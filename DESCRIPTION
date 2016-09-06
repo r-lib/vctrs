@@ -1,0 +1,14 @@
+Package: vctrs
+Title: Vector Helpers
+Version: 0.0.0.9000
+Authors@R: c(
+    person("Hadley", "Wickham", , "hadley@rstudio.com", role = c("aut", "cre")),
+    person("RStudio", role = "cph")
+  )
+Description: Functions that help you work with vectors, particularly numeric.
+    Provides a full set of summary, cumulative, rolling, and vectorised
+    functions for both R and C.
+Depends: R (>= 3.3.1)
+License: GPL-3
+Encoding: UTF-8
+LazyData: true
