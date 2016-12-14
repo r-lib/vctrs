@@ -10,6 +10,12 @@ namespace vctrs {
   public:
 
   public:
+    const Vctr& get_vctr() const {
+      check_vctr();
+
+      return *vctr;
+    }
+
     size_t length() const {
       check_vctr();
 

@@ -10,7 +10,7 @@ namespace vctrs {
   public:
     virtual int size() const = 0;
 
-    virtual int operator[](int i) const = 0;
+    virtual int operator[](size_t i) const = 0;
 
     virtual int group() const = 0;
 
@@ -35,7 +35,7 @@ namespace vctrs {
       return data.size();
     }
 
-    virtual int operator[](int i) const {
+    virtual int operator[](size_t i) const {
       return data[i];
     }
 
@@ -59,7 +59,7 @@ namespace vctrs {
       return 1;
     }
 
-    inline int operator[](int i) const {
+    inline int operator[](size_t i) const {
       if (i != 0)
         Rcpp::stop("Can only use 0 for RowwiseSlicingIndex, queried %d", i);
       return start;
@@ -85,7 +85,7 @@ namespace vctrs {
       return n;
     }
 
-    virtual int operator[](int i) const {
+    virtual int operator[](size_t i) const {
       if (i < 0 || i >= n)
         Rcpp::stop("Out of bounds index %d queried for NaturalSlicingIndex", i);
       return i;
@@ -108,15 +108,15 @@ namespace vctrs {
 // It is used for binding data frames vertically (bind_rows()).
   class OffsetSlicingIndex : public SlicingIndex {
   public:
-    OffsetSlicingIndex(const int start_, const int n_) : start(start_), n(n_) {
+    OffsetSlicingIndex(const size_t start_, const size_t n_) : start(start_), n(n_) {
     }
 
     inline int size() const {
       return n;
     }
 
-    inline int operator[](int i) const {
-      if (i < 0 || i >= n)
+    inline int operator[](size_t i) const {
+      if (i >= n)
         Rcpp::stop("Out of bounds index %d queried for OffsetSlicingIndex", i);
       return i + start;
     }
@@ -126,7 +126,7 @@ namespace vctrs {
     }
 
   private:
-    int start, n;
+    size_t start, n;
   };
 
 }
