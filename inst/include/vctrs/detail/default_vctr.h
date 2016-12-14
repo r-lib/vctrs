@@ -1,14 +1,37 @@
-#ifndef VCTRS_VCTRS_DEFAULT_VCTR_H
-#define VCTRS_VCTRS_DEFAULT_VCTR_H
+#ifndef VCTRS_VCTRS_DETAIL_DEFAULT_VCTR_H
+#define VCTRS_VCTRS_DETAIL_DEFAULT_VCTR_H
 
 #include <vctrs/vctr.h>
+#include <vctrs/traits/class.h>
+#include <vctrs/traits/type.h>
+#include <vctrs/typed_vctr.h>
 
 namespace vctrs {
   namespace detail {
 
+    class DefaultVctr;
+
+  }
+
+  namespace traits {
+
+    template <>
+    struct vctr_class<VCTR_DEFAULT> {
+      typedef detail::DefaultVctr type;
+    };
+
+
+    template <>
+    struct vctr_type<detail::DefaultVctr> {
+      static const VctrTypes type = VCTR_DEFAULT;
+    };
+  }
+
+  namespace detail {
+
     using namespace Rcpp;
 
-    class DefaultVctr : public Vctr {
+    class DefaultVctr : public TypedVctr<DefaultVctr> {
     public:
       DefaultVctr(SEXP x_) : x(x_) {}
 
@@ -22,6 +45,10 @@ namespace vctrs {
       }
 
       virtual Vctr* coerce_to(const Vctr& other, size_t new_size) const {
+        if (other.get_type() != VCTR_DEFAULT) {
+          stop("Cannot coerce default vctr to anything other than a default vctr");
+        }
+
         return NULL;
       }
 
@@ -60,6 +87,7 @@ namespace vctrs {
     };
 
   }
+
 }
 
-#endif // VCTRS_VCTRS_DEFAULT_VCTR_H
+#endif // VCTRS_VCTRS_DETAIL_DEFAULT_VCTR_H

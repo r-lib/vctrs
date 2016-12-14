@@ -8,5 +8,6 @@
 #include <vctrs/in_place_vctr.h>
 #include <vctrs/vctr_builder.h>
 #include <vctrs/vctr_factory.h>
+#include <vctrs/types.h>
 
 #endif // VCTRS_VCTRS_H
