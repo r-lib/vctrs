@@ -26,6 +26,27 @@ namespace vctrs {
       }
     };
 
+    template <template <class C1, class C2> class X, class Base = typename X<void, void>::base_class, VctrTypes type1 = VCTR_DEFAULT, VctrTypes type2 = VCTR_DEFAULT>
+    struct vctr_type_selector2 : public vctr_type_selector2<X, Base, type1, (VctrTypes)(type2 - 1)> {
+      template <class C1>
+      class XX : public X<C1, typename traits::vctr_class<type2>::type> {};
+
+      Base& select(VctrTypes type1_, VctrTypes type2_)  {
+        if (type2_ != type2) {
+          return static_cast<vctr_type_selector2<X, Base, type1, (VctrTypes)(type2 - 1)>*>(this)->select(type1_, type2_);
+        }
+
+        return vctr_type_selector<XX, Base, type2>().select(type1_);
+      }
+    };
+
+    template <template <class C1, class C2> class X, class Base, VctrTypes type1>
+    struct vctr_type_selector2<X, Base, type1, VCTR_NONE> {
+      Base& select(VctrTypes type1_, VctrTypes type2_) {
+        Rcpp::stop("Unknown type: ", type2_);
+      }
+    };
+
   }
 }
 
