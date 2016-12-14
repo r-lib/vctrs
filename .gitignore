@@ -1,3 +1,6 @@
 .Rproj.user
 .Rhistory
 .RData
+clion-test.R
+/.idea
+cmake-build-debug
