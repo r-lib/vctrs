@@ -23,7 +23,7 @@ namespace vctrs {
 
     template <>
     struct vctr_type<detail::DefaultVctr> {
-      static const VctrTypes type = VCTR_DEFAULT;
+      static const VctrTypes value = VCTR_DEFAULT;
     };
   }
 
@@ -44,22 +44,9 @@ namespace vctrs {
         return new DefaultVctr(Function("[", R_BaseEnv)(x, compute_positions(index)));
       }
 
-      virtual Vctr* coerce_to(const Vctr& other, size_t new_size) const {
-        if (other.get_type() != VCTR_DEFAULT) {
-          stop("Cannot coerce default vctr to anything other than a default vctr");
-        }
-
-        return NULL;
-      }
-
-      virtual Vctr* copy(const Vctr& other, const SlicingIndex& index) {
+      virtual Vctr* combine(const Vctr& other) const {
         const DefaultVctr& my_other = static_cast<const DefaultVctr&>(other);
-
-        if (index.is_tight(other.length(), length())) {
-          return new DefaultVctr(Function("c", R_BaseEnv)(x, my_other.x));
-        }
-
-        stop("DefaultVctr::copy() not yet implemented for the general case");
+        return new DefaultVctr(Function("c", R_BaseEnv)(x, my_other.x));
       }
 
       virtual Vctr* clone() const {

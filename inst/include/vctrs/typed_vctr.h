@@ -10,7 +10,7 @@ namespace vctrs {
   class TypedVctr : public Vctr {
   public:
     VctrTypes get_type() const {
-      return traits::vctr_type<C>::type;
+      return traits::vctr_type<C>::value;
     }
   };
 

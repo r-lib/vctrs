@@ -17,12 +17,16 @@ namespace vctrs {
         static X<typename traits::vctr_class<type>::type> x;
         return x;
       }
+
+      Base& select(const Vctr& v) {
+        return select(v.get_type());
+      }
     };
 
     template <template <class C> class X, class Base>
     struct vctr_type_selector<X, Base, VCTR_NONE> {
       Base& select(VctrTypes type_)  {
-        Rcpp::stop("Unknown type: ", type_);
+        Rcpp::stop("Unknown type: %d", type_);
       }
     };
 
@@ -36,7 +40,11 @@ namespace vctrs {
           return static_cast<vctr_type_selector2<X, Base, type1, (VctrTypes)(type2 - 1)>*>(this)->select(type1_, type2_);
         }
 
-        return vctr_type_selector<XX, Base, type2>().select(type1_);
+        return vctr_type_selector<XX, Base>().select(type1_);
+      }
+
+      Base& select(const Vctr& v1, const Vctr& v2) {
+        return select(v1.get_type(), v2.get_type());
       }
     };
 

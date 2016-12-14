@@ -21,7 +21,7 @@ namespace vctrs {
 
     template <>
     struct vctr_type<detail::LogicalVctr> {
-      static const VctrTypes type = VCTR_LOGICAL;
+      static const VctrTypes value = VCTR_LOGICAL;
     };
 
   }
@@ -49,28 +49,18 @@ namespace vctrs {
         return new LogicalVctr(ret);
       }
 
-      virtual Vctr* coerce_to(const Vctr& other, size_t new_size) const {
-        if (other.get_type() == VCTR_LOGICAL) {
-          LogicalVector ret(x.length() + other.length());
-          for (int i = 0; i < x.length(); ++i) {
-            ret[i] = x[i];
-          }
-          return new LogicalVctr(ret);
-        }
-        else {
-          return new DefaultVctr(x);
-        }
-      }
-
-      virtual Vctr* copy(const Vctr& other, const SlicingIndex& index) {
+      virtual Vctr* combine(const Vctr& other) const {
         const LogicalVctr& my_other = static_cast<const LogicalVctr&>(other);
 
-        for (size_t i = 0; i < index.size(); ++i) {
-          x[index[i]] = my_other.x[i];
+        LogicalVector ret(x.length() + my_other.x.length());
+        for (R_xlen_t i = 0; i < x.length(); ++i) {
+          ret[i] = x[i];
         }
-
-        return NULL;
-    }
+        for (R_xlen_t i = 0; i < my_other.x.length(); ++i) {
+          ret[x.length() + i] = my_other.x[i];
+        }
+        return new LogicalVctr(ret);
+      }
 
       virtual Vctr* clone() const {
         return new LogicalVctr(x);
@@ -80,9 +70,17 @@ namespace vctrs {
         return x;
       }
 
+    public:
+      bool all_na() const {
+        for (R_xlen_t i = 0; i < x.length(); ++i) {
+          if (!x.is_na(x[i]))
+            return false;
+        }
+        return true;
+      }
+
     private:
       LogicalVector x;
-
     };
 
   }

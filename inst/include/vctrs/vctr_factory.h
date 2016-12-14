@@ -10,15 +10,15 @@ namespace vctrs {
   using namespace Rcpp;
 
   class VctrFactory {
-    class VctrCreatorBase {
+    class worker_base {
     public:
       virtual Vctr* create(SEXP x) = 0;
     };
 
     template <class C>
-    class VctrCreator : public VctrCreatorBase {
+    class worker : public worker_base {
     public:
-      typedef VctrCreatorBase base_class;
+      typedef worker_base base_class;
 
       virtual Vctr* create(SEXP x) {
         return new C(x);
@@ -29,7 +29,7 @@ namespace vctrs {
     static Vctr* create(const RObject& x) {
       VctrTypes type = detail::get_type(x);
 
-      return traits::vctr_type_selector<VctrCreator>().select(type).create(x);
+      return traits::vctr_type_selector<worker>().select(type).create(x);
     }
   };
 
