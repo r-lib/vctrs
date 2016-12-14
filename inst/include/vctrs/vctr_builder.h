@@ -6,6 +6,9 @@
 namespace vctrs {
   class VctrBuilder {
   public:
+    VctrBuilder(const Vctr& vctr_) : vctr(vctr_) {}
+
+  public:
     const Vctr& get_vctr() const {
       return vctr.get_vctr();
     }

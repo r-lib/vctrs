@@ -8,6 +8,8 @@
 namespace vctrs {
   class InPlaceVctr {
   public:
+    InPlaceVctr(const Vctr& vctr_) : vctr(vctr_.clone()) {}
+
 
   public:
     const Vctr& get_vctr() const {
