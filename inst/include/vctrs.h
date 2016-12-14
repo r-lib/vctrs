@@ -1,4 +1,6 @@
-#ifndef vctrs_vctrs_h
-#define vctrs_vctrs_h
+#ifndef VCTRS_VCTRS_H
+#define VCTRS_VCTRS_H
 
-#endif
+#include <vctrs/vctr.h>
+
+#endif // VCTRS_VCTRS_H
