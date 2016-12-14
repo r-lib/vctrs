@@ -4,9 +4,11 @@
 namespace vctrs {
 
   enum VctrTypes {
+    VCTR_NONE,      // must be first element
+
     VCTR_LOGICAL,
 
-    VCTR_DEFAULT
+    VCTR_DEFAULT    // must be last element
   };
 
 }
