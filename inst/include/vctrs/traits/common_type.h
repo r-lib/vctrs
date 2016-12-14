@@ -18,7 +18,7 @@ namespace vctrs {
           return common_type<type2, type1>::get(v2, v1);
         }
         else {
-          return VCTR_NONE;
+          Rcpp::stop("Cannot find a common type for %d and %d", type1, type2);
         }
       }
     };
