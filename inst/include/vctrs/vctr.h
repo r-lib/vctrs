@@ -9,9 +9,10 @@ namespace vctrs {
     virtual ~Vctr() {}
 
   public:
-    virtual Vctr* get(size_t index) = 0;
-    virtual Vctr* subset(const SlicingIndex& index) = 0;
-    virtual Vctr* coerce_to(const Vctr& other) = 0;
+    virtual size_t length() const = 0;
+    virtual Vctr* subset(const SlicingIndex& index) const = 0;
+    virtual Vctr* coerce_to(const Vctr& other, size_t new_size) const = 0;
+    virtual void copy(const Vctr& other, const SlicingIndex& index) = 0;
   };
 }
 
