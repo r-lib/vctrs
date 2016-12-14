@@ -8,13 +8,13 @@ namespace vctrs {
 // Important special cases can be implemented without materializing the map.
   class SlicingIndex {
   public:
-    virtual int size() const = 0;
+    virtual size_t size() const = 0;
 
-    virtual int operator[](size_t i) const = 0;
+    virtual size_t operator[](size_t i) const = 0;
 
     virtual int group() const = 0;
 
-    virtual bool is_identity(SEXP x) const {
+    virtual bool is_tight(size_t length, size_t offset = 0) const {
       return FALSE;
     };
   };
@@ -31,11 +31,11 @@ namespace vctrs {
     GroupedSlicingIndex(Rcpp::IntegerVector data_, int group_) : data(data_), group_index(group_) {
     }
 
-    virtual int size() const {
+    virtual size_t size() const {
       return data.size();
     }
 
-    virtual int operator[](size_t i) const {
+    virtual size_t operator[](size_t i) const {
       return data[i];
     }
 
@@ -55,11 +55,11 @@ namespace vctrs {
     RowwiseSlicingIndex(const int start_) : start(start_) {
     }
 
-    inline int size() const {
+    inline size_t size() const {
       return 1;
     }
 
-    inline int operator[](size_t i) const {
+    inline size_t operator[](size_t i) const {
       if (i != 0)
         Rcpp::stop("Can only use 0 for RowwiseSlicingIndex, queried %d", i);
       return start;
@@ -78,15 +78,15 @@ namespace vctrs {
 // to address the rows.
   class NaturalSlicingIndex : public SlicingIndex {
   public:
-    NaturalSlicingIndex(const int n_) : n(n_) {
+    NaturalSlicingIndex(const size_t n_) : n(n_) {
     }
 
-    virtual int size() const {
+    virtual size_t size() const {
       return n;
     }
 
-    virtual int operator[](size_t i) const {
-      if (i < 0 || i >= n)
+    virtual size_t operator[](size_t i) const {
+      if (i >= n)
         Rcpp::stop("Out of bounds index %d queried for NaturalSlicingIndex", i);
       return i;
     }
@@ -95,13 +95,12 @@ namespace vctrs {
       return -1;
     }
 
-    virtual bool is_identity(SEXP x) const {
-      const R_len_t length = Rf_length(x);
-      return length == n;
+    virtual bool is_tight(size_t length, size_t offset = 0) const {
+      return offset == 0 && length == n;
     }
 
   private:
-    int n;
+    size_t n;
   };
 
 // An OffsetSlicingIndex selects a consecutive part of a data frame, starting at a specific row.
@@ -111,11 +110,11 @@ namespace vctrs {
     OffsetSlicingIndex(const size_t start_, const size_t n_) : start(start_), n(n_) {
     }
 
-    inline int size() const {
+    inline size_t size() const {
       return n;
     }
 
-    inline int operator[](size_t i) const {
+    inline size_t operator[](size_t i) const {
       if (i >= n)
         Rcpp::stop("Out of bounds index %d queried for OffsetSlicingIndex", i);
       return i + start;
@@ -123,6 +122,10 @@ namespace vctrs {
 
     inline int group() const {
       return -1;
+    }
+
+    virtual bool is_tight(size_t length, size_t offset = 0) const {
+      return offset == start && length == n;
     }
 
   private:

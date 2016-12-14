@@ -12,8 +12,9 @@ namespace vctrs {
     virtual size_t length() const = 0;
     virtual Vctr* subset(const SlicingIndex& index) const = 0;
     virtual Vctr* coerce_to(const Vctr& other, size_t new_size) const = 0;
-    virtual void copy(const Vctr& other, const SlicingIndex& index) = 0;
-    virtual Vctr* clone() const;
+    virtual Vctr* copy(const Vctr& other, const SlicingIndex& index) = 0;
+    virtual Vctr* clone() const = 0;
+    virtual SEXP get_sexp() const = 0;
   };
 }
 

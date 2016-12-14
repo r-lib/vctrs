@@ -43,7 +43,12 @@ namespace vctrs {
     }
 
     virtual void copy(const Vctr& other, const SlicingIndex& index) {
-      vctr->copy(other, index);
+      check_vctr();
+
+      Vctr* copy_vctr = vctr->copy(other, index);
+      if (copy_vctr) {
+        vctr.reset(copy_vctr);
+      }
     }
 
   private:
