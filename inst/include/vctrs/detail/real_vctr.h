@@ -1,9 +1,9 @@
 #ifndef VCTRS_VCTRS_DETAIL_REAL_VCTR_H
 #define VCTRS_VCTRS_DETAIL_REAL_VCTR_H
 
-#include <vctrs/vctr.h>
+#include <vctrs/detail/atomic_vctr.h>
 #include <vctrs/traits/class.h>
-#include "default_vctr.h"
+#include <vctrs/traits/type.h>
 
 namespace vctrs {
   namespace detail {

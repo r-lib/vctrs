@@ -3,6 +3,7 @@
 
 #include <vctrs/vctr.h>
 #include <vctrs/types.h>
+#include <vctrs/traits/type.h>
 
 namespace vctrs {
 
