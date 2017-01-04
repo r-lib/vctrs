@@ -66,7 +66,7 @@ namespace vctrs {
       }
 
     private:
-      RealVector x;
+      DoubleVector x;
     };
 
   }
