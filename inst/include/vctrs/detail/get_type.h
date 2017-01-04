@@ -5,6 +5,7 @@
 #include <vctrs/types.h>
 #include <vctrs/detail/logical_vctr.h>
 #include <vctrs/detail/integer_vctr.h>
+#include <vctrs/detail/real_vctr.h>
 #include <vctrs/detail/default_vctr.h>
 
 namespace vctrs {
@@ -20,6 +21,9 @@ namespace vctrs {
 
         case INTSXP:
           return VCTR_INTEGER;
+
+        case REALSXP:
+          return VCTR_REAL;
         }
       }
 

@@ -8,6 +8,7 @@ namespace vctrs {
 
     VCTR_LOGICAL,
     VCTR_INTEGER,
+    VCTR_REAL,
 
     VCTR_DEFAULT    // must be last element
   };

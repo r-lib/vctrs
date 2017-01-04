@@ -36,6 +36,16 @@ namespace vctrs {
       }
     };
 
+    template <>
+    struct coerce_to<VCTR_INTEGER, VCTR_REAL> {
+      static const VctrTypes type1 = VCTR_INTEGER;
+      static const VctrTypes type2 = VCTR_REAL;
+
+      static Vctr* perform(const typename vctr_class<type1>::type& v1) {
+        return new typename vctr_class<type2>::type(v1.get_sexp());
+      }
+    };
+
     template <VctrTypes type1>
     struct coerce_to<type1, VCTR_DEFAULT> {
       static const VctrTypes type2 = VCTR_DEFAULT;

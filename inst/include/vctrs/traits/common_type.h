@@ -23,6 +23,16 @@ namespace vctrs {
       }
     };
 
+    template <>
+    struct common_type<VCTR_INTEGER, VCTR_REAL> {
+      static const VctrTypes type1 = VCTR_INTEGER;
+      static const VctrTypes type2 = VCTR_REAL;
+
+      static VctrTypes get(const typename vctr_class<type1>::type& v1, const typename vctr_class<type2>::type& v2) {
+        return type2;
+      }
+    };
+
     template <VctrTypes type2>
     struct common_type<VCTR_LOGICAL, type2> {
       static const VctrTypes type1 = VCTR_LOGICAL;

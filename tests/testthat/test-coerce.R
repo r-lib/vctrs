@@ -15,7 +15,6 @@ test_that("combine logical NA", {
 })
 
 test_that("combine integer and double", {
-  skip("Currently failing")
   expect_equal(combine(1, 2L), c(1, 2))
   expect_equal(combine(1L, 2), c(1, 2))
 })
