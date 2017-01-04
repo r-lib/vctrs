@@ -19,3 +19,5 @@ LazyData: true
 URL: https://github.com/hadley/vctrs
 BugReports: https://github.com/hadley/vctrs/issues
 RoxygenNote: 5.0.1.9000
+Suggests: 
+    testthat
