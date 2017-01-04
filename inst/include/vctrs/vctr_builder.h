@@ -16,7 +16,6 @@ namespace vctrs {
     }
 
     void append(const Vctr& other) {
-      const size_t vctr_length = vctr.length();
       const VctrTypes type = CommonType::get(vctr.get_vctr(), other);
 
       InPlaceVctr new_this(vctr);
