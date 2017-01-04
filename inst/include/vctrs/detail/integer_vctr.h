@@ -12,20 +12,6 @@ namespace vctrs {
 
   }
 
-  namespace traits {
-
-    template <>
-    struct vctr_class<VCTR_INTEGER> {
-      typedef detail::IntegerVctr type;
-    };
-
-    template <>
-    struct vctr_type<detail::IntegerVctr> {
-      static const VctrTypes value = VCTR_INTEGER;
-    };
-
-  }
-
   namespace detail {
 
     using namespace Rcpp;
@@ -81,6 +67,20 @@ namespace vctrs {
 
     private:
       IntegerVector x;
+    };
+
+  }
+
+  namespace traits {
+
+    template <>
+    struct vctr_class<VCTR_INTEGER> {
+      typedef detail::IntegerVctr type;
+    };
+
+    template <>
+    struct vctr_type<detail::IntegerVctr> {
+      static const VctrTypes value = VCTR_INTEGER;
     };
 
   }

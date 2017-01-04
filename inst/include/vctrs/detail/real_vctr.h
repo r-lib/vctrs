@@ -12,20 +12,6 @@ namespace vctrs {
 
   }
 
-  namespace traits {
-
-    template <>
-    struct vctr_class<VCTR_REAL> {
-      typedef detail::RealVctr type;
-    };
-
-    template <>
-    struct vctr_type<detail::RealVctr> {
-      static const VctrTypes value = VCTR_REAL;
-    };
-
-  }
-
   namespace detail {
 
     using namespace Rcpp;
@@ -80,7 +66,21 @@ namespace vctrs {
       }
 
     private:
-      IntegerVector x;
+      RealVector x;
+    };
+
+  }
+
+  namespace traits {
+
+    template <>
+    struct vctr_class<VCTR_REAL> {
+      typedef detail::RealVctr type;
+    };
+
+    template <>
+    struct vctr_type<detail::RealVctr> {
+      static const VctrTypes value = VCTR_REAL;
     };
 
   }

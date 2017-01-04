@@ -12,20 +12,6 @@ namespace vctrs {
 
   }
 
-  namespace traits {
-
-    template <>
-    struct vctr_class<VCTR_LOGICAL> {
-      typedef detail::LogicalVctr type;
-    };
-
-    template <>
-    struct vctr_type<detail::LogicalVctr> {
-      static const VctrTypes value = VCTR_LOGICAL;
-    };
-
-  }
-
   namespace detail {
 
     using namespace Rcpp;
@@ -81,6 +67,20 @@ namespace vctrs {
 
     private:
       LogicalVector x;
+    };
+
+  }
+
+  namespace traits {
+
+    template <>
+    struct vctr_class<VCTR_LOGICAL> {
+      typedef detail::LogicalVctr type;
+    };
+
+    template <>
+    struct vctr_type<detail::LogicalVctr> {
+      static const VctrTypes value = VCTR_LOGICAL;
     };
 
   }
