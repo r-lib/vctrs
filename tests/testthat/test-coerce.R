@@ -1,5 +1,12 @@
 context("coerce")
 
+test_that("combine of the same type", {
+  expect_equal(combine(TRUE, FALSE), c(TRUE, FALSE))
+  expect_equal(combine(1L, 2L), 1:2)
+  expect_equal(combine(1, 2), c(1, 2))
+  expect_equal(combine(as.Date("2017-01-04"), as.Date("2017-01-05")), as.Date("2017-01-04") + 0:1)
+})
+
 test_that("combine logical NA", {
   expect_equal(combine(NA, 1L), c(NA, 1L))
   expect_equal(combine(NA, 1), c(NA, 1))

@@ -28,6 +28,10 @@ namespace vctrs {
       static const VctrTypes type1 = VCTR_LOGICAL;
 
       static VctrTypes get(const typename vctr_class<type1>::type& v1, const typename vctr_class<type2>::type& v2) {
+        if (type1 == type2) {
+          return type1;
+        }
+
         if (v1.all_na()) {
           return type2;
         }
