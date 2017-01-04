@@ -8,17 +8,12 @@
 namespace vctrs {
   namespace detail {
 
-    class LogicalVctr;
-
-  }
-
-  namespace detail {
-
     using namespace Rcpp;
 
-    class LogicalVctr : public TypedVctr<LogicalVctr> {
+    template <class RCPP_TYPE>
+    class AtomicVctr : public TypedVctr<AtomicVctr<RCPP_TYPE> > {
     public:
-      LogicalVctr(SEXP x_) : x(x_) {}
+      AtomicVctr(SEXP x_) : x(x_) {}
 
     public:
       virtual size_t length() const {
@@ -32,24 +27,24 @@ namespace vctrs {
           ret[i] = x[index[i]];
         }
 
-        return new LogicalVctr(ret);
+        return new AtomicVctr(ret);
       }
 
       virtual Vctr* combine(const Vctr& other) const {
-        const LogicalVctr& my_other = static_cast<const LogicalVctr&>(other);
+        const AtomicVctr& my_other = static_cast<const AtomicVctr&>(other);
 
-        LogicalVector ret(x.length() + my_other.x.length());
+        RCPP_TYPE ret(x.length() + my_other.x.length());
         for (R_xlen_t i = 0; i < x.length(); ++i) {
           ret[i] = x[i];
         }
         for (R_xlen_t i = 0; i < my_other.x.length(); ++i) {
           ret[x.length() + i] = my_other.x[i];
         }
-        return new LogicalVctr(ret);
+        return new AtomicVctr(ret);
       }
 
       virtual Vctr* clone() const {
-        return new LogicalVctr(x);
+        return new AtomicVctr(x);
       }
 
       virtual SEXP get_sexp() const {
@@ -66,8 +61,10 @@ namespace vctrs {
       }
 
     private:
-      LogicalVector x;
+      RCPP_TYPE x;
     };
+
+    typedef AtomicVctr<LogicalVector> LogicalVctr;
 
   }
 

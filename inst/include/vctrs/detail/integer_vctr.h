@@ -8,66 +8,9 @@
 namespace vctrs {
   namespace detail {
 
-    class IntegerVctr;
-
-  }
-
-  namespace detail {
-
     using namespace Rcpp;
 
-    class IntegerVctr : public TypedVctr<IntegerVctr> {
-    public:
-      IntegerVctr(SEXP x_) : x(x_) {}
-
-    public:
-      virtual size_t length() const {
-        return Rf_length(x);
-      }
-
-      virtual Vctr* subset(const SlicingIndex& index) const {
-        LogicalVector ret(index.size());
-
-        for (size_t i = 0; i < index.size(); ++i) {
-          ret[i] = x[index[i]];
-        }
-
-        return new IntegerVctr(ret);
-      }
-
-      virtual Vctr* combine(const Vctr& other) const {
-        const IntegerVctr& my_other = static_cast<const IntegerVctr&>(other);
-
-        LogicalVector ret(x.length() + my_other.x.length());
-        for (R_xlen_t i = 0; i < x.length(); ++i) {
-          ret[i] = x[i];
-        }
-        for (R_xlen_t i = 0; i < my_other.x.length(); ++i) {
-          ret[x.length() + i] = my_other.x[i];
-        }
-        return new IntegerVctr(ret);
-      }
-
-      virtual Vctr* clone() const {
-        return new IntegerVctr(x);
-      }
-
-      virtual SEXP get_sexp() const {
-        return x;
-      }
-
-    public:
-      bool all_na() const {
-        for (R_xlen_t i = 0; i < x.length(); ++i) {
-          if (!x.is_na(x[i]))
-            return false;
-        }
-        return true;
-      }
-
-    private:
-      IntegerVector x;
-    };
+    typedef AtomicVctr<IntegerVector> IntegerVctr;
 
   }
 
