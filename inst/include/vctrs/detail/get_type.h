@@ -4,6 +4,7 @@
 
 #include <vctrs/types.h>
 #include <vctrs/detail/logical_vctr.h>
+#include <vctrs/detail/integer_vctr.h>
 #include <vctrs/detail/default_vctr.h>
 
 namespace vctrs {
@@ -16,6 +17,9 @@ namespace vctrs {
         switch (x.sexp_type()) {
         case LGLSXP:
           return VCTR_LOGICAL;
+
+        case INTSXP:
+          return VCTR_INTEGER;
         }
       }
 

@@ -51,7 +51,7 @@ namespace vctrs {
     template <template <class C1, class C2> class X, class Base, VctrTypes type1>
     struct vctr_type_selector2<X, Base, type1, VCTR_NONE> {
       Base& select(VctrTypes type1_, VctrTypes type2_) {
-        Rcpp::stop("Unknown type: ", type2_);
+        Rcpp::stop("Unknown type: %d", type2_);
       }
     };
 
