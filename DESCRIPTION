@@ -19,3 +19,4 @@ Imports:
     rlang
 Suggests: 
     testthat
+Roxygen: list(markdown = TRUE)
