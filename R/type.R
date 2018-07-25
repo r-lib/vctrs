@@ -2,24 +2,23 @@
 # Compared to type_sum it is not designed to fit in a column label
 # So can be quite a lot longer
 
-#' @export
 vec_type <- function(x) UseMethod("vec_type")
 
 #' @export
 vec_type.default <- function(x) {
   stopifnot(is_vector(x))
 
-  paste0(typeof(x), dim_type(x))
+  vt(typeof(x), dim_type(x))
 }
 
 #' @export
 vec_type.Date <- function(x) {
-  "date"
+  vt("date")
 }
 
 #' @export
 vec_type.POSIXt <- function(x) {
-  "datetime"
+  vt("datetime")
 }
 
 # Levels are parameter of the type, because it does not make sense to
@@ -28,7 +27,7 @@ vec_type.POSIXt <- function(x) {
 #' @export
 vec_type.factor <- function(x) {
   params <- paste0("<", hash(levels(x)), ">")
-  paste0("factor",dim_type(x), params)
+  vt("factor", dim_type(x), params)
 }
 
 #' @export
@@ -36,7 +35,7 @@ vec_type.data.frame <- function(x) {
   # Needs to handle recursion with indenting
   types <- map_chr(x, vec_type)
 
-  paste0(
+  vt(
     "data.frame<\n",
     paste0("  $", format(names(x)), " ", types, collapse = "\n"),
     "\n>"
@@ -53,3 +52,13 @@ dim_type <- function(x) {
   }
 }
 
+
+vt <- function(...) {
+  structure(paste0(...), class = "vec_type")
+}
+
+#' @export
+print.vec_type <- function(x, ...) {
+  cat(x, "\n", sep = "")
+  invisible(x)
+}
