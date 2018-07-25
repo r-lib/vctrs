@@ -30,5 +30,16 @@ test_that("data frames print nicely", {
       print(vec_type(iris))
     }
   )
+})
 
+test_that("embedded data frames", {
+  df <- data.frame(x = 1:3)
+  df$y <- data.frame(a = 1:3, b = letters[1:3])
+
+  expect_known_output(
+    file = test_path("test-type-df-embedded.txt"),
+    {
+      print(vec_type(df))
+    }
+  )
 })

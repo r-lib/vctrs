@@ -35,9 +35,12 @@ vec_type.data.frame <- function(x) {
   # Needs to handle recursion with indenting
   types <- map_chr(x, vec_type)
 
+  names <- paste0("  $", format(names(x)))
+  types <- indent(types, nchar(names) + 1)
+
   vt(
     "data.frame<\n",
-    paste0("  $", format(names(x)), " ", types, collapse = "\n"),
+      paste0(names, " ", types, collapse = "\n"),
     "\n>"
   )
 }
