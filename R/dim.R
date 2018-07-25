@@ -2,7 +2,7 @@
 #'
 #' * `vec_length()` returns the length of the vector, which is the number of
 #'   rows if multidimensional
-#' * µ`vec_dims()` gives the dimensionality (i.e. number of dimensions)
+#' * `vec_dims()` gives the dimensionality (i.e. number of dimensions)
 #' * `vec_dim()` returns the size of each dimension
 #'
 #' Unlike base R, we treat vectors with `NULL` dimensions as 1d. This

@@ -20,12 +20,23 @@ vec_dims(x)
 \itemize{
 \item \code{vec_length()} returns the length of the vector, which is the number of
 rows if multidimensional
-\item µ\code{vec_dims()} gives the dimensionality (i.e. number of dimensions)
+\item \code{vec_dims()} gives the dimensionality (i.e. number of dimensions)
 \item \code{vec_dim()} returns the size of each dimension
 }
 }
 \details{
-Unlike base R, we treat vectors with \code{NULL} dimensions as 1d. This means
-that \code{vec_length()} acts like \code{NROW()}, and \code{vec_dim()} returns \code{length()}
-not \code{dim()} when \code{x} is 1d.
+Unlike base R, we treat vectors with \code{NULL} dimensions as 1d. This
+simplifies the type system by eliding a special case. Compared to base R
+equivalents \code{vec_length()} acts like \code{NROW()}, and \code{vec_dim()} returns
+\code{length()}, not \code{NULL}, when \code{x} is 1d.
+}
+\examples{
+# Compared to base R
+x <- 1:5
+dim(x)
+vec_dim(x)
+
+y <- matrix(1:6, nrow = 2)
+length(y)
+vec_length(y)
 }
