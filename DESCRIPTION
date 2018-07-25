@@ -21,3 +21,4 @@ Imports:
 Suggests: 
     testthat
 Roxygen: list(markdown = TRUE)
+Language: en-GB
