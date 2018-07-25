@@ -1,37 +1,37 @@
 # The type of a vector is a compact string representation
+# Compared to type_sum it is not designed to fit in a column label
+# So can be quite a lot longer
+
+#' @export
 vec_type <- function(x) UseMethod("vec_type")
 
-# The "dimension" type ignores the length (the first dimension)
-dim_type <- function(x) {
-  if (vec_dims(x) == 1) {
-    "[]"
-  } else {
-    paste0("[,", paste(vec_dim(x)[-1], collapse = ","), "]")
-  }
-}
-
+#' @export
 vec_type.default <- function(x) {
-  if (is.object(x)) {
-    class(x)[[1]]
-  } else {
-    paste0(typeof(x), dim_type(x))
-  }
+  stopifnot(is_vector(x))
+
+  paste0(typeof(x), dim_type(x))
 }
 
+#' @export
 vec_type.Date <- function(x) {
-  paste0("date", dim_type(x))
+  "date"
 }
+
+#' @export
 vec_type.POSIXt <- function(x) {
-  paste0("datetime", dim_type(x))
+  "datetime"
 }
 
 # Levels are parameter of the type, because it does not make sense to
 # compare the values of the underlying vector if the levels are different.
+# Levels are potentially long, so we just display a hash of the levels.
+#' @export
 vec_type.factor <- function(x) {
-  params <- paste0("<", paste0(levels(x), collapse = ","), ">")
+  params <- paste0("<", hash(levels(x)), ">")
   paste0("factor",dim_type(x), params)
 }
 
+#' @export
 vec_type.data.frame <- function(x) {
   # Needs to handle recursion with indenting
   types <- map_chr(x, vec_type)
@@ -41,5 +41,15 @@ vec_type.data.frame <- function(x) {
     paste0("  $", format(names(x)), " ", types, collapse = "\n"),
     "\n>"
   )
+}
+
+# The "length" is not included in the type specification since it's often
+# not important (and the recycling rules means matching is non trivial)
+dim_type <- function(x) {
+  if (vec_dims(x) == 1) {
+    ""
+  } else {
+    paste0("[,", paste(vec_dim(x)[-1], collapse = ","), "]")
+  }
 }
 
