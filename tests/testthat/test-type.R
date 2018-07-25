@@ -18,3 +18,17 @@ test_that("factors display hashed levels", {
   expect_equal(vec_type(f1), vt("factor<5cab7>"))
   expect_equal(vec_type(f1[0]), vt("factor<5cab7>"))
 })
+
+test_that("data frames print nicely", {
+  expect_known_output(
+    file = test_path("test-type-df.txt"),
+    {
+      cat("mtcars:\n")
+      print(vec_type(mtcars))
+      cat("\n")
+      cat("iris:\n")
+      print(vec_type(iris))
+    }
+  )
+
+})
