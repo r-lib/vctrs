@@ -1,5 +1,7 @@
 coerce <- function(..., .strict = TRUE) {
   args <- list2(...)
+  if (length(args) == 0)
+    return(list())
 
   type <- reduce(args, vectype_max, strict = .strict)
 

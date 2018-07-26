@@ -1,43 +1,54 @@
-new_shape <- function(x) {
-  structure(x, class = "vecshape")
+new_shape <- function(x, data.frame = FALSE) {
+  structure(
+    x,
+    data.frame = data.frame,
+    class = "vecshape"
+  )
 }
 
-shape <- function(x) {
-  if (is_vector(x)) {
-    new_shape(vec_dim(x))
-  } else {
-    stop("Can only compute shape of a vector", call. = FALSe)
-  }
-}
-
-print.vecshape <- function(x) {
-  cat("shape: [", paste0(x, collapse = ","), "]\n", sep = "")
-  invisible(x)
+shape <- function(..., data.frame = FALSE) {
+  new_shape(c(...), data.frame = data.frame)
 }
 
 as_shape <- function(x) UseMethod("as_shape")
 as_shape.vecshape <- function(x) x
-as_shape.default <- function(x) shape(x)
+as_shape.data.frame <- function(x) new_shape(vec_dim(x), data.frame = TRUE)
+as_shape.NULL <- function(x) NULL
+as_shape.default <- function(x) {
+  if (is_vector(x)) {
+    new_shape(vec_dim(x))
+  } else {
+    stop("Can only compute shape of a vector", call. = FALSE)
+  }
+}
+
+print.vecshape <- function(x, ...) {
+  cat("shape: [", paste0(x, collapse = ","), "]\n", sep = "")
+  invisible(x)
+}
+
+max.vecshape <- function(...) {
+  args <- list2(...)
+  reduce(args, vecshape_max)
+}
 
 vecshape_max <- function(x, y) {
+  x <- as_shape(x)
+  y <- as_shape(y)
+
   if (is.null(x) && is.null(y)) {
     return(NULL)
   } else if (is.null(x)) {
-    return(as_shape(y))
+    return(y)
   } else if (is.null(y)) {
-    return(as_shape(x))
+    return(x)
   }
 
-  dim <- one_pad(as_shape(x), as_shape(y))
+  dim <- one_pad(x, y)
 
-  # Can only recycle a data frame in along rows
-  # This logic isn't quite correct yet
-  if (is.data.frame(x) || is.data.frame(y)) {
+  if (xor(attr(x, "data.frame"), attr(y, "data.frame"))) {
     if (length(dim$x) > 2) {
-      stop("Data frames must be 2d")
-    }
-    if (length(dim$x) == 2 && dim$x[2] != dim$y[2]) {
-      stop("Can not recycle columns of data frame, only rows")
+      stop("Data frames must be 2d", call. = FALSE)
     }
   }
 

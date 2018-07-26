@@ -1,6 +1,10 @@
 recycle <- function(...) {
   args <- list2(...)
+  if (length(args) == 0)
+    return(list())
 
-  shape <- reduce(args, vecshape_max)
+  shapes <- map(args, as_shape)
+  shape <- invoke(max, shapes)
+
   map(args, vecshape_coerce, shape = shape)
 }
