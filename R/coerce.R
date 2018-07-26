@@ -9,13 +9,20 @@ coerce <- function(..., .strict = TRUE) {
 
 vec_c <- function(..., .strict = TRUE) {
   args <- list2(...)
+
   type <- reduce(args, vectype_max, strict = .strict)
+  if (is.null(type))
+    return(NULL)
+
   ns <- map_int(args, length)
   out <- vec_rep(type, sum(ns))
 
   pos <- 1
   for (i in seq_along(ns)) {
     n <- ns[[i]]
+    if (n == 0L)
+      next
+
     out[pos:(pos + n - 1)] <- vectype_coerce(type, args[[i]])
     pos <- pos + n
   }
