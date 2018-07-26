@@ -3,8 +3,6 @@ recycle <- function(...) {
   if (length(args) == 0)
     return(list())
 
-  shapes <- map(args, as_shape)
-  shape <- invoke(max, shapes)
-
+  shape <- max.vecshape(!!!args)
   map(args, vecshape_coerce, shape = shape)
 }
