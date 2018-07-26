@@ -1,14 +1,34 @@
-# This is not reducable!
+new_shape <- function(x) {
+  structure(x, class = "vecshape")
+}
+
+shape <- function(x) {
+  if (is_vector(x)) {
+    new_shape(vec_dim(x))
+  } else {
+    stop("Can only compute shape of a vector", call. = FALSe)
+  }
+}
+
+print.vecshape <- function(x) {
+  cat("shape: [", paste0(x, collapse = ","), "]\n", sep = "")
+  invisible(x)
+}
+
+as_shape <- function(x) UseMethod("as_shape")
+as_shape.vecshape <- function(x) x
+as_shape.default <- function(x) shape(x)
+
 vecshape_max <- function(x, y) {
   if (is.null(x) && is.null(y)) {
     return(NULL)
   } else if (is.null(x)) {
-    return(vec_dim(y))
+    return(as_shape(y))
   } else if (is.null(y)) {
-    return(vec_dim(x))
+    return(as_shape(x))
   }
 
-  dim <- one_pad(vec_dim(x), vec_dim(y))
+  dim <- one_pad(as_shape(x), as_shape(y))
 
   # Can only recycle a data frame in along rows
   # This logic isn't quite correct yet
@@ -21,7 +41,7 @@ vecshape_max <- function(x, y) {
     }
   }
 
-  map2_int(dim$x, dim$y, recycle_length)
+  new_shape(map2_int(dim$x, dim$y, recycle_length))
 }
 
 vecshape_coerce <- function(x, shape) {
