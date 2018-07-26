@@ -12,6 +12,13 @@ test_that("date/times as expected", {
   expect_equal(vec_type(Sys.time()), vt("datetime"))
 })
 
+test_that("difftime has units as parameter", {
+  now <- Sys.time()
+
+  expect_equal(vec_type(difftime(now + 10, now)), vt("difftime<secs>"))
+  expect_equal(vec_type(difftime(now + 1e5, now)), vt("difftime<days>"))
+})
+
 test_that("factors display hashed levels", {
   f1 <- factor(letters)
 

@@ -31,6 +31,13 @@ vec_type.factor <- function(x) {
 }
 
 #' @export
+vec_type.difftime <- function(x) {
+  params <- paste0("<", attr(x, "units"), ">")
+  vt("difftime", dim_type(x), params)
+}
+
+
+#' @export
 vec_type.data.frame <- function(x) {
   # Needs to handle recursion with indenting
   types <- map_chr(x, vec_type)
