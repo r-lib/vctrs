@@ -5,8 +5,13 @@
 vec_type <- function(x) UseMethod("vec_type")
 
 #' @export
+vec_type.NULL <- function(x) {
+  vt("NULL")
+}
+
+#' @export
 vec_type.default <- function(x) {
-  stopifnot(is_vector(x))
+  stopifnot(is_vector(x) || is_null(x))
 
   vt(typeof(x), dim_type(x))
 }

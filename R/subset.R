@@ -1,4 +1,6 @@
 vec_subset <- function(x, i) {
+  if (is.null(x)) return(NULL)
+
   stopifnot(is_vector(x))
   stopifnot(is.integer(i) || is.character(i))
 
