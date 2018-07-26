@@ -74,3 +74,25 @@ list_fallback <- function(x, y, strict = TRUE) {
     stop("No maximum type for ", vec_type(x), " and ", vec_type(y), call. = FALSE)
   }
 }
+
+coerces_to <- function(x, y, ...) {
+  tryCatch({
+    type <- vectype_max(x, y, ...)
+    vec_type(type)
+  }, error = function(e) {
+    NA_character_
+  })
+}
+
+maxtype_mat <- function(types) {
+  names(types) <- map_chr(types, vec_type)
+
+  grid <- as_tibble(expand.grid(x = types, y = types))
+  grid$max <- map2_chr(grid$x, grid$y, coerces_to)
+
+  matrix(
+    grid$max,
+    nrow = length(types),
+    dimnames = list(names(types), names(types))
+  )
+}
