@@ -20,3 +20,12 @@ set_compare <- function(x, y) {
     "notequal"
   }
 }
+
+ones <- function(...) {
+  array(1, dim = c(...))
+}
+
+unrowname <- function(x) {
+  row.names(x) <- NULL
+  x
+}

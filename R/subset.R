@@ -8,7 +8,13 @@ vec_subset <- function(x, i) {
   if (d == 1) {
     x[i, drop = FALSE]
   } else if (d == 2) {
-    x[i, , drop = FALSE]
+    out <- x[i, , drop = FALSE]
+
+    if (is.data.frame(x) && .row_names_info(x) < 0) {
+      row.names(out) <- NULL
+    }
+    out
+
   } else {
     miss_args <- rep(list(missing_arg()), d - 1)
     eval_bare(expr(x[i, !!!miss_args, drop = FALSE]))
