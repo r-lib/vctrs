@@ -101,6 +101,23 @@ vectype_max.POSIXt <- function(x, y, strict = TRUE) {
   }
 }
 
+vectype_max.difftime <- function(x, y, strict = TRUE) {
+  if (is_null(y)) {
+    x[0]
+  } else if (inherits(y, "difftime")) {
+    out <- x[0]
+
+    if (!identical(units(x), units(y))) {
+      units(out) <- "secs"
+    }
+
+    out
+  } else {
+    fallback(list(), x, y, strict = strict)
+  }
+
+}
+
 # Lists -------------------------------------------------------------------
 
 vectype_max.list <- function(x, y, strict = TRUE) {
