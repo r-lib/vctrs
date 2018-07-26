@@ -22,3 +22,8 @@ vec_na <- function(x) {
   }
 }
 
+
+vec_rep <- function(x, n) {
+  id <- rep_len(seq_len(vec_length(x)), n)
+  vec_subset(x, id)
+}

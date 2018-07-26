@@ -1,5 +1,7 @@
 context("test-recycle")
 
+# Vectors -----------------------------------------------------------------
+
 test_that("NULL is idempotent", {
   expect_equal(recycle2(1:5, NULL), list(x = 1:5, y = NULL))
   expect_equal(recycle2(NULL, 1:5), list(x = NULL, y = 1:5))
@@ -31,4 +33,25 @@ test_that("length 0 causes both outputs to be zero", {
 test_that("incompatible lengths get error messages", {
   expect_error(recycle2(1:2, 1:3), "Incompatible")
   expect_error(recycle2(1:3, 1:2), "Incompatible")
+})
+
+
+# Matrices ----------------------------------------------------------------
+
+test_that("can recycle matrices", {
+  x <- matrix(nrow = 4, ncol = 4)
+  x1 <- x[1, , drop = FALSE]
+  x0 <- x[0, , drop = FALSE]
+
+  expect_equal(recycle2(x1, x), list(x = x, y = x))
+  expect_equal(recycle2(x0, x), list(x = x0, y = x0))
+})
+
+test_that("can recycle data frames", {
+  x <- data.frame(a = rep(1, 3), b = rep(2, 3))
+  x1 <- x[1, , drop = FALSE]
+  x0 <- x[0, , drop = FALSE]
+
+  expect_equivalent(recycle2(x1, x), list(x = x, y = x)) # ignore row names
+  expect_equal(recycle2(x0, x), list(x = x0, y = x0))
 })
