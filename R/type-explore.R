@@ -9,14 +9,14 @@ coerces_to <- function(x, y, using = "strict") {
 
   tryCatch({
     type <- type_max(x, y)
-    vec_type(type)
+    format(vec_type(type))
   }, error = function(e) {
     NA_character_
   })
 }
 
 maxtype_mat <- function(types, using = "strict") {
-  names(types) <- map_chr(types, vec_type)
+  names(types) <- map_chr(types, function(x) format(vec_type(x)))
 
   grid <- expand.grid(x = types, y = types)
   grid$max <- map2_chr(grid$x, grid$y, coerces_to, using = using)
