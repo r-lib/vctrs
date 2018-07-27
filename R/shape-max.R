@@ -1,6 +1,6 @@
 vecshape_max <- function(x, y) {
-  x <- as_shape(x)
-  y <- as_shape(y)
+  x <- as_vec_shape(x)
+  y <- as_vec_shape(y)
 
   if (is.null(x) && is.null(y)) {
     return(NULL)
@@ -22,7 +22,7 @@ vecshape_max <- function(x, y) {
     # recycle(1:5, matrix(nrow = 5, ncol = 2))
   }
 
-  new_shape(map2_int(dim$x, dim$y, recycle_length))
+  new_vec_shape(map2_int(dim$x, dim$y, recycle_length))
 }
 
 # Helpers -----------------------------------------------------------------
