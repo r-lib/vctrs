@@ -137,27 +137,34 @@ vectype_max.list <- function(x, y, strict = TRUE) {
 # Data frames -------------------------------------------------------------
 
 vectype_max.data.frame <- function(x, y, strict = TRUE) {
-  common <- intersect(names(x), names(y))
-  only_x <- setdiff(names(x), names(y))
-  only_y <- setdiff(names(y), names(x))
+  if (is_null(y)) {
+    data.frame()
+  } else if (is.data.frame(y)) {
+    common <- intersect(names(x), names(y))
+    only_x <- setdiff(names(x), names(y))
+    only_y <- setdiff(names(y), names(x))
 
-  # Find types
-  if (length(common) > 0) {
-    common_types <- map2(x[common], y[common], vectype_max, strict = strict)
+    # Find types
+    if (length(common) > 0) {
+      common_types <- map2(x[common], y[common], vectype_max, strict = strict)
+    } else {
+      common_types <- list()
+    }
+    only_x_types <- map(x[only_x], vec_subset, 0L)
+    only_y_types <- map(y[only_y], vec_subset, 0L)
+
+    # Combine, restore variable order, and turn into a data frame
+    out <- c(common_types, only_x_types, only_y_types)
+    out <- out[c(names(x), setdiff(names(y), names(x)))]
+    structure(
+      out,
+      class = "data.frame",
+      row.names = .set_row_names(0L)
+    )
   } else {
-    common_types <- list()
+    fallback(list(), x, y, strict = strict)
   }
-  only_x_types <- map(x[only_x], vec_subset, 0L)
-  only_y_types <- map(y[only_y], vec_subset, 0L)
 
-  # Combine, restore variable order, and turn into a data frame
-  out <- c(common_types, only_x_types, only_y_types)
-  out <- out[c(names(x), setdiff(names(y), names(x)))]
-  structure(
-    out,
-    class = "data.frame",
-    row.names = .set_row_names(0L)
-  )
 }
 
 # Helpers -----------------------------------------------------------------
@@ -167,6 +174,6 @@ fallback <- function(fallback, x, y, strict = TRUE) {
     fallback
   } else {
     # should be classed condition
-    stop("No maximum type for ", vec_type(x), " and ", vec_type(y), call. = FALSE)
+    stop("No maximum type for ", format(vec_type(x)), " and ", format(vec_type(y)), call. = FALSE)
   }
 }
