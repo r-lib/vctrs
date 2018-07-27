@@ -1,3 +1,4 @@
+#' @export
 coerce <- function(..., .strict = TRUE) {
   args <- list2(...)
   if (length(args) == 0)
@@ -6,7 +7,7 @@ coerce <- function(..., .strict = TRUE) {
   type <- max.vec_type(!!!args, strict = .strict)
 
   # Should return ListOf<type>
-  map(args, vectype_coerce, x = type$protype)
+  map(args, function(val) vectype_coerce(type$prototype, val))
 }
 
 vec_c <- function(..., .strict = TRUE) {

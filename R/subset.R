@@ -21,15 +21,9 @@ vec_subset <- function(x, i) {
   }
 }
 
-vec_na <- function(x) {
-  if (is_list(x) && vec_dims(x) == 1L) {
-    # list()[NA_integer_] returns list(NULL)
-    NULL
-  } else {
-    vec_subset(x, NA_integer_)
-  }
+vec_na <- function(x, n = 1L) {
+  vec_subset(x, rep_len(NA_integer_, n))
 }
-
 
 vec_rep <- function(x, n) {
   id <- rep_len(seq_len(vec_length(x)), n)
