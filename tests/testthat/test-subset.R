@@ -41,8 +41,8 @@ test_that("na of POSIXct preserves tz", {
   expect_equal(attr(dt2, "tzone"), "America/New_York")
 })
 
-test_that("na of list is NULL", {
-  expect_equal(vec_na(list()), NULL)
+test_that("na of list is list(NULL)", {
+  expect_equal(vec_na(list()), list(NULL))
 })
 
 test_that("na of array is 1d slice", {
