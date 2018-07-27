@@ -4,3 +4,11 @@ factor<127a2> "factor<127a2>" "factor<127a2>" "factor<078e5>" NA              NA
 factor<078e5> "factor<078e5>" "factor<078e5>" "factor<078e5>" NA              NA         
 factor<6e7a8> "factor<6e7a8>" NA              NA              "factor<6e7a8>" NA         
 character     "character"     NA              NA              NA              "character"
+
+
+              NULL            factor<127a2>   factor<078e5>   factor<6e7a8>   character  
+NULL          "NULL"          "factor<127a2>" "factor<078e5>" "factor<6e7a8>" "character"
+factor<127a2> "factor<127a2>" "factor<127a2>" "factor<078e5>" "character"     "character"
+factor<078e5> "factor<078e5>" "factor<078e5>" "factor<078e5>" "character"     "character"
+factor<6e7a8> "factor<6e7a8>" "character"     "character"     "factor<6e7a8>" "character"
+character     "character"     "character"     "character"     "character"     "character"

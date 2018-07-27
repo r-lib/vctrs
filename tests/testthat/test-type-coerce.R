@@ -37,13 +37,19 @@ test_that("factor/character coercions are symmetric and unnchanging", {
     fc = factor(levels = c("c")),
     character()
   )
-  mat <- maxtype_mat(types)
+  mat_strct <- maxtype_mat(types)
+  expect_true(isSymmetric(mat_strct))
 
-  expect_true(isSymmetric(mat))
+  mat_relax <- maxtype_mat(types, "relax")
+  expect_true(isSymmetric(mat_relax))
+
   expect_known_output(
-    mat,
+    {
+      print(mat_strct)
+      cat("\n\n")
+      print(mat_relax)
+    },
     test_path("test-type-coerce-factor.txt"),
-    print = TRUE,
     width = 200
   )
 
@@ -56,9 +62,6 @@ test_that("factors can be coerced to character when relaxed", {
   fb <- vec_type(factor("b"))
 
   type <- max(fa, fb, strict = FALSE)
-  expect_equal(type$prototype, character())
-
-  type <- max(fa, "x", strict = FALSE)
   expect_equal(type$prototype, character())
 })
 
