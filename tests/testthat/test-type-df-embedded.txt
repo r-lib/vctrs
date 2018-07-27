@@ -1,4 +1,4 @@
-data.frame<
+type: data.frame<
   $x integer
   $y data.frame<
        $a integer

@@ -68,7 +68,7 @@ print.vecshape <- function(x, ...) {
 }
 
 #' @export
-max.vecshape <- function(...) {
+max.vecshape <- function(..., na.rm = FALSE) {
   args <- list2(...)
   reduce(args, vecshape_max, .init = NULL)
 }

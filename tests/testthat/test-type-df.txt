@@ -1,5 +1,5 @@
 mtcars:
-data.frame<
+type: data.frame<
   $mpg  double
   $cyl  double
   $disp double
@@ -14,7 +14,7 @@ data.frame<
 >
 
 iris:
-data.frame<
+type: data.frame<
   $Sepal.Length double
   $Sepal.Width  double
   $Petal.Length double

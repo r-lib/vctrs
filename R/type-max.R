@@ -2,6 +2,11 @@ vectype_max <- function(x, y, strict = TRUE) {
   UseMethod("vectype_max")
 }
 
+vectype_max.vec_type <- function(x, y, strict = TRUE) {
+  y <- as_vec_type(y)
+  vec_type(vectype_max(x$prototype, y$prototype, strict = strict))
+}
+
 vectype_max.NULL <- function(x, y, strict = TRUE) {
   vec_subset(y, 0L)
 }

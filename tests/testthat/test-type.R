@@ -1,29 +1,29 @@
 context("test-type")
 
 test_that("atomic vectors and arrays as expected", {
-  expect_equal(vec_type(1:5), vt("integer"))
+  expect_equal(vec_type_string(1:5), "integer")
 
   dbl_mat <- matrix(1, nrow = 3, ncol = 3)
-  expect_equal(vec_type(dbl_mat), vt("double[,3]"))
+  expect_equal(vec_type_string(dbl_mat), "double[,3]")
 })
 
 test_that("date/times as expected", {
-  expect_equal(vec_type(Sys.Date()), vt("date"))
-  expect_equal(vec_type(Sys.time()), vt("datetime"))
+  expect_equal(vec_type_string(Sys.Date()), "date")
+  expect_equal(vec_type_string(Sys.time()), "datetime")
 })
 
 test_that("difftime has units as parameter", {
   now <- Sys.time()
 
-  expect_equal(vec_type(difftime(now + 10, now)), vt("difftime<secs>"))
-  expect_equal(vec_type(difftime(now + 1e5, now)), vt("difftime<days>"))
+  expect_equal(vec_type_string(difftime(now + 10, now)), "difftime<secs>")
+  expect_equal(vec_type_string(difftime(now + 1e5, now)), "difftime<days>")
 })
 
 test_that("factors display hashed levels", {
   f1 <- factor(letters)
 
-  expect_equal(vec_type(f1), vt("factor<5cab7>"))
-  expect_equal(vec_type(f1[0]), vt("factor<5cab7>"))
+  expect_equal(vec_type_string(f1), "factor<5cab7>")
+  expect_equal(vec_type_string(f1[0]), "factor<5cab7>")
 })
 
 test_that("data frames print nicely", {

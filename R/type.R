@@ -2,78 +2,36 @@
 # Compared to type_sum it is not designed to fit in a column label
 # So can be quite a lot longer
 
-vec_type <- function(x) UseMethod("vec_type")
-
-#' @export
-vec_type.NULL <- function(x) {
-  vt("NULL")
-}
-
-#' @export
-vec_type.default <- function(x) {
+vec_type <- function(x) {
   stopifnot(is_vector(x) || is_null(x))
 
-  vt(typeof(x), dim_type(x))
+  new_vec_type(vec_subset(x, 0L))
 }
 
-#' @export
-vec_type.Date <- function(x) {
-  vt("date")
-}
-
-#' @export
-vec_type.POSIXt <- function(x) {
-  vt("datetime")
-}
-
-# Levels are parameter of the type, because it does not make sense to
-# compare the values of the underlying vector if the levels are different.
-# Levels are potentially long, so we just display a hash of the levels.
-#' @export
-vec_type.factor <- function(x) {
-  params <- paste0("<", hash(levels(x)), ">")
-  vt("factor", dim_type(x), params)
-}
-
-#' @export
-vec_type.difftime <- function(x) {
-  params <- paste0("<", attr(x, "units"), ">")
-  vt("difftime", dim_type(x), params)
-}
-
-
-#' @export
-vec_type.data.frame <- function(x) {
-  # Needs to handle recursion with indenting
-  types <- map_chr(x, vec_type)
-
-  names <- paste0("  $", format(names(x)))
-  types <- indent(types, nchar(names) + 1)
-
-  vt(
-    "data.frame<\n",
-      paste0(names, " ", types, collapse = "\n"),
-    "\n>"
+new_vec_type <- function(prototype) {
+  structure(
+    list(prototype = prototype),
+    class = "vec_type"
   )
 }
 
-# The "length" is not included in the type specification since it's often
-# not important (and the recycling rules means matching is non trivial)
-dim_type <- function(x) {
-  if (vec_dims(x) == 1) {
-    ""
-  } else {
-    paste0("[,", paste(vec_dim(x)[-1], collapse = ","), "]")
-  }
-}
+as_vec_type <- function(x) UseMethod("as_vec_type")
+as_vec_type.vec_type <- function(x) x
+as_vec_type.default <- function(x) vec_type(x)
 
-
-vt <- function(...) {
-  structure(paste0(...), class = "vec_type")
+#' @export
+format.vec_type <- function(x, ...) {
+  vec_type_string(x$prototype)
 }
 
 #' @export
 print.vec_type <- function(x, ...) {
-  cat(x, "\n", sep = "")
+  cat("type: ", format(x), "\n", sep = "")
   invisible(x)
+}
+
+#' @export
+max.vec_type <- function(..., na.rm = FALSE) {
+  args <- list2(...)
+  reduce(args, vectype_max, .init = vec_type(NULL))
 }
