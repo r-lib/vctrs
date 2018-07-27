@@ -15,19 +15,6 @@ coerces_to <- function(x, y, using = "strict") {
   })
 }
 
-base <- function(x, y) {
-  df_x <- data.frame(x = x, stringsAsFactors = FALSE)
-  df_y <- data.frame(x = y, stringsAsFactors = FALSE)
-
-  list(
-    c = c(x, y),
-    unlist = unlist(list(x, y)),
-    modify = tryish(`[<-`(x, 2, value = y)),
-    rbind = tryish(rbind(df_x, df_y)$x)
-  )
-}
-
-
 maxtype_mat <- function(types, using = "strict") {
   names(types) <- map_chr(types, vec_type)
 
