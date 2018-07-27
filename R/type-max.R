@@ -74,10 +74,10 @@ vectype_max.factor <- function(x, y, strict = TRUE) {
       y_in_x = vec_subset(x, 0L),
       fallback(character(), x, y, strict = strict) # needs custom error
     )
-  } else if (!strict && is.character(y)) {
+  } else if (!strict && is_bare_character(y)) {
     character()
   } else {
-    fallback(list(), x, y, strict = TRUE)
+    fallback(list(), x, y, strict = strict)
   }
 }
 
