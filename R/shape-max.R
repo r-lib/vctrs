@@ -2,9 +2,7 @@ vecshape_max <- function(x, y) {
   x <- as_vec_shape(x)
   y <- as_vec_shape(y)
 
-  if (is.null(x) && is.null(y)) {
-    return(NULL)
-  } else if (is.null(x)) {
+  if (is.null(x)) {
     return(y)
   } else if (is.null(y)) {
     return(x)
@@ -16,10 +14,12 @@ vecshape_max <- function(x, y) {
     if (length(dim$x) > 2) {
       stop("Data frames must be 2d", call. = FALSE)
     }
-    # Need to figure out how to forbid
-    # recycle(data.frame(x = 1:5), matrix(nrow = 5, ncol = 2))
-    # because the names are meaningless and it's no better than
-    # recycle(1:5, matrix(nrow = 5, ncol = 2))
+  }
+  if (attr(x, "data.frame") && dim$y[2] > dim$x[2]) {
+    stop("Can't expand columns of data frame", call. = FALSE)
+  }
+  if (attr(y, "data.frame") && dim$x[2] > dim$y[2]) {
+    stop("Can't expand columns of data frame", call. = FALSE)
   }
 
   new_vec_shape(map2_int(dim$x, dim$y, recycle_length))
