@@ -13,6 +13,7 @@ vectype_max.NULL <- function(x, y, strict = TRUE) {
 
 # Numeric-ish ----------------------------------------------------------
 
+#' @export
 vectype_max.logical <- function(x, y, strict = TRUE) {
   if (is_null(y)) {
     logical()
@@ -27,6 +28,7 @@ vectype_max.logical <- function(x, y, strict = TRUE) {
   }
 }
 
+#' @export
 vectype_max.integer <- function(x, y, strict = TRUE) {
   if (is_null(y)) {
     integer()
@@ -41,6 +43,7 @@ vectype_max.integer <- function(x, y, strict = TRUE) {
   }
 }
 
+#' @export
 vectype_max.double <- function(x, y, strict = TRUE) {
   if (is_null(y)) {
     double()
@@ -58,6 +61,7 @@ vectype_max.double <- function(x, y, strict = TRUE) {
 
 # Characters and factors --------------------------------------------------
 
+#' @export
 vectype_max.character <- function(x, y, strict = TRUE) {
   if (is_null(y) || is_bare_character(y)) {
     character()
@@ -68,6 +72,7 @@ vectype_max.character <- function(x, y, strict = TRUE) {
   }
 }
 
+#' @export
 vectype_max.factor <- function(x, y, strict = TRUE) {
   if (is_null(y)) {
     vec_subset(x, 0L)
@@ -88,6 +93,7 @@ vectype_max.factor <- function(x, y, strict = TRUE) {
 
 # Date/times --------------------------------------------------------------
 
+#' @export
 vectype_max.Date <- function(x, y, strict = TRUE) {
   if (is_null(y) || inherits(y, "Date")) {
     x[0]
@@ -98,6 +104,7 @@ vectype_max.Date <- function(x, y, strict = TRUE) {
   }
 }
 
+#' @export
 vectype_max.POSIXt <- function(x, y, strict = TRUE) {
   if (is_null(y) || inherits(y, "Date") || inherits(y, "POSIXt")) {
     x[0]
@@ -106,6 +113,7 @@ vectype_max.POSIXt <- function(x, y, strict = TRUE) {
   }
 }
 
+#' @export
 vectype_max.difftime <- function(x, y, strict = TRUE) {
   if (is_null(y)) {
     x[0]
@@ -125,6 +133,7 @@ vectype_max.difftime <- function(x, y, strict = TRUE) {
 
 # Lists -------------------------------------------------------------------
 
+#' @export
 vectype_max.list <- function(x, y, strict = TRUE) {
   if (is_null(y) || is_bare_list(y)) {
     list()
@@ -136,9 +145,10 @@ vectype_max.list <- function(x, y, strict = TRUE) {
 
 # Data frames -------------------------------------------------------------
 
+#' @export
 vectype_max.data.frame <- function(x, y, strict = TRUE) {
   if (is_null(y)) {
-    data.frame()
+    x
   } else if (is.data.frame(y)) {
     common <- intersect(names(x), names(y))
     only_x <- setdiff(names(x), names(y))

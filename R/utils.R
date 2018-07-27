@@ -3,6 +3,9 @@ hash <- function(x) {
 }
 
 indent <- function(x, n) {
+  if (length(x) == 0)
+    return(character())
+
   pad <- strrep(" ", n)
 
   out <- Map(gsub, "\n", paste0("\n", pad), x)
