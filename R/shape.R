@@ -1,7 +1,8 @@
 #' Compute "shape" of a vector
 #'
-#' The shape of a vector is its `vec_dim()`, i.e. the dimension attribute,
-#' if it exists, otherwise the length, and whether or not its a data frame.
+#' The shape of a vector is its `vec_dim()` (i.e. `dim()` or `length()`)
+#' and whether or not it's a data frame.
+#'
 #' `new_vec_shape()` is the low-level constructor, `vec_shape()` is a helper for
 #' interactive exploration, `as_vec_shape()` computes the shape of an existing
 #' object. Use `max()` to compute the "maximum" shape of a set of shapes,

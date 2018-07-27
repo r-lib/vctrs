@@ -1,6 +1,9 @@
 #' Compute "type" of a vector
 #'
-#' The type of a vector can be represented using a 0-row subset.
+#' The type of a vector capture its essence, independent of it's values.
+#' We record the type (including its parameters) with a 0-row subset of the
+#' vector, which we call the prototype.
+#'
 #' `new_vec_type()` is the low-level S3 constructor, `vec_type()` is a helper
 #' for interactive exploration, and `as_vec_type()` for programming.
 #' Use `max()` to compute the "maximum" type of a set of types; this will

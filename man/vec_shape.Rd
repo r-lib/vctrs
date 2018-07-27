@@ -20,8 +20,10 @@ must be 2 dimensional, and can only be recycled along the first dimension.}
 For \code{as_vec_shape()}, an existing data vector}
 }
 \description{
-The shape of a vector is its \code{vec_dim()}, i.e. the dimension attribute,
-if it exists, otherwise the length, and whether or not its a data frame.
+The shape of a vector is its \code{vec_dim()} (i.e. \code{dim()} or \code{length()})
+and whether or not it's a data frame.
+}
+\details{
 \code{new_vec_shape()} is the low-level constructor, \code{vec_shape()} is a helper for
 interactive exploration, \code{as_vec_shape()} computes the shape of an existing
 object. Use \code{max()} to compute the "maximum" shape of a set of shapes,
