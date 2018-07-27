@@ -5,28 +5,30 @@ vectype_coerce <- function(x, val) {
 
 # Base vectors --------------------------------------------------------------
 
+# Unexported wrapper around Rf_coerceVector()
+vec_coerce_bare <- function(x, type) {
+  coerce <- env_get(ns_env("rlang"), "vec_coerce")
+  coerce(x, type)
+}
+
 vectype_coerce.NULL <- function(x, val) {
   val
 }
 
 vectype_coerce.logical <- function(x, val) {
-  mode(val) <- "logical"
-  val
+  vec_coerce_bare(x, "logical")
 }
 
 vectype_coerce.integer <- function(x, val) {
-  mode(val) <- "integer"
-  val
+  vec_coerce_bare(x, "integer")
 }
 
 vectype_coerce.double <- function(x, val) {
-  mode(val) <- "double"
-  val
+  vec_coerce_bare(x, "double")
 }
 
 vectype_coerce.character <- function(x, val) {
-  mode(val) <- "character"
-  val
+  vec_coerce_bare(x, "character")
 }
 
 vectype_coerce.list <- function(x, val) {
@@ -41,7 +43,7 @@ vectype_coerce.factor <- function(x, val) {
 
 vectype_coerce.difftime <- function(x, val) {
   structure(
-    unclass(val),
+    as.double(val),
     class = "difftime",
     units = units(x)
   )
