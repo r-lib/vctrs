@@ -73,5 +73,3 @@ test_that("nested factors are equivalent", {
   expect_equal(type, fab)
 })
 
-
-
