@@ -29,6 +29,11 @@
 vec_type <- function(x) {
   stopifnot(is_vector(x) || is_null(x))
 
+  # In practice, a vector containing only NA implies shape, but not type.
+  if (is.logical(x) && all(is.na(x))) {
+    return(NULL)
+  }
+
   new_vec_type(vec_subset(x, 0L))
 }
 
