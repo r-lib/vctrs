@@ -1,6 +1,16 @@
 context("test-coerce")
 
 
+# vec_coerce --------------------------------------------------------------
+
+test_that("empty input returns list()", {
+  expect_equal(vec_coerce(), list())
+})
+
+test_that("output has consistent type", {
+  expect_equal(vec_coerce(TRUE, 1), list(1, 1))
+})
+
 # vec_c -------------------------------------------------------------------
 
 test_that("zero length input returns NULL", {

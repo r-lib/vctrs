@@ -4,7 +4,7 @@
 \alias{vec_coerce}
 \title{Coerce vectors to shared type}
 \usage{
-vec_coerce(..., .strict = TRUE)
+vec_coerce(..., .strict = TRUE, .type = NULL)
 }
 \arguments{
 \item{...}{Vectors to coerce.}
@@ -46,5 +46,5 @@ within the other, we use the larger set.
 
 vec_coerce(factor("a"), factor(c("a", "b")))
 vec_coerce(factor("a"), factor("b"), .strict = FALSE)
-
+vec_coerce(factor("a"), factor("b"), .type = character())
 }

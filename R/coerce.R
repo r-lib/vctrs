@@ -33,16 +33,13 @@
 #'
 #' vec_coerce(factor("a"), factor(c("a", "b")))
 #' vec_coerce(factor("a"), factor("b"), .strict = FALSE)
-#'
-vec_coerce <- function(..., .strict = TRUE) {
+#' vec_coerce(factor("a"), factor("b"), .type = character())
+vec_coerce <- function(..., .strict = TRUE, .type = NULL) {
   args <- list2(...)
-  if (length(args) == 0)
-    return(list())
-
-  type <- max.vec_type(!!!args, strict = .strict)
+  type <- find_type(args, .strict = .strict, .type = .type)
 
   # Should return ListOf<type>
-  map(args, function(val) vectype_coerce(type$prototype, val))
+  map(args, vec_cast, to = type)
 }
 
 #' Concatenate vectors
@@ -87,7 +84,7 @@ vec_c <- function(..., .strict = TRUE, .type = NULL) {
   # Impute least-upper-bound type, if needed
   type <- find_type(args, .strict = .strict, .type = .type)
   if (is.null(type))
-    return(type)
+    return(NULL)
 
   ns <- map_int(args, length)
   out <- vec_rep(type, sum(ns))
