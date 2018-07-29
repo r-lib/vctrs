@@ -85,16 +85,9 @@ vec_c <- function(..., .strict = TRUE, .type = NULL) {
   }
 
   # Impute least-upper-bound type, if needed
-  if (is.null(.type)) {
-    type <- reduce(args, vectype_max, strict = .strict)
-    if (is.null(type))
-      return(NULL)
-  } else {
-    type <- .type
-    if (!missing(.strict)) {
-      stop("Must not use `.strict` if `type` is specified", call. = FALSE)
-    }
-  }
+  type <- find_type(args, .strict = .strict, .type = .type)
+  if (is.null(type))
+    return(type)
 
   ns <- map_int(args, length)
   out <- vec_rep(type, sum(ns))
@@ -110,4 +103,12 @@ vec_c <- function(..., .strict = TRUE, .type = NULL) {
   }
 
   out
+}
+
+find_type <- function(x, .strict = TRUE, .type = NULL) {
+  if (!is.null(.type)) {
+    return(.type)
+  }
+
+  reduce(x, vectype_max, strict = .strict)
 }
