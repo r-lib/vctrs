@@ -160,11 +160,27 @@ vec_cast.POSIXt <- function(x, to) {
 
 #' @export
 vec_cast.difftime <- function(x, to) {
-  structure(
-    as.double(x),
-    class = "difftime",
-    units = units(to)
-  )
+  if (is_null(x)) {
+    NULL
+  } else if (is_bare_double(x)) {
+    structure(
+      as.double(x), # strip attributes
+      class = "difftime",
+      units = units(to)
+    )
+  } else if (inherits(x, "difftime")) {
+    if (identical(units(x), units(to))) {
+      x
+    } else {
+      # Hack: I can't see any obvious way of changing the units
+      origin <- as.POSIXct(0, origin = "1970-01-01")
+      difftime(origin, origin - x, units = units(to))
+    }
+  } else if (is.list(x)) {
+    cast_from_list(x, to)
+  } else {
+    abort_no_cast(x, to)
+  }
 }
 
 #' @export

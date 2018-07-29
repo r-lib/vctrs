@@ -155,3 +155,20 @@ test_that("invalid casts generate error", {
   expect_error(vec_cast(integer(), datetime), class = "error_no_cast")
 })
 
+# difftime ----------------------------------------------------------------
+
+test_that("safe casts work as expected", {
+  dt1 <- as.difftime(600, units = "secs")
+  dt2 <- as.difftime(10, units = "mins")
+
+  expect_equal(vec_cast(NULL, dt1), NULL)
+  expect_equal(vec_cast(600, dt1), dt1)
+  expect_equal(vec_cast(dt1, dt1), dt1)
+  expect_equal(vec_cast(dt1, dt2), dt2)
+  expect_equal(vec_cast(list(dt1), dt1), dt1)
+})
+
+test_that("invalid casts generate error", {
+  dt <- as.difftime(600, units = "secs")
+  expect_error(vec_cast(integer(), dt), class = "error_no_cast")
+})
