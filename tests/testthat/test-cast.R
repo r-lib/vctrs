@@ -75,6 +75,12 @@ test_that("safe casts work as expected", {
   expect_equal(vec_cast(list("x"), character()), "x")
 })
 
+test_that("difftime gets special treatment", {
+  dt1 <- as.difftime(600, units = "secs")
+
+  expect_equal(vec_cast(dt1, character()), "600 secs")
+})
+
 # Lists  ------------------------------------------------------------------
 
 test_that("safe casts work as expected", {
@@ -119,9 +125,10 @@ test_that("safe casts work as expected", {
   type_date <- as_vec_type(Sys.Date())
 
   expect_equal(vec_cast(NULL, date), NULL)
+  expect_equal(vec_cast(17532, date), date)
+  expect_equal(vec_cast("2018-01-01", date), date)
   expect_equal(vec_cast(date, date), date)
   expect_equal(vec_cast(as.POSIXct(date), date), date)
-  expect_equal(vec_cast(17532, date), date)
   expect_equal(vec_cast(list(date), date), date)
 })
 
@@ -144,9 +151,10 @@ test_that("safe casts work as expected", {
   datetime <- as.POSIXct("1970-02-01", tz = "UTC")
 
   expect_equal(vec_cast(NULL, datetime), NULL)
+  expect_equal(vec_cast(2678400, datetime), datetime)
+  expect_equal(vec_cast("1970-02-01", datetime), datetime)
   expect_equal(vec_cast(datetime, datetime), datetime)
   expect_equal(vec_cast(as.Date(datetime), datetime), datetime)
-  expect_equal(vec_cast(2678400, datetime), datetime)
   expect_equal(vec_cast(list(datetime), datetime), datetime)
 })
 

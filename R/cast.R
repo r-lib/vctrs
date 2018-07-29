@@ -73,6 +73,8 @@ vec_cast.double <- function(x, to) {
 vec_cast.character <- function(x, to) {
   if (is_null(x)) {
     x
+  } else if (inherits(x, "difftime")) {
+    paste(x, units(x))
   } else if (is.list(x)) {
     cast_from_list(x, to)
   } else {
@@ -123,6 +125,8 @@ vec_cast.Date <- function(x, to) {
     NULL
   } else if (is_bare_double(x)) {
     as.Date(x, origin = "1970-01-01")
+  } else if (is_bare_character(x)) {
+    as.Date(x, format = "%Y-%m-%d")
   } else if (inherits(x, "Date")) {
     x
   } else if (inherits(x, "POSIXt")) {
@@ -144,6 +148,8 @@ vec_cast.POSIXt <- function(x, to) {
     x <- as.POSIXct(x, origin = "1970-01-01")
     attr(x, "tzone") <- attr(to, "tzone")
     x
+  } else if (is_bare_character(x)) {
+    as.POSIXct(x, tz = "UTC")
   } else if (inherits(x, "Date")) {
     x <- as.POSIXct(x)
     attr(x, "tzone") <- attr(to, "tzone")
