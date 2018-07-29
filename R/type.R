@@ -64,6 +64,11 @@ format.vec_type <- function(x, ...) {
 }
 
 #' @export
+as.character.vec_type <- function(x, ...) {
+  format(x, ...)
+}
+
+#' @export
 print.vec_type <- function(x, ...) {
   cat("type: ", format(x), "\n", sep = "")
   invisible(x)

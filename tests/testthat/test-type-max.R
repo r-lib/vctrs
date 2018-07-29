@@ -80,7 +80,7 @@ test_that("data frame only combines with other data frames or NULL", {
   dt <- vec_type(data.frame(x = 1))
 
   expect_equal(max(dt, NULL), dt)
-  expect_error(max(dt, 1:10), "No maximum type")
+  expect_error(max(dt, 1:10), class = "error_no_max_type")
 })
 
 test_that("data frame takes max of individual variables", {

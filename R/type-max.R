@@ -188,7 +188,16 @@ fallback <- function(fallback, x, y, strict = TRUE) {
     )
     fallback
   } else {
-    # should be classed condition
-    stop("No maximum type for ", format(vec_type(x)), " and ", format(vec_type(y)), call. = FALSE)
+    abort_no_max_type(vec_type(x), vec_type(y))
   }
+}
+
+abort_no_max_type <- function(type_x, type_y) {
+  msg <- glue::glue("No common type for {type_x} and {type_y}")
+  abort(
+    "error_no_max_type",
+    message = msg,
+    type_x = type_x,
+    type_y = type_y,
+  )
 }
