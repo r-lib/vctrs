@@ -33,7 +33,21 @@ vec_cast.logical <- function(x, to) {
 
 #' @export
 vec_cast.integer <- function(x, to) {
-  set_names(as.integer(x), names(x))
+  if (is_null(x)) {
+    x
+  } else if (is_bare_logical(x)) {
+    set_names(as.integer(x), names(x))
+  } else if (is_bare_integer(x)) {
+    x
+  } else if (is_bare_double(x) || is_bare_character(x)) {
+    out <- set_names(suppressWarnings(as.integer(x)), names(x))
+    warn_cast_lossy(x, to, out != x)
+    out
+  } else if (is.list(x)) {
+    cast_from_list(x, to)
+  } else {
+    abort_no_cast(x, to)
+  }
 }
 
 #' @export
