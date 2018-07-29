@@ -121,14 +121,14 @@ vec_cast.factor <- function(x, to) {
 vec_cast.Date <- function(x, to) {
   if (is_null(x)) {
     NULL
+  } else if (is_bare_double(x)) {
+    as.Date(x, origin = "1970-01-01")
   } else if (inherits(x, "Date")) {
     x
   } else if (inherits(x, "POSIXt")) {
     out <- as.Date(x)
     warn_cast_lossy(x, to, abs(x - as.POSIXct(out)) > 1e-9)
     out
-  } else if (is_bare_double(x)) {
-    as.Date(x, origin = "1970-01-01")
   } else if (is.list(x)) {
     cast_from_list(x, to)
   } else {
@@ -138,7 +138,24 @@ vec_cast.Date <- function(x, to) {
 
 #' @export
 vec_cast.POSIXt <- function(x, to) {
-  as.POSIXct(x)
+  if (is_null(x)) {
+    NULL
+  } else if (is_bare_double(x)) {
+    x <- as.POSIXct(x, origin = "1970-01-01")
+    attr(x, "tzone") <- attr(to, "tzone")
+    x
+  } else if (inherits(x, "Date")) {
+    x <- as.POSIXct(x)
+    attr(x, "tzone") <- attr(to, "tzone")
+    x
+  } else if (inherits(x, "POSIXt")) {
+    attr(x, "tzone") <- attr(to, "tzone")
+    x
+  } else if (is.list(x)) {
+    cast_from_list(x, to)
+  } else {
+    abort_no_cast(x, to)
+  }
 }
 
 #' @export

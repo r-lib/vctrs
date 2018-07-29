@@ -136,3 +136,22 @@ test_that("invalid casts generate error", {
   date <- as.Date("2018-01-01")
   expect_error(vec_cast(integer(), date), class = "error_no_cast")
 })
+
+
+# Date-times --------------------------------------------------------------
+
+test_that("safe casts work as expected", {
+  datetime <- as.POSIXct("1970-02-01", tz = "UTC")
+
+  expect_equal(vec_cast(NULL, datetime), NULL)
+  expect_equal(vec_cast(datetime, datetime), datetime)
+  expect_equal(vec_cast(as.Date(datetime), datetime), datetime)
+  expect_equal(vec_cast(2678400, datetime), datetime)
+  expect_equal(vec_cast(list(datetime), datetime), datetime)
+})
+
+test_that("invalid casts generate error", {
+  datetime <- as.POSIXct("1970-02-01", tz = "UTC")
+  expect_error(vec_cast(integer(), datetime), class = "error_no_cast")
+})
+
