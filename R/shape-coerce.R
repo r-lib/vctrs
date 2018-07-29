@@ -14,7 +14,7 @@ vecshape_coerce <- function(x, shape) {
     return(vec_rep(x, shape))
   } else if (length(x) == 1) {
     # scalar recycling
-    return(array(x, dim = shape))
+    return(array(x, dim = as.numeric(shape)))
   }
 
   dim(x) <- one_pad(vec_dim(x), shape)$x
