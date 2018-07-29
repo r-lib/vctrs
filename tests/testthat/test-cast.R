@@ -180,3 +180,27 @@ test_that("invalid casts generate error", {
   dt <- as.difftime(600, units = "secs")
   expect_error(vec_cast(integer(), dt), class = "error_no_cast")
 })
+
+
+# data frames -------------------------------------------------------------
+
+test_that("safe casts work as expected", {
+  df <- data.frame(x = 1, y = 0)
+
+  expect_equal(vec_cast(NULL, df), NULL)
+  expect_equal(vec_cast(df, df), df)
+
+  expect_equal(vec_cast(data.frame(x = TRUE, y = FALSE), df), df)
+})
+
+test_that("warn about lossy coercions", {
+  df1 <- data.frame(x = 1, y = 1)
+  df2 <- data.frame(x = "a", stringsAsFactors = FALSE)
+
+  expect_condition(vec_cast(df1, df1[1]), class = "warning_cast_lossy_dataframe")
+  expect_condition(vec_cast(df2, df1), class = "warning_cast_lossy_vector")
+})
+
+test_that("invalid cast generates error", {
+  expect_error(vec_cast(1L, data.frame()), class = "error_no_cast")
+})

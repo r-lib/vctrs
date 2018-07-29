@@ -54,13 +54,13 @@ vec_cast.logical <- function(x, to) {
   } else if (is_bare_logical(x)) {
     x
   } else if (is_bare_integer(x)) {
-    warn_cast_lossy(x, to, !x %in% c(0L, 1L))
+    warn_cast_lossy_vector(x, to, !x %in% c(0L, 1L))
     set_names(as.logical(x), names(x))
   } else if (is_bare_double(x)) {
-    warn_cast_lossy(x, to, !x %in% c(0, 1))
+    warn_cast_lossy_vector(x, to, !x %in% c(0, 1))
     set_names(as.logical(x), names(x))
   } else if (is_bare_character(x)) {
-    warn_cast_lossy(x, to, !toupper(x) %in% c("T", "F", "TRUE", "FALSE"))
+    warn_cast_lossy_vector(x, to, !toupper(x) %in% c("T", "F", "TRUE", "FALSE"))
     set_names(as.logical(x), names(x))
   } else if (is.list(x)) {
     cast_from_list(x, to)
@@ -79,7 +79,7 @@ vec_cast.integer <- function(x, to) {
     x
   } else if (is_bare_double(x) || is_bare_character(x)) {
     out <- set_names(suppressWarnings(as.integer(x)), names(x))
-    warn_cast_lossy(x, to, (out != x) | xor(is.na(x), is.na(out)))
+    warn_cast_lossy_vector(x, to, (out != x) | xor(is.na(x), is.na(out)))
     out
   } else if (is.list(x)) {
     cast_from_list(x, to)
@@ -98,7 +98,7 @@ vec_cast.double <- function(x, to) {
     x
   } else if (is_bare_character(x)) {
     out <- set_names(suppressWarnings(as.double(x)), names(x))
-    warn_cast_lossy(x, to, (out != x) | xor(is.na(x), is.na(out)))
+    warn_cast_lossy_vector(x, to, (out != x) | xor(is.na(x), is.na(out)))
     out
   } else if (is.list(x)) {
     cast_from_list(x, to)
@@ -139,7 +139,7 @@ vec_cast.factor <- function(x, to) {
     if (length(levels(to)) == 0L) {
       factor(x, levels = unique(x))
     } else {
-      warn_cast_lossy(x, to, !x %in% levels(to))
+      warn_cast_lossy_vector(x, to, !x %in% levels(to))
       factor(x, levels = levels(to))
     }
   } else if (is.factor(x)) {
@@ -147,7 +147,7 @@ vec_cast.factor <- function(x, to) {
       # fast path
       x
     } else {
-      warn_cast_lossy(x, to, !x %in% levels(to))
+      warn_cast_lossy_vector(x, to, !x %in% levels(to))
       factor(as.character(x), levels = levels(to))
     }
   } else if (is.list(x)) {
@@ -169,7 +169,7 @@ vec_cast.Date <- function(x, to) {
     x
   } else if (inherits(x, "POSIXt")) {
     out <- as.Date(x)
-    warn_cast_lossy(x, to, abs(x - as.POSIXct(out)) > 1e-9)
+    warn_cast_lossy_vector(x, to, abs(x - as.POSIXct(out)) > 1e-9)
     out
   } else if (is.list(x)) {
     cast_from_list(x, to)
@@ -229,18 +229,28 @@ vec_cast.difftime <- function(x, to) {
 
 #' @export
 vec_cast.data.frame <- function(x, to) {
-  # Coerce common columns
-  common <- intersect(names(x), names(to))
-  x[common] <- map2(x[common], to[common], vec_cast)
+  if (is_null(x)) {
+    NULL
+  } else if (is.data.frame(x)) {
+    # Coerce common columns
+    common <- intersect(names(x), names(to))
+    x[common] <- map2(x[common], to[common], vec_cast)
 
-  # Add new columns
-  only_type <- setdiff(names(to), names(x))
-  x[only_type] <- map(to[only_type], vec_na, n = vec_length(x))
+    # Add new columns
+    from_type <- setdiff(names(to), names(x))
+    x[from_type] <- map(to[from_type], vec_na, n = vec_length(x))
 
-  x[c(common, only_type)]
+    # Warn about dropped columns
+    dropped <- setdiff(names(x), names(to))
+    if (length(dropped) > 0 ) {
+      warn_cast_lossy_dataframe(x, to, dropped)
+    }
+
+    x[c(common, from_type)]
+  } else {
+    abort_no_cast(x, to)
+  }
 }
-
-
 
 # Helpers -----------------------------------------------------------------
 
@@ -277,7 +287,7 @@ abort_no_cast <- function(from, to, details = NULL) {
   )
 }
 
-warn_cast_lossy <- function(from, to, is_lossy) {
+warn_cast_lossy_vector <- function(from, to, is_lossy) {
   which <- which(is_lossy)
   if (length(which) == 0) {
     return()
@@ -293,10 +303,29 @@ warn_cast_lossy <- function(from, to, is_lossy) {
   )
 
   warn(
-    "warning_cast_lossy",
+    c("warning_cast_lossy_vector", "warning_cast_lossy"),
     message = msg,
     from = from,
     to = to,
     which = which
+  )
+}
+
+warn_cast_lossy_dataframe <- function(from, to, dropped) {
+  from <- as_vec_type(from)
+  to <- as_vec_type(to)
+
+  vars <- glue::glue_collapse(dropped, width = 80)
+  msg <- glue::glue("
+    Lossy conversion from data.frame to data.frame
+    Dropped variables: {vars}"
+  )
+
+  warn(
+    c("warning_cast_lossy_dataframe", "warning_cast_lossy"),
+    message = msg,
+    from = from,
+    to = to,
+    dropped = dropped
   )
 }
