@@ -11,7 +11,24 @@ vec_cast.NULL <- function(x, to) {
 
 #' @export
 vec_cast.logical <- function(x, to) {
-  set_names(as.logical(x), names(x))
+  if (is_null(x)) {
+    x
+  } else if (is_bare_logical(x)) {
+    x
+  } else if (is_bare_integer(x)) {
+    warn_cast_lossy(x, to, !x %in% c(0L, 1L))
+    set_names(as.logical(x), names(x))
+  } else if (is_bare_double(x)) {
+    warn_cast_lossy(x, to, !x %in% c(0, 1))
+    set_names(as.logical(x), names(x))
+  } else if (is_bare_character(x)) {
+    warn_cast_lossy(x, to, !toupper(x) %in% c("T", "F", "TRUE", "FALSE"))
+    set_names(as.logical(x), names(x))
+  } else if (is.list(x)) {
+    cast_from_list(x, to)
+  } else {
+    abort_no_cast(x, to)
+  }
 }
 
 #' @export
@@ -71,4 +88,65 @@ vec_cast.data.frame <- function(x, to) {
   x[only_type] <- map(to[only_type], vec_na, n = vec_length(x))
 
   x[c(common, only_type)]
+}
+
+
+
+# Helpers -----------------------------------------------------------------
+
+cast_from_list <- function(x, to) {
+  ns <- map_int(x, length)
+  if (any(ns != 1)) {
+    abort_no_cast(x, to, "All list elements are not length 1")
+  }
+
+  n <- length(x)
+  out <- vec_na(to, n)
+
+  for (i in seq_len(n)) {
+    out[[i]] <- vec_cast(x[[i]], to)
+  }
+
+  out
+}
+
+abort_no_cast <- function(from, to, details = NULL) {
+  from <- as_vec_type(from)
+  to <- as_vec_type(to)
+
+  msg <- glue::glue("Can't cast {from} to {to}")
+  if (!is.null(details)) {
+    msg <- paste0(msg, "\n", details)
+  }
+  abort(
+    "error_no_cast",
+    message = msg,
+    from = from,
+    to = to,
+    details = details
+  )
+}
+
+warn_cast_lossy <- function(from, to, is_lossy) {
+  which <- which(is_lossy)
+  if (length(which) == 0) {
+    return()
+  }
+
+  from <- as_vec_type(from)
+  to <- as_vec_type(to)
+
+  pos <- glue::glue_collapse(which, width = 80)
+  msg <- glue::glue("
+    Lossy conversion from {from} to {to}
+    At positions: {pos}"
+  )
+
+  warn(
+    "warning_cast_lossy",
+    message = msg,
+    from = from,
+    to = to,
+    which = which
+  )
 }
