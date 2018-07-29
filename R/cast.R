@@ -96,10 +96,14 @@ vec_cast.factor <- function(x, to) {
   if (is_null(x)) {
     NULL
   } else if (is.character(x))  {
-    warn_cast_lossy(x, to, !x %in% levels(to))
-    factor(x, levels = levels(to))
+    if (length(levels(to)) == 0L) {
+      factor(x, levels = unique(x))
+    } else {
+      warn_cast_lossy(x, to, !x %in% levels(to))
+      factor(x, levels = levels(to))
+    }
   } else if (is.factor(x)) {
-    if (identical(levels(x), levels(to))) {
+    if (identical(levels(x), levels(to)) || length(levels(to)) == 0) {
       # fast path
       x
     } else {

@@ -94,6 +94,9 @@ test_that("safe casts work as expected", {
   expect_equal(vec_cast(fa, fab), fab[1])
   expect_equal(vec_cast("a", fab), fab[1])
 
+  expect_equal(vec_cast("a", factor()), fa)
+  expect_equal(vec_cast(fa, factor()), fa)
+
   expect_equal(vec_cast(list("a", "b"), fab), fab)
 })
 
