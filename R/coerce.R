@@ -84,7 +84,7 @@ vec_c <- function(..., .strict = TRUE) {
     if (n == 0L)
       next
 
-    out[pos:(pos + n - 1)] <- vectype_coerce(type, args[[i]])
+    out[pos:(pos + n - 1)] <- vec_cast(args[[i]], to = type)
     pos <- pos + n
   }
 
