@@ -93,7 +93,24 @@ vec_cast.list <- function(x, to) {
 
 #' @export
 vec_cast.factor <- function(x, to) {
-  factor(as.character(x), levels = levels(to))
+  if (is_null(x)) {
+    NULL
+  } else if (is.character(x))  {
+    warn_cast_lossy(x, to, !x %in% levels(to))
+    factor(x, levels = levels(to))
+  } else if (is.factor(x)) {
+    if (identical(levels(x), levels(to))) {
+      # fast path
+      x
+    } else {
+      warn_cast_lossy(x, to, !x %in% levels(to))
+      factor(as.character(x), levels = levels(to))
+    }
+  } else if (is.list(x)) {
+    cast_from_list(x, to)
+  } else {
+    abort_no_cast(x, to)
+  }
 }
 
 #' @export

@@ -75,7 +75,6 @@ test_that("safe casts work as expected", {
   expect_equal(vec_cast(list("x"), character()), "x")
 })
 
-
 # Lists  ------------------------------------------------------------------
 
 test_that("safe casts work as expected", {
@@ -83,3 +82,29 @@ test_that("safe casts work as expected", {
   expect_equal(vec_cast(1:2, list()), list(1L, 2L))
 })
 
+# Factors -----------------------------------------------------------------
+
+test_that("safe casts work as expected", {
+  fa <- factor("a")
+  fab <- factor(c("a", "b"))
+
+  expect_equal(vec_cast(NULL, fa), NULL)
+
+  expect_equal(vec_cast(fa, fa), fa)
+  expect_equal(vec_cast(fa, fab), fab[1])
+  expect_equal(vec_cast("a", fab), fab[1])
+
+  expect_equal(vec_cast(list("a", "b"), fab), fab)
+})
+
+test_that("lossy casts generate warning", {
+  fa <- factor("a")
+  fb <- factor("b")
+
+  expect_condition(vec_cast(fa, fb), class = "warning_cast_lossy")
+  expect_condition(vec_cast("a", fb), class = "warning_cast_lossy")
+})
+
+test_that("invalid casts generate error", {
+  expect_error(vec_cast(double(), factor("a")), class = "error_no_cast")
+})
