@@ -55,6 +55,8 @@ vec_coerce <- function(..., .strict = TRUE) {
 #' @inheritParams vec_coerce
 #' @export
 #' @examples
+#' vec_c(FALSE, 1L, 1.5)
+#' vec_c(FALSE, 1L, "x", .type = character())
 #'
 #' # Date/times --------------------------
 #' c(Sys.Date(), Sys.time())
@@ -70,7 +72,11 @@ vec_coerce <- function(..., .strict = TRUE) {
 #' # different types with no common type, unless you relax the
 #' # usual rules, in which case you'll get a character vector
 #' vec_c(factor("a"), factor("b"), .strict = FALSE)
-vec_c <- function(..., .strict = TRUE) {
+#'
+#' # You can also supply a type to override the defaults
+#' vec_c(factor("a"), factor("b"), .type = character())
+#' vec_c(factor("a"), factor("b"), .type = factor(levels = c("a", "b")))
+vec_c <- function(..., .strict = TRUE, .type = NULL) {
   args <- list2(...)
 
   dims <- map_int(args, vec_dims)
@@ -78,9 +84,17 @@ vec_c <- function(..., .strict = TRUE) {
     stop("Inputs must be 1d", call. = FALSE)
   }
 
-  type <- reduce(args, vectype_max, strict = .strict)
-  if (is.null(type))
-    return(NULL)
+  # Impute least-upper-bound type, if needed
+  if (is.null(.type)) {
+    type <- reduce(args, vectype_max, strict = .strict)
+    if (is.null(type))
+      return(NULL)
+  } else {
+    type <- .type
+    if (!missing(.strict)) {
+      stop("Must not use `.strict` if `type` is specified", call. = FALSE)
+    }
+  }
 
   ns <- map_int(args, length)
   out <- vec_rep(type, sum(ns))

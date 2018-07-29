@@ -4,7 +4,7 @@
 \alias{vec_c}
 \title{Concatenate vectors}
 \usage{
-vec_c(..., .strict = TRUE)
+vec_c(..., .strict = TRUE, .type = NULL)
 }
 \arguments{
 \item{...}{Vectors to coerce. All vectors must be 1d (i.e. no data
@@ -19,6 +19,8 @@ Concatenate vectors using the vctr coercion rules as explained in
 \code{\link[=vec_coerce]{vec_coerce()}}.
 }
 \examples{
+vec_c(FALSE, 1L, 1.5)
+vec_c(FALSE, 1L, "x", .type = character())
 
 # Date/times --------------------------
 c(Sys.Date(), Sys.time())
@@ -34,4 +36,8 @@ c(factor("a"), factor("b"))
 # different types with no common type, unless you relax the
 # usual rules, in which case you'll get a character vector
 vec_c(factor("a"), factor("b"), .strict = FALSE)
+
+# You can also supply a type to override the defaults
+vec_c(factor("a"), factor("b"), .type = character())
+vec_c(factor("a"), factor("b"), .type = factor(levels = c("a", "b")))
 }
