@@ -111,3 +111,28 @@ test_that("lossy casts generate warning", {
 test_that("invalid casts generate error", {
   expect_error(vec_cast(double(), factor("a")), class = "error_no_cast")
 })
+
+# Dates -------------------------------------------------------------------
+
+test_that("safe casts work as expected", {
+  date <- as.Date("2018-01-01")
+  type_date <- as_vec_type(Sys.Date())
+
+  expect_equal(vec_cast(NULL, date), NULL)
+  expect_equal(vec_cast(date, date), date)
+  expect_equal(vec_cast(as.POSIXct(date), date), date)
+  expect_equal(vec_cast(17532, date), date)
+  expect_equal(vec_cast(list(date), date), date)
+})
+
+test_that("lossy casts generate warning", {
+  date <- as.Date("2018-01-01")
+  datetime <- as.POSIXct(date) + 3600
+
+  expect_condition(vec_cast(datetime, date), class = "warning_cast_lossy")
+})
+
+test_that("invalid casts generate error", {
+  date <- as.Date("2018-01-01")
+  expect_error(vec_cast(integer(), date), class = "error_no_cast")
+})
