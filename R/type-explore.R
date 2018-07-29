@@ -8,7 +8,7 @@ coerces_to <- function(x, y, using = "strict") {
   )
 
   tryCatch({
-    type <- type_max(x, y)
+    type <- suppressWarnings(type_max(x, y))
     format(vec_type(type))
   }, error = function(e) {
     NA_character_

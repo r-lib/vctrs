@@ -61,7 +61,7 @@ test_that("factors can be coerced to character when relaxed", {
   fa <- vec_type(factor("a"))
   fb <- vec_type(factor("b"))
 
-  type <- max(fa, fb, strict = FALSE)
+  expect_warning(type <- max(fa, fb, strict = FALSE), "Coercing")
   expect_equal(type$prototype, character())
 })
 

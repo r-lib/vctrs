@@ -84,8 +84,8 @@ vectype_max.factor <- function(x, y, strict = TRUE) {
       y_in_x = vec_subset(x, 0L),
       fallback(character(), x, y, strict = strict) # needs custom error
     )
-  } else if (!strict && is_bare_character(y)) {
-    character()
+  } else if (is_bare_character(y)) {
+    fallback(character(), x, y, strict = strict)
   } else {
     fallback(list(), x, y, strict = strict)
   }
@@ -181,6 +181,11 @@ vectype_max.data.frame <- function(x, y, strict = TRUE) {
 
 fallback <- function(fallback, x, y, strict = TRUE) {
   if (!strict) {
+    warning(
+      "Coercing to ", format(vec_type(fallback)),
+      call. = FALSE,
+      immediate. = TRUE
+    )
     fallback
   } else {
     # should be classed condition
