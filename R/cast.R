@@ -41,7 +41,7 @@ vec_cast.integer <- function(x, to) {
     x
   } else if (is_bare_double(x) || is_bare_character(x)) {
     out <- set_names(suppressWarnings(as.integer(x)), names(x))
-    warn_cast_lossy(x, to, out != x)
+    warn_cast_lossy(x, to, (out != x) | xor(is.na(x), is.na(out)))
     out
   } else if (is.list(x)) {
     cast_from_list(x, to)
@@ -52,17 +52,41 @@ vec_cast.integer <- function(x, to) {
 
 #' @export
 vec_cast.double <- function(x, to) {
-  set_names(as.double(x), names(x))
+  if (is_null(x)) {
+    x
+  } else if (is_bare_logical(x) || is_bare_integer(x)) {
+    set_names(as.integer(x), names(x))
+  } else if (is_bare_double(x)) {
+    x
+  } else if (is_bare_character(x)) {
+    out <- set_names(suppressWarnings(as.double(x)), names(x))
+    warn_cast_lossy(x, to, (out != x) | xor(is.na(x), is.na(out)))
+    out
+  } else if (is.list(x)) {
+    cast_from_list(x, to)
+  } else {
+    abort_no_cast(x, to)
+  }
 }
 
 #' @export
 vec_cast.character <- function(x, to) {
-  set_names(as.character(x), names(x))
+  if (is_null(x)) {
+    x
+  } else if (is.list(x)) {
+    cast_from_list(x, to)
+  } else {
+    as.character(x)
+  }
 }
 
 #' @export
 vec_cast.list <- function(x, to) {
-  as.list(x)
+  if (is_null(x)) {
+    NULL
+  } else {
+    as.list(x)
+  }
 }
 
 # S3 vectors --------------------------------------------------------------
