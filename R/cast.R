@@ -118,15 +118,6 @@ vec_cast.factor <- function(x, to) {
 }
 
 #' @export
-vec_cast.difftime <- function(x, to) {
-  structure(
-    as.double(x),
-    class = "difftime",
-    units = units(to)
-  )
-}
-
-#' @export
 vec_cast.Date <- function(x, to) {
   as.Date(x)
 }
@@ -134,6 +125,15 @@ vec_cast.Date <- function(x, to) {
 #' @export
 vec_cast.POSIXt <- function(x, to) {
   as.POSIXct(x)
+}
+
+#' @export
+vec_cast.difftime <- function(x, to) {
+  structure(
+    as.double(x),
+    class = "difftime",
+    units = units(to)
+  )
 }
 
 #' @export
