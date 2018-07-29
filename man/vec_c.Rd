@@ -7,7 +7,8 @@
 vec_c(..., .strict = TRUE)
 }
 \arguments{
-\item{...}{Vectors to coerce.}
+\item{...}{Vectors to coerce. All vectors must be 1d (i.e. no data
+frames, matrices or arrays).}
 
 \item{.strict}{If \code{.strict = FALSE}, there will always be a common type for
 any pair of vectors. This will be a character vector for factors with

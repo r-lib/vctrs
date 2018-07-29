@@ -50,6 +50,8 @@ vec_coerce <- function(..., .strict = TRUE) {
 #' Concatenate vectors using the vctr coercion rules as explained in
 #' [vec_coerce()].
 #'
+#' @param ... Vectors to coerce. All vectors must be 1d (i.e. no data
+#'   frames, matrices or arrays).
 #' @inheritParams vec_coerce
 #' @export
 #' @examples
@@ -70,6 +72,11 @@ vec_coerce <- function(..., .strict = TRUE) {
 #' vec_c(factor("a"), factor("b"), .strict = FALSE)
 vec_c <- function(..., .strict = TRUE) {
   args <- list2(...)
+
+  dims <- map_int(args, vec_dims)
+  if (any(dims > 1)) {
+    stop("Inputs must be 1d", call. = FALSE)
+  }
 
   type <- reduce(args, vectype_max, strict = .strict)
   if (is.null(type))
