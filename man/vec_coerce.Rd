@@ -33,7 +33,7 @@ there is no common type.
 The poset of the most important base vectors is shown below:
 (where datetime stands for \code{POSIXt}, and date for \code{Date})
 
-\figure{types.png}
+\figure{coerce.png}
 
 Red lines indicate coercions that only occur when \code{.strict = FALSE}
 Note that factors are a parametric type; it doesn't make sense to compare

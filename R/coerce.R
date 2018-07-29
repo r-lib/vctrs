@@ -14,7 +14,7 @@
 #' The poset of the most important base vectors is shown below:
 #' (where datetime stands for `POSIXt`, and date for `Date`)
 #'
-#' \figure{types.png}
+#' \figure{coerce.png}
 #'
 #' Red lines indicate coercions that only occur when `.strict = FALSE`
 #' Note that factors are a parametric type; it doesn't make sense to compare
