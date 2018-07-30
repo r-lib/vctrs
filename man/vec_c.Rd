@@ -13,6 +13,10 @@ frames, matrices or arrays).}
 \item{.strict}{If \code{.strict = FALSE}, there will always be a common type for
 any pair of vectors. This will be a character vector for factors with
 different level sets, and a list for everything else.}
+
+\item{.type}{Usually, the type of the output is coerced to a type common to
+inputs. Alternatively, you can supply \code{.type} to force the output to
+have known type, or to die trying. See \code{\link[=vec_cast]{vec_cast()}} for more details.}
 }
 \description{
 Concatenate vectors using the vctr coercion rules as explained in

@@ -5,6 +5,8 @@
 #' by coercing all input items.
 #'
 #' @inheritParams vec_c
+#' @param x For `as_repeated()`, a vector to be coerced to repeated.
+#' @param
 #' @export
 #' @examples
 #' x <- repeated(1:3, 5:6, 10:15)
@@ -39,19 +41,19 @@ as_repeated.repeated <- function(x, .type = NULL, ...) {
 }
 
 #' @export
-as_repeated.list <- function(x, .strict = TRUE, .type = NULL) {
+as_repeated.list <- function(x, ..., .strict = TRUE, .type = NULL) {
   repeated(!!!x, .strict = .strict, .type = .type)
 }
 
 #' @export
 #' @rdname repeated
-new_repeated <- function(x, type) {
+new_repeated <- function(x, .type) {
   stopifnot(is.list(x))
-  stopifnot(vec_length(type) == 0)
+  stopifnot(vec_length(.type) == 0)
 
   structure(
     x,
-    type = type,
+    type = .type,
     class = "repeated"
   )
 }
@@ -62,7 +64,7 @@ is_repeated <- function(x) {
   inherits(x, "repeated")
 }
 
-#' @export
+# registered .onLoad
 type_sum.repeated <- function(x) {
   paste0("list<", tibble::type_sum(attr(x, "type")), ">")
 }

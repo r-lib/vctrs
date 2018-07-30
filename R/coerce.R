@@ -26,6 +26,9 @@
 #' @param .strict If `.strict = FALSE`, there will always be a common type for
 #'   any pair of vectors. This will be a character vector for factors with
 #'   different level sets, and a list for everything else.
+#' @param .type Usually, the type of the output is coerced to a type common to
+#'   inputs. Alternatively, you can supply `.type` to force the output to
+#'   have known type, or to die trying. See [vec_cast()] for more details.
 #' @return A list of input vectors coerced to shared (least-upper-bound) type,
 #'   or an error stating that a common type could not be found.
 #' @export
