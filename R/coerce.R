@@ -39,10 +39,13 @@
 #' vec_coerce(factor("a"), factor("b"), .type = character())
 vec_coerce <- function(..., .strict = TRUE, .type = NULL) {
   args <- list2(...)
+  if (length(args) == 0)
+    return(list())
+
   type <- find_type(args, .strict = .strict, .type = .type)
 
   # Should return ListOf<type>
-  map(args, vec_cast, to = type)
+  as_repeated(map(args, vec_cast, to = type), .type = type)
 }
 
 #' Concatenate vectors

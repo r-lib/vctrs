@@ -8,7 +8,7 @@ test_that("empty input returns list()", {
 })
 
 test_that("output has consistent type", {
-  expect_equal(vec_coerce(TRUE, 1), list(1, 1))
+  expect_equal(vec_coerce(TRUE, 1), repeated(1, 1))
 })
 
 # vec_c -------------------------------------------------------------------
