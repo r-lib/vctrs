@@ -1,7 +1,7 @@
 type: data.frame<
-  $x integer
-  $y data.frame<
-       $a integer
-       $b factor<38ce1>
-     >
+ x: integer
+ y: data.frame<
+    a: integer
+    b: factor<38ce1>
+   >
 >

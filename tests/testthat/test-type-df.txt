@@ -1,23 +1,23 @@
 mtcars:
 type: data.frame<
-  $mpg  double
-  $cyl  double
-  $disp double
-  $hp   double
-  $drat double
-  $wt   double
-  $qsec double
-  $vs   double
-  $am   double
-  $gear double
-  $carb double
+ mpg : double
+ cyl : double
+ disp: double
+ hp  : double
+ drat: double
+ wt  : double
+ qsec: double
+ vs  : double
+ am  : double
+ gear: double
+ carb: double
 >
 
 iris:
 type: data.frame<
-  $Sepal.Length double
-  $Sepal.Width  double
-  $Petal.Length double
-  $Petal.Width  double
-  $Species      factor<12d60>
+ Sepal.Length: double
+ Sepal.Width : double
+ Petal.Length: double
+ Petal.Width : double
+ Species     : factor<12d60>
 >

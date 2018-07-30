@@ -38,15 +38,21 @@ vec_type_string.difftime <- function(x) {
 
 #' @export
 vec_type_string.data.frame <- function(x) {
+  if (length(x) == 0) {
+    return("data.frame<>")
+  } else if (length(x) == 1) {
+    return(paste0("data.frame<", names(x), ":", vec_type_string(x[[1]]), ">"))
+  }
+
   # Needs to handle recursion with indenting
   types <- map_chr(x, vec_type_string)
 
-  names <- paste0("  $", format(names(x)))
+  names <- paste0(" ", format(names(x)))
   types <- indent(types, nchar(names) + 1)
 
   paste0(
     "data.frame<\n",
-      paste0(names, " ", types, collapse = "\n"),
+      paste0(names, ": ", types, collapse = "\n"),
     "\n>"
   )
 }
