@@ -27,3 +27,9 @@ set_compare <- function(x, y) {
 ones <- function(...) {
   array(1, dim = c(...))
 }
+
+vec_coerce_bare <- function(x, type) {
+  # Unexported wrapper around Rf_coerceVector()
+  coerce <- env_get(ns_env("rlang"), "vec_coerce")
+  coerce(x, type)
+}

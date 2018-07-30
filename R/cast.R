@@ -55,13 +55,13 @@ vec_cast.logical <- function(x, to) {
     x
   } else if (is_bare_integer(x)) {
     warn_cast_lossy_vector(x, to, !x %in% c(0L, 1L))
-    set_names(as.logical(x), names(x))
+    vec_coerce_bare(x, "logical")
   } else if (is_bare_double(x)) {
     warn_cast_lossy_vector(x, to, !x %in% c(0, 1))
-    set_names(as.logical(x), names(x))
+    vec_coerce_bare(x, "logical")
   } else if (is_bare_character(x)) {
     warn_cast_lossy_vector(x, to, !toupper(x) %in% c("T", "F", "TRUE", "FALSE"))
-    set_names(as.logical(x), names(x))
+    vec_coerce_bare(x, "logical")
   } else if (is.list(x)) {
     cast_from_list(x, to)
   } else {
@@ -74,11 +74,11 @@ vec_cast.integer <- function(x, to) {
   if (is_null(x)) {
     x
   } else if (is_bare_logical(x)) {
-    set_names(as.integer(x), names(x))
+    vec_coerce_bare(x, "integer")
   } else if (is_bare_integer(x)) {
     x
   } else if (is_bare_double(x) || is_bare_character(x)) {
-    out <- set_names(suppressWarnings(as.integer(x)), names(x))
+    out <- suppressWarnings(vec_coerce_bare(x, "integer"))
     warn_cast_lossy_vector(x, to, (out != x) | xor(is.na(x), is.na(out)))
     out
   } else if (is.list(x)) {
@@ -93,11 +93,11 @@ vec_cast.double <- function(x, to) {
   if (is_null(x)) {
     x
   } else if (is_bare_logical(x) || is_bare_integer(x)) {
-    set_names(as.integer(x), names(x))
+    vec_coerce_bare(x, "double")
   } else if (is_bare_double(x)) {
     x
   } else if (is_bare_character(x)) {
-    out <- set_names(suppressWarnings(as.double(x)), names(x))
+    out <- suppressWarnings(vec_coerce_bare(x, "double"))
     warn_cast_lossy_vector(x, to, (out != x) | xor(is.na(x), is.na(out)))
     out
   } else if (is.list(x)) {
@@ -111,6 +111,8 @@ vec_cast.double <- function(x, to) {
 vec_cast.character <- function(x, to) {
   if (is_null(x)) {
     x
+  } else if (is_bare_atomic(x)) {
+    vec_coerce_bare(x, "character")
   } else if (inherits(x, "difftime")) {
     paste(x, units(x))
   } else if (is.list(x)) {
