@@ -142,6 +142,25 @@ vectype_max.list <- function(x, y, strict = TRUE) {
   }
 }
 
+#' @export
+vectype_max.repeated <- function(x, y, strict = TRUE) {
+  if (is_null(y)) {
+    x
+  } else if (is_repeated(y)) {
+    tryCatch(
+      error_no_max_type = function(e) {
+        if (strict) stop(e)
+        list()
+      },
+      {
+        type <- vectype_max(attr(x, "type"), attr(y, "type"))
+        new_repeated(list(), type)
+      }
+    )
+  } else {
+    fallback(x, y, list(), strict = strict)
+  }
+}
 
 # Data frames -------------------------------------------------------------
 

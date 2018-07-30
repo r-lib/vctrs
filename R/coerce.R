@@ -107,5 +107,5 @@ find_type <- function(x, .strict = TRUE, .type = NULL) {
     return(.type)
   }
 
-  reduce(x, vectype_max, strict = .strict)
+  reduce(x, vectype_max, strict = .strict, .init = NULL)
 }

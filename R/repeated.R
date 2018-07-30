@@ -1,30 +1,114 @@
-repeated <- function(x, n = 0) {
-  new_repeated(
-    rep(list(vec_na(x)), n),
-    vec_subset(x, 0L)
-  )
+#' Construct "repeated" objects
+#'
+#' A repeated object is a list where each element has the same type.
+#' Modifying the list with `$`, `[`, and `[[` preserves the constraint
+#' by coercing all input items.
+#'
+#' @inheritParams vec_c
+#' @export
+#' @examples
+#' x <- repeated(1:3, 5:6, 10:15)
+#' tibble::tibble(x = x)
+#'
+#' vec_c(repeated(1, 2), repeated(FALSE, TRUE))
+repeated <- function(..., .strict = TRUE, .type = NULL) {
+  args <- list2(...)
+
+  type <- find_type(args, .strict = .strict, .type = .type)
+  if (is_null(type) || is_bare_list(type)) {
+    stop("Could not find common type for elements of `x`", call. = FALSE)
+  }
+
+  x <- map(args, vec_cast, to = type)
+  new_repeated(x, type)
 }
 
-# as_repeated needs to derive and/or check
-# need function that constructs from individual components
+#' @export
+#' @rdname repeated
+as_repeated <- function(x, ...) {
+  UseMethod("as_repeated")
+}
 
-new_repeated <- function(x, prototype) {
+#' @export
+as_repeated.repeated <- function(x, .type = NULL, ...) {
+  if (!is.null(.type)) {
+    repeated(!!!x, .type = .type)
+  } else {
+    x
+  }
+}
+
+#' @export
+as_repeated.list <- function(x, .strict = TRUE, .type = NULL) {
+  repeated(!!!x, .strict = .strict, .type = .type)
+}
+
+#' @export
+#' @rdname repeated
+new_repeated <- function(x, type) {
   stopifnot(is.list(x))
-  stopifnot(vec_length(prototype) == 0)
+  stopifnot(vec_length(type) == 0)
 
   structure(
     x,
-    prototype = prototype,
+    type = type,
     class = "repeated"
   )
 }
 
-vec_type.repeated <- function(x) {
-  paste0("repeated<", vec_type(attr(x, "prototype")), ">")
+#' @export
+#' @rdname repeated
+is_repeated <- function(x) {
+  inherits(x, "repeated")
 }
 
+#' @export
+type_sum.repeated <- function(x) {
+  paste0("list<", tibble::type_sum(attr(x, "type")), ">")
+}
+
+#' @export
+vec_type_string.repeated <- function(x) {
+  paste0("repeated<", vec_type(attr(x, "type")), ">")
+}
+
+#' @export
+print.repeated <- function(x, ...) {
+  cat(format(vec_type(x)), "\n", sep = "")
+
+  # Expensive: need to find a better way
+  attr(x, "type") <- NULL
+  class(x) <- NULL
+
+  print(x)
+}
+
+#' @export
+as.list.repeated <- function(x, ...) {
+  attr(x, "type") <- NULL
+  attr(x, "class") <- NULL
+  x
+}
+
+#' @export
 `[.repeated` <- function(x, ...) {
-  new_repeated(x, attr(x, "prototype"))
+  new_repeated(NextMethod(), attr(x, "type"))
 }
 
-# TODO: methods for [[<-, [<- and $<- that coerce their inputs
+#' @export
+`[<-.repeated` <- function(x, i, value) {
+  value <- map(value, vec_cast, attr(x, "type"))
+  NextMethod()
+}
+
+#' @export
+`[[<-.repeated` <- function(x, i, value) {
+  value <- vec_cast(value, attr(x, "type"))
+  NextMethod()
+}
+
+#' @export
+`$<-.repeated` <- function(x, i, value) {
+  value <- vec_cast(value, attr(x, "type"))
+  NextMethod()
+}

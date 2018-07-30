@@ -124,8 +124,22 @@ vec_cast.character <- function(x, to) {
 vec_cast.list <- function(x, to) {
   if (is_null(x)) {
     NULL
+  } else if (is_repeated(x)) {
+    warn_cast_lossy(from = x, to = to)
+    as.list(x)
   } else {
     as.list(x)
+  }
+}
+
+#' @export
+vec_cast.repeated <- function(x, to) {
+  if (is_null(x)) {
+    NULL
+  } else if (is_repeated(x) || is_bare_list(x)) {
+    as_repeated(x, .type = attr(to, "type"))
+  } else {
+    abort_no_cast(x, to)
   }
 }
 
@@ -287,6 +301,23 @@ abort_no_cast <- function(from, to, details = NULL) {
   )
 }
 
+warn_cast_lossy <- function(message = NULL, .subclass = NULL, from, to, ..., class) {
+  from <- as_vec_type(from)
+  to <- as_vec_type(to)
+
+  if (is.null(message)) {
+    message <- glue::glue("Lossy conversion from {from} to {to}")
+  }
+
+  warn(
+    c(.subclass, "warning_cast_lossy"),
+    message = message,
+    from = from,
+    to = to,
+    ...
+  )
+}
+
 warn_cast_lossy_vector <- function(from, to, is_lossy) {
   which <- which(is_lossy)
   if (length(which) == 0) {
@@ -302,8 +333,8 @@ warn_cast_lossy_vector <- function(from, to, is_lossy) {
     At positions: {pos}"
   )
 
-  warn(
-    c("warning_cast_lossy_vector", "warning_cast_lossy"),
+  warn_cast_lossy(
+    "warning_cast_lossy_vector",
     message = msg,
     from = from,
     to = to,
@@ -321,8 +352,8 @@ warn_cast_lossy_dataframe <- function(from, to, dropped) {
     Dropped variables: {vars}"
   )
 
-  warn(
-    c("warning_cast_lossy_dataframe", "warning_cast_lossy"),
+  warn_cast_lossy(
+    "warning_cast_lossy_dataframe",
     message = msg,
     from = from,
     to = to,

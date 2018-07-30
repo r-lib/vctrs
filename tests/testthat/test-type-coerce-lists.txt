@@ -1,0 +1,6 @@
+                    NULL                  list   repeated<integer>   repeated<double>   repeated<character>  
+NULL                "NULL"                "list" "repeated<integer>" "repeated<double>" "repeated<character>"
+list                "list"                "list" NA                  NA                 NA                   
+repeated<integer>   "repeated<integer>"   NA     "repeated<integer>" "repeated<double>" NA                   
+repeated<double>    "repeated<double>"    NA     "repeated<double>"  "repeated<double>" NA                   
+repeated<character> "repeated<character>" NA     NA                  NA                 "repeated<character>"

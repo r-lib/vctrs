@@ -52,8 +52,27 @@ test_that("factor/character coercions are symmetric and unnchanging", {
     test_path("test-type-coerce-factor.txt"),
     width = 200
   )
-
 })
+
+test_that("repeated/list coercions are symmetric and unchanging", {
+  types <- list(
+    NULL,
+    list(),
+    repeated(.type = integer()),
+    repeated(.type = double()),
+    repeated(.type = character())
+  )
+  mat <- maxtype_mat(types)
+
+  expect_true(isSymmetric(mat))
+  expect_known_output(
+    mat,
+    test_path("test-type-coerce-lists.txt"),
+    print = TRUE,
+    width = 200
+  )
+})
+
 
 # Factors -----------------------------------------------------------------
 
@@ -73,6 +92,24 @@ test_that("nested factors are equivalent", {
   expect_equal(type, fab)
 })
 
+
+# Repeated ----------------------------------------------------------------
+
+test_that("max<repeated<a>, repeated<b>> is repeated<max<a, b>>", {
+  r_int <- vec_type(repeated(.type = integer()))
+  r_dbl <- vec_type(repeated(.type = double()))
+
+  expect_equal(max(r_int, r_int), r_int)
+  expect_equal(max(r_int, r_dbl), r_int)
+})
+
+test_that("falls back to list when strict = FALSE", {
+  r_int <- vec_type(repeated(.type = integer()))
+  r_chr <- vec_type(repeated(.type = character()))
+
+  expect_error(max(r_int, r_chr), class = "error_no_max_type")
+  expect_equal(max(r_int, r_chr, strict = FALSE), vec_type(list()))
+})
 
 # Data frame --------------------------------------------------------------
 
