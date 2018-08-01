@@ -15,7 +15,7 @@ knitr::opts_chunk$set(
 
 # vctrs
 
-[![Travis build status](https://travis-ci.org/hadley/vctrs.svg?branch=master)](https://travis-ci.org/hadley/vctrs)
+[![Travis build status](https://travis-ci.org/r-lib/vctrs.svg?branch=master)](https://travis-ci.org/r-lib/vctrs)
 
 The primary short-term goal of vctrs is to develop a theory of "types" that help us reason about the "correct" type and shape to return from vectorised functions that have to combine inputs with different types (e.g. `c()` and `dplyr::bind_rows()`). For the user, the goal is to be invisible: a principled approach to type coercion will provide greater consistency across functions, leading to a more accurate mental model and fewer suprises.
 
