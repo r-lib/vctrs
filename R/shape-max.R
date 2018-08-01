@@ -1,4 +1,4 @@
-vecshape_max <- function(x, y) {
+vec_shape2 <- function(x, y) {
   x <- as_vec_shape(x)
   y <- as_vec_shape(y)
 

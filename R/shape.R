@@ -75,5 +75,5 @@ print.vec_shape <- function(x, ...) {
 #' @export
 max.vec_shape <- function(..., na.rm = FALSE) {
   args <- list2(...)
-  reduce(args, vecshape_max, .init = NULL)
+  reduce(args, vec_shape2, .init = NULL)
 }
