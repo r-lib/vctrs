@@ -1,6 +1,6 @@
-                    NULL                  list   repeated<integer>   repeated<double>   repeated<character>  
-NULL                "NULL"                "list" "repeated<integer>" "repeated<double>" "repeated<character>"
-list                "list"                "list" NA                  NA                 NA                   
-repeated<integer>   "repeated<integer>"   NA     "repeated<integer>" "repeated<double>" NA                   
-repeated<double>    "repeated<double>"    NA     "repeated<double>"  "repeated<double>" NA                   
-repeated<character> "repeated<character>" NA     NA                  NA                 "repeated<character>"
+                   NULL                 list   list_of<integer>   list_of<double>   list_of<character>  
+NULL               "NULL"               "list" "list_of<integer>" "list_of<double>" "list_of<character>"
+list               "list"               "list" NA                 NA                NA                  
+list_of<integer>   "list_of<integer>"   NA     "list_of<integer>" "list_of<double>" NA                  
+list_of<double>    "list_of<double>"    NA     "list_of<double>"  "list_of<double>" NA                  
+list_of<character> "list_of<character>" NA     NA                 NA                "list_of<character>"

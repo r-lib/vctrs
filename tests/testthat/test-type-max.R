@@ -47,13 +47,13 @@ test_that("factor/character coercions are symmetric and unnchanging", {
   )
 })
 
-test_that("repeated/list coercions are symmetric and unchanging", {
+test_that("list coercions are symmetric and unchanging", {
   types <- list(
     NULL,
     list(),
-    repeated(.type = integer()),
-    repeated(.type = double()),
-    repeated(.type = character())
+    list_of(.type = integer()),
+    list_of(.type = double()),
+    list_of(.type = character())
   )
   mat <- maxtype_mat(types)
 
@@ -79,11 +79,11 @@ test_that("factors level are unioned", {
   expect_equal(max(fb, fa), vec_type(factor(levels = c("b", "a"))))
 })
 
-# Repeated ----------------------------------------------------------------
+# list_of ----------------------------------------------------------------
 
-test_that("max<repeated<a>, repeated<b>> is repeated<max<a, b>>", {
-  r_int <- vec_type(repeated(.type = integer()))
-  r_dbl <- vec_type(repeated(.type = double()))
+test_that("max<list_of<a>, list_of<b>> is list_of<max<a, b>>", {
+  r_int <- vec_type(list_of(.type = integer()))
+  r_dbl <- vec_type(list_of(.type = double()))
 
   expect_equal(max(r_int, r_int), r_int)
   expect_equal(max(r_int, r_dbl), r_int)

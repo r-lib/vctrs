@@ -1,5 +1,5 @@
 .onLoad <- function(...) {
-  register_s3_method("tibble", "type_sum", "repeated")
+  register_s3_method("tibble", "type_sum", "list_of")
 }
 
 register_s3_method <- function(pkg, generic, class, fun = NULL) {

@@ -89,25 +89,25 @@ test_that("safe casts work as expected", {
 })
 
 test_that("lossy casts generate warnings", {
-  expect_condition(vec_cast(repeated(1L), list()), class = "warning_cast_lossy")
+  expect_condition(vec_cast(list_of(1L), list()), class = "warning_cast_lossy")
 })
 
-# Repeated -----------------------------------------------------------------
+# list_of -----------------------------------------------------------------
 
 test_that("safe casts work as expected", {
-  x <- repeated(1)
+  x <- list_of(1)
   expect_equal(vec_cast(NULL, x), NULL)
   expect_equal(vec_cast(list(1), x), x)
   expect_equal(vec_cast(list(TRUE), x), x)
 })
 
 test_that("lossy casts generate warning", {
-  x <- repeated(1L)
+  x <- list_of(1L)
   expect_condition(vec_cast(list(1.5), x), class = "warning_cast_lossy")
 })
 
 test_that("invalid casts generate error", {
-  expect_error(vec_cast(factor("a"), repeated(1)), class = "error_no_cast")
+  expect_error(vec_cast(factor("a"), list_of(1)), class = "error_no_cast")
 })
 
 # Factors -----------------------------------------------------------------

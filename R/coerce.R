@@ -35,7 +35,7 @@ vec_coerce <- function(..., .type = NULL) {
   type <- find_type(args, .type = .type)
 
   # Should return ListOf<type>
-  as_repeated(map(args, vec_cast, to = type), .type = type)
+  as_list_of(map(args, vec_cast, to = type), .type = type)
 }
 
 #' Concatenate vectors

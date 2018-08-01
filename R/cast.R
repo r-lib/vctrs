@@ -126,7 +126,7 @@ vec_cast.character <- function(x, to) {
 vec_cast.list <- function(x, to) {
   if (is_null(x)) {
     NULL
-  } else if (is_repeated(x)) {
+  } else if (is_list_of(x)) {
     warn_cast_lossy(from = x, to = to)
     as.list(x)
   } else {
@@ -135,11 +135,11 @@ vec_cast.list <- function(x, to) {
 }
 
 #' @export
-vec_cast.repeated <- function(x, to) {
+vec_cast.list_of <- function(x, to) {
   if (is_null(x)) {
     NULL
-  } else if (is_repeated(x) || is_bare_list(x)) {
-    as_repeated(x, .type = attr(to, "type"))
+  } else if (is_list_of(x) || is_bare_list(x)) {
+    as_list_of(x, .type = attr(to, "type"))
   } else {
     abort_no_cast(x, to)
   }

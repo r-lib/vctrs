@@ -150,12 +150,12 @@ vectype_max.list <- function(x, y) {
 }
 
 #' @export
-vectype_max.repeated <- function(x, y) {
+vectype_max.list_of <- function(x, y) {
   if (is_null(y)) {
     x
-  } else if (is_repeated(y)) {
+  } else if (is_list_of(y)) {
     type <- vectype_max(attr(x, "type"), attr(y, "type"))
-    new_repeated(list(), type)
+    new_list_of(list(), type)
   } else {
     abort_no_max_type(vec_type(x), vec_type(y))
   }
