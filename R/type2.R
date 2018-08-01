@@ -1,20 +1,20 @@
-vectype_max <- function(x, y) {
-  UseMethod("vectype_max")
+vec_type2 <- function(x, y) {
+  UseMethod("vec_type2")
 }
 
-vectype_max.vec_type <- function(x, y) {
+vec_type2.vec_type <- function(x, y) {
   y <- as_vec_type(y)
-  vec_type(vectype_max(x$prototype, y$prototype))
+  vec_type(vec_type2(x$prototype, y$prototype))
 }
 
-vectype_max.NULL <- function(x, y) {
+vec_type2.NULL <- function(x, y) {
   vec_subset(y, 0L)
 }
 
 # Numeric-ish ----------------------------------------------------------
 
 #' @export
-vectype_max.logical <- function(x, y) {
+vec_type2.logical <- function(x, y) {
   if (is_null(y)) {
     logical()
   } else if (is_bare_logical(y)) {
@@ -29,7 +29,7 @@ vectype_max.logical <- function(x, y) {
 }
 
 #' @export
-vectype_max.integer <- function(x, y) {
+vec_type2.integer <- function(x, y) {
   if (is_null(y)) {
     integer()
   } else if (is_bare_logical(y)) {
@@ -44,7 +44,7 @@ vectype_max.integer <- function(x, y) {
 }
 
 #' @export
-vectype_max.double <- function(x, y) {
+vec_type2.double <- function(x, y) {
   if (is_null(y)) {
     double()
   } else if (is_bare_logical(y)) {
@@ -62,7 +62,7 @@ vectype_max.double <- function(x, y) {
 # Characters and factors --------------------------------------------------
 
 #' @export
-vectype_max.character <- function(x, y) {
+vec_type2.character <- function(x, y) {
   if (is_null(y) || is_bare_character(y) || is.factor(y)) {
     character()
   } else {
@@ -71,7 +71,7 @@ vectype_max.character <- function(x, y) {
 }
 
 #' @export
-vectype_max.factor <- function(x, y) {
+vec_type2.factor <- function(x, y) {
   if (is_null(y)) {
     vec_subset(x, 0L)
   } else if (is.factor(y)) {
@@ -84,7 +84,7 @@ vectype_max.factor <- function(x, y) {
 }
 
 #' @export
-vectype_max.ordered <- function(x, y) {
+vec_type2.ordered <- function(x, y) {
   if (is_null(y)) {
     vec_subset(x, 0L)
   } else if (is.ordered(y)) {
@@ -101,7 +101,7 @@ vectype_max.ordered <- function(x, y) {
 # Date/times --------------------------------------------------------------
 
 #' @export
-vectype_max.Date <- function(x, y) {
+vec_type2.Date <- function(x, y) {
   if (is_null(y) || inherits(y, "Date")) {
     x[0]
   } else if (inherits(y, "POSIXt")) {
@@ -112,7 +112,7 @@ vectype_max.Date <- function(x, y) {
 }
 
 #' @export
-vectype_max.POSIXt <- function(x, y) {
+vec_type2.POSIXt <- function(x, y) {
   if (is_null(y) || inherits(y, "Date") || inherits(y, "POSIXt")) {
     x[0]
   } else {
@@ -121,7 +121,7 @@ vectype_max.POSIXt <- function(x, y) {
 }
 
 #' @export
-vectype_max.difftime <- function(x, y) {
+vec_type2.difftime <- function(x, y) {
   if (is_null(y)) {
     x[0]
   } else if (inherits(y, "difftime")) {
@@ -141,7 +141,7 @@ vectype_max.difftime <- function(x, y) {
 # Lists -------------------------------------------------------------------
 
 #' @export
-vectype_max.list <- function(x, y) {
+vec_type2.list <- function(x, y) {
   if (is_null(y) || is_bare_list(y)) {
     list()
   } else {
@@ -150,11 +150,11 @@ vectype_max.list <- function(x, y) {
 }
 
 #' @export
-vectype_max.list_of <- function(x, y) {
+vec_type2.list_of <- function(x, y) {
   if (is_null(y)) {
     x
   } else if (is_list_of(y)) {
-    type <- vectype_max(attr(x, "type"), attr(y, "type"))
+    type <- vec_type2(attr(x, "type"), attr(y, "type"))
     new_list_of(list(), type)
   } else {
     abort_no_max_type(vec_type(x), vec_type(y))
@@ -164,7 +164,7 @@ vectype_max.list_of <- function(x, y) {
 # Data frames -------------------------------------------------------------
 
 #' @export
-vectype_max.data.frame <- function(x, y) {
+vec_type2.data.frame <- function(x, y) {
   if (is_null(y)) {
     x
   } else if (is.data.frame(y)) {
@@ -174,7 +174,7 @@ vectype_max.data.frame <- function(x, y) {
 
     # Find types
     if (length(common) > 0) {
-      common_types <- map2(x[common], y[common], vectype_max)
+      common_types <- map2(x[common], y[common], vec_type2)
     } else {
       common_types <- list()
     }

@@ -1,6 +1,6 @@
 coerces_to <- function(x, y, using = "strict") {
   type_max <- switch(using,
-    strict = vectype_max,
+    strict = vec_type2,
     base_c = c,
     base_unlist = function(x, y) unlist(list(x, y)),
     base_modify = function(x, y) `[<-`(x, 2, value = y)

@@ -112,6 +112,6 @@ find_type <- function(x, .type = NULL) {
   } else if (isTRUE(getOption("vctrs.no_guessing"))) {
     stop("strict mode is activated; you must supply .type", call. = FALSE)
   } else {
-    reduce(x, vectype_max, .init = NULL)
+    reduce(x, vec_type2, .init = NULL)
   }
 }

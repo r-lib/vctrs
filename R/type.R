@@ -72,5 +72,5 @@ print.vec_type <- function(x, ...) {
 #' @rdname vec_type
 max.vec_type <- function(..., na.rm = FALSE) {
   args <- list2(...)
-  reduce(args, vectype_max, .init = vec_type(NULL))
+  reduce(args, vec_type2, .init = vec_type(NULL))
 }
