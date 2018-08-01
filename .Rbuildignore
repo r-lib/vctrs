@@ -1,2 +1,6 @@
 ^.*\.Rproj$
 ^\.Rproj\.user$
+^CMakeLists\.txt$
+^clion-test\.R$
+^\.idea$
+^cmake-build-debug$

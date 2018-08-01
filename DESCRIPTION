@@ -9,8 +9,15 @@ Description: Functions that help you work with vectors, particularly numeric.
     Provides a full set of summary, cumulative, rolling, and vectorised
     functions for both R and C.
 Depends: R (>= 3.3.1)
+Imports: 
+    Rcpp
+LinkingTo: 
+    Rcpp
 License: GPL-3
 Encoding: UTF-8
 LazyData: true
 URL: https://github.com/hadley/vctrs
 BugReports: https://github.com/hadley/vctrs/issues
+RoxygenNote: 5.0.1.9000
+Suggests: 
+    testthat
