@@ -254,7 +254,7 @@ vec_cast.data.frame <- function(x, to) {
       warn_cast_lossy_dataframe(x, to, dropped)
     }
 
-    x[c(common, from_type)]
+    x[names(to)]
   } else {
     abort_no_cast(x, to)
   }
