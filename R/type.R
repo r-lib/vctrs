@@ -12,10 +12,6 @@
 #' @export
 #' @param x For `vec_type()` a vector; for `as_vec_type()` a vector or
 #'    vectory type
-#' @param strict By default `max()` will error if no common type is found;
-#'   `strict = FALSE` activates a more flexible mode which will always return
-#'   a common type, falling back to a list if nothing more specific is
-#'   available.
 #' @keywords internal
 #' @examples
 #' vec_type(mtcars)
@@ -24,8 +20,6 @@
 #' \dontrun{
 #' max(vec_type(1), vec_type("a"))
 #' }
-#' max(vec_type(1), vec_type("a"), strict = FALSE)
-#'
 vec_type <- function(x) {
   stopifnot(is_vector(x) || is_null(x))
 
@@ -76,7 +70,7 @@ print.vec_type <- function(x, ...) {
 
 #' @export
 #' @rdname vec_type
-max.vec_type <- function(..., na.rm = FALSE, strict = TRUE) {
+max.vec_type <- function(..., na.rm = FALSE) {
   args <- list2(...)
-  reduce(args, vectype_max, .init = vec_type(NULL), strict = strict)
+  reduce(args, vectype_max, .init = vec_type(NULL))
 }

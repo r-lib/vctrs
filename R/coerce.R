@@ -9,36 +9,30 @@
 #' vctrs thinks of the vector types as forming a partially ordered set, or
 #' poset. Then finding the common type from a set of types is a matter of
 #' finding the least-upper-bound; if the least-upper-bound does not exist,
-#' there is no common type.
+#' there is no common type. This is the case for many pairs of 1d vectors.
 #'
 #' The poset of the most important base vectors is shown below:
 #' (where datetime stands for `POSIXt`, and date for `Date`)
 #'
 #' \figure{coerce.png}
 #'
-#' Red lines indicate coercions that only occur when `.strict = FALSE`
-#'
 #' @param ... Vectors to coerce.
-#' @param .strict If `.strict = FALSE`, there will always be a common type for
-#'   any pair of vectors. This will be a character vector for factors with
-#'   different level sets, and a list for everything else.
 #' @param .type Usually, the type of the output is coerced to a type common to
 #'   inputs. Alternatively, you can supply `.type` to force the output to
 #'   have known type, or to die trying. See [vec_cast()] for more details.
+#'   `.type = character()` and `.type = list()` will succeed for all vectors.
 #' @return A list of input vectors coerced to shared (least-upper-bound) type,
 #'   or an error stating that a common type could not be found.
 #' @export
 #' @examples
-#'
 #' vec_coerce(factor("a"), factor(c("a", "b")))
-#' vec_coerce(factor("a"), factor("b"), .strict = FALSE)
-#' vec_coerce(factor("a"), factor("b"), .type = character())
-vec_coerce <- function(..., .strict = TRUE, .type = NULL) {
+#' vec_coerce(factor("a"), Sys.Date(), .type = list())
+vec_coerce <- function(..., .type = NULL) {
   args <- list2(...)
   if (length(args) == 0)
     return(list())
 
-  type <- find_type(args, .strict = .strict, .type = .type)
+  type <- find_type(args, .type = .type)
 
   # Should return ListOf<type>
   as_repeated(map(args, vec_cast, to = type), .type = type)
@@ -66,16 +60,8 @@ vec_coerce <- function(..., .strict = TRUE, .type = NULL) {
 #'
 #' # Factors -----------------------------
 #' c(factor("a"), factor("b"))
-#'
-#' # vctrs considers factors with different level sets to be
-#' # different types with no common type, unless you relax the
-#' # usual rules, in which case you'll get a character vector
-#' vec_c(factor("a"), factor("b"), .strict = FALSE)
-#'
-#' # You can also supply a type to override the defaults
-#' vec_c(factor("a"), factor("b"), .type = character())
-#' vec_c(factor("a"), factor("b"), .type = factor(levels = c("a", "b")))
-vec_c <- function(..., .strict = TRUE, .type = NULL) {
+#' vec_c(factor("a"), factor("b"))
+vec_c <- function(..., .type = NULL) {
   args <- list2(...)
 
   dims <- map_int(args, vec_dims)
@@ -84,7 +70,7 @@ vec_c <- function(..., .strict = TRUE, .type = NULL) {
   }
 
   # Impute least-upper-bound type, if needed
-  type <- find_type(args, .strict = .strict, .type = .type)
+  type <- find_type(args, .type = .type)
   if (is.null(type))
     return(NULL)
 
@@ -104,10 +90,10 @@ vec_c <- function(..., .strict = TRUE, .type = NULL) {
   out
 }
 
-find_type <- function(x, .strict = TRUE, .type = NULL) {
+find_type <- function(x, .type = NULL) {
   if (!is.null(.type)) {
-    return(.type)
+    .type
+  } else {
+    reduce(x, vectype_max, .init = NULL)
   }
-
-  reduce(x, vectype_max, strict = .strict, .init = NULL)
 }

@@ -6,18 +6,17 @@
 #'
 #' @inheritParams vec_c
 #' @param x For `as_repeated()`, a vector to be coerced to repeated.
-#' @param
 #' @export
 #' @examples
 #' x <- repeated(1:3, 5:6, 10:15)
 #' tibble::tibble(x = x)
 #'
 #' vec_c(repeated(1, 2), repeated(FALSE, TRUE))
-repeated <- function(..., .strict = TRUE, .type = NULL) {
+repeated <- function(..., .type = NULL) {
   args <- list2(...)
 
-  type <- find_type(args, .strict = .strict, .type = .type)
-  if (is_null(type) || is_bare_list(type)) {
+  type <- find_type(args, .type = .type)
+  if (is_null(type)) {
     stop("Could not find common type for elements of `x`", call. = FALSE)
   }
 
@@ -41,8 +40,8 @@ as_repeated.repeated <- function(x, .type = NULL, ...) {
 }
 
 #' @export
-as_repeated.list <- function(x, ..., .strict = TRUE, .type = NULL) {
-  repeated(!!!x, .strict = .strict, .type = .type)
+as_repeated.list <- function(x, ..., .type = NULL) {
+  repeated(!!!x, .type = .type)
 }
 
 #' @export

@@ -15,7 +15,6 @@ test_that("repeated works like list", {
 
 test_that("repeated errors if it can't find common type", {
   expect_error(repeated(1, "a"), class = "error_no_max_type")
-  expect_error(expect_warning(repeated(1, "a", .strict = FALSE)), "find common type")
   expect_error(repeated(), "find common type")
 })
 

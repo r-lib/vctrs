@@ -3,10 +3,3 @@ NULL      "NULL"      "ordered"   "factor"    "character"
 ordered   "ordered"   "ordered"   "factor"    "character"
 factor    "factor"    "factor"    "factor"    "character"
 character "character" "character" "character" "character"
-
-
-          NULL        ordered     factor      character  
-NULL      "NULL"      "ordered"   "factor"    "character"
-ordered   "ordered"   "ordered"   "factor"    "character"
-factor    "factor"    "factor"    "factor"    "character"
-character "character" "character" "character" "character"

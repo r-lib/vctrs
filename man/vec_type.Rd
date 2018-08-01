@@ -13,16 +13,11 @@ new_vec_type(prototype)
 
 as_vec_type(x)
 
-\method{max}{vec_type}(..., na.rm = FALSE, strict = TRUE)
+\method{max}{vec_type}(..., na.rm = FALSE)
 }
 \arguments{
 \item{x}{For \code{vec_type()} a vector; for \code{as_vec_type()} a vector or
 vectory type}
-
-\item{strict}{By default \code{max()} will error if no common type is found;
-\code{strict = FALSE} activates a more flexible mode which will always return
-a common type, falling back to a list if nothing more specific is
-available.}
 }
 \description{
 The type of a vector capture its essence, independent of it's values.
@@ -42,7 +37,5 @@ max(vec_type(1), vec_type(1L))
 \dontrun{
 max(vec_type(1), vec_type("a"))
 }
-max(vec_type(1), vec_type("a"), strict = FALSE)
-
 }
 \keyword{internal}

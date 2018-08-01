@@ -36,18 +36,12 @@ test_that("factor/character coercions are symmetric and unnchanging", {
     factor(),
     character()
   )
-  mat_strct <- maxtype_mat(types)
-  expect_true(isSymmetric(mat_strct))
-
-  mat_relax <- maxtype_mat(types, "relax")
-  expect_true(isSymmetric(mat_relax))
+  mat <- maxtype_mat(types)
+  expect_true(isSymmetric(mat))
 
   expect_known_output(
-    {
-      print(mat_strct)
-      cat("\n\n")
-      print(mat_relax)
-    },
+    mat,
+    print = TRUE,
     test_path("test-type-coerce-factor.txt"),
     width = 200
   )
@@ -85,15 +79,6 @@ test_that("factors level are unioned", {
   expect_equal(max(fb, fa), vec_type(factor(levels = c("b", "a"))))
 })
 
-test_that("nested factors are equivalent", {
-  fab <- vec_type(factor("a", "b"))
-  fb <- vec_type(factor("b"))
-
-  type <- max(fab, fb, strict = FALSE)
-  expect_equal(type, fab)
-})
-
-
 # Repeated ----------------------------------------------------------------
 
 test_that("max<repeated<a>, repeated<b>> is repeated<max<a, b>>", {
@@ -102,14 +87,6 @@ test_that("max<repeated<a>, repeated<b>> is repeated<max<a, b>>", {
 
   expect_equal(max(r_int, r_int), r_int)
   expect_equal(max(r_int, r_dbl), r_int)
-})
-
-test_that("falls back to list when strict = FALSE", {
-  r_int <- vec_type(repeated(.type = integer()))
-  r_chr <- vec_type(repeated(.type = character()))
-
-  expect_error(max(r_int, r_chr), class = "error_no_max_type")
-  expect_equal(max(r_int, r_chr, strict = FALSE), vec_type(list()))
 })
 
 # Data frame --------------------------------------------------------------

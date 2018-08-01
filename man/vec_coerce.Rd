@@ -4,18 +4,15 @@
 \alias{vec_coerce}
 \title{Coerce vectors to shared type}
 \usage{
-vec_coerce(..., .strict = TRUE, .type = NULL)
+vec_coerce(..., .type = NULL)
 }
 \arguments{
 \item{...}{Vectors to coerce.}
 
-\item{.strict}{If \code{.strict = FALSE}, there will always be a common type for
-any pair of vectors. This will be a character vector for factors with
-different level sets, and a list for everything else.}
-
 \item{.type}{Usually, the type of the output is coerced to a type common to
 inputs. Alternatively, you can supply \code{.type} to force the output to
-have known type, or to die trying. See \code{\link[=vec_cast]{vec_cast()}} for more details.}
+have known type, or to die trying. See \code{\link[=vec_cast]{vec_cast()}} for more details.
+\code{.type = character()} and \code{.type = list()} will succeed for all vectors.}
 }
 \value{
 A list of input vectors coerced to shared (least-upper-bound) type,
@@ -32,19 +29,15 @@ decisions. See \code{\link[=vec_c]{vec_c()}} for an application of these princip
 vctrs thinks of the vector types as forming a partially ordered set, or
 poset. Then finding the common type from a set of types is a matter of
 finding the least-upper-bound; if the least-upper-bound does not exist,
-there is no common type.
+there is no common type. This is the case for many pairs of 1d vectors.
 
 The poset of the most important base vectors is shown below:
 (where datetime stands for \code{POSIXt}, and date for \code{Date})
 
 \figure{coerce.png}
-
-Red lines indicate coercions that only occur when \code{.strict = FALSE}
 }
 
 \examples{
-
 vec_coerce(factor("a"), factor(c("a", "b")))
-vec_coerce(factor("a"), factor("b"), .strict = FALSE)
-vec_coerce(factor("a"), factor("b"), .type = character())
+vec_coerce(factor("a"), Sys.Date(), .type = list())
 }

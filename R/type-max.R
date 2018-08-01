@@ -1,20 +1,20 @@
-vectype_max <- function(x, y, strict = TRUE) {
+vectype_max <- function(x, y) {
   UseMethod("vectype_max")
 }
 
-vectype_max.vec_type <- function(x, y, strict = TRUE) {
+vectype_max.vec_type <- function(x, y) {
   y <- as_vec_type(y)
-  vec_type(vectype_max(x$prototype, y$prototype, strict = strict))
+  vec_type(vectype_max(x$prototype, y$prototype))
 }
 
-vectype_max.NULL <- function(x, y, strict = TRUE) {
+vectype_max.NULL <- function(x, y) {
   vec_subset(y, 0L)
 }
 
 # Numeric-ish ----------------------------------------------------------
 
 #' @export
-vectype_max.logical <- function(x, y, strict = TRUE) {
+vectype_max.logical <- function(x, y) {
   if (is_null(y)) {
     logical()
   } else if (is_bare_logical(y)) {
@@ -24,12 +24,12 @@ vectype_max.logical <- function(x, y, strict = TRUE) {
   } else if (is_bare_double(y)) {
     double()
   } else {
-    fallback(list(), x, y, strict = strict)
+    abort_no_max_type(vec_type(x), vec_type(y))
   }
 }
 
 #' @export
-vectype_max.integer <- function(x, y, strict = TRUE) {
+vectype_max.integer <- function(x, y) {
   if (is_null(y)) {
     integer()
   } else if (is_bare_logical(y)) {
@@ -39,12 +39,12 @@ vectype_max.integer <- function(x, y, strict = TRUE) {
   } else if (is_bare_double(y)) {
     double()
   } else {
-    fallback(list(), x, y, strict = strict)
+    abort_no_max_type(vec_type(x), vec_type(y))
   }
 }
 
 #' @export
-vectype_max.double <- function(x, y, strict = TRUE) {
+vectype_max.double <- function(x, y) {
   if (is_null(y)) {
     double()
   } else if (is_bare_logical(y)) {
@@ -54,7 +54,7 @@ vectype_max.double <- function(x, y, strict = TRUE) {
   } else if (is_bare_double(y)) {
     double()
   } else {
-    fallback(list(), x, y, strict = strict)
+    abort_no_max_type(vec_type(x), vec_type(y))
   }
 }
 
@@ -62,16 +62,16 @@ vectype_max.double <- function(x, y, strict = TRUE) {
 # Characters and factors --------------------------------------------------
 
 #' @export
-vectype_max.character <- function(x, y, strict = TRUE) {
+vectype_max.character <- function(x, y) {
   if (is_null(y) || is_bare_character(y) || is.factor(y)) {
     character()
   } else {
-    fallback(list(), x, y, strict = strict)
+    abort_no_max_type(vec_type(x), vec_type(y))
   }
 }
 
 #' @export
-vectype_max.factor <- function(x, y, strict = TRUE) {
+vectype_max.factor <- function(x, y) {
   if (is_null(y)) {
     vec_subset(x, 0L)
   } else if (is.factor(y)) {
@@ -79,12 +79,12 @@ vectype_max.factor <- function(x, y, strict = TRUE) {
   } else if (is_bare_character(y)) {
     character()
   } else {
-    fallback(list(), x, y, strict = strict)
+    abort_no_max_type(vec_type(x), vec_type(y))
   }
 }
 
 #' @export
-vectype_max.ordered <- function(x, y, strict = TRUE) {
+vectype_max.ordered <- function(x, y) {
   if (is_null(y)) {
     vec_subset(x, 0L)
   } else if (is.ordered(y)) {
@@ -94,34 +94,34 @@ vectype_max.ordered <- function(x, y, strict = TRUE) {
   } else if (is_bare_character(y)) {
     character()
   } else {
-    fallback(list(), x, y, strict = strict)
+    abort_no_max_type(vec_type(x), vec_type(y))
   }
 }
 
 # Date/times --------------------------------------------------------------
 
 #' @export
-vectype_max.Date <- function(x, y, strict = TRUE) {
+vectype_max.Date <- function(x, y) {
   if (is_null(y) || inherits(y, "Date")) {
     x[0]
   } else if (inherits(y, "POSIXt")) {
     y[0]
   } else {
-    fallback(list(), x, y, strict = strict)
+    abort_no_max_type(vec_type(x), vec_type(y))
   }
 }
 
 #' @export
-vectype_max.POSIXt <- function(x, y, strict = TRUE) {
+vectype_max.POSIXt <- function(x, y) {
   if (is_null(y) || inherits(y, "Date") || inherits(y, "POSIXt")) {
     x[0]
   } else {
-    fallback(list(), x, y, strict = strict)
+    abort_no_max_type(vec_type(x), vec_type(y))
   }
 }
 
 #' @export
-vectype_max.difftime <- function(x, y, strict = TRUE) {
+vectype_max.difftime <- function(x, y) {
   if (is_null(y)) {
     x[0]
   } else if (inherits(y, "difftime")) {
@@ -133,7 +133,7 @@ vectype_max.difftime <- function(x, y, strict = TRUE) {
 
     out
   } else {
-    fallback(list(), x, y, strict = strict)
+    abort_no_max_type(vec_type(x), vec_type(y))
   }
 
 }
@@ -141,38 +141,30 @@ vectype_max.difftime <- function(x, y, strict = TRUE) {
 # Lists -------------------------------------------------------------------
 
 #' @export
-vectype_max.list <- function(x, y, strict = TRUE) {
+vectype_max.list <- function(x, y) {
   if (is_null(y) || is_bare_list(y)) {
     list()
   } else {
-    fallback(x, y, list(), strict = strict)
+    abort_no_max_type(vec_type(x), vec_type(y))
   }
 }
 
 #' @export
-vectype_max.repeated <- function(x, y, strict = TRUE) {
+vectype_max.repeated <- function(x, y) {
   if (is_null(y)) {
     x
   } else if (is_repeated(y)) {
-    tryCatch(
-      error_no_max_type = function(e) {
-        if (strict) stop(e)
-        list()
-      },
-      {
-        type <- vectype_max(attr(x, "type"), attr(y, "type"))
-        new_repeated(list(), type)
-      }
-    )
+    type <- vectype_max(attr(x, "type"), attr(y, "type"))
+    new_repeated(list(), type)
   } else {
-    fallback(x, y, list(), strict = strict)
+    abort_no_max_type(vec_type(x), vec_type(y))
   }
 }
 
 # Data frames -------------------------------------------------------------
 
 #' @export
-vectype_max.data.frame <- function(x, y, strict = TRUE) {
+vectype_max.data.frame <- function(x, y) {
   if (is_null(y)) {
     x
   } else if (is.data.frame(y)) {
@@ -182,7 +174,7 @@ vectype_max.data.frame <- function(x, y, strict = TRUE) {
 
     # Find types
     if (length(common) > 0) {
-      common_types <- map2(x[common], y[common], vectype_max, strict = strict)
+      common_types <- map2(x[common], y[common], vectype_max)
     } else {
       common_types <- list()
     }
@@ -198,25 +190,13 @@ vectype_max.data.frame <- function(x, y, strict = TRUE) {
       row.names = .set_row_names(0L)
     )
   } else {
-    fallback(list(), x, y, strict = strict)
+    abort_no_max_type(vec_type(x), vec_type(y))
   }
 
 }
 
 # Helpers -----------------------------------------------------------------
 
-fallback <- function(fallback, x, y, strict = TRUE) {
-  if (!strict) {
-    warning(
-      "Coercing to ", format(vec_type(fallback)),
-      call. = FALSE,
-      immediate. = TRUE
-    )
-    fallback
-  } else {
-    abort_no_max_type(vec_type(x), vec_type(y))
-  }
-}
 
 abort_no_max_type <- function(type_x, type_y) {
   msg <- glue::glue("No common type for {type_x} and {type_y}")

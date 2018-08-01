@@ -1,4 +1,4 @@
-vec_type_explain <- function(..., .strict = TRUE) {
+vec_type_explain <- function(...) {
   args <- list2(...)
   n <- length(args)
   if (n == 0L) {
@@ -13,7 +13,7 @@ vec_type_explain <- function(..., .strict = TRUE) {
   for (i in seq2(2, n)) {
     cur <- tryCatch(
       error_no_max_type = function(e) NA_character_,
-      vectype_max(cur, args[[i]], strict = .strict)
+      vectype_max(cur, args[[i]])
     )
 
     if (identical(cur, NA_character_)) {

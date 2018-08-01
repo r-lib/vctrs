@@ -7,7 +7,7 @@
 \alias{is_repeated}
 \title{Construct "repeated" objects}
 \usage{
-repeated(..., .strict = TRUE, .type = NULL)
+repeated(..., .type = NULL)
 
 as_repeated(x, ...)
 
@@ -19,13 +19,10 @@ is_repeated(x)
 \item{...}{Vectors to coerce. All vectors must be 1d (i.e. no data
 frames, matrices or arrays).}
 
-\item{.strict}{If \code{.strict = FALSE}, there will always be a common type for
-any pair of vectors. This will be a character vector for factors with
-different level sets, and a list for everything else.}
-
 \item{.type}{Usually, the type of the output is coerced to a type common to
 inputs. Alternatively, you can supply \code{.type} to force the output to
-have known type, or to die trying. See \code{\link[=vec_cast]{vec_cast()}} for more details.}
+have known type, or to die trying. See \code{\link[=vec_cast]{vec_cast()}} for more details.
+\code{.type = character()} and \code{.type = list()} will succeed for all vectors.}
 
 \item{x}{For \code{as_repeated()}, a vector to be coerced to repeated.}
 }

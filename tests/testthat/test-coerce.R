@@ -35,8 +35,3 @@ test_that("different types are coerced to common", {
 test_that("specified .types allows more casts", {
   expect_equal(vec_c(TRUE, .type = character()), "TRUE")
 })
-
-test_that("setting strict = FALSE allows relaxes coercions", {
-  expect_warning(x <- vec_c(1:2, "x", .strict = FALSE), "Coercing")
-  expect_equal(x, list(1L, 2L, "x"))
-})

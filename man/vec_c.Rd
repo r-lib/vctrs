@@ -4,19 +4,16 @@
 \alias{vec_c}
 \title{Concatenate vectors}
 \usage{
-vec_c(..., .strict = TRUE, .type = NULL)
+vec_c(..., .type = NULL)
 }
 \arguments{
 \item{...}{Vectors to coerce. All vectors must be 1d (i.e. no data
 frames, matrices or arrays).}
 
-\item{.strict}{If \code{.strict = FALSE}, there will always be a common type for
-any pair of vectors. This will be a character vector for factors with
-different level sets, and a list for everything else.}
-
 \item{.type}{Usually, the type of the output is coerced to a type common to
 inputs. Alternatively, you can supply \code{.type} to force the output to
-have known type, or to die trying. See \code{\link[=vec_cast]{vec_cast()}} for more details.}
+have known type, or to die trying. See \code{\link[=vec_cast]{vec_cast()}} for more details.
+\code{.type = character()} and \code{.type = list()} will succeed for all vectors.}
 }
 \description{
 Concatenate vectors using the vctr coercion rules as explained in
@@ -35,13 +32,5 @@ vec_c(Sys.time(), Sys.Date())
 
 # Factors -----------------------------
 c(factor("a"), factor("b"))
-
-# vctrs considers factors with different level sets to be
-# different types with no common type, unless you relax the
-# usual rules, in which case you'll get a character vector
-vec_c(factor("a"), factor("b"), .strict = FALSE)
-
-# You can also supply a type to override the defaults
-vec_c(factor("a"), factor("b"), .type = character())
-vec_c(factor("a"), factor("b"), .type = factor(levels = c("a", "b")))
+vec_c(factor("a"), factor("b"))
 }
