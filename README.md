@@ -3,6 +3,9 @@
 
 # vctrs
 
+[![Travis build
+status](https://travis-ci.org/hadley/vctrs.svg?branch=master)](https://travis-ci.org/hadley/vctrs)
+
 The primary short-term goal of vctrs is to develop a theory of “types”
 that help us reason about the “correct” type and shape to return from
 vectorised functions that have to combine inputs with different types

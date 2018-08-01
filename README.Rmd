@@ -15,6 +15,8 @@ knitr::opts_chunk$set(
 
 # vctrs
 
+[![Travis build status](https://travis-ci.org/hadley/vctrs.svg?branch=master)](https://travis-ci.org/hadley/vctrs)
+
 The primary short-term goal of vctrs is to develop a theory of "types" that help us reason about the "correct" type and shape to return from vectorised functions that have to combine inputs with different types (e.g. `c()` and `dplyr::bind_rows()`). For the user, the goal is to be invisible: a principled approach to type coercion will provide greater consistency across functions, leading to a more accurate mental model and fewer suprises.
 
 In the medium-term, we will provide developer documentation for creating new types of S3 vector. This will describe what you need to do make your new class by into the vctrs coercion philosophy, well as what base generics you should be supply methods for.
