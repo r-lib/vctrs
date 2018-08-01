@@ -20,6 +20,9 @@ This means we'll recycle a scalar to a vector, but not a length-2 vector
 to a length-10 vector. Recycling arrays takes dimension into account so
 that (e.g.) row and col vectors are fill a matrix as you might expect.
 }
+\details{
+This is called broadcasting in numpy.
+}
 \examples{
 # Only vectors of length 1 are recycled
 vec_recycle(1:5, 5)
@@ -31,6 +34,7 @@ vec_recycle(1:5, 1:2)
 vec_recycle(
   matrix(1:6, nrow = 2),
   matrix(1:2, nrow = 2),
-  matrix(1:3, nrow = 1)
+  matrix(1:3, nrow = 1),
+  0
 )
 }

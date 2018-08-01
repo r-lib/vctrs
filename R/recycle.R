@@ -6,6 +6,8 @@
 #' to a length-10 vector. Recycling arrays takes dimension into account so
 #' that (e.g.) row and col vectors are fill a matrix as you might expect.
 #'
+#' This is called broadcasting in numpy.
+#'
 #' @param ... Vectors to recycle.
 #' @return A list of input vectors recycled to common shape, or an error
 #'   stating that a common shape could not be found.
@@ -21,7 +23,8 @@
 #' vec_recycle(
 #'   matrix(1:6, nrow = 2),
 #'   matrix(1:2, nrow = 2),
-#'   matrix(1:3, nrow = 1)
+#'   matrix(1:3, nrow = 1),
+#'   0
 #' )
 vec_recycle <- function(...) {
   args <- list2(...)
