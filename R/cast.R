@@ -151,20 +151,12 @@ vec_cast.repeated <- function(x, to) {
 vec_cast.factor <- function(x, to) {
   if (is_null(x)) {
     NULL
-  } else if (is.character(x))  {
+  } else if (is.character(x) || is.factor(x))  {
     if (length(levels(to)) == 0L) {
-      factor(x, levels = unique(x))
+      factor(as.character(x), levels = unique(x), ordered = is.ordered(to))
     } else {
       warn_cast_lossy_vector(x, to, !x %in% levels(to))
-      factor(x, levels = levels(to))
-    }
-  } else if (is.factor(x)) {
-    if (identical(levels(x), levels(to)) || length(levels(to)) == 0) {
-      # fast path
-      x
-    } else {
-      warn_cast_lossy_vector(x, to, !x %in% levels(to))
-      factor(as.character(x), levels = levels(to))
+      factor(x, levels = levels(to), ordered = is.ordered(to))
     }
   } else if (is.list(x)) {
     cast_from_list(x, to)

@@ -19,13 +19,6 @@ test_that("difftime has units as parameter", {
   expect_equal(vec_type_string(difftime(now + 1e5, now)), "difftime<days>")
 })
 
-test_that("factors display hashed levels", {
-  f1 <- factor(letters)
-
-  expect_equal(vec_type_string(f1), "factor<5cab7>")
-  expect_equal(vec_type_string(f1[0]), "factor<5cab7>")
-})
-
 test_that("data frames print nicely", {
   expect_known_output(
     file = test_path("test-type-df.txt"),

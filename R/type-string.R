@@ -20,13 +20,16 @@ vec_type_string.POSIXt <- function(x) {
   "datetime"
 }
 
+# Strict thinking:
 # Levels are parameter of the type, because it does not make sense to
 # compare the values of the underlying vector if the levels are different.
 # Levels are potentially long, so we just display a hash of the levels.
+# Relaxed thinking:
+# Pragmatically, while the levels are a parameter of the type, the pay off
+# for explicitly managing is not worthwhile.
 #' @export
 vec_type_string.factor <- function(x) {
-  params <- paste0("<", hash(levels(x)), ">")
-  paste0("factor", dim_type(x), params)
+  if (is.ordered(x)) "ordered" else "factor"
 }
 
 #' @export

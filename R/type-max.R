@@ -63,9 +63,7 @@ vectype_max.double <- function(x, y, strict = TRUE) {
 
 #' @export
 vectype_max.character <- function(x, y, strict = TRUE) {
-  if (is_null(y) || is_bare_character(y)) {
-    character()
-  } else if (!strict && is.factor(y)) {
+  if (is_null(y) || is_bare_character(y) || is.factor(y)) {
     character()
   } else {
     fallback(list(), x, y, strict = strict)
@@ -77,15 +75,24 @@ vectype_max.factor <- function(x, y, strict = TRUE) {
   if (is_null(y)) {
     vec_subset(x, 0L)
   } else if (is.factor(y)) {
-    switch(
-      set_compare(levels(x), levels(y)),
-      equal = vec_subset(x, 0L),
-      x_in_y = vec_subset(y, 0L),
-      y_in_x = vec_subset(x, 0L),
-      fallback(character(), x, y, strict = strict) # needs custom error
-    )
+    factor(levels = union(levels(x), levels(y)))
   } else if (is_bare_character(y)) {
-    fallback(character(), x, y, strict = strict)
+    character()
+  } else {
+    fallback(list(), x, y, strict = strict)
+  }
+}
+
+#' @export
+vectype_max.ordered <- function(x, y, strict = TRUE) {
+  if (is_null(y)) {
+    vec_subset(x, 0L)
+  } else if (is.ordered(y)) {
+    ordered(character(), levels = union(levels(x), levels(y)))
+  } else if (is.factor(y)) {
+    factor(levels = union(levels(x), levels(y)))
+  } else if (is_bare_character(y)) {
+    character()
   } else {
     fallback(list(), x, y, strict = strict)
   }

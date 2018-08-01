@@ -140,6 +140,14 @@ test_that("invalid casts generate error", {
   expect_error(vec_cast(double(), factor("a")), class = "error_no_cast")
 })
 
+test_that("orderedness of factor is preserved", {
+  fct <- factor("a")
+  ord <- ordered("a")
+
+  expect_equal(vec_cast(fct, ord), ord)
+  expect_equal(vec_cast("a", ord), ord)
+})
+
 # Dates -------------------------------------------------------------------
 
 test_that("safe casts work as expected", {

@@ -32,9 +32,8 @@ test_that("datetime coercions are symmetric and unchanging", {
 test_that("factor/character coercions are symmetric and unnchanging", {
   types <- list(
     NULL,
-    fa = factor(levels = c("a")),
-    fab = factor(levels = c("a", "b")),
-    fc = factor(levels = c("c")),
+    ordered(character()),
+    factor(),
     character()
   )
   mat_strct <- maxtype_mat(types)
@@ -76,12 +75,14 @@ test_that("repeated/list coercions are symmetric and unchanging", {
 
 # Factors -----------------------------------------------------------------
 
-test_that("factors can be coerced to character when relaxed", {
-  fa <- vec_type(factor("a"))
-  fb <- vec_type(factor("b"))
+test_that("factors level are unioned", {
+  # This is technically incorrect, but because of R's existing behaviour
+  # anything else will cause substantial friction.
+  fa <- vec_type(factor(levels = "a"))
+  fb <- vec_type(factor(levels = "b"))
 
-  expect_warning(type <- max(fa, fb, strict = FALSE), "Coercing")
-  expect_equal(type$prototype, character())
+  expect_equal(max(fa, fb), vec_type(factor(levels = c("a", "b"))))
+  expect_equal(max(fb, fa), vec_type(factor(levels = c("b", "a"))))
 })
 
 test_that("nested factors are equivalent", {

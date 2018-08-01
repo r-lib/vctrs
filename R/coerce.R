@@ -17,10 +17,6 @@
 #' \figure{coerce.png}
 #'
 #' Red lines indicate coercions that only occur when `.strict = FALSE`
-#' Note that factors are a parametric type; it doesn't make sense to compare
-#' factors with different level sets. The rules are slightly more generous
-#' than shown in this diagram: if one level set is completely contained
-#' within the other, we use the larger set.
 #'
 #' @param ... Vectors to coerce.
 #' @param .strict If `.strict = FALSE`, there will always be a common type for
