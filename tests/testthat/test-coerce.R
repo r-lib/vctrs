@@ -42,3 +42,11 @@ test_that("different types are coerced to common", {
 test_that("specified .types allows more casts", {
   expect_equal(vec_c(TRUE, .type = character()), "TRUE")
 })
+
+test_that("combines outer an inner names", {
+  expect_equal(vec_c(x = 1), c(x = 1))
+  expect_equal(vec_c(c(x = 1)), c(x = 1))
+
+  expect_equal(vec_c(c(x = 1:2)), c(x1 = 1, x2 = 2))
+  expect_equal(vec_c(y = c(x = 1)), c(y.x = 1))
+})

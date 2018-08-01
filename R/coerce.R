@@ -45,6 +45,12 @@ vec_coerce <- function(..., .type = NULL) {
 #'
 #' @param ... Vectors to coerce. All vectors must be 1d (i.e. no data
 #'   frames, matrices or arrays).
+#' @return A vector with length equal to the sum of the lengths of the contents
+#'   of `...`.
+#'
+#'   The vector will have names if the individual components have names
+#'   (inner names) or if the arguments are named (outer names). If both
+#'   inner and outer names are present, they are combined with a `.`.
 #' @inheritParams vec_coerce
 #' @export
 #' @examples
@@ -76,6 +82,11 @@ vec_c <- function(..., .type = NULL) {
 
   ns <- map_int(args, length)
   out <- vec_rep(type, sum(ns))
+  if (is.null(names(args))) {
+    names <- NULL
+  } else {
+    names <- vec_rep(character(), sum(ns))
+  }
 
   pos <- 1
   for (i in seq_along(ns)) {
@@ -83,9 +94,14 @@ vec_c <- function(..., .type = NULL) {
     if (n == 0L)
       next
 
-    out[pos:(pos + n - 1)] <- vec_cast(args[[i]], to = type)
+    x <- vec_cast(args[[i]], to = type)
+
+    names[pos:(pos + n - 1)] <- outer_names(x, names(args)[[i]])
+    out[pos:(pos + n - 1)] <- x
     pos <- pos + n
   }
+
+  names(out) <- names
 
   out
 }

@@ -15,6 +15,14 @@ inputs. Alternatively, you can supply \code{.type} to force the output to
 have known type, or to die trying. See \code{\link[=vec_cast]{vec_cast()}} for more details.
 \code{.type = character()} and \code{.type = list()} will succeed for all vectors.}
 }
+\value{
+A vector with length equal to the sum of the lengths of the contents
+of \code{...}.
+
+The vector will have names if the individual components have names
+(inner names) or if the arguments are named (outer names). If both
+inner and outer names are present, they are combined with a \code{.}.
+}
 \description{
 Concatenate vectors using the vctr coercion rules as explained in
 \code{\link[=vec_coerce]{vec_coerce()}}.
