@@ -12,8 +12,8 @@ Depends: R (>= 3.3.1)
 License: GPL-3
 Encoding: UTF-8
 LazyData: true
-URL: https://github.com/hadley/vctrs
-BugReports: https://github.com/hadley/vctrs/issues
+URL: https://github.com/r-lib/vctrs
+BugReports: https://github.com/r-lib/vctrs/issues
 RoxygenNote: 6.0.1.9000
 Imports: 
     rlang,

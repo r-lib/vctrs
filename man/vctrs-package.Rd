@@ -13,8 +13,8 @@ functions for both R and C.
 \seealso{
 Useful links:
 \itemize{
-  \item \url{https://github.com/hadley/vctrs}
-  \item Report bugs at \url{https://github.com/hadley/vctrs/issues}
+  \item \url{https://github.com/r-lib/vctrs}
+  \item Report bugs at \url{https://github.com/r-lib/vctrs/issues}
 }
 
 }
