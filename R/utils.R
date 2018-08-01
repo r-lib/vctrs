@@ -33,3 +33,25 @@ vec_coerce_bare <- function(x, type) {
   coerce <- env_get(ns_env("rlang"), "vec_coerce")
   coerce(x, type)
 }
+
+
+# Matches the semantics of c() - based on experimenting with the output
+# of c(), not reading the source code.
+name_outer <- function(x, outer) {
+  has_outer <- !outer %in% c("", NA)
+  if (!has_outer)
+    return(x)
+
+  has_inner <- !is.null(names(x))
+  if (has_inner) {
+    names(x) <- paste0(outer, ".", names(x))
+  } else {
+    if (length(x) == 1) {
+      names(x) <- outer
+    } else {
+      names(x) <- paste0(outer, seq_along(x))
+    }
+  }
+
+  x
+}
