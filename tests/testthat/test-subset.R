@@ -18,6 +18,20 @@ test_that("can subset object of an dimensionality", {
   expect_equal(vec_subset(x4, 1L), ones(1, 3, 4, 5))
 })
 
+test_that("can modify subset", {
+  x1 <- c(2, 1)
+  vec_subset(x1, 1L) <- 1
+  expect_equal(x1, c(1, 1))
+
+  x2 <- array(c(2, 1, 2, 1), c(2, 2))
+  vec_subset(x2, 1L) <- 1
+  expect_equal(x2, array(1, c(2, 2)))
+
+  x3 <- array(c(2, 1, 2, 1, 2, 1, 2, 1), c(2, 2, 2))
+  vec_subset(x3, 1L) <- 1
+  expect_equal(x3, array(1, c(2, 2, 2)))
+})
+
 # vec_na ------------------------------------------------------------------
 
 test_that("na of atomic vectors is as expected", {
