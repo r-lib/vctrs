@@ -8,19 +8,20 @@ Authors@R: c(
 Description: Functions that help you work with vectors, particularly numeric.
     Provides a full set of summary, cumulative, rolling, and vectorised
     functions for both R and C.
-Depends: R (>= 3.3.1)
 License: GPL-3
-Encoding: UTF-8
-LazyData: true
 URL: https://github.com/r-lib/vctrs
 BugReports: https://github.com/r-lib/vctrs/issues
-RoxygenNote: 6.0.1.9000
+Depends: 
+    R (>= 3.3.1)
 Imports: 
-    rlang,
     digest,
     glue,
+    rlang,
     tibble
 Suggests: 
     testthat
-Roxygen: list(markdown = TRUE)
+Encoding: UTF-8
 Language: en-GB
+LazyData: true
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 6.0.1.9000
