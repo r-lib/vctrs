@@ -1,3 +1,4 @@
+^README\.Rmd$
 ^man/figures/types\.graffle$
 ^.*\.Rproj$
 ^\.Rproj\.user$
