@@ -28,6 +28,11 @@ test_that("invalid casts generate error", {
   expect_error(vec_cast(factor("a"), logical()), class = "error_no_cast")
 })
 
+test_that("dimensionality is preserved" ,{
+  x <- matrix(1, nrow = 2, ncol = 2)
+  expect_dim(vec_cast(x, logical()), c(2, 2))
+})
+
 # Integer -----------------------------------------------------------------
 
 test_that("safe casts work as expected", {
@@ -46,6 +51,11 @@ test_that("lossy casts generate warning", {
 
 test_that("invalid casts generate error", {
   expect_error(vec_cast(factor("a"), integer()), class = "error_no_cast")
+})
+
+test_that("dimensionality is preserved" ,{
+  x <- matrix(TRUE, nrow = 2, ncol = 2)
+  expect_dim(vec_cast(x, integer()), c(2, 2))
 })
 
 # Double ------------------------------------------------------------------
@@ -67,6 +77,11 @@ test_that("invalid casts generate error", {
   expect_error(vec_cast(factor("a"), double()), class = "error_no_cast")
 })
 
+test_that("dimensionality is preserved" ,{
+  x <- matrix(TRUE, nrow = 2, ncol = 2)
+  expect_dim(vec_cast(x, double()), c(2, 2))
+})
+
 # Character ---------------------------------------------------------------
 
 test_that("safe casts work as expected", {
@@ -81,6 +96,12 @@ test_that("difftime gets special treatment", {
   expect_equal(vec_cast(dt1, character()), "600 secs")
 })
 
+test_that("dimensionality is preserved" ,{
+  x <- matrix(TRUE, nrow = 2, ncol = 2)
+  expect_dim(vec_cast(x, character()), c(2, 2))
+})
+
+
 # Lists  ------------------------------------------------------------------
 
 test_that("safe casts work as expected", {
@@ -90,6 +111,11 @@ test_that("safe casts work as expected", {
 
 test_that("lossy casts generate warnings", {
   expect_condition(vec_cast(list_of(1L), list()), class = "warning_cast_lossy")
+})
+
+test_that("dimensionality is preserved" ,{
+  x <- matrix(TRUE, nrow = 2, ncol = 2)
+  expect_dim(vec_cast(x, list()), c(2, 2))
 })
 
 # list_of -----------------------------------------------------------------
