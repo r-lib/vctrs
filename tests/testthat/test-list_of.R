@@ -46,6 +46,10 @@ test_that("[ preserves type", {
 })
 
 test_that("[<-, [[<- and $<- coerce their input", {
+  # Seems to be some bug in R 3.1 where NextMethod() called from $.list_of
+  # causes an error "invalid subscript type 'promise'"
+  skip_if_not(getRversion() >= "3.2")
+
   x <- list_of(x = 1, y = 1, z = 1)
   x[1] <- list(FALSE)
   x[[2]] <- FALSE
