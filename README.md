@@ -129,8 +129,8 @@ is a list where each element has the same *length*).
 
 ``` r
 x1 <- list_of(1:3, 3:5, 6:8)
-vec_type(x)
-#> Error in is_vector(x): object 'x' not found
+vec_type(x1)
+#> type: list_of<integer>
 
 # This type is enforced if you attempt to modify the vector
 x1[[4]] <- c(FALSE, TRUE, FALSE)
