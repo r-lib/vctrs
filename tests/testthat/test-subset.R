@@ -1,10 +1,6 @@
 context("test-subset")
 
 test_that("can subset object of an dimensionality", {
-  ones <- function(...) {
-    array(1, dim = c(...))
-  }
-
   x0 <- c(1, 1)
   x1 <- ones(2)
   x2 <- ones(2, 3)
