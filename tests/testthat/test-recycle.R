@@ -1,5 +1,9 @@
 context("test-vec_recycle")
 
+test_that("empty input returns empty list", {
+  expect_equal(vec_recycle(), list())
+})
+
 # Vectors -----------------------------------------------------------------
 
 test_that("NULL is idempotent", {
