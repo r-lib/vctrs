@@ -7,6 +7,7 @@
 status](https://travis-ci.org/r-lib/vctrs.svg?branch=master)](https://travis-ci.org/r-lib/vctrs)
 [![Coverage
 status](https://codecov.io/gh/hadley/vctrs/branch/master/graph/badge.svg)](https://codecov.io/github/hadley/vctrs?branch=master)
+[![lifecycle](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://www.tidyverse.org/lifecycle/#experimental)
 
 The primary short-term goal of vctrs is to develop a theory of “types”
 that help us reason about the “correct” type and shape to return from
@@ -19,7 +20,9 @@ and fewer suprises.
 In the medium-term, we will provide developer documentation for creating
 new types of S3 vector. This will describe what you need to do make your
 new class by into the vctrs coercion philosophy, well as what base
-generics you should be supply methods for.
+generics you should be supply methods for. We will also reimplement the
+core coercions in C for performance, and consider how best to perform
+double dispatch without using S4.
 
 In the long-run, vctrs will also expand to provide functions that
 working with logical and numeric vectors, and vectors in general. It
@@ -39,7 +42,7 @@ You can install the development version of vctrs from GitHub with:
 devtools::install_github("r-lib/vctrs")
 ```
 
-## Example
+## Examples
 
 ### Base vectors
 
