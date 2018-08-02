@@ -114,7 +114,23 @@ Reduce(vec_type2, types)
 ```
 
 `vec_cast()` is used for explicit casts: given a value and a type, it
-casts the value to the type, or dies trying.
+casts the value to the type, or dies trying. It will warn if a cast is
+possible in general, but information is lost for a specific input.
+
+``` r
+# Cast succeeds
+vec_cast(c(1, 2), integer())
+#> [1] 1 2
+
+# Cast loses information
+vec_cast(c(1.5, 2.5), integer())
+#> Warning: Lossy conversion from double to integer [Locations: 1, 2]
+#> [1] 1 2
+
+# Cast fails
+vec_cast(c(1.5, 2.5), factor("a"))
+#> Error: Can't cast double to factor
+```
 
 The set of possible casts is a subset of possible automatic coercions,
 and both are summarised in the following diagram where arrows represent
