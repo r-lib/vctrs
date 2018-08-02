@@ -1,4 +1,5 @@
-.onLoad <- function(...) {
+.onLoad <- function(libname, pkgname) {
+  backports::import(pkgname, "strrep")
   register_s3_method("tibble", "type_sum", "list_of")
 }
 

@@ -17,7 +17,8 @@ Imports:
     digest,
     glue,
     rlang,
-    tibble
+    tibble,
+    backports
 Suggests: 
     testthat
 Encoding: UTF-8
@@ -25,5 +26,5 @@ Language: en-GB
 LazyData: true
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 6.0.1.9000
-Remotes:  
+Remotes: 
     r-lib/rlang
