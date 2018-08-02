@@ -70,8 +70,7 @@ vec_c(1, "x", .type = list())
 
 # Coercions will warn when lossy (i.e. you can't round trip)
 vec_c(1, 1.5, 2, .type = integer())
-#> Warning: Lossy conversion from double to integer
-#> At positions: 1
+#> Warning: Lossy conversion from double to integer [Locations: 1]
 #> [1] 1 1 2
 ```
 
@@ -90,6 +89,38 @@ vec_type(list(1, 2, 3))
 Internally, we represent the type of a vector with a 0-length subset of
 the vector; that allows us to use value and types interchangeably in
 many cases, and we can rely base constructors for empty vectors.
+
+### Coercion and casting
+
+There are two primary components to the implementation of vectors,
+`vec_type2()` and `vec_cast()`.
+
+`vec_type2()` is used for implicit coercions: given two types, it
+returns their common type or dies trying. `vec_type2()` is associative
+and commutative, which means that to find the common type for more than
+two vectors, you can use `Reduce()`.
+
+``` r
+vec_type2(integer(), double())
+#> numeric(0)
+
+# no common type
+vec_type2(factor(), Sys.Date())
+#> Error: No common type for factor and date
+
+types <- list(integer(), double(), logical())
+Reduce(vec_type2, types)
+#> numeric(0)
+```
+
+`vec_cast()` is used for explicit casts: given a value and a type, it
+casts the value to the type, or dies trying.
+
+The set of possible casts is a subset of possible automatic coercions,
+and both are summarised in the following diagram where arrows represent
+automatic coercions, and circles represent possible casts.
+
+![](man/figures/combined.png)
 
 ### Data frames
 
