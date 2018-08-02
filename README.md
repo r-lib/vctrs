@@ -6,7 +6,7 @@
 [![Travis build
 status](https://travis-ci.org/r-lib/vctrs.svg?branch=master)](https://travis-ci.org/r-lib/vctrs)
 [![Coverage
-status](https://codecov.io/gh/hadley/vctrs/branch/master/graph/badge.svg)](https://codecov.io/github/hadley/vctrs?branch=master)
+status](https://codecov.io/gh/r-lib/vctrs/branch/master/graph/badge.svg)](https://codecov.io/github/r-lib/vctrs?branch=master)
 [![lifecycle](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://www.tidyverse.org/lifecycle/#experimental)
 
 The primary short-term goal of vctrs is to develop a theory of “types”
