@@ -5,6 +5,8 @@
 
 [![Travis build
 status](https://travis-ci.org/r-lib/vctrs.svg?branch=master)](https://travis-ci.org/r-lib/vctrs)
+[![Coverage
+status](https://codecov.io/gh/hadley/vctrs/branch/master/graph/badge.svg)](https://codecov.io/github/hadley/vctrs?branch=master)
 
 The primary short-term goal of vctrs is to develop a theory of “types”
 that help us reason about the “correct” type and shape to return from
