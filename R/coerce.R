@@ -1,28 +1,16 @@
 #' Coerce vectors to shared type
 #'
-#' This function is a general tool that will be of most interest when developing
-#' new functions, but it also serves as a central place to document design
-#' decisions. See [vec_c()] for an application of these principles.
-#'
-#' @section Coercion rules:
-#'
-#' vctrs thinks of the vector types as forming a partially ordered set, or
-#' poset. Then finding the common type from a set of types is a matter of
-#' finding the least-upper-bound; if the least-upper-bound does not exist,
-#' there is no common type. This is the case for many pairs of 1d vectors.
-#'
-#' The poset of the most important base vectors is shown below:
-#' (where datetime stands for `POSIXt`, and date for `Date`)
-#'
-#' \figure{coerce.png}
+#' This function is a useful as a building block for other functions. The
+#' implementation also illustrates the key ideas of the vctrs type system.
 #'
 #' @param ... Vectors to coerce.
 #' @param .type Usually, the type of the output is coerced to a type common to
 #'   inputs. Alternatively, you can supply `.type` to force the output to
 #'   have known type, or to die trying. See [vec_cast()] for more details.
 #'   `.type = character()` and `.type = list()` will succeed for all vectors.
-#' @return A list of input vectors coerced to shared (least-upper-bound) type,
-#'   or an error stating that a common type could not be found.
+#' @return A [list_of] input vectors coerced to `.type`, an error stating
+#'   that a common type could not be found, or an error stating that casting
+#'   a input to `.type` was not possible.
 #' @export
 #' @examples
 #' vec_coerce(factor("a"), factor(c("a", "b")))
@@ -33,8 +21,6 @@ vec_coerce <- function(..., .type = NULL) {
     return(list())
 
   type <- find_type(args, .type = .type)
-
-  # Should return ListOf<type>
   as_list_of(map(args, vec_cast, to = type), .type = type)
 }
 

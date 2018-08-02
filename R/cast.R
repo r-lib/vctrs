@@ -1,10 +1,11 @@
-#' Export cast a vector to specified type
+#' Cast a vector to specified type
 #'
-#' Casting supports a wider range of transformations that are automatically
-#' imputed by coercion (e.g. with [vec_coerce()]).
+#' `vec_cast()` provides general coercions from one type of vector to another,
+#' and along with [vec_type2()] forms the foundation of the vctrs type system.
+#' It should generally not be called by R users, but is important for R
+#' developers.
 #'
 #' @section Casting rules:
-#'
 #' Casting is more flexible than coercion, and allows for the possibility of
 #' information loss. This diagram summarises possible coercions. `vec_cast()`
 #' from any type connected to another type, provided that the arrows are
@@ -12,6 +13,10 @@
 #' character, and list to time, but you can not cast from logical to datetime.
 #'
 #' \figure{cast.png}
+#'
+#' Most casts are not symmetric: you can cast all integers to doubles, but you
+#' can only cast a subset of doubles back to integers. If a cast is lossy
+#' for
 #'
 #' The rules for coercing from a list a fairly strict: each component of the
 #' list must be of length 1, and must be coercible to type `to`.
@@ -321,11 +326,8 @@ warn_cast_lossy_vector <- function(from, to, is_lossy) {
   from <- as_vec_type(from)
   to <- as_vec_type(to)
 
-  pos <- glue::glue_collapse(which, width = 80)
-  msg <- glue::glue("
-    Lossy conversion from {from} to {to}
-    At positions: {pos}"
-  )
+  pos <- glue::glue_collapse(which, ", ", width = 80)
+  msg <- glue::glue("Lossy conversion from {from} to {to} [Locations: {pos}]")
 
   warn_cast_lossy(
     "warning_cast_lossy_vector",

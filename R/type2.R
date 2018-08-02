@@ -1,12 +1,41 @@
+#' Find the common type for a pair of vector types
+#'
+#' `vec_type2()` finds the common type for a pair of vectors, or dies trying.
+#' It forms the foundation of the vctrs type system, along with [vec_cast()].
+#' It should generally not be called by R users, but is important for R
+#' developers.
+#'
+#' @section Lifecycle:
+#' This function is experimental, and we plan that implementation will change
+#' substantially in the future. `vec_type()` does double-dispatch, but
+#' currently with a combination of S3 and nested `if`-`else` blocks. In
+#' the future we will provide an extensible implemntation.
+#'
+#' @section Coercion rules:
+#' vctrs thinks of the vector types as forming a partially ordered set, or
+#' poset. Then finding the common type from a set of types is a matter of
+#' finding the least-upper-bound; if the least-upper-bound does not exist,
+#' there is no common type. This is the case for many pairs of 1d vectors.
+#'
+#' The poset of the most important base vectors is shown below:
+#' (where datetime stands for `POSIXt`, and date for `Date`)
+#'
+#' \figure{coerce.png}
+#'
+#' @keywords internal
+#' @param x,y Either vector types produced by [vec_type()], or actual vectors.
+#' @export
 vec_type2 <- function(x, y) {
   UseMethod("vec_type2")
 }
 
+#' @export
 vec_type2.vec_type <- function(x, y) {
   y <- as_vec_type(y)
   vec_type(vec_type2(x$prototype, y$prototype))
 }
 
+#' @export
 vec_type2.NULL <- function(x, y) {
   vec_subset(y, 0L)
 }

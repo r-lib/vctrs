@@ -2,7 +2,7 @@
 % Please edit documentation in R/cast.R
 \name{vec_cast}
 \alias{vec_cast}
-\title{Export cast a vector to specified type}
+\title{Cast a vector to specified type}
 \usage{
 vec_cast(x, to)
 }
@@ -18,11 +18,12 @@ information is lost when casting between compatible types (i.e. when
 there is no 1-to-1 mapping for a specific value).
 }
 \description{
-Casting supports a wider range of transformations that are automatically
-imputed by coercion (e.g. with \code{\link[=vec_coerce]{vec_coerce()}}).
+\code{vec_cast()} provides general coercions from one type of vector to another,
+and along with \code{\link[=vec_type2]{vec_type2()}} forms the foundation of the vctrs type system.
+It should generally not be called by R users, but is important for R
+developers.
 }
 \section{Casting rules}{
-
 
 Casting is more flexible than coercion, and allows for the possibility of
 information loss. This diagram summarises possible coercions. \code{vec_cast()}
@@ -31,6 +32,10 @@ followed in only one direction. For example you can cast from logical to
 character, and list to time, but you can not cast from logical to datetime.
 
 \figure{cast.png}
+
+Most casts are not symmetric: you can cast all integers to doubles, but you
+can only cast a subset of doubles back to integers. If a cast is lossy
+for
 
 The rules for coercing from a list a fairly strict: each component of the
 list must be of length 1, and must be coercible to type \code{to}.

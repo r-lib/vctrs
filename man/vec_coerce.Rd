@@ -15,28 +15,14 @@ have known type, or to die trying. See \code{\link[=vec_cast]{vec_cast()}} for m
 \code{.type = character()} and \code{.type = list()} will succeed for all vectors.}
 }
 \value{
-A list of input vectors coerced to shared (least-upper-bound) type,
-or an error stating that a common type could not be found.
+A \link{list_of} input vectors coerced to \code{.type}, an error stating
+that a common type could not be found, or an error stating that casting
+a input to \code{.type} was not possible.
 }
 \description{
-This function is a general tool that will be of most interest when developing
-new functions, but it also serves as a central place to document design
-decisions. See \code{\link[=vec_c]{vec_c()}} for an application of these principles.
+This function is a useful as a building block for other functions. The
+implementation also illustrates the key ideas of the vctrs type system.
 }
-\section{Coercion rules}{
-
-
-vctrs thinks of the vector types as forming a partially ordered set, or
-poset. Then finding the common type from a set of types is a matter of
-finding the least-upper-bound; if the least-upper-bound does not exist,
-there is no common type. This is the case for many pairs of 1d vectors.
-
-The poset of the most important base vectors is shown below:
-(where datetime stands for \code{POSIXt}, and date for \code{Date})
-
-\figure{coerce.png}
-}
-
 \examples{
 vec_coerce(factor("a"), factor(c("a", "b")))
 vec_coerce(factor("a"), Sys.Date(), .type = list())
