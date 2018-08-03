@@ -28,7 +28,7 @@ outer_names <- function(x, outer) {
 
   has_inner <- !is.null(names(x))
   if (has_inner) {
-    paste0(outer, ".", names(x))
+    paste0(outer, "..", names(x))
   } else {
     if (length(x) == 1) {
       outer

@@ -1,5 +1,7 @@
 context("test-bind")
 
+# rows --------------------------------------------------------------------
+
 test_that("empty inputs return an empty data frame", {
   expect_equal(vec_rbind(), data_frame())
   expect_equal(vec_rbind(NULL, NULL), data_frame())
@@ -50,4 +52,35 @@ test_that("all inputs coerced to data frames", {
 test_that("names are supplied if needed", {
   expect_message(out <- vec_rbind(data_frame(..1 = 1), 1), "->")
   expect_equal(out, data_frame(..1 = c(1, 1)))
+})
+
+
+# cols --------------------------------------------------------------------
+
+test_that("empty inputs give data frame", {
+  expect_equal(vec_cbind(), data.frame())
+  expect_equal(vec_cbind(NULL), data.frame())
+})
+
+test_that("outer names are respected", {
+  expect_named(vec_cbind(x = 1, y = 4), c("x", "y"))
+  expect_named(vec_cbind(a = data.frame(x = 1)), "a..x")
+})
+
+test_that("nameless vectors get tidy defaults", {
+  expect_named(vec_cbind(1:2, 1), c("..1", "..2"))
+})
+
+test_that("duplicate names are de-deduplicated", {
+  expect_named(vec_cbind(x = 1, x = 1), c("x..1", "x..2"))
+  expect_named(vec_cbind(data.frame(x = 1), data.frame(x = 1)), c("x..1", "x..2"))
+})
+
+test_that("rows recycled to longest", {
+  df <- data.frame(x = 1:3)
+
+  expect_dim(vec_cbind(df), c(1, 3))
+  expect_dim(vec_cbind(df, NULL), c(1, 3))
+  expect_dim(vec_cbind(df, y = 1), c(1, 3))
+  expect_dim(vec_cbind(data.frame(x = 1), y = 1:3), c(1, 3))
 })

@@ -7,7 +7,6 @@ vecshape_coerce <- function(x, shape) {
   } else if (is.data.frame(x)) {
     # data frame recycling
     out <- vec_rep(x, shape[1])
-    out <- out[rep_len(seq_along(out), shape[2])]
     return(out)
   } else if (vec_dims(x) == 1 && length(shape) == 1) {
     # vector recycling

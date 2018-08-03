@@ -16,5 +16,5 @@ test_that("outer name vectorised if needed", {
 })
 
 test_that("outer and inner names are combined", {
-  expect_equal(outer_names(c(x = 1), "y"), c("y.x"))
+  expect_equal(outer_names(c(x = 1), "y"), c("y..x"))
 })
