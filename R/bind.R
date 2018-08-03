@@ -1,3 +1,82 @@
+#' Bind data frames
+#'
+#' This pair of functions binds together data frames, either by rows or by
+#' columns. Row-binding creates a data frame with common type over all
+#' arguments. Column-binding creates a data frame with common length over all
+#' arguments.
+#'
+#' @param ... Data frames, or objects that can be coerced to data frames.
+#'   `vec_rbind()` ignores names. `vec_cbind()` preserves outer names,
+#'   combining with inner names if also present. `NULL` inputs are ignored.
+#' @inheritParams vec_c
+#' @return A data frame. A subclass of a data frame will be returned if any
+#'   element is subclass of that data frame. Technically, the type of the
+#'   final container will respect the coercion rules defined by `vec_coerce()`.
+#'
+#'   If there are no non-`NULL` inputs, the result will be `data.frame()`.
+#' @examples
+#' # row binding -----------------------------------------
+#'
+#' # common columns are coerced to common type
+#' vec_rbind(
+#'   data.frame(x = 1),
+#'   data.frame(x = FALSE)
+#' )
+#'
+#' # unique columns are filled with NAs
+#' vec_rbind(
+#'   data.frame(x = 1),
+#'   data.frame(y = "x")
+#' )
+#'
+#' # null inputs are ignored
+#' vec_rbind(
+#'   data.frame(x = 1),
+#'   NULL,
+#'   data.frame(x = 2)
+#' )
+#'
+#' # bare vectors are treated as rows
+#' vec_rbind(
+#'   c(x = 1, y = 2),
+#'   c(x = 3)
+#' )
+#'
+#' # default names will be supplied if arguments are not named
+#' vec_rbind(
+#'   1:2,
+#'   1:3,
+#'   1:4
+#' )
+#'
+#' # column binding --------------------------------------
+#'
+#' # each input is recycled to have common length
+#' vec_cbind(
+#'   data.frame(x = 1),
+#'   data.frame(y = 1:3)
+#' )
+#'
+#' # bare vectors are treated as columns
+#' vec_cbind(
+#'   data.frame(x = 1),
+#'   y = letters[1:3]
+#' )
+#'
+#' # outer names are combined with inner names
+#' vec_cbind(
+#'   x = data.frame(a = 1, b = 2),
+#'   y = 1
+#' )
+#'
+#' # duplicate names are flagged
+#' vec_cbind(x = 1, x = 2)
+#'
+#' @name vec_bind
+NULL
+
+#' @export
+#' @rdname vec_bind
 vec_rbind <- function(..., .type = NULL) {
   args <- list2(...)
   tbls <- map(args, as_tibble_row)
@@ -23,7 +102,8 @@ vec_rbind <- function(..., .type = NULL) {
   out
 }
 
-
+#' @export
+#' @rdname vec_bind
 vec_cbind <- function(..., .type = NULL) {
   args <- list2(...)
 
