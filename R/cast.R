@@ -202,9 +202,7 @@ vec_cast.POSIXt <- function(x, to) {
   } else if (is_bare_character(x)) {
     as.POSIXct(x, tz = "UTC")
   } else if (inherits(x, "Date")) {
-    x <- as.POSIXct(x)
-    attr(x, "tzone") <- attr(to, "tzone")
-    x
+    as.POSIXct(as.character(x), tz = attr(to, "tzone") %||% "")
   } else if (inherits(x, "POSIXt")) {
     attr(x, "tzone") <- attr(to, "tzone")
     x

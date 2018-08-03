@@ -219,6 +219,15 @@ test_that("invalid casts generate error", {
   expect_error(vec_cast(integer(), datetime), class = "error_no_cast")
 })
 
+test_that("dates become midnight in date-time tzone", {
+  date1 <- as.Date("2010-01-01")
+  datetime <- as.POSIXct(character(), tz = "Pacific/Auckland")
+
+  date2 <- vec_cast(date1, datetime)
+  expect_equal(attr(date2, "tzone"), "Pacific/Auckland")
+  expect_equal(format(date2, "%H:%M"), "00:00")
+})
+
 # difftime ----------------------------------------------------------------
 
 test_that("safe casts work as expected", {
