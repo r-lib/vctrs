@@ -37,3 +37,17 @@ outer_names <- function(x, outer) {
     }
   }
 }
+
+union_tzone <- function(x, y) {
+  x_tz <- attr(x, "tzone")
+  y_tz <- attr(y, "tzone")
+
+  if (is_null(x_tz) || identical(x_tz, "")) {
+    tz <- y_tz
+  } else {
+    tz <- x_tz
+  }
+
+  attr(x, "tzone") <- tz
+  x
+}

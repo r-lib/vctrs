@@ -67,6 +67,23 @@ test_that("list coercions are symmetric and unchanging", {
 })
 
 
+# Date times --------------------------------------------------------------
+
+test_that("tz comes from first non-empty", {
+  # On the assumption that if you've set the time zone explicitly it
+  # should win
+
+  x <- as.POSIXct("2020-01-01")
+  y <- as.POSIXct("2020-01-01", tz = "America/New_York")
+
+  expect_equal(vec_type2(x, y), y[0])
+  expect_equal(vec_type2(y, x), y[0])
+
+  z <- as.POSIXct("2020-01-01", tz = "Pacific/Auckland")
+  expect_equal(vec_type2(y, z), y[0])
+  expect_equal(vec_type2(z, y), z[0])
+})
+
 # Factors -----------------------------------------------------------------
 
 test_that("factors level are unioned", {

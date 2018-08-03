@@ -142,7 +142,10 @@ vec_type2.Date <- function(x, y) {
 
 #' @export
 vec_type2.POSIXt <- function(x, y) {
-  if (is_null(y) || inherits(y, "Date") || inherits(y, "POSIXt")) {
+  if (is_null(y) || inherits(y, "Date")) {
+    x[0]
+  } else if (inherits(y, "POSIXt")) {
+    x <- union_tzone(x, y)
     x[0]
   } else {
     abort_no_max_type(vec_type(x), vec_type(y))
