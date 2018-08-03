@@ -35,7 +35,11 @@ vec_cbind <- function(..., .type = NULL) {
 
   tbls <- map2(args, names2(args), as_tibble_col)
   names(tbls) <- NULL
-  tbls <- vec_recycle(!!!tbls)
+
+  # recycle to same length
+  nrows <- map_int(tbls, NROW)
+  n <- Reduce(recycle_length, nrows)
+  tbls <- map(tbls, recycle, n = n)
 
   ns <- map_int(tbls, length)
   out <- vec_rep(list(), sum(ns))
@@ -57,6 +61,13 @@ vec_cbind <- function(..., .type = NULL) {
   as.data.frame(tibble::new_tibble(out))
 }
 
+
+recycle <- function(x, n) {
+  if (is.null(x) || nrow(x) == n)
+    return(x)
+
+  vec_rep(x, n)
+}
 
 # as_tibble --------------------------------------------------------------
 

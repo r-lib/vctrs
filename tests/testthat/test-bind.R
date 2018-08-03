@@ -83,4 +83,13 @@ test_that("rows recycled to longest", {
   expect_dim(vec_cbind(df, NULL), c(1, 3))
   expect_dim(vec_cbind(df, y = 1), c(1, 3))
   expect_dim(vec_cbind(data.frame(x = 1), y = 1:3), c(1, 3))
+
+  expect_dim(
+    vec_cbind(
+      x = data.frame(a = 1, b = 2),
+      y = 1:3
+    ),
+    c(3, 3)
+  )
+
 })
