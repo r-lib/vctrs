@@ -66,8 +66,8 @@ test_that("names are supplied if needed", {
 # cols --------------------------------------------------------------------
 
 test_that("empty inputs give data frame", {
-  expect_equal(vec_cbind(), data.frame())
-  expect_equal(vec_cbind(NULL), data.frame())
+  expect_equal(vec_cbind(), df_empty(list()))
+  expect_equal(vec_cbind(NULL), df_empty(list()))
 })
 
 test_that("outer names are respected", {
@@ -99,5 +99,13 @@ test_that("rows recycled to longest", {
     ),
     c(3, 3)
   )
+})
 
+test_that("output is tibble if any input is tibble", {
+  df <- data.frame(x = 1)
+  dt <- tibble::tibble(y = 2)
+
+  expect_s3_class(vec_cbind(dt), "tbl_df")
+  expect_s3_class(vec_cbind(df, dt), "tbl_df")
+  expect_s3_class(vec_cbind(dt, df), "tbl_df")
 })

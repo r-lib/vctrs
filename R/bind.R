@@ -118,11 +118,11 @@ vec_cbind <- function(..., .type = NULL) {
 
   # recycle to same length
   nrows <- map_int(tbls, NROW)
-  n <- Reduce(recycle_length, nrows)
-  tbls <- map(tbls, recycle, n = n)
+  nrow <- Reduce(recycle_length, nrows) %||% 0L
+  tbls <- map(tbls, recycle, n = nrow)
 
   ns <- map_int(tbls, length)
-  out <- vec_rep(list(), sum(ns))
+  cols <- vec_rep(list(), sum(ns))
   names <- vec_rep(character(), sum(ns))
 
   pos <- 1
@@ -131,16 +131,27 @@ vec_cbind <- function(..., .type = NULL) {
     if (n == 0L)
       next
 
-    out[pos:(pos + n - 1)] <- tbls[[i]]
+    cols[pos:(pos + n - 1)] <- tbls[[i]]
     if (!name_fix[[n]])
       names[pos:(pos + n - 1)] <- names(tbls[[i]])
     pos <- pos + n
   }
 
-  names(out) <- tibble::tidy_names(names)
-  as.data.frame(tibble::new_tibble(out))
-}
+  # Determine container type
+  tbl_empty <- map(tbls, function(x) x[0])
+  out <- find_type(tbl_empty, .type = .type[0])
+  if (is.null(out)) {
+    return(df_empty(list()))
+  }
 
+  # Need to document these assumptions, or better move into
+  # a generic
+  attr(out, "row.names") <- .set_row_names(nrow)
+  out[seq_along(cols)] <- cols
+  names(out) <- tibble::tidy_names(names)
+
+  out
+}
 
 recycle <- function(x, n) {
   if (is.null(x) || nrow(x) == n)
