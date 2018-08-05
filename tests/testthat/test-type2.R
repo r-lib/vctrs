@@ -129,3 +129,11 @@ test_that("data frame combines variables", {
   dt3 <- max(dt1, dt2)
   expect_equal(dt3$prototype, data.frame(x = double(), y = double()))
 })
+
+test_that("tibble beats data frame", {
+  df <- vec_type(data_frame())
+  dt <- vec_type(tibble::tibble())
+
+  expect_s3_class(max(dt, df)$prototype, "tbl_df")
+  expect_s3_class(max(dt, df)$prototype, "tbl_df")
+})

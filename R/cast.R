@@ -243,21 +243,18 @@ vec_cast.data.frame <- function(x, to) {
   if (is_null(x)) {
     NULL
   } else if (is.data.frame(x)) {
-    # Coerce common columns
-    common <- intersect(names(x), names(to))
-    x[common] <- map2(x[common], to[common], vec_cast)
+    as.data.frame(df_col_cast(x, to))
+  } else {
+    abort_no_cast(x, to)
+  }
+}
 
-    # Add new columns
-    from_type <- setdiff(names(to), names(x))
-    x[from_type] <- map(to[from_type], vec_na, n = vec_length(x))
-
-    # Warn about dropped columns
-    dropped <- setdiff(names(x), names(to))
-    if (length(dropped) > 0 ) {
-      warn_cast_lossy_dataframe(x, to, dropped)
-    }
-
-    x[names(to)]
+#' @export
+vec_cast.tbl_df <- function(x, to) {
+  if (is_null(x)) {
+    NULL
+  } else if (is.data.frame(x)) {
+    tibble::as_tibble(df_col_cast(x, to))
   } else {
     abort_no_cast(x, to)
   }

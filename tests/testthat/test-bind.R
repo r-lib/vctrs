@@ -12,6 +12,14 @@ test_that("NULL is idempotent", {
   expect_equal(vec_rbind(df, NULL), df)
 })
 
+test_that("output is tibble if any input is tibble", {
+  df <- data_frame(x = 1)
+  dt <- tibble::tibble(x = 1)
+
+  expect_s3_class(vec_rbind(dt), "tbl_df")
+  expect_s3_class(vec_rbind(dt, df), "tbl_df")
+  expect_s3_class(vec_rbind(df, dt), "tbl_df")
+})
 
 test_that("type of column is common type of individual columns", {
   x_int <- data_frame(x = 1L)

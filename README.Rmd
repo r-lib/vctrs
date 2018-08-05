@@ -25,7 +25,7 @@ Currently, the vctrs type system is fixed, and only works with types from base R
 
 In the longer-term, vctrs will become the home for tidyverse vector functions that work with logical and numeric vectors, and vectors in general. This will make it a natural complement to [stringr](https://stringr.tidyverse.org) (strings), [lubridate](http://lubridate.tidyverse.org) (date/times), and [forcats](https://forcats.tidyverse.org) (factors), and will bring together various helpers that are currently scattered across packages, `ggplot2::cut_number()`, `dplyr::coalesce()`, and `tidyr::fill()`. 
 
-vctrs has few dependencies and is suitable for use from other packages.
+vctrs has few dependencies and is suitable for use from other packages. (vctrs has a transition dependency on tibble. Once vctrs is extensible all tibble related code will move into the tibble package.)
 
 ## Installation
 

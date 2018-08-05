@@ -37,6 +37,8 @@ together various helpers that are currently scattered across packages,
 `ggplot2::cut_number()`, `dplyr::coalesce()`, and `tidyr::fill()`.
 
 vctrs has few dependencies and is suitable for use from other packages.
+(vctrs has a transition dependency on tibble. Once vctrs is extensible
+all tibble related code will move into the tibble package.)
 
 ## Installation
 

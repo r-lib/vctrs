@@ -276,5 +276,12 @@ test_that("column order matches type", {
 
   df3 <- vec_cast(df2, max(vec_type(df1), vec_type(df2))$prototype)
   expect_named(df3, c("x", "y", "z"))
+})
 
+test_that("casts preserve outer class", {
+  df <- data.frame(x = 1)
+  dt <- tibble::tibble(x = 1)
+
+  expect_s3_class(vec_cast(df, dt), "tbl_df")
+  expect_s3_class(vec_cast(dt, df), "data.frame")
 })

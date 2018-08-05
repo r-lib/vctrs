@@ -168,9 +168,8 @@ as_tibble_row.default <- function(x) {
   }
 
   # TODO: eliminate this
-  tibble::as_tibble(x)
+  as.data.frame(tibble::as_tibble(x))
 }
-
 
 as_tibble_col <- function(x, outer_name) UseMethod("as_tibble_col")
 
@@ -186,10 +185,10 @@ as_tibble_col.NULL <- function(x, outer_name = NULL) x
 #' @export
 as_tibble_col.default <- function(x, outer_name = NULL) {
   if (vec_dims(x) == 1L) {
-    tibble::as_tibble(setNames(list(x), outer_name), validate = FALSE)
+    as.data.frame(tibble::as_tibble(setNames(list(x), outer_name), validate = FALSE))
   } else {
     colnames(x) <- outer_names(x, outer_name)
     # TODO: eliminate this
-    tibble::as_tibble(x)
+    as.data.frame(tibble::as_tibble(x))
   }
 }
