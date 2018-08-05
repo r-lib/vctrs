@@ -21,9 +21,12 @@ have known type, or to die trying. See \code{\link[=vec_cast]{vec_cast()}} for m
 \code{.type = character()} and \code{.type = list()} will succeed for all vectors.}
 }
 \value{
-A data frame. A subclass of a data frame will be returned if any
-element is subclass of that data frame. Technically, the type of the
-final container will respect the coercion rules defined by \code{vec_coerce()}.
+A data frame, or subclass.
+
+If \code{...} is a mix of different data frame subclases, \code{vec_type2()} will
+be used to find the common type. For \code{vec_cbind()} only the type of
+the container needs to be determined this way, as the columns need only
+be recycled to common length, not coerced to common type.
 
 If there are no non-\code{NULL} inputs, the result will be \code{data.frame()}.
 }

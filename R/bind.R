@@ -9,9 +9,12 @@
 #'   `vec_rbind()` ignores names. `vec_cbind()` preserves outer names,
 #'   combining with inner names if also present. `NULL` inputs are ignored.
 #' @inheritParams vec_c
-#' @return A data frame. A subclass of a data frame will be returned if any
-#'   element is subclass of that data frame. Technically, the type of the
-#'   final container will respect the coercion rules defined by `vec_coerce()`.
+#' @return A data frame, or subclass.
+#'
+#'   If `...` is a mix of different data frame subclases, `vec_type2()` will
+#'   be used to find the common type. For `vec_cbind()` only the type of
+#'   the container needs to be determined this way, as the columns need only
+#'   be recycled to common length, not coerced to common type.
 #'
 #'   If there are no non-`NULL` inputs, the result will be `data.frame()`.
 #' @examples
