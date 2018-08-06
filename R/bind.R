@@ -114,7 +114,21 @@ vec_rbind <- function(..., .type = NULL) {
 vec_cbind <- function(..., .type = NULL) {
   args <- list2(...)
 
-  # needs name if no outer name, and is vector/matrix without names
+  # container type: common type of all (data frame) inputs
+  # compute early so we can fail fast
+  tbl_empty <- map(args, function(x) {
+    if (is.data.frame(x))
+      x[0]
+  })
+  out <- find_type(tbl_empty, .type = .type[0]) %||% data.frame()
+
+  # container size: common length of all inputs
+  arg_rows <- map_int(args, vec_length)
+  nrow <- Reduce(recycle_length, arg_rows) %||% 0L
+  args <- map(args, recycle, n = nrow)
+
+  # Fix up names: needs name if no outer name, and is vector/matrix without
+  # names
   no_outer <- names2(args) == ""
   no_inner <- map_lgl(args, function(x) vec_dims(x) == 1 || is.null(colnames(x)))
   name_fix <- no_outer & no_inner
@@ -123,18 +137,16 @@ vec_cbind <- function(..., .type = NULL) {
   tbls <- map2(args, names2(args), as_df_col)
   names(tbls) <- NULL
 
-  # recycle to same length
-  nrows <- map_int(tbls, NROW)
-  nrow <- Reduce(recycle_length, nrows) %||% 0L
-  tbls <- map(tbls, recycle, n = nrow)
+  # Now find number of columns and create output template
+  arg_cols <- map_int(tbls, length)
+  ncol <- sum(arg_cols)
 
-  ns <- map_int(tbls, length)
-  cols <- vec_rep(list(), sum(ns))
-  names <- vec_rep(character(), sum(ns))
+  cols <- vec_rep(list(), ncol)
+  names <- vec_rep(character(), ncol)
 
   pos <- 1
-  for (i in seq_along(ns)) {
-    n <- ns[[i]]
+  for (i in seq_along(arg_cols)) {
+    n <- arg_cols[[i]]
     if (n == 0L)
       next
 
@@ -144,14 +156,7 @@ vec_cbind <- function(..., .type = NULL) {
     pos <- pos + n
   }
 
-  # Determine container type
-  tbl_empty <- map(tbls, function(x) x[0])
-  out <- find_type(tbl_empty, .type = .type[0])
-  if (is.null(out)) {
-    return(new_data_frame(list(), n = 0L))
-  }
-
-  # Need to document these assumptions, or better move into
+  # Need to document these assumptions, or better, move into
   # a generic
   attr(out, "row.names") <- .set_row_names(nrow)
   out[seq_along(cols)] <- cols
@@ -161,7 +166,7 @@ vec_cbind <- function(..., .type = NULL) {
 }
 
 recycle <- function(x, n) {
-  if (is.null(x) || nrow(x) == n)
+  if (is.null(x) || vec_length(x) == n)
     return(x)
 
   vec_rep(x, n)

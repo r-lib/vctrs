@@ -66,8 +66,8 @@ test_that("names are supplied if needed", {
 # cols --------------------------------------------------------------------
 
 test_that("empty inputs give data frame", {
-  expect_equal(vec_cbind(), new_data_frame(list(), 0))
-  expect_equal(vec_cbind(NULL), new_data_frame(list(), 0))
+  expect_equal(vec_cbind(), data_frame())
+  expect_equal(vec_cbind(NULL), data_frame())
 })
 
 test_that("outer names are respected", {
