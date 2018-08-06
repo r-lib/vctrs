@@ -175,9 +175,10 @@ fa <- factor("a")
 fb <- factor("b")
 
 # c() strips all factor attributes giving an integer vector
+# (as documented in ?c)
 c(fa, fb)
 
-# while unlist() creates a new factor with the union of the levels 
+# unlist() creates a new factor with the union of the levels 
 unlist(list(fa, fb))
 
 # vctrs always unions the levels
@@ -204,6 +205,12 @@ c(datetime, date)
 # of the arguments, and converts dates to datetimes at midnight
 vec_c(datetime, date)
 vec_c(date, datetime)
+
+# More subtly (as documented), c() drops the timezone, while
+# vec_c() preserves it
+datetime_nz <- as.POSIXct("2020-01-01 09:00", tz = "Pacific/Auckland")
+c(datetime_nz, datetime_nz)
+vec_c(datetime_nz, datetime_nz)
 ```
 
 ### Data frames
@@ -220,6 +227,10 @@ vec_rbind(df1, df2)
 
 # Additionally, you can specify the desired output type
 vec_rbind(df1, df2, .type = data.frame(x = double(), y = double()))
+
+# In some circumstances (combining data frames and vectors), 
+# rbind() silently discards data
+rbind(data.frame(x = 1:3), c(1, 1000000))
 ```
 
 ### Tibbles

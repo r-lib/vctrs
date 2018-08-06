@@ -268,10 +268,11 @@ fa <- factor("a")
 fb <- factor("b")
 
 # c() strips all factor attributes giving an integer vector
+# (as documented in ?c)
 c(fa, fb)
 #> [1] 1 1
 
-# while unlist() creates a new factor with the union of the levels 
+# unlist() creates a new factor with the union of the levels 
 unlist(list(fa, fb))
 #> [1] a b
 #> Levels: a b
@@ -306,6 +307,14 @@ vec_c(datetime, date)
 #> [1] "2020-01-01 09:00:00 CST" "2020-01-01 00:00:00 CST"
 vec_c(date, datetime)
 #> [1] "2020-01-01 00:00:00 CST" "2020-01-01 09:00:00 CST"
+
+# More subtly (as documented), c() drops the timezone, while
+# vec_c() preserves it
+datetime_nz <- as.POSIXct("2020-01-01 09:00", tz = "Pacific/Auckland")
+c(datetime_nz, datetime_nz)
+#> [1] "2019-12-31 14:00:00 CST" "2019-12-31 14:00:00 CST"
+vec_c(datetime_nz, datetime_nz)
+#> [1] "2020-01-01 09:00:00 NZDT" "2020-01-01 09:00:00 NZDT"
 ```
 
 ### Data frames
@@ -329,6 +338,15 @@ vec_rbind(df1, df2, .type = data.frame(x = double(), y = double()))
 #>    x  y
 #> 1  1 NA
 #> 2 NA  2
+
+# In some circumstances (combining data frames and vectors), 
+# rbind() silently discards data
+rbind(data.frame(x = 1:3), c(1, 1000000))
+#>   x
+#> 1 1
+#> 2 2
+#> 3 3
+#> 4 1
 ```
 
 ### Tibbles
