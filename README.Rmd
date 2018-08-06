@@ -152,6 +152,93 @@ This provides a natural type for nested data frames:
 vec_type(as_list_of(split(mtcars, mtcars$cyl)))
 ```
 
+## Compared to base R
+
+The following section compares base R and vctrs behavour. Changing base R to follow the same set of principles as vctrs would lead to widespread breakage in existing code, especially given that `c()` is often used for its side-effect of stripping attributes (e.g. `?POSIXct` suggests using `c(x)` to strip the time zone attribute).
+
+### Atomic vectors
+
+```{r, error = TRUE}
+# c() will coerce any atomic type to character
+c(1, "x")
+
+# vctrs is stricter, and only casts explicitly
+vec_c(1, "x")
+
+vec_c(1, "x", .type = character())
+```
+
+### Factors
+
+```{r}
+fa <- factor("a")
+fb <- factor("b")
+
+# c() strips all factor attributes giving an integer vector
+c(fa, fb)
+
+# while unlist() creates a new factor with the union of the levels 
+unlist(list(fa, fb))
+
+# vctrs always unions the levels
+vec_c(fa, fb)
+```
+
+### Dates and date-times
+
+```{r}
+date <- as.Date("2020-01-01")
+datetime <- as.POSIXct("2020-01-01 09:00")
+
+# If the first argument to c() is a date, the result is a date
+# But the datetime is not converted correctly (the number of seconds
+# in the datetime is interpreted as the number of days in the date)
+c(date, datetime)
+
+# If the first argument to c() is a datetime, the result is a datetime
+# But the date is not converted correctly (the number of days in the
+# date is interpreted as the number of seconds in the date)
+c(datetime, date)
+
+# vctrs always returns the same type regardless of the order
+# of the arguments, and converts dates to datetimes at midnight
+vec_c(datetime, date)
+vec_c(date, datetime)
+```
+
+### Data frames
+
+```{r, error = TRUE}
+df1 <- data.frame(x = TRUE)
+df2 <- data.frame(y = 2)
+
+# rbind() requires the inputs to have identical column names
+rbind(df1, df2)
+
+# vctrs creates a common type that is the union of the columns
+vec_rbind(df1, df2)
+
+# Additionally, you can specify the desired output type
+vec_rbind(df1, df2, .type = data.frame(x = double(), y = double()))
+```
+
+### Tibbles
+
+```{r}
+tb1 <- tibble::tibble(x = 3)
+
+# rbind() uses the class of the first argument
+class(rbind(tb1, df1))
+class(rbind(df1, tb1))
+
+# vctrs uses the common class of all arguments
+class(vec_rbind(df1, df1))
+class(vec_rbind(tb1, df1))
+class(vec_rbind(df1, tb1))
+
+# (this will help the tidyverse avoid turning data frames
+# into tibbles when you're not using them)
+```
 
 ## Tidyverse functions
 
