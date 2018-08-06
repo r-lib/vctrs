@@ -111,7 +111,12 @@ vec_rbind <- function(..., .type = NULL) {
 
 #' @export
 #' @rdname vec_bind
-vec_cbind <- function(..., .type = NULL) {
+#' @param .nrow If, `NULL`, the default, will determing the number of
+#'   rows in `vec_cbind()` output by using the standard recycling rules.
+#'
+#'   Alternatively, specify the desired number of rows, and any inputs
+#'   of length 1 will be recycled appropriately.
+vec_cbind <- function(..., .type = NULL, .nrow = NULL) {
   args <- list2(...)
 
   # container type: common type of all (data frame) inputs
@@ -123,8 +128,7 @@ vec_cbind <- function(..., .type = NULL) {
   out <- find_type(tbl_empty, .type = .type[0]) %||% data.frame()
 
   # container size: common length of all inputs
-  arg_rows <- map_int(args, vec_length)
-  nrow <- Reduce(recycle_length, arg_rows) %||% 0L
+  nrow <- find_nrow(args, .nrow = .nrow)
   args <- map(args, recycle, n = nrow)
 
   # Fix up names: needs name if no outer name, and is vector/matrix without
@@ -165,11 +169,25 @@ vec_cbind <- function(..., .type = NULL) {
   out
 }
 
-recycle <- function(x, n) {
-  if (is.null(x) || vec_length(x) == n)
-    return(x)
+find_nrow <- function(x, .nrow = NULL) {
+  if (!is.null(.nrow)) {
+    .nrow
+  } else {
+    lengths <- map_int(x, vec_length)
+    Reduce(recycle_length, lengths) %||% 0L
+  }
+}
 
-  vec_rep(x, n)
+recycle <- function(x, n) {
+  nx <- vec_length(x)
+
+  if (is.null(x) || nx == n) {
+    x
+  } else if (nx == 1L || n == 0L) {
+    vec_rep(x, n)
+  } else {
+    stop("Can't recycle vector of length ", nx, " to length ", n, call. = FALSE)
+  }
 }
 
 # as_df --------------------------------------------------------------

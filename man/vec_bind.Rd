@@ -8,7 +8,7 @@
 \usage{
 vec_rbind(..., .type = NULL)
 
-vec_cbind(..., .type = NULL)
+vec_cbind(..., .type = NULL, .nrow = NULL)
 }
 \arguments{
 \item{...}{Data frames or vectors.
@@ -25,6 +25,12 @@ computing the common type across all inputs.
 Alternatively, you can supply \code{.type} to force the output to have known
 type, or to die trying. \code{.type = character()} and \code{.type = list()} will
 succeed for all vectors. See \code{\link[=vec_cast]{vec_cast()}} for more details.}
+
+\item{.nrow}{If, \code{NULL}, the default, will determing the number of
+rows in \code{vec_cbind()} output by using the standard recycling rules.
+
+Alternatively, specify the desired number of rows, and any inputs
+of length 1 will be recycled appropriately.}
 }
 \value{
 A data frame, or subclass of data frame.

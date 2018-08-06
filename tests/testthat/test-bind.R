@@ -109,3 +109,11 @@ test_that("output is tibble if any input is tibble", {
   expect_s3_class(vec_cbind(df, dt), "tbl_df")
   expect_s3_class(vec_cbind(dt, df), "tbl_df")
 })
+
+test_that("can override default .nrow", {
+  expect_dim(vec_cbind(1, .nrow = 3), c(1, 2))
+})
+
+test_that("can't violate recycling rules", {
+  expect_error(vec_cbind(1:2, .nrow = 3), "recycle")
+})
