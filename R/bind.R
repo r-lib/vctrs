@@ -133,21 +133,20 @@ vec_cbind <- function(..., .type = NULL, .nrow = NULL) {
 
   # convert input to columns and prepare output containers
   tbls <- map2(args, names2(args), as_df_col)
-  arg_cols <- map_int(tbls, length)
-  ncol <- sum(arg_cols)
 
-  cols <- vec_rep(list(), ncol)
-  names <- vec_rep(character(), ncol)
+  ps <- map_int(tbls, length)
+  cols <- vec_rep(list(), sum(ps))
+  names <- vec_rep(character(), sum(ps))
 
-  pos <- 1
-  for (i in seq_along(arg_cols)) {
-    n <- arg_cols[[i]]
-    if (n == 0L)
+  col <- 1
+  for (j in seq_along(tbls)) {
+    p <- ps[[j]]
+    if (p == 0L)
       next
 
-    cols[pos:(pos + n - 1)] <- tbls[[i]]
-    names[pos:(pos + n - 1)] <- names(tbls[[i]]) %||% rep("", n)
-    pos <- pos + n
+    cols[col:(col + p - 1)] <- tbls[[j]]
+    names[col:(col + p - 1)] <- names(tbls[[j]]) %||% rep("", p)
+    col <- col + p
   }
 
   # Need to document these assumptions, or better, move into
