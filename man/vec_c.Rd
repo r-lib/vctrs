@@ -2,7 +2,7 @@
 % Please edit documentation in R/c.R
 \name{vec_c}
 \alias{vec_c}
-\title{Concatenate vectors}
+\title{Combine multiple vectors into a single vector}
 \usage{
 vec_c(..., .type = NULL)
 }
@@ -10,22 +10,23 @@ vec_c(..., .type = NULL)
 \item{...}{Vectors to coerce. All vectors must be 1d (i.e. no data
 frames, matrices or arrays).}
 
-\item{.type}{Usually, the type of the output is coerced to a type common to
-inputs. Alternatively, you can supply \code{.type} to force the output to
-have known type, or to die trying. See \code{\link[=vec_cast]{vec_cast()}} for more details.
-\code{.type = character()} and \code{.type = list()} will succeed for all vectors.}
+\item{.type}{If \code{NULL}, the default, the output type is determined by
+computing the common type across all inputs.
+
+Alternatively, you can supply \code{.type} to force the output to have known
+type, or to die trying. \code{.type = character()} and \code{.type = list()} will
+succeed for all vectors. See \code{\link[=vec_cast]{vec_cast()}} for more details.}
 }
 \value{
-A vector with length equal to the sum of the lengths of the contents
-of \code{...}.
+A vector with type \code{.type}, and length equal to the sum of the
+lengths of the contents of \code{...}.
 
 The vector will have names if the individual components have names
 (inner names) or if the arguments are named (outer names). If both
 inner and outer names are present, they are combined with a \code{.}.
 }
 \description{
-Concatenate vectors using the vctr coercion rules as explained in
-\code{\link[=vec_coerce]{vec_coerce()}}.
+Combine all arguments into a new vector of common type.
 }
 \examples{
 vec_c(FALSE, 1L, 1.5)
@@ -41,4 +42,8 @@ vec_c(Sys.time(), Sys.Date())
 # Factors -----------------------------
 c(factor("a"), factor("b"))
 vec_c(factor("a"), factor("b"))
+}
+\seealso{
+\code{\link[=vec_cbind]{vec_cbind()}}/\code{\link[=vec_rbind]{vec_rbind()}} for combining data frames by rows
+or columns.
 }

@@ -1,22 +1,26 @@
-#' Bind data frames
+#' Combine multiple data frames into a single data frames
 #'
-#' This pair of functions binds together data frames, either by rows or by
-#' columns. Row-binding creates a data frame with common type over all
-#' arguments. Column-binding creates a data frame with common length over all
-#' arguments.
+#' This pair of functions binds together data frames (and vectors), either
+#' row-wise or column-wise. Row-binding creates a data frame with common type
+#' across all arguments. Column-binding creates a data frame with common length
+#' across all arguments.
 #'
-#' @param ... Data frames, or objects that can be coerced to data frames.
+#' @param ... Data frames or vectors.
+#'
 #'   `vec_rbind()` ignores names. `vec_cbind()` preserves outer names,
-#'   combining with inner names if also present. `NULL` inputs are ignored.
+#'   combining with inner names if also present.
+#'
+#'   `NULL` inputs are silently ignored. Empty (e.g. zero row) inputs
+#'   will not appear in the output, but will affect the derived `.type`.
 #' @inheritParams vec_c
-#' @return A data frame, or subclass.
+#' @return A data frame, or subclass of data frame.
 #'
-#'   If `...` is a mix of different data frame subclases, `vec_type2()` will
-#'   be used to find the common type. For `vec_cbind()` only the type of
-#'   the container needs to be determined this way, as the columns need only
-#'   be recycled to common length, not coerced to common type.
-#'
+#'   If `...` is a mix of different data frame subclases, `vec_type2()`
+#'   will be used to determine the output type. For `vec_rbind()`, this
+#'   will determine the type of the container and the type of each column;
+#'   for `vec_cbind()` it only determines the type of the output container.
 #'   If there are no non-`NULL` inputs, the result will be `data.frame()`.
+#' @seealso [vec_c()] for combining 1d vectors.
 #' @examples
 #' # row binding -----------------------------------------
 #'

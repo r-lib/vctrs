@@ -1,17 +1,17 @@
-
-#' Concatenate vectors
+#' Combine multiple vectors into a single vector
 #'
-#' Concatenate vectors using the vctr coercion rules as explained in
-#' [vec_coerce()].
+#' Combine all arguments into a new vector of common type.
 #'
 #' @param ... Vectors to coerce. All vectors must be 1d (i.e. no data
 #'   frames, matrices or arrays).
-#' @return A vector with length equal to the sum of the lengths of the contents
-#'   of `...`.
+#' @return A vector with type `.type`, and length equal to the sum of the
+#'   lengths of the contents of `...`.
 #'
 #'   The vector will have names if the individual components have names
 #'   (inner names) or if the arguments are named (outer names). If both
 #'   inner and outer names are present, they are combined with a `.`.
+#' @seealso [vec_cbind()]/[vec_rbind()] for combining data frames by rows
+#'   or columns.
 #' @inheritParams vec_coerce
 #' @export
 #' @examples

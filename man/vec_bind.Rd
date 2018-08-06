@@ -4,37 +4,42 @@
 \alias{vec_bind}
 \alias{vec_rbind}
 \alias{vec_cbind}
-\title{Bind data frames}
+\title{Combine multiple data frames into a single data frames}
 \usage{
 vec_rbind(..., .type = NULL)
 
 vec_cbind(..., .type = NULL)
 }
 \arguments{
-\item{...}{Data frames, or objects that can be coerced to data frames.
-\code{vec_rbind()} ignores names. \code{vec_cbind()} preserves outer names,
-combining with inner names if also present. \code{NULL} inputs are ignored.}
+\item{...}{Data frames or vectors.
 
-\item{.type}{Usually, the type of the output is coerced to a type common to
-inputs. Alternatively, you can supply \code{.type} to force the output to
-have known type, or to die trying. See \code{\link[=vec_cast]{vec_cast()}} for more details.
-\code{.type = character()} and \code{.type = list()} will succeed for all vectors.}
+\code{vec_rbind()} ignores names. \code{vec_cbind()} preserves outer names,
+combining with inner names if also present.
+
+\code{NULL} inputs are silently ignored. Empty (e.g. zero row) inputs
+will not appear in the output, but will affect the derived \code{.type}.}
+
+\item{.type}{If \code{NULL}, the default, the output type is determined by
+computing the common type across all inputs.
+
+Alternatively, you can supply \code{.type} to force the output to have known
+type, or to die trying. \code{.type = character()} and \code{.type = list()} will
+succeed for all vectors. See \code{\link[=vec_cast]{vec_cast()}} for more details.}
 }
 \value{
-A data frame, or subclass.
+A data frame, or subclass of data frame.
 
-If \code{...} is a mix of different data frame subclases, \code{vec_type2()} will
-be used to find the common type. For \code{vec_cbind()} only the type of
-the container needs to be determined this way, as the columns need only
-be recycled to common length, not coerced to common type.
-
+If \code{...} is a mix of different data frame subclases, \code{vec_type2()}
+will be used to determine the output type. For \code{vec_rbind()}, this
+will determine the type of the container and the type of each column;
+for \code{vec_cbind()} it only determines the type of the output container.
 If there are no non-\code{NULL} inputs, the result will be \code{data.frame()}.
 }
 \description{
-This pair of functions binds together data frames, either by rows or by
-columns. Row-binding creates a data frame with common type over all
-arguments. Column-binding creates a data frame with common length over all
-arguments.
+This pair of functions binds together data frames (and vectors), either
+row-wise or column-wise. Row-binding creates a data frame with common type
+across all arguments. Column-binding creates a data frame with common length
+across all arguments.
 }
 \examples{
 # row binding -----------------------------------------
@@ -94,4 +99,7 @@ vec_cbind(
 # duplicate names are flagged
 vec_cbind(x = 1, x = 2)
 
+}
+\seealso{
+\code{\link[=vec_c]{vec_c()}} for combining 1d vectors.
 }

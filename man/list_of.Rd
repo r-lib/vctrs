@@ -19,10 +19,12 @@ is_list_of(x)
 \item{...}{Vectors to coerce. All vectors must be 1d (i.e. no data
 frames, matrices or arrays).}
 
-\item{.type}{Usually, the type of the output is coerced to a type common to
-inputs. Alternatively, you can supply \code{.type} to force the output to
-have known type, or to die trying. See \code{\link[=vec_cast]{vec_cast()}} for more details.
-\code{.type = character()} and \code{.type = list()} will succeed for all vectors.}
+\item{.type}{If \code{NULL}, the default, the output type is determined by
+computing the common type across all inputs.
+
+Alternatively, you can supply \code{.type} to force the output to have known
+type, or to die trying. \code{.type = character()} and \code{.type = list()} will
+succeed for all vectors. See \code{\link[=vec_cast]{vec_cast()}} for more details.}
 
 \item{x}{For \code{as_list_of()}, a vector to be coerced to list_of.}
 }

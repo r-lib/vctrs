@@ -4,10 +4,12 @@
 #' implementation also illustrates the key ideas of the vctrs type system.
 #'
 #' @param ... Vectors to coerce.
-#' @param .type Usually, the type of the output is coerced to a type common to
-#'   inputs. Alternatively, you can supply `.type` to force the output to
-#'   have known type, or to die trying. See [vec_cast()] for more details.
-#'   `.type = character()` and `.type = list()` will succeed for all vectors.
+#' @param .type If `NULL`, the default, the output type is determined by
+#'   computing the common type across all inputs.
+#'
+#'   Alternatively, you can supply `.type` to force the output to have known
+#'   type, or to die trying. `.type = character()` and `.type = list()` will
+#'   succeed for all vectors. See [vec_cast()] for more details.
 #' @return A [list_of] input vectors coerced to `.type`, an error stating
 #'   that a common type could not be found, or an error stating that casting
 #'   a input to `.type` was not possible.
