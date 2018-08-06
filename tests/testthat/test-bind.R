@@ -75,6 +75,10 @@ test_that("outer names are respected", {
   expect_named(vec_cbind(a = data.frame(x = 1)), "a..x")
 })
 
+test_that("inner names are respected", {
+  expect_named(vec_cbind(data_frame(x = 1), data_frame(y = 1)), c("x", "y"))
+})
+
 test_that("nameless vectors get tidy defaults", {
   expect_named(vec_cbind(1:2, 1), c("..1", "..2"))
 })

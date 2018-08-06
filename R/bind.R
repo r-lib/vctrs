@@ -131,17 +131,8 @@ vec_cbind <- function(..., .type = NULL, .nrow = NULL) {
   nrow <- find_nrow(args, .nrow = .nrow)
   args <- map(args, recycle, n = nrow)
 
-  # Fix up names: needs name if no outer name, and is vector/matrix without
-  # names
-  no_outer <- names2(args) == ""
-  no_inner <- map_lgl(args, function(x) vec_dims(x) == 1 || is.null(colnames(x)))
-  name_fix <- no_outer & no_inner
-  names(args) <- ifelse(name_fix, paste0("X", seq_along(args)), names2(args))
-
+  # convert input to columns and prepare output containers
   tbls <- map2(args, names2(args), as_df_col)
-  names(tbls) <- NULL
-
-  # Now find number of columns and create output template
   arg_cols <- map_int(tbls, length)
   ncol <- sum(arg_cols)
 
@@ -155,8 +146,7 @@ vec_cbind <- function(..., .type = NULL, .nrow = NULL) {
       next
 
     cols[pos:(pos + n - 1)] <- tbls[[i]]
-    if (!name_fix[[n]])
-      names[pos:(pos + n - 1)] <- names(tbls[[i]])
+    names[pos:(pos + n - 1)] <- names(tbls[[i]]) %||% rep("", n)
     pos <- pos + n
   }
 
