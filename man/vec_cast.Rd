@@ -34,11 +34,15 @@ character, and list to time, but you can not cast from logical to datetime.
 \figure{cast.png}
 
 Most casts are not symmetric: you can cast all integers to doubles, but you
-can only cast a subset of doubles back to integers. If a cast is lossy
-for
+can only cast a subset of doubles back to integers. If a cast is potentially
+lossy, a warning message will be shown whenever an actual loss occurs
+(which may only be for some elements of a vector).
 
-The rules for coercing from a list a fairly strict: each component of the
-list must be of length 1, and must be coercible to type \code{to}.
+The rules for coercing from a list are fairly strict: each component of the
+list must be of length 1, and must be coercible to type \code{to}. This ensures
+that a round-trip to and form list is possible, without opening the door
+to very flexible list flattening (which should be the job of a more
+specialised function).
 }
 
 \examples{
