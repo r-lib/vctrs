@@ -137,7 +137,7 @@ vctr provides a new vector type that represents a list where each element has th
 
 ```{r, error = TRUE}
 x1 <- list_of(1:3, 3:5, 6:8)
-vec_type(x)
+vec_type(x1)
 
 # This type is enforced if you attempt to modify the vector
 x1[[4]] <- c(FALSE, TRUE, FALSE)
