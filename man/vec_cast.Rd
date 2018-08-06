@@ -2,9 +2,48 @@
 % Please edit documentation in R/cast.R
 \name{vec_cast}
 \alias{vec_cast}
+\alias{vec_cast.NULL}
+\alias{vec_cast.logical}
+\alias{vec_cast.integer}
+\alias{vec_cast.double}
+\alias{vec_cast.character}
+\alias{vec_cast.list}
+\alias{vec_cast.list_of}
+\alias{vec_cast.factor}
+\alias{vec_cast.Date}
+\alias{vec_cast.POSIXt}
+\alias{vec_cast.difftime}
+\alias{vec_cast.data.frame}
+\alias{vec_cast.tbl_df}
 \title{Cast a vector to specified type}
 \usage{
 vec_cast(x, to)
+
+\method{vec_cast}{NULL}(x, to)
+
+\method{vec_cast}{logical}(x, to)
+
+\method{vec_cast}{integer}(x, to)
+
+\method{vec_cast}{double}(x, to)
+
+\method{vec_cast}{character}(x, to)
+
+\method{vec_cast}{list}(x, to)
+
+\method{vec_cast}{list_of}(x, to)
+
+\method{vec_cast}{factor}(x, to)
+
+\method{vec_cast}{Date}(x, to)
+
+\method{vec_cast}{POSIXt}(x, to)
+
+\method{vec_cast}{difftime}(x, to)
+
+\method{vec_cast}{data.frame}(x, to)
+
+\method{vec_cast}{tbl_df}(x, to)
 }
 \arguments{
 \item{x}{Vector to cast.}
@@ -43,6 +82,22 @@ list must be of length 1, and must be coercible to type \code{to}. This ensures
 that a round-trip to and form list is possible, without opening the door
 to very flexible list flattening (which should be the job of a more
 specialised function).
+}
+
+\section{S3 dispatch}{
+
+\code{vec_cast()} dispatches on both arguments because casting depends on both
+the type of \code{x} and of \code{to}. This is implemented by having methods of
+\code{vec_cast()}, e.g. \code{vec_cast.integer()} also be S3 generics, which call
+e.g. \code{vec_cast.integer.double()}.
+
+Note that \code{vec_cast()} dispatch on its second argument, so that the name
+of the final method uses the same convention as \code{as.xyz()} methods, i.e.
+\code{vec_cast.integer.double()} casts double to integers, in the same way
+that \code{as.integer.double()} would.
+
+See \code{vignette("extending-vctrs")} on how to extend to your own S3
+vector classes.
 }
 
 \examples{
