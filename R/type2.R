@@ -200,9 +200,9 @@ vec_type2.data.frame <- function(x, y) {
   if (is_null(y)) {
     x
   } else if (inherits(y, "tbl_df")) {
-    df_empty(df_col_type2(x, y), c("tbl_df", "tbl"))
+    new_tibble(df_col_type2(x, y), n = 0)
   } else if (is.data.frame(y)) {
-    df_empty(df_col_type2(x, y))
+    new_data_frame(df_col_type2(x, y), n = 0)
   } else {
     abort_no_max_type(vec_type(x), vec_type(y))
   }
@@ -213,7 +213,7 @@ vec_type2.tbl_df <- function(x, y) {
   if (is_null(y)) {
     x
   } else if (is.data.frame(y)) {
-    df_empty(df_col_type2(x, y), c("tbl_df", "tbl"))
+    new_tibble(df_col_type2(x, y), n = 0L)
   } else {
     abort_no_max_type(vec_type(x), vec_type(y))
   }

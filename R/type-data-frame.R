@@ -1,12 +1,18 @@
 # TODO: consider names and export so that they can be used by
 # data frame subclasses in other packages
 
-df_empty <- function(cols, subclass = NULL) {
+new_data_frame <- function(x, n, subclass = NULL) {
+  n <- as.integer(n)
+
   structure(
-    cols,
+    x,
     class = c(subclass, "data.frame"),
-    row.names = .set_row_names(0L)
+    row.names = .set_row_names(n)
   )
+}
+
+new_tibble <- function(x, n) {
+  new_data_frame(x, n, subclass = c("tbl_df", "tbl"))
 }
 
 df_col_type2 <- function(x, y) {

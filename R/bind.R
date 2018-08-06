@@ -82,7 +82,7 @@ NULL
 #' @rdname vec_bind
 vec_rbind <- function(..., .type = NULL) {
   args <- list2(...)
-  tbls <- map(args, as_tibble_row)
+  tbls <- map(args, as_df_row)
   type <- find_type(tbls, .type = .type)
 
   if (is.null(type))
@@ -116,7 +116,7 @@ vec_cbind <- function(..., .type = NULL) {
   name_fix <- no_outer & no_inner
   names(args) <- ifelse(name_fix, paste0("X", seq_along(args)), names2(args))
 
-  tbls <- map2(args, names2(args), as_tibble_col)
+  tbls <- map2(args, names2(args), as_df_col)
   names(tbls) <- NULL
 
   # recycle to same length
@@ -144,7 +144,7 @@ vec_cbind <- function(..., .type = NULL) {
   tbl_empty <- map(tbls, function(x) x[0])
   out <- find_type(tbl_empty, .type = .type[0])
   if (is.null(out)) {
-    return(df_empty(list()))
+    return(new_data_frame(list(), n = 0L))
   }
 
   # Need to document these assumptions, or better move into
@@ -163,46 +163,45 @@ recycle <- function(x, n) {
   vec_rep(x, n)
 }
 
-# as_tibble --------------------------------------------------------------
+# as_df --------------------------------------------------------------
 
-as_tibble_row <- function(x) UseMethod("as_tibble_row")
-
-# important that this doesn't convert data frames to tibbles
-#' @export
-as_tibble_row.data.frame <- function(x) x
+as_df_row <- function(x) UseMethod("as_df_row")
 
 #' @export
-as_tibble_row.NULL <- function(x) x
+as_df_row.data.frame <- function(x) x
 
 #' @export
-as_tibble_row.default <- function(x) {
+as_df_row.NULL <- function(x) x
+
+#' @export
+as_df_row.default <- function(x) {
   if (vec_dims(x) == 1L) {
     x <- as.list(x)
     x <- tibble::set_tidy_names(x)
+    new_data_frame(x, 1)
+  } else {
+    as.data.frame(x)
   }
-
-  # TODO: eliminate this
-  as.data.frame(tibble::as_tibble(x))
 }
 
-as_tibble_col <- function(x, outer_name) UseMethod("as_tibble_col")
+as_df_col <- function(x, outer_name) UseMethod("as_df_col")
 
 #' @export
-as_tibble_col.data.frame <- function(x, outer_name = NULL) {
+as_df_col.data.frame <- function(x, outer_name = NULL) {
   names(x) <- outer_names(x, outer_name)
   x
 }
 
 #' @export
-as_tibble_col.NULL <- function(x, outer_name = NULL) x
+as_df_col.NULL <- function(x, outer_name = NULL) x
 
 #' @export
-as_tibble_col.default <- function(x, outer_name = NULL) {
+as_df_col.default <- function(x, outer_name = NULL) {
   if (vec_dims(x) == 1L) {
-    as.data.frame(tibble::as_tibble(setNames(list(x), outer_name), validate = FALSE))
+    x <- stats::setNames(list(x), outer_name)
+    new_data_frame(x, vec_length(x[[1]]))
   } else {
     colnames(x) <- outer_names(x, outer_name)
-    # TODO: eliminate this
-    as.data.frame(tibble::as_tibble(x))
+    as.data.frame(x)
   }
 }
