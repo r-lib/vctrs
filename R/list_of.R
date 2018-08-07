@@ -133,7 +133,9 @@ vec_type2.list_of.list_of <- function(x, y) {
 }
 #' @method vec_type2.list_of default
 #' @export
-vec_type2.list_of.default  <- function(x, y) abort_no_max_type(x, y)
+vec_type2.list_of.default  <- function(x, y) {
+  stop_incompatible_type(x, y)
+}
 
 #' @rdname list_of
 #' @export vec_cast.list_of
@@ -158,5 +160,5 @@ vec_cast.list_of.list_of <- vec_cast.list_of.list
 #' @export
 #' @method vec_cast.list default
 vec_cast.list_of.default <- function(x, to) {
-  abort_no_cast(x, to)
+  stop_incompatible_cast(x, to)
 }

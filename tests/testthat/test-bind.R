@@ -29,7 +29,7 @@ test_that("type of column is common type of individual columns", {
   expect_equal(vec_rbind(x_int, x_int), data_frame(x = c(1L, 1L)))
   expect_equal(vec_rbind(x_int, x_dbl), data_frame(x = c(1, 2.5)))
 
-  expect_error(vec_rbind(x_int, x_chr), class = "error_no_max_type")
+  expect_error(vec_rbind(x_int, x_chr), class = "error_incompatible_type")
 })
 
 test_that("result contains union of columns", {

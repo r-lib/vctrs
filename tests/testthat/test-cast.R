@@ -11,8 +11,8 @@ test_that("NULL is idempotent", {
 
 test_that("new classes are uncoercible by default", {
   x <- structure(1:10, class = "vctrs_nonexistant")
-  expect_error(vec_cast(1, x), class = "error_no_cast")
-  expect_error(vec_cast(x, 1), class = "error_no_cast")
+  expect_error(vec_cast(1, x), class = "error_incompatible_cast")
+  expect_error(vec_cast(x, 1), class = "error_incompatible_cast")
 })
 
 # Logical -----------------------------------------------------------------
@@ -33,7 +33,7 @@ test_that("lossy casts generate warning", {
 })
 
 test_that("invalid casts generate error", {
-  expect_error(vec_cast(factor("a"), logical()), class = "error_no_cast")
+  expect_error(vec_cast(factor("a"), logical()), class = "error_incompatible_cast")
 })
 
 test_that("dimensionality is preserved" ,{
@@ -58,7 +58,7 @@ test_that("lossy casts generate warning", {
 })
 
 test_that("invalid casts generate error", {
-  expect_error(vec_cast(factor("a"), integer()), class = "error_no_cast")
+  expect_error(vec_cast(factor("a"), integer()), class = "error_incompatible_cast")
 })
 
 test_that("dimensionality is preserved" ,{
@@ -82,7 +82,7 @@ test_that("lossy casts generate warning", {
 })
 
 test_that("invalid casts generate error", {
-  expect_error(vec_cast(factor("a"), double()), class = "error_no_cast")
+  expect_error(vec_cast(factor("a"), double()), class = "error_incompatible_cast")
 })
 
 test_that("dimensionality is preserved" ,{
@@ -149,7 +149,7 @@ test_that("lossy casts generate warning", {
 })
 
 test_that("invalid casts generate error", {
-  expect_error(vec_cast(double(), factor("a")), class = "error_no_cast")
+  expect_error(vec_cast(double(), factor("a")), class = "error_incompatible_cast")
 })
 
 test_that("orderedness of factor is preserved", {
@@ -183,7 +183,7 @@ test_that("lossy casts generate warning", {
 
 test_that("invalid casts generate error", {
   date <- as.Date("2018-01-01")
-  expect_error(vec_cast(integer(), date), class = "error_no_cast")
+  expect_error(vec_cast(integer(), date), class = "error_incompatible_cast")
 })
 
 
@@ -202,7 +202,7 @@ test_that("safe casts work as expected", {
 
 test_that("invalid casts generate error", {
   datetime <- as.POSIXct("1970-02-01", tz = "UTC")
-  expect_error(vec_cast(integer(), datetime), class = "error_no_cast")
+  expect_error(vec_cast(integer(), datetime), class = "error_incompatible_cast")
 })
 
 test_that("dates become midnight in date-time tzone", {
@@ -229,7 +229,7 @@ test_that("safe casts work as expected", {
 
 test_that("invalid casts generate error", {
   dt <- as.difftime(600, units = "secs")
-  expect_error(vec_cast(integer(), dt), class = "error_no_cast")
+  expect_error(vec_cast(integer(), dt), class = "error_incompatible_cast")
 })
 
 
@@ -253,7 +253,7 @@ test_that("warn about lossy coercions", {
 })
 
 test_that("invalid cast generates error", {
-  expect_error(vec_cast(1L, data.frame()), class = "error_no_cast")
+  expect_error(vec_cast(1L, data.frame()), class = "error_incompatible_cast")
 })
 
 test_that("column order matches type", {

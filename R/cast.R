@@ -65,7 +65,7 @@ vec_cast <- function(x, to) {
 
 #' @export
 vec_cast.default <- function(x, to) {
-  abort_no_cast(x, to)
+  stop_incompatible_cast(x, to)
 }
 
 # Base vectors --------------------------------------------------------------
@@ -119,7 +119,7 @@ vec_cast.logical.list <- function(x, to) {
 }
 #' @export
 #' @method vec_cast.logical default
-vec_cast.logical.default <- function(x, to) abort_no_cast(x, to)
+vec_cast.logical.default <- function(x, to) stop_incompatible_cast(x, to)
 
 #' @export
 #' @rdname vec_cast
@@ -161,7 +161,7 @@ vec_cast.integer.list <- function(x, to) {
 #' @export
 #' @method vec_cast.integer default
 vec_cast.integer.default <- function(x, to) {
-  abort_no_cast(x, to)
+  stop_incompatible_cast(x, to)
 }
 
 #' @export
@@ -204,7 +204,7 @@ vec_cast.double.list <- function(x, to) {
 #' @export
 #' @method vec_cast.double default
 vec_cast.double.default <- function(x, to) {
-  abort_no_cast(x, to)
+  stop_incompatible_cast(x, to)
 }
 
 #' @export
@@ -315,7 +315,7 @@ vec_cast.factor.list <- function(x, to) {
 #' @export
 #' @method vec_cast.factor default
 vec_cast.factor.default <- function(x, to) {
-  abort_no_cast(x, to)
+  stop_incompatible_cast(x, to)
 }
 
 #' @rdname vec_cast
@@ -360,7 +360,7 @@ vec_cast.Date.list <- function(x, to) {
 #' @export
 #' @method vec_cast.Date default
 vec_cast.Date.default <- function(x, to) {
-  abort_no_cast(x, to)
+  stop_incompatible_cast(x, to)
 }
 
 #' @rdname vec_cast
@@ -406,7 +406,7 @@ vec_cast.POSIXt.list <- function(x, to) {
 #' @export
 #' @method vec_cast.POSIXt default
 vec_cast.POSIXt.default <- function(x, to) {
-  abort_no_cast(x, to)
+  stop_incompatible_cast(x, to)
 }
 
 #' @rdname vec_cast
@@ -449,7 +449,7 @@ vec_cast.difftime.list <- function(x, to) {
 #' @export
 #' @method vec_cast.difftime default
 vec_cast.difftime.default <- function(x, to) {
-  abort_no_cast(x, to)
+  stop_incompatible_cast(x, to)
 }
 
 #' @rdname vec_cast
@@ -472,7 +472,7 @@ vec_cast.data.frame.data.frame <- function(x, to) {
 #' @export
 #' @method vec_cast.data.frame default
 vec_cast.data.frame.default <- function(x, to) {
-  abort_no_cast(x, to)
+  stop_incompatible_cast(x, to)
 }
 
 #' @rdname vec_cast
@@ -495,7 +495,7 @@ vec_cast.tbl_df.data.frame <- function(x, to) {
 #' @export
 #' @method vec_cast.data.frame default
 vec_cast.tbl_df.default <- function(x, to) {
-  abort_no_cast(x, to)
+  stop_incompatible_cast(x, to)
 }
 
 # Helpers -----------------------------------------------------------------
@@ -503,7 +503,7 @@ vec_cast.tbl_df.default <- function(x, to) {
 cast_from_list <- function(x, to) {
   ns <- map_int(x, length)
   if (any(ns != 1)) {
-    abort_no_cast(x, to, "All list elements are not length 1")
+    stop_incompatible_cast(x, to, "All list elements are not length 1")
   }
 
   n <- length(x)

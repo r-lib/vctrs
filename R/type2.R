@@ -34,7 +34,7 @@ vec_type2 <- function(x, y) {
 
 #' @export
 vec_type2.default <- function(x, y) {
-  abort_no_max_type(x, y)
+  stop_incompatible_type(x, y)
 }
 
 #' @export
@@ -105,13 +105,13 @@ vec_type2.double.double   <- function(x, y) double()
 
 #' @method vec_type2.logical default
 #' @export
-vec_type2.logical.default <- function(x, y) abort_no_max_type(x, y)
+vec_type2.logical.default <- function(x, y) stop_incompatible_type(x, y)
 #' @method vec_type2.integer default
 #' @export
-vec_type2.integer.default <- function(x, y) abort_no_max_type(x, y)
+vec_type2.integer.default <- function(x, y) stop_incompatible_type(x, y)
 #' @method vec_type2.double default
 #' @export
-vec_type2.double.default  <- function(x, y) abort_no_max_type(x, y)
+vec_type2.double.default  <- function(x, y) stop_incompatible_type(x, y)
 
 # Characters and factors --------------------------------------------------
 
@@ -169,13 +169,13 @@ vec_type2.character.character <- function(x, y) character()
 
 #' @method vec_type2.character default
 #' @export
-vec_type2.character.default <- function(x, y) abort_no_max_type(x, y)
+vec_type2.character.default <- function(x, y) stop_incompatible_type(x, y)
 #' @method vec_type2.factor default
 #' @export
-vec_type2.factor.default    <- function(x, y) abort_no_max_type(x, y)
+vec_type2.factor.default    <- function(x, y) stop_incompatible_type(x, y)
 #' @method vec_type2.ordered default
 #' @export
-vec_type2.ordered.default   <- function(x, y) abort_no_max_type(x, y)
+vec_type2.ordered.default   <- function(x, y) stop_incompatible_type(x, y)
 
 # Date-times --------------------------------------------------------------
 
@@ -212,10 +212,10 @@ vec_type2.POSIXt.POSIXt  <- function(x, y) new_datetime(tzone = tzone_union(x, y
 
 #' @method vec_type2.Date default
 #' @export
-vec_type2.Date.default   <- function(x, y) abort_no_max_type(x, y)
+vec_type2.Date.default   <- function(x, y) stop_incompatible_type(x, y)
 #' @method vec_type2.POSIXt default
 #' @export
-vec_type2.POSIXt.default <- function(x, y) abort_no_max_type(x, y)
+vec_type2.POSIXt.default <- function(x, y) stop_incompatible_type(x, y)
 
 # difftime ----------------------------------------------------------------
 
@@ -234,7 +234,7 @@ vec_type2.difftime.difftime <- function(x, y) new_difftime(units = units_union(x
 
 #' @method vec_type2.difftime default
 #' @export
-vec_type2.difftime.default  <- function(x, y) abort_no_max_type(x, y)
+vec_type2.difftime.default  <- function(x, y) stop_incompatible_type(x, y)
 
 # Lists -------------------------------------------------------------------
 
@@ -253,7 +253,7 @@ vec_type2.list.list <- function(x, y) list()
 
 #' @method vec_type2.list default
 #' @export
-vec_type2.list.default  <- function(x, y) abort_no_max_type(x, y)
+vec_type2.list.default  <- function(x, y) stop_incompatible_type(x, y)
 
 # Data frames -------------------------------------------------------------
 
@@ -287,7 +287,7 @@ vec_type2.data.frame.tbl_df <- function(x, y) new_tibble(df_col_type2(x, y), n =
 
 #' @method vec_type2.data.frame default
 #' @export
-vec_type2.data.frame.default <- function(x, y) abort_no_max_type(x, y)
+vec_type2.data.frame.default <- function(x, y) stop_incompatible_type(x, y)
 #' @method vec_type2.tbl_df default
 #' @export
-vec_type2.tbl_df.default <- function(x, y) abort_no_max_type(x, y)
+vec_type2.tbl_df.default <- function(x, y) stop_incompatible_type(x, y)
