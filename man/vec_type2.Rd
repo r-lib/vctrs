@@ -2,9 +2,48 @@
 % Please edit documentation in R/type2.R
 \name{vec_type2}
 \alias{vec_type2}
+\alias{vec_type2.logical}
+\alias{vec_type2.integer}
+\alias{vec_type2.double}
+\alias{vec_type2.character}
+\alias{vec_type2.factor}
+\alias{vec_type2.ordered}
+\alias{vec_type2.Date}
+\alias{vec_type2.POSIXt}
+\alias{vec_type2.difftime}
+\alias{vec_type2.list}
+\alias{vec_type2.list_of}
+\alias{vec_type2.data.frame}
+\alias{vec_type2.tbl_df}
 \title{Find the common type for a pair of vector types}
 \usage{
 vec_type2(x, y)
+
+\method{vec_type2}{logical}(x, y)
+
+\method{vec_type2}{integer}(x, y)
+
+\method{vec_type2}{double}(x, y)
+
+\method{vec_type2}{character}(x, y)
+
+\method{vec_type2}{factor}(x, y)
+
+\method{vec_type2}{ordered}(x, y)
+
+\method{vec_type2}{Date}(x, y)
+
+\method{vec_type2}{POSIXt}(x, y)
+
+\method{vec_type2}{difftime}(x, y)
+
+\method{vec_type2}{list}(x, y)
+
+\method{vec_type2}{list_of}(x, y)
+
+\method{vec_type2}{data.frame}(x, y)
+
+\method{vec_type2}{tbl_df}(x, y)
 }
 \arguments{
 \item{x, y}{Either vector types produced by \code{\link[=vec_type]{vec_type()}}, or actual vectors.}
@@ -15,14 +54,6 @@ It forms the foundation of the vctrs type system, along with \code{\link[=vec_ca
 It should generally not be called by R users, but is important for R
 developers.
 }
-\section{Lifecycle}{
-
-This function is experimental, and we plan that implementation will change
-substantially in the future. \code{vec_type()} does double-dispatch, but
-currently with a combination of S3 and nested \code{if}-\code{else} blocks. In
-the future we will provide an extensible implemntation.
-}
-
 \section{Coercion rules}{
 
 vctrs thinks of the vector types as forming a partially ordered set, or
@@ -34,6 +65,18 @@ The poset of the most important base vectors is shown below:
 (where datetime stands for \code{POSIXt}, and date for \code{Date})
 
 \figure{coerce.png}
+}
+
+\section{S3 dispatch}{
+
+\code{vec_type2()} dispatches on both arguments. This is implemented by having
+methods of \code{vec_type2()}, e.g. \code{vec_type2.integer()} also be S3 generics,
+which call e.g. \code{vec_type2.integer.double()}. \code{vec_type2.x.y()} must
+return the same value as \code{vec_type2.y.x()}; this is currently not enforced,
+only checked in unit tests.
+
+See \code{vignette("extending-vctrs")} on how to extend to your own S3
+vector classes.
 }
 
 \keyword{internal}

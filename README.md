@@ -11,7 +11,7 @@ status](https://codecov.io/gh/r-lib/vctrs/branch/master/graph/badge.svg)](https:
 
 The primary short-term goal of vctrs is to develop a [type
 system](https://en.wikipedia.org/wiki/Type_system) for vectors
-(including array and data frames) that help us reason about the
+(including arrays and data frames) that help us reason about the
 “correct” type and shape to return from vectorised functions that
 combine inputs of different types (e.g. `c()`, `ifelse()`, `rbind()`).
 Our hope that this will make the package invisible for most users,
@@ -19,13 +19,11 @@ instead of being suprised by the result of a function, a type *system*
 will mean that you build up an accurate mental model just from
 day-to-day use.
 
-Currently, the vctrs type system is fixed, and only works with types
-from base R (plus a handful of useful new types). In the medium-term, we
-will make the type system extensible, and document how to create new
-vector types that work with the type system. We will also reimplement
-the core coercions in C for performance, and consider how best to
-implemented the double dispatch needed for the core type system
-functions, `vec_cast()` and `vec_type2()`.
+vctrs is user extensible. By setting up the `vec_type2()` and
+`vec_cast()` methods any package can participate in this system (which
+in the long-term will ensure that `dplyr::bind_rows()` work with
+arbitrary vector types). `vignette("extending-vctrs")` will provide more
+details.
 
 In the longer-term, vctrs will become the home for tidyverse vector
 functions that work with logical and numeric vectors, and vectors in
