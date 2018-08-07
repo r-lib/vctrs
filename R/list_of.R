@@ -6,6 +6,7 @@
 #'
 #' @inheritParams vec_c
 #' @param x For `as_list_of()`, a vector to be coerced to list_of.
+#' @param y,to Arguments to `vec_type2()` and `vec_cast()`.
 #' @export
 #' @examples
 #' x <- list_of(1:3, 5:6, 10:15)

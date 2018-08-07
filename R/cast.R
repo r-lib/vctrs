@@ -63,6 +63,11 @@ vec_cast <- function(x, to) {
   UseMethod("vec_cast", to)
 }
 
+#' @export
+vec_cast.default <- function(x, to) {
+  abort_no_cast(x, to)
+}
+
 # Base vectors --------------------------------------------------------------
 
 #' @export

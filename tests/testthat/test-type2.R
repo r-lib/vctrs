@@ -66,6 +66,12 @@ test_that("list coercions are symmetric and unchanging", {
   )
 })
 
+test_that("new classes are uncoercible by default", {
+  x <- structure(1:10, class = "vctrs_nonexistant")
+  expect_error(vec_type2(1, x), class = "error_no_max_type")
+  expect_error(vec_type2(x, 1), class = "error_no_max_type")
+})
+
 
 # Date times --------------------------------------------------------------
 

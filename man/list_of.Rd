@@ -33,6 +33,8 @@ type, or to die trying. \code{.type = character()} and \code{.type = list()} wil
 succeed for all vectors. See \code{\link[=vec_cast]{vec_cast()}} for more details.}
 
 \item{x}{For \code{as_list_of()}, a vector to be coerced to list_of.}
+
+\item{y, to}{Arguments to \code{vec_type2()} and \code{vec_cast()}.}
 }
 \description{
 A \code{list_of} object is a list where each element has the same type.

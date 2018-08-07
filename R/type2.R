@@ -33,6 +33,11 @@ vec_type2 <- function(x, y) {
 }
 
 #' @export
+vec_type2.default <- function(x, y) {
+  abort_no_max_type(x, y)
+}
+
+#' @export
 vec_type2.vec_type <- function(x, y) {
   y <- as_vec_type(y)
   vec_type(vec_type2(x$prototype, y$prototype))
