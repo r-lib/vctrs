@@ -1,4 +1,18 @@
-vec_type_string <- function(x) UseMethod("vec_type_string")
+#' Vector type as a string
+#'
+#' Provide a method for this generic to control how your vector type is
+#' printed. The default method uses the first element of the class vector.
+#'
+#' @param x A vector.
+#' @keyword internal
+#' @return A string.
+#' @export
+#' @examples
+#' cat(vec_type_string(1:10))
+#' cat(vec_type_string(iris))
+vec_type_string <- function(x) {
+  UseMethod("vec_type_string")
+}
 
 #' @export
 vec_type_string.NULL <- function(x) {
