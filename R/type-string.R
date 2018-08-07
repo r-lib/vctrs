@@ -7,7 +7,11 @@ vec_type_string.NULL <- function(x) {
 
 #' @export
 vec_type_string.default <- function(x) {
-  paste0(typeof(x), dim_type(x))
+  if (is.object(x)) {
+    class(x)[[1]]
+  } else {
+    paste0(typeof(x), dim_type(x))
+  }
 }
 
 #' @export
