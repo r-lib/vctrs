@@ -291,18 +291,3 @@ vec_type2.data.frame.default <- function(x, y) abort_no_max_type(x, y)
 #' @method vec_type2.tbl_df default
 #' @export
 vec_type2.tbl_df.default <- function(x, y) abort_no_max_type(x, y)
-
-# Helpers -----------------------------------------------------------------
-
-abort_no_max_type <- function(x, y) {
-  type_x <- as_vec_type(x)
-  type_y <- as_vec_type(y)
-
-  msg <- glue::glue("No common type for {type_x} and {type_y}")
-  abort(
-    "error_no_max_type",
-    message = msg,
-    type_x = type_x,
-    type_y = type_y,
-  )
-}
