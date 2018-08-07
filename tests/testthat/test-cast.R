@@ -109,31 +109,9 @@ test_that("safe casts work as expected", {
   expect_equal(vec_cast(1:2, list()), list(1L, 2L))
 })
 
-test_that("lossy casts generate warnings", {
-  expect_condition(vec_cast(list_of(1L), list()), class = "warning_cast_lossy")
-})
-
 test_that("dimensionality is preserved" ,{
   x <- matrix(TRUE, nrow = 2, ncol = 2)
   expect_dim(vec_cast(x, list()), c(2, 2))
-})
-
-# list_of -----------------------------------------------------------------
-
-test_that("safe casts work as expected", {
-  x <- list_of(1)
-  expect_equal(vec_cast(NULL, x), NULL)
-  expect_equal(vec_cast(list(1), x), x)
-  expect_equal(vec_cast(list(TRUE), x), x)
-})
-
-test_that("lossy casts generate warning", {
-  x <- list_of(1L)
-  expect_condition(vec_cast(list(1.5), x), class = "warning_cast_lossy")
-})
-
-test_that("invalid casts generate error", {
-  expect_error(vec_cast(factor("a"), list_of(1)), class = "error_no_cast")
 })
 
 # Factors -----------------------------------------------------------------

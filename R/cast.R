@@ -275,32 +275,6 @@ vec_cast.list.default <- function(x, to) {
   as.list(x)
 }
 
-#' @rdname vec_cast
-#' @export vec_cast.list_of
-#' @method vec_cast list_of
-#' @export
-vec_cast.list_of <- function(x, to) {
-  UseMethod("vec_cast.list_of")
-}
-#' @export
-#' @method vec_cast.list_of NULL
-vec_cast.list_of.NULL <- function(x, to) {
-  x
-}
-#' @export
-#' @method vec_cast.list_of list
-vec_cast.list_of.list <- function(x, to) {
-  as_list_of(x, .type = attr(to, "type"))
-}
-#' @export
-#' @method vec_cast.list_of list_of
-vec_cast.list_of.list_of <- vec_cast.list_of.list
-#' @export
-#' @method vec_cast.list default
-vec_cast.list_of.default <- function(x, to) {
-  abort_no_cast(x, to)
-}
-
 # S3 vectors --------------------------------------------------------------
 
 #' @rdname vec_cast

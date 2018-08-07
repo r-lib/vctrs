@@ -5,6 +5,8 @@
 \alias{as_list_of}
 \alias{new_list_of}
 \alias{is_list_of}
+\alias{vec_type2.list_of}
+\alias{vec_cast.list_of}
 \title{Construct "list_of" objects}
 \usage{
 list_of(..., .type = NULL)
@@ -14,6 +16,10 @@ as_list_of(x, ...)
 new_list_of(x, .type)
 
 is_list_of(x)
+
+\method{vec_type2}{list_of}(x, y)
+
+\method{vec_cast}{list_of}(x, to)
 }
 \arguments{
 \item{...}{Vectors to coerce. All vectors must be 1d (i.e. no data

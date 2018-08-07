@@ -96,16 +96,6 @@ test_that("factors level are unioned", {
   expect_equal(max(fb, fa), vec_type(factor(levels = c("b", "a"))))
 })
 
-# list_of ----------------------------------------------------------------
-
-test_that("max<list_of<a>, list_of<b>> is list_of<max<a, b>>", {
-  r_int <- vec_type(list_of(.type = integer()))
-  r_dbl <- vec_type(list_of(.type = double()))
-
-  expect_equal(max(r_int, r_int), r_int)
-  expect_equal(max(r_int, r_dbl), r_int)
-})
-
 # Data frame --------------------------------------------------------------
 
 test_that("data frame only combines with other data frames or NULL", {

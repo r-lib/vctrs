@@ -8,7 +8,6 @@
 \alias{vec_cast.double}
 \alias{vec_cast.character}
 \alias{vec_cast.list}
-\alias{vec_cast.list_of}
 \alias{vec_cast.factor}
 \alias{vec_cast.Date}
 \alias{vec_cast.POSIXt}
@@ -30,8 +29,6 @@ vec_cast(x, to)
 \method{vec_cast}{character}(x, to)
 
 \method{vec_cast}{list}(x, to)
-
-\method{vec_cast}{list_of}(x, to)
 
 \method{vec_cast}{factor}(x, to)
 

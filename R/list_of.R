@@ -113,3 +113,49 @@ as.list.list_of <- function(x, ...) {
   value <- vec_cast(value, attr(x, "type"))
   NextMethod()
 }
+
+# Type system -------------------------------------------------------------
+
+#' @rdname list_of
+#' @export vec_type2.list_of
+#' @method vec_type2 list_of
+#' @export
+vec_type2.list_of <- function(x, y) UseMethod("vec_type2.list_of", y)
+#' @method vec_type2.list_of NULL
+#' @export
+vec_type2.list_of.NULL    <- function(x, y) list_of(.type = attr(x, "type"))
+#' @method vec_type2.list_of list_of
+#' @export
+vec_type2.list_of.list_of <- function(x, y) {
+  type <- vec_type2(attr(x, "type"), attr(y, "type"))
+  new_list_of(list(), type)
+}
+#' @method vec_type2.list_of default
+#' @export
+vec_type2.list_of.default  <- function(x, y) abort_no_max_type(x, y)
+
+#' @rdname list_of
+#' @export vec_cast.list_of
+#' @method vec_cast list_of
+#' @export
+vec_cast.list_of <- function(x, to) {
+  UseMethod("vec_cast.list_of")
+}
+#' @export
+#' @method vec_cast.list_of NULL
+vec_cast.list_of.NULL <- function(x, to) {
+  x
+}
+#' @export
+#' @method vec_cast.list_of list
+vec_cast.list_of.list <- function(x, to) {
+  as_list_of(x, .type = attr(to, "type"))
+}
+#' @export
+#' @method vec_cast.list_of list_of
+vec_cast.list_of.list_of <- vec_cast.list_of.list
+#' @export
+#' @method vec_cast.list default
+vec_cast.list_of.default <- function(x, to) {
+  abort_no_cast(x, to)
+}

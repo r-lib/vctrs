@@ -57,3 +57,31 @@ test_that("[<-, [[<- and $<- coerce their input", {
 
   expect_equal(x, list_of(x = 0, y = 0, z = 0))
 })
+
+
+# Type system -------------------------------------------------------------
+
+test_that("max<list_of<a>, list_of<b>> is list_of<max<a, b>>", {
+  r_int <- vec_type(list_of(.type = integer()))
+  r_dbl <- vec_type(list_of(.type = double()))
+
+  expect_equal(max(r_int, r_int), r_int)
+  expect_equal(max(r_int, r_dbl), r_int)
+})
+
+test_that("safe casts work as expected", {
+  x <- list_of(1)
+  expect_equal(vec_cast(NULL, x), NULL)
+  expect_equal(vec_cast(list(1), x), x)
+  expect_equal(vec_cast(list(TRUE), x), x)
+})
+
+test_that("lossy casts generate warning", {
+  x <- list_of(1L)
+  expect_condition(vec_cast(list(1.5), x), class = "warning_cast_lossy")
+  expect_condition(vec_cast(list_of(1L), list()), class = "warning_cast_lossy")
+})
+
+test_that("invalid casts generate error", {
+  expect_error(vec_cast(factor("a"), list_of(1)), class = "error_no_cast")
+})

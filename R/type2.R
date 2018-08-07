@@ -238,11 +238,6 @@ vec_type2.difftime.default  <- function(x, y) abort_no_max_type(x, y)
 #' @method vec_type2 list
 #' @export
 vec_type2.list    <- function(x, y) UseMethod("vec_type2.list", y)
-#' @rdname vec_type2
-#' @export vec_type2.list_of
-#' @method vec_type2 list_of
-#' @export
-vec_type2.list_of <- function(x, y) UseMethod("vec_type2.list_of", y)
 
 #' @method vec_type2.list NULL
 #' @export
@@ -251,22 +246,9 @@ vec_type2.list.NULL <- function(x, y) list()
 #' @export
 vec_type2.list.list <- function(x, y) list()
 
-#' @method vec_type2.list_of NULL
-#' @export
-vec_type2.list_of.NULL    <- function(x, y) list_of(.type = attr(x, "type"))
-#' @method vec_type2.list_of list_of
-#' @export
-vec_type2.list_of.list_of <- function(x, y) {
-  type <- vec_type2(attr(x, "type"), attr(y, "type"))
-  new_list_of(list(), type)
-}
-
 #' @method vec_type2.list default
 #' @export
 vec_type2.list.default  <- function(x, y) abort_no_max_type(x, y)
-#' @method vec_type2.list_of default
-#' @export
-vec_type2.list_of.default  <- function(x, y) abort_no_max_type(x, y)
 
 # Data frames -------------------------------------------------------------
 

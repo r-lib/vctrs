@@ -12,7 +12,6 @@
 \alias{vec_type2.POSIXt}
 \alias{vec_type2.difftime}
 \alias{vec_type2.list}
-\alias{vec_type2.list_of}
 \alias{vec_type2.data.frame}
 \alias{vec_type2.tbl_df}
 \title{Find the common type for a pair of vector types}
@@ -38,8 +37,6 @@ vec_type2(x, y)
 \method{vec_type2}{difftime}(x, y)
 
 \method{vec_type2}{list}(x, y)
-
-\method{vec_type2}{list_of}(x, y)
 
 \method{vec_type2}{data.frame}(x, y)
 
