@@ -45,11 +45,9 @@ new_vec_type <- function(prototype) {
 as_vec_type <- function(x) UseMethod("as_vec_type")
 
 #' @export
-#' @rdname as_vec_type
 as_vec_type.vec_type <- function(x) x
 
 #' @export
-#' @rdname as_vec_type
 as_vec_type.default <- function(x) vec_type(x)
 
 #' @export
