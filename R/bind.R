@@ -90,7 +90,7 @@ vec_rbind <- function(..., .type = NULL) {
   type <- find_type(tbls, .type = .type)
 
   if (is.null(type))
-    return(data.frame())
+    return(data_frame())
 
   ns <- map_int(tbls, vec_length)
   out <- vec_rep(type, sum(ns))
@@ -125,7 +125,7 @@ vec_cbind <- function(..., .type = NULL, .nrow = NULL) {
     if (is.data.frame(x))
       x[0]
   })
-  out <- find_type(tbl_empty, .type = .type[0]) %||% data.frame()
+  out <- find_type(tbl_empty, .type = .type[0]) %||% data_frame()
 
   # container size: common length of all inputs
   nrow <- find_nrow(args, .nrow = .nrow)

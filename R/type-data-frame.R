@@ -1,6 +1,19 @@
 # TODO: consider names and export so that they can be used by
 # data frame subclasses in other packages
 
+
+data_frame <- function(...) {
+  cols <- tibble::set_tidy_names(list(...))
+
+  if (length(cols) > 0) {
+    n <- length(cols[[1]])
+  } else {
+    n <- 0L
+  }
+
+  new_data_frame(cols, n = n)
+}
+
 new_data_frame <- function(x, n, subclass = NULL) {
   n <- as.integer(n)
 
