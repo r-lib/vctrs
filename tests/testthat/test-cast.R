@@ -30,6 +30,7 @@ test_that("lossy casts generate warning", {
   expect_condition(vec_cast(2L, logical()), class = "warning_cast_lossy")
   expect_condition(vec_cast(2, logical()), class = "warning_cast_lossy")
   expect_condition(vec_cast("x", logical()), class = "warning_cast_lossy")
+  expect_condition(vec_cast(list(c(TRUE, FALSE)), logical()), class = "warning_cast_lossy")
 })
 
 test_that("invalid casts generate error", {

@@ -115,7 +115,7 @@ vec_cast.logical.character <- function(x, to) {
 #' @export
 #' @method vec_cast.logical list
 vec_cast.logical.list <- function(x, to) {
-  cast_from_list(x, to)
+  vec_list_cast(x, to)
 }
 #' @export
 #' @method vec_cast.logical default
@@ -156,7 +156,7 @@ vec_cast.integer.character <- vec_cast.integer.double
 #' @export
 #' @method vec_cast.integer list
 vec_cast.integer.list <- function(x, to) {
-  cast_from_list(x, to)
+  vec_list_cast(x, to)
 }
 #' @export
 #' @method vec_cast.integer default
@@ -199,7 +199,7 @@ vec_cast.double.double <- function(x, to) {
 #' @export
 #' @method vec_cast.double list
 vec_cast.double.list <- function(x, to) {
-  cast_from_list(x, to)
+  vec_list_cast(x, to)
 }
 #' @export
 #' @method vec_cast.double default
@@ -243,7 +243,7 @@ vec_cast.character.difftime <- function(x, to) {
 #' @export
 #' @method vec_cast.character list
 vec_cast.character.list <- function(x, to) {
-  cast_from_list(x, to)
+  vec_list_cast(x, to)
 }
 #' @export
 #' @method vec_cast.character default
@@ -310,7 +310,7 @@ vec_cast.factor.character <- vec_cast.factor.factor
 #' @export
 #' @method vec_cast.factor list
 vec_cast.factor.list <- function(x, to) {
-  cast_from_list(x, to)
+  vec_list_cast(x, to)
 }
 #' @export
 #' @method vec_cast.factor default
@@ -355,7 +355,7 @@ vec_cast.Date.POSIXt <- function(x, to) {
 #' @export
 #' @method vec_cast.Date list
 vec_cast.Date.list <- function(x, to) {
-  cast_from_list(x, to)
+  vec_list_cast(x, to)
 }
 #' @export
 #' @method vec_cast.Date default
@@ -401,7 +401,7 @@ vec_cast.POSIXt.POSIXt <- function(x, to) {
 #' @export
 #' @method vec_cast.POSIXt list
 vec_cast.POSIXt.list <- function(x, to) {
-  cast_from_list(x, to)
+  vec_list_cast(x, to)
 }
 #' @export
 #' @method vec_cast.POSIXt default
@@ -444,7 +444,7 @@ vec_cast.difftime.difftime <- function(x, to) {
 #' @export
 #' @method vec_cast.difftime list
 vec_cast.difftime.list <- function(x, to) {
-  cast_from_list(x, to)
+  vec_list_cast(x, to)
 }
 #' @export
 #' @method vec_cast.difftime default
@@ -500,17 +500,32 @@ vec_cast.tbl_df.default <- function(x, to) {
 
 # Helpers -----------------------------------------------------------------
 
-cast_from_list <- function(x, to) {
+#' Cast a list to vector of specific type
+#'
+#' This is a function for developers to use when extending vctrs. It casts
+#' a list to a more specific vectoring type, keeping the length constant.
+#' It does this by discarding (with a warning), any elements after the 1.
+#' It is called from `vec_cast.XYZ.list()` methods to preserve symmetry with
+#' `vec_cast.list.XYZ()`.
+#'
+#' See `vignette("extending-vctrs")` for details.
+#'
+#' @param x A list
+#' @param to Type to coerce to
+#' @export
+#' @keywords internal
+vec_list_cast <- function(x, to) {
   ns <- map_int(x, length)
+
   if (any(ns != 1)) {
-    stop_incompatible_cast(x, to, "All list elements are not length 1")
+    warn_cast_lossy_vector(x, to, ns != 1)
   }
 
   n <- length(x)
   out <- vec_na(to, n)
 
   for (i in seq_len(n)) {
-    out[[i]] <- vec_cast(x[[i]], to)
+    out[[i]] <- vec_cast(x[[i]][[1]], to)
   }
 
   out
