@@ -19,9 +19,9 @@ knitr::opts_chunk$set(
 [![Coverage status](https://codecov.io/gh/r-lib/vctrs/branch/master/graph/badge.svg)](https://codecov.io/github/r-lib/vctrs?branch=master)
 [![lifecycle](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://www.tidyverse.org/lifecycle/#experimental)
 
-The primary short-term goal of vctrs is to develop a [type system](https://en.wikipedia.org/wiki/Type_system) for vectors (including arrays and data frames) that help us reason about the "correct" type and shape to return from vectorised functions that combine inputs of different types (e.g. `c()`, `ifelse()`, `rbind()`). Our hope that this will make the package invisible for most users, instead of being suprised by the result of a function, a type _system_ will mean that you build up an accurate mental model just from day-to-day use.
+The primary short-term goal of vctrs is to develop a [type _system_](https://en.wikipedia.org/wiki/Type_system) for vectors (including arrays and data frames) that help us reason about the class of values returned from vectorised functions that combine different types of input (e.g. `c()`, `ifelse()`, `rbind()`). Our hope that this will make the package invisible for most users, instead of being suprised by the result of a function, a __type system__ will mean that you build up an accurate mental model just from day-to-day use.
 
-vctrs is user extensible. By setting up the `vec_type2()` and `vec_cast()` methods any package can participate in this system (which in the long-term will ensure that `dplyr::bind_rows()` work with arbitrary vector types). `vignette("extending-vctrs")` will provide more details.
+vctrs is user extensible. By setting up the `vec_type2()` and `vec_cast()` methods any package can participate in this system (which in the long-term will ensure that `dplyr::bind_rows()` work with arbitrary S3 classes). `vignette("extending-vctrs")` will provide more details.
 
 In the longer-term, vctrs will become the home for tidyverse vector functions that work with logical and numeric vectors, and vectors in general. This will make it a natural complement to [stringr](https://stringr.tidyverse.org) (strings), [lubridate](http://lubridate.tidyverse.org) (date/times), and [forcats](https://forcats.tidyverse.org) (factors), and will bring together various helpers that are currently scattered across packages, `ggplot2::cut_number()`, `dplyr::coalesce()`, and `tidyr::fill()`. 
 
@@ -56,9 +56,9 @@ c(dt, factor("a"))
 c(factor("a"), dt)
 ```
 
-This behaviour arises partly because `c()` has dual purposes: as well as it's primary duty of combining vectors, it has a secondary duty of stripping attributes. (For example, `?POSIXct` suggests that you should use `c()` if you want to reset the timezone.)
+This behaviour arises partly because `c()` has dual purposes: as well as it's primary duty of combining vectors, it has a secondary duty of stripping attributes. For example, `?POSIXct` suggests that you should use `c()` if you want to reset the timezone.
 
-The second problem is `dplyr::bind_rows()`: how should it handle vectors implemented in other packages? It currently handles them using a set of heuristics which have lead to many issues over the last few years.
+The second problem is `dplyr::bind_rows()`: how should it handle vector classes implemented in other packages? At the moment it handles them using a set of heuristics, these heuristics have grown over time, but it feels like we really need to think through the problem in order to build a robust solution that is robustly correct.
 
 ## Usage
 
@@ -76,7 +76,7 @@ vec_c(1L, 1.5)
 vec_c(1.5, "x")
 ```
 
-Unlike `c()`, you can optionally specify the desired output type:
+Unlike `c()`, you can optionally specify the desired output class:
 
 ```{r}
 vec_c(1, 2, .type = integer())
@@ -92,7 +92,7 @@ vec_c(Sys.Date(), .type = factor())
 
 ### What is a type?
 
-There are a number of 1d types that built-in to base R and supported by vctrs: logical, integer, double, character, factor/ordered, date (`Date`), datetime (`POSIXct`), and time (`difftime`). You can get a textual representation of the type of a vector with `vec_type()`:
+There are a number of 1d types that are built-in to base R and supported by vctrs: logical, integer, double, character, factor/ordered, date (`Date`), datetime (`POSIXct`), and time (`difftime`). You can get a textual representation of the type of a vector with `vec_type()`:
 
 ```{r}
 vec_type(letters)
