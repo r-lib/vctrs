@@ -1,0 +1,217 @@
+---
+title: "Extending vctrs"
+author: "Hadley Wickham"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Extending vctrs}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+This vignette describes how you can add your own S3 vector class to the vctrs type system. I assume that you have already understand the basics of the [S3 system][S3], and you have an S3 vector class with at least:
+
+* A `print()` method
+
+* A `[` method that preserves class.
+
+* A zero-length representation that can be constructed with `x[0]` and 
+  prints informatively.
+
+Your vector class must curently be built on top of an existing base vector type (logical, integer, double, character, or list). vctrs currently does not support vector types built on other foundations, or that provide custom `names()` or `length()` methods.
+
+```{r}
+library(vctrs)
+```
+
+## Binned
+
+To make the discussion of the ideas in this vignette concrete, I'm going to provide a simple vector class of my own. The `binned` class stores a double vector along with a vector of breaks, and uses these when printing. It's kind of like a factor, but for doubles.
+
+```{r}
+new_binned <- function(x, breaks) {
+  stopifnot(is.double(x))
+  
+  structure(
+    x, 
+    breaks = breaks,
+    class = "binned"
+  )
+}
+
+#' @export
+print.binned <- function(x) {
+  cat("<binned>\n")
+  
+  # Rely on factor printing as much as possible
+  f <- cut(x, attr(x, "breaks"))
+  print(as.integer(f))
+  cat("Bins: ", paste0(levels(f), collapse = ", "))
+  
+  invisible(x)
+}
+
+#' @export
+`[.binned` <- function(x, i, ...) {
+  new_binned(NextMethod(), breaks = attr(x, "breaks"))
+}
+
+x <- new_binned(runif(10), seq(0, 1, length = 5))
+x
+
+x[1]
+
+x[0]
+```
+
+## Coercion
+
+`vec_type2()` defines the possible set of automatic, or implicit, coercions. Because these coercions happen silently, they are quite strict; if they're too flexible, they'll increase the likelihood of silent mistakes. It's useful to look at coercions that vctrs provides for base types, as we think about _why_ these coercions exist, and how you should think about coercions for your own class.
+
+```{r, echo = FALSE}
+knitr::include_graphics("../man/figures/coerce.png")
+```
+
+If you squint your brain a little, I think you can see that each set of automatic coercions is about increasing resolution. Integers are low resolution versions of doubles, and dates are low resolution versions of date-times. Logicals are low resolution version of integers because there's a strong convention that `TRUE` and `FALSE` can be used interchangeably with `1` and `0`. 
+
+But what is the resolution of a factor? We must take a somewhat pragmatic approach because base R often converts character vectors to factors, and we don't want to be burdensome to users. So we say that a factor `x` has finer resolution than factor `y` if the levels of `y` are contained in `x`. So to find the common type of two factors, we take the union of the levels of both factors, resulting in a factor that has finer resolution than either. Finally, you can think of a character vector as a factor with every possible level, so factors and character vectors are coercible.
+
+Using this reasoning, I think binned should only be coercible with doubles, as you can think of a double as a binned vector with inifinitely small bins.
+
+### Double dispatch
+
+The implementation of `vec_type2()` relies on __double dispatch__, because the result depends on the type of both arguments. S3 does not have native support for double dispatch, but we can implement with a trick: doing dispatch twice. 
+
+```{r, eval = FALSE}
+vec_type2 <- function(x, y) {
+  UseMethod("vec_type2")
+}
+vec_type2.integer <- function(x, y) {
+  UseMethod("vec_type2.integer", y)
+}
+vec_type2.integer.double <- function(x, y) {
+  double()
+}
+```
+
+This means that we can two levels of generics `vec_type2()` and `vec_type2.XYZ()` with the interesting property that `vec_type2.XYZ()` is both an S3 method _and_ an S3 generic.
+
+To make this a bit more concrete, when you call `vec_type2(1L, 1)` the sequence of calls is:
+
+* `vec_type2()`
+* `vec_type2.integer()`
+* `vec_type2.integer.double()`
+
+If you call `vec_type2(1, 1L)` the sequence of calls is quite different:
+
+* `vec_type2()`
+* `vec_type2.double()`
+* `vec_type2.double.integer()`
+
+`vec_type2.x.y()` must return the same value as `vec_type2.y.x()`, but unfortunately there's no way to enforce this at the language level. Instead we need to use strong conventions (always defining the pair of methods next to each other), and unit tests to make sure that the system is well founded.
+
+### Extending binned
+
+Now that you understand the principles governing which coercions should exist, and the basic idea behind `vec_type2()`, we can implement coercions for the binned class. 
+
+First, we create `vec_type2.binned()`:
+
+```{r}
+vec_type2.binned <- function(x, y) {
+  UseMethod("vec_type2.binned", y)
+} 
+```
+
+(We'll come back to how to manage this in your package `NAMESPACE` a little later.)
+
+Next, we add two methods to `vec_type2.binned()` that must always exist:
+
+*   `NULL` is idempotent (i.e. `vec_type2(x, NULL)` is always `x`), so 
+    you must provide a `NULL` method that returns a vector of the same type as 
+    `x`, but with zero length. 
+  
+    ```{r}
+    vec_type2.binned.NULL <- function(x, y) {
+      x[0L]
+    }
+    ```
+  
+*   A default method that throws an informative error if there is no common type 
+    for a pair of types. Use `stop_incompatible_type()` to get a standard 
+    message. This function also uses a [custom condition][custom-condition]
+    which you can test for with `expect_error(class = "error_incompatible_type")`.
+
+    ```{r}
+    vec_type2.binned.default <- function(x, y) {
+      stop_incompatible_type(x, y)
+    }
+    ```
+
+Now we can provide the meat of our implementation, ensuring that the common type of double and binned is double. We need a pair of methods for the two possible orders of the argument.
+
+```{r}
+vec_type2.binned.double <- function(x, y) double()
+vec_type2.double.binned <- function(x, y) double()
+
+vec_type2(x, 1.5)
+vec_type2(1.5, x)
+```
+
+We also need to handle the binned <-> binned case. We take the same approach as for factors, taking the union of the breaks.
+
+```{r}
+union_breaks <- function(x, y) {
+  x_breaks <- attr(x, "breaks")
+  y_breaks <- attr(y, "breaks")
+  
+  sort(union(x_breaks, y_breaks))
+}
+
+vec_type2.binned.binned <- function(x, y) {
+  new_binned(double(), breaks = union_breaks(x, y))
+}
+
+y <- new_binned(c(1, 5, 10), breaks = c(0, 2.5, 5, 7.5))
+vec_type2(x, y)
+```
+
+## Casting
+
+`vec_cast()` defines the possible set user-requested coercions, or casts. Because these are user initiated, the set of possible casts is much larger than the set of possible coercions.
+
+```{r, echo = FALSE}
+knitr::include_graphics("../man/figures/cast.png")
+```
+
+Like `vec_type2()`, `vec_cast()` uses double dispatch.
+
+## Namespaces
+
+The namespace declarations are a little tricky because of the dual role of the function: it needs to be registered as an S3 method, and exported as  function. This problem wasn't thought of during the creation of roxygen2 so the syntax is a little clunky:
+
+```{r}
+#' @export
+#' @method vec_cast foofy
+#' @export vec_cast.foofy
+vec_cast.foofy <- function(x, y) {
+  UseMethod("vec_cast.foofy")
+} 
+```
+
+You also need to need to register all of the double-dispatch methods. Unfortuantely roxygen's heuristic for determing the name of the generic from the name of the method is suboptimal, so you'll need to manaully specify:
+
+```{r}
+vec_cast.foofy.integer <- function(x, y) {
+  attr(x )
+}
+```
+
+[custom-condition]: https://adv-r.hadley.nz/conditions.html#custom-conditions
+[s3]: https://adv-r.hadley.nz/s3.html

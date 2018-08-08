@@ -21,7 +21,9 @@ Imports:
     backports
 Suggests: 
     covr,
-    testthat
+    testthat,
+    knitr,
+    rmarkdown
 Encoding: UTF-8
 Language: en-GB
 LazyData: true
@@ -29,3 +31,4 @@ Roxygen: list(markdown = TRUE)
 RoxygenNote: 6.0.1.9000
 Remotes: 
     r-lib/rlang
+VignetteBuilder: knitr
