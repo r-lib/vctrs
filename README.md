@@ -48,6 +48,42 @@ GitHub with:
 devtools::install_github("r-lib/vctrs")
 ```
 
+## Motivation
+
+The primary motivation comes from two separate, but related problems.
+The first problem is that `base::c()` has rather undesirable behaviour
+when you mix different S3 vectors:
+
+``` r
+# combining factors makes integers
+c(factor("a"), factor("b"))
+#> [1] 1 1
+
+# combing dates and date-times give incorrect values
+dt <- as.Date("2020-01-1")
+dttm <- as.POSIXct(dt)
+
+c(dt, dttm)
+#> [1] "2020-01-01"    "4321940-06-07"
+c(dttm, dt)
+#> [1] "2019-12-31 18:00:00 CST" "1969-12-31 23:04:22 CST"
+
+# as do combining dates and factors: factors
+c(dt, factor("a"))
+#> [1] "2020-01-01" "1970-01-02"
+c(factor("a"), dt)
+#> [1]     1 18262
+```
+
+This behaviour arises partly because `c()` has dual purposes: as well as
+it’s primary duty of combining vectors, it has a secondary duty of
+stripping attributes. (For example, `?POSIXct` suggests that you should
+use `c()` if you want to reset the timezone.)
+
+The second problem is `dplyr::bind_rows()`: how should it handle vectors
+implemented in other packages? It currently handles them using a set of
+heuristics which have lead to many issues over the last few years.
+
 ## Usage
 
 ``` r
