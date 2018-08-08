@@ -266,24 +266,26 @@ vec_c(x[1], 0.5, .type = x)
 
 ## Namespaces
 
-The namespace declarations are a little tricky because of the dual role of the function: it needs to be registered as an S3 method, and exported as  function. This problem wasn't thought of during the creation of roxygen2 so the syntax is a little clunky:
+The namespace declarations are a little clunky because (e.g.) `vec_cast.binned()` is both a generic (which must be exported so that others can provide methods) and an S3 method (which must be registered). This problem wasn't considered in the design of roxygen2, so you have to be quite explicit:
 
 ```{r}
 #' @export
-#' @method vec_cast foofy
-#' @export vec_cast.foofy
-vec_cast.foofy <- function(x, y) {
-  UseMethod("vec_cast.foofy")
+#' @method vec_cast binned
+#' @export vec_cast.binned
+vec_cast.binned <- function(x, y) {
 } 
 ```
 
-You also need to need to register all of the double-dispatch methods. Unfortuantely roxygen's heuristic for determing the name of the generic from the name of the method is suboptimal, so you'll need to manaully specify:
+You also need to register the individual double-dispatch methods. Unfortuantely roxygen's heuristic for determing the name of the generic from the name of the method gives the wrong result here, so you need to fully specify it:
 
 ```{r}
-vec_cast.foofy.integer <- function(x, y) {
-  attr(x)
+#' @method vec_cast.binned double
+#' @export
+vec_cast.binned.double <- function(x, y) {
 }
 ```
+
+Hopefully future versions of roxygen will make these exports less painful.
 
 [custom-condition]: https://adv-r.hadley.nz/conditions.html#custom-conditions
 [s3]: https://adv-r.hadley.nz/s3.html
