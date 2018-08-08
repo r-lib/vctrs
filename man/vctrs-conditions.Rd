@@ -4,16 +4,22 @@
 \alias{vctrs-conditions}
 \alias{stop_incompatible_type}
 \alias{stop_incompatible_cast}
+\alias{warn_cast_lossy_vector}
 \title{Custom conditions for vctrs package}
 \usage{
 stop_incompatible_type(x, y, details = NULL)
 
 stop_incompatible_cast(x, y, details = NULL)
+
+warn_cast_lossy_vector(from, to, is_lossy)
 }
 \arguments{
 \item{x, y}{Vectors}
 
 \item{details}{Any additional human readable details}
+
+\item{is_lossy}{A logical vector describing which elements of
+\code{x} lost resolution.}
 
 \item{subclass}{Use if you want to further customise the class}
 }

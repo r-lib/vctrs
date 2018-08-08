@@ -7,6 +7,8 @@
 #' @param x,y Vectors
 #' @param details Any additional human readable details
 #' @param subclass Use if you want to further customise the class
+#' @param is_lossy A logical vector describing which elements of
+#'   `x` lost resolution.
 #' @name vctrs-conditions
 NULL
 
@@ -87,6 +89,8 @@ warn_cast_lossy <- function(message = NULL, .subclass = NULL, from, to, ..., cla
   )
 }
 
+#' @export
+#' @rdname vctrs-conditions
 warn_cast_lossy_vector <- function(from, to, is_lossy) {
   which <- which(is_lossy)
   if (length(which) == 0) {
