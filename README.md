@@ -9,20 +9,20 @@ status](https://travis-ci.org/r-lib/vctrs.svg?branch=master)](https://travis-ci.
 status](https://codecov.io/gh/r-lib/vctrs/branch/master/graph/badge.svg)](https://codecov.io/github/r-lib/vctrs?branch=master)
 [![lifecycle](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://www.tidyverse.org/lifecycle/#experimental)
 
-The primary short-term goal of vctrs is to develop a [type
-*system*](https://en.wikipedia.org/wiki/Type_system) for vectors
-(including arrays and data frames) that help us reason about the class
-of values returned from vectorised functions that combine different
-types of input (e.g. `c()`, `ifelse()`, `rbind()`). Our hope that this
-will make the package invisible for most users, instead of being
-suprised by the result of a function, a **type system** will mean that
-you build up an accurate mental model just from day-to-day use.
+The short-term goal of vctrs is to develop a [type
+system](https://en.wikipedia.org/wiki/Type_system) for vectors which
+will help reason about functions that combine different types of input
+(e.g. `c()`, `ifelse()`, `rbind()`). The vctrs type system encompasses
+base vectors (e.g. logical, numeric, character, list), S3 vectors
+(e.g. factor, ordered, Date, POSIXct), and data frames; and can be
+extended to deal with S3 vectors defined in other packages, as described
+in `vignette("extending-vctrs")`.
 
-vctrs is user extensible. By setting up the `vec_type2()` and
-`vec_cast()` methods any package can participate in this system (which
-in the long-term will ensure that `dplyr::bind_rows()` work with
-arbitrary S3 classes). `vignette("extending-vctrs")` will provide more
-details.
+Understanding and extending vctrs requires some effort from developers,
+but it is our hope that the package will be invisible to most users.
+Having an underlying theory that describes what type of thing a function
+should return will mean that you can build up an accurate mental model
+from day-to-day use, and you will be less surprised by new functions.
 
 In the longer-term, vctrs will become the home for tidyverse vector
 functions that work with logical and numeric vectors, and vectors in
@@ -34,7 +34,7 @@ together various helpers that are currently scattered across packages,
 `ggplot2::cut_number()`, `dplyr::coalesce()`, and `tidyr::fill()`.
 
 vctrs has few dependencies and is suitable for use from other packages.
-(vctrs has a transition dependency on tibble. Once vctrs is extensible
+(vctrs has a transitional dependency on tibble. Once vctrs is extensible
 all tibble related code will move into the tibble package.)
 
 ## Installation
@@ -79,11 +79,12 @@ it’s primary duty of combining vectors, it has a secondary duty of
 stripping attributes. For example, `?POSIXct` suggests that you should
 use `c()` if you want to reset the timezone.
 
-The second problem is `dplyr::bind_rows()`: how should it handle vector
-classes implemented in other packages? At the moment it handles them
-using a set of heuristics, these heuristics have grown over time, but it
-feels like we really need to think through the problem in order to build
-a robust solution that is robustly correct.
+The second problem is that `dplyr::bind_rows()` is not extensible by
+others. At the moment it handles S3 classes using a set of heuristics,
+but these often fail, and it feels like we really need to think through
+the problem in order to build a principled solution. This intersects
+with the need to cleanly support more types of data frame columns
+including lists of data frames, data frames, and matrices.
 
 ## Usage
 
