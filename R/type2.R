@@ -144,9 +144,6 @@ vec_type2.factor.NULL         <- function(x, y) new_factor(levels = levels(x))
 #' @method vec_type2.factor factor
 #' @export
 vec_type2.factor.factor       <- function(x, y) new_factor(levels = levels_union(x, y))
-#' @method vec_type2.ordered factor
-#' @export
-vec_type2.ordered.factor      <- function(x, y) new_factor(levels = levels_union(x, y))
 
 #' @method vec_type2.character NULL
 #' @export
@@ -166,6 +163,13 @@ vec_type2.factor.character    <- function(x, y) character()
 #' @method vec_type2.character character
 #' @export
 vec_type2.character.character <- function(x, y) character()
+
+#' @method vec_type2.ordered factor
+#' @export
+vec_type2.ordered.factor      <- function(x, y) stop_incompatible_type(x, y)
+#' @method vec_type2.factor ordered
+#' @export
+vec_type2.factor.ordered      <- function(x, y) stop_incompatible_type(x, y)
 
 #' @method vec_type2.character default
 #' @export
