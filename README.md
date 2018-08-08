@@ -58,6 +58,10 @@ when you mix different S3 vectors:
 c(factor("a"), factor("b"))
 #> [1] 1 1
 
+# even if you combine with a string
+c("a", factor("a"))
+#> [1] "a" "1"
+
 # combing dates and date-times give incorrect values
 dt <- as.Date("2020-01-1")
 dttm <- as.POSIXct(dt)
@@ -174,6 +178,10 @@ Reduce(vec_type2, types)
 #> numeric(0)
 ```
 
+(More formally, `vec_type2()` forms a [commutative
+monoid](http://mathworld.wolfram.com/CommutativeMonoid.html) because
+it’s assocaited, commutative, and has an identity element, `NULL`.)
+
 `vec_cast()` is used for explicit casts: given a value and a type, it
 casts the value to the type or throws an error stating that the cast is
 not possible. If a cast is possible in general (i.e. double -\>
@@ -200,6 +208,22 @@ The following diagram summarises both casts (arrows) and coercions
 (circles) for all base types supported by vctrs:
 
 ![](man/figures/combined.png)
+
+### Factors
+
+Note that the commutativty of `vec_type()` only applies to the type, not
+the parameters of that type. Concretely, the order in which you
+concatenate factors will affect the order of the levels in the output:
+
+``` r
+fa <- factor("a")
+fb <- factor("b")
+
+levels(vec_type2(fa, fb))
+#> [1] "a" "b"
+levels(vec_type2(fb, fa))
+#> [1] "b" "a"
+```
 
 ### Data frames
 
@@ -235,11 +259,58 @@ vec_type(vec_type2(df1, df2))
 #> >
 ```
 
+Like factors, the order of variables in the data frame is not
+commutative, and depends on the order of the inputs:
+
+``` r
+names(vec_type2(df1, df2))
+#> [1] "x" "y" "z"
+names(vec_type2(df2, df1))
+#> [1] "x" "z" "y"
+```
+
+vctrs also knows how to handle data frame columns:
+
+``` r
+df3 <- data.frame(x = 3)
+df3$z <- data.frame(a = 2, b = 2)
+vec_type(df3)
+#> type: data.frame<
+#>  x: double
+#>  z: data.frame<
+#>     a: double
+#>     b: double
+#>    >
+#> >
+
+df4 <- data.frame(x = 4)
+df4$z <- data.frame(a = FALSE, b = 3, c = "a")
+vec_type(df4)
+#> type: data.frame<
+#>  x: double
+#>  z: data.frame<
+#>     a: logical
+#>     b: double
+#>     c: factor
+#>    >
+#> >
+
+vec_type(vec_type2(df3, df4))
+#> type: data.frame<
+#>  x: double
+#>  z: data.frame<
+#>     a: double
+#>     b: double
+#>     c: factor
+#>    >
+#> >
+```
+
 ### List of
 
-vctr provides a new vector type that represents a list where each
-element has the same type (an interesting contrast to a data frame which
-is a list where each element has the same *length*).
+vctr provides a new vector class that represents a list where each
+element has the same type. This is an interesting contrast to a data
+frame which is a list where each element has the same *length*.
 
 ``` r
 x1 <- list_of(1:3, 3:5, 6:8)
@@ -258,29 +329,17 @@ x1[[5]] <- factor("x")
 This provides a natural type for nested data frames:
 
 ``` r
-vec_type(as_list_of(split(mtcars, mtcars$cyl)))
+vec_type(as_list_of(split(mtcars[1:3], mtcars$cyl)))
 #> type: list_of<data.frame<
 #>  mpg : double
 #>  cyl : double
 #>  disp: double
-#>  hp  : double
-#>  drat: double
-#>  wt  : double
-#>  qsec: double
-#>  vs  : double
-#>  am  : double
-#>  gear: double
-#>  carb: double
 #> >>
 ```
 
 ## Compared to base R
 
-The following section compares base R and vctrs behavour. Changing base
-R to follow the same set of principles as vctrs would lead to widespread
-breakage in existing code, especially given that `c()` is often used for
-its side-effect of stripping attributes (e.g. `?POSIXct` suggests using
-`c(x)` to strip the time zone attribute).
+The following section compares base R and vctrs behaviour.
 
 ### Atomic vectors
 
@@ -289,7 +348,7 @@ its side-effect of stripping attributes (e.g. `?POSIXct` suggests using
 c(1, "x")
 #> [1] "1" "x"
 
-# vctrs is stricter, and only casts explicitly
+# vctrs is stricter, and requires an explicit cast
 vec_c(1, "x")
 #> Error: No common type for double and character
 
