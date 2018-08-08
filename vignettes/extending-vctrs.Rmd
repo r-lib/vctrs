@@ -31,6 +31,8 @@ Your vector class must curently be built on top of an existing base vector type 
 library(vctrs)
 ```
 
+Please note that the API (particularly function and argument names) described in this vignette is highly likely to change in the future. Expect some modification as we learn from external developers what could be improved.
+
 ## Binned
 
 To make the discussion of the ideas in this vignette concrete, I'm going to provide a simple vector class of my own. The `binned` class stores a double vector along with a vector of breaks, and uses these when printing. It's kind of like a factor, but for doubles.
@@ -184,13 +186,83 @@ vec_type2(x, y)
 
 ## Casting
 
-`vec_cast()` defines the possible set user-requested coercions, or casts. Because these are user initiated, the set of possible casts is much larger than the set of possible coercions.
+`vec_cast()` defines the possible set user-requested coercions, or casts. Because these are user initiated, the set of possible casts is much larger than the set of possible coercions. The following diagram shows the set of casts that vctrs provides for base classes. If you can follow arrows in the same direction from one class to another, then a cast exists.
 
 ```{r, echo = FALSE}
 knitr::include_graphics("../man/figures/cast.png")
 ```
 
-Like `vec_type2()`, `vec_cast()` uses double dispatch.
+Note that the arrows are bidirectional: if you can cast from `x` to `y`, you should also be able to cast back from `y` to `x`. If type `x` has greater resolution than `y`, there will be some inputs that lose precision. These should generate warnings using `warn_cast_lossy()`:
+
+```{r}
+vec_cast(c(1, 2, 10), to = integer())
+
+vec_cast(c(1.5, 2, 10.5), to = integer())
+```
+
+Generally, you should provide a cast method whenever it's meaningful to cast back and forth from a given type. For binned vectors, I think this is only true for doubles and lists.
+
+### Extending binned
+
+Like `vec_type2()`, `vec_cast()` uses double dispatch, so the initial steps are similar. We start by creating the generic, and providing `NULL` and `default` methods. 
+
+```{r}
+vec_cast.binned <- function(x, to) {
+  UseMethod("vec_cast.binned")
+}
+
+vec_cast.binned.NULL <- function(x, to) {
+  NULL
+}
+
+vec_cast.binned.default <- function(x, to) {
+  stop_incompatible_cast(x, to)
+}
+```
+
+Note that the order of dispatch is different to `vec_type2()`. Here the second argument, `to`, forms the first component of the function name, i.e. `vec_cast.binned.NULL()` casts a `NULL` vector to `binned`. This makes sense if you think about `as.integer()`, `as.double()` etc.
+
+There is one extra method that you should always provide for `vec_cast()`: the ability to round trip to and from a list. To cast your vector to a list, implement a `as.list()` method, which can always follow the simple form show below. To cast from a list back to you class, use the `vec_list_cast()` helper provided by vctrs.
+
+```{r}
+as.list.binned <- function(x, ...) {
+  lapply(seq_along(x), function(i) x[i])
+}
+
+vec_cast.list.binned <- function(x, to) as.list(x)
+vec_cast.binned.list <- function(x, to) cast_from_list(x, to)
+```
+
+Need make sure that your object can cast to itself:
+
+```{r}
+vec_cast.binned.binned <- function(x, to) {
+  new_binned(as.vector(x), breaks = attr(x, "breaks"))
+}
+```
+
+Finish up by providing an other casts. For binned, we need to describe how to cast from binned to double and double to binned:
+
+```{r}
+vec_cast.binned.double <- function(x, to) {
+  # using as.vector() for its purpose of stripping attributes
+  as.vector(x)
+}
+
+vec_cast.double.binned <- function(x, to) {
+  new_binned(x, breaks = attr(to, "breaks"))
+}
+```
+
+You can then confirm that `vec_type2()` and `vec_cast()` are plumbed together correctly by using `vec_c()`:
+
+```{r}
+vec_c(x[1], 0.5)
+
+vec_c(0.5, .type = x)
+
+vec_c(x[1], 0.5, .type = x)
+```
 
 ## Namespaces
 
@@ -209,7 +281,7 @@ You also need to need to register all of the double-dispatch methods. Unfortuant
 
 ```{r}
 vec_cast.foofy.integer <- function(x, y) {
-  attr(x )
+  attr(x)
 }
 ```
 
