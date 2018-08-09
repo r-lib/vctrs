@@ -148,7 +148,6 @@ test_that("orderedness of factor is preserved", {
 
 test_that("safe casts work as expected", {
   date <- as.Date("2018-01-01")
-  type_date <- as_vec_type(Sys.Date())
 
   expect_equal(vec_cast(NULL, date), NULL)
   expect_equal(vec_cast(17532, date), date)
