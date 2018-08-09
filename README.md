@@ -269,40 +269,45 @@ names(vec_type2(df2, df1))
 #> [1] "x" "z" "y"
 ```
 
-vctrs also knows how to handle data frame columns:
+vctrs also knows how to handle data frame and matrix columns:
 
 ``` r
 df3 <- data.frame(x = 3)
-df3$z <- data.frame(a = 2, b = 2)
+df3$a <- data.frame(a = 2, b = 2)
+df3$b <- matrix(c(1L, 2L), nrow = 1)
 vec_type(df3)
 #> type: data.frame<
 #>  x: double
-#>  z: data.frame<
+#>  a: data.frame<
 #>     a: double
 #>     b: double
 #>    >
+#>  b: integer[,2]
 #> >
 
 df4 <- data.frame(x = 4)
-df4$z <- data.frame(a = FALSE, b = 3, c = "a")
+df4$a <- data.frame(a = FALSE, b = 3, c = "a")
+df4$b <- matrix(c(3, 5), nrow = 1)
 vec_type(df4)
 #> type: data.frame<
 #>  x: double
-#>  z: data.frame<
+#>  a: data.frame<
 #>     a: logical
 #>     b: double
 #>     c: factor
 #>    >
+#>  b: double[,2]
 #> >
 
 vec_type(vec_type2(df3, df4))
 #> type: data.frame<
 #>  x: double
-#>  z: data.frame<
+#>  a: data.frame<
 #>     a: double
 #>     b: double
 #>     c: factor
 #>    >
+#>  b: double
 #> >
 ```
 

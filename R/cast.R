@@ -92,25 +92,28 @@ vec_cast.logical.NULL <- function(x, to) {
 #' @export
 #' @method vec_cast.logical logical
 vec_cast.logical.logical <- function(x, to) {
-  x
+  shape_recycle(x, to)
 }
 #' @export
 #' @method vec_cast.logical integer
 vec_cast.logical.integer <- function(x, to) {
   warn_cast_lossy_vector(x, to, !x %in% c(0L, 1L))
-  vec_coerce_bare(x, "logical")
+  x <- vec_coerce_bare(x, "logical")
+  shape_recycle(x, to)
 }
 #' @export
 #' @method vec_cast.logical double
 vec_cast.logical.double <- function(x, to) {
   warn_cast_lossy_vector(x, to, !x %in% c(0, 1))
-  vec_coerce_bare(x, "logical")
+  x <- vec_coerce_bare(x, "logical")
+  shape_recycle(x, to)
 }
 #' @export
 #' @method vec_cast.logical character
 vec_cast.logical.character <- function(x, to) {
   warn_cast_lossy_vector(x, to, !toupper(x) %in% c("T", "F", "TRUE", "FALSE"))
-  vec_coerce_bare(x, "logical")
+  x <- vec_coerce_bare(x, "logical")
+  shape_recycle(x, to)
 }
 #' @export
 #' @method vec_cast.logical list
@@ -136,19 +139,20 @@ vec_cast.integer.NULL  <- function(x, to) {
 #' @export
 #' @method vec_cast.integer logical
 vec_cast.integer.logical <- function(x, to) {
-  vec_coerce_bare(x, "integer")
+  x <- vec_coerce_bare(x, "integer")
+  shape_recycle(x, to)
 }
 #' @export
 #' @method vec_cast.integer integer
 vec_cast.integer.integer <- function(x, to) {
-  x
+  shape_recycle(x, to)
 }
 #' @export
 #' @method vec_cast.integer double
 vec_cast.integer.double <- function(x, to) {
   out <- suppressWarnings(vec_coerce_bare(x, "integer"))
   warn_cast_lossy_vector(x, to, (out != x) | xor(is.na(x), is.na(out)))
-  out
+  shape_recycle(out, to)
 }
 #' @export
 #' @method vec_cast.integer character
@@ -179,7 +183,8 @@ vec_cast.double.NULL <- function(x, to) {
 #' @export
 #' @method vec_cast.double logical
 vec_cast.double.logical <- function(x, to) {
-  vec_coerce_bare(x, "double")
+  x <- vec_coerce_bare(x, "double")
+  shape_recycle(x, to)
 }
 #' @export
 #' @method vec_cast.double integer
@@ -189,12 +194,13 @@ vec_cast.double.integer <- vec_cast.double.logical
 vec_cast.double.character <- function(x, to) {
   out <- suppressWarnings(vec_coerce_bare(x, "double"))
   warn_cast_lossy_vector(x, to, (out != x) | xor(is.na(x), is.na(out)))
+  out <- shape_recycle(out, to)
   out
 }
 #' @export
 #' @method vec_cast.double double
 vec_cast.double.double <- function(x, to) {
-  x
+  shape_recycle(x, to)
 }
 #' @export
 #' @method vec_cast.double list
@@ -222,7 +228,8 @@ vec_cast.character.NULL <- function(x, to) {
 #' @export
 #' @method vec_cast.character logical
 vec_cast.character.logical <- function(x, to) {
-  vec_coerce_bare(x, "character")
+  x <- vec_coerce_bare(x, "character")
+  shape_recycle(x, to)
 }
 #' @export
 #' @method vec_cast.character integer
@@ -233,12 +240,13 @@ vec_cast.character.double <- vec_cast.character.logical
 #' @export
 #' @method vec_cast.character character
 vec_cast.character.character <- function(x, to) {
-  x
+  shape_recycle(x, to)
 }
 #' @export
 #' @method vec_cast.character difftime
 vec_cast.character.difftime <- function(x, to) {
-  paste(x, units(x))
+  x <- paste(x, units(x))
+  shape_recycle(x, to)
 }
 #' @export
 #' @method vec_cast.character list
@@ -267,12 +275,12 @@ vec_cast.list.NULL <- function(x, to) {
 #' @method vec_cast.list list_of
 vec_cast.list.list_of <- function(x, to) {
   warn_cast_lossy(from = x, to = to)
-  as.list(x)
+  shape_recycle(as.list(x), to)
 }
 #' @export
 #' @method vec_cast.list list
 vec_cast.list.list <- function(x, to) {
-  x
+  shape_recycle(x, to)
 }
 #' @export
 #' @method vec_cast.list default
@@ -528,5 +536,5 @@ vec_list_cast <- function(x, to) {
     out[[i]] <- vec_cast(x[[i]][[1]], to)
   }
 
-  out
+  shape_recycle(out, to)
 }

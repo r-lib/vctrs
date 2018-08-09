@@ -127,6 +127,9 @@ vec_cbind <- function(..., .type = NULL, .nrow = NULL) {
   })
   out <- find_type(tbl_empty, .type = .type[0]) %||% data_frame()
 
+  is_null <- map_lgl(args, is.null)
+  args <- args[!is_null]
+
   # container size: common length of all inputs
   nrow <- find_nrow(args, .nrow = .nrow)
   args <- map(args, recycle, n = nrow)

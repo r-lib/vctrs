@@ -37,9 +37,13 @@ test_that("invalid casts generate error", {
   expect_error(vec_cast(factor("a"), logical()), class = "error_incompatible_cast")
 })
 
-test_that("dimensionality is preserved" ,{
+test_that("dimensionality matches output" ,{
   x <- matrix(1, nrow = 2, ncol = 2)
-  expect_dim(vec_cast(x, logical()), c(2, 2))
+  expect_equal(vec_cast(x, logical()), rep(TRUE, 4))
+
+  x1 <- matrix(TRUE, nrow = 1, ncol = 1)
+  x2 <- matrix(1, nrow = 0, ncol = 2)
+  expect_dim(vec_cast(x1, x2), c(1, 2))
 })
 
 # Integer -----------------------------------------------------------------
@@ -62,11 +66,6 @@ test_that("invalid casts generate error", {
   expect_error(vec_cast(factor("a"), integer()), class = "error_incompatible_cast")
 })
 
-test_that("dimensionality is preserved" ,{
-  x <- matrix(TRUE, nrow = 2, ncol = 2)
-  expect_dim(vec_cast(x, integer()), c(2, 2))
-})
-
 # Double ------------------------------------------------------------------
 
 test_that("safe casts work as expected", {
@@ -86,11 +85,6 @@ test_that("invalid casts generate error", {
   expect_error(vec_cast(factor("a"), double()), class = "error_incompatible_cast")
 })
 
-test_that("dimensionality is preserved" ,{
-  x <- matrix(TRUE, nrow = 2, ncol = 2)
-  expect_dim(vec_cast(x, double()), c(2, 2))
-})
-
 # Character ---------------------------------------------------------------
 
 test_that("safe casts work as expected", {
@@ -105,22 +99,11 @@ test_that("difftime gets special treatment", {
   expect_equal(vec_cast(dt1, character()), "600 secs")
 })
 
-test_that("dimensionality is preserved" ,{
-  x <- matrix(TRUE, nrow = 2, ncol = 2)
-  expect_dim(vec_cast(x, character()), c(2, 2))
-})
-
-
 # Lists  ------------------------------------------------------------------
 
 test_that("safe casts work as expected", {
   expect_equal(vec_cast(NULL, list()), NULL)
   expect_equal(vec_cast(1:2, list()), list(1L, 2L))
-})
-
-test_that("dimensionality is preserved" ,{
-  x <- matrix(TRUE, nrow = 2, ncol = 2)
-  expect_dim(vec_cast(x, list()), c(2, 2))
 })
 
 # Factors -----------------------------------------------------------------

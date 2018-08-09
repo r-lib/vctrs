@@ -1,4 +1,4 @@
-expect_dim <- function(x, type) {
+expect_dim <- function(x, shape) {
   dim <- vec_dim(x)
-  expect_equal(vec_dim(x), !!dim)
+  expect_equal(dim, !!shape)
 }

@@ -179,15 +179,17 @@ names(vec_type2(df1, df2))
 names(vec_type2(df2, df1))
 ```
 
-vctrs also knows how to handle data frame columns:
+vctrs also knows how to handle data frame and matrix columns:
 
 ```{r}
 df3 <- data.frame(x = 3)
-df3$z <- data.frame(a = 2, b = 2)
+df3$a <- data.frame(a = 2, b = 2)
+df3$b <- matrix(c(1L, 2L), nrow = 1)
 vec_type(df3)
 
 df4 <- data.frame(x = 4)
-df4$z <- data.frame(a = FALSE, b = 3, c = "a")
+df4$a <- data.frame(a = FALSE, b = 3, c = "a")
+df4$b <- matrix(c(3, 5), nrow = 1)
 vec_type(df4)
 
 vec_type(vec_type2(df3, df4))

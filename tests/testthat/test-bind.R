@@ -91,10 +91,10 @@ test_that("duplicate names are de-deduplicated", {
 test_that("rows recycled to longest", {
   df <- data.frame(x = 1:3)
 
-  expect_dim(vec_cbind(df), c(1, 3))
-  expect_dim(vec_cbind(df, NULL), c(1, 3))
-  expect_dim(vec_cbind(df, y = 1), c(1, 3))
-  expect_dim(vec_cbind(data.frame(x = 1), y = 1:3), c(1, 3))
+  expect_dim(vec_cbind(df), c(3, 1))
+  expect_dim(vec_cbind(df, NULL), c(3, 1))
+  expect_dim(vec_cbind(df, y = 1), c(3, 2))
+  expect_dim(vec_cbind(data.frame(x = 1), y = 1:3), c(3, 2))
 
   expect_dim(
     vec_cbind(
@@ -115,7 +115,7 @@ test_that("output is tibble if any input is tibble", {
 })
 
 test_that("can override default .nrow", {
-  expect_dim(vec_cbind(1, .nrow = 3), c(1, 2))
+  expect_dim(vec_cbind(1, .nrow = 3), c(3, 1))
 })
 
 test_that("can't violate recycling rules", {
