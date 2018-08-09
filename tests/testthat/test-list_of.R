@@ -4,10 +4,10 @@ test_that("list_of works like list", {
   x1 <- list_of(1, 1)
   expect_type(x1, "list")
   expect_s3_class(x1, "list_of")
-  expect_equal(attr(x1, "type"), double())
+  expect_equal(attr(x1, "ptype"), double())
 
-  x2 <- list_of(1, 1, .type = integer())
-  expect_equal(attr(x1, "type"), integer())
+  x2 <- list_of(1, 1, .ptype = integer())
+  expect_equal(attr(x1, "ptype"), integer())
 
   x3 <- as_list_of(list(1, 1))
   expect_equal(x3, x1)
@@ -22,7 +22,7 @@ test_that("can use as_list_of to change type", {
   x1 <- list_of(1)
   expect_equal(as_list_of(x1), x1)
 
-  x2 <- as_list_of(x1, .type = integer())
+  x2 <- as_list_of(x1, .ptype = integer())
   expect_identical(x2[[1]], 1L)
 })
 
@@ -62,8 +62,8 @@ test_that("[<-, [[<- and $<- coerce their input", {
 # Type system -------------------------------------------------------------
 
 test_that("max<list_of<a>, list_of<b>> is list_of<max<a, b>>", {
-  r_int <- list_of(.type = integer())
-  r_dbl <- list_of(.type = double())
+  r_int <- list_of(.ptype = integer())
+  r_dbl <- list_of(.ptype = double())
 
   expect_equal(vec_ptype(r_int, r_int), vec_ptype(r_int))
   expect_equal(vec_ptype(r_int, r_dbl), vec_ptype(r_int))

@@ -2,10 +2,13 @@
 % Please edit documentation in R/unknown.R
 \name{unknown}
 \alias{unknown}
+\alias{is_unknown}
 \alias{vec_type2.unknown}
 \title{A vector of unknown type}
 \usage{
 unknown(n = 0)
+
+is_unknown(x)
 
 \method{vec_type2}{unknown}(x, y)
 }

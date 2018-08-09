@@ -261,9 +261,9 @@ You can then confirm that `vec_type2()` and `vec_cast()` are plumbed together co
 ```{r}
 vec_c(x[1], 0.5)
 
-vec_c(0.5, .type = x)
+vec_c(0.5, .ptype = x)
 
-vec_c(x[1], 0.5, .type = x)
+vec_c(x[1], 0.5, .ptype = x)
 ```
 
 ## Namespaces

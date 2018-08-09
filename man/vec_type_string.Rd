@@ -20,3 +20,4 @@ printed. The default method uses the first element of the class vector.
 cat(vec_type_string(1:10))
 cat(vec_type_string(iris))
 }
+\keyword{internal}

@@ -4,7 +4,7 @@
 #' printed. The default method uses the first element of the class vector.
 #'
 #' @param x A vector.
-#' @keyword internal
+#' @keywords internal
 #' @return A string.
 #' @export
 #' @examples

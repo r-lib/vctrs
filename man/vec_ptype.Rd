@@ -9,10 +9,15 @@ vec_ptype(..., .ptype = NULL)
 \arguments{
 \item{...}{Vectors inputs}
 
-\item{.ptype}{Optionally, supply your own prototype to override finding
-the common prototype. If \code{getOption("vctrs.no_guessing")} is \code{TRUE} you
-must supply this value: this is a convenient way to make production
-code demand fixed types.}
+\item{.ptype}{If \code{NULL}, the default, the output type is determined by
+computing the common type across all elements of \code{...}.
+
+Alternatively, you can supply \code{.ptype} to give the output known type.
+If \code{getOption("vctrs.no_guessing")} is \code{TRUE} you must supply this value:
+this is a convenient way to make production code demand fixed types.}
+}
+\value{
+A prototype
 }
 \description{
 This function is aimed at developers, but may also be useful for users who

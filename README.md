@@ -112,11 +112,11 @@ vec_c(1.5, "x")
 Unlike `c()`, you can optionally specify the desired output class:
 
 ``` r
-vec_c(1, 2, .type = integer())
+vec_c(1, 2, .ptype = integer())
 #> [1] 1 2
-vec_c(1, "x", .type = character())
+vec_c(1, "x", .ptype = character())
 #> [1] "1" "x"
-vec_c(1, "x", .type = list())
+vec_c(1, "x", .ptype = list())
 #> [[1]]
 #> [1] 1
 #> 
@@ -128,7 +128,7 @@ This supports a much wider range of casts (more on that below) than the
 automatic coercions, but it can still fail:
 
 ``` r
-vec_c(Sys.Date(), .type = factor())
+vec_c(Sys.Date(), .ptype = factor())
 #> Error: Can't cast date to factor
 ```
 
@@ -356,7 +356,7 @@ c(1, "x")
 vec_c(1, "x")
 #> Error: No common type for double and character
 
-vec_c(1, "x", .type = character())
+vec_c(1, "x", .ptype = character())
 #> [1] "1" "x"
 ```
 
@@ -433,7 +433,7 @@ vec_rbind(df1, df2)
 #> 2   NA  2
 
 # Additionally, you can specify the desired output type
-vec_rbind(df1, df2, .type = data.frame(x = double(), y = double()))
+vec_rbind(df1, df2, .ptype = data.frame(x = double(), y = double()))
 #>    x  y
 #> 1  1 NA
 #> 2 NA  2

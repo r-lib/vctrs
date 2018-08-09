@@ -9,11 +9,11 @@
 \alias{vec_cast.list_of}
 \title{Construct "list_of" objects}
 \usage{
-list_of(..., .type = NULL)
+list_of(..., .ptype = NULL)
 
 as_list_of(x, ...)
 
-new_list_of(x, .type)
+new_list_of(x, .ptype)
 
 is_list_of(x)
 
@@ -25,12 +25,12 @@ is_list_of(x)
 \item{...}{Vectors to coerce. All vectors must be 1d (i.e. no data
 frames, matrices or arrays).}
 
-\item{.type}{If \code{NULL}, the default, the output type is determined by
-computing the common type across all inputs.
+\item{.ptype}{If \code{NULL}, the default, the output type is determined by
+computing the common type across all elements of \code{...}.
 
-Alternatively, you can supply \code{.type} to force the output to have known
-type, or to die trying. \code{.type = character()} and \code{.type = list()} will
-succeed for all vectors. See \code{\link[=vec_cast]{vec_cast()}} for more details.}
+Alternatively, you can supply \code{.ptype} to give the output known type.
+If \code{getOption("vctrs.no_guessing")} is \code{TRUE} you must supply this value:
+this is a convenient way to make production code demand fixed types.}
 
 \item{x}{For \code{as_list_of()}, a vector to be coerced to list_of.}
 

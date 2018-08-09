@@ -11,7 +11,7 @@
 #'   combining with inner names if also present.
 #'
 #'   `NULL` inputs are silently ignored. Empty (e.g. zero row) inputs
-#'   will not appear in the output, but will affect the derived `.type`.
+#'   will not appear in the output, but will affect the derived `.ptype`.
 #' @inheritParams vec_c
 #' @return A data frame, or subclass of data frame.
 #'
@@ -24,7 +24,7 @@
 #' @examples
 #' # row binding -----------------------------------------
 #'
-#' # common columns are coerced to common type
+#' # common columns are coerced to common class
 #' vec_rbind(
 #'   data.frame(x = 1),
 #'   data.frame(x = FALSE)
@@ -84,16 +84,16 @@ NULL
 
 #' @export
 #' @rdname vec_bind
-vec_rbind <- function(..., .type = NULL) {
+vec_rbind <- function(..., .ptype = NULL) {
   args <- list2(...)
   tbls <- map(args, as_df_row)
-  type <- find_type(tbls, .type = .type)
+  ptype <- vec_ptype(!!!tbls, .ptype = .ptype)[[1]]
 
-  if (is.null(type))
+  if (is_unknown(ptype))
     return(data_frame())
 
   ns <- map_int(tbls, vec_length)
-  out <- vec_rep(type, sum(ns))
+  out <- vec_rep(ptype, sum(ns))
   rownames(out) <- NULL
 
   pos <- 1
@@ -102,7 +102,7 @@ vec_rbind <- function(..., .type = NULL) {
     if (n == 0L)
       next
 
-    out[pos:(pos + n - 1), ] <- vec_cast(tbls[[i]], to = type)
+    out[pos:(pos + n - 1), ] <- vec_cast(tbls[[i]], to = ptype)
     pos <- pos + n
   }
 
@@ -116,7 +116,7 @@ vec_rbind <- function(..., .type = NULL) {
 #'
 #'   Alternatively, specify the desired number of rows, and any inputs
 #'   of length 1 will be recycled appropriately.
-vec_cbind <- function(..., .type = NULL, .nrow = NULL) {
+vec_cbind <- function(..., .ptype = NULL, .nrow = NULL) {
   args <- list2(...)
 
   # container type: common type of all (data frame) inputs
@@ -125,9 +125,12 @@ vec_cbind <- function(..., .type = NULL, .nrow = NULL) {
     if (is.data.frame(x))
       x[0]
   })
-  out <- find_type(tbl_empty, .type = .type[0]) %||% data_frame()
+  out <- vec_ptype(!!!tbl_empty, .ptype = .ptype[0])[[1]]
+  if (is_unknown(out)) {
+    out <- data_frame()
+  }
 
-  is_null <- map_lgl(args, is.null)
+  is_null <- map_lgl(args, is_null)
   args <- args[!is_null]
 
   # container size: common length of all inputs

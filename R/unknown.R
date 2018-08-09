@@ -14,6 +14,12 @@ unknown <- function(n = 0) {
   unknown(length(NextMethod()))
 }
 
+#' @export
+#' @rdname unknown
+is_unknown <- function(x) {
+  inherits(x, "unknown")
+}
+
 # In practice, a vector containing only NA implies shape, but not type.
 is_nullish <- function(x) {
   is.null(x) || (is.logical(x) && vec_dims(x) == 1L && length(x) > 0 && all(is.na(x)))

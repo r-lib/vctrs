@@ -6,9 +6,9 @@
 \alias{vec_cbind}
 \title{Combine multiple data frames into a single data frames}
 \usage{
-vec_rbind(..., .type = NULL)
+vec_rbind(..., .ptype = NULL)
 
-vec_cbind(..., .type = NULL, .nrow = NULL)
+vec_cbind(..., .ptype = NULL, .nrow = NULL)
 }
 \arguments{
 \item{...}{Data frames or vectors.
@@ -17,14 +17,14 @@ vec_cbind(..., .type = NULL, .nrow = NULL)
 combining with inner names if also present.
 
 \code{NULL} inputs are silently ignored. Empty (e.g. zero row) inputs
-will not appear in the output, but will affect the derived \code{.type}.}
+will not appear in the output, but will affect the derived \code{.ptype}.}
 
-\item{.type}{If \code{NULL}, the default, the output type is determined by
-computing the common type across all inputs.
+\item{.ptype}{If \code{NULL}, the default, the output type is determined by
+computing the common type across all elements of \code{...}.
 
-Alternatively, you can supply \code{.type} to force the output to have known
-type, or to die trying. \code{.type = character()} and \code{.type = list()} will
-succeed for all vectors. See \code{\link[=vec_cast]{vec_cast()}} for more details.}
+Alternatively, you can supply \code{.ptype} to give the output known type.
+If \code{getOption("vctrs.no_guessing")} is \code{TRUE} you must supply this value:
+this is a convenient way to make production code demand fixed types.}
 
 \item{.nrow}{If, \code{NULL}, the default, will determing the number of
 rows in \code{vec_cbind()} output by using the standard recycling rules.
@@ -50,7 +50,7 @@ across all arguments.
 \examples{
 # row binding -----------------------------------------
 
-# common columns are coerced to common type
+# common columns are coerced to common class
 vec_rbind(
   data.frame(x = 1),
   data.frame(x = FALSE)

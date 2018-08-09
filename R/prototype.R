@@ -11,10 +11,13 @@
 #' because bare `NA`s should be automatically coercible to every other class.
 #'
 #' @param ... Vectors inputs
-#' @param .ptype Optionally, supply your own prototype to override finding
-#'    the common prototype. If `getOption("vctrs.no_guessing")` is `TRUE` you
-#'    must supply this value: this is a convenient way to make production
-#'    code demand fixed types.
+#' @param .ptype If `NULL`, the default, the output type is determined by
+#'   computing the common type across all elements of `...`.
+#'
+#'   Alternatively, you can supply `.ptype` to give the output known type.
+#'   If `getOption("vctrs.no_guessing")` is `TRUE` you must supply this value:
+#'   this is a convenient way to make production code demand fixed types.
+#' @return A prototype
 #' @export
 #' @examples
 #' # Unknown types ------------------------------------------
@@ -54,7 +57,7 @@ vec_ptype <- function(..., .ptype = NULL) {
     ptype <- as_vec_ptype(.ptype)
   } else {
     if (isTRUE(getOption("vctrs.no_guessing"))) {
-      stop("strict mode is activated; you must supply .type", call. = FALSE)
+      stop("strict mode is activated; you must supply .ptype", call. = FALSE)
     }
 
     args <- list2(...)

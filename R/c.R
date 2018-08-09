@@ -4,19 +4,19 @@
 #'
 #' @param ... Vectors to coerce. All vectors must be 1d (i.e. no data
 #'   frames, matrices or arrays).
-#' @return A vector with type `.type`, and length equal to the sum of the
-#'   lengths of the contents of `...`.
+#' @return A vector with class given by `.ptype`, and length equal to the
+#'   sum of the lengths of the contents of `...`.
 #'
 #'   The vector will have names if the individual components have names
 #'   (inner names) or if the arguments are named (outer names). If both
 #'   inner and outer names are present, they are combined with a `.`.
+#' @inheritParams vec_ptype
 #' @seealso [vec_cbind()]/[vec_rbind()] for combining data frames by rows
 #'   or columns.
-#' @inheritParams vec_coerce
 #' @export
 #' @examples
 #' vec_c(FALSE, 1L, 1.5)
-#' vec_c(FALSE, 1L, "x", .type = character())
+#' vec_c(FALSE, 1L, "x", .ptype = character())
 #'
 #' # Date/times --------------------------
 #' c(Sys.Date(), Sys.time())
@@ -28,7 +28,7 @@
 #' # Factors -----------------------------
 #' c(factor("a"), factor("b"))
 #' vec_c(factor("a"), factor("b"))
-vec_c <- function(..., .type = NULL) {
+vec_c <- function(..., .ptype = NULL) {
   args <- list2(...)
 
   dims <- map_int(args, vec_dims)
@@ -36,13 +36,12 @@ vec_c <- function(..., .type = NULL) {
     stop("Inputs must be 1d", call. = FALSE)
   }
 
-  # Impute least-upper-bound type, if needed
-  type <- find_type(args, .type = .type)
-  if (is.null(type))
+  ptype <- vec_ptype(!!!args, .ptype = .ptype)[[1]]
+  if (is_unknown(ptype))
     return(NULL)
 
   ns <- map_int(args, length)
-  out <- vec_rep(type, sum(ns))
+  out <- vec_rep(ptype, sum(ns))
   if (is.null(names(args))) {
     names <- NULL
   } else {
@@ -55,7 +54,7 @@ vec_c <- function(..., .type = NULL) {
     if (n == 0L)
       next
 
-    x <- vec_cast(args[[i]], to = type)
+    x <- vec_cast(args[[i]], to = ptype)
 
     names[pos:(pos + n - 1)] <- outer_names(x, names(args)[[i]])
     out[pos:(pos + n - 1)] <- x

@@ -13,16 +13,16 @@
 #' tibble::tibble(x = x)
 #'
 #' vec_c(list_of(1, 2), list_of(FALSE, TRUE))
-list_of <- function(..., .type = NULL) {
+list_of <- function(..., .ptype = NULL) {
   args <- list2(...)
 
-  type <- find_type(args, .type = .type)
-  if (is_null(type)) {
+  ptype <- vec_ptype(!!!args, .ptype = .ptype)[[1]]
+  if (is_unknown(ptype)) {
     stop("Could not find common type for elements of `x`", call. = FALSE)
   }
 
-  x <- map(args, vec_cast, to = type)
-  new_list_of(x, type)
+  x <- map(args, vec_cast, to = ptype)
+  new_list_of(x, ptype)
 }
 
 #' @export
@@ -32,28 +32,28 @@ as_list_of <- function(x, ...) {
 }
 
 #' @export
-as_list_of.list_of <- function(x, .type = NULL, ...) {
-  if (!is.null(.type)) {
-    list_of(!!!x, .type = .type)
+as_list_of.list_of <- function(x, .ptype = NULL, ...) {
+  if (!is.null(.ptype)) {
+    list_of(!!!x, .ptype = .ptype)
   } else {
     x
   }
 }
 
 #' @export
-as_list_of.list <- function(x, ..., .type = NULL) {
-  list_of(!!!x, .type = .type)
+as_list_of.list <- function(x, ..., .ptype = NULL) {
+  list_of(!!!x, .ptype = .ptype)
 }
 
 #' @export
 #' @rdname list_of
-new_list_of <- function(x, .type) {
+new_list_of <- function(x, .ptype) {
   stopifnot(is.list(x))
-  stopifnot(vec_length(.type) == 0)
+  stopifnot(vec_length(.ptype) == 0)
 
   structure(
     x,
-    type = .type,
+    ptype = .ptype,
     class = "list_of"
   )
 }
@@ -66,12 +66,12 @@ is_list_of <- function(x) {
 
 # registered .onLoad
 type_sum.list_of <- function(x) {
-  paste0("list<", tibble::type_sum(attr(x, "type")), ">")
+  paste0("list<", tibble::type_sum(attr(x, "ptype")), ">")
 }
 
 #' @export
 vec_type_string.list_of <- function(x) {
-  paste0("list_of<", vec_ptype(attr(x, "type")), ">")
+  paste0("list_of<", vec_ptype(attr(x, "ptype")), ">")
 }
 
 #' @export
@@ -79,7 +79,7 @@ print.list_of <- function(x, ...) {
   cat(format(vec_ptype(x)), "\n", sep = "")
 
   # Expensive: need to find a better way
-  attr(x, "type") <- NULL
+  attr(x, "ptype") <- NULL
   class(x) <- NULL
 
   print(x)
@@ -87,31 +87,31 @@ print.list_of <- function(x, ...) {
 
 #' @export
 as.list.list_of <- function(x, ...) {
-  attr(x, "type") <- NULL
+  attr(x, "ptype") <- NULL
   attr(x, "class") <- NULL
   x
 }
 
 #' @export
 `[.list_of` <- function(x, ...) {
-  new_list_of(NextMethod(), attr(x, "type"))
+  new_list_of(NextMethod(), attr(x, "ptype"))
 }
 
 #' @export
 `[<-.list_of` <- function(x, i, value) {
-  value <- map(value, vec_cast, attr(x, "type"))
+  value <- map(value, vec_cast, attr(x, "ptype"))
   NextMethod()
 }
 
 #' @export
 `[[<-.list_of` <- function(x, i, value) {
-  value <- vec_cast(value, attr(x, "type"))
+  value <- vec_cast(value, attr(x, "ptype"))
   NextMethod()
 }
 
 #' @export
 `$<-.list_of` <- function(x, i, value) {
-  value <- vec_cast(value, attr(x, "type"))
+  value <- vec_cast(value, attr(x, "ptype"))
   NextMethod()
 }
 
@@ -124,11 +124,11 @@ as.list.list_of <- function(x, ...) {
 vec_type2.list_of <- function(x, y) UseMethod("vec_type2.list_of", y)
 #' @method vec_type2.list_of NULL
 #' @export
-vec_type2.list_of.NULL    <- function(x, y) list_of(.type = attr(x, "type"))
+vec_type2.list_of.NULL    <- function(x, y) list_of(.ptype = attr(x, "ptype"))
 #' @method vec_type2.list_of list_of
 #' @export
 vec_type2.list_of.list_of <- function(x, y) {
-  type <- vec_type2(attr(x, "type"), attr(y, "type"))
+  type <- vec_type2(attr(x, "ptype"), attr(y, "ptype"))
   new_list_of(list(), type)
 }
 #' @method vec_type2.list_of default
@@ -152,7 +152,7 @@ vec_cast.list_of.NULL <- function(x, to) {
 #' @export
 #' @method vec_cast.list_of list
 vec_cast.list_of.list <- function(x, to) {
-  as_list_of(x, .type = attr(to, "type"))
+  as_list_of(x, .ptype = attr(to, "ptype"))
 }
 #' @export
 #' @method vec_cast.list_of list_of

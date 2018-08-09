@@ -4,22 +4,22 @@
 \alias{vec_coerce}
 \title{Coerce vectors to shared type}
 \usage{
-vec_coerce(..., .type = NULL)
+vec_coerce(..., .ptype = NULL)
 }
 \arguments{
 \item{...}{Vectors to coerce.}
 
-\item{.type}{If \code{NULL}, the default, the output type is determined by
-computing the common type across all inputs.
+\item{.ptype}{If \code{NULL}, the default, the output type is determined by
+computing the common type across all elements of \code{...}.
 
-Alternatively, you can supply \code{.type} to force the output to have known
-type, or to die trying. \code{.type = character()} and \code{.type = list()} will
-succeed for all vectors. See \code{\link[=vec_cast]{vec_cast()}} for more details.}
+Alternatively, you can supply \code{.ptype} to give the output known type.
+If \code{getOption("vctrs.no_guessing")} is \code{TRUE} you must supply this value:
+this is a convenient way to make production code demand fixed types.}
 }
 \value{
-A \link{list_of} input vectors coerced to \code{.type}, an error stating
+A \link{list_of} input vectors coerced to \code{.ptype}, an error stating
 that a common type could not be found, or an error stating that casting
-a input to \code{.type} was not possible.
+a input to \code{.ptype} was not possible.
 }
 \description{
 This function is a useful as a building block for other functions. The
@@ -27,5 +27,5 @@ implementation also illustrates the key ideas of the vctrs type system.
 }
 \examples{
 vec_coerce(factor("a"), factor(c("a", "b")))
-vec_coerce(factor("a"), Sys.Date(), .type = list())
+vec_coerce(factor("a"), Sys.Date(), .ptype = list())
 }

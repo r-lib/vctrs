@@ -51,9 +51,9 @@ test_that("list coercions are symmetric and unchanging", {
   types <- list(
     NULL,
     list(),
-    list_of(.type = integer()),
-    list_of(.type = double()),
-    list_of(.type = character())
+    list_of(.ptype = integer()),
+    list_of(.ptype = double()),
+    list_of(.ptype = character())
   )
   mat <- maxtype_mat(types)
 
