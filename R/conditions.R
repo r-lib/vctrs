@@ -49,7 +49,7 @@ stop_incompatible_cast <- function(x, y, details = NULL) {
 conditionMessage.stop_incompatible <- function(c) {
   msg <- glue::glue_data(c, "Incompatible types: {type_x} + {type_y}")
   if (!is.null(c$details)) {
-    msg <- paste0(c$msg, "\n", c$details)
+    msg <- paste0(msg, "\n", c$details)
   }
   msg
 }
@@ -58,7 +58,7 @@ conditionMessage.stop_incompatible <- function(c) {
 conditionMessage.error_incompatible_type <- function(c) {
   msg <- glue::glue_data(c, "No common type for {type_x} and {type_y}")
   if (!is.null(c$details)) {
-    msg <- paste0(c$msg, "\n", c$details)
+    msg <- paste0(msg, "\n", c$details)
   }
   msg
 }
@@ -67,7 +67,7 @@ conditionMessage.error_incompatible_type <- function(c) {
 conditionMessage.error_incompatible_cast <- function(c) {
   msg <- glue::glue_data(c, "Can't cast {type_x} to {type_y}")
   if (!is.null(c$details)) {
-    msg <- paste0(c$msg, "\n", c$details)
+    msg <- paste0(msg, "\n", c$details)
   }
   msg
 }
