@@ -113,6 +113,25 @@ vec_type2.integer.default <- function(x, y) stop_incompatible_type(x, y)
 #' @export
 vec_type2.double.default  <- function(x, y) stop_incompatible_type(x, y)
 
+# Lists -------------------------------------------------------------------
+
+#' @rdname vec_type2
+#' @export vec_type2.list
+#' @method vec_type2 list
+#' @export
+vec_type2.list    <- function(x, y) UseMethod("vec_type2.list", y)
+
+#' @method vec_type2.list NULL
+#' @export
+vec_type2.list.NULL <- function(x, y) list()
+#' @method vec_type2.list list
+#' @export
+vec_type2.list.list <- function(x, y) list()
+
+#' @method vec_type2.list default
+#' @export
+vec_type2.list.default  <- function(x, y) stop_incompatible_type(x, y)
+
 # Characters and factors --------------------------------------------------
 
 #' @rdname vec_type2
@@ -239,25 +258,6 @@ vec_type2.difftime.difftime <- function(x, y) new_difftime(units = units_union(x
 #' @method vec_type2.difftime default
 #' @export
 vec_type2.difftime.default  <- function(x, y) stop_incompatible_type(x, y)
-
-# Lists -------------------------------------------------------------------
-
-#' @rdname vec_type2
-#' @export vec_type2.list
-#' @method vec_type2 list
-#' @export
-vec_type2.list    <- function(x, y) UseMethod("vec_type2.list", y)
-
-#' @method vec_type2.list NULL
-#' @export
-vec_type2.list.NULL <- function(x, y) list()
-#' @method vec_type2.list list
-#' @export
-vec_type2.list.list <- function(x, y) list()
-
-#' @method vec_type2.list default
-#' @export
-vec_type2.list.default  <- function(x, y) stop_incompatible_type(x, y)
 
 # Data frames -------------------------------------------------------------
 
