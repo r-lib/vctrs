@@ -123,7 +123,7 @@ types <- list(integer(), double(), logical())
 Reduce(vec_type2, types)
 ```
 
-(More formally, `vec_type2()` forms a [commutative monoid](http://mathworld.wolfram.com/CommutativeMonoid.html) because it's assocaited, commutative, and has an identity element, `NULL`.)
+(More formally, `vec_type2()` forms a [commutative monoid](http://mathworld.wolfram.com/CommutativeMonoid.html) because it's associative, commutative, and has an identity element, `NULL`.)
 
 `vec_cast()` is used for explicit casts: given a value and a type, it casts the value to the type or throws an error stating that the cast is not possible. If a cast is possible in general (i.e. double -> integer), but information is lost for a specific input (e.g. 1.5 -> 1), it will generate a warning.
 

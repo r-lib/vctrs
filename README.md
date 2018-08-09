@@ -69,7 +69,7 @@ dttm <- as.POSIXct(dt)
 c(dt, dttm)
 #> [1] "2020-01-01"    "4321940-06-07"
 c(dttm, dt)
-#> [1] "2019-12-31 18:00:00 CST" "1969-12-31 23:04:22 CST"
+#> [1] "2020-01-01 11:00:00 AEDT" "1970-01-01 15:04:22 AEST"
 
 # as do combining dates and factors: factors
 c(dt, factor("a"))
@@ -106,7 +106,7 @@ vec_c(TRUE, 1)
 vec_c(1L, 1.5)
 #> [1] 1.0 1.5
 vec_c(1.5, "x")
-#> Error: No common type for double and character
+#> Error in abort(c(subclass, "error_incompatible"), message = "Incompatible types", : unused arguments (message = "Incompatible types", type_x = type_x, type_y = type_y, details = details)
 ```
 
 Unlike `c()`, you can optionally specify the desired output class:
@@ -129,7 +129,7 @@ automatic coercions, but it can still fail:
 
 ``` r
 vec_c(Sys.Date(), .type = factor())
-#> Error: Can't cast date to factor
+#> Error in abort(c(subclass, "error_incompatible"), message = "Incompatible types", : unused arguments (message = "Incompatible types", type_x = type_x, type_y = type_y, details = details)
 ```
 
 ### What is a type?
@@ -166,7 +166,7 @@ vec_type2(integer(), double())
 
 # no common type
 vec_type2(factor(), Sys.Date())
-#> Error: No common type for factor and date
+#> Error in abort(c(subclass, "error_incompatible"), message = "Incompatible types", : unused arguments (message = "Incompatible types", type_x = type_x, type_y = type_y, details = details)
 ```
 
 `vec_type2()` is associative and commutative, so if you have more than
@@ -180,7 +180,7 @@ Reduce(vec_type2, types)
 
 (More formally, `vec_type2()` forms a [commutative
 monoid](http://mathworld.wolfram.com/CommutativeMonoid.html) because
-it’s assocaited, commutative, and has an identity element, `NULL`.)
+it’s associative, commutative, and has an identity element, `NULL`.)
 
 `vec_cast()` is used for explicit casts: given a value and a type, it
 casts the value to the type or throws an error stating that the cast is
@@ -195,12 +195,11 @@ vec_cast(c(1, 2), integer())
 
 # Cast loses information
 vec_cast(c(1.5, 2.5), integer())
-#> Warning: Lossy conversion from double to integer [Locations: 1, 2]
-#> [1] 1 2
+#> Error in warn(c(.subclass, "warning_cast_lossy"), message = message, from = from, : unused arguments (message = message, from = from, to = to, which = which)
 
 # Cast fails
 vec_cast(c(1.5, 2.5), factor("a"))
-#> Error: Can't cast double to factor
+#> Error in abort(c(subclass, "error_incompatible"), message = "Incompatible types", : unused arguments (message = "Incompatible types", type_x = type_x, type_y = type_y, details = details)
 ```
 
 The set of possible casts is a subset of possible automatic coercions.
@@ -323,7 +322,7 @@ x1[[4]]
 #> [1] 0 1 0
 
 x1[[5]] <- factor("x")
-#> Error: Can't cast factor to integer
+#> Error in abort(c(subclass, "error_incompatible"), message = "Incompatible types", : unused arguments (message = "Incompatible types", type_x = type_x, type_y = type_y, details = details)
 ```
 
 This provides a natural type for nested data frames:
@@ -350,7 +349,7 @@ c(1, "x")
 
 # vctrs is stricter, and requires an explicit cast
 vec_c(1, "x")
-#> Error: No common type for double and character
+#> Error in abort(c(subclass, "error_incompatible"), message = "Incompatible types", : unused arguments (message = "Incompatible types", type_x = type_x, type_y = type_y, details = details)
 
 vec_c(1, "x", .type = character())
 #> [1] "1" "x"
@@ -388,26 +387,26 @@ datetime <- as.POSIXct("2020-01-01 09:00")
 # But the datetime is not converted correctly (the number of seconds
 # in the datetime is interpreted as the number of days in the date)
 c(date, datetime)
-#> [1] "2020-01-01"    "4322088-04-11"
+#> [1] "2020-01-01"    "4321920-09-20"
 
 # If the first argument to c() is a datetime, the result is a datetime
 # But the date is not converted correctly (the number of days in the
 # date is interpreted as the number of seconds in the date)
 c(datetime, date)
-#> [1] "2020-01-01 09:00:00 CST" "1969-12-31 23:04:22 CST"
+#> [1] "2020-01-01 09:00:00 AEDT" "1970-01-01 15:04:22 AEST"
 
 # vctrs always returns the same type regardless of the order
 # of the arguments, and converts dates to datetimes at midnight
 vec_c(datetime, date)
-#> [1] "2020-01-01 09:00:00 CST" "2020-01-01 00:00:00 CST"
+#> [1] "2020-01-01 09:00:00 AEDT" "2020-01-01 00:00:00 AEDT"
 vec_c(date, datetime)
-#> [1] "2020-01-01 00:00:00 CST" "2020-01-01 09:00:00 CST"
+#> [1] "2020-01-01 00:00:00 AEDT" "2020-01-01 09:00:00 AEDT"
 
 # More subtly (as documented), c() drops the timezone, while
 # vec_c() preserves it
 datetime_nz <- as.POSIXct("2020-01-01 09:00", tz = "Pacific/Auckland")
 c(datetime_nz, datetime_nz)
-#> [1] "2019-12-31 14:00:00 CST" "2019-12-31 14:00:00 CST"
+#> [1] "2020-01-01 07:00:00 AEDT" "2020-01-01 07:00:00 AEDT"
 vec_c(datetime_nz, datetime_nz)
 #> [1] "2020-01-01 09:00:00 NZDT" "2020-01-01 09:00:00 NZDT"
 ```
