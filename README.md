@@ -106,7 +106,7 @@ vec_c(TRUE, 1)
 vec_c(1L, 1.5)
 #> [1] 1.0 1.5
 vec_c(1.5, "x")
-#> Error in abort(c(subclass, "error_incompatible"), message = "Incompatible types", : unused arguments (message = "Incompatible types", type_x = type_x, type_y = type_y, details = details)
+#> Error: No common type for double and character
 ```
 
 Unlike `c()`, you can optionally specify the desired output class:
@@ -129,7 +129,7 @@ automatic coercions, but it can still fail:
 
 ``` r
 vec_c(Sys.Date(), .type = factor())
-#> Error in abort(c(subclass, "error_incompatible"), message = "Incompatible types", : unused arguments (message = "Incompatible types", type_x = type_x, type_y = type_y, details = details)
+#> Error: Can't cast date to factor
 ```
 
 ### What is a type?
@@ -166,7 +166,7 @@ vec_type2(integer(), double())
 
 # no common type
 vec_type2(factor(), Sys.Date())
-#> Error in abort(c(subclass, "error_incompatible"), message = "Incompatible types", : unused arguments (message = "Incompatible types", type_x = type_x, type_y = type_y, details = details)
+#> Error: No common type for factor and date
 ```
 
 `vec_type2()` is associative and commutative, so if you have more than
@@ -195,11 +195,12 @@ vec_cast(c(1, 2), integer())
 
 # Cast loses information
 vec_cast(c(1.5, 2.5), integer())
-#> Error in warn(c(.subclass, "warning_cast_lossy"), message = message, from = from, : unused arguments (message = message, from = from, to = to, which = which)
+#> Warning: Lossy conversion from double to integer [Locations: 1, 2]
+#> [1] 1 2
 
 # Cast fails
 vec_cast(c(1.5, 2.5), factor("a"))
-#> Error in abort(c(subclass, "error_incompatible"), message = "Incompatible types", : unused arguments (message = "Incompatible types", type_x = type_x, type_y = type_y, details = details)
+#> Error: Can't cast double to factor
 ```
 
 The set of possible casts is a subset of possible automatic coercions.
@@ -210,8 +211,8 @@ The following diagram summarises both casts (arrows) and coercions
 
 ### Factors
 
-Note that the commutativty of `vec_type()` only applies to the type, not
-the parameters of that type. Concretely, the order in which you
+Note that the commutativity of `vec_type()` only applies to the type,
+not the parameters of that type. Concretely, the order in which you
 concatenate factors will affect the order of the levels in the output:
 
 ``` r
@@ -322,7 +323,7 @@ x1[[4]]
 #> [1] 0 1 0
 
 x1[[5]] <- factor("x")
-#> Error in abort(c(subclass, "error_incompatible"), message = "Incompatible types", : unused arguments (message = "Incompatible types", type_x = type_x, type_y = type_y, details = details)
+#> Error: Can't cast factor to integer
 ```
 
 This provides a natural type for nested data frames:
@@ -349,7 +350,7 @@ c(1, "x")
 
 # vctrs is stricter, and requires an explicit cast
 vec_c(1, "x")
-#> Error in abort(c(subclass, "error_incompatible"), message = "Incompatible types", : unused arguments (message = "Incompatible types", type_x = type_x, type_y = type_y, details = details)
+#> Error: No common type for double and character
 
 vec_c(1, "x", .type = character())
 #> [1] "1" "x"
