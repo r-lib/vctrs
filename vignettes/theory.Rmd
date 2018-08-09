@@ -1,0 +1,85 @@
+---
+title: "vctrs theory"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{vctrs theory}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+vctrs is heavily inspired by abstract and algebraic data types. The primary goal is not to provide new vector classes (although vctrs does provide a couple), but to think carefully about how existing classes should behave when used together.
+
+This vignette collects together various thoughts related to theory; it's not yet readable.
+
+## Motivating examples
+
+There are two motivating examples from that illustrate many of the key ideas: `ifelse()` and `rbind()`. These have analogs in dplyr (`dplyr::if_else()` and `dplyr::bind_rows()`) which are slightly stricter on average than their base equivalents, but still adhoc. 
+
+What should the result of `ifelse()` look like? `ifelse()` has three inputs: 
+
+* a logical `condition`
+* a value to use when the condition is `true`
+* a value to use when the condition is `false`
+
+It seems like these three inputs should all effect the output, but precisely how?
+
+`rbind()` poses two challenges. First, what should the overall output type be? i.e. if you combine a data frame and a tibble, what should the result be? What if you combine a data table and a tibble? Second, how should the individual columns be handled, and what should happen when the columns don't match exactly between the inputs?
+
+`rbind()` also poses a challenge of recursion, because the columns of a data frame can themselves [be data frames][df-col]. This means that the type of a data frame is not flat 
+
+## Algebra
+
+`vec_type2()` is a binary operator defined on the set of types. We will call the result of `vec_type2(x, y)` the __commmon type__ of `x` and `y`. The common type is only defined for a small set of pairs. If the common type does exist, we can say that `x` and `y` are uncoercable.
+
+It has three useful properties:
+
+* It is commutative: `vec_type2(x, vec_type(y, z)) == vec_type(vec_type2(x, y), z)`
+* It is associative: `vec_type2(x, y) == vec_type2(y, x)`
+* It has an identity element, `NULL`: `vec_type2(x, NULL) == x`
+
+Together, this means the type system forms a __commutative monoid__, which has a couple of appealing properties:
+
+* When have multiple types we can find their common type by progressively 
+  reducing (aka folding) `vec_type2()`. We'll get the same results regardless
+  of whether we reduce from left or right.
+  
+* The operation of finding common type is [parallelisable][prefix-sum].
+  For practial input size, parallelism is unlikely to helpful, but it's 
+  nice property to have in general.
+
+## Data frames
+
+Data frames are a __product type__: the type of the data frame is provided by the type of each column tagged with a name.
+
+```{r}
+df1 <- data.frame(x = FALSE, y = 2)
+vec_type(df1)
+
+df2 <- data.frame(x = 1, y = 2L)
+vec_type(df2)
+```
+
+The common type of two data frames is the common type of each pair of shared columns:
+
+```{r}
+vec_type(vec_type2(df1, df2))
+```
+
+By default, the common type of a data frame includes the union of columns in each data frame:
+
+```{r}
+df3 <- data.frame(x = 1, y = 2)
+df4 <- data.frame(x = 1, z = 3)
+
+vec_type(vec_type2(df3, df4))
+```
+
+[df-col]: https://adv-r.hadley.nz/vectors-chap.html#matrix-and-data-frame-columns
+[prefix-sum]: https://en.wikipedia.org/wiki/Prefix_sum#Parallel_algorithm
