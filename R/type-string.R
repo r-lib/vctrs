@@ -78,12 +78,12 @@ vec_type_string.data.frame <- function(x) {
   )
 }
 
-# The "length" is not included in the type specification since it's often
-# not important (and the recycling rules means matching is non trivial)
+# In the type specification of bare vectors, a zero means free specification
 dim_type <- function(x) {
   if (vec_dims(x) == 1) {
     ""
   } else {
-    paste0("[,", paste(vec_dim(x)[-1], collapse = ","), "]")
+    dim <- vec_dim(x)
+    paste0("[", paste(ifelse(dim == 0L, "", dim), collapse = ","), "]")
   }
 }

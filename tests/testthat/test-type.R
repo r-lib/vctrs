@@ -3,7 +3,7 @@ context("test-type")
 test_that("atomic vectors and arrays as expected", {
   expect_equal(vec_type_string(1:5), "integer")
 
-  dbl_mat <- matrix(1, nrow = 3, ncol = 3)
+  dbl_mat <- array(double(), c(0, 3))
   expect_equal(vec_type_string(dbl_mat), "double[,3]")
 })
 

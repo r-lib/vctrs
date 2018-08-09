@@ -24,7 +24,7 @@ vec_type <- function(x) {
   stopifnot(is_vector(x) || is_null(x))
 
   # In practice, a vector containing only NA implies shape, but not type.
-  if (is.logical(x) && length(x) > 0 && all(is.na(x))) {
+  if (is.logical(x) && vec_dims(x) == 1L && length(x) > 0 && all(is.na(x))) {
     return(NULL)
   }
 
