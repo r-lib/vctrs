@@ -21,7 +21,9 @@ to a length-10 vector. Recycling arrays takes dimension into account so
 that (e.g.) row and col vectors are fill a matrix as you might expect.
 }
 \details{
-This is called broadcasting in numpy.
+Recycling support is half-baked currently so please don't rely on this API.
+
+This is called broadcasting in numpy and julia.
 }
 \examples{
 # Only vectors of length 1 are recycled
