@@ -13,14 +13,11 @@
 NULL
 
 stop_incompatible <- function(x, y, details = NULL, subclass = NULL) {
-  type_x <- as_vec_type(x)
-  type_y <- as_vec_type(y)
-
   abort(
     c(subclass, "error_incompatible"),
     message = "Incompatible types",
-    type_x = type_x,
-    type_y = type_y,
+    x = x,
+    y = y,
     details = details
   )
 }
@@ -46,17 +43,8 @@ stop_incompatible_cast <- function(x, y, details = NULL) {
 }
 
 #' @export
-conditionMessage.stop_incompatible <- function(c) {
-  msg <- glue::glue_data(c, "Incompatible types: {type_x} + {type_y}")
-  if (!is.null(c$details)) {
-    msg <- paste0(msg, "\n", c$details)
-  }
-  msg
-}
-
-#' @export
 conditionMessage.error_incompatible_type <- function(c) {
-  msg <- glue::glue_data(c, "No common type for {type_x} and {type_y}")
+  msg <- glue::glue_data(c, "No common type for {vec_type_string(x)} and {vec_type_string(y)}")
   if (!is.null(c$details)) {
     msg <- paste0(msg, "\n", c$details)
   }
@@ -65,7 +53,7 @@ conditionMessage.error_incompatible_type <- function(c) {
 
 #' @export
 conditionMessage.error_incompatible_cast <- function(c) {
-  msg <- glue::glue_data(c, "Can't cast {type_x} to {type_y}")
+  msg <- glue::glue_data(c, "Can't cast {vec_type_string(x)} to {vec_type_string(y)}")
   if (!is.null(c$details)) {
     msg <- paste0(msg, "\n", c$details)
   }
@@ -73,11 +61,8 @@ conditionMessage.error_incompatible_cast <- function(c) {
 }
 
 warn_cast_lossy <- function(message = NULL, .subclass = NULL, from, to, ..., class) {
-  from <- as_vec_type(from)
-  to <- as_vec_type(to)
-
   if (is.null(message)) {
-    message <- glue::glue("Lossy conversion from {from} to {to}")
+    message <- glue::glue("Lossy conversion from {vec_type_string(from)} to {vec_type_string(to)}")
   }
 
   warn(
@@ -97,11 +82,8 @@ warn_cast_lossy_vector <- function(from, to, is_lossy) {
     return()
   }
 
-  from <- as_vec_type(from)
-  to <- as_vec_type(to)
-
   pos <- glue::glue_collapse(which, ", ", width = 80)
-  msg <- glue::glue("Lossy conversion from {from} to {to} [Locations: {pos}]")
+  msg <- glue::glue("Lossy conversion from {vec_type_string(from)} to {vec_type_string(to)} [Locations: {pos}]")
 
   warn_cast_lossy(
     "warning_cast_lossy_vector",
@@ -113,9 +95,6 @@ warn_cast_lossy_vector <- function(from, to, is_lossy) {
 }
 
 warn_cast_lossy_dataframe <- function(from, to, dropped) {
-  from <- as_vec_type(from)
-  to <- as_vec_type(to)
-
   vars <- glue::glue_collapse(dropped, width = 80)
   msg <- glue::glue("
     Lossy conversion from data.frame to data.frame
