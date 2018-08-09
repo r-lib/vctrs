@@ -95,35 +95,28 @@ vec_c(Sys.Date(), .type = factor())
 
 ### What is a type?
 
-There are a number of 1d types that are built-in to base R and supported by vctrs: logical, integer, double, character, factor/ordered, date (`Date`), datetime (`POSIXct`), and time (`difftime`). You can get a textual representation of the type of a vector with `vec_type()`:
+There are a number of 1d types that are built-in to base R and supported by vctrs: logical, integer, double, character, factor/ordered, date (`Date`), datetime (`POSIXct`), and time (`difftime`). You can get a textual representation of the type of a vector with `vec_ptype()`:
 
 ```{r}
-vec_type(letters)
-vec_type(1:50)
-vec_type(list(1, 2, 3))
+vec_ptype(letters)
+vec_ptype(1:50)
+vec_ptype(list(1, 2, 3))
 ```
 
 Internally, we represent the type of a vector with a 0-length subset of the vector; this allows us to use value and types interchangeably in many cases, and we can construct type specifications using base constructors (e.g, `double()`, `factor(levels = c("a", "b"))`).
 
 ### Coercion and casting
 
-The vctrs type system is defined by two functions: `vec_type2()` and `vec_cast()`. `vec_type2()` is used for implicit coercions: given two types, it returns their common type, or an error stating that there's no common type. 
+The vctrs type system is defined by two functions: `vec_type2()` and `vec_cast()`. `vec_type2()` is used for implicit coercions: given two types, it returns their common type, or an error stating that there's no common type. It is commutative, associative, and has identity element, `unknown()`.
+
+You can see it in action with `vec_ptype()` which uses `vec_type2()` to find the common type of multiple inputs:
 
 ```{r, error = TRUE}
-vec_type2(integer(), double())
+vec_ptype(integer(), double())
 
 # no common type
-vec_type2(factor(), Sys.Date())
+vec_ptype(factor(), Sys.Date())
 ```
-
-`vec_type2()` is associative and commutative, so if you have more than two types, you can use `Reduce()` to find the common type:
-
-```{r}
-types <- list(integer(), double(), logical())
-Reduce(vec_type2, types)
-```
-
-(More formally, `vec_type2()` forms a [commutative monoid](http://mathworld.wolfram.com/CommutativeMonoid.html) because it's assocaited, commutative, and has an identity element, `NULL`.)
 
 `vec_cast()` is used for explicit casts: given a value and a type, it casts the value to the type or throws an error stating that the cast is not possible. If a cast is possible in general (i.e. double -> integer), but information is lost for a specific input (e.g. 1.5 -> 1), it will generate a warning.
 
@@ -144,14 +137,14 @@ The set of possible casts is a subset of possible automatic coercions. The follo
 
 ### Factors
 
-Note that the commutativty of `vec_type()` only applies to the type, not the parameters of that type. Concretely, the order in which you concatenate factors will affect the order of the levels in the output:
+Note that the commutativty of `vec_type2()` only applies to the type, not the parameters of that type. Concretely, the order in which you concatenate factors will affect the order of the levels in the output:
 
 ```{r}
 fa <- factor("a")
 fb <- factor("b")
 
-levels(vec_type2(fa, fb))
-levels(vec_type2(fb, fa))
+levels(vec_ptype(fa, fb))
+levels(vec_ptype(fb, fa))
 ```
 
 ### Data frames
@@ -160,23 +153,23 @@ vctrs defines the type of a data frame as the type of each column labelled with 
 
 ```{r}
 df1 <- data.frame(x = TRUE, y = 1L)
-vec_type(df1)
+vec_ptype(df1)
 
 df2 <- data.frame(x = 1, z = 1)
-vec_type(df2)
+vec_ptype(df2)
 ```
 
 The common type of two data frames is the common type of each column that occurs in both data frame frames, and the union of the columns that only occur in one:
 
 ```{r}
-vec_type(vec_type2(df1, df2))
+vec_ptype(df1, df2)
 ```
 
 Like factors, the order of variables in the data frame is not commutative, and depends on the order of the inputs:
 
 ```{r}
-names(vec_type2(df1, df2))
-names(vec_type2(df2, df1))
+vec_ptype(df1, df2)
+vec_ptype(df2, df1)
 ```
 
 vctrs also knows how to handle data frame and matrix columns:
@@ -185,14 +178,14 @@ vctrs also knows how to handle data frame and matrix columns:
 df3 <- data.frame(x = 3)
 df3$a <- data.frame(a = 2, b = 2)
 df3$b <- matrix(c(1L, 2L), nrow = 1)
-vec_type(df3)
+vec_ptype(df3)
 
 df4 <- data.frame(x = 4)
 df4$a <- data.frame(a = FALSE, b = 3, c = "a")
 df4$b <- matrix(c(3, 5), nrow = 1)
-vec_type(df4)
+vec_ptype(df4)
 
-vec_type(vec_type2(df3, df4))
+vec_ptype(df3, df4)
 ```
 
 ### List of
@@ -201,7 +194,7 @@ vctr provides a new vector class that represents a list where each element has t
 
 ```{r, error = TRUE}
 x1 <- list_of(1:3, 3:5, 6:8)
-vec_type(x1)
+vec_ptype(x1)
 
 # This type is enforced if you attempt to modify the vector
 x1[[4]] <- c(FALSE, TRUE, FALSE)
@@ -213,7 +206,7 @@ x1[[5]] <- factor("x")
 This provides a natural type for nested data frames:
 
 ```{r}
-vec_type(as_list_of(split(mtcars[1:3], mtcars$cyl)))
+vec_ptype(as_list_of(split(mtcars[1:3], mtcars$cyl)))
 ```
 
 ## Compared to base R

@@ -5,11 +5,11 @@ vec_type_explain <- function(...) {
     stop("No types to explain", call. = FALSE)
   }
 
-  types <- map(args, vec_type)
+  types <- map(args, vec_ptype)
   accum <- vec_na(character(), n = n)
 
   cur <- args[[1L]]
-  accum[[1L]] <- format(vec_type(cur))
+  accum[[1L]] <- format(vec_ptype(cur))
   for (i in seq2(2, n)) {
     cur <- tryCatch(
       error_no_max_type = function(e) NA_character_,
@@ -20,7 +20,7 @@ vec_type_explain <- function(...) {
       break
     }
 
-    accum[[i]] <- format(vec_type(cur))
+    accum[[i]] <- format(vec_ptype(cur))
   }
 
   data.frame(

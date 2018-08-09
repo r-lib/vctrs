@@ -1,5 +1,5 @@
-               NULL             date       datetime   difftime<mins>   difftime<secs>  
-NULL           "NULL"           "date"     "datetime" "difftime<mins>" "difftime<secs>"
+               unknown          date       datetime   difftime<mins>   difftime<secs>  
+unknown        "unknown"        "date"     "datetime" "difftime<mins>" "difftime<secs>"
 date           "date"           "date"     "datetime" NA               NA              
 datetime       "datetime"       "datetime" "datetime" NA               NA              
 difftime<mins> "difftime<mins>" NA         NA         "difftime<mins>" "difftime<secs>"

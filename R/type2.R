@@ -2,8 +2,8 @@
 #'
 #' `vec_type2()` finds the common type for a pair of vectors, or dies trying.
 #' It forms the foundation of the vctrs type system, along with [vec_cast()].
-#' It should generally not be called by R users, but is important for R
-#' developers.
+#' This powers type coercion but should not usually be called directly;
+#' instead call [vec_ptype()].
 #'
 #' @section Coercion rules:
 #' vctrs thinks of the vector types as forming a partially ordered set, or
@@ -26,7 +26,7 @@
 #' See `vignette("extending-vctrs")` on how to extend to your own S3
 #' vector classes.
 #' @keywords internal
-#' @param x,y Either vector types produced by [vec_type()], or actual vectors.
+#' @param x,y Either vector types; i.e.
 #' @export
 vec_type2 <- function(x, y) {
   UseMethod("vec_type2")
@@ -35,12 +35,6 @@ vec_type2 <- function(x, y) {
 #' @export
 vec_type2.default <- function(x, y) {
   stop_incompatible_type(x, y)
-}
-
-#' @export
-vec_type2.vec_type <- function(x, y) {
-  y <- as_vec_type(y)
-  vec_type(vec_type2(x$prototype, y$prototype))
 }
 
 #' @export

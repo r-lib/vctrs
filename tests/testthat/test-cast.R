@@ -243,7 +243,7 @@ test_that("column order matches type", {
   df1 <- data.frame(x = 1, y = "a")
   df2 <- data.frame(x = TRUE, z = 3)
 
-  df3 <- vec_cast(df2, max(vec_type(df1), vec_type(df2))$prototype)
+  df3 <- vec_cast(df2, vec_ptype(df1, df2)[[1]])
   expect_named(df3, c("x", "y", "z"))
 })
 

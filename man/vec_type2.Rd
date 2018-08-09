@@ -43,13 +43,13 @@ vec_type2(x, y)
 \method{vec_type2}{tbl_df}(x, y)
 }
 \arguments{
-\item{x, y}{Either vector types produced by \code{\link[=vec_type]{vec_type()}}, or actual vectors.}
+\item{x, y}{Either vector types; i.e.}
 }
 \description{
 \code{vec_type2()} finds the common type for a pair of vectors, or dies trying.
 It forms the foundation of the vctrs type system, along with \code{\link[=vec_cast]{vec_cast()}}.
-It should generally not be called by R users, but is important for R
-developers.
+This powers type coercion but should not usually be called directly;
+instead call \code{\link[=vec_ptype]{vec_ptype()}}.
 }
 \section{Coercion rules}{
 

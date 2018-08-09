@@ -1,5 +1,5 @@
-                   NULL                 list   list_of<integer>   list_of<double>   list_of<character>  
-NULL               "NULL"               "list" "list_of<integer>" "list_of<double>" "list_of<character>"
+                   unknown              list   list_of<integer>   list_of<double>   list_of<character>  
+unknown            "unknown"            "list" "list_of<integer>" "list_of<double>" "list_of<character>"
 list               "list"               "list" NA                 NA                NA                  
 list_of<integer>   "list_of<integer>"   NA     "list_of<integer>" "list_of<double>" NA                  
 list_of<double>    "list_of<double>"    NA     "list_of<double>"  "list_of<double>" NA                  

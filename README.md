@@ -137,15 +137,15 @@ vec_c(Sys.Date(), .type = factor())
 There are a number of 1d types that are built-in to base R and supported
 by vctrs: logical, integer, double, character, factor/ordered, date
 (`Date`), datetime (`POSIXct`), and time (`difftime`). You can get a
-textual representation of the type of a vector with `vec_type()`:
+textual representation of the type of a vector with `vec_ptype()`:
 
 ``` r
-vec_type(letters)
-#> type: character
-vec_type(1:50)
-#> type: integer
-vec_type(list(1, 2, 3))
-#> type: list
+vec_ptype(letters)
+#> prototype: character
+vec_ptype(1:50)
+#> prototype: integer
+vec_ptype(list(1, 2, 3))
+#> prototype: list
 ```
 
 Internally, we represent the type of a vector with a 0-length subset of
@@ -158,29 +158,20 @@ constructors (e.g, `double()`, `factor(levels = c("a", "b"))`).
 The vctrs type system is defined by two functions: `vec_type2()` and
 `vec_cast()`. `vec_type2()` is used for implicit coercions: given two
 types, it returns their common type, or an error stating that there’s no
-common type.
+common type. It is commutative, associative, and has identity element,
+`unknown()`.
+
+You can see it in action with `vec_ptype()` which uses `vec_type2()` to
+find the common type of multiple inputs:
 
 ``` r
-vec_type2(integer(), double())
-#> numeric(0)
+vec_ptype(integer(), double())
+#> prototype: double
 
 # no common type
-vec_type2(factor(), Sys.Date())
+vec_ptype(factor(), Sys.Date())
 #> Error: No common type for factor and date
 ```
-
-`vec_type2()` is associative and commutative, so if you have more than
-two types, you can use `Reduce()` to find the common type:
-
-``` r
-types <- list(integer(), double(), logical())
-Reduce(vec_type2, types)
-#> numeric(0)
-```
-
-(More formally, `vec_type2()` forms a [commutative
-monoid](http://mathworld.wolfram.com/CommutativeMonoid.html) because
-it’s assocaited, commutative, and has an identity element, `NULL`.)
 
 `vec_cast()` is used for explicit casts: given a value and a type, it
 casts the value to the type or throws an error stating that the cast is
@@ -211,18 +202,18 @@ The following diagram summarises both casts (arrows) and coercions
 
 ### Factors
 
-Note that the commutativty of `vec_type()` only applies to the type, not
-the parameters of that type. Concretely, the order in which you
+Note that the commutativty of `vec_type2()` only applies to the type,
+not the parameters of that type. Concretely, the order in which you
 concatenate factors will affect the order of the levels in the output:
 
 ``` r
 fa <- factor("a")
 fb <- factor("b")
 
-levels(vec_type2(fa, fb))
-#> [1] "a" "b"
-levels(vec_type2(fb, fa))
-#> [1] "b" "a"
+levels(vec_ptype(fa, fb))
+#> NULL
+levels(vec_ptype(fb, fa))
+#> NULL
 ```
 
 ### Data frames
@@ -232,15 +223,15 @@ labelled with the name of the column:
 
 ``` r
 df1 <- data.frame(x = TRUE, y = 1L)
-vec_type(df1)
-#> type: data.frame<
+vec_ptype(df1)
+#> prototype: data.frame<
 #>  x: logical
 #>  y: integer
 #> >
 
 df2 <- data.frame(x = 1, z = 1)
-vec_type(df2)
-#> type: data.frame<
+vec_ptype(df2)
+#> prototype: data.frame<
 #>  x: double
 #>  z: double
 #> >
@@ -251,8 +242,8 @@ that occurs in both data frame frames, and the union of the columns that
 only occur in one:
 
 ``` r
-vec_type(vec_type2(df1, df2))
-#> type: data.frame<
+vec_ptype(df1, df2)
+#> prototype: data.frame<
 #>  x: double
 #>  y: integer
 #>  z: double
@@ -263,10 +254,18 @@ Like factors, the order of variables in the data frame is not
 commutative, and depends on the order of the inputs:
 
 ``` r
-names(vec_type2(df1, df2))
-#> [1] "x" "y" "z"
-names(vec_type2(df2, df1))
-#> [1] "x" "z" "y"
+vec_ptype(df1, df2)
+#> prototype: data.frame<
+#>  x: double
+#>  y: integer
+#>  z: double
+#> >
+vec_ptype(df2, df1)
+#> prototype: data.frame<
+#>  x: double
+#>  z: double
+#>  y: integer
+#> >
 ```
 
 vctrs also knows how to handle data frame and matrix columns:
@@ -275,8 +274,8 @@ vctrs also knows how to handle data frame and matrix columns:
 df3 <- data.frame(x = 3)
 df3$a <- data.frame(a = 2, b = 2)
 df3$b <- matrix(c(1L, 2L), nrow = 1)
-vec_type(df3)
-#> type: data.frame<
+vec_ptype(df3)
+#> prototype: data.frame<
 #>  x: double
 #>  a: data.frame<
 #>     a: double
@@ -288,8 +287,8 @@ vec_type(df3)
 df4 <- data.frame(x = 4)
 df4$a <- data.frame(a = FALSE, b = 3, c = "a")
 df4$b <- matrix(c(3, 5), nrow = 1)
-vec_type(df4)
-#> type: data.frame<
+vec_ptype(df4)
+#> prototype: data.frame<
 #>  x: double
 #>  a: data.frame<
 #>     a: logical
@@ -299,15 +298,15 @@ vec_type(df4)
 #>  b: double[,2]
 #> >
 
-vec_type(vec_type2(df3, df4))
-#> type: data.frame<
+vec_ptype(df3, df4)
+#> prototype: data.frame<
 #>  x: double
 #>  a: data.frame<
 #>     a: double
 #>     b: double
 #>     c: factor
 #>    >
-#>  b: double
+#>  b: double[,2]
 #> >
 ```
 
@@ -319,8 +318,8 @@ frame which is a list where each element has the same *length*.
 
 ``` r
 x1 <- list_of(1:3, 3:5, 6:8)
-vec_type(x1)
-#> type: list_of<integer>
+vec_ptype(x1)
+#> prototype: list_of<integer>
 
 # This type is enforced if you attempt to modify the vector
 x1[[4]] <- c(FALSE, TRUE, FALSE)
@@ -334,8 +333,8 @@ x1[[5]] <- factor("x")
 This provides a natural type for nested data frames:
 
 ``` r
-vec_type(as_list_of(split(mtcars[1:3], mtcars$cyl)))
-#> type: list_of<data.frame<
+vec_ptype(as_list_of(split(mtcars[1:3], mtcars$cyl)))
+#> prototype: list_of<data.frame<
 #>  mpg : double
 #>  cyl : double
 #>  disp: double

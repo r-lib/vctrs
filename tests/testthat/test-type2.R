@@ -95,41 +95,43 @@ test_that("tz comes from first non-empty", {
 test_that("factors level are unioned", {
   # This is technically incorrect, but because of R's existing behaviour
   # anything else will cause substantial friction.
-  fa <- vec_type(factor(levels = "a"))
-  fb <- vec_type(factor(levels = "b"))
+  fa <- vec_ptype(factor(levels = "a"))
+  fb <- vec_ptype(factor(levels = "b"))
 
-  expect_equal(max(fa, fb), vec_type(factor(levels = c("a", "b"))))
-  expect_equal(max(fb, fa), vec_type(factor(levels = c("b", "a"))))
+  expect_equal(vec_ptype(fa, fb), vec_ptype(factor(levels = c("a", "b"))))
+  expect_equal(vec_ptype(fb, fa), vec_ptype(factor(levels = c("b", "a"))))
 })
 
 # Data frame --------------------------------------------------------------
 
 test_that("data frame only combines with other data frames or NULL", {
-  dt <- vec_type(data.frame(x = 1))
-
-  expect_equal(max(dt, NULL), dt)
-  expect_error(max(dt, 1:10), class = "error_incompatible_type")
+  dt <- data.frame(x = 1)
+  expect_equal(vec_ptype(dt, NULL), vec_ptype(dt))
+  expect_error(vec_ptype(dt, 1:10), class = "error_incompatible_type")
 })
 
 test_that("data frame takes max of individual variables", {
-  dt1 <- vec_type(data.frame(x = FALSE, y = 1L))
-  dt2 <- vec_type(data.frame(x = 1.5, y = 1.5))
+  dt1 <- data.frame(x = FALSE, y = 1L)
+  dt2 <- data.frame(x = 1.5, y = 1.5)
 
-  expect_equal(max(dt1, dt2), dt2)
+  expect_equal(vec_ptype(dt1, dt2), vec_ptype(dt2))
 })
 
 test_that("data frame combines variables", {
-  dt1 <- vec_type(data.frame(x = 1))
-  dt2 <- vec_type(data.frame(y = 1))
+  dt1 <- data.frame(x = 1)
+  dt2 <- data.frame(y = 1)
 
   dt3 <- max(dt1, dt2)
-  expect_equal(dt3$prototype, data.frame(x = double(), y = double()))
+  expect_equal(
+    vec_ptype(dt1, dt2),
+    vec_ptype(data.frame(x = double(), y = double()))
+  )
 })
 
 test_that("tibble beats data frame", {
-  df <- vec_type(data_frame())
-  dt <- vec_type(tibble::tibble())
+  df <- vec_ptype(data_frame())
+  dt <- vec_ptype(tibble::tibble())
 
-  expect_s3_class(max(dt, df)$prototype, "tbl_df")
-  expect_s3_class(max(dt, df)$prototype, "tbl_df")
+  expect_s3_class(vec_ptype(dt, df)[[1]], "tbl_df")
+  expect_s3_class(vec_ptype(dt, df)[[1]], "tbl_df")
 })

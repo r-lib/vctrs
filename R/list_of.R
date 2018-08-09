@@ -71,12 +71,12 @@ type_sum.list_of <- function(x) {
 
 #' @export
 vec_type_string.list_of <- function(x) {
-  paste0("list_of<", vec_type(attr(x, "type")), ">")
+  paste0("list_of<", vec_ptype(attr(x, "type")), ">")
 }
 
 #' @export
 print.list_of <- function(x, ...) {
-  cat(format(vec_type(x)), "\n", sep = "")
+  cat(format(vec_ptype(x)), "\n", sep = "")
 
   # Expensive: need to find a better way
   attr(x, "type") <- NULL

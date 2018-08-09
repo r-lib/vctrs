@@ -1,4 +1,4 @@
-type: data.frame<
+prototype: data.frame<
  x: integer
  y: data.frame<
     a: integer

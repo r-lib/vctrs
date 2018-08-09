@@ -40,7 +40,7 @@ It seems like these three inputs should all effect the output, but precisely how
 
 It has three useful properties:
 
-* It is commutative: `vec_type2(x, vec_type(y, z)) == vec_type(vec_type2(x, y), z)`
+* It is commutative: `vec_type2(x, vec_type2(y, z)) == vec_type2(vec_type2(x, y), z)`
 * It is associative: `vec_type2(x, y) == vec_type2(y, x)`
 * It has an identity element, `NULL`: `vec_type2(x, NULL) == x`
 
@@ -60,16 +60,16 @@ Data frames are a __product type__: the type of the data frame is provided by th
 
 ```{r}
 df1 <- data.frame(x = FALSE, y = 2)
-vec_type(df1)
+vec_ptype(df1)
 
 df2 <- data.frame(x = 1, y = 2L)
-vec_type(df2)
+vec_ptype(df2)
 ```
 
 The common type of two data frames is the common type of each pair of shared columns:
 
 ```{r}
-vec_type(vec_type2(df1, df2))
+vec_ptype(df1, df2)
 ```
 
 By default, the common type of a data frame includes the union of columns in each data frame:
@@ -78,7 +78,7 @@ By default, the common type of a data frame includes the union of columns in eac
 df3 <- data.frame(x = 1, y = 2)
 df4 <- data.frame(x = 1, z = 3)
 
-vec_type(vec_type2(df3, df4))
+vec_ptype(df3, df4)
 ```
 
 [df-col]: https://adv-r.hadley.nz/vectors-chap.html#matrix-and-data-frame-columns

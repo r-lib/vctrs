@@ -62,11 +62,11 @@ test_that("[<-, [[<- and $<- coerce their input", {
 # Type system -------------------------------------------------------------
 
 test_that("max<list_of<a>, list_of<b>> is list_of<max<a, b>>", {
-  r_int <- vec_type(list_of(.type = integer()))
-  r_dbl <- vec_type(list_of(.type = double()))
+  r_int <- list_of(.type = integer())
+  r_dbl <- list_of(.type = double())
 
-  expect_equal(max(r_int, r_int), r_int)
-  expect_equal(max(r_int, r_dbl), r_int)
+  expect_equal(vec_ptype(r_int, r_int), vec_ptype(r_int))
+  expect_equal(vec_ptype(r_int, r_dbl), vec_ptype(r_int))
 })
 
 test_that("safe casts work as expected", {
