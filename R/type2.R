@@ -71,37 +71,37 @@ vec_type2.double  <- function(x, y) UseMethod("vec_type2.double", y)
 vec_type2.logical.NULL    <- function(x, y) logical()
 #' @method vec_type2.logical logical
 #' @export
-vec_type2.logical.logical <- function(x, y) match_dim(logical(), x, y)
+vec_type2.logical.logical <- function(x, y) dim_match(logical(), x, y)
 
 #' @method vec_type2.integer NULL
 vec_type2.integer.NULL    <- function(x, y) integer()
 #' @export
 #' @method vec_type2.logical integer
-vec_type2.logical.integer <- function(x, y) match_dim(integer(), x, y)
+vec_type2.logical.integer <- function(x, y) dim_match(integer(), x, y)
 #' @export
 #' @method vec_type2.integer logical
-vec_type2.integer.logical <- function(x, y) match_dim(integer(), x, y)
+vec_type2.integer.logical <- function(x, y) dim_match(integer(), x, y)
 #' @export
 #' @method vec_type2.integer integer
-vec_type2.integer.integer <- function(x, y) match_dim(integer(), x, y)
+vec_type2.integer.integer <- function(x, y) dim_match(integer(), x, y)
 
 #' @method vec_type2.double NULL
 vec_type2.double.NULL     <- function(x, y) double()
 #' @export
 #' @method vec_type2.logical double
-vec_type2.logical.double  <- function(x, y) match_dim(double(), x, y)
+vec_type2.logical.double  <- function(x, y) dim_match(double(), x, y)
 #' @export
 #' @method vec_type2.double logical
-vec_type2.double.logical  <- function(x, y) match_dim(double(), x, y)
+vec_type2.double.logical  <- function(x, y) dim_match(double(), x, y)
 #' @export
 #' @method vec_type2.integer double
-vec_type2.integer.double  <- function(x, y) match_dim(double(), x, y)
+vec_type2.integer.double  <- function(x, y) dim_match(double(), x, y)
 #' @export
 #' @method vec_type2.double integer
-vec_type2.double.integer  <- function(x, y) match_dim(double(), x, y)
+vec_type2.double.integer  <- function(x, y) dim_match(double(), x, y)
 #' @export
 #' @method vec_type2.double double
-vec_type2.double.double   <- function(x, y) match_dim(double(), x, y)
+vec_type2.double.double   <- function(x, y) dim_match(double(), x, y)
 
 #' @method vec_type2.logical default
 #' @export
@@ -126,7 +126,7 @@ vec_type2.list    <- function(x, y) UseMethod("vec_type2.list", y)
 vec_type2.list.NULL <- function(x, y) list()
 #' @method vec_type2.list list
 #' @export
-vec_type2.list.list <- function(x, y) match_dim(list(), x, y)
+vec_type2.list.list <- function(x, y) dim_match(list(), x, y)
 
 #' @method vec_type2.list default
 #' @export
@@ -166,22 +166,22 @@ vec_type2.factor.factor       <- function(x, y) new_factor(levels = levels_union
 
 #' @method vec_type2.character NULL
 #' @export
-vec_type2.character.NULL      <- function(x, y) match_dim(character(), x, y)
+vec_type2.character.NULL      <- function(x, y) dim_match(character(), x, y)
 #' @method vec_type2.ordered character
 #' @export
-vec_type2.ordered.character   <- function(x, y) match_dim(character(), x, y)
+vec_type2.ordered.character   <- function(x, y) dim_match(character(), x, y)
 #' @method vec_type2.character ordered
 #' @export
-vec_type2.character.ordered   <- function(x, y) match_dim(character(), x, y)
+vec_type2.character.ordered   <- function(x, y) dim_match(character(), x, y)
 #' @method vec_type2.character factor
 #' @export
-vec_type2.character.factor    <- function(x, y) match_dim(character(), x, y)
+vec_type2.character.factor    <- function(x, y) dim_match(character(), x, y)
 #' @method vec_type2.factor character
 #' @export
-vec_type2.factor.character    <- function(x, y) match_dim(character(), x, y)
+vec_type2.factor.character    <- function(x, y) dim_match(character(), x, y)
 #' @method vec_type2.character character
 #' @export
-vec_type2.character.character <- function(x, y) match_dim(character(), x, y)
+vec_type2.character.character <- function(x, y) dim_match(character(), x, y)
 
 #' @method vec_type2.ordered factor
 #' @export

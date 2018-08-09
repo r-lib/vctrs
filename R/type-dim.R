@@ -2,11 +2,11 @@
 # dimensionality. This is needed to support matrix columns in data frames.
 # Data frames don't support array cols, but we might as well be generic.
 
-match_dim <- function(type, x, y) {
-  structure(type, dim = common_dim(x, y))
+dim_match <- function(type, x, y) {
+  structure(type, dim = dim_common(x, y))
 }
 
-common_dim <- function(x, y) {
+dim_common <- function(x, y) {
   if (vec_dims(x) == 1L && vec_dims(y) == 1L) {
     return(NULL)
   } else if (xor(is.object(x), is.object(y))) {
