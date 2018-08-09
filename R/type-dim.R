@@ -17,7 +17,8 @@ common_dim <- function(x, y) {
   }
 
   dim <- zero_pad(vec_dim(x), vec_dim(y))
-  out <- map2_int(dim$x, dim$y, recycle_dim)
+  max_dim <- pmax(dim$x, dim$y)
+  out <- ifelse(dim$x == 0 | dim$y == 0 | dim$x == dim$y, max_dim, NA)
 
   # Always treat "length" as free, so we can use values or prototypes
   out[[1]] <- 0L
@@ -27,16 +28,6 @@ common_dim <- function(x, y) {
   }
 
   out
-}
-
-recycle_dim <- function(nx, ny) {
-  if (nx == ny) {
-    nx
-  } else if (nx == 0L || ny == 0L) {
-    max(nx, ny)
-  } else {
-    NA_integer_
-  }
 }
 
 zero_pad <- function(x, y) {
