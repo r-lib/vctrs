@@ -79,7 +79,7 @@ vec_c(1L, 1.5)
 vec_c(1.5, "x")
 ```
 
-Unlike `c()`, you can optionally specify the desired output class:
+Unlike `c()`, you can optionally specify the desired output class by supplying a __prototype__, or ptype, for short:
 
 ```{r}
 vec_c(1, 2, .ptype = integer())
@@ -93,23 +93,33 @@ This supports a much wider range of casts (more on that below) than the automati
 vec_c(Sys.Date(), .ptype = factor())
 ```
 
-### What is a type?
+### What is a prototype?
 
-There are a number of 1d types that are built-in to base R and supported by vctrs: logical, integer, double, character, factor/ordered, date (`Date`), datetime (`POSIXct`), and time (`difftime`). You can get a textual representation of the type of a vector with `vec_ptype()`:
+Internally, vctrs represents the class of a vector with a 0-length subset of the vector. This captures all the attributes of the class, and in many cases you can use existing base functions like (e.g, `double()`, `factor(levels = c("a", "b"))`). You can use `vec_ptype()` to get a textual representation of prototype of an object:
 
 ```{r}
 vec_ptype(letters)
 vec_ptype(1:50)
 vec_ptype(list(1, 2, 3))
+vec_ptype(iris)
 ```
 
-Internally, we represent the type of a vector with a 0-length subset of the vector; this allows us to use value and types interchangeably in many cases, and we can construct type specifications using base constructors (e.g, `double()`, `factor(levels = c("a", "b"))`).
+vctrs provides the `unknown()` class to represent vectors of unknown type:
+
+```{r}
+vec_ptype()
+vec_ptype(NULL)
+
+# NA is technically logical, but used in many places to
+# represent a missing value of arbitrary type
+vec_ptype(NA)
+```
 
 ### Coercion and casting
 
 The vctrs type system is defined by two functions: `vec_type2()` and `vec_cast()`. `vec_type2()` is used for implicit coercions: given two types, it returns their common type, or an error stating that there's no common type. It is commutative, associative, and has identity element, `unknown()`.
 
-You can see it in action with `vec_ptype()` which uses `vec_type2()` to find the common type of multiple inputs:
+The easier way to explore how coercion works is to give multiple arguments to `vec_ptype()`. Behind the scenes, it uses `vec_type2()` to find the common type. 
 
 ```{r, error = TRUE}
 vec_ptype(integer(), double())

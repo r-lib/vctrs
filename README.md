@@ -112,7 +112,8 @@ vec_c(1.5, "x")
 #> Error: No common type for double and character
 ```
 
-Unlike `c()`, you can optionally specify the desired output class:
+Unlike `c()`, you can optionally specify the desired output class by
+supplying a **prototype**, or ptype, for short:
 
 ``` r
 vec_c(1, 2, .ptype = integer())
@@ -135,12 +136,13 @@ vec_c(Sys.Date(), .ptype = factor())
 #> Error: Can't cast date to factor
 ```
 
-### What is a type?
+### What is a prototype?
 
-There are a number of 1d types that are built-in to base R and supported
-by vctrs: logical, integer, double, character, factor/ordered, date
-(`Date`), datetime (`POSIXct`), and time (`difftime`). You can get a
-textual representation of the type of a vector with `vec_ptype()`:
+Internally, vctrs represents the class of a vector with a 0-length
+subset of the vector. This captures all the attributes of the class, and
+in many cases you can use existing base functions like (e.g, `double()`,
+`factor(levels = c("a", "b"))`). You can use `vec_ptype()` to get a
+textual representation of prototype of an object:
 
 ``` r
 vec_ptype(letters)
@@ -149,12 +151,30 @@ vec_ptype(1:50)
 #> prototype: integer
 vec_ptype(list(1, 2, 3))
 #> prototype: list
+vec_ptype(iris)
+#> prototype: data.frame<
+#>  Sepal.Length: double
+#>  Sepal.Width : double
+#>  Petal.Length: double
+#>  Petal.Width : double
+#>  Species     : factor
+#> >
 ```
 
-Internally, we represent the type of a vector with a 0-length subset of
-the vector; this allows us to use value and types interchangeably in
-many cases, and we can construct type specifications using base
-constructors (e.g, `double()`, `factor(levels = c("a", "b"))`).
+vctrs provides the `unknown()` class to represent vectors of unknown
+type:
+
+``` r
+vec_ptype()
+#> prototype: unknown
+vec_ptype(NULL)
+#> prototype: unknown
+
+# NA is technically logical, but used in many places to
+# represent a missing value of arbitrary type
+vec_ptype(NA)
+#> prototype: unknown
+```
 
 ### Coercion and casting
 
@@ -164,8 +184,9 @@ types, it returns their common type, or an error stating that there’s no
 common type. It is commutative, associative, and has identity element,
 `unknown()`.
 
-You can see it in action with `vec_ptype()` which uses `vec_type2()` to
-find the common type of multiple inputs:
+The easier way to explore how coercion works is to give multiple
+arguments to `vec_ptype()`. Behind the scenes, it uses `vec_type2()` to
+find the common type.
 
 ``` r
 vec_ptype(integer(), double())
