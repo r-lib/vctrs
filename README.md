@@ -235,7 +235,7 @@ The following diagram summarises both casts (arrows) and coercions
 
 ### Factors
 
-Note that the commutativty of `vec_type2()` only applies to the type,
+Note that the commutativity of `vec_type2()` only applies to the type,
 not the parameters of that type. Concretely, the order in which you
 concatenate factors will affect the order of the levels in the output:
 
