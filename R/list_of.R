@@ -71,7 +71,12 @@ type_sum.list_of <- function(x) {
 
 #' @export
 vec_type_string.list_of <- function(x) {
-  paste0("list_of<", vec_ptype(attr(x, "ptype")), ">")
+  param <- format(vec_ptype(attr(x, "ptype")))
+  if (grepl("\n", param)) {
+    param <- paste0(indent(paste0("\n", param), 2), "\n")
+  }
+
+  paste0("list_of<", param, ">")
 }
 
 #' @export

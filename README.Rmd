@@ -249,7 +249,7 @@ x1[[5]] <- factor("x")
 This provides a natural type for nested data frames:
 
 ```{r}
-by_cyl <- data.frame(c = c(4, 6, 8))
+by_cyl <- data.frame(cyl = c(4, 6, 8))
 by_cyl$data <- as_list_of(split(mtcars[1:3], mtcars$cyl))
 
 vec_ptype(by_cyl)

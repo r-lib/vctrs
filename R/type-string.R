@@ -66,9 +66,10 @@ vec_type_string.data.frame <- function(x) {
 
   # Needs to handle recursion with indenting
   types <- map_chr(x, vec_type_string)
+  needs_indent <- grepl("\n", types)
+  types[needs_indent] <- map(types[needs_indent], function(x) indent(paste0("\n", x), 4))
 
-  names <- paste0(" ", format(names(x)))
-  types <- indent(types, nchar(names) + 1)
+  names <- paste0("  ", format(names(x)))
 
   paste0(
     "data.frame<\n",

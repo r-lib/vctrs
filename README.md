@@ -292,15 +292,15 @@ Data frames are defined by the names and prototypes of their columns:
 df1 <- data.frame(x = TRUE, y = 1L)
 vec_ptype(df1)
 #> prototype: data.frame<
-#>  x: logical
-#>  y: integer
+#>   x: logical
+#>   y: integer
 #> >
 
 df2 <- data.frame(x = 1, z = 1)
 vec_ptype(df2)
 #> prototype: data.frame<
-#>  x: double
-#>  z: double
+#>   x: double
+#>   z: double
 #> >
 ```
 
@@ -311,9 +311,9 @@ only occur in one:
 ``` r
 vec_ptype(df1, df2)
 #> prototype: data.frame<
-#>  x: double
-#>  y: integer
-#>  z: double
+#>   x: double
+#>   y: integer
+#>   z: double
 #> >
 ```
 
@@ -323,15 +323,15 @@ commutative, and depends on the order of the inputs:
 ``` r
 vec_ptype(df1, df2)
 #> prototype: data.frame<
-#>  x: double
-#>  y: integer
-#>  z: double
+#>   x: double
+#>   y: integer
+#>   z: double
 #> >
 vec_ptype(df2, df1)
 #> prototype: data.frame<
-#>  x: double
-#>  z: double
-#>  y: integer
+#>   x: double
+#>   z: double
+#>   y: integer
 #> >
 ```
 
@@ -344,33 +344,36 @@ df3 <- data.frame(x = 2L)
 df3$a <- data.frame(a = 2, b = 2)
 vec_ptype(df3)
 #> prototype: data.frame<
-#>  x: integer
-#>  a: data.frame<
-#>     a: double
-#>     b: double
-#>    >
+#>   x: integer
+#>   a: 
+#>     data.frame<
+#>       a: double
+#>       b: double
+#>     >
 #> >
 
 df4 <- data.frame(x = 4)
 df4$a <- data.frame(a = FALSE, b = 3, c = "a")
 vec_ptype(df4)
 #> prototype: data.frame<
-#>  x: double
-#>  a: data.frame<
-#>     a: logical
-#>     b: double
-#>     c: factor<127a2>
-#>    >
+#>   x: double
+#>   a: 
+#>     data.frame<
+#>       a: logical
+#>       b: double
+#>       c: factor<127a2>
+#>     >
 #> >
 
 vec_ptype(df3, df4)
 #> prototype: data.frame<
-#>  x: double
-#>  a: data.frame<
-#>     a: double
-#>     b: double
-#>     c: factor<127a2>
-#>    >
+#>   x: double
+#>   a: 
+#>     data.frame<
+#>       a: double
+#>       b: double
+#>       c: factor<127a2>
+#>     >
 #> >
 ```
 
@@ -398,17 +401,20 @@ x1[[5]] <- factor("x")
 This provides a natural type for nested data frames:
 
 ``` r
-by_cyl <- data.frame(c = c(4, 6, 8))
+by_cyl <- data.frame(cyl = c(4, 6, 8))
 by_cyl$data <- as_list_of(split(mtcars[1:3], mtcars$cyl))
 
 vec_ptype(by_cyl)
 #> prototype: data.frame<
-#>  c   : double
-#>  data: list_of<data.frame<
-#>        mpg : double
-#>        cyl : double
-#>        disp: double
-#>       >>
+#>   cyl : double
+#>   data: 
+#>     list_of<
+#>       data.frame<
+#>         mpg : double
+#>         cyl : double
+#>         disp: double
+#>       >
+#>     >
 #> >
 ```
 
