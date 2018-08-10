@@ -74,24 +74,24 @@ c(dt, dttm)
 c(dttm, dt)
 #> [1] "2019-12-31 18:00:00 CST" "1969-12-31 23:04:22 CST"
 
-# as do combining dates and factors: factors
+# as do combining dates and factors
 c(dt, factor("a"))
 #> [1] "2020-01-01" "1970-01-02"
 c(factor("a"), dt)
 #> [1]     1 18262
 ```
 
-This behaviour arises partly because `c()` has dual purposes: as well as
-it’s primary duty of combining vectors, it has a secondary duty of
-stripping attributes. For example, `?POSIXct` suggests that you should
-use `c()` if you want to reset the timezone.
+This behaviour arises because `c()` has dual purposes: as well as it’s
+primary duty of combining vectors, it has a secondary duty of stripping
+attributes. For example, `?POSIXct` suggests that you should use `c()`
+if you want to reset the timezone.
 
 The second problem is that `dplyr::bind_rows()` is not extensible by
-others. At the moment it handles S3 classes using a set of heuristics,
-but these often fail, and it feels like we really need to think through
-the problem in order to build a principled solution. This intersects
-with the need to cleanly support more types of data frame columns
-including lists of data frames, data frames, and matrices.
+others. Currently, it handles arbitrary S3 classes using heuristics, but
+these often fail, and it feels like we really need to think through the
+problem in order to build a principled solution. This intersects with
+the need to cleanly support more types of data frame columns including
+lists of data frames, data frames, and matrices.
 
 ## Usage
 
@@ -139,10 +139,13 @@ vec_c(Sys.Date(), .ptype = factor())
 ### What is a prototype?
 
 Internally, vctrs represents the class of a vector with a 0-length
-subset of the vector. This captures all the attributes of the class, and
-in many cases you can use existing base functions like (e.g, `double()`,
-`factor(levels = c("a", "b"))`). You can use `vec_ptype()` get a concise
-summary of the prototype:
+subset. We call this a prototype, because it’s a miniature version of
+the vector, that contains all of the attributes but none of the data.
+Conveniently, you can create many prototypes using existing base
+functions (e.g, `double()`, `factor(levels = c("a", "b"))`).
+
+You can use `vec_ptype()` to create a prototype from an existing object.
+It has a print method that summarises the prototype:
 
 ``` r
 vec_ptype(letters)
@@ -153,15 +156,18 @@ vec_ptype(list(1, 2, 3))
 #> prototype: list
 ```
 
-Some protoypes have parameters that are also displayed:
+Some protoypes have parameters that affect their behaviour. These are
+displayed where possible:
 
 ``` r
 # Factors display a hash of their levels; this lets
 # you distinguish different factors at a glance
 vec_ptype(factor("a"))
 #> prototype: factor<127a2>
+vec_ptype(factor("b"))
+#> prototype: factor<ddf10>
 
-# Date times display the timezone
+# Date-times display their timezone
 vec_ptype(Sys.time())
 #> prototype: datetime<local>
 
@@ -187,27 +193,29 @@ vec_ptype(NA)
 
 ### Coercion and casting
 
-The vctrs type system is defined by two functions: `vec_type2()` and
-`vec_cast()`. `vec_type2()` is used for implicit coercions: given two
-types, it returns their common type, or an error stating that there’s no
-common type. It is commutative, associative, and has identity element,
-`unknown()`.
+vctrs defines the relationship between classes with two functions:
+`vec_type2()` and `vec_cast()`. `vec_type2()` is used for implicit
+coercions: given two classes, it returns the common class if it exists,
+or otherwise throws and error. `vec_type2()` is commutative,
+associative, and has an identity element, `unknown()`.
 
-The easier way to explore how coercion works is to give multiple
-arguments to `vec_ptype()`. Behind the scenes, it uses `vec_type2()` to
-find the common type.
+The easiest way to explore coercion is to give multiple arguments to
+`vec_ptype()`. It uses `vec_type2()` to find the common type and
+displays the results in a convenient form:
 
 ``` r
 vec_ptype(integer(), double())
 #> prototype: double
+vec_ptype(Sys.Date(), Sys.time())
+#> prototype: datetime<local>
 
 # no common type
 vec_ptype(factor(), Sys.Date())
 #> Error: No common type for factor<5152a> and date
 ```
 
-`vec_cast()` is used for explicit casts: given a value and a type, it
-casts the value to the type or throws an error stating that the cast is
+`vec_cast()` is used for explicit casts: given a value and a class, it
+casts the value to the class or throws an error stating that the cast is
 not possible. If a cast is possible in general (i.e. double -\>
 integer), but information is lost for a specific input (e.g. 1.5 -\> 1),
 it will generate a warning.
@@ -235,24 +243,50 @@ The following diagram summarises both casts (arrows) and coercions
 
 ### Factors
 
-Note that the commutativity of `vec_type2()` only applies to the type,
-not the parameters of that type. Concretely, the order in which you
-concatenate factors will affect the order of the levels in the output:
+Note that the commutativity of `vec_type2()` only applies to the
+prototype, not the attributes of the prototype. Concretely, the order in
+which you concatenate factors will affect the order of the levels in the
+output:
 
 ``` r
 fa <- factor("a")
 fb <- factor("b")
 
-levels(vec_ptype(fa, fb))
-#> NULL
-levels(vec_ptype(fb, fa))
-#> NULL
+levels(vec_ptype(fa, fb)[[1]])
+#> [1] "a" "b"
+levels(vec_ptype(fb, fa)[[1]])
+#> [1] "b" "a"
+```
+
+### Matrices and arrays
+
+Any bare vector can have a `dim` attribute which turns it into a matrix
+or array. The prototype of a matrix or array its a 0-row subset.
+
+``` r
+vec_ptype(array(1, c(1, 10)))
+#> prototype: double[,10]
+vec_ptype(array(1, c(1, 10, 10)))
+#> prototype: double[,10,10]
+```
+
+A pair of arrays only has common type if the dimensions match:
+
+``` r
+vec_ptype(array(TRUE, c(2, 10)), array(1, c(5, 10)))
+#> prototype: double[,10]
+
+vec_ptype(array(TRUE, c(2, 10)), array(1, c(5, 1)))
+#> Error: No common type for logical[,10] and double[,1]
+#> Shapes are not compatible
+vec_ptype(array(TRUE, c(2, 10)), array(1, c(5, 10, 1)))
+#> Error: No common type for logical[,10] and double[,10,1]
+#> Dimensionality must be equal
 ```
 
 ### Data frames
 
-vctrs defines the type of a data frame as the type of each column
-labelled with the name of the column:
+Data frames are defined by the names and prototypes of their columns:
 
 ``` r
 df1 <- data.frame(x = TRUE, y = 1L)
@@ -301,25 +335,24 @@ vec_ptype(df2, df1)
 #> >
 ```
 
-vctrs also knows how to handle data frame and matrix columns:
+Data frames are interesting because they are recursive: a data frame can
+have a column that is also a data frame. vctrs knows how to handle these
+too:
 
 ``` r
-df3 <- data.frame(x = 3)
+df3 <- data.frame(x = 2L)
 df3$a <- data.frame(a = 2, b = 2)
-df3$b <- matrix(c(1L, 2L), nrow = 1)
 vec_ptype(df3)
 #> prototype: data.frame<
-#>  x: double
+#>  x: integer
 #>  a: data.frame<
 #>     a: double
 #>     b: double
 #>    >
-#>  b: integer[,2]
 #> >
 
 df4 <- data.frame(x = 4)
 df4$a <- data.frame(a = FALSE, b = 3, c = "a")
-df4$b <- matrix(c(3, 5), nrow = 1)
 vec_ptype(df4)
 #> prototype: data.frame<
 #>  x: double
@@ -328,7 +361,6 @@ vec_ptype(df4)
 #>     b: double
 #>     c: factor<127a2>
 #>    >
-#>  b: double[,2]
 #> >
 
 vec_ptype(df3, df4)
@@ -339,15 +371,15 @@ vec_ptype(df3, df4)
 #>     b: double
 #>     c: factor<127a2>
 #>    >
-#>  b: double[,2]
 #> >
 ```
 
 ### List of
 
-vctr provides a new vector class that represents a list where each
-element has the same type. This is an interesting contrast to a data
-frame which is a list where each element has the same *length*.
+vctrs provides a new class that represents a list of elements with
+constant prototype but varying lengths. This is an interesting contrast
+to a data frame which is a list of elements with constant length, but
+varying prototypes.
 
 ``` r
 x1 <- list_of(1:3, 3:5, 6:8)
@@ -366,12 +398,18 @@ x1[[5]] <- factor("x")
 This provides a natural type for nested data frames:
 
 ``` r
-vec_ptype(as_list_of(split(mtcars[1:3], mtcars$cyl)))
-#> prototype: list_of<data.frame<
-#>  mpg : double
-#>  cyl : double
-#>  disp: double
-#> >>
+by_cyl <- data.frame(c = c(4, 6, 8))
+by_cyl$data <- as_list_of(split(mtcars[1:3], mtcars$cyl))
+
+vec_ptype(by_cyl)
+#> prototype: data.frame<
+#>  c   : double
+#>  data: list_of<data.frame<
+#>        mpg : double
+#>        cyl : double
+#>        disp: double
+#>       >>
+#> >
 ```
 
 ## Compared to base R
