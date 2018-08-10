@@ -38,3 +38,7 @@ outer_names <- function(x, outer) {
   }
 }
 
+
+hash <- function(x, length = 5) {
+  substr(digest::digest(x), 1, length)
+}

@@ -9,7 +9,7 @@ test_that("atomic vectors and arrays as expected", {
 
 test_that("date/times as expected", {
   expect_equal(vec_type_string(Sys.Date()), "date")
-  expect_equal(vec_type_string(Sys.time()), "datetime")
+  expect_equal(vec_type_string(Sys.time()), "datetime<local>")
 })
 
 test_that("difftime has units as parameter", {

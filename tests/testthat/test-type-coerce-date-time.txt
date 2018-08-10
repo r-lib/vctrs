@@ -1,6 +1,7 @@
-               unknown          date       datetime   difftime<mins>   difftime<secs>  
-unknown        "unknown"        "date"     "datetime" "difftime<mins>" "difftime<secs>"
-date           "date"           "date"     "datetime" NA               NA              
-datetime       "datetime"       "datetime" "datetime" NA               NA              
-difftime<mins> "difftime<mins>" NA         NA         "difftime<mins>" "difftime<secs>"
-difftime<secs> "difftime<secs>" NA         NA         "difftime<secs>" "difftime<secs>"
+                     unknown                date                   datetime<local>        datetime<US/Central>   difftime<mins>   difftime<secs>  
+unknown              "unknown"              "date"                 "datetime<local>"      "datetime<US/Central>" "difftime<mins>" "difftime<secs>"
+date                 "date"                 "date"                 "datetime<local>"      "datetime<US/Central>" NA               NA              
+datetime<local>      "datetime<local>"      "datetime<local>"      "datetime<local>"      "datetime<US/Central>" NA               NA              
+datetime<US/Central> "datetime<US/Central>" "datetime<US/Central>" "datetime<US/Central>" "datetime<US/Central>" NA               NA              
+difftime<mins>       "difftime<mins>"       NA                     NA                     NA                     "difftime<mins>" "difftime<secs>"
+difftime<secs>       "difftime<secs>"       NA                     NA                     NA                     "difftime<secs>" "difftime<secs>"

@@ -35,7 +35,7 @@ vec_type_string.Date <- function(x) {
 
 #' @export
 vec_type_string.POSIXt <- function(x) {
-  "datetime"
+  paste0("datetime<", attr(x, "tzone") %||% "local", ">")
 }
 
 # Strict thinking:
@@ -47,13 +47,12 @@ vec_type_string.POSIXt <- function(x) {
 # for explicitly managing is not worthwhile.
 #' @export
 vec_type_string.factor <- function(x) {
-  if (is.ordered(x)) "ordered" else "factor"
+  paste0(class(x)[[1]], "<", hash(levels(x)), ">")
 }
 
 #' @export
 vec_type_string.difftime <- function(x) {
-  params <- paste0("<", attr(x, "units"), ">")
-  paste0("difftime", dim_type(x), params)
+  paste0("difftime<", attr(x, "units"), ">")
 }
 
 

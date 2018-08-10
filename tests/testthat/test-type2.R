@@ -13,8 +13,9 @@ test_that("base coercions are symmetric and unchanging", {
 test_that("datetime coercions are symmetric and unchanging", {
   types <- list(
     unknown(),
-    Sys.Date(),
-    Sys.time(),
+    new_date(),
+    new_datetime(),
+    new_datetime(tzone = "US/Central"),
     difftime(Sys.time() + 1000, Sys.time()),
     difftime(Sys.time() + 1, Sys.time())
   )

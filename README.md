@@ -133,7 +133,7 @@ automatic coercions, but it can still fail:
 
 ``` r
 vec_c(Sys.Date(), .ptype = factor())
-#> Error: Can't cast date to factor
+#> Error: Can't cast date to factor<5152a>
 ```
 
 ### What is a prototype?
@@ -141,8 +141,8 @@ vec_c(Sys.Date(), .ptype = factor())
 Internally, vctrs represents the class of a vector with a 0-length
 subset of the vector. This captures all the attributes of the class, and
 in many cases you can use existing base functions like (e.g, `double()`,
-`factor(levels = c("a", "b"))`). You can use `vec_ptype()` to get a
-textual representation of prototype of an object:
+`factor(levels = c("a", "b"))`). You can use `vec_ptype()` get a concise
+summary of the prototype:
 
 ``` r
 vec_ptype(letters)
@@ -151,14 +151,23 @@ vec_ptype(1:50)
 #> prototype: integer
 vec_ptype(list(1, 2, 3))
 #> prototype: list
-vec_ptype(iris)
-#> prototype: data.frame<
-#>  Sepal.Length: double
-#>  Sepal.Width : double
-#>  Petal.Length: double
-#>  Petal.Width : double
-#>  Species     : factor
-#> >
+```
+
+Some protoypes have parameters that are also displayed:
+
+``` r
+# Factors display a hash of their levels; this lets
+# you distinguish different factors at a glance
+vec_ptype(factor("a"))
+#> prototype: factor<127a2>
+
+# Date times display the timezone
+vec_ptype(Sys.time())
+#> prototype: datetime<local>
+
+# difftimes display their units
+vec_ptype(as.difftime(10, units = "mins"))
+#> prototype: difftime<mins>
 ```
 
 vctrs provides the `unknown()` class to represent vectors of unknown
@@ -194,7 +203,7 @@ vec_ptype(integer(), double())
 
 # no common type
 vec_ptype(factor(), Sys.Date())
-#> Error: No common type for factor and date
+#> Error: No common type for factor<5152a> and date
 ```
 
 `vec_cast()` is used for explicit casts: given a value and a type, it
@@ -215,7 +224,7 @@ vec_cast(c(1.5, 2.5), integer())
 
 # Cast fails
 vec_cast(c(1.5, 2.5), factor("a"))
-#> Error: Can't cast double to factor
+#> Error: Can't cast double to factor<127a2>
 ```
 
 The set of possible casts is a subset of possible automatic coercions.
@@ -317,7 +326,7 @@ vec_ptype(df4)
 #>  a: data.frame<
 #>     a: logical
 #>     b: double
-#>     c: factor
+#>     c: factor<127a2>
 #>    >
 #>  b: double[,2]
 #> >
@@ -328,7 +337,7 @@ vec_ptype(df3, df4)
 #>  a: data.frame<
 #>     a: double
 #>     b: double
-#>     c: factor
+#>     c: factor<127a2>
 #>    >
 #>  b: double[,2]
 #> >
@@ -351,7 +360,7 @@ x1[[4]]
 #> [1] 0 1 0
 
 x1[[5]] <- factor("x")
-#> Error: Can't cast factor to integer
+#> Error: Can't cast factor<5a425> to integer
 ```
 
 This provides a natural type for nested data frames:

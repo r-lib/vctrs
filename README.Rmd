@@ -95,13 +95,26 @@ vec_c(Sys.Date(), .ptype = factor())
 
 ### What is a prototype?
 
-Internally, vctrs represents the class of a vector with a 0-length subset of the vector. This captures all the attributes of the class, and in many cases you can use existing base functions like (e.g, `double()`, `factor(levels = c("a", "b"))`). You can use `vec_ptype()` to get a textual representation of prototype of an object:
+Internally, vctrs represents the class of a vector with a 0-length subset of the vector. This captures all the attributes of the class, and in many cases you can use existing base functions like (e.g, `double()`, `factor(levels = c("a", "b"))`). You can use `vec_ptype()` get a concise summary of the prototype:
 
 ```{r}
 vec_ptype(letters)
 vec_ptype(1:50)
 vec_ptype(list(1, 2, 3))
-vec_ptype(iris)
+```
+
+Some protoypes have parameters that are also displayed:
+
+```{r}
+# Factors display a hash of their levels; this lets
+# you distinguish different factors at a glance
+vec_ptype(factor("a"))
+
+# Date times display the timezone
+vec_ptype(Sys.time())
+
+# difftimes display their units
+vec_ptype(as.difftime(10, units = "mins"))
 ```
 
 vctrs provides the `unknown()` class to represent vectors of unknown type:
