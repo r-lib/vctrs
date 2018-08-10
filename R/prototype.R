@@ -121,7 +121,7 @@ as_vec_ptype.logical <- function(x) {
   if (is_nullish(x)) {
     unknown()
   } else {
-    logical()
+    vec_subset(x, 0L)
   }
 }
 
