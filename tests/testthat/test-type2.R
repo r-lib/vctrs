@@ -3,7 +3,7 @@ context("test-type-coerce")
 # High-level regression + symmetry tests ---------------------------------------------
 
 test_that("base coercions are symmetric and unchanging", {
-  types <- list(NULL, logical(), integer(), double(), character(), list())
+  types <- list(unknown(), logical(), integer(), double(), character(), list())
   mat <- maxtype_mat(types)
 
   expect_true(isSymmetric(mat))
@@ -12,7 +12,7 @@ test_that("base coercions are symmetric and unchanging", {
 
 test_that("datetime coercions are symmetric and unchanging", {
   types <- list(
-    NULL,
+    unknown(),
     Sys.Date(),
     Sys.time(),
     difftime(Sys.time() + 1000, Sys.time()),
@@ -31,7 +31,7 @@ test_that("datetime coercions are symmetric and unchanging", {
 
 test_that("factor/character coercions are symmetric and unnchanging", {
   types <- list(
-    NULL,
+    unknown(),
     ordered(character()),
     factor(),
     character()
@@ -49,7 +49,7 @@ test_that("factor/character coercions are symmetric and unnchanging", {
 
 test_that("list coercions are symmetric and unchanging", {
   types <- list(
-    NULL,
+    unknown(),
     list(),
     list_of(.ptype = integer()),
     list_of(.ptype = double()),

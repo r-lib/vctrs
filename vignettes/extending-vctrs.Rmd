@@ -134,12 +134,12 @@ vec_type2.binned <- function(x, y) {
 
 Next, we add two required methods to `vec_type2.binned()`:
 
-*   A `NULL` method must return a vector of the same type as `x`, but with 
-    zero length. This makes `NULL` is the identity element of the type system,
-    an important algebraic property.
+*   A `unknown` method must return a vector of the same type as `x`, but with 
+    zero length. This makes `unknown()` is the identity element of the type
+    system,an important algebraic property.
   
     ```{r}
-    vec_type2.binned.NULL <- function(x, y) {
+    vec_type2.binned.unknown <- function(x, y) {
       x[0L]
     }
     ```
@@ -212,7 +212,7 @@ vec_cast.binned <- function(x, to) {
   UseMethod("vec_cast.binned")
 }
 
-vec_cast.binned.NULL <- function(x, to) {
+vec_cast.binned.unknown <- function(x, to) {
   NULL
 }
 

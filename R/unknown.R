@@ -5,6 +5,12 @@
 #'
 #' @keywords internal
 #' @param n Length of vector
+#' @export
+#' @examples
+#' vec_ptype()
+#' vec_ptype(NA)
+#'
+#' vec_ptype(unknown(), "x")
 unknown <- function(n = 0) {
   structure(rep(NA, n), class = "unknown")
 }
@@ -12,6 +18,11 @@ unknown <- function(n = 0) {
 #' @export
 `[.unknown` <- function(x, i, ...) {
   unknown(length(NextMethod()))
+}
+
+#' @export
+print.unknown <- function(x, ...) {
+  cat("<unknown> [", length(x), "]\n", sep = "")
 }
 
 #' @export
@@ -31,18 +42,10 @@ is_nullish <- function(x) {
 #' @export vec_type2.unknown
 #' @method vec_type2 unknown
 #' @export
-vec_type2.unknown <- function(x, y) UseMethod("vec_type2.unknown", y)
-#' @method vec_type2.unknown NULL
-#' @export
-vec_type2.unknown.NULL    <- function(x, y) unknown()
-#' @method vec_type2.unknown unknown
-#' @export
-vec_type2.unknown.unknown <- function(x, y) unknown()
-#' @method vec_type2.unknown default
-#' @export
-vec_type2.unknown.default  <- function(x, y) {
+vec_type2.unknown <- function(x, y) {
   y
 }
+
 #' @method vec_type2.logical unknown
 #' @export
 vec_type2.logical.unknown <- function(x, y) x
@@ -76,6 +79,9 @@ vec_type2.POSIXt.unknown <- function(x, y) x
 #' @method vec_type2.data.frame unknown
 #' @export
 vec_type2.data.frame.unknown <- function(x, y) x
+#' @method vec_type2.difftime unknown
+#' @export
+vec_type2.difftime.unknown <- function(x, y) x
 
 #' @method vec_cast unknown
 #' @export

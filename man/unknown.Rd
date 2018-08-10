@@ -19,4 +19,10 @@ is_unknown(x)
 This is a special vector type used to represent of known length but
 unknown type.
 }
+\examples{
+vec_ptype()
+vec_ptype(NA)
+
+vec_ptype(unknown(), "x")
+}
 \keyword{internal}

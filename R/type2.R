@@ -60,15 +60,10 @@ vec_type2.integer <- function(x, y) UseMethod("vec_type2.integer", y)
 #' @export
 vec_type2.double  <- function(x, y) UseMethod("vec_type2.double", y)
 
-#' @method vec_type2.logical NULL
-#' @export
-vec_type2.logical.NULL    <- function(x, y) logical()
 #' @method vec_type2.logical logical
 #' @export
 vec_type2.logical.logical <- function(x, y) dim_match(logical(), x, y)
 
-#' @method vec_type2.integer NULL
-vec_type2.integer.NULL    <- function(x, y) integer()
 #' @export
 #' @method vec_type2.logical integer
 vec_type2.logical.integer <- function(x, y) dim_match(integer(), x, y)
@@ -79,8 +74,6 @@ vec_type2.integer.logical <- function(x, y) dim_match(integer(), x, y)
 #' @method vec_type2.integer integer
 vec_type2.integer.integer <- function(x, y) dim_match(integer(), x, y)
 
-#' @method vec_type2.double NULL
-vec_type2.double.NULL     <- function(x, y) double()
 #' @export
 #' @method vec_type2.logical double
 vec_type2.logical.double  <- function(x, y) dim_match(double(), x, y)
@@ -115,9 +108,6 @@ vec_type2.double.default  <- function(x, y) stop_incompatible_type(x, y)
 #' @export
 vec_type2.list    <- function(x, y) UseMethod("vec_type2.list", y)
 
-#' @method vec_type2.list NULL
-#' @export
-vec_type2.list.NULL <- function(x, y) list()
 #' @method vec_type2.list list
 #' @export
 vec_type2.list.list <- function(x, y) dim_match(list(), x, y)
@@ -144,23 +134,14 @@ vec_type2.factor    <- function(x, y) UseMethod("vec_type2.factor", y)
 #' @export
 vec_type2.ordered   <- function(x, y) UseMethod("vec_type2.ordered", y)
 
-#' @method vec_type2.ordered NULL
-#' @export
-vec_type2.ordered.NULL        <- function(x, y) new_ordered(levels = levels(x))
 #' @method vec_type2.ordered ordered
 #' @export
 vec_type2.ordered.ordered     <- function(x, y) new_ordered(levels = levels_union(x, y))
 
-#' @method vec_type2.factor NULL
-#' @export
-vec_type2.factor.NULL         <- function(x, y) new_factor(levels = levels(x))
 #' @method vec_type2.factor factor
 #' @export
 vec_type2.factor.factor       <- function(x, y) new_factor(levels = levels_union(x, y))
 
-#' @method vec_type2.character NULL
-#' @export
-vec_type2.character.NULL      <- function(x, y) dim_match(character(), x, y)
 #' @method vec_type2.ordered character
 #' @export
 vec_type2.ordered.character   <- function(x, y) dim_match(character(), x, y)
@@ -214,9 +195,6 @@ vec_type2.Date.NULL      <- function(x, y) new_date()
 #' @export
 vec_type2.Date.Date      <- function(x, y) new_date()
 
-#' @method vec_type2.POSIXt NULL
-#' @export
-vec_type2.POSIXt.NULL    <- function(x, y) new_datetime(tzone = tzone(x))
 #' @method vec_type2.POSIXt Date
 #' @export
 vec_type2.POSIXt.Date    <- function(x, y) new_datetime(tzone = tzone(x))
@@ -242,9 +220,6 @@ vec_type2.POSIXt.default <- function(x, y) stop_incompatible_type(x, y)
 #' @export
 vec_type2.difftime <- function(x, y) UseMethod("vec_type2.difftime", y)
 
-#' @method vec_type2.difftime NULL
-#' @export
-vec_type2.difftime.NULL     <- function(x, y) new_difftime(units = units(x))
 #' @method vec_type2.difftime difftime
 #' @export
 vec_type2.difftime.difftime <- function(x, y) new_difftime(units = units_union(x, y))
@@ -266,16 +241,10 @@ vec_type2.data.frame <- function(x, y) UseMethod("vec_type2.data.frame", y)
 #' @export
 vec_type2.tbl_df     <- function(x, y) UseMethod("vec_type2.tbl_df", y)
 
-#' @method vec_type2.data.frame NULL
-#' @export
-vec_type2.data.frame.NULL <- function(x, y) vec_subset(x, 0L)
 #' @method vec_type2.data.frame data.frame
 #' @export
 vec_type2.data.frame.data.frame <- function(x, y) new_data_frame(df_col_type2(x, y), n = 0)
 
-#' @method vec_type2.tbl_df NULL
-#' @export
-vec_type2.tbl_df.NULL <- function(x, y) vec_subset(x, 0L)
 #' @method vec_type2.tbl_df data.frame
 #' @export
 vec_type2.tbl_df.data.frame <- function(x, y) new_tibble(df_col_type2(x, y), n = 0)
