@@ -2,15 +2,12 @@
 % Please edit documentation in R/shape.R
 \name{vec_shape}
 \alias{vec_shape}
-\alias{new_vec_shape}
-\alias{as_vec_shape}
-\title{Compute "shape" of a vector}
+\alias{vec_reshape}
+\title{Compute and alter "shape" of a vector}
 \usage{
 vec_shape(..., data.frame = FALSE)
 
-new_vec_shape(x, data.frame = FALSE)
-
-as_vec_shape(x)
+vec_reshape(x, shape)
 }
 \arguments{
 \item{data.frame}{Does this shape represent a data frame? Data frames
@@ -23,23 +20,13 @@ For \code{as_vec_shape()}, an existing data vector}
 The shape of a vector is its \code{vec_dim()} (i.e. \code{dim()} or \code{length()})
 and whether or not it's a data frame.
 }
-\details{
-\code{new_vec_shape()} is the low-level constructor, \code{vec_shape()} is a helper for
-interactive exploration, \code{as_vec_shape()} computes the shape of an existing
-object. Use \code{max()} to compute the "maximum" shape of a set of shapes,
-obeying the recycling rules.
-}
 \examples{
-vec_shape(1, 2, 3)
-as_vec_shape(mtcars)
-
-max(vec_shape(1), vec_shape(10))
+vec_shape(1:10)
+vec_shape(1:10, 1)
 \dontrun{
-max(vec_shape(2), vec_shape(10))
+vec_shape(1:10, 1)
 }
 
-max(vec_shape(10), vec_shape(0))
-max(vec_shape(10), vec_shape(10, 2))
-max(vec_shape(1, 5, 1), vec_shape(2, 5, 10))
+vec_shape(mtcars)
 }
 \keyword{internal}

@@ -1,2 +1,2 @@
-shape: [10]
-shape: [1,2,3,4,5]
+shape: [1]
+shape: [1]

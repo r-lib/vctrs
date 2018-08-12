@@ -84,7 +84,8 @@ c(factor("a"), dt)
 This behaviour arises because `c()` has dual purposes: as well as it’s
 primary duty of combining vectors, it has a secondary duty of stripping
 attributes. For example, `?POSIXct` suggests that you should use `c()`
-if you want to reset the timezone.
+if you want to reset the timezone. A detailed comparison of vctrs vs
+base R behaviour can be found in `vignettes("vctrs-vs-base.Rmd")`
 
 The second problem is that `dplyr::bind_rows()` is not extensible by
 others. Currently, it handles arbitrary S3 classes using heuristics, but
@@ -416,136 +417,6 @@ vec_ptype(by_cyl)
 #>       >
 #>     >
 #> >
-```
-
-## Compared to base R
-
-The following section compares base R and vctrs behaviour.
-
-### Atomic vectors
-
-``` r
-# c() will coerce any atomic type to character
-c(1, "x")
-#> [1] "1" "x"
-
-# vctrs is stricter, and requires an explicit cast
-vec_c(1, "x")
-#> Error: No common type for double and character
-
-vec_c(1, "x", .ptype = character())
-#> [1] "1" "x"
-```
-
-### Factors
-
-``` r
-fa <- factor("a")
-fb <- factor("b")
-
-# c() strips all factor attributes giving an integer vector
-# (as documented in ?c)
-c(fa, fb)
-#> [1] 1 1
-
-# unlist() creates a new factor with the union of the levels 
-unlist(list(fa, fb))
-#> [1] a b
-#> Levels: a b
-
-# vctrs always unions the levels
-vec_c(fa, fb)
-#> [1] a b
-#> Levels: a b
-```
-
-### Dates and date-times
-
-``` r
-date <- as.Date("2020-01-01")
-datetime <- as.POSIXct("2020-01-01 09:00")
-
-# If the first argument to c() is a date, the result is a date
-# But the datetime is not converted correctly (the number of seconds
-# in the datetime is interpreted as the number of days in the date)
-c(date, datetime)
-#> [1] "2020-01-01"    "4322088-04-11"
-
-# If the first argument to c() is a datetime, the result is a datetime
-# But the date is not converted correctly (the number of days in the
-# date is interpreted as the number of seconds in the date)
-c(datetime, date)
-#> [1] "2020-01-01 09:00:00 CST" "1969-12-31 23:04:22 CST"
-
-# vctrs always returns the same type regardless of the order
-# of the arguments, and converts dates to datetimes at midnight
-vec_c(datetime, date)
-#> [1] "2020-01-01 09:00:00 CST" "2020-01-01 00:00:00 CST"
-vec_c(date, datetime)
-#> [1] "2020-01-01 00:00:00 CST" "2020-01-01 09:00:00 CST"
-
-# More subtly (as documented), c() drops the timezone, while
-# vec_c() preserves it
-datetime_nz <- as.POSIXct("2020-01-01 09:00", tz = "Pacific/Auckland")
-c(datetime_nz, datetime_nz)
-#> [1] "2019-12-31 14:00:00 CST" "2019-12-31 14:00:00 CST"
-vec_c(datetime_nz, datetime_nz)
-#> [1] "2020-01-01 09:00:00 NZDT" "2020-01-01 09:00:00 NZDT"
-```
-
-### Data frames
-
-``` r
-df1 <- data.frame(x = TRUE)
-df2 <- data.frame(y = 2)
-
-# rbind() requires the inputs to have identical column names
-rbind(df1, df2)
-#> Error in match.names(clabs, names(xi)): names do not match previous names
-
-# vctrs creates a common type that is the union of the columns
-vec_rbind(df1, df2)
-#>      x  y
-#> 1 TRUE NA
-#> 2   NA  2
-
-# Additionally, you can specify the desired output type
-vec_rbind(df1, df2, .ptype = data.frame(x = double(), y = double()))
-#>    x  y
-#> 1  1 NA
-#> 2 NA  2
-
-# In some circumstances (combining data frames and vectors), 
-# rbind() silently discards data
-rbind(data.frame(x = 1:3), c(1, 1000000))
-#>   x
-#> 1 1
-#> 2 2
-#> 3 3
-#> 4 1
-```
-
-### Tibbles
-
-``` r
-tb1 <- tibble::tibble(x = 3)
-
-# rbind() uses the class of the first argument
-class(rbind(tb1, df1))
-#> [1] "tbl_df"     "tbl"        "data.frame"
-class(rbind(df1, tb1))
-#> [1] "data.frame"
-
-# vctrs uses the common class of all arguments
-class(vec_rbind(df1, df1))
-#> [1] "data.frame"
-class(vec_rbind(tb1, df1))
-#> [1] "tbl_df"     "tbl"        "data.frame"
-class(vec_rbind(df1, tb1))
-#> [1] "tbl_df"     "tbl"        "data.frame"
-
-# (this will help the tidyverse avoid turning data frames
-# into tibbles when you're not using them)
 ```
 
 ## Tidyverse functions
