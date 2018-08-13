@@ -9,7 +9,7 @@ matrix:
   - r: release
     after_success:
     - Rscript -e 'covr::codecov()'
-    - R CMD install .
+    - R CMD INSTALL .
     - Rscript -e 'pkgdown::build_site()'
 
     deploy:
