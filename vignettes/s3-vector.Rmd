@@ -1,0 +1,215 @@
+---
+title: "S3 vectors"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{S3 vectors}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+This vignette contains tips for creating your own S3 vector class. It focusses on the details of making a vector class play nice; you'll also need to provide methods that actually make the vector useful.
+
+## Construction
+
+All classes should have a low-level constructor called `new_class()` that checks types (but not values), then calls `structure()`. Every class should have one of `class()` and `as_class()`. Some classes will have both.
+
+When called with no arguments the construct should return a zero-length vector.
+
+## First methods
+  
+The first method you should implement is a print method. Your first pass at a print method should (ab)use existing print methods. Your print method should return `x` invisibly.
+    
+The second method you should implement is `[`. It should will look something like:
+
+```{r}
+`[.myclass` <- function(x, i) {
+  new_myclass(NextMethod(), 
+    attr1 = attr(x, "attr1"), 
+    attr2 = attr(x, "attr")
+  )
+}
+```
+
+If you are willing to take a dependency on sloop, you should implement a reconstruct method:
+
+```{r}
+reconstruct.myclass <- function(new, old) {
+  new_myclass(new, 
+  attr1 = attr(old, "attr1"), 
+  attr2 = attr(old, "attr")
+  )
+}
+```
+
+Then your `[` method can be simplified to:
+
+```{r}
+`[.myclass` <- function(x, i) {
+  reconstruct(NextMethod(), x)
+}
+```
+
+## Other methods
+
+Implement `[<-` to ensure that the user can't corrupt the data type.
+
+Consider implementing `names<-()` and `dims<-()` methods to expressly forbid use of names or dims (unless you actually want to support them).
+
+Avoid redefining `length()` or `names()`. If you find yourself leading in this direction, it may be a sign that you need a vector built on top of a data frame instead.
+  
+## Data frames and tibbles
+  
+Next implement `as.data.frame.myclass` so you can put your vector inside a data frame. It should always have this form:
+
+```{r}
+as.data.frame.myclass <- function(x, row.names = NULL, optional = FALSE, ..., nm = paste(deparse(substitute(x), width.cutoff = 500L), collapse = " ")) {
+  force(nm)
+  
+  cols <- list(x)
+  if (!optional) {
+    names(cols) <- nm
+  }
+  
+  structure(
+    cols,
+    class = "data.frame",
+    row.names = .set_row_names(length(x))
+  )
+}
+```
+
+If you need the column to print specially within the data frame provide a `format()` method. It should return a character vector the same length as `x`. Consider rewriting your print method to use `format()`.
+  
+To make work more nicely in tibbles, provide a method for 
+`pillar::type_sum()`, and if you need custom printing, a method for
+`pillar::pillar_shaft()`. See details in 
+<https://tibble.tidyverse.org/articles/extending.html>.
+
+## Utils
+
+```{r}
+cat_line <- function(...) cat(..., "\n", sep = "")
+```
+
+## Case study: percent
+
+Foundations:
+
+```{r}
+new_percent <- function(x) {
+  stopifnot(is.double(x))
+  
+  structure(x, class = "percent")
+}
+
+percent <- function(x = double()) {
+  # Strip attributes and names
+  x <- as.vector(x)
+  names(x) <- NULL
+  
+  new_percent(x)
+}
+
+print.percent <- function(x, ...) {
+  cat_line("<percent>")
+  if (length(x) > 0) 
+    print(paste0(signif(x * 100, 3), "%"), quote = FALSE)
+  invisible(x)
+}
+
+x <- percent(seq(0, 1, length = 4))
+x
+
+`[.percent` <- function(x, i) {
+  new_percent(NextMethod())
+}
+x[c(1, 1, 4)]
+
+# Now is a good time to check that zero-length vectors print well
+x[0]
+```
+
+Next make it work in data frames:
+
+```{r}
+as.data.frame.percent <- function(x, row.names = NULL, optional = FALSE, ..., nm = paste(deparse(substitute(x), width.cutoff = 500L), collapse = " ")) {
+  force(nm)
+  
+  cols <- list(x)
+  if (!optional) {
+    names(cols) <- nm
+  }
+  
+  structure(
+    cols,
+    class = "data.frame",
+    row.names = .set_row_names(length(x))
+  )
+}
+
+df <- data.frame(x = x)
+df
+
+format.percent <- function(x, ...) {
+  paste0(format.default(signif(x * 100, 3)), "%")
+}
+df
+
+# Now rewrite print
+print.percent <- function(x, ...) {
+  cat_line("<percent>")
+  if (length(x) > 0) 
+    print(format(x), quote = FALSE)
+  invisible(x)
+}
+x
+```
+
+And in tibbles:
+
+```{r}
+type_sum.percent <- function(x) {
+  "pct"
+}
+
+# Not quite right, but a reasonable place to start
+pillar_shaft.percent <- function(x) {
+  pillar::pillar_shaft(format(x))
+}
+
+tibble::tibble(x)
+```
+
+Make it stricter:
+
+```{r, error = TRUE}
+`[<-.percent` <- function(x, i, value) {
+  stopifnot(is.double(value))
+  if (any(value < 0 | value > 1, na.rm = TRUE)) {
+    stop("Percentages must be values between 0 and 1", call. = FALSE)
+  }
+  NextMethod()
+}
+
+x[1] <- "a"
+x[1] <- 2
+
+x[1] <- 0.5
+x
+
+`names<-.percent` <- function(x, value) {
+  stop("Percent vector must be nameless", call. = FALSE)
+}
+
+`dim<-.percent` <- function(x, value) {
+  stop("Percent vector must be 1d", call. = FALSE)
+}
+```
+
