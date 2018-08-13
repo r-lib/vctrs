@@ -10,7 +10,20 @@ r:
 - 3.3
 - oldrel
 - release
-- devel
 
-after_success:
-  - Rscript -e 'covr::codecov()'
+matrix:
+  include:
+  - r: devel
+    after_success:
+    - Rscript -e 'covr::codecov()'
+    - Rscript -e 'pkgdown::build_site()'
+
+    deploy:
+      provider: pages
+      skip-cleanup: true
+      github-token: $GITHUB_PAT
+      local-dir: docs
+      fqdn: vctrs.r-lib.org
+      on:
+        branch: master
+        r: release

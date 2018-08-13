@@ -23,7 +23,8 @@ Suggests:
     covr,
     testthat,
     knitr,
-    rmarkdown
+    rmarkdown,
+    pkgdown
 Encoding: UTF-8
 Language: en-GB
 LazyData: true
