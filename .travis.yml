@@ -19,7 +19,6 @@ matrix:
       fqdn: vctrs.r-lib.org
       on:
         branch: master
-        r: release
 
 r:
 - devel
