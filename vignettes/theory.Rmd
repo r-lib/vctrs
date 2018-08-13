@@ -18,6 +18,10 @@ vctrs is heavily inspired by abstract and algebraic data types. The primary goal
 
 This vignette collects together various thoughts related to theory; it's not yet readable.
 
+```{r}
+library(vctrs)
+```
+
 ## Motivating examples
 
 There are two motivating examples from that illustrate many of the key ideas: `ifelse()` and `rbind()`. These have analogs in dplyr (`dplyr::if_else()` and `dplyr::bind_rows()`) which are slightly stricter on average than their base equivalents, but still adhoc. 
