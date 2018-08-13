@@ -9,11 +9,11 @@ r:
 - 3.2
 - 3.3
 - oldrel
-- release
+- devel
 
 matrix:
   include:
-  - r: devel
+  - r: release
     after_success:
     - Rscript -e 'covr::codecov()'
     - Rscript -e 'pkgdown::build_site()'
