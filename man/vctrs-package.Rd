@@ -7,8 +7,8 @@
 \title{vctrs: Vector Helpers}
 \description{
 Functions that help you work with vectors, particularly numeric.
-Provides a full set of summary, cumulative, rolling, and vectorised
-functions for both R and C.
+    Provides a full set of summary, cumulative, rolling, and vectorised
+    functions for both R and C.
 }
 \seealso{
 Useful links:
