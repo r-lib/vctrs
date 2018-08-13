@@ -446,4 +446,5 @@ dplyr::recode()
 dplyr::case_when()
 dplyr::coalesce()
 dplyr::na_if()
+dplyr::between()
 ```
