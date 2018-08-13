@@ -14,7 +14,7 @@ matrix:
     deploy:
       provider: pages
       skip-cleanup: true
-      github-token: $GITHUB_PAT
+      github-token: $GITHUB_TOKEN
       local-dir: docs
       fqdn: vctrs.r-lib.org
       on:
