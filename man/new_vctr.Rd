@@ -32,23 +32,34 @@ places.
 \code{print()} and \code{as.character()} methods that should be adequate for
 most classes. Be warned: a good format method may be as much work
 as the rest of the class put together!
-\item If attributes depend on the data, you'll need to provide a
-\code{vec_reconstruct()} and \code{length<-()} methods that recompute the values.
-If attributes are parameters of the type, provide a \code{vec_type_string()}
-method that displays them.
+\item Next provide \code{\link[=vec_type2]{vec_type2()}} and \code{\link[=vec_cast]{vec_cast()}}. First focus on the
+casts between your class and its underlying the base type.
+Next think about base types that should be coercible or castable.
+See \code{vignette("extending-vctrs")} for details.
 }
 
-The vctr superclass provides \code{as.data.frame()}, \code{[[}, \code{[}, \code{as.list()},
-and \code{rep()} methods; it is unlikely that you should need to redefine for
-you own class. \code{[[<-} and \code{[<-} use \code{vec_cast()} to cast \code{value} to the
-same type as \code{x}; they will work once you have implemented the \code{\link[=vec_cast]{vec_cast()}}
-methods. \code{c()} is aliased to \code{\link[=vec_c]{vec_c()}}; it will work once you have
-implemented the \code{\link[=vec_type2]{vec_type2()}} methods.
-
-vctr also provides default \link{Math}, \link{Summary}, and \link{Ops} group generics.
-The Math and Summary group generics just reconstruct. The Ops group generic
-coerces both inputs to a common type, and reconstructs the output
-(except for the comparison operators which always return a logical vector)
+Implementing these methods gets you many methods for free:
+\itemize{
+\item \code{[[} and \code{[} use \code{NextMethod()} dispatch to the underlying base function,
+reconstructing attributes with \code{vec_cast()}. \code{rep()} works similarly.
+Override if one or more attributes have a one-to-one relationship to
+the underlying data.
+\item \code{[[<-} and \code{[<-} cast the RHS to the LHS, then call \code{NextMethod()}.
+Override these methods if any attributes depend on the data.
+\item The \link{Math} group generics (\code{abs()}, \code{log()} etc), the \link{Summary} group
+generics (\code{sum()}, \code{prod()}), and \code{mean()} use \code{NextMethod()} and
+reconstruct attributes with \code{vec_cast()}. Override if you class has
+non-standard mathematical operations.
+\item The \link{Ops} group generic coerces both inputs to a common type, then calls
+\code{NextMethod()}. For comparison operators, it returns the logical vector,
+otherwise it re-casts the output back to the common type.
+\item \code{as.list.vctr()} calls \code{[[} repeatedly, \code{as.character.vctr()} calls
+\code{format()}.
+\item \code{as.data.frame.vctr()} uses a standard technique to wrap a vector
+in a data frame. You should never need to override this method.
+\item \code{names<-.vctr()}, \code{dims<-.vctr()}, and \code{dimnames<-.vctr()} all through
+errors as generally custom vector classes do not need names or dimensions.
+}
 }
 
 \keyword{internal}

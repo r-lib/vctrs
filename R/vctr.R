@@ -19,22 +19,38 @@
 #'    most classes. Be warned: a good format method may be as much work
 #'    as the rest of the class put together!
 #'
-#' 1. If attributes depend on the data, you'll need to provide a
-#'   `vec_reconstruct()` and `length<-()` methods that recompute the values.
-#'   If attributes are parameters of the type, provide a `vec_type_string()`
-#'   method that displays them.
+#' 1. Next provide [vec_type2()] and [vec_cast()]. First focus on the
+#'    casts between your class and its underlying the base type.
+#'    Next think about base types that should be coercible or castable.
+#'    See `vignette("extending-vctrs")` for details.
 #'
-#' The vctr superclass provides `as.data.frame()`, `[[`, `[`, `as.list()`,
-#' and `rep()` methods; it is unlikely that you should need to redefine for
-#' you own class. `[[<-` and `[<-` use `vec_cast()` to cast `value` to the
-#' same type as `x`; they will work once you have implemented the [vec_cast()]
-#' methods. `c()` is aliased to [vec_c()]; it will work once you have
-#' implemented the [vec_type2()] methods.
+#' Implementing these methods gets you many methods for free:
 #'
-#' vctr also provides default [Math], [Summary], and [Ops] group generics.
-#' The Math and Summary group generics just reconstruct. The Ops group generic
-#' coerces both inputs to a common type, and reconstructs the output
-#' (except for the comparison operators which always return a logical vector)
+#' * `[[` and `[` use `NextMethod()` dispatch to the underlying base function,
+#'    reconstructing attributes with `vec_cast()`. `rep()` works similarly.
+#'    Override if one or more attributes have a one-to-one relationship to
+#'    the underlying data.
+#'
+#' * `[[<-` and `[<-` cast the RHS to the LHS, then call `NextMethod()`.
+#'   Override these methods if any attributes depend on the data.
+#'
+#' * The [Math] group generics (`abs()`, `log()` etc), the [Summary] group
+#'   generics (`sum()`, `prod()`), and `mean()` use `NextMethod()` and
+#'   reconstruct attributes with `vec_cast()`. Override if you class has
+#'   non-standard mathematical operations.
+#'
+#' * The [Ops] group generic coerces both inputs to a common type, then calls
+#'   `NextMethod()`. For comparison operators, it returns the logical vector,
+#'   otherwise it re-casts the output back to the common type.
+#'
+#' * `as.list.vctr()` calls `[[` repeatedly, `as.character.vctr()` calls
+#'   `format()`.
+#'
+#' * `as.data.frame.vctr()` uses a standard technique to wrap a vector
+#'   in a data frame. You should never need to override this method.
+#'
+#' * `names<-.vctr()`, `dims<-.vctr()`, and `dimnames<-.vctr()` all through
+#'   errors as generally custom vector classes do not need names or dimensions.
 #'
 #' @param x Foundation of class. Must be a vector
 #' @param ... Name-value pairs defining attributes
@@ -47,6 +63,21 @@ new_vctr <- function(.data, ..., class) {
   }
 
   structure(.data, ..., class = c(class, "vctr"))
+}
+
+#' @method vec_cast vctr
+#' @export
+vec_cast.vctr <- function(x, to) UseMethod("vec_cast.vctr")
+
+#' @method vec_cast.vctr default
+#' @export
+vec_cast.vctr.default <- function(x, to) {
+  if (is.object(x) || typeof(x) != typeof(to)) {
+    stop_incompatible_cast(x, to)
+  }
+
+  attributes(x) <- attributes(to)
+  x
 }
 
 # Printing ----------------------------------------------------------------
@@ -75,20 +106,13 @@ as.character.vctr <- function(x, ...) {
 # Subsetting --------------------------------------------------------------
 
 #' @export
-vec_reconstruct.vctr <- function(new, old) {
-  # safe because we prohibit names and dims
-  attributes(new) <- attributes(old)
-  new
-}
-
-#' @export
 `[.vctr` <- function(x, i,...) {
-  vec_reconstruct(NextMethod(), x)
+  vec_cast(NextMethod(), x)
 }
 
 #' @export
 `[[.vctr` <- function(x, i, ...) {
-  vec_reconstruct(NextMethod(), x)
+  vec_cast(NextMethod(), x)
 }
 
 #' @export
@@ -98,7 +122,7 @@ as.list.vctr <- function(x, ...) {
 
 #' @export
 rep.vctr <- function(x, ...) {
-  vec_reconstruct(NextMethod(), x)
+  vec_cast(NextMethod(), x)
 }
 
 # Replacement -------------------------------------------------------------
@@ -138,24 +162,24 @@ Ops.vctr <- function(e1, e2) {
 
   out <- NextMethod()
   if (.Generic %in% c("+", "-", "*", "/", "^", "%%", "%/%")) {
-    out <- vec_reconstruct(out, ptype)
+    out <- vec_cast(out, ptype)
   }
   out
 }
 
 #' @export
 Summary.vctr <- function(..., na.rm = FALSE) {
-  vec_reconstruct(NextMethod(), ..1)
+  vec_cast(NextMethod(), ..1)
 }
 
 #' @export
 mean.vctr <- function(x, ...) {
-  vec_reconstruct(NextMethod(), x)
+  vec_cast(NextMethod(), x)
 }
 
 #' @export
 Math.vctr <- function(..., na.rm = FALSE) {
-  vec_reconstruct(NextMethod(), ..1)
+  vec_cast(NextMethod(), ..1)
 }
 
 #' @export
@@ -203,23 +227,18 @@ as.data.frame.vctr <- function(x,
   structure(
     cols,
     class = "data.frame",
-    row.names = .set_row_names(length(x))
+    row.names = .set_row_names(vec_length(x))
   )
 }
 
 # Helpers -----------------------------------------------------------------
-
-# TODO: how does this interact with sloop::reconstruct?
-vec_reconstruct <- function(new, old) {
-  UseMethod("vec_reconstruct", old)
-}
 
 # This simple class is used for testing as defining methods inside
 # a test does not work (because the lexical scope is lost)
 # nocov start
 new_hidden <- function(x = double()) {
   stopifnot(is.numeric(x))
-  new_vctr(x, class = "hidden")
+  new_vctr(as.double(x), class = "hidden")
 }
 format.hidden <- function(x, ...) rep("xxx", length(x))
 
