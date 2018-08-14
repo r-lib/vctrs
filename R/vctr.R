@@ -20,15 +20,21 @@
 #'    as the rest of the class put together!
 #'
 #' 1. If attributes depend on the data, you'll need to provide a
-#'   `reconstruct()` method that recomputes the values. If attributes are
-#'   paramters of the type, provide a `vec_type_string()` method that displays
-#'   them.
+#'   `vec_reconstruct()` and `length<-()` methods that recompute the values.
+#'   If attributes are parameters of the type, provide a `vec_type_string()`
+#'   method that displays them.
 #'
-#' The vctrs super class provides `as.data.frame()`, `[[`, `[`, `as.list()`,
+#' The vctr superclass provides `as.data.frame()`, `[[`, `[`, `as.list()`,
 #' and `rep()` methods; it is unlikely that you should need to redefine for
 #' you own class. `[[<-` and `[<-` use `vec_cast()` to cast `value` to the
-#' same type as `x`; they will work once you have fleshed out your `vec_type2()`
-#' and `vec_cast()` methods.
+#' same type as `x`; they will work once you have implemented the [vec_cast()]
+#' methods. `c()` is aliased to [vec_c()]; it will work once you have
+#' implemented the [vec_type2()] methods.
+#'
+#' vctr also provides default [Math], [Summary], and [Ops] group generics.
+#' The Math and Summary group generics just reconstruct. The Ops group generic
+#' coerces both inputs to a common type, and reconstructs the output
+#' (except for the comparison operators which always return a logical vector)
 #'
 #' @param x Foundation of class. Must be a vector
 #' @param ... Name-value pairs defining attributes
@@ -76,12 +82,12 @@ vec_reconstruct.vctr <- function(new, old) {
 }
 
 #' @export
-`[.vctr` <- function(x, i) {
+`[.vctr` <- function(x, i,...) {
   vec_reconstruct(NextMethod(), x)
 }
 
 #' @export
-`[[.vctr` <- function(x, i) {
+`[[.vctr` <- function(x, i, ...) {
   vec_reconstruct(NextMethod(), x)
 }
 
@@ -98,22 +104,74 @@ rep.vctr <- function(x, ...) {
 # Replacement -------------------------------------------------------------
 
 #' @export
-`[[<-.vctrs` <- function(x, i, value) {
+`[[<-.vctr` <- function(x, i, value) {
   value <- vec_cast(value, x)
   NextMethod()
 }
 
 #' @export
-`[<-.vctrs` <- function(x, i, value) {
+`[<-.vctr` <- function(x, i, value) {
   value <- vec_cast(value, x)
   NextMethod()
+}
+
+# Group generics ----------------------------------------------------------
+# Apart from the comparison operators (==, <, >, <=, =>, !=), these group
+# generics only apply to numeric vectors, but defining them for non-numeric
+# vctrs isn't harmful - as far as I know, the only downside is that the
+# traceback() will be a little longer
+
+#' @export
+Ops.vctr <- function(e1, e2) {
+  if (missing(e2)) {
+    ptype <- e1
+  } else {
+    if (length(e2) == 1) {
+      # Optimisation if RHS is a scalar
+      ptype <- e1
+    } else {
+      ptype <- vec_ptype(e1, e2)[[1]]
+    }
+    e1 <- vec_cast(e1, ptype)
+    e2 <- vec_cast(e2, ptype)
+  }
+
+  out <- NextMethod()
+  if (.Generic %in% c("+", "-", "*", "/", "^", "%%", "%/%")) {
+    out <- vec_reconstruct(out, ptype)
+  }
+  out
+}
+
+#' @export
+Summary.vctr <- function(..., na.rm = FALSE) {
+  vec_reconstruct(NextMethod(), ..1)
+}
+
+#' @export
+mean.vctr <- function(x, ...) {
+  vec_reconstruct(NextMethod(), x)
+}
+
+#' @export
+Math.vctr <- function(..., na.rm = FALSE) {
+  vec_reconstruct(NextMethod(), ..1)
+}
+
+#' @export
+c.vctr <- function(...) {
+  vec_c(...)
 }
 
 # Protection --------------------------------------------------------------
 
 #' @export
 `names<-.vctr` <- function(x, value) {
-  stop("Must not set names() of ", class(x)[[1]], " vector", call. = FALSE)
+  if (is.null(value)) {
+    x
+  } else {
+    stop("Must not set names() of ", class(x)[[1]], " vector", call. = FALSE)
+  }
 }
 
 #' @export
@@ -157,7 +215,27 @@ vec_reconstruct <- function(new, old) {
 }
 
 # This simple class is used for testing as defining methods inside
-# a test does not work
-new_hidden <- function(x) new_vctr(x, class = "hidden")
-#' @export
+# a test does not work (because the lexical scope is lost)
+# nocov start
+new_hidden <- function(x = double()) {
+  stopifnot(is.numeric(x))
+  new_vctr(x, class = "hidden")
+}
 format.hidden <- function(x, ...) rep("xxx", length(x))
+
+vec_type2.hidden         <- function(x, y) UseMethod("vec_type2.hidden")
+vec_type2.hidden.default <- function(x, y) stop_incompatible_type(x, y)
+vec_type2.hidden.hidden  <- function(x, y) new_hidden()
+vec_type2.hidden.NULL    <- function(x, y) new_hidden()
+vec_type2.NULL.hidden    <- function(x, y) new_hidden()
+vec_type2.hidden.double  <- function(x, y) new_hidden()
+vec_type2.double.hidden  <- function(x, y) new_hidden()
+
+vec_cast.hidden          <- function(x, to) UseMethod("vec_cast.hidden")
+vec_cast.hidden.default  <- function(x, to) stop_incompatible_cast(x, to)
+vec_cast.hidden.hidden   <- function(x, to) x
+vec_cast.hidden.NULL     <- function(x, to) x
+vec_cast.NULL.hidden     <- function(x, to) x
+vec_cast.hidden.double   <- function(x, to) new_hidden(as.double(x)) # strip attr
+vec_cast.double.hidden   <- function(x, to) as.double(x)
+# nocov end

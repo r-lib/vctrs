@@ -33,16 +33,22 @@ places.
 most classes. Be warned: a good format method may be as much work
 as the rest of the class put together!
 \item If attributes depend on the data, you'll need to provide a
-\code{reconstruct()} method that recomputes the values. If attributes are
-paramters of the type, provide a \code{vec_type_string()} method that displays
-them.
+\code{vec_reconstruct()} and \code{length<-()} methods that recompute the values.
+If attributes are parameters of the type, provide a \code{vec_type_string()}
+method that displays them.
 }
 
-The vctrs super class provides \code{as.data.frame()}, \code{[[}, \code{[}, \code{as.list()},
+The vctr superclass provides \code{as.data.frame()}, \code{[[}, \code{[}, \code{as.list()},
 and \code{rep()} methods; it is unlikely that you should need to redefine for
 you own class. \code{[[<-} and \code{[<-} use \code{vec_cast()} to cast \code{value} to the
-same type as \code{x}; they will work once you have fleshed out your \code{vec_type2()}
-and \code{vec_cast()} methods.
+same type as \code{x}; they will work once you have implemented the \code{\link[=vec_cast]{vec_cast()}}
+methods. \code{c()} is aliased to \code{\link[=vec_c]{vec_c()}}; it will work once you have
+implemented the \code{\link[=vec_type2]{vec_type2()}} methods.
+
+vctr also provides default \link{Math}, \link{Summary}, and \link{Ops} group generics.
+The Math and Summary group generics just reconstruct. The Ops group generic
+coerces both inputs to a common type, and reconstructs the output
+(except for the comparison operators which always return a logical vector)
 }
 
 \keyword{internal}

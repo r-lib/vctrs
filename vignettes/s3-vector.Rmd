@@ -113,6 +113,7 @@ cat_line <- function(...) cat(..., "\n", sep = "")
 ## Case study: percent (vctrs)
 
 ```{r}
+library(vctrs)
 new_percentv <- function(x) {
   stopifnot(is.double(x))
   
@@ -136,7 +137,7 @@ percentv <- function(x = double()) {
 }
 
 format.percentv <- function(x, ...) {
-  out <- format.default(signif(x * 100, 3))
+  out <- format.default(signif(unclass(x) * 100, 3))
   out[!is.na(x)] <- paste0(out[!is.na(x)], "%")
   out
 }
