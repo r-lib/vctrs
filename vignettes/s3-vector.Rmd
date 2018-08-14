@@ -14,6 +14,18 @@ knitr::opts_chunk$set(
 )
 ```
 
+```{r, include = FALSE, eval = FALSE}
+# Find all methods that base provides
+library(tidyverse)
+vectors <- c("factor", "Date", "POSIXct", "difftime")
+
+methods <- map_dfr(vectors, sloop::s3_methods_class)
+methods %>% 
+  filter(source == "base") %>% 
+  View()
+```
+
+
 This vignette contains tips for creating your own S3 vector class. It focusses on the details of making a vector class play nice; you'll also need to provide methods that actually make the vector useful.
 
 ## Construction
@@ -42,8 +54,8 @@ If you are willing to take a dependency on sloop, you should implement a reconst
 ```{r}
 reconstruct.myclass <- function(new, old) {
   new_myclass(new, 
-  attr1 = attr(old, "attr1"), 
-  attr2 = attr(old, "attr")
+    attr1 = attr(old, "attr1"), 
+    attr2 = attr(old, "attr")
   )
 }
 ```
@@ -98,18 +110,73 @@ To make work more nicely in tibbles, provide a method for
 cat_line <- function(...) cat(..., "\n", sep = "")
 ```
 
-## Case study: percent
+## Case study: percent (vctrs)
+
+```{r}
+new_percentv <- function(x) {
+  stopifnot(is.double(x))
+  
+  new_vctr(x, class = "percentv")
+}
+
+percentv <- function(x = double()) {
+  # Check invariants
+  if (!is.numeric(x)) {
+    stop("Percentages must be numeric", call. = FALSE)
+  }
+  if (any(x < 0 | x > 1, na.rm = TRUE)) {
+    stop("Percentages must be between 0 and 1", call. = FALSE)
+  }
+  
+  # Strip attributes and names
+  x <- as.vector(x)
+  names(x) <- NULL
+  
+  new_percentv(x)
+}
+
+format.percentv <- function(x, ...) {
+  out <- format.default(signif(x * 100, 3))
+  out[!is.na(x)] <- paste0(out[!is.na(x)], "%")
+  out
+}
+
+x <- percentv(c(seq(0, 1, length = 4), NA))
+x
+
+x[c(1, 1, 4)]
+x[0]
+x[[1]]
+
+df <- data.frame(x = x)
+df
+
+type_sum.percentv <- function(x) {
+  "pctv"
+}
+
+tibble::tibble(x)
+```
+
+## Case study: percent (base)
 
 Foundations:
 
 ```{r}
 new_percent <- function(x) {
   stopifnot(is.double(x))
-  
   structure(x, class = "percent")
 }
 
 percent <- function(x = double()) {
+  # Check invariants
+  if (!is.numeric(x)) {
+    stop("Percentages must be numeric", call. = FALSE)
+  }
+  if (any(x < 0 | x > 1, na.rm = TRUE)) {
+    stop("Percentages must be between 0 and 1", call. = FALSE)
+  }
+  
   # Strip attributes and names
   x <- as.vector(x)
   names(x) <- NULL
@@ -124,22 +191,34 @@ print.percent <- function(x, ...) {
   invisible(x)
 }
 
-x <- percent(seq(0, 1, length = 4))
+x <- percent(c(seq(0, 1, length = 4), NA))
 x
 
 `[.percent` <- function(x, i) {
   new_percent(NextMethod())
 }
+
 x[c(1, 1, 4)]
 
 # Now is a good time to check that zero-length vectors print well
 x[0]
+
+`[[.percent` <- function(x, i) {
+  new_percent(NextMethod())
+}
+
+x[[1]]
 ```
 
 Next make it work in data frames:
 
 ```{r}
-as.data.frame.percent <- function(x, row.names = NULL, optional = FALSE, ..., nm = paste(deparse(substitute(x), width.cutoff = 500L), collapse = " ")) {
+as.data.frame.percent <- function(x, 
+                                  row.names = NULL, 
+                                  optional = FALSE, 
+                                  ..., 
+                                  nm = paste(deparse(substitute(x), width.cutoff = 500L), collapse = " ")
+                                  ) {
   force(nm)
   
   cols <- list(x)
@@ -158,7 +237,9 @@ df <- data.frame(x = x)
 df
 
 format.percent <- function(x, ...) {
-  paste0(format.default(signif(x * 100, 3)), "%")
+  out <- paste0(format.default(signif(x * 100, 3)), "%")
+  out[is.na(x)] <- NA
+  out
 }
 df
 
@@ -179,11 +260,6 @@ type_sum.percent <- function(x) {
   "pct"
 }
 
-# Not quite right, but a reasonable place to start
-pillar_shaft.percent <- function(x) {
-  pillar::pillar_shaft(format(x))
-}
-
 tibble::tibble(x)
 ```
 
@@ -191,17 +267,19 @@ Make it stricter:
 
 ```{r, error = TRUE}
 `[<-.percent` <- function(x, i, value) {
-  stopifnot(is.double(value))
-  if (any(value < 0 | value > 1, na.rm = TRUE)) {
-    stop("Percentages must be values between 0 and 1", call. = FALSE)
-  }
+  value <- percent(value)
+  NextMethod()
+}
+
+`[[<-.percent` <- function(x, i, value) {
+  value <- percent(value)
   NextMethod()
 }
 
 x[1] <- "a"
-x[1] <- 2
+x[[1]] <- 2
 
-x[1] <- 0.5
+x[1:2] <- 0.5
 x
 
 `names<-.percent` <- function(x, value) {

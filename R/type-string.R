@@ -2,6 +2,8 @@
 #'
 #' Provide a method for this generic to control how your vector type is
 #' printed. The default method uses the first element of the class vector.
+#' Override this method if your class has parameters that should be prominently
+#' displayed.
 #'
 #' @param x A vector.
 #' @keywords internal
