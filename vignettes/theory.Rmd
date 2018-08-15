@@ -44,8 +44,8 @@ It seems like these three inputs should all effect the output, but precisely how
 
 It has three useful properties:
 
-* It is commutative: `vec_type2(x, vec_type2(y, z)) == vec_type2(vec_type2(x, y), z)`
-* It is associative: `vec_type2(x, y) == vec_type2(y, x)`
+* It is associative: `vec_type2(x, vec_type2(y, z)) == vec_type2(vec_type2(x, y), z)`
+* It is commutative: `vec_type2(x, y) == vec_type2(y, x)`
 * It has an identity element, `NULL`: `vec_type2(x, NULL) == x`
 
 Together, this means the type system forms a __commutative monoid__, which has a couple of appealing properties:

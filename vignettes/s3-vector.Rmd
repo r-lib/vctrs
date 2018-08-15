@@ -36,15 +36,15 @@ When called with no arguments the construct should return a zero-length vector.
 
 ## First methods
   
-The first method you should implement is a print method. Your first pass at a print method should (ab)use existing print methods. Your print method should return `x` invisibly.
-    
+The first method you should implement is a `print()` method. Your first pass at a `print()` method should (ab)use existing `print()` methods. Your `print()` method should return `x` invisibly.
+
 The second method you should implement is `[`. It should will look something like:
 
 ```{r}
 `[.myclass` <- function(x, i) {
   new_myclass(NextMethod(), 
     attr1 = attr(x, "attr1"), 
-    attr2 = attr(x, "attr")
+    attr2 = attr(x, "attr2")
   )
 }
 ```
@@ -55,7 +55,7 @@ If you are willing to take a dependency on sloop, you should implement a reconst
 reconstruct.myclass <- function(new, old) {
   new_myclass(new, 
     attr1 = attr(old, "attr1"), 
-    attr2 = attr(old, "attr")
+    attr2 = attr(old, "attr2")
   )
 }
 ```
