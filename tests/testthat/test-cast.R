@@ -104,6 +104,7 @@ test_that("difftime gets special treatment", {
 test_that("safe casts work as expected", {
   expect_equal(vec_cast(NULL, list()), NULL)
   expect_equal(vec_cast(1:2, list()), list(1L, 2L))
+  expect_equal(vec_cast(list(1L, 2L), list()), list(1L, 2L))
 })
 
 # Factors -----------------------------------------------------------------

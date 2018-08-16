@@ -24,6 +24,10 @@ test_that("NULLs are idempotent", {
   expect_equal(vec_shape(x, NULL), vec_shape(x))
 })
 
+test_that("shape of shape is shape", {
+  expect_equal(vec_shape(vec_shape(1:10)), vec_shape(1:10))
+})
+
 test_that("arrays expand to highest dimensionality", {
   x1 <- ones(1)
   x2 <- ones(1, 2)

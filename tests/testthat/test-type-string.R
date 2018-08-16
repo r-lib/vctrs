@@ -1,5 +1,9 @@
 context("test-type-string")
 
+test_that("NULL as method", {
+  expect_equal(vec_type_string(NULL), "NULL")
+})
+
 test_that("non objects default to type + shape", {
   expect_equal(vec_type_string(ones(10)), "double")
   expect_equal(vec_type_string(ones(0, 10)), "double[,10]")

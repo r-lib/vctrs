@@ -68,15 +68,6 @@ vec_ptype <- function(..., .ptype = NULL) {
   new_vec_ptype(ptype)
 }
 
-vec_ptype_init <- function(x, n) {
-  stopifnot(is_vec_ptype(x))
-  vec_subset(x[[1]], rep_len(NA_integer_, n))
-}
-
-is_vec_ptype <- function(x) {
-  inherits(x, "vec_ptype")
-}
-
 new_vec_ptype <- function(ptype) {
   structure(
     list(ptype),

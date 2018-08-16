@@ -26,6 +26,11 @@ test_that("can use as_list_of to change type", {
   expect_identical(x2[[1]], 1L)
 })
 
+test_that("is_list_of as expected", {
+  expect_false(is_list_of(list(1)))
+  expect_true(is_list_of(list_of(1)))
+})
+
 test_that("print method gives human friendly output", {
   x <- list_of(1, 2:3)
 
