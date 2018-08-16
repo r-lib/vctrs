@@ -46,3 +46,10 @@ hash <- function(x, length = 5) {
 cat_line <- function(...) {
   cat(..., "\n", sep = "")
 }
+
+obj_set <- function(x, val) {
+  invisible(.Call(obj_set_, x, val))
+}
+obj_get <- function(x) {
+  .Call(obj_get_, x)
+}

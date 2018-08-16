@@ -36,6 +36,9 @@ as the rest of the class put together!
 casts between your class and its underlying the base type.
 Next think about base types that should be coercible or castable.
 See \code{vignette("extending-vctrs")} for details.
+\item If your function behaves similarly to numbers or booleans, or has
+specialised comparison methods, read \link{vec_grp} to learn about the vctrs
+group generics: these allow you to implement many methods at once.
 }
 
 Implementing these methods gets you many methods for free:
@@ -46,13 +49,6 @@ Override if one or more attributes have a one-to-one relationship to
 the underlying data.
 \item \code{[[<-} and \code{[<-} cast the RHS to the LHS, then call \code{NextMethod()}.
 Override these methods if any attributes depend on the data.
-\item The \link{Math} group generics (\code{abs()}, \code{log()} etc), the \link{Summary} group
-generics (\code{sum()}, \code{prod()}), and \code{mean()} use \code{NextMethod()} and
-reconstruct attributes with \code{vec_cast()}. Override if you class has
-non-standard mathematical operations.
-\item The \link{Ops} group generic coerces both inputs to a common type, then calls
-\code{NextMethod()}. For comparison operators, it returns the logical vector,
-otherwise it re-casts the output back to the common type.
 \item \code{as.list.vctr()} calls \code{[[} repeatedly, \code{as.character.vctr()} calls
 \code{format()}.
 \item \code{as.data.frame.vctr()} uses a standard technique to wrap a vector

@@ -24,6 +24,10 @@
 #'    Next think about base types that should be coercible or castable.
 #'    See `vignette("extending-vctrs")` for details.
 #'
+#' 1. If your function behaves similarly to numbers or booleans, or has
+#'    specialised comparison methods, read [vec_grp] to learn about the vctrs
+#'    group generics: these allow you to implement many methods at once.
+#'
 #' Implementing these methods gets you many methods for free:
 #'
 #' * `[[` and `[` use `NextMethod()` dispatch to the underlying base function,
@@ -33,15 +37,6 @@
 #'
 #' * `[[<-` and `[<-` cast the RHS to the LHS, then call `NextMethod()`.
 #'   Override these methods if any attributes depend on the data.
-#'
-#' * The [Math] group generics (`abs()`, `log()` etc), the [Summary] group
-#'   generics (`sum()`, `prod()`), and `mean()` use `NextMethod()` and
-#'   reconstruct attributes with `vec_cast()`. Override if you class has
-#'   non-standard mathematical operations.
-#'
-#' * The [Ops] group generic coerces both inputs to a common type, then calls
-#'   `NextMethod()`. For comparison operators, it returns the logical vector,
-#'   otherwise it re-casts the output back to the common type.
 #'
 #' * `as.list.vctr()` calls `[[` repeatedly, `as.character.vctr()` calls
 #'   `format()`.
@@ -69,10 +64,22 @@ new_vctr <- function(.data, ..., class) {
 #' @export
 vec_cast.vctr <- function(x, to) UseMethod("vec_cast.vctr")
 
+#' @method vec_cast.vctr NULL
+#' @export
+vec_cast.vctr.NULL <- function(x, to) x
+
 #' @method vec_cast.vctr default
 #' @export
 vec_cast.vctr.default <- function(x, to) {
-  if (is.object(x) || typeof(x) != typeof(to)) {
+  if (is.object(x)) {
+    if (identical(class(x), class(to))) {
+      return(x)
+    } else {
+      stop_incompatible_cast(x, to)
+    }
+  }
+
+  if (typeof(x) != typeof(to)) {
     stop_incompatible_cast(x, to)
   }
 
@@ -140,46 +147,54 @@ rep.vctr <- function(x, ...) {
 }
 
 # Group generics ----------------------------------------------------------
-# Apart from the comparison operators (==, <, >, <=, =>, !=), these group
-# generics only apply to numeric vectors, but defining them for non-numeric
-# vctrs isn't harmful - as far as I know, the only downside is that the
-# traceback() will be a little longer
 
 #' @export
 Ops.vctr <- function(e1, e2) {
   if (missing(e2)) {
-    ptype <- e1
-  } else {
-    if (length(e2) == 1) {
-      # Optimisation if RHS is a scalar
-      ptype <- e1
+    if (.Generic == "!") {
+      return(vec_grp_logical(.Generic, e1))
     } else {
-      ptype <- vec_ptype(e1, e2)[[1]]
+      return(vec_grp_unary(.Generic, e1))
     }
-    e1 <- vec_cast(e1, ptype)
-    e2 <- vec_cast(e2, ptype)
   }
 
-  out <- NextMethod()
-  if (.Generic %in% c("+", "-", "*", "/", "^", "%%", "%/%")) {
-    out <- vec_cast(out, ptype)
+  if (length(e2) == 1) {
+    # Optimisation if RHS is a scalar
+    ptype <- e1
+  } else {
+    ptype <- vec_ptype(e1, e2)[[1]]
   }
-  out
+  e1 <- vec_cast(e1, ptype)
+  e2 <- vec_cast(e2, ptype)
+
+  if (.Generic %in% c("+", "-", "*", "/", "^", "%%", "%/%")) {
+    vec_grp_numeric(.Generic, e1, e2)
+  } else if (.Generic %in% c("&", "|", "!")) {
+    vec_grp_logical(.Generic, e1, e2)
+  } else {
+    vec_grp_compare(.Generic, e1, e2)
+  }
 }
 
 #' @export
 Summary.vctr <- function(..., na.rm = FALSE) {
-  vec_cast(NextMethod(), ..1)
+  vec_grp_summary(.Generic, vec_c(...), na.rm = na.rm)
 }
 
 #' @export
-mean.vctr <- function(x, ...) {
+mean.vctr <- function(x, ..., na.rm = FALSE) {
+  vec_cast(NextMethod(), x)
+}
+
+#' @importFrom stats median
+#' @export
+median.vctr <- function(x, ..., na.rm = FALSE) {
   vec_cast(NextMethod(), x)
 }
 
 #' @export
-Math.vctr <- function(..., na.rm = FALSE) {
-  vec_cast(NextMethod(), ..1)
+Math.vctr <- function(x, ..., na.rm = FALSE) {
+  vec_cast(NextMethod(), x)
 }
 
 #' @export
@@ -242,19 +257,23 @@ new_hidden <- function(x = double()) {
 }
 format.hidden <- function(x, ...) rep("xxx", length(x))
 
-vec_type2.hidden         <- function(x, y) UseMethod("vec_type2.hidden")
-vec_type2.hidden.default <- function(x, y) stop_incompatible_type(x, y)
-vec_type2.hidden.hidden  <- function(x, y) new_hidden()
-vec_type2.hidden.NULL    <- function(x, y) new_hidden()
-vec_type2.NULL.hidden    <- function(x, y) new_hidden()
-vec_type2.hidden.double  <- function(x, y) new_hidden()
-vec_type2.double.hidden  <- function(x, y) new_hidden()
+vec_type2.hidden          <- function(x, y) UseMethod("vec_type2.hidden")
+vec_type2.hidden.default  <- function(x, y) stop_incompatible_type(x, y)
+vec_type2.hidden.hidden   <- function(x, y) new_hidden()
+vec_type2.hidden.NULL     <- function(x, y) new_hidden()
+vec_type2.NULL.hidden     <- function(x, y) new_hidden()
+vec_type2.hidden.double   <- function(x, y) new_hidden()
+vec_type2.double.hidden   <- function(x, y) new_hidden()
+vec_type2.hidden.logical  <- function(x, y) new_hidden()
+vec_type2.logical.hidden  <- function(x, y) new_hidden()
 
-vec_cast.hidden          <- function(x, to) UseMethod("vec_cast.hidden")
-vec_cast.hidden.default  <- function(x, to) stop_incompatible_cast(x, to)
-vec_cast.hidden.hidden   <- function(x, to) x
-vec_cast.hidden.NULL     <- function(x, to) x
-vec_cast.NULL.hidden     <- function(x, to) x
-vec_cast.hidden.double   <- function(x, to) new_hidden(as.double(x)) # strip attr
-vec_cast.double.hidden   <- function(x, to) as.double(x)
+vec_cast.hidden           <- function(x, to) UseMethod("vec_cast.hidden")
+vec_cast.hidden.default   <- function(x, to) stop_incompatible_cast(x, to)
+vec_cast.hidden.hidden    <- function(x, to) x
+vec_cast.hidden.NULL      <- function(x, to) x
+vec_cast.NULL.hidden      <- function(x, to) x
+vec_cast.hidden.double    <- function(x, to) new_hidden(as.double(x)) # strip attr
+vec_cast.double.hidden    <- function(x, to) as.double(x)
+vec_cast.hidden.logical   <- function(x, to) new_hidden(as.double(x)) # strip attr
+vec_cast.logical.hidden   <- function(x, to) as.logical(x)
 # nocov end

@@ -14,6 +14,22 @@ test_that("no default format method", {
   expect_error(format(x), "not implemented")
 })
 
+test_that("cast to NULL returns x", {
+  x <- new_vctr(1, class = "x")
+  expect_equal(vec_cast(NULL, x), NULL)
+})
+
+test_that("cast to atomic vector of same type preserves attributes", {
+  x1 <- new_vctr(1, class = "x")
+  x2 <- new_vctr(2, class = "x")
+
+  expect_equal(vec_cast(2, x1), x2)
+
+  # otherwise you get an error
+  expect_error(vec_cast(2L, x1), class = "error_incompatible_cast")
+  expect_error(vec_cast(new_date(), x1), class = "error_incompatible_cast")
+})
+
 
 # hidden class ------------------------------------------------------------
 # We can't construct classes in test because the methods are not found
@@ -43,12 +59,14 @@ test_that("RHS cast when using subset assign", {
   expect_equal(h, new_hidden(c(1, 2)))
 })
 
-test_that("Math and Ops generics preserve class (where sensible)", {
+test_that("group generics dispatch to vctr group generics", {
   h <- new_hidden(1)
 
   expect_equal(abs(h), h)
   expect_equal(+h, h)
   expect_equal(h * 2, new_hidden(2))
+  expect_error(h & 1, "Boolean operator")
+
   expect_equal(h == 1, TRUE)
   expect_equal(h == c(1, 2), c(TRUE, FALSE))
 })
@@ -68,6 +86,7 @@ test_that("summaries preserve class", {
 
   expect_equal(sum(h), new_hidden(3))
   expect_equal(mean(h), new_hidden(1.5))
+  expect_equal(median(h), new_hidden(1.5))
 })
 
 test_that("can put in data frame", {
@@ -107,3 +126,17 @@ test_that("can't touch protected attributes", {
   # strictness in the future
   expect_error(names(h) <- NULL, NA)
 })
+
+
+# logical class -----------------------------------------------------------
+
+test_that("logical group generics return bare logical", {
+  v <- new_vctr(TRUE, class = "test")
+
+  expect_equal(v == v, TRUE)
+  expect_equal(v & v, TRUE)
+  expect_equal(!v, FALSE)
+})
+
+
+
