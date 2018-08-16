@@ -62,12 +62,22 @@ test_that("names are supplied if needed", {
   expect_equal(out, data_frame(..1 = c(1, 1)))
 })
 
+test_that("matrix becomes data frame", {
+  x <- matrix(1:4, nrow = 2)
+  expect_equal(vec_rbind(x), data.frame(V1 = 1:2, V2 = 3:4))
+})
+
 
 # cols --------------------------------------------------------------------
 
 test_that("empty inputs give data frame", {
   expect_equal(vec_cbind(), data_frame())
   expect_equal(vec_cbind(NULL), data_frame())
+})
+
+test_that("NULL is idempotent", {
+  df <- data_frame(x = 1)
+  expect_equal(vec_cbind(df, NULL), df)
 })
 
 test_that("outer names are respected", {
@@ -82,6 +92,15 @@ test_that("inner names are respected", {
 test_that("nameless vectors get tidy defaults", {
   expect_named(vec_cbind(1:2, 1), c("..1", "..2"))
 })
+
+test_that("matrix becomes data frame", {
+  x <- matrix(1:4, nrow = 2)
+  expect_equal(vec_cbind(x), data.frame(V1 = 1:2, V2 = 3:4))
+
+  # respecting outer names
+  expect_equal(vec_cbind(x = x), data.frame(x1 = 1:2, x2 = 3:4))
+})
+
 
 test_that("duplicate names are de-deduplicated", {
   expect_named(vec_cbind(x = 1, x = 1), c("x..1", "x..2"))

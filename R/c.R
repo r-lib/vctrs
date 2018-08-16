@@ -56,7 +56,7 @@ vec_c <- function(..., .ptype = NULL) {
 
     x <- vec_cast(args[[i]], to = ptype)
 
-    names[pos:(pos + n - 1)] <- outer_names(x, names(args)[[i]])
+    names[pos:(pos + n - 1)] <- outer_names(names(args)[[i]], names(args[[i]]), length(x))
     out[pos:(pos + n - 1)] <- x
     pos <- pos + n
   }
