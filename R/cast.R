@@ -256,7 +256,7 @@ vec_cast.character.list <- function(x, to) {
 #' @export
 #' @method vec_cast.character default
 vec_cast.character.default <- function(x, to) {
-  as.character(x)
+  stop_incompatible_cast(x, to)
 }
 
 #' @rdname vec_cast

@@ -96,9 +96,12 @@ test_that("can put in data frame", {
   expect_named(data.frame(x = h), "x")
 })
 
-test_that("as.character defaults to format", {
+test_that("base coercions default to vec_cast", {
   h <- new_hidden(1)
-  expect_equal(as.character(h), "xxx")
+  expect_error(as.character(h), class = "error_incompatible_cast")
+  expect_error(as.integer(h), class = "error_incompatible_cast")
+  expect_equal(as.logical(h), TRUE)
+  expect_equal(as.double(h), 1)
 })
 
 test_that("default print method is ok", {
@@ -117,9 +120,11 @@ test_that("default print method is ok", {
 test_that("can't touch protected attributes", {
   h <- new_hidden(1:4)
 
-  expect_error(names(h) <- "x", "Must not set")
-  expect_error(dim(h) <- c(2, 2), "Must not set")
-  expect_error(dimnames(h) <- list("x"), "Must not set")
+  expect_error(names(h) <- "x", class = "error_unsupported")
+  expect_error(dim(h) <- c(2, 2), class = "error_unsupported")
+  expect_error(dimnames(h) <- list("x"), class = "error_unsupported")
+  expect_error(h$x, class = "error_unsupported")
+  expect_error(h$x <- 2, class = "error_unsupported")
 
   # but it's ok to set names to NULL; this happens at least in vec_c
   # and maybe elsewhere. We may need to back off on this level of

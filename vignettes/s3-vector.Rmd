@@ -14,144 +14,156 @@ knitr::opts_chunk$set(
 )
 ```
 
-```{r, include = FALSE, eval = FALSE}
-# Find all methods that base provides
-library(tidyverse)
-vectors <- c("factor", "Date", "POSIXct", "difftime")
-
-methods <- map_dfr(vectors, sloop::s3_methods_class)
-methods %>% 
-  filter(source == "base") %>% 
-  View()
-```
-
-
-This vignette contains tips for creating your own S3 vector class. It focusses on the details of making a vector class play nice; you'll also need to provide methods that actually make the vector useful.
-
-## Construction
-
-All classes should have a low-level constructor called `new_class()` that checks types (but not values), then calls `structure()`. Every class should have one of `class()` and `as_class()`. Some classes will have both.
-
-When called with no arguments the construct should return a zero-length vector.
-
-## First methods
-  
-The first method you should implement is a `print()` method. Your first pass at a `print()` method should (ab)use existing `print()` methods. Your `print()` method should return `x` invisibly.
-
-The second method you should implement is `[`. It should will look something like:
-
-```{r}
-`[.myclass` <- function(x, i) {
-  new_myclass(NextMethod(), 
-    attr1 = attr(x, "attr1"), 
-    attr2 = attr(x, "attr2")
-  )
-}
-```
-
-If you are willing to take a dependency on sloop, you should implement a reconstruct method:
-
-```{r}
-reconstruct.myclass <- function(new, old) {
-  new_myclass(new, 
-    attr1 = attr(old, "attr1"), 
-    attr2 = attr(old, "attr2")
-  )
-}
-```
-
-Then your `[` method can be simplified to:
-
-```{r}
-`[.myclass` <- function(x, i) {
-  reconstruct(NextMethod(), x)
-}
-```
-
-## Other methods
-
-Implement `[<-` to ensure that the user can't corrupt the data type.
-
-Consider implementing `names<-()` and `dims<-()` methods to expressly forbid use of names or dims (unless you actually want to support them).
-
-Avoid redefining `length()` or `names()`. If you find yourself leading in this direction, it may be a sign that you need a vector built on top of a data frame instead.
-  
-## Data frames and tibbles
-  
-Next implement `as.data.frame.myclass` so you can put your vector inside a data frame. It should always have this form:
-
-```{r}
-as.data.frame.myclass <- function(x, row.names = NULL, optional = FALSE, ..., nm = paste(deparse(substitute(x), width.cutoff = 500L), collapse = " ")) {
-  force(nm)
-  
-  cols <- list(x)
-  if (!optional) {
-    names(cols) <- nm
-  }
-  
-  structure(
-    cols,
-    class = "data.frame",
-    row.names = .set_row_names(length(x))
-  )
-}
-```
-
-If you need the column to print specially within the data frame provide a `format()` method. It should return a character vector the same length as `x`. Consider rewriting your print method to use `format()`.
-  
-To make work more nicely in tibbles, provide a method for 
-`pillar::type_sum()`, and if you need custom printing, a method for
-`pillar::pillar_shaft()`. See details in 
-<https://tibble.tidyverse.org/articles/extending.html>.
-
-## Utils
-
-```{r}
-cat_line <- function(...) cat(..., "\n", sep = "")
-```
-
-## Case study: percent (vctrs)
+This vignette contains tips for creating your own S3 vector class built on top the `vctr` class provided by vctrs. It focusses on the aspects of making a vector class that every class needs to worry about; you'll also need to provide methods that actually make the vector useful.
 
 ```{r}
 library(vctrs)
-new_percentv <- function(x) {
+```
+
+## My first class: `percent()`
+
+We'll first work through the simplest possible class: one that just changes how the output is printed. The following sections will show more complicated examples once you have this under your belt.
+
+### Low-level constructor
+
+All classes should have a low-level constructor called `new_class()` that checks types (but not values), then calls `new_vctr()`.  This function is designed for developers: it should be high performance (i.e. no expensive checks) so it can be called from other functions.
+
+```{r}
+new_percent <- function(x) {
   stopifnot(is.double(x))
   
-  new_vctr(x, class = "percentv")
+  new_vctr(x, class = "percent")
 }
 
-percentv <- function(x = double()) {
-  # Check invariants
-  if (!is.numeric(x)) {
-    stop("Percentages must be numeric", call. = FALSE)
-  }
-  if (any(x < 0 | x > 1, na.rm = TRUE)) {
-    stop("Percentages must be between 0 and 1", call. = FALSE)
-  }
-  
-  # Strip attributes and names
-  x <- as.vector(x)
-  names(x) <- NULL
-  
-  new_percentv(x)
-}
+x <- new_percent(c(seq(0, 1, length = 4), NA))
+str(x)
+```
 
-format.percentv <- function(x, ...) {
+### Formatter
+
+We can inspect this object, but we can't easily print it:
+
+```{r, error = TRUE}
+x
+```
+
+You should always provide a `format()` method:
+
+```{r}
+format.percent <- function(x, ...) {
   out <- format.default(signif(unclass(x) * 100, 3))
   out[!is.na(x)] <- paste0(out[!is.na(x)], "%")
   out
 }
 
-x <- percentv(c(seq(0, 1, length = 4), NA))
 x
+```
 
-x[c(1, 1, 4)]
+This is all you need for a function vector as the vctr base class provides many default methods with reasonable behaviour.
+
+```{r}
+x[1:2]
+
 x[0]
+
 x[[1]]
 
-df <- data.frame(x = x)
-df
+rep(x, 2)
 
+-x
+
+sqrt(x)
+```
+
+### User-friendly constructor
+
+Next, implement a user friendly constructor called `myclass()`. It should carefully check that the input is valid, providing human readable messages if it is not:
+
+```{r}
+percent <- function(x = double()) {
+  # Check invariants
+  if (!is.numeric(x)) {
+    stop("Percentages must be numeric", call. = FALSE)
+  }
+
+  # Strip attributes and names
+  x <- as.double(x)
+  attributes(x) <- NULL
+
+  new_percent(x)
+}
+```
+
+When called with no arguments the construct should return a zero-length vector.
+
+```{r}
+percent()
+```
+
+### Casting
+
+```{r}
+vec_cast.percent <- function(x, to) UseMethod("vec_cast.percent")
+vec_cast.percent.default <- function(x, to) stop_incompatible_cast(x, to)
+vec_cast.percent.NULL    <- function(x, to) x
+vec_cast.NULL.percent    <- function(x, to) x
+vec_cast.percent.numeric <- function(x, to) percent(x)
+vec_cast.numeric.percent <- function(x, to) vec_data(x)
+vec_cast.percent.percent <- function(x, to) x
+```
+
+Now `[[<-` and `[<-` will work:
+
+```{r, error = TRUE}
+x[1] <- 2
+x
+
+x[[1]] <- "x"
+```
+
+Note that vctrs explicitly forbid use of `$`.
+
+```{r, error = TRUE}
+x$a
+x$a <- 1
+```
+
+### Coercion
+
+```{r}
+vec_type2.percent <- function(x, y) UseMethod("vec_cast.percent")
+vec_type2.percent.default <- function(x, y) stop_incompatible_type(x, y)
+vec_type2.percent.NULL    <- function(x, y) percent()
+vec_type2.NULL.percent    <- function(x, y) percent()
+vec_type2.percent.numeric <- function(x, y) percent()
+vec_type2.numeric.percent <- function(x, y) percent()
+vec_type2.percent.percent <- function(x, y) percent()
+```
+
+```{r}
+vec_c(x, 1)
+
+x == 1
+x * 2
+```
+
+Unfortunately
+
+```{r}
+x * factor("x")
+factor("x") * x
+```
+
+### Data frames and tibbles
+
+```{r}
+data.frame(x)
+```
+
+To make work more nicely in tibbles, provide a method for 
+`pillar::type_sum()`:
+
+```{r}
 type_sum.percentv <- function(x) {
   "pctv"
 }
@@ -159,136 +171,7 @@ type_sum.percentv <- function(x) {
 tibble::tibble(x)
 ```
 
-## Case study: percent (base)
-
-Foundations:
-
-```{r}
-new_percent <- function(x) {
-  stopifnot(is.double(x))
-  structure(x, class = "percent")
-}
-
-percent <- function(x = double()) {
-  # Check invariants
-  if (!is.numeric(x)) {
-    stop("Percentages must be numeric", call. = FALSE)
-  }
-  if (any(x < 0 | x > 1, na.rm = TRUE)) {
-    stop("Percentages must be between 0 and 1", call. = FALSE)
-  }
-  
-  # Strip attributes and names
-  x <- as.vector(x)
-  names(x) <- NULL
-  
-  new_percent(x)
-}
-
-print.percent <- function(x, ...) {
-  cat_line("<percent>")
-  if (length(x) > 0) 
-    print(paste0(signif(x * 100, 3), "%"), quote = FALSE)
-  invisible(x)
-}
-
-x <- percent(c(seq(0, 1, length = 4), NA))
-x
-
-`[.percent` <- function(x, i) {
-  new_percent(NextMethod())
-}
-
-x[c(1, 1, 4)]
-
-# Now is a good time to check that zero-length vectors print well
-x[0]
-
-`[[.percent` <- function(x, i) {
-  new_percent(NextMethod())
-}
-
-x[[1]]
-```
-
-Next make it work in data frames:
-
-```{r}
-as.data.frame.percent <- function(x, 
-                                  row.names = NULL, 
-                                  optional = FALSE, 
-                                  ..., 
-                                  nm = paste(deparse(substitute(x), width.cutoff = 500L), collapse = " ")
-                                  ) {
-  force(nm)
-  
-  cols <- list(x)
-  if (!optional) {
-    names(cols) <- nm
-  }
-  
-  structure(
-    cols,
-    class = "data.frame",
-    row.names = .set_row_names(length(x))
-  )
-}
-
-df <- data.frame(x = x)
-df
-
-format.percent <- function(x, ...) {
-  out <- paste0(format.default(signif(x * 100, 3)), "%")
-  out[is.na(x)] <- NA
-  out
-}
-df
-
-# Now rewrite print
-print.percent <- function(x, ...) {
-  cat_line("<percent>")
-  if (length(x) > 0) 
-    print(format(x), quote = FALSE)
-  invisible(x)
-}
-x
-```
-
-And in tibbles:
-
-```{r}
-type_sum.percent <- function(x) {
-  "pct"
-}
-
-tibble::tibble(x)
-```
-
-Make it stricter:
-
-```{r, error = TRUE}
-`[<-.percent` <- function(x, i, value) {
-  value <- percent(value)
-  NextMethod()
-}
-
-`[[<-.percent` <- function(x, i, value) {
-  value <- percent(value)
-  NextMethod()
-}
-
-x[1] <- "a"
-x[[1]] <- 2
-
-x[1:2] <- 0.5
-x
-
-`names<-.percent` <- function(x, value) {
-  stop("Percent vector must be nameless", call. = FALSE)
-}
-
-`dim<-.percent` <- function(x, value) {
-  stop("Percent vector must be 1d", call. = FALSE)
-}
-```
+For greater control over printing, you'll need to provide a
+`pillar::pillar_shaft()`. A full discussion of this method is beyond the scope of this text, because tibble columns have functionality to grow and shrink to fill available space. See the details in: 
+<https://tibble.tidyverse.org/articles/extending.html>.
 

@@ -92,9 +92,9 @@ vec_cast.vctr.default <- function(x, to) {
 #' @export
 print.vctr <- function(x, ...) {
   if (length(x) == 0) {
-    cat_line("<", class(x)[[1]], "[0]>")
+    cat_line("<", vec_type_string(x), "[0]>")
   } else {
-    cat_line("<", class(x)[[1]], ">")
+    cat_line("<", vec_type_string(x), ">")
     print(format(x), quote = FALSE)
   }
   invisible(x)
@@ -103,11 +103,6 @@ print.vctr <- function(x, ...) {
 #' @export
 format.vctr <- function(x, ...) {
   stop(glue::glue("`format.{class(x)[[1]]}()` method not implemented"), call. = FALSE)
-}
-
-#' @export
-as.character.vctr <- function(x, ...) {
-  format(x, ...)
 }
 
 # Subsetting --------------------------------------------------------------
@@ -120,11 +115,6 @@ as.character.vctr <- function(x, ...) {
 #' @export
 `[[.vctr` <- function(x, i, ...) {
   vec_cast(NextMethod(), x)
-}
-
-#' @export
-as.list.vctr <- function(x, ...) {
-  lapply(seq_along(x), function(i) x[[i]])
 }
 
 #' @export
@@ -144,6 +134,33 @@ rep.vctr <- function(x, ...) {
 `[<-.vctr` <- function(x, i, value) {
   value <- vec_cast(value, x)
   NextMethod()
+}
+
+# Coercion ----------------------------------------------------------------
+
+#' @export
+as.logical.vctr <- function(x, ...) {
+  vec_cast(x, logical())
+}
+
+#' @export
+as.integer.vctr <- function(x, ...) {
+  vec_cast(x, integer())
+}
+
+#' @export
+as.double.vctr <- function(x, ...) {
+  vec_cast(x, double())
+}
+
+#' @export
+as.character.vctr <- function(x, ...) {
+  vec_cast(x, character())
+}
+
+#' @export
+as.list.vctr <- function(x, ...) {
+  lapply(seq_along(x), function(i) x[[i]])
 }
 
 # Group generics ----------------------------------------------------------
@@ -204,23 +221,43 @@ c.vctr <- function(...) {
 
 # Protection --------------------------------------------------------------
 
+stop_unsupported <- function(x, operation) {
+  msg <- glue::glue("Must not {operation} on {vec_type_string(x)} vector")
+  abort(
+    "error_unsupported",
+    message = msg,
+    x = x,
+    operation = operation
+  )
+}
+
 #' @export
 `names<-.vctr` <- function(x, value) {
   if (is.null(value)) {
     x
   } else {
-    stop("Must not set names() of ", class(x)[[1]], " vector", call. = FALSE)
+    stop_unsupported(x, "set names()")
   }
 }
 
 #' @export
 `dim<-.vctr` <- function(x, value) {
-  stop("Must not set dim() of ", class(x)[[1]], " vector", call. = FALSE)
+  stop_unsupported(x, "set dim()")
 }
 
 #' @export
 `dimnames<-.vctr` <- function(x, value) {
-  stop("Must not set dimnames() of ", class(x)[[1]], " vector", call. = FALSE)
+  stop_unsupported(x, "set dimnames()")
+}
+
+#' @export
+`$.vctr` <- function(x, i) {
+  stop_unsupported(x, "use $ subsetting")
+}
+
+#' @export
+`$<-.vctr` <- function(x, i, value) {
+  stop_unsupported(x, "use $ subsetting")
 }
 
 # Data frame --------------------------------------------------------------
@@ -272,8 +309,8 @@ vec_cast.hidden.default   <- function(x, to) stop_incompatible_cast(x, to)
 vec_cast.hidden.hidden    <- function(x, to) x
 vec_cast.hidden.NULL      <- function(x, to) x
 vec_cast.NULL.hidden      <- function(x, to) x
-vec_cast.hidden.double    <- function(x, to) new_hidden(as.double(x)) # strip attr
-vec_cast.double.hidden    <- function(x, to) as.double(x)
-vec_cast.hidden.logical   <- function(x, to) new_hidden(as.double(x)) # strip attr
-vec_cast.logical.hidden   <- function(x, to) as.logical(x)
+vec_cast.hidden.double    <- function(x, to) new_hidden(vec_data(x))
+vec_cast.double.hidden    <- function(x, to) vec_data(x)
+vec_cast.hidden.logical   <- function(x, to) new_hidden(as.double(x))
+vec_cast.logical.hidden   <- function(x, to) as.logical(vec_data(x))
 # nocov end
