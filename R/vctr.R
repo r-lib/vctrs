@@ -72,7 +72,7 @@ vec_cast.vctr.NULL <- function(x, to) x
 #' @export
 vec_cast.vctr.default <- function(x, to) {
   if (is.object(x)) {
-    if (identical(class(x), class(to))) {
+    if (identical(attributes(x), attributes(to))) {
       return(x)
     } else {
       stop_incompatible_cast(x, to)
