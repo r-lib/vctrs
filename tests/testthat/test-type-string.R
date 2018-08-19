@@ -1,37 +1,37 @@
 context("test-type-string")
 
 test_that("NULL as method", {
-  expect_equal(vec_type_string(NULL), "NULL")
+  expect_equal(vec_ptype_full(NULL), "NULL")
 })
 
 test_that("non objects default to type + shape", {
-  expect_equal(vec_type_string(ones(10)), "double")
-  expect_equal(vec_type_string(ones(0, 10)), "double[,10]")
-  expect_equal(vec_type_string(ones(10, 0)), "double[10,]")
+  expect_equal(vec_ptype_full(ones(10)), "double")
+  expect_equal(vec_ptype_full(ones(0, 10)), "double[,10]")
+  expect_equal(vec_ptype_full(ones(10, 0)), "double[10,]")
 })
 
 test_that("objects default to first class", {
   x <- structure(1, class = "foofy")
-  expect_equal(vec_type_string(x), "foofy")
+  expect_equal(vec_ptype_full(x), "foofy")
 })
 
 test_that("atomic vectors and arrays as expected", {
-  expect_equal(vec_type_string(1:5), "integer")
+  expect_equal(vec_ptype_full(1:5), "integer")
 
   dbl_mat <- array(double(), c(0, 3))
-  expect_equal(vec_type_string(dbl_mat), "double[,3]")
+  expect_equal(vec_ptype_full(dbl_mat), "double[,3]")
 })
 
 test_that("date/times as expected", {
-  expect_equal(vec_type_string(Sys.Date()), "date")
-  expect_equal(vec_type_string(Sys.time()), "datetime<local>")
+  expect_equal(vec_ptype_full(Sys.Date()), "date")
+  expect_equal(vec_ptype_full(Sys.time()), "datetime<local>")
 })
 
 test_that("difftime has units as parameter", {
   now <- Sys.time()
 
-  expect_equal(vec_type_string(difftime(now + 10, now)), "difftime<secs>")
-  expect_equal(vec_type_string(difftime(now + 1e5, now)), "difftime<days>")
+  expect_equal(vec_ptype_full(difftime(now + 10, now)), "time<secs>")
+  expect_equal(vec_ptype_full(difftime(now + 1e5, now)), "time<days>")
 })
 
 test_that("data frames print nicely", {

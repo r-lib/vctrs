@@ -70,8 +70,8 @@ type_sum.list_of <- function(x) {
 }
 
 #' @export
-vec_type_string.list_of <- function(x) {
-  param <- format(vec_ptype(attr(x, "ptype")))
+vec_ptype_full.list_of <- function(x) {
+  param <- vec_ptype_full(attr(x, "ptype"))
   if (grepl("\n", param)) {
     param <- paste0(indent(paste0("\n", param), 2), "\n")
   }

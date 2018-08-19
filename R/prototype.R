@@ -83,7 +83,7 @@ print.vec_ptype <- function(x, ...) {
 
 #' @export
 format.vec_ptype <- function(x, ...) {
-  vec_type_string(x[[1]])
+  vec_ptype_full(x[[1]])
 }
 #' @export
 as.character.vec_ptype <- format.vec_ptype

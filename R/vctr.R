@@ -92,9 +92,9 @@ vec_cast.vctr.default <- function(x, to) {
 #' @export
 print.vctr <- function(x, ...) {
   if (length(x) == 0) {
-    cat_line("<", vec_type_string(x), "[0]>")
+    cat_line("<", vec_ptype_full(x), "[0]>")
   } else {
-    cat_line("<", vec_type_string(x), ">")
+    cat_line("<", vec_ptype_full(x), ">")
     print(format(x), quote = FALSE)
   }
   invisible(x)
@@ -222,7 +222,7 @@ c.vctr <- function(...) {
 # Protection --------------------------------------------------------------
 
 stop_unsupported <- function(x, operation) {
-  msg <- glue::glue("Must not {operation} on {vec_type_string(x)} vector")
+  msg <- glue::glue("Must not {operation} on {vec_ptype_full(x)} vector")
   abort(
     "error_unsupported",
     message = msg,
