@@ -125,6 +125,11 @@ rep.vctr <- function(x, ...) {
   vec_cast(NextMethod(), x)
 }
 
+#' @export
+`length<-.vctr` <- function(x, value) {
+  vec_cast(NextMethod(), x)
+}
+
 # Replacement -------------------------------------------------------------
 
 #' @export
@@ -225,7 +230,7 @@ c.vctr <- function(...) {
 # Protection --------------------------------------------------------------
 
 stop_unsupported <- function(x, operation) {
-  msg <- glue::glue("Must not {operation} on {vec_ptype_full(x)} vector")
+  msg <- glue::glue("Must not {operation} {vec_ptype_full(x)} vector")
   abort(
     "error_unsupported",
     message = msg,
@@ -245,24 +250,33 @@ stop_unsupported <- function(x, operation) {
 
 #' @export
 `dim<-.vctr` <- function(x, value) {
-  stop_unsupported(x, "set dim()")
+  stop_unsupported(x, "set dim() on")
 }
 
 #' @export
 `dimnames<-.vctr` <- function(x, value) {
-  stop_unsupported(x, "set dimnames()")
+  stop_unsupported(x, "set dimnames() on ")
+}
+
+#' @export
+`levels<-.vctr` <- function(x, value) {
+  stop_unsupported(x, "set levels() on")
 }
 
 #' @export
 `$.vctr` <- function(x, i) {
-  stop_unsupported(x, "use $ subsetting")
+  stop_unsupported(x, "use $ subsetting with")
 }
 
 #' @export
 `$<-.vctr` <- function(x, i, value) {
-  stop_unsupported(x, "use $ subsetting")
+  stop_unsupported(x, "use $ subsetting with")
 }
 
+#' @export
+`t.vctr` <- function(x) {
+  stop_unsupported(x, "transpose")
+}
 # Data frame --------------------------------------------------------------
 
 #' @export

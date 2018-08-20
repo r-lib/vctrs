@@ -48,6 +48,9 @@ test_that("class preserved when subsetting", {
   expect_s3_class(h[[1]], "hidden")
   expect_s3_class(rep(h[1], 2), "hidden")
   expect_s3_class(as.list(h)[[1]], "hidden")
+
+  length(h) <- 3
+  expect_s3_class(h, "hidden")
 })
 
 test_that("RHS cast when using subset assign", {
@@ -127,6 +130,7 @@ test_that("can't touch protected attributes", {
   expect_error(names(h) <- "x", class = "error_unsupported")
   expect_error(dim(h) <- c(2, 2), class = "error_unsupported")
   expect_error(dimnames(h) <- list("x"), class = "error_unsupported")
+  expect_error(levels(h) <- "x", class = "error_unsupported")
   expect_error(h$x, class = "error_unsupported")
   expect_error(h$x <- 2, class = "error_unsupported")
 
@@ -136,6 +140,10 @@ test_that("can't touch protected attributes", {
   expect_error(names(h) <- NULL, NA)
 })
 
+test_that("can't transpose", {
+  h <- new_hidden(1:4)
+  expect_error(t(h), class = "error_unsupported")
+})
 
 # logical class -----------------------------------------------------------
 
