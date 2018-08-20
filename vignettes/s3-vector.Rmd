@@ -55,12 +55,14 @@ format.percent <- function(x, ...) {
   out[!is.na(x)] <- paste0(out[!is.na(x)], "%")
   out
 }
-
-x
 ```
 
 ```{r, include = FALSE}
 vctrs:::register_s3_method("base", "format", "percent")
+```
+
+```{r}
+x
 ```
 
 This is all you need for a function vector as the vctr base class provides many default methods with reasonable behaviour.
@@ -115,11 +117,9 @@ vec_cast.percent.numeric <- function(x, to) percent(x)
 vec_cast.numeric.percent <- function(x, to) vec_data(x)
 vec_cast.percent.percent <- function(x, to) x
 ```
-
 ```{r, include = FALSE}
 vctrs:::register_s3_method("vctrs", "vec_cast", "percent")
 ```
-
 
 Now `[[<-` and `[<-` will work:
 
@@ -148,11 +148,9 @@ vec_type2.percent.numeric <- function(x, y) percent()
 vec_type2.numeric.percent <- function(x, y) percent()
 vec_type2.percent.percent <- function(x, y) percent()
 ```
-
 ```{r, include = FALSE}
 vctrs:::register_s3_method("vctrs", "vec_type2", "percent")
 ```
-
 
 ```{r}
 vec_c(x, 1)
