@@ -9,6 +9,10 @@ test_that(".data must be a vector", {
   expect_error(new_vctr(mean), "vector type")
 })
 
+test_that(".data must not have attributes", {
+  expect_error(new_vctr(structure(1, a = 1)), "attributes")
+})
+
 test_that("no default format method", {
   x <- new_vctr(1, class = "x")
   expect_error(format(x), "not implemented")

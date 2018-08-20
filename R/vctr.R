@@ -56,6 +56,9 @@ new_vctr <- function(.data, ..., class) {
   if (!is_vector(.data)) {
     stop("`.data` must be a vector type", call. = FALSE)
   }
+  if (!is_null(attributes(.data))) {
+    stop("`.data.` must not have attributes", call. = FALSE)
+  }
 
   structure(.data, ..., class = c(class, "vctr"))
 }
