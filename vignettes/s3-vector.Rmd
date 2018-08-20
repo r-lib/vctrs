@@ -59,6 +59,10 @@ format.percent <- function(x, ...) {
 x
 ```
 
+```{r, include = FALSE}
+vctrs:::register_s3_method("base", "format", "percent")
+```
+
 This is all you need for a function vector as the vctr base class provides many default methods with reasonable behaviour.
 
 ```{r}
@@ -112,6 +116,11 @@ vec_cast.numeric.percent <- function(x, to) vec_data(x)
 vec_cast.percent.percent <- function(x, to) x
 ```
 
+```{r, include = FALSE}
+vctrs:::register_s3_method("vctrs", "vec_cast", "percent")
+```
+
+
 Now `[[<-` and `[<-` will work:
 
 ```{r, error = TRUE}
@@ -140,6 +149,11 @@ vec_type2.numeric.percent <- function(x, y) percent()
 vec_type2.percent.percent <- function(x, y) percent()
 ```
 
+```{r, include = FALSE}
+vctrs:::register_s3_method("vctrs", "vec_type2", "percent")
+```
+
+
 ```{r}
 vec_c(x, 1)
 
@@ -164,11 +178,15 @@ To make work more nicely in tibbles, provide a method for
 `pillar::type_sum()`:
 
 ```{r}
-type_sum.percentv <- function(x) {
+type_sum.percent <- function(x) {
   "pctv"
 }
 
 tibble::tibble(x)
+```
+
+```{r, include = FALSE}
+vctrs:::register_s3_method("pillar", "type_sum", "percent")
 ```
 
 For greater control over printing, you'll need to provide a
