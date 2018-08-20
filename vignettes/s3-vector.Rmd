@@ -28,7 +28,7 @@ We'll first work through the simplest possible class: one that just changes how 
 
 All classes should have a low-level constructor called `new_class()` that checks types (but not values), then calls `new_vctr()`.  This function is designed for developers: it should be high performance (i.e. no expensive checks) so it can be called from other functions.
 
-```{r}
+```{r, error = TRUE}
 new_percent <- function(x) {
   stopifnot(is.double(x))
   
