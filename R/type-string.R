@@ -50,7 +50,7 @@ vec_ptype_full.default <- function(x) {
 #' @export
 vec_ptype_abbr.default <- function(x) {
   if (is.object(x)) {
-    abbreviate(vec_ptype_full(x), 8)
+    abbreviate(vec_ptype_full(x), 8, named = FALSE)
   } else if (is_vector(x)) {
     abbr <- switch(typeof(x),
       logical = "lgl",
@@ -111,8 +111,13 @@ vec_ptype_abbr.factor <- function(x) {
 }
 
 #' @export
+vec_ptype_full.ordered <- function(x) {
+  paste0("ordered<", hash(levels(x)), ">")
+}
+
+#' @export
 vec_ptype_full.factor <- function(x) {
-  paste0(class(x)[[1]], "<", hash(levels(x)), ">")
+  paste0("factor<", hash(levels(x)), ">")
 }
 
 # Data frame --------------------------------------------------------------
@@ -133,7 +138,7 @@ vec_ptype_full.data.frame <- function(x) {
   names <- paste0("  ", format(names(x)))
 
   paste0(
-    class(x)[[1]], "<\n",
+    .Class[[1]], "<\n",
     paste0(names, ": ", types, collapse = "\n"),
     "\n>"
   )

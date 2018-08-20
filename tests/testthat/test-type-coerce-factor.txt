@@ -1,5 +1,5 @@
-               unknown          ordered<5152a>   factor<5152a>   character  
-unknown        "unknown"        "ordered<5152a>" "factor<5152a>" "character"
-ordered<5152a> "ordered<5152a>" "ordered<5152a>" NA              "character"
-factor<5152a>  "factor<5152a>"  NA               "factor<5152a>" "character"
-character      "character"      "character"      "character"     "character"
+          unknown     ordered<>   factor<>    character  
+unknown   "unknown"   "ordered<>" "factor<>"  "character"
+ordered<> "ordered<>" "ordered<>" NA          "character"
+factor<>  "factor<>"  NA          "factor<>"  "character"
+character "character" "character" "character" "character"
