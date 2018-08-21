@@ -50,7 +50,7 @@ vec_ptype_full.default <- function(x) {
 #' @export
 vec_ptype_abbr.default <- function(x) {
   if (is.object(x)) {
-    abbreviate(vec_ptype_full(x), 8, named = FALSE)
+    unname(abbreviate(vec_ptype_full(x), 8))
   } else if (is_vector(x)) {
     abbr <- switch(typeof(x),
       logical = "lgl",
