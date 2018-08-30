@@ -68,18 +68,12 @@ vec_grp_summary <- function(generic, x, na.rm = TRUE) {
 #' @rdname vec_grp
 #' @export
 vec_generic_call <- function(generic, x, y, ...) {
-  # In order to avoid method dispatch (and hence find the internal default)
-  # we temporarily suppress the object bit - this is a bit naughty but
-  # seems like the cleanest way to execute the internal code
-
+  x <- vec_data(x)
   args <- list(quote(x))
-  obj_set(x, FALSE)
-  on.exit(obj_set(x, TRUE), add = TRUE)
 
   if (!missing(y)) {
+    y <- vec_data(y)
     args[[2]] <- quote(y)
-    obj_set(y, FALSE)
-    on.exit(obj_set(y, TRUE), add = TRUE)
   }
 
   generic <- as.name(generic)
