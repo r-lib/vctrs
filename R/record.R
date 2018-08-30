@@ -102,14 +102,17 @@ vec_cast.record.list <- function(x, to) {
   if (!setequal(fields(x), fields(to))) {
     diff <- set_partition(fields(x), fields(to))
     if (length(diff$only_x) > 0) {
-      fields <- glue::glue_collapse(diff$only_x, sep = ", ", width = 80)
-      details <- paste0("Extra names: ", feilds)
-      warn_lossy_cast(x, to, details = details)
+      warn_lossy_cast(
+        x, to,
+        details = inline_list("Extra names: ", diff$only_x, quote = "`")
+      )
     }
 
     if (length(diff$only_y) > 0) {
-      details <- paste0("Missing names: ", paste0(diff$only_y, collapse = ", "))
-      stop_incompatible_cast(x, to, details)
+      stop_incompatible_cast(
+        x, to,
+        details = inline_list("Missing names: ", diff$only_y, quote = "`")
+      )
     }
   }
 

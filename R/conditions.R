@@ -50,8 +50,8 @@ warn_lossy_cast <- function(x, y, locations = NULL, details = NULL) {
     message = "Lossy cast",
     x = x,
     y = y,
-    locations = NULL,
-    details = NULL,
+    locations = locations,
+    details = details
   )
 }
 
@@ -75,11 +75,10 @@ conditionMessage.error_incompatible_cast <- function(c) {
 
 #' @export
 conditionMessage.warning_lossy_cast <- function(c) {
-  msg <- glue::glue_data(c, "Can't cast {vec_ptype_full(x)} to {vec_ptype_full(y)}")
+  msg <- glue::glue_data(c, "Lossy cast from {vec_ptype_full(x)} to {vec_ptype_full(y)}")
 
   if (!is.null(c$locations)) {
-    pos <- glue::glue_collapse(which, ", ", width = 80)
-    msg <- paste0(msg, glue::glue("\nAt positions: {pos}]"))
+    msg <- paste0(msg, "\n", inline_list("Locations: ", c$locations))
   }
 
   if (!is.null(c$details)) {

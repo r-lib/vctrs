@@ -60,3 +60,13 @@ set_partition <- function(x, y) {
 }
 
 all_equal <- function(x) all(x == x[[1]])
+
+inline_list <- function(title, x, width = getOption("width"), quote = "") {
+  label_width <- width - nchar(title)
+  x <- glue::glue_collapse(
+    encodeString(x, quote = quote),
+    sep = ", ",
+    width = label_width
+  )
+  paste0(title, x)
+}
