@@ -59,7 +59,10 @@ df_col_cast <- function(x, to) {
   # Warn about dropped columns
   dropped <- setdiff(names(x), names(to))
   if (length(dropped) > 0 ) {
-    warn_cast_lossy_dataframe(x, to, dropped)
+    vars <- glue::glue_collapse(dropped, width = 80)
+    details <- glue::glue("Dropped variables: {vars}")
+
+    warn_lossy_cast(x, to, details = details)
   }
 
   x[names(to)]

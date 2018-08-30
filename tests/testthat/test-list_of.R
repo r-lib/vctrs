@@ -83,8 +83,8 @@ test_that("safe casts work as expected", {
 
 test_that("lossy casts generate warning", {
   x <- list_of(1L)
-  expect_condition(vec_cast(list(1.5), x), class = "warning_cast_lossy")
-  expect_condition(vec_cast(list_of(1L), list()), class = "warning_cast_lossy")
+  expect_condition(vec_cast(list(1.5), x), class = "warning_lossy_cast")
+  expect_condition(vec_cast(list_of(1L), list()), class = "warning_lossy_cast")
 })
 
 test_that("invalid casts generate error", {

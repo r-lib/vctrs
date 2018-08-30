@@ -193,7 +193,7 @@ knitr::include_graphics("../man/figures/cast.png")
 
 Note that the arrows are bidirectional: if you can cast from `x` to `y`, you should also be able to cast back from `y` to `x`. 
 
-If type `x` has greater resolution than `y`, there will be some inputs that lose precision. These should generate warnings using `warn_cast_lossy()`. You can see that in action when casting from doubles to integers; only some doubles can become integers without losing resolution.
+If type `x` has greater resolution than `y`, there will be some inputs that lose precision. These should generate warnings using `warn_lossy_cast()`. You can see that in action when casting from doubles to integers; only some doubles can become integers without losing resolution.
 
 ```{r}
 vec_cast(c(1, 2, 10), to = integer())

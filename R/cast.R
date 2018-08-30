@@ -97,21 +97,30 @@ vec_cast.logical.logical <- function(x, to) {
 #' @export
 #' @method vec_cast.logical integer
 vec_cast.logical.integer <- function(x, to) {
-  warn_cast_lossy_vector(x, to, !x %in% c(0L, 1L))
+  lossy <- !x %in% c(0L, 1L)
+  if (any(lossy)) {
+    warn_lossy_cast(x, to, locations = which(lossy))
+  }
   x <- vec_coerce_bare(x, "logical")
   shape_recycle(x, to)
 }
 #' @export
 #' @method vec_cast.logical double
 vec_cast.logical.double <- function(x, to) {
-  warn_cast_lossy_vector(x, to, !x %in% c(0, 1))
+  lossy <- !x %in% c(0, 1)
+  if (any(lossy)) {
+    warn_lossy_cast(x, to, locations = which(lossy))
+  }
   x <- vec_coerce_bare(x, "logical")
   shape_recycle(x, to)
 }
 #' @export
 #' @method vec_cast.logical character
 vec_cast.logical.character <- function(x, to) {
-  warn_cast_lossy_vector(x, to, !toupper(x) %in% c("T", "F", "TRUE", "FALSE"))
+  lossy <- !toupper(x) %in% c("T", "F", "TRUE", "FALSE")
+  if (any(lossy)) {
+    warn_lossy_cast(x, to, locations = which(lossy))
+  }
   x <- vec_coerce_bare(x, "logical")
   shape_recycle(x, to)
 }
@@ -151,7 +160,12 @@ vec_cast.integer.integer <- function(x, to) {
 #' @method vec_cast.integer double
 vec_cast.integer.double <- function(x, to) {
   out <- suppressWarnings(vec_coerce_bare(x, "integer"))
-  warn_cast_lossy_vector(x, to, (out != x) | xor(is.na(x), is.na(out)))
+
+  lossy <- (out != x) | xor(is.na(x), is.na(out))
+  if (any(lossy)) {
+    warn_lossy_cast(x, to, locations = which(lossy))
+  }
+
   shape_recycle(out, to)
 }
 #' @export
@@ -193,7 +207,12 @@ vec_cast.double.integer <- vec_cast.double.logical
 #' @method vec_cast.double character
 vec_cast.double.character <- function(x, to) {
   out <- suppressWarnings(vec_coerce_bare(x, "double"))
-  warn_cast_lossy_vector(x, to, (out != x) | xor(is.na(x), is.na(out)))
+
+  lossy <- (out != x) | xor(is.na(x), is.na(out))
+  if (any(lossy)) {
+    warn_lossy_cast(x, to, locations = which(lossy))
+  }
+
   out <- shape_recycle(out, to)
   out
 }
@@ -274,7 +293,7 @@ vec_cast.list.NULL <- function(x, to) {
 #' @export
 #' @method vec_cast.list list_of
 vec_cast.list.list_of <- function(x, to) {
-  warn_cast_lossy(from = x, to = to)
+  warn_lossy_cast(x, to)
   shape_recycle(as.list(x), to)
 }
 #' @export
@@ -308,7 +327,11 @@ vec_cast.factor.factor <- function(x, to) {
   if (length(levels(to)) == 0L) {
     factor(as.character(x), levels = unique(x), ordered = is.ordered(to))
   } else {
-    warn_cast_lossy_vector(x, to, !x %in% levels(to))
+    lossy <- !x %in% levels(to)
+    if (any(lossy)) {
+      warn_lossy_cast(x, to, locations = which(lossy))
+    }
+
     factor(x, levels = levels(to), ordered = is.ordered(to))
   }
 }
@@ -357,7 +380,12 @@ vec_cast.Date.Date <- function(x, to) {
 #' @method vec_cast.Date POSIXt
 vec_cast.Date.POSIXt <- function(x, to) {
   out <- as.Date(x)
-  warn_cast_lossy_vector(x, to, abs(x - as.POSIXct(out)) > 1e-9)
+
+  lossy <- abs(x - as.POSIXct(out)) > 1e-9
+  if (any(lossy)) {
+    warn_lossy_cast(x, to, locations = which(lossy))
+  }
+
   out
 }
 #' @export
@@ -525,8 +553,9 @@ vec_cast.tbl_df.default <- function(x, to) {
 vec_list_cast <- function(x, to) {
   ns <- map_int(x, length)
 
-  if (any(ns != 1)) {
-    warn_cast_lossy_vector(x, to, ns != 1)
+  lossy <- ns != 1
+  if (any(lossy)) {
+    warn_lossy_cast(x, to, locations = which(lossy))
   }
 
   n <- length(x)

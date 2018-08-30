@@ -27,10 +27,10 @@ test_that("safe casts work as expeced", {
 })
 
 test_that("lossy casts generate warning", {
-  expect_condition(vec_cast(2L, logical()), class = "warning_cast_lossy")
-  expect_condition(vec_cast(2, logical()), class = "warning_cast_lossy")
-  expect_condition(vec_cast("x", logical()), class = "warning_cast_lossy")
-  expect_condition(vec_cast(list(c(TRUE, FALSE)), logical()), class = "warning_cast_lossy")
+  expect_condition(vec_cast(2L, logical()), class = "warning_lossy_cast")
+  expect_condition(vec_cast(2, logical()), class = "warning_lossy_cast")
+  expect_condition(vec_cast("x", logical()), class = "warning_lossy_cast")
+  expect_condition(vec_cast(list(c(TRUE, FALSE)), logical()), class = "warning_lossy_cast")
 })
 
 test_that("invalid casts generate error", {
@@ -58,8 +58,8 @@ test_that("safe casts work as expected", {
 })
 
 test_that("lossy casts generate warning", {
-  expect_condition(vec_cast(2.5, integer()), class = "warning_cast_lossy")
-  expect_condition(vec_cast("2.5", integer()), class = "warning_cast_lossy")
+  expect_condition(vec_cast(2.5, integer()), class = "warning_lossy_cast")
+  expect_condition(vec_cast("2.5", integer()), class = "warning_lossy_cast")
 })
 
 test_that("invalid casts generate error", {
@@ -78,7 +78,7 @@ test_that("safe casts work as expected", {
 })
 
 test_that("lossy casts generate warning", {
-  expect_condition(vec_cast("x", double()), class = "warning_cast_lossy")
+  expect_condition(vec_cast("x", double()), class = "warning_lossy_cast")
 })
 
 test_that("invalid casts generate error", {
@@ -129,8 +129,8 @@ test_that("lossy casts generate warning", {
   fa <- factor("a")
   fb <- factor("b")
 
-  expect_condition(vec_cast(fa, fb), class = "warning_cast_lossy")
-  expect_condition(vec_cast("a", fb), class = "warning_cast_lossy")
+  expect_condition(vec_cast(fa, fb), class = "warning_lossy_cast")
+  expect_condition(vec_cast("a", fb), class = "warning_lossy_cast")
 })
 
 test_that("invalid casts generate error", {
@@ -162,7 +162,7 @@ test_that("lossy casts generate warning", {
   date <- as.Date("2018-01-01")
   datetime <- as.POSIXct(date) + 3600
 
-  expect_condition(vec_cast(datetime, date), class = "warning_cast_lossy")
+  expect_condition(vec_cast(datetime, date), class = "warning_lossy_cast")
 })
 
 test_that("invalid casts generate error", {
@@ -232,8 +232,8 @@ test_that("warn about lossy coercions", {
   df1 <- data.frame(x = 1, y = 1)
   df2 <- data.frame(x = "a", stringsAsFactors = FALSE)
 
-  expect_condition(vec_cast(df1, df1[1]), class = "warning_cast_lossy_dataframe")
-  expect_condition(vec_cast(df2, df1), class = "warning_cast_lossy_vector")
+  expect_condition(vec_cast(df1, df1[1]), class = "warning_lossy_cast")
+  expect_condition(vec_cast(df2, df1), class = "warning_lossy_cast")
 })
 
 test_that("invalid cast generates error", {

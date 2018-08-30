@@ -7,8 +7,8 @@
 #' @param x,y Vectors
 #' @param details Any additional human readable details
 #' @param subclass Use if you want to further customise the class
-#' @param is_lossy A logical vector describing which elements of
-#'   `x` lost resolution.
+#' @param locations For `warn_lossy_cast()`, an optional vector giving the
+#'   locations where `x` lost information.
 #' @name vctrs-conditions
 NULL
 
@@ -42,6 +42,19 @@ stop_incompatible_cast <- function(x, y, details = NULL) {
   )
 }
 
+#' @rdname vctrs-conditions
+#' @export
+warn_lossy_cast <- function(x, y, locations = NULL, details = NULL) {
+  warn(
+    "warning_lossy_cast",
+    message = "Lossy cast",
+    x = x,
+    y = y,
+    locations = NULL,
+    details = NULL,
+  )
+}
+
 #' @export
 conditionMessage.error_incompatible_type <- function(c) {
   msg <- glue::glue_data(c, "No common type for {vec_ptype_full(x)} and {vec_ptype_full(y)}")
@@ -60,52 +73,18 @@ conditionMessage.error_incompatible_cast <- function(c) {
   msg
 }
 
-warn_cast_lossy <- function(message = NULL, .subclass = NULL, from, to, ..., class) {
-  if (is.null(message)) {
-    message <- glue::glue("Lossy conversion from {vec_ptype_full(from)} to {vec_ptype_full(to)}")
-  }
-
-  warn(
-    c(.subclass, "warning_cast_lossy"),
-    message = message,
-    from = from,
-    to = to,
-    ...
-  )
-}
-
 #' @export
-#' @rdname vctrs-conditions
-warn_cast_lossy_vector <- function(from, to, is_lossy) {
-  which <- which(is_lossy)
-  if (length(which) == 0) {
-    return()
+conditionMessage.warning_lossy_cast <- function(c) {
+  msg <- glue::glue_data(c, "Can't cast {vec_ptype_full(x)} to {vec_ptype_full(y)}")
+
+  if (!is.null(c$locations)) {
+    pos <- glue::glue_collapse(which, ", ", width = 80)
+    msg <- paste0(msg, glue::glue("\nAt positions: {pos}]"))
   }
 
-  pos <- glue::glue_collapse(which, ", ", width = 80)
-  msg <- glue::glue("Lossy conversion from {vec_ptype_full(from)} to {vec_ptype_full(to)} [Locations: {pos}]")
+  if (!is.null(c$details)) {
+    msg <- paste0(msg, "\n", c$details)
+  }
+  msg
 
-  warn_cast_lossy(
-    "warning_cast_lossy_vector",
-    message = msg,
-    from = from,
-    to = to,
-    which = which
-  )
-}
-
-warn_cast_lossy_dataframe <- function(from, to, dropped) {
-  vars <- glue::glue_collapse(dropped, width = 80)
-  msg <- glue::glue("
-    Lossy conversion from data.frame to data.frame
-    Dropped variables: {vars}"
-  )
-
-  warn_cast_lossy(
-    "warning_cast_lossy_dataframe",
-    message = msg,
-    from = from,
-    to = to,
-    dropped = dropped
-  )
 }
