@@ -95,10 +95,8 @@ vec_cast.vctr.default <- function(x, to) {
 
 #' @export
 print.vctr <- function(x, ...) {
-  if (length(x) == 0) {
-    cat_line("<", vec_ptype_full(x), "[0]>")
-  } else {
-    cat_line("<", vec_ptype_full(x), ">")
+  cat_line("<", vec_ptype_full(x), "[", length(x), "]>")
+  if (length(x) > 0) {
     print(format(x), quote = FALSE)
   }
   invisible(x)
