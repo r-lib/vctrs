@@ -202,6 +202,31 @@ Math.record <- function(x, ..., na.rm = FALSE) {
   stop_unimplemented(x, .Generic)
 }
 
+#' @export
+anyNA.record <- function(x, recursive = FALSE) {
+  stop_unimplemented(x, .Method)
+}
+
+#' @export
+is.finite.record <- function(x) {
+  stop_unimplemented(x, .Method)
+}
+
+#' @export
+is.finite.record <- function(x) {
+  stop_unimplemented(x, .Method)
+}
+
+#' @export
+is.na.record <- function(x) {
+  stop_unimplemented(x, .Method)
+}
+
+#' @export
+is.nan.record <- function(x) {
+  stop_unimplemented(x, .Method)
+}
+
 # Helpers -----------------------------------------------------------------
 
 unique_field_names <- function(x) {
