@@ -198,23 +198,11 @@ rational <- function(n = integer(), d = integer()) {
     n = vec_cast(n, integer()),
     d = vec_cast(d, integer())
   )
-
-  new_rational(fields$n, fields$d)
-}
-
-new_rational <- function(n, d) {
-  new_record(list(n = n, d = d), class = "rational")
+  new_record(fields, class = "rational")
 }
 
 format.rational <- function(x, ...) {
-  paste0(.subset2(x, "n"), "/", .subset2(x, "d"))
-}
-
-vec_grp_unary.rational <- function(generic, x) {
-  new_rational(
-    vec_generic_call(generic, .subset2(x, "n")),
-    .subset2(x, "d")
-  )
+  paste0(field(x, "n"), "/", field(x, "d"))
 }
 
 # nocov end
