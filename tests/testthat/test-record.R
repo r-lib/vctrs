@@ -35,3 +35,24 @@ test_that("no attributes", {
   x <- structure(list(x = 1:3), y = 1)
   expect_error(new_record(x), "no attributes")
 })
+
+
+# rational class ----------------------------------------------------------
+# use simple class to test essential features of records
+
+test_that("print and str use format", {
+  r <- rational(1, 1:100)
+
+  expect_known_output(
+    file = test_path("test-record-format.txt"),
+    {
+      print(r)
+      cat("\n")
+      str(r)
+      cat("\n")
+      str(list(list(list(r, 1:100))))
+    }
+  )
+
+})
+

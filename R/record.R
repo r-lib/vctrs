@@ -86,6 +86,21 @@ names.record <- function(x) {
   NULL
 }
 
+#' @export
+str.record <- function(object, ..., indent.str = "", width = getOption("width")) {
+  width <- width - nchar(indent.str) - 2
+  # Avoid spending too much time formatting elements that won't see
+  length <- ceiling(width / 2)
+  if (length(object) > length) {
+    x <- object[1:length]
+  } else {
+    x <- object
+  }
+
+  title <- glue::glue(" {vec_ptype_abbr(object)} [1:{length(object)}] ")
+  cat_line(inline_list(title, format(x), width = width))
+}
+
 #' @method vec_cast record
 #' @export
 vec_cast.record <- function(x, to) UseMethod("vec_cast.record")
@@ -149,17 +164,42 @@ rep.record <- function(x, ...) {
 # Replacement -------------------------------------------------------------
 
 #' @export
-`[[<-.vctr` <- function(x, i, value) {
+`[[<-.record` <- function(x, i, value) {
   value <- vec_cast(value, x)
-  out <- map2(vec_data(x), vec_data(value), function(x, value, i) x[i] <- value)
+  out <- map2(vec_data(x), vec_data(value), function(x, value) {
+    x[[i]] <- value
+    x
+  })
   vec_cast(out, x)
 }
 
 #' @export
-`[<-.vctr` <- function(x, i, value) {
+`[<-.record` <- function(x, i, value) {
   value <- vec_cast(value, x)
-  out <- map2(vec_data(x), vec_data(value), function(x, value, i) x[[i]] <- value)
+  out <- map2(vec_data(x), vec_data(value), function(x, value) {
+    x[i] <- value
+    x
+  })
   vec_cast(out, x)
+}
+
+
+# Unimplemented -----------------------------------------------------------
+
+#' @export
+mean.record <- function(x, ..., na.rm = FALSE) {
+  stop_unimplemented(x, "mean")
+}
+
+#' @importFrom stats median
+#' @export
+median.record <- function(x, ..., na.rm = FALSE) {
+  stop_unimplemented(x, "median")
+}
+
+#' @export
+Math.record <- function(x, ..., na.rm = FALSE) {
+  stop_unimplemented(x, .Generic)
 }
 
 # Helpers -----------------------------------------------------------------
@@ -204,5 +244,17 @@ rational <- function(n = integer(), d = integer()) {
 format.rational <- function(x, ...) {
   paste0(field(x, "n"), "/", field(x, "d"))
 }
+
+vec_type2.rational <- function(x, y)  UseMethod("vec_type2.rational", y)
+vec_type2.rational.unknown <- function(x, y) rational()
+vec_type2.rational.integer <- function(x, y) rational()
+vec_type2.integer.rational <- function(x, y) rational()
+vec_type2.rational.rational <- function(x, y) rational()
+vec_type2.rational.default <- function(x, y) stop_incompatible_type(x, y)
+
+vec_cast.rational <- function(x, to) UseMethod("vec_cast.rational")
+vec_cast.rational.integer <- function(x, to) rational(x, 1)
+vec_cast.rational.list <- function(x, to) rational(x$n, x$d)
+vec_cast.rational.rational <- function(x, to) x
 
 # nocov end

@@ -15,7 +15,7 @@ test_that(".data must not have attributes", {
 
 test_that("no default format method", {
   x <- new_vctr(1, class = "x")
-  expect_error(format(x), "not implemented")
+  expect_error(format(x), class = "error_unimplemented")
 })
 
 test_that("cast to NULL returns x", {

@@ -102,9 +102,19 @@ print.vctr <- function(x, ...) {
   invisible(x)
 }
 
+stop_unimplemented <- function(x, method) {
+  msg <- glue::glue("`{method}(<{vec_ptype_full(x)}>)` not implemented")
+  abort(
+    "error_unimplemented",
+    message = msg,
+    x = x,
+    method = method
+  )
+}
+
 #' @export
 format.vctr <- function(x, ...) {
-  stop(glue::glue("`format.{class(x)[[1]]}()` method not implemented"), call. = FALSE)
+  stop_unimplemented(x, "format")
 }
 
 # Subsetting --------------------------------------------------------------
