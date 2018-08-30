@@ -2,6 +2,7 @@
 % Please edit documentation in R/vctr.R
 \name{new_vctr}
 \alias{new_vctr}
+\alias{vctr}
 \title{vctr S3 class}
 \usage{
 new_vctr(.data, ..., class)

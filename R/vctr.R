@@ -52,6 +52,7 @@
 #' @param class Name of subclass.
 #' @export
 #' @keywords internal
+#' @aliases vctr
 new_vctr <- function(.data, ..., class) {
   if (!is_vector(.data)) {
     stop("`.data` must be a vector type", call. = FALSE)

@@ -38,7 +38,6 @@ outer_names <- function(outer, names, n) {
   }
 }
 
-
 hash <- function(x, length = 5) {
   if (length(x) == 0) {
     ""
@@ -50,3 +49,14 @@ hash <- function(x, length = 5) {
 cat_line <- function(...) {
   cat(..., "\n", sep = "")
 }
+
+
+set_partition <- function(x, y) {
+  list(
+    both = intersect(x, y),
+    only_x = setdiff(x, y),
+    only_y = setdiff(y, x)
+  )
+}
+
+all_equal <- function(x) all(x == x[[1]])

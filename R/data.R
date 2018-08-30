@@ -10,6 +10,11 @@ vec_data <- function(x) {
   stopifnot(is_vector(x))
 
   # TODO: implement with ALTREP to avoid making a copy
-  attributes(x) <- NULL
+  if (inherits(x, "record")) {
+    attributes(x) <- list(names = fields(x))
+  } else {
+    attributes(x) <- NULL
+  }
+
   x
 }
