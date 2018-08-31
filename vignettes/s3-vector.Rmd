@@ -7,7 +7,7 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-```{r setup, include = FALSE}
+```{r, include = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>"
@@ -16,7 +16,7 @@ knitr::opts_chunk$set(
 
 This vignette contains tips for creating your own S3 vector class built on top the `vctr` class provided by vctrs. It focusses on the aspects of making a vector class that every class needs to worry about; you'll also need to provide methods that actually make the vector useful.
 
-```{r}
+```{r setup}
 library(vctrs)
 ```
 
@@ -28,36 +28,43 @@ We'll first work through the simplest possible class: one that just changes how 
 
 All classes should have a low-level constructor called `new_class()` that checks types (but not values), then calls `new_vctr()`.  This function is designed for developers: it should be high performance (i.e. no expensive checks) so it can be called from other functions.
 
-```{r, error = TRUE}
+The percent class is very simple, so this only has a single argument, `x`, which needs to be a double vector.
+
+```{r}
 new_percent <- function(x) {
   stopifnot(is.double(x))
-  
   new_vctr(x, class = "percent")
 }
 
 x <- new_percent(c(seq(0, 1, length = 4), NA))
-str(x)
 ```
 
-### Formatter
-
-We can inspect this object, but we can't easily print it:
+We can't yet look at this object:
 
 ```{r, error = TRUE}
 x
+
+str(x)
 ```
 
-You should always provide a `format()` method:
+### Your first method: `format()`
+
+To fix this, provide a method for `format()`:
 
 ```{r}
 format.percent <- function(x, ...) {
   out <- format.default(signif(unclass(x) * 100, 3))
+  out[is.na(x)] <- NA
   out[!is.na(x)] <- paste0(out[!is.na(x)], "%")
   out
 }
 ```
 
+NB: by default, `format()` will convert `NA` to `"NA"` (i.e. the string containing the letters "N" and "A"). If you preserve it as an `NA`, you will get better default formatting when printing.
+
 ```{r, include = FALSE}
+# As of R 3.5, print.vctr can not find format.percent since it's not in
+# it's lexical environment. We fix that problem by manually registering.
 vctrs:::register_s3_method("base", "format", "percent")
 ```
 
@@ -65,25 +72,54 @@ vctrs:::register_s3_method("base", "format", "percent")
 x
 ```
 
-This is all you need for a function vector as the vctr base class provides many default methods with reasonable behaviour.
+The format method is also used by tibbles and data frames:
+
+```{r}
+data.frame(x)
+```
+
+For optimal tibble display, it's a good idea to define an abbreviated name for the type. This is used in tibbles and `str()`:
+
+```{r}
+vec_ptype_abbr.percent <- function(x) {
+  "pctv"
+}
+
+tibble::tibble(x)
+
+str(x)
+```
+
+You can gain greater control over tibble printing by providing a method for  `pillar::pillar_shaft()`. See the details in: 
+<https://tibble.tidyverse.org/articles/extending.html>.
+
+### Default methods
+
+The vctr base class implements defaults for many common methods so that you don't have to. It provides default subsetting methods for all underlying vectors, default mathematical operations for numeric vectors, and logical operations for logical vectors. 
 
 ```{r}
 x[1:2]
 
-x[0]
-
 x[[1]]
-
-rep(x, 2)
 
 -x
 
 sqrt(x)
 ```
 
+Currently, vctrs do not support names:
+
+```{r, error = TRUE}
+new_percent(c(x = 2))
+
+x <- percent(c(x = 2))
+x
+names(x) <- "x"
+```
+
 ### User-friendly constructor
 
-Next, implement a user friendly constructor called `myclass()`. It should carefully check that the input is valid, providing human readable messages if it is not:
+Next, implement a user friendly constructor called `myclass()`. It should carefully check that the input is valid, providing human readable messages if it is not. The user-friendly constructor will typically use `vec_cast()` to helpfully coerce inputs to the correct type.
 
 ```{r}
 percent <- function(x = double()) {
@@ -94,13 +130,12 @@ percent <- function(x = double()) {
 
   # Strip attributes and names
   x <- as.double(x)
-  attributes(x) <- NULL
 
   new_percent(x)
 }
 ```
 
-When called with no arguments the construct should return a zero-length vector.
+Check that user-friendly constructor returns a zero-length vector when called with no arguments:
 
 ```{r}
 percent()
@@ -108,20 +143,38 @@ percent()
 
 ### Casting
 
+Next, define possible casts between your vector and existing types. You do this by providing methods for `vec_cast()`. `vec_cast()` is a little unusual because the result depends on the type of both arguments: the input `x`, and the target type `to`. Techically, this means that we need __[double dispatch](https://en.wikipedia.org/wiki/Double_dispatch)__. S3 does not natively support double dispatch, but we can implement with a trick: doing single dispatch twice.  Here we'll focus on the practicalities, giving you a recipe to follow for your class. Read `vignette("theory")` to get more details on the theory, and to help you think about what casts you should enable.
+
+First, we create a new generic, and provide a standard set of methods. These are required for every class; you can just copy and paste this block, replacing `percent` with the name of your class.
+
 ```{r}
 vec_cast.percent <- function(x, to) UseMethod("vec_cast.percent")
 vec_cast.percent.default <- function(x, to) stop_incompatible_cast(x, to)
 vec_cast.percent.NULL    <- function(x, to) x
 vec_cast.NULL.percent    <- function(x, to) x
-vec_cast.percent.numeric <- function(x, to) percent(x)
-vec_cast.numeric.percent <- function(x, to) vec_data(x)
 vec_cast.percent.percent <- function(x, to) x
 ```
 ```{r, include = FALSE}
 vctrs:::register_s3_method("vctrs", "vec_cast", "percent")
 ```
 
-Now `[[<-` and `[<-` will work:
+Next we provide some useful methods to coerce percents back and forth between integers and doubles. We use `vec_cast()` on the underlying vector (`vec_data()`) in order to get the nice default behaviour which reports when we lose precision:
+
+```{r}
+vec_cast.percent.double <- function(x, to) percent(x)
+vec_cast.double.percent <- function(x, to) vec_data(x)
+
+vec_cast(0.5, percent())
+vec_cast(percent(0.5), double())
+
+vec_cast.percent.integer <- function(x, to) percent(x)
+vec_cast.integer.percent <- function(x, to) vec_cast(vec_data(x), integer())
+
+vec_cast(integer(), percent(0.5))
+vec_cast(percent(0.5), integer())
+```
+
+These methods power `[[<-` and `[<-`, because the vctrs default coerces the `value` to the same type as `x`.
 
 ```{r, error = TRUE}
 x[1] <- 2
@@ -130,27 +183,31 @@ x
 x[[1]] <- "x"
 ```
 
-Note that vctrs explicitly forbid use of `$`.
-
-```{r, error = TRUE}
-x$a
-x$a <- 1
-```
-
 ### Coercion
+
+Finally, we define methods for `vec_type2()` which describe when it is ok to perform automatic (aka implicit) coercion. Again, `vec_type2()` uses double-dispatch, so we start off with a recipe.
 
 ```{r}
 vec_type2.percent <- function(x, y) UseMethod("vec_cast.percent")
 vec_type2.percent.default <- function(x, y) stop_incompatible_type(x, y)
 vec_type2.percent.NULL    <- function(x, y) percent()
 vec_type2.NULL.percent    <- function(x, y) percent()
-vec_type2.percent.numeric <- function(x, y) percent()
-vec_type2.numeric.percent <- function(x, y) percent()
 vec_type2.percent.percent <- function(x, y) percent()
 ```
 ```{r, include = FALSE}
 vctrs:::register_s3_method("vctrs", "vec_type2", "percent")
 ```
+
+And then we define methods that say it's ok to automatically coerce percents to numbers. If you're unsure about what methods to provide here, err on the side of caution: too many implicit coercions make code hard to understand. See `vignette("theory")` for more details.
+
+```{r}
+vec_type2.percent.double <- function(x, y) percent()
+vec_type2.double.percent <- function(x, y) percent()
+vec_type2.percent.integer <- function(x, y) percent()
+vec_type2.integer.percent <- function(x, y) percent()
+```
+
+Implementing casting gives you more methods for free:
 
 ```{r}
 vec_c(x, 1)
@@ -159,35 +216,10 @@ x == 1
 x * 2
 ```
 
-Unfortunately
+Unfortunately, due to the design of the "S3 group generics", there's no way to make vctr classes fully compatible with the base S3 classes:
 
 ```{r}
 x * factor("x")
 factor("x") * x
 ```
-
-### Data frames and tibbles
-
-```{r}
-data.frame(x)
-```
-
-To make work more nicely in tibbles, provide a method for 
-`pillar::type_sum()`:
-
-```{r}
-type_sum.percent <- function(x) {
-  "pctv"
-}
-
-tibble::tibble(x)
-```
-
-```{r, include = FALSE}
-vctrs:::register_s3_method("pillar", "type_sum", "percent")
-```
-
-For greater control over printing, you'll need to provide a
-`pillar::pillar_shaft()`. A full discussion of this method is beyond the scope of this text, because tibble columns have functionality to grow and shrink to fill available space. See the details in: 
-<https://tibble.tidyverse.org/articles/extending.html>.
 
