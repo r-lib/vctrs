@@ -203,8 +203,14 @@ Math.record <- function(x, ..., na.rm = FALSE) {
 }
 
 #' @export
-anyNA.record <- function(x, recursive = FALSE) {
-  stop_unimplemented(x, .Method)
+anyNA.record <- if (getRversion() >= "3.2") {
+  function(x, recursive = FALSE) {
+    stop_unimplemented(x, .Method)
+  }
+} else {
+  function(x) {
+    stop_unimplemented(x, .Method)
+  }
 }
 
 #' @export
