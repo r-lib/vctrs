@@ -37,22 +37,50 @@ test_that("no attributes", {
 })
 
 
-# rational class ----------------------------------------------------------
+# tuple class ----------------------------------------------------------
 # use simple class to test essential features of records
 
 test_that("print and str use format", {
-  r <- rational(1, 1:100)
+  r <- tuple(1, 1:100)
 
   expect_known_output(
     file = test_path("test-record-format.txt"),
     {
       print(r)
       cat("\n")
-      str(r)
+      str(r[1:10])
       cat("\n")
       str(list(list(list(r, 1:100))))
     }
   )
-
 })
 
+test_that("subsetting methods applied to each field", {
+  x <- tuple(1:2, 1)
+  expect_equal(x[1], tuple(1, 1))
+  expect_equal(x[[1]], tuple(1, 1))
+
+  expect_equal(rep(tuple(1, 1), 2), tuple(c(1, 1), 1))
+
+  length(x) <- 1
+  expect_equal(x, tuple(1, 1))
+})
+
+test_that("subset assignment modifies each field", {
+  x <- tuple(c(1, 1), c(2, 2))
+
+  x[[1]] <- tuple(3, 3)
+  expect_equal(x, tuple(c(3, 1), c(3, 2)))
+
+  x[1] <- tuple(4, 4)
+  expect_equal(x, tuple(c(4, 1), c(4, 2)))
+})
+
+test_that("subset assignment recycles", {
+  x <- tuple(c(1, 1), c(2, 2))
+  x[1:2] <- tuple(1, 1)
+  expect_equal(x, tuple(c(1, 1), c(1, 1)))
+
+  x[] <- tuple(2, 2)
+  expect_equal(x, tuple(c(2, 2), c(2, 2)))
+})

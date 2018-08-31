@@ -150,10 +150,19 @@ rep.record <- function(x, ...) {
 #' @export
 `[<-.record` <- function(x, i, value) {
   value <- vec_cast(value, x)
-  out <- map2(vec_data(x), vec_data(value), function(x, value) {
-    x[i] <- value
-    x
-  })
+
+  if (missing(i)) {
+    replace <- function(x, value) {
+      x[] <- value
+      x
+    }
+  } else {
+    replace <- function(x, value) {
+      x[i] <- value
+      x
+    }
+  }
+  out <- map2(vec_data(x), vec_data(value), replace)
   vec_cast(out, x)
 }
 
@@ -222,38 +231,34 @@ unique_field_names <- function(x) {
 # a test does not work (because the lexical scope is lost)
 # nocov start
 
-#' @examples
-#' r <- rational(1, 1:10)
-#'
-#' r[0]
-#' r[5:1]
-#' r[[1]]
-#'
-#' -r
-#' abs(r)
-#' r == r
-rational <- function(n = integer(), d = integer()) {
+tuple <- function(x = integer(), y = integer()) {
   fields <- vec_recycle(
-    n = vec_cast(n, integer()),
-    d = vec_cast(d, integer())
+    x = vec_cast(x, integer()),
+    y = vec_cast(y, integer())
   )
-  new_record(fields, class = "rational")
+  new_record(fields, class = "tuple")
 }
 
-format.rational <- function(x, ...) {
-  paste0(field(x, "n"), "/", field(x, "d"))
+format.tuple <- function(x, ...) {
+  paste0("(", field(x, "x"), ",", field(x, "y"), ")")
 }
 
-vec_type2.rational <- function(x, y)  UseMethod("vec_type2.rational", y)
-vec_type2.rational.unknown <- function(x, y) rational()
-vec_type2.rational.integer <- function(x, y) rational()
-vec_type2.integer.rational <- function(x, y) rational()
-vec_type2.rational.rational <- function(x, y) rational()
-vec_type2.rational.default <- function(x, y) stop_incompatible_type(x, y)
+vec_type2.tuple <- function(x, y)  UseMethod("vec_type2.tuple", y)
+vec_type2.tuple.unknown <- function(x, y) tuple()
+vec_type2.tuple.tuple <- function(x, y) tuple()
+vec_type2.tuple.default <- function(x, y) stop_incompatible_type(x, y)
 
-vec_cast.rational <- function(x, to) UseMethod("vec_cast.rational")
-vec_cast.rational.integer <- function(x, to) rational(x, 1)
-vec_cast.rational.list <- function(x, to) rational(x$n, x$d)
-vec_cast.rational.rational <- function(x, to) x
+vec_cast.tuple <- function(x, to) UseMethod("vec_cast.tuple")
+vec_cast.tuple.list <- function(x, to) tuple(x$x, x$y)
+vec_cast.list.tuple <- function(x, to) vec_data(x)
+vec_cast.tuple.tuple <- function(x, to) x
+
+vec_grp_numeric.tuple <- function(generic, x, y) {
+  rec <- vec_recycle(x, y)
+  tuple(
+    vec_generic_call(generic, field(rec[[1]], "x"), field(rec[[2]], "x")),
+    vec_generic_call(generic, field(rec[[1]], "y"), field(rec[[2]], "y"))
+  )
+}
 
 # nocov end
