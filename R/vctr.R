@@ -114,7 +114,7 @@ type_sum.vctr <- function(x) {
 }
 
 stop_unimplemented <- function(x, method) {
-  msg <- glue::glue("`{method}(<{vec_ptype_full(x)}>)` not implemented")
+  msg <- glue::glue("`{method}.{class(x)[[1]]}()` not implemented")
   abort(
     "error_unimplemented",
     message = msg,
