@@ -147,6 +147,11 @@ rep.record <- function(x, ...) {
   record_reconstruct(out, x)
 }
 
+#' @export
+as.list.record <- function(x, ...) {
+  lapply(seq_along(x), function(i) x[[i]])
+}
+
 # Replacement -------------------------------------------------------------
 
 #' @export
@@ -261,8 +266,7 @@ vec_type2.tuple.tuple <- function(x, y) tuple()
 vec_type2.tuple.default <- function(x, y) stop_incompatible_type(x, y)
 
 vec_cast.tuple <- function(x, to) UseMethod("vec_cast.tuple")
-vec_cast.tuple.list <- function(x, to) tuple(x$x, x$y)
-vec_cast.list.tuple <- function(x, to) vec_data(x)
+vec_cast.tuple.list <- function(x, to) vec_list_cast(x, to)
 vec_cast.tuple.tuple <- function(x, to) x
 
 vec_grp_numeric.tuple <- function(generic, x, y) {

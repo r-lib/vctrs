@@ -39,11 +39,10 @@ test_that("can reconstruct record from list", {
 })
 
 test_that("default casts are implemented correctly", {
-  r <- new_record(list(x = integer(), y = numeric()))
+  r <- new_record(list(x = 1, y = 1))
 
   expect_error(vec_cast(1, r), error = "error_incompatible_cast")
   expect_equal(vec_cast(NULL, r), NULL)
-  expect_equal(vec_cast(list(r), r), r)
 })
 
 # invalid inputs ------------------------------------------------------------
@@ -113,6 +112,12 @@ test_that("subset assignment recycles", {
 
   x[] <- tuple(2, 2)
   expect_equal(x, tuple(c(2, 2), c(2, 2)))
+})
+
+test_that("can round trip through list", {
+  t <- tuple(1:2, 3:4)
+  l <- expect_equal(vec_cast(t, list()), list(tuple(1, 3), tuple(2, 4)))
+  expect_equal(vec_cast(l, t), t)
 })
 
 test_that("dangerous methods marked as unimplemented", {

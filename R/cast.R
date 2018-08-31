@@ -533,37 +533,3 @@ vec_cast.tbl_df.data.frame <- function(x, to) {
 vec_cast.tbl_df.default <- function(x, to) {
   stop_incompatible_cast(x, to)
 }
-
-# Helpers -----------------------------------------------------------------
-
-#' Cast a list to vector of specific type
-#'
-#' This is a function for developers to use when extending vctrs. It casts
-#' a list to a more specific vectoring type, keeping the length constant.
-#' It does this by discarding (with a warning), any elements after the 1.
-#' It is called from `vec_cast.XYZ.list()` methods to preserve symmetry with
-#' `vec_cast.list.XYZ()`.
-#'
-#' See `vignette("extending-vctrs")` for details.
-#'
-#' @param x A list
-#' @param to Type to coerce to
-#' @export
-#' @keywords internal
-vec_list_cast <- function(x, to) {
-  ns <- map_int(x, length)
-
-  lossy <- ns != 1
-  if (any(lossy)) {
-    warn_lossy_cast(x, to, locations = which(lossy))
-  }
-
-  n <- length(x)
-  out <- vec_na(to, n)
-
-  for (i in seq_len(n)) {
-    out[[i]] <- vec_cast(x[[i]][[1]], to)
-  }
-
-  shape_recycle(out, to)
-}
