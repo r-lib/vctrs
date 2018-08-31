@@ -3,13 +3,21 @@
 #include <stdlib.h> // for NULL
 #include <R_ext/Rdynload.h>
 
+/* FIXME:
+   Check these declarations against the C/Fortran source code.
+*/
+
 /* .Call calls */
-extern SEXP obj_get_(SEXP);
-extern SEXP obj_set_(SEXP, SEXP);
+extern SEXP vctrs_field_get(SEXP, SEXP);
+extern SEXP vctrs_field_set(SEXP, SEXP, SEXP);
+extern SEXP vctrs_fields(SEXP);
+extern SEXP vctrs_n_fields(SEXP);
 
 static const R_CallMethodDef CallEntries[] = {
-    {"obj_get_", (DL_FUNC) &obj_get_, 1},
-    {"obj_set_", (DL_FUNC) &obj_set_, 2},
+    {"vctrs_field_get", (DL_FUNC) &vctrs_field_get, 2},
+    {"vctrs_field_set", (DL_FUNC) &vctrs_field_set, 3},
+    {"vctrs_fields",    (DL_FUNC) &vctrs_fields,    1},
+    {"vctrs_n_fields",  (DL_FUNC) &vctrs_n_fields,  1},
     {NULL, NULL, 0}
 };
 

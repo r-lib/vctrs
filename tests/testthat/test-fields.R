@@ -1,0 +1,62 @@
+context("test-fields")
+
+test_that("n_fields captures number of fields", {
+  r <- new_record(list(x = 1, y = 2))
+  expect_equal(n_fields(r), 2)
+})
+
+
+# get ---------------------------------------------------------------------
+
+test_that("can extract valid field", {
+  r <- new_record(list(x = 1, y = 2))
+
+  expect_equal(field(r, "x"), 1)
+  expect_equal(field(r, 1L), 1)
+})
+
+test_that("invalid indices throw error", {
+  r <- new_record(list(x = 1, y = 2))
+
+  expect_error(field(r, "z"), "Invalid index")
+  expect_error(field(r, NA_character_), "Invalid index")
+  expect_error(field(r, ""), "Invalid index")
+  expect_error(field(r, letters), "Invalid index")
+
+  expect_error(field(r, 0L), "Invalid index")
+  expect_error(field(r, NA_integer_), "Invalid index")
+
+  expect_error(field(r, 1), "Invalid index")
+
+})
+
+test_that("corrupt record throws error", {
+  r <- new_record(list(x = 1, y = 2))
+
+  expect_error(field(1:10, 1L), "Corrupt record")
+  expect_error(field(list(), 1L), "Corrupt record")
+
+  expect_error(field(list(1), "x"), "Corrupt record")
+  expect_error(field(setNames(list(1, 1), "y"), "x"), "Corrupt record")
+})
+
+
+# set ---------------------------------------------------------------------
+
+test_that("field<- modifies a copy", {
+  r1 <- new_record(list(x = 1, y = 2))
+  r2 <- r1
+
+  field(r1, "x") <- 3
+  expect_equal(field(r1, "x"), 3)
+  expect_equal(field(r2, "x"), 1)
+})
+
+test_that("field<- checks inputs", {
+  x <- list()
+  expect_error(field(x, "x") <- 1, "Corrupt record")
+
+  r <- new_record(list(x = 1))
+  expect_error(field(r, "x") <- 1:3, "Invalid value")
+  expect_error(field(r, "x") <- environment(), "Invalid value")
+})

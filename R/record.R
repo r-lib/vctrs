@@ -50,32 +50,6 @@ check_fields <- function(fields) {
   invisible(fields)
 }
 
-#' Tools for accessing the fields of a record.
-#'
-#' A [record] behaves like a vector, so `length()`, `names()`, and `$` can
-#' not provide access to the fields of the underlying list. These helpers do:
-#' `fields()` is equivalent to `names()`; `n_fields()` is equivalent to
-#' `length()`; `field()` is equivalent to `$`.
-#'
-#' @param x A record
-#' @keywords internal
-#' @export
-fields <- function(x) {
-  attr(x, "names")
-}
-
-#' @export
-#' @rdname fields
-n_fields <- function(x) {
-  length(vec_data(x))
-}
-
-#' @export
-#' @rdname fields
-field <- function(x, i) {
-  .subset2(x, i)
-}
-
 #' @export
 length.record <- function(x) {
   length(field(x, 1L))
