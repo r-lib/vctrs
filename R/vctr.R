@@ -58,7 +58,7 @@ new_vctr <- function(.data, ..., class) {
     stop("`.data` must be a vector type", call. = FALSE)
   }
   if (!is_null(attributes(.data))) {
-    stop("`.data.` must not have attributes", call. = FALSE)
+    stop("`.data` must not have attributes", call. = FALSE)
   }
 
   structure(.data, ..., class = c(class, "vctr"))
@@ -279,7 +279,7 @@ stop_unsupported <- function(x, operation) {
   if (is.null(value)) {
     x
   } else {
-    stop_unsupported(x, "set names()")
+    stop_unsupported(x, "set names() of")
   }
 }
 
