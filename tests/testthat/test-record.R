@@ -84,3 +84,15 @@ test_that("subset assignment recycles", {
   x[] <- tuple(2, 2)
   expect_equal(x, tuple(c(2, 2), c(2, 2)))
 })
+
+test_that("dangerous methods marked as unimplemented", {
+  t <- tuple()
+
+  expect_error(mean(t), class = "error_unimplemented")
+  expect_error(median(t), class = "error_unimplemented")
+  expect_error(abs(t), class = "error_unimplemented")
+  expect_error(anyNA(t), class = "error_unimplemented")
+  expect_error(is.finite(t), class = "error_unimplemented")
+  expect_error(is.na(t), class = "error_unimplemented")
+  expect_error(is.nan(t), class = "error_unimplemented")
+})
