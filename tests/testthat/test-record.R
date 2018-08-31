@@ -16,6 +16,38 @@ test_that("can construct and access components", {
   expect_equal(field(r, "x"), 1)
 })
 
+
+# coercion ----------------------------------------------------------------
+
+test_that("default coercion works with list", {
+  r <- new_record(list(x = integer(), y = numeric()))
+
+  expect_equal(
+    vec_cast(NULL, r),
+    NULL
+  )
+
+  expect_equal(
+    vec_cast(list(x = 1L, y = 1), r),
+    new_record(list(x = 1L, y = 1))
+  )
+
+  expect_warning(
+    vec_cast(list(x = 1L, y = 1, z = 3), r),
+    class = "warn_lossy_cast"
+  )
+})
+
+test_that("invalid inputs give error", {
+  r <- new_record(list(x = integer(), y = numeric()))
+
+  expect_error(
+    vec_cast(list(x = 1L), r),
+    class = "error_incompatible_cast"
+  )
+
+})
+
 # invalid inputs ------------------------------------------------------------
 
 test_that("must be list of equal length vectors", {
