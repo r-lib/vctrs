@@ -102,6 +102,17 @@ print.vctr <- function(x, ...) {
   invisible(x)
 }
 
+# manually registered in zzz.R
+pillar_shaft.vctr <- function(x, ...) {
+  align <- if (is_character(x)) "left" else "right"
+  pillar::new_pillar_shaft_simple(format(x), align = align)
+}
+
+# manually registered in zzz.R
+type_sum.vctr <- function(x) {
+  vec_ptype_abbr(x)
+}
+
 stop_unimplemented <- function(x, method) {
   msg <- glue::glue("`{method}(<{vec_ptype_full(x)}>)` not implemented")
   abort(
@@ -115,6 +126,21 @@ stop_unimplemented <- function(x, method) {
 #' @export
 format.vctr <- function(x, ...) {
   stop_unimplemented(x, "format")
+}
+
+#' @export
+str.vctr <- function(object, ..., indent.str = "", width = getOption("width")) {
+  width <- width - nchar(indent.str) - 2
+  # Avoid spending too much time formatting elements that won't see
+  length <- ceiling(width / 2)
+  if (length(object) > length) {
+    x <- object[1:length]
+  } else {
+    x <- object
+  }
+
+  title <- glue::glue(" {vec_ptype_abbr(object)} [1:{length(object)}] ")
+  cat_line(inline_list(title, format(x), width = width))
 }
 
 # Subsetting --------------------------------------------------------------

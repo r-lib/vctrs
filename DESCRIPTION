@@ -24,6 +24,7 @@ Suggests:
     testthat,
     knitr,
     rmarkdown,
+    pillar,
     pkgdown
 Encoding: UTF-8
 Language: en-GB

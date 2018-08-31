@@ -86,21 +86,6 @@ names.record <- function(x) {
   NULL
 }
 
-#' @export
-str.record <- function(object, ..., indent.str = "", width = getOption("width")) {
-  width <- width - nchar(indent.str) - 2
-  # Avoid spending too much time formatting elements that won't see
-  length <- ceiling(width / 2)
-  if (length(object) > length) {
-    x <- object[1:length]
-  } else {
-    x <- object
-  }
-
-  title <- glue::glue(" {vec_ptype_abbr(object)} [1:{length(object)}] ")
-  cat_line(inline_list(title, format(x), width = width))
-}
-
 #' @method vec_cast record
 #' @export
 vec_cast.record <- function(x, to) UseMethod("vec_cast.record")
