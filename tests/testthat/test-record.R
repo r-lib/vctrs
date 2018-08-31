@@ -19,33 +19,31 @@ test_that("can construct and access components", {
 
 # coercion ----------------------------------------------------------------
 
-test_that("default coercion works with list", {
+test_that("can reconstruct record from list", {
   r <- new_record(list(x = integer(), y = numeric()))
 
   expect_equal(
-    vec_cast(NULL, r),
-    NULL
-  )
-
-  expect_equal(
-    vec_cast(list(x = 1L, y = 1), r),
+    record_reconstruct(list(x = 1L, y = 1), r),
     new_record(list(x = 1L, y = 1))
   )
 
   expect_warning(
-    vec_cast(list(x = 1L, y = 1, z = 3), r),
+    record_reconstruct(list(x = 1L, y = 1, z = 3), r),
     class = "warn_lossy_cast"
+  )
+
+  expect_error(
+    record_reconstruct(list(x = 1L), r),
+    class = "error_incompatible_cast"
   )
 })
 
-test_that("invalid inputs give error", {
+test_that("default casts are implemented correctly", {
   r <- new_record(list(x = integer(), y = numeric()))
 
-  expect_error(
-    vec_cast(list(x = 1L), r),
-    class = "error_incompatible_cast"
-  )
-
+  expect_error(vec_cast(1, r), error = "error_incompatible_cast")
+  expect_equal(vec_cast(NULL, r), NULL)
+  expect_equal(vec_cast(list(r), r), r)
 })
 
 # invalid inputs ------------------------------------------------------------

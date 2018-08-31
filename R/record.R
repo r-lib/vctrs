@@ -24,6 +24,32 @@ new_record <- function(fields, ..., class = character()) {
   structure(fields, ..., class = c(class, "record", "vctr"))
 }
 
+record_reconstruct <- function(x, to) {
+  # if not a record, need to check valid
+
+  if (!setequal(fields(x), fields(to))) {
+    diff <- set_partition(fields(x), fields(to))
+    if (length(diff$only_x) > 0) {
+      warn_lossy_cast(
+        x, to,
+        details = inline_list("Extra names: ", diff$only_x, quote = "`")
+      )
+    }
+
+    if (length(diff$only_y) > 0) {
+      stop_incompatible_cast(
+        x, to,
+        details = inline_list("Missing names: ", diff$only_y, quote = "`")
+      )
+    }
+  }
+
+  # check types
+
+  attributes(x) <- attributes(to)
+  x
+}
+
 check_fields <- function(fields) {
   if (!is.list(fields) || length(fields) == 0) {
     stop("`fields` must be a list of length 1 or greater", call. = FALSE)
@@ -86,27 +112,13 @@ vec_cast.record.NULL <- function(x, to) x
 #' @method vec_cast.record list
 #' @export
 vec_cast.record.list <- function(x, to) {
-  # if not a record, need to check valid
+  vec_list_cast(x, to)
+}
 
-  if (!setequal(fields(x), fields(to))) {
-    diff <- set_partition(fields(x), fields(to))
-    if (length(diff$only_x) > 0) {
-      warn_lossy_cast(
-        x, to,
-        details = inline_list("Extra names: ", diff$only_x, quote = "`")
-      )
-    }
-
-    if (length(diff$only_y) > 0) {
-      stop_incompatible_cast(
-        x, to,
-        details = inline_list("Missing names: ", diff$only_y, quote = "`")
-      )
-    }
-  }
-
-  attributes(x) <- attributes(to)
-  x
+#' @method vec_cast.record default
+#' @export
+vec_cast.record.default <- function(x, to) {
+  stop_incompatible_cast(x, to)
 }
 
 # Subsetting --------------------------------------------------------------
@@ -114,25 +126,25 @@ vec_cast.record.list <- function(x, to) {
 #' @export
 `[.record` <- function(x, i,...) {
   out <- lapply(vec_data(x), `[`, i, ...)
-  vec_cast(out, x)
+  record_reconstruct(out, x)
 }
 
 #' @export
 `[[.record` <- function(x, i, ...) {
   out <- lapply(vec_data(x), `[[`, i, ...)
-  vec_cast(out, x)
+  record_reconstruct(out, x)
 }
 
 #' @export
 rep.record <- function(x, ...) {
   out <- lapply(vec_data(x), rep, ...)
-  vec_cast(out, x)
+  record_reconstruct(out, x)
 }
 
 #' @export
 `length<-.record` <- function(x, value) {
   out <- lapply(vec_data(x), `length<-`, value)
-  vec_cast(out, x)
+  record_reconstruct(out, x)
 }
 
 # Replacement -------------------------------------------------------------
@@ -144,7 +156,7 @@ rep.record <- function(x, ...) {
     x[[i]] <- value
     x
   })
-  vec_cast(out, x)
+  record_reconstruct(out, x)
 }
 
 #' @export
@@ -163,7 +175,7 @@ rep.record <- function(x, ...) {
     }
   }
   out <- map2(vec_data(x), vec_data(value), replace)
-  vec_cast(out, x)
+  record_reconstruct(out, x)
 }
 
 
