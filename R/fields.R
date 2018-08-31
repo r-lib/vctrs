@@ -8,6 +8,14 @@
 #' @param x A record
 #' @keywords internal
 #' @export
+#' @examples
+#' x <- new_record(list(x = 1:3, y = 3:1, z = letters[1:3]))
+#' n_fields(x)
+#' fields(x)
+#'
+#' field(x, "y")
+#' field(x, "y") <- runif(3)
+#' field(x, "y")
 fields <- function(x) {
   .Call(vctrs_fields, x)
 }

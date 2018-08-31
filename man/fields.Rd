@@ -24,4 +24,13 @@ not provide access to the fields of the underlying list. These helpers do:
 \code{fields()} is equivalent to \code{names()}; \code{n_fields()} is equivalent to
 \code{length()}; \code{field()} is equivalent to \code{$}.
 }
+\examples{
+x <- new_record(list(x = 1:3, y = 3:1, z = letters[1:3]))
+n_fields(x)
+fields(x)
+
+field(x, "y")
+field(x, "y") <- runif(3)
+field(x, "y")
+}
 \keyword{internal}
