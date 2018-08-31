@@ -36,7 +36,7 @@
 #' `vec_cast.integer.double()` casts double to integers, in the same way
 #' that `as.integer.double()` would.
 #'
-#' See `vignette("extending-vctrs")` on how to extend to your own S3
+#' See `vignette("s3-vector")` on how to extend to your own S3
 #' vector classes.
 #'
 #' @param x Vector to cast.

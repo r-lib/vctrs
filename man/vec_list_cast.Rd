@@ -19,6 +19,6 @@ It is called from \code{vec_cast.XYZ.list()} methods to preserve symmetry with
 \code{vec_cast.list.XYZ()}.
 }
 \details{
-See \code{vignette("extending-vctrs")} for details.
+See \code{vignette("s3-vector")} for details.
 }
 \keyword{internal}

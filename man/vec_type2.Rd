@@ -72,7 +72,7 @@ which call e.g. \code{vec_type2.integer.double()}. \code{vec_type2.x.y()} must
 return the same value as \code{vec_type2.y.x()}; this is currently not enforced,
 only checked in unit tests.
 
-See \code{vignette("extending-vctrs")} on how to extend to your own S3
+See \code{vignette("s3-vector")} on how to extend to your own S3
 vector classes.
 }
 

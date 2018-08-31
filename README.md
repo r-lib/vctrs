@@ -16,7 +16,7 @@ functions that combine different types of input (e.g. `c()`, `ifelse()`,
 (e.g. logical, numeric, character, list), S3 vectors (e.g. factor,
 ordered, Date, POSIXct), and data frames; and can be extended to deal
 with S3 vectors defined in other packages, as described in
-`vignette("extending-vctrs")`.
+`vignette("s3-vectors")`.
 
 Understanding and extending vctrs requires some effort from developers,
 but it is our hope that the package will be invisible to most users.
@@ -134,7 +134,7 @@ automatic coercions, but it can still fail:
 
 ``` r
 vec_c(Sys.Date(), .ptype = factor())
-#> Error: Can't cast date to factor<5152a>
+#> Error: Can't cast date to factor<>
 ```
 
 ### What is a prototype?
@@ -174,7 +174,7 @@ vec_ptype(Sys.time())
 
 # difftimes display their units
 vec_ptype(as.difftime(10, units = "mins"))
-#> prototype: difftime<mins>
+#> prototype: time<mins>
 ```
 
 vctrs provides the `unknown()` class to represent vectors of unknown
@@ -212,7 +212,7 @@ vec_ptype(Sys.Date(), Sys.time())
 
 # no common type
 vec_ptype(factor(), Sys.Date())
-#> Error: No common type for factor<5152a> and date
+#> Error: No common type for factor<> and date
 ```
 
 `vec_cast()` is used for explicit casts: given a value and a class, it
@@ -228,7 +228,7 @@ vec_cast(c(1, 2), integer())
 
 # Cast loses information
 vec_cast(c(1.5, 2.5), integer())
-#> Warning: Lossy conversion from double to integer [Locations: 1, 2]
+#> Warning: Lossy cast
 #> [1] 1 2
 
 # Cast fails

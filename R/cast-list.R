@@ -6,7 +6,7 @@
 #' It is called from `vec_cast.XYZ.list()` methods to preserve symmetry with
 #' `vec_cast.list.XYZ()`.
 #'
-#' See `vignette("extending-vctrs")` for details.
+#' See `vignette("s3-vector")` for details.
 #'
 #' @param x A list
 #' @param to Type to coerce to

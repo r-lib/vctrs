@@ -23,7 +23,7 @@
 #' return the same value as `vec_type2.y.x()`; this is currently not enforced,
 #' only checked in unit tests.
 #'
-#' See `vignette("extending-vctrs")` on how to extend to your own S3
+#' See `vignette("s3-vector")` on how to extend to your own S3
 #' vector classes.
 #' @keywords internal
 #' @param x,y Either vector types; i.e.

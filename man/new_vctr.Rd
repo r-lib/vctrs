@@ -36,7 +36,7 @@ as the rest of the class put together!
 \item Next provide \code{\link[=vec_type2]{vec_type2()}} and \code{\link[=vec_cast]{vec_cast()}}. First focus on the
 casts between your class and its underlying the base type.
 Next think about base types that should be coercible or castable.
-See \code{vignette("extending-vctrs")} for details.
+See \code{vignette("s3-vector")} for details.
 \item If your function behaves similarly to numbers or booleans, or has
 specialised comparison methods, read \link{vec_grp} to learn about the vctrs
 group generics: these allow you to implement many methods at once.

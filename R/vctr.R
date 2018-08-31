@@ -22,7 +22,7 @@
 #' 1. Next provide [vec_type2()] and [vec_cast()]. First focus on the
 #'    casts between your class and its underlying the base type.
 #'    Next think about base types that should be coercible or castable.
-#'    See `vignette("extending-vctrs")` for details.
+#'    See `vignette("s3-vector")` for details.
 #'
 #' 1. If your function behaves similarly to numbers or booleans, or has
 #'    specialised comparison methods, read [vec_grp] to learn about the vctrs
