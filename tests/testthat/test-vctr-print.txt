@@ -2,3 +2,5 @@
 [1] xxx xxx xxx xxx
 
 <hidden[0]>
+
+ hidden [1:4] xxx, xxx, xxx, xxx

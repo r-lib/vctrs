@@ -121,6 +121,11 @@ vec_cast.record.default <- function(x, to) {
 }
 
 #' @export
+`$.record` <- function(x, i, ...) {
+  stop_unsupported(x, "subsetting with $")
+}
+
+#' @export
 rep.record <- function(x, ...) {
   out <- lapply(vec_data(x), rep, ...)
   record_reconstruct(out, x)
@@ -147,6 +152,11 @@ as.list.record <- function(x, ...) {
     x
   })
   record_reconstruct(out, x)
+}
+
+#' @export
+`$<-.record` <- function(x, i, value) {
+  stop_unsupported(x, "subset assignment with $")
 }
 
 #' @export

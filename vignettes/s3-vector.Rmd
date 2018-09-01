@@ -107,16 +107,6 @@ x[[1]]
 sqrt(x)
 ```
 
-Currently, vctrs do not support names:
-
-```{r, error = TRUE}
-new_percent(c(x = 2))
-
-x <- percent(c(x = 2))
-x
-names(x) <- "x"
-```
-
 ### User-friendly constructor
 
 Next, implement a user friendly constructor called `myclass()`. It should carefully check that the input is valid, providing human readable messages if it is not. The user-friendly constructor will typically use `vec_cast()` to helpfully coerce inputs to the correct type.

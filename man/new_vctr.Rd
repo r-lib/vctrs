@@ -5,7 +5,7 @@
 \alias{vctr}
 \title{vctr S3 class}
 \usage{
-new_vctr(.data, ..., class)
+new_vctr(.data, ..., class = character())
 }
 \arguments{
 \item{...}{Name-value pairs defining attributes}
@@ -54,8 +54,8 @@ Override these methods if any attributes depend on the data.
 \code{format()}.
 \item \code{as.data.frame.vctr()} uses a standard technique to wrap a vector
 in a data frame. You should never need to override this method.
-\item \code{names<-.vctr()}, \code{dims<-.vctr()}, and \code{dimnames<-.vctr()} all through
-errors as generally custom vector classes do not need names or dimensions.
+\item \code{dims<-.vctr()}, and \code{dimnames<-.vctr()} all throw errors as generally
+custom vector classes do not need to support dimensions.
 }
 }
 

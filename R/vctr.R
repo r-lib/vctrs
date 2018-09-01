@@ -44,8 +44,8 @@
 #' * `as.data.frame.vctr()` uses a standard technique to wrap a vector
 #'   in a data frame. You should never need to override this method.
 #'
-#' * `names<-.vctr()`, `dims<-.vctr()`, and `dimnames<-.vctr()` all through
-#'   errors as generally custom vector classes do not need names or dimensions.
+#' * `dims<-.vctr()`, and `dimnames<-.vctr()` all throw errors as generally
+#'   custom vector classes do not need to support dimensions.
 #'
 #' @param x Foundation of class. Must be a vector
 #' @param ... Name-value pairs defining attributes
@@ -53,15 +53,35 @@
 #' @export
 #' @keywords internal
 #' @aliases vctr
-new_vctr <- function(.data, ..., class) {
+new_vctr <- function(.data, ..., class = character()) {
   if (!is_vector(.data)) {
     stop("`.data` must be a vector type", call. = FALSE)
   }
-  if (!is_null(attributes(.data))) {
-    stop("`.data` must not have attributes", call. = FALSE)
-  }
+  check_attr(.data)
 
   structure(.data, ..., class = c(class, "vctr"))
+}
+
+check_attr <- function(.data) {
+  attr <- attributes(.data)
+  if (is.null(attr))
+    return()
+
+  if (!identical(names(attr), "names")) {
+    stop("`.data` must not have attributes apart from names", call. = FALSE)
+  }
+
+  if (!names_all_or_nothing(attr[[1]])) {
+    stop("If any elements of `.data` are named, all must be named", call. = FALSE)
+  }
+}
+
+names_all_or_nothing <- function(names) {
+  if (is.null(names)) {
+    TRUE
+  } else {
+    all(names != "" & !is.na(names))
+  }
 }
 
 #' @method vec_cast vctr
@@ -87,7 +107,11 @@ vec_cast.vctr.default <- function(x, to) {
     stop_incompatible_cast(x, to)
   }
 
-  attributes(x) <- attributes(to)
+  # Copy every attribute, preserving names
+  attr_to <- attributes(to)
+  attr_to[["names"]] <- names(x)
+  attributes(x) <- attr_to
+
   x
 }
 
@@ -97,7 +121,8 @@ vec_cast.vctr.default <- function(x, to) {
 print.vctr <- function(x, ...) {
   cat_line("<", vec_ptype_full(x), "[", length(x), "]>")
   if (length(x) > 0) {
-    print(format(x), quote = FALSE)
+    out <- stats::setNames(format(x), names(x))
+    print(out, quote = FALSE)
   }
   invisible(x)
 }
@@ -156,6 +181,11 @@ str.vctr <- function(object, ..., indent.str = "", width = getOption("width")) {
 }
 
 #' @export
+`$.vctr` <- function(x, i) {
+  vec_cast(NextMethod(), x)
+}
+
+#' @export
 rep.vctr <- function(x, ...) {
   vec_cast(NextMethod(), x)
 }
@@ -169,6 +199,16 @@ rep.vctr <- function(x, ...) {
 
 #' @export
 `[[<-.vctr` <- function(x, i, value) {
+  value <- vec_cast(value, x)
+  NextMethod()
+}
+
+#' @export
+`$<-.vctr` <- function(x, i, value) {
+  if (!is.list(x)) {
+    # Default behaviour is to cast LHS to a list
+    stop("$ operator is invalid for atomic vectors", call. = FALSE)
+  }
   value <- vec_cast(value, x)
   NextMethod()
 }
@@ -275,15 +315,6 @@ stop_unsupported <- function(x, operation) {
 }
 
 #' @export
-`names<-.vctr` <- function(x, value) {
-  if (is.null(value)) {
-    x
-  } else {
-    stop_unsupported(x, "set names() of")
-  }
-}
-
-#' @export
 `dim<-.vctr` <- function(x, value) {
   stop_unsupported(x, "set dim() on")
 }
@@ -299,19 +330,21 @@ stop_unsupported <- function(x, operation) {
 }
 
 #' @export
-`$.vctr` <- function(x, i) {
-  stop_unsupported(x, "use $ subsetting with")
-}
-
-#' @export
-`$<-.vctr` <- function(x, i, value) {
-  stop_unsupported(x, "use $ subsetting with")
-}
-
-#' @export
 `t.vctr` <- function(x) {
   stop_unsupported(x, "transpose")
 }
+
+#' @export
+`names<-.vctr` <- function(x, value) {
+  if (length(value) != 0 && length(value) != length(x)) {
+    stop("`names()` must be the same length as x", call. = FALSE)
+  }
+  if (!names_all_or_nothing(value)) {
+    stop("If any elements are named, all elements must be named", call. = FALSE)
+  }
+  NextMethod()
+}
+
 # Data frame --------------------------------------------------------------
 
 #' @export
@@ -342,7 +375,7 @@ as.data.frame.vctr <- function(x,
 # nocov start
 new_hidden <- function(x = double()) {
   stopifnot(is.numeric(x))
-  new_vctr(as.double(x), class = "hidden")
+  new_vctr(vec_cast(x, double()), class = "hidden")
 }
 format.hidden <- function(x, ...) rep("xxx", length(x))
 

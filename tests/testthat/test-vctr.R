@@ -9,8 +9,9 @@ test_that(".data must be a vector", {
   expect_error(new_vctr(mean), "vector type")
 })
 
-test_that(".data must not have attributes", {
+test_that(".data must not have attributes, apart from names", {
   expect_error(new_vctr(structure(1, a = 1)), "attributes")
+  expect_error(new_vctr(c(a = 1)), NA)
 })
 
 test_that("no default format method", {
@@ -34,6 +35,40 @@ test_that("cast to atomic vector of same type preserves attributes", {
   expect_error(vec_cast(new_date(), x1), class = "error_incompatible_cast")
 })
 
+
+# names -------------------------------------------------------------------
+
+test_that("all elements must be named if any are named", {
+  expect_error(new_vctr(setNames(1:2, c("a", NA))), "named")
+  expect_error(new_vctr(setNames(1:2, c("a", ""))), "named")
+})
+
+test_that("can not provide invalid names", {
+  x <- new_vctr(c(a = 1, b = 2))
+  expect_error(names(x) <- "x", "length")
+  expect_error(names(x) <- c("x", NA), "named")
+  expect_error(names(x) <- c("x", ""), "named")
+  expect_error(names(x) <- c("x", "y", "z"), "length")
+  expect_error(names(x) <- NULL, NA)
+})
+
+test_that("can use [ and [[ with names", {
+  x <- new_vctr(c(a = 1, b = 2))
+
+  expect_equal(x["b"], new_vctr(c(b = 2)))
+  expect_equal(x[["b"]], new_vctr(2)) # [[ drops names
+
+  x[["c"]] <- 3
+  expect_equal(x[["c"]], new_vctr(3))
+  x["d"] <- 4
+  expect_equal(x[["d"]], new_vctr(4))
+})
+
+test_that("$ inherits from underlying vector", {
+  x <- new_vctr(c(a = 1, b = 2))
+  expect_error(x$a, "atomic vectors")
+  expect_error(x$a <- 2, "atomic vectors")
+})
 
 # hidden class ------------------------------------------------------------
 # We can't construct classes in test because the methods are not found
@@ -111,7 +146,7 @@ test_that("base coercions default to vec_cast", {
   expect_equal(as.double(h), 1)
 })
 
-test_that("default print method is ok", {
+test_that("default print and str methods are useful", {
   h <- new_hidden(1:4)
 
   expect_known_output(
@@ -119,20 +154,30 @@ test_that("default print method is ok", {
       print(h)
       cat("\n")
       print(h[0])
+      cat("\n")
+      str(h)
     },
     file = "test-vctr-print.txt",
+  )
+})
+
+test_that("default print method shows names", {
+  h <- new_hidden(c(A = 1, B = 2, C = 3))
+
+  expect_known_output(
+    {
+      print(h)
+    },
+    file = "test-vctr-print-names.txt",
   )
 })
 
 test_that("can't touch protected attributes", {
   h <- new_hidden(1:4)
 
-  expect_error(names(h) <- "x", class = "error_unsupported")
   expect_error(dim(h) <- c(2, 2), class = "error_unsupported")
   expect_error(dimnames(h) <- list("x"), class = "error_unsupported")
   expect_error(levels(h) <- "x", class = "error_unsupported")
-  expect_error(h$x, class = "error_unsupported")
-  expect_error(h$x <- 2, class = "error_unsupported")
 
   # but it's ok to set names to NULL; this happens at least in vec_c
   # and maybe elsewhere. We may need to back off on this level of
