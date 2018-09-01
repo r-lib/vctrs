@@ -70,3 +70,12 @@ inline_list <- function(title, x, width = getOption("width"), quote = "") {
   )
   paste0(title, x)
 }
+
+# other than names
+has_attrs <- function(x) {
+  attr <- attributes(x)
+  if (is.null(attr))
+    return(FALSE)
+
+  !identical(names(attr), "names")
+}

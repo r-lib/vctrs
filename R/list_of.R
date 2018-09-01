@@ -51,11 +51,7 @@ new_list_of <- function(x, .ptype) {
   stopifnot(is.list(x))
   stopifnot(vec_length(.ptype) == 0)
 
-  structure(
-    x,
-    ptype = .ptype,
-    class = "list_of"
-  )
+  new_vctr(x, ptype = .ptype, class = "list_of")
 }
 
 #' @export
@@ -64,9 +60,44 @@ is_list_of <- function(x) {
   inherits(x, "list_of")
 }
 
-# registered .onLoad
-type_sum.list_of <- function(x) {
-  paste0("list<", tibble::type_sum(attr(x, "ptype")), ">")
+
+# Formatting --------------------------------------------------------------
+
+#' @export
+print.list_of <- function(x, ...) {
+  cat_line("<", vec_ptype_full(x), "[", length(x), "]>")
+  if (length(x) > 0) {
+    print(vec_data(x))
+  }
+  invisible(x)
+}
+
+#' @export
+str.list_of <- function(object, ..., nest.lev = 0, indent.str = "", width = getOption("width")) {
+  width <- width - nchar(indent.str) - 2
+  # Avoid spending too much time formatting elements that won't see
+  length <- ceiling(width / 2)
+  if (length(object) > length) {
+    x <- object[1:length]
+  } else {
+    x <- object
+  }
+
+  if (nest.lev != 0L) cat(" ")
+  cat_line(glue::glue("{vec_ptype_abbr(object)} [1:{length(object)}] "))
+  utils::str(
+    vec_data(x),
+    no.list = TRUE,
+    ...,
+    nest.lev = nest.lev + 1L,
+    indent.str = indent.str,
+    width = width
+  )
+}
+
+#' @export
+format.list_of <- function(x, ...) {
+  format.default(x)
 }
 
 #' @export
@@ -80,15 +111,11 @@ vec_ptype_full.list_of <- function(x) {
 }
 
 #' @export
-print.list_of <- function(x, ...) {
-  cat(format(vec_ptype(x)), "\n", sep = "")
-
-  # Expensive: need to find a better way
-  attr(x, "ptype") <- NULL
-  class(x) <- NULL
-
-  print(x)
+vec_ptype_abbr.list_of <- function(x) {
+  paste0("list<", vec_ptype_abbr(attr(x, "ptype")), ">")
 }
+
+# vctr methods ------------------------------------------------------------
 
 #' @export
 as.list.list_of <- function(x, ...) {
@@ -98,26 +125,24 @@ as.list.list_of <- function(x, ...) {
 }
 
 #' @export
-`[.list_of` <- function(x, ...) {
-  new_list_of(NextMethod(), attr(x, "ptype"))
-}
-
-#' @export
-`[<-.list_of` <- function(x, i, value) {
-  value <- map(value, vec_cast, attr(x, "ptype"))
-  NextMethod()
+`[[.list_of` <- function(x, i, ...) {
+  .subset2(x, i)
 }
 
 #' @export
 `[[<-.list_of` <- function(x, i, value) {
-  value <- vec_cast(value, attr(x, "ptype"))
-  NextMethod()
+  # TODO: replace with vctr_field_set equivalent
+  out <- vec_data(x)
+  out[[i]] <- vec_data(vec_cast(list(value), x))[[1]]
+  vec_cast(out, x)
 }
 
 #' @export
 `$<-.list_of` <- function(x, i, value) {
-  value <- vec_cast(value, attr(x, "ptype"))
-  NextMethod()
+  # TODO: replace with vctr_field_set equivalent
+  out <- vec_data(x)
+  out[[i]] <- vec_data(vec_cast(list(value), x))[[1]]
+  vec_cast(out, x)
 }
 
 # Type system -------------------------------------------------------------

@@ -13,7 +13,7 @@ vec_data <- function(x) {
   if (inherits(x, "record")) {
     attributes(x) <- list(names = fields(x))
   } else {
-    attributes(x) <- NULL
+    attributes(x) <- list(names = names(x))
   }
 
   x

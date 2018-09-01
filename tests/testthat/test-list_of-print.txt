@@ -1,4 +1,4 @@
-list_of<double>
+<list_of<double>[2]>
 [[1]]
 [1] 1
 
@@ -7,7 +7,7 @@ list_of<double>
 
 
 # A tibble: 2 x 1
-  x          
+            x
   <list<dbl>>
-1 1          
-2 2, 3       
+1           1
+2        2, 3

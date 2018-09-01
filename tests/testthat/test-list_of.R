@@ -43,6 +43,18 @@ test_that("print method gives human friendly output", {
   )
 })
 
+test_that("str method is reasonably correct", {
+  x <- list_of(1, 2:3)
+
+  expect_known_output({
+      str(x)
+      cat("\n")
+      str(list(list(x, y = 2:1)))
+    },
+    file = test_path("test-list_of-str.txt")
+  )
+})
+
 # Subsetting --------------------------------------------------------------
 
 test_that("[ preserves type", {
