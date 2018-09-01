@@ -73,25 +73,17 @@ print.list_of <- function(x, ...) {
 }
 
 #' @export
-str.list_of <- function(object, ..., nest.lev = 0, indent.str = "", width = getOption("width")) {
-  width <- width - nchar(indent.str) - 2
-  # Avoid spending too much time formatting elements that won't see
-  length <- ceiling(width / 2)
-  if (length(object) > length) {
-    x <- object[1:length]
-  } else {
-    x <- object
-  }
-
-  if (nest.lev != 0L) cat(" ")
+str.list_of <- function(object, ..., indent.str = "", nest.lev = 0) {
+  if (nest.lev != 0L)
+    cat(" ")
   cat_line(glue::glue("{vec_ptype_abbr(object)} [1:{length(object)}] "))
+
   utils::str(
-    vec_data(x),
+    vec_data(object),
     no.list = TRUE,
     ...,
     nest.lev = nest.lev + 1L,
-    indent.str = indent.str,
-    width = width
+    indent.str = indent.str
   )
 }
 
