@@ -22,7 +22,13 @@ library(vctrs)
 
 ## My first class: `percent()`
 
-We'll first work through the simplest possible class: one that just changes how the output is printed. The following sections will show more complicated examples once you have this under your belt.
+In this section, I'll show you how to make a "percent" class, i.e. a double vector that is multiplied by 100 and suffixed with `%` when printed. This is a good place to start because it's the simplest possible S3 class; the only attribute used is `class`.
+
+```{r, eval = FALSE}
+percent(c(0, 0.5, 1))
+#> <percent[3]>
+#> [1]   0%  50% 100%
+```
 
 ### Low-level constructor
 
@@ -39,6 +45,8 @@ new_percent <- function(x) {
 x <- new_percent(c(seq(0, 1, length = 4), NA))
 ```
 
+### Your first method: `format()`
+
 We can't yet look at this object:
 
 ```{r, error = TRUE}
@@ -47,20 +55,15 @@ x
 str(x)
 ```
 
-### Your first method: `format()`
-
-To fix this, provide a method for `format()`:
+Because we need to provide a `format()` method. This method should return a character vector the same length as `x`. The easiest way to do this is to rely on one of R's low-level formatting functions like `formatC()`:
 
 ```{r}
 format.percent <- function(x, ...) {
-  out <- format.default(signif(unclass(x) * 100, 3))
-  out[is.na(x)] <- NA
+  out <- formatC(signif(x * 100, 3))
   out[!is.na(x)] <- paste0(out[!is.na(x)], "%")
   out
 }
 ```
-
-NB: by default, `format()` will convert `NA` to `"NA"` (i.e. the string containing the letters "N" and "A"). If you preserve it as an `NA`, you will get better default formatting when printing.
 
 ```{r, include = FALSE}
 # As of R 3.5, print.vctr can not find format.percent since it's not in
@@ -72,13 +75,13 @@ vctrs:::register_s3_method("base", "format", "percent")
 x
 ```
 
-The format method is also used by tibbles and data frames:
+The format method is also used by data frames, tibbles, and `str()`:
 
 ```{r}
 data.frame(x)
 ```
 
-For optimal tibble display, it's a good idea to define an abbreviated name for the type. This is used in tibbles and `str()`:
+For optimal display, I recommend also defining an abbreviated type name. This is used in tibbles and `str()`:
 
 ```{r}
 vec_ptype_abbr.percent <- function(x) {
