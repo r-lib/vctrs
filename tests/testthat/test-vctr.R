@@ -65,6 +65,10 @@ test_that("can use [ and [[ with names", {
 })
 
 test_that("$ inherits from underlying vector", {
+  # Seems to be some bug in R 3.1 where NextMethod() called from $.vctr
+  # causes an error "invalid subscript type 'promise'"
+  skip_if_not(getRversion() >= "3.2")
+
   x <- new_vctr(c(a = 1, b = 2))
   expect_error(x$a, "atomic vectors")
   expect_error(x$a <- 2, "atomic vectors")
