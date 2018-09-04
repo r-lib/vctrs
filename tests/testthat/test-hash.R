@@ -34,3 +34,10 @@ test_that("list hashes to values of individual values", {
   expect_equal(x[[1]], hash_vector(1:3))
   expect_equal(x[[2]], hash_vector(letters))
 })
+
+test_that("hash of data frame works down rows", {
+  df <- data.frame(x = 1:3, y = 1:3)
+  x <- hash(df)
+  expect_length(x, 3)
+  expect_equal(x[[1]], hash_vector(1:2))
+})

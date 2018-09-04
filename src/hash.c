@@ -5,6 +5,26 @@
 #include <stdint.h>
 #include <stdbool.h>
 
+bool is_data_frame(SEXP x) {
+  return TYPEOF(x) == VECSXP && Rf_inherits(x, "data.frame");
+}
+
+R_len_t vec_length(SEXP x) {
+  if (!is_data_frame(x)) {
+    return Rf_length(x);
+  }
+
+  // Automatically generates integer vector of correct length
+  SEXP rn = Rf_getAttrib(x, R_RowNamesSymbol);
+  switch(TYPEOF(rn)) {
+  case INTSXP:
+  case STRSXP:
+    return Rf_length(rn);
+  default:
+    Rf_errorcall(R_NilValue, "Corrupt data frame: invalid row names");
+  }
+}
+
 // boost::hash_combine from https://stackoverflow.com/questions/35985960
 int32_t hash_combine(int x, int y) {
   return x ^ y + 0x9e3779b9 + (x << 6) + (x >> 2);
@@ -28,6 +48,7 @@ int32_t hash_int64(int64_t x) {
 }
 
 int32_t hash_vector(SEXP x);
+int32_t hash_scalar(SEXP x, R_len_t i);
 
 int32_t hash_scalar(SEXP x, R_len_t i) {
   switch(TYPEOF(x)) {
@@ -50,7 +71,18 @@ int32_t hash_scalar(SEXP x, R_len_t i) {
     return hash_int64((intptr_t) STRING_ELT(x, i));
   }
   case VECSXP: {
-    return hash_vector(VECTOR_ELT(x, i));
+    if (is_data_frame(x)) {
+      uint32_t hash = 0;
+
+      int p = Rf_length(x);
+      for (int j = 0; j < p; ++j) {
+        SEXP col = VECTOR_ELT(x, j);
+        hash = hash_combine(hash, hash_scalar(col, i));
+      }
+      return hash;
+    } else {
+      return hash_vector(VECTOR_ELT(x, i));
+    }
   }
 
   default:
@@ -59,7 +91,7 @@ int32_t hash_scalar(SEXP x, R_len_t i) {
 }
 
 int32_t hash_vector(SEXP x) {
-  R_len_t n = Rf_length(x);
+  R_len_t n = vec_length(x);
   int32_t hash = 0;
 
   for (R_len_t i = 0; i < n; ++i) {
@@ -72,7 +104,7 @@ int32_t hash_vector(SEXP x) {
 // R interface -----------------------------------------------------------------
 
 SEXP vctrs_hash(SEXP x) {
-  R_len_t n = Rf_length(x);
+  R_len_t n = vec_length(x);
   SEXP out = PROTECT(Rf_allocVector(INTSXP, n));
 
   int32_t* pOut = INTEGER(out);
