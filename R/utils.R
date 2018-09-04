@@ -38,7 +38,7 @@ outer_names <- function(outer, names, n) {
   }
 }
 
-hash <- function(x, length = 5) {
+hash_label <- function(x, length = 5) {
   if (length(x) == 0) {
     ""
   } else {

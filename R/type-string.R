@@ -112,12 +112,12 @@ vec_ptype_abbr.factor <- function(x) {
 
 #' @export
 vec_ptype_full.ordered <- function(x) {
-  paste0("ordered<", hash(levels(x)), ">")
+  paste0("ordered<", hash_label(levels(x)), ">")
 }
 
 #' @export
 vec_ptype_full.factor <- function(x) {
-  paste0("factor<", hash(levels(x)), ">")
+  paste0("factor<", hash_label(levels(x)), ">")
 }
 
 # Data frame --------------------------------------------------------------
