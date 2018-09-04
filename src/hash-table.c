@@ -82,6 +82,32 @@ SEXP vctrs_duplicated(SEXP x) {
   return out;
 }
 
+SEXP vctrs_id(SEXP x) {
+  R_len_t size = vec_length(x);
+  SEXP key = PROTECT(Rf_allocVector(INTSXP, size));
+  int* pKey = INTEGER(key);
+  for (R_len_t i = 0; i < size; ++i) {
+    pKey[i] = -1;
+  }
+
+  R_len_t n = vec_length(x);
+  SEXP out = PROTECT(Rf_allocVector(INTSXP, size));
+  int* pOut = INTEGER(out);
+
+  for (int i = 0; i < n; ++i) {
+    uint32_t loc = hash_table_find(key, size, x, i);
+
+    if (pKey[loc] == -1) {
+      pKey[loc] = i;
+    }
+    pOut[i] = pKey[loc] + 1;
+  }
+
+  UNPROTECT(2);
+  return out;
+}
+
+
 SEXP vctrs_count(SEXP x) {
   R_len_t size = vec_length(x);
   SEXP key = PROTECT(Rf_allocVector(INTSXP, size));
