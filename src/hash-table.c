@@ -52,6 +52,9 @@ uint32_t hash_table_find(SEXP key, R_len_t n, SEXP x, R_len_t i) {
   Rf_errorcall(R_NilValue, "Hash table is full!");
 }
 
+
+// R interface -----------------------------------------------------------------
+
 SEXP vctrs_duplicated(SEXP x) {
   R_len_t size = vec_length(x);
   SEXP key = PROTECT(Rf_allocVector(INTSXP, size));
@@ -79,5 +82,54 @@ SEXP vctrs_duplicated(SEXP x) {
   return out;
 }
 
-// R interface -----------------------------------------------------------------
+SEXP vctrs_count(SEXP x) {
+  R_len_t size = vec_length(x);
+  SEXP key = PROTECT(Rf_allocVector(INTSXP, size));
+  int* pKey = INTEGER(key);
+  for (R_len_t k = 0; k < size; ++k) {
+    pKey[k] = -1;
+  }
+
+  R_len_t n = vec_length(x);
+  SEXP val = PROTECT(Rf_allocVector(INTSXP, size));
+  int* pVal = INTEGER(val);
+
+  R_len_t n_unique = 0;
+
+  for (int i = 0; i < n; ++i) {
+    int32_t k = hash_table_find(key, size, x, i);
+
+    if (pKey[k] == -1) {
+      pKey[k] = i;
+      pVal[k] = 0;
+      n_unique++;
+    }
+    pVal[k]++;
+  }
+
+  SEXP out_idx = PROTECT(Rf_allocVector(INTSXP, n_unique));
+  SEXP out_val = PROTECT(Rf_allocVector(INTSXP, n_unique));
+  int* p_out_idx = INTEGER(out_idx);
+  int* p_out_val = INTEGER(out_val);
+
+  int i = 0;
+  for (int k = 0; k < size; ++k) {
+    if (pKey[k] == -1)
+      continue;
+    p_out_idx[i] = pKey[k] + 1;
+    p_out_val[i] = pVal[k];
+    i++;
+  }
+
+  SEXP out = PROTECT(Rf_allocVector(VECSXP, 2));
+  SET_VECTOR_ELT(out, 0, out_idx);
+  SET_VECTOR_ELT(out, 1, out_val);
+  SEXP names = PROTECT(Rf_allocVector(STRSXP, 2));
+  SET_STRING_ELT(names, 0, Rf_mkChar("idx"));
+  SET_STRING_ELT(names, 1, Rf_mkChar("count"));
+  Rf_setAttrib(out, R_NamesSymbol, names);
+
+  UNPROTECT(6);
+  return out;
+}
 
