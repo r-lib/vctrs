@@ -22,6 +22,11 @@ int32_t hash_double(double x) {
   return value.i[0] ^ value.i[1];
 }
 
+// https://github.com/attractivechaos/klib/blob/master/khash.h#L385
+int32_t hash_int64(int64_t x) {
+  return x >> 33 ^ x ^ x << 11;
+}
+
 int32_t hash_vector(SEXP x);
 
 int32_t hash_scalar(SEXP x, R_len_t i) {
@@ -42,9 +47,7 @@ int32_t hash_scalar(SEXP x, R_len_t i) {
   }
   case STRSXP: {
     // currently assuming 64-bit pointer size
-    // https://github.com/attractivechaos/klib/blob/master/khash.h#L385
-    intptr_t ptr = (intptr_t) STRING_ELT(x, i);
-    return (ptr) >> 33 ^ (ptr) ^ (ptr) << 11;
+    return hash_int64((intptr_t) STRING_ELT(x, i));
   }
   case VECSXP: {
     return hash_vector(VECTOR_ELT(x, i));
