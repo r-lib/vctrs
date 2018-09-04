@@ -2,8 +2,8 @@
 #include <R.h>
 #include <Rinternals.h>
 
-#include <stdint.h>
 #include <stdbool.h>
+#include "hash.h"
 
 bool is_data_frame(SEXP x) {
   return TYPEOF(x) == VECSXP && Rf_inherits(x, "data.frame");
@@ -46,9 +46,6 @@ int32_t hash_double(double x) {
 int32_t hash_int64(int64_t x) {
   return x >> 33 ^ x ^ x << 11;
 }
-
-int32_t hash_vector(SEXP x);
-int32_t hash_scalar(SEXP x, R_len_t i);
 
 int32_t hash_scalar(SEXP x, R_len_t i) {
   switch(TYPEOF(x)) {

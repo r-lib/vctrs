@@ -38,14 +38,6 @@ outer_names <- function(outer, names, n) {
   }
 }
 
-hash_label <- function(x, length = 5) {
-  if (length(x) == 0) {
-    ""
-  } else {
-    substr(digest::digest(x), 1, length)
-  }
-}
-
 cat_line <- function(...) {
   cat(..., "\n", sep = "")
 }
