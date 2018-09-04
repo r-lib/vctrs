@@ -22,7 +22,9 @@ int32_t hash_double(double x) {
   return value.i[0] ^ value.i[1];
 }
 
-int32_t vctrs_hash_scalar(SEXP x, R_len_t i) {
+int32_t hash_vector(SEXP x);
+
+int32_t hash_scalar(SEXP x, R_len_t i) {
   switch(TYPEOF(x)) {
   case LGLSXP:
     return LOGICAL(x)[i];
@@ -44,21 +46,41 @@ int32_t vctrs_hash_scalar(SEXP x, R_len_t i) {
     intptr_t ptr = (intptr_t) STRING_ELT(x, i);
     return (ptr) >> 33 ^ (ptr) ^ (ptr) << 11;
   }
+  case VECSXP: {
+    return hash_vector(VECTOR_ELT(x, i));
+  }
 
   default:
     Rf_errorcall(R_NilValue, "Unsupported type %s", Rf_type2char(TYPEOF(x)));
   }
 }
 
+int32_t hash_vector(SEXP x) {
+  R_len_t n = Rf_length(x);
+  int32_t hash = 0;
+
+  for (R_len_t i = 0; i < n; ++i) {
+    hash = hash_combine(hash, hash_scalar(x, i));
+  }
+
+  return hash;
+}
+
+// R interface -----------------------------------------------------------------
+
 SEXP vctrs_hash(SEXP x) {
-  int n = Rf_length(x);
+  R_len_t n = Rf_length(x);
   SEXP out = PROTECT(Rf_allocVector(INTSXP, n));
 
   int32_t* pOut = INTEGER(out);
-  for (int i = 0; i < n; ++i) {
-    pOut[i] = vctrs_hash_scalar(x, i);
+  for (R_len_t i = 0; i < n; ++i) {
+    pOut[i] = hash_scalar(x, i);
   }
 
   UNPROTECT(1);
   return out;
+}
+
+SEXP vctrs_hash_vector(SEXP x) {
+  return Rf_ScalarInteger(hash_vector(x));
 }
