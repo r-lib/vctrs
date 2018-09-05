@@ -16,10 +16,7 @@ hash_label <- function(x, length = 5) {
   }
 }
 
-equal <- function(x, y) {
-  ptype <- vec_ptype(x, y)[[1]]
-  x <- vec_cast(x, ptype)
-  y <- vec_cast(y, ptype)
-
-  .Call(vctrs_equal, x, y)
+equal <- function(x, y, .ptype = NULL) {
+  v <- vec_coerce(x = x, y = y, .ptype = .ptype)
+  .Call(vctrs_equal, v$x, v$y)
 }

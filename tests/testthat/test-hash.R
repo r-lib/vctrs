@@ -58,7 +58,7 @@ test_that("correct behaviour for basic vectors", {
 })
 
 test_that("NAs are equal", {
-  expect_true(equal(NA, NA))
+  expect_true(equal(NA, NA, .ptype = logical()))
   expect_true(equal(NA_integer_, NA_integer_))
   expect_true(equal(NA_real_, NA_real_))
   expect_true(equal(NA_character_, NA_character_))

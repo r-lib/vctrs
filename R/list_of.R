@@ -122,6 +122,11 @@ as.list.list_of <- function(x, ...) {
 }
 
 #' @export
+`$.list_of` <- function(x, i, ...) {
+  .subset2(x, i)
+}
+
+#' @export
 `[[<-.list_of` <- function(x, i, value) {
   # TODO: replace with vctr_field_set equivalent
   out <- vec_data(x)
