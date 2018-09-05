@@ -5,6 +5,8 @@
 #include <stdbool.h>
 #include "hash.h"
 
+#define EMPTY -1
+
 bool equal_scalar(SEXP x, int i, SEXP y, int j) {
   if (TYPEOF(x) != TYPEOF(y))
     return false;
@@ -43,20 +45,26 @@ int32_t ceil2(int32_t x) {
   return x;
 }
 
-// Hashtable object ------------------------------------------------------------
+// Dictonary object ------------------------------------------------------------
 
-struct HASHTABLE {
-  SEXP x;
+// The dictionary structure is a little peculiar since R has no notion of
+// a scalar, so the `key`s are indexes into vector `x`. This means we can
+// only store values from a single vector, but we can still lookup using
+// another vector, provided that they're of the same type.
+
+struct dictionary {
+  SEXP x;      // must be a vector
   SEXP key;    // INTSXP
   int* p_key;
   SEXP val;
   uint32_t size;
   uint32_t used;
 };
+typedef struct dictionary dictionary;
 
-// Caller is responsible for PROTECTing x; and for calling hash_table_term
+// Caller is responsible for PROTECTing x; and for calling dict_term
 // Use val_t = NILSXP if need set-like behaviour, rather than dictionary
-void hash_table_init(struct HASHTABLE* d, SEXP x, SEXPTYPE val_t) {
+void dict_init(dictionary* d, SEXP x, SEXPTYPE val_t) {
   d->x = x;
 
   // round up to power of 2
@@ -66,7 +74,7 @@ void hash_table_init(struct HASHTABLE* d, SEXP x, SEXPTYPE val_t) {
   d->key = PROTECT(Rf_allocVector(INTSXP, size));
   d->p_key = INTEGER(d->key);
   for (R_len_t i = 0; i < size; ++i) {
-    d->p_key[i] = -1;
+    d->p_key[i] = EMPTY;
   }
 
   if (val_t == NILSXP) {
@@ -79,7 +87,7 @@ void hash_table_init(struct HASHTABLE* d, SEXP x, SEXPTYPE val_t) {
   d->used = 0;
 }
 
-void hash_table_term(struct HASHTABLE* d) {
+void dict_term(dictionary* d) {
   if (TYPEOF(d->val) == NILSXP) {
     UNPROTECT(1);
   } else {
@@ -87,7 +95,7 @@ void hash_table_term(struct HASHTABLE* d) {
   }
 }
 
-SEXP hash_table_contents_int(struct HASHTABLE* d) {
+SEXP dict_contents_int(dictionary* d) {
   SEXP key = PROTECT(Rf_allocVector(INTSXP, d->used));
   SEXP val = PROTECT(Rf_allocVector(INTSXP, d->used));
   int* p_out_key = INTEGER(key);
@@ -97,7 +105,7 @@ SEXP hash_table_contents_int(struct HASHTABLE* d) {
 
   int i = 0;
   for (int k = 0; k < d->size; ++k) {
-    if (d->p_key[k] == -1)
+    if (d->p_key[k] == EMPTY)
       continue;
 
     p_out_key[i] = d->p_key[k] + 1;
@@ -117,8 +125,8 @@ SEXP hash_table_contents_int(struct HASHTABLE* d) {
   return out;
 }
 
-uint32_t hash_table_find(struct HASHTABLE* d, SEXP x, R_len_t i) {
-  uint32_t hv = hash_scalar(x, i);
+uint32_t dict_find(dictionary* d, SEXP y, R_len_t i) {
+  uint32_t hv = hash_scalar(y, i);
 
   // quadratic probing: will try every slot if d->size is power of 2
   // http://research.cs.vt.edu/AVresearch/hashing/quadratic.php
@@ -128,17 +136,17 @@ uint32_t hash_table_find(struct HASHTABLE* d, SEXP x, R_len_t i) {
       break;
 
     R_len_t idx = d->p_key[probe];
-    if (idx == -1) // not used
+    if (idx == EMPTY) // not used
       return probe;
 
-    if (equal_scalar(d->x, idx, x, i)) // same value
+    if (equal_scalar(d->x, idx, y, i)) // same value
       return probe;
   }
 
-  Rf_errorcall(R_NilValue, "Hash table is full!");
+  Rf_errorcall(R_NilValue, "Dictionary is full!");
 }
 
-void hash_table_put(struct HASHTABLE* d, uint32_t k, R_len_t i) {
+void dict_put(dictionary* d, uint32_t k, R_len_t i) {
   d->p_key[k] = i;
   d->used++;
 }
@@ -146,69 +154,69 @@ void hash_table_put(struct HASHTABLE* d, uint32_t k, R_len_t i) {
 // R interface -----------------------------------------------------------------
 
 SEXP vctrs_duplicated(SEXP x) {
-  struct HASHTABLE d;
-  hash_table_init(&d, x, NILSXP);
+  dictionary d;
+  dict_init(&d, x, NILSXP);
 
   R_len_t n = vec_length(x);
   SEXP out = PROTECT(Rf_allocVector(LGLSXP, n));
-  int* pOut = LOGICAL(out);
+  int* p_out = LOGICAL(out);
 
   for (int i = 0; i < n; ++i) {
-    uint32_t k = hash_table_find(&d, x, i);
+    uint32_t k = dict_find(&d, x, i);
 
-    if (d.p_key[k] == -1) {
-      hash_table_put(&d, k, i);
-      pOut[i] = false;
+    if (d.p_key[k] == EMPTY) {
+      dict_put(&d, k, i);
+      p_out[i] = false;
     } else {
-      pOut[i] = true;
+      p_out[i] = true;
     }
   }
 
-  hash_table_term(&d);
+  dict_term(&d);
   UNPROTECT(1);
   return out;
 }
 
 SEXP vctrs_id(SEXP x) {
-  struct HASHTABLE d;
-  hash_table_init(&d, x, NILSXP);
+  dictionary d;
+  dict_init(&d, x, NILSXP);
 
   R_len_t n = vec_length(x);
   SEXP out = PROTECT(Rf_allocVector(INTSXP, n));
-  int* pOut = INTEGER(out);
+  int* p_out = INTEGER(out);
 
   for (int i = 0; i < n; ++i) {
-    uint32_t k = hash_table_find(&d, x, i);
+    uint32_t k = dict_find(&d, x, i);
 
-    if (d.p_key[k] == -1) {
-      hash_table_put(&d, k, i);
+    if (d.p_key[k] == EMPTY) {
+      dict_put(&d, k, i);
     }
-    pOut[i] = d.p_key[k] + 1;
+    p_out[i] = d.p_key[k] + 1;
   }
 
-  hash_table_term(&d);
+  dict_term(&d);
   UNPROTECT(1);
   return out;
 }
 
 SEXP vctrs_count(SEXP x) {
-  struct HASHTABLE d;
-  hash_table_init(&d, x, INTSXP);
+  dictionary d;
+  dict_init(&d, x, INTSXP);
   int* p_val = INTEGER(d.val);
 
   R_len_t n = Rf_length(x);
   for (int i = 0; i < n; ++i) {
-    int32_t k = hash_table_find(&d, x, i);
+    int32_t k = dict_find(&d, x, i);
 
-    if (d.p_key[k] == -1) {
-      hash_table_put(&d, k, i);
+    if (d.p_key[k] == EMPTY) {
+      dict_put(&d, k, i);
       p_val[k] = 0;
     }
     p_val[k]++;
   }
 
-  SEXP out = PROTECT(hash_table_contents_int(&d));
-  hash_table_term(&d);
+  SEXP out = PROTECT(dict_contents_int(&d));
+  dict_term(&d);
   UNPROTECT(1);
   return out;
 }
