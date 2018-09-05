@@ -27,6 +27,9 @@ vec_count <- function(x, order = TRUE) {
   if (order) {
     df <- df[order(kv$key), , drop = FALSE]
     rownames(df) <- NULL
+    if (is.data.frame(df$key)) {
+      rownames(df$key) <- NULL
+    }
   }
 
   df
