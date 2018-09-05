@@ -3,6 +3,7 @@
 #include <Rinternals.h>
 
 #include <stdbool.h>
+#include <stdio.h>
 #include "hash.h"
 
 #define EMPTY -1
@@ -30,6 +31,8 @@ int32_t ceil2(int32_t x) {
 struct dictionary {
   SEXP x;
   int32_t* key;
+  SEXP key_s;
+  int key_protect;
   uint32_t size;
   uint32_t used;
 };
@@ -46,13 +49,17 @@ void dict_init(dictionary* d, SEXP x) {
   R_len_t size = ceil2(vec_length(x) / 0.77);
   // Rprintf("size: %i\n", size);
 
-  d->key = (int32_t*) R_alloc(size, sizeof(int32_t));
-  for (R_len_t i = 0; i < size; ++i) {
-    d->key[i] = EMPTY;
-  }
+  d->key_s = Rf_allocVector(INTSXP, size);
+  PROTECT_WITH_INDEX(d->key_s, &d->key_protect);
+  d->key = INTEGER(d->key_s);
+  memset(d->key, -1, size * sizeof(int));
 
   d->size = size;
   d->used = 0;
+}
+
+void dict_free(dictionary* d) {
+  UNPROTECT(1);
 }
 
 uint32_t dict_find(dictionary* d, SEXP y, R_len_t i) {
@@ -105,6 +112,7 @@ SEXP vctrs_duplicated(SEXP x) {
   }
 
   UNPROTECT(1);
+  dict_free(&d);
   return out;
 }
 
@@ -112,6 +120,7 @@ SEXP vctrs_duplicated_any(SEXP x) {
   dictionary d;
   dict_init(&d, x);
 
+  bool out = false;
   R_len_t n = vec_length(x);
 
   for (int i = 0; i < n; ++i) {
@@ -120,11 +129,13 @@ SEXP vctrs_duplicated_any(SEXP x) {
     if (d.key[k] == EMPTY) {
       dict_put(&d, k, i);
     } else {
-      return Rf_ScalarLogical(true);
+      out = true;
+      break;
     }
   }
 
-  return Rf_ScalarLogical(false);
+  dict_free(&d);
+  return Rf_ScalarLogical(out);
 }
 
 SEXP vctrs_n_distinct(SEXP x) {
@@ -139,6 +150,7 @@ SEXP vctrs_n_distinct(SEXP x) {
       dict_put(&d, k, i);
   }
 
+  dict_free(&d);
   return Rf_ScalarInteger(d.used);
 }
 
@@ -160,6 +172,7 @@ SEXP vctrs_id(SEXP x) {
   }
 
   UNPROTECT(1);
+  dict_free(&d);
   return out;
 }
 
@@ -191,6 +204,7 @@ SEXP vctrs_match(SEXP needles, SEXP haystack) {
     }
   }
   UNPROTECT(1);
+  dict_free(&d);
   return out;
 }
 
@@ -237,5 +251,6 @@ SEXP vctrs_count(SEXP x) {
   Rf_setAttrib(out, R_NamesSymbol, names);
 
   UNPROTECT(5);
+  dict_free(&d);
   return out;
 }
