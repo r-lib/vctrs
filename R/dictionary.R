@@ -3,6 +3,7 @@ vec_duplicated <- function(x) {
 }
 
 vec_unique <- function(x) {
+  # TODO: explore C function that returns indices
   vec_subset(x, which(!vec_duplicated(x)))
 }
 
