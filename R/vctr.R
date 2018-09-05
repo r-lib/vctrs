@@ -302,6 +302,14 @@ c.vctr <- function(...) {
   vec_c(...)
 }
 
+
+# Order and equality ------------------------------------------------------
+
+#' @export
+xtfrm.vctr <- function(x) {
+  vec_proxy_order(x)
+}
+
 # Protection --------------------------------------------------------------
 
 stop_unsupported <- function(x, operation) {

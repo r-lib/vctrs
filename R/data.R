@@ -10,7 +10,7 @@ vec_data <- function(x) {
   stopifnot(is_vector(x))
 
   # TODO: implement with ALTREP to avoid making a copy
-  if (inherits(x, "record")) {
+  if (is_record(x)) {
     attributes(x) <- list(names = fields(x))
   } else {
     attributes(x) <- list(names = names(x))
@@ -18,3 +18,11 @@ vec_data <- function(x) {
 
   x
 }
+
+is_record <- function(x) {
+  UseMethod("is_record")
+}
+is_record.POSIXlt <- function(x) TRUE
+is_record.record <- function(x) TRUE
+is_record.default <- function(x) FALSE
+

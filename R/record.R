@@ -179,6 +179,16 @@ as.list.record <- function(x, ...) {
 }
 
 
+# Equality and ordering ---------------------------------------------------
+
+#' @export
+vec_proxy_equality.record <- function(x)  {
+  new_data_frame(vec_data(x), length(x))
+}
+
+#' @export
+vec_proxy_order.record <- vec_proxy_equality.record
+
 # Unimplemented -----------------------------------------------------------
 
 #' @export

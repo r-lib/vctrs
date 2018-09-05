@@ -1,8 +1,10 @@
 vec_duplicated <- function(x) {
+  x <- vec_proxy_equality(x)
   .Call(vctrs_duplicated, x)
 }
 
 vec_duplicated_any <- function(x) {
+  x <- vec_proxy_equality(x)
   .Call(vctrs_duplicated_any, x)
 }
 
@@ -12,11 +14,12 @@ vec_unique <- function(x) {
 }
 
 vec_n_distinct <- function(x) {
+  x <- vec_proxy_equality(x)
   .Call(vctrs_n_distinct, x)
 }
 
 vec_count <- function(x, order = TRUE) {
-  kv <- .Call(vctrs_count, x)
+  kv <- .Call(vctrs_count, vec_proxy_equality(x))
 
   df <- data.frame(key = 0, count = kv$val)
   df$key <- vec_subset(x, kv$key) # might be a dataframe
@@ -30,6 +33,7 @@ vec_count <- function(x, order = TRUE) {
 }
 
 vec_id <- function(x) {
+  x <- vec_proxy_equality(x)
   .Call(vctrs_id, x)
 }
 
