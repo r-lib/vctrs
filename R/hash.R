@@ -15,3 +15,11 @@ hash_label <- function(x, length = 5) {
     substr(digest::digest(x), 1, length)
   }
 }
+
+equal <- function(x, y) {
+  ptype <- vec_ptype(x, y)[[1]]
+  x <- vec_cast(x, ptype)
+  y <- vec_cast(y, ptype)
+
+  .Call(vctrs_equal, x, y)
+}

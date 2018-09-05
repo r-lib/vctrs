@@ -141,3 +141,22 @@ SEXP vctrs_hash(SEXP x) {
 SEXP vctrs_hash_vector(SEXP x) {
   return Rf_ScalarInteger(hash_vector(x));
 }
+
+SEXP vctrs_equal(SEXP x, SEXP y) {
+  if (TYPEOF(x) != TYPEOF(y))
+    Rf_errorcall(R_NilValue, "`x` and `y` must have same types");
+  if (vec_length(y) != 1) {
+    Rf_errorcall(R_NilValue, "`y` must have length 1");
+  }
+
+  R_len_t n = vec_length(x);
+  SEXP out = PROTECT(Rf_allocVector(LGLSXP, n));
+  int32_t* p_out = LOGICAL(out);
+
+  for (R_len_t i = 0; i < n; ++i) {
+    p_out[i] = equal_scalar(x, i, y, 0);
+  }
+
+  UNPROTECT(1);
+  return out;
+}
