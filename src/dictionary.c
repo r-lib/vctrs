@@ -7,28 +7,6 @@
 
 #define EMPTY -1
 
-bool equal_scalar(SEXP x, int i, SEXP y, int j) {
-  switch(TYPEOF(x)) {
-  case LGLSXP:
-    return LOGICAL(x)[i] == LOGICAL(y)[j];
-  case INTSXP:
-    return INTEGER(x)[i] == INTEGER(y)[j];
-  case REALSXP: {
-    double xi = REAL(x)[i], yj = REAL(y)[j];
-    if (R_IsNA(xi)) return R_IsNA(yj);
-    if (R_IsNaN(xi)) return R_IsNaN(yj);
-    return xi == yj;
-  }
-  case STRSXP:
-    // Ignoring encoding for now
-    return STRING_ELT(x, i) == STRING_ELT(y, j);
-  case VECSXP:
-    // Need to add support for data frame
-    return R_compute_identical(VECTOR_ELT(x, i), VECTOR_ELT(y, j), 16);
-  default:
-    Rf_errorcall(R_NilValue, "Unsupported type %s", Rf_type2char(TYPEOF(x)));
-  }
-}
 
 // http://graphics.stanford.edu/~seander/bithacks.html#RoundUpPowerOf2
 int32_t ceil2(int32_t x) {
