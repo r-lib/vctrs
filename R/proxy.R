@@ -8,7 +8,9 @@
 #'
 #' @keywords internal
 #' @param x A vector x.
-#' @return A 1d atomic vector, 1d list, or a data frame.
+#' @return A 1d atomic vector, 1d list, or a data frame. For these functions,
+#'   `NA`s (and `NaN`s) are considered to be equal, and smaller than all
+#'   other values (i.e. they're equivalent to `-Inf`).
 #' @name vec_proxy
 NULL
 
