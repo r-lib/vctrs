@@ -8,9 +8,6 @@
 #define EMPTY -1
 
 bool equal_scalar(SEXP x, int i, SEXP y, int j) {
-  if (TYPEOF(x) != TYPEOF(y))
-    return false;
-
   switch(TYPEOF(x)) {
   case LGLSXP:
     return LOGICAL(x)[i] == LOGICAL(y)[j];
