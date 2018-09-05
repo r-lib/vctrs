@@ -170,7 +170,7 @@ bool equal_scalar(SEXP x, int i, SEXP y, int j) {
       return true;
 
     } else {
-      return R_compute_identical(VECTOR_ELT(x, i), VECTOR_ELT(y, j), 16);
+      return R_compute_identical(VECTOR_ELT(x, i), VECTOR_ELT(y, j), 0);
     }
     // Need to add support for data frame
 
