@@ -4,7 +4,9 @@ vec_duplicated <- function(x) {
 
 vec_count <- function(x) {
   count <- .Call(vctrs_count, x)
-  data.frame(x = vec_subset(x, count$idx), count = count$count)
+  df <- data.frame(key = 0, count = count$val)
+  df$key <- count$key
+  df
 }
 
 vec_id <- function(x) {

@@ -31,131 +31,187 @@ bool equal_scalar(SEXP x, int i, SEXP y, int j) {
   }
 }
 
-uint32_t hash_table_find(SEXP key, R_len_t n, SEXP x, R_len_t i) {
+// http://graphics.stanford.edu/~seander/bithacks.html#RoundUpPowerOf2
+int32_t ceil2(int32_t x) {
+  x--;
+  x |= x >> 1;
+  x |= x >> 2;
+  x |= x >> 4;
+  x |= x >> 8;
+  x |= x >> 16;
+  x++;
+  return x;
+}
+
+// Hashtable object ------------------------------------------------------------
+
+struct HASHTABLE {
+  SEXP x;
+  SEXP key;    // INTSXP
+  int* p_key;
+  SEXP val;
+  uint32_t size;
+  uint32_t used;
+};
+
+// Caller is responsible for PROTECTing x; and for calling hash_table_term
+// Use val_t = NILSXP if need set-like behaviour, rather than dictionary
+void hash_table_init(struct HASHTABLE* d, SEXP x, SEXPTYPE val_t) {
+  d->x = x;
+
+  // round up to power of 2
+  // once dictionary is resizable we'll reduce this to a smaller number
+  R_len_t size = ceil2(vec_length(x));
+  Rprintf("%i, %i\n", vec_length(x), size);
+
+  d->key = PROTECT(Rf_allocVector(INTSXP, size));
+  d->p_key = INTEGER(d->key);
+  for (R_len_t i = 0; i < size; ++i) {
+    d->p_key[i] = -1;
+  }
+
+  if (val_t == NILSXP) {
+    d->val = R_NilValue;
+  } else {
+    d->val = PROTECT(Rf_allocVector(val_t, size));
+  }
+
+  d->size = size;
+  d->used = 0;
+}
+
+void hash_table_term(struct HASHTABLE* d) {
+  if (TYPEOF(d->val) == NILSXP) {
+    UNPROTECT(1);
+  } else {
+    UNPROTECT(2);
+  }
+}
+
+SEXP hash_table_contents_int(struct HASHTABLE* d, bool all) {
+  int n = all ? d->size : d->used;
+  SEXP key = PROTECT(Rf_allocVector(INTSXP, n));
+  SEXP val = PROTECT(Rf_allocVector(INTSXP, n));
+  int* p_out_key = INTEGER(key);
+  int* p_out_val = INTEGER(val);
+
+  int* p_val = INTEGER(d->val);
+
+  int i = 0;
+  for (int k = 0; k < d->size; ++k) {
+    if (!all && d->p_key[k] == -1)
+      continue;
+
+    p_out_key[i] = d->p_key[k] + 1;
+    p_out_val[i] = p_val[k];
+    i++;
+  }
+
+  SEXP out = PROTECT(Rf_allocVector(VECSXP, 2));
+  SET_VECTOR_ELT(out, 0, key);
+  SET_VECTOR_ELT(out, 1, val);
+  SEXP names = PROTECT(Rf_allocVector(STRSXP, 2));
+  SET_STRING_ELT(names, 0, Rf_mkChar("key"));
+  SET_STRING_ELT(names, 1, Rf_mkChar("val"));
+  Rf_setAttrib(out, R_NamesSymbol, names);
+
+  UNPROTECT(4);
+  return out;
+}
+
+uint32_t hash_table_find(struct HASHTABLE* d, SEXP x, R_len_t i) {
   uint32_t hv = hash_scalar(x, i);
 
   // quadratic probing
   // https://github.com/attractivechaos/klib/blob/master/khash.h#L51-L53
-  for (int k = 0; k < n; ++k) {
-    uint32_t probe = (hv + (k * k + k) / 2) % n;
+  for (int k = 0; k < d->size; ++k) {
+    uint32_t probe = (hv + (k * k + k) / 2) % d->size;
     if (k > 1 && probe == hv) // circled back to start
       break;
 
-    R_len_t idx = INTEGER(key)[probe];
+    R_len_t idx = d->p_key[probe];
     if (idx == -1) // not used
       return probe;
 
-    if (equal_scalar(x, i, x, idx)) // same value
+    if (equal_scalar(d->x, idx, x, i)) // same value
       return probe;
   }
 
   Rf_errorcall(R_NilValue, "Hash table is full!");
 }
 
+void hash_table_put(struct HASHTABLE* d, uint32_t k, R_len_t i) {
+  d->p_key[k] = i;
+  d->used++;
+}
 
 // R interface -----------------------------------------------------------------
 
 SEXP vctrs_duplicated(SEXP x) {
-  R_len_t size = vec_length(x);
-  SEXP key = PROTECT(Rf_allocVector(INTSXP, size));
-  int* pKey = INTEGER(key);
-  for (R_len_t i = 0; i < size; ++i) {
-    pKey[i] = -1;
-  }
+  struct HASHTABLE d;
+  hash_table_init(&d, x, NILSXP);
 
   R_len_t n = vec_length(x);
-  SEXP out = PROTECT(Rf_allocVector(LGLSXP, size));
+  SEXP out = PROTECT(Rf_allocVector(LGLSXP, n));
   int* pOut = LOGICAL(out);
 
   for (int i = 0; i < n; ++i) {
-    uint32_t loc = hash_table_find(key, size, x, i);
+    uint32_t k = hash_table_find(&d, x, i);
 
-    if (pKey[loc] == -1) {
+    if (d.p_key[k] == -1) {
+      hash_table_put(&d, k, i);
       pOut[i] = false;
-      pKey[loc] = i;
     } else {
       pOut[i] = true;
     }
   }
 
-  UNPROTECT(2);
+  hash_table_term(&d);
+  UNPROTECT(1);
   return out;
 }
 
 SEXP vctrs_id(SEXP x) {
-  R_len_t size = vec_length(x);
-  SEXP key = PROTECT(Rf_allocVector(INTSXP, size));
-  int* pKey = INTEGER(key);
-  for (R_len_t i = 0; i < size; ++i) {
-    pKey[i] = -1;
-  }
+  struct HASHTABLE d;
+  hash_table_init(&d, x, NILSXP);
 
   R_len_t n = vec_length(x);
-  SEXP out = PROTECT(Rf_allocVector(INTSXP, size));
+  SEXP out = PROTECT(Rf_allocVector(INTSXP, n));
   int* pOut = INTEGER(out);
 
   for (int i = 0; i < n; ++i) {
-    uint32_t loc = hash_table_find(key, size, x, i);
+    uint32_t k = hash_table_find(&d, x, i);
 
-    if (pKey[loc] == -1) {
-      pKey[loc] = i;
+    if (d.p_key[k] == -1) {
+      hash_table_put(&d, k, i);
     }
-    pOut[i] = pKey[loc] + 1;
+    pOut[i] = d.p_key[k] + 1;
   }
 
-  UNPROTECT(2);
+  hash_table_term(&d);
+  UNPROTECT(1);
   return out;
 }
 
-
 SEXP vctrs_count(SEXP x) {
-  R_len_t size = vec_length(x);
-  SEXP key = PROTECT(Rf_allocVector(INTSXP, size));
-  int* pKey = INTEGER(key);
-  for (R_len_t k = 0; k < size; ++k) {
-    pKey[k] = -1;
-  }
+  struct HASHTABLE d;
+  hash_table_init(&d, x, INTSXP);
+  int* p_val = INTEGER(d.val);
 
-  R_len_t n = vec_length(x);
-  SEXP val = PROTECT(Rf_allocVector(INTSXP, size));
-  int* pVal = INTEGER(val);
-
-  R_len_t n_unique = 0;
-
+  R_len_t n = Rf_length(x);
   for (int i = 0; i < n; ++i) {
-    int32_t k = hash_table_find(key, size, x, i);
+    int32_t k = hash_table_find(&d, x, i);
 
-    if (pKey[k] == -1) {
-      pKey[k] = i;
-      pVal[k] = 0;
-      n_unique++;
+    if (d.p_key[k] == -1) {
+      hash_table_put(&d, k, i);
+      p_val[k] = 0;
     }
-    pVal[k]++;
+    p_val[k]++;
   }
 
-  SEXP out_idx = PROTECT(Rf_allocVector(INTSXP, n_unique));
-  SEXP out_val = PROTECT(Rf_allocVector(INTSXP, n_unique));
-  int* p_out_idx = INTEGER(out_idx);
-  int* p_out_val = INTEGER(out_val);
-
-  int i = 0;
-  for (int k = 0; k < size; ++k) {
-    if (pKey[k] == -1)
-      continue;
-    p_out_idx[i] = pKey[k] + 1;
-    p_out_val[i] = pVal[k];
-    i++;
-  }
-
-  SEXP out = PROTECT(Rf_allocVector(VECSXP, 2));
-  SET_VECTOR_ELT(out, 0, out_idx);
-  SET_VECTOR_ELT(out, 1, out_val);
-  SEXP names = PROTECT(Rf_allocVector(STRSXP, 2));
-  SET_STRING_ELT(names, 0, Rf_mkChar("idx"));
-  SET_STRING_ELT(names, 1, Rf_mkChar("count"));
-  Rf_setAttrib(out, R_NamesSymbol, names);
-
-  UNPROTECT(6);
+  SEXP out = PROTECT(hash_table_contents_int(&d, false));
+  hash_table_term(&d);
+  UNPROTECT(1);
   return out;
 }
 
