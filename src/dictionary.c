@@ -54,8 +54,7 @@ int32_t ceil2(int32_t x) {
 
 struct dictionary {
   SEXP x;      // must be a vector
-  SEXP key;    // INTSXP
-  int* p_key;
+  int32_t* key;
   SEXP val;
   uint32_t size;
   uint32_t used;
@@ -71,10 +70,9 @@ void dict_init(dictionary* d, SEXP x, SEXPTYPE val_t) {
   // once dictionary is resizable we'll reduce this to a smaller number
   R_len_t size = ceil2(vec_length(x));
 
-  d->key = PROTECT(Rf_allocVector(INTSXP, size));
-  d->p_key = INTEGER(d->key);
+  d->key = (int32_t*) R_alloc(size, sizeof(int32_t));
   for (R_len_t i = 0; i < size; ++i) {
-    d->p_key[i] = EMPTY;
+    d->key[i] = EMPTY;
   }
 
   if (val_t == NILSXP) {
@@ -88,10 +86,8 @@ void dict_init(dictionary* d, SEXP x, SEXPTYPE val_t) {
 }
 
 void dict_term(dictionary* d) {
-  if (TYPEOF(d->val) == NILSXP) {
+  if (TYPEOF(d->val) != NILSXP) {
     UNPROTECT(1);
-  } else {
-    UNPROTECT(2);
   }
 }
 
@@ -105,10 +101,10 @@ SEXP dict_contents_int(dictionary* d) {
 
   int i = 0;
   for (int k = 0; k < d->size; ++k) {
-    if (d->p_key[k] == EMPTY)
+    if (d->key[k] == EMPTY)
       continue;
 
-    p_out_key[i] = d->p_key[k] + 1;
+    p_out_key[i] = d->key[k] + 1;
     p_out_val[i] = p_val[k];
     i++;
   }
@@ -135,7 +131,7 @@ uint32_t dict_find(dictionary* d, SEXP y, R_len_t i) {
     if (k > 1 && probe == hv) // circled back to start
       break;
 
-    R_len_t idx = d->p_key[probe];
+    R_len_t idx = d->key[probe];
     if (idx == EMPTY) // not used
       return probe;
 
@@ -147,7 +143,7 @@ uint32_t dict_find(dictionary* d, SEXP y, R_len_t i) {
 }
 
 void dict_put(dictionary* d, uint32_t k, R_len_t i) {
-  d->p_key[k] = i;
+  d->key[k] = i;
   d->used++;
 }
 
@@ -164,7 +160,7 @@ SEXP vctrs_duplicated(SEXP x) {
   for (int i = 0; i < n; ++i) {
     uint32_t k = dict_find(&d, x, i);
 
-    if (d.p_key[k] == EMPTY) {
+    if (d.key[k] == EMPTY) {
       dict_put(&d, k, i);
       p_out[i] = false;
     } else {
@@ -188,10 +184,10 @@ SEXP vctrs_id(SEXP x) {
   for (int i = 0; i < n; ++i) {
     uint32_t k = dict_find(&d, x, i);
 
-    if (d.p_key[k] == EMPTY) {
+    if (d.key[k] == EMPTY) {
       dict_put(&d, k, i);
     }
-    p_out[i] = d.p_key[k] + 1;
+    p_out[i] = d.key[k] + 1;
   }
 
   dict_term(&d);
@@ -208,7 +204,7 @@ SEXP vctrs_count(SEXP x) {
   for (int i = 0; i < n; ++i) {
     int32_t k = dict_find(&d, x, i);
 
-    if (d.p_key[k] == EMPTY) {
+    if (d.key[k] == EMPTY) {
       dict_put(&d, k, i);
       p_val[k] = 0;
     }
