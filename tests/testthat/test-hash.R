@@ -71,3 +71,7 @@ test_that("double special values", {
   expect_true(equal(-Inf, -Inf))
 })
 
+test_that("works for data frames", {
+  df <- data.frame(x = 1:2, y = letters[2:1], stringsAsFactors = FALSE)
+  expect_equal(equal(df, df[1, ]), c(TRUE, FALSE))
+})

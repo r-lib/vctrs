@@ -146,7 +146,7 @@ SEXP vctrs_count(SEXP x) {
   SEXP val = PROTECT(Rf_allocVector(INTSXP, d.size));
   int* p_val = INTEGER(val);
 
-  R_len_t n = Rf_length(x);
+  R_len_t n = vec_length(x);
   for (int i = 0; i < n; ++i) {
     int32_t k = dict_find(&d, x, i);
 

@@ -3,7 +3,7 @@ vec_duplicated <- function(x) {
 }
 
 vec_unique <- function(x) {
-  vec_subset(x, !vec_duplicated(x))
+  vec_subset(x, which(!vec_duplicated(x)))
 }
 
 vec_n_distinct <- function(x) {

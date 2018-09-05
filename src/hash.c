@@ -116,8 +116,24 @@ bool equal_scalar(SEXP x, int i, SEXP y, int j) {
     // Ignoring encoding for now
     return STRING_ELT(x, i) == STRING_ELT(y, j);
   case VECSXP:
+    if (is_data_frame(x)) {
+      int p = Rf_length(x);
+      if (p != Rf_length(y))
+        return false; // shouldn't happen because types are enforced in R
+
+      for (int k = 0; k < p; ++k) {
+        SEXP col_x = VECTOR_ELT(x, k);
+        SEXP col_y = VECTOR_ELT(y, k);
+        if (!equal_scalar(col_x, i, col_y, j))
+          return false;
+      }
+      return true;
+
+    } else {
+      return R_compute_identical(VECTOR_ELT(x, i), VECTOR_ELT(y, j), 16);
+    }
     // Need to add support for data frame
-    return R_compute_identical(VECTOR_ELT(x, i), VECTOR_ELT(y, j), 16);
+
   default:
     Rf_errorcall(R_NilValue, "Unsupported type %s", Rf_type2char(TYPEOF(x)));
   }
