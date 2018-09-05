@@ -53,17 +53,15 @@ int32_t ceil2(int32_t x) {
 // another vector, provided that they're of the same type.
 
 struct dictionary {
-  SEXP x;      // must be a vector
+  SEXP x;
   int32_t* key;
-  SEXP val;
   uint32_t size;
   uint32_t used;
 };
 typedef struct dictionary dictionary;
 
-// Caller is responsible for PROTECTing x; and for calling dict_term
-// Use val_t = NILSXP if need set-like behaviour, rather than dictionary
-void dict_init(dictionary* d, SEXP x, SEXPTYPE val_t) {
+// Caller is responsible for PROTECTing x
+void dict_init(dictionary* d, SEXP x) {
   d->x = x;
 
   // round up to power of 2
@@ -75,50 +73,8 @@ void dict_init(dictionary* d, SEXP x, SEXPTYPE val_t) {
     d->key[i] = EMPTY;
   }
 
-  if (val_t == NILSXP) {
-    d->val = R_NilValue;
-  } else {
-    d->val = PROTECT(Rf_allocVector(val_t, size));
-  }
-
   d->size = size;
   d->used = 0;
-}
-
-void dict_term(dictionary* d) {
-  if (TYPEOF(d->val) != NILSXP) {
-    UNPROTECT(1);
-  }
-}
-
-SEXP dict_contents_int(dictionary* d) {
-  SEXP key = PROTECT(Rf_allocVector(INTSXP, d->used));
-  SEXP val = PROTECT(Rf_allocVector(INTSXP, d->used));
-  int* p_out_key = INTEGER(key);
-  int* p_out_val = INTEGER(val);
-
-  int* p_val = INTEGER(d->val);
-
-  int i = 0;
-  for (int k = 0; k < d->size; ++k) {
-    if (d->key[k] == EMPTY)
-      continue;
-
-    p_out_key[i] = d->key[k] + 1;
-    p_out_val[i] = p_val[k];
-    i++;
-  }
-
-  SEXP out = PROTECT(Rf_allocVector(VECSXP, 2));
-  SET_VECTOR_ELT(out, 0, key);
-  SET_VECTOR_ELT(out, 1, val);
-  SEXP names = PROTECT(Rf_allocVector(STRSXP, 2));
-  SET_STRING_ELT(names, 0, Rf_mkChar("key"));
-  SET_STRING_ELT(names, 1, Rf_mkChar("val"));
-  Rf_setAttrib(out, R_NamesSymbol, names);
-
-  UNPROTECT(4);
-  return out;
 }
 
 uint32_t dict_find(dictionary* d, SEXP y, R_len_t i) {
@@ -151,7 +107,7 @@ void dict_put(dictionary* d, uint32_t k, R_len_t i) {
 
 SEXP vctrs_duplicated(SEXP x) {
   dictionary d;
-  dict_init(&d, x, NILSXP);
+  dict_init(&d, x);
 
   R_len_t n = vec_length(x);
   SEXP out = PROTECT(Rf_allocVector(LGLSXP, n));
@@ -168,14 +124,13 @@ SEXP vctrs_duplicated(SEXP x) {
     }
   }
 
-  dict_term(&d);
   UNPROTECT(1);
   return out;
 }
 
 SEXP vctrs_n_distinct(SEXP x) {
   dictionary d;
-  dict_init(&d, x, NILSXP);
+  dict_init(&d, x);
 
   R_len_t n = vec_length(x);
   for (int i = 0; i < n; ++i) {
@@ -185,13 +140,12 @@ SEXP vctrs_n_distinct(SEXP x) {
       dict_put(&d, k, i);
   }
 
-  dict_term(&d);
   return Rf_ScalarInteger(d.used);
 }
 
 SEXP vctrs_id(SEXP x) {
   dictionary d;
-  dict_init(&d, x, NILSXP);
+  dict_init(&d, x);
 
   R_len_t n = vec_length(x);
   SEXP out = PROTECT(Rf_allocVector(INTSXP, n));
@@ -206,15 +160,16 @@ SEXP vctrs_id(SEXP x) {
     p_out[i] = d.key[k] + 1;
   }
 
-  dict_term(&d);
   UNPROTECT(1);
   return out;
 }
 
 SEXP vctrs_count(SEXP x) {
   dictionary d;
-  dict_init(&d, x, INTSXP);
-  int* p_val = INTEGER(d.val);
+  dict_init(&d, x);
+
+  SEXP val = PROTECT(Rf_allocVector(INTSXP, d.size));
+  int* p_val = INTEGER(val);
 
   R_len_t n = Rf_length(x);
   for (int i = 0; i < n; ++i) {
@@ -227,9 +182,30 @@ SEXP vctrs_count(SEXP x) {
     p_val[k]++;
   }
 
-  SEXP out = PROTECT(dict_contents_int(&d));
-  dict_term(&d);
-  UNPROTECT(1);
+  // Create output
+  SEXP out_key = PROTECT(Rf_allocVector(INTSXP, d.used));
+  SEXP out_val = PROTECT(Rf_allocVector(INTSXP, d.used));
+  int* p_out_key = INTEGER(out_key);
+  int* p_out_val = INTEGER(out_val);
+
+  int i = 0;
+  for (int k = 0; k < d.size; ++k) {
+    if (d.key[k] == EMPTY)
+      continue;
+
+    p_out_key[i] = d.key[k] + 1;
+    p_out_val[i] = p_val[k];
+    i++;
+  }
+
+  SEXP out = PROTECT(Rf_allocVector(VECSXP, 2));
+  SET_VECTOR_ELT(out, 0, out_key);
+  SET_VECTOR_ELT(out, 1, out_val);
+  SEXP names = PROTECT(Rf_allocVector(STRSXP, 2));
+  SET_STRING_ELT(names, 0, Rf_mkChar("key"));
+  SET_STRING_ELT(names, 1, Rf_mkChar("val"));
+  Rf_setAttrib(out, R_NamesSymbol, names);
+
+  UNPROTECT(5);
   return out;
 }
-
