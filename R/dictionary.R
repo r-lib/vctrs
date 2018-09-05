@@ -29,3 +29,8 @@ vec_id <- function(x) {
   .Call(vctrs_id, x)
 }
 
+vec_match <- function(needles, haystack) {
+  v <- vec_coerce(needles = needles, haystack = haystack)
+  .Call(vctrs_match, v$needles, v$haystack)
+}
+

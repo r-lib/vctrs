@@ -39,9 +39,12 @@ typedef struct dictionary dictionary;
 void dict_init(dictionary* d, SEXP x) {
   d->x = x;
 
-  // round up to power of 2
-  // once dictionary is resizable we'll reduce this to a smaller number
-  R_len_t size = ceil2(vec_length(x));
+  // assume worst case, that every value is distinct, aiming for a load factor
+  // of at most 77%. We round up to power of 2 to ensure quadratic probing
+  // strategy works. Once the dictionary is resizable we'll reduce this to a
+  // smaller number.
+  R_len_t size = ceil2(vec_length(x) / 0.77);
+  // Rprintf("size: %i\n", size);
 
   d->key = (int32_t*) R_alloc(size, sizeof(int32_t));
   for (R_len_t i = 0; i < size; ++i) {
@@ -54,11 +57,13 @@ void dict_init(dictionary* d, SEXP x) {
 
 uint32_t dict_find(dictionary* d, SEXP y, R_len_t i) {
   uint32_t hv = hash_scalar(y, i);
+  // Rprintf("i: %i hash: %i\n", i, hv);
 
   // quadratic probing: will try every slot if d->size is power of 2
   // http://research.cs.vt.edu/AVresearch/hashing/quadratic.php
   for (int k = 0; k < d->size; ++k) {
     uint32_t probe = (hv + k * (k + 1) / 2) % d->size;
+    // Rprintf("Probe: %i\n", probe);
     if (k > 1 && probe == hv) // circled back to start
       break;
 
@@ -135,6 +140,37 @@ SEXP vctrs_id(SEXP x) {
     p_out[i] = d.key[k] + 1;
   }
 
+  UNPROTECT(1);
+  return out;
+}
+
+SEXP vctrs_match(SEXP needles, SEXP haystack) {
+  dictionary d;
+  dict_init(&d, haystack);
+
+  // Load dictionary with haystack
+  R_len_t n = vec_length(haystack);
+  for (int i = 0; i < n; ++i) {
+    uint32_t k = dict_find(&d, haystack, i);
+
+    if (d.key[k] == EMPTY) {
+      dict_put(&d, k, i);
+    }
+  }
+
+  // Locate needles
+  R_len_t n_needle = vec_length(needles);
+  SEXP out = PROTECT(Rf_allocVector(INTSXP, n_needle));
+  int* p_out = INTEGER(out);
+
+  for (int i = 0; i < n; ++i) {
+    uint32_t k = dict_find(&d, needles, i);
+    if (d.key[k] == EMPTY) {
+      p_out[i] = NA_INTEGER;
+    } else {
+      p_out[i] = d.key[k] + 1;
+    }
+  }
   UNPROTECT(1);
   return out;
 }

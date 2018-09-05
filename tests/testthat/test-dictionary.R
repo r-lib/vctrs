@@ -25,6 +25,13 @@ test_that("vec_count counts number observations", {
   expect_equal(x, data.frame(key = 1:3, count = 1:3))
 })
 
+test_that("vec_match() matches match()", {
+  n <- c(1:3, NA)
+  h <- c(4, 2, 1, NA)
+
+  expect_equal(vec_match(n, h), match(n, h))
+})
+
 test_that("everything works for data frames", {
   df <- data.frame(x = 1:2, y = letters[2:1], stringsAsFactors = FALSE)
   idx <- c(1L, 1L, 1L, 2L, 2L)
