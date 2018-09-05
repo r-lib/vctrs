@@ -62,7 +62,6 @@ void hash_table_init(struct HASHTABLE* d, SEXP x, SEXPTYPE val_t) {
   // round up to power of 2
   // once dictionary is resizable we'll reduce this to a smaller number
   R_len_t size = ceil2(vec_length(x));
-  Rprintf("%i, %i\n", vec_length(x), size);
 
   d->key = PROTECT(Rf_allocVector(INTSXP, size));
   d->p_key = INTEGER(d->key);
@@ -88,10 +87,9 @@ void hash_table_term(struct HASHTABLE* d) {
   }
 }
 
-SEXP hash_table_contents_int(struct HASHTABLE* d, bool all) {
-  int n = all ? d->size : d->used;
-  SEXP key = PROTECT(Rf_allocVector(INTSXP, n));
-  SEXP val = PROTECT(Rf_allocVector(INTSXP, n));
+SEXP hash_table_contents_int(struct HASHTABLE* d) {
+  SEXP key = PROTECT(Rf_allocVector(INTSXP, d->used));
+  SEXP val = PROTECT(Rf_allocVector(INTSXP, d->used));
   int* p_out_key = INTEGER(key);
   int* p_out_val = INTEGER(val);
 
@@ -99,7 +97,7 @@ SEXP hash_table_contents_int(struct HASHTABLE* d, bool all) {
 
   int i = 0;
   for (int k = 0; k < d->size; ++k) {
-    if (!all && d->p_key[k] == -1)
+    if (d->p_key[k] == -1)
       continue;
 
     p_out_key[i] = d->p_key[k] + 1;
@@ -122,10 +120,10 @@ SEXP hash_table_contents_int(struct HASHTABLE* d, bool all) {
 uint32_t hash_table_find(struct HASHTABLE* d, SEXP x, R_len_t i) {
   uint32_t hv = hash_scalar(x, i);
 
-  // quadratic probing
-  // https://github.com/attractivechaos/klib/blob/master/khash.h#L51-L53
+  // quadratic probing: will try every slot if d->size is power of 2
+  // http://research.cs.vt.edu/AVresearch/hashing/quadratic.php
   for (int k = 0; k < d->size; ++k) {
-    uint32_t probe = (hv + (k * k + k) / 2) % d->size;
+    uint32_t probe = (hv + k * (k + 1) / 2) % d->size;
     if (k > 1 && probe == hv) // circled back to start
       break;
 
@@ -209,7 +207,7 @@ SEXP vctrs_count(SEXP x) {
     p_val[k]++;
   }
 
-  SEXP out = PROTECT(hash_table_contents_int(&d, false));
+  SEXP out = PROTECT(hash_table_contents_int(&d));
   hash_table_term(&d);
   UNPROTECT(1);
   return out;
