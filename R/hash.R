@@ -2,8 +2,8 @@ hash <- function(x) {
   as.hexmode(.Call(vctrs_hash, x))
 }
 
-hash_vector <- function(x) {
-  as.hexmode(.Call(vctrs_hash_vector, x))
+hash_obj <- function(x) {
+  as.hexmode(.Call(vctrs_hash_object, x))
 }
 
 hash_label <- function(x, length = 5) {

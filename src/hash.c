@@ -49,6 +49,7 @@ int32_t hash_int64(int64_t x) {
 
 int32_t hash_scalar(SEXP x, R_len_t i) {
   switch(TYPEOF(x)) {
+  // Vector types ----------------------------------------------------------
   case LGLSXP:
     return LOGICAL(x)[i];
   case INTSXP:
@@ -78,7 +79,7 @@ int32_t hash_scalar(SEXP x, R_len_t i) {
       }
       return hash;
     } else {
-      return hash_vector(VECTOR_ELT(x, i));
+      return hash_object(VECTOR_ELT(x, i));
     }
   }
 
@@ -87,13 +88,52 @@ int32_t hash_scalar(SEXP x, R_len_t i) {
   }
 }
 
-int32_t hash_vector(SEXP x) {
+int32_t hash_object(SEXP x) {
   R_len_t n = vec_length(x);
   int32_t hash = 0;
 
-  for (R_len_t i = 0; i < n; ++i) {
-    hash = hash_combine(hash, hash_scalar(x, i));
+  switch(TYPEOF(x)) {
+  case NILSXP:
+    break;
+
+  case LGLSXP:
+  case INTSXP:
+  case REALSXP:
+  case STRSXP:
+  case VECSXP:
+    for (R_len_t i = 0; i < n; ++i) {
+      hash = hash_combine(hash, hash_scalar(x, i));
+    }
+    break;
+
+  case SYMSXP:
+    hash = hash_object(PRINTNAME(x));
+    break;
+  case DOTSXP:
+  case LANGSXP:
+  case LISTSXP:
+  case BCODESXP:
+    hash = hash_combine(hash, hash_object(CAR(x)));
+    hash = hash_combine(hash, hash_object(CDR(x)));
+    break;
+  case CLOSXP:
+    hash = hash_combine(hash, hash_object(BODY(x)));
+    hash = hash_combine(hash, hash_object(CLOENV(x)));
+    hash = hash_combine(hash, hash_object(FORMALS(x)));
+    break;
+
+  case SPECIALSXP:
+  case BUILTINSXP:
+  case CHARSXP:
+  case ENVSXP:
+  case EXTPTRSXP:
+    hash = hash_int64((intptr_t) x);
+    break;
+
+  default:
+    Rf_errorcall(R_NilValue, "Unsupported type %s", Rf_type2char(TYPEOF(x)));
   }
+
 
   return hash;
 }
@@ -154,8 +194,8 @@ SEXP vctrs_hash(SEXP x) {
   return out;
 }
 
-SEXP vctrs_hash_vector(SEXP x) {
-  return Rf_ScalarInteger(hash_vector(x));
+SEXP vctrs_hash_object(SEXP x) {
+  return Rf_ScalarInteger(hash_object(x));
 }
 
 SEXP vctrs_equal(SEXP x, SEXP y) {
