@@ -5,6 +5,11 @@ test_that("vec_duplicated matches duplicated", {
   expect_equal(duplicated(x), vec_duplicated(x))
 })
 
+test_that("vec_duplicated_any returns single TRUE/FALSE", {
+  expect_false(vec_duplicated_any(c(1:10)))
+  expect_true(vec_duplicated_any(c(1:10, 1)))
+})
+
 test_that("vec_unique matches unique", {
   x <- sample(100, 1000, replace = TRUE)
   expect_equal(unique(x), unique(x))
