@@ -12,3 +12,7 @@ vec_count <- function(x) {
 vec_id <- function(x) {
   .Call(vctrs_id, x)
 }
+
+vec_n_distinct <- function(x) {
+  .Call(vctrs_n_distinct, x)
+}

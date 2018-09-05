@@ -17,6 +17,7 @@ extern SEXP vctrs_hash_vector(SEXP);
 extern SEXP vctrs_duplicated(SEXP);
 extern SEXP vctrs_count(SEXP);
 extern SEXP vctrs_id(SEXP);
+extern SEXP vctrs_n_distinct(SEXP);
 
 static const R_CallMethodDef CallEntries[] = {
     {"vctrs_field_get",   (DL_FUNC) &vctrs_field_get, 2},
@@ -28,6 +29,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"vctrs_duplicated",  (DL_FUNC) &vctrs_duplicated,  1},
     {"vctrs_count",       (DL_FUNC) &vctrs_count,  1},
     {"vctrs_id",          (DL_FUNC) &vctrs_id,  1},
+    {"vctrs_n_distinct",  (DL_FUNC) &vctrs_n_distinct,  1},
     {NULL, NULL, 0}
 };
 

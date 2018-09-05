@@ -173,6 +173,22 @@ SEXP vctrs_duplicated(SEXP x) {
   return out;
 }
 
+SEXP vctrs_n_distinct(SEXP x) {
+  dictionary d;
+  dict_init(&d, x, NILSXP);
+
+  R_len_t n = vec_length(x);
+  for (int i = 0; i < n; ++i) {
+    uint32_t k = dict_find(&d, x, i);
+
+    if (d.key[k] == EMPTY)
+      dict_put(&d, k, i);
+  }
+
+  dict_term(&d);
+  return Rf_ScalarInteger(d.used);
+}
+
 SEXP vctrs_id(SEXP x) {
   dictionary d;
   dict_init(&d, x, NILSXP);
