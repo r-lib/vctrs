@@ -71,20 +71,65 @@ reset_rownames <- function(x) {
 
 # Duplicates --------------------------------------------------------------
 
-vec_duplicate_detect <- function(x) {
-  x <- vec_proxy_equality(x)
-  .Call(vctrs_duplicated, x)
-}
+#' Find duplicated values
+#'
+#' * `vec_duplicate_any()`: detects the presence of any duplicated values,
+#'   a la [anyDuplicated()].
+#' * `vec_duplicate_detect()`: returns a logical vector describing if each
+#'   element of the vector is duplicated elsewhere. Unlike [duplicated()], it
+#'   reports all duplicated values, not just the second and subsequent
+#'   repetitions.
+#' * `vec_duplicate_id()`: returns an integer vector given the location of
+#'   the first occurence of the value
+#'
+#' @param x A vector (including data frames).
+#' @return
+#'   * `vec_duplicate_any()`: a logical vector of length 1.
+#'   * `vec_duplicate_detect()`: a logical vector the same length as `x`
+#'   * `vec_duplicate_id()`: an integer vector the same length as `x`
+#' @seealso [vec_unique()] for functions that work with the dual of duplicated
+#'   values: unique values.
+#' @name vec_duplicate
+#' @examples
+#' vec_duplicate_any(1:10)
+#' vec_duplicate_any(c(1, 1:10))
+#'
+#' x <- c(10, 10, 20, 30, 30, 40)
+#' vec_duplicate_detect(x)
+#' # Note that `duplicated()` doesn't consider the first instance to
+#' # be a duplicate
+#' duplicated(x)
+#'
+#' # Identify elements of a vector by the location of the first element that
+#' # they're equal to:
+#' vec_duplicate_id(x)
+#'
+#' # Equivalent to `duplicated()`:
+#' vec_duplicate_id(x) == seq_along(x)
+NULL
 
+#' @rdname vec_duplicate
+#' @export
 vec_duplicate_any <- function(x) {
   x <- vec_proxy_equality(x)
   .Call(vctrs_duplicated_any, x)
 }
 
+#' @rdname vec_duplicate
+#' @export
+vec_duplicate_detect <- function(x) {
+  x <- vec_proxy_equality(x)
+  .Call(vctrs_duplicated, x)
+}
+
+#' @rdname vec_duplicate
+#' @export
 vec_duplicate_id <- function(x) {
   x <- vec_proxy_equality(x)
   .Call(vctrs_id, x)
 }
+
+# Unique values -----------------------------------------------------------
 
 vec_unique <- function(x) {
   x <- vec_proxy_equality(x)
