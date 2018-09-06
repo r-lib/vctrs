@@ -88,30 +88,8 @@ void dict_put(dictionary* d, uint32_t k, R_len_t i) {
 }
 
 // R interface -----------------------------------------------------------------
-
-SEXP vctrs_duplicated(SEXP x) {
-  dictionary d;
-  dict_init(&d, x);
-
-  R_len_t n = vec_length(x);
-  SEXP out = PROTECT(Rf_allocVector(LGLSXP, n));
-  int* p_out = LOGICAL(out);
-
-  for (int i = 0; i < n; ++i) {
-    uint32_t k = dict_find(&d, x, i);
-
-    if (d.key[k] == EMPTY) {
-      dict_put(&d, k, i);
-      p_out[i] = false;
-    } else {
-      p_out[i] = true;
-    }
-  }
-
-  UNPROTECT(1);
-  dict_free(&d);
-  return out;
-}
+// TODO: rename to match R function names
+// TODO: separate out into individual files
 
 SEXP vctrs_unique_loc(SEXP x) {
   dictionary d;
@@ -201,8 +179,8 @@ SEXP vctrs_match(SEXP needles, SEXP haystack) {
   dict_init(&d, haystack);
 
   // Load dictionary with haystack
-  R_len_t n = vec_length(haystack);
-  for (int i = 0; i < n; ++i) {
+  R_len_t n_haystack = vec_length(haystack);
+  for (int i = 0; i < n_haystack; ++i) {
     uint32_t k = dict_find(&d, haystack, i);
 
     if (d.key[k] == EMPTY) {
@@ -215,13 +193,42 @@ SEXP vctrs_match(SEXP needles, SEXP haystack) {
   SEXP out = PROTECT(Rf_allocVector(INTSXP, n_needle));
   int* p_out = INTEGER(out);
 
-  for (int i = 0; i < n; ++i) {
+  for (int i = 0; i < n_needle; ++i) {
     uint32_t k = dict_find(&d, needles, i);
     if (d.key[k] == EMPTY) {
       p_out[i] = NA_INTEGER;
     } else {
       p_out[i] = d.key[k] + 1;
     }
+  }
+  UNPROTECT(1);
+  dict_free(&d);
+  return out;
+}
+
+
+SEXP vctrs_in(SEXP needles, SEXP haystack) {
+  dictionary d;
+  dict_init(&d, haystack);
+
+  // Load dictionary with haystack
+  R_len_t n_haystack = vec_length(haystack);
+  for (int i = 0; i < n_haystack; ++i) {
+    uint32_t k = dict_find(&d, haystack, i);
+
+    if (d.key[k] == EMPTY) {
+      dict_put(&d, k, i);
+    }
+  }
+
+  // Locate needles
+  R_len_t n_needle = vec_length(needles);
+  SEXP out = PROTECT(Rf_allocVector(LGLSXP, n_needle));
+  int* p_out = LOGICAL(out);
+
+  for (int i = 0; i < n_needle; ++i) {
+    uint32_t k = dict_find(&d, needles, i);
+    p_out[i] = (d.key[k] != EMPTY);
   }
   UNPROTECT(1);
   dict_free(&d);
@@ -271,6 +278,38 @@ SEXP vctrs_count(SEXP x) {
   Rf_setAttrib(out, R_NamesSymbol, names);
 
   UNPROTECT(5);
+  dict_free(&d);
+  return out;
+}
+
+SEXP vctrs_duplicated(SEXP x) {
+  dictionary d;
+  dict_init(&d, x);
+
+  SEXP val = PROTECT(Rf_allocVector(INTSXP, d.size));
+  int* p_val = INTEGER(val);
+
+  R_len_t n = vec_length(x);
+  for (int i = 0; i < n; ++i) {
+    int32_t k = dict_find(&d, x, i);
+
+    if (d.key[k] == EMPTY) {
+      dict_put(&d, k, i);
+      p_val[k] = 0;
+    }
+    p_val[k]++;
+  }
+
+  // Create output
+  SEXP out = PROTECT(Rf_allocVector(LGLSXP, n));
+  int* p_out = LOGICAL(out);
+
+  for (int i = 0; i < n; ++i) {
+    int32_t k = dict_find(&d, x, i);
+    p_out[i] = p_val[k] != 1;
+  }
+
+  UNPROTECT(2);
   dict_free(&d);
   return out;
 }

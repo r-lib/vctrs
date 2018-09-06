@@ -60,11 +60,6 @@ vec_count <- function(x, sort = c("count", "key", "location", "none")) {
   reset_rownames(df)
 }
 
-vec_match <- function(needles, haystack) {
-  v <- vec_coerce(needles = needles, haystack = haystack)
-  .Call(vctrs_match, v$needles, v$haystack)
-}
-
 reset_rownames <- function(x) {
   rownames(x) <- NULL
 
@@ -76,30 +71,46 @@ reset_rownames <- function(x) {
 
 # Duplicates --------------------------------------------------------------
 
-vec_duplicated <- function(x) {
+vec_duplicate_detect <- function(x) {
   x <- vec_proxy_equality(x)
   .Call(vctrs_duplicated, x)
 }
 
-vec_duplicated_any <- function(x) {
+vec_duplicate_any <- function(x) {
   x <- vec_proxy_equality(x)
   .Call(vctrs_duplicated_any, x)
 }
 
+vec_duplicate_id <- function(x) {
+  x <- vec_proxy_equality(x)
+  .Call(vctrs_id, x)
+}
+
 vec_unique <- function(x) {
+  x <- vec_proxy_equality(x)
   vec_subset(x, vec_unique_loc(x))
 }
 
 vec_unique_loc <- function(x) {
+  x <- vec_proxy_equality(x)
   .Call(vctrs_unique_loc, x)
 }
 
-vec_n_distinct <- function(x) {
+vec_unique_count <- function(x) {
   x <- vec_proxy_equality(x)
   .Call(vctrs_n_distinct, x)
 }
 
-vec_id <- function(x) {
-  x <- vec_proxy_equality(x)
-  .Call(vctrs_id, x)
+
+# Matching ----------------------------------------------------------------
+
+vec_in <- function(needles, haystack) {
+  v <- vec_coerce(needles = needles, haystack = haystack)
+  .Call(vctrs_in, vec_proxy_equality(v$needles), vec_proxy_equality(v$haystack))
 }
+
+vec_match <- function(needles, haystack) {
+  v <- vec_coerce(needles = needles, haystack = haystack)
+  .Call(vctrs_match, vec_proxy_equality(v$needles), vec_proxy_equality(v$haystack))
+}
+
