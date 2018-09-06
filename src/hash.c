@@ -26,30 +26,41 @@ int32_t hash_combine(int x, int y) {
   return x ^ y + 0x9e3779b9 + (x << 6) + (x >> 2);
 }
 
-// same approach as java 7
-// https://docs.oracle.com/javase/7/docs/api/java/lang/Double.html#hashCode()
+// 32-bit mixer from murmurhash
+// https://github.com/aappleby/smhasher/blob/master/src/MurmurHash3.cpp#L68
+int32_t hash_int32(int32_t x) {
+  x ^= x >> 16;
+  x *= 0x85ebca6b;
+  x ^= x >> 13;
+  x *= 0xc2b2ae35;
+  x ^= x >> 16;
+
+  return x;
+}
+
+// 64-bit mixer from murmurhash
+// https://github.com/aappleby/smhasher/blob/master/src/MurmurHash3.cpp#L81
+int32_t hash_int64(int64_t x) {
+  x ^= x >> 33;
+  x *= UINT64_C(0xff51afd7ed558ccd);
+  x ^= x >> 33;
+  x *= UINT64_C(0xc4ceb9fe1a85ec53);
+  x ^= x >> 33;
+  return x;
+}
+
+// Seems like something designed specificaly for doubles should work better
+// but I haven't been able to find anything
 int32_t hash_double(double x) {
   union {
     double d;
-    uint32_t i[2];
+    uint64_t i;
   } value;
   value.d = x;
 
-  return value.i[0] ^ value.i[1];
+  return hash_int64(value.i);
 }
 
-// https://github.com/attractivechaos/klib/blob/master/khash.h#L385
-int32_t hash_int64(int64_t x) {
-  return x >> 33 ^ x ^ x << 11;
-}
-
-// https://stackoverflow.com/a/12996028/16632
-int32_t hash_int32(int32_t x) {
-  x = ((x >> 16) ^ x) * 0x45d9f3b;
-  x = ((x >> 16) ^ x) * 0x45d9f3b;
-  x = (x >> 16) ^ x;
-  return x;
-}
 
 int32_t hash_scalar(SEXP x, R_len_t i) {
   switch(TYPEOF(x)) {
