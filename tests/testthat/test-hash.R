@@ -42,6 +42,17 @@ test_that("hash of data frame works down rows", {
   expect_equal(x[1], hash_obj(1:2))
 })
 
+test_that("hashes are consistent from run to run", {
+  # no string, since we're currently hashing the address in string pool
+  df <- data.frame(
+    lgl = c(TRUE, TRUE, FALSE, NA),
+    int = c(1L, 2L, 10L, NA),
+    dbl = c(1, 2, 10, NA)
+  )
+  hash <- new_data_frame(lapply(df, hash), nrow(df))
+
+  expect_known_output(print(hash), file = test_path("test-hash-hash.txt"))
+})
 
 # Equality ----------------------------------------------------------------
 
