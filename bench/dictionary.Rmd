@@ -1,0 +1,92 @@
+---
+title: "Dictionary performance"
+output: github_document
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(collapse = TRUE, comment = "#> ")
+```
+
+```{r setup, message = FALSE}
+library(tidyverse)
+library(vctrs)
+
+make_vec <- function(type, n, mix) {
+  x <- switch(as.character(mix),
+    unique = 1:n,
+    constant = rep(0L, n),
+    "50-50" = c(1:(n/2), rep(0L, n / 2))
+  )
+  
+  as.vector(x, as.character(type))
+}
+```
+
+## Proportion of uniqueness
+
+```{r}
+df <- bench::press(
+  n = c(1e1, 1e2, 1e3, 1e4, 1e5, 1e6),
+  mix = c("unique", "constant", "50-50"),
+  {
+    x <- make_vec("integer", n, mix)
+    bench::mark(
+      base = unique(x),
+      vctrs = vec_unique(x),
+      min_time = 0.05
+    )
+  }
+)
+```
+
+Relatively small difference. Unsurprisingly, unique is the worst case, so I'll just only use that going forward.
+
+
+```{r, echo = FALSE}
+ggplot(df, aes(n, as.numeric(min))) + 
+  geom_point() + 
+  geom_line(aes(colour = mix)) + 
+  scale_x_log10() + 
+  scale_y_log10() + 
+  facet_wrap(~ expression)
+```
+
+## Performance by type
+
+```{r}
+df <- bench::press(
+  type = c("integer", "double", "character"),
+  n = c(1e1, 1e2, 1e3, 1e4, 1e5, 1e6),
+  {
+    x <- make_vec(type, n, "unique")
+    bench::mark(
+      base = unique(x),
+      vctrs = vec_unique(x),
+      min_time = 0.05,
+      max_iterations = 20
+    )
+  }
+)
+```
+
+Let's compare head-to-head with base:
+
+```{r, echo = FALSE}
+ggplot(df, aes(n, as.numeric(min))) + 
+  geom_point() + 
+  geom_line(aes(colour = type)) + 
+  scale_x_log10() + 
+  scale_y_log10() + 
+  facet_wrap( ~ expression)
+```
+
+Clearly there's some larger setup cost needed for vctrs dictionary, and the performance difference declines as size increases. 
+
+```{r, echo = FALSE}
+ggplot(df, aes(n, as.numeric(min))) + 
+  geom_point() + 
+  geom_line(aes(colour = expression)) + 
+  scale_x_log10() + 
+  scale_y_log10() + 
+  facet_wrap( ~ type)
+```

@@ -1,3 +1,4 @@
+^bench$
 ^docs$
 ^_pkgdown\.yml$
 ^codecov\.yml$
