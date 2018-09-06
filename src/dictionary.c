@@ -32,8 +32,6 @@ int32_t ceil2(int32_t x) {
 struct dictionary {
   SEXP x;
   int32_t* key;
-  SEXP key_s;
-  int key_protect;
   uint32_t size;
   uint32_t used;
 };
@@ -49,17 +47,15 @@ void dict_init(dictionary* d, SEXP x) {
   R_len_t size = ceil2(vec_length(x) / 0.77);
   // Rprintf("size: %i\n", size);
 
-  d->key_s = Rf_allocVector(INTSXP, size);
-  PROTECT_WITH_INDEX(d->key_s, &d->key_protect);
-  d->key = INTEGER(d->key_s);
-  memset(d->key, EMPTY, size * sizeof(int));
+  d->key = (int32_t*) R_alloc(size, sizeof(int32_t));
+  memset(d->key, EMPTY, size * sizeof(int32_t));
 
   d->size = size;
   d->used = 0;
 }
 
 void dict_free(dictionary* d) {
-  UNPROTECT(1);
+  // no cleanup currently needed
 }
 
 uint32_t dict_find(dictionary* d, SEXP y, R_len_t i) {
