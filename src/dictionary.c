@@ -2,9 +2,10 @@
 #include <R.h>
 #include <Rinternals.h>
 
+#include "growable.h"
+#include "hash.h"
 #include <stdbool.h>
 #include <string.h>
-#include "hash.h"
 
 #define EMPTY -1
 
@@ -19,41 +20,6 @@ int32_t ceil2(int32_t x) {
   x |= x >> 16;
   x++;
   return x;
-}
-
-struct growable {
-  SEXP x;
-  int32_t idx;
-  int n;
-  int capacity;
-};
-typedef struct growable growable;
-
-void growable_init(growable* g, SEXPTYPE type, int capacity) {
-  g->x = Rf_allocVector(type, capacity);
-  PROTECT_WITH_INDEX(g->x, &g->idx);
-
-  g->n = 0;
-  g->capacity = capacity;
-}
-
-void growable_free(growable* g) {
-  UNPROTECT(1);
-}
-
-void growable_push_int(growable* g, int i) {
-  if (g->n == g->capacity) {
-    g->capacity *= 2;
-    g->x = Rf_lengthgets(g->x, g->capacity);
-    REPROTECT(g->x, g->idx);
-  }
-
-  INTEGER(g->x)[g->n] = i;
-  g->n++;
-}
-
-SEXP growable_values(growable* g) {
-  return Rf_lengthgets(g->x, g->n);
 }
 
 // Dictonary object ------------------------------------------------------------

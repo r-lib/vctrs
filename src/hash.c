@@ -1,9 +1,5 @@
-#define R_NO_REMAP
-#include <R.h>
-#include <Rinternals.h>
-
-#include <stdbool.h>
 #include "hash.h"
+#include <stdbool.h>
 
 bool is_data_frame(SEXP x) {
   return TYPEOF(x) == VECSXP && Rf_inherits(x, "data.frame");
