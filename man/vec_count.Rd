@@ -7,7 +7,7 @@
 vec_count(x, sort = c("count", "key", "location", "none"))
 }
 \arguments{
-\item{x}{A vector}
+\item{x}{A vector (including a data frame).}
 
 \item{sort}{One of "count", "key", "location", or "none".
 \itemize{

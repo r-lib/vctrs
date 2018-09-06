@@ -14,7 +14,19 @@ vec_duplicate_detect(x)
 vec_duplicate_id(x)
 }
 \arguments{
-\item{x}{A vector (including data frames).}
+\item{x}{A vector (including a data frame).}
+
+\item{Missing}{values:
+In most cases, missing values are not considered to be equal, i.e.
+\code{NA == NA} is not \code{TRUE}. This behaviour would be unappealing for computing
+unique values, so, internally, these functions consider all \code{NAs} to
+be equivalent.}
+
+\item{Performance:}{These functions are currently primarily a proof of concept. They rely on the
+concept of a dictionary which uses C-level hashing and equality test for
+good asymptotic performance. They illustrate how we can implement these
+tools generically with clean C code, but have not yet been tuned for
+performance.}
 }
 \value{
 \itemize{
@@ -48,7 +60,8 @@ duplicated(x)
 # Identify elements of a vector by the location of the first element that
 # they're equal to:
 vec_duplicate_id(x)
-
+# Location of the unique values:
+vec_unique_loc(x)
 # Equivalent to `duplicated()`:
 vec_duplicate_id(x) == seq_along(x)
 }

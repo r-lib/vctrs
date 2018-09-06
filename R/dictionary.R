@@ -5,7 +5,7 @@
 #' given multiple inputs (as a data frame), it only counts combinations that
 #' appear in the input.
 #'
-#' @param x A vector
+#' @param x A vector (including a data frame).
 #' @param sort One of "count", "key", "location", or "none".
 #'  * "count", the default, puts most frequent values at top
 #'  * "key", orders by the output key column (i.e. unique values of `x`)
@@ -82,7 +82,20 @@ reset_rownames <- function(x) {
 #' * `vec_duplicate_id()`: returns an integer vector given the location of
 #'   the first occurence of the value
 #'
-#' @param x A vector (including data frames).
+#' @param Missing values:
+#' In most cases, missing values are not considered to be equal, i.e.
+#' `NA == NA` is not `TRUE`. This behaviour would be unappealing for computing
+#' unique values, so, internally, these functions consider all `NAs` to
+#' be equivalent.
+#'
+#' @param Performance:
+#' These functions are currently primarily a proof of concept. They rely on the
+#' concept of a dictionary which uses C-level hashing and equality test for
+#' good asymptotic performance. They illustrate how we can implement these
+#' tools generically with clean C code, but have not yet been tuned for
+#' performance.
+#'
+#' @param x A vector (including a data frame).
 #' @return
 #'   * `vec_duplicate_any()`: a logical vector of length 1.
 #'   * `vec_duplicate_detect()`: a logical vector the same length as `x`
@@ -103,7 +116,8 @@ reset_rownames <- function(x) {
 #' # Identify elements of a vector by the location of the first element that
 #' # they're equal to:
 #' vec_duplicate_id(x)
-#'
+#' # Location of the unique values:
+#' vec_unique_loc(x)
 #' # Equivalent to `duplicated()`:
 #' vec_duplicate_id(x) == seq_along(x)
 NULL
@@ -131,16 +145,53 @@ vec_duplicate_id <- function(x) {
 
 # Unique values -----------------------------------------------------------
 
+#' Find and count unique values
+#'
+#' * `vec_unique()`: the unique values.
+#' * `vec_unique_loc()`: the locations of the unique values.
+#' * `vec_unique_count()`: the number of unique values.
+#'
+#' @inherit vec_duplicate sections
+#' @param x A vector (including a data frame).
+#' @return
+#' * `vec_unique()`: a vector the same type as `x` containining only unique
+#'    values.
+#' * `vec_unique_loc()`: an integer vector, giving locations of unique values.
+#' * `vec_unique_count()`: an integer vector of length 1, giving the
+#'   number of unique values.
+#' @seealso [vec_duplicated] for functions that work with the dual of
+#'   unique values: duplicated values.
+#' @export
+#' @examples
+#' x <- rpois(100, 8)
+#' vec_unique(x)
+#' vec_unique_loc(x)
+#' vec_unique_count(x)
+#'
+#' # `vec_unique()` returns values in the order that encounters them
+#' # use sort = "location" to match to the result of `vec_count()`
+#' head(vec_unique(x))
+#' head(vec_count(x, sort = "location"))
+#'
+#' # Normally missing values are not considered to be equal
+#' NA == NA
+#'
+#' # But they are for the purposes of considering uniqueness
+#' vec_unique(c(NA, NA, NA, NA, 1, 2, 1))
 vec_unique <- function(x) {
   x <- vec_proxy_equality(x)
   vec_subset(x, vec_unique_loc(x))
 }
 
+#' @rdname vec_unique
+#' @export
 vec_unique_loc <- function(x) {
   x <- vec_proxy_equality(x)
   .Call(vctrs_unique_loc, x)
 }
 
+#' @rdname vec_unique
+#' @export
 vec_unique_count <- function(x) {
   x <- vec_proxy_equality(x)
   .Call(vctrs_n_distinct, x)
