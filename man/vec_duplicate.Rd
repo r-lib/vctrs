@@ -15,18 +15,6 @@ vec_duplicate_id(x)
 }
 \arguments{
 \item{x}{A vector (including a data frame).}
-
-\item{Missing}{values:
-In most cases, missing values are not considered to be equal, i.e.
-\code{NA == NA} is not \code{TRUE}. This behaviour would be unappealing for computing
-unique values, so, internally, these functions consider all \code{NAs} to
-be equivalent.}
-
-\item{Performance:}{These functions are currently primarily a proof of concept. They rely on the
-concept of a dictionary which uses C-level hashing and equality test for
-good asymptotic performance. They illustrate how we can implement these
-tools generically with clean C code, but have not yet been tuned for
-performance.}
 }
 \value{
 \itemize{
@@ -47,6 +35,23 @@ repetitions.
 the first occurence of the value
 }
 }
+\section{Missing values}{
+
+In most cases, missing values are not considered to be equal, i.e.
+\code{NA == NA} is not \code{TRUE}. This behaviour would be unappealing for computing
+unique values, so, internally, these functions consider all \code{NAs} to
+be equivalent.
+}
+
+\section{Performance}{
+
+These functions are currently primarily a proof of concept. They rely on the
+concept of a dictionary which uses C-level hashing and equality test for
+good asymptotic performance. They illustrate how we can implement these
+tools generically with clean C code, but have not yet been tuned for
+performance.
+}
+
 \examples{
 vec_duplicate_any(1:10)
 vec_duplicate_any(c(1, 1:10))

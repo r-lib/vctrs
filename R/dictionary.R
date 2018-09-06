@@ -82,13 +82,13 @@ reset_rownames <- function(x) {
 #' * `vec_duplicate_id()`: returns an integer vector given the location of
 #'   the first occurence of the value
 #'
-#' @param Missing values:
+#' @section Missing values:
 #' In most cases, missing values are not considered to be equal, i.e.
 #' `NA == NA` is not `TRUE`. This behaviour would be unappealing for computing
 #' unique values, so, internally, these functions consider all `NAs` to
 #' be equivalent.
 #'
-#' @param Performance:
+#' @section Performance:
 #' These functions are currently primarily a proof of concept. They rely on the
 #' concept of a dictionary which uses C-level hashing and equality test for
 #' good asymptotic performance. They illustrate how we can implement these
@@ -159,7 +159,7 @@ vec_duplicate_id <- function(x) {
 #' * `vec_unique_loc()`: an integer vector, giving locations of unique values.
 #' * `vec_unique_count()`: an integer vector of length 1, giving the
 #'   number of unique values.
-#' @seealso [vec_duplicated] for functions that work with the dual of
+#' @seealso [vec_duplicate] for functions that work with the dual of
 #'   unique values: duplicated values.
 #' @export
 #' @examples

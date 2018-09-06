@@ -31,6 +31,23 @@ number of unique values.
 \item \code{vec_unique_count()}: the number of unique values.
 }
 }
+\section{Missing values}{
+
+In most cases, missing values are not considered to be equal, i.e.
+\code{NA == NA} is not \code{TRUE}. This behaviour would be unappealing for computing
+unique values, so, internally, these functions consider all \code{NAs} to
+be equivalent.
+}
+
+\section{Performance}{
+
+These functions are currently primarily a proof of concept. They rely on the
+concept of a dictionary which uses C-level hashing and equality test for
+good asymptotic performance. They illustrate how we can implement these
+tools generically with clean C code, but have not yet been tuned for
+performance.
+}
+
 \examples{
 x <- rpois(100, 8)
 vec_unique(x)
@@ -49,6 +66,6 @@ NA == NA
 vec_unique(c(NA, NA, NA, NA, 1, 2, 1))
 }
 \seealso{
-\link{vec_duplicated} for functions that work with the dual of
+\link{vec_duplicate} for functions that work with the dual of
 unique values: duplicated values.
 }
