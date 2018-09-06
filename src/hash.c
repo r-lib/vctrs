@@ -172,8 +172,6 @@ bool equal_scalar(SEXP x, int i, SEXP y, int j) {
     } else {
       return R_compute_identical(VECTOR_ELT(x, i), VECTOR_ELT(y, j), 0);
     }
-    // Need to add support for data frame
-
   default:
     Rf_errorcall(R_NilValue, "Unsupported type %s", Rf_type2char(TYPEOF(x)));
   }

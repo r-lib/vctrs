@@ -19,6 +19,7 @@ vec_n_distinct <- function(x) {
 }
 
 vec_count <- function(x, order = TRUE) {
+  # Returns key-value pair giving index of first occurence value and count
   kv <- .Call(vctrs_count, vec_proxy_equality(x))
 
   df <- data.frame(key = 0, count = kv$val)

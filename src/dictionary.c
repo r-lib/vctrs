@@ -3,7 +3,7 @@
 #include <Rinternals.h>
 
 #include <stdbool.h>
-#include <stdio.h>
+#include <string.h>
 #include "hash.h"
 
 #define EMPTY -1
@@ -26,7 +26,8 @@ int32_t ceil2(int32_t x) {
 // The dictionary structure is a little peculiar since R has no notion of
 // a scalar, so the `key`s are indexes into vector `x`. This means we can
 // only store values from a single vector, but we can still lookup using
-// another vector, provided that they're of the same type.
+// another vector, provided that they're of the same type (which is ensured
+// at the R-level).
 
 struct dictionary {
   SEXP x;
@@ -44,15 +45,14 @@ void dict_init(dictionary* d, SEXP x) {
 
   // assume worst case, that every value is distinct, aiming for a load factor
   // of at most 77%. We round up to power of 2 to ensure quadratic probing
-  // strategy works. Once the dictionary is resizable we'll reduce this to a
-  // smaller number.
+  // strategy works.
   R_len_t size = ceil2(vec_length(x) / 0.77);
   // Rprintf("size: %i\n", size);
 
   d->key_s = Rf_allocVector(INTSXP, size);
   PROTECT_WITH_INDEX(d->key_s, &d->key_protect);
   d->key = INTEGER(d->key_s);
-  memset(d->key, -1, size * sizeof(int));
+  memset(d->key, EMPTY, size * sizeof(int));
 
   d->size = size;
   d->used = 0;
