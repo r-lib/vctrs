@@ -26,7 +26,7 @@ test_that("vec_id gives position of first found", {
 })
 
 test_that("vec_count counts number observations", {
-  x <- vec_count(rep(1:3, 1:3))
+  x <- vec_count(rep(1:3, 1:3), sort = "key")
   expect_equal(x, data.frame(key = 1:3, count = 1:3))
 })
 
