@@ -43,13 +43,21 @@ int32_t hash_int64(int64_t x) {
   return x >> 33 ^ x ^ x << 11;
 }
 
+// https://stackoverflow.com/a/12996028/16632
+int32_t hash_int32(int32_t x) {
+  x = ((x >> 16) ^ x) * 0x45d9f3b;
+  x = ((x >> 16) ^ x) * 0x45d9f3b;
+  x = (x >> 16) ^ x;
+  return x;
+}
+
 int32_t hash_scalar(SEXP x, R_len_t i) {
   switch(TYPEOF(x)) {
   // Vector types ----------------------------------------------------------
   case LGLSXP:
-    return hash_combine(0, LOGICAL(x)[i]);
+    return hash_int32(LOGICAL(x)[i]);
   case INTSXP:
-    return hash_combine(0, INTEGER(x)[i]);
+    return hash_int32(INTEGER(x)[i]);
   case REALSXP: {
     double val = REAL(x)[i];
     // Hash all NAs and NaNs to same value (i.e. ignoring significand)
