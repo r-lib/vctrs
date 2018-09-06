@@ -47,9 +47,9 @@ int32_t hash_scalar(SEXP x, R_len_t i) {
   switch(TYPEOF(x)) {
   // Vector types ----------------------------------------------------------
   case LGLSXP:
-    return LOGICAL(x)[i];
+    return hash_combine(0, LOGICAL(x)[i]);
   case INTSXP:
-    return INTEGER(x)[i];
+    return hash_combine(0, INTEGER(x)[i]);
   case REALSXP: {
     double val = REAL(x)[i];
     // Hash all NAs and NaNs to same value (i.e. ignoring significand)

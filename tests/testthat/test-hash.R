@@ -7,11 +7,6 @@ test_that("F, T, and NA hash to different values", {
   expect_length(unique(x), 3)
 })
 
-test_that("integer hash to own value", {
-  x <- hash(1:10)
-  expect_equal(x, as.hexmode(1:10))
-})
-
 test_that("hash of double produces different values", {
   x <- hash(c(1, 1, 2))
   expect_true(x[[1]] == x[[2]])
@@ -39,7 +34,7 @@ test_that("hash of data frame works down rows", {
   df <- data.frame(x = 1:3, y = 1:3)
   x <- hash(df)
   expect_length(x, 3)
-  expect_equal(x[1], hash_obj(1:2))
+  expect_equal(x[1], hash(df[1, ]))
 })
 
 test_that("hashes are consistent from run to run", {
