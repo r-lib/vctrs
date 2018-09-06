@@ -39,12 +39,13 @@ test_that("hash of data frame works down rows", {
 
 test_that("hashes are consistent from run to run", {
   # no string, since we're currently hashing the address in string pool
-  df <- data.frame(
-    lgl = c(TRUE, TRUE, FALSE, NA),
-    int = c(1L, 2L, 10L, NA),
-    dbl = c(1, 2, 10, NA)
+  df <- list(
+    lgl = c(TRUE, FALSE, NA),
+    int = 1:100,
+    dbl1 = as.double(1:100),
+    dbl2 = seq(0, 1, length = 100)
   )
-  hash <- new_data_frame(lapply(df, hash), nrow(df))
+  hash <- lapply(df, hash)
 
   expect_known_output(print(hash), file = test_path("test-hash-hash.txt"))
 })
