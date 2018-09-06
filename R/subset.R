@@ -7,14 +7,13 @@ vec_subset <- function(x, i) {
   d <- vec_dims(x)
   if (d == 1) {
     x[i, drop = FALSE]
+  } else if (is.data.frame(x)) {
+    # Much faster, and avoids creating rownames
+    out <- lapply(x, `[`, i)
+    n <- if (length(out) == 0) 0L else length(out[[1]])
+    new_data_frame(out, n = n, subclass = setdiff(class(x), "data.frame"))
   } else if (d == 2) {
-    out <- x[i, , drop = FALSE]
-
-    if (is.data.frame(x) && .row_names_info(x) < 0) {
-      row.names(out) <- NULL
-    }
-    out
-
+    x[i, , drop = FALSE]
   } else {
     miss_args <- rep(list(missing_arg()), d - 1)
     eval_bare(expr(x[i, !!!miss_args, drop = FALSE]))
