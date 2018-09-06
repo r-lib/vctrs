@@ -21,6 +21,41 @@ int32_t ceil2(int32_t x) {
   return x;
 }
 
+struct growable {
+  SEXP x;
+  int32_t idx;
+  int n;
+  int capacity;
+};
+typedef struct growable growable;
+
+void growable_init(growable* g, SEXPTYPE type, int capacity) {
+  g->x = Rf_allocVector(type, capacity);
+  PROTECT_WITH_INDEX(g->x, &g->idx);
+
+  g->n = 0;
+  g->capacity = capacity;
+}
+
+void growable_free(growable* g) {
+  UNPROTECT(1);
+}
+
+void growable_push_int(growable* g, int i) {
+  if (g->n == g->capacity) {
+    g->capacity *= 2;
+    g->x = Rf_lengthgets(g->x, g->capacity);
+    REPROTECT(g->x, g->idx);
+  }
+
+  INTEGER(g->x)[g->n] = i;
+  g->n++;
+}
+
+SEXP growable_values(growable* g) {
+  return Rf_lengthgets(g->x, g->n);
+}
+
 // Dictonary object ------------------------------------------------------------
 
 // The dictionary structure is a little peculiar since R has no notion of
@@ -109,6 +144,29 @@ SEXP vctrs_duplicated(SEXP x) {
 
   UNPROTECT(1);
   dict_free(&d);
+  return out;
+}
+
+SEXP vctrs_unique_loc(SEXP x) {
+  dictionary d;
+  dict_init(&d, x);
+
+  growable g;
+  growable_init(&g, INTSXP, 256);
+
+  R_len_t n = vec_length(x);
+  for (int i = 0; i < n; ++i) {
+    uint32_t k = dict_find(&d, x, i);
+
+    if (d.key[k] == EMPTY) {
+      dict_put(&d, k, i);
+      growable_push_int(&g, i + 1);
+    }
+  }
+
+  SEXP out = growable_values(&g);
+  dict_free(&d);
+  growable_free(&g);
   return out;
 }
 

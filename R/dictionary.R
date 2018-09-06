@@ -87,8 +87,11 @@ vec_duplicated_any <- function(x) {
 }
 
 vec_unique <- function(x) {
-  # TODO: explore C function that returns indices
-  vec_subset(x, which(!vec_duplicated(x)))
+  vec_subset(x, vec_unique_loc(x))
+}
+
+vec_unique_loc <- function(x) {
+  .Call(vctrs_unique_loc, x)
 }
 
 vec_n_distinct <- function(x) {
