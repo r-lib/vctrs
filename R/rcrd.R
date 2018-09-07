@@ -21,7 +21,7 @@
 #' @keywords internal
 new_rcrd <- function(fields, ..., class = character()) {
   check_fields(fields)
-  structure(fields, ..., class = c(class, "rcrd", "vctrs_vctr"))
+  structure(fields, ..., class = c(class, "vctrs_rcrd", "vctrs_vctr"))
 }
 
 rcrd_reconstruct <- function(x, to) {
@@ -76,75 +76,75 @@ check_fields <- function(fields) {
 }
 
 #' @export
-length.rcrd <- function(x) {
+length.vctrs_rcrd <- function(x) {
   length(field(x, 1L))
 }
 
 #' @export
-names.rcrd <- function(x) {
+names.vctrs_rcrd <- function(x) {
   NULL
 }
 
-#' @method vec_cast rcrd
+#' @method vec_cast vctrs_rcrd
 #' @export
-vec_cast.rcrd <- function(x, to) UseMethod("vec_cast.rcrd")
+vec_cast.vctrs_rcrd <- function(x, to) UseMethod("vec_cast.vctrs_rcrd")
 
-#' @method vec_cast.rcrd NULL
+#' @method vec_cast.vctrs_rcrd NULL
 #' @export
-vec_cast.rcrd.NULL <- function(x, to) x
+vec_cast.vctrs_rcrd.NULL <- function(x, to) x
 
-#' @method vec_cast.rcrd list
+#' @method vec_cast.vctrs_rcrd list
 #' @export
-vec_cast.rcrd.list <- function(x, to) {
+vec_cast.vctrs_rcrd.list <- function(x, to) {
   vec_list_cast(x, to)
 }
 
-#' @method vec_cast.rcrd default
+#' @method vec_cast.vctrs_rcrd default
 #' @export
-vec_cast.rcrd.default <- function(x, to) {
+vec_cast.vctrs_rcrd.default <- function(x, to) {
   stop_incompatible_cast(x, to)
 }
 
 # Subsetting --------------------------------------------------------------
 
 #' @export
-`[.rcrd` <- function(x, i,...) {
+`[.vctrs_rcrd` <- function(x, i,...) {
   out <- lapply(vec_data(x), `[`, i, ...)
   rcrd_reconstruct(out, x)
 }
 
 #' @export
-`[[.rcrd` <- function(x, i, ...) {
+`[[.vctrs_rcrd` <- function(x, i, ...) {
   out <- lapply(vec_data(x), `[[`, i, ...)
   rcrd_reconstruct(out, x)
 }
 
 #' @export
-`$.rcrd` <- function(x, i, ...) {
+`$.vctrs_rcrd` <- function(x, i, ...) {
   stop_unsupported(x, "subsetting with $")
 }
 
 #' @export
-rep.rcrd <- function(x, ...) {
+rep.vctrs_rcrd <- function(x, ...) {
   out <- lapply(vec_data(x), rep, ...)
   rcrd_reconstruct(out, x)
 }
 
 #' @export
-`length<-.rcrd` <- function(x, value) {
+`length<-.vctrs_rcrd` <- function(x, value) {
   out <- lapply(vec_data(x), `length<-`, value)
   rcrd_reconstruct(out, x)
 }
 
 #' @export
-as.list.rcrd <- function(x, ...) {
+as.list.vctrs_rcrd <- function(x, ...) {
   lapply(seq_along(x), function(i) x[[i]])
 }
 
 # Replacement -------------------------------------------------------------
 
 #' @export
-`[[<-.rcrd` <- function(x, i, value) {
+`[[<-.vctrs_rcrd` <- function(x, i, value) {
   value <- vec_cast(value, x)
   out <- map2(vec_data(x), vec_data(value), function(x, value) {
     x[[i]] <- value
@@ -154,12 +154,12 @@ as.list.rcrd <- function(x, ...) {
 }
 
 #' @export
-`$<-.rcrd` <- function(x, i, value) {
+`$<-.vctrs_rcrd` <- function(x, i, value) {
   stop_unsupported(x, "subset assignment with $")
 }
 
 #' @export
-`[<-.rcrd` <- function(x, i, value) {
+`[<-.vctrs_rcrd` <- function(x, i, value) {
   value <- vec_cast(value, x)
 
   if (missing(i)) {
@@ -181,35 +181,35 @@ as.list.rcrd <- function(x, ...) {
 # Equality and ordering ---------------------------------------------------
 
 #' @export
-vec_proxy_equality.rcrd <- function(x)  {
+vec_proxy_equality.vctrs_rcrd <- function(x)  {
   new_data_frame(vec_data(x), length(x))
 }
 
 #' @export
-vec_proxy_order.rcrd <- function(x) {
+vec_proxy_order.vctrs_rcrd <- function(x) {
   new_data_frame(vec_data(x), length(x))
 }
 
 # Unimplemented -----------------------------------------------------------
 
 #' @export
-mean.rcrd <- function(x, ..., na.rm = FALSE) {
+mean.vctrs_rcrd <- function(x, ..., na.rm = FALSE) {
   stop_unimplemented(x, "mean")
 }
 
 #' @importFrom stats median
 #' @export
-median.rcrd <- function(x, ..., na.rm = FALSE) {
+median.vctrs_rcrd <- function(x, ..., na.rm = FALSE) {
   stop_unimplemented(x, "median")
 }
 
 #' @export
-Math.rcrd <- function(x, ..., na.rm = FALSE) {
+Math.vctrs_rcrd <- function(x, ..., na.rm = FALSE) {
   stop_unimplemented(x, .Generic)
 }
 
 #' @export
-anyNA.rcrd <- if (getRversion() >= "3.2") {
+anyNA.vctrs_rcrd <- if (getRversion() >= "3.2") {
   function(x, recursive = FALSE) {
     stop_unimplemented(x, .Method)
   }
@@ -220,22 +220,22 @@ anyNA.rcrd <- if (getRversion() >= "3.2") {
 }
 
 #' @export
-is.finite.rcrd <- function(x) {
+is.finite.vctrs_rcrd <- function(x) {
   stop_unimplemented(x, .Method)
 }
 
 #' @export
-is.finite.rcrd <- function(x) {
+is.finite.vctrs_rcrd <- function(x) {
   stop_unimplemented(x, .Method)
 }
 
 #' @export
-is.na.rcrd <- function(x) {
+is.na.vctrs_rcrd <- function(x) {
   stop_unimplemented(x, .Method)
 }
 
 #' @export
-is.nan.rcrd <- function(x) {
+is.nan.vctrs_rcrd <- function(x) {
   stop_unimplemented(x, .Method)
 }
 
