@@ -3,7 +3,7 @@
 \name{vec_match}
 \alias{vec_match}
 \alias{vec_in}
-\title{Find matching observations between vectors}
+\title{Find matching observations across vectors}
 \usage{
 vec_match(needles, haystack)
 

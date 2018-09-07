@@ -7,7 +7,7 @@
 \alias{is_list_of}
 \alias{vec_type2.list_of}
 \alias{vec_cast.list_of}
-\title{Construct "list_of" objects}
+\title{\code{list_of} S3 class for homogenous lists}
 \usage{
 list_of(..., .ptype = NULL)
 

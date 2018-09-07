@@ -1,4 +1,4 @@
-#' Combine multiple vectors into a single vector
+#' Combine many vectors into one vector
 #'
 #' Combine all arguments into a new vector of common type.
 #'

@@ -2,7 +2,7 @@
 % Please edit documentation in R/prototype.R
 \name{vec_ptype}
 \alias{vec_ptype}
-\title{Create a new prototype}
+\title{Find the prototype of a set of vectors}
 \usage{
 vec_ptype(..., .ptype = NULL)
 }

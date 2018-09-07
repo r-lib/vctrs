@@ -1,4 +1,4 @@
-#' Create a new prototype
+#' Find the prototype of a set of vectors
 #'
 #' This function is aimed at developers, but may also be useful for users who
 #' want to explore the type system interactively. Use this function to find the

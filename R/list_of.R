@@ -1,4 +1,4 @@
-#' Construct "list_of" objects
+#' `list_of` S3 class for homogenous lists
 #'
 #' A `list_of` object is a list where each element has the same type.
 #' Modifying the list with `$`, `[`, and `[[` preserves the constraint

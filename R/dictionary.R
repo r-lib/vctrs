@@ -200,7 +200,7 @@ vec_unique_count <- function(x) {
 
 # Matching ----------------------------------------------------------------
 
-#' Find matching observations between vectors
+#' Find matching observations across vectors
 #'
 #' `vec_in()` returns a logical vector based on whether `needle` is found in
 #' haystack. `vec_match()` returns an integer vector giving location of

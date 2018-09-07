@@ -2,7 +2,7 @@
 % Please edit documentation in R/coerce.R
 \name{vec_coerce}
 \alias{vec_coerce}
-\title{Coerce vectors to shared type}
+\title{Coerce vectors to common type}
 \usage{
 vec_coerce(..., .ptype = NULL)
 }
@@ -22,8 +22,9 @@ that a common type could not be found, or an error stating that casting
 a input to \code{.ptype} was not possible.
 }
 \description{
-This function is a useful as a building block for other functions. The
-implementation also illustrates the key ideas of the vctrs type system.
+This function is primarily useful as a building block for other functions.
+The implementation also illustrates the key ideas of the vctrs type system,
+and allows you to experiment interactively.
 }
 \examples{
 vec_coerce(factor("a"), factor(c("a", "b")))

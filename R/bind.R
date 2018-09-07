@@ -1,4 +1,4 @@
-#' Combine multiple data frames into a single data frames
+#' Combine many data frames into one data frame
 #'
 #' This pair of functions binds together data frames (and vectors), either
 #' row-wise or column-wise. Row-binding creates a data frame with common type

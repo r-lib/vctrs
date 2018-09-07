@@ -1,7 +1,8 @@
-#' Coerce vectors to shared type
+#' Coerce vectors to common type
 #'
-#' This function is a useful as a building block for other functions. The
-#' implementation also illustrates the key ideas of the vctrs type system.
+#' This function is primarily useful as a building block for other functions.
+#' The implementation also illustrates the key ideas of the vctrs type system,
+#' and allows you to experiment interactively.
 #'
 #' @param ... Vectors to coerce.
 #' @inheritParams vec_ptype

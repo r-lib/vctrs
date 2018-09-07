@@ -1,4 +1,4 @@
-#' Recycle vector types to have the same shape
+#' Recycle vector types to common shape
 #'
 #' The vctrs takes on recycling is both broader and stricter than base R.
 #' As a general rule, we only ever recycle 1-d slices of high-d arrays.

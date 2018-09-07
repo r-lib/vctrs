@@ -1,7 +1,8 @@
-#' Return the underlying data from a vector
+#' Extract underlying data
 #'
-#' Currently, due to the underlying memory architecture of vectors, this
-#' requires a full copy of the underlying data.
+#' Extract the data underlying an S3 vector object, i.e. the underlying
+#' atomic vector or list. Currently, due to the underlying memory architecture
+#' of R, this creates a full copy of the underlying data.
 #'
 #' @param x A vector
 #' @export

@@ -2,7 +2,7 @@
 % Please edit documentation in R/data.R
 \name{vec_data}
 \alias{vec_data}
-\title{Return the underlying data from a vector}
+\title{Extract underlying data}
 \usage{
 vec_data(x)
 }
@@ -13,6 +13,7 @@ vec_data(x)
 The data underlying \code{x}, free from an attributes.
 }
 \description{
-Currently, due to the underlying memory architecture of vectors, this
-requires a full copy of the underlying data.
+Extract the data underlying an S3 vector object, i.e. the underlying
+atomic vector or list. Currently, due to the underlying memory architecture
+of R, this creates a full copy of the underlying data.
 }

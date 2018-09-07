@@ -1,0 +1,26 @@
+reference:
+- title: Foundations
+  contents:
+  - vec_data
+  - vec_ptype
+  - vec_length
+
+- title: Casting and combining
+  contents:
+  - vec_c
+  - vec_cbind
+  - vec_coerce
+  - vec_recycle
+
+- title: Matching
+  contents:
+  - vec_count
+  - vec_duplicate
+  - vec_unique
+  - vec_in
+
+- title: New classes
+  contents:
+  - list_of
+  - vctr
+  - rcrd

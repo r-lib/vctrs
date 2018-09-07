@@ -2,7 +2,7 @@
 % Please edit documentation in R/c.R
 \name{vec_c}
 \alias{vec_c}
-\title{Combine multiple vectors into a single vector}
+\title{Combine many vectors into one vector}
 \usage{
 vec_c(..., .ptype = NULL)
 }

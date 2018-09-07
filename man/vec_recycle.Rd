@@ -2,7 +2,7 @@
 % Please edit documentation in R/recycle.R
 \name{vec_recycle}
 \alias{vec_recycle}
-\title{Recycle vector types to have the same shape}
+\title{Recycle vector types to common shape}
 \usage{
 vec_recycle(...)
 }

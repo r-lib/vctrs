@@ -4,7 +4,7 @@
 \alias{vec_bind}
 \alias{vec_rbind}
 \alias{vec_cbind}
-\title{Combine multiple data frames into a single data frames}
+\title{Combine many data frames into one data frame}
 \usage{
 vec_rbind(..., .ptype = NULL)
 
