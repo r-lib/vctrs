@@ -42,9 +42,9 @@ vec_proxy_order <- function(x) {
 
 #' @export
 vec_proxy_order.vctr <- function(x) {
-  if (is_record(x)) {
-    new_data_frame(vec_data(x), length(x))
+  if (is.list(x)) {
+    stop_unimplemented(x, "vec_proxy_order")
   } else {
-    vec_data(x)
+    order(vec_data(x))
   }
 }

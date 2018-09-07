@@ -114,6 +114,12 @@ test_that("subset assignment recycles", {
   expect_equal(x, tuple(c(2, 2), c(2, 2)))
 })
 
+test_that("can sort record", {
+  x <- tuple(c(1, 2, 1), c(3, 1, 2))
+  expect_equal(order(x), c(3, 1, 2))
+  expect_equal(sort(x), tuple(c(1, 1, 2), c(2, 3, 1)))
+})
+
 test_that("can round trip through list", {
   t <- tuple(1:2, 3:4)
   l <- expect_equal(vec_cast(t, list()), list(tuple(1, 3), tuple(2, 4)))
