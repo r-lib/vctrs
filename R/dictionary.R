@@ -200,13 +200,41 @@ vec_unique_count <- function(x) {
 
 # Matching ----------------------------------------------------------------
 
-vec_in <- function(needles, haystack) {
-  v <- vec_coerce(needles = needles, haystack = haystack)
-  .Call(vctrs_in, vec_proxy_equality(v$needles), vec_proxy_equality(v$haystack))
-}
-
+#' Find matching observations between vectors
+#'
+#' `vec_in()` returns a logical vector based on whether `needle` is found in
+#' haystack. `vec_match()` returns an integer vector giving location of
+#' `needle` in `haystack`, or `NA` if it's not found.
+#'
+#' `vec_in()` is equivalent to [%in%]; `vec_match()` is equivalen to `match()`.
+#'
+#' @param needles,haystack Vector of `needles` to search for in vector haystack.
+#'   `haystack` should usually be unique; if not `vec_match()` will only
+#'   return the location of the first match.
+#'
+#'   `needles` and `haystack` are coerced to the same type prior to
+#'   comparison.
+#' @return A vector the same length as `needles`. `vec_in()` returns a
+#'   logical vector; `vec_match()` returns an integer vector.
+#' @export
+#' @examples
+#' hadley <- strsplit("hadley", "")[[1]]
+#' vec_match(hadley, letters)
+#'
+#' vowels <- c("a", "e", "i", "o", "u")
+#' vec_match(hadley, vowels)
+#' vec_in(hadley, vowels)
+#'
+#' # Only the first index of duplicates is returned
+#' vec_match(c("a", "b"), c("a", "b", "a", "b"))
 vec_match <- function(needles, haystack) {
   v <- vec_coerce(needles = needles, haystack = haystack)
   .Call(vctrs_match, vec_proxy_equality(v$needles), vec_proxy_equality(v$haystack))
 }
 
+#' @export
+#' @rdname vec_match
+vec_in <- function(needles, haystack) {
+  v <- vec_coerce(needles = needles, haystack = haystack)
+  .Call(vctrs_in, vec_proxy_equality(v$needles), vec_proxy_equality(v$haystack))
+}

@@ -60,3 +60,10 @@ test_that("vec_match() matches match()", {
   expect_equal(vec_match(n, h), match(n, h))
 })
 
+test_that("vec_in() matches %in%", {
+  n <- c(1:3, NA)
+  h <- c(4, 2, 1, NA)
+
+  expect_equal(vec_in(n, h), n %in% h)
+})
+
