@@ -84,9 +84,9 @@ reset_rownames <- function(x) {
 #'
 #' @section Missing values:
 #' In most cases, missing values are not considered to be equal, i.e.
-#' `NA == NA` is not `TRUE`. This behaviour would be unappealing for computing
-#' unique values, so, internally, these functions consider all `NAs` to
-#' be equivalent.
+#' `NA == NA` is not `TRUE`. This behaviour would be unappealing here,
+#' so these functions consider all `NAs` to be equal. (Similarly,
+#' all `NaN` are also considered to be equal.)
 #'
 #' @section Performance:
 #' These functions are currently slightly slower than their base equivalents.
@@ -208,6 +208,7 @@ vec_unique_count <- function(x) {
 #'
 #' `vec_in()` is equivalent to [%in%]; `vec_match()` is equivalen to `match()`.
 #'
+#' @inherit vec_duplicate sections
 #' @param needles,haystack Vector of `needles` to search for in vector haystack.
 #'   `haystack` should usually be unique; if not `vec_match()` will only
 #'   return the location of the first match.

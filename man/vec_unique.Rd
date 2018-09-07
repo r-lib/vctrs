@@ -34,9 +34,9 @@ number of unique values.
 \section{Missing values}{
 
 In most cases, missing values are not considered to be equal, i.e.
-\code{NA == NA} is not \code{TRUE}. This behaviour would be unappealing for computing
-unique values, so, internally, these functions consider all \code{NAs} to
-be equivalent.
+\code{NA == NA} is not \code{TRUE}. This behaviour would be unappealing here,
+so these functions consider all \code{NAs} to be equal. (Similarly,
+all \code{NaN} are also considered to be equal.)
 }
 
 \section{Performance}{

@@ -29,6 +29,23 @@ haystack. \code{vec_match()} returns an integer vector giving location of
 \details{
 \code{vec_in()} is equivalent to \link{\%in\%}; \code{vec_match()} is equivalen to \code{match()}.
 }
+\section{Missing values}{
+
+In most cases, missing values are not considered to be equal, i.e.
+\code{NA == NA} is not \code{TRUE}. This behaviour would be unappealing here,
+so these functions consider all \code{NAs} to be equal. (Similarly,
+all \code{NaN} are also considered to be equal.)
+}
+
+\section{Performance}{
+
+These functions are currently slightly slower than their base equivalents.
+This is primarily because they do a little more checking and coercion
+in R, which makes them both a litter safer and more generic. Additionally,
+the C code underlying vctrs has not yet been implemented: we expect
+some performance improvements when that happens.
+}
+
 \examples{
 hadley <- strsplit("hadley", "")[[1]]
 vec_match(hadley, letters)
