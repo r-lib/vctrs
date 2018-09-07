@@ -19,22 +19,12 @@ test_that("can construct and access components", {
 
 # coercion ----------------------------------------------------------------
 
-test_that("can reconstruct rcrd from list", {
+test_that("can recast rcrd from list", {
   r <- new_rcrd(list(x = integer(), y = numeric()))
 
   expect_equal(
-    rcrd_reconstruct(list(x = 1L, y = 1), r),
+    vec_recast(list(x = 1L, y = 1), r),
     new_rcrd(list(x = 1L, y = 1))
-  )
-
-  expect_warning(
-    rcrd_reconstruct(list(x = 1L, y = 1, z = 3), r),
-    class = "warn_lossy_cast"
-  )
-
-  expect_error(
-    rcrd_reconstruct(list(x = 1L), r),
-    class = "error_incompatible_cast"
   )
 })
 

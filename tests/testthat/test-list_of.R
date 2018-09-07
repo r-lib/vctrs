@@ -69,8 +69,11 @@ test_that("[<-, [[<- and $<- coerce their input", {
 
   x <- list_of(x = 1, y = 1, z = 1)
   x[1] <- list(FALSE)
+  x
   x[[2]] <- FALSE
+  x
   x$z <- FALSE
+  x
 
   expect_equal(x, list_of(x = 0, y = 0, z = 0))
 })

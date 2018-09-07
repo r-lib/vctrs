@@ -17,3 +17,7 @@ Extract the data underlying an S3 vector object, i.e. the underlying
 atomic vector or list. Currently, due to the underlying memory architecture
 of R, this creates a full copy of the underlying data.
 }
+\seealso{
+See \code{\link[=vec_recast]{vec_recast()}} for the inverse operation: it restores
+attributes given a bare vector and a prototype.
+}

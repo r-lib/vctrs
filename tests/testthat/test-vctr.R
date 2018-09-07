@@ -24,15 +24,11 @@ test_that("cast to NULL returns x", {
   expect_equal(vec_cast(NULL, x), NULL)
 })
 
-test_that("cast to atomic vector of same type preserves attributes", {
+test_that("recasting to atomic vector of same type preserves attributes", {
   x1 <- new_vctr(1, class = "x")
   x2 <- new_vctr(2, class = "x")
 
-  expect_equal(vec_cast(2, x1), x2)
-
-  # otherwise you get an error
-  expect_error(vec_cast(2L, x1), class = "error_incompatible_cast")
-  expect_error(vec_cast(new_date(), x1), class = "error_incompatible_cast")
+  expect_equal(vec_recast(2, x1), x2)
 })
 
 test_that("xtfrm works for variety of base classes", {

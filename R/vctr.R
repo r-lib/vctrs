@@ -84,6 +84,16 @@ names_all_or_nothing <- function(names) {
   }
 }
 
+#' @export
+vec_recast.vctrs_vctr <- function(x, to) {
+  # Copy every attribute, but preserve existing names
+  attr_to <- attributes(to)
+  attr_to[["names"]] <- names(x)
+  attributes(x) <- attr_to
+
+  x
+}
+
 #' @method vec_cast vctrs_vctr
 #' @export
 vec_cast.vctrs_vctr <- function(x, to) UseMethod("vec_cast.vctrs_vctr")
@@ -103,16 +113,7 @@ vec_cast.vctrs_vctr.default <- function(x, to) {
     }
   }
 
-  if (typeof(x) != typeof(to)) {
-    stop_incompatible_cast(x, to)
-  }
-
-  # Copy every attribute, preserving names
-  attr_to <- attributes(to)
-  attr_to[["names"]] <- names(x)
-  attributes(x) <- attr_to
-
-  x
+  vec_recast(x, to)
 }
 
 # Printing ----------------------------------------------------------------
@@ -172,27 +173,27 @@ str.vctrs_vctr <- function(object, ..., indent.str = "", width = getOption("widt
 
 #' @export
 `[.vctrs_vctr` <- function(x, i,...) {
-  vec_cast(NextMethod(), x)
+  vec_recast(NextMethod(), x)
 }
 
 #' @export
 `[[.vctrs_vctr` <- function(x, i, ...) {
-  vec_cast(NextMethod(), x)
+  vec_recast(NextMethod(), x)
 }
 
 #' @export
 `$.vctrs_vctr` <- function(x, i) {
-  vec_cast(NextMethod(), x)
+  vec_recast(NextMethod(), x)
 }
 
 #' @export
 rep.vctrs_vctr <- function(x, ...) {
-  vec_cast(NextMethod(), x)
+  vec_recast(NextMethod(), x)
 }
 
 #' @export
 `length<-.vctrs_vctr` <- function(x, value) {
-  vec_cast(NextMethod(), x)
+  vec_recast(NextMethod(), x)
 }
 
 # Replacement -------------------------------------------------------------
@@ -283,18 +284,18 @@ Summary.vctrs_vctr <- function(..., na.rm = FALSE) {
 
 #' @export
 mean.vctrs_vctr <- function(x, ..., na.rm = FALSE) {
-  vec_cast(NextMethod(), x)
+  vec_recast(NextMethod(), x)
 }
 
 #' @importFrom stats median
 #' @export
 median.vctrs_vctr <- function(x, ..., na.rm = FALSE) {
-  vec_cast(NextMethod(), x)
+  vec_recast(NextMethod(), x)
 }
 
 #' @export
 Math.vctrs_vctr <- function(x, ..., na.rm = FALSE) {
-  vec_cast(NextMethod(), x)
+  vec_recast(NextMethod(), x)
 }
 
 #' @export

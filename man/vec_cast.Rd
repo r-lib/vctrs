@@ -2,6 +2,7 @@
 % Please edit documentation in R/cast.R
 \name{vec_cast}
 \alias{vec_cast}
+\alias{vec_recast}
 \alias{vec_cast.NULL}
 \alias{vec_cast.logical}
 \alias{vec_cast.integer}
@@ -17,6 +18,8 @@
 \title{Cast a vector to specified type}
 \usage{
 vec_cast(x, to)
+
+vec_recast(x, to)
 
 \method{vec_cast}{NULL}(x, to)
 
@@ -57,7 +60,9 @@ there is no 1-to-1 mapping for a specific value).
 \code{vec_cast()} provides general coercions from one type of vector to another,
 and along with \code{\link[=vec_type2]{vec_type2()}} forms the foundation of the vctrs type system.
 It should generally not be called by R users, but is important for R
-developers.
+developers. \code{vec_recast()} is designed specifically for casting a bare
+vector to the original type; it's useful when relying \code{NextMethod()} for
+the actual implementation.
 }
 \section{Casting rules}{
 
@@ -95,6 +100,22 @@ that \code{as.integer.double()} would.
 
 See \code{vignette("s3-vector")} on how to extend to your own S3
 vector classes.
+}
+
+\section{Recasting}{
+
+
+A recast is a specialised type of cast, primarily used in conjunction
+with \code{NextMethod()} or a C-level function that works on the underlying
+data structure. A \code{vec_recast()} method can assume that \code{x} has the
+correct type (although the length may be different) but all attributes
+have been lost and need to be restored. \code{vec_cast(vec_data(x), x)}
+should yield \code{x}.
+
+To understand the difference between \code{vec_cast()} and \code{vec_recast()}
+think about factors: it doesn't make sense to cast an integer to a factor,
+but if \code{NextMethod()} or other low-level function has stripped attributes,
+you still need to be able to restore them.
 }
 
 \examples{

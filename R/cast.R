@@ -3,7 +3,9 @@
 #' `vec_cast()` provides general coercions from one type of vector to another,
 #' and along with [vec_type2()] forms the foundation of the vctrs type system.
 #' It should generally not be called by R users, but is important for R
-#' developers.
+#' developers. `vec_recast()` is designed specifically for casting a bare
+#' vector to the original type; it's useful when relying `NextMethod()` for
+#' the actual implementation.
 #'
 #' @section Casting rules:
 #' Casting is more flexible than coercion, and allows for the possibility of
@@ -39,6 +41,20 @@
 #' See `vignette("s3-vector")` on how to extend to your own S3
 #' vector classes.
 #'
+#' @section Recasting:
+#'
+#' A recast is a specialised type of cast, primarily used in conjunction
+#' with `NextMethod()` or a C-level function that works on the underlying
+#' data structure. A `vec_recast()` method can assume that `x` has the
+#' correct type (although the length may be different) but all attributes
+#' have been lost and need to be restored. `vec_cast(vec_data(x), x)`
+#' should yield `x`.
+#'
+#' To understand the difference between `vec_cast()` and `vec_recast()`
+#' think about factors: it doesn't make sense to cast an integer to a factor,
+#' but if `NextMethod()` or other low-level function has stripped attributes,
+#' you still need to be able to restore them.
+#'
 #' @param x Vector to cast.
 #' @param to Type to cast to.
 #' @return A vector the same length as `x` with the same type as `to`,
@@ -66,6 +82,17 @@ vec_cast <- function(x, to) {
 #' @export
 vec_cast.default <- function(x, to) {
   stop_incompatible_cast(x, to)
+}
+
+#' @export
+#' @rdname vec_cast
+vec_recast <- function(x, to) {
+  UseMethod("vec_recast", to)
+}
+
+#' @export
+vec_recast.default <- function(x, to) {
+  x
 }
 
 # Base vectors --------------------------------------------------------------

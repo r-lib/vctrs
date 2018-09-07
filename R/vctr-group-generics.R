@@ -115,7 +115,7 @@ vec_grp_unary.vctrs_vctr <- function(generic, x) {
   }
 
   out <- vec_generic_call(generic, x)
-  vec_cast(out, x)
+  vec_recast(out, x)
 }
 
 #' @export
@@ -128,7 +128,7 @@ vec_grp_numeric.vctrs_vctr <- function(generic, x, y) {
   }
 
   out <- vec_generic_call(generic, x, y)
-  vec_cast(out, x)
+  vec_recast(out, x)
 }
 
 #' @export

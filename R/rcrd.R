@@ -24,27 +24,8 @@ new_rcrd <- function(fields, ..., class = character()) {
   structure(fields, ..., class = c(class, "vctrs_rcrd", "vctrs_vctr"))
 }
 
-rcrd_reconstruct <- function(x, to) {
-  # if not a rcrd, need to check valid
-  if (!setequal(fields(x), fields(to))) {
-    diff <- set_partition(fields(x), fields(to))
-    if (length(diff$only_x) > 0) {
-      warn_lossy_cast(
-        x, to,
-        details = inline_list("Extra names: ", diff$only_x, quote = "`")
-      )
-    }
-
-    if (length(diff$only_y) > 0) {
-      stop_incompatible_cast(
-        x, to,
-        details = inline_list("Missing names: ", diff$only_y, quote = "`")
-      )
-    }
-  }
-
-  # check types
-
+#' @export
+vec_recast.vctrs_rcrd <- function(x, to) {
   attributes(x) <- attributes(to)
   x
 }
@@ -110,13 +91,13 @@ vec_cast.vctrs_rcrd.default <- function(x, to) {
 #' @export
 `[.vctrs_rcrd` <- function(x, i,...) {
   out <- lapply(vec_data(x), `[`, i, ...)
-  rcrd_reconstruct(out, x)
+  vec_recast(out, x)
 }
 
 #' @export
 `[[.vctrs_rcrd` <- function(x, i, ...) {
   out <- lapply(vec_data(x), `[[`, i, ...)
-  rcrd_reconstruct(out, x)
+  vec_recast(out, x)
 }
 
 #' @export
@@ -127,13 +108,13 @@ vec_cast.vctrs_rcrd.default <- function(x, to) {
 #' @export
 rep.vctrs_rcrd <- function(x, ...) {
   out <- lapply(vec_data(x), rep, ...)
-  rcrd_reconstruct(out, x)
+  vec_recast(out, x)
 }
 
 #' @export
 `length<-.vctrs_rcrd` <- function(x, value) {
   out <- lapply(vec_data(x), `length<-`, value)
-  rcrd_reconstruct(out, x)
+  vec_recast(out, x)
 }
 
 #' @export
@@ -150,7 +131,7 @@ as.list.vctrs_rcrd <- function(x, ...) {
     x[[i]] <- value
     x
   })
-  rcrd_reconstruct(out, x)
+  vec_recast(out, x)
 }
 
 #' @export
@@ -174,9 +155,8 @@ as.list.vctrs_rcrd <- function(x, ...) {
     }
   }
   out <- map2(vec_data(x), vec_data(value), replace)
-  rcrd_reconstruct(out, x)
+  vec_recast(out, x)
 }
-
 
 # Equality and ordering ---------------------------------------------------
 

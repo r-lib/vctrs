@@ -130,19 +130,24 @@ as.list.vctrs_list_of <- function(x, ...) {
 `[[<-.vctrs_list_of` <- function(x, i, value) {
   # TODO: replace with vctrs_field_set equivalent
   out <- vec_data(x)
-  out[[i]] <- vec_data(vec_cast(list(value), x))[[1]]
-  vec_cast(out, x)
+  out[[i]] <- vec_cast(value, attr(x, "ptype"))
+  vec_recast(out, x)
 }
 
 #' @export
 `$<-.vctrs_list_of` <- function(x, i, value) {
   # TODO: replace with vctrs_field_set equivalent
   out <- vec_data(x)
-  out[[i]] <- vec_data(vec_cast(list(value), x))[[1]]
-  vec_cast(out, x)
+  out[[i]] <- vec_cast(value, attr(x, "ptype"))
+  vec_recast(out, x)
 }
 
 # Type system -------------------------------------------------------------
+
+#' @export
+vec_recast.vctrs_list_of <- function(x, to) {
+  new_list_of(x, .ptype = attr(to, "ptype"))
+}
 
 #' @rdname list_of
 #' @export vec_type2.vctrs_list_of
