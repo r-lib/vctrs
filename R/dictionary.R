@@ -89,11 +89,11 @@ reset_rownames <- function(x) {
 #' be equivalent.
 #'
 #' @section Performance:
-#' These functions are currently primarily a proof of concept. They rely on the
-#' concept of a dictionary which uses C-level hashing and equality test for
-#' good asymptotic performance. They illustrate how we can implement these
-#' tools generically with clean C code, but have not yet been tuned for
-#' performance.
+#' These functions are currently slightly slower than their base equivalents.
+#' This is primarily because they do a little more checking and coercion
+#' in R, which makes them both a litter safer and more generic. Additionally,
+#' the C code underlying vctrs has not yet been implemented: we expect
+#' some performance improvements when that happens.
 #'
 #' @param x A vector (including a data frame).
 #' @return
