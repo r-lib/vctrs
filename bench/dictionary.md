@@ -116,3 +116,61 @@ Clearly there’s some larger setup cost needed for vctrs dictionary, and
 the performance difference declines as size increases.
 
 ![](dictionary_files/figure-gfm/unnamed-chunk-6-1.png)<!-- -->
+
+## Raw C code
+
+If we just call the C function that underlies `vec_unique()`,
+(i.e. ignoring the code that makes these functions generic), we see
+basically no performance difference:
+
+``` r
+df <- bench::press(
+  type = c("integer", "double", "character"),
+  n = c(1e1, 1e2, 1e3, 1e4, 1e5, 1e6),
+  {
+    x <- make_vec(type, n, "unique")
+    bench::mark(
+      base = unique(x),
+      vctrs = .Call(vctrs:::vctrs_unique_loc, x),
+      min_time = 0.05,
+      max_iterations = 20,
+      check = FALSE
+    )
+  }
+)
+#>  Running with:
+#>     type            n
+#>   1 integer        10
+#>   2 double         10
+#>   3 character      10
+#>   4 integer       100
+#>   5 double        100
+#>   6 character     100
+#>   7 integer      1000
+#>   8 double       1000
+#>   9 character    1000
+#>  10 integer     10000
+#>  11 double      10000
+#>  12 character   10000
+#>  13 integer    100000
+#>  14 double     100000
+#>  15 character  100000
+#>  16 integer   1000000
+#>  Warning: Some expressions had a GC in every iteration; so filtering is
+#>  disabled.
+#>  17 double    1000000
+#>  Warning: Some expressions had a GC in every iteration; so filtering is
+#>  disabled.
+#>  18 character 1000000
+#>  Warning: Some expressions had a GC in every iteration; so filtering is
+#>  disabled.
+
+ggplot(df, aes(n, as.numeric(min))) + 
+  geom_point() + 
+  geom_line(aes(colour = expression)) + 
+  scale_x_log10() + 
+  scale_y_log10() + 
+  facet_wrap(~ type)
+```
+
+![](dictionary_files/figure-gfm/unnamed-chunk-7-1.png)<!-- -->

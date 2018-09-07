@@ -90,3 +90,32 @@ ggplot(df, aes(n, as.numeric(min))) +
   scale_y_log10() + 
   facet_wrap( ~ type)
 ```
+
+## Raw C code
+
+If we just call the C function that underlies `vec_unique()` (i.e. ignoring the code that makes these functions generic) we see basically no performance difference:
+
+```{r}
+df <- bench::press(
+  type = c("integer", "double", "character"),
+  n = c(1e1, 1e2, 1e3, 1e4, 1e5, 1e6),
+  {
+    x <- make_vec(type, n, "unique")
+    bench::mark(
+      base = unique(x),
+      vctrs = .Call(vctrs:::vctrs_unique_loc, x),
+      min_time = 0.05,
+      max_iterations = 20,
+      check = FALSE
+    )
+  }
+)
+
+ggplot(df, aes(n, as.numeric(min))) + 
+  geom_point() + 
+  geom_line(aes(colour = expression)) + 
+  scale_x_log10() + 
+  scale_y_log10() + 
+  facet_wrap(~ type)
+```
+
