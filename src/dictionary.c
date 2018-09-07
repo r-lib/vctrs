@@ -46,6 +46,8 @@ void dict_init(dictionary* d, SEXP x) {
   // of at most 77%. We round up to power of 2 to ensure quadratic probing
   // strategy works.
   R_len_t size = ceil2(vec_length(x) / 0.77);
+  if (size < 16)
+    size = 16;
   // Rprintf("size: %i\n", size);
 
   d->key = (int32_t*) R_alloc(size, sizeof(int32_t));
