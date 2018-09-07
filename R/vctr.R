@@ -306,6 +306,21 @@ c.vctr <- function(...) {
 # Order and equality ------------------------------------------------------
 
 #' @export
+vec_proxy_order.vctr <- function(x) {
+  if (is.list(x)) {
+    # no natural ordering for lists, so just preserve
+    seq_along(x)
+  } else {
+    vec_data(x)
+  }
+}
+
+#' @export
+vec_proxy_equality.default <- function(x) {
+  vec_data(x)
+}
+
+#' @export
 xtfrm.vctr <- function(x) {
   proxy <- vec_proxy_order(x)
 

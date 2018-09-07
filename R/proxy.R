@@ -39,12 +39,3 @@ vec_proxy_order <- function(x) {
   UseMethod("vec_proxy_order")
 }
 
-#' @export
-vec_proxy_order.vctr <- function(x) {
-  if (is.list(x)) {
-    # no natural ordering for lists, so just preserve
-    seq_along(x)
-  } else {
-    vec_data(x)
-  }
-}
