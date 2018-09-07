@@ -3,7 +3,7 @@ context("test-list_of")
 test_that("list_of works like list", {
   x1 <- list_of(1, 1)
   expect_type(x1, "list")
-  expect_s3_class(x1, "list_of")
+  expect_s3_class(x1, "vctrs_list_of")
   expect_equal(attr(x1, "ptype"), double())
 
   x2 <- list_of(1, 1, .ptype = integer())

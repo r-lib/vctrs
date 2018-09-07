@@ -67,9 +67,9 @@ vec_type2.ordered.unknown <- function(x, y) x
 #' @method vec_type2.list unknown
 #' @export
 vec_type2.list.unknown <- function(x, y) x
-#' @method vec_type2.list_of unknown
+#' @method vec_type2.vctrs_list_of unknown
 #' @export
-vec_type2.list_of.unknown <- function(x, y) x
+vec_type2.vctrs_list_of.unknown <- function(x, y) x
 #' @method vec_type2.Date unknown
 #' @export
 vec_type2.Date.unknown <- function(x, y) x

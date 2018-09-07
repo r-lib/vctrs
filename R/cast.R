@@ -291,8 +291,8 @@ vec_cast.list.NULL <- function(x, to) {
   x
 }
 #' @export
-#' @method vec_cast.list list_of
-vec_cast.list.list_of <- function(x, to) {
+#' @method vec_cast.list vctrs_list_of
+vec_cast.list.vctrs_list_of <- function(x, to) {
   warn_lossy_cast(x, to)
   shape_recycle(as.list(x), to)
 }

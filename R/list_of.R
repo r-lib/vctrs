@@ -32,7 +32,7 @@ as_list_of <- function(x, ...) {
 }
 
 #' @export
-as_list_of.list_of <- function(x, .ptype = NULL, ...) {
+as_list_of.vctrs_list_of <- function(x, .ptype = NULL, ...) {
   if (!is.null(.ptype)) {
     list_of(!!!x, .ptype = .ptype)
   } else {
@@ -51,20 +51,20 @@ new_list_of <- function(x, .ptype) {
   stopifnot(is.list(x))
   stopifnot(vec_length(.ptype) == 0)
 
-  new_vctr(x, ptype = .ptype, class = "list_of")
+  new_vctr(x, ptype = .ptype, class = "vctrs_list_of")
 }
 
 #' @export
 #' @rdname list_of
 is_list_of <- function(x) {
-  inherits(x, "list_of")
+  inherits(x, "vctrs_list_of")
 }
 
 
 # Formatting --------------------------------------------------------------
 
 #' @export
-print.list_of <- function(x, ...) {
+print.vctrs_list_of <- function(x, ...) {
   cat_line("<", vec_ptype_full(x), "[", length(x), "]>")
   if (length(x) > 0) {
     print(vec_data(x))
@@ -73,7 +73,7 @@ print.list_of <- function(x, ...) {
 }
 
 #' @export
-str.list_of <- function(object, ..., indent.str = "", nest.lev = 0) {
+str.vctrs_list_of <- function(object, ..., indent.str = "", nest.lev = 0) {
   if (nest.lev != 0L)
     cat(" ")
   cat_line(glue::glue("{vec_ptype_abbr(object)} [1:{length(object)}] "))
@@ -88,12 +88,12 @@ str.list_of <- function(object, ..., indent.str = "", nest.lev = 0) {
 }
 
 #' @export
-format.list_of <- function(x, ...) {
+format.vctrs_list_of <- function(x, ...) {
   format.default(x)
 }
 
 #' @export
-vec_ptype_full.list_of <- function(x) {
+vec_ptype_full.vctrs_list_of <- function(x) {
   param <- vec_ptype_full(attr(x, "ptype"))
   if (grepl("\n", param)) {
     param <- paste0(indent(paste0("\n", param), 2), "\n")
@@ -103,40 +103,40 @@ vec_ptype_full.list_of <- function(x) {
 }
 
 #' @export
-vec_ptype_abbr.list_of <- function(x) {
+vec_ptype_abbr.vctrs_list_of <- function(x) {
   paste0("list<", vec_ptype_abbr(attr(x, "ptype")), ">")
 }
 
 # vctr methods ------------------------------------------------------------
 
 #' @export
-as.list.list_of <- function(x, ...) {
+as.list.vctrs_list_of <- function(x, ...) {
   attr(x, "ptype") <- NULL
   attr(x, "class") <- NULL
   x
 }
 
 #' @export
-`[[.list_of` <- function(x, i, ...) {
+`[[.vctrs_list_of` <- function(x, i, ...) {
   .subset2(x, i)
 }
 
 #' @export
-`$.list_of` <- function(x, i, ...) {
+`$.vctrs_list_of` <- function(x, i, ...) {
   .subset2(x, i)
 }
 
 #' @export
-`[[<-.list_of` <- function(x, i, value) {
-  # TODO: replace with vctr_field_set equivalent
+`[[<-.vctrs_list_of` <- function(x, i, value) {
+  # TODO: replace with vctrs_field_set equivalent
   out <- vec_data(x)
   out[[i]] <- vec_data(vec_cast(list(value), x))[[1]]
   vec_cast(out, x)
 }
 
 #' @export
-`$<-.list_of` <- function(x, i, value) {
-  # TODO: replace with vctr_field_set equivalent
+`$<-.vctrs_list_of` <- function(x, i, value) {
+  # TODO: replace with vctrs_field_set equivalent
   out <- vec_data(x)
   out[[i]] <- vec_data(vec_cast(list(value), x))[[1]]
   vec_cast(out, x)
@@ -145,47 +145,47 @@ as.list.list_of <- function(x, ...) {
 # Type system -------------------------------------------------------------
 
 #' @rdname list_of
-#' @export vec_type2.list_of
-#' @method vec_type2 list_of
+#' @export vec_type2.vctrs_list_of
+#' @method vec_type2 vctrs_list_of
 #' @export
-vec_type2.list_of <- function(x, y) UseMethod("vec_type2.list_of", y)
-#' @method vec_type2.list_of unknown
+vec_type2.vctrs_list_of <- function(x, y) UseMethod("vec_type2.vctrs_list_of", y)
+#' @method vec_type2.vctrs_list_of unknown
 #' @export
-vec_type2.list_of.unknown    <- function(x, y) x
-#' @method vec_type2.list_of list_of
+vec_type2.vctrs_list_of.unknown    <- function(x, y) x
+#' @method vec_type2.vctrs_list_of vctrs_list_of
 #' @export
-vec_type2.list_of.list_of <- function(x, y) {
+vec_type2.vctrs_list_of.vctrs_list_of <- function(x, y) {
   type <- vec_type2(attr(x, "ptype"), attr(y, "ptype"))
   new_list_of(list(), type)
 }
-#' @method vec_type2.list_of default
+#' @method vec_type2.vctrs_list_of default
 #' @export
-vec_type2.list_of.default  <- function(x, y) {
+vec_type2.vctrs_list_of.default  <- function(x, y) {
   stop_incompatible_type(x, y)
 }
 
 #' @rdname list_of
-#' @export vec_cast.list_of
-#' @method vec_cast list_of
+#' @export vec_cast.vctrs_list_of
+#' @method vec_cast vctrs_list_of
 #' @export
-vec_cast.list_of <- function(x, to) {
-  UseMethod("vec_cast.list_of")
+vec_cast.vctrs_list_of <- function(x, to) {
+  UseMethod("vec_cast.vctrs_list_of")
 }
 #' @export
-#' @method vec_cast.list_of NULL
-vec_cast.list_of.NULL <- function(x, to) {
+#' @method vec_cast.vctrs_list_of NULL
+vec_cast.vctrs_list_of.NULL <- function(x, to) {
   x
 }
 #' @export
-#' @method vec_cast.list_of list
-vec_cast.list_of.list <- function(x, to) {
+#' @method vec_cast.vctrs_list_of list
+vec_cast.vctrs_list_of.list <- function(x, to) {
   as_list_of(x, .ptype = attr(to, "ptype"))
 }
 #' @export
-#' @method vec_cast.list_of list_of
-vec_cast.list_of.list_of <- vec_cast.list_of.list
+#' @method vec_cast.vctrs_list_of vctrs_list_of
+vec_cast.vctrs_list_of.vctrs_list_of <- vec_cast.vctrs_list_of.list
 #' @export
 #' @method vec_cast.list default
-vec_cast.list_of.default <- function(x, to) {
+vec_cast.vctrs_list_of.default <- function(x, to) {
   stop_incompatible_cast(x, to)
 }
