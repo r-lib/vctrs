@@ -21,7 +21,7 @@
 #' @keywords internal
 new_rcrd <- function(fields, ..., class = character()) {
   check_fields(fields)
-  structure(fields, ..., class = c(class, "rcrd", "vctr"))
+  structure(fields, ..., class = c(class, "rcrd", "vctrs_vctr"))
 }
 
 rcrd_reconstruct <- function(x, to) {

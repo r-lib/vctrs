@@ -50,11 +50,11 @@ Override if one or more attributes have a one-to-one relationship to
 the underlying data.
 \item \code{[[<-} and \code{[<-} cast the RHS to the LHS, then call \code{NextMethod()}.
 Override these methods if any attributes depend on the data.
-\item \code{as.list.vctr()} calls \code{[[} repeatedly, \code{as.character.vctr()} calls
+\item \code{as.list.vctrs_vctr()} calls \code{[[} repeatedly, \code{as.character.vctrs_vctr()} calls
 \code{format()}.
-\item \code{as.data.frame.vctr()} uses a standard technique to wrap a vector
+\item \code{as.data.frame.vctrs_vctr()} uses a standard technique to wrap a vector
 in a data frame. You should never need to override this method.
-\item \code{dims<-.vctr()}, and \code{dimnames<-.vctr()} all throw errors as generally
+\item \code{dims<-.vctrs_vctr()}, and \code{dimnames<-.vctrs_vctr()} all throw errors as generally
 custom vector classes do not need to support dimensions.
 }
 }

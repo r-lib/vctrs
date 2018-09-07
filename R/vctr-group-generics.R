@@ -92,12 +92,12 @@ vec_generic_call <- function(generic, x, y, ...) {
 # Default methods ---------------------------------------------------------
 
 #' @export
-vec_grp_compare.vctr <- function(generic, x, y) {
+vec_grp_compare.vctrs_vctr <- function(generic, x, y) {
   vec_generic_call(generic, x, y)
 }
 
 #' @export
-vec_grp_logical.vctr <- function(generic, x, y) {
+vec_grp_logical.vctrs_vctr <- function(generic, x, y) {
   if (!is_logical(x)) {
     stop("Non-logical input to Boolean operator", call. = FALSE)
   }
@@ -106,7 +106,7 @@ vec_grp_logical.vctr <- function(generic, x, y) {
 }
 
 #' @export
-vec_grp_unary.vctr <- function(generic, x) {
+vec_grp_unary.vctrs_vctr <- function(generic, x) {
   if (!is_integer(x) && !is_double(x)) {
     stop(
       glue::glue("Non-numeric input to mathematical operator ({generic}x)"),
@@ -119,7 +119,7 @@ vec_grp_unary.vctr <- function(generic, x) {
 }
 
 #' @export
-vec_grp_numeric.vctr <- function(generic, x, y) {
+vec_grp_numeric.vctrs_vctr <- function(generic, x, y) {
   if (!is_integer(x) && !is_double(x)) {
     stop(
       glue::glue("Non-numeric input to mathematical operator (x {generic} y)"),
@@ -132,7 +132,7 @@ vec_grp_numeric.vctr <- function(generic, x, y) {
 }
 
 #' @export
-vec_grp_summary.vctr <- function(generic, x, na.rm = TRUE) {
+vec_grp_summary.vctrs_vctr <- function(generic, x, na.rm = TRUE) {
   if (!is_integer(x) && !is_double(x)) {
     stop(
       glue::glue("Non-numeric input to mathematical function `{generic}()`"),

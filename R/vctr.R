@@ -38,13 +38,13 @@
 #' * `[[<-` and `[<-` cast the RHS to the LHS, then call `NextMethod()`.
 #'   Override these methods if any attributes depend on the data.
 #'
-#' * `as.list.vctr()` calls `[[` repeatedly, `as.character.vctr()` calls
+#' * `as.list.vctrs_vctr()` calls `[[` repeatedly, `as.character.vctrs_vctr()` calls
 #'   `format()`.
 #'
-#' * `as.data.frame.vctr()` uses a standard technique to wrap a vector
+#' * `as.data.frame.vctrs_vctr()` uses a standard technique to wrap a vector
 #'   in a data frame. You should never need to override this method.
 #'
-#' * `dims<-.vctr()`, and `dimnames<-.vctr()` all throw errors as generally
+#' * `dims<-.vctrs_vctr()`, and `dimnames<-.vctrs_vctr()` all throw errors as generally
 #'   custom vector classes do not need to support dimensions.
 #'
 #' @param x Foundation of class. Must be a vector
@@ -59,7 +59,7 @@ new_vctr <- function(.data, ..., class = character()) {
   }
   check_attr(.data)
 
-  structure(.data, ..., class = c(class, "vctr"))
+  structure(.data, ..., class = c(class, "vctrs_vctr"))
 }
 
 check_attr <- function(.data) {
@@ -84,17 +84,17 @@ names_all_or_nothing <- function(names) {
   }
 }
 
-#' @method vec_cast vctr
+#' @method vec_cast vctrs_vctr
 #' @export
-vec_cast.vctr <- function(x, to) UseMethod("vec_cast.vctr")
+vec_cast.vctrs_vctr <- function(x, to) UseMethod("vec_cast.vctrs_vctr")
 
-#' @method vec_cast.vctr NULL
+#' @method vec_cast.vctrs_vctr NULL
 #' @export
-vec_cast.vctr.NULL <- function(x, to) x
+vec_cast.vctrs_vctr.NULL <- function(x, to) x
 
-#' @method vec_cast.vctr default
+#' @method vec_cast.vctrs_vctr default
 #' @export
-vec_cast.vctr.default <- function(x, to) {
+vec_cast.vctrs_vctr.default <- function(x, to) {
   if (is.object(x)) {
     if (identical(attributes(x), attributes(to))) {
       return(x)
@@ -118,7 +118,7 @@ vec_cast.vctr.default <- function(x, to) {
 # Printing ----------------------------------------------------------------
 
 #' @export
-print.vctr <- function(x, ...) {
+print.vctrs_vctr <- function(x, ...) {
   cat_line("<", vec_ptype_full(x), "[", length(x), "]>")
   if (length(x) > 0) {
     out <- stats::setNames(format(x), names(x))
@@ -128,13 +128,13 @@ print.vctr <- function(x, ...) {
 }
 
 # manually registered in zzz.R
-pillar_shaft.vctr <- function(x, ...) {
+pillar_shaft.vctrs_vctr <- function(x, ...) {
   align <- if (is_character(x)) "left" else "right"
   pillar::new_pillar_shaft_simple(format(x), align = align)
 }
 
 # manually registered in zzz.R
-type_sum.vctr <- function(x) {
+type_sum.vctrs_vctr <- function(x) {
   vec_ptype_abbr(x)
 }
 
@@ -149,12 +149,12 @@ stop_unimplemented <- function(x, method) {
 }
 
 #' @export
-format.vctr <- function(x, ...) {
+format.vctrs_vctr <- function(x, ...) {
   stop_unimplemented(x, "format")
 }
 
 #' @export
-str.vctr <- function(object, ..., indent.str = "", width = getOption("width")) {
+str.vctrs_vctr <- function(object, ..., indent.str = "", width = getOption("width")) {
   width <- width - nchar(indent.str) - 2
   # Avoid spending too much time formatting elements that won't see
   length <- ceiling(width / 2)
@@ -171,40 +171,40 @@ str.vctr <- function(object, ..., indent.str = "", width = getOption("width")) {
 # Subsetting --------------------------------------------------------------
 
 #' @export
-`[.vctr` <- function(x, i,...) {
+`[.vctrs_vctr` <- function(x, i,...) {
   vec_cast(NextMethod(), x)
 }
 
 #' @export
-`[[.vctr` <- function(x, i, ...) {
+`[[.vctrs_vctr` <- function(x, i, ...) {
   vec_cast(NextMethod(), x)
 }
 
 #' @export
-`$.vctr` <- function(x, i) {
+`$.vctrs_vctr` <- function(x, i) {
   vec_cast(NextMethod(), x)
 }
 
 #' @export
-rep.vctr <- function(x, ...) {
+rep.vctrs_vctr <- function(x, ...) {
   vec_cast(NextMethod(), x)
 }
 
 #' @export
-`length<-.vctr` <- function(x, value) {
+`length<-.vctrs_vctr` <- function(x, value) {
   vec_cast(NextMethod(), x)
 }
 
 # Replacement -------------------------------------------------------------
 
 #' @export
-`[[<-.vctr` <- function(x, i, value) {
+`[[<-.vctrs_vctr` <- function(x, i, value) {
   value <- vec_cast(value, x)
   NextMethod()
 }
 
 #' @export
-`$<-.vctr` <- function(x, i, value) {
+`$<-.vctrs_vctr` <- function(x, i, value) {
   if (!is.list(x)) {
     # Default behaviour is to cast LHS to a list
     stop("$ operator is invalid for atomic vectors", call. = FALSE)
@@ -214,7 +214,7 @@ rep.vctr <- function(x, ...) {
 }
 
 #' @export
-`[<-.vctr` <- function(x, i, value) {
+`[<-.vctrs_vctr` <- function(x, i, value) {
   value <- vec_cast(value, x)
   NextMethod()
 }
@@ -222,34 +222,34 @@ rep.vctr <- function(x, ...) {
 # Coercion ----------------------------------------------------------------
 
 #' @export
-as.logical.vctr <- function(x, ...) {
+as.logical.vctrs_vctr <- function(x, ...) {
   vec_cast(x, logical())
 }
 
 #' @export
-as.integer.vctr <- function(x, ...) {
+as.integer.vctrs_vctr <- function(x, ...) {
   vec_cast(x, integer())
 }
 
 #' @export
-as.double.vctr <- function(x, ...) {
+as.double.vctrs_vctr <- function(x, ...) {
   vec_cast(x, double())
 }
 
 #' @export
-as.character.vctr <- function(x, ...) {
+as.character.vctrs_vctr <- function(x, ...) {
   vec_cast(x, character())
 }
 
 #' @export
-as.list.vctr <- function(x, ...) {
+as.list.vctrs_vctr <- function(x, ...) {
   lapply(seq_along(x), function(i) x[[i]])
 }
 
 # Group generics ----------------------------------------------------------
 
 #' @export
-Ops.vctr <- function(e1, e2) {
+Ops.vctrs_vctr <- function(e1, e2) {
   if (missing(e2)) {
     if (.Generic == "!") {
       return(vec_grp_logical(.Generic, e1))
@@ -277,28 +277,28 @@ Ops.vctr <- function(e1, e2) {
 }
 
 #' @export
-Summary.vctr <- function(..., na.rm = FALSE) {
+Summary.vctrs_vctr <- function(..., na.rm = FALSE) {
   vec_grp_summary(.Generic, vec_c(...), na.rm = na.rm)
 }
 
 #' @export
-mean.vctr <- function(x, ..., na.rm = FALSE) {
+mean.vctrs_vctr <- function(x, ..., na.rm = FALSE) {
   vec_cast(NextMethod(), x)
 }
 
 #' @importFrom stats median
 #' @export
-median.vctr <- function(x, ..., na.rm = FALSE) {
+median.vctrs_vctr <- function(x, ..., na.rm = FALSE) {
   vec_cast(NextMethod(), x)
 }
 
 #' @export
-Math.vctr <- function(x, ..., na.rm = FALSE) {
+Math.vctrs_vctr <- function(x, ..., na.rm = FALSE) {
   vec_cast(NextMethod(), x)
 }
 
 #' @export
-c.vctr <- function(...) {
+c.vctrs_vctr <- function(...) {
   vec_c(...)
 }
 
@@ -306,7 +306,7 @@ c.vctr <- function(...) {
 # Order and equality ------------------------------------------------------
 
 #' @export
-vec_proxy_order.vctr <- function(x) {
+vec_proxy_order.vctrs_vctr <- function(x) {
   if (is.list(x)) {
     # no natural ordering for lists, so just preserve
     seq_along(x)
@@ -321,7 +321,7 @@ vec_proxy_equality.default <- function(x) {
 }
 
 #' @export
-xtfrm.vctr <- function(x) {
+xtfrm.vctrs_vctr <- function(x) {
   proxy <- vec_proxy_order(x)
 
   # order(order(x)) ~= rank(x)
@@ -337,17 +337,17 @@ xtfrm.vctr <- function(x) {
 }
 
 #' @export
-unique.vctr <- function(x, incomparables = FALSE, ...) {
+unique.vctrs_vctr <- function(x, incomparables = FALSE, ...) {
   vec_unique(x)
 }
 
 #' @export
-duplicated.vctr <- function(x, incomparables = FALSE, ...) {
+duplicated.vctrs_vctr <- function(x, incomparables = FALSE, ...) {
   vec_duplicate_id(x) != seq_along(x)
 }
 
 #' @export
-anyDuplicated.vctr <- function(x, incomparables = FALSE, ...) {
+anyDuplicated.vctrs_vctr <- function(x, incomparables = FALSE, ...) {
   vec_duplicate_any(x)
 }
 
@@ -364,27 +364,27 @@ stop_unsupported <- function(x, operation) {
 }
 
 #' @export
-`dim<-.vctr` <- function(x, value) {
+`dim<-.vctrs_vctr` <- function(x, value) {
   stop_unsupported(x, "set dim() on")
 }
 
 #' @export
-`dimnames<-.vctr` <- function(x, value) {
+`dimnames<-.vctrs_vctr` <- function(x, value) {
   stop_unsupported(x, "set dimnames() on ")
 }
 
 #' @export
-`levels<-.vctr` <- function(x, value) {
+`levels<-.vctrs_vctr` <- function(x, value) {
   stop_unsupported(x, "set levels() on")
 }
 
 #' @export
-`t.vctr` <- function(x) {
+`t.vctrs_vctr` <- function(x) {
   stop_unsupported(x, "transpose")
 }
 
 #' @export
-`names<-.vctr` <- function(x, value) {
+`names<-.vctrs_vctr` <- function(x, value) {
   if (length(value) != 0 && length(value) != length(x)) {
     stop("`names()` must be the same length as x", call. = FALSE)
   }
@@ -397,7 +397,7 @@ stop_unsupported <- function(x, operation) {
 # Data frame --------------------------------------------------------------
 
 #' @export
-as.data.frame.vctr <- function(x,
+as.data.frame.vctrs_vctr <- function(x,
                                row.names = NULL,
                                optional = FALSE,
                                ...,
