@@ -14,9 +14,7 @@ vec_proxy_order(x)
 \item{x}{A vector x.}
 }
 \value{
-A 1d atomic vector, 1d list, or a data frame. For these functions,
-\code{NA}s (and \code{NaN}s) are considered to be equal, and smaller than all
-other values (i.e. they're equivalent to \code{-Inf}).
+A 1d atomic vector or a data frame.
 }
 \description{
 \code{vec_proxy_equality()} powers \code{==} and the hashing functions (and which

@@ -35,6 +35,17 @@ test_that("cast to atomic vector of same type preserves attributes", {
   expect_error(vec_cast(new_date(), x1), class = "error_incompatible_cast")
 })
 
+test_that("xtfrm works for variety of base classes", {
+  x <- new_vctr(1:3)
+  expect_equal(xtfrm(x), 1:3)
+
+  x <- new_vctr(letters[1:3])
+  expect_equal(xtfrm(x), 1:3)
+
+  # lists have no natural ordering so we just preserve existing
+  x <- new_vctr(list(3, 2, 1))
+  expect_equal(xtfrm(x), 1:3)
+})
 
 # names -------------------------------------------------------------------
 

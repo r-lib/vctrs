@@ -116,6 +116,7 @@ test_that("subset assignment recycles", {
 
 test_that("can sort record", {
   x <- tuple(c(1, 2, 1), c(3, 1, 2))
+  expect_equal(xtfrm(x), c(2, 3, 1))
   expect_equal(order(x), c(3, 1, 2))
   expect_equal(sort(x), tuple(c(1, 1, 2), c(2, 3, 1)))
 })

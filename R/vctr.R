@@ -307,7 +307,18 @@ c.vctr <- function(...) {
 
 #' @export
 xtfrm.vctr <- function(x) {
-  vec_proxy_order(x)
+  proxy <- vec_proxy_order(x)
+
+  # order(order(x)) ~= rank(x)
+  if (is.data.frame(proxy)) {
+    order(do.call(base::order, proxy))
+  } else if (is_integer(proxy) || is_double(proxy)) {
+    proxy
+  } else if (is_character(proxy)) {
+    order(order(proxy))
+  } else {
+    stop("Invalid value returned by `vec_proxy_equality()`.", call. = FALSE)
+  }
 }
 
 #' @export

@@ -188,8 +188,7 @@ vec_proxy_equality.record <- function(x)  {
 
 #' @export
 vec_proxy_order.record <- function(x) {
-  # order(order(x)) ~= rank(x)
-  order(do.call(base::order, vec_data(x)))
+  new_data_frame(vec_data(x), length(x))
 }
 
 # Unimplemented -----------------------------------------------------------

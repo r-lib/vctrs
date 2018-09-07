@@ -8,9 +8,7 @@
 #'
 #' @keywords internal
 #' @param x A vector x.
-#' @return A 1d atomic vector, 1d list, or a data frame. For these functions,
-#'   `NA`s (and `NaN`s) are considered to be equal, and smaller than all
-#'   other values (i.e. they're equivalent to `-Inf`).
+#' @return A 1d atomic vector or a data frame.
 #' @name vec_proxy
 NULL
 
@@ -44,8 +42,9 @@ vec_proxy_order <- function(x) {
 #' @export
 vec_proxy_order.vctr <- function(x) {
   if (is.list(x)) {
-    stop_unimplemented(x, "vec_proxy_order")
+    # no natural ordering for lists, so just preserve
+    seq_along(x)
   } else {
-    order(vec_data(x))
+    vec_data(x)
   }
 }
