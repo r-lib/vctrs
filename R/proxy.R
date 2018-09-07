@@ -26,12 +26,13 @@ vec_proxy_equality.data.frame <- function(x) {
 }
 
 #' @export
+vec_proxy_equality.POSIXlt <- function(x) {
+  new_data_frame(vec_data(x), length(x))
+}
+
+#' @export
 vec_proxy_equality.default <- function(x) {
-  if (is_record(x)) {
-    new_data_frame(vec_data(x), length(x))
-  } else {
-    vec_data(x)
-  }
+  vec_data(x)
 }
 
 #' @export
