@@ -120,6 +120,13 @@ test_that("can sort record", {
   expect_equal(sort(x), tuple(c(1, 1, 2), c(2, 3, 1)))
 })
 
+test_that("can use dictionary methods on a record", {
+  x <- tuple(c(1, 2, 1), c(3, 1, 3))
+  expect_equal(unique(x), x[1:2])
+  expect_equal(duplicated(x), c(FALSE, FALSE, TRUE))
+  expect_equal(anyDuplicated(x), TRUE)
+})
+
 test_that("can round trip through list", {
   t <- tuple(1:2, 3:4)
   l <- expect_equal(vec_cast(t, list()), list(tuple(1, 3), tuple(2, 4)))

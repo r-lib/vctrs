@@ -74,7 +74,7 @@ reset_rownames <- function(x) {
 #' Find duplicated values
 #'
 #' * `vec_duplicate_any()`: detects the presence of any duplicated values,
-#'   a la [anyDuplicated()].
+#'   in the same way as [anyDuplicated()].
 #' * `vec_duplicate_detect()`: returns a logical vector describing if each
 #'   element of the vector is duplicated elsewhere. Unlike [duplicated()], it
 #'   reports all duplicated values, not just the second and subsequent
@@ -147,7 +147,7 @@ vec_duplicate_id <- function(x) {
 
 #' Find and count unique values
 #'
-#' * `vec_unique()`: the unique values.
+#' * `vec_unique()`: the unique values. Equivalent to [unique()].
 #' * `vec_unique_loc()`: the locations of the unique values.
 #' * `vec_unique_count()`: the number of unique values.
 #'
@@ -179,8 +179,8 @@ vec_duplicate_id <- function(x) {
 #' # But they are for the purposes of considering uniqueness
 #' vec_unique(c(NA, NA, NA, NA, 1, 2, 1))
 vec_unique <- function(x) {
-  x <- vec_proxy_equality(x)
-  vec_subset(x, vec_unique_loc(x))
+  px <- vec_proxy_equality(x)
+  vec_subset(x, vec_unique_loc(px))
 }
 
 #' @rdname vec_unique

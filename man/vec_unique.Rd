@@ -26,7 +26,7 @@ number of unique values.
 }
 \description{
 \itemize{
-\item \code{vec_unique()}: the unique values.
+\item \code{vec_unique()}: the unique values. Equivalent to \code{\link[=unique]{unique()}}.
 \item \code{vec_unique_loc()}: the locations of the unique values.
 \item \code{vec_unique_count()}: the number of unique values.
 }

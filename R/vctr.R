@@ -310,6 +310,21 @@ xtfrm.vctr <- function(x) {
   vec_proxy_order(x)
 }
 
+#' @export
+unique.vctr <- function(x, incomparables = FALSE, ...) {
+  vec_unique(x)
+}
+
+#' @export
+duplicated.vctr <- function(x, incomparables = FALSE, ...) {
+  vec_duplicate_id(x) != seq_along(x)
+}
+
+#' @export
+anyDuplicated.vctr <- function(x, incomparables = FALSE, ...) {
+  vec_duplicate_any(x)
+}
+
 # Protection --------------------------------------------------------------
 
 stop_unsupported <- function(x, operation) {
