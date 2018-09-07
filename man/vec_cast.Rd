@@ -109,13 +109,20 @@ A recast is a specialised type of cast, primarily used in conjunction
 with \code{NextMethod()} or a C-level function that works on the underlying
 data structure. A \code{vec_recast()} method can assume that \code{x} has the
 correct type (although the length may be different) but all attributes
-have been lost and need to be restored. \code{vec_cast(vec_data(x), x)}
-should yield \code{x}.
+have been lost and need to be restored. In other words,
+\code{vec_cast(vec_data(x), x)} should yield \code{x}.
 
 To understand the difference between \code{vec_cast()} and \code{vec_recast()}
 think about factors: it doesn't make sense to cast an integer to a factor,
 but if \code{NextMethod()} or other low-level function has stripped attributes,
 you still need to be able to restore them.
+
+The default method copies across all attributes so you only need to
+provide your own method if your attributes require special care
+(i.e. they are dependent on the data in somew way). When implementing
+your own method, bear in mind that many R users add attributes to track
+additional metadat that is important to them, so you should preserve any
+attributes that don't require special handling for your class.
 }
 
 \examples{

@@ -47,13 +47,20 @@
 #' with `NextMethod()` or a C-level function that works on the underlying
 #' data structure. A `vec_recast()` method can assume that `x` has the
 #' correct type (although the length may be different) but all attributes
-#' have been lost and need to be restored. `vec_cast(vec_data(x), x)`
-#' should yield `x`.
+#' have been lost and need to be restored. In other words,
+#' `vec_cast(vec_data(x), x)` should yield `x`.
 #'
 #' To understand the difference between `vec_cast()` and `vec_recast()`
 #' think about factors: it doesn't make sense to cast an integer to a factor,
 #' but if `NextMethod()` or other low-level function has stripped attributes,
 #' you still need to be able to restore them.
+#'
+#' The default method copies across all attributes so you only need to
+#' provide your own method if your attributes require special care
+#' (i.e. they are dependent on the data in somew way). When implementing
+#' your own method, bear in mind that many R users add attributes to track
+#' additional metadat that is important to them, so you should preserve any
+#' attributes that don't require special handling for your class.
 #'
 #' @param x Vector to cast.
 #' @param to Type to cast to.
@@ -92,6 +99,7 @@ vec_recast <- function(x, to) {
 
 #' @export
 vec_recast.default <- function(x, to) {
+  attributes(x) <- attributes(to)
   x
 }
 

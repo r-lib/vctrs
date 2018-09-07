@@ -144,11 +144,6 @@ as.list.vctrs_list_of <- function(x, ...) {
 
 # Type system -------------------------------------------------------------
 
-#' @export
-vec_recast.vctrs_list_of <- function(x, to) {
-  new_list_of(x, .ptype = attr(to, "ptype"))
-}
-
 #' @rdname list_of
 #' @export vec_type2.vctrs_list_of
 #' @method vec_type2 vctrs_list_of

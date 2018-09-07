@@ -24,12 +24,6 @@ new_rcrd <- function(fields, ..., class = character()) {
   structure(fields, ..., class = c(class, "vctrs_rcrd", "vctrs_vctr"))
 }
 
-#' @export
-vec_recast.vctrs_rcrd <- function(x, to) {
-  attributes(x) <- attributes(to)
-  x
-}
-
 check_fields <- function(fields) {
   if (!is.list(fields) || length(fields) == 0) {
     stop("`fields` must be a list of length 1 or greater", call. = FALSE)

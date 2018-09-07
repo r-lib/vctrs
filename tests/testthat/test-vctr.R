@@ -71,6 +71,14 @@ test_that("can use [ and [[ with names", {
   expect_equal(x[["d"]], new_vctr(4))
 })
 
+test_that("subsetting preserves attributes", {
+  x <- new_vctr(c(a = 1, b = 2))
+  attr(x, "extra") <- TRUE
+
+  y <- x[1]
+  expect_equal(attr(x, "extra"), TRUE)
+})
+
 test_that("$ inherits from underlying vector", {
   # Seems to be some bug in R 3.1 where NextMethod() called from $.vctr
   # causes an error "invalid subscript type 'promise'"
