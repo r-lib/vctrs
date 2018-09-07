@@ -23,6 +23,6 @@ is_record <- function(x) {
   UseMethod("is_record")
 }
 is_record.POSIXlt <- function(x) TRUE
-is_record.record <- function(x) TRUE
+is_record.rcrd <- function(x) TRUE
 is_record.default <- function(x) FALSE
 

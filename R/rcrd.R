@@ -1,8 +1,8 @@
 # Constructor and basic methods  ---------------------------------------------
 
-#' record S3 class
+#' rcrd (record) S3 class
 #'
-#' The record class extends [vctr]. A record is composed of 1 or more [field]s,
+#' The rcrd class extends [vctr]. A rcrd is composed of 1 or more [field]s,
 #' which must be vectors of the same length. Is designed specifically for
 #' classes that can naturally be decomposed into multiple vectors of the same
 #' length, like [POSIXlt], but where the organisation should be considered
@@ -17,16 +17,15 @@
 #' @param ... Additional attributes
 #' @param class Name of subclass.
 #' @export
-#' @aliases ses record
+#' @aliases ses rcrd
 #' @keywords internal
-new_record <- function(fields, ..., class = character()) {
+new_rcrd <- function(fields, ..., class = character()) {
   check_fields(fields)
-  structure(fields, ..., class = c(class, "record", "vctr"))
+  structure(fields, ..., class = c(class, "rcrd", "vctr"))
 }
 
-record_reconstruct <- function(x, to) {
-  # if not a record, need to check valid
-
+rcrd_reconstruct <- function(x, to) {
+  # if not a rcrd, need to check valid
   if (!setequal(fields(x), fields(to))) {
     diff <- set_partition(fields(x), fields(to))
     if (length(diff$only_x) > 0) {
@@ -77,90 +76,90 @@ check_fields <- function(fields) {
 }
 
 #' @export
-length.record <- function(x) {
+length.rcrd <- function(x) {
   length(field(x, 1L))
 }
 
 #' @export
-names.record <- function(x) {
+names.rcrd <- function(x) {
   NULL
 }
 
-#' @method vec_cast record
+#' @method vec_cast rcrd
 #' @export
-vec_cast.record <- function(x, to) UseMethod("vec_cast.record")
+vec_cast.rcrd <- function(x, to) UseMethod("vec_cast.rcrd")
 
-#' @method vec_cast.record NULL
+#' @method vec_cast.rcrd NULL
 #' @export
-vec_cast.record.NULL <- function(x, to) x
+vec_cast.rcrd.NULL <- function(x, to) x
 
-#' @method vec_cast.record list
+#' @method vec_cast.rcrd list
 #' @export
-vec_cast.record.list <- function(x, to) {
+vec_cast.rcrd.list <- function(x, to) {
   vec_list_cast(x, to)
 }
 
-#' @method vec_cast.record default
+#' @method vec_cast.rcrd default
 #' @export
-vec_cast.record.default <- function(x, to) {
+vec_cast.rcrd.default <- function(x, to) {
   stop_incompatible_cast(x, to)
 }
 
 # Subsetting --------------------------------------------------------------
 
 #' @export
-`[.record` <- function(x, i,...) {
+`[.rcrd` <- function(x, i,...) {
   out <- lapply(vec_data(x), `[`, i, ...)
-  record_reconstruct(out, x)
+  rcrd_reconstruct(out, x)
 }
 
 #' @export
-`[[.record` <- function(x, i, ...) {
+`[[.rcrd` <- function(x, i, ...) {
   out <- lapply(vec_data(x), `[[`, i, ...)
-  record_reconstruct(out, x)
+  rcrd_reconstruct(out, x)
 }
 
 #' @export
-`$.record` <- function(x, i, ...) {
+`$.rcrd` <- function(x, i, ...) {
   stop_unsupported(x, "subsetting with $")
 }
 
 #' @export
-rep.record <- function(x, ...) {
+rep.rcrd <- function(x, ...) {
   out <- lapply(vec_data(x), rep, ...)
-  record_reconstruct(out, x)
+  rcrd_reconstruct(out, x)
 }
 
 #' @export
-`length<-.record` <- function(x, value) {
+`length<-.rcrd` <- function(x, value) {
   out <- lapply(vec_data(x), `length<-`, value)
-  record_reconstruct(out, x)
+  rcrd_reconstruct(out, x)
 }
 
 #' @export
-as.list.record <- function(x, ...) {
+as.list.rcrd <- function(x, ...) {
   lapply(seq_along(x), function(i) x[[i]])
 }
 
 # Replacement -------------------------------------------------------------
 
 #' @export
-`[[<-.record` <- function(x, i, value) {
+`[[<-.rcrd` <- function(x, i, value) {
   value <- vec_cast(value, x)
   out <- map2(vec_data(x), vec_data(value), function(x, value) {
     x[[i]] <- value
     x
   })
-  record_reconstruct(out, x)
+  rcrd_reconstruct(out, x)
 }
 
 #' @export
-`$<-.record` <- function(x, i, value) {
+`$<-.rcrd` <- function(x, i, value) {
   stop_unsupported(x, "subset assignment with $")
 }
 
 #' @export
-`[<-.record` <- function(x, i, value) {
+`[<-.rcrd` <- function(x, i, value) {
   value <- vec_cast(value, x)
 
   if (missing(i)) {
@@ -175,42 +174,42 @@ as.list.record <- function(x, ...) {
     }
   }
   out <- map2(vec_data(x), vec_data(value), replace)
-  record_reconstruct(out, x)
+  rcrd_reconstruct(out, x)
 }
 
 
 # Equality and ordering ---------------------------------------------------
 
 #' @export
-vec_proxy_equality.record <- function(x)  {
+vec_proxy_equality.rcrd <- function(x)  {
   new_data_frame(vec_data(x), length(x))
 }
 
 #' @export
-vec_proxy_order.record <- function(x) {
+vec_proxy_order.rcrd <- function(x) {
   new_data_frame(vec_data(x), length(x))
 }
 
 # Unimplemented -----------------------------------------------------------
 
 #' @export
-mean.record <- function(x, ..., na.rm = FALSE) {
+mean.rcrd <- function(x, ..., na.rm = FALSE) {
   stop_unimplemented(x, "mean")
 }
 
 #' @importFrom stats median
 #' @export
-median.record <- function(x, ..., na.rm = FALSE) {
+median.rcrd <- function(x, ..., na.rm = FALSE) {
   stop_unimplemented(x, "median")
 }
 
 #' @export
-Math.record <- function(x, ..., na.rm = FALSE) {
+Math.rcrd <- function(x, ..., na.rm = FALSE) {
   stop_unimplemented(x, .Generic)
 }
 
 #' @export
-anyNA.record <- if (getRversion() >= "3.2") {
+anyNA.rcrd <- if (getRversion() >= "3.2") {
   function(x, recursive = FALSE) {
     stop_unimplemented(x, .Method)
   }
@@ -221,22 +220,22 @@ anyNA.record <- if (getRversion() >= "3.2") {
 }
 
 #' @export
-is.finite.record <- function(x) {
+is.finite.rcrd <- function(x) {
   stop_unimplemented(x, .Method)
 }
 
 #' @export
-is.finite.record <- function(x) {
+is.finite.rcrd <- function(x) {
   stop_unimplemented(x, .Method)
 }
 
 #' @export
-is.na.record <- function(x) {
+is.na.rcrd <- function(x) {
   stop_unimplemented(x, .Method)
 }
 
 #' @export
-is.nan.record <- function(x) {
+is.nan.rcrd <- function(x) {
   stop_unimplemented(x, .Method)
 }
 
@@ -266,7 +265,7 @@ tuple <- function(x = integer(), y = integer()) {
     x = vec_cast(x, integer()),
     y = vec_cast(y, integer())
   )
-  new_record(fields, class = "tuple")
+  new_rcrd(fields, class = "tuple")
 }
 
 format.tuple <- function(x, ...) {

@@ -23,7 +23,7 @@ int find_offset(SEXP x, SEXP index) {
   } else if (TYPEOF(index) == STRSXP) {
     SEXP names = Rf_getAttrib(x, R_NamesSymbol);
     if (names == R_NilValue)
-      Rf_errorcall(R_NilValue, "Corrupt record: no names");
+      Rf_errorcall(R_NilValue, "Corrupt rcrd: no names");
 
     if (STRING_ELT(index, 0) == NA_STRING)
       Rf_errorcall(R_NilValue, "Invalid index: NA_character_");
@@ -34,7 +34,7 @@ int find_offset(SEXP x, SEXP index) {
 
     for (int j = 0; j < Rf_length(names); ++j) {
       if (STRING_ELT(names, j) == NA_STRING)
-        Rf_errorcall(R_NilValue, "Corrupt record: element %i is unnamed", j + 1);
+        Rf_errorcall(R_NilValue, "Corrupt rcrd: element %i is unnamed", j + 1);
 
       const char* names_j = Rf_translateCharUTF8(STRING_ELT(names, j));
       if (strcmp(names_j, val) == 0)
@@ -46,34 +46,34 @@ int find_offset(SEXP x, SEXP index) {
   }
 }
 
-void check_record(SEXP x) {
+void check_rcrd(SEXP x) {
   if (!Rf_isVectorList(x))
-    Rf_errorcall(R_NilValue, "Corrupt record: not a list");
+    Rf_errorcall(R_NilValue, "Corrupt rcrd: not a list");
   if (Rf_length(x) == 0)
-    Rf_errorcall(R_NilValue, "Corrupt record: length 0");
+    Rf_errorcall(R_NilValue, "Corrupt rcrd: length 0");
 }
 
 SEXP vctrs_fields(SEXP x) {
-  check_record(x);
+  check_rcrd(x);
 
   return Rf_getAttrib(x, R_NamesSymbol);
 }
 
 SEXP vctrs_n_fields(SEXP x) {
-  check_record(x);
+  check_rcrd(x);
 
   return Rf_ScalarInteger(Rf_length(x));
 }
 
 SEXP vctrs_field_get(SEXP x, SEXP index) {
-  check_record(x);
+  check_rcrd(x);
 
   int idx = find_offset(x, index);
   return VECTOR_ELT(x, idx);
 }
 
 SEXP vctrs_field_set(SEXP x, SEXP index, SEXP value) {
-  check_record(x);
+  check_rcrd(x);
 
   if (!Rf_isVector(value))
     Rf_errorcall(R_NilValue, "Invalid value: not a vector");

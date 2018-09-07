@@ -3,7 +3,7 @@
 \name{new_vctr}
 \alias{new_vctr}
 \alias{vctr}
-\title{vctr S3 class}
+\title{vctr (vectr) S3 class}
 \usage{
 new_vctr(.data, ..., class = character())
 }

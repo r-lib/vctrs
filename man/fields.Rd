@@ -16,16 +16,16 @@ field(x, i)
 field(x, i) <- value
 }
 \arguments{
-\item{x}{A record}
+\item{x}{A \link{rcrd}, i.e. a list of equal length vectors with unique names.}
 }
 \description{
-A \link{record} behaves like a vector, so \code{length()}, \code{names()}, and \code{$} can
+A \link{rcrd} behaves like a vector, so \code{length()}, \code{names()}, and \code{$} can
 not provide access to the fields of the underlying list. These helpers do:
 \code{fields()} is equivalent to \code{names()}; \code{n_fields()} is equivalent to
 \code{length()}; \code{field()} is equivalent to \code{$}.
 }
 \examples{
-x <- new_record(list(x = 1:3, y = 3:1, z = letters[1:3]))
+x <- new_rcrd(list(x = 1:3, y = 3:1, z = letters[1:3]))
 n_fields(x)
 fields(x)
 

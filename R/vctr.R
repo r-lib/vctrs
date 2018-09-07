@@ -1,4 +1,4 @@
-#' vctr S3 class
+#' vctr (vectr) S3 class
 #'
 #' This abstract class provides a set of useful default methods that makes it
 #' considerably easier to get started with a new S3 vector class.
