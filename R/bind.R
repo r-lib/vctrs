@@ -102,7 +102,7 @@ vec_rbind <- function(..., .ptype = NULL) {
     if (n == 0L)
       next
 
-    tbl_i <- vec_cast(tbls[[i]], to = ptype)
+    tbl_i <- vec_data(vec_cast(tbls[[i]], to = ptype))
     for (j in seq_along(out)) {
       out[[j]][pos:(pos + n - 1)] <- tbl_i[[j]]
     }

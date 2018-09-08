@@ -49,6 +49,7 @@ df_col_type2 <- function(x, y) {
 }
 
 df_col_cast <- function(x, to) {
+  n <- vec_length(x)
   x <- vec_data(x)
 
   # Coerce common columns
@@ -57,7 +58,7 @@ df_col_cast <- function(x, to) {
 
   # Add new columns
   from_type <- setdiff(names(to), names(x))
-  x[from_type] <- map(to[from_type], vec_na, n = vec_length(x))
+  x[from_type] <- map(to[from_type], vec_na, n = n)
 
   # Warn about dropped columns
   dropped <- setdiff(names(x), names(to))
