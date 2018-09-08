@@ -1,21 +1,22 @@
 vec_subset <- function(x, i) {
-  if (is.null(x)) return(NULL)
-
-  stopifnot(is_vector(x))
-  stopifnot(is.integer(i) || is.character(i))
-
-  d <- vec_dims(x)
-  if (d == 1) {
-    x[i, drop = FALSE]
+  if (is.null(x)) {
+    NULL
   } else if (is.data.frame(x)) {
     # Much faster, and avoids creating rownames
     out <- lapply(x, `[`, i)
-    return(vec_recast(out, x))
-  } else if (d == 2) {
-    x[i, , drop = FALSE]
+    vec_recast(out, x)
+  } else if (is_vector(x)) {
+    d <- vec_dims(x)
+    if (d == 1) {
+      x[i, drop = FALSE]
+    } else if (d == 2) {
+      x[i, , drop = FALSE]
+    } else {
+      miss_args <- rep(list(missing_arg()), d - 1)
+      eval_bare(expr(x[i, !!!miss_args, drop = FALSE]))
+    }
   } else {
-    miss_args <- rep(list(missing_arg()), d - 1)
-    eval_bare(expr(x[i, !!!miss_args, drop = FALSE]))
+    stop("`x` must be a vector", call = FALSE)
   }
 }
 
