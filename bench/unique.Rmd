@@ -1,5 +1,5 @@
 ---
-title: "Dictionary performance"
+title: "Unique performance"
 output: github_document
 ---
 
@@ -7,9 +7,12 @@ output: github_document
 knitr::opts_chunk$set(collapse = TRUE, comment = "#> ")
 ```
 
+Exploration of the performance of unique as a proxy for the performance of the underyling dictionary + hash code.
+
 ```{r setup, message = FALSE}
 library(tidyverse)
 library(vctrs)
+library(bench)
 
 make_vec <- function(type, n, mix) {
   x <- switch(as.character(mix),
@@ -24,7 +27,7 @@ make_vec <- function(type, n, mix) {
 
 ## Proportion of uniqueness
 
-```{r}
+```{r, message = FALSE, warning = FALSE}
 df <- bench::press(
   n = c(1e1, 1e2, 1e3, 1e4, 1e5, 1e6),
   mix = c("unique", "constant", "50-50"),
@@ -53,7 +56,7 @@ ggplot(df, aes(n, as.numeric(min))) +
 
 ## Performance by type
 
-```{r}
+```{r, message = FALSE, warning = FALSE}
 df <- bench::press(
   type = c("integer", "double", "character"),
   n = c(1e1, 1e2, 1e3, 1e4, 1e5, 1e6),
@@ -69,8 +72,6 @@ df <- bench::press(
 )
 ```
 
-Let's compare head-to-head with base:
-
 ```{r, echo = FALSE}
 ggplot(df, aes(n, as.numeric(min))) + 
   geom_point() + 
@@ -80,7 +81,7 @@ ggplot(df, aes(n, as.numeric(min))) +
   facet_wrap( ~ expression)
 ```
 
-Clearly there's some larger setup cost needed for vctrs dictionary, and the performance difference declines as size increases. 
+Let's compare head-to-head with base. Clearly there's some larger setup cost needed for vctrs dictionary, and the performance difference declines as size increases. 
 
 ```{r, echo = FALSE}
 ggplot(df, aes(n, as.numeric(min))) + 
@@ -93,9 +94,9 @@ ggplot(df, aes(n, as.numeric(min))) +
 
 ## Raw C code
 
-If we just call the C function that underlies `vec_unique()` (i.e. ignoring the code that makes these functions generic) we see basically no performance difference:
+If we just call the C function that underlies `vec_unique()` (i.e. ignoring the code that makes these functions generic) we see very little performance difference:
 
-```{r}
+```{r, message = FALSE, warning = FALSE}
 df <- bench::press(
   type = c("integer", "double", "character"),
   n = c(1e1, 1e2, 1e3, 1e4, 1e5, 1e6),
@@ -110,7 +111,9 @@ df <- bench::press(
     )
   }
 )
+```
 
+```{r, echo = FALSE}
 ggplot(df, aes(n, as.numeric(min))) + 
   geom_point() + 
   geom_line(aes(colour = expression)) + 
