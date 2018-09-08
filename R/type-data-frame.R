@@ -30,25 +30,27 @@ new_tibble <- function(x, n) {
 }
 
 df_col_type2 <- function(x, y) {
-  common <- intersect(names(x), names(y))
-  only_x <- setdiff(names(x), names(y))
-  only_y <- setdiff(names(y), names(x))
+  x <- vec_data(x)
+  y <- vec_data(y)
+  names <- set_partition(names(x), names(y))
 
   # Find types
-  if (length(common) > 0) {
-    common_types <- map2(x[common], y[common], vec_type2)
+  if (length(names$both) > 0) {
+    common_types <- map2(x[names$both], y[names$both], vec_type2)
   } else {
     common_types <- list()
   }
-  only_x_types <- map(x[only_x], vec_subset, 0L)
-  only_y_types <- map(y[only_y], vec_subset, 0L)
+  only_x_types <- map(x[names$only_x], vec_subset, 0L)
+  only_y_types <- map(y[names$only_y], vec_subset, 0L)
 
   # Combine and restore order
   out <- c(common_types, only_x_types, only_y_types)
-  out[c(names(x), setdiff(names(y), names(x)))]
+  out[c(names(x), names$only_y)]
 }
 
 df_col_cast <- function(x, to) {
+  x <- vec_data(x)
+
   # Coerce common columns
   common <- intersect(names(x), names(to))
   x[common] <- map2(x[common], to[common], vec_cast)

@@ -549,7 +549,8 @@ vec_cast.data.frame.NULL <- function(x, to) {
 #' @export
 #' @method vec_cast.data.frame data.frame
 vec_cast.data.frame.data.frame <- function(x, to) {
-  as.data.frame(df_col_cast(x, to))
+  df <- df_col_cast(x, to)
+  vec_recast(df, to)
 }
 #' @export
 #' @method vec_cast.data.frame default

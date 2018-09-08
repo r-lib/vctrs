@@ -1,0 +1,32 @@
+---
+title: "Row-binding"
+output: github_document
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(collapse = TRUE, comment = "#> ")
+```
+
+```{r setup, message = FALSE}
+library(tidyverse)
+library(vctrs)
+
+df <- data.frame(x = 1:10, y = letters[1:10], stringsAsFactors = FALSE)
+dfs <- map(1:100, ~ df)
+```
+
+Currently, `vec_rbind()` is _much_ slower than the alternatives:
+
+```{r}
+bench::mark(
+  do.call(rbind, dfs),
+  vec_rbind(!!!dfs),
+  dplyr::bind_rows(dfs)
+)
+```
+
+I've removed the biggest bottlenecks coercing data frames to lists with `vec_data()`, operating on them, and then restoring with `vec_recast()`. This avoids the expensive data frame methods. I think further improvement (to get on par with base/dplyr) will require a systematic rewrite in C.
+
+```{r, eval = FALSE}
+profvis::profvis(vec_rbind(!!!dfs))
+```

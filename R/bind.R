@@ -93,8 +93,8 @@ vec_rbind <- function(..., .ptype = NULL) {
     return(data_frame())
 
   ns <- map_int(tbls, vec_length)
-  out <- vec_rep(ptype, sum(ns))
-  rownames(out) <- NULL
+  # Use list so we can rely on efficient internal [[<-
+  out <- vec_data(vec_rep(ptype, sum(ns)))
 
   pos <- 1
   for (i in seq_along(ns)) {
@@ -102,11 +102,14 @@ vec_rbind <- function(..., .ptype = NULL) {
     if (n == 0L)
       next
 
-    out[pos:(pos + n - 1), ] <- vec_cast(tbls[[i]], to = ptype)
+    tbl_i <- vec_cast(tbls[[i]], to = ptype)
+    for (j in seq_along(out)) {
+      out[[j]][pos:(pos + n - 1)] <- tbl_i[[j]]
+    }
     pos <- pos + n
   }
 
-  out
+  vec_recast(out, ptype)
 }
 
 #' @export

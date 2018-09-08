@@ -243,14 +243,24 @@ vec_type2.tbl_df     <- function(x, y) UseMethod("vec_type2.tbl_df", y)
 
 #' @method vec_type2.data.frame data.frame
 #' @export
-vec_type2.data.frame.data.frame <- function(x, y) new_data_frame(df_col_type2(x, y), n = 0)
+vec_type2.data.frame.data.frame <- function(x, y) {
+  df <- df_col_type2(x, y)
+  new_data_frame(df, n = 0)
+}
 
 #' @method vec_type2.tbl_df data.frame
 #' @export
-vec_type2.tbl_df.data.frame <- function(x, y) new_tibble(df_col_type2(x, y), n = 0)
+vec_type2.tbl_df.data.frame <- function(x, y) {
+  df <- df_col_type2(x, y)
+  new_tibble(df, n = 0)
+}
+
 #' @method vec_type2.data.frame tbl_df
 #' @export
-vec_type2.data.frame.tbl_df <- function(x, y) new_tibble(df_col_type2(x, y), n = 0)
+vec_type2.data.frame.tbl_df <- function(x, y) {
+  df <- df_col_type2(x, y)
+  new_tibble(df, n = 0)
+}
 
 #' @method vec_type2.data.frame default
 #' @export
