@@ -350,7 +350,7 @@ vec_cast.list.list <- function(x, to) {
 #' @export
 #' @method vec_cast.list default
 vec_cast.list.default <- function(x, to) {
-  as.list(x)
+  lapply(seq_along(x), function(i) x[[i]])
 }
 
 # S3 vectors --------------------------------------------------------------

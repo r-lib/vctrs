@@ -244,7 +244,7 @@ as.character.vctrs_vctr <- function(x, ...) {
 
 #' @export
 as.list.vctrs_vctr <- function(x, ...) {
-  lapply(seq_along(x), function(i) x[[i]])
+  vec_cast(x, list())
 }
 
 # Group generics ----------------------------------------------------------
