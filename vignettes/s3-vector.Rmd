@@ -68,7 +68,7 @@ format.percent <- function(x, ...) {
 ```{r, include = FALSE}
 # As of R 3.5, print.vctr can not find format.percent since it's not in
 # it's lexical environment. We fix that problem by manually registering.
-vctrs:::register_s3_method("base", "format", "percent")
+vec_method_register("base::format.percent")
 ```
 
 ```{r}
@@ -148,7 +148,7 @@ vec_cast.NULL.percent    <- function(x, to) x
 vec_cast.percent.percent <- function(x, to) x
 ```
 ```{r, include = FALSE}
-vctrs:::register_s3_method("vctrs", "vec_cast", "percent")
+vec_method_register("vctrs::vec_cast.percent")
 ```
 
 Next we provide some useful methods to coerce percents back and forth between integers and doubles. We use `vec_cast()` on the underlying vector (`vec_data()`) in order to get the nice default behaviour which reports when we lose precision:
@@ -188,7 +188,7 @@ vec_type2.NULL.percent    <- function(x, y) percent()
 vec_type2.percent.percent <- function(x, y) percent()
 ```
 ```{r, include = FALSE}
-vctrs:::register_s3_method("vctrs", "vec_type2", "percent")
+vec_method_register("vctrs::vec_type2.percent")
 ```
 
 And then we define methods that say it's ok to automatically coerce percents to numbers. If you're unsure about what methods to provide here, err on the side of caution: too many implicit coercions make code hard to understand. See `vignette("theory")` for more details.
