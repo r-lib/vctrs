@@ -10,8 +10,7 @@ vec_subset <- function(x, i) {
   } else if (is.data.frame(x)) {
     # Much faster, and avoids creating rownames
     out <- lapply(x, `[`, i)
-    n <- if (length(out) == 0) 0L else length(out[[1]])
-    new_data_frame(out, n = n, subclass = setdiff(class(x), "data.frame"))
+    return(vec_recast(out, x))
   } else if (d == 2) {
     x[i, , drop = FALSE]
   } else {

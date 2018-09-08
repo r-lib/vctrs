@@ -4,17 +4,18 @@
 
 data_frame <- function(...) {
   cols <- tibble::set_tidy_names(list(...))
+  new_data_frame(cols)
+}
 
-  if (length(cols) > 0) {
-    n <- length(cols[[1]])
+df_length <- function(x) {
+  if (length(x) > 0) {
+    n <- length(x[[1]])
   } else {
     n <- 0L
   }
-
-  new_data_frame(cols, n = n)
 }
 
-new_data_frame <- function(x, n, subclass = NULL) {
+new_data_frame <- function(x, n = df_length(x), subclass = NULL) {
   n <- as.integer(n)
 
   structure(
