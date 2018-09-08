@@ -22,5 +22,17 @@ reference:
 - title: New classes
   contents:
   - list_of
+
+- title: Developer tools
+  contents:
   - vctr
+  - vec_cast
+  - vec_list_cast
+  - vec_type2
+  - vec_grp_compare
+  - vec_proxy_equality
+  - vec_ptype_full
+  - "vctrs-conditions"
   - rcrd
+  - fields
+  - vec_method_register
