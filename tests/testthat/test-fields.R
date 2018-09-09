@@ -48,8 +48,8 @@ test_that("corrupt rcrd throws error", {
   expect_error(field(1:10, 1L), "Corrupt rcrd")
   expect_error(field(list(), 1L), "Corrupt rcrd")
 
-  expect_error(field(list(1), "x"), "Corrupt rcrd")
-  expect_error(field(setNames(list(1, 1), "y"), "x"), "Corrupt rcrd")
+  expect_error(field(list(1), "x"), "Corrupt x")
+  expect_error(field(setNames(list(1, 1), "y"), "x"), "Corrupt x")
 })
 
 

@@ -43,7 +43,7 @@ int find_offset(SEXP x, SEXP index) {
   } else if (TYPEOF(index) == STRSXP) {
     SEXP names = Rf_getAttrib(x, R_NamesSymbol);
     if (names == R_NilValue)
-      Rf_errorcall(R_NilValue, "Corrupt rcrd: no names");
+      Rf_errorcall(R_NilValue, "Corrupt x: no names");
 
     SEXP val_0 = STRING_ELT(index, 0);
     if (val_0 == NA_STRING)
@@ -56,7 +56,7 @@ int find_offset(SEXP x, SEXP index) {
     for (int j = 0; j < Rf_length(names); ++j) {
       SEXP name_j = STRING_ELT(names, j);
       if (name_j == NA_STRING)
-        Rf_errorcall(R_NilValue, "Corrupt rcrd: element %i is unnamed", j + 1);
+        Rf_errorcall(R_NilValue, "Corrupt x: element %i is unnamed", j + 1);
 
       if (equal_string(val_0, &val_0_chr, name_j))
         return j;
