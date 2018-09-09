@@ -118,28 +118,24 @@ as.list.vctrs_list_of <- function(x, ...) {
 
 #' @export
 `[[.vctrs_list_of` <- function(x, i, ...) {
-  .subset2(x, i)
+  .Call(vctrs_list_get, x, i)
 }
 
 #' @export
 `$.vctrs_list_of` <- function(x, i, ...) {
-  .subset2(x, i)
+  .Call(vctrs_list_get, x, i)
 }
 
 #' @export
 `[[<-.vctrs_list_of` <- function(x, i, value) {
-  # TODO: replace with vctrs_field_set equivalent
-  out <- vec_data(x)
-  out[[i]] <- vec_cast(value, attr(x, "ptype"))
-  vec_recast(out, x)
+  value <- vec_cast(value, attr(x, "ptype"))
+  .Call(vctrs_list_set, x, i, value)
 }
 
 #' @export
 `$<-.vctrs_list_of` <- function(x, i, value) {
-  # TODO: replace with vctrs_field_set equivalent
-  out <- vec_data(x)
-  out[[i]] <- vec_cast(value, attr(x, "ptype"))
-  vec_recast(out, x)
+  value <- vec_cast(value, attr(x, "ptype"))
+  .Call(vctrs_list_set, x, i, value)
 }
 
 # Type system -------------------------------------------------------------

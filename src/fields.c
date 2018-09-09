@@ -40,6 +40,17 @@ int find_offset(SEXP x, SEXP index) {
       Rf_errorcall(R_NilValue, "Invalid index: out of bounds");
 
     return val;
+  } else if (TYPEOF(index) == REALSXP) {
+    int val = REAL(index)[0];
+
+    if (val == NA_INTEGER)
+      Rf_errorcall(R_NilValue, "Invalid index: NA_real_");
+
+    val--;
+    if (val < 0 || val >= n)
+      Rf_errorcall(R_NilValue, "Invalid index: out of bounds");
+
+    return val;
   } else if (TYPEOF(index) == STRSXP) {
     SEXP names = Rf_getAttrib(x, R_NamesSymbol);
     if (names == R_NilValue)
@@ -67,6 +78,26 @@ int find_offset(SEXP x, SEXP index) {
   }
 }
 
+// Lists -------------------------------------------------------------------
+
+SEXP vctrs_list_get(SEXP x, SEXP index) {
+  int idx = find_offset(x, index);
+
+  return VECTOR_ELT(x, idx);
+}
+
+SEXP vctrs_list_set(SEXP x, SEXP index, SEXP value) {
+  int idx = find_offset(x, index);
+
+  SEXP out = PROTECT(Rf_shallow_duplicate(x));
+  SET_VECTOR_ELT(out, idx, value);
+  UNPROTECT(1);
+
+  return out;
+}
+
+// Records ------------------------------------------------------------------
+
 void check_rcrd(SEXP x) {
   if (!Rf_isVectorList(x))
     Rf_errorcall(R_NilValue, "Corrupt rcrd: not a list");
@@ -88,9 +119,7 @@ SEXP vctrs_n_fields(SEXP x) {
 
 SEXP vctrs_field_get(SEXP x, SEXP index) {
   check_rcrd(x);
-
-  int idx = find_offset(x, index);
-  return VECTOR_ELT(x, idx);
+  return vctrs_list_get(x, index);
 }
 
 SEXP vctrs_field_set(SEXP x, SEXP index, SEXP value) {
@@ -101,10 +130,5 @@ SEXP vctrs_field_set(SEXP x, SEXP index, SEXP value) {
   if (Rf_length(value) != Rf_length(VECTOR_ELT(x, 0)))
     Rf_errorcall(R_NilValue, "Invalid value: incorrect length");
 
-  int idx = find_offset(x, index);
-  SEXP out = PROTECT(Rf_shallow_duplicate(x));
-  SET_VECTOR_ELT(out, idx, value);
-  UNPROTECT(1);
-
-  return out;
+  return vctrs_list_set(x, index, value);
 }

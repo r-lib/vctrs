@@ -38,7 +38,7 @@ test_that("invalid indices throw error", {
   expect_error(field(r, 0L), "Invalid index")
   expect_error(field(r, NA_integer_), "Invalid index")
 
-  expect_error(field(r, 1), "Invalid index")
+  expect_error(field(r, mean), "Invalid index")
 
 })
 

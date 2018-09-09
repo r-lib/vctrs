@@ -8,6 +8,8 @@
 */
 
 /* .Call calls */
+extern SEXP vctrs_list_get(SEXP, SEXP);
+extern SEXP vctrs_list_set(SEXP, SEXP, SEXP);
 extern SEXP vctrs_field_get(SEXP, SEXP);
 extern SEXP vctrs_field_set(SEXP, SEXP, SEXP);
 extern SEXP vctrs_fields(SEXP);
@@ -26,6 +28,8 @@ extern SEXP vctrs_duplicated_any(SEXP);
 extern SEXP vctrs_length(SEXP);
 
 static const R_CallMethodDef CallEntries[] = {
+    {"vctrs_list_get",    (DL_FUNC) &vctrs_list_get, 2},
+    {"vctrs_list_set",    (DL_FUNC) &vctrs_list_set, 3},
     {"vctrs_field_get",   (DL_FUNC) &vctrs_field_get, 2},
     {"vctrs_field_set",   (DL_FUNC) &vctrs_field_set, 3},
     {"vctrs_fields",      (DL_FUNC) &vctrs_fields,    1},
