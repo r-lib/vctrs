@@ -4,6 +4,8 @@
 
 #include "growable.h"
 #include "hash.h"
+#include "dim.h"
+
 #include <stdbool.h>
 #include <string.h>
 

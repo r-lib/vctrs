@@ -1,25 +1,6 @@
 #include "hash.h"
+#include "dim.h"
 #include <stdbool.h>
-
-bool is_data_frame(SEXP x) {
-  return TYPEOF(x) == VECSXP && Rf_inherits(x, "data.frame");
-}
-
-R_len_t vec_length(SEXP x) {
-  if (!is_data_frame(x)) {
-    return Rf_length(x);
-  }
-
-  // Automatically generates integer vector of correct length
-  SEXP rn = Rf_getAttrib(x, R_RowNamesSymbol);
-  switch(TYPEOF(rn)) {
-  case INTSXP:
-  case STRSXP:
-    return Rf_length(rn);
-  default:
-    Rf_errorcall(R_NilValue, "Corrupt data frame: invalid row names");
-  }
-}
 
 // boost::hash_combine from https://stackoverflow.com/questions/35985960
 int32_t hash_combine(int x, int y) {

@@ -27,12 +27,7 @@ NULL
 #' @export
 #' @rdname dims
 vec_length <- function(x) {
-  d <- dim(x)
-  if (is.null(d)) {
-    length(x)
-  } else {
-    d[[1]]
-  }
+  .Call(vctrs_length, x)
 }
 
 #' @export
