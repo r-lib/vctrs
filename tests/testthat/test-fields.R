@@ -15,6 +15,18 @@ test_that("can extract valid field", {
   expect_equal(field(r, 1L), 1)
 })
 
+test_that("can extract field even if encoding is different", {
+  x1 <- "fa\u00e7ile"
+  skip_if_not(Encoding(x1) == "UTF-8")
+
+  x2 <- iconv(x1, to = "latin1")
+  skip_if_not(Encoding(x2) == "latin1")
+
+  r <- new_rcrd(setNames(list(1), x1))
+  expect_equal(field(r, x1), 1)
+  expect_equal(field(r, x2), 1)
+})
+
 test_that("invalid indices throw error", {
   r <- new_rcrd(list(x = 1, y = 2))
 

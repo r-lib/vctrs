@@ -2,8 +2,28 @@
 #include <R.h>
 #include <Rinternals.h>
 
+#include <stdbool.h>
+#include "hash.h"
+
+// SEXP x and y must be CHARSXP
+// x_utf* is pointer to const char* which is lazily initialised:
+//  This makes this function also suitable for use when repeated
+//  comparing varying y to constant x
+bool equal_string(SEXP x, const char** x_utf8, SEXP y) {
+  // Try fast pointer comparison
+  if (x == y)
+    return true;
+
+  if (*x_utf8 == NULL)
+    *x_utf8 = Rf_translateCharUTF8(x);
+
+  // Try slower conversion to common encoding
+  const char* y_utf = Rf_translateCharUTF8(y);
+  return (strcmp(y_utf, *x_utf8) == 0);
+}
+
 int find_offset(SEXP x, SEXP index) {
-  if (Rf_length(index) > 1) {
+  if (Rf_length(index) != 1) {
     Rf_errorcall(R_NilValue, "Invalid index: must have length 1");
   }
 
@@ -25,22 +45,23 @@ int find_offset(SEXP x, SEXP index) {
     if (names == R_NilValue)
       Rf_errorcall(R_NilValue, "Corrupt rcrd: no names");
 
-    if (STRING_ELT(index, 0) == NA_STRING)
+    SEXP val_0 = STRING_ELT(index, 0);
+    if (val_0 == NA_STRING)
       Rf_errorcall(R_NilValue, "Invalid index: NA_character_");
 
-    const char* val = Rf_translateCharUTF8(STRING_ELT(index, 0));
-    if (val[0] == '\0')
+    const char* val_0_chr = Rf_translateCharUTF8(val_0);
+    if (val_0_chr == '\0')
       Rf_errorcall(R_NilValue, "Invalid index: empty string");
 
     for (int j = 0; j < Rf_length(names); ++j) {
-      if (STRING_ELT(names, j) == NA_STRING)
+      SEXP name_j = STRING_ELT(names, j);
+      if (name_j == NA_STRING)
         Rf_errorcall(R_NilValue, "Corrupt rcrd: element %i is unnamed", j + 1);
 
-      const char* names_j = Rf_translateCharUTF8(STRING_ELT(names, j));
-      if (strcmp(names_j, val) == 0)
+      if (equal_string(val_0, &val_0_chr, name_j))
         return j;
     }
-    Rf_errorcall(R_NilValue, "Invalid index: field name '%s' not found", val);
+    Rf_errorcall(R_NilValue, "Invalid index: field name '%s' not found", val_0_chr);
   } else {
     Rf_errorcall(R_NilValue, "Invalid index: must be a character or numeric vector");
   }
