@@ -2,6 +2,7 @@
 #'
 #' * `vec_length()` returns the length of the vector, which is the number of
 #'   rows if multidimensional
+#' * `vec_empty()` returns `TRUE` if `vec_length()` is zero.
 #' * `vec_dims()` gives the dimensionality (i.e. number of dimensions)
 #' * `vec_dim()` returns the size of each dimension
 #'
@@ -32,6 +33,12 @@ vec_length <- function(x) {
   } else {
     d[[1]]
   }
+}
+
+#' @export
+#' @rdname dims
+vec_empty <- function(x) {
+  vec_length(x) == 0L
 }
 
 #' @export

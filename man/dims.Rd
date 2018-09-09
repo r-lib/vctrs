@@ -3,11 +3,14 @@
 \name{dims}
 \alias{dims}
 \alias{vec_length}
+\alias{vec_empty}
 \alias{vec_dim}
 \alias{vec_dims}
 \title{Vector dimensions}
 \usage{
 vec_length(x)
+
+vec_empty(x)
 
 vec_dim(x)
 
@@ -20,6 +23,7 @@ vec_dims(x)
 \itemize{
 \item \code{vec_length()} returns the length of the vector, which is the number of
 rows if multidimensional
+\item \code{vec_empty()} returns \code{TRUE} if \code{vec_length()} is zero.
 \item \code{vec_dims()} gives the dimensionality (i.e. number of dimensions)
 \item \code{vec_dim()} returns the size of each dimension
 }
