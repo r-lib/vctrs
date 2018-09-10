@@ -3,38 +3,38 @@ context("test-hash")
 # Vectorised --------------------------------------------------------------
 
 test_that("F, T, and NA hash to different values", {
-  x <- hash(c(TRUE, FALSE, NA))
+  x <- vec_hash(c(TRUE, FALSE, NA))
   expect_length(unique(x), 3)
 })
 
-test_that("hash of double produces different values", {
-  x <- hash(c(1, 1, 2))
+test_that("vec_hash of double produces different values", {
+  x <- vec_hash(c(1, 1, 2))
   expect_true(x[[1]] == x[[2]])
   expect_false(x[[2]] == x[[3]])
 })
 
 test_that("NA and NaN hash to different values", {
-  x <- hash(c(NA, NaN))
+  x <- vec_hash(c(NA, NaN))
   expect_false(x[[1]] == x[[2]])
 })
 
 test_that("same string hashes to same value", {
-  x <- hash(c("1", "1", "2"))
+  x <- vec_hash(c("1", "1", "2"))
   expect_true(x[[1]] == x[[2]])
   expect_false(x[[2]] == x[[3]])
 })
 
 test_that("list hashes to values of individual values", {
-  x <- hash(list(1:3, letters))
-  expect_equal(x[1], hash_obj(1:3))
-  expect_equal(x[2], hash_obj(letters))
+  x <- vec_hash(list(1:3, letters))
+  expect_equal(x[1], obj_hash(1:3))
+  expect_equal(x[2], obj_hash(letters))
 })
 
 test_that("hash of data frame works down rows", {
   df <- data.frame(x = 1:3, y = 1:3)
-  x <- hash(df)
+  x <- vec_hash(df)
   expect_length(x, 3)
-  expect_equal(x[1], hash(df[1, ]))
+  expect_equal(x[1], vec_hash(df[1, ]))
 })
 
 test_that("hashes are consistent from run to run", {
@@ -45,7 +45,7 @@ test_that("hashes are consistent from run to run", {
     dbl1 = as.double(1:100),
     dbl2 = seq(0, 1, length = 100)
   )
-  hash <- lapply(df, hash)
+  hash <- lapply(df, vec_hash)
 
   expect_known_output(print(hash), file = test_path("test-hash-hash.txt"))
 })

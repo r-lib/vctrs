@@ -1,8 +1,8 @@
-hash <- function(x) {
+vec_hash <- function(x) {
   as.hexmode(.Call(vctrs_hash, x))
 }
 
-hash_obj <- function(x) {
+obj_hash <- function(x) {
   as.hexmode(.Call(vctrs_hash_object, x))
 }
 
