@@ -3,6 +3,7 @@
 #include <Rinternals.h>
 
 #include "growable.h"
+#include "equal.h"
 #include "hash.h"
 #include "dim.h"
 
@@ -10,7 +11,6 @@
 #include <string.h>
 
 #define EMPTY -1
-
 
 // http://graphics.stanford.edu/~seander/bithacks.html#RoundUpPowerOf2
 int32_t ceil2(int32_t x) {
