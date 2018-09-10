@@ -20,6 +20,8 @@ vec_proxy_equality <- function(x) {
 
 #' @export
 vec_proxy_equality.data.frame <- function(x) {
+  is_list <- map_lgl(x, is.list)
+  x[is_list] <- lapply(x[is_list], vec_proxy_equality)
   x
 }
 
@@ -30,7 +32,11 @@ vec_proxy_equality.POSIXlt <- function(x) {
 
 #' @export
 vec_proxy_equality.default <- function(x) {
-  vec_data(x)
+  if (is.list(x)) {
+    lapply(x, vec_data)
+  } else {
+    vec_data(x)
+  }
 }
 
 #' @export
