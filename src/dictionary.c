@@ -1,14 +1,4 @@
-#define R_NO_REMAP
-#include <R.h>
-#include <Rinternals.h>
-
-#include "growable.h"
-#include "equal.h"
-#include "hash.h"
-#include "dim.h"
-
-#include <stdbool.h>
-#include <string.h>
+#include "vctrs.h"
 
 #define EMPTY -1
 

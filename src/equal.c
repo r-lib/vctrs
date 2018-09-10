@@ -1,5 +1,4 @@
-#include "equal.h"
-#include "dim.h"
+#include "vctrs.h"
 
 bool equal_scalar(SEXP x, int i, SEXP y, int j) {
   if (TYPEOF(x) != TYPEOF(y))

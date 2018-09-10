@@ -1,6 +1,4 @@
-#include "hash.h"
-#include "equal.h"
-#include "dim.h"
+#include "vctrs.h"
 
 // boost::hash_combine from https://stackoverflow.com/questions/35985960
 int32_t hash_combine(int x, int y) {

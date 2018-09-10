@@ -1,5 +1,4 @@
-#include "growable.h"
-#include <stdint.h>
+#include "vctrs.h"
 
 void growable_init(growable* g, SEXPTYPE type, int capacity) {
   g->x = Rf_allocVector(type, capacity);

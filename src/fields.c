@@ -1,9 +1,4 @@
-#define R_NO_REMAP
-#include <R.h>
-#include <Rinternals.h>
-
-#include <stdbool.h>
-#include "hash.h"
+#include "vctrs.h"
 
 // SEXP x and y must be CHARSXP
 // x_utf* is pointer to const char* which is lazily initialised:

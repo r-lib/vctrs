@@ -1,4 +1,4 @@
-#include "dim.h"
+#include "vctrs.h"
 
 bool is_data_frame(SEXP x) {
   return TYPEOF(x) == VECSXP && Rf_inherits(x, "data.frame");
