@@ -43,6 +43,9 @@ bool equal_scalar(SEXP x, int i, SEXP y, int j) {
 }
 
 bool equal_object(SEXP x, SEXP y) {
+  if (x == y)
+    return true;
+
   if (TYPEOF(x) != TYPEOF(y))
     return false;
 
