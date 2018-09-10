@@ -16,7 +16,8 @@ hash_label <- function(x, length = 5) {
   }
 }
 
-equal <- function(x, y, .ptype = NULL) {
-  v <- vec_coerce(x = x, y = y, .ptype = .ptype)
-  .Call(vctrs_equal, v$x, v$y)
+vec_equal <- function(x, y, .ptype = NULL) {
+  args <- vec_recycle(x, y)
+  args <- vec_coerce(!!!args, .ptype = .ptype)
+  .Call(vctrs_equal, vec_proxy_equality(args[[1]]), vec_proxy_equality(args[[2]]))
 }
