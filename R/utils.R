@@ -39,7 +39,7 @@ outer_names <- function(outer, names, n) {
 }
 
 cat_line <- function(...) {
-  cat(..., "\n", sep = "")
+  cat(paste0(..., "\n", collapse = ""))
 }
 
 

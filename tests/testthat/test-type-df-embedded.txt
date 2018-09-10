@@ -1,10 +1,6 @@
 prototype: data.frame<
   x: integer
-  a: 
-    data.frame<
-      a: integer
-      b: factor<38ce1>
-    >
+  a: data.frame<>
   b: list_of<double>
   c: 
     list_of<
