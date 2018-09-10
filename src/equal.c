@@ -129,3 +129,7 @@ SEXP vctrs_equal(SEXP x, SEXP y) {
   UNPROTECT(1);
   return out;
 }
+
+SEXP vctrs_equal_object(SEXP x, SEXP y) {
+  return Rf_ScalarLogical(equal_object(x, y));
+}

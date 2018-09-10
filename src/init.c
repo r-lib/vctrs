@@ -16,6 +16,7 @@ extern SEXP vctrs_fields(SEXP);
 extern SEXP vctrs_n_fields(SEXP);
 extern SEXP vctrs_hash(SEXP);
 extern SEXP vctrs_hash_object(SEXP);
+extern SEXP vctrs_equal_object(SEXP);
 extern SEXP vctrs_in(SEXP, SEXP);
 extern SEXP vctrs_duplicated(SEXP);
 extern SEXP vctrs_unique_loc(SEXP);
@@ -36,6 +37,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"vctrs_n_fields",    (DL_FUNC) &vctrs_n_fields,  1},
     {"vctrs_hash",        (DL_FUNC) &vctrs_hash,  1},
     {"vctrs_hash_object", (DL_FUNC) &vctrs_hash_object,  1},
+    {"vctrs_equal_object", (DL_FUNC) &vctrs_equal_object,  2},
     {"vctrs_in",          (DL_FUNC) &vctrs_in,  2},
     {"vctrs_unique_loc",  (DL_FUNC) &vctrs_unique_loc,  1},
     {"vctrs_duplicated",  (DL_FUNC) &vctrs_duplicated,  1},
