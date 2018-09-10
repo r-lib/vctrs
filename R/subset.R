@@ -16,7 +16,7 @@ vec_subset <- function(x, i) {
       eval_bare(expr(x[i, !!!miss_args, drop = FALSE]))
     }
   } else {
-    stop("`x` must be a vector", call = FALSE)
+    stop("`x` must be a vector", call. = FALSE)
   }
 }
 
