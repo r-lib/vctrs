@@ -38,7 +38,7 @@ int find_offset(SEXP x, SEXP index) {
   } else if (TYPEOF(index) == REALSXP) {
     int val = REAL(index)[0];
 
-    if (val == NA_INTEGER)
+    if (R_IsNA(val))
       Rf_errorcall(R_NilValue, "Invalid index: NA_real_");
 
     val--;
@@ -56,7 +56,7 @@ int find_offset(SEXP x, SEXP index) {
       Rf_errorcall(R_NilValue, "Invalid index: NA_character_");
 
     const char* val_0_chr = Rf_translateCharUTF8(val_0);
-    if (val_0_chr == '\0')
+    if (val_0_chr[0] == '\0')
       Rf_errorcall(R_NilValue, "Invalid index: empty string");
 
     for (int j = 0; j < Rf_length(names); ++j) {
