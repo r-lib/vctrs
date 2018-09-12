@@ -1,7 +1,7 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# vctrs <img src="man/figures/logo.png" align="right" alt="" />
+# vctrs <img src="man/figures/logo.png" align="right" width=120 height=139 alt="" />
 
 [![Travis build
 status](https://travis-ci.org/r-lib/vctrs.svg?branch=master)](https://travis-ci.org/r-lib/vctrs)
