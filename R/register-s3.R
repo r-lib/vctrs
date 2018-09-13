@@ -4,7 +4,7 @@
 #' `S3Method()` namespace directive (often generated automatically be the
 #' `@export` roxygen2 tag). However, this technique requires that the generic
 #' be in an imported package, and sometimes you want to suggest a package,
-#' and only provide a method when that package is loaded. `vec_method_dynamic()`
+#' and only provide a method when that package is loaded. `vec_method_register()`
 #' should be called from your package's `.onLoad()` to dynamically register
 #' a method only if the generic's package is loaded.
 #'
@@ -24,8 +24,8 @@
 #' # printing when they are used.
 #'
 #' .onLoad <- function(...) {
-#'   vec_method_dynamic("pillar::pillar_shaft.vctrs_vctr")
-#'   vec_method_dynamic("tibble::type_sum.vctrs_vctr")
+#'   vec_method_register("pillar::pillar_shaft.vctrs_vctr")
+#'   vec_method_register("tibble::type_sum.vctrs_vctr")
 #' }
 #' @keywords internal
 vec_method_register <- function(method_name, method = NULL) {
