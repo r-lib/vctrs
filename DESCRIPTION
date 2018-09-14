@@ -32,5 +32,6 @@ LazyData: true
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 6.1.0
 Remotes: 
-    r-lib/rlang
+    r-lib/rlang,
+    r-lib/pkgdown
 VignetteBuilder: knitr

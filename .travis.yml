@@ -10,17 +10,11 @@ matrix:
   - r: release
     after_success:
     - Rscript -e 'covr::codecov()'
-    - R CMD INSTALL .
-    - Rscript -e 'pkgdown::build_site()'
 
     deploy:
-      provider: pages
+      provider: script
+      script: Rscript -e 'pkgdown::deploy_site_github()'
       skip-cleanup: true
-      github-token: $GITHUB_TOKEN
-      local-dir: docs
-      fqdn: vctrs.r-lib.org
-      on:
-        branch: master
   - r: oldrel
   - r: 3.3
   - r: 3.2
