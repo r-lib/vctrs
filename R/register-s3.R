@@ -12,6 +12,15 @@
 #' in a vignette, since as of R 3.5.0, method lookup no longer always involves
 #' the lexical scope.
 #'
+#' As of R 3.6.0, a similar effect can be accomplished by using "delayed method
+#' registration", by placing the following in your `NAMESPACE` file:
+#'
+#' ```
+#' if (getRversion() >= "3.6.0") {
+#'   S3method(package::generic, class)
+#' }
+#' ```
+#'
 #' @param method_name Name of the method in the form `pkg::generic.class`.
 #' @param method Optionally, the implementation of the method. By default,
 #'   this will be found by looking for a function called `generic.class`

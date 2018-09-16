@@ -26,6 +26,12 @@ a method only if the generic's package is loaded.
 \code{vec_method_register()} is also useful when demonstrating class creation
 in a vignette, since as of R 3.5.0, method lookup no longer always involves
 the lexical scope.
+
+As of R 3.6.0, a similar effect can be accomplished by using "delayed method
+registration", by placing the following in your \code{NAMESPACE} file:\preformatted{if (getRversion() >= "3.6.0") {
+  S3method(package::generic, class)
+}
+}
 }
 \examples{
 # A typical use case is to dynamically register tibble/pillar methods
