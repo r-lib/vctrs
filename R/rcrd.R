@@ -166,6 +166,21 @@ vec_proxy_order.vctrs_rcrd <- function(x) {
 
 # Unimplemented -----------------------------------------------------------
 
+stop_unimplemented <- function(x, method) {
+  msg <- glue::glue("`{method}.{class(x)[[1]]}()` not implemented")
+  abort(
+    "error_unimplemented",
+    message = msg,
+    x = x,
+    method = method
+  )
+}
+
+#' @export
+format.vctrs_rcrd <- function(x, ...) {
+  stop_unimplemented(x, "format")
+}
+
 #' @export
 mean.vctrs_rcrd <- function(x, ..., na.rm = FALSE) {
   stop_unimplemented(x, "mean")

@@ -16,6 +16,10 @@ test_that("can construct and access components", {
   expect_equal(field(r, "x"), 1)
 })
 
+test_that("requires format method", {
+  x <- new_rcrd(list(x = 1))
+  expect_error(format(x), class = "error_unimplemented")
+})
 
 # coercion ----------------------------------------------------------------
 

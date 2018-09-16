@@ -139,19 +139,9 @@ type_sum.vctrs_vctr <- function(x) {
   vec_ptype_abbr(x)
 }
 
-stop_unimplemented <- function(x, method) {
-  msg <- glue::glue("`{method}.{class(x)[[1]]}()` not implemented")
-  abort(
-    "error_unimplemented",
-    message = msg,
-    x = x,
-    method = method
-  )
-}
-
 #' @export
 format.vctrs_vctr <- function(x, ...) {
-  stop_unimplemented(x, "format")
+  format(vec_data(x, ...))
 }
 
 #' @export
