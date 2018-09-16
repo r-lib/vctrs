@@ -247,6 +247,16 @@ as.list.vctrs_vctr <- function(x, ...) {
   vec_cast(x, list())
 }
 
+#' @export
+as.Date.vctrs_vctr <- function(x, ...) {
+  vec_cast(x, date())
+}
+
+#' @export
+as.POSIXct.vctrs_vctr <- function(x, tz = "", ...) {
+  vec_cast(x, new_datetime(tzone = tz))
+}
+
 # Group generics ----------------------------------------------------------
 
 #' @export
