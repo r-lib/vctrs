@@ -120,9 +120,9 @@ vec_cast.vctrs_vctr.default <- function(x, to) {
 
 #' @export
 print.vctrs_vctr <- function(x, ...) {
-  vec_print_header(x)
-  vec_print_data(x)
-  vec_print_footer(x)
+  vec_print_header(x, ...)
+  vec_print_data(x, ...)
+  vec_print_footer(x, ...)
   invisible(x)
 }
 
