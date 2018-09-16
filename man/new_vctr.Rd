@@ -3,9 +3,18 @@
 \name{new_vctr}
 \alias{new_vctr}
 \alias{vctr}
+\alias{vec_print_header}
+\alias{vec_print_data}
+\alias{vec_print_footer}
 \title{vctr (vectr) S3 class}
 \usage{
 new_vctr(.data, ..., class = character())
+
+vec_print_header(x, ...)
+
+vec_print_data(x, ...)
+
+vec_print_footer(x, ...)
 }
 \arguments{
 \item{...}{Name-value pairs defining attributes}

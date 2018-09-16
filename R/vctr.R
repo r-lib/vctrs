@@ -120,13 +120,48 @@ vec_cast.vctrs_vctr.default <- function(x, to) {
 
 #' @export
 print.vctrs_vctr <- function(x, ...) {
-  cat_line("<", vec_ptype_full(x), "[", length(x), "]>")
-  if (length(x) > 0) {
-    out <- stats::setNames(format(x), names(x))
-    print(out, quote = FALSE)
-  }
+  vec_print_header(x)
+  vec_print_data(x)
+  vec_print_footer(x)
   invisible(x)
 }
+
+#' @export
+#' @rdname new_vctr
+vec_print_header <- function(x, ...) {
+  UseMethod("vec_print_header")
+}
+
+#' @export
+vec_print_header.vctrs_vctr <- function(x, ...) {
+  cat_line("<", vec_ptype_full(x), "[", length(x), "]>")
+}
+
+#' @export
+#' @rdname new_vctr
+vec_print_data <- function(x, ...) {
+  UseMethod("vec_print_data")
+}
+
+#' @export
+vec_print_data.vctrs_vctr <- function(x, ...) {
+  if (length(x) == 0)
+    return()
+
+  out <- stats::setNames(format(x), names(x))
+  print(out, quote = FALSE)
+}
+
+#' @export
+#' @rdname new_vctr
+vec_print_footer <- function(x, ...) {
+  UseMethod("vec_print_footer")
+}
+
+#' @export
+vec_print_footer.vctrs_vctr <- function(x, ...) {
+}
+
 
 # manually registered in zzz.R
 pillar_shaft.vctrs_vctr <- function(x, ...) {
