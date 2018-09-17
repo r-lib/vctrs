@@ -15,7 +15,7 @@ knitr::opts_chunk$set(
 set.seed(1014)
 ```
 
-This vignette contains tips for creating your own S3 vector class built on top the `vctr` class provided by vctrs. It focusses on the aspects of making a vector class that every class needs to worry about; you'll also need to provide methods that actually make the vector useful.
+This vignette shows you how to create your own S3 vector classes. It focusses on the aspects of making a vector class that every class needs to worry about; you'll also need to provide methods that actually make the vector useful.
 
 ```{r setup}
 library(vctrs)
@@ -37,6 +37,24 @@ This vignette will work through a few different types of vector:
 * Rational: a pair of integer vectors that defines a rational number (i.e. a 
   fraction).
 
+This vignette shows you the basic infrastructure for creating a new vector: defining low-level and user-facing constructor functions, providing a `format()` method, and defining casting and coercion methods. This gets you quite a long way because vctrs provides many S3 methods build from these primitives. For example:
+
+* `print()` and `str()` methods are defined in terms of `format()` so you get
+  uniformly nice display as soon as you've made your `format()` method.
+  
+* You can immediately put your new vector class in a data frame because 
+  vctrs provided the tricky `as.data.frame()` for you.
+
+* Subsetting (`[`, `[[`, `$`), `length<-`, and `rep()` methods automatically
+  preserve attributes because they're built on top of `vec_recast()`. A 
+  default `vec_recast()` works for all classes where the attributes are 
+  data-independent, and can easily be customised when the attributes do depend
+  on the data.
+
+* Subset-assignment methods (`[<-`, `[[<-`, `$<-`) are implemented based on the
+  principle that the new values should be coerced to the same type as the 
+  existing vector. This gives predictable behaviour and clear error messages.
+  
 ## Percent {#percent}
 
 In this section, I'll show you how to make a "percent" class, i.e. a double vector that is printed like it's a percentage. This is a good place to start because it's the simplest possible S3 class as it has no custom attributes.
