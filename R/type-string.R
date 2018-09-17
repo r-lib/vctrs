@@ -138,7 +138,7 @@ vec_ptype_full.data.frame <- function(x) {
   names <- paste0("  ", format(names(x)))
 
   paste0(
-    .Class[[1]], "<\n",
+    class(x)[[1]], "<\n",
     paste0(names, ": ", types, collapse = "\n"),
     "\n>"
   )
@@ -153,12 +153,14 @@ vec_ptype_abbr.data.frame <- function(x) {
 
 #' @export
 vec_ptype_full.AsIs <- function(x) {
-  paste0("I<", NextMethod(), ">")
+  class(x) <- setdiff(class(x), "AsIs")
+  paste0("I<", vec_ptype_full(x), ">")
 }
 
 #' @export
 vec_ptype_abbr.AsIs <- function(x) {
-  paste0("I<", NextMethod(), ">")
+  class(x) <- setdiff(class(x), "AsIs")
+  paste0("I<", vec_ptype_abbr(x), ">")
 }
 
 # Helpers -----------------------------------------------------------------

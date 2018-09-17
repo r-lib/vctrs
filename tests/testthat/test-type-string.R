@@ -43,11 +43,20 @@ test_that("date/times as expected", {
   expect_equal(vec_ptype_full(Sys.time()), "datetime<local>")
 })
 
-test_that("I wraps contents", {
+test_that("I() wraps contents", {
   f <- factor()
 
   expect_equal(vec_ptype_abbr(I(f)), "I<fctr>")
   expect_equal(vec_ptype_full(I(f)), "I<factor<>>")
+})
+
+test_that("AsIs class stripped from I()", {
+  df <- data.frame(x = 1, y = 1:2)
+  class(df) <- c("myclass", "data.frame")
+
+  expect_equal(vec_ptype_full(I(df)), "I<myclass<\n  x: double\n  y: integer\n>>")
+  expect_equal(vec_ptype_full(I(df[1])), "I<myclass<x:double>>")
+  expect_equal(vec_ptype_full(I(df[0])), "I<myclass<>>")
 })
 
 test_that("factors as expected", {
