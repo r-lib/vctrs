@@ -4,6 +4,10 @@ bool is_data_frame(SEXP x) {
   return TYPEOF(x) == VECSXP && Rf_inherits(x, "data.frame");
 }
 
+bool is_record(SEXP x) {
+  return TYPEOF(x) == VECSXP && Rf_inherits(x, "vctrs_rcrd");
+}
+
 // For performance, avoid Rf_getAttrib() because it automatically transforms
 // the rownames into an integer vector
 R_len_t df_rownames(SEXP x) {
@@ -33,6 +37,14 @@ R_len_t df_rownames(SEXP x) {
 R_len_t vec_length(SEXP x) {
   if (is_data_frame(x)) {
     return df_rownames(x);
+  }
+  if (is_record(x)) {
+    int n = Rf_length(x);
+    if (n == 0) {
+      return 0;
+    } else {
+      return Rf_length(VECTOR_ELT(x, 0));
+    }
   }
 
   SEXP dims = Rf_getAttrib(x, R_DimSymbol);

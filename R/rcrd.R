@@ -52,7 +52,7 @@ check_fields <- function(fields) {
 
 #' @export
 length.vctrs_rcrd <- function(x) {
-  length(field(x, 1L))
+  .Call(vctrs_length, x)
 }
 
 #' @export

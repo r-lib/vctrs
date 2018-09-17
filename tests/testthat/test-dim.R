@@ -13,6 +13,11 @@ test_that("length is number of rows", {
   expect_equal(vec_length(array(dim = c(2, 1, 5))), 2)
 })
 
+test_that("length of record is number of rows, not fields", {
+  r <- new_rcrd(list(x = 1:10))
+  expect_equal(vec_length(r), 10)
+})
+
 test_that("handles three types of data frame rownames", {
   df1 <- df2 <- df3 <- data.frame(x = 1:3)
   rownames(df1) <- NULL
