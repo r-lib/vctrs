@@ -34,6 +34,9 @@ This vignette will work through a few different types of vector:
 * Cached sum: a numeric vector that caches the total sum in an attribute. This
   will show you how handle an attribute that is dependent on the data.
 
+* Rational: a pair of integer vectors that defines a rational number (i.e. a 
+  fraction).
+
 ## Percent {#percent}
 
 In this section, I'll show you how to make a "percent" class, i.e. a double vector that is printed like it's a percentage. This is a good place to start because it's the simplest possible S3 class as it has no custom attributes.
@@ -383,3 +386,74 @@ x[1]
 This works because most of the vctrs methods dispatch to the underlying base function, by first stripping off extra attributes with `vec_data()` and then reapplying them again with `vec_recast()`. The default `vec_recast()` method copies over all attributes, which is not appropriate here.
 
 Note that `vec_recast.class` is subtly different from `vec_cast.class.class()`. `vec_recast()` is used when restoring attributes that have been lost; `vec_cast()` is used for coercions. This is easier to understand with a concrete example. Imagine factors were implements with `new_vectr()`. `vec_recast.factor()` would restore attributes back to an integer vector, but you would not want to allow manually casting an integer to a factor with `vec_cast()`. 
+
+# Rational
+
+A fraction, or rational number can be represented by a pair of integer vectors representing the numerator (the number on top) and the denominator (the number on bottom), where the length of each vector must be the same. To represent such a data structure we turn to a new base data type: the record (or rcrd for short).
+
+As usual we start with low-level and user-friendly constructors. The low-level constructor calls `new_rcrd()` which expects a named list of equal-length vectors (and will error if given anything else).
+
+```{r}
+new_rational <- function(n = integer(), d = integer()) {
+  stopifnot(is.integer(n))
+  stopifnot(is.integer(d))
+  
+  new_rcrd(list(n = n, d = d), class = "vctrs_rational")
+}
+```
+
+In our user friendly constructor as well as casting `n` and `d` to the desired type, we also recycle them to the same length.
+
+```{r}
+rational <- function(n, d) {
+  shape <- vec_shape(n, d)
+  
+  n <- vec_reshape(vec_cast(n, integer()), shape)
+  d <- vec_reshape(vec_cast(d, integer()), shape)
+  
+  new_rational(n, d)
+}
+
+x <- rational(1, 1:10)
+```
+
+Behind the scenes, `x` is a named list with two elements. But to behave like a vector, those details are hidden:
+
+```{r}
+names(x)
+length(x)
+```
+
+To access the underlyings we need to use `field()` and `fields()`:
+
+```{r}
+fields(x)
+field(x, "n")
+```
+
+Which allows us to create a format method:
+
+```{r}
+format.vctrs_rational <- function(x, ...) {
+  n <- field(x, "n")
+  d <- field(x, "d")
+  
+  out <- paste0(n, "/", d)
+  out[is.na(n) | is.na(d)] <- NA
+  
+  out
+}
+
+vec_ptype_abbr.vctrs_rational <- function(x) "rtnl"
+vec_ptype_full.vctrs_rational <- function(x) "rational"
+
+x
+```
+
+vctrs also uses this method in `str()`, hiding the underlying implementation details from the user:
+
+```{r}
+str(x)
+```
+
+Implementing `vec_ptype()` and `vec_cast()` is straightforward following the existing recipes of `percent()`. If the class has additional attributes, follow the recipe of `decimal()`. If the attributes, vary based on the data, follow the recipe of `cached_sum()`.
