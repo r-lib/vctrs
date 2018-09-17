@@ -282,6 +282,24 @@ as.POSIXct.vctrs_vctr <- function(x, tz = "", ...) {
   vec_cast(x, new_datetime(tzone = tz))
 }
 
+#' @importFrom generics as.factor
+#' @export
+as.factor.vctrs_vctr <- function(x, levels = character(), ...) {
+  vec_cast(x, new_factor(levels = levels))
+}
+
+#' @importFrom generics as.ordered
+#' @export
+as.ordered.vctrs_vctr <- function(x, levels = character(), ...) {
+  vec_cast(x, new_ordered(levels = levels))
+}
+
+#' @importFrom generics as.difftime
+#' @export
+as.difftime.vctrs_vctr <- function(x, units = "secs", ...) {
+  vec_cast(x, new_difftime(units = units))
+}
+
 # Group generics ----------------------------------------------------------
 
 #' @export

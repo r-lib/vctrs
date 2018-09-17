@@ -18,7 +18,8 @@ Imports:
     glue,
     rlang,
     tibble,
-    backports
+    backports,
+    generics
 Suggests: 
     covr,
     testthat,
@@ -32,6 +33,7 @@ LazyData: true
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 6.1.0
 Remotes: 
+    r-lib/generics,
     r-lib/rlang,
     r-lib/pkgdown
 VignetteBuilder: knitr
