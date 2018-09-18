@@ -19,5 +19,6 @@ of R, this creates a full copy of the underlying data.
 }
 \seealso{
 See \code{\link[=vec_recast]{vec_recast()}} for the inverse operation: it restores
-attributes given a bare vector and a prototype.
+attributes given a bare vector and a prototype;
+\code{vec_recast(vec_data(x), x)} will always yield \code{x}.
 }
