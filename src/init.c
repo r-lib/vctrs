@@ -24,6 +24,7 @@ extern SEXP vctrs_count(SEXP);
 extern SEXP vctrs_id(SEXP);
 extern SEXP vctrs_n_distinct(SEXP);
 extern SEXP vctrs_equal(SEXP, SEXP);
+extern SEXP vctrs_compare(SEXP, SEXP, SEXP);
 extern SEXP vctrs_match(SEXP, SEXP);
 extern SEXP vctrs_duplicated_any(SEXP);
 extern SEXP vctrs_length(SEXP);
@@ -47,6 +48,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"vctrs_n_distinct",  (DL_FUNC) &vctrs_n_distinct,  1},
     {"vctrs_length",      (DL_FUNC) &vctrs_length,  1},
     {"vctrs_equal",       (DL_FUNC) &vctrs_equal,  2},
+    {"vctrs_compare",     (DL_FUNC) &vctrs_compare,  3},
     {"vctrs_match",       (DL_FUNC) &vctrs_match,  2},
     {NULL, NULL, 0}
 };

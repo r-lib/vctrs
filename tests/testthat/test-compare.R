@@ -1,0 +1,57 @@
+context("test-compare")
+
+test_that("matches R ordering", {
+  expect_same <- function(x, y) {
+    expect_equal(vec_compare(!!x, !!y), cmp(!!x, !!y))
+  }
+
+  expect_same(c(NA, FALSE, TRUE), FALSE)
+  expect_same(c(NA, -100L, 0L, 100L), 0L)
+  expect_same(c(NA, -Inf, -100, 100, Inf), 0L)
+  expect_same(c(NA, NaN, 0), NA)
+  expect_same(c(NA, "a", "b", "c"), "b")
+})
+
+test_that("NAs equal when requested", {
+  expect_value <- function(x, y, val, .ptype = NULL) {
+    expect_equal(vec_compare(!!x, !!y, .ptype = .ptype, na_equal = TRUE), !!val)
+  }
+
+  expect_value(NA, NA, 0L, .ptype = logical())
+  expect_value(NA, FALSE, -1L)
+  expect_value(FALSE, NA, 1L)
+
+  expect_value(NA_integer_, NA_integer_, 0L)
+  expect_value(NA_integer_, 0L, -1L)
+  expect_value(0L, NA_integer_, 1L)
+
+  expect_value(NA_character_, NA_character_, 0L)
+  expect_value(NA_character_, "", -1L)
+  expect_value("", NA_character_, 1L)
+
+  expect_value(0, NA_real_, 1L)
+  expect_value(0, NaN, 1L)
+  expect_value(0, 0, 0L)
+  expect_value(NA_real_, NA_real_, 0L)
+  expect_value(NA_real_, NaN, 1L)
+  expect_value(NA_real_, 0, -1L)
+  expect_value(NaN, NA_real_, -1L)
+  expect_value(NaN, NaN, 0L)
+  expect_value(NaN, 0, -1L)
+})
+
+test_that("data frames are compared column by column", {
+  df1 <- data.frame(x = c(1, 1, 1), y = c(-1, 0, 1))
+
+  expect_equal(vec_compare(df1, df1[2, ]), c(-1, 0, 1))
+  expect_equal(vec_compare(df1[1], df1[2, 1, drop = FALSE]), c(0, 0, 0))
+  expect_equal(vec_compare(df1[2], df1[2, 2, drop = FALSE]), c(-1, 0, 1))
+  expect_equal(vec_compare(df1[2:1], df1[2, 2:1]), c(-1, 0, 1))
+})
+
+test_that("C code doesn't crash with bad inputs", {
+  df <- data.frame(x = c(1, 1, 1), y = c(-1, 0, 1))
+
+  expect_error(.Call(vctrs_compare, df, df[1], TRUE), "not comparable")
+  expect_error(.Call(vctrs_compare, df, setNames(df, c("x", "z")), TRUE), "not comparable")
+})
