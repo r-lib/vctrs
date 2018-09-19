@@ -90,7 +90,7 @@ int compare_scalar(SEXP x, int i, SEXP y, int j, bool na_equal) {
       int p = Rf_length(x);
       if (p != Rf_length(y))
         stop_not_comparable(x, y, "different number of columns");
-      if (!equal_object(Rf_getAttrib(x, R_NamesSymbol), Rf_getAttrib(y, R_NamesSymbol)))
+      if (!equal_names(x, y))
         stop_not_comparable(x, y, "different column names");
 
       if (p == 0)

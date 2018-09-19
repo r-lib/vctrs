@@ -69,7 +69,7 @@ uint32_t dict_find(dictionary* d, SEXP y, R_len_t i) {
     if (idx == EMPTY) // not used
       return probe;
 
-    if (equal_scalar(d->x, idx, y, i)) // same value
+    if (equal_scalar(d->x, idx, y, i, true)) // same value
       return probe;
   }
 

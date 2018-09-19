@@ -11,7 +11,10 @@ R_len_t vec_length(SEXP x);
 bool is_data_frame(SEXP x);
 
 bool equal_object(SEXP x, SEXP y);
-bool equal_scalar(SEXP x, int i, SEXP y, int j);
+bool equal_names(SEXP x, SEXP y);
+
+int equal_scalar(SEXP x, int i, SEXP y, int j, bool na_equal);
+int compare_scalar(SEXP x, int i, SEXP y, int j, bool na_equal);
 
 int32_t hash_object(SEXP x);
 int32_t hash_scalar(SEXP x, R_len_t i);
