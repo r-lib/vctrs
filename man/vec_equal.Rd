@@ -2,9 +2,12 @@
 % Please edit documentation in R/equal.R
 \name{vec_equal}
 \alias{vec_equal}
+\alias{vec_equal_na}
 \title{Test if two vectors are equal}
 \usage{
 vec_equal(x, y, na_equal = FALSE, .ptype = NULL)
+
+vec_equal_na(x)
 }
 \arguments{
 \item{x}{Vectors with compatible types and lengths.}
@@ -24,10 +27,12 @@ Test if two vectors are equal
 \examples{
 vec_equal(c(TRUE, FALSE, NA), FALSE)
 vec_equal(c(TRUE, FALSE, NA), FALSE, na_equal = TRUE)
+vec_equal_na(c(TRUE, FALSE, NA))
 
 vec_equal(5, 1:10)
 vec_equal("d", letters[1:10])
 
-df <- data.frame(x = c(1, 1, 2), y = c(1, 2, 1))
+df <- data.frame(x = c(1, 1, 2, 1), y = c(1, 2, 1, NA))
 vec_equal(df, data.frame(x = 1, y = 2))
+vec_equal_na(df)
 }

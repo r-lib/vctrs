@@ -192,28 +192,12 @@ Math.vctrs_rcrd <- function(x, ..., na.rm = FALSE) {
 }
 
 #' @export
-anyNA.vctrs_rcrd <- if (getRversion() >= "3.2") {
-  function(x, recursive = FALSE) {
-    stop_unimplemented(x, .Method)
-  }
-} else {
-  function(x) {
-    stop_unimplemented(x, .Method)
-  }
-}
-
-#' @export
 is.finite.vctrs_rcrd <- function(x) {
   stop_unimplemented(x, .Method)
 }
 
 #' @export
 is.finite.vctrs_rcrd <- function(x) {
-  stop_unimplemented(x, .Method)
-}
-
-#' @export
-is.na.vctrs_rcrd <- function(x) {
   stop_unimplemented(x, .Method)
 }
 

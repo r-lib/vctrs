@@ -121,6 +121,35 @@ bool equal_object(SEXP x, SEXP y) {
   return true;
 }
 
+bool equal_na(SEXP x, int i) {
+  switch(TYPEOF(x)) {
+  case LGLSXP:
+    return LOGICAL(x)[i] == NA_LOGICAL;
+  case INTSXP:
+    return INTEGER(x)[i] == NA_INTEGER;
+  case REALSXP:
+    // is.na(NaN) is TRUE
+    return isnan(REAL(x)[i]);
+  case STRSXP:
+    return STRING_ELT(x, i) == NA_STRING;
+  case VECSXP:
+    if (is_data_frame(x)) {
+      int p = Rf_length(x);
+
+      for (int k = 0; k < p; ++k) {
+        SEXP col = VECTOR_ELT(x, k);
+        if (equal_na(col, i))
+          return true;
+      }
+      return false;
+    } else {
+      return Rf_isNull(VECTOR_ELT(x, i));
+    }
+  default:
+    Rf_errorcall(R_NilValue, "Unsupported type %s", Rf_type2char(TYPEOF(x)));
+  }
+}
+
 bool equal_names(SEXP x, SEXP y) {
   SEXP x_names = Rf_getAttrib(x, R_NamesSymbol);
   SEXP y_names = Rf_getAttrib(y, R_NamesSymbol);
@@ -141,6 +170,19 @@ SEXP vctrs_equal(SEXP x, SEXP y, SEXP na_equal_) {
 
   for (R_len_t i = 0; i < n; ++i) {
     p_out[i] = equal_scalar(x, i, y, i, na_equal);
+  }
+
+  UNPROTECT(1);
+  return out;
+}
+
+SEXP vctrs_equal_na(SEXP x) {
+  R_len_t n = vec_length(x);
+  SEXP out = PROTECT(Rf_allocVector(LGLSXP, n));
+  int32_t* p_out = LOGICAL(out);
+
+  for (R_len_t i = 0; i < n; ++i) {
+    p_out[i] = equal_na(x, i);
   }
 
   UNPROTECT(1);

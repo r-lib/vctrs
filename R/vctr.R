@@ -346,6 +346,22 @@ c.vctrs_vctr <- function(...) {
 }
 
 #' @export
+is.na.vcrs_vctr <- function(x) {
+  vec_equal_na(x)
+}
+
+#' @export
+anyNA.vctrs_vctr <- if (getRversion() >= "3.2") {
+  function(x, recursive = FALSE) {
+    any(is.na(x))
+  }
+} else {
+  function(x) {
+    any(is.na(x))
+  }
+}
+
+#' @export
 unique.vctrs_vctr <- function(x, incomparables = FALSE, ...) {
   vec_unique(x)
 }
@@ -469,6 +485,11 @@ stop_unsupported <- function(x, operation) {
     stop("If any elements are named, all elements must be named", call. = FALSE)
   }
   NextMethod()
+}
+
+#' @export
+`is.na<-.vctrs_vctr` <- function(x, value) {
+  stop_unsupported(x, "set missing values")
 }
 
 # Data frame --------------------------------------------------------------
