@@ -155,7 +155,7 @@ as.list.vctrs_rcrd <- function(x, ...) {
 # Equality and ordering ---------------------------------------------------
 
 #' @export
-vec_proxy_equality.vctrs_rcrd <- function(x)  {
+vec_proxy_equal.vctrs_rcrd <- function(x)  {
   new_data_frame(vec_data(x), length(x))
 }
 

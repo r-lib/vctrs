@@ -7,18 +7,18 @@
 #'
 #' The default method calls [vec_proxy_compare], which makes all vector classes
 #' equal-able by default. If your object is not, provide a
-#' `vec_proxy_equality()` method that throws an error.
+#' `vec_proxy_equal()` method that throws an error.
 #'
 #' @param x A vector x.
 #' @return A 1d atomic vector or a data frame.
 #' @keywords internal
 #' @export
-vec_proxy_equality <- function(x) {
-  UseMethod("vec_proxy_equality")
+vec_proxy_equal <- function(x) {
+  UseMethod("vec_proxy_equal")
 }
 
 #' @export
-vec_proxy_equality.default <- function(x) {
+vec_proxy_equal.default <- function(x) {
   if (!is.object(x) && is.list(x)) {
     lapply(x, vec_data)
   } else {
@@ -45,8 +45,8 @@ vec_equal <- function(x, y, na_equal = FALSE, .ptype = NULL) {
   args <- vec_coerce(!!!args, .ptype = .ptype)
   .Call(
     vctrs_equal,
-    vec_proxy_equality(args[[1]]),
-    vec_proxy_equality(args[[2]]),
+    vec_proxy_equal(args[[1]]),
+    vec_proxy_equal(args[[2]]),
     na_equal
   )
 }

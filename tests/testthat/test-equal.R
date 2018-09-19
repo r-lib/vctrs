@@ -30,3 +30,14 @@ test_that("works for data frames", {
   df <- data.frame(x = 1:2, y = letters[2:1], stringsAsFactors = FALSE)
   expect_equal(vec_equal(df, df[1, ]), c(TRUE, FALSE))
 })
+
+# proxy -------------------------------------------------------------------
+
+test_that("compound objects create data frames", {
+  df <- data.frame(x = 1:2, y = 2:1)
+  expect_s3_class(vec_proxy_equal(df), "data.frame")
+
+  posixlt <- as.POSIXlt(as.Date("2010-10-10") + 0:5)
+  expect_s3_class(vec_proxy_equal(posixlt), "data.frame")
+})
+
