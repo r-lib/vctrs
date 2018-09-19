@@ -16,7 +16,8 @@ int dcmp(double x, double y) {
 int scmp(SEXP x, SEXP y) {
   if (x == y)
     return 0;
-  return strcmp(CHAR(x), CHAR(y));
+  int cmp = strcmp(CHAR(x), CHAR(y));
+  return cmp / abs(cmp);
 }
 
 int compare_scalar(SEXP x, int i, SEXP y, int j, bool na_equal) {
