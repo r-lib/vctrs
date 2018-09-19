@@ -5,6 +5,10 @@
 #' `!=` (via [vec_equal()]); [unique()], [duplicated()] (via
 #' [vec_unique()] and [vec_duplicate_detect()]).
 #'
+#' The default method calls [vec_proxy_compare], which makes all vector classes
+#' equal-able by default. If your object is not, provide a
+#' `vec_proxy_equality()` method that throws an error.
+#'
 #' @param x A vector x.
 #' @return A 1d atomic vector or a data frame.
 #' @keywords internal
@@ -14,23 +18,11 @@ vec_proxy_equality <- function(x) {
 }
 
 #' @export
-vec_proxy_equality.data.frame <- function(x) {
-  is_list <- map_lgl(x, is.list)
-  x[is_list] <- lapply(x[is_list], vec_proxy_equality)
-  x
-}
-
-#' @export
-vec_proxy_equality.POSIXlt <- function(x) {
-  new_data_frame(vec_data(x), length(x))
-}
-
-#' @export
 vec_proxy_equality.default <- function(x) {
-  if (is.list(x)) {
+  if (!is.object(x) && is.list(x)) {
     lapply(x, vec_data)
   } else {
-    vec_data(x)
+    vec_proxy_compare(x)
   }
 }
 

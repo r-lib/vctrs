@@ -5,12 +5,40 @@
 #' [sort()] (via [xtfrm()]); `<`, `>`, `>=` and `<=` (via [vec_compare()]);
 #' and [min()], [max()], [median()], and [quantile()].
 #'
+#' The default method assumes that all classes built on top of atomic
+#' vectors or records are orderable. If your class is not, you will need
+#' to provide a `vec_proxy_compare()` method that throws an error. Note
+#' that the default [vec_proxy_equal()] method calls `vec_proxy_compare()` so
+#' if your object is equal-able but not comparable, you'll need to provide
+#' methods for both generics.
+#'
 #' @param x A vector x.
 #' @return A 1d atomic vector or a data frame.
 #' @keywords internal
 #' @export
 vec_proxy_compare <- function(x) {
   UseMethod("vec_proxy_compare")
+}
+
+#' @export
+vec_proxy_compare.data.frame <- function(x) {
+  is_list <- map_lgl(x, is.list)
+  x[is_list] <- lapply(x[is_list], vec_proxy_compare)
+  x
+}
+
+#' @export
+vec_proxy_compare.POSIXlt <- function(x) {
+  new_data_frame(vec_data(x), length(x))
+}
+
+#' @export
+vec_proxy_compare.default <- function(x) {
+  if (!is.object(x) && is.list(x)) {
+    stop("Lists are not comparable", call. = FALSE)
+  } else {
+    vec_data(x)
+  }
 }
 
 #' Compare two vectors

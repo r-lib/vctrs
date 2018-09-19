@@ -336,11 +336,6 @@ c.vctrs_vctr <- function(...) {
 # Equality ----------------------------------------------------------------
 
 #' @export
-vec_proxy_equality.default <- function(x) {
-  vec_data(x)
-}
-
-#' @export
 `==.vctrs_vctr` <- function(e1, e2) {
   vec_equal(e1, e2)
 }
@@ -365,17 +360,7 @@ anyDuplicated.vctrs_vctr <- function(x, incomparables = FALSE, ...) {
   vec_duplicate_any(x)
 }
 
-
 # Comparison ----------------------------------------------------------------
-
-#' @export
-vec_proxy_compare.vctrs_vctr <- function(x) {
-  if (is.list(x)) {
-    stop("Lists are not comparible", call. = FALSE)
-  } else {
-    vec_data(x)
-  }
-}
 
 #' @export
 `<=.vctrs_vctr` <- function(e1, e2) {

@@ -14,8 +14,13 @@ A 1d atomic vector or a data frame.
 }
 \description{
 Returns a proxy object (i.e. an atomic vector or data frame of atomic
-vectors). For \link{vctr}s, this determins the behaviour of \code{==} and
+vectors). For \link{vctr}s, this determines the behaviour of \code{==} and
 \code{!=} (via \code{\link[=vec_equal]{vec_equal()}}); \code{\link[=unique]{unique()}}, \code{\link[=duplicated]{duplicated()}} (via
 \code{\link[=vec_unique]{vec_unique()}} and \code{\link[=vec_duplicate_detect]{vec_duplicate_detect()}}).
+}
+\details{
+The default method calls \link{vec_proxy_compare}, which makes all vector classes
+equal-able by default. If your object is not, provide a
+\code{vec_proxy_equality()} method that throws an error.
 }
 \keyword{internal}
