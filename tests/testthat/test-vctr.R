@@ -221,10 +221,7 @@ test_that("can't transpose", {
 test_that("logical group generics return bare logical", {
   v <- new_vctr(TRUE, class = "test")
 
-  expect_equal(v == v, TRUE)
   expect_equal(v & v, TRUE)
   expect_equal(!v, FALSE)
 })
-
-
 

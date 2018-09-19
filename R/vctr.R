@@ -333,6 +333,39 @@ c.vctrs_vctr <- function(...) {
 }
 
 
+# Equality ----------------------------------------------------------------
+
+#' @export
+vec_proxy_equality.default <- function(x) {
+  vec_data(x)
+}
+
+#' @export
+`==.vctrs_vctr` <- function(e1, e2) {
+  vec_equal(e1, e2)
+}
+
+#' @export
+`!=.vctrs_vctr` <- function(e1, e2) {
+  !vec_equal(e1, e2)
+}
+
+#' @export
+unique.vctrs_vctr <- function(x, incomparables = FALSE, ...) {
+  vec_unique(x)
+}
+
+#' @export
+duplicated.vctrs_vctr <- function(x, incomparables = FALSE, ...) {
+  vec_duplicate_id(x) != seq_along(x)
+}
+
+#' @export
+anyDuplicated.vctrs_vctr <- function(x, incomparables = FALSE, ...) {
+  vec_duplicate_any(x)
+}
+
+
 # Comparison ----------------------------------------------------------------
 
 #' @export
@@ -408,28 +441,6 @@ max.vctrs_vctr <- function(x, ..., na.rm = FALSE) {
   rank <- xtfrm(x)
   idx <- if (isTRUE(na.rm)) which.max(rank) else which(rank == max(rank))
   x[[idx[[1]]]]
-}
-
-# Equality ----------------------------------------------------------------
-
-#' @export
-vec_proxy_equality.default <- function(x) {
-  vec_data(x)
-}
-
-#' @export
-unique.vctrs_vctr <- function(x, incomparables = FALSE, ...) {
-  vec_unique(x)
-}
-
-#' @export
-duplicated.vctrs_vctr <- function(x, incomparables = FALSE, ...) {
-  vec_duplicate_id(x) != seq_along(x)
-}
-
-#' @export
-anyDuplicated.vctrs_vctr <- function(x, incomparables = FALSE, ...) {
-  vec_duplicate_any(x)
 }
 
 # Protection --------------------------------------------------------------
