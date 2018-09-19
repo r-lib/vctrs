@@ -116,6 +116,11 @@ vec_cast.vctrs_vctr.default <- function(x, to) {
   vec_restore(x, to)
 }
 
+#' @export
+c.vctrs_vctr <- function(...) {
+  vec_c(...)
+}
+
 # Printing ----------------------------------------------------------------
 
 #' @export
@@ -312,27 +317,6 @@ Ops.vctrs_vctr <- function(e1, e2) {
   }
 }
 
-#' @export
-Summary.vctrs_vctr <- function(..., na.rm = FALSE) {
-  vec_grp_summary(.Generic, vec_c(...), na.rm = na.rm)
-}
-
-#' @export
-mean.vctrs_vctr <- function(x, ..., na.rm = FALSE) {
-  vec_restore(NextMethod(), x)
-}
-
-#' @export
-Math.vctrs_vctr <- function(x, ..., na.rm = FALSE) {
-  vec_restore(NextMethod(), x)
-}
-
-#' @export
-c.vctrs_vctr <- function(...) {
-  vec_c(...)
-}
-
-
 # Equality ----------------------------------------------------------------
 
 #' @export
@@ -466,6 +450,30 @@ max.vctrs_vctr <- function(x, ..., na.rm = FALSE) {
   vec_restore_logical(out, args[[1]])
 }
 
+# Numeric -----------------------------------------------------------------
+
+#' @export
+Math.vctrs_vctr <- function(x, ...) {
+  generic <- getExportedValue("base", .Generic)
+  out <- generic(vec_proxy_numeric(x), ...)
+  vec_restore_numeric(out, x)
+}
+
+#' @export
+Summary.vctrs_vctr <- function(..., na.rm = FALSE) {
+  x <- vec_c(...)
+
+  generic <- getExportedValue("base", .Generic)
+  out <- generic(vec_proxy_numeric(x), na.rm = na.rm)
+  vec_restore_numeric(out, x)
+}
+
+#' @export
+mean.vctrs_vctr <- function(x, ..., na.rm = FALSE) {
+  out <- mean(vec_proxy_numeric(x), ..., na.rm = na.rm)
+  vec_restore_numeric(out, x)
+}
+
 # Protection --------------------------------------------------------------
 
 stop_unsupported <- function(x, operation) {
@@ -547,6 +555,8 @@ new_hidden <- function(x = double()) {
   new_vctr(vec_cast(x, double()), class = "hidden")
 }
 format.hidden <- function(x, ...) rep("xxx", length(x))
+
+vec_restore_numeric.hidden <- function(x, to) new_hidden(x)
 
 vec_type2.hidden          <- function(x, y) UseMethod("vec_type2.hidden")
 vec_type2.hidden.default  <- function(x, y) stop_incompatible_type(x, y)

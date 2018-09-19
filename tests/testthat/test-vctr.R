@@ -122,7 +122,6 @@ test_that("group generics dispatch to vctr group generics", {
   expect_equal(abs(h), h)
   expect_equal(+h, h)
   expect_equal(h * 2, new_hidden(2))
-  expect_error(h & 1, "Boolean operator")
 
   expect_equal(h == 1, TRUE)
   expect_equal(h == c(1, 2), c(TRUE, FALSE))
