@@ -1,47 +1,37 @@
-#' vctr (vectr) S3 class
+#' vctr (vector) S3 class
 #'
 #' This abstract class provides a set of useful default methods that makes it
-#' considerably easier to get started with a new S3 vector class.
+#' considerably easier to get started with a new S3 vector class. See
+#' `vignette("S3-vector")` to learn how to use it to create your own S3
+#' vector classes.
 #'
-#' @section Recommended workflow:
-#' 1. Start by creating a low-level constructor. It should be called
-#'    `new_myclass()`, and should check the types (but not the values)
-#'    of its inputs.
-#'
-#' 1. Depending on the class create either a helper `myclass()`, a coercer
-#'    `as_myclass()`, or both. A helper should construct valid values then
-#'    pass on to constructor. A coercer should either check values are correct,
-#'    or rely on the helper. Avoid defining validation code in multiple
-#'    places.
-#'
-#' 1. Define a useful `format.myclass()` method. This will give default
-#'    `print()` and `as.character()` methods that should be adequate for
-#'    most classes. Be warned: a good format method may be as much work
-#'    as the rest of the class put together!
-#'
-#' 1. Next provide [vec_type2()] and [vec_cast()]. First focus on the
-#'    casts between your class and its underlying the base type.
-#'    Next think about base types that should be coercible or castable.
-#'    See `vignette("s3-vector")` for details.
-#'
-#' Implementing these methods gets you many methods for free:
+#' @section Base methods:
+#' The vctr class provides methods for many base generics using a smaller
+#' set of generics defined by this package.
 #'
 #' * `[[` and `[` use `NextMethod()` dispatch to the underlying base function,
-#'    reconstructing attributes with `vec_cast()`. `rep()` works similarly.
-#'    Override if one or more attributes have a one-to-one relationship to
-#'    the underlying data.
+#'    then restore attributes with `vec_restore()`.
+#'    `rep()` and `length<-` work similarly.
 #'
-#' * `[[<-` and `[<-` cast the RHS to the LHS, then call `NextMethod()`.
-#'   Override these methods if any attributes depend on the data.
+#' * `[[<-` and `[<-` cast `value` to same type as `x`, then call
+#'   `NextMethod()`.
 #'
-#' * `as.list.vctrs_vctr()` calls `[[` repeatedly, `as.character.vctrs_vctr()` calls
-#'   `format()`.
+#' * `==`, `!=`, `unique()`, any `duplicated()` use [vec_proxy_equal].
 #'
-#' * `as.data.frame.vctrs_vctr()` uses a standard technique to wrap a vector
-#'   in a data frame. You should never need to override this method.
+#' * `<`, `<=`, `>=`, `>`, `min()`, `max()`, `median()`, `quantile()`,
+#'   and `xtfrm()` methods use [vec_proxy_compare].
 #'
-#' * `dims<-.vctrs_vctr()`, and `dimnames<-.vctrs_vctr()` all throw errors as generally
-#'   custom vector classes do not need to support dimensions.
+#' * `!`, `&`, and `|` methods use [vec_proxy_logical()].
+#'
+#' * Mathematical operations use [vec_proxy_numeric()].
+#'
+#' * `as.logical()`, `as.integer()`, `as.numeric()`, `as.character()`,
+#'   `as.Date()` and `as.POSIXct()` methods call `vec_cast()`.
+#'   The `as.list()` method calls `[[` repeatedly, and the `as.data.frame()`
+#'   method uses a standard technique to wrap a vector in a data frame.
+#'
+#' * `dims()`, `dims<-()`, `dimnames()`, `dimnames<-`, `levels()`, and
+#'   `levels<-` methods throw errors.
 #'
 #' @param x Foundation of class. Must be a vector
 #' @param ... Name-value pairs defining attributes
@@ -222,7 +212,7 @@ rep.vctrs_vctr <- function(x, ...) {
   vec_restore(NextMethod(), x)
 }
 
-# Replacement -------------------------------------------------------------
+# Modification -------------------------------------------------------------
 
 #' @export
 `[[<-.vctrs_vctr` <- function(x, i, value) {
@@ -246,6 +236,16 @@ rep.vctrs_vctr <- function(x, ...) {
   NextMethod()
 }
 
+#' @export
+`names<-.vctrs_vctr` <- function(x, value) {
+  if (length(value) != 0 && length(value) != length(x)) {
+    stop("`names()` must be the same length as x", call. = FALSE)
+  }
+  if (!names_all_or_nothing(value)) {
+    stop("If any elements are named, all elements must be named", call. = FALSE)
+  }
+  NextMethod()
+}
 # Coercion ----------------------------------------------------------------
 
 #' @export
@@ -455,7 +455,7 @@ is.nan.vctrs_rcrd <- function(x) {
   is.nan(vec_proxy_numeric(x))
 }
 
-# Protection --------------------------------------------------------------
+# Unsupported --------------------------------------------------------------
 
 stop_unsupported <- function(x, operation) {
   msg <- glue::glue("Can not {operation} {vec_ptype_full(x)} vector")
@@ -478,6 +478,11 @@ stop_unsupported <- function(x, operation) {
 }
 
 #' @export
+levels.vctrs_vctr <- function(x) {
+  stop_unsupported(x, "retrieve levels() of")
+}
+
+#' @export
 `levels<-.vctrs_vctr` <- function(x, value) {
   stop_unsupported(x, "set levels() on")
 }
@@ -485,17 +490,6 @@ stop_unsupported <- function(x, operation) {
 #' @export
 `t.vctrs_vctr` <- function(x) {
   stop_unsupported(x, "transpose")
-}
-
-#' @export
-`names<-.vctrs_vctr` <- function(x, value) {
-  if (length(value) != 0 && length(value) != length(x)) {
-    stop("`names()` must be the same length as x", call. = FALSE)
-  }
-  if (!names_all_or_nothing(value)) {
-    stop("If any elements are named, all elements must be named", call. = FALSE)
-  }
-  NextMethod()
 }
 
 #' @export

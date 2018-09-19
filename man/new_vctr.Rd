@@ -6,7 +6,7 @@
 \alias{vec_print_header}
 \alias{vec_print_data}
 \alias{vec_print_footer}
-\title{vctr (vectr) S3 class}
+\title{vctr (vector) S3 class}
 \usage{
 new_vctr(.data, ..., class = character())
 
@@ -25,43 +25,31 @@ vec_print_footer(x, ...)
 }
 \description{
 This abstract class provides a set of useful default methods that makes it
-considerably easier to get started with a new S3 vector class.
+considerably easier to get started with a new S3 vector class. See
+\code{vignette("S3-vector")} to learn how to use it to create your own S3
+vector classes.
 }
-\section{Recommended workflow}{
+\section{Base methods}{
 
-\enumerate{
-\item Start by creating a low-level constructor. It should be called
-\code{new_myclass()}, and should check the types (but not the values)
-of its inputs.
-\item Depending on the class create either a helper \code{myclass()}, a coercer
-\code{as_myclass()}, or both. A helper should construct valid values then
-pass on to constructor. A coercer should either check values are correct,
-or rely on the helper. Avoid defining validation code in multiple
-places.
-\item Define a useful \code{format.myclass()} method. This will give default
-\code{print()} and \code{as.character()} methods that should be adequate for
-most classes. Be warned: a good format method may be as much work
-as the rest of the class put together!
-\item Next provide \code{\link[=vec_type2]{vec_type2()}} and \code{\link[=vec_cast]{vec_cast()}}. First focus on the
-casts between your class and its underlying the base type.
-Next think about base types that should be coercible or castable.
-See \code{vignette("s3-vector")} for details.
-}
-
-Implementing these methods gets you many methods for free:
+The vctr class provides methods for many base generics using a smaller
+set of generics defined by this package.
 \itemize{
 \item \code{[[} and \code{[} use \code{NextMethod()} dispatch to the underlying base function,
-reconstructing attributes with \code{vec_cast()}. \code{rep()} works similarly.
-Override if one or more attributes have a one-to-one relationship to
-the underlying data.
-\item \code{[[<-} and \code{[<-} cast the RHS to the LHS, then call \code{NextMethod()}.
-Override these methods if any attributes depend on the data.
-\item \code{as.list.vctrs_vctr()} calls \code{[[} repeatedly, \code{as.character.vctrs_vctr()} calls
-\code{format()}.
-\item \code{as.data.frame.vctrs_vctr()} uses a standard technique to wrap a vector
-in a data frame. You should never need to override this method.
-\item \code{dims<-.vctrs_vctr()}, and \code{dimnames<-.vctrs_vctr()} all throw errors as generally
-custom vector classes do not need to support dimensions.
+then restore attributes with \code{vec_restore()}.
+\code{rep()} and \code{length<-} work similarly.
+\item \code{[[<-} and \code{[<-} cast \code{value} to same type as \code{x}, then call
+\code{NextMethod()}.
+\item \code{==}, \code{!=}, \code{unique()}, any \code{duplicated()} use \link{vec_proxy_equal}.
+\item \code{<}, \code{<=}, \code{>=}, \code{>}, \code{min()}, \code{max()}, \code{median()}, \code{quantile()},
+and \code{xtfrm()} methods use \link{vec_proxy_compare}.
+\item \code{!}, \code{&}, and \code{|} methods use \code{\link[=vec_proxy_logical]{vec_proxy_logical()}}.
+\item Mathematical operations use \code{\link[=vec_proxy_numeric]{vec_proxy_numeric()}}.
+\item \code{as.logical()}, \code{as.integer()}, \code{as.numeric()}, \code{as.character()},
+\code{as.Date()} and \code{as.POSIXct()} methods call \code{vec_cast()}.
+The \code{as.list()} method calls \code{[[} repeatedly, and the \code{as.data.frame()}
+method uses a standard technique to wrap a vector in a data frame.
+\item \code{dims()}, \code{dims<-()}, \code{dimnames()}, \code{dimnames<-}, \code{levels()}, and
+\code{levels<-} methods throw errors.
 }
 }
 
