@@ -160,7 +160,7 @@ vec_proxy_equality.vctrs_rcrd <- function(x)  {
 }
 
 #' @export
-vec_proxy_order.vctrs_rcrd <- function(x) {
+vec_proxy_compare.vctrs_rcrd <- function(x) {
   new_data_frame(vec_data(x), length(x))
 }
 
@@ -184,12 +184,6 @@ format.vctrs_rcrd <- function(x, ...) {
 #' @export
 mean.vctrs_rcrd <- function(x, ..., na.rm = FALSE) {
   stop_unimplemented(x, "mean")
-}
-
-#' @importFrom stats median
-#' @export
-median.vctrs_rcrd <- function(x, ..., na.rm = FALSE) {
-  stop_unimplemented(x, "median")
 }
 
 #' @export

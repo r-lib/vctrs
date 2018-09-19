@@ -37,10 +37,6 @@ test_that("xtfrm works for variety of base classes", {
 
   x <- new_vctr(letters[1:3])
   expect_equal(xtfrm(x), 1:3)
-
-  # lists have no natural ordering so we just preserve existing
-  x <- new_vctr(list(3, 2, 1))
-  expect_equal(xtfrm(x), 1:3)
 })
 
 # names -------------------------------------------------------------------
@@ -147,7 +143,18 @@ test_that("summaries preserve class", {
 
   expect_equal(sum(h), new_hidden(3))
   expect_equal(mean(h), new_hidden(1.5))
-  expect_equal(median(h), new_hidden(1.5))
+})
+
+test_that("methods using vec_proxy_compare agree with base", {
+  h <- new_hidden(c(1:10))
+
+  expect_agree <- function(f, x) {
+    f <- enexpr(f)
+    expect_equal(vec_data((!!f)(x)), (!!f)(vec_data(x)))
+  }
+
+  expect_agree(min, h)
+  expect_agree(max, h)
 })
 
 test_that("can put in data frame", {

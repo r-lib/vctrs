@@ -1,8 +1,12 @@
 #' Equality and ordering proxies
 #'
-#' `vec_proxy_equality()` powers `==` and the hashing functions (and which
-#' powers `vec_duplicated()` etc).
-#' `vec_proxy_order()` powers `order()`, `sort()`, `<`, `>`, and so on.
+#' @description
+#' * `vec_proxy_equality()` powers `==` and the hashing functions
+#'   (and which #' powers `vec_duplicated()` etc).
+#' * `vec_proxy_compare()` powers [order()] and [sort()] (via [xtfrm()]);
+#'   `<`, `>`, `>=` and `<=`; and [min()], [max()], [median()], and
+#'   [quantile()].
+#'
 #' Override these methods if your class has different equality or ordering
 #' semantics.
 #'
@@ -41,7 +45,7 @@ vec_proxy_equality.default <- function(x) {
 
 #' @export
 #' @rdname vec_proxy
-vec_proxy_order <- function(x) {
-  UseMethod("vec_proxy_order")
+vec_proxy_compare <- function(x) {
+  UseMethod("vec_proxy_compare")
 }
 

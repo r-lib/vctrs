@@ -322,12 +322,6 @@ mean.vctrs_vctr <- function(x, ..., na.rm = FALSE) {
   vec_recast(NextMethod(), x)
 }
 
-#' @importFrom stats median
-#' @export
-median.vctrs_vctr <- function(x, ..., na.rm = FALSE) {
-  vec_recast(NextMethod(), x)
-}
-
 #' @export
 Math.vctrs_vctr <- function(x, ..., na.rm = FALSE) {
   vec_recast(NextMethod(), x)
@@ -339,37 +333,88 @@ c.vctrs_vctr <- function(...) {
 }
 
 
-# Order and equality ------------------------------------------------------
+# Comparison ----------------------------------------------------------------
 
 #' @export
-vec_proxy_order.vctrs_vctr <- function(x) {
+vec_proxy_compare.vctrs_vctr <- function(x) {
   if (is.list(x)) {
-    # no natural ordering for lists, so just preserve
-    seq_along(x)
+    stop("Lists are not comparible", call. = FALSE)
   } else {
     vec_data(x)
   }
 }
 
 #' @export
-vec_proxy_equality.default <- function(x) {
-  vec_data(x)
+`<=.vctrs_vctr` <- function(e1, e2) {
+  vec_compare(e1, e2) <= 0
+}
+
+#' @export
+`<.vctrs_vctr` <- function(e1, e2) {
+  vec_compare(e1, e2) < 0
+}
+
+#' @export
+`>=.vctrs_vctr` <- function(e1, e2) {
+  vec_compare(e1, e2) >= 0
+}
+
+#' @export
+`>.vctrs_vctr` <- function(e1, e2) {
+  vec_compare(e1, e2) > 0
 }
 
 #' @export
 xtfrm.vctrs_vctr <- function(x) {
-  proxy <- vec_proxy_order(x)
+  proxy <- vec_proxy_compare(x)
 
   # order(order(x)) ~= rank(x)
   if (is.data.frame(proxy)) {
     order(do.call(base::order, proxy))
   } else if (is_integer(proxy) || is_double(proxy)) {
     proxy
-  } else if (is_character(proxy)) {
+  } else if (is_character(proxy) || is_logical(proxy)) {
     order(order(proxy))
+  } else if (is_list(proxy)) {
+    stop("Lists are not comparible", call. = FALSE)
   } else {
-    stop("Invalid value returned by `vec_proxy_equality()`.", call. = FALSE)
+    stop("Invalid type returned by `vec_proxy_compare()`.", call. = FALSE)
   }
+}
+
+#' @importFrom stats median
+#' @export
+median.vctrs_vctr <- function(x, ..., na.rm = FALSE) {
+  stop_unimplemented(x, "median")
+}
+
+#' @importFrom stats quantile
+#' @export
+quantile.vctrs_vctr <- function(x, ..., type = 1, na.rm = FALSE) {
+  stop_unimplemented(x, "quantile")
+}
+
+#' @export
+min.vctrs_vctr <- function(x, ..., na.rm = FALSE) {
+  # TODO: implement to do vec_arg_min()
+  rank <- xtfrm(x)
+  idx <- if (isTRUE(na.rm)) which.max(rank) else which(rank == min(rank))
+  x[[idx[[1]]]]
+}
+
+#' @export
+max.vctrs_vctr <- function(x, ..., na.rm = FALSE) {
+  # TODO: implement to do vec_arg_max()
+  rank <- xtfrm(x)
+  idx <- if (isTRUE(na.rm)) which.max(rank) else which(rank == max(rank))
+  x[[idx[[1]]]]
+}
+
+# Equality ----------------------------------------------------------------
+
+#' @export
+vec_proxy_equality.default <- function(x) {
+  vec_data(x)
 }
 
 #' @export

@@ -3,12 +3,12 @@
 \name{vec_proxy}
 \alias{vec_proxy}
 \alias{vec_proxy_equality}
-\alias{vec_proxy_order}
+\alias{vec_proxy_compare}
 \title{Equality and ordering proxies}
 \usage{
 vec_proxy_equality(x)
 
-vec_proxy_order(x)
+vec_proxy_compare(x)
 }
 \arguments{
 \item{x}{A vector x.}
@@ -17,9 +17,14 @@ vec_proxy_order(x)
 A 1d atomic vector or a data frame.
 }
 \description{
-\code{vec_proxy_equality()} powers \code{==} and the hashing functions (and which
-powers \code{vec_duplicated()} etc).
-\code{vec_proxy_order()} powers \code{order()}, \code{sort()}, \code{<}, \code{>}, and so on.
+\itemize{
+\item \code{vec_proxy_equality()} powers \code{==} and the hashing functions
+(and which #' powers \code{vec_duplicated()} etc).
+\item \code{vec_proxy_compare()} powers \code{\link[=order]{order()}} and \code{\link[=sort]{sort()}} (via \code{\link[=xtfrm]{xtfrm()}});
+\code{<}, \code{>}, \code{>=} and \code{<=}; and \code{\link[=min]{min()}}, \code{\link[=max]{max()}}, \code{\link[=median]{median()}}, and
+\code{\link[=quantile]{quantile()}}.
+}
+
 Override these methods if your class has different equality or ordering
 semantics.
 }
