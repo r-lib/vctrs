@@ -71,3 +71,9 @@ has_attrs <- function(x) {
 
   !identical(names(attr), "names")
 }
+
+vec_binary <- function(x, y, f = vec_data) {
+  args <- vec_recycle(x, y)
+  args <- vec_coerce(!!!args)
+  lapply(args, vec_data)
+}

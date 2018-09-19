@@ -444,6 +444,28 @@ max.vctrs_vctr <- function(x, ..., na.rm = FALSE) {
   x[[idx[[1]]]]
 }
 
+
+# Logical -----------------------------------------------------------------
+
+#' @export
+`!.vctrs_vctr` <- function(x) {
+  vec_restore_logical(!vec_proxy_logical(x), x)
+}
+
+#' @export
+`&.vctrs_vctr` <- function(e1, e2) {
+  args <- vec_binary(e1, e2, vec_proxy_logical)
+  out <- args[[1]] & args[[2]]
+  vec_restore_logical(out, args[[1]])
+}
+
+#' @export
+`|.vctrs_vctr` <- function(e1, e2) {
+  args <- vec_binary(e1, e2, vec_proxy_logical)
+  out <- args[[1]] | args[[2]]
+  vec_restore_logical(out, args[[1]])
+}
+
 # Protection --------------------------------------------------------------
 
 stop_unsupported <- function(x, operation) {
