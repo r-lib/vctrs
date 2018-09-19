@@ -85,13 +85,13 @@ vec_cast.vctrs_rcrd.default <- function(x, to) {
 #' @export
 `[.vctrs_rcrd` <- function(x, i,...) {
   out <- lapply(vec_data(x), `[`, i, ...)
-  vec_recast(out, x)
+  vec_restore(out, x)
 }
 
 #' @export
 `[[.vctrs_rcrd` <- function(x, i, ...) {
   out <- lapply(vec_data(x), `[[`, i, ...)
-  vec_recast(out, x)
+  vec_restore(out, x)
 }
 
 #' @export
@@ -102,13 +102,13 @@ vec_cast.vctrs_rcrd.default <- function(x, to) {
 #' @export
 rep.vctrs_rcrd <- function(x, ...) {
   out <- lapply(vec_data(x), rep, ...)
-  vec_recast(out, x)
+  vec_restore(out, x)
 }
 
 #' @export
 `length<-.vctrs_rcrd` <- function(x, value) {
   out <- lapply(vec_data(x), `length<-`, value)
-  vec_recast(out, x)
+  vec_restore(out, x)
 }
 
 #' @export
@@ -125,7 +125,7 @@ as.list.vctrs_rcrd <- function(x, ...) {
     x[[i]] <- value
     x
   })
-  vec_recast(out, x)
+  vec_restore(out, x)
 }
 
 #' @export
@@ -149,7 +149,7 @@ as.list.vctrs_rcrd <- function(x, ...) {
     }
   }
   out <- map2(vec_data(x), vec_data(value), replace)
-  vec_recast(out, x)
+  vec_restore(out, x)
 }
 
 # Equality and ordering ---------------------------------------------------

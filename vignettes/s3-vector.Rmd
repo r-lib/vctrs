@@ -46,8 +46,8 @@ This vignette shows you the basic infrastructure for creating a new vector: defi
   vctrs provided the tricky `as.data.frame()` for you.
 
 * Subsetting (`[`, `[[`, `$`), `length<-`, and `rep()` methods automatically
-  preserve attributes because they're built on top of `vec_recast()`. A 
-  default `vec_recast()` works for all classes where the attributes are 
+  preserve attributes because they're built on top of `vec_restore()`. A 
+  default `vec_restore()` works for all classes where the attributes are 
   data-independent, and can easily be customised when the attributes do depend
   on the data.
 
@@ -391,19 +391,19 @@ As mentioned above, vctrs assumes that attributes are independent of the data. T
 x[1:2]
 ```
 
-To fix this, you need to provide a `vec_recast()` method. Note that this method dispatches on the `to` argument.
+To fix this, you need to provide a `vec_restore()` method. Note that this method dispatches on the `to` argument.
 
 ```{r}
-vec_recast.vctrs_cached_sum <- function(x, to) {
+vec_restore.vctrs_cached_sum <- function(x, to) {
   new_cached_sum(x, sum(x))
 }
 
 x[1]
 ```
 
-This works because most of the vctrs methods dispatch to the underlying base function, by first stripping off extra attributes with `vec_data()` and then reapplying them again with `vec_recast()`. The default `vec_recast()` method copies over all attributes, which is not appropriate here.
+This works because most of the vctrs methods dispatch to the underlying base function, by first stripping off extra attributes with `vec_data()` and then reapplying them again with `vec_restore()`. The default `vec_restore()` method copies over all attributes, which is not appropriate here.
 
-Note that `vec_recast.class` is subtly different from `vec_cast.class.class()`. `vec_recast()` is used when restoring attributes that have been lost; `vec_cast()` is used for coercions. This is easier to understand with a concrete example. Imagine factors were implements with `new_vectr()`. `vec_recast.factor()` would restore attributes back to an integer vector, but you would not want to allow manually casting an integer to a factor with `vec_cast()`. 
+Note that `vec_restore.class` is subtly different from `vec_cast.class.class()`. `vec_restore()` is used when restoring attributes that have been lost; `vec_cast()` is used for coercions. This is easier to understand with a concrete example. Imagine factors were implements with `new_vectr()`. `vec_restore.factor()` would restore attributes back to an integer vector, but you would not want to allow manually casting an integer to a factor with `vec_cast()`. 
 
 # Rational
 

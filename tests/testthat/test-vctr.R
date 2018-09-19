@@ -24,11 +24,11 @@ test_that("cast to NULL returns x", {
   expect_equal(vec_cast(NULL, x), NULL)
 })
 
-test_that("recasting to atomic vector of same type preserves attributes", {
+test_that("restoring to atomic vector of same type preserves attributes", {
   x1 <- new_vctr(1, class = "x")
   x2 <- new_vctr(2, class = "x")
 
-  expect_equal(vec_recast(2, x1), x2)
+  expect_equal(vec_restore(2, x1), x2)
 })
 
 test_that("xtfrm works for variety of base classes", {

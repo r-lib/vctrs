@@ -27,7 +27,7 @@ test_that("can recast rcrd from list", {
   r <- new_rcrd(list(x = integer(), y = numeric()))
 
   expect_equal(
-    vec_recast(list(x = 1L, y = 1), r),
+    vec_restore(list(x = 1L, y = 1), r),
     new_rcrd(list(x = 1L, y = 1))
   )
 })

@@ -3,7 +3,7 @@
 #' `vec_cast()` provides general coercions from one type of vector to another,
 #' and along with [vec_type2()] forms the foundation of the vctrs type system.
 #' It should generally not be called by R users, but is important for R
-#' developers. `vec_recast()` is designed specifically for casting a bare
+#' developers. `vec_restore()` is designed specifically for casting a bare
 #' vector to the original type; it's useful when relying `NextMethod()` for
 #' the actual implementation.
 #'
@@ -41,16 +41,16 @@
 #' See `vignette("s3-vector")` on how to extend to your own S3
 #' vector classes.
 #'
-#' @section Recasting:
+#' @section Restoring attributes:
 #'
-#' A recast is a specialised type of cast, primarily used in conjunction
+#' A restore is a specialised type of cast, primarily used in conjunction
 #' with `NextMethod()` or a C-level function that works on the underlying
-#' data structure. A `vec_recast()` method can assume that `x` has the
+#' data structure. A `vec_restore()` method can assume that `x` has the
 #' correct type (although the length may be different) but all attributes
 #' have been lost and need to be restored. In other words,
-#' `vec_cast(vec_data(x), x)` should yield `x`.
+#' `vec_restore(vec_data(x), x)` should yield `x`.
 #'
-#' To understand the difference between `vec_cast()` and `vec_recast()`
+#' To understand the difference between `vec_cast()` and `vec_restore()`
 #' think about factors: it doesn't make sense to cast an integer to a factor,
 #' but if `NextMethod()` or other low-level function has stripped attributes,
 #' you still need to be able to restore them.
@@ -93,18 +93,18 @@ vec_cast.default <- function(x, to) {
 
 #' @export
 #' @rdname vec_cast
-vec_recast <- function(x, to) {
-  UseMethod("vec_recast", to)
+vec_restore <- function(x, to) {
+  UseMethod("vec_restore", to)
 }
 
 #' @export
-vec_recast.default <- function(x, to) {
+vec_restore.default <- function(x, to) {
   attributes(x) <- attributes(to)
   x
 }
 
 #' @export
-vec_recast.data.frame <- function(x, to) {
+vec_restore.data.frame <- function(x, to) {
   # Copy attribute, preserving existing names & recreating rownames
   attr_to <- attributes(to)
   attr_to[["names"]] <- names(x)
@@ -550,7 +550,7 @@ vec_cast.data.frame.NULL <- function(x, to) {
 #' @method vec_cast.data.frame data.frame
 vec_cast.data.frame.data.frame <- function(x, to) {
   df <- df_col_cast(x, to)
-  vec_recast(df, to)
+  vec_restore(df, to)
 }
 #' @export
 #' @method vec_cast.data.frame default

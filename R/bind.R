@@ -109,7 +109,7 @@ vec_rbind <- function(..., .ptype = NULL) {
     pos <- pos + n
   }
 
-  vec_recast(out, ptype)
+  vec_restore(out, ptype)
 }
 
 #' @export

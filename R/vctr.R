@@ -85,7 +85,7 @@ names_all_or_nothing <- function(names) {
 }
 
 #' @export
-vec_recast.vctrs_vctr <- function(x, to) {
+vec_restore.vctrs_vctr <- function(x, to) {
   # Copy every attribute, but preserve existing names
   attr_to <- attributes(to)
   attr_to[["names"]] <- names(x)
@@ -113,7 +113,7 @@ vec_cast.vctrs_vctr.default <- function(x, to) {
     }
   }
 
-  vec_recast(x, to)
+  vec_restore(x, to)
 }
 
 # Printing ----------------------------------------------------------------
@@ -198,27 +198,27 @@ str.vctrs_vctr <- function(object, ..., indent.str = "", width = getOption("widt
 
 #' @export
 `[.vctrs_vctr` <- function(x, i,...) {
-  vec_recast(NextMethod(), x)
+  vec_restore(NextMethod(), x)
 }
 
 #' @export
 `[[.vctrs_vctr` <- function(x, i, ...) {
-  vec_recast(NextMethod(), x)
+  vec_restore(NextMethod(), x)
 }
 
 #' @export
 `$.vctrs_vctr` <- function(x, i) {
-  vec_recast(NextMethod(), x)
+  vec_restore(NextMethod(), x)
 }
 
 #' @export
 rep.vctrs_vctr <- function(x, ...) {
-  vec_recast(NextMethod(), x)
+  vec_restore(NextMethod(), x)
 }
 
 #' @export
 `length<-.vctrs_vctr` <- function(x, value) {
-  vec_recast(NextMethod(), x)
+  vec_restore(NextMethod(), x)
 }
 
 # Replacement -------------------------------------------------------------
@@ -319,12 +319,12 @@ Summary.vctrs_vctr <- function(..., na.rm = FALSE) {
 
 #' @export
 mean.vctrs_vctr <- function(x, ..., na.rm = FALSE) {
-  vec_recast(NextMethod(), x)
+  vec_restore(NextMethod(), x)
 }
 
 #' @export
 Math.vctrs_vctr <- function(x, ..., na.rm = FALSE) {
-  vec_recast(NextMethod(), x)
+  vec_restore(NextMethod(), x)
 }
 
 #' @export
