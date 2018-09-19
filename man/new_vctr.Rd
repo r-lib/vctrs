@@ -46,9 +46,6 @@ as the rest of the class put together!
 casts between your class and its underlying the base type.
 Next think about base types that should be coercible or castable.
 See \code{vignette("s3-vector")} for details.
-\item If your function behaves similarly to numbers or booleans, or has
-specialised comparison methods, read \link{vec_grp} to learn about the vctrs
-group generics: these allow you to implement many methods at once.
 }
 
 Implementing these methods gets you many methods for free:

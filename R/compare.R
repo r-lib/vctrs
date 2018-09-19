@@ -35,7 +35,7 @@ vec_proxy_compare.POSIXlt <- function(x) {
 #' @export
 vec_proxy_compare.default <- function(x) {
   if (!is.object(x) && is.list(x)) {
-    stop("Lists are not comparable", call. = FALSE)
+    stop_unsupported(x, "compare")
   } else {
     vec_data(x)
   }

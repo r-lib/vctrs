@@ -24,10 +24,6 @@
 #'    Next think about base types that should be coercible or castable.
 #'    See `vignette("s3-vector")` for details.
 #'
-#' 1. If your function behaves similarly to numbers or booleans, or has
-#'    specialised comparison methods, read [vec_grp] to learn about the vctrs
-#'    group generics: these allow you to implement many methods at once.
-#'
 #' Implementing these methods gets you many methods for free:
 #'
 #' * `[[` and `[` use `NextMethod()` dispatch to the underlying base function,
@@ -287,36 +283,6 @@ as.POSIXct.vctrs_vctr <- function(x, tz = "", ...) {
   vec_cast(x, new_datetime(tzone = tz))
 }
 
-# Group generics ----------------------------------------------------------
-
-#' @export
-Ops.vctrs_vctr <- function(e1, e2) {
-  if (missing(e2)) {
-    if (.Generic == "!") {
-      return(vec_grp_logical(.Generic, e1))
-    } else {
-      return(vec_grp_unary(.Generic, e1))
-    }
-  }
-
-  if (length(e2) == 1) {
-    # Optimisation if RHS is a scalar
-    ptype <- e1
-  } else {
-    ptype <- vec_ptype(e1, e2)[[1]]
-  }
-  e1 <- vec_cast(e1, ptype)
-  e2 <- vec_cast(e2, ptype)
-
-  if (.Generic %in% c("+", "-", "*", "/", "^", "%%", "%/%")) {
-    vec_grp_numeric(.Generic, e1, e2)
-  } else if (.Generic %in% c("&", "|", "!")) {
-    vec_grp_logical(.Generic, e1, e2)
-  } else {
-    vec_grp_compare(.Generic, e1, e2)
-  }
-}
-
 # Equality ----------------------------------------------------------------
 
 #' @export
@@ -474,10 +440,25 @@ mean.vctrs_vctr <- function(x, ..., na.rm = FALSE) {
   vec_restore_numeric(out, x)
 }
 
+#' @export
+is.finite.vctrs_rcrd <- function(x) {
+  is.finite(vec_proxy_numeric(x))
+}
+
+#' @export
+is.infinite.vctrs_rcrd <- function(x) {
+  is.infinite(vec_proxy_numeric(x))
+}
+
+#' @export
+is.nan.vctrs_rcrd <- function(x) {
+  is.nan(vec_proxy_numeric(x))
+}
+
 # Protection --------------------------------------------------------------
 
 stop_unsupported <- function(x, operation) {
-  msg <- glue::glue("Must not {operation} {vec_ptype_full(x)} vector")
+  msg <- glue::glue("Can not {operation} {vec_ptype_full(x)} vector")
   abort(
     "error_unsupported",
     message = msg,

@@ -22,7 +22,7 @@ vec_proxy_numeric.default <- function(x) {
   if (is_logical(x) || is_integer(x) || is_double(x)) {
     vec_data(x)
   } else {
-    stop("Non-numeric input", call. = FALSE)
+    stop_unsupported(x, "numeric-ise")
   }
 }
 

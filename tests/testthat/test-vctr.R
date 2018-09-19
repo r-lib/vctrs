@@ -116,7 +116,7 @@ test_that("RHS cast when using subset assign", {
   expect_equal(h, new_hidden(c(1, 2)))
 })
 
-test_that("group generics dispatch to vctr group generics", {
+test_that("numeric methods use vec_restore_numeric", {
   h <- new_hidden(1)
 
   expect_equal(abs(h), h)
@@ -217,7 +217,7 @@ test_that("can't transpose", {
 
 # logical class -----------------------------------------------------------
 
-test_that("logical group generics return bare logical", {
+test_that("logical comparisons return bare logical", {
   v <- new_vctr(TRUE, class = "test")
 
   expect_equal(v & v, TRUE)

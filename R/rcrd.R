@@ -60,6 +60,11 @@ names.vctrs_rcrd <- function(x) {
   NULL
 }
 
+#' @export
+format.vctrs_rcrd <- function(x, ...) {
+  stop_unimplemented(x, "format")
+}
+
 #' @method vec_cast vctrs_rcrd
 #' @export
 vec_cast.vctrs_rcrd <- function(x, to) UseMethod("vec_cast.vctrs_rcrd")
@@ -164,7 +169,17 @@ vec_proxy_compare.vctrs_rcrd <- function(x) {
   new_data_frame(vec_data(x), length(x))
 }
 
-# Unimplemented -----------------------------------------------------------
+#' @export
+vec_proxy_logical.vctrs_rcrd <- function(x) {
+  stop_unimplemented(x, "vec_proxy_logical")
+}
+
+#' @export
+vec_proxy_numeric.vctrs_rcrd <- function(x) {
+  stop_unimplemented(x, "vec_proxy_numeric")
+}
+
+# Helpers -----------------------------------------------------------------
 
 stop_unimplemented <- function(x, method) {
   msg <- glue::glue("`{method}.{class(x)[[1]]}()` not implemented")
@@ -175,38 +190,6 @@ stop_unimplemented <- function(x, method) {
     method = method
   )
 }
-
-#' @export
-format.vctrs_rcrd <- function(x, ...) {
-  stop_unimplemented(x, "format")
-}
-
-#' @export
-mean.vctrs_rcrd <- function(x, ..., na.rm = FALSE) {
-  stop_unimplemented(x, "mean")
-}
-
-#' @export
-Math.vctrs_rcrd <- function(x, ..., na.rm = FALSE) {
-  stop_unimplemented(x, .Generic)
-}
-
-#' @export
-is.finite.vctrs_rcrd <- function(x) {
-  stop_unimplemented(x, .Method)
-}
-
-#' @export
-is.finite.vctrs_rcrd <- function(x) {
-  stop_unimplemented(x, .Method)
-}
-
-#' @export
-is.nan.vctrs_rcrd <- function(x) {
-  stop_unimplemented(x, .Method)
-}
-
-# Helpers -----------------------------------------------------------------
 
 unique_field_names <- function(x) {
   if (length(x) == 0) {
@@ -247,13 +230,5 @@ vec_type2.tuple.default <- function(x, y) stop_incompatible_type(x, y)
 vec_cast.tuple <- function(x, to) UseMethod("vec_cast.tuple")
 vec_cast.tuple.list <- function(x, to) vec_list_cast(x, to)
 vec_cast.tuple.tuple <- function(x, to) x
-
-vec_grp_numeric.tuple <- function(generic, x, y) {
-  rec <- vec_recycle(x, y)
-  tuple(
-    vec_generic_call(generic, field(rec[[1]], "x"), field(rec[[2]], "x")),
-    vec_generic_call(generic, field(rec[[1]], "y"), field(rec[[2]], "y"))
-  )
-}
 
 # nocov end
