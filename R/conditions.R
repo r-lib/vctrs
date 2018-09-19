@@ -87,6 +87,29 @@ warn_lossy_cast <- function(x, y, locations = NULL, details = NULL, ..., message
   )
 }
 
+
+stop_unsupported <- function(x, method) {
+  msg <- glue::glue("`{method}.{class(x)[[1]]}()` not supported")
+  abort(
+    "error_unsupported",
+    message = msg,
+    x = x,
+    method = method
+  )
+}
+
+stop_unimplemented <- function(x, method) {
+  msg <- glue::glue("`{method}.{class(x)[[1]]}()` not implemented")
+  abort(
+    "error_unimplemented",
+    message = msg,
+    x = x,
+    method = method
+  )
+}
+
+# helpers -----------------------------------------------------------------
+
 glue_lines <- function(..., env = parent.frame()) {
   lines <- c(...)
   out <- map_chr(lines, glue::glue, .envir = env)

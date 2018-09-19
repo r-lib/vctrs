@@ -457,44 +457,34 @@ is.nan.vctrs_rcrd <- function(x) {
 
 # Unsupported --------------------------------------------------------------
 
-stop_unsupported <- function(x, operation) {
-  msg <- glue::glue("Can not {operation} {vec_ptype_full(x)} vector")
-  abort(
-    "error_unsupported",
-    message = msg,
-    x = x,
-    operation = operation
-  )
-}
-
 #' @export
 `dim<-.vctrs_vctr` <- function(x, value) {
-  stop_unsupported(x, "set dim() on")
+  stop_unsupported(x, "dim<-")
 }
 
 #' @export
 `dimnames<-.vctrs_vctr` <- function(x, value) {
-  stop_unsupported(x, "set dimnames() on ")
+  stop_unsupported(x, "dimnames<-")
 }
 
 #' @export
 levels.vctrs_vctr <- function(x) {
-  stop_unsupported(x, "retrieve levels() of")
+  stop_unsupported(x, "levels")
 }
 
 #' @export
 `levels<-.vctrs_vctr` <- function(x, value) {
-  stop_unsupported(x, "set levels() on")
+  stop_unsupported(x, "levels<-")
 }
 
 #' @export
 `t.vctrs_vctr` <- function(x) {
-  stop_unsupported(x, "transpose")
+  stop_unsupported(x, "t")
 }
 
 #' @export
 `is.na<-.vctrs_vctr` <- function(x, value) {
-  stop_unsupported(x, "set missing values")
+  stop_unsupported(x, "is.na<-")
 }
 
 # Data frame --------------------------------------------------------------

@@ -181,16 +181,6 @@ vec_proxy_numeric.vctrs_rcrd <- function(x) {
 
 # Helpers -----------------------------------------------------------------
 
-stop_unimplemented <- function(x, method) {
-  msg <- glue::glue("`{method}.{class(x)[[1]]}()` not implemented")
-  abort(
-    "error_unimplemented",
-    message = msg,
-    x = x,
-    method = method
-  )
-}
-
 unique_field_names <- function(x) {
   if (length(x) == 0) {
     return(FALSE)
