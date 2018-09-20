@@ -78,5 +78,12 @@ vec_binary <- function(x, y, f = vec_data) {
   lapply(args, vec_data)
 }
 
+#' Destructuring assignment
+#'
+#' See \code{zeallot::\link[zeallot]{\%<-\%}} for details.
 #' @importFrom zeallot %<-%
-NULL
+#' @export
+#' @rdname unpack-assign
+#' @name %<-%
+#' @keywords internal
+`%<-%`
