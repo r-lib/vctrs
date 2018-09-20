@@ -68,6 +68,25 @@ stop_incompatible_cast <- function(x, y, details = NULL, ..., message = NULL, .s
 
 #' @rdname vctrs-conditions
 #' @export
+stop_incompatible_op <- function(op, x, y, details = NULL, ..., message = NULL, .subclass = NULL) {
+
+  message <- message %||% glue_lines(
+    "{vec_ptype_full(x)} {op} {vec_ptype_full(y)} is not permitted",
+    details
+  )
+
+  stop_incompatible(
+    x, y,
+    op = op,
+    message = message,
+    details = details,
+    ...,
+    .subclass = c(.subclass, "error_incompatible_op")
+  )
+}
+
+#' @rdname vctrs-conditions
+#' @export
 warn_lossy_cast <- function(x, y, locations = NULL, details = NULL, ..., message = NULL, .subclass = NULL) {
 
   message <- message %||% glue_lines(

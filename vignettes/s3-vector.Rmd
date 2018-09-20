@@ -90,7 +90,7 @@ The first method for every class should almost always be a `format()` method. Th
 
 ```{r}
 format.vctrs_percent <- function(x, ...) {
-  out <- formatC(signif(x * 100, 3))
+  out <- formatC(signif(vec_data(x) * 100, 3))
   out[is.na(x)] <- NA
   out[!is.na(x)] <- paste0(out[!is.na(x)], "%")
   out
@@ -131,14 +131,12 @@ If you need more control over printing in tibbles, implement a method for  `pill
 
 ### Default methods
 
-The vctr base class provides implementations of many important generics so that you don't have to. This means that most functions will just work out of the box without any additional effort on your part:
+The vctr base class provides implementations of many important generics so that you don't have to. This means that many functions will work out of the box without any additional effort on your part:
 
 ```{r}
 x[1:2]
 
 x[[1]]
-
--x
 
 sqrt(x)
 ```
@@ -244,17 +242,9 @@ Implementing casting gives you more methods for free:
 ```{r}
 vec_c(x, 1)
 
-x == 1
-x * 2
+x[1] <- 1
 ```
 
-Unfortunately, due to the design of the "S3 group generics", there's no way to make vctr classes fully compatible with the base S3 classes:
-
-```{r, error = TRUE}
-x * factor("x")
-
-c(factor("x"), x)
-```
 
 However, you can assume any function beginning with `vec()` will handle these coercions correctly.
 
@@ -303,7 +293,6 @@ By default, vctrs assumes that attributes are independent of the data, and so ar
 ```{r}
 x[1:2]
 x[[1]]
-x * 2
 ```
 
 For the sake of exposition, we'll assume that `digits` is an important attribute of the class, and should be included in the full type:

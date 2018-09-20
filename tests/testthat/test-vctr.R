@@ -120,11 +120,7 @@ test_that("numeric methods use vec_restore_numeric", {
   h <- new_hidden(1)
 
   expect_equal(abs(h), h)
-  expect_equal(+h, h)
-  expect_equal(h * 2, new_hidden(2))
-
-  expect_equal(h == 1, TRUE)
-  expect_equal(h == c(1, 2), c(TRUE, FALSE))
+  expect_equal(sum(h), h)
 })
 
 test_that("c passes on to vec_c", {

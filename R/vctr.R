@@ -455,6 +455,46 @@ is.nan.vctrs_rcrd <- function(x) {
   is.nan(vec_proxy_numeric(x))
 }
 
+# Arithmetic --------------------------------------------------------------
+
+#' @export
+`+.vctrs_vctr` <- function(e1, e2) {
+  if (missing(e2)) {
+    vec_arith("+", e1, MISSING())
+  } else {
+    vec_arith("+", e1, e2)
+  }
+}
+
+#' @export
+`-.vctrs_vctr` <- function(e1, e2) {
+  if (missing(e2)) {
+    vec_arith("-", e1, MISSING())
+  } else {
+    vec_arith("-", e1, e2)
+  }
+}
+
+#' @export
+`*.vctrs_vctr` <- function(e1, e2) {
+  vec_arith("*", e1, e2)
+}
+
+#' @export
+`/.vctrs_vctr` <- function(e1, e2) {
+  vec_arith("/", e1, e2)
+}
+
+#' @export
+`%%.vctrs_vctr` <- function(e1, e2) {
+  vec_arith("%%", e1, e2)
+}
+
+#' @export
+`%/%.vctrs_vctr` <- function(e1, e2) {
+  vec_arith("%/%", e1, e2)
+}
+
 # Unsupported --------------------------------------------------------------
 
 #' @export
