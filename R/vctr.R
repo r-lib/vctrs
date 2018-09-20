@@ -7,7 +7,9 @@
 #'
 #' @section Base methods:
 #' The vctr class provides methods for many base generics using a smaller
-#' set of generics defined by this package.
+#' set of generics defined by this package. Generally, you should think
+#' carefully before overriding any of the methods that vctrs implements for
+#' you as they've been carefully planned to be internally consistent.
 #'
 #' * `[[` and `[` use `NextMethod()` dispatch to the underlying base function,
 #'    then restore attributes with `vec_restore()`.
@@ -16,17 +18,20 @@
 #' * `[[<-` and `[<-` cast `value` to same type as `x`, then call
 #'   `NextMethod()`.
 #'
-#' * `==`, `!=`, `unique()`, any `duplicated()` use [vec_proxy_equal].
-#'
-#' * `<`, `<=`, `>=`, `>`, `min()`, `max()`, `median()`, `quantile()`,
-#'   and `xtfrm()` methods use [vec_proxy_compare].
-#'
-#' * Mathematical operations use [vec_proxy_numeric()].
-#'
 #' * `as.logical()`, `as.integer()`, `as.numeric()`, `as.character()`,
 #'   `as.Date()` and `as.POSIXct()` methods call `vec_cast()`.
 #'   The `as.list()` method calls `[[` repeatedly, and the `as.data.frame()`
 #'   method uses a standard technique to wrap a vector in a data frame.
+#'
+#' * `==`, `!=`, `unique()`, `anyDuplicated()`, and `is.na()` use
+#'   [vec_proxy_equal()].
+#'
+#' * `<`, `<=`, `>=`, `>`, `min()`, `max()`, `median()`, `quantile()`,
+#'   and `xtfrm()` methods use [vec_proxy_compare()].
+#'
+#' * Mathematical operations including the Summary group generics, the
+#'   Math group generics, `mean()`, `is.nan()`, `is.finite()`, and
+#'   `is.infinite()` use [vec_proxy_numeric()].
 #'
 #' * `dims()`, `dims<-()`, `dimnames()`, `dimnames<-`, `levels()`, and
 #'   `levels<-` methods throw errors.

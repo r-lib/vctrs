@@ -32,21 +32,26 @@ vector classes.
 \section{Base methods}{
 
 The vctr class provides methods for many base generics using a smaller
-set of generics defined by this package.
+set of generics defined by this package. Generally, you should think
+carefully before overriding any of the methods that vctrs implements for
+you as they've been carefully planned to be internally consistent.
 \itemize{
 \item \code{[[} and \code{[} use \code{NextMethod()} dispatch to the underlying base function,
 then restore attributes with \code{vec_restore()}.
 \code{rep()} and \code{length<-} work similarly.
 \item \code{[[<-} and \code{[<-} cast \code{value} to same type as \code{x}, then call
 \code{NextMethod()}.
-\item \code{==}, \code{!=}, \code{unique()}, any \code{duplicated()} use \link{vec_proxy_equal}.
-\item \code{<}, \code{<=}, \code{>=}, \code{>}, \code{min()}, \code{max()}, \code{median()}, \code{quantile()},
-and \code{xtfrm()} methods use \link{vec_proxy_compare}.
-\item Mathematical operations use \code{\link[=vec_proxy_numeric]{vec_proxy_numeric()}}.
 \item \code{as.logical()}, \code{as.integer()}, \code{as.numeric()}, \code{as.character()},
 \code{as.Date()} and \code{as.POSIXct()} methods call \code{vec_cast()}.
 The \code{as.list()} method calls \code{[[} repeatedly, and the \code{as.data.frame()}
 method uses a standard technique to wrap a vector in a data frame.
+\item \code{==}, \code{!=}, \code{unique()}, \code{anyDuplicated()}, and \code{is.na()} use
+\code{\link[=vec_proxy_equal]{vec_proxy_equal()}}.
+\item \code{<}, \code{<=}, \code{>=}, \code{>}, \code{min()}, \code{max()}, \code{median()}, \code{quantile()},
+and \code{xtfrm()} methods use \code{\link[=vec_proxy_compare]{vec_proxy_compare()}}.
+\item Mathematical operations including the Summary group generics, the
+Math group generics, \code{mean()}, \code{is.nan()}, \code{is.finite()}, and
+\code{is.infinite()} use \code{\link[=vec_proxy_numeric]{vec_proxy_numeric()}}.
 \item \code{dims()}, \code{dims<-()}, \code{dimnames()}, \code{dimnames<-}, \code{levels()}, and
 \code{levels<-} methods throw errors.
 }
