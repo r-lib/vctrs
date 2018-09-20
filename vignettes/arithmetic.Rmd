@@ -18,6 +18,77 @@ knitr::opts_chunk$set(
 library(vctrs)
 ```
 
+## Period and frequency
+
+```{r}
+period <- function(x) {
+  x <- vec_cast(x, double())
+  new_vctr(x, class = "vctrs_period")
+}
+format.vctrs_period <- function(x) {
+  paste0(format(vec_data(x)), " s")
+}
+
+freq <- function(x) {
+  x <- vec_cast(x, double())
+  new_vctr(x, class = "vctrs_frequency")
+}
+format.vctr_frequency <- function(x) {
+  paste0(format(vec_data(x)), " Hz")
+}
+
+period(0.1)
+freq(10)
+```
+
+
+```{r}
+vec_arith.vctr_frequency <- function(op, x, y) {
+  UseMethod("vec_arith.vctr_frequency", y)
+}
+vec_arith.vctrs_frequency.default <- function(op, x, y) {
+  stop_incompatible_op(op, x, y)
+}
+vec_arith.vctrs_period <- function(op, x, y) {
+  UseMethod("vec_arith.vctrs_period", y)
+}
+vec_arith.vctrs_period.default <- function(op, x, y) {
+  stop_incompatible_op(op, x, y)
+}
+```
+
+```{r}
+vec_arith.vctrs_period.vctrs_period <- function(op, x, y) {
+  switch(op,
+    `-` = ,
+    `+` = vec_restore(vec_arith_base(op, x, y), x),
+    stop_incompatible_op(op, x, y)
+  )
+}
+vec_arith.vctrs_period.numeric <- function(op, x, y) {
+  switch(op,
+    `-` = ,
+    `+` = ,
+    `*` = ,
+    `/` = vec_restore(vec_arith_base(op, x, y), x),
+    stop_incompatible_op(op, x, y)
+  )
+}
+vec_arith.numeric.vctrs_period <- function(op, x, y) {
+  switch(op,
+    `*` = vec_restore(vec_arith_base(op, x, y), y),
+    `/` = freq(vec_arith_base(op, x, y)),
+    stop_incompatible_op(op, x, y)
+  )
+}
+
+period(1) + period(1)
+2 * period(10)
+period(10) / 5
+5 / period(10)
+```
+
+
 ## Intervals
 
 First, we implement an interval class, a record composed of `l`eft and `r`ight fields. As usual, we make a low-level constructor, a user-friend constructor, and define a format method.
@@ -126,3 +197,4 @@ vec_arith.vctrs_interval.MISSING <- function(op, x, y) {
 +x
 ```
 
+(Note that this implementation prevents subclassing)
