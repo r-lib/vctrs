@@ -37,15 +37,15 @@ MISSING()
 a sentinel object of class \code{MISSING}, as created by \code{MISSING()}.}
 }
 \description{
-This method provides a common double dispatch mechnaism for all arithmetic
+This generic provides a common double dispatch mechanism for all infix
 operators (\code{+}, \code{-}, \code{/}, \code{*}, \code{^}, \code{\%\%}, \code{\%/\%}, \code{!}, \code{&}, \code{|}). It is used
 to power the default arithmetic and boolean operators for \link{vctr}s objects,
 overcoming the limitations of the base \link{Ops} generic.
 }
 \details{
 \code{vec_base_arith()} is provided as a convenience for writing methods. It
-recycles \code{x} and \code{y} to common length then uses calls \code{op} on the underlying
-\code{\link[=vec_data]{vec_data()}}.
+recycles \code{x} and \code{y} to common length then calls the base operator with the
+underlying \code{\link[=vec_data]{vec_data()}}.
 }
 \examples{
 d <- as.Date("2018-01-01")
@@ -68,5 +68,8 @@ vec_arith("*", t, 2)
 \seealso{
 \code{\link[=stop_incompatible_op]{stop_incompatible_op()}} for signalling that an arithmetic
 operation is not permitted/supported.
+
+See \code{\link[=vec_math]{vec_math()}} for the equivalent for the unary mathematical
+functions.
 }
 \keyword{internal}

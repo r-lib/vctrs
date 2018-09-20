@@ -29,6 +29,9 @@
 #' * `<`, `<=`, `>=`, `>`, `min()`, `max()`, `median()`, `quantile()`,
 #'   and `xtfrm()` methods use [vec_proxy_compare()].
 #'
+#' * `+`, `-`, `/`, `*`, `^`, `%%`, `%/%`, `!`, `&`, and `|` operators
+#'   use [vec_arith()].
+#'
 #' * Mathematical operations including the Summary group generics (`max`,
 #'   `min`, `range`, `prod`, `sum`, `any`, `all`), the Math group generics
 #'   (`abs`, `sign`, `sqrt`, `ceiling`, `floor`, `trunc`, `cummax`, `cummin`,

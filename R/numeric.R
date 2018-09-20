@@ -1,10 +1,14 @@
 #' Mathematical operations
 #'
 #' This generic provides a common dispatch mechanism for all regular unary
-#' mathematical functions (see [vec_arith()] infix functions). It is used
-#' as a common wrapper around the Summary group generics, the Math group
-#' generics, and a hanful of other mathematical functions like `mean()`.
+#' mathematical functions. It is used as a common wrapper around the Summary
+#' group generics, the Math group generics, and a handful of other
+#' mathematical functions like `mean()`.
 #'
+#' `vec_base_arith()` is provided as a convenience for writing methods. It
+#' calls the base `fun` on the underlying [vec_data()].
+#'
+#' @seealso [vec_arith()] for the equivalent for the arithmetic infix operators.
 #' @param fun An mathematical function as a string
 #' @param x A vector
 #' @param ... An additional arguments.
@@ -26,7 +30,7 @@ vec_math.default <- function(fun, x, ...) {
   if (is_double(x)) {
     vec_restore(vec_math_base(fun, x, ...), x)
   } else {
-    stop_unsupported(x, "vec_math")
+    stop_unimplemented(x, "vec_math")
   }
 }
 

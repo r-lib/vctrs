@@ -49,6 +49,8 @@ method uses a standard technique to wrap a vector in a data frame.
 \code{\link[=vec_proxy_equal]{vec_proxy_equal()}}.
 \item \code{<}, \code{<=}, \code{>=}, \code{>}, \code{min()}, \code{max()}, \code{median()}, \code{quantile()},
 and \code{xtfrm()} methods use \code{\link[=vec_proxy_compare]{vec_proxy_compare()}}.
+\item \code{+}, \code{-}, \code{/}, \code{*}, \code{^}, \code{\%\%}, \code{\%/\%}, \code{!}, \code{&}, and \code{|} operators
+use \code{\link[=vec_arith]{vec_arith()}}.
 \item Mathematical operations including the Summary group generics (\code{max},
 \code{min}, \code{range}, \code{prod}, \code{sum}, \code{any}, \code{all}), the Math group generics
 (\code{abs}, \code{sign}, \code{sqrt}, \code{ceiling}, \code{floor}, \code{trunc}, \code{cummax}, \code{cummin},

@@ -18,9 +18,13 @@ vec_math_base(fun, x, ...)
 }
 \description{
 This generic provides a common dispatch mechanism for all regular unary
-mathematical functions (see \code{\link[=vec_arith]{vec_arith()}} infix functions). It is used
-as a common wrapper around the Summary group generics, the Math group
-generics, and a hanful of other mathematical functions like \code{mean()}.
+mathematical functions. It is used as a common wrapper around the Summary
+group generics, the Math group generics, and a handful of other
+mathematical functions like \code{mean()}.
+}
+\details{
+\code{vec_base_arith()} is provided as a convenience for writing methods. It
+calls the base \code{fun} on the underlying \code{\link[=vec_data]{vec_data()}}.
 }
 \examples{
 x <- new_vctr(c(1, 2.5, 10))
@@ -29,5 +33,8 @@ x
 abs(x)
 sum(x)
 cumsum(x)
+}
+\seealso{
+\code{\link[=vec_arith]{vec_arith()}} for the equivalent for the arithmetic infix operators.
 }
 \keyword{internal}
