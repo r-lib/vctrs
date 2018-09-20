@@ -296,7 +296,7 @@ as.POSIXct.vctrs_vctr <- function(x, tz = "", ...) {
 }
 
 #' @export
-is.na.vcrs_vctr <- function(x) {
+is.na.vctrs_vctr <- function(x) {
   vec_equal_na(x)
 }
 
