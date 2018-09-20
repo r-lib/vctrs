@@ -495,6 +495,13 @@ is.nan.vctrs_rcrd <- function(x) {
   vec_arith("%/%", e1, e2)
 }
 
+# Unimplemented ------------------------------------------------------------
+
+#' @export
+summary.vctrs_vctr <- function(object, ...) {
+  stop_unimplemented(object, "summary")
+}
+
 # Unsupported --------------------------------------------------------------
 
 #' @export
