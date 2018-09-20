@@ -177,10 +177,9 @@ vec_proxy_compare.vctrs_rcrd <- function(x) {
 }
 
 #' @export
-vec_proxy_numeric.vctrs_rcrd <- function(x) {
-  stop_unimplemented(x, "vec_proxy_numeric")
+vec_math.vctrs_rcrd <- function(fun, x, ...) {
+  stop_unsupported(x, "vec_math")
 }
-
 # Helpers -----------------------------------------------------------------
 
 unique_field_names <- function(x) {

@@ -131,9 +131,8 @@ test_that("can round trip through list", {
 test_that("dangerous methods marked as unimplemented", {
   t <- tuple()
 
-  expect_error(mean(t), class = "error_unimplemented")
-  expect_error(median(t), class = "error_unimplemented")
-  expect_error(abs(t), class = "error_unimplemented")
-  expect_error(is.finite(t), class = "error_unimplemented")
-  expect_error(is.nan(t), class = "error_unimplemented")
+  expect_error(mean(t), class = "error_unsupported")
+  expect_error(abs(t), class = "error_unsupported")
+  expect_error(is.finite(t), class = "error_unsupported")
+  expect_error(is.nan(t), class = "error_unsupported")
 })

@@ -29,9 +29,14 @@
 #' * `<`, `<=`, `>=`, `>`, `min()`, `max()`, `median()`, `quantile()`,
 #'   and `xtfrm()` methods use [vec_proxy_compare()].
 #'
-#' * Mathematical operations including the Summary group generics, the
-#'   Math group generics, `mean()`, `is.nan()`, `is.finite()`, and
-#'   `is.infinite()` use [vec_proxy_numeric()].
+#' * Mathematical operations including the Summary group generics (`max`,
+#'   `min`, `range`, `prod`, `sum`, `any`, `all`), the Math group generics
+#'   (`abs`, `sign`, `sqrt`, `ceiling`, `floor`, `trunc`, `cummax`, `cummin`,
+#'   `cumprod`, `cumsum`, `log`, `log10`, `log2`, `log1p`, `acos`, `acosh`,
+#'   `asin`, `asinh`, `atan`, `atanh`, `exp`, `expm1`, `cos`, `cosh`, `cospi`,
+#'   `sin`, `sinh`, `sinpi`, `tan`, `tanh`, `tanpi`, `gamma`, `lgamma`,
+#'   `digamma`, `trigamma`), `mean()`, `is.nan()`, `is.finite()`, and
+#'   `is.infinite()` use [vec_math()].
 #'
 #' * `dims()`, `dims<-()`, `dimnames()`, `dimnames<-`, `levels()`, and
 #'   `levels<-` methods throw errors.
@@ -402,39 +407,33 @@ max.vctrs_vctr <- function(x, ..., na.rm = FALSE) {
 
 #' @export
 Math.vctrs_vctr <- function(x, ...) {
-  generic <- getExportedValue("base", .Generic)
-  out <- generic(vec_proxy_numeric(x), ...)
-  vec_restore_numeric(out, x)
+  vec_math(.Generic, x, ...)
 }
 
 #' @export
 Summary.vctrs_vctr <- function(..., na.rm = FALSE) {
   x <- vec_c(...)
-
-  generic <- getExportedValue("base", .Generic)
-  out <- generic(vec_proxy_numeric(x), na.rm = na.rm)
-  vec_restore_numeric(out, x)
+  vec_math(.Generic, x, na.rm = TRUE)
 }
 
 #' @export
 mean.vctrs_vctr <- function(x, ..., na.rm = FALSE) {
-  out <- mean(vec_proxy_numeric(x), ..., na.rm = na.rm)
-  vec_restore_numeric(out, x)
+  vec_math("mean", x, na.rm = TRUE)
 }
 
 #' @export
 is.finite.vctrs_rcrd <- function(x) {
-  is.finite(vec_proxy_numeric(x))
+  vec_math("is.finite", x)
 }
 
 #' @export
 is.infinite.vctrs_rcrd <- function(x) {
-  is.infinite(vec_proxy_numeric(x))
+  vec_math("is.infinite", x)
 }
 
 #' @export
 is.nan.vctrs_rcrd <- function(x) {
-  is.nan(vec_proxy_numeric(x))
+  vec_math("is.nan", x)
 }
 
 # Arithmetic --------------------------------------------------------------

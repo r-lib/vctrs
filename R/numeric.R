@@ -1,43 +1,43 @@
-#' Numeric proxy
+#' Mathematical operations
 #'
-#' `vec_proxy_numeric()` converts an object to it's numeric representation
-#' (if available). `vec_restore_numeric()` restores a numeric proxy back to
-#' the original type. The default methods allow any object built on a logical,
-#' integer, or numeric, to be coerced to numeric, and leave the result as is.
+#' This generic provides a common dispatch mechanism for all regular unary
+#' mathematical functions (see [vec_arith()] infix functions). It is used
+#' as a common wrapper around the Summary group generics, the Math group
+#' generics, and a hanful of other mathematical functions like `mean()`.
 #'
+#' @param fun An mathematical function as a string
+#' @param x A vector
+#' @param ... An additional arguments.
 #' @keywords internal
 #' @export
 #' @examples
-#' x <- new_vctr(-10:10)
+#' x <- new_vctr(c(1, 2.5, 10))
+#' x
 #'
 #' abs(x)
-#' x ^ 2
-vec_proxy_numeric <- function(x) {
-  UseMethod("vec_proxy_numeric")
+#' sum(x)
+#' cumsum(x)
+vec_math <- function(fun, x, ...) {
+  UseMethod("vec_math", x)
 }
 
 #' @export
-vec_proxy_numeric.default <- function(x) {
-  # Same rules as base
-  if (is_logical(x) || is_integer(x) || is_double(x)) {
-    vec_data(x)
+vec_math.default <- function(fun, x, ...) {
+  if (is_double(x)) {
+    vec_restore(vec_math_base(fun, x, ...), x)
   } else {
-    stop_unsupported(x, "vec_proxy_numeric")
+    stop_unsupported(x, "vec_math")
   }
 }
 
 #' @export
-vec_proxy_numeric.factor <- function(x) {
-  stop_unsupported(x, "vec_proxy_numeric")
+vec_math.factor <- function(fun, x, ...) {
+  stop_unsupported(x, "vec_math")
 }
 
 #' @export
-#' @rdname vec_proxy_numeric
-vec_restore_numeric <- function(x, to) {
-  UseMethod("vec_restore_numeric", to)
-}
-
-#' @export
-vec_restore_numeric.default <- function(x, to) {
-  x
+#' @rdname vec_math
+vec_math_base <- function(fun, x, ...) {
+  fun <- getExportedValue("base", fun)
+  fun(vec_data(x), ...)
 }

@@ -49,9 +49,14 @@ method uses a standard technique to wrap a vector in a data frame.
 \code{\link[=vec_proxy_equal]{vec_proxy_equal()}}.
 \item \code{<}, \code{<=}, \code{>=}, \code{>}, \code{min()}, \code{max()}, \code{median()}, \code{quantile()},
 and \code{xtfrm()} methods use \code{\link[=vec_proxy_compare]{vec_proxy_compare()}}.
-\item Mathematical operations including the Summary group generics, the
-Math group generics, \code{mean()}, \code{is.nan()}, \code{is.finite()}, and
-\code{is.infinite()} use \code{\link[=vec_proxy_numeric]{vec_proxy_numeric()}}.
+\item Mathematical operations including the Summary group generics (\code{max},
+\code{min}, \code{range}, \code{prod}, \code{sum}, \code{any}, \code{all}), the Math group generics
+(\code{abs}, \code{sign}, \code{sqrt}, \code{ceiling}, \code{floor}, \code{trunc}, \code{cummax}, \code{cummin},
+\code{cumprod}, \code{cumsum}, \code{log}, \code{log10}, \code{log2}, \code{log1p}, \code{acos}, \code{acosh},
+\code{asin}, \code{asinh}, \code{atan}, \code{atanh}, \code{exp}, \code{expm1}, \code{cos}, \code{cosh}, \code{cospi},
+\code{sin}, \code{sinh}, \code{sinpi}, \code{tan}, \code{tanh}, \code{tanpi}, \code{gamma}, \code{lgamma},
+\code{digamma}, \code{trigamma}), \code{mean()}, \code{is.nan()}, \code{is.finite()}, and
+\code{is.infinite()} use \code{\link[=vec_math]{vec_math()}}.
 \item \code{dims()}, \code{dims<-()}, \code{dimnames()}, \code{dimnames<-}, \code{levels()}, and
 \code{levels<-} methods throw errors.
 }
