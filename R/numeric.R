@@ -22,8 +22,13 @@ vec_proxy_numeric.default <- function(x) {
   if (is_logical(x) || is_integer(x) || is_double(x)) {
     vec_data(x)
   } else {
-    stop_unsupported(x, "numeric-ise")
+    stop_unsupported(x, "vec_proxy_numeric")
   }
+}
+
+#' @export
+vec_proxy_numeric.factor <- function(x) {
+  stop_unsupported(x, "vec_proxy_numeric")
 }
 
 #' @export
