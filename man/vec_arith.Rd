@@ -33,14 +33,14 @@ MISSING()
 \arguments{
 \item{op}{An arithmetic operator as a string}
 
-\item{x, y}{A pair of vectors. For unary \code{+} and \code{-}, \code{y} can be a
-sentinel object of class \code{MISSING}, as created by \code{MISSING()}.}
+\item{x, y}{A pair of vectors. For \code{!}, unary \code{+} and unary \code{-}, \code{y} will be
+a sentinel object of class \code{MISSING}, as created by \code{MISSING()}.}
 }
 \description{
 This method provides a common double dispatch mechnaism for all arithmetic
-operators (\code{+}, \code{-}, \code{/}, \code{*}, \code{\%\%} and \code{\%/\%}). It is used to power the
-default arithmetic operators for \link{vctr}s objects, overcoming the limitations
-of the base \link{Ops} generic.
+operators (\code{+}, \code{-}, \code{/}, \code{*}, \code{^}, \code{\%\%}, \code{\%/\%}, \code{!}, \code{&}, \code{|}). It is used
+to power the default arithmetic and boolean operators for \link{vctr}s objects,
+overcoming the limitations of the base \link{Ops} generic.
 }
 \details{
 \code{vec_base_arith()} is provided as a convenience for writing methods. It

@@ -1,17 +1,17 @@
 #' Arithmetic operations
 #'
 #' This method provides a common double dispatch mechnaism for all arithmetic
-#' operators (`+`, `-`, `/`, `*`, `%%` and `%/%`). It is used to power the
-#' default arithmetic operators for [vctr]s objects, overcoming the limitations
-#' of the base [Ops] generic.
+#' operators (`+`, `-`, `/`, `*`, `^`, `%%`, `%/%`, `!`, `&`, `|`). It is used
+#' to power the default arithmetic and boolean operators for [vctr]s objects,
+#' overcoming the limitations of the base [Ops] generic.
 #'
 #' `vec_base_arith()` is provided as a convenience for writing methods. It
 #' recycles `x` and `y` to common length then uses calls `op` on the underlying
 #' [vec_data()].
 #'
 #' @param op An arithmetic operator as a string
-#' @param x,y A pair of vectors. For unary `+` and `-`, `y` can be a
-#'   sentinel object of class `MISSING`, as created by `MISSING()`.
+#' @param x,y A pair of vectors. For `!`, unary `+` and unary `-`, `y` will be
+#'   a sentinel object of class `MISSING`, as created by `MISSING()`.
 #' @seealso [stop_incompatible_op()] for signalling that an arithmetic
 #'   operation is not permitted/supported.
 #' @export

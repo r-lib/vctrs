@@ -210,13 +210,3 @@ test_that("can't transpose", {
   h <- new_hidden(1:4)
   expect_error(t(h), class = "error_unsupported")
 })
-
-# logical class -----------------------------------------------------------
-
-test_that("logical comparisons return bare logical", {
-  v <- new_vctr(TRUE, class = "test")
-
-  expect_equal(v & v, TRUE)
-  expect_equal(!v, FALSE)
-})
-

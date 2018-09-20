@@ -42,7 +42,6 @@ then restore attributes with \code{vec_restore()}.
 \item \code{==}, \code{!=}, \code{unique()}, any \code{duplicated()} use \link{vec_proxy_equal}.
 \item \code{<}, \code{<=}, \code{>=}, \code{>}, \code{min()}, \code{max()}, \code{median()}, \code{quantile()},
 and \code{xtfrm()} methods use \link{vec_proxy_compare}.
-\item \code{!}, \code{&}, and \code{|} methods use \code{\link[=vec_proxy_logical]{vec_proxy_logical()}}.
 \item Mathematical operations use \code{\link[=vec_proxy_numeric]{vec_proxy_numeric()}}.
 \item \code{as.logical()}, \code{as.integer()}, \code{as.numeric()}, \code{as.character()},
 \code{as.Date()} and \code{as.POSIXct()} methods call \code{vec_cast()}.

@@ -21,8 +21,6 @@
 #' * `<`, `<=`, `>=`, `>`, `min()`, `max()`, `median()`, `quantile()`,
 #'   and `xtfrm()` methods use [vec_proxy_compare].
 #'
-#' * `!`, `&`, and `|` methods use [vec_proxy_logical()].
-#'
 #' * Mathematical operations use [vec_proxy_numeric()].
 #'
 #' * `as.logical()`, `as.integer()`, `as.numeric()`, `as.character()`,
@@ -395,27 +393,6 @@ max.vctrs_vctr <- function(x, ..., na.rm = FALSE) {
 }
 
 
-# Logical -----------------------------------------------------------------
-
-#' @export
-`!.vctrs_vctr` <- function(x) {
-  vec_restore_logical(!vec_proxy_logical(x), x)
-}
-
-#' @export
-`&.vctrs_vctr` <- function(e1, e2) {
-  args <- vec_binary(e1, e2, vec_proxy_logical)
-  out <- args[[1]] & args[[2]]
-  vec_restore_logical(out, args[[1]])
-}
-
-#' @export
-`|.vctrs_vctr` <- function(e1, e2) {
-  args <- vec_binary(e1, e2, vec_proxy_logical)
-  out <- args[[1]] | args[[2]]
-  vec_restore_logical(out, args[[1]])
-}
-
 # Numeric -----------------------------------------------------------------
 
 #' @export
@@ -493,6 +470,21 @@ is.nan.vctrs_rcrd <- function(x) {
 #' @export
 `%/%.vctrs_vctr` <- function(e1, e2) {
   vec_arith("%/%", e1, e2)
+}
+
+#' @export
+`!.vctrs_vctr` <- function(x) {
+  vec_arith("!", x, MISSING())
+}
+
+#' @export
+`&.vctrs_vctr` <- function(e1, e2) {
+  vec_arith("&", e1, e2)
+}
+
+#' @export
+`|.vctrs_vctr` <- function(e1, e2) {
+  vec_arith("|", e1, e2)
 }
 
 # Unimplemented ------------------------------------------------------------

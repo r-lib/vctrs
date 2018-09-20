@@ -170,11 +170,6 @@ vec_proxy_compare.vctrs_rcrd <- function(x) {
 }
 
 #' @export
-vec_proxy_logical.vctrs_rcrd <- function(x) {
-  stop_unimplemented(x, "vec_proxy_logical")
-}
-
-#' @export
 vec_proxy_numeric.vctrs_rcrd <- function(x) {
   stop_unimplemented(x, "vec_proxy_numeric")
 }
