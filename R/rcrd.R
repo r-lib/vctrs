@@ -85,6 +85,13 @@ vec_cast.vctrs_rcrd.default <- function(x, to) {
   stop_incompatible_cast(x, to)
 }
 
+#' @export
+vec_restore.vctrs_rcrd <- function(x, to) {
+  attributes(x) <- attributes(to)
+  x
+}
+
+
 # Subsetting --------------------------------------------------------------
 
 #' @export
