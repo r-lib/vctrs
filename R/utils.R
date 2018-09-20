@@ -77,3 +77,6 @@ vec_binary <- function(x, y, f = vec_data) {
   args <- vec_coerce(!!!args)
   lapply(args, vec_data)
 }
+
+#' @importFrom zeallot %<-%
+NULL
