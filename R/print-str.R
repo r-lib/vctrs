@@ -87,7 +87,35 @@ vec_str_data <- function(x, ...) {
 }
 
 #' @export
-vec_str_data.default <- function(x, ..., indent.str = "", width = getOption("width")) {
+vec_str_data.default <- function(x, ...) {
+
+  if (is.list(x)) {
+    vec_str_recursive(x, ...)
+  } else {
+    vec_str_leaf(x, ...)
+  }
+}
+
+vec_str_recursive <- function(x, ...,
+                              indent.str = "",
+                              nest.lev = 0) {
+
+  if (nest.lev != 0L)
+    cat(" ")
+  cat_line(glue::glue("{vec_ptype_abbr(x)} [1:{length(x)}] "))
+
+  utils::str(
+    vec_data(x),
+    no.list = TRUE,
+    ...,
+    nest.lev = nest.lev + 1L,
+    indent.str = indent.str
+  )
+}
+
+vec_str_leaf <- function(x, ...,
+                         indent.str = "",
+                         width = getOption("width")) {
   width <- width - nchar(indent.str) - 2
 
   # Avoid spending too much time formatting elements that won't see

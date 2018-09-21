@@ -65,6 +65,11 @@ format.vctrs_rcrd <- function(x, ...) {
   stop_unimplemented(x, "format")
 }
 
+#' @export
+vec_str_data.vctrs_rcrd <- function(x, ...) {
+  vec_str_leaf(x, ...)
+}
+
 #' @method vec_cast vctrs_rcrd
 #' @export
 vec_cast.vctrs_rcrd <- function(x, to) UseMethod("vec_cast.vctrs_rcrd")
