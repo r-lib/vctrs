@@ -282,20 +282,17 @@ as.POSIXct.vctrs_vctr <- function(x, tz = "", ...) {
   vec_cast(x, new_datetime(tzone = tz))
 }
 
-#' @importFrom generics as.factor
-#' @export
+# Dynamically registered in .onLoad()
 as.factor.vctrs_vctr <- function(x, levels = character(), ...) {
   vec_cast(x, new_factor(levels = levels))
 }
 
-#' @importFrom generics as.ordered
-#' @export
+# Dynamically registered in .onLoad()
 as.ordered.vctrs_vctr <- function(x, levels = character(), ...) {
   vec_cast(x, new_ordered(levels = levels))
 }
 
-#' @importFrom generics as.difftime
-#' @export
+# Dynamically registered in .onLoad()
 as.difftime.vctrs_vctr <- function(x, units = "secs", ...) {
   vec_cast(x, new_difftime(units = units))
 }

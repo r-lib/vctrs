@@ -18,15 +18,15 @@ Imports:
     glue,
     rlang,
     tibble,
-    backports,
-    generics
+    backports
 Suggests: 
     covr,
     testthat,
     knitr,
     rmarkdown,
     pillar,
-    pkgdown
+    pkgdown,
+    generics
 Encoding: UTF-8
 Language: en-GB
 LazyData: true
