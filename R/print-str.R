@@ -139,7 +139,29 @@ vec_str_footer <- function(x, ...) {
 }
 
 #' @export
-vec_str_footer.default <- function(x, ...) {
+vec_str_footer.default <- function(x, ...,
+                                   indent.str = "",
+                                   nest.lev = 0) {
+  attr <- attributes(x)
+  attr[["class"]] <- NULL
+  attr[["names"]] <- NULL
+
+  if (length(attr) == 0)
+    return(invisible(x))
+
+  if (!is.list(x)) {
+    indent.str <- paste0(" ", indent.str)
+  }
+
+  utils::str(
+    attr,
+    no.list = TRUE,
+    ...,
+    comp.str = "@ ",
+    nest.lev = nest.lev + 1L,
+    indent.str = indent.str
+  )
+
   invisible(x)
 }
 
