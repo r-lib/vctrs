@@ -186,18 +186,47 @@ format.vctrs_vctr <- function(x, ...) {
 }
 
 #' @export
-str.vctrs_vctr <- function(object, ..., indent.str = "", width = getOption("width")) {
+str.vctrs_vctr <- function(object, ...) {
+  vec_str_header(object, ...)
+  vec_str_data(object, ...)
+  vec_str_footer(object, ...)
+}
+
+vec_str_header <- function(x, ..., width = getOption("width")) {
+  UseMethod("vec_str_header")
+}
+
+vec_str_header.vctrs_vctr <- function(x, ..., width = getOption("width")) {
+  invisible(x)
+}
+
+vec_str_data <- function(x, ..., width = getOption("width")) {
+  UseMethod("vec_str_data")
+}
+
+vec_str_data.vctrs_vctr <- function(x, ..., indent.str = "", width = getOption("width")) {
   width <- width - nchar(indent.str) - 2
+
   # Avoid spending too much time formatting elements that won't see
   length <- ceiling(width / 2)
-  if (length(object) > length) {
-    x <- object[1:length]
+  if (length(x) > length) {
+    out <- x[1:length]
   } else {
-    x <- object
+    out <- x
   }
 
-  title <- glue::glue(" {vec_ptype_abbr(object)} [1:{length(object)}] ")
-  cat_line(inline_list(title, format(x), width = width))
+  title <- glue::glue(" {vec_ptype_abbr(x)} [1:{length(x)}] ")
+  cat_line(inline_list(title, format(out), width = width))
+
+  invisible(x)
+}
+
+vec_str_footer <- function(x, ...) {
+  UseMethod("vec_str_footer")
+}
+
+vec_str_footer.vctrs_vctr <- function(x, ...) {
+  invisible(x)
 }
 
 # Subsetting --------------------------------------------------------------

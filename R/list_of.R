@@ -78,13 +78,13 @@ vec_print_data.vctrs_list_of <- function(x, ...) {
 }
 
 #' @export
-str.vctrs_list_of <- function(object, ..., indent.str = "", nest.lev = 0) {
+vec_str_data.vctrs_list_of <- function(x, ..., indent.str = "", nest.lev = 0) {
   if (nest.lev != 0L)
     cat(" ")
-  cat_line(glue::glue("{vec_ptype_abbr(object)} [1:{length(object)}] "))
+  cat_line(glue::glue("{vec_ptype_abbr(x)} [1:{length(x)}] "))
 
   utils::str(
-    vec_data(object),
+    vec_data(x),
     no.list = TRUE,
     ...,
     nest.lev = nest.lev + 1L,
