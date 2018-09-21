@@ -1,51 +1,48 @@
-#' vctr (vectr) S3 class
+#' vctr (vector) S3 class
 #'
 #' This abstract class provides a set of useful default methods that makes it
-#' considerably easier to get started with a new S3 vector class.
+#' considerably easier to get started with a new S3 vector class. See
+#' `vignette("S3-vector")` to learn how to use it to create your own S3
+#' vector classes.
 #'
-#' @section Recommended workflow:
-#' 1. Start by creating a low-level constructor. It should be called
-#'    `new_myclass()`, and should check the types (but not the values)
-#'    of its inputs.
-#'
-#' 1. Depending on the class create either a helper `myclass()`, a coercer
-#'    `as_myclass()`, or both. A helper should construct valid values then
-#'    pass on to constructor. A coercer should either check values are correct,
-#'    or rely on the helper. Avoid defining validation code in multiple
-#'    places.
-#'
-#' 1. Define a useful `format.myclass()` method. This will give default
-#'    `print()` and `as.character()` methods that should be adequate for
-#'    most classes. Be warned: a good format method may be as much work
-#'    as the rest of the class put together!
-#'
-#' 1. Next provide [vec_type2()] and [vec_cast()]. First focus on the
-#'    casts between your class and its underlying the base type.
-#'    Next think about base types that should be coercible or castable.
-#'    See `vignette("s3-vector")` for details.
-#'
-#' 1. If your function behaves similarly to numbers or booleans, or has
-#'    specialised comparison methods, read [vec_grp] to learn about the vctrs
-#'    group generics: these allow you to implement many methods at once.
-#'
-#' Implementing these methods gets you many methods for free:
+#' @section Base methods:
+#' The vctr class provides methods for many base generics using a smaller
+#' set of generics defined by this package. Generally, you should think
+#' carefully before overriding any of the methods that vctrs implements for
+#' you as they've been carefully planned to be internally consistent.
 #'
 #' * `[[` and `[` use `NextMethod()` dispatch to the underlying base function,
-#'    reconstructing attributes with `vec_cast()`. `rep()` works similarly.
-#'    Override if one or more attributes have a one-to-one relationship to
-#'    the underlying data.
+#'    then restore attributes with `vec_restore()`.
+#'    `rep()` and `length<-` work similarly.
 #'
-#' * `[[<-` and `[<-` cast the RHS to the LHS, then call `NextMethod()`.
-#'   Override these methods if any attributes depend on the data.
+#' * `[[<-` and `[<-` cast `value` to same type as `x`, then call
+#'   `NextMethod()`.
 #'
-#' * `as.list.vctrs_vctr()` calls `[[` repeatedly, `as.character.vctrs_vctr()` calls
-#'   `format()`.
+#' * `as.logical()`, `as.integer()`, `as.numeric()`, `as.character()`,
+#'   `as.Date()` and `as.POSIXct()` methods call `vec_cast()`.
+#'   The `as.list()` method calls `[[` repeatedly, and the `as.data.frame()`
+#'   method uses a standard technique to wrap a vector in a data frame.
 #'
-#' * `as.data.frame.vctrs_vctr()` uses a standard technique to wrap a vector
-#'   in a data frame. You should never need to override this method.
+#' * `==`, `!=`, `unique()`, `anyDuplicated()`, and `is.na()` use
+#'   [vec_proxy_equal()].
 #'
-#' * `dims<-.vctrs_vctr()`, and `dimnames<-.vctrs_vctr()` all throw errors as generally
-#'   custom vector classes do not need to support dimensions.
+#' * `<`, `<=`, `>=`, `>`, `min()`, `max()`, `median()`, `quantile()`,
+#'   and `xtfrm()` methods use [vec_proxy_compare()].
+#'
+#' * `+`, `-`, `/`, `*`, `^`, `%%`, `%/%`, `!`, `&`, and `|` operators
+#'   use [vec_arith()].
+#'
+#' * Mathematical operations including the Summary group generics (`max`,
+#'   `min`, `range`, `prod`, `sum`, `any`, `all`), the Math group generics
+#'   (`abs`, `sign`, `sqrt`, `ceiling`, `floor`, `trunc`, `cummax`, `cummin`,
+#'   `cumprod`, `cumsum`, `log`, `log10`, `log2`, `log1p`, `acos`, `acosh`,
+#'   `asin`, `asinh`, `atan`, `atanh`, `exp`, `expm1`, `cos`, `cosh`, `cospi`,
+#'   `sin`, `sinh`, `sinpi`, `tan`, `tanh`, `tanpi`, `gamma`, `lgamma`,
+#'   `digamma`, `trigamma`), `mean()`, `is.nan()`, `is.finite()`, and
+#'   `is.infinite()` use [vec_math()].
+#'
+#' * `dims()`, `dims<-()`, `dimnames()`, `dimnames<-`, `levels()`, and
+#'   `levels<-` methods throw errors.
 #'
 #' @param x Foundation of class. Must be a vector
 #' @param ... Name-value pairs defining attributes
@@ -85,7 +82,11 @@ names_all_or_nothing <- function(names) {
 }
 
 #' @export
-vec_recast.vctrs_vctr <- function(x, to) {
+vec_restore.vctrs_vctr <- function(x, to) {
+  if (typeof(x) != typeof(to)) {
+    stop_incompatible_cast(x, to)
+  }
+
   # Copy every attribute, but preserve existing names
   attr_to <- attributes(to)
   attr_to[["names"]] <- names(x)
@@ -113,55 +114,26 @@ vec_cast.vctrs_vctr.default <- function(x, to) {
     }
   }
 
-  vec_recast(x, to)
+  vec_restore(x, to)
+}
+
+#' @export
+c.vctrs_vctr <- function(...) {
+  vec_c(...)
 }
 
 # Printing ----------------------------------------------------------------
 
 #' @export
 print.vctrs_vctr <- function(x, ...) {
-  vec_print_header(x, ...)
-  vec_print_data(x, ...)
-  vec_print_footer(x, ...)
+  vec_print(x, ...)
   invisible(x)
 }
 
 #' @export
-#' @rdname new_vctr
-vec_print_header <- function(x, ...) {
-  UseMethod("vec_print_header")
+str.vctrs_vctr <- function(object, ...) {
+  vec_str(object, ...)
 }
-
-#' @export
-vec_print_header.vctrs_vctr <- function(x, ...) {
-  cat_line("<", vec_ptype_full(x), "[", length(x), "]>")
-}
-
-#' @export
-#' @rdname new_vctr
-vec_print_data <- function(x, ...) {
-  UseMethod("vec_print_data")
-}
-
-#' @export
-vec_print_data.vctrs_vctr <- function(x, ...) {
-  if (length(x) == 0)
-    return()
-
-  out <- stats::setNames(format(x), names(x))
-  print(out, quote = FALSE)
-}
-
-#' @export
-#' @rdname new_vctr
-vec_print_footer <- function(x, ...) {
-  UseMethod("vec_print_footer")
-}
-
-#' @export
-vec_print_footer.vctrs_vctr <- function(x, ...) {
-}
-
 
 # manually registered in zzz.R
 pillar_shaft.vctrs_vctr <- function(x, ...) {
@@ -179,49 +151,34 @@ format.vctrs_vctr <- function(x, ...) {
   format(vec_data(x, ...))
 }
 
-#' @export
-str.vctrs_vctr <- function(object, ..., indent.str = "", width = getOption("width")) {
-  width <- width - nchar(indent.str) - 2
-  # Avoid spending too much time formatting elements that won't see
-  length <- ceiling(width / 2)
-  if (length(object) > length) {
-    x <- object[1:length]
-  } else {
-    x <- object
-  }
-
-  title <- glue::glue(" {vec_ptype_abbr(object)} [1:{length(object)}] ")
-  cat_line(inline_list(title, format(x), width = width))
-}
-
 # Subsetting --------------------------------------------------------------
 
 #' @export
 `[.vctrs_vctr` <- function(x, i,...) {
-  vec_recast(NextMethod(), x)
+  vec_restore(NextMethod(), x)
 }
 
 #' @export
 `[[.vctrs_vctr` <- function(x, i, ...) {
-  vec_recast(NextMethod(), x)
+  vec_restore(NextMethod(), x)
 }
 
 #' @export
 `$.vctrs_vctr` <- function(x, i) {
-  vec_recast(NextMethod(), x)
+  vec_restore(NextMethod(), x)
 }
 
 #' @export
 rep.vctrs_vctr <- function(x, ...) {
-  vec_recast(NextMethod(), x)
+  vec_restore(NextMethod(), x)
 }
 
 #' @export
 `length<-.vctrs_vctr` <- function(x, value) {
-  vec_recast(NextMethod(), x)
+  vec_restore(NextMethod(), x)
 }
 
-# Replacement -------------------------------------------------------------
+# Modification -------------------------------------------------------------
 
 #' @export
 `[[<-.vctrs_vctr` <- function(x, i, value) {
@@ -245,6 +202,16 @@ rep.vctrs_vctr <- function(x, ...) {
   NextMethod()
 }
 
+#' @export
+`names<-.vctrs_vctr` <- function(x, value) {
+  if (length(value) != 0 && length(value) != length(x)) {
+    stop("`names()` must be the same length as x", call. = FALSE)
+  }
+  if (!names_all_or_nothing(value)) {
+    stop("If any elements are named, all elements must be named", call. = FALSE)
+  }
+  NextMethod()
+}
 # Coercion ----------------------------------------------------------------
 
 #' @export
@@ -297,93 +264,31 @@ as.difftime.vctrs_vctr <- function(x, units = "secs", ...) {
   vec_cast(x, new_difftime(units = units))
 }
 
-# Group generics ----------------------------------------------------------
+# Equality ----------------------------------------------------------------
 
 #' @export
-Ops.vctrs_vctr <- function(e1, e2) {
-  if (missing(e2)) {
-    if (.Generic == "!") {
-      return(vec_grp_logical(.Generic, e1))
-    } else {
-      return(vec_grp_unary(.Generic, e1))
-    }
+`==.vctrs_vctr` <- function(e1, e2) {
+  vec_equal(e1, e2)
+}
+
+#' @export
+`!=.vctrs_vctr` <- function(e1, e2) {
+  !vec_equal(e1, e2)
+}
+
+#' @export
+is.na.vctrs_vctr <- function(x) {
+  vec_equal_na(x)
+}
+
+#' @export
+anyNA.vctrs_vctr <- if (getRversion() >= "3.2") {
+  function(x, recursive = FALSE) {
+    any(is.na(x))
   }
-
-  if (length(e2) == 1) {
-    # Optimisation if RHS is a scalar
-    ptype <- e1
-  } else {
-    ptype <- vec_ptype(e1, e2)[[1]]
-  }
-  e1 <- vec_cast(e1, ptype)
-  e2 <- vec_cast(e2, ptype)
-
-  if (.Generic %in% c("+", "-", "*", "/", "^", "%%", "%/%")) {
-    vec_grp_numeric(.Generic, e1, e2)
-  } else if (.Generic %in% c("&", "|", "!")) {
-    vec_grp_logical(.Generic, e1, e2)
-  } else {
-    vec_grp_compare(.Generic, e1, e2)
-  }
-}
-
-#' @export
-Summary.vctrs_vctr <- function(..., na.rm = FALSE) {
-  vec_grp_summary(.Generic, vec_c(...), na.rm = na.rm)
-}
-
-#' @export
-mean.vctrs_vctr <- function(x, ..., na.rm = FALSE) {
-  vec_recast(NextMethod(), x)
-}
-
-#' @importFrom stats median
-#' @export
-median.vctrs_vctr <- function(x, ..., na.rm = FALSE) {
-  vec_recast(NextMethod(), x)
-}
-
-#' @export
-Math.vctrs_vctr <- function(x, ..., na.rm = FALSE) {
-  vec_recast(NextMethod(), x)
-}
-
-#' @export
-c.vctrs_vctr <- function(...) {
-  vec_c(...)
-}
-
-
-# Order and equality ------------------------------------------------------
-
-#' @export
-vec_proxy_order.vctrs_vctr <- function(x) {
-  if (is.list(x)) {
-    # no natural ordering for lists, so just preserve
-    seq_along(x)
-  } else {
-    vec_data(x)
-  }
-}
-
-#' @export
-vec_proxy_equality.default <- function(x) {
-  vec_data(x)
-}
-
-#' @export
-xtfrm.vctrs_vctr <- function(x) {
-  proxy <- vec_proxy_order(x)
-
-  # order(order(x)) ~= rank(x)
-  if (is.data.frame(proxy)) {
-    order(do.call(base::order, proxy))
-  } else if (is_integer(proxy) || is_double(proxy)) {
-    proxy
-  } else if (is_character(proxy)) {
-    order(order(proxy))
-  } else {
-    stop("Invalid value returned by `vec_proxy_equality()`.", call. = FALSE)
+} else {
+  function(x) {
+    any(is.na(x))
   }
 }
 
@@ -402,47 +307,200 @@ anyDuplicated.vctrs_vctr <- function(x, incomparables = FALSE, ...) {
   vec_duplicate_any(x)
 }
 
-# Protection --------------------------------------------------------------
+# Comparison ----------------------------------------------------------------
 
-stop_unsupported <- function(x, operation) {
-  msg <- glue::glue("Must not {operation} {vec_ptype_full(x)} vector")
-  abort(
-    "error_unsupported",
-    message = msg,
-    x = x,
-    operation = operation
-  )
+#' @export
+`<=.vctrs_vctr` <- function(e1, e2) {
+  vec_compare(e1, e2) <= 0
 }
 
 #' @export
+`<.vctrs_vctr` <- function(e1, e2) {
+  vec_compare(e1, e2) < 0
+}
+
+#' @export
+`>=.vctrs_vctr` <- function(e1, e2) {
+  vec_compare(e1, e2) >= 0
+}
+
+#' @export
+`>.vctrs_vctr` <- function(e1, e2) {
+  vec_compare(e1, e2) > 0
+}
+
+#' @export
+xtfrm.vctrs_vctr <- function(x) {
+  proxy <- vec_proxy_compare(x)
+
+  # order(order(x)) ~= rank(x)
+  if (is.data.frame(proxy)) {
+    order(do.call(base::order, proxy))
+  } else if (is_integer(proxy) || is_double(proxy)) {
+    proxy
+  } else if (is_character(proxy) || is_logical(proxy)) {
+    order(order(proxy))
+  } else if (is_list(proxy)) {
+    stop("Lists are not comparible", call. = FALSE)
+  } else {
+    stop("Invalid type returned by `vec_proxy_compare()`.", call. = FALSE)
+  }
+}
+
+#' @importFrom stats median
+#' @export
+median.vctrs_vctr <- function(x, ..., na.rm = FALSE) {
+  stop_unimplemented(x, "median")
+}
+
+#' @importFrom stats quantile
+#' @export
+quantile.vctrs_vctr <- function(x, ..., type = 1, na.rm = FALSE) {
+  stop_unimplemented(x, "quantile")
+}
+
+#' @export
+min.vctrs_vctr <- function(x, ..., na.rm = FALSE) {
+  # TODO: implement to do vec_arg_min()
+  rank <- xtfrm(x)
+  idx <- if (isTRUE(na.rm)) which.max(rank) else which(rank == min(rank))
+  x[[idx[[1]]]]
+}
+
+#' @export
+max.vctrs_vctr <- function(x, ..., na.rm = FALSE) {
+  # TODO: implement to do vec_arg_max()
+  rank <- xtfrm(x)
+  idx <- if (isTRUE(na.rm)) which.max(rank) else which(rank == max(rank))
+  x[[idx[[1]]]]
+}
+
+
+# Numeric -----------------------------------------------------------------
+
+#' @export
+Math.vctrs_vctr <- function(x, ...) {
+  vec_math(.Generic, x, ...)
+}
+
+#' @export
+Summary.vctrs_vctr <- function(..., na.rm = FALSE) {
+  x <- vec_c(...)
+  vec_math(.Generic, x, na.rm = TRUE)
+}
+
+#' @export
+mean.vctrs_vctr <- function(x, ..., na.rm = FALSE) {
+  vec_math("mean", x, na.rm = TRUE)
+}
+
+#' @export
+is.finite.vctrs_rcrd <- function(x) {
+  vec_math("is.finite", x)
+}
+
+#' @export
+is.infinite.vctrs_rcrd <- function(x) {
+  vec_math("is.infinite", x)
+}
+
+#' @export
+is.nan.vctrs_rcrd <- function(x) {
+  vec_math("is.nan", x)
+}
+
+# Arithmetic --------------------------------------------------------------
+
+#' @export
+`+.vctrs_vctr` <- function(e1, e2) {
+  if (missing(e2)) {
+    vec_arith("+", e1, MISSING())
+  } else {
+    vec_arith("+", e1, e2)
+  }
+}
+
+#' @export
+`-.vctrs_vctr` <- function(e1, e2) {
+  if (missing(e2)) {
+    vec_arith("-", e1, MISSING())
+  } else {
+    vec_arith("-", e1, e2)
+  }
+}
+
+#' @export
+`*.vctrs_vctr` <- function(e1, e2) {
+  vec_arith("*", e1, e2)
+}
+
+#' @export
+`/.vctrs_vctr` <- function(e1, e2) {
+  vec_arith("/", e1, e2)
+}
+
+#' @export
+`%%.vctrs_vctr` <- function(e1, e2) {
+  vec_arith("%%", e1, e2)
+}
+
+#' @export
+`%/%.vctrs_vctr` <- function(e1, e2) {
+  vec_arith("%/%", e1, e2)
+}
+
+#' @export
+`!.vctrs_vctr` <- function(x) {
+  vec_arith("!", x, MISSING())
+}
+
+#' @export
+`&.vctrs_vctr` <- function(e1, e2) {
+  vec_arith("&", e1, e2)
+}
+
+#' @export
+`|.vctrs_vctr` <- function(e1, e2) {
+  vec_arith("|", e1, e2)
+}
+
+# Unimplemented ------------------------------------------------------------
+
+#' @export
+summary.vctrs_vctr <- function(object, ...) {
+  stop_unimplemented(object, "summary")
+}
+
+# Unsupported --------------------------------------------------------------
+
+#' @export
 `dim<-.vctrs_vctr` <- function(x, value) {
-  stop_unsupported(x, "set dim() on")
+  stop_unsupported(x, "dim<-")
 }
 
 #' @export
 `dimnames<-.vctrs_vctr` <- function(x, value) {
-  stop_unsupported(x, "set dimnames() on ")
+  stop_unsupported(x, "dimnames<-")
+}
+
+#' @export
+levels.vctrs_vctr <- function(x) {
+  stop_unsupported(x, "levels")
 }
 
 #' @export
 `levels<-.vctrs_vctr` <- function(x, value) {
-  stop_unsupported(x, "set levels() on")
+  stop_unsupported(x, "levels<-")
 }
 
 #' @export
 `t.vctrs_vctr` <- function(x) {
-  stop_unsupported(x, "transpose")
+  stop_unsupported(x, "t")
 }
 
 #' @export
-`names<-.vctrs_vctr` <- function(x, value) {
-  if (length(value) != 0 && length(value) != length(x)) {
-    stop("`names()` must be the same length as x", call. = FALSE)
-  }
-  if (!names_all_or_nothing(value)) {
-    stop("If any elements are named, all elements must be named", call. = FALSE)
-  }
-  NextMethod()
+`is.na<-.vctrs_vctr` <- function(x, value) {
+  stop_unsupported(x, "is.na<-")
 }
 
 # Data frame --------------------------------------------------------------
@@ -478,6 +536,8 @@ new_hidden <- function(x = double()) {
   new_vctr(vec_cast(x, double()), class = "hidden")
 }
 format.hidden <- function(x, ...) rep("xxx", length(x))
+
+vec_restore_numeric.hidden <- function(x, to) new_hidden(x)
 
 vec_type2.hidden          <- function(x, y) UseMethod("vec_type2.hidden")
 vec_type2.hidden.default  <- function(x, y) stop_incompatible_type(x, y)

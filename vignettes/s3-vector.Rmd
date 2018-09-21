@@ -46,8 +46,8 @@ This vignette shows you the basic infrastructure for creating a new vector: defi
   vctrs provided the tricky `as.data.frame()` for you.
 
 * Subsetting (`[`, `[[`, `$`), `length<-`, and `rep()` methods automatically
-  preserve attributes because they're built on top of `vec_recast()`. A 
-  default `vec_recast()` works for all classes where the attributes are 
+  preserve attributes because they're built on top of `vec_restore()`. A 
+  default `vec_restore()` works for all classes where the attributes are 
   data-independent, and can easily be customised when the attributes do depend
   on the data.
 
@@ -84,13 +84,24 @@ x
 str(x)
 ```
 
+If you want your class to be extensible, you need to include `...` and `class` in your low-level constructor:
+
+```{r}
+new_percent <- function(x, ..., class = character()) {
+  stopifnot(is.double(x))
+  new_vctr(x, ..., class = c(class, "vctrs_percent"))
+}
+```
+
+You need to carefully decide if it's worthwhile to make your class extensible, as it will make the implementation of other methods more complex, since you only know the inputs contain at least the specified attributes; they may contain more if it's a subclass.
+
 ### `format()` method
 
 The first method for every class should almost always be a `format()` method. This should return a character vector the same length as `x`. The easiest way to do this is to rely on one of R's low-level formatting functions like `formatC()`:
 
 ```{r}
 format.vctrs_percent <- function(x, ...) {
-  out <- formatC(signif(x * 100, 3))
+  out <- formatC(signif(vec_data(x) * 100, 3))
   out[is.na(x)] <- NA
   out[!is.na(x)] <- paste0(out[!is.na(x)], "%")
   out
@@ -100,7 +111,7 @@ format.vctrs_percent <- function(x, ...) {
 ```{r, include = FALSE}
 # As of R 3.5, print.vctr can not find format.percent since it's not in
 # it's lexical environment. We fix that problem by manually registering.
-vec_method_register("base::format.vctrs_percent")
+vec_method_register("base::format", "vctrs_percent")
 ```
 
 ```{r}
@@ -131,14 +142,12 @@ If you need more control over printing in tibbles, implement a method for  `pill
 
 ### Default methods
 
-The vctr base class provides implementations of many important generics so that you don't have to. This means that most functions will just work out of the box without any additional effort on your part:
+The vctr base class provides implementations of many important generics so that you don't have to. This means that many functions will work out of the box without any additional effort on your part:
 
 ```{r}
 x[1:2]
 
 x[[1]]
-
--x
 
 sqrt(x)
 ```
@@ -173,7 +182,7 @@ vec_cast.vctrs_percent.NULL    <- function(x, to) x
 vec_cast.NULL.vctrs_percent    <- function(x, to) x
 ```
 ```{r, include = FALSE}
-vec_method_register("vctrs::vec_cast.vctrs_percent")
+vec_method_register("vctrs::vec_cast", "vctrs_percent")
 ```
 
 You also need to provide a method to coerce one percent object to match the attributes of another. This is very simple because percent objects have no attributes, but it will more complicated for more complex object types.
@@ -225,7 +234,7 @@ vec_type2.NULL.vctrs_percent    <- function(x, y) percent()
 vec_type2.vctrs_percent.vctrs_percent <- function(x, y) percent()
 ```
 ```{r, include = FALSE}
-vec_method_register("vctrs::vec_type2.vctrs_percent")
+vec_method_register("vctrs::vec_type2", "vctrs_percent")
 ```
 
 Next we define methods that say it's ok to automatically coerce percents to double and integer vectors.
@@ -244,17 +253,9 @@ Implementing casting gives you more methods for free:
 ```{r}
 vec_c(x, 1)
 
-x == 1
-x * 2
+x[1] <- 1
 ```
 
-Unfortunately, due to the design of the "S3 group generics", there's no way to make vctr classes fully compatible with the base S3 classes:
-
-```{r, error = TRUE}
-x * factor("x")
-
-c(factor("x"), x)
-```
 
 However, you can assume any function beginning with `vec()` will handle these coercions correctly.
 
@@ -303,7 +304,6 @@ By default, vctrs assumes that attributes are independent of the data, and so ar
 ```{r}
 x[1:2]
 x[[1]]
-x * 2
 ```
 
 For the sake of exposition, we'll assume that `digits` is an important attribute of the class, and should be included in the full type:
@@ -391,19 +391,19 @@ As mentioned above, vctrs assumes that attributes are independent of the data. T
 x[1:2]
 ```
 
-To fix this, you need to provide a `vec_recast()` method. Note that this method dispatches on the `to` argument.
+To fix this, you need to provide a `vec_restore()` method. Note that this method dispatches on the `to` argument.
 
 ```{r}
-vec_recast.vctrs_cached_sum <- function(x, to) {
+vec_restore.vctrs_cached_sum <- function(x, to) {
   new_cached_sum(x, sum(x))
 }
 
 x[1]
 ```
 
-This works because most of the vctrs methods dispatch to the underlying base function, by first stripping off extra attributes with `vec_data()` and then reapplying them again with `vec_recast()`. The default `vec_recast()` method copies over all attributes, which is not appropriate here.
+This works because most of the vctrs methods dispatch to the underlying base function, by first stripping off extra attributes with `vec_data()` and then reapplying them again with `vec_restore()`. The default `vec_restore()` method copies over all attributes, which is not appropriate here.
 
-Note that `vec_recast.class` is subtly different from `vec_cast.class.class()`. `vec_recast()` is used when restoring attributes that have been lost; `vec_cast()` is used for coercions. This is easier to understand with a concrete example. Imagine factors were implements with `new_vectr()`. `vec_recast.factor()` would restore attributes back to an integer vector, but you would not want to allow manually casting an integer to a factor with `vec_cast()`. 
+Note that `vec_restore.class` is subtly different from `vec_cast.class.class()`. `vec_restore()` is used when restoring attributes that have been lost; `vec_cast()` is used for coercions. This is easier to understand with a concrete example. Imagine factors were implements with `new_vectr()`. `vec_restore.factor()` would restore attributes back to an integer vector, but you would not want to allow manually casting an integer to a factor with `vec_cast()`. 
 
 # Rational
 

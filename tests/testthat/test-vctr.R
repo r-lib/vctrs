@@ -24,11 +24,11 @@ test_that("cast to NULL returns x", {
   expect_equal(vec_cast(NULL, x), NULL)
 })
 
-test_that("recasting to atomic vector of same type preserves attributes", {
+test_that("restoring to atomic vector of same type preserves attributes", {
   x1 <- new_vctr(1, class = "x")
   x2 <- new_vctr(2, class = "x")
 
-  expect_equal(vec_recast(2, x1), x2)
+  expect_equal(vec_restore(2, x1), x2)
 })
 
 test_that("xtfrm works for variety of base classes", {
@@ -36,10 +36,6 @@ test_that("xtfrm works for variety of base classes", {
   expect_equal(xtfrm(x), 1:3)
 
   x <- new_vctr(letters[1:3])
-  expect_equal(xtfrm(x), 1:3)
-
-  # lists have no natural ordering so we just preserve existing
-  x <- new_vctr(list(3, 2, 1))
   expect_equal(xtfrm(x), 1:3)
 })
 
@@ -120,16 +116,11 @@ test_that("RHS cast when using subset assign", {
   expect_equal(h, new_hidden(c(1, 2)))
 })
 
-test_that("group generics dispatch to vctr group generics", {
+test_that("numeric methods use vec_restore_numeric", {
   h <- new_hidden(1)
 
   expect_equal(abs(h), h)
-  expect_equal(+h, h)
-  expect_equal(h * 2, new_hidden(2))
-  expect_error(h & 1, "Boolean operator")
-
-  expect_equal(h == 1, TRUE)
-  expect_equal(h == c(1, 2), c(TRUE, FALSE))
+  expect_equal(sum(h), h)
 })
 
 test_that("c passes on to vec_c", {
@@ -147,7 +138,18 @@ test_that("summaries preserve class", {
 
   expect_equal(sum(h), new_hidden(3))
   expect_equal(mean(h), new_hidden(1.5))
-  expect_equal(median(h), new_hidden(1.5))
+})
+
+test_that("methods using vec_proxy_compare agree with base", {
+  h <- new_hidden(c(1:10))
+
+  expect_agree <- function(f, x) {
+    f <- enexpr(f)
+    expect_equal(vec_data((!!f)(x)), (!!f)(vec_data(x)))
+  }
+
+  expect_agree(min, h)
+  expect_agree(max, h)
 })
 
 test_that("can put in data frame", {
@@ -211,16 +213,3 @@ test_that("can't transpose", {
   h <- new_hidden(1:4)
   expect_error(t(h), class = "error_unsupported")
 })
-
-# logical class -----------------------------------------------------------
-
-test_that("logical group generics return bare logical", {
-  v <- new_vctr(TRUE, class = "test")
-
-  expect_equal(v == v, TRUE)
-  expect_equal(v & v, TRUE)
-  expect_equal(!v, FALSE)
-})
-
-
-

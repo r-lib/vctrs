@@ -60,6 +60,16 @@ names.vctrs_rcrd <- function(x) {
   NULL
 }
 
+#' @export
+format.vctrs_rcrd <- function(x, ...) {
+  stop_unimplemented(x, "format")
+}
+
+#' @export
+vec_str_data.vctrs_rcrd <- function(x, ...) {
+  vec_str_leaf(x, ...)
+}
+
 #' @method vec_cast vctrs_rcrd
 #' @export
 vec_cast.vctrs_rcrd <- function(x, to) UseMethod("vec_cast.vctrs_rcrd")
@@ -80,18 +90,25 @@ vec_cast.vctrs_rcrd.default <- function(x, to) {
   stop_incompatible_cast(x, to)
 }
 
+#' @export
+vec_restore.vctrs_rcrd <- function(x, to) {
+  attributes(x) <- attributes(to)
+  x
+}
+
+
 # Subsetting --------------------------------------------------------------
 
 #' @export
 `[.vctrs_rcrd` <- function(x, i,...) {
   out <- lapply(vec_data(x), `[`, i, ...)
-  vec_recast(out, x)
+  vec_restore(out, x)
 }
 
 #' @export
 `[[.vctrs_rcrd` <- function(x, i, ...) {
   out <- lapply(vec_data(x), `[[`, i, ...)
-  vec_recast(out, x)
+  vec_restore(out, x)
 }
 
 #' @export
@@ -102,13 +119,13 @@ vec_cast.vctrs_rcrd.default <- function(x, to) {
 #' @export
 rep.vctrs_rcrd <- function(x, ...) {
   out <- lapply(vec_data(x), rep, ...)
-  vec_recast(out, x)
+  vec_restore(out, x)
 }
 
 #' @export
 `length<-.vctrs_rcrd` <- function(x, value) {
   out <- lapply(vec_data(x), `length<-`, value)
-  vec_recast(out, x)
+  vec_restore(out, x)
 }
 
 #' @export
@@ -125,7 +142,7 @@ as.list.vctrs_rcrd <- function(x, ...) {
     x[[i]] <- value
     x
   })
-  vec_recast(out, x)
+  vec_restore(out, x)
 }
 
 #' @export
@@ -149,85 +166,25 @@ as.list.vctrs_rcrd <- function(x, ...) {
     }
   }
   out <- map2(vec_data(x), vec_data(value), replace)
-  vec_recast(out, x)
+  vec_restore(out, x)
 }
 
 # Equality and ordering ---------------------------------------------------
 
 #' @export
-vec_proxy_equality.vctrs_rcrd <- function(x)  {
+vec_proxy_equal.vctrs_rcrd <- function(x)  {
   new_data_frame(vec_data(x), length(x))
 }
 
 #' @export
-vec_proxy_order.vctrs_rcrd <- function(x) {
+vec_proxy_compare.vctrs_rcrd <- function(x) {
   new_data_frame(vec_data(x), length(x))
 }
 
-# Unimplemented -----------------------------------------------------------
-
-stop_unimplemented <- function(x, method) {
-  msg <- glue::glue("`{method}.{class(x)[[1]]}()` not implemented")
-  abort(
-    "error_unimplemented",
-    message = msg,
-    x = x,
-    method = method
-  )
-}
-
 #' @export
-format.vctrs_rcrd <- function(x, ...) {
-  stop_unimplemented(x, "format")
+vec_math.vctrs_rcrd <- function(fun, x, ...) {
+  stop_unsupported(x, "vec_math")
 }
-
-#' @export
-mean.vctrs_rcrd <- function(x, ..., na.rm = FALSE) {
-  stop_unimplemented(x, "mean")
-}
-
-#' @importFrom stats median
-#' @export
-median.vctrs_rcrd <- function(x, ..., na.rm = FALSE) {
-  stop_unimplemented(x, "median")
-}
-
-#' @export
-Math.vctrs_rcrd <- function(x, ..., na.rm = FALSE) {
-  stop_unimplemented(x, .Generic)
-}
-
-#' @export
-anyNA.vctrs_rcrd <- if (getRversion() >= "3.2") {
-  function(x, recursive = FALSE) {
-    stop_unimplemented(x, .Method)
-  }
-} else {
-  function(x) {
-    stop_unimplemented(x, .Method)
-  }
-}
-
-#' @export
-is.finite.vctrs_rcrd <- function(x) {
-  stop_unimplemented(x, .Method)
-}
-
-#' @export
-is.finite.vctrs_rcrd <- function(x) {
-  stop_unimplemented(x, .Method)
-}
-
-#' @export
-is.na.vctrs_rcrd <- function(x) {
-  stop_unimplemented(x, .Method)
-}
-
-#' @export
-is.nan.vctrs_rcrd <- function(x) {
-  stop_unimplemented(x, .Method)
-}
-
 # Helpers -----------------------------------------------------------------
 
 unique_field_names <- function(x) {
@@ -269,13 +226,5 @@ vec_type2.tuple.default <- function(x, y) stop_incompatible_type(x, y)
 vec_cast.tuple <- function(x, to) UseMethod("vec_cast.tuple")
 vec_cast.tuple.list <- function(x, to) vec_list_cast(x, to)
 vec_cast.tuple.tuple <- function(x, to) x
-
-vec_grp_numeric.tuple <- function(generic, x, y) {
-  rec <- vec_recycle(x, y)
-  tuple(
-    vec_generic_call(generic, field(rec[[1]], "x"), field(rec[[2]], "x")),
-    vec_generic_call(generic, field(rec[[1]], "y"), field(rec[[2]], "y"))
-  )
-}
 
 # nocov end

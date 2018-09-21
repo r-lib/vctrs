@@ -4,7 +4,7 @@ vec_subset <- function(x, i) {
   } else if (is.data.frame(x)) {
     # Much faster, and avoids creating rownames
     out <- lapply(x, `[`, i)
-    vec_recast(out, x)
+    vec_restore(out, x)
   } else if (is_vector(x)) {
     d <- vec_dims(x)
     if (d == 1) {

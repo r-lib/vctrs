@@ -18,7 +18,8 @@ Imports:
     glue,
     rlang,
     tibble,
-    backports
+    backports,
+    zeallot
 Suggests: 
     covr,
     testthat,

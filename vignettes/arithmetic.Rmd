@@ -1,0 +1,200 @@
+---
+title: "Vector arithmetic"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Vector arithmetic}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(vctrs)
+```
+
+## Period and frequency
+
+```{r}
+period <- function(x) {
+  x <- vec_cast(x, double())
+  new_vctr(x, class = "vctrs_period")
+}
+format.vctrs_period <- function(x) {
+  paste0(format(vec_data(x)), " s")
+}
+
+freq <- function(x) {
+  x <- vec_cast(x, double())
+  new_vctr(x, class = "vctrs_frequency")
+}
+format.vctr_frequency <- function(x) {
+  paste0(format(vec_data(x)), " Hz")
+}
+
+period(0.1)
+freq(10)
+```
+
+
+```{r}
+vec_arith.vctr_frequency <- function(op, x, y) {
+  UseMethod("vec_arith.vctr_frequency", y)
+}
+vec_arith.vctrs_frequency.default <- function(op, x, y) {
+  stop_incompatible_op(op, x, y)
+}
+vec_arith.vctrs_period <- function(op, x, y) {
+  UseMethod("vec_arith.vctrs_period", y)
+}
+vec_arith.vctrs_period.default <- function(op, x, y) {
+  stop_incompatible_op(op, x, y)
+}
+```
+
+```{r}
+vec_arith.vctrs_period.vctrs_period <- function(op, x, y) {
+  switch(op,
+    `-` = ,
+    `+` = vec_restore(vec_arith_base(op, x, y), x),
+    stop_incompatible_op(op, x, y)
+  )
+}
+vec_arith.vctrs_period.numeric <- function(op, x, y) {
+  switch(op,
+    `-` = ,
+    `+` = ,
+    `*` = ,
+    `/` = vec_restore(vec_arith_base(op, x, y), x),
+    stop_incompatible_op(op, x, y)
+  )
+}
+vec_arith.numeric.vctrs_period <- function(op, x, y) {
+  switch(op,
+    `*` = vec_restore(vec_arith_base(op, x, y), y),
+    `/` = freq(vec_arith_base(op, x, y)),
+    stop_incompatible_op(op, x, y)
+  )
+}
+
+period(1) + period(1)
+2 * period(10)
+period(10) / 5
+5 / period(10)
+```
+
+
+## Intervals
+
+First, we implement an interval class, a record composed of `l`eft and `r`ight fields. As usual, we make a low-level constructor, a user-friend constructor, and define a format method.
+
+```{r}
+new_interval <- function(l, r) {
+  stopifnot(is.double(l), is.double(r))
+  new_rcrd(list(l = l, r = r), class = "vctrs_interval")
+}
+interval <- function(l, r) {
+  c(l, r) %<-% as.list(vec_coerce(l, r, .ptype = double()))
+  c(l, r) %<-% vec_recycle(l, r)
+  c(l, r) %<-% list(pmin(l, r), pmax(l, r))
+  new_interval(l, r)
+}
+format.vctrs_interval <- function(x, ...) {
+  l <- field(x, "l")
+  r <- field(x, "r")
+  
+  out <- paste0("[", format(l), ",", format(r), "]")
+  out[is.na(x)] <- NA
+  out
+}
+
+x <- new_interval(c(0.25, 0.5, 0.75, NA), c(0.5, 1.5, 2, NA))
+x
+```
+
+Arithmetic operations are provided by a single generic, `vec_arith()`, which like `vec_cast()` and `vec_type2()`, uses double dispatch. That means we start with some boilerplate:
+
+```{r}
+vec_arith.vctrs_interval <- function(op, x, y) {
+  UseMethod("vec_arith.vctrs_interval", y)
+}
+vec_arith.vctrs_interval.default <- function(op, x, y) {
+  stop_incompatible_op(op, x, y)
+}
+```
+
+First, we'll implement a method two intervals. <https://en.wikipedia.org/wiki/Interval_arithmetic#Simple_arithmetic>
+
+```{r}
+vec_arith.vctrs_interval.vctrs_interval <- function(op, x, y) {
+  c(x, y) %<-% vec_recycle(x, y)
+  
+  x1 <- field(x, "l"); x2 <- field(x, "r")
+  y1 <- field(y, "l"); y2 <- field(y, "r")
+  
+  switch(op,
+    "+" = new_interval(x1 + y1, x2 + y2),
+    "-" = new_interval(xl - y2, x2 - y1),
+    "*" = new_interval(
+      pmin(x1 * y1, x1 * y2, x2 * y1, x2 * y2), 
+      pmax(x1 * y1, x1 * y2, x2 * y1, x2 * y2)
+    ),
+    stop_incompatible_op(op, x, y)
+  )
+}
+
+x + interval(0, 1)
+
+x * interval(0, 1)
+x * interval(1, 2)
+```
+
+```{r}
+vec_arith.vctrs_interval.double <- function(op, x, y) {
+  c(x, y) %<-% vec_recycle(x, y)
+  
+  l <- vec_arith_base(op, field(x, "l"), y)
+  r <- vec_arith_base(op, field(x, "r"), y)
+  
+  new_interval(pmin(l, r), pmax(l, r))
+}
+
+x + 1
+x / 2
+x * -2 
+```
+
+```{r}
+vec_arith.numeric.vctrs_interval <- function(op, x, y) {
+  c(x, y) %<-% vec_recycle(x, y)
+  
+  l <- vec_arith_base(op, x, field(y, "l"))
+  r <- vec_arith_base(op, x, field(y, "r"))
+  
+  new_interval(pmin(l, r), pmax(l, r))
+}
+
+1 + x
+2 / x 
+-2 * x 
+```
+
+```{r}
+
+vec_arith.vctrs_interval.MISSING <- function(op, x, y) {
+  switch(op, 
+    `-` = x * -1,
+    `+` = x,
+    stop_incompatible_op(op, x, y)
+  )
+}
+-x 
++x
+```
+
+(Note that this implementation prevents subclassing)

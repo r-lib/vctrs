@@ -4,6 +4,7 @@
 \alias{vctrs-conditions}
 \alias{stop_incompatible_type}
 \alias{stop_incompatible_cast}
+\alias{stop_incompatible_op}
 \alias{warn_lossy_cast}
 \title{Custom conditions for vctrs package}
 \usage{
@@ -11,6 +12,9 @@ stop_incompatible_type(x, y, details = NULL, ..., message = NULL,
   .subclass = NULL)
 
 stop_incompatible_cast(x, y, details = NULL, ..., message = NULL,
+  .subclass = NULL)
+
+stop_incompatible_op(op, x, y, details = NULL, ..., message = NULL,
   .subclass = NULL)
 
 warn_lossy_cast(x, y, locations = NULL, details = NULL, ...,

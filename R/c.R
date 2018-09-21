@@ -61,7 +61,8 @@ vec_c <- function(..., .ptype = NULL) {
     pos <- pos + n
   }
 
-  names(out) <- names
+  if (!is.null(names))
+    names(out) <- names
 
   out
 }

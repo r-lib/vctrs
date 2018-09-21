@@ -53,17 +53,19 @@
 #'   data.frame(z = "a")
 #' )
 vec_ptype <- function(..., .ptype = NULL) {
-  if (!is.null(.ptype)) {
-    ptype <- as_vec_ptype(.ptype)
-  } else {
-    if (isTRUE(getOption("vctrs.no_guessing"))) {
-      stop("strict mode is activated; you must supply .ptype", call. = FALSE)
-    }
-
-    args <- list2(...)
-    ptypes <- map(args, as_vec_ptype)
-    ptype <- reduce(ptypes, vec_type2, .init = unknown())
+  if (!is_partial(.ptype)) {
+    return(new_vec_ptype(as_vec_ptype(.ptype)))
   }
+
+  if (isTRUE(getOption("vctrs.no_guessing"))) {
+    stop("strict mode is activated; you must supply complete .ptype", call. = FALSE)
+  }
+
+  args <- list2(...)
+  ptypes <- map(args, as_vec_ptype)
+  ptype <- reduce(ptypes, vec_type2, .init = .ptype)
+
+  ptype <- vec_type_finalise(ptype)
 
   new_vec_ptype(ptype)
 }
@@ -124,6 +126,6 @@ as_vec_ptype.data.frame <- function(x) {
   cols[null_cols] <- rep.int(list(unknown()), sum(null_cols))
   cols[!null_cols] <- map(cols[!null_cols], as_vec_ptype)
 
-  new_data_frame(cols, 0L, setdiff(class(x), "data.frame"))
+  new_data_frame(cols, 0L, subclass = setdiff(class(x), "data.frame"))
 }
 

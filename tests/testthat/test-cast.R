@@ -258,7 +258,7 @@ test_that("casts preserve outer class", {
 
 test_that("recast generates correct row/col names", {
   df1 <- data.frame(x = 1:4, y = 1:4, z = 1:4)
-  df2 <- vec_recast(lapply(df1[1:3], `[`, 1:2), df1)
+  df2 <- vec_restore(lapply(df1[1:3], `[`, 1:2), df1)
 
   expect_named(df2, c("x", "y", "z"))
   expect_equal(.row_names_info(df2), -2)
@@ -266,7 +266,7 @@ test_that("recast generates correct row/col names", {
 
 test_that("recast makes tibbles", {
   df1 <- tibble::tibble(x = 1:4)
-  df2 <- vec_recast(vec_data(df1), df1)
+  df2 <- vec_restore(vec_data(df1), df1)
 
   expect_s3_class(df1, "tbl_df")
 })

@@ -42,7 +42,7 @@ vec_count <- function(x, sort = c("count", "key", "location", "none")) {
   sort <- match.arg(sort)
 
   # Returns key-value pair giving index of first occurence value and count
-  kv <- .Call(vctrs_count, vec_proxy_equality(x))
+  kv <- .Call(vctrs_count, vec_proxy_equal(x))
 
   df <- data.frame(key = 0, count = kv$val)
   df$key <- vec_subset(x, kv$key) # might be a dataframe
@@ -125,21 +125,21 @@ NULL
 #' @rdname vec_duplicate
 #' @export
 vec_duplicate_any <- function(x) {
-  x <- vec_proxy_equality(x)
+  x <- vec_proxy_equal(x)
   .Call(vctrs_duplicated_any, x)
 }
 
 #' @rdname vec_duplicate
 #' @export
 vec_duplicate_detect <- function(x) {
-  x <- vec_proxy_equality(x)
+  x <- vec_proxy_equal(x)
   .Call(vctrs_duplicated, x)
 }
 
 #' @rdname vec_duplicate
 #' @export
 vec_duplicate_id <- function(x) {
-  x <- vec_proxy_equality(x)
+  x <- vec_proxy_equal(x)
   .Call(vctrs_id, x)
 }
 
@@ -179,21 +179,21 @@ vec_duplicate_id <- function(x) {
 #' # But they are for the purposes of considering uniqueness
 #' vec_unique(c(NA, NA, NA, NA, 1, 2, 1))
 vec_unique <- function(x) {
-  px <- vec_proxy_equality(x)
+  px <- vec_proxy_equal(x)
   vec_subset(x, vec_unique_loc(px))
 }
 
 #' @rdname vec_unique
 #' @export
 vec_unique_loc <- function(x) {
-  x <- vec_proxy_equality(x)
+  x <- vec_proxy_equal(x)
   .Call(vctrs_unique_loc, x)
 }
 
 #' @rdname vec_unique
 #' @export
 vec_unique_count <- function(x) {
-  x <- vec_proxy_equality(x)
+  x <- vec_proxy_equal(x)
   .Call(vctrs_n_distinct, x)
 }
 
@@ -230,12 +230,12 @@ vec_unique_count <- function(x) {
 #' vec_match(c("a", "b"), c("a", "b", "a", "b"))
 vec_match <- function(needles, haystack) {
   v <- vec_coerce(needles = needles, haystack = haystack)
-  .Call(vctrs_match, vec_proxy_equality(v$needles), vec_proxy_equality(v$haystack))
+  .Call(vctrs_match, vec_proxy_equal(v$needles), vec_proxy_equal(v$haystack))
 }
 
 #' @export
 #' @rdname vec_match
 vec_in <- function(needles, haystack) {
   v <- vec_coerce(needles = needles, haystack = haystack)
-  .Call(vctrs_in, vec_proxy_equality(v$needles), vec_proxy_equality(v$haystack))
+  .Call(vctrs_in, vec_proxy_equal(v$needles), vec_proxy_equal(v$haystack))
 }

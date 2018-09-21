@@ -18,6 +18,7 @@ atomic vector or list. Currently, due to the underlying memory architecture
 of R, this creates a full copy of the underlying data.
 }
 \seealso{
-See \code{\link[=vec_recast]{vec_recast()}} for the inverse operation: it restores
-attributes given a bare vector and a prototype.
+See \code{\link[=vec_restore]{vec_restore()}} for the inverse operation: it restores
+attributes given a bare vector and a prototype;
+\code{vec_restore(vec_data(x), x)} will always yield \code{x}.
 }

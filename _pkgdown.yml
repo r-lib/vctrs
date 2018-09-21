@@ -32,7 +32,7 @@ reference:
   - vec_list_cast
   - vec_type2
   - vec_grp_compare
-  - vec_proxy_equality
+  - vec_proxy_equal
   - vec_ptype_full
   - "vctrs-conditions"
   - rcrd

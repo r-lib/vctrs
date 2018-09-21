@@ -39,7 +39,7 @@ outer_names <- function(outer, names, n) {
 }
 
 cat_line <- function(...) {
-  cat(..., "\n", sep = "")
+  cat(paste0(..., "\n", collapse = ""))
 }
 
 
@@ -71,3 +71,19 @@ has_attrs <- function(x) {
 
   !identical(names(attr), "names")
 }
+
+vec_binary <- function(x, y, f = vec_data) {
+  args <- vec_recycle(x, y)
+  args <- vec_coerce(!!!args)
+  lapply(args, vec_data)
+}
+
+#' Destructuring assignment
+#'
+#' See \code{zeallot::\link[zeallot]{\%<-\%}} for details.
+#' @importFrom zeallot %<-%
+#' @export
+#' @rdname unpack-assign
+#' @name %<-%
+#' @keywords internal
+`%<-%`

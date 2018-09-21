@@ -7,8 +7,9 @@
 #' @param x A vector
 #' @export
 #' @return The data underlying `x`, free from an attributes.
-#' @seealso See [vec_recast()] for the inverse operation: it restores
-#'   attributes given a bare vector and a prototype.
+#' @seealso See [vec_restore()] for the inverse operation: it restores
+#'   attributes given a bare vector and a prototype;
+#'   `vec_restore(vec_data(x), x)` will always yield `x`.
 vec_data <- function(x) {
   stopifnot(is_vector(x))
 

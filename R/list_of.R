@@ -45,13 +45,19 @@ as_list_of.list <- function(x, ..., .ptype = NULL) {
   list_of(!!!x, .ptype = .ptype)
 }
 
+#' Create list_of subclass
+#'
+#' @param x A list
+#' @param ptype The prototype which every element of `x` belongs to
+#' @param ... Additional attributes used by subclass
+#' @param class Optional subclass name
+#' @keywords internal
 #' @export
-#' @rdname list_of
-new_list_of <- function(x, .ptype) {
+new_list_of <- function(x, ptype, ..., class = character()) {
   stopifnot(is.list(x))
-  stopifnot(vec_length(.ptype) == 0)
+  stopifnot(vec_length(ptype) == 0)
 
-  new_vctr(x, ptype = .ptype, class = "vctrs_list_of")
+  new_vctr(x, ..., ptype = ptype, class = c(class, "vctrs_list_of"))
 }
 
 #' @export
@@ -64,27 +70,11 @@ is_list_of <- function(x) {
 # Formatting --------------------------------------------------------------
 
 #' @export
-print.vctrs_list_of <- function(x, ...) {
-  cat_line("<", vec_ptype_full(x), "[", length(x), "]>")
-  if (length(x) > 0) {
-    print(vec_data(x))
-  }
-  invisible(x)
-}
+vec_print_data.vctrs_list_of <- function(x, ...) {
+  if (length(x) == 0)
+    return()
 
-#' @export
-str.vctrs_list_of <- function(object, ..., indent.str = "", nest.lev = 0) {
-  if (nest.lev != 0L)
-    cat(" ")
-  cat_line(glue::glue("{vec_ptype_abbr(object)} [1:{length(object)}] "))
-
-  utils::str(
-    vec_data(object),
-    no.list = TRUE,
-    ...,
-    nest.lev = nest.lev + 1L,
-    indent.str = indent.str
-  )
+  print(vec_data(x))
 }
 
 #' @export

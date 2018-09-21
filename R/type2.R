@@ -34,6 +34,9 @@ vec_type2 <- function(x, y) {
 
 #' @export
 vec_type2.default <- function(x, y) {
+  if (identical(attributes(x), attributes(y)))
+    return(vec_subset(x, 0L))
+
   stop_incompatible_type(x, y)
 }
 

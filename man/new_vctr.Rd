@@ -3,18 +3,9 @@
 \name{new_vctr}
 \alias{new_vctr}
 \alias{vctr}
-\alias{vec_print_header}
-\alias{vec_print_data}
-\alias{vec_print_footer}
-\title{vctr (vectr) S3 class}
+\title{vctr (vector) S3 class}
 \usage{
 new_vctr(.data, ..., class = character())
-
-vec_print_header(x, ...)
-
-vec_print_data(x, ...)
-
-vec_print_footer(x, ...)
 }
 \arguments{
 \item{...}{Name-value pairs defining attributes}
@@ -25,46 +16,42 @@ vec_print_footer(x, ...)
 }
 \description{
 This abstract class provides a set of useful default methods that makes it
-considerably easier to get started with a new S3 vector class.
+considerably easier to get started with a new S3 vector class. See
+\code{vignette("S3-vector")} to learn how to use it to create your own S3
+vector classes.
 }
-\section{Recommended workflow}{
+\section{Base methods}{
 
-\enumerate{
-\item Start by creating a low-level constructor. It should be called
-\code{new_myclass()}, and should check the types (but not the values)
-of its inputs.
-\item Depending on the class create either a helper \code{myclass()}, a coercer
-\code{as_myclass()}, or both. A helper should construct valid values then
-pass on to constructor. A coercer should either check values are correct,
-or rely on the helper. Avoid defining validation code in multiple
-places.
-\item Define a useful \code{format.myclass()} method. This will give default
-\code{print()} and \code{as.character()} methods that should be adequate for
-most classes. Be warned: a good format method may be as much work
-as the rest of the class put together!
-\item Next provide \code{\link[=vec_type2]{vec_type2()}} and \code{\link[=vec_cast]{vec_cast()}}. First focus on the
-casts between your class and its underlying the base type.
-Next think about base types that should be coercible or castable.
-See \code{vignette("s3-vector")} for details.
-\item If your function behaves similarly to numbers or booleans, or has
-specialised comparison methods, read \link{vec_grp} to learn about the vctrs
-group generics: these allow you to implement many methods at once.
-}
-
-Implementing these methods gets you many methods for free:
+The vctr class provides methods for many base generics using a smaller
+set of generics defined by this package. Generally, you should think
+carefully before overriding any of the methods that vctrs implements for
+you as they've been carefully planned to be internally consistent.
 \itemize{
 \item \code{[[} and \code{[} use \code{NextMethod()} dispatch to the underlying base function,
-reconstructing attributes with \code{vec_cast()}. \code{rep()} works similarly.
-Override if one or more attributes have a one-to-one relationship to
-the underlying data.
-\item \code{[[<-} and \code{[<-} cast the RHS to the LHS, then call \code{NextMethod()}.
-Override these methods if any attributes depend on the data.
-\item \code{as.list.vctrs_vctr()} calls \code{[[} repeatedly, \code{as.character.vctrs_vctr()} calls
-\code{format()}.
-\item \code{as.data.frame.vctrs_vctr()} uses a standard technique to wrap a vector
-in a data frame. You should never need to override this method.
-\item \code{dims<-.vctrs_vctr()}, and \code{dimnames<-.vctrs_vctr()} all throw errors as generally
-custom vector classes do not need to support dimensions.
+then restore attributes with \code{vec_restore()}.
+\code{rep()} and \code{length<-} work similarly.
+\item \code{[[<-} and \code{[<-} cast \code{value} to same type as \code{x}, then call
+\code{NextMethod()}.
+\item \code{as.logical()}, \code{as.integer()}, \code{as.numeric()}, \code{as.character()},
+\code{as.Date()} and \code{as.POSIXct()} methods call \code{vec_cast()}.
+The \code{as.list()} method calls \code{[[} repeatedly, and the \code{as.data.frame()}
+method uses a standard technique to wrap a vector in a data frame.
+\item \code{==}, \code{!=}, \code{unique()}, \code{anyDuplicated()}, and \code{is.na()} use
+\code{\link[=vec_proxy_equal]{vec_proxy_equal()}}.
+\item \code{<}, \code{<=}, \code{>=}, \code{>}, \code{min()}, \code{max()}, \code{median()}, \code{quantile()},
+and \code{xtfrm()} methods use \code{\link[=vec_proxy_compare]{vec_proxy_compare()}}.
+\item \code{+}, \code{-}, \code{/}, \code{*}, \code{^}, \code{\%\%}, \code{\%/\%}, \code{!}, \code{&}, and \code{|} operators
+use \code{\link[=vec_arith]{vec_arith()}}.
+\item Mathematical operations including the Summary group generics (\code{max},
+\code{min}, \code{range}, \code{prod}, \code{sum}, \code{any}, \code{all}), the Math group generics
+(\code{abs}, \code{sign}, \code{sqrt}, \code{ceiling}, \code{floor}, \code{trunc}, \code{cummax}, \code{cummin},
+\code{cumprod}, \code{cumsum}, \code{log}, \code{log10}, \code{log2}, \code{log1p}, \code{acos}, \code{acosh},
+\code{asin}, \code{asinh}, \code{atan}, \code{atanh}, \code{exp}, \code{expm1}, \code{cos}, \code{cosh}, \code{cospi},
+\code{sin}, \code{sinh}, \code{sinpi}, \code{tan}, \code{tanh}, \code{tanpi}, \code{gamma}, \code{lgamma},
+\code{digamma}, \code{trigamma}), \code{mean()}, \code{is.nan()}, \code{is.finite()}, and
+\code{is.infinite()} use \code{\link[=vec_math]{vec_math()}}.
+\item \code{dims()}, \code{dims<-()}, \code{dimnames()}, \code{dimnames<-}, \code{levels()}, and
+\code{levels<-} methods throw errors.
 }
 }
 

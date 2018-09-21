@@ -27,7 +27,7 @@ test_that("can recast rcrd from list", {
   r <- new_rcrd(list(x = integer(), y = numeric()))
 
   expect_equal(
-    vec_recast(list(x = 1L, y = 1), r),
+    vec_restore(list(x = 1L, y = 1), r),
     new_rcrd(list(x = 1L, y = 1))
   )
 })
@@ -131,11 +131,8 @@ test_that("can round trip through list", {
 test_that("dangerous methods marked as unimplemented", {
   t <- tuple()
 
-  expect_error(mean(t), class = "error_unimplemented")
-  expect_error(median(t), class = "error_unimplemented")
-  expect_error(abs(t), class = "error_unimplemented")
-  expect_error(anyNA(t), class = "error_unimplemented")
-  expect_error(is.finite(t), class = "error_unimplemented")
-  expect_error(is.na(t), class = "error_unimplemented")
-  expect_error(is.nan(t), class = "error_unimplemented")
+  expect_error(mean(t), class = "error_unsupported")
+  expect_error(abs(t), class = "error_unsupported")
+  expect_error(is.finite(t), class = "error_unsupported")
+  expect_error(is.nan(t), class = "error_unsupported")
 })
