@@ -1,9 +1,9 @@
 ---
-title: "Proxies: equal, compare, numeric"
+title: "Proxy generics"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Proxies: equal, compare, numeric}
+  %\VignetteIndexEntry{Proxy generics}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
