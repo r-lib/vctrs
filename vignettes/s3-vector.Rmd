@@ -84,6 +84,17 @@ x
 str(x)
 ```
 
+If you want your class to be extensible, you need to include `...` and `class` in your low-level constructor:
+
+```{r}
+new_percent <- function(x, ..., class = character()) {
+  stopifnot(is.double(x))
+  new_vctr(x, ..., class = c(class, "vctrs_percent"))
+}
+```
+
+You need to carefully decide if it's worthwhile to make your class extensible, as it will make the implementation of other methods more complex, since you only know the inputs contain at least the specified attributes; they may contain more if it's a subclass.
+
 ### `format()` method
 
 The first method for every class should almost always be a `format()` method. This should return a character vector the same length as `x`. The easiest way to do this is to rely on one of R's low-level formatting functions like `formatC()`:
