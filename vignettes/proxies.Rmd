@@ -1,0 +1,211 @@
+---
+title: "Proxies: equal, compare, numeric"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Proxies: equal, compare, numeric}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(vctrs)
+```
+
+vctrs provides two "proxy" methods that allow you to declare that your class have possesses certain properties. A proxy function returns a simple object (typically either a bare vector or a data frame), that possesses the same properties as your class. This permits efficient implementation of the vctrs internals because once you have the proxy object, all code can be written in C.
+
+* `vec_proxy_equal()` specifies how to test the elements of your for equality. 
+  This proxy underpins `==` and `!=`, but also `unique()`, `anyDuplicated()`, 
+  and `is.na()`.
+
+* `vec_proxy_compare()` specifies how to compare the elements of your vector.
+  This proxy is used in `<`, `<=`, `>=`, `>`, `min()`, `max()`, `median()`, 
+  `quantile()`, and `xtfrm()` methods. (And `xtfrm()` is used in `order()` and 
+  `sort()`.)
+
+## Rational
+
+To explore these ideas we'll use the rational class which was introduced in `vignette("s3-vector")`. Here's the basic defintion of the class:
+
+```{r}
+new_rational <- function(n = integer(), d = integer()) {
+  stopifnot(is.integer(n))
+  stopifnot(is.integer(d))
+  
+  new_rcrd(list(n = n, d = d), class = "vctrs_rational")
+}
+rational <- function(n, d) {
+  shape <- vec_shape(n, d)
+  
+  n <- vec_reshape(vec_cast(n, integer()), shape)
+  d <- vec_reshape(vec_cast(d, integer()), shape)
+  
+  new_rational(n, d)
+}
+format.vctrs_rational <- function(x, ...) {
+  n <- field(x, "n")
+  d <- field(x, "d")
+  
+  out <- paste0(n, "/", d)
+  out[is.na(n) | is.na(d)] <- NA
+  
+  out
+}
+
+vec_ptype_abbr.vctrs_rational <- function(x) "rtnl"
+vec_ptype_full.vctrs_rational <- function(x) "rational"
+```
+
+```{r}
+vec_type2.vctrs_rational <- function(x, y) UseMethod("vec_type2.vctrs_rational", y)
+vec_type2.vctrs_rational.default <- function(x, y) stop_incompatible_type(x, y)
+vec_type2.vctrs_rational.vctrs_rational <- function(x, y) x
+
+vec_cast.vctrs_rational <- function(x, to) UseMethod("vec_cast.vctrs_rational")
+vec_cast.vctrs_rational.default <- function(x, to) stop_incompatible_cast(x, y)
+vec_cast.vctrs_rational.vctrs_rational <- function(x, to) x
+```
+
+### Equality
+
+By default, `vec_proxy_equal()` converts a record to a data frame:
+
+```{r}
+x <- rational(c(1, 2, 1, 2), c(1, 1, 2, 2))
+x
+
+vec_proxy_equal(x)
+```
+
+And the default comparison is column by column:
+
+```{r}
+x == rational(1, 1)
+```
+
+This is an ok default, but doesn't do exactly what we want here because `rational(1, 1)` represents the same number as `rational(2, 2)` so they should be equal. We can fix that by dividing `n` and `d` by their greatest common divisor:
+
+```{r}
+# Thanks to Matthew Lundberg: https://stackoverflow.com/a/21504113/16632 
+gcd <- function(x, y) {
+  r <- x %% y
+  ifelse(r, gcd(y, r), y)
+}
+
+vec_proxy_equal.vctrs_rational <- function(x) {
+  n <- field(x, "n")
+  d <- field(x, "d")
+  gcd <- gcd(n, d)
+  
+  data.frame(n = n / gcd, d = d / gcd)
+}
+vec_proxy_equal(x)
+
+x == rational(1, 1)
+```
+
+### Comparison
+
+Again, the default comparison proxy is just the elements:
+
+```{r}
+vec_proxy_compare(x)
+```
+So sorting doesn't give us increasing order:
+
+```{r}
+sort(x)
+```
+
+Here the easiest fix is to simply compute the fraction and then sort that real number:
+
+```{r}
+vec_proxy_compare.vctrs_rational <- function(x) {
+  field(x, "n") / field(x, "d")
+}
+
+sort(x)
+```
+
+(We could have used that technique for equality, but due to floating point computation it's not necessarily true that `x == y` implies that `d * x == d * y`.)
+
+## Polynomial
+
+```{r}
+new_poly <- function(x) {
+  new_list_of(x, ptype = integer(), class = "vctrs_poly")
+}
+
+poly <- function(...) {
+  x <- list(...)
+  x <- lapply(x, vec_cast, integer())
+  new_poly(x)
+}
+
+vec_ptype_full.vctrs_poly <- function(x) "polynomial"
+vec_ptype_abbr.vctrs_poly <- function(x) "poly"
+
+format.vctrs_poly <- function(x, ...) {
+  format_one <- function(x) {
+    if (length(x) == 0) {
+      return("")
+    } else if (length(x) == 1) {
+      format(x)
+    } else {
+      suffix <- c(paste0("\u22C5x^", seq(length(x) - 1, 1)), "")
+      out <- paste0(x, suffix)
+      out <- out[x != 0L]
+      paste0(out, collapse = " + ")
+    }
+  }
+  vapply(x, format_one, character(1))
+}
+
+vec_print_data.vctrs_poly <- function(x) {
+  if (length(x) == 0)
+    return()
+  print(format(x), quote = FALSE)
+}
+
+p <- poly(1, c(1, 0, 1), c(1, 0, 0, 0, 2))
+p
+```
+
+Equality works out of the box because we can tell if two integer vectors are equal:
+
+```{r}
+p == poly(c(1, 0, 1))
+```
+
+But we can't order them, because lists are not comparable:
+
+```{r, error = TRUE}
+sort(p)
+```
+
+So we need to define a `vec_proxy_compare()` method:
+
+```{r}
+vec_proxy_compare.vctrs_poly <- function(x) {
+  x_raw <- vec_data(x)
+  # First figure out the maximum length
+  n <- max(vapply(x_raw, length, integer(1)))
+  
+  # Then expand all vectors to this length by filling in with zeros
+  full <- lapply(x_raw, function(x) c(rep(0L, n - length(x)), x))
+  
+  # Then turn into a data frame
+  as.data.frame(do.call(rbind, full))
+}
+
+sort(poly(3, 2, 1))
+sort(poly(1, c(1, 0, 0), c(1, 0)))
+```
+
