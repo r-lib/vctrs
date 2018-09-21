@@ -4,10 +4,12 @@
 \alias{vec_method_register}
 \title{Register a method for a suggested dependency}
 \usage{
-vec_method_register(method_name, method = NULL)
+vec_method_register(generic, class, method = NULL)
 }
 \arguments{
-\item{method_name}{Name of the method in the form \code{pkg::generic.class}.}
+\item{generic}{Name of the generic in the form \code{pkg::generic}.}
+
+\item{class}{Name of the class}
 
 \item{method}{Optionally, the implementation of the method. By default,
 this will be found by looking for a function called \code{generic.class}
@@ -40,8 +42,8 @@ registration", by placing the following in your \code{NAMESPACE} file:\preformat
 # printing when they are used.
 
 .onLoad <- function(...) {
-  vec_method_register("pillar::pillar_shaft.vctrs_vctr")
-  vec_method_register("tibble::type_sum.vctrs_vctr")
+  vec_method_register("pillar::pillar_shaft", "vctrs_vctr")
+  vec_method_register("tibble::type_sum", "vctrs_vctr")
 }
 }
 \keyword{internal}

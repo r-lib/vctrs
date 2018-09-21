@@ -21,7 +21,8 @@
 #' }
 #' ```
 #'
-#' @param method_name Name of the method in the form `pkg::generic.class`.
+#' @param generic Name of the generic in the form `pkg::generic`.
+#' @param class Name of the class
 #' @param method Optionally, the implementation of the method. By default,
 #'   this will be found by looking for a function called `generic.class`
 #'   in the package environment.
@@ -33,18 +34,18 @@
 #' # printing when they are used.
 #'
 #' .onLoad <- function(...) {
-#'   vec_method_register("pillar::pillar_shaft.vctrs_vctr")
-#'   vec_method_register("tibble::type_sum.vctrs_vctr")
+#'   vec_method_register("pillar::pillar_shaft", "vctrs_vctr")
+#'   vec_method_register("tibble::type_sum", "vctrs_vctr")
 #' }
 #' @keywords internal
-vec_method_register <- function(method_name, method = NULL) {
-  stopifnot(is.character(method_name), length(method_name) == 1)
+vec_method_register <- function(generic, class, method = NULL) {
+  stopifnot(is.character(generic), length(generic) == 1)
+  stopifnot(is.character(class), length(class) == 1)
 
-  pieces <- strsplit(method_name, "::|[.]")[[1]]
-  stopifnot(length(pieces) == 3)
+  pieces <- strsplit(generic, "::")[[1]]
+  stopifnot(length(pieces) == 2)
   package <- pieces[[1]]
   generic <- pieces[[2]]
-  class <- pieces[[3]]
 
   if (is.null(method)) {
     method <- get(paste0(generic, ".", class), envir = parent.frame())
