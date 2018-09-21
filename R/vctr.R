@@ -126,48 +126,14 @@ c.vctrs_vctr <- function(...) {
 
 #' @export
 print.vctrs_vctr <- function(x, ...) {
-  vec_print_header(x, ...)
-  vec_print_data(x, ...)
-  vec_print_footer(x, ...)
+  vec_print(x, ...)
   invisible(x)
 }
 
 #' @export
-#' @rdname new_vctr
-vec_print_header <- function(x, ...) {
-  UseMethod("vec_print_header")
+str.vctrs_vctr <- function(object, ...) {
+  vec_str(object, ...)
 }
-
-#' @export
-vec_print_header.vctrs_vctr <- function(x, ...) {
-  cat_line("<", vec_ptype_full(x), "[", length(x), "]>")
-}
-
-#' @export
-#' @rdname new_vctr
-vec_print_data <- function(x, ...) {
-  UseMethod("vec_print_data")
-}
-
-#' @export
-vec_print_data.vctrs_vctr <- function(x, ...) {
-  if (length(x) == 0)
-    return()
-
-  out <- stats::setNames(format(x), names(x))
-  print(out, quote = FALSE)
-}
-
-#' @export
-#' @rdname new_vctr
-vec_print_footer <- function(x, ...) {
-  UseMethod("vec_print_footer")
-}
-
-#' @export
-vec_print_footer.vctrs_vctr <- function(x, ...) {
-}
-
 
 # manually registered in zzz.R
 pillar_shaft.vctrs_vctr <- function(x, ...) {
@@ -183,50 +149,6 @@ type_sum.vctrs_vctr <- function(x) {
 #' @export
 format.vctrs_vctr <- function(x, ...) {
   format(vec_data(x, ...))
-}
-
-#' @export
-str.vctrs_vctr <- function(object, ...) {
-  vec_str_header(object, ...)
-  vec_str_data(object, ...)
-  vec_str_footer(object, ...)
-}
-
-vec_str_header <- function(x, ..., width = getOption("width")) {
-  UseMethod("vec_str_header")
-}
-
-vec_str_header.vctrs_vctr <- function(x, ..., width = getOption("width")) {
-  invisible(x)
-}
-
-vec_str_data <- function(x, ..., width = getOption("width")) {
-  UseMethod("vec_str_data")
-}
-
-vec_str_data.vctrs_vctr <- function(x, ..., indent.str = "", width = getOption("width")) {
-  width <- width - nchar(indent.str) - 2
-
-  # Avoid spending too much time formatting elements that won't see
-  length <- ceiling(width / 2)
-  if (length(x) > length) {
-    out <- x[1:length]
-  } else {
-    out <- x
-  }
-
-  title <- glue::glue(" {vec_ptype_abbr(x)} [1:{length(x)}] ")
-  cat_line(inline_list(title, format(out), width = width))
-
-  invisible(x)
-}
-
-vec_str_footer <- function(x, ...) {
-  UseMethod("vec_str_footer")
-}
-
-vec_str_footer.vctrs_vctr <- function(x, ...) {
-  invisible(x)
 }
 
 # Subsetting --------------------------------------------------------------
