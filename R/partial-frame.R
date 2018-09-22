@@ -35,15 +35,13 @@ new_partial_frame <- function(partial = data.frame(), learned = data.frame()) {
 
 #' @export
 vec_ptype_full.vctrs_partial_frame <- function(x) {
-  partial <- attr(x, "partial")
-  learned <- attr(x, "learned")
-  both <- c(as.list(partial), as.list(learned))
+  both <- c(as.list(x$partial), as.list(x$learned))
 
   types <- map_chr(both, vec_ptype_full)
   needs_indent <- grepl("\n", types)
   types[needs_indent] <- map(types[needs_indent], function(x) indent(paste0("\n", x), 4))
 
-  source <- c(rep(" {partial}", length(partial)), rep("", length(learned)))
+  source <- c(rep(" {partial}", length(x$partial)), rep("", length(x$learned)))
   names <- paste0("  ", format(names(both)))
 
   paste0(
@@ -65,24 +63,19 @@ vec_type2.vctrs_partial_frame <- function(x, y) {
 #' @method vec_type2.vctrs_partial_frame data.frame
 #' @export
 vec_type2.vctrs_partial_frame.data.frame <- function(x, y) {
-  partial <- attr(x, "partial")
-  learned <- vec_type2(attr(x, "learned"), y)
-
-  new_partial_frame(partial, learned)
+  new_partial_frame(x$partial, vec_type2(x$learned, y))
 }
 
 #' @method vec_type2.data.frame vctrs_partial_frame
 #' @export
 vec_type2.data.frame.vctrs_partial_frame <- function(x, y) {
-  vec_type2.vctrs_partial_frame.data.frame(y, x)
+  new_partial_frame(y$partial, vec_type2(y$learned, x))
 }
 
 #' @export
 vec_type_finalise.vctrs_partial_frame <- function(x) {
-  partial <- attr(x, "partial")
-
-  out <- attr(x, "learned")
-  out[names(partial)] <- partial
+  out <- x$learned
+  out[names(x$partial)] <- x$partial
 
   out
 }

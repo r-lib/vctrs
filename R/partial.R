@@ -15,7 +15,7 @@
 #' @export
 #' @keywords internal
 new_partial <- function(..., class = character()) {
-  new_vctr(list(), ..., class = c(class, "vctrs_partial"))
+  new_sclr(..., class = c(class, "vctrs_partial"))
 }
 
 #' @export

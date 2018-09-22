@@ -35,14 +35,14 @@ vec_type2 <- function(x, y) {
 #' @export
 vec_type2.default <- function(x, y) {
   if (identical(attributes(x), attributes(y)))
-    return(vec_subset(x, 0L))
+    return(as_vec_ptype(x))
 
   stop_incompatible_type(x, y)
 }
 
 #' @export
 vec_type2.NULL <- function(x, y) {
-  vec_subset(y, 0L)
+  as_vec_ptype(y)
 }
 
 # Numeric-ish ----------------------------------------------------------
