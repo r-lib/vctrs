@@ -19,9 +19,34 @@ test_that("default format method is internal", {
   expect_equal(format(x), format(x))
 })
 
+test_that("xtfrm works for variety of base classes", {
+  x <- new_vctr(1:3)
+  expect_equal(xtfrm(x), 1:3)
+
+  x <- new_vctr(letters[1:3])
+  expect_equal(xtfrm(x), 1:3)
+})
+
+# Cast/restore ------------------------------------------------------------
+
 test_that("cast to NULL returns x", {
   x <- new_vctr(1, class = "x")
   expect_equal(vec_cast(NULL, x), NULL)
+})
+
+test_that("cast succeeds if attributes equal", {
+  x1 <- new_vctr(1, class = "x", a = 1, b = 2)
+  x2 <- new_vctr(2, class = "x", a = 1, b = 2)
+
+  expect_equal(vec_cast(x1, x2), x1)
+  expect_equal(vec_cast(x2, x1), x2)
+})
+
+test_that("and fails if attributes are different", {
+  x1 <- new_vctr(1, class = "x", a = 1, b = 2)
+  x2 <- new_vctr(2, class = "x", a = 2, b = 2)
+
+  expect_error(vec_cast(x1, x2), class = "error_incompatible_cast")
 })
 
 test_that("restoring to atomic vector of same type preserves attributes", {
@@ -31,12 +56,10 @@ test_that("restoring to atomic vector of same type preserves attributes", {
   expect_equal(vec_restore(2, x1), x2)
 })
 
-test_that("xtfrm works for variety of base classes", {
-  x <- new_vctr(1:3)
-  expect_equal(xtfrm(x), 1:3)
+test_that("restoring to atomic vector of different type throws error", {
+  x1 <- new_vctr(1, class = "x")
 
-  x <- new_vctr(letters[1:3])
-  expect_equal(xtfrm(x), 1:3)
+  expect_error(vec_restore("x", x1), class = "error_incompatible_cast")
 })
 
 # names -------------------------------------------------------------------
