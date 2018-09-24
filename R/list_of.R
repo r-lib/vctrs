@@ -10,7 +10,9 @@
 #' @export
 #' @examples
 #' x <- list_of(1:3, 5:6, 10:15)
-#' tibble::tibble(x = x)
+#' if (requireNamespace("tibble", quietly = TRUE)) {
+#'   tibble::tibble(x = x)
+#' }
 #'
 #' vec_c(list_of(1, 2), list_of(FALSE, TRUE))
 list_of <- function(..., .ptype = NULL) {

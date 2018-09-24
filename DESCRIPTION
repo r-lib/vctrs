@@ -17,12 +17,12 @@ Imports:
     digest,
     glue,
     rlang,
-    tibble,
     backports,
     zeallot
 Suggests: 
     covr,
     testthat,
+    tibble,
     knitr,
     rmarkdown,
     pillar,

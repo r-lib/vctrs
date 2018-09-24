@@ -162,7 +162,10 @@ vec_cbind <- function(..., .ptype = NULL, .nrow = NULL) {
   # a generic
   attr(out, "row.names") <- .set_row_names(nrow)
   out[seq_along(cols)] <- cols
-  names(out) <- tibble::tidy_names(names)
+  if (is_installed("tibble")) {
+    names <- tibble::tidy_names(names)
+  }
+  names(out) <- names
 
   out
 }
@@ -202,7 +205,8 @@ as_df_row.NULL <- function(x) x
 as_df_row.default <- function(x) {
   if (vec_dims(x) == 1L) {
     x <- as.list(x)
-    x <- tibble::set_tidy_names(x)
+    if (is_installed("tibble"))
+      x <- tibble::set_tidy_names(x)
     new_data_frame(x, n = 1L)
   } else {
     as.data.frame(x)
