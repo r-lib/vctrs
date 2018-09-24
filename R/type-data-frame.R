@@ -37,7 +37,6 @@ vec_restore.data.frame <- function(x, to) {
   x
 }
 
-
 #' @export
 vec_ptype_full.data.frame <- function(x) {
   if (length(x) == 0) {
@@ -65,6 +64,51 @@ vec_ptype_abbr.data.frame <- function(x) {
   paste0("df", vec_ptype_shape(x))
 }
 
+# Coercion ----------------------------------------------------------------
+
+#' @rdname vec_type2
+#' @export vec_type2.data.frame
+#' @method vec_type2 data.frame
+#' @export
+vec_type2.data.frame <- function(x, y) UseMethod("vec_type2.data.frame", y)
+#' @method vec_type2.data.frame data.frame
+#' @export
+vec_type2.data.frame.data.frame <- function(x, y) {
+  df <- df_col_type2(x, y)
+
+  new_data_frame(df, n = 0L)
+}
+#' @method vec_type2.data.frame default
+#' @export
+vec_type2.data.frame.default <- function(x, y) stop_incompatible_type(x, y)
+
+# Cast --------------------------------------------------------------------
+
+#' @rdname vec_cast
+#' @export vec_cast.data.frame
+#' @method vec_cast data.frame
+#' @export
+vec_cast.data.frame <- function(x, to) {
+  UseMethod("vec_cast.data.frame")
+}
+#' @export
+#' @method vec_cast.data.frame NULL
+vec_cast.data.frame.NULL <- function(x, to) {
+  x
+}
+#' @export
+#' @method vec_cast.data.frame data.frame
+vec_cast.data.frame.data.frame <- function(x, to) {
+  df <- df_col_cast(x, to)
+  vec_restore(df, to)
+}
+#' @export
+#' @method vec_cast.data.frame default
+vec_cast.data.frame.default <- function(x, to) {
+  stop_incompatible_cast(x, to)
+}
+
+# Helpers -----------------------------------------------------------------
 
 df_length <- function(x) {
   if (length(x) > 0) {
@@ -116,51 +160,3 @@ df_col_cast <- function(x, to) {
 
   x[names(to)]
 }
-
-
-# Coercion ----------------------------------------------------------------
-
-#' @rdname vec_type2
-#' @export vec_type2.data.frame
-#' @method vec_type2 data.frame
-#' @export
-vec_type2.data.frame <- function(x, y) UseMethod("vec_type2.data.frame", y)
-
-#' @method vec_type2.data.frame data.frame
-#' @export
-vec_type2.data.frame.data.frame <- function(x, y) {
-  df <- df_col_type2(x, y)
-  new_data_frame(df, n = 0L)
-}
-
-#' @method vec_type2.data.frame default
-#' @export
-vec_type2.data.frame.default <- function(x, y) stop_incompatible_type(x, y)
-
-# Cast --------------------------------------------------------------------
-
-
-#' @rdname vec_cast
-#' @export vec_cast.data.frame
-#' @method vec_cast data.frame
-#' @export
-vec_cast.data.frame <- function(x, to) {
-  UseMethod("vec_cast.data.frame")
-}
-#' @export
-#' @method vec_cast.data.frame NULL
-vec_cast.data.frame.NULL <- function(x, to) {
-  x
-}
-#' @export
-#' @method vec_cast.data.frame data.frame
-vec_cast.data.frame.data.frame <- function(x, to) {
-  df <- df_col_cast(x, to)
-  vec_restore(df, to)
-}
-#' @export
-#' @method vec_cast.data.frame default
-vec_cast.data.frame.default <- function(x, to) {
-  stop_incompatible_cast(x, to)
-}
-

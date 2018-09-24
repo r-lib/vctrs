@@ -50,32 +50,3 @@ test_that("AsIs class stripped from I()", {
   expect_equal(vec_ptype_full(I(df[0])), "I<myclass<>>")
 })
 
-test_that("data frames print nicely", {
-  expect_equal(vec_ptype_abbr(mtcars), "df[32,11]")
-
-  expect_known_output(
-    file = test_path("test-type-df.txt"),
-    {
-      cat("mtcars:\n")
-      print(vec_ptype(mtcars))
-      cat("\n")
-      cat("iris:\n")
-      print(vec_ptype(iris))
-    }
-  )
-})
-
-test_that("embedded data frames print nicely", {
-  df <- data.frame(x = 1:3)
-  df$a <- data.frame(a = 1:3, b = letters[1:3])
-  df$b <- list_of(1, 2, 3)
-  df$c <- as_list_of(split(data.frame(x = 1:3, y = letters[1:3]), 1:3))
-
-
-  expect_known_output(
-    file = test_path("test-type-df-embedded.txt"),
-    {
-      print(vec_ptype(df))
-    }
-  )
-})

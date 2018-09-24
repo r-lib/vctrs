@@ -72,37 +72,3 @@ test_that("new classes are uncoercible by default", {
   expect_error(vec_type2(1, x), class = "error_incompatible_type")
   expect_error(vec_type2(x, 1), class = "error_incompatible_type")
 })
-
-# Data frame --------------------------------------------------------------
-
-test_that("data frame only combines with other data frames or NULL", {
-  dt <- data.frame(x = 1)
-  expect_equal(vec_ptype(dt, NULL), vec_ptype(dt))
-  expect_error(vec_ptype(dt, 1:10), class = "error_incompatible_type")
-})
-
-test_that("data frame takes max of individual variables", {
-  dt1 <- data.frame(x = FALSE, y = 1L)
-  dt2 <- data.frame(x = 1.5, y = 1.5)
-
-  expect_equal(vec_ptype(dt1, dt2), vec_ptype(dt2))
-})
-
-test_that("data frame combines variables", {
-  dt1 <- data.frame(x = 1)
-  dt2 <- data.frame(y = 1)
-
-  dt3 <- max(dt1, dt2)
-  expect_equal(
-    vec_ptype(dt1, dt2),
-    vec_ptype(data.frame(x = double(), y = double()))
-  )
-})
-
-test_that("tibble beats data frame", {
-  df <- vec_ptype(data_frame())
-  dt <- vec_ptype(tibble::tibble())
-
-  expect_s3_class(vec_ptype(dt, df)[[1]], "tbl_df")
-  expect_s3_class(vec_ptype(dt, df)[[1]], "tbl_df")
-})
