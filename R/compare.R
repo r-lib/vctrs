@@ -29,7 +29,7 @@ vec_proxy_compare.data.frame <- function(x) {
 
 #' @export
 vec_proxy_compare.POSIXlt <- function(x) {
-  new_data_frame(vec_data(x), length(x))
+  new_data_frame(vec_data(x), n = length(x))
 }
 
 #' @export

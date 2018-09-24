@@ -173,12 +173,12 @@ as.list.vctrs_rcrd <- function(x, ...) {
 
 #' @export
 vec_proxy_equal.vctrs_rcrd <- function(x)  {
-  new_data_frame(vec_data(x), length(x))
+  new_data_frame(vec_data(x), n = length(x))
 }
 
 #' @export
 vec_proxy_compare.vctrs_rcrd <- function(x) {
-  new_data_frame(vec_data(x), length(x))
+  new_data_frame(vec_data(x), n = length(x))
 }
 
 #' @export

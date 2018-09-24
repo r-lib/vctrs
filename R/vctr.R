@@ -504,7 +504,7 @@ as.data.frame.vctrs_vctr <- function(x,
     names(cols) <- nm
   }
 
-  new_data_frame(cols, vec_length(x))
+  new_data_frame(cols, n = vec_length(x))
 }
 
 # Helpers -----------------------------------------------------------------

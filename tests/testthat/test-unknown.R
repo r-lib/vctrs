@@ -9,7 +9,7 @@ test_that("unknown type is idempotent", {
     character(),
     new_factor(),
     new_ordered(),
-    new_data_frame(list(), 0),
+    new_data_frame(),
     new_date(),
     new_datetime()
   )

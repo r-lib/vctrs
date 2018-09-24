@@ -203,7 +203,7 @@ as_df_row.default <- function(x) {
   if (vec_dims(x) == 1L) {
     x <- as.list(x)
     x <- tibble::set_tidy_names(x)
-    new_data_frame(x, 1)
+    new_data_frame(x, n = 1)
   } else {
     as.data.frame(x)
   }
@@ -221,7 +221,7 @@ as_df_col.data.frame <- function(x, outer_name = NULL) {
 as_df_col.default <- function(x, outer_name = NULL) {
   if (vec_dims(x) == 1L) {
     x <- stats::setNames(list(x), outer_name)
-    new_data_frame(x, vec_length(x[[1]]))
+    new_data_frame(x, n = vec_length(x[[1]]))
   } else {
     colnames(x) <- outer_names(outer_name, colnames(x), ncol(x))
     as.data.frame(x)

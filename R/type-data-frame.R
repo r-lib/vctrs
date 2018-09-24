@@ -1,10 +1,20 @@
 # TODO: consider names and export so that they can be used by
 # data frame subclasses in other packages
 
-
 data_frame <- function(...) {
   cols <- tibble::set_tidy_names(list(...))
   new_data_frame(cols)
+}
+
+new_data_frame <- function(x = list(), n = df_length(x), ...,  class = character()) {
+  n <- as.integer(n)
+
+  structure(
+    x,
+    ...,
+    class = c(class, "data.frame"),
+    row.names = .set_row_names(n)
+  )
 }
 
 df_length <- function(x) {
@@ -13,20 +23,6 @@ df_length <- function(x) {
   } else {
     n <- 0L
   }
-}
-
-new_data_frame <- function(x, n = df_length(x), subclass = NULL) {
-  n <- as.integer(n)
-
-  structure(
-    x,
-    class = c(subclass, "data.frame"),
-    row.names = .set_row_names(n)
-  )
-}
-
-new_tibble <- function(x, n) {
-  new_data_frame(x, n, subclass = c("tbl_df", "tbl"))
 }
 
 df_col_type2 <- function(x, y) {
