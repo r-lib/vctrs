@@ -233,7 +233,7 @@ date <- function(x) {
 }
 
 format.date <- function(x) {
-  format(.Date(vec_data(x)), "%Y-%m-%d")
+  format(vctrs::new_date(vec_data(x)), "%Y-%m-%d")
 }
 
 x <- date(c("2020-01-01", NA))
