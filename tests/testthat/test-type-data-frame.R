@@ -97,7 +97,7 @@ test_that("casts preserve outer class", {
   expect_s3_class(vec_cast(dt, df), "data.frame")
 })
 
-test_that("recast generates correct row/col names", {
+test_that("restore generates correct row/col names", {
   df1 <- data.frame(x = 1:4, y = 1:4, z = 1:4)
   df2 <- vec_restore(lapply(df1[1:3], `[`, 1:2), df1)
 

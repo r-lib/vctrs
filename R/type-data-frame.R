@@ -73,14 +73,10 @@ vec_ptype_abbr.data.frame <- function(x) {
 vec_type2.data.frame <- function(x, y) UseMethod("vec_type2.data.frame", y)
 #' @method vec_type2.data.frame data.frame
 #' @export
-vec_type2.data.frame.data.frame <- function(x, y) {
-  df <- df_col_type2(x, y)
-
-  new_data_frame(df, n = 0L)
-}
+vec_type2.data.frame.data.frame <- function(x, y) df_col_type2(x, y)
 #' @method vec_type2.data.frame default
 #' @export
-vec_type2.data.frame.default <- function(x, y) stop_incompatible_type(x, y)
+vec_type2.data.frame.default    <- function(x, y) stop_incompatible_type(x, y)
 
 # Cast --------------------------------------------------------------------
 
@@ -93,20 +89,13 @@ vec_cast.data.frame <- function(x, to) {
 }
 #' @export
 #' @method vec_cast.data.frame NULL
-vec_cast.data.frame.NULL <- function(x, to) {
-  x
-}
+vec_cast.data.frame.NULL       <- function(x, to) x
 #' @export
 #' @method vec_cast.data.frame data.frame
-vec_cast.data.frame.data.frame <- function(x, to) {
-  df <- df_col_cast(x, to)
-  vec_restore(df, to)
-}
+vec_cast.data.frame.data.frame <- function(x, to) df_col_cast(x, to)
 #' @export
 #' @method vec_cast.data.frame default
-vec_cast.data.frame.default <- function(x, to) {
-  stop_incompatible_cast(x, to)
-}
+vec_cast.data.frame.default    <- function(x, to) stop_incompatible_cast(x, to)
 
 # Helpers -----------------------------------------------------------------
 
@@ -119,44 +108,47 @@ df_length <- function(x) {
 }
 
 df_col_type2 <- function(x, y) {
-  x <- vec_data(x)
-  y <- vec_data(y)
-  names <- set_partition(names(x), names(y))
+  # Avoid expensive [.data.frame
+  x_raw <- vec_data(vec_subset(x, 0L))
+  y_raw <- vec_data(vec_subset(y, 0L))
 
   # Find types
+  names <- set_partition(names(x), names(y))
   if (length(names$both) > 0) {
-    common_types <- map2(x[names$both], y[names$both], vec_type2)
+    common_types <- map2(x_raw[names$both], y_raw[names$both], vec_type2)
   } else {
     common_types <- list()
   }
-  only_x_types <- map(x[names$only_x], vec_subset, 0L)
-  only_y_types <- map(y[names$only_y], vec_subset, 0L)
+  only_x_types <- x_raw[names$only_x]
+  only_y_types <- y_raw[names$only_y]
 
-  # Combine and restore order
+  # Combine and restore order and type
   out <- c(common_types, only_x_types, only_y_types)
-  out[c(names(x), names$only_y)]
+  out <- out[c(names(x), names$only_y)]
+  vec_restore(out, x)
 }
 
 df_col_cast <- function(x, to) {
-  n <- vec_length(x)
-  x <- vec_data(x)
+  # Avoid expensive [.data.frame method
+  out <- vec_data(x)
 
   # Coerce common columns
   common <- intersect(names(x), names(to))
-  x[common] <- map2(x[common], to[common], vec_cast)
+  out[common] <- map2(out[common], to[common], vec_cast)
 
   # Add new columns
   from_type <- setdiff(names(to), names(x))
-  x[from_type] <- map(to[from_type], vec_na, n = n)
+  out[from_type] <- map(to[from_type], vec_na, n = vec_length(x))
 
-  # Warn about dropped columns
-  dropped <- setdiff(names(x), names(to))
-  if (length(dropped) > 0 ) {
+  # Drop extra columns
+  out <- out[names(to)]
+  extra <- setdiff(names(x), names(to))
+  if (length(extra) > 0 ) {
     warn_lossy_cast(
       x, to,
-      details = inline_list("Dropped variables: ", dropped, quote = "`")
+      details = inline_list("Dropped variables: ", extra, quote = "`")
     )
   }
 
-  x[names(to)]
+  vec_restore(out, to)
 }
