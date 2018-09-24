@@ -63,7 +63,7 @@ as.data.frame.vctrs_sclr <- function(x,
     names(cols) <- nm
   }
 
-  new_data_frame(cols, n = 1)
+  new_data_frame(cols, n = 1L)
 }
 
 # Vector behaviours -------------------------------------------------------

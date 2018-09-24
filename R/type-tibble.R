@@ -1,4 +1,5 @@
 new_tibble <- function(x, n) {
+  n <- as.integer(n)
   new_data_frame(x, n, class = c("tbl_df", "tbl"))
 }
 

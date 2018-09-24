@@ -203,7 +203,7 @@ as_df_row.default <- function(x) {
   if (vec_dims(x) == 1L) {
     x <- as.list(x)
     x <- tibble::set_tidy_names(x)
-    new_data_frame(x, n = 1)
+    new_data_frame(x, n = 1L)
   } else {
     as.data.frame(x)
   }

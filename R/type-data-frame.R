@@ -1,13 +1,14 @@
-# TODO: consider names and export so that they can be used by
-# data frame subclasses in other packages
+new_data_frame <- function(x = list(), n = NULL, ..., class = character()) {
+  stopifnot(is.list(x))
+  n <- n %||% df_length(x)
+  stopifnot(is.integer(n), length(n) == 1L)
 
-data_frame <- function(...) {
-  cols <- tibble::set_tidy_names(list(...))
-  new_data_frame(cols)
-}
-
-new_data_frame <- function(x = list(), n = df_length(x), ...,  class = character()) {
-  n <- as.integer(n)
+  # names() should always be a character vector, but we can't enforce that
+  # because as.data.frame() returns a data frame with NULL names to indicate
+  # that outer names should be used
+  if (length(x) == 0) {
+    names(x) <- character()
+  }
 
   structure(
     x,
@@ -15,6 +16,14 @@ new_data_frame <- function(x = list(), n = df_length(x), ...,  class = character
     class = c(class, "data.frame"),
     row.names = .set_row_names(n)
   )
+}
+
+# Light weight constructor used for tests - avoids having to repeatedly do
+# stringsAsFactors = FALSE etc. Should not be used in internal code as is
+# not a real helper as it lacks value checks.
+data_frame <- function(...) {
+  cols <- list(...)
+  new_data_frame(cols)
 }
 
 #' @export
@@ -59,9 +68,9 @@ vec_ptype_abbr.data.frame <- function(x) {
 
 df_length <- function(x) {
   if (length(x) > 0) {
-    n <- length(x[[1]])
+    length(x[[1]])
   } else {
-    n <- 0L
+    0L
   }
 }
 
@@ -121,7 +130,7 @@ vec_type2.data.frame <- function(x, y) UseMethod("vec_type2.data.frame", y)
 #' @export
 vec_type2.data.frame.data.frame <- function(x, y) {
   df <- df_col_type2(x, y)
-  new_data_frame(df, n = 0)
+  new_data_frame(df, n = 0L)
 }
 
 #' @method vec_type2.data.frame default
