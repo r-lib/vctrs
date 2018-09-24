@@ -49,3 +49,25 @@ test_that("hashes are consistent from run to run", {
 
   expect_known_output(print(hash), file = test_path("test-hash-hash.txt"))
 })
+
+test_that("can hash list of non-vectors", {
+  x <- list(quote(x), mean)
+
+  expect_equal(
+    vec_hash(x),
+    as.hexmode(c(obj_hash(x[[1]]), obj_hash(x[[2]])))
+  )
+})
+
+
+# Object ------------------------------------------------------------------
+
+test_that("equal objects hash to same value", {
+  # just test function since they'll recurse through every other object type
+  f1 <- function(x, y = NULL) x + y
+  attr(f1, "srcref") <- NULL
+  f2 <- function(x, y = NULL) x + y
+  attr(f2, "srcref") <- NULL
+
+  expect_equal(obj_hash(f1), obj_hash(f2))
+})

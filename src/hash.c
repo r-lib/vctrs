@@ -100,9 +100,6 @@ int32_t hash_object(SEXP x) {
     }
     break;
 
-  case SYMSXP:
-    hash = hash_object(PRINTNAME(x));
-    break;
   case DOTSXP:
   case LANGSXP:
   case LISTSXP:
@@ -116,6 +113,7 @@ int32_t hash_object(SEXP x) {
     hash = hash_combine(hash, hash_object(FORMALS(x)));
     break;
 
+  case SYMSXP:
   case SPECIALSXP:
   case BUILTINSXP:
   case CHARSXP:
