@@ -217,7 +217,7 @@ I'll ignore POSIXlt as its primary purpose is to extract human meaningful compon
 
 ### Classes
 
-A date is a double. Most of the complexity is in printing and parsing; I'll just shim over the base Date methods 
+A date is a double. To focus on the key ideas, I'll shim over the base Date methods for printing as parsing.
 
 ```{r}
 new_date <- function(x) {
@@ -233,15 +233,86 @@ date <- function(x) {
 }
 
 format.date <- function(x) {
-  format(vctrs::new_date(vec_data(x)), "%Y-%m-%d")
+  format(as.Date(vec_data(x), origin = "1970-01-01"))
 }
 
 x <- date(c("2020-01-01", NA))
 x
 ```
 
+A datetime is a double with a timezone. The timezone affects the display of the object, not the time it represents. A default timezone of `""` reflects the current timezone.
+
+```{r}
+new_datetime <- function(x, tzone = "") {
+  stopifnot(is.double(x))
+  stopifnot(is.character(tzone), length(tzone) == 1L)
+  
+  new_vctr(x, class = "datetime")
+}
+
+datetime <- function(x, tzone = "") {
+  stopifnot(is.character(x))
+  
+  x <- vec_data(as.POSIXct(x))
+  new_datetime(x, tzone = tzone)
+}
+
+format.datetime <- function(x) {
+  format(as.POSIXct(vec_data(x), origin = "1970-01-01"))
+}
+
+x <- datetime(c("2020-01-01 10:00", NA))
+x
+```
+
+A duration is a double with units. Unfortunately the base implementation doesn't use units simply as a formatting convenience, but it actually affects the underlying value. I think this is suboptimal design, so in my redesign I use the units just for formatting.
+
+```{r}
+new_duration <- function(x = double(), unit = c("sec", "min", "hour", "day")) {
+  stopifnot(is.double(x))
+  unit <- match.arg(unit)
+  
+  new_vctr(x, unit = unit, class = "duration")
+} 
+
+duration <- function(x = double(), unit = c("sec", "min", "hour", "day")) {
+  x <- vec_cast(x, double())
+  new_duration(x, unit = unit)
+}
+
+unit_to_s <- function(x) {
+  switch(x,
+    sec = 1,
+    min = 60,
+    hour = 60 * 60,
+    day = 24 * 60 * 60
+  )
+}
+
+format.duration <- function(x, ...) {
+  unit <- attr(x, "unit")
+  y <- vec_data(x) / unit_to_s(unit)
+  
+  out <- paste0(format(y), substr(unit, 1, 1))
+  out[is.na(x)] <- NA
+  out
+}
+
+duration(c(10, NA))
+duration(864000, "day")
+```
+
 ### Coercions
 
 ### Arithmetic
 
+The inter-relationships between the three classes are complex:
 
+* Subtracting a date/time from a date/time yields a duration.
+* Adding a duration to a date/time yields a data time.
+* You can subtract a duration from a date/time, but you can't subtract
+  a date/time from a duration. 
+* You can divide a duration by another duration to yield a unit-less
+  number
+  
+The full complexity is too much to recreate here, but you can see the implementation in <https://github.com/r-lib/vctrs/blob/master/R/type-date-time.R>
