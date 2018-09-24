@@ -1,8 +1,6 @@
 new_sclr <- function(..., class = character()) {
   fields <- list(...)
-  if (!unique_field_names(names(fields))) {
-    stop("Components must have unique names", call. = FALSE)
-  }
+  stopifnot(has_unique_names(fields))
 
   structure(
     list(...),

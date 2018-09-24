@@ -29,7 +29,7 @@ check_fields <- function(fields) {
     stop("`fields` must be a list of length 1 or greater", call. = FALSE)
   }
 
-  if (!unique_field_names(names(fields))) {
+  if (!has_unique_names(fields)) {
     stop("`fields` must have unique names", call. = FALSE)
   }
 
@@ -185,20 +185,6 @@ vec_proxy_compare.vctrs_rcrd <- function(x) {
 vec_math.vctrs_rcrd <- function(fun, x, ...) {
   stop_unsupported(x, "vec_math")
 }
-# Helpers -----------------------------------------------------------------
-
-unique_field_names <- function(x) {
-  if (length(x) == 0) {
-    return(FALSE)
-  }
-
-  if (any(is.na(x) | x == "")) {
-    return(FALSE)
-  }
-
-  !anyDuplicated(x)
-}
-
 
 # Test class ---------------------------------------------------------------
 

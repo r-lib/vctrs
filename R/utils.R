@@ -87,3 +87,17 @@ vec_binary <- function(x, y, f = vec_data) {
 #' @name %<-%
 #' @keywords internal
 `%<-%`
+
+has_unique_names <- function(x) {
+  nms <- names(x)
+
+  if (length(nms) != length(x)) {
+    return(FALSE)
+  }
+
+  if (any(is.na(nms) | nms == "")) {
+    return(FALSE)
+  }
+
+  !anyDuplicated(nms)
+}
