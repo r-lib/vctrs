@@ -35,11 +35,6 @@ vec_math.default <- function(fun, x, ...) {
 }
 
 #' @export
-vec_math.factor <- function(fun, x, ...) {
-  stop_unsupported(x, "vec_math")
-}
-
-#' @export
 #' @rdname vec_math
 vec_math_base <- function(fun, x, ...) {
   fun <- getExportedValue("base", fun)

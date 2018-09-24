@@ -18,9 +18,12 @@ levels_union <- function(x, y) {
   union(levels(x), levels(y))
 }
 
+#' @export
+vec_math.factor <- function(fun, x, ...) {
+  stop_unsupported(x, "vec_math")
+}
 
 # Print -------------------------------------------------------------------
-
 
 #' @export
 vec_ptype_abbr.ordered <- function(x) {
