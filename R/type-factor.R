@@ -1,3 +1,16 @@
+#' Factor/ordered factor S3 class
+#'
+#' These functions help the base factor and ordered factor classes fit in to
+#' the vctrs type system by providing low-level constructors, as well as
+#' coercion and casting generics + methods. `new_factor()` and `new_ordered()`
+#' are low-level constructors - they only check that types, but not values,
+#' are valid, and therefore are for expert use only.
+#'
+#' @param x Integer values which index in to `levels`.
+#' @param levels Character vector of labels.
+#' @param ...,class Used to for subclasses.
+#' @keywords internal
+#' @export
 new_factor <- function(x = integer(), levels = character(), ..., class = character()) {
   stopifnot(is.integer(x))
   stopifnot(is.character(levels))
@@ -10,25 +23,19 @@ new_factor <- function(x = integer(), levels = character(), ..., class = charact
   )
 }
 
+#' @export
+#' @rdname new_factor
 new_ordered <- function(x = integer(), levels = character()) {
   new_factor(x = x, levels = levels, class = "ordered")
-}
-
-levels_union <- function(x, y) {
-  union(levels(x), levels(y))
-}
-
-#' @export
-vec_math.factor <- function(fun, x, ...) {
-  stop_unsupported(x, "vec_math")
 }
 
 # Print -------------------------------------------------------------------
 
 #' @export
-vec_ptype_abbr.ordered <- function(x) {
-  "ord"
+vec_ptype_full.factor <- function(x) {
+  paste0("factor<", hash_label(levels(x)), ">")
 }
+
 #' @export
 vec_ptype_abbr.factor <- function(x) {
   "fctr"
@@ -40,61 +47,57 @@ vec_ptype_full.ordered <- function(x) {
 }
 
 #' @export
-vec_ptype_full.factor <- function(x) {
-  paste0("factor<", hash_label(levels(x)), ">")
+vec_ptype_abbr.ordered <- function(x) {
+  "ord"
 }
-
 
 # Coerce ------------------------------------------------------------------
 
-#' @rdname vec_type2
+#' @rdname new_factor
 #' @export vec_type2.factor
 #' @method vec_type2 factor
 #' @export
 vec_type2.factor    <- function(x, y) UseMethod("vec_type2.factor", y)
-#' @rdname vec_type2
-#' @export vec_type2.ordered
-#' @method vec_type2 ordered
+#' @method vec_type2.factor default
 #' @export
-vec_type2.ordered   <- function(x, y) UseMethod("vec_type2.ordered", y)
-
-#' @method vec_type2.ordered ordered
-#' @export
-vec_type2.ordered.ordered     <- function(x, y) new_ordered(levels = levels_union(x, y))
-
-#' @method vec_type2.factor factor
-#' @export
-vec_type2.factor.factor       <- function(x, y) new_factor(levels = levels_union(x, y))
-
-#' @method vec_type2.ordered character
-#' @export
-vec_type2.ordered.character   <- function(x, y) dim_match(character(), x, y)
-#' @method vec_type2.character ordered
-#' @export
-vec_type2.character.ordered   <- function(x, y) dim_match(character(), x, y)
+vec_type2.factor.default    <- function(x, y) stop_incompatible_type(x, y)
 #' @method vec_type2.character factor
 #' @export
 vec_type2.character.factor    <- function(x, y) dim_match(character(), x, y)
 #' @method vec_type2.factor character
 #' @export
 vec_type2.factor.character    <- function(x, y) dim_match(character(), x, y)
+#' @method vec_type2.factor factor
+#' @export
+vec_type2.factor.factor       <- function(x, y) new_factor(levels = levels_union(x, y))
 
+#' @rdname new_factor
+#' @export vec_type2.ordered
+#' @method vec_type2 ordered
+#' @export
+vec_type2.ordered <- function(x, y) UseMethod("vec_type2.ordered", y)
+#' @method vec_type2.ordered default
+#' @export
+vec_type2.ordered.default     <- function(x, y) stop_incompatible_type(x, y)
+#' @method vec_type2.ordered character
+#' @export
+vec_type2.ordered.character   <- function(x, y) dim_match(character(), x, y)
+#' @method vec_type2.character ordered
+#' @export
+vec_type2.character.ordered   <- function(x, y) dim_match(character(), x, y)
 #' @method vec_type2.ordered factor
 #' @export
 vec_type2.ordered.factor      <- function(x, y) stop_incompatible_type(x, y)
 #' @method vec_type2.factor ordered
 #' @export
 vec_type2.factor.ordered      <- function(x, y) stop_incompatible_type(x, y)
-#' @method vec_type2.factor default
+#' @method vec_type2.ordered ordered
 #' @export
-vec_type2.factor.default    <- function(x, y) stop_incompatible_type(x, y)
-#' @method vec_type2.ordered default
-#' @export
-vec_type2.ordered.default   <- function(x, y) stop_incompatible_type(x, y)
+vec_type2.ordered.ordered     <- function(x, y) new_ordered(levels = levels_union(x, y))
 
 # Cast --------------------------------------------------------------------
 
-#' @rdname vec_cast
+#' @rdname new_factor
 #' @export vec_cast.factor
 #' @method vec_cast factor
 #' @export
@@ -134,3 +137,30 @@ vec_cast.factor.default <- function(x, to) {
   stop_incompatible_cast(x, to)
 }
 
+# Math and arithmetic -----------------------------------------------------
+
+#' @export
+vec_math.factor <- function(fun, x, ...) {
+  stop_unsupported(x, fun)
+}
+
+#' @export
+vec_arith.factor <- function(op, x, y) {
+  stop_unsupported(x, op)
+}
+
+# Helpers -----------------------------------------------------------------
+
+hash_label <- function(x, length = 5) {
+  if (length(x) == 0) {
+    ""
+  } else {
+    # Can't use hash() currently because it hashes the string pointers
+    # for performance, so the values in the test change each time
+    substr(digest::digest(x), 1, length)
+  }
+}
+
+levels_union <- function(x, y) {
+  union(levels(x), levels(y))
+}

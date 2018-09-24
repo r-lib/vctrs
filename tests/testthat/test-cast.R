@@ -107,44 +107,6 @@ test_that("safe casts work as expected", {
   expect_equal(vec_cast(list(1L, 2L), list()), list(1L, 2L))
 })
 
-# Factors -----------------------------------------------------------------
-
-test_that("safe casts work as expected", {
-  fa <- factor("a")
-  fab <- factor(c("a", "b"))
-
-  expect_equal(vec_cast(NULL, fa), NULL)
-
-  expect_equal(vec_cast(fa, fa), fa)
-  expect_equal(vec_cast(fa, fab), fab[1])
-  expect_equal(vec_cast("a", fab), fab[1])
-
-  expect_equal(vec_cast("a", factor()), fa)
-  expect_equal(vec_cast(fa, factor()), fa)
-
-  expect_equal(vec_cast(list("a", "b"), fab), fab)
-})
-
-test_that("lossy casts generate warning", {
-  fa <- factor("a")
-  fb <- factor("b")
-
-  expect_condition(vec_cast(fa, fb), class = "warning_lossy_cast")
-  expect_condition(vec_cast("a", fb), class = "warning_lossy_cast")
-})
-
-test_that("invalid casts generate error", {
-  expect_error(vec_cast(double(), factor("a")), class = "error_incompatible_cast")
-})
-
-test_that("orderedness of factor is preserved", {
-  fct <- factor("a")
-  ord <- ordered("a")
-
-  expect_equal(vec_cast(fct, ord), ord)
-  expect_equal(vec_cast("a", ord), ord)
-})
-
 # Dates -------------------------------------------------------------------
 
 test_that("safe casts work as expected", {

@@ -59,18 +59,6 @@ test_that("AsIs class stripped from I()", {
   expect_equal(vec_ptype_full(I(df[0])), "I<myclass<>>")
 })
 
-test_that("factors as expected", {
-  f <- factor()
-  o <- ordered(character())
-
-  expect_equal(vec_ptype_abbr(f), "fctr")
-  expect_equal(vec_ptype_abbr(o), "ord")
-
-  expect_equal(vec_ptype_full(f), "factor<>")
-  expect_equal(vec_ptype_full(o), "ordered<>")
-})
-
-
 test_that("difftime has units as parameter", {
   now <- Sys.time()
 

@@ -13,7 +13,7 @@ test_that("logical/integer/numeric works", {
 })
 
 test_that("default is error", {
-  f <- factor("x")
+  f <- new_vctr(1:10, class = "foo")
 
   expect_error(vec_arith("+", f, 1), class = "error_incompatible_op")
 

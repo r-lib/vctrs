@@ -91,18 +91,6 @@ test_that("tz comes from first non-empty", {
   expect_equal(vec_type2(z, y), z[0])
 })
 
-# Factors -----------------------------------------------------------------
-
-test_that("factors level are unioned", {
-  # This is technically incorrect, but because of R's existing behaviour
-  # anything else will cause substantial friction.
-  fa <- vec_ptype(factor(levels = "a"))
-  fb <- vec_ptype(factor(levels = "b"))
-
-  expect_equal(vec_ptype(fa, fb), vec_ptype(factor(levels = c("a", "b"))))
-  expect_equal(vec_ptype(fb, fa), vec_ptype(factor(levels = c("b", "a"))))
-})
-
 # Data frame --------------------------------------------------------------
 
 test_that("data frame only combines with other data frames or NULL", {
