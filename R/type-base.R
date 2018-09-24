@@ -37,7 +37,7 @@ new_datetime <- function(n = 0L, tzone = NULL) {
   )
 }
 
-new_difftime <- function(x = double(), units = "secs") {
+new_duration <- function(x = double(), units = "secs") {
   stopifnot(is.double(x))
 
   structure(

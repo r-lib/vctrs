@@ -225,7 +225,7 @@ vec_type2.difftime <- function(x, y) UseMethod("vec_type2.difftime", y)
 
 #' @method vec_type2.difftime difftime
 #' @export
-vec_type2.difftime.difftime <- function(x, y) new_difftime(units = units_union(x, y))
+vec_type2.difftime.difftime <- function(x, y) new_duration(units = units_union(x, y))
 
 #' @method vec_type2.difftime default
 #' @export
