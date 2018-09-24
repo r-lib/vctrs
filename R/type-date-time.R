@@ -1,15 +1,20 @@
-new_date <- function(n = 0L) {
+new_date <- function(x = double()) {
+  stopifnot(is.double(x))
+
   structure(
-    double(n),
+    x,
     class = "Date"
   )
 }
 
-new_datetime <- function(n = 0L, tzone = NULL) {
+new_datetime <- function(x = double(), tzone = "") {
+  stopifnot(is.double(x))
+  stopifnot(is.character(tzone))
+
   structure(
-    double(n),
-    class = c("POSIXct", "POSIXt"),
-    tzone = tzone
+    x,
+    tzone = tzone,
+    class = c("POSIXct", "POSIXt")
   )
 }
 
@@ -27,14 +32,16 @@ tzone <- function(x) {
   attr(x, "tzone")
 }
 
-tzone_union <- function(x, y) {
-  x_tz <- attr(x, "tzone")
-  y_tz <- attr(y, "tzone")
+tzone_is_local <- function(x) {
+  tz <- tzone(x)
+  is.null(tz) || identical(tz, "")
+}
 
-  if (is_null(x_tz) || identical(x_tz, "")) {
-    y_tz
+tzone_union <- function(x, y) {
+  if (tzone_is_local(x)) {
+    tzone(y)
   } else {
-    x_tz
+    tzone(x)
   }
 }
 

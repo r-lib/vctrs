@@ -81,7 +81,8 @@ vec_ptype_abbr.Date <- function(x) {
 
 #' @export
 vec_ptype_full.POSIXt <- function(x) {
-  paste0("datetime<", attr(x, "tzone") %||% "local", ">")
+  tzone <- if (tzone_is_local(x)) "local" else tzone(x)
+  paste0("datetime<", tzone, ">")
 }
 
 #' @export
