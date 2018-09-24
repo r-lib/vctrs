@@ -17,6 +17,46 @@ new_data_frame <- function(x = list(), n = df_length(x), ...,  class = character
   )
 }
 
+#' @export
+vec_restore.data.frame <- function(x, to) {
+  # Copy attribute, preserving existing names & recreating rownames
+  attr_to <- attributes(to)
+  attr_to[["names"]] <- names(x)
+  attr_to[["row.names"]] <- .set_row_names(df_length(x))
+  attributes(x) <- attr_to
+
+  x
+}
+
+
+#' @export
+vec_ptype_full.data.frame <- function(x) {
+  if (length(x) == 0) {
+    return(paste0(class(x)[[1]], "<>"))
+  } else if (length(x) == 1) {
+    return(paste0(class(x)[[1]], "<", names(x), ":", vec_ptype_full(x[[1]]), ">"))
+  }
+
+  # Needs to handle recursion with indenting
+  types <- map_chr(x, vec_ptype_full)
+  needs_indent <- grepl("\n", types)
+  types[needs_indent] <- map(types[needs_indent], function(x) indent(paste0("\n", x), 4))
+
+  names <- paste0("  ", format(names(x)))
+
+  paste0(
+    class(x)[[1]], "<\n",
+    paste0(names, ": ", types, collapse = "\n"),
+    "\n>"
+  )
+}
+
+#' @export
+vec_ptype_abbr.data.frame <- function(x) {
+  paste0("df", vec_ptype_shape(x))
+}
+
+
 df_length <- function(x) {
   if (length(x) > 0) {
     n <- length(x[[1]])

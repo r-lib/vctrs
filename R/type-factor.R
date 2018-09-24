@@ -19,8 +19,30 @@ levels_union <- function(x, y) {
 }
 
 
-# Coerce ------------------------------------------------------------------
+# Print -------------------------------------------------------------------
 
+
+#' @export
+vec_ptype_abbr.ordered <- function(x) {
+  "ord"
+}
+#' @export
+vec_ptype_abbr.factor <- function(x) {
+  "fctr"
+}
+
+#' @export
+vec_ptype_full.ordered <- function(x) {
+  paste0("ordered<", hash_label(levels(x)), ">")
+}
+
+#' @export
+vec_ptype_full.factor <- function(x) {
+  paste0("factor<", hash_label(levels(x)), ">")
+}
+
+
+# Coerce ------------------------------------------------------------------
 
 #' @rdname vec_type2
 #' @export vec_type2.factor
@@ -68,7 +90,6 @@ vec_type2.factor.default    <- function(x, y) stop_incompatible_type(x, y)
 vec_type2.ordered.default   <- function(x, y) stop_incompatible_type(x, y)
 
 # Cast --------------------------------------------------------------------
-
 
 #' @rdname vec_cast
 #' @export vec_cast.factor

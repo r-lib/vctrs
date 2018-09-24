@@ -54,6 +54,41 @@ units_union <- function(x, y) {
 }
 
 
+# Print ------------------------------------------------------------------
+
+
+#' @export
+vec_ptype_full.Date <- function(x) {
+  "date"
+}
+
+#' @export
+vec_ptype_abbr.Date <- function(x) {
+  "date"
+}
+
+#' @export
+vec_ptype_full.POSIXt <- function(x) {
+  tzone <- if (tzone_is_local(x)) "local" else tzone(x)
+  paste0("datetime<", tzone, ">")
+}
+
+#' @export
+vec_ptype_abbr.POSIXct <- function(x) {
+  "dttm"
+}
+
+#' @export
+vec_ptype_full.difftime <- function(x) {
+  paste0("time<", attr(x, "units"), ">")
+}
+
+#' @export
+vec_ptype_abbr.difftime <- function(x) {
+  "time"
+}
+
+
 # Coerce ------------------------------------------------------------------
 
 #' @rdname vec_type2
