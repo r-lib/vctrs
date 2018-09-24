@@ -41,6 +41,11 @@ test_that("safe casts work as expected", {
   expect_equal(vec_cast(list("a", "b"), fab), fab)
 })
 
+test_that("can cast to character", {
+  expect_equal(vec_cast(factor("X"), character()), "X")
+  expect_equal(vec_cast(ordered("X"), character()), "X")
+})
+
 test_that("lossy casts generate warning", {
   fa <- factor("a")
   fb <- factor("b")

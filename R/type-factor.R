@@ -127,6 +127,9 @@ vec_cast.factor.factor <- function(x, to) {
 #' @method vec_cast.factor character
 vec_cast.factor.character <- vec_cast.factor.factor
 #' @export
+#' @method vec_cast.character factor
+vec_cast.character.factor <- function(x, to) as.character(x)
+#' @export
 #' @method vec_cast.factor list
 vec_cast.factor.list <- function(x, to) {
   vec_list_cast(x, to)
