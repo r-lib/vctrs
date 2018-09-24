@@ -157,7 +157,7 @@ vec_cast.fctr.integer <- function(x, to) {
 as.integer(x)
 ```
 
-## Ordered factors
+### Ordered factors
 
 Ordered factors are a subclass of factors, so first we need to make `fctr` extensible by adding `...` and `class` to the low-level constructor:
 
@@ -204,3 +204,44 @@ In base R, factors and ordered factors behave differently in two main way:
   errors. I think this is inconsistent - if you can sort something it implies
   an ordering, and hence that there's a minimum and maximum value. Ordered
   factors don't have these restrictions. 
+
+## Date/times
+
+R comes with three interlated date/time classes:
+
+* POSIXct
+* Date
+* difftime
+
+I'll ignore POSIXlt as its primary purpose is to extract human meaningful components of a date-time (i.e. weekday, month, year).
+
+### Classes
+
+A date is a double. Most of the complexity is in printing and parsing; I'll just shim over the base Date methods 
+
+```{r}
+new_date <- function(x) {
+  stopifnot(is.double(x))
+  new_vctr(x, class = "date")
+}
+
+date <- function(x) {
+  stopifnot(is.character(x))
+  
+  x <- vec_data(as.Date(x, format = "%Y-%m-%d"))
+  new_date(x)
+}
+
+format.date <- function(x) {
+  format(.Date(vec_data(x)), "%Y-%m-%d")
+}
+
+x <- date(c("2020-01-01", NA))
+x
+```
+
+### Coercions
+
+### Arithmetic
+
+

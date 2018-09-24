@@ -67,3 +67,36 @@ df_col_cast <- function(x, to) {
 
   x[names(to)]
 }
+
+
+# Coercion ----------------------------------------------------------------
+
+
+
+# Cast --------------------------------------------------------------------
+
+
+#' @rdname vec_cast
+#' @export vec_cast.data.frame
+#' @method vec_cast data.frame
+#' @export
+vec_cast.data.frame <- function(x, to) {
+  UseMethod("vec_cast.data.frame")
+}
+#' @export
+#' @method vec_cast.data.frame NULL
+vec_cast.data.frame.NULL <- function(x, to) {
+  x
+}
+#' @export
+#' @method vec_cast.data.frame data.frame
+vec_cast.data.frame.data.frame <- function(x, to) {
+  df <- df_col_cast(x, to)
+  vec_restore(df, to)
+}
+#' @export
+#' @method vec_cast.data.frame default
+vec_cast.data.frame.default <- function(x, to) {
+  stop_incompatible_cast(x, to)
+}
+

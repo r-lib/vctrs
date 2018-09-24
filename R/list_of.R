@@ -167,6 +167,14 @@ vec_cast.vctrs_list_of.NULL <- function(x, to) {
 vec_cast.vctrs_list_of.list <- function(x, to) {
   as_list_of(x, .ptype = attr(to, "ptype"))
 }
+
+#' @export
+#' @method vec_cast.list vctrs_list_of
+vec_cast.list.vctrs_list_of <- function(x, to) {
+  warn_lossy_cast(x, to)
+  shape_recycle(as.list(x), to)
+}
+
 #' @export
 #' @method vec_cast.vctrs_list_of vctrs_list_of
 vec_cast.vctrs_list_of.vctrs_list_of <- vec_cast.vctrs_list_of.list
