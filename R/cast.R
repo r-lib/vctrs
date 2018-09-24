@@ -75,7 +75,9 @@
 #' vec_cast(1, integer())
 #'
 #' # Information is lost so a warning is generated
+#' \dontrun{
 #' vec_cast(1.5, integer())
+#' }
 #'
 #' # No sensible coercion is possible so an error is generated
 #' \dontrun{
