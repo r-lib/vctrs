@@ -191,6 +191,28 @@ rep.vctrs_vctr <- function(x, ...) {
   vec_restore(NextMethod(), x)
 }
 
+#' @export
+diff.vctrs_vctr <- function(x, lag = 1L, differences = 1L, ...) {
+  stopifnot(length(lag) == 1L, lag >= 1L)
+  stopifnot(length(differences) == 1L, differences >= 1L)
+
+  n <- vec_obs(x)
+  if (lag * differences >= n)
+    return(vec_subset(x, 0L))
+
+  out <- x
+  for (i in seq_len(differences)) {
+    n <- vec_obs(out)
+    lhs <- (1L + lag):n
+    rhs <- 1L:(n - lag)
+
+    out <- vec_subset(out, lhs) - vec_subset(out, rhs)
+  }
+
+  out
+}
+
+
 # Modification -------------------------------------------------------------
 
 #' @export

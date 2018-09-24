@@ -9,6 +9,8 @@
 #' recycles `x` and `y` to common length then calls the base operator with the
 #' underlying [vec_data()].
 #'
+#' `vec_arith()` is also used in `diff.vctrs_vctr()` method via `-`.
+#'
 #' @param op An arithmetic operator as a string
 #' @param x,y A pair of vectors. For `!`, unary `+` and unary `-`, `y` will be
 #'   a sentinel object of class `MISSING`, as created by `MISSING()`.

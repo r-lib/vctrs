@@ -140,6 +140,21 @@ test_that("math functions overridden", {
   expect_equal(is.nan(x), FALSE)
 })
 
+test_that("diff matches base R", {
+  x1 <- cumsum(cumsum(1:10))
+  x2 <- new_vctr(x1, class = "vctrs_minus")
+
+  vec_arith.vctrs_minus <- function(op, x, y) vec_arith_base(op, x, y)
+  registerS3method("vec_arith", "vctrs_minus", vec_arith.vctrs_minus)
+
+  expect_equal(diff(x2), diff(x1))
+  expect_equal(diff(x2, lag = 2L), diff(x1, lag = 2L))
+  expect_equal(diff(x2, differences = 2L), diff(x1, differences = 2L))
+
+  expect_equal(diff(x2, lag = 11), x2[0L])
+  expect_equal(diff(x2, differences = 11), x2[0L])
+})
+
 # names -------------------------------------------------------------------
 
 test_that("all elements must be named if any are named", {

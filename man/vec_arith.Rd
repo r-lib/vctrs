@@ -37,6 +37,8 @@ overcoming the limitations of the base \link{Ops} generic.
 \code{vec_base_arith()} is provided as a convenience for writing methods. It
 recycles \code{x} and \code{y} to common length then calls the base operator with the
 underlying \code{\link[=vec_data]{vec_data()}}.
+
+\code{vec_arith()} is also used in \code{diff.vctrs_vctr()} method via \code{-}.
 }
 \examples{
 d <- as.Date("2018-01-01")
