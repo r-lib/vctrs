@@ -62,6 +62,29 @@ test_that("restoring to atomic vector of different type throws error", {
   expect_error(vec_restore("x", x1), class = "error_incompatible_cast")
 })
 
+test_that("base coercion methods mapped to vec_cast", {
+  x <- new_vctr(1)
+
+  expect_error(as.logical(x), class = "error_incompatible_cast")
+  expect_error(as.integer(x), class = "error_incompatible_cast")
+  expect_error(as.logical(x), class = "error_incompatible_cast")
+  expect_error(as.double(x), class = "error_incompatible_cast")
+  expect_error(as.character(x), class = "error_incompatible_cast")
+  expect_error(as.Date(x), class = "error_incompatible_cast")
+  expect_error(as.POSIXct(x), class = "error_incompatible_cast")
+
+  expect_equal(as.list(x), list(x))
+})
+
+test_that("as.data.frame creates data frame", {
+  x <- new_vctr(1:3)
+  df <- as.data.frame(x)
+
+  expect_s3_class(df, "data.frame")
+  expect_equal(nrow(df), 3)
+  expect_named(df, "x")
+})
+
 # names -------------------------------------------------------------------
 
 test_that("all elements must be named if any are named", {

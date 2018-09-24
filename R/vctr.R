@@ -264,6 +264,24 @@ as.POSIXct.vctrs_vctr <- function(x, tz = "", ...) {
   vec_cast(x, new_datetime(tzone = tz))
 }
 
+
+#' @export
+as.data.frame.vctrs_vctr <- function(x,
+                               row.names = NULL,
+                               optional = FALSE,
+                               ...,
+                               nm = paste(deparse(substitute(x), width.cutoff = 500L), collapse = " ")
+                               ) {
+
+  force(nm)
+  cols <- list(x)
+  if (!optional) {
+    names(cols) <- nm
+  }
+
+  new_data_frame(cols, n = vec_length(x))
+}
+
 # Equality ----------------------------------------------------------------
 
 #' @export
@@ -501,25 +519,6 @@ levels.vctrs_vctr <- function(x) {
 #' @export
 `is.na<-.vctrs_vctr` <- function(x, value) {
   stop_unsupported(x, "is.na<-")
-}
-
-# Data frame --------------------------------------------------------------
-
-#' @export
-as.data.frame.vctrs_vctr <- function(x,
-                               row.names = NULL,
-                               optional = FALSE,
-                               ...,
-                               nm = paste(deparse(substitute(x), width.cutoff = 500L), collapse = " ")
-                               ) {
-
-  force(nm)
-  cols <- list(x)
-  if (!optional) {
-    names(cols) <- nm
-  }
-
-  new_data_frame(cols, n = vec_length(x))
 }
 
 # Helpers -----------------------------------------------------------------
