@@ -69,6 +69,16 @@ as.data.frame.vctrs_sclr <- function(x,
 # Vector behaviours -------------------------------------------------------
 
 #' @export
+`[.vctrs_sclr` <- function(x, ...) {
+  stop_unsupported(x, "[")
+}
+
+#' @export
+`[<-.vctrs_sclr` <- function(x, ...) {
+  stop_unsupported(x, "[<-")
+}
+
+#' @export
 c.vctrs_sclr <- function(...) {
   stop_unsupported(..1, "c")
 }
@@ -101,11 +111,6 @@ Summary.vctrs_sclr <- function(..., na.rm = TRUE) {
 #' @export
 xtfrm.vctrs_sclr <- function(x) {
   stop_unsupported(x, "xtfrm")
-}
-
-#' @export
-summary.vctrs_sclr <- function(object, ...) {
-  stop_unimplemented(object, "summary")
 }
 
 #' @export
@@ -182,3 +187,12 @@ as.Date.vctrs_sclr <- function(x, ...) {
 as.POSIXct.vctrs_sclr <- function(x, tz = "", ...) {
   stop_unsupported(x, "as.POSIXct")
 }
+
+
+# Unimplemented -----------------------------------------------------------
+
+#' @export
+summary.vctrs_sclr <- function(object, ...) {
+  stop_unimplemented(object, "summary")
+}
+
