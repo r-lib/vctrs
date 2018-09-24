@@ -8,6 +8,8 @@ new_date <- function(x = double()) {
 }
 
 new_datetime <- function(x = double(), tzone = "") {
+  tzone <- tzone %||% ""
+
   stopifnot(is.double(x))
   stopifnot(is.character(tzone))
 
