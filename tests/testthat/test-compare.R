@@ -55,3 +55,12 @@ test_that("C code doesn't crash with bad inputs", {
   expect_error(.Call(vctrs_compare, df, df[1], TRUE), "not comparable")
   expect_error(.Call(vctrs_compare, df, setNames(df, c("x", "z")), TRUE), "not comparable")
 })
+
+test_that("xtfrm.vctrs_vctr works for variety of base classes", {
+  df <- data.frame(x = c(NA, 1, 1), y = c(1, 2, 1))
+  expect_equal(xtfrm.vctrs_vctr(df), c(3, 2, 1))
+
+  x <- c(2, 3, 1)
+  expect_equal(xtfrm.vctrs_vctr(x), x)
+  expect_equal(xtfrm.vctrs_vctr(letters[x]), x)
+})

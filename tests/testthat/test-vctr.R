@@ -19,14 +19,6 @@ test_that("default format method is internal", {
   expect_equal(format(x), format(x))
 })
 
-test_that("xtfrm works for variety of base classes", {
-  x <- new_vctr(1:3)
-  expect_equal(xtfrm(x), 1:3)
-
-  x <- new_vctr(letters[1:3])
-  expect_equal(xtfrm(x), 1:3)
-})
-
 # Cast/restore ------------------------------------------------------------
 
 test_that("cast to NULL returns x", {
@@ -83,6 +75,69 @@ test_that("as.data.frame creates data frame", {
   expect_s3_class(df, "data.frame")
   expect_equal(nrow(df), 3)
   expect_named(df, "x")
+})
+
+# equality + comparison + arith + math ---------------------------------------
+
+test_that("equality functions remapped", {
+  x <- new_vctr(c(1, 1, NA))
+
+  expect_error(x == 1, class = "error_incompatible_type")
+  expect_error(x != 1, class = "error_incompatible_type")
+  expect_equal(is.na(x), c(FALSE, FALSE, TRUE))
+  expect_true(anyNA(x))
+
+  expect_equal(unique(x), new_vctr(c(1, NA)))
+  expect_equal(duplicated(x), c(FALSE, TRUE, FALSE))
+  expect_true(anyDuplicated(x))
+})
+
+test_that("comparison functions remapped", {
+  x1 <- new_vctr(c(1, 2), class = "bizzaro")
+  x2 <- new_vctr(2, class = "bizzaro")
+
+  vec_proxy_compare.bizzaro <- function(x) -vec_data(x)
+  registerS3method("vec_proxy_compare", "bizzaro", vec_proxy_compare.bizzaro)
+
+  expect_equal(order(x1), c(2L, 1L))
+  expect_equal(x1 < x2, c(FALSE, FALSE))
+  expect_equal(x1 <= x2, c(FALSE, TRUE))
+  expect_equal(x1 > x2, c(TRUE, FALSE))
+  expect_equal(x1 >= x2, c(TRUE, TRUE))
+})
+
+test_that("operators remapped", {
+  x <- new_vctr(c(1, 2), class = "bizzaro")
+
+  vec_arith.bizzaro <- function(op, x, y) 1L
+  registerS3method("vec_arith", "bizzaro", vec_arith.bizzaro)
+
+  expect_equal(x + 1, 1L)
+  expect_equal(x - 1, 1L)
+  expect_equal(x * 1, 1L)
+  expect_equal(x / 1, 1L)
+  expect_equal(x %% 1, 1L)
+  expect_equal(x %/% 1, 1L)
+  expect_equal(x & 1, 1L)
+  expect_equal(x | 1, 1L)
+
+  expect_equal(!x, 1L)
+  expect_equal(+x, 1L)
+  expect_equal(-x, 1L)
+})
+
+test_that("math functions overridden", {
+  x <- new_vctr(c(1, NA), class = "bizzaro")
+
+  vec_math.bizzaro <- function(fun, x, ...) vec_math_base(fun, 2L)
+  registerS3method("vec_math", "bizzaro", vec_math.bizzaro)
+
+  expect_equal(mean(x), 2L)
+  expect_equal(sum(x), 2L)
+
+  expect_equal(is.finite(x), TRUE)
+  expect_equal(is.infinite(x), FALSE)
+  expect_equal(is.nan(x), FALSE)
 })
 
 # names -------------------------------------------------------------------

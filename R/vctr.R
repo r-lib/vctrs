@@ -358,8 +358,6 @@ xtfrm.vctrs_vctr <- function(x) {
     proxy
   } else if (is_character(proxy) || is_logical(proxy)) {
     order(order(proxy))
-  } else if (is_list(proxy)) {
-    stop("Lists are not comparible", call. = FALSE)
   } else {
     stop("Invalid type returned by `vec_proxy_compare()`.", call. = FALSE)
   }
@@ -413,17 +411,17 @@ mean.vctrs_vctr <- function(x, ..., na.rm = FALSE) {
 }
 
 #' @export
-is.finite.vctrs_rcrd <- function(x) {
+is.finite.vctrs_vctr <- function(x) {
   vec_math("is.finite", x)
 }
 
 #' @export
-is.infinite.vctrs_rcrd <- function(x) {
+is.infinite.vctrs_vctr <- function(x) {
   vec_math("is.infinite", x)
 }
 
 #' @export
-is.nan.vctrs_rcrd <- function(x) {
+is.nan.vctrs_vctr <- function(x) {
   vec_math("is.nan", x)
 }
 
