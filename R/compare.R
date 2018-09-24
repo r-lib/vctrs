@@ -34,11 +34,16 @@ vec_proxy_compare.POSIXlt <- function(x) {
 
 #' @export
 vec_proxy_compare.default <- function(x) {
-  if (!is.object(x) && is.list(x)) {
-    stop_unsupported(x, "compare")
+  if (is_bare_list(x)) {
+    stop_unsupported(x, "vec_proxy_compare")
   } else {
     vec_data(x)
   }
+}
+
+#' @export
+vec_proxy_compare.NULL <- function(x) {
+  NULL
 }
 
 #' Compare two vectors

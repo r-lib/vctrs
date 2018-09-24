@@ -29,6 +29,9 @@ int equal_scalar(SEXP x, int i, SEXP y, int j, bool na_equal) {
   }
   case VECSXP:
     if (is_data_frame(x)) {
+      if (!is_data_frame(y))
+        return false;
+
       int p = Rf_length(x);
       if (p != Rf_length(y))
         return false;
@@ -59,9 +62,6 @@ bool equal_object(SEXP x, SEXP y) {
     return false;
 
   switch(TYPEOF(x)) {
-  case NILSXP:
-    return true;
-
   case LGLSXP:
   case INTSXP:
   case REALSXP:
@@ -110,7 +110,8 @@ bool equal_object(SEXP x, SEXP y) {
   case CHARSXP:
   case ENVSXP:
   case EXTPTRSXP:
-    return x == y;
+    // If equal, would have returned true above
+    return false;
     break;
 
   default:
