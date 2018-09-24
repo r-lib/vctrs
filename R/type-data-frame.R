@@ -71,7 +71,22 @@ df_col_cast <- function(x, to) {
 
 # Coercion ----------------------------------------------------------------
 
+#' @rdname vec_type2
+#' @export vec_type2.data.frame
+#' @method vec_type2 data.frame
+#' @export
+vec_type2.data.frame <- function(x, y) UseMethod("vec_type2.data.frame", y)
 
+#' @method vec_type2.data.frame data.frame
+#' @export
+vec_type2.data.frame.data.frame <- function(x, y) {
+  df <- df_col_type2(x, y)
+  new_data_frame(df, n = 0)
+}
+
+#' @method vec_type2.data.frame default
+#' @export
+vec_type2.data.frame.default <- function(x, y) stop_incompatible_type(x, y)
 
 # Cast --------------------------------------------------------------------
 
