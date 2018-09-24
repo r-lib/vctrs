@@ -8,9 +8,9 @@
 \description{
 \if{html}{\figure{logo.png}{options: align='right'}}
 
-Functions that help you work with vectors, particularly numeric.
-    Provides a full set of summary, cumulative, rolling, and vectorised
-    functions for both R and C.
+Functions that help you work with vectors,
+    particularly numeric.  Provides a full set of summary, cumulative,
+    rolling, and vectorised functions for both R and C.
 }
 \seealso{
 Useful links:
