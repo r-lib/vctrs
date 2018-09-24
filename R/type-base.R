@@ -1,11 +1,19 @@
 # Factors -----------------------------------------------------------------
 
-new_factor <- function(n = 0L, levels = character()) {
-  factor(character(n), levels = levels)
+new_factor <- function(x = integer(), levels = character(), ..., class = character()) {
+  stopifnot(is.integer(x))
+  stopifnot(is.character(levels))
+
+  structure(
+    x,
+    levels = levels,
+    ...,
+    class = c(class, "factor")
+  )
 }
 
-new_ordered <- function(n = 0L, levels = character()) {
-  ordered(character(n), levels = levels)
+new_ordered <- function(x = integer(), levels = character()) {
+  new_factor(x = x, levels = levels, class = "ordered")
 }
 
 levels_union <- function(x, y) {
@@ -29,6 +37,15 @@ new_datetime <- function(n = 0L, tzone = NULL) {
   )
 }
 
+new_difftime <- function(x = double(), units = "secs") {
+  stopifnot(is.double(x))
+
+  structure(
+    x,
+    units = units,
+    class = "difftime"
+  )
+}
 
 tzone <- function(x) {
   attr(x, "tzone")
@@ -43,14 +60,6 @@ tzone_union <- function(x, y) {
   } else {
     x_tz
   }
-}
-
-new_difftime <- function(n = 0L, units = "secs") {
-  structure(
-    double(n),
-    units = units,
-    class = "difftime"
-  )
 }
 
 units_union <- function(x, y) {
