@@ -88,6 +88,12 @@ test_that("can use [ and [[ with names", {
   expect_equal(x[["c"]], new_vctr(3))
   x["d"] <- 4
   expect_equal(x[["d"]], new_vctr(4))
+
+  y <- new_vctr(list(a = 1, b = 2))
+  y[["c"]] <- 3
+  expect_equal(y[["c"]], 3)
+  y["d"] <- list(4)
+  expect_equal(y[["d"]], 4)
 })
 
 test_that("subsetting preserves attributes", {
@@ -103,9 +109,14 @@ test_that("$ inherits from underlying vector", {
   # causes an error "invalid subscript type 'promise'"
   skip_if_not(getRversion() >= "3.2")
 
-  x <- new_vctr(c(a = 1, b = 2))
-  expect_error(x$a, "atomic vectors")
-  expect_error(x$a <- 2, "atomic vectors")
+  x1 <- new_vctr(c(a = 1, b = 2))
+  expect_error(x1$a, "atomic vectors")
+  expect_error(x1$a <- 2, "atomic vectors")
+
+  x2 <- new_vctr(list(a = 1, b = 2))
+  expect_equal(x2$a, 1)
+  x2$a <- 10
+  expect_equal(x2$a, 10)
 })
 
 # hidden class ------------------------------------------------------------

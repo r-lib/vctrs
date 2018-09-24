@@ -106,8 +106,13 @@ vec_cast.vctrs_vctr.NULL <- function(x, to) x
 #' @method vec_cast.vctrs_vctr default
 #' @export
 vec_cast.vctrs_vctr.default <- function(x, to) {
+  # These are not strictly necessary, but make bootstrapping a new class
+  # a bit simpler
   if (is.object(x)) {
-    if (identical(attributes(x), attributes(to))) {
+    attr_x <- utils::modifyList(attributes(x), list(names = NULL))
+    attr_y <- utils::modifyList(attributes(to), list(names = NULL))
+
+    if (identical(attr_x, attr_y)) {
       return(x)
     } else {
       stop_incompatible_cast(x, to)
@@ -160,12 +165,20 @@ format.vctrs_vctr <- function(x, ...) {
 
 #' @export
 `[[.vctrs_vctr` <- function(x, i, ...) {
-  vec_restore(NextMethod(), x)
+  if (is.list(x)) {
+    NextMethod()
+  } else {
+    vec_restore(NextMethod(), x)
+  }
 }
 
 #' @export
 `$.vctrs_vctr` <- function(x, i) {
-  vec_restore(NextMethod(), x)
+  if (is.list(x)) {
+    NextMethod()
+  } else {
+    vec_restore(NextMethod(), x)
+  }
 }
 
 #' @export
@@ -182,18 +195,20 @@ rep.vctrs_vctr <- function(x, ...) {
 
 #' @export
 `[[<-.vctrs_vctr` <- function(x, i, value) {
-  value <- vec_cast(value, x)
+  if (!is.list(x)) {
+    value <- vec_cast(value, x)
+  }
   NextMethod()
 }
 
 #' @export
 `$<-.vctrs_vctr` <- function(x, i, value) {
-  if (!is.list(x)) {
+  if (is.list(x)) {
+    NextMethod()
+  } else {
     # Default behaviour is to cast LHS to a list
     stop("$ operator is invalid for atomic vectors", call. = FALSE)
   }
-  value <- vec_cast(value, x)
-  NextMethod()
 }
 
 #' @export
