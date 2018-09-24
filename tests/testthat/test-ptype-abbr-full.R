@@ -25,7 +25,6 @@ test_that("objects default to first class", {
   x <- structure(1, class = "foofy")
   expect_equal(vec_ptype_full(x), "foofy")
   expect_equal(vec_ptype_abbr(x), "foofy")
-
 })
 
 test_that("atomic vectors and arrays as expected", {
@@ -33,14 +32,6 @@ test_that("atomic vectors and arrays as expected", {
 
   dbl_mat <- array(double(), c(0, 3))
   expect_equal(vec_ptype_full(dbl_mat), "double[,3]")
-})
-
-test_that("date/times as expected", {
-  expect_equal(vec_ptype_abbr(Sys.Date()), "date")
-  expect_equal(vec_ptype_abbr(Sys.time()), "dttm")
-
-  expect_equal(vec_ptype_full(Sys.Date()), "date")
-  expect_equal(vec_ptype_full(Sys.time()), "datetime<local>")
 })
 
 test_that("I() wraps contents", {
@@ -57,14 +48,6 @@ test_that("AsIs class stripped from I()", {
   expect_equal(vec_ptype_full(I(df)), "I<myclass<\n  x: double\n  y: integer\n>>")
   expect_equal(vec_ptype_full(I(df[1])), "I<myclass<x:double>>")
   expect_equal(vec_ptype_full(I(df[0])), "I<myclass<>>")
-})
-
-test_that("difftime has units as parameter", {
-  now <- Sys.time()
-
-  expect_equal(vec_ptype_abbr(difftime(now + 10, now)), "time")
-  expect_equal(vec_ptype_full(difftime(now + 10, now)), "time<secs>")
-  expect_equal(vec_ptype_full(difftime(now + 1e5, now)), "time<days>")
 })
 
 test_that("data frames print nicely", {

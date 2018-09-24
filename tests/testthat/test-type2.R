@@ -73,24 +73,6 @@ test_that("new classes are uncoercible by default", {
   expect_error(vec_type2(x, 1), class = "error_incompatible_type")
 })
 
-
-# Date times --------------------------------------------------------------
-
-test_that("tz comes from first non-empty", {
-  # On the assumption that if you've set the time zone explicitly it
-  # should win
-
-  x <- as.POSIXct("2020-01-01")
-  y <- as.POSIXct("2020-01-01", tz = "America/New_York")
-
-  expect_equal(vec_type2(x, y), y[0])
-  expect_equal(vec_type2(y, x), y[0])
-
-  z <- as.POSIXct("2020-01-01", tz = "Pacific/Auckland")
-  expect_equal(vec_type2(y, z), y[0])
-  expect_equal(vec_type2(z, y), z[0])
-})
-
 # Data frame --------------------------------------------------------------
 
 test_that("data frame only combines with other data frames or NULL", {
