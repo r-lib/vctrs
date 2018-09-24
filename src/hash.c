@@ -83,7 +83,7 @@ int32_t hash_scalar(SEXP x, R_len_t i) {
 }
 
 int32_t hash_object(SEXP x) {
-  R_len_t n = vec_length(x);
+  R_len_t n = vec_obs(x);
   int32_t hash = 0;
 
   switch(TYPEOF(x)) {
@@ -133,7 +133,7 @@ int32_t hash_object(SEXP x) {
 // R interface -----------------------------------------------------------------
 
 SEXP vctrs_hash(SEXP x) {
-  R_len_t n = vec_length(x);
+  R_len_t n = vec_obs(x);
   SEXP out = PROTECT(Rf_allocVector(INTSXP, n));
 
   int32_t* pOut = INTEGER(out);

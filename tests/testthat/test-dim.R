@@ -1,21 +1,21 @@
 context("test-dim")
 
-# vec_length --------------------------------------------------------------
+# vec_obs --------------------------------------------------------------
 
 test_that("length is number of rows", {
-  expect_equal(vec_length(integer()), 0)
-  expect_equal(vec_length(array(integer())), 0)
+  expect_equal(vec_obs(integer()), 0)
+  expect_equal(vec_obs(array(integer())), 0)
 
-  expect_equal(vec_length(1:2), 2)
-  expect_equal(vec_length(array(dim = 2)), 2)
+  expect_equal(vec_obs(1:2), 2)
+  expect_equal(vec_obs(array(dim = 2)), 2)
 
-  expect_equal(vec_length(matrix(nrow = 2, ncol = 3)), 2)
-  expect_equal(vec_length(array(dim = c(2, 1, 5))), 2)
+  expect_equal(vec_obs(matrix(nrow = 2, ncol = 3)), 2)
+  expect_equal(vec_obs(array(dim = c(2, 1, 5))), 2)
 })
 
 test_that("length of record is number of rows, not fields", {
   r <- new_rcrd(list(x = 1:10))
-  expect_equal(vec_length(r), 10)
+  expect_equal(vec_obs(r), 10)
 })
 
 test_that("handles three types of data frame rownames", {
@@ -24,9 +24,9 @@ test_that("handles three types of data frame rownames", {
   rownames(df2) <- 3:1
   rownames(df3) <- letters[1:3]
 
-  expect_equal(vec_length(df1), 3)
-  expect_equal(vec_length(df2), 3)
-  expect_equal(vec_length(df3), 3)
+  expect_equal(vec_obs(df1), 3)
+  expect_equal(vec_obs(df2), 3)
+  expect_equal(vec_obs(df3), 3)
 })
 
 # vec_dim -----------------------------------------------------------------
@@ -51,6 +51,6 @@ test_that("vector and 1-d array are equivalent", {
   expect_equal(vec_dim(x1), 5)
   expect_equal(vec_dim(x2), 5)
 
-  expect_equal(vec_length(x1), 5)
-  expect_equal(vec_length(x2), 5)
+  expect_equal(vec_obs(x1), 5)
+  expect_equal(vec_obs(x2), 5)
 })

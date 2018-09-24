@@ -92,7 +92,7 @@ vec_rbind <- function(..., .ptype = NULL) {
   if (is_unknown(ptype))
     return(data_frame())
 
-  ns <- map_int(tbls, vec_length)
+  ns <- map_int(tbls, vec_obs)
   # Use list so we can rely on efficient internal [[<-
   out <- vec_data(vec_rep(ptype, sum(ns)))
 
@@ -171,13 +171,13 @@ find_nrow <- function(x, .nrow = NULL) {
   if (!is.null(.nrow)) {
     .nrow
   } else {
-    lengths <- map_int(x, vec_length)
+    lengths <- map_int(x, vec_obs)
     Reduce(recycle_length, lengths) %||% 0L
   }
 }
 
 recycle <- function(x, n) {
-  nx <- vec_length(x)
+  nx <- vec_obs(x)
 
   if (is.null(x) || nx == n) {
     x
@@ -221,7 +221,7 @@ as_df_col.data.frame <- function(x, outer_name = NULL) {
 as_df_col.default <- function(x, outer_name = NULL) {
   if (vec_dims(x) == 1L) {
     x <- stats::setNames(list(x), outer_name)
-    new_data_frame(x, n = vec_length(x[[1]]))
+    new_data_frame(x)
   } else {
     colnames(x) <- outer_names(outer_name, colnames(x), ncol(x))
     as.data.frame(x)

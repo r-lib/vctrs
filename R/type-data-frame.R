@@ -138,7 +138,7 @@ df_col_cast <- function(x, to) {
 
   # Add new columns
   from_type <- setdiff(names(to), names(x))
-  out[from_type] <- map(to[from_type], vec_na, n = vec_length(x))
+  out[from_type] <- map(to[from_type], vec_na, n = vec_obs(x))
 
   # Drop extra columns
   out <- out[names(to)]

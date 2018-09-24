@@ -55,7 +55,7 @@ as_list_of.list <- function(x, ..., .ptype = NULL) {
 #' @export
 new_list_of <- function(x, ptype, ..., class = character()) {
   stopifnot(is.list(x))
-  stopifnot(vec_length(ptype) == 0)
+  stopifnot(vec_obs(ptype) == 0)
 
   new_vctr(x, ..., ptype = ptype, class = c(class, "vctrs_list_of"))
 }

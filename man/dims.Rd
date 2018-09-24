@@ -2,13 +2,13 @@
 % Please edit documentation in R/dim.R
 \name{dims}
 \alias{dims}
-\alias{vec_length}
+\alias{vec_obs}
 \alias{vec_empty}
 \alias{vec_dim}
 \alias{vec_dims}
 \title{Vector dimensions}
 \usage{
-vec_length(x)
+vec_obs(x)
 
 vec_empty(x)
 
@@ -21,9 +21,10 @@ vec_dims(x)
 }
 \description{
 \itemize{
-\item \code{vec_length()} returns the length of the vector, which is the number of
+\item \code{vec_obs()} returns the number of observations in an object. This is
+the length of a 1d vector, or the number of rows in a matrix or data frame
 rows if multidimensional
-\item \code{vec_empty()} returns \code{TRUE} if \code{vec_length()} is zero.
+\item \code{vec_empty()} returns \code{TRUE} if \code{vec_obs()} is zero.
 \item \code{vec_dims()} gives the dimensionality (i.e. number of dimensions)
 \item \code{vec_dim()} returns the size of each dimension
 }
@@ -31,7 +32,7 @@ rows if multidimensional
 \details{
 Unlike base R, we treat vectors with \code{NULL} dimensions as 1d. This
 simplifies the type system by eliding a special case. Compared to base R
-equivalents \code{vec_length()} acts like \code{NROW()}, and \code{vec_dim()} returns
+equivalents \code{vec_obs()} acts like \code{NROW()}, and \code{vec_dim()} returns
 \code{length()}, not \code{NULL}, when \code{x} is 1d.
 }
 \examples{
@@ -42,5 +43,5 @@ vec_dim(x)
 
 y <- matrix(1:6, nrow = 2)
 length(y)
-vec_length(y)
+vec_obs(y)
 }
