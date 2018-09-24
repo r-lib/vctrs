@@ -74,7 +74,7 @@ as.data.frame.vctrs_sclr <- function(x,
 }
 
 #' @export
-`[<-.vctrs_sclr` <- function(x, ...) {
+`[<-.vctrs_sclr` <- function(x, ..., value) {
   stop_unsupported(x, "[<-")
 }
 
