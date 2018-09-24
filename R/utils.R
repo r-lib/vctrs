@@ -63,21 +63,6 @@ inline_list <- function(title, x, width = getOption("width"), quote = "") {
   paste0(title, x)
 }
 
-# other than names
-has_attrs <- function(x) {
-  attr <- attributes(x)
-  if (is.null(attr))
-    return(FALSE)
-
-  !identical(names(attr), "names")
-}
-
-vec_binary <- function(x, y, f = vec_data) {
-  args <- vec_recycle(x, y)
-  args <- vec_coerce(!!!args)
-  lapply(args, vec_data)
-}
-
 #' Destructuring assignment
 #'
 #' See \code{zeallot::\link[zeallot]{\%<-\%}} for details.
