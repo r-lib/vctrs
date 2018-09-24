@@ -31,6 +31,6 @@ These functions help the base factor and ordered factor classes fit in to
 the vctrs type system by providing low-level constructors, as well as
 coercion and casting generics + methods. \code{new_factor()} and \code{new_ordered()}
 are low-level constructors - they only check that types, but not values,
-are valid.
+are valid, and therefore are for expert use only.
 }
 \keyword{internal}
