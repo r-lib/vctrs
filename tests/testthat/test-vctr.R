@@ -197,6 +197,31 @@ test_that("$ inherits from underlying vector", {
   expect_equal(x2$a, 10)
 })
 
+
+# unsupported/unimplemented operations --------------------------------------
+
+test_that("can't touch protected attributes", {
+  x <- new_vctr(1:4)
+
+  expect_error(is.na(x) <- TRUE, class = "error_unsupported")
+
+  expect_error(dim(x) <- c(2, 2), class = "error_unsupported")
+  expect_error(dimnames(x) <- list("x"), class = "error_unsupported")
+
+  expect_error(levels(x), class = "error_unsupported")
+  expect_error(levels(x) <- "x", class = "error_unsupported")
+
+  # but it's ok to set names to NULL; this happens at least in vec_c
+  # and maybe elsewhere. We may need to back off on this level of
+  # strictness in the future
+  expect_error(names(x) <- NULL, NA)
+})
+
+test_that("summary is unimplemented", {
+  x <- new_vctr(1:4)
+  expect_error(summary(x), class = "error_unimplemented")
+})
+
 # hidden class ------------------------------------------------------------
 # We can't construct classes in test because the methods are not found
 # when vctr generics call other generics. Instead we rely on a very simple
@@ -303,19 +328,6 @@ test_that("default print method shows names", {
     },
     file = "test-vctr-print-names.txt",
   )
-})
-
-test_that("can't touch protected attributes", {
-  h <- new_hidden(1:4)
-
-  expect_error(dim(h) <- c(2, 2), class = "error_unsupported")
-  expect_error(dimnames(h) <- list("x"), class = "error_unsupported")
-  expect_error(levels(h) <- "x", class = "error_unsupported")
-
-  # but it's ok to set names to NULL; this happens at least in vec_c
-  # and maybe elsewhere. We may need to back off on this level of
-  # strictness in the future
-  expect_error(names(h) <- NULL, NA)
 })
 
 test_that("can't transpose", {
