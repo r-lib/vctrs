@@ -36,6 +36,11 @@ then restore attributes with \code{vec_restore()}.
 \code{as.Date()} and \code{as.POSIXct()} methods call \code{vec_cast()}.
 The \code{as.list()} method calls \code{[[} repeatedly, and the \code{as.data.frame()}
 method uses a standard technique to wrap a vector in a data frame.
+\item \code{as.factor()}, \code{as.ordered()} and \code{as.difftime()} are not generic functions
+in base R, but have been reimplemented as generics in the \code{generics}
+package. \code{vctrs} extends these and calls \code{vec_cast()}. To inherit this
+behavior in a package, import and re-export the generic of interest
+from \code{generics}.
 \item \code{==}, \code{!=}, \code{unique()}, \code{anyDuplicated()}, and \code{is.na()} use
 \code{\link[=vec_proxy_equal]{vec_proxy_equal()}}.
 \item \code{<}, \code{<=}, \code{>=}, \code{>}, \code{min()}, \code{max()}, \code{median()}, \code{quantile()},
