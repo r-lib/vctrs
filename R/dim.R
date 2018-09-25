@@ -1,14 +1,15 @@
 #' Vector dimensions
 #'
-#' * `vec_length()` returns the length of the vector, which is the number of
+#' * `vec_obs()` returns the number of observations in an object. This is
+#'   the length of a 1d vector, or the number of rows in a matrix or data frame
 #'   rows if multidimensional
-#' * `vec_empty()` returns `TRUE` if `vec_length()` is zero.
+#' * `vec_empty()` returns `TRUE` if `vec_obs()` is zero.
 #' * `vec_dims()` gives the dimensionality (i.e. number of dimensions)
 #' * `vec_dim()` returns the size of each dimension
 #'
 #' Unlike base R, we treat vectors with `NULL` dimensions as 1d. This
 #' simplifies the type system by eliding a special case. Compared to base R
-#' equivalents `vec_length()` acts like `NROW()`, and `vec_dim()` returns
+#' equivalents `vec_obs()` acts like `NROW()`, and `vec_dim()` returns
 #' `length()`, not `NULL`, when `x` is 1d.
 #'
 #' @param x A vector
@@ -21,19 +22,19 @@
 #'
 #' y <- matrix(1:6, nrow = 2)
 #' length(y)
-#' vec_length(y)
+#' vec_obs(y)
 NULL
 
 #' @export
 #' @rdname dims
-vec_length <- function(x) {
+vec_obs <- function(x) {
   .Call(vctrs_length, x)
 }
 
 #' @export
 #' @rdname dims
 vec_empty <- function(x) {
-  vec_length(x) == 0L
+  vec_obs(x) == 0L
 }
 
 #' @export

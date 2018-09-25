@@ -7,7 +7,7 @@
 
 // Vector methods ------------------------------------------------
 
-R_len_t vec_length(SEXP x);
+R_len_t vec_obs(SEXP x);
 bool is_data_frame(SEXP x);
 
 bool equal_object(SEXP x, SEXP y);

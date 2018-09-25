@@ -27,10 +27,10 @@ test_that("safe casts work as expeced", {
 })
 
 test_that("lossy casts generate warning", {
-  expect_condition(vec_cast(2L, logical()), class = "warning_lossy_cast")
-  expect_condition(vec_cast(2, logical()), class = "warning_lossy_cast")
-  expect_condition(vec_cast("x", logical()), class = "warning_lossy_cast")
-  expect_condition(vec_cast(list(c(TRUE, FALSE)), logical()), class = "warning_lossy_cast")
+  expect_condition(vec_cast(c(2L, 1L), logical()), class = "warning_lossy_cast")
+  expect_condition(vec_cast(c(2, 1), logical()), class = "warning_lossy_cast")
+  expect_condition(vec_cast(c("x", "TRUE"), logical()), class = "warning_lossy_cast")
+  expect_condition(vec_cast(list(c(TRUE, FALSE), TRUE), logical()), class = "warning_lossy_cast")
 })
 
 test_that("invalid casts generate error", {
@@ -58,8 +58,8 @@ test_that("safe casts work as expected", {
 })
 
 test_that("lossy casts generate warning", {
-  expect_condition(vec_cast(2.5, integer()), class = "warning_lossy_cast")
-  expect_condition(vec_cast("2.5", integer()), class = "warning_lossy_cast")
+  expect_condition(vec_cast(c(2.5, 2), integer()), class = "warning_lossy_cast")
+  expect_condition(vec_cast(c("2.5", "2"), integer()), class = "warning_lossy_cast")
 })
 
 test_that("invalid casts generate error", {
@@ -78,7 +78,7 @@ test_that("safe casts work as expected", {
 })
 
 test_that("lossy casts generate warning", {
-  expect_condition(vec_cast("x", double()), class = "warning_lossy_cast")
+  expect_condition(vec_cast(c("2.5", "x"), double()), class = "warning_lossy_cast")
 })
 
 test_that("invalid casts generate error", {
@@ -105,168 +105,4 @@ test_that("safe casts work as expected", {
   expect_equal(vec_cast(NULL, list()), NULL)
   expect_equal(vec_cast(1:2, list()), list(1L, 2L))
   expect_equal(vec_cast(list(1L, 2L), list()), list(1L, 2L))
-})
-
-# Factors -----------------------------------------------------------------
-
-test_that("safe casts work as expected", {
-  fa <- factor("a")
-  fab <- factor(c("a", "b"))
-
-  expect_equal(vec_cast(NULL, fa), NULL)
-
-  expect_equal(vec_cast(fa, fa), fa)
-  expect_equal(vec_cast(fa, fab), fab[1])
-  expect_equal(vec_cast("a", fab), fab[1])
-
-  expect_equal(vec_cast("a", factor()), fa)
-  expect_equal(vec_cast(fa, factor()), fa)
-
-  expect_equal(vec_cast(list("a", "b"), fab), fab)
-})
-
-test_that("lossy casts generate warning", {
-  fa <- factor("a")
-  fb <- factor("b")
-
-  expect_condition(vec_cast(fa, fb), class = "warning_lossy_cast")
-  expect_condition(vec_cast("a", fb), class = "warning_lossy_cast")
-})
-
-test_that("invalid casts generate error", {
-  expect_error(vec_cast(double(), factor("a")), class = "error_incompatible_cast")
-})
-
-test_that("orderedness of factor is preserved", {
-  fct <- factor("a")
-  ord <- ordered("a")
-
-  expect_equal(vec_cast(fct, ord), ord)
-  expect_equal(vec_cast("a", ord), ord)
-})
-
-# Dates -------------------------------------------------------------------
-
-test_that("safe casts work as expected", {
-  date <- as.Date("2018-01-01")
-
-  expect_equal(vec_cast(NULL, date), NULL)
-  expect_equal(vec_cast(17532, date), date)
-  expect_equal(vec_cast("2018-01-01", date), date)
-  expect_equal(vec_cast(date, date), date)
-  expect_equal(vec_cast(as.POSIXct(date), date), date)
-  expect_equal(vec_cast(list(date), date), date)
-})
-
-test_that("lossy casts generate warning", {
-  date <- as.Date("2018-01-01")
-  datetime <- as.POSIXct(date) + 3600
-
-  expect_condition(vec_cast(datetime, date), class = "warning_lossy_cast")
-})
-
-test_that("invalid casts generate error", {
-  date <- as.Date("2018-01-01")
-  expect_error(vec_cast(integer(), date), class = "error_incompatible_cast")
-})
-
-
-# Date-times --------------------------------------------------------------
-
-test_that("safe casts work as expected", {
-  datetime <- as.POSIXct("1970-02-01", tz = "UTC")
-
-  expect_equal(vec_cast(NULL, datetime), NULL)
-  expect_equal(vec_cast(2678400, datetime), datetime)
-  expect_equal(vec_cast("1970-02-01", datetime), datetime)
-  expect_equal(vec_cast(datetime, datetime), datetime)
-  expect_equal(vec_cast(as.Date(datetime), datetime), datetime)
-  expect_equal(vec_cast(list(datetime), datetime), datetime)
-})
-
-test_that("invalid casts generate error", {
-  datetime <- as.POSIXct("1970-02-01", tz = "UTC")
-  expect_error(vec_cast(integer(), datetime), class = "error_incompatible_cast")
-})
-
-test_that("dates become midnight in date-time tzone", {
-  date1 <- as.Date("2010-01-01")
-  datetime <- as.POSIXct(character(), tz = "Pacific/Auckland")
-
-  date2 <- vec_cast(date1, datetime)
-  expect_equal(attr(date2, "tzone"), "Pacific/Auckland")
-  expect_equal(format(date2, "%H:%M"), "00:00")
-})
-
-# difftime ----------------------------------------------------------------
-
-test_that("safe casts work as expected", {
-  dt1 <- as.difftime(600, units = "secs")
-  dt2 <- as.difftime(10, units = "mins")
-
-  expect_equal(vec_cast(NULL, dt1), NULL)
-  expect_equal(vec_cast(600, dt1), dt1)
-  expect_equal(vec_cast(dt1, dt1), dt1)
-  expect_equal(vec_cast(dt1, dt2), dt2)
-  expect_equal(vec_cast(list(dt1), dt1), dt1)
-})
-
-test_that("invalid casts generate error", {
-  dt <- as.difftime(600, units = "secs")
-  expect_error(vec_cast(integer(), dt), class = "error_incompatible_cast")
-})
-
-
-# data frames -------------------------------------------------------------
-
-test_that("safe casts work as expected", {
-  df <- data.frame(x = 1, y = 0)
-
-  expect_equal(vec_cast(NULL, df), NULL)
-  expect_equal(vec_cast(df, df), df)
-
-  expect_equal(vec_cast(data.frame(x = TRUE, y = FALSE), df), df)
-})
-
-test_that("warn about lossy coercions", {
-  df1 <- data.frame(x = 1, y = 1)
-  df2 <- data.frame(x = "a", stringsAsFactors = FALSE)
-
-  expect_condition(vec_cast(df1, df1[1]), class = "warning_lossy_cast")
-  expect_condition(vec_cast(df2, df1), class = "warning_lossy_cast")
-})
-
-test_that("invalid cast generates error", {
-  expect_error(vec_cast(1L, data.frame()), class = "error_incompatible_cast")
-})
-
-test_that("column order matches type", {
-  df1 <- data.frame(x = 1, y = "a")
-  df2 <- data.frame(x = TRUE, z = 3)
-
-  df3 <- vec_cast(df2, vec_ptype(df1, df2)[[1]])
-  expect_named(df3, c("x", "y", "z"))
-})
-
-test_that("casts preserve outer class", {
-  df <- data.frame(x = 1)
-  dt <- tibble::tibble(x = 1)
-
-  expect_s3_class(vec_cast(df, dt), "tbl_df")
-  expect_s3_class(vec_cast(dt, df), "data.frame")
-})
-
-test_that("recast generates correct row/col names", {
-  df1 <- data.frame(x = 1:4, y = 1:4, z = 1:4)
-  df2 <- vec_restore(lapply(df1[1:3], `[`, 1:2), df1)
-
-  expect_named(df2, c("x", "y", "z"))
-  expect_equal(.row_names_info(df2), -2)
-})
-
-test_that("recast makes tibbles", {
-  df1 <- tibble::tibble(x = 1:4)
-  df2 <- vec_restore(vec_data(df1), df1)
-
-  expect_s3_class(df1, "tbl_df")
 })

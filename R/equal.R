@@ -19,9 +19,14 @@ vec_proxy_equal <- function(x) {
 }
 
 #' @export
+vec_proxy_equal.NULL <- function(x) {
+  NULL
+}
+
+#' @export
 vec_proxy_equal.default <- function(x) {
-  if (!is.object(x) && is.list(x)) {
-    lapply(x, vec_data)
+  if (is_bare_list(x)) {
+    lapply(x, vec_proxy_equal)
   } else {
     vec_proxy_compare(x)
   }

@@ -112,8 +112,13 @@ vec_cast.vctrs_vctr.NULL <- function(x, to) x
 #' @method vec_cast.vctrs_vctr default
 #' @export
 vec_cast.vctrs_vctr.default <- function(x, to) {
+  # These are not strictly necessary, but make bootstrapping a new class
+  # a bit simpler
   if (is.object(x)) {
-    if (identical(attributes(x), attributes(to))) {
+    attr_x <- utils::modifyList(attributes(x), list(names = NULL))
+    attr_y <- utils::modifyList(attributes(to), list(names = NULL))
+
+    if (identical(attr_x, attr_y)) {
       return(x)
     } else {
       stop_incompatible_cast(x, to)
@@ -166,12 +171,20 @@ format.vctrs_vctr <- function(x, ...) {
 
 #' @export
 `[[.vctrs_vctr` <- function(x, i, ...) {
-  vec_restore(NextMethod(), x)
+  if (is.list(x)) {
+    NextMethod()
+  } else {
+    vec_restore(NextMethod(), x)
+  }
 }
 
 #' @export
 `$.vctrs_vctr` <- function(x, i) {
-  vec_restore(NextMethod(), x)
+  if (is.list(x)) {
+    NextMethod()
+  } else {
+    vec_restore(NextMethod(), x)
+  }
 }
 
 #' @export
@@ -184,22 +197,46 @@ rep.vctrs_vctr <- function(x, ...) {
   vec_restore(NextMethod(), x)
 }
 
+#' @export
+diff.vctrs_vctr <- function(x, lag = 1L, differences = 1L, ...) {
+  stopifnot(length(lag) == 1L, lag >= 1L)
+  stopifnot(length(differences) == 1L, differences >= 1L)
+
+  n <- vec_obs(x)
+  if (lag * differences >= n)
+    return(vec_subset(x, 0L))
+
+  out <- x
+  for (i in seq_len(differences)) {
+    n <- vec_obs(out)
+    lhs <- (1L + lag):n
+    rhs <- 1L:(n - lag)
+
+    out <- vec_subset(out, lhs) - vec_subset(out, rhs)
+  }
+
+  out
+}
+
+
 # Modification -------------------------------------------------------------
 
 #' @export
 `[[<-.vctrs_vctr` <- function(x, i, value) {
-  value <- vec_cast(value, x)
+  if (!is.list(x)) {
+    value <- vec_cast(value, x)
+  }
   NextMethod()
 }
 
 #' @export
 `$<-.vctrs_vctr` <- function(x, i, value) {
-  if (!is.list(x)) {
+  if (is.list(x)) {
+    NextMethod()
+  } else {
     # Default behaviour is to cast LHS to a list
     stop("$ operator is invalid for atomic vectors", call. = FALSE)
   }
-  value <- vec_cast(value, x)
-  NextMethod()
 }
 
 #' @export
@@ -253,6 +290,24 @@ as.Date.vctrs_vctr <- function(x, ...) {
 #' @export
 as.POSIXct.vctrs_vctr <- function(x, tz = "", ...) {
   vec_cast(x, new_datetime(tzone = tz))
+}
+
+
+#' @export
+as.data.frame.vctrs_vctr <- function(x,
+                                     row.names = NULL,
+                                     optional = FALSE,
+                                     ...,
+                                     nm = paste(deparse(substitute(x), width.cutoff = 500L), collapse = " ")
+                                     ) {
+
+  force(nm)
+  cols <- list(x)
+  if (!optional) {
+    names(cols) <- nm
+  }
+
+  new_data_frame(cols, n = vec_obs(x))
 }
 
 # Dynamically registered in .onLoad()
@@ -346,8 +401,6 @@ xtfrm.vctrs_vctr <- function(x) {
     proxy
   } else if (is_character(proxy) || is_logical(proxy)) {
     order(order(proxy))
-  } else if (is_list(proxy)) {
-    stop("Lists are not comparible", call. = FALSE)
   } else {
     stop("Invalid type returned by `vec_proxy_compare()`.", call. = FALSE)
   }
@@ -401,17 +454,17 @@ mean.vctrs_vctr <- function(x, ..., na.rm = FALSE) {
 }
 
 #' @export
-is.finite.vctrs_rcrd <- function(x) {
+is.finite.vctrs_vctr <- function(x) {
   vec_math("is.finite", x)
 }
 
 #' @export
-is.infinite.vctrs_rcrd <- function(x) {
+is.infinite.vctrs_vctr <- function(x) {
   vec_math("is.infinite", x)
 }
 
 #' @export
-is.nan.vctrs_rcrd <- function(x) {
+is.nan.vctrs_vctr <- function(x) {
   vec_math("is.nan", x)
 }
 
@@ -507,29 +560,6 @@ levels.vctrs_vctr <- function(x) {
 #' @export
 `is.na<-.vctrs_vctr` <- function(x, value) {
   stop_unsupported(x, "is.na<-")
-}
-
-# Data frame --------------------------------------------------------------
-
-#' @export
-as.data.frame.vctrs_vctr <- function(x,
-                               row.names = NULL,
-                               optional = FALSE,
-                               ...,
-                               nm = paste(deparse(substitute(x), width.cutoff = 500L), collapse = " ")
-                               ) {
-
-  force(nm)
-  cols <- list(x)
-  if (!optional) {
-    names(cols) <- nm
-  }
-
-  structure(
-    cols,
-    class = "data.frame",
-    row.names = .set_row_names(vec_length(x))
-  )
 }
 
 # Helpers -----------------------------------------------------------------

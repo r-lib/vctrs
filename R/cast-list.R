@@ -14,11 +14,7 @@
 #' @keywords internal
 vec_list_cast <- function(x, to) {
   ns <- map_int(x, length)
-
-  lossy <- ns != 1L
-  if (any(lossy)) {
-    warn_lossy_cast(x, to, locations = which(lossy))
-  }
+  report_lossy_cast(x, to, ns != 1L)
 
   n <- length(x)
   out <- vec_na(to, n)

@@ -11,7 +11,9 @@
 #'   attributes given a bare vector and a prototype;
 #'   `vec_restore(vec_data(x), x)` will always yield `x`.
 vec_data <- function(x) {
-  stopifnot(is_vector(x))
+  if (!is_vector(x)) {
+    return(x)
+  }
 
   # TODO: implement with ALTREP to avoid making a copy
   if (is_record(x)) {

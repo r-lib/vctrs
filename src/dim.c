@@ -8,6 +8,10 @@ bool is_record(SEXP x) {
   return TYPEOF(x) == VECSXP && Rf_inherits(x, "vctrs_rcrd");
 }
 
+bool is_scalar(SEXP x) {
+  return TYPEOF(x) == VECSXP && Rf_inherits(x, "vctrs_sclr");
+}
+
 // For performance, avoid Rf_getAttrib() because it automatically transforms
 // the rownames into an integer vector
 R_len_t df_rownames(SEXP x) {
@@ -34,7 +38,10 @@ R_len_t df_rownames(SEXP x) {
   Rf_errorcall(R_NilValue, "Corrupt data frame: row.names are missing");
 }
 
-R_len_t vec_length(SEXP x) {
+R_len_t vec_obs(SEXP x) {
+  if (is_scalar(x)) {
+    Rf_errorcall(R_NilValue, "`x` is a scalar");
+  }
   if (is_data_frame(x)) {
     return df_rownames(x);
   }
@@ -60,5 +67,5 @@ R_len_t vec_length(SEXP x) {
 // R interface ------------------------------------------------------------
 
 SEXP vctrs_length(SEXP x) {
-  return Rf_ScalarInteger(vec_length(x));
+  return Rf_ScalarInteger(vec_obs(x));
 }

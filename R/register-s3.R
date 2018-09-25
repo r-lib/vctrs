@@ -38,6 +38,7 @@
 #'   vec_method_register("tibble::type_sum", "vctrs_vctr")
 #' }
 #' @keywords internal
+# nocov start
 vec_method_register <- function(generic, class, method = NULL) {
   stopifnot(is.character(generic), length(generic) == 1)
   stopifnot(is.character(class), length(class) == 1)
@@ -64,3 +65,5 @@ vec_method_register <- function(generic, class, method = NULL) {
     }
   )
 }
+
+# nocov end

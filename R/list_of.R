@@ -10,7 +10,9 @@
 #' @export
 #' @examples
 #' x <- list_of(1:3, 5:6, 10:15)
-#' tibble::tibble(x = x)
+#' if (requireNamespace("tibble", quietly = TRUE)) {
+#'   tibble::tibble(x = x)
+#' }
 #'
 #' vec_c(list_of(1, 2), list_of(FALSE, TRUE))
 list_of <- function(..., .ptype = NULL) {
@@ -55,7 +57,7 @@ as_list_of.list <- function(x, ..., .ptype = NULL) {
 #' @export
 new_list_of <- function(x, ptype, ..., class = character()) {
   stopifnot(is.list(x))
-  stopifnot(vec_length(ptype) == 0)
+  stopifnot(vec_obs(ptype) == 0)
 
   new_vctr(x, ..., ptype = ptype, class = c(class, "vctrs_list_of"))
 }
@@ -167,6 +169,14 @@ vec_cast.vctrs_list_of.NULL <- function(x, to) {
 vec_cast.vctrs_list_of.list <- function(x, to) {
   as_list_of(x, .ptype = attr(to, "ptype"))
 }
+
+#' @export
+#' @method vec_cast.list vctrs_list_of
+vec_cast.list.vctrs_list_of <- function(x, to) {
+  warn_lossy_cast(x, to)
+  shape_recycle(as.list(x), to)
+}
+
 #' @export
 #' @method vec_cast.vctrs_list_of vctrs_list_of
 vec_cast.vctrs_list_of.vctrs_list_of <- vec_cast.vctrs_list_of.list

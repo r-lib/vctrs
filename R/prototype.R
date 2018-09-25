@@ -126,6 +126,6 @@ as_vec_ptype.data.frame <- function(x) {
   cols[null_cols] <- rep.int(list(unknown()), sum(null_cols))
   cols[!null_cols] <- map(cols[!null_cols], as_vec_ptype)
 
-  new_data_frame(cols, 0L, subclass = setdiff(class(x), "data.frame"))
+  vec_restore(cols, x)
 }
 

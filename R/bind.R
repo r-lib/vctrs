@@ -92,7 +92,7 @@ vec_rbind <- function(..., .ptype = NULL) {
   if (is_unknown(ptype))
     return(data_frame())
 
-  ns <- map_int(tbls, vec_length)
+  ns <- map_int(tbls, vec_obs)
   # Use list so we can rely on efficient internal [[<-
   out <- vec_data(vec_rep(ptype, sum(ns)))
 
@@ -162,7 +162,10 @@ vec_cbind <- function(..., .ptype = NULL, .nrow = NULL) {
   # a generic
   attr(out, "row.names") <- .set_row_names(nrow)
   out[seq_along(cols)] <- cols
-  names(out) <- tibble::tidy_names(names)
+  if (is_installed("tibble")) {
+    names <- tibble::tidy_names(names)
+  }
+  names(out) <- names
 
   out
 }
@@ -171,13 +174,13 @@ find_nrow <- function(x, .nrow = NULL) {
   if (!is.null(.nrow)) {
     .nrow
   } else {
-    lengths <- map_int(x, vec_length)
+    lengths <- map_int(x, vec_obs)
     Reduce(recycle_length, lengths) %||% 0L
   }
 }
 
 recycle <- function(x, n) {
-  nx <- vec_length(x)
+  nx <- vec_obs(x)
 
   if (is.null(x) || nx == n) {
     x
@@ -202,8 +205,9 @@ as_df_row.NULL <- function(x) x
 as_df_row.default <- function(x) {
   if (vec_dims(x) == 1L) {
     x <- as.list(x)
-    x <- tibble::set_tidy_names(x)
-    new_data_frame(x, 1)
+    if (is_installed("tibble"))
+      x <- tibble::set_tidy_names(x)
+    new_data_frame(x, n = 1L)
   } else {
     as.data.frame(x)
   }
@@ -221,7 +225,7 @@ as_df_col.data.frame <- function(x, outer_name = NULL) {
 as_df_col.default <- function(x, outer_name = NULL) {
   if (vec_dims(x) == 1L) {
     x <- stats::setNames(list(x), outer_name)
-    new_data_frame(x, vec_length(x[[1]]))
+    new_data_frame(x)
   } else {
     colnames(x) <- outer_names(outer_name, colnames(x), ncol(x))
     as.data.frame(x)

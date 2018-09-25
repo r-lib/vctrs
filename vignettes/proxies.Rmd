@@ -19,7 +19,7 @@ knitr::opts_chunk$set(
 library(vctrs)
 ```
 
-vctrs provides two "proxy" methods that allow you to declare that your class have possesses certain properties. A proxy function returns a simple object (typically either a bare vector or a data frame), that possesses the same properties as your class. This permits efficient implementation of the vctrs internals because once you have the proxy object, all code can be written in C.
+vctrs provides two "proxy" generics that allow you to declare that your class have possesses certain properties. A proxy function returns a simple object (typically either a bare vector or a data frame), that possesses the same properties as your class. This permits efficient implementation of the vctrs internals because once you have the proxy object, all code can be written in C.
 
 * `vec_proxy_equal()` specifies how to test the elements of your for equality. 
   This proxy underpins `==` and `!=`, but also `unique()`, `anyDuplicated()`, 
@@ -29,6 +29,16 @@ vctrs provides two "proxy" methods that allow you to declare that your class hav
   This proxy is used in `<`, `<=`, `>=`, `>`, `min()`, `max()`, `median()`, 
   `quantile()`, and `xtfrm()` methods. (And `xtfrm()` is used in `order()` and 
   `sort()`.)
+
+vctrs also provides two mathematical generics that allow you to define a broad swath of mathematical behaviour at once:
+
+*  `vec_math()` specifies the behaviour of mathematical functions like 
+   `abs()`, `sum()`, and `mean()`.
+   
+*  `vec_arith()` specifies the behaviour of the arithmetic operations like
+   `+`, `-`, and `%%`.
+
+Where possible, it's a good idea to define methods for these generics because you get a lot of behaviour for relatively little work.
 
 ## Rational
 
@@ -208,4 +218,185 @@ vec_proxy_compare.vctrs_poly <- function(x) {
 sort(poly(3, 2, 1))
 sort(poly(1, c(1, 0, 0), c(1, 0)))
 ```
+
+## Period and frequency
+
+```{r}
+period <- function(x) {
+  x <- vec_cast(x, double())
+  new_vctr(x, class = "vctrs_period")
+}
+format.vctrs_period <- function(x) {
+  paste0(format(vec_data(x)), " s")
+}
+
+freq <- function(x) {
+  x <- vec_cast(x, double())
+  new_vctr(x, class = "vctrs_frequency")
+}
+format.vctr_frequency <- function(x) {
+  paste0(format(vec_data(x)), " Hz")
+}
+
+period(0.1)
+freq(10)
+```
+
+
+```{r}
+vec_arith.vctr_frequency <- function(op, x, y) {
+  UseMethod("vec_arith.vctr_frequency", y)
+}
+vec_arith.vctrs_frequency.default <- function(op, x, y) {
+  stop_incompatible_op(op, x, y)
+}
+vec_arith.vctrs_period <- function(op, x, y) {
+  UseMethod("vec_arith.vctrs_period", y)
+}
+vec_arith.vctrs_period.default <- function(op, x, y) {
+  stop_incompatible_op(op, x, y)
+}
+```
+
+```{r}
+vec_arith.vctrs_period.vctrs_period <- function(op, x, y) {
+  switch(op,
+    `-` = ,
+    `+` = vec_restore(vec_arith_base(op, x, y), x),
+    stop_incompatible_op(op, x, y)
+  )
+}
+vec_arith.vctrs_period.numeric <- function(op, x, y) {
+  switch(op,
+    `-` = ,
+    `+` = ,
+    `*` = ,
+    `/` = vec_restore(vec_arith_base(op, x, y), x),
+    stop_incompatible_op(op, x, y)
+  )
+}
+vec_arith.numeric.vctrs_period <- function(op, x, y) {
+  switch(op,
+    `*` = vec_restore(vec_arith_base(op, x, y), y),
+    `/` = freq(vec_arith_base(op, x, y)),
+    stop_incompatible_op(op, x, y)
+  )
+}
+
+period(1) + period(1)
+2 * period(10)
+period(10) / 5
+5 / period(10)
+```
+
+
+## Intervals
+
+First, we implement an interval class, a record composed of `l`eft and `r`ight fields. As usual, we make a low-level constructor, a user-friend constructor, and define a format method.
+
+```{r}
+new_interval <- function(l, r) {
+  stopifnot(is.double(l), is.double(r))
+  new_rcrd(list(l = l, r = r), class = "vctrs_interval")
+}
+interval <- function(l, r) {
+  c(l, r) %<-% as.list(vec_coerce(l, r, .ptype = double()))
+  c(l, r) %<-% vec_recycle(l, r)
+  c(l, r) %<-% list(pmin(l, r), pmax(l, r))
+  new_interval(l, r)
+}
+format.vctrs_interval <- function(x, ...) {
+  l <- field(x, "l")
+  r <- field(x, "r")
+  
+  out <- paste0("[", format(l), ",", format(r), "]")
+  out[is.na(x)] <- NA
+  out
+}
+
+x <- new_interval(c(0.25, 0.5, 0.75, NA), c(0.5, 1.5, 2, NA))
+x
+```
+
+Arithmetic operations are provided by a single generic, `vec_arith()`, which like `vec_cast()` and `vec_type2()`, uses double dispatch. That means we start with some boilerplate:
+
+```{r}
+vec_arith.vctrs_interval <- function(op, x, y) {
+  UseMethod("vec_arith.vctrs_interval", y)
+}
+vec_arith.vctrs_interval.default <- function(op, x, y) {
+  stop_incompatible_op(op, x, y)
+}
+```
+
+First, we'll implement a method two intervals. <https://en.wikipedia.org/wiki/Interval_arithmetic#Simple_arithmetic>
+
+```{r}
+vec_arith.vctrs_interval.vctrs_interval <- function(op, x, y) {
+  c(x, y) %<-% vec_recycle(x, y)
+  
+  x1 <- field(x, "l"); x2 <- field(x, "r")
+  y1 <- field(y, "l"); y2 <- field(y, "r")
+  
+  switch(op,
+    "+" = new_interval(x1 + y1, x2 + y2),
+    "-" = new_interval(xl - y2, x2 - y1),
+    "*" = new_interval(
+      pmin(x1 * y1, x1 * y2, x2 * y1, x2 * y2), 
+      pmax(x1 * y1, x1 * y2, x2 * y1, x2 * y2)
+    ),
+    stop_incompatible_op(op, x, y)
+  )
+}
+
+x + interval(0, 1)
+
+x * interval(0, 1)
+x * interval(1, 2)
+```
+
+```{r}
+vec_arith.vctrs_interval.double <- function(op, x, y) {
+  c(x, y) %<-% vec_recycle(x, y)
+  
+  l <- vec_arith_base(op, field(x, "l"), y)
+  r <- vec_arith_base(op, field(x, "r"), y)
+  
+  new_interval(pmin(l, r), pmax(l, r))
+}
+
+x + 1
+x / 2
+x * -2 
+```
+
+```{r}
+vec_arith.numeric.vctrs_interval <- function(op, x, y) {
+  c(x, y) %<-% vec_recycle(x, y)
+  
+  l <- vec_arith_base(op, x, field(y, "l"))
+  r <- vec_arith_base(op, x, field(y, "r"))
+  
+  new_interval(pmin(l, r), pmax(l, r))
+}
+
+1 + x
+2 / x 
+-2 * x 
+```
+
+(Note that this implementation prevents subclassing because we explicitly call `new_interval()`. If you wanted to support subclassing, you'd need to carefully think about how to use `vec_restore()`.)
+
+```{r}
+vec_arith.vctrs_interval.MISSING <- function(op, x, y) {
+  switch(op, 
+    `-` = x * -1,
+    `+` = x,
+    stop_incompatible_op(op, x, y)
+  )
+}
+-x 
++x
+```
+
 

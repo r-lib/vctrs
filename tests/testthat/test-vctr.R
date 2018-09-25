@@ -19,9 +19,26 @@ test_that("default format method is internal", {
   expect_equal(format(x), format(x))
 })
 
+# Cast/restore ------------------------------------------------------------
+
 test_that("cast to NULL returns x", {
   x <- new_vctr(1, class = "x")
   expect_equal(vec_cast(NULL, x), NULL)
+})
+
+test_that("cast succeeds if attributes equal", {
+  x1 <- new_vctr(1, class = "x", a = 1, b = 2)
+  x2 <- new_vctr(2, class = "x", a = 1, b = 2)
+
+  expect_equal(vec_cast(x1, x2), x1)
+  expect_equal(vec_cast(x2, x1), x2)
+})
+
+test_that("and fails if attributes are different", {
+  x1 <- new_vctr(1, class = "x", a = 1, b = 2)
+  x2 <- new_vctr(2, class = "x", a = 2, b = 2)
+
+  expect_error(vec_cast(x1, x2), class = "error_incompatible_cast")
 })
 
 test_that("restoring to atomic vector of same type preserves attributes", {
@@ -31,12 +48,114 @@ test_that("restoring to atomic vector of same type preserves attributes", {
   expect_equal(vec_restore(2, x1), x2)
 })
 
-test_that("xtfrm works for variety of base classes", {
-  x <- new_vctr(1:3)
-  expect_equal(xtfrm(x), 1:3)
+test_that("restoring to atomic vector of different type throws error", {
+  x1 <- new_vctr(1, class = "x")
 
-  x <- new_vctr(letters[1:3])
-  expect_equal(xtfrm(x), 1:3)
+  expect_error(vec_restore("x", x1), class = "error_incompatible_cast")
+})
+
+test_that("base coercion methods mapped to vec_cast", {
+  x <- new_vctr(1)
+
+  expect_error(as.logical(x), class = "error_incompatible_cast")
+  expect_error(as.integer(x), class = "error_incompatible_cast")
+  expect_error(as.logical(x), class = "error_incompatible_cast")
+  expect_error(as.double(x), class = "error_incompatible_cast")
+  expect_error(as.character(x), class = "error_incompatible_cast")
+  expect_error(as.Date(x), class = "error_incompatible_cast")
+  expect_error(as.POSIXct(x), class = "error_incompatible_cast")
+
+  expect_equal(as.list(x), list(x))
+})
+
+test_that("as.data.frame creates data frame", {
+  x <- new_vctr(1:3)
+  df <- as.data.frame(x)
+
+  expect_s3_class(df, "data.frame")
+  expect_equal(nrow(df), 3)
+  expect_named(df, "x")
+})
+
+# equality + comparison + arith + math ---------------------------------------
+
+test_that("equality functions remapped", {
+  x <- new_vctr(c(1, 1, NA))
+
+  expect_error(x == 1, class = "error_incompatible_type")
+  expect_error(x != 1, class = "error_incompatible_type")
+  expect_equal(is.na(x), c(FALSE, FALSE, TRUE))
+  expect_true(anyNA(x))
+
+  expect_equal(unique(x), new_vctr(c(1, NA)))
+  expect_equal(duplicated(x), c(FALSE, TRUE, FALSE))
+  expect_true(anyDuplicated(x))
+})
+
+test_that("comparison functions remapped", {
+  # Fails on 3.1 with `could not find function "vec_cast.vctrs_vctr"`
+  skip_if_not(getRversion() >= "3.2")
+
+  x1 <- new_vctr(c(1, 2), class = "bizzaro")
+  x2 <- new_vctr(2, class = "bizzaro")
+
+  vec_proxy_compare.bizzaro <- function(x) -vec_data(x)
+  registerS3method("vec_proxy_compare", "bizzaro", vec_proxy_compare.bizzaro)
+
+  expect_equal(order(x1), c(2L, 1L))
+  expect_equal(x1 < x2, c(FALSE, FALSE))
+  expect_equal(x1 <= x2, c(FALSE, TRUE))
+  expect_equal(x1 > x2, c(TRUE, FALSE))
+  expect_equal(x1 >= x2, c(TRUE, TRUE))
+})
+
+test_that("operators remapped", {
+  x <- new_vctr(c(1, 2), class = "bizzaro")
+
+  vec_arith.bizzaro <- function(op, x, y) 1L
+  registerS3method("vec_arith", "bizzaro", vec_arith.bizzaro)
+
+  expect_equal(x + 1, 1L)
+  expect_equal(x - 1, 1L)
+  expect_equal(x * 1, 1L)
+  expect_equal(x / 1, 1L)
+  expect_equal(x %% 1, 1L)
+  expect_equal(x %/% 1, 1L)
+  expect_equal(x & 1, 1L)
+  expect_equal(x | 1, 1L)
+
+  expect_equal(!x, 1L)
+  expect_equal(+x, 1L)
+  expect_equal(-x, 1L)
+})
+
+test_that("math functions overridden", {
+  x <- new_vctr(c(1, NA), class = "bizzaro")
+
+  vec_math.bizzaro <- function(fun, x, ...) vec_math_base(fun, 2L)
+  registerS3method("vec_math", "bizzaro", vec_math.bizzaro)
+
+  expect_equal(mean(x), 2L)
+  expect_equal(sum(x), 2L)
+
+  expect_equal(is.finite(x), TRUE)
+  expect_equal(is.infinite(x), FALSE)
+  expect_equal(is.nan(x), FALSE)
+})
+
+test_that("diff matches base R", {
+  x1 <- cumsum(cumsum(1:10))
+  x2 <- new_vctr(x1, class = "vctrs_minus")
+
+  vec_arith.vctrs_minus <- function(op, x, y) vec_arith_base(op, x, y)
+  registerS3method("vec_arith", "vctrs_minus", vec_arith.vctrs_minus)
+
+  expect_equal(diff(x2), diff(x1))
+  expect_equal(diff(x2, lag = 2L), diff(x1, lag = 2L))
+  expect_equal(diff(x2, differences = 2L), diff(x1, differences = 2L))
+
+  expect_equal(diff(x2, lag = 11), x2[0L])
+  expect_equal(diff(x2, differences = 11), x2[0L])
 })
 
 # names -------------------------------------------------------------------
@@ -65,6 +184,12 @@ test_that("can use [ and [[ with names", {
   expect_equal(x[["c"]], new_vctr(3))
   x["d"] <- 4
   expect_equal(x[["d"]], new_vctr(4))
+
+  y <- new_vctr(list(a = 1, b = 2))
+  y[["c"]] <- 3
+  expect_equal(y[["c"]], 3)
+  y["d"] <- list(4)
+  expect_equal(y[["d"]], 4)
 })
 
 test_that("subsetting preserves attributes", {
@@ -80,9 +205,39 @@ test_that("$ inherits from underlying vector", {
   # causes an error "invalid subscript type 'promise'"
   skip_if_not(getRversion() >= "3.2")
 
-  x <- new_vctr(c(a = 1, b = 2))
-  expect_error(x$a, "atomic vectors")
-  expect_error(x$a <- 2, "atomic vectors")
+  x1 <- new_vctr(c(a = 1, b = 2))
+  expect_error(x1$a, "atomic vectors")
+  expect_error(x1$a <- 2, "atomic vectors")
+
+  x2 <- new_vctr(list(a = 1, b = 2))
+  expect_equal(x2$a, 1)
+  x2$a <- 10
+  expect_equal(x2$a, 10)
+})
+
+
+# unsupported/unimplemented operations --------------------------------------
+
+test_that("can't touch protected attributes", {
+  x <- new_vctr(1:4)
+
+  expect_error(is.na(x) <- TRUE, class = "error_unsupported")
+
+  expect_error(dim(x) <- c(2, 2), class = "error_unsupported")
+  expect_error(dimnames(x) <- list("x"), class = "error_unsupported")
+
+  expect_error(levels(x), class = "error_unsupported")
+  expect_error(levels(x) <- "x", class = "error_unsupported")
+
+  # but it's ok to set names to NULL; this happens at least in vec_c
+  # and maybe elsewhere. We may need to back off on this level of
+  # strictness in the future
+  expect_error(names(x) <- NULL, NA)
+})
+
+test_that("summary is unimplemented", {
+  x <- new_vctr(1:4)
+  expect_error(summary(x), class = "error_unimplemented")
 })
 
 # hidden class ------------------------------------------------------------
@@ -194,19 +349,6 @@ test_that("default print method shows names", {
     },
     file = "test-vctr-print-names.txt",
   )
-})
-
-test_that("can't touch protected attributes", {
-  h <- new_hidden(1:4)
-
-  expect_error(dim(h) <- c(2, 2), class = "error_unsupported")
-  expect_error(dimnames(h) <- list("x"), class = "error_unsupported")
-  expect_error(levels(h) <- "x", class = "error_unsupported")
-
-  # but it's ok to set names to NULL; this happens at least in vec_c
-  # and maybe elsewhere. We may need to back off on this level of
-  # strictness in the future
-  expect_error(names(h) <- NULL, NA)
 })
 
 test_that("can't transpose", {

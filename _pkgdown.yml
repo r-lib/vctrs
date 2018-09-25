@@ -5,7 +5,7 @@ reference:
   contents:
   - vec_data
   - vec_ptype
-  - vec_length
+  - vec_obs
 
 - title: Casting and combining
   contents:
