@@ -204,11 +204,11 @@ vec_cast(percent(0.5), double())
 And then with integers. Note that I use `vec_cast()` on the underlying vector (`vec_data()`) in order to get the nice default behaviour which reports when we lose precision:
 
 ```{r}
-vec_cast.vctrs_percent.integer <- function(x, to) percent(x)
-vec_cast.integer.vctrs_percent <- function(x, to) vec_cast(vec_data(x), integer())
+vec_cast.vctrs_percent.integer <- function(x, to) percent(x / 100)
+vec_cast.integer.vctrs_percent <- function(x, to) vec_cast(vec_data(x) * 100, integer())
 
-vec_cast(integer(), percent(0.5))
-vec_cast(percent(0.5), integer())
+vec_cast(c(100L, 50L), percent())
+vec_cast(percent(c(0.5, 1)), integer())
 ```
 
 These methods power `[[<-` and `[<-`, because the vctrs default coerces the `value` to the same type as `x`.
