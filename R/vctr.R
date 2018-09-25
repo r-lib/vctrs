@@ -322,7 +322,7 @@ as.ordered.vctrs_vctr <- function(x, levels = character(), ...) {
 
 # Dynamically registered in .onLoad()
 as.difftime.vctrs_vctr <- function(x, units = "secs", ...) {
-  vec_cast(x, new_difftime(units = units))
+  vec_cast(x, new_duration(units = units))
 }
 
 # Equality ----------------------------------------------------------------
