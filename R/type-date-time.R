@@ -166,11 +166,7 @@ vec_cast.Date.Date <- function(x, to) {
 #' @method vec_cast.Date POSIXt
 vec_cast.Date.POSIXt <- function(x, to) {
   out <- as.Date(x)
-
-  lossy <- abs(x - as.POSIXct(out)) > 1e-9
-  if (any(lossy)) {
-    warn_lossy_cast(x, to, locations = which(lossy))
-  }
+  report_lossy_cast(x, to, abs(x - as.POSIXct(out)) > 1e-9)
 
   out
 }

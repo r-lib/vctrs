@@ -45,7 +45,7 @@ test_that("safe casts work as expected", {
 
 test_that("lossy casts generate warning", {
   date <- as.Date("2018-01-01")
-  datetime <- as.POSIXct(date) + 3600
+  datetime <- as.POSIXct(date) + c(0, 3600)
 
   expect_condition(vec_cast(datetime, date), class = "warning_lossy_cast")
 })

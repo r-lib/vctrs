@@ -27,10 +27,10 @@ test_that("safe casts work as expeced", {
 })
 
 test_that("lossy casts generate warning", {
-  expect_condition(vec_cast(2L, logical()), class = "warning_lossy_cast")
-  expect_condition(vec_cast(2, logical()), class = "warning_lossy_cast")
-  expect_condition(vec_cast("x", logical()), class = "warning_lossy_cast")
-  expect_condition(vec_cast(list(c(TRUE, FALSE)), logical()), class = "warning_lossy_cast")
+  expect_condition(vec_cast(c(2L, 1L), logical()), class = "warning_lossy_cast")
+  expect_condition(vec_cast(c(2, 1), logical()), class = "warning_lossy_cast")
+  expect_condition(vec_cast(c("x", "TRUE"), logical()), class = "warning_lossy_cast")
+  expect_condition(vec_cast(list(c(TRUE, FALSE), TRUE), logical()), class = "warning_lossy_cast")
 })
 
 test_that("invalid casts generate error", {
@@ -58,8 +58,8 @@ test_that("safe casts work as expected", {
 })
 
 test_that("lossy casts generate warning", {
-  expect_condition(vec_cast(2.5, integer()), class = "warning_lossy_cast")
-  expect_condition(vec_cast("2.5", integer()), class = "warning_lossy_cast")
+  expect_condition(vec_cast(c(2.5, 2), integer()), class = "warning_lossy_cast")
+  expect_condition(vec_cast(c("2.5", "2"), integer()), class = "warning_lossy_cast")
 })
 
 test_that("invalid casts generate error", {
@@ -78,7 +78,7 @@ test_that("safe casts work as expected", {
 })
 
 test_that("lossy casts generate warning", {
-  expect_condition(vec_cast("x", double()), class = "warning_lossy_cast")
+  expect_condition(vec_cast(c("2.5", "x"), double()), class = "warning_lossy_cast")
 })
 
 test_that("invalid casts generate error", {

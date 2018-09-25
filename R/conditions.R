@@ -106,7 +106,6 @@ warn_lossy_cast <- function(x, y, locations = NULL, details = NULL, ..., message
   )
 }
 
-
 stop_unsupported <- function(x, method) {
   msg <- glue::glue("`{method}.{class(x)[[1]]}()` not supported")
   abort(

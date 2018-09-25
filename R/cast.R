@@ -134,30 +134,21 @@ vec_cast.logical.logical <- function(x, to) {
 #' @export
 #' @method vec_cast.logical integer
 vec_cast.logical.integer <- function(x, to) {
-  lossy <- !x %in% c(0L, 1L)
-  if (any(lossy)) {
-    warn_lossy_cast(x, to, locations = which(lossy))
-  }
+  report_lossy_cast(x, to, !x %in% c(0L, 1L))
   x <- vec_coerce_bare(x, "logical")
   shape_recycle(x, to)
 }
 #' @export
 #' @method vec_cast.logical double
 vec_cast.logical.double <- function(x, to) {
-  lossy <- !x %in% c(0, 1)
-  if (any(lossy)) {
-    warn_lossy_cast(x, to, locations = which(lossy))
-  }
+  report_lossy_cast(x, to, !x %in% c(0, 1))
   x <- vec_coerce_bare(x, "logical")
   shape_recycle(x, to)
 }
 #' @export
 #' @method vec_cast.logical character
 vec_cast.logical.character <- function(x, to) {
-  lossy <- !toupper(x) %in% c("T", "F", "TRUE", "FALSE")
-  if (any(lossy)) {
-    warn_lossy_cast(x, to, locations = which(lossy))
-  }
+  report_lossy_cast(x, to, !toupper(x) %in% c("T", "F", "TRUE", "FALSE"))
   x <- vec_coerce_bare(x, "logical")
   shape_recycle(x, to)
 }
@@ -197,11 +188,7 @@ vec_cast.integer.integer <- function(x, to) {
 #' @method vec_cast.integer double
 vec_cast.integer.double <- function(x, to) {
   out <- suppressWarnings(vec_coerce_bare(x, "integer"))
-
-  lossy <- (out != x) | xor(is.na(x), is.na(out))
-  if (any(lossy)) {
-    warn_lossy_cast(x, to, locations = which(lossy))
-  }
+  report_lossy_cast(x, to, (out != x) | xor(is.na(x), is.na(out)))
 
   shape_recycle(out, to)
 }
@@ -244,11 +231,7 @@ vec_cast.double.integer <- vec_cast.double.logical
 #' @method vec_cast.double character
 vec_cast.double.character <- function(x, to) {
   out <- suppressWarnings(vec_coerce_bare(x, "double"))
-
-  lossy <- (out != x) | xor(is.na(x), is.na(out))
-  if (any(lossy)) {
-    warn_lossy_cast(x, to, locations = which(lossy))
-  }
+  report_lossy_cast(x, to, (out != x) | xor(is.na(x), is.na(out)))
 
   out <- shape_recycle(out, to)
   out
@@ -337,3 +320,20 @@ vec_cast.list.list <- function(x, to) {
 vec_cast.list.default <- function(x, to) {
   lapply(seq_along(x), function(i) x[[i]])
 }
+
+
+# Helpers -----------------------------------------------------------------
+
+# Used primarily to make base coercions a little stricter
+report_lossy_cast <- function(x, y, lossy, details = NULL) {
+  if (all(lossy)) {
+    stop_incompatible_cast(
+      x, y,
+      details = "All elements of vectorised cast failed"
+    )
+  }
+  if (any(lossy)) {
+    warn_lossy_cast(x, y, locations = which(lossy), details = details)
+  }
+}
+
