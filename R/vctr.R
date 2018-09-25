@@ -23,6 +23,12 @@
 #'   The `as.list()` method calls `[[` repeatedly, and the `as.data.frame()`
 #'   method uses a standard technique to wrap a vector in a data frame.
 #'
+#' * `as.factor()`, `as.ordered()` and `as.difftime()` are not generic functions
+#'   in base R, but have been reimplemented as generics in the `generics`
+#'   package. `vctrs` extends these and calls `vec_cast()`. To inherit this
+#'   behavior in a package, import and re-export the generic of interest
+#'   from `generics`.
+#'
 #' * `==`, `!=`, `unique()`, `anyDuplicated()`, and `is.na()` use
 #'   [vec_proxy_equal()].
 #'
@@ -302,6 +308,21 @@ as.data.frame.vctrs_vctr <- function(x,
   }
 
   new_data_frame(cols, n = vec_obs(x))
+}
+
+# Dynamically registered in .onLoad()
+as.factor.vctrs_vctr <- function(x, levels = character(), ...) {
+  vec_cast(x, new_factor(levels = levels))
+}
+
+# Dynamically registered in .onLoad()
+as.ordered.vctrs_vctr <- function(x, levels = character(), ...) {
+  vec_cast(x, new_ordered(levels = levels))
+}
+
+# Dynamically registered in .onLoad()
+as.difftime.vctrs_vctr <- function(x, units = "secs", ...) {
+  vec_cast(x, new_duration(units = units))
 }
 
 # Equality ----------------------------------------------------------------
