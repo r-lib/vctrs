@@ -93,6 +93,9 @@ test_that("equality functions remapped", {
 })
 
 test_that("comparison functions remapped", {
+  # Fails on 3.1 with `could not find function "vec_cast.vctrs_vctr"`
+  skip_if_not(getRversion() >= "3.2")
+
   x1 <- new_vctr(c(1, 2), class = "bizzaro")
   x2 <- new_vctr(2, class = "bizzaro")
 
