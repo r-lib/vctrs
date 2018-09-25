@@ -21,6 +21,7 @@ Imports:
     zeallot
 Suggests: 
     covr,
+    generics,
     knitr,
     pillar,
     pkgdown,
@@ -30,8 +31,9 @@ Suggests:
 VignetteBuilder: 
     knitr
 Remotes: 
-    r-lib/pkgdown,
-    r-lib/rlang
+    r-lib/generics,
+    r-lib/rlang,
+    r-lib/pkgdown
 Encoding: UTF-8
 Language: en-GB
 LazyData: true
