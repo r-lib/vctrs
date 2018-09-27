@@ -38,12 +38,13 @@ test_that("invalid casts generate error", {
 })
 
 test_that("dimensionality matches output" ,{
-  x <- matrix(1, nrow = 2, ncol = 2)
-  expect_equal(vec_cast(x, logical()), rep(TRUE, 4))
-
   x1 <- matrix(TRUE, nrow = 1, ncol = 1)
   x2 <- matrix(1, nrow = 0, ncol = 2)
   expect_dim(vec_cast(x1, x2), c(1, 2))
+  expect_dim(vec_cast(TRUE, x2), c(1, 2))
+
+  x <- matrix(1, nrow = 2, ncol = 2)
+  expect_error(vec_cast(x, logical()), class = "error_incompatible_cast")
 })
 
 # Integer -----------------------------------------------------------------

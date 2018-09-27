@@ -65,33 +65,33 @@ vec_type2.double  <- function(x, y) UseMethod("vec_type2.double", y)
 
 #' @method vec_type2.logical logical
 #' @export
-vec_type2.logical.logical <- function(x, y) dim_match(logical(), x, y)
+vec_type2.logical.logical <- function(x, y) shape_match(logical(), x, y)
 
 #' @export
 #' @method vec_type2.integer integer
-vec_type2.integer.integer <- function(x, y) dim_match(integer(), x, y)
+vec_type2.integer.integer <- function(x, y) shape_match(integer(), x, y)
 #' @export
 #' @method vec_type2.logical integer
-vec_type2.logical.integer <- function(x, y) dim_match(integer(), x, y)
+vec_type2.logical.integer <- function(x, y) shape_match(integer(), x, y)
 #' @export
 #' @method vec_type2.integer logical
-vec_type2.integer.logical <- function(x, y) dim_match(integer(), x, y)
+vec_type2.integer.logical <- function(x, y) shape_match(integer(), x, y)
 
 #' @export
 #' @method vec_type2.double double
-vec_type2.double.double   <- function(x, y) dim_match(double(), x, y)
+vec_type2.double.double   <- function(x, y) shape_match(double(), x, y)
 #' @export
 #' @method vec_type2.logical double
-vec_type2.logical.double  <- function(x, y) dim_match(double(), x, y)
+vec_type2.logical.double  <- function(x, y) shape_match(double(), x, y)
 #' @export
 #' @method vec_type2.double logical
-vec_type2.double.logical  <- function(x, y) dim_match(double(), x, y)
+vec_type2.double.logical  <- function(x, y) shape_match(double(), x, y)
 #' @export
 #' @method vec_type2.integer double
-vec_type2.integer.double  <- function(x, y) dim_match(double(), x, y)
+vec_type2.integer.double  <- function(x, y) shape_match(double(), x, y)
 #' @export
 #' @method vec_type2.double integer
-vec_type2.double.integer  <- function(x, y) dim_match(double(), x, y)
+vec_type2.double.integer  <- function(x, y) shape_match(double(), x, y)
 
 #' @method vec_type2.logical default
 #' @export
@@ -112,7 +112,7 @@ vec_type2.double.default  <- function(x, y) stop_incompatible_type(x, y)
 vec_type2.character <- function(x, y) UseMethod("vec_type2.character", y)
 #' @method vec_type2.character character
 #' @export
-vec_type2.character.character <- function(x, y) dim_match(character(), x, y)
+vec_type2.character.character <- function(x, y) shape_match(character(), x, y)
 #' @method vec_type2.character default
 #' @export
 vec_type2.character.default <- function(x, y) stop_incompatible_type(x, y)
@@ -127,7 +127,7 @@ vec_type2.list    <- function(x, y) UseMethod("vec_type2.list", y)
 
 #' @method vec_type2.list list
 #' @export
-vec_type2.list.list <- function(x, y) dim_match(list(), x, y)
+vec_type2.list.list <- function(x, y) shape_match(list(), x, y)
 
 #' @method vec_type2.list default
 #' @export

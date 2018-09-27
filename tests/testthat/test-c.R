@@ -10,10 +10,6 @@ test_that("NULL is idempotent", {
   expect_equal(vec_c(1:10, NULL), 1:10)
 })
 
-test_that("all inputs must be 1d", {
-  expect_error(vec_c(mtcars))
-})
-
 test_that("different types are coerced to common", {
   expect_equal(vec_c(TRUE, 1L, 1), c(1, 1, 1))
   expect_equal(vec_c(TRUE, 2:4), 1:4)

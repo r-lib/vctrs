@@ -2,10 +2,9 @@
 #'
 #' Combine all arguments into a new vector of common type.
 #'
-#' @param ... Vectors to coerce. All vectors must be 1d (i.e. no data
-#'   frames, matrices or arrays).
+#' @param ... Vectors to coerce.
 #' @return A vector with class given by `.ptype`, and length equal to the
-#'   sum of the lengths of the contents of `...`.
+#'   sum of the `vec_obs()` of the contents of `...`.
 #'
 #'   The vector will have names if the individual components have names
 #'   (inner names) or if the arguments are named (outer names). If both
@@ -31,16 +30,11 @@
 vec_c <- function(..., .ptype = NULL) {
   args <- list2(...)
 
-  dims <- map_int(args, vec_dims)
-  if (any(dims > 1)) {
-    stop("Inputs must be 1d", call. = FALSE)
-  }
-
   ptype <- vec_ptype(!!!args, .ptype = .ptype)[[1]]
   if (is_unknown(ptype))
     return(NULL)
 
-  ns <- map_int(args, length)
+  ns <- map_int(args, vec_obs)
   out <- vec_rep(ptype, sum(ns))
   if (is.null(names(args))) {
     names <- NULL
@@ -56,13 +50,32 @@ vec_c <- function(..., .ptype = NULL) {
 
     x <- vec_cast(args[[i]], to = ptype)
 
-    names[pos:(pos + n - 1)] <- outer_names(names(args)[[i]], names(args[[i]]), length(x))
-    out[pos:(pos + n - 1)] <- x
+    names[pos:(pos + n - 1)] <- outer_names(names(args)[[i]], vec_names(args[[i]]), length(x))
+    vec_subset(out, pos:(pos + n - 1)) <- x
     pos <- pos + n
   }
 
   if (!is.null(names))
-    names(out) <- names
+    vec_names(out) <- names
 
   out
+}
+
+vec_names <- function(x) {
+  if (vec_dims(x) == 1) {
+    names(x)
+  } else if (is.data.frame(x)) {
+    NULL
+  } else {
+    rownames(x)
+  }
+}
+
+`vec_names<-` <- function(x, value) {
+  if (vec_dims(x) == 1) {
+    names(x) <- value
+  } else {
+    rownames(x) <- value
+  }
+  x
 }

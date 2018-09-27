@@ -27,5 +27,9 @@ vec_list_cast <- function(x, to) {
     out[[i]] <- vec_cast(val[[1]], to)
   }
 
-  shape_recycle(out, to)
+  if (is.object(to)) {
+    out
+  } else {
+    shape_broadcast(out, to)
+  }
 }

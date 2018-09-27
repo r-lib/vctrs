@@ -1,38 +1,57 @@
-#' Recycle vector types to common shape
-#'
-#' The vctrs takes on recycling is both broader and stricter than base R.
-#' As a general rule, we only ever recycle 1-d slices of high-d arrays.
-#' This means we'll recycle a scalar to a vector, but not a length-2 vector
-#' to a length-10 vector. Recycling arrays takes dimension into account so
-#' that (e.g.) row and col vectors are fill a matrix as you might expect.
-#'
-#' Recycling support is half-baked currently so please don't rely on this API.
-#'
-#' This is called broadcasting in numpy and julia.
+#' Recycle vector types to common number of observations
 #'
 #' @param ... Vectors to recycle.
-#' @return A list of input vectors recycled to common shape, or an error
-#'   stating that a common shape could not be found.
+#' @param .nobs Number of observations
+#' @return A list of vectors each with equal [vec_obs()], or an error
+#'   stating that recycling was not possible.
 #' @export
 #' @examples
-#' # Only vectors of length 1 are recycled
+#' # Inputs with 1 observation are recycled
 #' vec_recycle(1:5, 5)
 #' \dontrun{
 #' vec_recycle(1:5, 1:2)
 #' }
 #'
-#' # Recycling respects dimensions
-#' vec_recycle(
-#'   matrix(1:6, nrow = 2),
-#'   matrix(1:2, nrow = 2),
-#'   matrix(1:3, nrow = 1),
-#'   0
-#' )
-vec_recycle <- function(...) {
+#' # Inputs with 0 observations
+#' vec_recycle(1:5, integer())
+#'
+#' # Data frames and matrices are recycled along their rows
+#' vec_recycle(data.frame(x = 1), 1:5)
+#' vec_recycle(array(1:2, c(1, 2)), 1:5)
+#' vec_recycle(array(1:3, c(1, 3, 1)), 1:5)
+vec_recycle <- function(..., .nobs = NULL) {
   args <- list2(...)
   if (length(args) == 0)
     return(list())
+  nobs <- vec_shape(!!!args, .nobs = .nobs)
+  map(args, vec_reshape, nobs)
+}
 
-  shape <- vec_shape(!!!args)
-  map(args, vec_reshape, shape = shape)
+vec_shape <- function(..., .nobs = NULL) {
+  if (!is.null(.nobs)) {
+    return(.nobs)
+  }
+
+  args <- list2(...)
+  args <- args[!map_lgl(args, is.null)]
+
+  nobs <- map_int(args, vec_obs)
+  reduce(nobs, recycle_length)
+}
+
+vec_reshape <- function(x, n_to) {
+  if (is.null(x) || is.null(n_to))
+    return(x)
+
+  n_x <- vec_obs(x)
+
+  if (n_x == n_to) {
+    x
+  } else if (n_to == 0L) {
+    vec_subset(x, 0L)
+  } else if (n_x == 1L) {
+    vec_rep(x, n_to)
+  } else {
+    stop("Incompatible lengths: ", n_x, ", ", n_to, call. = FALSE)
+  }
 }

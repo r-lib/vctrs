@@ -7,8 +7,7 @@
 vec_c(..., .ptype = NULL)
 }
 \arguments{
-\item{...}{Vectors to coerce. All vectors must be 1d (i.e. no data
-frames, matrices or arrays).}
+\item{...}{Vectors to coerce.}
 
 \item{.ptype}{If \code{NULL}, the default, the output type is determined by
 computing the common type across all elements of \code{...}.
@@ -19,7 +18,7 @@ this is a convenient way to make production code demand fixed types.}
 }
 \value{
 A vector with class given by \code{.ptype}, and length equal to the
-sum of the lengths of the contents of \code{...}.
+sum of the \code{vec_obs()} of the contents of \code{...}.
 
 The vector will have names if the individual components have names
 (inner names) or if the arguments are named (outer names). If both

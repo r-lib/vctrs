@@ -52,11 +52,9 @@ new_rational <- function(n = integer(), d = integer()) {
   new_rcrd(list(n = n, d = d), class = "vctrs_rational")
 }
 rational <- function(n, d) {
-  shape <- vec_shape(n, d)
-  
-  n <- vec_reshape(vec_cast(n, integer()), shape)
-  d <- vec_reshape(vec_cast(d, integer()), shape)
-  
+  c(n, d) %<-% as.list(vec_coerce(n, d, .ptype = integer()))
+  c(n, d) %<-% vec_recycle(n, d)
+
   new_rational(n, d)
 }
 format.vctrs_rational <- function(x, ...) {

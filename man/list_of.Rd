@@ -19,8 +19,7 @@ is_list_of(x)
 \method{vec_cast}{vctrs_list_of}(x, to)
 }
 \arguments{
-\item{...}{Vectors to coerce. All vectors must be 1d (i.e. no data
-frames, matrices or arrays).}
+\item{...}{Vectors to coerce.}
 
 \item{.ptype}{If \code{NULL}, the default, the output type is determined by
 computing the common type across all elements of \code{...}.

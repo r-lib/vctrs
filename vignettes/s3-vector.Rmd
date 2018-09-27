@@ -424,10 +424,8 @@ In our user friendly constructor as well as casting `n` and `d` to the desired t
 
 ```{r}
 rational <- function(n, d) {
-  shape <- vec_shape(n, d)
-  
-  n <- vec_reshape(vec_cast(n, integer()), shape)
-  d <- vec_reshape(vec_cast(d, integer()), shape)
+  c(n, d) %<-% as.list(vec_coerce(n, d, .ptype = integer()))
+  c(n, d) %<-% vec_recycle(n, d)
   
   new_rational(n, d)
 }

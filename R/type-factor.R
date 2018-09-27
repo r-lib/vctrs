@@ -63,10 +63,10 @@ vec_type2.factor    <- function(x, y) UseMethod("vec_type2.factor", y)
 vec_type2.factor.default    <- function(x, y) stop_incompatible_type(x, y)
 #' @method vec_type2.character factor
 #' @export
-vec_type2.character.factor    <- function(x, y) dim_match(character(), x, y)
+vec_type2.character.factor    <- function(x, y) character()
 #' @method vec_type2.factor character
 #' @export
-vec_type2.factor.character    <- function(x, y) dim_match(character(), x, y)
+vec_type2.factor.character    <- function(x, y) character()
 #' @method vec_type2.factor factor
 #' @export
 vec_type2.factor.factor       <- function(x, y) new_factor(levels = levels_union(x, y))
@@ -81,10 +81,10 @@ vec_type2.ordered <- function(x, y) UseMethod("vec_type2.ordered", y)
 vec_type2.ordered.default     <- function(x, y) stop_incompatible_type(x, y)
 #' @method vec_type2.ordered character
 #' @export
-vec_type2.ordered.character   <- function(x, y) dim_match(character(), x, y)
+vec_type2.ordered.character   <- function(x, y) character()
 #' @method vec_type2.character ordered
 #' @export
-vec_type2.character.ordered   <- function(x, y) dim_match(character(), x, y)
+vec_type2.character.ordered   <- function(x, y) character()
 #' @method vec_type2.ordered factor
 #' @export
 vec_type2.ordered.factor      <- function(x, y) stop_incompatible_type(x, y)
