@@ -83,12 +83,11 @@ vec_ptype_abbr.AsIs <- function(x) {
 
 # Helpers -----------------------------------------------------------------
 
-# In the type specification of bare vectors, a zero means free specification
 vec_ptype_shape <- function(x) {
-  if (vec_dims(x) == 1) {
+  dim <- vec_dim(x)
+  if (length(dim) == 1) {
     ""
   } else {
-    dim <- vec_dim(x)
-    paste0("[", paste(ifelse(dim == 0L, "", dim), collapse = ","), "]")
+    paste0("[,", paste(dim[-1], collapse = ","), "]")
   }
 }

@@ -88,7 +88,6 @@ vec_str_data <- function(x, ...) {
 
 #' @export
 vec_str_data.default <- function(x, ...) {
-
   if (is.list(x)) {
     vec_str_recursive(x, ...)
   } else {
@@ -102,7 +101,7 @@ vec_str_recursive <- function(x, ...,
 
   if (nest.lev != 0L)
     cat(" ")
-  cat_line(glue::glue("{vec_ptype_abbr(x)} [1:{length(x)}] "))
+  cat_line(glue::glue("{vec_ptype_abbr(x)} [1:{vec_obs(x)}] "))
 
   utils::str(
     vec_data(x),

@@ -3,7 +3,7 @@ context("test-type-data-frame")
 # printing ----------------------------------------------------------------
 
 test_that("data frames print nicely", {
-  expect_equal(vec_ptype_abbr(mtcars), "df[32,11]")
+  expect_equal(vec_ptype_abbr(mtcars), "df[,11]")
 
   expect_known_output(
     file = test_path("test-type-df.txt"),
