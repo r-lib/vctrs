@@ -116,10 +116,10 @@ as_vec_ptype.NULL <- function(x) {
 
 #' @export
 as_vec_ptype.logical <- function(x) {
-  if (is_nullish(x)) {
+  if (is_unspecified(x)) {
     unknown()
   } else {
-    vec_subset(x, 0L)
+    logical()
   }
 }
 

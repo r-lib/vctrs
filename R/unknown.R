@@ -29,13 +29,13 @@ print.unknown <- function(x, ...) {
   cat("<unknown> [", length(x), "]\n", sep = "")
 }
 
-# In practice, a vector containing only NA implies shape, but not type.
-is_nullish <- function(x) {
-  is.null(x) || (is.logical(x) && vec_dims(x) == 1L && length(x) > 0 && all(is.na(x)))
+
+is_unspecified <- function(x) {
+  .Call(vctrs_is_unspecified, x)
 }
 
 vec_unknown_cast <- function(x, to) {
-  if (is_nullish(x)) {
+  if (is_unspecified(x)) {
     vec_na(to, length(x))
   } else {
     stop_incompatible_cast(x, to)
