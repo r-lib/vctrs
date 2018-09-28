@@ -86,3 +86,8 @@ has_unique_names <- function(x) {
 
   !anyDuplicated(nms)
 }
+
+compact <- function(x) {
+  is_null <- map_lgl(x, is.null)
+  x[!is_null]
+}

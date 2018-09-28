@@ -19,7 +19,7 @@ list_of <- function(..., .ptype = NULL) {
   args <- list2(...)
 
   ptype <- vec_ptype(!!!args, .ptype = .ptype)[[1]]
-  if (is_unknown(ptype)) {
+  if (is.null(ptype)) {
     stop("Could not find common type for elements of `x`", call. = FALSE)
   }
 
@@ -55,7 +55,7 @@ as_list_of.list <- function(x, ..., .ptype = NULL) {
 #' @param class Optional subclass name
 #' @keywords internal
 #' @export
-new_list_of <- function(x, ptype, ..., class = character()) {
+new_list_of <- function(x = list(), ptype = logical(), ..., class = character()) {
   stopifnot(is.list(x))
   stopifnot(vec_obs(ptype) == 0)
 
@@ -160,11 +160,6 @@ vec_cast.vctrs_list_of <- function(x, to) {
   UseMethod("vec_cast.vctrs_list_of")
 }
 #' @export
-#' @method vec_cast.vctrs_list_of NULL
-vec_cast.vctrs_list_of.NULL <- function(x, to) {
-  x
-}
-#' @export
 #' @method vec_cast.vctrs_list_of list
 vec_cast.vctrs_list_of.list <- function(x, to) {
   as_list_of(x, .ptype = attr(to, "ptype"))
@@ -180,6 +175,13 @@ vec_cast.list.vctrs_list_of <- function(x, to) {
 #' @export
 #' @method vec_cast.vctrs_list_of vctrs_list_of
 vec_cast.vctrs_list_of.vctrs_list_of <- vec_cast.vctrs_list_of.list
+
+#' @export
+#' @method vec_cast.vctrs_list_of logical
+vec_cast.vctrs_list_of.logical <- function(x, to) {
+  vec_unknown_cast(x, to)
+}
+
 #' @export
 #' @method vec_cast.list default
 vec_cast.vctrs_list_of.default <- function(x, to) {

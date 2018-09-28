@@ -109,10 +109,6 @@ map_if <- function(.x, .p, .f, ...) {
   .x
 }
 
-compact <- function(.x) {
-  Filter(length, .x)
-}
-
 transpose <- function(.l) {
   inner_names <- names(.l[[1]])
   if (is.null(inner_names)) {

@@ -89,7 +89,7 @@ vec_rbind <- function(..., .ptype = NULL) {
   tbls <- map(args, as_df_row)
   ptype <- vec_ptype(!!!tbls, .ptype = .ptype)[[1]]
 
-  if (is_unknown(ptype))
+  if (is.null(ptype))
     return(data_frame())
 
   ns <- map_int(tbls, vec_obs)
@@ -129,7 +129,7 @@ vec_cbind <- function(..., .ptype = NULL, .nrow = NULL) {
       x[0]
   })
   out <- vec_ptype(!!!tbl_empty, .ptype = .ptype[0])[[1]]
-  if (is_unknown(out)) {
+  if (is.null(out)) {
     out <- data_frame()
   }
 

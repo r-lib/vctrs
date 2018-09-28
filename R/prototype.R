@@ -61,12 +61,17 @@ vec_ptype <- function(..., .ptype = NULL) {
     stop("strict mode is activated; you must supply complete .ptype", call. = FALSE)
   }
 
-  args <- list2(...)
-  ptypes <- map(args, as_vec_ptype)
-  ptype <- reduce(ptypes, vec_type2, .init = .ptype)
+  args <- compact(list2(.ptype, ...))
+  if (length(args) == 0) {
+    ptype <- NULL
+  } else if (length(args) == 1) {
+    ptype <- as_vec_ptype(args[[1]])
+  } else {
+    ptypes <- map(args, as_vec_ptype)
+    ptype <- reduce(ptypes, vec_type2)
+  }
 
   ptype <- vec_type_finalise(ptype)
-
   new_vec_ptype(ptype)
 }
 
@@ -106,7 +111,7 @@ as_vec_ptype.default <- function(x) {
 
 #' @export
 as_vec_ptype.NULL <- function(x) {
-  unknown()
+  NULL
 }
 
 #' @export
@@ -120,12 +125,7 @@ as_vec_ptype.logical <- function(x) {
 
 #' @export
 as_vec_ptype.data.frame <- function(x) {
-  null_cols <- unname(map_lgl(x, is_nullish))
-
-  cols <- as.list(x)
-  cols[null_cols] <- rep.int(list(unknown()), sum(null_cols))
-  cols[!null_cols] <- map(cols[!null_cols], as_vec_ptype)
-
+  cols <- map(x, as_vec_ptype)
   vec_restore(cols, x)
 }
 

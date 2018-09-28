@@ -104,11 +104,13 @@ vec_type2.ordered.ordered     <- function(x, y) new_ordered(levels = levels_unio
 vec_cast.factor <- function(x, to) {
   UseMethod("vec_cast.factor")
 }
+
 #' @export
-#' @method vec_cast.factor NULL
-vec_cast.factor.NULL <- function(x, to) {
-  x
+#' @method vec_cast.factor logical
+vec_cast.factor.logical <- function(x, to) {
+  vec_unknown_cast(x, to)
 }
+
 #' @export
 #' @method vec_cast.factor factor
 vec_cast.factor.factor <- function(x, to) {

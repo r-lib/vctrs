@@ -46,6 +46,11 @@ test_that("can cast to character", {
   expect_equal(vec_cast(ordered("X"), character()), "X")
 })
 
+test_that("can cast NA to factor", {
+  expect_equal(vec_cast(NA, new_factor()), factor(NA))
+  expect_equal(vec_cast(NA, new_ordered()), ordered(NA))
+})
+
 test_that("lossy casts generate warning", {
   fa <- factor("a")
   fb <- factor("b")

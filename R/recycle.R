@@ -32,9 +32,7 @@ vec_shape <- function(..., .nobs = NULL) {
     return(.nobs)
   }
 
-  args <- list2(...)
-  args <- args[!map_lgl(args, is.null)]
-
+  args <- compact(list2(...))
   nobs <- map_int(args, vec_obs)
   reduce(nobs, recycle_length)
 }

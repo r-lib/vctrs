@@ -35,14 +35,9 @@ vec_type2 <- function(x, y) {
 #' @export
 vec_type2.default <- function(x, y) {
   if (identical(attributes(x), attributes(y)))
-    return(as_vec_ptype(x))
+    return(x)
 
   stop_incompatible_type(x, y)
-}
-
-#' @export
-vec_type2.NULL <- function(x, y) {
-  as_vec_ptype(y)
 }
 
 # Numeric-ish ----------------------------------------------------------
@@ -124,11 +119,9 @@ vec_type2.character.default <- function(x, y) stop_incompatible_type(x, y)
 #' @method vec_type2 list
 #' @export
 vec_type2.list    <- function(x, y) UseMethod("vec_type2.list", y)
-
 #' @method vec_type2.list list
 #' @export
 vec_type2.list.list <- function(x, y) shape_match(list(), x, y)
-
 #' @method vec_type2.list default
 #' @export
 vec_type2.list.default  <- function(x, y) stop_incompatible_type(x, y)

@@ -17,7 +17,7 @@ test_that("NAs equal when requested", {
     expect_equal(vec_compare(!!x, !!y, .ptype = .ptype, na_equal = TRUE), !!val)
   }
 
-  expect_value(NA, NA, 0L, .ptype = logical())
+  expect_value(NA, NA, 0L)
   expect_value(NA, FALSE, -1L)
   expect_value(FALSE, NA, 1L)
 

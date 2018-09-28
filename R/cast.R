@@ -63,7 +63,7 @@
 #' attributes that don't require special handling for your class.
 #'
 #' @param x Vector to cast.
-#' @param to Type to cast to.
+#' @param to Type to cast to. If `NULL`, `x` will be returned as is.
 #' @return A vector the same length as `x` with the same type as `to`,
 #'   or an error if the cast is not possible. A warning is generated if
 #'   information is lost when casting between compatible types (i.e. when
@@ -85,6 +85,9 @@
 #' }
 #'
 vec_cast <- function(x, to) {
+  if (is.null(x) || is.null(to)) {
+    return(x)
+  }
   UseMethod("vec_cast", to)
 }
 
@@ -108,24 +111,10 @@ vec_restore.default <- function(x, to) {
 # Base vectors --------------------------------------------------------------
 
 #' @export
-#' @export vec_cast.NULL
-#' @method vec_cast NULL
-#' @rdname vec_cast
-vec_cast.NULL <- function(x, to) UseMethod("vec_cast.NULL")
-#' @export
-#' @method vec_cast.NULL default
-vec_cast.NULL.default <- function(x, to) x
-
-#' @export
 #' @rdname vec_cast
 #' @export vec_cast.logical
 #' @method vec_cast logical
 vec_cast.logical <- function(x, to) UseMethod("vec_cast.logical")
-#' @export
-#' @method vec_cast.logical NULL
-vec_cast.logical.NULL <- function(x, to) {
-  NULL
-}
 #' @export
 #' @method vec_cast.logical logical
 vec_cast.logical.logical <- function(x, to) {
@@ -159,7 +148,9 @@ vec_cast.logical.list <- function(x, to) {
 }
 #' @export
 #' @method vec_cast.logical default
-vec_cast.logical.default <- function(x, to) stop_incompatible_cast(x, to)
+vec_cast.logical.default <- function(x, to) {
+  stop_incompatible_cast(x, to)
+}
 
 #' @export
 #' @rdname vec_cast
@@ -167,11 +158,6 @@ vec_cast.logical.default <- function(x, to) stop_incompatible_cast(x, to)
 #' @method vec_cast integer
 vec_cast.integer <- function(x, to) {
   UseMethod("vec_cast.integer")
-}
-#' @export
-#' @method vec_cast.integer NULL
-vec_cast.integer.NULL  <- function(x, to) {
-  x
 }
 #' @export
 #' @method vec_cast.integer logical
@@ -214,11 +200,6 @@ vec_cast.double <- function(x, to) {
   UseMethod("vec_cast.double")
 }
 #' @export
-#' @method vec_cast.double NULL
-vec_cast.double.NULL <- function(x, to) {
-  x
-}
-#' @export
 #' @method vec_cast.double logical
 vec_cast.double.logical <- function(x, to) {
   x <- vec_coerce_bare(x, "double")
@@ -257,11 +238,6 @@ vec_cast.double.default <- function(x, to) {
 #' @method vec_cast character
 vec_cast.character <- function(x, to) {
   UseMethod("vec_cast.character")
-}
-#' @export
-#' @method vec_cast.character NULL
-vec_cast.character.NULL <- function(x, to) {
-  x
 }
 #' @export
 #' @method vec_cast.character logical
@@ -305,11 +281,6 @@ vec_cast.list <- function(x, to) {
   UseMethod("vec_cast.list")
 }
 #' @export
-#' @method vec_cast.list NULL
-vec_cast.list.NULL <- function(x, to) {
-  x
-}
-#' @export
 #' @method vec_cast.list list
 vec_cast.list.list <- function(x, to) {
   shape_broadcast(x, to)
@@ -317,9 +288,17 @@ vec_cast.list.list <- function(x, to) {
 #' @export
 #' @method vec_cast.list default
 vec_cast.list.default <- function(x, to) {
-  lapply(seq_along(x), function(i) x[[i]])
-}
+  out <- lapply(seq_along(x), function(i) x[[i]])
 
+  miss <- is.na(x)
+  out[miss] <- rep(list(NULL), sum(miss))
+
+  if (!is.object(to)) {
+    out <- shape_broadcast(out, to)
+  }
+
+  out
+}
 
 # Helpers -----------------------------------------------------------------
 

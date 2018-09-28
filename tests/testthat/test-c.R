@@ -3,12 +3,30 @@ context("test-c")
 test_that("zero length input returns NULL", {
   expect_equal(vec_c(), NULL)
   expect_equal(vec_c(NULL), NULL)
+  expect_equal(vec_c(NULL,), NULL)
+  expect_equal(vec_c(NULL, NULL), NULL)
 })
 
 test_that("NULL is idempotent", {
-  expect_equal(vec_c(NULL, 1:10), 1:10)
-  expect_equal(vec_c(1:10, NULL), 1:10)
+  expect_equal(vec_c(NULL, 1L), 1L)
+  expect_equal(vec_c(1L, NULL), 1L)
 })
+
+test_that("NA is idempotent", {
+  expect_equal(vec_c(NA, 1L), c(NA, 1L))
+  expect_equal(vec_c(NA, "x"), c(NA, "x"))
+  expect_equal(vec_c(NA, factor("x")), factor(c(NA, "x")))
+  expect_equal(vec_c(NA, new_date(0)), new_date(c(NA, 0)))
+  expect_equal(vec_c(NA, new_datetime(0)), new_datetime(c(NA, 0)))
+  expect_equal(vec_c(NA, new_duration(0)), new_duration(c(NA, 0)))
+})
+
+test_that("NA is logical if no other types intervene", {
+  expect_equal(vec_c(logical()), logical())
+  expect_equal(vec_c(NA), NA)
+  expect_equal(vec_c(NA, NA), c(NA, NA))
+})
+
 
 test_that("different types are coerced to common", {
   expect_equal(vec_c(TRUE, 1L, 1), c(1, 1, 1))

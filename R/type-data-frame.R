@@ -88,9 +88,6 @@ vec_cast.data.frame <- function(x, to) {
   UseMethod("vec_cast.data.frame")
 }
 #' @export
-#' @method vec_cast.data.frame NULL
-vec_cast.data.frame.NULL       <- function(x, to) x
-#' @export
 #' @method vec_cast.data.frame data.frame
 vec_cast.data.frame.data.frame <- function(x, to) df_col_cast(x, to)
 #' @export

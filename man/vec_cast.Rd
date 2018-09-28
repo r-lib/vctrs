@@ -3,7 +3,6 @@
 \name{vec_cast}
 \alias{vec_cast}
 \alias{vec_restore}
-\alias{vec_cast.NULL}
 \alias{vec_cast.logical}
 \alias{vec_cast.integer}
 \alias{vec_cast.double}
@@ -15,8 +14,6 @@
 vec_cast(x, to)
 
 vec_restore(x, to)
-
-\method{vec_cast}{NULL}(x, to)
 
 \method{vec_cast}{logical}(x, to)
 
@@ -33,7 +30,7 @@ vec_restore(x, to)
 \arguments{
 \item{x}{Vector to cast.}
 
-\item{to}{Type to cast to.}
+\item{to}{Type to cast to. If \code{NULL}, \code{x} will be returned as is.}
 }
 \value{
 A vector the same length as \code{x} with the same type as \code{to},

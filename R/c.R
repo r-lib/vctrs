@@ -31,7 +31,7 @@ vec_c <- function(..., .ptype = NULL) {
   args <- list2(...)
 
   ptype <- vec_ptype(!!!args, .ptype = .ptype)[[1]]
-  if (is_unknown(ptype))
+  if (is.null(ptype))
     return(NULL)
 
   ns <- map_int(args, vec_obs)

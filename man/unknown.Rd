@@ -2,13 +2,10 @@
 % Please edit documentation in R/unknown.R
 \name{unknown}
 \alias{unknown}
-\alias{is_unknown}
 \alias{vec_type2.unknown}
-\title{A vector of unknown type}
+\title{A 1d vector of unknown type}
 \usage{
 unknown(n = 0)
-
-is_unknown(x)
 
 \method{vec_type2}{unknown}(x, y)
 }
@@ -16,13 +13,17 @@ is_unknown(x)
 \item{n}{Length of vector}
 }
 \description{
-This is a special vector type used to represent of known length but
-unknown type.
+This is a \href{new_partial}{partial type} used to represents logical vectors
+that only contain \code{NA}. These require special handling because we want to
+allow \code{NA} to specify missingness without requiring a type.
 }
 \examples{
 vec_ptype()
 vec_ptype(NA)
 
-vec_ptype(unknown(), "x")
+vec_c(NA, factor("x"))
+vec_c(NA, Sys.Date())
+vec_c(NA, Sys.time())
+vec_c(NA, list(1:3, 4:5))
 }
 \keyword{internal}

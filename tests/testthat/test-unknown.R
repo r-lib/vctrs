@@ -9,7 +9,6 @@ test_that("unknown type is idempotent", {
     character(),
     new_factor(),
     new_ordered(),
-    new_data_frame(),
     new_date(),
     new_datetime()
   )
@@ -19,10 +18,6 @@ test_that("unknown type is idempotent", {
 
   rhs <- map(types, vec_type2, y = unknown())
   expect_equal(types, rhs)
-})
-
-test_that("casting to/from unknown leaves as/is", {
-  expect_equal(vec_cast(1, unknown()), 1)
 })
 
 test_that("has useful print method", {

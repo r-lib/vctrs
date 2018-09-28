@@ -105,10 +105,6 @@ vec_restore.vctrs_vctr <- function(x, to) {
 #' @export
 vec_cast.vctrs_vctr <- function(x, to) UseMethod("vec_cast.vctrs_vctr")
 
-#' @method vec_cast.vctrs_vctr NULL
-#' @export
-vec_cast.vctrs_vctr.NULL <- function(x, to) x
-
 #' @method vec_cast.vctrs_vctr default
 #' @export
 vec_cast.vctrs_vctr.default <- function(x, to) {
@@ -578,8 +574,6 @@ vec_restore_numeric.hidden <- function(x, to) new_hidden(x)
 vec_type2.hidden          <- function(x, y) UseMethod("vec_type2.hidden")
 vec_type2.hidden.default  <- function(x, y) stop_incompatible_type(x, y)
 vec_type2.hidden.hidden   <- function(x, y) new_hidden()
-vec_type2.hidden.NULL     <- function(x, y) new_hidden()
-vec_type2.NULL.hidden     <- function(x, y) new_hidden()
 vec_type2.hidden.double   <- function(x, y) new_hidden()
 vec_type2.double.hidden   <- function(x, y) new_hidden()
 vec_type2.hidden.logical  <- function(x, y) new_hidden()
@@ -588,8 +582,6 @@ vec_type2.logical.hidden  <- function(x, y) new_hidden()
 vec_cast.hidden           <- function(x, to) UseMethod("vec_cast.hidden")
 vec_cast.hidden.default   <- function(x, to) stop_incompatible_cast(x, to)
 vec_cast.hidden.hidden    <- function(x, to) x
-vec_cast.hidden.NULL      <- function(x, to) x
-vec_cast.NULL.hidden      <- function(x, to) x
 vec_cast.hidden.double    <- function(x, to) new_hidden(vec_data(x))
 vec_cast.double.hidden    <- function(x, to) vec_data(x)
 vec_cast.hidden.logical   <- function(x, to) new_hidden(as.double(x))

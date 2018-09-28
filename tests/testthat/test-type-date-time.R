@@ -55,6 +55,9 @@ test_that("invalid casts generate error", {
   expect_error(vec_cast(integer(), date), class = "error_incompatible_cast")
 })
 
+test_that("can cast NA", {
+  expect_equal(vec_cast(NA, new_date()), new_date(NA_real_))
+})
 
 # cast: datetimes -----------------------------------------------------------
 
@@ -83,6 +86,10 @@ test_that("dates become midnight in date-time tzone", {
   expect_equal(format(date2, "%H:%M"), "00:00")
 })
 
+test_that("can cast NA", {
+  expect_equal(vec_cast(NA, new_datetime()), new_datetime(NA_real_))
+})
+
 # cast: durations ------------------------------------------------------------
 
 test_that("safe casts work as expected", {
@@ -101,6 +108,9 @@ test_that("invalid casts generate error", {
   expect_error(vec_cast(integer(), dt), class = "error_incompatible_cast")
 })
 
+test_that("can cast NA", {
+  expect_equal(vec_cast(NA, new_duration()), new_duration(NA_real_))
+})
 
 # arithmetic --------------------------------------------------------------
 

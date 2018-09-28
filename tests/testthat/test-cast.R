@@ -90,6 +90,7 @@ test_that("invalid casts generate error", {
 
 test_that("safe casts work as expected", {
   expect_equal(vec_cast(NULL, character()), NULL)
+  expect_equal(vec_cast(NA, character()), NA_character_)
   expect_equal(vec_cast(TRUE, character()), "TRUE")
   expect_equal(vec_cast(list("x"), character()), "x")
 })
@@ -104,6 +105,14 @@ test_that("difftime gets special treatment", {
 
 test_that("safe casts work as expected", {
   expect_equal(vec_cast(NULL, list()), NULL)
+  expect_equal(vec_cast(NA, list()), list(NULL))
   expect_equal(vec_cast(1:2, list()), list(1L, 2L))
   expect_equal(vec_cast(list(1L, 2L), list()), list(1L, 2L))
+})
+
+test_that("dimensionality matches to" ,{
+  x1 <- matrix(TRUE, nrow = 1, ncol = 1)
+  x2 <- matrix(list(), nrow = 0, ncol = 2)
+  expect_dim(vec_cast(x1, x2), c(1, 2))
+  expect_dim(vec_cast(TRUE, x2), c(1, 2))
 })

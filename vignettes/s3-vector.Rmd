@@ -178,8 +178,6 @@ First, we create a new generic, and provide a standard set of methods. These are
 ```{r}
 vec_cast.vctrs_percent <- function(x, to) UseMethod("vec_cast.vctrs_percent")
 vec_cast.vctrs_percent.default <- function(x, to) stop_incompatible_cast(x, to)
-vec_cast.vctrs_percent.NULL    <- function(x, to) x
-vec_cast.NULL.vctrs_percent    <- function(x, to) x
 ```
 ```{r, include = FALSE}
 vec_method_register("vctrs::vec_cast", "vctrs_percent")
@@ -229,8 +227,6 @@ Finally, we define methods for `vec_type2()` which tells vctrs when it is ok to 
 ```{r}
 vec_type2.vctrs_percent <- function(x, y) UseMethod("vec_type2.vctrs_percent")
 vec_type2.vctrs_percent.default <- function(x, y) stop_incompatible_type(x, y)
-vec_type2.vctrs_percent.NULL    <- function(x, y) percent()
-vec_type2.NULL.vctrs_percent    <- function(x, y) percent()
 vec_type2.vctrs_percent.vctrs_percent <- function(x, y) percent()
 ```
 ```{r, include = FALSE}
@@ -321,13 +317,9 @@ Now consider `vec_cast()` and `vec_type2()`. I start with the standard recipes:
 ```{r}
 vec_type2.vctrs_decimal         <- function(x, y) UseMethod("vec_type2.vctrs_decimal")
 vec_type2.vctrs_decimal.default <- function(x, y) stop_incompatible_type(x, y)
-vec_type2.vctrs_decimal.NULL    <- function(x, y) new_decimal()
-vec_type2.NULL.vctrs_decimal    <- function(x, y) new_decimal()
 
 vec_cast.vctrs_decimal          <- function(x, to) UseMethod("vec_cast.vctrs_decimal")
 vec_cast.vctrs_decimal.default  <- function(x, to) stop_incompatible_cast(x, to)
-vec_cast.vctrs_decimal.NULL     <- function(x, to) x
-vec_cast.NULL.vctrs_decimal     <- function(x, to) x
 ```
 
 Casting and coercing from one decimal to another requires a little thought as the values of the `digits` attribute might be different, and we need some way to reconcile them. Here I've chosen to chose the maximum of the two, but for your class you might chose the left-hand side or throw an error.

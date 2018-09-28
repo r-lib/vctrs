@@ -22,7 +22,7 @@ test_that("correct behaviour for basic vectors", {
 })
 
 test_that("NAs are equal", {
-  expect_true(vec_equal(NA, NA, na_equal = TRUE, .ptype = logical()))
+  expect_true(vec_equal(NA, NA, na_equal = TRUE))
   expect_true(vec_equal(NA_integer_, NA_integer_, na_equal = TRUE))
   expect_true(vec_equal(NA_real_, NA_real_, na_equal = TRUE))
   expect_true(vec_equal(NA_character_, NA_character_, na_equal = TRUE))

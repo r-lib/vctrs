@@ -74,10 +74,6 @@ vec_str_data.vctrs_rcrd <- function(x, ...) {
 #' @export
 vec_cast.vctrs_rcrd <- function(x, to) UseMethod("vec_cast.vctrs_rcrd")
 
-#' @method vec_cast.vctrs_rcrd NULL
-#' @export
-vec_cast.vctrs_rcrd.NULL <- function(x, to) x
-
 #' @method vec_cast.vctrs_rcrd list
 #' @export
 vec_cast.vctrs_rcrd.list <- function(x, to) {

@@ -4,7 +4,7 @@
 \alias{new_list_of}
 \title{Create list_of subclass}
 \usage{
-new_list_of(x, ptype, ..., class = character())
+new_list_of(x = list(), ptype = logical(), ..., class = character())
 }
 \arguments{
 \item{x}{A list}

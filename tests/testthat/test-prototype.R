@@ -17,10 +17,12 @@ test_that("can feed ptype into itself", {
 })
 
 test_that("unknown prototypes created from under specified inputs", {
-  expect_equal(vec_ptype()[[1]], unknown())
-  expect_equal(vec_ptype(NA)[[1]], unknown())
-  expect_equal(vec_ptype(NULL)[[1]], unknown())
-  expect_equal(vec_ptype(NA, NULL)[[1]], unknown())
+  expect_equal(vec_ptype()[[1]], NULL)
+  expect_equal(vec_ptype(NULL)[[1]], NULL)
+
+  expect_equal(vec_ptype(NA)[[1]], logical())
+  expect_equal(vec_ptype(NA, NULL)[[1]], logical())
+  expect_equal(vec_ptype(NULL, NA)[[1]], logical())
 })
 
 test_that("unknown prototypes created from data frame cols", {

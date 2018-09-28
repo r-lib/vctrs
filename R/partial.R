@@ -48,11 +48,6 @@ vec_type_finalise.default <- function(x) {
 }
 
 #' @export
-vec_type_finalise.NULL <- function(x) {
-  unknown()
-}
-
-#' @export
 vec_type_finalise.vctrs_partial <- function(x) {
   stop_unimplemented(x, "vec_type_finalise")
 }

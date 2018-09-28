@@ -1,7 +1,6 @@
-                     unknown                date                   datetime<local>        datetime<US/Central>   duration<mins>   duration<secs>  
-unknown              "unknown"              "date"                 "datetime<local>"      "datetime<US/Central>" "duration<mins>" "duration<secs>"
-date                 "date"                 "date"                 "datetime<local>"      "datetime<US/Central>" NA               NA              
-datetime<local>      "datetime<local>"      "datetime<local>"      "datetime<local>"      "datetime<US/Central>" NA               NA              
-datetime<US/Central> "datetime<US/Central>" "datetime<US/Central>" "datetime<US/Central>" "datetime<US/Central>" NA               NA              
-duration<mins>       "duration<mins>"       NA                     NA                     NA                     "duration<mins>" "duration<secs>"
-duration<secs>       "duration<secs>"       NA                     NA                     NA                     "duration<secs>" "duration<secs>"
+                     date                   datetime<local>        datetime<US/Central>   duration<mins>   duration<secs>  
+date                 "date"                 "datetime<local>"      "datetime<US/Central>" NA               NA              
+datetime<local>      "datetime<local>"      "datetime<local>"      "datetime<US/Central>" NA               NA              
+datetime<US/Central> "datetime<US/Central>" "datetime<US/Central>" "datetime<US/Central>" NA               NA              
+duration<mins>       NA                     NA                     NA                     "duration<mins>" "duration<secs>"
+duration<secs>       NA                     NA                     NA                     "duration<secs>" "duration<secs>"

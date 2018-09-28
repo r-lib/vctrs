@@ -96,9 +96,6 @@ vec_type2.Date   <- function(x, y) UseMethod("vec_type2.Date", y)
 #' @method vec_type2.Date default
 #' @export
 vec_type2.Date.default   <- function(x, y) stop_incompatible_type(x, y)
-#' @method vec_type2.Date NULL
-#' @export
-vec_type2.Date.NULL      <- function(x, y) new_date()
 #' @method vec_type2.Date Date
 #' @export
 vec_type2.Date.Date      <- function(x, y) new_date()
@@ -143,11 +140,6 @@ vec_cast.Date <- function(x, to) {
   UseMethod("vec_cast.Date")
 }
 #' @export
-#' @method vec_cast.Date NULL
-vec_cast.Date.NULL <- function(x, to) {
-  x
-}
-#' @export
 #' @method vec_cast.Date double
 vec_cast.Date.double <- function(x, to) {
   new_date(x)
@@ -176,6 +168,12 @@ vec_cast.Date.list <- function(x, to) {
   vec_list_cast(x, to)
 }
 #' @export
+#' @method vec_cast.Date logical
+vec_cast.Date.logical <- function(x, to) {
+  vec_unknown_cast(x, to)
+}
+
+#' @export
 #' @method vec_cast.Date default
 vec_cast.Date.default <- function(x, to) {
   stop_incompatible_cast(x, to)
@@ -187,11 +185,6 @@ vec_cast.Date.default <- function(x, to) {
 #' @export
 vec_cast.POSIXt <- function(x, to) {
   UseMethod("vec_cast.POSIXt")
-}
-#' @export
-#' @method vec_cast.POSIXt NULL
-vec_cast.POSIXt.NULL <- function(x, to) {
-  x
 }
 #' @export
 #' @method vec_cast.POSIXt double
@@ -219,6 +212,11 @@ vec_cast.POSIXt.list <- function(x, to) {
   vec_list_cast(x, to)
 }
 #' @export
+#' @method vec_cast.POSIXt logical
+vec_cast.POSIXt.logical <- function(x, to) {
+  vec_unknown_cast(x, to)
+}
+#' @export
 #' @method vec_cast.POSIXt default
 vec_cast.POSIXt.default <- function(x, to) {
   stop_incompatible_cast(x, to)
@@ -230,11 +228,6 @@ vec_cast.POSIXt.default <- function(x, to) {
 #' @export
 vec_cast.difftime <- function(x, to) {
   UseMethod("vec_cast.difftime")
-}
-#' @export
-#' @method vec_cast.difftime NULL
-vec_cast.difftime.NULL <- function(x, to) {
-  x
 }
 #' @export
 #' @method vec_cast.difftime double
@@ -256,6 +249,11 @@ vec_cast.difftime.difftime <- function(x, to) {
 #' @method vec_cast.difftime list
 vec_cast.difftime.list <- function(x, to) {
   vec_list_cast(x, to)
+}
+#' @export
+#' @method vec_cast.difftime logical
+vec_cast.difftime.logical <- function(x, to) {
+  vec_unknown_cast(x, to)
 }
 #' @export
 #' @method vec_cast.difftime default

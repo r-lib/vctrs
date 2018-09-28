@@ -94,6 +94,7 @@ test_that("safe casts work as expected", {
   expect_equal(vec_cast(NULL, x), NULL)
   expect_equal(vec_cast(list(1), x), x)
   expect_equal(vec_cast(list(TRUE), x), x)
+  expect_equal(vec_cast(NA, x), list_of(NULL, .ptype = double()))
 })
 
 test_that("lossy casts generate warning", {
