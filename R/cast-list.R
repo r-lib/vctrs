@@ -14,7 +14,7 @@
 #' @keywords internal
 vec_list_cast <- function(x, to) {
   ns <- map_int(x, length)
-  report_lossy_cast(x, to, ns != 1L)
+  report_lossy_cast(x, to, !ns %in% c(0L, 1L))
 
   n <- length(x)
   out <- vec_na(to, n)

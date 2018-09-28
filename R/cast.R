@@ -290,9 +290,6 @@ vec_cast.list.list <- function(x, to) {
 vec_cast.list.default <- function(x, to) {
   out <- lapply(seq_along(x), function(i) x[[i]])
 
-  miss <- is.na(x)
-  out[miss] <- rep(list(NULL), sum(miss))
-
   if (!is.object(to)) {
     out <- shape_broadcast(out, to)
   }

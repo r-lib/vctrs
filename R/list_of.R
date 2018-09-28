@@ -177,13 +177,13 @@ vec_cast.list.vctrs_list_of <- function(x, to) {
 vec_cast.vctrs_list_of.vctrs_list_of <- vec_cast.vctrs_list_of.list
 
 #' @export
-#' @method vec_cast.vctrs_list_of logical
-vec_cast.vctrs_list_of.logical <- function(x, to) {
-  vec_unknown_cast(x, to)
-}
-
-#' @export
-#' @method vec_cast.list default
+#' @method vec_cast.vctrs_list_of default
 vec_cast.vctrs_list_of.default <- function(x, to) {
-  stop_incompatible_cast(x, to)
+  x <- vec_cast(x, attr(to, "ptype"))
+  out <- lapply(seq_along(x), function(i) x[[i]])
+
+  miss <- is.na(x)
+  out[miss] <- rep(list(NULL), sum(miss))
+
+  new_list_of(out, ptype = attr(to, "ptype"))
 }

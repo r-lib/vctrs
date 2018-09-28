@@ -92,6 +92,8 @@ test_that("max<list_of<a>, list_of<b>> is list_of<max<a, b>>", {
 test_that("safe casts work as expected", {
   x <- list_of(1)
   expect_equal(vec_cast(NULL, x), NULL)
+  expect_equal(vec_cast(1L, x), x)
+  expect_equal(vec_cast(1, x), x)
   expect_equal(vec_cast(list(1), x), x)
   expect_equal(vec_cast(list(TRUE), x), x)
   expect_equal(vec_cast(NA, x), list_of(NULL, .ptype = double()))
