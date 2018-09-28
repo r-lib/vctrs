@@ -342,11 +342,35 @@ vec_cast.binned.double <- function(x, y) {
 
 Hopefully future versions of roxygen will make these exports less painful.
 
+## Length vs shape/type
+
+Any bare vector can have a `dim` attribute which turns it into a matrix or array. The prototype of matrices and arrays includes the "shape", all the dimensions apart from the first:
+
+```{r}
+vec_ptype(array(1, c(1, 10)))
+vec_ptype(array(1, c(1, 10, 10)))
+```
+
+Length 1 dimensions are automatically broadcast:
+
+```{r, error = TRUE}
+vec_ptype(array(TRUE, c(2, 1)), array(1, c(5, 2)))
+vec_ptype(array(TRUE, c(1, 1, 1)), array(1, c(1, 4, 3)))
+```
+
+And lower-dimensional arrays will be automatically expanded to higher:
+
+```{r}
+vec_ptype(TRUE, array(1, c(5, 10, 2)))
+```
+
+
 [custom-condition]: https://adv-r.hadley.nz/conditions.html#custom-conditions
 [s3]: https://adv-r.hadley.nz/s3.html
 
 
 [df-col]: https://adv-r.hadley.nz/vectors-chap.html#matrix-and-data-frame-columns
 [prefix-sum]: https://en.wikipedia.org/wiki/Prefix_sum#Parallel_algorithm
+
 
 

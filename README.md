@@ -110,7 +110,7 @@ vec_c(TRUE, 1)
 vec_c(1L, 1.5)
 #> [1] 1.0 1.5
 vec_c(1.5, "x")
-#> Error: No common type for double and character
+#> Error: No common type for <double> and <character>
 ```
 
 Unlike `c()`, you can optionally specify the desired output class by
@@ -134,14 +134,14 @@ automatic coercions, but it can still fail:
 
 ``` r
 vec_c(Sys.Date(), .ptype = factor())
-#> Error: Can't cast date to factor<>
+#> Error: Can't cast <date> to <factor<>>
 ```
 
 ### What is a prototype?
 
 Internally, vctrs represents the class of a vector with a 0-length
 subset. We call this a prototype, because it’s a miniature version of
-the vector, that contains all of the attributes but none of the data.
+the vector that contains all of the attributes but none of the data.
 Conveniently, you can create many prototypes using existing base
 functions (e.g, `double()`, `factor(levels = c("a", "b"))`).
 
@@ -174,22 +174,7 @@ vec_ptype(Sys.time())
 
 # difftimes display their units
 vec_ptype(as.difftime(10, units = "mins"))
-#> prototype: time<mins>
-```
-
-vctrs provides the `unknown()` class to represent vectors of unknown
-type:
-
-``` r
-vec_ptype()
-#> prototype: unknown
-vec_ptype(NULL)
-#> prototype: unknown
-
-# NA is technically logical, but used in many places to
-# represent a missing value of arbitrary type
-vec_ptype(NA)
-#> prototype: unknown
+#> prototype: duration<mins>
 ```
 
 ### Coercion and casting
@@ -197,8 +182,8 @@ vec_ptype(NA)
 vctrs defines the relationship between classes with two functions:
 `vec_type2()` and `vec_cast()`. `vec_type2()` is used for implicit
 coercions: given two classes, it returns the common class if it exists,
-or otherwise throws and error. `vec_type2()` is commutative,
-associative, and has an identity element, `unknown()`.
+or otherwise throws an error. `vec_type2()` is commutative, which means
+that `vec_type2(x, y) == vec_type2(y, x)`.
 
 The easiest way to explore coercion is to give multiple arguments to
 `vec_ptype()`. It uses `vec_type2()` to find the common type and
@@ -212,12 +197,12 @@ vec_ptype(Sys.Date(), Sys.time())
 
 # no common type
 vec_ptype(factor(), Sys.Date())
-#> Error: No common type for factor<> and date
+#> Error: No common type for <factor<>> and <date>
 ```
 
-`vec_cast()` is used for explicit casts: given a value and a class, it
-casts the value to the class or throws an error stating that the cast is
-not possible. If a cast is possible in general (i.e. double -\>
+`vec_cast()` is used for explicit casts: given a value and a prototype,
+it casts the value to the prototype or throws an error stating that the
+cast is not possible. If a cast is possible in general (i.e. double -\>
 integer), but information is lost for a specific input (e.g. 1.5 -\> 1),
 it will generate a warning.
 
@@ -227,13 +212,14 @@ vec_cast(c(1, 2), integer())
 #> [1] 1 2
 
 # Cast loses information
-vec_cast(c(1.5, 2.5), integer())
-#> Warning: Lossy cast
+vec_cast(c(1.5, 2), integer())
+#> Warning: Lossy cast from <double> to <integer>
+#> Locations: 1
 #> [1] 1 2
 
 # Cast fails
 vec_cast(c(1.5, 2.5), factor("a"))
-#> Error: Can't cast double to factor<127a2>
+#> Error: Can't cast <double> to <factor<127a2>>
 ```
 
 The set of possible casts is a subset of possible automatic coercions.
@@ -244,10 +230,9 @@ The following diagram summarises both casts (arrows) and coercions
 
 ### Factors
 
-Note that the commutativity of `vec_type2()` only applies to the
-prototype, not the attributes of the prototype. Concretely, the order in
-which you concatenate factors will affect the order of the levels in the
-output:
+The commutativity of `vec_type2()` only applies to the prototype, not
+its parameters. For example, factor levels are combined on in the order
+in which they are seen:
 
 ``` r
 fa <- factor("a")
@@ -259,35 +244,9 @@ levels(vec_ptype(fb, fa)[[1]])
 #> [1] "b" "a"
 ```
 
-### Matrices and arrays
-
-Any bare vector can have a `dim` attribute which turns it into a matrix
-or array. The prototype of a matrix or array its a 0-row subset.
-
-``` r
-vec_ptype(array(1, c(1, 10)))
-#> prototype: double[,10]
-vec_ptype(array(1, c(1, 10, 10)))
-#> prototype: double[,10,10]
-```
-
-A pair of arrays only has common type if the dimensions match:
-
-``` r
-vec_ptype(array(TRUE, c(2, 10)), array(1, c(5, 10)))
-#> prototype: double[,10]
-
-vec_ptype(array(TRUE, c(2, 10)), array(1, c(5, 1)))
-#> Error: No common type for logical[,10] and double[,1]
-#> Shapes are not compatible
-vec_ptype(array(TRUE, c(2, 10)), array(1, c(5, 10, 1)))
-#> Error: No common type for logical[,10] and double[,10,1]
-#> Dimensionality must be equal
-```
-
 ### Data frames
 
-Data frames are defined by the names and prototypes of their columns:
+The prototype of data frame contains the prototypes of its columns:
 
 ``` r
 df1 <- data.frame(x = TRUE, y = 1L)
@@ -369,12 +328,7 @@ vec_ptype(df4)
 vec_ptype(df3, df4)
 #> prototype: data.frame<
 #>   x: double
-#>   a: 
-#>     data.frame<
-#>       a: double
-#>       b: double
-#>       c: factor<127a2>
-#>     >
+#>   a: data.frame<>
 #> >
 ```
 
@@ -395,8 +349,9 @@ x1[[4]] <- c(FALSE, TRUE, FALSE)
 x1[[4]]
 #> [1] 0 1 0
 
+# factors() can't be cast to integers
 x1[[5]] <- factor("x")
-#> Error: Can't cast factor<5a425> to integer
+#> Error: Can't cast <factor<5a425>> to <integer>
 ```
 
 This provides a natural type for nested data frames:

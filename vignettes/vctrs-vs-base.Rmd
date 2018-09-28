@@ -116,6 +116,26 @@ vec_c(date, datetime)
 vec_c(date, datetime_nz)
 ```
 
+### Missing values
+
+vctrs treats a logical vector consisting only of `NA` special: it's an unspecified type than can be converted to any other 1d type:
+
+```{r}
+vec_c(NA, "x")
+vec_c(NA, fa)
+vec_c(NA, date)
+vec_c(NA, datetime)
+```
+
+Whereas `c()` strips the classes:
+
+```{r}
+c(NA, "x")
+c(NA, fa)
+c(NA, date)
+c(NA, datetime)
+```
+
 ## `rbind()` and `vec_rbind()`
 
 ### Variables
