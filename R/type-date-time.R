@@ -170,7 +170,7 @@ vec_cast.Date.list <- function(x, to) {
 #' @export
 #' @method vec_cast.Date logical
 vec_cast.Date.logical <- function(x, to) {
-  vec_unknown_cast(x, to)
+  vec_unspecified_cast(x, to)
 }
 
 #' @export
@@ -214,7 +214,7 @@ vec_cast.POSIXt.list <- function(x, to) {
 #' @export
 #' @method vec_cast.POSIXt logical
 vec_cast.POSIXt.logical <- function(x, to) {
-  vec_unknown_cast(x, to)
+  vec_unspecified_cast(x, to)
 }
 #' @export
 #' @method vec_cast.POSIXt default
@@ -253,7 +253,7 @@ vec_cast.difftime.list <- function(x, to) {
 #' @export
 #' @method vec_cast.difftime logical
 vec_cast.difftime.logical <- function(x, to) {
-  vec_unknown_cast(x, to)
+  vec_unspecified_cast(x, to)
 }
 #' @export
 #' @method vec_cast.difftime default

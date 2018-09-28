@@ -108,7 +108,7 @@ vec_cast.factor <- function(x, to) {
 #' @export
 #' @method vec_cast.factor logical
 vec_cast.factor.logical <- function(x, to) {
-  vec_unknown_cast(x, to)
+  vec_unspecified_cast(x, to)
 }
 
 #' @export

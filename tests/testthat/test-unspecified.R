@@ -1,8 +1,8 @@
-context("test-unknown")
+context("test-unspecified")
 
 test_that("unknown type is idempotent", {
   types <- list(
-    unknown(),
+    unspecified(),
     logical(),
     integer(),
     double(),
@@ -13,13 +13,13 @@ test_that("unknown type is idempotent", {
     new_datetime()
   )
 
-  lhs <- map(types, vec_type2, x = unknown())
+  lhs <- map(types, vec_type2, x = unspecified())
   expect_equal(types, lhs)
 
-  rhs <- map(types, vec_type2, y = unknown())
+  rhs <- map(types, vec_type2, y = unspecified())
   expect_equal(types, rhs)
 })
 
 test_that("has useful print method", {
-  expect_known_output(unknown(), print = TRUE, file = test_path("test-unknown.txt"))
+  expect_known_output(unspecified(), print = TRUE, file = test_path("test-unspecified.txt"))
 })

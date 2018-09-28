@@ -201,7 +201,7 @@ format.tuple <- function(x, ...) {
 }
 
 vec_type2.tuple <- function(x, y)  UseMethod("vec_type2.tuple", y)
-vec_type2.tuple.unknown <- function(x, y) tuple()
+vec_type2.tuple.vctrs_unspecified <- function(x, y) tuple()
 vec_type2.tuple.tuple <- function(x, y) tuple()
 vec_type2.tuple.default <- function(x, y) stop_incompatible_type(x, y)
 

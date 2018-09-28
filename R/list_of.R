@@ -137,9 +137,6 @@ as.list.vctrs_list_of <- function(x, ...) {
 #' @method vec_type2 vctrs_list_of
 #' @export
 vec_type2.vctrs_list_of <- function(x, y) UseMethod("vec_type2.vctrs_list_of", y)
-#' @method vec_type2.vctrs_list_of unknown
-#' @export
-vec_type2.vctrs_list_of.unknown    <- function(x, y) x
 #' @method vec_type2.vctrs_list_of vctrs_list_of
 #' @export
 vec_type2.vctrs_list_of.vctrs_list_of <- function(x, y) {

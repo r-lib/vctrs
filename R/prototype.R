@@ -6,9 +6,9 @@
 #'
 #' This function works by finding the prototype (a zero-length subset) of each
 #' input, then using [Reduce()] and [vec_type2()] to find the common class.
-#' `NULL`s and logical vectors that consist only of `NA` (including those inside
-#' data frames) are converted to the special [unknown] type. This is needed
-#' because bare `NA`s should be automatically coercible to every other class.
+#' Logical vectors that consist only of `NA` are converted to the special
+#' [unspecified] type. This is needed because bare `NA`s should be
+#' automatically coercible to any 1d vector.
 #'
 #' @param ... Vectors inputs
 #' @param .ptype If `NULL`, the default, the output type is determined by
@@ -117,7 +117,7 @@ as_vec_ptype.NULL <- function(x) {
 #' @export
 as_vec_ptype.logical <- function(x) {
   if (is_unspecified(x)) {
-    unknown()
+    unspecified()
   } else {
     logical()
   }

@@ -16,7 +16,7 @@ test_that("can feed ptype into itself", {
   expect_equal(vec_ptype(vec_ptype(1:10))[[1]], numeric())
 })
 
-test_that("unknown prototypes created from under specified inputs", {
+test_that("unspecified prototypes created from under specified inputs", {
   expect_equal(vec_ptype()[[1]], NULL)
   expect_equal(vec_ptype(NULL)[[1]], NULL)
 
@@ -25,9 +25,9 @@ test_that("unknown prototypes created from under specified inputs", {
   expect_equal(vec_ptype(NULL, NA)[[1]], logical())
 })
 
-test_that("unknown prototypes created from data frame cols", {
+test_that("unspecified prototypes created from data frame cols", {
   df <- data.frame(x = NA)
-  expect_equal(vec_ptype(df)[[1]]$x, unknown())
+  expect_equal(vec_ptype(df)[[1]]$x, unspecified())
 })
 
 test_that("non-missing logical get correct type", {

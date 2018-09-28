@@ -27,9 +27,9 @@ common type from a set of inputs.
 \details{
 This function works by finding the prototype (a zero-length subset) of each
 input, then using \code{\link[=Reduce]{Reduce()}} and \code{\link[=vec_type2]{vec_type2()}} to find the common class.
-\code{NULL}s and logical vectors that consist only of \code{NA} (including those inside
-data frames) are converted to the special \link{unknown} type. This is needed
-because bare \code{NA}s should be automatically coercible to every other class.
+Logical vectors that consist only of \code{NA} are converted to the special
+\link{unspecified} type. This is needed because bare \code{NA}s should be
+automatically coercible to any 1d vector.
 }
 \examples{
 # Unknown types ------------------------------------------
