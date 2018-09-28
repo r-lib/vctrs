@@ -78,6 +78,15 @@ test_that("[<-, [[<- and $<- coerce their input", {
   expect_equal(x, list_of(x = 0, y = 0, z = 0))
 })
 
+test_that("assingment can increase size of vector", {
+  x <- list_of(x = 1)
+  x[[2]] <- 2
+  x$z <- 3
+  x[4:5] <- c(4,5)
+
+  expect_length(x, 5)
+})
+
 
 # Type system -------------------------------------------------------------
 

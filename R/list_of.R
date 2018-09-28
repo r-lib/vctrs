@@ -121,13 +121,13 @@ as.list.vctrs_list_of <- function(x, ...) {
 #' @export
 `[[<-.vctrs_list_of` <- function(x, i, value) {
   value <- vec_cast(value, attr(x, "ptype"))
-  .Call(vctrs_list_set, x, i, value)
+  NextMethod()
 }
 
 #' @export
 `$<-.vctrs_list_of` <- function(x, i, value) {
   value <- vec_cast(value, attr(x, "ptype"))
-  .Call(vctrs_list_set, x, i, value)
+  NextMethod()
 }
 
 # Type system -------------------------------------------------------------
