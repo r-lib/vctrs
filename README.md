@@ -24,21 +24,11 @@ Having an underlying theory that describes what type of thing a function
 should return will mean that you can build up an accurate mental model
 from day-to-day use, and you will be less surprised by new functions.
 
-In the longer-term, vctrs will become the home for tidyverse vector
-functions that work with logical and numeric vectors, and vectors in
-general. This will make it a natural complement to
-[stringr](https://stringr.tidyverse.org) (strings),
-[lubridate](http://lubridate.tidyverse.org) (date/times), and
-[forcats](https://forcats.tidyverse.org) (factors), and will bring
-together various helpers that are currently scattered across packages,
-`ggplot2::cut_number()`, `dplyr::coalesce()`, and `tidyr::fill()`. In
-the very long-term, vctrs might provide the basis for a [type
-system](https://en.wikipedia.org/wiki/Type_system) for vectors that
-could help automate documentation and argument checking.
-
-vctrs has few dependencies and is suitable for use from other packages.
-(vctrs has a transitional dependency on tibble. Once vctrs is extensible
-all tibble related code will move into the tibble package.)
+vctrs is a developer focused package. I expect that few users will
+attach vctrs, and hence data analysis functions will live elsewhere.
+vctrs will typically be used by other packages, making it easy for them
+to provide new classes of S3 vectors that are supported throughout the
+tidyverse (and beyond). For that reason, vctrs has few dependencies.
 
 ## Installation
 
@@ -372,34 +362,4 @@ vec_ptype(by_cyl)
 #>       >
 #>     >
 #> >
-```
-
-## Tidyverse functions
-
-There are a number of tidyverse functions that currently need to do type
-coercion. In the long run, their varied and idiosyncratic approaches
-will be replaced by the systematic foundation provided by vctrs.
-
-``` r
-# Data frame functions
-dplyr::inner_join() # and friends
-dplyr::bind_rows()
-dplyr::summarise()
-dplyr::mutate()
-
-tidyr::gather()
-tidyr::unnest()
-
-# Vector functions
-purrr::flatten()
-purrr::map_c()
-purrr::transpose()
-
-dplyr::combine()
-dplyr::if_else()
-dplyr::recode()
-dplyr::case_when()
-dplyr::coalesce()
-dplyr::na_if()
-dplyr::between()
 ```
