@@ -6,9 +6,11 @@
 #include <stdint.h>
 
 // Vector methods ------------------------------------------------
-
 R_len_t vec_obs(SEXP x);
+
 bool is_data_frame(SEXP x);
+bool is_record(SEXP x);
+bool is_scalar(SEXP x);
 
 bool equal_object(SEXP x, SEXP y);
 bool equal_names(SEXP x, SEXP y);
