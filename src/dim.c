@@ -39,6 +39,9 @@ R_len_t df_rownames(SEXP x) {
 }
 
 R_len_t vec_obs(SEXP x) {
+  if (!Rf_isVector(x) && !Rf_isNull(x))
+    Rf_errorcall(R_NilValue, "`x` is a not a vector");
+
   if (is_scalar(x)) {
     Rf_errorcall(R_NilValue, "`x` is a scalar");
   }

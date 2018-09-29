@@ -83,7 +83,6 @@ int32_t hash_scalar(SEXP x, R_len_t i) {
 }
 
 int32_t hash_object(SEXP x) {
-  R_len_t n = vec_obs(x);
   int32_t hash = 0;
 
   switch(TYPEOF(x)) {
@@ -94,11 +93,13 @@ int32_t hash_object(SEXP x) {
   case INTSXP:
   case REALSXP:
   case STRSXP:
-  case VECSXP:
+  case VECSXP: {
+    R_len_t n = vec_obs(x);
     for (R_len_t i = 0; i < n; ++i) {
       hash = hash_combine(hash, hash_scalar(x, i));
     }
     break;
+  }
 
   case DOTSXP:
   case LANGSXP:

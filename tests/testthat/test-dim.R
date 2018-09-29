@@ -2,6 +2,10 @@ context("test-dim")
 
 # vec_obs --------------------------------------------------------------
 
+test_that("vec_obs must be called with vector", {
+  expect_error(vec_obs(mean), "not a vector")
+})
+
 test_that("length is number of rows", {
   expect_equal(vec_obs(integer()), 0)
   expect_equal(vec_obs(array(integer())), 0)
