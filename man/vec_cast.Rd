@@ -84,8 +84,6 @@ which should call \code{\link[=stop_incompatible_cast]{stop_incompatible_cast()}
 \code{\link[=vec_unspecified_cast]{vec_unspecified_cast()}}).
 
 See \code{vignette("s3-vector.Rmd")} for full details.
-See \code{vignette("s3-vector")} on how to extend to your own S3
-vector classes.
 }
 
 \section{Restoring attributes}{
