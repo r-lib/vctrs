@@ -5,7 +5,7 @@
 #' allow `NA` to specify missingness without requiring a type.
 #'
 #' `vec_unspecified_cast()` is a helper to use in your [vec_cast()] methods.
-#' See `vignette("S3-vector")` for detail.
+#' See `vignette("s3-vector")` for detail.
 #'
 #' @keywords internal
 #' @param n Length of vector

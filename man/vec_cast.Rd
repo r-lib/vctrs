@@ -83,7 +83,7 @@ which should call \code{\link[=stop_incompatible_cast]{stop_incompatible_cast()}
 \code{vec_cast.new_class.vctrs_unspecified()} (which should call
 \code{\link[=vec_unspecified_cast]{vec_unspecified_cast()}}).
 
-See \code{vignette("s3-vector.Rmd")} for full details.
+See \code{vignette("s3-vector")} for full details.
 }
 
 \section{Restoring attributes}{

@@ -20,6 +20,7 @@ A useful way to understand the high-level structure of a function is to think ab
 library(vctrs)
 ```
 
+[^class]: Here we'll ignore the distinction between the types of base vectors and the class of S3 vectors, using class to refer interchangeably to both.
 
 ## Motivation
 
@@ -132,7 +133,51 @@ The set of possible casts is a subset of possible automatic coercions. The follo
 
 ![](../man/figures/combined.png)
 
+### Algebra
+
+`vec_type2()` is a binary operator defined on the set of types. We will call the result of `vec_type2(x, y)` the __commmon type__ of `x` and `y`. The common type is only defined for a small set of pairs. If the common type does exist, we can say that `x` and `y` are uncoercable.
+
+It has three useful properties:
+
+* It is associative: `vec_type2(x, vec_type2(y, z)) == vec_type2(vec_type2(x, y), z)`
+* It is commutative: `vec_type2(x, y) == vec_type2(y, x)`
+* It has an identity element, `NULL`: `vec_type2(x, NULL) == x`
+
+Together, this means the type system forms a __commutative monoid__, which has a couple of appealing properties:
+
+* When have multiple types we can find their common type by progressively 
+  reducing (aka folding) `vec_type2()`. We'll get the same results regardless
+  of whether we reduce from left or right.
+  
+* The operation of finding common type is [parallelisable][prefix-sum].
+  For practial input size, parallelism is unlikely to helpful, but it's 
+  nice property to have in general.
+
+
 ## Base classes
+
+### Matrices and arrays
+
+Any bare vector can have a `dim` attribute which turns it into a matrix or array. The prototype of matrices and arrays includes the "shape", all the dimensions apart from the first:
+
+```{r}
+vec_ptype(array(1, c(1, 10)))
+vec_ptype(array(1, c(1, 10, 10)))
+```
+
+Length 1 dimensions are automatically broadcast:
+
+```{r, error = TRUE}
+vec_ptype(array(TRUE, c(2, 1)), array(1, c(5, 2)))
+vec_ptype(array(TRUE, c(1, 1, 1)), array(1, c(1, 4, 3)))
+```
+
+And lower-dimensional arrays will be automatically expanded to higher:
+
+```{r}
+vec_ptype(TRUE, array(1, c(5, 10, 2)))
+```
+
 
 ### Factors
 
@@ -413,4 +458,7 @@ vec_rbind()
 vec_rbind(NULL)
 ```
 
-
+[custom-condition]: https://adv-r.hadley.nz/conditions.html#custom-conditions
+[s3]: https://adv-r.hadley.nz/s3.html
+[df-col]: https://adv-r.hadley.nz/vectors-chap.html#matrix-and-data-frame-columns
+[prefix-sum]: https://en.wikipedia.org/wiki/Prefix_sum#Parallel_algorithm

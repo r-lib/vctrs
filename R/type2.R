@@ -28,7 +28,7 @@
 #' which should call [stop_incompatible_cast()]) and
 #' `vec_type2.new_class.vctrs_unspecified()` (which should return `x`).
 #'
-#' See `vignette("s3-vector.Rmd")` for full details.
+#' See `vignette("s3-vector")` for full details.
 #' @keywords internal
 #' @param x,y Either vector types; i.e.
 #' @export

@@ -31,7 +31,7 @@ The vctrs packages provides developer tools for working with existing vector cla
     classes whose behaviour can be defined my implementing just a handful of
     key methods.
 
-    See `vignette("s3-vectors")` for more details.
+    See `vignette("s3-vector")` for more details.
 
 vctrs is a developer focused package. Understanding and extending vctrs requires some effort from developers, but should be invisible to most users. It's our hope that having an underlying theory will mean that users can build up an accurate mental model without explicitly learning the theory. vctrs will typically be used by other packages, making it easy for them to provide new classes of S3 vectors that are supported throughout the tidyverse (and beyond). For that reason, vctrs has few dependencies.
 

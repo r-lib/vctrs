@@ -25,7 +25,7 @@ creating new vctors classes. It has two related goals:
     vector classes whose behaviour can be defined my implementing just a
     handful of key methods.
     
-    See `vignette("s3-vectors")` for more details.
+    See `vignette("s3-vector")` for more details.
 
 vctrs is a developer focused package. Understanding and extending vctrs
 requires some effort from developers, but should be invisible to most
@@ -55,5 +55,5 @@ vec_c(factor("a"), factor("b"))
 #> [1] a b
 #> Levels: a b
 vec_c(Sys.Date(), Sys.time())
-#> [1] "2018-10-02 00:00:00 CDT" "2018-10-02 15:42:38 CDT"
+#> [1] "2018-10-02 00:00:00 CDT" "2018-10-02 16:35:50 CDT"
 ```

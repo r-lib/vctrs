@@ -171,7 +171,7 @@ percent()
 
 ### Casting
 
-Next, define possible casts between your vector and existing types. You do this by providing methods for `vec_cast()`. `vec_cast()` is a little unusual because the result depends on the type of both arguments: the input `x`, and the target type `to`. Techically, this means that we need __[double dispatch](https://en.wikipedia.org/wiki/Double_dispatch)__. S3 does not natively support double dispatch, but we can implement with a trick: doing single dispatch twice.  Here we'll focus on the practicalities, giving you a recipe to follow for your class. Read `vignette("theory")` to get more details on the theory, and to help you think about what casts you should enable.
+Next, define possible casts between your vector and existing types. You do this by providing methods for `vec_cast()`. `vec_cast()` is a little unusual because the result depends on the type of both arguments: the input `x`, and the target type `to`. Techically, this means that we need __double dispatch__, which is described in detail in `vignette("double-dispatch")`. S3 does not natively support double dispatch, but we can implement with a trick: doing single dispatch twice.  Here we'll focus on the practicalities, giving you a recipe to follow for your class.
 
 First, we create a new generic, and provide two standard methods:
 
@@ -257,7 +257,7 @@ vec_type2.vctrs_percent.integer <- function(x, y) percent()
 vec_type2.integer.vctrs_percent <- function(x, y) percent()
 ```
 
-If you're unsure about what methods to provide here, err on the side of caution: too many implicit coercions make code hard to understand. See `vignette("theory")` for more details.
+If you're unsure about what methods to provide here, err on the side of caution: too many implicit coercions make code hard to understand.
 
 Implementing casting gives you more methods for free:
 
@@ -481,3 +481,39 @@ str(x)
 ```
 
 Implementing `vec_ptype()` and `vec_cast()` is straightforward following the existing recipes of `percent()`. If the class has additional attributes, follow the recipe of `decimal()`. If the attributes, vary based on the data, follow the recipe of `cached_sum()`.
+
+## General considerations
+
+### Coercions
+
+`vec_type2()` defines the possible set of automatic (implicit) coercions. These coercions happen silently, so they should be quite strict; if they're too flexible, they increase the chance of silently propagating mistakes. To think about what coercions your class should provide, it's useful to look at coercions that vctrs provides for base types:
+
+```{r, echo = FALSE}
+knitr::include_graphics("../man/figures/coerce.png")
+```
+
+If you squint your brain a little, I think you can see that each set of automatic coercions is about increasing resolution. Integers are low resolution versions of doubles, and dates are low resolution versions of date-times. Logicals are low resolution version of integers because there's a strong convention that `TRUE` and `FALSE` can be used interchangeably with `1` and `0`. 
+
+But what is the resolution of a factor? We must take a somewhat pragmatic approach because base R often converts character vectors to factors, and we don't want to be burdensome to users. So we say that a factor `x` has finer resolution than factor `y` if the levels of `y` are contained in `x`. So to find the common type of two factors, we take the union of the levels of both factors, resulting in a factor that has finer resolution than either. Finally, you can think of a character vector as a factor with every possible level, so factors and character vectors are coercible.
+
+I expect that most custom classes will be coercible to only a couple of other classes at most.
+
+### Casts
+
+`vec_cast()` defines the possible set user-requested coercions, known as __casts__. Because these are user initiated, the set of possible casts is much larger than the set of possible coercions. The following diagram shows the set of casts that vctrs provides for base classes. If you can follow arrows in the same direction from one class to another, then a cast exists.
+
+```{r, echo = FALSE}
+knitr::include_graphics("../man/figures/cast.png")
+```
+
+Note that the arrows are bidirectional: if you can cast from `x` to `y`, you should also be able to cast back from `y` to `x`. 
+
+If type `x` has greater resolution than `y`, there will be some inputs that lose precision. These should generate warnings using `warn_lossy_cast()`. You can see that in action when casting from doubles to integers; only some doubles can become integers without losing resolution.
+
+```{r}
+vec_cast(c(1, 2, 10), to = integer())
+
+vec_cast(c(1.5, 2, 10.5), to = integer())
+```
+
+Generally, you should provide a cast method whenever it's meaningful to cast back and forth from a given type. 

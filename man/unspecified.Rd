@@ -22,7 +22,7 @@ allow \code{NA} to specify missingness without requiring a type.
 }
 \details{
 \code{vec_unspecified_cast()} is a helper to use in your \code{\link[=vec_cast]{vec_cast()}} methods.
-See \code{vignette("S3-vector")} for detail.
+See \code{vignette("s3-vector")} for detail.
 }
 \examples{
 vec_ptype()

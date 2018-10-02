@@ -59,7 +59,7 @@ make sure to always provide \code{vec_type2.new_class.default()} (
 which should call \code{\link[=stop_incompatible_cast]{stop_incompatible_cast()}}) and
 \code{vec_type2.new_class.vctrs_unspecified()} (which should return \code{x}).
 
-See \code{vignette("s3-vector.Rmd")} for full details.
+See \code{vignette("s3-vector")} for full details.
 }
 
 \keyword{internal}

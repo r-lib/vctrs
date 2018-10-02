@@ -2,7 +2,7 @@
 #'
 #' This abstract class provides a set of useful default methods that makes it
 #' considerably easier to get started with a new S3 vector class. See
-#' `vignette("S3-vector")` to learn how to use it to create your own S3
+#' `vignette("s3-vector")` to learn how to use it to create your own S3
 #' vector classes.
 #'
 #' @section Base methods:

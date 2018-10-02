@@ -44,7 +44,7 @@
 #' `vec_cast.new_class.vctrs_unspecified()` (which should call
 #' [vec_unspecified_cast()]).
 #'
-#' See `vignette("s3-vector.Rmd")` for full details.
+#' See `vignette("s3-vector")` for full details.
 #' @section Restoring attributes:
 #'
 #' A restore is a specialised type of cast, primarily used in conjunction
