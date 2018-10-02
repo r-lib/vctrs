@@ -1,6 +1,5 @@
 ---
-title: "Proxy generics"
-date: "`r Sys.Date()`"
+title: "S3 proxy generics"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{Proxy generics}

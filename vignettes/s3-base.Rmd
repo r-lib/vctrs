@@ -1,5 +1,5 @@
 ---
-title: "Base classes"
+title: "S3 base classes"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{Base classes}
