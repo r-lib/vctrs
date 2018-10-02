@@ -1,3 +1,20 @@
+#' Data frame class
+#'
+#' A `data.frame` [data.frame()] is a list with "row.names" attribute. Each
+#' element of the list must be named, and of the same length. These functions
+#' help the base data.frame classes fit in to the vctrs type system by
+#' providing constructors, coercion functions, and casting functions.
+#'
+#' @param x A named list of equal-length vectors. The lengths are not
+#'   checked; it is responsibility of the caller to make sure they are
+#'   equal.
+#' @param n Number of rows. If `NULL`, will be computed from the length of
+#'   the first element of `x`.
+#' @param ...,class Additional arguments for creating subclasses.
+#' @export
+#' @keywords internal
+#' @examples
+#' new_data_frame(list(x = 1:10, y = 10:1))
 new_data_frame <- function(x = list(), n = NULL, ..., class = character()) {
   stopifnot(is.list(x))
   n <- n %||% df_length(x)
@@ -66,7 +83,7 @@ vec_ptype_abbr.data.frame <- function(x) {
 
 # Coercion ----------------------------------------------------------------
 
-#' @rdname vec_type2
+#' @rdname new_data_frame
 #' @export vec_type2.data.frame
 #' @method vec_type2 data.frame
 #' @export
@@ -80,7 +97,7 @@ vec_type2.data.frame.default    <- function(x, y) stop_incompatible_type(x, y)
 
 # Cast --------------------------------------------------------------------
 
-#' @rdname vec_cast
+#' @rdname new_data_frame
 #' @export vec_cast.data.frame
 #' @method vec_cast data.frame
 #' @export
