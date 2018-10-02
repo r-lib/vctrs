@@ -27,10 +27,16 @@ new_ordered(x = integer(), levels = character())
 \item{..., class}{Used to for subclasses.}
 }
 \description{
+A \link{factor} is an integer with attribute \code{levels}, a character vector. There
+should be one level for each integer between 1 and \code{max(x)}.
+An \link{ordered} factor has the same properties as a factor, but possesses
+an extra class that marks levels as having a total ordering.
+}
+\details{
 These functions help the base factor and ordered factor classes fit in to
-the vctrs type system by providing low-level constructors, as well as
-coercion and casting generics + methods. \code{new_factor()} and \code{new_ordered()}
-are low-level constructors - they only check that types, but not values,
-are valid, and therefore are for expert use only.
+the vctrs type system by providing constructors, coercion functions,
+and casting functions. \code{new_factor()} and \code{new_ordered()} are low-level
+constructors - they only check that types, but not values, are valid, so
+are for expert use only.
 }
 \keyword{internal}

@@ -1,14 +1,21 @@
 #' Date, date-time, and duration S3 classes
 #'
-#' These function help the date ([Date]), datetime ([POSIXct]), and duration
-#' ([difftime]) classes fit into the vctrs type system by providing low-level
-#' constructors, as well as coercion and casting generics + methods.
+#' * A `date` ([Date]) is a double vector. Its value represent the number
+#'   of days since the Unix "epoch", 1970-01-01. It has no attributes.
+#' * A `datetime` ([POSIXct] is a double vector. Its value represents the
+#'   number of seconds since the Unix "Epoch", 1970-01-01. It has a single
+#'   attribute: the timezone (`tzone`))
+#' * A `duration` ([difftime])
+#'
+#' These function help the base `Date`, `POSIXct`, and `difftime` classes fit
+#' into the vctrs type system by providing constructors, coercion functions,
+#' and casting functions.
 #'
 #' @param x A double vector representing the number of days since UNIX
 #'   epoch for `new_date()`, number of seconds since UNIX epoch for
 #'   `new_datetime()`, and number of `units` for `new_duration()`.
-#' @param tzone Time zone. Either `""` for local time zone, or a value
-#'   from [OlsonNames()]
+#' @param tzone Time zone. A character vector of length 1. Either `""` for
+#'   the local time zone, or a value from [OlsonNames()]
 #' @param units Units of duration.
 #' @export
 #' @keywords internal

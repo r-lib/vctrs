@@ -45,15 +45,25 @@ new_duration(x = double(), units = c("secs", "mins", "hours", "days",
 epoch for \code{new_date()}, number of seconds since UNIX epoch for
 \code{new_datetime()}, and number of \code{units} for \code{new_duration()}.}
 
-\item{tzone}{Time zone. Either \code{""} for local time zone, or a value
-from \code{\link[=OlsonNames]{OlsonNames()}}}
+\item{tzone}{Time zone. A character vector of length 1. Either \code{""} for
+the local time zone, or a value from \code{\link[=OlsonNames]{OlsonNames()}}}
 
 \item{units}{Units of duration.}
 }
 \description{
-These function help the date (\link{Date}), datetime (\link{POSIXct}), and duration
-(\link{difftime}) classes fit into the vctrs type system by providing low-level
-constructors, as well as coercion and casting generics + methods.
+\itemize{
+\item A \code{date} (\link{Date}) is a double vector. Its value represent the number
+of days since the Unix "epoch", 1970-01-01. It has no attributes.
+\item A \code{datetime} (\link{POSIXct} is a double vector. Its value represents the
+number of seconds since the Unix "Epoch", 1970-01-01. It has a single
+attribute: the timezone (\code{tzone}))
+\item A \code{duration} (\link{difftime})
+}
+}
+\details{
+These function help the base \code{Date}, \code{POSIXct}, and \code{difftime} classes fit
+into the vctrs type system by providing constructors, coercion functions,
+and casting functions.
 }
 \examples{
 new_date(0)

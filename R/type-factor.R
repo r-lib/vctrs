@@ -1,10 +1,15 @@
 #' Factor/ordered factor S3 class
 #'
+#' A [factor] is an integer with attribute `levels`, a character vector. There
+#' should be one level for each integer between 1 and `max(x)`.
+#' An [ordered] factor has the same properties as a factor, but possesses
+#' an extra class that marks levels as having a total ordering.
+#'
 #' These functions help the base factor and ordered factor classes fit in to
-#' the vctrs type system by providing low-level constructors, as well as
-#' coercion and casting generics + methods. `new_factor()` and `new_ordered()`
-#' are low-level constructors - they only check that types, but not values,
-#' are valid, and therefore are for expert use only.
+#' the vctrs type system by providing constructors, coercion functions,
+#' and casting functions. `new_factor()` and `new_ordered()` are low-level
+#' constructors - they only check that types, but not values, are valid, so
+#' are for expert use only.
 #'
 #' @param x Integer values which index in to `levels`.
 #' @param levels Character vector of labels.
