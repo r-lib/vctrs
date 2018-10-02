@@ -21,10 +21,14 @@
 #' methods of `vec_type2()`, e.g. `vec_type2.integer()` also be S3 generics,
 #' which call e.g. `vec_type2.integer.double()`. `vec_type2.x.y()` must
 #' return the same value as `vec_type2.y.x()`; this is currently not enforced,
-#' only checked in unit tests.
+#' but should be tested.
 #'
-#' See `vignette("s3-vector")` on how to extend to your own S3
-#' vector classes.
+#' Whenever you implemenet a `vec_type2.new_class()` generic/method,
+#' make sure to always provide `vec_type2.new_class.default()` (
+#' which should call [stop_incompatible_cast()]) and
+#' `vec_type2.new_class.vctrs_unspecified()` (which should return `x`).
+#'
+#' See `vignette("s3-vector.Rmd")` for full details.
 #' @keywords internal
 #' @param x,y Either vector types; i.e.
 #' @export

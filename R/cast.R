@@ -38,9 +38,13 @@
 #' `vec_cast.integer.double()` casts double to integers, in the same way
 #' that `as.integer.double()` would.
 #'
-#' See `vignette("s3-vector")` on how to extend to your own S3
-#' vector classes.
+#' Whenever you implemenet a `vec_cast.new_class()` generic/method,
+#' make sure to always provide `vec_cast.new_class.default()` (
+#' which should call [stop_incompatible_cast()]) and
+#' `vec_cast.new_class.vctrs_unspecified()` (which should call
+#' [vec_unspecified_cast()]).
 #'
+#' See `vignette("s3-vector.Rmd")` for full details.
 #' @section Restoring attributes:
 #'
 #' A restore is a specialised type of cast, primarily used in conjunction

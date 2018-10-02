@@ -52,10 +52,14 @@ The poset of the most important base vectors is shown below:
 methods of \code{vec_type2()}, e.g. \code{vec_type2.integer()} also be S3 generics,
 which call e.g. \code{vec_type2.integer.double()}. \code{vec_type2.x.y()} must
 return the same value as \code{vec_type2.y.x()}; this is currently not enforced,
-only checked in unit tests.
+but should be tested.
 
-See \code{vignette("s3-vector")} on how to extend to your own S3
-vector classes.
+Whenever you implemenet a \code{vec_type2.new_class()} generic/method,
+make sure to always provide \code{vec_type2.new_class.default()} (
+which should call \code{\link[=stop_incompatible_cast]{stop_incompatible_cast()}}) and
+\code{vec_type2.new_class.vctrs_unspecified()} (which should return \code{x}).
+
+See \code{vignette("s3-vector.Rmd")} for full details.
 }
 
 \keyword{internal}

@@ -2,10 +2,13 @@
 % Please edit documentation in R/unspecified.R
 \name{unspecified}
 \alias{unspecified}
+\alias{vec_unspecified_cast}
 \alias{vec_type2.vctrs_unspecified}
 \title{A 1d vector of unspecified type}
 \usage{
 unspecified(n = 0)
+
+vec_unspecified_cast(x, to)
 
 \method{vec_type2}{vctrs_unspecified}(x, y)
 }
@@ -16,6 +19,10 @@ unspecified(n = 0)
 This is a \href{new_partial}{partial type} used to represent logical vectors
 that only contain \code{NA}. These require special handling because we want to
 allow \code{NA} to specify missingness without requiring a type.
+}
+\details{
+\code{vec_unspecified_cast()} is a helper to use in your \code{\link[=vec_cast]{vec_cast()}} methods.
+See \code{vignette("S3-vector")} for detail.
 }
 \examples{
 vec_ptype()

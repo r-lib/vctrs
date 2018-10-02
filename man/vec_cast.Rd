@@ -77,6 +77,13 @@ of the final method uses the same convention as \code{as.xyz()} methods, i.e.
 \code{vec_cast.integer.double()} casts double to integers, in the same way
 that \code{as.integer.double()} would.
 
+Whenever you implemenet a \code{vec_cast.new_class()} generic/method,
+make sure to always provide \code{vec_cast.new_class.default()} (
+which should call \code{\link[=stop_incompatible_cast]{stop_incompatible_cast()}}) and
+\code{vec_cast.new_class.vctrs_unspecified()} (which should call
+\code{\link[=vec_unspecified_cast]{vec_unspecified_cast()}}).
+
+See \code{vignette("s3-vector.Rmd")} for full details.
 See \code{vignette("s3-vector")} on how to extend to your own S3
 vector classes.
 }

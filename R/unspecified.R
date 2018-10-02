@@ -4,6 +4,9 @@
 #' that only contain `NA`. These require special handling because we want to
 #' allow `NA` to specify missingness without requiring a type.
 #'
+#' `vec_unspecified_cast()` is a helper to use in your [vec_cast()] methods.
+#' See `vignette("S3-vector")` for detail.
+#'
 #' @keywords internal
 #' @param n Length of vector
 #' @export
@@ -33,6 +36,8 @@ is_unspecified <- function(x) {
   .Call(vctrs_is_unspecified, x)
 }
 
+#' @export
+#' @rdname unspecified
 vec_unspecified_cast <- function(x, to) {
   if (is_unspecified(x)) {
     vec_na(to, length(x))
@@ -55,7 +60,7 @@ vec_type_finalise.vctrs_unspecified <- function(x) {
 vec_type2.vctrs_unspecified <- function(x, y) UseMethod("vec_type2.vctrs_unspecified", y)
 #' @method vec_type2.vctrs_unspecified default
 #' @export
-vec_type2.vctrs_unspecified.default <- function(x, y) stop_incompatible_type(x, y)
+vec_type2.vctrs_unspecified.default <- function(x, y) y
 #' @method vec_type2.vctrs_unspecified vctrs_unspecified
 #' @export
 vec_type2.vctrs_unspecified.vctrs_unspecified <- function(x, y) x
