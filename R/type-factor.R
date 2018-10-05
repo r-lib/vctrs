@@ -122,7 +122,7 @@ vec_cast.factor.factor <- function(x, to) {
   if (length(levels(to)) == 0L) {
     factor(as.character(x), levels = unique(x), ordered = is.ordered(to))
   } else {
-    lossy <- !x %in% levels(to)
+    lossy <- !(x %in% levels(to) | is.na(x))
     if (any(lossy)) {
       warn_lossy_cast(x, to, locations = which(lossy))
     }
