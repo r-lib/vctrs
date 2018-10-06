@@ -209,6 +209,11 @@ vec_cast.POSIXt.Date <- function(x, to) {
   as.POSIXct(as.character(x), tz = tzone(to))
 }
 #' @export
+#' @method vec_cast.POSIXt POSIXlt
+vec_cast.POSIXt.POSIXlt <- function(x, to) {
+  new_datetime(as.POSIXct(x), tzone = tzone(to))
+}
+#' @export
 #' @method vec_cast.POSIXt POSIXt
 vec_cast.POSIXt.POSIXt <- function(x, to) {
   new_datetime(vec_data(x), tzone = tzone(to))
