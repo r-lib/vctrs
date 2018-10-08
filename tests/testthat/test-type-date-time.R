@@ -95,7 +95,9 @@ test_that("dates become midnight in date-time tzone", {
 
   datetime <- as.POSIXlt(datetime)
   date2 <- vec_cast(date1, datetime)
-  expect_equal(attr(date2, "tzone")[1], "Pacific/Auckland")
+  # because the tz attribute for POSIXlt can have 3 components
+  # (time zone name, abbreviated name, abbreviated DST name)
+  expect_equal(attr(date2, "tzone")[[1L]], "Pacific/Auckland")
   expect_equal(format(date2, "%H:%M"), "00:00")
 })
 
