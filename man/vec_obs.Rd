@@ -42,3 +42,6 @@ vec_obs(NULL)
 #   vec_obs(NULL) + vec_obs(x) ==
 #   vec_obs(x)
 }
+\seealso{
+\code{\link[=vec_slice]{vec_slice()}} for a variation of \code{[} compatible with \code{vec_obs()}.
+}

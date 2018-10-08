@@ -8,6 +8,7 @@
 #' `vec_obs()` is equivalent to `NROW()` but has a name that is easier to
 #' pronounce, and throws an error when passed non-vector inputs.
 #'
+#' @seealso [vec_slice()] for a variation of `[` compatible with `vec_obs()`.
 #' @section Invariants:
 #' * `vec_obs(dataframe)` == `vec_obs(dataframe[[i]])`
 #' * `vec_obs(matrix)` == `vec_obs(matrix[, i, drop = FALSE])`
@@ -31,6 +32,26 @@ vec_obs <- function(x) {
 
 # Slicing ----------------------------------------------------------------
 
+#' Get or set observations in a vector
+#'
+#' This provides a common interface to extracting and modifying observations
+#' for all vector types, regardless of dimensionality. It is an analog to `[`
+#' that matches [vec_obs()] instead of `length()`.
+#'
+#' @param x A vector
+#' @param i An integer or character vector specifying the positions or
+#'   names of the observations to get/set.
+#' @param value Replacement values.
+#' @export
+#' @keywords internal
+#' @examples
+#' x <- sample(10)
+#' x
+#' vec_slice(x, 1:3)
+#' vec_slice(x, 2L) <- 100
+#' x
+#'
+#' vec_slice(mtcars, 1:3)
 vec_slice <- function(x, i) {
   stopifnot(is.integer(i) || is.character(i))
 
@@ -43,7 +64,11 @@ vec_slice <- function(x, i) {
   } else if (is_vector(x)) {
     d <- vec_dims(x)
     if (d == 1) {
-      x[i, drop = FALSE]
+      if (is.object(x)) {
+        x[i]
+      } else {
+        x[i, drop = FALSE]
+      }
     } else if (d == 2) {
       x[i, , drop = FALSE]
     } else {
@@ -55,8 +80,11 @@ vec_slice <- function(x, i) {
   }
 }
 
+#' @export
+#' @rdname vec_slice
 `vec_slice<-` <- function(x, i, value) {
   stopifnot(is.integer(i) || is.character(i))
+  stopifnot(length(i) == length(value))
 
   if (is.null(x)) {
     NULL
