@@ -200,7 +200,7 @@ diff.vctrs_vctr <- function(x, lag = 1L, differences = 1L, ...) {
 
   n <- vec_obs(x)
   if (lag * differences >= n)
-    return(vec_subset(x, 0L))
+    return(vec_slice(x, 0L))
 
   out <- x
   for (i in seq_len(differences)) {
@@ -208,7 +208,7 @@ diff.vctrs_vctr <- function(x, lag = 1L, differences = 1L, ...) {
     lhs <- (1L + lag):n
     rhs <- 1L:(n - lag)
 
-    out <- vec_subset(out, lhs) - vec_subset(out, rhs)
+    out <- vec_slice(out, lhs) - vec_slice(out, rhs)
   }
 
   out

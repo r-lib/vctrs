@@ -29,8 +29,11 @@ vec_obs <- function(x) {
   .Call(vctrs_length, x)
 }
 
-# Rename to vec_slice before exporting
-vec_subset <- function(x, i) {
+# Slicing ----------------------------------------------------------------
+
+vec_slice <- function(x, i) {
+  stopifnot(is.integer(i) || is.character(i))
+
   if (is.null(x)) {
     NULL
   } else if (is.data.frame(x)) {
@@ -52,32 +55,38 @@ vec_subset <- function(x, i) {
   }
 }
 
-`vec_subset<-` <- function(x, i, value) {
-  if (is.null(x)) return(NULL)
-
-  stopifnot(is_vector(x))
+`vec_slice<-` <- function(x, i, value) {
   stopifnot(is.integer(i) || is.character(i))
 
-  d <- vec_dims(x)
-  if (d == 1) {
-    x[i] <- value
-  } else if (d == 2) {
-    x[i, ] <- value
+  if (is.null(x)) {
+    NULL
+  } else if (is_vector(x)) {
+    d <- vec_dims(x)
+    if (d == 1) {
+      x[i] <- value
+    } else if (d == 2) {
+      x[i, ] <- value
+    } else {
+      miss_args <- rep(list(missing_arg()), d - 1)
+      eval_bare(expr(x[i, !!!miss_args] <- value))
+    }
   } else {
-    miss_args <- rep(list(missing_arg()), d - 1)
-    eval_bare(expr(x[i, !!!miss_args] <- value))
+    stop("`x` must be a vector", call. = FALSE)
   }
+
   x
 }
 
 vec_na <- function(x, n = 1L) {
-  vec_subset(x, rep_len(NA_integer_, n))
+  vec_slice(x, rep_len(NA_integer_, n))
 }
 
 vec_rep <- function(x, n) {
   id <- rep_len(seq_len(vec_obs(x)), n)
-  vec_subset(x, id)
+  vec_slice(x, id)
 }
+
+# Names -------------------------------------------------------------------
 
 vec_names <- function(x) {
   if (vec_dims(x) == 1) {

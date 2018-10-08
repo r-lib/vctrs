@@ -33,7 +33,7 @@ test_that("handles three types of data frame rownames", {
   expect_equal(vec_obs(df3), 3)
 })
 
-# vec_subset --------------------------------------------------------------
+# vec_slice --------------------------------------------------------------
 
 test_that("can subset object of an dimensionality", {
   x0 <- c(1, 1)
@@ -42,28 +42,35 @@ test_that("can subset object of an dimensionality", {
   x3 <- ones(2, 3, 4)
   x4 <- ones(2, 3, 4, 5)
 
-  expect_equal(vec_subset(x0, 1L), 1)
-  expect_equal(vec_subset(x1, 1L), ones(1))
-  expect_equal(vec_subset(x2, 1L), ones(1, 3))
-  expect_equal(vec_subset(x3, 1L), ones(1, 3, 4))
-  expect_equal(vec_subset(x4, 1L), ones(1, 3, 4, 5))
+  expect_equal(vec_slice(x0, 1L), 1)
+  expect_equal(vec_slice(x1, 1L), ones(1))
+  expect_equal(vec_slice(x2, 1L), ones(1, 3))
+  expect_equal(vec_slice(x3, 1L), ones(1, 3, 4))
+  expect_equal(vec_slice(x4, 1L), ones(1, 3, 4, 5))
 })
 
 test_that("can modify subset", {
   x1 <- c(2, 1)
-  vec_subset(x1, 1L) <- 1
+  vec_slice(x1, 1L) <- 1
   expect_equal(x1, c(1, 1))
 
   x2 <- array(c(2, 1, 2, 1), c(2, 2))
-  vec_subset(x2, 1L) <- 1
+  vec_slice(x2, 1L) <- 1
   expect_equal(x2, array(1, c(2, 2)))
 
   x3 <- array(c(2, 1, 2, 1, 2, 1, 2, 1), c(2, 2, 2))
-  vec_subset(x3, 1L) <- 1
+  vec_slice(x3, 1L) <- 1
   expect_equal(x3, array(1, c(2, 2, 2)))
 })
 
 # vec_na ------------------------------------------------------------------
+
+test_that("vec_slice throws error with non-vector inputs", {
+  expect_error(vec_slice(environment(), 1L), "a vector")
+
+  x <- environment()
+  expect_error(vec_slice(x, 1L) <- 1L, "a vector")
+})
 
 test_that("na of atomic vectors is as expected", {
   expect_equal(vec_na(TRUE), NA)

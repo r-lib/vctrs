@@ -46,7 +46,7 @@ vec_reshape <- function(x, n_to) {
   if (n_x == n_to) {
     x
   } else if (n_to == 0L) {
-    vec_subset(x, 0L)
+    vec_slice(x, 0L)
   } else if (n_x == 1L) {
     vec_rep(x, n_to)
   } else {

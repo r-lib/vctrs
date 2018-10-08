@@ -45,7 +45,7 @@ vec_count <- function(x, sort = c("count", "key", "location", "none")) {
   kv <- .Call(vctrs_count, vec_proxy_equal(x))
 
   df <- data.frame(key = 0, count = kv$val)
-  df$key <- vec_subset(x, kv$key) # might be a dataframe
+  df$key <- vec_slice(x, kv$key) # might be a dataframe
 
   if (sort == "none")
     return(df)
@@ -180,7 +180,7 @@ vec_duplicate_id <- function(x) {
 #' vec_unique(c(NA, NA, NA, NA, 1, 2, 1))
 vec_unique <- function(x) {
   px <- vec_proxy_equal(x)
-  vec_subset(x, vec_unique_loc(px))
+  vec_slice(x, vec_unique_loc(px))
 }
 
 #' @rdname vec_unique

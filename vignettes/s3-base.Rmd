@@ -83,10 +83,10 @@ vec_type2.fctr.fctr <- function(x, y) {
   new_fctr(levels = union(attr(x, "levels"), attr(y, "levels")))
 }
 vec_type2.fctr.character <- function(x, y) {
-  vec_subset(x, 0L) 
+  x[[0L]]
 }
 vec_type2.character.fctr <- function(x, y) {
-  vec_subset(y, 0L) 
+  y[[0L]]
 }
 
 vec_type2(

@@ -54,8 +54,8 @@ test_that("can vec_recycle matrices", {
 
 test_that("can vec_recycle data frames", {
   x <- data.frame(a = rep(1, 3), b = rep(2, 3))
-  x1 <- vec_subset(x, 1L)
-  x0 <- vec_subset(x, 0L)
+  x1 <- vec_slice(x, 1L)
+  x0 <- vec_slice(x, 0L)
 
   expect_equal(vec_recycle(x, x), list(x, x))
   expect_equal(vec_recycle(x1, x), list(x, x))
@@ -67,21 +67,21 @@ test_that("can vec_recycle matrix and data frame", {
   df <- data.frame(x = c(1, 1), y = c(2, 2))
 
   expect_equal(
-    vec_recycle(vec_subset(mt, 0L), df),
-    list(vec_subset(mt, 0L), vec_subset(df, 0L))
+    vec_recycle(vec_slice(mt, 0L), df),
+    list(vec_slice(mt, 0L), vec_slice(df, 0L))
   )
   expect_equal(
-    vec_recycle(vec_subset(mt, 1L), df),
+    vec_recycle(vec_slice(mt, 1L), df),
     list(mt, df)
   )
 
   expect_equal(
-    vec_recycle(mt, vec_subset(df, 0L)),
-    list(vec_subset(mt, 0L), vec_subset(df, 0L))
+    vec_recycle(mt, vec_slice(df, 0L)),
+    list(vec_slice(mt, 0L), vec_slice(df, 0L))
   )
 
   expect_equal(
-    vec_recycle(mt, vec_subset(df, 1L)),
+    vec_recycle(mt, vec_slice(df, 1L)),
     list(mt, df)
   )
 })

@@ -43,7 +43,7 @@ test_that("also works for data frames", {
   rownames(df2) <- NULL
 
   expect_equal(vec_duplicate_detect(df2), vec_duplicate_detect(idx))
-  expect_equal(vec_unique(df2), vec_subset(df, vec_unique(idx)))
+  expect_equal(vec_unique(df2), vec_slice(df, vec_unique(idx)))
 
   count <- vec_count(df2)
   expect_equal(count$key, df)

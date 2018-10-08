@@ -106,7 +106,7 @@ as_vec_ptype.vec_ptype <- function(x) {
 
 #' @export
 as_vec_ptype.default <- function(x) {
-  vec_subset(x, 0L)
+  vec_slice(x, 0L)
 }
 
 #' @export
