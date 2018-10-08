@@ -2,13 +2,29 @@
 #'
 #' `vec_obs()` returns the number of observations in an object. This is
 #' the length of a 1d vector, or the number of rows in a matrix or data frame.
+#' There is no vctrs helper that retrieves the number of columns: as this
+#' is a property of the [type][vec_ptype()].
 #'
+#' `vec_obs()` is equivalent to `NROW()` but has a name that is easier to
+#' pronounce, and throws an error when passed non-vector inputs.
+#'
+#' @section Invariants:
+#' * `vec_obs(dataframe)` == `vec_obs(dataframe[[i]])`
+#' * `vec_obs(matrix)` == `vec_obs(matrix[, i, drop = FALSE])`
+#' * `vec_obs(vec_c(x, y))` == `vec_obs(x)` + `vec_obs(y)`
 #' @param x A vector
+#' @return An integer (or double for long vectors). Will throw an error
+#'   if `x` is not a vector.
 #' @export
 #' @examples
 #' vec_obs(1:100)
 #' vec_obs(mtcars)
 #' vec_obs(array(dim = c(3, 5, 10)))
+#'
+#' vec_obs(NULL)
+#' # Because vec_obs(vec_c(NULL, x)) ==
+#' #   vec_obs(NULL) + vec_obs(x) ==
+#' #   vec_obs(x)
 vec_obs <- function(x) {
   .Call(vctrs_length, x)
 }

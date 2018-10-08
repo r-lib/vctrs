@@ -9,12 +9,36 @@ vec_obs(x)
 \arguments{
 \item{x}{A vector}
 }
+\value{
+An integer (or double for long vectors). Will throw an error
+if \code{x} is not a vector.
+}
 \description{
 \code{vec_obs()} returns the number of observations in an object. This is
 the length of a 1d vector, or the number of rows in a matrix or data frame.
+There is no vctrs helper that retrieves the number of columns: as this
+is a property of the \link[=vec_ptype]{type}.
 }
+\details{
+\code{vec_obs()} is equivalent to \code{NROW()} but has a name that is easier to
+pronounce, and throws an error when passed non-vector inputs.
+}
+\section{Invariants}{
+
+\itemize{
+\item \code{vec_obs(dataframe)} == \code{vec_obs(dataframe[[i]])}
+\item \code{vec_obs(matrix)} == \code{vec_obs(matrix[, i, drop = FALSE])}
+\item \code{vec_obs(vec_c(x, y))} == \code{vec_obs(x)} + \code{vec_obs(y)}
+}
+}
+
 \examples{
 vec_obs(1:100)
 vec_obs(mtcars)
 vec_obs(array(dim = c(3, 5, 10)))
+
+vec_obs(NULL)
+# Because vec_obs(vec_c(NULL, x)) ==
+#   vec_obs(NULL) + vec_obs(x) ==
+#   vec_obs(x)
 }
