@@ -9,7 +9,7 @@
 \alias{vec_str_header}
 \alias{vec_str_data}
 \alias{vec_str_footer}
-\title{\code{print() and}str()` generics.}
+\title{\code{print() and }str()` generics.}
 \usage{
 vec_print(x, ...)
 

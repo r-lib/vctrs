@@ -8,7 +8,8 @@
 \alias{vec_type2.POSIXt}
 \alias{vec_type2.difftime}
 \alias{vec_cast.Date}
-\alias{vec_cast.POSIXt}
+\alias{vec_cast.POSIXct}
+\alias{vec_cast.POSIXlt}
 \alias{vec_cast.difftime}
 \alias{vec_arith.Date}
 \alias{vec_arith.POSIXct}
@@ -30,7 +31,9 @@ new_duration(x = double(), units = c("secs", "mins", "hours", "days",
 
 \method{vec_cast}{Date}(x, to)
 
-\method{vec_cast}{POSIXt}(x, to)
+\method{vec_cast}{POSIXct}(x, to)
+
+\method{vec_cast}{POSIXlt}(x, to)
 
 \method{vec_cast}{difftime}(x, to)
 

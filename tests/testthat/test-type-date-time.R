@@ -70,6 +70,14 @@ test_that("safe casts work as expected", {
   expect_equal(vec_cast(datetime, datetime), datetime)
   expect_equal(vec_cast(as.Date(datetime), datetime), datetime)
   expect_equal(vec_cast(list(datetime), datetime), datetime)
+
+  datetime <- as.POSIXlt(datetime)
+  expect_equal(vec_cast(NULL, datetime), NULL)
+  expect_equal(vec_cast(2678400, datetime), datetime)
+  expect_equal(vec_cast("1970-02-01", datetime), datetime)
+  expect_equal(vec_cast(datetime, datetime), datetime)
+  expect_equal(vec_cast(as.Date(datetime), datetime), datetime)
+  expect_equal(vec_cast(list(datetime), datetime), datetime)
 })
 
 test_that("invalid casts generate error", {
@@ -84,10 +92,16 @@ test_that("dates become midnight in date-time tzone", {
   date2 <- vec_cast(date1, datetime)
   expect_equal(attr(date2, "tzone"), "Pacific/Auckland")
   expect_equal(format(date2, "%H:%M"), "00:00")
+
+  datetime <- as.POSIXlt(datetime)
+  date2 <- vec_cast(date1, datetime)
+  expect_equal(attr(date2, "tzone")[1], "Pacific/Auckland")
+  expect_equal(format(date2, "%H:%M"), "00:00")
 })
 
 test_that("can cast NA", {
   expect_equal(vec_cast(NA, new_datetime()), new_datetime(NA_real_))
+  expect_equal(vec_cast(NA, as.POSIXlt(new_datetime())), new_datetime(NA_real_))
 })
 
 # cast: durations ------------------------------------------------------------

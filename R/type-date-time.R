@@ -187,51 +187,64 @@ vec_cast.Date.default <- function(x, to) {
 }
 
 #' @rdname new_date
-#' @export vec_cast.POSIXt
-#' @method vec_cast POSIXt
+#' @export vec_cast.POSIXct
+#' @method vec_cast POSIXct
 #' @export
-vec_cast.POSIXt <- function(x, to) {
-  UseMethod("vec_cast.POSIXt")
+vec_cast.POSIXct <- function(x, to) {
+  UseMethod("vec_cast.POSIXct")
 }
 #' @export
-#' @method vec_cast.POSIXt double
-vec_cast.POSIXt.double <- function(x, to) {
+#' @method vec_cast.POSIXct double
+vec_cast.POSIXct.double <- function(x, to) {
   new_datetime(x, tzone = tzone(to))
 }
 #' @export
-#' @method vec_cast.POSIXt character
-vec_cast.POSIXt.character <- function(x, to) {
+#' @method vec_cast.POSIXct character
+vec_cast.POSIXct.character <- function(x, to) {
   as.POSIXct(x, tz = tzone(to))
 }
 #' @export
-#' @method vec_cast.POSIXt Date
-vec_cast.POSIXt.Date <- function(x, to) {
+#' @method vec_cast.POSIXct Date
+vec_cast.POSIXct.Date <- function(x, to) {
   as.POSIXct(as.character(x), tz = tzone(to))
 }
 #' @export
-#' @method vec_cast.POSIXt POSIXlt
-vec_cast.POSIXt.POSIXlt <- function(x, to) {
+#' @method vec_cast.POSIXct POSIXlt
+vec_cast.POSIXct.POSIXlt <- function(x, to) {
   new_datetime(as.POSIXct(x), tzone = tzone(to))
 }
 #' @export
-#' @method vec_cast.POSIXt POSIXt
-vec_cast.POSIXt.POSIXt <- function(x, to) {
+#' @method vec_cast.POSIXct POSIXct
+vec_cast.POSIXct.POSIXct <- function(x, to) {
   new_datetime(vec_data(x), tzone = tzone(to))
 }
 #' @export
-#' @method vec_cast.POSIXt list
-vec_cast.POSIXt.list <- function(x, to) {
+#' @method vec_cast.POSIXct list
+vec_cast.POSIXct.list <- function(x, to) {
   vec_list_cast(x, to)
 }
 #' @export
-#' @method vec_cast.POSIXt logical
-vec_cast.POSIXt.logical <- function(x, to) {
+#' @method vec_cast.POSIXct logical
+vec_cast.POSIXct.logical <- function(x, to) {
   vec_unspecified_cast(x, to)
 }
 #' @export
-#' @method vec_cast.POSIXt default
-vec_cast.POSIXt.default <- function(x, to) {
+#' @method vec_cast.POSIXct default
+vec_cast.POSIXct.default <- function(x, to) {
   stop_incompatible_cast(x, to)
+}
+
+#' @rdname new_date
+#' @export vec_cast.POSIXlt
+#' @method vec_cast POSIXlt
+#' @export
+vec_cast.POSIXlt <- function(x, to) {
+  UseMethod("vec_cast.POSIXlt")
+}
+#' @export
+#' @method vec_cast.POSIXlt default
+vec_cast.POSIXlt.default <- function(x, to) {
+  as.POSIXlt(vec_cast.POSIXct(x, as.POSIXct(to)))
 }
 
 #' @rdname new_date

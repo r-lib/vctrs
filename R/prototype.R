@@ -128,8 +128,3 @@ as_vec_ptype.data.frame <- function(x) {
   cols <- map(x, as_vec_ptype)
   vec_restore(cols, x)
 }
-
-#' @export
-as_vec_ptype.POSIXlt <- function(x) {
-  as_vec_ptype(as.POSIXct(x))
-}
