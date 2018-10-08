@@ -71,6 +71,11 @@ test_that("orderedness of factor is preserved", {
   expect_equal(vec_cast("a", ord), ord)
 })
 
+test_that("NA are not considered lossy in factor cast (#109)", {
+  f <- factor(c("itsy", "bitsy", NA, "spider", "spider"))
+  expect_warning(vec_cast(f, f[1]), NA)
+})
+
 # Arithmetic and factor ---------------------------------------------------
 
 test_that("factors don't support math or arthimetic", {
