@@ -47,6 +47,16 @@ row-wise or column-wise. Row-binding creates a data frame with common type
 across all arguments. Column-binding creates a data frame with common length
 across all arguments.
 }
+\section{Invariants}{
+
+\itemize{
+\item \code{vec_obs(vec_rbind(x, y)) == vec_obs(x) + vec_obs(y)}
+\item \code{vec_ptype(vec_rbind(x, y)) = vec_ptype(x, y)}
+\item \code{vec_obs(vec_cbind(x, y)) == vec_obs(vec_recycle(x, y))}
+\item \code{vec_ptype(vec_cbind(x, y)) = vec_cbind(vec_ptype(x), vec_ptype(x))}
+}
+}
+
 \examples{
 # row binding -----------------------------------------
 

@@ -2,6 +2,10 @@
 #'
 #' Combine all arguments into a new vector of common type.
 #'
+#' @section Invariants:
+#' * `vec_obs(vec_c(x, y)) == vec_obs(x) + vec_obs(y)`
+#' * `vec_ptype(vec_c(x, y)) = vec_ptype(x, y)`.
+#'
 #' @param ... Vectors to coerce.
 #' @return A vector with class given by `.ptype`, and length equal to the
 #'   sum of the `vec_obs()` of the contents of `...`.

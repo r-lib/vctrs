@@ -27,6 +27,14 @@ inner and outer names are present, they are combined with a \code{.}.
 \description{
 Combine all arguments into a new vector of common type.
 }
+\section{Invariants}{
+
+\itemize{
+\item \code{vec_obs(vec_c(x, y)) == vec_obs(x) + vec_obs(y)}
+\item \code{vec_ptype(vec_c(x, y)) = vec_ptype(x, y)}.
+}
+}
+
 \examples{
 vec_c(FALSE, 1L, 1.5)
 vec_c(FALSE, 1L, "x", .ptype = character())
