@@ -64,22 +64,3 @@ vec_c <- function(..., .ptype = NULL) {
 
   out
 }
-
-vec_names <- function(x) {
-  if (vec_dims(x) == 1) {
-    names(x)
-  } else if (is.data.frame(x)) {
-    NULL
-  } else {
-    rownames(x)
-  }
-}
-
-`vec_names<-` <- function(x, value) {
-  if (vec_dims(x) == 1) {
-    names(x) <- value
-  } else {
-    rownames(x) <- value
-  }
-  x
-}

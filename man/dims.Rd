@@ -2,14 +2,11 @@
 % Please edit documentation in R/dim.R
 \name{dims}
 \alias{dims}
-\alias{vec_obs}
 \alias{vec_empty}
 \alias{vec_dim}
 \alias{vec_dims}
 \title{Vector dimensions}
 \usage{
-vec_obs(x)
-
 vec_empty(x)
 
 vec_dim(x)
@@ -21,9 +18,6 @@ vec_dims(x)
 }
 \description{
 \itemize{
-\item \code{vec_obs()} returns the number of observations in an object. This is
-the length of a 1d vector, or the number of rows in a matrix or data frame
-rows if multidimensional
 \item \code{vec_empty()} returns \code{TRUE} if \code{vec_obs()} is zero.
 \item \code{vec_dims()} gives the dimensionality (i.e. number of dimensions)
 \item \code{vec_dim()} returns the size of each dimension

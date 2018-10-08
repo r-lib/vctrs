@@ -1,8 +1,5 @@
 #' Vector dimensions
 #'
-#' * `vec_obs()` returns the number of observations in an object. This is
-#'   the length of a 1d vector, or the number of rows in a matrix or data frame
-#'   rows if multidimensional
 #' * `vec_empty()` returns `TRUE` if `vec_obs()` is zero.
 #' * `vec_dims()` gives the dimensionality (i.e. number of dimensions)
 #' * `vec_dim()` returns the size of each dimension
@@ -24,12 +21,6 @@
 #' length(y)
 #' vec_obs(y)
 NULL
-
-#' @export
-#' @rdname dims
-vec_obs <- function(x) {
-  .Call(vctrs_length, x)
-}
 
 #' @export
 #' @rdname dims
