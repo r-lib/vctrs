@@ -120,7 +120,7 @@ vec_rbind <- function(..., .ptype = NULL) {
 
 #' @export
 #' @rdname vec_bind
-#' @param .nrow If, `NULL`, the default, will determing the number of
+#' @param .size If, `NULL`, the default, will determing the number of
 #'   rows in `vec_cbind()` output by using the standard recycling rules.
 #'
 #'   Alternatively, specify the desired number of rows, and any inputs
