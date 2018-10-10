@@ -37,7 +37,7 @@ void dict_init(dictionary* d, SEXP x) {
   // assume worst case, that every value is distinct, aiming for a load factor
   // of at most 77%. We round up to power of 2 to ensure quadratic probing
   // strategy works.
-  R_len_t size = ceil2(vec_obs(x) / 0.77);
+  R_len_t size = ceil2(vec_size(x) / 0.77);
   if (size < 16)
     size = 16;
   // Rprintf("size: %i\n", size);
@@ -92,7 +92,7 @@ SEXP vctrs_unique_loc(SEXP x) {
   growable g;
   growable_init(&g, INTSXP, 256);
 
-  R_len_t n = vec_obs(x);
+  R_len_t n = vec_size(x);
   for (int i = 0; i < n; ++i) {
     uint32_t k = dict_find(&d, x, i);
 
@@ -113,7 +113,7 @@ SEXP vctrs_duplicated_any(SEXP x) {
   dict_init(&d, x);
 
   bool out = false;
-  R_len_t n = vec_obs(x);
+  R_len_t n = vec_size(x);
 
   for (int i = 0; i < n; ++i) {
     uint32_t k = dict_find(&d, x, i);
@@ -134,7 +134,7 @@ SEXP vctrs_n_distinct(SEXP x) {
   dictionary d;
   dict_init(&d, x);
 
-  R_len_t n = vec_obs(x);
+  R_len_t n = vec_size(x);
   for (int i = 0; i < n; ++i) {
     uint32_t k = dict_find(&d, x, i);
 
@@ -150,7 +150,7 @@ SEXP vctrs_id(SEXP x) {
   dictionary d;
   dict_init(&d, x);
 
-  R_len_t n = vec_obs(x);
+  R_len_t n = vec_size(x);
   SEXP out = PROTECT(Rf_allocVector(INTSXP, n));
   int* p_out = INTEGER(out);
 
@@ -173,7 +173,7 @@ SEXP vctrs_match(SEXP needles, SEXP haystack) {
   dict_init(&d, haystack);
 
   // Load dictionary with haystack
-  R_len_t n_haystack = vec_obs(haystack);
+  R_len_t n_haystack = vec_size(haystack);
   for (int i = 0; i < n_haystack; ++i) {
     uint32_t k = dict_find(&d, haystack, i);
 
@@ -183,7 +183,7 @@ SEXP vctrs_match(SEXP needles, SEXP haystack) {
   }
 
   // Locate needles
-  R_len_t n_needle = vec_obs(needles);
+  R_len_t n_needle = vec_size(needles);
   SEXP out = PROTECT(Rf_allocVector(INTSXP, n_needle));
   int* p_out = INTEGER(out);
 
@@ -206,7 +206,7 @@ SEXP vctrs_in(SEXP needles, SEXP haystack) {
   dict_init(&d, haystack);
 
   // Load dictionary with haystack
-  R_len_t n_haystack = vec_obs(haystack);
+  R_len_t n_haystack = vec_size(haystack);
   for (int i = 0; i < n_haystack; ++i) {
     uint32_t k = dict_find(&d, haystack, i);
 
@@ -216,7 +216,7 @@ SEXP vctrs_in(SEXP needles, SEXP haystack) {
   }
 
   // Locate needles
-  R_len_t n_needle = vec_obs(needles);
+  R_len_t n_needle = vec_size(needles);
   SEXP out = PROTECT(Rf_allocVector(LGLSXP, n_needle));
   int* p_out = LOGICAL(out);
 
@@ -236,7 +236,7 @@ SEXP vctrs_count(SEXP x) {
   SEXP val = PROTECT(Rf_allocVector(INTSXP, d.size));
   int* p_val = INTEGER(val);
 
-  R_len_t n = vec_obs(x);
+  R_len_t n = vec_size(x);
   for (int i = 0; i < n; ++i) {
     int32_t k = dict_find(&d, x, i);
 
@@ -283,7 +283,7 @@ SEXP vctrs_duplicated(SEXP x) {
   SEXP val = PROTECT(Rf_allocVector(INTSXP, d.size));
   int* p_val = INTEGER(val);
 
-  R_len_t n = vec_obs(x);
+  R_len_t n = vec_size(x);
   for (int i = 0; i < n; ++i) {
     int32_t k = dict_find(&d, x, i);
 

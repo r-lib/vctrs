@@ -6,11 +6,11 @@
 #' across all arguments.
 #'
 #' @section Invariants:
-#' * `vec_obs(vec_rbind(x, y)) == vec_obs(x) + vec_obs(y)`
-#' * `vec_ptype(vec_rbind(x, y)) = vec_ptype(x, y)`
+#' * `vec_size(vec_rbind(x, y)) == vec_size(x) + vec_size(y)`
+#' * `vec_type(vec_rbind(x, y)) = vec_type_common(x, y)`
 #'
-#' * `vec_obs(vec_cbind(x, y)) == vec_obs(vec_recycle(x, y))`
-#' * `vec_ptype(vec_cbind(x, y)) = vec_cbind(vec_ptype(x), vec_ptype(x))`
+#' * `vec_size(vec_cbind(x, y)) == vec_size_common(x, y)`
+#' * `vec_type(vec_cbind(x, y)) == vec_cbind(vec_type(x), vec_type(x))`
 #' @param ... Data frames or vectors.
 #'
 #'   `vec_rbind()` ignores names. `vec_cbind()` preserves outer names,
@@ -93,12 +93,12 @@ NULL
 vec_rbind <- function(..., .ptype = NULL) {
   args <- list2(...)
   tbls <- map(args, as_df_row)
-  ptype <- vec_ptype(!!!tbls, .ptype = .ptype)[[1]]
+  ptype <- vec_type_common(!!!tbls, .ptype = .ptype)
 
   if (is.null(ptype))
     return(data_frame())
 
-  ns <- map_int(tbls, vec_obs)
+  ns <- map_int(tbls, vec_size)
   # Use list so we can rely on efficient internal [[<-
   out <- vec_data(vec_rep(ptype, sum(ns)))
 
@@ -134,7 +134,7 @@ vec_cbind <- function(..., .ptype = NULL, .nrow = NULL) {
     if (is.data.frame(x))
       x[0]
   })
-  out <- vec_ptype(!!!tbl_empty, .ptype = .ptype[0])[[1]]
+  out <- vec_type_common(!!!tbl_empty, .ptype = .ptype[0])
   if (is.null(out)) {
     out <- data_frame()
   }
@@ -180,13 +180,13 @@ find_nrow <- function(x, .nrow = NULL) {
   if (!is.null(.nrow)) {
     .nrow
   } else {
-    lengths <- map_int(x, vec_obs)
-    Reduce(recycle_length, lengths) %||% 0L
+    lengths <- map_int(x, vec_size)
+    Reduce(vec_size2, lengths) %||% 0L
   }
 }
 
 recycle <- function(x, n) {
-  nx <- vec_obs(x)
+  nx <- vec_size(x)
 
   if (is.null(x) || nx == n) {
     x

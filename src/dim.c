@@ -3,7 +3,7 @@
 R_len_t df_obs(SEXP x);
 R_len_t rcrd_obs(SEXP x);
 
-R_len_t vec_obs(SEXP x) {
+R_len_t vec_size(SEXP x) {
   switch(TYPEOF(x)) {
   case NILSXP:
     return 0;
@@ -76,6 +76,6 @@ R_len_t rcrd_obs(SEXP x) {
 
 // R interface ------------------------------------------------------------
 
-SEXP vctrs_length(SEXP x) {
-  return Rf_ScalarInteger(vec_obs(x));
+SEXP vctrs_size(SEXP x) {
+  return Rf_ScalarInteger(vec_size(x));
 }

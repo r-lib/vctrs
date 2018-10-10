@@ -18,7 +18,7 @@
 list_of <- function(..., .ptype = NULL) {
   args <- list2(...)
 
-  ptype <- vec_ptype(!!!args, .ptype = .ptype)[[1]]
+  ptype <- vec_type_common(!!!args, .ptype = .ptype)
   if (is.null(ptype)) {
     stop("Could not find common type for elements of `x`", call. = FALSE)
   }
@@ -57,7 +57,7 @@ as_list_of.list <- function(x, ..., .ptype = NULL) {
 #' @export
 new_list_of <- function(x = list(), ptype = logical(), ..., class = character()) {
   stopifnot(is.list(x))
-  stopifnot(vec_obs(ptype) == 0)
+  stopifnot(vec_size(ptype) == 0)
 
   new_vctr(x, ..., ptype = ptype, class = c(class, "vctrs_list_of"))
 }

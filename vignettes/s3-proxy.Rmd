@@ -52,7 +52,7 @@ new_rational <- function(n = integer(), d = integer()) {
 }
 rational <- function(n, d) {
   c(n, d) %<-% as.list(vec_coerce(n, d, .ptype = integer()))
-  c(n, d) %<-% vec_recycle(n, d)
+  c(n, d) %<-% vec_recycle_common(n, d)
 
   new_rational(n, d)
 }
@@ -298,7 +298,7 @@ new_interval <- function(l, r) {
 }
 interval <- function(l, r) {
   c(l, r) %<-% as.list(vec_coerce(l, r, .ptype = double()))
-  c(l, r) %<-% vec_recycle(l, r)
+  c(l, r) %<-% vec_recycle_common(l, r)
   c(l, r) %<-% list(pmin(l, r), pmax(l, r))
   new_interval(l, r)
 }
@@ -330,7 +330,7 @@ First, we'll implement a method two intervals. <https://en.wikipedia.org/wiki/In
 
 ```{r}
 vec_arith.vctrs_interval.vctrs_interval <- function(op, x, y) {
-  c(x, y) %<-% vec_recycle(x, y)
+  c(x, y) %<-% vec_recycle_common(x, y)
   
   x1 <- field(x, "l"); x2 <- field(x, "r")
   y1 <- field(y, "l"); y2 <- field(y, "r")
@@ -354,7 +354,7 @@ x * interval(1, 2)
 
 ```{r}
 vec_arith.vctrs_interval.double <- function(op, x, y) {
-  c(x, y) %<-% vec_recycle(x, y)
+  c(x, y) %<-% vec_recycle_common(x, y)
   
   l <- vec_arith_base(op, field(x, "l"), y)
   r <- vec_arith_base(op, field(x, "r"), y)
@@ -369,7 +369,7 @@ x * -2
 
 ```{r}
 vec_arith.numeric.vctrs_interval <- function(op, x, y) {
-  c(x, y) %<-% vec_recycle(x, y)
+  c(x, y) %<-% vec_recycle_common(x, y)
   
   l <- vec_arith_base(op, x, field(y, "l"))
   r <- vec_arith_base(op, x, field(y, "r"))

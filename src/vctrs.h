@@ -6,7 +6,7 @@
 #include <stdint.h>
 
 // Vector methods ------------------------------------------------
-R_len_t vec_obs(SEXP x);
+R_len_t vec_size(SEXP x);
 
 bool is_data_frame(SEXP x);
 bool is_record(SEXP x);

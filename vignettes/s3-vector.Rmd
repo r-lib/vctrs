@@ -433,7 +433,7 @@ In our user friendly constructor as well as casting `n` and `d` to the desired t
 ```{r}
 rational <- function(n, d) {
   c(n, d) %<-% as.list(vec_coerce(n, d, .ptype = integer()))
-  c(n, d) %<-% vec_recycle(n, d)
+  c(n, d) %<-% vec_recycle_common(n, d)
   
   new_rational(n, d)
 }

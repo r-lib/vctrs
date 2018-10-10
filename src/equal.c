@@ -67,8 +67,8 @@ bool equal_object(SEXP x, SEXP y) {
   case REALSXP:
   case STRSXP:
   case VECSXP: {
-    R_len_t n = vec_obs(x);
-    if (n != vec_obs(y))
+    R_len_t n = vec_size(x);
+    if (n != vec_size(y))
       return false;
 
     if (!equal_object(ATTRIB(x), ATTRIB(y)))
@@ -161,11 +161,11 @@ bool equal_names(SEXP x, SEXP y) {
 // R interface -----------------------------------------------------------------
 
 SEXP vctrs_equal(SEXP x, SEXP y, SEXP na_equal_) {
-  if (TYPEOF(x) != TYPEOF(y) || vec_obs(x) != vec_obs(y))
+  if (TYPEOF(x) != TYPEOF(y) || vec_size(x) != vec_size(y))
     Rf_errorcall(R_NilValue, "`x` and `y` must have same types and lengths");
   bool na_equal = Rf_asLogical(na_equal_);
 
-  R_len_t n = vec_obs(x);
+  R_len_t n = vec_size(x);
   SEXP out = PROTECT(Rf_allocVector(LGLSXP, n));
   int32_t* p_out = LOGICAL(out);
 
@@ -178,7 +178,7 @@ SEXP vctrs_equal(SEXP x, SEXP y, SEXP na_equal_) {
 }
 
 SEXP vctrs_equal_na(SEXP x) {
-  R_len_t n = vec_obs(x);
+  R_len_t n = vec_size(x);
   SEXP out = PROTECT(Rf_allocVector(LGLSXP, n));
   int32_t* p_out = LOGICAL(out);
 

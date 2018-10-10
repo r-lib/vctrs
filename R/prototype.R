@@ -1,8 +1,8 @@
 #' Find the prototype of a set of vectors
 #'
-#' This function is aimed at developers, but may also be useful for users who
-#' want to explore the type system interactively. Use this function to find the
-#' common type from a set of inputs.
+#' `vec_type_common()` finds the common type from a set of vectors.
+#' `vec_ptype()` is designed for interative exploration: it wraps
+#' `vec_type_common()` with a custom class that gives a nice output.
 #'
 #' This function works by finding the prototype (a zero-length subset) of each
 #' input, then using [Reduce()] and [vec_type2()] to find the common class.
@@ -53,8 +53,15 @@
 #'   data.frame(z = "a")
 #' )
 vec_ptype <- function(..., .ptype = NULL) {
+  type <- vec_type_common(..., .ptype = .ptype)
+  new_vec_ptype(type)
+}
+
+#' @export
+#' @rdname vec_ptype
+vec_type_common <- function(..., .ptype = NULL) {
   if (!is_partial(.ptype)) {
-    return(new_vec_ptype(as_vec_ptype(.ptype)))
+    return(as_vec_ptype(.ptype))
   }
 
   if (isTRUE(getOption("vctrs.no_guessing"))) {
@@ -71,9 +78,9 @@ vec_ptype <- function(..., .ptype = NULL) {
     ptype <- reduce(ptypes, vec_type2)
   }
 
-  ptype <- vec_type_finalise(ptype)
-  new_vec_ptype(ptype)
+  vec_type_finalise(ptype)
 }
+
 
 new_vec_ptype <- function(ptype) {
   structure(
@@ -97,11 +104,6 @@ as.character.vec_ptype <- format.vec_ptype
 
 as_vec_ptype <- function(x) {
   UseMethod("as_vec_ptype")
-}
-
-#' @export
-as_vec_ptype.vec_ptype <- function(x) {
-  x[[1]]
 }
 
 #' @export

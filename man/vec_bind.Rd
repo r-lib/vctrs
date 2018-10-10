@@ -50,10 +50,10 @@ across all arguments.
 \section{Invariants}{
 
 \itemize{
-\item \code{vec_obs(vec_rbind(x, y)) == vec_obs(x) + vec_obs(y)}
-\item \code{vec_ptype(vec_rbind(x, y)) = vec_ptype(x, y)}
-\item \code{vec_obs(vec_cbind(x, y)) == vec_obs(vec_recycle(x, y))}
-\item \code{vec_ptype(vec_cbind(x, y)) = vec_cbind(vec_ptype(x), vec_ptype(x))}
+\item \code{vec_size(vec_rbind(x, y)) == vec_size(x) + vec_size(y)}
+\item \code{vec_type(vec_rbind(x, y)) = vec_type_common(x, y)}
+\item \code{vec_size(vec_cbind(x, y)) == vec_size_common(x, y)}
+\item \code{vec_type(vec_cbind(x, y)) == vec_cbind(vec_type(x), vec_type(x))}
 }
 }
 

@@ -52,7 +52,7 @@ check_fields <- function(fields) {
 
 #' @export
 length.vctrs_rcrd <- function(x) {
-  .Call(vctrs_length, x)
+  .Call(vctrs_size, x)
 }
 
 #' @export
@@ -189,7 +189,7 @@ vec_math.vctrs_rcrd <- function(fun, x, ...) {
 # nocov start
 
 tuple <- function(x = integer(), y = integer()) {
-  fields <- vec_recycle(
+  fields <- vec_recycle_common(
     x = vec_cast(x, integer()),
     y = vec_cast(y, integer())
   )

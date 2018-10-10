@@ -98,8 +98,8 @@ test_that("max<list_of<a>, list_of<b>> is list_of<max<a, b>>", {
   r_int <- list_of(.ptype = integer())
   r_dbl <- list_of(.ptype = double())
 
-  expect_equal(vec_ptype(r_int, r_int), vec_ptype(r_int))
-  expect_equal(vec_ptype(r_int, r_dbl), vec_ptype(r_int))
+  expect_equal(vec_type_common(r_int, r_int), r_int)
+  expect_equal(vec_type_common(r_int, r_dbl), r_int)
 })
 
 test_that("safe casts work as expected", {

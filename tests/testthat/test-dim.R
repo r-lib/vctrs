@@ -22,6 +22,6 @@ test_that("vector and 1-d array are equivalent", {
   expect_equal(vec_dim(x1), 5)
   expect_equal(vec_dim(x2), 5)
 
-  expect_equal(vec_obs(x1), 5)
-  expect_equal(vec_obs(x2), 5)
+  expect_equal(vec_size(x1), 5)
+  expect_equal(vec_size(x2), 5)
 })

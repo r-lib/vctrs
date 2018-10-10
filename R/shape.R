@@ -14,7 +14,7 @@ shape_match <- function(type, x, y) {
 
 shape_common <- function(x, y) {
   shape <- dim2(shape(x), shape(y))
-  map2_int(shape$x, shape$y, recycle_length)
+  map2_int(shape$x, shape$y, vec_size2)
 }
 
 shape_broadcast <- function(x, to) {
@@ -54,18 +54,6 @@ shape <- function(x) {
   }
 
   vec_dim(x)[-1]
-}
-
-recycle_length <- function(nx, ny) {
-  if (nx == ny) {
-    nx
-  } else if (nx == 0L || ny == 0L) {
-    0L
-  } else if (nx == 1L || ny == 1L) {
-    max(nx, ny)
-  } else {
-    stop("Incompatible lengths: ", nx, ", ", ny, call. = FALSE)
-  }
 }
 
 dim2 <- function(x, y) {

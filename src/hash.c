@@ -94,7 +94,7 @@ int32_t hash_object(SEXP x) {
   case REALSXP:
   case STRSXP:
   case VECSXP: {
-    R_len_t n = vec_obs(x);
+    R_len_t n = vec_size(x);
     for (R_len_t i = 0; i < n; ++i) {
       hash = hash_combine(hash, hash_scalar(x, i));
     }
@@ -134,7 +134,7 @@ int32_t hash_object(SEXP x) {
 // R interface -----------------------------------------------------------------
 
 SEXP vctrs_hash(SEXP x) {
-  R_len_t n = vec_obs(x);
+  R_len_t n = vec_size(x);
   SEXP out = PROTECT(Rf_allocVector(INTSXP, n));
 
   int32_t* pOut = INTEGER(out);

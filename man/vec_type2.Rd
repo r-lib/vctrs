@@ -31,7 +31,7 @@ vec_type2(x, y)
 \code{vec_type2()} finds the common type for a pair of vectors, or dies trying.
 It forms the foundation of the vctrs type system, along with \code{\link[=vec_cast]{vec_cast()}}.
 This powers type coercion but should not usually be called directly;
-instead call \code{\link[=vec_ptype]{vec_ptype()}}.
+instead call \code{\link[=vec_type_common]{vec_type_common()}}.
 }
 \section{Coercion rules}{
 

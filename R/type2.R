@@ -3,7 +3,7 @@
 #' `vec_type2()` finds the common type for a pair of vectors, or dies trying.
 #' It forms the foundation of the vctrs type system, along with [vec_cast()].
 #' This powers type coercion but should not usually be called directly;
-#' instead call [vec_ptype()].
+#' instead call [vec_type_common()].
 #'
 #' @section Coercion rules:
 #' vctrs thinks of the vector types as forming a partially ordered set, or

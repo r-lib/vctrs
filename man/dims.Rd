@@ -18,7 +18,7 @@ vec_dims(x)
 }
 \description{
 \itemize{
-\item \code{vec_empty()} returns \code{TRUE} if \code{vec_obs()} is zero.
+\item \code{vec_empty()} returns \code{TRUE} if \code{vec_size()} is zero.
 \item \code{vec_dims()} gives the dimensionality (i.e. number of dimensions)
 \item \code{vec_dim()} returns the size of each dimension
 }
@@ -26,16 +26,11 @@ vec_dims(x)
 \details{
 Unlike base R, we treat vectors with \code{NULL} dimensions as 1d. This
 simplifies the type system by eliding a special case. Compared to base R
-equivalents \code{vec_obs()} acts like \code{NROW()}, and \code{vec_dim()} returns
-\code{length()}, not \code{NULL}, when \code{x} is 1d.
+equivalent, \code{vec_dim()} returns \code{length()}, not \code{NULL}, when \code{x} is 1d.
 }
 \examples{
 # Compared to base R
 x <- 1:5
 dim(x)
 vec_dim(x)
-
-y <- matrix(1:6, nrow = 2)
-length(y)
-vec_obs(y)
 }

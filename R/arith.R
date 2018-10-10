@@ -84,7 +84,7 @@ vec_arith.numeric.numeric <- function(op, x, y) vec_arith_base(op, x, y)
 #' @export
 #' @rdname vec_arith
 vec_arith_base <- function(op, x, y) {
-  c(x, y) %<-% vec_recycle(x, y)
+  c(x, y) %<-% vec_recycle_common(x, y)
 
   op_fun <- getExportedValue("base", op)
   op_fun(vec_data(x), vec_data(y))

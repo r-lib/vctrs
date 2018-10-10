@@ -3,12 +3,12 @@
 #' Combine all arguments into a new vector of common type.
 #'
 #' @section Invariants:
-#' * `vec_obs(vec_c(x, y)) == vec_obs(x) + vec_obs(y)`
-#' * `vec_ptype(vec_c(x, y)) = vec_ptype(x, y)`.
+#' * `vec_size(vec_c(x, y)) == vec_size(x) + vec_size(y)`
+#' * `vec_type(vec_c(x, y)) == vec_type_common(x, y)`.
 #'
 #' @param ... Vectors to coerce.
 #' @return A vector with class given by `.ptype`, and length equal to the
-#'   sum of the `vec_obs()` of the contents of `...`.
+#'   sum of the `vec_size()` of the contents of `...`.
 #'
 #'   The vector will have names if the individual components have names
 #'   (inner names) or if the arguments are named (outer names). If both
@@ -34,11 +34,11 @@
 vec_c <- function(..., .ptype = NULL) {
   args <- list2(...)
 
-  ptype <- vec_ptype(!!!args, .ptype = .ptype)[[1]]
+  ptype <- vec_type_common(!!!args, .ptype = .ptype)
   if (is.null(ptype))
     return(NULL)
 
-  ns <- map_int(args, vec_obs)
+  ns <- map_int(args, vec_size)
   out <- vec_rep(ptype, sum(ns))
   if (is.null(names(args))) {
     names <- NULL

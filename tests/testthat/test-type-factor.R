@@ -16,11 +16,11 @@ test_that("ptype methods are descriptive", {
 test_that("factors level are unioned", {
   # This is technically incorrect, but because of R's existing behaviour
   # anything else will cause substantial friction.
-  fa <- vec_ptype(factor(levels = "a"))
-  fb <- vec_ptype(factor(levels = "b"))
+  fa <- factor(levels = "a")
+  fb <- factor(levels = "b")
 
-  expect_equal(vec_ptype(fa, fb), vec_ptype(factor(levels = c("a", "b"))))
-  expect_equal(vec_ptype(fb, fa), vec_ptype(factor(levels = c("b", "a"))))
+  expect_equal(vec_type_common(fa, fb), factor(levels = c("a", "b")))
+  expect_equal(vec_type_common(fb, fa), factor(levels = c("b", "a")))
 })
 
 # Casting -----------------------------------------------------------------

@@ -18,6 +18,6 @@ vec_coerce <- function(..., .ptype = NULL) {
   if (length(args) == 0)
     return(list())
 
-  ptype <- vec_ptype(!!!args, .ptype = .ptype)[[1]]
+  ptype <- vec_type_common(!!!args, .ptype = .ptype)
   list_of(!!!args, .ptype = ptype)
 }

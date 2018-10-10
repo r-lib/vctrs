@@ -198,13 +198,13 @@ diff.vctrs_vctr <- function(x, lag = 1L, differences = 1L, ...) {
   stopifnot(length(lag) == 1L, lag >= 1L)
   stopifnot(length(differences) == 1L, differences >= 1L)
 
-  n <- vec_obs(x)
+  n <- vec_size(x)
   if (lag * differences >= n)
     return(vec_slice(x, 0L))
 
   out <- x
   for (i in seq_len(differences)) {
-    n <- vec_obs(out)
+    n <- vec_size(out)
     lhs <- (1L + lag):n
     rhs <- 1L:(n - lag)
 
@@ -303,7 +303,7 @@ as.data.frame.vctrs_vctr <- function(x,
     names(cols) <- nm
   }
 
-  new_data_frame(cols, n = vec_obs(x))
+  new_data_frame(cols, n = vec_size(x))
 }
 
 # Dynamically registered in .onLoad()

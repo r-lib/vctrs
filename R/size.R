@@ -1,34 +1,80 @@
 #' Number of observations
 #'
-#' `vec_obs()` returns the number of observations in an object. This is
-#' the length of a 1d vector, or the number of rows in a matrix or data frame.
+#' `vec_size(x)` returns the size of a vector. This is distinct from the
+#' [length()] of a vector because it generalises to the "number of observations"
+#' for 2d structures, i.e. it's the number of rows in matrix or a data frame.
+#' This definition has the important property that every column of a data frame
+#' (even data frame and matrix columns) have the same size.
+#' `vec_size_common(...)` returns the common size of multiple vectors.
+#'
 #' There is no vctrs helper that retrieves the number of columns: as this
 #' is a property of the [type][vec_ptype()].
 #'
-#' `vec_obs()` is equivalent to `NROW()` but has a name that is easier to
+#' `vec_size()` is equivalent to `NROW()` but has a name that is easier to
 #' pronounce, and throws an error when passed non-vector inputs.
 #'
-#' @seealso [vec_slice()] for a variation of `[` compatible with `vec_obs()`.
+#' @seealso [vec_slice()] for a variation of `[` compatible with `vec_size()`,
+#'   and [vec_recycle()] to recycle vectors to common length.
 #' @section Invariants:
-#' * `vec_obs(dataframe)` == `vec_obs(dataframe[[i]])`
-#' * `vec_obs(matrix)` == `vec_obs(matrix[, i, drop = FALSE])`
-#' * `vec_obs(vec_c(x, y))` == `vec_obs(x)` + `vec_obs(y)`
-#' @param x A vector
+#' * `vec_size(dataframe)` == `vec_size(dataframe[[i]])`
+#' * `vec_size(matrix)` == `vec_size(matrix[, i, drop = FALSE])`
+#' * `vec_size(vec_c(x, y))` == `vec_size(x)` + `vec_size(y)`
+#'
+#' @param x,... Vector inputs
+#' @param .size If `NULL`, the default, the output size is determined by
+#'   recycling the lengths of all elements of `...`. Alternatively, you can
+#'   supply `.size` to force a known size.
 #' @return An integer (or double for long vectors). Will throw an error
 #'   if `x` is not a vector.
+#'
+#'   `vec_size_common()` will return `NULL` if all inputs are `NULL` or absent.
 #' @export
 #' @examples
-#' vec_obs(1:100)
-#' vec_obs(mtcars)
-#' vec_obs(array(dim = c(3, 5, 10)))
+#' vec_size(1:100)
+#' vec_size(mtcars)
+#' vec_size(array(dim = c(3, 5, 10)))
 #'
-#' vec_obs(NULL)
-#' # Because vec_obs(vec_c(NULL, x)) ==
-#' #   vec_obs(NULL) + vec_obs(x) ==
-#' #   vec_obs(x)
-vec_obs <- function(x) {
-  .Call(vctrs_length, x)
+#' vec_size(NULL)
+#' # Because vec_size(vec_c(NULL, x)) ==
+#' #   vec_size(NULL) + vec_size(x) ==
+#' #   vec_size(x)
+#'
+#' vec_size_common(1:10, 1:10)
+#' vec_size_common(1:10, 1)
+#' vec_size_common(1:10, integer())
+vec_size <- function(x) {
+  .Call(vctrs_size, x)
 }
+
+#' @export
+#' @rdname vec_size
+vec_size_common <- function(..., .size = NULL) {
+  if (!is.null(.size)) {
+    return(.size)
+  }
+
+  args <- compact(list2(...))
+  if (length(args) == 0)
+    return(NULL)
+
+  nobs <- map_int(args, vec_size)
+  reduce(nobs, vec_size2)
+}
+
+vec_size2 <- function(nx, ny) {
+  if (nx == ny) {
+    nx
+  } else if (nx == 0L || ny == 0L) {
+    0L
+  } else if (nx == 1L) {
+    ny
+  } else if (ny == 1L) {
+    nx
+  } else {
+    stop("Incompatible lengths: ", nx, ", ", ny, call. = FALSE)
+  }
+}
+
 
 # Slicing ----------------------------------------------------------------
 
@@ -36,7 +82,7 @@ vec_obs <- function(x) {
 #'
 #' This provides a common interface to extracting and modifying observations
 #' for all vector types, regardless of dimensionality. It is an analog to `[`
-#' that matches [vec_obs()] instead of `length()`.
+#' that matches [vec_size()] instead of `length()`.
 #'
 #' @param x A vector
 #' @param i An integer or character vector specifying the positions or
@@ -110,7 +156,7 @@ vec_na <- function(x, n = 1L) {
 }
 
 vec_rep <- function(x, n) {
-  id <- rep_len(seq_len(vec_obs(x)), n)
+  id <- rep_len(seq_len(vec_size(x)), n)
   vec_slice(x, id)
 }
 

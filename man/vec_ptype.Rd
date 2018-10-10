@@ -2,9 +2,12 @@
 % Please edit documentation in R/prototype.R
 \name{vec_ptype}
 \alias{vec_ptype}
+\alias{vec_type_common}
 \title{Find the prototype of a set of vectors}
 \usage{
 vec_ptype(..., .ptype = NULL)
+
+vec_type_common(..., .ptype = NULL)
 }
 \arguments{
 \item{...}{Vectors inputs}
@@ -20,9 +23,9 @@ this is a convenient way to make production code demand fixed types.}
 A prototype
 }
 \description{
-This function is aimed at developers, but may also be useful for users who
-want to explore the type system interactively. Use this function to find the
-common type from a set of inputs.
+\code{vec_type_common()} finds the common type from a set of vectors.
+\code{vec_ptype()} is designed for interative exploration: it wraps
+\code{vec_type_common()} with a custom class that gives a nice output.
 }
 \details{
 This function works by finding the prototype (a zero-length subset) of each

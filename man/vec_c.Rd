@@ -18,7 +18,7 @@ this is a convenient way to make production code demand fixed types.}
 }
 \value{
 A vector with class given by \code{.ptype}, and length equal to the
-sum of the \code{vec_obs()} of the contents of \code{...}.
+sum of the \code{vec_size()} of the contents of \code{...}.
 
 The vector will have names if the individual components have names
 (inner names) or if the arguments are named (outer names). If both
@@ -30,8 +30,8 @@ Combine all arguments into a new vector of common type.
 \section{Invariants}{
 
 \itemize{
-\item \code{vec_obs(vec_c(x, y)) == vec_obs(x) + vec_obs(y)}
-\item \code{vec_ptype(vec_c(x, y)) = vec_ptype(x, y)}.
+\item \code{vec_size(vec_c(x, y)) == vec_size(x) + vec_size(y)}
+\item \code{vec_type(vec_c(x, y)) == vec_type_common(x, y)}.
 }
 }
 

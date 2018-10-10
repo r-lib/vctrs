@@ -1,13 +1,12 @@
 #' Vector dimensions
 #'
-#' * `vec_empty()` returns `TRUE` if `vec_obs()` is zero.
+#' * `vec_empty()` returns `TRUE` if `vec_size()` is zero.
 #' * `vec_dims()` gives the dimensionality (i.e. number of dimensions)
 #' * `vec_dim()` returns the size of each dimension
 #'
 #' Unlike base R, we treat vectors with `NULL` dimensions as 1d. This
 #' simplifies the type system by eliding a special case. Compared to base R
-#' equivalents `vec_obs()` acts like `NROW()`, and `vec_dim()` returns
-#' `length()`, not `NULL`, when `x` is 1d.
+#' equivalent, `vec_dim()` returns `length()`, not `NULL`, when `x` is 1d.
 #'
 #' @param x A vector
 #' @name dims
@@ -16,16 +15,12 @@
 #' x <- 1:5
 #' dim(x)
 #' vec_dim(x)
-#'
-#' y <- matrix(1:6, nrow = 2)
-#' length(y)
-#' vec_obs(y)
 NULL
 
 #' @export
 #' @rdname dims
 vec_empty <- function(x) {
-  vec_obs(x) == 0L
+  vec_size(x) == 0L
 }
 
 #' @export

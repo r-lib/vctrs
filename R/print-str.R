@@ -101,7 +101,7 @@ vec_str_recursive <- function(x, ...,
 
   if (nest.lev != 0L)
     cat(" ")
-  cat_line(glue::glue("{vec_ptype_abbr(x)} [1:{vec_obs(x)}] "))
+  cat_line(glue::glue("{vec_ptype_abbr(x)} [1:{vec_size(x)}] "))
 
   utils::str(
     vec_data(x),
