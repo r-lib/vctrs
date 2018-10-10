@@ -5,7 +5,8 @@
 #' It should generally not be called by R users, but is important for R
 #' developers. `vec_restore()` is designed specifically for casting a bare
 #' vector to the original type; it's useful when relying `NextMethod()` for
-#' the actual implementation.
+#' the actual implementation. `vec_cast_common(...)` casts a collection to
+#' vectors to the same type.
 #'
 #' @section Casting rules:
 #' Casting is more flexible than coercion, and allows for the possibility of
@@ -66,8 +67,8 @@
 #' additional metadat that is important to them, so you should preserve any
 #' attributes that don't require special handling for your class.
 #'
-#' @param x Vector to cast.
-#' @param to Type to cast to. If `NULL`, `x` will be returned as is.
+#' @param x,... Vectors to cast.
+#' @param to,.to Type to cast to. If `NULL`, `x` will be returned as is.
 #' @return A vector the same length as `x` with the same type as `to`,
 #'   or an error if the cast is not possible. A warning is generated if
 #'   information is lost when casting between compatible types (i.e. when
@@ -88,11 +89,22 @@
 #' vec_cast(1.5, factor("a"))
 #' }
 #'
+#' # Cast to common type
+#' vec_cast_common(factor("a"), factor(c("a", "b")))
+#' vec_cast_common(factor("a"), Sys.Date(), .to = list())
 vec_cast <- function(x, to) {
   if (is.null(x) || is.null(to)) {
     return(x)
   }
   UseMethod("vec_cast", to)
+}
+
+#' @export
+#' @rdname vec_cast
+vec_cast_common <- function(..., .to = NULL) {
+  args <- list2(...)
+  type <- vec_type_common(!!!args, .ptype = .to)
+  map(args, vec_cast, to = type)
 }
 
 #' @export

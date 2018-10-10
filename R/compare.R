@@ -71,7 +71,7 @@ vec_proxy_compare.NULL <- function(x) {
 #' vec_compare(df, data.frame(x = 1, y = 1))
 vec_compare <- function(x, y, na_equal = FALSE, .ptype = NULL) {
   args <- vec_recycle_common(x, y)
-  args <- vec_coerce(!!!args, .ptype = .ptype)
+  args <- vec_cast_common(!!!args, .to = .ptype)
   .Call(vctrs_compare, vec_proxy_equal(args[[1]]), vec_proxy_equal(args[[2]]), na_equal)
 }
 

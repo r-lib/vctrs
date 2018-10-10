@@ -60,5 +60,5 @@ vec_recycle <- function(x, size) {
 vec_recycle_common <- function(..., .size = NULL) {
   args <- list2(...)
   size <- vec_size_common(!!!args, .size = .size)
-  map(args, vec_recycle, size)
+  map(args, vec_recycle, size = size)
 }

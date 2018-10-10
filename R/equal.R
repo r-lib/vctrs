@@ -50,7 +50,7 @@ vec_proxy_equal.default <- function(x) {
 #' vec_equal_na(df)
 vec_equal <- function(x, y, na_equal = FALSE, .ptype = NULL) {
   args <- vec_recycle_common(x, y)
-  args <- vec_coerce(!!!args, .ptype = .ptype)
+  args <- vec_cast_common(!!!args, .to = .ptype)
   .Call(
     vctrs_equal,
     vec_proxy_equal(args[[1]]),

@@ -2,6 +2,7 @@
 % Please edit documentation in R/cast.R
 \name{vec_cast}
 \alias{vec_cast}
+\alias{vec_cast_common}
 \alias{vec_restore}
 \alias{vec_cast.logical}
 \alias{vec_cast.integer}
@@ -11,6 +12,8 @@
 \title{Cast a vector to specified type}
 \usage{
 vec_cast(x, to)
+
+vec_cast_common(..., .to = NULL)
 
 vec_restore(x, to)
 
@@ -25,9 +28,9 @@ vec_restore(x, to)
 \method{vec_cast}{list}(x, to)
 }
 \arguments{
-\item{x}{Vector to cast.}
+\item{x, ...}{Vectors to cast.}
 
-\item{to}{Type to cast to. If \code{NULL}, \code{x} will be returned as is.}
+\item{to, .to}{Type to cast to. If \code{NULL}, \code{x} will be returned as is.}
 }
 \value{
 A vector the same length as \code{x} with the same type as \code{to},
@@ -41,7 +44,8 @@ and along with \code{\link[=vec_type2]{vec_type2()}} forms the foundation of the
 It should generally not be called by R users, but is important for R
 developers. \code{vec_restore()} is designed specifically for casting a bare
 vector to the original type; it's useful when relying \code{NextMethod()} for
-the actual implementation.
+the actual implementation. \code{vec_cast_common(...)} casts a collection to
+vectors to the same type.
 }
 \section{Casting rules}{
 
@@ -123,5 +127,8 @@ vec_cast(1.5, integer())
 vec_cast(1.5, factor("a"))
 }
 
+# Cast to common type
+vec_cast_common(factor("a"), factor(c("a", "b")))
+vec_cast_common(factor("a"), Sys.Date(), .to = list())
 }
 \keyword{internal}

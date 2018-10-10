@@ -11,8 +11,6 @@ reference:
   contents:
   - vec_c
   - vec_cbind
-  - vec_coerce
-  - vec_recycle
 
 - title: Matching
   contents:
@@ -38,3 +36,4 @@ reference:
   - rcrd
   - fields
   - vec_method_register
+  - vec_resize

@@ -51,7 +51,8 @@ new_rational <- function(n = integer(), d = integer()) {
   new_rcrd(list(n = n, d = d), class = "vctrs_rational")
 }
 rational <- function(n, d) {
-  c(n, d) %<-% as.list(vec_coerce(n, d, .ptype = integer()))
+  browser()
+  c(n, d) %<-% vec_cast_common(n, d, .to = integer())
   c(n, d) %<-% vec_recycle_common(n, d)
 
   new_rational(n, d)
@@ -297,7 +298,7 @@ new_interval <- function(l, r) {
   new_rcrd(list(l = l, r = r), class = "vctrs_interval")
 }
 interval <- function(l, r) {
-  c(l, r) %<-% as.list(vec_coerce(l, r, .ptype = double()))
+  c(l, r) %<-% vec_cast_common(l, r, .to = double())
   c(l, r) %<-% vec_recycle_common(l, r)
   c(l, r) %<-% list(pmin(l, r), pmax(l, r))
   new_interval(l, r)
