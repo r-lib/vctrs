@@ -10,7 +10,7 @@
 #' [unspecified] type. This is needed because bare `NA`s should be
 #' automatically coercible to any 1d vector.
 #'
-#' @param ... Vectors inputs
+#' @param ...,x Vectors inputs
 #' @param .ptype If `NULL`, the default, the output type is determined by
 #'   computing the common type across all elements of `...`.
 #'
@@ -61,7 +61,7 @@ vec_ptype <- function(..., .ptype = NULL) {
 #' @rdname vec_ptype
 vec_type_common <- function(..., .ptype = NULL) {
   if (!is_partial(.ptype)) {
-    return(as_vec_ptype(.ptype))
+    return(vec_type(.ptype))
   }
 
   if (isTRUE(getOption("vctrs.no_guessing"))) {
@@ -72,9 +72,9 @@ vec_type_common <- function(..., .ptype = NULL) {
   if (length(args) == 0) {
     ptype <- NULL
   } else if (length(args) == 1) {
-    ptype <- as_vec_ptype(args[[1]])
+    ptype <- vec_type(args[[1]])
   } else {
-    ptypes <- map(args, as_vec_ptype)
+    ptypes <- map(args, vec_type)
     ptype <- reduce(ptypes, vec_type2)
   }
 
@@ -102,22 +102,28 @@ format.vec_ptype <- function(x, ...) {
 #' @export
 as.character.vec_ptype <- format.vec_ptype
 
-as_vec_ptype <- function(x) {
-  UseMethod("as_vec_ptype")
+#' @export
+#' @rdname vec_ptype
+vec_type <- function(x) {
+  UseMethod("vec_type")
 }
 
 #' @export
-as_vec_ptype.default <- function(x) {
-  vec_slice(x, 0L)
+vec_type.default <- function(x) {
+  if (is_vector(x)) {
+    vec_slice(x, 0L)
+  } else {
+    stop("`x` is not a vector", call. = FALSE)
+  }
 }
 
 #' @export
-as_vec_ptype.NULL <- function(x) {
+vec_type.NULL <- function(x) {
   NULL
 }
 
 #' @export
-as_vec_ptype.logical <- function(x) {
+vec_type.logical <- function(x) {
   if (is_unspecified(x)) {
     unspecified()
   } else {
@@ -126,8 +132,8 @@ as_vec_ptype.logical <- function(x) {
 }
 
 #' @export
-as_vec_ptype.data.frame <- function(x) {
-  cols <- map(x, as_vec_ptype)
+vec_type.data.frame <- function(x) {
+  cols <- map(x, vec_type)
   vec_restore(cols, x)
 }
 

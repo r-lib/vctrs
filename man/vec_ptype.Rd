@@ -3,14 +3,17 @@
 \name{vec_ptype}
 \alias{vec_ptype}
 \alias{vec_type_common}
+\alias{vec_type}
 \title{Find the prototype of a set of vectors}
 \usage{
 vec_ptype(..., .ptype = NULL)
 
 vec_type_common(..., .ptype = NULL)
+
+vec_type(x)
 }
 \arguments{
-\item{...}{Vectors inputs}
+\item{..., x}{Vectors inputs}
 
 \item{.ptype}{If \code{NULL}, the default, the output type is determined by
 computing the common type across all elements of \code{...}.

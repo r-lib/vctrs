@@ -9,7 +9,7 @@ new_sclr <- function(..., class = character()) {
 }
 
 #' @export
-as_vec_ptype.vctrs_sclr <- function(x) {
+vec_type.vctrs_sclr <- function(x) {
   x
 }
 
