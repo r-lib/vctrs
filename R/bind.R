@@ -125,7 +125,7 @@ vec_rbind <- function(..., .ptype = NULL) {
 #'
 #'   Alternatively, specify the desired number of rows, and any inputs
 #'   of length 1 will be recycled appropriately.
-vec_cbind <- function(..., .ptype = NULL, .nrow = NULL) {
+vec_cbind <- function(..., .ptype = NULL, .size = NULL) {
   args <- list2(...)
 
   # container type: common type of all (data frame) inputs
@@ -143,8 +143,8 @@ vec_cbind <- function(..., .ptype = NULL, .nrow = NULL) {
   args <- args[!is_null]
 
   # container size: common length of all inputs
-  nrow <- find_nrow(args, .nrow = .nrow)
-  args <- map(args, vec_recycle, size = nrow)
+  size <- vec_size_common(!!!args, .size = .size) %||% 0L
+  args <- map(args, vec_recycle, size = size)
 
   # convert input to columns and prepare output containers
   tbls <- map2(args, names2(args), as_df_col)
@@ -166,7 +166,7 @@ vec_cbind <- function(..., .ptype = NULL, .nrow = NULL) {
 
   # Need to document these assumptions, or better, move into
   # a generic
-  attr(out, "row.names") <- .set_row_names(nrow)
+  attr(out, "row.names") <- .set_row_names(size)
   out[seq_along(cols)] <- cols
   if (is_installed("tibble")) {
     names <- tibble::tidy_names(names)
@@ -174,15 +174,6 @@ vec_cbind <- function(..., .ptype = NULL, .nrow = NULL) {
   names(out) <- names
 
   out
-}
-
-find_nrow <- function(x, .nrow = NULL) {
-  if (!is.null(.nrow)) {
-    .nrow
-  } else {
-    lengths <- map_int(x, vec_size)
-    Reduce(vec_size2, lengths) %||% 0L
-  }
 }
 
 # as_df --------------------------------------------------------------

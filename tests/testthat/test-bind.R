@@ -134,9 +134,9 @@ test_that("output is tibble if any input is tibble", {
 })
 
 test_that("can override default .nrow", {
-  expect_dim(vec_cbind(1, .nrow = 3), c(3, 1))
+  expect_dim(vec_cbind(1, .size = 3), c(3, 1))
 })
 
 test_that("can't violate recycling rules", {
-  expect_error(vec_cbind(1:2, .nrow = 3), "Incompatible")
+  expect_error(vec_cbind(1:2, .size = 3), "Incompatible")
 })
