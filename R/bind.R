@@ -100,7 +100,7 @@ vec_rbind <- function(..., .ptype = NULL) {
 
   ns <- map_int(tbls, vec_size)
   # Use list so we can rely on efficient internal [[<-
-  out <- vec_data(vec_rep(ptype, sum(ns)))
+  out <- vec_data(vec_na(ptype, sum(ns)))
 
   pos <- 1
   for (i in seq_along(ns)) {
@@ -144,14 +144,14 @@ vec_cbind <- function(..., .ptype = NULL, .nrow = NULL) {
 
   # container size: common length of all inputs
   nrow <- find_nrow(args, .nrow = .nrow)
-  args <- map(args, recycle, n = nrow)
+  args <- map(args, vec_recycle, size = nrow)
 
   # convert input to columns and prepare output containers
   tbls <- map2(args, names2(args), as_df_col)
 
   ps <- map_int(tbls, length)
-  cols <- vec_rep(list(), sum(ps))
-  names <- vec_rep(character(), sum(ps))
+  cols <- vec_na(list(), sum(ps))
+  names <- vec_na(character(), sum(ps))
 
   col <- 1
   for (j in seq_along(tbls)) {
@@ -182,18 +182,6 @@ find_nrow <- function(x, .nrow = NULL) {
   } else {
     lengths <- map_int(x, vec_size)
     Reduce(vec_size2, lengths) %||% 0L
-  }
-}
-
-recycle <- function(x, n) {
-  nx <- vec_size(x)
-
-  if (is.null(x) || nx == n) {
-    x
-  } else if (nx == 1L || n == 0L) {
-    vec_rep(x, n)
-  } else {
-    stop("Can't recycle vector of length ", nx, " to length ", n, call. = FALSE)
   }
 }
 

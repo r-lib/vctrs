@@ -39,11 +39,11 @@ vec_c <- function(..., .ptype = NULL) {
     return(NULL)
 
   ns <- map_int(args, vec_size)
-  out <- vec_rep(ptype, sum(ns))
+  out <- vec_na(ptype, sum(ns))
   if (is.null(names(args))) {
     names <- NULL
   } else {
-    names <- vec_rep(character(), sum(ns))
+    names <- vec_na(character(), sum(ns))
   }
 
   pos <- 1

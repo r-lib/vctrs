@@ -155,11 +155,6 @@ vec_na <- function(x, n = 1L) {
   vec_slice(x, rep_len(NA_integer_, n))
 }
 
-vec_rep <- function(x, n) {
-  id <- rep_len(seq_len(vec_size(x)), n)
-  vec_slice(x, id)
-}
-
 # Names -------------------------------------------------------------------
 
 vec_names <- function(x) {

@@ -138,5 +138,5 @@ test_that("can override default .nrow", {
 })
 
 test_that("can't violate recycling rules", {
-  expect_error(vec_cbind(1:2, .nrow = 3), "recycle")
+  expect_error(vec_cbind(1:2, .nrow = 3), "Incompatible")
 })
