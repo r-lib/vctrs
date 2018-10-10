@@ -151,6 +151,15 @@ vec_slice <- function(x, i) {
   x
 }
 
+#' Create a missing vector
+#'
+#' @param x Template of missing vector
+#' @param n Desired size of result
+#' @export
+#' @examples
+#' vec_na(1:10, 3)
+#' vec_na(Sys.Date(), 5)
+#' vec_na(mtcars, 2)
 vec_na <- function(x, n = 1L) {
   vec_slice(x, rep_len(NA_integer_, n))
 }
