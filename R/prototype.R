@@ -127,7 +127,7 @@ vec_type.logical <- function(x) {
   if (is_unspecified(x)) {
     unspecified()
   } else {
-    logical()
+    vec_slice(x, 0L)
   }
 }
 

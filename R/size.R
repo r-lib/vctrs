@@ -130,7 +130,7 @@ vec_slice <- function(x, i) {
 #' @rdname vec_slice
 `vec_slice<-` <- function(x, i, value) {
   stopifnot(is.integer(i) || is.character(i))
-  stopifnot(length(i) == length(value))
+  stopifnot(vec_size(i) == vec_size(value))
 
   if (is.null(x)) {
     NULL
