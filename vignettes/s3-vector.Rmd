@@ -111,7 +111,7 @@ format.vctrs_percent <- function(x, ...) {
 ```{r, include = FALSE}
 # As of R 3.5, print.vctr can not find format.percent since it's not in
 # it's lexical environment. We fix that problem by manually registering.
-vec_method_register("base::format", "vctrs_percent")
+s3_register("base::format", "vctrs_percent")
 ```
 
 ```{r}
@@ -193,7 +193,7 @@ vec_cast(character(), x)
 vec_cast(NA, percent())
 ```
 ```{r, include = FALSE}
-vec_method_register("vctrs::vec_cast", "vctrs_percent")
+s3_register("vctrs::vec_cast", "vctrs_percent")
 ```
 
 You also need to provide a method to coerce one percent object to match the attributes of another. This is very simple because percent objects have no attributes, but it will more complicated for more complex object types.
@@ -245,7 +245,7 @@ vec_type2.vctrs_percent.vctrs_percent     <- function(x, y) x
 ```
 
 ```{r, include = FALSE}
-vec_method_register("vctrs::vec_type2", "vctrs_percent")
+s3_register("vctrs::vec_type2", "vctrs_percent")
 ```
 
 Next we define methods that say it's ok to automatically coerce percents to double and integer vectors.

@@ -35,5 +35,5 @@ reference:
   - "vctrs-conditions"
   - rcrd
   - fields
-  - vec_method_register
+  - s3_register
   - vec_resize
