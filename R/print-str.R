@@ -11,33 +11,33 @@
 #'   [str()] for commonly used options
 #' @keywords internal
 #' @export
-vec_print <- function(x, ...) {
-  vec_print_header(x, ...)
-  vec_print_data(x, ...)
-  vec_print_footer(x, ...)
+obj_print <- function(x, ...) {
+  obj_print_header(x, ...)
+  obj_print_data(x, ...)
+  obj_print_footer(x, ...)
   invisible(x)
 }
 
 #' @export
-#' @rdname vec_print
-vec_print_header <- function(x, ...) {
-  UseMethod("vec_print_header")
+#' @rdname obj_print
+obj_print_header <- function(x, ...) {
+  UseMethod("obj_print_header")
 }
 
 #' @export
-vec_print_header.default <- function(x, ...) {
+obj_print_header.default <- function(x, ...) {
   cat_line("<", vec_ptype_full(x), "[", length(x), "]>")
   invisible(x)
 }
 
 #' @export
-#' @rdname vec_print
-vec_print_data <- function(x, ...) {
-  UseMethod("vec_print_data")
+#' @rdname obj_print
+obj_print_data <- function(x, ...) {
+  UseMethod("obj_print_data")
 }
 
 #' @export
-vec_print_data.default <- function(x, ...) {
+obj_print_data.default <- function(x, ...) {
   if (length(x) == 0)
     return()
 
@@ -48,13 +48,13 @@ vec_print_data.default <- function(x, ...) {
 }
 
 #' @export
-#' @rdname vec_print
-vec_print_footer <- function(x, ...) {
-  UseMethod("vec_print_footer")
+#' @rdname obj_print
+obj_print_footer <- function(x, ...) {
+  UseMethod("obj_print_footer")
 }
 
 #' @export
-vec_print_footer.default <- function(x, ...) {
+obj_print_footer.default <- function(x, ...) {
   invisible(x)
 }
 
@@ -62,40 +62,40 @@ vec_print_footer.default <- function(x, ...) {
 # str ---------------------------------------------------------------------
 
 #' @export
-#' @rdname vec_print
-vec_str <- function(x, ...) {
-  vec_str_header(x, ...)
-  vec_str_data(x, ...)
-  vec_str_footer(x, ...)
+#' @rdname obj_print
+obj_str <- function(x, ...) {
+  obj_str_header(x, ...)
+  obj_str_data(x, ...)
+  obj_str_footer(x, ...)
 }
 
 #' @export
-#' @rdname vec_print
-vec_str_header <- function(x, ...) {
-  UseMethod("vec_str_header")
+#' @rdname obj_print
+obj_str_header <- function(x, ...) {
+  UseMethod("obj_str_header")
 }
 
 #' @export
-vec_str_header.default <- function(x, ...) {
+obj_str_header.default <- function(x, ...) {
   invisible(x)
 }
 
 #' @export
-#' @rdname vec_print
-vec_str_data <- function(x, ...) {
-  UseMethod("vec_str_data")
+#' @rdname obj_print
+obj_str_data <- function(x, ...) {
+  UseMethod("obj_str_data")
 }
 
 #' @export
-vec_str_data.default <- function(x, ...) {
+obj_str_data.default <- function(x, ...) {
   if (is.list(x)) {
-    vec_str_recursive(x, ...)
+    obj_str_recursive(x, ...)
   } else {
-    vec_str_leaf(x, ...)
+    obj_str_leaf(x, ...)
   }
 }
 
-vec_str_recursive <- function(x, ...,
+obj_str_recursive <- function(x, ...,
                               indent.str = "",
                               nest.lev = 0) {
 
@@ -112,7 +112,7 @@ vec_str_recursive <- function(x, ...,
   )
 }
 
-vec_str_leaf <- function(x, ...,
+obj_str_leaf <- function(x, ...,
                          indent.str = "",
                          width = getOption("width")) {
   width <- width - nchar(indent.str) - 2
@@ -132,13 +132,13 @@ vec_str_leaf <- function(x, ...,
 }
 
 #' @export
-#' @rdname vec_print
-vec_str_footer <- function(x, ...) {
-  UseMethod("vec_str_footer")
+#' @rdname obj_print
+obj_str_footer <- function(x, ...) {
+  UseMethod("obj_str_footer")
 }
 
 #' @export
-vec_str_footer.default <- function(x, ...,
+obj_str_footer.default <- function(x, ...,
                                    indent.str = "",
                                    nest.lev = 0) {
   attr <- attributes(x)

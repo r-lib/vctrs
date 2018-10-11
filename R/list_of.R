@@ -72,7 +72,7 @@ is_list_of <- function(x) {
 # Formatting --------------------------------------------------------------
 
 #' @export
-vec_print_data.vctrs_list_of <- function(x, ...) {
+obj_print_data.vctrs_list_of <- function(x, ...) {
   if (length(x) == 0)
     return()
 

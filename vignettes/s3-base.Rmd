@@ -59,7 +59,7 @@ format.fctr <- function(x, ...) {
   attr(x, "levels")[x]
 }
 
-vec_print_footer.fctr <- function(x, ...) {
+obj_print_footer.fctr <- function(x, ...) {
   cat("Levels: ", paste0(attr(x, "levels"), collapse = ", "), "\n", sep = "")
 }
 
@@ -185,10 +185,10 @@ x <- ordrd(letters[1:3])
 x
 ```
 
-Then we add a `vec_print_footer` method to distinguish between ordered and unordered factors:
+Then we add a `obj_print_footer` method to distinguish between ordered and unordered factors:
 
 ```{r}
-vec_print_footer.ordrd <- function(x, ...) {
+obj_print_footer.ordrd <- function(x, ...) {
   cat("Levels: ", paste0(attr(x, "levels"), collapse = " > "), "\n", sep = "")
 }
 x

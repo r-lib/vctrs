@@ -66,8 +66,8 @@ format.vctrs_rcrd <- function(x, ...) {
 }
 
 #' @export
-vec_str_data.vctrs_rcrd <- function(x, ...) {
-  vec_str_leaf(x, ...)
+obj_str_data.vctrs_rcrd <- function(x, ...) {
+  obj_str_leaf(x, ...)
 }
 
 #' @method vec_cast vctrs_rcrd

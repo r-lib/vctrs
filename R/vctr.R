@@ -133,13 +133,13 @@ c.vctrs_vctr <- function(...) {
 
 #' @export
 print.vctrs_vctr <- function(x, ...) {
-  vec_print(x, ...)
+  obj_print(x, ...)
   invisible(x)
 }
 
 #' @export
 str.vctrs_vctr <- function(object, ...) {
-  vec_str(object, ...)
+  obj_str(object, ...)
 }
 
 # manually registered in zzz.R

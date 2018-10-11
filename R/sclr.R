@@ -40,7 +40,7 @@ vec_type.vctrs_sclr <- function(x) {
 
 #' @export
 print.vctrs_sclr <- function(x, ...) {
-  vec_print(x, ...)
+  obj_print(x, ...)
   invisible(x)
 }
 

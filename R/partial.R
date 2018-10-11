@@ -19,13 +19,13 @@ new_partial <- function(..., class = character()) {
 }
 
 #' @export
-vec_print_header.vctrs_partial <- function(x, ...) {
+obj_print_header.vctrs_partial <- function(x, ...) {
   NULL
   invisible(x)
 }
 
 #' @export
-vec_print_data.vctrs_partial <- function(x, ...) {
+obj_print_data.vctrs_partial <- function(x, ...) {
   cat_line(vec_ptype_full(x))
   invisible(x)
 }

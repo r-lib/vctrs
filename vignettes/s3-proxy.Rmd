@@ -176,7 +176,7 @@ format.vctrs_poly <- function(x, ...) {
   vapply(x, format_one, character(1))
 }
 
-vec_print_data.vctrs_poly <- function(x) {
+obj_print_data.vctrs_poly <- function(x) {
   if (length(x) == 0)
     return()
   print(format(x), quote = FALSE)

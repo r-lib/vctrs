@@ -382,10 +382,10 @@ cached_sum <- function(x) {
 }
 ```
 
-For this class, we don't need to provide a method for `format()`. Instead, we'll provide a method for `vec_print_footer()` that prints the sum:
+For this class, we don't need to provide a method for `format()`. Instead, we'll provide a method for `obj_print_footer()` that prints the sum:
 
 ```{r}
-vec_print_footer.vctrs_cached_sum <- function(x, ...) {
+obj_print_footer.vctrs_cached_sum <- function(x, ...) {
   cat("# Sum: ", format(attr(x, "sum"), digits = 3), "\n", sep = "")
 }
 
