@@ -248,7 +248,7 @@ vec_type2.vctrs_percent.vctrs_percent     <- function(x, y) x
 s3_register("vctrs::vec_type2", "vctrs_percent")
 ```
 
-Next we define methods that say it's ok to automatically coerce percents to double and integer vectors.
+Next we define methods that say it's ok to automatically coerce double and integer vectors to percents.
 
 ```{r}
 vec_type2.vctrs_percent.double  <- function(x, y) percent()
