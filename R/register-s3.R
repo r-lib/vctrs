@@ -5,15 +5,16 @@
 #' `@export` roxygen2 tag). However, this technique requires that the generic
 #' be in an imported package, and sometimes you want to suggest a package,
 #' and only provide a method when that package is loaded. `s3_register()`
-#' should be called from your package's `.onLoad()` to dynamically register
-#' a method only if the generic's package is loaded.
+#' can be called from your package's `.onLoad()` to dynamically register
+#' a method only if the generic's package is loaded. (To avoid taking a
+#' dependency on vctrs for this one function, please feel free to copy
+#' and paste the function source into your own package.)
 #'
-#' `s3_register()` is also useful when demonstrating class creation
-#' in a vignette, since as of R 3.5.0, method lookup no longer always involves
-#' the lexical scope.
-#'
-#' As of R 3.6.0, a similar effect can be accomplished by using "delayed method
-#' registration", by placing the following in your `NAMESPACE` file:
+#' For R 3.5.0 and later, `s3_register()` is also useful when demonstrating
+#' class creation in a vignette, since method lookup no longer always involves
+#' the lexical scope. For R 3.6.0 and later, you can achieve a similar effect
+#' by using "delayed method registration", i.e. placing the following in your
+#' `NAMESPACE` file:
 #'
 #' ```
 #' if (getRversion() >= "3.6.0") {
