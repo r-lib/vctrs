@@ -4,6 +4,6 @@
 ^codecov\.yml$
 ^\.travis\.yml$
 ^README\.Rmd$
-^man/figures/types\.graffle$
+^man/figures/*\.graffle$
 ^.*\.Rproj$
 ^\.Rproj\.user$
