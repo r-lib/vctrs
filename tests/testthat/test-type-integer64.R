@@ -115,3 +115,11 @@ test_that("integer64 vs logical", {
   expect_is(vec_arith("-", x, y), "integer64")
   expect_is(vec_arith("-", y, x), "integer64")
 })
+
+# Math --------------------------------------------------------------------
+
+test_that("vec_math integer64", {
+  x <- new_int64(bit64::as.integer64(1:10))
+
+  expect_equal(vec_math("sum", x), sum(x))
+})

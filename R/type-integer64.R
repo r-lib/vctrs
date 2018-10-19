@@ -205,3 +205,14 @@ vec_arith.integer64.MISSING <- function(op, x, y) {
     stop_incompatible_op(op, x, y)
   )
 }
+
+# Math --------------------------------------------------------------------
+
+# just skipping calling vec_data because it removes the "integer64" class
+
+#' @export
+#' @rdname new_int64
+vec_math.integer64 <- function(fun, x, ...) {
+  fun <- getExportedValue("base", fun)
+  fun(x, ...)
+}
