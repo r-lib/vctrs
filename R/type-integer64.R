@@ -1,7 +1,7 @@
 
 #' 64 bit integers
 #'
-#' A [integer64] vector is 64 bits integer vector. Details
+#' A `integer64` vector is 64 bits integer vector. Details
 #' are implented in the `bit64` package.
 #'
 #' These functions help the `integer64` class from `bit64` in to
@@ -132,4 +132,76 @@ vec_cast.integer64.double <- function(x, to) {
 #' @method vec_cast.logical integer64
 vec_cast.double.integer64 <- function(x, to) {
   as.double(x)
+}
+
+# Arithmetic --------------------------------------------------------------
+
+# we need these otherwise `vec_data()`
+vec_arith_integer64_other <- function(op, x, y){
+  c(x, y) %<-% vec_recycle_common(x, y)
+
+  op_fun <- getExportedValue("base", op)
+  op_fun(x, vec_data(y))
+}
+
+vec_arith_other_integer64 <- function(op, x, y){
+  c(x, y) %<-% vec_recycle_common(x, y)
+
+  op_fun <- getExportedValue("base", op)
+  op_fun(vec_data(x), y)
+}
+
+vec_arith_integer64_integer64 <- function(op, x, y){
+  c(x, y) %<-% vec_recycle_common(x, y)
+
+  op_fun <- getExportedValue("base", op)
+  op_fun(x, y)
+}
+
+#' @rdname new_int64
+#' @export vec_arith.integer64
+#' @method vec_arith integer64
+#' @export
+vec_arith.integer64 <- function(op, x, y) UseMethod("vec_arith.integer64", y)
+
+#' @method vec_arith.integer64 default
+#' @export
+vec_arith.integer64.default <- function(op, x, y) stop_incompatible_op(op, x, y)
+
+#' @method vec_arith.integer64 integer64
+#' @export
+vec_arith.integer64.integer64 <- function(op, x, y) vec_arith_integer64_integer64(op, x, y)
+
+#' @method vec_arith.integer64 integer
+#' @export
+vec_arith.integer64.integer <- function(op, x, y) vec_arith_integer64_other(op, x, y)
+
+#' @method vec_arith.integer integer64
+#' @export
+vec_arith.integer.integer64 <- function(op, x, y) vec_arith_other_integer64(op, x, y)
+
+#' @method vec_arith.integer64 numeric
+#' @export
+vec_arith.integer64.numeric <- function(op, x, y) vec_arith_integer64_other(op, x, y)
+
+#' @method vec_arith.numeric integer64
+#' @export
+vec_arith.numeric.integer64 <- function(op, x, y) vec_arith_other_integer64(op, x, y)
+
+#' @method vec_arith.integer64 logical
+#' @export
+vec_arith.integer64.logical <- function(op, x, y) vec_arith_integer64_other(op, x, y)
+
+#' @method vec_arith.logical integer64
+#' @export
+vec_arith.logical.integer64 <- function(op, x, y) vec_arith_other_integer64(op, x, y)
+
+#' @method vec_arith.integer64 MISSING
+#' @export
+vec_arith.integer64.MISSING <- function(op, x, y) {
+  switch(op,
+    `-` = -x,
+    `+` = x,
+    stop_incompatible_op(op, x, y)
+  )
 }
