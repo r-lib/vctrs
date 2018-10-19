@@ -6,8 +6,6 @@
 \alias{vec_ptype_abbr.integer64}
 \alias{vec_type2.integer64}
 \alias{vec_cast.integer64}
-\alias{vec_arith.integer64}
-\alias{vec_math.integer64}
 \title{64 bit integers}
 \usage{
 new_int64(x = bit64::integer64(), ..., class = character())
@@ -19,10 +17,6 @@ new_int64(x = bit64::integer64(), ..., class = character())
 \method{vec_type2}{integer64}(x, y)
 
 \method{vec_cast}{integer64}(x, to)
-
-\method{vec_arith}{integer64}(op, x, y)
-
-\method{vec_math}{integer64}(fun, x, ...)
 }
 \arguments{
 \item{x}{64 bit integer vector}
