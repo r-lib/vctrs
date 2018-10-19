@@ -23,7 +23,7 @@ library(vctrs)
 
 This vignette will work through a few different types of vector:
 
-* Perent: a simple class that changes the display of a numeric vector, but
+* Percent: a simple class that changes the display of a numeric vector, but
   not its calculation. This will help you get familiar with the basics of 
   vctrs. I recommend that every read this section, before picking up choosing
   from the following sections based on the type of vector you'll need.
