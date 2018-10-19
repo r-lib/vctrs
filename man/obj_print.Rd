@@ -9,7 +9,7 @@
 \alias{obj_str_header}
 \alias{obj_str_data}
 \alias{obj_str_footer}
-\title{\code{print() and}str()` generics.}
+\title{\code{print() and }str()` generics.}
 \usage{
 obj_print(x, ...)
 
