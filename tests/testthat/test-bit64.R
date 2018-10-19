@@ -32,4 +32,11 @@ test_that("vec_type2 for integer64 works", {
 
   expect_equal(vec_type2(x, TRUE), bit64::integer64())
   expect_equal(vec_type2(TRUE, x), bit64::integer64())
+
+  expect_error(vec_type2(data.frame(), x))
+  expect_error(vec_type2(x, data.frame()))
+})
+
+test_that("vec_ptype_abbr.integer64", {
+  expect_equal(vec_ptype_abbr(bit64::as.integer64(1:10)), "int64")
 })
