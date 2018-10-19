@@ -5,7 +5,6 @@
 \alias{vec_arith.default}
 \alias{vec_arith.logical}
 \alias{vec_arith.numeric}
-\alias{vec_arith.integer}
 \alias{vec_arith_base}
 \alias{MISSING}
 \title{Arithmetic operations}
@@ -17,8 +16,6 @@ vec_arith(op, x, y)
 \method{vec_arith}{logical}(op, x, y)
 
 \method{vec_arith}{numeric}(op, x, y)
-
-\method{vec_arith}{integer}(op, x, y)
 
 vec_arith_base(op, x, y)
 
