@@ -27,7 +27,8 @@ Suggests:
     pkgdown,
     rmarkdown,
     testthat,
-    tibble
+    tibble,
+    bit64
 VignetteBuilder: 
     knitr
 Encoding: UTF-8
