@@ -1,15 +1,15 @@
 context("test-vctr")
 
 test_that("constructor sets attributes", {
-  x <- new_vctr(1:4, class = "x", x = 1)
-  expect_equal(x, structure(1:4, class = c("x", "vctrs_vctr"), x = 1))
+  x <- new_vctr(1:4, class = "x", y = 1)
+  expect_equal(x, structure(1:4, class = c("x", "vctrs_vctr"), y = 1))
 })
 
-test_that(".data must be a vector", {
+test_that("x must be a vector", {
   expect_error(new_vctr(mean), "vector type")
 })
 
-test_that(".data must not have attributes, apart from names", {
+test_that("x must not have attributes, apart from names", {
   expect_error(new_vctr(structure(1, a = 1)), "attributes")
   expect_error(new_vctr(c(a = 1)), NA)
 })
