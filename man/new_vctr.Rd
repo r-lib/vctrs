@@ -8,11 +8,11 @@
 new_vctr(.data, ..., class = character())
 }
 \arguments{
+\item{.data}{Foundation of class. Must be a vector}
+
 \item{...}{Name-value pairs defining attributes}
 
 \item{class}{Name of subclass.}
-
-\item{x}{Foundation of class. Must be a vector}
 }
 \description{
 This abstract class provides a set of useful default methods that makes it
