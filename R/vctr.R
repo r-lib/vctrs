@@ -50,7 +50,7 @@
 #' * `dims()`, `dims<-()`, `dimnames()`, `dimnames<-`, `levels()`, and
 #'   `levels<-` methods throw errors.
 #'
-#' @param x Foundation of class. Must be a vector
+#' @param .data Foundation of class. Must be a vector
 #' @param ... Name-value pairs defining attributes
 #' @param class Name of subclass.
 #' @export
