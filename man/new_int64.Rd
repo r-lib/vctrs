@@ -24,8 +24,8 @@ new_int64(x = bit64::integer64(), ..., class = character())
 \item{..., class}{Used to for subclasses.}
 }
 \description{
-A \code{integer64} vector is 64 bits integer vector. Details
-are implented in the \code{bit64} package.
+A \code{integer64} vector is a 64 bits integer vector. Details
+are implemented in the \code{bit64} package.
 }
 \details{
 These functions help the \code{integer64} class from \code{bit64} in to

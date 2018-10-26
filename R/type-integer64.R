@@ -1,8 +1,8 @@
 
 #' 64 bit integers
 #'
-#' A `integer64` vector is 64 bits integer vector. Details
-#' are implented in the `bit64` package.
+#' A `integer64` vector is a 64 bits integer vector. Details
+#' are implemented in the `bit64` package.
 #'
 #' These functions help the `integer64` class from `bit64` in to
 #' the vctrs type system by providing constructors, coercion functions,
