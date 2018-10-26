@@ -5,14 +5,14 @@
 \alias{vctr}
 \title{vctr (vector) S3 class}
 \usage{
-new_vctr(.data, ..., class = character())
+new_vctr(x, ..., class = character())
 }
 \arguments{
+\item{x}{Foundation of class. Must be a vector}
+
 \item{...}{Name-value pairs defining attributes}
 
 \item{class}{Name of subclass.}
-
-\item{x}{Foundation of class. Must be a vector}
 }
 \description{
 This abstract class provides a set of useful default methods that makes it

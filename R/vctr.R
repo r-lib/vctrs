@@ -56,26 +56,26 @@
 #' @export
 #' @keywords internal
 #' @aliases vctr
-new_vctr <- function(.data, ..., class = character()) {
-  if (!is_vector(.data)) {
-    stop("`.data` must be a vector type", call. = FALSE)
+new_vctr <- function(x, ..., class = character()) {
+  if (!is_vector(x)) {
+    stop("`x` must be a vector type", call. = FALSE)
   }
-  check_attr(.data)
+  check_attr(x)
 
-  structure(.data, ..., class = c(class, "vctrs_vctr"))
+  structure(x, ..., class = c(class, "vctrs_vctr"))
 }
 
-check_attr <- function(.data) {
-  attr <- attributes(.data)
+check_attr <- function(x) {
+  attr <- attributes(x)
   if (is.null(attr))
     return()
 
   if (!identical(names(attr), "names")) {
-    stop("`.data` must not have attributes apart from names", call. = FALSE)
+    stop("`x` must not have attributes apart from names", call. = FALSE)
   }
 
   if (!names_all_or_nothing(attr[[1]])) {
-    stop("If any elements of `.data` are named, all must be named", call. = FALSE)
+    stop("If any elements of `x` are named, all must be named", call. = FALSE)
   }
 }
 
