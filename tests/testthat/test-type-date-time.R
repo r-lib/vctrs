@@ -11,8 +11,27 @@ test_that("date-times have informative types", {
   expect_equal(vec_ptype_full(new_duration(10)), "duration<secs>")
 })
 
-
 # coerce ------------------------------------------------------------------
+
+test_that("datetime coercions are symmetric and unchanging", {
+  types <- list(
+    new_date(),
+    new_datetime(),
+    new_datetime(tzone = "US/Central"),
+    as.POSIXlt(character(), tz = "US/Central"),
+    difftime(Sys.time() + 1000, Sys.time()),
+    difftime(Sys.time() + 1, Sys.time())
+  )
+  mat <- maxtype_mat(types)
+
+  expect_true(isSymmetric(mat))
+  expect_known_output(
+    mat,
+    test_path("test-type-date-time.txt"),
+    print = TRUE,
+    width = 200
+  )
+})
 
 test_that("tz comes from first non-empty", {
   # On the assumption that if you've set the time zone explicitly it

@@ -6,7 +6,7 @@ test_that("data frames print nicely", {
   expect_equal(vec_ptype_abbr(mtcars), "df[,11]")
 
   expect_known_output(
-    file = test_path("test-type-df.txt"),
+    file = test_path("test-type-data-frame.txt"),
     {
       cat("mtcars:\n")
       print(vec_ptype(mtcars))
@@ -25,7 +25,7 @@ test_that("embedded data frames print nicely", {
 
 
   expect_known_output(
-    file = test_path("test-type-df-embedded.txt"),
+    file = test_path("test-type-data-frame-embedded.txt"),
     {
       print(vec_ptype(df))
     }

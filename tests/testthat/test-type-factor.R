@@ -13,6 +13,23 @@ test_that("ptype methods are descriptive", {
 
 # Coercion ----------------------------------------------------------------
 
+test_that("factor/character coercions are symmetric and unnchanging", {
+  types <- list(
+    ordered(character()),
+    factor(),
+    character()
+  )
+  mat <- maxtype_mat(types)
+  expect_true(isSymmetric(mat))
+
+  expect_known_output(
+    mat,
+    print = TRUE,
+    test_path("test-type-factor.txt"),
+    width = 200
+  )
+})
+
 test_that("factors level are unioned", {
   # This is technically incorrect, but because of R's existing behaviour
   # anything else will cause substantial friction.

@@ -94,6 +94,24 @@ test_that("assingment can increase size of vector", {
 
 # Type system -------------------------------------------------------------
 
+test_that("list coercions are symmetric and unchanging", {
+  types <- list(
+    list(),
+    list_of(.ptype = integer()),
+    list_of(.ptype = double()),
+    list_of(.ptype = character())
+  )
+  mat <- maxtype_mat(types)
+
+  expect_true(isSymmetric(mat))
+  expect_known_output(
+    mat,
+    test_path("test-list_of-type.txt"),
+    print = TRUE,
+    width = 200
+  )
+})
+
 test_that("max<list_of<a>, list_of<b>> is list_of<max<a, b>>", {
   r_int <- list_of(.ptype = integer())
   r_dbl <- list_of(.ptype = double())
