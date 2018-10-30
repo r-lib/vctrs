@@ -1,14 +1,22 @@
 #' Find the prototype of a set of vectors
 #'
-#' `vec_type_common()` finds the common type from a set of vectors.
-#' `vec_ptype()` is designed for interative exploration: it wraps
-#' `vec_type_common()` with a custom class that gives a nice output.
+#' `vec_type()` finds the prototype of a single vector.
+#' `vec_type_common()` finds the common type of multiple vectors.
+#' `vec_ptype()` nicely prints the common type of any number of
+#' inputs, and is designed for interative exploration.
 #'
-#' This function works by finding the prototype (a zero-length subset) of each
-#' input, then using [Reduce()] and [vec_type2()] to find the common class.
-#' Logical vectors that consist only of `NA` are converted to the special
-#' [unspecified] type. This is needed because bare `NA`s should be
-#' automatically coercible to any 1d vector.
+#' `vec_type_common()` first finds the prototype of each input, then
+#' finds the common type using [vec_type2()] and [Reduce()].
+#'
+#' @section Prototype:
+#' A prototype is [size](vec_size) 0 vector containing attributes, but no
+#' data. Generally, this is just `vec_slice(x, 0L)`, but some inputs
+#' require special handling.
+#'
+#' For example, the prototype of logical vectors that only contain missing
+#' values is the special [unspecified] type, which can be coerced to any
+#' other 1d type. This allows bare `NA`s to represent missing values for
+#' any 1d vector type.
 #'
 #' @param ...,x Vectors inputs
 #' @param .ptype If `NULL`, the default, the output type is determined by
@@ -17,7 +25,8 @@
 #'   Alternatively, you can supply `.ptype` to give the output known type.
 #'   If `getOption("vctrs.no_guessing")` is `TRUE` you must supply this value:
 #'   this is a convenient way to make production code demand fixed types.
-#' @return A prototype
+#' @return `vec_type()` and `vec_type_common()` return a prototype
+#'   (a size-0 vector)
 #' @export
 #' @examples
 #' # Unknown types ------------------------------------------
@@ -52,58 +61,6 @@
 #'   data.frame(y = 2),
 #'   data.frame(z = "a")
 #' )
-vec_ptype <- function(..., .ptype = NULL) {
-  type <- vec_type_common(..., .ptype = .ptype)
-  new_vec_ptype(type)
-}
-
-#' @export
-#' @rdname vec_ptype
-vec_type_common <- function(..., .ptype = NULL) {
-  if (!is_partial(.ptype)) {
-    return(vec_type(.ptype))
-  }
-
-  if (isTRUE(getOption("vctrs.no_guessing"))) {
-    stop("strict mode is activated; you must supply complete .ptype", call. = FALSE)
-  }
-
-  args <- compact(list2(.ptype, ...))
-  if (length(args) == 0) {
-    ptype <- NULL
-  } else if (length(args) == 1) {
-    ptype <- vec_type(args[[1]])
-  } else {
-    ptypes <- map(args, vec_type)
-    ptype <- reduce(ptypes, vec_type2)
-  }
-
-  vec_type_finalise(ptype)
-}
-
-
-new_vec_ptype <- function(ptype) {
-  structure(
-    list(ptype),
-    class = "vec_ptype"
-  )
-}
-
-#' @export
-print.vec_ptype <- function(x, ...) {
-  cat("prototype: ", format(x), "\n", sep = "")
-  invisible(x)
-}
-
-#' @export
-format.vec_ptype <- function(x, ...) {
-  vec_ptype_full(x[[1]])
-}
-#' @export
-as.character.vec_ptype <- format.vec_ptype
-
-#' @export
-#' @rdname vec_ptype
 vec_type <- function(x) {
   UseMethod("vec_type")
 }
@@ -136,3 +93,37 @@ vec_type.data.frame <- function(x) {
   cols <- map(x, vec_type)
   vec_restore(cols, x)
 }
+
+#' @export
+#' @rdname vec_type
+vec_type_common <- function(..., .ptype = NULL) {
+  if (!is_partial(.ptype)) {
+    return(vec_type(.ptype))
+  }
+
+  if (isTRUE(getOption("vctrs.no_guessing"))) {
+    stop("strict mode is activated; you must supply complete .ptype", call. = FALSE)
+  }
+
+  args <- compact(list2(.ptype, ...))
+  if (length(args) == 0) {
+    ptype <- NULL
+  } else if (length(args) == 1) {
+    ptype <- vec_type(args[[1]])
+  } else {
+    ptypes <- map(args, vec_type)
+    ptype <- reduce(ptypes, vec_type2)
+  }
+
+  vec_type_finalise(ptype)
+}
+
+#' @export
+#' @rdname vec_type
+vec_ptype <- function(..., .ptype = NULL) {
+  type <- vec_type_common(..., .ptype = .ptype)
+
+  cat_line("prototype: ", vec_ptype_full(type))
+  invisible()
+}
+
