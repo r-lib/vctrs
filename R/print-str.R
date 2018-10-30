@@ -1,6 +1,6 @@
 # print -------------------------------------------------------------------
 
-#' `print() and `str()` generics.
+#' `print()` and `str()` generics.
 #'
 #' These are contructed to be more easily extensible since you can override
 #' the `_header()`, `_data()` or `_footer()` components individually. The
