@@ -35,7 +35,7 @@ test_that("handles three types of data frame rownames", {
 
 # vec_slice --------------------------------------------------------------
 
-test_that("can subset object of an dimensionality", {
+test_that("can subset object of any dimensionality", {
   x0 <- c(1, 1)
   x1 <- ones(2)
   x2 <- ones(2, 3)
@@ -61,6 +61,13 @@ test_that("can modify subset", {
   x3 <- array(c(2, 1, 2, 1, 2, 1, 2, 1), c(2, 2, 2))
   vec_slice(x3, 1L) <- 1
   expect_equal(x3, array(1, c(2, 2, 2)))
+})
+
+test_that("ignores NA in logical subsetting", {
+  x <- c(NA, 1, 2)
+  expect_equal(vec_slice(x, x > 0), c(1, 2))
+  expect_equal(`vec_slice<-`(x, x > 0, 1), c(NA, 1, 1))
+  expect_equal(`vec_slice<-`(x, x > 0, 2:1), c(NA, 2, 1))
 })
 
 # vec_na ------------------------------------------------------------------

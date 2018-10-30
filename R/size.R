@@ -99,6 +99,9 @@ vec_size2 <- function(nx, ny) {
 #'
 #' vec_slice(mtcars, 1:3)
 vec_slice <- function(x, i) {
+  if (is.logical(i)) {
+    i <- which(i)
+  }
   stopifnot(is.integer(i) || is.character(i))
 
   if (is.null(x)) {
@@ -129,8 +132,11 @@ vec_slice <- function(x, i) {
 #' @export
 #' @rdname vec_slice
 `vec_slice<-` <- function(x, i, value) {
+  if (is.logical(i)) {
+    i <- which(i)
+  }
   stopifnot(is.integer(i) || is.character(i))
-  stopifnot(vec_size(i) == vec_size(value))
+  value <- vec_recycle(value, vec_size(i))
 
   if (is.null(x)) {
     NULL
