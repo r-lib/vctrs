@@ -65,5 +65,38 @@ vec_c(factor("a"), factor("b"))
 #> [1] a b
 #> Levels: a b
 vec_c(Sys.Date(), Sys.time())
-#> [1] "2018-10-30 00:00:00 CDT" "2018-10-30 10:14:55 CDT"
+#> [1] "2018-10-30 00:00:00 CDT" "2018-10-30 18:07:35 CDT"
 ```
+
+## Motivation
+
+The original motivation for vctrs from two separate, but related
+problems. The first problem is that `base::c()` has rather undesirable
+behaviour when you mix different S3 vectors:
+
+``` r
+# combining factors makes integers
+c(factor("a"), factor("b"))
+#> [1] 1 1
+
+# combing dates and date-times give incorrect values
+dt <- as.Date("2020-01-1")
+dttm <- as.POSIXct(dt)
+
+c(dt, dttm)
+#> [1] "2020-01-01"    "4321940-06-07"
+c(dttm, dt)
+#> [1] "2019-12-31 18:00:00 CST" "1969-12-31 23:04:22 CST"
+```
+
+This behaviour arises because `c()` has dual purposes: as well as it’s
+primary duty of combining vectors, it has a secondary duty of stripping
+attributes. For example, `?POSIXct` suggests that you should use `c()`
+if you want to reset the timezone.
+
+The second problem is that `dplyr::bind_rows()` is not extensible by
+others. Currently, it handles arbitrary S3 classes using heuristics, but
+these often fail, and it feels like we really need to think through the
+problem in order to build a principled solution. This intersects with
+the need to cleanly support more types of data frame columns including
+lists of data frames, data frames, and matrices.

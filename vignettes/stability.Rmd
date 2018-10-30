@@ -7,118 +7,143 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-```{r setup, include = FALSE}
+```{r, include = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>"
 )
 ```
 
-```{r}
+This vignette introduces the ideas of type-stability and size-stability. If a function possesses these properties it is substantially easier to reason about because to predict the "shape" of the output, you only need to know the "shape"s of the inputs.
+
+This work is partly motivated by a common pattern that I noticed in myself when reviewing code: if when reading the code (not running it!), I can't predict the type of each variables, I feel very uneasy about the code. This is important because most unit tests explore typical inputs, rather than exhaustively testing the strange and unusual. Analysing about the types (and size) of variables makes it possible to spot unpleasant edge cases.
+
+```{r setup}
 library(vctrs)
 ```
 
-## Motivation
+## Definitions
 
-The primary motivation for vctrs from two separate, but related problems. The first problem is that `base::c()` has rather undesirable behaviour when you mix different S3 vectors:
+We say a function is __type-stable__ iif:
 
-```{r}
-# combining factors makes integers
-c(factor("a"), factor("b"))
+1.  You can predict the output type knowing only the input types. 
+1.  The order of arguments in ... does not affect the output type.
 
-# even if you combine with a string
-c("a", factor("a"))
+Similary, a function is __size-stable__ iif:
 
-# combing dates and date-times give incorrect values
-dt <- as.Date("2020-01-1")
-dttm <- as.POSIXct(dt)
+1.  You can predict the output size knowing only the input sizes. 
+1.  The order of arguments in ... does not affect the output size.
 
-c(dt, dttm)
-c(dttm, dt)
+We'll call functions that don't obey these principle __type-unstable__ and __size-unstable__ respectively.
 
-# as do combining dates and factors
-c(dt, factor("a"))
-c(factor("a"), dt)
-```
+## Examples
 
-This behaviour arises because `c()` has dual purposes: as well as it's primary duty of combining vectors, it has a secondary duty of stripping attributes. For example, `?POSIXct` suggests that you should use `c()` if you want to reset the timezone. A detailed comparison of vctrs vs base R behaviour can at the end of this vignette.
+To make these ideas concrete, lets apply them to a few base functions:
 
-The second problem is that `dplyr::bind_rows()` is not extensible by others. Currently, it handles arbitrary S3 classes using heuristics, but these often fail, and it feels like we really need to think through the problem in order to build a principled solution. This intersects with the need to cleanly support more types of data frame columns including lists of data frames, data frames, and matrices.
+1.  `mean()` is trivially type-stable and size-stable because it always returns
+    a double vector of length 1 (or it throws an error).
+    
+1.  Suprisingly, `median()` is not type-stable:
 
-## Stability
+    ```{r}
+    vec_ptype(median(c(1L, 1L)))
+    vec_ptype(median(c(1L, 1L, 1L)))
+    ```
 
-Type stability:
+1.  `sapply()` is type-unstable because you can't predict the output type only
+    knowing the input types.
 
-* You can predict the output type knowing only the input types 
-  (not the values).
+    ```{r}
+    vec_ptype(sapply(1L, function(x) c(x, x)))
+    vec_ptype(sapply(integer(), function(x) c(x, x)))
+    ```
+    
+1.  `vapply()` is type-stable because `vec_ptype(vapply(x, fun, template))` is 
+    always `vec_ptype(template)`.
 
-* The order of arguments in ... should not affect the output type.
+1.  `c()` is type-unstable because `c(x, y)` doesn't always the same type 
+    as `c(y, x)`.
+    
+    ```{r}
+    vec_ptype(c(NA, Sys.Date()))
+    vec_ptype(c(Sys.Date(), NA))
+    ```
+    
+    `c()` is not quite size-stable, but it is length-stable because 
+    `length(c(x, y))` is always `length(x) + length(y)`.
+    
+1.  `ifelse()` is length-stable because `length(ifelse(cond, true, false))`
+    is always `length(cond)`. `ifelse()` is type-unstable because the output
+    type depends on the value of `cond`:
+    
+    ```{r}
+    vec_ptype(ifelse(NA, 1L, 1L))
+    vec_ptype(ifelse(FALSE, 1L, 1L))
+    ```
 
-Additionally, the should be as few sets of type-stable rules as possible.
+1.  `read.csv(file)` is type-unstable and size-unstable because while you know 
+    it will return a data frame, you don't know what columns it will return, or
+    how many rows it will have. Similarly, `df[[i]]` is not type-stable because 
+    the result depends on the _value_ of `i`. There are very many important 
+    functions that can not be made type-stable or size-stable!
+    
+The biggest challenges of type-stability occur when you're somewhere in between `mean()` and `read.csv()`: when you have a couple of inputs to a function and they're different types. Functions of this nature include `c()` and `ifelse()`, but also `rbind()`. We'll focus on these functions of intermediate complexity in this vignette.
 
-Many important functions can't be type-stable, e.g. `read.csv()`. You don't want to only use type-stable functions; but you should prefer them where possible
-
-Length stability
+On top of type- and size-stability, it's also desirable to have a single set of rules that are applied consistently. This is the goal of `vec_cast_common()` and `vec_recycle_common()`: you can use these functions to ensure that your function obeys a standard set of rules.
 
 
-## `c()` and `vec_c()`
+## `c()` and `vctrs::vec_c()`
 
-### Atomic vectors
+In this section we'll compare and contrast `c()` and `vec_c()`. `vec_c()` is both type- and size-stable because it possesses the following invariants:
 
-```{r, error = TRUE}
-# c() will coerce any atomic type to character
-c(1, "x")
+* `vec_type(vec_c(x, y))` equals `vec_type_common(x, y)`
+* `vec_size(vec_c(X, y))` equals `vec_size(x) + vec_size(y)`
 
-# vctrs is stricter, and requires an explicit cast
-vec_c(1, "x")
+If we only consider atomic vectors, `c()` is type-stable because it uses a hierarchy of types: character > complex > double > integer > logical. Things start to break down when we get to S3 vectors, as we'll see shortly. Another undesirable property of `c()` which I won't consider further is it's not consistent with `unlist()`, i.e. `unlist(list(x, y))` does not always equal `c(x, y)`.
 
-vec_c(1, "x", .ptype = character())
-```
+I have two goals here: 
+
+* To fully document the quirks of `c()`, hence motivating the development 
+  of an alternative.
+  
+* To discuss non-obvious consequences of the invariants above.
 
 ### Factors
+
+As documented in `c()`, combining two factors returns an integer vector:
 
 ```{r}
 fa <- factor("a")
 fb <- factor("b")
 
-# c() strips all factor attributes giving an integer vector
-# (as documented in ?c)
 c(fa, fb)
-
-# unlist() creates a new factor with the union of the levels 
-fs <- list(fa, fb)
-unlist(fs)
 ```
 
-vctrs always unions the levels. This is a somewhat contentious decision, primarily motivated by pragmatics.
+`vec_c()` returns a factor taking the unions the levels. This is behaviour is motivated by pragmatics: there are many places in base R that automatically convert character vectors to factors, so enforcing stricter behaviour would be unnecessarily onerous. (This is backed up by experience with `dplyr::bind_rows()` which is stricter, and is a common source of user difficult). 
 
 ```{r}
 vec_c(fa, fb)
+vec_c(fb, fa)
 ```
 
-vctrs doesn't currently provide an `unlist()` equivalent, but you can use a tidy dots feature:
+### Date-times
 
-```{r}
-vec_c(!!!fs)
-```
-
-### Time zones
-
-As documented, `c()` strips time zones:
+`c()` strips the time zone associated with date-times:
 
 ```{r}
 datetime_nz <- as.POSIXct("2020-01-01 09:00", tz = "Pacific/Auckland")
-
 c(datetime_nz)
 ```
 
-`vec_c()` preserves them:
+This behaviour is documented in `?DateTimeClasses`, but is the source of considerable user pain.
+
+`vec_c()` preserves time zones:
 
 ```{r}
 vec_c(datetime_nz)
 ```
 
-If there are multiple time zones, vctrs takes the first non-local timezone:
+This leads to a decision: what time zone should be used if input don't all have the same time zone? Again, we could be strict, and force the user to manually align all the time zones. However, this is onerous (particularly because base provides no easy way to change the time zone of an existing vector), so vctrs chooses to takes the first non-local timezone:
 
 ```{r}
 datetime_local <- as.POSIXct("2020-01-01 09:00")
@@ -131,59 +156,45 @@ vec_ptype(datetime_nz, datetime_houston)
 
 ### Dates and date-times
 
-Combining dates and date-times with `c()` gives silently incorrect results:
+Mixing dates and date-times with `c()` gives silently incorrect results:
 
 ```{r}
 date <- as.Date("2020-01-01")
 datetime <- as.POSIXct("2020-01-01 09:00")
 
-# If the first argument to c() is a date, the result is a date
-# But the datetime is not converted correctly (the number of seconds
-# in the datetime is interpreted as the number of days in the date)
 c(date, datetime)
-
-# If the first argument to c() is a datetime, the result is a datetime
-# But the date is not converted correctly (the number of days in the
-# date is interpreted as the number of seconds in the date)
 c(datetime, date)
 ```
 
-When you mix dates and date-times, vctrs returns a date-time, and converts dates to date-times at midnight (in the timezone of the date-time).
+This behaviour arises because neither `c.Date()` nor `c.POSIXct()` check that all inputs are of the same type.
+
+`vec_c()` uses a standard set of rules to avoid this problem. When you mix dates and date-times, vctrs returns a date-time, and converts dates to date-times at midnight (in the timezone of the date-time).
 
 ```{r}
-vec_c(datetime, date)
-
 vec_c(date, datetime)
 vec_c(date, datetime_nz)
 ```
 
 ### Missing values
 
-vctrs treats a logical vector consisting only of `NA` specially: it's an unspecified type than can be converted to any other 1d type:
+If a missing value comes at the beginning of the inputs, `c()` falls back to the internal behaviour which strips all attributes:
 
 ```{r}
-vec_c(NA, "x")
-vec_c(NA, fa)
-vec_c(NA, date)
-vec_c(NA, datetime)
-```
-
-Whereas `c()` strips the classes:
-
-```{r}
-c(NA, "x")
 c(NA, fa)
 c(NA, date)
 c(NA, datetime)
 ```
 
-## `ifelse()`
+`vec_c()` takes a different approach. Any 
+vctrs treats a logical vector consisting only of `NA` specially: it's an unspecified type than can be converted to any other 1d type:
 
 ```{r}
-typeof(ifelse(FALSE, 1, "x"))
-typeof(ifelse(TRUE, 1, "x"))
-typeof(ifelse(NA, 1, "x"))
+vec_c(NA, fa)
+vec_c(NA, date)
+vec_c(NA, datetime)
 ```
+
+### Data frames
 
 ## `rbind()` and `vec_rbind()`
 
@@ -242,22 +253,6 @@ Like `vec_c()` you can specify the desired output type:
 
 ```{r}
 vec_rbind(df1, df2, .ptype = data.frame(x = double(), y = double()))
-```
-
-### Empty inputs
-
-Because `rbind()` can produce both matrices and data frames, its identity element is `NULL`:
-
-```{r}
-rbind()
-rbind(NULL)
-```
-
-Because `vec_rbind()` only produces data frames, its identity element is an empty data frame:
-
-```{r}
-vec_rbind()
-vec_rbind(NULL)
 ```
 
 [custom-condition]: https://adv-r.hadley.nz/conditions.html#custom-conditions
