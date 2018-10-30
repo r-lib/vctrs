@@ -1,0 +1,266 @@
+---
+title: "Type and size stability"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Type and size stability}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r}
+library(vctrs)
+```
+
+## Motivation
+
+The primary motivation for vctrs from two separate, but related problems. The first problem is that `base::c()` has rather undesirable behaviour when you mix different S3 vectors:
+
+```{r}
+# combining factors makes integers
+c(factor("a"), factor("b"))
+
+# even if you combine with a string
+c("a", factor("a"))
+
+# combing dates and date-times give incorrect values
+dt <- as.Date("2020-01-1")
+dttm <- as.POSIXct(dt)
+
+c(dt, dttm)
+c(dttm, dt)
+
+# as do combining dates and factors
+c(dt, factor("a"))
+c(factor("a"), dt)
+```
+
+This behaviour arises because `c()` has dual purposes: as well as it's primary duty of combining vectors, it has a secondary duty of stripping attributes. For example, `?POSIXct` suggests that you should use `c()` if you want to reset the timezone. A detailed comparison of vctrs vs base R behaviour can at the end of this vignette.
+
+The second problem is that `dplyr::bind_rows()` is not extensible by others. Currently, it handles arbitrary S3 classes using heuristics, but these often fail, and it feels like we really need to think through the problem in order to build a principled solution. This intersects with the need to cleanly support more types of data frame columns including lists of data frames, data frames, and matrices.
+
+## Stability
+
+Type stability:
+
+* You can predict the output type knowing only the input types 
+  (not the values).
+
+* The order of arguments in ... should not affect the output type.
+
+Additionally, the should be as few sets of type-stable rules as possible.
+
+Many important functions can't be type-stable, e.g. `read.csv()`. You don't want to only use type-stable functions; but you should prefer them where possible
+
+Length stability
+
+
+## `c()` and `vec_c()`
+
+### Atomic vectors
+
+```{r, error = TRUE}
+# c() will coerce any atomic type to character
+c(1, "x")
+
+# vctrs is stricter, and requires an explicit cast
+vec_c(1, "x")
+
+vec_c(1, "x", .ptype = character())
+```
+
+### Factors
+
+```{r}
+fa <- factor("a")
+fb <- factor("b")
+
+# c() strips all factor attributes giving an integer vector
+# (as documented in ?c)
+c(fa, fb)
+
+# unlist() creates a new factor with the union of the levels 
+fs <- list(fa, fb)
+unlist(fs)
+```
+
+vctrs always unions the levels. This is a somewhat contentious decision, primarily motivated by pragmatics.
+
+```{r}
+vec_c(fa, fb)
+```
+
+vctrs doesn't currently provide an `unlist()` equivalent, but you can use a tidy dots feature:
+
+```{r}
+vec_c(!!!fs)
+```
+
+### Time zones
+
+As documented, `c()` strips time zones:
+
+```{r}
+datetime_nz <- as.POSIXct("2020-01-01 09:00", tz = "Pacific/Auckland")
+
+c(datetime_nz)
+```
+
+`vec_c()` preserves them:
+
+```{r}
+vec_c(datetime_nz)
+```
+
+If there are multiple time zones, vctrs takes the first non-local timezone:
+
+```{r}
+datetime_local <- as.POSIXct("2020-01-01 09:00")
+datetime_houston <- as.POSIXct("2020-01-01 09:00", tz = "US/Central")
+
+vec_ptype(datetime_local, datetime_houston)
+vec_ptype(datetime_houston, datetime_nz)
+vec_ptype(datetime_nz, datetime_houston)
+```
+
+### Dates and date-times
+
+Combining dates and date-times with `c()` gives silently incorrect results:
+
+```{r}
+date <- as.Date("2020-01-01")
+datetime <- as.POSIXct("2020-01-01 09:00")
+
+# If the first argument to c() is a date, the result is a date
+# But the datetime is not converted correctly (the number of seconds
+# in the datetime is interpreted as the number of days in the date)
+c(date, datetime)
+
+# If the first argument to c() is a datetime, the result is a datetime
+# But the date is not converted correctly (the number of days in the
+# date is interpreted as the number of seconds in the date)
+c(datetime, date)
+```
+
+When you mix dates and date-times, vctrs returns a date-time, and converts dates to date-times at midnight (in the timezone of the date-time).
+
+```{r}
+vec_c(datetime, date)
+
+vec_c(date, datetime)
+vec_c(date, datetime_nz)
+```
+
+### Missing values
+
+vctrs treats a logical vector consisting only of `NA` specially: it's an unspecified type than can be converted to any other 1d type:
+
+```{r}
+vec_c(NA, "x")
+vec_c(NA, fa)
+vec_c(NA, date)
+vec_c(NA, datetime)
+```
+
+Whereas `c()` strips the classes:
+
+```{r}
+c(NA, "x")
+c(NA, fa)
+c(NA, date)
+c(NA, datetime)
+```
+
+## `ifelse()`
+
+```{r}
+typeof(ifelse(FALSE, 1, "x"))
+typeof(ifelse(TRUE, 1, "x"))
+typeof(ifelse(NA, 1, "x"))
+```
+
+## `rbind()` and `vec_rbind()`
+
+### Variables
+
+`rbind()` requires all inputs to have the same variables
+
+```{r, error = TRUE}
+df1 <- data.frame(x = TRUE)
+df2 <- data.frame(y = 2)
+
+# rbind() requires the inputs to have identical column names
+rbind(df1, df2)
+```
+
+`vec_rbind()` takes the union of columns:
+
+```{r}
+vec_rbind(df1, df2)
+```
+
+### Mixing data frames and vectors
+
+`rbind()` can silently discard data:
+
+```{r}
+rbind(data.frame(x = 1:3), c(1, 1000000))
+```
+
+`vec_rbind()` first converts any vector inputs to one-row data frames.
+
+```{r}
+vec_rbind(data.frame(x = 1:3), c(1, 1000000))
+```
+
+### Container class
+
+`rbind()` uses the class of the first argument:
+
+```{r}
+tb1 <- tibble::tibble(x = 3)
+
+class(rbind(tb1, df1))
+class(rbind(df1, tb1))
+```
+
+`vec_rbind()` uses the common class:
+
+```{r}
+class(vec_rbind(df1, df1))
+class(vec_rbind(tb1, df1))
+class(vec_rbind(df1, tb1))
+```
+
+Like `vec_c()` you can specify the desired output type:
+
+```{r}
+vec_rbind(df1, df2, .ptype = data.frame(x = double(), y = double()))
+```
+
+### Empty inputs
+
+Because `rbind()` can produce both matrices and data frames, its identity element is `NULL`:
+
+```{r}
+rbind()
+rbind(NULL)
+```
+
+Because `vec_rbind()` only produces data frames, its identity element is an empty data frame:
+
+```{r}
+vec_rbind()
+vec_rbind(NULL)
+```
+
+[custom-condition]: https://adv-r.hadley.nz/conditions.html#custom-conditions
+[s3]: https://adv-r.hadley.nz/s3.html
+[df-col]: https://adv-r.hadley.nz/vectors-chap.html#matrix-and-data-frame-columns
+[prefix-sum]: https://en.wikipedia.org/wiki/Prefix_sum#Parallel_algorithm
