@@ -73,13 +73,19 @@ vec_ptype_abbr.Date <- function(x) {
 }
 
 #' @export
-vec_ptype_full.POSIXt <- function(x) {
+vec_ptype_full.POSIXct <- function(x) {
   tzone <- if (tzone_is_local(x)) "local" else tzone(x)
   paste0("datetime<", tzone, ">")
 }
 
 #' @export
-vec_ptype_abbr.POSIXct <- function(x) {
+vec_ptype_full.POSIXlt <- function(x) {
+  tzone <- if (tzone_is_local(x)) "local" else tzone(x)
+  paste0("POSIXlt<", tzone, ">")
+}
+
+#' @export
+vec_ptype_abbr.POSIXt <- function(x) {
   "dttm"
 }
 
@@ -187,47 +193,101 @@ vec_cast.Date.default <- function(x, to) {
 }
 
 #' @rdname new_date
-#' @export vec_cast.POSIXt
-#' @method vec_cast POSIXt
+#' @export vec_cast.POSIXct
+#' @method vec_cast POSIXct
 #' @export
-vec_cast.POSIXt <- function(x, to) {
-  UseMethod("vec_cast.POSIXt")
+vec_cast.POSIXct <- function(x, to) {
+  UseMethod("vec_cast.POSIXct")
 }
 #' @export
-#' @method vec_cast.POSIXt double
-vec_cast.POSIXt.double <- function(x, to) {
+#' @method vec_cast.POSIXct double
+vec_cast.POSIXct.double <- function(x, to) {
   new_datetime(x, tzone = tzone(to))
 }
 #' @export
-#' @method vec_cast.POSIXt character
-vec_cast.POSIXt.character <- function(x, to) {
+#' @method vec_cast.POSIXct character
+vec_cast.POSIXct.character <- function(x, to) {
   as.POSIXct(x, tz = tzone(to))
 }
 #' @export
-#' @method vec_cast.POSIXt Date
-vec_cast.POSIXt.Date <- function(x, to) {
+#' @method vec_cast.POSIXct Date
+vec_cast.POSIXct.Date <- function(x, to) {
   as.POSIXct(as.character(x), tz = tzone(to))
 }
 #' @export
-#' @method vec_cast.POSIXt POSIXt
-vec_cast.POSIXt.POSIXt <- function(x, to) {
+#' @method vec_cast.POSIXct POSIXlt
+vec_cast.POSIXct.POSIXlt <- function(x, to) {
+  new_datetime(as.POSIXct(x), tzone = tzone(to))
+}
+#' @export
+#' @method vec_cast.POSIXct POSIXct
+vec_cast.POSIXct.POSIXct <- function(x, to) {
   new_datetime(vec_data(x), tzone = tzone(to))
 }
 #' @export
-#' @method vec_cast.POSIXt list
-vec_cast.POSIXt.list <- function(x, to) {
+#' @method vec_cast.POSIXct list
+vec_cast.POSIXct.list <- function(x, to) {
   vec_list_cast(x, to)
 }
 #' @export
-#' @method vec_cast.POSIXt logical
-vec_cast.POSIXt.logical <- function(x, to) {
+#' @method vec_cast.POSIXct logical
+vec_cast.POSIXct.logical <- function(x, to) {
   vec_unspecified_cast(x, to)
 }
 #' @export
-#' @method vec_cast.POSIXt default
-vec_cast.POSIXt.default <- function(x, to) {
+#' @method vec_cast.POSIXct default
+vec_cast.POSIXct.default <- function(x, to) {
   stop_incompatible_cast(x, to)
 }
+
+#' @rdname new_date
+#' @export vec_cast.POSIXlt
+#' @method vec_cast POSIXlt
+#' @export
+vec_cast.POSIXlt <- function(x, to) {
+  UseMethod("vec_cast.POSIXlt")
+}
+#' @export
+#' @method vec_cast.POSIXlt double
+vec_cast.POSIXlt.double <- function(x, to) {
+  as.POSIXlt(new_datetime(x, tzone = tzone(to)))
+}
+#' @export
+#' @method vec_cast.POSIXlt character
+vec_cast.POSIXlt.character <- function(x, to) {
+  as.POSIXlt(x, tz = tzone(to))
+}
+#' @export
+#' @method vec_cast.POSIXlt Date
+vec_cast.POSIXlt.Date <- function(x, to) {
+  as.POSIXlt(as.character(x), tz = tzone(to))
+}
+#' @export
+#' @method vec_cast.POSIXlt POSIXlt
+vec_cast.POSIXlt.POSIXlt <- function(x, to) {
+  as.POSIXlt(x, tz = tzone(to))
+}
+#' @export
+#' @method vec_cast.POSIXlt POSIXlt
+vec_cast.POSIXlt.POSIXct <- function(x, to) {
+  as.POSIXlt(x, tz = tzone(to))
+}
+#' @export
+#' @method vec_cast.POSIXlt list
+vec_cast.POSIXlt.list <- function(x, to) {
+  vec_list_cast(x, to)
+}
+#' @export
+#' @method vec_cast.POSIXlt logical
+vec_cast.POSIXlt.logical <- function(x, to) {
+  vec_unspecified_cast(x, to)
+}
+#' @export
+#' @method vec_cast.POSIXlt default
+vec_cast.POSIXlt.default <- function(x, to) {
+  stop_incompatible_cast(x, to)
+}
+
 
 #' @rdname new_date
 #' @export vec_cast.difftime
@@ -429,8 +489,10 @@ vec_arith.numeric.difftime <- function(op, x, y) {
 
 # Helpers -----------------------------------------------------------------
 
+# The tz attribute for POSIXlt can have 3 components
+# (time zone name, abbreviated name, abbreviated DST name)
 tzone <- function(x) {
-  attr(x, "tzone") %||% ""
+  attr(x, "tzone")[[1]] %||% ""
 }
 
 tzone_is_local <- function(x) {

@@ -5,7 +5,7 @@ bool is_data_frame(SEXP x) {
 }
 
 bool is_record(SEXP x) {
-  return Rf_inherits(x, "vctrs_rcrd");
+  return Rf_inherits(x, "vctrs_rcrd") || Rf_inherits(x, "POSIXlt");
 }
 
 bool is_scalar(SEXP x) {

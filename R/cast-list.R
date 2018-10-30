@@ -13,10 +13,10 @@
 #' @export
 #' @keywords internal
 vec_list_cast <- function(x, to) {
-  ns <- map_int(x, length)
+  ns <- map_int(x, vec_size)
   report_lossy_cast(x, to, !ns %in% c(0L, 1L))
 
-  n <- length(x)
+  n <- vec_size(x)
   out <- vec_na(to, n)
 
   for (i in seq_len(n)) {
@@ -24,7 +24,7 @@ vec_list_cast <- function(x, to) {
     if (length(val) == 0)
       next
 
-    out[[i]] <- vec_cast(val[[1]], to)
+    vec_slice(out, i) <- vec_cast(vec_slice(val, 1L), to)
   }
 
   if (is.object(to)) {

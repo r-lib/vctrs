@@ -29,6 +29,15 @@ test_that("tz comes from first non-empty", {
   expect_equal(vec_type2(z, y), z[0])
 })
 
+test_that("POSIXlt always steered towards POSIXct", {
+  dtc <- as.POSIXct("2020-01-01")
+  dtl <- as.POSIXlt("2020-01-01")
+
+  expect_equal(vec_type2(dtc, dtl), dtc[0])
+  expect_equal(vec_type2(dtl, dtc), dtc[0])
+  expect_equal(vec_type2(dtl, dtl), dtc[0])
+})
+
 
 # cast: dates ---------------------------------------------------------------
 
@@ -62,14 +71,24 @@ test_that("can cast NA", {
 # cast: datetimes -----------------------------------------------------------
 
 test_that("safe casts work as expected", {
-  datetime <- as.POSIXct("1970-02-01", tz = "UTC")
+  datetime_c <- as.POSIXct("1970-02-01", tz = "UTC")
+  datetime_l <- as.POSIXlt("1970-02-01", tz = "UTC")
 
-  expect_equal(vec_cast(NULL, datetime), NULL)
-  expect_equal(vec_cast(2678400, datetime), datetime)
-  expect_equal(vec_cast("1970-02-01", datetime), datetime)
-  expect_equal(vec_cast(datetime, datetime), datetime)
-  expect_equal(vec_cast(as.Date(datetime), datetime), datetime)
-  expect_equal(vec_cast(list(datetime), datetime), datetime)
+  expect_equal(vec_cast(NULL, datetime_c), NULL)
+  expect_equal(vec_cast(2678400, datetime_c), datetime_c)
+  expect_equal(vec_cast("1970-02-01", datetime_c), datetime_c)
+  expect_equal(vec_cast(datetime_c, datetime_c), datetime_c)
+  expect_equal(vec_cast(datetime_l, datetime_c), datetime_c)
+  expect_equal(vec_cast(as.Date(datetime_c), datetime_c), datetime_c)
+  expect_equal(vec_cast(list(datetime_c), datetime_c), datetime_c)
+
+  expect_equal(vec_cast(NULL, datetime_l), NULL)
+  expect_equal(vec_cast(2678400, datetime_l), datetime_l)
+  expect_equal(vec_cast("1970-02-01", datetime_l), datetime_l)
+  expect_equal(vec_cast(datetime_c, datetime_l), datetime_l)
+  expect_equal(vec_cast(datetime_l, datetime_l), datetime_l)
+  expect_equal(vec_cast(as.Date(datetime_l), datetime_l), datetime_l)
+  expect_equal(vec_cast(list(datetime_l), datetime_l), datetime_l)
 })
 
 test_that("invalid casts generate error", {
@@ -79,15 +98,21 @@ test_that("invalid casts generate error", {
 
 test_that("dates become midnight in date-time tzone", {
   date1 <- as.Date("2010-01-01")
-  datetime <- as.POSIXct(character(), tz = "Pacific/Auckland")
+  datetime_c <- as.POSIXct(character(), tz = "Pacific/Auckland")
+  datetime_l <- as.POSIXlt(character(), tz = "Pacific/Auckland")
 
-  date2 <- vec_cast(date1, datetime)
-  expect_equal(attr(date2, "tzone"), "Pacific/Auckland")
-  expect_equal(format(date2, "%H:%M"), "00:00")
+  date2_c <- vec_cast(date1, datetime_c)
+  expect_equal(tzone(date2_c), "Pacific/Auckland")
+  expect_equal(format(date2_c, "%H:%M"), "00:00")
+
+  date2_l <- vec_cast(date1, datetime_l)
+  expect_equal(tzone(date2_l), "Pacific/Auckland")
+  expect_equal(format(date2_l, "%H:%M"), "00:00")
 })
 
 test_that("can cast NA", {
   expect_equal(vec_cast(NA, new_datetime()), new_datetime(NA_real_))
+  expect_equal(vec_cast(NA, as.POSIXlt(new_datetime())), new_datetime(NA_real_))
 })
 
 # cast: durations ------------------------------------------------------------
