@@ -54,8 +54,10 @@ This vignette shows you the basic infrastructure for creating a new vector: defi
 * Subset-assignment methods (`[<-`, `[[<-`, `$<-`) are implemented based on the
   principle that the new values should be coerced to the same type as the 
   existing vector. This gives predictable behaviour and clear error messages.
-  
-## Percent {#percent}
+
+## Basics
+
+### Percent class
 
 In this section, I'll show you how to make a "percent" class, i.e. a double vector that is printed like it's a percentage. This is a good place to start because it's the simplest possible S3 class as it has no custom attributes.
 
@@ -169,7 +171,45 @@ Before you go on, check that user-friendly constructor returns a zero-length vec
 percent()
 ```
 
-### Casting
+## Casting and coercion
+
+### Coercions
+
+`vec_type2()` defines the possible set of automatic (implicit) coercions. These coercions happen silently, so they should be quite strict; if they're too flexible, they increase the chance of silently propagating mistakes. To think about what coercions your class should provide, it's useful to look at coercions that vctrs provides for base types:
+
+```{r, echo = FALSE}
+knitr::include_graphics("../man/figures/coerce.png")
+```
+
+If you squint your brain a little, I think you can see that each set of automatic coercions is about increasing resolution. Integers are low resolution versions of doubles, and dates are low resolution versions of date-times. Logicals are low resolution version of integers because there's a strong convention that `TRUE` and `FALSE` can be used interchangeably with `1` and `0`. 
+
+But what is the resolution of a factor? We must take a somewhat pragmatic approach because base R often converts character vectors to factors, and we don't want to be burdensome to users. So we say that a factor `x` has finer resolution than factor `y` if the levels of `y` are contained in `x`. So to find the common type of two factors, we take the union of the levels of both factors, resulting in a factor that has finer resolution than either. Finally, you can think of a character vector as a factor with every possible level, so factors and character vectors are coercible.
+
+I expect that most custom classes will be coercible to only a couple of other classes at most.
+
+### Casts
+
+`vec_cast()` defines the possible set user-requested coercions, known as __casts__. Because these are user initiated, the set of possible casts is much larger than the set of possible coercions. The following diagram shows the set of casts that vctrs provides for base classes. If you can follow arrows in the same direction from one class to another, then a cast exists.
+
+```{r, echo = FALSE}
+knitr::include_graphics("../man/figures/cast.png")
+```
+
+Note that the arrows are bidirectional: if you can cast from `x` to `y`, you should also be able to cast back from `y` to `x`. 
+
+If type `x` has greater resolution than `y`, there will be some inputs that lose precision. These should generate warnings using `warn_lossy_cast()`. You can see that in action when casting from doubles to integers; only some doubles can become integers without losing resolution.
+
+```{r}
+vec_cast(c(1, 2, 10), to = integer())
+
+vec_cast(c(1.5, 2, 10.5), to = integer())
+```
+
+Generally, you should provide a cast method whenever it's meaningful to cast back and forth from a given type. 
+
+
+### Percent class {#percent}
+
 
 Next, define possible casts between your vector and existing types. You do this by providing methods for `vec_cast()`. `vec_cast()` is a little unusual because the result depends on the type of both arguments: the input `x`, and the target type `to`. Techically, this means that we need __double dispatch__, which is described in detail in `vignette("double-dispatch")`. S3 does not natively support double dispatch, but we can implement with a trick: doing single dispatch twice.  Here we'll focus on the practicalities, giving you a recipe to follow for your class.
 
@@ -231,8 +271,6 @@ x
 x[[1]] <- "x"
 ```
 
-### Coercion
-
 Finally, we define methods for `vec_type2()` which tells vctrs when it is ok to perform automatic (aka implicit) coercion: given a pair of prototypes, it should either return their common type or throw an error.
 
 `vec_type2()` also uses double-dispatch, so we start off with a recipe:
@@ -269,7 +307,7 @@ x[1] <- 1
 
 However, you can assume any function beginning with `vec()` will handle these coercions correctly.
 
-## Decimal
+### Decimal class
 
 Now that you've seen the basics with a very simple S3 class, we'll gradually explore more complicated scenarios. This section creates a `decimal` class that always prints with the specified number of decimal places. This is very similar to `percent` but now the class needs an attribute: the number of decimal places to display.
 
@@ -364,7 +402,7 @@ vec_c(decimal(1, digits = 1), pi)
 vec_c(pi, decimal(1, digits = 1))
 ```
 
-## Cached sum {#cached-sum}
+### Cached sum class {#cached-sum}
 
 The next level up in complexity is an object that has data-dependent attributes. To explore this idea we'll create a vector that caches the sum of its values. As usual, we start with low-level and user-friendly constructors:
 
@@ -413,7 +451,10 @@ This works because most of the vctrs methods dispatch to the underlying base fun
 
 Note that `vec_restore.class` is subtly different from `vec_cast.class.class()`. `vec_restore()` is used when restoring attributes that have been lost; `vec_cast()` is used for coercions. This is easier to understand with a concrete example. Imagine factors were implements with `new_vectr()`. `vec_restore.factor()` would restore attributes back to an integer vector, but you would not want to allow manually casting an integer to a factor with `vec_cast()`. 
 
-# Rational
+
+## Records
+
+### Rational
 
 A fraction, or rational number can be represented by a pair of integer vectors representing the numerator (the number on top) and the denominator (the number on bottom), where the length of each vector must be the same. To represent such a data structure we turn to a new base data type: the record (or rcrd for short).
 
@@ -482,38 +523,352 @@ str(x)
 
 Implementing `vec_ptype()` and `vec_cast()` is straightforward following the existing recipes of `percent()`. If the class has additional attributes, follow the recipe of `decimal()`. If the attributes, vary based on the data, follow the recipe of `cached_sum()`.
 
-## General considerations
+```{r}
+vec_type2.vctrs_rational <- function(x, y) UseMethod("vec_type2.vctrs_rational", y)
+vec_type2.vctrs_rational.default <- function(x, y) stop_incompatible_type(x, y)
+vec_type2.vctrs_rational.vctrs_rational <- function(x, y) x
 
-### Coercions
-
-`vec_type2()` defines the possible set of automatic (implicit) coercions. These coercions happen silently, so they should be quite strict; if they're too flexible, they increase the chance of silently propagating mistakes. To think about what coercions your class should provide, it's useful to look at coercions that vctrs provides for base types:
-
-```{r, echo = FALSE}
-knitr::include_graphics("../man/figures/coerce.png")
+vec_cast.vctrs_rational <- function(x, to) UseMethod("vec_cast.vctrs_rational")
+vec_cast.vctrs_rational.default <- function(x, to) stop_incompatible_cast(x, y)
+vec_cast.vctrs_rational.vctrs_rational <- function(x, to) x
 ```
 
-If you squint your brain a little, I think you can see that each set of automatic coercions is about increasing resolution. Integers are low resolution versions of doubles, and dates are low resolution versions of date-times. Logicals are low resolution version of integers because there's a strong convention that `TRUE` and `FALSE` can be used interchangeably with `1` and `0`. 
 
-But what is the resolution of a factor? We must take a somewhat pragmatic approach because base R often converts character vectors to factors, and we don't want to be burdensome to users. So we say that a factor `x` has finer resolution than factor `y` if the levels of `y` are contained in `x`. So to find the common type of two factors, we take the union of the levels of both factors, resulting in a factor that has finer resolution than either. Finally, you can think of a character vector as a factor with every possible level, so factors and character vectors are coercible.
+## Equality and comparison
 
-I expect that most custom classes will be coercible to only a couple of other classes at most.
+vctrs provides two "proxy" generics that allow you to declare that your class have possesses certain properties. A proxy function returns a simple object (typically either a bare vector or a data frame), that possesses the same properties as your class. This permits efficient implementation of the vctrs internals because once you have the proxy object, all code can be written in C.
 
-### Casts
+* `vec_proxy_equal()` specifies how to test the elements of your for equality. 
+  This proxy underpins `==` and `!=`, but also `unique()`, `anyDuplicated()`, 
+  and `is.na()`.
 
-`vec_cast()` defines the possible set user-requested coercions, known as __casts__. Because these are user initiated, the set of possible casts is much larger than the set of possible coercions. The following diagram shows the set of casts that vctrs provides for base classes. If you can follow arrows in the same direction from one class to another, then a cast exists.
+* `vec_proxy_compare()` specifies how to compare the elements of your vector.
+  This proxy is used in `<`, `<=`, `>=`, `>`, `min()`, `max()`, `median()`, 
+  `quantile()`, and `xtfrm()` methods. (And `xtfrm()` is used in `order()` and 
+  `sort()`.)
 
-```{r, echo = FALSE}
-knitr::include_graphics("../man/figures/cast.png")
-```
+Where possible, it's a good idea to define methods for these generics because you get a lot of behaviour for relatively little work.
 
-Note that the arrows are bidirectional: if you can cast from `x` to `y`, you should also be able to cast back from `y` to `x`. 
+### Rational class
 
-If type `x` has greater resolution than `y`, there will be some inputs that lose precision. These should generate warnings using `warn_lossy_cast()`. You can see that in action when casting from doubles to integers; only some doubles can become integers without losing resolution.
+By default, `vec_proxy_equal()` converts a record to a data frame:
 
 ```{r}
-vec_cast(c(1, 2, 10), to = integer())
+x <- rational(c(1, 2, 1, 2), c(1, 1, 2, 2))
+x
 
-vec_cast(c(1.5, 2, 10.5), to = integer())
+vec_proxy_equal(x)
 ```
 
-Generally, you should provide a cast method whenever it's meaningful to cast back and forth from a given type. 
+And the default comparison is column by column:
+
+```{r}
+x == rational(1, 1)
+```
+
+This is an ok default, but doesn't do exactly what we want here because `rational(1, 1)` represents the same number as `rational(2, 2)` so they should be equal. We can fix that by dividing `n` and `d` by their greatest common divisor:
+
+```{r}
+# Thanks to Matthew Lundberg: https://stackoverflow.com/a/21504113/16632 
+gcd <- function(x, y) {
+  r <- x %% y
+  ifelse(r, gcd(y, r), y)
+}
+
+vec_proxy_equal.vctrs_rational <- function(x) {
+  n <- field(x, "n")
+  d <- field(x, "d")
+  gcd <- gcd(n, d)
+  
+  data.frame(n = n / gcd, d = d / gcd)
+}
+vec_proxy_equal(x)
+
+x == rational(1, 1)
+```
+
+Again, the default comparison proxy is just the elements:
+
+```{r}
+vec_proxy_compare(x)
+```
+So sorting doesn't give us increasing order:
+
+```{r}
+sort(x)
+```
+
+Here the easiest fix is to simply compute the fraction and then sort that real number:
+
+```{r}
+vec_proxy_compare.vctrs_rational <- function(x) {
+  field(x, "n") / field(x, "d")
+}
+
+sort(x)
+```
+
+(We could have used that technique for equality, but due to floating point computation it's not necessarily true that `x == y` implies that `d * x == d * y`.)
+
+### Polynomial class
+
+```{r}
+new_poly <- function(x) {
+  new_list_of(x, ptype = integer(), class = "vctrs_poly")
+}
+
+poly <- function(...) {
+  x <- list(...)
+  x <- lapply(x, vec_cast, integer())
+  new_poly(x)
+}
+
+vec_ptype_full.vctrs_poly <- function(x) "polynomial"
+vec_ptype_abbr.vctrs_poly <- function(x) "poly"
+
+format.vctrs_poly <- function(x, ...) {
+  format_one <- function(x) {
+    if (length(x) == 0) {
+      return("")
+    } else if (length(x) == 1) {
+      format(x)
+    } else {
+      suffix <- c(paste0("\u22C5x^", seq(length(x) - 1, 1)), "")
+      out <- paste0(x, suffix)
+      out <- out[x != 0L]
+      paste0(out, collapse = " + ")
+    }
+  }
+  vapply(x, format_one, character(1))
+}
+
+obj_print_data.vctrs_poly <- function(x) {
+  if (length(x) == 0)
+    return()
+  print(format(x), quote = FALSE)
+}
+
+p <- poly(1, c(1, 0, 1), c(1, 0, 0, 0, 2))
+p
+```
+
+Equality works out of the box because we can tell if two integer vectors are equal:
+
+```{r}
+p == poly(c(1, 0, 1))
+```
+
+But we can't order them, because lists are not comparable:
+
+```{r, error = TRUE}
+sort(p)
+```
+
+So we need to define a `vec_proxy_compare()` method:
+
+```{r}
+vec_proxy_compare.vctrs_poly <- function(x) {
+  x_raw <- vec_data(x)
+  # First figure out the maximum length
+  n <- max(vapply(x_raw, length, integer(1)))
+  
+  # Then expand all vectors to this length by filling in with zeros
+  full <- lapply(x_raw, function(x) c(rep(0L, n - length(x)), x))
+  
+  # Then turn into a data frame
+  as.data.frame(do.call(rbind, full))
+}
+
+sort(poly(3, 2, 1))
+sort(poly(1, c(1, 0, 0), c(1, 0)))
+```
+
+## Arithmetic
+
+vctrs also provides two mathematical generics that allow you to define a broad swath of mathematical behaviour at once:
+
+*  `vec_math()` specifies the behaviour of mathematical functions like 
+   `abs()`, `sum()`, and `mean()`.
+   
+*  `vec_arith()` specifies the behaviour of the arithmetic operations like
+   `+`, `-`, and `%%`.
+
+### Interval class
+
+First, we implement an interval class, a record composed of `l`eft and `r`ight fields. As usual, we make a low-level constructor, a user-friend constructor, and define a format method.
+
+```{r}
+new_interval <- function(l, r) {
+  stopifnot(is.double(l), is.double(r))
+  new_rcrd(list(l = l, r = r), class = "vctrs_interval")
+}
+interval <- function(l, r) {
+  c(l, r) %<-% vec_cast_common(l, r, .to = double())
+  c(l, r) %<-% vec_recycle_common(l, r)
+  c(l, r) %<-% list(pmin(l, r), pmax(l, r))
+  new_interval(l, r)
+}
+format.vctrs_interval <- function(x, ...) {
+  l <- field(x, "l")
+  r <- field(x, "r")
+  
+  out <- paste0("[", format(l), ",", format(r), "]")
+  out[is.na(x)] <- NA
+  out
+}
+
+x <- new_interval(c(0.25, 0.5, 0.75, NA), c(0.5, 1.5, 2, NA))
+x
+```
+
+Arithmetic operations are provided by a single generic, `vec_arith()`, which like `vec_cast()` and `vec_type2()`, uses double dispatch. That means we start with some boilerplate:
+
+```{r}
+vec_arith.vctrs_interval <- function(op, x, y) {
+  UseMethod("vec_arith.vctrs_interval", y)
+}
+vec_arith.vctrs_interval.default <- function(op, x, y) {
+  stop_incompatible_op(op, x, y)
+}
+```
+
+First, we'll implement a method two intervals. <https://en.wikipedia.org/wiki/Interval_arithmetic#Simple_arithmetic>
+
+```{r}
+vec_arith.vctrs_interval.vctrs_interval <- function(op, x, y) {
+  c(x, y) %<-% vec_recycle_common(x, y)
+  
+  x1 <- field(x, "l"); x2 <- field(x, "r")
+  y1 <- field(y, "l"); y2 <- field(y, "r")
+  
+  switch(op,
+    "+" = new_interval(x1 + y1, x2 + y2),
+    "-" = new_interval(xl - y2, x2 - y1),
+    "*" = new_interval(
+      pmin(x1 * y1, x1 * y2, x2 * y1, x2 * y2), 
+      pmax(x1 * y1, x1 * y2, x2 * y1, x2 * y2)
+    ),
+    stop_incompatible_op(op, x, y)
+  )
+}
+
+x + interval(0, 1)
+
+x * interval(0, 1)
+x * interval(1, 2)
+```
+
+```{r}
+vec_arith.vctrs_interval.double <- function(op, x, y) {
+  c(x, y) %<-% vec_recycle_common(x, y)
+  
+  l <- vec_arith_base(op, field(x, "l"), y)
+  r <- vec_arith_base(op, field(x, "r"), y)
+  
+  new_interval(pmin(l, r), pmax(l, r))
+}
+
+x + 1
+x / 2
+x * -2 
+```
+
+```{r}
+vec_arith.numeric.vctrs_interval <- function(op, x, y) {
+  c(x, y) %<-% vec_recycle_common(x, y)
+  
+  l <- vec_arith_base(op, x, field(y, "l"))
+  r <- vec_arith_base(op, x, field(y, "r"))
+  
+  new_interval(pmin(l, r), pmax(l, r))
+}
+
+1 + x
+2 / x 
+-2 * x 
+```
+
+(Note that this implementation prevents subclassing because we explicitly call `new_interval()`. If you wanted to support subclassing, you'd need to carefully think about how to use `vec_restore()`.)
+
+```{r}
+vec_arith.vctrs_interval.MISSING <- function(op, x, y) {
+  switch(op, 
+    `-` = x * -1,
+    `+` = x,
+    stop_incompatible_op(op, x, y)
+  )
+}
+-x 
++x
+```
+
+### Period and frequency classes
+
+```{r}
+period <- function(x) {
+  x <- vec_cast(x, double())
+  new_vctr(x, class = "vctrs_period")
+}
+format.vctrs_period <- function(x) {
+  paste0(format(vec_data(x)), " s")
+}
+
+freq <- function(x) {
+  x <- vec_cast(x, double())
+  new_vctr(x, class = "vctrs_frequency")
+}
+format.vctr_frequency <- function(x) {
+  paste0(format(vec_data(x)), " Hz")
+}
+
+period(0.1)
+freq(10)
+```
+
+
+```{r}
+vec_arith.vctr_frequency <- function(op, x, y) {
+  UseMethod("vec_arith.vctr_frequency", y)
+}
+vec_arith.vctrs_frequency.default <- function(op, x, y) {
+  stop_incompatible_op(op, x, y)
+}
+vec_arith.vctrs_period <- function(op, x, y) {
+  UseMethod("vec_arith.vctrs_period", y)
+}
+vec_arith.vctrs_period.default <- function(op, x, y) {
+  stop_incompatible_op(op, x, y)
+}
+```
+
+```{r}
+vec_arith.vctrs_period.vctrs_period <- function(op, x, y) {
+  switch(op,
+    `-` = ,
+    `+` = vec_restore(vec_arith_base(op, x, y), x),
+    stop_incompatible_op(op, x, y)
+  )
+}
+vec_arith.vctrs_period.numeric <- function(op, x, y) {
+  switch(op,
+    `-` = ,
+    `+` = ,
+    `*` = ,
+    `/` = vec_restore(vec_arith_base(op, x, y), x),
+    stop_incompatible_op(op, x, y)
+  )
+}
+vec_arith.numeric.vctrs_period <- function(op, x, y) {
+  switch(op,
+    `*` = vec_restore(vec_arith_base(op, x, y), y),
+    `/` = freq(vec_arith_base(op, x, y)),
+    stop_incompatible_op(op, x, y)
+  )
+}
+
+period(1) + period(1)
+2 * period(10)
+period(10) / 5
+5 / period(10)
+```
+
