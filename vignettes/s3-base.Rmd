@@ -243,7 +243,7 @@ x
 A datetime is a double with a timezone. The timezone affects the display of the object, not the time it represents. A default timezone of `""` reflects the current timezone.
 
 ```{r}
-new_datetime <- function(x, tzone = "") {
+new_datetime <- function(x = double(), tzone = "") {
   stopifnot(is.double(x))
   stopifnot(is.character(tzone), length(tzone) == 1L)
   
