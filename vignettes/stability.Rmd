@@ -36,7 +36,7 @@ Similary, a function is __size-stable__ iif:
 
 We'll call functions that don't obey these principle __type-unstable__ and __size-unstable__ respectively.
 
-## Examples
+### Examples
 
 To make these ideas concrete, lets apply them to a few base functions:
 
@@ -90,7 +90,6 @@ To make these ideas concrete, lets apply them to a few base functions:
 The biggest challenges of type-stability occur when you're somewhere in between `mean()` and `read.csv()`: when you have a couple of inputs to a function and they're different types. Functions of this nature include `c()` and `ifelse()`, but also `rbind()`. We'll focus on these functions of intermediate complexity in this vignette.
 
 On top of type- and size-stability, it's also desirable to have a single set of rules that are applied consistently. This is the goal of `vec_cast_common()` and `vec_recycle_common()`: you can use these functions to ensure that your function obeys a standard set of rules.
-
 
 ## `c()` and `vctrs::vec_c()`
 
@@ -254,8 +253,3 @@ Like `vec_c()` you can specify the desired output type:
 ```{r}
 vec_rbind(df1, df2, .ptype = data.frame(x = double(), y = double()))
 ```
-
-[custom-condition]: https://adv-r.hadley.nz/conditions.html#custom-conditions
-[s3]: https://adv-r.hadley.nz/s3.html
-[df-col]: https://adv-r.hadley.nz/vectors-chap.html#matrix-and-data-frame-columns
-[prefix-sum]: https://en.wikipedia.org/wiki/Prefix_sum#Parallel_algorithm

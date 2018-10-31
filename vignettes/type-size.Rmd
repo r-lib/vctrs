@@ -1,5 +1,5 @@
 ---
-title: "Types"
+title: "Type and size"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{Types}
@@ -14,20 +14,17 @@ knitr::opts_chunk$set(
 )
 ```
 
-vctrs uses the concept of a type, or prototype, rather than class in order to capture important additional attributes. As you will learn, this gives a clean separation between size and prototype and hence between recycling and type-coercion rules. 
+Rather than using `class()` and `length()`, vctrs has notions of prototype (`vec_ptype()`) and size (`vec_size()`). This vignette motivates why these alternatives are necessary, and connects their definitions to type coercion and the recycling rules.
+
+Both size and type are motivated by the utility of thinking about a function's interface, rather than it's implementation. See `vignette("stability")` for more details.
 
 ```{r}
 library(vctrs)
-library(tibble)
 ```
 
 ## Type
 
-A useful way to understand the high-level structure of a function is to think about its __type__. Instead of worrying about the specific values that are returned, we can just think about the classes[^class] involved. For example, if you `c()` together an integer and double vector you get a double vector. To express this more succinctly, we'll adopt a convention common in other programming langauges and write the class of the vector in angle brackets like `<integer>`, `<double>`. Then we can describe `c()` as `c(<integer>, <double>)` -> `<double>`.
-
-[^class]: Here we'll ignore the distinction between the types of base vectors and the class of S3 vectors, using class to refer interchangeably to both.
-
-Unfortunately, the `class()` of an object is inadequate for this purpose:
+`vec_type()` is motivated by the need to capture the metadata associated with a vector, without capturing any data. Unfortunately, the `class()` of an object is inadequate for this purpose:
 
 * The `class()` doesn't include attributes. Attributes are important because
   they store the levels of a factor, and the timezone of a `POSIXct`.
@@ -35,13 +32,17 @@ Unfortunately, the `class()` of an object is inadequate for this purpose:
 * The `class()` of a matrix is "matrix", and doesn't include the type of the
   underlying vector, or the number of columns.
   
-Instead vctrs takes advantage of R's vectorised nature and uses a __prototype__, which is a 0-observation slice of the data structure. This is a miniature version of the vector that contains all of the attributes but none of the data. Conveniently, you can create many prototypes using existing base functions (e.g, `double()`, `factor(levels = c("a", "b"))`). 
+Instead vctrs takes advantage of R's vectorised nature and uses a __prototype__, a 0-observation slice of the vector. This is a miniature version of the vector that contains all of the attributes but none of the data. 
 
-### Prototypes
+Conveniently, you can create many prototypes using existing base functions (e.g, `double()`, `factor(levels = c("a", "b"))`). vctrs provides a few helpers (e.g. `new_date()`, `new_datetime()`, `new_duration()`) where base R doesn't provide a convenient interface.
 
-You can use `vec_type()` to create a prototype from an existing object. However, many base vectors have uninformative printing methods for 0-length subsets, so vctrs also provides `vec_ptype()`. `vec_ptype()` is designed for interactive exploration; it's called only for its side-effect of printing the prototype:
+### Base prototypes
 
-*  Atomic vectors are straightforward:
+`vec_type()` creates a prototype from an existing object. However, many base vectors have uninformative printing methods for 0-length subsets, so while `vec_type()` is useful for programming with, it's not so great for interactive exploration. To resolve this problem vctrs also provides `vec_ptype()`, which is called for its side-effect of printing the prototype in a friendly way.
+
+Using `vec_ptype()` allows us to explore the prototypes of classes in base R.
+
+*  Atomic vectors have no attributes, and just display the underlying `typeof()`:
 
     ```{r}
     vec_ptype(FALSE)
@@ -51,17 +52,19 @@ You can use `vec_type()` to create a prototype from an existing object. However,
     vec_ptype(list(1, 2, 3))
     ```
 
-*  Matrices and arrays lose the first dimension as this is the size
-   (and size and type are orthogonal by design).
+*  The prototype of matrices and arrays include the base type, and the 
+   dimensions after the first:
 
     ```{r}
-    vec_ptype(array(integer(), c(2, 3)))
-    vec_ptype(array(character(), c(2, 3, 4)))
+    vec_ptype(array(logical(), c(2, 3)))
+    vec_ptype(array(integer(), c(2, 3, 4)))
+    vec_ptype(array(character(), c(2, 3, 4, 5)))
     ```
 
-*  Factors have the levels attribute, a character vector. This can be 
-   arbitrarily long so the prototype just shows a hash; if the hash of two
-   factors is equal it's higly likely that their levels are also equal
+*  The prototype of a factor includes it levels. Levels are a character vector
+   which can be arbitrarily long so the prototype just shows a hash; if the 
+   hash of two factors is equal it's higly likely that their levels are also 
+   equal.
 
     ```{r}
     vec_ptype(factor("a"))
@@ -75,8 +78,9 @@ You can use `vec_type()` to create a prototype from an existing object. However,
     vec_type(factor("a"))
     ```
     
-*   Dates don't have any attributes, but date-times (`POSIXct`) have a 
-    time zone and durations (`difftime`) have units.
+*   Looking at the date/time classes, dates don't have any attributes, but 
+    date-times (`POSIXct`) have a time zone and durations (`difftime`) have 
+    units.
 
     ```{r}
     vec_ptype(Sys.Date())
@@ -88,7 +92,7 @@ You can use `vec_type()` to create a prototype from an existing object. However,
     name and type of each column:
     
     ```{r}
-    vec_ptype(data.frame(x = FALSE, y = 1L, z = 2.5))
+    vec_ptype(data.frame(a = FALSE, b = 1L, c = 2.5, d = "x"))
     ```
 
     Data frames can have columns that are themselves data frames, making this
