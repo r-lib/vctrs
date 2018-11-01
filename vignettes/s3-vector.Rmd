@@ -448,24 +448,39 @@ x[1]
 This works because most of the vctrs methods dispatch to the underlying base function, by first stripping off extra attributes with `vec_data()` and then reapplying them again with `vec_restore()`. The default `vec_restore()` method copies over all attributes, which is not appropriate when the attributes depend on the data.
 
 Note that `vec_restore.class` is subtly different from `vec_cast.class.class()`. `vec_restore()` is used when restoring attributes that have been lost; `vec_cast()` is used for coercions. This is easier to understand with a concrete example. Imagine factors were implements with `new_vectr()`. `vec_restore.factor()` would restore attributes back to an integer vector, but you would not want to allow manually casting an integer to a factor with `vec_cast()`. 
-## Records
+## Record-style objects
 
-### Rational
+Record-style objects use a list of equal-length vectors to represent individual components of the object. The best example of this is `POSIXlt`, which underneath the hood is a list of 11 fields like year, month, and day. Record-style classes override `length()` and subsetting  methods to conceal this implementation detail.
+   
+```{r}
+x <- as.POSIXlt(ISOdatetime(2020, 1, 1, 0, 0, 1:3))
+x
+
+length(x)
+length(unclass(x))
+
+x[[1]] # the first date time
+unclass(x)[[1]] # the first component, the number of seconds
+```
+
+vctrs makes it easy to create new record-style classes using `new_rcrd()`, which has a wide selection of default methods.
+
+### Rational class
 
 A fraction, or rational number can be represented by a pair of integer vectors representing the numerator (the number on top) and the denominator (the number on bottom), where the length of each vector must be the same. To represent such a data structure we turn to a new base data type: the record (or rcrd for short).
 
-As usual we start with low-level and user-friendly constructors. The low-level constructor calls `new_rcrd()` which expects a named list of equal-length vectors (and will error if given anything else).
+As usual we start with low-level and user-friendly constructors. The low-level constructor calls `new_rcrd()` which need a named list of equal-length vectors.
 
 ```{r}
 new_rational <- function(n = integer(), d = integer()) {
-  stopifnot(is.integer(n))
-  stopifnot(is.integer(d))
+  vec_assert(n, ptype = integer())
+  vec_assert(d, ptype = integer())
   
   new_rcrd(list(n = n, d = d), class = "vctrs_rational")
 }
 ```
 
-In our user friendly constructor as well as casting `n` and `d` to the desired type, we also recycle them to the same length.
+Our user friendly constructor casts `n` and `d` to integers and recycles them to the same length.
 
 ```{r}
 rational <- function(n, d) {
@@ -478,21 +493,21 @@ rational <- function(n, d) {
 x <- rational(1, 1:10)
 ```
 
-Behind the scenes, `x` is a named list with two elements. But to behave like a vector, those details are hidden:
+Behind the scenes, `x` is a named list with two elements. But those details are hidden so that it behaves like a vector:
 
 ```{r}
 names(x)
 length(x)
 ```
 
-To access the underlyings we need to use `field()` and `fields()`:
+To access the underlying fields we need to use `field()` and `fields()`:
 
 ```{r}
 fields(x)
 field(x, "n")
 ```
 
-Which allows us to create a format method:
+This allows us to create a format method:
 
 ```{r}
 format.vctrs_rational <- function(x, ...) {
@@ -511,25 +526,64 @@ vec_ptype_full.vctrs_rational <- function(x) "rational"
 x
 ```
 
-vctrs also uses this method in `str()`, hiding the underlying implementation details from the user:
+vctrs uses the `format()` method in `str()`, hiding the underlying implementation details from the user:
 
 ```{r}
 str(x)
 ```
 
-Implementing `vec_ptype()` and `vec_cast()` is straightforward following the existing recipes of `percent()`. If the class has additional attributes, follow the recipe of `decimal()`. If the attributes, vary based on the data, follow the recipe of `cached_sum()`.
+For `rational`, `vec_type2()` and `vec_cast()` follow the same pattern as  `percent()`. I allow coercion from integer and to doubles.
 
 ```{r}
 vec_type2.vctrs_rational <- function(x, y) UseMethod("vec_type2.vctrs_rational", y)
 vec_type2.vctrs_rational.default <- function(x, y) stop_incompatible_type(x, y)
-vec_type2.vctrs_rational.vctrs_rational <- function(x, y) x
+vec_type2.vctrs_rational.vctrs_unspecified <- function(x, y) x
+vec_type2.vctrs_rational.vctrs_rational <- function(x, y) new_rational()
+vec_type2.vctrs_rational.integer <- function(x, y) new_rational()
+vec_type2.integer.vctrs_rational <- function(x, y) new_rational()
 
 vec_cast.vctrs_rational <- function(x, to) UseMethod("vec_cast.vctrs_rational")
-vec_cast.vctrs_rational.default <- function(x, to) stop_incompatible_cast(x, y)
+vec_cast.vctrs_rational.default <- function(x, to) stop_incompatible_cast(x, to)
+vec_cast.vctrs_rational.logical <- function(x, to) vec_unspecified_cast(x, to)
 vec_cast.vctrs_rational.vctrs_rational <- function(x, to) x
+vec_cast.double.vctrs_rational <- function(x, to) field(x, "n") / field(x, "d")
+vec_cast.vctrs_rational.integer <- function(x, to) rational(x, 1)
+
+vec_c(rational(1, 2), 1L, NA)
 ```
 
-### Better decimal
+### Decimal2 class
+
+The previous implementation of `decimal` was built on top of doubles. This is a bad idea because decimal vectors are typically used when you care about precise values (i.e. dollars and cents in a bank account), and double values suffer from floating point problems. 
+
+A better implementation of a decimal class would use be to use pair of integers, one for the value to the left of the decimal point, and the other for the value to the right (divided by a `scale`). The code is a very quick sketch of how you might start creating such a class:
+
+```{r}
+new_decimal2 <- function(l, r, scale = 2L) {
+  vec_assert(l, ptype = integer())
+  vec_assert(r, ptype = integer())
+  vec_assert(scale, ptype = integer(), size = 1L)
+  
+  new_rcrd(list(l = l, r = r), scale = scale, class = "vctrs_decimal2")
+}
+
+decimal2 <- function(l, r, scale = 2L) {
+  l <- vec_cast(l, integer())
+  r <- vec_cast(r, integer())
+  c(l, r) %<-% vec_recycle_common(l, r)
+  scale <- vec_cast(scale, integer())
+  
+  # should check that r < 10^scale
+  new_decimal2(l = l, r = r, scale = scale)
+}
+
+format.vctrs_decimal2 <- function(x, ...) {
+  val <- field(x, "l") + field(x, "r") / 10^attr(x, "scale")
+  sprintf(paste0("%.0", attr(x, "scale"), "f"), val)
+}
+
+decimal2(10, c(0, 5, 99))
+```
 
 ## Equality and comparison
 
