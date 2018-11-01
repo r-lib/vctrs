@@ -1,5 +1,5 @@
 mtcars:
-prototype: data.frame<
+Prototype: data.frame<
   mpg : double
   cyl : double
   disp: double
@@ -14,7 +14,7 @@ prototype: data.frame<
 >
 
 iris:
-prototype: data.frame<
+Prototype: data.frame<
   Sepal.Length: double
   Sepal.Width : double
   Petal.Length: double

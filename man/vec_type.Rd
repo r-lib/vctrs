@@ -10,7 +10,7 @@ vec_type(x)
 
 vec_type_common(..., .ptype = NULL)
 
-vec_ptype(..., .ptype = NULL)
+vec_ptype(...)
 }
 \arguments{
 \item{..., x}{Vectors inputs}

@@ -120,10 +120,101 @@ vec_type_common <- function(..., .ptype = NULL) {
 
 #' @export
 #' @rdname vec_type
-vec_ptype <- function(..., .ptype = NULL) {
-  type <- vec_type_common(..., .ptype = .ptype)
+vec_ptype <- function(...) {
+  args <- compact(list2(...))
+  n <- length(args)
+  if (n == 0) {
+    cat_line("Prototype: NULL")
+  } else if (n == 1) {
+    cat_line("Prototype: ", vec_ptype_full(args[[1]]))
+  } else {
+    in_types <- map(args, vec_type)
+    out_types <- accumulate(in_types, vec_type2)
 
-  cat_line("prototype: ", vec_ptype_full(type))
+    in_full <- paste0("<", map_chr(in_types, vec_ptype_full), ">")
+    out_full <- paste0("<", map_chr(out_types, vec_ptype_full), ">")
+
+    out <- cbind(
+      n = paste0(seq(0, n - 1), ". "),
+      lhs = c("", out_full[-n]),
+      comma = " , ",
+      rhs = in_full,
+      equals = " = ",
+      res = c(in_full[[1]], out_full[-1])
+    )
+    out <- t(apply(out, 1, pad_height))
+    out <- apply(out, 2, pad_width)
+    # apply(out, 1:2, block_size)
+
+    out[, "lhs"] <- parens(out[, "lhs"])
+    out[, "rhs"] <- parens(out[, "rhs"], FALSE)
+
+    lines <- strsplit(out, "\n")
+    dim(lines) <- dim(out)
+
+    steps <- apply(lines, 1, function(x) do.call(cbind, x))
+    if (is.list(steps)) {
+      step_lines <- unlist(lapply(steps, function(x) apply(x, 1, paste0, collapse = "")))
+    } else {
+      step_lines <- apply(steps, 2, paste0, collapse = "")
+    }
+
+    cat_line("Protoype: ", out_full[[n]])
+    cat_line(step_lines)
+  }
+
   invisible()
 }
 
+block_size <- function(x) {
+  lines <- strsplit(x, "\n")[[1]]
+  width <- unique(map_int(lines, nchar))
+  paste0("[", length(lines), ", ", if (length(width) > 1) "?" else width, "]")
+}
+
+blank <- function(x) {
+  paste0(rep(" ", nchar(x)), collapse = "")
+}
+
+parens <- function(x, left = TRUE) {
+  x_lines <- strsplit(x, "\n")
+  x_lines <- map(x_lines, paren, left = left)
+  map_chr(x_lines, paste0, collapse = "\n")
+}
+
+paren <- function(x, left = TRUE) {
+  if (length(x) <= 1) {
+    if (left) {
+      paste0("( ", x)
+    } else {
+      paste0(x, " )")
+    }
+  } else {
+    if (left) {
+      paste0(c("\u250c ", rep("\u2502 ", length(x) - 2), "\u2514 "), x)
+    } else {
+      paste0(format(x), c(" \u2510", rep(" \u2502", length(x) - 2), " \u2518"))
+    }
+  }
+}
+
+pad_height <- function(x) {
+  pad <- function(x, n) c(x, rep("", n - length(x)))
+
+  lines <- strsplit(x, "\n")
+  height <- max(map_int(lines, length))
+  lines <- map(lines, pad, height)
+  map_chr(lines, paste0, "\n", collapse = "")
+}
+
+pad_width <- function(x) {
+  lines <- strsplit(x, "\n", fixed = TRUE)
+
+  # fix up strsplit bug
+  n <- map_int(lines, length)
+  lines[n == 0] <- ""
+
+  width <- max(unlist(map(lines, nchar)))
+  lines <- map(lines, format, width = width)
+  map_chr(lines, paste, collapse = "\n")
+}
