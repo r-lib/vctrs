@@ -692,6 +692,110 @@ vctrs also provides two mathematical generics that allow you to define a broad s
 *  `vec_arith()` specifies the behaviour of the arithmetic operations like
    `+`, `-`, and `%%`.
 
+### Meter class
+
+```{r}
+new_meter <- function(x) {
+  stopifnot(is.double(x))
+  new_vctr(x, class = "vctrs_meter")
+}
+
+format.vctrs_meter <- function(x, ...) {
+  paste0(format(vec_data(x)), " m")
+}
+
+meter <- function(x) {
+  x <- vec_cast(x, double())
+  new_meter(x)
+}
+
+x <- meter(1:10)
+x
+```
+
+Basic mathematic operations work:
+
+```{r}
+sum(x)
+mean(x)
+```
+
+But we can't do arithmetic:
+
+```{r, error = TRUE}
+x + 1
+meter(10) + meter(1)
+meter(10) * 3
+```
+
+Before we continue it's worth contemplating what algebra we should support:
+
+* It makes sense to add and subtract meters: that yields another meter object.
+  We can divide a meter by another meter (yielding a unitless number), but
+  we can't multiple to meters (because that would yield an area.)
+  
+* It makes sense to do any arithmetic operation with a number and a meter
+  unit _except_ dividing a number by a meter.
+
+`vec_arith()` is another function that uses double dispatch, so as usual we start with a template.
+  
+```{r}
+vec_arith.vctrs_meter <- function(op, x, y) {
+  UseMethod("vec_arith.vctrs_meter", y)
+}
+vec_arith.vctrs_meter.default <- function(op, x, y) {
+  stop_incompatible_op(op, x, y)
+}
+```
+
+Then write the method for two method objects:
+
+```{r, error = TRUE}
+vec_arith.vctrs_meter.vctrs_meter <- function(op, x, y) {
+  switch(
+    op,
+    "+" = ,
+    "-" = new_meter(vec_arith_base(op, x, y)),
+    "/" = vec_arith_base(op, x, y),
+    stop_incompatible_op(op, x, y)
+  )
+}
+
+meter(10) + meter(1)
+meter(10) - meter(1)
+meter(10) / meter(1)
+meter(10) * meter(1)
+```
+
+Then the pair of methods for a meter and a number. These are not symetric because while `meter(10) / 2` makes sense, `2 / meter(10)` does not.
+
+```{r, error = TRUE}
+vec_arith.vctrs_meter.numeric <- function(op, x, y) {
+  switch(
+    op,
+    "+" = ,
+    "-" = ,
+    "/" = ,
+    "*" = new_meter(vec_arith_base(op, x, y)),
+    stop_incompatible_op(op, x, y)
+  )
+}
+vec_arith.numeric.vctrs_meter <- function(op, x, y) {
+  switch(
+    op,
+    "+" = ,
+    "-" = ,
+    "*" = new_meter(vec_arith_base(op, x, y)),
+    stop_incompatible_op(op, x, y)
+  )
+}
+
+meter(2) * 10
+10 * meter(2) 
+meter(20) / 10
+10 / meter(20)
+```
+
 ### Interval class
 
 First, we implement an interval class, a record composed of `l`eft and `r`ight fields. As usual, we make a low-level constructor, a user-friend constructor, and define a format method.
