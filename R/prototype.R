@@ -129,7 +129,11 @@ vec_ptype <- function(...) {
     cat_line("Prototype: ", vec_ptype_full(args[[1]]))
   } else {
     in_types <- map(args, vec_type)
-    out_types <- accumulate(in_types, vec_type2)
+    out_types <- vector("list", length(in_types))
+    out_types[[1]] <- in_types[[1]]
+    for (i in seq2(2, n)) {
+      out_types[[i]] <- vec_type2(out_types[[i - 1]], in_types[[i]])
+    }
 
     in_full <- paste0("<", map_chr(in_types, vec_ptype_full), ">")
     out_full <- paste0("<", map_chr(out_types, vec_ptype_full), ">")
