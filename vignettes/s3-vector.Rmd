@@ -81,11 +81,13 @@ In this section you'll learn how to create a new vctrs class by calling `new_vct
 
 ### Percent class
 
-In this section, I'll show you how to make a `percent` class, i.e. a double vector that is printed as a percentage. We start by defining a low-level [constructor](https://adv-r.hadley.nz/s3.html#s3-constrcutor) that checks types and sizes then calls `new_vctr()`. `percent` is built on a numeric vector and doesn't have any attributes.
+In this section, I'll show you how to make a `percent` class, i.e. a double vector that is printed as a percentage. We start by defining a low-level [constructor](https://adv-r.hadley.nz/s3.html#s3-constrcutor) that uses `vec_assert()` to checks types and/or sizes then calls `new_vctr()`. 
+
+`percent` is built on a double vector of any length and doesn't have any attributes.
 
 ```{r}
 new_percent <- function(x = double()) {
-  stopifnot(is.double(x))
+  vec_assert(x, double())
   new_vctr(x, class = "vctrs_percent")
 }
 
@@ -285,27 +287,22 @@ Unforuntately there's no way to fix this problem with the current design of `c()
 
 ### Decimal class
 
-Now that you've seen the basics with a very simple S3 class, we'll gradually explore more complicated scenarios. This section creates a `decimal` class that prints with the specified number of decimal places. This is very similar to `percent` but now the class needs an attribute: the number of decimal places to display.
+Now that you've seen the basics with a very simple S3 class, we'll gradually explore more complicated scenarios. This section creates a `decimal` class that prints with the specified number of decimal places. This is very similar to `percent` but now the class needs an attribute: the number of decimal places to display (an integer vector of length 1).
 
 We start of as before, defining a low-level constructor, a user-friendly constructor, a `format()` method, and a `vec_ptype_abbr()`. Note that additional object attributes are simply passed along to `new_vctr()`:
 
 ```{r}
 new_decimal <- function(x = double(), digits = 2L) {
-  vec_assert(x, type = double())
-  vec_assert(digits, type = integer(), size = 1)
-  stopifnot(is.double(x))
-  stopifnot(is.integer(digits), length(digits) == 1)
-  
+  vec_assert(x, ptype = double())
+  vec_assert(digits, ptype = integer(), size = 1)
+
   new_vctr(x, digits = digits, class = "vctrs_decimal")
 }
 
 decimal <- function(x = double(), digits = 2L) {
   x <- vec_cast(x, double())
-  digits <- vec_cast(digits, integer())
-  if (length(digits) != 1) {
-    stop("`digits` must be length 1", call. = FALSE)
-  }
-  
+  digits <- vec_recycle(vec_cast(digits, integer()), 1L)
+
   new_decimal(x, digits = digits)
 }
 
@@ -354,7 +351,7 @@ vec_cast.vctrs_decimal.default <- function(x, to) stop_incompatible_cast(x, to)
 vec_cast.vctrs_decimal.logical <- function(x, to) vec_unspecified_cast(x, to)
 ```
 
-Casting and coercing from one decimal to another requires a little thought as the values of the `digits` attribute might be different, and we need some way to reconcile them. Here I've chosen to chose the maximum of the two, but for your class you might chose the left-hand side or throw an error.
+Casting and coercing from one decimal to another requires a little thought as the values of the `digits` attribute might be different, and we need some way to reconcile them. Here I've chosen to chose the maximum of the two; other reasonable options are to take the value from the left-hand side or throw an error.
 
 ```{r}
 vec_type2.vctrs_decimal.vctrs_decimal <- function(x, y) {
@@ -394,9 +391,9 @@ The next level up in complexity is an object that has data-dependent attributes.
 
 ```{r}
 new_cached_sum <- function(x = double(), sum = 0L) {
-  stopifnot(is.double(x))
-  stopifnot(is.double(sum), length(sum) == 1L)
-  
+  vec_assert(x, ptype = double())
+  vec_assert(sum, ptype = double(), size = 1L)
+
   new_vctr(x, sum = sum, class = "vctrs_cached_sum")
 }
 
@@ -406,7 +403,7 @@ cached_sum <- function(x) {
 }
 ```
 
-For this class, we don't need to provide a method for `format()`. Instead, we'll provide a method for `obj_print_footer()` that prints the sum:
+For this class, we can use the default `format()` method, and instead, we'll customise the `obj_print_footer()` method. This is a good place to display user facing attributes.
 
 ```{r}
 obj_print_footer.vctrs_cached_sum <- function(x, ...) {
@@ -415,6 +412,21 @@ obj_print_footer.vctrs_cached_sum <- function(x, ...) {
 
 x <- cached_sum(runif(10))
 x
+```
+
+We'll also override `sum()` and `mean()` to use the attribute. This is easiest to do with `vec_math()`, which you'll learn about later.
+
+```{r}
+vec_math.vctrs_cached_sum <- function(fun, x, ...) {
+  cat("Using cache\n")
+  switch(fun,
+    sum = attr(x, "sum"),
+    mean = attr(x, "sum") / length(x),
+    vec_math_base(fun, x, ...)
+  )
+}
+
+sum(x)
 ```
 
 As mentioned above, vctrs assumes that attributes are independent of the data. This means that when we take advantage of the default methods, they'll work, but return the incorrect result:
@@ -433,23 +445,9 @@ vec_restore.vctrs_cached_sum <- function(x, to) {
 x[1]
 ```
 
-This works because most of the vctrs methods dispatch to the underlying base function, by first stripping off extra attributes with `vec_data()` and then reapplying them again with `vec_restore()`. The default `vec_restore()` method copies over all attributes, which is not appropriate here.
+This works because most of the vctrs methods dispatch to the underlying base function, by first stripping off extra attributes with `vec_data()` and then reapplying them again with `vec_restore()`. The default `vec_restore()` method copies over all attributes, which is not appropriate when the attributes depend on the data.
 
 Note that `vec_restore.class` is subtly different from `vec_cast.class.class()`. `vec_restore()` is used when restoring attributes that have been lost; `vec_cast()` is used for coercions. This is easier to understand with a concrete example. Imagine factors were implements with `new_vectr()`. `vec_restore.factor()` would restore attributes back to an integer vector, but you would not want to allow manually casting an integer to a factor with `vec_cast()`. 
-
-## Subclassing
-
-If you want your class to be extensible, you need to include `...` and `class` in your low-level constructor:
-
-```{r}
-new_percent <- function(x, ..., class = character()) {
-  stopifnot(is.double(x))
-  new_vctr(x, ..., class = c(class, "vctrs_percent"))
-}
-```
-
-You need to carefully decide if it's worthwhile to make your class extensible, as it will make the implementation of other methods more complex, since you only know the inputs contain at least the specified attributes; they may contain more if it's a subclass.
-
 ## Records
 
 ### Rational
@@ -691,6 +689,7 @@ vctrs also provides two mathematical generics that allow you to define a broad s
    
 *  `vec_arith()` specifies the behaviour of the arithmetic operations like
    `+`, `-`, and `%%`.
+
 
 ### Meter class
 
