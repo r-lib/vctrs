@@ -274,8 +274,9 @@ We define `vec_size()` as follows:
 
 * It is the length of 1d vectors
 * It is the number of rows of data frames, matrices, and arrays.
+* It throws error for non vectors.
 
-Given `vec_size()`, we can give a precise definition of a data frame: a data frame is a list of vectors where every element has the same size. This has the desirable property of trivially supporting matrix and data frame columns.
+Given `vec_size()`, we can give a precise definition of a data frame: a data frame is a list of vectors where every vector has the same size. This has the desirable property of trivially supporting matrix and data frame columns.
 
 ### Slicing
 
@@ -295,7 +296,7 @@ vec_slice(df, 5:6)
 
 `vec_slice(data.frame(x), i)` equals `data.frame(vec_slice(x, i))` (modulo variable and row names).
 
-Prototypes are generated with `vec_slice(x, 0L)`. Given a prototype, you can generate a vector of given size (filled with `NA`s) with `vec_na()`
+Prototypes are generated with `vec_slice(x, 0L)`; given a prototype, you can generate a vector of given size (filled with `NA`s) with `vec_na()`
 
 ### Common sizes: recycling rules
 
@@ -312,13 +313,11 @@ vctrs obeys a stricter set of recylcing rules than base R, only recycling under 
 * Vectors of size 1 can be recycled to any size.
 * Vectors of any size can be recylced to size 0.
 
-All other size combinations will generate an error. 
+All other size combinations will generate an error. This strictness prevents common mistakes like `dest == c("IAH", "HOU"))`, at the cost of occassionally requiring an explicit calls to `rep()`.
 
-```{r, echo = FALSE, fig.cap="Summary of vctrs recycling rules"}
+```{r, echo = FALSE, fig.cap="Summary of vctrs recycling rules. X indicates n error"}
 knitr::include_graphics("../man/figures/sizes-recycling.png", dpi = 300)
 ```
-
-This strictness prevents common mistakes like `dest == c("IAH", "HOU"))` at the cost of requiring explicit calls to `rep()` when occassionally needed.
 
 You can apply the recycling rules in two ways:
 

@@ -16,7 +16,7 @@ knitr::opts_chunk$set(
 
 This vignette introduces the ideas of type-stability and size-stability. If a function possesses these properties it is substantially easier to reason about because to predict the "shape" of the output, you only need to know the "shape"s of the inputs.
 
-This work is partly motivated by a common pattern that I noticed in myself when reviewing code: if when reading the code (not running it!), I can't predict the type of each variables, I feel very uneasy about the code. This is important because most unit tests explore typical inputs, rather than exhaustively testing the strange and unusual. Analysing about the types (and size) of variables makes it possible to spot unpleasant edge cases.
+This work is partly motivated by a common pattern that I noticed when reviewing code: if I read the code (without running it!) and I can't predict the type of each variables, I feel very uneasy about the code. This sense is important because most unit tests explore typical inputs, rather than exhaustively testing the strange and unusual. Analysing the types (and size) of variables makes it possible to spot unpleasant edge cases.
 
 ```{r setup}
 library(vctrs)
@@ -31,8 +31,8 @@ We say a function is __type-stable__ iif:
 
 Similary, a function is __size-stable__ iif:
 
-1.  You can predict the output size knowing only the input sizes. 
-1.  The order of arguments in ... does not affect the output size.
+1.  You can predict the output size knowing only the input sizes, or
+    there is a single numeric output that specifies the output size.
 
 We'll call functions that don't obey these principle __type-unstable__ and __size-unstable__ respectively.
 
@@ -43,23 +43,30 @@ To make these ideas concrete, lets apply them to a few base functions:
 1.  `mean()` is trivially type-stable and size-stable because it always returns
     a double vector of length 1 (or it throws an error).
     
-1.  Suprisingly, `median()` is not type-stable:
+1.  Suprisingly, `median()` is type-unstable:
 
     ```{r}
     vec_ptype(median(c(1L, 1L)))
     vec_ptype(median(c(1L, 1L, 1L)))
     ```
 
+    It is, however, size-stable since it always returns a vector of length 1.
+
 1.  `sapply()` is type-unstable because you can't predict the output type only
-    knowing the input types.
+    knowing the input types:
 
     ```{r}
     vec_ptype(sapply(1L, function(x) c(x, x)))
     vec_ptype(sapply(integer(), function(x) c(x, x)))
     ```
     
+    It's not quite size-stable, `vec_size(sapply(x, f))` is `vec_size(x)`
+    for vectors, but not for matrices (the output is transposed) or 
+    data frames (it iterates over the columns).
+    
 1.  `vapply()` is type-stable because `vec_ptype(vapply(x, fun, template))` is 
-    always `vec_ptype(template)`.
+    always `vec_ptype(template)`.  It is size-unstable for the same reasons
+    as `sapply()`.
 
 1.  `c()` is type-unstable because `c(x, y)` doesn't always the same type 
     as `c(y, x)`.
