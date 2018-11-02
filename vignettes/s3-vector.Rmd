@@ -587,7 +587,7 @@ decimal2(10, c(0, 5, 99))
 
 ## Equality and comparison
 
-vctrs provides two "proxy" generics that allow you to declare that your class have possesses certain properties. A proxy function returns a simple object (typically either a bare vector or a data frame), that possesses the same properties as your class. This permits efficient implementation of the vctrs internals because once you have the proxy object, all code can be written in C.
+vctrs provides two "proxy" generics that lets you control how your class determines equality and ordering:
 
 * `vec_proxy_equal()` specifies how to test the elements of your for equality. 
   This proxy underpins `==` and `!=`, but also `unique()`, `anyDuplicated()`, 
@@ -595,29 +595,26 @@ vctrs provides two "proxy" generics that allow you to declare that your class ha
 
 * `vec_proxy_compare()` specifies how to compare the elements of your vector.
   This proxy is used in `<`, `<=`, `>=`, `>`, `min()`, `max()`, `median()`, 
-  `quantile()`, and `xtfrm()` methods. (And `xtfrm()` is used in `order()` and 
-  `sort()`.)
+  `quantile()`, and `xtfrm()` (used in `order()` and `sort()`) methods. 
 
-Where possible, it's a good idea to define methods for these generics because you get a lot of behaviour for relatively little work.
+It's a good idea to define methods for these generics because you get a lot of behaviour for relatively little work.
+
+These proxy functions should always return a simple object (typically either a bare vector or a data frame), that possesses the same properties as your class. This permits efficient implementation of the vctrs internals because it allows dispatch to happen once in R, and then efficient computations can be written in C.
 
 ### Rational class
 
-By default, `vec_proxy_equal()` converts a record to a data frame:
+Let's explore these ideas by with the rational class we started on above. By default, `vec_proxy_equal()` converts a record to a data frame, and the default comparison works column by column:
 
 ```{r}
 x <- rational(c(1, 2, 1, 2), c(1, 1, 2, 2))
 x
 
 vec_proxy_equal(x)
-```
 
-And the default comparison is column by column:
-
-```{r}
 x == rational(1, 1)
 ```
 
-This is an ok default, but doesn't do exactly what we want here because `rational(1, 1)` represents the same number as `rational(2, 2)` so they should be equal. We can fix that by dividing `n` and `d` by their greatest common divisor:
+This makes sense as a default, but isn't correct here because `rational(1, 1)` represents the same number as `rational(2, 2)` so they should be equal. We can fix that by implementation `vec_proxy_equal()` method that by divides `n` and `d` by their greatest common divisor:
 
 ```{r}
 # Thanks to Matthew Lundberg: https://stackoverflow.com/a/21504113/16632 
@@ -638,18 +635,19 @@ vec_proxy_equal(x)
 x == rational(1, 1)
 ```
 
-Again, the default comparison proxy is just the elements:
+`vec_proxy_equal()` is also used by `unique()`:
 
 ```{r}
-vec_proxy_compare(x)
+unique(x)
 ```
-So sorting doesn't give us increasing order:
+
+We need fix `sort()` similarly, since it currently sorts by `n`, then by `d`:
 
 ```{r}
 sort(x)
 ```
 
-Here the easiest fix is to simply compute the fraction and then sort that real number:
+The easiest fix is to convert the fraction to a decimal and then sort that:
 
 ```{r}
 vec_proxy_compare.vctrs_rational <- function(x) {
@@ -659,9 +657,11 @@ vec_proxy_compare.vctrs_rational <- function(x) {
 sort(x)
 ```
 
-(We could have used that technique for equality, but due to floating point computation it's not necessarily true that `x == y` implies that `d * x == d * y`.)
+(We could have used the same approach in `vec_proxy_equality()`, but when working with floating point numbers it's not necessarily true that `x == y` implies that `d * x == d * y`.)
 
 ### Polynomial class
+
+A related problem occurs if we build our vector on top of a list. The following code defines a polynomial class that represents polynomials (like `1 + 3x - 2x ^2`) using a list of integer vectors (like `c(1, 3, -2)`).
 
 ```{r}
 new_poly <- function(x) {
@@ -738,14 +738,44 @@ sort(poly(1, c(1, 0, 0), c(1, 0)))
 
 vctrs also provides two mathematical generics that allow you to define a broad swath of mathematical behaviour at once:
 
-*  `vec_math()` specifies the behaviour of mathematical functions like 
-   `abs()`, `sum()`, and `mean()`.
+*  `vec_math(fun, x, ...)` specifies the behaviour of mathematical functions 
+   like `abs()`, `sum()`, and `mean()`. (See `?vec_math()` for the complete
+   list.)
    
-*  `vec_arith()` specifies the behaviour of the arithmetic operations like
-   `+`, `-`, and `%%`.
+*  `vec_arith(op, x, y)` specifies the behaviour of the arithmetic operations
+   like `+`, `-`, and `%%`. (See `?vec_arith()` for the complete list.)
 
+Both generics define the behaviour for multiple functions because `sum.vctrs_vctr(x)` calls `vec_math.vctrs_vctr("sum", x)`, and `x + y` calls
+`vec_math.x_class.y_class("+", x, y)`. They're accompanied by `vec_math_base()` and `vec_arith_base()` which make it easy to call the underlying base R functions.
+
+`vec_arith()` uses double dispatch, and needs the following standard boilerplate:
+
+```{r}
+vec_arith.MYCLASS <- function(op, x, y) {
+  UseMethod("vec_arith.MYCLASS", y)
+}
+vec_arith.MYCLASS.default <- function(op, x, y) {
+  stop_incompatible_op(op, x, y)
+}
+```
+
+### Cached sum class
+
+I showed an example of `vec_math()` to define `sum()` and `mean()` methods `cached_sum`. Now lets talk about exactly how it works. Most `vec_math()` functions will have a similar form. You use a switch statement to handle the methods that you care about, and fall back to `vec_math_base()` for those that you don't care about.
+
+```{r}
+vec_math.vctrs_cached_sum <- function(fun, x, ...) {
+  switch(fun,
+    sum = attr(x, "sum"),
+    mean = attr(x, "sum") / length(x),
+    vec_math_base(fun, x, ...)
+  )
+}
+```
 
 ### Meter class
+
+To explore the infix arithmetic operators exposed by `vec_arith()` I'll create a new class that represents a measurement in `meter`s:
 
 ```{r}
 new_meter <- function(x) {
@@ -766,7 +796,7 @@ x <- meter(1:10)
 x
 ```
 
-Basic mathematic operations work:
+Because `meter` is built on top of a double vector, basic mathematic operations work:
 
 ```{r}
 sum(x)
@@ -781,9 +811,9 @@ meter(10) + meter(1)
 meter(10) * 3
 ```
 
-Before we continue it's worth contemplating what algebra we should support:
+To allow these infix functions to work, we'll need to provide `vec_arith()` generic. But before we do that, lets think about what combinations of inputs we should support:
 
-* It makes sense to add and subtract meters: that yields another meter object.
+* It makes sense to add and subtract meters: that yields another meter.
   We can divide a meter by another meter (yielding a unitless number), but
   we can't multiple to meters (because that would yield an area.)
   
@@ -801,7 +831,7 @@ vec_arith.vctrs_meter.default <- function(op, x, y) {
 }
 ```
 
-Then write the method for two method objects:
+Then write the method for two meter objects. We use a switch statement to cover the cases we care about, and `stop_incompatible_op()` to throw an informative error message for everything else.
 
 ```{r, error = TRUE}
 vec_arith.vctrs_meter.vctrs_meter <- function(op, x, y) {
@@ -820,7 +850,7 @@ meter(10) / meter(1)
 meter(10) * meter(1)
 ```
 
-Then the pair of methods for a meter and a number. These are not symetric because while `meter(10) / 2` makes sense, `2 / meter(10)` does not.
+Next we write the pair of methods for arithmetic with a meter and a number. These are almost identical, but while `meter(10) / 2` makes sense, `2 / meter(10)` does not.
 
 ```{r, error = TRUE}
 vec_arith.vctrs_meter.numeric <- function(op, x, y) {
@@ -849,8 +879,6 @@ meter(20) / 10
 10 / meter(20)
 ```
 
-(To permit subclassing we'd need to replace `new_meter()` with `vec_restore()`.)
-
 For completeness, we also need `vec_arith.vctrs_meter.MISSING` for the unary `+` and `-` operators:
 
 ```{r}
@@ -865,112 +893,21 @@ vec_arith.vctrs_meter.MISSING <- function(op, x, y) {
 +meter(1) 
 ```
 
+## Appendix: `NAMESPACE` declarations
 
-### Rational
-
-### Period and frequency classes
-
-```{r}
-period <- function(x) {
-  x <- vec_cast(x, double())
-  new_vctr(x, class = "vctrs_period")
-}
-format.vctrs_period <- function(x) {
-  paste0(format(vec_data(x)), " s")
-}
-
-freq <- function(x) {
-  x <- vec_cast(x, double())
-  new_vctr(x, class = "vctrs_frequency")
-}
-format.vctr_frequency <- function(x) {
-  paste0(format(vec_data(x)), " Hz")
-}
-
-period(0.1)
-freq(10)
-```
-
-
-```{r}
-vec_arith.vctr_frequency <- function(op, x, y) {
-  UseMethod("vec_arith.vctr_frequency", y)
-}
-vec_arith.vctrs_frequency.default <- function(op, x, y) {
-  stop_incompatible_op(op, x, y)
-}
-vec_arith.vctrs_period <- function(op, x, y) {
-  UseMethod("vec_arith.vctrs_period", y)
-}
-vec_arith.vctrs_period.default <- function(op, x, y) {
-  stop_incompatible_op(op, x, y)
-}
-```
-
-```{r}
-vec_arith.vctrs_period.vctrs_period <- function(op, x, y) {
-  switch(op,
-    `-` = ,
-    `+` = vec_restore(vec_arith_base(op, x, y), x),
-    stop_incompatible_op(op, x, y)
-  )
-}
-vec_arith.vctrs_period.numeric <- function(op, x, y) {
-  switch(op,
-    `-` = ,
-    `+` = ,
-    `*` = ,
-    `/` = vec_restore(vec_arith_base(op, x, y), x),
-    stop_incompatible_op(op, x, y)
-  )
-}
-vec_arith.numeric.vctrs_period <- function(op, x, y) {
-  switch(op,
-    `*` = vec_restore(vec_arith_base(op, x, y), y),
-    `/` = freq(vec_arith_base(op, x, y)),
-    stop_incompatible_op(op, x, y)
-  )
-}
-
-period(1) + period(1)
-2 * period(10)
-period(10) / 5
-5 / period(10)
-```
-
-## Appendix: double dispatch
-
-
-
-To make this a bit more concrete, when you call `vec_type2(1L, 1)` the sequence of calls is:
-
-* `vec_type2()`
-* `vec_type2.integer()`
-* `vec_type2.integer.double()`
-
-If you call `vec_type2(1, 1L)` the sequence of calls is quite different:
-
-* `vec_type2()`
-* `vec_type2.double()`
-* `vec_type2.double.integer()`
-
-In order to preserve commutativity, `vec_type2.x.y()` __must__ return the same value as `vec_type2.y.x()`. Unfortunately there's no way to enforce this at the language level, so instead we use strong conventions (always defining the pair of methods next to each other) and unit tests to make sure that we're consistent.
-
-## Appendix: package namespaces
-
-Defining S3 method interactively is fine for iteration and exploration, but if your vector lives in a package, you also need to register the S3 methods by listing them in the `NAMESPACE` file. The namespace declarations are a little tricky because (e.g.) `vec_cast.binned()` is both a generic function (which must be exported with `export()`) and an S3 method (which must be registered with `S3method()`). 
+Defining S3 methods interactively is fine for iteration and exploration, but if your vector lives in a package, you also need to register the S3 methods by listing them in the `NAMESPACE` file. The namespace declarations are a little tricky because (e.g.) `vec_cast.vctrs_percent()` is both a generic function (which must be exported with `export()`) and an S3 method (which must be registered with `S3method()`). 
 
 This problem wasn't considered in the design of roxygen2, so you have to be quite explicit:
 
 ```{r}
 #' @export
-#' @method vec_cast binned
-#' @export vec_cast.binned
-vec_cast.binned <- function(x, y) {
+#' @method vec_cast vctrs_percent
+#' @export vec_cast.vctrs_percent
+vec_cast.vctrs_percent <- function(x, y) {
 } 
 ```
 
-You also need to register the individual double-dispatch methods. Unfortuantely roxygen's heuristic for determing the name of the generic from the name of the method gives the wrong result here, so you need to fully specify it:
+You also need to register the individual double-dispatch methods. Again, this is hard that it should be because roxygen's heuristics aren't quite right. That means you need to describe the `@method` explicitly:
 
 ```{r}
 #' @method vec_cast.binned double
