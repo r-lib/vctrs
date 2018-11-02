@@ -32,9 +32,18 @@ We say a function is __type-stable__ iif:
 Similary, a function is __size-stable__ iif:
 
 1.  You can predict the output size knowing only the input sizes, or
-    there is a single numeric output that specifies the output size.
+    there is a single numeric input that specifies the output size.
+
+Very few base R functions are size-stable, so I'll also define a slightly weaker condition. I'll call a function is __length-stable__ iif:
+
+1.  You can predict the output _length_ knowing only the input _lengths_, or
+    there is a single numeric input that specifies the output _length_.
 
 We'll call functions that don't obey these principle __type-unstable__ and __size-unstable__ respectively.
+
+On top of type- and size-stability, it's also desirable to have a single set of rules that are applied consistently. We want one set of type-coercion and size-recycling rules that apply everywhere, not many sets of rules that apply to different functions.
+
+The goal of these principles is to minimse cognitive overhead. Rather than having to memory many special cases, you should be able to learn one set of principles and apply them again and again.
 
 ### Examples
 
@@ -50,7 +59,7 @@ To make these ideas concrete, lets apply them to a few base functions:
     vec_ptype(median(c(1L, 1L, 1L)))
     ```
 
-    It is, however, size-stable since it always returns a vector of length 1.
+    It is, however, size-stable, since it always returns a vector of length 1.
 
 1.  `sapply()` is type-unstable because you can't predict the output type only
     knowing the input types:
@@ -64,9 +73,9 @@ To make these ideas concrete, lets apply them to a few base functions:
     for vectors, but not for matrices (the output is transposed) or 
     data frames (it iterates over the columns).
     
-1.  `vapply()` is type-stable because `vec_ptype(vapply(x, fun, template))` is 
-    always `vec_ptype(template)`.  It is size-unstable for the same reasons
-    as `sapply()`.
+1.  `vapply()` is type-stable version of `sapply()` because 
+    `vec_ptype(vapply(x, fun, template))` is always `vec_ptype(template)`.  
+    It is size-unstable for the same reasons as `sapply()`.
 
 1.  `c()` is type-unstable because `c(x, y)` doesn't always the same type 
     as `c(y, x)`.
@@ -76,8 +85,13 @@ To make these ideas concrete, lets apply them to a few base functions:
     vec_ptype(c(Sys.Date(), NA))
     ```
     
-    `c()` is not quite size-stable, but it is length-stable because 
-    `length(c(x, y))` is always `length(x) + length(y)`.
+    `c()` is length-stable because `length(c(x, y))` is always 
+    `length(x) + length(y)`.
+    
+1.  `paste(x1, x2)` is length-stable because `length(paste(x1, x2))`
+    equals `max(length(x1), length(x2))`. However, it doesn't follow the usual
+    arithmetic recycling rules because `paste(1:2, 1:3)` doesn't generate
+    a warning.
     
 1.  `ifelse()` is length-stable because `length(ifelse(cond, true, false))`
     is always `length(cond)`. `ifelse()` is type-unstable because the output
@@ -93,30 +107,44 @@ To make these ideas concrete, lets apply them to a few base functions:
     how many rows it will have. Similarly, `df[[i]]` is not type-stable because 
     the result depends on the _value_ of `i`. There are very many important 
     functions that can not be made type-stable or size-stable!
-    
-The biggest challenges of type-stability occur when you're somewhere in between `mean()` and `read.csv()`: when you have a couple of inputs to a function and they're different types. Functions of this nature include `c()` and `ifelse()`, but also `rbind()`. We'll focus on these functions of intermediate complexity in this vignette.
-
-On top of type- and size-stability, it's also desirable to have a single set of rules that are applied consistently. This is the goal of `vec_cast_common()` and `vec_recycle_common()`: you can use these functions to ensure that your function obeys a standard set of rules.
 
 ## `c()` and `vctrs::vec_c()`
 
 In this section we'll compare and contrast `c()` and `vec_c()`. `vec_c()` is both type- and size-stable because it possesses the following invariants:
 
-* `vec_type(vec_c(x, y))` equals `vec_type_common(x, y)`
-* `vec_size(vec_c(X, y))` equals `vec_size(x) + vec_size(y)`
+* `vec_type(vec_c(x, y))` equals `vec_type_common(x, y)`.
+* `vec_size(vec_c(X, y))` equals `vec_size(x) + vec_size(y)`.
 
-If we only consider atomic vectors, `c()` is type-stable because it uses a hierarchy of types: character > complex > double > integer > logical. Things start to break down when we get to S3 vectors, as we'll see shortly. Another undesirable property of `c()` which I won't consider further is it's not consistent with `unlist()`, i.e. `unlist(list(x, y))` does not always equal `c(x, y)`.
+If we only consider atomic vectors, `c()` is type-stable because it uses a hierarchy of types: character > complex > double > integer > logical. Things start to break down when we get to S3 vectors, as we'll see shortly. Another undesirable property of `c()` which I won't consider further is it's not consistent with `unlist()`, i.e. `unlist(list(x, y))` does not always equal `c(x, y)`; i.e. base R has multiple sets of type-coerion rules.
 
 I have two goals here: 
 
 * To fully document the quirks of `c()`, hence motivating the development 
   of an alternative.
   
-* To discuss non-obvious consequences of the invariants above.
+* To discuss non-obvious consequences of the type- and size-stability above.
+
+### Non-vectors
+
+As far as I can tell `c()` never throws an error; no matter how bizarre the inputs, it alway returns something, putting the elements in to a list if needed.
+
+```{r}
+c(mean, globalenv())
+
+c(Sys.Date(), factor("x"), "x")
+```
+
+`vec_c()` throws an error if the inputs are not vectors, or not automatically coercible:
+
+```{r, error = TRUE}
+vec_c(mean, globalenv())
+
+vec_c(Sys.Date(), factor("x"), "x")
+```
 
 ### Factors
 
-As documented in `c()`, combining two factors returns an integer vector:
+Combining two factors returns an integer vector:
 
 ```{r}
 fa <- factor("a")
@@ -125,7 +153,9 @@ fb <- factor("b")
 c(fa, fb)
 ```
 
-`vec_c()` returns a factor taking the unions the levels. This is behaviour is motivated by pragmatics: there are many places in base R that automatically convert character vectors to factors, so enforcing stricter behaviour would be unnecessarily onerous. (This is backed up by experience with `dplyr::bind_rows()` which is stricter, and is a common source of user difficult). 
+(this is documented in `c()` but is still undesirable.)
+
+`vec_c()` returns a factor taking the union of the levels. This is behaviour is motivated by pragmatics: there are many places in base R that automatically convert character vectors to factors, so enforcing stricter behaviour would be unnecessarily onerous. (This is backed up by experience with `dplyr::bind_rows()` which is stricter, and is a common source of user difficulty.) 
 
 ```{r}
 vec_c(fa, fb)
@@ -149,20 +179,20 @@ This behaviour is documented in `?DateTimeClasses`, but is the source of conside
 vec_c(datetime_nz)
 ```
 
-This leads to a decision: what time zone should be used if input don't all have the same time zone? Again, we could be strict, and force the user to manually align all the time zones. However, this is onerous (particularly because base provides no easy way to change the time zone of an existing vector), so vctrs chooses to takes the first non-local timezone:
+What time zone should the output have if inputs have different time zones? One option would be to strict and force the user to manually align all the time zones. However, this is onerous (particularly because theres no easy way to change the time zone in base R), so vctrs chooses to use the first non-local time zone:
 
 ```{r}
 datetime_local <- as.POSIXct("2020-01-01 09:00")
 datetime_houston <- as.POSIXct("2020-01-01 09:00", tz = "US/Central")
 
-vec_ptype(datetime_local, datetime_houston)
-vec_ptype(datetime_houston, datetime_nz)
-vec_ptype(datetime_nz, datetime_houston)
+vec_c(datetime_local, datetime_houston, datetime_nz)
+vec_c(datetime_houston, datetime_nz)
+vec_c(datetime_nz, datetime_houston)
 ```
 
 ### Dates and date-times
 
-Mixing dates and date-times with `c()` gives silently incorrect results:
+Combining dates and date-times with `c()` gives silently incorrect results:
 
 ```{r}
 date <- as.Date("2020-01-01")
@@ -191,8 +221,7 @@ c(NA, date)
 c(NA, datetime)
 ```
 
-`vec_c()` takes a different approach. Any 
-vctrs treats a logical vector consisting only of `NA` specially: it's an unspecified type than can be converted to any other 1d type:
+`vec_c()` takes a different approach treating a logical vector consisting only of `NA` as the `unspecified()` class which can be converted to any other 1d type:
 
 ```{r}
 vec_c(NA, fa)
@@ -201,6 +230,38 @@ vec_c(NA, datetime)
 ```
 
 ### Data frames
+
+`c()` combines data frames into a list:
+
+```{r}
+df1 <- data.frame(x = 1)
+df2 <- data.frame(x = 2)
+str(c(df1, df1))
+```
+
+`vec_c()` is size-stable which implies that `vec_()` should row-bind data frames:
+
+```{r}
+vec_c(df1, df2)
+```
+
+### Matrices and arrays
+
+The same reasoning applies to matrices:
+
+```{r}
+m <- matrix(1:4, nrow = 2)
+c(m, m)
+vec_c(m, m)
+```
+
+One difference is that `vec_c()` will "broadcast" a vector to match the dimensions of an array:
+
+```{r}
+c(m, 1)
+
+vec_c(m, 1)
+```
 
 ## `rbind()` and `vec_rbind()`
 
