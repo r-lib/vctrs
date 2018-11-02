@@ -9,33 +9,23 @@ status](https://travis-ci.org/r-lib/vctrs.svg?branch=master)](https://travis-ci.
 status](https://codecov.io/gh/r-lib/vctrs/branch/master/graph/badge.svg)](https://codecov.io/github/r-lib/vctrs?branch=master)
 [![lifecycle](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://www.tidyverse.org/lifecycle/#experimental)
 
-The goal of the vctrs package is to expose and standardise the vector
-interface that sits at the heart of the R language. The vctrs framework
-implements consistent combinations of vectors with well defined and
-extensible coercion rules. Thanks to the consistency and genericity of
-the vctrs framework, you can work with vectors in a robust and
-predictable way.
+There are three main goals to the vctrs package, each described in a
+vignette:
 
-Because the vctrs interface is well defined and generic, it makes it
-easy to define your own vector classes with minimal efforts. Like base
-classes, these custom vector classes interact consistently and
-predictably with the rest of the language.
+  - To propose `vec_size()` and `vec_type()` as alternatives to
+    `length()` and `class()`; `vignette("type-size")`. These definitions
+    are paired with a framework for type-coercion and size-recycling.
 
-To make this possible, vctrs provides tools to think about function
-invariants, properties of function that always true, regardless of the
-inputs. The vctrs framework focusses on invariants related to R’s vector
-data structures, partitioning their properties into two main components:
-a size and a prototype. This allows us to analyse properties of a
-function API, without having to think about the implementation.
+  - To define type- and size-stability as desirable function properties,
+    use them to analyse existing base function, and to propose better
+    alternatives; `vignette("stability")`. This work has been
+    particularly motivated by thinking about the ideal properties of
+    `c()`, `ifelse()`, and `rbind()`.
 
-For example, we might say that a function like `c()` should have two
-properties:
-
-  - the size of the output should equal the sum of size of the inputs.
-    i.e. `vec_size(vec_c(x, y))` equals `vec_size(x) + vec_size(y)`
-
-  - the type of the output shouldn’t be affected by the order of the
-    inputs. i.e. `vec_type(vec_c(x, y))` equals `vec_type(vec_c(y, x))`
+  - To provide a new `vctr` base class that makes it easy to create new
+    S3 vectors; `vignette("s3-vector")`. vctrs provides methods for many
+    base generics in terms of a few new vctrs generics, making
+    implementation considerably simpler and more robust.
 
 vctrs is a developer focused package. Understanding and extending vctrs
 requires some effort from developers, but should be invisible to most
@@ -61,11 +51,22 @@ devtools::install_github("r-lib/vctrs")
 ``` r
 library(vctrs)
 
-vec_c(factor("a"), factor("b"))
-#> [1] a b
-#> Levels: a b
-vec_c(Sys.Date(), Sys.time())
-#> [1] "2018-10-30 00:00:00 CDT" "2018-10-30 18:07:35 CDT"
+# Prototypes
+str(vec_type_common(FALSE, 1L, 2.5))
+#>  num(0)
+str(vec_cast_common(FALSE, 1L, 2.5))
+#> List of 3
+#>  $ : num 0
+#>  $ : num 1
+#>  $ : num 2.5
+
+# Sizes
+str(vec_size_common(1, 1:10))
+#>  int 10
+str(vec_recycle_common(1, 1:10))
+#> List of 2
+#>  $ : num [1:10] 1 1 1 1 1 1 1 1 1 1
+#>  $ : int [1:10] 1 2 3 4 5 6 7 8 9 10
 ```
 
 ## Motivation
