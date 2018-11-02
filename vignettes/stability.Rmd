@@ -108,6 +108,8 @@ To make these ideas concrete, lets apply them to a few base functions:
     the result depends on the _value_ of `i`. There are very many important 
     functions that can not be made type-stable or size-stable!
 
+With this understand of type- and size-stability in hand, we'll use them to analyse some base R functions in greater depth and then propose alternatives with better properties.
+
 ## `c()` and `vctrs::vec_c()`
 
 In this section we'll compare and contrast `c()` and `vec_c()`. `vec_c()` is both type- and size-stable because it possesses the following invariants:
@@ -115,7 +117,7 @@ In this section we'll compare and contrast `c()` and `vec_c()`. `vec_c()` is bot
 * `vec_type(vec_c(x, y))` equals `vec_type_common(x, y)`.
 * `vec_size(vec_c(X, y))` equals `vec_size(x) + vec_size(y)`.
 
-If we only consider atomic vectors, `c()` is type-stable because it uses a hierarchy of types: character > complex > double > integer > logical. Things start to break down when we get to S3 vectors, as we'll see shortly. Another undesirable property of `c()` which I won't consider further is it's not consistent with `unlist()`, i.e. `unlist(list(x, y))` does not always equal `c(x, y)`; i.e. base R has multiple sets of type-coerion rules.
+`c()` has another undesirable property in that it's not consistent with `unlist()`, i.e. `unlist(list(x, y))` does not always equal `c(x, y)`; i.e. base R has multiple sets of type-coerion rules. I won't this problem further consider here.
 
 I have two goals here: 
 
@@ -124,9 +126,33 @@ I have two goals here:
   
 * To discuss non-obvious consequences of the type- and size-stability above.
 
+### Atomic vectors
+
+If we only consider atomic vectors, `c()` is type-stable because it uses a hierarchy of types: character > complex > double > integer > logical. 
+
+```{r}
+c(FALSE, 1L, 2.5)
+```
+
+`vec_c()` obeys similar rules:
+
+```{r}
+vec_c(FALSE, 1L, 2.5)
+```
+
+But does not automatically coerce to character vectors or lists:
+
+```{r, error = TRUE}
+c(FALSE, "x")
+vec_c(FALSE, "x")
+
+c(FALSE, list(1))
+vec_c(FALSE, list(1))
+```
+
 ### Non-vectors
 
-As far as I can tell `c()` never throws an error; no matter how bizarre the inputs, it alway returns something, putting the elements in to a list if needed.
+As far as I can tell `c()` never throws an error. No matter how bizarre the inputs, it alway returns something, putting any non-vectors into a list:
 
 ```{r}
 c(mean, globalenv())
@@ -231,7 +257,7 @@ vec_c(NA, datetime)
 
 ### Data frames
 
-`c()` combines data frames into a list:
+Because it is length-stable,`c()` combines data frames column wise (into a list):
 
 ```{r}
 df1 <- data.frame(x = 1)
@@ -239,7 +265,7 @@ df2 <- data.frame(x = 2)
 str(c(df1, df1))
 ```
 
-`vec_c()` is size-stable which implies that `vec_()` should row-bind data frames:
+`vec_c()` is size-stable which implies it will row-bind data frames:
 
 ```{r}
 vec_c(df1, df2)
@@ -255,7 +281,7 @@ c(m, m)
 vec_c(m, m)
 ```
 
-One difference is that `vec_c()` will "broadcast" a vector to match the dimensions of an array:
+One difference is that `vec_c()` will "broadcast" a vector to match the dimensions of an matrix:
 
 ```{r}
 c(m, 1)
@@ -263,61 +289,83 @@ c(m, 1)
 vec_c(m, 1)
 ```
 
-## `rbind()` and `vec_rbind()`
+### Implementation
 
-### Variables
+The basic implementation of `vec_c()` is reasonably simple. We first figure out the properties of the output, i.e. the common type and total size, and then allocate it with `vec_na()`, and then insert each input into the correct place in the output.
 
-`rbind()` requires all inputs to have the same variables
+```{r, eval = FALSE}
+vec_c <- function(...) {
+  args <- compact(list2(...))
 
-```{r, error = TRUE}
-df1 <- data.frame(x = TRUE)
-df2 <- data.frame(y = 2)
+  ptype <- vec_type_common(!!!args)
+  if (is.null(ptype))
+    return(NULL)
 
-# rbind() requires the inputs to have identical column names
-rbind(df1, df2)
+  ns <- map_int(args, vec_size)
+  out <- vec_na(ptype, sum(ns))
+
+  pos <- 1
+  for (i in seq_along(ns)) {
+    n <- ns[[i]]
+    
+    x <- vec_cast(args[[i]], to = ptype)
+    vec_slice(out, pos:(pos + n - 1)) <- x
+    pos <- pos + n
+  }
+
+  out
+}
 ```
 
-`vec_rbind()` takes the union of columns:
+(The real `vec_c()` is a bit more complicated in order to handle inner and outer names).
+
+## `ifelse()`
+
+One of the functions that motivate the development of vctrs is `ifelse`. It has the surprising property that the result value is "A vector of the same length and attributes (including dimensions and class) as `test`". To me, it seems more reasonable for type of the output to be controlled by the type of the `yes` and `no` arguments.
+
+In `dplyr::if_else()`, I swung too far towards strictness: it throws an error if `yes` and `no` are not the same type. This is annoying in practice because requires typed missing values (`NA_character_` etc), and because the checks are only on the class (not the full prototype), it's easy to create invalid output.
+
+I found it much easier understand what `ifelse()` _should_ do once I internalised the ideas of type- and size-stability:
+
+* The first argument must be logical.
+
+* `vec_type(if_else(test, yes, no))` equals 
+  `vec_type_common(yes, no)`. Unlike `ifelse()` this implies
+  that `if_else()` must always evaluate both `yes` and `no` in order
+  to figure out the correct type. I think this consistent with `&&` (scalar
+  operation, short circuits) and `&` (vectorised, evalutes both sides).
+
+* `vec_size(if_else(test, yes, no))` equals 
+  `vec_size_common(test, yes, no)`. I think the output could have the same 
+  size as `test` (i.e. the same behaviour as `ifelse`), but I _think_
+  as a general rule that you inputs should either be mutually recycling,
+  or not.
+
+This leads to the following implementation:
 
 ```{r}
-vec_rbind(df1, df2)
+if_else <- function(test, yes, no) {
+  vec_assert(test, logical())
+  c(yes, no) %<-% vec_cast_common(yes, no)
+  c(test, yes, no) %<-% vec_recycle_common(test, yes, no)
+
+  out <- vec_na(yes, vec_size(yes))
+  vec_slice(out, test) <- vec_slice(yes, test)
+  vec_slice(out, !test) <- vec_slice(no, !test)
+
+  out
+}
+
+x <- c(NA, 1:4)
+if_else(x > 2, "small", "big")
+if_else(x > 2, factor("small"), factor("big"))
+if_else(x > 2, Sys.Date(), Sys.Date() + 7)
 ```
 
-### Mixing data frames and vectors
-
-`rbind()` can silently discard data:
+By using `vec_size()` and `vec_slice()` this definition of `if_else()` automatically works with data.frames and matrices:
 
 ```{r}
-rbind(data.frame(x = 1:3), c(1, 1000000))
-```
+if_else(x > 2, data.frame(x = 1), data.frame(y = 2))
 
-`vec_rbind()` first converts any vector inputs to one-row data frames.
-
-```{r}
-vec_rbind(data.frame(x = 1:3), c(1, 1000000))
-```
-
-### Container class
-
-`rbind()` uses the class of the first argument:
-
-```{r}
-tb1 <- tibble::tibble(x = 3)
-
-class(rbind(tb1, df1))
-class(rbind(df1, tb1))
-```
-
-`vec_rbind()` uses the common class:
-
-```{r}
-class(vec_rbind(df1, df1))
-class(vec_rbind(tb1, df1))
-class(vec_rbind(df1, tb1))
-```
-
-Like `vec_c()` you can specify the desired output type:
-
-```{r}
-vec_rbind(df1, df2, .ptype = data.frame(x = double(), y = double()))
+if_else(x > 2, matrix(1:10, ncol = 2), cbind(30, 30))
 ```
