@@ -8,6 +8,21 @@
 #' `vec_base_arith()` is provided as a convenience for writing methods. It
 #' calls the base `fun` on the underlying [vec_data()].
 #'
+#' @section Included functions:
+#'
+#' * From the [Summary] group generic:
+#'   `max()`, `min()`, `range()`, `prod`, `sum()`, `any()`, `all()`.
+#'
+#' * From the [Math] group generic:
+#'   `abs()`, `sign()`, `sqrt()`, `ceiling()`, `floor()`, `trunc()`, `cummax()`,
+#'   `cummin()`, `cumprod()`, `cumsum()`, `log()`, `log10()`, `log2()`,
+#'   `log1p()`, `acos()`, `acosh()`, `asin()`, `asinh()`, `atan()`, `atanh()`,
+#'   `exp()`, `expm1()`, `cos()`, `cosh()`, `cospi()`, `sin()`, `sinh()`,
+#'   `sinpi()`, `tan()`, `tanh()`, `tanpi()`, `gamma()`, `lgamma()`,
+#'   `digamma()`, `trigamma()`.
+#'
+#' * Additional generics: `mean()`, `is.nan()`, `is.finite()`, `is.infinite()`.
+#'
 #' @seealso [vec_arith()] for the equivalent for the arithmetic infix operators.
 #' @param fun An mathematical function as a string
 #' @param x A vector

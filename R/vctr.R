@@ -40,11 +40,7 @@
 #'
 #' * Mathematical operations including the Summary group generics (`max`,
 #'   `min`, `range`, `prod`, `sum`, `any`, `all`), the Math group generics
-#'   (`abs`, `sign`, `sqrt`, `ceiling`, `floor`, `trunc`, `cummax`, `cummin`,
-#'   `cumprod`, `cumsum`, `log`, `log10`, `log2`, `log1p`, `acos`, `acosh`,
-#'   `asin`, `asinh`, `atan`, `atanh`, `exp`, `expm1`, `cos`, `cosh`, `cospi`,
-#'   `sin`, `sinh`, `sinpi`, `tan`, `tanh`, `tanpi`, `gamma`, `lgamma`,
-#'   `digamma`, `trigamma`), `mean()`, `is.nan()`, `is.finite()`, and
+#'   (`abs`, `sign`, etc), `mean()`, `is.nan()`, `is.finite()`, and
 #'   `is.infinite()` use [vec_math()].
 #'
 #' * `dims()`, `dims<-()`, `dimnames()`, `dimnames<-`, `levels()`, and
