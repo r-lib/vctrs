@@ -39,6 +39,8 @@ Very few base R functions are size-stable, so I'll also define a slightly weaker
 1.  You can predict the output _length_ knowing only the input _lengths_, or
     there is a single numeric input that specifies the output _length_.
 
+(But note that length-stable is not a particularly robust definition because `length()` returns a value for things that are not vectors.)
+
 We'll call functions that don't obey these principle __type-unstable__ and __size-unstable__ respectively.
 
 On top of type- and size-stability, it's also desirable to have a single set of rules that are applied consistently. We want one set of type-coercion and size-recycling rules that apply everywhere, not many sets of rules that apply to different functions.
@@ -152,12 +154,24 @@ vec_c(FALSE, list(1))
 
 ### Non-vectors
 
-As far as I can tell `c()` never throws an error. No matter how bizarre the inputs, it alway returns something, putting any non-vectors into a list:
+As far as I can tell `c()` never throws an error. No matter how bizarre the inputs, it alway returns something:
+
+```{r}
+c(Sys.Date(), factor("x"), "x")
+```
+
+If the inputs aren't vectors, `c()` automatically puts them in a list:
 
 ```{r}
 c(mean, globalenv())
+```
 
-c(Sys.Date(), factor("x"), "x")
+Technically, this means `c()` isn't actually length-stable, because:
+
+```{r}
+length(mean)
+length(globalenv())
+length(c(globalenv(), mean))
 ```
 
 `vec_c()` throws an error if the inputs are not vectors, or not automatically coercible:
