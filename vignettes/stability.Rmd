@@ -54,7 +54,7 @@ To make these ideas concrete, lets apply them to a few base functions:
 1.  `mean()` is trivially type-stable and size-stable because it always returns
     a double vector of length 1 (or it throws an error).
     
-1.  Suprisingly, `median()` is type-unstable:
+1.  Surprisingly, `median()` is type-unstable:
 
     ```{r}
     vec_ptype(median(c(1L, 1L)))
@@ -87,8 +87,17 @@ To make these ideas concrete, lets apply them to a few base functions:
     vec_ptype(c(Sys.Date(), NA))
     ```
     
-    `c()` is length-stable because `length(c(x, y))` is always 
-    `length(x) + length(y)`.
+    `c()` is *almost always* length-stable because `length(c(x, y))`
+    *almost always* equals `length(x) + length(y)`. One common source of
+    instability here is dealing with non-vectors (see also later section
+    "Non-vectors"):
+    
+    ```{r}
+    env <- new.env(parent = emptyenv())
+    length(env)
+    length(mean)
+    length(c(env, mean))
+    ```
     
 1.  `paste(x1, x2)` is length-stable because `length(paste(x1, x2))`
     equals `max(length(x1), length(x2))`. However, it doesn't follow the usual
@@ -119,7 +128,7 @@ In this section we'll compare and contrast `c()` and `vec_c()`. `vec_c()` is bot
 * `vec_type(vec_c(x, y))` equals `vec_type_common(x, y)`.
 * `vec_size(vec_c(X, y))` equals `vec_size(x) + vec_size(y)`.
 
-`c()` has another undesirable property in that it's not consistent with `unlist()`, i.e. `unlist(list(x, y))` does not always equal `c(x, y)`; i.e. base R has multiple sets of type-coerion rules. I won't consider this problem further here.
+`c()` has another undesirable property in that it's not consistent with `unlist()`, i.e. `unlist(list(x, y))` does not always equal `c(x, y)`; i.e. base R has multiple sets of type-coercion rules. I won't consider this problem further here.
 
 I have two goals here: 
 
@@ -154,7 +163,7 @@ vec_c(FALSE, list(1))
 
 ### Non-vectors
 
-As far as I can tell `c()` never throws an error. No matter how bizarre the inputs, it alway returns something:
+As far as I can tell `c()` never throws an error. No matter how bizarre the inputs, it always returns something:
 
 ```{r}
 c(Sys.Date(), factor("x"), "x")
@@ -164,14 +173,6 @@ If the inputs aren't vectors, `c()` automatically puts them in a list:
 
 ```{r}
 c(mean, globalenv())
-```
-
-Technically, this means `c()` isn't actually length-stable, because:
-
-```{r}
-length(mean)
-length(globalenv())
-length(c(globalenv(), mean))
 ```
 
 `vec_c()` throws an error if the inputs are not vectors, or not automatically coercible:
@@ -271,7 +272,7 @@ vec_c(NA, datetime)
 
 ### Data frames
 
-Because it is length-stable,`c()` combines data frames column wise (into a list):
+Because it is *almost always* length-stable, `c()` combines data frames column wise (into a list):
 
 ```{r}
 df1 <- data.frame(x = 1)
@@ -347,7 +348,7 @@ I found it much easier understand what `ifelse()` _should_ do once I internalise
   `vec_type_common(yes, no)`. Unlike `ifelse()` this implies
   that `if_else()` must always evaluate both `yes` and `no` in order
   to figure out the correct type. I think this consistent with `&&` (scalar
-  operation, short circuits) and `&` (vectorised, evalutes both sides).
+  operation, short circuits) and `&` (vectorised, evaluates both sides).
 
 * `vec_size(if_else(test, yes, no))` equals 
   `vec_size_common(test, yes, no)`. I think the output could have the same 
