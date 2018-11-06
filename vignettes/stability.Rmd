@@ -54,7 +54,7 @@ To make these ideas concrete, lets apply them to a few base functions:
 1.  `mean()` is trivially type-stable and size-stable because it always returns
     a double vector of length 1 (or it throws an error).
     
-1.  Suprisingly, `median()` is type-unstable:
+1.  Surprisingly, `median()` is type-unstable:
 
     ```{r}
     vec_ptype(median(c(1L, 1L)))
@@ -129,7 +129,7 @@ In this section we'll compare and contrast `c()` and `vec_c()`. `vec_c()` is bot
 * `vec_type(vec_c(x, y))` equals `vec_type_common(x, y)`.
 * `vec_size(vec_c(X, y))` equals `vec_size(x) + vec_size(y)`.
 
-`c()` has another undesirable property in that it's not consistent with `unlist()`, i.e. `unlist(list(x, y))` does not always equal `c(x, y)`; i.e. base R has multiple sets of type-coerion rules. I won't consider this problem further here.
+`c()` has another undesirable property in that it's not consistent with `unlist()`, i.e. `unlist(list(x, y))` does not always equal `c(x, y)`; i.e. base R has multiple sets of type-coercion rules. I won't consider this problem further here.
 
 I have two goals here: 
 
@@ -164,7 +164,7 @@ vec_c(FALSE, list(1))
 
 ### Non-vectors
 
-As far as I can tell `c()` never throws an error. No matter how bizarre the inputs, it alway returns something:
+As far as I can tell `c()` never throws an error. No matter how bizarre the inputs, it always returns something:
 
 ```{r}
 c(Sys.Date(), factor("x"), "x")
@@ -349,7 +349,7 @@ I found it much easier understand what `ifelse()` _should_ do once I internalise
   `vec_type_common(yes, no)`. Unlike `ifelse()` this implies
   that `if_else()` must always evaluate both `yes` and `no` in order
   to figure out the correct type. I think this consistent with `&&` (scalar
-  operation, short circuits) and `&` (vectorised, evalutes both sides).
+  operation, short circuits) and `&` (vectorised, evaluates both sides).
 
 * `vec_size(if_else(test, yes, no))` equals 
   `vec_size_common(test, yes, no)`. I think the output could have the same 
