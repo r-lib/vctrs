@@ -29,23 +29,23 @@ We say a function is __type-stable__ iif:
 1.  You can predict the output type knowing only the input types. 
 1.  The order of arguments in ... does not affect the output type.
 
-Similary, a function is __size-stable__ iif:
+Similarly, a function is __size-stable__ iif:
 
 1.  You can predict the output size knowing only the input sizes, or
     there is a single numeric input that specifies the output size.
 
-Very few base R functions are size-stable, so I'll also define a slightly weaker condition. I'll call a function is __length-stable__ iif:
+Very few base R functions are size-stable, so I'll also define a slightly weaker condition. I'll call a function __length-stable__ iif:
 
 1.  You can predict the output _length_ knowing only the input _lengths_, or
     there is a single numeric input that specifies the output _length_.
 
 (But note that length-stable is not a particularly robust definition because `length()` returns a value for things that are not vectors.)
 
-We'll call functions that don't obey these principle __type-unstable__ and __size-unstable__ respectively.
+We'll call functions that don't obey these principles __type-unstable__ and __size-unstable__ respectively.
 
 On top of type- and size-stability, it's also desirable to have a single set of rules that are applied consistently. We want one set of type-coercion and size-recycling rules that apply everywhere, not many sets of rules that apply to different functions.
 
-The goal of these principles is to minimse cognitive overhead. Rather than having to memory many special cases, you should be able to learn one set of principles and apply them again and again.
+The goal of these principles is to minimise cognitive overhead. Rather than having to memorise many special cases, you should be able to learn one set of principles and apply them again and again.
 
 ### Examples
 
@@ -119,7 +119,7 @@ In this section we'll compare and contrast `c()` and `vec_c()`. `vec_c()` is bot
 * `vec_type(vec_c(x, y))` equals `vec_type_common(x, y)`.
 * `vec_size(vec_c(X, y))` equals `vec_size(x) + vec_size(y)`.
 
-`c()` has another undesirable property in that it's not consistent with `unlist()`, i.e. `unlist(list(x, y))` does not always equal `c(x, y)`; i.e. base R has multiple sets of type-coerion rules. I won't this problem further consider here.
+`c()` has another undesirable property in that it's not consistent with `unlist()`, i.e. `unlist(list(x, y))` does not always equal `c(x, y)`; i.e. base R has multiple sets of type-coerion rules. I won't consider this problem further here.
 
 I have two goals here: 
 
@@ -195,7 +195,7 @@ c(fa, fb)
 
 (this is documented in `c()` but is still undesirable.)
 
-`vec_c()` returns a factor taking the union of the levels. This is behaviour is motivated by pragmatics: there are many places in base R that automatically convert character vectors to factors, so enforcing stricter behaviour would be unnecessarily onerous. (This is backed up by experience with `dplyr::bind_rows()` which is stricter, and is a common source of user difficulty.) 
+`vec_c()` returns a factor taking the union of the levels. This behaviour is motivated by pragmatics: there are many places in base R that automatically convert character vectors to factors, so enforcing stricter behaviour would be unnecessarily onerous. (This is backed up by experience with `dplyr::bind_rows()` which is stricter, and is a common source of user difficulty.) 
 
 ```{r}
 vec_c(fa, fb)
@@ -219,7 +219,7 @@ This behaviour is documented in `?DateTimeClasses`, but is the source of conside
 vec_c(datetime_nz)
 ```
 
-What time zone should the output have if inputs have different time zones? One option would be to strict and force the user to manually align all the time zones. However, this is onerous (particularly because theres no easy way to change the time zone in base R), so vctrs chooses to use the first non-local time zone:
+What time zone should the output have if inputs have different time zones? One option would be to strict and force the user to manually align all the time zones. However, this is onerous (particularly because there's no easy way to change the time zone in base R), so vctrs chooses to use the first non-local time zone:
 
 ```{r}
 datetime_local <- as.POSIXct("2020-01-01 09:00")
