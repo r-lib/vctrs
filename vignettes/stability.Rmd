@@ -87,8 +87,18 @@ To make these ideas concrete, lets apply them to a few base functions:
     vec_ptype(c(Sys.Date(), NA))
     ```
     
-    `c()` is length-stable because `length(c(x, y))` is always 
-    `length(x) + length(y)`.
+    `c()` is *almost always* length-stable because `length(c(x, y))`
+    *almost always* equals `length(x) + length(y)`. One common source of
+    instability here is dealing with non-vectors (see also later section
+    "Non-vectors"):
+    
+    ```{r}
+    env <- new.env()
+    # `env` is empty
+    length(env)
+    length(mean)
+    length(c(env, mean))
+    ```
     
 1.  `paste(x1, x2)` is length-stable because `length(paste(x1, x2))`
     equals `max(length(x1), length(x2))`. However, it doesn't follow the usual
@@ -164,14 +174,6 @@ If the inputs aren't vectors, `c()` automatically puts them in a list:
 
 ```{r}
 c(mean, globalenv())
-```
-
-Technically, this means `c()` isn't actually length-stable, because:
-
-```{r}
-length(mean)
-length(globalenv())
-length(c(globalenv(), mean))
 ```
 
 `vec_c()` throws an error if the inputs are not vectors, or not automatically coercible:
@@ -271,7 +273,7 @@ vec_c(NA, datetime)
 
 ### Data frames
 
-Because it is length-stable,`c()` combines data frames column wise (into a list):
+Because it is *almost always* length-stable, `c()` combines data frames column wise (into a list):
 
 ```{r}
 df1 <- data.frame(x = 1)
