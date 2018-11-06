@@ -817,8 +817,9 @@ To allow these infix functions to work, we'll need to provide `vec_arith()` gene
   We can divide a meter by another meter (yielding a unitless number), but
   we can't multiply meters (because that would yield an area.)
   
-* It makes sense to do any arithmetic operation with a number and a meter
-  unit _except_ dividing a number by a meter.
+* For a combination of meter and number multiplication and division by a number
+  are acceptable. Addition and subtraction don't make much sense as we, strictly
+  speaking, are dealing with objects of different nature.
 
 `vec_arith()` is another function that uses double dispatch, so as usual we start with a template.
   
@@ -850,14 +851,12 @@ meter(10) / meter(1)
 meter(10) * meter(1)
 ```
 
-Next we write the pair of methods for arithmetic with a meter and a number. These are almost identical, but while `meter(10) / 2` makes sense, `2 / meter(10)` does not.
+Next we write the pair of methods for arithmetic with a meter and a number. These are almost identical, but while `meter(10) / 2` makes sense, `2 / meter(10)` does not (as addition and subtraction).
 
 ```{r, error = TRUE}
 vec_arith.vctrs_meter.numeric <- function(op, x, y) {
   switch(
     op,
-    "+" = ,
-    "-" = ,
     "/" = ,
     "*" = new_meter(vec_arith_base(op, x, y)),
     stop_incompatible_op(op, x, y)
@@ -866,8 +865,6 @@ vec_arith.vctrs_meter.numeric <- function(op, x, y) {
 vec_arith.numeric.vctrs_meter <- function(op, x, y) {
   switch(
     op,
-    "+" = ,
-    "-" = ,
     "*" = new_meter(vec_arith_base(op, x, y)),
     stop_incompatible_op(op, x, y)
   )
@@ -877,6 +874,7 @@ meter(2) * 10
 10 * meter(2) 
 meter(20) / 10
 10 / meter(20)
+meter(20) + 10
 ```
 
 For completeness, we also need `vec_arith.vctrs_meter.MISSING` for the unary `+` and `-` operators:
