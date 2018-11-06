@@ -93,8 +93,7 @@ To make these ideas concrete, lets apply them to a few base functions:
     "Non-vectors"):
     
     ```{r}
-    env <- new.env()
-    # `env` is empty
+    env <- new.env(parent = emptyenv())
     length(env)
     length(mean)
     length(c(env, mean))
