@@ -214,7 +214,7 @@ diff.vctrs_vctr <- function(x, lag = 1L, differences = 1L, ...) {
 # Modification -------------------------------------------------------------
 
 #' @export
-`[[<-.vctrs_vctr` <- function(x, i, value) {
+`[[<-.vctrs_vctr` <- function(x, ..., value) {
   if (!is.list(x)) {
     value <- vec_cast(value, x)
   }

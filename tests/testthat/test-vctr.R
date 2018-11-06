@@ -192,6 +192,13 @@ test_that("can use [ and [[ with names", {
   expect_equal(y[["d"]], 4)
 })
 
+test_that("can use [[<- to replace n-dimensional elements", {
+  x <- new_vctr(rep(1, times = 4), dim = c(2, 2), class = "vctrs_mtrx")
+  vec_restore.vctrs_mtrx <- function(x, to) x
+  x[[2, 2]] <- 4
+  expect_equal(x[[2, 2]], 4)
+})
+
 test_that("subsetting preserves attributes", {
   x <- new_vctr(c(a = 1, b = 2))
   attr(x, "extra") <- TRUE
