@@ -22,7 +22,7 @@ Size and prototype are motivated by thinking about the optimal behaviour for `c(
 library(vctrs)
 ```
 
-## Protoype
+## Prototype
 
 The idea of a prototype is to capture the metadata associated with a vector, without capturing any data. Unfortunately, the `class()` of an object is inadequate for this purpose:
 
