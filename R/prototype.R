@@ -163,7 +163,7 @@ vec_ptype <- function(...) {
       step_lines <- apply(steps, 2, paste0, collapse = "")
     }
 
-    cat_line("Protoype: ", out_full[[n]])
+    cat_line("Prototype: ", out_full[[n]])
     cat_line(step_lines)
   }
 
