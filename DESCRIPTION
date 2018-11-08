@@ -31,9 +31,7 @@ Suggests:
 VignetteBuilder: 
     knitr
 Remotes: 
-    r-lib/generics,
-    r-lib/pkgdown,
-    r-lib/rlang
+    r-lib/pkgdown
 Encoding: UTF-8
 Language: en-GB
 LazyData: true
