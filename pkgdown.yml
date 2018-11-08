@@ -1,0 +1,11 @@
+pandoc: '2.2'
+pkgdown: 1.1.0.9000
+pkgdown_sha: 3eb2f10fba5c97b11b2bf7e3a5179fbed1c5cc7d
+articles:
+  s3-vector: s3-vector.html
+  stability: stability.html
+  type-size: type-size.html
+urls:
+  reference: https://vctrs.r-lib.org/reference
+  article: https://vctrs.r-lib.org/articles
+
