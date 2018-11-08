@@ -30,8 +30,6 @@ Suggests:
     tibble
 VignetteBuilder: 
     knitr
-Remotes: 
-    r-lib/pkgdown
 Encoding: UTF-8
 Language: en-GB
 LazyData: true
