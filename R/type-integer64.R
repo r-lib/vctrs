@@ -69,6 +69,13 @@ vec_type2.integer64.logical <- function(x, y) bit64::integer64()
 #' @export
 vec_type2.logical.integer64 <- function(x, y) bit64::integer64()
 
+#' @method vec_type2.integer64 vctrs_unspecified
+#' @export
+vec_type2.integer64.vctrs_unspecified <- function(x, y) bit64::integer64()
+
+#' @method vec_type2.vctrs_unspecified integer64
+#' @export
+vec_type2.vctrs_unspecified.integer64 <- function(x, y) bit64::integer64()
 
 # Cast --------------------------------------------------------------------
 
