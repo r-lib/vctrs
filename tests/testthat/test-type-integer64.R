@@ -43,6 +43,9 @@ test_that("vec_type2 for integer64 works", {
   expect_equal(vec_type2(x, NA), bit64::integer64())
   expect_equal(vec_type2(NA, x), bit64::integer64())
 
+  expect_equal(vec_type2(unspecified(), x), bit64::integer64())
+  expect_equal(vec_type2(x, unspecified()), bit64::integer64())
+
   expect_error(vec_type2(x, 1))
   expect_error(vec_type2(1, x))
 
