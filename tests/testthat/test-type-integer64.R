@@ -3,6 +3,8 @@ context("test-type-integer64")
 test_that("new_int64 works", {
   x <- new_int64()
   expect_is(x, "integer64")
+  x <- new_int64(bit64::integer64())
+  expect_is(x, "integer64")
   expect_error(new_int64(1:10))
 })
 
@@ -21,6 +23,8 @@ test_that("casting of integer64 works", {
 
   expect_equal(vec_cast(x, logical()), rep(TRUE, 10L))
   expect_equal(vec_cast(c(TRUE, FALSE), bit64::integer64()), bit64::as.integer64(c(1, 0)))
+
+  expect_equal(vec_cast(NA, bit64::integer64()), bit64::as.integer64(NA))
 
   expect_error(vec_cast(x, factor()))
   expect_error(vec_cast(factor(c("a", "b"))))
