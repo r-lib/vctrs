@@ -8,9 +8,10 @@
 \description{
 \if{html}{\figure{logo.png}{options: align='right'}}
 
-Functions that help you work with vectors,
-    particularly numeric.  Provides a full set of summary, cumulative,
-    rolling, and vectorised functions for both R and C.
+Defines new notions of prototype and size that are used 
+    to provide tools for consistent and well-founded type-coercion and 
+    size-recycling, and are in turn connected to ideas of type- and 
+    size-stability useful for analyzing function interfaces.
 }
 \seealso{
 Useful links:
