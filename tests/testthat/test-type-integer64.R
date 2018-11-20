@@ -20,6 +20,7 @@ test_that("casting of integer64 works", {
 
   expect_error(vec_cast(x, factor()))
   expect_error(vec_cast(factor(c("a", "b"))))
+  expect_error(vec_cast(x, unspecified()))
 })
 
 test_that("vec_type2 for integer64 works", {
