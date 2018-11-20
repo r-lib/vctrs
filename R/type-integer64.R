@@ -1,33 +1,21 @@
+# Print -------------------------------------------------------------------
 
 #' 64 bit integers
 #'
-#' A `integer64` vector is a 64 bits integer vector. Details
-#' are implemented in the `bit64` package.
+#' A `integer64` is a 64 bits integer vector, implemented in the `bit64` package.
 #'
 #' These functions help the `integer64` class from `bit64` in to
-#' the vctrs type system by providing constructors, coercion functions,
-#' and casting functions. `new_int64()` is a low-level
-#' constructor that only checks the type is valid, so
-#' is for expert use only.
+#' the vctrs type system by providing coercion functions
+#' and casting functions.
 #'
-#' @param x 64 bit integer vector
-#' @param ...,class Used to for subclasses.
 #' @keywords internal
-#' @export
-new_int64 <- function(x = bit64::integer64(), ..., class = character()) {
-  stopifnot(inherits(x, "integer64"))
-  x
-}
-
-# Print -------------------------------------------------------------------
-
-#' @rdname new_int64
+#' @rdname int64
 #' @export
 vec_ptype_full.integer64 <- function(x) {
   "integer64"
 }
 
-#' @rdname new_int64
+#' @rdname int64
 #' @export
 vec_ptype_abbr.integer64 <- function(x) {
   "int64"
@@ -37,7 +25,7 @@ vec_ptype_abbr.integer64 <- function(x) {
 # Coerce ------------------------------------------------------------------
 
 #' @export
-#' @rdname new_int64
+#' @rdname int64
 #' @export vec_type2.integer64
 #' @method vec_type2 integer64
 vec_type2.integer64 <- function(x, y) {
@@ -47,6 +35,16 @@ vec_type2.integer64 <- function(x, y) {
 #' @method vec_type2.integer64 default
 #' @export
 vec_type2.integer64.default <- function(x, y) stop_incompatible_type(x, y)
+
+
+#' @method vec_type2.integer64 vctrs_unspecified
+#' @export
+vec_type2.integer64.vctrs_unspecified <- function(x, y) bit64::integer64()
+
+#' @method vec_type2.vctrs_unspecified integer64
+#' @export
+vec_type2.vctrs_unspecified.integer64 <- function(x, y) bit64::integer64()
+
 
 #' @method vec_type2.integer64 integer64
 #' @export
@@ -61,6 +59,7 @@ vec_type2.integer64.integer <- function(x, y) bit64::integer64()
 #' @export
 vec_type2.integer.integer64 <- function(x, y) bit64::integer64()
 
+
 #' @method vec_type2.integer64 logical
 #' @export
 vec_type2.integer64.logical <- function(x, y) bit64::integer64()
@@ -69,18 +68,11 @@ vec_type2.integer64.logical <- function(x, y) bit64::integer64()
 #' @export
 vec_type2.logical.integer64 <- function(x, y) bit64::integer64()
 
-#' @method vec_type2.integer64 vctrs_unspecified
-#' @export
-vec_type2.integer64.vctrs_unspecified <- function(x, y) bit64::integer64()
-
-#' @method vec_type2.vctrs_unspecified integer64
-#' @export
-vec_type2.vctrs_unspecified.integer64 <- function(x, y) bit64::integer64()
 
 # Cast --------------------------------------------------------------------
 
 #' @export
-#' @rdname new_int64
+#' @rdname int64
 #' @export vec_cast.integer64
 #' @method vec_cast integer64
 vec_cast.integer64 <- function(x, to) UseMethod("vec_cast.integer64")
