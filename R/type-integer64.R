@@ -86,6 +86,10 @@ vec_cast.integer64.default <- function(x, to) stop_incompatible_cast(x, to)
 vec_cast.integer64.integer64 <- function(x, to) x
 
 #' @export
+#' @method vec_cast.integer64 vctrs_unspecified
+vec_cast.integer64.vctrs_unspecified <- function(x, to) vec_unspecified_cast(x, to)
+
+#' @export
 #' @method vec_cast.integer64 integer
 vec_cast.integer64.integer <- function(x, to) {
   bit64::as.integer64(x)
@@ -128,7 +132,7 @@ vec_cast.integer64.double <- function(x, to) {
 }
 
 #' @export
-#' @method vec_cast.logical integer64
+#' @method vec_cast.double integer64
 vec_cast.double.integer64 <- function(x, to) {
   as.double(x)
 }

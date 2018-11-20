@@ -19,7 +19,8 @@ test_that("casting of integer64 works", {
   expect_equal(vec_cast(NA, bit64::integer64()), bit64::as.integer64(NA))
 
   expect_error(vec_cast(x, factor()))
-  expect_error(vec_cast(factor(c("a", "b"))))
+  expect_error(vec_cast(factor(), x))
+  expect_error(vec_cast(unspecified(), x))
   expect_error(vec_cast(x, unspecified()))
 })
 
