@@ -51,7 +51,11 @@ test_that("can subset object of any dimensionality", {
 
 test_that("can subset data frame columns", {
   df <- data.frame(x = c(1, 2), y = I(data.frame(z = c(1, 2), w = c(1, 2))))
-  expect_equal(vec_slice(df, 1L), df[1, , drop = FALSE])
+
+  base_slice <- df[1, , drop = FALSE]
+  rownames(base_slice) <- NULL
+
+  expect_equal(vec_slice(df, 1L), base_slice)
 })
 
 test_that("can modify subset", {
