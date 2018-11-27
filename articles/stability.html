@@ -6,15 +6,14 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Type and size stability • vctrs</title>
-<link rel="shortcut icon" type="image/x-icon" href="../favicon.ico">
-<!-- jquery --><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script><!-- Bootstrap --><link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script><!-- Font Awesome icons --><link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-T8Gy5hrqNKT+hzMclPo118YTQO6cYprQmhrYwIiQ/3axmI1hQomh7Ud2hPOy8SP1" crossorigin="anonymous">
-<!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.1/clipboard.min.js" integrity="sha256-hIvIxeqhGZF+VVeM55k0mJvWpQ6gTkWk3Emc+NmowYA=" crossorigin="anonymous"></script><!-- sticky kit --><script src="https://cdnjs.cloudflare.com/ajax/libs/sticky-kit/1.1.3/sticky-kit.min.js" integrity="sha256-c4Rlo1ZozqTPE2RLuvbusY3+SU1pQaJC0TjuhygMipw=" crossorigin="anonymous"></script><!-- pkgdown --><link href="../pkgdown.css" rel="stylesheet">
+<!-- jquery --><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script><!-- Bootstrap --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha256-916EbMg70RQy9LHiGkXzG8hSg9EdNy97GazNG/aiY1w=" crossorigin="anonymous">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha256-U5ZEeKfGNOja007MMD3YBI0A3OSZOQbeG6z2f2Y0hu8=" crossorigin="anonymous"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha256-eZrrJcwDc/3uDhsdt61sL2oOBY362qM3lon1gyExkL0=" crossorigin="anonymous">
+<!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.4/clipboard.min.js" integrity="sha256-FiZwavyI2V6+EXO1U+xzLG3IKldpiTFf3153ea9zikQ=" crossorigin="anonymous"></script><!-- sticky kit --><script src="https://cdnjs.cloudflare.com/ajax/libs/sticky-kit/1.1.3/sticky-kit.min.js" integrity="sha256-c4Rlo1ZozqTPE2RLuvbusY3+SU1pQaJC0TjuhygMipw=" crossorigin="anonymous"></script><!-- pkgdown --><link href="../pkgdown.css" rel="stylesheet">
 <script src="../pkgdown.js"></script><meta property="og:title" content="Type and size stability">
 <meta property="og:description" content="">
 <meta property="og:image" content="https://vctrs.r-lib.org/logo.png">
 <meta name="twitter:card" content="summary">
-<!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script><!--[if lt IE 9]>
+<!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
 <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
 <![endif]-->
@@ -32,7 +31,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">vctrs</a>
-        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.0.9000</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.0.9000</span>
       </span>
     </div>
 
@@ -97,7 +96,7 @@
     
 <p>This vignette introduces the ideas of type-stability and size-stability. If a function possesses these properties it is substantially easier to reason about because to predict the “shape” of the output, you only need to know the “shape”s of the inputs.</p>
 <p>This work is partly motivated by a common pattern that I noticed when reviewing code: if I read the code (without running it!) and I can’t predict the type of each variables, I feel very uneasy about the code. This sense is important because most unit tests explore typical inputs, rather than exhaustively testing the strange and unusual. Analysing the types (and size) of variables makes it possible to spot unpleasant edge cases.</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" data-line-number="1"><span class="kw">library</span>(vctrs)</a></code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" data-line-number="1"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">library</a></span>(vctrs)</a></code></pre></div>
 <div id="definitions" class="section level2">
 <h2 class="hasAnchor">
 <a href="#definitions" class="anchor"></a>Definitions</h2>
@@ -114,7 +113,7 @@
 <ol style="list-style-type: decimal">
 <li>You can predict the output <em>length</em> knowing only the input <em>lengths</em>, or there is a single numeric input that specifies the output <em>length</em>.</li>
 </ol>
-<p>(But note that length-stable is not a particularly robust definition because <code>length()</code> returns a value for things that are not vectors.)</p>
+<p>(But note that length-stable is not a particularly robust definition because <code><a href="https://www.rdocumentation.org/packages/base/topics/length">length()</a></code> returns a value for things that are not vectors.)</p>
 <p>We’ll call functions that don’t obey these principles <strong>type-unstable</strong> and <strong>size-unstable</strong> respectively.</p>
 <p>On top of type- and size-stability, it’s also desirable to have a single set of rules that are applied consistently. We want one set of type-coercion and size-recycling rules that apply everywhere, not many sets of rules that apply to different functions.</p>
 <p>The goal of these principles is to minimise cognitive overhead. Rather than having to memorise many special cases, you should be able to learn one set of principles and apply them again and again.</p>
@@ -123,128 +122,128 @@
 <a href="#examples" class="anchor"></a>Examples</h3>
 <p>To make these ideas concrete, lets apply them to a few base functions:</p>
 <ol style="list-style-type: decimal">
-<li><p><code>mean()</code> is trivially type-stable and size-stable because it always returns a double vector of length 1 (or it throws an error).</p></li>
+<li><p><code><a href="https://www.rdocumentation.org/packages/base/topics/mean">mean()</a></code> is trivially type-stable and size-stable because it always returns a double vector of length 1 (or it throws an error).</p></li>
 <li>
-<p>Surprisingly, <code>median()</code> is type-unstable:</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" data-line-number="1"><span class="kw"><a href="../reference/vec_type.html">vec_ptype</a></span>(<span class="kw">median</span>(<span class="kw">c</span>(1L, 1L)))</a>
+<p>Surprisingly, <code><a href="https://www.rdocumentation.org/packages/stats/topics/median">median()</a></code> is type-unstable:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" data-line-number="1"><span class="kw"><a href="../reference/vec_type.html">vec_ptype</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/stats/topics/median">median</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(1L, 1L)))</a>
 <a class="sourceLine" id="cb2-2" data-line-number="2"><span class="co">#&gt; Prototype: double</span></a>
-<a class="sourceLine" id="cb2-3" data-line-number="3"><span class="kw"><a href="../reference/vec_type.html">vec_ptype</a></span>(<span class="kw">median</span>(<span class="kw">c</span>(1L, 1L, 1L)))</a>
+<a class="sourceLine" id="cb2-3" data-line-number="3"><span class="kw"><a href="../reference/vec_type.html">vec_ptype</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/stats/topics/median">median</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(1L, 1L, 1L)))</a>
 <a class="sourceLine" id="cb2-4" data-line-number="4"><span class="co">#&gt; Prototype: integer</span></a></code></pre></div>
 <p>It is, however, size-stable, since it always returns a vector of length 1.</p>
 </li>
 <li>
-<p><code>sapply()</code> is type-unstable because you can’t predict the output type only knowing the input types:</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" data-line-number="1"><span class="kw"><a href="../reference/vec_type.html">vec_ptype</a></span>(<span class="kw">sapply</span>(1L, <span class="cf">function</span>(x) <span class="kw">c</span>(x, x)))</a>
+<p><code><a href="https://www.rdocumentation.org/packages/base/topics/lapply">sapply()</a></code> is type-unstable because you can’t predict the output type only knowing the input types:</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" data-line-number="1"><span class="kw"><a href="../reference/vec_type.html">vec_ptype</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/lapply">sapply</a></span>(1L, <span class="cf">function</span>(x) <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(x, x)))</a>
 <a class="sourceLine" id="cb3-2" data-line-number="2"><span class="co">#&gt; Prototype: integer[,1]</span></a>
-<a class="sourceLine" id="cb3-3" data-line-number="3"><span class="kw"><a href="../reference/vec_type.html">vec_ptype</a></span>(<span class="kw">sapply</span>(<span class="kw">integer</span>(), <span class="cf">function</span>(x) <span class="kw">c</span>(x, x)))</a>
+<a class="sourceLine" id="cb3-3" data-line-number="3"><span class="kw"><a href="../reference/vec_type.html">vec_ptype</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/lapply">sapply</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/integer">integer</a></span>(), <span class="cf">function</span>(x) <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(x, x)))</a>
 <a class="sourceLine" id="cb3-4" data-line-number="4"><span class="co">#&gt; Prototype: list</span></a></code></pre></div>
 <p>It’s not quite size-stable, <code><a href="../reference/vec_size.html">vec_size(sapply(x, f))</a></code> is <code><a href="../reference/vec_size.html">vec_size(x)</a></code> for vectors, but not for matrices (the output is transposed) or data frames (it iterates over the columns).</p>
 </li>
-<li><p><code>vapply()</code> is type-stable version of <code>sapply()</code> because <code><a href="../reference/vec_type.html">vec_ptype(vapply(x, fun, template))</a></code> is always <code><a href="../reference/vec_type.html">vec_ptype(template)</a></code>.<br>
-It is size-unstable for the same reasons as <code>sapply()</code>.</p></li>
+<li><p><code><a href="https://www.rdocumentation.org/packages/base/topics/lapply">vapply()</a></code> is type-stable version of <code><a href="https://www.rdocumentation.org/packages/base/topics/lapply">sapply()</a></code> because <code><a href="../reference/vec_type.html">vec_ptype(vapply(x, fun, template))</a></code> is always <code><a href="../reference/vec_type.html">vec_ptype(template)</a></code>.<br>
+It is size-unstable for the same reasons as <code><a href="https://www.rdocumentation.org/packages/base/topics/lapply">sapply()</a></code>.</p></li>
 <li>
-<p><code>c()</code> is type-unstable because <code>c(x, y)</code> doesn’t always the same type as <code>c(y, x)</code>.</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" data-line-number="1"><span class="kw"><a href="../reference/vec_type.html">vec_ptype</a></span>(<span class="kw">c</span>(<span class="ot">NA</span>, <span class="kw">Sys.Date</span>()))</a>
+<p><code><a href="https://www.rdocumentation.org/packages/base/topics/c">c()</a></code> is type-unstable because <code><a href="https://www.rdocumentation.org/packages/base/topics/c">c(x, y)</a></code> doesn’t always the same type as <code><a href="https://www.rdocumentation.org/packages/base/topics/c">c(y, x)</a></code>.</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" data-line-number="1"><span class="kw"><a href="../reference/vec_type.html">vec_ptype</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="ot">NA</span>, <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/Sys.time">Sys.Date</a></span>()))</a>
 <a class="sourceLine" id="cb4-2" data-line-number="2"><span class="co">#&gt; Prototype: double</span></a>
-<a class="sourceLine" id="cb4-3" data-line-number="3"><span class="kw"><a href="../reference/vec_type.html">vec_ptype</a></span>(<span class="kw">c</span>(<span class="kw">Sys.Date</span>(), <span class="ot">NA</span>))</a>
+<a class="sourceLine" id="cb4-3" data-line-number="3"><span class="kw"><a href="../reference/vec_type.html">vec_ptype</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/Sys.time">Sys.Date</a></span>(), <span class="ot">NA</span>))</a>
 <a class="sourceLine" id="cb4-4" data-line-number="4"><span class="co">#&gt; Prototype: date</span></a></code></pre></div>
-<p><code>c()</code> is <em>almost always</em> length-stable because <code>length(c(x, y))</code> <em>almost always</em> equals <code>length(x) + length(y)</code>. One common source of instability here is dealing with non-vectors (see also later section “Non-vectors”):</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" data-line-number="1">env &lt;-<span class="st"> </span><span class="kw">new.env</span>(<span class="dt">parent =</span> <span class="kw">emptyenv</span>())</a>
-<a class="sourceLine" id="cb5-2" data-line-number="2"><span class="kw">length</span>(env)</a>
+<p><code><a href="https://www.rdocumentation.org/packages/base/topics/c">c()</a></code> is <em>almost always</em> length-stable because <code><a href="https://www.rdocumentation.org/packages/base/topics/length">length(c(x, y))</a></code> <em>almost always</em> equals <code>length(x) + length(y)</code>. One common source of instability here is dealing with non-vectors (see also later section “Non-vectors”):</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" data-line-number="1">env &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/environment">new.env</a></span>(<span class="dt">parent =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/environment">emptyenv</a></span>())</a>
+<a class="sourceLine" id="cb5-2" data-line-number="2"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/length">length</a></span>(env)</a>
 <a class="sourceLine" id="cb5-3" data-line-number="3"><span class="co">#&gt; [1] 0</span></a>
-<a class="sourceLine" id="cb5-4" data-line-number="4"><span class="kw">length</span>(mean)</a>
+<a class="sourceLine" id="cb5-4" data-line-number="4"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/length">length</a></span>(mean)</a>
 <a class="sourceLine" id="cb5-5" data-line-number="5"><span class="co">#&gt; [1] 1</span></a>
-<a class="sourceLine" id="cb5-6" data-line-number="6"><span class="kw">length</span>(<span class="kw">c</span>(env, mean))</a>
+<a class="sourceLine" id="cb5-6" data-line-number="6"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/length">length</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(env, mean))</a>
 <a class="sourceLine" id="cb5-7" data-line-number="7"><span class="co">#&gt; [1] 2</span></a></code></pre></div>
 </li>
-<li><p><code>paste(x1, x2)</code> is length-stable because <code>length(paste(x1, x2))</code> equals <code>max(length(x1), length(x2))</code>. However, it doesn’t follow the usual arithmetic recycling rules because <code>paste(1:2, 1:3)</code> doesn’t generate a warning.</p></li>
+<li><p><code><a href="https://www.rdocumentation.org/packages/base/topics/paste">paste(x1, x2)</a></code> is length-stable because <code><a href="https://www.rdocumentation.org/packages/base/topics/length">length(paste(x1, x2))</a></code> equals <code><a href="https://www.rdocumentation.org/packages/base/topics/Extremes">max(length(x1), length(x2))</a></code>. However, it doesn’t follow the usual arithmetic recycling rules because <code><a href="https://www.rdocumentation.org/packages/base/topics/paste">paste(1:2, 1:3)</a></code> doesn’t generate a warning.</p></li>
 <li>
-<p><code>ifelse()</code> is length-stable because <code>length(ifelse(cond, true, false))</code> is always <code>length(cond)</code>. <code>ifelse()</code> is type-unstable because the output type depends on the value of <code>cond</code>:</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" data-line-number="1"><span class="kw"><a href="../reference/vec_type.html">vec_ptype</a></span>(<span class="kw">ifelse</span>(<span class="ot">NA</span>, 1L, 1L))</a>
+<p><code><a href="https://www.rdocumentation.org/packages/base/topics/ifelse">ifelse()</a></code> is length-stable because <code><a href="https://www.rdocumentation.org/packages/base/topics/length">length(ifelse(cond, true, false))</a></code> is always <code><a href="https://www.rdocumentation.org/packages/base/topics/length">length(cond)</a></code>. <code><a href="https://www.rdocumentation.org/packages/base/topics/ifelse">ifelse()</a></code> is type-unstable because the output type depends on the value of <code>cond</code>:</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" data-line-number="1"><span class="kw"><a href="../reference/vec_type.html">vec_ptype</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/ifelse">ifelse</a></span>(<span class="ot">NA</span>, 1L, 1L))</a>
 <a class="sourceLine" id="cb6-2" data-line-number="2"><span class="co">#&gt; Prototype: logical</span></a>
-<a class="sourceLine" id="cb6-3" data-line-number="3"><span class="kw"><a href="../reference/vec_type.html">vec_ptype</a></span>(<span class="kw">ifelse</span>(<span class="ot">FALSE</span>, 1L, 1L))</a>
+<a class="sourceLine" id="cb6-3" data-line-number="3"><span class="kw"><a href="../reference/vec_type.html">vec_ptype</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/ifelse">ifelse</a></span>(<span class="ot">FALSE</span>, 1L, 1L))</a>
 <a class="sourceLine" id="cb6-4" data-line-number="4"><span class="co">#&gt; Prototype: integer</span></a></code></pre></div>
 </li>
-<li><p><code>read.csv(file)</code> is type-unstable and size-unstable because while you know it will return a data frame, you don’t know what columns it will return, or how many rows it will have. Similarly, <code>df[[i]]</code> is not type-stable because the result depends on the <em>value</em> of <code>i</code>. There are very many important functions that can not be made type-stable or size-stable!</p></li>
+<li><p><code><a href="https://www.rdocumentation.org/packages/utils/topics/read.table">read.csv(file)</a></code> is type-unstable and size-unstable because while you know it will return a data frame, you don’t know what columns it will return, or how many rows it will have. Similarly, <code>df[[i]]</code> is not type-stable because the result depends on the <em>value</em> of <code>i</code>. There are very many important functions that can not be made type-stable or size-stable!</p></li>
 </ol>
 <p>With this understand of type- and size-stability in hand, we’ll use them to analyse some base R functions in greater depth and then propose alternatives with better properties.</p>
 </div>
 </div>
 <div id="c-and-vctrsvec_c" class="section level2">
 <h2 class="hasAnchor">
-<a href="#c-and-vctrsvec_c" class="anchor"></a><code>c()</code> and <code><a href="../reference/vec_c.html">vctrs::vec_c()</a></code>
+<a href="#c-and-vctrsvec_c" class="anchor"></a><code><a href="https://www.rdocumentation.org/packages/base/topics/c">c()</a></code> and <code><a href="../reference/vec_c.html">vctrs::vec_c()</a></code>
 </h2>
-<p>In this section we’ll compare and contrast <code>c()</code> and <code><a href="../reference/vec_c.html">vec_c()</a></code>. <code><a href="../reference/vec_c.html">vec_c()</a></code> is both type- and size-stable because it possesses the following invariants:</p>
+<p>In this section we’ll compare and contrast <code><a href="https://www.rdocumentation.org/packages/base/topics/c">c()</a></code> and <code><a href="../reference/vec_c.html">vec_c()</a></code>. <code><a href="../reference/vec_c.html">vec_c()</a></code> is both type- and size-stable because it possesses the following invariants:</p>
 <ul>
 <li>
 <code><a href="../reference/vec_type.html">vec_type(vec_c(x, y))</a></code> equals <code><a href="../reference/vec_type.html">vec_type_common(x, y)</a></code>.</li>
 <li>
 <code><a href="../reference/vec_size.html">vec_size(vec_c(X, y))</a></code> equals <code>vec_size(x) + vec_size(y)</code>.</li>
 </ul>
-<p><code>c()</code> has another undesirable property in that it’s not consistent with <code>unlist()</code>, i.e. <code>unlist(list(x, y))</code> does not always equal <code>c(x, y)</code>; i.e. base R has multiple sets of type-coercion rules. I won’t consider this problem further here.</p>
+<p><code><a href="https://www.rdocumentation.org/packages/base/topics/c">c()</a></code> has another undesirable property in that it’s not consistent with <code><a href="https://www.rdocumentation.org/packages/base/topics/unlist">unlist()</a></code>, i.e. <code><a href="https://www.rdocumentation.org/packages/base/topics/unlist">unlist(list(x, y))</a></code> does not always equal <code><a href="https://www.rdocumentation.org/packages/base/topics/c">c(x, y)</a></code>; i.e. base R has multiple sets of type-coercion rules. I won’t consider this problem further here.</p>
 <p>I have two goals here:</p>
 <ul>
-<li><p>To fully document the quirks of <code>c()</code>, hence motivating the development of an alternative.</p></li>
+<li><p>To fully document the quirks of <code><a href="https://www.rdocumentation.org/packages/base/topics/c">c()</a></code>, hence motivating the development of an alternative.</p></li>
 <li><p>To discuss non-obvious consequences of the type- and size-stability above.</p></li>
 </ul>
 <div id="atomic-vectors" class="section level3">
 <h3 class="hasAnchor">
 <a href="#atomic-vectors" class="anchor"></a>Atomic vectors</h3>
-<p>If we only consider atomic vectors, <code>c()</code> is type-stable because it uses a hierarchy of types: character &gt; complex &gt; double &gt; integer &gt; logical.</p>
-<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" data-line-number="1"><span class="kw">c</span>(<span class="ot">FALSE</span>, 1L, <span class="fl">2.5</span>)</a>
+<p>If we only consider atomic vectors, <code><a href="https://www.rdocumentation.org/packages/base/topics/c">c()</a></code> is type-stable because it uses a hierarchy of types: character &gt; complex &gt; double &gt; integer &gt; logical.</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" data-line-number="1"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="ot">FALSE</span>, 1L, <span class="fl">2.5</span>)</a>
 <a class="sourceLine" id="cb7-2" data-line-number="2"><span class="co">#&gt; [1] 0.0 1.0 2.5</span></a></code></pre></div>
 <p><code><a href="../reference/vec_c.html">vec_c()</a></code> obeys similar rules:</p>
 <div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb8-1" data-line-number="1"><span class="kw"><a href="../reference/vec_c.html">vec_c</a></span>(<span class="ot">FALSE</span>, 1L, <span class="fl">2.5</span>)</a>
 <a class="sourceLine" id="cb8-2" data-line-number="2"><span class="co">#&gt; [1] 0.0 1.0 2.5</span></a></code></pre></div>
 <p>But does not automatically coerce to character vectors or lists:</p>
-<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb9-1" data-line-number="1"><span class="kw">c</span>(<span class="ot">FALSE</span>, <span class="st">"x"</span>)</a>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb9-1" data-line-number="1"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="ot">FALSE</span>, <span class="st">"x"</span>)</a>
 <a class="sourceLine" id="cb9-2" data-line-number="2"><span class="co">#&gt; [1] "FALSE" "x"</span></a>
 <a class="sourceLine" id="cb9-3" data-line-number="3"><span class="kw"><a href="../reference/vec_c.html">vec_c</a></span>(<span class="ot">FALSE</span>, <span class="st">"x"</span>)</a>
 <a class="sourceLine" id="cb9-4" data-line-number="4"><span class="co">#&gt; Error: No common type for &lt;logical&gt; and &lt;character&gt;</span></a>
 <a class="sourceLine" id="cb9-5" data-line-number="5"></a>
-<a class="sourceLine" id="cb9-6" data-line-number="6"><span class="kw">c</span>(<span class="ot">FALSE</span>, <span class="kw">list</span>(<span class="dv">1</span>))</a>
+<a class="sourceLine" id="cb9-6" data-line-number="6"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="ot">FALSE</span>, <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/list">list</a></span>(<span class="dv">1</span>))</a>
 <a class="sourceLine" id="cb9-7" data-line-number="7"><span class="co">#&gt; [[1]]</span></a>
 <a class="sourceLine" id="cb9-8" data-line-number="8"><span class="co">#&gt; [1] FALSE</span></a>
 <a class="sourceLine" id="cb9-9" data-line-number="9"><span class="co">#&gt; </span></a>
 <a class="sourceLine" id="cb9-10" data-line-number="10"><span class="co">#&gt; [[2]]</span></a>
 <a class="sourceLine" id="cb9-11" data-line-number="11"><span class="co">#&gt; [1] 1</span></a>
-<a class="sourceLine" id="cb9-12" data-line-number="12"><span class="kw"><a href="../reference/vec_c.html">vec_c</a></span>(<span class="ot">FALSE</span>, <span class="kw">list</span>(<span class="dv">1</span>))</a>
+<a class="sourceLine" id="cb9-12" data-line-number="12"><span class="kw"><a href="../reference/vec_c.html">vec_c</a></span>(<span class="ot">FALSE</span>, <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/list">list</a></span>(<span class="dv">1</span>))</a>
 <a class="sourceLine" id="cb9-13" data-line-number="13"><span class="co">#&gt; Error: No common type for &lt;logical&gt; and &lt;list&gt;</span></a></code></pre></div>
 </div>
 <div id="non-vectors" class="section level3">
 <h3 class="hasAnchor">
 <a href="#non-vectors" class="anchor"></a>Non-vectors</h3>
-<p>As far as I can tell <code>c()</code> never throws an error. No matter how bizarre the inputs, it always returns something:</p>
-<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb10-1" data-line-number="1"><span class="kw">c</span>(<span class="kw">Sys.Date</span>(), <span class="kw">factor</span>(<span class="st">"x"</span>), <span class="st">"x"</span>)</a>
+<p>As far as I can tell <code><a href="https://www.rdocumentation.org/packages/base/topics/c">c()</a></code> never throws an error. No matter how bizarre the inputs, it always returns something:</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb10-1" data-line-number="1"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/Sys.time">Sys.Date</a></span>(), <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/factor">factor</a></span>(<span class="st">"x"</span>), <span class="st">"x"</span>)</a>
 <a class="sourceLine" id="cb10-2" data-line-number="2"><span class="co">#&gt; Warning in as.POSIXlt.Date(x): NAs introduced by coercion</span></a>
-<a class="sourceLine" id="cb10-3" data-line-number="3"><span class="co">#&gt; [1] "2018-11-08" "1970-01-02" NA</span></a></code></pre></div>
-<p>If the inputs aren’t vectors, <code>c()</code> automatically puts them in a list:</p>
-<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb11-1" data-line-number="1"><span class="kw">c</span>(mean, <span class="kw">globalenv</span>())</a>
+<a class="sourceLine" id="cb10-3" data-line-number="3"><span class="co">#&gt; [1] "2018-11-27" "1970-01-02" NA</span></a></code></pre></div>
+<p>If the inputs aren’t vectors, <code><a href="https://www.rdocumentation.org/packages/base/topics/c">c()</a></code> automatically puts them in a list:</p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb11-1" data-line-number="1"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(mean, <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/environment">globalenv</a></span>())</a>
 <a class="sourceLine" id="cb11-2" data-line-number="2"><span class="co">#&gt; [[1]]</span></a>
 <a class="sourceLine" id="cb11-3" data-line-number="3"><span class="co">#&gt; function (x, ...) </span></a>
 <a class="sourceLine" id="cb11-4" data-line-number="4"><span class="co">#&gt; UseMethod("mean")</span></a>
-<a class="sourceLine" id="cb11-5" data-line-number="5"><span class="co">#&gt; &lt;bytecode: 0x3134288&gt;</span></a>
+<a class="sourceLine" id="cb11-5" data-line-number="5"><span class="co">#&gt; &lt;bytecode: 0x3633038&gt;</span></a>
 <a class="sourceLine" id="cb11-6" data-line-number="6"><span class="co">#&gt; &lt;environment: namespace:base&gt;</span></a>
 <a class="sourceLine" id="cb11-7" data-line-number="7"><span class="co">#&gt; </span></a>
 <a class="sourceLine" id="cb11-8" data-line-number="8"><span class="co">#&gt; [[2]]</span></a>
 <a class="sourceLine" id="cb11-9" data-line-number="9"><span class="co">#&gt; &lt;environment: R_GlobalEnv&gt;</span></a></code></pre></div>
 <p><code><a href="../reference/vec_c.html">vec_c()</a></code> throws an error if the inputs are not vectors, or not automatically coercible:</p>
-<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb12-1" data-line-number="1"><span class="kw"><a href="../reference/vec_c.html">vec_c</a></span>(mean, <span class="kw">globalenv</span>())</a>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb12-1" data-line-number="1"><span class="kw"><a href="../reference/vec_c.html">vec_c</a></span>(mean, <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/environment">globalenv</a></span>())</a>
 <a class="sourceLine" id="cb12-2" data-line-number="2"><span class="co">#&gt; Error: `x` is not a vector</span></a>
 <a class="sourceLine" id="cb12-3" data-line-number="3"></a>
-<a class="sourceLine" id="cb12-4" data-line-number="4"><span class="kw"><a href="../reference/vec_c.html">vec_c</a></span>(<span class="kw">Sys.Date</span>(), <span class="kw">factor</span>(<span class="st">"x"</span>), <span class="st">"x"</span>)</a>
+<a class="sourceLine" id="cb12-4" data-line-number="4"><span class="kw"><a href="../reference/vec_c.html">vec_c</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/Sys.time">Sys.Date</a></span>(), <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/factor">factor</a></span>(<span class="st">"x"</span>), <span class="st">"x"</span>)</a>
 <a class="sourceLine" id="cb12-5" data-line-number="5"><span class="co">#&gt; Error: No common type for &lt;date&gt; and &lt;factor&lt;5a425&gt;&gt;</span></a></code></pre></div>
 </div>
 <div id="factors" class="section level3">
 <h3 class="hasAnchor">
 <a href="#factors" class="anchor"></a>Factors</h3>
 <p>Combining two factors returns an integer vector:</p>
-<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb13-1" data-line-number="1">fa &lt;-<span class="st"> </span><span class="kw">factor</span>(<span class="st">"a"</span>)</a>
-<a class="sourceLine" id="cb13-2" data-line-number="2">fb &lt;-<span class="st"> </span><span class="kw">factor</span>(<span class="st">"b"</span>)</a>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb13-1" data-line-number="1">fa &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/factor">factor</a></span>(<span class="st">"a"</span>)</a>
+<a class="sourceLine" id="cb13-2" data-line-number="2">fb &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/factor">factor</a></span>(<span class="st">"b"</span>)</a>
 <a class="sourceLine" id="cb13-3" data-line-number="3"></a>
-<a class="sourceLine" id="cb13-4" data-line-number="4"><span class="kw">c</span>(fa, fb)</a>
+<a class="sourceLine" id="cb13-4" data-line-number="4"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(fa, fb)</a>
 <a class="sourceLine" id="cb13-5" data-line-number="5"><span class="co">#&gt; [1] 1 1</span></a></code></pre></div>
-<p>(this is documented in <code>c()</code> but is still undesirable.)</p>
+<p>(this is documented in <code><a href="https://www.rdocumentation.org/packages/base/topics/c">c()</a></code> but is still undesirable.)</p>
 <p><code><a href="../reference/vec_c.html">vec_c()</a></code> returns a factor taking the union of the levels. This behaviour is motivated by pragmatics: there are many places in base R that automatically convert character vectors to factors, so enforcing stricter behaviour would be unnecessarily onerous. (This is backed up by experience with <code>dplyr::bind_rows()</code> which is stricter, and is a common source of user difficulty.)</p>
 <div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb14-1" data-line-number="1"><span class="kw"><a href="../reference/vec_c.html">vec_c</a></span>(fa, fb)</a>
 <a class="sourceLine" id="cb14-2" data-line-number="2"><span class="co">#&gt; [1] a b</span></a>
@@ -256,17 +255,17 @@ It is size-unstable for the same reasons as <code>sapply()</code>.</p></li>
 <div id="date-times" class="section level3">
 <h3 class="hasAnchor">
 <a href="#date-times" class="anchor"></a>Date-times</h3>
-<p><code>c()</code> strips the time zone associated with date-times:</p>
-<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb15-1" data-line-number="1">datetime_nz &lt;-<span class="st"> </span><span class="kw">as.POSIXct</span>(<span class="st">"2020-01-01 09:00"</span>, <span class="dt">tz =</span> <span class="st">"Pacific/Auckland"</span>)</a>
-<a class="sourceLine" id="cb15-2" data-line-number="2"><span class="kw">c</span>(datetime_nz)</a>
+<p><code><a href="https://www.rdocumentation.org/packages/base/topics/c">c()</a></code> strips the time zone associated with date-times:</p>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb15-1" data-line-number="1">datetime_nz &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/as.POSIXlt">as.POSIXct</a></span>(<span class="st">"2020-01-01 09:00"</span>, <span class="dt">tz =</span> <span class="st">"Pacific/Auckland"</span>)</a>
+<a class="sourceLine" id="cb15-2" data-line-number="2"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(datetime_nz)</a>
 <a class="sourceLine" id="cb15-3" data-line-number="3"><span class="co">#&gt; [1] "2019-12-31 20:00:00 UTC"</span></a></code></pre></div>
-<p>This behaviour is documented in <code>?DateTimeClasses</code>, but is the source of considerable user pain.</p>
+<p>This behaviour is documented in <code><a href="https://www.rdocumentation.org/packages/base/topics/DateTimeClasses">?DateTimeClasses</a></code>, but is the source of considerable user pain.</p>
 <p><code><a href="../reference/vec_c.html">vec_c()</a></code> preserves time zones:</p>
 <div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb16-1" data-line-number="1"><span class="kw"><a href="../reference/vec_c.html">vec_c</a></span>(datetime_nz)</a>
 <a class="sourceLine" id="cb16-2" data-line-number="2"><span class="co">#&gt; [1] "2020-01-01 09:00:00 NZDT"</span></a></code></pre></div>
 <p>What time zone should the output have if inputs have different time zones? One option would be to strict and force the user to manually align all the time zones. However, this is onerous (particularly because there’s no easy way to change the time zone in base R), so vctrs chooses to use the first non-local time zone:</p>
-<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb17-1" data-line-number="1">datetime_local &lt;-<span class="st"> </span><span class="kw">as.POSIXct</span>(<span class="st">"2020-01-01 09:00"</span>)</a>
-<a class="sourceLine" id="cb17-2" data-line-number="2">datetime_houston &lt;-<span class="st"> </span><span class="kw">as.POSIXct</span>(<span class="st">"2020-01-01 09:00"</span>, <span class="dt">tz =</span> <span class="st">"US/Central"</span>)</a>
+<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb17-1" data-line-number="1">datetime_local &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/as.POSIXlt">as.POSIXct</a></span>(<span class="st">"2020-01-01 09:00"</span>)</a>
+<a class="sourceLine" id="cb17-2" data-line-number="2">datetime_houston &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/as.POSIXlt">as.POSIXct</a></span>(<span class="st">"2020-01-01 09:00"</span>, <span class="dt">tz =</span> <span class="st">"US/Central"</span>)</a>
 <a class="sourceLine" id="cb17-3" data-line-number="3"></a>
 <a class="sourceLine" id="cb17-4" data-line-number="4"><span class="kw"><a href="../reference/vec_c.html">vec_c</a></span>(datetime_local, datetime_houston, datetime_nz)</a>
 <a class="sourceLine" id="cb17-5" data-line-number="5"><span class="co">#&gt; [1] "2020-01-01 03:00:00 CST" "2020-01-01 09:00:00 CST"</span></a>
@@ -279,15 +278,15 @@ It is size-unstable for the same reasons as <code>sapply()</code>.</p></li>
 <div id="dates-and-date-times" class="section level3">
 <h3 class="hasAnchor">
 <a href="#dates-and-date-times" class="anchor"></a>Dates and date-times</h3>
-<p>Combining dates and date-times with <code>c()</code> gives silently incorrect results:</p>
-<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb18-1" data-line-number="1">date &lt;-<span class="st"> </span><span class="kw">as.Date</span>(<span class="st">"2020-01-01"</span>)</a>
-<a class="sourceLine" id="cb18-2" data-line-number="2">datetime &lt;-<span class="st"> </span><span class="kw">as.POSIXct</span>(<span class="st">"2020-01-01 09:00"</span>)</a>
+<p>Combining dates and date-times with <code><a href="https://www.rdocumentation.org/packages/base/topics/c">c()</a></code> gives silently incorrect results:</p>
+<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb18-1" data-line-number="1">date &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/as.Date">as.Date</a></span>(<span class="st">"2020-01-01"</span>)</a>
+<a class="sourceLine" id="cb18-2" data-line-number="2">datetime &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/as.POSIXlt">as.POSIXct</a></span>(<span class="st">"2020-01-01 09:00"</span>)</a>
 <a class="sourceLine" id="cb18-3" data-line-number="3"></a>
-<a class="sourceLine" id="cb18-4" data-line-number="4"><span class="kw">c</span>(date, datetime)</a>
+<a class="sourceLine" id="cb18-4" data-line-number="4"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(date, datetime)</a>
 <a class="sourceLine" id="cb18-5" data-line-number="5"><span class="co">#&gt; [1] "2020-01-01"    "4322029-02-20"</span></a>
-<a class="sourceLine" id="cb18-6" data-line-number="6"><span class="kw">c</span>(datetime, date)</a>
+<a class="sourceLine" id="cb18-6" data-line-number="6"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(datetime, date)</a>
 <a class="sourceLine" id="cb18-7" data-line-number="7"><span class="co">#&gt; [1] "2020-01-01 09:00:00 UTC" "1970-01-01 05:04:22 UTC"</span></a></code></pre></div>
-<p>This behaviour arises because neither <code>c.Date()</code> nor <code>c.POSIXct()</code> check that all inputs are of the same type.</p>
+<p>This behaviour arises because neither <code><a href="https://www.rdocumentation.org/packages/base/topics/Dates">c.Date()</a></code> nor <code><a href="https://www.rdocumentation.org/packages/base/topics/DateTimeClasses">c.POSIXct()</a></code> check that all inputs are of the same type.</p>
 <p><code><a href="../reference/vec_c.html">vec_c()</a></code> uses a standard set of rules to avoid this problem. When you mix dates and date-times, vctrs returns a date-time, and converts dates to date-times at midnight (in the timezone of the date-time).</p>
 <div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb19-1" data-line-number="1"><span class="kw"><a href="../reference/vec_c.html">vec_c</a></span>(date, datetime)</a>
 <a class="sourceLine" id="cb19-2" data-line-number="2"><span class="co">#&gt; [1] "2020-01-01 00:00:00 UTC" "2020-01-01 09:00:00 UTC"</span></a>
@@ -297,12 +296,12 @@ It is size-unstable for the same reasons as <code>sapply()</code>.</p></li>
 <div id="missing-values" class="section level3">
 <h3 class="hasAnchor">
 <a href="#missing-values" class="anchor"></a>Missing values</h3>
-<p>If a missing value comes at the beginning of the inputs, <code>c()</code> falls back to the internal behaviour which strips all attributes:</p>
-<div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb20-1" data-line-number="1"><span class="kw">c</span>(<span class="ot">NA</span>, fa)</a>
+<p>If a missing value comes at the beginning of the inputs, <code><a href="https://www.rdocumentation.org/packages/base/topics/c">c()</a></code> falls back to the internal behaviour which strips all attributes:</p>
+<div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb20-1" data-line-number="1"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="ot">NA</span>, fa)</a>
 <a class="sourceLine" id="cb20-2" data-line-number="2"><span class="co">#&gt; [1] NA  1</span></a>
-<a class="sourceLine" id="cb20-3" data-line-number="3"><span class="kw">c</span>(<span class="ot">NA</span>, date)</a>
+<a class="sourceLine" id="cb20-3" data-line-number="3"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="ot">NA</span>, date)</a>
 <a class="sourceLine" id="cb20-4" data-line-number="4"><span class="co">#&gt; [1]    NA 18262</span></a>
-<a class="sourceLine" id="cb20-5" data-line-number="5"><span class="kw">c</span>(<span class="ot">NA</span>, datetime)</a>
+<a class="sourceLine" id="cb20-5" data-line-number="5"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="ot">NA</span>, datetime)</a>
 <a class="sourceLine" id="cb20-6" data-line-number="6"><span class="co">#&gt; [1]         NA 1577869200</span></a></code></pre></div>
 <p><code><a href="../reference/vec_c.html">vec_c()</a></code> takes a different approach treating a logical vector consisting only of <code>NA</code> as the <code><a href="../reference/unspecified.html">unspecified()</a></code> class which can be converted to any other 1d type:</p>
 <div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb21-1" data-line-number="1"><span class="kw"><a href="../reference/vec_c.html">vec_c</a></span>(<span class="ot">NA</span>, fa)</a>
@@ -316,10 +315,10 @@ It is size-unstable for the same reasons as <code>sapply()</code>.</p></li>
 <div id="data-frames" class="section level3">
 <h3 class="hasAnchor">
 <a href="#data-frames" class="anchor"></a>Data frames</h3>
-<p>Because it is <em>almost always</em> length-stable, <code>c()</code> combines data frames column wise (into a list):</p>
-<div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb22-1" data-line-number="1">df1 &lt;-<span class="st"> </span><span class="kw">data.frame</span>(<span class="dt">x =</span> <span class="dv">1</span>)</a>
-<a class="sourceLine" id="cb22-2" data-line-number="2">df2 &lt;-<span class="st"> </span><span class="kw">data.frame</span>(<span class="dt">x =</span> <span class="dv">2</span>)</a>
-<a class="sourceLine" id="cb22-3" data-line-number="3"><span class="kw">str</span>(<span class="kw">c</span>(df1, df1))</a>
+<p>Because it is <em>almost always</em> length-stable, <code><a href="https://www.rdocumentation.org/packages/base/topics/c">c()</a></code> combines data frames column wise (into a list):</p>
+<div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb22-1" data-line-number="1">df1 &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/data.frame">data.frame</a></span>(<span class="dt">x =</span> <span class="dv">1</span>)</a>
+<a class="sourceLine" id="cb22-2" data-line-number="2">df2 &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/data.frame">data.frame</a></span>(<span class="dt">x =</span> <span class="dv">2</span>)</a>
+<a class="sourceLine" id="cb22-3" data-line-number="3"><span class="kw"><a href="https://www.rdocumentation.org/packages/utils/topics/str">str</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(df1, df1))</a>
 <a class="sourceLine" id="cb22-4" data-line-number="4"><span class="co">#&gt; List of 2</span></a>
 <a class="sourceLine" id="cb22-5" data-line-number="5"><span class="co">#&gt;  $ x: num 1</span></a>
 <a class="sourceLine" id="cb22-6" data-line-number="6"><span class="co">#&gt;  $ x: num 1</span></a></code></pre></div>
@@ -333,8 +332,8 @@ It is size-unstable for the same reasons as <code>sapply()</code>.</p></li>
 <h3 class="hasAnchor">
 <a href="#matrices-and-arrays" class="anchor"></a>Matrices and arrays</h3>
 <p>The same reasoning applies to matrices:</p>
-<div class="sourceCode" id="cb24"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb24-1" data-line-number="1">m &lt;-<span class="st"> </span><span class="kw">matrix</span>(<span class="dv">1</span><span class="op">:</span><span class="dv">4</span>, <span class="dt">nrow =</span> <span class="dv">2</span>)</a>
-<a class="sourceLine" id="cb24-2" data-line-number="2"><span class="kw">c</span>(m, m)</a>
+<div class="sourceCode" id="cb24"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb24-1" data-line-number="1">m &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/matrix">matrix</a></span>(<span class="dv">1</span><span class="op">:</span><span class="dv">4</span>, <span class="dt">nrow =</span> <span class="dv">2</span>)</a>
+<a class="sourceLine" id="cb24-2" data-line-number="2"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(m, m)</a>
 <a class="sourceLine" id="cb24-3" data-line-number="3"><span class="co">#&gt; [1] 1 2 3 4 1 2 3 4</span></a>
 <a class="sourceLine" id="cb24-4" data-line-number="4"><span class="kw"><a href="../reference/vec_c.html">vec_c</a></span>(m, m)</a>
 <a class="sourceLine" id="cb24-5" data-line-number="5"><span class="co">#&gt;      [,1] [,2]</span></a>
@@ -343,7 +342,7 @@ It is size-unstable for the same reasons as <code>sapply()</code>.</p></li>
 <a class="sourceLine" id="cb24-8" data-line-number="8"><span class="co">#&gt; [3,]    1    3</span></a>
 <a class="sourceLine" id="cb24-9" data-line-number="9"><span class="co">#&gt; [4,]    2    4</span></a></code></pre></div>
 <p>One difference is that <code><a href="../reference/vec_c.html">vec_c()</a></code> will “broadcast” a vector to match the dimensions of an matrix:</p>
-<div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb25-1" data-line-number="1"><span class="kw">c</span>(m, <span class="dv">1</span>)</a>
+<div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb25-1" data-line-number="1"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(m, <span class="dv">1</span>)</a>
 <a class="sourceLine" id="cb25-2" data-line-number="2"><span class="co">#&gt; [1] 1 2 3 4 1</span></a>
 <a class="sourceLine" id="cb25-3" data-line-number="3"></a>
 <a class="sourceLine" id="cb25-4" data-line-number="4"><span class="kw"><a href="../reference/vec_c.html">vec_c</a></span>(m, <span class="dv">1</span>)</a>
@@ -360,14 +359,14 @@ It is size-unstable for the same reasons as <code>sapply()</code>.</p></li>
 <a class="sourceLine" id="cb26-2" data-line-number="2">  args &lt;-<span class="st"> </span><span class="kw">compact</span>(<span class="kw">list2</span>(...))</a>
 <a class="sourceLine" id="cb26-3" data-line-number="3"></a>
 <a class="sourceLine" id="cb26-4" data-line-number="4">  ptype &lt;-<span class="st"> </span><span class="kw"><a href="../reference/vec_type.html">vec_type_common</a></span>(<span class="op">!!!</span>args)</a>
-<a class="sourceLine" id="cb26-5" data-line-number="5">  <span class="cf">if</span> (<span class="kw">is.null</span>(ptype))</a>
-<a class="sourceLine" id="cb26-6" data-line-number="6">    <span class="kw">return</span>(<span class="ot">NULL</span>)</a>
+<a class="sourceLine" id="cb26-5" data-line-number="5">  <span class="cf">if</span> (<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/NULL">is.null</a></span>(ptype))</a>
+<a class="sourceLine" id="cb26-6" data-line-number="6">    <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/function">return</a></span>(<span class="ot">NULL</span>)</a>
 <a class="sourceLine" id="cb26-7" data-line-number="7"></a>
 <a class="sourceLine" id="cb26-8" data-line-number="8">  ns &lt;-<span class="st"> </span><span class="kw">map_int</span>(args, vec_size)</a>
-<a class="sourceLine" id="cb26-9" data-line-number="9">  out &lt;-<span class="st"> </span><span class="kw"><a href="../reference/vec_na.html">vec_na</a></span>(ptype, <span class="kw">sum</span>(ns))</a>
+<a class="sourceLine" id="cb26-9" data-line-number="9">  out &lt;-<span class="st"> </span><span class="kw"><a href="../reference/vec_na.html">vec_na</a></span>(ptype, <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/sum">sum</a></span>(ns))</a>
 <a class="sourceLine" id="cb26-10" data-line-number="10"></a>
 <a class="sourceLine" id="cb26-11" data-line-number="11">  pos &lt;-<span class="st"> </span><span class="dv">1</span></a>
-<a class="sourceLine" id="cb26-12" data-line-number="12">  <span class="cf">for</span> (i <span class="cf">in</span> <span class="kw">seq_along</span>(ns)) {</a>
+<a class="sourceLine" id="cb26-12" data-line-number="12">  <span class="cf">for</span> (i <span class="cf">in</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/seq">seq_along</a></span>(ns)) {</a>
 <a class="sourceLine" id="cb26-13" data-line-number="13">    n &lt;-<span class="st"> </span>ns[[i]]</a>
 <a class="sourceLine" id="cb26-14" data-line-number="14">    </a>
 <a class="sourceLine" id="cb26-15" data-line-number="15">    x &lt;-<span class="st"> </span><span class="kw"><a href="../reference/vec_cast.html">vec_cast</a></span>(args[[i]], <span class="dt">to =</span> ptype)</a>
@@ -382,21 +381,21 @@ It is size-unstable for the same reasons as <code>sapply()</code>.</p></li>
 </div>
 <div id="ifelse" class="section level2">
 <h2 class="hasAnchor">
-<a href="#ifelse" class="anchor"></a><code>ifelse()</code>
+<a href="#ifelse" class="anchor"></a><code><a href="https://www.rdocumentation.org/packages/base/topics/ifelse">ifelse()</a></code>
 </h2>
 <p>One of the functions that motivate the development of vctrs is <code>ifelse</code>. It has the surprising property that the result value is “A vector of the same length and attributes (including dimensions and class) as <code>test</code>”. To me, it seems more reasonable for type of the output to be controlled by the type of the <code>yes</code> and <code>no</code> arguments.</p>
 <p>In <code>dplyr::if_else()</code>, I swung too far towards strictness: it throws an error if <code>yes</code> and <code>no</code> are not the same type. This is annoying in practice because requires typed missing values (<code>NA_character_</code> etc), and because the checks are only on the class (not the full prototype), it’s easy to create invalid output.</p>
-<p>I found it much easier understand what <code>ifelse()</code> <em>should</em> do once I internalised the ideas of type- and size-stability:</p>
+<p>I found it much easier understand what <code><a href="https://www.rdocumentation.org/packages/base/topics/ifelse">ifelse()</a></code> <em>should</em> do once I internalised the ideas of type- and size-stability:</p>
 <ul>
 <li><p>The first argument must be logical.</p></li>
-<li><p><code><a href="../reference/vec_type.html">vec_type(if_else(test, yes, no))</a></code> equals <code><a href="../reference/vec_type.html">vec_type_common(yes, no)</a></code>. Unlike <code>ifelse()</code> this implies that <code>if_else()</code> must always evaluate both <code>yes</code> and <code>no</code> in order to figure out the correct type. I think this consistent with <code>&amp;&amp;</code> (scalar operation, short circuits) and <code>&amp;</code> (vectorised, evaluates both sides).</p></li>
+<li><p><code><a href="../reference/vec_type.html">vec_type(if_else(test, yes, no))</a></code> equals <code><a href="../reference/vec_type.html">vec_type_common(yes, no)</a></code>. Unlike <code><a href="https://www.rdocumentation.org/packages/base/topics/ifelse">ifelse()</a></code> this implies that <code>if_else()</code> must always evaluate both <code>yes</code> and <code>no</code> in order to figure out the correct type. I think this consistent with <code>&amp;&amp;</code> (scalar operation, short circuits) and <code>&amp;</code> (vectorised, evaluates both sides).</p></li>
 <li><p><code><a href="../reference/vec_size.html">vec_size(if_else(test, yes, no))</a></code> equals <code><a href="../reference/vec_size.html">vec_size_common(test, yes, no)</a></code>. I think the output could have the same size as <code>test</code> (i.e. the same behaviour as <code>ifelse</code>), but I <em>think</em> as a general rule that you inputs should either be mutually recycling, or not.</p></li>
 </ul>
 <p>This leads to the following implementation:</p>
 <div class="sourceCode" id="cb27"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb27-1" data-line-number="1">if_else &lt;-<span class="st"> </span><span class="cf">function</span>(test, yes, no) {</a>
-<a class="sourceLine" id="cb27-2" data-line-number="2">  <span class="kw"><a href="../reference/vec_assert.html">vec_assert</a></span>(test, <span class="kw">logical</span>())</a>
-<a class="sourceLine" id="cb27-3" data-line-number="3">  <span class="kw">c</span>(yes, no) <span class="op">%&lt;-%</span><span class="st"> </span><span class="kw"><a href="../reference/vec_cast.html">vec_cast_common</a></span>(yes, no)</a>
-<a class="sourceLine" id="cb27-4" data-line-number="4">  <span class="kw">c</span>(test, yes, no) <span class="op">%&lt;-%</span><span class="st"> </span><span class="kw"><a href="../reference/vec_recycle.html">vec_recycle_common</a></span>(test, yes, no)</a>
+<a class="sourceLine" id="cb27-2" data-line-number="2">  <span class="kw"><a href="../reference/vec_assert.html">vec_assert</a></span>(test, <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/logical">logical</a></span>())</a>
+<a class="sourceLine" id="cb27-3" data-line-number="3">  <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(yes, no) <span class="op">%&lt;-%</span><span class="st"> </span><span class="kw"><a href="../reference/vec_cast.html">vec_cast_common</a></span>(yes, no)</a>
+<a class="sourceLine" id="cb27-4" data-line-number="4">  <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(test, yes, no) <span class="op">%&lt;-%</span><span class="st"> </span><span class="kw"><a href="../reference/vec_recycle.html">vec_recycle_common</a></span>(test, yes, no)</a>
 <a class="sourceLine" id="cb27-5" data-line-number="5"></a>
 <a class="sourceLine" id="cb27-6" data-line-number="6">  out &lt;-<span class="st"> </span><span class="kw"><a href="../reference/vec_na.html">vec_na</a></span>(yes, <span class="kw"><a href="../reference/vec_size.html">vec_size</a></span>(yes))</a>
 <a class="sourceLine" id="cb27-7" data-line-number="7">  <span class="kw"><a href="../reference/vec_slice.html">vec_slice</a></span>(out, test) &lt;-<span class="st"> </span><span class="kw"><a href="../reference/vec_slice.html">vec_slice</a></span>(yes, test)</a>
@@ -405,16 +404,16 @@ It is size-unstable for the same reasons as <code>sapply()</code>.</p></li>
 <a class="sourceLine" id="cb27-10" data-line-number="10">  out</a>
 <a class="sourceLine" id="cb27-11" data-line-number="11">}</a>
 <a class="sourceLine" id="cb27-12" data-line-number="12"></a>
-<a class="sourceLine" id="cb27-13" data-line-number="13">x &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="ot">NA</span>, <span class="dv">1</span><span class="op">:</span><span class="dv">4</span>)</a>
+<a class="sourceLine" id="cb27-13" data-line-number="13">x &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="ot">NA</span>, <span class="dv">1</span><span class="op">:</span><span class="dv">4</span>)</a>
 <a class="sourceLine" id="cb27-14" data-line-number="14"><span class="kw">if_else</span>(x <span class="op">&gt;</span><span class="st"> </span><span class="dv">2</span>, <span class="st">"small"</span>, <span class="st">"big"</span>)</a>
 <a class="sourceLine" id="cb27-15" data-line-number="15"><span class="co">#&gt; [1] NA      "big"   "big"   "small" "small"</span></a>
-<a class="sourceLine" id="cb27-16" data-line-number="16"><span class="kw">if_else</span>(x <span class="op">&gt;</span><span class="st"> </span><span class="dv">2</span>, <span class="kw">factor</span>(<span class="st">"small"</span>), <span class="kw">factor</span>(<span class="st">"big"</span>))</a>
+<a class="sourceLine" id="cb27-16" data-line-number="16"><span class="kw">if_else</span>(x <span class="op">&gt;</span><span class="st"> </span><span class="dv">2</span>, <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/factor">factor</a></span>(<span class="st">"small"</span>), <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/factor">factor</a></span>(<span class="st">"big"</span>))</a>
 <a class="sourceLine" id="cb27-17" data-line-number="17"><span class="co">#&gt; [1] &lt;NA&gt;  big   big   small small</span></a>
 <a class="sourceLine" id="cb27-18" data-line-number="18"><span class="co">#&gt; Levels: small big</span></a>
-<a class="sourceLine" id="cb27-19" data-line-number="19"><span class="kw">if_else</span>(x <span class="op">&gt;</span><span class="st"> </span><span class="dv">2</span>, <span class="kw">Sys.Date</span>(), <span class="kw">Sys.Date</span>() <span class="op">+</span><span class="st"> </span><span class="dv">7</span>)</a>
-<a class="sourceLine" id="cb27-20" data-line-number="20"><span class="co">#&gt; [1] NA           "2018-11-15" "2018-11-15" "2018-11-08" "2018-11-08"</span></a></code></pre></div>
+<a class="sourceLine" id="cb27-19" data-line-number="19"><span class="kw">if_else</span>(x <span class="op">&gt;</span><span class="st"> </span><span class="dv">2</span>, <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/Sys.time">Sys.Date</a></span>(), <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/Sys.time">Sys.Date</a></span>() <span class="op">+</span><span class="st"> </span><span class="dv">7</span>)</a>
+<a class="sourceLine" id="cb27-20" data-line-number="20"><span class="co">#&gt; [1] NA           "2018-12-04" "2018-12-04" "2018-11-27" "2018-11-27"</span></a></code></pre></div>
 <p>By using <code><a href="../reference/vec_size.html">vec_size()</a></code> and <code><a href="../reference/vec_slice.html">vec_slice()</a></code> this definition of <code>if_else()</code> automatically works with data.frames and matrices:</p>
-<div class="sourceCode" id="cb28"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb28-1" data-line-number="1"><span class="kw">if_else</span>(x <span class="op">&gt;</span><span class="st"> </span><span class="dv">2</span>, <span class="kw">data.frame</span>(<span class="dt">x =</span> <span class="dv">1</span>), <span class="kw">data.frame</span>(<span class="dt">y =</span> <span class="dv">2</span>))</a>
+<div class="sourceCode" id="cb28"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb28-1" data-line-number="1"><span class="kw">if_else</span>(x <span class="op">&gt;</span><span class="st"> </span><span class="dv">2</span>, <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/data.frame">data.frame</a></span>(<span class="dt">x =</span> <span class="dv">1</span>), <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/data.frame">data.frame</a></span>(<span class="dt">y =</span> <span class="dv">2</span>))</a>
 <a class="sourceLine" id="cb28-2" data-line-number="2"><span class="co">#&gt;    x  y</span></a>
 <a class="sourceLine" id="cb28-3" data-line-number="3"><span class="co">#&gt; 1 NA NA</span></a>
 <a class="sourceLine" id="cb28-4" data-line-number="4"><span class="co">#&gt; 2 NA  2</span></a>
@@ -422,7 +421,7 @@ It is size-unstable for the same reasons as <code>sapply()</code>.</p></li>
 <a class="sourceLine" id="cb28-6" data-line-number="6"><span class="co">#&gt; 4  1 NA</span></a>
 <a class="sourceLine" id="cb28-7" data-line-number="7"><span class="co">#&gt; 5  1 NA</span></a>
 <a class="sourceLine" id="cb28-8" data-line-number="8"></a>
-<a class="sourceLine" id="cb28-9" data-line-number="9"><span class="kw">if_else</span>(x <span class="op">&gt;</span><span class="st"> </span><span class="dv">2</span>, <span class="kw">matrix</span>(<span class="dv">1</span><span class="op">:</span><span class="dv">10</span>, <span class="dt">ncol =</span> <span class="dv">2</span>), <span class="kw">cbind</span>(<span class="dv">30</span>, <span class="dv">30</span>))</a>
+<a class="sourceLine" id="cb28-9" data-line-number="9"><span class="kw">if_else</span>(x <span class="op">&gt;</span><span class="st"> </span><span class="dv">2</span>, <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/matrix">matrix</a></span>(<span class="dv">1</span><span class="op">:</span><span class="dv">10</span>, <span class="dt">ncol =</span> <span class="dv">2</span>), <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/cbind">cbind</a></span>(<span class="dv">30</span>, <span class="dv">30</span>))</a>
 <a class="sourceLine" id="cb28-10" data-line-number="10"><span class="co">#&gt;      [,1] [,2]</span></a>
 <a class="sourceLine" id="cb28-11" data-line-number="11"><span class="co">#&gt; [1,]   NA   NA</span></a>
 <a class="sourceLine" id="cb28-12" data-line-number="12"><span class="co">#&gt; [2,]   30   30</span></a>
@@ -438,8 +437,8 @@ It is size-unstable for the same reasons as <code>sapply()</code>.</p></li>
 <a href="#tocnav" class="anchor"></a>Contents</h2>
       <ul class="nav nav-pills nav-stacked">
 <li><a href="#definitions">Definitions</a></li>
-      <li><a href="#c-and-vctrsvec_c"><code>c()</code> and <code><a href="--/reference/vec_c-html">vctrs::vec_c()</a></code></a></li>
-      <li><a href="#ifelse"><code>ifelse()</code></a></li>
+      <li><a href="#c-and-vctrsvec_c"><code><a href="https://www-rdocumentation-org/packages/base/topics/c">c()</a></code> and <code><a href="--/reference/vec_c-html">vctrs::vec_c()</a></code></a></li>
+      <li><a href="#ifelse"><code><a href="https://www-rdocumentation-org/packages/base/topics/ifelse">ifelse()</a></code></a></li>
       </ul>
 </div>
       </div>
@@ -452,9 +451,8 @@ It is size-unstable for the same reasons as <code>sapply()</code>.</p></li>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="http://pkgdown.r-lib.org/">pkgdown</a>.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.2.0.9000.</p>
 </div>
-
       </footer>
 </div>
 

@@ -1,6 +1,6 @@
 pandoc: '2.2'
-pkgdown: 1.1.0.9000
-pkgdown_sha: 3eb2f10fba5c97b11b2bf7e3a5179fbed1c5cc7d
+pkgdown: 1.2.0.9000
+pkgdown_sha: c980e84a573614087c6e151d5e6e19a22748b761
 articles:
   s3-vector: s3-vector.html
   stability: stability.html
