@@ -108,7 +108,7 @@ vec_slice <- function(x, i) {
     NULL
   } else if (is.data.frame(x)) {
     # Much faster, and avoids creating rownames
-    out <- lapply(x, vec_slice, i)
+    out <- lapply(x, `[`, i)
     vec_restore(out, x)
   } else if (is_vector(x)) {
     d <- vec_dims(x)
