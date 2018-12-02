@@ -34,7 +34,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">vctrs</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.0.9000</span>
       </span>
     </div>
 
@@ -66,6 +66,9 @@
       <a href="articles/type-size.html">Prototypes and sizes</a>
     </li>
   </ul>
+</li>
+<li>
+  <a href="news/index.html">Changelog</a>
 </li>
       </ul>
 <ul class="nav navbar-nav navbar-right">
@@ -102,48 +105,50 @@
 <div id="installation" class="section level2">
 <h2 class="hasAnchor">
 <a href="#installation" class="anchor"></a>Installation</h2>
-<p>vctrs is not currently on CRAN. Install the development version from GitHub with:</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" data-line-number="1"><span class="co"># install.packages("devtools")</span></a>
-<a class="sourceLine" id="cb1-2" data-line-number="2">devtools<span class="op">::</span><span class="kw"><a href="https://www.rdocumentation.org/packages/devtools/topics/reexports">install_github</a></span>(<span class="st">"r-lib/vctrs"</span>)</a></code></pre></div>
+<p>Install vctrs from CRAN with:</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" data-line-number="1"><span class="kw"><a href="https://www.rdocumentation.org/packages/utils/topics/install.packages">install.packages</a></span>(<span class="st">"vctrs"</span>)</a></code></pre></div>
+<p>Alternatively, if you need to development version, install it with:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" data-line-number="1"><span class="co"># install.packages("devtools")</span></a>
+<a class="sourceLine" id="cb2-2" data-line-number="2">devtools<span class="op">::</span><span class="kw"><a href="https://www.rdocumentation.org/packages/devtools/topics/reexports">install_github</a></span>(<span class="st">"r-lib/vctrs"</span>)</a></code></pre></div>
 </div>
 <div id="usage" class="section level2">
 <h2 class="hasAnchor">
 <a href="#usage" class="anchor"></a>Usage</h2>
-<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" data-line-number="1"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">library</a></span>(vctrs)</a>
-<a class="sourceLine" id="cb2-2" data-line-number="2"></a>
-<a class="sourceLine" id="cb2-3" data-line-number="3"><span class="co"># Prototypes</span></a>
-<a class="sourceLine" id="cb2-4" data-line-number="4"><span class="kw"><a href="https://www.rdocumentation.org/packages/utils/topics/str">str</a></span>(<span class="kw"><a href="reference/vec_type.html">vec_type_common</a></span>(<span class="ot">FALSE</span>, 1L, <span class="fl">2.5</span>))</a>
-<a class="sourceLine" id="cb2-5" data-line-number="5"><span class="co">#&gt;  num(0)</span></a>
-<a class="sourceLine" id="cb2-6" data-line-number="6"><span class="kw"><a href="https://www.rdocumentation.org/packages/utils/topics/str">str</a></span>(<span class="kw"><a href="reference/vec_cast.html">vec_cast_common</a></span>(<span class="ot">FALSE</span>, 1L, <span class="fl">2.5</span>))</a>
-<a class="sourceLine" id="cb2-7" data-line-number="7"><span class="co">#&gt; List of 3</span></a>
-<a class="sourceLine" id="cb2-8" data-line-number="8"><span class="co">#&gt;  $ : num 0</span></a>
-<a class="sourceLine" id="cb2-9" data-line-number="9"><span class="co">#&gt;  $ : num 1</span></a>
-<a class="sourceLine" id="cb2-10" data-line-number="10"><span class="co">#&gt;  $ : num 2.5</span></a>
-<a class="sourceLine" id="cb2-11" data-line-number="11"></a>
-<a class="sourceLine" id="cb2-12" data-line-number="12"><span class="co"># Sizes</span></a>
-<a class="sourceLine" id="cb2-13" data-line-number="13"><span class="kw"><a href="https://www.rdocumentation.org/packages/utils/topics/str">str</a></span>(<span class="kw"><a href="reference/vec_size.html">vec_size_common</a></span>(<span class="dv">1</span>, <span class="dv">1</span><span class="op">:</span><span class="dv">10</span>))</a>
-<a class="sourceLine" id="cb2-14" data-line-number="14"><span class="co">#&gt;  int 10</span></a>
-<a class="sourceLine" id="cb2-15" data-line-number="15"><span class="kw"><a href="https://www.rdocumentation.org/packages/utils/topics/str">str</a></span>(<span class="kw"><a href="reference/vec_recycle.html">vec_recycle_common</a></span>(<span class="dv">1</span>, <span class="dv">1</span><span class="op">:</span><span class="dv">10</span>))</a>
-<a class="sourceLine" id="cb2-16" data-line-number="16"><span class="co">#&gt; List of 2</span></a>
-<a class="sourceLine" id="cb2-17" data-line-number="17"><span class="co">#&gt;  $ : num [1:10] 1 1 1 1 1 1 1 1 1 1</span></a>
-<a class="sourceLine" id="cb2-18" data-line-number="18"><span class="co">#&gt;  $ : int [1:10] 1 2 3 4 5 6 7 8 9 10</span></a></code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" data-line-number="1"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">library</a></span>(vctrs)</a>
+<a class="sourceLine" id="cb3-2" data-line-number="2"></a>
+<a class="sourceLine" id="cb3-3" data-line-number="3"><span class="co"># Prototypes</span></a>
+<a class="sourceLine" id="cb3-4" data-line-number="4"><span class="kw"><a href="https://www.rdocumentation.org/packages/utils/topics/str">str</a></span>(<span class="kw"><a href="reference/vec_type.html">vec_type_common</a></span>(<span class="ot">FALSE</span>, 1L, <span class="fl">2.5</span>))</a>
+<a class="sourceLine" id="cb3-5" data-line-number="5"><span class="co">#&gt;  num(0)</span></a>
+<a class="sourceLine" id="cb3-6" data-line-number="6"><span class="kw"><a href="https://www.rdocumentation.org/packages/utils/topics/str">str</a></span>(<span class="kw"><a href="reference/vec_cast.html">vec_cast_common</a></span>(<span class="ot">FALSE</span>, 1L, <span class="fl">2.5</span>))</a>
+<a class="sourceLine" id="cb3-7" data-line-number="7"><span class="co">#&gt; List of 3</span></a>
+<a class="sourceLine" id="cb3-8" data-line-number="8"><span class="co">#&gt;  $ : num 0</span></a>
+<a class="sourceLine" id="cb3-9" data-line-number="9"><span class="co">#&gt;  $ : num 1</span></a>
+<a class="sourceLine" id="cb3-10" data-line-number="10"><span class="co">#&gt;  $ : num 2.5</span></a>
+<a class="sourceLine" id="cb3-11" data-line-number="11"></a>
+<a class="sourceLine" id="cb3-12" data-line-number="12"><span class="co"># Sizes</span></a>
+<a class="sourceLine" id="cb3-13" data-line-number="13"><span class="kw"><a href="https://www.rdocumentation.org/packages/utils/topics/str">str</a></span>(<span class="kw"><a href="reference/vec_size.html">vec_size_common</a></span>(<span class="dv">1</span>, <span class="dv">1</span><span class="op">:</span><span class="dv">10</span>))</a>
+<a class="sourceLine" id="cb3-14" data-line-number="14"><span class="co">#&gt;  int 10</span></a>
+<a class="sourceLine" id="cb3-15" data-line-number="15"><span class="kw"><a href="https://www.rdocumentation.org/packages/utils/topics/str">str</a></span>(<span class="kw"><a href="reference/vec_recycle.html">vec_recycle_common</a></span>(<span class="dv">1</span>, <span class="dv">1</span><span class="op">:</span><span class="dv">10</span>))</a>
+<a class="sourceLine" id="cb3-16" data-line-number="16"><span class="co">#&gt; List of 2</span></a>
+<a class="sourceLine" id="cb3-17" data-line-number="17"><span class="co">#&gt;  $ : num [1:10] 1 1 1 1 1 1 1 1 1 1</span></a>
+<a class="sourceLine" id="cb3-18" data-line-number="18"><span class="co">#&gt;  $ : int [1:10] 1 2 3 4 5 6 7 8 9 10</span></a></code></pre></div>
 </div>
 <div id="motivation" class="section level2">
 <h2 class="hasAnchor">
 <a href="#motivation" class="anchor"></a>Motivation</h2>
 <p>The original motivation for vctrs from two separate, but related problems. The first problem is that <code><a href="https://www.rdocumentation.org/packages/base/topics/c">base::c()</a></code> has rather undesirable behaviour when you mix different S3 vectors:</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" data-line-number="1"><span class="co"># combining factors makes integers</span></a>
-<a class="sourceLine" id="cb3-2" data-line-number="2"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/factor">factor</a></span>(<span class="st">"a"</span>), <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/factor">factor</a></span>(<span class="st">"b"</span>))</a>
-<a class="sourceLine" id="cb3-3" data-line-number="3"><span class="co">#&gt; [1] 1 1</span></a>
-<a class="sourceLine" id="cb3-4" data-line-number="4"></a>
-<a class="sourceLine" id="cb3-5" data-line-number="5"><span class="co"># combing dates and date-times give incorrect values</span></a>
-<a class="sourceLine" id="cb3-6" data-line-number="6">dt &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/as.Date">as.Date</a></span>(<span class="st">"2020-01-1"</span>)</a>
-<a class="sourceLine" id="cb3-7" data-line-number="7">dttm &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/as.POSIXlt">as.POSIXct</a></span>(dt)</a>
-<a class="sourceLine" id="cb3-8" data-line-number="8"></a>
-<a class="sourceLine" id="cb3-9" data-line-number="9"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(dt, dttm)</a>
-<a class="sourceLine" id="cb3-10" data-line-number="10"><span class="co">#&gt; [1] "2020-01-01"    "4321940-06-07"</span></a>
-<a class="sourceLine" id="cb3-11" data-line-number="11"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(dttm, dt)</a>
-<a class="sourceLine" id="cb3-12" data-line-number="12"><span class="co">#&gt; [1] "2020-01-01 00:00:00 UTC" "1970-01-01 05:04:22 UTC"</span></a></code></pre></div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" data-line-number="1"><span class="co"># combining factors makes integers</span></a>
+<a class="sourceLine" id="cb4-2" data-line-number="2"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/factor">factor</a></span>(<span class="st">"a"</span>), <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/factor">factor</a></span>(<span class="st">"b"</span>))</a>
+<a class="sourceLine" id="cb4-3" data-line-number="3"><span class="co">#&gt; [1] 1 1</span></a>
+<a class="sourceLine" id="cb4-4" data-line-number="4"></a>
+<a class="sourceLine" id="cb4-5" data-line-number="5"><span class="co"># combing dates and date-times give incorrect values</span></a>
+<a class="sourceLine" id="cb4-6" data-line-number="6">dt &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/as.Date">as.Date</a></span>(<span class="st">"2020-01-1"</span>)</a>
+<a class="sourceLine" id="cb4-7" data-line-number="7">dttm &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/as.POSIXlt">as.POSIXct</a></span>(dt)</a>
+<a class="sourceLine" id="cb4-8" data-line-number="8"></a>
+<a class="sourceLine" id="cb4-9" data-line-number="9"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(dt, dttm)</a>
+<a class="sourceLine" id="cb4-10" data-line-number="10"><span class="co">#&gt; [1] "2020-01-01"    "4321940-06-07"</span></a>
+<a class="sourceLine" id="cb4-11" data-line-number="11"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(dttm, dt)</a>
+<a class="sourceLine" id="cb4-12" data-line-number="12"><span class="co">#&gt; [1] "2020-01-01 00:00:00 UTC" "1970-01-01 05:04:22 UTC"</span></a></code></pre></div>
 <p>This behaviour arises because <code><a href="https://www.rdocumentation.org/packages/base/topics/c">c()</a></code> has dual purposes: as well as it’s primary duty of combining vectors, it has a secondary duty of stripping attributes. For example, <code><a href="https://www.rdocumentation.org/packages/base/topics/DateTimeClasses">?POSIXct</a></code> suggests that you should use <code><a href="https://www.rdocumentation.org/packages/base/topics/c">c()</a></code> if you want to reset the timezone.</p>
 <p>The second problem is that <code>dplyr::bind_rows()</code> is not extensible by others. Currently, it handles arbitrary S3 classes using heuristics, but these often fail, and it feels like we really need to think through the problem in order to build a principled solution. This intersects with the need to cleanly support more types of data frame columns including lists of data frames, data frames, and matrices.</p>
 </div>
