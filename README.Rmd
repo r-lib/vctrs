@@ -39,7 +39,13 @@ vctrs is a developer focused package. Understanding and extending vctrs requires
 
 ## Installation
 
-vctrs is not currently on CRAN. Install the development version from GitHub with:
+Install vctrs from CRAN with:
+
+```{r, eval = FALSE}
+install.packages("vctrs")
+```
+
+Alternatively, if you need to development version, install it with:
 
 ```{r, eval = FALSE}
 # install.packages("devtools")

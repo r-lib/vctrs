@@ -38,8 +38,13 @@ dependencies.
 
 ## Installation
 
-vctrs is not currently on CRAN. Install the development version from
-GitHub with:
+Install vctrs from CRAN with:
+
+``` r
+install.packages("vctrs")
+```
+
+Alternatively, if you need to development version, install it with:
 
 ``` r
 # install.packages("devtools")
