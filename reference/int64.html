@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Get or set observations in a vector — vec_slice • vctrs</title>
+<title>64 bit integers — vec_ptype_full.integer64 • vctrs</title>
 
 <!-- jquery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
@@ -30,11 +30,9 @@
 
 
 
-<meta property="og:title" content="Get or set observations in a vector — vec_slice" />
+<meta property="og:title" content="64 bit integers — vec_ptype_full.integer64" />
 
-<meta property="og:description" content="This provides a common interface to extracting and modifying observations
-for all vector types, regardless of dimensionality. It is an analog to [
-that matches vec_size() instead of length()." />
+<meta property="og:description" content="A integer64 is a 64 bits integer vector, implemented in the bit64 package." />
 
 <meta property="og:image" content="https://vctrs.r-lib.org/logo.png" />
 <meta name="twitter:card" content="summary" />
@@ -124,58 +122,43 @@ that matches vec_size() instead of length()." />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Get or set observations in a vector</h1>
-    <small class="dont-index">Source: <a href='https://github.com/r-lib/vctrs/blob/master/R/size.R'><code>R/size.R</code></a></small>
-    <div class="hidden name"><code>vec_slice.Rd</code></div>
+    <h1>64 bit integers</h1>
+    <small class="dont-index">Source: <a href='https://github.com/r-lib/vctrs/blob/master/R/type-integer64.R'><code>R/type-integer64.R</code></a></small>
+    <div class="hidden name"><code>int64.Rd</code></div>
     </div>
 
     <div class="ref-description">
     
-    <p>This provides a common interface to extracting and modifying observations
-for all vector types, regardless of dimensionality. It is an analog to <code>[</code>
-that matches <code><a href='vec_size.html'>vec_size()</a></code> instead of <code><a href='https://www.rdocumentation.org/packages/base/topics/length'>length()</a></code>.</p>
+    <p>A <code>integer64</code> is a 64 bits integer vector, implemented in the <code>bit64</code> package.</p>
     
     </div>
 
-    <pre class="usage"><span class='fu'>vec_slice</span>(<span class='no'>x</span>, <span class='no'>i</span>)
+    <pre class="usage"><span class='co'># S3 method for integer64</span>
+<span class='fu'><a href='vec_ptype_full.html'>vec_ptype_full</a></span>(<span class='no'>x</span>)
 
-<span class='fu'>vec_slice</span>(<span class='no'>x</span>, <span class='no'>i</span>) <span class='kw'>&lt;-</span> <span class='no'>value</span></pre>
-    
-    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
-    <table class="ref-arguments">
-    <colgroup><col class="name" /><col class="desc" /></colgroup>
-    <tr>
-      <th>x</th>
-      <td><p>A vector</p></td>
-    </tr>
-    <tr>
-      <th>i</th>
-      <td><p>An integer or character vector specifying the positions or
-names of the observations to get/set.</p></td>
-    </tr>
-    <tr>
-      <th>value</th>
-      <td><p>Replacement values.</p></td>
-    </tr>
-    </table>
+<span class='co'># S3 method for integer64</span>
+<span class='fu'><a href='vec_ptype_full.html'>vec_ptype_abbr</a></span>(<span class='no'>x</span>)
+
+<span class='co'># S3 method for integer64</span>
+<span class='fu'><a href='vec_type2.html'>vec_type2</a></span>(<span class='no'>x</span>, <span class='no'>y</span>)
+
+<span class='co'># S3 method for integer64</span>
+<span class='fu'><a href='vec_cast.html'>vec_cast</a></span>(<span class='no'>x</span>, <span class='no'>to</span>)</pre>
+        
+    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
+
+    <p>These functions help the <code>integer64</code> class from <code>bit64</code> in to
+the vctrs type system by providing coercion functions
+and casting functions.</p>
     
 
-    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='no'>x</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/sample'>sample</a></span>(<span class='fl'>10</span>)
-<span class='no'>x</span></div><div class='output co'>#&gt;  [1]  9 10  5  3  8  7  6  4  2  1</div><div class='input'><span class='fu'>vec_slice</span>(<span class='no'>x</span>, <span class='fl'>1</span>:<span class='fl'>3</span>)</div><div class='output co'>#&gt; [1]  9 10  5</div><div class='input'><span class='fu'>vec_slice</span>(<span class='no'>x</span>, <span class='fl'>2L</span>) <span class='kw'>&lt;-</span> <span class='fl'>100</span>
-<span class='no'>x</span></div><div class='output co'>#&gt;  [1]   9 100   5   3   8   7   6   4   2   1</div><div class='input'>
-<span class='fu'>vec_slice</span>(<span class='no'>mtcars</span>, <span class='fl'>1</span>:<span class='fl'>3</span>)</div><div class='output co'>#&gt;    mpg cyl disp  hp drat    wt  qsec vs am gear carb
-#&gt; 1 21.0   6  160 110 3.90 2.620 16.46  0  1    4    4
-#&gt; 2 21.0   6  160 110 3.90 2.875 17.02  0  1    4    4
-#&gt; 3 22.8   4  108  93 3.85 2.320 18.61  1  1    4    1</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
-      <li><a href="#arguments">Arguments</a></li>
-            
-      <li><a href="#examples">Examples</a></li>
-    </ul>
+      
+      <li><a href="#details">Details</a></li>
+          </ul>
 
   </div>
 </div>
