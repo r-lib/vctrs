@@ -27,7 +27,7 @@ vignette:
     base generics in terms of a few new vctrs generics, making
     implementation considerably simpler and more robust.
 
-vctrs is a developer focused package. Understanding and extending vctrs
+vctrs is a developer-focussed package. Understanding and extending vctrs
 requires some effort from developers, but should be invisible to most
 users. It’s our hope that having an underlying theory will mean that
 users can build up an accurate mental model without explicitly learning
