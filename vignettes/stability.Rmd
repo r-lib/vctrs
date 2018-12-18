@@ -24,17 +24,17 @@ library(vctrs)
 
 ## Definitions
 
-We say a function is __type-stable__ iif:
+We say a function is __type-stable__ iff:
 
 1.  You can predict the output type knowing only the input types. 
 1.  The order of arguments in ... does not affect the output type.
 
-Similarly, a function is __size-stable__ iif:
+Similarly, a function is __size-stable__ iff:
 
 1.  You can predict the output size knowing only the input sizes, or
     there is a single numeric input that specifies the output size.
 
-Very few base R functions are size-stable, so I'll also define a slightly weaker condition. I'll call a function __length-stable__ iif:
+Very few base R functions are size-stable, so I'll also define a slightly weaker condition. I'll call a function __length-stable__ iff:
 
 1.  You can predict the output _length_ knowing only the input _lengths_, or
     there is a single numeric input that specifies the output _length_.
