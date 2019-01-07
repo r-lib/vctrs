@@ -34,12 +34,12 @@
 #' `vec_cast()`, e.g. `vec_cast.integer()` also be S3 generics, which call
 #' e.g. `vec_cast.integer.double()`.
 #'
-#' Note that `vec_cast()` dispatch on its second argument, so that the name
+#' Note that `vec_cast()` dispatches on its second argument, so that the name
 #' of the final method uses the same convention as `as.xyz()` methods, i.e.
 #' `vec_cast.integer.double()` casts double to integers, in the same way
 #' that `as.integer.double()` would.
 #'
-#' Whenever you implemenet a `vec_cast.new_class()` generic/method,
+#' Whenever you implement a `vec_cast.new_class()` generic/method,
 #' make sure to always provide `vec_cast.new_class.default()` (
 #' which should call [stop_incompatible_cast()]) and
 #' `vec_cast.new_class.vctrs_unspecified()` (which should call
@@ -57,14 +57,14 @@
 #'
 #' To understand the difference between `vec_cast()` and `vec_restore()`
 #' think about factors: it doesn't make sense to cast an integer to a factor,
-#' but if `NextMethod()` or other low-level function has stripped attributes,
+#' but if `NextMethod()` or another low-level function has stripped attributes,
 #' you still need to be able to restore them.
 #'
 #' The default method copies across all attributes so you only need to
 #' provide your own method if your attributes require special care
-#' (i.e. they are dependent on the data in somew way). When implementing
+#' (i.e. they are dependent on the data in some way). When implementing
 #' your own method, bear in mind that many R users add attributes to track
-#' additional metadat that is important to them, so you should preserve any
+#' additional metadata that is important to them, so you should preserve any
 #' attributes that don't require special handling for your class.
 #'
 #' @param x,... Vectors to cast.

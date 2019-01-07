@@ -76,12 +76,12 @@ the type of \code{x} and of \code{to}. This is implemented by having methods of
 \code{vec_cast()}, e.g. \code{vec_cast.integer()} also be S3 generics, which call
 e.g. \code{vec_cast.integer.double()}.
 
-Note that \code{vec_cast()} dispatch on its second argument, so that the name
+Note that \code{vec_cast()} dispatches on its second argument, so that the name
 of the final method uses the same convention as \code{as.xyz()} methods, i.e.
 \code{vec_cast.integer.double()} casts double to integers, in the same way
 that \code{as.integer.double()} would.
 
-Whenever you implemenet a \code{vec_cast.new_class()} generic/method,
+Whenever you implement a \code{vec_cast.new_class()} generic/method,
 make sure to always provide \code{vec_cast.new_class.default()} (
 which should call \code{\link[=stop_incompatible_cast]{stop_incompatible_cast()}}) and
 \code{vec_cast.new_class.vctrs_unspecified()} (which should call
@@ -102,14 +102,14 @@ have been lost and need to be restored. In other words,
 
 To understand the difference between \code{vec_cast()} and \code{vec_restore()}
 think about factors: it doesn't make sense to cast an integer to a factor,
-but if \code{NextMethod()} or other low-level function has stripped attributes,
+but if \code{NextMethod()} or another low-level function has stripped attributes,
 you still need to be able to restore them.
 
 The default method copies across all attributes so you only need to
 provide your own method if your attributes require special care
-(i.e. they are dependent on the data in somew way). When implementing
+(i.e. they are dependent on the data in some way). When implementing
 your own method, bear in mind that many R users add attributes to track
-additional metadat that is important to them, so you should preserve any
+additional metadata that is important to them, so you should preserve any
 attributes that don't require special handling for your class.
 }
 
