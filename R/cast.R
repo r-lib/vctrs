@@ -85,9 +85,7 @@
 #' }
 #'
 #' # Information is lost in some conversions so a warning is generated
-#' \dontrun{
 #' vec_cast(c(1, 1.5), integer())
-#' }
 #'
 #' # No sensible coercion is possible so an error is generated
 #' \dontrun{
