@@ -212,11 +212,11 @@ specialised function).</p>
 the type of <code>x</code> and of <code>to</code>. This is implemented by having methods of
 <code>vec_cast()</code>, e.g. <code>vec_cast.integer()</code> also be S3 generics, which call
 e.g. <code>vec_cast.integer.double()</code>.</p>
-<p>Note that <code>vec_cast()</code> dispatch on its second argument, so that the name
+<p>Note that <code>vec_cast()</code> dispatches on its second argument, so that the name
 of the final method uses the same convention as <code>as.xyz()</code> methods, i.e.
 <code>vec_cast.integer.double()</code> casts double to integers, in the same way
 that <code>as.integer.double()</code> would.</p>
-<p>Whenever you implemenet a <code>vec_cast.new_class()</code> generic/method,
+<p>Whenever you implement a <code>vec_cast.new_class()</code> generic/method,
 make sure to always provide <code>vec_cast.new_class.default()</code> (
 which should call <code><a href='vctrs-conditions.html'>stop_incompatible_cast()</a></code>) and
 <code>vec_cast.new_class.vctrs_unspecified()</code> (which should call
@@ -234,13 +234,13 @@ have been lost and need to be restored. In other words,
 <code>vec_restore(vec_data(x), x)</code> should yield <code>x</code>.</p>
 <p>To understand the difference between <code>vec_cast()</code> and <code>vec_restore()</code>
 think about factors: it doesn't make sense to cast an integer to a factor,
-but if <code><a href='https://www.rdocumentation.org/packages/base/topics/UseMethod'>NextMethod()</a></code> or other low-level function has stripped attributes,
+but if <code><a href='https://www.rdocumentation.org/packages/base/topics/UseMethod'>NextMethod()</a></code> or another low-level function has stripped attributes,
 you still need to be able to restore them.</p>
 <p>The default method copies across all attributes so you only need to
 provide your own method if your attributes require special care
-(i.e. they are dependent on the data in somew way). When implementing
+(i.e. they are dependent on the data in some way). When implementing
 your own method, bear in mind that many R users add attributes to track
-additional metadat that is important to them, so you should preserve any
+additional metadata that is important to them, so you should preserve any
 attributes that don't require special handling for your class.</p>
     
 
@@ -271,7 +271,7 @@ attributes that don't require special handling for your class.</p>
 #&gt; 
 #&gt; [[2]]
 #&gt; [[2]][[1]]
-#&gt; [1] "2018-12-18"
+#&gt; [1] "2019-01-07"
 #&gt; 
 #&gt; </div></pre>
   </div>
