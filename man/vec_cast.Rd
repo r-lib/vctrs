@@ -76,12 +76,12 @@ the type of \code{x} and of \code{to}. This is implemented by having methods of
 \code{vec_cast()}, e.g. \code{vec_cast.integer()} also be S3 generics, which call
 e.g. \code{vec_cast.integer.double()}.
 
-Note that \code{vec_cast()} dispatch on its second argument, so that the name
+Note that \code{vec_cast()} dispatches on its second argument, so that the name
 of the final method uses the same convention as \code{as.xyz()} methods, i.e.
 \code{vec_cast.integer.double()} casts double to integers, in the same way
 that \code{as.integer.double()} would.
 
-Whenever you implemenet a \code{vec_cast.new_class()} generic/method,
+Whenever you implement a \code{vec_cast.new_class()} generic/method,
 make sure to always provide \code{vec_cast.new_class.default()} (
 which should call \code{\link[=stop_incompatible_cast]{stop_incompatible_cast()}}) and
 \code{vec_cast.new_class.vctrs_unspecified()} (which should call
