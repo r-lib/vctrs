@@ -57,14 +57,14 @@
 #'
 #' To understand the difference between `vec_cast()` and `vec_restore()`
 #' think about factors: it doesn't make sense to cast an integer to a factor,
-#' but if `NextMethod()` or other low-level function has stripped attributes,
+#' but if `NextMethod()` or another low-level function has stripped attributes,
 #' you still need to be able to restore them.
 #'
 #' The default method copies across all attributes so you only need to
 #' provide your own method if your attributes require special care
-#' (i.e. they are dependent on the data in somew way). When implementing
+#' (i.e. they are dependent on the data in some way). When implementing
 #' your own method, bear in mind that many R users add attributes to track
-#' additional metadat that is important to them, so you should preserve any
+#' additional metadata that is important to them, so you should preserve any
 #' attributes that don't require special handling for your class.
 #'
 #' @param x,... Vectors to cast.
