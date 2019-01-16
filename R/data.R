@@ -1,12 +1,13 @@
 #' Extract underlying data
 #'
 #' Extract the data underlying an S3 vector object, i.e. the underlying
-#' atomic vector or list. Currently, due to the underlying memory architecture
-#' of R, this creates a full copy of the underlying data.
+#' (named) atomic vector or list.
+#' Currently, due to the underlying memory architecture
+#' of R, this creates a full copy of the data.
 #'
 #' @param x A vector
 #' @export
-#' @return The data underlying `x`, free from an attributes.
+#' @return The data underlying `x`, free from any attributes except the names.
 #' @seealso See [vec_restore()] for the inverse operation: it restores
 #'   attributes given a bare vector and a prototype;
 #'   `vec_restore(vec_data(x), x)` will always yield `x`.
