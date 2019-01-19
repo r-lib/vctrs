@@ -34,7 +34,7 @@ to power the default arithmetic and boolean operators for \link{vctr}s objects,
 overcoming the limitations of the base \link{Ops} generic.
 }
 \details{
-\code{vec_base_arith()} is provided as a convenience for writing methods. It
+\code{vec_arith_base()} is provided as a convenience for writing methods. It
 recycles \code{x} and \code{y} to common length then calls the base operator with the
 underlying \code{\link[=vec_data]{vec_data()}}.
 

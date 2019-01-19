@@ -5,7 +5,7 @@
 #' to power the default arithmetic and boolean operators for [vctr]s objects,
 #' overcoming the limitations of the base [Ops] generic.
 #'
-#' `vec_base_arith()` is provided as a convenience for writing methods. It
+#' `vec_arith_base()` is provided as a convenience for writing methods. It
 #' recycles `x` and `y` to common length then calls the base operator with the
 #' underlying [vec_data()].
 #'
