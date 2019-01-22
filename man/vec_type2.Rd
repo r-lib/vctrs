@@ -6,6 +6,7 @@
 \alias{vec_type2.logical}
 \alias{vec_type2.integer}
 \alias{vec_type2.double}
+\alias{vec_type2.raw}
 \alias{vec_type2.character}
 \alias{vec_type2.list}
 \title{Find the common type for a pair of vector types}
@@ -19,6 +20,8 @@ vec_type2(x, y)
 \method{vec_type2}{integer}(x, y)
 
 \method{vec_type2}{double}(x, y)
+
+\method{vec_type2}{raw}(x, y)
 
 \method{vec_type2}{character}(x, y)
 

@@ -61,6 +61,11 @@ vec_type2.integer <- function(x, y) UseMethod("vec_type2.integer", y)
 #' @method vec_type2 double
 #' @export
 vec_type2.double  <- function(x, y) UseMethod("vec_type2.double", y)
+#' @rdname vec_type2
+#' @export vec_type2.raw
+#' @method vec_type2 raw
+#' @export
+vec_type2.raw  <- function(x, y) UseMethod("vec_type2.raw", y)
 
 #' @method vec_type2.logical logical
 #' @export
@@ -92,6 +97,10 @@ vec_type2.integer.double  <- function(x, y) shape_match(double(), x, y)
 #' @method vec_type2.double integer
 vec_type2.double.integer  <- function(x, y) shape_match(double(), x, y)
 
+#' @export
+#' @method vec_type2.raw raw
+vec_type2.raw.raw         <- function(x, y) shape_match(raw(), x, y)
+
 #' @method vec_type2.logical default
 #' @export
 vec_type2.logical.default <- function(x, y) stop_incompatible_type(x, y)
@@ -101,6 +110,9 @@ vec_type2.integer.default <- function(x, y) stop_incompatible_type(x, y)
 #' @method vec_type2.double default
 #' @export
 vec_type2.double.default  <- function(x, y) stop_incompatible_type(x, y)
+#' @method vec_type2.raw default
+#' @export
+vec_type2.raw.default  <- function(x, y) stop_incompatible_type(x, y)
 
 # Character ---------------------------------------------------------------
 

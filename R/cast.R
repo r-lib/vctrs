@@ -253,6 +253,29 @@ vec_cast.double.default <- function(x, to) {
 
 #' @export
 #' @rdname vec_cast
+#' @export vec_cast.raw
+#' @method vec_cast raw
+vec_cast.raw <- function(x, to) {
+  UseMethod("vec_cast.raw")
+}
+#' @export
+#' @method vec_cast.raw raw
+vec_cast.raw.raw <- function(x, to) {
+  shape_broadcast(x, to)
+}
+#' @export
+#' @method vec_cast.raw list
+vec_cast.raw.list <- function(x, to) {
+  vec_list_cast(x, to)
+}
+#' @export
+#' @method vec_cast.raw default
+vec_cast.raw.default <- function(x, to) {
+  stop_incompatible_cast(x, to)
+}
+
+#' @export
+#' @rdname vec_cast
 #' @export vec_cast.character
 #' @method vec_cast character
 vec_cast.character <- function(x, to) {
