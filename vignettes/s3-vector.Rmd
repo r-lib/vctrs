@@ -115,6 +115,14 @@ new_percent()
 percent()
 ```
 
+Add a call to `setOldClass()` for compatibility with the S4 system:
+
+```{r}
+#' @importFrom methods setOldClass
+methods::setOldClass(c("vctrs_percent", "vctrs_vctr"))
+```
+
+
 ### `format()` method
 
 The first method for every class should almost always be a `format()` method. This should return a character vector the same length as `x`. The easiest way to do this is to rely on one of R's low-level formatting functions like `formatC()`:
