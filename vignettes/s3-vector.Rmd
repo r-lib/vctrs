@@ -264,7 +264,7 @@ vec_cast(0.5, percent())
 vec_cast(percent(0.5), double())
 ```
 
-Once you've implemented `vec_type2()` and `vec_cast()` you get `vec_c()` and `[<-` implementations for free.
+Once you've implemented `vec_type2()` and `vec_cast()` you get `vec_c()`, `[<-` and `[[<-` implementations for free.
 
 ```{r, error = TRUE}
 vec_c(percent(0.5), 1)
@@ -272,8 +272,9 @@ vec_c(NA, percent(0.5))
 # but
 vec_c(TRUE, percent(0.5))
 
-x <- percent(c(0.5, 1))
-x[1] <- 2
+x <- percent(c(0.5, 1, 2))
+x[1:2] <- 2:1
+x[[3]] <- 0.5
 x
 ```
 
