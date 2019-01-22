@@ -123,6 +123,15 @@ methods::setOldClass(c("vctrs_percent", "vctrs_vctr"))
 ```
 
 
+For the convenience of your users, consider implementing an `is_percent()` function:
+
+```{r}
+is_percent <- function(x) {
+  inherits(x, "vctrs_percent")
+}
+```
+
+
 ### `format()` method
 
 The first method for every class should almost always be a `format()` method. This should return a character vector the same length as `x`. The easiest way to do this is to rely on one of R's low-level formatting functions like `formatC()`:
@@ -298,6 +307,15 @@ c(factor(1), percent(0.5))
 ```
 
 Unfortunately there's no way to fix this problem with the current design of `c()`.
+
+Again, as a convenience, consider providing an `as_percent()` function that makes use of the casts defined in your `vec_cast.vctrs_percent()` methods:
+
+```{r}
+as_percent <- function(x) {
+  vec_cast(x, new_percent())
+}
+```
+
 
 ### Decimal class
 
