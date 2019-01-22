@@ -70,7 +70,11 @@ check_attr <- function(.data) {
     abort("`.data` must not have attributes apart from names.")
   }
 
-  if (!names_all_or_nothing(attr[[1]])) {
+  check_names_all_or_nothing(attr[[1]])
+}
+
+check_names_all_or_nothing <- function(names) {
+  if (!names_all_or_nothing(names)) {
     stop("If any elements of `.data` are named, all must be named", call. = FALSE)
   }
 }

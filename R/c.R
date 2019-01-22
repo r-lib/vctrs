@@ -39,8 +39,8 @@ vec_c <- function(..., .ptype = NULL) {
     return(NULL)
 
   ns <- map_int(args, vec_size)
-  out <- vec_na(ptype, sum(ns))
-  if (is.null(names(args))) {
+  out <- vec_na(unname(ptype), sum(ns))
+  if (is.null(names(args)) && all(map_lgl(map(args, vec_names), is.null))) {
     names <- NULL
   } else {
     names <- vec_na(character(), sum(ns))
@@ -54,8 +54,9 @@ vec_c <- function(..., .ptype = NULL) {
 
     x <- vec_cast(args[[i]], to = ptype)
 
-    names[pos:(pos + n - 1)] <- outer_names(names(args)[[i]], vec_names(args[[i]]), length(x))
-    vec_slice(out, pos:(pos + n - 1)) <- x
+    ix <- pos:(pos + n - 1)
+    names[ix] <- outer_names(names(args)[[i]], vec_names(args[[i]]), length(x))
+    vec_slice(out, ix) <- unname(x)
     pos <- pos + n
   }
 
