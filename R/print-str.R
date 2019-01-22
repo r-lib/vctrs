@@ -26,7 +26,7 @@ obj_print_header <- function(x, ...) {
 
 #' @export
 obj_print_header.default <- function(x, ...) {
-  cat_line("<", vec_ptype_full(x), "[", length(x), "]>")
+  cat_line("<", vec_ptype_full(x), "[", vec_size(x), "]>")
   invisible(x)
 }
 
