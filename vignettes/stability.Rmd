@@ -49,7 +49,7 @@ The goal of these principles is to minimise cognitive overhead. Rather than havi
 
 ### Examples
 
-To make these ideas concrete, lets apply them to a few base functions:
+To make these ideas concrete, let's apply them to a few base functions:
 
 1.  `mean()` is trivially type-stable and size-stable because it always returns
     a double vector of length 1 (or it throws an error).
