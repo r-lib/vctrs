@@ -92,6 +92,23 @@ test_that("equality functions remapped", {
   expect_true(anyDuplicated(x))
 })
 
+test_that("is.na<-() and new_vctr() commute", {
+  x <- new_vctr(1:4)
+  y <- 1:4
+
+  expect_error(is.na(x) <- 2L, NA)
+  is.na(y) <- 2L
+  expect_identical(x, new_vctr(!!y))
+
+  expect_error(is.na(x) <- c(FALSE, FALSE, TRUE, NA), NA)
+  is.na(y) <- c(FALSE, FALSE, TRUE, NA)
+  expect_identical(x, new_vctr(!!y))
+
+  expect_error(is.na(x) <- TRUE, NA)
+  is.na(y) <- TRUE
+  expect_identical(x, new_vctr(!!y))
+})
+
 test_that("comparison functions remapped", {
   # Fails on 3.1 with `could not find function "vec_cast.vctrs_vctr"`
   skip_if_not(getRversion() >= "3.2")
@@ -228,8 +245,6 @@ test_that("$ inherits from underlying vector", {
 
 test_that("can't touch protected attributes", {
   x <- new_vctr(1:4)
-
-  expect_error(is.na(x) <- TRUE, class = "error_unsupported")
 
   expect_error(dim(x) <- c(2, 2), class = "error_unsupported")
   expect_error(dimnames(x) <- list("x"), class = "error_unsupported")
