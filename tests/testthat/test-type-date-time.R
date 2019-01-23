@@ -108,6 +108,7 @@ test_that("safe casts work as expected", {
   expect_equal(vec_cast(datetime_l, datetime_l), datetime_l)
   expect_equal(vec_cast(as.Date(datetime_l), datetime_l), datetime_l)
   expect_equal(vec_cast(list(datetime_l), datetime_l), datetime_l)
+  expect_error(vec_cast(raw(), datetime_l), class = "error_incompatible_cast")
 })
 
 test_that("invalid casts generate error", {
@@ -167,6 +168,9 @@ test_that("default is error", {
   expect_error(vec_arith("+", d, f), class = "error_incompatible_op")
   expect_error(vec_arith("+", dt, f), class = "error_incompatible_op")
   expect_error(vec_arith("+", t, f), class = "error_incompatible_op")
+  expect_error(vec_arith("*", dt, t), class = "error_incompatible_op")
+  expect_error(vec_arith("*", d, t), class = "error_incompatible_op")
+  expect_error(vec_arith("!", t, MISSING()), class = "error_incompatible_op")
 })
 
 test_that("date-time vs date-time", {

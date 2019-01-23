@@ -8,6 +8,11 @@ test_that("vec_count counts number observations", {
   expect_equal(x, data.frame(key = 1:3, count = 1:3))
 })
 
+test_that("vec_count works in corner cases", {
+  x <- vec_count(integer(), sort = "none")
+  expect_equal(x, data.frame(key = integer(), count = integer()))
+})
+
 
 # duplicates and uniques --------------------------------------------------
 
@@ -37,15 +42,15 @@ test_that("vec_unique_count matches length + unique", {
 })
 
 test_that("also works for data frames", {
-  df <- data.frame(x = 1:2, y = letters[2:1], stringsAsFactors = FALSE)
-  idx <- c(1L, 1L, 1L, 2L, 2L)
+  df <- data.frame(x = 1:3, y = letters[3:1], stringsAsFactors = FALSE)
+  idx <- c(1L, 1L, 1L, 2L, 2L, 3L)
   df2 <- df[idx, , drop = FALSE]
   rownames(df2) <- NULL
 
   expect_equal(vec_duplicate_detect(df2), vec_duplicate_detect(idx))
   expect_equal(vec_unique(df2), vec_slice(df, vec_unique(idx)))
 
-  count <- vec_count(df2)
+  count <- vec_count(df2, sort = "key")
   expect_equal(count$key, df)
   expect_equal(count$count, vec_count(idx)$count)
 })

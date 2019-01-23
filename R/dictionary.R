@@ -44,7 +44,8 @@ vec_count <- function(x, sort = c("count", "key", "location", "none")) {
   # Returns key-value pair giving index of first occurence value and count
   kv <- .Call(vctrs_count, vec_proxy_equal(x))
 
-  df <- data.frame(key = 0, count = kv$val)
+  # rep_along() to support zero-length vectors!
+  df <- data.frame(key = rep_along(kv$val, NA), count = kv$val)
   df$key <- vec_slice(x, kv$key) # might be a dataframe
 
   if (sort == "none")
@@ -52,7 +53,7 @@ vec_count <- function(x, sort = c("count", "key", "location", "none")) {
 
   idx <- switch(sort,
     location = order(kv$key),
-    key = order(df$key),
+    key = order_proxy(vec_proxy_compare(df$key)),
     count = order(-kv$val)
   )
 

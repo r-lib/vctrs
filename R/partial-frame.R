@@ -53,7 +53,7 @@ vec_ptype_full.vctrs_partial_frame <- function(x) {
 
 #' @export
 vec_ptype_abbr.vctrs_partial_frame <- function(x) {
-  "<partial_frame>"
+  "prtl"
 }
 
 vec_type2.vctrs_partial_frame <- function(x, y) {

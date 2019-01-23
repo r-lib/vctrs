@@ -23,6 +23,18 @@ test_that("requires format method", {
 
 # coercion ----------------------------------------------------------------
 
+test_that("can cast list to rcrd", {
+  l <- list(
+    new_rcrd(list(a = "1", b = 3L)),
+    new_rcrd(list(b = "4", a = 2))
+  )
+
+  expect_equal(
+    vec_cast(l, new_rcrd(list(a = 1L, b = 2L))),
+    new_rcrd(list(a = 1:2, b = 3:4))
+  )
+})
+
 test_that("can recast rcrd from list", {
   r <- new_rcrd(list(x = integer(), y = numeric()))
 
@@ -32,11 +44,52 @@ test_that("can recast rcrd from list", {
   )
 })
 
+test_that("can cast rcrd to list", {
+  r <- new_rcrd(list(x = 1:2, y = 2:3))
+
+  expect_identical(
+    vec_cast(r, list()),
+    list(
+      new_rcrd(list(x = 1L, y = 2L)),
+      new_rcrd(list(x = 2L, y = 3L))
+    )
+  )
+
+  expect_identical(
+    vec_cast(r, list()),
+    as.list(r)
+  )
+})
+
 test_that("default casts are implemented correctly", {
   r <- new_rcrd(list(x = 1, y = 1))
 
   expect_error(vec_cast(1, r), error = "error_incompatible_cast")
   expect_equal(vec_cast(NULL, r), NULL)
+})
+
+test_that("can't cast incompatible rcrd", {
+  expect_error(
+    vec_cast(
+      new_rcrd(list(a = "1", b = 3L)),
+      new_rcrd(list(a = "1"))
+    ),
+    class = "error_incompatible_cast"
+  )
+  expect_error(
+    vec_cast(
+      new_rcrd(list(a = "1", b = 3L)),
+      new_rcrd(list(a = "1", c = 3L))
+    ),
+    class = "error_incompatible_cast"
+  )
+  expect_error(
+    vec_cast(
+      new_rcrd(list(a = "a", b = 3L)),
+      new_rcrd(list(a = 1, b = 3L))
+    ),
+    class = "error_incompatible_cast"
+  )
 })
 
 # invalid inputs ------------------------------------------------------------
@@ -57,6 +110,16 @@ test_that("names must be unique", {
 test_that("no attributes", {
   x <- structure(list(x = 1:3), y = 1)
   expect_error(new_rcrd(x), "no attributes")
+})
+
+test_that("subset assignment", {
+  x <- new_rcrd(list(x = 1))
+  expect_error(
+    x$y <- 2,
+    "subset assignment with $",
+    fixed = TRUE,
+    class = "error_unsupported"
+  )
 })
 
 

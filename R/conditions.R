@@ -13,14 +13,7 @@
 #' @name vctrs-conditions
 NULL
 
-stop_incompatible <- function(x, y, details = NULL, ..., message = NULL, .subclass = NULL) {
-  if (is.null(message)) {
-    message <- glue::glue("Incompatible inputs: <{vec_ptype_full(x)}> and <{vec_ptype_full(y)}>")
-    if (!is.null(details)) {
-      message <- paste0(message, "\n", details)
-    }
-  }
-
+stop_incompatible <- function(x, y, message, details = NULL, ..., .subclass = NULL) {
   abort(
     message,
     .subclass = c(.subclass, "error_incompatible"),

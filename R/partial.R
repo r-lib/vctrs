@@ -49,5 +49,7 @@ vec_type_finalise.default <- function(x) {
 
 #' @export
 vec_type_finalise.vctrs_partial <- function(x) {
+  # nocov start
   stop_unimplemented(x, "vec_type_finalise")
+  # nocov end
 }

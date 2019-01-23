@@ -73,6 +73,7 @@ test_that("matrix becomes data frame", {
 test_that("empty inputs give data frame", {
   expect_equal(vec_cbind(), data_frame())
   expect_equal(vec_cbind(NULL), data_frame())
+  expect_equal(vec_cbind(data.frame(a = 1), NULL), data_frame(a = 1))
 })
 
 test_that("NULL is idempotent", {

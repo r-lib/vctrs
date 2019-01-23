@@ -45,7 +45,9 @@ vec_math.default <- function(fun, x, ...) {
   if (is_double(x)) {
     vec_restore(vec_math_base(fun, x, ...), x)
   } else {
+    # nocov start
     stop_unimplemented(x, "vec_math")
+    # nocov end
   }
 }
 

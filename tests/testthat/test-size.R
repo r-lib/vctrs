@@ -41,12 +41,26 @@ test_that("can subset object of any dimensionality", {
   x2 <- ones(2, 3)
   x3 <- ones(2, 3, 4)
   x4 <- ones(2, 3, 4, 5)
+  x5 <- NULL
 
   expect_equal(vec_slice(x0, 1L), 1)
-  expect_equal(vec_slice(x1, 1L), ones(1))
-  expect_equal(vec_slice(x2, 1L), ones(1, 3))
-  expect_equal(vec_slice(x3, 1L), ones(1, 3, 4))
-  expect_equal(vec_slice(x4, 1L), ones(1, 3, 4, 5))
+  expect_identical(vec_slice(x1, 1L), ones(1))
+  expect_identical(vec_slice(x2, 1L), ones(1, 3))
+  expect_identical(vec_slice(x3, 1L), ones(1, 3, 4))
+  expect_identical(vec_slice(x4, 1L), ones(1, 3, 4, 5))
+  expect_identical(vec_slice(x5, 1L), NULL)
+})
+
+test_that("can subset using logical index", {
+  x0 <- c(1, 1)
+
+  expect_identical(vec_slice(x0, TRUE), x0)
+  expect_identical(vec_slice(x0, c(TRUE, FALSE)), 1)
+  expect_error(
+    vec_slice(x0, c(TRUE, FALSE, TRUE)),
+    "Incompatible lengths: 3, 2",
+    fixed = TRUE
+  )
 })
 
 test_that("can subset data frame columns", {
@@ -57,6 +71,10 @@ test_that("can subset data frame columns", {
 })
 
 test_that("can modify subset", {
+  x0 <- NULL
+  vec_slice(x0, 1L) <- 1
+  expect_identical(x0, NULL)
+
   x1 <- c(2, 1)
   vec_slice(x1, 1L) <- 1
   expect_equal(x1, c(1, 1))
@@ -68,6 +86,20 @@ test_that("can modify subset", {
   x3 <- array(c(2, 1, 2, 1, 2, 1, 2, 1), c(2, 2, 2))
   vec_slice(x3, 1L) <- 1
   expect_equal(x3, array(1, c(2, 2, 2)))
+})
+
+test_that("can modify subset using logical index", {
+  x1 <- c(2, 1)
+  vec_slice(x1, TRUE) <- 3
+  expect_equal(x1, c(3, 3))
+  vec_slice(x1, c(TRUE, FALSE)) <- 4
+  expect_equal(x1, c(4, 3))
+
+  expect_error(
+    vec_slice(x1, c(TRUE, FALSE, TRUE)) <- 5,
+    "Incompatible lengths: 3, 2",
+    fixed = TRUE
+  )
 })
 
 test_that("ignores NA in logical subsetting", {
@@ -125,3 +157,28 @@ test_that("na of list-array is 1d slice", {
   expect_equal(x2, array(list(), c(1, 3, 4)))
 })
 
+# vec_names ---------------------------------------------------------------
+
+test_that("can retrieve names", {
+  expect_null(vec_names(letters))
+  expect_identical(vec_names(set_names(letters)), letters)
+  expect_null(vec_names(mtcars))
+  expect_identical(vec_names(Titanic), dimnames(Titanic)[[1]])
+})
+
+test_that("can set names", {
+  x <- letters
+  vec_names(x) <- letters
+  expect_identical(vec_names(x), letters)
+  vec_names(x) <- NULL
+  expect_null(vec_names(x))
+
+  y <- iris
+  vec_names(y) <- as.character(-seq_len(vec_size(y)))
+  expect_identical(row.names(y), row.names(iris))
+  expect_null(vec_names(y))
+
+  z <- ones(3, 2, 1)
+  vec_names(z) <- as.character(1:3)
+  expect_identical(vec_names(z), as.character(1:3))
+})

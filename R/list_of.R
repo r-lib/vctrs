@@ -159,13 +159,16 @@ vec_cast.vctrs_list_of <- function(x, to) {
 #' @export
 #' @method vec_cast.vctrs_list_of list
 vec_cast.vctrs_list_of.list <- function(x, to) {
+  # Casting list to list_of will warn/err if the cast is lossy,
+  # but the locations refer to the inner vectors,
+  # and the cast fails if all (vector) elements in a single (list) element
   as_list_of(x, .ptype = attr(to, "ptype"))
 }
 
 #' @export
 #' @method vec_cast.list vctrs_list_of
 vec_cast.list.vctrs_list_of <- function(x, to) {
-  warn_lossy_cast(x, to)
+  # Casting list_of to list is never lossy
   shape_broadcast(as.list(x), to)
 }
 

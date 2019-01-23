@@ -16,6 +16,24 @@ test_that("can cast tibble to df and vice versa", {
   expect_equal(vec_cast(dt, df), df)
 })
 
+test_that("can't cast vector to tibble", {
+  dt <- tibble::tibble()
+  v <- logical()
+
+  expect_error(vec_type2(v, dt), class = "error_incompatible_type")
+  expect_error(vec_type2(dt, v), class = "error_incompatible_type")
+  expect_error(vec_cast(v, dt), class = "error_incompatible_cast")
+})
+
+test_that("can't cast list to tibble", {
+  dt <- tibble::tibble()
+  l <- list()
+
+  expect_error(vec_type2(l, dt), class = "error_incompatible_type")
+  expect_error(vec_type2(dt, l), class = "error_incompatible_type")
+  expect_error(vec_cast(l, dt), class = "error_incompatible_cast")
+})
+
 test_that("vec_restore restores tibbles", {
   df1 <- tibble::tibble(x = 1:4)
   df2 <- vec_restore(vec_data(df1), df1)
