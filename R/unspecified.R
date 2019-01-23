@@ -55,12 +55,8 @@ vec_type_finalise.vctrs_unspecified <- function(x) {
 
 #' @rdname unspecified
 #' @export vec_type2.vctrs_unspecified
-#' @method vec_type2 vctrs_unspecified
 #' @export
-vec_type2.vctrs_unspecified <- function(x, y) UseMethod("vec_type2.vctrs_unspecified", y)
-#' @method vec_type2.vctrs_unspecified default
-#' @export
-vec_type2.vctrs_unspecified.default <- function(x, y) y
+vec_type2.vctrs_unspecified <- function(x, y) y
 
 #' @method vec_type2.logical vctrs_unspecified
 #' @export
