@@ -33,8 +33,9 @@
 <meta property="og:title" content="Extract underlying data — vec_data" />
 
 <meta property="og:description" content="Extract the data underlying an S3 vector object, i.e. the underlying
-atomic vector or list. Currently, due to the underlying memory architecture
-of R, this creates a full copy of the underlying data." />
+(named) atomic vector or list.
+Currently, due to the underlying memory architecture
+of R, this creates a full copy of the data." />
 
 <meta property="og:image" content="https://vctrs.r-lib.org/logo.png" />
 <meta name="twitter:card" content="summary" />
@@ -132,8 +133,9 @@ of R, this creates a full copy of the underlying data." />
     <div class="ref-description">
     
     <p>Extract the data underlying an S3 vector object, i.e. the underlying
-atomic vector or list. Currently, due to the underlying memory architecture
-of R, this creates a full copy of the underlying data.</p>
+(named) atomic vector or list.
+Currently, due to the underlying memory architecture
+of R, this creates a full copy of the data.</p>
     
     </div>
 
@@ -150,7 +152,7 @@ of R, this creates a full copy of the underlying data.</p>
     
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>The data underlying <code>x</code>, free from an attributes.</p>
+    <p>The data underlying <code>x</code>, free from any attributes except the names.</p>
     
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
