@@ -10,12 +10,13 @@ vec_data(x)
 \item{x}{A vector}
 }
 \value{
-The data underlying \code{x}, free from an attributes.
+The data underlying \code{x}, free from any attributes except the names.
 }
 \description{
 Extract the data underlying an S3 vector object, i.e. the underlying
-atomic vector or list. Currently, due to the underlying memory architecture
-of R, this creates a full copy of the underlying data.
+(named) atomic vector or list.
+Currently, due to the underlying memory architecture
+of R, this creates a full copy of the data.
 }
 \seealso{
 See \code{\link[=vec_restore]{vec_restore()}} for the inverse operation: it restores
