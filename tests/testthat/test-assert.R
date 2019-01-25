@@ -1,6 +1,6 @@
 context("test-assert")
 
-test_that("basic assert is a no-op", {
+test_that("basic assert is idempotent", {
   x <- new_vctr(1:4)
   expect_identical(vec_assert(x), x)
 
@@ -14,6 +14,7 @@ test_that("asserting ptype", {
   expect_error(vec_assert(new_vctr(1:4), new_vctr(integer())), NA)
 
   # Is this the correct error message?
+  # #168: Need classed error.
   expect_error(
     vec_assert(new_vctr(1:4), new_vctr(double())),
     "must be <vctrs_vc>, not <vctrs_vc>.",

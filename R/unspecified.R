@@ -56,38 +56,38 @@ vec_type_finalise.vctrs_unspecified <- function(x) {
 #' @rdname unspecified
 #' @export vec_type2.vctrs_unspecified
 #' @export
-vec_type2.vctrs_unspecified <- function(x, y) vec_slice(y, 0L)
+vec_type2.vctrs_unspecified <- function(x, y) vec_type(y)
 
 #' @method vec_type2.logical vctrs_unspecified
 #' @export
-vec_type2.logical.vctrs_unspecified <- function(x, y) vec_slice(x, 0L)
+vec_type2.logical.vctrs_unspecified <- function(x, y) vec_type(x)
 #' @method vec_type2.integer vctrs_unspecified
 #' @export
-vec_type2.integer.vctrs_unspecified <- function(x, y) vec_slice(x, 0L)
+vec_type2.integer.vctrs_unspecified <- function(x, y) vec_type(x)
 #' @method vec_type2.double vctrs_unspecified
 #' @export
-vec_type2.double.vctrs_unspecified <- function(x, y) vec_slice(x, 0L)
+vec_type2.double.vctrs_unspecified <- function(x, y) vec_type(x)
 #' @method vec_type2.character vctrs_unspecified
 #' @export
-vec_type2.character.vctrs_unspecified <- function(x, y) vec_slice(x, 0L)
+vec_type2.character.vctrs_unspecified <- function(x, y) vec_type(x)
 #' @method vec_type2.factor vctrs_unspecified
 #' @export
-vec_type2.factor.vctrs_unspecified <- function(x, y) vec_slice(x, 0L)
+vec_type2.factor.vctrs_unspecified <- function(x, y) vec_type(x)
 #' @method vec_type2.ordered vctrs_unspecified
 #' @export
-vec_type2.ordered.vctrs_unspecified <- function(x, y) vec_slice(x, 0L)
+vec_type2.ordered.vctrs_unspecified <- function(x, y) vec_type(x)
 #' @method vec_type2.list vctrs_unspecified
 #' @export
-vec_type2.list.vctrs_unspecified <- function(x, y) vec_slice(x, 0L)
+vec_type2.list.vctrs_unspecified <- function(x, y) vec_type(x)
 #' @method vec_type2.vctrs_list_of vctrs_unspecified
 #' @export
-vec_type2.vctrs_list_of.vctrs_unspecified <- function(x, y) vec_slice(x, 0L)
+vec_type2.vctrs_list_of.vctrs_unspecified <- function(x, y) vec_type(x)
 #' @method vec_type2.Date vctrs_unspecified
 #' @export
-vec_type2.Date.vctrs_unspecified <- function(x, y) vec_slice(x, 0L)
+vec_type2.Date.vctrs_unspecified <- function(x, y) vec_type(x)
 #' @method vec_type2.POSIXt vctrs_unspecified
 #' @export
-vec_type2.POSIXt.vctrs_unspecified <- function(x, y) vec_slice(x, 0L)
+vec_type2.POSIXt.vctrs_unspecified <- function(x, y) vec_type(x)
 #' @method vec_type2.difftime vctrs_unspecified
 #' @export
-vec_type2.difftime.vctrs_unspecified <- function(x, y) vec_slice(x, 0L)
+vec_type2.difftime.vctrs_unspecified <- function(x, y) vec_type(x)

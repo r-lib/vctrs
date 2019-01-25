@@ -79,6 +79,8 @@ vec_cast.vctrs_rcrd <- function(x, to) UseMethod("vec_cast.vctrs_rcrd")
 #' @method vec_cast.vctrs_rcrd vctrs_rcrd
 #' @export
 vec_cast.vctrs_rcrd.vctrs_rcrd <- function(x, to) {
+  # This assumes that we don't have duplicate field names,
+  # which is verified even in the constructor.
   if (!setequal(fields(x), fields(to))) {
     stop_incompatible_cast(x, to)
   }
