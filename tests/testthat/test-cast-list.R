@@ -17,7 +17,7 @@ test_that("elements of length >1 are truncated with warning", {
 })
 
 test_that("error if all casts are lossy", {
-  # Do we really want to err out here? Perhaps give a different warning?
+  # #166: Do we really want to err out here? Perhaps give a different warning?
   # Otherwise it feels like a variant of type stability is violated.
   x <- list(c(2, 1), c(3, 2, 1))
   expect_error(vec_list_cast(x, double()), class = "error_incompatible_cast")

@@ -32,6 +32,7 @@ test_that("as.list strips attributes apart from names", {
 })
 
 test_that("as.data.frame works", {
+  # #167: Not sure if this is the correct behavior.
   x <- new_sclr(x = 1, y = 2)
   expect_equal(
     as.data.frame(x, nm = "a"),

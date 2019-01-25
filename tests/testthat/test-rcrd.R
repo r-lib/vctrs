@@ -116,7 +116,6 @@ test_that("subset assignment throws error", {
   x <- new_rcrd(list(x = 1))
   expect_error(
     x$y <- 2,
-    "subset assignment with $",
     fixed = TRUE,
     class = "error_unsupported"
   )

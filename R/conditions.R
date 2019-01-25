@@ -13,7 +13,7 @@
 #' @name vctrs-conditions
 NULL
 
-stop_incompatible <- function(x, y, message, details = NULL, ..., .subclass = NULL) {
+stop_incompatible <- function(x, y, details = NULL, ..., message, .subclass = NULL) {
   abort(
     message,
     .subclass = c(.subclass, "error_incompatible"),
@@ -34,9 +34,9 @@ stop_incompatible_type <- function(x, y, details = NULL, ..., message = NULL, .s
 
   stop_incompatible(
     x, y,
-    message = message,
     details = details,
     ...,
+    message = message,
     .subclass = c(.subclass, "error_incompatible_type")
   )
 }
@@ -52,9 +52,9 @@ stop_incompatible_cast <- function(x, y, details = NULL, ..., message = NULL, .s
 
   stop_incompatible(
     x, y,
-    message = message,
     details = details,
     ...,
+    message = message,
     .subclass = c(.subclass, "error_incompatible_cast")
   )
 }
@@ -71,9 +71,9 @@ stop_incompatible_op <- function(op, x, y, details = NULL, ..., message = NULL, 
   stop_incompatible(
     x, y,
     op = op,
-    message = message,
     details = details,
     ...,
+    message = message,
     .subclass = c(.subclass, "error_incompatible_op")
   )
 }

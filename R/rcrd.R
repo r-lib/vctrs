@@ -79,10 +79,7 @@ vec_cast.vctrs_rcrd <- function(x, to) UseMethod("vec_cast.vctrs_rcrd")
 #' @method vec_cast.vctrs_rcrd vctrs_rcrd
 #' @export
 vec_cast.vctrs_rcrd.vctrs_rcrd <- function(x, to) {
-  if (n_fields(x) != n_fields(to)) {
-    stop_incompatible_cast(x, to)
-  }
-  if (any(sort(fields(x)) != sort(fields(to)))) {
+  if (!setequal(fields(x), fields(to))) {
     stop_incompatible_cast(x, to)
   }
 
