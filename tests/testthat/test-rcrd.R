@@ -112,7 +112,7 @@ test_that("no attributes", {
   expect_error(new_rcrd(x), "no attributes")
 })
 
-test_that("subset assignment", {
+test_that("subset assignment throws error", {
   x <- new_rcrd(list(x = 1))
   expect_error(
     x$y <- 2,
