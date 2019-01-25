@@ -8,7 +8,7 @@ test_that("vec_count counts number observations", {
   expect_equal(x, data.frame(key = 1:3, count = 1:3))
 })
 
-test_that("vec_count works in corner cases", {
+test_that("vec_count works for zero-length input", {
   x <- vec_count(integer(), sort = "none")
   expect_equal(x, data.frame(key = integer(), count = integer()))
 })
