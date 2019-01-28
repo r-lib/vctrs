@@ -1,13 +1,16 @@
 Package: vctrs
 Title: Vector Helpers
 Version: 0.1.0.9000
-Authors@R: c(
-    person("Hadley", "Wickham", , "hadley@rstudio.com", role = c("aut", "cre")),
-    person("RStudio", role = "cph")
-  )
-Description: Defines new notions of prototype and size that are used 
-    to provide tools for consistent and well-founded type-coercion and 
-    size-recycling, and are in turn connected to ideas of type- and 
+Authors@R: 
+    c(person(given = "Hadley",
+             family = "Wickham",
+             role = c("aut", "cre"),
+             email = "hadley@rstudio.com"),
+      person(given = "RStudio",
+             role = "cph"))
+Description: Defines new notions of prototype and size that are
+    used to provide tools for consistent and well-founded type-coercion
+    and size-recycling, and are in turn connected to ideas of type- and
     size-stability useful for analyzing function interfaces.
 License: GPL-3
 URL: https://github.com/r-lib/vctrs
@@ -18,9 +21,10 @@ Imports:
     backports,
     digest,
     glue,
-    rlang,
+    rlang (>= 0.3.1),
     zeallot
 Suggests: 
+    bit64,
     covr,
     generics,
     knitr,
@@ -28,8 +32,7 @@ Suggests:
     pkgdown,
     rmarkdown,
     testthat,
-    tibble,
-    bit64
+    tibble
 VignetteBuilder: 
     knitr
 Encoding: UTF-8

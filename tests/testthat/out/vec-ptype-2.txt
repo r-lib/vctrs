@@ -1,0 +1,3 @@
+Prototype: <double>
+0. (           , <integer> ) = <integer>
+1. ( <integer> , <double>  ) = <double> 

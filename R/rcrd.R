@@ -62,7 +62,9 @@ names.vctrs_rcrd <- function(x) {
 
 #' @export
 format.vctrs_rcrd <- function(x, ...) {
+  # nocov start
   stop_unimplemented(x, "format")
+  # nocov end
 }
 
 #' @export
@@ -74,16 +76,32 @@ obj_str_data.vctrs_rcrd <- function(x, ...) {
 #' @export
 vec_cast.vctrs_rcrd <- function(x, to) UseMethod("vec_cast.vctrs_rcrd")
 
-#' @method vec_cast.vctrs_rcrd list
+#' @method vec_cast.vctrs_rcrd vctrs_rcrd
 #' @export
-vec_cast.vctrs_rcrd.list <- function(x, to) {
-  vec_list_cast(x, to)
+vec_cast.vctrs_rcrd.vctrs_rcrd <- function(x, to) {
+  # This assumes that we don't have duplicate field names,
+  # which is verified even in the constructor.
+  if (!setequal(fields(x), fields(to))) {
+    stop_incompatible_cast(x, to)
+  }
+
+  new_data <- map2(
+    vec_data(x)[fields(to)],
+    vec_data(to),
+    vec_cast
+  )
+
+  new_rcrd(new_data)
 }
 
 #' @method vec_cast.vctrs_rcrd default
 #' @export
 vec_cast.vctrs_rcrd.default <- function(x, to) {
-  stop_incompatible_cast(x, to)
+  if (is_bare_list(x)) {
+    vec_list_cast(x, to)
+  } else {
+    stop_incompatible_cast(x, to)
+  }
 }
 
 #' @export
@@ -126,7 +144,7 @@ rep.vctrs_rcrd <- function(x, ...) {
 
 #' @export
 as.list.vctrs_rcrd <- function(x, ...) {
-  lapply(seq_along(x), function(i) x[[i]])
+  vec_cast(x, list())
 }
 
 # Replacement -------------------------------------------------------------

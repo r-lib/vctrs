@@ -99,10 +99,7 @@ vec_size2 <- function(nx, ny) {
 #'
 #' vec_slice(mtcars, 1:3)
 vec_slice <- function(x, i) {
-  if (is.logical(i)) {
-    i <- which(i)
-  }
-  stopifnot(is.integer(i) || is.character(i))
+  i <- get_slice_index(i, x)
 
   if (is.null(x)) {
     NULL
@@ -132,14 +129,11 @@ vec_slice <- function(x, i) {
 #' @export
 #' @rdname vec_slice
 `vec_slice<-` <- function(x, i, value) {
-  if (is.logical(i)) {
-    i <- which(i)
-  }
-  stopifnot(is.integer(i) || is.character(i))
+  i <- get_slice_index(i, x)
   value <- vec_recycle(value, vec_size(i))
 
   if (is.null(x)) {
-    NULL
+    x <- NULL
   } else if (is_vector(x)) {
     d <- vec_dims(x)
     if (d == 1) {
@@ -155,6 +149,19 @@ vec_slice <- function(x, i) {
   }
 
   x
+}
+
+get_slice_index <- function(i, x) {
+  if (is_logical(i)) {
+    i <- vec_recycle(i, vec_size(x))
+    i <- which(i)
+    stopifnot(is.integer(i))
+  } else {
+    # Do we really want to forbid numeric indices here (> 2^31)?
+    stopifnot(is.integer(i) || is.character(i))
+  }
+
+  i
 }
 
 #' Create a missing vector
@@ -185,6 +192,8 @@ vec_names <- function(x) {
 `vec_names<-` <- function(x, value) {
   if (vec_dims(x) == 1) {
     names(x) <- value
+  } else if (is.data.frame(x)) {
+    # Do not update row names
   } else {
     rownames(x) <- value
   }

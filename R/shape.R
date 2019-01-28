@@ -3,13 +3,17 @@
 # * all other dimensions = the shape parameter of the type
 # These helpers work with the shape parameter
 
-shape_match <- function(type, x, y) {
-  shape <- shape_common(x, y)
+new_shape <- function(type, shape = NULL) {
   if (length(shape) == 0L) {
     type
   } else {
     structure(type, dim = c(0L, shape))
   }
+}
+
+shape_match <- function(type, x, y) {
+  shape <- shape_common(x, y)
+  new_shape(type, shape)
 }
 
 shape_common <- function(x, y) {
@@ -50,7 +54,7 @@ shape_broadcast <- function(x, to) {
 
 shape <- function(x) {
   if (is.object(x)) {
-    stop("Only bare vectors have shapes", call. = FALSE)
+    stop("Only bare vectors have shapes.", call. = FALSE)
   }
 
   vec_dim(x)[-1]

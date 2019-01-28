@@ -5,6 +5,7 @@ test_that("matches R ordering", {
     expect_equal(vec_compare(!!x, !!y), cmp(!!x, !!y))
   }
 
+  expect_same(NULL, NULL)
   expect_same(c(NA, FALSE, TRUE), FALSE)
   expect_same(c(NA, -100L, 0L, 100L), 0L)
   expect_same(c(NA, -Inf, -100, 100, Inf), 0L)
@@ -63,4 +64,8 @@ test_that("xtfrm.vctrs_vctr works for variety of base classes", {
   x <- c(2, 3, 1)
   expect_equal(xtfrm.vctrs_vctr(x), x)
   expect_equal(xtfrm.vctrs_vctr(letters[x]), x)
+})
+
+test_that("vec_proxy_compare() refuses to deal with lists", {
+  expect_error(vec_proxy_compare(list()), class = "error_unsupported")
 })

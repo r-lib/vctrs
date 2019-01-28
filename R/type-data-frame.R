@@ -123,8 +123,8 @@ df_length <- function(x) {
 
 df_col_type2 <- function(x, y) {
   # Avoid expensive [.data.frame
-  x_raw <- vec_data(vec_slice(x, 0L))
-  y_raw <- vec_data(vec_slice(y, 0L))
+  x_raw <- vec_data(vec_type(x))
+  y_raw <- vec_data(vec_type(y))
 
   # Find types
   names <- set_partition(names(x), names(y))

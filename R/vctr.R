@@ -387,12 +387,18 @@ xtfrm.vctrs_vctr <- function(x) {
   proxy <- vec_proxy_compare(x)
 
   # order(order(x)) ~= rank(x)
-  if (is.data.frame(proxy)) {
-    order(do.call(base::order, proxy))
-  } else if (is_integer(proxy) || is_double(proxy)) {
+  if (is_integer(proxy) || is_double(proxy)) {
     proxy
-  } else if (is_character(proxy) || is_logical(proxy)) {
-    order(order(proxy))
+  } else {
+    order(order_proxy(proxy))
+  }
+}
+
+order_proxy <- function(proxy) {
+  if (is.data.frame(proxy)) {
+    do.call(base::order, proxy)
+  } else if (is_character(proxy) || is_logical(proxy) || is_integer(proxy) || is_double(proxy)) {
+    order(proxy)
   } else {
     stop("Invalid type returned by `vec_proxy_compare()`.", call. = FALSE)
   }
@@ -401,13 +407,17 @@ xtfrm.vctrs_vctr <- function(x) {
 #' @importFrom stats median
 #' @export
 median.vctrs_vctr <- function(x, ..., na.rm = FALSE) {
+  # nocov start
   stop_unimplemented(x, "median")
+  # nocov end
 }
 
 #' @importFrom stats quantile
 #' @export
 quantile.vctrs_vctr <- function(x, ..., type = 1, na.rm = FALSE) {
+  # nocov start
   stop_unimplemented(x, "quantile")
+  # nocov end
 }
 
 #' @export
@@ -519,7 +529,9 @@ is.nan.vctrs_vctr <- function(x) {
 
 #' @export
 summary.vctrs_vctr <- function(object, ...) {
+  # nocov start
   stop_unimplemented(object, "summary")
+  # nocov end
 }
 
 # Unsupported --------------------------------------------------------------

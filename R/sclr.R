@@ -193,6 +193,8 @@ as.POSIXct.vctrs_sclr <- function(x, tz = "", ...) {
 
 #' @export
 summary.vctrs_sclr <- function(object, ...) {
+  # nocov start
   stop_unimplemented(object, "summary")
+  # nocov end
 }
 

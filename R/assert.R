@@ -6,7 +6,7 @@
 #' @return Either an error, or `x`, invisibly.
 #' @export
 vec_assert <- function(x, ptype = NULL, size = NULL) {
-  x_name <- as.character(ensym(x))
+  x_name <- as_label(x)
 
   if (!is.null(ptype)) {
     x_type <- vec_type(x)

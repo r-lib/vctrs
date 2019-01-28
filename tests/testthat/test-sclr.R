@@ -31,6 +31,15 @@ test_that("as.list strips attributes apart from names", {
   expect_equal(attributes(y), list(names = names(x)))
 })
 
+test_that("as.data.frame works", {
+  # #167: Not sure if this is the correct behavior.
+  x <- new_sclr(x = 1, y = 2)
+  expect_equal(
+    as.data.frame(x, nm = "a"),
+    new_data_frame(list(a = list(x)))
+  )
+})
+
 test_that("putting in a data frame makes a list-col", {
   x <- new_sclr(x = 1, y = 2)
   df <- data.frame(x)

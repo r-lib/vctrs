@@ -1,11 +1,6 @@
 indent <- function(x, n) {
-  if (length(x) == 0)
-    return(character())
-
   pad <- strrep(" ", n)
-
-  out <- Map(gsub, "\n", paste0("\n", pad), x)
-  unlist(out, use.names = FALSE)
+  map_chr(x, gsub, pattern = "(\n+)", replacement = paste0("\\1", pad))
 }
 
 ones <- function(...) {

@@ -148,7 +148,6 @@ vec_ptype <- function(...) {
     )
     out <- t(apply(out, 1, pad_height))
     out <- apply(out, 2, pad_width)
-    # apply(out, 1:2, block_size)
 
     out[, "lhs"] <- parens(out[, "lhs"])
     out[, "rhs"] <- parens(out[, "rhs"], FALSE)
@@ -168,16 +167,6 @@ vec_ptype <- function(...) {
   }
 
   invisible()
-}
-
-block_size <- function(x) {
-  lines <- strsplit(x, "\n")[[1]]
-  width <- unique(map_int(lines, nchar))
-  paste0("[", length(lines), ", ", if (length(width) > 1) "?" else width, "]")
-}
-
-blank <- function(x) {
-  paste0(rep(" ", nchar(x)), collapse = "")
 }
 
 parens <- function(x, left = TRUE) {

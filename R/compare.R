@@ -41,11 +41,6 @@ vec_proxy_compare.default <- function(x) {
   }
 }
 
-#' @export
-vec_proxy_compare.NULL <- function(x) {
-  NULL
-}
-
 #' Compare two vectors
 #'
 #' @section S3 dispatch:

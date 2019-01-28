@@ -13,7 +13,7 @@ test_that("ptype methods are descriptive", {
 
 # Coercion ----------------------------------------------------------------
 
-test_that("factor/character coercions are symmetric and unnchanging", {
+test_that("factor/character coercions are symmetric and unchanging", {
   types <- list(
     ordered(character()),
     factor(),
@@ -38,6 +38,13 @@ test_that("factors level are unioned", {
 
   expect_equal(vec_type_common(fa, fb), factor(levels = c("a", "b")))
   expect_equal(vec_type_common(fb, fa), factor(levels = c("b", "a")))
+})
+
+test_that("coercion errors with factors", {
+  f <- factor(levels = "a")
+
+  expect_error(vec_type_common(f, logical()), class = "error_incompatible_type")
+  expect_error(vec_type_common(logical(), f), class = "error_incompatible_type")
 })
 
 # Casting -----------------------------------------------------------------
@@ -78,6 +85,10 @@ test_that("lossy casts generate warning", {
 
 test_that("invalid casts generate error", {
   expect_error(vec_cast(double(), factor("a")), class = "error_incompatible_cast")
+  expect_error(vec_cast(factor("a"), logical()), class = "error_incompatible_cast")
+  expect_error(vec_cast(ordered("a"), logical()), class = "error_incompatible_cast")
+  expect_error(vec_cast(logical(), factor("a")), class = "error_incompatible_cast")
+  expect_error(vec_cast(logical(), ordered("a")), class = "error_incompatible_cast")
 })
 
 test_that("orderedness of factor is preserved", {
