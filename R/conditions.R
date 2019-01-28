@@ -28,7 +28,7 @@ stop_incompatible <- function(x, y, details = NULL, ..., message = NULL, .subcla
 #' @export
 stop_incompatible_type <- function(x, y, details = NULL, ..., message = NULL, .subclass = NULL) {
   message <- message %||% glue_lines(
-    "No common type for <{vec_ptype_full(x)}> and <{vec_ptype_full(y)}>",
+    "No common type for <{vec_ptype_full(x)}> and <{vec_ptype_full(y)}>.",
     details
   )
 
@@ -83,7 +83,7 @@ stop_incompatible_op <- function(op, x, y, details = NULL, ..., message = NULL, 
 warn_lossy_cast <- function(x, y, locations = NULL, details = NULL, ..., message = NULL, .subclass = NULL) {
 
   message <- message %||% glue_lines(
-    "Lossy cast from <{vec_ptype_full(x)}> to <{vec_ptype_full(y)}>",
+    "Lossy cast from <{vec_ptype_full(x)}> to <{vec_ptype_full(y)}>.",
     inline_list("Locations: ", locations),
     details
   )
@@ -100,7 +100,7 @@ warn_lossy_cast <- function(x, y, locations = NULL, details = NULL, ..., message
 }
 
 stop_unsupported <- function(x, method) {
-  msg <- glue::glue("`{method}.{class(x)[[1]]}()` not supported")
+  msg <- glue::glue("`{method}.{class(x)[[1]]}()` not supported.")
   abort(
     "error_unsupported",
     message = msg,
@@ -110,7 +110,7 @@ stop_unsupported <- function(x, method) {
 }
 
 stop_unimplemented <- function(x, method) {
-  msg <- glue::glue("`{method}.{class(x)[[1]]}()` not implemented")
+  msg <- glue::glue("`{method}.{class(x)[[1]]}()` not implemented.")
   abort(
     "error_unimplemented",
     message = msg,

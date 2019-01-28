@@ -51,7 +51,7 @@ vec_recycle <- function(x, size) {
   } else if (n_x == 1L) {
     vec_slice(x, rep(1L, size))
   } else {
-    stop("Incompatible lengths: ", n_x, ", ", size, call. = FALSE)
+    abort(paste0("Incompatible lengths: ", n_x, ", ", size, "."))
   }
 }
 

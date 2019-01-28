@@ -20,7 +20,7 @@ list_of <- function(..., .ptype = NULL) {
 
   ptype <- vec_type_common(!!!args, .ptype = .ptype)
   if (is.null(ptype)) {
-    stop("Could not find common type for elements of `x`", call. = FALSE)
+    abort("Could not find common type for elements of `x`.")
   }
 
   x <- map(args, vec_cast, to = ptype)
