@@ -71,7 +71,7 @@ vec_size2 <- function(nx, ny) {
   } else if (ny == 1L) {
     nx
   } else {
-    stop("Incompatible lengths: ", nx, ", ", ny, call. = FALSE)
+    abort(paste0("Incompatible lengths: ", nx, ", ", ny, "."))
   }
 }
 
@@ -122,7 +122,7 @@ vec_slice <- function(x, i) {
       eval_bare(expr(x[i, !!!miss_args, drop = FALSE]))
     }
   } else {
-    stop("`x` must be a vector", call. = FALSE)
+    abort("`x` must be a vector.")
   }
 }
 
@@ -145,7 +145,7 @@ vec_slice <- function(x, i) {
       eval_bare(expr(x[i, !!!miss_args] <- value))
     }
   } else {
-    stop("`x` must be a vector", call. = FALSE)
+    abort("`x` must be a vector.")
   }
 
   x

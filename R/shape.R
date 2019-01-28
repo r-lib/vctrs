@@ -54,7 +54,7 @@ shape_broadcast <- function(x, to) {
 
 shape <- function(x) {
   if (is.object(x)) {
-    stop("Only bare vectors have shapes.", call. = FALSE)
+    abort("Only bare vectors have shapes.")
   }
 
   vec_dim(x)[-1]

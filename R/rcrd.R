@@ -26,25 +26,25 @@ new_rcrd <- function(fields, ..., class = character()) {
 
 check_fields <- function(fields) {
   if (!is.list(fields) || length(fields) == 0) {
-    stop("`fields` must be a list of length 1 or greater", call. = FALSE)
+    abort("`fields` must be a list of length 1 or greater.")
   }
 
   if (!has_unique_names(fields)) {
-    stop("`fields` must have unique names", call. = FALSE)
+    abort("`fields` must have unique names.")
   }
 
   if (!identical(names(attributes(fields)), "names")) {
-    stop("`fields` must have no attributes (apart from names)", call. = FALSE)
+    abort("`fields` must have no attributes (apart from names).")
   }
 
   is_vector <- map_lgl(fields, is_vector)
   if (!all(is_vector)) {
-    stop("Every field must be a vector", call. = FALSE)
+    abort("Every field must be a vector.")
   }
 
   lengths <- map_int(fields, length)
   if (!all_equal(lengths)) {
-    stop("Every field must be the same length", call. = FALSE)
+    abort("Every field must be the same length.")
   }
 
   invisible(fields)

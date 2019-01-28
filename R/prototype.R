@@ -70,7 +70,7 @@ vec_type.default <- function(x) {
   if (is_vector(x)) {
     vec_slice(x, 0L)
   } else {
-    stop("`x` is not a vector", call. = FALSE)
+    abort("`x` is not a vector.")
   }
 }
 
@@ -102,7 +102,7 @@ vec_type_common <- function(..., .ptype = NULL) {
   }
 
   if (isTRUE(getOption("vctrs.no_guessing"))) {
-    stop("strict mode is activated; you must supply complete .ptype", call. = FALSE)
+    abort("strict mode is activated; you must supply complete `.ptype`.")
   }
 
   args <- compact(list2(.ptype, ...))

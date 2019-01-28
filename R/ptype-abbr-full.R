@@ -43,7 +43,7 @@ vec_ptype_full.default <- function(x) {
   } else if (is_vector(x)) {
     paste0(typeof(x), vec_ptype_shape(x))
   } else {
-    stop("Not a vector", call. = FALSE)
+    abort("Not a vector.")
   }
 }
 
@@ -63,7 +63,7 @@ vec_ptype_abbr.default <- function(x) {
     )
     paste0(abbr, vec_ptype_shape(x))
   } else {
-    stop("Not a vector", call. = FALSE)
+    abort("Not a vector.")
   }
 }
 
