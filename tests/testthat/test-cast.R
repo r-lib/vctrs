@@ -110,6 +110,7 @@ test_that("safe casts work as expected", {
 
 test_that("invalid casts generate error", {
   expect_error(vec_cast(raw(1), double()), class = "error_incompatible_cast")
+  expect_error(vec_cast(double(1), raw()), class = "error_incompatible_cast")
 })
 
 # Lists  ------------------------------------------------------------------
