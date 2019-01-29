@@ -33,6 +33,10 @@ outer_names <- function(outer, names, n) {
   }
 }
 
+has_inner_names <- function(x) {
+  !all(map_lgl(map(x, vec_names), is.null))
+}
+
 cat_line <- function(...) {
   cat(paste0(..., "\n", collapse = ""))
 }
