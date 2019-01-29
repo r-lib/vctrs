@@ -94,6 +94,11 @@ test_that("[<-, [[<- and $<- coerce their input", {
 
   x[3:4] <- list(NULL)
   expect_equal(x, list_of(x = 0, y = NULL, z = NULL, w = NULL))
+
+  expect_equal(is.na(x), c(FALSE, TRUE, TRUE, TRUE))
+
+  x[[2]] <- zap()
+  expect_equal(x, list_of(x = 0, z = NULL, w = NULL))
 })
 
 test_that("assingment can increase size of vector", {

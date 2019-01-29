@@ -4,6 +4,9 @@
 #' Modifying the list with `$`, `[`, and `[[` preserves the constraint
 #' by coercing all input items.
 #'
+#' Unlike regular lists, setting a list element to `NULL` using `[[`
+#' does not remove it. Use [zap()] to remove list items.
+#'
 #' @inheritParams vec_c
 #' @param x For `as_list_of()`, a vector to be coerced to list_of.
 #' @param y,to Arguments to `vec_type2()` and `vec_cast()`.
@@ -15,6 +18,12 @@
 #' }
 #'
 #' vec_c(list_of(1, 2), list_of(FALSE, TRUE))
+#'
+#' # Use zap() to remove list items:
+#' x[[2]] <- NULL
+#' is.na(x)
+#' x[[2]] <- rlang::zap()
+#' x
 list_of <- function(..., .ptype = NULL) {
   args <- list2(...)
 
@@ -120,14 +129,17 @@ as.list.vctrs_list_of <- function(x, ...) {
 
 #' @export
 `[[<-.vctrs_list_of` <- function(x, i, value) {
-  if (is.null(value)) {
+  if (is_zap(value)) {
+    value <- NULL
+  } else if (is.null(value)) {
     # Setting to NULL via [[ shortens the list! Example:
     # `[[<-`(list(1), 1, NULL)
     x[i] <- list(value)
     return(x)
+  } else {
+    value <- vec_cast(value, attr(x, "ptype"))
   }
 
-  value <- vec_cast(value, attr(x, "ptype"))
   NextMethod()
 }
 
