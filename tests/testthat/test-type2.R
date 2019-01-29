@@ -6,6 +6,7 @@ test_that("base coercions are symmetric and unchanging", {
     integer(),
     double(),
     character(),
+    raw(),
     list()
   )
   mat <- maxtype_mat(types)
