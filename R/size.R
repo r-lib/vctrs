@@ -136,17 +136,17 @@ vec_slice <- function(x, i) {
     x <- NULL
   } else if (is_vector(x)) {
     d <- vec_dims(x)
+
     if (d == 1) {
       x[i] <- value
-      check_names_all_or_nothing(names(x))
     } else if (d == 2) {
       x[i, ] <- value
-      check_names_all_or_nothing(names(x))
     } else {
       miss_args <- rep(list(missing_arg()), d - 1)
       eval_bare(expr(x[i, !!!miss_args] <- value))
-      check_names_all_or_nothing(names(x))
     }
+
+    check_names_all_or_nothing(names(x))
   } else {
     abort("`x` must be a vector.")
   }
