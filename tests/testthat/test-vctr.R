@@ -96,10 +96,6 @@ test_that("is.na<-() and new_vctr() commute", {
   x <- new_vctr(1:4)
   y <- 1:4
 
-  expect_error(is.na(x) <- 2L, NA)
-  is.na(y) <- 2L
-  expect_identical(x, new_vctr(!!y))
-
   expect_error(is.na(x) <- c(FALSE, FALSE, TRUE, NA), NA)
   is.na(y) <- c(FALSE, FALSE, TRUE, NA)
   expect_identical(x, new_vctr(!!y))
