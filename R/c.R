@@ -39,7 +39,7 @@ vec_c <- function(..., .ptype = NULL) {
     return(NULL)
 
   ns <- map_int(args, vec_size)
-  out <- vec_na(unname(ptype), sum(ns))
+  out <- vec_na(ptype, sum(ns))
   if (is.null(names(args)) && !has_inner_names(args)) {
     names <- NULL
   } else {
@@ -54,9 +54,8 @@ vec_c <- function(..., .ptype = NULL) {
 
     x <- vec_cast(args[[i]], to = ptype)
 
-    ix <- pos:(pos + n - 1)
-    names[ix] <- outer_names(names(args)[[i]], vec_names(args[[i]]), length(x))
-    vec_slice(out, ix) <- unname(x)
+    names[pos:(pos + n - 1)] <- outer_names(names(args)[[i]], vec_names(args[[i]]), length(x))
+    vec_slice(out, pos:(pos + n - 1)) <- x
     pos <- pos + n
   }
 
