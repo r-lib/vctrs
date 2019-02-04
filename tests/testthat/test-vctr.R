@@ -92,17 +92,14 @@ test_that("equality functions remapped", {
   expect_true(anyDuplicated(x))
 })
 
-test_that("is.na<-() and new_vctr() commute", {
+test_that("is.na<-() supported", {
   x <- new_vctr(1:4)
-  y <- 1:4
 
-  expect_silent(is.na(x) <- c(FALSE, FALSE, TRUE, NA))
-  is.na(y) <- c(FALSE, FALSE, TRUE, NA)
-  expect_identical(x, new_vctr(!!y))
+  is.na(x) <- c(FALSE, FALSE, TRUE, NA)
+  expect_identical(x, new_vctr(c(1:2, NA, 4L)))
 
-  expect_silent(is.na(x) <- TRUE)
-  is.na(y) <- TRUE
-  expect_identical(x, new_vctr(!!y))
+  is.na(x) <- TRUE
+  expect_identical(x, new_vctr(rep(NA_integer_, 4)))
 })
 
 test_that("comparison functions remapped", {
