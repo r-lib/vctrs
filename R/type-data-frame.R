@@ -114,8 +114,8 @@ vec_cast.data.frame.default    <- function(x, to) stop_incompatible_cast(x, to)
 # Helpers -----------------------------------------------------------------
 
 df_length <- function(x) {
-  if (length(x) > 0) {
-    length(x[[1]])
+  if (vec_size(x) > 0) {
+    vec_size(x[[1]])
   } else {
     0L
   }
