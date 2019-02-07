@@ -67,6 +67,16 @@ test_that("matrix becomes data frame", {
   expect_equal(vec_rbind(x), data.frame(V1 = 1:2, V2 = 3:4))
 })
 
+test_that("can bind data.frame columns", {
+  df <- data.frame(x = NA, y = 1:2)
+  df$x <- data.frame(a = 1:2)
+
+  expected <- data.frame(x = NA, y = c(1:2, 1:2))
+  expected$x <- data.frame(a = c(1:2, 1:2))
+
+  expect_equal(vec_rbind(df, df), expected)
+})
+
 
 # cols --------------------------------------------------------------------
 

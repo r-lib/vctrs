@@ -44,3 +44,13 @@ test_that("combines outer an inner names", {
   expect_equal(vec_c(c(x = 1:2)), c(x1 = 1, x2 = 2))
   expect_equal(vec_c(y = c(x = 1)), c(y..x = 1))
 })
+
+test_that("can bind data.frame columns", {
+  df <- data.frame(x = NA, y = 1:2)
+  df$x <- data.frame(a = 1:2)
+
+  expected <- data.frame(x = NA, y = c(1:2, 1:2))
+  expected$x <- data.frame(a = c(1:2, 1:2))
+
+  expect_equal(vec_c(df, df), expected)
+})

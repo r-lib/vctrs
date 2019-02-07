@@ -63,11 +63,13 @@ test_that("can subset using logical index", {
   )
 })
 
-test_that("can subset data frame columns", {
-  df <- data.frame(x = 1:2)
-  df$y <- data.frame(a = 2:1)
+test_that("can subset 0-column data.fames", {
+  df_empty <- as.data.frame(matrix(nrow = 3, ncol = 0))
+  expect_equal(vec_slice(df_empty, 1:3), df_empty)
 
-  expect_equal(vec_slice(df, 1L)$y, vec_slice(df$y, 1L))
+  df <- df_empty
+  df$x <- df_empty
+  expect_equal(vec_slice(df, 1:3), df)
 })
 
 test_that("can modify subset", {
