@@ -39,7 +39,7 @@ by coercing all input items.
 }
 \details{
 Unlike regular lists, setting a list element to \code{NULL} using \code{[[}
-does not remove it. Use \code{\link[=zap]{zap()}} to remove list items.
+does not remove it.
 }
 \examples{
 x <- list_of(1:3, 5:6, 10:15)
@@ -48,10 +48,4 @@ if (requireNamespace("tibble", quietly = TRUE)) {
 }
 
 vec_c(list_of(1, 2), list_of(FALSE, TRUE))
-
-# Use zap() to remove list items:
-x[[2]] <- NULL
-is.na(x)
-x[[2]] <- rlang::zap()
-x
 }

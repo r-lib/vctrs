@@ -5,7 +5,7 @@
 #' by coercing all input items.
 #'
 #' Unlike regular lists, setting a list element to `NULL` using `[[`
-#' does not remove it. Use [zap()] to remove list items.
+#' does not remove it.
 #'
 #' @inheritParams vec_c
 #' @param x For `as_list_of()`, a vector to be coerced to list_of.
@@ -18,12 +18,6 @@
 #' }
 #'
 #' vec_c(list_of(1, 2), list_of(FALSE, TRUE))
-#'
-#' # Use zap() to remove list items:
-#' x[[2]] <- NULL
-#' is.na(x)
-#' x[[2]] <- rlang::zap()
-#' x
 list_of <- function(..., .ptype = NULL) {
   args <- list2(...)
 
