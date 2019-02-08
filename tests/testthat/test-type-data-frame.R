@@ -97,8 +97,10 @@ test_that("casts preserve outer class", {
 })
 
 test_that("restore generates correct row/col names", {
-  df1 <- data.frame(x = 1:4, y = 1:4, z = 1:4)
-  df2 <- vec_restore(lapply(df1[1:3], `[`, 1:2), df1)
+  df1 <- data.frame(x = NA, y = 1:4, z = 1:4)
+  df1$x <- data.frame(a = 1:4, b = 1:4)
+
+  df2 <- vec_restore(lapply(df1[1:3], vec_slice, 1:2), df1)
 
   expect_named(df2, c("x", "y", "z"))
   expect_equal(.row_names_info(df2), -2)

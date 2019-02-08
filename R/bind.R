@@ -110,7 +110,7 @@ vec_rbind <- function(..., .ptype = NULL) {
 
     tbl_i <- vec_data(vec_cast(tbls[[i]], to = ptype))
     for (j in seq_along(out)) {
-      out[[j]][pos:(pos + n - 1)] <- tbl_i[[j]]
+      vec_slice(out[[j]], pos:(pos + n - 1)) <- tbl_i[[j]]
     }
     pos <- pos + n
   }
