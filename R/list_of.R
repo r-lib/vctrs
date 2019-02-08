@@ -129,17 +129,14 @@ as.list.vctrs_list_of <- function(x, ...) {
 
 #' @export
 `[[<-.vctrs_list_of` <- function(x, i, value) {
-  if (is_zap(value)) {
-    value <- NULL
-  } else if (is.null(value)) {
+  if (is.null(value)) {
     # Setting to NULL via [[ shortens the list! Example:
     # `[[<-`(list(1), 1, NULL)
     x[i] <- list(value)
     return(x)
-  } else {
-    value <- vec_cast(value, attr(x, "ptype"))
   }
 
+  value <- vec_cast(value, attr(x, "ptype"))
   NextMethod()
 }
 
