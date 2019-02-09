@@ -101,6 +101,18 @@ test_that("difftime gets special treatment", {
   expect_equal(vec_cast(dt1, character()), "600 secs")
 })
 
+# Raw ---------------------------------------------------------------------
+
+test_that("safe casts work as expected", {
+  expect_equal(vec_cast(NULL, raw()), NULL)
+  expect_equal(vec_cast(list(raw(1)), raw()), raw(1))
+})
+
+test_that("invalid casts generate error", {
+  expect_error(vec_cast(raw(1), double()), class = "error_incompatible_cast")
+  expect_error(vec_cast(double(1), raw()), class = "error_incompatible_cast")
+})
+
 # Lists  ------------------------------------------------------------------
 
 test_that("safe casts work as expected", {

@@ -40,7 +40,7 @@ vec_c <- function(..., .ptype = NULL) {
 
   ns <- map_int(args, vec_size)
   out <- vec_na(ptype, sum(ns))
-  if (is.null(names(args))) {
+  if (is.null(names(args)) && !has_inner_names(args)) {
     names <- NULL
   } else {
     names <- vec_na(character(), sum(ns))

@@ -4,6 +4,9 @@
 #' Modifying the list with `$`, `[`, and `[[` preserves the constraint
 #' by coercing all input items.
 #'
+#' Unlike regular lists, setting a list element to `NULL` using `[[`
+#' does not remove it.
+#'
 #' @inheritParams vec_c
 #' @param x For `as_list_of()`, a vector to be coerced to list_of.
 #' @param y,to Arguments to `vec_type2()` and `vec_cast()`.
@@ -120,6 +123,13 @@ as.list.vctrs_list_of <- function(x, ...) {
 
 #' @export
 `[[<-.vctrs_list_of` <- function(x, i, value) {
+  if (is.null(value)) {
+    # Setting to NULL via [[ shortens the list! Example:
+    # `[[<-`(list(1), 1, NULL)
+    x[i] <- list(value)
+    return(x)
+  }
+
   value <- vec_cast(value, attr(x, "ptype"))
   NextMethod()
 }

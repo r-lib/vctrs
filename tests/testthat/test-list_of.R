@@ -79,7 +79,7 @@ test_that("[<-, [[<- and $<- coerce their input", {
   # causes an error "invalid subscript type 'promise'"
   skip_if_not(getRversion() >= "3.2")
 
-  x <- list_of(x = 1, y = 1, z = 1)
+  x <- list_of(x = 1, y = 1, z = 1, w = 1)
   x[1] <- list(FALSE)
   x
   x[[2]] <- FALSE
@@ -87,7 +87,15 @@ test_that("[<-, [[<- and $<- coerce their input", {
   x$z <- FALSE
   x
 
-  expect_equal(x, list_of(x = 0, y = 0, z = 0))
+  expect_equal(x, list_of(x = 0, y = 0, z = 0, w = 1))
+
+  x[[2]] <- NULL
+  expect_equal(x, list_of(x = 0, y = NULL, z = 0, w = 1))
+
+  x[3:4] <- list(NULL)
+  expect_equal(x, list_of(x = 0, y = NULL, z = NULL, w = NULL))
+
+  expect_equal(is.na(x), c(FALSE, TRUE, TRUE, TRUE))
 })
 
 test_that("assingment can increase size of vector", {

@@ -21,6 +21,7 @@ R_len_t vec_size(SEXP x) {
   case EXPRSXP:
   case LGLSXP:
   case INTSXP:
+  case RAWSXP:
   case REALSXP:
   case CPLXSXP:
   case STRSXP: {

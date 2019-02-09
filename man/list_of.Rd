@@ -37,6 +37,10 @@ A \code{list_of} object is a list where each element has the same type.
 Modifying the list with \code{$}, \code{[}, and \code{[[} preserves the constraint
 by coercing all input items.
 }
+\details{
+Unlike regular lists, setting a list element to \code{NULL} using \code{[[}
+does not remove it.
+}
 \examples{
 x <- list_of(1:3, 5:6, 10:15)
 if (requireNamespace("tibble", quietly = TRUE)) {
