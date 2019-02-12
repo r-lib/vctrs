@@ -43,8 +43,8 @@ test_that("factors level are unioned", {
 test_that("coercion errors with factors", {
   f <- factor(levels = "a")
 
-  expect_error(vec_type_common(f, logical()), class = "error_incompatible_type")
-  expect_error(vec_type_common(logical(), f), class = "error_incompatible_type")
+  expect_error(vec_type_common(f, logical()), class = "vctrs_error_incompatible_type")
+  expect_error(vec_type_common(logical(), f), class = "vctrs_error_incompatible_type")
 })
 
 # Casting -----------------------------------------------------------------
@@ -84,11 +84,11 @@ test_that("lossy casts generate warning", {
 })
 
 test_that("invalid casts generate error", {
-  expect_error(vec_cast(double(), factor("a")), class = "error_incompatible_cast")
-  expect_error(vec_cast(factor("a"), logical()), class = "error_incompatible_cast")
-  expect_error(vec_cast(ordered("a"), logical()), class = "error_incompatible_cast")
-  expect_error(vec_cast(logical(), factor("a")), class = "error_incompatible_cast")
-  expect_error(vec_cast(logical(), ordered("a")), class = "error_incompatible_cast")
+  expect_error(vec_cast(double(), factor("a")), class = "vctrs_error_incompatible_cast")
+  expect_error(vec_cast(factor("a"), logical()), class = "vctrs_error_incompatible_cast")
+  expect_error(vec_cast(ordered("a"), logical()), class = "vctrs_error_incompatible_cast")
+  expect_error(vec_cast(logical(), factor("a")), class = "vctrs_error_incompatible_cast")
+  expect_error(vec_cast(logical(), ordered("a")), class = "vctrs_error_incompatible_cast")
 })
 
 test_that("orderedness of factor is preserved", {

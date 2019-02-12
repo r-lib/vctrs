@@ -16,7 +16,7 @@ NULL
 stop_incompatible <- function(x, y, details = NULL, ..., message = NULL, .subclass = NULL) {
   abort(
     message,
-    .subclass = c(.subclass, "error_incompatible"),
+    .subclass = c(.subclass, "vctrs_error_incompatible"),
     x = x,
     y = y,
     details = details,
@@ -37,7 +37,7 @@ stop_incompatible_type <- function(x, y, details = NULL, ..., message = NULL, .s
     details = details,
     ...,
     message = message,
-    .subclass = c(.subclass, "error_incompatible_type")
+    .subclass = c(.subclass, "vctrs_error_incompatible_type")
   )
 }
 
@@ -55,7 +55,7 @@ stop_incompatible_cast <- function(x, y, details = NULL, ..., message = NULL, .s
     details = details,
     ...,
     message = message,
-    .subclass = c(.subclass, "error_incompatible_cast")
+    .subclass = c(.subclass, "vctrs_error_incompatible_cast")
   )
 }
 
@@ -74,7 +74,7 @@ stop_incompatible_op <- function(op, x, y, details = NULL, ..., message = NULL, 
     details = details,
     ...,
     message = message,
-    .subclass = c(.subclass, "error_incompatible_op")
+    .subclass = c(.subclass, "vctrs_error_incompatible_op")
   )
 }
 
