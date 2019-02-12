@@ -113,7 +113,7 @@ It's often important to combine vectors with multiple types. vctrs provides a co
 * `class(vec_type_common(x, y))` equals `class(vec_type_common(y, x))`.
 
 * `class(vec_type_common(x, vec_type_common(y, z))` equals 
-  `class(vec_type_common(vec_type_common(x, y),z))`.
+  `class(vec_type_common(vec_type_common(x, y), z))`.
   
 * `vec_type_common(x, NULL) == x`.
 
