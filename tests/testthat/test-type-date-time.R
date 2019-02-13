@@ -249,6 +249,6 @@ test_that("difftime vs difftime/numeric", {
 # Math --------------------------------------------------------------------
 
 test_that("date and date times don't support math", {
-  expect_error(vec_math("sum", new_date()), class = "error_unsupported")
-  expect_error(vec_math("sum", new_datetime()), class = "error_unsupported")
+  expect_error(vec_math("sum", new_date()), class = "vctrs_error_unsupported")
+  expect_error(vec_math("sum", new_datetime()), class = "vctrs_error_unsupported")
 })

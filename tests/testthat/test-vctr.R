@@ -239,11 +239,11 @@ test_that("$ inherits from underlying vector", {
 test_that("can't touch protected attributes", {
   x <- new_vctr(1:4)
 
-  expect_error(dim(x) <- c(2, 2), class = "error_unsupported")
-  expect_error(dimnames(x) <- list("x"), class = "error_unsupported")
+  expect_error(dim(x) <- c(2, 2), class = "vctrs_error_unsupported")
+  expect_error(dimnames(x) <- list("x"), class = "vctrs_error_unsupported")
 
-  expect_error(levels(x), class = "error_unsupported")
-  expect_error(levels(x) <- "x", class = "error_unsupported")
+  expect_error(levels(x), class = "vctrs_error_unsupported")
+  expect_error(levels(x) <- "x", class = "vctrs_error_unsupported")
 
   # but it's ok to set names to NULL; this happens at least in vec_c
   # and maybe elsewhere. We may need to back off on this level of
@@ -253,7 +253,7 @@ test_that("can't touch protected attributes", {
 
 test_that("summary is unimplemented", {
   x <- new_vctr(1:4)
-  expect_error(summary(x), class = "error_unimplemented")
+  expect_error(summary(x), class = "vctrs_error_unimplemented")
 })
 
 # hidden class ------------------------------------------------------------
@@ -369,5 +369,5 @@ test_that("default print method shows names", {
 
 test_that("can't transpose", {
   h <- new_hidden(1:4)
-  expect_error(t(h), class = "error_unsupported")
+  expect_error(t(h), class = "vctrs_error_unsupported")
 })

@@ -102,7 +102,7 @@ warn_lossy_cast <- function(x, y, locations = NULL, details = NULL, ..., message
 stop_unsupported <- function(x, method) {
   msg <- glue::glue("`{method}.{class(x)[[1]]}()` not supported.")
   abort(
-    "error_unsupported",
+    "vctrs_error_unsupported",
     message = msg,
     x = x,
     method = method
@@ -112,7 +112,7 @@ stop_unsupported <- function(x, method) {
 stop_unimplemented <- function(x, method) {
   msg <- glue::glue("`{method}.{class(x)[[1]]}()` not implemented.")
   abort(
-    "error_unimplemented",
+    "vctrs_error_unimplemented",
     message = msg,
     x = x,
     method = method

@@ -12,13 +12,13 @@ test_that("can construct and access components", {
   expect_equal(names(r), NULL)
   expect_equal(fields(r), c("x", "y"))
 
-  expect_error(r$x, class = "error_unsupported")
+  expect_error(r$x, class = "vctrs_error_unsupported")
   expect_equal(field(r, "x"), 1)
 })
 
 test_that("requires format method", {
   x <- new_rcrd(list(x = 1))
-  expect_error(format(x), class = "error_unimplemented")
+  expect_error(format(x), class = "vctrs_error_unimplemented")
 })
 
 # coercion ----------------------------------------------------------------
@@ -117,7 +117,7 @@ test_that("subset assignment throws error", {
   expect_error(
     x$y <- 2,
     fixed = TRUE,
-    class = "error_unsupported"
+    class = "vctrs_error_unsupported"
   )
 })
 
@@ -193,8 +193,8 @@ test_that("can round trip through list", {
 test_that("dangerous methods marked as unimplemented", {
   t <- tuple()
 
-  expect_error(mean(t), class = "error_unsupported")
-  expect_error(abs(t), class = "error_unsupported")
-  expect_error(is.finite(t), class = "error_unsupported")
-  expect_error(is.nan(t), class = "error_unsupported")
+  expect_error(mean(t), class = "vctrs_error_unsupported")
+  expect_error(abs(t), class = "vctrs_error_unsupported")
+  expect_error(is.finite(t), class = "vctrs_error_unsupported")
+  expect_error(is.nan(t), class = "vctrs_error_unsupported")
 })

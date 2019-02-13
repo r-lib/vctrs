@@ -67,5 +67,5 @@ test_that("xtfrm.vctrs_vctr works for variety of base classes", {
 })
 
 test_that("vec_proxy_compare() refuses to deal with lists", {
-  expect_error(vec_proxy_compare(list()), class = "error_unsupported")
+  expect_error(vec_proxy_compare(list()), class = "vctrs_error_unsupported")
 })

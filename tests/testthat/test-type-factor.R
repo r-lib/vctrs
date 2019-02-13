@@ -108,6 +108,6 @@ test_that("NA are not considered lossy in factor cast (#109)", {
 
 test_that("factors don't support math or arthimetic", {
   f <- factor("x")
-  expect_error(vec_math("sum", f), class = "error_unsupported")
-  expect_error(vec_arith("+", f, f), class = "error_unsupported")
+  expect_error(vec_math("sum", f), class = "vctrs_error_unsupported")
+  expect_error(vec_arith("+", f, f), class = "vctrs_error_unsupported")
 })
