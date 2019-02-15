@@ -17,6 +17,6 @@ test_that("base coercions are symmetric and unchanging", {
 
 test_that("new classes are uncoercible by default", {
   x <- structure(1:10, class = "vctrs_nonexistant")
-  expect_error(vec_type2(1, x), class = "error_incompatible_type")
-  expect_error(vec_type2(x, 1), class = "error_incompatible_type")
+  expect_error(vec_type2(1, x), class = "vctrs_error_incompatible_type")
+  expect_error(vec_type2(x, 1), class = "vctrs_error_incompatible_type")
 })

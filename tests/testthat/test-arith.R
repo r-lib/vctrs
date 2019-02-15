@@ -15,9 +15,9 @@ test_that("logical/integer/numeric works", {
 test_that("default is error", {
   f <- new_vctr(1:10, class = "foo")
 
-  expect_error(vec_arith("+", f, 1), class = "error_incompatible_op")
+  expect_error(vec_arith("+", f, 1), class = "vctrs_error_incompatible_op")
 
-  expect_error(vec_arith("+", TRUE, f), class = "error_incompatible_op")
-  expect_error(vec_arith("+", 1L, f), class = "error_incompatible_op")
-  expect_error(vec_arith("+", 1, f), class = "error_incompatible_op")
+  expect_error(vec_arith("+", TRUE, f), class = "vctrs_error_incompatible_op")
+  expect_error(vec_arith("+", 1L, f), class = "vctrs_error_incompatible_op")
+  expect_error(vec_arith("+", 1, f), class = "vctrs_error_incompatible_op")
 })

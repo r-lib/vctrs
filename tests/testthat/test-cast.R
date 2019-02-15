@@ -11,8 +11,8 @@ test_that("NULL is idempotent", {
 
 test_that("new classes are uncoercible by default", {
   x <- structure(1:10, class = "vctrs_nonexistant")
-  expect_error(vec_cast(1, x), class = "error_incompatible_cast")
-  expect_error(vec_cast(x, 1), class = "error_incompatible_cast")
+  expect_error(vec_cast(1, x), class = "vctrs_error_incompatible_cast")
+  expect_error(vec_cast(x, 1), class = "vctrs_error_incompatible_cast")
 })
 
 # Logical -----------------------------------------------------------------
@@ -34,7 +34,7 @@ test_that("lossy casts generate warning", {
 })
 
 test_that("invalid casts generate error", {
-  expect_error(vec_cast(factor("a"), logical()), class = "error_incompatible_cast")
+  expect_error(vec_cast(factor("a"), logical()), class = "vctrs_error_incompatible_cast")
 })
 
 test_that("dimensionality matches output" ,{
@@ -44,7 +44,7 @@ test_that("dimensionality matches output" ,{
   expect_dim(vec_cast(TRUE, x2), c(1, 2))
 
   x <- matrix(1, nrow = 2, ncol = 2)
-  expect_error(vec_cast(x, logical()), class = "error_incompatible_cast")
+  expect_error(vec_cast(x, logical()), class = "vctrs_error_incompatible_cast")
 })
 
 # Integer -----------------------------------------------------------------
@@ -64,7 +64,7 @@ test_that("lossy casts generate warning", {
 })
 
 test_that("invalid casts generate error", {
-  expect_error(vec_cast(factor("a"), integer()), class = "error_incompatible_cast")
+  expect_error(vec_cast(factor("a"), integer()), class = "vctrs_error_incompatible_cast")
 })
 
 # Double ------------------------------------------------------------------
@@ -83,7 +83,7 @@ test_that("lossy casts generate warning", {
 })
 
 test_that("invalid casts generate error", {
-  expect_error(vec_cast(factor("a"), double()), class = "error_incompatible_cast")
+  expect_error(vec_cast(factor("a"), double()), class = "vctrs_error_incompatible_cast")
 })
 
 # Character ---------------------------------------------------------------
@@ -109,8 +109,8 @@ test_that("safe casts work as expected", {
 })
 
 test_that("invalid casts generate error", {
-  expect_error(vec_cast(raw(1), double()), class = "error_incompatible_cast")
-  expect_error(vec_cast(double(1), raw()), class = "error_incompatible_cast")
+  expect_error(vec_cast(raw(1), double()), class = "vctrs_error_incompatible_cast")
+  expect_error(vec_cast(double(1), raw()), class = "vctrs_error_incompatible_cast")
 })
 
 # Lists  ------------------------------------------------------------------

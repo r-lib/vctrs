@@ -80,7 +80,7 @@ test_that("lossy casts generate warning", {
 
 test_that("invalid casts generate error", {
   date <- as.Date("2018-01-01")
-  expect_error(vec_cast(integer(), date), class = "error_incompatible_cast")
+  expect_error(vec_cast(integer(), date), class = "vctrs_error_incompatible_cast")
 })
 
 test_that("can cast NA", {
@@ -108,12 +108,12 @@ test_that("safe casts work as expected", {
   expect_equal(vec_cast(datetime_l, datetime_l), datetime_l)
   expect_equal(vec_cast(as.Date(datetime_l), datetime_l), datetime_l)
   expect_equal(vec_cast(list(datetime_l), datetime_l), datetime_l)
-  expect_error(vec_cast(raw(), datetime_l), class = "error_incompatible_cast")
+  expect_error(vec_cast(raw(), datetime_l), class = "vctrs_error_incompatible_cast")
 })
 
 test_that("invalid casts generate error", {
   datetime <- as.POSIXct("1970-02-01", tz = "UTC")
-  expect_error(vec_cast(integer(), datetime), class = "error_incompatible_cast")
+  expect_error(vec_cast(integer(), datetime), class = "vctrs_error_incompatible_cast")
 })
 
 test_that("dates become midnight in date-time tzone", {
@@ -150,7 +150,7 @@ test_that("safe casts work as expected", {
 
 test_that("invalid casts generate error", {
   dt <- as.difftime(600, units = "secs")
-  expect_error(vec_cast(integer(), dt), class = "error_incompatible_cast")
+  expect_error(vec_cast(integer(), dt), class = "vctrs_error_incompatible_cast")
 })
 
 test_that("can cast NA", {
@@ -165,28 +165,28 @@ test_that("default is error", {
   t <- as.difftime(12, units = "hours")
   f <- factor("x")
 
-  expect_error(vec_arith("+", d, f), class = "error_incompatible_op")
-  expect_error(vec_arith("+", dt, f), class = "error_incompatible_op")
-  expect_error(vec_arith("+", t, f), class = "error_incompatible_op")
-  expect_error(vec_arith("*", dt, t), class = "error_incompatible_op")
-  expect_error(vec_arith("*", d, t), class = "error_incompatible_op")
-  expect_error(vec_arith("!", t, MISSING()), class = "error_incompatible_op")
+  expect_error(vec_arith("+", d, f), class = "vctrs_error_incompatible_op")
+  expect_error(vec_arith("+", dt, f), class = "vctrs_error_incompatible_op")
+  expect_error(vec_arith("+", t, f), class = "vctrs_error_incompatible_op")
+  expect_error(vec_arith("*", dt, t), class = "vctrs_error_incompatible_op")
+  expect_error(vec_arith("*", d, t), class = "vctrs_error_incompatible_op")
+  expect_error(vec_arith("!", t, MISSING()), class = "vctrs_error_incompatible_op")
 })
 
 test_that("date-time vs date-time", {
   d <- as.Date("2018-01-01")
   dt <- as.POSIXct(d)
 
-  expect_error(vec_arith("+", d, d), class = "error_incompatible_op")
+  expect_error(vec_arith("+", d, d), class = "vctrs_error_incompatible_op")
   expect_equal(vec_arith("-", d, d), d - d)
 
-  expect_error(vec_arith("+", d, dt), class = "error_incompatible_op")
+  expect_error(vec_arith("+", d, dt), class = "vctrs_error_incompatible_op")
   expect_equal(vec_arith("-", d, dt), difftime(d, dt))
 
-  expect_error(vec_arith("+", dt, d), class = "error_incompatible_op")
+  expect_error(vec_arith("+", dt, d), class = "vctrs_error_incompatible_op")
   expect_equal(vec_arith("-", dt, d), difftime(dt, d))
 
-  expect_error(vec_arith("+", dt, dt), class = "error_incompatible_op")
+  expect_error(vec_arith("+", dt, dt), class = "vctrs_error_incompatible_op")
   expect_equal(vec_arith("-", dt, dt), dt - dt)
 })
 
@@ -197,10 +197,10 @@ test_that("date-time vs numeric", {
    expect_equal(vec_arith("+", d, 1), d + 1)
    expect_equal(vec_arith("+", 1, d), d + 1)
    expect_equal(vec_arith("-", d, 1), d - 1)
-   expect_error(vec_arith("-", 1, d), class = "error_incompatible_op")
+   expect_error(vec_arith("-", 1, d), class = "vctrs_error_incompatible_op")
 
-   expect_error(vec_arith("*", 1, d), class = "error_incompatible_op")
-   expect_error(vec_arith("*", d, 1), class = "error_incompatible_op")
+   expect_error(vec_arith("*", 1, d), class = "vctrs_error_incompatible_op")
+   expect_error(vec_arith("*", d, 1), class = "vctrs_error_incompatible_op")
 })
 
 test_that("date-time vs difftime", {
@@ -215,8 +215,8 @@ test_that("date-time vs difftime", {
 
   expect_equal(vec_arith("+", t, dt), dt + t)
   expect_equal(vec_arith("+", t, d), d + t)
-  expect_error(vec_arith("-", t, dt), class = "error_incompatible_op")
-  expect_error(vec_arith("-", t, d), class = "error_incompatible_op")
+  expect_error(vec_arith("-", t, dt), class = "vctrs_error_incompatible_op")
+  expect_error(vec_arith("-", t, d), class = "vctrs_error_incompatible_op")
 })
 
 test_that("difftime vs difftime/numeric", {
@@ -235,10 +235,10 @@ test_that("difftime vs difftime/numeric", {
 
   expect_equal(vec_arith("*", 2, t), 2 * t)
   expect_equal(vec_arith("*", t, 2), 2 * t)
-  expect_error(vec_arith("*", t, t), class = "error_incompatible_op")
+  expect_error(vec_arith("*", t, t), class = "vctrs_error_incompatible_op")
 
   expect_equal(vec_arith("/", t, 2), t / 2)
-  expect_error(vec_arith("/", 2, t), class = "error_incompatible_op")
+  expect_error(vec_arith("/", 2, t), class = "vctrs_error_incompatible_op")
 
   expect_equal(vec_arith("/", t, t), 1)
   expect_equal(vec_arith("%/%", t, t), 1)
@@ -249,6 +249,6 @@ test_that("difftime vs difftime/numeric", {
 # Math --------------------------------------------------------------------
 
 test_that("date and date times don't support math", {
-  expect_error(vec_math("sum", new_date()), class = "error_unsupported")
-  expect_error(vec_math("sum", new_datetime()), class = "error_unsupported")
+  expect_error(vec_math("sum", new_date()), class = "vctrs_error_unsupported")
+  expect_error(vec_math("sum", new_datetime()), class = "vctrs_error_unsupported")
 })
