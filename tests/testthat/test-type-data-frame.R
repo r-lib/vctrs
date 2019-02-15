@@ -36,7 +36,7 @@ test_that("embedded data frames print nicely", {
 test_that("data frame only combines with other data frames or NULL", {
   dt <- data.frame(x = 1)
   expect_equal(vec_type_common(dt, NULL), vec_type(dt))
-  expect_error(vec_type_common(dt, 1:10), class = "error_incompatible_type")
+  expect_error(vec_type_common(dt, 1:10), class = "vctrs_error_incompatible_type")
 })
 
 test_that("data frame takes max of individual variables", {
@@ -77,7 +77,7 @@ test_that("warn about lossy coercions", {
 })
 
 test_that("invalid cast generates error", {
-  expect_error(vec_cast(1L, data.frame()), class = "error_incompatible_cast")
+  expect_error(vec_cast(1L, data.frame()), class = "vctrs_error_incompatible_cast")
 })
 
 test_that("column order matches type", {

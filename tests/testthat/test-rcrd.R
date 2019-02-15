@@ -12,13 +12,13 @@ test_that("can construct and access components", {
   expect_equal(names(r), NULL)
   expect_equal(fields(r), c("x", "y"))
 
-  expect_error(r$x, class = "error_unsupported")
+  expect_error(r$x, class = "vctrs_error_unsupported")
   expect_equal(field(r, "x"), 1)
 })
 
 test_that("requires format method", {
   x <- new_rcrd(list(x = 1))
-  expect_error(format(x), class = "error_unimplemented")
+  expect_error(format(x), class = "vctrs_error_unimplemented")
 })
 
 # coercion ----------------------------------------------------------------
@@ -64,7 +64,7 @@ test_that("can cast rcrd to list", {
 test_that("default casts are implemented correctly", {
   r <- new_rcrd(list(x = 1, y = 1))
 
-  expect_error(vec_cast(1, r), error = "error_incompatible_cast")
+  expect_error(vec_cast(1, r), error = "vctrs_error_incompatible_cast")
   expect_equal(vec_cast(NULL, r), NULL)
 })
 
@@ -74,21 +74,21 @@ test_that("can't cast incompatible rcrd", {
       new_rcrd(list(a = "1", b = 3L)),
       new_rcrd(list(a = "1"))
     ),
-    class = "error_incompatible_cast"
+    class = "vctrs_error_incompatible_cast"
   )
   expect_error(
     vec_cast(
       new_rcrd(list(a = "1", b = 3L)),
       new_rcrd(list(a = "1", c = 3L))
     ),
-    class = "error_incompatible_cast"
+    class = "vctrs_error_incompatible_cast"
   )
   expect_error(
     vec_cast(
       new_rcrd(list(a = "a", b = 3L)),
       new_rcrd(list(a = 1, b = 3L))
     ),
-    class = "error_incompatible_cast"
+    class = "vctrs_error_incompatible_cast"
   )
 })
 
@@ -117,7 +117,7 @@ test_that("subset assignment throws error", {
   expect_error(
     x$y <- 2,
     fixed = TRUE,
-    class = "error_unsupported"
+    class = "vctrs_error_unsupported"
   )
 })
 
@@ -193,8 +193,8 @@ test_that("can round trip through list", {
 test_that("dangerous methods marked as unimplemented", {
   t <- tuple()
 
-  expect_error(mean(t), class = "error_unsupported")
-  expect_error(abs(t), class = "error_unsupported")
-  expect_error(is.finite(t), class = "error_unsupported")
-  expect_error(is.nan(t), class = "error_unsupported")
+  expect_error(mean(t), class = "vctrs_error_unsupported")
+  expect_error(abs(t), class = "vctrs_error_unsupported")
+  expect_error(is.finite(t), class = "vctrs_error_unsupported")
+  expect_error(is.nan(t), class = "vctrs_error_unsupported")
 })

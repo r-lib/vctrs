@@ -38,7 +38,7 @@ test_that("and fails if attributes are different", {
   x1 <- new_vctr(1, class = "x", a = 1, b = 2)
   x2 <- new_vctr(2, class = "x", a = 2, b = 2)
 
-  expect_error(vec_cast(x1, x2), class = "error_incompatible_cast")
+  expect_error(vec_cast(x1, x2), class = "vctrs_error_incompatible_cast")
 })
 
 test_that("restoring to atomic vector of same type preserves attributes", {
@@ -51,19 +51,19 @@ test_that("restoring to atomic vector of same type preserves attributes", {
 test_that("restoring to atomic vector of different type throws error", {
   x1 <- new_vctr(1, class = "x")
 
-  expect_error(vec_restore("x", x1), class = "error_incompatible_cast")
+  expect_error(vec_restore("x", x1), class = "vctrs_error_incompatible_cast")
 })
 
 test_that("base coercion methods mapped to vec_cast", {
   x <- new_vctr(1)
 
-  expect_error(as.logical(x), class = "error_incompatible_cast")
-  expect_error(as.integer(x), class = "error_incompatible_cast")
-  expect_error(as.logical(x), class = "error_incompatible_cast")
-  expect_error(as.double(x), class = "error_incompatible_cast")
-  expect_error(as.character(x), class = "error_incompatible_cast")
-  expect_error(as.Date(x), class = "error_incompatible_cast")
-  expect_error(as.POSIXct(x), class = "error_incompatible_cast")
+  expect_error(as.logical(x), class = "vctrs_error_incompatible_cast")
+  expect_error(as.integer(x), class = "vctrs_error_incompatible_cast")
+  expect_error(as.logical(x), class = "vctrs_error_incompatible_cast")
+  expect_error(as.double(x), class = "vctrs_error_incompatible_cast")
+  expect_error(as.character(x), class = "vctrs_error_incompatible_cast")
+  expect_error(as.Date(x), class = "vctrs_error_incompatible_cast")
+  expect_error(as.POSIXct(x), class = "vctrs_error_incompatible_cast")
 
   expect_equal(as.list(x), list(x))
 })
@@ -82,8 +82,8 @@ test_that("as.data.frame creates data frame", {
 test_that("equality functions remapped", {
   x <- new_vctr(c(1, 1, NA))
 
-  expect_error(x == 1, class = "error_incompatible_type")
-  expect_error(x != 1, class = "error_incompatible_type")
+  expect_error(x == 1, class = "vctrs_error_incompatible_type")
+  expect_error(x != 1, class = "vctrs_error_incompatible_type")
   expect_equal(is.na(x), c(FALSE, FALSE, TRUE))
   expect_true(anyNA(x))
 
@@ -239,11 +239,11 @@ test_that("$ inherits from underlying vector", {
 test_that("can't touch protected attributes", {
   x <- new_vctr(1:4)
 
-  expect_error(dim(x) <- c(2, 2), class = "error_unsupported")
-  expect_error(dimnames(x) <- list("x"), class = "error_unsupported")
+  expect_error(dim(x) <- c(2, 2), class = "vctrs_error_unsupported")
+  expect_error(dimnames(x) <- list("x"), class = "vctrs_error_unsupported")
 
-  expect_error(levels(x), class = "error_unsupported")
-  expect_error(levels(x) <- "x", class = "error_unsupported")
+  expect_error(levels(x), class = "vctrs_error_unsupported")
+  expect_error(levels(x) <- "x", class = "vctrs_error_unsupported")
 
   # but it's ok to set names to NULL; this happens at least in vec_c
   # and maybe elsewhere. We may need to back off on this level of
@@ -253,7 +253,7 @@ test_that("can't touch protected attributes", {
 
 test_that("summary is unimplemented", {
   x <- new_vctr(1:4)
-  expect_error(summary(x), class = "error_unimplemented")
+  expect_error(summary(x), class = "vctrs_error_unimplemented")
 })
 
 # hidden class ------------------------------------------------------------
@@ -277,8 +277,8 @@ test_that("class preserved when subsetting", {
 test_that("RHS cast when using subset assign", {
   h <- new_hidden(1)
 
-  expect_error(h[[1]] <- "x", class = "error_incompatible_cast")
-  expect_error(h[1] <- "x", class = "error_incompatible_cast")
+  expect_error(h[[1]] <- "x", class = "vctrs_error_incompatible_cast")
+  expect_error(h[1] <- "x", class = "vctrs_error_incompatible_cast")
 
   h[2] <- 1
   expect_equal(h, new_hidden(c(1, 1)))
@@ -332,11 +332,11 @@ test_that("can put in data frame", {
 
 test_that("base coercions default to vec_cast", {
   h <- new_hidden(1)
-  expect_error(as.character(h), class = "error_incompatible_cast")
-  expect_error(as.integer(h), class = "error_incompatible_cast")
-  expect_error(generics::as.factor(h), class = "error_incompatible_cast")
-  expect_error(generics::as.ordered(h), class = "error_incompatible_cast")
-  expect_error(generics::as.difftime(h), class = "error_incompatible_cast")
+  expect_error(as.character(h), class = "vctrs_error_incompatible_cast")
+  expect_error(as.integer(h), class = "vctrs_error_incompatible_cast")
+  expect_error(generics::as.factor(h), class = "vctrs_error_incompatible_cast")
+  expect_error(generics::as.ordered(h), class = "vctrs_error_incompatible_cast")
+  expect_error(generics::as.difftime(h), class = "vctrs_error_incompatible_cast")
   expect_equal(as.logical(h), TRUE)
   expect_equal(as.double(h), 1)
 })
@@ -369,5 +369,5 @@ test_that("default print method shows names", {
 
 test_that("can't transpose", {
   h <- new_hidden(1:4)
-  expect_error(t(h), class = "error_unsupported")
+  expect_error(t(h), class = "vctrs_error_unsupported")
 })

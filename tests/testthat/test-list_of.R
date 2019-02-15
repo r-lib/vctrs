@@ -18,7 +18,7 @@ test_that("list_of works like list", {
 })
 
 test_that("list_of errors if it can't find common type", {
-  expect_error(list_of(1, "a"), class = "error_incompatible_type")
+  expect_error(list_of(1, "a"), class = "vctrs_error_incompatible_type")
   expect_error(list_of(), "find common type")
 })
 
@@ -157,5 +157,5 @@ test_that("lossy casts generate warning", {
 })
 
 test_that("invalid casts generate error", {
-  expect_error(vec_cast(factor("a"), list_of(1)), class = "error_incompatible_cast")
+  expect_error(vec_cast(factor("a"), list_of(1)), class = "vctrs_error_incompatible_cast")
 })

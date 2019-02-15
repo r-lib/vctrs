@@ -45,11 +45,11 @@ test_that("can broadcast to higher dimension, but not lower", {
   )
   expect_error(
     shape_broadcast(int(1, 1, 1), int(4, 4)),
-    class = "error_incompatible_cast"
+    class = "vctrs_error_incompatible_cast"
   )
   expect_error(
     shape_broadcast(int(3, 2), int(3, 3)),
-    class = "error_incompatible_cast"
+    class = "vctrs_error_incompatible_cast"
   )
 })
 

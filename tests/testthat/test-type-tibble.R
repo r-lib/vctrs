@@ -20,18 +20,18 @@ test_that("can't cast vector to tibble", {
   dt <- tibble::tibble()
   v <- logical()
 
-  expect_error(vec_type2(v, dt), class = "error_incompatible_type")
-  expect_error(vec_type2(dt, v), class = "error_incompatible_type")
-  expect_error(vec_cast(v, dt), class = "error_incompatible_cast")
+  expect_error(vec_type2(v, dt), class = "vctrs_error_incompatible_type")
+  expect_error(vec_type2(dt, v), class = "vctrs_error_incompatible_type")
+  expect_error(vec_cast(v, dt), class = "vctrs_error_incompatible_cast")
 })
 
 test_that("can't cast list to tibble", {
   dt <- tibble::tibble()
   l <- list()
 
-  expect_error(vec_type2(l, dt), class = "error_incompatible_type")
-  expect_error(vec_type2(dt, l), class = "error_incompatible_type")
-  expect_error(vec_cast(l, dt), class = "error_incompatible_cast")
+  expect_error(vec_type2(l, dt), class = "vctrs_error_incompatible_type")
+  expect_error(vec_type2(dt, l), class = "vctrs_error_incompatible_type")
+  expect_error(vec_cast(l, dt), class = "vctrs_error_incompatible_cast")
 })
 
 test_that("vec_restore restores tibbles", {
