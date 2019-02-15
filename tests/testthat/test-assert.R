@@ -14,11 +14,9 @@ test_that("asserting ptype", {
   expect_error(vec_assert(new_vctr(1:4), new_vctr(integer())), NA)
 
   # Is this the correct error message?
-  # #168: Need classed error.
   expect_error(
     vec_assert(new_vctr(1:4), new_vctr(double())),
-    "must be <vctrs_vc>, not <vctrs_vc>.",
-    fixed = TRUE
+    class = "vctrs_error_assert_ptype"
   )
 })
 
@@ -27,7 +25,6 @@ test_that("asserting size", {
 
   expect_error(
     vec_assert(new_vctr(1:4), size = 5),
-    "must have size 5, not size 4.",
-    fixed = TRUE
+    class = "vctrs_error_assert_size"
   )
 })
