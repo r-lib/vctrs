@@ -2,4 +2,6 @@
 
 * Added a `NEWS.md` file to track changes to the package.
 
-* `vec_c()` and `vec_rbind()` now handle data.frame columns properly (@yutannihilation, #182)
+* Character indexing is now only supported for named objects, an error is raised for unnamed objects (#171).
+
+* `vec_c()` and `vec_rbind()` now handle data.frame columns properly (@yutannihilation, #182).
