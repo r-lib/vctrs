@@ -207,14 +207,22 @@ test_that("date-time vs difftime", {
   d <- as.Date("2018-01-01")
   dt <- as.POSIXct(d)
   t <- as.difftime(1, units = "days")
+  th <- as.difftime(1, units = "hours")
 
   expect_equal(vec_arith("+", dt, t), dt + t)
   expect_equal(vec_arith("+", d, t), d + t)
+  expect_equal(vec_arith("+", dt, th), dt + th)
+  expect_equal(vec_arith("+", d, th), d + th)
   expect_equal(vec_arith("-", dt, t), dt - t)
   expect_equal(vec_arith("-", d, t), d - t)
+  expect_equal(vec_arith("-", dt, th), dt - th)
+  expect_equal(vec_arith("-", d, th), d - th)
 
   expect_equal(vec_arith("+", t, dt), dt + t)
   expect_equal(vec_arith("+", t, d), d + t)
+  expect_equal(vec_arith("+", th, dt), dt + th)
+  expect_equal(vec_arith("+", th, d), d + th)
+
   expect_error(vec_arith("-", t, dt), class = "vctrs_error_incompatible_op")
   expect_error(vec_arith("-", t, d), class = "vctrs_error_incompatible_op")
 })
