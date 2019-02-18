@@ -354,3 +354,8 @@ report_lossy_cast <- function(x, y, lossy, details = NULL) {
   }
 }
 
+lossy_floor <- function(x, to) {
+  x_floor <- floor(x)
+  report_lossy_cast(x, to, x != x_floor)
+  x_floor
+}
