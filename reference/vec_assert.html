@@ -32,7 +32,11 @@
 
 <meta property="og:title" content="Assert an argument has known prototype and/or size — vec_assert" />
 
-<meta property="og:description" content="Assert an argument has known prototype and/or size" />
+<meta property="og:description" content="If the prototype doesn't match, an error of class
+&quot;error_assert_ptype&quot; is raised.
+If the prototype doesn't match, an error of class
+&quot;error_assert_size&quot; is raised.
+Both errors inherit from &quot;error_assert&quot;." />
 
 <meta property="og:image" content="https://vctrs.r-lib.org/logo.png" />
 <meta name="twitter:card" content="summary" />
@@ -129,7 +133,11 @@
 
     <div class="ref-description">
     
-    <p>Assert an argument has known prototype and/or size</p>
+    <p>If the prototype doesn't match, an error of class
+<code>"error_assert_ptype"</code> is raised.
+If the prototype doesn't match, an error of class
+<code>"error_assert_size"</code> is raised.
+Both errors inherit from <code>"error_assert"</code>.</p>
     
     </div>
 
@@ -154,7 +162,7 @@
     
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>Either an error, or <code>x</code>, invisibly.</p>
+    <p>Either an error of class <code>"error_assert"</code>, or <code>x</code>, invisibly.</p>
     
 
   </div>
