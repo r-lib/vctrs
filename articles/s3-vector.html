@@ -145,7 +145,7 @@
 <a class="sourceLine" id="cb2-10" data-line-number="10"></a>
 <a class="sourceLine" id="cb2-11" data-line-number="11"><span class="kw"><a href="https://www.rdocumentation.org/packages/utils/topics/str">str</a></span>(x)</a>
 <a class="sourceLine" id="cb2-12" data-line-number="12"><span class="co">#&gt;  vctrs_pr [1:5] 0.0000000, 0.3333333, 0.6666667, 1.0000000,        NA</span></a></code></pre></div>
-<p>Note that we prefix the name of the class with the name of the package. This prevents conflicting definitions between packages.</p>
+<p>Note that we prefix the name of the class with the name of the package. This prevents conflicting definitions between packages. For packages that implement only one class (such as <a href="https://blob.tidyverse.org/">blob</a>), it’s fine to use the package name without prefix as the class name.</p>
 <p>We then follow up with a user friendly <a href="https://adv-r.hadley.nz/s3.html#helpers">helper</a>. Here we’ll use <code><a href="../reference/vec_cast.html">vec_cast()</a></code> to allow it to accept anything coercible to a double:</p>
 <div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" data-line-number="1">percent &lt;-<span class="st"> </span><span class="cf">function</span>(<span class="dt">x =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/double">double</a></span>()) {</a>
 <a class="sourceLine" id="cb3-2" data-line-number="2">  x &lt;-<span class="st"> </span><span class="kw"><a href="../reference/vec_cast.html">vec_cast</a></span>(x, <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/double">double</a></span>())</a>
