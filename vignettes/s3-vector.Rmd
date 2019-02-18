@@ -97,7 +97,7 @@ x
 str(x)
 ```
 
-Note that we prefix the name of the class with the name of the package. This prevents conflicting definitions between packages.
+Note that we prefix the name of the class with the name of the package. This prevents conflicting definitions between packages. For packages that implement only one class (such as [blob](https://blob.tidyverse.org/)), it's fine to use the package name without prefix as the class name.
 
 We then follow up with a user friendly [helper](https://adv-r.hadley.nz/s3.html#helpers). Here we'll use `vec_cast()`  to allow it to accept anything coercible to a double:
 
