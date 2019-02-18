@@ -427,26 +427,34 @@ vec_arith.difftime.POSIXct <- function(op, x, y) {
 #' @method vec_arith.Date difftime
 #' @export
 vec_arith.Date.difftime <- function(op, x, y) {
+  # Exit early to avoid warning
+  if (!(op %in% c("+", "-"))) {
+    stop_incompatible_op(op, x, y)
+  }
+
   # Need to warn if non-integer number of days
   y <- vec_cast(y, new_duration(units = "days"))
+  yo <- y
   y <- floor(y)
+  report_lossy_cast(y, x, yo != y)
 
-  switch(op,
-    `+` = vec_restore(vec_arith_base(op, x, y), x),
-    `-` = vec_restore(vec_arith_base(op, x, y), x),
-    stop_incompatible_op(op, x, y)
-  )
+  vec_restore(vec_arith_base(op, x, y), x)
 }
 #' @method vec_arith.difftime Date
 #' @export
 vec_arith.difftime.Date <- function(op, x, y) {
-  x <- vec_cast(x, new_duration(units = "days"))
-  x <- floor(x)
-
-  switch(op,
-    `+` = vec_restore(vec_arith_base(op, x, y), y),
+  # Exit early to avoid warning
+  if (op != "+") {
     stop_incompatible_op(op, x, y)
-  )
+  }
+
+  # Need to warn if non-integer number of days
+  x <- vec_cast(x, new_duration(units = "days"))
+  xo <- x
+  x <- floor(x)
+  report_lossy_cast(x, y, x != xo)
+
+  vec_restore(vec_arith_base(op, x, y), y)
 }
 
 #' @method vec_arith.difftime difftime
