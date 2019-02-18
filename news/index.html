@@ -133,6 +133,7 @@
 <li><p>Using classed errors of class <code>"vctrs_error_assert"</code> for failed assertions, and of class <code>"vctrs_error_incompatible"</code> (with subclasses <code>_type</code>, <code>_cast</code> and <code>_op</code>) for errors on incompatible types (<a href='https://github.com/r-lib/vctrs/issues/184'>#184</a>).</p></li>
 <li><p>Character indexing is now only supported for named objects, an error is raised for unnamed objects (<a href='https://github.com/r-lib/vctrs/issues/171'>#171</a>).</p></li>
 <li><p><code><a href="../reference/vec_c.html">vec_c()</a></code> and <code><a href="../reference/vec_bind.html">vec_rbind()</a></code> now handle data.frame columns properly (<a href='https://github.com/yutannihilation'>@yutannihilation</a>, <a href='https://github.com/r-lib/vctrs/issues/182'>#182</a>).</p></li>
+<li><p><code><a href="../reference/vec_arith.html">vec_arith()</a></code> is consistent with base R when combining <code>difftime</code> and <code>date</code>, with a warning if casts are lossy (<a href='https://github.com/r-lib/vctrs/issues/192'>#192</a>).</p></li>
 </ul>
 </div>
   </div>
