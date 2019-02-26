@@ -34,8 +34,14 @@ vec_proxy_equal.default <- function(x) {
 
 #' Test if two vectors are equal
 #'
+#' `vec_equal_na()` tests a special case: equality with `NA`. It is similar to
+#' [is.na] but:
+#' * Considers the missing element of a list to be `NULL`.
+#' * Considered data frames and records to be missing if every component
+#'   is missing.
+#'
 #' @inheritParams vec_compare
-#' @return A logical vector. Will only contain `NA`s if `na_equal` is `FALSE`.
+#' @return A logical vector the same size as. Will only contain `NA`s if `na_equal` is `FALSE`.
 #' @export
 #' @examples
 #' vec_equal(c(TRUE, FALSE, NA), FALSE)
@@ -45,7 +51,7 @@ vec_proxy_equal.default <- function(x) {
 #' vec_equal(5, 1:10)
 #' vec_equal("d", letters[1:10])
 #'
-#' df <- data.frame(x = c(1, 1, 2, 1), y = c(1, 2, 1, NA))
+#' df <- data.frame(x = c(1, 1, 2, 1, NA), y = c(1, 2, 1, NA, NA))
 #' vec_equal(df, data.frame(x = 1, y = 2))
 #' vec_equal_na(df)
 vec_equal <- function(x, y, na_equal = FALSE, .ptype = NULL) {

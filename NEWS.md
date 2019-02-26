@@ -1,5 +1,8 @@
 # vctrs 0.1.0.9000
 
+* `vec_equal_na()` now returns `TRUE` for data frames and records when every
+  component is mising, not when _any_ component is missing (#201).
+
 * `vec_type2(x, data.frame())` ensures that the returned object has 
   names that are a length-0 character vector.
   

@@ -139,10 +139,10 @@ bool equal_na(SEXP x, int i) {
 
       for (int k = 0; k < p; ++k) {
         SEXP col = VECTOR_ELT(x, k);
-        if (equal_na(col, i))
-          return true;
+        if (!equal_na(col, i))
+          return false;
       }
-      return false;
+      return true;
     } else {
       return Rf_isNull(VECTOR_ELT(x, i));
     }

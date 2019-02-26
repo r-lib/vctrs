@@ -127,8 +127,8 @@ test_that("can detect different types of NA", {
 })
 
 test_that("vectorised over rows of a data frame", {
-  df <- data.frame(x = c(1, 1, NA), y = c(1, NA, 1))
-  expect_equal(vec_equal_na(df), c(FALSE, TRUE, TRUE))
+  df <- data.frame(x = c(1, 1, NA, NA), y = c(1, NA, 1, NA))
+  expect_equal(vec_equal_na(df), c(FALSE, FALSE, FALSE, TRUE))
 })
 
 # proxy -------------------------------------------------------------------

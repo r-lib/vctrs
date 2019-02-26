@@ -19,10 +19,16 @@ vec_equal_na(x)
 \item{.ptype}{Override to optionally specify common type}
 }
 \value{
-A logical vector. Will only contain \code{NA}s if \code{na_equal} is \code{FALSE}.
+A logical vector the same size as. Will only contain \code{NA}s if \code{na_equal} is \code{FALSE}.
 }
 \description{
-Test if two vectors are equal
+\code{vec_equal_na()} tests a special case: equality with \code{NA}. It is similar to
+\link{is.na} but:
+\itemize{
+\item Considers the missing element of a list to be \code{NULL}.
+\item Considered data frames and records to be missing if every component
+is missing.
+}
 }
 \examples{
 vec_equal(c(TRUE, FALSE, NA), FALSE)
@@ -32,7 +38,7 @@ vec_equal_na(c(TRUE, FALSE, NA))
 vec_equal(5, 1:10)
 vec_equal("d", letters[1:10])
 
-df <- data.frame(x = c(1, 1, 2, 1), y = c(1, 2, 1, NA))
+df <- data.frame(x = c(1, 1, 2, 1, NA), y = c(1, 2, 1, NA, NA))
 vec_equal(df, data.frame(x = 1, y = 2))
 vec_equal_na(df)
 }
