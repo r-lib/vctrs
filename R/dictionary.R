@@ -74,8 +74,8 @@ reset_rownames <- function(x) {
 
 #' Find duplicated values
 #'
-#' * `vec_duplicate_any()`: detects the presence of any duplicated values,
-#'   in the same way as [anyDuplicated()].
+#' * `vec_duplicate_any()`: detects the presence of duplicated values,
+#'   similarly to [anyDuplicated()].
 #' * `vec_duplicate_detect()`: returns a logical vector describing if each
 #'   element of the vector is duplicated elsewhere. Unlike [duplicated()], it
 #'   reports all duplicated values, not just the second and subsequent

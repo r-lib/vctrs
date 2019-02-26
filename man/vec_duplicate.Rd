@@ -25,8 +25,8 @@ vec_duplicate_id(x)
 }
 \description{
 \itemize{
-\item \code{vec_duplicate_any()}: detects the presence of any duplicated values,
-in the same way as \code{\link[=anyDuplicated]{anyDuplicated()}}.
+\item \code{vec_duplicate_any()}: detects the presence of duplicated values,
+similarly to \code{\link[=anyDuplicated]{anyDuplicated()}}.
 \item \code{vec_duplicate_detect()}: returns a logical vector describing if each
 element of the vector is duplicated elsewhere. Unlike \code{\link[=duplicated]{duplicated()}}, it
 reports all duplicated values, not just the second and subsequent
