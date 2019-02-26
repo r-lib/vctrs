@@ -14,12 +14,12 @@ vec_assert(x, ptype = NULL, size = NULL)
 \item{size}{Size to compare against}
 }
 \value{
-Either an error of class \code{"error_assert"}, or \code{x}, invisibly.
+Either an error of class \code{"vctrs_error_assert"}, or \code{x}, invisibly.
 }
 \description{
 If the prototype doesn't match, an error of class
-\code{"error_assert_ptype"} is raised.
+\code{"vctrs_error_assert_ptype"} is raised.
 If the prototype doesn't match, an error of class
-\code{"error_assert_size"} is raised.
-Both errors inherit from \code{"error_assert"}.
+\code{"vctrs_error_assert_size"} is raised.
+Both errors inherit from \code{"vctrs_error_assert"}.
 }
