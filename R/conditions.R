@@ -95,7 +95,7 @@ warn_lossy_cast <- function(x, y, locations = NULL, details = NULL, ..., message
     locations = locations,
     details = details,
     ...,
-    .subclass = c("warning_lossy_cast", .subclass),
+    .subclass = c(.subclass, "warning_lossy_cast"),
   )
 }
 
