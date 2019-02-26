@@ -114,7 +114,12 @@ vec_cast.data.frame.default    <- function(x, to) stop_incompatible_cast(x, to)
 # Helpers -----------------------------------------------------------------
 
 df_length <- function(x) {
-  if (vec_size(x) > 0) {
+  # Possibly inefficient because it forces a realisation of row names vector?
+  rn <- attr(x, "row.names", exact = TRUE)
+
+  if (!is.null(rn)) {
+    .row_names_info(x, 2L)
+  } else if (vec_size(x) > 0) {
     vec_size(x[[1]])
   } else {
     0L
@@ -139,6 +144,11 @@ df_col_type2 <- function(x, y) {
   # Combine and restore order and type
   out <- c(common_types, only_x_types, only_y_types)
   out <- out[c(names(x), names$only_y)]
+
+  if (length(out) == 0) {
+    names(out) <- character()
+  }
+
   vec_restore(out, x)
 }
 
@@ -164,5 +174,7 @@ df_col_cast <- function(x, to) {
     )
   }
 
+  # Casting doesn't affect number of rows
+  attr(out, "row.names") <- attr(x, "row.names")
   vec_restore(out, to)
 }

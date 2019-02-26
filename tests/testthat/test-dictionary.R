@@ -72,3 +72,10 @@ test_that("vec_in() matches %in%", {
   expect_equal(vec_in(n, h), n %in% h)
 })
 
+test_that("vec_match works with empty data frame", {
+  out <- vec_match(
+    new_data_frame(n = 3L),
+    new_data_frame(n = 0L)
+  )
+  expect_equal(out, vec_na(integer(), 3))
+})

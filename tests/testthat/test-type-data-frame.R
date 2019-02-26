@@ -57,6 +57,13 @@ test_that("data frame combines variables", {
   )
 })
 
+test_that("empty data frame still has names", {
+  df <- data.frame()
+  out <- vec_type_common(df, df)
+
+  expect_equal(names(out), character())
+})
+
 # casting -----------------------------------------------------------------
 
 test_that("safe casts work as expected", {
@@ -104,4 +111,9 @@ test_that("restore generates correct row/col names", {
 
   expect_named(df2, c("x", "y", "z"))
   expect_equal(.row_names_info(df2), -2)
+})
+
+test_that("cast to empty data frame preserves number of rows", {
+  out <- vec_cast(new_data_frame(n = 10L), new_data_frame())
+  expect_equal(nrow(out), 10L)
 })

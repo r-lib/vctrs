@@ -1,5 +1,10 @@
 # vctrs 0.1.0.9000
 
+* `vec_type2(x, data.frame())` ensures that the returned object has 
+  names that are a length-0 character vector.
+  
+* `vec_cast(x, data.frame())` preserves the number of rows in the `x`.
+
 * Added a `NEWS.md` file to track changes to the package.
 
 * Using classed errors of class `"vctrs_error_assert"` for failed assertions, and of class `"vctrs_error_incompatible"` (with subclasses `_type`, `_cast` and `_op`) for errors on incompatible types (#184).
