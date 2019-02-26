@@ -129,6 +129,7 @@
 <a href="#vctrs-0-1-0-9000" class="anchor"></a>vctrs 0.1.0.9000<small> Unreleased </small>
 </h1>
 <ul>
+<li><p><code><a href="../reference/vec_equal.html">vec_equal_na()</a></code> now returns <code>TRUE</code> for data frames and records when every component is mising, not when <em>any</em> component is missing (<a href='https://github.com/r-lib/vctrs/issues/201'>#201</a>).</p></li>
 <li><p><code><a href="../reference/vec_type2.html">vec_type2(x, data.frame())</a></code> ensures that the returned object has names that are a length-0 character vector.</p></li>
 <li><p><code><a href="../reference/vec_cast.html">vec_cast(x, data.frame())</a></code> preserves the number of rows in the <code>x</code>.</p></li>
 <li><p>Added a <code>NEWS.md</code> file to track changes to the package.</p></li>

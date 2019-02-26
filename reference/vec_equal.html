@@ -32,7 +32,14 @@
 
 <meta property="og:title" content="Test if two vectors are equal — vec_equal" />
 
-<meta property="og:description" content="Test if two vectors are equal" />
+<meta property="og:description" content="vec_equal_na() tests a special case: equality with NA. It is similar to
+is.na but:
+Considers the missing element of a list to be NULL.
+Considered data frames and records to be missing if every component
+is missing.
+This preserves the invariant that vec_equal_na(x) is equal to
+vec_equal(x, vec_na(x), na_equal = TRUE).
+" />
 
 <meta property="og:image" content="https://vctrs.r-lib.org/logo.png" />
 <meta name="twitter:card" content="summary" />
@@ -129,7 +136,14 @@
 
     <div class="ref-description">
     
-    <p>Test if two vectors are equal</p>
+    <p><code>vec_equal_na()</code> tests a special case: equality with <code>NA</code>. It is similar to
+<a href='https://www.rdocumentation.org/packages/base/topics/NA'>is.na</a> but:</p><ul>
+<li><p>Considers the missing element of a list to be <code>NULL</code>.</p></li>
+<li><p>Considered data frames and records to be missing if every component
+is missing.
+This preserves the invariant that <code>vec_equal_na(x)</code> is equal to
+<code>vec_equal(x, vec_na(x), na_equal = TRUE)</code>.</p></li>
+</ul>
     
     </div>
 
@@ -160,14 +174,14 @@
     
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>A logical vector. Will only contain <code>NA</code>s if <code>na_equal</code> is <code>FALSE</code>.</p>
+    <p>A logical vector the same size as. Will only contain <code>NA</code>s if <code>na_equal</code> is <code>FALSE</code>.</p>
     
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='fu'>vec_equal</span>(<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='fl'>TRUE</span>, <span class='fl'>FALSE</span>, <span class='fl'>NA</span>), <span class='fl'>FALSE</span>)</div><div class='output co'>#&gt; [1] FALSE  TRUE    NA</div><div class='input'><span class='fu'>vec_equal</span>(<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='fl'>TRUE</span>, <span class='fl'>FALSE</span>, <span class='fl'>NA</span>), <span class='fl'>FALSE</span>, <span class='kw'>na_equal</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</div><div class='output co'>#&gt; [1] FALSE  TRUE FALSE</div><div class='input'><span class='fu'>vec_equal_na</span>(<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='fl'>TRUE</span>, <span class='fl'>FALSE</span>, <span class='fl'>NA</span>))</div><div class='output co'>#&gt; [1] FALSE FALSE  TRUE</div><div class='input'>
 <span class='fu'>vec_equal</span>(<span class='fl'>5</span>, <span class='fl'>1</span>:<span class='fl'>10</span>)</div><div class='output co'>#&gt;  [1] FALSE FALSE FALSE FALSE  TRUE FALSE FALSE FALSE FALSE FALSE</div><div class='input'><span class='fu'>vec_equal</span>(<span class='st'>"d"</span>, <span class='no'>letters</span>[<span class='fl'>1</span>:<span class='fl'>10</span>])</div><div class='output co'>#&gt;  [1] FALSE FALSE FALSE  TRUE FALSE FALSE FALSE FALSE FALSE FALSE</div><div class='input'>
-<span class='no'>df</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/data.frame'>data.frame</a></span>(<span class='kw'>x</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='fl'>1</span>, <span class='fl'>1</span>, <span class='fl'>2</span>, <span class='fl'>1</span>), <span class='kw'>y</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='fl'>1</span>, <span class='fl'>2</span>, <span class='fl'>1</span>, <span class='fl'>NA</span>))
-<span class='fu'>vec_equal</span>(<span class='no'>df</span>, <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/data.frame'>data.frame</a></span>(<span class='kw'>x</span> <span class='kw'>=</span> <span class='fl'>1</span>, <span class='kw'>y</span> <span class='kw'>=</span> <span class='fl'>2</span>))</div><div class='output co'>#&gt; [1] FALSE  TRUE FALSE  TRUE</div><div class='input'><span class='fu'>vec_equal_na</span>(<span class='no'>df</span>)</div><div class='output co'>#&gt; [1] FALSE FALSE FALSE  TRUE</div></pre>
+<span class='no'>df</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/data.frame'>data.frame</a></span>(<span class='kw'>x</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='fl'>1</span>, <span class='fl'>1</span>, <span class='fl'>2</span>, <span class='fl'>1</span>, <span class='fl'>NA</span>), <span class='kw'>y</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='fl'>1</span>, <span class='fl'>2</span>, <span class='fl'>1</span>, <span class='fl'>NA</span>, <span class='fl'>NA</span>))
+<span class='fu'>vec_equal</span>(<span class='no'>df</span>, <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/data.frame'>data.frame</a></span>(<span class='kw'>x</span> <span class='kw'>=</span> <span class='fl'>1</span>, <span class='kw'>y</span> <span class='kw'>=</span> <span class='fl'>2</span>))</div><div class='output co'>#&gt; [1] FALSE  TRUE FALSE  TRUE  TRUE</div><div class='input'><span class='fu'>vec_equal_na</span>(<span class='no'>df</span>)</div><div class='output co'>#&gt; [1] FALSE FALSE FALSE FALSE  TRUE</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
