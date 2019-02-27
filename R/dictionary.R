@@ -240,3 +240,43 @@ vec_in <- function(needles, haystack) {
   v <- vec_cast_common(needles = needles, haystack = haystack)
   .Call(vctrs_in, vec_proxy_equal(v$needles), vec_proxy_equal(v$haystack))
 }
+
+
+# Splitting ---------------------------------------------------------------
+
+#' Split a vector into groups
+#'
+#' This is a generalisation of [split()] that can split by any type of vector,
+#' not just factors. Instead of returning the keys in the character names,
+#' the are returned in a separate parallel vector.
+#'
+#' @param x Vector to divide into groups.
+#' @param by Vector whose unique values defines the groups.
+#' @return A data frame with two columns and size equal to
+#'   `vec_size(vec_unique(by))`. The `key` column has the same type as
+#'   `by`, and the `val` column has type `list_of<vec_type(x)>`.
+#'
+#'   Note for complex types, the default `data.frame` print method will be
+#'   suboptimal, and you will want to coerce into a tibble to better
+#'   understand the output.
+#' @export
+#' @examples
+#' vec_split(mtcars$cyl, mtcars$vs)
+#' vec_split(mtcars$cyl, mtcars[c("vs", "am")])
+#'
+#' if (require("tibble")) {
+#'   as_tibble(vec_split(mtcars$cyl, mtcars[c("vs", "am")]))
+#'   as_tibble(vec_split(mtcars, mtcars[c("vs", "am")]))
+#' }
+vec_split <- function(x, by) {
+  # TODO: optimise to avoid creating the dictionary twice and to avoid split()
+  keys <- vec_unique(by)
+  if (vec_size(x) != vec_size(by)) {
+    abort("`x` and `by` must have same size")
+  }
+
+  idx <- unname(split(vec_seq_along(x), vec_duplicate_id(by)))
+  vals <- new_list_of(map(idx, vec_slice, x = x), vec_type(x))
+
+  new_data_frame(list(key = keys, val = vals), n = vec_size(keys))
+}

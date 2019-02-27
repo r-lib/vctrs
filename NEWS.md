@@ -1,5 +1,10 @@
 # vctrs 0.1.0.9000
 
+* New `vec_split(x, by)` is a generalisation of `split()` that can divide
+  a vector into groups formed by the unique values of another vector. Returns
+  a two-column data frame containing unique values of `by` aligned with 
+  matching `x` values (#196).
+
 * New `vec_seq_along()` and `vec_na_along()` create useful sequences (#189).
 
 * `vec_equal_na()` now returns `TRUE` for data frames and records when every
