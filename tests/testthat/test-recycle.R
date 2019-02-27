@@ -55,7 +55,7 @@ test_that("can vec_recycle_common matrices", {
 test_that("can vec_recycle_common data frames", {
   x <- data.frame(a = rep(1, 3), b = rep(2, 3))
   x1 <- vec_slice(x, 1L)
-  x0 <- vec_slice(x, 0L)
+  x0 <- vec_slice(x, integer())
 
   expect_equal(vec_recycle_common(x, x), list(x, x))
   expect_equal(vec_recycle_common(x1, x), list(x, x))
@@ -67,7 +67,7 @@ test_that("can vec_recycle_common matrix and data frame", {
   df <- data.frame(x = c(1, 1), y = c(2, 2))
 
   expect_equal(
-    vec_recycle_common(vec_slice(mt, 0L), df),
+    vec_recycle_common(vec_slice(mt, integer()), df),
     list(vec_slice(mt, 0L), vec_slice(df, 0L))
   )
   expect_equal(

@@ -47,7 +47,7 @@ vec_recycle <- function(x, size) {
   if (n_x == size) {
     x
   } else if (size == 0L) {
-    vec_slice(x, 0L)
+    vec_slice(x, integer())
   } else if (n_x == 1L) {
     vec_slice(x, rep(1L, size))
   } else {

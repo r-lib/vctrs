@@ -106,6 +106,7 @@ vec_slice <- function(x, i) {
   } else if (is.data.frame(x)) {
     # Much faster, and avoids creating rownames
     out <- lapply(x, vec_slice, i)
+    attr(out, "row.names") <- .set_row_names(length(i))
     vec_restore(out, x)
   } else if (is_vector(x)) {
     d <- vec_dims(x)
@@ -152,7 +153,9 @@ vec_slice <- function(x, i) {
 }
 
 get_slice_index <- function(i, x) {
-  if (is_logical(i)) {
+  if (identical(i, 0L)) {
+    i <- integer()
+  } else if (is_logical(i)) {
     i <- vec_recycle(i, vec_size(x))
     i <- which(i)
     stopifnot(is.integer(i))

@@ -1,5 +1,7 @@
 # vctrs 0.1.0.9000
 
+* `vec_slice()` can correct slice 0-row data frames (#179).
+
 * New `vec_split(x, by)` is a generalisation of `split()` that can divide
   a vector into groups formed by the unique values of another vector. Returns
   a two-column data frame containing unique values of `by` aligned with 
