@@ -281,3 +281,24 @@ vec_split <- function(x, by) {
   new_data_frame(list(key = keys, val = vals), n = vec_size(keys))
 }
 
+# TODO - vec_self_split() could also return the
+# unique duplicate positions so we don't have to do the map_int() step
+vec_split2 <- function(x, by) {
+
+  if (vec_size(x) != vec_size(by)) {
+    abort("`x` and `by` must have same size")
+  }
+
+  idx <- vec_self_split(by)
+
+  keys <- vec_slice(by, map_int(idx, function(x) {x[1]}))
+
+  vals <- new_list_of(map(idx, vec_slice, x = x), vec_type(x))
+
+  new_data_frame(list(key = keys, val = vals), n = vec_size(keys))
+}
+
+vec_self_split <- function(x) {
+  x <- vec_proxy_equal(x)
+  .Call(vctrs_self_split, x)
+}
