@@ -25,6 +25,7 @@ int32_t ceil2(int32_t x) {
 struct dictionary {
   SEXP x;
   int32_t* key;
+  int32_t* slot;
   uint32_t size;
   uint32_t used;
 };
@@ -44,6 +45,9 @@ void dict_init(dictionary* d, SEXP x) {
 
   d->key = (int32_t*) R_alloc(size, sizeof(int32_t));
   memset(d->key, EMPTY, size * sizeof(int32_t));
+
+  d->slot = (int32_t*) R_alloc(size, sizeof(int32_t));
+  memset(d->slot, EMPTY, size * sizeof(int32_t));
 
   d->size = size;
   d->used = 0;
@@ -78,6 +82,7 @@ uint32_t dict_find(dictionary* d, SEXP y, R_len_t i) {
 
 void dict_put(dictionary* d, uint32_t k, R_len_t i) {
   d->key[k] = i;
+  d->slot[k] = d->used;
   d->used++;
 }
 
@@ -305,5 +310,50 @@ SEXP vctrs_duplicated(SEXP x) {
 
   UNPROTECT(2);
   dict_free(&d);
+  return out;
+}
+
+SEXP vctrs_self_split(SEXP x) {
+  dictionary d;
+  dict_init(&d, x);
+
+  R_len_t n = vec_size(x);
+
+  // Fill dictionary
+  for (int i = 0; i < n; ++i) {
+    uint32_t k = dict_find(&d, x, i);
+
+    if (d.key[k] == EMPTY) {
+      dict_put(&d, k, i);
+    }
+  }
+
+  // Construct and init growable array
+  growable g_array[d.used];
+
+  for (uint32_t i = 0; i < d.used; ++i) {
+    growable_init(&g_array[i], INTSXP, 256);
+  }
+
+  // Fill growable array with positions
+  for (int i = 0; i < n; ++i) {
+    uint32_t k = dict_find(&d, x, i);
+    uint32_t g_i = d.slot[k];
+    growable_push_int(&g_array[g_i], i + 1);
+  }
+
+  // Extract growable array into a list
+  SEXP out = PROTECT(Rf_allocVector(VECSXP, d.used));
+
+  for (int i = 0; i < d.used; ++i) {
+    SET_VECTOR_ELT(out, i, growable_values(&g_array[i]));
+  }
+
+  UNPROTECT(1);
+  dict_free(&d);
+  for (uint32_t i = 0; i < d.used; ++i) {
+    growable_free(&g_array[i]);
+  }
+
   return out;
 }
