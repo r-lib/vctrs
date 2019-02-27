@@ -115,10 +115,16 @@
     <loc>https://vctrs.r-lib.org/reference/vec_recycle.html</loc>
   </url>
   <url>
+    <loc>https://vctrs.r-lib.org/reference/vec_seq_along.html</loc>
+  </url>
+  <url>
     <loc>https://vctrs.r-lib.org/reference/vec_size.html</loc>
   </url>
   <url>
     <loc>https://vctrs.r-lib.org/reference/vec_slice.html</loc>
+  </url>
+  <url>
+    <loc>https://vctrs.r-lib.org/reference/vec_split.html</loc>
   </url>
   <url>
     <loc>https://vctrs.r-lib.org/reference/vec_type.html</loc>

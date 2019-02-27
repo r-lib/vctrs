@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>A 1d vector of unspecified type — unspecified • vctrs</title>
+<title>Useful sequences — vec_seq_along • vctrs</title>
 
 <!-- jquery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
@@ -30,11 +30,11 @@
 
 
 
-<meta property="og:title" content="A 1d vector of unspecified type — unspecified" />
+<meta property="og:title" content="Useful sequences — vec_seq_along" />
 
-<meta property="og:description" content="This is a partial type used to represent logical vectors
-that only contain NA. These require special handling because we want to
-allow NA to specify missingness without requiring a type." />
+<meta property="og:description" content="vec_seq_along() is equivalent to seq_along() but uses size, not length.
+vec_na_along() creates a vector of missing values with size matching
+an existing object." />
 
 <meta property="og:image" content="https://vctrs.r-lib.org/logo.png" />
 <meta name="twitter:card" content="summary" />
@@ -124,60 +124,59 @@ allow NA to specify missingness without requiring a type." />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>A 1d vector of unspecified type</h1>
-    <small class="dont-index">Source: <a href='https://github.com/r-lib/vctrs/blob/master/R/unspecified.R'><code>R/unspecified.R</code></a></small>
-    <div class="hidden name"><code>unspecified.Rd</code></div>
+    <h1>Useful sequences</h1>
+    <small class="dont-index">Source: <a href='https://github.com/r-lib/vctrs/blob/master/R/size.R'><code>R/size.R</code></a></small>
+    <div class="hidden name"><code>vec_seq_along.Rd</code></div>
     </div>
 
     <div class="ref-description">
     
-    <p>This is a <a href='new_partial'>partial type</a> used to represent logical vectors
-that only contain <code>NA</code>. These require special handling because we want to
-allow <code>NA</code> to specify missingness without requiring a type.</p>
+    <p><code>vec_seq_along()</code> is equivalent to <code><a href='https://www.rdocumentation.org/packages/base/topics/seq'>seq_along()</a></code> but uses size, not length.
+<code>vec_na_along()</code> creates a vector of missing values with size matching
+an existing object.</p>
     
     </div>
 
-    <pre class="usage"><span class='fu'>unspecified</span>(<span class='kw'>n</span> <span class='kw'>=</span> <span class='fl'>0</span>)
+    <pre class="usage"><span class='fu'>vec_seq_along</span>(<span class='no'>x</span>)
 
-<span class='fu'>vec_unspecified_cast</span>(<span class='no'>x</span>, <span class='no'>to</span>)
-
-<span class='co'># S3 method for vctrs_unspecified</span>
-<span class='fu'><a href='vec_type2.html'>vec_type2</a></span>(<span class='no'>x</span>, <span class='no'>y</span>)</pre>
+<span class='fu'>vec_na_along</span>(<span class='no'>x</span>, <span class='kw'>y</span> <span class='kw'>=</span> <span class='no'>x</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>n</th>
-      <td><p>Length of vector</p></td>
+      <th>x, y</th>
+      <td><p>Vectors</p></td>
     </tr>
     </table>
     
-    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
+    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p><code>vec_unspecified_cast()</code> is a helper to use in your <code><a href='vec_cast.html'>vec_cast()</a></code> methods.
-See <code><a href='../articles/s3-vector.html'>vignette("s3-vector")</a></code> for detail.</p>
+    
+<ul>
+<li><p><code>vec_seq_along()</code> an integer vector with the same size as <code>x</code>.</p></li>
+<li><p><code>vec_na_along()</code> a vector with the same type as <code>x</code> and the same size
+as <code>y</code>.</p></li>
+</ul>
+
     
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'><a href='vec_type.html'>vec_ptype</a></span>()</div><div class='output co'>#&gt; Prototype: NULL</div><div class='input'><span class='fu'><a href='vec_type.html'>vec_ptype</a></span>(<span class='fl'>NA</span>)</div><div class='output co'>#&gt; Prototype: logical</div><div class='input'>
-<span class='fu'><a href='vec_c.html'>vec_c</a></span>(<span class='fl'>NA</span>, <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/factor'>factor</a></span>(<span class='st'>"x"</span>))</div><div class='output co'>#&gt; [1] &lt;NA&gt; x   
-#&gt; Levels: x</div><div class='input'><span class='fu'><a href='vec_c.html'>vec_c</a></span>(<span class='fl'>NA</span>, <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/Sys.time'>Sys.Date</a></span>())</div><div class='output co'>#&gt; [1] NA           "2019-02-27"</div><div class='input'><span class='fu'><a href='vec_c.html'>vec_c</a></span>(<span class='fl'>NA</span>, <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/Sys.time'>Sys.time</a></span>())</div><div class='output co'>#&gt; [1] NA                        "2019-02-27 15:38:30 UTC"</div><div class='input'><span class='fu'><a href='vec_c.html'>vec_c</a></span>(<span class='fl'>NA</span>, <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/list'>list</a></span>(<span class='fl'>1</span>:<span class='fl'>3</span>, <span class='fl'>4</span>:<span class='fl'>5</span>))</div><div class='output co'>#&gt; [[1]]
-#&gt; [1] NA
-#&gt; 
-#&gt; [[2]]
-#&gt; [1] 1 2 3
-#&gt; 
-#&gt; [[3]]
-#&gt; [1] 4 5
-#&gt; </div></pre>
+    <pre class="examples"><div class='input'><span class='fu'>vec_seq_along</span>(<span class='no'>mtcars</span>)</div><div class='output co'>#&gt;  [1]  1  2  3  4  5  6  7  8  9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25
+#&gt; [26] 26 27 28 29 30 31 32</div><div class='input'><span class='fu'>vec_na_along</span>(<span class='fu'><a href='https://www.rdocumentation.org/packages/utils/topics/head'>head</a></span>(<span class='no'>mtcars</span>))</div><div class='output co'>#&gt;   mpg cyl disp hp drat wt qsec vs am gear carb
+#&gt; 1  NA  NA   NA NA   NA NA   NA NA NA   NA   NA
+#&gt; 2  NA  NA   NA NA   NA NA   NA NA NA   NA   NA
+#&gt; 3  NA  NA   NA NA   NA NA   NA NA NA   NA   NA
+#&gt; 4  NA  NA   NA NA   NA NA   NA NA NA   NA   NA
+#&gt; 5  NA  NA   NA NA   NA NA   NA NA NA   NA   NA
+#&gt; 6  NA  NA   NA NA   NA NA   NA NA NA   NA   NA</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
       <li><a href="#arguments">Arguments</a></li>
       
-      <li><a href="#details">Details</a></li>
+      <li><a href="#value">Value</a></li>
       
       <li><a href="#examples">Examples</a></li>
     </ul>
