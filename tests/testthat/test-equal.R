@@ -131,6 +131,21 @@ test_that("vectorised over rows of a data frame", {
   expect_equal(vec_equal_na(df), c(FALSE, FALSE, FALSE, TRUE))
 })
 
+test_that("NA propagate symmetrically (#204)", {
+  exp <- c(NA, NA)
+
+  expect_identical(vec_equal(c(TRUE, FALSE), NA), exp)
+  expect_identical(vec_equal(1:2, NA), exp)
+  expect_identical(vec_equal(c(1, 2), NA), exp)
+  expect_identical(vec_equal(letters[1:2], NA), exp)
+
+  expect_identical(vec_equal(NA, c(TRUE, FALSE)), exp)
+  expect_identical(vec_equal(NA, 1:2), exp)
+  expect_identical(vec_equal(NA, c(1, 2)), exp)
+  expect_identical(vec_equal(NA, letters[1:2]), exp)
+})
+
+
 # proxy -------------------------------------------------------------------
 
 test_that("compound objects create data frames", {
