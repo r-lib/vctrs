@@ -1,5 +1,7 @@
 # vctrs 0.1.0.9000
 
+* New `validate_list_of()` (#193).
+
 * `vec_slice()` can correct slice 0-row data frames (#179).
 
 * New `vec_split(x, by)` is a generalisation of `split()` that can divide
