@@ -67,6 +67,15 @@ new_list_of <- function(x = list(), ptype = logical(), ..., class = character())
 
 #' @export
 #' @rdname list_of
+validate_list_of <- function(x) {
+  # Type checking is a side effect of the constructor
+  list_of(!!!x, .ptype = attr(x, "ptype"))
+
+  invisible(x)
+}
+
+#' @export
+#' @rdname list_of
 is_list_of <- function(x) {
   inherits(x, "vctrs_list_of")
 }
