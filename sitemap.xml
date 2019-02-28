@@ -91,9 +91,6 @@
     <loc>https://vctrs.r-lib.org/reference/vec_equal.html</loc>
   </url>
   <url>
-    <loc>https://vctrs.r-lib.org/reference/vec_expand.html</loc>
-  </url>
-  <url>
     <loc>https://vctrs.r-lib.org/reference/vec_list_cast.html</loc>
   </url>
   <url>
@@ -106,6 +103,9 @@
     <loc>https://vctrs.r-lib.org/reference/vec_na.html</loc>
   </url>
   <url>
+    <loc>https://vctrs.r-lib.org/reference/vec_order.html</loc>
+  </url>
+  <url>
     <loc>https://vctrs.r-lib.org/reference/vec_proxy_compare.html</loc>
   </url>
   <url>
@@ -116,6 +116,9 @@
   </url>
   <url>
     <loc>https://vctrs.r-lib.org/reference/vec_recycle.html</loc>
+  </url>
+  <url>
+    <loc>https://vctrs.r-lib.org/reference/vec_repeat.html</loc>
   </url>
   <url>
     <loc>https://vctrs.r-lib.org/reference/vec_seq_along.html</loc>

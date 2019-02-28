@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Find and count unique values — vec_unique • vctrs</title>
+<title>Expand the length of a vector — vec_repeat • vctrs</title>
 
 <!-- jquery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
@@ -30,13 +30,10 @@
 
 
 
-<meta property="og:title" content="Find and count unique values — vec_unique" />
+<meta property="og:title" content="Expand the length of a vector — vec_repeat" />
 
-<meta property="og:description" content="
-vec_unique(): the unique values. Equivalent to unique().
-vec_unique_loc(): the locations of the unique values.
-vec_unique_count(): the number of unique values.
-" />
+<meta property="og:description" content="This is a special case of rep() for the special case of integer times
+and each values, and works along size, rather than length." />
 
 <meta property="og:image" content="https://vctrs.r-lib.org/logo.png" />
 <meta name="twitter:card" content="summary" />
@@ -126,87 +123,65 @@ vec_unique_count(): the number of unique values.
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Find and count unique values</h1>
-    <small class="dont-index">Source: <a href='https://github.com/r-lib/vctrs/blob/master/R/dictionary.R'><code>R/dictionary.R</code></a></small>
-    <div class="hidden name"><code>vec_unique.Rd</code></div>
+    <h1>Expand the length of a vector</h1>
+    <small class="dont-index">Source: <a href='https://github.com/r-lib/vctrs/blob/master/R/size.R'><code>R/size.R</code></a></small>
+    <div class="hidden name"><code>vec_repeat.Rd</code></div>
     </div>
 
     <div class="ref-description">
     
-    <ul>
-<li><p><code>vec_unique()</code>: the unique values. Equivalent to <code><a href='https://www.rdocumentation.org/packages/base/topics/unique'>unique()</a></code>.</p></li>
-<li><p><code>vec_unique_loc()</code>: the locations of the unique values.</p></li>
-<li><p><code>vec_unique_count()</code>: the number of unique values.</p></li>
-</ul>
+    <p>This is a special case of <code><a href='https://www.rdocumentation.org/packages/base/topics/rep'>rep()</a></code> for the special case of integer <code>times</code>
+and <code>each</code> values, and works along size, rather than length.</p>
     
     </div>
 
-    <pre class="usage"><span class='fu'>vec_unique</span>(<span class='no'>x</span>)
-
-<span class='fu'>vec_unique_loc</span>(<span class='no'>x</span>)
-
-<span class='fu'>vec_unique_count</span>(<span class='no'>x</span>)</pre>
+    <pre class="usage"><span class='fu'>vec_repeat</span>(<span class='no'>x</span>, <span class='kw'>each</span> <span class='kw'>=</span> <span class='fl'>1L</span>, <span class='kw'>times</span> <span class='kw'>=</span> <span class='fl'>1L</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>x</th>
-      <td><p>A vector (including a data frame).</p></td>
+      <td><p>A vector.</p></td>
+    </tr>
+    <tr>
+      <th>each</th>
+      <td><p>Number of times to repeat each element of <code>x</code>.</p></td>
+    </tr>
+    <tr>
+      <th>times</th>
+      <td><p>Number of times to repeat the whole vector of <code>x</code>.</p></td>
     </tr>
     </table>
     
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    
-<ul>
-<li><p><code>vec_unique()</code>: a vector the same type as <code>x</code> containining only unique
-values.</p></li>
-<li><p><code>vec_unique_loc()</code>: an integer vector, giving locations of unique values.</p></li>
-<li><p><code>vec_unique_count()</code>: an integer vector of length 1, giving the
-number of unique values.</p></li>
-</ul>
-
-    
-    <h2 class="hasAnchor" id="missing-values"><a class="anchor" href="#missing-values"></a>Missing values</h2>
-
-    
-    <p>In most cases, missing values are not considered to be equal, i.e.
-<code>NA == NA</code> is not <code>TRUE</code>. This behaviour would be unappealing here,
-so these functions consider all <code>NAs</code> to be equal. (Similarly,
-all <code>NaN</code> are also considered to be equal.)</p>
-    
-    <h2 class="hasAnchor" id="performance"><a class="anchor" href="#performance"></a>Performance</h2>
-
-    
-    <p>These functions are currently slightly slower than their base equivalents.
-This is primarily because they do a little more checking and coercion
-in R, which makes them both a litter safer and more generic. Additionally,
-the C code underlying vctrs has not yet been implemented: we expect
-some performance improvements when that happens.</p>
-    
-    <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
-
-    <div class='dont-index'><p><a href='vec_duplicate.html'>vec_duplicate</a> for functions that work with the dual of
-unique values: duplicated values.</p></div>
+    <p>A vector the same type as <code>x</code> with size <code>vec_size(x) * times * each</code>.</p>
     
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='no'>x</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/stats/topics/Poisson'>rpois</a></span>(<span class='fl'>100</span>, <span class='fl'>8</span>)
-<span class='fu'>vec_unique</span>(<span class='no'>x</span>)</div><div class='output co'>#&gt;  [1]  9  5 12  3  6 11 10  8  7 14 16  2 13  4 19 15</div><div class='input'><span class='fu'>vec_unique_loc</span>(<span class='no'>x</span>)</div><div class='output co'>#&gt;  [1]  1  2  3  4  6  8 11 13 14 19 24 31 32 40 58 74</div><div class='input'><span class='fu'>vec_unique_count</span>(<span class='no'>x</span>)</div><div class='output co'>#&gt; [1] 16</div><div class='input'>
-<span class='co'># `vec_unique()` returns values in the order that encounters them</span>
-<span class='co'># use sort = "location" to match to the result of `vec_count()`</span>
-<span class='fu'><a href='https://www.rdocumentation.org/packages/utils/topics/head'>head</a></span>(<span class='fu'>vec_unique</span>(<span class='no'>x</span>))</div><div class='output co'>#&gt; [1]  9  5 12  3  6 11</div><div class='input'><span class='fu'><a href='https://www.rdocumentation.org/packages/utils/topics/head'>head</a></span>(<span class='fu'><a href='vec_count.html'>vec_count</a></span>(<span class='no'>x</span>, <span class='kw'>sort</span> <span class='kw'>=</span> <span class='st'>"location"</span>))</div><div class='output co'>#&gt;   key count
-#&gt; 1   9    14
-#&gt; 2   5     6
-#&gt; 3  12     5
-#&gt; 4   3     4
-#&gt; 5   6    15
-#&gt; 6  11    12</div><div class='input'>
-<span class='co'># Normally missing values are not considered to be equal</span>
-<span class='fl'>NA</span> <span class='kw'>==</span> <span class='fl'>NA</span></div><div class='output co'>#&gt; [1] NA</div><div class='input'>
-<span class='co'># But they are for the purposes of considering uniqueness</span>
-<span class='fu'>vec_unique</span>(<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='fl'>NA</span>, <span class='fl'>NA</span>, <span class='fl'>NA</span>, <span class='fl'>NA</span>, <span class='fl'>1</span>, <span class='fl'>2</span>, <span class='fl'>1</span>))</div><div class='output co'>#&gt; [1] NA  1  2</div></pre>
+    <pre class="examples"><div class='input'><span class='co'># each repeats within</span>
+<span class='fu'>vec_repeat</span>(<span class='fl'>1</span>:<span class='fl'>3</span>, <span class='kw'>each</span> <span class='kw'>=</span> <span class='fl'>2</span>)</div><div class='output co'>#&gt; [1] 1 1 2 2 3 3</div><div class='input'><span class='co'># times repeats whole thing</span>
+<span class='fu'>vec_repeat</span>(<span class='fl'>1</span>:<span class='fl'>3</span>, <span class='kw'>times</span> <span class='kw'>=</span> <span class='fl'>2</span>)</div><div class='output co'>#&gt; [1] 1 2 3 1 2 3</div><div class='input'>
+<span class='no'>df</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/data.frame'>data.frame</a></span>(<span class='kw'>x</span> <span class='kw'>=</span> <span class='fl'>1</span>:<span class='fl'>2</span>, <span class='kw'>y</span> <span class='kw'>=</span> <span class='fl'>1</span>:<span class='fl'>2</span>)
+<span class='co'># rep() repeats columns of data frame, and returns list:</span>
+<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/rep'>rep</a></span>(<span class='no'>df</span>, <span class='kw'>each</span> <span class='kw'>=</span> <span class='fl'>2</span>)</div><div class='output co'>#&gt; $x
+#&gt; [1] 1 2
+#&gt; 
+#&gt; $x
+#&gt; [1] 1 2
+#&gt; 
+#&gt; $y
+#&gt; [1] 1 2
+#&gt; 
+#&gt; $y
+#&gt; [1] 1 2
+#&gt; </div><div class='input'><span class='co'># vec_repeat() repeats rows, and returns same data.frame</span>
+<span class='fu'>vec_repeat</span>(<span class='no'>df</span>, <span class='fl'>2</span>)</div><div class='output co'>#&gt;   x y
+#&gt; 1 1 1
+#&gt; 2 1 1
+#&gt; 3 2 2
+#&gt; 4 2 2</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
@@ -214,12 +189,6 @@ unique values: duplicated values.</p></div>
       <li><a href="#arguments">Arguments</a></li>
       
       <li><a href="#value">Value</a></li>
-
-      <li><a href="#missing-values">Missing values</a></li>
-
-      <li><a href="#performance">Performance</a></li>
-
-      <li><a href="#see-also">See also</a></li>
       
       <li><a href="#examples">Examples</a></li>
     </ul>
