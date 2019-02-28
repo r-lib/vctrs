@@ -31,18 +31,35 @@ struct growable {
 };
 typedef struct growable growable;
 
-struct list_of_growable {
-  growable* g_array;
-  int n;
-  int capacity;
-};
-typedef struct list_of_growable list_of_growable;
-
 void growable_init(growable* g, SEXPTYPE type, int capacity);
 void growable_free(growable* g);
 void growable_push_int(growable* g, int i);
 SEXP growable_values(growable* g);
 
-void list_of_growable_init(list_of_growable* g_lst, SEXPTYPE type, int capacity);
-void list_of_growable_push_growable(list_of_growable* g_lst, growable* g);
-void list_of_growable_free(list_of_growable* g_lst);
+// Growable int array -----------------------------------------------
+
+struct growable_int {
+  int* x;
+  int n;
+  int capacity;
+  int instances;
+};
+typedef struct growable_int growable_int;
+
+void growable_int_init(growable_int* g, int capacity);
+void growable_int_free(growable_int* g);
+void growable_int_push_int(growable_int* g, int i);
+SEXP growable_int_values(growable_int* g);
+
+struct growable_of_growable_int {
+  growable_int* g_array;
+  int n;
+  int capacity;
+  int instances;
+};
+typedef struct growable_of_growable_int growable_of_growable_int;
+
+void growable_of_growable_int_init(growable_of_growable_int* g_of_gi, int capacity);
+void growable_of_growable_int_push_growable_int(growable_of_growable_int* g_of_gi, growable_int* g);
+void growable_of_growable_int_free(growable_of_growable_int* g_of_gi);
+SEXP growable_of_growable_int_values(growable_of_growable_int* g_of_gi);

@@ -281,8 +281,6 @@ vec_split <- function(x, by) {
   new_data_frame(list(key = keys, val = vals), n = vec_size(keys))
 }
 
-# TODO - vec_self_split() could also return the
-# unique duplicate positions so we don't have to do the map_int() step
 vec_split2 <- function(x, by) {
 
   if (vec_size(x) != vec_size(by)) {
