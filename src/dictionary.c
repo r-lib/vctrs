@@ -335,7 +335,7 @@ SEXP vctrs_self_split(SEXP x) {
   R_len_t n = vec_size(x);
 
   list_of_growable g_lst;
-  list_of_growable_init(&g_lst, INTSXP, 10);
+  list_of_growable_init(&g_lst, INTSXP, 128);
 
   // Fill dictionary
   for (int i = 0; i < n; ++i) {
@@ -346,7 +346,7 @@ SEXP vctrs_self_split(SEXP x) {
       dict_put(&d, k, i);
 
       growable g;
-      growable_init(&g, INTSXP, 256);
+      growable_init(&g, INTSXP, 32);
       list_of_growable_push_growable(&g_lst, &g);
     }
 
