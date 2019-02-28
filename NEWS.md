@@ -3,7 +3,7 @@
 * New `vec_order()` and `vec_sort()` for ordering and sorting generalised 
   vectors.
 
-* New `vec_expand()` for repeating each element of a vector the same number
+* New `vec_repeat()` for repeating each element of a vector the same number
   of times.
 
 * `vec_slice()` can correct slice 0-row data frames (#179).
