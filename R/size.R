@@ -212,6 +212,35 @@ vec_na_along <- function(x, y = x) {
   vec_slice(x, rep_len(NA_integer_, vec_size(y)))
 }
 
+#' Expand the length of a vector
+#'
+#' This is a special case of [rep()] for the special case of integer `times`
+#' and `each` values, and works along size, rather than length.
+#'
+#' @param x A vector.
+#' @param each Number of times to repeat each element of `x`.
+#' @param times Number of times to repeat the whole vector of `x`.
+#' @return A vector the same type as `x` with size `vec_size(x) * times * each`.
+#' @export
+#' @examples
+#' # each repeats within
+#' vec_expand(1:3, each = 2L)
+#' # times repeats whole thing
+#' vec_expand(1:3, times = 2L)
+#'
+#' df <- data.frame(x = 1:2, y = 1:2)
+#' # rep() repeats columns of data frame, and returns list:
+#' rep(df, each = 2)
+#' # vec_expand() repeats rows, and returns same data.frame
+#' vec_expand(df, 2L)
+vec_expand <- function(x, each = 1L, times = 1L) {
+  vec_assert(each, integer(), 1L)
+  vec_assert(times, integer(), 1L)
+
+  idx <- rep(vec_seq_along(x), times = times, each = each)
+  vec_slice(x, idx)
+}
+
 # Names -------------------------------------------------------------------
 
 vec_names <- function(x) {
