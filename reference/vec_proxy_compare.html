@@ -139,7 +139,7 @@ and <code><a href='https://www.rdocumentation.org/packages/base/topics/Extremes'
     
     </div>
 
-    <pre class="usage"><span class='fu'>vec_proxy_compare</span>(<span class='no'>x</span>)</pre>
+    <pre class="usage"><span class='fu'>vec_proxy_compare</span>(<span class='no'>x</span>, <span class='kw'>relax</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -147,6 +147,13 @@ and <code><a href='https://www.rdocumentation.org/packages/base/topics/Extremes'
     <tr>
       <th>x</th>
       <td><p>A vector x.</p></td>
+    </tr>
+    <tr>
+      <th>relax</th>
+      <td><p>If <code>TRUE</code>, and <code>x</code> is otherwise non-comparable, will return
+<code><a href='vec_seq_along.html'>vec_seq_along(x)</a></code>. This allows a data frame to be orderable, even if
+one of its components is not. This is experimental and may change in the
+future.</p></td>
     </tr>
     </table>
     
