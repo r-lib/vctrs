@@ -69,3 +69,23 @@ test_that("xtfrm.vctrs_vctr works for variety of base classes", {
 test_that("vec_proxy_compare() refuses to deal with lists", {
   expect_error(vec_proxy_compare(list()), class = "vctrs_error_unsupported")
 })
+
+# order/sort --------------------------------------------------------------
+
+test_that("can request NAs sorted first", {
+  expect_equal(vec_order(c(1, NA), "asc", "large"), 1:2)
+  expect_equal(vec_order(c(1, NA), "desc", "large"), 2:1)
+
+  expect_equal(vec_order(c(1, NA), "asc", "small"), 2:1)
+  expect_equal(vec_order(c(1, NA), "desc", "small"), 1:2)
+})
+
+test_that("can sort data frames", {
+  df <- data.frame(x = c(1, 2, 1), y = c(1, 2, 2))
+
+  out1 <- vec_sort(df)
+  expect_equal(out1, data.frame(x = c(1, 1, 2), y = c(1, 2, 2)))
+
+  out2 <- vec_sort(df, "desc")
+  expect_equal(out2, data.frame(x = c(2, 1, 1), y = c(2, 2, 1)))
+})

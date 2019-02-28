@@ -70,6 +70,71 @@ vec_compare <- function(x, y, na_equal = FALSE, .ptype = NULL) {
   .Call(vctrs_compare, vec_proxy_equal(args[[1]]), vec_proxy_equal(args[[2]]), na_equal)
 }
 
+
+# order/sort --------------------------------------------------------------
+
+#' Order and sort vectors
+#'
+#' @param x A vector
+#' @param direction Direction to sort in. Defaults to `asc`ending.
+#' @param na_value Should `NA`s be treated as the largest or smallest values?
+#' @return
+#' * `vec_order()` an integer vector the same size as `x`.
+#' * `vec_sort()` a vector with the same size and type as `x`.
+#' @export
+#' @examples
+#' x <- round(c(runif(9), NA), 3)
+#' vec_order(x)
+#' vec_sort(x)
+#' vec_sort(x, "desc")
+#'
+#' # Can also handle data frames
+#' df <- data.frame(g = sample(2, 10, replace = TRUE), x = x)
+#' vec_order(df)
+#' vec_sort(df)
+#' vec_sort(df, "desc")
+vec_order <- function(x,
+                      direction = c("asc", "desc"),
+                      na_value = c("largest", "smallest")
+                      ) {
+  direction <- match.arg(direction)
+  na_value <- match.arg(na_value)
+
+  order_proxy(vec_proxy_compare(x), direction = direction, na_value = na_value)
+}
+
+#' @export
+#' @rdname vec_order
+vec_sort <- function(x,
+                     direction = c("asc", "desc"),
+                     na_value = c("largest", "smallest")) {
+  direction <- match.arg(direction)
+  na_value <- match.arg(na_value)
+
+  idx <- vec_order(x, direction = direction, na_value = na_value)
+  vec_slice(x, idx)
+}
+
+order_proxy <- function(proxy, direction = "asc", na_value = "largest") {
+  decreasing <- !identical(direction, "asc")
+  na.last <- identical(na_value, "largest")
+  if (decreasing) {
+    na.last <- !na.last
+  }
+
+  if (is.data.frame(proxy)) {
+    args <- unname(proxy)
+    args$decreasing <- decreasing
+    args$na.last <- na.last
+
+    do.call(base::order, args)
+  } else if (is_character(proxy) || is_logical(proxy) || is_integer(proxy) || is_double(proxy)) {
+    order(proxy, decreasing = decreasing, na.last = na.last)
+  } else {
+    abort("Invalid type returned by `vec_proxy_compare()`.")
+  }
+}
+
 # Helpers -----------------------------------------------------------------
 
 # Used for testing

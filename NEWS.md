@@ -1,5 +1,8 @@
 # vctrs 0.1.0.9000
 
+* New `vec_order()` and `vec_sort()` for ordering and sorting generalised 
+  vectors.
+
 * New `vec_expand()` for repeating each element of a vector the same number
   of times.
 
