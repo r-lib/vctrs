@@ -191,7 +191,7 @@ vec_proxy_equal.vctrs_rcrd <- function(x)  {
 }
 
 #' @export
-vec_proxy_compare.vctrs_rcrd <- function(x) {
+vec_proxy_compare.vctrs_rcrd <- function(x, relax = FALSE) {
   new_data_frame(vec_data(x), n = length(x))
 }
 
