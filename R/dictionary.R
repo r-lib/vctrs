@@ -144,6 +144,11 @@ vec_duplicate_id <- function(x) {
   .Call(vctrs_id, x)
 }
 
+vec_duplicate_split <- function(x) {
+  x <- vec_proxy_equal(x)
+  .Call(vctrs_duplicate_split, x)
+}
+
 # Unique values -----------------------------------------------------------
 
 #' Find and count unique values
@@ -287,16 +292,11 @@ vec_split2 <- function(x, by) {
     abort("`x` and `by` must have same size")
   }
 
-  idx <- vec_self_split(by)
+  idx <- vec_duplicate_split(by)
 
   keys <- vec_slice(by, map_int(idx, function(x) {x[1]}))
 
   vals <- new_list_of(map(idx, vec_slice, x = x), vec_type(x))
 
   new_data_frame(list(key = keys, val = vals), n = vec_size(keys))
-}
-
-vec_self_split <- function(x) {
-  x <- vec_proxy_equal(x)
-  .Call(vctrs_self_split, x)
 }

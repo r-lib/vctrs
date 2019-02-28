@@ -325,7 +325,7 @@ void dict_tracker_put(dict_tracker* dt, uint32_t k, uint32_t used) {
   dt->dict_pos[k] = used;
 }
 
-SEXP vctrs_self_split(SEXP x) {
+SEXP vctrs_duplicate_split(SEXP x) {
 
   dictionary d;
   dict_init(&d, x);
