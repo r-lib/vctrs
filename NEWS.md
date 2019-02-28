@@ -1,5 +1,8 @@
 # vctrs 0.1.0.9000
 
+* `vec_proxy_compare()` gains an experimental `relax` argument, which allows 
+  data frames to be orderable even if all their columns are not (#210).
+
 * New `vec_order()` and `vec_sort()` for ordering and sorting generalised 
   vectors.
 

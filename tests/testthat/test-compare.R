@@ -89,3 +89,7 @@ test_that("can sort data frames", {
   out2 <- vec_sort(df, "desc")
   expect_equal(out2, data.frame(x = c(2, 1, 1), y = c(2, 2, 1)))
 })
+
+test_that("can order tibbles that contain non-comparable objects", {
+  expect_equal(vec_order(data_frame(list(10, 2, 1))), 1:3)
+})

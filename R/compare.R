@@ -13,29 +13,36 @@
 #' methods for both generics.
 #'
 #' @param x A vector x.
+#' @param relax If `TRUE`, and `x` is otherwise non-comparable, will return
+#'   `vec_seq_along(x)`. This allows a data frame to be orderable, even if
+#'   one of its components is not. This is experimental and may change in the
+#'   future.
 #' @return A 1d atomic vector or a data frame.
 #' @keywords internal
 #' @export
-vec_proxy_compare <- function(x) {
+vec_proxy_compare <- function(x, relax = FALSE) {
   UseMethod("vec_proxy_compare")
 }
 
 #' @export
-vec_proxy_compare.data.frame <- function(x) {
-  is_list <- map_lgl(x, is.list)
-  x[is_list] <- lapply(x[is_list], vec_proxy_compare)
+vec_proxy_compare.data.frame <- function(x, relax = FALSE) {
+  x[] <- lapply(x[], vec_proxy_compare, relax = TRUE)
   x
 }
 
 #' @export
-vec_proxy_compare.POSIXlt <- function(x) {
+vec_proxy_compare.POSIXlt <- function(x, relax = FALSE) {
   new_data_frame(vec_data(x), n = length(x))
 }
 
 #' @export
-vec_proxy_compare.default <- function(x) {
+vec_proxy_compare.default <- function(x, relax = FALSE) {
   if (is_bare_list(x)) {
-    stop_unsupported(x, "vec_proxy_compare")
+    if (relax) {
+      vec_seq_along(x)
+    } else {
+      stop_unsupported(x, "vec_proxy_compare")
+    }
   } else {
     vec_data(x)
   }
