@@ -1,6 +1,16 @@
 # vctrs 0.1.0.9000
 
+
 * New `validate_list_of()` (#193).
+
+* `vec_proxy_compare()` gains an experimental `relax` argument, which allows 
+  data frames to be orderable even if all their columns are not (#210).
+
+* New `vec_order()` and `vec_sort()` for ordering and sorting generalised 
+  vectors.
+
+* New `vec_repeat()` for repeating each element of a vector the same number
+  of times.
 
 * `vec_slice()` can correct slice 0-row data frames (#179).
 

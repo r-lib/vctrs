@@ -394,16 +394,6 @@ xtfrm.vctrs_vctr <- function(x) {
   }
 }
 
-order_proxy <- function(proxy) {
-  if (is.data.frame(proxy)) {
-    do.call(base::order, proxy)
-  } else if (is_character(proxy) || is_logical(proxy) || is_integer(proxy) || is_double(proxy)) {
-    order(proxy)
-  } else {
-    abort("Invalid type returned by `vec_proxy_compare()`.")
-  }
-}
-
 #' @importFrom stats median
 #' @export
 median.vctrs_vctr <- function(x, ..., na.rm = FALSE) {

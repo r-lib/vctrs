@@ -4,10 +4,15 @@
 \alias{vec_proxy_compare}
 \title{Comparison proxy}
 \usage{
-vec_proxy_compare(x)
+vec_proxy_compare(x, relax = FALSE)
 }
 \arguments{
 \item{x}{A vector x.}
+
+\item{relax}{If \code{TRUE}, and \code{x} is otherwise non-comparable, will return
+\code{vec_seq_along(x)}. This allows a data frame to be orderable, even if
+one of its components is not. This is experimental and may change in the
+future.}
 }
 \value{
 A 1d atomic vector or a data frame.
