@@ -325,7 +325,7 @@ void dict_tracker_put(dict_tracker* dt, uint32_t k, uint32_t used) {
   dt->dict_pos[k] = used;
 }
 
-SEXP vctrs_duplicate_split(SEXP x) {
+SEXP vctrs_duplicate_split_old(SEXP x) {
 
   dictionary d;
   dict_init(&d, x);
@@ -362,5 +362,83 @@ SEXP vctrs_duplicate_split(SEXP x) {
 
   growable_of_growable_int_free(&g_of_gi);
 
+  return out;
+}
+
+SEXP vctrs_duplicate_split_new(SEXP x) {
+  dictionary d;
+  dict_init(&d, x);
+
+  // Tracks the order in which keys are seen
+  SEXP tracker = PROTECT(Rf_allocVector(INTSXP, d.size));
+  int* p_tracker = INTEGER(tracker);
+
+  R_len_t n = vec_size(x);
+
+  // For collecting positions in the final `out` list
+  // This helps us know which element of the list x[i] goes in
+  SEXP out_pos = PROTECT(Rf_allocVector(INTSXP, n));
+  int* p_out_pos = INTEGER(out_pos);
+
+  // For collecting counts of each key
+  SEXP count = PROTECT(Rf_allocVector(INTSXP, d.size));
+  int* p_count = INTEGER(count);
+
+  // Fill dictionary, out_pos, and count
+  for (int i = 0; i < n; ++i) {
+    uint32_t k = dict_find(&d, x, i);
+
+    if (d.key[k] == EMPTY) {
+      // capture before d.used is updated
+      p_tracker[k] = d.used;
+
+      dict_put(&d, k, i);
+      p_count[k] = 0;
+    }
+    p_out_pos[i] = p_tracker[k];
+    p_count[k]++;
+  }
+
+  // Shrink count down to only non-EMPTY elements
+  // and in the right order
+  SEXP count_real = PROTECT(Rf_allocVector(INTSXP, d.used));
+  int* p_count_real = INTEGER(count_real);
+
+  for (int k = 0; k < d.size; ++k) {
+    if (d.key[k] == EMPTY) {
+      continue;
+    }
+    p_count_real[p_tracker[k]] = p_count[k];
+  }
+
+  SEXP out = PROTECT(Rf_allocVector(VECSXP, d.used));
+
+  SEXP counters = PROTECT(Rf_allocVector(INTSXP, d.used));
+  int* p_counters = INTEGER(counters);
+
+  // Set up empty container with correct lengths
+  // And initialize counters
+  for (int i = 0; i < d.used; ++i) {
+    SET_VECTOR_ELT(out, i, Rf_allocVector(INTSXP, p_count_real[i]));
+    p_counters[i] = 0;
+  }
+
+  // Fill container
+  for (int i = 0; i < n; ++i) {
+    int j = p_out_pos[i];
+    int k = p_counters[j];
+
+    SEXP out_i = PROTECT(VECTOR_ELT(out, j));
+    int* p_out_i = INTEGER(out_i);
+
+    p_out_i[k] = i + 1;
+
+    p_counters[j] = k + 1;
+
+    UNPROTECT(1);
+  }
+
+  UNPROTECT(6);
+  dict_free(&d);
   return out;
 }

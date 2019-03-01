@@ -144,9 +144,16 @@ vec_duplicate_id <- function(x) {
   .Call(vctrs_id, x)
 }
 
-vec_duplicate_split <- function(x) {
+#' @export
+vec_duplicate_split_old <- function(x) {
   x <- vec_proxy_equal(x)
-  .Call(vctrs_duplicate_split, x)
+  .Call(vctrs_duplicate_split_old, x)
+}
+
+#' @export
+vec_duplicate_split_new <- function(x) {
+  x <- vec_proxy_equal(x)
+  .Call(vctrs_duplicate_split_new, x)
 }
 
 # Unique values -----------------------------------------------------------
@@ -286,13 +293,30 @@ vec_split <- function(x, by) {
   new_data_frame(list(key = keys, val = vals), n = vec_size(keys))
 }
 
-vec_split2 <- function(x, by) {
+#' @export
+vec_split_old <- function(x, by) {
 
   if (vec_size(x) != vec_size(by)) {
     abort("`x` and `by` must have same size")
   }
 
-  idx <- vec_duplicate_split(by)
+  idx <- vec_duplicate_split_old(by)
+
+  keys <- vec_slice(by, map_int(idx, function(x) {x[1]}))
+
+  vals <- new_list_of(map(idx, vec_slice, x = x), vec_type(x))
+
+  new_data_frame(list(key = keys, val = vals), n = vec_size(keys))
+}
+
+#' @export
+vec_split_new <- function(x, by) {
+
+  if (vec_size(x) != vec_size(by)) {
+    abort("`x` and `by` must have same size")
+  }
+
+  idx <- vec_duplicate_split_new(by)
 
   keys <- vec_slice(by, map_int(idx, function(x) {x[1]}))
 
