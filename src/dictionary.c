@@ -373,28 +373,26 @@ SEXP vctrs_duplicate_split_new(SEXP x) {
   SEXP tracker = PROTECT(Rf_allocVector(INTSXP, d.size));
   int* p_tracker = INTEGER(tracker);
 
-  R_len_t n = vec_size(x);
-
-  // For collecting positions in the final `out` list
-  // This helps us know which element of the list x[i] goes in
-  SEXP out_pos = PROTECT(Rf_allocVector(INTSXP, n));
-  int* p_out_pos = INTEGER(out_pos);
-
-  // For collecting counts of each key
+  // Collects the counts of each key
   SEXP count = PROTECT(Rf_allocVector(INTSXP, d.size));
   int* p_count = INTEGER(count);
+
+  R_len_t n = vec_size(x);
+
+  // Tells us which element of the final list x[i] goes in
+  SEXP out_pos = PROTECT(Rf_allocVector(INTSXP, n));
+  int* p_out_pos = INTEGER(out_pos);
 
   // Fill dictionary, out_pos, and count
   for (int i = 0; i < n; ++i) {
     uint32_t k = dict_find(&d, x, i);
 
     if (d.key[k] == EMPTY) {
-      // capture before d.used is updated
       p_tracker[k] = d.used;
-
       dict_put(&d, k, i);
       p_count[k] = 0;
     }
+
     p_out_pos[i] = p_tracker[k];
     p_count[k]++;
   }
@@ -405,8 +403,7 @@ SEXP vctrs_duplicate_split_new(SEXP x) {
   int* p_counters = INTEGER(counters);
   memset(p_counters, 0, d.used * sizeof(int));
 
-  // Set up empty container with correct lengths
-  // And initialize counters
+  // Set up empty container
   for (int k = 0; k < d.size; ++k) {
     if (d.key[k] == EMPTY) {
       continue;
@@ -420,10 +417,10 @@ SEXP vctrs_duplicate_split_new(SEXP x) {
     int j = p_out_pos[i];
     int k = p_counters[j];
 
-    SEXP out_i = PROTECT(VECTOR_ELT(out, j));
-    int* p_out_i = INTEGER(out_i);
+    SEXP out_elem = PROTECT(VECTOR_ELT(out, j));
+    int* p_out_elem = INTEGER(out_elem);
 
-    p_out_i[k] = i + 1;
+    p_out_elem[k] = i + 1;
     p_counters[j] = k + 1;
 
     UNPROTECT(1);
