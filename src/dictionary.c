@@ -399,28 +399,20 @@ SEXP vctrs_duplicate_split_new(SEXP x) {
     p_count[k]++;
   }
 
-  // Shrink count down to only non-EMPTY elements
-  // and in the right order
-  SEXP count_real = PROTECT(Rf_allocVector(INTSXP, d.used));
-  int* p_count_real = INTEGER(count_real);
-
-  for (int k = 0; k < d.size; ++k) {
-    if (d.key[k] == EMPTY) {
-      continue;
-    }
-    p_count_real[p_tracker[k]] = p_count[k];
-  }
-
   SEXP out = PROTECT(Rf_allocVector(VECSXP, d.used));
 
   SEXP counters = PROTECT(Rf_allocVector(INTSXP, d.used));
   int* p_counters = INTEGER(counters);
+  memset(p_counters, 0, d.used * sizeof(int));
 
   // Set up empty container with correct lengths
   // And initialize counters
-  for (int i = 0; i < d.used; ++i) {
-    SET_VECTOR_ELT(out, i, Rf_allocVector(INTSXP, p_count_real[i]));
-    p_counters[i] = 0;
+  for (int k = 0; k < d.size; ++k) {
+    if (d.key[k] == EMPTY) {
+      continue;
+    }
+
+    SET_VECTOR_ELT(out, p_tracker[k], Rf_allocVector(INTSXP, p_count[k]));
   }
 
   // Fill container
@@ -432,13 +424,12 @@ SEXP vctrs_duplicate_split_new(SEXP x) {
     int* p_out_i = INTEGER(out_i);
 
     p_out_i[k] = i + 1;
-
     p_counters[j] = k + 1;
 
     UNPROTECT(1);
   }
 
-  UNPROTECT(6);
+  UNPROTECT(5);
   dict_free(&d);
   return out;
 }
