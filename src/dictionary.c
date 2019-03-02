@@ -417,13 +417,8 @@ SEXP vctrs_duplicate_split_new(SEXP x) {
     int j = p_out_pos[i];
     int k = p_counters[j];
 
-    SEXP out_elem = PROTECT(VECTOR_ELT(out, j));
-    int* p_out_elem = INTEGER(out_elem);
-
-    p_out_elem[k] = i + 1;
+    INTEGER(VECTOR_ELT(out, j))[k] = i + 1;
     p_counters[j] = k + 1;
-
-    UNPROTECT(1);
   }
 
   UNPROTECT(5);
