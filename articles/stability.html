@@ -181,7 +181,7 @@ It is size-unstable for the same reasons as <code><a href="https://www.rdocument
 <li>
 <code><a href="../reference/vec_type.html">vec_type(vec_c(x, y))</a></code> equals <code><a href="../reference/vec_type.html">vec_type_common(x, y)</a></code>.</li>
 <li>
-<code><a href="../reference/vec_size.html">vec_size(vec_c(X, y))</a></code> equals <code>vec_size(x) + vec_size(y)</code>.</li>
+<code><a href="../reference/vec_size.html">vec_size(vec_c(x, y))</a></code> equals <code>vec_size(x) + vec_size(y)</code>.</li>
 </ul>
 <p><code><a href="https://www.rdocumentation.org/packages/base/topics/c">c()</a></code> has another undesirable property in that it’s not consistent with <code><a href="https://www.rdocumentation.org/packages/base/topics/unlist">unlist()</a></code>, i.e. <code><a href="https://www.rdocumentation.org/packages/base/topics/unlist">unlist(list(x, y))</a></code> does not always equal <code><a href="https://www.rdocumentation.org/packages/base/topics/c">c(x, y)</a></code>; i.e. base R has multiple sets of type-coercion rules. I won’t consider this problem further here.</p>
 <p>I have two goals here:</p>
@@ -225,7 +225,7 @@ It is size-unstable for the same reasons as <code><a href="https://www.rdocument
 <a class="sourceLine" id="cb11-2" data-line-number="2"><span class="co">#&gt; [[1]]</span></a>
 <a class="sourceLine" id="cb11-3" data-line-number="3"><span class="co">#&gt; function (x, ...) </span></a>
 <a class="sourceLine" id="cb11-4" data-line-number="4"><span class="co">#&gt; UseMethod("mean")</span></a>
-<a class="sourceLine" id="cb11-5" data-line-number="5"><span class="co">#&gt; &lt;bytecode: 0x3fdfc28&gt;</span></a>
+<a class="sourceLine" id="cb11-5" data-line-number="5"><span class="co">#&gt; &lt;bytecode: 0x2b08c28&gt;</span></a>
 <a class="sourceLine" id="cb11-6" data-line-number="6"><span class="co">#&gt; &lt;environment: namespace:base&gt;</span></a>
 <a class="sourceLine" id="cb11-7" data-line-number="7"><span class="co">#&gt; </span></a>
 <a class="sourceLine" id="cb11-8" data-line-number="8"><span class="co">#&gt; [[2]]</span></a>
