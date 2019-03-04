@@ -308,64 +308,7 @@ SEXP vctrs_duplicated(SEXP x) {
   return out;
 }
 
-struct dict_tracker {
-  // the actual position in the dictionary that a key belongs to
-  int32_t* dict_pos;
-};
-typedef struct dict_tracker dict_tracker;
-
-void dict_tracker_init(dict_tracker* dt, uint32_t size) {
-
-  dt->dict_pos = (int32_t*) R_alloc(size, sizeof(int32_t));
-  memset(dt->dict_pos, EMPTY, size * sizeof(int32_t));
-
-}
-
-void dict_tracker_put(dict_tracker* dt, uint32_t k, uint32_t used) {
-  dt->dict_pos[k] = used;
-}
-
-SEXP vctrs_duplicate_split_old(SEXP x) {
-
-  dictionary d;
-  dict_init(&d, x);
-
-  dict_tracker dt;
-  dict_tracker_init(&dt, d.size);
-
-  R_len_t n = vec_size(x);
-
-  int gi_init = fmin(n, 32);
-  int g_of_gi_init = fmin(n, 128);
-
-  growable_of_growable_int g_of_gi;
-  growable_of_growable_int_init(&g_of_gi, g_of_gi_init);
-
-  // Fill dictionary
-  for (int i = 0; i < n; ++i) {
-    uint32_t k = dict_find(&d, x, i);
-
-    if (d.key[k] == EMPTY) {
-      dict_tracker_put(&dt, k, d.used); // before d.used is incremented
-      dict_put(&d, k, i);
-
-      growable_int gi;
-      growable_int_init(&gi, gi_init);
-      growable_of_growable_int_push_growable_int(&g_of_gi, &gi);
-    }
-
-    int32_t g_i = dt.dict_pos[k];
-    growable_int_push_int(&g_of_gi.g_array[g_i], i + 1);
-  }
-
-  SEXP out = growable_of_growable_int_values(&g_of_gi);
-
-  growable_of_growable_int_free(&g_of_gi);
-
-  return out;
-}
-
-SEXP vctrs_duplicate_split_new(SEXP x) {
+SEXP vctrs_duplicate_split(SEXP x) {
   dictionary d;
   dict_init(&d, x);
 

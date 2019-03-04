@@ -144,18 +144,6 @@ vec_duplicate_id <- function(x) {
   .Call(vctrs_id, x)
 }
 
-#' @export
-vec_duplicate_split_old <- function(x) {
-  x <- vec_proxy_equal(x)
-  .Call(vctrs_duplicate_split_old, x)
-}
-
-#' @export
-vec_duplicate_split_new <- function(x) {
-  x <- vec_proxy_equal(x)
-  .Call(vctrs_duplicate_split_new, x)
-}
-
 # Unique values -----------------------------------------------------------
 
 #' Find and count unique values
@@ -281,26 +269,12 @@ vec_in <- function(needles, haystack) {
 #'   as_tibble(vec_split(mtcars, mtcars[c("vs", "am")]))
 #' }
 vec_split <- function(x, by) {
-  # TODO: optimise to avoid creating the dictionary twice and to avoid split()
-  keys <- vec_unique(by)
-  if (vec_size(x) != vec_size(by)) {
-    abort("`x` and `by` must have same size")
-  }
-
-  idx <- unname(split(vec_seq_along(x), vec_duplicate_id(by)))
-  vals <- new_list_of(map(idx, vec_slice, x = x), vec_type(x))
-
-  new_data_frame(list(key = keys, val = vals), n = vec_size(keys))
-}
-
-#' @export
-vec_split_old <- function(x, by) {
 
   if (vec_size(x) != vec_size(by)) {
     abort("`x` and `by` must have same size")
   }
 
-  idx <- vec_duplicate_split_old(by)
+  idx <- vec_duplicate_split(by)
 
   keys <- vec_slice(by, map_int(idx, function(x) {x[1]}))
 
@@ -309,18 +283,7 @@ vec_split_old <- function(x, by) {
   new_data_frame(list(key = keys, val = vals), n = vec_size(keys))
 }
 
-#' @export
-vec_split_new <- function(x, by) {
-
-  if (vec_size(x) != vec_size(by)) {
-    abort("`x` and `by` must have same size")
-  }
-
-  idx <- vec_duplicate_split_new(by)
-
-  keys <- vec_slice(by, map_int(idx, function(x) {x[1]}))
-
-  vals <- new_list_of(map(idx, vec_slice, x = x), vec_type(x))
-
-  new_data_frame(list(key = keys, val = vals), n = vec_size(keys))
+vec_duplicate_split <- function(x) {
+  x <- vec_proxy_equal(x)
+  .Call(vctrs_duplicate_split, x)
 }
