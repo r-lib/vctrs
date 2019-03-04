@@ -274,17 +274,19 @@ vec_split <- function(x, by) {
     abort("`x` and `by` must have same size")
   }
 
-  idx <- vec_duplicate_split(by)
+  ki <- vec_duplicate_split(by)
 
-  keys <- vec_slice(by, map_int(idx, function(x) {x[1]}))
+  keys <- vec_slice(by, ki$key)
 
-  x_lst <- map(idx, vec_slice, x = x)
+  x_split <- map(ki$idx, vec_slice, x = x)
 
-  vals <- new_list_of(x_lst, vec_type(x))
+  vals <- new_list_of(x_split, vec_type(x))
 
   new_data_frame(list(key = keys, val = vals), n = vec_size(keys))
 }
 
+# Returns key-index pair giving the index of first key occurence and
+# a list containing the locations of each key
 vec_duplicate_split <- function(x) {
   x <- vec_proxy_equal(x)
   .Call(vctrs_duplicate_split, x)

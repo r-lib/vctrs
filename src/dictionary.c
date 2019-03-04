@@ -322,7 +322,7 @@ SEXP vctrs_duplicate_split(SEXP x) {
 
   R_len_t n = vec_size(x);
 
-  // Tells us which element of the final list x[i] goes in
+  // Tells us which element of the index list x[i] goes in
   SEXP out_pos = PROTECT(Rf_allocVector(INTSXP, n));
   int* p_out_pos = INTEGER(out_pos);
 
@@ -340,31 +340,47 @@ SEXP vctrs_duplicate_split(SEXP x) {
     p_count[k]++;
   }
 
-  SEXP out = PROTECT(Rf_allocVector(VECSXP, d.used));
+  SEXP out_key = PROTECT(Rf_allocVector(INTSXP, d.used));
+  int* p_out_key = INTEGER(out_key);
+
+  SEXP out_idx = PROTECT(Rf_allocVector(VECSXP, d.used));
 
   SEXP counters = PROTECT(Rf_allocVector(INTSXP, d.used));
   int* p_counters = INTEGER(counters);
   memset(p_counters, 0, d.used * sizeof(int));
 
-  // Set up empty container
+  // Set up empty index container
   for (int k = 0; k < d.size; ++k) {
     if (d.key[k] == EMPTY) {
       continue;
     }
 
-    SET_VECTOR_ELT(out, p_tracker[k], Rf_allocVector(INTSXP, p_count[k]));
+    SET_VECTOR_ELT(out_idx, p_tracker[k], Rf_allocVector(INTSXP, p_count[k]));
   }
 
-  // Fill container
+  // Fill index container and key locations
   for (int i = 0; i < n; ++i) {
     int j = p_out_pos[i];
     int k = p_counters[j];
 
-    INTEGER(VECTOR_ELT(out, j))[k] = i + 1;
+    if (k == 0) {
+      p_out_key[j] = i + 1;
+    }
+
+    INTEGER(VECTOR_ELT(out_idx, j))[k] = i + 1;
     p_counters[j] = k + 1;
   }
 
-  UNPROTECT(5);
+  // Construct output
+  SEXP out = PROTECT(Rf_allocVector(VECSXP, 2));
+  SET_VECTOR_ELT(out, 0, out_key);
+  SET_VECTOR_ELT(out, 1, out_idx);
+  SEXP names = PROTECT(Rf_allocVector(STRSXP, 2));
+  SET_STRING_ELT(names, 0, Rf_mkChar("key"));
+  SET_STRING_ELT(names, 1, Rf_mkChar("idx"));
+  Rf_setAttrib(out, R_NamesSymbol, names);
+
+  UNPROTECT(8);
   dict_free(&d);
   return out;
 }
