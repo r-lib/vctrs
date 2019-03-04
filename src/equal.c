@@ -8,22 +8,27 @@ int equal_scalar(SEXP x, int i, SEXP y, int j, bool na_equal) {
   case LGLSXP: {
     int xi = LOGICAL(x)[i], yj = LOGICAL(y)[j];
     if (xi == NA_LOGICAL) return na_equal ? yj == NA_LOGICAL : NA_LOGICAL;
+    if (yj == NA_LOGICAL) return na_equal ? xi == NA_LOGICAL : NA_LOGICAL;
     return xi == yj;
   }
   case INTSXP: {
     int xi = INTEGER(x)[i], yj = INTEGER(y)[j];
     if (xi == NA_INTEGER) return na_equal ? yj == NA_INTEGER : NA_LOGICAL;
+    if (yj == NA_INTEGER) return na_equal ? xi == NA_INTEGER : NA_LOGICAL;
     return xi == yj;
   }
   case REALSXP: {
     double xi = REAL(x)[i], yj = REAL(y)[j];
     if (R_IsNA(xi)) return na_equal ? R_IsNA(yj) : NA_LOGICAL;
     if (R_IsNaN(xi)) return na_equal ? R_IsNaN(yj) : NA_LOGICAL;
+    if (R_IsNA(yj)) return na_equal ? R_IsNA(xi) : NA_LOGICAL;
+    if (R_IsNaN(yj)) return na_equal ? R_IsNaN(xi) : NA_LOGICAL;
     return xi == yj;
   }
   case STRSXP: {
     SEXP xi = STRING_ELT(x, i), yj = STRING_ELT(y, j);
     if (xi == NA_STRING) return na_equal ? yj == NA_STRING : NA_LOGICAL;
+    if (yj == NA_STRING) return na_equal ? xi == NA_STRING : NA_LOGICAL;
     // Ignoring encoding for now
     return xi == yj;
   }
