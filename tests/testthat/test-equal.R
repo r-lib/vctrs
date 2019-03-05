@@ -145,6 +145,26 @@ test_that("NA propagate symmetrically (#204)", {
   expect_identical(vec_equal(NA, letters[1:2]), exp)
 })
 
+test_that("NA propagate from data frames columns", {
+  x <- data.frame(x = 1:3)
+  y <- data.frame(x = c(1L, NA, 2L))
+
+  expect_identical(vec_equal(x, y), c(TRUE, NA, FALSE))
+  expect_identical(vec_equal(y, x), c(TRUE, NA, FALSE))
+
+  expect_identical(vec_equal(x, y, na_equal = TRUE), c(TRUE, FALSE, FALSE))
+  expect_identical(vec_equal(y, x, na_equal = TRUE), c(TRUE, FALSE, FALSE))
+
+  x <- data.frame(x = 1:3, y = 1:3)
+  y <- data.frame(x = c(1L, NA, 2L), y = c(NA, 2L, 3L))
+
+  expect_identical(vec_equal(x, y), c(NA, NA, FALSE))
+  expect_identical(vec_equal(y, x), c(NA, NA, FALSE))
+
+  expect_identical(vec_equal(x, y, na_equal = TRUE), c(FALSE, FALSE, FALSE))
+  expect_identical(vec_equal(y, x, na_equal = TRUE), c(FALSE, FALSE, FALSE))
+})
+
 
 # proxy -------------------------------------------------------------------
 
