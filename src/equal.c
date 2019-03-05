@@ -47,9 +47,13 @@ int equal_scalar(SEXP x, int i, SEXP y, int j, bool na_equal) {
       for (int k = 0; k < p; ++k) {
         SEXP col_x = VECTOR_ELT(x, k);
         SEXP col_y = VECTOR_ELT(y, k);
-        if (!equal_scalar(col_x, i, col_y, j, na_equal))
-          return false;
+
+        int eq = equal_scalar(col_x, i, col_y, j, na_equal);
+        if (eq <= 0) {
+          return eq;
+        }
       }
+
       return true;
     } else {
       return equal_object(VECTOR_ELT(x, i), VECTOR_ELT(y, j));
