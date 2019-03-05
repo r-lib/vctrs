@@ -269,14 +269,22 @@ vec_in <- function(needles, haystack) {
 #'   as_tibble(vec_split(mtcars, mtcars[c("vs", "am")]))
 #' }
 vec_split <- function(x, by) {
-  # TODO: optimise to avoid creating the dictionary twice and to avoid split()
-  keys <- vec_unique(by)
   if (vec_size(x) != vec_size(by)) {
     abort("`x` and `by` must have same size")
   }
 
-  idx <- unname(split(vec_seq_along(x), vec_duplicate_id(by)))
-  vals <- new_list_of(map(idx, vec_slice, x = x), vec_type(x))
+  ki <- vec_duplicate_split(by)
+  keys <- vec_slice(by, ki$key)
+  x_split <- map(ki$idx, vec_slice, x = x)
+
+  vals <- new_list_of(x_split, vec_type(x))
 
   new_data_frame(list(key = keys, val = vals), n = vec_size(keys))
+}
+
+# Returns key-index pair giving the index of first key occurence and
+# a list containing the locations of each key
+vec_duplicate_split <- function(x) {
+  x <- vec_proxy_equal(x)
+  .Call(vctrs_duplicate_split, x)
 }
