@@ -269,15 +269,12 @@ vec_in <- function(needles, haystack) {
 #'   as_tibble(vec_split(mtcars, mtcars[c("vs", "am")]))
 #' }
 vec_split <- function(x, by) {
-
   if (vec_size(x) != vec_size(by)) {
     abort("`x` and `by` must have same size")
   }
 
   ki <- vec_duplicate_split(by)
-
   keys <- vec_slice(by, ki$key)
-
   x_split <- map(ki$idx, vec_slice, x = x)
 
   vals <- new_list_of(x_split, vec_type(x))
