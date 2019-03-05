@@ -5,6 +5,24 @@
 #include <stdbool.h>
 #include <stdint.h>
 
+
+// Vector types -------------------------------------------------
+
+enum vctrs_type {
+  vctrs_type_null      = 0,
+  vctrs_type_logical   = 1,
+  vctrs_type_integer   = 2,
+  vctrs_type_double    = 3,
+  vctrs_type_complex   = 4,
+  vctrs_type_character = 5,
+  vctrs_type_raw       = 6,
+  vctrs_type_list      = 7,
+  vctrs_type_dataframe = 8
+};
+
+enum vctrs_type vec_typeof(SEXP x);
+
+
 // Vector methods ------------------------------------------------
 R_len_t vec_size(SEXP x);
 
