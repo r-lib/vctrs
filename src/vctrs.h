@@ -12,7 +12,9 @@ bool is_data_frame(SEXP x);
 bool is_record(SEXP x);
 bool is_scalar(SEXP x);
 
-bool equal_object(SEXP x, SEXP y);
+// Most vector predicates return `int` because missing values are
+// propagated as `NA_LOGICAL`
+int equal_object(SEXP x, SEXP y, bool na_equal);
 bool equal_names(SEXP x, SEXP y);
 
 int equal_scalar(SEXP x, int i, SEXP y, int j, bool na_equal);

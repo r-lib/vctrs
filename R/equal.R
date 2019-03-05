@@ -74,6 +74,6 @@ vec_equal_na <- function(x) {
   .Call(vctrs_equal_na, x)
 }
 
-obj_equal <- function(x, y) {
-  .Call(vctrs_equal_object, x, y)
+obj_equal <- function(x, y, na_equal = TRUE) {
+  .Call(vctrs_equal_object, x, y, na_equal)
 }

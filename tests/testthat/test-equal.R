@@ -165,6 +165,28 @@ test_that("NA propagate from data frames columns", {
   expect_identical(vec_equal(y, x, na_equal = TRUE), c(FALSE, FALSE, FALSE))
 })
 
+test_that("NA propagate from list components", {
+  expect_identical(obj_equal(NA, NA, na_equal = FALSE), NA)
+  expect_identical(vec_equal(list(NA), list(NA)), NA)
+
+  expect_true(obj_equal(NA, NA, na_equal = TRUE))
+  expect_true(vec_equal(list(NA), list(NA), na_equal = TRUE))
+})
+
+test_that("NA propagate from vector names when comparing objects (#217)", {
+  x <- set_names(1:3, c("a", "b", NA))
+  y <- set_names(1:3, c("a", NA, NA))
+
+  expect_identical(obj_equal(x, x, na_equal = FALSE), NA)
+  expect_identical(obj_equal(x, x, na_equal = TRUE), TRUE)
+
+  expect_identical(obj_equal(x, y, na_equal = FALSE), NA)
+  expect_identical(obj_equal(x, y, na_equal = TRUE), FALSE)
+
+  expect_identical(vec_equal(list(x, x, y), list(x, y, y)), c(NA, NA, NA))
+  expect_identical(vec_equal(list(x, x, y), list(x, y, y), na_equal = TRUE), c(TRUE, FALSE, TRUE))
+})
+
 
 # proxy -------------------------------------------------------------------
 

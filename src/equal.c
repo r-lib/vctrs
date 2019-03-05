@@ -34,15 +34,20 @@ int equal_scalar(SEXP x, int i, SEXP y, int j, bool na_equal) {
   }
   case VECSXP:
     if (is_data_frame(x)) {
-      if (!is_data_frame(y))
+      if (!is_data_frame(y)) {
         return false;
+      }
 
       int p = Rf_length(x);
-      if (p != Rf_length(y))
+      if (p != Rf_length(y)) {
         return false;
+      }
 
-      if (!equal_names(x, y))
+      // Don't worry about names missingness because properly formed
+      // data frames shouldn't have any missing names
+      if (!equal_names(x, y)) {
         return false;
+      }
 
       for (int k = 0; k < p; ++k) {
         SEXP col_x = VECTOR_ELT(x, k);
@@ -56,36 +61,60 @@ int equal_scalar(SEXP x, int i, SEXP y, int j, bool na_equal) {
 
       return true;
     } else {
-      return equal_object(VECTOR_ELT(x, i), VECTOR_ELT(y, j));
+      return equal_object(VECTOR_ELT(x, i), VECTOR_ELT(y, j), na_equal);
     }
   default:
     Rf_errorcall(R_NilValue, "Unsupported type %s", Rf_type2char(TYPEOF(x)));
   }
 }
 
-bool equal_object(SEXP x, SEXP y) {
-  if (x == y)
-    return true;
+int equal_object(SEXP x, SEXP y, bool na_equal) {
+  SEXPTYPE type = TYPEOF(x);
 
-  if (TYPEOF(x) != TYPEOF(y))
+  if (type != TYPEOF(y)) {
     return false;
+  }
 
-  switch(TYPEOF(x)) {
+  // Pointer comparison is safe for these types
+  switch (type) {
+  case NILSXP:
+  case SYMSXP:
+  case SPECIALSXP:
+  case BUILTINSXP:
+  case CHARSXP:
+  case ENVSXP:
+  case EXTPTRSXP:
+    return x == y;
+  }
+
+  // For other types, pointer comparison is only relevant when missing
+  // values are not propagated
+  if (na_equal && x == y) {
+    return true;
+  }
+
+  switch(type) {
   case LGLSXP:
   case INTSXP:
   case REALSXP:
   case STRSXP:
   case VECSXP: {
     R_len_t n = vec_size(x);
-    if (n != vec_size(y))
+    if (n != vec_size(y)) {
       return false;
+    }
 
-    if (!equal_object(ATTRIB(x), ATTRIB(y)))
-      return false;
+    int eq_attr = equal_object(ATTRIB(x), ATTRIB(y), na_equal);
+    if (eq_attr <= 0) {
+      return eq_attr;
+    }
 
-    for (R_len_t i = 0; i < n; ++i)
-      if (!equal_scalar(x, i, y, i, true))
-        return false;
+    for (R_len_t i = 0; i < n; ++i) {
+      int eq = equal_scalar(x, i, y, i, na_equal);
+      if (eq <= 0) {
+        return eq;
+      }
+    }
 
     return true;
   }
@@ -93,40 +122,52 @@ bool equal_object(SEXP x, SEXP y) {
   case DOTSXP:
   case LANGSXP:
   case LISTSXP:
-  case BCODESXP:
-    if (!equal_object(ATTRIB(x), ATTRIB(y)))
-      return false;
-    if (!equal_object(CAR(x), CAR(y)))
-      return false;
-    if (!equal_object(CDR(x), CDR(y)))
-      return false;
+  case BCODESXP: {
+    int eq;
+
+    eq = equal_object(ATTRIB(x), ATTRIB(y), na_equal);
+    if (eq <= 0) {
+      return eq;
+    }
+    eq = equal_object(CAR(x), CAR(y), na_equal);
+    if (eq <= 0) {
+      return eq;
+    }
+    eq = equal_object(CDR(x), CDR(y), na_equal);
+    if (eq <= 0) {
+      return eq;
+    }
     return true;
+  }
+
   case CLOSXP:
-    if (!equal_object(ATTRIB(x), ATTRIB(y)))
+    if (!equal_object(ATTRIB(x), ATTRIB(y), na_equal)) {
       return false;
-    if (!equal_object(BODY(x), BODY(y)))
+    }
+    if (!equal_object(BODY(x), BODY(y), na_equal)) {
       return false;
-    if (!equal_object(CLOENV(x), CLOENV(y)))
+    }
+    if (!equal_object(CLOENV(x), CLOENV(y), na_equal)) {
       return false;
-    if (!equal_object(FORMALS(x), FORMALS(y)))
+    }
+    if (!equal_object(FORMALS(x), FORMALS(y), na_equal)) {
       return false;
+    }
     return true;
 
-  // Pointer comparison
+  case NILSXP:
   case SYMSXP:
   case SPECIALSXP:
   case BUILTINSXP:
   case CHARSXP:
   case ENVSXP:
   case EXTPTRSXP:
-    // If equal, would have returned true above
-    return false;
-    break;
+    // These are handled above with pointer comparison
+    Rf_error("Internal error: Unexpected reference type in `vec_equal()`");
 
   default:
     Rf_errorcall(R_NilValue, "Unsupported type %s", Rf_type2char(TYPEOF(x)));
   }
-
 
   return true;
 }
@@ -164,7 +205,7 @@ bool equal_names(SEXP x, SEXP y) {
   SEXP x_names = Rf_getAttrib(x, R_NamesSymbol);
   SEXP y_names = Rf_getAttrib(y, R_NamesSymbol);
 
-  return equal_object(x_names, y_names);
+  return equal_object(x_names, y_names, true);
 }
 
 // R interface -----------------------------------------------------------------
@@ -199,6 +240,6 @@ SEXP vctrs_equal_na(SEXP x) {
   return out;
 }
 
-SEXP vctrs_equal_object(SEXP x, SEXP y) {
-  return Rf_ScalarLogical(equal_object(x, y));
+SEXP vctrs_equal_object(SEXP x, SEXP y, SEXP na_equal) {
+  return Rf_ScalarLogical(equal_object(x, y, Rf_asLogical(na_equal)));
 }
