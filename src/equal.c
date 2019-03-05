@@ -68,6 +68,48 @@ int equal_scalar(SEXP x, int i, SEXP y, int j, bool na_equal) {
   }
 }
 
+// TODO: Sort attributes by tag before comparison
+
+// We don't propagate missingness from attributes because any missing
+// values in there are probably actual data
+static inline bool obj_equal_attrib(SEXP x, SEXP y) {
+  return equal_object(ATTRIB(x), ATTRIB(y), true);
+}
+
+// Same as `obj_` variant but propagates NA only for names
+static inline int vec_equal_attrib(SEXP x, SEXP y, bool na_equal) {
+  SEXP x_attrs = ATTRIB(x);
+  SEXP y_attrs = ATTRIB(y);
+
+  while (x_attrs != R_NilValue) {
+    if (y_attrs == R_NilValue) {
+      return false;
+    }
+
+    SEXP x_tag = TAG(x_attrs);
+    SEXP y_tag = TAG(x_attrs);
+
+    if (x_tag != y_tag) {
+      return false;
+    }
+
+    int eq;
+    if (x_tag == R_NamesSymbol) {
+      eq = equal_object(CAR(x_attrs), CAR(y_attrs), na_equal);
+    } else {
+      eq = equal_object(CAR(x_attrs), CAR(y_attrs), true);
+    }
+    if (eq <= 0) {
+      return(eq);
+    }
+
+    x_attrs = CDR(x_attrs);
+    y_attrs = CDR(y_attrs);
+  }
+
+  return true;
+}
+
 int equal_object(SEXP x, SEXP y, bool na_equal) {
   SEXPTYPE type = TYPEOF(x);
 
@@ -104,7 +146,7 @@ int equal_object(SEXP x, SEXP y, bool na_equal) {
       return false;
     }
 
-    int eq_attr = equal_object(ATTRIB(x), ATTRIB(y), na_equal);
+    int eq_attr = vec_equal_attrib(x, y, na_equal);
     if (eq_attr <= 0) {
       return eq_attr;
     }
@@ -123,12 +165,11 @@ int equal_object(SEXP x, SEXP y, bool na_equal) {
   case LANGSXP:
   case LISTSXP:
   case BCODESXP: {
-    int eq;
-
-    eq = equal_object(ATTRIB(x), ATTRIB(y), na_equal);
-    if (eq <= 0) {
-      return eq;
+    if (!obj_equal_attrib(x, y)) {
+      return false;
     }
+
+    int eq;
     eq = equal_object(CAR(x), CAR(y), na_equal);
     if (eq <= 0) {
       return eq;
@@ -141,16 +182,16 @@ int equal_object(SEXP x, SEXP y, bool na_equal) {
   }
 
   case CLOSXP:
-    if (!equal_object(ATTRIB(x), ATTRIB(y), na_equal)) {
+    if (!obj_equal_attrib(x, y)) {
       return false;
     }
-    if (!equal_object(BODY(x), BODY(y), na_equal)) {
+    if (!equal_object(BODY(x), BODY(y), true)) {
       return false;
     }
-    if (!equal_object(CLOENV(x), CLOENV(y), na_equal)) {
+    if (!equal_object(CLOENV(x), CLOENV(y), true)) {
       return false;
     }
-    if (!equal_object(FORMALS(x), FORMALS(y), na_equal)) {
+    if (!equal_object(FORMALS(x), FORMALS(y), true)) {
       return false;
     }
     return true;

@@ -174,6 +174,9 @@ test_that("NA propagate from list components", {
 })
 
 test_that("NA propagate from vector names when comparing objects (#217)", {
+  # FIXME: Not clear what should we do in the recursive case. Should we
+  # compare attributes of non S3 vectors at all?
+
   x <- set_names(1:3, c("a", "b", NA))
   y <- set_names(1:3, c("a", NA, NA))
 
@@ -185,6 +188,29 @@ test_that("NA propagate from vector names when comparing objects (#217)", {
 
   expect_identical(vec_equal(list(x, x, y), list(x, y, y)), c(NA, NA, NA))
   expect_identical(vec_equal(list(x, x, y), list(x, y, y), na_equal = TRUE), c(TRUE, FALSE, TRUE))
+})
+
+test_that("NA do not propagate from attributes", {
+  x <- structure(1:3, foo = NA)
+  y <- structure(1:3, foo = "")
+  expect_true(obj_equal(x, x))
+  expect_false(obj_equal(x, y))
+})
+
+test_that("NA do not propagate from function bodies or formals", {
+  fn <- other <- function() NA
+  body(other) <- TRUE
+
+  expect_true(vec_equal(list(fn), list(fn)))
+  expect_false(vec_equal(list(fn), list(other)))
+  expect_true(obj_equal(fn, fn))
+  expect_false(obj_equal(fn, other))
+
+  fn <- other <- function(x = NA) NULL
+  formals(other) <- list(x = NULL)
+
+  expect_true(vec_equal(list(fn), list(fn)))
+  expect_false(vec_equal(list(fn), list(other)))
 })
 
 
