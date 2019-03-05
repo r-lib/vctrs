@@ -693,7 +693,7 @@ vec_proxy_compare.vctrs_rational <- function(x) {
 sort(x)
 ```
 
-(We could have used the same approach in `vec_proxy_equality()`, but when working with floating point numbers it's not necessarily true that `x == y` implies that `d * x == d * y`.)
+(We could have used the same approach in `vec_proxy_equal()`, but when working with floating point numbers it's not necessarily true that `x == y` implies that `d * x == d * y`.)
 
 ### Polynomial class
 
