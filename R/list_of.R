@@ -67,6 +67,19 @@ new_list_of <- function(x = list(), ptype = logical(), ..., class = character())
 
 #' @export
 #' @rdname list_of
+validate_list_of <- function(x) {
+  stopifnot(is.list(x))
+
+  ptype <- attr(x, "ptype")
+  stopifnot(vec_size(ptype) == 0)
+
+  walk(x, vec_cast, to = ptype)
+
+  invisible(x)
+}
+
+#' @export
+#' @rdname list_of
 is_list_of <- function(x) {
   inherits(x, "vctrs_list_of")
 }

@@ -1,5 +1,7 @@
 # vctrs 0.1.0.9000
 
+* New `validate_list_of()` (#193).
+
 * `vec_equal()` now handles missing values symmetrically (#204).
 
 * `vec_proxy_compare()` gains an experimental `relax` argument, which allows 
