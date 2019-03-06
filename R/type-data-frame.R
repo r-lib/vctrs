@@ -158,7 +158,7 @@ df_col_cast <- function(x, to) {
 
   # Coerce common columns
   common <- intersect(names(x), names(to))
-  out[common] <- map2(out[common], to[common], vec_cast)
+  out[common] <- map2(out[common], to[common], function(x, y) {vec_cast(x, y)})
 
   # Add new columns
   from_type <- setdiff(names(to), names(x))
