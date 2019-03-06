@@ -219,13 +219,13 @@ It is size-unstable for the same reasons as <code><a href="https://www.rdocument
 <p>As far as I can tell <code><a href="https://www.rdocumentation.org/packages/base/topics/c">c()</a></code> never throws an error. No matter how bizarre the inputs, it always returns something:</p>
 <div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb10-1" data-line-number="1"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/Sys.time">Sys.Date</a></span>(), <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/factor">factor</a></span>(<span class="st">"x"</span>), <span class="st">"x"</span>)</a>
 <a class="sourceLine" id="cb10-2" data-line-number="2"><span class="co">#&gt; Warning in as.POSIXlt.Date(x): NAs introduced by coercion</span></a>
-<a class="sourceLine" id="cb10-3" data-line-number="3"><span class="co">#&gt; [1] "2019-03-05" "1970-01-02" NA</span></a></code></pre></div>
+<a class="sourceLine" id="cb10-3" data-line-number="3"><span class="co">#&gt; [1] "2019-03-06" "1970-01-02" NA</span></a></code></pre></div>
 <p>If the inputs aren’t vectors, <code><a href="https://www.rdocumentation.org/packages/base/topics/c">c()</a></code> automatically puts them in a list:</p>
 <div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb11-1" data-line-number="1"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(mean, <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/environment">globalenv</a></span>())</a>
 <a class="sourceLine" id="cb11-2" data-line-number="2"><span class="co">#&gt; [[1]]</span></a>
 <a class="sourceLine" id="cb11-3" data-line-number="3"><span class="co">#&gt; function (x, ...) </span></a>
 <a class="sourceLine" id="cb11-4" data-line-number="4"><span class="co">#&gt; UseMethod("mean")</span></a>
-<a class="sourceLine" id="cb11-5" data-line-number="5"><span class="co">#&gt; &lt;bytecode: 0x3617c28&gt;</span></a>
+<a class="sourceLine" id="cb11-5" data-line-number="5"><span class="co">#&gt; &lt;bytecode: 0x44d9c28&gt;</span></a>
 <a class="sourceLine" id="cb11-6" data-line-number="6"><span class="co">#&gt; &lt;environment: namespace:base&gt;</span></a>
 <a class="sourceLine" id="cb11-7" data-line-number="7"><span class="co">#&gt; </span></a>
 <a class="sourceLine" id="cb11-8" data-line-number="8"><span class="co">#&gt; [[2]]</span></a>
@@ -414,7 +414,7 @@ It is size-unstable for the same reasons as <code><a href="https://www.rdocument
 <a class="sourceLine" id="cb27-17" data-line-number="17"><span class="co">#&gt; [1] &lt;NA&gt;  big   big   small small</span></a>
 <a class="sourceLine" id="cb27-18" data-line-number="18"><span class="co">#&gt; Levels: small big</span></a>
 <a class="sourceLine" id="cb27-19" data-line-number="19"><span class="kw">if_else</span>(x <span class="op">&gt;</span><span class="st"> </span><span class="dv">2</span>, <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/Sys.time">Sys.Date</a></span>(), <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/Sys.time">Sys.Date</a></span>() <span class="op">+</span><span class="st"> </span><span class="dv">7</span>)</a>
-<a class="sourceLine" id="cb27-20" data-line-number="20"><span class="co">#&gt; [1] NA           "2019-03-12" "2019-03-12" "2019-03-05" "2019-03-05"</span></a></code></pre></div>
+<a class="sourceLine" id="cb27-20" data-line-number="20"><span class="co">#&gt; [1] NA           "2019-03-13" "2019-03-13" "2019-03-06" "2019-03-06"</span></a></code></pre></div>
 <p>By using <code><a href="../reference/vec_size.html">vec_size()</a></code> and <code><a href="../reference/vec_slice.html">vec_slice()</a></code> this definition of <code>if_else()</code> automatically works with data.frames and matrices:</p>
 <div class="sourceCode" id="cb28"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb28-1" data-line-number="1"><span class="kw">if_else</span>(x <span class="op">&gt;</span><span class="st"> </span><span class="dv">2</span>, <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/data.frame">data.frame</a></span>(<span class="dt">x =</span> <span class="dv">1</span>), <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/data.frame">data.frame</a></span>(<span class="dt">y =</span> <span class="dv">2</span>))</a>
 <a class="sourceLine" id="cb28-2" data-line-number="2"><span class="co">#&gt;    x  y</span></a>
