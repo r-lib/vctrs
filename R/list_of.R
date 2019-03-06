@@ -68,8 +68,12 @@ new_list_of <- function(x = list(), ptype = logical(), ..., class = character())
 #' @export
 #' @rdname list_of
 validate_list_of <- function(x) {
-  # Type checking is a side effect of the constructor
-  list_of(!!!x, .ptype = attr(x, "ptype"))
+  stopifnot(is.list(x))
+
+  ptype <- attr(x, "ptype")
+  stopifnot(vec_size(ptype) == 0)
+
+  walk(x, vec_cast, to = ptype)
 
   invisible(x)
 }
