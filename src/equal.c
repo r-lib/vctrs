@@ -76,8 +76,6 @@ int df_equal_scalar(SEXP x, R_len_t i, SEXP y, R_len_t j, bool na_equal) {
   return true;
 }
 
-// Caller must ensure proper types and sizes. This function is meant
-// to be used in loops. These must check bounds.
 int equal_scalar(SEXP x, R_len_t i, SEXP y, R_len_t j, bool na_equal) {
   switch (vec_typeof(x)) {
   case vctrs_type_logical: return lgl_equal_scalar(LOGICAL(x) + i, LOGICAL(y) + j, na_equal);

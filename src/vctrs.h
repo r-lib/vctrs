@@ -35,8 +35,15 @@ bool is_scalar(SEXP x);
 int equal_object(SEXP x, SEXP y, bool na_equal);
 bool equal_names(SEXP x, SEXP y);
 
-// Caller must ensure proper types and sizes. These functions are meant
-// to be used in loops. These must check bounds.
+/**
+ * These functions are meant to be used in loops so it is the callers
+ * responsibility to ensure that:
+ *
+ * - `x` and `y` have identical SEXTYPEs
+ * - `i` is a valid index into `x`, and `j` is a valid index into `y`.
+ *
+ * The behaviour is undefined if these conditions are not true.
+ */
 int equal_scalar(SEXP x, int i, SEXP y, int j, bool na_equal);
 int compare_scalar(SEXP x, int i, SEXP y, int j, bool na_equal);
 
