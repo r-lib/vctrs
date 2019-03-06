@@ -28,3 +28,10 @@ test_that("asserting size", {
     class = "vctrs_error_assert_size"
   )
 })
+
+test_that("vec_assert() labels input", {
+  expect_error(
+    vec_assert(new_vctr(1:4), size = 5),
+    regexp = "new_vctr\\(1:4\\)` must have"
+  )
+})
