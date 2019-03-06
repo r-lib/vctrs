@@ -39,7 +39,12 @@ test_that("asserting size", {
 test_that("vec_assert() labels input", {
   expect_error(
     vec_assert(new_vctr(1:4), size = 5),
-    regexp = "new_vctr\\(1:4\\)` must have",
+    regexp = "`new_vctr\\(1:4\\)` must have",
+    class = "vctrs_error_assert_size"
+  )
+  expect_error(
+    vec_assert(new_vctr(1:4), size = 5, arg = "foobar"),
+    regexp = "`foobar` must have",
     class = "vctrs_error_assert_size"
   )
 })

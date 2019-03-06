@@ -20,27 +20,31 @@
 #' @param x A vector argument to check.
 #' @param ptype Prototype to compare against.
 #' @param size Size to compare against
+#' @param arg Name of argument being checked. This is used in error
+#'   messages. The label of the expression passed as `x` is taken as
+#'   default.
+#'
 #' @return `vec_is()` returns `TRUE` or `FALSE`. `vec_assert()` either
 #'   throws a typed error (see section on error types) or returns `x`,
 #'   invisibly.
 #' @export
-vec_assert <- function(x, ptype = NULL, size = NULL) {
-  x_name <- as_label(substitute(x))
-  vec_is_impl(x, x_name, ptype, size, assert = TRUE)
+vec_assert <- function(x, ptype = NULL, size = NULL, arg = NULL) {
+  arg <- arg %||% as_label(substitute(x))
+  vec_is_impl(x, arg, ptype, size, assert = TRUE)
 }
 #' @export
 vec_is <- function(x, ptype = NULL, size = NULL) {
   vec_is_impl(x, "", ptype, size)
 }
 
-vec_is_impl <- function(x, x_name, ptype = NULL, size = NULL, assert = FALSE) {
+vec_is_impl <- function(x, arg, ptype = NULL, size = NULL, assert = FALSE) {
   if (!is.null(ptype)) {
     x_type <- vec_type(x)
     ptype <- vec_type(ptype)
 
     if (!identical(ptype, x_type)) {
       if (assert) {
-        msg <- paste0("`", x_name, "` must be <", vec_ptype_abbr(ptype), ">, not <", vec_ptype_abbr(x_type), ">.")
+        msg <- paste0("`", arg, "` must be <", vec_ptype_abbr(ptype), ">, not <", vec_ptype_abbr(x_type), ">.")
         abort(
           msg,
           .subclass = c("vctrs_error_assert_ptype", "vctrs_error_assert"),
@@ -59,7 +63,7 @@ vec_is_impl <- function(x, x_name, ptype = NULL, size = NULL, assert = FALSE) {
 
     if (!identical(size, x_size)) {
       if (assert) {
-        msg <- paste0("`", x_name, "` must have size ", size, ", not size ", x_size, ".")
+        msg <- paste0("`", arg, "` must have size ", size, ", not size ", x_size, ".")
         abort(
           msg,
           .subclass = c("vctrs_error_assert_size", "vctrs_error_assert"),

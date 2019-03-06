@@ -4,7 +4,7 @@
 \alias{vec_assert}
 \title{Assert an argument has known prototype and/or size}
 \usage{
-vec_assert(x, ptype = NULL, size = NULL)
+vec_assert(x, ptype = NULL, size = NULL, arg = NULL)
 }
 \arguments{
 \item{x}{A vector argument to check.}
@@ -12,6 +12,10 @@ vec_assert(x, ptype = NULL, size = NULL)
 \item{ptype}{Prototype to compare against.}
 
 \item{size}{Size to compare against}
+
+\item{arg}{Name of argument being checked. This is used in error
+messages. The label of the expression passed as \code{x} is taken as
+default.}
 }
 \value{
 \code{vec_is()} returns \code{TRUE} or \code{FALSE}. \code{vec_assert()} either
