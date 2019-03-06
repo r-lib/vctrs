@@ -31,14 +31,8 @@ map_cpl <- function(.x, .f, ...) {
 }
 
 walk <- function(.x, .f, ...) {
-  force(list(...))
-
-  .ff <- function(.xx) {
-    .f(.xx, ...)
-    NA
-  }
-  map_lgl(.x, .ff)
-  invisible(NULL)
+  map(.x, .f, ...)
+  invisible(.x)
 }
 
 pluck <- function(.x, .f) {
