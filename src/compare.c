@@ -20,7 +20,7 @@ int scmp(SEXP x, SEXP y) {
   return cmp / abs(cmp);
 }
 
-int compare_scalar(SEXP x, int i, SEXP y, int j, bool na_equal) {
+int compare_scalar(SEXP x, R_len_t i, SEXP y, R_len_t j, bool na_equal) {
   if (TYPEOF(x) != TYPEOF(y))
     stop_not_comparable(x, y, "different types");
 
