@@ -5,6 +5,24 @@
 #include <stdbool.h>
 #include <stdint.h>
 
+
+// Vector types -------------------------------------------------
+
+enum vctrs_type {
+  vctrs_type_null      = 0,
+  vctrs_type_logical   = 1,
+  vctrs_type_integer   = 2,
+  vctrs_type_double    = 3,
+  vctrs_type_complex   = 4,
+  vctrs_type_character = 5,
+  vctrs_type_raw       = 6,
+  vctrs_type_list      = 7,
+  vctrs_type_dataframe = 8
+};
+
+enum vctrs_type vec_typeof(SEXP x);
+
+
 // Vector methods ------------------------------------------------
 R_len_t vec_size(SEXP x);
 
@@ -17,8 +35,17 @@ bool is_scalar(SEXP x);
 int equal_object(SEXP x, SEXP y, bool na_equal);
 bool equal_names(SEXP x, SEXP y);
 
-int equal_scalar(SEXP x, int i, SEXP y, int j, bool na_equal);
-int compare_scalar(SEXP x, int i, SEXP y, int j, bool na_equal);
+/**
+ * These functions are meant to be used in loops so it is the callers
+ * responsibility to ensure that:
+ *
+ * - `x` and `y` have identical SEXTYPEs
+ * - `i` is a valid index into `x`, and `j` is a valid index into `y`.
+ *
+ * The behaviour is undefined if these conditions are not true.
+ */
+int equal_scalar(SEXP x, R_len_t i, SEXP y, R_len_t j, bool na_equal);
+int compare_scalar(SEXP x, R_len_t i, SEXP y, R_len_t j, bool na_equal);
 
 int32_t hash_object(SEXP x);
 int32_t hash_scalar(SEXP x, R_len_t i);
