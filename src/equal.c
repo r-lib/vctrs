@@ -1,27 +1,46 @@
+#include <math.h>
 #include "vctrs.h"
 
 int lgl_equal_scalar(int* x, int* y, bool na_equal) {
-  if (*x == NA_LOGICAL) return na_equal ? *y == NA_LOGICAL : NA_LOGICAL;
-  if (*y == NA_LOGICAL) return na_equal ? *x == NA_LOGICAL : NA_LOGICAL;
-  return *x == *y;
+  int xi = *x;
+  int yj = *y;
+  if (na_equal) {
+    return xi == yj;
+  } else {
+    return (xi == NA_LOGICAL || yj == NA_LOGICAL) ? NA_LOGICAL : xi == yj;
+  }
 }
 int int_equal_scalar(int* x, int* y, bool na_equal) {
-  if (*x == NA_INTEGER) return na_equal ? *y == NA_INTEGER : NA_LOGICAL;
-  if (*y == NA_INTEGER) return na_equal ? *x == NA_INTEGER : NA_LOGICAL;
-  return *x == *y;
+  int xi = *x;
+  int yj = *y;
+  if (na_equal) {
+    return xi == yj;
+  } else {
+    return (xi == NA_INTEGER || yj == NA_INTEGER) ? NA_LOGICAL : xi == yj;
+  }
 }
 int dbl_equal_scalar(double* x, double* y, bool na_equal) {
-  if (R_IsNA(*x)) return na_equal ? R_IsNA(*y) : NA_LOGICAL;
-  if (R_IsNaN(*x)) return na_equal ? R_IsNaN(*y) : NA_LOGICAL;
-  if (R_IsNA(*y)) return na_equal ? R_IsNA(*x) : NA_LOGICAL;
-  if (R_IsNaN(*y)) return na_equal ? R_IsNaN(*x) : NA_LOGICAL;
-  return *x == *y;
+  double xi = *x;
+  double yj = *y;
+  if (na_equal) {
+    if (R_IsNA(xi)) return R_IsNA(yj);
+    if (R_IsNaN(xi)) return R_IsNaN(yj);
+    if (R_IsNA(yj)) return R_IsNA(xi);
+    if (R_IsNaN(yj)) return R_IsNaN(xi);
+  } else {
+    if (isnan(xi) || isnan(yj)) return NA_LOGICAL;
+  }
+  return xi == yj;
 }
 int chr_equal_scalar(SEXP* x, SEXP* y, bool na_equal) {
-  if (*x == NA_STRING) return na_equal ? *y == NA_STRING : NA_LOGICAL;
-  if (*y == NA_STRING) return na_equal ? *x == NA_STRING : NA_LOGICAL;
-  // Ignoring encoding for now
-  return *x == *y;
+  SEXP xi = *x;
+  SEXP yj = *y;
+  if (na_equal) {
+    // Ignoring encoding for now
+    return xi == yj;
+  } else {
+    return (xi == NA_STRING || yj == NA_STRING) ? NA_LOGICAL : xi == yj;
+  }
 }
 
 int list_equal_scalar(SEXP x, R_len_t i, SEXP y, R_len_t j, bool na_equal) {
