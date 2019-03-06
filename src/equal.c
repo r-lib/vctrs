@@ -1,6 +1,9 @@
 #include <math.h>
 #include "vctrs.h"
 
+// Storing pointed values on the stack helps performance for the
+// `!na_equal` cases
+
 int lgl_equal_scalar(int* x, int* y, bool na_equal) {
   int xi = *x;
   int yj = *y;
