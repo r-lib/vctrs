@@ -14,12 +14,26 @@ vec_assert(x, ptype = NULL, size = NULL)
 \item{size}{Size to compare against}
 }
 \value{
-Either an error of class \code{"vctrs_error_assert"}, or \code{x}, invisibly.
+\code{vec_is()} returns \code{TRUE} or \code{FALSE}. \code{vec_assert()} either
+throws a typed error (see section on error types) or returns \code{x},
+invisibly.
 }
 \description{
-If the prototype doesn't match, an error of class
+\itemize{
+\item \code{vec_is()} is a predicate that checks if its input conforms to a
+prototype and/or a size.
+\item \code{vec_assert()} throws an error when the input doesn't conform.
+}
+}
+\section{Error types}{
+
+\itemize{
+\item If the prototype doesn't match, an error of class
 \code{"vctrs_error_assert_ptype"} is raised.
-If the prototype doesn't match, an error of class
+\item If the prototype doesn't match, an error of class
 \code{"vctrs_error_assert_size"} is raised.
+}
+
 Both errors inherit from \code{"vctrs_error_assert"}.
 }
+

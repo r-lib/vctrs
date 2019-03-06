@@ -1,5 +1,9 @@
 # vctrs 0.1.0.9000
 
+* New `vec_is()` function to check whether a vector conforms to a
+  protopty and/or a size. Unlike `vec_assert()`, it doesn't throw
+  errors but returns `TRUE` or `FALSE` (#79).
+
 * New `validate_list_of()` (#193).
 
 * `vec_equal()` now handles missing values symmetrically (#204).
