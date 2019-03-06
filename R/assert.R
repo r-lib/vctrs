@@ -12,7 +12,7 @@
 #' @return Either an error of class `"vctrs_error_assert"`, or `x`, invisibly.
 #' @export
 vec_assert <- function(x, ptype = NULL, size = NULL) {
-  x_name <- as_label(x)
+  x_name <- as_label(substitute(x))
 
   if (!is.null(ptype)) {
     x_type <- vec_type(x)

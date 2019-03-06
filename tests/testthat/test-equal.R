@@ -131,6 +131,89 @@ test_that("vectorised over rows of a data frame", {
   expect_equal(vec_equal_na(df), c(FALSE, FALSE, FALSE, TRUE))
 })
 
+test_that("NA propagate symmetrically (#204)", {
+  exp <- c(NA, NA)
+
+  expect_identical(vec_equal(c(TRUE, FALSE), NA), exp)
+  expect_identical(vec_equal(1:2, NA), exp)
+  expect_identical(vec_equal(c(1, 2), NA), exp)
+  expect_identical(vec_equal(letters[1:2], NA), exp)
+
+  expect_identical(vec_equal(NA, c(TRUE, FALSE)), exp)
+  expect_identical(vec_equal(NA, 1:2), exp)
+  expect_identical(vec_equal(NA, c(1, 2)), exp)
+  expect_identical(vec_equal(NA, letters[1:2]), exp)
+})
+
+test_that("NA propagate from data frames columns", {
+  x <- data.frame(x = 1:3)
+  y <- data.frame(x = c(1L, NA, 2L))
+
+  expect_identical(vec_equal(x, y), c(TRUE, NA, FALSE))
+  expect_identical(vec_equal(y, x), c(TRUE, NA, FALSE))
+
+  expect_identical(vec_equal(x, y, na_equal = TRUE), c(TRUE, FALSE, FALSE))
+  expect_identical(vec_equal(y, x, na_equal = TRUE), c(TRUE, FALSE, FALSE))
+
+  x <- data.frame(x = 1:3, y = 1:3)
+  y <- data.frame(x = c(1L, NA, 2L), y = c(NA, 2L, 3L))
+
+  expect_identical(vec_equal(x, y), c(NA, NA, FALSE))
+  expect_identical(vec_equal(y, x), c(NA, NA, FALSE))
+
+  expect_identical(vec_equal(x, y, na_equal = TRUE), c(FALSE, FALSE, FALSE))
+  expect_identical(vec_equal(y, x, na_equal = TRUE), c(FALSE, FALSE, FALSE))
+})
+
+test_that("NA propagate from list components", {
+  expect_identical(obj_equal(NA, NA, na_equal = FALSE), NA)
+  expect_identical(vec_equal(list(NA), list(NA)), NA)
+
+  expect_true(obj_equal(NA, NA, na_equal = TRUE))
+  expect_true(vec_equal(list(NA), list(NA), na_equal = TRUE))
+})
+
+test_that("NA propagate from vector names when comparing objects (#217)", {
+  # FIXME: Not clear what should we do in the recursive case. Should we
+  # compare attributes of non S3 vectors at all?
+
+  x <- set_names(1:3, c("a", "b", NA))
+  y <- set_names(1:3, c("a", NA, NA))
+
+  expect_identical(obj_equal(x, x, na_equal = FALSE), NA)
+  expect_identical(obj_equal(x, x, na_equal = TRUE), TRUE)
+
+  expect_identical(obj_equal(x, y, na_equal = FALSE), NA)
+  expect_identical(obj_equal(x, y, na_equal = TRUE), FALSE)
+
+  expect_identical(vec_equal(list(x, x, y), list(x, y, y)), c(NA, NA, NA))
+  expect_identical(vec_equal(list(x, x, y), list(x, y, y), na_equal = TRUE), c(TRUE, FALSE, TRUE))
+})
+
+test_that("NA do not propagate from attributes", {
+  x <- structure(1:3, foo = NA)
+  y <- structure(1:3, foo = "")
+  expect_true(obj_equal(x, x))
+  expect_false(obj_equal(x, y))
+})
+
+test_that("NA do not propagate from function bodies or formals", {
+  fn <- other <- function() NA
+  body(other) <- TRUE
+
+  expect_true(vec_equal(list(fn), list(fn)))
+  expect_false(vec_equal(list(fn), list(other)))
+  expect_true(obj_equal(fn, fn))
+  expect_false(obj_equal(fn, other))
+
+  fn <- other <- function(x = NA) NULL
+  formals(other) <- list(x = NULL)
+
+  expect_true(vec_equal(list(fn), list(fn)))
+  expect_false(vec_equal(list(fn), list(other)))
+})
+
+
 # proxy -------------------------------------------------------------------
 
 test_that("compound objects create data frames", {
