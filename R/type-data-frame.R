@@ -134,7 +134,10 @@ df_col_type2 <- function(x, y) {
   # Find types
   names <- set_partition(names(x), names(y))
   if (length(names$both) > 0) {
-    common_types <- map2(x_raw[names$both], y_raw[names$both], vec_type2)
+    common_types <- map2(
+      x_raw[names$both], y_raw[names$both],
+      function(.x, .y) vec_type2(.x, .y)
+    )
   } else {
     common_types <- list()
   }
@@ -158,7 +161,10 @@ df_col_cast <- function(x, to) {
 
   # Coerce common columns
   common <- intersect(names(x), names(to))
-  out[common] <- map2(out[common], to[common], function(x, y) {vec_cast(x, y)})
+  out[common] <- map2(
+    out[common], to[common],
+    function(.x, .to) vec_cast(.x, .to)
+  )
 
   # Add new columns
   from_type <- setdiff(names(to), names(x))

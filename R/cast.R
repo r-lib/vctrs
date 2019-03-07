@@ -107,7 +107,7 @@ vec_cast <- function(x, to) {
 vec_cast_common <- function(..., .to = NULL) {
   args <- list2(...)
   type <- vec_type_common(!!!args, .ptype = .to)
-  map(args, vec_cast, to = type)
+  map(args, function(.x) vec_cast(.x, to = type))
 }
 
 #' @export
