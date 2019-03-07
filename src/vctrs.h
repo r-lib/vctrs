@@ -21,6 +21,8 @@ enum vctrs_type {
 };
 
 enum vctrs_type vec_typeof(SEXP x);
+const char* vec_type_as_str(enum vctrs_type type);
+void vctrs_stop_unsupported_type(enum vctrs_type, const char* fn) __attribute__((noreturn));
 
 
 // Vector methods ------------------------------------------------

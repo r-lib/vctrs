@@ -30,3 +30,24 @@ enum vctrs_type vec_typeof(SEXP x) {
     Rf_error("Unsupported type", Rf_type2char(TYPEOF(x)));
   }
 }
+
+const char* vec_type_as_str(enum vctrs_type type) {
+  switch (type) {
+  case vctrs_type_null:      return "null";
+  case vctrs_type_logical:   return "logical";
+  case vctrs_type_integer:   return "integer";
+  case vctrs_type_double:    return "double";
+  case vctrs_type_complex:   return "complex";
+  case vctrs_type_character: return "character";
+  case vctrs_type_raw:       return "raw";
+  case vctrs_type_list:      return "list";
+  case vctrs_type_dataframe: return "dataframe";
+  }
+}
+
+void vctrs_stop_unsupported_type(enum vctrs_type type, const char* fn) {
+  Rf_errorcall(R_NilValue,
+               "Unsupported vctrs type `%s` in `%s`",
+               vec_type_as_str(type),
+               fn);
+}
