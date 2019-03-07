@@ -1,25 +1,43 @@
 #' Assert an argument has known prototype and/or size
 #'
-#' If the prototype doesn't match, an error of class
-#' `"vctrs_error_assert_ptype"` is raised.
-#' If the prototype doesn't match, an error of class
+#' @description
+#'
+#' * `vec_is()` is a predicate that checks if its input conforms to a
+#'   prototype and/or a size.
+#'
+#' * `vec_assert()` throws an error when the input doesn't conform.
+#'
+#' @section Error types:
+#'
+#' * If the prototype doesn't match, an error of class
+#'   `"vctrs_error_assert_ptype"` is raised.
+#'
+#' * If the prototype doesn't match, an error of class
 #' `"vctrs_error_assert_size"` is raised.
+#'
 #' Both errors inherit from `"vctrs_error_assert"`.
 #'
 #' @param x A vector argument to check.
 #' @param ptype Prototype to compare against.
 #' @param size Size to compare against
-#' @return Either an error of class `"vctrs_error_assert"`, or `x`, invisibly.
+#' @param arg Name of argument being checked. This is used in error
+#'   messages. The label of the expression passed as `x` is taken as
+#'   default.
+#'
+#' @return `vec_is()` returns `TRUE` or `FALSE`. `vec_assert()` either
+#'   throws a typed error (see section on error types) or returns `x`,
+#'   invisibly.
 #' @export
-vec_assert <- function(x, ptype = NULL, size = NULL) {
-  x_name <- as_label(substitute(x))
+vec_assert <- function(x, ptype = NULL, size = NULL, arg = NULL) {
+  arg <- arg %||% as_label(substitute(x))
 
-  if (!is.null(ptype)) {
-    x_type <- vec_type(x)
+  if (!is_null(ptype)) {
     ptype <- vec_type(ptype)
-
-    if (!identical(ptype, x_type)) {
-      msg <- paste0("`", x_name, "` must be <", vec_ptype_abbr(ptype), ">, not <", vec_ptype_abbr(x_type), ">.")
+    x_type <- vec_type(x)
+    if (!identical(x_type, ptype)) {
+      ptype <- vec_type(ptype)
+      x_type <- vec_type(x)
+      msg <- paste0("`", arg, "` must be <", vec_ptype_abbr(ptype), ">, not <", vec_ptype_abbr(x_type), ">.")
       abort(
         msg,
         .subclass = c("vctrs_error_assert_ptype", "vctrs_error_assert"),
@@ -29,12 +47,11 @@ vec_assert <- function(x, ptype = NULL, size = NULL) {
     }
   }
 
-  if (!is.null(size)) {
+  if (!is_null(size)) {
     size <- vec_recycle(vec_cast(size, integer()), 1L)
     x_size <- vec_size(x)
-
-    if (!identical(size, x_size)) {
-      msg <- paste0("`", x_name, "` must have size ", size, ", not size ", x_size, ".")
+    if (!identical(x_size, size)) {
+      msg <- paste0("`", arg, "` must have size ", size, ", not size ", x_size, ".")
       abort(
         msg,
         .subclass = c("vctrs_error_assert_size", "vctrs_error_assert"),
@@ -45,4 +62,25 @@ vec_assert <- function(x, ptype = NULL, size = NULL) {
   }
 
   invisible(x)
+}
+#' @rdname vec_assert
+#' @export
+vec_is <- function(x, ptype = NULL, size = NULL) {
+  if (!is_null(ptype)) {
+    ptype <- vec_type(ptype)
+    x_type <- vec_type(x)
+    if (!identical(x_type, ptype)) {
+      return(FALSE)
+    }
+  }
+
+  if (!is_null(size)) {
+    size <- vec_recycle(vec_cast(size, integer()), 1L)
+    x_size <- vec_size(x)
+    if (!identical(x_size, size)) {
+      return(FALSE)
+    }
+  }
+
+  TRUE
 }

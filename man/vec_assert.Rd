@@ -2,9 +2,12 @@
 % Please edit documentation in R/assert.R
 \name{vec_assert}
 \alias{vec_assert}
+\alias{vec_is}
 \title{Assert an argument has known prototype and/or size}
 \usage{
-vec_assert(x, ptype = NULL, size = NULL)
+vec_assert(x, ptype = NULL, size = NULL, arg = NULL)
+
+vec_is(x, ptype = NULL, size = NULL)
 }
 \arguments{
 \item{x}{A vector argument to check.}
@@ -12,14 +15,32 @@ vec_assert(x, ptype = NULL, size = NULL)
 \item{ptype}{Prototype to compare against.}
 
 \item{size}{Size to compare against}
+
+\item{arg}{Name of argument being checked. This is used in error
+messages. The label of the expression passed as \code{x} is taken as
+default.}
 }
 \value{
-Either an error of class \code{"vctrs_error_assert"}, or \code{x}, invisibly.
+\code{vec_is()} returns \code{TRUE} or \code{FALSE}. \code{vec_assert()} either
+throws a typed error (see section on error types) or returns \code{x},
+invisibly.
 }
 \description{
-If the prototype doesn't match, an error of class
+\itemize{
+\item \code{vec_is()} is a predicate that checks if its input conforms to a
+prototype and/or a size.
+\item \code{vec_assert()} throws an error when the input doesn't conform.
+}
+}
+\section{Error types}{
+
+\itemize{
+\item If the prototype doesn't match, an error of class
 \code{"vctrs_error_assert_ptype"} is raised.
-If the prototype doesn't match, an error of class
+\item If the prototype doesn't match, an error of class
 \code{"vctrs_error_assert_size"} is raised.
+}
+
 Both errors inherit from \code{"vctrs_error_assert"}.
 }
+
