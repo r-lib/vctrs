@@ -80,3 +80,23 @@ test_that("data frames are recursive vectors", {
   vec_is_vector.data.frame <- function(...) stop("should not be called")
   expect_true(vec_is_vector(mtcars))
 })
+
+test_that("non-vector base types are scalars", {
+  expect_identical(vec_typeof(quote(foo)), "scalar")
+  expect_identical(vec_typeof(pairlist("")), "scalar")
+  expect_identical(vec_typeof(function() NULL), "scalar")
+  expect_identical(vec_typeof(env()), "scalar")
+  expect_identical(vec_typeof(~foo), "scalar")
+  expect_identical(vec_typeof(base::`{`), "scalar")
+  expect_identical(vec_typeof(base::c), "scalar")
+  expect_identical(vec_typeof(expression()), "scalar")
+
+  expect_false(vec_is_vector(quote(foo)))
+  expect_false(vec_is_vector(pairlist("")))
+  expect_false(vec_is_vector(function() NULL))
+  expect_false(vec_is_vector(env()))
+  expect_false(vec_is_vector(~foo))
+  expect_false(vec_is_vector(base::`{`))
+  expect_false(vec_is_vector(base::c))
+  expect_false(vec_is_vector(expression()))
+})

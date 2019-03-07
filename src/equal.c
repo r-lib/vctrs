@@ -80,16 +80,11 @@ int df_equal_scalar(SEXP x, R_len_t i, SEXP y, R_len_t j, bool na_equal) {
 }
 
 int equal_scalar(SEXP x, R_len_t i, SEXP y, R_len_t j, bool na_equal) {
-  // No `[[` dispatch for atomic vectors
-  switch (TYPEOF(x)) {
-  case LGLSXP: return lgl_equal_scalar(LOGICAL(x) + i, LOGICAL(y) + j, na_equal);
-  case INTSXP: return int_equal_scalar(INTEGER(x) + i, INTEGER(y) + j, na_equal);
-  case REALSXP: return dbl_equal_scalar(REAL(x) + i, REAL(y) + j, na_equal);
-  case STRSXP: return chr_equal_scalar(STRING_PTR(x) + i, STRING_PTR(y) + j, na_equal);
-  default: break;
-  }
-
   switch (vec_typeof(x)) {
+  case vctrs_type_logical: return lgl_equal_scalar(LOGICAL(x) + i, LOGICAL(y) + j, na_equal);
+  case vctrs_type_integer: return int_equal_scalar(INTEGER(x) + i, INTEGER(y) + j, na_equal);
+  case vctrs_type_double: return dbl_equal_scalar(REAL(x) + i, REAL(y) + j, na_equal);
+  case vctrs_type_character: return chr_equal_scalar(STRING_PTR(x) + i, STRING_PTR(y) + j, na_equal);
   case vctrs_type_list: return list_equal_scalar(x, i, y, j, na_equal);
   case vctrs_type_dataframe: return df_equal_scalar(x, i, y, j, na_equal);
   default: break;
@@ -337,6 +332,8 @@ SEXP vctrs_equal(SEXP x, SEXP y, SEXP na_equal_) {
     }
     break;
   }
+  case vctrs_type_scalar:
+    Rf_errorcall(R_NilValue, "Can't compare scalars with `vctrs_equal()`");
   default:
     Rf_error("Unimplemented type in `vctrs_equal()`");
   }

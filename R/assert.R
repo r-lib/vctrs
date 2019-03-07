@@ -145,7 +145,9 @@ vec_is_vector <- function(x) {
         return(TRUE)
       } else {
         UseMethod("vec_is_vector")
-      }
+      },
+    scalar =
+      return(FALSE)
   )
 
   stop_unimplemented(vec_typeof(x), "vec_is_vector")
