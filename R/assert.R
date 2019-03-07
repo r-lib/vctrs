@@ -31,6 +31,11 @@
 vec_assert <- function(x, ptype = NULL, size = NULL, arg = NULL) {
   arg <- arg %||% as_label(substitute(x))
 
+  if (!vec_is_vector(x)) {
+    msg <- paste0("`", arg, "` must be a vector, not a scalar")
+    abort(msg, "vctrs_error_assert_scalar", actual = x)
+  }
+
   if (!is_null(ptype)) {
     ptype <- vec_type(ptype)
     x_type <- vec_type(x)
@@ -66,6 +71,10 @@ vec_assert <- function(x, ptype = NULL, size = NULL, arg = NULL) {
 #' @rdname vec_assert
 #' @export
 vec_is <- function(x, ptype = NULL, size = NULL) {
+  if (!vec_is_vector(x)) {
+    return(FALSE)
+  }
+
   if (!is_null(ptype)) {
     ptype <- vec_type(ptype)
     x_type <- vec_type(x)
