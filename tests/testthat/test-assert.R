@@ -76,9 +76,10 @@ test_that("S3 lists are not vectors by default", {
   expect_false(vec_is_vector(foobar()))
 })
 
-test_that("data frames are recursive vectors", {
+test_that("data frames and records are vectors", {
   vec_is_vector.data.frame <- function(...) stop("should not be called")
   expect_true(vec_is_vector(mtcars))
+  expect_true(vec_is_vector(new_rcrd(list(x = 1, y = 2))))
 })
 
 test_that("non-vector base types are scalars", {
