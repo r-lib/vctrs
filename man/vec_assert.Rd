@@ -2,9 +2,12 @@
 % Please edit documentation in R/assert.R
 \name{vec_assert}
 \alias{vec_assert}
+\alias{vec_is}
 \title{Assert an argument has known prototype and/or size}
 \usage{
 vec_assert(x, ptype = NULL, size = NULL, arg = NULL)
+
+vec_is(x, ptype = NULL, size = NULL)
 }
 \arguments{
 \item{x}{A vector argument to check.}
