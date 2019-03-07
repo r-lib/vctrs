@@ -13,6 +13,13 @@ bool is_scalar(SEXP x) {
 }
 
 enum vctrs_type vec_typeof(SEXP x) {
+  if (is_data_frame(x)) {
+    return vctrs_type_dataframe;
+  }
+  if (OBJECT(x)) {
+    return vctrs_type_s3;
+  }
+
   switch (TYPEOF(x)) {
   case LGLSXP: return vctrs_type_logical;
   case INTSXP: return vctrs_type_integer;
@@ -20,12 +27,7 @@ enum vctrs_type vec_typeof(SEXP x) {
   case CPLXSXP: return vctrs_type_double;
   case STRSXP: return vctrs_type_character;
   case RAWSXP: return vctrs_type_raw;
-  case VECSXP:
-    if (is_data_frame(x)) {
-      return vctrs_type_dataframe;
-    } else {
-      return vctrs_type_list;
-    }
+  case VECSXP: return vctrs_type_list;
   default:
     Rf_error("Unsupported type", Rf_type2char(TYPEOF(x)));
   }
@@ -42,6 +44,7 @@ const char* vec_type_as_str(enum vctrs_type type) {
   case vctrs_type_raw:       return "raw";
   case vctrs_type_list:      return "list";
   case vctrs_type_dataframe: return "dataframe";
+  case vctrs_type_s3:        return "s3";
   }
 }
 
@@ -50,4 +53,8 @@ void vctrs_stop_unsupported_type(enum vctrs_type type, const char* fn) {
                "Unsupported vctrs type `%s` in `%s`",
                vec_type_as_str(type),
                fn);
+}
+
+SEXP vctrs_typeof(SEXP x) {
+  return Rf_mkString(vec_type_as_str(vec_typeof(x)));
 }
