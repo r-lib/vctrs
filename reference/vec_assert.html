@@ -32,11 +32,11 @@
 
 <meta property="og:title" content="Assert an argument has known prototype and/or size — vec_assert" />
 
-<meta property="og:description" content="If the prototype doesn't match, an error of class
-&quot;vctrs_error_assert_ptype&quot; is raised.
-If the prototype doesn't match, an error of class
-&quot;vctrs_error_assert_size&quot; is raised.
-Both errors inherit from &quot;vctrs_error_assert&quot;." />
+<meta property="og:description" content="
+vec_is() is a predicate that checks if its input conforms to a
+prototype and/or a size.
+vec_assert() throws an error when the input doesn't conform.
+" />
 
 <meta property="og:image" content="https://vctrs.r-lib.org/logo.png" />
 <meta name="twitter:card" content="summary" />
@@ -133,15 +133,17 @@ Both errors inherit from &quot;vctrs_error_assert&quot;." />
 
     <div class="ref-description">
     
-    <p>If the prototype doesn't match, an error of class
-<code>"vctrs_error_assert_ptype"</code> is raised.
-If the prototype doesn't match, an error of class
-<code>"vctrs_error_assert_size"</code> is raised.
-Both errors inherit from <code>"vctrs_error_assert"</code>.</p>
+    <ul>
+<li><p><code>vec_is()</code> is a predicate that checks if its input conforms to a
+prototype and/or a size.</p></li>
+<li><p><code>vec_assert()</code> throws an error when the input doesn't conform.</p></li>
+</ul>
     
     </div>
 
-    <pre class="usage"><span class='fu'>vec_assert</span>(<span class='no'>x</span>, <span class='kw'>ptype</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>size</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</pre>
+    <pre class="usage"><span class='fu'>vec_assert</span>(<span class='no'>x</span>, <span class='kw'>ptype</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>size</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>arg</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)
+
+<span class='fu'>vec_is</span>(<span class='no'>x</span>, <span class='kw'>ptype</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>size</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -158,11 +160,30 @@ Both errors inherit from <code>"vctrs_error_assert"</code>.</p>
       <th>size</th>
       <td><p>Size to compare against</p></td>
     </tr>
+    <tr>
+      <th>arg</th>
+      <td><p>Name of argument being checked. This is used in error
+messages. The label of the expression passed as <code>x</code> is taken as
+default.</p></td>
+    </tr>
     </table>
     
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>Either an error of class <code>"vctrs_error_assert"</code>, or <code>x</code>, invisibly.</p>
+    <p><code>vec_is()</code> returns <code>TRUE</code> or <code>FALSE</code>. <code>vec_assert()</code> either
+throws a typed error (see section on error types) or returns <code>x</code>,
+invisibly.</p>
+    
+    <h2 class="hasAnchor" id="error-types"><a class="anchor" href="#error-types"></a>Error types</h2>
+
+    
+    <ul>
+<li><p>If the prototype doesn't match, an error of class
+<code>"vctrs_error_assert_ptype"</code> is raised.</p></li>
+<li><p>If the prototype doesn't match, an error of class
+<code>"vctrs_error_assert_size"</code> is raised.</p></li>
+</ul>
+    <p>Both errors inherit from <code>"vctrs_error_assert"</code>.</p>
     
 
   </div>
@@ -172,6 +193,8 @@ Both errors inherit from <code>"vctrs_error_assert"</code>.</p>
       <li><a href="#arguments">Arguments</a></li>
       
       <li><a href="#value">Value</a></li>
+
+      <li><a href="#error-types">Error types</a></li>
           </ul>
 
   </div>
