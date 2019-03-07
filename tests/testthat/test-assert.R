@@ -48,3 +48,35 @@ test_that("vec_assert() labels input", {
     class = "vctrs_error_assert_size"
   )
 })
+
+test_that("bare atomic vectors are vectors but not recursive", {
+  expect_true(vec_is_vector(TRUE))
+  expect_true(vec_is_vector(1L))
+  expect_true(vec_is_vector(1))
+  expect_true(vec_is_vector(1i))
+  expect_true(vec_is_vector("foo"))
+  expect_true(vec_is_vector(as.raw(1)))
+})
+
+test_that("S3 atomic vectors are vectors", {
+  vec_is_vector.foobar <- function(...) stop("should not be called")
+  expect_true(vec_is_vector(foobar(TRUE)))
+  expect_true(vec_is_vector(foobar(1L)))
+  expect_true(vec_is_vector(foobar(1)))
+  expect_true(vec_is_vector(foobar(1i)))
+  expect_true(vec_is_vector(foobar("foo")))
+  expect_true(vec_is_vector(foobar(as.raw(1))))
+})
+
+test_that("bare lists are recursive", {
+  expect_true(vec_is_vector(list()))
+})
+
+test_that("S3 lists are not vectors by default", {
+  expect_false(vec_is_vector(foobar()))
+})
+
+test_that("data frames are recursive vectors", {
+  vec_is_vector.data.frame <- function(...) stop("should not be called")
+  expect_true(vec_is_vector(mtcars))
+})
