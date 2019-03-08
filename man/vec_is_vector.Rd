@@ -10,10 +10,19 @@ vec_is_vector(x)
 \item{x}{An object.}
 }
 \description{
-A vector is a collection of values. In practical terms, a vector is
-something that can be a column of a data frame. The opposite of a
-vector is a scalar. Such an object cannot be \link[=vec_slice]{sliced},
-nor can it be a data frame column.
+A vector is a collection of values like a logical vector, a factor,
+or a date vector. Vectors can be \link[=vec_slice]{sliced} and can be
+assigned as data frame columns. The opposite of a vector is a
+scalar. For example, a function is not a vector, and neither is a
+linear model. An environment is a collection of values but it
+cannot be a data frame column and so is not a vector.
+
+Compared to base R our definition is both more generic and
+constrained. In base R, anything that is an atomic vector or a list
+is a vector, even a model fit object (\code{\link[base:is.vector]{base::is.vector()}} returns
+\code{TRUE} for these objects). For the most part, functions calls
+implement the vector interface and can generally be treated as
+vectors. In vctrs, all of these objects are scalars.
 }
 \section{Dispatch}{
 
