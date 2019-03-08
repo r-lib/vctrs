@@ -32,6 +32,10 @@ extern SEXP vctrs_duplicated_any(SEXP);
 extern SEXP vctrs_size(SEXP);
 extern SEXP vctrs_is_unspecified(SEXP);
 extern SEXP vctrs_typeof(SEXP);
+extern SEXP vctrs_is_vector(SEXP);
+
+// Defined below
+SEXP vctrs_init(SEXP);
 
 static const R_CallMethodDef CallEntries[] = {
     {"vctrs_list_get",    (DL_FUNC) &vctrs_list_get, 2},
@@ -58,6 +62,8 @@ static const R_CallMethodDef CallEntries[] = {
     {"vctrs_compare",     (DL_FUNC) &vctrs_compare,  3},
     {"vctrs_match",       (DL_FUNC) &vctrs_match,  2},
     {"vctrs_typeof",      (DL_FUNC) &vctrs_typeof, 1},
+    {"vctrs_init",        (DL_FUNC) &vctrs_init, 1},
+    {"vctrs_is_vector",   (DL_FUNC) &vctrs_is_vector, 1},
     {NULL, NULL, 0}
 };
 
@@ -65,4 +71,12 @@ void R_init_vctrs(DllInfo *dll)
 {
     R_registerRoutines(dll, NULL, CallEntries, NULL, NULL);
     R_useDynamicSymbols(dll, FALSE);
+}
+
+
+void vctrs_init_types(SEXP ns);
+
+SEXP vctrs_init(SEXP ns) {
+  vctrs_init_types(ns);
+  return R_NilValue;
 }

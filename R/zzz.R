@@ -7,6 +7,8 @@
   s3_register("generics::as.factor", "vctrs_vctr")
   s3_register("generics::as.ordered", "vctrs_vctr")
   s3_register("generics::as.difftime", "vctrs_vctr")
+
+  .Call(vctrs_init, environment())
 }
 
 # nocov end

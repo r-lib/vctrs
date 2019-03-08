@@ -146,29 +146,10 @@ vec_is <- function(x, ptype = NULL, size = NULL) {
 #' vec_is_vector(function() NULL)
 #' @export
 vec_is_vector <- function(x) {
-  switch(vec_typeof(x),
-    null =
-      return(FALSE),
-    logical = ,
-    integer = ,
-    double = ,
-    complex = ,
-    character = ,
-    raw = ,
-    list = ,
-    dataframe =
-      return(TRUE),
-    s3 =
-      if (inherits(x, "vctrs_vctr")) {
-        return(TRUE)
-      } else {
-        UseMethod("vec_is_vector")
-      },
-    scalar =
-      return(FALSE)
-  )
-
-  stop_unimplemented(vec_typeof(x), "vec_is_vector")
+  .Call(vctrs_is_vector, x)
+}
+vec_is_vector_dispatch <- function(x) {
+  UseMethod("vec_is_vector")
 }
 #' @export
 vec_is_vector.default <- function(x) {

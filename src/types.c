@@ -49,6 +49,38 @@ const char* vec_type_as_str(enum vctrs_type type) {
   }
 }
 
+static SEXP vec_is_vector_dispatch_fn = NULL;
+
+bool vec_is_vector(SEXP x) {
+  switch (vec_typeof(x)) {
+  case vctrs_type_null:
+  case vctrs_type_scalar:
+    return false;
+  case vctrs_type_logical:
+  case vctrs_type_integer:
+  case vctrs_type_double:
+  case vctrs_type_complex:
+  case vctrs_type_character:
+  case vctrs_type_raw:
+  case vctrs_type_list:
+  case vctrs_type_dataframe:
+    return true;
+  case vctrs_type_s3:
+    if (Rf_inherits(x, "vctrs_vctr")) {
+      return true;
+    } else {
+      SEXP dispatch_call = PROTECT(Rf_lang2(vec_is_vector_dispatch_fn, x));
+      SEXP out = Rf_eval(dispatch_call, R_GlobalEnv);
+      UNPROTECT(1);
+      return *LOGICAL(out);
+    }
+  }
+}
+
+SEXP vctrs_is_vector(SEXP x) {
+  return Rf_ScalarLogical(vec_is_vector(x));
+}
+
 void vctrs_stop_unsupported_type(enum vctrs_type type, const char* fn) {
   Rf_errorcall(R_NilValue,
                "Unsupported vctrs type `%s` in `%s`",
@@ -58,4 +90,9 @@ void vctrs_stop_unsupported_type(enum vctrs_type type, const char* fn) {
 
 SEXP vctrs_typeof(SEXP x) {
   return Rf_mkString(vec_type_as_str(vec_typeof(x)));
+}
+
+
+void vctrs_init_types(SEXP ns) {
+  vec_is_vector_dispatch_fn = Rf_findVar(Rf_install("vec_is_vector_dispatch"), ns);
 }
