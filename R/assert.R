@@ -158,10 +158,6 @@ vec_is_vector.default <- function(x) {
   is_atomic(x)
 }
 
-stop_unimplemented <- function(type, fn) {
-  abort("Internal error: Unimplemented vctrs type `{ type }` in `{ fn }`")
-}
-
 vec_typeof <- function(x) {
   .Call(vctrs_typeof, x)
 }

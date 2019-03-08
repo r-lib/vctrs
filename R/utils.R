@@ -90,7 +90,3 @@ compact <- function(x) {
   is_null <- map_lgl(x, is.null)
   x[!is_null]
 }
-
-collapse_backtick <- function(x, last = " and ") {
-  glue::glue_collapse(glue::backtick(x), ", ", last = last)
-}
