@@ -48,3 +48,96 @@ test_that("vec_assert() labels input", {
     class = "vctrs_error_assert_size"
   )
 })
+
+test_that("bare atomic vectors are vectors but not recursive", {
+  expect_true(vec_is_vector(TRUE))
+  expect_true(vec_is_vector(1L))
+  expect_true(vec_is_vector(1))
+  expect_true(vec_is_vector(1i))
+  expect_true(vec_is_vector("foo"))
+  expect_true(vec_is_vector(as.raw(1)))
+})
+
+test_that("S3 atomic vectors are vectors", {
+  vec_is_vector.foobar <- function(...) stop("should not be called")
+  expect_true(vec_is_vector(foobar(TRUE)))
+  expect_true(vec_is_vector(foobar(1L)))
+  expect_true(vec_is_vector(foobar(1)))
+  expect_true(vec_is_vector(foobar(1i)))
+  expect_true(vec_is_vector(foobar("foo")))
+  expect_true(vec_is_vector(foobar(as.raw(1))))
+})
+
+test_that("bare lists are recursive", {
+  expect_true(vec_is_vector(list()))
+})
+
+test_that("S3 lists are not vectors by default", {
+  expect_false(vec_is_vector(foobar()))
+})
+
+test_that("can override `vec_is_vector()` for S3 lists", {
+  scoped_bindings(.env = global_env(),
+    vec_is_vector.vctrs_foobar = function(...) out
+  )
+
+  out <- TRUE
+  expect_true(vec_is_vector(foobar()))
+
+  out <- "foo"
+  expect_error(vec_is_vector(foobar()), "must return `TRUE` or `FALSE`")
+
+  out <- NA
+  expect_error(vec_is_vector(foobar()), "must return `TRUE` or `FALSE`")
+})
+
+test_that("data frames and records are vectors", {
+  vec_is_vector.data.frame <- function(...) stop("should not be called")
+  expect_true(vec_is_vector(mtcars))
+  expect_true(vec_is_vector(new_rcrd(list(x = 1, y = 2))))
+})
+
+test_that("non-vector base types are scalars", {
+  expect_identical(vec_typeof(quote(foo)), "scalar")
+  expect_identical(vec_typeof(pairlist("")), "scalar")
+  expect_identical(vec_typeof(function() NULL), "scalar")
+  expect_identical(vec_typeof(env()), "scalar")
+  expect_identical(vec_typeof(~foo), "scalar")
+  expect_identical(vec_typeof(base::`{`), "scalar")
+  expect_identical(vec_typeof(base::c), "scalar")
+  expect_identical(vec_typeof(expression()), "scalar")
+
+  expect_false(vec_is_vector(quote(foo)))
+  expect_false(vec_is_vector(pairlist("")))
+  expect_false(vec_is_vector(function() NULL))
+  expect_false(vec_is_vector(env()))
+  expect_false(vec_is_vector(~foo))
+  expect_false(vec_is_vector(base::`{`))
+  expect_false(vec_is_vector(base::c))
+  expect_false(vec_is_vector(expression()))
+
+  expect_false(vec_is(quote(foo)))
+  expect_false(vec_is(pairlist("")))
+  expect_false(vec_is(function() NULL))
+  expect_false(vec_is(env()))
+  expect_false(vec_is(~foo))
+  expect_false(vec_is(base::`{`))
+  expect_false(vec_is(base::c))
+  expect_false(vec_is(expression()))
+
+  expect_error(vec_assert(quote(foo)), "must be a vector")
+  expect_error(vec_assert(pairlist("")), "must be a vector")
+  expect_error(vec_assert(function() NULL), "must be a vector")
+  expect_error(vec_assert(env()), "must be a vector")
+  expect_error(vec_assert(~foo), "must be a vector")
+  expect_error(vec_assert(base::`{`), "must be a vector")
+  expect_error(vec_assert(base::c), "must be a vector")
+  expect_error(vec_assert(expression()), "must be a vector")
+})
+
+test_that("vec_assert() uses friendly type in error messages", {
+   # Friendly type will be generated in rlang in the future. Upstream
+   # changes should not cause CRAN failures.
+  skip_on_cran()
+  expect_error(vec_assert(function() NULL), "must be a vector, not a function")
+})

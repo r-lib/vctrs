@@ -17,11 +17,14 @@ enum vctrs_type {
   vctrs_type_character = 5,
   vctrs_type_raw       = 6,
   vctrs_type_list      = 7,
-  vctrs_type_dataframe = 8
+  vctrs_type_dataframe = 8,
+  vctrs_type_s3        = 9,
+  vctrs_type_scalar    = 10
 };
 
 enum vctrs_type vec_typeof(SEXP x);
 const char* vec_type_as_str(enum vctrs_type type);
+bool vec_is_vector(SEXP x);
 void vctrs_stop_unsupported_type(enum vctrs_type, const char* fn) __attribute__((noreturn));
 
 

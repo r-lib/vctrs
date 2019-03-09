@@ -87,8 +87,10 @@ int equal_scalar(SEXP x, R_len_t i, SEXP y, R_len_t j, bool na_equal) {
   case vctrs_type_character: return chr_equal_scalar(STRING_PTR(x) + i, STRING_PTR(y) + j, na_equal);
   case vctrs_type_list: return list_equal_scalar(x, i, y, j, na_equal);
   case vctrs_type_dataframe: return df_equal_scalar(x, i, y, j, na_equal);
-  default: vctrs_stop_unsupported_type(vec_typeof(x), "equal_scalar()");
+  default: break;
   }
+
+  vctrs_stop_unsupported_type(vec_typeof(x), "equal_scalar()");
 }
 
 // TODO: Sort attributes by tag before comparison
@@ -330,6 +332,8 @@ SEXP vctrs_equal(SEXP x, SEXP y, SEXP na_equal_) {
     }
     break;
   }
+  case vctrs_type_scalar:
+    Rf_errorcall(R_NilValue, "Can't compare scalars with `vctrs_equal()`");
   default:
     Rf_error("Unimplemented type in `vctrs_equal()`");
   }
