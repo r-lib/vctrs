@@ -116,13 +116,16 @@ vec_is <- function(x, ptype = NULL, size = NULL) {
 #'
 #' This function is internally generic:
 #'
-#' * Atomic vectors are always vectors.
+#' * Atomic vectors are always vectors, regardless of their class.
 #' * Bare lists are vectors.
 #' * Data frames are always vectors.
-#' * Non-vector base types are always scalars.
+#' * Other objects like functions and calls are always scalar.
+#' * S3 objects built on top of lists are scalar by default.
 #'
-#' Only lists can be overriden by implementing an S3 method for
-#' `vec_is_vector()`.
+#' The behaviour of `vec_is_vector()` can be overridden for S3 objects
+#' built on top of lists by providing a method. If you build your
+#' class on top of [`vctrs_vctr`][new_vctr] (which we recommend), you
+#' don't need to override it.
 #'
 #' @param x An object.
 #'

@@ -29,14 +29,17 @@ vectors. In vctrs, all of these objects are scalars.
 
 This function is internally generic:
 \itemize{
-\item Atomic vectors are always vectors.
+\item Atomic vectors are always vectors, regardless of their class.
 \item Bare lists are vectors.
 \item Data frames are always vectors.
-\item Non-vector base types are always scalars.
+\item Other objects like functions and calls are always scalar.
+\item S3 objects built on top of lists are scalar by default.
 }
 
-Only lists can be overriden by implementing an S3 method for
-\code{vec_is_vector()}.
+The behaviour of \code{vec_is_vector()} can be overridden for S3 objects
+built on top of lists by providing a method. If you build your
+class on top of \code{\link[=new_vctr]{vctrs_vctr}} (which we recommend), you
+don't need to override it.
 }
 
 \examples{
