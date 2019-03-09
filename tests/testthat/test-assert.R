@@ -76,6 +76,21 @@ test_that("S3 lists are not vectors by default", {
   expect_false(vec_is_vector(foobar()))
 })
 
+test_that("can override `vec_is_vector()` for S3 lists", {
+  scoped_bindings(.env = global_env(),
+    vec_is_vector.vctrs_foobar = function(...) out
+  )
+
+  out <- TRUE
+  expect_true(vec_is_vector(foobar()))
+
+  out <- "foo"
+  expect_error(vec_is_vector(foobar()), "must return `TRUE` or `FALSE`")
+
+  out <- NA
+  expect_error(vec_is_vector(foobar()), "must return `TRUE` or `FALSE`")
+})
+
 test_that("data frames and records are vectors", {
   vec_is_vector.data.frame <- function(...) stop("should not be called")
   expect_true(vec_is_vector(mtcars))

@@ -1,4 +1,5 @@
 #include "vctrs.h"
+#include "utils.h"
 
 bool is_data_frame(SEXP x) {
   return Rf_inherits(x, "data.frame");
@@ -71,6 +72,11 @@ bool vec_is_vector(SEXP x) {
     } else {
       SEXP dispatch_call = PROTECT(Rf_lang2(vec_is_vector_dispatch_fn, x));
       SEXP out = Rf_eval(dispatch_call, R_GlobalEnv);
+
+      if (!is_bool(out)) {
+        Rf_errorcall(R_NilValue, "`vec_is_vector()` must return `TRUE` or `FALSE`");
+      }
+
       UNPROTECT(1);
       return *LOGICAL(out);
     }
