@@ -10,10 +10,10 @@ vec_is_vector(x)
 \item{x}{An object.}
 }
 \description{
-A vector is a collection of values like a logical vector, a factor,
-or a date vector. Vectors can be \link[=vec_slice]{sliced} and can be
-assigned as data frame columns. The opposite of a vector is a
-scalar. For example, a function is not a vector, and neither is a
+A data vector is a collection of values like a logical vector, a
+factor, or a date vector. Vectors can be \link[=vec_slice]{sliced} and
+can be assigned as data frame columns. The opposite of a vector is
+a scalar. For example, a function is not a vector, and neither is a
 linear model. An environment is a collection of values but it
 cannot be a data frame column and so is not a vector.
 
