@@ -119,3 +119,10 @@ test_that("non-vector base types are scalars", {
   expect_error(vec_assert(base::c), "must be a vector")
   expect_error(vec_assert(expression()), "must be a vector")
 })
+
+test_that("vec_assert() uses friendly type in error messages", {
+   # Friendly type will be generated in rlang in the future. Upstream
+   # changes should not cause CRAN failures.
+  skip_on_cran()
+  expect_error(vec_assert(function() NULL), "must be a vector, not a function")
+})
