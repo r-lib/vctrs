@@ -149,7 +149,10 @@ vec_is <- function(x, ptype = NULL, size = NULL) {
 #' vec_is_vector(function() NULL)
 #' @export
 vec_is_vector <- function(x) {
-  .Call(vctrs_is_vector, x)
+  return(.Call(vctrs_is_vector, x))
+
+  # For static analysis in roxygen
+  UseMethod("vec_is_vector")
 }
 vec_is_vector_dispatch <- function(x) {
   UseMethod("vec_is_vector")
