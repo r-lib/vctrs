@@ -91,6 +91,9 @@
     <loc>https://vctrs.r-lib.org/reference/vec_equal.html</loc>
   </url>
   <url>
+    <loc>https://vctrs.r-lib.org/reference/vec_is_vector.html</loc>
+  </url>
+  <url>
     <loc>https://vctrs.r-lib.org/reference/vec_list_cast.html</loc>
   </url>
   <url>
