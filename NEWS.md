@@ -4,6 +4,11 @@
   protopty and/or a size. Unlike `vec_assert()`, it doesn't throw
   errors but returns `TRUE` or `FALSE` (#79).
 
+  Called without a specific type or size, it tests whether an object
+  is a data vector or a scalar. S3 lists are treated as scalars by
+  default. Implement a `vec_is_vector()` for your class to override
+  this property (or derive from `vctrs_vctr`).
+
 * New `validate_list_of()` (#193).
 
 * `vec_equal()` now handles missing values symmetrically (#204).
