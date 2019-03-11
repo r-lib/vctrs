@@ -8,6 +8,8 @@
   s3_register("generics::as.ordered", "vctrs_vctr")
   s3_register("generics::as.difftime", "vctrs_vctr")
 
+  utils::globalVariables("vec_is_vector_workaround")
+
   # Work around "invalid generic in usemethod" error on R 3.1
   if (getRversion() < "3.2.0") {
     env_bind(ns_env("vctrs"),
