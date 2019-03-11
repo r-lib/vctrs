@@ -62,9 +62,16 @@ test_that("can subset using logical index", {
 
   expect_identical(vec_slice(x0, TRUE), x0)
   expect_identical(vec_slice(x0, c(TRUE, FALSE)), 1)
+
   expect_error(
     vec_slice(x0, c(TRUE, FALSE, TRUE)),
     "Incompatible lengths: 3, 2",
+    fixed = TRUE
+  )
+
+  expect_error(
+    vec_slice(x0, lgl()),
+    "Incompatible lengths: 0, 2",
     fixed = TRUE
   )
 })
