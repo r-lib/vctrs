@@ -574,19 +574,24 @@ format.hidden <- function(x, ...) rep("xxx", length(x))
 
 vec_restore_numeric.hidden <- function(x, to) new_hidden(x)
 
-vec_type2.hidden          <- function(x, y) UseMethod("vec_type2.hidden")
-vec_type2.hidden.default  <- function(x, y) stop_incompatible_type(x, y)
-vec_type2.hidden.hidden   <- function(x, y) new_hidden()
-vec_type2.hidden.double   <- function(x, y) new_hidden()
-vec_type2.double.hidden   <- function(x, y) new_hidden()
-vec_type2.hidden.logical  <- function(x, y) new_hidden()
-vec_type2.logical.hidden  <- function(x, y) new_hidden()
+scoped_hidden <- function(frame = caller_env()) {
+  scoped_bindings(.env = global_env(), .frame = frame,
+    vec_type2.hidden         = function(x, y) UseMethod("vec_type2.hidden"),
+    vec_type2.hidden.default = function(x, y) stop_incompatible_type(x, y),
+    vec_type2.hidden.hidden  = function(x, y) new_hidden(),
+    vec_type2.hidden.double  = function(x, y) new_hidden(),
+    vec_type2.double.hidden  = function(x, y) new_hidden(),
+    vec_type2.hidden.logical = function(x, y) new_hidden(),
+    vec_type2.logical.hidden = function(x, y) new_hidden(),
 
-vec_cast.hidden           <- function(x, to) UseMethod("vec_cast.hidden")
-vec_cast.hidden.default   <- function(x, to) stop_incompatible_cast(x, to)
-vec_cast.hidden.hidden    <- function(x, to) x
-vec_cast.hidden.double    <- function(x, to) new_hidden(vec_data(x))
-vec_cast.double.hidden    <- function(x, to) vec_data(x)
-vec_cast.hidden.logical   <- function(x, to) new_hidden(as.double(x))
-vec_cast.logical.hidden   <- function(x, to) as.logical(vec_data(x))
+    vec_cast.hidden          = function(x, to) UseMethod("vec_cast.hidden"),
+    vec_cast.hidden.default  = function(x, to) stop_incompatible_cast(x, to),
+    vec_cast.hidden.hidden   = function(x, to) x,
+    vec_cast.hidden.double   = function(x, to) new_hidden(vec_data(x)),
+    vec_cast.double.hidden   = function(x, to) vec_data(x),
+    vec_cast.hidden.logical  = function(x, to) new_hidden(as.double(x)),
+    vec_cast.logical.hidden  = function(x, to) as.logical(vec_data(x))
+  )
+}
+
 # nocov end

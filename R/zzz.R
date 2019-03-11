@@ -17,9 +17,9 @@
   if (getRversion() < "3.2.0") {
     env_bind(ns_env("vctrs"),
       vec_is_vector_workaround = vec_is_vector_dispatch,
-      vec_is_vector_dispatch = function(x) vec_is_vector_workaround(x),
+      vec_is_vector_dispatch = function(...) vec_is_vector_workaround(...),
       vec_type2_workaround = vec_type2_dispatch,
-      vec_type2_dispatch = function(x) vec_type2_workaround(x)
+      vec_type2_dispatch = function(...) vec_type2_workaround(...)
     )
   }
 
