@@ -106,6 +106,16 @@ enum vctrs_dispatch {
   vctrs_dispatch_scalar_scalar
 };
 
+extern SEXP vctrs_shared_empty_lgl;
+extern SEXP vctrs_shared_empty_int;
+extern SEXP vctrs_shared_empty_dbl;
+extern SEXP vctrs_shared_empty_cpl;
+extern SEXP vctrs_shared_empty_chr;
+extern SEXP vctrs_shared_empty_raw;
+extern SEXP vctrs_shared_empty_list;
+
+enum vctrs_dispatch vec_dispatch_typeof(SEXP x, SEXP y);
+
 
 // Vector methods ------------------------------------------------
 R_len_t vec_size(SEXP x);
@@ -148,3 +158,7 @@ void growable_init(growable* g, SEXPTYPE type, int capacity);
 void growable_free(growable* g);
 void growable_push_int(growable* g, int i);
 SEXP growable_values(growable* g);
+
+// Shape --------------------------------------------------------
+
+bool has_dim(SEXP x);

@@ -41,3 +41,8 @@ test_that("vec_dispatch_typeof() returns common type", {
     }
   }
 })
+
+test_that("vec_type2() dispatches when inputs have shape", {
+  expect_identical(dim(vec_type2(int(), matrix(nrow = 3, ncol = 4))), c(0L, 4L))
+  expect_identical(dim(vec_type2(matrix("", nrow = 3), c("", "", ""))), c(0L, 1L))
+})

@@ -75,6 +75,10 @@ R_len_t rcrd_obs(SEXP x) {
   }
 }
 
+bool has_dim(SEXP x) {
+  return ATTRIB(x) != R_NilValue && Rf_getAttrib(x, R_DimSymbol) != R_NilValue;
+}
+
 // R interface ------------------------------------------------------------
 
 SEXP vctrs_size(SEXP x) {
