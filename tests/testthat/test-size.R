@@ -33,6 +33,12 @@ test_that("handles three types of data frame rownames", {
   expect_equal(vec_size(df3), 3)
 })
 
+test_that("handles positive short row names (#220)", {
+  data <- structure(mtcars, row.names = c(NA, 32))
+  expect_identical(vec_size(data), 32L)
+})
+
+
 # vec_slice --------------------------------------------------------------
 
 test_that("can subset object of any dimensionality", {

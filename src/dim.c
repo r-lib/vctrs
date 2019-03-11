@@ -53,7 +53,7 @@ R_len_t df_obs(SEXP x) {
     switch(TYPEOF(rn)) {
     case INTSXP:
       if (n == 2 && INTEGER(rn)[0] == NA_INTEGER) {
-        return -INTEGER(rn)[1];
+        return abs(INTEGER(rn)[1]);
       } else {
         return n;
       }

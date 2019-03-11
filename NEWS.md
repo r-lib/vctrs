@@ -1,5 +1,8 @@
 # vctrs 0.1.0.9000
 
+* `vec_size()` now works with positive short row names. This fixes
+  issues with data frames created with jsonlite (#220).
+
 * New `vec_is()` function to check whether a vector conforms to a
   protopty and/or a size. Unlike `vec_assert()`, it doesn't throw
   errors but returns `TRUE` or `FALSE` (#79).
