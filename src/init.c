@@ -33,6 +33,7 @@ extern SEXP vctrs_size(SEXP);
 extern SEXP vctrs_is_unspecified(SEXP);
 extern SEXP vctrs_typeof(SEXP);
 extern SEXP vctrs_is_vector(SEXP);
+extern SEXP vctrs_type2(SEXP);
 
 // Defined below
 SEXP vctrs_init(SEXP);
@@ -64,6 +65,7 @@ static const R_CallMethodDef CallEntries[] = {
   {"vctrs_typeof",                     (DL_FUNC) &vctrs_typeof, 1},
   {"vctrs_init",                       (DL_FUNC) &vctrs_init, 1},
   {"vctrs_is_vector",                  (DL_FUNC) &vctrs_is_vector, 1},
+  {"vctrs_type2",                      (DL_FUNC) &vctrs_type2, 2},
   {NULL, NULL, 0}
 };
 
@@ -74,9 +76,11 @@ void R_init_vctrs(DllInfo *dll)
 }
 
 
+void vctrs_init_type2(SEXP ns);
 void vctrs_init_types(SEXP ns);
 
 SEXP vctrs_init(SEXP ns) {
+  vctrs_init_type2(ns);
   vctrs_init_types(ns);
   return R_NilValue;
 }

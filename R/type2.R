@@ -33,13 +33,17 @@
 #' @param x,y Either vector types; i.e.
 #' @export
 vec_type2 <- function(x, y) {
+  return(.Call(vctrs_type2, x, y))
   UseMethod("vec_type2")
 }
-
+vec_type2_dispatch <- function(x, y) {
+  UseMethod("vec_type2")
+}
 #' @export
 vec_type2.default <- function(x, y) {
-  if (identical(attributes(x), attributes(y)))
+  if (identical(attributes(x), attributes(y))) {
     return(x)
+  }
 
   stop_incompatible_type(x, y)
 }
