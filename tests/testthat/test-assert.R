@@ -141,3 +141,9 @@ test_that("vec_assert() uses friendly type in error messages", {
   skip_on_cran()
   expect_error(vec_assert(function() NULL), "must be a vector, not a function")
 })
+
+test_that("vec_typeof() handles all types", {
+  for (i in seq_along(empty_types)) {
+    expect_identical(vec_typeof(!!empty_types[[i]]), !!names(empty_types)[[i]])
+  }
+})

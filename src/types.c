@@ -19,7 +19,7 @@ enum vctrs_type vec_typeof(SEXP x) {
   case LGLSXP: return OBJECT(x) ? vctrs_type_s3 : vctrs_type_logical;
   case INTSXP: return OBJECT(x) ? vctrs_type_s3 : vctrs_type_integer;
   case REALSXP: return OBJECT(x) ? vctrs_type_s3 : vctrs_type_double;
-  case CPLXSXP: return OBJECT(x) ? vctrs_type_s3 : vctrs_type_double;
+  case CPLXSXP: return OBJECT(x) ? vctrs_type_s3 : vctrs_type_complex;
   case STRSXP: return OBJECT(x) ? vctrs_type_s3 : vctrs_type_character;
   case RAWSXP: return OBJECT(x) ? vctrs_type_s3 : vctrs_type_raw;
   case VECSXP:
