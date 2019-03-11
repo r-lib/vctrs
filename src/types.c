@@ -15,12 +15,13 @@ bool is_scalar(SEXP x) {
 
 enum vctrs_type vec_typeof(SEXP x) {
   switch (TYPEOF(x)) {
-  case LGLSXP: return vctrs_type_logical;
-  case INTSXP: return vctrs_type_integer;
-  case REALSXP: return vctrs_type_double;
-  case CPLXSXP: return vctrs_type_double;
-  case STRSXP: return vctrs_type_character;
-  case RAWSXP: return vctrs_type_raw;
+  case NILSXP: return vctrs_type_null;
+  case LGLSXP: return OBJECT(x) ? vctrs_type_s3 : vctrs_type_logical;
+  case INTSXP: return OBJECT(x) ? vctrs_type_s3 : vctrs_type_integer;
+  case REALSXP: return OBJECT(x) ? vctrs_type_s3 : vctrs_type_double;
+  case CPLXSXP: return OBJECT(x) ? vctrs_type_s3 : vctrs_type_double;
+  case STRSXP: return OBJECT(x) ? vctrs_type_s3 : vctrs_type_character;
+  case RAWSXP: return OBJECT(x) ? vctrs_type_s3 : vctrs_type_raw;
   case VECSXP:
     if (!OBJECT(x)) {
       return vctrs_type_list;
