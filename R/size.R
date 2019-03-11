@@ -158,14 +158,13 @@ get_slice_index <- function(i, x) {
   } else if (is_logical(i)) {
     i <- vec_recycle(i, vec_size(x))
     i <- which(i)
-    stopifnot(is.integer(i))
   } else if (is_character(i)) {
     if (is.null(names(x))) {
       abort("Can't use character to index an unnamed vector.")
     }
-  } else {
+  } else if (!is_integer(i)) {
     # Do we really want to forbid numeric indices here (> 2^31)?
-    stopifnot(is.integer(i))
+    abort("`i` must be an integer")
   }
 
   i
