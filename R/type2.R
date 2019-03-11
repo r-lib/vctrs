@@ -48,6 +48,11 @@ vec_type2.default <- function(x, y) {
   stop_incompatible_type(x, y)
 }
 
+vec_dispatch_typeof <- function(x, y) {
+  .Call(vctrs_dispatch_typeof, x, y)
+}
+
+
 # Numeric-ish ----------------------------------------------------------
 
 #' @rdname vec_type2

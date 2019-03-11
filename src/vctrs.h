@@ -27,6 +27,85 @@ const char* vec_type_as_str(enum vctrs_type type);
 bool vec_is_vector(SEXP x);
 void vctrs_stop_unsupported_type(enum vctrs_type, const char* fn) __attribute__((noreturn));
 
+enum vctrs_dispatch {
+  vctrs_dispatch_null_null,
+  vctrs_dispatch_null_logical,
+  vctrs_dispatch_null_integer,
+  vctrs_dispatch_null_double,
+  vctrs_dispatch_null_complex,
+  vctrs_dispatch_null_character,
+  vctrs_dispatch_null_raw,
+  vctrs_dispatch_null_list,
+  vctrs_dispatch_null_dataframe,
+  vctrs_dispatch_null_s3,
+  vctrs_dispatch_null_scalar,
+
+  vctrs_dispatch_logical_logical,
+  vctrs_dispatch_logical_integer,
+  vctrs_dispatch_logical_double,
+  vctrs_dispatch_logical_complex,
+  vctrs_dispatch_logical_character,
+  vctrs_dispatch_logical_raw,
+  vctrs_dispatch_logical_list,
+  vctrs_dispatch_logical_dataframe,
+  vctrs_dispatch_logical_s3,
+  vctrs_dispatch_logical_scalar,
+
+  vctrs_dispatch_integer_integer,
+  vctrs_dispatch_integer_double,
+  vctrs_dispatch_integer_complex,
+  vctrs_dispatch_integer_character,
+  vctrs_dispatch_integer_raw,
+  vctrs_dispatch_integer_list,
+  vctrs_dispatch_integer_dataframe,
+  vctrs_dispatch_integer_s3,
+  vctrs_dispatch_integer_scalar,
+
+  vctrs_dispatch_double_double,
+  vctrs_dispatch_double_complex,
+  vctrs_dispatch_double_character,
+  vctrs_dispatch_double_raw,
+  vctrs_dispatch_double_list,
+  vctrs_dispatch_double_dataframe,
+  vctrs_dispatch_double_s3,
+  vctrs_dispatch_double_scalar,
+
+  vctrs_dispatch_complex_complex,
+  vctrs_dispatch_complex_character,
+  vctrs_dispatch_complex_raw,
+  vctrs_dispatch_complex_list,
+  vctrs_dispatch_complex_dataframe,
+  vctrs_dispatch_complex_s3,
+  vctrs_dispatch_complex_scalar,
+
+  vctrs_dispatch_character_character,
+  vctrs_dispatch_character_raw,
+  vctrs_dispatch_character_list,
+  vctrs_dispatch_character_dataframe,
+  vctrs_dispatch_character_s3,
+  vctrs_dispatch_character_scalar,
+
+  vctrs_dispatch_raw_raw,
+  vctrs_dispatch_raw_list,
+  vctrs_dispatch_raw_dataframe,
+  vctrs_dispatch_raw_s3,
+  vctrs_dispatch_raw_scalar,
+
+  vctrs_dispatch_list_list,
+  vctrs_dispatch_list_dataframe,
+  vctrs_dispatch_list_s3,
+  vctrs_dispatch_list_scalar,
+
+  vctrs_dispatch_dataframe_dataframe,
+  vctrs_dispatch_dataframe_s3,
+  vctrs_dispatch_dataframe_scalar,
+
+  vctrs_dispatch_s3_s3,
+  vctrs_dispatch_s3_scalar,
+
+  vctrs_dispatch_scalar_scalar
+};
+
 
 // Vector methods ------------------------------------------------
 R_len_t vec_size(SEXP x);
