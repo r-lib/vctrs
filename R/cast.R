@@ -160,7 +160,7 @@ vec_cast.logical.double <- function(x, to) {
 #' @export
 #' @method vec_cast.logical character
 vec_cast.logical.character <- function(x, to) {
-  report_lossy_cast(x, to, !toupper(x) %in% c("T", "F", "TRUE", "FALSE"))
+  report_lossy_cast(x, to, !x %in% c("T", "F", "TRUE", "FALSE", "true", "false"))
   x <- vec_coerce_bare(x, "logical")
   shape_broadcast(x, to)
 }
