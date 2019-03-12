@@ -108,6 +108,9 @@ enum vctrs_dispatch {
   vctrs_dispatch_scalar_scalar
 };
 
+enum vctrs_dispatch vec_dispatch_typeof(SEXP x, SEXP y);
+const char* vctrs_dispatch_type_as_str(enum vctrs_dispatch type);
+
 extern SEXP vctrs_shared_empty_lgl;
 extern SEXP vctrs_shared_empty_int;
 extern SEXP vctrs_shared_empty_dbl;
@@ -115,8 +118,6 @@ extern SEXP vctrs_shared_empty_cpl;
 extern SEXP vctrs_shared_empty_chr;
 extern SEXP vctrs_shared_empty_raw;
 extern SEXP vctrs_shared_empty_list;
-
-enum vctrs_dispatch vec_dispatch_typeof(SEXP x, SEXP y);
 
 
 // Vector methods ------------------------------------------------
