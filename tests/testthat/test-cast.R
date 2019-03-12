@@ -68,6 +68,12 @@ test_that("safe casts work as expected", {
 test_that("lossy casts generate warning", {
   expect_condition(vec_cast(c(2.5, 2), integer()), class = "warning_lossy_cast")
   expect_condition(vec_cast(c("2.5", "2"), integer()), class = "warning_lossy_cast")
+
+  out <- expect_lossy_cast(vec_cast(c(.Machine$integer.max + 1, 1), int()))
+  expect_identical(out, int(NA, 1L))
+
+  out <- expect_lossy_cast(vec_cast(c(-.Machine$integer.max - 1, 1), int()))
+  expect_identical(out, int(NA, 1L))
 })
 
 test_that("invalid casts generate error", {

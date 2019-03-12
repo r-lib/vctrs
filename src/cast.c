@@ -69,6 +69,42 @@ static bool is_lossy_chr_as_lgl(SEXP x) {
   return false;
 }
 
+static SEXP dbl_as_integer(SEXP x, bool* lossy) {
+  double* data = REAL(x);
+  R_len_t n = Rf_length(x);
+
+  SEXP out = PROTECT(Rf_allocVector(INTSXP, n));
+  int* out_data = INTEGER(out);
+
+  for (R_len_t i = 0; i < n; ++i, ++data, ++out_data) {
+    double elt = *data;
+
+    if (elt <= INT_MIN || elt >= INT_MAX + 1.0) {
+      *lossy = true;
+      UNPROTECT(1);
+      return R_NilValue;
+    }
+
+    if (isnan(elt)) {
+      *out_data = NA_INTEGER;
+      continue;
+    }
+
+    int value = (int) elt;
+
+    if (value != elt) {
+      *lossy = true;
+      UNPROTECT(1);
+      return R_NilValue;
+    }
+
+    *out_data = value;
+  }
+
+  UNPROTECT(1);
+  return out;
+}
+
 SEXP vec_cast(SEXP x, SEXP to) {
   if (x == R_NilValue || to == R_NilValue) {
     return x;
@@ -89,6 +125,21 @@ SEXP vec_cast(SEXP x, SEXP to) {
     case vctrs_type_character:
       if (is_lossy_chr_as_lgl(x)) goto dispatch; else return Rf_coerceVector(x, LGLSXP);
     // TODO case vctrs_type_list:
+    default:
+      goto dispatch;
+    }
+
+  case vctrs_type_integer:
+    switch (vec_typeof(x)) {
+    case vctrs_type_logical:
+      return Rf_coerceVector(x, INTSXP);
+    case vctrs_type_integer:
+      return x;
+    case vctrs_type_double: {
+      bool lossy = false;
+      SEXP out = dbl_as_integer(x, &lossy);
+      if (lossy) goto dispatch; else return out;
+    }
     default:
       goto dispatch;
     }
