@@ -27,6 +27,8 @@ const char* vec_type_as_str(enum vctrs_type type);
 bool vec_is_vector(SEXP x);
 void vctrs_stop_unsupported_type(enum vctrs_type, const char* fn) __attribute__((noreturn));
 
+// After adding a new `vctrs_dispatch` type, add the missing entries
+// in `vec_dispatch_typeof()`
 enum vctrs_dispatch {
   vctrs_dispatch_null_null,
   vctrs_dispatch_null_logical,

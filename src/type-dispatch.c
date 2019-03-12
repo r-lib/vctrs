@@ -1,6 +1,9 @@
 #include "vctrs.h"
 
 
+// After adding entries in `vec_dispatch_typeof()`, adjust the list of
+// types in helper-types.R. This will ensure the consistency of the
+// new entries.
 enum vctrs_dispatch vec_dispatch_typeof(SEXP x, SEXP y) {
   switch (vec_typeof(x)) {
   case vctrs_type_null: {
