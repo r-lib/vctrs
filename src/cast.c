@@ -137,6 +137,38 @@ static SEXP dbl_as_integer(SEXP x, bool* lossy) {
   return out;
 }
 
+static SEXP lgl_as_double(SEXP x, bool* lossy) {
+  int* data = LOGICAL(x);
+  R_len_t n = Rf_length(x);
+
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  double* out_data = REAL(out);
+
+  for (R_len_t i = 0; i < n; ++i, ++data, ++out_data) {
+    int elt = *data;
+    *out_data = elt == NA_LOGICAL ? NA_REAL : elt;
+  }
+
+  UNPROTECT(1);
+  return out;
+}
+
+static SEXP int_as_double(SEXP x, bool* lossy) {
+  int* data = INTEGER(x);
+  R_len_t n = Rf_length(x);
+
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  double* out_data = REAL(out);
+
+  for (R_len_t i = 0; i < n; ++i, ++data, ++out_data) {
+    int elt = *data;
+    *out_data = elt == NA_INTEGER ? NA_REAL : elt;
+  }
+
+  UNPROTECT(1);
+  return out;
+}
+
 SEXP vec_cast(SEXP x, SEXP to) {
   if (x == R_NilValue || to == R_NilValue) {
     return x;
@@ -177,6 +209,27 @@ SEXP vec_cast(SEXP x, SEXP to) {
     case vctrs_type_double:
       out = dbl_as_integer(x, &lossy);
       break;
+    case vctrs_type_character:
+      // TODO: Implement with `R_strtod()` from R_ext/utils.h
+      goto dispatch;
+    default:
+      goto dispatch;
+    }
+    break;
+
+  case vctrs_type_double:
+    switch (vec_typeof(x)) {
+    case vctrs_type_logical:
+      out = lgl_as_double(x, &lossy);
+      break;
+    case vctrs_type_integer:
+      out = int_as_double(x, &lossy);
+      break;
+    case vctrs_type_double:
+      return x;
+    case vctrs_type_character:
+      // TODO: Implement with `R_strtod()` from R_ext/utils.h
+      goto dispatch;
     default:
       goto dispatch;
     }
