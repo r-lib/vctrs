@@ -96,9 +96,10 @@
 #' vec_cast_common(factor("a"), factor(c("a", "b")))
 #' vec_cast_common(factor("a"), Sys.Date(), .to = list())
 vec_cast <- function(x, to) {
-  if (is.null(x) || is.null(to)) {
-    return(x)
-  }
+  return(.Call(vctrs_cast, x, to))
+  UseMethod("vec_cast", to)
+}
+vec_cast_dispatch <- function(x, to) {
   UseMethod("vec_cast", to)
 }
 
