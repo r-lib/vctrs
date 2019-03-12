@@ -170,10 +170,7 @@ enum vctrs_dispatch vec_dispatch_typeof(SEXP x, SEXP y) {
     case vctrs_type_s3:        return vctrs_dispatch_s3_scalar;
     case vctrs_type_scalar:    return vctrs_dispatch_scalar_scalar;
     }
-  }
-  default:
-    Rf_errorcall(R_NilValue, "Unimplemented type in `vec_dispatch_type()`");
-  }
+  }}
 };
 
 const char* vctrs_dispatch_type_as_str(enum vctrs_dispatch type) {
