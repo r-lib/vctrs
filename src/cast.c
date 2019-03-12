@@ -235,6 +235,19 @@ SEXP vec_cast(SEXP x, SEXP to) {
     }
     break;
 
+  case vctrs_type_character:
+    switch (vec_typeof(x)) {
+    case vctrs_type_logical:
+    case vctrs_type_integer:
+    case vctrs_type_double:
+      return Rf_coerceVector(x, STRSXP);
+    case vctrs_type_character:
+      return x;
+    default:
+      goto dispatch;
+    }
+    break;
+
   default:
     goto dispatch;
   }
