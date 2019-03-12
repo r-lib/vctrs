@@ -76,6 +76,10 @@ vec_type2.double  <- function(x, y) UseMethod("vec_type2.double", y)
 #' @export
 vec_type2.raw  <- function(x, y) UseMethod("vec_type2.raw", y)
 
+
+# These methods for base types are handled at the C level unless
+# inputs have shape
+
 #' @method vec_type2.logical logical
 #' @export
 vec_type2.logical.logical <- function(x, y) shape_match(logical(), x, y)
