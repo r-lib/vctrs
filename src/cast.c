@@ -4,69 +4,101 @@
 static SEXP vec_cast_dispatch_fn = NULL;
 
 
-static bool is_lossy_int_as_lgl(SEXP x) {
+static SEXP int_as_logical(SEXP x, bool* lossy) {
   int* data = INTEGER(x);
   R_len_t n = Rf_length(x);
 
+  SEXP out = PROTECT(Rf_allocVector(LGLSXP, n));
+  int* out_data = LOGICAL(out);
+
   for (R_len_t i = 0; i < n; ++i, ++data) {
     int elt = *data;
+
     if (elt != 0 && elt != 1) {
-      return true;
+      *lossy = true;
+      UNPROTECT(1);
+      return R_NilValue;
     }
+
+    *out_data = elt;
   }
 
-  return false;
+  UNPROTECT(1);
+  return out;
 }
-static bool is_lossy_dbl_as_lgl(SEXP x) {
+
+static SEXP dbl_as_logical(SEXP x, bool* lossy) {
   double* data = REAL(x);
   R_len_t n = Rf_length(x);
 
+  SEXP out = PROTECT(Rf_allocVector(LGLSXP, n));
+  int* out_data = LOGICAL(out);
+
   for (R_len_t i = 0; i < n; ++i, ++data) {
-    int elt = *data;
+    double elt = *data;
+
     if (elt != 0 && elt != 1) {
-      return true;
+      *lossy = true;
+      UNPROTECT(1);
+      return R_NilValue;
     }
+
+    *out_data = isnan(elt) ? NA_LOGICAL : (int) elt;
   }
 
-  return false;
+  UNPROTECT(1);
+  return out;
 }
-static bool is_lossy_chr_as_lgl(SEXP x) {
+
+static SEXP chr_as_logical(SEXP x, bool* lossy) {
   SEXP* data = STRING_PTR(x);
   R_len_t n = Rf_length(x);
 
-  for (R_len_t i = 0; i < n; ++i, ++data) {
+  SEXP out = PROTECT(Rf_allocVector(LGLSXP, n));
+  int* out_data = LOGICAL(out);
+
+  for (R_len_t i = 0; i < n; ++i, ++data, ++out_data) {
     const char* elt = CHAR(*data);
     switch (elt[0]) {
     case 'T':
       if (elt[1] == '\0' || strcmp(elt, "TRUE") == 0) {
+        *out_data = 1;
         continue;
-      } else {
-        return true;
       }
+      break;
     case 'F':
-      if (elt[1] == '\0' || strcmp(elt, "TRUE") == 0) {
+      if (elt[1] == '\0' || strcmp(elt, "FALSE") == 0) {
+        *out_data = 0;
         continue;
-      } else {
-        return true;
       }
+      break;
     case 't':
       if (strcmp(elt, "true") == 0) {
+        *out_data = 1;
         continue;
-      } else {
-        return true;
       }
+      break;
     case 'f':
       if (strcmp(elt, "false") == 0) {
+        *out_data = 0;
         continue;
-      } else {
-        return true;
       }
+      break;
     default:
-      return true;
+      break;
     }
+
+    *lossy = true;
+    UNPROTECT(1);
+    return R_NilValue;
   }
 
-  return false;
+  UNPROTECT(1);
+  return out;
+}
+
+static SEXP lgl_as_integer(SEXP x, bool* lossy) {
+  return Rf_coerceVector(x, INTSXP);
 }
 
 static SEXP dbl_as_integer(SEXP x, bool* lossy) {
@@ -113,45 +145,58 @@ SEXP vec_cast(SEXP x, SEXP to) {
     goto dispatch;
   }
 
+  bool lossy = false;
+  SEXP out = R_NilValue;
+
   switch (vec_typeof(to)) {
   case vctrs_type_logical:
     switch (vec_typeof(x)) {
     case vctrs_type_logical:
       return x;
     case vctrs_type_integer:
-      if (is_lossy_int_as_lgl(x)) goto dispatch; else return Rf_coerceVector(x, LGLSXP);
+      out = int_as_logical(x, &lossy);
+      break;
     case vctrs_type_double:
-      if (is_lossy_dbl_as_lgl(x)) goto dispatch; else return Rf_coerceVector(x, LGLSXP);
+      out = dbl_as_logical(x, &lossy);
+      break;
     case vctrs_type_character:
-      if (is_lossy_chr_as_lgl(x)) goto dispatch; else return Rf_coerceVector(x, LGLSXP);
-    // TODO case vctrs_type_list:
+      out = chr_as_logical(x, &lossy);
+      break;
     default:
       goto dispatch;
     }
+    break;
 
   case vctrs_type_integer:
     switch (vec_typeof(x)) {
     case vctrs_type_logical:
-      return Rf_coerceVector(x, INTSXP);
+      out = lgl_as_integer(x, &lossy);
+      break;
     case vctrs_type_integer:
       return x;
-    case vctrs_type_double: {
-      bool lossy = false;
-      SEXP out = dbl_as_integer(x, &lossy);
-      if (lossy) goto dispatch; else return out;
-    }
+    case vctrs_type_double:
+      out = dbl_as_integer(x, &lossy);
+      break;
     default:
       goto dispatch;
     }
+    break;
 
   default:
-  dispatch: {
+    goto dispatch;
+  }
+
+  if (!lossy) {
+    return out;
+  }
+
+ dispatch: {
     SEXP dispatch_call = PROTECT(Rf_lang3(vec_cast_dispatch_fn, x, to));
     SEXP out = Rf_eval(dispatch_call, R_GlobalEnv);
 
     UNPROTECT(1);
     return out;
-  }}
+  }
 }
 
 
