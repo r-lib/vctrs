@@ -130,6 +130,9 @@ vec_restore.default <- function(x, to) {
 
 # Base vectors --------------------------------------------------------------
 
+# These methods for base types are handled at the C level unless
+# inputs have shape or have lossy casts
+
 #' @export
 #' @rdname vec_cast
 #' @export vec_cast.logical
