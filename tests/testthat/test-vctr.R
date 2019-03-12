@@ -295,6 +295,8 @@ test_that("numeric methods use vec_restore_numeric", {
 })
 
 test_that("c passes on to vec_c", {
+  scoped_hidden()
+
   h <- new_hidden(1)
 
   expect_equal(c(h), h)
@@ -331,6 +333,7 @@ test_that("can put in data frame", {
 })
 
 test_that("base coercions default to vec_cast", {
+  scoped_hidden()
   h <- new_hidden(1)
   expect_error(as.character(h), class = "vctrs_error_incompatible_cast")
   expect_error(as.integer(h), class = "vctrs_error_incompatible_cast")

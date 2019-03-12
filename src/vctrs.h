@@ -27,6 +27,98 @@ const char* vec_type_as_str(enum vctrs_type type);
 bool vec_is_vector(SEXP x);
 void vctrs_stop_unsupported_type(enum vctrs_type, const char* fn) __attribute__((noreturn));
 
+// After adding a new `vctrs_dispatch` type, add the missing entries
+// in `vec_dispatch_typeof()`
+enum vctrs_dispatch {
+  vctrs_dispatch_null_null,
+  vctrs_dispatch_null_logical,
+  vctrs_dispatch_null_integer,
+  vctrs_dispatch_null_double,
+  vctrs_dispatch_null_complex,
+  vctrs_dispatch_null_character,
+  vctrs_dispatch_null_raw,
+  vctrs_dispatch_null_list,
+  vctrs_dispatch_null_dataframe,
+  vctrs_dispatch_null_s3,
+  vctrs_dispatch_null_scalar,
+
+  vctrs_dispatch_logical_logical,
+  vctrs_dispatch_logical_integer,
+  vctrs_dispatch_logical_double,
+  vctrs_dispatch_logical_complex,
+  vctrs_dispatch_logical_character,
+  vctrs_dispatch_logical_raw,
+  vctrs_dispatch_logical_list,
+  vctrs_dispatch_logical_dataframe,
+  vctrs_dispatch_logical_s3,
+  vctrs_dispatch_logical_scalar,
+
+  vctrs_dispatch_integer_integer,
+  vctrs_dispatch_integer_double,
+  vctrs_dispatch_integer_complex,
+  vctrs_dispatch_integer_character,
+  vctrs_dispatch_integer_raw,
+  vctrs_dispatch_integer_list,
+  vctrs_dispatch_integer_dataframe,
+  vctrs_dispatch_integer_s3,
+  vctrs_dispatch_integer_scalar,
+
+  vctrs_dispatch_double_double,
+  vctrs_dispatch_double_complex,
+  vctrs_dispatch_double_character,
+  vctrs_dispatch_double_raw,
+  vctrs_dispatch_double_list,
+  vctrs_dispatch_double_dataframe,
+  vctrs_dispatch_double_s3,
+  vctrs_dispatch_double_scalar,
+
+  vctrs_dispatch_complex_complex,
+  vctrs_dispatch_complex_character,
+  vctrs_dispatch_complex_raw,
+  vctrs_dispatch_complex_list,
+  vctrs_dispatch_complex_dataframe,
+  vctrs_dispatch_complex_s3,
+  vctrs_dispatch_complex_scalar,
+
+  vctrs_dispatch_character_character,
+  vctrs_dispatch_character_raw,
+  vctrs_dispatch_character_list,
+  vctrs_dispatch_character_dataframe,
+  vctrs_dispatch_character_s3,
+  vctrs_dispatch_character_scalar,
+
+  vctrs_dispatch_raw_raw,
+  vctrs_dispatch_raw_list,
+  vctrs_dispatch_raw_dataframe,
+  vctrs_dispatch_raw_s3,
+  vctrs_dispatch_raw_scalar,
+
+  vctrs_dispatch_list_list,
+  vctrs_dispatch_list_dataframe,
+  vctrs_dispatch_list_s3,
+  vctrs_dispatch_list_scalar,
+
+  vctrs_dispatch_dataframe_dataframe,
+  vctrs_dispatch_dataframe_s3,
+  vctrs_dispatch_dataframe_scalar,
+
+  vctrs_dispatch_s3_s3,
+  vctrs_dispatch_s3_scalar,
+
+  vctrs_dispatch_scalar_scalar
+};
+
+enum vctrs_dispatch vec_dispatch_typeof(SEXP x, SEXP y);
+const char* vctrs_dispatch_type_as_str(enum vctrs_dispatch type);
+
+extern SEXP vctrs_shared_empty_lgl;
+extern SEXP vctrs_shared_empty_int;
+extern SEXP vctrs_shared_empty_dbl;
+extern SEXP vctrs_shared_empty_cpl;
+extern SEXP vctrs_shared_empty_chr;
+extern SEXP vctrs_shared_empty_raw;
+extern SEXP vctrs_shared_empty_list;
+
 
 // Vector methods ------------------------------------------------
 R_len_t vec_size(SEXP x);
@@ -69,3 +161,7 @@ void growable_init(growable* g, SEXPTYPE type, int capacity);
 void growable_free(growable* g);
 void growable_push_int(growable* g, int i);
 SEXP growable_values(growable* g);
+
+// Shape --------------------------------------------------------
+
+bool has_dim(SEXP x);

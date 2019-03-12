@@ -33,16 +33,25 @@
 #' @param x,y Either vector types; i.e.
 #' @export
 vec_type2 <- function(x, y) {
+  return(.Call(vctrs_type2, x, y))
   UseMethod("vec_type2")
 }
-
+vec_type2_dispatch <- function(x, y) {
+  UseMethod("vec_type2")
+}
 #' @export
 vec_type2.default <- function(x, y) {
-  if (identical(attributes(x), attributes(y)))
+  if (identical(attributes(x), attributes(y))) {
     return(x)
+  }
 
   stop_incompatible_type(x, y)
 }
+
+vec_dispatch_typeof <- function(x, y) {
+  .Call(vctrs_dispatch_typeof, x, y)
+}
+
 
 # Numeric-ish ----------------------------------------------------------
 
@@ -66,6 +75,10 @@ vec_type2.double  <- function(x, y) UseMethod("vec_type2.double", y)
 #' @method vec_type2 raw
 #' @export
 vec_type2.raw  <- function(x, y) UseMethod("vec_type2.raw", y)
+
+
+# These methods for base types are handled at the C level unless
+# inputs have shape
 
 #' @method vec_type2.logical logical
 #' @export

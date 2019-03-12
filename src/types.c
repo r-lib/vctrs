@@ -19,7 +19,7 @@ enum vctrs_type vec_typeof(SEXP x) {
   case LGLSXP: return OBJECT(x) ? vctrs_type_s3 : vctrs_type_logical;
   case INTSXP: return OBJECT(x) ? vctrs_type_s3 : vctrs_type_integer;
   case REALSXP: return OBJECT(x) ? vctrs_type_s3 : vctrs_type_double;
-  case CPLXSXP: return OBJECT(x) ? vctrs_type_s3 : vctrs_type_double;
+  case CPLXSXP: return OBJECT(x) ? vctrs_type_s3 : vctrs_type_complex;
   case STRSXP: return OBJECT(x) ? vctrs_type_s3 : vctrs_type_character;
   case RAWSXP: return OBJECT(x) ? vctrs_type_s3 : vctrs_type_raw;
   case VECSXP:
@@ -100,6 +100,35 @@ SEXP vctrs_typeof(SEXP x) {
 }
 
 
+SEXP vctrs_shared_empty_lgl = NULL;
+SEXP vctrs_shared_empty_int = NULL;
+SEXP vctrs_shared_empty_dbl = NULL;
+SEXP vctrs_shared_empty_cpl = NULL;
+SEXP vctrs_shared_empty_chr = NULL;
+SEXP vctrs_shared_empty_raw = NULL;
+SEXP vctrs_shared_empty_list = NULL;
+
 void vctrs_init_types(SEXP ns) {
   vec_is_vector_dispatch_fn = Rf_findVar(Rf_install("vec_is_vector_dispatch"), ns);
+
+  vctrs_shared_empty_lgl = Rf_allocVector(LGLSXP, 0);
+  R_PreserveObject(vctrs_shared_empty_lgl);
+
+  vctrs_shared_empty_int = Rf_allocVector(INTSXP, 0);
+  R_PreserveObject(vctrs_shared_empty_int);
+
+  vctrs_shared_empty_dbl = Rf_allocVector(REALSXP, 0);
+  R_PreserveObject(vctrs_shared_empty_dbl);
+
+  vctrs_shared_empty_cpl = Rf_allocVector(CPLXSXP, 0);
+  R_PreserveObject(vctrs_shared_empty_cpl);
+
+  vctrs_shared_empty_chr = Rf_allocVector(STRSXP, 0);
+  R_PreserveObject(vctrs_shared_empty_chr);
+
+  vctrs_shared_empty_raw = Rf_allocVector(RAWSXP, 0);
+  R_PreserveObject(vctrs_shared_empty_raw);
+
+  vctrs_shared_empty_list = Rf_allocVector(VECSXP, 0);
+  R_PreserveObject(vctrs_shared_empty_list);
 }
