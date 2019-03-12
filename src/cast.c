@@ -30,6 +30,44 @@ static bool is_lossy_dbl_as_lgl(SEXP x) {
 
   return false;
 }
+static bool is_lossy_chr_as_lgl(SEXP x) {
+  SEXP* data = STRING_PTR(x);
+  R_len_t n = Rf_length(x);
+
+  for (R_len_t i = 0; i < n; ++i, ++data) {
+    const char* elt = CHAR(*data);
+    switch (elt[0]) {
+    case 'T':
+      if (elt[1] == '\0' || strcmp(elt, "TRUE") == 0) {
+        continue;
+      } else {
+        return true;
+      }
+    case 'F':
+      if (elt[1] == '\0' || strcmp(elt, "TRUE") == 0) {
+        continue;
+      } else {
+        return true;
+      }
+    case 't':
+      if (strcmp(elt, "true") == 0) {
+        continue;
+      } else {
+        return true;
+      }
+    case 'f':
+      if (strcmp(elt, "false") == 0) {
+        continue;
+      } else {
+        return true;
+      }
+    default:
+      return true;
+    }
+  }
+
+  return false;
+}
 
 SEXP vec_cast(SEXP x, SEXP to) {
   if (x == R_NilValue || to == R_NilValue) {
@@ -48,6 +86,9 @@ SEXP vec_cast(SEXP x, SEXP to) {
       if (is_lossy_int_as_lgl(x)) goto dispatch; else return Rf_coerceVector(x, LGLSXP);
     case vctrs_type_double:
       if (is_lossy_dbl_as_lgl(x)) goto dispatch; else return Rf_coerceVector(x, LGLSXP);
+    case vctrs_type_character:
+      if (is_lossy_chr_as_lgl(x)) goto dispatch; else return Rf_coerceVector(x, LGLSXP);
+    // TODO case vctrs_type_list:
     default:
       goto dispatch;
     }

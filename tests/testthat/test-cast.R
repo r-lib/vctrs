@@ -17,12 +17,17 @@ test_that("new classes are uncoercible by default", {
 
 # Logical -----------------------------------------------------------------
 
-test_that("safe casts work as expeced", {
+test_that("safe casts work as expected", {
   expect_equal(vec_cast(NULL, logical()), NULL)
   expect_equal(vec_cast(TRUE, logical()), TRUE)
   expect_equal(vec_cast(1L, logical()), TRUE)
   expect_equal(vec_cast(1, logical()), TRUE)
+  expect_equal(vec_cast("T", logical()), TRUE)
+  expect_equal(vec_cast("F", logical()), FALSE)
   expect_equal(vec_cast("TRUE", logical()), TRUE)
+  expect_equal(vec_cast("FALSE", logical()), FALSE)
+  expect_equal(vec_cast("true", logical()), TRUE)
+  expect_equal(vec_cast("false", logical()), FALSE)
   expect_equal(vec_cast(list(1), logical()), TRUE)
 })
 
