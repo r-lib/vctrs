@@ -99,7 +99,7 @@ vec_size2 <- function(nx, ny) {
 #'
 #' vec_slice(mtcars, 1:3)
 vec_slice <- function(x, i) {
-  i <- get_slice_index(i, x)
+  i <- slice_index(i, x)
 
   if (is.null(x)) {
     NULL
@@ -130,7 +130,7 @@ vec_slice <- function(x, i) {
 #' @export
 #' @rdname vec_slice
 `vec_slice<-` <- function(x, i, value) {
-  i <- get_slice_index(i, x)
+  i <- slice_index(i, x)
   value <- vec_recycle(value, vec_size(i))
 
   if (is.null(x)) {
@@ -152,7 +152,7 @@ vec_slice <- function(x, i) {
   x
 }
 
-get_slice_index <- function(i, x) {
+slice_index <- function(i, x) {
   if (identical(i, 0L)) {
     i <- integer()
   } else if (is_logical(i)) {
