@@ -131,6 +131,9 @@ vec_slice_dispatch <- function(x, i) {
 #' @rdname vec_slice
 `vec_slice<-` <- function(x, i, value) {
   i <- slice_index(i, x)
+  if (is_missing(i)) {
+    i <- seq_along(x)
+  }
   value <- vec_recycle(value, vec_size(i))
 
   if (is.null(x)) {

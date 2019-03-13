@@ -49,7 +49,7 @@ static SEXP lgl_slice_index(SEXP i, SEXP x) {
 
   if (n == 1) {
     if (*LOGICAL(i)) {
-      return vctrs_shared_true;
+      return R_MissingArg;
     } else {
       return vctrs_shared_empty_int;
     }
