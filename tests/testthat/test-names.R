@@ -27,9 +27,6 @@ test_that("can use names to vec_slice<-() a named object", {
   vec_slice(x0, "b") <- 3
   expect_identical(x0, c(a = 1, b = 3))
 
-  vec_slice(x0, "c") <- 2
-  expect_identical(x0, c(a = 1, b = 3, c = 2))
-
   vec_slice(x1, "a") <- 3
   expect_identical(x1, c(a = 3, a = 2))
 })

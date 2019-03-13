@@ -99,31 +99,31 @@ vec_size2 <- function(nx, ny) {
 #'
 #' vec_slice(mtcars, 1:3)
 vec_slice <- function(x, i) {
-  i <- slice_index(i, x)
+  .Call(vctrs_slice, x, i)
+}
 
-  if (is.null(x)) {
-    NULL
-  } else if (is.data.frame(x)) {
+vec_slice_dispatch <- function(x, i) {
+  if (is.data.frame(x)) {
     # Much faster, and avoids creating rownames
     out <- lapply(x, vec_slice, i)
     attr(out, "row.names") <- .set_row_names(length(i))
-    vec_restore(out, x)
-  } else if (is_vector(x)) {
-    d <- vec_dims(x)
-    if (d == 1) {
-      if (is.object(x)) {
-        x[i]
-      } else {
-        x[i, drop = FALSE]
-      }
-    } else if (d == 2) {
-      x[i, , drop = FALSE]
+    return(vec_restore(out, x))
+  }
+
+  vec_assert(x)
+
+  d <- vec_dims(x)
+  if (d == 1) {
+    if (is.object(x)) {
+      x[i]
     } else {
-      miss_args <- rep(list(missing_arg()), d - 1)
-      eval_bare(expr(x[i, !!!miss_args, drop = FALSE]))
+      x[i, drop = FALSE]
     }
+  } else if (d == 2) {
+    x[i, , drop = FALSE]
   } else {
-    abort("`x` must be a vector.")
+    miss_args <- rep(list(missing_arg()), d - 1)
+    eval_bare(expr(x[i, !!!miss_args, drop = FALSE]))
   }
 }
 

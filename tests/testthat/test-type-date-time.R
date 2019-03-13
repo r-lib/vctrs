@@ -11,6 +11,13 @@ test_that("date-times have informative types", {
   expect_equal(vec_ptype_full(new_duration(10)), "duration<secs>")
 })
 
+test_that("dates and times are vectors", {
+  expect_true(vec_is(Sys.Date()))
+  expect_true(vec_is(as.POSIXct("2020-01-01")))
+  expect_true(vec_is(as.POSIXlt("2020-01-01")))
+})
+
+
 # coerce ------------------------------------------------------------------
 
 test_that("datetime coercions are symmetric and unchanging", {

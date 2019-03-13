@@ -1,6 +1,36 @@
 #include "vctrs.h"
 #include "utils.h"
 
+// Initialised at load time
+SEXP vec_slice_dispatch_fn = NULL;
+
+// Defined below
+SEXP vctrs_slice_index(SEXP i, SEXP x);
+
+
+SEXP vctrs_slice(SEXP x, SEXP i) {
+  i = PROTECT(vctrs_slice_index(i, x));
+
+  switch (vec_typeof(x)) {
+  case vctrs_type_null:
+    UNPROTECT(1);
+    return R_NilValue;
+
+  case vctrs_type_s3:
+    goto dispatch;
+
+  default:
+    break;
+  }
+
+ dispatch: {
+    SEXP dispatch_call = PROTECT(Rf_lang3(vec_slice_dispatch_fn, x, i));
+    SEXP out = Rf_eval(dispatch_call, R_GlobalEnv);
+
+    UNPROTECT(2);
+    return out;
+  }
+}
 
 static SEXP int_slice_index(SEXP i, SEXP x) {
   if (Rf_length(i) == 1 && *INTEGER(i) == 0) {
@@ -51,4 +81,9 @@ SEXP vctrs_slice_index(SEXP i, SEXP x) {
   // Do we really want to forbid numeric indices here (> 2^31)?
   default: Rf_errorcall(R_NilValue, "`i` must be an integer.");
   }
+}
+
+
+void vctrs_init_size(SEXP ns) {
+  vec_slice_dispatch_fn = Rf_findVar(Rf_install("vec_slice_dispatch"), ns);
 }
