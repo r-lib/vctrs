@@ -113,22 +113,29 @@ void vctrs_init_types(SEXP ns) {
 
   vctrs_shared_empty_lgl = Rf_allocVector(LGLSXP, 0);
   R_PreserveObject(vctrs_shared_empty_lgl);
+  MARK_NOT_MUTABLE(vctrs_shared_empty_lgl);
 
   vctrs_shared_empty_int = Rf_allocVector(INTSXP, 0);
   R_PreserveObject(vctrs_shared_empty_int);
+  MARK_NOT_MUTABLE(vctrs_shared_empty_int);
 
   vctrs_shared_empty_dbl = Rf_allocVector(REALSXP, 0);
   R_PreserveObject(vctrs_shared_empty_dbl);
+  MARK_NOT_MUTABLE(vctrs_shared_empty_dbl);
 
   vctrs_shared_empty_cpl = Rf_allocVector(CPLXSXP, 0);
   R_PreserveObject(vctrs_shared_empty_cpl);
+  MARK_NOT_MUTABLE(vctrs_shared_empty_cpl);
 
   vctrs_shared_empty_chr = Rf_allocVector(STRSXP, 0);
   R_PreserveObject(vctrs_shared_empty_chr);
+  MARK_NOT_MUTABLE(vctrs_shared_empty_chr);
 
   vctrs_shared_empty_raw = Rf_allocVector(RAWSXP, 0);
   R_PreserveObject(vctrs_shared_empty_raw);
+  MARK_NOT_MUTABLE(vctrs_shared_empty_raw);
 
   vctrs_shared_empty_list = Rf_allocVector(VECSXP, 0);
   R_PreserveObject(vctrs_shared_empty_list);
+  MARK_NOT_MUTABLE(vctrs_shared_empty_list);
 }
