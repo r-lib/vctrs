@@ -119,6 +119,9 @@ extern SEXP vctrs_shared_empty_chr;
 extern SEXP vctrs_shared_empty_raw;
 extern SEXP vctrs_shared_empty_list;
 
+extern SEXP vctrs_shared_true;
+extern SEXP vctrs_shared_false;
+
 
 // Vector methods ------------------------------------------------
 R_len_t vec_size(SEXP x);
