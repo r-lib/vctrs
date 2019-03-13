@@ -146,7 +146,7 @@ static SEXP lgl_as_double(SEXP x, bool* lossy) {
 
   for (R_len_t i = 0; i < n; ++i, ++data, ++out_data) {
     int elt = *data;
-    *out_data = elt == NA_LOGICAL ? NA_REAL : elt;
+    *out_data = (elt == NA_LOGICAL) ? NA_REAL : elt;
   }
 
   UNPROTECT(1);
@@ -162,7 +162,7 @@ static SEXP int_as_double(SEXP x, bool* lossy) {
 
   for (R_len_t i = 0; i < n; ++i, ++data, ++out_data) {
     int elt = *data;
-    *out_data = elt == NA_INTEGER ? NA_REAL : elt;
+    *out_data = (elt == NA_INTEGER) ? NA_REAL : elt;
   }
 
   UNPROTECT(1);
