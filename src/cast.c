@@ -11,7 +11,7 @@ static SEXP int_as_logical(SEXP x, bool* lossy) {
   SEXP out = PROTECT(Rf_allocVector(LGLSXP, n));
   int* out_data = LOGICAL(out);
 
-  for (R_len_t i = 0; i < n; ++i, ++data) {
+  for (R_len_t i = 0; i < n; ++i, ++data, ++out_data) {
     int elt = *data;
 
     if (elt != 0 && elt != 1) {
@@ -34,7 +34,7 @@ static SEXP dbl_as_logical(SEXP x, bool* lossy) {
   SEXP out = PROTECT(Rf_allocVector(LGLSXP, n));
   int* out_data = LOGICAL(out);
 
-  for (R_len_t i = 0; i < n; ++i, ++data) {
+  for (R_len_t i = 0; i < n; ++i, ++data, ++out_data) {
     double elt = *data;
 
     if (elt != 0 && elt != 1) {

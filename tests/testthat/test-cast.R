@@ -18,17 +18,15 @@ test_that("new classes are uncoercible by default", {
 # Logical -----------------------------------------------------------------
 
 test_that("safe casts work as expected", {
+  exp <- lgl(TRUE, FALSE)
   expect_equal(vec_cast(NULL, logical()), NULL)
-  expect_equal(vec_cast(TRUE, logical()), TRUE)
-  expect_equal(vec_cast(1L, logical()), TRUE)
-  expect_equal(vec_cast(1, logical()), TRUE)
-  expect_equal(vec_cast("T", logical()), TRUE)
-  expect_equal(vec_cast("F", logical()), FALSE)
-  expect_equal(vec_cast("TRUE", logical()), TRUE)
-  expect_equal(vec_cast("FALSE", logical()), FALSE)
-  expect_equal(vec_cast("true", logical()), TRUE)
-  expect_equal(vec_cast("false", logical()), FALSE)
-  expect_equal(vec_cast(list(1), logical()), TRUE)
+  expect_equal(vec_cast(lgl(TRUE, FALSE), logical()), exp)
+  expect_equal(vec_cast(int(1L, 0L), logical()), exp)
+  expect_equal(vec_cast(dbl(1, 0), logical()), exp)
+  expect_equal(vec_cast(chr("T", "F"), logical()), exp)
+  expect_equal(vec_cast(chr("TRUE", "FALSE"), logical()), exp)
+  expect_equal(vec_cast(chr("true", "false"), logical()), exp)
+  expect_equal(vec_cast(list(1, 0), logical()), exp)
 })
 
 test_that("lossy casts generate warning", {
@@ -58,11 +56,11 @@ test_that("dimensionality matches output" ,{
 
 test_that("safe casts work as expected", {
   expect_equal(vec_cast(NULL, integer()), NULL)
-  expect_equal(vec_cast(TRUE, integer()), 1L)
-  expect_equal(vec_cast(1L, integer()), 1L)
-  expect_equal(vec_cast(1, integer()), 1L)
-  expect_equal(vec_cast("1", integer()), 1L)
-  expect_equal(vec_cast(list(1L), integer()), 1L)
+  expect_equal(vec_cast(lgl(TRUE, FALSE), integer()), int(1L, 0L))
+  expect_equal(vec_cast(int(1L, 2L), integer()), int(1L, 2L))
+  expect_equal(vec_cast(dbl(1, 2), integer()), int(1L, 2L))
+  expect_equal(vec_cast(chr("1", "2"), integer()), int(1L, 2L))
+  expect_equal(vec_cast(list(1L, 2L), integer()), int(1L, 2L))
 })
 
 test_that("lossy casts generate warning", {
@@ -84,11 +82,11 @@ test_that("invalid casts generate error", {
 
 test_that("safe casts work as expected", {
   expect_equal(vec_cast(NULL, double()), NULL)
-  expect_equal(vec_cast(TRUE, double()), 1L)
-  expect_equal(vec_cast(1.5, double()), 1.5)
-  expect_equal(vec_cast(1.5, double()), 1.5)
-  expect_equal(vec_cast("1.5", double()), 1.5)
-  expect_equal(vec_cast(list(1.5), double()), 1.5)
+  expect_equal(vec_cast(lgl(TRUE, FALSE), double()), dbl(1, 0))
+  expect_equal(vec_cast(int(1, 0), double()), dbl(1, 0))
+  expect_equal(vec_cast(dbl(1, 1.5), double()), dbl(1, 1.5))
+  expect_equal(vec_cast(chr("1", "1.5"), double()), dbl(1, 1.5))
+  expect_equal(vec_cast(list(1, 1.5), double()), dbl(1, 1.5))
 })
 
 test_that("lossy casts generate warning", {
@@ -104,8 +102,8 @@ test_that("invalid casts generate error", {
 test_that("safe casts work as expected", {
   expect_equal(vec_cast(NULL, character()), NULL)
   expect_equal(vec_cast(NA, character()), NA_character_)
-  expect_equal(vec_cast(TRUE, character()), "TRUE")
-  expect_equal(vec_cast(list("x"), character()), "x")
+  expect_equal(vec_cast(lgl(TRUE, FALSE), character()), chr("TRUE", "FALSE"))
+  expect_equal(vec_cast(list("x", "y"), character()), chr("x", "y"))
 })
 
 test_that("difftime gets special treatment", {
