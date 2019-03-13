@@ -96,9 +96,10 @@
 #' vec_cast_common(factor("a"), factor(c("a", "b")))
 #' vec_cast_common(factor("a"), Sys.Date(), .to = list())
 vec_cast <- function(x, to) {
-  if (is.null(x) || is.null(to)) {
-    return(x)
-  }
+  return(.Call(vctrs_cast, x, to))
+  UseMethod("vec_cast", to)
+}
+vec_cast_dispatch <- function(x, to) {
   UseMethod("vec_cast", to)
 }
 
@@ -129,6 +130,9 @@ vec_restore.default <- function(x, to) {
 
 # Base vectors --------------------------------------------------------------
 
+# These methods for base types are handled at the C level unless
+# inputs have shape or have lossy casts
+
 #' @export
 #' @rdname vec_cast
 #' @export vec_cast.logical
@@ -156,7 +160,7 @@ vec_cast.logical.double <- function(x, to) {
 #' @export
 #' @method vec_cast.logical character
 vec_cast.logical.character <- function(x, to) {
-  report_lossy_cast(x, to, !toupper(x) %in% c("T", "F", "TRUE", "FALSE"))
+  report_lossy_cast(x, to, !x %in% c("T", "F", "TRUE", "FALSE", "true", "false"))
   x <- vec_coerce_bare(x, "logical")
   shape_broadcast(x, to)
 }

@@ -19,7 +19,9 @@
       vec_is_vector_workaround = vec_is_vector_dispatch,
       vec_is_vector_dispatch = function(...) vec_is_vector_workaround(...),
       vec_type2_workaround = vec_type2_dispatch,
-      vec_type2_dispatch = function(...) vec_type2_workaround(...)
+      vec_type2_dispatch = function(...) vec_type2_workaround(...),
+      vec_cast_workaround = vec_cast_dispatch,
+      vec_cast_dispatch = function(...) vec_cast_workaround(...)
     )
   }
 

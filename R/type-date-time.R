@@ -268,7 +268,7 @@ vec_cast.POSIXlt.POSIXlt <- function(x, to) {
   as.POSIXlt(x, tz = tzone(to))
 }
 #' @export
-#' @method vec_cast.POSIXlt POSIXlt
+#' @method vec_cast.POSIXlt POSIXct
 vec_cast.POSIXlt.POSIXct <- function(x, to) {
   as.POSIXlt(x, tz = tzone(to))
 }

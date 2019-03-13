@@ -17,12 +17,17 @@ test_that("new classes are uncoercible by default", {
 
 # Logical -----------------------------------------------------------------
 
-test_that("safe casts work as expeced", {
+test_that("safe casts work as expected", {
   expect_equal(vec_cast(NULL, logical()), NULL)
   expect_equal(vec_cast(TRUE, logical()), TRUE)
   expect_equal(vec_cast(1L, logical()), TRUE)
   expect_equal(vec_cast(1, logical()), TRUE)
+  expect_equal(vec_cast("T", logical()), TRUE)
+  expect_equal(vec_cast("F", logical()), FALSE)
   expect_equal(vec_cast("TRUE", logical()), TRUE)
+  expect_equal(vec_cast("FALSE", logical()), FALSE)
+  expect_equal(vec_cast("true", logical()), TRUE)
+  expect_equal(vec_cast("false", logical()), FALSE)
   expect_equal(vec_cast(list(1), logical()), TRUE)
 })
 
@@ -31,6 +36,8 @@ test_that("lossy casts generate warning", {
   expect_condition(vec_cast(c(2, 1), logical()), class = "warning_lossy_cast")
   expect_condition(vec_cast(c("x", "TRUE"), logical()), class = "warning_lossy_cast")
   expect_condition(vec_cast(list(c(TRUE, FALSE), TRUE), logical()), class = "warning_lossy_cast")
+  expect_condition(vec_cast(c("t", "T"), logical()), class = "warning_lossy_cast")
+  expect_condition(vec_cast(c("f", "F"), logical()), class = "warning_lossy_cast")
 })
 
 test_that("invalid casts generate error", {
@@ -61,6 +68,12 @@ test_that("safe casts work as expected", {
 test_that("lossy casts generate warning", {
   expect_condition(vec_cast(c(2.5, 2), integer()), class = "warning_lossy_cast")
   expect_condition(vec_cast(c("2.5", "2"), integer()), class = "warning_lossy_cast")
+
+  out <- expect_lossy_cast(vec_cast(c(.Machine$integer.max + 1, 1), int()))
+  expect_identical(out, int(NA, 1L))
+
+  out <- expect_lossy_cast(vec_cast(c(-.Machine$integer.max - 1, 1), int()))
+  expect_identical(out, int(NA, 1L))
 })
 
 test_that("invalid casts generate error", {
