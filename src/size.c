@@ -129,7 +129,7 @@ static SEXP lgl_slice_index(SEXP i, SEXP x) {
   R_len_t n = Rf_length(i);
 
   if (n == Rf_length(x)) {
-    return r_lgl_which(i);
+    return r_lgl_which(i, true);
   }
 
   // A single `TRUE` or `FALSE` index is recycled to the full vector
@@ -160,7 +160,6 @@ static SEXP chr_slice_index(SEXP i, SEXP x) {
   return Rf_match(nms, i, NA_INTEGER);
 }
 
-// Should we check for NA in `i`?
 SEXP vctrs_slice_index(SEXP i, SEXP x) {
   switch (TYPEOF(i)) {
   case INTSXP: return int_slice_index(i, x);

@@ -52,13 +52,14 @@ test_that("can subset atomic vectors", {
 })
 
 test_that("can subset with missing indices", {
-  i <- int(2L, NA)
-  expect_identical(vec_slice(lgl(1, 0, 1), i), lgl(0, NA))
-  expect_identical(vec_slice(int(1, 2, 3), i), int(2, NA))
-  expect_identical(vec_slice(dbl(1, 2, 3), i), dbl(2, NA))
-  expect_identical(vec_slice(cpl(1, 2, 3), i), cpl(2, NA))
-  expect_identical(vec_slice(chr("1", "2", "3"), i), c("2", NA))
-  expect_identical(vec_slice(bytes(1, 2, 3), i), bytes(2, 0))
+  for (i in list(int(2L, NA), lgl(FALSE, TRUE, NA))) {
+    expect_identical(vec_slice(lgl(1, 0, 1), i), lgl(0, NA))
+    expect_identical(vec_slice(int(1, 2, 3), i), int(2, NA))
+    expect_identical(vec_slice(dbl(1, 2, 3), i), dbl(2, NA))
+    expect_identical(vec_slice(cpl(1, 2, 3), i), cpl(2, NA))
+    expect_identical(vec_slice(chr("1", "2", "3"), i), c("2", NA))
+    expect_identical(vec_slice(bytes(1, 2, 3), i), bytes(2, 0))
+  }
 })
 
 test_that("can subset object of any dimensionality", {
@@ -149,9 +150,16 @@ test_that("can modify subset using logical index", {
 
 test_that("ignores NA in logical subsetting", {
   x <- c(NA, 1, 2)
-  expect_equal(vec_slice(x, x > 0), c(1, 2))
+  expect_equal(vec_slice(x, x > 0), c(NA, 1, 2))
   expect_equal(`vec_slice<-`(x, x > 0, 1), c(NA, 1, 1))
   expect_equal(`vec_slice<-`(x, x > 0, 2:1), c(NA, 2, 1))
+})
+
+test_that("ignores NA in integer subsetting", {
+  x <- 0:2
+  expect_equal(vec_slice(x, c(NA, 2:3)), c(NA, 1, 2))
+  expect_equal(`vec_slice<-`(x, c(NA, 2:3), 1), c(0, 1, 1))
+  expect_equal(`vec_slice<-`(x, c(NA, 2:3), 2:1), c(0, 2, 1))
 })
 
 # vec_na ------------------------------------------------------------------

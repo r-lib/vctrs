@@ -130,7 +130,7 @@ vec_slice_dispatch <- function(x, i) {
 #' @export
 #' @rdname vec_slice
 `vec_slice<-` <- function(x, i, value) {
-  i <- slice_index(i, x)
+  i <- na.omit(slice_index(i, x))
   if (is_missing(i)) {
     i <- seq_along(x)
   }

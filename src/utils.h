@@ -4,8 +4,8 @@
 
 bool is_bool(SEXP x);
 
-R_len_t r_lgl_sum(SEXP lgl);
-SEXP r_lgl_which(SEXP x);
+R_len_t r_lgl_sum(SEXP lgl, bool na_true);
+SEXP r_lgl_which(SEXP x, bool na_true);
 
 
 #endif
