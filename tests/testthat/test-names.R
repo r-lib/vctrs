@@ -14,11 +14,11 @@ test_that("can use names to vec_slice() a named object", {
 
   expect_identical(vec_slice(x0, letters[1]), c(a = 1))
   expect_identical(vec_slice(x0, letters[2:1]), c(b = 2, a = 1))
-  expect_identical(vec_slice(x0, letters[3:1]), c_na(NA_real_, b = 2, a = 1))
   expect_identical(vec_slice(x1, letters[1]), c(a = 1))
-  expect_identical(vec_slice(x1, letters[2]), c_na(NA_real_))
-})
 
+  expect_error(vec_slice(x0, letters[3:1]), "non-existing")
+  expect_error(vec_slice(x1, letters[2]), "non-existing")
+})
 
 test_that("can use names to vec_slice<-() a named object", {
   x0 <- c(a = 1, b = 2)

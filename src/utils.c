@@ -68,3 +68,16 @@ void r_int_fill(SEXP x, int value) {
     *data = value;
   }
 }
+
+bool r_int_any_na(SEXP x) {
+  int* data = INTEGER(x);
+  R_len_t n = Rf_length(x);
+
+  for (R_len_t i = 0; i < n; ++i, ++data) {
+    if (*data == NA_INTEGER) {
+      return true;
+    }
+  }
+
+  return false;
+}

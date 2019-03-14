@@ -75,6 +75,11 @@ test_that("can't index beyond the end of a vector", {
   ))
 })
 
+test_that("slicing non existing elements fails", {
+  expect_error(vec_as_index("foo", c(f = 1)), "non-existing")
+  expect_error(vec_slice(c(f = 1), "foo"), "non-existing")
+})
+
 test_that("can subset object of any dimensionality", {
   x0 <- c(1, 1)
   x1 <- ones(2)

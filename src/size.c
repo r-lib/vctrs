@@ -226,7 +226,14 @@ static SEXP chr_as_index(SEXP i, SEXP x) {
     Rf_errorcall(R_NilValue, "Can't use character to index an unnamed vector.");
   }
 
-  return Rf_match(nms, i, NA_INTEGER);
+  i = PROTECT(Rf_match(nms, i, NA_INTEGER));
+
+  if (r_int_any_na(i)) {
+    Rf_errorcall(R_NilValue, "Can't index non-existing elements.");
+  }
+
+  UNPROTECT(1);
+  return i;
 }
 
 SEXP vec_as_index(SEXP i, SEXP x) {
