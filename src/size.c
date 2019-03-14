@@ -137,7 +137,13 @@ static SEXP lgl_slice_index(SEXP i, SEXP x) {
   // subsetting) and `FALSE` is synonym for empty index. Returning
   // these sentinels avoids materialising a full index vector.
   if (n == 1) {
-    if (*LOGICAL(i)) {
+    int elt = *LOGICAL(i);
+    if (elt == NA_LOGICAL) {
+      SEXP out = PROTECT(Rf_allocVector(INTSXP, n));
+      r_int_fill(out, NA_INTEGER);
+      UNPROTECT(1);
+      return out;
+    } else if (elt) {
       return R_MissingArg;
     } else {
       return vctrs_shared_empty_int;

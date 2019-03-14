@@ -62,6 +62,10 @@ test_that("can subset with missing indices", {
   }
 })
 
+test_that("can subset with a single logical NA", {
+  expect_identical(vec_slice(1:3, NA), na_int)
+})
+
 test_that("can subset object of any dimensionality", {
   x0 <- c(1, 1)
   x1 <- ones(2)

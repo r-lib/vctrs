@@ -6,6 +6,7 @@ bool is_bool(SEXP x);
 
 R_len_t r_lgl_sum(SEXP lgl, bool na_true);
 SEXP r_lgl_which(SEXP x, bool na_true);
+void r_int_fill(SEXP x, int value);
 
 
 #endif

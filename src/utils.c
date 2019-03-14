@@ -59,3 +59,12 @@ SEXP r_lgl_which(SEXP x, bool na_propagate) {
   UNPROTECT(1);
   return which;
 }
+
+void r_int_fill(SEXP x, int value) {
+  R_len_t n = Rf_length(x);
+  int* data = INTEGER(x);
+
+  for (R_len_t i = 0; i < n; ++i, ++data) {
+    *data = value;
+  }
+}
