@@ -191,6 +191,14 @@ test_that("slicing unclassed structures preserves attributes", {
   expect_identical(vec_slice(x, 1L), structure(1L, foo = "bar"))
 })
 
+test_that("can slice with negative indices", {
+  x <- 1:3
+  expect_identical(vec_slice(x, -c(1L, 3L)), 2L)
+
+  expect_error(vec_slice(x, -c(1L, NA)), "mix of negative indices and missing values")
+  expect_error(vec_slice(x, c(-1L, 1L)), "mix of negative and positive indices")
+})
+
 
 # vec_na ------------------------------------------------------------------
 

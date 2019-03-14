@@ -179,13 +179,59 @@ static void slice_copy_attributes(SEXP to, SEXP from, SEXP index) {
   UNPROTECT(1);
 }
 
+static SEXP int_invert_index(SEXP i, SEXP x);
 
-static SEXP int_as_index(SEXP i, SEXP x) {
-  if (Rf_length(i) == 1 && *INTEGER(i) == 0) {
+static SEXP int_as_index(SEXP index, SEXP x) {
+  const int* data = INTEGER_RO(index);
+  R_len_t n = Rf_length(index);
+
+  if (n == 1 && *data == 0) {
     return vctrs_shared_empty_int;
-  } else {
-    return i;
   }
+
+  for (R_len_t i = 0; i < n; ++i, ++data) {
+    int elt = *data;
+    if (elt < 0 && elt != NA_INTEGER) {
+      return int_invert_index(index, x);
+    }
+  }
+
+  return index;
+}
+
+
+static SEXP lgl_as_index(SEXP i, SEXP x);
+
+static SEXP int_invert_index(SEXP index, SEXP x) {
+  const int* data = INTEGER_RO(index);
+  R_len_t n = Rf_length(index);
+
+  SEXP sel = PROTECT(Rf_allocVector(LGLSXP, Rf_length(x)));
+  r_lgl_fill(sel, 1);
+
+  int* sel_data = LOGICAL(sel);
+
+  for (R_len_t i = 0; i < n; ++i, ++data) {
+    int j = *data;
+
+    if (j == NA_INTEGER) {
+      Rf_errorcall(R_NilValue, "Can't subset with a mix of negative indices and missing values");
+    }
+    if (j >= 0) {
+      if (j == 0) {
+        continue;
+      } else {
+        Rf_errorcall(R_NilValue, "Can't subset with a mix of negative and positive indices");
+      }
+    }
+
+    sel_data[-j - 1] = 0;
+  }
+
+  SEXP out = lgl_as_index(sel, x);
+
+  UNPROTECT(1);
+  return out;
 }
 
 static SEXP lgl_as_index(SEXP i, SEXP x) {

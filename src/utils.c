@@ -60,14 +60,23 @@ SEXP r_lgl_which(SEXP x, bool na_propagate) {
   return which;
 }
 
-void r_int_fill(SEXP x, int value) {
-  R_len_t n = Rf_length(x);
-  int* data = INTEGER(x);
 
-  for (R_len_t i = 0; i < n; ++i, ++data) {
-    *data = value;
-  }
+#define FILL(CTYPE, DEREF)                      \
+  R_len_t n = Rf_length(x);                     \
+  CTYPE* data = DEREF(x);                       \
+                                                \
+  for (R_len_t i = 0; i < n; ++i, ++data)       \
+    *data = value
+
+void r_lgl_fill(SEXP x, int value) {
+  FILL(int, LOGICAL);
 }
+void r_int_fill(SEXP x, int value) {
+  FILL(int, INTEGER);
+}
+
+#undef FILL
+
 
 bool r_int_any_na(SEXP x) {
   int* data = INTEGER(x);
