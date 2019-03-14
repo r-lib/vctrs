@@ -16,8 +16,8 @@ static void stop_bad_index_length(R_len_t data_n, R_len_t i) {
                data_n, i);
 }
 
-#define SLICE(RTYPE, CTYPE, DEREF, NA_VALUE)                    \
-  CTYPE* data = DEREF(x);                                       \
+#define SLICE(RTYPE, CTYPE, DEREF, CONST_DEREF, NA_VALUE)       \
+  const CTYPE* data = CONST_DEREF(x);                           \
   R_len_t data_n = Rf_length(x);                                \
                                                                 \
   R_len_t n = Rf_length(index);                                 \
@@ -40,22 +40,22 @@ static void stop_bad_index_length(R_len_t data_n, R_len_t i) {
   return out
 
 static SEXP lgl_slice(SEXP x, SEXP index) {
-  SLICE(LGLSXP, int, LOGICAL, NA_LOGICAL);
+  SLICE(LGLSXP, int, LOGICAL, LOGICAL_RO, NA_LOGICAL);
 }
 static SEXP int_slice(SEXP x, SEXP index) {
-  SLICE(INTSXP, int, INTEGER, NA_INTEGER);
+  SLICE(INTSXP, int, INTEGER, INTEGER_RO, NA_INTEGER);
 }
 static SEXP dbl_slice(SEXP x, SEXP index) {
-  SLICE(REALSXP, double, REAL, NA_REAL);
+  SLICE(REALSXP, double, REAL, REAL_RO, NA_REAL);
 }
 static SEXP cpl_slice(SEXP x, SEXP index) {
-  SLICE(CPLXSXP, Rcomplex, COMPLEX, vctrs_shared_na_cpl);
+  SLICE(CPLXSXP, Rcomplex, COMPLEX, COMPLEX_RO, vctrs_shared_na_cpl);
 }
 static SEXP chr_slice(SEXP x, SEXP index) {
-  SLICE(STRSXP, SEXP, STRING_PTR, NA_STRING);
+  SLICE(STRSXP, SEXP, STRING_PTR, STRING_PTR_RO, NA_STRING);
 }
 static SEXP raw_slice(SEXP x, SEXP index) {
-  SLICE(RAWSXP, Rbyte, RAW, 0);
+  SLICE(RAWSXP, Rbyte, RAW, RAW_RO, 0);
 }
 
 #undef SLICE
