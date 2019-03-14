@@ -60,6 +60,35 @@ static SEXP raw_slice(SEXP x, SEXP index) {
 #undef SLICE
 
 
+#define SLICE_BARRIER(RTYPE, GET, SET, NA_VALUE)                \
+  R_len_t data_n = Rf_length(x);                                \
+                                                                \
+  R_len_t n = Rf_length(index);                                 \
+  int* index_data = INTEGER(index);                             \
+                                                                \
+  SEXP out = PROTECT(Rf_allocVector(RTYPE, n));                 \
+                                                                \
+  for (R_len_t i = 0; i < n; ++i, ++index_data) {               \
+    int j = *index_data;                                        \
+                                                                \
+    if (j > data_n) {                                           \
+      stop_bad_index_length(data_n, j);                         \
+    }                                                           \
+                                                                \
+    SEXP elt = (j == NA_INTEGER) ? NA_VALUE : GET(x, j - 1);    \
+    SET(out, i, elt);                                           \
+  }                                                             \
+                                                                \
+  UNPROTECT(1);                                                 \
+  return out
+
+static SEXP list_slice(SEXP x, SEXP index) {
+  SLICE_BARRIER(VECSXP, VECTOR_ELT, SET_VECTOR_ELT, R_NilValue);
+}
+
+#undef SLICE_BARRIER
+
+
 SEXP vctrs_slice(SEXP x, SEXP index) {
   index = PROTECT(vec_as_index(index, x));
 
@@ -100,6 +129,10 @@ SEXP vctrs_slice(SEXP x, SEXP index) {
   }
   case vctrs_type_raw: {
     out = raw_slice(x, index);
+    break;
+  }
+  case vctrs_type_list: {
+    out = list_slice(x, index);
     break;
   }
 
