@@ -130,7 +130,7 @@ vec_slice_dispatch <- function(x, i) {
 #' @export
 #' @rdname vec_slice
 `vec_slice<-` <- function(x, i, value) {
-  i <- na.omit(slice_index(i, x))
+  i <- na.omit(vec_as_index(i, x))
   if (is_missing(i)) {
     i <- seq_along(x)
   }
@@ -155,8 +155,8 @@ vec_slice_dispatch <- function(x, i) {
   x
 }
 
-slice_index <- function(i, x) {
-  .Call(vctrs_slice_index, i, x)
+vec_as_index <- function(i, x) {
+  .Call(vctrs_as_index, i, x)
 }
 
 #' Create a missing vector

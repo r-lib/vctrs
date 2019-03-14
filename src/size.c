@@ -5,7 +5,7 @@
 SEXP vec_slice_dispatch_fn = NULL;
 
 // Defined below
-SEXP vctrs_slice_index(SEXP i, SEXP x);
+SEXP vec_as_index(SEXP i, SEXP x);
 
 
 static void stop_bad_index_length(R_len_t data_n, R_len_t i) {
@@ -61,7 +61,7 @@ static SEXP raw_slice(SEXP x, SEXP index) {
 
 
 SEXP vctrs_slice(SEXP x, SEXP index) {
-  index = PROTECT(vctrs_slice_index(index, x));
+  index = PROTECT(vec_as_index(index, x));
 
   if (index == R_MissingArg) {
     UNPROTECT(1);
@@ -130,7 +130,8 @@ SEXP vctrs_slice(SEXP x, SEXP index) {
   return out;
 }
 
-static SEXP int_slice_index(SEXP i, SEXP x) {
+
+static SEXP int_as_index(SEXP i, SEXP x) {
   if (Rf_length(i) == 1 && *INTEGER(i) == 0) {
     return vctrs_shared_empty_int;
   } else {
@@ -138,7 +139,7 @@ static SEXP int_slice_index(SEXP i, SEXP x) {
   }
 }
 
-static SEXP lgl_slice_index(SEXP i, SEXP x) {
+static SEXP lgl_as_index(SEXP i, SEXP x) {
   R_len_t n = Rf_length(i);
 
   if (n == Rf_length(x)) {
@@ -169,7 +170,7 @@ static SEXP lgl_slice_index(SEXP i, SEXP x) {
                n, Rf_length(x));
 }
 
-static SEXP chr_slice_index(SEXP i, SEXP x) {
+static SEXP chr_as_index(SEXP i, SEXP x) {
   SEXP nms = Rf_getAttrib(x, R_NamesSymbol);
 
   if (nms == R_NilValue) {
@@ -179,11 +180,11 @@ static SEXP chr_slice_index(SEXP i, SEXP x) {
   return Rf_match(nms, i, NA_INTEGER);
 }
 
-SEXP vctrs_slice_index(SEXP i, SEXP x) {
+SEXP vec_as_index(SEXP i, SEXP x) {
   switch (TYPEOF(i)) {
-  case INTSXP: return int_slice_index(i, x);
-  case LGLSXP: return lgl_slice_index(i, x);
-  case STRSXP: return chr_slice_index(i, x);
+  case INTSXP: return int_as_index(i, x);
+  case LGLSXP: return lgl_as_index(i, x);
+  case STRSXP: return chr_as_index(i, x);
 
   // Do we really want to forbid numeric indices here (> 2^31)?
   default: Rf_errorcall(R_NilValue, "`i` must be an integer.");
