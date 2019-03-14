@@ -107,8 +107,11 @@ SEXP vctrs_shared_empty_cpl = NULL;
 SEXP vctrs_shared_empty_chr = NULL;
 SEXP vctrs_shared_empty_raw = NULL;
 SEXP vctrs_shared_empty_list = NULL;
+
 SEXP vctrs_shared_true = NULL;
 SEXP vctrs_shared_false = NULL;
+
+Rcomplex vctrs_shared_na_cpl;
 
 void vctrs_init_types(SEXP ns) {
   vec_is_vector_dispatch_fn = Rf_findVar(Rf_install("vec_is_vector_dispatch"), ns);
@@ -150,4 +153,7 @@ void vctrs_init_types(SEXP ns) {
   R_PreserveObject(vctrs_shared_false);
   MARK_NOT_MUTABLE(vctrs_shared_false);
   *LOGICAL(vctrs_shared_false) = 0;
+
+  vctrs_shared_na_cpl.i = NA_REAL;
+  vctrs_shared_na_cpl.r = NA_REAL;
 }

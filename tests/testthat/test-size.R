@@ -41,6 +41,26 @@ test_that("handles positive short row names (#220)", {
 
 # vec_slice --------------------------------------------------------------
 
+test_that("can subset atomic vectors", {
+  i <- 2:3
+  expect_identical(vec_slice(lgl(1, 0, 1), i), lgl(0, 1))
+  expect_identical(vec_slice(int(1, 2, 3), i), int(2, 3))
+  expect_identical(vec_slice(dbl(1, 2, 3), i), dbl(2, 3))
+  expect_identical(vec_slice(cpl(1, 2, 3), i), cpl(2, 3))
+  expect_identical(vec_slice(chr("1", "2", "3"), i), chr("2", "3"))
+  expect_identical(vec_slice(bytes(1, 2, 3), i), bytes(2, 3))
+})
+
+test_that("can subset with missing indices", {
+  i <- int(2L, NA)
+  expect_identical(vec_slice(lgl(1, 0, 1), i), lgl(0, NA))
+  expect_identical(vec_slice(int(1, 2, 3), i), int(2, NA))
+  expect_identical(vec_slice(dbl(1, 2, 3), i), dbl(2, NA))
+  expect_identical(vec_slice(cpl(1, 2, 3), i), cpl(2, NA))
+  expect_identical(vec_slice(chr("1", "2", "3"), i), c("2", NA))
+  expect_identical(vec_slice(bytes(1, 2, 3), i), bytes(2, 0))
+})
+
 test_that("can subset object of any dimensionality", {
   x0 <- c(1, 1)
   x1 <- ones(2)

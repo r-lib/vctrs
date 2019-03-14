@@ -8,28 +8,113 @@ SEXP vec_slice_dispatch_fn = NULL;
 SEXP vctrs_slice_index(SEXP i, SEXP x);
 
 
-SEXP vctrs_slice(SEXP x, SEXP i) {
-  i = PROTECT(vctrs_slice_index(i, x));
+#define SLICE(RTYPE, CTYPE, DEREF, NA_VALUE)                    \
+  CTYPE* data = DEREF(x);                                       \
+                                                                \
+  R_len_t n = Rf_length(index);                                 \
+  int* index_data = INTEGER(index);                             \
+                                                                \
+  SEXP out = PROTECT(Rf_allocVector(RTYPE, n));                 \
+  CTYPE* out_data = DEREF(out);                                 \
+                                                                \
+  for (R_len_t i = 0; i < n; ++i, ++index_data, ++out_data) {   \
+    int j = *index_data;                                        \
+    *out_data = (j == NA_INTEGER) ? NA_VALUE : data[j - 1];     \
+  }                                                             \
+                                                                \
+  UNPROTECT(1);                                                 \
+  return out
+
+static SEXP lgl_slice(SEXP x, SEXP index) {
+  SLICE(LGLSXP, int, LOGICAL, NA_LOGICAL);
+}
+static SEXP int_slice(SEXP x, SEXP index) {
+  SLICE(INTSXP, int, INTEGER, NA_INTEGER);
+}
+static SEXP dbl_slice(SEXP x, SEXP index) {
+  SLICE(REALSXP, double, REAL, NA_REAL);
+}
+static SEXP cpl_slice(SEXP x, SEXP index) {
+  SLICE(CPLXSXP, Rcomplex, COMPLEX, vctrs_shared_na_cpl);
+}
+static SEXP chr_slice(SEXP x, SEXP index) {
+  SLICE(STRSXP, SEXP, STRING_PTR, NA_STRING);
+}
+static SEXP raw_slice(SEXP x, SEXP index) {
+  SLICE(RAWSXP, Rbyte, RAW, 0);
+}
+
+#undef SLICE
+
+
+SEXP vctrs_slice(SEXP x, SEXP index) {
+  index = PROTECT(vctrs_slice_index(index, x));
+
+  if (index == R_MissingArg) {
+    UNPROTECT(1);
+    return x;
+  }
+  if (has_dim(x)) {
+    goto dispatch;
+  }
+
+  SEXP out = NULL;
 
   switch (vec_typeof(x)) {
   case vctrs_type_null:
-    UNPROTECT(1);
-    return R_NilValue;
+    out = R_NilValue;
+    break;
 
-  case vctrs_type_s3:
-    goto dispatch;
-
-  default:
+  case vctrs_type_logical: {
+    out = lgl_slice(x, index);
+    break;
+  }
+  case vctrs_type_integer: {
+    out = int_slice(x, index);
+    break;
+  }
+  case vctrs_type_double: {
+    out = dbl_slice(x, index);
+    break;
+  }
+  case vctrs_type_complex: {
+    out = cpl_slice(x, index);
+    break;
+  }
+  case vctrs_type_character: {
+    out = chr_slice(x, index);
+    break;
+  }
+  case vctrs_type_raw: {
+    out = raw_slice(x, index);
     break;
   }
 
- dispatch: {
-    SEXP dispatch_call = PROTECT(Rf_lang3(vec_slice_dispatch_fn, x, i));
+  default:
+  dispatch: {
+    SEXP dispatch_call = PROTECT(Rf_lang3(vec_slice_dispatch_fn, x, index));
     SEXP out = Rf_eval(dispatch_call, R_GlobalEnv);
 
     UNPROTECT(2);
     return out;
+  }}
+
+
+  SEXP nms = Rf_getAttrib(x, R_NamesSymbol);
+  switch (TYPEOF(nms)) {
+  case NILSXP:
+    break;
+  case STRSXP:
+    nms = PROTECT(chr_slice(nms, index));
+    Rf_setAttrib(out, R_NamesSymbol, nms);
+    UNPROTECT(1);
+    break;
+  default:
+    Rf_error("Internal error: Expected character names in `vec_slice()`.");
   }
+
+  UNPROTECT(1);
+  return out;
 }
 
 static SEXP int_slice_index(SEXP i, SEXP x) {
@@ -47,6 +132,10 @@ static SEXP lgl_slice_index(SEXP i, SEXP x) {
     return r_lgl_which(i);
   }
 
+  // A single `TRUE` or `FALSE` index is recycled to the full vector
+  // size. This means `TRUE` is synonym for missing index (i.e. no
+  // subsetting) and `FALSE` is synonym for empty index. Returning
+  // these sentinels avoids materialising a full index vector.
   if (n == 1) {
     if (*LOGICAL(i)) {
       return R_MissingArg;
