@@ -90,11 +90,8 @@ static SEXP list_slice(SEXP x, SEXP index) {
 #undef SLICE_BARRIER
 
 
-SEXP vctrs_slice(SEXP x, SEXP index) {
-  index = PROTECT(vec_as_index(index, x));
-
+static SEXP vec_slice(SEXP x, SEXP index) {
   if (index == R_MissingArg) {
-    UNPROTECT(1);
     return x;
   }
   if (has_dim(x)) {
@@ -142,12 +139,19 @@ SEXP vctrs_slice(SEXP x, SEXP index) {
     SEXP dispatch_call = PROTECT(Rf_lang3(vec_slice_dispatch_fn, x, index));
     SEXP out = Rf_eval(dispatch_call, R_GlobalEnv);
 
-    UNPROTECT(2);
+    UNPROTECT(1);
     return out;
   }}
 
   // TODO: Should be the default `vec_restore()` method
   slice_copy_attributes(out, x, index);
+
+  return out;
+}
+
+SEXP vctrs_slice(SEXP x, SEXP index) {
+  index = PROTECT(vec_as_index(index, x));
+  SEXP out = vec_slice(x, index);
 
   UNPROTECT(1);
   return out;
