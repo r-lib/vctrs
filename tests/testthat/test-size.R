@@ -173,6 +173,12 @@ test_that("ignores NA in integer subsetting", {
   expect_equal(`vec_slice<-`(x, c(NA, 2:3), 2:1), c(0, 2, 1))
 })
 
+test_that("can slice with missing argument", {
+  expect_identical(vec_slice(1:3), 1:3)
+  expect_identical(vec_slice(mtcars), mtcars)
+  expect_identical(vec_slice(new_vctr(1:3)), new_vctr(1:3))
+})
+
 # vec_na ------------------------------------------------------------------
 
 test_that("vec_slice throws error with non-vector inputs", {

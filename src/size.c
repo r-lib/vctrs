@@ -185,9 +185,11 @@ SEXP vec_as_index(SEXP i, SEXP x) {
   case INTSXP: return int_as_index(i, x);
   case LGLSXP: return lgl_as_index(i, x);
   case STRSXP: return chr_as_index(i, x);
+  case SYMSXP: if (i == R_MissingArg) return i;
 
   // Do we really want to forbid numeric indices here (> 2^31)?
-  default: Rf_errorcall(R_NilValue, "`i` must be an integer.");
+  default: Rf_errorcall(R_NilValue, "`i` must be an integer, not a %s.",
+                        Rf_type2char(TYPEOF(i)));
   }
 }
 

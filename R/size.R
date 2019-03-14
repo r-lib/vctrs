@@ -99,7 +99,7 @@ vec_size2 <- function(nx, ny) {
 #'
 #' vec_slice(mtcars, 1:3)
 vec_slice <- function(x, i) {
-  .Call(vctrs_slice, x, i)
+  .Call(vctrs_slice, x, maybe_missing(i))
 }
 
 vec_slice_dispatch <- function(x, i) {
@@ -156,7 +156,7 @@ vec_slice_dispatch <- function(x, i) {
 }
 
 vec_as_index <- function(i, x) {
-  .Call(vctrs_as_index, i, x)
+  .Call(vctrs_as_index, maybe_missing(i), x)
 }
 
 #' Create a missing vector
