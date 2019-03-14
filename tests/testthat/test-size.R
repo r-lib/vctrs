@@ -181,6 +181,12 @@ test_that("can slice with missing argument", {
   expect_identical(vec_slice(new_vctr(1:3)), new_vctr(1:3))
 })
 
+test_that("slicing unclassed structures preserves attributes", {
+  x <- structure(1:3, foo = "bar")
+  expect_identical(vec_slice(x, 1L), structure(1L, foo = "bar"))
+})
+
+
 # vec_na ------------------------------------------------------------------
 
 test_that("vec_slice throws error with non-vector inputs", {

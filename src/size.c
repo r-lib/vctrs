@@ -6,6 +6,7 @@ SEXP vec_slice_dispatch_fn = NULL;
 
 // Defined below
 SEXP vec_as_index(SEXP i, SEXP x);
+static void slice_copy_attributes(SEXP to, SEXP from, SEXP index);
 
 
 static void stop_bad_index_length(R_len_t data_n, R_len_t i) {
@@ -145,22 +146,37 @@ SEXP vctrs_slice(SEXP x, SEXP index) {
     return out;
   }}
 
-
-  SEXP nms = Rf_getAttrib(x, R_NamesSymbol);
-  switch (TYPEOF(nms)) {
-  case NILSXP:
-    break;
-  case STRSXP:
-    nms = PROTECT(chr_slice(nms, index));
-    Rf_setAttrib(out, R_NamesSymbol, nms);
-    UNPROTECT(1);
-    break;
-  default:
-    Rf_error("Internal error: Expected character names in `vec_slice()`.");
-  }
+  // TODO: Should be the default `vec_restore()` method
+  slice_copy_attributes(out, x, index);
 
   UNPROTECT(1);
   return out;
+}
+
+static void slice_copy_attributes(SEXP to, SEXP from, SEXP index) {
+  SEXP attrib = PROTECT(Rf_shallow_duplicate(ATTRIB(from)));
+
+  for (SEXP node = attrib; node != R_NilValue; node = CDR(node)) {
+    if (TAG(node) != R_NamesSymbol) {
+      continue;
+    }
+
+    SEXP nms = CAR(node);
+    switch (TYPEOF(nms)) {
+    case NILSXP:
+      break;
+    case STRSXP:
+      nms = PROTECT(chr_slice(nms, index));
+      SETCAR(node, nms);
+      UNPROTECT(1);
+      break;
+    default:
+      Rf_error("Internal error: Expected character names in `vec_slice()`.");
+    }
+  }
+
+  SET_ATTRIB(to, attrib);
+  UNPROTECT(1);
 }
 
 
