@@ -66,6 +66,13 @@ test_that("can subset with a single logical NA", {
   expect_identical(vec_slice(1:3, NA), na_int)
 })
 
+test_that("can't index beyond the end of a vector", {
+  expect_error(vec_slice(1:2, 3L), glue::glue(
+    "Can't index beyond the end of a vector.\n",
+    "The vector has length 2 and you've tried to subset element 3."
+  ))
+})
+
 test_that("can subset object of any dimensionality", {
   x0 <- c(1, 1)
   x1 <- ones(2)

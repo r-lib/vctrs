@@ -8,8 +8,16 @@ SEXP vec_slice_dispatch_fn = NULL;
 SEXP vctrs_slice_index(SEXP i, SEXP x);
 
 
+static void stop_bad_index_length(R_len_t data_n, R_len_t i) {
+  Rf_errorcall(R_NilValue,
+               "Can't index beyond the end of a vector.\n"
+               "The vector has length %d and you've tried to subset element %d.",
+               data_n, i);
+}
+
 #define SLICE(RTYPE, CTYPE, DEREF, NA_VALUE)                    \
   CTYPE* data = DEREF(x);                                       \
+  R_len_t data_n = Rf_length(x);                                \
                                                                 \
   R_len_t n = Rf_length(index);                                 \
   int* index_data = INTEGER(index);                             \
@@ -19,6 +27,11 @@ SEXP vctrs_slice_index(SEXP i, SEXP x);
                                                                 \
   for (R_len_t i = 0; i < n; ++i, ++index_data, ++out_data) {   \
     int j = *index_data;                                        \
+                                                                \
+    if (j > data_n) {                                           \
+      stop_bad_index_length(data_n, j);                         \
+    }                                                           \
+                                                                \
     *out_data = (j == NA_INTEGER) ? NA_VALUE : data[j - 1];     \
   }                                                             \
                                                                 \
