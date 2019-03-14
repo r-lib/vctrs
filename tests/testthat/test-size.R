@@ -97,13 +97,13 @@ test_that("can subset using logical index", {
 
   expect_error(
     vec_slice(x0, c(TRUE, FALSE, TRUE)),
-    "Incompatible lengths: 3, 2",
+    "has length 3 whereas the index has length 2",
     fixed = TRUE
   )
 
   expect_error(
     vec_slice(x0, lgl()),
-    "Incompatible lengths: 0, 2",
+    "has length 0 whereas the index has length 2",
     fixed = TRUE
   )
 })
@@ -154,7 +154,7 @@ test_that("can modify subset using logical index", {
 
   expect_error(
     vec_slice(x1, c(TRUE, FALSE, TRUE)) <- 5,
-    "Incompatible lengths: 3, 2",
+    "has length 3 whereas the index has length 2",
     fixed = TRUE
   )
 })

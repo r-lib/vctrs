@@ -163,9 +163,9 @@ static SEXP lgl_slice_index(SEXP i, SEXP x) {
     }
   }
 
-  Rf_errorcall(R_NilValue, "Logical indices must have length 1 "
-               "or be as long as the indexed vector.\n"
-               "Incompatible lengths: %d, %d",
+  Rf_errorcall(R_NilValue,
+               "Logical indices must have length 1 or be as long as the indexed vector.\n"
+               "The vector has length %d whereas the index has length %d.",
                n, Rf_length(x));
 }
 
