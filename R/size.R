@@ -130,6 +130,10 @@ vec_slice_dispatch <- function(x, i) {
 #' @export
 #' @rdname vec_slice
 `vec_slice<-` <- function(x, i, value) {
+  if (is_null(x)) {
+    return(x)
+  }
+
   i <- vec_as_index(i, x)
   value <- vec_recycle(value, vec_size(i))
 
@@ -137,9 +141,7 @@ vec_slice_dispatch <- function(x, i) {
   i <- vec_slice(i, existing)
   value <- vec_slice(value, existing)
 
-  if (is.null(x)) {
-    x <- NULL
-  } else if (is_vector(x)) {
+  if (is_vector(x)) {
     d <- vec_dims(x)
     if (d == 1) {
       x[i] <- value

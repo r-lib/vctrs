@@ -84,6 +84,7 @@ test_that("can't index beyond the end of a vector", {
     "Can't index beyond the end of a vector.\n",
     "The vector has length 2 and you've tried to subset element 3."
   ))
+  expect_error(vec_slice(1:2, -3L), "Can't index beyond the end of a vector.")
 })
 
 test_that("slicing non existing elements fails", {

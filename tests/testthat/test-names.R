@@ -49,7 +49,6 @@ test_that("can't use names to vec_slice() an unnamed object", {
 
 test_that("can use names to vec_slice<-() a named object", {
   x0 <- 1:3
-  x1 <- NULL
 
   expect_error(
     vec_slice(x0, letters[1]) <- 4L,
@@ -58,11 +57,6 @@ test_that("can use names to vec_slice<-() a named object", {
   )
   expect_error(
     vec_slice(x0, letters[25:27]) <- 5L,
-    "Can't use character to index an unnamed vector.",
-    fixed = TRUE
-  )
-  expect_error(
-    vec_slice(x1, letters[1]) <- 6,
     "Can't use character to index an unnamed vector.",
     fixed = TRUE
   )

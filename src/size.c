@@ -18,8 +18,6 @@ static void stop_bad_index_length(R_len_t data_n, R_len_t i) {
 
 #define SLICE(RTYPE, CTYPE, DEREF, CONST_DEREF, NA_VALUE)       \
   const CTYPE* data = CONST_DEREF(x);                           \
-  R_len_t data_n = Rf_length(x);                                \
-                                                                \
   R_len_t n = Rf_length(index);                                 \
   int* index_data = INTEGER(index);                             \
                                                                 \
@@ -28,11 +26,6 @@ static void stop_bad_index_length(R_len_t data_n, R_len_t i) {
                                                                 \
   for (R_len_t i = 0; i < n; ++i, ++index_data, ++out_data) {   \
     int j = *index_data;                                        \
-                                                                \
-    if (j > data_n) {                                           \
-      stop_bad_index_length(data_n, j);                         \
-    }                                                           \
-                                                                \
     *out_data = (j == NA_INTEGER) ? NA_VALUE : data[j - 1];     \
   }                                                             \
                                                                 \
@@ -62,8 +55,6 @@ static SEXP raw_slice(SEXP x, SEXP index) {
 
 
 #define SLICE_BARRIER(RTYPE, GET, SET, NA_VALUE)                \
-  R_len_t data_n = Rf_length(x);                                \
-                                                                \
   R_len_t n = Rf_length(index);                                 \
   int* index_data = INTEGER(index);                             \
                                                                 \
@@ -71,11 +62,6 @@ static SEXP raw_slice(SEXP x, SEXP index) {
                                                                 \
   for (R_len_t i = 0; i < n; ++i, ++index_data) {               \
     int j = *index_data;                                        \
-                                                                \
-    if (j > data_n) {                                           \
-      stop_bad_index_length(data_n, j);                         \
-    }                                                           \
-                                                                \
     SEXP elt = (j == NA_INTEGER) ? NA_VALUE : GET(x, j - 1);    \
     SET(out, i, elt);                                           \
   }                                                             \
@@ -150,6 +136,10 @@ static SEXP vec_slice(SEXP x, SEXP index) {
 }
 
 SEXP vctrs_slice(SEXP x, SEXP index) {
+  if (x == R_NilValue) {
+    return x;
+  }
+
   index = PROTECT(vec_as_index(index, x));
   SEXP out = vec_slice(x, index);
 
@@ -189,6 +179,7 @@ static SEXP int_filter_zero(SEXP index, R_len_t x);
 static SEXP int_as_index(SEXP index, SEXP x) {
   const int* data = INTEGER_RO(index);
   R_len_t n = Rf_length(index);
+  R_len_t vec_n = vec_size(x);
 
   // Zeros need to be filtered out from the index vector.
   // `int_invert_index()` filters them out for negative indices, but
@@ -202,6 +193,9 @@ static SEXP int_as_index(SEXP index, SEXP x) {
     }
     if (elt == 0) {
       ++n_zero;
+    }
+    if (elt > vec_n) {
+      stop_bad_index_length(vec_n, elt);
     }
   }
 
@@ -218,6 +212,7 @@ static SEXP lgl_as_index(SEXP i, SEXP x);
 static SEXP int_invert_index(SEXP index, SEXP x) {
   const int* data = INTEGER_RO(index);
   R_len_t n = Rf_length(index);
+  R_len_t vec_n = vec_size(x);
 
   SEXP sel = PROTECT(Rf_allocVector(LGLSXP, vec_size(x)));
   r_lgl_fill(sel, 1);
@@ -238,7 +233,12 @@ static SEXP int_invert_index(SEXP index, SEXP x) {
       }
     }
 
-    sel_data[-j - 1] = 0;
+    j = -j;
+    if (j > vec_n) {
+      stop_bad_index_length(vec_n, j);
+    }
+
+    sel_data[j - 1] = 0;
   }
 
   SEXP out = lgl_as_index(sel, x);
