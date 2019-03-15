@@ -203,11 +203,11 @@ test_that("slicing unclassed structures preserves attributes", {
 })
 
 test_that("can slice with negative indices", {
-  x <- 1:3
-  expect_identical(vec_slice(x, -c(1L, 3L)), 2L)
+  expect_identical(vec_slice(1:3, -c(1L, 3L)), 2L)
+  expect_identical(vec_slice(mtcars, -(1:30)), vec_slice(mtcars, 31:32))
 
-  expect_error(vec_slice(x, -c(1L, NA)), "mix of negative indices and missing values")
-  expect_error(vec_slice(x, c(-1L, 1L)), "mix of negative and positive indices")
+  expect_error(vec_slice(1:3, -c(1L, NA)), "mix of negative indices and missing values")
+  expect_error(vec_slice(1:3, c(-1L, 1L)), "mix of negative and positive indices")
 })
 
 test_that("can slice-assign with missing indices", {

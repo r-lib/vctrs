@@ -210,7 +210,7 @@ static SEXP int_invert_index(SEXP index, SEXP x) {
   const int* data = INTEGER_RO(index);
   R_len_t n = Rf_length(index);
 
-  SEXP sel = PROTECT(Rf_allocVector(LGLSXP, Rf_length(x)));
+  SEXP sel = PROTECT(Rf_allocVector(LGLSXP, vec_size(x)));
   r_lgl_fill(sel, 1);
 
   int* sel_data = LOGICAL(sel);
