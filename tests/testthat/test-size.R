@@ -69,6 +69,16 @@ test_that("can subset with a recycled NA", {
   expect_identical(vec_slice(mtcars, NA), unrownames(mtcars[NA, ]))
 })
 
+test_that("can subset with a recycled TRUE", {
+  expect_identical(vec_slice(1:3, TRUE), 1:3)
+  expect_identical(vec_slice(mtcars, TRUE), unrownames(mtcars))
+})
+
+test_that("can subset with a recycled FALSE", {
+  expect_identical(vec_slice(1:3, FALSE), int())
+  expect_identical(vec_slice(mtcars, FALSE), unrownames(mtcars[NULL, ]))
+})
+
 test_that("can't index beyond the end of a vector", {
   expect_error(vec_slice(1:2, 3L), glue::glue(
     "Can't index beyond the end of a vector.\n",

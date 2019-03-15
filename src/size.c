@@ -246,10 +246,15 @@ static SEXP lgl_as_index(SEXP i, SEXP x) {
     return r_lgl_which(i, true);
   }
 
-  // A single `TRUE` or `FALSE` index is recycled to the full vector
-  // size. This means `TRUE` is synonym for missing index (i.e. no
-  // subsetting) and `FALSE` is synonym for empty index. Returning
-  // these sentinels avoids materialising a full index vector.
+  /* A single `TRUE` or `FALSE` index is recycled to the full vector
+   * size. This means `TRUE` is synonym for missing index (i.e. no
+   * subsetting) and `FALSE` is synonym for empty index.
+   *
+   * We could return the missing argument as sentinel to avoid
+   * materialising the index vector for the `TRUE` case but this would
+   * make `vec_as_index()` an option type just to optimise a rather
+   * uncommon case.
+   */
   if (n == 1) {
     int elt = *LOGICAL(i);
     if (elt == NA_LOGICAL) {
@@ -258,7 +263,10 @@ static SEXP lgl_as_index(SEXP i, SEXP x) {
       UNPROTECT(1);
       return out;
     } else if (elt) {
-      return R_MissingArg;
+      SEXP out = PROTECT(Rf_allocVector(INTSXP, n_vec));
+      r_int_fill_seq(out, 1);
+      UNPROTECT(1);
+      return out;
     } else {
       return vctrs_shared_empty_int;
     }

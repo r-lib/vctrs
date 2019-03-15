@@ -10,6 +10,8 @@ SEXP r_lgl_which(SEXP x, bool na_true);
 void r_lgl_fill(SEXP x, int value);
 void r_int_fill(SEXP x, int value);
 
+void r_int_fill_seq(SEXP x, int start);
+
 bool r_int_any_na(SEXP x);
 
 

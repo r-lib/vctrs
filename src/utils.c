@@ -78,6 +78,16 @@ void r_int_fill(SEXP x, int value) {
 #undef FILL
 
 
+void r_int_fill_seq(SEXP x, int start) {
+  R_len_t n = Rf_length(x);
+  int* data = INTEGER(x);
+
+  for (R_len_t i = 0; i < n; ++i, ++data, ++start) {
+    *data = start;
+  }
+}
+
+
 bool r_int_any_na(SEXP x) {
   int* data = INTEGER(x);
   R_len_t n = Rf_length(x);
