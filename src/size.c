@@ -274,8 +274,8 @@ static SEXP lgl_as_index(SEXP i, SEXP x) {
 
   Rf_errorcall(R_NilValue,
                "Logical indices must have length 1 or be as long as the indexed vector.\n"
-               "The vector has length %d whereas the index has length %d.",
-               n, Rf_length(x));
+               "The vector has size %d whereas the index has size %d.",
+               n, vec_size(x));
 }
 
 static SEXP chr_as_index(SEXP i, SEXP x) {

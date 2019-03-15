@@ -115,14 +115,19 @@ test_that("can subset using logical index", {
 
   expect_error(
     vec_slice(x0, c(TRUE, FALSE, TRUE)),
-    "has length 3 whereas the index has length 2",
+    "has size 3 whereas the index has size 2",
     fixed = TRUE
   )
 
   expect_error(
     vec_slice(x0, lgl()),
-    "has length 0 whereas the index has length 2",
+    "has size 0 whereas the index has size 2",
     fixed = TRUE
+  )
+
+  expect_error(
+    vec_slice(mtcars, c(TRUE, FALSE)),
+    "has size 2 whereas the index has size 32"
   )
 })
 
@@ -172,8 +177,13 @@ test_that("can modify subset using logical index", {
 
   expect_error(
     vec_slice(x1, c(TRUE, FALSE, TRUE)) <- 5,
-    "has length 3 whereas the index has length 2",
+    "has size 3 whereas the index has size 2",
     fixed = TRUE
+  )
+
+  expect_error(
+    vec_slice(mtcars, c(TRUE, FALSE)) <- mtcars[1, ],
+    "has size 2 whereas the index has size 32"
   )
 })
 
