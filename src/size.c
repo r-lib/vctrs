@@ -240,8 +240,9 @@ static SEXP int_invert_index(SEXP index, SEXP x) {
 
 static SEXP lgl_as_index(SEXP i, SEXP x) {
   R_len_t n = Rf_length(i);
+  R_len_t n_vec = vec_size(x);
 
-  if (n == Rf_length(x)) {
+  if (n == n_vec) {
     return r_lgl_which(i, true);
   }
 
@@ -252,7 +253,7 @@ static SEXP lgl_as_index(SEXP i, SEXP x) {
   if (n == 1) {
     int elt = *LOGICAL(i);
     if (elt == NA_LOGICAL) {
-      SEXP out = PROTECT(Rf_allocVector(INTSXP, n));
+      SEXP out = PROTECT(Rf_allocVector(INTSXP, n_vec));
       r_int_fill(out, NA_INTEGER);
       UNPROTECT(1);
       return out;

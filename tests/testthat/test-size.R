@@ -64,8 +64,9 @@ test_that("can subset with missing indices", {
   }
 })
 
-test_that("can subset with a single logical NA", {
-  expect_identical(vec_slice(1:3, NA), na_int)
+test_that("can subset with a recycled NA", {
+  expect_identical(vec_slice(1:3, NA), int(NA, NA, NA))
+  expect_identical(vec_slice(mtcars, NA), unrownames(mtcars[NA, ]))
 })
 
 test_that("can't index beyond the end of a vector", {
