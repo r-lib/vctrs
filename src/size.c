@@ -183,24 +183,33 @@ static void slice_copy_attributes(SEXP to, SEXP from, SEXP index) {
   UNPROTECT(1);
 }
 
-static SEXP int_invert_index(SEXP i, SEXP x);
+static SEXP int_invert_index(SEXP index, SEXP x);
+static SEXP int_filter_zero(SEXP index, R_len_t x);
 
 static SEXP int_as_index(SEXP index, SEXP x) {
   const int* data = INTEGER_RO(index);
   R_len_t n = Rf_length(index);
 
-  if (n == 1 && *data == 0) {
-    return vctrs_shared_empty_int;
-  }
+  // Zeros need to be filtered out from the index vector.
+  // `int_invert_index()` filters them out for negative indices, but
+  // positive indices need to go through and `int_filter_zero()`.
+  R_len_t n_zero = 0;
 
   for (R_len_t i = 0; i < n; ++i, ++data) {
     int elt = *data;
     if (elt < 0 && elt != NA_INTEGER) {
       return int_invert_index(index, x);
     }
+    if (elt == 0) {
+      ++n_zero;
+    }
   }
 
-  return index;
+  if (n_zero) {
+    return int_filter_zero(index, n_zero);
+  } else {
+    return index;
+  }
 }
 
 
@@ -233,6 +242,25 @@ static SEXP int_invert_index(SEXP index, SEXP x) {
   }
 
   SEXP out = lgl_as_index(sel, x);
+
+  UNPROTECT(1);
+  return out;
+}
+
+static SEXP int_filter_zero(SEXP index, R_len_t n_zero) {
+  R_len_t n = vec_size(index);
+  const int* data = INTEGER_RO(index);
+
+  SEXP out = PROTECT(Rf_allocVector(INTSXP, n - n_zero));
+  int* out_data = INTEGER(out);
+
+  for (R_len_t i = 0; i < n; ++i, ++data) {
+    int elt = *data;
+    if (elt != 0) {
+      *out_data = elt;
+      ++out_data;
+    }
+  }
 
   UNPROTECT(1);
   return out;

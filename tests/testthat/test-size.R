@@ -220,6 +220,17 @@ test_that("can slice with negative indices", {
   expect_error(vec_slice(1:3, c(-1L, 1L)), "mix of negative and positive indices")
 })
 
+test_that("0 is ignored in negative indices", {
+  expect_identical(vec_slice(1:3, c(-2L, 0L)), int(1L, 3L))
+  expect_identical(vec_slice(1:3, c(0L, -2L)), int(1L, 3L))
+})
+
+test_that("0 is ignored in positive indices", {
+  expect_identical(vec_slice(1:3, 0L), int())
+  expect_identical(vec_slice(1:3, c(0L, 0L)), int())
+  expect_identical(vec_slice(1:3, c(0L, 2L, 0L)), 2L)
+})
+
 test_that("can slice-assign with missing indices", {
   x <- 1:3
   y <- 4:6
