@@ -130,11 +130,12 @@ vec_slice_dispatch <- function(x, i) {
 #' @export
 #' @rdname vec_slice
 `vec_slice<-` <- function(x, i, value) {
-  i <- na.omit(vec_as_index(i, x))
-  if (is_missing(i)) {
-    i <- seq_along(x)
-  }
+  i <- vec_as_index(i, x)
   value <- vec_recycle(value, vec_size(i))
+
+  existing <- !is.na(i)
+  i <- vec_slice(i, existing)
+  value <- vec_slice(value, existing)
 
   if (is.null(x)) {
     x <- NULL

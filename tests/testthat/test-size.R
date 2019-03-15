@@ -181,14 +181,14 @@ test_that("ignores NA in logical subsetting", {
   x <- c(NA, 1, 2)
   expect_equal(vec_slice(x, x > 0), c(NA, 1, 2))
   expect_equal(`vec_slice<-`(x, x > 0, 1), c(NA, 1, 1))
-  expect_equal(`vec_slice<-`(x, x > 0, 2:1), c(NA, 2, 1))
+  expect_equal(`vec_slice<-`(x, x > 0, c(NA, 2:1)), c(NA, 2, 1))
 })
 
 test_that("ignores NA in integer subsetting", {
   x <- 0:2
   expect_equal(vec_slice(x, c(NA, 2:3)), c(NA, 1, 2))
   expect_equal(`vec_slice<-`(x, c(NA, 2:3), 1), c(0, 1, 1))
-  expect_equal(`vec_slice<-`(x, c(NA, 2:3), 2:1), c(0, 2, 1))
+  expect_equal(`vec_slice<-`(x, c(NA, 2:3), c(NA, 2:1)), c(0, 2, 1))
 })
 
 test_that("can slice with missing argument", {
@@ -208,6 +208,14 @@ test_that("can slice with negative indices", {
 
   expect_error(vec_slice(x, -c(1L, NA)), "mix of negative indices and missing values")
   expect_error(vec_slice(x, c(-1L, 1L)), "mix of negative and positive indices")
+})
+
+test_that("can slice-assign with missing indices", {
+  x <- 1:3
+  y <- 4:6
+  test <- c(NA, TRUE, FALSE)
+  vec_slice(x, test) <- vec_slice(y, test)
+  expect_identical(x, int(1, 5, 3))
 })
 
 
