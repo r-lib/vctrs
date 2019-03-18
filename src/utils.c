@@ -7,6 +7,14 @@ bool is_bool(SEXP x) {
     *LOGICAL(x) != NA_LOGICAL;
 }
 
+SEXP vctrs_dispatch3(SEXP fn, SEXP x, SEXP y) {
+  SEXP dispatch_call = PROTECT(Rf_lang3(fn, x, y));
+  SEXP out = Rf_eval(dispatch_call, R_GlobalEnv);
+
+  UNPROTECT(1);
+  return out;
+}
+
 // From rlang
 R_len_t r_lgl_sum(SEXP x, bool na_true) {
   if (TYPEOF(x) != LGLSXP) {

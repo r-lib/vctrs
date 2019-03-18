@@ -121,13 +121,9 @@ static SEXP vec_slice(SEXP x, SEXP index) {
   }
 
   default:
-  dispatch: {
-    SEXP dispatch_call = PROTECT(Rf_lang3(vec_slice_dispatch_fn, x, index));
-    SEXP out = Rf_eval(dispatch_call, R_GlobalEnv);
-
-    UNPROTECT(1);
-    return out;
-  }}
+  dispatch:
+    return vctrs_dispatch3(vec_slice_dispatch_fn, x, index);
+  }
 
   // TODO: Should be the default `vec_restore()` method
   slice_copy_attributes(out, x, index);

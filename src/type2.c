@@ -1,4 +1,5 @@
 #include "vctrs.h"
+#include "utils.h"
 
 
 // Initialised at load time
@@ -35,13 +36,9 @@ SEXP vctrs_type2(SEXP x, SEXP y) {
     return vctrs_shared_empty_list;
 
   default:
-  dispatch: {
-    SEXP dispatch_call = PROTECT(Rf_lang3(vec_type2_dispatch_fn, x, y));
-    SEXP out = Rf_eval(dispatch_call, R_GlobalEnv);
-
-    UNPROTECT(1);
-    return out;
-  }}
+  dispatch:
+    return vctrs_dispatch3(vec_type2_dispatch_fn, x, y);
+  }
 }
 
 
