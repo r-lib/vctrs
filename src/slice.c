@@ -150,6 +150,7 @@ SEXP vctrs_slice(SEXP x, SEXP index) {
 static void slice_copy_attributes(SEXP to, SEXP from, SEXP index) {
   SEXP attrib = PROTECT(Rf_shallow_duplicate(ATTRIB(from)));
 
+  // Subset names
   for (SEXP node = attrib; node != R_NilValue; node = CDR(node)) {
     if (TAG(node) != R_NamesSymbol) {
       continue;
@@ -167,6 +168,8 @@ static void slice_copy_attributes(SEXP to, SEXP from, SEXP index) {
     default:
       Rf_error("Internal error: Expected character names in `vec_slice()`.");
     }
+
+    break;
   }
 
   SET_ATTRIB(to, attrib);
