@@ -9,3 +9,4 @@
 ^man/figures/*\.graffle$
 ^.*\.Rproj$
 ^\.Rproj\.user$
+^TAGS$
