@@ -338,8 +338,7 @@ SEXP vec_as_index(SEXP i, SEXP x) {
   case STRSXP: return chr_as_index(i, x);
   case SYMSXP: if (i == R_MissingArg) return i;
 
-  // Do we really want to forbid numeric indices here (> 2^31)?
-  default: Rf_errorcall(R_NilValue, "`i` must be an integer, not a %s.",
+  default: Rf_errorcall(R_NilValue, "`i` must be an integer, character, or logical vector, not a %s.",
                         Rf_type2char(TYPEOF(i)));
   }
 }

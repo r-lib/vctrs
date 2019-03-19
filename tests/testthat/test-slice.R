@@ -209,6 +209,10 @@ test_that("slice-assign checks vectorness", {
   expect_error(vec_slice(x, 1) <- 10, "must be a vector")
 })
 
+test_that("vec_as_index() checks type", {
+  expect_error(vec_as_index(quote(foo), 1), "must be an integer, character, or logical vector, not a symbol")
+})
+
 
 # vec_na ------------------------------------------------------------------
 
