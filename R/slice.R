@@ -61,18 +61,18 @@ vec_slice_dispatch <- function(x, i) {
   i <- vec_slice(i, existing)
   value <- vec_slice(value, existing)
 
-  if (is_vector(x)) {
-    d <- vec_dims(x)
-    if (d == 1) {
-      x[i] <- value
-    } else if (d == 2) {
-      x[i, ] <- value
-    } else {
-      miss_args <- rep(list(missing_arg()), d - 1)
-      eval_bare(expr(x[i, !!!miss_args] <- value))
-    }
-  } else {
+  if (!is_vector(x)) {
     abort("`x` must be a vector.")
+  }
+
+  d <- vec_dims(x)
+  if (d == 1) {
+    x[i] <- value
+  } else if (d == 2) {
+    x[i, ] <- value
+  } else {
+    miss_args <- rep(list(missing_arg()), d - 1)
+    eval_bare(expr(x[i, !!!miss_args] <- value))
   }
 
   x
