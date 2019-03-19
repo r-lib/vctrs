@@ -54,16 +54,14 @@ vec_slice_dispatch <- function(x, i) {
     return(x)
   }
 
+  vec_assert(x)
+
   i <- vec_as_index(i, x)
   value <- vec_recycle(value, vec_size(i))
 
   existing <- !is.na(i)
   i <- vec_slice(i, existing)
   value <- vec_slice(value, existing)
-
-  if (!is_vector(x)) {
-    abort("`x` must be a vector.")
-  }
 
   d <- vec_dims(x)
   if (d == 1) {

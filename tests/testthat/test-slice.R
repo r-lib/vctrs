@@ -204,6 +204,11 @@ test_that("can slice with double indices", {
   expect_error(vec_as_index(2^31, 1:3), class = "vctrs_error_incompatible_cast")
 })
 
+test_that("slice-assign checks vectorness", {
+  x <- foobar(list(1))
+  expect_error(vec_slice(x, 1) <- 10, "must be a vector")
+})
+
 
 # vec_na ------------------------------------------------------------------
 
