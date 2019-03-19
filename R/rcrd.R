@@ -118,18 +118,13 @@ vec_restore.vctrs_rcrd <- function(x, to) {
 # Subsetting --------------------------------------------------------------
 
 #' @export
-vec_slice.vctrs_rcrd <- function(x, i) {
-  out <- lapply(vec_data(x), vec_slice, i)
+vec_slice.vctrs_rcrd <- function(x, i, ...) {
+  out <- lapply(vec_data(x), vec_slice, i, ...)
   vec_restore(out, x)
 }
 
 #' @export
-`[.vctrs_rcrd` <- function(x, i, ...) {
-  # Recurse into `[` instead of `vec_slice()` in case a `[` method
-  # relies on arguments in `...`
-  out <- lapply(vec_data(x), `[`, i, ...)
-  vec_restore(out, x)
-}
+`[.vctrs_rcrd` <- vec_slice.vctrs_rcrd
 
 #' @export
 `[[.vctrs_rcrd` <- function(x, i, ...) {

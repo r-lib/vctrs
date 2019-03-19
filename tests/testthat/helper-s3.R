@@ -5,3 +5,7 @@ unrownames <- function(x) {
   row.names(x) <- NULL
   x
 }
+
+scoped_global_bindings <- function(..., .frame = caller_env()) {
+  scoped_bindings(..., .env = global_env(), .frame = .frame)
+}
