@@ -16,6 +16,9 @@ void r_int_fill_seq(SEXP x, int start);
 
 bool r_int_any_na(SEXP x);
 
+SEXP r_new_environment(SEXP parent, R_len_t size);
+
+
 extern SEXP syms_i;
 extern SEXP syms_x;
 extern SEXP syms_dots;
