@@ -54,6 +54,10 @@ vec_slice.default <- function(x, i) {
   }
 }
 
+vec_slice_bare <- function(x, i) {
+  .Call(vctrs_slice_bare, x, maybe_missing(i))
+}
+
 #' @export
 #' @rdname vec_slice
 `vec_slice<-` <- function(x, i, value) {

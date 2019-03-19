@@ -24,6 +24,8 @@ enum vctrs_type {
 };
 
 enum vctrs_type vec_typeof(SEXP x);
+enum vctrs_type vec_typeof_impl(SEXP x, bool dispatch);
+
 const char* vec_type_as_str(enum vctrs_type type);
 bool vec_is_vector(SEXP x);
 void vctrs_stop_unsupported_type(enum vctrs_type, const char* fn) __attribute__((noreturn));

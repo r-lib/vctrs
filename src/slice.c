@@ -76,7 +76,7 @@ static SEXP list_slice(SEXP x, SEXP index) {
 #undef SLICE_BARRIER
 
 
-static SEXP vec_slice(SEXP x, SEXP index) {
+static SEXP vec_slice(SEXP x, SEXP index, bool dispatch) {
   if (index == R_MissingArg) {
     return x;
   }
@@ -86,7 +86,7 @@ static SEXP vec_slice(SEXP x, SEXP index) {
 
   SEXP out = NULL;
 
-  switch (vec_typeof(x)) {
+  switch (vec_typeof_impl(x, dispatch)) {
   case vctrs_type_null:
     out = R_NilValue;
     break;
@@ -131,16 +131,23 @@ static SEXP vec_slice(SEXP x, SEXP index) {
   return out;
 }
 
-SEXP vctrs_slice(SEXP x, SEXP index) {
+static SEXP vctrs_slice_impl(SEXP x, SEXP index, bool dispatch) {
   if (x == R_NilValue) {
     return x;
   }
 
   index = PROTECT(vec_as_index(index, x));
-  SEXP out = vec_slice(x, index);
+  SEXP out = vec_slice(x, index, dispatch);
 
   UNPROTECT(1);
   return out;
+}
+
+SEXP vctrs_slice(SEXP x, SEXP index) {
+  return vctrs_slice_impl(x, index, true);
+}
+SEXP vctrs_slice_bare(SEXP x, SEXP index) {
+  return vctrs_slice_impl(x, index, false);
 }
 
 static void slice_copy_attributes(SEXP to, SEXP from, SEXP index) {
