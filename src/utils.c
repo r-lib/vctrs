@@ -7,9 +7,32 @@ bool is_bool(SEXP x) {
     *LOGICAL(x) != NA_LOGICAL;
 }
 
-SEXP vctrs_dispatch3(SEXP fn, SEXP x, SEXP y) {
+/**
+ * Dispatch with two arguments
+ *
+ * @param fn The method to call.
+ * @param x,y Arguments passed to the method.
+ * @param x_sym,y_sym Symbols to which `x` and `y` should be assigned.
+ *   The assignment occurs in `env` and the dispatch call refers to
+ *   these symbols. If not supplied, the dispatch call inlines `x` and
+ *   `y`. This might cause heavy backtraces.
+ * @param env The environment in which to dispatch. Should be the
+ *   global environment or inherit from it so methods defined there
+ *   are picked up.
+ */
+SEXP vctrs_dispatch2(SEXP fn, SEXP x_sym, SEXP x, SEXP y_sym, SEXP y, SEXP env) {
+  // Forward new values in the dispatch environment
+  if (x_sym != R_NilValue) {
+    Rf_defineVar(x_sym, x, env);
+    x = x_sym;
+  }
+  if (y_sym != R_NilValue) {
+    Rf_defineVar(y_sym, y, env);
+    y = y_sym;
+  }
+
   SEXP dispatch_call = PROTECT(Rf_lang3(fn, x, y));
-  SEXP out = Rf_eval(dispatch_call, R_GlobalEnv);
+  SEXP out = Rf_eval(dispatch_call, env);
 
   UNPROTECT(1);
   return out;
@@ -107,4 +130,13 @@ bool r_int_any_na(SEXP x) {
   }
 
   return false;
+}
+
+
+SEXP syms_i = NULL;
+SEXP syms_x = NULL;
+
+void vctrs_init_utils(SEXP ns) {
+  syms_i = Rf_install("i");
+  syms_x = Rf_install("x");
 }

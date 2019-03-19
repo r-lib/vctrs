@@ -258,7 +258,7 @@ SEXP vec_cast(SEXP x, SEXP to) {
   }
 
  dispatch:
-  return vctrs_dispatch3(vec_cast_dispatch_fn, x, to);
+  return vctrs_dispatch2(vec_cast_dispatch_fn, R_NilValue, x, R_NilValue, to, R_GlobalEnv);
 }
 
 

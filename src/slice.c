@@ -2,7 +2,7 @@
 #include "utils.h"
 
 // Initialised at load time
-SEXP vec_slice_dispatch_fn = NULL;
+SEXP syms_vec_slice_dispatch = NULL;
 
 // Defined below
 SEXP vec_as_index(SEXP i, SEXP x);
@@ -122,7 +122,10 @@ static SEXP vec_slice(SEXP x, SEXP index, bool dispatch) {
 
   default:
   dispatch:
-    return vctrs_dispatch3(vec_slice_dispatch_fn, x, index);
+    return vctrs_dispatch2(syms_vec_slice_dispatch,
+                           R_NilValue, x,
+                           syms_i, index,
+                           R_GlobalEnv);
   }
 
   // TODO: Should be the default `vec_restore()` method
@@ -352,5 +355,5 @@ SEXP vec_as_index(SEXP i, SEXP x) {
 
 
 void vctrs_init_size(SEXP ns) {
-  vec_slice_dispatch_fn = Rf_findVar(Rf_install("vec_slice_dispatch"), ns);
+  syms_vec_slice_dispatch = Rf_install("vec_slice_dispatch");
 }

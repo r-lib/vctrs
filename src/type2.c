@@ -37,7 +37,7 @@ SEXP vctrs_type2(SEXP x, SEXP y) {
 
   default:
   dispatch:
-    return vctrs_dispatch3(vec_type2_dispatch_fn, x, y);
+    return vctrs_dispatch2(vec_type2_dispatch_fn, R_NilValue, x, R_NilValue, y, R_GlobalEnv);
   }
 }
 
