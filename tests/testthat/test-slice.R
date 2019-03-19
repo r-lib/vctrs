@@ -218,6 +218,14 @@ test_that("can `vec_slice()` S3 objects without infloop dispatch", {
   expect_identical(new_vctr(as.list(1:3))[1], new_vctr(list(1L)))
 })
 
+test_that("can `vec_slice()` records", {
+  out <- vec_slice(new_rcrd(list(a = 1L, b = 2L)), rep(1, 3))
+  expect_size(out, 3)
+
+  out <- vec_na(new_rcrd(list(a = 1L, b = 2L)), 2)
+  expect_size(out, 2)
+})
+
 
 # vec_na ------------------------------------------------------------------
 

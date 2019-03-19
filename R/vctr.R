@@ -157,6 +157,11 @@ format.vctrs_vctr <- function(x, ...) {
 # Subsetting --------------------------------------------------------------
 
 #' @export
+vec_slice.vctrs_vctr <- function(x, i) {
+  vec_restore(vec_slice_bare(x, i), x)
+}
+
+#' @export
 `[.vctrs_vctr` <- function(x, i,...) {
   vec_restore(vec_slice_bare(x, i), x)
 }
