@@ -1,6 +1,7 @@
 #define R_NO_REMAP
 #include <R.h>
 #include <Rinternals.h>
+#include <Rversion.h>
 
 #include <stdbool.h>
 #include <stdint.h>
@@ -119,9 +120,15 @@ extern SEXP vctrs_shared_empty_chr;
 extern SEXP vctrs_shared_empty_raw;
 extern SEXP vctrs_shared_empty_list;
 
+extern SEXP vctrs_shared_true;
+extern SEXP vctrs_shared_false;
+
+extern Rcomplex vctrs_shared_na_cpl;
+
 
 // Vector methods ------------------------------------------------
 R_len_t vec_size(SEXP x);
+SEXP vec_cast(SEXP x, SEXP to);
 
 bool is_data_frame(SEXP x);
 bool is_record(SEXP x);
@@ -165,3 +172,15 @@ SEXP growable_values(growable* g);
 // Shape --------------------------------------------------------
 
 bool has_dim(SEXP x);
+
+
+// Compatibility ------------------------------------------------
+
+#if (R_VERSION < R_Version(3, 5, 0))
+# define LOGICAL_RO(x) ((const int*) LOGICAL(x))
+# define INTEGER_RO(x) ((const int*) INTEGER(x))
+# define REAL_RO(x) ((const double*) REAL(x))
+# define COMPLEX_RO(x) ((const Rcomplex*) COMPLEX(x))
+# define STRING_PTR_RO(x) ((const SEXP*) STRING_PTR(x))
+# define RAW_RO(x) ((const Rbyte*) RAW(x))
+#endif
