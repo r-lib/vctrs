@@ -3,6 +3,7 @@
 
 // Initialised at load time
 SEXP syms_vec_slice_dispatch = NULL;
+SEXP fns_vec_slice_dispatch = NULL;
 
 // Defined below
 SEXP vec_as_index(SEXP i, SEXP x);
@@ -124,8 +125,8 @@ static SEXP vec_slice(SEXP x, SEXP index, SEXP frame) {
 
   default:
   dispatch:
-    return vctrs_dispatch2(syms_vec_slice_dispatch,
-                           R_NilValue, x,
+    return vctrs_dispatch2(syms_vec_slice_dispatch, fns_vec_slice_dispatch,
+                           syms_x, x,
                            syms_i, index,
                            frame);
   }
@@ -351,4 +352,5 @@ SEXP vec_as_index(SEXP i, SEXP x) {
 
 void vctrs_init_size(SEXP ns) {
   syms_vec_slice_dispatch = Rf_install("vec_slice_dispatch");
+  fns_vec_slice_dispatch = Rf_findVar(syms_vec_slice_dispatch, ns);
 }

@@ -2,7 +2,8 @@
 #include "utils.h"
 
 // Initialised at load time
-static SEXP vec_cast_dispatch_fn = NULL;
+static SEXP syms_vec_cast_dispatch = NULL;
+static SEXP fns_vec_cast_dispatch = NULL;
 
 
 static SEXP int_as_logical(SEXP x, bool* lossy) {
@@ -258,10 +259,14 @@ SEXP vec_cast(SEXP x, SEXP to) {
   }
 
  dispatch:
-  return vctrs_dispatch2(vec_cast_dispatch_fn, R_NilValue, x, R_NilValue, to, R_GlobalEnv);
+  return vctrs_dispatch2(syms_vec_cast_dispatch, fns_vec_cast_dispatch,
+                         syms_x, x,
+                         syms_to, to,
+                         R_GlobalEnv);
 }
 
 
 void vctrs_init_cast(SEXP ns) {
-  vec_cast_dispatch_fn = Rf_findVar(Rf_install("vec_cast_dispatch"), ns);
+  syms_vec_cast_dispatch = Rf_install("vec_cast_dispatch");
+  fns_vec_cast_dispatch = Rf_findVar(syms_vec_cast_dispatch, ns);
 }

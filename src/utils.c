@@ -13,26 +13,32 @@ bool is_bool(SEXP x) {
  *
  * @param fn The method to call.
  * @param x,y Arguments passed to the method.
- * @param x_sym,y_sym Symbols to which `x` and `y` should be assigned.
- *   The assignment occurs in `env` and the dispatch call refers to
- *   these symbols. If not supplied, the dispatch call inlines `x` and
- *   `y`. This might cause heavy backtraces.
+ * @param fn_sym,x_sym,y_sym Symbols to which `x` and `y` should be
+ *   assigned.  The assignment occurs in `env` and the dispatch call
+ *   refers to these symbols.
  * @param env The environment in which to dispatch. Should be the
  *   global environment or inherit from it so methods defined there
- *   are picked up.
+ *   are picked up. If the global environment, a child is created so
+ *   the call components can be masked.
  *
  *   If `env` contains dots, the dispatch call forwards dots.
  */
-SEXP vctrs_dispatch2(SEXP fn, SEXP x_sym, SEXP x, SEXP y_sym, SEXP y, SEXP env) {
+SEXP vctrs_dispatch2(SEXP fn_sym, SEXP fn,
+                     SEXP x_sym, SEXP x,
+                     SEXP y_sym, SEXP y,
+                     SEXP env) {
+  int n_protect = 0;
+
+  // Create a child so we can mask the call components
+  if (env == R_GlobalEnv) {
+    env = PROTECT(r_new_environment(env, 3));
+    ++n_protect;
+  }
+
   // Forward new values in the dispatch environment
-  if (x_sym != R_NilValue) {
-    Rf_defineVar(x_sym, x, env);
-    x = x_sym;
-  }
-  if (y_sym != R_NilValue) {
-    Rf_defineVar(y_sym, y, env);
-    y = y_sym;
-  }
+  Rf_defineVar(fn_sym, fn, env);
+  Rf_defineVar(x_sym, x, env);
+  Rf_defineVar(y_sym, y, env);
 
   // Forward dots to methods if they exist
   SEXP dispatch_call;
@@ -41,10 +47,11 @@ SEXP vctrs_dispatch2(SEXP fn, SEXP x_sym, SEXP x, SEXP y_sym, SEXP y, SEXP env) 
   } else {
     dispatch_call = PROTECT(Rf_lang4(fn, x, y, syms_dots));
   }
+  ++n_protect;
 
   SEXP out = Rf_eval(dispatch_call, env);
 
-  UNPROTECT(1);
+  UNPROTECT(n_protect);
   return out;
 }
 
@@ -197,11 +204,15 @@ SEXP r_new_environment(SEXP parent, R_len_t size) {
 
 SEXP syms_i = NULL;
 SEXP syms_x = NULL;
+SEXP syms_y = NULL;
+SEXP syms_to = NULL;
 SEXP syms_dots = NULL;
 
 void vctrs_init_utils(SEXP ns) {
   syms_i = Rf_install("i");
   syms_x = Rf_install("x");
+  syms_y = Rf_install("y");
+  syms_to = Rf_install("to");
   syms_dots = Rf_install("...");
 
   new_env_call = r_parse_eval("as.call(list(new.env, TRUE, NULL, NULL))", R_BaseEnv);
