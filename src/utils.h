@@ -18,6 +18,7 @@ bool r_int_any_na(SEXP x);
 
 extern SEXP syms_i;
 extern SEXP syms_x;
+extern SEXP syms_dots;
 
 
 #endif

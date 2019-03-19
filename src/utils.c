@@ -1,4 +1,5 @@
 #include "vctrs.h"
+#include "utils.h"
 
 bool is_bool(SEXP x) {
   return
@@ -19,6 +20,8 @@ bool is_bool(SEXP x) {
  * @param env The environment in which to dispatch. Should be the
  *   global environment or inherit from it so methods defined there
  *   are picked up.
+ *
+ *   If `env` contains dots, the dispatch call forwards dots.
  */
 SEXP vctrs_dispatch2(SEXP fn, SEXP x_sym, SEXP x, SEXP y_sym, SEXP y, SEXP env) {
   // Forward new values in the dispatch environment
@@ -31,7 +34,14 @@ SEXP vctrs_dispatch2(SEXP fn, SEXP x_sym, SEXP x, SEXP y_sym, SEXP y, SEXP env) 
     y = y_sym;
   }
 
-  SEXP dispatch_call = PROTECT(Rf_lang3(fn, x, y));
+  // Forward dots to methods if they exist
+  SEXP dispatch_call;
+  if (Rf_findVar(syms_dots, env) == R_UnboundValue) {
+    dispatch_call = PROTECT(Rf_lang3(fn, x, y));
+  } else {
+    dispatch_call = PROTECT(Rf_lang4(fn, x, y, syms_dots));
+  }
+
   SEXP out = Rf_eval(dispatch_call, env);
 
   UNPROTECT(1);
@@ -135,8 +145,10 @@ bool r_int_any_na(SEXP x) {
 
 SEXP syms_i = NULL;
 SEXP syms_x = NULL;
+SEXP syms_dots = NULL;
 
 void vctrs_init_utils(SEXP ns) {
   syms_i = Rf_install("i");
   syms_x = Rf_install("x");
+  syms_dots = Rf_install("...");
 }
