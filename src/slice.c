@@ -77,7 +77,7 @@ static SEXP list_slice(SEXP x, SEXP index) {
 #undef SLICE_BARRIER
 
 
-static SEXP vec_slice(SEXP x, SEXP index, SEXP frame) {
+static SEXP vec_slice_impl(SEXP x, SEXP index, SEXP frame) {
   if (index == R_MissingArg) {
     return x;
   }
@@ -143,10 +143,13 @@ SEXP vctrs_slice(SEXP x, SEXP index, SEXP frame) {
   }
 
   index = PROTECT(vec_as_index(index, x));
-  SEXP out = vec_slice(x, index, frame);
+  SEXP out = vec_slice_impl(x, index, frame);
 
   UNPROTECT(1);
   return out;
+}
+SEXP vec_slice(SEXP x, SEXP index) {
+  return vctrs_slice(x, index, R_GlobalEnv);
 }
 
 static void slice_copy_attributes(SEXP to, SEXP from, SEXP index) {
