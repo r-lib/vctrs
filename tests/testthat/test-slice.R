@@ -199,6 +199,11 @@ test_that("can slice-assign with missing indices", {
   expect_identical(x, int(1, 5, 3))
 })
 
+test_that("can slice with double indices", {
+  expect_identical(vec_slice(1:3, dbl(2, 3)), 2:3)
+  expect_error(vec_as_index(2^31, 1:3), class = "vctrs_error_incompatible_cast")
+})
+
 
 # vec_na ------------------------------------------------------------------
 

@@ -265,6 +265,14 @@ static SEXP int_filter_zero(SEXP index, R_len_t n_zero) {
   return out;
 }
 
+static SEXP dbl_as_index(SEXP i, SEXP x) {
+  i = PROTECT(vec_cast(i, vctrs_shared_empty_int));
+  i = int_as_index(i, x);
+
+  UNPROTECT(1);
+  return i;
+}
+
 static SEXP lgl_as_index(SEXP i, SEXP x) {
   R_len_t n = Rf_length(i);
   R_len_t n_vec = vec_size(x);
@@ -325,6 +333,7 @@ static SEXP chr_as_index(SEXP i, SEXP x) {
 SEXP vec_as_index(SEXP i, SEXP x) {
   switch (TYPEOF(i)) {
   case INTSXP: return int_as_index(i, x);
+  case REALSXP: return dbl_as_index(i, x);
   case LGLSXP: return lgl_as_index(i, x);
   case STRSXP: return chr_as_index(i, x);
   case SYMSXP: if (i == R_MissingArg) return i;
