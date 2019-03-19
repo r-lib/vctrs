@@ -18,7 +18,10 @@
 #' Both errors inherit from `"vctrs_error_assert"`.
 #'
 #' @param x A vector argument to check.
-#' @param ptype Prototype to compare against.
+#' @param ptype Prototype to compare against. If the prototype has a
+#'   class, its [vec_type()] is compared to that of `x` with
+#'   `identical()`. Otherwise, its [typeof()] is compared to that of
+#'   `x` with `==`.
 #' @param size Size to compare against
 #' @param arg Name of argument being checked. This is used in error
 #'   messages. The label of the expression passed as `x` is taken as
@@ -39,7 +42,7 @@ vec_assert <- function(x, ptype = NULL, size = NULL, arg = NULL) {
   if (!is_null(ptype)) {
     ptype <- vec_type(ptype)
     x_type <- vec_type(x)
-    if (!identical(x_type, ptype)) {
+    if (!is_same_type(x_type, ptype)) {
       ptype <- vec_type(ptype)
       x_type <- vec_type(x)
       msg <- paste0("`", arg, "` must be <", vec_ptype_abbr(ptype), ">, not <", vec_ptype_abbr(x_type), ">.")
@@ -78,7 +81,7 @@ vec_is <- function(x, ptype = NULL, size = NULL) {
   if (!is_null(ptype)) {
     ptype <- vec_type(ptype)
     x_type <- vec_type(x)
-    if (!identical(x_type, ptype)) {
+    if (!is_same_type(x_type, ptype)) {
       return(FALSE)
     }
   }
@@ -92,6 +95,15 @@ vec_is <- function(x, ptype = NULL, size = NULL) {
   }
 
   TRUE
+}
+
+# Bare prototypes act as partial types. Only the SEXPTYPE is checked.
+is_same_type <- function(x, y) {
+  if (!is.object(x) || !is.object(y)) {
+    typeof(x) == typeof(y)
+  } else {
+    identical(x, y)
+  }
 }
 
 #' Is an object a vector?

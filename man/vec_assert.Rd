@@ -12,7 +12,10 @@ vec_is(x, ptype = NULL, size = NULL)
 \arguments{
 \item{x}{A vector argument to check.}
 
-\item{ptype}{Prototype to compare against.}
+\item{ptype}{Prototype to compare against. If the prototype has a
+class, its \code{\link[=vec_type]{vec_type()}} is compared to that of \code{x} with
+\code{identical()}. Otherwise, its \code{\link[=typeof]{typeof()}} is compared to that of
+\code{x} with \code{==}.}
 
 \item{size}{Size to compare against}
 
