@@ -124,7 +124,9 @@ vec_restore <- function(x, to) {
 
 #' @export
 vec_restore.default <- function(x, to) {
-  attributes(x) <- attributes(to)
+  attr_to <- attributes(to)
+  attr_to[["names"]] <- names(x)
+  attributes(x) <- attr_to
   x
 }
 
