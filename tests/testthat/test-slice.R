@@ -213,7 +213,7 @@ test_that("vec_as_index() checks type", {
   expect_error(vec_as_index(quote(foo), 1), "must be an integer, character, or logical vector, not a symbol")
 })
 
-test_that("can `vec_slice()` S3 objects without infloop dispatch", {
+test_that("can `vec_slice()` S3 objects without dispatch infloop", {
   expect_identical(new_vctr(1:3)[1], new_vctr(1L))
   expect_identical(new_vctr(as.list(1:3))[1], new_vctr(list(1L)))
 })
