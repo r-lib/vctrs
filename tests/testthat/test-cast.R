@@ -146,3 +146,26 @@ test_that("empty input returns list()", {
   expect_equal(vec_cast_common(), list())
   expect_equal(vec_cast_common(NULL, NULL), list(NULL, NULL))
 })
+
+# vec_restore -------------------------------------------------------------
+
+test_that("default vec_restore() restores attributes except names", {
+  to <- structure(NA, foo = "foo", bar = "bar")
+  expect_identical(vec_restore.default(NA, to), structure(NA, foo = "foo", bar = "bar"))
+
+  to <- structure(NA, names = "a", foo = "foo", bar = "bar")
+  expect_identical(vec_restore.default(NA, to), structure(NA, foo = "foo", bar = "bar"))
+
+  to <- structure(NA, foo = "foo", names = "a", bar = "bar")
+  expect_identical(vec_restore.default(NA, to), structure(NA, foo = "foo", bar = "bar"))
+
+  to <- structure(NA, foo = "foo", bar = "bar", names = "a")
+  expect_identical(vec_restore.default(NA, to), structure(NA, foo = "foo", bar = "bar"))
+})
+
+test_that("default vec_restore() restores objectness", {
+  to <- structure(NA, class = "foo")
+  x <- vec_restore.default(NA, to)
+  expect_true(is.object(x))
+  expect_is(x, "foo")
+})

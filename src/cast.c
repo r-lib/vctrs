@@ -261,6 +261,37 @@ SEXP vec_cast(SEXP x, SEXP to) {
   return out;
 }
 
+// Copy attributes except names. This duplicates `x` if needed.
+SEXP vctrs_restore_default(SEXP x, SEXP to) {
+  int n_protect = 0;
+
+  SEXP attrib = PROTECT(Rf_shallow_duplicate(ATTRIB(to)));
+  ++n_protect;
+
+  if (attrib == R_NilValue) {
+    UNPROTECT(n_protect);
+    return x;
+  }
+
+  if (MAYBE_REFERENCED(x)) {
+    x = PROTECT(Rf_shallow_duplicate(x));
+    ++n_protect;
+  }
+
+  // Copy attributes but keep names
+  SEXP nms = Rf_getAttrib(x, R_NamesSymbol);
+  SET_ATTRIB(x, attrib);
+  Rf_setAttrib(x, R_NamesSymbol, nms);
+
+  // SET_ATTRIB() does not set object bit when attributes include class
+  if (OBJECT(to)) {
+    SET_OBJECT(x, true);
+  }
+
+  UNPROTECT(n_protect);
+  return x;
+}
+
 void vctrs_init_cast(SEXP ns) {
   syms_vec_cast_dispatch = Rf_install("vec_cast_dispatch");
   fns_vec_cast_dispatch = Rf_findVar(syms_vec_cast_dispatch, ns);

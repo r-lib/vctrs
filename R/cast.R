@@ -124,10 +124,7 @@ vec_restore <- function(x, to) {
 
 #' @export
 vec_restore.default <- function(x, to) {
-  attr_to <- attributes(to)
-  attr_to[["names"]] <- names(x)
-  attributes(x) <- attr_to
-  x
+  .Call(vctrs_restore_default, x, to)
 }
 
 # Base vectors --------------------------------------------------------------
