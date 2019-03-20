@@ -3,7 +3,9 @@
 
 // Initialised at load time
 static SEXP syms_vec_cast_dispatch = NULL;
+static SEXP syms_vec_restore_dispatch = NULL;
 static SEXP fns_vec_cast_dispatch = NULL;
+static SEXP fns_vec_restore_dispatch = NULL;
 
 
 static SEXP int_as_logical(SEXP x, bool* lossy) {
@@ -292,7 +294,23 @@ SEXP vctrs_restore_default(SEXP x, SEXP to) {
   return x;
 }
 
+SEXP vctrs_restore(SEXP x, SEXP to) {
+  switch (vec_typeof(to)) {
+  case vctrs_type_dataframe:
+  case vctrs_type_s3:
+    return vctrs_dispatch2(syms_vec_restore_dispatch, fns_vec_restore_dispatch,
+                           syms_x, x,
+                           syms_to, to);
+  default:
+    return vctrs_restore_default(x, to);
+  }
+}
+
+
 void vctrs_init_cast(SEXP ns) {
   syms_vec_cast_dispatch = Rf_install("vec_cast_dispatch");
+  syms_vec_restore_dispatch = Rf_install("vec_restore_dispatch");
+
   fns_vec_cast_dispatch = Rf_findVar(syms_vec_cast_dispatch, ns);
+  fns_vec_restore_dispatch = Rf_findVar(syms_vec_restore_dispatch, ns);
 }

@@ -119,9 +119,12 @@ vec_cast.default <- function(x, to) {
 #' @export
 #' @rdname vec_cast
 vec_restore <- function(x, to) {
+  return(.Call(vctrs_restore, x, to))
   UseMethod("vec_restore", to)
 }
-
+vec_restore_dispatch <- function(x, to) {
+  UseMethod("vec_restore", to)
+}
 #' @export
 vec_restore.default <- function(x, to) {
   .Call(vctrs_restore_default, x, to)
