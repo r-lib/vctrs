@@ -8,6 +8,9 @@ SEXP vctrs_dispatch2(SEXP fn_sym, SEXP fn,
                      SEXP x_sym, SEXP x,
                      SEXP y_sym, SEXP y);
 
+bool is_compact_rownames(SEXP x);
+R_len_t compact_rownames_length(SEXP x);
+
 R_len_t r_lgl_sum(SEXP lgl, bool na_true);
 SEXP r_lgl_which(SEXP x, bool na_true);
 

@@ -44,17 +44,6 @@ data_frame <- function(...) {
 }
 
 #' @export
-vec_restore.data.frame <- function(x, to) {
-  # Copy attribute, preserving existing names & recreating rownames
-  attr_to <- attributes(to)
-  attr_to[["names"]] <- names(x)
-  attr_to[["row.names"]] <- .set_row_names(df_length(x))
-  attributes(x) <- attr_to
-
-  x
-}
-
-#' @export
 vec_ptype_full.data.frame <- function(x) {
   if (length(x) == 0) {
     return(paste0(class(x)[[1]], "<>"))

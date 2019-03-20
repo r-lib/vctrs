@@ -169,3 +169,7 @@ test_that("default vec_restore() restores objectness", {
   expect_true(is.object(x))
   expect_is(x, "foo")
 })
+
+test_that("data frame vec_restore() checks type", {
+  expect_error(vec_restore(NA, mtcars), "Attempt to restore data frame from a logical")
+})

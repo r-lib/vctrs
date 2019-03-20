@@ -1,4 +1,5 @@
 #include "vctrs.h"
+#include "utils.h"
 
 R_len_t df_obs(SEXP x);
 R_len_t rcrd_obs(SEXP x);
@@ -52,8 +53,8 @@ R_len_t df_obs(SEXP x) {
 
     switch(TYPEOF(rn)) {
     case INTSXP:
-      if (n == 2 && INTEGER(rn)[0] == NA_INTEGER) {
-        return abs(INTEGER(rn)[1]);
+      if (is_compact_rownames(rn)) {
+        return compact_rownames_length(rn);
       } else {
         return n;
       }
