@@ -41,7 +41,7 @@ SEXP vctrs_type2(SEXP x, SEXP y) {
     return vctrs_dispatch2(syms_vec_type2_dispatch, fns_vec_type2_dispatch,
                            syms_x, x,
                            syms_y, y,
-                           R_GlobalEnv);
+                           R_NilValue);
   }
 }
 

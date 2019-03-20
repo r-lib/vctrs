@@ -30,8 +30,8 @@ SEXP vctrs_dispatch2(SEXP fn_sym, SEXP fn,
   int n_protect = 0;
 
   // Create a child so we can mask the call components
-  if (env == R_GlobalEnv) {
-    env = PROTECT(r_new_environment(env, 3));
+  if (env == R_NilValue) {
+    env = PROTECT(r_new_environment(R_GlobalEnv, 3));
     ++n_protect;
   }
 

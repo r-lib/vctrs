@@ -262,7 +262,7 @@ SEXP vec_cast(SEXP x, SEXP to) {
   return vctrs_dispatch2(syms_vec_cast_dispatch, fns_vec_cast_dispatch,
                          syms_x, x,
                          syms_to, to,
-                         R_GlobalEnv);
+                         R_NilValue);
 }
 
 
