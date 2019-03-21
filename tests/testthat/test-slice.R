@@ -168,6 +168,7 @@ test_that("can slice with missing argument", {
 })
 
 test_that("slicing unclassed structures preserves attributes", {
+  skip("TODO")
   x <- structure(1:3, foo = "bar")
   expect_identical(vec_slice(x, 1L), structure(1L, foo = "bar"))
 })
@@ -211,6 +212,19 @@ test_that("slice-assign checks vectorness", {
 
 test_that("vec_as_index() checks type", {
   expect_error(vec_as_index(quote(foo), 1), "must be an integer, character, or logical vector, not a symbol")
+})
+
+test_that("can `vec_slice()` S3 objects without dispatch infloop", {
+  expect_identical(new_vctr(1:3)[1], new_vctr(1L))
+  expect_identical(new_vctr(as.list(1:3))[1], new_vctr(list(1L)))
+})
+
+test_that("can `vec_slice()` records", {
+  out <- vec_slice(new_rcrd(list(a = 1L, b = 2L)), rep(1, 3))
+  expect_size(out, 3)
+
+  out <- vec_na(new_rcrd(list(a = 1L, b = 2L)), 2)
+  expect_size(out, 2)
 })
 
 

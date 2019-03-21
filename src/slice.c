@@ -2,11 +2,12 @@
 #include "utils.h"
 
 // Initialised at load time
-SEXP vec_slice_dispatch_fn = NULL;
+SEXP syms_vec_slice_dispatch = NULL;
+SEXP fns_vec_slice_dispatch = NULL;
 
 // Defined below
 SEXP vec_as_index(SEXP i, SEXP x);
-static void slice_copy_attributes(SEXP to, SEXP from, SEXP index);
+static void slice_names(SEXP x, SEXP to, SEXP index);
 
 
 static void stop_bad_index_length(R_len_t data_n, R_len_t i) {
@@ -76,7 +77,7 @@ static SEXP list_slice(SEXP x, SEXP index) {
 #undef SLICE_BARRIER
 
 
-static SEXP vec_slice(SEXP x, SEXP index) {
+static SEXP vec_slice_impl(SEXP x, SEXP index, bool dispatch) {
   if (index == R_MissingArg) {
     return x;
   }
@@ -86,90 +87,79 @@ static SEXP vec_slice(SEXP x, SEXP index) {
 
   SEXP out = NULL;
 
-  switch (vec_typeof(x)) {
+  switch (vec_typeof_impl(x, dispatch)) {
   case vctrs_type_null:
-    out = R_NilValue;
-    break;
+    Rf_error("Internal error: Unexpected `NULL` in `vec_slice_impl()`.");
 
   case vctrs_type_logical: {
-    out = lgl_slice(x, index);
+    out = PROTECT(lgl_slice(x, index));
     break;
   }
   case vctrs_type_integer: {
-    out = int_slice(x, index);
+    out = PROTECT(int_slice(x, index));
     break;
   }
   case vctrs_type_double: {
-    out = dbl_slice(x, index);
+    out = PROTECT(dbl_slice(x, index));
     break;
   }
   case vctrs_type_complex: {
-    out = cpl_slice(x, index);
+    out = PROTECT(cpl_slice(x, index));
     break;
   }
   case vctrs_type_character: {
-    out = chr_slice(x, index);
+    out = PROTECT(chr_slice(x, index));
     break;
   }
   case vctrs_type_raw: {
-    out = raw_slice(x, index);
+    out = PROTECT(raw_slice(x, index));
     break;
   }
   case vctrs_type_list: {
-    out = list_slice(x, index);
+    out = PROTECT(list_slice(x, index));
     break;
   }
 
   default:
   dispatch:
-    return vctrs_dispatch3(vec_slice_dispatch_fn, x, index);
+    return vctrs_dispatch2(syms_vec_slice_dispatch, fns_vec_slice_dispatch,
+                           syms_x, x,
+                           syms_i, index);
   }
 
-  // TODO: Should be the default `vec_restore()` method
-  slice_copy_attributes(out, x, index);
+  slice_names(out, x, index);
 
+  UNPROTECT(1);
   return out;
 }
 
-SEXP vctrs_slice(SEXP x, SEXP index) {
+static void slice_names(SEXP x, SEXP to, SEXP index) {
+  SEXP nms = PROTECT(Rf_getAttrib(to, R_NamesSymbol));
+
+  if (nms == R_NilValue) {
+    UNPROTECT(1);
+    return;
+  }
+
+  nms = PROTECT(chr_slice(nms, index));
+  Rf_setAttrib(x, R_NamesSymbol, nms);
+
+  UNPROTECT(2);
+}
+
+SEXP vctrs_slice(SEXP x, SEXP index, SEXP dispatch) {
   if (x == R_NilValue) {
     return x;
   }
 
   index = PROTECT(vec_as_index(index, x));
-  SEXP out = vec_slice(x, index);
+  SEXP out = vec_slice_impl(x, index, *LOGICAL(dispatch));
 
   UNPROTECT(1);
   return out;
 }
-
-static void slice_copy_attributes(SEXP to, SEXP from, SEXP index) {
-  SEXP attrib = PROTECT(Rf_shallow_duplicate(ATTRIB(from)));
-
-  // Subset names
-  for (SEXP node = attrib; node != R_NilValue; node = CDR(node)) {
-    if (TAG(node) != R_NamesSymbol) {
-      continue;
-    }
-
-    SEXP nms = CAR(node);
-    switch (TYPEOF(nms)) {
-    case NILSXP:
-      break;
-    case STRSXP:
-      nms = PROTECT(chr_slice(nms, index));
-      SETCAR(node, nms);
-      UNPROTECT(1);
-      break;
-    default:
-      Rf_error("Internal error: Expected character names in `vec_slice()`.");
-    }
-
-    break;
-  }
-
-  SET_ATTRIB(to, attrib);
-  UNPROTECT(1);
+SEXP vec_slice(SEXP x, SEXP index) {
+  return vctrs_slice(x, index, vctrs_shared_true);
 }
 
 static SEXP int_invert_index(SEXP index, SEXP x);
@@ -345,5 +335,6 @@ SEXP vec_as_index(SEXP i, SEXP x) {
 
 
 void vctrs_init_size(SEXP ns) {
-  vec_slice_dispatch_fn = Rf_findVar(Rf_install("vec_slice_dispatch"), ns);
+  syms_vec_slice_dispatch = Rf_install("vec_slice_dispatch");
+  fns_vec_slice_dispatch = Rf_findVar(syms_vec_slice_dispatch, ns);
 }

@@ -1,4 +1,5 @@
 #include "vctrs.h"
+#include "utils.h"
 
 bool is_bool(SEXP x) {
   return
@@ -7,11 +8,43 @@ bool is_bool(SEXP x) {
     *LOGICAL(x) != NA_LOGICAL;
 }
 
-SEXP vctrs_dispatch3(SEXP fn, SEXP x, SEXP y) {
-  SEXP dispatch_call = PROTECT(Rf_lang3(fn, x, y));
-  SEXP out = Rf_eval(dispatch_call, R_GlobalEnv);
+/**
+ * Dispatch with two arguments
+ *
+ * @param fn The method to call.
+ * @param x,y Arguments passed to the method.
+ * @param fn_sym,x_sym,y_sym Symbols to which `x` and `y` should be
+ *   assigned.  The assignment occurs in `env` and the dispatch call
+ *   refers to these symbols.
+ * @param env The environment in which to dispatch. Should be the
+ *   global environment or inherit from it so methods defined there
+ *   are picked up. If the global environment, a child is created so
+ *   the call components can be masked.
+ *
+ *   If `env` contains dots, the dispatch call forwards dots.
+ */
+SEXP vctrs_dispatch2(SEXP fn_sym, SEXP fn,
+                     SEXP x_sym, SEXP x,
+                     SEXP y_sym, SEXP y) {
+  // Create a child so we can mask the call components
+  SEXP env = PROTECT(r_new_environment(R_GlobalEnv, 3));
 
-  UNPROTECT(1);
+  // Forward new values in the dispatch environment
+  Rf_defineVar(fn_sym, fn, env);
+  Rf_defineVar(x_sym, x, env);
+  Rf_defineVar(y_sym, y, env);
+
+  // Forward dots to methods if they exist
+  SEXP dispatch_call;
+  if (Rf_findVar(syms_dots, env) == R_UnboundValue) {
+    dispatch_call = PROTECT(Rf_lang3(fn, x, y));
+  } else {
+    dispatch_call = PROTECT(Rf_lang4(fn, x, y, syms_dots));
+  }
+
+  SEXP out = Rf_eval(dispatch_call, env);
+
+  UNPROTECT(2);
   return out;
 }
 
@@ -107,4 +140,77 @@ bool r_int_any_na(SEXP x) {
   }
 
   return false;
+}
+
+
+#include <R_ext/Parse.h>
+
+static void abort_parse(SEXP code, const char* why) {
+  if (Rf_GetOption1(Rf_install("rlang__verbose_errors")) != R_NilValue) {
+   Rf_PrintValue(code);
+  }
+  Rf_error("Internal error: %s", why);
+}
+
+SEXP r_parse(const char* str) {
+  SEXP str_ = PROTECT(Rf_mkString(str));
+
+  ParseStatus status;
+  SEXP out = PROTECT(R_ParseVector(str_, -1, &status, R_NilValue));
+  if (status != PARSE_OK) {
+    abort_parse(str_, "Parsing failed");
+  }
+  if (Rf_length(out) != 1) {
+    abort_parse(str_, "Expected a single expression");
+  }
+
+  out = VECTOR_ELT(out, 0);
+
+  UNPROTECT(2);
+  return out;
+}
+SEXP r_parse_eval(const char* str, SEXP env) {
+  SEXP out = Rf_eval(PROTECT(r_parse(str)), env);
+  UNPROTECT(1);
+  return out;
+}
+
+static SEXP new_env_call = NULL;
+static SEXP new_env__parent_node = NULL;
+static SEXP new_env__size_node = NULL;
+
+SEXP r_new_environment(SEXP parent, R_len_t size) {
+  parent = parent ? parent : R_EmptyEnv;
+  SETCAR(new_env__parent_node, parent);
+
+  size = size ? size : 29;
+  SETCAR(new_env__size_node, Rf_ScalarInteger(size));
+
+  SEXP env = Rf_eval(new_env_call, R_BaseEnv);
+
+  // Free for gc
+  SETCAR(new_env__parent_node, R_NilValue);
+
+  return env;
+}
+
+
+SEXP syms_i = NULL;
+SEXP syms_x = NULL;
+SEXP syms_y = NULL;
+SEXP syms_to = NULL;
+SEXP syms_dots = NULL;
+
+void vctrs_init_utils(SEXP ns) {
+  syms_i = Rf_install("i");
+  syms_x = Rf_install("x");
+  syms_y = Rf_install("y");
+  syms_to = Rf_install("to");
+  syms_dots = Rf_install("...");
+
+  new_env_call = r_parse_eval("as.call(list(new.env, TRUE, NULL, NULL))", R_BaseEnv);
+  R_PreserveObject(new_env_call);
+
+  new_env__parent_node = CDDR(new_env_call);
+  new_env__size_node = CDR(new_env__parent_node);
 }

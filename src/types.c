@@ -13,17 +13,17 @@ bool is_scalar(SEXP x) {
   return Rf_inherits(x, "vctrs_sclr");
 }
 
-enum vctrs_type vec_typeof(SEXP x) {
+enum vctrs_type vec_typeof_impl(SEXP x, bool dispatch) {
   switch (TYPEOF(x)) {
   case NILSXP: return vctrs_type_null;
-  case LGLSXP: return OBJECT(x) ? vctrs_type_s3 : vctrs_type_logical;
-  case INTSXP: return OBJECT(x) ? vctrs_type_s3 : vctrs_type_integer;
-  case REALSXP: return OBJECT(x) ? vctrs_type_s3 : vctrs_type_double;
-  case CPLXSXP: return OBJECT(x) ? vctrs_type_s3 : vctrs_type_complex;
-  case STRSXP: return OBJECT(x) ? vctrs_type_s3 : vctrs_type_character;
-  case RAWSXP: return OBJECT(x) ? vctrs_type_s3 : vctrs_type_raw;
+  case LGLSXP: return OBJECT(x) && dispatch ? vctrs_type_s3 : vctrs_type_logical;
+  case INTSXP: return OBJECT(x) && dispatch ? vctrs_type_s3 : vctrs_type_integer;
+  case REALSXP: return OBJECT(x) && dispatch ? vctrs_type_s3 : vctrs_type_double;
+  case CPLXSXP: return OBJECT(x) && dispatch ? vctrs_type_s3 : vctrs_type_complex;
+  case STRSXP: return OBJECT(x) && dispatch ? vctrs_type_s3 : vctrs_type_character;
+  case RAWSXP: return OBJECT(x) && dispatch ? vctrs_type_s3 : vctrs_type_raw;
   case VECSXP:
-    if (!OBJECT(x)) {
+    if (!OBJECT(x) || !dispatch) {
       return vctrs_type_list;
     } else if (is_data_frame(x)) {
       return vctrs_type_dataframe;
@@ -33,6 +33,9 @@ enum vctrs_type vec_typeof(SEXP x) {
   default:
     return vctrs_type_scalar;
   }
+}
+enum vctrs_type vec_typeof(SEXP x) {
+  return vec_typeof_impl(x, true);
 }
 
 const char* vec_type_as_str(enum vctrs_type type) {

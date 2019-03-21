@@ -22,6 +22,10 @@ This provides a common interface to extracting and modifying observations
 for all vector types, regardless of dimensionality. It is an analog to \code{[}
 that matches \code{\link[=vec_size]{vec_size()}} instead of \code{length()}.
 }
+\details{
+\code{vec_slice()} is an S3 generic for which you can implement methods.
+The default method calls \code{[}.
+}
 \examples{
 x <- sample(10)
 x

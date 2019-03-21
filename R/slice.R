@@ -4,6 +4,9 @@
 #' for all vector types, regardless of dimensionality. It is an analog to `[`
 #' that matches [vec_size()] instead of `length()`.
 #'
+#' `vec_slice()` is an S3 generic for which you can implement methods.
+#' The default method calls `[`.
+#'
 #' @param x A vector
 #' @param i An integer or character vector specifying the positions or
 #'   names of the observations to get/set.
@@ -19,10 +22,14 @@
 #'
 #' vec_slice(mtcars, 1:3)
 vec_slice <- function(x, i) {
-  .Call(vctrs_slice, x, maybe_missing(i))
+  return(.Call(vctrs_slice, x, maybe_missing(i), TRUE))
+  UseMethod("vec_slice")
 }
-
 vec_slice_dispatch <- function(x, i) {
+  UseMethod("vec_slice")
+}
+#' @export
+vec_slice.default <- function(x, i) {
   if (is.data.frame(x)) {
     # Much faster, and avoids creating rownames
     out <- lapply(x, vec_slice, i)
@@ -45,6 +52,10 @@ vec_slice_dispatch <- function(x, i) {
     miss_args <- rep(list(missing_arg()), d - 1)
     eval_bare(expr(x[i, !!!miss_args, drop = FALSE]))
   }
+}
+
+vec_slice_bare <- function(x, i) {
+  .Call(vctrs_slice, x, maybe_missing(i), FALSE)
 }
 
 #' @export

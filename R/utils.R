@@ -148,3 +148,16 @@ as_friendly_type <- function(type) {
 paste_classes <- function(x) {
   paste(class(x), collapse = "/")
 }
+
+paste_line <- function (...) {
+  paste(chr(...), collapse = "\n")
+}
+
+check_dots_empty_s3_consistency <- function(...) {
+  if (dots_n(...)) {
+    abort(paste_line(
+      "`...` is not empty.",
+      "These dots only exist for technical reasons and should be empty."
+    ))
+  }
+}

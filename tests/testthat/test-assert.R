@@ -147,3 +147,11 @@ test_that("vec_typeof() handles all types", {
     expect_identical(vec_typeof(!!empty_types[[i]]), !!names(empty_types)[[i]])
   }
 })
+
+test_that("bare prototypes act as partial types", {
+  scoped_bindings(.env = global_env(),
+    vec_slice.vctrs_foobar = function(x, i) foobar(x[i])
+  )
+  expect_true(vec_is(foobar(1), dbl()))
+  expect_error(NA, object = vec_assert(foobar(1), dbl()))
+})

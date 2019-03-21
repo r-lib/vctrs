@@ -24,6 +24,8 @@ enum vctrs_type {
 };
 
 enum vctrs_type vec_typeof(SEXP x);
+enum vctrs_type vec_typeof_impl(SEXP x, bool dispatch);
+
 const char* vec_type_as_str(enum vctrs_type type);
 bool vec_is_vector(SEXP x);
 void vctrs_stop_unsupported_type(enum vctrs_type, const char* fn) __attribute__((noreturn));
@@ -129,6 +131,7 @@ extern Rcomplex vctrs_shared_na_cpl;
 // Vector methods ------------------------------------------------
 R_len_t vec_size(SEXP x);
 SEXP vec_cast(SEXP x, SEXP to);
+SEXP vec_slice(SEXP x, SEXP index);
 
 bool is_data_frame(SEXP x);
 bool is_record(SEXP x);

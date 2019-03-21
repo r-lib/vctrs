@@ -9,9 +9,9 @@ test_that(".data must be a vector", {
   expect_error(new_vctr(mean), "vector type")
 })
 
-test_that(".data must not have attributes, apart from names", {
-  expect_error(new_vctr(structure(1, a = 1)), "attributes")
-  expect_error(new_vctr(c(a = 1)), NA)
+test_that("attributes other than names are ignored", {
+  out <- new_vctr(structure(1, a = 1))
+  expect_null(attributes(out)$a)
 })
 
 test_that("default format method is internal", {
@@ -373,4 +373,11 @@ test_that("default print method shows names", {
 test_that("can't transpose", {
   h <- new_hidden(1:4)
   expect_error(t(h), class = "vctrs_error_unsupported")
+})
+
+
+# slicing -----------------------------------------------------------------
+
+test_that("dots must be empty", {
+  expect_error(new_vctr("foo")[1, 2], "is not empty")
 })

@@ -3,7 +3,8 @@
 
 
 // Initialised at load time
-static SEXP vec_type2_dispatch_fn = NULL;
+static SEXP fns_vec_type2_dispatch = NULL;
+static SEXP syms_vec_type2_dispatch = NULL;
 
 SEXP vctrs_type2(SEXP x, SEXP y) {
   if (has_dim(x) || has_dim(y)) {
@@ -37,11 +38,14 @@ SEXP vctrs_type2(SEXP x, SEXP y) {
 
   default:
   dispatch:
-    return vctrs_dispatch3(vec_type2_dispatch_fn, x, y);
+    return vctrs_dispatch2(syms_vec_type2_dispatch, fns_vec_type2_dispatch,
+                           syms_x, x,
+                           syms_y, y);
   }
 }
 
 
 void vctrs_init_type2(SEXP ns) {
-  vec_type2_dispatch_fn = Rf_findVar(Rf_install("vec_type2_dispatch"), ns);
+  syms_vec_type2_dispatch = Rf_install("vec_type2_dispatch");
+  fns_vec_type2_dispatch = Rf_findVar(syms_vec_type2_dispatch, ns);
 }
