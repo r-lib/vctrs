@@ -173,3 +173,18 @@ test_that("default vec_restore() restores objectness", {
 test_that("data frame vec_restore() checks type", {
   expect_error(vec_restore(NA, mtcars), "Attempt to restore data frame from a logical")
 })
+
+test_that("can use vctrs primitives from vec_restore() without inflooping", {
+  scoped_global_bindings(
+    vec_restore.vctrs_foobar = function(x, to) {
+      vec_type(x)
+      vec_na(x)
+      vec_assert(x)
+      vec_slice(x, 0)
+      "woot"
+    }
+  )
+
+  foobar <- new_vctr(1:3, class = "vctrs_foobar")
+  expect_identical(vec_slice(foobar, 2), "woot")
+})
