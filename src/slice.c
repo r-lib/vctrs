@@ -89,35 +89,34 @@ static SEXP vec_slice_impl(SEXP x, SEXP index, bool dispatch) {
 
   switch (vec_typeof_impl(x, dispatch)) {
   case vctrs_type_null:
-    out = R_NilValue;
-    break;
+    Rf_error("Internal error: Unexpected `NULL` in `vec_slice_impl()`.");
 
   case vctrs_type_logical: {
-    out = lgl_slice(x, index);
+    out = PROTECT(lgl_slice(x, index));
     break;
   }
   case vctrs_type_integer: {
-    out = int_slice(x, index);
+    out = PROTECT(int_slice(x, index));
     break;
   }
   case vctrs_type_double: {
-    out = dbl_slice(x, index);
+    out = PROTECT(dbl_slice(x, index));
     break;
   }
   case vctrs_type_complex: {
-    out = cpl_slice(x, index);
+    out = PROTECT(cpl_slice(x, index));
     break;
   }
   case vctrs_type_character: {
-    out = chr_slice(x, index);
+    out = PROTECT(chr_slice(x, index));
     break;
   }
   case vctrs_type_raw: {
-    out = raw_slice(x, index);
+    out = PROTECT(raw_slice(x, index));
     break;
   }
   case vctrs_type_list: {
-    out = list_slice(x, index);
+    out = PROTECT(list_slice(x, index));
     break;
   }
 
@@ -131,6 +130,7 @@ static SEXP vec_slice_impl(SEXP x, SEXP index, bool dispatch) {
   // TODO: Should be the default `vec_restore()` method
   slice_copy_attributes(out, x, index);
 
+  UNPROTECT(1);
   return out;
 }
 
