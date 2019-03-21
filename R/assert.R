@@ -98,11 +98,11 @@ vec_is <- function(x, ptype = NULL, size = NULL) {
 }
 
 # Bare prototypes act as partial types. Only the SEXPTYPE is checked.
-is_same_type <- function(x, y) {
-  if (!is.object(x) || !is.object(y)) {
-    typeof(x) == typeof(y)
+is_same_type <- function(x, ptype) {
+  if (!is.object(x) || !is.object(ptype)) {
+    typeof(x) == typeof(ptype)
   } else {
-    identical(x, y)
+    identical(x, ptype)
   }
 }
 
