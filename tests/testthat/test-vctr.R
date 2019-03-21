@@ -374,3 +374,10 @@ test_that("can't transpose", {
   h <- new_hidden(1:4)
   expect_error(t(h), class = "vctrs_error_unsupported")
 })
+
+
+# slicing -----------------------------------------------------------------
+
+test_that("dots must be empty", {
+  expect_error(new_vctr("foo")[1, 2], "is not empty")
+})

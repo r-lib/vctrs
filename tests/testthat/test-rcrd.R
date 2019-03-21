@@ -197,3 +197,10 @@ test_that("dangerous methods marked as unimplemented", {
   expect_error(is.finite(t), class = "vctrs_error_unsupported")
   expect_error(is.nan(t), class = "vctrs_error_unsupported")
 })
+
+
+# slicing -----------------------------------------------------------------
+
+test_that("dots must be empty", {
+  expect_error(new_rcrd(list(foo = "foo"))[1, 2], "is not empty")
+})

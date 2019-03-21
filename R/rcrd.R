@@ -125,6 +125,7 @@ vec_slice.vctrs_rcrd <- function(x, i) {
 
 #' @export
 `[.vctrs_rcrd` <-  function(x, i, ...) {
+  check_dots_empty_s3_consistency(...)
   vec_slice.vctrs_rcrd(x, i)
 }
 
