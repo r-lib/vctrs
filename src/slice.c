@@ -125,8 +125,7 @@ static SEXP vec_slice_impl(SEXP x, SEXP index, bool dispatch) {
   dispatch:
     return vctrs_dispatch2(syms_vec_slice_dispatch, fns_vec_slice_dispatch,
                            syms_x, x,
-                           syms_i, index,
-                           R_NilValue);
+                           syms_i, index);
   }
 
   // TODO: Should be the default `vec_restore()` method

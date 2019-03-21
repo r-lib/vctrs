@@ -25,15 +25,9 @@ bool is_bool(SEXP x) {
  */
 SEXP vctrs_dispatch2(SEXP fn_sym, SEXP fn,
                      SEXP x_sym, SEXP x,
-                     SEXP y_sym, SEXP y,
-                     SEXP env) {
-  int n_protect = 0;
-
+                     SEXP y_sym, SEXP y) {
   // Create a child so we can mask the call components
-  if (env == R_NilValue) {
-    env = PROTECT(r_new_environment(R_GlobalEnv, 3));
-    ++n_protect;
-  }
+  SEXP env = PROTECT(r_new_environment(R_GlobalEnv, 3));
 
   // Forward new values in the dispatch environment
   Rf_defineVar(fn_sym, fn, env);
@@ -47,11 +41,10 @@ SEXP vctrs_dispatch2(SEXP fn_sym, SEXP fn,
   } else {
     dispatch_call = PROTECT(Rf_lang4(fn, x, y, syms_dots));
   }
-  ++n_protect;
 
   SEXP out = Rf_eval(dispatch_call, env);
 
-  UNPROTECT(n_protect);
+  UNPROTECT(2);
   return out;
 }
 
