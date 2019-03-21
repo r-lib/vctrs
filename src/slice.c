@@ -7,7 +7,7 @@ SEXP fns_vec_slice_dispatch = NULL;
 
 // Defined below
 SEXP vec_as_index(SEXP i, SEXP x);
-static void slice_copy_attributes(SEXP to, SEXP from, SEXP index);
+static void slice_names(SEXP x, SEXP to, SEXP index);
 
 
 static void stop_bad_index_length(R_len_t data_n, R_len_t i) {
@@ -127,11 +127,24 @@ static SEXP vec_slice_impl(SEXP x, SEXP index, bool dispatch) {
                            syms_i, index);
   }
 
-  // TODO: Should be the default `vec_restore()` method
-  slice_copy_attributes(out, x, index);
+  slice_names(out, x, index);
 
   UNPROTECT(1);
   return out;
+}
+
+static void slice_names(SEXP x, SEXP to, SEXP index) {
+  SEXP nms = PROTECT(Rf_getAttrib(to, R_NamesSymbol));
+
+  if (nms == R_NilValue) {
+    UNPROTECT(1);
+    return;
+  }
+
+  nms = PROTECT(chr_slice(nms, index));
+  Rf_setAttrib(x, R_NamesSymbol, nms);
+
+  UNPROTECT(2);
 }
 
 SEXP vctrs_slice(SEXP x, SEXP index, SEXP dispatch) {
@@ -147,35 +160,6 @@ SEXP vctrs_slice(SEXP x, SEXP index, SEXP dispatch) {
 }
 SEXP vec_slice(SEXP x, SEXP index) {
   return vctrs_slice(x, index, vctrs_shared_true);
-}
-
-static void slice_copy_attributes(SEXP to, SEXP from, SEXP index) {
-  SEXP attrib = PROTECT(Rf_shallow_duplicate(ATTRIB(from)));
-
-  // Subset names
-  for (SEXP node = attrib; node != R_NilValue; node = CDR(node)) {
-    if (TAG(node) != R_NamesSymbol) {
-      continue;
-    }
-
-    SEXP nms = CAR(node);
-    switch (TYPEOF(nms)) {
-    case NILSXP:
-      break;
-    case STRSXP:
-      nms = PROTECT(chr_slice(nms, index));
-      SETCAR(node, nms);
-      UNPROTECT(1);
-      break;
-    default:
-      Rf_error("Internal error: Expected character names in `vec_slice()`.");
-    }
-
-    break;
-  }
-
-  SET_ATTRIB(to, attrib);
-  UNPROTECT(1);
 }
 
 static SEXP int_invert_index(SEXP index, SEXP x);

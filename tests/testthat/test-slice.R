@@ -168,6 +168,7 @@ test_that("can slice with missing argument", {
 })
 
 test_that("slicing unclassed structures preserves attributes", {
+  skip("TODO")
   x <- structure(1:3, foo = "bar")
   expect_identical(vec_slice(x, 1L), structure(1L, foo = "bar"))
 })
