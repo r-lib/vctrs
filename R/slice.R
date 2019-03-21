@@ -22,7 +22,7 @@
 #'
 #' vec_slice(mtcars, 1:3)
 vec_slice <- function(x, i) {
-  return(.Call(vctrs_slice, x, maybe_missing(i), environment()))
+  return(.Call(vctrs_slice, x, maybe_missing(i), TRUE))
   UseMethod("vec_slice")
 }
 vec_slice_dispatch <- function(x, i) {
@@ -55,7 +55,7 @@ vec_slice.default <- function(x, i) {
 }
 
 vec_slice_bare <- function(x, i) {
-  .Call(vctrs_slice, x, maybe_missing(i), NULL)
+  .Call(vctrs_slice, x, maybe_missing(i), FALSE)
 }
 
 #' @export

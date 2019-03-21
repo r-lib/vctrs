@@ -77,7 +77,7 @@ static SEXP list_slice(SEXP x, SEXP index) {
 #undef SLICE_BARRIER
 
 
-static SEXP vec_slice_impl(SEXP x, SEXP index, SEXP frame) {
+static SEXP vec_slice_impl(SEXP x, SEXP index, bool dispatch) {
   if (index == R_MissingArg) {
     return x;
   }
@@ -85,8 +85,6 @@ static SEXP vec_slice_impl(SEXP x, SEXP index, SEXP frame) {
     goto dispatch;
   }
 
-  // `vec_slice_bare()` passes NULL as sentinel to signal no dispatch
-  bool dispatch = frame != R_NilValue;
   SEXP out = NULL;
 
   switch (vec_typeof_impl(x, dispatch)) {
@@ -128,7 +126,7 @@ static SEXP vec_slice_impl(SEXP x, SEXP index, SEXP frame) {
     return vctrs_dispatch2(syms_vec_slice_dispatch, fns_vec_slice_dispatch,
                            syms_x, x,
                            syms_i, index,
-                           frame);
+                           R_NilValue);
   }
 
   // TODO: Should be the default `vec_restore()` method
@@ -137,19 +135,19 @@ static SEXP vec_slice_impl(SEXP x, SEXP index, SEXP frame) {
   return out;
 }
 
-SEXP vctrs_slice(SEXP x, SEXP index, SEXP frame) {
+SEXP vctrs_slice(SEXP x, SEXP index, SEXP dispatch) {
   if (x == R_NilValue) {
     return x;
   }
 
   index = PROTECT(vec_as_index(index, x));
-  SEXP out = vec_slice_impl(x, index, frame);
+  SEXP out = vec_slice_impl(x, index, *LOGICAL(dispatch));
 
   UNPROTECT(1);
   return out;
 }
 SEXP vec_slice(SEXP x, SEXP index) {
-  return vctrs_slice(x, index, R_GlobalEnv);
+  return vctrs_slice(x, index, vctrs_shared_true);
 }
 
 static void slice_copy_attributes(SEXP to, SEXP from, SEXP index) {
