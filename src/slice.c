@@ -119,6 +119,8 @@ static SEXP vec_slice_impl(SEXP x, SEXP index, bool dispatch) {
 
   PROTECT(out);
   slice_names(out, x, index);
+  out = vctrs_restore(out, x);
+
   UNPROTECT(1);
 
   return out;

@@ -23,8 +23,12 @@ for all vector types, regardless of dimensionality. It is an analog to \code{[}
 that matches \code{\link[=vec_size]{vec_size()}} instead of \code{length()}.
 }
 \details{
-\code{vec_slice()} is an S3 generic for which you can implement methods.
+\itemize{
+\item \code{vec_slice()} is an S3 generic for which you can implement methods.
 The default method calls \code{[}.
+\item \code{\link[=vec_restore]{vec_restore()}} is called on the slice vector to restore
+the class and attributes.
+}
 }
 \examples{
 x <- sample(10)

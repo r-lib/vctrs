@@ -148,13 +148,13 @@ format.vctrs_vctr <- function(x, ...) {
 
 #' @export
 vec_slice.vctrs_vctr <- function(x, i) {
-  vec_restore(vec_slice_bare(x, i), x)
+  vec_slice_bare(x, i)
 }
 
 #' @export
 `[.vctrs_vctr` <- function(x, i, ...) {
   check_dots_empty_s3_consistency(...)
-  vec_restore(vec_slice_bare(x, i), x)
+  vec_slice_bare(x, i)
 }
 
 #' @export

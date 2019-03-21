@@ -4,8 +4,11 @@
 #' for all vector types, regardless of dimensionality. It is an analog to `[`
 #' that matches [vec_size()] instead of `length()`.
 #'
-#' `vec_slice()` is an S3 generic for which you can implement methods.
-#' The default method calls `[`.
+#' * `vec_slice()` is an S3 generic for which you can implement methods.
+#'   The default method calls `[`.
+#'
+#' * [vec_restore()] is called on the slice vector to restore
+#'   the class and attributes.
 #'
 #' @param x A vector
 #' @param i An integer or character vector specifying the positions or
