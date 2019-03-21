@@ -5,7 +5,7 @@
 \alias{vec_slice<-}
 \title{Get or set observations in a vector}
 \usage{
-vec_slice(x, i, ...)
+vec_slice(x, i)
 
 vec_slice(x, i) <- value
 }
@@ -14,8 +14,6 @@ vec_slice(x, i) <- value
 
 \item{i}{An integer or character vector specifying the positions or
 names of the observations to get/set.}
-
-\item{...}{Arguments passed to \code{vec_slice()} and \code{[} methods.}
 
 \item{value}{Replacement values.}
 }

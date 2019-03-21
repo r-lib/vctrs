@@ -226,22 +226,6 @@ test_that("can `vec_slice()` records", {
   expect_size(out, 2)
 })
 
-test_that("vec_slice() forwards dots to vec_slice() methods", {
-  scoped_global_bindings(
-    vec_slice.vctrs_foobar = function(x, i, ...) list(...),
-  )
-  expect_identical(vec_slice(foobar(1), 1), list())
-  expect_identical(vec_slice(foobar(1), 1, foo = "bar"), list(foo = "bar"))
-})
-
-test_that("vec_slice() forwards dots to `[` methods", {
-  scoped_global_bindings(
-    `[.vctrs_foobar` = function(x, i, ...) list(...)
-  )
-  expect_identical(vec_slice(foobar(1), 1), list())
-  expect_identical(vec_slice(foobar(1), 1, foo = "bar"), list(foo = "bar"))
-})
-
 
 # vec_na ------------------------------------------------------------------
 

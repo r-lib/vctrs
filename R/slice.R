@@ -10,7 +10,6 @@
 #' @param x A vector
 #' @param i An integer or character vector specifying the positions or
 #'   names of the observations to get/set.
-#' @param ... Arguments passed to `vec_slice()` and `[` methods.
 #' @param value Replacement values.
 #' @export
 #' @keywords internal
@@ -22,18 +21,18 @@
 #' x
 #'
 #' vec_slice(mtcars, 1:3)
-vec_slice <- function(x, i, ...) {
+vec_slice <- function(x, i) {
   return(.Call(vctrs_slice, x, maybe_missing(i), environment()))
   UseMethod("vec_slice")
 }
-vec_slice_dispatch <- function(x, i, ...) {
+vec_slice_dispatch <- function(x, i) {
   UseMethod("vec_slice")
 }
 #' @export
-vec_slice.default <- function(x, i, ...) {
+vec_slice.default <- function(x, i) {
   if (is.data.frame(x)) {
     # Much faster, and avoids creating rownames
-    out <- lapply(x, vec_slice, i, ...)
+    out <- lapply(x, vec_slice, i)
     attr(out, "row.names") <- .set_row_names(length(i))
     return(vec_restore(out, x))
   }
@@ -43,15 +42,15 @@ vec_slice.default <- function(x, i, ...) {
   d <- vec_dims(x)
   if (d == 1) {
     if (is.object(x)) {
-      x[i, ...]
+      x[i]
     } else {
-      x[i, drop = FALSE, ...]
+      x[i, drop = FALSE]
     }
   } else if (d == 2) {
-    x[i, , drop = FALSE, ...]
+    x[i, , drop = FALSE]
   } else {
     miss_args <- rep(list(missing_arg()), d - 1)
-    eval_bare(expr(x[i, !!!miss_args, drop = FALSE, ...]))
+    eval_bare(expr(x[i, !!!miss_args, drop = FALSE]))
   }
 }
 
