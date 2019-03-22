@@ -21,6 +21,8 @@ matrix:
   - r: 3.3
   - r: 3.2
   - r: 3.1
+    r_github_packages:
+    - yihui/highr@v0.7
 
 env:
   global:
