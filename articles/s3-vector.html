@@ -923,18 +923,17 @@
 <a class="sourceLine" id="cb53-42" data-line-number="42"><span class="co">#&gt;  38.   ├─x[order(x, na.last = na.last, decreasing = decreasing)]</span></a>
 <a class="sourceLine" id="cb53-43" data-line-number="43"><span class="co">#&gt;  39.   ├─vctrs:::`[.vctrs_vctr`(x, order(x, na.last = na.last, decreasing = decreasing))</span></a>
 <a class="sourceLine" id="cb53-44" data-line-number="44"><span class="co">#&gt;  40.   │ ├─vctrs::vec_restore(vec_slice_bare(x, i), x)</span></a>
-<a class="sourceLine" id="cb53-45" data-line-number="45"><span class="co">#&gt;  41.   │ ├─vctrs:::vec_restore.vctrs_vctr(vec_slice_bare(x, i), x)</span></a>
-<a class="sourceLine" id="cb53-46" data-line-number="46"><span class="co">#&gt;  42.   │ └─vctrs:::vec_slice_bare(x, i)</span></a>
-<a class="sourceLine" id="cb53-47" data-line-number="47"><span class="co">#&gt;  43.   │   └─rlang::maybe_missing(i)</span></a>
-<a class="sourceLine" id="cb53-48" data-line-number="48"><span class="co">#&gt;  44.   │     └─rlang::is_missing(x)</span></a>
-<a class="sourceLine" id="cb53-49" data-line-number="49"><span class="co">#&gt;  45.   └─base::order(x, na.last = na.last, decreasing = decreasing)</span></a>
-<a class="sourceLine" id="cb53-50" data-line-number="50"><span class="co">#&gt;  46.     └─base::lapply(z, function(x) if (is.object(x)) as.vector(xtfrm(x)) else x)</span></a>
-<a class="sourceLine" id="cb53-51" data-line-number="51"><span class="co">#&gt;  47.       └─base:::FUN(X[[i]], ...)</span></a>
-<a class="sourceLine" id="cb53-52" data-line-number="52"><span class="co">#&gt;  48.         ├─base::as.vector(xtfrm(x))</span></a>
-<a class="sourceLine" id="cb53-53" data-line-number="53"><span class="co">#&gt;  49.         ├─base::xtfrm(x)</span></a>
-<a class="sourceLine" id="cb53-54" data-line-number="54"><span class="co">#&gt;  50.         └─vctrs:::xtfrm.vctrs_vctr(x)</span></a>
-<a class="sourceLine" id="cb53-55" data-line-number="55"><span class="co">#&gt;  51.           ├─base::order(order_proxy(proxy))</span></a>
-<a class="sourceLine" id="cb53-56" data-line-number="56"><span class="co">#&gt;  52.           └─vctrs:::order_proxy(proxy)</span></a></code></pre></div>
+<a class="sourceLine" id="cb53-45" data-line-number="45"><span class="co">#&gt;  41.   │ └─vctrs:::vec_slice_bare(x, i)</span></a>
+<a class="sourceLine" id="cb53-46" data-line-number="46"><span class="co">#&gt;  42.   │   └─rlang::maybe_missing(i)</span></a>
+<a class="sourceLine" id="cb53-47" data-line-number="47"><span class="co">#&gt;  43.   │     └─rlang::is_missing(x)</span></a>
+<a class="sourceLine" id="cb53-48" data-line-number="48"><span class="co">#&gt;  44.   └─base::order(x, na.last = na.last, decreasing = decreasing)</span></a>
+<a class="sourceLine" id="cb53-49" data-line-number="49"><span class="co">#&gt;  45.     └─base::lapply(z, function(x) if (is.object(x)) as.vector(xtfrm(x)) else x)</span></a>
+<a class="sourceLine" id="cb53-50" data-line-number="50"><span class="co">#&gt;  46.       └─base:::FUN(X[[i]], ...)</span></a>
+<a class="sourceLine" id="cb53-51" data-line-number="51"><span class="co">#&gt;  47.         ├─base::as.vector(xtfrm(x))</span></a>
+<a class="sourceLine" id="cb53-52" data-line-number="52"><span class="co">#&gt;  48.         ├─base::xtfrm(x)</span></a>
+<a class="sourceLine" id="cb53-53" data-line-number="53"><span class="co">#&gt;  49.         └─vctrs:::xtfrm.vctrs_vctr(x)</span></a>
+<a class="sourceLine" id="cb53-54" data-line-number="54"><span class="co">#&gt;  50.           ├─base::order(order_proxy(proxy))</span></a>
+<a class="sourceLine" id="cb53-55" data-line-number="55"><span class="co">#&gt;  51.           └─vctrs:::order_proxy(proxy)</span></a></code></pre></div>
 <p>So we need to define a <code><a href="../reference/vec_proxy_compare.html">vec_proxy_compare()</a></code> method:</p>
 <div class="sourceCode" id="cb54"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb54-1" data-line-number="1">vec_proxy_compare.vctrs_poly &lt;-<span class="st"> </span><span class="cf">function</span>(x) {</a>
 <a class="sourceLine" id="cb54-2" data-line-number="2">  x_raw &lt;-<span class="st"> </span><span class="kw"><a href="../reference/vec_data.html">vec_data</a></span>(x)</a>
