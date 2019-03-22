@@ -60,3 +60,8 @@ test_that("vec_proxy() must return a data vector", {
   )
   expect_identical(vec_proxy(!!x), !!x)
 })
+
+test_that("NULL is not a data vector but it is proxied", {
+  expect_false(vec_is_data_vector(NULL))
+  expect_null(vec_proxy(NULL))
+})

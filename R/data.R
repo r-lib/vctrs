@@ -34,7 +34,7 @@ vec_data <- function(x) {
 #'
 #' @export
 vec_proxy <- function(x) {
-  if (vec_is_data_vector(x)) {
+  if (vec_is_data_vector(x) || is_null(x)) {
     return(x)
   }
 
