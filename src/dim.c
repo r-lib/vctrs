@@ -1,8 +1,8 @@
 #include "vctrs.h"
 #include "utils.h"
 
-R_len_t df_obs(SEXP x);
-R_len_t rcrd_obs(SEXP x);
+R_len_t df_size(SEXP x);
+R_len_t rcrd_size(SEXP x);
 
 R_len_t vec_size(SEXP x) {
   switch(TYPEOF(x)) {
@@ -13,9 +13,9 @@ R_len_t vec_size(SEXP x) {
     if (is_scalar(x)) {
       Rf_errorcall(R_NilValue, "`x` is a scalar");
     } else if (is_data_frame(x)) {
-      return df_obs(x);
+      return df_size(x);
     } else if (is_record(x)) {
-      return rcrd_obs(x);
+      return rcrd_size(x);
     }
     // Fall through to non-list logic
 
@@ -43,7 +43,7 @@ R_len_t vec_size(SEXP x) {
 
 // For performance, avoid Rf_getAttrib() because it automatically transforms
 // the rownames into an integer vector
-R_len_t df_obs(SEXP x) {
+R_len_t df_size(SEXP x) {
   for (SEXP attr = ATTRIB(x); attr != R_NilValue; attr = CDR(attr)) {
     if (TAG(attr) != R_RowNamesSymbol)
       continue;
@@ -67,7 +67,7 @@ R_len_t df_obs(SEXP x) {
   Rf_errorcall(R_NilValue, "Corrupt data frame: row.names are missing");
 }
 
-R_len_t rcrd_obs(SEXP x) {
+R_len_t rcrd_size(SEXP x) {
   int n = Rf_length(x);
   if (n == 0) {
     return 0;
