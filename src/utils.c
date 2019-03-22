@@ -42,6 +42,10 @@ SEXP vctrs_dispatch2(SEXP fn_sym, SEXP fn,
     dispatch_call = PROTECT(Rf_lang4(fn, x, y, syms_dots));
   }
 
+  SEXP elt = CDR(dispatch_call);
+  SET_TAG(elt, x_sym); elt = CDR(elt);
+  SET_TAG(elt, y_sym); elt = CDR(elt);
+
   SEXP out = Rf_eval(dispatch_call, env);
 
   UNPROTECT(2);
@@ -67,6 +71,11 @@ SEXP vctrs_dispatch3(SEXP fn_sym, SEXP fn,
   } else {
     dispatch_call = PROTECT(Rf_lang5(fn, x, y, z, syms_dots));
   }
+
+  SEXP elt = CDR(dispatch_call);
+  SET_TAG(elt, x_sym); elt = CDR(elt);
+  SET_TAG(elt, y_sym); elt = CDR(elt);
+  SET_TAG(elt, z_sym); elt = CDR(elt);
 
   SEXP out = Rf_eval(dispatch_call, env);
 
