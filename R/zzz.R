@@ -12,7 +12,8 @@
     "vec_is_vector_workaround",
     "vec_type2_workaround",
     "vec_cast_workaround",
-    "vec_slice_workaround"
+    "vec_slice_workaround",
+    "vec_restore_workaround"
   ))
 
   # Work around "invalid generic in usemethod" error on R 3.1
