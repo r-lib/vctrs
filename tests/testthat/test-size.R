@@ -38,6 +38,14 @@ test_that("handles positive short row names (#220)", {
   expect_identical(vec_size(data), 32L)
 })
 
+test_that("size is proxied", {
+  scoped_global_bindings(
+    vec_proxy.vctrs_proxy = function(x) x[[1]]$x,
+  )
+  expect_size(new_proxy(1:3), 3)
+})
+
+
 # sequences ---------------------------------------------------------------
 
 test_that("vec_seq_along returns size-0 output for size-0 input", {
