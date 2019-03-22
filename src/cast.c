@@ -265,6 +265,10 @@ SEXP vec_cast(SEXP x, SEXP to) {
 
 // Copy attributes except names. This duplicates `x` if needed.
 SEXP vctrs_restore_default(SEXP x, SEXP to) {
+  if (has_dim(x)) {
+    return x;
+  }
+
   int n_protect = 0;
 
   SEXP attrib = PROTECT(Rf_shallow_duplicate(ATTRIB(to)));

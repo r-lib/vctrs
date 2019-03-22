@@ -226,6 +226,13 @@ test_that("can `vec_slice()` records", {
   expect_size(out, 2)
 })
 
+test_that("vec_restore() is called after slicing", {
+  scoped_global_bindings(
+    vec_restore.vctrs_foobar = function(x, to, ..., i) "dispatch"
+  )
+  expect_identical(vec_slice(foobar(1:3), 2), "dispatch")
+})
+
 
 # vec_na ------------------------------------------------------------------
 

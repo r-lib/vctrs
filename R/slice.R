@@ -34,9 +34,7 @@ vec_slice_dispatch <- function(x, i) {
 #' @export
 vec_slice.default <- function(x, i) {
   if (is.data.frame(x)) {
-    # Much faster, and avoids creating rownames
-    out <- lapply(x, vec_slice, i)
-    return(vec_restore(out, x, i = i))
+    return(lapply(x, vec_slice, i))
   }
 
   vec_assert(x)

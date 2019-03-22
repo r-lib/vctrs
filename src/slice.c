@@ -76,10 +76,15 @@ static SEXP list_slice(SEXP x, SEXP index) {
 
 #undef SLICE_BARRIER
 
+
 static SEXP vec_slice_dispatch(SEXP x, SEXP index) {
-  return vctrs_dispatch2(syms_vec_slice_dispatch, fns_vec_slice_dispatch,
-                         syms_x, x,
-                         syms_i, index);
+  SEXP out = PROTECT(vctrs_dispatch2(syms_vec_slice_dispatch, fns_vec_slice_dispatch,
+                                     syms_x, x,
+                                     syms_i, index));
+  out = vctrs_restore(out, x, index);
+
+  UNPROTECT(1);
+  return out;
 }
 
 static SEXP vec_slice_switch(SEXP x, SEXP index, bool dispatch) {
