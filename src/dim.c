@@ -1,7 +1,8 @@
 #include "vctrs.h"
+#include "utils.h"
 
-R_len_t df_obs(SEXP x);
-R_len_t rcrd_obs(SEXP x);
+R_len_t df_size(SEXP x);
+R_len_t rcrd_size(SEXP x);
 
 R_len_t vec_size(SEXP x) {
   switch(TYPEOF(x)) {
@@ -12,9 +13,9 @@ R_len_t vec_size(SEXP x) {
     if (is_scalar(x)) {
       Rf_errorcall(R_NilValue, "`x` is a scalar");
     } else if (is_data_frame(x)) {
-      return df_obs(x);
+      return df_size(x);
     } else if (is_record(x)) {
-      return rcrd_obs(x);
+      return rcrd_size(x);
     }
     // Fall through to non-list logic
 
@@ -40,20 +41,19 @@ R_len_t vec_size(SEXP x) {
   }
 }
 
-// For performance, avoid Rf_getAttrib() because it automatically transforms
-// the rownames into an integer vector
-R_len_t df_obs(SEXP x) {
+R_len_t df_rownames_size(SEXP x) {
   for (SEXP attr = ATTRIB(x); attr != R_NilValue; attr = CDR(attr)) {
-    if (TAG(attr) != R_RowNamesSymbol)
+    if (TAG(attr) != R_RowNamesSymbol) {
       continue;
+    }
 
     SEXP rn = CAR(attr);
     R_len_t n = Rf_length(rn);
 
     switch(TYPEOF(rn)) {
     case INTSXP:
-      if (n == 2 && INTEGER(rn)[0] == NA_INTEGER) {
-        return abs(INTEGER(rn)[1]);
+      if (is_compact_rownames(rn)) {
+        return compact_rownames_length(rn);
       } else {
         return n;
       }
@@ -63,10 +63,37 @@ R_len_t df_obs(SEXP x) {
       Rf_errorcall(R_NilValue, "Corrupt data frame: row.names are invalid type");
     }
   }
-  Rf_errorcall(R_NilValue, "Corrupt data frame: row.names are missing");
+
+  return -1;
 }
 
-R_len_t rcrd_obs(SEXP x) {
+// For performance, avoid Rf_getAttrib() because it automatically transforms
+// the rownames into an integer vector
+R_len_t df_size(SEXP x) {
+  R_len_t n = df_rownames_size(x);
+
+  if (n < 0) {
+    Rf_errorcall(R_NilValue, "Corrupt data frame: row.names are missing");
+  }
+
+  return n;
+}
+// Supports bare lists as well
+R_len_t df_raw_size(SEXP x) {
+  R_len_t n = df_rownames_size(x);
+  if (n >= 0) {
+    return n;
+  }
+
+  if (Rf_length(x) >= 1) {
+    return vec_size(VECTOR_ELT(x, 0));
+  } else {
+    return 0;
+  }
+}
+
+
+R_len_t rcrd_size(SEXP x) {
   int n = Rf_length(x);
   if (n == 0) {
     return 0;

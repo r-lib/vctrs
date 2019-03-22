@@ -48,6 +48,14 @@ SEXP vctrs_dispatch2(SEXP fn_sym, SEXP fn,
   return out;
 }
 
+
+bool is_compact_rownames(SEXP x) {
+  return Rf_length(x) == 2 && INTEGER(x)[0] == NA_INTEGER;
+}
+R_len_t compact_rownames_length(SEXP x) {
+  return abs(INTEGER(x)[1]);
+}
+
 // From rlang
 R_len_t r_lgl_sum(SEXP x, bool na_true) {
   if (TYPEOF(x) != LGLSXP) {

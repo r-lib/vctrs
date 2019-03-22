@@ -146,3 +146,45 @@ test_that("empty input returns list()", {
   expect_equal(vec_cast_common(), list())
   expect_equal(vec_cast_common(NULL, NULL), list(NULL, NULL))
 })
+
+# vec_restore -------------------------------------------------------------
+
+test_that("default vec_restore() restores attributes except names", {
+  to <- structure(NA, foo = "foo", bar = "bar")
+  expect_identical(vec_restore.default(NA, to), structure(NA, foo = "foo", bar = "bar"))
+
+  to <- structure(NA, names = "a", foo = "foo", bar = "bar")
+  expect_identical(vec_restore.default(NA, to), structure(NA, foo = "foo", bar = "bar"))
+
+  to <- structure(NA, foo = "foo", names = "a", bar = "bar")
+  expect_identical(vec_restore.default(NA, to), structure(NA, foo = "foo", bar = "bar"))
+
+  to <- structure(NA, foo = "foo", bar = "bar", names = "a")
+  expect_identical(vec_restore.default(NA, to), structure(NA, foo = "foo", bar = "bar"))
+})
+
+test_that("default vec_restore() restores objectness", {
+  to <- structure(NA, class = "foo")
+  x <- vec_restore.default(NA, to)
+  expect_true(is.object(x))
+  expect_is(x, "foo")
+})
+
+test_that("data frame vec_restore() checks type", {
+  expect_error(vec_restore(NA, mtcars), "Attempt to restore data frame from a logical")
+})
+
+test_that("can use vctrs primitives from vec_restore() without inflooping", {
+  scoped_global_bindings(
+    vec_restore.vctrs_foobar = function(x, to) {
+      vec_type(x)
+      vec_na(x)
+      vec_assert(x)
+      vec_slice(x, 0)
+      "woot"
+    }
+  )
+
+  foobar <- new_vctr(1:3, class = "vctrs_foobar")
+  expect_identical(vec_slice(foobar, 2), "woot")
+})

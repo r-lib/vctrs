@@ -84,13 +84,7 @@ vec_restore.vctrs_vctr <- function(x, to) {
   if (typeof(x) != typeof(to)) {
     stop_incompatible_cast(x, to)
   }
-
-  # Copy every attribute, but preserve existing names
-  attr_to <- attributes(to)
-  attr_to[["names"]] <- names(x)
-  attributes(x) <- attr_to
-
-  x
+  NextMethod()
 }
 
 #' @method vec_cast vctrs_vctr

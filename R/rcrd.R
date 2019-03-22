@@ -104,17 +104,6 @@ vec_cast.vctrs_rcrd.default <- function(x, to) {
   }
 }
 
-#' @export
-vec_restore.vctrs_rcrd <- function(x, to) {
-  # Copy every attribute, but preserve existing names
-  attr_to <- attributes(to)
-  attr_to[["names"]] <- names(x)
-  attributes(x) <- attr_to
-
-  x
-}
-
-
 # Subsetting --------------------------------------------------------------
 
 #' @export
