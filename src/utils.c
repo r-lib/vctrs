@@ -23,6 +23,25 @@ bool is_bool(SEXP x) {
  *
  *   If `env` contains dots, the dispatch call forwards dots.
  */
+SEXP vctrs_dispatch1(SEXP fn_sym, SEXP fn,
+                     SEXP x_sym, SEXP x) {
+  // Create a child so we can mask the call components
+  SEXP env = PROTECT(r_new_environment(R_GlobalEnv, 3));
+
+  // Forward new values in the dispatch environment
+  Rf_defineVar(fn_sym, fn, env);
+  Rf_defineVar(x_sym, x, env);
+
+  SEXP dispatch_call = PROTECT(Rf_lang2(fn_sym, x_sym));
+
+  SEXP elt = CDR(dispatch_call);
+  SET_TAG(elt, x_sym); elt = CDR(elt);
+
+  SEXP out = Rf_eval(dispatch_call, env);
+
+  UNPROTECT(2);
+  return out;
+}
 SEXP vctrs_dispatch2(SEXP fn_sym, SEXP fn,
                      SEXP x_sym, SEXP x,
                      SEXP y_sym, SEXP y) {

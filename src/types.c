@@ -1,6 +1,11 @@
 #include "vctrs.h"
 #include "utils.h"
 
+// Initialised at load time
+static SEXP syms_vec_is_vector_dispatch = NULL;
+static SEXP fns_vec_is_vector_dispatch = NULL;
+
+
 bool is_data_frame(SEXP x) {
   return Rf_inherits(x, "data.frame");
 }
@@ -54,13 +59,12 @@ const char* vec_type_as_str(enum vctrs_type type) {
   }
 }
 
-static SEXP vec_is_vector_dispatch_fn = NULL;
-
 bool vec_is_vector(SEXP x) {
   switch (vec_typeof(x)) {
   case vctrs_type_null:
   case vctrs_type_scalar:
     return false;
+
   case vctrs_type_logical:
   case vctrs_type_integer:
   case vctrs_type_double:
@@ -70,12 +74,13 @@ bool vec_is_vector(SEXP x) {
   case vctrs_type_list:
   case vctrs_type_dataframe:
     return true;
+
   case vctrs_type_s3:
     if (Rf_inherits(x, "vctrs_vctr")) {
       return true;
     } else {
-      SEXP dispatch_call = PROTECT(Rf_lang2(vec_is_vector_dispatch_fn, x));
-      SEXP out = Rf_eval(dispatch_call, R_GlobalEnv);
+      SEXP out = PROTECT(vctrs_dispatch1(syms_vec_is_vector_dispatch, fns_vec_is_vector_dispatch,
+                                         syms_x, x));
 
       if (!is_bool(out)) {
         Rf_errorcall(R_NilValue, "`vec_is_vector()` must return `TRUE` or `FALSE`");
@@ -117,7 +122,8 @@ SEXP vctrs_shared_false = NULL;
 Rcomplex vctrs_shared_na_cpl;
 
 void vctrs_init_types(SEXP ns) {
-  vec_is_vector_dispatch_fn = Rf_findVar(Rf_install("vec_is_vector_dispatch"), ns);
+  syms_vec_is_vector_dispatch = Rf_install("vec_is_vector_dispatch");
+  fns_vec_is_vector_dispatch = Rf_findVar(syms_vec_is_vector_dispatch, ns);
 
   vctrs_shared_empty_lgl = Rf_allocVector(LGLSXP, 0);
   R_PreserveObject(vctrs_shared_empty_lgl);

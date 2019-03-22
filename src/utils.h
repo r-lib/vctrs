@@ -4,6 +4,8 @@
 
 bool is_bool(SEXP x);
 
+SEXP vctrs_dispatch1(SEXP fn_sym, SEXP fn,
+                     SEXP x_sym, SEXP x);
 SEXP vctrs_dispatch2(SEXP fn_sym, SEXP fn,
                      SEXP x_sym, SEXP x,
                      SEXP y_sym, SEXP y);
