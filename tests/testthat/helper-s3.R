@@ -13,3 +13,6 @@ scoped_global_bindings <- function(..., .frame = caller_env()) {
 new_proxy <- function(x) {
   structure(list(env(x = x)), class = "vctrs_proxy")
 }
+proxy_deref <- function(x) {
+  x[[1]]$x
+}

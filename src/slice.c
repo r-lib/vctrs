@@ -139,13 +139,24 @@ static SEXP vec_slice_impl(SEXP x, SEXP index, bool dispatch) {
     UNPROTECT(1);
     return out;
 
-  default: {
+  case vctrs_type_s3: {
     SEXP proxy = PROTECT(vec_proxy(x));
-    out = PROTECT(vec_slice_fallback(proxy, index));
+
+    if (is_record(proxy)) {
+      out = PROTECT(rows_slice(proxy, index));
+    } else {
+      out = PROTECT(vec_slice_impl(proxy, index, false));
+    }
     out = vec_restore(out, x, index);
+
     UNPROTECT(2);
     return out;
-  }}
+  }
+
+  default:
+    Rf_error("Internal error: Unexpected type `%s` for vector proxy in `vec_slice()`",
+             vec_type_as_str(vec_typeof(x)));
+  }
 
   PROTECT(out);
   slice_names(out, x, index);
