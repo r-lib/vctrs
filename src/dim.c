@@ -1,7 +1,6 @@
 #include "vctrs.h"
 #include "utils.h"
 
-R_len_t df_size(SEXP x);
 R_len_t rcrd_size(SEXP x);
 
 R_len_t vec_size(SEXP x) {

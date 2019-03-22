@@ -138,6 +138,7 @@ bool is_data_frame(SEXP x);
 bool is_record(SEXP x);
 bool is_scalar(SEXP x);
 
+R_len_t df_size(SEXP x);
 R_len_t df_rownames_size(SEXP x);
 R_len_t df_raw_size(SEXP x);
 

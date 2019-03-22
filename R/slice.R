@@ -33,10 +33,6 @@ vec_slice_dispatch <- function(x, i) {
 }
 #' @export
 vec_slice.default <- function(x, i) {
-  if (is.data.frame(x)) {
-    return(lapply(x, vec_slice, i))
-  }
-
   vec_assert(x)
 
   d <- vec_dims(x)
