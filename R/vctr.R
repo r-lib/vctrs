@@ -80,7 +80,7 @@ names_all_or_nothing <- function(names) {
 }
 
 #' @export
-vec_restore.vctrs_vctr <- function(x, to) {
+vec_restore.vctrs_vctr <- function(x, to, ...) {
   if (typeof(x) != typeof(to)) {
     stop_incompatible_cast(x, to)
   }

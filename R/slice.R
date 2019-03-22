@@ -36,8 +36,7 @@ vec_slice.default <- function(x, i) {
   if (is.data.frame(x)) {
     # Much faster, and avoids creating rownames
     out <- lapply(x, vec_slice, i)
-    attr(out, "row.names") <- .set_row_names(length(i))
-    return(vec_restore(out, x))
+    return(vec_restore(out, x, i = i))
   }
 
   vec_assert(x)

@@ -294,7 +294,7 @@ SEXP vctrs_restore_default(SEXP x, SEXP to) {
   return x;
 }
 
-static SEXP df_restore(SEXP x, SEXP to) {
+static SEXP df_restore(SEXP x, SEXP to, SEXP i) {
   if (TYPEOF(x) != VECSXP) {
     Rf_errorcall(R_NilValue, "Internal error: Attempt to restore data frame from a %s.",
                  Rf_type2char(TYPEOF(x)));
@@ -302,8 +302,13 @@ static SEXP df_restore(SEXP x, SEXP to) {
 
   int n_protect = 0;
 
-  // Compute size before changing attributes
-  R_len_t size = df_raw_size(x);
+  // Compute size before changing attributes of `x`
+  R_len_t size;
+  if (i == R_NilValue) {
+    size = df_raw_size(x);
+  } else {
+    size = Rf_length(i);
+  }
 
   if (MAYBE_REFERENCED(x)) {
     x = PROTECT(Rf_shallow_duplicate(x));
@@ -325,10 +330,10 @@ static SEXP df_restore(SEXP x, SEXP to) {
   return x;
 }
 
-SEXP vctrs_restore(SEXP x, SEXP to) {
+SEXP vctrs_restore(SEXP x, SEXP to, SEXP i) {
   switch (vec_typeof(to)) {
   case vctrs_type_dataframe:
-    return df_restore(x, to);
+    return df_restore(x, to, i);
   case vctrs_type_s3:
     return vctrs_dispatch2(syms_vec_restore_dispatch, fns_vec_restore_dispatch,
                            syms_x, x,

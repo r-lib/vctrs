@@ -16,7 +16,7 @@ vec_cast(x, to)
 
 vec_cast_common(..., .to = NULL)
 
-vec_restore(x, to)
+vec_restore(x, to, ..., i = NULL)
 
 \method{vec_cast}{logical}(x, to)
 
@@ -31,9 +31,16 @@ vec_restore(x, to)
 \method{vec_cast}{list}(x, to)
 }
 \arguments{
-\item{x, ...}{Vectors to cast.}
+\item{x}{Vectors to cast.}
 
 \item{to, .to}{Type to cast to. If \code{NULL}, \code{x} will be returned as is.}
+
+\item{...}{For \code{vec_cast()}, vectors to cast. For \code{vec_restore()},
+these dots are only for future extensions and should be empty.}
+
+\item{i}{The index vector used to slice \code{x} when restoration is
+triggered by \code{\link[=vec_slice]{vec_slice()}}. In most cases you don't need this
+information and can safely ignore that argument.}
 }
 \value{
 A vector the same length as \code{x} with the same type as \code{to},
