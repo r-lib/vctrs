@@ -95,13 +95,9 @@ static SEXP df_slice(SEXP x, SEXP index) {
 
 
 static SEXP vec_slice_dispatch(SEXP x, SEXP index) {
-  SEXP out = PROTECT(vctrs_dispatch2(syms_vec_slice_dispatch, fns_vec_slice_dispatch,
-                                     syms_x, x,
-                                     syms_i, index));
-  out = vec_restore(out, x, index);
-
-  UNPROTECT(1);
-  return out;
+  return vctrs_dispatch2(syms_vec_slice_dispatch, fns_vec_slice_dispatch,
+                         syms_x, x,
+                         syms_i, index);
 }
 
 static SEXP vec_slice_impl(SEXP x, SEXP index, bool dispatch) {
@@ -144,7 +140,10 @@ static SEXP vec_slice_impl(SEXP x, SEXP index, bool dispatch) {
     return out;
 
   default:
-    return vec_slice_dispatch(x, index);
+    out = PROTECT(vec_slice_dispatch(x, index));
+    out = vec_restore(out, x, index);
+    UNPROTECT(1);
+    return out;
   }
 
   PROTECT(out);
