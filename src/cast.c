@@ -263,12 +263,8 @@ SEXP vec_cast(SEXP x, SEXP to) {
   return out;
 }
 
-// Copy attributes except names. This duplicates `x` if needed.
+// Copy attributes except names and dim. This duplicates `x` if needed.
 SEXP vctrs_restore_default(SEXP x, SEXP to) {
-  if (has_dim(x)) {
-    return x;
-  }
-
   int n_protect = 0;
 
   SEXP attrib = PROTECT(Rf_shallow_duplicate(ATTRIB(to)));
@@ -284,10 +280,16 @@ SEXP vctrs_restore_default(SEXP x, SEXP to) {
     ++n_protect;
   }
 
-  // Copy attributes but keep names
-  SEXP nms = Rf_getAttrib(x, R_NamesSymbol);
+  // Copy attributes but keep names and dims
+  SEXP nms = PROTECT(Rf_getAttrib(x, R_NamesSymbol));
+  ++n_protect;
+
+  SEXP dim = PROTECT(Rf_getAttrib(x, R_DimSymbol));
+  ++n_protect;
+
   SET_ATTRIB(x, attrib);
   Rf_setAttrib(x, R_NamesSymbol, nms);
+  Rf_setAttrib(x, R_DimSymbol, dim);
 
   // SET_ATTRIB() does not set object bit when attributes include class
   if (OBJECT(to)) {
