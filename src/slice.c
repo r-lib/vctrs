@@ -139,7 +139,7 @@ static SEXP vec_slice_impl(SEXP x, SEXP index, bool dispatch) {
 
   case vctrs_type_dataframe:
     out = PROTECT(df_slice(x, index));
-    out = vctrs_restore(out, x, index);
+    out = df_restore(out, x, index);
     UNPROTECT(1);
     return out;
 

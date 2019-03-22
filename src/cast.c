@@ -300,7 +300,7 @@ SEXP vctrs_restore_default(SEXP x, SEXP to) {
   return x;
 }
 
-static SEXP df_restore(SEXP x, SEXP to, SEXP i) {
+SEXP df_restore(SEXP x, SEXP to, SEXP i) {
   if (TYPEOF(x) != VECSXP) {
     Rf_errorcall(R_NilValue, "Internal error: Attempt to restore data frame from a %s.",
                  Rf_type2char(TYPEOF(x)));
