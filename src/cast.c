@@ -171,69 +171,52 @@ static SEXP int_as_double(SEXP x, bool* lossy) {
   return out;
 }
 
-SEXP vec_cast(SEXP x, SEXP to) {
-  if (x == R_NilValue || to == R_NilValue) {
-    return x;
-  }
-  if (has_dim(x) || has_dim(to)) {
-    goto dispatch;
-  }
-
-  bool lossy = false;
-  SEXP out = R_NilValue;
-
+static SEXP vec_cast_switch(SEXP x, SEXP to, bool* lossy) {
   switch (vec_typeof(to)) {
   case vctrs_type_logical:
     switch (vec_typeof(x)) {
     case vctrs_type_logical:
       return x;
     case vctrs_type_integer:
-      out = int_as_logical(x, &lossy);
-      break;
+      return int_as_logical(x, lossy);
     case vctrs_type_double:
-      out = dbl_as_logical(x, &lossy);
-      break;
+      return dbl_as_logical(x, lossy);
     case vctrs_type_character:
-      out = chr_as_logical(x, &lossy);
-      break;
+      return chr_as_logical(x, lossy);
     default:
-      goto dispatch;
+      break;
     }
     break;
 
   case vctrs_type_integer:
     switch (vec_typeof(x)) {
     case vctrs_type_logical:
-      out = lgl_as_integer(x, &lossy);
-      break;
+      return lgl_as_integer(x, lossy);
     case vctrs_type_integer:
       return x;
     case vctrs_type_double:
-      out = dbl_as_integer(x, &lossy);
-      break;
+      return dbl_as_integer(x, lossy);
     case vctrs_type_character:
       // TODO: Implement with `R_strtod()` from R_ext/utils.h
-      goto dispatch;
+      break;
     default:
-      goto dispatch;
+      break;
     }
     break;
 
   case vctrs_type_double:
     switch (vec_typeof(x)) {
     case vctrs_type_logical:
-      out = lgl_as_double(x, &lossy);
-      break;
+      return lgl_as_double(x, lossy);
     case vctrs_type_integer:
-      out = int_as_double(x, &lossy);
-      break;
+      return int_as_double(x, lossy);
     case vctrs_type_double:
       return x;
     case vctrs_type_character:
       // TODO: Implement with `R_strtod()` from R_ext/utils.h
-      goto dispatch;
+      break;
     default:
-      goto dispatch;
+      break;
     }
     break;
 
@@ -246,24 +229,37 @@ SEXP vec_cast(SEXP x, SEXP to) {
     case vctrs_type_character:
       return x;
     default:
-      goto dispatch;
+      break;
     }
     break;
 
   default:
-    goto dispatch;
+    break;
   }
 
-  if (!lossy) {
-    return out;
-  }
-
- dispatch:
-  return vctrs_dispatch2(syms_vec_cast_dispatch, fns_vec_cast_dispatch,
-                         syms_x, x,
-                         syms_to, to);
+  return R_NilValue;
 }
 
+SEXP vec_cast(SEXP x, SEXP to) {
+  if (x == R_NilValue || to == R_NilValue) {
+    return x;
+  }
+
+  bool lossy = false;
+  SEXP out = R_NilValue;
+
+  if (!has_dim(x) && !has_dim(to)) {
+    out = vec_cast_switch(x, to, &lossy);
+  }
+
+  if (lossy || out == R_NilValue) {
+    return vctrs_dispatch2(syms_vec_cast_dispatch, fns_vec_cast_dispatch,
+                           syms_x, x,
+                           syms_to, to);
+  }
+
+  return out;
+}
 
 void vctrs_init_cast(SEXP ns) {
   syms_vec_cast_dispatch = Rf_install("vec_cast_dispatch");
