@@ -26,6 +26,44 @@ vec_data <- function(x) {
   x
 }
 
+#' Extract vector data
+#'
+#' Unlike [vec_data()], this doesn't remove attributes.
+#'
+#' @param x A vector.
+#'
+#' @export
+vec_proxy <- function(x) {
+  if (vec_is_data_vector(x)) {
+    return(x)
+  }
+
+  out <- vec_proxy_dispatch(x)
+  if (vec_is_data_vector(out)) {
+    return(out)
+  }
+
+  abort("Internal error: `vec_proxy()` must return a data vector.")
+  UseMethod("vec_proxy")
+}
+vec_proxy_dispatch <- function(x) {
+  UseMethod("vec_proxy")
+}
+#' @export
+vec_proxy.default <- function(x) {
+  vec_assert(x)
+  stop_unimplemented(x, "vec_proxy")
+}
+
+vec_is_data_vector <- function(x) {
+  FALSE ||
+    is_atomic(x) ||
+    is_bare_vector(x) ||
+    is_record(x) ||
+    is.data.frame(x) ||
+    vec_is_vector(x)
+}
+
 is_record <- function(x) {
   UseMethod("is_record")
 }
