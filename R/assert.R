@@ -175,5 +175,8 @@ vec_is_vector.default <- function(x) {
 }
 
 vec_typeof <- function(x) {
-  .Call(vctrs_typeof, x)
+  .Call(vctrs_typeof, x, TRUE)
+}
+vec_typeof_bare <- function(x) {
+  .Call(vctrs_typeof, x, FALSE)
 }

@@ -155,3 +155,7 @@ test_that("bare prototypes act as partial types", {
   expect_true(vec_is(foobar(1), dbl()))
   expect_error(NA, object = vec_assert(foobar(1), dbl()))
 })
+
+test_that("data frames are always classified as such even when dispatch is off", {
+  expect_identical(vec_typeof_bare(mtcars), "dataframe")
+})
