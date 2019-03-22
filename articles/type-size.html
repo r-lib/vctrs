@@ -245,8 +245,8 @@
 <a class="sourceLine" id="cb9-46" data-line-number="46"><span class="co">#&gt;  36. ├─vctrs::vec_ptype(logical(), character())</span></a>
 <a class="sourceLine" id="cb9-47" data-line-number="47"><span class="co">#&gt;  37. │ └─vctrs::vec_type2(out_types[[i - 1]], in_types[[i]])</span></a>
 <a class="sourceLine" id="cb9-48" data-line-number="48"><span class="co">#&gt;  38. ├─(function (x, y) ...</span></a>
-<a class="sourceLine" id="cb9-49" data-line-number="49"><span class="co">#&gt;  39. ├─vctrs::vec_type2.logical(logical(0), character(0))</span></a>
-<a class="sourceLine" id="cb9-50" data-line-number="50"><span class="co">#&gt;  40. └─vctrs:::vec_type2.logical.default(logical(0), character(0))</span></a>
+<a class="sourceLine" id="cb9-49" data-line-number="49"><span class="co">#&gt;  39. ├─vctrs::vec_type2.logical(x = logical(0), y = character(0))</span></a>
+<a class="sourceLine" id="cb9-50" data-line-number="50"><span class="co">#&gt;  40. └─vctrs:::vec_type2.logical.default(x = logical(0), y = character(0))</span></a>
 <a class="sourceLine" id="cb9-51" data-line-number="51"><span class="co">#&gt;  41.   └─vctrs::stop_incompatible_type(x, y)</span></a>
 <a class="sourceLine" id="cb9-52" data-line-number="52"><span class="co">#&gt;  42.     └─vctrs:::stop_incompatible(...)</span></a></code></pre></div>
 </li>
@@ -474,8 +474,8 @@
 <a class="sourceLine" id="cb19-44" data-line-number="44"><span class="co">#&gt;  35. │                     └─base::eval(expr, envir, enclos)</span></a>
 <a class="sourceLine" id="cb19-45" data-line-number="45"><span class="co">#&gt;  36. ├─vctrs::vec_cast(c(1.5, 2.5), factor("a"))</span></a>
 <a class="sourceLine" id="cb19-46" data-line-number="46"><span class="co">#&gt;  37. ├─(function (x, to) ...</span></a>
-<a class="sourceLine" id="cb19-47" data-line-number="47"><span class="co">#&gt;  38. ├─vctrs::vec_cast.factor(c(1.5, 2.5), structure(1L, .Label = "a", class = "factor"))</span></a>
-<a class="sourceLine" id="cb19-48" data-line-number="48"><span class="co">#&gt;  39. └─vctrs:::vec_cast.factor.default(c(1.5, 2.5), structure(1L, .Label = "a", class = "factor"))</span></a>
+<a class="sourceLine" id="cb19-47" data-line-number="47"><span class="co">#&gt;  38. ├─vctrs::vec_cast.factor(x = c(1.5, 2.5), to = structure(1L, .Label = "a", class = "factor"))</span></a>
+<a class="sourceLine" id="cb19-48" data-line-number="48"><span class="co">#&gt;  39. └─vctrs:::vec_cast.factor.default(x = c(1.5, 2.5), to = structure(1L, .Label = "a", class = "factor"))</span></a>
 <a class="sourceLine" id="cb19-49" data-line-number="49"><span class="co">#&gt;  40.   └─vctrs::stop_incompatible_cast(x, to)</span></a>
 <a class="sourceLine" id="cb19-50" data-line-number="50"><span class="co">#&gt;  41.     └─vctrs:::stop_incompatible(...)</span></a></code></pre></div>
 <p>If a cast is possible in general (i.e. double -&gt; integer), but information is lost for a specific input (e.g. 1.5 -&gt; 1), it will generate a warning.</p>
@@ -521,11 +521,11 @@
 <a class="sourceLine" id="cb21-2" data-line-number="2">df &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/data.frame">data.frame</a></span>(<span class="dt">x =</span> x)</a>
 <a class="sourceLine" id="cb21-3" data-line-number="3"></a>
 <a class="sourceLine" id="cb21-4" data-line-number="4"><span class="kw"><a href="../reference/vec_slice.html">vec_slice</a></span>(x, <span class="dv">5</span><span class="op">:</span><span class="dv">6</span>)</a>
-<a class="sourceLine" id="cb21-5" data-line-number="5"><span class="co">#&gt; [1] 4 8</span></a>
+<a class="sourceLine" id="cb21-5" data-line-number="5"><span class="co">#&gt; [1] 3 1</span></a>
 <a class="sourceLine" id="cb21-6" data-line-number="6"><span class="kw"><a href="../reference/vec_slice.html">vec_slice</a></span>(df, <span class="dv">5</span><span class="op">:</span><span class="dv">6</span>)</a>
 <a class="sourceLine" id="cb21-7" data-line-number="7"><span class="co">#&gt;   x</span></a>
-<a class="sourceLine" id="cb21-8" data-line-number="8"><span class="co">#&gt; 1 4</span></a>
-<a class="sourceLine" id="cb21-9" data-line-number="9"><span class="co">#&gt; 2 8</span></a></code></pre></div>
+<a class="sourceLine" id="cb21-8" data-line-number="8"><span class="co">#&gt; 1 3</span></a>
+<a class="sourceLine" id="cb21-9" data-line-number="9"><span class="co">#&gt; 2 1</span></a></code></pre></div>
 <p><code><a href="../reference/vec_slice.html">vec_slice(data.frame(x), i)</a></code> equals <code><a href="https://www.rdocumentation.org/packages/base/topics/data.frame">data.frame(vec_slice(x, i))</a></code> (modulo variable and row names).</p>
 <p>Prototypes are generated with <code><a href="../reference/vec_slice.html">vec_slice(x, 0L)</a></code>; given a prototype, you can generate a vector of given size (filled with <code>NA</code>s) with <code><a href="../reference/vec_na.html">vec_na()</a></code></p>
 </div>

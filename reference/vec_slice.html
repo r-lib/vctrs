@@ -162,8 +162,21 @@ names of the observations to get/set.</p></td>
     
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <p><code>vec_slice()</code> is an S3 generic for which you can implement methods.
-The default method calls <code>[</code>.</p>
+    <ul>
+<li><p><code>vec_slice()</code> is an S3 generic for which you can implement methods.
+The default method calls <code>[</code>.</p></li>
+<li><p><code><a href='vec_cast.html'>vec_restore()</a></code> is called on the slice vector to restore
+the class and attributes.</p></li>
+</ul>
+    
+    <h2 class="hasAnchor" id="differences-with-base-r-subsetting"><a class="anchor" href="#differences-with-base-r-subsetting"></a>Differences with base R subsetting</h2>
+
+    
+    <ul>
+<li><p><code>vec_slice()</code> only slices along one dimension. For
+two-dimensional types, the first dimension is subsetted.</p></li>
+<li><p><code>vec_slice()</code> preserves attributes by default.</p></li>
+</ul>
     
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
@@ -181,6 +194,8 @@ The default method calls <code>[</code>.</p>
       <li><a href="#arguments">Arguments</a></li>
       
       <li><a href="#details">Details</a></li>
+
+      <li><a href="#differences-with-base-r-subsetting">Differences with base R subsetting</a></li>
       
       <li><a href="#examples">Examples</a></li>
     </ul>

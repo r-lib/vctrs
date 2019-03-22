@@ -150,7 +150,7 @@ vectors to the same type.</p>
 
 <span class='fu'>vec_cast_common</span>(<span class='no'>...</span>, <span class='kw'>.to</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)
 
-<span class='fu'>vec_restore</span>(<span class='no'>x</span>, <span class='no'>to</span>)
+<span class='fu'>vec_restore</span>(<span class='no'>x</span>, <span class='no'>to</span>, <span class='no'>...</span>, <span class='kw'>i</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)
 
 <span class='co'># S3 method for logical</span>
 <span class='fu'>vec_cast</span>(<span class='no'>x</span>, <span class='no'>to</span>)
@@ -174,12 +174,23 @@ vectors to the same type.</p>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>x, ...</th>
+      <th>x</th>
       <td><p>Vectors to cast.</p></td>
     </tr>
     <tr>
       <th>to, .to</th>
       <td><p>Type to cast to. If <code>NULL</code>, <code>x</code> will be returned as is.</p></td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td><p>For <code>vec_cast()</code>, vectors to cast. For <code>vec_restore()</code>,
+these dots are only for future extensions and should be empty.</p></td>
+    </tr>
+    <tr>
+      <th>i</th>
+      <td><p>The index vector used to slice <code>x</code> when restoration is
+triggered by <code><a href='vec_slice.html'>vec_slice()</a></code>. In most cases you don't need this
+information and can safely ignore that argument.</p></td>
     </tr>
     </table>
     
