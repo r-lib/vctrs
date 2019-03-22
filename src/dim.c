@@ -41,12 +41,11 @@ R_len_t vec_size(SEXP x) {
   }
 }
 
-// For performance, avoid Rf_getAttrib() because it automatically transforms
-// the rownames into an integer vector
-R_len_t df_size(SEXP x) {
+R_len_t df_rownames_size(SEXP x) {
   for (SEXP attr = ATTRIB(x); attr != R_NilValue; attr = CDR(attr)) {
-    if (TAG(attr) != R_RowNamesSymbol)
+    if (TAG(attr) != R_RowNamesSymbol) {
       continue;
+    }
 
     SEXP rn = CAR(attr);
     R_len_t n = Rf_length(rn);
@@ -64,7 +63,20 @@ R_len_t df_size(SEXP x) {
       Rf_errorcall(R_NilValue, "Corrupt data frame: row.names are invalid type");
     }
   }
-  Rf_errorcall(R_NilValue, "Corrupt data frame: row.names are missing");
+
+  return -1;
+}
+
+// For performance, avoid Rf_getAttrib() because it automatically transforms
+// the rownames into an integer vector
+R_len_t df_size(SEXP x) {
+  R_len_t n = df_rownames_size(x);
+
+  if (n < 0) {
+    Rf_errorcall(R_NilValue, "Corrupt data frame: row.names are missing");
+  }
+
+  return n;
 }
 
 R_len_t rcrd_size(SEXP x) {
