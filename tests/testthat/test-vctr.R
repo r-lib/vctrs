@@ -19,6 +19,12 @@ test_that("default format method is internal", {
   expect_equal(format(x), format(x))
 })
 
+test_that("vctr class is proxied", {
+  expect_identical(vec_proxy(new_vctr(1:3)), new_vctr(1:3))
+  expect_identical(vec_proxy(new_vctr(as.list(1:3))), new_vctr(as.list(1:3)))
+})
+
+
 # Cast/restore ------------------------------------------------------------
 
 test_that("cast to NULL returns x", {

@@ -49,20 +49,6 @@ test_that("vec_proxy() fails with non vectors", {
   expect_error(vec_proxy(!!x), class = "vctrs_error_unimplemented")
 })
 
-test_that("vec_proxy() must return a data vector", {
-  x <- foobar(list())
-
-  scoped_global_bindings(
-    vec_proxy.vctrs_foobar = function(x) x
-  )
-  expect_error(vec_proxy(x), "must return a data vector")
-
-  scoped_global_bindings(
-    vec_is_vector.vctrs_foobar = function(...) TRUE
-  )
-  expect_error(vec_proxy(x), "must return a data vector")
-})
-
 test_that("NULL is not a data vector but it is proxied", {
   expect_false(vec_is_data_vector(NULL))
   expect_null(vec_proxy(NULL))

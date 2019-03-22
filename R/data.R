@@ -36,14 +36,9 @@ vec_data <- function(x) {
 vec_proxy <- function(x) {
   if (vec_is_data_vector(x) || is_null(x)) {
     return(x)
+  } else {
+    return(vec_proxy_dispatch(x))
   }
-
-  out <- vec_proxy_dispatch(x)
-  if (vec_is_data_vector(out)) {
-    return(out)
-  }
-
-  abort("Internal error: `vec_proxy()` must return a data vector.")
   UseMethod("vec_proxy")
 }
 vec_proxy_dispatch <- function(x) {
