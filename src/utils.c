@@ -34,13 +34,8 @@ SEXP vctrs_dispatch2(SEXP fn_sym, SEXP fn,
   Rf_defineVar(x_sym, x, env);
   Rf_defineVar(y_sym, y, env);
 
-  // Forward dots to methods if they exist
   SEXP dispatch_call;
-  if (Rf_findVar(syms_dots, env) == R_UnboundValue) {
-    dispatch_call = PROTECT(Rf_lang3(fn, x, y));
-  } else {
-    dispatch_call = PROTECT(Rf_lang4(fn, x, y, syms_dots));
-  }
+  dispatch_call = PROTECT(Rf_lang3(fn_sym, x_sym, y_sym));
 
   SEXP elt = CDR(dispatch_call);
   SET_TAG(elt, x_sym); elt = CDR(elt);
@@ -64,13 +59,8 @@ SEXP vctrs_dispatch3(SEXP fn_sym, SEXP fn,
   Rf_defineVar(y_sym, y, env);
   Rf_defineVar(z_sym, z, env);
 
-  // Forward dots to methods if they exist
   SEXP dispatch_call;
-  if (Rf_findVar(syms_dots, env) == R_UnboundValue) {
-    dispatch_call = PROTECT(Rf_lang4(fn, x, y, z));
-  } else {
-    dispatch_call = PROTECT(Rf_lang5(fn, x, y, z, syms_dots));
-  }
+  dispatch_call = PROTECT(Rf_lang4(fn_sym, x_sym, y_sym, z_sym));
 
   SEXP elt = CDR(dispatch_call);
   SET_TAG(elt, x_sym); elt = CDR(elt);
