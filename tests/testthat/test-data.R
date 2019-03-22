@@ -15,13 +15,15 @@ test_that("vec_is_data_vector() detects data vectors", {
   for (x in records) {
     expect_true(vec_is_data_vector(!!x))
   }
+})
 
+test_that("vec_is_data_vector() is only TRUE for bare data vectors", {
   expect_false(vec_is_data_vector(foobar(list())))
 
   scoped_global_bindings(
     vec_is_vector.vctrs_foobar = function(...) TRUE
   )
-  expect_true(vec_is_data_vector(foobar(list())))
+  expect_false(vec_is_data_vector(foobar(list())))
 })
 
 test_that("vec_proxy() is a no-op with data vectors", {
@@ -44,7 +46,7 @@ test_that("vec_proxy() fails with non vectors", {
   scoped_global_bindings(
     vec_is_vector.vctrs_foobar = function(...) TRUE
   )
-  expect_identical(vec_proxy(!!x), !!x)
+  expect_error(vec_proxy(!!x), class = "vctrs_error_unimplemented")
 })
 
 test_that("vec_proxy() must return a data vector", {
@@ -58,7 +60,7 @@ test_that("vec_proxy() must return a data vector", {
   scoped_global_bindings(
     vec_is_vector.vctrs_foobar = function(...) TRUE
   )
-  expect_identical(vec_proxy(!!x), !!x)
+  expect_error(vec_proxy(x), "must return a data vector")
 })
 
 test_that("NULL is not a data vector but it is proxied", {
