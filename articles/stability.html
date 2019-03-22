@@ -247,9 +247,9 @@ It is size-unstable for the same reasons as <code><a href="https://www.rdocument
 <a class="sourceLine" id="cb9-45" data-line-number="45"><span class="co">#&gt;  39. │     └─base::Reduce(f, .x, init = .init)</span></a>
 <a class="sourceLine" id="cb9-46" data-line-number="46"><span class="co">#&gt;  40. │       └─vctrs:::f(init, x[[i]])</span></a>
 <a class="sourceLine" id="cb9-47" data-line-number="47"><span class="co">#&gt;  41. │         └─vctrs:::.f(x, y, ...)</span></a>
-<a class="sourceLine" id="cb9-48" data-line-number="48"><span class="co">#&gt;  42. ├─(function (x, y) ...</span></a>
-<a class="sourceLine" id="cb9-49" data-line-number="49"><span class="co">#&gt;  43. ├─vctrs::vec_type2.logical(x = logical(0), y = character(0))</span></a>
-<a class="sourceLine" id="cb9-50" data-line-number="50"><span class="co">#&gt;  44. └─vctrs:::vec_type2.logical.default(x = logical(0), y = character(0))</span></a>
+<a class="sourceLine" id="cb9-48" data-line-number="48"><span class="co">#&gt;  42. ├─vctrs:::vec_type2_dispatch(x = x, y = y)</span></a>
+<a class="sourceLine" id="cb9-49" data-line-number="49"><span class="co">#&gt;  43. ├─vctrs::vec_type2.logical(x = x, y = y)</span></a>
+<a class="sourceLine" id="cb9-50" data-line-number="50"><span class="co">#&gt;  44. └─vctrs:::vec_type2.logical.default(x = x, y = y)</span></a>
 <a class="sourceLine" id="cb9-51" data-line-number="51"><span class="co">#&gt;  45.   └─vctrs::stop_incompatible_type(x, y)</span></a>
 <a class="sourceLine" id="cb9-52" data-line-number="52"><span class="co">#&gt;  46.     └─vctrs:::stop_incompatible(...)</span></a>
 <a class="sourceLine" id="cb9-53" data-line-number="53"></a>
@@ -304,9 +304,9 @@ It is size-unstable for the same reasons as <code><a href="https://www.rdocument
 <a class="sourceLine" id="cb9-102" data-line-number="102"><span class="co">#&gt;  39. │     └─base::Reduce(f, .x, init = .init)</span></a>
 <a class="sourceLine" id="cb9-103" data-line-number="103"><span class="co">#&gt;  40. │       └─vctrs:::f(init, x[[i]])</span></a>
 <a class="sourceLine" id="cb9-104" data-line-number="104"><span class="co">#&gt;  41. │         └─vctrs:::.f(x, y, ...)</span></a>
-<a class="sourceLine" id="cb9-105" data-line-number="105"><span class="co">#&gt;  42. ├─(function (x, y) ...</span></a>
-<a class="sourceLine" id="cb9-106" data-line-number="106"><span class="co">#&gt;  43. ├─vctrs::vec_type2.logical(x = logical(0), y = list())</span></a>
-<a class="sourceLine" id="cb9-107" data-line-number="107"><span class="co">#&gt;  44. └─vctrs:::vec_type2.logical.default(x = logical(0), y = list())</span></a>
+<a class="sourceLine" id="cb9-105" data-line-number="105"><span class="co">#&gt;  42. ├─vctrs:::vec_type2_dispatch(x = x, y = y)</span></a>
+<a class="sourceLine" id="cb9-106" data-line-number="106"><span class="co">#&gt;  43. ├─vctrs::vec_type2.logical(x = x, y = y)</span></a>
+<a class="sourceLine" id="cb9-107" data-line-number="107"><span class="co">#&gt;  44. └─vctrs:::vec_type2.logical.default(x = x, y = y)</span></a>
 <a class="sourceLine" id="cb9-108" data-line-number="108"><span class="co">#&gt;  45.   └─vctrs::stop_incompatible_type(x, y)</span></a>
 <a class="sourceLine" id="cb9-109" data-line-number="109"><span class="co">#&gt;  46.     └─vctrs:::stop_incompatible(...)</span></a></code></pre></div>
 </div>
@@ -322,7 +322,7 @@ It is size-unstable for the same reasons as <code><a href="https://www.rdocument
 <a class="sourceLine" id="cb11-2" data-line-number="2"><span class="co">#&gt; [[1]]</span></a>
 <a class="sourceLine" id="cb11-3" data-line-number="3"><span class="co">#&gt; function (x, ...) </span></a>
 <a class="sourceLine" id="cb11-4" data-line-number="4"><span class="co">#&gt; UseMethod("mean")</span></a>
-<a class="sourceLine" id="cb11-5" data-line-number="5"><span class="co">#&gt; &lt;bytecode: 0x3bf3c60&gt;</span></a>
+<a class="sourceLine" id="cb11-5" data-line-number="5"><span class="co">#&gt; &lt;bytecode: 0x314ac60&gt;</span></a>
 <a class="sourceLine" id="cb11-6" data-line-number="6"><span class="co">#&gt; &lt;environment: namespace:base&gt;</span></a>
 <a class="sourceLine" id="cb11-7" data-line-number="7"><span class="co">#&gt; </span></a>
 <a class="sourceLine" id="cb11-8" data-line-number="8"><span class="co">#&gt; [[2]]</span></a>
@@ -419,9 +419,9 @@ It is size-unstable for the same reasons as <code><a href="https://www.rdocument
 <a class="sourceLine" id="cb12-89" data-line-number="89"><span class="co">#&gt;  39. │     └─base::Reduce(f, .x, init = .init)</span></a>
 <a class="sourceLine" id="cb12-90" data-line-number="90"><span class="co">#&gt;  40. │       └─vctrs:::f(init, x[[i]])</span></a>
 <a class="sourceLine" id="cb12-91" data-line-number="91"><span class="co">#&gt;  41. │         └─vctrs:::.f(x, y, ...)</span></a>
-<a class="sourceLine" id="cb12-92" data-line-number="92"><span class="co">#&gt;  42. ├─(function (x, y) ...</span></a>
-<a class="sourceLine" id="cb12-93" data-line-number="93"><span class="co">#&gt;  43. ├─vctrs::vec_type2.Date(...)</span></a>
-<a class="sourceLine" id="cb12-94" data-line-number="94"><span class="co">#&gt;  44. └─vctrs:::vec_type2.Date.default(...)</span></a>
+<a class="sourceLine" id="cb12-92" data-line-number="92"><span class="co">#&gt;  42. ├─vctrs:::vec_type2_dispatch(x = x, y = y)</span></a>
+<a class="sourceLine" id="cb12-93" data-line-number="93"><span class="co">#&gt;  43. ├─vctrs::vec_type2.Date(x = x, y = y)</span></a>
+<a class="sourceLine" id="cb12-94" data-line-number="94"><span class="co">#&gt;  44. └─vctrs:::vec_type2.Date.default(x = x, y = y)</span></a>
 <a class="sourceLine" id="cb12-95" data-line-number="95"><span class="co">#&gt;  45.   └─vctrs::stop_incompatible_type(x, y)</span></a>
 <a class="sourceLine" id="cb12-96" data-line-number="96"><span class="co">#&gt;  46.     └─vctrs:::stop_incompatible(...)</span></a></code></pre></div>
 </div>

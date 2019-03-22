@@ -277,9 +277,9 @@
 <a class="sourceLine" id="cb13-38" data-line-number="38"><span class="co">#&gt;  34. │                   └─base::eval(expr, envir, enclos)</span></a>
 <a class="sourceLine" id="cb13-39" data-line-number="39"><span class="co">#&gt;  35. │                     └─base::eval(expr, envir, enclos)</span></a>
 <a class="sourceLine" id="cb13-40" data-line-number="40"><span class="co">#&gt;  36. ├─vctrs::vec_type2("bogus", percent())</span></a>
-<a class="sourceLine" id="cb13-41" data-line-number="41"><span class="co">#&gt;  37. ├─(function (x, y) ...</span></a>
-<a class="sourceLine" id="cb13-42" data-line-number="42"><span class="co">#&gt;  38. ├─vctrs::vec_type2.character(...)</span></a>
-<a class="sourceLine" id="cb13-43" data-line-number="43"><span class="co">#&gt;  39. └─vctrs:::vec_type2.character.default(...)</span></a>
+<a class="sourceLine" id="cb13-41" data-line-number="41"><span class="co">#&gt;  37. ├─vctrs:::vec_type2_dispatch(x = x, y = y)</span></a>
+<a class="sourceLine" id="cb13-42" data-line-number="42"><span class="co">#&gt;  38. ├─vctrs::vec_type2.character(x = x, y = y)</span></a>
+<a class="sourceLine" id="cb13-43" data-line-number="43"><span class="co">#&gt;  39. └─vctrs:::vec_type2.character.default(x = x, y = y)</span></a>
 <a class="sourceLine" id="cb13-44" data-line-number="44"><span class="co">#&gt;  40.   └─vctrs::stop_incompatible_type(x, y)</span></a>
 <a class="sourceLine" id="cb13-45" data-line-number="45"><span class="co">#&gt;  41.     └─vctrs:::stop_incompatible(...)</span></a>
 <a class="sourceLine" id="cb13-46" data-line-number="46"><span class="kw"><a href="../reference/vec_type2.html">vec_type2</a></span>(<span class="kw">percent</span>(), <span class="kw"><a href="../reference/vec_type.html">vec_type</a></span>(<span class="ot">NA</span>))</a>
@@ -363,9 +363,9 @@
 <a class="sourceLine" id="cb21-49" data-line-number="49"><span class="co">#&gt;  39. │     └─base::Reduce(f, .x, init = .init)</span></a>
 <a class="sourceLine" id="cb21-50" data-line-number="50"><span class="co">#&gt;  40. │       └─vctrs:::f(init, x[[i]])</span></a>
 <a class="sourceLine" id="cb21-51" data-line-number="51"><span class="co">#&gt;  41. │         └─vctrs:::.f(x, y, ...)</span></a>
-<a class="sourceLine" id="cb21-52" data-line-number="52"><span class="co">#&gt;  42. ├─(function (x, y) ...</span></a>
-<a class="sourceLine" id="cb21-53" data-line-number="53"><span class="co">#&gt;  43. ├─vctrs::vec_type2.logical(...)</span></a>
-<a class="sourceLine" id="cb21-54" data-line-number="54"><span class="co">#&gt;  44. └─vctrs:::vec_type2.logical.default(...)</span></a>
+<a class="sourceLine" id="cb21-52" data-line-number="52"><span class="co">#&gt;  42. ├─vctrs:::vec_type2_dispatch(x = x, y = y)</span></a>
+<a class="sourceLine" id="cb21-53" data-line-number="53"><span class="co">#&gt;  43. ├─vctrs::vec_type2.logical(x = x, y = y)</span></a>
+<a class="sourceLine" id="cb21-54" data-line-number="54"><span class="co">#&gt;  44. └─vctrs:::vec_type2.logical.default(x = x, y = y)</span></a>
 <a class="sourceLine" id="cb21-55" data-line-number="55"><span class="co">#&gt;  45.   └─vctrs::stop_incompatible_type(x, y)</span></a>
 <a class="sourceLine" id="cb21-56" data-line-number="56"><span class="co">#&gt;  46.     └─vctrs:::stop_incompatible(...)</span></a>
 <a class="sourceLine" id="cb21-57" data-line-number="57"></a>
@@ -412,9 +412,9 @@
 <a class="sourceLine" id="cb21-98" data-line-number="98"><span class="co">#&gt;  36. ├─base::`[&lt;-`(`*tmp*`, 1:2, value = 2:1)</span></a>
 <a class="sourceLine" id="cb21-99" data-line-number="99"><span class="co">#&gt;  37. ├─vctrs:::`[&lt;-.vctrs_vctr`(`*tmp*`, 1:2, value = 2:1)</span></a>
 <a class="sourceLine" id="cb21-100" data-line-number="100"><span class="co">#&gt;  38. │ └─vctrs::vec_cast(value, x)</span></a>
-<a class="sourceLine" id="cb21-101" data-line-number="101"><span class="co">#&gt;  39. ├─(function (x, to) ...</span></a>
-<a class="sourceLine" id="cb21-102" data-line-number="102"><span class="co">#&gt;  40. ├─global::vec_cast.vctrs_percent(...)</span></a>
-<a class="sourceLine" id="cb21-103" data-line-number="103"><span class="co">#&gt;  41. └─global::vec_cast.vctrs_percent.default(...)</span></a>
+<a class="sourceLine" id="cb21-101" data-line-number="101"><span class="co">#&gt;  39. ├─vctrs:::vec_cast_dispatch(x = x, to = to)</span></a>
+<a class="sourceLine" id="cb21-102" data-line-number="102"><span class="co">#&gt;  40. ├─global::vec_cast.vctrs_percent(x = x, to = to)</span></a>
+<a class="sourceLine" id="cb21-103" data-line-number="103"><span class="co">#&gt;  41. └─global::vec_cast.vctrs_percent.default(x = x, to = to)</span></a>
 <a class="sourceLine" id="cb21-104" data-line-number="104"><span class="co">#&gt;  42.   └─vctrs::stop_incompatible_cast(x, to)</span></a>
 <a class="sourceLine" id="cb21-105" data-line-number="105"><span class="co">#&gt;  43.     └─vctrs:::stop_incompatible(...)</span></a>
 <a class="sourceLine" id="cb21-106" data-line-number="106">x[[<span class="dv">3</span>]] &lt;-<span class="st"> </span><span class="fl">0.5</span></a>
@@ -472,9 +472,9 @@
 <a class="sourceLine" id="cb22-48" data-line-number="48"><span class="co">#&gt;  41. │       └─base::Reduce(f, .x, init = .init)</span></a>
 <a class="sourceLine" id="cb22-49" data-line-number="49"><span class="co">#&gt;  42. │         └─vctrs:::f(init, x[[i]])</span></a>
 <a class="sourceLine" id="cb22-50" data-line-number="50"><span class="co">#&gt;  43. │           └─vctrs:::.f(x, y, ...)</span></a>
-<a class="sourceLine" id="cb22-51" data-line-number="51"><span class="co">#&gt;  44. ├─(function (x, y) ...</span></a>
-<a class="sourceLine" id="cb22-52" data-line-number="52"><span class="co">#&gt;  45. ├─global::vec_type2.vctrs_percent(...)</span></a>
-<a class="sourceLine" id="cb22-53" data-line-number="53"><span class="co">#&gt;  46. └─global::vec_type2.vctrs_percent.default(...)</span></a>
+<a class="sourceLine" id="cb22-51" data-line-number="51"><span class="co">#&gt;  44. ├─vctrs:::vec_type2_dispatch(x = x, y = y)</span></a>
+<a class="sourceLine" id="cb22-52" data-line-number="52"><span class="co">#&gt;  45. ├─global::vec_type2.vctrs_percent(x = x, y = y)</span></a>
+<a class="sourceLine" id="cb22-53" data-line-number="53"><span class="co">#&gt;  46. └─global::vec_type2.vctrs_percent.default(x = x, y = y)</span></a>
 <a class="sourceLine" id="cb22-54" data-line-number="54"><span class="co">#&gt;  47.   └─vctrs::stop_incompatible_type(x, y)</span></a>
 <a class="sourceLine" id="cb22-55" data-line-number="55"><span class="co">#&gt;  48.     └─vctrs:::stop_incompatible(...)</span></a>
 <a class="sourceLine" id="cb22-56" data-line-number="56"></a>
