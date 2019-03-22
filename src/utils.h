@@ -7,6 +7,10 @@ bool is_bool(SEXP x);
 SEXP vctrs_dispatch2(SEXP fn_sym, SEXP fn,
                      SEXP x_sym, SEXP x,
                      SEXP y_sym, SEXP y);
+SEXP vctrs_dispatch3(SEXP fn_sym, SEXP fn,
+                     SEXP x_sym, SEXP x,
+                     SEXP y_sym, SEXP y,
+                     SEXP z_sym, SEXP z);
 
 bool is_compact_rownames(SEXP x);
 R_len_t compact_rownames_length(SEXP x);

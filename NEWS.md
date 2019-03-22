@@ -1,5 +1,8 @@
 # vctrs 0.1.0.9000
 
+* `vec_slice()` now calls `vec_restore()` automatically. Unlike the
+  default `[` method from base R, attributes are preserved by default.
+
 * `vec_slice()` is now a generic. Its default method calls `[`.
 
 * `vec_size()` now works with positive short row names. This fixes

@@ -263,7 +263,7 @@ SEXP vec_cast(SEXP x, SEXP to) {
   return out;
 }
 
-// Copy attributes except names. This duplicates `x` if needed.
+// Copy attributes except names and dim. This duplicates `x` if needed.
 SEXP vctrs_restore_default(SEXP x, SEXP to) {
   int n_protect = 0;
 
@@ -280,10 +280,16 @@ SEXP vctrs_restore_default(SEXP x, SEXP to) {
     ++n_protect;
   }
 
-  // Copy attributes but keep names
-  SEXP nms = Rf_getAttrib(x, R_NamesSymbol);
+  // Copy attributes but keep names and dims
+  SEXP nms = PROTECT(Rf_getAttrib(x, R_NamesSymbol));
+  ++n_protect;
+
+  SEXP dim = PROTECT(Rf_getAttrib(x, R_DimSymbol));
+  ++n_protect;
+
   SET_ATTRIB(x, attrib);
   Rf_setAttrib(x, R_NamesSymbol, nms);
+  Rf_setAttrib(x, R_DimSymbol, dim);
 
   // SET_ATTRIB() does not set object bit when attributes include class
   if (OBJECT(to)) {
@@ -294,7 +300,7 @@ SEXP vctrs_restore_default(SEXP x, SEXP to) {
   return x;
 }
 
-static SEXP df_restore(SEXP x, SEXP to) {
+SEXP df_restore(SEXP x, SEXP to, SEXP i) {
   if (TYPEOF(x) != VECSXP) {
     Rf_errorcall(R_NilValue, "Internal error: Attempt to restore data frame from a %s.",
                  Rf_type2char(TYPEOF(x)));
@@ -302,8 +308,13 @@ static SEXP df_restore(SEXP x, SEXP to) {
 
   int n_protect = 0;
 
-  // Compute size before changing attributes
-  R_len_t size = df_raw_size(x);
+  // Compute size before changing attributes of `x`
+  R_len_t size;
+  if (i == R_NilValue) {
+    size = df_raw_size(x);
+  } else {
+    size = Rf_length(i);
+  }
 
   if (MAYBE_REFERENCED(x)) {
     x = PROTECT(Rf_shallow_duplicate(x));
@@ -325,14 +336,15 @@ static SEXP df_restore(SEXP x, SEXP to) {
   return x;
 }
 
-SEXP vctrs_restore(SEXP x, SEXP to) {
+SEXP vec_restore(SEXP x, SEXP to, SEXP i) {
   switch (vec_typeof(to)) {
   case vctrs_type_dataframe:
-    return df_restore(x, to);
+    return df_restore(x, to, i);
   case vctrs_type_s3:
-    return vctrs_dispatch2(syms_vec_restore_dispatch, fns_vec_restore_dispatch,
+    return vctrs_dispatch3(syms_vec_restore_dispatch, fns_vec_restore_dispatch,
                            syms_x, x,
-                           syms_to, to);
+                           syms_to, to,
+                           syms_i, i);
   default:
     return vctrs_restore_default(x, to);
   }

@@ -67,8 +67,13 @@
 #' additional metadata that is important to them, so you should preserve any
 #' attributes that don't require special handling for your class.
 #'
-#' @param x,... Vectors to cast.
+#' @param x Vectors to cast.
+#' @param ... For `vec_cast()`, vectors to cast. For `vec_restore()`,
+#'   these dots are only for future extensions and should be empty.
 #' @param to,.to Type to cast to. If `NULL`, `x` will be returned as is.
+#' @param i The index vector used to slice `x` when restoration is
+#'   triggered by [vec_slice()]. In most cases you don't need this
+#'   information and can safely ignore that argument.
 #' @return A vector the same length as `x` with the same type as `to`,
 #'   or an error if the cast is not possible. A warning is generated if
 #'   information is lost when casting between compatible types (i.e. when
@@ -118,15 +123,16 @@ vec_cast.default <- function(x, to) {
 
 #' @export
 #' @rdname vec_cast
-vec_restore <- function(x, to) {
-  return(.Call(vctrs_restore, x, to))
+vec_restore <- function(x, to, ..., i = NULL) {
+  check_dots_empty_s3_extensions(...)
+  return(.Call(vctrs_restore, x, to, i))
   UseMethod("vec_restore", to)
 }
-vec_restore_dispatch <- function(x, to) {
+vec_restore_dispatch <- function(x, to, ..., i = NULL) {
   UseMethod("vec_restore", to)
 }
 #' @export
-vec_restore.default <- function(x, to) {
+vec_restore.default <- function(x, to, ...) {
   .Call(vctrs_restore_default, x, to)
 }
 

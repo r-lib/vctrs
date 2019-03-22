@@ -12,10 +12,10 @@ bool is_bool(SEXP x) {
  * Dispatch with two arguments
  *
  * @param fn The method to call.
- * @param x,y Arguments passed to the method.
- * @param fn_sym,x_sym,y_sym Symbols to which `x` and `y` should be
- *   assigned.  The assignment occurs in `env` and the dispatch call
- *   refers to these symbols.
+ * @param x,y,z Arguments passed to the method.
+ * @param fn_sym,x_sym,y_sym,z_sym Symbols to which `x`, `y` and `z`
+ *   should be assigned.  The assignment occurs in `env` and the
+ *   dispatch call refers to these symbols.
  * @param env The environment in which to dispatch. Should be the
  *   global environment or inherit from it so methods defined there
  *   are picked up. If the global environment, a child is created so
@@ -41,6 +41,41 @@ SEXP vctrs_dispatch2(SEXP fn_sym, SEXP fn,
   } else {
     dispatch_call = PROTECT(Rf_lang4(fn, x, y, syms_dots));
   }
+
+  SEXP elt = CDR(dispatch_call);
+  SET_TAG(elt, x_sym); elt = CDR(elt);
+  SET_TAG(elt, y_sym); elt = CDR(elt);
+
+  SEXP out = Rf_eval(dispatch_call, env);
+
+  UNPROTECT(2);
+  return out;
+}
+SEXP vctrs_dispatch3(SEXP fn_sym, SEXP fn,
+                     SEXP x_sym, SEXP x,
+                     SEXP y_sym, SEXP y,
+                     SEXP z_sym, SEXP z) {
+  // Create a child so we can mask the call components
+  SEXP env = PROTECT(r_new_environment(R_GlobalEnv, 3));
+
+  // Forward new values in the dispatch environment
+  Rf_defineVar(fn_sym, fn, env);
+  Rf_defineVar(x_sym, x, env);
+  Rf_defineVar(y_sym, y, env);
+  Rf_defineVar(z_sym, z, env);
+
+  // Forward dots to methods if they exist
+  SEXP dispatch_call;
+  if (Rf_findVar(syms_dots, env) == R_UnboundValue) {
+    dispatch_call = PROTECT(Rf_lang4(fn, x, y, z));
+  } else {
+    dispatch_call = PROTECT(Rf_lang5(fn, x, y, z, syms_dots));
+  }
+
+  SEXP elt = CDR(dispatch_call);
+  SET_TAG(elt, x_sym); elt = CDR(elt);
+  SET_TAG(elt, y_sym); elt = CDR(elt);
+  SET_TAG(elt, z_sym); elt = CDR(elt);
 
   SEXP out = Rf_eval(dispatch_call, env);
 

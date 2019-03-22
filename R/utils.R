@@ -161,3 +161,11 @@ check_dots_empty_s3_consistency <- function(...) {
     ))
   }
 }
+check_dots_empty_s3_extensions <- function(...) {
+  if (dots_n(...)) {
+    abort(paste_line(
+      "`...` is not empty.",
+      "These dots only exist to allow future extensions and should be empty."
+    ))
+  }
+}

@@ -204,7 +204,7 @@ test_that("can use [ and [[ with names", {
 
 test_that("can use [[<- to replace n-dimensional elements", {
   x <- new_vctr(rep(1, times = 4), dim = c(2, 2), class = "vctrs_mtrx")
-  vec_restore.vctrs_mtrx <- function(x, to) x
+  vec_restore.vctrs_mtrx <- function(x, to, ...) x
   s3_register("vctrs::vec_restore", "vctrs_mtrx", vec_restore.vctrs_mtrx)
   x[[2, 2]] <- 4
   expect_equal(x[[2, 2]], 4)

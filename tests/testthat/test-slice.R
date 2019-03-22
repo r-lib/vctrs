@@ -168,7 +168,6 @@ test_that("can slice with missing argument", {
 })
 
 test_that("slicing unclassed structures preserves attributes", {
-  skip("TODO")
   x <- structure(1:3, foo = "bar")
   expect_identical(vec_slice(x, 1L), structure(1L, foo = "bar"))
 })
@@ -225,6 +224,13 @@ test_that("can `vec_slice()` records", {
 
   out <- vec_na(new_rcrd(list(a = 1L, b = 2L)), 2)
   expect_size(out, 2)
+})
+
+test_that("vec_restore() is called after slicing", {
+  scoped_global_bindings(
+    vec_restore.vctrs_foobar = function(x, to, ..., i) "dispatch"
+  )
+  expect_identical(vec_slice(foobar(1:3), 2), "dispatch")
 })
 
 

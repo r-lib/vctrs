@@ -472,7 +472,7 @@ x[1:2]
 To fix this, you need to provide a `vec_restore()` method. Note that this method dispatches on the `to` argument.
 
 ```{r}
-vec_restore.vctrs_cached_sum <- function(x, to) {
+vec_restore.vctrs_cached_sum <- function(x, to, ..., i = NULL) {
   new_cached_sum(x, sum(x))
 }
 

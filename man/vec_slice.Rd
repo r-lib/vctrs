@@ -23,9 +23,22 @@ for all vector types, regardless of dimensionality. It is an analog to \code{[}
 that matches \code{\link[=vec_size]{vec_size()}} instead of \code{length()}.
 }
 \details{
-\code{vec_slice()} is an S3 generic for which you can implement methods.
+\itemize{
+\item \code{vec_slice()} is an S3 generic for which you can implement methods.
 The default method calls \code{[}.
+\item \code{\link[=vec_restore]{vec_restore()}} is called on the slice vector to restore
+the class and attributes.
 }
+}
+\section{Differences with base R subsetting}{
+
+\itemize{
+\item \code{vec_slice()} only slices along one dimension. For
+two-dimensional types, the first dimension is subsetted.
+\item \code{vec_slice()} preserves attributes by default.
+}
+}
+
 \examples{
 x <- sample(10)
 x
