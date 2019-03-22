@@ -2,12 +2,15 @@
 % Please edit documentation in R/data.R
 \name{vec_data}
 \alias{vec_data}
+\alias{vec_proxy}
 \title{Extract underlying data}
 \usage{
 vec_data(x)
+
+vec_proxy(x)
 }
 \arguments{
-\item{x}{A vector}
+\item{x}{A vector or object implementing \code{vec_proxy()}.}
 }
 \value{
 The data underlying \code{x}, free from any attributes except the names.
@@ -15,8 +18,20 @@ The data underlying \code{x}, free from any attributes except the names.
 \description{
 Extract the data underlying an S3 vector object, i.e. the underlying
 (named) atomic vector or list.
-Currently, due to the underlying memory architecture
-of R, this creates a full copy of the data.
+\itemize{
+\item \code{vec_data()} returns unstructured data. The only attributes
+preserved are names.
+
+Currently, due to the underlying memory architecture of R, this
+creates a full copy of the data.
+\item \code{vec_proxy()} may return structured data. This generic is the
+main customisation point in vctrs, along with \code{\link[=vec_restore]{vec_restore()}}.
+You should only implement it when your type is not its own data,
+i.e. it's not a vector, data frame, or record type.
+
+Methods must return a vector type. Records and data frames will
+be processed rowwise.
+}
 }
 \seealso{
 See \code{\link[=vec_restore]{vec_restore()}} for the inverse operation: it restores

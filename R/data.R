@@ -1,11 +1,26 @@
 #' Extract underlying data
 #'
+#' @description
+#'
 #' Extract the data underlying an S3 vector object, i.e. the underlying
 #' (named) atomic vector or list.
-#' Currently, due to the underlying memory architecture
-#' of R, this creates a full copy of the data.
 #'
-#' @param x A vector
+#' * `vec_data()` returns unstructured data. The only attributes
+#'   preserved are names.
+#'
+#'   Currently, due to the underlying memory architecture of R, this
+#'   creates a full copy of the data.
+#'
+#' * `vec_proxy()` may return structured data. This generic is the
+#'   main customisation point in vctrs, along with [vec_restore()].
+#'   You should only implement it when your type is not its own data,
+#'   i.e. it's not a vector, data frame, or record type.
+#'
+#'   Methods must return a vector type. Records and data frames will
+#'   be processed rowwise.
+#'
+#'
+#' @param x A vector or object implementing `vec_proxy()`.
 #' @export
 #' @return The data underlying `x`, free from any attributes except the names.
 #' @seealso See [vec_restore()] for the inverse operation: it restores
@@ -25,13 +40,7 @@ vec_data <- function(x) {
 
   x
 }
-
-#' Extract vector data
-#'
-#' Unlike [vec_data()], this doesn't remove attributes.
-#'
-#' @param x A vector.
-#'
+#' @rdname vec_data
 #' @export
 vec_proxy <- function(x) {
   if (vec_is_data_vector(x) || is_null(x)) {

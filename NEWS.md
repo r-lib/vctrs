@@ -1,5 +1,10 @@
 # vctrs 0.1.0.9000
 
+* New `vec_proxy()` generic. This is the main customisation point in
+  vctrs along with `vec_restore()`. You should only implement it when
+  your type is not its own data, i.e. it's not a vector, data frame,
+  or record type.
+
 * `vec_slice()` now calls `vec_restore()` automatically. Unlike the
   default `[` method from base R, attributes are preserved by default.
 
