@@ -76,60 +76,51 @@ static SEXP list_slice(SEXP x, SEXP index) {
 
 #undef SLICE_BARRIER
 
+static SEXP vec_slice_dispatch(SEXP x, SEXP index) {
+  return vctrs_dispatch2(syms_vec_slice_dispatch, fns_vec_slice_dispatch,
+                         syms_x, x,
+                         syms_i, index);
+}
 
-static SEXP vec_slice_impl(SEXP x, SEXP index, bool dispatch) {
-  if (index == R_MissingArg) {
-    return x;
-  }
-  if (has_dim(x)) {
-    goto dispatch;
-  }
-
-  SEXP out = NULL;
-
+static SEXP vec_slice_switch(SEXP x, SEXP index, bool dispatch) {
   switch (vec_typeof_impl(x, dispatch)) {
   case vctrs_type_null:
     Rf_error("Internal error: Unexpected `NULL` in `vec_slice_impl()`.");
 
-  case vctrs_type_logical: {
-    out = PROTECT(lgl_slice(x, index));
-    break;
-  }
-  case vctrs_type_integer: {
-    out = PROTECT(int_slice(x, index));
-    break;
-  }
-  case vctrs_type_double: {
-    out = PROTECT(dbl_slice(x, index));
-    break;
-  }
-  case vctrs_type_complex: {
-    out = PROTECT(cpl_slice(x, index));
-    break;
-  }
-  case vctrs_type_character: {
-    out = PROTECT(chr_slice(x, index));
-    break;
-  }
-  case vctrs_type_raw: {
-    out = PROTECT(raw_slice(x, index));
-    break;
-  }
-  case vctrs_type_list: {
-    out = PROTECT(list_slice(x, index));
-    break;
-  }
+  case vctrs_type_logical:
+    return lgl_slice(x, index);
+  case vctrs_type_integer:
+    return int_slice(x, index);
+  case vctrs_type_double:
+    return dbl_slice(x, index);
+  case vctrs_type_complex:
+    return cpl_slice(x, index);
+  case vctrs_type_character:
+    return chr_slice(x, index);
+  case vctrs_type_raw:
+    return raw_slice(x, index);
+  case vctrs_type_list:
+    return list_slice(x, index);
 
   default:
-  dispatch:
-    return vctrs_dispatch2(syms_vec_slice_dispatch, fns_vec_slice_dispatch,
-                           syms_x, x,
-                           syms_i, index);
+    return R_NilValue;
+  }
+}
+
+static SEXP vec_slice_impl(SEXP x, SEXP index, bool dispatch) {
+  SEXP out = R_NilValue;
+
+  if (!has_dim(x)) {
+    out = vec_slice_switch(x, index, dispatch);
+  }
+  if (out == R_NilValue) {
+    return vec_slice_dispatch(x, index);
   }
 
+  PROTECT(out);
   slice_names(out, x, index);
-
   UNPROTECT(1);
+
   return out;
 }
 
@@ -148,7 +139,7 @@ static void slice_names(SEXP x, SEXP to, SEXP index) {
 }
 
 SEXP vctrs_slice(SEXP x, SEXP index, SEXP dispatch) {
-  if (x == R_NilValue) {
+  if (x == R_NilValue || index == R_MissingArg) {
     return x;
   }
 

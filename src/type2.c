@@ -6,9 +6,15 @@
 static SEXP fns_vec_type2_dispatch = NULL;
 static SEXP syms_vec_type2_dispatch = NULL;
 
+static SEXP vctrs_type2_dispatch(SEXP x, SEXP y) {
+  return vctrs_dispatch2(syms_vec_type2_dispatch, fns_vec_type2_dispatch,
+                         syms_x, x,
+                         syms_y, y);
+}
+
 SEXP vctrs_type2(SEXP x, SEXP y) {
   if (has_dim(x) || has_dim(y)) {
-    goto dispatch;
+    return vctrs_type2_dispatch(x, y);
   }
 
   switch (vec_dispatch_typeof(x, y)) {
@@ -37,10 +43,7 @@ SEXP vctrs_type2(SEXP x, SEXP y) {
     return vctrs_shared_empty_list;
 
   default:
-  dispatch:
-    return vctrs_dispatch2(syms_vec_type2_dispatch, fns_vec_type2_dispatch,
-                           syms_x, x,
-                           syms_y, y);
+    return vctrs_type2_dispatch(x, y);
   }
 }
 
