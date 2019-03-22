@@ -76,13 +76,18 @@ static SEXP list_slice(SEXP x, SEXP index) {
 
 #undef SLICE_BARRIER
 
+static SEXP vec_slice_dispatch(SEXP x, SEXP index) {
+  return vctrs_dispatch2(syms_vec_slice_dispatch, fns_vec_slice_dispatch,
+                         syms_x, x,
+                         syms_i, index);
+}
 
 static SEXP vec_slice_impl(SEXP x, SEXP index, bool dispatch) {
   if (index == R_MissingArg) {
     return x;
   }
   if (has_dim(x)) {
-    goto dispatch;
+    return vec_slice_dispatch(x, index);
   }
 
   SEXP out = NULL;
@@ -121,10 +126,7 @@ static SEXP vec_slice_impl(SEXP x, SEXP index, bool dispatch) {
   }
 
   default:
-  dispatch:
-    return vctrs_dispatch2(syms_vec_slice_dispatch, fns_vec_slice_dispatch,
-                           syms_x, x,
-                           syms_i, index);
+    return vec_slice_dispatch(x, index);
   }
 
   slice_names(out, x, index);
