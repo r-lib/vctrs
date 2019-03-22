@@ -294,31 +294,6 @@ SEXP vctrs_restore_default(SEXP x, SEXP to) {
   return x;
 }
 
-static R_len_t df_raw_length(SEXP x) {
-  SEXP attrib = ATTRIB(x);
-
-  // Avoid materialising compact sequences
-  while (attrib != R_NilValue) {
-    if (TAG(attrib) == R_RowNamesSymbol) {
-      SEXP rn = CAR(attrib);
-
-      if (is_compact_rownames(rn)) {
-        return compact_rownames_length(rn);
-      } else {
-        return Rf_length(rn);
-      }
-    }
-
-    attrib = CDR(attrib);
-  }
-
-  if (Rf_length(x) >= 1) {
-    return vec_size(VECTOR_ELT(x, 0));
-  } else {
-    return 0;
-  }
-}
-
 static SEXP df_restore(SEXP x, SEXP to) {
   if (TYPEOF(x) != VECSXP) {
     Rf_errorcall(R_NilValue, "Internal error: Attempt to restore data frame from a %s.",
@@ -328,7 +303,7 @@ static SEXP df_restore(SEXP x, SEXP to) {
   int n_protect = 0;
 
   // Compute size before changing attributes
-  R_len_t size = df_raw_length(x);
+  R_len_t size = df_raw_size(x);
 
   if (MAYBE_REFERENCED(x)) {
     x = PROTECT(Rf_shallow_duplicate(x));

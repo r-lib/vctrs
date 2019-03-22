@@ -78,6 +78,20 @@ R_len_t df_size(SEXP x) {
 
   return n;
 }
+// Supports bare lists as well
+R_len_t df_raw_size(SEXP x) {
+  R_len_t n = df_rownames_size(x);
+  if (n >= 0) {
+    return n;
+  }
+
+  if (Rf_length(x) >= 1) {
+    return vec_size(VECTOR_ELT(x, 0));
+  } else {
+    return 0;
+  }
+}
+
 
 R_len_t rcrd_size(SEXP x) {
   int n = Rf_length(x);

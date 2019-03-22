@@ -138,6 +138,7 @@ bool is_record(SEXP x);
 bool is_scalar(SEXP x);
 
 R_len_t df_rownames_size(SEXP x);
+R_len_t df_raw_size(SEXP x);
 
 // Most vector predicates return `int` because missing values are
 // propagated as `NA_LOGICAL`
