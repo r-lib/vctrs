@@ -12,7 +12,7 @@
 #' * If the prototype doesn't match, an error of class
 #'   `"vctrs_error_assert_ptype"` is raised.
 #'
-#' * If the prototype doesn't match, an error of class
+#' * If the size doesn't match, an error of class
 #' `"vctrs_error_assert_size"` is raised.
 #'
 #' Both errors inherit from `"vctrs_error_assert"`.

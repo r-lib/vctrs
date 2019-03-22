@@ -40,7 +40,7 @@ prototype and/or a size.
 \itemize{
 \item If the prototype doesn't match, an error of class
 \code{"vctrs_error_assert_ptype"} is raised.
-\item If the prototype doesn't match, an error of class
+\item If the size doesn't match, an error of class
 \code{"vctrs_error_assert_size"} is raised.
 }
 
