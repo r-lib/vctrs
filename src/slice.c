@@ -2,8 +2,8 @@
 #include "utils.h"
 
 // Initialised at load time
-SEXP syms_vec_slice_dispatch = NULL;
-SEXP fns_vec_slice_dispatch = NULL;
+SEXP syms_vec_slice_fallback = NULL;
+SEXP fns_vec_slice_fallback = NULL;
 
 // Defined below
 SEXP vec_as_index(SEXP i, SEXP x);
@@ -94,15 +94,15 @@ static SEXP df_slice(SEXP x, SEXP index) {
 }
 
 
-static SEXP vec_slice_dispatch(SEXP x, SEXP index) {
-  return vctrs_dispatch2(syms_vec_slice_dispatch, fns_vec_slice_dispatch,
+static SEXP vec_slice_fallback(SEXP x, SEXP index) {
+  return vctrs_dispatch2(syms_vec_slice_fallback, fns_vec_slice_fallback,
                          syms_x, x,
                          syms_i, index);
 }
 
 static SEXP vec_slice_impl(SEXP x, SEXP index, bool dispatch) {
   if (has_dim(x)) {
-    return vec_slice_dispatch(x, index);
+    return vec_slice_fallback(x, index);
   }
 
   SEXP out = R_NilValue;
@@ -139,12 +139,13 @@ static SEXP vec_slice_impl(SEXP x, SEXP index, bool dispatch) {
     UNPROTECT(1);
     return out;
 
-  default:
-    out = PROTECT(vec_slice_dispatch(x, index));
+  default: {
+    SEXP proxy = PROTECT(vec_proxy(x));
+    out = PROTECT(vec_slice_fallback(proxy, index));
     out = vec_restore(out, x, index);
-    UNPROTECT(1);
+    UNPROTECT(2);
     return out;
-  }
+  }}
 
   PROTECT(out);
   slice_names(out, x, index);
@@ -357,6 +358,6 @@ SEXP vec_as_index(SEXP i, SEXP x) {
 
 
 void vctrs_init_size(SEXP ns) {
-  syms_vec_slice_dispatch = Rf_install("vec_slice_dispatch");
-  fns_vec_slice_dispatch = Rf_findVar(syms_vec_slice_dispatch, ns);
+  syms_vec_slice_fallback = Rf_install("vec_slice_fallback");
+  fns_vec_slice_fallback = Rf_findVar(syms_vec_slice_fallback, ns);
 }

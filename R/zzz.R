@@ -25,8 +25,6 @@
       vec_type2_dispatch = function(...) vec_type2_workaround(...),
       vec_cast_workaround = vec_cast_dispatch,
       vec_cast_dispatch = function(...) vec_cast_workaround(...),
-      vec_slice_workaround = vec_slice_dispatch,
-      vec_slice_dispatch = function(...) vec_slice_workaround(...),
       vec_restore_workaround = vec_restore_dispatch,
       vec_restore_dispatch = function(...) vec_restore_workaround(...)
     )

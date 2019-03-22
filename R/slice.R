@@ -35,14 +35,9 @@
 #'
 #' vec_slice(mtcars, 1:3)
 vec_slice <- function(x, i) {
-  return(.Call(vctrs_slice, x, maybe_missing(i), TRUE))
-  UseMethod("vec_slice")
+  .Call(vctrs_slice, x, maybe_missing(i), TRUE)
 }
-vec_slice_dispatch <- function(x, i) {
-  UseMethod("vec_slice")
-}
-#' @export
-vec_slice.default <- function(x, i) {
+vec_slice_fallback <- function(x, i) {
   vec_assert(x)
 
   d <- vec_dims(x)

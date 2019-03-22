@@ -233,6 +233,16 @@ test_that("vec_restore() is called after slicing", {
   expect_identical(vec_slice(foobar(1:3), 2), "dispatch")
 })
 
+test_that("vec_slice() is proxied", {
+  scoped_global_bindings(
+    vec_restore.vctrs_proxy = function(x, to, ..., i) new_proxy(x),
+    vec_proxy.vctrs_proxy = function(x) x[[1]]$x,
+    vec_is_vector.vctrs_proxy = function(...) TRUE
+  )
+  x <- vec_slice(new_proxy(1:3), 2:3)
+  expect_identical(vec_proxy(x), 2:3)
+})
+
 
 # vec_na ------------------------------------------------------------------
 
