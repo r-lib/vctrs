@@ -103,23 +103,16 @@ static SEXP vec_slice_switch(SEXP x, SEXP index, bool dispatch) {
     return list_slice(x, index);
 
   default:
-    break;
+    return R_NilValue;
   }
-
-  return R_NilValue;
 }
 
 static SEXP vec_slice_impl(SEXP x, SEXP index, bool dispatch) {
-  if (index == R_MissingArg) {
-    return x;
-  }
-
   SEXP out = R_NilValue;
 
   if (!has_dim(x)) {
     out = vec_slice_switch(x, index, dispatch);
   }
-
   if (out == R_NilValue) {
     return vec_slice_dispatch(x, index);
   }
@@ -146,7 +139,7 @@ static void slice_names(SEXP x, SEXP to, SEXP index) {
 }
 
 SEXP vctrs_slice(SEXP x, SEXP index, SEXP dispatch) {
-  if (x == R_NilValue) {
+  if (x == R_NilValue || index == R_MissingArg) {
     return x;
   }
 
