@@ -1,7 +1,7 @@
 # vctrs 0.1.0.9000
 
-* `vec_slice()` now calls `vec_restore()` automatically. Attributes of
-  unclassed structures are preserved by default.
+* `vec_slice()` now calls `vec_restore()` automatically. Unlike the
+  default `[` method from base R, attributes are preserved by default.
 
 * `vec_slice()` is now a generic. Its default method calls `[`.
 

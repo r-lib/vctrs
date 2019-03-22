@@ -4,16 +4,26 @@
 #' for all vector types, regardless of dimensionality. It is an analog to `[`
 #' that matches [vec_size()] instead of `length()`.
 #'
+#' @param x A vector
+#' @param i An integer or character vector specifying the positions or
+#'   names of the observations to get/set.
+#' @param value Replacement values.
+#'
+#' @details
+#'
 #' * `vec_slice()` is an S3 generic for which you can implement methods.
 #'   The default method calls `[`.
 #'
 #' * [vec_restore()] is called on the slice vector to restore
 #'   the class and attributes.
 #'
-#' @param x A vector
-#' @param i An integer or character vector specifying the positions or
-#'   names of the observations to get/set.
-#' @param value Replacement values.
+#' @section Differences with base R subsetting:
+#'
+#' * `vec_slice()` only slices along one dimension. For
+#'   two-dimensional types, the first dimension is subsetted.
+#'
+#' * `vec_slice()` preserves attributes by default.
+#'
 #' @export
 #' @keywords internal
 #' @examples

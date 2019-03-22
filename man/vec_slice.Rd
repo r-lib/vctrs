@@ -30,6 +30,15 @@ The default method calls \code{[}.
 the class and attributes.
 }
 }
+\section{Differences with base R subsetting}{
+
+\itemize{
+\item \code{vec_slice()} only slices along one dimension. For
+two-dimensional types, the first dimension is subsetted.
+\item \code{vec_slice()} preserves attributes by default.
+}
+}
+
 \examples{
 x <- sample(10)
 x
