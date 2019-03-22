@@ -188,3 +188,10 @@ test_that("can use vctrs primitives from vec_restore() without inflooping", {
   foobar <- new_vctr(1:3, class = "vctrs_foobar")
   expect_identical(vec_slice(foobar, 2), "woot")
 })
+
+test_that("vec_restore() passes `i` argument to methods", {
+  scoped_global_bindings(
+    vec_restore.vctrs_foobar = function(x, to, ..., i) i
+  )
+  expect_identical(vec_slice(foobar(1:3), 2), 2L)
+})

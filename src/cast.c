@@ -335,9 +335,10 @@ SEXP vctrs_restore(SEXP x, SEXP to, SEXP i) {
   case vctrs_type_dataframe:
     return df_restore(x, to, i);
   case vctrs_type_s3:
-    return vctrs_dispatch2(syms_vec_restore_dispatch, fns_vec_restore_dispatch,
+    return vctrs_dispatch3(syms_vec_restore_dispatch, fns_vec_restore_dispatch,
                            syms_x, x,
-                           syms_to, to);
+                           syms_to, to,
+                           syms_i, i);
   default:
     return vctrs_restore_default(x, to);
   }
