@@ -336,7 +336,7 @@ SEXP df_restore(SEXP x, SEXP to, SEXP i) {
   return x;
 }
 
-SEXP vctrs_restore(SEXP x, SEXP to, SEXP i) {
+SEXP vec_restore(SEXP x, SEXP to, SEXP i) {
   switch (vec_typeof(to)) {
   case vctrs_type_dataframe:
     return df_restore(x, to, i);

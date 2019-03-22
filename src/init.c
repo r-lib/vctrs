@@ -38,7 +38,7 @@ extern SEXP vctrs_dispatch_typeof(SEXP, SEXP);
 extern SEXP vec_cast(SEXP, SEXP);
 extern SEXP vec_as_index(SEXP, SEXP);
 extern SEXP vctrs_slice(SEXP, SEXP, SEXP);
-extern SEXP vctrs_restore(SEXP, SEXP, SEXP);
+extern SEXP vec_restore(SEXP, SEXP, SEXP);
 extern SEXP vctrs_restore_default(SEXP, SEXP);
 
 // Defined below
@@ -76,7 +76,7 @@ static const R_CallMethodDef CallEntries[] = {
   {"vctrs_cast",                       (DL_FUNC) &vec_cast, 2},
   {"vctrs_as_index",                   (DL_FUNC) &vec_as_index, 2},
   {"vctrs_slice",                      (DL_FUNC) &vctrs_slice, 3},
-  {"vctrs_restore",                    (DL_FUNC) &vctrs_restore, 3},
+  {"vctrs_restore",                    (DL_FUNC) &vec_restore, 3},
   {"vctrs_restore_default",            (DL_FUNC) &vctrs_restore_default, 2},
   {NULL, NULL, 0}
 };
