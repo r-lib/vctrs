@@ -17,29 +17,29 @@ SEXP vctrs_type2(SEXP x, SEXP y) {
     return vctrs_type2_dispatch(x, y);
   }
 
-  switch (vec_dispatch_typeof(x, y)) {
-  case vctrs_dispatch_null_null:
+  switch (vec_typeof2(x, y)) {
+  case vctrs_type2_null_null:
     return R_NilValue;
 
-  case vctrs_dispatch_logical_logical:
+  case vctrs_type2_logical_logical:
     return vctrs_shared_empty_lgl;
 
-  case vctrs_dispatch_logical_integer:
-  case vctrs_dispatch_integer_integer:
+  case vctrs_type2_logical_integer:
+  case vctrs_type2_integer_integer:
     return vctrs_shared_empty_int;
 
-  case vctrs_dispatch_logical_double:
-  case vctrs_dispatch_integer_double:
-  case vctrs_dispatch_double_double:
+  case vctrs_type2_logical_double:
+  case vctrs_type2_integer_double:
+  case vctrs_type2_double_double:
     return vctrs_shared_empty_dbl;
 
-  case vctrs_dispatch_character_character:
+  case vctrs_type2_character_character:
     return vctrs_shared_empty_chr;
 
-  case vctrs_dispatch_raw_raw:
+  case vctrs_type2_raw_raw:
     return vctrs_shared_empty_raw;
 
-  case vctrs_dispatch_list_list:
+  case vctrs_type2_list_list:
     return vctrs_shared_empty_list;
 
   default:

@@ -21,7 +21,7 @@ test_that("new classes are uncoercible by default", {
   expect_error(vec_type2(x, 1), class = "vctrs_error_incompatible_type")
 })
 
-test_that("vec_dispatch_typeof() returns common type", {
+test_that("vec_typeof2() returns common type", {
   nms <- names(empty_types)
 
   for (i in seq_along(empty_types)) {
@@ -31,11 +31,11 @@ test_that("vec_dispatch_typeof() returns common type", {
       that <- nms[[j]]
 
       if (i <= j) {
-        exp <- paste0("vctrs_dispatch_", this, "_", that)
+        exp <- paste0("vctrs_type2_", this, "_", that)
       } else {
-        exp <- paste0("vctrs_dispatch_", that, "_", this)
+        exp <- paste0("vctrs_type2_", that, "_", this)
       }
-      out <- vec_dispatch_typeof(empty_types[[this]], empty_types[[that]])
+      out <- vec_typeof2(empty_types[[this]], empty_types[[that]])
 
       expect_identical(out, exp)
     }
