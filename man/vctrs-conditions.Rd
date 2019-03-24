@@ -28,7 +28,8 @@ warn_lossy_cast(x, y, locations = NULL, details = NULL, ...,
 \item{..., message, .subclass}{Only use these fields when creating a subclass.}
 
 \item{locations}{For \code{warn_lossy_cast()}, an optional vector giving the
-locations where \code{x} lost information.}
+locations where \code{x} lost information.  If the vector is given and empty,
+no warning is issued.}
 
 \item{subclass}{Use if you want to further customise the class}
 }

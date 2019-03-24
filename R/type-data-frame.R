@@ -156,12 +156,10 @@ df_col_cast <- function(x, to) {
   # Drop extra columns
   out <- out[names(to)]
   extra <- setdiff(names(x), names(to))
-  if (length(extra) > 0 ) {
-    warn_lossy_cast(
-      x, to,
-      details = inline_list("Dropped variables: ", extra, quote = "`")
-    )
-  }
+  warn_lossy_cast(
+    x, to, extra,
+    details = inline_list("Dropped variables: ", extra, quote = "`")
+  )
 
   # Casting doesn't affect number of rows
   attr(out, "row.names") <- attr(x, "row.names")

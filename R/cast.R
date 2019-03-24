@@ -361,9 +361,8 @@ report_lossy_cast <- function(x, y, lossy, details = NULL) {
       details = "All elements of vectorised cast failed"
     )
   }
-  if (any(lossy)) {
-    warn_lossy_cast(x, y, locations = which(lossy), details = details)
-  }
+
+  warn_lossy_cast(x, y, locations = which(lossy), details = details)
 }
 
 lossy_floor <- function(x, to) {
