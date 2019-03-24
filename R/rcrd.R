@@ -51,6 +51,11 @@ check_fields <- function(fields) {
 }
 
 #' @export
+vec_proxy.vctrs_rcrd <- function(x) {
+  new_data_frame(unclass(x))
+}
+
+#' @export
 length.vctrs_rcrd <- function(x) {
   .Call(vctrs_size, x)
 }

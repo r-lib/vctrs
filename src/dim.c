@@ -12,9 +12,6 @@ static R_len_t vec_size_impl(SEXP x, bool dispatch) {
     if (!vec_is_vector(x)) {
       break;
     }
-    if (is_record(x)) {
-      return rcrd_size(x);
-    }
     // fallthrough
   case vctrs_type_logical:
   case vctrs_type_integer:

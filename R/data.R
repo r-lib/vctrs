@@ -60,11 +60,7 @@ vec_proxy.default <- function(x) {
 }
 
 vec_is_data_vector <- function(x) {
-  FALSE ||
-    is_atomic(x) ||
-    is_bare_list(x) ||
-    is_record(x) ||
-    is.data.frame(x)
+  is_atomic(x) || is_bare_list(x) || is.data.frame(x)
 }
 
 is_record <- function(x) {

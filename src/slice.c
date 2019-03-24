@@ -142,11 +142,7 @@ static SEXP vec_slice_impl(SEXP x, SEXP index, bool dispatch) {
   case vctrs_type_s3: {
     SEXP proxy = PROTECT(vec_proxy(x));
 
-    if (is_record(proxy)) {
-      out = PROTECT(rows_slice(proxy, index));
-    } else {
-      out = PROTECT(vec_slice_impl(proxy, index, false));
-    }
+    out = PROTECT(vec_slice_impl(proxy, index, false));
     out = vec_restore(out, x, index);
 
     UNPROTECT(2);

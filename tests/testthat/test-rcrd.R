@@ -21,6 +21,14 @@ test_that("requires format method", {
   expect_error(format(x), class = "vctrs_error_unimplemented")
 })
 
+test_that("vec_proxy() transforms records to data frames", {
+  expect_identical(
+    vec_proxy(new_rcrd(list(a = "1"))),
+    new_data_frame(list(a = "1"))
+  )
+})
+
+
 # coercion ----------------------------------------------------------------
 
 test_that("can cast list to rcrd", {
