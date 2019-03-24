@@ -59,7 +59,6 @@ test_that("bare atomic vectors are vectors but not recursive", {
 })
 
 test_that("S3 atomic vectors are vectors", {
-  vec_is_vector.foobar <- function(...) stop("should not be called")
   expect_true(vec_is_vector(foobar(TRUE)))
   expect_true(vec_is_vector(foobar(1L)))
   expect_true(vec_is_vector(foobar(1)))
@@ -78,21 +77,12 @@ test_that("S3 lists are not vectors by default", {
 
 test_that("can override `vec_is_vector()` for S3 lists", {
   scoped_bindings(.env = global_env(),
-    vec_is_vector.vctrs_foobar = function(...) out
+    vec_proxy.vctrs_foobar = function(x) unclass(x)
   )
-
-  out <- TRUE
   expect_true(vec_is_vector(foobar()))
-
-  out <- "foo"
-  expect_error(vec_is_vector(foobar()), "must return `TRUE` or `FALSE`")
-
-  out <- NA
-  expect_error(vec_is_vector(foobar()), "must return `TRUE` or `FALSE`")
 })
 
 test_that("data frames and records are vectors", {
-  vec_is_vector.data.frame <- function(...) stop("should not be called")
   expect_true(vec_is_vector(mtcars))
   expect_true(vec_is_vector(new_rcrd(list(x = 1, y = 2))))
 })

@@ -16,11 +16,6 @@ test_that("vec_is_data_vector() detects data vectors", {
 
 test_that("vec_is_data_vector() is only TRUE for bare data vectors", {
   expect_false(vec_is_data_vector(foobar(list())))
-
-  scoped_global_bindings(
-    vec_is_vector.vctrs_foobar = function(...) TRUE
-  )
-  expect_false(vec_is_data_vector(foobar(list())))
 })
 
 test_that("vec_proxy() is a no-op with data vectors", {

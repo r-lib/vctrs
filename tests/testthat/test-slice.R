@@ -236,8 +236,7 @@ test_that("vec_restore() is called after slicing", {
 test_that("vec_slice() is proxied", {
   scoped_global_bindings(
     vec_restore.vctrs_proxy = function(x, to, ..., i) new_proxy(x),
-    vec_proxy.vctrs_proxy = function(x) proxy_deref(x),
-    vec_is_vector.vctrs_proxy = function(...) TRUE
+    vec_proxy.vctrs_proxy = function(x) proxy_deref(x)
   )
 
   x <- vec_slice(new_proxy(1:3), 2:3)
