@@ -84,6 +84,10 @@ is_list_of <- function(x) {
   inherits(x, "vctrs_list_of")
 }
 
+#' @export
+vec_proxy.vctrs_list_of <- function(x) {
+  unclass(x)
+}
 
 # Formatting --------------------------------------------------------------
 
