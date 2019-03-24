@@ -43,20 +43,11 @@ vec_data <- function(x) {
 #' @rdname vec_data
 #' @export
 vec_proxy <- function(x) {
-  if (vec_is_data_vector(x) || is_null(x)) {
-    return(x)
-  } else {
-    return(vec_proxy_dispatch(x))
-  }
-  UseMethod("vec_proxy")
-}
-vec_proxy_dispatch <- function(x) {
   UseMethod("vec_proxy")
 }
 #' @export
 vec_proxy.default <- function(x) {
-  vec_assert(x)
-  stop_unimplemented(x, "vec_proxy")
+  x
 }
 
 vec_is_data_vector <- function(x) {
