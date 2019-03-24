@@ -1,9 +1,14 @@
 #include "vctrs.h"
 
-
-// After adding entries in `vec_typeof2()`, adjust the list of
-// types in helper-types.R. This will ensure the consistency of the
-// new entries.
+/**
+ * Type for symmetric binary dispatch.
+ *
+ * Permuting `x` and `y` does not change the typeof2.
+ *
+ * After adding entries in `vec_typeof2()`, adjust the list of types
+ * in helper-types.R. This will ensure the consistency of the new
+ * entries.
+ */
 enum vctrs_type2 vec_typeof2(SEXP x, SEXP y) {
   switch (vec_typeof(x)) {
   case vctrs_type_null: {
