@@ -43,16 +43,18 @@ vec_slice_fallback <- function(x, i) {
   d <- vec_dims(x)
   if (d == 1) {
     if (is.object(x)) {
-      x[i]
+      out <- x[i]
     } else {
-      x[i, drop = FALSE]
+      out <- x[i, drop = FALSE]
     }
   } else if (d == 2) {
-    x[i, , drop = FALSE]
+    out <- x[i, , drop = FALSE]
   } else {
     miss_args <- rep(list(missing_arg()), d - 1)
-    eval_bare(expr(x[i, !!!miss_args, drop = FALSE]))
+    out <- eval_bare(expr(x[i, !!!miss_args, drop = FALSE]))
   }
+
+  vec_restore(out, x)
 }
 
 vec_slice_bare <- function(x, i) {
