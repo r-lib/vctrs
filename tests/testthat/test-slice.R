@@ -260,6 +260,26 @@ test_that("dimensions are preserved by vec_slice()", {
   expect_identical(attrib, exp)
 })
 
+test_that("vec_slice() unclasses input before calling `vec_restore()`", {
+  class <- NULL
+  scoped_global_bindings(
+    vec_restore.vctrs_foobar = function(x, ...) class <<- class(x)
+  )
+
+  x <- foobar(1:4)
+  dim(x) <- c(2, 2)
+
+  vec_slice(x, 1)
+  expect_identical(class, "matrix")
+
+  scoped_global_bindings(
+    `[.vctrs_foobar` = function(x, i) class <<- class(x)
+  )
+
+  vec_slice(foobar(1:2), 1)
+  expect_identical(class, "character")
+})
+
 
 # vec_na ------------------------------------------------------------------
 
