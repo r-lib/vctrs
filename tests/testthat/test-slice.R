@@ -243,6 +243,23 @@ test_that("vec_slice() is proxied", {
   expect_identical(proxy_deref(x), 2:3)
 })
 
+test_that("dimensions are preserved by vec_slice()", {
+  attrib <- NULL
+
+  scoped_global_bindings(
+    vec_restore.vctrs_foobar = function(x, ...) attrib <<- attributes(x)
+  )
+
+  x <- foobar(1:4)
+  dim(x) <- c(2, 2)
+  dimnames(x) <- list(a = c("foo", "bar"), b = c("quux", "hunoz"))
+
+  vec_slice(x, 1)
+
+  exp <- list(dim = 1:2, dimnames = list(a = "foo", b = c("quux", "hunoz")))
+  expect_identical(attrib, exp)
+})
+
 
 # vec_na ------------------------------------------------------------------
 
