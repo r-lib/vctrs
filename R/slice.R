@@ -54,8 +54,8 @@ vec_slice_fallback <- function(x, i) {
   vec_restore(out, x)
 }
 
-vec_slice_bare <- function(x, i) {
 # No dispatch on `[`, should be called in `[` methods
+vec_slice_native <- function(x, i) {
   .Call(vctrs_slice, x, maybe_missing(i), TRUE)
 }
 

@@ -230,16 +230,16 @@ test_that("vec_restore() is called after bare slicing", {
   scoped_global_bindings(
     vec_restore.vctrs_foobar = function(x, to, ..., i) "dispatch"
   )
-  expect_identical(vec_slice_bare(foobar(1:3), 2), "dispatch")
+  expect_identical(vec_slice_native(foobar(1:3), 2), "dispatch")
 })
 
-test_that("vec_slice_bare() is proxied", {
+test_that("vec_slice_native() is proxied", {
   scoped_global_bindings(
     vec_restore.vctrs_proxy = function(x, to, ..., i) new_proxy(x),
     vec_proxy.vctrs_proxy = function(x) proxy_deref(x)
   )
 
-  x <- vec_slice_bare(new_proxy(1:3), 2:3)
+  x <- vec_slice_native(new_proxy(1:3), 2:3)
   expect_identical(proxy_deref(x), 2:3)
 })
 
@@ -260,7 +260,7 @@ test_that("dimensions are preserved by vec_slice()", {
   expect_identical(attrib, exp)
 })
 
-test_that("vec_slice_bare() unclasses input before calling `vec_restore()`", {
+test_that("vec_slice_native() unclasses input before calling `vec_restore()`", {
   class <- NULL
   scoped_global_bindings(
     vec_restore.vctrs_foobar = function(x, ...) class <<- class(x)
@@ -269,14 +269,14 @@ test_that("vec_slice_bare() unclasses input before calling `vec_restore()`", {
   x <- foobar(1:4)
   dim(x) <- c(2, 2)
 
-  vec_slice_bare(x, 1)
+  vec_slice_native(x, 1)
   expect_identical(class, "matrix")
 
   scoped_global_bindings(
     `[.vctrs_foobar` = function(x, i) class <<- class(x)
   )
 
-  vec_slice_bare(foobar(1:2), 1)
+  vec_slice_native(foobar(1:2), 1)
   expect_identical(class, "character")
 })
 

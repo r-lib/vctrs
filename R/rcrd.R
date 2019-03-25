@@ -114,7 +114,7 @@ vec_cast.vctrs_rcrd.default <- function(x, to) {
 #' @export
 `[.vctrs_rcrd` <-  function(x, i, ...) {
   check_dots_empty_s3_consistency(...)
-  vec_slice_bare(x, i)
+  vec_slice_native(x, i)
 }
 
 #' @export

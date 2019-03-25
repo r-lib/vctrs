@@ -9,7 +9,7 @@ SEXP fns_vec_slice_fallback = NULL;
 SEXP vec_as_index(SEXP i, SEXP x);
 static void slice_names(SEXP x, SEXP to, SEXP index);
 static SEXP vec_slice_impl(SEXP x, SEXP index, bool dispatch);
-static SEXP vec_slice_bare(SEXP x, SEXP index);
+static SEXP vec_slice_native(SEXP x, SEXP index);
 
 
 static void stop_bad_index_length(R_len_t data_n, R_len_t i) {
@@ -179,7 +179,7 @@ static SEXP vec_slice_impl(SEXP x, SEXP index, bool dispatch) {
 }
 
 // [[export]]
-SEXP vctrs_slice(SEXP x, SEXP index, SEXP bare) {
+SEXP vctrs_slice(SEXP x, SEXP index, SEXP native) {
   if (x == R_NilValue || index == R_MissingArg) {
     return x;
   }
@@ -187,8 +187,8 @@ SEXP vctrs_slice(SEXP x, SEXP index, SEXP bare) {
   index = PROTECT(vec_as_index(index, x));
 
   SEXP out;
-  if (*LOGICAL(bare)) {
-    out = vec_slice_bare(x, index);
+  if (*LOGICAL(native)) {
+    out = vec_slice_native(x, index);
   } else {
     out = vec_slice_impl(x, index, true);
   }
@@ -204,7 +204,7 @@ SEXP vec_slice(SEXP x, SEXP index) {
 
 // Unlike `vec_slice()` which falls back to `[`, this takes the proxy
 // of OO objects and applies internal slicing
-static SEXP vec_slice_bare(SEXP x, SEXP index) {
+static SEXP vec_slice_native(SEXP x, SEXP index) {
   if (has_dim(x)) {
     return vec_slice_fallback(x, index);
   }
