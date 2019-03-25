@@ -280,6 +280,19 @@ test_that("vec_slice() unclasses input before calling `vec_restore()`", {
   expect_identical(class, "character")
 })
 
+test_that("can call `vec_slice()` from `[` methods with shaped objects without infloop", {
+  scoped_global_bindings(
+    `[.vctrs_foobar` = function(x, i, ...) vec_slice(x, i)
+  )
+
+  x <- foobar(1:4)
+  dim(x) <- c(2, 2)
+
+  exp <- foobar(c(1L, 3L))
+  dim(exp) <- c(1, 2)
+  expect_identical(x[1], exp)
+})
+
 
 # vec_na ------------------------------------------------------------------
 
