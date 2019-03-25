@@ -79,10 +79,13 @@ names_all_or_nothing <- function(names) {
   }
 }
 
-# Should only dispatch here with lists
 #' @export
 vec_proxy.vctrs_vctr <- function(x) {
-  x
+  if (is_list(x)) {
+    unclass(x)
+  } else {
+    x
+  }
 }
 
 #' @export
