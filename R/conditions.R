@@ -1,6 +1,8 @@
 #' Custom conditions for vctrs package
 #'
-#' These errors and warnings have custom classes and structures to make
+#' These functions are called for their side effect of raising
+#' errors and warnings.
+#' These conditions have custom classes and structures to make
 #' testing easier.
 #'
 #' @keywords internal
@@ -25,6 +27,10 @@ stop_incompatible <- function(x, y, details = NULL, ..., message = NULL, .subcla
   )
 }
 
+#' @return
+#' `stop_incompatible_*()` unconditionally raise an error of class `"vctrs_error_incompatible_*"`
+#' and `"vctrs_error_incompatible"`.
+#'
 #' @rdname vctrs-conditions
 #' @export
 stop_incompatible_type <- function(x, y, details = NULL, ..., message = NULL, .subclass = NULL) {
@@ -79,6 +85,11 @@ stop_incompatible_op <- function(op, x, y, details = NULL, ..., message = NULL, 
   )
 }
 
+#' @return
+#' `warn_lossy_cast()` emits a warning of class `"vctrs_warning_lossy_cast"` if there
+#' are problem locations to report, i.e. if the `locations` argument is a nonzero-length
+#' vector.
+#'
 #' @rdname vctrs-conditions
 #' @export
 warn_lossy_cast <- function(x, y, locations = NULL, details = NULL, ..., message = NULL, .subclass = NULL) {
@@ -100,7 +111,7 @@ warn_lossy_cast <- function(x, y, locations = NULL, details = NULL, ..., message
     locations = locations,
     details = details,
     ...,
-    .subclass = c(.subclass, "warning_lossy_cast"),
+    .subclass = c(.subclass, "vctrs_warning_lossy_cast"),
   )
 }
 

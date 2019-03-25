@@ -33,8 +33,18 @@ no warning is issued.}
 
 \item{subclass}{Use if you want to further customise the class}
 }
+\value{
+\code{stop_incompatible_*()} unconditionally raise an error of class \code{"vctrs_error_incompatible_*"}
+and \code{"vctrs_error_incompatible"}.
+
+\code{warn_lossy_cast()} emits a warning of class \code{"vctrs_warning_lossy_cast"} if there
+are problem locations to report, i.e. if the \code{locations} argument is a nonzero-length
+vector.
+}
 \description{
-These errors and warnings have custom classes and structures to make
+These functions are called for their side effect of raising
+errors and warnings.
+These conditions have custom classes and structures to make
 testing easier.
 }
 \keyword{internal}

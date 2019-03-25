@@ -157,7 +157,8 @@ df_col_cast <- function(x, to) {
   out <- out[names(to)]
   extra <- setdiff(names(x), names(to))
   warn_lossy_cast(
-    x, to, extra,
+    x, to,
+    locations = extra,
     details = inline_list("Dropped variables: ", extra, quote = "`")
   )
 
