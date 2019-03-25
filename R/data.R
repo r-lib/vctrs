@@ -6,7 +6,7 @@
 #' (named) atomic vector or list.
 #'
 #' * `vec_data()` returns unstructured data. The only attributes
-#'   preserved are names.
+#'   preserved are names, dims, and dimnames.
 #'
 #'   Currently, due to the underlying memory architecture of R, this
 #'   creates a full copy of the data.

@@ -20,7 +20,7 @@ Extract the data underlying an S3 vector object, i.e. the underlying
 (named) atomic vector or list.
 \itemize{
 \item \code{vec_data()} returns unstructured data. The only attributes
-preserved are names.
+preserved are names, dims, and dimnames.
 
 Currently, due to the underlying memory architecture of R, this
 creates a full copy of the data.
