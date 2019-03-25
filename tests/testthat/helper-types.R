@@ -12,3 +12,11 @@ empty_types <- list(
   s3 = foobar(),
   scalar = ~foobar
 )
+
+atomics <- list(TRUE, 1L, 1.0, 1i, "foo", bytes(1))
+vectors <- c(atomics, list(list()))
+records <- list(
+  df = data.frame(x = 1),
+  rcrd = new_rcrd(list(x = 1)),
+  posixlt = as.POSIXlt("2020-01-01")
+)

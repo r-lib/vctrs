@@ -1,5 +1,30 @@
 # vctrs 0.1.0.9000
 
+* New `vec_proxy()` generic. This is the main customisation point in
+  vctrs along with `vec_restore()`. You should only implement it when
+  your type is designed around a non-vector class (atomic vectors,
+  bare lists, data frames). In this case, `vec_proxy()` should return
+  such a vector class. The vctrs operations will be applied on the
+  proxy and `vec_restore()` is called to restore the original
+  representation of your type.
+
+  The most common case where you need to implement `vec_proxy()` is
+  for S3 lists. In vctrs, S3 lists are treated as scalars by
+  default. This way we don't treat objects like model fits as
+  vectors. To prevent vctrs from treating your S3 list as a scalar,
+  unclass it from the `vec_proxy()` method. For instance here is the
+  definition for `list_of`:
+
+  ```
+  #' @export
+  vec_proxy.vctrs_list_of <- function(x) {
+    unclass(x)
+  }
+  ```
+
+  If you inherit from `vctrs_vctr` or `vctrs_rcrd` you don't need to
+  implement `vec_proxy()`.
+
 * `vec_slice()` now calls `vec_restore()` automatically. Unlike the
   default `[` method from base R, attributes are preserved by default.
 

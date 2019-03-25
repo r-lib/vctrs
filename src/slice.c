@@ -2,8 +2,8 @@
 #include "utils.h"
 
 // Initialised at load time
-SEXP syms_vec_slice_dispatch = NULL;
-SEXP fns_vec_slice_dispatch = NULL;
+SEXP syms_vec_slice_fallback = NULL;
+SEXP fns_vec_slice_fallback = NULL;
 
 // Defined below
 SEXP vec_as_index(SEXP i, SEXP x);
@@ -77,7 +77,7 @@ static SEXP list_slice(SEXP x, SEXP index) {
 
 #undef SLICE_BARRIER
 
-static SEXP df_slice(SEXP x, SEXP index) {
+static SEXP rows_slice(SEXP x, SEXP index) {
   R_len_t n = Rf_length(x);
   SEXP out = PROTECT(Rf_allocVector(VECSXP, n));
 
@@ -94,15 +94,15 @@ static SEXP df_slice(SEXP x, SEXP index) {
 }
 
 
-static SEXP vec_slice_dispatch(SEXP x, SEXP index) {
-  return vctrs_dispatch2(syms_vec_slice_dispatch, fns_vec_slice_dispatch,
+static SEXP vec_slice_fallback(SEXP x, SEXP index) {
+  return vctrs_dispatch2(syms_vec_slice_fallback, fns_vec_slice_fallback,
                          syms_x, x,
                          syms_i, index);
 }
 
 static SEXP vec_slice_impl(SEXP x, SEXP index, bool dispatch) {
   if (has_dim(x)) {
-    return vec_slice_dispatch(x, index);
+    return vec_slice_fallback(x, index);
   }
 
   SEXP out = R_NilValue;
@@ -134,16 +134,24 @@ static SEXP vec_slice_impl(SEXP x, SEXP index, bool dispatch) {
     break;
 
   case vctrs_type_dataframe:
-    out = PROTECT(df_slice(x, index));
+    out = PROTECT(rows_slice(x, index));
     out = df_restore(out, x, index);
     UNPROTECT(1);
     return out;
 
-  default:
-    out = PROTECT(vec_slice_dispatch(x, index));
+  case vctrs_type_s3: {
+    SEXP proxy = PROTECT(vec_proxy(x));
+
+    out = PROTECT(vec_slice_impl(proxy, index, false));
     out = vec_restore(out, x, index);
-    UNPROTECT(1);
+
+    UNPROTECT(2);
     return out;
+  }
+
+  default:
+    Rf_error("Internal error: Unexpected type `%s` for vector proxy in `vec_slice()`",
+             vec_type_as_str(vec_typeof(x)));
   }
 
   PROTECT(out);
@@ -357,6 +365,6 @@ SEXP vec_as_index(SEXP i, SEXP x) {
 
 
 void vctrs_init_size(SEXP ns) {
-  syms_vec_slice_dispatch = Rf_install("vec_slice_dispatch");
-  fns_vec_slice_dispatch = Rf_findVar(syms_vec_slice_dispatch, ns);
+  syms_vec_slice_fallback = Rf_install("vec_slice_fallback");
+  fns_vec_slice_fallback = Rf_findVar(syms_vec_slice_fallback, ns);
 }

@@ -14,10 +14,6 @@ bool is_record(SEXP x) {
   return Rf_inherits(x, "vctrs_rcrd") || Rf_inherits(x, "POSIXlt");
 }
 
-bool is_scalar(SEXP x) {
-  return Rf_inherits(x, "vctrs_sclr");
-}
-
 enum vctrs_type vec_typeof_impl(SEXP x, bool dispatch) {
   switch (TYPEOF(x)) {
   case NILSXP: return vctrs_type_null;
@@ -28,12 +24,14 @@ enum vctrs_type vec_typeof_impl(SEXP x, bool dispatch) {
   case STRSXP: return OBJECT(x) && dispatch ? vctrs_type_s3 : vctrs_type_character;
   case RAWSXP: return OBJECT(x) && dispatch ? vctrs_type_s3 : vctrs_type_raw;
   case VECSXP:
-    if (!OBJECT(x) || !dispatch) {
+    if (!OBJECT(x)) {
       return vctrs_type_list;
     } else if (is_data_frame(x)) {
       return vctrs_type_dataframe;
-    } else {
+    } else if (dispatch) {
       return vctrs_type_s3;
+    } else {
+      return vctrs_type_list;
     }
   default:
     return vctrs_type_scalar;
@@ -103,8 +101,8 @@ void vctrs_stop_unsupported_type(enum vctrs_type type, const char* fn) {
                fn);
 }
 
-SEXP vctrs_typeof(SEXP x) {
-  return Rf_mkString(vec_type_as_str(vec_typeof(x)));
+SEXP vctrs_typeof(SEXP x, SEXP dispatch) {
+  return Rf_mkString(vec_type_as_str(vec_typeof_impl(x, *LOGICAL(dispatch))));
 }
 
 

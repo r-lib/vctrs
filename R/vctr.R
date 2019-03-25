@@ -80,6 +80,15 @@ names_all_or_nothing <- function(names) {
 }
 
 #' @export
+vec_proxy.vctrs_vctr <- function(x) {
+  if (is_list(x)) {
+    unclass(x)
+  } else {
+    x
+  }
+}
+
+#' @export
 vec_restore.vctrs_vctr <- function(x, to, ...) {
   if (typeof(x) != typeof(to)) {
     stop_incompatible_cast(x, to)
@@ -145,11 +154,6 @@ format.vctrs_vctr <- function(x, ...) {
 }
 
 # Subsetting --------------------------------------------------------------
-
-#' @export
-vec_slice.vctrs_vctr <- function(x, i) {
-  vec_slice_bare(x, i)
-}
 
 #' @export
 `[.vctrs_vctr` <- function(x, i, ...) {

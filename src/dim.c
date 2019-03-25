@@ -3,41 +3,52 @@
 
 R_len_t rcrd_size(SEXP x);
 
-R_len_t vec_size(SEXP x) {
-  switch(TYPEOF(x)) {
-  case NILSXP:
+static R_len_t vec_size_impl(SEXP x, bool dispatch) {
+  switch (vec_typeof_impl(x, dispatch)) {
+  case vctrs_type_null:
     return 0;
 
-  case VECSXP:
-    if (is_scalar(x)) {
-      Rf_errorcall(R_NilValue, "`x` is a scalar");
-    } else if (is_data_frame(x)) {
-      return df_size(x);
-    } else if (is_record(x)) {
-      return rcrd_size(x);
+  case vctrs_type_list:
+    if (!vec_is_vector(x)) {
+      break;
     }
-    // Fall through to non-list logic
-
-  case EXPRSXP:
-  case LGLSXP:
-  case INTSXP:
-  case RAWSXP:
-  case REALSXP:
-  case CPLXSXP:
-  case STRSXP: {
+    // fallthrough
+  case vctrs_type_logical:
+  case vctrs_type_integer:
+  case vctrs_type_double:
+  case vctrs_type_complex:
+  case vctrs_type_character:
+  case vctrs_type_raw: {
     SEXP dims = Rf_getAttrib(x, R_DimSymbol);
-    if (dims == R_NilValue || Rf_length(dims) == 0)
+    if (dims == R_NilValue || Rf_length(dims) == 0) {
       return Rf_length(x);
+    }
 
-    if (TYPEOF(dims) != INTSXP)
+    if (TYPEOF(dims) != INTSXP) {
       Rf_errorcall(R_NilValue, "Corrupt vector: dims is not integer vector");
+    }
 
     return INTEGER(dims)[0];
   }
 
-  default:
-    Rf_errorcall(R_NilValue, "`x` is a not a vector");
+  case vctrs_type_dataframe:
+    return df_size(x);
+
+  case vctrs_type_s3: {
+    x = PROTECT(vec_proxy(x));
+    R_len_t n = vec_size_impl(x, false);
+    UNPROTECT(1);
+    return n;
   }
+
+  default:
+    break;
+  }
+
+  Rf_errorcall(R_NilValue, "`x` is a not a vector");
+}
+R_len_t vec_size(SEXP x) {
+  return vec_size_impl(x, true);
 }
 
 R_len_t df_rownames_size(SEXP x) {

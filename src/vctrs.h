@@ -129,6 +129,7 @@ extern Rcomplex vctrs_shared_na_cpl;
 
 
 // Vector methods ------------------------------------------------
+SEXP vec_proxy(SEXP x);
 R_len_t vec_size(SEXP x);
 SEXP vec_cast(SEXP x, SEXP to);
 SEXP vec_slice(SEXP x, SEXP index);
@@ -136,7 +137,6 @@ SEXP vec_restore(SEXP x, SEXP to, SEXP i);
 
 bool is_data_frame(SEXP x);
 bool is_record(SEXP x);
-bool is_scalar(SEXP x);
 
 R_len_t df_size(SEXP x);
 R_len_t df_rownames_size(SEXP x);

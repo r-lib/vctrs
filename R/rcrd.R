@@ -51,6 +51,11 @@ check_fields <- function(fields) {
 }
 
 #' @export
+vec_proxy.vctrs_rcrd <- function(x) {
+  new_data_frame(unclass(x))
+}
+
+#' @export
 length.vctrs_rcrd <- function(x) {
   .Call(vctrs_size, x)
 }
@@ -107,15 +112,9 @@ vec_cast.vctrs_rcrd.default <- function(x, to) {
 # Subsetting --------------------------------------------------------------
 
 #' @export
-vec_slice.vctrs_rcrd <- function(x, i) {
-  out <- lapply(vec_data(x), vec_slice, i)
-  vec_restore(out, x)
-}
-
-#' @export
 `[.vctrs_rcrd` <-  function(x, i, ...) {
   check_dots_empty_s3_consistency(...)
-  vec_slice.vctrs_rcrd(x, i)
+  vec_slice(x, i)
 }
 
 #' @export
