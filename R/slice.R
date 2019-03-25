@@ -37,22 +37,23 @@
 vec_slice <- function(x, i) {
   .Call(vctrs_slice, x, maybe_missing(i), TRUE)
 }
-vec_slice_fallback <- function(x, i) {
-  vec_assert(x)
 
-  d <- vec_dims(x)
+# Only called when `x` has dimensions
+vec_slice_fallback <- function(x, i) {
+  out <- unclass(vec_proxy(x))
+  vec_assert(out)
+
+  d <- vec_dims(out)
   if (d == 1) {
-    if (is.object(x)) {
-      x[i]
-    } else {
-      x[i, drop = FALSE]
-    }
+    out <- out[i, drop = FALSE]
   } else if (d == 2) {
-    x[i, , drop = FALSE]
+    out <- out[i, , drop = FALSE]
   } else {
     miss_args <- rep(list(missing_arg()), d - 1)
-    eval_bare(expr(x[i, !!!miss_args, drop = FALSE]))
+    out <- eval_bare(expr(out[i, !!!miss_args, drop = FALSE]))
   }
+
+  vec_restore(out, x)
 }
 
 vec_slice_bare <- function(x, i) {

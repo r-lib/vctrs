@@ -195,3 +195,15 @@ test_that("vec_restore() passes `i` argument to methods", {
   )
   expect_identical(vec_slice(foobar(1:3), 2), 2L)
 })
+
+test_that("dimensions are preserved by default restore method", {
+  x <- foobar(1:4)
+  dim(x) <- c(2, 2)
+  dimnames(x) <- list(a = c("foo", "bar"), b = c("quux", "hunoz"))
+
+  exp <- foobar(c(1L, 3L))
+  dim(exp) <- c(1, 2)
+  dimnames(exp) <- list(a = "foo", b = c("quux", "hunoz"))
+
+  expect_identical(vec_slice(x, 1), exp)
+})

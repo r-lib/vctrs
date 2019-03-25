@@ -46,14 +46,25 @@
 #' [vec_unspecified_cast()]).
 #'
 #' See `vignette("s3-vector")` for full details.
+#'
+#'
 #' @section Restoring attributes:
 #'
-#' A restore is a specialised type of cast, primarily used in conjunction
-#' with `NextMethod()` or a C-level function that works on the underlying
-#' data structure. A `vec_restore()` method can assume that `x` has the
-#' correct type (although the length may be different) but all attributes
-#' have been lost and need to be restored. In other words,
-#' `vec_restore(vec_data(x), x)` should yield `x`.
+#' A restore is a specialised type of cast, primarily used in
+#' conjunction with `NextMethod()` or a C-level function that works on
+#' the underlying data structure. A `vec_restore()` method can make
+#' the following assumptions about `x`:
+#'
+#' * It has the correct type.
+#' * It has the correct names.
+#' * It has the correct `dim` and `dimnames` attributes.
+#' * It is unclassed. This way you can call vctrs generics with `x`
+#'   without triggering an infinite loop of restoration.
+#'
+#' The length may be different (for example after [vec_slice()] has
+#' been called), and all other attributes may have been lost. The
+#' method should restore all attributes so that after restoration,
+#' `vec_restore(vec_data(x), x)` yields `x`.
 #'
 #' To understand the difference between `vec_cast()` and `vec_restore()`
 #' think about factors: it doesn't make sense to cast an integer to a factor,

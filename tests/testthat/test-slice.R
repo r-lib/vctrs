@@ -243,6 +243,56 @@ test_that("vec_slice() is proxied", {
   expect_identical(proxy_deref(x), 2:3)
 })
 
+test_that("dimensions are preserved by vec_slice()", {
+  attrib <- NULL
+
+  scoped_global_bindings(
+    vec_restore.vctrs_foobar = function(x, ...) attrib <<- attributes(x)
+  )
+
+  x <- foobar(1:4)
+  dim(x) <- c(2, 2)
+  dimnames(x) <- list(a = c("foo", "bar"), b = c("quux", "hunoz"))
+
+  vec_slice(x, 1)
+
+  exp <- list(dim = 1:2, dimnames = list(a = "foo", b = c("quux", "hunoz")))
+  expect_identical(attrib, exp)
+})
+
+test_that("vec_slice() unclasses input before calling `vec_restore()`", {
+  class <- NULL
+  scoped_global_bindings(
+    vec_restore.vctrs_foobar = function(x, ...) class <<- class(x)
+  )
+
+  x <- foobar(1:4)
+  dim(x) <- c(2, 2)
+
+  vec_slice(x, 1)
+  expect_identical(class, "matrix")
+
+  scoped_global_bindings(
+    `[.vctrs_foobar` = function(x, i) class <<- class(x)
+  )
+
+  vec_slice(foobar(1:2), 1)
+  expect_identical(class, "character")
+})
+
+test_that("can call `vec_slice()` from `[` methods with shaped objects without infloop", {
+  scoped_global_bindings(
+    `[.vctrs_foobar` = function(x, i, ...) vec_slice(x, i)
+  )
+
+  x <- foobar(1:4)
+  dim(x) <- c(2, 2)
+
+  exp <- foobar(c(1L, 3L))
+  dim(exp) <- c(1, 2)
+  expect_identical(x[1], exp)
+})
+
 
 # vec_na ------------------------------------------------------------------
 
