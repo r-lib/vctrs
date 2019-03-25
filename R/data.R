@@ -13,19 +13,59 @@
 #'
 #' * `vec_proxy()` may return structured data. This generic is the
 #'   main customisation point in vctrs, along with [vec_restore()].
-#'   You should only implement it when your type is not its own data,
-#'   i.e. it's not a vector, data frame, or record type.
+#'   See the section below to learn when you should implement
+#'   `vec_proxy()`.
 #'
 #'   Methods must return a vector type. Records and data frames will
 #'   be processed rowwise.
 #'
-#'
 #' @param x A vector or object implementing `vec_proxy()`.
-#' @export
 #' @return The data underlying `x`, free from any attributes except the names.
+#'
+#' @section When should you proxy your type:
+#'
+#' You should only implement `vec_proxy()` when your type is designed
+#' around a non-vector class. I.e. anything that is not either:
+#'
+#' * An atomic vector
+#' * A bare list
+#' * A data frame
+#'
+#' In this case, implement `vec_proxy()` to return such a vector
+#' class. The vctrs operations such as [vec_slice()] are applied on
+#' the proxy and `vec_restore()` is called to restore the original
+#' representation of your type.
+#'
+#' The most common case where you need to implement `vec_proxy()` is
+#' for S3 lists. In vctrs, S3 lists are treated as scalars by
+#' default. This way we don't treat objects like model fits as
+#' vectors. To prevent vctrs from treating your S3 list as a scalar,
+#' unclass it in the `vec_proxy()` method. For instance, here is the
+#' definition for `list_of`:
+#'
+#' ```
+#' vec_proxy.vctrs_list_of <- function(x) {
+#'   unclass(x)
+#' }
+#' ```
+#'
+#' Another case where you need to implement a proxy is [record
+#' types][new_rcrd]. Record types should return a data frame, as in
+#' the `POSIXlt` method:
+#'
+#' ```
+#' vec_proxy.POSIXlt <- function(x) {
+#'   new_data_frame(unclass(x))
+#' }
+#' ```
+#'
+#' Note that you don't need to implement `vec_proxy()` when your class
+#' inherits from `vctrs_vctr` or `vctrs_rcrd`.
+#'
 #' @seealso See [vec_restore()] for the inverse operation: it restores
 #'   attributes given a bare vector and a prototype;
 #'   `vec_restore(vec_data(x), x)` will always yield `x`.
+#' @export
 vec_data <- function(x) {
   if (!is_vector(x)) {
     return(x)
