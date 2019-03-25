@@ -241,12 +241,20 @@ which should call <code><a href='vctrs-conditions.html'>stop_incompatible_cast()
     <h2 class="hasAnchor" id="restoring-attributes"><a class="anchor" href="#restoring-attributes"></a>Restoring attributes</h2>
 
     
-    <p>A restore is a specialised type of cast, primarily used in conjunction
-with <code><a href='https://www.rdocumentation.org/packages/base/topics/UseMethod'>NextMethod()</a></code> or a C-level function that works on the underlying
-data structure. A <code>vec_restore()</code> method can assume that <code>x</code> has the
-correct type (although the length may be different) but all attributes
-have been lost and need to be restored. In other words,
-<code>vec_restore(vec_data(x), x)</code> should yield <code>x</code>.</p>
+    <p>A restore is a specialised type of cast, primarily used in
+conjunction with <code><a href='https://www.rdocumentation.org/packages/base/topics/UseMethod'>NextMethod()</a></code> or a C-level function that works on
+the underlying data structure. A <code>vec_restore()</code> method can make
+the following assumptions about <code>x</code>:</p><ul>
+<li><p>It has the correct type.</p></li>
+<li><p>It has the correct names.</p></li>
+<li><p>It has the correct <code>dim</code> and <code>dimnames</code> attributes.</p></li>
+<li><p>It is unclassed. This way you can call vctrs generics with <code>x</code>
+without triggering an infinite loop of restoration.</p></li>
+</ul>
+    <p>The length may be different (for example after <code><a href='vec_slice.html'>vec_slice()</a></code> has
+been called), and all other attributes may have been lost. The
+method should restore all attributes so that after restoration,
+<code>vec_restore(vec_data(x), x)</code> yields <code>x</code>.</p>
 <p>To understand the difference between <code>vec_cast()</code> and <code>vec_restore()</code>
 think about factors: it doesn't make sense to cast an integer to a factor,
 but if <code><a href='https://www.rdocumentation.org/packages/base/topics/UseMethod'>NextMethod()</a></code> or another low-level function has stripped attributes,
