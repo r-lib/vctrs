@@ -82,7 +82,7 @@ test_that("lossy casts generate warning", {
   date <- as.Date("2018-01-01")
   datetime <- as.POSIXct(date) + c(0, 3600)
 
-  expect_condition(vec_cast(datetime, date), class = "warning_lossy_cast")
+  expect_condition(vec_cast(datetime, date), class = "vctrs_warning_lossy_cast")
 })
 
 test_that("invalid casts generate error", {
@@ -219,16 +219,16 @@ test_that("date-time vs difftime", {
   expect_equal(vec_arith("+", dt, t), dt + t)
   expect_equal(vec_arith("+", d, t), d + t)
   expect_equal(vec_arith("+", dt, th), dt + th)
-  expect_warning(expect_equal(vec_arith("+", d, th), d + th), class = "warning_lossy_cast")
+  expect_warning(expect_equal(vec_arith("+", d, th), d + th), class = "vctrs_warning_lossy_cast")
   expect_equal(vec_arith("-", dt, t), dt - t)
   expect_equal(vec_arith("-", d, t), d - t)
   expect_equal(vec_arith("-", dt, th), dt - th)
-  expect_warning(expect_equal(vec_arith("-", d, th), d - th), class = "warning_lossy_cast")
+  expect_warning(expect_equal(vec_arith("-", d, th), d - th), class = "vctrs_warning_lossy_cast")
 
   expect_equal(vec_arith("+", t, dt), dt + t)
   expect_equal(vec_arith("+", t, d), d + t)
   expect_equal(vec_arith("+", th, dt), dt + th)
-  expect_warning(expect_equal(vec_arith("+", th, d), d + th), class = "warning_lossy_cast")
+  expect_warning(expect_equal(vec_arith("+", th, d), d + th), class = "vctrs_warning_lossy_cast")
 
   expect_error(vec_arith("-", t, dt), class = "vctrs_error_incompatible_op")
   expect_error(vec_arith("-", t, d), class = "vctrs_error_incompatible_op")

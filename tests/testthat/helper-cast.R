@@ -9,7 +9,7 @@ expect_lossy_cast <- function(expr) {
     }),
     expr
   )
-  expect_is(cnd, "warning_lossy_cast")
+  expect_is(cnd, "vctrs_warning_lossy_cast")
 
   out
 }
