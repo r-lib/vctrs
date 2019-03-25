@@ -34,8 +34,8 @@
 #' x
 #'
 #' vec_slice(mtcars, 1:3)
-vec_slice <- function(x, i) {
-  .Call(vctrs_slice, x, maybe_missing(i), FALSE)
+vec_slice <- function(x, i = NULL) {
+  .Call(vctrs_slice, x, i, FALSE)
 }
 
 # Called when `x` has dimensions
@@ -56,12 +56,12 @@ vec_slice_fallback <- function(x, i) {
 
 # No dispatch on `[`, should be called in `[` methods
 vec_slice_native <- function(x, i) {
-  .Call(vctrs_slice, x, maybe_missing(i), TRUE)
+  .Call(vctrs_slice, x, i, TRUE)
 }
 
 #' @export
 #' @rdname vec_slice
-`vec_slice<-` <- function(x, i, value) {
+`vec_slice<-` <- function(x, i = NULL, value) {
   if (is_null(x)) {
     return(x)
   }
@@ -89,7 +89,7 @@ vec_slice_native <- function(x, i) {
 }
 
 vec_as_index <- function(i, x) {
-  .Call(vctrs_as_index, maybe_missing(i), x)
+  .Call(vctrs_as_index, i, x)
 }
 
 #' Create a missing vector

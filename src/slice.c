@@ -202,7 +202,7 @@ static SEXP vec_slice_impl(SEXP x, SEXP index, SEXP to, bool dispatch) {
 
 // [[export]]
 SEXP vctrs_slice(SEXP x, SEXP index, SEXP native) {
-  if (x == R_NilValue || index == R_MissingArg) {
+  if (x == R_NilValue || index == R_NilValue) {
     return x;
   }
 
@@ -402,11 +402,11 @@ static SEXP chr_as_index(SEXP i, SEXP x) {
 
 SEXP vec_as_index(SEXP i, SEXP x) {
   switch (TYPEOF(i)) {
+  case NILSXP: return lgl_as_index(Rf_ScalarLogical(1), x);
   case INTSXP: return int_as_index(i, x);
   case REALSXP: return dbl_as_index(i, x);
   case LGLSXP: return lgl_as_index(i, x);
   case STRSXP: return chr_as_index(i, x);
-  case SYMSXP: if (i == R_MissingArg) return i;
 
   default: Rf_errorcall(R_NilValue, "`i` must be an integer, character, or logical vector, not a %s.",
                         Rf_type2char(TYPEOF(i)));

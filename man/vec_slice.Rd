@@ -5,9 +5,9 @@
 \alias{vec_slice<-}
 \title{Get or set observations in a vector}
 \usage{
-vec_slice(x, i)
+vec_slice(x, i = NULL)
 
-vec_slice(x, i) <- value
+vec_slice(x, i = NULL) <- value
 }
 \arguments{
 \item{x}{A vector}
