@@ -35,6 +35,9 @@ extern SEXP syms_x;
 extern SEXP syms_y;
 extern SEXP syms_to;
 extern SEXP syms_dots;
+extern SEXP syms_bracket;
+
+extern SEXP fns_bracket;
 
 
 #endif

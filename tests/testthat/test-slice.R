@@ -226,20 +226,20 @@ test_that("can `vec_slice()` records", {
   expect_size(out, 2)
 })
 
-test_that("vec_restore() is called after slicing", {
+test_that("vec_restore() is called after bare slicing", {
   scoped_global_bindings(
     vec_restore.vctrs_foobar = function(x, to, ..., i) "dispatch"
   )
-  expect_identical(vec_slice(foobar(1:3), 2), "dispatch")
+  expect_identical(vec_slice_bare(foobar(1:3), 2), "dispatch")
 })
 
-test_that("vec_slice() is proxied", {
+test_that("vec_slice_bare() is proxied", {
   scoped_global_bindings(
     vec_restore.vctrs_proxy = function(x, to, ..., i) new_proxy(x),
     vec_proxy.vctrs_proxy = function(x) proxy_deref(x)
   )
 
-  x <- vec_slice(new_proxy(1:3), 2:3)
+  x <- vec_slice_bare(new_proxy(1:3), 2:3)
   expect_identical(proxy_deref(x), 2:3)
 })
 
@@ -260,7 +260,7 @@ test_that("dimensions are preserved by vec_slice()", {
   expect_identical(attrib, exp)
 })
 
-test_that("vec_slice() unclasses input before calling `vec_restore()`", {
+test_that("vec_slice_bare() unclasses input before calling `vec_restore()`", {
   class <- NULL
   scoped_global_bindings(
     vec_restore.vctrs_foobar = function(x, ...) class <<- class(x)
@@ -269,14 +269,14 @@ test_that("vec_slice() unclasses input before calling `vec_restore()`", {
   x <- foobar(1:4)
   dim(x) <- c(2, 2)
 
-  vec_slice(x, 1)
+  vec_slice_bare(x, 1)
   expect_identical(class, "matrix")
 
   scoped_global_bindings(
     `[.vctrs_foobar` = function(x, i) class <<- class(x)
   )
 
-  vec_slice(foobar(1:2), 1)
+  vec_slice_bare(foobar(1:2), 1)
   expect_identical(class, "character")
 })
 
@@ -291,6 +291,28 @@ test_that("can call `vec_slice()` from `[` methods with shaped objects without i
   exp <- foobar(c(1L, 3L))
   dim(exp) <- c(1, 2)
   expect_identical(x[1], exp)
+})
+
+test_that("vec_slice() falls back to `[` with S3 objects", {
+  scoped_global_bindings(
+    `[.vctrs_foobar` = function(x, i, ...) "dispatched"
+  )
+  expect_identical(vec_slice(foobar(NA), 1), "dispatched")
+
+  expect_error(vec_slice(foobar(list(NA)), 1), "not a vector")
+  scoped_global_bindings(
+    vec_proxy.vctrs_foobar = function(x) unclass(x)
+  )
+  expect_identical(vec_slice(foobar(list(NA)), 1), "dispatched")
+})
+
+test_that("vec_slice() doesn't call vec_restore() with S3 objects", {
+  scoped_global_bindings(
+    vec_proxy.vctrs_foobar = function(x) unclass(x),
+    vec_restore.vctrs_foobar = function(x, to) stop("not called")
+  )
+  expect_error(vec_slice(foobar(NA), 1), NA)
+  expect_error(vec_slice(foobar(list(NA)), 1), NA)
 })
 
 

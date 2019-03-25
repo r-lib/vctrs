@@ -9,6 +9,7 @@ SEXP fns_vec_slice_fallback = NULL;
 SEXP vec_as_index(SEXP i, SEXP x);
 static void slice_names(SEXP x, SEXP to, SEXP index);
 static SEXP vec_slice_impl(SEXP x, SEXP index, bool dispatch);
+static SEXP vec_slice_bare(SEXP x, SEXP index);
 
 
 static void stop_bad_index_length(R_len_t data_n, R_len_t i) {
@@ -100,69 +101,27 @@ static SEXP vec_slice_fallback(SEXP x, SEXP index) {
                          syms_i, index);
 }
 
-static SEXP vec_slice_impl(SEXP x, SEXP index, bool dispatch) {
-  if (has_dim(x)) {
-    return vec_slice_fallback(x, index);
+static SEXP vec_slice_base(enum vctrs_type type, SEXP x, SEXP index, bool dispatch) {
+  SEXP out;
+  switch (type) {
+  case vctrs_type_logical:   out = lgl_slice(x, index); break;
+  case vctrs_type_integer:   out = int_slice(x, index); break;
+  case vctrs_type_double:    out = dbl_slice(x, index); break;
+  case vctrs_type_complex:   out = cpl_slice(x, index); break;
+  case vctrs_type_character: out = chr_slice(x, index); break;
+  case vctrs_type_raw:       out = raw_slice(x, index); break;
+  case vctrs_type_list:      out = list_slice(x, index); break;
+  default: Rf_error("Internal error: Non-base vector type `%s` in `vec_slice_base()`",
+                    vec_type_as_str(type));
   }
-
-  SEXP out = R_NilValue;
-
-  switch (vec_typeof_impl(x, dispatch)) {
-  case vctrs_type_null:
-    Rf_error("Internal error: Unexpected `NULL` in `vec_slice_impl()`.");
-
-  case vctrs_type_logical:
-    out = lgl_slice(x, index);
-    break;
-  case vctrs_type_integer:
-    out = int_slice(x, index);
-    break;
-  case vctrs_type_double:
-    out = dbl_slice(x, index);
-    break;
-  case vctrs_type_complex:
-    out = cpl_slice(x, index);
-    break;
-  case vctrs_type_character:
-    out = chr_slice(x, index);
-    break;
-  case vctrs_type_raw:
-    out = raw_slice(x, index);
-    break;
-  case vctrs_type_list:
-    out = list_slice(x, index);
-    break;
-
-  case vctrs_type_dataframe:
-    out = PROTECT(rows_slice(x, index));
-    out = df_restore(out, x, index);
-    UNPROTECT(1);
-    return out;
-
-  case vctrs_type_s3: {
-    SEXP proxy = PROTECT(vec_proxy(x));
-
-    out = PROTECT(vec_slice_impl(proxy, index, false));
-    out = vec_restore(out, x, index);
-
-    UNPROTECT(2);
-    return out;
-  }
-
-  default:
-    Rf_error("Internal error: Unexpected type `%s` for vector proxy in `vec_slice()`",
-             vec_type_as_str(vec_typeof(x)));
-  }
-
   PROTECT(out);
-  slice_names(out, x, index);
 
+  slice_names(out, x, index);
   out = vec_restore(out, x, index);
 
   UNPROTECT(1);
   return out;
 }
-
 static void slice_names(SEXP x, SEXP to, SEXP index) {
   SEXP nms = PROTECT(Rf_getAttrib(to, R_NamesSymbol));
 
@@ -177,20 +136,92 @@ static void slice_names(SEXP x, SEXP to, SEXP index) {
   UNPROTECT(2);
 }
 
-SEXP vctrs_slice(SEXP x, SEXP index, SEXP dispatch) {
+static SEXP vec_slice_impl(SEXP x, SEXP index, bool dispatch) {
+  if (has_dim(x)) {
+    return vec_slice_fallback(x, index);
+  }
+
+  SEXP out = R_NilValue;
+  enum vctrs_type type = vec_typeof_impl(x, dispatch);
+
+  switch (type) {
+  case vctrs_type_null:
+    Rf_error("Internal error: Unexpected `NULL` in `vec_slice_impl()`.");
+
+  case vctrs_type_logical:
+  case vctrs_type_integer:
+  case vctrs_type_double:
+  case vctrs_type_complex:
+  case vctrs_type_character:
+  case vctrs_type_raw:
+  case vctrs_type_list:
+    return vec_slice_base(type, x, index, dispatch);
+
+  case vctrs_type_dataframe:
+    out = PROTECT(rows_slice(x, index));
+    out = df_restore(out, x, index);
+    UNPROTECT(1);
+    return out;
+
+  case vctrs_type_s3: {
+    // Normally we'd take the proxy and recurse with dispatch turned off.
+    // However we fall back to `[` for compatibility with foreign types.
+    SEXP call = PROTECT(Rf_lang3(fns_bracket, x, index));
+    out = Rf_eval(call, R_GlobalEnv);
+    UNPROTECT(1);
+    return out;
+  }
+
+  default:
+    Rf_error("Internal error: Unexpected type `%s` for vector proxy in `vec_slice()`",
+             vec_type_as_str(vec_typeof(x)));
+  }
+}
+
+// [[export]]
+SEXP vctrs_slice(SEXP x, SEXP index, SEXP bare) {
   if (x == R_NilValue || index == R_MissingArg) {
     return x;
   }
 
   index = PROTECT(vec_as_index(index, x));
-  SEXP out = vec_slice_impl(x, index, *LOGICAL(dispatch));
+
+  SEXP out;
+  if (*LOGICAL(bare)) {
+    out = vec_slice_bare(x, index);
+  } else {
+    out = vec_slice_impl(x, index, true);
+  }
 
   UNPROTECT(1);
   return out;
 }
+
+
 SEXP vec_slice(SEXP x, SEXP index) {
   return vctrs_slice(x, index, vctrs_shared_true);
 }
+
+// Unlike `vec_slice()` which falls back to `[`, this takes the proxy
+// of OO objects and applies internal slicing
+static SEXP vec_slice_bare(SEXP x, SEXP index) {
+  if (has_dim(x)) {
+    return vec_slice_fallback(x, index);
+  }
+
+  switch (vec_typeof(x)) {
+  case vctrs_type_s3: {
+    SEXP proxy = PROTECT(vec_proxy(x));
+    SEXP out = PROTECT(vec_slice_impl(proxy, index, false));
+    out = vec_restore(out, x, index);
+    UNPROTECT(2);
+    return out;
+  }
+  default:
+    return vec_slice_impl(x, index, false);
+  }
+}
+
 
 static SEXP int_invert_index(SEXP index, SEXP x);
 static SEXP int_filter_zero(SEXP index, R_len_t x);

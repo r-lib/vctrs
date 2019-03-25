@@ -120,7 +120,7 @@ SEXP vctrs_shared_false = NULL;
 Rcomplex vctrs_shared_na_cpl;
 
 void vctrs_init_types(SEXP ns) {
-  syms_vec_is_vector_dispatch = Rf_install("vec_is_vector_dispatch");
+  syms_vec_is_vector_dispatch = Rf_install("vec_is_vector");
   fns_vec_is_vector_dispatch = Rf_findVar(syms_vec_is_vector_dispatch, ns);
 
   vctrs_shared_empty_lgl = Rf_allocVector(LGLSXP, 0);
