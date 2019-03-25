@@ -103,12 +103,22 @@ See \code{vignette("s3-vector")} for full details.
 \section{Restoring attributes}{
 
 
-A restore is a specialised type of cast, primarily used in conjunction
-with \code{NextMethod()} or a C-level function that works on the underlying
-data structure. A \code{vec_restore()} method can assume that \code{x} has the
-correct type (although the length may be different) but all attributes
-have been lost and need to be restored. In other words,
-\code{vec_restore(vec_data(x), x)} should yield \code{x}.
+A restore is a specialised type of cast, primarily used in
+conjunction with \code{NextMethod()} or a C-level function that works on
+the underlying data structure. A \code{vec_restore()} method can make
+the following assumptions about \code{x}:
+\itemize{
+\item It has the correct type.
+\item It has the correct names.
+\item It has the correct \code{dim} and \code{dimnames} attributes.
+\item It is unclassed. This way you can call vctrs generics with \code{x}
+without triggering an infinite loop of restoration.
+}
+
+The length may be different (for example after \code{\link[=vec_slice]{vec_slice()}} has
+been called), and all other attributes may have been lost. The
+method should restore all attributes so that after restoration,
+\code{vec_restore(vec_data(x), x)} yields \code{x}.
 
 To understand the difference between \code{vec_cast()} and \code{vec_restore()}
 think about factors: it doesn't make sense to cast an integer to a factor,
