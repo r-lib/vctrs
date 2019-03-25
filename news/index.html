@@ -130,12 +130,21 @@
 <a href="#vctrs-0-1-0-9000" class="anchor"></a>vctrs 0.1.0.9000<small> Unreleased </small>
 </h1>
 <ul>
+<li>
+<p>New <code><a href="../reference/vec_data.html">vec_proxy()</a></code> generic. This is the main customisation point in vctrs along with <code><a href="../reference/vec_cast.html">vec_restore()</a></code>. You should only implement it when your type is designed around a non-vector class (atomic vectors, bare lists, data frames). In this case, <code><a href="../reference/vec_data.html">vec_proxy()</a></code> should return such a vector class. The vctrs operations will be applied on the proxy and <code><a href="../reference/vec_cast.html">vec_restore()</a></code> is called to restore the original representation of your type.</p>
+<p>The most common case where you need to implement <code><a href="../reference/vec_data.html">vec_proxy()</a></code> is for S3 lists. In vctrs, S3 lists are treated as scalars by default. This way we don’t treat objects like model fits as vectors. To prevent vctrs from treating your S3 list as a scalar, unclass it from the <code><a href="../reference/vec_data.html">vec_proxy()</a></code> method. For instance here is the definition for <code>list_of</code>:</p>
+<pre><code>#' <a href='https://github.com/export'>@export</a>
+vec_proxy.vctrs_list_of &lt;- function(x) {
+  unclass(x)
+}</code></pre>
+<p>If you inherit from <code>vctrs_vctr</code> or <code>vctrs_rcrd</code> you don’t need to implement <code><a href="../reference/vec_data.html">vec_proxy()</a></code>.</p>
+</li>
 <li><p><code><a href="../reference/vec_slice.html">vec_slice()</a></code> now calls <code><a href="../reference/vec_cast.html">vec_restore()</a></code> automatically. Unlike the default <code>[</code> method from base R, attributes are preserved by default.</p></li>
 <li><p><code><a href="../reference/vec_slice.html">vec_slice()</a></code> is now a generic. Its default method calls <code>[</code>.</p></li>
 <li><p><code><a href="../reference/vec_size.html">vec_size()</a></code> now works with positive short row names. This fixes issues with data frames created with jsonlite (<a href='https://github.com/r-lib/vctrs/issues/220'>#220</a>).</p></li>
 <li>
 <p>New <code><a href="../reference/vec_assert.html">vec_is()</a></code> function to check whether a vector conforms to a protopty and/or a size. Unlike <code><a href="../reference/vec_assert.html">vec_assert()</a></code>, it doesn’t throw errors but returns <code>TRUE</code> or <code>FALSE</code> (<a href='https://github.com/r-lib/vctrs/issues/79'>#79</a>).</p>
-<p>Called without a specific type or size, it tests whether an object is a data vector or a scalar. S3 lists are treated as scalars by default. Implement a <code><a href="../reference/vec_is_vector.html">vec_is_vector()</a></code> for your class to override this property (or derive from <code>vctrs_vctr</code>).</p>
+<p>Called without a specific type or size, it tests whether an object is a data vector or a scalar. S3 lists are treated as scalars by default. Implement a <code>vec_is_vector()</code> for your class to override this property (or derive from <code>vctrs_vctr</code>).</p>
 </li>
 <li><p>New <code><a href="../reference/list_of.html">validate_list_of()</a></code> (<a href='https://github.com/r-lib/vctrs/issues/193'>#193</a>).</p></li>
 <li><p><code><a href="../reference/vec_equal.html">vec_equal()</a></code> now handles missing values symmetrically (<a href='https://github.com/r-lib/vctrs/issues/204'>#204</a>).</p></li>
