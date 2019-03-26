@@ -402,7 +402,7 @@ static SEXP chr_as_index(SEXP i, SEXP x) {
 
 SEXP vec_as_index(SEXP i, SEXP x) {
   switch (TYPEOF(i)) {
-  case NILSXP: return lgl_as_index(Rf_ScalarLogical(1), x);
+  case NILSXP: return lgl_as_index(vctrs_shared_true, x);
   case INTSXP: return int_as_index(i, x);
   case REALSXP: return dbl_as_index(i, x);
   case LGLSXP: return lgl_as_index(i, x);
