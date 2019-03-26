@@ -89,7 +89,7 @@ vec_proxy.vctrs_vctr <- function(x) {
 }
 
 #' @export
-vec_restore.vctrs_vctr <- function(x, to, ...) {
+vec_restore.vctrs_vctr <- function(x, to, ..., i = NULL) {
   if (typeof(x) != typeof(to)) {
     stop_incompatible_cast(x, to)
   }
