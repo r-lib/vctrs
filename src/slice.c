@@ -78,7 +78,7 @@ static SEXP list_slice(SEXP x, SEXP index) {
 
 #undef SLICE_BARRIER
 
-static SEXP rows_slice(SEXP x, SEXP index) {
+static SEXP df_slice(SEXP x, SEXP index) {
   R_len_t n = Rf_length(x);
   SEXP out = PROTECT(Rf_allocVector(VECSXP, n));
 
@@ -167,11 +167,12 @@ static SEXP vec_slice_impl(SEXP x, SEXP index, SEXP to, bool dispatch) {
   case vctrs_type_list:
     return vec_slice_base(type, x, index, to, dispatch);
 
-  case vctrs_type_dataframe:
-    out = PROTECT(rows_slice(x, index));
-    out = df_restore(out, x, index);
+  case vctrs_type_dataframe: {
+    SEXP out = PROTECT(df_slice(x, index));
+    out = vec_restore(out, to, index);
     UNPROTECT(1);
     return out;
+  }
 
   case vctrs_type_s3: {
     // Normally we'd take the proxy and recurse with dispatch turned off.

@@ -271,13 +271,6 @@ test_that("vec_slice_native() unclasses input before calling `vec_restore()`", {
 
   vec_slice_native(x, 1)
   expect_identical(class, "matrix")
-
-  scoped_global_bindings(
-    `[.vctrs_foobar` = function(x, i) class <<- class(x)
-  )
-
-  vec_slice_native(foobar(1:2), 1)
-  expect_identical(class, "character")
 })
 
 test_that("can call `vec_slice()` from `[` methods with shaped objects without infloop", {
@@ -331,6 +324,14 @@ test_that("can vec_slice() without inflooping when restore calls math generics",
     }
   )
   expect_identical(new_foobar(1:10)[1:2], new_foobar(1:2))
+})
+
+test_that("vec_restore() is called after slicing data frames", {
+  scoped_global_bindings(
+    vec_restore.vctrs_tabble = function(...) "dispatched"
+  )
+  df <- structure(mtcars, class = c("vctrs_tabble", "data.frame"))
+  expect_identical(vec_slice(df, 1), "dispatched")
 })
 
 
