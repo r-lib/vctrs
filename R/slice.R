@@ -35,18 +35,16 @@
 #'
 #' vec_slice(mtcars, 1:3)
 vec_slice <- function(x, i) {
-  .Call(vctrs_slice, x, maybe_missing(i), TRUE)
+  .Call(vctrs_slice, x, maybe_missing(i), FALSE)
 }
 
-# Only called when `x` has dimensions
+# Called when `x` has dimensions
 vec_slice_fallback <- function(x, i) {
   out <- unclass(vec_proxy(x))
   vec_assert(out)
 
   d <- vec_dims(out)
-  if (d == 1) {
-    out <- out[i, drop = FALSE]
-  } else if (d == 2) {
+  if (d == 2) {
     out <- out[i, , drop = FALSE]
   } else {
     miss_args <- rep(list(missing_arg()), d - 1)
@@ -56,8 +54,9 @@ vec_slice_fallback <- function(x, i) {
   vec_restore(out, x)
 }
 
-vec_slice_bare <- function(x, i) {
-  .Call(vctrs_slice, x, maybe_missing(i), FALSE)
+# No dispatch on `[`, should be called in `[` methods
+vec_slice_native <- function(x, i) {
+  .Call(vctrs_slice, x, maybe_missing(i), TRUE)
 }
 
 #' @export

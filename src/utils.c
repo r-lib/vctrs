@@ -5,7 +5,7 @@ bool is_bool(SEXP x) {
   return
     TYPEOF(x) == LGLSXP &&
     Rf_length(x) == 1 &&
-    *LOGICAL(x) != NA_LOGICAL;
+    LOGICAL(x)[0] != NA_LOGICAL;
 }
 
 /**
@@ -252,6 +252,9 @@ SEXP syms_x = NULL;
 SEXP syms_y = NULL;
 SEXP syms_to = NULL;
 SEXP syms_dots = NULL;
+SEXP syms_bracket = NULL;
+
+SEXP fns_bracket = NULL;
 
 void vctrs_init_utils(SEXP ns) {
   syms_i = Rf_install("i");
@@ -259,6 +262,9 @@ void vctrs_init_utils(SEXP ns) {
   syms_y = Rf_install("y");
   syms_to = Rf_install("to");
   syms_dots = Rf_install("...");
+  syms_bracket = Rf_install("[");
+
+  fns_bracket = Rf_findVar(syms_bracket, R_BaseEnv);
 
   new_env_call = r_parse_eval("as.call(list(new.env, TRUE, NULL, NULL))", R_BaseEnv);
   R_PreserveObject(new_env_call);

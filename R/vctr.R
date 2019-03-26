@@ -89,7 +89,7 @@ vec_proxy.vctrs_vctr <- function(x) {
 }
 
 #' @export
-vec_restore.vctrs_vctr <- function(x, to, ...) {
+vec_restore.vctrs_vctr <- function(x, to, ..., i = NULL) {
   if (typeof(x) != typeof(to)) {
     stop_incompatible_cast(x, to)
   }
@@ -158,7 +158,7 @@ format.vctrs_vctr <- function(x, ...) {
 #' @export
 `[.vctrs_vctr` <- function(x, i, ...) {
   check_dots_empty_s3_consistency(...)
-  vec_slice_bare(x, i)
+  vec_slice_native(x, i)
 }
 
 #' @export

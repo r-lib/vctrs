@@ -212,3 +212,7 @@ test_that("dangerous methods marked as unimplemented", {
 test_that("dots must be empty", {
   expect_error(new_rcrd(list(foo = "foo"))[1, 2], "is not empty")
 })
+
+test_that("records are restored after slicing the proxy", {
+  expect_identical(new_rcrd(list(x = 1:2))[1], new_rcrd(list(x = 1L)))
+})

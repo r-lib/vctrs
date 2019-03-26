@@ -340,15 +340,23 @@ SEXP df_restore(SEXP x, SEXP to, SEXP i) {
   return x;
 }
 
+static SEXP vec_restore_dispatch(SEXP x, SEXP to, SEXP i) {
+  return vctrs_dispatch3(syms_vec_restore_dispatch, fns_vec_restore_dispatch,
+                         syms_x, x,
+                         syms_to, to,
+                         syms_i, i);
+}
+
 SEXP vec_restore(SEXP x, SEXP to, SEXP i) {
   switch (vec_typeof(to)) {
-  case vctrs_type_dataframe:
-    return df_restore(x, to, i);
+  case vctrs_type_dataframe: {
+    SEXP out = PROTECT(df_restore(x, to, i));
+    out = vec_restore_dispatch(out, to, i);
+    UNPROTECT(1);
+    return out;
+  }
   case vctrs_type_s3:
-    return vctrs_dispatch3(syms_vec_restore_dispatch, fns_vec_restore_dispatch,
-                           syms_x, x,
-                           syms_to, to,
-                           syms_i, i);
+    return vec_restore_dispatch(x, to, i);
   default:
     return vctrs_restore_default(x, to);
   }

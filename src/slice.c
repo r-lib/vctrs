@@ -8,7 +8,25 @@ SEXP fns_vec_slice_fallback = NULL;
 // Defined below
 SEXP vec_as_index(SEXP i, SEXP x);
 static void slice_names(SEXP x, SEXP to, SEXP index);
-static SEXP vec_slice_impl(SEXP x, SEXP index, bool dispatch);
+
+/**
+ * This `vec_slice()` variant falls back to `[` with S3 objects.
+ *
+ * @param to The type to restore to. We need to pass it along because
+ *   `vec_slice_native()` passes a proxy but needs to restore to the
+ *   original type.
+ * @param dispatch When `true`, dispatches to `[` for compatibility
+ *   with base R. When `false`, uses native implementations.
+ */
+static SEXP vec_slice_impl(SEXP x, SEXP index, SEXP to, bool dispatch);
+
+/**
+ * This `vec_slice()` variant takes the [vec_proxy()] of S3 objects
+ * and calls `vec_slice_impl()` with dispatch turned off. It should be
+ * called from `[` methods that want to implement the semantics of
+ * `vec_slice()` for their S3 class.
+ */
+static SEXP vec_slice_native(SEXP x, SEXP index);
 
 
 static void stop_bad_index_length(R_len_t data_n, R_len_t i) {
@@ -77,7 +95,7 @@ static SEXP list_slice(SEXP x, SEXP index) {
 
 #undef SLICE_BARRIER
 
-static SEXP rows_slice(SEXP x, SEXP index) {
+static SEXP df_slice(SEXP x, SEXP index) {
   R_len_t n = Rf_length(x);
   SEXP out = PROTECT(Rf_allocVector(VECSXP, n));
 
@@ -85,7 +103,8 @@ static SEXP rows_slice(SEXP x, SEXP index) {
   Rf_setAttrib(out, R_NamesSymbol, nms);
 
   for (R_len_t i = 0; i < n; ++i) {
-    SEXP sliced = vec_slice_impl(VECTOR_ELT(x, i), index, true);
+    SEXP elt = VECTOR_ELT(x, i);
+    SEXP sliced = vec_slice_impl(elt, index, elt, true);
     SET_VECTOR_ELT(out, i, sliced);
   }
 
@@ -100,69 +119,30 @@ static SEXP vec_slice_fallback(SEXP x, SEXP index) {
                          syms_i, index);
 }
 
-static SEXP vec_slice_impl(SEXP x, SEXP index, bool dispatch) {
-  if (has_dim(x)) {
-    return vec_slice_fallback(x, index);
+static SEXP vec_slice_base(enum vctrs_type type,
+                           SEXP x,
+                           SEXP index,
+                           SEXP to, bool dispatch) {
+  SEXP out;
+  switch (type) {
+  case vctrs_type_logical:   out = lgl_slice(x, index); break;
+  case vctrs_type_integer:   out = int_slice(x, index); break;
+  case vctrs_type_double:    out = dbl_slice(x, index); break;
+  case vctrs_type_complex:   out = cpl_slice(x, index); break;
+  case vctrs_type_character: out = chr_slice(x, index); break;
+  case vctrs_type_raw:       out = raw_slice(x, index); break;
+  case vctrs_type_list:      out = list_slice(x, index); break;
+  default: Rf_error("Internal error: Non-vector base type `%s` in `vec_slice_base()`",
+                    vec_type_as_str(type));
   }
-
-  SEXP out = R_NilValue;
-
-  switch (vec_typeof_impl(x, dispatch)) {
-  case vctrs_type_null:
-    Rf_error("Internal error: Unexpected `NULL` in `vec_slice_impl()`.");
-
-  case vctrs_type_logical:
-    out = lgl_slice(x, index);
-    break;
-  case vctrs_type_integer:
-    out = int_slice(x, index);
-    break;
-  case vctrs_type_double:
-    out = dbl_slice(x, index);
-    break;
-  case vctrs_type_complex:
-    out = cpl_slice(x, index);
-    break;
-  case vctrs_type_character:
-    out = chr_slice(x, index);
-    break;
-  case vctrs_type_raw:
-    out = raw_slice(x, index);
-    break;
-  case vctrs_type_list:
-    out = list_slice(x, index);
-    break;
-
-  case vctrs_type_dataframe:
-    out = PROTECT(rows_slice(x, index));
-    out = df_restore(out, x, index);
-    UNPROTECT(1);
-    return out;
-
-  case vctrs_type_s3: {
-    SEXP proxy = PROTECT(vec_proxy(x));
-
-    out = PROTECT(vec_slice_impl(proxy, index, false));
-    out = vec_restore(out, x, index);
-
-    UNPROTECT(2);
-    return out;
-  }
-
-  default:
-    Rf_error("Internal error: Unexpected type `%s` for vector proxy in `vec_slice()`",
-             vec_type_as_str(vec_typeof(x)));
-  }
-
   PROTECT(out);
-  slice_names(out, x, index);
 
-  out = vec_restore(out, x, index);
+  slice_names(out, x, index);
+  out = vec_restore(out, to, index);
 
   UNPROTECT(1);
   return out;
 }
-
 static void slice_names(SEXP x, SEXP to, SEXP index) {
   SEXP nms = PROTECT(Rf_getAttrib(to, R_NamesSymbol));
 
@@ -177,20 +157,90 @@ static void slice_names(SEXP x, SEXP to, SEXP index) {
   UNPROTECT(2);
 }
 
-SEXP vctrs_slice(SEXP x, SEXP index, SEXP dispatch) {
+static SEXP vec_slice_impl(SEXP x, SEXP index, SEXP to, bool dispatch) {
+  if (has_dim(x)) {
+    return vec_slice_fallback(x, index);
+  }
+
+  SEXP out = R_NilValue;
+  enum vctrs_type type = vec_typeof_impl(x, dispatch);
+
+  switch (type) {
+  case vctrs_type_null:
+    Rf_error("Internal error: Unexpected `NULL` in `vec_slice_impl()`.");
+
+  case vctrs_type_logical:
+  case vctrs_type_integer:
+  case vctrs_type_double:
+  case vctrs_type_complex:
+  case vctrs_type_character:
+  case vctrs_type_raw:
+  case vctrs_type_list:
+    return vec_slice_base(type, x, index, to, dispatch);
+
+  case vctrs_type_dataframe: {
+    SEXP out = PROTECT(df_slice(x, index));
+    out = vec_restore(out, to, index);
+    UNPROTECT(1);
+    return out;
+  }
+
+  case vctrs_type_s3: {
+    // Normally we'd take the proxy and recurse with dispatch turned off.
+    // However we fall back to `[` for compatibility with foreign types.
+    SEXP call = PROTECT(Rf_lang3(fns_bracket, x, index));
+    out = Rf_eval(call, R_GlobalEnv);
+    UNPROTECT(1);
+    return out;
+  }
+
+  default:
+    Rf_error("Internal error: Unexpected type `%s` for vector proxy in `vec_slice()`",
+             vec_type_as_str(vec_typeof(x)));
+  }
+}
+
+// [[export]]
+SEXP vctrs_slice(SEXP x, SEXP index, SEXP native) {
   if (x == R_NilValue || index == R_MissingArg) {
     return x;
   }
 
   index = PROTECT(vec_as_index(index, x));
-  SEXP out = vec_slice_impl(x, index, *LOGICAL(dispatch));
+
+  SEXP out;
+  if (LOGICAL(native)[0]) {
+    out = vec_slice_native(x, index);
+  } else {
+    out = vec_slice_impl(x, index, x, true);
+  }
 
   UNPROTECT(1);
   return out;
 }
+
+
 SEXP vec_slice(SEXP x, SEXP index) {
   return vctrs_slice(x, index, vctrs_shared_true);
 }
+
+static SEXP vec_slice_native(SEXP x, SEXP index) {
+  if (has_dim(x)) {
+    return vec_slice_fallback(x, index);
+  }
+
+  switch (vec_typeof(x)) {
+  case vctrs_type_s3: {
+    SEXP proxy = PROTECT(vec_proxy(x));
+    SEXP out = vec_slice_impl(proxy, index, x, false);
+    UNPROTECT(1);
+    return out;
+  }
+  default:
+    return vec_slice_impl(x, index, x, false);
+  }
+}
+
 
 static SEXP int_invert_index(SEXP index, SEXP x);
 static SEXP int_filter_zero(SEXP index, R_len_t x);
@@ -311,7 +361,7 @@ static SEXP lgl_as_index(SEXP i, SEXP x) {
    * uncommon case.
    */
   if (n == 1) {
-    int elt = *LOGICAL(i);
+    int elt = LOGICAL(i)[0];
     if (elt == NA_LOGICAL) {
       SEXP out = PROTECT(Rf_allocVector(INTSXP, n_vec));
       r_int_fill(out, NA_INTEGER);

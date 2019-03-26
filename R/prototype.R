@@ -91,7 +91,7 @@ vec_type.logical <- function(x) {
 #' @export
 vec_type.data.frame <- function(x) {
   cols <- map(x, vec_type)
-  vec_restore(cols, x)
+  vec_restore(cols, x, i = int())
 }
 
 #' @export
