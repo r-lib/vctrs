@@ -85,7 +85,7 @@ bool vec_is_vector(SEXP x) {
       }
 
       UNPROTECT(1);
-      return *LOGICAL(out);
+      return LOGICAL(out)[0];
     }
   }
 }
@@ -102,7 +102,7 @@ void vctrs_stop_unsupported_type(enum vctrs_type type, const char* fn) {
 }
 
 SEXP vctrs_typeof(SEXP x, SEXP dispatch) {
-  return Rf_mkString(vec_type_as_str(vec_typeof_impl(x, *LOGICAL(dispatch))));
+  return Rf_mkString(vec_type_as_str(vec_typeof_impl(x, LOGICAL(dispatch)[0])));
 }
 
 
@@ -154,12 +154,12 @@ void vctrs_init_types(SEXP ns) {
   vctrs_shared_true = Rf_allocVector(LGLSXP, 1);
   R_PreserveObject(vctrs_shared_true);
   MARK_NOT_MUTABLE(vctrs_shared_true);
-  *LOGICAL(vctrs_shared_true) = 1;
+  LOGICAL(vctrs_shared_true)[0] = 1;
 
   vctrs_shared_false = Rf_allocVector(LGLSXP, 1);
   R_PreserveObject(vctrs_shared_false);
   MARK_NOT_MUTABLE(vctrs_shared_false);
-  *LOGICAL(vctrs_shared_false) = 0;
+  LOGICAL(vctrs_shared_false)[0] = 0;
 
   vctrs_shared_na_cpl.i = NA_REAL;
   vctrs_shared_na_cpl.r = NA_REAL;

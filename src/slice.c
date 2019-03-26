@@ -198,7 +198,7 @@ SEXP vctrs_slice(SEXP x, SEXP index, SEXP native) {
   index = PROTECT(vec_as_index(index, x));
 
   SEXP out;
-  if (*LOGICAL(native)) {
+  if (LOGICAL(native)[0]) {
     out = vec_slice_native(x, index);
   } else {
     out = vec_slice_impl(x, index, x, true);
@@ -352,7 +352,7 @@ static SEXP lgl_as_index(SEXP i, SEXP x) {
    * uncommon case.
    */
   if (n == 1) {
-    int elt = *LOGICAL(i);
+    int elt = LOGICAL(i)[0];
     if (elt == NA_LOGICAL) {
       SEXP out = PROTECT(Rf_allocVector(INTSXP, n_vec));
       r_int_fill(out, NA_INTEGER);
