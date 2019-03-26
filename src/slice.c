@@ -8,7 +8,24 @@ SEXP fns_vec_slice_fallback = NULL;
 // Defined below
 SEXP vec_as_index(SEXP i, SEXP x);
 static void slice_names(SEXP x, SEXP to, SEXP index);
+
+/**
+ * This `vec_slice()` variant falls back to `[` with S3 objects.
+ *
+ * @param to The type to restore to. We need to pass it along because
+ *   `vec_slice_native()` passes a proxy but needs to restore to the
+ *   original type.
+ * @param dispatch When `true`, dispatches to `[` for compatibility
+ *   with base R. When `false`, uses native implementations.
+ */
 static SEXP vec_slice_impl(SEXP x, SEXP index, SEXP to, bool dispatch);
+
+/**
+ * This `vec_slice()` variant takes the [vec_proxy()] of S3 objects
+ * and calls `vec_slice_impl()` with dispatch turned off. It should be
+ * called from `[` methods that want to implement the semantics of
+ * `vec_slice()` for their S3 class.
+ */
 static SEXP vec_slice_native(SEXP x, SEXP index);
 
 
@@ -141,11 +158,6 @@ static void slice_names(SEXP x, SEXP to, SEXP index) {
   UNPROTECT(2);
 }
 
-/**
- * @param to The type to restore to. Necessary to pass it along
- *   because `vec_slice_native()` passes a proxy but needs to restore
- *   to the original type.
- */
 static SEXP vec_slice_impl(SEXP x, SEXP index, SEXP to, bool dispatch) {
   if (has_dim(x)) {
     return vec_slice_fallback(x, index);
@@ -213,8 +225,6 @@ SEXP vec_slice(SEXP x, SEXP index) {
   return vctrs_slice(x, index, vctrs_shared_true);
 }
 
-// Unlike `vec_slice()` which falls back to `[`, this takes the proxy
-// of OO objects and applies internal slicing
 static SEXP vec_slice_native(SEXP x, SEXP index) {
   if (has_dim(x)) {
     return vec_slice_fallback(x, index);
