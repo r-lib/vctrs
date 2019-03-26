@@ -116,7 +116,7 @@ static SEXP vec_slice_base(enum vctrs_type type,
   case vctrs_type_character: out = chr_slice(x, index); break;
   case vctrs_type_raw:       out = raw_slice(x, index); break;
   case vctrs_type_list:      out = list_slice(x, index); break;
-  default: Rf_error("Internal error: Non-base vector type `%s` in `vec_slice_base()`",
+  default: Rf_error("Internal error: Non-vector base type `%s` in `vec_slice_base()`",
                     vec_type_as_str(type));
   }
   PROTECT(out);
