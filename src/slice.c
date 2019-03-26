@@ -8,7 +8,7 @@ SEXP fns_vec_slice_fallback = NULL;
 // Defined below
 SEXP vec_as_index(SEXP i, SEXP x);
 static void slice_names(SEXP x, SEXP to, SEXP index);
-static SEXP vec_slice_impl(SEXP x, SEXP index, bool dispatch);
+static SEXP vec_slice_impl(SEXP x, SEXP index, SEXP to, bool dispatch);
 static SEXP vec_slice_native(SEXP x, SEXP index);
 
 
@@ -86,8 +86,10 @@ static SEXP rows_slice(SEXP x, SEXP index) {
   Rf_setAttrib(out, R_NamesSymbol, nms);
 
   for (R_len_t i = 0; i < n; ++i) {
-    SEXP sliced = vec_slice_impl(VECTOR_ELT(x, i), index, true);
+    SEXP elt = PROTECT(VECTOR_ELT(x, i));
+    SEXP sliced = vec_slice_impl(elt, index, elt, true);
     SET_VECTOR_ELT(out, i, sliced);
+    UNPROTECT(1);
   }
 
   UNPROTECT(1);
@@ -101,7 +103,10 @@ static SEXP vec_slice_fallback(SEXP x, SEXP index) {
                          syms_i, index);
 }
 
-static SEXP vec_slice_base(enum vctrs_type type, SEXP x, SEXP index, bool dispatch) {
+static SEXP vec_slice_base(enum vctrs_type type,
+                           SEXP x,
+                           SEXP index,
+                           SEXP to, bool dispatch) {
   SEXP out;
   switch (type) {
   case vctrs_type_logical:   out = lgl_slice(x, index); break;
@@ -117,7 +122,7 @@ static SEXP vec_slice_base(enum vctrs_type type, SEXP x, SEXP index, bool dispat
   PROTECT(out);
 
   slice_names(out, x, index);
-  out = vec_restore(out, x, index);
+  out = vec_restore(out, to, index);
 
   UNPROTECT(1);
   return out;
@@ -136,7 +141,12 @@ static void slice_names(SEXP x, SEXP to, SEXP index) {
   UNPROTECT(2);
 }
 
-static SEXP vec_slice_impl(SEXP x, SEXP index, bool dispatch) {
+/**
+ * @param to The type to restore to. Necessary to pass it along
+ *   because `vec_slice_native()` passes a proxy but needs to restore
+ *   to the original type.
+ */
+static SEXP vec_slice_impl(SEXP x, SEXP index, SEXP to, bool dispatch) {
   if (has_dim(x)) {
     return vec_slice_fallback(x, index);
   }
@@ -155,7 +165,7 @@ static SEXP vec_slice_impl(SEXP x, SEXP index, bool dispatch) {
   case vctrs_type_character:
   case vctrs_type_raw:
   case vctrs_type_list:
-    return vec_slice_base(type, x, index, dispatch);
+    return vec_slice_base(type, x, index, to, dispatch);
 
   case vctrs_type_dataframe:
     out = PROTECT(rows_slice(x, index));
@@ -190,7 +200,7 @@ SEXP vctrs_slice(SEXP x, SEXP index, SEXP native) {
   if (*LOGICAL(native)) {
     out = vec_slice_native(x, index);
   } else {
-    out = vec_slice_impl(x, index, true);
+    out = vec_slice_impl(x, index, x, true);
   }
 
   UNPROTECT(1);
@@ -212,13 +222,12 @@ static SEXP vec_slice_native(SEXP x, SEXP index) {
   switch (vec_typeof(x)) {
   case vctrs_type_s3: {
     SEXP proxy = PROTECT(vec_proxy(x));
-    SEXP out = PROTECT(vec_slice_impl(proxy, index, false));
-    out = vec_restore(out, x, index);
-    UNPROTECT(2);
+    SEXP out = vec_slice_impl(proxy, index, x, false);
+    UNPROTECT(1);
     return out;
   }
   default:
-    return vec_slice_impl(x, index, false);
+    return vec_slice_impl(x, index, x, false);
   }
 }
 

@@ -315,6 +315,24 @@ test_that("vec_slice() doesn't call vec_restore() with S3 objects", {
   expect_error(vec_slice(foobar(list(NA)), 1), NA)
 })
 
+test_that("can vec_slice() without inflooping when restore calls math generics", {
+  scoped_global_bindings(
+    new_foobar = function(x) {
+      new_vctr(as.double(x), class = "vctrs_foobar")
+    },
+    vec_restore.vctrs_foobar = function(x, ...) {
+      abs(x)
+      sum(x)
+      mean(x)
+      is.finite(x)
+      is.infinite(x)
+      is.nan(x)
+      new_foobar(x)
+    }
+  )
+  expect_identical(new_foobar(1:10)[1:2], new_foobar(1:2))
+})
+
 
 # vec_na ------------------------------------------------------------------
 
