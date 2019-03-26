@@ -103,10 +103,9 @@ static SEXP df_slice(SEXP x, SEXP index) {
   Rf_setAttrib(out, R_NamesSymbol, nms);
 
   for (R_len_t i = 0; i < n; ++i) {
-    SEXP elt = PROTECT(VECTOR_ELT(x, i));
+    SEXP elt = VECTOR_ELT(x, i);
     SEXP sliced = vec_slice_impl(elt, index, elt, true);
     SET_VECTOR_ELT(out, i, sliced);
-    UNPROTECT(1);
   }
 
   UNPROTECT(1);
