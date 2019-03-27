@@ -291,8 +291,8 @@ SEXP vctrs_restore_default(SEXP x, SEXP to) {
   ++n_protect;
 
   SET_ATTRIB(x, attrib);
-  Rf_setAttrib(x, R_NamesSymbol, nms);
   Rf_setAttrib(x, R_DimSymbol, dim);
+  Rf_setAttrib(x, R_NamesSymbol, nms);
   Rf_setAttrib(x, R_DimNamesSymbol, dimnames);
 
   // SET_ATTRIB() does not set object bit when attributes include class
