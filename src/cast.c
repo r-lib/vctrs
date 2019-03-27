@@ -282,13 +282,22 @@ SEXP vctrs_restore_default(SEXP x, SEXP to) {
 
   // Remove vectorised attributes which might be incongruent after reshaping.
   // Shouldn't matter for GNU R but other R implementations might have checks.
+  // Also record class to set it later with `Rf_setAttrib()`. This restores
+  // the OBJECT bit and is likely more compatible with other implementations.
+  SEXP class = R_NilValue;
+
   {
     SEXP node = attrib;
     SEXP prev = R_NilValue;
 
     while (node != R_NilValue) {
       SEXP tag = TAG(node);
-      if (tag == R_NamesSymbol || tag == R_DimSymbol || tag == R_DimNamesSymbol) {
+
+      if (tag == R_NamesSymbol || tag == R_DimSymbol ||
+          tag == R_DimNamesSymbol || tag == R_ClassSymbol) {
+        if (tag == R_ClassSymbol) {
+          class = CAR(node);
+        }
         if (prev == R_NilValue) {
           attrib = CDR(attrib);
           node = CDR(node);
@@ -321,9 +330,8 @@ SEXP vctrs_restore_default(SEXP x, SEXP to) {
     UNPROTECT(1);
   }
 
-  // SET_ATTRIB() does not set object bit when attributes include class
-  if (OBJECT(to)) {
-    SET_OBJECT(x, true);
+  if (class != R_NilValue) {
+    Rf_setAttrib(x, R_ClassSymbol, class);
   }
 
   UNPROTECT(n_protect);
