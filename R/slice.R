@@ -5,8 +5,10 @@
 #' that matches [vec_size()] instead of `length()`.
 #'
 #' @param x A vector
-#' @param i An integer or character vector specifying the positions or
+#' @param i An integer, character or logical vector specifying the positions or
 #'   names of the observations to get/set.
+#'   Specify `TRUE` to index all elements (as in `x[]`), or `NULL`, `FALSE` or
+#'   `integer()` to index none (as in `x[NULL]`).
 #' @param value Replacement values.
 #'
 #' @details
@@ -34,7 +36,7 @@
 #' x
 #'
 #' vec_slice(mtcars, 1:3)
-vec_slice <- function(x, i = NULL) {
+vec_slice <- function(x, i) {
   .Call(vctrs_slice, x, i, FALSE)
 }
 
@@ -61,7 +63,7 @@ vec_slice_native <- function(x, i) {
 
 #' @export
 #' @rdname vec_slice
-`vec_slice<-` <- function(x, i = NULL, value) {
+`vec_slice<-` <- function(x, i, value) {
   if (is_null(x)) {
     return(x)
   }

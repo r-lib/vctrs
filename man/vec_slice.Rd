@@ -5,15 +5,17 @@
 \alias{vec_slice<-}
 \title{Get or set observations in a vector}
 \usage{
-vec_slice(x, i = NULL)
+vec_slice(x, i)
 
-vec_slice(x, i = NULL) <- value
+vec_slice(x, i) <- value
 }
 \arguments{
 \item{x}{A vector}
 
-\item{i}{An integer or character vector specifying the positions or
-names of the observations to get/set.}
+\item{i}{An integer, character or logical vector specifying the positions or
+names of the observations to get/set.
+Specify \code{TRUE} to index all elements (as in \code{x[]}), or \code{NULL}, \code{FALSE} or
+\code{integer()} to index none (as in \code{x[NULL]}).}
 
 \item{value}{Replacement values.}
 }
