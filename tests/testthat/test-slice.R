@@ -26,16 +26,19 @@ test_that("can subset with missing indices", {
 test_that("can subset with a recycled NA", {
   expect_identical(vec_slice(1:3, NA), int(NA, NA, NA))
   expect_identical(vec_slice(mtcars, NA), unrownames(mtcars[NA, ]))
+  expect_identical(vec_slice(new_vctr(1:3), NA), new_vctr(int(NA, NA, NA)))
 })
 
 test_that("can subset with a recycled TRUE", {
   expect_identical(vec_slice(1:3, TRUE), 1:3)
   expect_identical(vec_slice(mtcars, TRUE), unrownames(mtcars))
+  expect_identical(vec_slice(new_vctr(1:3), TRUE), new_vctr(1:3))
 })
 
 test_that("can subset with a recycled FALSE", {
   expect_identical(vec_slice(1:3, FALSE), int())
   expect_identical(vec_slice(mtcars, FALSE), unrownames(mtcars[NULL, ]))
+  expect_identical(vec_slice(new_vctr(1:3), FALSE), new_vctr(integer()))
 })
 
 test_that("can't index beyond the end of a vector", {
@@ -167,19 +170,6 @@ test_that("can't slice with missing argument", {
   expect_error(vec_slice(new_vctr(1:3)))
 })
 
-test_that("can slice with TRUE argument", {
-  expect_identical(vec_slice(1:3, TRUE), 1:3)
-  # Row names are stripped!
-  expect_identical(vec_slice(iris, TRUE), iris)
-  expect_identical(vec_slice(new_vctr(1:3), TRUE), new_vctr(1:3))
-})
-
-test_that("can slice with FALSE argument", {
-  expect_identical(vec_slice(1:3, FALSE), integer())
-  expect_identical(vec_slice(iris, FALSE), iris[0, ])
-  expect_identical(vec_slice(new_vctr(1:3), FALSE), new_vctr(integer()))
-})
-
 test_that("can slice with NULL argument", {
   expect_identical(vec_slice(1:3, NULL), integer())
   expect_identical(vec_slice(iris, NULL), iris[0, ])
@@ -191,17 +181,21 @@ test_that("can't modify subset with missing argument", {
   expect_error(vec_slice(x, ) <- 2L)
 })
 
-test_that("can modify subset with TRUE argument", {
+test_that("can modify subset with recycled NA argument", {
+  x <- 1:3
+  vec_slice(x, NA) <- 2L
+  expect_identical(x, 1:3)
+})
+
+test_that("can modify subset with recycled TRUE argument", {
   x <- 1:3
   vec_slice(x, TRUE) <- 2L
-
   expect_identical(x, rep(2L, 3))
 })
 
-test_that("can modify subset with FALSE argument", {
+test_that("can modify subset with recycled FALSE argument", {
   x <- 1:3
   vec_slice(x, FALSE) <- 2L
-
   expect_identical(x, 1:3)
 })
 
