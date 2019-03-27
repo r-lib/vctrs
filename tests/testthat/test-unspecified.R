@@ -34,3 +34,21 @@ test_that("subsetting works", {
 test_that("has useful print method", {
   expect_known_output(unspecified(), print = TRUE, file = test_path("test-unspecified.txt"))
 })
+
+test_that("can finalise data frame containing unspecified columns", {
+  df <- data.frame(y = NA, x = c(1, 2, NA))
+
+  ptype <- vec_type(df)
+  expect_identical(ptype$y, unspecified())
+
+  finalised <- vec_type_finalise(ptype)
+  expect_identical(finalised$y, lgl())
+
+  common <- vec_type_common(df, df)
+  expect_identical(common$y, lgl())
+})
+
+test_that("can cast to common type data frame containing unspecified columns", {
+  df <- data.frame(y = NA, x = c(1, 2, NA))
+  expect_identical(vec_cast_common(df, df), list(df, df))
+})
