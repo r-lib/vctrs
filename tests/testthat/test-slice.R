@@ -161,17 +161,55 @@ test_that("ignores NA in integer subsetting", {
   expect_equal(`vec_slice<-`(x, c(NA, 2:3), c(NA, 2:1)), c(0, 2, 1))
 })
 
-test_that("can slice with missing argument", {
-  expect_identical(vec_slice(1:3), 1:3)
-  expect_identical(vec_slice(mtcars), mtcars)
-  expect_identical(vec_slice(new_vctr(1:3)), new_vctr(1:3))
+test_that("can't slice with missing argument", {
+  expect_error(vec_slice(1:3))
+  expect_error(vec_slice(mtcars))
+  expect_error(vec_slice(new_vctr(1:3)))
 })
 
-test_that("can modify subset with missing argument", {
+test_that("can slice with TRUE argument", {
+  expect_identical(vec_slice(1:3, TRUE), 1:3)
+  # Row names are stripped!
+  expect_identical(vec_slice(iris, TRUE), iris)
+  expect_identical(vec_slice(new_vctr(1:3), TRUE), new_vctr(1:3))
+})
+
+test_that("can slice with FALSE argument", {
+  expect_identical(vec_slice(1:3, FALSE), integer())
+  expect_identical(vec_slice(iris, FALSE), iris[0, ])
+  expect_identical(vec_slice(new_vctr(1:3), FALSE), new_vctr(integer()))
+})
+
+test_that("can slice with NULL argument", {
+  expect_identical(vec_slice(1:3, NULL), integer())
+  expect_identical(vec_slice(iris, NULL), iris[0, ])
+  expect_identical(vec_slice(new_vctr(1:3), NULL), new_vctr(integer()))
+})
+
+test_that("can't modify subset with missing argument", {
   x <- 1:3
-  vec_slice(x, ) <- 2L
+  expect_error(vec_slice(x, ) <- 2L)
+})
+
+test_that("can modify subset with TRUE argument", {
+  x <- 1:3
+  vec_slice(x, TRUE) <- 2L
 
   expect_identical(x, rep(2L, 3))
+})
+
+test_that("can modify subset with FALSE argument", {
+  x <- 1:3
+  vec_slice(x, FALSE) <- 2L
+
+  expect_identical(x, 1:3)
+})
+
+test_that("can modify subset with NULL argument", {
+  x <- 1:3
+  vec_slice(x, NULL) <- 2L
+
+  expect_identical(x, 1:3)
 })
 
 test_that("slicing unclassed structures preserves attributes", {
