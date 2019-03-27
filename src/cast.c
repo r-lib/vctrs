@@ -280,24 +280,58 @@ SEXP vctrs_restore_default(SEXP x, SEXP to) {
     ++n_protect;
   }
 
-  // Copy attributes but keep names and dims
-  SEXP nms = PROTECT(Rf_getAttrib(x, R_NamesSymbol));
-  ++n_protect;
+  // Remove vectorised attributes which might be incongruent after reshaping.
+  // Shouldn't matter for GNU R but other R implementations might have checks.
+  // Also record class to set it later with `Rf_setAttrib()`. This restores
+  // the OBJECT bit and is likely more compatible with other implementations.
+  SEXP class = R_NilValue;
 
+  {
+    SEXP node = attrib;
+    SEXP prev = R_NilValue;
+
+    while (node != R_NilValue) {
+      SEXP tag = TAG(node);
+
+      if (tag == R_NamesSymbol || tag == R_DimSymbol ||
+          tag == R_DimNamesSymbol || tag == R_ClassSymbol) {
+        if (tag == R_ClassSymbol) {
+          class = CAR(node);
+        }
+        if (prev == R_NilValue) {
+          attrib = CDR(attrib);
+          node = CDR(node);
+          continue;
+        }
+
+        SETCDR(prev, CDR(node));
+      }
+
+      prev = node;
+      node = CDR(node);
+    }
+  }
+
+  // Copy attributes but keep names and dims. Don't restore names for
+  // shaped objects since those are generated from dimnames.
   SEXP dim = PROTECT(Rf_getAttrib(x, R_DimSymbol));
   ++n_protect;
 
-  SEXP dimnames = PROTECT(Rf_getAttrib(x, R_DimNamesSymbol));
-  ++n_protect;
+  if (dim == R_NilValue) {
+    SEXP nms = PROTECT(Rf_getAttrib(x, R_NamesSymbol));
+    SET_ATTRIB(x, attrib);
+    Rf_setAttrib(x, R_NamesSymbol, nms);
+    UNPROTECT(1);
+  } else {
+    SEXP dimnames = PROTECT(Rf_getAttrib(x, R_DimNamesSymbol));
+    SET_ATTRIB(x, attrib);
+    Rf_setAttrib(x, R_DimSymbol, dim);
+    Rf_setAttrib(x, R_DimNamesSymbol, dimnames);
+    UNPROTECT(1);
+  }
 
-  SET_ATTRIB(x, attrib);
-  Rf_setAttrib(x, R_NamesSymbol, nms);
-  Rf_setAttrib(x, R_DimSymbol, dim);
-  Rf_setAttrib(x, R_DimNamesSymbol, dimnames);
-
-  // SET_ATTRIB() does not set object bit when attributes include class
-  if (OBJECT(to)) {
-    SET_OBJECT(x, true);
+  if (class != R_NilValue) {
+    Rf_setAttrib(x, R_ClassSymbol, class);
   }
 
   UNPROTECT(n_protect);

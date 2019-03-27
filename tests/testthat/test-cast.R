@@ -207,3 +207,16 @@ test_that("dimensions are preserved by default restore method", {
 
   expect_identical(vec_slice(x, 1), exp)
 })
+
+test_that("names attribute isn't set when restoring 1D arrays using 2D+ objects", {
+  x <- foobar(1:2)
+  dim(x) <- c(2)
+  nms <- c("foo", "bar")
+  dimnames(x) <- list(nms)
+
+  res <- vec_restore(x, matrix(1))
+
+  expect_null(attributes(res)$names)
+  expect_equal(attr(res, "names"), nms)
+  expect_equal(names(res), nms)
+})
