@@ -280,6 +280,29 @@ SEXP vctrs_restore_default(SEXP x, SEXP to) {
     ++n_protect;
   }
 
+  // Remove vectorised attributes which might be incongruent after reshaping.
+  // Shouldn't matter for GNU R but other R implementations might have checks.
+  {
+    SEXP node = attrib;
+    SEXP prev = R_NilValue;
+
+    while (node != R_NilValue) {
+      SEXP tag = TAG(node);
+      if (tag == R_NamesSymbol || tag == R_DimSymbol || tag == R_DimNamesSymbol) {
+        if (prev == R_NilValue) {
+          attrib = CDR(attrib);
+          node = CDR(node);
+          continue;
+        }
+
+        SETCDR(prev, CDR(node));
+      }
+
+      prev = node;
+      node = CDR(node);
+    }
+  }
+
   // Copy attributes but keep names and dims
   SEXP nms = PROTECT(Rf_getAttrib(x, R_NamesSymbol));
   ++n_protect;
