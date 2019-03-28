@@ -48,6 +48,7 @@ testing easier.
 
 By default, lossy casts are an error. Use
 \code{suppress_errors_lossy_cast()} to silence these errors and continue
-with the partial results. The lost values are typically set to \code{NA}.
+with the partial results. The lost values may be set to \code{NA} or to
+a lower value resolution, depending on the type of cast.
 }
 \keyword{internal}

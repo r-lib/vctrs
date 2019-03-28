@@ -249,7 +249,23 @@ If a cast is possible in general (i.e. double -> integer), but information is lo
 vec_cast(c(1.5, 2), integer())
 ```
 
-You can suppress the lossy cast errors with `suppress_error`
+You can suppress the lossy cast errors with `suppress_errors_lossy_cast()`:
+
+```{r}
+suppress_errors_lossy_cast(
+  vec_cast(c(1.5, 2), integer())
+)
+```
+
+This will suppress all lossy cast errors. Supply prototypes if you want to be specific about the type of lossy cast allowed:
+
+```{r}
+suppress_errors_lossy_cast(
+  vec_cast(c(1.5, 2), integer()),
+  x_ptype = double(),
+  to_ptype = integer()
+)
+```
 
 The set of casts is more permissive than the set of coercions and is summarised in the diagram below. Coercions are shown by arrows; possible casts are shown with circles.
 

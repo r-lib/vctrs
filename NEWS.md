@@ -1,5 +1,9 @@
 # vctrs 0.1.0.9000
 
+* Lossy casts now throw errors of type `vctrs_error_cast_lossy`.  You
+  can suppress these errors selectively with
+  `suppress_errors_lossy_cast()` to get the partial cast results
+
 * New `vec_proxy()` generic. This is the main customisation point in
   vctrs along with `vec_restore()`. You should only implement it when
   your type is designed around a non-vector class (atomic vectors,
