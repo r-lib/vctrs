@@ -126,7 +126,11 @@ vec_cast.factor.factor <- function(x, to) {
     out <- factor(x, levels = levels(to), ordered = is.ordered(to))
 
     if (any(lossy)) {
-      stop_lossy_cast(x, to, out, locations = which(lossy))
+      stop_lossy_cast(
+        x, to, out,
+        locations = which(lossy),
+        .subclass = "vctrs_error_cast_lossy_factor"
+      )
     }
 
     out

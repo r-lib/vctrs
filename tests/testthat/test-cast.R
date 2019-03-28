@@ -220,3 +220,11 @@ test_that("names attribute isn't set when restoring 1D arrays using 2D+ objects"
   expect_equal(attr(res, "names"), nms)
   expect_equal(names(res), nms)
 })
+
+# Conditions --------------------------------------------------------------
+
+test_that("can suppress cast errors selectively", {
+  expect_error(regexp = NA, suppress_errors_lossy_cast(vec_cast(factor("a"), factor("b"))))
+  expect_error(regexp = NA, suppress_errors_lossy_cast(vec_cast(factor("a"), factor("b")), "vctrs_error_cast_lossy_factor"))
+  expect_error(suppress_errors_lossy_cast(vec_cast(factor("a"), factor("b")), "other"), class = "vctrs_error_cast_lossy_factor")
+})

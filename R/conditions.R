@@ -137,10 +137,12 @@ stop_lossy_cast <- function(x, y, result,
 }
 #' @rdname vctrs-conditions
 #' @export
-suppress_errors_lossy_cast <- function(expr) {
+suppress_errors_lossy_cast <- function(expr, subclass = NULL) {
   withCallingHandlers(
     vctrs_error_cast_lossy = function(err) {
-      invokeRestart("vctrs_restart_error_cast_lossy", err$result)
+      if (is_null(subclass) || inherits_any(err, subclass)) {
+        invokeRestart("vctrs_restart_error_cast_lossy", err$result)
+      }
     },
     expr
   )

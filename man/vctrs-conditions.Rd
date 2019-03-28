@@ -25,7 +25,7 @@ warn_lossy_cast(x, y, locations = NULL, details = NULL, ...,
 stop_lossy_cast(x, y, result, locations = NULL, details = NULL, ...,
   message = NULL, .subclass = NULL)
 
-suppress_errors_lossy_cast(expr)
+suppress_errors_lossy_cast(expr, subclass = NULL)
 }
 \arguments{
 \item{x, y}{Vectors}

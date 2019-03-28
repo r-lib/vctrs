@@ -79,10 +79,10 @@ test_that("lossy factor casts fail", {
   fa <- factor("a")
   fb <- factor("b")
 
-  expect_error(vec_cast(fa, fb), class = "vctrs_error_cast_lossy")
-  expect_error(vec_cast("a", fb), class = "vctrs_error_cast_lossy")
+  expect_error(vec_cast(fa, fb), class = "vctrs_error_cast_lossy_factor")
+  expect_error(vec_cast("a", fb), class = "vctrs_error_cast_lossy_factor")
 
-  out <- suppress_errors_lossy_cast(vec_cast(fa, fb))
+  out <- suppress_errors_lossy_cast(vec_cast(fa, fb), "vctrs_error_cast_lossy_factor")
   expect_identical(out, factor(NA, levels = "b"))
 })
 
