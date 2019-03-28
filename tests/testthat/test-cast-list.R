@@ -12,8 +12,8 @@ test_that("elements of length 0 become NA without error", {
 
 test_that("elements of length >1 are truncated with error", {
   x <- list(1, c(2, 1), c(3, 2, 1))
-  expect_lossy(vec_list_cast(x, dbl()), dbl(1, 2, 3), list(), dbl())
+  expect_lossy(vec_list_cast(x, dbl()), dbl(1, 2, 3), x = list(), to = dbl())
 
   x <- list(c(2, 1), c(3, 2, 1))
-  expect_lossy(vec_list_cast(x, dbl()), dbl(2, 3), list(), dbl())
+  expect_lossy(vec_list_cast(x, dbl()), dbl(2, 3), x = list(), to = dbl())
 })

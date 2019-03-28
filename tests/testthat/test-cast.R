@@ -30,12 +30,12 @@ test_that("safe casts work as expected", {
 })
 
 test_that("lossy casts generate warning", {
-  expect_condition(vec_cast(c(2L, 1L), logical()), class = "vctrs_warning_cast_lossy")
-  expect_condition(vec_cast(c(2, 1), logical()), class = "vctrs_warning_cast_lossy")
-  expect_condition(vec_cast(c("x", "TRUE"), logical()), class = "vctrs_warning_cast_lossy")
-  expect_error(vec_cast(list(c(TRUE, FALSE), TRUE), logical()), class = "vctrs_error_cast_lossy")
-  expect_condition(vec_cast(c("t", "T"), logical()), class = "vctrs_warning_cast_lossy")
-  expect_condition(vec_cast(c("f", "F"), logical()), class = "vctrs_warning_cast_lossy")
+  expect_lossy(vec_cast(int(2L, 1L), lgl()),                lgl(TRUE, TRUE), x = int(),  to = lgl())
+  expect_lossy(vec_cast(dbl(2, 1), lgl()),                  lgl(TRUE, TRUE), x = dbl(),  to = lgl())
+  expect_lossy(vec_cast(chr("x", "TRUE"), lgl()),           lgl(NA, TRUE),   x = chr(),  to = lgl())
+  expect_lossy(vec_cast(chr("t", "T"), lgl()),              lgl(NA, TRUE),   x = chr(),  to = lgl())
+  expect_lossy(vec_cast(chr("f", "F"), lgl()),              lgl(NA, FALSE),  x = chr(),  to = lgl())
+  expect_lossy(vec_cast(list(c(TRUE, FALSE), TRUE), lgl()), lgl(TRUE, TRUE), x = list(), to = lgl())
 })
 
 test_that("invalid casts generate error", {
@@ -63,15 +63,12 @@ test_that("safe casts work as expected", {
   expect_equal(vec_cast(list(1L, 2L), integer()), int(1L, 2L))
 })
 
-test_that("lossy casts generate warning", {
-  expect_condition(vec_cast(c(2.5, 2), integer()), class = "vctrs_warning_cast_lossy")
-  expect_condition(vec_cast(c("2.5", "2"), integer()), class = "vctrs_warning_cast_lossy")
+test_that("lossy casts generate error", {
+  expect_lossy(vec_cast(c(2.5, 2), int()),     int(2, 2), x = dbl(), to = int())
+  expect_lossy(vec_cast(c("2.5", "2"), int()), int(2, 2), x = chr(), to = int())
 
-  out <- expect_lossy_cast(vec_cast(c(.Machine$integer.max + 1, 1), int()))
-  expect_identical(out, int(NA, 1L))
-
-  out <- expect_lossy_cast(vec_cast(c(-.Machine$integer.max - 1, 1), int()))
-  expect_identical(out, int(NA, 1L))
+  expect_lossy(vec_cast(c(.Machine$integer.max + 1, 1), int()),  int(NA, 1L), x = dbl(), to = int())
+  expect_lossy(vec_cast(c(-.Machine$integer.max - 1, 1), int()), int(NA, 1L), x = dbl(), to = int())
 })
 
 test_that("invalid casts generate error", {
@@ -90,7 +87,7 @@ test_that("safe casts work as expected", {
 })
 
 test_that("lossy casts generate warning", {
-  expect_condition(vec_cast(c("2.5", "x"), double()), class = "vctrs_warning_cast_lossy")
+  expect_lossy(vec_cast(c("2.5", "x"), dbl()), dbl(2.5, NA), x = chr(), to = dbl())
 })
 
 test_that("invalid casts generate error", {

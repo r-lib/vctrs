@@ -169,23 +169,26 @@ vec_cast.logical.logical <- function(x, to) {
 #' @export
 #' @method vec_cast.logical integer
 vec_cast.logical.integer <- function(x, to) {
-  report_lossy_cast(x, to, !x %in% c(0L, 1L))
-  x <- vec_coerce_bare(x, "logical")
-  shape_broadcast(x, to)
+  out <- vec_coerce_bare(x, "logical")
+  out <- shape_broadcast(out, to)
+  lossy <- !x %in% c(0L, 1L)
+  maybe_lossy_cast(out, x, to, lossy)
 }
 #' @export
 #' @method vec_cast.logical double
 vec_cast.logical.double <- function(x, to) {
-  report_lossy_cast(x, to, !x %in% c(0, 1))
-  x <- vec_coerce_bare(x, "logical")
-  shape_broadcast(x, to)
+  out <- vec_coerce_bare(x, "logical")
+  out <- shape_broadcast(out, to)
+  lossy <- !x %in% c(0, 1)
+  maybe_lossy_cast(out, x, to, lossy)
 }
 #' @export
 #' @method vec_cast.logical character
 vec_cast.logical.character <- function(x, to) {
-  report_lossy_cast(x, to, !x %in% c("T", "F", "TRUE", "FALSE", "true", "false"))
-  x <- vec_coerce_bare(x, "logical")
-  shape_broadcast(x, to)
+  out <- vec_coerce_bare(x, "logical")
+  out <- shape_broadcast(out, to)
+  lossy <- !x %in% c("T", "F", "TRUE", "FALSE", "true", "false")
+  maybe_lossy_cast(out, x, to, lossy)
 }
 #' @export
 #' @method vec_cast.logical list
@@ -220,9 +223,9 @@ vec_cast.integer.integer <- function(x, to) {
 #' @method vec_cast.integer double
 vec_cast.integer.double <- function(x, to) {
   out <- suppressWarnings(vec_coerce_bare(x, "integer"))
-  report_lossy_cast(x, to, (out != x) | xor(is.na(x), is.na(out)))
-
-  shape_broadcast(out, to)
+  lossy <- (out != x) | xor(is.na(x), is.na(out))
+  out <- shape_broadcast(out, to)
+  maybe_lossy_cast(out, x, to, lossy)
 }
 #' @export
 #' @method vec_cast.integer character
@@ -258,9 +261,9 @@ vec_cast.double.integer <- vec_cast.double.logical
 #' @method vec_cast.double character
 vec_cast.double.character <- function(x, to) {
   out <- suppressWarnings(vec_coerce_bare(x, "double"))
-  report_lossy_cast(x, to, (out != x) | xor(is.na(x), is.na(out)))
-
-  shape_broadcast(out, to)
+  lossy <- (out != x) | xor(is.na(x), is.na(out))
+  out <- shape_broadcast(out, to)
+  maybe_lossy_cast(out, x, to, lossy)
 }
 #' @export
 #' @method vec_cast.double double
@@ -391,6 +394,6 @@ maybe_lossy_cast <- function(result, x, y, lossy, ...) {
 
 lossy_floor <- function(x, to) {
   x_floor <- floor(x)
-  report_lossy_cast(x, to, x != x_floor)
-  x_floor
+  lossy <- x != x_floor
+  maybe_lossy_cast(x_floor, x, to, lossy)
 }

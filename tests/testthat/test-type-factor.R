@@ -79,8 +79,8 @@ test_that("lossy factor casts fail", {
   fa <- factor("a")
   fb <- factor("b")
 
-  expect_lossy(vec_cast(fa, fb), factor(NA, levels = "b"), fa, fb)
-  expect_lossy(vec_cast("a", fb), factor(NA, levels = "b"), chr(), fb)
+  expect_lossy(vec_cast(fa, fb), factor(NA, levels = "b"), x = fa, to = fb)
+  expect_lossy(vec_cast("a", fb), factor(NA, levels = "b"), x = chr(), to = fb)
 })
 
 test_that("invalid casts generate error", {
