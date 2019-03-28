@@ -33,7 +33,7 @@ test_that("lossy casts generate warning", {
   expect_condition(vec_cast(c(2L, 1L), logical()), class = "vctrs_warning_cast_lossy")
   expect_condition(vec_cast(c(2, 1), logical()), class = "vctrs_warning_cast_lossy")
   expect_condition(vec_cast(c("x", "TRUE"), logical()), class = "vctrs_warning_cast_lossy")
-  expect_condition(vec_cast(list(c(TRUE, FALSE), TRUE), logical()), class = "vctrs_warning_cast_lossy")
+  expect_error(vec_cast(list(c(TRUE, FALSE), TRUE), logical()), class = "vctrs_error_cast_lossy_list")
   expect_condition(vec_cast(c("t", "T"), logical()), class = "vctrs_warning_cast_lossy")
   expect_condition(vec_cast(c("f", "F"), logical()), class = "vctrs_warning_cast_lossy")
 })

@@ -381,6 +381,20 @@ report_lossy_cast <- function(x, y, lossy, details = NULL) {
   }
 }
 
+maybe_lossy_cast <- function(result, x, y, lossy, details = NULL, ...) {
+  if (all(lossy)) {
+    stop_incompatible_cast(
+      x, y,
+      details = "All elements of vectorised cast failed"
+    )
+  }
+  if (any(lossy)) {
+    stop_lossy_cast(x, y, result, locations = which(lossy), details = details, ...)
+  } else {
+    result
+  }
+}
+
 lossy_floor <- function(x, to) {
   x_floor <- floor(x)
   report_lossy_cast(x, to, x != x_floor)
