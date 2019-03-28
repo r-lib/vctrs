@@ -382,12 +382,6 @@ report_lossy_cast <- function(x, y, lossy, details = NULL) {
 }
 
 maybe_lossy_cast <- function(result, x, y, lossy, ...) {
-  if (all(lossy)) {
-    stop_incompatible_cast(
-      x, y,
-      details = "All elements of vectorised cast failed"
-    )
-  }
   if (any(lossy)) {
     stop_lossy_cast(x, y, result, locations = which(lossy), ...)
   } else {
