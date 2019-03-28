@@ -57,3 +57,9 @@ test_that("unspecified vectors are always unspecified (#222)", {
   expect_true(is_unspecified(unspecified()))
   expect_true(is_unspecified(unspecified(1)))
 })
+
+test_that("S3 vectors and shaped vectors are never unspecified", {
+  expect_false(is_unspecified(foobar(NA)))
+  expect_false(is_unspecified(foobar(lgl(NA, NA))))
+  expect_false(is_unspecified(matrix(NA, 2)))
+})
