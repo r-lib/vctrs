@@ -124,16 +124,7 @@ vec_cast.factor.factor <- function(x, to) {
   } else {
     lossy <- !(x %in% levels(to) | is.na(x))
     out <- factor(x, levels = levels(to), ordered = is.ordered(to))
-
-    if (any(lossy)) {
-      stop_lossy_cast(
-        x, to, out,
-        locations = which(lossy),
-        .subclass = "vctrs_error_cast_lossy_factor"
-      )
-    } else {
-      out
-    }
+    maybe_lossy_cast(out, x, to, lossy)
   }
 }
 #' @export
