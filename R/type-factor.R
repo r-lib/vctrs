@@ -131,9 +131,9 @@ vec_cast.factor.factor <- function(x, to) {
         locations = which(lossy),
         .subclass = "vctrs_error_cast_lossy_factor"
       )
+    } else {
+      out
     }
-
-    out
   }
 }
 #' @export

@@ -228,3 +228,14 @@ test_that("can suppress cast errors selectively", {
   expect_error(regexp = NA, suppress_errors_lossy_cast(vec_cast(factor("a"), factor("b")), "vctrs_error_cast_lossy_factor"))
   expect_error(suppress_errors_lossy_cast(vec_cast(factor("a"), factor("b")), "other"), class = "vctrs_error_cast_lossy_factor")
 })
+
+test_that("can recover with a custom value", {
+  rst <- function(err) {
+    invokeRestart("vctrs_restart_error_cast_lossy", "foo")
+  }
+  out <- with_handlers(
+    vctrs_error_cast_lossy = calling(rst),
+    vec_cast(factor("a"), factor("b"))
+  )
+  expect_identical(out, "foo")
+})
