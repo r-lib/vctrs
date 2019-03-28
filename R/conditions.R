@@ -136,13 +136,20 @@ stop_lossy_cast <- function(x, y, result,
   )
 }
 #' @rdname vctrs-conditions
+#' @param x_ptype,to_ptype Suppress only the casting errors where `x`
+#'   or `to` match these [prototypes][vec_type].
 #' @export
-suppress_errors_lossy_cast <- function(expr, subclass = NULL) {
+suppress_errors_lossy_cast <- function(expr, x_ptype = NULL, to_ptype = NULL) {
   withCallingHandlers(
     vctrs_error_cast_lossy = function(err) {
-      if (is_null(subclass) || inherits_any(err, subclass)) {
-        invokeRestart("vctrs_restart_error_cast_lossy", err$result)
+      if (!is_null(x_ptype) && !vec_is(err$x, x_ptype)) {
+        return()
       }
+      if (!is_null(to_ptype) && !vec_is(err$y, to_ptype)) {
+        return()
+      }
+
+      invokeRestart("vctrs_restart_error_cast_lossy", err$result)
     },
     expr
   )

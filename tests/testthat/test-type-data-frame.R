@@ -82,7 +82,7 @@ test_that("warn about lossy coercions", {
   expect_error(vec_cast(df1, df1[1]), class = "vctrs_error_cast_lossy_df_dropped")
   expect_warning(vec_cast(df2, df1), class = "vctrs_warning_cast_lossy")
 
-  out <- suppress_errors_lossy_cast(vec_cast(df1, df1[1]), "vctrs_error_cast_lossy_df_dropped")
+  out <- suppress_errors_lossy_cast(vec_cast(df1, df1[1]), df1)
   expect_identical(out, df1[1])
 
   out <- expect_warning(

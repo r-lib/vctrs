@@ -30,11 +30,5 @@ vec_list_cast <- function(x, to) {
     out <- shape_broadcast(out, to)
   }
 
-  maybe_lossy_cast(
-    result = out,
-    x = x,
-    y = to,
-    lossy = !ns %in% c(0L, 1L),
-    type = "list"
-  )
+  maybe_lossy_cast(out, x, to, lossy = !ns %in% c(0L, 1L))
 }

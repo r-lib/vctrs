@@ -25,7 +25,7 @@ warn_lossy_cast(x, y, locations = NULL, details = NULL, ...,
 stop_lossy_cast(x, y, result, locations = NULL, details = NULL, ...,
   message = NULL, .subclass = NULL)
 
-suppress_errors_lossy_cast(expr, subclass = NULL)
+suppress_errors_lossy_cast(expr, x_ptype = NULL, to_ptype = NULL)
 }
 \arguments{
 \item{x, y}{Vectors}
@@ -38,6 +38,9 @@ suppress_errors_lossy_cast(expr, subclass = NULL)
 locations where \code{x} lost information.}
 
 \item{result}{The result of a lossy cast.}
+
+\item{x_ptype, to_ptype}{Suppress only the casting errors where \code{x}
+or \code{to} match these \link[=vec_type]{prototypes}.}
 
 \item{subclass}{Use if you want to further customise the class}
 }

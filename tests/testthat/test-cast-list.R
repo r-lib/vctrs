@@ -12,7 +12,7 @@ test_that("elements of length 0 become NA without error", {
 
 test_that("elements of length >1 are truncated with error", {
   x <- list(1, c(2, 1), c(3, 2, 1))
-  expect_error(vec_list_cast(x, double()), class = "vctrs_error_cast_lossy_list")
+  expect_error(vec_list_cast(x, double()), class = "vctrs_error_cast_lossy")
 
   out <- suppress_errors_lossy_cast(vec_list_cast(x, double()))
   expect_equal(out, c(1, 2, 3))

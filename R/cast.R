@@ -381,7 +381,7 @@ report_lossy_cast <- function(x, y, lossy, details = NULL) {
   }
 }
 
-maybe_lossy_cast <- function(result, x, y, lossy, type, ...) {
+maybe_lossy_cast <- function(result, x, y, lossy, ...) {
   if (all(lossy)) {
     stop_incompatible_cast(
       x, y,
@@ -389,8 +389,7 @@ maybe_lossy_cast <- function(result, x, y, lossy, type, ...) {
     )
   }
   if (any(lossy)) {
-    subclass <- paste0("vctrs_error_cast_lossy_", type)
-    stop_lossy_cast(x, y, result, locations = which(lossy), .subclass = subclass, ...)
+    stop_lossy_cast(x, y, result, locations = which(lossy), ...)
   } else {
     result
   }

@@ -33,7 +33,7 @@ test_that("lossy casts generate warning", {
   expect_condition(vec_cast(c(2L, 1L), logical()), class = "vctrs_warning_cast_lossy")
   expect_condition(vec_cast(c(2, 1), logical()), class = "vctrs_warning_cast_lossy")
   expect_condition(vec_cast(c("x", "TRUE"), logical()), class = "vctrs_warning_cast_lossy")
-  expect_error(vec_cast(list(c(TRUE, FALSE), TRUE), logical()), class = "vctrs_error_cast_lossy_list")
+  expect_error(vec_cast(list(c(TRUE, FALSE), TRUE), logical()), class = "vctrs_error_cast_lossy")
   expect_condition(vec_cast(c("t", "T"), logical()), class = "vctrs_warning_cast_lossy")
   expect_condition(vec_cast(c("f", "F"), logical()), class = "vctrs_warning_cast_lossy")
 })
@@ -224,9 +224,14 @@ test_that("names attribute isn't set when restoring 1D arrays using 2D+ objects"
 # Conditions --------------------------------------------------------------
 
 test_that("can suppress cast errors selectively", {
-  expect_error(regexp = NA, suppress_errors_lossy_cast(vec_cast(factor("a"), factor("b"))))
-  expect_error(regexp = NA, suppress_errors_lossy_cast(vec_cast(factor("a"), factor("b")), "vctrs_error_cast_lossy_factor"))
-  expect_error(suppress_errors_lossy_cast(vec_cast(factor("a"), factor("b")), "other"), class = "vctrs_error_cast_lossy_factor")
+  f <- function() vec_cast(factor("a"), to = factor("b"))
+  expect_error(regexp = NA, suppress_errors_lossy_cast(f()))
+  expect_error(regexp = NA, suppress_errors_lossy_cast(f(), x_ptype = factor("a")))
+  expect_error(regexp = NA, suppress_errors_lossy_cast(f(), to_ptype = factor("b")))
+  expect_error(regexp = NA, suppress_errors_lossy_cast(f(), x_ptype = factor("a"), to_ptype = factor("b")))
+  expect_error(suppress_errors_lossy_cast(f(), x_ptype = factor("c")), class = "vctrs_error_cast_lossy")
+  expect_error(suppress_errors_lossy_cast(f(), x_ptype = factor("b"), to_ptype = factor("a")), class = "vctrs_error_cast_lossy")
+  expect_error(suppress_errors_lossy_cast(f(), x_ptype = factor("a"), to_ptype = factor("c")), class = "vctrs_error_cast_lossy")
 })
 
 test_that("can recover with a custom value", {
