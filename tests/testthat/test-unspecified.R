@@ -52,3 +52,8 @@ test_that("can cast to common type data frame containing unspecified columns", {
   df <- data.frame(y = NA, x = c(1, 2, NA))
   expect_identical(vec_cast_common(df, df), list(df, df))
 })
+
+test_that("unspecified vectors are always unspecified (#222)", {
+  expect_true(is_unspecified(unspecified()))
+  expect_true(is_unspecified(unspecified(1)))
+})

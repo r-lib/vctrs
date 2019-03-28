@@ -18,10 +18,11 @@ test_that("casting of integer64 works", {
 
   expect_equal(vec_cast(NA, bit64::integer64()), bit64::as.integer64(NA))
 
-  expect_error(vec_cast(x, factor()))
-  expect_error(vec_cast(factor(), x))
-  expect_error(vec_cast(unspecified(), x))
-  expect_error(vec_cast(x, unspecified()))
+  expect_error(vec_cast(x, unspecified()), class = "vctrs_error_incompatible_cast")
+  expect_equal(vec_cast(unspecified(), x), bit64::as.integer64(NULL))
+
+  expect_error(vec_cast(x, factor()), class = "vctrs_error_incompatible_cast")
+  expect_error(vec_cast(factor(), x), class = "vctrs_error_incompatible_cast")
 })
 
 test_that("vec_type2 for integer64 works", {
