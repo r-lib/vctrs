@@ -243,9 +243,9 @@ vec_cast(c(1, 2), integer())
 vec_cast(c(1.5, 2.5), factor("a"))
 ```
 
-If a cast is possible in general (i.e. double -> integer), but information is lost for a specific input (e.g. 1.5 -> 1), it will generate a warning.
+If a cast is possible in general (i.e. double -> integer), but information is lost for a specific input (e.g. 1.5 -> 1), it will generate an error.
 
-```{r}
+```{r, error = TRUE}
 vec_cast(c(1.5, 2), integer())
 ```
 

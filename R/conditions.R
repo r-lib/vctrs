@@ -14,7 +14,7 @@
 #' @param result The result of a lossy cast.
 #' @param details Any additional human readable details
 #' @param subclass Use if you want to further customise the class
-#' @param locations For `warn_lossy_cast()`, an optional vector giving the
+#' @param locations For `stop_lossy_cast()`, an optional vector giving the
 #'   locations where `x` lost information.
 #' @param ...,message,.subclass Only use these fields when creating a subclass.
 #'
@@ -83,27 +83,6 @@ stop_incompatible_op <- function(op, x, y, details = NULL, ..., message = NULL, 
     ...,
     message = message,
     .subclass = c(.subclass, "vctrs_error_incompatible_op")
-  )
-}
-
-#' @rdname vctrs-conditions
-#' @export
-warn_lossy_cast <- function(x, y, locations = NULL, details = NULL, ..., message = NULL, .subclass = NULL) {
-
-  message <- message %||% glue_lines(
-    "Lossy cast from <{vec_ptype_full(x)}> to <{vec_ptype_full(y)}>.",
-    inline_list("Locations: ", locations),
-    details
-  )
-
-  warn(
-    message,
-    x = x,
-    y = y,
-    locations = locations,
-    details = details,
-    ...,
-    .subclass = c(.subclass, "vctrs_warning_cast_lossy"),
   )
 }
 

@@ -371,19 +371,6 @@ vec_cast.list.default <- function(x, to) {
 
 # Helpers -----------------------------------------------------------------
 
-# Used primarily to make base coercions a little stricter
-report_lossy_cast <- function(x, y, lossy, details = NULL) {
-  if (all(lossy)) {
-    stop_incompatible_cast(
-      x, y,
-      details = "All elements of vectorised cast failed"
-    )
-  }
-  if (any(lossy)) {
-    warn_lossy_cast(x, y, locations = which(lossy), details = details)
-  }
-}
-
 maybe_lossy_cast <- function(result, x, y, lossy, ...) {
   if (any(lossy)) {
     stop_lossy_cast(x, y, result, locations = which(lossy), ...)
