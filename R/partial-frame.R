@@ -76,8 +76,5 @@ vec_type2.data.frame.vctrs_partial_frame <- function(x, y) {
 
 #' @export
 vec_type_finalise.vctrs_partial_frame <- function(x) {
-  out <- x$learned
-  out[names(x$partial)] <- x$partial
-
-  out
+  x$learned
 }

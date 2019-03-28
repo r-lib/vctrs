@@ -18,9 +18,10 @@ test_that("order of variables comes from data", {
   expect_named(vec_type_common(df, pf), c("x", "y"))
 })
 
-test_that("partial variables added to end if not in data", {
+test_that("partial variables are forgotten if not in data", {
   pf <- partial_frame(y = 1)
   df <- data.frame(x = 1)
-  expect_named(vec_type_common(pf, df), c("x", "y"))
-  expect_named(vec_type_common(df, pf), c("x", "y"))
+  expect_named(vec_type_common(pf, df), "x")
+  expect_named(vec_type_common(df, pf), "x")
+})
 })
