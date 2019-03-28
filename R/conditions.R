@@ -103,7 +103,7 @@ stop_lossy_cast <- function(x, to, result,
   )
 
   withRestarts(
-    vctrs_restart_error_cast_lossy = identity,
+    vctrs_restart_error_cast_lossy = function() result,
     abort(
       message,
       x = x,
@@ -131,7 +131,7 @@ suppress_errors_lossy_cast <- function(expr, x_ptype = NULL, to_ptype = NULL) {
         return()
       }
 
-      invokeRestart("vctrs_restart_error_cast_lossy", err$result)
+      invokeRestart("vctrs_restart_error_cast_lossy")
     },
     expr
   )
