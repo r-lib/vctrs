@@ -79,8 +79,8 @@ test_that("lossy casts generate warning", {
   fa <- factor("a")
   fb <- factor("b")
 
-  expect_condition(vec_cast(fa, fb), class = "warning_lossy_cast")
-  expect_condition(vec_cast("a", fb), class = "warning_lossy_cast")
+  expect_condition(vec_cast(fa, fb), class = "vctrs_warning_cast_lossy")
+  expect_condition(vec_cast("a", fb), class = "vctrs_warning_cast_lossy")
 })
 
 test_that("invalid casts generate error", {
