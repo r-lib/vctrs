@@ -12,15 +12,12 @@ test_that("elements of length 0 become NA without error", {
 
 test_that("elements of length >1 are truncated with error", {
   x <- list(1, c(2, 1), c(3, 2, 1))
-  expect_error(vec_list_cast(x, double()), class = "vctrs_error_cast_lossy")
-
-  out <- suppress_errors_lossy_cast(vec_list_cast(x, double()))
-  expect_equal(out, c(1, 2, 3))
+  expect_lossy(vec_list_cast(x, dbl()), dbl(1, 2, 3), list(), dbl())
 })
 
 test_that("error if all casts are lossy", {
   # #166: Do we really want to err out here? Perhaps give a different warning?
   # Otherwise it feels like a variant of type stability is violated.
   x <- list(c(2, 1), c(3, 2, 1))
-  expect_error(vec_list_cast(x, double()), class = "vctrs_error_incompatible_cast")
+  expect_error(vec_list_cast(x, double()), class = "vctrs_error_cast_lossy")
 })
