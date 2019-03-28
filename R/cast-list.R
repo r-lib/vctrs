@@ -31,8 +31,10 @@ vec_list_cast <- function(x, to) {
   }
 
   maybe_lossy_cast(
-    out, x, to,
+    result = out,
+    x = x,
+    y = to,
     lossy = !ns %in% c(0L, 1L),
-    .subclass = "vctrs_error_cast_lossy_list"
+    type = "list"
   )
 }
