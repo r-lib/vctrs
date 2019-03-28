@@ -177,9 +177,13 @@ vec_cast.Date.Date <- function(x, to) {
 #' @method vec_cast.Date POSIXt
 vec_cast.Date.POSIXt <- function(x, to) {
   out <- as.Date(x)
-  report_lossy_cast(x, to, abs(x - as.POSIXct(out)) > 1e-9)
-
-  out
+  maybe_lossy_cast(
+    result = out,
+    x = x,
+    y = to,
+    lossy = abs(x - as.POSIXct(out)) > 1e-9,
+    .subclass = "vctrs_error_cast_lossy_date"
+  )
 }
 #' @export
 #' @method vec_cast.Date list

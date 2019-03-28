@@ -82,7 +82,7 @@ test_that("lossy casts generate warning", {
   date <- as.Date("2018-01-01")
   datetime <- as.POSIXct(date) + c(0, 3600)
 
-  expect_condition(vec_cast(datetime, date), class = "vctrs_warning_cast_lossy")
+  expect_error(vec_cast(datetime, date), class = "vctrs_error_cast_lossy_date")
 })
 
 test_that("invalid casts generate error", {
