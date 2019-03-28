@@ -6,6 +6,8 @@
 \alias{stop_incompatible_cast}
 \alias{stop_incompatible_op}
 \alias{warn_lossy_cast}
+\alias{stop_lossy_cast}
+\alias{suppress_errors_lossy_cast}
 \title{Custom conditions for vctrs package}
 \usage{
 stop_incompatible_type(x, y, details = NULL, ..., message = NULL,
@@ -19,6 +21,11 @@ stop_incompatible_op(op, x, y, details = NULL, ..., message = NULL,
 
 warn_lossy_cast(x, y, locations = NULL, details = NULL, ...,
   message = NULL, .subclass = NULL)
+
+stop_lossy_cast(x, y, result, locations = NULL, details = NULL, ...,
+  message = NULL, .subclass = NULL)
+
+suppress_errors_lossy_cast(expr)
 }
 \arguments{
 \item{x, y}{Vectors}
@@ -30,10 +37,16 @@ warn_lossy_cast(x, y, locations = NULL, details = NULL, ...,
 \item{locations}{For \code{warn_lossy_cast()}, an optional vector giving the
 locations where \code{x} lost information.}
 
+\item{result}{The result of a lossy cast.}
+
 \item{subclass}{Use if you want to further customise the class}
 }
 \description{
 These errors and warnings have custom classes and structures to make
 testing easier.
+
+By default, lossy casts are an error. Use
+\code{suppress_errors_lossy_cast()} to silence these errors and continue
+with the partial results. The lost values are typically set to \code{NA}.
 }
 \keyword{internal}

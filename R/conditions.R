@@ -1,15 +1,23 @@
 #' Custom conditions for vctrs package
 #'
+#' @description
+#'
 #' These errors and warnings have custom classes and structures to make
 #' testing easier.
 #'
+#' By default, lossy casts are an error. Use
+#' `suppress_errors_lossy_cast()` to silence these errors and continue
+#' with the partial results. The lost values are typically set to `NA`.
+#'
 #' @keywords internal
 #' @param x,y Vectors
+#' @param result The result of a lossy cast.
 #' @param details Any additional human readable details
 #' @param subclass Use if you want to further customise the class
 #' @param locations For `warn_lossy_cast()`, an optional vector giving the
 #'   locations where `x` lost information.
 #' @param ...,message,.subclass Only use these fields when creating a subclass.
+#'
 #' @name vctrs-conditions
 NULL
 
@@ -96,6 +104,45 @@ warn_lossy_cast <- function(x, y, locations = NULL, details = NULL, ..., message
     details = details,
     ...,
     .subclass = c(.subclass, "vctrs_warning_cast_lossy"),
+  )
+}
+
+#' @rdname vctrs-conditions
+#' @export
+stop_lossy_cast <- function(x, y, result,
+                            locations = NULL,
+                            details = NULL,
+                            ...,
+                            message = NULL,
+                            .subclass = NULL) {
+  message <- message %||% glue_lines(
+    "Lossy cast from <{vec_ptype_full(x)}> to <{vec_ptype_full(y)}>.",
+    inline_list("Locations: ", locations),
+    details
+  )
+
+  withRestarts(
+    vctrs_restart_error_cast_lossy = identity,
+    abort(
+      message,
+      x = x,
+      y = y,
+      result = result,
+      locations = locations,
+      details = details,
+      ...,
+      .subclass = c(.subclass, "vctrs_error_cast_lossy")
+    )
+  )
+}
+#' @rdname vctrs-conditions
+#' @export
+suppress_errors_lossy_cast <- function(expr) {
+  withCallingHandlers(
+    vctrs_error_cast_lossy = function(err) {
+      invokeRestart("vctrs_restart_error_cast_lossy", err$result)
+    },
+    expr
   )
 }
 
