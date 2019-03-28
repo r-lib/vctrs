@@ -24,4 +24,9 @@ test_that("partial variables are forgotten if not in data", {
   expect_named(vec_type_common(pf, df), "x")
   expect_named(vec_type_common(df, pf), "x")
 })
+
+test_that("can assert partial frames", {
+  partial <- partial_frame(col_name = character(), measure = character())
+  expect_true(vec_is(data.frame(x = 1, col_name = 2), partial))
+  expect_true(vec_is(data.frame(col_name = 2, x = 1), partial))
 })

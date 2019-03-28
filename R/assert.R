@@ -100,6 +100,9 @@ is_same_type <- function(x, ptype) {
   if (!is.object(x) || !is.object(ptype)) {
     typeof(x) == typeof(ptype)
   } else {
+    if (is_partial(ptype)) {
+      ptype <- vec_type_common(x, ptype)
+    }
     identical(x, ptype)
   }
 }
