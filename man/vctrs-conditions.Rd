@@ -18,7 +18,7 @@ stop_incompatible_cast(x, y, details = NULL, ..., message = NULL,
 stop_incompatible_op(op, x, y, details = NULL, ..., message = NULL,
   .subclass = NULL)
 
-stop_lossy_cast(x, y, result, locations = NULL, details = NULL, ...,
+stop_lossy_cast(x, to, result, locations = NULL, details = NULL, ...,
   message = NULL, .subclass = NULL)
 
 suppress_errors_lossy_cast(expr, x_ptype = NULL, to_ptype = NULL)
@@ -29,6 +29,8 @@ suppress_errors_lossy_cast(expr, x_ptype = NULL, to_ptype = NULL)
 \item{details}{Any additional human readable details}
 
 \item{..., message, .subclass}{Only use these fields when creating a subclass.}
+
+\item{to}{Type to cast to.}
 
 \item{result}{The result of a lossy cast.}
 

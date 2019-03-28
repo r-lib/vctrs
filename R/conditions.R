@@ -11,7 +11,6 @@
 #'
 #' @keywords internal
 #' @param x,y Vectors
-#' @param result The result of a lossy cast.
 #' @param details Any additional human readable details
 #' @param subclass Use if you want to further customise the class
 #' @param locations For `stop_lossy_cast()`, an optional vector giving the
@@ -87,15 +86,17 @@ stop_incompatible_op <- function(op, x, y, details = NULL, ..., message = NULL, 
 }
 
 #' @rdname vctrs-conditions
+#' @param to Type to cast to.
+#' @param result The result of a lossy cast.
 #' @export
-stop_lossy_cast <- function(x, y, result,
+stop_lossy_cast <- function(x, to, result,
                             locations = NULL,
                             details = NULL,
                             ...,
                             message = NULL,
                             .subclass = NULL) {
   message <- message %||% glue_lines(
-    "Lossy cast from <{vec_ptype_full(x)}> to <{vec_ptype_full(y)}>.",
+    "Lossy cast from <{vec_ptype_full(x)}> to <{vec_ptype_full(to)}>.",
     inline_list("Locations: ", locations),
     details
   )
@@ -105,7 +106,8 @@ stop_lossy_cast <- function(x, y, result,
     abort(
       message,
       x = x,
-      y = y,
+      y = to,
+      to = to,
       result = result,
       locations = locations,
       details = details,
@@ -124,7 +126,7 @@ suppress_errors_lossy_cast <- function(expr, x_ptype = NULL, to_ptype = NULL) {
       if (!is_null(x_ptype) && !vec_is(err$x, x_ptype)) {
         return()
       }
-      if (!is_null(to_ptype) && !vec_is(err$y, to_ptype)) {
+      if (!is_null(to_ptype) && !vec_is(err$to, to_ptype)) {
         return()
       }
 

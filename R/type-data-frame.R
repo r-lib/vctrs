@@ -171,7 +171,7 @@ df_col_cast <- function(x, to) {
   if (length(extra) > 0 ) {
     stop_lossy_cast(
       x = x,
-      y = to,
+      to = to,
       result = out,
       dropped = extra,
       details = inline_list("Dropped variables: ", extra, quote = "`"),
