@@ -5,12 +5,20 @@ bool vec_is_unspecified(SEXP x) {
     return false;
   }
 
-  R_len_t n = Rf_length(x);
-  if (n == 0) {
-    return false;
+  if (ATTRIB(x) != R_NilValue) {
+    if (Rf_inherits(x, "vctrs_unspecified")) {
+      return true;
+    }
+    if (OBJECT(x)) {
+      return false;
+    }
+    if (has_dim(x)) {
+      return false;
+    }
   }
 
-  if (has_dim(x)) {
+  R_len_t n = Rf_length(x);
+  if (n == 0) {
     return false;
   }
 
