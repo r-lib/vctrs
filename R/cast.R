@@ -374,14 +374,6 @@ vec_cast.list.default <- function(x, to) {
 
 # Helpers -----------------------------------------------------------------
 
-maybe_lossy_cast <- function(result, x, to, lossy, ...) {
-  if (any(lossy)) {
-    stop_lossy_cast(x, to, result, locations = which(lossy), ...)
-  } else {
-    result
-  }
-}
-
 lossy_floor <- function(x, to) {
   x_floor <- floor(x)
   lossy <- x != x_floor

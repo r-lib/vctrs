@@ -87,9 +87,18 @@ stop_incompatible_op <- function(op, x, y, details = NULL, ..., message = NULL, 
 }
 
 #' @rdname vctrs-conditions
+#' @param result The result of a potentially lossy cast.
 #' @param to Type to cast to.
-#' @param result The result of a lossy cast.
+#' @param lossy A logical vector indicating which elements of `result`
+#'   were lossy.
 #' @export
+maybe_lossy_cast <- function(result, x, to, lossy, ...) {
+  if (any(lossy)) {
+    stop_lossy_cast(x, to, result, locations = which(lossy), ...)
+  } else {
+    result
+  }
+}
 stop_lossy_cast <- function(x, to, result,
                             locations = NULL,
                             details = NULL,

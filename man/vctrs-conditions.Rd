@@ -5,7 +5,7 @@
 \alias{stop_incompatible_type}
 \alias{stop_incompatible_cast}
 \alias{stop_incompatible_op}
-\alias{stop_lossy_cast}
+\alias{maybe_lossy_cast}
 \alias{allow_lossy_cast}
 \title{Custom conditions for vctrs package}
 \usage{
@@ -18,8 +18,7 @@ stop_incompatible_cast(x, y, details = NULL, ..., message = NULL,
 stop_incompatible_op(op, x, y, details = NULL, ..., message = NULL,
   .subclass = NULL)
 
-stop_lossy_cast(x, to, result, locations = NULL, details = NULL, ...,
-  message = NULL, .subclass = NULL)
+maybe_lossy_cast(result, x, to, lossy, ...)
 
 allow_lossy_cast(expr, x_ptype = NULL, to_ptype = NULL)
 }
@@ -30,17 +29,20 @@ allow_lossy_cast(expr, x_ptype = NULL, to_ptype = NULL)
 
 \item{..., message, .subclass}{Only use these fields when creating a subclass.}
 
+\item{result}{The result of a potentially lossy cast.}
+
 \item{to}{Type to cast to.}
 
-\item{result}{The result of a lossy cast.}
-
-\item{locations}{For \code{stop_lossy_cast()}, an optional vector giving the
-locations where \code{x} lost information.}
+\item{lossy}{A logical vector indicating which elements of \code{result}
+were lossy.}
 
 \item{x_ptype, to_ptype}{Suppress only the casting errors where \code{x}
 or \code{to} match these \link[=vec_type]{prototypes}.}
 
 \item{subclass}{Use if you want to further customise the class}
+
+\item{locations}{For \code{stop_lossy_cast()}, an optional vector giving the
+locations where \code{x} lost information.}
 }
 \description{
 These errors and warnings have custom classes and structures to make
