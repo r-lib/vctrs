@@ -6,7 +6,7 @@
 #' testing easier.
 #'
 #' By default, lossy casts are an error. Use
-#' `suppress_errors_lossy_cast()` to silence these errors and continue
+#' `allow_lossy_cast()` to silence these errors and continue
 #' with the partial results. The lost values may be set to `NA` or to
 #' a lower value resolution, depending on the type of cast.
 #'
@@ -121,7 +121,7 @@ stop_lossy_cast <- function(x, to, result,
 #' @param x_ptype,to_ptype Suppress only the casting errors where `x`
 #'   or `to` match these [prototypes][vec_type].
 #' @export
-suppress_errors_lossy_cast <- function(expr, x_ptype = NULL, to_ptype = NULL) {
+allow_lossy_cast <- function(expr, x_ptype = NULL, to_ptype = NULL) {
   withCallingHandlers(
     vctrs_error_cast_lossy = function(err) {
       if (!is_null(x_ptype) && !vec_is(err$x, x_ptype)) {

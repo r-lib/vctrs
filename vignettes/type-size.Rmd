@@ -249,10 +249,10 @@ If a cast is possible in general (i.e. double -> integer), but information is lo
 vec_cast(c(1.5, 2), integer())
 ```
 
-You can suppress the lossy cast errors with `suppress_errors_lossy_cast()`:
+You can suppress the lossy cast errors with `allow_lossy_cast()`:
 
 ```{r}
-suppress_errors_lossy_cast(
+allow_lossy_cast(
   vec_cast(c(1.5, 2), integer())
 )
 ```
@@ -260,7 +260,7 @@ suppress_errors_lossy_cast(
 This will suppress all lossy cast errors. Supply prototypes if you want to be specific about the type of lossy cast allowed:
 
 ```{r}
-suppress_errors_lossy_cast(
+allow_lossy_cast(
   vec_cast(c(1.5, 2), integer()),
   x_ptype = double(),
   to_ptype = integer()

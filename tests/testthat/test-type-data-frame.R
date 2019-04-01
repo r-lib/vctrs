@@ -83,8 +83,8 @@ test_that("warn about lossy coercions", {
   expect_lossy(vec_cast(df2, df1), data.frame(x = dbl(NA, 1), y = dbl(NA, NA)), x = chr(), to = dbl())
 
   out <-
-    suppress_errors_lossy_cast(
-      suppress_errors_lossy_cast(
+    allow_lossy_cast(
+      allow_lossy_cast(
         vec_cast(df2, df1),
         chr(), dbl()
       ),

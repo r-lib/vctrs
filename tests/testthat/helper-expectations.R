@@ -7,6 +7,6 @@ expect_lossy <- function(expr, result, x = NULL, to = NULL) {
   expr <- enquo(expr)
   expect_error(eval_tidy(expr), class = "vctrs_error_cast_lossy")
 
-  out <- suppress_errors_lossy_cast(eval_tidy(expr), x_ptype = x, to_ptype = to)
+  out <- allow_lossy_cast(eval_tidy(expr), x_ptype = x, to_ptype = to)
   expect_identical(!!out, !!result)
 }

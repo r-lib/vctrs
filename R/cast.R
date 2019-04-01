@@ -99,14 +99,14 @@
 #' try(vec_cast(c(1, 2), logical()))
 #'
 #' # You can suppress this error and get the partial results
-#' suppress_errors_lossy_cast(vec_cast(c(1, 1.5), integer()))
-#' suppress_errors_lossy_cast(vec_cast(c(1, 2), logical()))
+#' allow_lossy_cast(vec_cast(c(1, 1.5), integer()))
+#' allow_lossy_cast(vec_cast(c(1, 2), logical()))
 #'
 #' # By default this suppress all lossy cast errors without
 #' # distinction, but you can be specific about what cast is allowed
 #' # by supplying prototypes
-#' suppress_errors_lossy_cast(vec_cast(c(1, 1.5), integer()), to_ptype = integer())
-#' try(suppress_errors_lossy_cast(vec_cast(c(1, 2), logical()), to_ptype = integer()))
+#' allow_lossy_cast(vec_cast(c(1, 1.5), integer()), to_ptype = integer())
+#' try(allow_lossy_cast(vec_cast(c(1, 2), logical()), to_ptype = integer()))
 #'
 #' # No sensible coercion is possible so an error is generated
 #' try(vec_cast(1.5, factor("a")))

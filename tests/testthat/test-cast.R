@@ -222,11 +222,11 @@ test_that("names attribute isn't set when restoring 1D arrays using 2D+ objects"
 
 test_that("can suppress cast errors selectively", {
   f <- function() vec_cast(factor("a"), to = factor("b"))
-  expect_error(regexp = NA, suppress_errors_lossy_cast(f()))
-  expect_error(regexp = NA, suppress_errors_lossy_cast(f(), x_ptype = factor("a")))
-  expect_error(regexp = NA, suppress_errors_lossy_cast(f(), to_ptype = factor("b")))
-  expect_error(regexp = NA, suppress_errors_lossy_cast(f(), x_ptype = factor("a"), to_ptype = factor("b")))
-  expect_error(suppress_errors_lossy_cast(f(), x_ptype = factor("c")), class = "vctrs_error_cast_lossy")
-  expect_error(suppress_errors_lossy_cast(f(), x_ptype = factor("b"), to_ptype = factor("a")), class = "vctrs_error_cast_lossy")
-  expect_error(suppress_errors_lossy_cast(f(), x_ptype = factor("a"), to_ptype = factor("c")), class = "vctrs_error_cast_lossy")
+  expect_error(regexp = NA, allow_lossy_cast(f()))
+  expect_error(regexp = NA, allow_lossy_cast(f(), x_ptype = factor("a")))
+  expect_error(regexp = NA, allow_lossy_cast(f(), to_ptype = factor("b")))
+  expect_error(regexp = NA, allow_lossy_cast(f(), x_ptype = factor("a"), to_ptype = factor("b")))
+  expect_error(allow_lossy_cast(f(), x_ptype = factor("c")), class = "vctrs_error_cast_lossy")
+  expect_error(allow_lossy_cast(f(), x_ptype = factor("b"), to_ptype = factor("a")), class = "vctrs_error_cast_lossy")
+  expect_error(allow_lossy_cast(f(), x_ptype = factor("a"), to_ptype = factor("c")), class = "vctrs_error_cast_lossy")
 })
