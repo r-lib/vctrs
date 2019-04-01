@@ -52,10 +52,34 @@ or \code{to} match these \link[=vec_type]{prototypes}.}
 \description{
 These errors and warnings have custom classes and structures to make
 testing easier.
+}
+\section{Lossy cast errors}{
 
-By default, lossy casts are an error. Use
-\code{allow_lossy_cast()} to silence these errors and continue
-with the partial results. The lost values may be set to \code{NA} or to
-a lower value resolution, depending on the type of cast.
+
+By default, lossy casts are an error. Use \code{allow_lossy_cast()} to
+silence these errors and continue with the partial results. In this
+case the lost values are typically set to \code{NA} or to a lower value
+resolution, depending on the type of cast.
+
+Lossy cast errors are thrown by \code{maybe_lossy_cast()}. Unlike
+functions prefixed with \code{stop_}, \code{maybe_lossy_cast()} usually
+returns a result. If a lossy cast is detected, it throws an error,
+unless it's been wrapped in \code{allow_lossy_cast()}. In that case, it
+returns the result silently.
+}
+
+\examples{
+
+# Most of the time, `maybe_lossy_cast()` returns its input normally:
+maybe_lossy_cast(c("foo", "bar"), NULL, "", lossy = c(FALSE, FALSE))
+
+# If `lossy` has any `TRUE`, an error is thrown:
+try(maybe_lossy_cast(c("foo", "bar"), NULL, "", lossy = c(FALSE, TRUE)))
+
+# Unless lossy casts are allowed:
+allow_lossy_cast(
+  maybe_lossy_cast(c("foo", "bar"), NULL, "", lossy = c(FALSE, TRUE))
+)
+
 }
 \keyword{internal}
