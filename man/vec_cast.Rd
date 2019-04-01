@@ -44,7 +44,7 @@ information and can safely ignore that argument.}
 }
 \value{
 A vector the same length as \code{x} with the same type as \code{to},
-or an error if the cast is not possible. A warning is generated if
+or an error if the cast is not possible. An error is generated if
 information is lost when casting between compatible types (i.e. when
 there is no 1-to-1 mapping for a specific value).
 }
@@ -69,8 +69,7 @@ character, and list to time, but you can not cast from logical to datetime.
 
 Most casts are not symmetric: you can cast all integers to doubles, but you
 can only cast a subset of doubles back to integers. If a cast is potentially
-lossy, a warning message will be shown whenever an actual loss occurs
-(which may only be for some elements of a vector).
+lossy, an error will be shown whenever an actual loss occurs.
 
 The rules for coercing from a list are fairly strict: each component of the
 list must be of length 1, and must be coercible to type \code{to}. This ensures
@@ -137,18 +136,22 @@ attributes that don't require special handling for your class.
 # x is a double, but no information is lost
 vec_cast(1, integer())
 
-# Information is lost in all conversions so an error is generated
-\dontrun{
-vec_cast(1.5, integer())
-}
+# When information is lost the cast fails
+try(vec_cast(c(1, 1.5), integer()))
+try(vec_cast(c(1, 2), logical()))
 
-# Information is lost in some conversions so a warning is generated
-vec_cast(c(1, 1.5), integer())
+# You can suppress this error and get the partial results
+allow_lossy_cast(vec_cast(c(1, 1.5), integer()))
+allow_lossy_cast(vec_cast(c(1, 2), logical()))
+
+# By default this suppress all lossy cast errors without
+# distinction, but you can be specific about what cast is allowed
+# by supplying prototypes
+allow_lossy_cast(vec_cast(c(1, 1.5), integer()), to_ptype = integer())
+try(allow_lossy_cast(vec_cast(c(1, 2), logical()), to_ptype = integer()))
 
 # No sensible coercion is possible so an error is generated
-\dontrun{
-vec_cast(1.5, factor("a"))
-}
+try(vec_cast(1.5, factor("a")))
 
 # Cast to common type
 vec_cast_common(factor("a"), factor(c("a", "b")))

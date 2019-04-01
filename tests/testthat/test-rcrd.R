@@ -91,12 +91,13 @@ test_that("can't cast incompatible rcrd", {
     ),
     class = "vctrs_error_incompatible_cast"
   )
-  expect_error(
+  expect_lossy(
     vec_cast(
       new_rcrd(list(a = "a", b = 3L)),
       new_rcrd(list(a = 1, b = 3L))
     ),
-    class = "vctrs_error_incompatible_cast"
+    new_rcrd(list(a = na_dbl, b = 3L)),
+    chr(), dbl()
   )
 })
 

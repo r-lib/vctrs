@@ -157,8 +157,11 @@ test_that("safe casts work as expected", {
 })
 
 test_that("lossy casts generate warning", {
-  x <- list_of(1L)
-  expect_condition(vec_cast(list(c(1.5, 1), 1L), x), class = "vctrs_warning_cast_lossy")
+  expect_lossy(
+    vec_cast(list(c(1.5, 1), 1L), to = list_of(1L)),
+    list_of(int(1L, 1L), 1L),
+    x = dbl(), to = int()
+  )
 })
 
 test_that("invalid casts generate error", {
@@ -168,7 +171,7 @@ test_that("invalid casts generate error", {
 test_that("validation", {
   expect_error(validate_list_of(list_of(1, 2, 3)), NA)
   expect_error(
-    validate_list_of(new_list_of(list(1, "a", 3), double())),
-    class = "vctrs_error_incompatible_cast"
+    validate_list_of(new_list_of(list(1, "a", 3), dbl())),
+    class = "vctrs_error_cast_lossy"
   )
 })

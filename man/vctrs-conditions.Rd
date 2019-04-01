@@ -5,7 +5,8 @@
 \alias{stop_incompatible_type}
 \alias{stop_incompatible_cast}
 \alias{stop_incompatible_op}
-\alias{warn_lossy_cast}
+\alias{maybe_lossy_cast}
+\alias{allow_lossy_cast}
 \title{Custom conditions for vctrs package}
 \usage{
 stop_incompatible_type(x, y, details = NULL, ..., message = NULL,
@@ -17,8 +18,10 @@ stop_incompatible_cast(x, y, details = NULL, ..., message = NULL,
 stop_incompatible_op(op, x, y, details = NULL, ..., message = NULL,
   .subclass = NULL)
 
-warn_lossy_cast(x, y, locations = NULL, details = NULL, ...,
-  message = NULL, .subclass = NULL)
+maybe_lossy_cast(result, x, to, lossy = NULL, locations = NULL,
+  details = NULL, ..., message = NULL, .subclass = NULL)
+
+allow_lossy_cast(expr, x_ptype = NULL, to_ptype = NULL)
 }
 \arguments{
 \item{x, y}{Vectors}
@@ -27,13 +30,56 @@ warn_lossy_cast(x, y, locations = NULL, details = NULL, ...,
 
 \item{..., message, .subclass}{Only use these fields when creating a subclass.}
 
-\item{locations}{For \code{warn_lossy_cast()}, an optional vector giving the
+\item{result}{The result of a potentially lossy cast.}
+
+\item{to}{Type to cast to.}
+
+\item{lossy}{A logical vector indicating which elements of \code{result}
+were lossy.
+
+Can also be a single \code{TRUE}, but note that \code{locations} picks up
+locations from this vector by default. In this case, supply your
+own location vector, possibly empty.}
+
+\item{locations}{For \code{stop_lossy_cast()}, an optional vector giving the
 locations where \code{x} lost information.}
+
+\item{x_ptype, to_ptype}{Suppress only the casting errors where \code{x}
+or \code{to} match these \link[=vec_type]{prototypes}.}
 
 \item{subclass}{Use if you want to further customise the class}
 }
 \description{
 These errors and warnings have custom classes and structures to make
 testing easier.
+}
+\section{Lossy cast errors}{
+
+
+By default, lossy casts are an error. Use \code{allow_lossy_cast()} to
+silence these errors and continue with the partial results. In this
+case the lost values are typically set to \code{NA} or to a lower value
+resolution, depending on the type of cast.
+
+Lossy cast errors are thrown by \code{maybe_lossy_cast()}. Unlike
+functions prefixed with \code{stop_}, \code{maybe_lossy_cast()} usually
+returns a result. If a lossy cast is detected, it throws an error,
+unless it's been wrapped in \code{allow_lossy_cast()}. In that case, it
+returns the result silently.
+}
+
+\examples{
+
+# Most of the time, `maybe_lossy_cast()` returns its input normally:
+maybe_lossy_cast(c("foo", "bar"), NULL, "", lossy = c(FALSE, FALSE))
+
+# If `lossy` has any `TRUE`, an error is thrown:
+try(maybe_lossy_cast(c("foo", "bar"), NULL, "", lossy = c(FALSE, TRUE)))
+
+# Unless lossy casts are allowed:
+allow_lossy_cast(
+  maybe_lossy_cast(c("foo", "bar"), NULL, "", lossy = c(FALSE, TRUE))
+)
+
 }
 \keyword{internal}

@@ -123,11 +123,8 @@ vec_cast.factor.factor <- function(x, to) {
     factor(as.character(x), levels = unique(x), ordered = is.ordered(to))
   } else {
     lossy <- !(x %in% levels(to) | is.na(x))
-    if (any(lossy)) {
-      warn_lossy_cast(x, to, locations = which(lossy))
-    }
-
-    factor(x, levels = levels(to), ordered = is.ordered(to))
+    out <- factor(x, levels = levels(to), ordered = is.ordered(to))
+    maybe_lossy_cast(out, x, to, lossy)
   }
 }
 #' @export

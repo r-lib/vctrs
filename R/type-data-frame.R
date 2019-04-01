@@ -163,14 +163,18 @@ df_col_cast <- function(x, to) {
   # Drop extra columns
   out <- out[names(to)]
   extra <- setdiff(names(x), names(to))
-  if (length(extra) > 0 ) {
-    warn_lossy_cast(
-      x, to,
-      details = inline_list("Dropped variables: ", extra, quote = "`")
-    )
-  }
 
   # Casting doesn't affect number of rows
   attr(out, "row.names") <- attr(x, "row.names")
-  vec_restore(out, to)
+  out <- vec_restore(out, to)
+
+  maybe_lossy_cast(
+    result = out,
+    x = x,
+    to = to,
+    lossy = length(extra) > 0,
+    locations = int(),
+    details = inline_list("Dropped variables: ", extra, quote = "`"),
+    .subclass = "vctrs_error_cast_lossy_dropped"
+  )
 }

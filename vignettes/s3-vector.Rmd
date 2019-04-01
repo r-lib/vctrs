@@ -411,9 +411,9 @@ vec_c(decimal(1, digits = 1), pi)
 vec_c(pi, decimal(1, digits = 1))
 ```
 
-If type `x` has greater resolution than `y`, there will be some inputs that lose precision. These should generate warnings using `warn_lossy_cast()`. You can see that in action when casting from doubles to integers; only some doubles can become integers without losing resolution.
+If type `x` has greater resolution than `y`, there will be some inputs that lose precision. These should generate errors using `stop_lossy_cast()`. You can see that in action when casting from doubles to integers; only some doubles can become integers without losing resolution.
 
-```{r}
+```{r, error = TRUE}
 vec_cast(c(1, 2, 10), to = integer())
 
 vec_cast(c(1.5, 2, 10.5), to = integer())

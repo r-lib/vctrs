@@ -14,7 +14,6 @@
 #' @keywords internal
 vec_list_cast <- function(x, to) {
   ns <- map_int(x, vec_size)
-  report_lossy_cast(x, to, !ns %in% c(0L, 1L))
 
   n <- vec_size(x)
   out <- vec_na(to, n)
@@ -27,9 +26,9 @@ vec_list_cast <- function(x, to) {
     vec_slice(out, i) <- vec_cast(vec_slice(val, 1L), to)
   }
 
-  if (is.object(to)) {
-    out
-  } else {
-    shape_broadcast(out, to)
+  if (!is.object(to)) {
+    out <- shape_broadcast(out, to)
   }
+
+  maybe_lossy_cast(out, x, to, lossy = !ns %in% c(0L, 1L))
 }

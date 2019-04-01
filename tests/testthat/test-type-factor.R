@@ -75,12 +75,12 @@ test_that("can cast NA to factor", {
   expect_equal(vec_cast(NA, new_ordered()), ordered(NA))
 })
 
-test_that("lossy casts generate warning", {
+test_that("lossy factor casts fail", {
   fa <- factor("a")
   fb <- factor("b")
 
-  expect_condition(vec_cast(fa, fb), class = "vctrs_warning_cast_lossy")
-  expect_condition(vec_cast("a", fb), class = "vctrs_warning_cast_lossy")
+  expect_lossy(vec_cast(fa, fb), factor(NA, levels = "b"), x = fa, to = fb)
+  expect_lossy(vec_cast("a", fb), factor(NA, levels = "b"), x = chr(), to = fb)
 })
 
 test_that("invalid casts generate error", {

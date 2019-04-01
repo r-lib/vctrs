@@ -79,8 +79,19 @@ test_that("warn about lossy coercions", {
   df1 <- data.frame(x = 1, y = 1)
   df2 <- data.frame(x = c("a", 1), stringsAsFactors = FALSE)
 
-  expect_condition(vec_cast(df1, df1[1]), class = "vctrs_warning_cast_lossy")
-  expect_condition(vec_cast(df2, df1), class = "vctrs_warning_cast_lossy")
+  expect_lossy(vec_cast(df1, df1[1]), df1[1], x = df1, to = df1[1])
+  expect_lossy(vec_cast(df2, df1), data.frame(x = dbl(NA, 1), y = dbl(NA, NA)), x = chr(), to = dbl())
+
+  out <-
+    allow_lossy_cast(
+      allow_lossy_cast(
+        vec_cast(df2, df1),
+        chr(), dbl()
+      ),
+      df2, df1
+    )
+
+  expect_identical(out, data.frame(x = dbl(NA, 1), y = dbl(NA, NA)))
 })
 
 test_that("invalid cast generates error", {

@@ -19,8 +19,7 @@
 #'
 #' Most casts are not symmetric: you can cast all integers to doubles, but you
 #' can only cast a subset of doubles back to integers. If a cast is potentially
-#' lossy, a warning message will be shown whenever an actual loss occurs
-#' (which may only be for some elements of a vector).
+#' lossy, an error will be shown whenever an actual loss occurs.
 #'
 #' The rules for coercing from a list are fairly strict: each component of the
 #' list must be of length 1, and must be coercible to type `to`. This ensures
@@ -86,7 +85,7 @@
 #'   triggered by [vec_slice()]. In most cases you don't need this
 #'   information and can safely ignore that argument.
 #' @return A vector the same length as `x` with the same type as `to`,
-#'   or an error if the cast is not possible. A warning is generated if
+#'   or an error if the cast is not possible. An error is generated if
 #'   information is lost when casting between compatible types (i.e. when
 #'   there is no 1-to-1 mapping for a specific value).
 #' @export
@@ -95,18 +94,22 @@
 #' # x is a double, but no information is lost
 #' vec_cast(1, integer())
 #'
-#' # Information is lost in all conversions so an error is generated
-#' \dontrun{
-#' vec_cast(1.5, integer())
-#' }
+#' # When information is lost the cast fails
+#' try(vec_cast(c(1, 1.5), integer()))
+#' try(vec_cast(c(1, 2), logical()))
 #'
-#' # Information is lost in some conversions so a warning is generated
-#' vec_cast(c(1, 1.5), integer())
+#' # You can suppress this error and get the partial results
+#' allow_lossy_cast(vec_cast(c(1, 1.5), integer()))
+#' allow_lossy_cast(vec_cast(c(1, 2), logical()))
+#'
+#' # By default this suppress all lossy cast errors without
+#' # distinction, but you can be specific about what cast is allowed
+#' # by supplying prototypes
+#' allow_lossy_cast(vec_cast(c(1, 1.5), integer()), to_ptype = integer())
+#' try(allow_lossy_cast(vec_cast(c(1, 2), logical()), to_ptype = integer()))
 #'
 #' # No sensible coercion is possible so an error is generated
-#' \dontrun{
-#' vec_cast(1.5, factor("a"))
-#' }
+#' try(vec_cast(1.5, factor("a")))
 #'
 #' # Cast to common type
 #' vec_cast_common(factor("a"), factor(c("a", "b")))
@@ -169,23 +172,26 @@ vec_cast.logical.logical <- function(x, to) {
 #' @export
 #' @method vec_cast.logical integer
 vec_cast.logical.integer <- function(x, to) {
-  report_lossy_cast(x, to, !x %in% c(0L, 1L))
-  x <- vec_coerce_bare(x, "logical")
-  shape_broadcast(x, to)
+  out <- vec_coerce_bare(x, "logical")
+  out <- shape_broadcast(out, to)
+  lossy <- !x %in% c(0L, 1L)
+  maybe_lossy_cast(out, x, to, lossy)
 }
 #' @export
 #' @method vec_cast.logical double
 vec_cast.logical.double <- function(x, to) {
-  report_lossy_cast(x, to, !x %in% c(0, 1))
-  x <- vec_coerce_bare(x, "logical")
-  shape_broadcast(x, to)
+  out <- vec_coerce_bare(x, "logical")
+  out <- shape_broadcast(out, to)
+  lossy <- !x %in% c(0, 1)
+  maybe_lossy_cast(out, x, to, lossy)
 }
 #' @export
 #' @method vec_cast.logical character
 vec_cast.logical.character <- function(x, to) {
-  report_lossy_cast(x, to, !x %in% c("T", "F", "TRUE", "FALSE", "true", "false"))
-  x <- vec_coerce_bare(x, "logical")
-  shape_broadcast(x, to)
+  out <- vec_coerce_bare(x, "logical")
+  out <- shape_broadcast(out, to)
+  lossy <- !x %in% c("T", "F", "TRUE", "FALSE", "true", "false")
+  maybe_lossy_cast(out, x, to, lossy)
 }
 #' @export
 #' @method vec_cast.logical list
@@ -220,9 +226,9 @@ vec_cast.integer.integer <- function(x, to) {
 #' @method vec_cast.integer double
 vec_cast.integer.double <- function(x, to) {
   out <- suppressWarnings(vec_coerce_bare(x, "integer"))
-  report_lossy_cast(x, to, (out != x) | xor(is.na(x), is.na(out)))
-
-  shape_broadcast(out, to)
+  lossy <- (out != x) | xor(is.na(x), is.na(out))
+  out <- shape_broadcast(out, to)
+  maybe_lossy_cast(out, x, to, lossy)
 }
 #' @export
 #' @method vec_cast.integer character
@@ -258,9 +264,9 @@ vec_cast.double.integer <- vec_cast.double.logical
 #' @method vec_cast.double character
 vec_cast.double.character <- function(x, to) {
   out <- suppressWarnings(vec_coerce_bare(x, "double"))
-  report_lossy_cast(x, to, (out != x) | xor(is.na(x), is.na(out)))
-
-  shape_broadcast(out, to)
+  lossy <- (out != x) | xor(is.na(x), is.na(out))
+  out <- shape_broadcast(out, to)
+  maybe_lossy_cast(out, x, to, lossy)
 }
 #' @export
 #' @method vec_cast.double double
@@ -368,21 +374,8 @@ vec_cast.list.default <- function(x, to) {
 
 # Helpers -----------------------------------------------------------------
 
-# Used primarily to make base coercions a little stricter
-report_lossy_cast <- function(x, y, lossy, details = NULL) {
-  if (all(lossy)) {
-    stop_incompatible_cast(
-      x, y,
-      details = "All elements of vectorised cast failed"
-    )
-  }
-  if (any(lossy)) {
-    warn_lossy_cast(x, y, locations = which(lossy), details = details)
-  }
-}
-
 lossy_floor <- function(x, to) {
   x_floor <- floor(x)
-  report_lossy_cast(x, to, x != x_floor)
-  x_floor
+  lossy <- x != x_floor
+  maybe_lossy_cast(x_floor, x, to, lossy)
 }
