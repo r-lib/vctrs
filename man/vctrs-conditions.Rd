@@ -18,7 +18,8 @@ stop_incompatible_cast(x, y, details = NULL, ..., message = NULL,
 stop_incompatible_op(op, x, y, details = NULL, ..., message = NULL,
   .subclass = NULL)
 
-maybe_lossy_cast(result, x, to, lossy, ...)
+maybe_lossy_cast(result, x, to, lossy = NULL, locations = NULL,
+  details = NULL, ..., message = NULL, .subclass = NULL)
 
 allow_lossy_cast(expr, x_ptype = NULL, to_ptype = NULL)
 }
@@ -34,15 +35,19 @@ allow_lossy_cast(expr, x_ptype = NULL, to_ptype = NULL)
 \item{to}{Type to cast to.}
 
 \item{lossy}{A logical vector indicating which elements of \code{result}
-were lossy.}
+were lossy.
+
+Can also be a single \code{TRUE}, but note that \code{locations} picks up
+locations from this vector by default. In this case, supply your
+own location vector, possibly empty.}
+
+\item{locations}{For \code{stop_lossy_cast()}, an optional vector giving the
+locations where \code{x} lost information.}
 
 \item{x_ptype, to_ptype}{Suppress only the casting errors where \code{x}
 or \code{to} match these \link[=vec_type]{prototypes}.}
 
 \item{subclass}{Use if you want to further customise the class}
-
-\item{locations}{For \code{stop_lossy_cast()}, an optional vector giving the
-locations where \code{x} lost information.}
 }
 \description{
 These errors and warnings have custom classes and structures to make

@@ -91,15 +91,27 @@ stop_incompatible_op <- function(op, x, y, details = NULL, ..., message = NULL, 
 #' @param to Type to cast to.
 #' @param lossy A logical vector indicating which elements of `result`
 #'   were lossy.
+#'
+#'   Can also be a single `TRUE`, but note that `locations` picks up
+#'   locations from this vector by default. In this case, supply your
+#'   own location vector, possibly empty.
 #' @export
-maybe_lossy_cast <- function(result, x, to, lossy, ...) {
+maybe_lossy_cast <- function(result, x, to,
+                             lossy = NULL,
+                             locations = NULL,
+                             details = NULL,
+                             ...,
+                             message = NULL,
+                             .subclass = NULL) {
   if (!any(lossy)) {
     return(result)
   }
 
+  locations <- locations %||% which(lossy)
+
   withRestarts(
     vctrs_restart_error_cast_lossy = function() result,
-    stop_lossy_cast(x, to, result, locations = which(lossy), ...)
+    stop_lossy_cast(x, to, result, locations = NULL, ...)
   )
 }
 stop_lossy_cast <- function(x, to, result,
@@ -108,9 +120,12 @@ stop_lossy_cast <- function(x, to, result,
                             ...,
                             message = NULL,
                             .subclass = NULL) {
+  if (length(locations)) {
+    locations <- inline_list("Locations: ", locations)
+  }
   message <- message %||% glue_lines(
     "Lossy cast from <{vec_ptype_full(x)}> to <{vec_ptype_full(to)}>.",
-    inline_list("Locations: ", locations),
+    locations,
     details
   )
 

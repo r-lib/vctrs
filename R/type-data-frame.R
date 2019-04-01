@@ -168,16 +168,13 @@ df_col_cast <- function(x, to) {
   attr(out, "row.names") <- attr(x, "row.names")
   out <- vec_restore(out, to)
 
-  if (length(extra) > 0 ) {
-    stop_lossy_cast(
-      x = x,
-      to = to,
-      result = out,
-      dropped = extra,
-      details = inline_list("Dropped variables: ", extra, quote = "`"),
-      .subclass = "vctrs_error_cast_lossy_df_dropped"
-    )
-  } else {
-    out
-  }
+  maybe_lossy_cast(
+    result = out,
+    x = x,
+    to = to,
+    lossy = length(extra) > 0,
+    locations = int(),
+    details = inline_list("Dropped variables: ", extra, quote = "`"),
+    .subclass = "vctrs_error_cast_lossy_dropped"
+  )
 }
