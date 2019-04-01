@@ -382,14 +382,12 @@
 <a class="sourceLine" id="cb29-10" data-line-number="10"><span class="kw"><a href="../reference/vec_c.html">vec_c</a></span>(pi, <span class="kw">decimal</span>(<span class="dv">1</span>, <span class="dt">digits =</span> <span class="dv">1</span>))</a>
 <a class="sourceLine" id="cb29-11" data-line-number="11"><span class="co">#&gt; &lt;decimal&lt;1&gt;[2]&gt;</span></a>
 <a class="sourceLine" id="cb29-12" data-line-number="12"><span class="co">#&gt; [1] 3.1 1.0</span></a></code></pre></div>
-<p>If type <code>x</code> has greater resolution than <code>y</code>, there will be some inputs that lose precision. These should generate warnings using <code><a href="../reference/vctrs-conditions.html">warn_lossy_cast()</a></code>. You can see that in action when casting from doubles to integers; only some doubles can become integers without losing resolution.</p>
+<p>If type <code>x</code> has greater resolution than <code>y</code>, there will be some inputs that lose precision. These should generate errors using <code>stop_lossy_cast()</code>. You can see that in action when casting from doubles to integers; only some doubles can become integers without losing resolution.</p>
 <div class="sourceCode" id="cb30"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb30-1" data-line-number="1"><span class="kw"><a href="../reference/vec_cast.html">vec_cast</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">10</span>), <span class="dt">to =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/integer">integer</a></span>())</a>
 <a class="sourceLine" id="cb30-2" data-line-number="2"><span class="co">#&gt; [1]  1  2 10</span></a>
 <a class="sourceLine" id="cb30-3" data-line-number="3"></a>
 <a class="sourceLine" id="cb30-4" data-line-number="4"><span class="kw"><a href="../reference/vec_cast.html">vec_cast</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="fl">1.5</span>, <span class="dv">2</span>, <span class="fl">10.5</span>), <span class="dt">to =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/integer">integer</a></span>())</a>
-<a class="sourceLine" id="cb30-5" data-line-number="5"><span class="co">#&gt; Warning: Lossy cast from &lt;double&gt; to &lt;integer&gt;.</span></a>
-<a class="sourceLine" id="cb30-6" data-line-number="6"><span class="co">#&gt; Locations: 1, 3</span></a>
-<a class="sourceLine" id="cb30-7" data-line-number="7"><span class="co">#&gt; [1]  1  2 10</span></a></code></pre></div>
+<a class="sourceLine" id="cb30-5" data-line-number="5"><span class="co">#&gt; Lossy cast from &lt;double&gt; to &lt;integer&gt;.</span></a></code></pre></div>
 </div>
 <div id="cached-sum" class="section level3">
 <h3 class="hasAnchor">
