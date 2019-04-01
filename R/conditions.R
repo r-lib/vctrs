@@ -93,11 +93,14 @@ stop_incompatible_op <- function(op, x, y, details = NULL, ..., message = NULL, 
 #'   were lossy.
 #' @export
 maybe_lossy_cast <- function(result, x, to, lossy, ...) {
-  if (any(lossy)) {
-    stop_lossy_cast(x, to, result, locations = which(lossy), ...)
-  } else {
-    result
+  if (!any(lossy)) {
+    return(result)
   }
+
+  withRestarts(
+    vctrs_restart_error_cast_lossy = function() result,
+    stop_lossy_cast(x, to, result, locations = which(lossy), ...)
+  )
 }
 stop_lossy_cast <- function(x, to, result,
                             locations = NULL,
@@ -111,19 +114,16 @@ stop_lossy_cast <- function(x, to, result,
     details
   )
 
-  withRestarts(
-    vctrs_restart_error_cast_lossy = function() result,
-    abort(
-      message,
-      x = x,
-      y = to,
-      to = to,
-      result = result,
-      locations = locations,
-      details = details,
-      ...,
-      .subclass = c(.subclass, "vctrs_error_cast_lossy")
-    )
+  abort(
+    message,
+    x = x,
+    y = to,
+    to = to,
+    result = result,
+    locations = locations,
+    details = details,
+    ...,
+    .subclass = c(.subclass, "vctrs_error_cast_lossy")
   )
 }
 #' @rdname vctrs-conditions
