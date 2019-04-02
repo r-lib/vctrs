@@ -103,14 +103,3 @@ is_same_type <- function(x, ptype) {
     identical(x, ptype)
   }
 }
-
-vec_is_vector <- function(x) {
-  vec_is_data_vector(vec_proxy(x))
-}
-
-vec_typeof <- function(x) {
-  .Call(vctrs_typeof, x, TRUE)
-}
-vec_typeof_bare <- function(x) {
-  .Call(vctrs_typeof, x, FALSE)
-}

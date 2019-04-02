@@ -211,3 +211,14 @@ pad_width <- function(x) {
   lines <- map(lines, format, width = width)
   map_chr(lines, paste, collapse = "\n")
 }
+
+vec_is_vector <- function(x) {
+  vec_is_data_vector(vec_proxy(x))
+}
+
+vec_typeof <- function(x) {
+  .Call(vctrs_typeof, x, TRUE)
+}
+vec_typeof_bare <- function(x) {
+  .Call(vctrs_typeof, x, FALSE)
+}
