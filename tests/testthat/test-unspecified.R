@@ -68,3 +68,8 @@ test_that("can finalise lengthy unspecified vectors", {
   expect_identical(vec_type_finalise(unspecified(3)), rep(NA, 3))
   expect_identical(ununspecify(unspecified(3)), rep(NA, 3))
 })
+
+test_that("unspecified() validates input", {
+  expect_identical(unspecified(1), unspecified(1L))
+  expect_error(unspecified(1:3), "must be a single number")
+})

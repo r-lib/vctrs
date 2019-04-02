@@ -120,11 +120,15 @@ extern SEXP vctrs_shared_empty_cpl;
 extern SEXP vctrs_shared_empty_chr;
 extern SEXP vctrs_shared_empty_raw;
 extern SEXP vctrs_shared_empty_list;
+extern SEXP vctrs_shared_empty_uns;
 
 extern SEXP vctrs_shared_true;
 extern SEXP vctrs_shared_false;
 
 extern Rcomplex vctrs_shared_na_cpl;
+
+SEXP vec_unspecified(R_len_t n);
+bool vec_is_unspecified(SEXP x);
 
 
 // Vector methods ------------------------------------------------
