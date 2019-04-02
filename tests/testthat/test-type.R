@@ -1,4 +1,4 @@
-context("test-prototype")
+context("test-type")
 
 
 test_that("vec_type fails for non-vectors", {
