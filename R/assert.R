@@ -32,14 +32,16 @@
 #'   invisibly.
 #' @export
 vec_assert <- function(x, ptype = NULL, size = NULL, arg = as_label(substitute(x))) {
-  if (!vec_is_vector(x)) {
-    msg <- glue::glue("`{ arg }` must be a vector, not { friendly_type_of(x) }")
-    abort(msg, "vctrs_error_assert_scalar", actual = x)
+  proxy <- vec_proxy(x)
+
+  if (!vec_is_vector(proxy)) {
+    msg <- glue::glue("`{ arg }` must be a vector, not { friendly_type_of(proxy) }")
+    abort(msg, "vctrs_error_assert_scalar", actual = proxy)
   }
 
   if (!is_null(ptype)) {
     ptype <- vec_type(ptype)
-    x_type <- vec_type(x)
+    x_type <- vec_type(proxy)
     if (!is_same_type(x_type, ptype)) {
       msg <- paste0("`", arg, "` must be <", vec_ptype_abbr(ptype), ">, not <", vec_ptype_abbr(x_type), ">.")
       abort(
@@ -53,7 +55,7 @@ vec_assert <- function(x, ptype = NULL, size = NULL, arg = as_label(substitute(x
 
   if (!is_null(size)) {
     size <- vec_recycle(vec_cast(size, integer()), 1L)
-    x_size <- vec_size(x)
+    x_size <- vec_size(proxy)
     if (!identical(x_size, size)) {
       msg <- paste0("`", arg, "` must have size ", size, ", not size ", x_size, ".")
       abort(
@@ -65,11 +67,13 @@ vec_assert <- function(x, ptype = NULL, size = NULL, arg = as_label(substitute(x
     }
   }
 
-  invisible(x)
+  invisible(proxy)
 }
 #' @rdname vec_assert
 #' @export
 vec_is <- function(x, ptype = NULL, size = NULL) {
+  x <- vec_proxy(x)
+
   if (!vec_is_vector(x)) {
     return(FALSE)
   }
