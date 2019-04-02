@@ -4,7 +4,7 @@ context("test-type")
 test_that("vec_type fails for non-vectors", {
   expect_error(
     vec_type(quote(name)),
-    "`x` is not a vector",
+    "`x` must be a vector, not a symbol",
     fixed = TRUE
   )
 })

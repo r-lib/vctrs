@@ -246,6 +246,11 @@ SEXP r_new_environment(SEXP parent, R_len_t size) {
   return env;
 }
 
+// [[ include("utils.h") ]]
+SEXP r_protect(SEXP x) {
+  return Rf_lang2(fns_quote, x);
+}
+
 
 SEXP vctrs_ns_env = NULL;
 
@@ -257,6 +262,7 @@ SEXP syms_dots = NULL;
 SEXP syms_bracket = NULL;
 
 SEXP fns_bracket = NULL;
+SEXP fns_quote = NULL;
 
 void vctrs_init_utils(SEXP ns) {
   vctrs_ns_env = ns;
@@ -269,6 +275,7 @@ void vctrs_init_utils(SEXP ns) {
   syms_bracket = Rf_install("[");
 
   fns_bracket = Rf_findVar(syms_bracket, R_BaseEnv);
+  fns_quote = Rf_findVar(Rf_install("quote"), R_BaseEnv);
 
   new_env_call = r_parse_eval("as.call(list(new.env, TRUE, NULL, NULL))", R_BaseEnv);
   R_PreserveObject(new_env_call);

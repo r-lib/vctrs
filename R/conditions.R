@@ -243,6 +243,15 @@ stop_unimplemented <- function(x, method) {
   )
 }
 
+stop_scalar_type <- function(x, arg = NULL) {
+  if (is_null(arg)) {
+    msg <- glue::glue("Expected a vector, not { friendly_type_of(x) }")
+  } else {
+    msg <- glue::glue("`{ arg }` must be a vector, not { friendly_type_of(x) }")
+  }
+  abort(msg, "vctrs_error_scalar_type", actual = x)
+}
+
 # helpers -----------------------------------------------------------------
 
 glue_lines <- function(..., env = parent.frame()) {

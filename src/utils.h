@@ -29,6 +29,10 @@ bool r_int_any_na(SEXP x);
 
 SEXP r_new_environment(SEXP parent, R_len_t size);
 
+SEXP r_protect(SEXP x);
+
+
+extern SEXP vctrs_ns_env;
 
 extern SEXP vctrs_ns_env;
 
@@ -40,6 +44,7 @@ extern SEXP syms_dots;
 extern SEXP syms_bracket;
 
 extern SEXP fns_bracket;
+extern SEXP fns_quote;
 
 
 #endif
