@@ -31,9 +31,7 @@
 #'   throws a typed error (see section on error types) or returns `x`,
 #'   invisibly.
 #' @export
-vec_assert <- function(x, ptype = NULL, size = NULL, arg = NULL) {
-  arg <- arg %||% as_label(substitute(x))
-
+vec_assert <- function(x, ptype = NULL, size = NULL, arg = as_label(substitute(x))) {
   if (!vec_is_vector(x)) {
     msg <- glue::glue("`{ arg }` must be a vector, not { friendly_type_of(x) }")
     abort(msg, "vctrs_error_assert_scalar", actual = x)

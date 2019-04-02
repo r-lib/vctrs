@@ -5,7 +5,8 @@
 \alias{vec_is}
 \title{Assert an argument has known prototype and/or size}
 \usage{
-vec_assert(x, ptype = NULL, size = NULL, arg = NULL)
+vec_assert(x, ptype = NULL, size = NULL,
+  arg = as_label(substitute(x)))
 
 vec_is(x, ptype = NULL, size = NULL)
 }
