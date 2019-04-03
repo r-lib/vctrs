@@ -52,6 +52,9 @@ stop_incompatible <- function(x, y, details = NULL, ..., message = NULL, .subcla
 #' @rdname vctrs-conditions
 #' @export
 stop_incompatible_type <- function(x, y, details = NULL, ..., message = NULL, .subclass = NULL) {
+  vec_assert(x)
+  vec_assert(y)
+
   message <- message %||% glue_lines(
     "No common type for <{vec_ptype_full(x)}> and <{vec_ptype_full(y)}>.",
     details

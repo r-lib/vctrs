@@ -17,7 +17,17 @@ SEXP vctrs_type2(SEXP x, SEXP y) {
     return vctrs_type2_dispatch(x, y);
   }
 
-  switch (vec_typeof2(x, y)) {
+  enum vctrs_type type_x = vec_typeof(x);
+  enum vctrs_type type_y = vec_typeof(y);
+
+  if (type_x == vctrs_type_scalar) {
+    stop_scalar_type(x, "x");
+  }
+  if (type_y == vctrs_type_scalar) {
+    stop_scalar_type(y, "y");
+  }
+
+  switch (vec_typeof2_impl(type_x, type_y)) {
   case vctrs_type2_null_null:
     return R_NilValue;
 

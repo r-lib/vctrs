@@ -41,7 +41,7 @@ vec_type2_dispatch <- function(x, y) {
 }
 #' @export
 vec_type2.default <- function(x, y) {
-  if (identical(attributes(x), attributes(y))) {
+  if (typeof(x) == typeof(y) && identical(attributes(x), attributes(y))) {
     return(x)
   }
 
