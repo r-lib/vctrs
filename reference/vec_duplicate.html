@@ -35,13 +35,13 @@
 
 <meta property="og:description" content="
 vec_duplicate_any(): detects the presence of duplicated values,
-similarly to anyDuplicated().
+similar to anyDuplicated().
 vec_duplicate_detect(): returns a logical vector describing if each
 element of the vector is duplicated elsewhere. Unlike duplicated(), it
 reports all duplicated values, not just the second and subsequent
 repetitions.
-vec_duplicate_id(): returns an integer vector given the location of
-the first occurence of the value
+vec_duplicate_id(): returns an integer vector giving the location of
+the first occurence of the value.
 " />
 
 <meta property="og:image" content="https://vctrs.r-lib.org/logo.png" />
@@ -141,13 +141,13 @@ the first occurence of the value
     
     <ul>
 <li><p><code>vec_duplicate_any()</code>: detects the presence of duplicated values,
-similarly to <code><a href='https://www.rdocumentation.org/packages/base/topics/duplicated'>anyDuplicated()</a></code>.</p></li>
+similar to <code><a href='https://www.rdocumentation.org/packages/base/topics/duplicated'>anyDuplicated()</a></code>.</p></li>
 <li><p><code>vec_duplicate_detect()</code>: returns a logical vector describing if each
 element of the vector is duplicated elsewhere. Unlike <code><a href='https://www.rdocumentation.org/packages/base/topics/duplicated'>duplicated()</a></code>, it
 reports all duplicated values, not just the second and subsequent
 repetitions.</p></li>
-<li><p><code>vec_duplicate_id()</code>: returns an integer vector given the location of
-the first occurence of the value</p></li>
+<li><p><code>vec_duplicate_id()</code>: returns an integer vector giving the location of
+the first occurence of the value.</p></li>
 </ul>
     
     </div>
@@ -172,8 +172,8 @@ the first occurence of the value</p></li>
     
 <ul>
 <li><p><code>vec_duplicate_any()</code>: a logical vector of length 1.</p></li>
-<li><p><code>vec_duplicate_detect()</code>: a logical vector the same length as <code>x</code></p></li>
-<li><p><code>vec_duplicate_id()</code>: an integer vector the same length as <code>x</code></p></li>
+<li><p><code>vec_duplicate_detect()</code>: a logical vector the same length as <code>x</code>.</p></li>
+<li><p><code>vec_duplicate_id()</code>: an integer vector the same length as <code>x</code>.</p></li>
 </ul>
 
     
@@ -190,7 +190,7 @@ all <code>NaN</code> are also considered to be equal.)</p>
     
     <p>These functions are currently slightly slower than their base equivalents.
 This is primarily because they do a little more checking and coercion
-in R, which makes them both a litter safer and more generic. Additionally,
+in R, which makes them both a little safer and more generic. Additionally,
 the C code underlying vctrs has not yet been implemented: we expect
 some performance improvements when that happens.</p>
     
