@@ -74,6 +74,8 @@ vec_data <- function(x) {
   # TODO: implement with ALTREP to avoid making a copy
   if (is_record(x)) {
     attributes(x) <- list(names = fields(x))
+  } else if (has_dim(x)) {
+    attributes(x) <- list(dim = dim(x), dimnames = dimnames(x))
   } else {
     attributes(x) <- list(names = names(x))
   }
@@ -100,4 +102,3 @@ is_record <- function(x) {
 is_record.POSIXlt <- function(x) TRUE
 is_record.vctrs_rcrd <- function(x) TRUE
 is_record.default <- function(x) FALSE
-
