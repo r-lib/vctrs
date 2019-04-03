@@ -104,7 +104,3 @@ is_record <- function(x) {
 is_record.POSIXlt <- function(x) TRUE
 is_record.vctrs_rcrd <- function(x) TRUE
 is_record.default <- function(x) FALSE
-
-has_dim <- function(x) {
-  !is.null(attr(x, "dim"))
-}
