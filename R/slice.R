@@ -5,8 +5,10 @@
 #' that matches [vec_size()] instead of `length()`.
 #'
 #' @param x A vector
-#' @param i An integer or character vector specifying the positions or
+#' @param i An integer, character or logical vector specifying the positions or
 #'   names of the observations to get/set.
+#'   Specify `TRUE` to index all elements (as in `x[]`), or `NULL`, `FALSE` or
+#'   `integer()` to index none (as in `x[NULL]`).
 #' @param value Replacement values.
 #'
 #' @details
@@ -35,7 +37,7 @@
 #'
 #' vec_slice(mtcars, 1:3)
 vec_slice <- function(x, i) {
-  .Call(vctrs_slice, x, maybe_missing(i), FALSE)
+  .Call(vctrs_slice, x, i, FALSE)
 }
 
 # Called when `x` has dimensions
@@ -56,7 +58,7 @@ vec_slice_fallback <- function(x, i) {
 
 # No dispatch on `[`, should be called in `[` methods
 vec_slice_native <- function(x, i) {
-  .Call(vctrs_slice, x, maybe_missing(i), TRUE)
+  .Call(vctrs_slice, x, i, TRUE)
 }
 
 #' @export
@@ -89,7 +91,7 @@ vec_slice_native <- function(x, i) {
 }
 
 vec_as_index <- function(i, x) {
-  .Call(vctrs_as_index, maybe_missing(i), x)
+  .Call(vctrs_as_index, i, x)
 }
 
 #' Create a missing vector

@@ -26,16 +26,19 @@ test_that("can subset with missing indices", {
 test_that("can subset with a recycled NA", {
   expect_identical(vec_slice(1:3, NA), int(NA, NA, NA))
   expect_identical(vec_slice(mtcars, NA), unrownames(mtcars[NA, ]))
+  expect_identical(vec_slice(new_vctr(1:3), NA), new_vctr(int(NA, NA, NA)))
 })
 
 test_that("can subset with a recycled TRUE", {
   expect_identical(vec_slice(1:3, TRUE), 1:3)
   expect_identical(vec_slice(mtcars, TRUE), unrownames(mtcars))
+  expect_identical(vec_slice(new_vctr(1:3), TRUE), new_vctr(1:3))
 })
 
 test_that("can subset with a recycled FALSE", {
   expect_identical(vec_slice(1:3, FALSE), int())
   expect_identical(vec_slice(mtcars, FALSE), unrownames(mtcars[NULL, ]))
+  expect_identical(vec_slice(new_vctr(1:3), FALSE), new_vctr(integer()))
 })
 
 test_that("can't index beyond the end of a vector", {
@@ -161,10 +164,46 @@ test_that("ignores NA in integer subsetting", {
   expect_equal(`vec_slice<-`(x, c(NA, 2:3), c(NA, 2:1)), c(0, 2, 1))
 })
 
-test_that("can slice with missing argument", {
-  expect_identical(vec_slice(1:3), 1:3)
-  expect_identical(vec_slice(mtcars), mtcars)
-  expect_identical(vec_slice(new_vctr(1:3)), new_vctr(1:3))
+test_that("can't slice with missing argument", {
+  expect_error(vec_slice(1:3))
+  expect_error(vec_slice(mtcars))
+  expect_error(vec_slice(new_vctr(1:3)))
+})
+
+test_that("can slice with NULL argument", {
+  expect_identical(vec_slice(1:3, NULL), integer())
+  expect_identical(vec_slice(iris, NULL), iris[0, ])
+  expect_identical(vec_slice(new_vctr(1:3), NULL), new_vctr(integer()))
+})
+
+test_that("can't modify subset with missing argument", {
+  x <- 1:3
+  expect_error(vec_slice(x, ) <- 2L)
+})
+
+test_that("can modify subset with recycled NA argument", {
+  x <- 1:3
+  vec_slice(x, NA) <- 2L
+  expect_identical(x, 1:3)
+})
+
+test_that("can modify subset with recycled TRUE argument", {
+  x <- 1:3
+  vec_slice(x, TRUE) <- 2L
+  expect_identical(x, rep(2L, 3))
+})
+
+test_that("can modify subset with recycled FALSE argument", {
+  x <- 1:3
+  vec_slice(x, FALSE) <- 2L
+  expect_identical(x, 1:3)
+})
+
+test_that("can modify subset with NULL argument", {
+  x <- 1:3
+  vec_slice(x, NULL) <- 2L
+
+  expect_identical(x, 1:3)
 })
 
 test_that("slicing unclassed structures preserves attributes", {
