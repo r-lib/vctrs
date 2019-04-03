@@ -36,6 +36,11 @@ test_that("vec_unique matches unique", {
   expect_equal(unique(x), unique(x))
 })
 
+test_that("vec_unique matches unique for matrices", {
+  x <- matrix(c(1, 1, 2, 2), ncol = 2)
+  expect_equal(vec_unique(x), unique(x))
+})
+
 test_that("vec_unique_count matches length + unique", {
   x <- sample(100, 1000, replace = TRUE)
   expect_equal(vec_unique_count(x), length(unique(x)))
