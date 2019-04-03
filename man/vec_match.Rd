@@ -41,7 +41,7 @@ all \code{NaN} are also considered to be equal.)
 
 These functions are currently slightly slower than their base equivalents.
 This is primarily because they do a little more checking and coercion
-in R, which makes them both a litter safer and more generic. Additionally,
+in R, which makes them both a little safer and more generic. Additionally,
 the C code underlying vctrs has not yet been implemented: we expect
 some performance improvements when that happens.
 }

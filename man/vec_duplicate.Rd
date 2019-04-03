@@ -19,20 +19,20 @@ vec_duplicate_id(x)
 \value{
 \itemize{
 \item \code{vec_duplicate_any()}: a logical vector of length 1.
-\item \code{vec_duplicate_detect()}: a logical vector the same length as \code{x}
-\item \code{vec_duplicate_id()}: an integer vector the same length as \code{x}
+\item \code{vec_duplicate_detect()}: a logical vector the same length as \code{x}.
+\item \code{vec_duplicate_id()}: an integer vector the same length as \code{x}.
 }
 }
 \description{
 \itemize{
 \item \code{vec_duplicate_any()}: detects the presence of duplicated values,
-similarly to \code{\link[=anyDuplicated]{anyDuplicated()}}.
+similar to \code{\link[=anyDuplicated]{anyDuplicated()}}.
 \item \code{vec_duplicate_detect()}: returns a logical vector describing if each
 element of the vector is duplicated elsewhere. Unlike \code{\link[=duplicated]{duplicated()}}, it
 reports all duplicated values, not just the second and subsequent
 repetitions.
-\item \code{vec_duplicate_id()}: returns an integer vector given the location of
-the first occurence of the value
+\item \code{vec_duplicate_id()}: returns an integer vector giving the location of
+the first occurence of the value.
 }
 }
 \section{Missing values}{
@@ -47,7 +47,7 @@ all \code{NaN} are also considered to be equal.)
 
 These functions are currently slightly slower than their base equivalents.
 This is primarily because they do a little more checking and coercion
-in R, which makes them both a litter safer and more generic. Additionally,
+in R, which makes them both a little safer and more generic. Additionally,
 the C code underlying vctrs has not yet been implemented: we expect
 some performance improvements when that happens.
 }
