@@ -21,7 +21,7 @@ Imports:
     backports,
     digest,
     glue,
-    rlang (>= 0.3.2.9000),
+    rlang (>= 0.3.3),
     zeallot
 Suggests: 
     bit64,
@@ -33,8 +33,6 @@ Suggests:
     rmarkdown,
     testthat,
     tibble
-Remotes: 
-    r-lib/rlang
 VignetteBuilder: 
     knitr
 Encoding: UTF-8
