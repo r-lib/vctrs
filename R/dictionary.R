@@ -75,13 +75,13 @@ reset_rownames <- function(x) {
 #' Find duplicated values
 #'
 #' * `vec_duplicate_any()`: detects the presence of duplicated values,
-#'   similarly to [anyDuplicated()].
+#'   similar to [anyDuplicated()].
 #' * `vec_duplicate_detect()`: returns a logical vector describing if each
 #'   element of the vector is duplicated elsewhere. Unlike [duplicated()], it
 #'   reports all duplicated values, not just the second and subsequent
 #'   repetitions.
-#' * `vec_duplicate_id()`: returns an integer vector given the location of
-#'   the first occurence of the value
+#' * `vec_duplicate_id()`: returns an integer vector giving the location of
+#'   the first occurence of the value.
 #'
 #' @section Missing values:
 #' In most cases, missing values are not considered to be equal, i.e.
@@ -92,15 +92,15 @@ reset_rownames <- function(x) {
 #' @section Performance:
 #' These functions are currently slightly slower than their base equivalents.
 #' This is primarily because they do a little more checking and coercion
-#' in R, which makes them both a litter safer and more generic. Additionally,
+#' in R, which makes them both a little safer and more generic. Additionally,
 #' the C code underlying vctrs has not yet been implemented: we expect
 #' some performance improvements when that happens.
 #'
 #' @param x A vector (including a data frame).
 #' @return
 #'   * `vec_duplicate_any()`: a logical vector of length 1.
-#'   * `vec_duplicate_detect()`: a logical vector the same length as `x`
-#'   * `vec_duplicate_id()`: an integer vector the same length as `x`
+#'   * `vec_duplicate_detect()`: a logical vector the same length as `x`.
+#'   * `vec_duplicate_id()`: an integer vector the same length as `x`.
 #' @seealso [vec_unique()] for functions that work with the dual of duplicated
 #'   values: unique values.
 #' @name vec_duplicate
