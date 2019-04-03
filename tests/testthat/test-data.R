@@ -8,6 +8,12 @@ test_that("strips vector attributes apart from names", {
   expect_equal(vec_data(x), c(x = 1, y = 2))
 })
 
+test_that("strips attributes apart from dim and dimnames", {
+  x <- new_vctr(1, a = 1, dim = c(1L, 1L), dimnames = list("foo", "bar"))
+  expect <- matrix(1, nrow = 1L, ncol = 1L, dimnames = list("foo", "bar"))
+  expect_equal(vec_data(x), expect)
+})
+
 test_that("vec_is_data_vector() detects data vectors", {
   for (x in vectors) {
     expect_true(vec_is_data_vector(!!x))
