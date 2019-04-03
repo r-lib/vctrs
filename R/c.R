@@ -67,8 +67,12 @@ vec_c <- function(..., .ptype = NULL) {
     pos <- pos + n
   }
 
-  if (!is.null(names))
+  if (!is.null(names)) {
+    if (is_installed("tibble")) {
+      names <- tibble::tidy_names(names)
+    }
     vec_names(out) <- names
+  }
 
   out
 }
