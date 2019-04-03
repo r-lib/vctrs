@@ -57,7 +57,7 @@ vec_count <- function(x, sort = c("count", "key", "location", "none")) {
     count = order(-kv$val)
   )
 
-  df <- df[idx, , drop = FALSE]
+  df <- vec_slice(df, idx)
   reset_rownames(df)
 }
 

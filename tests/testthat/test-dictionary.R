@@ -8,6 +8,13 @@ test_that("vec_count counts number observations", {
   expect_equal(x, data.frame(key = 1:3, count = 1:3))
 })
 
+test_that("vec_count works with arrays", {
+  x <- array(c(rep(1, 3), rep(2, 3)), dim = c(3, 2, 1))
+  expect <- data.frame(key = NA, count = 3)
+  expect$key <- vec_slice(x, 1L)
+  expect_equal(vec_count(x), expect)
+})
+
 test_that("vec_count works for zero-length input", {
   x <- vec_count(integer(), sort = "none")
   expect_equal(x, data.frame(key = integer(), count = integer()))
