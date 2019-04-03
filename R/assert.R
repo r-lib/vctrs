@@ -94,6 +94,9 @@ vec_is <- function(x, ptype = NULL, size = NULL) {
 }
 
 is_same_type <- function(x, ptype) {
+  if (is_partial(ptype)) {
+    ptype <- vec_type_common(x, ptype)
+  }
   identical(x, ptype)
 }
 
