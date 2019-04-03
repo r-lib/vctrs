@@ -42,7 +42,6 @@ vec_c <- function(..., .ptype = NULL) {
   out <- vec_na(ptype, sum(ns))
 
   has_names <- !is.null(names(args)) || has_inner_names(args)
-
   if (has_names) {
     names <- vec_na(character(), sum(ns))
   } else {
