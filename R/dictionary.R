@@ -180,8 +180,7 @@ vec_duplicate_id <- function(x) {
 #' # But they are for the purposes of considering uniqueness
 #' vec_unique(c(NA, NA, NA, NA, 1, 2, 1))
 vec_unique <- function(x) {
-  px <- vec_proxy_equal(x)
-  vec_slice(x, vec_unique_loc(px))
+  vec_slice(x, vec_unique_loc(x))
 }
 
 #' @rdname vec_unique
