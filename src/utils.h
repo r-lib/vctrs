@@ -14,6 +14,8 @@ SEXP vctrs_dispatch3(SEXP fn_sym, SEXP fn,
                      SEXP y_sym, SEXP y,
                      SEXP z_sym, SEXP z);
 
+enum vctrs_type2 vec_typeof2_impl(enum vctrs_type type_x, enum vctrs_type type_y);
+
 bool is_compact_rownames(SEXP x);
 R_len_t compact_rownames_length(SEXP x);
 

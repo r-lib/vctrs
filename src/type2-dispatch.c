@@ -9,10 +9,12 @@
  * in helper-types.R. This will ensure the consistency of the new
  * entries.
  */
-enum vctrs_type2 vec_typeof2(SEXP x, SEXP y) {
-  switch (vec_typeof(x)) {
+
+// [[ include("utils.h") ]]
+enum vctrs_type2 vec_typeof2_impl(enum vctrs_type type_x, enum vctrs_type type_y) {
+  switch (type_x) {
   case vctrs_type_null: {
-    switch (vec_typeof(y)) {
+    switch (type_y) {
     case vctrs_type_null:      return vctrs_type2_null_null;
     case vctrs_type_logical:   return vctrs_type2_null_logical;
     case vctrs_type_integer:   return vctrs_type2_null_integer;
@@ -27,7 +29,7 @@ enum vctrs_type2 vec_typeof2(SEXP x, SEXP y) {
     }
   }
   case vctrs_type_logical: {
-    switch (vec_typeof(y)) {
+    switch (type_y) {
     case vctrs_type_null:      return vctrs_type2_null_logical;
     case vctrs_type_logical:   return vctrs_type2_logical_logical;
     case vctrs_type_integer:   return vctrs_type2_logical_integer;
@@ -42,7 +44,7 @@ enum vctrs_type2 vec_typeof2(SEXP x, SEXP y) {
     }
   }
   case vctrs_type_integer: {
-    switch (vec_typeof(y)) {
+    switch (type_y) {
     case vctrs_type_null:      return vctrs_type2_null_integer;
     case vctrs_type_logical:   return vctrs_type2_logical_integer;
     case vctrs_type_integer:   return vctrs_type2_integer_integer;
@@ -57,7 +59,7 @@ enum vctrs_type2 vec_typeof2(SEXP x, SEXP y) {
     }
   }
   case vctrs_type_double: {
-    switch (vec_typeof(y)) {
+    switch (type_y) {
     case vctrs_type_null:      return vctrs_type2_null_double;
     case vctrs_type_logical:   return vctrs_type2_logical_double;
     case vctrs_type_integer:   return vctrs_type2_integer_double;
@@ -72,7 +74,7 @@ enum vctrs_type2 vec_typeof2(SEXP x, SEXP y) {
     }
   }
   case vctrs_type_complex: {
-    switch (vec_typeof(y)) {
+    switch (type_y) {
     case vctrs_type_null:      return vctrs_type2_null_complex;
     case vctrs_type_logical:   return vctrs_type2_logical_complex;
     case vctrs_type_integer:   return vctrs_type2_integer_complex;
@@ -87,7 +89,7 @@ enum vctrs_type2 vec_typeof2(SEXP x, SEXP y) {
     }
   }
   case vctrs_type_character: {
-    switch (vec_typeof(y)) {
+    switch (type_y) {
     case vctrs_type_null:      return vctrs_type2_null_character;
     case vctrs_type_logical:   return vctrs_type2_logical_character;
     case vctrs_type_integer:   return vctrs_type2_integer_character;
@@ -102,7 +104,7 @@ enum vctrs_type2 vec_typeof2(SEXP x, SEXP y) {
     }
   }
   case vctrs_type_raw: {
-    switch (vec_typeof(y)) {
+    switch (type_y) {
     case vctrs_type_null:      return vctrs_type2_null_raw;
     case vctrs_type_logical:   return vctrs_type2_logical_raw;
     case vctrs_type_integer:   return vctrs_type2_integer_raw;
@@ -117,7 +119,7 @@ enum vctrs_type2 vec_typeof2(SEXP x, SEXP y) {
     }
   }
   case vctrs_type_list: {
-    switch (vec_typeof(y)) {
+    switch (type_y) {
     case vctrs_type_null:      return vctrs_type2_null_list;
     case vctrs_type_logical:   return vctrs_type2_logical_list;
     case vctrs_type_integer:   return vctrs_type2_integer_list;
@@ -132,7 +134,7 @@ enum vctrs_type2 vec_typeof2(SEXP x, SEXP y) {
     }
   }
   case vctrs_type_dataframe: {
-    switch (vec_typeof(y)) {
+    switch (type_y) {
     case vctrs_type_null:      return vctrs_type2_null_dataframe;
     case vctrs_type_logical:   return vctrs_type2_logical_dataframe;
     case vctrs_type_integer:   return vctrs_type2_integer_dataframe;
@@ -147,7 +149,7 @@ enum vctrs_type2 vec_typeof2(SEXP x, SEXP y) {
     }
   }
   case vctrs_type_s3: {
-    switch (vec_typeof(y)) {
+    switch (type_y) {
     case vctrs_type_null:      return vctrs_type2_null_s3;
     case vctrs_type_logical:   return vctrs_type2_logical_s3;
     case vctrs_type_integer:   return vctrs_type2_integer_s3;
@@ -162,7 +164,7 @@ enum vctrs_type2 vec_typeof2(SEXP x, SEXP y) {
     }
   }
   case vctrs_type_scalar: {
-    switch (vec_typeof(y)) {
+    switch (type_y) {
     case vctrs_type_null:      return vctrs_type2_null_scalar;
     case vctrs_type_logical:   return vctrs_type2_logical_scalar;
     case vctrs_type_integer:   return vctrs_type2_integer_scalar;
@@ -176,6 +178,10 @@ enum vctrs_type2 vec_typeof2(SEXP x, SEXP y) {
     case vctrs_type_scalar:    return vctrs_type2_scalar_scalar;
     }
   }}
+}
+// [[ include("vctrs.h") ]]
+enum vctrs_type2 vec_typeof2(SEXP x, SEXP y) {
+  return vec_typeof2_impl(vec_typeof(x), vec_typeof(y));
 };
 
 const char* vctrs_type2_as_str(enum vctrs_type2 type) {
