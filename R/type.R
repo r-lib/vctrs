@@ -62,36 +62,7 @@
 #'   data.frame(z = "a")
 #' )
 vec_type <- function(x) {
-  UseMethod("vec_type")
-}
-
-#' @export
-vec_type.default <- function(x) {
-  if (is_vector(x)) {
-    vec_slice(x, 0L)
-  } else {
-    abort("`x` is not a vector.")
-  }
-}
-
-#' @export
-vec_type.NULL <- function(x) {
-  NULL
-}
-
-#' @export
-vec_type.logical <- function(x) {
-  if (is_unspecified(x)) {
-    unspecified()
-  } else {
-    vec_slice(x, 0L)
-  }
-}
-
-#' @export
-vec_type.data.frame <- function(x) {
-  cols <- map(x, vec_type)
-  vec_restore(cols, x, i = int())
+  .Call(vctrs_type, x)
 }
 
 #' @export

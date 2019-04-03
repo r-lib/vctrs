@@ -8,12 +8,6 @@ new_sclr <- function(..., class = character()) {
   )
 }
 
-#' @export
-vec_type.vctrs_sclr <- function(x) {
-  x
-}
-
-
 # Subsetting --------------------------------------------------------------
 
 #' @export

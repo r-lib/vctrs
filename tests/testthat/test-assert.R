@@ -139,11 +139,8 @@ test_that("vec_typeof() handles all types", {
 })
 
 test_that("bare prototypes act as partial types", {
-  scoped_bindings(.env = global_env(),
-    vec_slice.vctrs_foobar = function(x, i) foobar(x[i])
-  )
-  expect_true(vec_is(foobar(1), dbl()))
-  expect_error(NA, object = vec_assert(foobar(1), dbl()))
+  expect_false(vec_is(foobar(1), dbl()))
+  expect_error(vec_assert(foobar(1), dbl()), class = "vctrs_error_assert_ptype")
 })
 
 test_that("data frames are always classified as such even when dispatch is off", {

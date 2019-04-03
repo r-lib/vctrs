@@ -1,16 +1,10 @@
 context("test-type")
 
 
-test_that("vec_type fails for non-vectors", {
-  expect_error(
-    vec_type(quote(name)),
-    "`x` must be a vector, not a symbol",
-    fixed = TRUE
-  )
-})
-
-test_that("vec_type(NULL) returns NULL", {
-  expect_identical(vec_type(NULL), NULL)
+test_that("vec_type() is a no-op for non-vectors", {
+  expect_null(vec_type(NULL))
+  expect_identical(vec_type(quote(name)), quote(name))
+  expect_identical(vec_type(partial_frame(x = 1)), partial_frame(x = 1))
 })
 
 test_that(".ptype argument overrides others", {

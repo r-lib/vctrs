@@ -137,6 +137,7 @@ R_len_t vec_size(SEXP x);
 SEXP vec_cast(SEXP x, SEXP to);
 SEXP vec_slice(SEXP x, SEXP index);
 SEXP vec_restore(SEXP x, SEXP to, SEXP i);
+SEXP vec_type(SEXP x);
 
 bool is_data_frame(SEXP x);
 bool is_record(SEXP x);

@@ -5,6 +5,59 @@
 static SEXP syms_vec_is_vector_dispatch = NULL;
 static SEXP fns_vec_is_vector_dispatch = NULL;
 
+// Defined below
+static SEXP vec_type_rec(SEXP x, bool dispatch);
+
+
+static SEXP lgl_type(SEXP x) {
+  if (vec_is_unspecified(x)) {
+    return vctrs_shared_empty_uns;
+  } else {
+    return vec_slice(x, vctrs_shared_empty_int);
+  }
+}
+
+static SEXP df_type(SEXP x) {
+  R_len_t n = Rf_length(x);
+  SEXP out = PROTECT(Rf_allocVector(VECSXP, n));
+
+  for (R_len_t i = 0; i < n; ++i) {
+    SET_VECTOR_ELT(out, i, vec_type(VECTOR_ELT(x, i)));
+  }
+
+  // FIXME: Should that be restored?
+  SEXP nms = PROTECT(Rf_getAttrib(x, R_NamesSymbol));
+  Rf_setAttrib(out, R_NamesSymbol, nms);
+
+  out = df_restore(out, x, vctrs_shared_empty_int);
+
+  UNPROTECT(2);
+  return out;
+}
+
+static SEXP vec_type_dispatch(SEXP x) {
+  SEXP proxy = PROTECT(vec_proxy(x));
+  SEXP out = PROTECT(vec_type_rec(proxy, false));
+  out = vec_restore(out, x, vctrs_shared_empty_int);
+  UNPROTECT(2);
+  return out;
+}
+
+static SEXP vec_type_rec(SEXP x, bool dispatch) {
+  switch (vec_typeof_impl(x, dispatch)) {
+  case vctrs_type_scalar:    return x;
+  case vctrs_type_null:      return R_NilValue;
+  case vctrs_type_logical:   return lgl_type(x);
+  case vctrs_type_dataframe: return df_type(x);
+  case vctrs_type_s3:        return vec_type_dispatch(x);
+  default:                   return vec_slice(x, vctrs_shared_empty_int);
+  }
+}
+
+// [[ include("vctrs.h"), register ]]
+SEXP vec_type(SEXP x) {
+  return vec_type_rec(x, true);
+}
 
 bool is_data_frame(SEXP x) {
   return Rf_inherits(x, "data.frame");
