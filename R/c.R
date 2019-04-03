@@ -40,10 +40,13 @@ vec_c <- function(..., .ptype = NULL) {
 
   ns <- map_int(args, vec_size)
   out <- vec_na(ptype, sum(ns))
-  if (is.null(names(args)) && !has_inner_names(args)) {
-    names <- NULL
-  } else {
+
+  has_names <- !is.null(names(args)) || has_inner_names(args)
+
+  if (has_names) {
     names <- vec_na(character(), sum(ns))
+  } else {
+    names <- NULL
   }
 
   pos <- 1
@@ -54,7 +57,12 @@ vec_c <- function(..., .ptype = NULL) {
 
     x <- vec_cast(args[[i]], to = ptype)
 
-    names[pos:(pos + n - 1)] <- outer_names(names(args)[[i]], vec_names(args[[i]]), length(x))
+    if (has_names) {
+      n_x <- length(x)
+      names_i <- outer_names(names(args)[[i]], vec_names(args[[i]]), n_x)
+      names[pos:(pos + n - 1)] <- names_i %||% rep("", times = n_x)
+    }
+
     vec_slice(out, pos:(pos + n - 1)) <- x
     pos <- pos + n
   }
