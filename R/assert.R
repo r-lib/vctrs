@@ -41,7 +41,7 @@ vec_assert <- function(x, ptype = NULL, size = NULL, arg = as_label(substitute(x
     ptype <- vec_type(ptype)
     x_type <- vec_type_finalise(vec_type(x))
     if (!is_same_type(x_type, ptype)) {
-      msg <- paste0("`", arg, "` must be <", vec_ptype_abbr(ptype), ">, not <", vec_ptype_abbr(x_type), ">.")
+      msg <- vec_assert_type_explain(x_type, ptype, arg)
       abort(
         msg,
         .subclass = c("vctrs_error_assert_ptype", "vctrs_error_assert"),
@@ -95,4 +95,34 @@ vec_is <- function(x, ptype = NULL, size = NULL) {
 
 is_same_type <- function(x, ptype) {
   identical(x, ptype)
+}
+
+vec_assert_type_explain <- function(x, type, arg) {
+  arg <- str_backtick(arg)
+  x <- vec_ptype_full(x)
+  type <- vec_ptype_full(type)
+
+  intro <- paste0(arg, " must be a vector with type")
+  intro <- layout_type(intro, type)
+
+  outro <- paste0("Instead, it has type")
+  outro <- layout_type(outro, x)
+
+  paste_line(
+    !!!intro,
+    if (str_is_multiline(intro)) "",
+    !!!outro
+  )
+}
+
+layout_type <- function(start, type) {
+  if (str_is_multiline(type)) {
+    paste_line(
+      paste0(start, ":"),
+      "",
+      paste0("  ", indent(type, 2))
+    )
+  } else {
+    paste0(start, " ", type, ".")
+  }
 }
