@@ -178,3 +178,32 @@ test_that("unspecified is finalised before assertion", {
   expect_true(vec_is(NA, TRUE))
   expect_error(regexp = NA, vec_is(NA, TRUE))
 })
+
+test_that("assertion failures are explained", {
+  expect_known_output(file = test_path("test-assert-explanations.txt"), {
+    scoped_no_stringsAsFactors()
+    scoped_options(rlang_backtrace_on_error = "none")
+
+    try_cat(vec_assert(lgl(), chr()))
+
+    try_cat(vec_assert(lgl(), factor()))
+    try_cat(vec_assert(lgl(), factor(levels = "foo")))
+
+    try_cat(vec_assert(factor(levels = "bar"), factor(levels = "foo")))
+    try_cat(vec_assert(factor(), chr()))
+
+    try_cat(vec_assert(lgl(), data.frame()))
+    try_cat(vec_assert(lgl(), data.frame(x = 1)))
+    try_cat(vec_assert(lgl(), data.frame(x = 1, y = 2)))
+
+    try_cat(vec_assert(data.frame(), chr()))
+
+    try_cat(vec_assert(data.frame(x = 1), chr()))
+    try_cat(vec_assert(data.frame(x = 1), data.frame(x = "foo")))
+    try_cat(vec_assert(data.frame(x = 1), data.frame(x = "foo", y = 2)))
+
+    try_cat(vec_assert(data.frame(x = 1, y = 2), chr()))
+    try_cat(vec_assert(data.frame(x = 1, y = 2), data.frame(x = "foo")))
+    try_cat(vec_assert(data.frame(x = 1, y = 2), data.frame(x = "foo", y = 2)))
+  })
+})

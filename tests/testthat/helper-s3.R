@@ -16,3 +16,7 @@ new_proxy <- function(x) {
 proxy_deref <- function(x) {
   x[[1]]$x
 }
+
+scoped_no_stringsAsFactors <- function(frame = caller_env()) {
+  scoped_options(.frame = frame, stringsAsFactors = FALSE)
+}

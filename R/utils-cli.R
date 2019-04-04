@@ -41,3 +41,10 @@ pad_width <- function(x) {
   lines <- map(lines, format, width = width)
   map_chr(lines, paste, collapse = "\n")
 }
+
+str_backtick <- function(x) {
+  paste0("`", x, "`")
+}
+str_is_multiline <- function(x) {
+  grepl("\n", x)
+}
