@@ -48,7 +48,14 @@ vec_unspecified_cast <- function(x, to) {
 
 #' @export
 vec_type_finalise.vctrs_unspecified <- function(x) {
-  logical()
+  ununspecify(x)
+}
+ununspecify <- function(x) {
+  if (is_unspecified(x)) {
+    new_logical(length(x))
+  } else {
+    x
+  }
 }
 
 # Type system -------------------------------------------------------------

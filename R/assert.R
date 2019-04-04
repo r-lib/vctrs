@@ -39,7 +39,7 @@ vec_assert <- function(x, ptype = NULL, size = NULL, arg = as_label(substitute(x
 
   if (!is_null(ptype)) {
     ptype <- vec_type(ptype)
-    x_type <- vec_type(x)
+    x_type <- ununspecify(vec_type(x))
     if (!is_same_type(x_type, ptype)) {
       msg <- paste0("`", arg, "` must be <", vec_ptype_abbr(ptype), ">, not <", vec_ptype_abbr(x_type), ">.")
       abort(
@@ -76,7 +76,7 @@ vec_is <- function(x, ptype = NULL, size = NULL) {
 
   if (!is_null(ptype)) {
     ptype <- vec_type(ptype)
-    x_type <- vec_type(x)
+    x_type <- ununspecify(vec_type(x))
     if (!is_same_type(x_type, ptype)) {
       return(FALSE)
     }

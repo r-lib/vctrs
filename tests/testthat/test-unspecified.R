@@ -63,3 +63,8 @@ test_that("S3 vectors and shaped vectors are never unspecified", {
   expect_false(is_unspecified(foobar(lgl(NA, NA))))
   expect_false(is_unspecified(matrix(NA, 2)))
 })
+
+test_that("can finalise lengthy unspecified vectors", {
+  expect_identical(vec_type_finalise(unspecified(3)), rep(NA, 3))
+  expect_identical(ununspecify(unspecified(3)), rep(NA, 3))
+})

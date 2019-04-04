@@ -173,3 +173,8 @@ test_that("attributes of unclassed vectors are asserted", {
   expect_true(vec_is(y, x))
   expect_true(vec_is(x, y))
 })
+
+test_that("unspecified is finalised before assertion", {
+  expect_true(vec_is(NA, TRUE))
+  expect_error(regexp = NA, vec_is(NA, TRUE))
+})
