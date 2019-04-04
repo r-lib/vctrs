@@ -95,8 +95,14 @@ vec_is <- function(x, ptype = NULL, size = NULL) {
 
 is_same_type <- function(x, ptype) {
   if (is_partial(ptype)) {
-    ptype <- vec_type_common(x, ptype)
+    ptype <- maybe(vec_type_common(x, ptype), "vctrs_error_incompatible_type")
+
+    if (!is_null(ptype$error)) {
+      return(FALSE)
+    }
+    ptype <- ptype$value
   }
+
   identical(x, ptype)
 }
 

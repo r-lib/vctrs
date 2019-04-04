@@ -23,8 +23,13 @@ partial_frame <- function(...) {
 }
 
 new_partial_frame <- function(partial = data.frame(), learned = data.frame()) {
-  stopifnot(is.data.frame(partial))
-  stopifnot(is.data.frame(learned))
+  stopifnot(
+    is.data.frame(partial),
+    is.data.frame(learned)
+  )
+
+  # Fails if `learned` is not compatible with `partial`
+  vec_type2(partial, learned)
 
   new_partial(
     partial = partial,

@@ -173,3 +173,17 @@ check_dots_empty_s3_extensions <- function(...) {
 has_dim <- function(x) {
   !is.null(attr(x, "dim"))
 }
+
+value <- function(expr) {
+  eval_bare(enexpr(expr), caller_env())
+}
+new_maybe <- function(value, error = NULL) {
+  list(value = value, error = error)
+}
+maybe <- function(expr, class = "error") {
+  env <- environment()
+  hnd <- function(cnd) return_from(env, new_maybe(NULL, cnd))
+
+  handlers <- rep_named(class, list(hnd))
+  new_maybe(value(tryCatch(expr, !!!handlers)))
+}
