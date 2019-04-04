@@ -164,3 +164,12 @@ test_that("assertion is not applied on proxy", {
   expect_error(vec_assert(x, list()), class = "vctrs_error_assert_ptype")
   expect_error(vec_assert(x, x), regexp = NA)
 })
+
+test_that("attributes of unclassed vectors are asserted", {
+  x <- structure(FALSE, foo = "bar")
+  y <- structure(TRUE, foo = "bar")
+  expect_false(vec_is(x, FALSE))
+  expect_false(vec_is(FALSE, x))
+  expect_true(vec_is(y, x))
+  expect_true(vec_is(x, y))
+})
