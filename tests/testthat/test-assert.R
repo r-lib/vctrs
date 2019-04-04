@@ -149,3 +149,18 @@ test_that("bare prototypes act as partial types", {
 test_that("data frames are always classified as such even when dispatch is off", {
   expect_identical(vec_typeof_bare(mtcars), "dataframe")
 })
+
+test_that("assertion is not applied on proxy", {
+  scoped_global_bindings(
+    vec_proxy.vctrs_foobar = unclass,
+    vec_restore.vctrs_foobar = function(x, ...) foobar(x),
+    `[.vctrs_foobar` = function(x, i) vec_slice_native(x, i)
+  )
+  x <- foobar(list())
+
+  expect_true(vec_is(x, x))
+  expect_false(vec_is(x, list()))
+
+  expect_error(vec_assert(x, list()), class = "vctrs_error_assert_ptype")
+  expect_error(vec_assert(x, x), regexp = NA)
+})
