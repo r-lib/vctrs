@@ -16,4 +16,7 @@ vec_type2.data.frame.tbl_df <- function(x, y) vec_restore(df_col_type2(x, y), y)
 
 #' @method vec_type2.tbl_df default
 #' @export
-vec_type2.tbl_df.default <- function(x, y) stop_incompatible_type(x, y)
+vec_type2.tbl_df.default <- function(x, y) {
+  # FIXME: Do we need some sort of `next_vec_type2()`?
+  vec_type2.data.frame(x, y)
+}

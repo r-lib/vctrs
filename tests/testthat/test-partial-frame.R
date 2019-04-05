@@ -46,3 +46,15 @@ test_that("can assert partial frames based on column type", {
   pf <- partial_frame(y = 1)
   expect_false(vec_is(data.frame(y = "2"), pf))
 })
+
+test_that("incompatible data frames are an error", {
+  df <- data.frame(y = 1)
+  expect_error(vec_type2(df, partial_frame(y = chr())), class = "vctrs_error_incompatible_type")
+  expect_error(new_partial_frame(df, data.frame(y = chr())), class = "vctrs_error_incompatible_type")
+})
+
+test_that("dispatch is symmetric with tibbles", {
+  left <- vec_type2(partial_frame(x = 1), tibble::tibble(x = 1))
+  right <- vec_type2(tibble::tibble(x = 1), partial_frame(x = 1))
+  expect_identical(left, right)
+})
