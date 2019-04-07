@@ -387,7 +387,17 @@ static SEXP lgl_as_index(SEXP i, SEXP x) {
 }
 
 static SEXP chr_as_index(SEXP i, SEXP x) {
-  SEXP nms = Rf_getAttrib(x, R_NamesSymbol);
+
+  SEXP nms = R_NilValue;
+
+  if (has_dim(x)) {
+    SEXP dim_nms = Rf_getAttrib(x, R_DimNamesSymbol);
+    if (dim_nms != R_NilValue) {
+      nms = VECTOR_ELT(dim_nms, 0);
+    }
+  } else {
+    nms = Rf_getAttrib(x, R_NamesSymbol);
+  }
 
   if (nms == R_NilValue) {
     Rf_errorcall(R_NilValue, "Can't use character to index an unnamed vector.");
