@@ -6,8 +6,6 @@
 #' @param x,y Vectors
 #' @param details Any additional human readable details
 #' @param subclass Use if you want to further customise the class
-#' @param locations For `stop_lossy_cast()`, an optional vector giving the
-#'   locations where `x` lost information.
 #' @param ...,message,.subclass Only use these fields when creating a subclass.
 #'
 #' @section Lossy cast errors:
@@ -114,6 +112,8 @@ stop_incompatible_op <- function(op, x, y, details = NULL, ..., message = NULL, 
 #'   Can also be a single `TRUE`, but note that `locations` picks up
 #'   locations from this vector by default. In this case, supply your
 #'   own location vector, possibly empty.
+#' @param locations An optional integer vector giving the
+#'   locations where `x` lost information.
 #' @export
 maybe_lossy_cast <- function(result, x, to,
                              lossy = NULL,
