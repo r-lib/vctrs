@@ -387,7 +387,6 @@ static SEXP lgl_as_index(SEXP i, SEXP x) {
 }
 
 static SEXP chr_as_index(SEXP i, SEXP x) {
-
   SEXP nms = R_NilValue;
 
   if (has_dim(x)) {
