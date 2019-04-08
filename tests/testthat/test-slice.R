@@ -373,6 +373,19 @@ test_that("vec_restore() is called after slicing data frames", {
   expect_identical(vec_slice(df, 1), "dispatched")
 })
 
+test_that("additional subscripts are forwarded to `[`", {
+  scoped_global_bindings(
+    `[.vctrs_foobar` = function(x, i, ...) vec_index(x, i, ...)
+  )
+
+  x <- foobar(c("foo", "bar", "quux", "hunoz"))
+  dim(x) <- c(2, 2)
+
+  exp <- foobar("quux")
+  dim(exp) <- c(1, 1)
+
+  expect_identical(x[1, 2], exp)
+})
 
 # vec_na ------------------------------------------------------------------
 

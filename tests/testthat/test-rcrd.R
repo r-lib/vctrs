@@ -210,8 +210,8 @@ test_that("dangerous methods marked as unimplemented", {
 
 # slicing -----------------------------------------------------------------
 
-test_that("dots must be empty", {
-  expect_error(new_rcrd(list(foo = "foo"))[1, 2], "is not empty")
+test_that("dots are forwarded", {
+  expect_error(new_rcrd(list(foo = "foo"))[1, 2], "incorrect number of dimensions")
 })
 
 test_that("records are restored after slicing the proxy", {

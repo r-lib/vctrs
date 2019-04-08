@@ -385,6 +385,13 @@ test_that("can't transpose", {
 
 # slicing -----------------------------------------------------------------
 
-test_that("dots must be empty", {
-  expect_error(new_vctr("foo")[1, 2], "is not empty")
+test_that("additional subscripts are handled (#269)", {
+  new_2d <- function(.data, dim) {
+    vctrs::new_vctr(.data, dim = dim, class = "vctrs_2d")
+  }
+  x <- new_2d(c(1, 2), dim = c(2L, 1L))
+
+  expect_identical(x[1], new_2d(1, dim = c(1, 1)))
+  expect_identical(x[1, 1], new_2d(1, dim = c(1, 1)))
+  expect_identical(x[, 1], new_2d(c(1, 2), dim = c(2, 1)))
 })

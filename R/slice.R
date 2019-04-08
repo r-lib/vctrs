@@ -94,6 +94,20 @@ vec_as_index <- function(i, x) {
   .Call(vctrs_as_index, i, x)
 }
 
+vec_index <- function(x, i, ...) {
+  i <- maybe_missing(i, TRUE)
+
+  if (!dots_n(...)) {
+    return(vec_slice_native(x, i))
+  }
+
+  out <- unclass(vec_proxy(x))
+  vec_assert(out)
+
+  i <- vec_as_index(i, out)
+  vec_restore(out[i, ..., drop = FALSE], x, i = i)
+}
+
 #' Create a missing vector
 #'
 #' @param x Template of missing vector
