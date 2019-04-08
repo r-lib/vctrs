@@ -299,6 +299,17 @@ test_that("dimensions are preserved by vec_slice()", {
   expect_identical(attrib, exp)
 })
 
+test_that("can slice shaped objects by name", {
+  x <- matrix(1:2)
+
+  expect_error(vec_slice(x, "foo"), "unnamed")
+
+  dimnames(x) <- list(c("foo", "bar"))
+
+  expect_equal(vec_slice(x, "foo"), vec_slice(x, 1L))
+  expect_error(vec_slice(x, "baz"), "non-existing")
+})
+
 test_that("vec_slice_native() unclasses input before calling `vec_restore()`", {
   class <- NULL
   scoped_global_bindings(
