@@ -392,7 +392,7 @@ static SEXP chr_as_index(SEXP i, SEXP x) {
 
   if (has_dim(x)) {
     SEXP dim_nms = Rf_getAttrib(x, R_DimNamesSymbol);
-    if (dim_nms != R_NilValue) {
+    if (dim_nms != R_NilValue && Rf_length(dim_nms) >= 1) {
       nms = VECTOR_ELT(dim_nms, 0);
     }
   } else {
