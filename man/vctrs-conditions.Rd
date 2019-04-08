@@ -41,7 +41,7 @@ Can also be a single \code{TRUE}, but note that \code{locations} picks up
 locations from this vector by default. In this case, supply your
 own location vector, possibly empty.}
 
-\item{locations}{For \code{stop_lossy_cast()}, an optional vector giving the
+\item{locations}{An optional integer vector giving the
 locations where \code{x} lost information.}
 
 \item{x_ptype, to_ptype}{Suppress only the casting errors where \code{x}
