@@ -39,17 +39,20 @@ is_partial <- function(x) {
 #' @rdname new_partial
 #' @export
 vec_type_finalise <- function(x) {
+  return(.Call(vctrs_type_finalise, x))
   UseMethod("vec_type_finalise")
 }
-
-#' @export
-vec_type_finalise.default <- function(x) {
-  x
+vec_type_finalise_dispatch <- function(x) {
+  UseMethod("vec_type_finalise")
 }
-
 #' @export
 vec_type_finalise.vctrs_partial <- function(x) {
   # nocov start
   stop_unimplemented(x, "vec_type_finalise")
   # nocov end
+}
+
+#' @export
+vec_type_finalise.default <- function(x) {
+  x
 }

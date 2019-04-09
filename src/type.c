@@ -3,7 +3,9 @@
 
 // Initialised at load time
 static SEXP syms_vec_is_vector_dispatch = NULL;
+static SEXP syms_vec_type_finalise_dispatch = NULL;
 static SEXP fns_vec_is_vector_dispatch = NULL;
+static SEXP fns_vec_type_finalise_dispatch = NULL;
 
 // Defined below
 static SEXP vec_type_rec(SEXP x, bool dispatch);
@@ -45,6 +47,31 @@ static SEXP vec_type_rec(SEXP x, bool dispatch) {
 SEXP vec_type(SEXP x) {
   return vec_type_rec(x, true);
 }
+
+
+SEXP vec_type_finalise_rec(SEXP x, bool dispatch) {
+  if (OBJECT(x)) {
+    if (vec_is_unspecified(x)) {
+      SEXP out = PROTECT(Rf_allocVector(LGLSXP, Rf_length(x)));
+      r_lgl_fill(out, NA_LOGICAL);
+      UNPROTECT(1);
+      return out;
+    }
+  }
+
+  switch (vec_typeof_impl(x, dispatch)) {
+  case vctrs_type_dataframe: return df_map(x, &vec_type_finalise);
+  case vctrs_type_s3:        return vctrs_dispatch1(syms_vec_type_finalise_dispatch, fns_vec_type_finalise_dispatch,
+                                                    syms_x, x);
+  default:                   return x;
+  }
+}
+
+// [[ include("vctrs.h"), register ]]
+SEXP vec_type_finalise(SEXP x) {
+  return vec_type_finalise_rec(x, true);
+}
+
 
 bool is_data_frame(SEXP x) {
   return Rf_inherits(x, "data.frame");
@@ -159,6 +186,9 @@ Rcomplex vctrs_shared_na_cpl;
 void vctrs_init_types(SEXP ns) {
   syms_vec_is_vector_dispatch = Rf_install("vec_is_vector");
   fns_vec_is_vector_dispatch = Rf_findVar(syms_vec_is_vector_dispatch, ns);
+
+  syms_vec_type_finalise_dispatch = Rf_install("vec_type_finalise_dispatch");
+  fns_vec_type_finalise_dispatch = Rf_findVar(syms_vec_type_finalise_dispatch, ns);
 
   vctrs_shared_empty_lgl = Rf_allocVector(LGLSXP, 0);
   R_PreserveObject(vctrs_shared_empty_lgl);
