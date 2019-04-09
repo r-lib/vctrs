@@ -25,14 +25,6 @@ static SEXP lgl_type(SEXP x) {
   }
 }
 
-static SEXP vec_type_dispatch(SEXP x) {
-  SEXP proxy = PROTECT(vec_proxy(x));
-  SEXP out = PROTECT(vec_type_rec(proxy, false));
-  out = vec_restore(out, x, vctrs_shared_empty_int);
-  UNPROTECT(2);
-  return out;
-}
-
 static SEXP vec_type_rec(SEXP x, bool dispatch) {
   switch (vec_typeof_impl(x, dispatch)) {
   case vctrs_type_scalar:    return x;
@@ -45,7 +37,7 @@ static SEXP vec_type_rec(SEXP x, bool dispatch) {
   case vctrs_type_raw:       return vec_type_slice(x, vctrs_shared_empty_raw);
   case vctrs_type_list:      return vec_type_slice(x, vctrs_shared_empty_list);
   case vctrs_type_dataframe: return df_map(x, &vec_type);
-  case vctrs_type_s3:        return vec_type_dispatch(x);
+  case vctrs_type_s3:        return vec_recurse(x, &vec_type_rec, vctrs_shared_empty_int);
   }
 }
 
