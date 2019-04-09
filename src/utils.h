@@ -30,6 +30,8 @@ bool r_int_any_na(SEXP x);
 SEXP r_new_environment(SEXP parent, R_len_t size);
 
 
+extern SEXP vctrs_ns_env;
+
 extern SEXP syms_i;
 extern SEXP syms_x;
 extern SEXP syms_y;

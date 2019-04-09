@@ -27,7 +27,7 @@
     )
   }
 
-  .Call(vctrs_init, environment())
+  .Call(vctrs_init, topenv(environment()))
 }
 
 # nocov end

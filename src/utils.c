@@ -247,6 +247,8 @@ SEXP r_new_environment(SEXP parent, R_len_t size) {
 }
 
 
+SEXP vctrs_ns_env = NULL;
+
 SEXP syms_i = NULL;
 SEXP syms_x = NULL;
 SEXP syms_y = NULL;
@@ -257,6 +259,8 @@ SEXP syms_bracket = NULL;
 SEXP fns_bracket = NULL;
 
 void vctrs_init_utils(SEXP ns) {
+  vctrs_ns_env = ns;
+
   syms_i = Rf_install("i");
   syms_x = Rf_install("x");
   syms_y = Rf_install("y");
