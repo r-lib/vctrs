@@ -25,24 +25,6 @@ static SEXP lgl_type(SEXP x) {
   }
 }
 
-static SEXP df_type(SEXP x) {
-  R_len_t n = Rf_length(x);
-  SEXP out = PROTECT(Rf_allocVector(VECSXP, n));
-
-  for (R_len_t i = 0; i < n; ++i) {
-    SET_VECTOR_ELT(out, i, vec_type(VECTOR_ELT(x, i)));
-  }
-
-  // FIXME: Should that be restored?
-  SEXP nms = PROTECT(Rf_getAttrib(x, R_NamesSymbol));
-  Rf_setAttrib(out, R_NamesSymbol, nms);
-
-  out = df_restore(out, x, vctrs_shared_empty_int);
-
-  UNPROTECT(2);
-  return out;
-}
-
 static SEXP vec_type_dispatch(SEXP x) {
   SEXP proxy = PROTECT(vec_proxy(x));
   SEXP out = PROTECT(vec_type_rec(proxy, false));
@@ -62,7 +44,7 @@ static SEXP vec_type_rec(SEXP x, bool dispatch) {
   case vctrs_type_character: return vec_type_slice(x, vctrs_shared_empty_chr);
   case vctrs_type_raw:       return vec_type_slice(x, vctrs_shared_empty_raw);
   case vctrs_type_list:      return vec_type_slice(x, vctrs_shared_empty_list);
-  case vctrs_type_dataframe: return df_type(x);
+  case vctrs_type_dataframe: return df_map(x, &vec_type);
   case vctrs_type_s3:        return vec_type_dispatch(x);
   }
 }

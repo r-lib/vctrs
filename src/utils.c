@@ -92,6 +92,23 @@ SEXP vctrs_dispatch3(SEXP fn_sym, SEXP fn,
   return out;
 }
 
+SEXP df_map(SEXP df, SEXP (*fn)(SEXP)) {
+  R_len_t n = Rf_length(df);
+  SEXP out = PROTECT(Rf_allocVector(VECSXP, n));
+
+  for (R_len_t i = 0; i < n; ++i) {
+    SET_VECTOR_ELT(out, i, fn(VECTOR_ELT(df, i)));
+  }
+
+  // FIXME: Should that be restored?
+  SEXP nms = PROTECT(Rf_getAttrib(df, R_NamesSymbol));
+  Rf_setAttrib(out, R_NamesSymbol, nms);
+
+  out = df_restore(out, df, vctrs_shared_empty_int);
+
+  UNPROTECT(2);
+  return out;
+}
 
 bool is_compact_rownames(SEXP x) {
   return Rf_length(x) == 2 && INTEGER(x)[0] == NA_INTEGER;
