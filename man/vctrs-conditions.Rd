@@ -19,7 +19,8 @@ stop_incompatible_op(op, x, y, details = NULL, ..., message = NULL,
   .subclass = NULL)
 
 maybe_lossy_cast(result, x, to, lossy = NULL, locations = NULL,
-  details = NULL, ..., message = NULL, .subclass = NULL)
+  details = NULL, ..., message = NULL, .subclass = NULL,
+  .deprecation = FALSE)
 
 allow_lossy_cast(expr, x_ptype = NULL, to_ptype = NULL)
 }
@@ -43,6 +44,11 @@ own location vector, possibly empty.}
 
 \item{locations}{An optional integer vector giving the
 locations where \code{x} lost information.}
+
+\item{.deprecation}{If \code{TRUE}, the error is downgraded to a
+deprecation warning. This is useful for transitioning your class
+to a stricter conversion scheme. The warning advises your users
+to wrap their code with \code{allow_lossy_cast()}.}
 
 \item{x_ptype, to_ptype}{Suppress only the casting errors where \code{x}
 or \code{to} match these \link[=vec_type]{prototypes}.}

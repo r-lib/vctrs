@@ -230,3 +230,16 @@ test_that("can suppress cast errors selectively", {
   expect_error(allow_lossy_cast(f(), x_ptype = factor("b"), to_ptype = factor("a")), class = "vctrs_error_cast_lossy")
   expect_error(allow_lossy_cast(f(), x_ptype = factor("a"), to_ptype = factor("c")), class = "vctrs_error_cast_lossy")
 })
+
+test_that("can signal deprecation warnings for lossy casts", {
+  scoped_lifecycle_warnings()
+
+  lossy_cast <- function() {
+    maybe_lossy_cast(TRUE, factor("foo"), factor("bar"), lossy = TRUE, .deprecation = TRUE)
+  }
+
+  expect_true(expect_warning(lossy_cast(), "detected a lossy transformation"))
+  expect_true(expect_warning(regexp = NA, allow_lossy_cast(lossy_cast())))
+  expect_true(expect_warning(regexp = NA, allow_lossy_cast(lossy_cast(), factor("foo"), factor("bar"))))
+  expect_true(expect_warning(allow_lossy_cast(lossy_cast(), factor("bar"), double())))
+})

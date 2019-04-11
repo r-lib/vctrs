@@ -114,6 +114,10 @@ stop_incompatible_op <- function(op, x, y, details = NULL, ..., message = NULL, 
 #'   own location vector, possibly empty.
 #' @param locations An optional integer vector giving the
 #'   locations where `x` lost information.
+#' @param .deprecation If `TRUE`, the error is downgraded to a
+#'   deprecation warning. This is useful for transitioning your class
+#'   to a stricter conversion scheme. The warning advises your users
+#'   to wrap their code with `allow_lossy_cast()`.
 #' @export
 maybe_lossy_cast <- function(result, x, to,
                              lossy = NULL,
@@ -121,8 +125,13 @@ maybe_lossy_cast <- function(result, x, to,
                              details = NULL,
                              ...,
                              message = NULL,
-                             .subclass = NULL) {
+                             .subclass = NULL,
+                             .deprecation = FALSE) {
   if (!any(lossy)) {
+    return(result)
+  }
+  if (.deprecation) {
+    maybe_warn_deprecated_lossy_cast(x, to)
     return(result)
   }
 
@@ -178,6 +187,40 @@ allow_lossy_cast <- function(expr, x_ptype = NULL, to_ptype = NULL) {
     },
     expr
   )
+}
+
+maybe_warn_deprecated_lossy_cast <- function(x, to) {
+  # Returns `TRUE` if `allow_lossy_cast()` is on the stack and accepts
+  # to handle the condition
+  handled <- withRestarts(
+    vctrs_restart_error_cast_lossy = function() TRUE,
+    {
+      cnd_signal(cnd("vctrs_error_cast_lossy", x = x, to = to))
+      FALSE
+    }
+  )
+
+  if (handled) {
+    return(invisible())
+  }
+
+  from <- vec_ptype_abbr(x)
+  to <- vec_ptype_abbr(to)
+  warn_deprecated(paste_line(
+    glue::glue("We detected a lossy transformation from `{ from }` to `{ to }`."),
+    "The result will contain lower-resolution values or missing values.",
+    "To suppress this warning, wrap your code with `allow_lossy_cast()`:",
+    "",
+    "  # Allow all lossy transformations:",
+    "  vctrs::allow_lossy_cast(mycode())",
+    "",
+    "  # Allow only a specific transformation:",
+    "  vctrs::allow_lossy_cast(mycode(), x_ptype = from, to_ptype = to)",
+    "",
+    "Consult `?vctrs::allow_lossy_cast` for more information."
+  ))
+
+  invisible()
 }
 
 stop_unsupported <- function(x, method) {
