@@ -146,7 +146,8 @@ testing easier.</p>
   <span class='kw'>.subclass</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)
 
 <span class='fu'>maybe_lossy_cast</span>(<span class='no'>result</span>, <span class='no'>x</span>, <span class='no'>to</span>, <span class='kw'>lossy</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>locations</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>details</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='no'>...</span>, <span class='kw'>message</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>.subclass</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)
+  <span class='kw'>details</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='no'>...</span>, <span class='kw'>message</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>.subclass</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>.deprecation</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)
 
 <span class='fu'>allow_lossy_cast</span>(<span class='no'>expr</span>, <span class='kw'>x_ptype</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>to_ptype</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</pre>
     
@@ -185,6 +186,13 @@ own location vector, possibly empty.</p></td>
       <th>locations</th>
       <td><p>An optional integer vector giving the
 locations where <code>x</code> lost information.</p></td>
+    </tr>
+    <tr>
+      <th>.deprecation</th>
+      <td><p>If <code>TRUE</code>, the error is downgraded to a
+deprecation warning. This is useful for transitioning your class
+to a stricter conversion scheme. The warning advises your users
+to wrap their code with <code>allow_lossy_cast()</code>.</p></td>
     </tr>
     <tr>
       <th>x_ptype, to_ptype</th>
@@ -262,7 +270,7 @@ returns the result silently.</p>
 #&gt; </span><span style='color: #555555;'> 41. </span><span>                            │     └─base:::tryCatchOne(expr, names, parentenv, handlers[[1L]])
 #&gt; </span><span style='color: #555555;'> 42. </span><span>                            │       └─base:::doTryCatch(return(expr), name, parentenv, handler)
 #&gt; </span><span style='color: #555555;'> 43. </span><span>                            └─vctrs::maybe_lossy_cast(...)
-#&gt; </span><span style='color: #555555;'> 44. </span><span>                              ├─base::withRestarts(...) </span><span style='color: #555555;'>/home/travis/build/r-lib/vctrs/R/conditions.R:131:2</span><span>
+#&gt; </span><span style='color: #555555;'> 44. </span><span>                              ├─base::withRestarts(...) </span><span style='color: #555555;'>/home/travis/build/r-lib/vctrs/R/conditions.R:140:2</span><span>
 #&gt; </span><span style='color: #555555;'> 45. </span><span>                              │ └─base:::withOneRestart(expr, restarts[[1L]])
 #&gt; </span><span style='color: #555555;'> 46. </span><span>                              │   └─base:::doWithOneRestart(return(expr), restart)
 #&gt; </span><span style='color: #555555;'> 47. </span><span>                              └─vctrs:::stop_lossy_cast(x, to, result, locations = NULL, ...)</div><div class='input'>
