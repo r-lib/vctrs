@@ -182,7 +182,7 @@ enum vctrs_type2 vec_typeof2_impl(enum vctrs_type type_x, enum vctrs_type type_y
 // [[ include("vctrs.h") ]]
 enum vctrs_type2 vec_typeof2(SEXP x, SEXP y) {
   return vec_typeof2_impl(vec_typeof(x), vec_typeof(y));
-};
+}
 
 const char* vctrs_type2_as_str(enum vctrs_type2 type) {
   switch (type) {
