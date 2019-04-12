@@ -12,7 +12,8 @@ static SEXP vctrs_type2_dispatch(SEXP x, SEXP y) {
                          syms_y, y);
 }
 
-SEXP vctrs_type2(SEXP x, SEXP y) {
+// [[ include("vctrs.h"), register() ]]
+SEXP vec_type2(SEXP x, SEXP y) {
   if (has_dim(x) || has_dim(y)) {
     return vctrs_type2_dispatch(x, y);
   }
