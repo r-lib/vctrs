@@ -32,10 +32,6 @@ shape_broadcast <- function(x, to) {
   if (length(dim_x) == 1L && length(dim_to) == 1L)
     return(x)
 
-  # Don't broadcast if nothing changes
-  if (identical(dim_x[-1], dim_to[-1]))
-    return(x)
-
   if (length(dim_x) > length(dim_to))
     stop_incompatible_cast(x, to, details = "Can not decrease dimensions")
 
@@ -45,13 +41,19 @@ shape_broadcast <- function(x, to) {
   if (any(!ok))
     stop_incompatible_cast(x, to, details = "Non-recyclable dimensions")
 
+  # Increase dimensionality if required
+  if (vec_dims(x) != length(dim_x))
+    dim(x) <- dim_x
+
   recycle <- dim_x != dim_to
+
+  # Avoid expensive subset
+  if (all(!recycle)) {
+    return(x)
+  }
 
   indices <- rep(list(missing_arg()), length(dim_to))
   indices[recycle] <- map(dim_to[recycle], rep_len, x = 1L)
-
-  if (vec_dims(x) != length(dim_x))
-    dim(x) <- dim_x
 
   eval_bare(expr(x[!!!indices, drop = FALSE]))
 }
