@@ -50,7 +50,9 @@ shape_broadcast <- function(x, to) {
   indices <- rep(list(missing_arg()), length(dim_to))
   indices[recycle] <- map(dim_to[recycle], rep_len, x = 1L)
 
-  dim(x) <- dim_x
+  if (vec_dims(x) != length(dim_x))
+    dim(x) <- dim_x
+
   eval_bare(expr(x[!!!indices, drop = FALSE]))
 }
 
