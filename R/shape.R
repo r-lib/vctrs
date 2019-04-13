@@ -33,9 +33,8 @@ shape_broadcast <- function(x, to) {
     return(x)
 
   # Don't broadcast if nothing changes
-  if (identical(dim_x[-1], dim_to[-1])) {
+  if (identical(dim_x[-1], dim_to[-1]))
     return(x)
-  }
 
   if (length(dim_x) > length(dim_to))
     stop_incompatible_cast(x, to, details = "Can not decrease dimensions")
