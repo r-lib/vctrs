@@ -481,7 +481,7 @@ x[1]
 
 This works because most of the vctrs methods dispatch to the underlying base function, by first stripping off extra attributes with `vec_data()` and then reapplying them again with `vec_restore()`. The default `vec_restore()` method copies over all attributes, which is not appropriate when the attributes depend on the data.
 
-Note that `vec_restore.class` is subtly different from `vec_cast.class.class()`. `vec_restore()` is used when restoring attributes that have been lost; `vec_cast()` is used for coercions. This is easier to understand with a concrete example. Imagine factors were implements with `new_vectr()`. `vec_restore.factor()` would restore attributes back to an integer vector, but you would not want to allow manually casting an integer to a factor with `vec_cast()`. 
+Note that `vec_restore.class` is subtly different from `vec_cast.class.class()`. `vec_restore()` is used when restoring attributes that have been lost; `vec_cast()` is used for coercions. This is easier to understand with a concrete example. Imagine factors were implemented with `new_vectr()`. `vec_restore.factor()` would restore attributes back to an integer vector, but you would not want to allow manually casting an integer to a factor with `vec_cast()`. 
 
 
 ## Record-style objects
