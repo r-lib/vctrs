@@ -54,17 +54,19 @@ bool vec_is_partial(SEXP x) {
 }
 
 
-static SEXP vctrs_type_common_impl(SEXP types);
+static SEXP vctrs_type_common_impl(SEXP types, bool spliced);
 
-static SEXP vctrs_type_common_type(SEXP type) {
-  if (rlang_is_splice_box(type)) {
-    return vctrs_type_common_impl(rlang_unbox(type));
+static SEXP vctrs_type_common_type(SEXP type, bool spliced) {
+  // Don't call `rlang_is_splice_box()` if we're already looking at a
+  // spliced list because it's expensive
+  if (!spliced && rlang_is_splice_box(type)) {
+    return vctrs_type_common_impl(rlang_unbox(type), true);
   } else {
     return vec_type(type);
   }
 }
 
-static SEXP vctrs_type_common_impl(SEXP types) {
+static SEXP vctrs_type_common_impl(SEXP types, bool spliced) {
   R_len_t n = Rf_length(types);
 
   if (!n) {
@@ -80,7 +82,7 @@ static SEXP vctrs_type_common_impl(SEXP types) {
       continue;
     }
 
-    SEXP elt_type = PROTECT(vctrs_type_common_type(elt));
+    SEXP elt_type = PROTECT(vctrs_type_common_type(elt, spliced));
     type = vec_type2(type, elt_type);
 
     // Reprotect `type`
@@ -101,7 +103,7 @@ SEXP vctrs_type_common(SEXP types, SEXP ptype) {
     Rf_errorcall(R_NilValue, "strict mode is activated; you must supply complete `.ptype`.");
   }
 
-  SEXP type = PROTECT(vctrs_type_common_impl(types));
+  SEXP type = PROTECT(vctrs_type_common_impl(types, false));
   type = vec_type_finalise(type);
 
   UNPROTECT(1);
