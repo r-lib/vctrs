@@ -9,11 +9,19 @@ static SEXP fns_vec_is_vector_dispatch = NULL;
 static SEXP vec_type_rec(SEXP x, bool dispatch);
 
 
+static SEXP vec_type_slice(SEXP x, SEXP empty) {
+  if (ATTRIB(x) == R_NilValue) {
+    return empty;
+  } else {
+    // Slicing preserves attributes
+    return vec_slice(x, vctrs_shared_empty_int);
+  }
+}
 static SEXP lgl_type(SEXP x) {
   if (vec_is_unspecified(x)) {
     return vctrs_shared_empty_uns;
   } else {
-    return vec_slice(x, vctrs_shared_empty_int);
+    return vec_type_slice(x, vctrs_shared_empty_lgl);
   }
 }
 
@@ -48,9 +56,14 @@ static SEXP vec_type_rec(SEXP x, bool dispatch) {
   case vctrs_type_scalar:    return x;
   case vctrs_type_null:      return R_NilValue;
   case vctrs_type_logical:   return lgl_type(x);
+  case vctrs_type_integer:   return vec_type_slice(x, vctrs_shared_empty_int);
+  case vctrs_type_double:    return vec_type_slice(x, vctrs_shared_empty_dbl);
+  case vctrs_type_complex:   return vec_type_slice(x, vctrs_shared_empty_cpl);
+  case vctrs_type_character: return vec_type_slice(x, vctrs_shared_empty_chr);
+  case vctrs_type_raw:       return vec_type_slice(x, vctrs_shared_empty_raw);
+  case vctrs_type_list:      return vec_type_slice(x, vctrs_shared_empty_list);
   case vctrs_type_dataframe: return df_type(x);
   case vctrs_type_s3:        return vec_type_dispatch(x);
-  default:                   return vec_slice(x, vctrs_shared_empty_int);
   }
 }
 
