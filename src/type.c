@@ -49,6 +49,68 @@ SEXP vec_type(SEXP x) {
 }
 
 
+static bool is_partial(SEXP x) {
+  return x == R_NilValue || Rf_inherits(x, "vctrs_partial");
+}
+
+static SEXP vctrs_type_common_impl(SEXP types) {
+  R_len_t n = Rf_length(types);
+
+  if (!n) {
+    return R_NilValue;
+  }
+
+  // Find first non-null type
+  R_len_t i = 0;
+  for (; i < n; ++i) {
+    SEXP elt = VECTOR_ELT(types, i);
+    if (elt != R_NilValue) {
+      break;
+    }
+  }
+  if (i == n) {
+    return R_NilValue;
+  }
+
+  SEXP type = PROTECT(vec_type(VECTOR_ELT(types, i)));
+  ++i;
+
+  for (; i < n; ++i) {
+    SEXP elt = VECTOR_ELT(types, i);
+
+    if (elt == R_NilValue) {
+      continue;
+    }
+
+    SEXP elt_type = PROTECT(vec_type(elt));
+    type = vec_type2(type, elt_type);
+
+    // Reprotect `type`
+    UNPROTECT(2);
+    PROTECT(type);
+  }
+
+  UNPROTECT(1);
+  return type;
+}
+
+SEXP vctrs_type_common(SEXP types, SEXP ptype) {
+  if (!is_partial(ptype)) {
+    return vec_type(ptype);
+  }
+
+  if (r_is_true(r_peek_option("vctrs.no_guessing"))) {
+    Rf_errorcall(R_NilValue, "strict mode is activated; you must supply complete `.ptype`.");
+  }
+
+  SEXP type = PROTECT(vctrs_type_common_impl(types));
+  type = vec_type_finalise(type);
+
+  UNPROTECT(1);
+  return type;
+}
+
+
 SEXP vec_type_finalise_rec(SEXP x, bool dispatch) {
   if (OBJECT(x)) {
     if (vec_is_unspecified(x)) {

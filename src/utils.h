@@ -35,6 +35,8 @@ bool r_int_any_na(SEXP x);
 SEXP r_new_environment(SEXP parent, R_len_t size);
 
 SEXP r_protect(SEXP x);
+bool r_is_true(SEXP x);
+SEXP r_peek_option(const char* option);
 
 
 extern SEXP vctrs_ns_env;
