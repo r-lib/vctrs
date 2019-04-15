@@ -53,6 +53,17 @@ bool vec_is_partial(SEXP x) {
   return x == R_NilValue || Rf_inherits(x, "vctrs_partial");
 }
 
+
+static SEXP vctrs_type_common_impl(SEXP types);
+
+static SEXP vctrs_type_common_type(SEXP type) {
+  if (rlang_is_splice_box(type)) {
+    return vctrs_type_common_impl(rlang_unbox(type));
+  } else {
+    return vec_type(type);
+  }
+}
+
 static SEXP vctrs_type_common_impl(SEXP types) {
   R_len_t n = Rf_length(types);
 
@@ -69,7 +80,7 @@ static SEXP vctrs_type_common_impl(SEXP types) {
       continue;
     }
 
-    SEXP elt_type = PROTECT(vec_type(elt));
+    SEXP elt_type = PROTECT(vctrs_type_common_type(elt));
     type = vec_type2(type, elt_type);
 
     // Reprotect `type`

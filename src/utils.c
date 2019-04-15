@@ -1,6 +1,11 @@
 #include "vctrs.h"
 #include "utils.h"
 
+// Initialised at load time
+bool (*rlang_is_splice_box)(SEXP) = NULL;
+SEXP (*rlang_unbox)(SEXP) = NULL;
+
+
 bool is_bool(SEXP x) {
   return
     TYPEOF(x) == LGLSXP &&
@@ -322,4 +327,7 @@ void vctrs_init_utils(SEXP ns) {
 
   new_env__parent_node = CDDR(new_env_call);
   new_env__size_node = CDR(new_env__parent_node);
+
+  rlang_is_splice_box = (bool (*)(SEXP)) R_GetCCallable("rlang", "rlang_is_splice_box");
+  rlang_unbox = (SEXP (*)(SEXP)) R_GetCCallable("rlang", "rlang_unbox");
 }

@@ -68,7 +68,7 @@ vec_type <- function(x) {
 #' @export
 #' @rdname vec_type
 vec_type_common <- function(..., .ptype = NULL) {
- .Call(vctrs_type_common, list2(.ptype, ...), .ptype)
+ .Call(vctrs_type_common, dots_values(.ptype, ...), .ptype)
 }
 
 #' @export
