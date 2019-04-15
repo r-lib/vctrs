@@ -49,7 +49,7 @@ SEXP vec_type(SEXP x) {
 }
 
 
-static bool is_partial(SEXP x) {
+bool vec_is_partial(SEXP x) {
   return x == R_NilValue || Rf_inherits(x, "vctrs_partial");
 }
 
@@ -60,22 +60,9 @@ static SEXP vctrs_type_common_impl(SEXP types) {
     return R_NilValue;
   }
 
-  // Find first non-null type
-  R_len_t i = 0;
-  for (; i < n; ++i) {
-    SEXP elt = VECTOR_ELT(types, i);
-    if (elt != R_NilValue) {
-      break;
-    }
-  }
-  if (i == n) {
-    return R_NilValue;
-  }
+  SEXP type = PROTECT(R_NilValue);
 
-  SEXP type = PROTECT(vec_type(VECTOR_ELT(types, i)));
-  ++i;
-
-  for (; i < n; ++i) {
+  for (R_len_t i = 0; i < n; ++i) {
     SEXP elt = VECTOR_ELT(types, i);
 
     if (elt == R_NilValue) {
@@ -95,7 +82,7 @@ static SEXP vctrs_type_common_impl(SEXP types) {
 }
 
 SEXP vctrs_type_common(SEXP types, SEXP ptype) {
-  if (!is_partial(ptype)) {
+  if (!vec_is_partial(ptype)) {
     return vec_type(ptype);
   }
 

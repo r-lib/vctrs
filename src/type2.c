@@ -17,6 +17,18 @@ SEXP vec_type2(SEXP x, SEXP y) {
   if (has_dim(x) || has_dim(y)) {
     return vctrs_type2_dispatch(x, y);
   }
+  if (x == R_NilValue) {
+    if (!vec_is_partial(y)) {
+      vec_assert(y, "y");
+    }
+    return y;
+  }
+  if (y == R_NilValue) {
+    if (!vec_is_partial(x)) {
+      vec_assert(x, "x");
+    }
+    return x;
+  }
 
   enum vctrs_type type_x = vec_typeof(x);
   enum vctrs_type type_y = vec_typeof(y);
