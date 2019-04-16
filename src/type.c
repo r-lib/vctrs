@@ -17,12 +17,12 @@ bool is_record(SEXP x) {
 enum vctrs_type vec_typeof_impl(SEXP x, bool dispatch) {
   switch (TYPEOF(x)) {
   case NILSXP: return vctrs_type_null;
-  case LGLSXP: return OBJECT(x) && dispatch ? vctrs_type_s3 : vctrs_type_logical;
-  case INTSXP: return OBJECT(x) && dispatch ? vctrs_type_s3 : vctrs_type_integer;
-  case REALSXP: return OBJECT(x) && dispatch ? vctrs_type_s3 : vctrs_type_double;
-  case CPLXSXP: return OBJECT(x) && dispatch ? vctrs_type_s3 : vctrs_type_complex;
-  case STRSXP: return OBJECT(x) && dispatch ? vctrs_type_s3 : vctrs_type_character;
-  case RAWSXP: return OBJECT(x) && dispatch ? vctrs_type_s3 : vctrs_type_raw;
+  case LGLSXP: return dispatch && OBJECT(x) ? vctrs_type_s3 : vctrs_type_logical;
+  case INTSXP: return dispatch && OBJECT(x) ? vctrs_type_s3 : vctrs_type_integer;
+  case REALSXP: return dispatch && OBJECT(x) ? vctrs_type_s3 : vctrs_type_double;
+  case CPLXSXP: return dispatch && OBJECT(x) ? vctrs_type_s3 : vctrs_type_complex;
+  case STRSXP: return dispatch && OBJECT(x) ? vctrs_type_s3 : vctrs_type_character;
+  case RAWSXP: return dispatch && OBJECT(x) ? vctrs_type_s3 : vctrs_type_raw;
   case VECSXP:
     if (!OBJECT(x)) {
       return vctrs_type_list;
