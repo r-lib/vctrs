@@ -22,31 +22,44 @@ shape_common <- function(x, y) {
 }
 
 shape_broadcast <- function(x, to) {
-  if (is.null(x) || is.null(to))
+  if (is.null(x) || is.null(to)) {
     return(x)
+  }
 
   dim_x <- vec_dim(x)
   dim_to <- vec_dim(to)
 
   # Don't set dimensions for vectors
-  if (length(dim_x) == 1L && length(dim_to) == 1L)
+  if (length(dim_x) == 1L && length(dim_to) == 1L) {
     return(x)
+  }
 
-  if (length(dim_x) > length(dim_to))
+  if (length(dim_x) > length(dim_to)) {
     stop_incompatible_cast(x, to, details = "Can not decrease dimensions")
+  }
 
   dim_x <- dim2(dim_x, dim_to)$x
   dim_to[[1]] <- dim_x[[1]] # don't change number of observations
   ok <- dim_x == dim_to | dim_x == 1 | dim_to == 0
-  if (any(!ok))
+  if (any(!ok)) {
     stop_incompatible_cast(x, to, details = "Non-recyclable dimensions")
+  }
+
+  # Increase dimensionality if required
+  if (vec_dims(x) != length(dim_x)) {
+    dim(x) <- dim_x
+  }
 
   recycle <- dim_x != dim_to
+
+  # Avoid expensive subset
+  if (all(!recycle)) {
+    return(x)
+  }
 
   indices <- rep(list(missing_arg()), length(dim_to))
   indices[recycle] <- map(dim_to[recycle], rep_len, x = 1L)
 
-  dim(x) <- dim_x
   eval_bare(expr(x[!!!indices, drop = FALSE]))
 }
 
