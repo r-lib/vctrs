@@ -157,8 +157,7 @@ format.vctrs_vctr <- function(x, ...) {
 
 #' @export
 `[.vctrs_vctr` <- function(x, i, ...) {
-  check_dots_empty_s3_consistency(...)
-  vec_slice_native(x, maybe_missing(i, TRUE))
+  vec_index(x, i, ...)
 }
 
 #' @export
