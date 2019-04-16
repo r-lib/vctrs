@@ -14,7 +14,7 @@ static SEXP vec_type_slice(SEXP x, SEXP empty) {
     return empty;
   } else {
     // Slicing preserves attributes
-    return vec_slice(x, vctrs_shared_empty_int);
+    return vec_slice(x, R_NilValue);
   }
 }
 static SEXP lgl_type(SEXP x) {
