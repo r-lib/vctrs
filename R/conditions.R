@@ -52,6 +52,9 @@ stop_incompatible <- function(x, y, details = NULL, ..., message = NULL, .subcla
 #' @rdname vctrs-conditions
 #' @export
 stop_incompatible_type <- function(x, y, details = NULL, ..., message = NULL, .subclass = NULL) {
+  vec_assert(x)
+  vec_assert(y)
+
   message <- message %||% glue_lines(
     "No common type for <{vec_ptype_full(x)}> and <{vec_ptype_full(y)}>.",
     details
@@ -241,6 +244,15 @@ stop_unimplemented <- function(x, method) {
     x = x,
     method = method
   )
+}
+
+stop_scalar_type <- function(x, arg = NULL) {
+  if (is_null(arg)) {
+    msg <- glue::glue("Expected a vector, not { friendly_type_of(x) }")
+  } else {
+    msg <- glue::glue("`{ arg }` must be a vector, not { friendly_type_of(x) }")
+  }
+  abort(msg, "vctrs_error_scalar_type", actual = x)
 }
 
 # helpers -----------------------------------------------------------------

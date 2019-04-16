@@ -33,8 +33,7 @@
 #' @export
 vec_assert <- function(x, ptype = NULL, size = NULL, arg = as_label(substitute(x))) {
   if (!vec_is_vector(x)) {
-    msg <- glue::glue("`{ arg }` must be a vector, not { friendly_type_of(x) }")
-    abort(msg, "vctrs_error_assert_scalar", actual = x)
+    stop_scalar_type(x, arg)
   }
 
   if (!is_null(ptype)) {

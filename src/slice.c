@@ -99,6 +99,7 @@ static SEXP df_slice(SEXP x, SEXP index) {
   R_len_t n = Rf_length(x);
   SEXP out = PROTECT(Rf_allocVector(VECSXP, n));
 
+  // FIXME: Should that be restored?
   SEXP nms = Rf_getAttrib(x, R_NamesSymbol);
   Rf_setAttrib(out, R_NamesSymbol, nms);
 

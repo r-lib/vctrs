@@ -41,6 +41,8 @@ extern SEXP vctrs_slice(SEXP, SEXP, SEXP);
 extern SEXP vec_restore(SEXP, SEXP, SEXP);
 extern SEXP vctrs_restore_default(SEXP, SEXP);
 extern SEXP vec_proxy(SEXP);
+extern SEXP vctrs_unspecified(SEXP);
+extern SEXP vec_type(SEXP);
 
 // Defined below
 SEXP vctrs_init(SEXP);
@@ -80,6 +82,8 @@ static const R_CallMethodDef CallEntries[] = {
   {"vctrs_restore",                    (DL_FUNC) &vec_restore, 3},
   {"vctrs_restore_default",            (DL_FUNC) &vctrs_restore_default, 2},
   {"vctrs_proxy",                      (DL_FUNC) &vec_proxy, 1},
+  {"vctrs_unspecified",                (DL_FUNC) &vctrs_unspecified, 1},
+  {"vctrs_type",                       (DL_FUNC) &vec_type, 1},
   {NULL, NULL, 0}
 };
 
@@ -95,6 +99,7 @@ void vctrs_init_data(SEXP ns);
 void vctrs_init_size(SEXP ns);
 void vctrs_init_type2(SEXP ns);
 void vctrs_init_types(SEXP ns);
+void vctrs_init_unspecified(SEXP ns);
 void vctrs_init_utils(SEXP ns);
 
 SEXP vctrs_init(SEXP ns) {
@@ -103,6 +108,7 @@ SEXP vctrs_init(SEXP ns) {
   vctrs_init_size(ns);
   vctrs_init_type2(ns);
   vctrs_init_types(ns);
+  vctrs_init_unspecified(ns);
   vctrs_init_utils(ns);
   return R_NilValue;
 }

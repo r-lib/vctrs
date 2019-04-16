@@ -19,7 +19,7 @@
 #' vec_c(NA, Sys.time())
 #' vec_c(NA, list(1:3, 4:5))
 unspecified <- function(n = 0) {
-  structure(rep(NA, n), class = "vctrs_unspecified")
+  .Call(vctrs_unspecified, n)
 }
 
 #' @export

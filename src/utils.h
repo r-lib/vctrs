@@ -14,6 +14,8 @@ SEXP vctrs_dispatch3(SEXP fn_sym, SEXP fn,
                      SEXP y_sym, SEXP y,
                      SEXP z_sym, SEXP z);
 
+enum vctrs_type2 vec_typeof2_impl(enum vctrs_type type_x, enum vctrs_type type_y);
+
 bool is_compact_rownames(SEXP x);
 R_len_t compact_rownames_length(SEXP x);
 
@@ -29,6 +31,10 @@ bool r_int_any_na(SEXP x);
 
 SEXP r_new_environment(SEXP parent, R_len_t size);
 
+SEXP r_protect(SEXP x);
+
+
+extern SEXP vctrs_ns_env;
 
 extern SEXP vctrs_ns_env;
 
@@ -40,6 +46,7 @@ extern SEXP syms_dots;
 extern SEXP syms_bracket;
 
 extern SEXP fns_bracket;
+extern SEXP fns_quote;
 
 
 #endif

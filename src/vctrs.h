@@ -28,7 +28,6 @@ enum vctrs_type vec_typeof_impl(SEXP x, bool dispatch);
 
 const char* vec_type_as_str(enum vctrs_type type);
 bool vec_is_vector(SEXP x);
-void vctrs_stop_unsupported_type(enum vctrs_type, const char* fn) __attribute__((noreturn));
 
 // After adding a new `vctrs_dispatch` type, add the missing entries
 // in `vec_typeof2()`
@@ -121,11 +120,15 @@ extern SEXP vctrs_shared_empty_cpl;
 extern SEXP vctrs_shared_empty_chr;
 extern SEXP vctrs_shared_empty_raw;
 extern SEXP vctrs_shared_empty_list;
+extern SEXP vctrs_shared_empty_uns;
 
 extern SEXP vctrs_shared_true;
 extern SEXP vctrs_shared_false;
 
 extern Rcomplex vctrs_shared_na_cpl;
+
+SEXP vec_unspecified(R_len_t n);
+bool vec_is_unspecified(SEXP x);
 
 
 // Vector methods ------------------------------------------------
@@ -134,6 +137,7 @@ R_len_t vec_size(SEXP x);
 SEXP vec_cast(SEXP x, SEXP to);
 SEXP vec_slice(SEXP x, SEXP index);
 SEXP vec_restore(SEXP x, SEXP to, SEXP i);
+SEXP vec_type(SEXP x);
 
 bool is_data_frame(SEXP x);
 bool is_record(SEXP x);
@@ -181,6 +185,12 @@ SEXP growable_values(growable* g);
 // Shape --------------------------------------------------------
 
 bool has_dim(SEXP x);
+
+
+// Conditions ---------------------------------------------------
+
+void vctrs_stop_unsupported_type(enum vctrs_type, const char* fn) __attribute__((noreturn));
+void stop_scalar_type(SEXP x, const char* arg) __attribute__((noreturn));
 
 
 // Compatibility ------------------------------------------------
