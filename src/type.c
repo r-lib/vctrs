@@ -54,26 +54,25 @@ bool vec_is_partial(SEXP x) {
 }
 
 
-static SEXP vctrs_type_common_impl(SEXP types, bool spliced);
+static SEXP vctrs_type_common_impl(SEXP current, SEXP types, bool spliced);
 
-static SEXP vctrs_type_common_type(SEXP type, bool spliced) {
+static SEXP vctrs_type_common_type(SEXP current, SEXP elt, bool spliced) {
   // Don't call `rlang_is_splice_box()` if we're already looking at a
   // spliced list because it's expensive
-  if (!spliced && rlang_is_splice_box(type)) {
-    return vctrs_type_common_impl(rlang_unbox(type), true);
+  if (!spliced && rlang_is_splice_box(elt)) {
+    return vctrs_type_common_impl(current, rlang_unbox(elt), true);
   } else {
-    return vec_type(type);
+    return vec_type(elt);
   }
 }
-
-static SEXP vctrs_type_common_impl(SEXP types, bool spliced) {
+static SEXP vctrs_type_common_impl(SEXP current, SEXP types, bool spliced) {
   R_len_t n = Rf_length(types);
 
   if (!n) {
     return R_NilValue;
   }
 
-  SEXP type = PROTECT(R_NilValue);
+  current = PROTECT(current);
 
   for (R_len_t i = 0; i < n; ++i) {
     SEXP elt = VECTOR_ELT(types, i);
@@ -82,20 +81,24 @@ static SEXP vctrs_type_common_impl(SEXP types, bool spliced) {
       continue;
     }
 
-    SEXP elt_type = PROTECT(vctrs_type_common_type(elt, spliced));
-    type = vec_type2(type, elt_type);
+    SEXP elt_type = PROTECT(vctrs_type_common_type(current, elt, spliced));
+    current = vec_type2(current, elt_type);
 
-    // Reprotect `type`
+    // Reprotect `current`
     UNPROTECT(2);
-    PROTECT(type);
+    PROTECT(current);
   }
 
   UNPROTECT(1);
-  return type;
+  return current;
 }
 
-SEXP vctrs_type_common(SEXP types, SEXP ptype) {
+SEXP vctrs_ext2_type_common(SEXP call, SEXP op, SEXP args, SEXP env) {
+  args = CDR(args);
+
+  SEXP ptype = PROTECT(Rf_eval(CAR(args), env));
   if (!vec_is_partial(ptype)) {
+    UNPROTECT(1);
     return vec_type(ptype);
   }
 
@@ -103,10 +106,12 @@ SEXP vctrs_type_common(SEXP types, SEXP ptype) {
     Rf_errorcall(R_NilValue, "strict mode is activated; you must supply complete `.ptype`.");
   }
 
-  SEXP type = PROTECT(vctrs_type_common_impl(types, false));
+  SEXP types = PROTECT(rlang_env_dots_values(env));
+
+  SEXP type = PROTECT(vctrs_type_common_impl(ptype, types, false));
   type = vec_type_finalise(type);
 
-  UNPROTECT(1);
+  UNPROTECT(3);
   return type;
 }
 

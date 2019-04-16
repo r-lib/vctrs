@@ -21,7 +21,7 @@ Imports:
     backports,
     digest,
     glue,
-    rlang (>= 0.3.4.9000),
+    rlang (>= 0.3.4.9002),
     zeallot
 Suggests: 
     bit64,
