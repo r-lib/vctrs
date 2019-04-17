@@ -58,3 +58,36 @@ test_that("dispatch is symmetric with tibbles", {
   right <- vec_type2(tibble::tibble(x = 1), partial_frame(x = 1))
   expect_identical(left, right)
 })
+
+test_that("can take the common type with partial frames", {
+  exp <- tibble::tibble(x = dbl(), y = chr(), a = chr())
+
+  out <- vec_type_common(
+    partial_frame(x = double(), a = character()),
+    tibble::tibble(x = 1L, y = "a")
+  )
+  expect_identical(out, exp)
+
+  out <- vec_type_common(
+    tibble::tibble(x = 1L, y = "a"),
+    partial_frame(x = double(), a = character())
+  )
+  expect_identical(out, tibble::tibble(x = dbl(), y = chr(), a = chr()))
+})
+
+test_that("can rbind with a partial frame prototype", {
+  out <- vec_rbind(
+    tibble::tibble(x = 1L, y = "a"),
+    tibble::tibble(x = FALSE, z = 10),
+    .ptype = partial_frame(x = double(), a = character())
+  )
+
+  exp <- tibble::tibble(
+    x = dbl(1, 0),
+    y = chr("a", NA),
+    z = dbl(NA, 10),
+    a = chr(NA, NA)
+  )
+
+  expect_identical(out, exp)
+})
