@@ -16,3 +16,9 @@ void stop_scalar_type(SEXP x, const char* arg) {
   Rf_eval(call, vctrs_ns_env);
   Rf_error("Internal error: `stop_scalar_type()` should have jumped");
 }
+
+void vec_assert(SEXP x, const char* arg) {
+  if (!vec_is_vector(x)) {
+    stop_scalar_type(x, arg);
+  }
+}

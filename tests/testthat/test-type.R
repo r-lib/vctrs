@@ -47,3 +47,7 @@ test_that("output tests", {
   expect_known_output(vec_ptype(logical(), integer(), double()), "out/vec-ptype-3.txt")
 })
 
+test_that("vec_type_common() handles matrices", {
+  m <- matrix(1:4, nrow = 2)
+  expect_identical(vec_type_common(m, m), matrix(int(), ncol = 2))
+})

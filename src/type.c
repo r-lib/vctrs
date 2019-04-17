@@ -49,6 +49,73 @@ SEXP vec_type(SEXP x) {
 }
 
 
+bool vec_is_partial(SEXP x) {
+  return x == R_NilValue || Rf_inherits(x, "vctrs_partial");
+}
+
+
+static SEXP vctrs_type_common_impl(SEXP current, SEXP types, bool spliced);
+
+static SEXP vctrs_type_common_type(SEXP current, SEXP elt, bool spliced) {
+  // Don't call `rlang_is_splice_box()` if we're already looking at a
+  // spliced list because it's expensive
+  if (!spliced && rlang_is_splice_box(elt)) {
+    return vctrs_type_common_impl(current, rlang_unbox(elt), true);
+  } else {
+    return vec_type(elt);
+  }
+}
+static SEXP vctrs_type_common_impl(SEXP current, SEXP types, bool spliced) {
+  R_len_t n = Rf_length(types);
+
+  if (!n) {
+    return R_NilValue;
+  }
+
+  current = PROTECT(current);
+
+  for (R_len_t i = 0; i < n; ++i) {
+    SEXP elt = VECTOR_ELT(types, i);
+
+    if (elt == R_NilValue) {
+      continue;
+    }
+
+    SEXP elt_type = PROTECT(vctrs_type_common_type(current, elt, spliced));
+    current = vec_type2(current, elt_type);
+
+    // Reprotect `current`
+    UNPROTECT(2);
+    PROTECT(current);
+  }
+
+  UNPROTECT(1);
+  return current;
+}
+
+SEXP vctrs_ext2_type_common(SEXP call, SEXP op, SEXP args, SEXP env) {
+  args = CDR(args);
+
+  SEXP ptype = PROTECT(Rf_eval(CAR(args), env));
+  if (!vec_is_partial(ptype)) {
+    UNPROTECT(1);
+    return vec_type(ptype);
+  }
+
+  if (r_is_true(r_peek_option("vctrs.no_guessing"))) {
+    Rf_errorcall(R_NilValue, "strict mode is activated; you must supply complete `.ptype`.");
+  }
+
+  SEXP types = PROTECT(rlang_env_dots_values(env));
+
+  SEXP type = PROTECT(vctrs_type_common_impl(ptype, types, false));
+  type = vec_type_finalise(type);
+
+  UNPROTECT(3);
+  return type;
+}
+
+
 SEXP vec_type_finalise_rec(SEXP x, bool dispatch) {
   if (OBJECT(x)) {
     if (vec_is_unspecified(x)) {

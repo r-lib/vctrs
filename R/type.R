@@ -68,25 +68,7 @@ vec_type <- function(x) {
 #' @export
 #' @rdname vec_type
 vec_type_common <- function(..., .ptype = NULL) {
-  if (!is_partial(.ptype)) {
-    return(vec_type(.ptype))
-  }
-
-  if (isTRUE(getOption("vctrs.no_guessing"))) {
-    abort("strict mode is activated; you must supply complete `.ptype`.")
-  }
-
-  args <- compact(list2(.ptype, ...))
-  if (length(args) == 0) {
-    ptype <- NULL
-  } else if (length(args) == 1) {
-    ptype <- vec_type(args[[1]])
-  } else {
-    ptypes <- map(args, vec_type)
-    ptype <- reduce(ptypes, vec_type2)
-  }
-
-  vec_type_finalise(ptype)
+ .External2(vctrs_ext2_type_common, .ptype)
 }
 
 #' @export

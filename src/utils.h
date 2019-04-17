@@ -22,6 +22,10 @@ enum vctrs_type2 vec_typeof2_impl(enum vctrs_type type_x, enum vctrs_type type_y
 bool is_compact_rownames(SEXP x);
 R_len_t compact_rownames_length(SEXP x);
 
+bool (*rlang_is_splice_box)(SEXP);
+SEXP (*rlang_unbox)(SEXP);
+SEXP (*rlang_env_dots_values)(SEXP);
+
 R_len_t r_lgl_sum(SEXP lgl, bool na_true);
 SEXP r_lgl_which(SEXP x, bool na_true);
 
@@ -35,6 +39,8 @@ bool r_int_any_na(SEXP x);
 SEXP r_new_environment(SEXP parent, R_len_t size);
 
 SEXP r_protect(SEXP x);
+bool r_is_true(SEXP x);
+SEXP r_peek_option(const char* option);
 
 
 extern SEXP vctrs_ns_env;

@@ -1,6 +1,14 @@
 #include "vctrs.h"
 #include "utils.h"
 
+#include <R_ext/Rdynload.h>
+
+// Initialised at load time
+bool (*rlang_is_splice_box)(SEXP) = NULL;
+SEXP (*rlang_unbox)(SEXP) = NULL;
+SEXP (*rlang_env_dots_values)(SEXP) = NULL;
+
+
 bool is_bool(SEXP x) {
   return
     TYPEOF(x) == LGLSXP &&
@@ -278,6 +286,19 @@ SEXP r_protect(SEXP x) {
   return Rf_lang2(fns_quote, x);
 }
 
+bool r_is_bool(SEXP x) {
+  return TYPEOF(x) == LGLSXP &&
+    Rf_length(x) == 1 &&
+    LOGICAL(x)[0] != NA_LOGICAL;
+}
+bool r_is_true(SEXP x) {
+  return r_is_bool(x) && LOGICAL(x)[0] == 1;
+}
+
+SEXP r_peek_option(const char* option) {
+  return Rf_GetOption1(Rf_install(option));
+}
+
 
 SEXP vctrs_ns_env = NULL;
 
@@ -309,4 +330,8 @@ void vctrs_init_utils(SEXP ns) {
 
   new_env__parent_node = CDDR(new_env_call);
   new_env__size_node = CDR(new_env__parent_node);
+
+  rlang_is_splice_box = (bool (*)(SEXP)) R_GetCCallable("rlang", "rlang_is_splice_box");
+  rlang_unbox = (SEXP (*)(SEXP)) R_GetCCallable("rlang", "rlang_unbox");
+  rlang_env_dots_values = (SEXP (*)(SEXP)) R_GetCCallable("rlang", "rlang_env_dots_values");
 }

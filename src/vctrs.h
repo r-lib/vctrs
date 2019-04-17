@@ -28,6 +28,7 @@ enum vctrs_type vec_typeof_impl(SEXP x, bool dispatch);
 
 const char* vec_type_as_str(enum vctrs_type type);
 bool vec_is_vector(SEXP x);
+bool vec_is_partial(SEXP x);
 
 // After adding a new `vctrs_dispatch` type, add the missing entries
 // in `vec_typeof2()`
@@ -139,6 +140,7 @@ SEXP vec_slice(SEXP x, SEXP index);
 SEXP vec_restore(SEXP x, SEXP to, SEXP i);
 SEXP vec_type(SEXP x);
 SEXP vec_type_finalise(SEXP x);
+SEXP vec_type2(SEXP x, SEXP y);
 bool vec_is_unspecified(SEXP x);
 
 bool is_data_frame(SEXP x);
@@ -193,6 +195,7 @@ bool has_dim(SEXP x);
 
 void vctrs_stop_unsupported_type(enum vctrs_type, const char* fn) __attribute__((noreturn));
 void stop_scalar_type(SEXP x, const char* arg) __attribute__((noreturn));
+void vec_assert(SEXP x, const char* arg);
 
 
 // Compatibility ------------------------------------------------
