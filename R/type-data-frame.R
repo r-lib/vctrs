@@ -100,13 +100,6 @@ vec_cast.data.frame.data.frame <- function(x, to) df_col_cast(x, to)
 #' @method vec_cast.data.frame default
 vec_cast.data.frame.default    <- function(x, to) stop_incompatible_cast(x, to)
 
-# Partial -----------------------------------------------------------------
-
-#' @export
-vec_type_finalise.data.frame <- function(x) {
-  vec_restore(map(x, vec_type_finalise), x)
-}
-
 # Helpers -----------------------------------------------------------------
 
 df_length <- function(x) {
