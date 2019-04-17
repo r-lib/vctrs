@@ -1,6 +1,8 @@
 #include "vctrs.h"
 #include "utils.h"
 
+#include <R_ext/Rdynload.h>
+
 // Initialised at load time
 bool (*rlang_is_splice_box)(SEXP) = NULL;
 SEXP (*rlang_unbox)(SEXP) = NULL;
