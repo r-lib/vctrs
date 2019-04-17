@@ -54,3 +54,8 @@ test_that("can bind data.frame columns", {
 
   expect_equal(vec_c(df, df), expected)
 })
+
+test_that("vec_c() handles matrices", {
+    m <- matrix(1:4, nrow = 2)
+    expect_identical(vec_c(m, m), matrix(c(1:2, 1:2, 3:4, 3:4), nrow = 4))
+})
