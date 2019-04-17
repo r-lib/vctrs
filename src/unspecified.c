@@ -2,7 +2,7 @@
 #include "utils.h"
 
 // Initialised at load time
-static SEXP unspecified_class = NULL;
+static SEXP unspecified_attrib = NULL;
 SEXP vctrs_shared_empty_uns = NULL;
 
 
@@ -11,7 +11,8 @@ SEXP vec_unspecified(R_len_t n) {
   SEXP out = PROTECT(Rf_allocVector(LGLSXP, n));
 
   r_lgl_fill(out, NA_LOGICAL);
-  Rf_setAttrib(out, R_ClassSymbol, unspecified_class);
+  SET_ATTRIB(out, unspecified_attrib);
+  SET_OBJECT(out, 1);
 
   UNPROTECT(1);
   return out;
@@ -35,7 +36,15 @@ bool vec_is_unspecified(SEXP x) {
     return false;
   }
 
-  if (ATTRIB(x) != R_NilValue) {
+  SEXP attrib = ATTRIB(x);
+
+  if (attrib == unspecified_attrib) {
+    return true;
+  }
+
+  if (attrib != R_NilValue) {
+    // The unspecified vector might have been created outside the
+    // session (e.g. serialisation)
     if (Rf_inherits(x, "vctrs_unspecified")) {
       return true;
     }
@@ -69,9 +78,16 @@ SEXP vctrs_is_unspecified(SEXP x) {
 
 
 void vctrs_init_unspecified(SEXP ns) {
-  unspecified_class = Rf_allocVector(STRSXP, 1);
-  R_PreserveObject(unspecified_class);
-  SET_STRING_ELT(unspecified_class, 0, Rf_mkChar("vctrs_unspecified"));
+  {
+    SEXP unspecified_class = PROTECT(Rf_allocVector(STRSXP, 1));
+    SET_STRING_ELT(unspecified_class, 0, Rf_mkChar("vctrs_unspecified"));
+
+    unspecified_attrib = Rf_cons(unspecified_class, R_NilValue);
+    R_PreserveObject(unspecified_attrib);
+    SET_TAG(unspecified_attrib, R_ClassSymbol);
+
+    UNPROTECT(1);
+  }
 
   vctrs_shared_empty_uns = vec_unspecified(0);
   R_PreserveObject(vctrs_shared_empty_uns);
