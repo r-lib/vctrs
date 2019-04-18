@@ -83,11 +83,10 @@ test_that("vec_type2() methods forward args to stop_incompatible_type()", {
 test_that("vec_type2() data frame methods builds argument tags", {
   df1 <- tibble(x = tibble(y = tibble(z = 1)))
   df2 <- tibble(x = tibble(y = tibble(z = "a")))
-  expect_error(
-    vec_type2(df1, df2),
-    "No common type for `x$y$z` <double> and `x$y$z` <character>.",
-    fixed = TRUE
-  )
+  expect_known_output(file = test_path("test-type2-nested-data-frames-error.txt"), {
+    err <- catch_cnd(vec_type2(df1, df2), classes = "error")
+    cat(err$message, "\n")
+  })
 })
 
 test_that("stop_incompatible_type() can be called without argument tags", {
