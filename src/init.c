@@ -93,6 +93,7 @@ extern SEXP vctrs_ext2_type_common(SEXP, SEXP, SEXP, SEXP);
 
 static const R_ExternalMethodDef ExtEntries[] = {
   {"vctrs_ext2_type_common",           (DL_FUNC) &vctrs_ext2_type_common, 1},
+  {NULL, NULL, 0}
 };
 
 void R_init_vctrs(DllInfo *dll)
