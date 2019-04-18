@@ -150,7 +150,7 @@ type_sum.vctrs_vctr <- function(x) {
 
 #' @export
 format.vctrs_vctr <- function(x, ...) {
-  format(vec_data(x, ...))
+  format(vec_data(x), ...)
 }
 
 # Subsetting --------------------------------------------------------------
