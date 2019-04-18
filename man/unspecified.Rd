@@ -10,7 +10,7 @@ unspecified(n = 0)
 
 vec_unspecified_cast(x, to)
 
-\method{vec_type2}{vctrs_unspecified}(x, y)
+\method{vec_type2}{vctrs_unspecified}(x, y, ...)
 }
 \arguments{
 \item{n}{Length of vector}

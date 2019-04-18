@@ -82,7 +82,7 @@ static SEXP vctrs_type_common_impl(SEXP current, SEXP types, bool spliced) {
     }
 
     SEXP elt_type = PROTECT(vctrs_type_common_type(current, elt, spliced));
-    current = vec_type2(current, elt_type);
+    current = vec_type2(current, elt_type, "", "");
 
     // Reprotect `current`
     UNPROTECT(2);

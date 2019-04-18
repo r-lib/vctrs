@@ -6,29 +6,38 @@
 static SEXP fns_vec_type2_dispatch = NULL;
 static SEXP syms_vec_type2_dispatch = NULL;
 
-static SEXP vctrs_type2_dispatch(SEXP x, SEXP y) {
-  return vctrs_dispatch2(syms_vec_type2_dispatch, fns_vec_type2_dispatch,
-                         syms_x, x,
-                         syms_y, y);
+static SEXP vctrs_type2_dispatch(SEXP x, SEXP y,
+                                 const char* x_arg, const char* y_arg) {
+  SEXP x_arg_chr = PROTECT(Rf_mkString(x_arg));
+  SEXP y_arg_chr = PROTECT(Rf_mkString(y_arg));
+
+  SEXP syms[5] = { syms_x, syms_y, syms_x_arg, syms_y_arg, NULL };
+  SEXP args[5] = {      x,      y,  x_arg_chr,  y_arg_chr, NULL };
+
+  SEXP out = vctrs_dispatch_n(syms_vec_type2_dispatch, fns_vec_type2_dispatch,
+                              syms, args);
+
+  UNPROTECT(2);
+  return out;
 }
 
 // [[ include("vctrs.h"), register() ]]
-SEXP vec_type2(SEXP x, SEXP y) {
+SEXP vec_type2(SEXP x, SEXP y, const char* x_arg, const char* y_arg) {
   if (x == R_NilValue) {
     if (!vec_is_partial(y)) {
-      vec_assert(y, "y");
+      vec_assert(y, y_arg);
     }
     return y;
   }
   if (y == R_NilValue) {
     if (!vec_is_partial(x)) {
-      vec_assert(x, "x");
+      vec_assert(x, x_arg);
     }
     return x;
   }
 
   if (has_dim(x) || has_dim(y)) {
-    return vctrs_type2_dispatch(x, y);
+    return vctrs_type2_dispatch(x, y, x_arg, y_arg);
   }
 
   enum vctrs_type type_x = vec_typeof(x);
@@ -67,7 +76,7 @@ SEXP vec_type2(SEXP x, SEXP y) {
     return vctrs_shared_empty_list;
 
   default:
-    return vctrs_type2_dispatch(x, y);
+    return vctrs_type2_dispatch(x, y, x_arg, y_arg);
   }
 }
 

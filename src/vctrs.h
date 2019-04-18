@@ -140,7 +140,7 @@ SEXP vec_slice(SEXP x, SEXP index);
 SEXP vec_restore(SEXP x, SEXP to, SEXP i);
 SEXP vec_type(SEXP x);
 SEXP vec_type_finalise(SEXP x);
-SEXP vec_type2(SEXP x, SEXP y);
+SEXP vec_type2(SEXP x, SEXP y, const char* x_arg, const char* y_arg);
 bool vec_is_unspecified(SEXP x);
 
 bool is_data_frame(SEXP x);

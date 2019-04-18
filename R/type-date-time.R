@@ -111,43 +111,43 @@ vec_ptype_abbr.difftime <- function(x) {
 #' @export vec_type2.Date
 #' @method vec_type2 Date
 #' @export
-vec_type2.Date   <- function(x, y) UseMethod("vec_type2.Date", y)
+vec_type2.Date <- function(x, y, ...) UseMethod("vec_type2.Date", y)
 #' @method vec_type2.Date default
 #' @export
-vec_type2.Date.default   <- function(x, y) stop_incompatible_type(x, y)
+vec_type2.Date.default <- function(x, y, ...) stop_incompatible_type(x, y)
 #' @method vec_type2.Date Date
 #' @export
-vec_type2.Date.Date      <- function(x, y) new_date()
+vec_type2.Date.Date <- function(x, y, ...) new_date()
 
 #' @rdname new_date
 #' @export vec_type2.POSIXt
 #' @method vec_type2 POSIXt
 #' @export
-vec_type2.POSIXt <- function(x, y) UseMethod("vec_type2.POSIXt", y)
+vec_type2.POSIXt <- function(x, y, ...) UseMethod("vec_type2.POSIXt", y)
 #' @method vec_type2.POSIXt default
 #' @export
-vec_type2.POSIXt.default <- function(x, y) stop_incompatible_type(x, y)
+vec_type2.POSIXt.default <- function(x, y, ...) stop_incompatible_type(x, y)
 #' @method vec_type2.POSIXt Date
 #' @export
-vec_type2.POSIXt.Date    <- function(x, y) new_datetime(tzone = tzone(x))
+vec_type2.POSIXt.Date <- function(x, y, ...) new_datetime(tzone = tzone(x))
 #' @method vec_type2.Date POSIXt
 #' @export
-vec_type2.Date.POSIXt    <- function(x, y) new_datetime(tzone = tzone(y))
+vec_type2.Date.POSIXt <- function(x, y, ...) new_datetime(tzone = tzone(y))
 #' @method vec_type2.POSIXt POSIXt
 #' @export
-vec_type2.POSIXt.POSIXt  <- function(x, y) new_datetime(tzone = tzone_union(x, y))
+vec_type2.POSIXt.POSIXt <- function(x, y, ...) new_datetime(tzone = tzone_union(x, y))
 
 #' @rdname new_date
 #' @export vec_type2.difftime
 #' @method vec_type2 difftime
 #' @export
-vec_type2.difftime <- function(x, y) UseMethod("vec_type2.difftime", y)
+vec_type2.difftime <- function(x, y, ...) UseMethod("vec_type2.difftime", y)
 #' @method vec_type2.difftime default
 #' @export
-vec_type2.difftime.default  <- function(x, y) stop_incompatible_type(x, y)
+vec_type2.difftime.default <- function(x, y, ...) stop_incompatible_type(x, y)
 #' @method vec_type2.difftime difftime
 #' @export
-vec_type2.difftime.difftime <- function(x, y) new_duration(units = units_union(x, y))
+vec_type2.difftime.difftime <- function(x, y, ...) new_duration(units = units_union(x, y))
 
 # Cast --------------------------------------------------------------------
 

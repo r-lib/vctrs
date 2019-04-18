@@ -63,13 +63,13 @@ vec_ptype_abbr.vctrs_partial_frame <- function(x) {
 
 #' @method vec_type2 vctrs_partial_frame
 #' @export
-vec_type2.vctrs_partial_frame <- function(x, y) {
+vec_type2.vctrs_partial_frame <- function(x, y, ...) {
   UseMethod("vec_type2.vctrs_partial_frame", y)
 }
 
 #' @method vec_type2.vctrs_partial_frame vctrs_partial_frame
 #' @export
-vec_type2.vctrs_partial_frame.vctrs_partial_frame <- function(x, y) {
+vec_type2.vctrs_partial_frame.vctrs_partial_frame <- function(x, y, ...) {
   partial <- vec_type2(x$partial, y$partial)
   learned <- vec_type2(x$learned, y$learned)
   new_partial_frame(partial, learned)
@@ -77,13 +77,13 @@ vec_type2.vctrs_partial_frame.vctrs_partial_frame <- function(x, y) {
 
 #' @method vec_type2.vctrs_partial_frame data.frame
 #' @export
-vec_type2.vctrs_partial_frame.data.frame <- function(x, y) {
+vec_type2.vctrs_partial_frame.data.frame <- function(x, y, ...) {
   new_partial_frame(x$partial, vec_type2(x$learned, y))
 }
 
 #' @method vec_type2.data.frame vctrs_partial_frame
 #' @export
-vec_type2.data.frame.vctrs_partial_frame <- function(x, y) {
+vec_type2.data.frame.vctrs_partial_frame <- function(x, y, ...) {
   new_partial_frame(y$partial, vec_type2(y$learned, x))
 }
 

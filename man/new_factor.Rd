@@ -13,9 +13,9 @@ new_factor(x = integer(), levels = character(), ...,
 
 new_ordered(x = integer(), levels = character())
 
-\method{vec_type2}{factor}(x, y)
+\method{vec_type2}{factor}(x, y, ...)
 
-\method{vec_type2}{ordered}(x, y)
+\method{vec_type2}{ordered}(x, y, ...)
 
 \method{vec_cast}{factor}(x, to)
 }

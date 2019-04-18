@@ -28,45 +28,37 @@ vec_ptype_abbr.integer64 <- function(x) {
 #' @rdname int64
 #' @export vec_type2.integer64
 #' @method vec_type2 integer64
-vec_type2.integer64 <- function(x, y) {
+vec_type2.integer64 <- function(x, y, ...) {
   UseMethod("vec_type2.integer64", y)
 }
-
 #' @method vec_type2.integer64 default
 #' @export
-vec_type2.integer64.default <- function(x, y) stop_incompatible_type(x, y)
-
+vec_type2.integer64.default <- function(x, y, ...) stop_incompatible_type(x, y)
 
 #' @method vec_type2.integer64 vctrs_unspecified
 #' @export
-vec_type2.integer64.vctrs_unspecified <- function(x, y) bit64::integer64()
-
+vec_type2.integer64.vctrs_unspecified <- function(x, y, ...) bit64::integer64()
 #' @method vec_type2.vctrs_unspecified integer64
 #' @export
-vec_type2.vctrs_unspecified.integer64 <- function(x, y) bit64::integer64()
-
+vec_type2.vctrs_unspecified.integer64 <- function(x, y, ...) bit64::integer64()
 
 #' @method vec_type2.integer64 integer64
 #' @export
-vec_type2.integer64.integer64 <- function(x, y) bit64::integer64()
-
+vec_type2.integer64.integer64 <- function(x, y, ...) bit64::integer64()
 
 #' @method vec_type2.integer64 integer
 #' @export
-vec_type2.integer64.integer <- function(x, y) bit64::integer64()
-
+vec_type2.integer64.integer <- function(x, y, ...) bit64::integer64()
 #' @method vec_type2.integer integer64
 #' @export
-vec_type2.integer.integer64 <- function(x, y) bit64::integer64()
-
+vec_type2.integer.integer64 <- function(x, y, ...) bit64::integer64()
 
 #' @method vec_type2.integer64 logical
 #' @export
-vec_type2.integer64.logical <- function(x, y) bit64::integer64()
-
+vec_type2.integer64.logical <- function(x, y, ...) bit64::integer64()
 #' @method vec_type2.logical integer64
 #' @export
-vec_type2.logical.integer64 <- function(x, y) bit64::integer64()
+vec_type2.logical.integer64 <- function(x, y, ...) bit64::integer64()
 
 
 # Cast --------------------------------------------------------------------

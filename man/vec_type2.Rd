@@ -11,21 +11,21 @@
 \alias{vec_type2.list}
 \title{Find the common type for a pair of vector types}
 \usage{
-\method{vec_type2}{tbl_df}(x, y)
+\method{vec_type2}{tbl_df}(x, y, ...)
 
-vec_type2(x, y)
+vec_type2(x, y, ..., x_arg = NULL, y_arg = NULL)
 
-\method{vec_type2}{logical}(x, y)
+\method{vec_type2}{logical}(x, y, ...)
 
-\method{vec_type2}{integer}(x, y)
+\method{vec_type2}{integer}(x, y, ...)
 
-\method{vec_type2}{double}(x, y)
+\method{vec_type2}{double}(x, y, ...)
 
-\method{vec_type2}{raw}(x, y)
+\method{vec_type2}{raw}(x, y, ...)
 
-\method{vec_type2}{character}(x, y)
+\method{vec_type2}{character}(x, y, ...)
 
-\method{vec_type2}{list}(x, y)
+\method{vec_type2}{list}(x, y, ...)
 }
 \arguments{
 \item{x, y}{Either vector types; i.e.}

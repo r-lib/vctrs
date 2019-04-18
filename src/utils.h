@@ -4,6 +4,8 @@
 
 bool is_bool(SEXP x);
 
+SEXP vctrs_dispatch_n(SEXP fn_sym, SEXP fn,
+                      SEXP* syms, SEXP* args);
 SEXP vctrs_dispatch1(SEXP fn_sym, SEXP fn,
                      SEXP x_sym, SEXP x);
 SEXP vctrs_dispatch2(SEXP fn_sym, SEXP fn,
@@ -55,6 +57,8 @@ extern SEXP syms_y;
 extern SEXP syms_to;
 extern SEXP syms_dots;
 extern SEXP syms_bracket;
+extern SEXP syms_x_arg;
+extern SEXP syms_y_arg;
 
 extern SEXP fns_bracket;
 extern SEXP fns_quote;
