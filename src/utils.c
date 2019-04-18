@@ -20,10 +20,10 @@ bool is_bool(SEXP x) {
  * Dispatch with two arguments
  *
  * @param fn The method to call.
- * @param arg_vals Arguments passed to the method.
- * @param arg_syms Symbols to which arguments are assigned.  The
+ * @param syms Symbols to which arguments are assigned.  The
  *   assignment occurs in `env` and the dispatch call refers to these
  *   symbols.
+ * @param args Arguments passed to the method.
  * @param env The environment in which to dispatch. Should be the
  *   global environment or inherit from it so methods defined there
  *   are picked up. If the global environment, a child is created so
@@ -31,30 +31,18 @@ bool is_bool(SEXP x) {
  *
  *   If `env` contains dots, the dispatch call forwards dots.
  */
-SEXP vctrs_dispatch_n(SEXP fn_sym, SEXP fn, SEXP* arg_syms, SEXP* arg_vals) {
+SEXP vctrs_dispatch_n(SEXP fn_sym, SEXP fn, SEXP* syms, SEXP* args) {
   // Create a child so we can mask the call components
   SEXP env = PROTECT(r_new_environment(R_GlobalEnv, 4));
 
   // Forward new values in the dispatch environment
   Rf_defineVar(fn_sym, fn, env);
 
-  SEXP dispatch_call = PROTECT(Rf_lcons(fn_sym, R_NilValue));
+  SEXP dispatch_call = PROTECT(r_call(fn_sym, syms, args));
 
-  SEXP node = dispatch_call;
-  int n = 0;
-
-  while (*arg_syms) {
-    SEXP sym = *arg_syms;
-    SEXP val = *arg_vals;
-
-    Rf_defineVar(sym, val, env);
-
-    SEXP next_node = Rf_cons(val, R_NilValue);
-    SETCDR(node, next_node);
-    SET_TAG(next_node, sym);
-    node = next_node;
-
-    ++n; ++arg_syms; ++arg_vals;
+  while (*syms) {
+    Rf_defineVar(*syms, *args, env);
+    ++syms; ++args;
   }
 
   SEXP out = Rf_eval(dispatch_call, env);
@@ -281,6 +269,43 @@ bool r_is_true(SEXP x) {
 
 SEXP r_peek_option(const char* option) {
   return Rf_GetOption1(Rf_install(option));
+}
+
+/**
+ * Create a call or pairlist
+ *
+ * @param tags Optional. If not `NULL`, an array of symbols.
+ * @param cars Mandatory. An array of CAR values.
+ * @param fn The first CAR value of the language list.
+ *
+ * [[ include("utils.h") ]]
+ */
+SEXP r_pairlist(SEXP* tags, SEXP* cars) {
+  if (!cars) {
+    Rf_error("Internal error: Null `cars` in `r_pairlist()`");
+  }
+
+  SEXP list = PROTECT(Rf_cons(R_NilValue, R_NilValue));
+  SEXP node = list;
+
+  while (*cars) {
+    SEXP next_node = Rf_cons(*cars, R_NilValue);
+    SETCDR(node, next_node);
+    node = next_node;
+
+    if (tags) {
+      SET_TAG(next_node, *tags);
+      ++tags;
+    }
+
+    ++cars;
+  }
+
+  UNPROTECT(1);
+  return CDR(list);
+}
+SEXP r_call(SEXP fn, SEXP* tags, SEXP* cars) {
+  return Rf_lcons(fn, r_pairlist(tags, cars));
 }
 
 
