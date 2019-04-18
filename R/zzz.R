@@ -1,6 +1,6 @@
 # nocov start
 .onLoad <- function(libname, pkgname) {
-  backports::import(pkgname, "strrep")
+  backports::import(pkgname, c("strrep", "...length"))
 
   s3_register("pillar::pillar_shaft", "vctrs_vctr")
   s3_register("tibble::type_sum", "vctrs_vctr")
@@ -9,12 +9,6 @@
   s3_register("generics::as.difftime", "vctrs_vctr")
 
   ns <- ns_env("vctrs")
-
-  if (getRversion() < "3.5.0") {
-    env_bind(ns,
-      ...length = function() .Call(vctrs_dots_length, parent.frame())
-    )
-  }
 
   utils::globalVariables(c(
     "vec_type2_workaround",
