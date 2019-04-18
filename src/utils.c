@@ -20,10 +20,10 @@ bool is_bool(SEXP x) {
  * Dispatch with two arguments
  *
  * @param fn The method to call.
- * @param x,y,z Arguments passed to the method.
- * @param fn_sym,x_sym,y_sym,z_sym Symbols to which `x`, `y` and `z`
- *   should be assigned.  The assignment occurs in `env` and the
- *   dispatch call refers to these symbols.
+ * @param arg_vals Arguments passed to the method.
+ * @param arg_syms Symbols to which arguments are assigned.  The
+ *   assignment occurs in `env` and the dispatch call refers to these
+ *   symbols.
  * @param env The environment in which to dispatch. Should be the
  *   global environment or inherit from it so methods defined there
  *   are picked up. If the global environment, a child is created so
@@ -31,73 +31,57 @@ bool is_bool(SEXP x) {
  *
  *   If `env` contains dots, the dispatch call forwards dots.
  */
-SEXP vctrs_dispatch1(SEXP fn_sym, SEXP fn,
-                     SEXP x_sym, SEXP x) {
+SEXP vctrs_dispatch_n(SEXP fn_sym, SEXP fn, SEXP* arg_syms, SEXP* arg_vals) {
   // Create a child so we can mask the call components
-  SEXP env = PROTECT(r_new_environment(R_GlobalEnv, 3));
+  SEXP env = PROTECT(r_new_environment(R_GlobalEnv, 4));
 
   // Forward new values in the dispatch environment
   Rf_defineVar(fn_sym, fn, env);
-  Rf_defineVar(x_sym, x, env);
 
-  SEXP dispatch_call = PROTECT(Rf_lang2(fn_sym, x_sym));
+  SEXP dispatch_call = PROTECT(Rf_lcons(fn_sym, R_NilValue));
 
-  SEXP elt = CDR(dispatch_call);
-  SET_TAG(elt, x_sym); elt = CDR(elt);
+  SEXP node = dispatch_call;
+  int n = 0;
+
+  while (*arg_syms) {
+    SEXP sym = *arg_syms;
+    SEXP val = *arg_vals;
+
+    Rf_defineVar(sym, val, env);
+
+    SEXP next_node = Rf_cons(val, R_NilValue);
+    SETCDR(node, next_node);
+    SET_TAG(next_node, sym);
+    node = next_node;
+
+    ++n; ++arg_syms; ++arg_vals;
+  }
 
   SEXP out = Rf_eval(dispatch_call, env);
 
   UNPROTECT(2);
   return out;
 }
+SEXP vctrs_dispatch1(SEXP fn_sym, SEXP fn,
+                     SEXP x_sym, SEXP x) {
+  SEXP syms[2] = { x_sym, NULL };
+  SEXP args[2] = { x, NULL };
+  return vctrs_dispatch_n(fn_sym, fn, syms, args);
+}
 SEXP vctrs_dispatch2(SEXP fn_sym, SEXP fn,
                      SEXP x_sym, SEXP x,
                      SEXP y_sym, SEXP y) {
-  // Create a child so we can mask the call components
-  SEXP env = PROTECT(r_new_environment(R_GlobalEnv, 3));
-
-  // Forward new values in the dispatch environment
-  Rf_defineVar(fn_sym, fn, env);
-  Rf_defineVar(x_sym, x, env);
-  Rf_defineVar(y_sym, y, env);
-
-  SEXP dispatch_call;
-  dispatch_call = PROTECT(Rf_lang3(fn_sym, x_sym, y_sym));
-
-  SEXP elt = CDR(dispatch_call);
-  SET_TAG(elt, x_sym); elt = CDR(elt);
-  SET_TAG(elt, y_sym); elt = CDR(elt);
-
-  SEXP out = Rf_eval(dispatch_call, env);
-
-  UNPROTECT(2);
-  return out;
+  SEXP syms[3] = { x_sym, y_sym, NULL };
+  SEXP args[3] = { x, y, NULL };
+  return vctrs_dispatch_n(fn_sym, fn, syms, args);
 }
 SEXP vctrs_dispatch3(SEXP fn_sym, SEXP fn,
                      SEXP x_sym, SEXP x,
                      SEXP y_sym, SEXP y,
                      SEXP z_sym, SEXP z) {
-  // Create a child so we can mask the call components
-  SEXP env = PROTECT(r_new_environment(R_GlobalEnv, 3));
-
-  // Forward new values in the dispatch environment
-  Rf_defineVar(fn_sym, fn, env);
-  Rf_defineVar(x_sym, x, env);
-  Rf_defineVar(y_sym, y, env);
-  Rf_defineVar(z_sym, z, env);
-
-  SEXP dispatch_call;
-  dispatch_call = PROTECT(Rf_lang4(fn_sym, x_sym, y_sym, z_sym));
-
-  SEXP elt = CDR(dispatch_call);
-  SET_TAG(elt, x_sym); elt = CDR(elt);
-  SET_TAG(elt, y_sym); elt = CDR(elt);
-  SET_TAG(elt, z_sym); elt = CDR(elt);
-
-  SEXP out = Rf_eval(dispatch_call, env);
-
-  UNPROTECT(2);
-  return out;
+  SEXP syms[4] = { x_sym, y_sym, z_sym, NULL };
+  SEXP args[4] = { x, y, z, NULL };
+  return vctrs_dispatch_n(fn_sym, fn, syms, args);
 }
 
 SEXP df_map(SEXP df, SEXP (*fn)(SEXP)) {
