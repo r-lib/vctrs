@@ -89,3 +89,7 @@ test_that("vec_type2() data frame methods builds argument tags", {
     fixed = TRUE
   )
 })
+
+test_that("stop_incompatible_type() can be called without argument tags", {
+  expect_error(stop_incompatible_type(1, 2, x_arg = "", y_arg = ""), "No common type for <double> and <double>")
+})

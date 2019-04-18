@@ -65,16 +65,16 @@ stop_incompatible_type <- function(x, y,
     if (nzchar(x_arg)) {
       x_name <- paste0(" `", x_arg, "` ")
     } else {
-      x_name <- ""
+      x_name <- " "
     }
     if (nzchar(y_arg)) {
       y_name <- paste0(" `", y_arg, "` ")
     } else {
-      y_name <- ""
+      y_name <- " "
     }
 
     message <- glue_lines(
-      "No common type for `{x_arg}` <{vec_ptype_full(x)}> and `{y_arg}` <{vec_ptype_full(y)}>.",
+      "No common type for{x_name}<{vec_ptype_full(x)}> and{y_name}<{vec_ptype_full(y)}>.",
       details
     )
   }
