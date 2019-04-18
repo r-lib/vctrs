@@ -314,6 +314,14 @@ SEXP r_call(SEXP fn, SEXP* tags, SEXP* cars) {
   return Rf_lcons(fn, r_pairlist(tags, cars));
 }
 
+SEXP vctrs_dots_length(SEXP env) {
+    SEXP dots = Rf_findVar(R_DotsSymbol, env);
+    if (dots == R_UnboundValue) {
+      Rf_error("incorrect context: the current call has no '...' to look in");
+    }
+    return Rf_ScalarInteger(TYPEOF(dots) == DOTSXP ? Rf_length(dots) : 0);
+}
+
 
 SEXP vctrs_ns_env = NULL;
 SEXP vctrs_shared_empty_str = NULL;
