@@ -10,3 +10,13 @@ expect_lossy <- function(expr, result, x = NULL, to = NULL) {
   out <- allow_lossy_cast(eval_tidy(expr), x_ptype = x, to_ptype = to)
   expect_identical(!!out, !!result)
 }
+
+expect_args <- function(x, y, x_arg, y_arg) {
+  err <- catch_cnd(vec_type2(x, y, x_arg = x_arg, y_arg = y_arg), classes = "vctrs_error_incompatible_type")
+  expect_true(!is_null(err))
+
+  expect_true(grepl(paste0("for `", x_arg, "`"), err$message, fixed = TRUE))
+  expect_true(grepl(paste0("and `", y_arg, "`"), err$message, fixed = TRUE))
+
+  expect_identical(list(err$x_arg, err$y_arg), list(x_arg, y_arg))
+}

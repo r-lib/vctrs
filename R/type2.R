@@ -119,16 +119,24 @@ vec_type2.raw.raw         <- function(x, y, ...) shape_match(raw(), x, y)
 
 #' @method vec_type2.logical default
 #' @export
-vec_type2.logical.default <- function(x, y, ...) stop_incompatible_type(x, y)
+vec_type2.logical.default <- function(x, y, ..., x_arg = "", y_arg = "") {
+  stop_incompatible_type(x, y, x_arg = x_arg, y_arg = y_arg)
+}
 #' @method vec_type2.integer default
 #' @export
-vec_type2.integer.default <- function(x, y, ...) stop_incompatible_type(x, y)
+vec_type2.integer.default <- function(x, y, ..., x_arg = "", y_arg = "") {
+  stop_incompatible_type(x, y, x_arg = x_arg, y_arg = y_arg)
+}
 #' @method vec_type2.double default
 #' @export
-vec_type2.double.default  <- function(x, y, ...) stop_incompatible_type(x, y)
+vec_type2.double.default <- function(x, y, ..., x_arg = "", y_arg = "") {
+  stop_incompatible_type(x, y, x_arg = x_arg, y_arg = y_arg)
+}
 #' @method vec_type2.raw default
 #' @export
-vec_type2.raw.default  <- function(x, y, ...) stop_incompatible_type(x, y)
+vec_type2.raw.default <- function(x, y, ..., x_arg = "", y_arg = "") {
+  stop_incompatible_type(x, y, x_arg = x_arg, y_arg = y_arg)
+}
 
 # Character ---------------------------------------------------------------
 
@@ -142,7 +150,9 @@ vec_type2.character <- function(x, y, ...) UseMethod("vec_type2.character", y)
 vec_type2.character.character <- function(x, y, ...) shape_match(character(), x, y)
 #' @method vec_type2.character default
 #' @export
-vec_type2.character.default <- function(x, y, ...) stop_incompatible_type(x, y)
+vec_type2.character.default <- function(x, y, ..., x_arg = "", y_arg = "") {
+  stop_incompatible_type(x, y, x_arg = x_arg, y_arg = y_arg)
+}
 
 # Lists -------------------------------------------------------------------
 
@@ -156,4 +166,6 @@ vec_type2.list <- function(x, y, ...) UseMethod("vec_type2.list", y)
 vec_type2.list.list <- function(x, y, ...) shape_match(list(), x, y)
 #' @method vec_type2.list default
 #' @export
-vec_type2.list.default  <- function(x, y, ...) stop_incompatible_type(x, y)
+vec_type2.list.default <- function(x, y, ..., x_arg = "", y_arg = "") {
+  stop_incompatible_type(x, y, x_arg = x_arg, y_arg = y_arg)
+}

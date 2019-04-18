@@ -172,8 +172,8 @@ vec_type2.vctrs_list_of.vctrs_list_of <- function(x, y, ...) {
 }
 #' @method vec_type2.vctrs_list_of default
 #' @export
-vec_type2.vctrs_list_of.default  <- function(x, y, ...) {
-  stop_incompatible_type(x, y)
+vec_type2.vctrs_list_of.default <- function(x, y, ..., x_arg = "", y_arg = "") {
+  stop_incompatible_type(x, y, x_arg = x_arg, y_arg = y_arg)
 }
 
 #' @rdname list_of

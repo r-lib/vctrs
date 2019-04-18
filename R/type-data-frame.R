@@ -82,7 +82,9 @@ vec_type2.data.frame <- function(x, y, ...) UseMethod("vec_type2.data.frame", y)
 vec_type2.data.frame.data.frame <- function(x, y, ...) df_col_type2(x, y)
 #' @method vec_type2.data.frame default
 #' @export
-vec_type2.data.frame.default    <- function(x, y, ...) stop_incompatible_type(x, y)
+vec_type2.data.frame.default <- function(x, y, ..., x_arg = "", y_arg = "") {
+  stop_incompatible_type(x, y, x_arg = x_arg, y_arg = y_arg)
+}
 
 # Cast --------------------------------------------------------------------
 
