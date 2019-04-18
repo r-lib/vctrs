@@ -42,6 +42,8 @@ SEXP r_protect(SEXP x);
 bool r_is_true(SEXP x);
 SEXP r_peek_option(const char* option);
 
+SEXP r_pairlist(SEXP* tags, SEXP* cars);
+SEXP r_call(SEXP fn, SEXP* tags, SEXP* cars);
 
 extern SEXP vctrs_ns_env;
 
