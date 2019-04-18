@@ -29,6 +29,10 @@ vec_type2(x, y, ..., x_arg = "", y_arg = "")
 }
 \arguments{
 \item{x, y}{Either vector types; i.e.}
+
+\item{x_arg, y_arg}{Argument names for \code{x} and \code{y}. These are used
+in error messages to inform the user about the locations of
+incompatible types (see \code{\link[=stop_incompatible_type]{stop_incompatible_type()}}).}
 }
 \description{
 \code{vec_type2()} finds the common type for a pair of vectors, or dies trying.

@@ -31,6 +31,9 @@
 #' See `vignette("s3-vector")` for full details.
 #' @keywords internal
 #' @param x,y Either vector types; i.e.
+#' @param x_arg,y_arg Argument names for `x` and `y`. These are used
+#'   in error messages to inform the user about the locations of
+#'   incompatible types (see [stop_incompatible_type()]).
 #' @export
 vec_type2 <- function(x, y, ..., x_arg = "", y_arg = "") {
   if (...length()) {
