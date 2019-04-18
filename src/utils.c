@@ -20,10 +20,10 @@ bool is_bool(SEXP x) {
  * Dispatch with two arguments
  *
  * @param fn The method to call.
- * @param syms Symbols to which arguments are assigned.  The
- *   assignment occurs in `env` and the dispatch call refers to these
- *   symbols.
- * @param args Arguments passed to the method.
+ * @param syms A null-terminated array of symbols. The arguments `args`
+ *   are assigned to these symbols. The assignment occurs in `env` and
+ *   the dispatch call refers to these symbols.
+ * @param args A null-terminated array of arguments passed to the method.
  * @param env The environment in which to dispatch. Should be the
  *   global environment or inherit from it so methods defined there
  *   are picked up. If the global environment, a child is created so
@@ -274,8 +274,8 @@ SEXP r_peek_option(const char* option) {
 /**
  * Create a call or pairlist
  *
- * @param tags Optional. If not `NULL`, an array of symbols.
- * @param cars Mandatory. An array of CAR values.
+ * @param tags Optional. If not `NULL`, a null-terminated array of symbols.
+ * @param cars Mandatory. A null-terminated array of CAR values.
  * @param fn The first CAR value of the language list.
  *
  * [[ include("utils.h") ]]
