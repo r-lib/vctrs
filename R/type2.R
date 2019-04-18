@@ -32,18 +32,18 @@
 #' @keywords internal
 #' @param x,y Either vector types; i.e.
 #' @export
-vec_type2 <- function(x, y, ..., x_arg = NULL, y_arg = NULL) {
+vec_type2 <- function(x, y, ..., x_arg = "", y_arg = "") {
   if (...length()) {
     ellipsis::check_dots_empty()
   }
   return(.Call(vctrs_type2, x, y, x_arg, y_arg))
   UseMethod("vec_type2")
 }
-vec_type2_dispatch <- function(x, y, ..., x_arg = NULL, y_arg = NULL) {
+vec_type2_dispatch <- function(x, y, ..., x_arg = "", y_arg = "") {
   UseMethod("vec_type2")
 }
 #' @export
-vec_type2.default <- function(x, y, ..., x_arg = NULL, y_arg = NULL) {
+vec_type2.default <- function(x, y, ..., x_arg = "", y_arg = "") {
   if (typeof(x) == typeof(y) && identical(attributes(x), attributes(y))) {
     return(x)
   }

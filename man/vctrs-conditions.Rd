@@ -9,8 +9,8 @@
 \alias{allow_lossy_cast}
 \title{Custom conditions for vctrs package}
 \usage{
-stop_incompatible_type(x, y, details = NULL, ..., message = NULL,
-  .subclass = NULL)
+stop_incompatible_type(x, y, x_arg = "", y_arg = "", details = NULL,
+  ..., message = NULL, .subclass = NULL)
 
 stop_incompatible_cast(x, y, details = NULL, ..., message = NULL,
   .subclass = NULL)
