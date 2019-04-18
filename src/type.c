@@ -8,7 +8,7 @@ static SEXP fns_vec_is_vector_dispatch = NULL;
 static SEXP fns_vec_type_finalise_dispatch = NULL;
 
 // Defined below
-static SEXP vec_type_rec(SEXP x, bool dispatch);
+static SEXP vec_type_impl(SEXP x, bool dispatch);
 
 
 static SEXP vec_type_slice(SEXP x, SEXP empty) {
@@ -27,7 +27,7 @@ static SEXP lgl_type(SEXP x) {
   }
 }
 
-static SEXP vec_type_rec(SEXP x, bool dispatch) {
+static SEXP vec_type_impl(SEXP x, bool dispatch) {
   switch (vec_typeof_impl(x, dispatch)) {
   case vctrs_type_scalar:    return x;
   case vctrs_type_null:      return R_NilValue;
@@ -39,13 +39,13 @@ static SEXP vec_type_rec(SEXP x, bool dispatch) {
   case vctrs_type_raw:       return vec_type_slice(x, vctrs_shared_empty_raw);
   case vctrs_type_list:      return vec_type_slice(x, vctrs_shared_empty_list);
   case vctrs_type_dataframe: return df_map(x, &vec_type);
-  case vctrs_type_s3:        return vec_recurse(x, &vec_type_rec, vctrs_shared_empty_int);
+  case vctrs_type_s3:        return with_proxy(x, &vec_type_impl, vctrs_shared_empty_int);
   }
 }
 
 // [[ include("vctrs.h"), register ]]
 SEXP vec_type(SEXP x) {
-  return vec_type_rec(x, true);
+  return vec_type_impl(x, true);
 }
 
 

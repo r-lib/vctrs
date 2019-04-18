@@ -118,7 +118,7 @@ SEXP df_map(SEXP df, SEXP (*fn)(SEXP)) {
   return out;
 }
 
-SEXP vec_recurse(SEXP x, SEXP (*rec)(SEXP, bool), SEXP i) {
+SEXP with_proxy(SEXP x, SEXP (*rec)(SEXP, bool), SEXP i) {
   SEXP proxy = PROTECT(vec_proxy(x));
 
   SEXP out = PROTECT(rec(proxy, false));

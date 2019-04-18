@@ -15,7 +15,7 @@ SEXP vctrs_dispatch3(SEXP fn_sym, SEXP fn,
                      SEXP z_sym, SEXP z);
 
 SEXP df_map(SEXP df, SEXP (*fn)(SEXP));
-SEXP vec_recurse(SEXP x, SEXP (*rec)(SEXP, bool), SEXP i);
+SEXP with_proxy(SEXP x, SEXP (*rec)(SEXP, bool), SEXP i);
 
 enum vctrs_type2 vec_typeof2_impl(enum vctrs_type type_x, enum vctrs_type type_y);
 
