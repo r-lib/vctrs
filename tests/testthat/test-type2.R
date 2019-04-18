@@ -79,3 +79,13 @@ test_that("vec_type2() methods forward args to stop_incompatible_type()", {
   expect_args(ordered(""), factor(), x_arg = "foo", y_arg = "bar")
   expect_args(bit64::as.integer64(1), new_hidden(), x_arg = "foo", y_arg = "bar")
 })
+
+test_that("vec_type2() data frame methods builds argument tags", {
+  df1 <- tibble(x = tibble(y = tibble(z = 1)))
+  df2 <- tibble(x = tibble(y = tibble(z = "a")))
+  expect_error(
+    vec_type2(df1, df2),
+    "No common type for `x$y$z` <double> and `x$y$z` <character>.",
+    fixed = TRUE
+  )
+})
