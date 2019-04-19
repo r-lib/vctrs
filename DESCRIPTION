@@ -19,6 +19,7 @@ Depends:
     R (>= 3.2)
 Imports: 
     backports,
+    ellipsis (>= 0.1.0.9000),
     digest,
     glue,
     rlang (>= 0.3.4.9002),
@@ -35,7 +36,8 @@ Suggests:
     testthat,
     tibble
 Remotes:
-    r-lib/rlang
+    r-lib/rlang,
+    r-lib/ellipsis
 VignetteBuilder: 
     knitr
 Encoding: UTF-8

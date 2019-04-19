@@ -11,24 +11,28 @@
 \alias{vec_type2.list}
 \title{Find the common type for a pair of vector types}
 \usage{
-\method{vec_type2}{tbl_df}(x, y)
+\method{vec_type2}{tbl_df}(x, y, ...)
 
-vec_type2(x, y)
+vec_type2(x, y, ..., x_arg = "", y_arg = "")
 
-\method{vec_type2}{logical}(x, y)
+\method{vec_type2}{logical}(x, y, ...)
 
-\method{vec_type2}{integer}(x, y)
+\method{vec_type2}{integer}(x, y, ...)
 
-\method{vec_type2}{double}(x, y)
+\method{vec_type2}{double}(x, y, ...)
 
-\method{vec_type2}{raw}(x, y)
+\method{vec_type2}{raw}(x, y, ...)
 
-\method{vec_type2}{character}(x, y)
+\method{vec_type2}{character}(x, y, ...)
 
-\method{vec_type2}{list}(x, y)
+\method{vec_type2}{list}(x, y, ...)
 }
 \arguments{
 \item{x, y}{Either vector types; i.e.}
+
+\item{x_arg, y_arg}{Argument names for \code{x} and \code{y}. These are used
+in error messages to inform the user about the locations of
+incompatible types (see \code{\link[=stop_incompatible_type]{stop_incompatible_type()}}).}
 }
 \description{
 \code{vec_type2()} finds the common type for a pair of vectors, or dies trying.

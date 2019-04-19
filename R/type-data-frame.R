@@ -76,13 +76,15 @@ vec_ptype_abbr.data.frame <- function(x) {
 #' @export vec_type2.data.frame
 #' @method vec_type2 data.frame
 #' @export
-vec_type2.data.frame <- function(x, y) UseMethod("vec_type2.data.frame", y)
+vec_type2.data.frame <- function(x, y, ...) UseMethod("vec_type2.data.frame", y)
 #' @method vec_type2.data.frame data.frame
 #' @export
-vec_type2.data.frame.data.frame <- function(x, y) df_col_type2(x, y)
+vec_type2.data.frame.data.frame <- function(x, y, ...) df_col_type2(x, y, ...)
 #' @method vec_type2.data.frame default
 #' @export
-vec_type2.data.frame.default    <- function(x, y) stop_incompatible_type(x, y)
+vec_type2.data.frame.default <- function(x, y, ..., x_arg = "", y_arg = "") {
+  stop_incompatible_type(x, y, x_arg = x_arg, y_arg = y_arg)
+}
 
 # Cast --------------------------------------------------------------------
 
@@ -115,7 +117,7 @@ df_length <- function(x) {
   }
 }
 
-df_col_type2 <- function(x, y) {
+df_col_type2 <- function(x, y, ..., x_arg = "", y_arg = "") {
   # Avoid expensive [.data.frame
   x_raw <- vec_data(vec_type(x))
   y_raw <- vec_data(vec_type(y))
@@ -123,7 +125,11 @@ df_col_type2 <- function(x, y) {
   # Find types
   names <- set_partition(names(x), names(y))
   if (length(names$both) > 0) {
-    common_types <- map2(x_raw[names$both], y_raw[names$both], vec_type2)
+    both <- names$both
+    x_args <- tag_push(x_arg, "$", both)
+    y_args <- tag_push(y_arg, "$", both)
+    common_types <- pmap(list(x_raw[both], y_raw[both], x_arg = x_args, y_arg = y_args), vec_type2)
+    common_types <- set_names(common_types, both)
   } else {
     common_types <- list()
   }

@@ -20,3 +20,5 @@ proxy_deref <- function(x) {
 scoped_no_stringsAsFactors <- function(frame = caller_env()) {
   scoped_options(.frame = frame, stringsAsFactors = FALSE)
 }
+
+tibble <- tibble::tibble

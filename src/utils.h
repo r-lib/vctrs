@@ -4,6 +4,8 @@
 
 bool is_bool(SEXP x);
 
+SEXP vctrs_dispatch_n(SEXP fn_sym, SEXP fn,
+                      SEXP* syms, SEXP* args);
 SEXP vctrs_dispatch1(SEXP fn_sym, SEXP fn,
                      SEXP x_sym, SEXP x);
 SEXP vctrs_dispatch2(SEXP fn_sym, SEXP fn,
@@ -40,14 +42,18 @@ SEXP r_new_environment(SEXP parent, R_len_t size);
 
 SEXP r_protect(SEXP x);
 bool r_is_true(SEXP x);
+bool r_is_string(SEXP x);
 SEXP r_peek_option(const char* option);
 
 SEXP r_pairlist(SEXP* tags, SEXP* cars);
 SEXP r_call(SEXP fn, SEXP* tags, SEXP* cars);
 
-extern SEXP vctrs_ns_env;
+static inline const char* r_chr_get_c_string(SEXP chr, R_len_t i) {
+  return CHAR(STRING_ELT(chr, i));
+}
 
 extern SEXP vctrs_ns_env;
+extern SEXP vctrs_shared_empty_str;
 
 extern SEXP syms_i;
 extern SEXP syms_x;
@@ -55,6 +61,8 @@ extern SEXP syms_y;
 extern SEXP syms_to;
 extern SEXP syms_dots;
 extern SEXP syms_bracket;
+extern SEXP syms_x_arg;
+extern SEXP syms_y_arg;
 
 extern SEXP fns_bracket;
 extern SEXP fns_quote;

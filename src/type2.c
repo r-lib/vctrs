@@ -6,29 +6,38 @@
 static SEXP fns_vec_type2_dispatch = NULL;
 static SEXP syms_vec_type2_dispatch = NULL;
 
-static SEXP vctrs_type2_dispatch(SEXP x, SEXP y) {
-  return vctrs_dispatch2(syms_vec_type2_dispatch, fns_vec_type2_dispatch,
-                         syms_x, x,
-                         syms_y, y);
+static SEXP vctrs_type2_dispatch(SEXP x, SEXP y,
+                                 const char* x_arg, const char* y_arg) {
+  SEXP x_arg_chr = PROTECT(Rf_mkString(x_arg));
+  SEXP y_arg_chr = PROTECT(Rf_mkString(y_arg));
+
+  SEXP syms[5] = { syms_x, syms_y, syms_x_arg, syms_y_arg, NULL };
+  SEXP args[5] = {      x,      y,  x_arg_chr,  y_arg_chr, NULL };
+
+  SEXP out = vctrs_dispatch_n(syms_vec_type2_dispatch, fns_vec_type2_dispatch,
+                              syms, args);
+
+  UNPROTECT(2);
+  return out;
 }
 
-// [[ include("vctrs.h"), register() ]]
-SEXP vec_type2(SEXP x, SEXP y) {
+// [[ include("vctrs.h") ]]
+SEXP vec_type2(SEXP x, SEXP y, const char* x_arg, const char* y_arg) {
   if (x == R_NilValue) {
     if (!vec_is_partial(y)) {
-      vec_assert(y, "y");
+      vec_assert(y, y_arg);
     }
     return y;
   }
   if (y == R_NilValue) {
     if (!vec_is_partial(x)) {
-      vec_assert(x, "x");
+      vec_assert(x, x_arg);
     }
     return x;
   }
 
   if (has_dim(x) || has_dim(y)) {
-    return vctrs_type2_dispatch(x, y);
+    return vctrs_type2_dispatch(x, y, x_arg, y_arg);
   }
 
   enum vctrs_type type_x = vec_typeof(x);
@@ -67,10 +76,26 @@ SEXP vec_type2(SEXP x, SEXP y) {
     return vctrs_shared_empty_list;
 
   default:
-    return vctrs_type2_dispatch(x, y);
+    return vctrs_type2_dispatch(x, y, x_arg, y_arg);
   }
 }
 
+// [[ register() ]]
+SEXP vctrs_type2(SEXP x, SEXP y, SEXP x_arg, SEXP y_arg) {
+  if (x_arg == R_NilValue) {
+    x_arg = vctrs_shared_empty_str;
+  } else if (!r_is_string(x_arg)) {
+    Rf_errorcall(R_NilValue, "`x_arg` must be a string");
+  }
+
+  if (y_arg == R_NilValue) {
+    y_arg = vctrs_shared_empty_str;
+  } else if (!r_is_string(y_arg)) {
+    Rf_errorcall(R_NilValue, "`y_arg` must be a string");
+  }
+
+  return vec_type2(x, y, r_chr_get_c_string(x_arg, 0), r_chr_get_c_string(y_arg, 0));
+}
 
 void vctrs_init_type2(SEXP ns) {
   syms_vec_type2_dispatch = Rf_install("vec_type2_dispatch");

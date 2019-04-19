@@ -163,17 +163,17 @@ as.list.vctrs_list_of <- function(x, ...) {
 #' @export vec_type2.vctrs_list_of
 #' @method vec_type2 vctrs_list_of
 #' @export
-vec_type2.vctrs_list_of <- function(x, y) UseMethod("vec_type2.vctrs_list_of", y)
+vec_type2.vctrs_list_of <- function(x, y, ...) UseMethod("vec_type2.vctrs_list_of", y)
 #' @method vec_type2.vctrs_list_of vctrs_list_of
 #' @export
-vec_type2.vctrs_list_of.vctrs_list_of <- function(x, y) {
+vec_type2.vctrs_list_of.vctrs_list_of <- function(x, y, ...) {
   type <- vec_type2(attr(x, "ptype"), attr(y, "ptype"))
   new_list_of(list(), type)
 }
 #' @method vec_type2.vctrs_list_of default
 #' @export
-vec_type2.vctrs_list_of.default  <- function(x, y) {
-  stop_incompatible_type(x, y)
+vec_type2.vctrs_list_of.default <- function(x, y, ..., x_arg = "", y_arg = "") {
+  stop_incompatible_type(x, y, x_arg = x_arg, y_arg = y_arg)
 }
 
 #' @rdname list_of

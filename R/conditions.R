@@ -51,17 +51,38 @@ stop_incompatible <- function(x, y, details = NULL, ..., message = NULL, .subcla
 
 #' @rdname vctrs-conditions
 #' @export
-stop_incompatible_type <- function(x, y, details = NULL, ..., message = NULL, .subclass = NULL) {
+stop_incompatible_type <- function(x, y,
+                                   x_arg = "",
+                                   y_arg = "",
+                                   details = NULL,
+                                   ...,
+                                   message = NULL,
+                                   .subclass = NULL) {
   vec_assert(x)
   vec_assert(y)
 
-  message <- message %||% glue_lines(
-    "No common type for <{vec_ptype_full(x)}> and <{vec_ptype_full(y)}>.",
-    details
-  )
+  if (is_null(message)) {
+    if (nzchar(x_arg)) {
+      x_name <- paste0(" `", x_arg, "` ")
+    } else {
+      x_name <- " "
+    }
+    if (nzchar(y_arg)) {
+      y_name <- paste0(" `", y_arg, "` ")
+    } else {
+      y_name <- " "
+    }
+
+    message <- glue_lines(
+      "No common type for{x_name}<{vec_ptype_full(x)}> and{y_name}<{vec_ptype_full(y)}>.",
+      details
+    )
+  }
 
   stop_incompatible(
     x, y,
+    x_arg = x_arg,
+    y_arg = y_arg,
     details = details,
     ...,
     message = message,

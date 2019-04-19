@@ -62,3 +62,33 @@ test_that("stop_incompatible_type() checks for scalars", {
   expect_error(vec_type2(NA, foobar()), class = "vctrs_error_scalar_type")
   expect_error(vec_type2(foobar(), list()), class = "vctrs_error_scalar_type")
 })
+
+test_that("vec_type2() methods forward args to stop_incompatible_type()", {
+  expect_args(new_hidden(), NA, x_arg = "foo", y_arg = "bar")
+  expect_args(NA, new_hidden(), x_arg = "foo", y_arg = "bar")
+  expect_args(int(), new_hidden(), x_arg = "foo", y_arg = "bar")
+  expect_args(dbl(), new_hidden(), x_arg = "foo", y_arg = "bar")
+  expect_args(chr(), new_hidden(), x_arg = "foo", y_arg = "bar")
+  expect_args(list(), new_hidden(), x_arg = "foo", y_arg = "bar")
+  expect_args(new_rcrd(list(x = NA)), new_hidden(), x_arg = "foo", y_arg = "bar")
+  expect_args(data.frame(), new_hidden(), x_arg = "foo", y_arg = "bar")
+  expect_args(Sys.Date(), new_hidden(), x_arg = "foo", y_arg = "bar")
+  expect_args(as.difftime(1, units = "hours"), new_hidden(), x_arg = "foo", y_arg = "bar")
+  expect_args(factor(), new_hidden(), x_arg = "foo", y_arg = "bar")
+  expect_args(ordered(""), new_hidden(), x_arg = "foo", y_arg = "bar")
+  expect_args(ordered(""), factor(), x_arg = "foo", y_arg = "bar")
+  expect_args(bit64::as.integer64(1), new_hidden(), x_arg = "foo", y_arg = "bar")
+})
+
+test_that("vec_type2() data frame methods builds argument tags", {
+  df1 <- tibble(x = tibble(y = tibble(z = 1)))
+  df2 <- tibble(x = tibble(y = tibble(z = "a")))
+  expect_known_output(file = test_path("test-type2-nested-data-frames-error.txt"), {
+    err <- catch_cnd(vec_type2(df1, df2), classes = "error")
+    cat(err$message, "\n")
+  })
+})
+
+test_that("stop_incompatible_type() can be called without argument tags", {
+  expect_error(stop_incompatible_type(1, 2, x_arg = "", y_arg = ""), "No common type for <double> and <double>")
+})

@@ -33,7 +33,7 @@ extern SEXP vctrs_size(SEXP);
 extern SEXP vctrs_is_unspecified(SEXP);
 extern SEXP vctrs_typeof(SEXP, SEXP);
 extern SEXP vctrs_is_vector(SEXP, SEXP);
-extern SEXP vec_type2(SEXP);
+extern SEXP vctrs_type2(SEXP, SEXP, SEXP, SEXP);
 extern SEXP vctrs_typeof2(SEXP, SEXP);
 extern SEXP vec_cast(SEXP, SEXP);
 extern SEXP vec_as_index(SEXP, SEXP);
@@ -75,7 +75,7 @@ static const R_CallMethodDef CallEntries[] = {
   {"vctrs_typeof",                     (DL_FUNC) &vctrs_typeof, 2},
   {"vctrs_init",                       (DL_FUNC) &vctrs_init, 1},
   {"vctrs_is_vector",                  (DL_FUNC) &vctrs_is_vector, 2},
-  {"vctrs_type2",                      (DL_FUNC) &vec_type2, 2},
+  {"vctrs_type2",                      (DL_FUNC) &vctrs_type2, 4},
   {"vctrs_typeof2",                    (DL_FUNC) &vctrs_typeof2, 2},
   {"vctrs_cast",                       (DL_FUNC) &vec_cast, 2},
   {"vctrs_as_index",                   (DL_FUNC) &vec_as_index, 2},

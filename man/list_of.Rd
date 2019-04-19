@@ -17,7 +17,7 @@ validate_list_of(x)
 
 is_list_of(x)
 
-\method{vec_type2}{vctrs_list_of}(x, y)
+\method{vec_type2}{vctrs_list_of}(x, y, ...)
 
 \method{vec_cast}{vctrs_list_of}(x, to)
 }

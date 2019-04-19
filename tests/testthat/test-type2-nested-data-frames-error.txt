@@ -1,0 +1,1 @@
+No common type for `x$y$z` <double> and `x$y$z` <character>. 

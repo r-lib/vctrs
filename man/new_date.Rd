@@ -23,11 +23,11 @@ new_datetime(x = double(), tzone = "")
 new_duration(x = double(), units = c("secs", "mins", "hours", "days",
   "weeks"))
 
-\method{vec_type2}{Date}(x, y)
+\method{vec_type2}{Date}(x, y, ...)
 
-\method{vec_type2}{POSIXt}(x, y)
+\method{vec_type2}{POSIXt}(x, y, ...)
 
-\method{vec_type2}{difftime}(x, y)
+\method{vec_type2}{difftime}(x, y, ...)
 
 \method{vec_cast}{Date}(x, to)
 

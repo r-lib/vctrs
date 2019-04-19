@@ -8,7 +8,7 @@
 \usage{
 new_data_frame(x = list(), n = NULL, ..., class = character())
 
-\method{vec_type2}{data.frame}(x, y)
+\method{vec_type2}{data.frame}(x, y, ...)
 
 \method{vec_cast}{data.frame}(x, to)
 }

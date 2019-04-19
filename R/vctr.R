@@ -575,13 +575,15 @@ vec_restore_numeric.hidden <- function(x, to) new_hidden(x)
 
 scoped_hidden <- function(frame = caller_env()) {
   scoped_bindings(.env = global_env(), .frame = frame,
-    vec_type2.hidden         = function(x, y) UseMethod("vec_type2.hidden"),
-    vec_type2.hidden.default = function(x, y) stop_incompatible_type(x, y),
-    vec_type2.hidden.hidden  = function(x, y) new_hidden(),
-    vec_type2.hidden.double  = function(x, y) new_hidden(),
-    vec_type2.double.hidden  = function(x, y) new_hidden(),
-    vec_type2.hidden.logical = function(x, y) new_hidden(),
-    vec_type2.logical.hidden = function(x, y) new_hidden(),
+    vec_type2.hidden         = function(x, y, ...) UseMethod("vec_type2.hidden"),
+    vec_type2.hidden.default = function(x, y, ..., x_arg = "", y_arg = "") {
+      stop_incompatible_type(x, y, x_arg = x_arg, y_arg = y_arg)
+    },
+    vec_type2.hidden.hidden  = function(x, y, ...) new_hidden(),
+    vec_type2.hidden.double  = function(x, y, ...) new_hidden(),
+    vec_type2.double.hidden  = function(x, y, ...) new_hidden(),
+    vec_type2.hidden.logical = function(x, y, ...) new_hidden(),
+    vec_type2.logical.hidden = function(x, y, ...) new_hidden(),
 
     vec_cast.hidden          = function(x, to) UseMethod("vec_cast.hidden"),
     vec_cast.hidden.default  = function(x, to) stop_incompatible_cast(x, to),

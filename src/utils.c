@@ -267,6 +267,12 @@ bool r_is_true(SEXP x) {
   return r_is_bool(x) && LOGICAL(x)[0] == 1;
 }
 
+bool r_is_string(SEXP x) {
+  return TYPEOF(x) == STRSXP &&
+    Rf_length(x) == 1 &&
+    STRING_ELT(x, 0) != NA_STRING;
+}
+
 SEXP r_peek_option(const char* option) {
   return Rf_GetOption1(Rf_install(option));
 }
@@ -310,6 +316,7 @@ SEXP r_call(SEXP fn, SEXP* tags, SEXP* cars) {
 
 
 SEXP vctrs_ns_env = NULL;
+SEXP vctrs_shared_empty_str = NULL;
 
 SEXP syms_i = NULL;
 SEXP syms_x = NULL;
@@ -317,6 +324,8 @@ SEXP syms_y = NULL;
 SEXP syms_to = NULL;
 SEXP syms_dots = NULL;
 SEXP syms_bracket = NULL;
+SEXP syms_x_arg = NULL;
+SEXP syms_y_arg = NULL;
 
 SEXP fns_bracket = NULL;
 SEXP fns_quote = NULL;
@@ -324,12 +333,17 @@ SEXP fns_quote = NULL;
 void vctrs_init_utils(SEXP ns) {
   vctrs_ns_env = ns;
 
+  vctrs_shared_empty_str = Rf_mkString("");
+  R_PreserveObject(vctrs_shared_empty_str);
+
   syms_i = Rf_install("i");
   syms_x = Rf_install("x");
   syms_y = Rf_install("y");
   syms_to = Rf_install("to");
   syms_dots = Rf_install("...");
   syms_bracket = Rf_install("[");
+  syms_x_arg = Rf_install("x_arg");
+  syms_y_arg = Rf_install("y_arg");
 
   fns_bracket = Rf_findVar(syms_bracket, R_BaseEnv);
   fns_quote = Rf_findVar(Rf_install("quote"), R_BaseEnv);
