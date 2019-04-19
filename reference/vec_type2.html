@@ -140,27 +140,27 @@ instead call <code><a href='vec_type.html'>vec_type_common()</a></code>.</p>
     </div>
 
     <pre class="usage"><span class='co'># S3 method for tbl_df</span>
-<span class='fu'>vec_type2</span>(<span class='no'>x</span>, <span class='no'>y</span>)
+<span class='fu'>vec_type2</span>(<span class='no'>x</span>, <span class='no'>y</span>, <span class='no'>...</span>)
 
-<span class='fu'>vec_type2</span>(<span class='no'>x</span>, <span class='no'>y</span>)
+<span class='fu'>vec_type2</span>(<span class='no'>x</span>, <span class='no'>y</span>, <span class='no'>...</span>, <span class='kw'>x_arg</span> <span class='kw'>=</span> <span class='st'>""</span>, <span class='kw'>y_arg</span> <span class='kw'>=</span> <span class='st'>""</span>)
 
 <span class='co'># S3 method for logical</span>
-<span class='fu'>vec_type2</span>(<span class='no'>x</span>, <span class='no'>y</span>)
+<span class='fu'>vec_type2</span>(<span class='no'>x</span>, <span class='no'>y</span>, <span class='no'>...</span>)
 
 <span class='co'># S3 method for integer</span>
-<span class='fu'>vec_type2</span>(<span class='no'>x</span>, <span class='no'>y</span>)
+<span class='fu'>vec_type2</span>(<span class='no'>x</span>, <span class='no'>y</span>, <span class='no'>...</span>)
 
 <span class='co'># S3 method for double</span>
-<span class='fu'>vec_type2</span>(<span class='no'>x</span>, <span class='no'>y</span>)
+<span class='fu'>vec_type2</span>(<span class='no'>x</span>, <span class='no'>y</span>, <span class='no'>...</span>)
 
 <span class='co'># S3 method for raw</span>
-<span class='fu'>vec_type2</span>(<span class='no'>x</span>, <span class='no'>y</span>)
+<span class='fu'>vec_type2</span>(<span class='no'>x</span>, <span class='no'>y</span>, <span class='no'>...</span>)
 
 <span class='co'># S3 method for character</span>
-<span class='fu'>vec_type2</span>(<span class='no'>x</span>, <span class='no'>y</span>)
+<span class='fu'>vec_type2</span>(<span class='no'>x</span>, <span class='no'>y</span>, <span class='no'>...</span>)
 
 <span class='co'># S3 method for list</span>
-<span class='fu'>vec_type2</span>(<span class='no'>x</span>, <span class='no'>y</span>)</pre>
+<span class='fu'>vec_type2</span>(<span class='no'>x</span>, <span class='no'>y</span>, <span class='no'>...</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -168,6 +168,12 @@ instead call <code><a href='vec_type.html'>vec_type_common()</a></code>.</p>
     <tr>
       <th>x, y</th>
       <td><p>Either vector types; i.e.</p></td>
+    </tr>
+    <tr>
+      <th>x_arg, y_arg</th>
+      <td><p>Argument names for <code>x</code> and <code>y</code>. These are used
+in error messages to inform the user about the locations of
+incompatible types (see <code><a href='vctrs-conditions.html'>stop_incompatible_type()</a></code>).</p></td>
     </tr>
     </table>
     
