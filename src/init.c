@@ -89,10 +89,10 @@ static const R_CallMethodDef CallEntries[] = {
   {NULL, NULL, 0}
 };
 
-extern SEXP vctrs_ext2_type_common(SEXP, SEXP, SEXP, SEXP);
+extern SEXP vctrs_type_common(SEXP, SEXP, SEXP, SEXP);
 
 static const R_ExternalMethodDef ExtEntries[] = {
-  {"vctrs_ext2_type_common",           (DL_FUNC) &vctrs_ext2_type_common, 1},
+  {"vctrs_type_common",                (DL_FUNC) &vctrs_type_common, 1},
   {NULL, NULL, 0}
 };
 

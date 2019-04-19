@@ -93,7 +93,7 @@ static SEXP vctrs_type_common_impl(SEXP current, SEXP types, bool spliced) {
   return current;
 }
 
-SEXP vctrs_ext2_type_common(SEXP call, SEXP op, SEXP args, SEXP env) {
+SEXP vctrs_type_common(SEXP call, SEXP op, SEXP args, SEXP env) {
   args = CDR(args);
 
   SEXP ptype = PROTECT(Rf_eval(CAR(args), env));

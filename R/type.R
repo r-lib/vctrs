@@ -68,7 +68,7 @@ vec_type <- function(x) {
 #' @export
 #' @rdname vec_type
 vec_type_common <- function(..., .ptype = NULL) {
- .External2(vctrs_ext2_type_common, .ptype)
+  .External2(vctrs_type_common, .ptype)
 }
 
 #' @export
