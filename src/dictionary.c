@@ -24,7 +24,7 @@ int32_t ceil2(int32_t x) {
 
 struct dictionary {
   SEXP x;
-  int32_t* key;
+  R_len_t* key;
   uint32_t size;
   uint32_t used;
 };
@@ -38,12 +38,13 @@ void dict_init(dictionary* d, SEXP x) {
   // of at most 77%. We round up to power of 2 to ensure quadratic probing
   // strategy works.
   R_len_t size = ceil2(vec_size(x) / 0.77);
-  if (size < 16)
+  if (size < 16) {
     size = 16;
+  }
   // Rprintf("size: %i\n", size);
 
-  d->key = (int32_t*) R_alloc(size, sizeof(int32_t));
-  memset(d->key, EMPTY, size * sizeof(int32_t));
+  d->key = (R_len_t*) R_alloc(size, sizeof(R_len_t));
+  memset(d->key, EMPTY, size * sizeof(R_len_t));
 
   d->size = size;
   d->used = 0;
