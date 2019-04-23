@@ -10,8 +10,8 @@ static SEXP vctrs_type2_dispatch(SEXP x,
                                  SEXP y,
                                  struct vctrs_arg* x_arg,
                                  struct vctrs_arg* y_arg) {
-  SEXP x_arg_chr = PROTECT(Rf_mkString(vctrs_arg(x_arg)));
-  SEXP y_arg_chr = PROTECT(Rf_mkString(vctrs_arg(y_arg)));
+  SEXP x_arg_chr = PROTECT(vctrs_arg(x_arg));
+  SEXP y_arg_chr = PROTECT(vctrs_arg(y_arg));
 
   SEXP syms[5] = { syms_x, syms_y, syms_x_arg, syms_y_arg, NULL };
   SEXP args[5] = {      x,      y,  x_arg_chr,  y_arg_chr, NULL };
@@ -96,8 +96,8 @@ SEXP vctrs_type2(SEXP x, SEXP y, SEXP x_arg, SEXP y_arg) {
     Rf_errorcall(R_NilValue, "`y_arg` must be a string");
   }
 
-  struct vctrs_arg x_arg_ = new_vctrs_arg(r_chr_get_c_string(x_arg, 0));
-  struct vctrs_arg y_arg_ = new_vctrs_arg(r_chr_get_c_string(y_arg, 0));
+  struct vctrs_arg x_arg_ = new_vctrs_arg(NULL, r_chr_get_c_string(x_arg, 0));
+  struct vctrs_arg y_arg_ = new_vctrs_arg(NULL, r_chr_get_c_string(y_arg, 0));
 
   return vec_type2(x, y, &x_arg_, &y_arg_);
 }

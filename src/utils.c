@@ -111,6 +111,7 @@ inline void never_reached(const char* fn) {
   Rf_error("Internal error in `%s()`: Never reached", fn);
 }
 
+
 // From rlang
 R_len_t r_lgl_sum(SEXP x, bool na_true) {
   if (TYPEOF(x) != LGLSXP) {

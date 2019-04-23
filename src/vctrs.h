@@ -135,12 +135,13 @@ bool vec_is_unspecified(SEXP x);
 // Argument tags -------------------------------------------------
 
 struct vctrs_arg {
+  struct vctrs_arg* parent;
   const void* data;
   const char* (*get)(struct vctrs_arg* self);
 };
 
-struct vctrs_arg new_vctrs_arg(const char* arg);
-const char* vctrs_arg(struct vctrs_arg* arg);
+struct vctrs_arg new_vctrs_arg(struct vctrs_arg* parent, const char* arg);
+SEXP vctrs_arg(struct vctrs_arg* arg);
 
 
 // Vector methods ------------------------------------------------
