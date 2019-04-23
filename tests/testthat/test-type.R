@@ -51,3 +51,13 @@ test_that("vec_type_common() handles matrices", {
   m <- matrix(1:4, nrow = 2)
   expect_identical(vec_type_common(m, m), matrix(int(), ncol = 2))
 })
+
+test_that("vec_type_common() includes index in argument tag", {
+  df1 <- tibble(x = tibble(y = tibble(z = 1)))
+  df2 <- tibble(x = tibble(y = tibble(z = "a")))
+
+  expect_known_output(file = test_path("test-type-vec-type-common-error.txt"), {
+    try2(vec_type_common(df1, df2))
+    try2(vec_type_common(df1, df1, df2))
+  })
+})

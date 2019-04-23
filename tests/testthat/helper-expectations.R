@@ -20,3 +20,8 @@ expect_args <- function(x, y, x_arg, y_arg) {
 
   expect_identical(list(err$x_arg, err$y_arg), list(x_arg, y_arg))
 }
+
+try2 <- function(expr) {
+  cat(paste0("\n", as_label(substitute(expr)), ":\n\n"))
+  cat(catch_cnd(expr, classes = "error")$message, "\n\n")
+}
