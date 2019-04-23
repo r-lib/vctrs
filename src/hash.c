@@ -2,7 +2,7 @@
 
 // boost::hash_combine from https://stackoverflow.com/questions/35985960
 int32_t hash_combine(int x, int y) {
-  return x ^ y + 0x9e3779b9 + (x << 6) + (x >> 2);
+  return x ^ (y + 0x9e3779b9 + (x << 6) + (x >> 2));
 }
 
 // 32-bit mixer from murmurhash
