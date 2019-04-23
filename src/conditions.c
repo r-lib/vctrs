@@ -4,11 +4,26 @@
 #define DEFAULT_ARG_BUF 100
 
 
+static size_t arg_fill(struct vctrs_arg* self, char* buf, size_t remaining) {
+  const char* src = (const char*) self->data;
+
+  size_t len = strlen(src);
+
+  if (len >= remaining) {
+    return -1;
+  }
+
+  memcpy(buf, src, len);
+  buf[len] = '\0';
+
+  return len;
+}
+
 struct vctrs_arg new_vctrs_arg(struct vctrs_arg* parent, const char* arg) {
   struct vctrs_arg wrapper = {
     .parent = parent,
     .data = (const void* ) arg,
-    .get = NULL
+    .fill = &arg_fill
   };
   return wrapper;
 }
@@ -25,18 +40,13 @@ static int fill_arg_buffer(struct vctrs_arg* arg,
     }
   }
 
-  const char* src = (arg->get) ? arg->get(arg) : (const char*) arg->data;
-  size_t len = strlen(src);
+  size_t written = arg->fill(arg, buf + cur_size, tot_size - cur_size);
 
-  size_t next_size = cur_size + len;
-  if (next_size >= tot_size) {
-    return -1;
+  if (written < 0) {
+    return written;
+  } else {
+    return cur_size + written;
   }
-
-  memcpy(buf + cur_size, src, len);
-  buf[next_size] = '\0';
-
-  return next_size;
 }
 
 SEXP vctrs_arg(struct vctrs_arg* arg) {
@@ -61,7 +71,11 @@ SEXP vctrs_arg(struct vctrs_arg* arg) {
   return out;
 }
 
-struct vctrs_arg args_empty = { .data = (const void*) "", .get = NULL};
+struct vctrs_arg args_empty = {
+  .parent = NULL,
+  .data = (const void*) "",
+  .fill = arg_fill
+};
 
 
 void stop_scalar_type(SEXP x, struct vctrs_arg* arg) {

@@ -134,10 +134,26 @@ bool vec_is_unspecified(SEXP x);
 
 // Argument tags -------------------------------------------------
 
+/**
+ * Structure for argument tags.
+ *
+ * Argument tags are used in error messages to provide information
+ * about which elements of nested data structures (such as tibbles)
+ * fail to match a given type. They are generated lazily by the `fill`
+ * method in order to avoid any cost when there is no error.
+ *
+ * @member fill Takes a pointer to self, from which `data` can be
+ *   accessed, and a buffer to fill. If the buffer is too small
+ *   according to the `remaining` argument, `fill()` must return a
+ *   negative error value.
+ * @member data Data for the `fill()` method.
+ * @member parent The previously active argument tag.
+ *
+ */
 struct vctrs_arg {
-  struct vctrs_arg* parent;
+  size_t (*fill)(struct vctrs_arg* self, char* buf, size_t remaining);
   const void* data;
-  const char* (*get)(struct vctrs_arg* self);
+  struct vctrs_arg* parent;
 };
 
 struct vctrs_arg new_vctrs_arg(struct vctrs_arg* parent, const char* arg);
