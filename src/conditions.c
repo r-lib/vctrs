@@ -14,8 +14,6 @@ const char* vctrs_arg(struct vctrs_arg* arg) {
   }
 }
 
-struct vctrs_arg args_x = { .data = (const void*) "x", .get = NULL};
-struct vctrs_arg args_y = { .data = (const void*) "y", .get = NULL};
 struct vctrs_arg args_empty = { .data = (const void*) "", .get = NULL};
 
 

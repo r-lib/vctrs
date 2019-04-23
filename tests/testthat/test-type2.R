@@ -57,6 +57,11 @@ test_that("vec_type2() requires vectors", {
   expect_error(vec_type2(quote(name), quote(name)), class = "vctrs_error_scalar_type")
 })
 
+test_that("vec_type2() forwards argument tag", {
+  expect_error(vec_type2(quote(name), list(), x_arg = "foo"), "`foo` must be a vector")
+  expect_error(vec_type2(list(), quote(name), y_arg = "foo"), "`foo` must be a vector")
+})
+
 test_that("stop_incompatible_type() checks for scalars", {
   expect_error(stop_incompatible_type(NA, foobar()), class = "vctrs_error_scalar_type")
   expect_error(vec_type2(NA, foobar()), class = "vctrs_error_scalar_type")

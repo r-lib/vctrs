@@ -45,12 +45,11 @@ SEXP vec_type2(SEXP x, SEXP y, struct vctrs_arg* x_arg, struct vctrs_arg* y_arg)
   enum vctrs_type type_x = vec_typeof(x);
   enum vctrs_type type_y = vec_typeof(y);
 
-  // TESTME & FIXME
   if (type_x == vctrs_type_scalar) {
-    stop_scalar_type(x, &args_x);
+    stop_scalar_type(x, x_arg);
   }
   if (type_y == vctrs_type_scalar) {
-    stop_scalar_type(y, &args_y);
+    stop_scalar_type(y, y_arg);
   }
 
   switch (vec_typeof2_impl(type_x, type_y)) {

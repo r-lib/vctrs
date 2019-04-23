@@ -19,8 +19,6 @@ SEXP vctrs_dispatch3(SEXP fn_sym, SEXP fn,
 SEXP df_map(SEXP df, SEXP (*fn)(SEXP));
 SEXP with_proxy(SEXP x, SEXP (*rec)(SEXP, bool), SEXP i);
 
-struct vctrs_arg args_x;
-struct vctrs_arg args_y;
 struct vctrs_arg args_empty;
 
 void never_reached(const char* fn) __attribute__((noreturn));
