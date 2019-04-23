@@ -107,6 +107,10 @@ R_len_t compact_rownames_length(SEXP x) {
   return abs(INTEGER(x)[1]);
 }
 
+inline void never_reached(const char* fn) {
+  Rf_error("Internal error in `%s()`: Never reached", fn);
+}
+
 // From rlang
 R_len_t r_lgl_sum(SEXP x, bool na_true) {
   if (TYPEOF(x) != LGLSXP) {

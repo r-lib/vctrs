@@ -41,6 +41,7 @@ static SEXP vec_type_impl(SEXP x, bool dispatch) {
   case vctrs_type_dataframe: return df_map(x, &vec_type);
   case vctrs_type_s3:        return with_proxy(x, &vec_type_impl, vctrs_shared_empty_int);
   }
+  never_reached("vec_type_impl");
 }
 
 // [[ include("vctrs.h"), register ]]
@@ -189,6 +190,7 @@ const char* vec_type_as_str(enum vctrs_type type) {
   case vctrs_type_s3:        return "s3";
   case vctrs_type_scalar:    return "scalar";
   }
+  never_reached("vec_type_as_str");
 }
 
 static bool vec_is_vector_rec(SEXP x, bool dispatch) {
