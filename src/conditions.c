@@ -50,19 +50,22 @@ static int fill_arg_buffer(struct vctrs_arg* arg,
 }
 
 SEXP vctrs_arg(struct vctrs_arg* arg) {
-  size_t size = DEFAULT_ARG_BUF;
+  size_t next_size = DEFAULT_ARG_BUF;
+  size_t size;
 
   SEXP buf_holder = PROTECT(R_NilValue);
   char* buf;
 
   do {
+    size = next_size;
+
     UNPROTECT(1);
     buf_holder = PROTECT(Rf_allocVector(RAWSXP, size));
     buf = (char*) RAW(buf_holder);
 
     // Reallocate a larger buffer at the next iteration if the current
     // buffer turns out too small
-    size *= 1.5;
+    next_size *= 1.5;
   } while (fill_arg_buffer(arg, buf, 0, size) < 0);
 
   SEXP out = Rf_mkString(buf);

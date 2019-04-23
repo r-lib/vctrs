@@ -56,8 +56,14 @@ test_that("vec_type_common() includes index in argument tag", {
   df1 <- tibble(x = tibble(y = tibble(z = 1)))
   df2 <- tibble(x = tibble(y = tibble(z = "a")))
 
+  # Create a column name too large for default buffer
+  nm <- strrep("foobarfoobar", 10)
+  large_df1 <- set_names(df1, nm)
+  large_df2 <- set_names(df2, nm)
+
   expect_known_output(file = test_path("test-type-vec-type-common-error.txt"), {
     try2(vec_type_common(df1, df2))
     try2(vec_type_common(df1, df1, df2))
+    try2(vec_type_common(large_df1, large_df2))
   })
 })
