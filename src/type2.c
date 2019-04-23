@@ -6,10 +6,12 @@
 static SEXP fns_vec_type2_dispatch = NULL;
 static SEXP syms_vec_type2_dispatch = NULL;
 
-static SEXP vctrs_type2_dispatch(SEXP x, SEXP y,
-                                 const char* x_arg, const char* y_arg) {
-  SEXP x_arg_chr = PROTECT(Rf_mkString(x_arg));
-  SEXP y_arg_chr = PROTECT(Rf_mkString(y_arg));
+static SEXP vctrs_type2_dispatch(SEXP x,
+                                 SEXP y,
+                                 struct vctrs_arg* x_arg,
+                                 struct vctrs_arg* y_arg) {
+  SEXP x_arg_chr = PROTECT(Rf_mkString(vctrs_arg(x_arg)));
+  SEXP y_arg_chr = PROTECT(Rf_mkString(vctrs_arg(y_arg)));
 
   SEXP syms[5] = { syms_x, syms_y, syms_x_arg, syms_y_arg, NULL };
   SEXP args[5] = {      x,      y,  x_arg_chr,  y_arg_chr, NULL };
@@ -22,7 +24,7 @@ static SEXP vctrs_type2_dispatch(SEXP x, SEXP y,
 }
 
 // [[ include("vctrs.h") ]]
-SEXP vec_type2(SEXP x, SEXP y, const char* x_arg, const char* y_arg) {
+SEXP vec_type2(SEXP x, SEXP y, struct vctrs_arg* x_arg, struct vctrs_arg* y_arg) {
   if (x == R_NilValue) {
     if (!vec_is_partial(y)) {
       vec_assert(y, y_arg);
@@ -43,11 +45,12 @@ SEXP vec_type2(SEXP x, SEXP y, const char* x_arg, const char* y_arg) {
   enum vctrs_type type_x = vec_typeof(x);
   enum vctrs_type type_y = vec_typeof(y);
 
+  // TESTME & FIXME
   if (type_x == vctrs_type_scalar) {
-    stop_scalar_type(x, "x");
+    stop_scalar_type(x, &args_x);
   }
   if (type_y == vctrs_type_scalar) {
-    stop_scalar_type(y, "y");
+    stop_scalar_type(y, &args_y);
   }
 
   switch (vec_typeof2_impl(type_x, type_y)) {
@@ -94,7 +97,10 @@ SEXP vctrs_type2(SEXP x, SEXP y, SEXP x_arg, SEXP y_arg) {
     Rf_errorcall(R_NilValue, "`y_arg` must be a string");
   }
 
-  return vec_type2(x, y, r_chr_get_c_string(x_arg, 0), r_chr_get_c_string(y_arg, 0));
+  struct vctrs_arg x_arg_ = new_vctrs_arg(r_chr_get_c_string(x_arg, 0));
+  struct vctrs_arg y_arg_ = new_vctrs_arg(r_chr_get_c_string(y_arg, 0));
+
+  return vec_type2(x, y, &x_arg_, &y_arg_);
 }
 
 void vctrs_init_type2(SEXP ns) {
