@@ -4,7 +4,7 @@
 #define DEFAULT_ARG_BUF 100
 
 
-static size_t arg_fill(struct vctrs_arg* self, char* buf, size_t remaining) {
+static r_ssize_t arg_fill(struct vctrs_arg* self, char* buf, r_ssize_t remaining) {
   const char* src = (const char*) self->data;
 
   size_t len = strlen(src);
@@ -30,8 +30,8 @@ struct vctrs_arg new_vctrs_arg(struct vctrs_arg* parent, const char* arg) {
 
 static int fill_arg_buffer(struct vctrs_arg* arg,
                            char* buf,
-                           size_t cur_size,
-                           size_t tot_size) {
+                           r_ssize_t cur_size,
+                           r_ssize_t tot_size) {
   if (arg->parent) {
     cur_size = fill_arg_buffer(arg->parent, buf, cur_size, tot_size);
 
@@ -40,7 +40,7 @@ static int fill_arg_buffer(struct vctrs_arg* arg,
     }
   }
 
-  size_t written = arg->fill(arg, buf + cur_size, tot_size - cur_size);
+  r_ssize_t written = arg->fill(arg, buf + cur_size, tot_size - cur_size);
 
   if (written < 0) {
     return written;
@@ -50,8 +50,8 @@ static int fill_arg_buffer(struct vctrs_arg* arg,
 }
 
 SEXP vctrs_arg(struct vctrs_arg* arg) {
-  size_t next_size = DEFAULT_ARG_BUF;
-  size_t size;
+  r_ssize_t next_size = DEFAULT_ARG_BUF;
+  r_ssize_t size;
 
   SEXP buf_holder = PROTECT(R_NilValue);
   char* buf;

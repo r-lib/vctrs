@@ -7,6 +7,9 @@
 #include <stdint.h>
 
 
+typedef R_xlen_t r_ssize_t;
+
+
 // Vector types -------------------------------------------------
 
 enum vctrs_type {
@@ -151,7 +154,7 @@ bool vec_is_unspecified(SEXP x);
  *
  */
 struct vctrs_arg {
-  size_t (*fill)(struct vctrs_arg* self, char* buf, size_t remaining);
+  r_ssize_t (*fill)(struct vctrs_arg* self, char* buf, r_ssize_t remaining);
   const void* data;
   struct vctrs_arg* parent;
 };
