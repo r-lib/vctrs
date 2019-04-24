@@ -55,43 +55,15 @@ bool vec_is_partial(SEXP x) {
 }
 
 
-static const char* common_arg_prefix = "list(...)[[";
-static const char* common_arg_suffix = "]]";
-
 static r_ssize_t common_arg_fill(struct vctrs_arg* self, char* buf, r_ssize_t remaining) {
   R_len_t i = *((R_len_t*) self->data);
 
-  // Let R perform the integer formatting
-  SEXP i_int = PROTECT(Rf_ScalarInteger(i));
-  SEXP i_chr = PROTECT(Rf_coerceVector(i_int, STRSXP));
-  const char* i_str = r_chr_get_c_string(i_chr, 0);
-
-  r_ssize_t prefix_len = strlen(common_arg_prefix);
-  r_ssize_t index_len = strlen(i_str);
-  r_ssize_t suffix_len = strlen(common_arg_suffix);
-  r_ssize_t len = prefix_len + index_len + suffix_len;
-
+  int len = snprintf(buf, remaining, "list(...)[[%d]]", i);
   if (len >= remaining) {
     return -1;
+  } else {
+    return len;
   }
-
-  {
-    char* ptr = buf;
-
-    memcpy(ptr, common_arg_prefix, prefix_len);
-    ptr += prefix_len;
-
-    memcpy(ptr, i_str, index_len);
-    ptr += index_len;
-
-    memcpy(ptr, common_arg_suffix, suffix_len);
-    ptr += suffix_len;
-
-    *ptr = '\0';
-  }
-
-  UNPROTECT(2);
-  return len;
 }
 
 static struct vctrs_arg new_common_arg(struct vctrs_arg* parent, R_len_t* i) {
