@@ -15,7 +15,9 @@ as_minimal_names <- function(names) {
   names %|% ""
 }
 
-as_unique_names <- function(names, quiet = FALSE, transform = identity) {
+as_unique_names <- function(names, ..., quiet = FALSE, transform = identity) {
+  ellipsis::check_dots_empty()
+
   min_names <- as_minimal_names(names)
 
   naked_names <- strip_pos(two_to_three_dots(min_names))
@@ -34,17 +36,20 @@ as_unique_names <- function(names, quiet = FALSE, transform = identity) {
   new_names
 }
 
-as_universal_names <- function(names, quiet = FALSE) {
+as_universal_names <- function(names, ..., quiet = FALSE) {
+  ellipsis::check_dots_empty()
   as_unique_names(names, quiet = quiet, transform = make_syntactic)
 }
 
 set_minimal_names <- function(x) {
   set_names(x, minimal_names(x))
 }
-set_unique_names <- function(x, quiet = FALSE) {
+set_unique_names <- function(x, ..., quiet = FALSE) {
+  ellipsis::check_dots_empty()
   set_names(x, as_unique_names(minimal_names(x), quiet = quiet))
 }
-set_universal_names <- function(x, quiet = FALSE) {
+set_universal_names <- function(x, ..., quiet = FALSE) {
+  ellipsis::check_dots_empty()
   set_names(x, as_universal_names(minimal_names(x), quiet = quiet))
 }
 

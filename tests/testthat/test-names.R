@@ -1,4 +1,4 @@
-context("names")
+context("test-names")
 
 
 # minimal names -------------------------------------------------------------
