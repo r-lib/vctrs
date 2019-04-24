@@ -126,6 +126,16 @@ test_that("minimal_names() treats data frames and arrays as vectors", {
   expect_identical(minimal_names(as.matrix(mtcars)), row.names(mtcars))
 })
 
+test_that("as_minimal_names() copies on write", {
+  nms <- chr(NA, NA)
+  as_minimal_names(nms)
+  expect_identical(nms, chr(NA, NA))
+
+  nms <- c("a", "b")
+  out <- as_minimal_names(nms)
+  expect_true(is_reference(nms, out))
+})
+
 
 # unique names -------------------------------------------------------------
 

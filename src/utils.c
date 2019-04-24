@@ -504,6 +504,7 @@ bool r_is_function(SEXP x) {
 
 SEXP vctrs_ns_env = NULL;
 SEXP vctrs_shared_empty_str = NULL;
+SEXP vctrs_shared_empty_str_elt = NULL;
 
 SEXP syms_i = NULL;
 SEXP syms_x = NULL;
@@ -523,6 +524,8 @@ void vctrs_init_utils(SEXP ns) {
 
   vctrs_shared_empty_str = Rf_mkString("");
   R_PreserveObject(vctrs_shared_empty_str);
+
+  vctrs_shared_empty_str_elt = STRING_ELT(vctrs_shared_empty_str, 0);
 
 
   classes_data_frame = Rf_allocVector(STRSXP, 1);

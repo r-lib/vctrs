@@ -225,13 +225,7 @@ vec_repair_names <- function(x,
 }
 
 minimal_names <- function(x) {
-  names <- vec_names(x)
-
-  if (is.null(names)) {
-    rep_len("", vec_size(x))
-  } else {
-    as_minimal_names(names)
-  }
+  .Call(vctrs_minimal_names, x)
 }
 
 vec_names <- function(x) {
@@ -256,10 +250,7 @@ vec_names <- function(x) {
 set_names2 <- `vec_names<-`
 
 as_minimal_names <- function(names) {
-  if (!is_character(names)) {
-    abort("`names` must be a character vector")
-  }
-  names %|% ""
+  .Call(vctrs_as_minimal_names, names)
 }
 as_unique_names <- function(names, quiet = FALSE) {
   as_unique_names_impl(names, quiet, FALSE)
