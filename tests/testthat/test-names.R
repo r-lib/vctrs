@@ -7,7 +7,7 @@ test_that("minimal names are made from `n` when `name = NULL`", {
   expect_identical(minimal_names(NULL, 2), c("", ""))
   expect_error(
     minimal_names(NULL),
-    error_name_length_required(),
+    "`n` must be specified",
     fixed = TRUE
   )
 })
