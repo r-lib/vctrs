@@ -47,3 +47,9 @@ scoped_tuple_methods <- function(frame = caller_env()) {
     vec_cast.tuple.tuple = function(x, to) x
   )
 }
+
+c_na <- function(...) {
+  x <- c(...)
+  names(x)[names(x) == ""] <- NA_character_
+  x
+}
