@@ -4,16 +4,16 @@ context("names")
 # minimal names -------------------------------------------------------------
 
 test_that("minimal names are made from `n` when `name = NULL`", {
-  expect_identical(minimal_names(NULL, 2), c("", ""))
+  expect_identical(as_minimal_names(NULL, 2), c("", ""))
   expect_error(
-    minimal_names(NULL),
+    as_minimal_names(NULL),
     "`n` must be specified",
     fixed = TRUE
   )
 })
 
 test_that("minimal names have '' instead of NAs", {
-  expect_identical(minimal_names(c("", NA, "", NA)), c("", "", "", ""))
+  expect_identical(as_minimal_names(c("", NA, "", NA)), c("", "", "", ""))
 })
 
 test_that("set_minimal_names() copes with NULL input names", {
@@ -22,26 +22,26 @@ test_that("set_minimal_names() copes with NULL input names", {
   expect_equal(names(x_named), rep("", 3))
 })
 
-test_that("minimal_names() is idempotent", {
+test_that("as_minimal_names() is idempotent", {
   x <- c("", "", NA)
-  expect_identical(minimal_names(x), minimal_names(minimal_names(x)))
+  expect_identical(as_minimal_names(x), as_minimal_names(as_minimal_names(x)))
 })
 
 
 # unique names -------------------------------------------------------------
 
-test_that("unique_names() eliminates emptiness and duplication", {
+test_that("as_unique_names() eliminates emptiness and duplication", {
   x <- c("", "x", "y", "x")
-  expect_identical(unique_names(x), c("...1", "x...2", "y", "x...4"))
+  expect_identical(as_unique_names(x), c("...1", "x...2", "y", "x...4"))
 })
 
 test_that("solo empty or NA gets suffix", {
-  expect_identical(unique_names(""), "...1")
-  expect_identical(unique_names(NA_character_), "...1")
+  expect_identical(as_unique_names(""), "...1")
+  expect_identical(as_unique_names(NA_character_), "...1")
 })
 
 test_that("ellipsis treated like empty string", {
-  expect_identical(unique_names("..."), unique_names(""))
+  expect_identical(as_unique_names("..."), as_unique_names(""))
 })
 
 test_that("two_three_dots() does its job and no more", {
@@ -52,23 +52,23 @@ test_that("two_three_dots() does its job and no more", {
 })
 
 test_that("two dots then number treated like three dots then number", {
-  expect_identical(unique_names("..2"), unique_names("...5"))
+  expect_identical(as_unique_names("..2"), as_unique_names("...5"))
 })
 
-test_that("unique_names() strips positional suffixes, re-applies as needed", {
+test_that("as_unique_names() strips positional suffixes, re-applies as needed", {
   x <- c("...20", "a...1", "b", "", "a...2...34")
-  expect_identical(unique_names(x), c("...1", "a...2", "b", "...4", "a...5"))
+  expect_identical(as_unique_names(x), c("...1", "a...2", "b", "...4", "a...5"))
 
-  expect_identical(unique_names("a...1"), "a")
-  expect_identical(unique_names(c("a...2", "a")), c("a...1", "a...2"))
-  expect_identical(unique_names(c("a...3", "a", "a")), c("a...1", "a...2", "a...3"))
-  expect_identical(unique_names(c("a...2", "a", "a")), c("a...1", "a...2", "a...3"))
-  expect_identical(unique_names(c("a...2", "a...2", "a...2")), c("a...1", "a...2", "a...3"))
+  expect_identical(as_unique_names("a...1"), "a")
+  expect_identical(as_unique_names(c("a...2", "a")), c("a...1", "a...2"))
+  expect_identical(as_unique_names(c("a...3", "a", "a")), c("a...1", "a...2", "a...3"))
+  expect_identical(as_unique_names(c("a...2", "a", "a")), c("a...1", "a...2", "a...3"))
+  expect_identical(as_unique_names(c("a...2", "a...2", "a...2")), c("a...1", "a...2", "a...3"))
 })
 
-test_that("unique_names() is idempotent", {
+test_that("as_unique_names() is idempotent", {
   x <- c("...20", "a...1", "b", "", "a...2")
-  expect_identical(unique_names(!!x), unique_names(unique_names(!!x)))
+  expect_identical(as_unique_names(!!x), as_unique_names(as_unique_names(!!x)))
 })
 
 test_that("unique-ification has an 'algebraic'-y property", {
@@ -83,28 +83,28 @@ test_that("unique-ification has an 'algebraic'-y property", {
   y <- c("", "a...3", "b", "...3", "e")
 
   ## fix names on each, catenate, fix the whole
-  z1 <- unique_names(
+  z1 <- as_unique_names(
     c(
-      unique_names(x), unique_names(y)
+      as_unique_names(x), as_unique_names(y)
     )
   )
 
   ## fix names on x, catenate, fix the whole
-  z2 <- unique_names(
+  z2 <- as_unique_names(
     c(
-      unique_names(x), y
+      as_unique_names(x), y
     )
   )
 
   ## fix names on y, catenate, fix the whole
-  z3 <- unique_names(
+  z3 <- as_unique_names(
     c(
-      x, unique_names(y)
+      x, as_unique_names(y)
     )
   )
 
   ## catenate, fix the whole
-  z4 <- unique_names(
+  z4 <- as_unique_names(
     c(
       x, y
     )

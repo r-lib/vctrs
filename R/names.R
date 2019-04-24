@@ -1,5 +1,5 @@
 
-minimal_names <- function(names, n) {
+as_minimal_names <- function(names, n) {
   if (is.null(names) && missing(n)) {
     abort("`n` must be specified, when the `names` attribute is `NULL`.")
   }
@@ -12,8 +12,8 @@ minimal_names <- function(names, n) {
   }
 }
 
-unique_names <- function(names, quiet = FALSE, transform = identity) {
-  min_names <- minimal_names(names)
+as_unique_names <- function(names, quiet = FALSE, transform = identity) {
+  min_names <- as_minimal_names(names)
 
   naked_names <- strip_pos(two_to_three_dots(min_names))
   naked_needs_suffix <- (naked_names %in% c("", "..."))
@@ -31,20 +31,20 @@ unique_names <- function(names, quiet = FALSE, transform = identity) {
   new_names
 }
 
-universal_names <- function(names, quiet = FALSE) {
-  unique_names(names, quiet = quiet, transform = make_syntactic)
+as_universal_names <- function(names, quiet = FALSE) {
+  as_unique_names(names, quiet = quiet, transform = make_syntactic)
 }
 
 set_minimal_names <- function(x) {
-  set_names(x, minimal_names(names(x), n = length(x)))
+  set_names(x, as_minimal_names(names(x), n = length(x)))
 }
 set_unique_names <- function(x, quiet = FALSE) {
   x <- set_minimal_names(x)
-  set_names(x, unique_names(names(x), quiet = quiet))
+  set_names(x, as_unique_names(names(x), quiet = quiet))
 }
 set_universal_names <- function(x, quiet = FALSE) {
   x <- set_minimal_names(x)
-  set_names(x, universal_names(names(x), quiet = quiet))
+  set_names(x, as_universal_names(names(x), quiet = quiet))
 }
 
 two_to_three_dots <- function(names) {
