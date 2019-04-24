@@ -8,37 +8,42 @@ minimal_names <- function(x) {
     as_minimal_names(names)
   }
 }
+
 as_minimal_names <- function(names) {
   if (!is_character(names)) {
     abort("`names` must be a character vector")
   }
   names %|% ""
 }
-
-as_unique_names <- function(names, ..., quiet = FALSE, transform = identity) {
+as_unique_names <- function(names, ..., quiet = FALSE) {
   ellipsis::check_dots_empty()
+  as_unique_names_impl(names, quiet, FALSE)
+}
+as_universal_names <- function(names, ..., quiet = FALSE) {
+  ellipsis::check_dots_empty()
+  as_unique_names_impl(names, quiet, TRUE)
+}
 
-  min_names <- as_minimal_names(names)
+as_unique_names_impl <- function(names, quiet, syntactic) {
+  new_names <- rep_along(names, "")
 
-  naked_names <- strip_pos(two_to_three_dots(min_names))
-  naked_needs_suffix <- (naked_names %in% c("", "..."))
+  naked_names <- strip_pos(two_to_three_dots(as_minimal_names(names)))
+  empty <- naked_names %in% c("", "...")
 
-  new_names <- rep_along(naked_names, "")
-  new_names[!naked_needs_suffix] <- transform(naked_names[!naked_needs_suffix])
+  if (syntactic) {
+    new_names[!empty] <- make_syntactic(naked_names[!empty])
+  } else {
+    new_names[!empty] <- naked_names[!empty]
+  }
 
-  duped_after <- vec_duplicate_detect(new_names)
-  new_names <- append_pos(new_names, needs_suffix = naked_needs_suffix | duped_after)
+  needs_suffix <- empty | vec_duplicate_detect(new_names)
+  new_names <- append_pos(new_names, needs_suffix = needs_suffix)
 
   if (!quiet) {
     describe_repair(names, new_names)
   }
 
   new_names
-}
-
-as_universal_names <- function(names, ..., quiet = FALSE) {
-  ellipsis::check_dots_empty()
-  as_unique_names(names, quiet = quiet, transform = make_syntactic)
 }
 
 set_minimal_names <- function(x) {
