@@ -213,7 +213,7 @@ vec_names2 <- function(x,
 
   switch(arg_match(repair),
     minimal = minimal_names(x),
-    unique = as_unique_names(minimal_names(x), quiet = quiet),
+    unique = unique_names(x, quiet = quiet),
     universal = as_universal_names(minimal_names(x), quiet = quiet)
   )
 }
@@ -226,6 +226,9 @@ vec_repair_names <- function(x,
 
 minimal_names <- function(x) {
   .Call(vctrs_minimal_names, x)
+}
+unique_names <- function(x, quiet = FALSE) {
+  .Call(vctrs_unique_names, x)
 }
 
 vec_names <- function(x) {

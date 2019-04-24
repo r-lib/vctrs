@@ -139,6 +139,10 @@ test_that("as_minimal_names() copies on write", {
 
 # unique names -------------------------------------------------------------
 
+test_that("unique_names() handles unnamed vectors", {
+  expect_identical(unique_names(1:3), c("...1", "...2", "...3"))
+})
+
 test_that("as_unique_names() eliminates emptiness and duplication", {
   x <- c("", "x", "y", "x")
   expect_identical(as_unique_names(x), c("...1", "x...2", "y", "x...4"))
