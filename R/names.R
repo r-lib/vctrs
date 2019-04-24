@@ -26,7 +26,7 @@ as_unique_names <- function(names, ..., quiet = FALSE, transform = identity) {
   new_names <- rep_along(naked_names, "")
   new_names[!naked_needs_suffix] <- transform(naked_names[!naked_needs_suffix])
 
-  duped_after <- duplicated(new_names) | duplicated(new_names, fromLast = TRUE)
+  duped_after <- vec_duplicate_detect(new_names)
   new_names <- append_pos(new_names, needs_suffix = naked_needs_suffix | duped_after)
 
   if (!quiet) {
