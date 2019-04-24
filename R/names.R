@@ -1,15 +1,18 @@
 
-as_minimal_names <- function(names, n) {
-  if (is.null(names) && missing(n)) {
-    abort("`n` must be specified, when the `names` attribute is `NULL`.")
-  }
+minimal_names <- function(x) {
+  names <- names(x)
 
-  # TODO: Address scenarios where names is not NULL and n != length(names)?
   if (is.null(names)) {
-    rep_len("", n)
+    rep_along(x, "")
   } else {
-    names %|% ""
+    as_minimal_names(names)
   }
+}
+as_minimal_names <- function(names) {
+  if (!is_character(names)) {
+    abort("`names` must be a character vector")
+  }
+  names %|% ""
 }
 
 as_unique_names <- function(names, quiet = FALSE, transform = identity) {
@@ -36,15 +39,13 @@ as_universal_names <- function(names, quiet = FALSE) {
 }
 
 set_minimal_names <- function(x) {
-  set_names(x, as_minimal_names(names(x), n = length(x)))
+  set_names(x, minimal_names(x))
 }
 set_unique_names <- function(x, quiet = FALSE) {
-  x <- set_minimal_names(x)
-  set_names(x, as_unique_names(names(x), quiet = quiet))
+  set_names(x, as_unique_names(minimal_names(x), quiet = quiet))
 }
 set_universal_names <- function(x, quiet = FALSE) {
-  x <- set_minimal_names(x)
-  set_names(x, as_universal_names(names(x), quiet = quiet))
+  set_names(x, as_universal_names(minimal_names(x), quiet = quiet))
 }
 
 two_to_three_dots <- function(names) {

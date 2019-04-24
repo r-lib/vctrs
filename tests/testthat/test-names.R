@@ -4,12 +4,11 @@ context("names")
 # minimal names -------------------------------------------------------------
 
 test_that("minimal names are made from `n` when `name = NULL`", {
-  expect_identical(as_minimal_names(NULL, 2), c("", ""))
-  expect_error(
-    as_minimal_names(NULL),
-    "`n` must be specified",
-    fixed = TRUE
-  )
+  expect_identical(minimal_names(1:2), c("", ""))
+})
+
+test_that("as_minimal_names() checks input", {
+  expect_error(as_minimal_names(1:3), "must be a character vector")
 })
 
 test_that("minimal names have '' instead of NAs", {
