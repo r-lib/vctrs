@@ -112,18 +112,47 @@ static struct cow as_unique_names(struct cow cow_names) {
     Rf_errorcall(R_NilValue, "`names` must be a character vector");
   }
 
-  R_len_t i = 0;
-  R_len_t n = Rf_length(names);
-  SEXP* ptr = STRING_PTR(names);
-
-  cow_names = cow_maybe_copy(cow_names);
-  names = cow_names.obj;
-
   dictionary d;
   dict_init(&d, names);
   SEXP dups = PROTECT(Rf_allocVector(INTSXP, d.size));
   int* dups_ptr = INTEGER(dups);
 
+  R_len_t i = 0;
+  R_len_t n = Rf_length(names);
+  SEXP* ptr = STRING_PTR(names);
+
+  // First quick pass to detect if any repairs are needed. See second
+  // part of the loop for the meaning of each branch.
+  for (; i < n; ++i, ++ptr) {
+    SEXP elt = *ptr;
+
+    if (elt == NA_STRING || elt == strings_dots || elt == strings_empty || is_dotdotint(CHAR(elt))) {
+      break;
+    }
+    if (suffix_pos(CHAR(elt)) >= 0) {
+      break;
+    }
+
+    int32_t k = dict_find(&d, names, i);
+
+    if (d.key[k] == DICT_EMPTY) {
+      dict_put(&d, k, i);
+      dups_ptr[k] = 1;
+    } else {
+      break;
+    }
+  }
+
+  // Return early when no repairs are needed
+  if (i == n) {
+    UNPROTECT(1);
+    return cow_names;
+  }
+
+
+  cow_names = cow_maybe_copy(cow_names);
+  names = cow_names.obj;
+  ptr = STRING_PTR(names) + i;
 
   for (; i < n; ++i, ++ptr) {
     SEXP elt = *ptr;

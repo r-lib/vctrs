@@ -143,6 +143,13 @@ test_that("unique_names() handles unnamed vectors", {
   expect_identical(unique_names(1:3), c("...1", "...2", "...3"))
 })
 
+test_that("as_unique_names() is a no-op when no repairs are needed", {
+  x <- c("x", "y")
+  out <- as_unique_names(x)
+  expect_true(is_reference(out, x))
+  expect_identical(out, c("x", "y"))
+})
+
 test_that("as_unique_names() eliminates emptiness and duplication", {
   x <- c("", "x", "y", "x")
   expect_identical(as_unique_names(x), c("...1", "x...2", "y", "x...4"))
