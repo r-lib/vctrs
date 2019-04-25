@@ -138,7 +138,9 @@ vec_cast.default <- function(x, to) {
 #' @export
 #' @rdname vec_cast
 vec_restore <- function(x, to, ..., i = NULL) {
-  check_dots_empty_s3_extensions(...)
+  if (!missing(...)) {
+    ellipsis::check_dots_empty()
+  }
   return(.Call(vctrs_restore, x, to, i))
   UseMethod("vec_restore", to)
 }
