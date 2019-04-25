@@ -119,12 +119,6 @@ vec_cast.factor <- function(x, to) {
 }
 
 #' @export
-#' @method vec_cast.factor logical
-vec_cast.factor.logical <- function(x, to) {
-  vec_unspecified_cast(x, to)
-}
-
-#' @export
 #' @method vec_cast.factor factor
 vec_cast.factor.factor <- function(x, to) {
   if (length(levels(to)) == 0L) {
@@ -149,7 +143,7 @@ vec_cast.factor.list <- function(x, to) {
 #' @export
 #' @method vec_cast.factor default
 vec_cast.factor.default <- function(x, to) {
-  stop_incompatible_cast(x, to)
+  vec_default_cast(x, to)
 }
 
 # Math and arithmetic -----------------------------------------------------

@@ -101,7 +101,7 @@ vec_cast.data.frame <- function(x, to) {
 vec_cast.data.frame.data.frame <- function(x, to) df_col_cast(x, to)
 #' @export
 #' @method vec_cast.data.frame default
-vec_cast.data.frame.default    <- function(x, to) stop_incompatible_cast(x, to)
+vec_cast.data.frame.default <- function(x, to) vec_default_cast(x, to)
 
 #' @export
 vec_restore.data.frame <- function(x, to, ..., i = NULL) {

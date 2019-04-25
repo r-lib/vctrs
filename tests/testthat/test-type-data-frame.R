@@ -128,3 +128,8 @@ test_that("cast to empty data frame preserves number of rows", {
   out <- vec_cast(new_data_frame(n = 10L), new_data_frame())
   expect_equal(nrow(out), 10L)
 })
+
+test_that("can cast unspecified to data frame", {
+  df <- data.frame(x = 1, y = 2L)
+  expect_identical(vec_cast(unspecified(3), df), vec_na(df, 3))
+})
