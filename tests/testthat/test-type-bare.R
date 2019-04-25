@@ -141,7 +141,7 @@ test_that("dimensionality matches to" ,{
 # Unspecified
 
 test_that("unspecified can be cast to bare methods", {
-  for (x in vectors[-c(4, 7)]) {
+  for (x in vectors[-4]) {
     expect_identical(vec_cast(unspecified(3), x), vec_na(x, 3))
   }
 })
