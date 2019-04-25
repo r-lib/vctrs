@@ -250,8 +250,13 @@ as_minimal_names <- function(names) {
   .Call(vctrs_as_minimal_names, names)
 }
 as_unique_names <- function(names, quiet = FALSE) {
-  # as_unique_names_impl(names, quiet, FALSE)
-  .Call(vctrs_as_unique_names, names)
+  out <- .Call(vctrs_as_unique_names, names)
+
+  if (!quiet) {
+    describe_repair(names, out)
+  }
+
+  out
 }
 as_universal_names <- function(names, quiet = FALSE) {
   as_unique_names_impl(names, quiet, TRUE)

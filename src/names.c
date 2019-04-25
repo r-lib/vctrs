@@ -101,9 +101,8 @@ SEXP vctrs_minimal_names(SEXP x) {
 }
 
 
-void stop_large_name() {
-  Rf_errorcall(R_NilValue, "Can't tidy up name because it is too large");
-}
+void stop_large_name();
+bool is_dotdotint(const char* name);
 
 static struct cow as_unique_names(struct cow cow_names) {
   SEXP names = cow_names.obj;
@@ -127,7 +126,8 @@ static struct cow as_unique_names(struct cow cow_names) {
   for (; i < n; ++i, ++ptr) {
     SEXP elt = *ptr;
 
-    if (elt == NA_STRING || elt == strings_dots) {
+    // Set `NA` and dots values to "" so they get replaced by `...n` later on
+    if (elt == NA_STRING || elt == strings_dots || is_dotdotint(CHAR(elt))) {
       SET_STRING_ELT(names, i, strings_empty);
       elt = strings_empty;
     }
@@ -183,6 +183,22 @@ SEXP vctrs_as_unique_names(SEXP names) {
 
   UNPROTECT(1);
   return cow_names.obj;
+}
+
+bool is_dotdotint(const char* name) {
+  int n = strlen(name);
+
+  if (n < 3) {
+    return false;
+  }
+  if (name[0] != '.' || name[1] != '.') {
+    return false;
+  }
+
+  return (bool) strtol(name + 2, NULL, 10);
+}
+void stop_large_name() {
+  Rf_errorcall(R_NilValue, "Can't tidy up name because it is too large");
 }
 
 
