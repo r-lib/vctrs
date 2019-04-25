@@ -1,4 +1,5 @@
 #include "vctrs.h"
+#include "dictionary.h"
 #include "utils.h"
 
 
@@ -50,7 +51,7 @@ static struct cow as_minimal_names(struct cow cow_names) {
   for (; i < n; ++i, ++ptr) {
     SEXP elt = *ptr;
     if (elt == NA_STRING) {
-      SET_STRING_ELT(names, i, vctrs_shared_empty_str_elt);
+      SET_STRING_ELT(names, i, strings_empty);
     }
   }
 
@@ -100,6 +101,91 @@ SEXP vctrs_minimal_names(SEXP x) {
 }
 
 
+void stop_large_name() {
+  Rf_errorcall(R_NilValue, "Can't tidy up name because it is too large");
+}
+
+static struct cow as_unique_names(struct cow cow_names) {
+  SEXP names = cow_names.obj;
+
+  if (TYPEOF(names) != STRSXP) {
+    Rf_errorcall(R_NilValue, "`names` must be a character vector");
+  }
+
+  R_len_t i = 0;
+  R_len_t n = Rf_length(names);
+  SEXP* ptr = STRING_PTR(names);
+
+  dictionary d;
+  dict_init(&d, names);
+  SEXP dups = PROTECT(Rf_allocVector(INTSXP, d.size));
+  int* dups_ptr = INTEGER(dups);
+
+  cow_names = cow_maybe_copy(cow_names);
+  names = cow_names.obj;
+
+  for (; i < n; ++i, ++ptr) {
+    SEXP elt = *ptr;
+
+    if (elt == NA_STRING || elt == strings_dots) {
+      SET_STRING_ELT(names, i, strings_empty);
+      elt = strings_empty;
+    }
+
+    // Duplicates need a `...n` suffix
+    int32_t k = dict_find(&d, names, i);
+
+    if (d.key[k] == DICT_EMPTY) {
+      dict_put(&d, k, i);
+      dups_ptr[k] = 0;
+
+      // Ensure "" is seen as a duplicate so it always gets a suffix
+      if (elt == strings_empty) {
+        dups_ptr[k]++;
+      }
+    }
+    dups_ptr[k]++;
+  }
+
+  // Append all duplicates with a suffix
+  char buf[100] = "";
+
+  for (i = 0, ptr = STRING_PTR(names); i < n; ++i, ++ptr) {
+    int32_t k = dict_find(&d, names, i);
+    if (dups_ptr[k] != 1) {
+      const char* name = CHAR(*ptr);
+
+      int remaining = 100;
+      int size = strlen(name);
+      if (size >= 100) {
+        stop_large_name();
+      }
+
+      memcpy(buf, name, size + 1);
+      remaining -= size;
+
+      int needed = snprintf(buf + size, remaining, "...%d", i + 1);
+      if (needed >= remaining) {
+        stop_large_name();
+      }
+
+      SET_STRING_ELT(names, i, Rf_mkChar(buf));
+    }
+  }
+
+  UNPROTECT(1);
+  return cow_names;
+}
+
+SEXP vctrs_as_unique_names(SEXP names) {
+  struct cow cow_names = PROTECT_COW(names);
+  cow_names = as_unique_names(cow_names);
+
+  UNPROTECT(1);
+  return cow_names.obj;
+}
+
+
 static SEXP names_iota(R_len_t n);
 
 SEXP vctrs_unique_names(SEXP x) {
@@ -109,6 +195,8 @@ SEXP vctrs_unique_names(SEXP x) {
     UNPROTECT(1);
     return(names_iota(vec_size(x)));
   }
+
+  names = vctrs_as_unique_names(names);
 
   UNPROTECT(1);
   return names;

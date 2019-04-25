@@ -161,7 +161,7 @@ vec_as_names <- function(names,
 
   switch(arg_match(repair),
     minimal = as_minimal_names(names),
-    unique = as_unique_names(as_minimal_names(names), quiet = quiet),
+    unique = as_unique_names(names, quiet = quiet),
     universal = as_universal_names(as_minimal_names(names), quiet = quiet)
   )
 }
@@ -250,7 +250,8 @@ as_minimal_names <- function(names) {
   .Call(vctrs_as_minimal_names, names)
 }
 as_unique_names <- function(names, quiet = FALSE) {
-  as_unique_names_impl(names, quiet, FALSE)
+  # as_unique_names_impl(names, quiet, FALSE)
+  .Call(vctrs_as_unique_names, names)
 }
 as_universal_names <- function(names, quiet = FALSE) {
   as_unique_names_impl(names, quiet, TRUE)

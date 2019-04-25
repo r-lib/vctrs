@@ -99,9 +99,11 @@ static inline double r_dbl_get(SEXP x, R_len_t i) {
 
 extern SEXP vctrs_ns_env;
 extern SEXP vctrs_shared_empty_str;
-extern SEXP vctrs_shared_empty_str_elt;
 
 extern SEXP classes_data_frame;
+
+extern SEXP strings_dots;
+extern SEXP strings_empty;
 
 extern SEXP syms_i;
 extern SEXP syms_x;

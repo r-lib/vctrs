@@ -504,7 +504,10 @@ bool r_is_function(SEXP x) {
 
 SEXP vctrs_ns_env = NULL;
 SEXP vctrs_shared_empty_str = NULL;
-SEXP vctrs_shared_empty_str_elt = NULL;
+
+SEXP strings = NULL;
+SEXP strings_empty = NULL;
+SEXP strings_dots = NULL;
 
 SEXP syms_i = NULL;
 SEXP syms_x = NULL;
@@ -525,7 +528,17 @@ void vctrs_init_utils(SEXP ns) {
   vctrs_shared_empty_str = Rf_mkString("");
   R_PreserveObject(vctrs_shared_empty_str);
 
-  vctrs_shared_empty_str_elt = STRING_ELT(vctrs_shared_empty_str, 0);
+
+  // Holds the CHARSXP objects because unlike symbols they can be
+  // garbage collected
+  strings = Rf_allocVector(STRSXP, 2);
+  R_PreserveObject(strings);
+
+  strings_dots = Rf_mkChar("...");
+  SET_STRING_ELT(strings, 0, strings_dots);
+
+  strings_empty = Rf_mkChar("");
+  SET_STRING_ELT(strings, 1, strings_empty);
 
 
   classes_data_frame = Rf_allocVector(STRSXP, 1);
