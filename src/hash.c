@@ -58,10 +58,8 @@ int32_t hash_scalar(SEXP x, R_len_t i) {
 
     return hash_double(val);
   }
-  case STRSXP: {
-    // currently assuming 64-bit pointer size
-    return hash_int64((intptr_t) STRING_ELT(x, i));
-  }
+  case STRSXP:
+    return hash_object(STRING_ELT(x, i));
   case VECSXP: {
     if (is_data_frame(x)) {
       uint32_t hash = 0;
