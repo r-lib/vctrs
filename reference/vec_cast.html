@@ -129,7 +129,7 @@ vectors to the same type." />
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Cast a vector to specified type</h1>
-    <small class="dont-index">Source: <a href='https://github.com/r-lib/vctrs/blob/master/R/cast.R'><code>R/cast.R</code></a></small>
+    <small class="dont-index">Source: <a href='https://github.com/r-lib/vctrs/blob/master/R/cast.R'><code>R/cast.R</code></a>, <a href='https://github.com/r-lib/vctrs/blob/master/R/type-bare.R'><code>R/type-bare.R</code></a></small>
     <div class="hidden name"><code>vec_cast.Rd</code></div>
     </div>
 
@@ -317,8 +317,8 @@ attributes that don't require special handling for your class.</p>
 #&gt; </span><span style='color: #555555;'> 43. </span><span>│                           └─vctrs::vec_cast(c(1, 1.5), integer())
 #&gt; </span><span style='color: #555555;'> 44. </span><span>├─vctrs:::vec_cast_dispatch(x = x, to = to)
 #&gt; </span><span style='color: #555555;'> 45. </span><span>├─vctrs::vec_cast.integer(x = x, to = to) </span><span style='color: #555555;'>/home/travis/build/r-lib/vctrs/R/cast.R:122:2</span><span>
-#&gt; </span><span style='color: #555555;'> 46. </span><span>└─vctrs:::vec_cast.integer.double(x = x, to = to) </span><span style='color: #555555;'>/home/travis/build/r-lib/vctrs/R/cast.R:212:2</span><span>
-#&gt; </span><span style='color: #555555;'> 47. </span><span>  └─vctrs::maybe_lossy_cast(out, x, to, lossy) </span><span style='color: #555555;'>/home/travis/build/r-lib/vctrs/R/cast.R:231:2</span><span>
+#&gt; </span><span style='color: #555555;'> 46. </span><span>└─vctrs:::vec_cast.integer.double(x = x, to = to) </span><span style='color: #555555;'>/home/travis/build/r-lib/vctrs/R/type-bare.R:57:2</span><span>
+#&gt; </span><span style='color: #555555;'> 47. </span><span>  └─vctrs::maybe_lossy_cast(out, x, to, lossy) </span><span style='color: #555555;'>/home/travis/build/r-lib/vctrs/R/type-bare.R:76:2</span><span>
 #&gt; </span><span style='color: #555555;'> 48. </span><span>    ├─base::withRestarts(...) </span><span style='color: #555555;'>/home/travis/build/r-lib/vctrs/R/conditions.R:164:2</span><span>
 #&gt; </span><span style='color: #555555;'> 49. </span><span>    │ └─base:::withOneRestart(expr, restarts[[1L]])
 #&gt; </span><span style='color: #555555;'> 50. </span><span>    │   └─base:::doWithOneRestart(return(expr), restart)
@@ -370,8 +370,8 @@ attributes that don't require special handling for your class.</p>
 #&gt; </span><span style='color: #555555;'> 43. </span><span>│                           └─vctrs::vec_cast(c(1, 2), logical())
 #&gt; </span><span style='color: #555555;'> 44. </span><span>├─vctrs:::vec_cast_dispatch(x = x, to = to)
 #&gt; </span><span style='color: #555555;'> 45. </span><span>├─vctrs::vec_cast.logical(x = x, to = to) </span><span style='color: #555555;'>/home/travis/build/r-lib/vctrs/R/cast.R:122:2</span><span>
-#&gt; </span><span style='color: #555555;'> 46. </span><span>└─vctrs:::vec_cast.logical.double(x = x, to = to) </span><span style='color: #555555;'>/home/travis/build/r-lib/vctrs/R/cast.R:166:20</span><span>
-#&gt; </span><span style='color: #555555;'> 47. </span><span>  └─vctrs::maybe_lossy_cast(out, x, to, lossy) </span><span style='color: #555555;'>/home/travis/build/r-lib/vctrs/R/cast.R:186:2</span><span>
+#&gt; </span><span style='color: #555555;'> 46. </span><span>└─vctrs:::vec_cast.logical.double(x = x, to = to) </span><span style='color: #555555;'>/home/travis/build/r-lib/vctrs/R/type-bare.R:11:20</span><span>
+#&gt; </span><span style='color: #555555;'> 47. </span><span>  └─vctrs::maybe_lossy_cast(out, x, to, lossy) </span><span style='color: #555555;'>/home/travis/build/r-lib/vctrs/R/type-bare.R:31:2</span><span>
 #&gt; </span><span style='color: #555555;'> 48. </span><span>    ├─base::withRestarts(...) </span><span style='color: #555555;'>/home/travis/build/r-lib/vctrs/R/conditions.R:164:2</span><span>
 #&gt; </span><span style='color: #555555;'> 49. </span><span>    │ └─base:::withOneRestart(expr, restarts[[1L]])
 #&gt; </span><span style='color: #555555;'> 50. </span><span>    │   └─base:::doWithOneRestart(return(expr), restart)
@@ -431,8 +431,8 @@ attributes that don't require special handling for your class.</p>
 #&gt; </span><span style='color: #555555;'> 45. </span><span>│                           └─vctrs::vec_cast(c(1, 2), logical())
 #&gt; </span><span style='color: #555555;'> 46. </span><span>├─vctrs:::vec_cast_dispatch(x = x, to = to)
 #&gt; </span><span style='color: #555555;'> 47. </span><span>├─vctrs::vec_cast.logical(x = x, to = to) </span><span style='color: #555555;'>/home/travis/build/r-lib/vctrs/R/cast.R:122:2</span><span>
-#&gt; </span><span style='color: #555555;'> 48. </span><span>└─vctrs:::vec_cast.logical.double(x = x, to = to) </span><span style='color: #555555;'>/home/travis/build/r-lib/vctrs/R/cast.R:166:20</span><span>
-#&gt; </span><span style='color: #555555;'> 49. </span><span>  └─vctrs::maybe_lossy_cast(out, x, to, lossy) </span><span style='color: #555555;'>/home/travis/build/r-lib/vctrs/R/cast.R:186:2</span><span>
+#&gt; </span><span style='color: #555555;'> 48. </span><span>└─vctrs:::vec_cast.logical.double(x = x, to = to) </span><span style='color: #555555;'>/home/travis/build/r-lib/vctrs/R/type-bare.R:11:20</span><span>
+#&gt; </span><span style='color: #555555;'> 49. </span><span>  └─vctrs::maybe_lossy_cast(out, x, to, lossy) </span><span style='color: #555555;'>/home/travis/build/r-lib/vctrs/R/type-bare.R:31:2</span><span>
 #&gt; </span><span style='color: #555555;'> 50. </span><span>    ├─base::withRestarts(...) </span><span style='color: #555555;'>/home/travis/build/r-lib/vctrs/R/conditions.R:164:2</span><span>
 #&gt; </span><span style='color: #555555;'> 51. </span><span>    │ └─base:::withOneRestart(expr, restarts[[1L]])
 #&gt; </span><span style='color: #555555;'> 52. </span><span>    │   └─base:::doWithOneRestart(return(expr), restart)
