@@ -4,7 +4,7 @@
 
 struct cow {
   SEXP obj;
-  const PROTECT_INDEX i;
+  PROTECT_INDEX i;
 };
 
 struct cow PROTECT_COW(SEXP x) {
@@ -15,16 +15,16 @@ struct cow PROTECT_COW(SEXP x) {
   return cow;
 }
 
-void cow_maybe_copy(struct cow* cow) {
-  if (MAYBE_REFERENCED(cow->obj)) {
-    cow->obj = Rf_shallow_duplicate(cow->obj);
-    REPROTECT(cow->obj, cow->i);
+struct cow cow_maybe_copy(struct cow cow) {
+  if (MAYBE_REFERENCED(cow.obj)) {
+    cow.obj = Rf_shallow_duplicate(cow.obj);
+    REPROTECT(cow.obj, cow.i);
   }
+  return cow;
 }
 
-
-static SEXP as_minimal_names(struct cow* cow_names) {
-  SEXP names = cow_names->obj;
+static struct cow as_minimal_names(struct cow cow_names) {
+  SEXP names = cow_names.obj;
 
   if (TYPEOF(names) != STRSXP) {
     Rf_errorcall(R_NilValue, "`names` must be a character vector");
@@ -41,11 +41,11 @@ static SEXP as_minimal_names(struct cow* cow_names) {
     }
   }
   if (i == n) {
-    return names;
+    return cow_names;
   }
 
-  cow_maybe_copy(cow_names);
-  names = cow_names->obj;
+  cow_names = cow_maybe_copy(cow_names);
+  names = cow_names.obj;
 
   for (; i < n; ++i, ++ptr) {
     SEXP elt = *ptr;
@@ -54,15 +54,15 @@ static SEXP as_minimal_names(struct cow* cow_names) {
     }
   }
 
-  return names;
+  return cow_names;
 }
 
 SEXP vctrs_as_minimal_names(SEXP names) {
   struct cow cow_names = PROTECT_COW(names);
-  SEXP out = as_minimal_names(&cow_names);
+  cow_names = as_minimal_names(cow_names);
 
   UNPROTECT(1);
-  return out;
+  return cow_names.obj;
 }
 
 SEXP vec_names(SEXP x) {
@@ -93,10 +93,10 @@ SEXP vctrs_minimal_names(SEXP x) {
   }
 
   struct cow cow_names = PROTECT_COW(names);
-  names = as_minimal_names(&cow_names);
+  cow_names = as_minimal_names(cow_names);
 
   UNPROTECT(2);
-  return names;
+  return cow_names.obj;
 }
 
 
