@@ -73,3 +73,7 @@ test_that("unspecified() validates input", {
   expect_identical(unspecified(1), unspecified(1L))
   expect_error(unspecified(1:3), "must be a single number")
 })
+
+test_that("tibble::type_sum() knows about unspecified", {
+  expect_identical(tibble::type_sum(unspecified(3)), "???")
+})

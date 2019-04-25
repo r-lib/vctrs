@@ -31,6 +31,10 @@ unspecified <- function(n = 0) {
 print.vctrs_unspecified <- function(x, ...) {
   cat("<unspecified> [", length(x), "]\n", sep = "")
 }
+# manually registered in zzz.R
+type_sum.vctrs_unspecified <- function(x) {
+  "???"
+}
 
 is_unspecified <- function(x) {
   .Call(vctrs_is_unspecified, x)
