@@ -86,6 +86,7 @@ vec_type2.data.frame.default <- function(x, y, ..., x_arg = "", y_arg = "") {
   stop_incompatible_type(x, y, x_arg = x_arg, y_arg = y_arg)
 }
 
+
 # Cast --------------------------------------------------------------------
 
 #' @rdname new_data_frame
@@ -101,6 +102,12 @@ vec_cast.data.frame.data.frame <- function(x, to) df_col_cast(x, to)
 #' @export
 #' @method vec_cast.data.frame default
 vec_cast.data.frame.default    <- function(x, to) stop_incompatible_cast(x, to)
+
+#' @export
+vec_restore.data.frame <- function(x, to, ..., i = NULL) {
+  x
+}
+
 
 # Helpers -----------------------------------------------------------------
 

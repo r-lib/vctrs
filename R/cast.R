@@ -149,7 +149,3 @@ vec_restore_dispatch <- function(x, to, ..., i = NULL) {
 vec_restore.default <- function(x, to, ..., i = NULL) {
   .Call(vctrs_restore_default, x, to)
 }
-#' @export
-vec_restore.data.frame <- function(x, to, ..., i = NULL) {
-  x
-}
