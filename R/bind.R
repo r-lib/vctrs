@@ -178,20 +178,25 @@ vec_cbind <- function(..., .ptype = NULL, .size = NULL) {
 
 # as_df --------------------------------------------------------------
 
-as_df_row <- function(x) UseMethod("as_df_row")
+as_df_row <- function(x, quiet = FALSE) UseMethod("as_df_row")
 
 #' @export
-as_df_row.data.frame <- function(x) x
+as_df_row.data.frame <- function(x, quiet = FALSE) x
 
 #' @export
-as_df_row.NULL <- function(x) x
+as_df_row.NULL <- function(x, quiet = FALSE) x
 
 #' @export
-as_df_row.default <- function(x) {
+as_df_row.default <- function(x, quiet = FALSE) {
+  if (is_unspecified(x) && identical(names(x), NULL)) {
+    return(x)
+  }
+
   if (vec_dims(x) == 1L) {
     x <- as.list(x)
-    if (is_installed("tibble"))
-      x <- tibble::set_tidy_names(x)
+    if (is_installed("tibble")) {
+      x <- tibble::set_tidy_names(x, quiet = quiet)
+    }
     new_data_frame(x, n = 1L)
   } else {
     as.data.frame(x)

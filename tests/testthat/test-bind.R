@@ -77,6 +77,26 @@ test_that("can bind data.frame columns", {
   expect_equal(vec_rbind(df, df), expected)
 })
 
+test_that("can rbind unspecified vectors", {
+  df <- data.frame(x = 1)
+  expect_identical(vec_rbind(NA, df), data.frame(x = c(NA, 1)))
+  expect_identical(vec_rbind(df, NA), data.frame(x = c(1, NA)))
+  expect_identical(vec_rbind(NA, df, NA), data.frame(x = c(NA, 1, NA)))
+  expect_identical(vec_rbind(c(x = NA), data.frame(x = 1)), data.frame(x = c(NA, 1)))
+  expect_identical(vec_rbind(c(y = NA), df), data.frame(y = c(NA, NA), x = c(NA, 1)))
+
+  out <- suppressMessages(vec_rbind(c(x = NA, x = NA), df))
+  exp <- data.frame(x..1 = c(NA, NA), x..2 = c(NA, NA), x = c(NA, 1))
+  expect_identical(out, exp)
+})
+
+test_that("as_df_row() tidies the names of unspecified vectors", {
+  expect_identical(as_df_row(c(NA, NA)), c(NA, NA))
+  expect_identical(as_df_row(unspecified(2)), unspecified(2))
+  expect_identical(as_df_row(c(a = NA, a = NA), quiet = TRUE), data.frame(a..1 = NA, a..2 = NA))
+  expect_identical(as_df_row(c(a = TRUE, a = TRUE), quiet = TRUE), data.frame(a..1 = TRUE, a..2 = TRUE))
+})
+
 
 # cols --------------------------------------------------------------------
 
