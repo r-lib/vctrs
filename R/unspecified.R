@@ -50,6 +50,8 @@ vec_unspecified_cast <- function(x, to) {
   }
 }
 
+vec_default_cast <- vec_unspecified_cast
+
 ununspecify <- function(x) {
   if (is_unspecified(x)) {
     new_logical(length(x))

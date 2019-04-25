@@ -136,3 +136,12 @@ test_that("dimensionality matches to" ,{
   expect_dim(vec_cast(x1, x2), c(1, 2))
   expect_dim(vec_cast(TRUE, x2), c(1, 2))
 })
+
+
+# Unspecified
+
+test_that("unspecified can be cast to bare methods", {
+  for (x in vectors[-c(4, 7)]) {
+    expect_identical(vec_cast(unspecified(3), x), vec_na(x, 3))
+  }
+})
