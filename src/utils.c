@@ -38,7 +38,7 @@ SEXP vctrs_dispatch_n(SEXP fn_sym, SEXP fn, SEXP* syms, SEXP* args) {
   // Forward new values in the dispatch environment
   Rf_defineVar(fn_sym, fn, env);
 
-  SEXP dispatch_call = PROTECT(r_call(fn_sym, syms, args));
+  SEXP dispatch_call = PROTECT(r_call(fn_sym, syms, syms));
 
   while (*syms) {
     Rf_defineVar(*syms, *args, env);

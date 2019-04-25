@@ -218,6 +218,16 @@ test_that("names attribute isn't set when restoring 1D arrays using 2D+ objects"
   expect_equal(names(res), nms)
 })
 
+test_that("arguments are not inlined in the dispatch call (#300)", {
+  scoped_global_bindings(
+    vec_restore.vctrs_foobar = function(x, to, ..., i) sys.call(),
+    vec_proxy.vctrs_foobar = unclass
+  )
+  call <- vec_restore(foobar(list(1)), foobar(list(1)))
+  expect_equal(call, quote(vec_restore.vctrs_foobar(x = x, to = to, i = i)))
+})
+
+
 # Conditions --------------------------------------------------------------
 
 test_that("can suppress cast errors selectively", {
