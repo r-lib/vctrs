@@ -80,6 +80,8 @@ test_that("can bind data.frame columns", {
 test_that("can rbind unspecified vectors", {
   df <- data.frame(x = 1)
   expect_identical(vec_rbind(NA, df), data.frame(x = c(NA, 1)))
+  expect_identical(vec_rbind(df, NA), data.frame(x = c(1, NA)))
+  expect_identical(vec_rbind(NA, df, NA), data.frame(x = c(NA, 1, NA)))
   expect_identical(vec_rbind(c(x = NA), data.frame(x = 1)), data.frame(x = c(NA, 1)))
   expect_identical(vec_rbind(c(y = NA), df), data.frame(y = c(NA, NA), x = c(NA, 1)))
 

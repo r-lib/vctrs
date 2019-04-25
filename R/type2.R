@@ -54,6 +54,13 @@ vec_type2.default <- function(x, y, ..., x_arg = "", y_arg = "") {
   stop_incompatible_type(x, y, x_arg = x_arg, y_arg = y_arg)
 }
 
+vec_default_type2 <- function(x, y, ..., x_arg = "", y_arg = "") {
+  if (is_unspecified(y)) {
+    return(vec_type(x))
+  }
+  stop_incompatible_type(x, y, x_arg = x_arg, y_arg = y_arg)
+}
+
 vec_typeof2 <- function(x, y) {
   .Call(vctrs_typeof2, x, y)
 }
