@@ -1,6 +1,5 @@
 #include "vctrs.h"
-
-#define EMPTY -1
+#include "dictionary.h"
 
 // http://graphics.stanford.edu/~seander/bithacks.html#RoundUpPowerOf2
 int32_t ceil2(int32_t x) {
@@ -16,20 +15,6 @@ int32_t ceil2(int32_t x) {
 
 // Dictonary object ------------------------------------------------------------
 
-// The dictionary structure is a little peculiar since R has no notion of
-// a scalar, so the `key`s are indexes into vector `x`. This means we can
-// only store values from a single vector, but we can still lookup using
-// another vector, provided that they're of the same type (which is ensured
-// at the R-level).
-
-struct dictionary {
-  SEXP x;
-  R_len_t* key;
-  uint32_t size;
-  uint32_t used;
-};
-typedef struct dictionary dictionary;
-
 // Caller is responsible for PROTECTing x
 void dict_init(dictionary* d, SEXP x) {
   d->x = x;
@@ -44,7 +29,7 @@ void dict_init(dictionary* d, SEXP x) {
   // Rprintf("size: %i\n", size);
 
   d->key = (R_len_t*) R_alloc(size, sizeof(R_len_t));
-  memset(d->key, EMPTY, size * sizeof(R_len_t));
+  memset(d->key, DICT_EMPTY, size * sizeof(R_len_t));
 
   d->size = size;
   d->used = 0;
@@ -67,7 +52,7 @@ uint32_t dict_find(dictionary* d, SEXP y, R_len_t i) {
       break;
 
     R_len_t idx = d->key[probe];
-    if (idx == EMPTY) // not used
+    if (idx == DICT_EMPTY) // not used
       return probe;
 
     if (equal_scalar(d->x, idx, y, i, true)) // same value
@@ -97,7 +82,7 @@ SEXP vctrs_unique_loc(SEXP x) {
   for (int i = 0; i < n; ++i) {
     uint32_t k = dict_find(&d, x, i);
 
-    if (d.key[k] == EMPTY) {
+    if (d.key[k] == DICT_EMPTY) {
       dict_put(&d, k, i);
       growable_push_int(&g, i + 1);
     }
@@ -119,7 +104,7 @@ SEXP vctrs_duplicated_any(SEXP x) {
   for (int i = 0; i < n; ++i) {
     uint32_t k = dict_find(&d, x, i);
 
-    if (d.key[k] == EMPTY) {
+    if (d.key[k] == DICT_EMPTY) {
       dict_put(&d, k, i);
     } else {
       out = true;
@@ -139,7 +124,7 @@ SEXP vctrs_n_distinct(SEXP x) {
   for (int i = 0; i < n; ++i) {
     uint32_t k = dict_find(&d, x, i);
 
-    if (d.key[k] == EMPTY)
+    if (d.key[k] == DICT_EMPTY)
       dict_put(&d, k, i);
   }
 
@@ -158,7 +143,7 @@ SEXP vctrs_id(SEXP x) {
   for (int i = 0; i < n; ++i) {
     uint32_t k = dict_find(&d, x, i);
 
-    if (d.key[k] == EMPTY) {
+    if (d.key[k] == DICT_EMPTY) {
       dict_put(&d, k, i);
     }
     p_out[i] = d.key[k] + 1;
@@ -178,7 +163,7 @@ SEXP vctrs_match(SEXP needles, SEXP haystack) {
   for (int i = 0; i < n_haystack; ++i) {
     uint32_t k = dict_find(&d, haystack, i);
 
-    if (d.key[k] == EMPTY) {
+    if (d.key[k] == DICT_EMPTY) {
       dict_put(&d, k, i);
     }
   }
@@ -190,7 +175,7 @@ SEXP vctrs_match(SEXP needles, SEXP haystack) {
 
   for (int i = 0; i < n_needle; ++i) {
     uint32_t k = dict_find(&d, needles, i);
-    if (d.key[k] == EMPTY) {
+    if (d.key[k] == DICT_EMPTY) {
       p_out[i] = NA_INTEGER;
     } else {
       p_out[i] = d.key[k] + 1;
@@ -211,7 +196,7 @@ SEXP vctrs_in(SEXP needles, SEXP haystack) {
   for (int i = 0; i < n_haystack; ++i) {
     uint32_t k = dict_find(&d, haystack, i);
 
-    if (d.key[k] == EMPTY) {
+    if (d.key[k] == DICT_EMPTY) {
       dict_put(&d, k, i);
     }
   }
@@ -223,7 +208,7 @@ SEXP vctrs_in(SEXP needles, SEXP haystack) {
 
   for (int i = 0; i < n_needle; ++i) {
     uint32_t k = dict_find(&d, needles, i);
-    p_out[i] = (d.key[k] != EMPTY);
+    p_out[i] = (d.key[k] != DICT_EMPTY);
   }
   UNPROTECT(1);
   dict_free(&d);
@@ -241,7 +226,7 @@ SEXP vctrs_count(SEXP x) {
   for (int i = 0; i < n; ++i) {
     int32_t k = dict_find(&d, x, i);
 
-    if (d.key[k] == EMPTY) {
+    if (d.key[k] == DICT_EMPTY) {
       dict_put(&d, k, i);
       p_val[k] = 0;
     }
@@ -256,7 +241,7 @@ SEXP vctrs_count(SEXP x) {
 
   int i = 0;
   for (int k = 0; k < d.size; ++k) {
-    if (d.key[k] == EMPTY)
+    if (d.key[k] == DICT_EMPTY)
       continue;
 
     p_out_key[i] = d.key[k] + 1;
@@ -288,7 +273,7 @@ SEXP vctrs_duplicated(SEXP x) {
   for (int i = 0; i < n; ++i) {
     int32_t k = dict_find(&d, x, i);
 
-    if (d.key[k] == EMPTY) {
+    if (d.key[k] == DICT_EMPTY) {
       dict_put(&d, k, i);
       p_val[k] = 0;
     }
@@ -331,7 +316,7 @@ SEXP vctrs_duplicate_split(SEXP x) {
   for (int i = 0; i < n; ++i) {
     uint32_t k = dict_find(&d, x, i);
 
-    if (d.key[k] == EMPTY) {
+    if (d.key[k] == DICT_EMPTY) {
       p_tracker[k] = d.used;
       dict_put(&d, k, i);
       p_count[k] = 0;
@@ -352,7 +337,7 @@ SEXP vctrs_duplicate_split(SEXP x) {
 
   // Set up empty index container
   for (int k = 0; k < d.size; ++k) {
-    if (d.key[k] == EMPTY) {
+    if (d.key[k] == DICT_EMPTY) {
       continue;
     }
 
