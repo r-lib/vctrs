@@ -39,10 +39,8 @@
 #' that `as.integer.double()` would.
 #'
 #' Whenever you implement a `vec_cast.new_class()` generic/method,
-#' make sure to always provide `vec_cast.new_class.default()` (
-#' which should call [stop_incompatible_cast()]) and
-#' `vec_cast.new_class.vctrs_unspecified()` (which should call
-#' [vec_unspecified_cast()]).
+#' make sure to always provide `vec_cast.new_class.default()` and
+#' call [vec_default_cast()] from that method.
 #'
 #' See `vignette("s3-vector")` for full details.
 #'
@@ -134,6 +132,30 @@ vec_cast_common <- function(..., .to = NULL) {
 vec_cast.default <- function(x, to) {
   stop_incompatible_cast(x, to)
 }
+
+#' Default cast method
+#'
+#' @description
+#'
+#' This function should typically be called from the default
+#' [vec_cast()] method for your class, e.g. `vec_cast.myclass.default()`.
+#' It does two things:
+#'
+#' * If `x` is an [unspecified] vector, it automatically casts it to
+#'   `to` using [vec_na()].
+#'
+#' * Otherwise, an error is thrown with [stop_incompatible_cast()].
+#'
+#' @inheritParams vec_cast
+#' @export
+vec_default_cast <- function(x, to) {
+  if (is_unspecified(x)) {
+    vec_na(to, length(x))
+  } else {
+    stop_incompatible_cast(x, to)
+  }
+}
+
 
 #' @export
 #' @rdname vec_cast
