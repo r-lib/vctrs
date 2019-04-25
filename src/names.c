@@ -103,6 +103,7 @@ SEXP vctrs_minimal_names(SEXP x) {
 
 void stop_large_name();
 bool is_dotdotint(const char* name);
+ptrdiff_t suffix_pos(const char* name);
 
 static struct cow as_unique_names(struct cow cow_names) {
   SEXP names = cow_names.obj;
@@ -115,21 +116,37 @@ static struct cow as_unique_names(struct cow cow_names) {
   R_len_t n = Rf_length(names);
   SEXP* ptr = STRING_PTR(names);
 
+  cow_names = cow_maybe_copy(cow_names);
+  names = cow_names.obj;
+
   dictionary d;
   dict_init(&d, names);
   SEXP dups = PROTECT(Rf_allocVector(INTSXP, d.size));
   int* dups_ptr = INTEGER(dups);
 
-  cow_names = cow_maybe_copy(cow_names);
-  names = cow_names.obj;
 
   for (; i < n; ++i, ++ptr) {
     SEXP elt = *ptr;
 
     // Set `NA` and dots values to "" so they get replaced by `...n` later on
     if (elt == NA_STRING || elt == strings_dots || is_dotdotint(CHAR(elt))) {
-      SET_STRING_ELT(names, i, strings_empty);
       elt = strings_empty;
+      SET_STRING_ELT(names, i, elt);
+      SET_STRING_ELT(d.x, i, elt);
+    }
+
+    // Strip `...n` suffixes
+    const char* nm = CHAR(elt);
+    int pos = suffix_pos(nm);
+    if (pos >= 0) {
+      R_CheckStack2(pos + 1);
+      char buf[pos + 1];
+      memcpy(buf, nm, pos);
+      buf[pos] = '\0';
+
+      elt = Rf_mkChar(buf);
+      SET_STRING_ELT(names, i, elt);
+      SET_STRING_ELT(d.x, i, elt);
     }
 
     // Duplicates need a `...n` suffix
@@ -195,8 +212,92 @@ bool is_dotdotint(const char* name) {
     return false;
   }
 
-  return (bool) strtol(name + 2, NULL, 10);
+  if (name[2] == '.') {
+    name += 3;
+  } else {
+    name += 2;
+  }
+
+  return (bool) strtol(name, NULL, 10);
 }
+
+static bool is_digit(const char c) {
+  switch (c) {
+  case '0':
+  case '1':
+  case '2':
+  case '3':
+  case '4':
+  case '5':
+  case '6':
+  case '7':
+  case '8':
+  case '9':
+    return true;
+  default:
+    return false;
+  }
+}
+
+ptrdiff_t suffix_pos(const char* name) {
+  int n = strlen(name);
+
+  const char* suffix_end = NULL;
+  int in_dots = 0;
+  bool in_digits = false;
+
+  for (const char* ptr = name + n - 1; ptr >= name; --ptr) {
+    char c = *ptr;
+
+    if (in_digits) {
+      if (c == '.') {
+        in_digits = false;
+        in_dots = 1;
+        continue;
+      }
+
+      if (is_digit(c)) {
+        continue;
+      }
+
+      goto done;
+    }
+
+    switch (in_dots) {
+    case 0:
+      if (is_digit(c)) {
+        in_digits = true;
+        continue;
+      }
+      goto done;
+    case 1:
+    case 2:
+      if (c == '.') {
+        ++in_dots;
+        continue;
+      }
+      goto done;
+    case 3:
+      suffix_end = ptr + 1;
+      if (is_digit(c)) {
+        in_dots = 0;
+        in_digits = true;
+        continue;
+      }
+      goto done;
+
+    default:
+      Rf_error("Internal error: Unexpected state in `suffix_pos()`");
+    }}
+
+ done:
+  if (suffix_end) {
+    return suffix_end - name;
+  } else {
+    return -1;
+  }
+}
+
 void stop_large_name() {
   Rf_errorcall(R_NilValue, "Can't tidy up name because it is too large");
 }
