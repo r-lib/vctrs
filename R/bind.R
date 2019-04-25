@@ -188,6 +188,10 @@ as_df_row.NULL <- function(x, quiet = FALSE) x
 
 #' @export
 as_df_row.default <- function(x, quiet = FALSE) {
+  if (is_unspecified(x) && identical(names(x), NULL)) {
+    return(x)
+  }
+
   if (vec_dims(x) == 1L) {
     x <- as.list(x)
     if (is_installed("tibble")) {
