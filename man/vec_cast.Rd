@@ -91,10 +91,8 @@ of the final method uses the same convention as \code{as.xyz()} methods, i.e.
 that \code{as.integer.double()} would.
 
 Whenever you implement a \code{vec_cast.new_class()} generic/method,
-make sure to always provide \code{vec_cast.new_class.default()} (
-which should call \code{\link[=stop_incompatible_cast]{stop_incompatible_cast()}}) and
-\code{vec_cast.new_class.vctrs_unspecified()} (which should call
-\code{\link[=vec_unspecified_cast]{vec_unspecified_cast()}}).
+make sure to always provide \code{vec_cast.new_class.default()} and
+call \code{\link[=vec_default_cast]{vec_default_cast()}} from that method.
 
 See \code{vignette("s3-vector")} for full details.
 }

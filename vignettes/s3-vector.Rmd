@@ -206,8 +206,7 @@ vec_type2.MYCLASS.default <- function(x, y, ..., x_arg = "", y_arg = "") {
 vec_type2.MYCLASS.vctrs_unspecified <- function(x, y, ...) x
 
 vec_cast.MYCLASS <- function(x, to) UseMethod("vec_cast.MYCLASS")
-vec_cast.MYCLASS.default <- function(x, to) stop_incompatible_cast(x, to)
-vec_cast.MYCLASS.logical <- function(x, to) vec_unspecified_cast(x, to)
+vec_cast.MYCLASS.default <- function(x, to) vec_default_cast(x, to)
 ```
 
 We'll discuss what this boilerplate does in the upcoming sections; just remember you'll always need to copy and paste it when creating a new S3 class.
@@ -260,8 +259,7 @@ Next we implement explicit casting, again starting with the boilerplate:
 
 ```{r}
 vec_cast.vctrs_percent <- function(x, to) UseMethod("vec_cast.vctrs_percent")
-vec_cast.vctrs_percent.default <- function(x, to) stop_incompatible_cast(x, to)
-vec_cast.vctrs_percent.logical <- function(x, to) vec_unspecified_cast(x, to)
+vec_cast.vctrs_percent.default <- function(x, to) vec_default_cast(x, to)
 ```
 ```{r, include = FALSE}
 s3_register("vctrs::vec_cast", "vctrs_percent")
@@ -387,8 +385,7 @@ vec_type2.vctrs_decimal.default <- function(x, y, ..., x_arg = "", y_arg = "") {
 vec_type2.vctrs_decimal.vctrs_unspecified <- function(x, y, ...) x
 
 vec_cast.vctrs_decimal <- function(x, to) UseMethod("vec_cast.vctrs_decimal")
-vec_cast.vctrs_decimal.default <- function(x, to) stop_incompatible_cast(x, to)
-vec_cast.vctrs_decimal.logical <- function(x, to) vec_unspecified_cast(x, to)
+vec_cast.vctrs_decimal.default <- function(x, to) vec_default_cast(x, to)
 ```
 
 Casting and coercing from one decimal to another requires a little thought as the values of the `digits` attribute might be different, and we need some way to reconcile them. Here I've chosen to chose the maximum of the two; other reasonable options are to take the value from the left-hand side or throw an error.
@@ -587,8 +584,7 @@ vec_type2.vctrs_rational.integer <- function(x, y, ...) new_rational()
 vec_type2.integer.vctrs_rational <- function(x, y, ...) new_rational()
 
 vec_cast.vctrs_rational <- function(x, to) UseMethod("vec_cast.vctrs_rational")
-vec_cast.vctrs_rational.default <- function(x, to) stop_incompatible_cast(x, to)
-vec_cast.vctrs_rational.logical <- function(x, to) vec_unspecified_cast(x, to)
+vec_cast.vctrs_rational.default <- function(x, to) vec_default_cast(x, to)
 vec_cast.vctrs_rational.vctrs_rational <- function(x, to) x
 vec_cast.double.vctrs_rational <- function(x, to) field(x, "n") / field(x, "d")
 vec_cast.vctrs_rational.integer <- function(x, to) rational(x, 1)

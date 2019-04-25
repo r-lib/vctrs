@@ -89,9 +89,11 @@ test_that("invalid casts generate error", {
   expect_error(vec_cast(integer(), date), class = "vctrs_error_incompatible_cast")
 })
 
-test_that("can cast NA", {
-  expect_equal(vec_cast(NA, new_date()), new_date(NA_real_))
+test_that("can cast NA and unspecified to Date", {
+  expect_identical(vec_cast(NA, new_date()), new_date(NA_real_))
+  expect_identical(vec_cast(unspecified(2), new_date()), new_date(dbl(NA, NA)))
 })
+
 
 # cast: datetimes -----------------------------------------------------------
 
@@ -136,10 +138,15 @@ test_that("dates become midnight in date-time tzone", {
   expect_equal(format(date2_l, "%H:%M"), "00:00")
 })
 
-test_that("can cast NA", {
-  expect_equal(vec_cast(NA, new_datetime()), new_datetime(NA_real_))
-  expect_equal(vec_cast(NA, as.POSIXlt(new_datetime())), new_datetime(NA_real_))
+test_that("can cast NA and unspecified to POSIXct and POSIXlt", {
+  dtc <- as.POSIXct("2020-01-01")
+  dtl <- as.POSIXlt("2020-01-01")
+  expect_identical(vec_cast(NA, dtc), vec_na(dtc))
+  expect_identical(vec_cast(NA, dtl), vec_na(dtl))
+  expect_identical(vec_cast(unspecified(2), dtc), vec_na(dtc, 2))
+  expect_identical(vec_cast(unspecified(2), dtl), vec_na(dtl, 2))
 })
+
 
 # cast: durations ------------------------------------------------------------
 
@@ -159,9 +166,11 @@ test_that("invalid casts generate error", {
   expect_error(vec_cast(integer(), dt), class = "vctrs_error_incompatible_cast")
 })
 
-test_that("can cast NA", {
-  expect_equal(vec_cast(NA, new_duration()), new_duration(NA_real_))
+test_that("can cast NA and unspecified to duration", {
+  expect_identical(vec_cast(NA, new_duration()), new_duration(na_dbl))
+  expect_identical(vec_cast(unspecified(2), new_duration()), new_duration(dbl(NA, NA)))
 })
+
 
 # arithmetic --------------------------------------------------------------
 

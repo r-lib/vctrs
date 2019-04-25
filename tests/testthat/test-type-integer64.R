@@ -17,9 +17,7 @@ test_that("casting of integer64 works", {
   expect_equal(vec_cast(c(TRUE, FALSE), bit64::integer64()), bit64::as.integer64(c(1, 0)))
 
   expect_equal(vec_cast(NA, bit64::integer64()), bit64::as.integer64(NA))
-
-  expect_error(vec_cast(x, unspecified()), class = "vctrs_error_incompatible_cast")
-  expect_equal(vec_cast(unspecified(), x), bit64::as.integer64(NULL))
+  expect_equal(vec_cast(unspecified(2), bit64::integer64()), bit64::as.integer64(c(NA, NA)))
 
   expect_error(vec_cast(x, factor()), class = "vctrs_error_incompatible_cast")
   expect_error(vec_cast(factor(), x), class = "vctrs_error_incompatible_cast")

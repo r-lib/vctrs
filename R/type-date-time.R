@@ -192,15 +192,9 @@ vec_cast.Date.list <- function(x, to) {
   vec_list_cast(x, to)
 }
 #' @export
-#' @method vec_cast.Date logical
-vec_cast.Date.logical <- function(x, to) {
-  vec_unspecified_cast(x, to)
-}
-
-#' @export
 #' @method vec_cast.Date default
 vec_cast.Date.default <- function(x, to) {
-  stop_incompatible_cast(x, to)
+  vec_default_cast(x, to)
 }
 
 #' @rdname new_date
@@ -241,14 +235,9 @@ vec_cast.POSIXct.list <- function(x, to) {
   vec_list_cast(x, to)
 }
 #' @export
-#' @method vec_cast.POSIXct logical
-vec_cast.POSIXct.logical <- function(x, to) {
-  vec_unspecified_cast(x, to)
-}
-#' @export
 #' @method vec_cast.POSIXct default
 vec_cast.POSIXct.default <- function(x, to) {
-  stop_incompatible_cast(x, to)
+  vec_default_cast(x, to)
 }
 
 #' @rdname new_date
@@ -289,14 +278,9 @@ vec_cast.POSIXlt.list <- function(x, to) {
   vec_list_cast(x, to)
 }
 #' @export
-#' @method vec_cast.POSIXlt logical
-vec_cast.POSIXlt.logical <- function(x, to) {
-  vec_unspecified_cast(x, to)
-}
-#' @export
 #' @method vec_cast.POSIXlt default
 vec_cast.POSIXlt.default <- function(x, to) {
-  stop_incompatible_cast(x, to)
+  vec_default_cast(x, to)
 }
 
 
@@ -329,15 +313,11 @@ vec_cast.difftime.list <- function(x, to) {
   vec_list_cast(x, to)
 }
 #' @export
-#' @method vec_cast.difftime logical
-vec_cast.difftime.logical <- function(x, to) {
-  vec_unspecified_cast(x, to)
-}
-#' @export
 #' @method vec_cast.difftime default
 vec_cast.difftime.default <- function(x, to) {
-  stop_incompatible_cast(x, to)
+  vec_default_cast(x, to)
 }
+
 
 # Arithmetic --------------------------------------------------------------
 

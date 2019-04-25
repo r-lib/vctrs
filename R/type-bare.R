@@ -46,7 +46,7 @@ vec_cast.logical.list <- function(x, to) {
 #' @export
 #' @method vec_cast.logical default
 vec_cast.logical.default <- function(x, to) {
-  stop_incompatible_cast(x, to)
+  vec_default_cast(x, to)
 }
 
 #' @export
@@ -86,7 +86,7 @@ vec_cast.integer.list <- function(x, to) {
 #' @export
 #' @method vec_cast.integer default
 vec_cast.integer.default <- function(x, to) {
-  stop_incompatible_cast(x, to)
+  vec_default_cast(x, to)
 }
 
 #' @export
@@ -126,7 +126,7 @@ vec_cast.double.list <- function(x, to) {
 #' @export
 #' @method vec_cast.double default
 vec_cast.double.default <- function(x, to) {
-  stop_incompatible_cast(x, to)
+  vec_default_cast(x, to)
 }
 
 #' @export
@@ -149,7 +149,7 @@ vec_cast.raw.list <- function(x, to) {
 #' @export
 #' @method vec_cast.raw default
 vec_cast.raw.default <- function(x, to) {
-  stop_incompatible_cast(x, to)
+  vec_default_cast(x, to)
 }
 
 #' @export
@@ -190,7 +190,7 @@ vec_cast.character.list <- function(x, to) {
 #' @export
 #' @method vec_cast.character default
 vec_cast.character.default <- function(x, to) {
-  stop_incompatible_cast(x, to)
+  vec_default_cast(x, to)
 }
 
 #' @rdname vec_cast
@@ -208,6 +208,10 @@ vec_cast.list.list <- function(x, to) {
 #' @export
 #' @method vec_cast.list default
 vec_cast.list.default <- function(x, to) {
+  if (inherits(x, "vctrs_unspecified")) {
+    return(vec_na(to, length(x)))
+  }
+
   out <- lapply(seq_along(x), function(i) x[[i]])
 
   if (!is.object(to)) {

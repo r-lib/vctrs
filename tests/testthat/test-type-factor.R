@@ -70,9 +70,11 @@ test_that("can cast to character", {
   expect_equal(vec_cast(ordered("X"), character()), "X")
 })
 
-test_that("can cast NA to factor", {
-  expect_equal(vec_cast(NA, new_factor()), factor(NA))
-  expect_equal(vec_cast(NA, new_ordered()), ordered(NA))
+test_that("can cast NA and unspecified to factor", {
+  expect_identical(vec_cast(NA, new_factor()), factor(NA))
+  expect_identical(vec_cast(NA, new_ordered()), ordered(NA))
+  expect_identical(vec_cast(unspecified(2), new_factor()), factor(c(NA, NA)))
+  expect_identical(vec_cast(unspecified(2), new_ordered()), ordered(c(NA, NA)))
 })
 
 test_that("lossy factor casts fail", {
