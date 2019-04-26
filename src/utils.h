@@ -53,6 +53,9 @@ SEXP r_peek_option(const char* option);
 SEXP r_pairlist(SEXP* tags, SEXP* cars);
 SEXP r_call(SEXP fn, SEXP* tags, SEXP* cars);
 
+SEXP r_names(SEXP x);
+bool r_has_name_at(SEXP names, R_len_t i);
+
 static inline const char* r_chr_get_c_string(SEXP chr, R_len_t i) {
   return CHAR(STRING_ELT(chr, i));
 }

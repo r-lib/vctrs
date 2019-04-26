@@ -111,22 +111,34 @@ static r_ssize_t wrapper_arg_fill(struct vctrs_arg* self, char* buf, r_ssize_t r
 
 static r_ssize_t counter_arg_fill(struct vctrs_arg* self, char* buf, r_ssize_t remaining);
 
-struct vctrs_arg_counter new_counter_arg(struct vctrs_arg* parent, R_len_t* i) {
+struct vctrs_arg_counter new_counter_arg(struct vctrs_arg* parent,
+                                         R_len_t* i,
+                                         SEXP* names) {
   struct vctrs_arg_counter counter = {
     .iface = {
       .parent = parent,
       .fill = &counter_arg_fill
     },
-    .i = (void*) i
+    .i = (void*) i,
+    .names = names
   };
 
   return counter;
 }
 
 static r_ssize_t counter_arg_fill(struct vctrs_arg* self, char* buf, r_ssize_t remaining) {
-  R_len_t* i = ((struct vctrs_arg_counter*) self)->i;
+  struct vctrs_arg_counter* counter = (struct vctrs_arg_counter*) self;
+  R_len_t i = *counter->i;
+  SEXP names = *counter->names;
 
-  int len = snprintf(buf, remaining, "list(...)[[%d]]", *i);
+  int len;
+  if (r_has_name_at(names, i)) {
+    // FIXME: Check for syntactic names
+    len = snprintf(buf, remaining, "list(...)$%s", r_chr_get_c_string(names, i));
+  } else {
+    len = snprintf(buf, remaining, "list(...)[[%d]]", i + 1);
+  }
+
   if (len >= remaining) {
     return -1;
   } else {

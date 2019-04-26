@@ -13,3 +13,28 @@ vec_type_common(large_df1, large_df2):
 
 No common type for `list(...)[[1]]$foobarfoobarfoobarfoobarfoobarfoobarfoobarfoobarfoobarfoobarfoobarfoobarfoobarfoobarfoobarfoobarfoobarfoobarfoobarfoobar$y$z` <double> and `list(...)[[2]]$foobarfoobarfoobarfoobarfoobarfoobarfoobarfoobarfoobarfoobarfoobarfoobarfoobarfoobarfoobarfoobarfoobarfoobarfoobarfoobar$y$z` <character>. 
 
+
+vec_type_common(foo = TRUE, bar = "foo"):
+
+No common type for `list(...)$foo` <logical> and `list(...)$bar` <character>. 
+
+
+vec_type_common(foo = TRUE, baz = FALSE, bar = "foo"):
+
+No common type for `list(...)$baz` <logical> and `list(...)$bar` <character>. 
+
+
+vec_type_common(TRUE, !!!list(1, "foo")):
+
+No common type for `list(...)[[1]]` <double> and `list(...)[[2]]` <character>. 
+
+
+vec_type_common(foo = TRUE, !!!list(bar = 1, "foo")):
+
+No common type for `list(...)[[1]]` <double> and `list(...)[[2]]` <character>. 
+
+
+vec_type_common(foo = TRUE, !!!list(bar = "foo")):
+
+No common type for `list(...)[[1]]` <logical> and `list(...)[[2]]` <character>. 
+

@@ -40,14 +40,18 @@ struct vctrs_arg_wrapper {
 struct vctrs_arg_counter {
   struct vctrs_arg iface;
   R_len_t* i;
+  SEXP* names;
 };
 
 
 /**
  * Constructors for argument wrapper and counters.
  */
-struct vctrs_arg_wrapper new_wrapper_arg(struct vctrs_arg* parent, const char* arg);
-struct vctrs_arg_counter new_counter_arg(struct vctrs_arg* parent, R_len_t* i);
+struct vctrs_arg_wrapper new_wrapper_arg(struct vctrs_arg* parent,
+                                         const char* arg);
+struct vctrs_arg_counter new_counter_arg(struct vctrs_arg* parent,
+                                         R_len_t* i,
+                                         SEXP* names);
 
 /**
  * Materialise an argument tag. Returns a CHARSXP.

@@ -320,6 +320,24 @@ SEXP r_call(SEXP fn, SEXP* tags, SEXP* cars) {
   return Rf_lcons(fn, r_pairlist(tags, cars));
 }
 
+SEXP r_names(SEXP x) {
+  return Rf_getAttrib(x, R_NamesSymbol);
+}
+
+bool r_has_name_at(SEXP names, R_len_t i) {
+  if (TYPEOF(names) != STRSXP) {
+    return false;
+  }
+
+  R_len_t n = Rf_length(names);
+  if (n <= i) {
+    Rf_error("Internal error: Names shorter than expected: (%d/%d)", i + 1, n);
+  }
+
+  SEXP elt = STRING_ELT(names, i);
+  return elt != NA_STRING && elt != Rf_mkChar("");
+}
+
 
 SEXP vctrs_ns_env = NULL;
 SEXP vctrs_shared_empty_str = NULL;

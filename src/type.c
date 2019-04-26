@@ -55,44 +55,99 @@ bool vec_is_partial(SEXP x) {
 }
 
 
-static SEXP vctrs_type_common_impl(SEXP current, SEXP types, bool spliced);
+struct counters {
+  // Actual counters
+  R_len_t i;
+  R_len_t j;
 
-static SEXP vctrs_type_common_type(SEXP current, SEXP elt, bool spliced) {
-  // Don't call `rlang_is_splice_box()` if we're already looking at a
-  // spliced list because it's expensive
-  if (!spliced && rlang_is_splice_box(elt)) {
-    return vctrs_type_common_impl(current, rlang_unbox(elt), true);
-  } else {
-    return vec_type(elt);
-  }
+  SEXP names;
+
+  // `vctrs_arg`-derived objects
+  struct vctrs_arg_counter x_counter;
+  struct vctrs_arg_counter y_counter;
+
+  // `vctrs_arg` handles
+  struct vctrs_arg* x;
+  struct vctrs_arg* y;
+};
+
+struct counters new_counters(SEXP names, struct vctrs_arg* first_arg) {
+  struct counters counters = {
+    .i = 0,
+    .j = 1,
+    .names = names
+  };
+
+  counters.x_counter = new_counter_arg(NULL, &counters.i, &counters.names);
+  counters.y_counter = new_counter_arg(NULL, &counters.j, &counters.names);
+  counters.x = first_arg;
+  counters.y = (struct vctrs_arg*) &counters.x_counter;
+
+  return counters;
 }
 
-static SEXP vctrs_type_common_impl(SEXP current, SEXP types, bool spliced) {
+
+static SEXP vctrs_type_common_impl(SEXP current,
+                                   SEXP types,
+                                   struct counters* counters,
+                                   bool spliced);
+
+static SEXP vctrs_type_common_type(SEXP current,
+                                   SEXP elt,
+                                   struct counters* counters,
+                                   bool spliced) {
+  // Don't call `rlang_is_splice_box()` if we're already looking at a
+  // spliced list because it's expensive
+  if (spliced || !rlang_is_splice_box(elt)) {
+    return vec_type(elt);
+  }
+
+  // Unset outer names while we're reducing over the splice box
+  // FIXME: Should keep names at least for `current`
+  SEXP old = counters->names;
+  counters->names = R_NilValue;
+
+  SEXP out = vctrs_type_common_impl(current, rlang_unbox(elt), counters, true);
+
+  counters->names = old;
+  return out;
+}
+
+static SEXP vctrs_type_common_impl(SEXP current,
+                                   SEXP types,
+                                   struct counters* counters,
+                                   bool spliced) {
   R_len_t n = Rf_length(types);
 
   if (!n) {
+    // FIXME: Should this return `current`?
     return R_NilValue;
   }
 
-  current = PROTECT(current);
+  // The first comparison uses a different argument tag corresponding
+  // to `current`
+  SEXP elt = VECTOR_ELT(types, 0);
+  SEXP elt_type = PROTECT(vctrs_type_common_type(current, elt, counters, spliced));
 
-  R_len_t i = 0;
-  R_len_t j = 1;
+  current = vec_type2(current, elt_type, counters->x, counters->y);
 
-  struct vctrs_arg_counter x_arg_counter = new_counter_arg(NULL, &i);
-  struct vctrs_arg_counter y_arg_counter = new_counter_arg(NULL, &j);
-  struct vctrs_arg* x_arg = (struct vctrs_arg*) &x_arg_counter;
-  struct vctrs_arg* y_arg = (struct vctrs_arg*) &y_arg_counter;
+  UNPROTECT(1);
+  PROTECT(current);
 
-  for (; i < n; ++i, ++j) {
+  // Reset global counters after first comparison
+  counters->x = (struct vctrs_arg*) &counters->x_counter;
+  counters->y = (struct vctrs_arg*) &counters->y_counter;
+
+
+  for (R_len_t i = 1; i < n; ++i, ++(counters->i), ++(counters->j)) {
     SEXP elt = VECTOR_ELT(types, i);
 
     if (elt == R_NilValue) {
       continue;
     }
 
-    SEXP elt_type = PROTECT(vctrs_type_common_type(current, elt, spliced));
-    current = vec_type2(current, elt_type, x_arg, y_arg);
+    SEXP elt_type = PROTECT(vctrs_type_common_type(current, elt, counters, spliced));
+    current = vec_type2(current, elt_type, counters->x, counters->y);
 
     // Reprotect `current`
     UNPROTECT(2);
@@ -118,10 +173,14 @@ SEXP vctrs_type_common(SEXP call, SEXP op, SEXP args, SEXP env) {
 
   SEXP types = PROTECT(rlang_env_dots_values(env));
 
-  SEXP type = PROTECT(vctrs_type_common_impl(ptype, types, false));
+  SEXP names = PROTECT(r_names(types));
+  struct vctrs_arg_wrapper ptype_arg = new_wrapper_arg(NULL, ".ptype");
+  struct counters counters = new_counters(names, (struct vctrs_arg*) &ptype_arg);
+
+  SEXP type = PROTECT(vctrs_type_common_impl(ptype, types, &counters, false));
   type = vec_type_finalise(type);
 
-  UNPROTECT(3);
+  UNPROTECT(4);
   return type;
 }
 
