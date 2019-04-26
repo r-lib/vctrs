@@ -24,6 +24,11 @@ vec_type_common(foo = TRUE, baz = FALSE, bar = "foo"):
 No common type for `list(...)$baz` <logical> and `list(...)$bar` <character>. 
 
 
+vec_type_common(foo = TRUE, !!!list(FALSE, FALSE), bar = "foo"):
+
+No common type for `list(...)[[3]]` <logical> and `list(...)$bar` <character>. 
+
+
 vec_type_common(TRUE, !!!list(1, "foo")):
 
 No common type for `list(...)[[1]]` <double> and `list(...)[[2]]` <character>. 

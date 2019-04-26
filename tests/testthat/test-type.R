@@ -68,6 +68,7 @@ test_that("vec_type_common() includes index in argument tag", {
 
     try2(vec_type_common(foo = TRUE, bar = "foo"))
     try2(vec_type_common(foo = TRUE, baz = FALSE, bar = "foo"))
+    try2(vec_type_common(foo = TRUE, !!!list(FALSE, FALSE), bar = "foo"))
 
     try2(vec_type_common(TRUE, !!!list(1, "foo")))
     try2(vec_type_common(foo = TRUE, !!!list(bar = 1, "foo")))

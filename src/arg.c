@@ -114,7 +114,8 @@ static r_ssize_t counter_arg_fill(struct vctrs_arg* self, char* buf, r_ssize_t r
 struct vctrs_arg_counter new_counter_arg(struct vctrs_arg* parent,
                                          R_len_t* i,
                                          int offset,
-                                         SEXP* names) {
+                                         SEXP* names,
+                                         R_len_t* names_i) {
   struct vctrs_arg_counter counter = {
     .iface = {
       .parent = parent,
@@ -122,7 +123,8 @@ struct vctrs_arg_counter new_counter_arg(struct vctrs_arg* parent,
     },
     .i = i,
     .offset = offset,
-    .names = names
+    .names = names,
+    .names_i = names_i
   };
 
   return counter;
@@ -131,12 +133,14 @@ struct vctrs_arg_counter new_counter_arg(struct vctrs_arg* parent,
 static r_ssize_t counter_arg_fill(struct vctrs_arg* self, char* buf, r_ssize_t remaining) {
   struct vctrs_arg_counter* counter = (struct vctrs_arg_counter*) self;
   R_len_t i = *counter->i + counter->offset;
+
   SEXP names = *counter->names;
+  R_len_t names_i = *counter->names_i + counter->offset;
 
   int len;
-  if (r_has_name_at(names, i)) {
+  if (r_has_name_at(names, names_i)) {
     // FIXME: Check for syntactic names
-    len = snprintf(buf, remaining, "list(...)$%s", r_chr_get_c_string(names, i));
+    len = snprintf(buf, remaining, "list(...)$%s", r_chr_get_c_string(names, names_i));
   } else {
     len = snprintf(buf, remaining, "list(...)[[%d]]", i + 1);
   }

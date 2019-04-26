@@ -58,7 +58,9 @@ bool vec_is_partial(SEXP x) {
 struct counters {
   // Global counter
   R_len_t i;
+
   SEXP names;
+  R_len_t names_i;
 
   // `vctrs_arg`-derived objects
   struct vctrs_arg_counter x_counter;
@@ -72,15 +74,23 @@ struct counters {
 struct counters new_counters(SEXP names, struct vctrs_arg* first_arg) {
   struct counters counters = {
     .i = 0,
-    .names = names
+    .names = names,
+    .names_i = 0
   };
 
-  counters.x_counter = new_counter_arg(NULL, &counters.i, 0, &counters.names);
-  counters.y_counter = new_counter_arg(NULL, &counters.i, 1, &counters.names);
+  counters.x_counter = new_counter_arg(NULL, &counters.i, 0, &counters.names, &counters.names_i);
+  counters.y_counter = new_counter_arg(NULL, &counters.i, 1, &counters.names, &counters.names_i);
   counters.x = first_arg;
   counters.y = (struct vctrs_arg*) &counters.x_counter;
 
   return counters;
+}
+
+void counters_inc(struct counters* counters) {
+  ++(counters->i);
+  if (counters->names != R_NilValue) {
+    ++(counters->names_i);
+  }
 }
 
 
@@ -136,7 +146,7 @@ static SEXP vctrs_type_common_impl(SEXP current,
   counters->y = (struct vctrs_arg*) &counters->y_counter;
 
 
-  for (R_len_t i = 1; i < n; ++i, ++(counters->i)) {
+  for (R_len_t i = 1; i < n; ++i, counters_inc(counters)) {
     SEXP elt = VECTOR_ELT(types, i);
 
     if (elt == R_NilValue) {
