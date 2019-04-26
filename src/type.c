@@ -106,7 +106,10 @@ static SEXP vctrs_type_common_type(SEXP current,
   // Don't call `rlang_is_splice_box()` if we're already looking at a
   // spliced list because it's expensive
   if (spliced || !rlang_is_splice_box(elt)) {
-    return vec_type(elt);
+    SEXP elt_type = PROTECT(vec_type(elt));
+    current = vec_type2(current, elt_type, counters->x, counters->y);
+    UNPROTECT(1);
+    return current;
   }
 
   // Unset outer names while we're reducing over the splice box
@@ -114,10 +117,10 @@ static SEXP vctrs_type_common_type(SEXP current,
   SEXP old = counters->names;
   counters->names = R_NilValue;
 
-  SEXP out = vctrs_type_common_impl(current, rlang_unbox(elt), counters, true);
+  current = vctrs_type_common_impl(current, rlang_unbox(elt), counters, true);
 
   counters->names = old;
-  return out;
+  return current;
 }
 
 static SEXP vctrs_type_common_impl(SEXP current,
@@ -133,13 +136,7 @@ static SEXP vctrs_type_common_impl(SEXP current,
 
   // The first comparison uses a different argument tag corresponding
   // to `current`
-  SEXP elt = VECTOR_ELT(types, 0);
-  SEXP elt_type = PROTECT(vctrs_type_common_type(current, elt, counters, spliced));
-
-  current = vec_type2(current, elt_type, counters->x, counters->y);
-
-  UNPROTECT(1);
-  PROTECT(current);
+  current = PROTECT(vctrs_type_common_type(current, VECTOR_ELT(types, 0), counters, spliced));
 
   // Reset global counters after first comparison
   counters->x = (struct vctrs_arg*) &counters->x_counter;
@@ -147,18 +144,10 @@ static SEXP vctrs_type_common_impl(SEXP current,
 
 
   for (R_len_t i = 1; i < n; ++i, counters_inc(counters)) {
-    SEXP elt = VECTOR_ELT(types, i);
-
-    if (elt == R_NilValue) {
-      continue;
-    }
-
-    SEXP elt_type = PROTECT(vctrs_type_common_type(current, elt, counters, spliced));
-    current = vec_type2(current, elt_type, counters->x, counters->y);
+    current = vctrs_type_common_type(current, VECTOR_ELT(types, i), counters, spliced);
 
     // Reprotect `current`
-    UNPROTECT(2);
-    PROTECT(current);
+    UNPROTECT(1); PROTECT(current);
   }
 
   UNPROTECT(1);
