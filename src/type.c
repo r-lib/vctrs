@@ -55,10 +55,10 @@ bool vec_is_partial(SEXP x) {
 }
 
 
-static r_ssize_t common_arg_fill(struct vctrs_arg* self, char* buf, r_ssize_t remaining) {
-  R_len_t i = *((R_len_t*) self->data);
+static r_ssize_t counter_arg_fill(struct vctrs_arg* self, char* buf, r_ssize_t remaining) {
+  R_len_t* i = ((struct vctrs_arg_counter*) self)->i;
 
-  int len = snprintf(buf, remaining, "list(...)[[%d]]", i);
+  int len = snprintf(buf, remaining, "list(...)[[%d]]", *i);
   if (len >= remaining) {
     return -1;
   } else {
@@ -66,13 +66,18 @@ static r_ssize_t common_arg_fill(struct vctrs_arg* self, char* buf, r_ssize_t re
   }
 }
 
-static struct vctrs_arg new_common_arg(struct vctrs_arg* parent, R_len_t* i) {
-  struct vctrs_arg wrapper = {
+static struct vctrs_arg_counter new_counter_arg(struct vctrs_arg* parent, R_len_t* i) {
+  struct vctrs_arg iface = {
     .parent = parent,
-    .data = (void*) i,
-    .fill = &common_arg_fill
+    .fill = &counter_arg_fill
   };
-  return wrapper;
+
+  struct vctrs_arg_counter counter = {
+    .iface = iface,
+    .i = (void*) i
+  };
+
+  return counter;
 }
 
 
@@ -98,8 +103,11 @@ static SEXP vctrs_type_common_impl(SEXP current, SEXP types, bool spliced) {
 
   R_len_t i = 0;
   R_len_t j = 1;
-  struct vctrs_arg x_arg = new_common_arg(NULL, &i);
-  struct vctrs_arg y_arg = new_common_arg(NULL, &j);
+
+  struct vctrs_arg_counter x_arg_counter = new_counter_arg(NULL, &i);
+  struct vctrs_arg_counter y_arg_counter = new_counter_arg(NULL, &j);
+  struct vctrs_arg* x_arg = (struct vctrs_arg*) &x_arg_counter;
+  struct vctrs_arg* y_arg = (struct vctrs_arg*) &y_arg_counter;
 
   for (; i < n; ++i, ++j) {
     SEXP elt = VECTOR_ELT(types, i);
@@ -109,7 +117,7 @@ static SEXP vctrs_type_common_impl(SEXP current, SEXP types, bool spliced) {
     }
 
     SEXP elt_type = PROTECT(vctrs_type_common_type(current, elt, spliced));
-    current = vec_type2(current, elt_type, &x_arg, &y_arg);
+    current = vec_type2(current, elt_type, x_arg, y_arg);
 
     // Reprotect `current`
     UNPROTECT(2);

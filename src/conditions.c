@@ -5,7 +5,7 @@
 
 
 static r_ssize_t arg_fill(struct vctrs_arg* self, char* buf, r_ssize_t remaining) {
-  const char* src = (const char*) self->data;
+  const char* src = ((struct vctrs_arg_wrapper*) self)->arg;
 
   size_t len = strlen(src);
 
@@ -19,12 +19,17 @@ static r_ssize_t arg_fill(struct vctrs_arg* self, char* buf, r_ssize_t remaining
   return len;
 }
 
-struct vctrs_arg new_vctrs_arg(struct vctrs_arg* parent, const char* arg) {
-  struct vctrs_arg wrapper = {
+struct vctrs_arg_wrapper new_vctrs_arg(struct vctrs_arg* parent, const char* arg) {
+  struct vctrs_arg iface = {
     .parent = parent,
-    .data = (const void* ) arg,
     .fill = &arg_fill
   };
+
+  struct vctrs_arg_wrapper wrapper = {
+    .iface = iface,
+    .arg = arg
+  };
+
   return wrapper;
 }
 
@@ -73,12 +78,6 @@ SEXP vctrs_arg(struct vctrs_arg* arg) {
   UNPROTECT(1);
   return out;
 }
-
-struct vctrs_arg args_empty = {
-  .parent = NULL,
-  .data = (const void*) "",
-  .fill = arg_fill
-};
 
 
 void stop_scalar_type(SEXP x, struct vctrs_arg* arg) {
