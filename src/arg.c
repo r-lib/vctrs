@@ -34,6 +34,33 @@ struct vctrs_arg_wrapper new_vctrs_arg(struct vctrs_arg* parent, const char* arg
   return wrapper;
 }
 
+
+static r_ssize_t counter_arg_fill(struct vctrs_arg* self, char* buf, r_ssize_t remaining) {
+  R_len_t* i = ((struct vctrs_arg_counter*) self)->i;
+
+  int len = snprintf(buf, remaining, "list(...)[[%d]]", *i);
+  if (len >= remaining) {
+    return -1;
+  } else {
+    return len;
+  }
+}
+
+struct vctrs_arg_counter new_counter_arg(struct vctrs_arg* parent, R_len_t* i) {
+  struct vctrs_arg iface = {
+    .parent = parent,
+    .fill = &counter_arg_fill
+  };
+
+  struct vctrs_arg_counter counter = {
+    .iface = iface,
+    .i = (void*) i
+  };
+
+  return counter;
+}
+
+
 static int fill_arg_buffer(struct vctrs_arg* arg,
                            char* buf,
                            r_ssize_t cur_size,

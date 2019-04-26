@@ -55,32 +55,6 @@ bool vec_is_partial(SEXP x) {
 }
 
 
-static r_ssize_t counter_arg_fill(struct vctrs_arg* self, char* buf, r_ssize_t remaining) {
-  R_len_t* i = ((struct vctrs_arg_counter*) self)->i;
-
-  int len = snprintf(buf, remaining, "list(...)[[%d]]", *i);
-  if (len >= remaining) {
-    return -1;
-  } else {
-    return len;
-  }
-}
-
-static struct vctrs_arg_counter new_counter_arg(struct vctrs_arg* parent, R_len_t* i) {
-  struct vctrs_arg iface = {
-    .parent = parent,
-    .fill = &counter_arg_fill
-  };
-
-  struct vctrs_arg_counter counter = {
-    .iface = iface,
-    .i = (void*) i
-  };
-
-  return counter;
-}
-
-
 static SEXP vctrs_type_common_impl(SEXP current, SEXP types, bool spliced);
 
 static SEXP vctrs_type_common_type(SEXP current, SEXP elt, bool spliced) {
@@ -92,6 +66,7 @@ static SEXP vctrs_type_common_type(SEXP current, SEXP elt, bool spliced) {
     return vec_type(elt);
   }
 }
+
 static SEXP vctrs_type_common_impl(SEXP current, SEXP types, bool spliced) {
   R_len_t n = Rf_length(types);
 
