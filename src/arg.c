@@ -113,13 +113,15 @@ static r_ssize_t counter_arg_fill(struct vctrs_arg* self, char* buf, r_ssize_t r
 
 struct vctrs_arg_counter new_counter_arg(struct vctrs_arg* parent,
                                          R_len_t* i,
+                                         int offset,
                                          SEXP* names) {
   struct vctrs_arg_counter counter = {
     .iface = {
       .parent = parent,
       .fill = &counter_arg_fill
     },
-    .i = (void*) i,
+    .i = i,
+    .offset = offset,
     .names = names
   };
 
@@ -128,7 +130,7 @@ struct vctrs_arg_counter new_counter_arg(struct vctrs_arg* parent,
 
 static r_ssize_t counter_arg_fill(struct vctrs_arg* self, char* buf, r_ssize_t remaining) {
   struct vctrs_arg_counter* counter = (struct vctrs_arg_counter*) self;
-  R_len_t i = *counter->i;
+  R_len_t i = *counter->i + counter->offset;
   SEXP names = *counter->names;
 
   int len;
