@@ -46,7 +46,7 @@ struct vctrs_arg_counter {
 /**
  * Constructors for argument wrapper and counters.
  */
-struct vctrs_arg_wrapper new_vctrs_arg(struct vctrs_arg* parent, const char* arg);
+struct vctrs_arg_wrapper new_wrapper_arg(struct vctrs_arg* parent, const char* arg);
 struct vctrs_arg_counter new_counter_arg(struct vctrs_arg* parent, R_len_t* i);
 
 /**
