@@ -2,6 +2,13 @@
 #define VCTRS_UTILS_H
 
 
+#define SWAP(T, x, y) do {                      \
+    T tmp = x;                                  \
+    x = y;                                      \
+    y = tmp;                                    \
+  } while (0)
+
+
 bool is_bool(SEXP x);
 
 SEXP vctrs_dispatch_n(SEXP fn_sym, SEXP fn,
