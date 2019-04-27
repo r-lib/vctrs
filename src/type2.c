@@ -24,17 +24,22 @@ static SEXP vctrs_type2_dispatch(SEXP x,
 }
 
 // [[ include("vctrs.h") ]]
-SEXP vec_type2(SEXP x, SEXP y, struct vctrs_arg* x_arg, struct vctrs_arg* y_arg) {
+SEXP vec_type2(SEXP x, SEXP y,
+               struct vctrs_arg* x_arg,
+               struct vctrs_arg* y_arg,
+               int* left) {
   if (x == R_NilValue) {
     if (!vec_is_partial(y)) {
       vec_assert(y, y_arg);
     }
+    *left = y == R_NilValue;
     return y;
   }
   if (y == R_NilValue) {
     if (!vec_is_partial(x)) {
       vec_assert(x, x_arg);
     }
+    *left = x == R_NilValue;
     return x;
   }
 
@@ -52,8 +57,9 @@ SEXP vec_type2(SEXP x, SEXP y, struct vctrs_arg* x_arg, struct vctrs_arg* y_arg)
     stop_scalar_type(y, y_arg);
   }
 
-  int left;
-  switch (vec_typeof2_impl(type_x, type_y, &left)) {
+  enum vctrs_type2 type2 = vec_typeof2_impl(type_x, type_y, left);
+
+  switch (type2) {
   case vctrs_type2_null_null:
     return R_NilValue;
 
@@ -100,7 +106,8 @@ SEXP vctrs_type2(SEXP x, SEXP y, SEXP x_arg, SEXP y_arg) {
   struct vctrs_arg_wrapper x_arg_ = new_wrapper_arg(NULL, r_chr_get_c_string(x_arg, 0));
   struct vctrs_arg_wrapper y_arg_ = new_wrapper_arg(NULL, r_chr_get_c_string(y_arg, 0));
 
-  return vec_type2(x, y, (struct vctrs_arg*) &x_arg_, (struct vctrs_arg*) &y_arg_);
+  int _left;
+  return vec_type2(x, y, (struct vctrs_arg*) &x_arg_, (struct vctrs_arg*) &y_arg_, &_left);
 }
 
 void vctrs_init_type2(SEXP ns) {

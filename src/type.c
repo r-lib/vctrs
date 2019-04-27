@@ -111,7 +111,12 @@ static SEXP vctrs_type_common_type(SEXP current,
   // spliced list because it's expensive
   if (spliced || !rlang_is_splice_box(elt)) {
     SEXP elt_type = PROTECT(vec_type(elt));
-    current = vec_type2(current, elt_type, counters->curr_arg, counters->next_arg);
+    int left;
+    current = vec_type2(current,
+                        elt_type,
+                        counters->curr_arg,
+                        counters->next_arg,
+                        &left);
     UNPROTECT(1);
     return current;
   }
