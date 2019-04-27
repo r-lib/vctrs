@@ -56,38 +56,42 @@ bool vec_is_partial(SEXP x) {
 
 
 struct counters {
-  // Global counter
-  R_len_t i;
+  // Global counters
+  R_len_t curr;
+  R_len_t next;
 
   SEXP names;
   R_len_t names_i;
 
-  // `vctrs_arg`-derived objects
-  struct vctrs_arg_counter x_counter;
-  struct vctrs_arg_counter y_counter;
+  // Actual counter args are stored here
+  struct vctrs_arg_counter curr_counter;
+  struct vctrs_arg_counter next_counter;
 
-  // `vctrs_arg` handles
-  struct vctrs_arg* x;
-  struct vctrs_arg* y;
+  // Polymorphic `vctrs_arg` handles. They typically point to the
+  // local counter args, but might also point to external arg objects
+  // like a `.ptype` arg, or a splice box counter arg.
+  struct vctrs_arg* curr_arg;
+  struct vctrs_arg* next_arg;
 };
 
-struct counters new_counters(SEXP names, struct vctrs_arg* first_arg) {
+struct counters new_counters(SEXP names, struct vctrs_arg* curr_arg) {
   struct counters counters = {
-    .i = 0,
+    .curr = 0,
+    .next = 1,
     .names = names,
     .names_i = 0
   };
 
-  counters.x_counter = new_counter_arg(NULL, &counters.i, 0, &counters.names, &counters.names_i);
-  counters.y_counter = new_counter_arg(NULL, &counters.i, 1, &counters.names, &counters.names_i);
-  counters.x = first_arg;
-  counters.y = (struct vctrs_arg*) &counters.x_counter;
+  counters.curr_counter = new_counter_arg(NULL, &counters.curr, 0, &counters.names, &counters.names_i);
+  counters.next_counter = new_counter_arg(NULL, &counters.next, 0, &counters.names, &counters.names_i);
+  counters.curr_arg = curr_arg;
+  counters.next_arg = (struct vctrs_arg*) &counters.next_counter;
 
   return counters;
 }
 
 void counters_inc(struct counters* counters) {
-  ++(counters->i);
+  ++(counters->curr);
   if (counters->names != R_NilValue) {
     ++(counters->names_i);
   }
@@ -107,7 +111,7 @@ static SEXP vctrs_type_common_type(SEXP current,
   // spliced list because it's expensive
   if (spliced || !rlang_is_splice_box(elt)) {
     SEXP elt_type = PROTECT(vec_type(elt));
-    current = vec_type2(current, elt_type, counters->x, counters->y);
+    current = vec_type2(current, elt_type, counters->curr_arg, counters->next_arg);
     UNPROTECT(1);
     return current;
   }
@@ -139,8 +143,8 @@ static SEXP vctrs_type_common_impl(SEXP current,
   current = PROTECT(vctrs_type_common_type(current, VECTOR_ELT(types, 0), counters, spliced));
 
   // Reset global counters after first comparison
-  counters->x = (struct vctrs_arg*) &counters->x_counter;
-  counters->y = (struct vctrs_arg*) &counters->y_counter;
+  counters->curr_arg = (struct vctrs_arg*) &counters->curr_counter;
+  counters->next_arg = (struct vctrs_arg*) &counters->next_counter;
 
 
   for (R_len_t i = 1; i < n; ++i, counters_inc(counters)) {
