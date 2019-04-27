@@ -23,7 +23,7 @@ struct vctrs_arg args_empty;
 
 void never_reached(const char* fn) __attribute__((noreturn));
 
-enum vctrs_type2 vec_typeof2_impl(enum vctrs_type type_x, enum vctrs_type type_y);
+enum vctrs_type2 vec_typeof2_impl(enum vctrs_type type_x, enum vctrs_type type_y, int* left);
 
 bool is_compact_rownames(SEXP x);
 R_len_t compact_rownames_length(SEXP x);

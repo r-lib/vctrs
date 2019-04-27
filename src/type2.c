@@ -52,7 +52,8 @@ SEXP vec_type2(SEXP x, SEXP y, struct vctrs_arg* x_arg, struct vctrs_arg* y_arg)
     stop_scalar_type(y, y_arg);
   }
 
-  switch (vec_typeof2_impl(type_x, type_y)) {
+  int left;
+  switch (vec_typeof2_impl(type_x, type_y, &left)) {
   case vctrs_type2_null_null:
     return R_NilValue;
 
