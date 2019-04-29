@@ -69,6 +69,8 @@ test_that("vec_type_common() includes index in argument tag", {
     # Names
     try2(vec_type_common(foo = TRUE, bar = "foo"))
     try2(vec_type_common(foo = TRUE, baz = FALSE, bar = "foo"))
+    try2(vec_type_common(foo = df1, bar = df2))
+    try2(vec_type_common(df1, df1, bar = df2))
 
     # One splice box
     try2(vec_type_common(TRUE, !!!list(1, "foo")))
