@@ -138,7 +138,7 @@ static r_ssize_t counter_arg_fill(struct vctrs_arg* self, char* buf, r_ssize_t r
   int len;
   if (r_has_name_at(names, names_i)) {
     // FIXME: Check for syntactic names
-    len = snprintf(buf, remaining, "list(...)$%s", r_chr_get_c_string(names, names_i));
+    len = snprintf(buf, remaining, "%s", r_chr_get_c_string(names, names_i));
   } else {
     len = snprintf(buf, remaining, "list(...)[[%d]]", i + 1);
   }

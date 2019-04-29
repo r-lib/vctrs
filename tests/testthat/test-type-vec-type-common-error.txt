@@ -16,22 +16,22 @@ No common type for `list(...)[[1]]$foobarfoobarfoobarfoobarfoobarfoobarfoobarfoo
 
 vec_type_common(foo = TRUE, bar = "foo"):
 
-No common type for `list(...)$foo` <logical> and `list(...)$bar` <character>. 
+No common type for `foo` <logical> and `bar` <character>. 
 
 
 vec_type_common(foo = TRUE, baz = FALSE, bar = "foo"):
 
-No common type for `list(...)$foo` <logical> and `list(...)$bar` <character>. 
+No common type for `foo` <logical> and `bar` <character>. 
 
 
 vec_type_common(foo = df1, bar = df2):
 
-No common type for `list(...)$foo$x$y$z` <double> and `list(...)$bar$x$y$z` <character>. 
+No common type for `foo$x$y$z` <double> and `bar$x$y$z` <character>. 
 
 
 vec_type_common(df1, df1, bar = df2):
 
-No common type for `list(...)[[1]]$x$y$z` <double> and `list(...)$bar$x$y$z` <character>. 
+No common type for `list(...)[[1]]$x$y$z` <double> and `bar$x$y$z` <character>. 
 
 
 vec_type_common(TRUE, !!!list(1, "foo")):
@@ -51,25 +51,25 @@ No common type for `list(...)[[1]]` <double> and `list(...)[[5]]` <character>.
 
 vec_type_common(foo = TRUE, !!!list(FALSE, FALSE), bar = "foo"):
 
-No common type for `list(...)$foo` <logical> and `list(...)$bar` <character>. 
+No common type for `foo` <logical> and `bar` <character>. 
 
 
 vec_type_common(foo = TRUE, !!!list(bar = 1, "foo")):
 
-No common type for `list(...)$bar` <double> and `list(...)[[3]]` <character>. 
+No common type for `bar` <double> and `list(...)[[3]]` <character>. 
 
 
 vec_type_common(foo = TRUE, !!!list(bar = "foo")):
 
-No common type for `list(...)$foo` <logical> and `list(...)$bar` <character>. 
+No common type for `foo` <logical> and `bar` <character>. 
 
 
 vec_type_common(foo = TRUE, !!!list(bar = FALSE), baz = "chr"):
 
-No common type for `list(...)$foo` <logical> and `list(...)$baz` <character>. 
+No common type for `foo` <logical> and `baz` <character>. 
 
 
 vec_type_common(foo = TRUE, !!!list(bar = FALSE), !!!list(baz = "chr")):
 
-No common type for `list(...)$foo` <logical> and `list(...)$baz` <character>. 
+No common type for `foo` <logical> and `baz` <character>. 
 
