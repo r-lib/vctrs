@@ -76,24 +76,24 @@ struct counters {
   struct vctrs_arg* temp_arg;
 };
 
-struct counters new_counters(SEXP names, struct vctrs_arg* temp_arg) {
-  struct counters counters = {
-    .curr = 0,
-    .next = 0,
-    .names = names,
-    .names_curr = 0,
-    .names_next = 0
-  };
+void init_counters(struct counters* counters,
+                   SEXP names,
+                   struct vctrs_arg* temp_arg) {
+  counters->curr = 0;
+  counters->next = 0;
 
-  counters.curr_counter = new_counter_arg(NULL, &counters.curr, 0, &counters.names, &counters.names_curr);
-  counters.next_counter = new_counter_arg(NULL, &counters.next, 0, &counters.names, &counters.names_next);
+  counters->names = names;
+  counters->names_curr = 0;
+  counters->names_next = 0;
 
-  counters.curr_arg = (struct vctrs_arg*) &counters.curr_counter;
-  counters.next_arg = (struct vctrs_arg*) &counters.next_counter;
+  counters->curr_counter = new_counter_arg(NULL, &counters->curr, 0, &counters->names, &counters->names_curr);
+  counters->next_counter = new_counter_arg(NULL, &counters->next, 0, &counters->names, &counters->names_next);
 
-  counters.temp_arg = temp_arg;
+  counters->curr_arg = (struct vctrs_arg*) &counters->curr_counter;
+  counters->next_arg = (struct vctrs_arg*) &counters->next_counter;
 
-  return counters;
+  counters->temp_arg = temp_arg;
+  counters->temp_arg = counters->curr_arg;
 }
 
 void counters_inc(struct counters* counters) {
@@ -179,10 +179,11 @@ SEXP vctrs_type_common(SEXP call, SEXP op, SEXP args, SEXP env) {
   }
 
   SEXP types = PROTECT(rlang_env_dots_values(env));
-
   SEXP names = PROTECT(r_names(types));
+
   struct vctrs_arg_wrapper ptype_arg = new_wrapper_arg(NULL, ".ptype");
-  struct counters counters = new_counters(names, (struct vctrs_arg*) &ptype_arg);
+  struct counters counters;
+  init_counters(&counters, names, (struct vctrs_arg*) &ptype_arg);
 
   SEXP type = PROTECT(vctrs_type_common_impl(ptype, types, &counters, false));
   type = vec_type_finalise(type);
