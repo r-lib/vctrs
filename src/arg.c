@@ -76,13 +76,13 @@ static int fill_arg_buffer(struct vctrs_arg* arg,
 
 // Simple wrapper around a `const char*` argument tag
 
-static r_ssize_t arg_fill(struct vctrs_arg* self, char* buf, r_ssize_t remaining);
+static r_ssize_t wrapper_arg_fill(struct vctrs_arg* self, char* buf, r_ssize_t remaining);
 
 struct vctrs_arg_wrapper new_wrapper_arg(struct vctrs_arg* parent, const char* arg) {
   struct vctrs_arg_wrapper wrapper = {
     .iface = {
       .parent = parent,
-      .fill = &arg_fill
+      .fill = &wrapper_arg_fill
     },
     .arg = arg
   };
@@ -90,7 +90,7 @@ struct vctrs_arg_wrapper new_wrapper_arg(struct vctrs_arg* parent, const char* a
   return wrapper;
 }
 
-static r_ssize_t arg_fill(struct vctrs_arg* self, char* buf, r_ssize_t remaining) {
+static r_ssize_t wrapper_arg_fill(struct vctrs_arg* self, char* buf, r_ssize_t remaining) {
   const char* src = ((struct vctrs_arg_wrapper*) self)->arg;
 
   size_t len = strlen(src);
