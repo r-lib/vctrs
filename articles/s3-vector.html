@@ -277,25 +277,27 @@
 <a class="sourceLine" id="cb21-5" data-line-number="5"><span class="co">#&gt; [1] &lt;NA&gt; 50%</span></a>
 <a class="sourceLine" id="cb21-6" data-line-number="6"><span class="co"># but</span></a>
 <a class="sourceLine" id="cb21-7" data-line-number="7"><span class="kw"><a href="../reference/vec_c.html">vec_c</a></span>(<span class="ot">TRUE</span>, <span class="kw">percent</span>(<span class="fl">0.5</span>))</a>
-<a class="sourceLine" id="cb21-8" data-line-number="8"><span class="co">#&gt; No common type for &lt;logical&gt; and &lt;vctrs_percent&gt;.</span></a>
-<a class="sourceLine" id="cb21-9" data-line-number="9"></a>
-<a class="sourceLine" id="cb21-10" data-line-number="10">x &lt;-<span class="st"> </span><span class="kw">percent</span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="fl">0.5</span>, <span class="dv">1</span>, <span class="dv">2</span>))</a>
-<a class="sourceLine" id="cb21-11" data-line-number="11">x[<span class="dv">1</span><span class="op">:</span><span class="dv">2</span>] &lt;-<span class="st"> </span><span class="dv">2</span><span class="op">:</span><span class="dv">1</span></a>
-<a class="sourceLine" id="cb21-12" data-line-number="12"><span class="co">#&gt; Can't cast &lt;integer&gt; to &lt;vctrs_percent&gt;</span></a>
-<a class="sourceLine" id="cb21-13" data-line-number="13">x[[<span class="dv">3</span>]] &lt;-<span class="st"> </span><span class="fl">0.5</span></a>
-<a class="sourceLine" id="cb21-14" data-line-number="14">x</a>
-<a class="sourceLine" id="cb21-15" data-line-number="15"><span class="co">#&gt; &lt;vctrs_percent[3]&gt;</span></a>
-<a class="sourceLine" id="cb21-16" data-line-number="16"><span class="co">#&gt; [1] 50%  100% 50%</span></a></code></pre></div>
+<a class="sourceLine" id="cb21-8" data-line-number="8"><span class="co">#&gt; No common type for `list(...)[[1]]` &lt;logical&gt; and `list(...)[[2]]`</span></a>
+<a class="sourceLine" id="cb21-9" data-line-number="9"><span class="co">#&gt; &lt;vctrs_percent&gt;.</span></a>
+<a class="sourceLine" id="cb21-10" data-line-number="10"></a>
+<a class="sourceLine" id="cb21-11" data-line-number="11">x &lt;-<span class="st"> </span><span class="kw">percent</span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="fl">0.5</span>, <span class="dv">1</span>, <span class="dv">2</span>))</a>
+<a class="sourceLine" id="cb21-12" data-line-number="12">x[<span class="dv">1</span><span class="op">:</span><span class="dv">2</span>] &lt;-<span class="st"> </span><span class="dv">2</span><span class="op">:</span><span class="dv">1</span></a>
+<a class="sourceLine" id="cb21-13" data-line-number="13"><span class="co">#&gt; Can't cast &lt;integer&gt; to &lt;vctrs_percent&gt;</span></a>
+<a class="sourceLine" id="cb21-14" data-line-number="14">x[[<span class="dv">3</span>]] &lt;-<span class="st"> </span><span class="fl">0.5</span></a>
+<a class="sourceLine" id="cb21-15" data-line-number="15">x</a>
+<a class="sourceLine" id="cb21-16" data-line-number="16"><span class="co">#&gt; &lt;vctrs_percent[3]&gt;</span></a>
+<a class="sourceLine" id="cb21-17" data-line-number="17"><span class="co">#&gt; [1] 50%  100% 50%</span></a></code></pre></div>
 <p>You’ll also get mostly correct behaviour for <code><a href="https://www.rdocumentation.org/packages/base/topics/c">c()</a></code>. The exception is when you use <code><a href="https://www.rdocumentation.org/packages/base/topics/c">c()</a></code> with a base R class:</p>
 <div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb22-1" data-line-number="1"><span class="co"># Correct</span></a>
 <a class="sourceLine" id="cb22-2" data-line-number="2"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="kw">percent</span>(<span class="fl">0.5</span>), <span class="dv">1</span>)</a>
 <a class="sourceLine" id="cb22-3" data-line-number="3"><span class="co">#&gt; [1] 0.5 1.0</span></a>
 <a class="sourceLine" id="cb22-4" data-line-number="4"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="kw">percent</span>(<span class="fl">0.5</span>), <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/factor">factor</a></span>(<span class="dv">1</span>))</a>
-<a class="sourceLine" id="cb22-5" data-line-number="5"><span class="co">#&gt; No common type for &lt;vctrs_percent&gt; and &lt;factor&lt;5b58e&gt;&gt;.</span></a>
-<a class="sourceLine" id="cb22-6" data-line-number="6"></a>
-<a class="sourceLine" id="cb22-7" data-line-number="7"><span class="co"># Incorrect</span></a>
-<a class="sourceLine" id="cb22-8" data-line-number="8"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/factor">factor</a></span>(<span class="dv">1</span>), <span class="kw">percent</span>(<span class="fl">0.5</span>))</a>
-<a class="sourceLine" id="cb22-9" data-line-number="9"><span class="co">#&gt; [1] 1.0 0.5</span></a></code></pre></div>
+<a class="sourceLine" id="cb22-5" data-line-number="5"><span class="co">#&gt; No common type for `list(...)[[1]]` &lt;vctrs_percent&gt; and `list(...)[[2]]`</span></a>
+<a class="sourceLine" id="cb22-6" data-line-number="6"><span class="co">#&gt; &lt;factor&lt;5b58e&gt;&gt;.</span></a>
+<a class="sourceLine" id="cb22-7" data-line-number="7"></a>
+<a class="sourceLine" id="cb22-8" data-line-number="8"><span class="co"># Incorrect</span></a>
+<a class="sourceLine" id="cb22-9" data-line-number="9"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/factor">factor</a></span>(<span class="dv">1</span>), <span class="kw">percent</span>(<span class="fl">0.5</span>))</a>
+<a class="sourceLine" id="cb22-10" data-line-number="10"><span class="co">#&gt; [1] 1.0 0.5</span></a></code></pre></div>
 <p>Unfortunately there’s no way to fix this problem with the current design of <code><a href="https://www.rdocumentation.org/packages/base/topics/c">c()</a></code>.</p>
 <p>Again, as a convenience, consider providing an <code>as_percent()</code> function that makes use of the casts defined in your <code>vec_cast.vctrs_percent()</code> methods:</p>
 <div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb23-1" data-line-number="1">as_percent &lt;-<span class="st"> </span><span class="cf">function</span>(x) {</a>
