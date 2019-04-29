@@ -7,6 +7,7 @@
 bool (*rlang_is_splice_box)(SEXP) = NULL;
 SEXP (*rlang_unbox)(SEXP) = NULL;
 SEXP (*rlang_env_dots_values)(SEXP) = NULL;
+SEXP (*rlang_env_dots_list)(SEXP) = NULL;
 
 
 bool is_bool(SEXP x) {
@@ -362,4 +363,5 @@ void vctrs_init_utils(SEXP ns) {
   rlang_is_splice_box = (bool (*)(SEXP)) R_GetCCallable("rlang", "rlang_is_splice_box");
   rlang_unbox = (SEXP (*)(SEXP)) R_GetCCallable("rlang", "rlang_unbox");
   rlang_env_dots_values = (SEXP (*)(SEXP)) R_GetCCallable("rlang", "rlang_env_dots_values");
+  rlang_env_dots_list = (SEXP (*)(SEXP)) R_GetCCallable("rlang", "rlang_env_dots_list");
 }

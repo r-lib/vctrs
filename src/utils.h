@@ -31,6 +31,7 @@ R_len_t compact_rownames_length(SEXP x);
 bool (*rlang_is_splice_box)(SEXP);
 SEXP (*rlang_unbox)(SEXP);
 SEXP (*rlang_env_dots_values)(SEXP);
+SEXP (*rlang_env_dots_list)(SEXP);
 
 R_len_t r_lgl_sum(SEXP lgl, bool na_true);
 SEXP r_lgl_which(SEXP x, bool na_true);
