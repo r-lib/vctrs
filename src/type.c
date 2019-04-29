@@ -64,6 +64,15 @@ struct counters {
   R_len_t names_curr;
   R_len_t names_next;
 
+  // `names` might be from a splice box whose reduction has already
+  // finished. We protect those from up high.
+  PROTECT_INDEX names_pi;
+
+  // Local counters for splice boxes. We need two of those to handle
+  // the `vec_c(!!!list(foo = 1), !!!list(bar = 2))` case.
+  struct counters* next_box_counters;
+  struct counters* prev_box_counters;
+
   // Actual counter args are stored here
   struct vctrs_arg_counter curr_counter;
   struct vctrs_arg_counter next_counter;
@@ -77,7 +86,9 @@ struct counters {
 
 void init_counters(struct counters* counters,
                    SEXP names,
-                   struct vctrs_arg* curr_arg) {
+                   struct vctrs_arg* curr_arg,
+                   struct counters* prev_box_counters,
+                   struct counters* next_box_counters) {
   counters->curr = 0;
   counters->next = 0;
 
@@ -90,13 +101,32 @@ void init_counters(struct counters* counters,
 
   counters->curr_arg = curr_arg;
   counters->next_arg = (struct vctrs_arg*) &counters->next_counter;
+
+  counters->prev_box_counters = prev_box_counters;
+  counters->next_box_counters = next_box_counters;
+}
+
+void init_next_box_counters(struct counters* counters, SEXP names) {
+  SWAP(struct counters*, counters->prev_box_counters, counters->next_box_counters);
+  struct counters* next = counters->next_box_counters;
+
+  REPROTECT(names, next->names_pi);
+
+  init_counters(next, names, counters->curr_arg, NULL, NULL);
+  next->next = counters->next;
+}
+
+// Stack-based protection, should be called after `init_counters()`
+int PROTECT_COUNTERS(struct counters* counters) {
+  PROTECT_WITH_INDEX(counters->names, &counters->names_pi);
+  PROTECT_WITH_INDEX(R_NilValue, &counters->prev_box_counters->names_pi);
+  PROTECT_WITH_INDEX(R_NilValue, &counters->next_box_counters->names_pi);
+  return 3;
 }
 
 void counters_inc(struct counters* counters) {
   ++(counters->next);
-  if (counters->names != R_NilValue) {
-    ++(counters->names_next);
-  }
+  ++(counters->names_next);
 }
 
 static SEXP vctrs_type_common_impl(SEXP current,
@@ -130,14 +160,16 @@ static SEXP vctrs_type_common_type(SEXP current,
     return current;
   }
 
-  // Unset outer names while we're reducing over the splice box
-  // FIXME: Should keep names at least for `current`
-  SEXP old = counters->names;
-  counters->names = R_NilValue;
+  elt = PROTECT(rlang_unbox(elt));
+  init_next_box_counters(counters, r_names(elt));
+  struct counters* box_counters = counters->next_box_counters;
 
-  current = vctrs_type_common_impl(current, rlang_unbox(elt), counters, true);
+  current = vctrs_type_common_impl(current, elt, box_counters, true);
 
-  counters->names = old;
+  counters->curr_arg = box_counters->curr_arg;
+  counters->next = box_counters->next;
+
+  UNPROTECT(1);
   return current;
 }
 
@@ -170,16 +202,26 @@ SEXP vctrs_type_common(SEXP call, SEXP op, SEXP args, SEXP env) {
   }
 
   SEXP types = PROTECT(rlang_env_dots_values(env));
-  SEXP names = PROTECT(r_names(types));
 
+  // Store the box counters here as they might outlive their frame
+  struct counters next_box_counters;
+  struct counters prev_box_counters;
+
+  // Start with the `.ptype` argument
   struct vctrs_arg_wrapper ptype_arg = new_wrapper_arg(NULL, ".ptype");
+
   struct counters counters;
-  init_counters(&counters, names, (struct vctrs_arg*) &ptype_arg);
+  init_counters(&counters,
+                r_names(types),
+                (struct vctrs_arg*) &ptype_arg,
+                &prev_box_counters,
+                &next_box_counters);
+  int n_protect = PROTECT_COUNTERS(&counters);
 
   SEXP type = PROTECT(vctrs_type_common_impl(ptype, types, &counters, false));
   type = vec_type_finalise(type);
 
-  UNPROTECT(4);
+  UNPROTECT(3 + n_protect);
   return type;
 }
 

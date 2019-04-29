@@ -46,12 +46,12 @@ No common type for `list(...)$foo` <logical> and `list(...)$bar` <character>.
 
 vec_type_common(foo = TRUE, !!!list(bar = 1, "foo")):
 
-No common type for `list(...)[[2]]` <double> and `list(...)[[3]]` <character>. 
+No common type for `list(...)$bar` <double> and `list(...)[[3]]` <character>. 
 
 
 vec_type_common(foo = TRUE, !!!list(bar = "foo")):
 
-No common type for `list(...)[[1]]` <logical> and `list(...)[[2]]` <character>. 
+No common type for `list(...)$foo` <logical> and `list(...)$bar` <character>. 
 
 
 vec_type_common(foo = TRUE, !!!list(bar = FALSE), baz = "chr"):
@@ -61,5 +61,5 @@ No common type for `list(...)$foo` <logical> and `list(...)$baz` <character>.
 
 vec_type_common(foo = TRUE, !!!list(bar = FALSE), !!!list(baz = "chr")):
 
-No common type for `list(...)[[1]]` <logical> and `list(...)[[4]]` <character>. 
+No common type for `list(...)$foo` <logical> and `list(...)$baz` <character>. 
 
