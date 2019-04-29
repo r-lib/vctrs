@@ -113,7 +113,6 @@ static r_ssize_t counter_arg_fill(struct vctrs_arg* self, char* buf, r_ssize_t r
 
 struct vctrs_arg_counter new_counter_arg(struct vctrs_arg* parent,
                                          R_len_t* i,
-                                         int offset,
                                          SEXP* names,
                                          R_len_t* names_i) {
   struct vctrs_arg_counter counter = {
@@ -122,7 +121,6 @@ struct vctrs_arg_counter new_counter_arg(struct vctrs_arg* parent,
       .fill = &counter_arg_fill
     },
     .i = i,
-    .offset = offset,
     .names = names,
     .names_i = names_i
   };
@@ -132,10 +130,10 @@ struct vctrs_arg_counter new_counter_arg(struct vctrs_arg* parent,
 
 static r_ssize_t counter_arg_fill(struct vctrs_arg* self, char* buf, r_ssize_t remaining) {
   struct vctrs_arg_counter* counter = (struct vctrs_arg_counter*) self;
-  R_len_t i = *counter->i + counter->offset;
+  R_len_t i = *counter->i;
 
   SEXP names = *counter->names;
-  R_len_t names_i = *counter->names_i + counter->offset;
+  R_len_t names_i = *counter->names_i;
 
   int len;
   if (r_has_name_at(names, names_i)) {

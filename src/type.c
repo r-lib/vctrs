@@ -86,8 +86,8 @@ void init_counters(struct counters* counters,
   counters->names_curr = 0;
   counters->names_next = 0;
 
-  counters->curr_counter = new_counter_arg(NULL, &counters->curr, 0, &counters->names, &counters->names_curr);
-  counters->next_counter = new_counter_arg(NULL, &counters->next, 0, &counters->names, &counters->names_next);
+  counters->curr_counter = new_counter_arg(NULL, &counters->curr, &counters->names, &counters->names_curr);
+  counters->next_counter = new_counter_arg(NULL, &counters->next, &counters->names, &counters->names_next);
 
   counters->curr_arg = (struct vctrs_arg*) &counters->curr_counter;
   counters->next_arg = (struct vctrs_arg*) &counters->next_counter;

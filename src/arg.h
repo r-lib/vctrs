@@ -53,7 +53,6 @@ struct vctrs_arg_wrapper new_wrapper_arg(struct vctrs_arg* parent,
                                          const char* arg);
 struct vctrs_arg_counter new_counter_arg(struct vctrs_arg* parent,
                                          R_len_t* i,
-                                         int offset,
                                          SEXP* names,
                                          R_len_t* names_i);
 
