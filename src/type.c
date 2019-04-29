@@ -73,12 +73,11 @@ struct counters {
   // like a `.ptype` arg, or a splice box counter arg.
   struct vctrs_arg* curr_arg;
   struct vctrs_arg* next_arg;
-  struct vctrs_arg* temp_arg;
 };
 
 void init_counters(struct counters* counters,
                    SEXP names,
-                   struct vctrs_arg* temp_arg) {
+                   struct vctrs_arg* curr_arg) {
   counters->curr = 0;
   counters->next = 0;
 
@@ -89,11 +88,8 @@ void init_counters(struct counters* counters,
   counters->curr_counter = new_counter_arg(NULL, &counters->curr, &counters->names, &counters->names_curr);
   counters->next_counter = new_counter_arg(NULL, &counters->next, &counters->names, &counters->names_next);
 
-  counters->curr_arg = (struct vctrs_arg*) &counters->curr_counter;
+  counters->curr_arg = curr_arg;
   counters->next_arg = (struct vctrs_arg*) &counters->next_counter;
-
-  counters->temp_arg = temp_arg;
-  counters->temp_arg = counters->curr_arg;
 }
 
 void counters_inc(struct counters* counters) {
@@ -118,21 +114,16 @@ static SEXP vctrs_type_common_type(SEXP current,
     elt = PROTECT(vec_type(elt));
 
     int left;
-    current = vec_type2(current,
-                        elt,
-                        counters->temp_arg ? counters->temp_arg :counters->curr_arg,
-                        counters->next_arg,
-                        &left);
+    current = vec_type2(current, elt, counters->curr_arg, counters->next_arg, &left);
 
     // Update current if RHS is the common type
     if (!left) {
-      if (counters->temp_arg) {
-        counters->temp_arg = NULL;
-      } else {
-        SWAP(struct vctrs_arg_counter, counters->curr_counter, counters->next_counter);
-        SWAP(R_len_t*, counters->curr_counter.i, counters->next_counter.i);
-        counters->curr = counters->next;
-      }
+      SWAP(struct vctrs_arg_counter, counters->curr_counter, counters->next_counter);
+      SWAP(R_len_t*, counters->curr_counter.i, counters->next_counter.i);
+      SWAP(R_len_t*, counters->curr_counter.names_i, counters->next_counter.names_i);
+      counters->curr_arg = (struct vctrs_arg*) &counters->curr_counter;
+      counters->next_arg = (struct vctrs_arg*) &counters->next_counter;
+      counters->curr = counters->next;
     }
 
     UNPROTECT(1);
