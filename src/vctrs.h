@@ -7,6 +7,9 @@
 #include <stdint.h>
 
 
+typedef R_xlen_t r_ssize_t;
+
+
 // Vector types -------------------------------------------------
 
 enum vctrs_type {
@@ -133,6 +136,9 @@ bool vec_is_unspecified(SEXP x);
 
 
 // Vector methods ------------------------------------------------
+
+#include "arg.h"
+
 SEXP vec_proxy(SEXP x);
 R_len_t vec_size(SEXP x);
 SEXP vec_cast(SEXP x, SEXP to);
@@ -140,7 +146,7 @@ SEXP vec_slice(SEXP x, SEXP index);
 SEXP vec_restore(SEXP x, SEXP to, SEXP i);
 SEXP vec_type(SEXP x);
 SEXP vec_type_finalise(SEXP x);
-SEXP vec_type2(SEXP x, SEXP y, const char* x_arg, const char* y_arg);
+SEXP vec_type2(SEXP x, SEXP y, struct vctrs_arg* x_arg, struct vctrs_arg* y_arg);
 bool vec_is_unspecified(SEXP x);
 
 bool is_data_frame(SEXP x);
@@ -194,8 +200,8 @@ bool has_dim(SEXP x);
 // Conditions ---------------------------------------------------
 
 void vctrs_stop_unsupported_type(enum vctrs_type, const char* fn) __attribute__((noreturn));
-void stop_scalar_type(SEXP x, const char* arg) __attribute__((noreturn));
-void vec_assert(SEXP x, const char* arg);
+void stop_scalar_type(SEXP x, struct vctrs_arg* arg) __attribute__((noreturn));
+void vec_assert(SEXP x, struct vctrs_arg* arg);
 
 
 // Compatibility ------------------------------------------------

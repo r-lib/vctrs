@@ -66,6 +66,7 @@ static SEXP vctrs_type_common_type(SEXP current, SEXP elt, bool spliced) {
     return vec_type(elt);
   }
 }
+
 static SEXP vctrs_type_common_impl(SEXP current, SEXP types, bool spliced) {
   R_len_t n = Rf_length(types);
 
@@ -75,7 +76,15 @@ static SEXP vctrs_type_common_impl(SEXP current, SEXP types, bool spliced) {
 
   current = PROTECT(current);
 
-  for (R_len_t i = 0; i < n; ++i) {
+  R_len_t i = 0;
+  R_len_t j = 1;
+
+  struct vctrs_arg_counter x_arg_counter = new_counter_arg(NULL, &i);
+  struct vctrs_arg_counter y_arg_counter = new_counter_arg(NULL, &j);
+  struct vctrs_arg* x_arg = (struct vctrs_arg*) &x_arg_counter;
+  struct vctrs_arg* y_arg = (struct vctrs_arg*) &y_arg_counter;
+
+  for (; i < n; ++i, ++j) {
     SEXP elt = VECTOR_ELT(types, i);
 
     if (elt == R_NilValue) {
@@ -83,7 +92,7 @@ static SEXP vctrs_type_common_impl(SEXP current, SEXP types, bool spliced) {
     }
 
     SEXP elt_type = PROTECT(vctrs_type_common_type(current, elt, spliced));
-    current = vec_type2(current, elt_type, "", "");
+    current = vec_type2(current, elt_type, x_arg, y_arg);
 
     // Reprotect `current`
     UNPROTECT(2);

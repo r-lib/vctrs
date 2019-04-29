@@ -59,3 +59,13 @@ test_that("vec_c() handles matrices", {
     m <- matrix(1:4, nrow = 2)
     expect_identical(vec_c(m, m), matrix(c(1:2, 1:2, 3:4, 3:4), nrow = 4))
 })
+
+test_that("vec_c() includes index in argument tag", {
+  df1 <- tibble(x = tibble(y = tibble(z = 1)))
+  df2 <- tibble(x = tibble(y = tibble(z = "a")))
+
+  expect_known_output(file = test_path("test-type-vec-c-error.txt"), {
+    try2(vec_c(df1, df2))
+    try2(vec_c(df1, df1, df2))
+  })
+})
