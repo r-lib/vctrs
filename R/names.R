@@ -1,9 +1,9 @@
 
 minimal_names <- function(x) {
-  names <- names(x)
+  names <- vec_bare_names(x)
 
   if (is.null(names)) {
-    rep_along(x, "")
+    rep_len("", vec_size(x))
   } else {
     as_minimal_names(names)
   }

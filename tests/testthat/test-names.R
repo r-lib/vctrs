@@ -53,6 +53,11 @@ test_that("as_minimal_names() is idempotent", {
   expect_identical(as_minimal_names(x), as_minimal_names(as_minimal_names(x)))
 })
 
+test_that("minimal_names() treats data frames and arrays as vectors", {
+  expect_identical(minimal_names(mtcars), rep_len("", nrow(mtcars)))
+  expect_identical(minimal_names(as.matrix(mtcars)), row.names(mtcars))
+})
+
 
 # unique names -------------------------------------------------------------
 
