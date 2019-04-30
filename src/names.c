@@ -67,11 +67,16 @@ SEXP vctrs_as_minimal_names(SEXP names) {
 }
 
 SEXP vec_names(SEXP x) {
-  if (Rf_inherits(x, "data.frame")) {
+  if (OBJECT(x) && Rf_inherits(x, "data.frame")) {
     return R_NilValue;
   }
+
   if (vec_dim(x) == 1) {
-    return r_names(x);
+    if (OBJECT(x)) {
+      return vctrs_dispatch1(syms_names, fns_names, syms_x, x);
+    } else {
+      return r_names(x);
+    }
   }
 
   SEXP dimnames = PROTECT(Rf_getAttrib(x, R_DimNamesSymbol));

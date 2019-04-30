@@ -520,6 +520,7 @@ SEXP syms_y_arg = NULL;
 
 SEXP fns_bracket = NULL;
 SEXP fns_quote = NULL;
+SEXP fns_names = NULL;
 
 void vctrs_init_utils(SEXP ns) {
   vctrs_ns_env = ns;
@@ -571,6 +572,7 @@ void vctrs_init_utils(SEXP ns) {
 
   fns_bracket = Rf_findVar(syms_bracket, R_BaseEnv);
   fns_quote = Rf_findVar(Rf_install("quote"), R_BaseEnv);
+  fns_names = Rf_findVar(Rf_install("names"), R_BaseEnv);
 
   new_env_call = r_parse_eval("as.call(list(new.env, TRUE, NULL, NULL))", R_BaseEnv);
   R_PreserveObject(new_env_call);

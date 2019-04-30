@@ -10,6 +10,13 @@ test_that("vec_names() retrieves names", {
   expect_identical(vec_names(Titanic), dimnames(Titanic)[[1]])
 })
 
+test_that("vec_names() dispatches", {
+  scoped_global_bindings(
+    names.vctrs_foobar = function(x) "dispatched!"
+  )
+  expect_identical(vec_names(foobar()), "dispatched!")
+})
+
 test_that("vec_names<- sets names", {
   x <- letters
   vec_names(x) <- letters
