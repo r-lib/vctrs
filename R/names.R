@@ -1,4 +1,45 @@
 
+vec_names <- function(x,
+                      ...,
+                      names_repair = c("minimal", "unique", "universal"),
+                      quiet = FALSE) {
+  if (...length()) {
+    ellipsis::check_dots_empty()
+  }
+  switch(arg_match(names_repair),
+    minimal = minimal_names(x),
+    unique = as_unique_names(minimal_names(x), quiet = quiet),
+    universal = as_universal_names(minimal_names(x), quiet = quiet)
+  )
+}
+vec_as_names <- function(names,
+                         ...,
+                         names_repair = c("minimal", "unique", "universal"),
+                         quiet = FALSE) {
+  if (...length()) {
+    ellipsis::check_dots_empty()
+  }
+  switch(arg_match(names_repair),
+    minimal = as_minimal_names(names),
+    unique = as_unique_names(as_minimal_names(names), quiet = quiet),
+    universal = as_universal_names(as_minimal_names(names), quiet = quiet)
+  )
+}
+vec_repair_names <- function(x,
+                             names_repair = c("minimal", "unique", "universal"),
+                             ...,
+                             quiet = FALSE) {
+  if (...length()) {
+    ellipsis::check_dots_empty()
+  }
+  names <- switch(arg_match(names_repair),
+    minimal = minimal_names(x),
+    unique = as_unique_names(minimal_names(x), quiet = quiet),
+    universal = as_universal_names(minimal_names(x), quiet = quiet)
+  )
+  set_names(x, names)
+}
+
 minimal_names <- function(x) {
   names <- vec_bare_names(x)
 
@@ -35,19 +76,17 @@ as_minimal_names <- function(names) {
   }
   names %|% ""
 }
-as_unique_names <- function(names, ..., quiet = FALSE) {
-  ellipsis::check_dots_empty()
+as_unique_names <- function(names, quiet = FALSE) {
   as_unique_names_impl(names, quiet, FALSE)
 }
-as_universal_names <- function(names, ..., quiet = FALSE) {
-  ellipsis::check_dots_empty()
+as_universal_names <- function(names, quiet = FALSE) {
   as_unique_names_impl(names, quiet, TRUE)
 }
 
 as_unique_names_impl <- function(names, quiet, syntactic) {
   new_names <- rep_along(names, "")
 
-  naked_names <- strip_pos(two_to_three_dots(as_minimal_names(names)))
+  naked_names <- strip_pos(two_to_three_dots(names))
   empty <- naked_names %in% c("", "...")
 
   if (syntactic) {
@@ -64,18 +103,6 @@ as_unique_names_impl <- function(names, quiet, syntactic) {
   }
 
   new_names
-}
-
-set_minimal_names <- function(x) {
-  set_names(x, minimal_names(x))
-}
-set_unique_names <- function(x, ..., quiet = FALSE) {
-  ellipsis::check_dots_empty()
-  set_names(x, as_unique_names(minimal_names(x), quiet = quiet))
-}
-set_universal_names <- function(x, ..., quiet = FALSE) {
-  ellipsis::check_dots_empty()
-  set_names(x, as_universal_names(minimal_names(x), quiet = quiet))
 }
 
 two_to_three_dots <- function(names) {

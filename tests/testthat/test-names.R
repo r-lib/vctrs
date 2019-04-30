@@ -28,6 +28,42 @@ test_that("vec_bare_names<- sets names", {
 })
 
 
+# vec_names() --------------------------------------------------------------
+
+test_that("vec_names() repairs names", {
+  expect_identical(vec_names(1:2), c("", ""))
+  expect_identical(vec_names(1:2, names_repair = "unique"), c("...1", "...2"))
+  expect_identical(vec_names(set_names(1:2, c("_foo", "_bar")), names_repair = "universal"), c("._foo", "._bar"))
+})
+
+test_that("vec_names() treats data frames and arrays as vectors", {
+  expect_identical(vec_names(mtcars), rep_len("", nrow(mtcars)))
+  expect_identical(vec_names(as.matrix(mtcars)), row.names(mtcars))
+})
+
+
+# vec_as_names() -----------------------------------------------------------
+
+test_that("vec_as_names() requires character vector", {
+  expect_error(vec_as_names(NULL), "`names` must be a character vector")
+})
+
+test_that("vec_as_names() repairs names", {
+  expect_identical(vec_as_names(chr(NA, NA)), c("", ""))
+  expect_identical(vec_as_names(chr(NA, NA), names_repair = "unique"), c("...1", "...2"))
+  expect_identical(vec_as_names(chr("_foo", "_bar"), names_repair = "universal"), c("._foo", "._bar"))
+})
+
+
+# vec_repair_names() -------------------------------------------------------
+
+test_that("vec_repair_names() repairs names", {
+  expect_identical(vec_repair_names(1:2), set_names(1:2, c("", "")))
+  expect_identical(vec_repair_names(1:2, "unique"), set_names(1:2, c("...1", "...2")))
+  expect_identical(vec_repair_names(set_names(1:2, c("_foo", "_bar")), "universal"), set_names(1:2, c("._foo", "._bar")))
+})
+
+
 # minimal names -------------------------------------------------------------
 
 test_that("minimal names are made from `n` when `name = NULL`", {
@@ -42,9 +78,9 @@ test_that("minimal names have '' instead of NAs", {
   expect_identical(as_minimal_names(c("", NA, "", NA)), c("", "", "", ""))
 })
 
-test_that("set_minimal_names() copes with NULL input names", {
+test_that("repairing minimal names copes with NULL input names", {
   x <- 1:3
-  x_named <- set_minimal_names(x)
+  x_named <- vec_repair_names(x)
   expect_equal(names(x_named), rep("", 3))
 })
 
