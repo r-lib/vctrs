@@ -46,6 +46,7 @@ extern SEXP vec_type(SEXP);
 extern SEXP vec_type_finalise(SEXP);
 extern SEXP vctrs_minimal_names(SEXP);
 extern SEXP vctrs_as_minimal_names(SEXP);
+extern SEXP vec_names(SEXP);
 
 // Defined below
 SEXP vctrs_init(SEXP);
@@ -90,6 +91,7 @@ static const R_CallMethodDef CallEntries[] = {
   {"vctrs_type_finalise",              (DL_FUNC) &vec_type_finalise, 1},
   {"vctrs_minimal_names",              (DL_FUNC) &vctrs_minimal_names, 1},
   {"vctrs_as_minimal_names",           (DL_FUNC) &vctrs_as_minimal_names, 1},
+  {"vctrs_names",                      (DL_FUNC) &vec_names, 1},
   {NULL, NULL, 0}
 };
 

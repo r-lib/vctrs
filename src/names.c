@@ -65,16 +65,36 @@ SEXP vctrs_as_minimal_names(SEXP names) {
   return out;
 }
 
+SEXP vec_names(SEXP x) {
+  if (Rf_inherits(x, "data.frame")) {
+    return R_NilValue;
+  }
+  if (vec_dim(x) == 1) {
+    return r_names(x);
+  }
+
+  SEXP dimnames = PROTECT(Rf_getAttrib(x, R_DimNamesSymbol));
+  if (dimnames == R_NilValue || Rf_length(dimnames) < 1) {
+    UNPROTECT(1);
+    return R_NilValue;
+  }
+
+  SEXP out = VECTOR_ELT(dimnames, 0);
+  UNPROTECT(1);
+  return out;
+}
+
 SEXP vctrs_minimal_names(SEXP x) {
-  SEXP names = Rf_getAttrib(x, R_NamesSymbol);
+  SEXP names = PROTECT(vec_names(x));
 
   if (names == R_NilValue) {
-    return Rf_allocVector(STRSXP, Rf_length(x));
+    UNPROTECT(1);
+    return Rf_allocVector(STRSXP, vec_size(x));
   }
 
   struct cow cow_names = PROTECT_COW(names);
   names = as_minimal_names(&cow_names);
 
-  UNPROTECT(1);
+  UNPROTECT(2);
   return names;
 }

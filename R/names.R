@@ -229,13 +229,7 @@ minimal_names <- function(x) {
 }
 
 vec_names <- function(x) {
-  if (vec_dims(x) == 1) {
-    names(x)
-  } else if (is.data.frame(x)) {
-    NULL
-  } else {
-    rownames(x)
-  }
+  .Call(vctrs_names, x)
 }
 `vec_names<-` <- function(x, value) {
   if (vec_dims(x) == 1) {

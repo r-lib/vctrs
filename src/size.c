@@ -3,6 +3,15 @@
 
 R_len_t rcrd_size(SEXP x);
 
+
+R_len_t vec_dim(SEXP x) {
+  if (has_dim(x)) {
+    return Rf_length(x);
+  } else {
+    return 1;
+  }
+}
+
 static R_len_t vec_size_impl(SEXP x, bool dispatch) {
   switch (vec_typeof_impl(x, dispatch)) {
   case vctrs_type_null:
