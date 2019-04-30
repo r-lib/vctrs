@@ -9,6 +9,26 @@ minimal_names <- function(x) {
   }
 }
 
+vec_bare_names <- function(x) {
+  if (vec_dims(x) == 1) {
+    names(x)
+  } else if (is.data.frame(x)) {
+    NULL
+  } else {
+    rownames(x)
+  }
+}
+`vec_bare_names<-` <- function(x, value) {
+  if (vec_dims(x) == 1) {
+    names(x) <- value
+  } else if (is.data.frame(x)) {
+    # Do not update row names
+  } else {
+    rownames(x) <- value
+  }
+  x
+}
+
 as_minimal_names <- function(names) {
   if (!is_character(names)) {
     abort("`names` must be a character vector")

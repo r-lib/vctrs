@@ -131,26 +131,3 @@ vec_repeat <- function(x, each = 1L, times = 1L) {
   idx <- rep(vec_seq_along(x), times = times, each = each)
   vec_slice(x, idx)
 }
-
-# Names -------------------------------------------------------------------
-
-vec_names <- function(x) {
-  if (vec_dims(x) == 1) {
-    names(x)
-  } else if (is.data.frame(x)) {
-    NULL
-  } else {
-    rownames(x)
-  }
-}
-
-`vec_names<-` <- function(x, value) {
-  if (vec_dims(x) == 1) {
-    names(x) <- value
-  } else if (is.data.frame(x)) {
-    # Do not update row names
-  } else {
-    rownames(x) <- value
-  }
-  x
-}
