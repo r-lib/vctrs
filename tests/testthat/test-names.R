@@ -63,6 +63,13 @@ test_that("vec_repair_names() repairs names", {
   expect_identical(vec_repair_names(set_names(1:2, c("_foo", "_bar")), "universal"), set_names(1:2, c("._foo", "._bar")))
 })
 
+test_that("vec_repair_names() handles data frames and arrays", {
+  df <- data.frame(x = 1:2)
+  expect_identical(vec_repair_names(df), df)
+  expect_identical(row.names(vec_repair_names(as.matrix(df))), c("", ""))
+  expect_identical(row.names(vec_repair_names(as.matrix(df), "unique")), c("...1", "...2"))
+})
+
 
 # minimal names -------------------------------------------------------------
 

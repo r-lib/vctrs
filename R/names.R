@@ -37,7 +37,7 @@ vec_repair_names <- function(x,
     unique = as_unique_names(minimal_names(x), quiet = quiet),
     universal = as_universal_names(minimal_names(x), quiet = quiet)
   )
-  set_names(x, names)
+  set_bare_names(x, names)
 }
 
 minimal_names <- function(x) {
@@ -69,6 +69,7 @@ vec_bare_names <- function(x) {
   }
   x
 }
+set_bare_names <- `vec_bare_names<-`
 
 as_minimal_names <- function(names) {
   if (!is_character(names)) {
