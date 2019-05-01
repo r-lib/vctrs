@@ -196,34 +196,3 @@ vec_proxy_compare.vctrs_rcrd <- function(x, relax = FALSE) {
 vec_math.vctrs_rcrd <- function(fun, x, ...) {
   stop_unsupported(x, "vec_math")
 }
-
-# Test class ---------------------------------------------------------------
-
-# This simple class is used for testing as defining methods inside
-# a test does not work (because the lexical scope is lost)
-# nocov start
-
-tuple <- function(x = integer(), y = integer()) {
-  fields <- vec_recycle_common(
-    x = vec_cast(x, integer()),
-    y = vec_cast(y, integer())
-  )
-  new_rcrd(fields, class = "tuple")
-}
-
-format.tuple <- function(x, ...) {
-  paste0("(", field(x, "x"), ",", field(x, "y"), ")")
-}
-
-vec_type2.tuple <- function(x, y, ...)  UseMethod("vec_type2.tuple", y)
-vec_type2.tuple.vctrs_unspecified <- function(x, y, ...) tuple()
-vec_type2.tuple.tuple <- function(x, y, ...) tuple()
-vec_type2.tuple.default <- function(x, y, ..., x_arg = "", y_arg = "") {
-  stop_incompatible_type(x, y, x_arg = x_arg, y_arg = y_arg)
-}
-
-vec_cast.tuple <- function(x, to) UseMethod("vec_cast.tuple")
-vec_cast.tuple.list <- function(x, to) vec_list_cast(x, to)
-vec_cast.tuple.tuple <- function(x, to) x
-
-# nocov end
