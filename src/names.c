@@ -2,6 +2,9 @@
 #include "dictionary.h"
 #include "utils.h"
 
+static void describe_repair(SEXP old, SEXP new);
+
+
 // [[ register() ]]
 SEXP vec_names(SEXP x) {
   if (OBJECT(x) && Rf_inherits(x, "data.frame")) {
@@ -207,9 +210,13 @@ static struct sexp_cow as_unique_names(struct sexp_cow cow_names) {
   return cow_names;
 }
 
-SEXP vctrs_as_unique_names(SEXP names) {
+SEXP vctrs_as_unique_names(SEXP names, SEXP quiet) {
   struct sexp_cow cow_names = PROTECT_COW(names);
   cow_names = as_unique_names(cow_names);
+
+  if (!LOGICAL(quiet)[0]) {
+    describe_repair(names, cow_names.obj);
+  }
 
   UNPROTECT(1);
   return cow_names.obj;
@@ -315,21 +322,26 @@ void stop_large_name() {
   Rf_errorcall(R_NilValue, "Can't tidy up name because it is too large");
 }
 
-
 static SEXP names_iota(R_len_t n);
 
-SEXP vctrs_unique_names(SEXP x) {
+SEXP vctrs_unique_names(SEXP x, SEXP quiet) {
   SEXP names = PROTECT(Rf_getAttrib(x, R_NamesSymbol));
 
+  SEXP out;
   if (names == R_NilValue) {
-    UNPROTECT(1);
-    return(names_iota(vec_size(x)));
+    out = PROTECT(names_iota(vec_size(x)));
+  } else {
+    struct sexp_cow cow_names = PROTECT_COW(names);
+    cow_names = as_unique_names(cow_names);
+    out = cow_names.obj;
   }
 
-  names = vctrs_as_unique_names(names);
+  if (!LOGICAL(quiet)[0]) {
+    describe_repair(names, out);
+  }
 
-  UNPROTECT(1);
-  return names;
+  UNPROTECT(2);
+  return(out);
 }
 
 
@@ -359,3 +371,10 @@ static SEXP names_iota(R_len_t n) {
 
 #undef TOTAL_BUF_SIZE
 #undef FREE_BUF_SIZE
+
+
+static void describe_repair(SEXP old, SEXP new) {
+  SEXP call = PROTECT(Rf_lang3(Rf_install("describe_repair"), old, new));
+  Rf_eval(call, vctrs_ns_env);
+  UNPROTECT(1);
+}

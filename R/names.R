@@ -228,7 +228,7 @@ minimal_names <- function(x) {
   .Call(vctrs_minimal_names, x)
 }
 unique_names <- function(x, quiet = FALSE) {
-  .Call(vctrs_unique_names, x)
+  .Call(vctrs_unique_names, x, quiet)
 }
 
 vec_names <- function(x) {
@@ -250,13 +250,7 @@ as_minimal_names <- function(names) {
   .Call(vctrs_as_minimal_names, names)
 }
 as_unique_names <- function(names, quiet = FALSE) {
-  out <- .Call(vctrs_as_unique_names, names)
-
-  if (!quiet) {
-    describe_repair(names, out)
-  }
-
-  out
+  .Call(vctrs_as_unique_names, names, quiet)
 }
 as_universal_names <- function(names, quiet = FALSE) {
   as_unique_names_impl(names, quiet, TRUE)
@@ -374,7 +368,12 @@ re_match <- function(text, pattern, perl = TRUE, ...) {
 
 
 describe_repair <- function(orig_names, names) {
-  stopifnot(length(orig_names) == length(names))
+  if (is_null(orig_names)) {
+    orig_names <- rep_along(names, "")
+  }
+  if (length(orig_names) != length(names)) {
+    stop("Internal error: New names and old names don't have same length")
+  }
 
   new_names <- names != as_minimal_names(orig_names)
   if (any(new_names)) {

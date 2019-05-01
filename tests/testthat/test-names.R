@@ -242,6 +242,14 @@ test_that("unique-ification has an 'algebraic'-y property", {
   expect_identical(z1, z4)
 })
 
+test_that("unique_names() and as_unique_names() are verbose or silent", {
+  expect_message(unique_names(1:2), "-> ...1", fixed = TRUE)
+  expect_message(as_unique_names(c("", "")), "-> ...1", fixed = TRUE)
+
+  expect_message(regexp = NA, unique_names(1:2, quiet = TRUE))
+  expect_message(regexp = NA, as_unique_names(c("", ""), quiet = TRUE))
+})
+
 
 # Universal names ----------------------------------------------------------
 
