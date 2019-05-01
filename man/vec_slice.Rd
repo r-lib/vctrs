@@ -24,14 +24,22 @@ This provides a common interface to extracting and modifying observations
 for all vector types, regardless of dimensionality. It is an analog to \code{[}
 that matches \code{\link[=vec_size]{vec_size()}} instead of \code{length()}.
 }
-\details{
+\section{Genericity}{
+
 \itemize{
-\item \code{vec_slice()} is an S3 generic for which you can implement methods.
-The default method calls \code{[}.
-\item \code{\link[=vec_restore]{vec_restore()}} is called on the slice vector to restore
-the class and attributes.
+\item If the input is a class instance, \code{vec_slice()} falls back to the
+base generic \code{[}. Note that S3 lists are treated as scalars by
+default, and will cause an error if they don't implement a
+\code{\link[=vec_proxy]{vec_proxy()}} method.
+\item The vctrs class methods for \code{[} call back into \code{vec_slice()}.
+They slice the \code{\link[=vec_proxy]{vec_proxy()}} and \code{\link[=vec_restore]{vec_restore()}} the result.
+
+The tools for calling back into \code{vec_slice()} are not exported
+yet, but you can take advantage of this mechanism by inheriting
+from \link[=new_vctr]{vctrs_vctr} or \link[=new_rcrd]{vctrs_rcrd}.
 }
 }
+
 \section{Differences with base R subsetting}{
 
 \itemize{

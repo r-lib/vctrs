@@ -11,13 +11,19 @@
 #'   `integer()` to index none (as in `x[NULL]`).
 #' @param value Replacement values.
 #'
-#' @details
+#' @section Genericity:
 #'
-#' * `vec_slice()` is an S3 generic for which you can implement methods.
-#'   The default method calls `[`.
+#' * If the input is a class instance, `vec_slice()` falls back to the
+#'   base generic `[`. Note that S3 lists are treated as scalars by
+#'   default, and will cause an error if they don't implement a
+#'   [vec_proxy()] method.
 #'
-#' * [vec_restore()] is called on the slice vector to restore
-#'   the class and attributes.
+#' * The vctrs class methods for `[` call back into `vec_slice()`.
+#'   They slice the [vec_proxy()] and [vec_restore()] the result.
+#'
+#'   The tools for calling back into `vec_slice()` are not exported
+#'   yet, but you can take advantage of this mechanism by inheriting
+#'   from [vctrs_vctr][new_vctr] or [vctrs_rcrd][new_rcrd].
 #'
 #' @section Differences with base R subsetting:
 #'
