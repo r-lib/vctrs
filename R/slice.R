@@ -9,7 +9,10 @@
 #'   names of the observations to get/set.
 #'   Specify `TRUE` to index all elements (as in `x[]`), or `NULL`, `FALSE` or
 #'   `integer()` to index none (as in `x[NULL]`).
-#' @param value Replacement values.
+#' @param value Replacement values. `value` is cast to the type of
+#'   `x`, but only if they have a common type. See below for examples
+#'   of this rule.
+#' @return A vector of the same type as `x`.
 #'
 #' @section Genericity:
 #'
@@ -32,6 +35,9 @@
 #'
 #' * `vec_slice()` preserves attributes by default.
 #'
+#' * `vec_slice<-()` is type-stable and always returns the same type
+#'   as the LHS.
+#'
 #' @export
 #' @keywords internal
 #' @examples
@@ -42,6 +48,34 @@
 #' x
 #'
 #' vec_slice(mtcars, 1:3)
+#'
+#'
+#' # Type stability --------------------------------------------------
+#'
+#' # The assign variant is type stable. It always returns the same
+#' # type as the input.
+#' x <- 1:5
+#' vec_slice(x, 2) <- 20.0
+#'
+#' # `x` is still an integer vector because the RHS was cast to the
+#' # type of the LHS:
+#' typeof(x)
+#'
+#' # Compare to `[<-`:
+#' x[2] <- 20.0
+#' typeof(x)
+#'
+#'
+#' # Note that the types must be coercible for the cast to happen.
+#' # For instance, you can cast a character vector to an integer:
+#' vec_cast("1", integer())
+#'
+#' # But these types are not coercible:
+#' try(vec_type2("1", integer()))
+#'
+#' # Hence you cannot assign character values to an integer or double
+#' # vector:
+#' try(vec_slice(x, 2) <- "20")
 vec_slice <- function(x, i) {
   .Call(vctrs_slice, x, i, FALSE)
 }
@@ -75,6 +109,7 @@ vec_slice_native <- function(x, i) {
   }
 
   vec_assert(x)
+  value <- vec_coercible_cast(value, x, x_arg = "value", to_arg = "x")
 
   i <- vec_as_index(i, x)
   value <- vec_recycle(value, vec_size(i))

@@ -133,6 +133,15 @@ vec_cast.default <- function(x, to) {
   stop_incompatible_cast(x, to)
 }
 
+# Cast `x` to `to` but only if they are coercible
+vec_coercible_cast <- function(x, to, ..., x_arg = "", to_arg = "") {
+  if (!missing(...)) {
+    ellipsis::check_dots_empty()
+  }
+  vec_type2(x, to, x_arg = x_arg, y_arg = to_arg)
+  vec_cast(x, to)
+}
+
 #' Default cast method
 #'
 #' @description

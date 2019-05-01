@@ -1,5 +1,9 @@
 # vctrs 0.1.0.9000
 
+* `vec_slice<-` is now type stable (#140). It always returns the same
+  type as the LHS. If needed, the RHS is cast to the correct type, but
+  only if both inputs are coercible. See examples in `?vec_slice`.
+
 * Lossy casts now throw errors of type `vctrs_error_cast_lossy`.  You
   can suppress these errors selectively with `allow_lossy_cast()` to
   get the partial cast results. To implement your own lossy cast
