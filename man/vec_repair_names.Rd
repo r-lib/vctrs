@@ -4,13 +4,13 @@
 \alias{vec_repair_names}
 \title{Repair the names of a vector}
 \usage{
-vec_repair_names(x, names_repair = c("minimal", "unique", "universal"),
-  ..., quiet = FALSE)
+vec_repair_names(x, repair = c("minimal", "unique", "universal"), ...,
+  quiet = FALSE)
 }
 \arguments{
 \item{x}{A vector.}
 
-\item{names_repair}{\itemize{
+\item{repair}{\itemize{
 \item Minimal names are never \code{NULL} or \code{NA}. When an element doesn't
 have a name, its minimal name is an empty string.
 \itemize{

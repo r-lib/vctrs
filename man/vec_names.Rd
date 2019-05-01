@@ -5,18 +5,18 @@
 \alias{vec_as_names}
 \title{Retrieve and repair names}
 \usage{
-vec_names(x, ..., names_repair = c("minimal", "unique", "universal"),
+vec_names(x, ..., repair = c("minimal", "unique", "universal"),
   quiet = FALSE)
 
-vec_as_names(names, ..., names_repair = c("minimal", "unique",
-  "universal"), quiet = FALSE)
+vec_as_names(names, ..., repair = c("minimal", "unique", "universal"),
+  quiet = FALSE)
 }
 \arguments{
 \item{x}{A vector.}
 
 \item{...}{These dots are for future extensions and must be empty.}
 
-\item{names_repair}{\itemize{
+\item{repair}{\itemize{
 \item Minimal names are never \code{NULL} or \code{NA}. When an element doesn't
 have a name, its minimal name is an empty string.
 \itemize{
@@ -44,7 +44,7 @@ vector. It has the following differences:
 \code{NULL} when a vector doesn't have names, \code{vec_names()} returns a
 character vector of empty strings by default. \code{NA} names are also
 converted to \code{""}. You can control how names are repaired with
-the \code{names_repair} argument.
+the \code{repair} argument.
 \item With arrays it returns the row names. With data frames it returns
 an empty character vector as long as the number of rows.
 }
@@ -54,10 +54,10 @@ an empty character vector as long as the number of rows.
 vec_names(1:3)
 
 # You can make them unique:
-vec_names(1:3, names_repair = "unique")
+vec_names(1:3, repair = "unique")
 
 # Universal repairing fixes any non-syntactic name:
 x <- c("_foo" = 1, "+" = 2)
-vec_names(x, names_repair = "universal")
+vec_names(x, repair = "universal")
 
 }

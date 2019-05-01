@@ -9,14 +9,14 @@
 #'   `NULL` when a vector doesn't have names, `vec_names()` returns a
 #'   character vector of empty strings by default. `NA` names are also
 #'   converted to `""`. You can control how names are repaired with
-#'   the `names_repair` argument.
+#'   the `repair` argument.
 #'
 #' * With arrays it returns the row names. With data frames it returns
 #'   an empty character vector as long as the number of rows.
 #'
 #' @param x A vector.
 #' @param ... These dots are for future extensions and must be empty.
-#' @param names_repair
+#' @param repair
 #'   * Minimal names are never `NULL` or `NA`. When an element doesn't
 #'     have a name, its minimal name is an empty string.
 #'
@@ -37,21 +37,21 @@
 #' vec_names(1:3)
 #'
 #' # You can make them unique:
-#' vec_names(1:3, names_repair = "unique")
+#' vec_names(1:3, repair = "unique")
 #'
 #' # Universal repairing fixes any non-syntactic name:
 #' x <- c("_foo" = 1, "+" = 2)
-#' vec_names(x, names_repair = "universal")
+#' vec_names(x, repair = "universal")
 #'
 #' @export
 vec_names <- function(x,
                       ...,
-                      names_repair = c("minimal", "unique", "universal"),
+                      repair = c("minimal", "unique", "universal"),
                       quiet = FALSE) {
   if (...length()) {
     ellipsis::check_dots_empty()
   }
-  switch(arg_match(names_repair),
+  switch(arg_match(repair),
     minimal = minimal_names(x),
     unique = as_unique_names(minimal_names(x), quiet = quiet),
     universal = as_universal_names(minimal_names(x), quiet = quiet)
@@ -62,12 +62,12 @@ vec_names <- function(x,
 #' @export
 vec_as_names <- function(names,
                          ...,
-                         names_repair = c("minimal", "unique", "universal"),
+                         repair = c("minimal", "unique", "universal"),
                          quiet = FALSE) {
   if (...length()) {
     ellipsis::check_dots_empty()
   }
-  switch(arg_match(names_repair),
+  switch(arg_match(repair),
     minimal = as_minimal_names(names),
     unique = as_unique_names(as_minimal_names(names), quiet = quiet),
     universal = as_universal_names(as_minimal_names(names), quiet = quiet)
@@ -186,13 +186,13 @@ vec_as_names <- function(names,
 #'
 #' @export
 vec_repair_names <- function(x,
-                             names_repair = c("minimal", "unique", "universal"),
+                             repair = c("minimal", "unique", "universal"),
                              ...,
                              quiet = FALSE) {
   if (...length()) {
     ellipsis::check_dots_empty()
   }
-  names <- switch(arg_match(names_repair),
+  names <- switch(arg_match(repair),
     minimal = minimal_names(x),
     unique = as_unique_names(minimal_names(x), quiet = quiet),
     universal = as_universal_names(minimal_names(x), quiet = quiet)

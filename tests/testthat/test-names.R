@@ -32,8 +32,8 @@ test_that("vec_bare_names<- sets names", {
 
 test_that("vec_names() repairs names", {
   expect_identical(vec_names(1:2), c("", ""))
-  expect_identical(vec_names(1:2, names_repair = "unique"), c("...1", "...2"))
-  expect_identical(vec_names(set_names(1:2, c("_foo", "_bar")), names_repair = "universal"), c("._foo", "._bar"))
+  expect_identical(vec_names(1:2, repair = "unique"), c("...1", "...2"))
+  expect_identical(vec_names(set_names(1:2, c("_foo", "_bar")), repair = "universal"), c("._foo", "._bar"))
 })
 
 test_that("vec_names() treats data frames and arrays as vectors", {
@@ -50,8 +50,8 @@ test_that("vec_as_names() requires character vector", {
 
 test_that("vec_as_names() repairs names", {
   expect_identical(vec_as_names(chr(NA, NA)), c("", ""))
-  expect_identical(vec_as_names(chr(NA, NA), names_repair = "unique"), c("...1", "...2"))
-  expect_identical(vec_as_names(chr("_foo", "_bar"), names_repair = "universal"), c("._foo", "._bar"))
+  expect_identical(vec_as_names(chr(NA, NA), repair = "unique"), c("...1", "...2"))
+  expect_identical(vec_as_names(chr("_foo", "_bar"), repair = "universal"), c("._foo", "._bar"))
 })
 
 
