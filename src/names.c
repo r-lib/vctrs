@@ -2,6 +2,30 @@
 #include "dictionary.h"
 #include "utils.h"
 
+// [[ register() ]]
+SEXP vec_names(SEXP x) {
+  if (OBJECT(x) && Rf_inherits(x, "data.frame")) {
+    return R_NilValue;
+  }
+
+  if (vec_dim(x) == 1) {
+    if (OBJECT(x)) {
+      return vctrs_dispatch1(syms_names, fns_names, syms_x, x);
+    } else {
+      return r_names(x);
+    }
+  }
+
+  SEXP dimnames = PROTECT(Rf_getAttrib(x, R_DimNamesSymbol));
+  if (dimnames == R_NilValue || Rf_length(dimnames) < 1) {
+    UNPROTECT(1);
+    return R_NilValue;
+  }
+
+  SEXP out = VECTOR_ELT(dimnames, 0);
+  UNPROTECT(1);
+  return out;
+}
 
 static struct sexp_cow as_minimal_names(struct sexp_cow cow_names) {
   SEXP names = cow_names.obj;
@@ -43,30 +67,6 @@ SEXP vctrs_as_minimal_names(SEXP names) {
 
   UNPROTECT(1);
   return cow_names.obj;
-}
-
-SEXP vec_names(SEXP x) {
-  if (OBJECT(x) && Rf_inherits(x, "data.frame")) {
-    return R_NilValue;
-  }
-
-  if (vec_dim(x) == 1) {
-    if (OBJECT(x)) {
-      return vctrs_dispatch1(syms_names, fns_names, syms_x, x);
-    } else {
-      return r_names(x);
-    }
-  }
-
-  SEXP dimnames = PROTECT(Rf_getAttrib(x, R_DimNamesSymbol));
-  if (dimnames == R_NilValue || Rf_length(dimnames) < 1) {
-    UNPROTECT(1);
-    return R_NilValue;
-  }
-
-  SEXP out = VECTOR_ELT(dimnames, 0);
-  UNPROTECT(1);
-  return out;
 }
 
 SEXP vctrs_minimal_names(SEXP x) {
