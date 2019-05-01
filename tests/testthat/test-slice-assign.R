@@ -109,6 +109,22 @@ test_that("a coercible RHS is cast to LHS before assignment (#140)", {
 
   allow_lossy_cast(vec_slice(x, 1) <- 3.5)
   expect_identical(x, int(3, 2))
+
+  x <- matrix(1:4, 2)
+  vec_slice(x, 1) <- matrix(c(FALSE, FALSE), 1)
+  expect_identical(x, matrix(int(0, 2, 0, 4), 2))
+  expect_error(vec_slice(x, 1) <- matrix(c("", ""), 1), class = "vctrs_error_incompatible_type")
+})
+
+test_that("slice-assign takes the proxy", {
+  scoped_proxy()
+
+  x <- new_proxy(1:3)
+  y <- new_proxy(20:21)
+
+  vec_slice(x, 2:3) <- y
+
+  expect_identical(proxy_deref(x), int(1, 20, 21))
 })
 
 test_that("can use names to vec_slice<-() a named object", {

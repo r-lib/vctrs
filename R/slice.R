@@ -103,25 +103,34 @@ vec_slice_fallback <- function(x, i) {
   }
 
   vec_assert(x)
-  value <- vec_coercible_cast(value, x, x_arg = "value", to_arg = "x")
-
   i <- vec_as_index(i, x)
+
+  if (has_dim(x)) {
+    return(vec_assign_fallback(x, i, value))
+  }
+
+  value <- vec_coercible_cast(value, x, x_arg = "value", to_arg = "x")
+  value <- vec_proxy(value)
+  out <- vec_proxy(x)
+
   value <- vec_recycle(value, vec_size(i))
 
   existing <- !is.na(i)
   i <- vec_slice(i, existing)
   value <- vec_slice(value, existing)
 
-  d <- vec_dims(x)
-  if (d == 1) {
-    x[i] <- value
-  } else if (d == 2) {
-    x[i, ] <- value
-  } else {
-    miss_args <- rep(list(missing_arg()), d - 1)
-    eval_bare(expr(x[i, !!!miss_args] <- value))
-  }
+  out <- vec_assign_fallback(out, i, value)
 
+  vec_restore(out, x)
+}
+
+vec_assign_fallback <- function(x, i, value) {
+  value <- vec_recycle(value, vec_size(i))
+  value <- vec_coercible_cast(value, x, x_arg = "value", to_arg = "x")
+
+  d <- vec_dims(x)
+  miss_args <- rep(list(missing_arg()), d - 1)
+  eval_bare(expr(x[i, !!!miss_args] <- value))
   x
 }
 
