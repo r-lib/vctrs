@@ -9,6 +9,15 @@
   } while (0)
 
 
+struct sexp_cow {
+  SEXP obj;
+  PROTECT_INDEX i;
+};
+
+struct sexp_cow PROTECT_COW(SEXP x);
+struct sexp_cow r_maybe_copy(struct sexp_cow cow);
+
+
 bool is_bool(SEXP x);
 
 SEXP vctrs_dispatch_n(SEXP fn_sym, SEXP fn,

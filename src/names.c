@@ -3,28 +3,7 @@
 #include "utils.h"
 
 
-struct cow {
-  SEXP obj;
-  PROTECT_INDEX i;
-};
-
-struct cow PROTECT_COW(SEXP x) {
-  PROTECT_INDEX pi;
-  PROTECT_WITH_INDEX(x, &pi);
-
-  struct cow cow = { x, pi };
-  return cow;
-}
-
-struct cow cow_maybe_copy(struct cow cow) {
-  if (MAYBE_REFERENCED(cow.obj)) {
-    cow.obj = Rf_shallow_duplicate(cow.obj);
-    REPROTECT(cow.obj, cow.i);
-  }
-  return cow;
-}
-
-static struct cow as_minimal_names(struct cow cow_names) {
+static struct sexp_cow as_minimal_names(struct sexp_cow cow_names) {
   SEXP names = cow_names.obj;
 
   if (TYPEOF(names) != STRSXP) {
@@ -45,7 +24,7 @@ static struct cow as_minimal_names(struct cow cow_names) {
     return cow_names;
   }
 
-  cow_names = cow_maybe_copy(cow_names);
+  cow_names = r_maybe_copy(cow_names);
   names = cow_names.obj;
 
   for (; i < n; ++i, ++ptr) {
@@ -59,7 +38,7 @@ static struct cow as_minimal_names(struct cow cow_names) {
 }
 
 SEXP vctrs_as_minimal_names(SEXP names) {
-  struct cow cow_names = PROTECT_COW(names);
+  struct sexp_cow cow_names = PROTECT_COW(names);
   cow_names = as_minimal_names(cow_names);
 
   UNPROTECT(1);
@@ -98,7 +77,7 @@ SEXP vctrs_minimal_names(SEXP x) {
     return Rf_allocVector(STRSXP, vec_size(x));
   }
 
-  struct cow cow_names = PROTECT_COW(names);
+  struct sexp_cow cow_names = PROTECT_COW(names);
   cow_names = as_minimal_names(cow_names);
 
   UNPROTECT(2);
@@ -110,7 +89,7 @@ void stop_large_name();
 bool is_dotdotint(const char* name);
 ptrdiff_t suffix_pos(const char* name);
 
-static struct cow as_unique_names(struct cow cow_names) {
+static struct sexp_cow as_unique_names(struct sexp_cow cow_names) {
   SEXP names = cow_names.obj;
 
   if (TYPEOF(names) != STRSXP) {
@@ -155,7 +134,7 @@ static struct cow as_unique_names(struct cow cow_names) {
   }
 
 
-  cow_names = cow_maybe_copy(cow_names);
+  cow_names = r_maybe_copy(cow_names);
   names = cow_names.obj;
   ptr = STRING_PTR(names) + i;
 
@@ -229,7 +208,7 @@ static struct cow as_unique_names(struct cow cow_names) {
 }
 
 SEXP vctrs_as_unique_names(SEXP names) {
-  struct cow cow_names = PROTECT_COW(names);
+  struct sexp_cow cow_names = PROTECT_COW(names);
   cow_names = as_unique_names(cow_names);
 
   UNPROTECT(1);
