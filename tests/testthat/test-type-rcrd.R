@@ -1,4 +1,4 @@
-context("test-rcrd")
+context("test-type-rcrd")
 
 
 # constructor and accessors -----------------------------------------------
