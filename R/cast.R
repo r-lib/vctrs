@@ -138,7 +138,7 @@ vec_coercible_cast <- function(x, to, ..., x_arg = "", to_arg = "") {
   if (!missing(...)) {
     ellipsis::check_dots_empty()
   }
-  vec_type2(x, to, x_arg = x_arg, y_arg = to_arg)
+  vec_type2(to, x, x_arg = to_arg, y_arg = x_arg)
   vec_cast(x, to)
 }
 

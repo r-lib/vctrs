@@ -219,10 +219,10 @@ test_that("can use [ and [[ with names - list vctr", {
 test_that("can use [[<- to replace n-dimensional elements", {
   scoped_global_bindings(
     vec_restore.vctrs_mtrx = function(x, to, ...) x,
-    vec_type2.double.vctrs_mtrx = function(...) dbl()
+    vec_type2.double.vctrs_mtrx = function(...) dbl(),
+    vec_type2.vctrs_mtrx = function(...) dbl()
   )
   x <- new_vctr(rep(1, times = 4), dim = c(2, 2), class = "vctrs_mtrx")
-  s3_register("vctrs::vec_restore", "vctrs_mtrx", vec_restore.vctrs_mtrx)
   x[[2, 2]] <- 4
   expect_equal(x[[2, 2]], 4)
 })
