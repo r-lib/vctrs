@@ -65,6 +65,11 @@ test_that("`NULL` is treated as the absence of input", {
   expect_equal(vec_size_common(1:5, NULL), vec_size_common(1:5))
 })
 
+test_that("length 0 vectors force a common size of 0", {
+  expect_equal(vec_size_common(integer()), 0)
+  expect_equal(vec_size_common(1:5, integer()), 0)
+})
+
 # sequences ---------------------------------------------------------------
 
 test_that("vec_seq_along returns size-0 output for size-0 input", {
