@@ -133,6 +133,7 @@ test_that("operators remapped", {
   expect_equal(x - 1, 1L)
   expect_equal(x * 1, 1L)
   expect_equal(x / 1, 1L)
+  expect_equal(x ^ 1, 1L)
   expect_equal(x %% 1, 1L)
   expect_equal(x %/% 1, 1L)
   expect_equal(x & 1, 1L)
