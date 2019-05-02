@@ -420,10 +420,6 @@ bool r_is_string(SEXP x) {
     STRING_ELT(x, 0) != NA_STRING;
 }
 
-bool r_is_missing(SEXP x) {
-  return x == R_MissingArg;
-}
-
 SEXP r_peek_option(const char* option) {
   return Rf_GetOption1(Rf_install(option));
 }

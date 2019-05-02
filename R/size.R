@@ -43,7 +43,7 @@
 #' vec_size_common(1:10, 1)
 #' vec_size_common(1:10, integer())
 vec_size <- function(x) {
-  .Call(vctrs_size, maybe_missing(x))
+  .Call(vctrs_size, x)
 }
 
 #' @export

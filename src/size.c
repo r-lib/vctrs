@@ -13,10 +13,6 @@ R_len_t vec_dim(SEXP x) {
 }
 
 static R_len_t vec_size_impl(SEXP x, bool dispatch) {
-  if (r_is_missing(x)) {
-    return 0;
-  }
-
   switch (vec_typeof_impl(x, dispatch)) {
   case vctrs_type_null:
     return 0;

@@ -45,12 +45,8 @@ test_that("size is proxied", {
   expect_size(new_proxy(1:3), 3)
 })
 
-test_that("identity of vec_size is 0", {
-  expect_equal(vec_size(), 0)
-})
-
-test_that("`NULL` is treated as the absence of input", {
-  expect_equal(vec_size(NULL), vec_size())
+test_that("`NULL` has size 0", {
+  expect_equal(vec_size(NULL), 0)
 })
 
 # vec_size_common ---------------------------------------------------------
