@@ -1,4 +1,4 @@
-context("test-list_of")
+context("test-type-list-of")
 
 test_that("list_of works like list", {
   x1 <- list_of(1, 1)
