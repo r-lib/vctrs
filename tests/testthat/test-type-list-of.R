@@ -144,15 +144,6 @@ test_that("max<list_of<a>, list_of<b>> is list_of<max<a, b>>", {
   expect_equal(vec_type_common(r_int, r_dbl), r_int)
 })
 
-test_that("vectors are coercible to the wrapped list-of type", {
-  l <- list_of(1, 2, .ptype = int())
-
-  expect_identical(vec_type_common(l, 3), list_of(.ptype = int()))
-  expect_error(vec_type_common(l, "3"), class = "vctrs_error_incompatible_type")
-
-  expect_identical(vec_c(l, 3), list_of(1, 2, 3, .ptype = int()))
-})
-
 test_that("safe casts work as expected", {
   x <- list_of(1)
   expect_equal(vec_cast(NULL, x), NULL)
