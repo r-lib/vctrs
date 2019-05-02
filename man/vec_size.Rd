@@ -20,7 +20,7 @@ supply \code{.size} to force a known size.}
 An integer (or double for long vectors). Will throw an error
 if \code{x} is not a vector.
 
-\code{vec_size_common()} will return \code{NULL} if all inputs are \code{NULL} or absent.
+\code{vec_size_common()} will return \code{0} if all inputs are \code{NULL} or absent.
 }
 \description{
 \code{vec_size(x)} returns the size of a vector. This is distinct from the

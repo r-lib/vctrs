@@ -27,7 +27,7 @@
 #' @return An integer (or double for long vectors). Will throw an error
 #'   if `x` is not a vector.
 #'
-#'   `vec_size_common()` will return `NULL` if all inputs are `NULL` or absent.
+#'   `vec_size_common()` will return `0` if all inputs are `NULL` or absent.
 #' @export
 #' @examples
 #' vec_size(1:100)
