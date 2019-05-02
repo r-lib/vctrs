@@ -222,7 +222,7 @@ diff.vctrs_vctr <- function(x, lag = 1L, differences = 1L, ...) {
 #' @export
 `[[<-.vctrs_vctr` <- function(x, ..., value) {
   if (!is.list(x)) {
-    value <- vec_cast(value, x)
+    value <- vec_coercible_cast(value, x, x_arg = "x", to_arg = "value")
   }
   NextMethod()
 }
@@ -239,7 +239,7 @@ diff.vctrs_vctr <- function(x, lag = 1L, differences = 1L, ...) {
 
 #' @export
 `[<-.vctrs_vctr` <- function(x, i, value) {
-  value <- vec_cast(value, x)
+  value <- vec_coercible_cast(value, x, x_arg = "x", to_arg = "value")
   NextMethod()
 }
 
