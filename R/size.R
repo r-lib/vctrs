@@ -54,8 +54,9 @@ vec_size_common <- function(..., .size = NULL) {
   }
 
   args <- compact(list2(...))
-  if (length(args) == 0)
-    return(NULL)
+  if (length(args) == 0) {
+    return(0)
+  }
 
   nobs <- map_int(args, vec_size)
   reduce(nobs, vec_size2)
