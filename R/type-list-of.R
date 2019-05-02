@@ -173,7 +173,23 @@ vec_type2.vctrs_list_of.vctrs_list_of <- function(x, y, ...) {
 #' @method vec_type2.vctrs_list_of default
 #' @export
 vec_type2.vctrs_list_of.default <- function(x, y, ..., x_arg = "", y_arg = "") {
-  stop_incompatible_type(x, y, x_arg = x_arg, y_arg = y_arg)
+  if (!is_list_of(x)) {
+    tmp <- y
+    x <- y
+    y <- x
+
+    tmp <- y_arg
+    x_arg <- y_arg
+    y_arg <- x_arg
+  }
+
+  wrapped_type <- attr(x, "ptype")
+
+  # Fails with an incompatible type error if `other` isn't coercible
+  # to the wrapped type
+  vec_type2(wrapped_type, y, x_arg = x_arg, y_arg = y_arg)
+
+  x
 }
 
 #' @rdname list_of
