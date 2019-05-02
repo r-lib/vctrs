@@ -51,7 +51,7 @@ test_that("`NULL` has size 0", {
 
 # vec_size_common ---------------------------------------------------------
 
-test_that("identity of vec_size_common is 0", {
+test_that("vec_size_common with no input returns 0", {
   expect_equal(vec_size_common(), 0)
 })
 
