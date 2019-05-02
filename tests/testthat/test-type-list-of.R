@@ -88,6 +88,9 @@ test_that("[<-, [[<- and $<- coerce their input", {
   x[[2]] <- NULL
   expect_equal(x, list_of(x = 0, y = NULL, z = 0, w = 1))
 
+  expect_error(x[[2]] <- list(20), class = "vctrs_error_incompatible_type")
+  expect_error(x$y <- list(20), class = "vctrs_error_incompatible_type")
+
   x[3:4] <- list(NULL)
   expect_equal(x, list_of(x = 0, y = NULL, z = NULL, w = NULL))
 
