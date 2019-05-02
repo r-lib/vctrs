@@ -110,9 +110,6 @@ test_that("is.na<-() supported", {
 })
 
 test_that("comparison functions remapped", {
-  # Fails on 3.1 with `could not find function "vec_cast.vctrs_vctr"`
-  skip_if_not(getRversion() >= "3.2")
-
   x1 <- new_vctr(c(1, 2), class = "bizzaro")
   x2 <- new_vctr(2, class = "bizzaro")
 
@@ -226,10 +223,6 @@ test_that("subsetting preserves attributes", {
 })
 
 test_that("$ inherits from underlying vector", {
-  # Seems to be some bug in R 3.1 where NextMethod() called from $.vctr
-  # causes an error "invalid subscript type 'promise'"
-  skip_if_not(getRversion() >= "3.2")
-
   x1 <- new_vctr(c(a = 1, b = 2))
   expect_error(x1$a, "atomic vectors")
   expect_error(x1$a <- 2, "atomic vectors")
