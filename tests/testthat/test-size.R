@@ -53,6 +53,18 @@ test_that("`NULL` is treated as the absence of input", {
   expect_equal(vec_size(NULL), vec_size())
 })
 
+# vec_size_common ---------------------------------------------------------
+
+test_that("identity of vec_size_common is 0", {
+  expect_equal(vec_size_common(), 0)
+})
+
+test_that("`NULL` is treated as the absence of input", {
+  expect_equal(vec_size_common(NULL), vec_size_common())
+  expect_equal(vec_size_common(NULL, NULL), vec_size_common())
+  expect_equal(vec_size_common(1:5, NULL), vec_size_common(1:5))
+})
+
 # sequences ---------------------------------------------------------------
 
 test_that("vec_seq_along returns size-0 output for size-0 input", {
