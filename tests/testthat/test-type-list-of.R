@@ -76,17 +76,21 @@ test_that("[ preserves type", {
 
 test_that("[<-, [[<- and $<- coerce their input", {
   x <- list_of(x = 1, y = 1, z = 1, w = 1)
-  x[1] <- list(FALSE)
-  x
-  x[[2]] <- FALSE
-  x
-  x$z <- FALSE
-  x
 
-  expect_equal(x, list_of(x = 0, y = 0, z = 0, w = 1))
+  x[1] <- list(FALSE)
+  expect_identical(x, list_of(x = 0, y = 1, z = 1, w = 1))
+
+  x[[2]] <- FALSE
+  expect_identical(x, list_of(x = 0, y = 0, z = 1, w = 1))
+
+  x$z <- FALSE
+  expect_identical(x, list_of(x = 0, y = 0, z = 0, w = 1))
+
+  x[3:4] <- c(TRUE, FALSE)
+  expect_identical(x, list_of(x = 0, y = 0, z = 1, w = 0))
 
   x[[2]] <- NULL
-  expect_equal(x, list_of(x = 0, y = NULL, z = 0, w = 1))
+  expect_equal(x, list_of(x = 0, y = NULL, z = 1, w = 0))
 
   expect_error(x[[2]] <- list(20), class = "vctrs_error_incompatible_type")
   expect_error(x$y <- list(20), class = "vctrs_error_incompatible_type")
