@@ -26,6 +26,7 @@ SEXP vctrs_dispatch3(SEXP fn_sym, SEXP fn,
 SEXP df_map(SEXP df, SEXP (*fn)(SEXP));
 SEXP with_proxy(SEXP x, SEXP (*rec)(SEXP, bool), SEXP i);
 bool is_bare_tibble(SEXP x);
+SEXP s3_method(SEXP x, const char* generic);
 
 struct vctrs_arg args_empty;
 
@@ -67,6 +68,8 @@ SEXP r_call(SEXP fn, SEXP* tags, SEXP* cars);
 
 SEXP r_names(SEXP x);
 bool r_has_name_at(SEXP names, R_len_t i);
+SEXP r_env_get(SEXP env, SEXP sym);
+bool r_is_function(SEXP x);
 
 static inline const char* r_chr_get_c_string(SEXP chr, R_len_t i) {
   return CHAR(STRING_ELT(chr, i));
