@@ -22,7 +22,7 @@ Imports:
     ellipsis (>= 0.1.0.9000),
     digest,
     glue,
-    rlang (>= 0.3.4.9003),
+    rlang (>= 0.3.4),
     zeallot
 Suggests: 
     bit64,
