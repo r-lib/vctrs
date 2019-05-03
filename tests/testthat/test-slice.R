@@ -265,16 +265,14 @@ test_that("vec_slice() falls back to `[` with S3 objects", {
   scoped_global_bindings(
     vec_proxy.vctrs_foobar = function(x) unclass(x)
   )
-  expect_identical(vec_slice(foobar(list(NA)), 1), "dispatched")
+  expect_identical(vec_slice(foobar(list(NA)), 1), foobar(list(NA)))
 })
 
 test_that("vec_slice() doesn't call vec_restore() with S3 objects", {
   scoped_global_bindings(
-    vec_proxy.vctrs_foobar = function(x) unclass(x),
-    vec_restore.vctrs_foobar = function(x, to) stop("not called")
+    vec_restore.vctrs_foobar = function(...) stop("not called")
   )
   expect_error(vec_slice(foobar(NA), 1), NA)
-  expect_error(vec_slice(foobar(list(NA)), 1), NA)
 })
 
 test_that("can vec_slice() without inflooping when restore calls math generics", {

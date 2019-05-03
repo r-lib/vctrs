@@ -140,6 +140,8 @@ bool vec_is_unspecified(SEXP x);
 #include "arg.h"
 
 SEXP vec_proxy(SEXP x);
+SEXP vec_proxy_method(SEXP x);
+SEXP vec_proxy_invoke(SEXP x, SEXP method);
 R_len_t vec_size(SEXP x);
 SEXP vec_cast(SEXP x, SEXP to);
 SEXP vec_slice(SEXP x, SEXP index);

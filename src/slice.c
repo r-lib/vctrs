@@ -190,12 +190,22 @@ static SEXP vec_slice_impl(SEXP x, SEXP index, SEXP to, bool dispatch) {
     if (!vec_is_vector(x)) {
       Rf_errorcall(R_NilValue, "Can't slice a scalar");
     }
-    // Normally we'd take the proxy and recurse with dispatch turned off.
-    // However we fall back to `[` for compatibility with foreign types.
-    SEXP call = PROTECT(Rf_lang3(fns_bracket, x, index));
-    out = Rf_eval(call, R_GlobalEnv);
-    UNPROTECT(1);
-    return out;
+
+    // If has proxy, take the proxy and recurse. Otherwise, fall back
+    // to `[` for compatibility with foreign types.
+    SEXP method = PROTECT(vec_proxy_method(x));
+
+    if (method == R_NilValue) {
+      SEXP call = PROTECT(Rf_lang3(fns_bracket, x, index));
+      out = Rf_eval(call, R_GlobalEnv);
+      UNPROTECT(2);
+      return out;
+    } else {
+      SEXP proxy = PROTECT(vec_proxy_invoke(x, method));
+      SEXP out = vec_slice_impl(proxy, index, x, false);
+      UNPROTECT(2);
+      return out;
+    }
   }
 
   default:
