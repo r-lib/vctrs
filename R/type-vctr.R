@@ -150,9 +150,9 @@ type_sum.vctrs_vctr <- function(x) {
 
 # manually registered in zzz.R
 pillar_shaft.vctrs_list_of <- function(x, ...) {
-  out <- paste0("[", map_chr(x, dim_desc), "]")
+  out <- paste0("[", map_chr(x, pillar::dim_desc), "]")
 
-  pillar::new_pillar_shaft_simple(pillar::style_list(out), align = "right")
+  pillar::new_pillar_shaft_simple(out, align = "right")
 }
 
 #' @export
