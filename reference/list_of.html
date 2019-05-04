@@ -187,11 +187,11 @@ does not remove it.</p>
 <span class='kw'>if</span> (<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/ns-load'>requireNamespace</a></span>(<span class='st'>"tibble"</span>, <span class='kw'>quietly</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)) {
   <span class='kw pkg'>tibble</span><span class='kw ns'>::</span><span class='fu'><a href='https://tibble.tidyverse.org/reference/tibble.html'>tibble</a></span>(<span class='kw'>x</span> <span class='kw'>=</span> <span class='no'>x</span>)
 }</div><div class='output co'>#&gt; <span style='color: #949494;'># A tibble: 3 x 1</span><span>
-#&gt;                        x
-#&gt;              </span><span style='color: #949494;font-style: italic;'>&lt;list&lt;int&gt;&gt;</span><span>
-#&gt; </span><span style='color: #BCBCBC;'>1</span><span>                1, 2, 3
-#&gt; </span><span style='color: #BCBCBC;'>2</span><span>                   5, 6
-#&gt; </span><span style='color: #BCBCBC;'>3</span><span> 10, 11, 12, 13, 14, 15</div><div class='input'>
+#&gt;             x
+#&gt;   </span><span style='color: #949494;font-style: italic;'>&lt;list&lt;int&gt;&gt;</span><span>
+#&gt; </span><span style='color: #BCBCBC;'>1</span><span>         [3]
+#&gt; </span><span style='color: #BCBCBC;'>2</span><span>         [2]
+#&gt; </span><span style='color: #BCBCBC;'>3</span><span>         [6]</div><div class='input'>
 <span class='fu'><a href='vec_c.html'>vec_c</a></span>(<span class='fu'>list_of</span>(<span class='fl'>1</span>, <span class='fl'>2</span>), <span class='fu'>list_of</span>(<span class='fl'>FALSE</span>, <span class='fl'>TRUE</span>))</div><div class='output co'>#&gt; &lt;list_of&lt;double&gt;[4]&gt;
 #&gt; [[1]]
 #&gt; [1] 1
