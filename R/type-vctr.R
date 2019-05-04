@@ -148,6 +148,13 @@ type_sum.vctrs_vctr <- function(x) {
   vec_ptype_abbr(x)
 }
 
+# manually registered in zzz.R
+pillar_shaft.vctrs_list_of <- function(x, ...) {
+  out <- paste0("[", map_chr(x, pillar::dim_desc), "]")
+
+  pillar::new_pillar_shaft_simple(out, align = "right")
+}
+
 #' @export
 format.vctrs_vctr <- function(x, ...) {
   format(vec_data(x), ...)
