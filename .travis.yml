@@ -19,9 +19,9 @@ matrix:
     - Rscript -e 'remotes::install_deps("hms")'
     - Rscript -e 'remotes::install_deps("pillar")'
     - Rscript -e 'remotes::install_local(".")'
-    - Rscript -e 'devtools::test("blob", reporter = c("progress", "stop"))'
-    - Rscript -e 'devtools::test("hms", reporter = c("progress", "stop"))'
-    - Rscript -e 'devtools::test("pillar", reporter = c("progress", "stop"))'
+    - Rscript -e 'devtools::test("blob", reporter = c("progress", "fail"))'
+    - Rscript -e 'devtools::test("hms", reporter = c("progress", "fail"))'
+    - Rscript -e 'devtools::test("pillar", reporter = c("progress", "fail"))'
   - r: release
     after_success:
     - Rscript -e 'covr::codecov()'
