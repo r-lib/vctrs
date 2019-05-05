@@ -74,7 +74,7 @@ can_s3_register_now <- function(generic, class, method, package) {
 
   envir <- asNamespace(package)
 
-  # Avoid registration failures during pkgload::load_all(),
+  # Avoid registration failures during loading (pkgload or regular),
   # only register if generic can be accessed
   return(exists(generic, envir))
 }
