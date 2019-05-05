@@ -7,6 +7,19 @@ cache: packages
 matrix:
   include:
   - r: devel
+    deploy:
+      provider: script
+      script:
+      - git clone https://github.com/tidyverse/blob
+      - Rscript -e 'remotes::install_deps("blob")'
+      - Rscript -e 'devtools::test("blob")'
+      - git clone https://github.com/tidyverse/hms
+      - Rscript -e 'remotes::install_deps("hms")'
+      - Rscript -e 'devtools::test("hms")'
+      - git clone https://github.com/tidyverse/pillar
+      - Rscript -e 'remotes::install_deps("pillar")'
+      - Rscript -e 'devtools::test("pillar")'
+      skip_cleanup: true
   - r: release
     after_success:
     - Rscript -e 'covr::codecov()'
