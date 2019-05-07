@@ -57,6 +57,25 @@ static inline const char* r_chr_get_c_string(SEXP chr, R_len_t i) {
   return CHAR(STRING_ELT(chr, i));
 }
 
+static inline void r__vec_get_check(SEXP x, R_len_t i, const char* fn) {
+  if ((Rf_length(x) - 1) < i) {
+    Rf_error("Internal error in `%s()`: Vector is too small", fn);
+  }
+}
+static inline int r_lgl_get(SEXP x, R_len_t i) {
+  r__vec_get_check(x, i, "r_lgl_get");
+  return LOGICAL(x)[i];
+}
+static inline int r_int_get(SEXP x, R_len_t i) {
+  r__vec_get_check(x, i, "r_int_get");
+  return INTEGER(x)[i];
+}
+static inline double r_dbl_get(SEXP x, R_len_t i) {
+  r__vec_get_check(x, i, "r_dbl_get");
+  return REAL(x)[i];
+}
+
+
 extern SEXP vctrs_ns_env;
 extern SEXP vctrs_shared_empty_str;
 
