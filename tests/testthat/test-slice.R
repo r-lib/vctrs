@@ -398,6 +398,21 @@ test_that("additional subscripts are forwarded to `[`", {
   expect_identical(x[1, 2], exp)
 })
 
+test_that("a coercible RHS is cast to LHS before assignment (#140)", {
+  x <- 1:2
+  expect_error(vec_slice(x, 1) <- "1", class = "vctrs_error_incompatible_type")
+
+  x <- c("foo", "bar")
+  expect_error(vec_slice(x, 1) <- 1, class = "vctrs_error_incompatible_type")
+
+  x <- 1:2
+  expect_error(vec_slice(x, 1) <- 3.5, class = "vctrs_error_cast_lossy")
+
+  allow_lossy_cast(vec_slice(x, 1) <- 3.5)
+  expect_identical(x, int(3, 2))
+})
+
+
 # vec_na ------------------------------------------------------------------
 
 test_that("vec_slice throws error with non-vector inputs", {

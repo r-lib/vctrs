@@ -17,7 +17,12 @@ names of the observations to get/set.
 Specify \code{TRUE} to index all elements (as in \code{x[]}), or \code{NULL}, \code{FALSE} or
 \code{integer()} to index none (as in \code{x[NULL]}).}
 
-\item{value}{Replacement values.}
+\item{value}{Replacement values. \code{value} is cast to the type of
+\code{x}, but only if they have a common type. See below for examples
+of this rule.}
+}
+\value{
+A vector of the same type as \code{x}.
 }
 \description{
 This provides a common interface to extracting and modifying observations
@@ -46,6 +51,8 @@ from \link[=new_vctr]{vctrs_vctr} or \link[=new_rcrd]{vctrs_rcrd}.
 \item \code{vec_slice()} only slices along one dimension. For
 two-dimensional types, the first dimension is subsetted.
 \item \code{vec_slice()} preserves attributes by default.
+\item \code{vec_slice<-()} is type-stable and always returns the same type
+as the LHS.
 }
 }
 
@@ -57,5 +64,33 @@ vec_slice(x, 2L) <- 100
 x
 
 vec_slice(mtcars, 1:3)
+
+
+# Type stability --------------------------------------------------
+
+# The assign variant is type stable. It always returns the same
+# type as the input.
+x <- 1:5
+vec_slice(x, 2) <- 20.0
+
+# `x` is still an integer vector because the RHS was cast to the
+# type of the LHS:
+vec_type(x)
+
+# Compare to `[<-`:
+x[2] <- 20.0
+vec_type(x)
+
+
+# Note that the types must be coercible for the cast to happen.
+# For instance, you can cast a character vector to an integer:
+vec_cast("1", integer())
+
+# But these types are not coercible:
+try(vec_type2("1", integer()))
+
+# Hence you cannot assign character values to an integer or double
+# vector:
+try(vec_slice(x, 2) <- "20")
 }
 \keyword{internal}

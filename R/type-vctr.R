@@ -222,7 +222,7 @@ diff.vctrs_vctr <- function(x, lag = 1L, differences = 1L, ...) {
 #' @export
 `[[<-.vctrs_vctr` <- function(x, ..., value) {
   if (!is.list(x)) {
-    value <- vec_cast(value, x)
+    value <- vec_coercible_cast(value, x, x_arg = "x", to_arg = "value")
   }
   NextMethod()
 }
@@ -239,7 +239,7 @@ diff.vctrs_vctr <- function(x, lag = 1L, differences = 1L, ...) {
 
 #' @export
 `[<-.vctrs_vctr` <- function(x, i, value) {
-  value <- vec_cast(value, x)
+  value <- vec_coercible_cast(value, x, x_arg = "x", to_arg = "value")
   NextMethod()
 }
 
@@ -582,7 +582,7 @@ vec_restore_numeric.hidden <- function(x, to) new_hidden(x)
 
 scoped_hidden <- function(frame = caller_env()) {
   scoped_bindings(.env = global_env(), .frame = frame,
-    vec_type2.hidden         = function(x, y, ...) UseMethod("vec_type2.hidden"),
+    vec_type2.hidden         = function(x, y, ...) UseMethod("vec_type2.hidden", y),
     vec_type2.hidden.default = function(x, y, ..., x_arg = "", y_arg = "") {
       stop_incompatible_type(x, y, x_arg = x_arg, y_arg = y_arg)
     },

@@ -189,6 +189,10 @@ test_that("can not provide invalid names", {
 })
 
 test_that("can use [ and [[ with names", {
+  scoped_global_bindings(
+    vec_type2.vctrs_vctr = function(...) dbl(),
+    vec_type2.double.vctrs_vctr = function(...) dbl()
+  )
   x <- new_vctr(c(a = 1, b = 2))
 
   expect_equal(x["b"], new_vctr(c(b = 2)))
@@ -198,7 +202,13 @@ test_that("can use [ and [[ with names", {
   expect_equal(x[["c"]], new_vctr(3))
   x["d"] <- 4
   expect_equal(x[["d"]], new_vctr(4))
+})
 
+test_that("can use [ and [[ with names - list vctr", {
+  scoped_global_bindings(
+    vec_type2.vctrs_vctr = function(...) list(),
+    vec_type2.list.vctrs_vctr = function(...) list()
+  )
   y <- new_vctr(list(a = 1, b = 2))
   y[["c"]] <- 3
   expect_equal(y[["c"]], 3)
@@ -207,9 +217,12 @@ test_that("can use [ and [[ with names", {
 })
 
 test_that("can use [[<- to replace n-dimensional elements", {
+  scoped_global_bindings(
+    vec_restore.vctrs_mtrx = function(x, to, ...) x,
+    vec_type2.double.vctrs_mtrx = function(...) dbl(),
+    vec_type2.vctrs_mtrx = function(...) dbl()
+  )
   x <- new_vctr(rep(1, times = 4), dim = c(2, 2), class = "vctrs_mtrx")
-  vec_restore.vctrs_mtrx <- function(x, to, ...) x
-  s3_register("vctrs::vec_restore", "vctrs_mtrx", vec_restore.vctrs_mtrx)
   x[[2, 2]] <- 4
   expect_equal(x[[2, 2]], 4)
 })
@@ -275,10 +288,11 @@ test_that("class preserved when subsetting", {
 })
 
 test_that("RHS cast when using subset assign", {
+  scoped_hidden()
   h <- new_hidden(1)
 
-  expect_error(h[[1]] <- "x", class = "vctrs_error_incompatible_cast")
-  expect_error(h[1] <- "x", class = "vctrs_error_incompatible_cast")
+  expect_error(h[[1]] <- "x", class = "vctrs_error_incompatible_type")
+  expect_error(h[1] <- "x", class = "vctrs_error_incompatible_type")
 
   h[2] <- 1
   expect_equal(h, new_hidden(c(1, 1)))

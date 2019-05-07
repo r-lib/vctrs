@@ -139,6 +139,13 @@ as.list.vctrs_list_of <- function(x, ...) {
 }
 
 #' @export
+`[<-.vctrs_list_of` <- function(x, i, value) {
+  wrapped_type <- attr(x, "ptype")
+  value <- map(value, vec_coercible_cast, to = wrapped_type, x_arg = "to", to_arg = "value")
+  value <- new_list_of(value, ptype = attr(x, "ptype"))
+  NextMethod()
+}
+#' @export
 `[[<-.vctrs_list_of` <- function(x, i, value) {
   if (is.null(value)) {
     # Setting to NULL via [[ shortens the list! Example:
@@ -147,13 +154,13 @@ as.list.vctrs_list_of <- function(x, ...) {
     return(x)
   }
 
-  value <- vec_cast(value, attr(x, "ptype"))
+  value <- vec_coercible_cast(value, attr(x, "ptype"), x_arg = "value", to_arg = "x")
   NextMethod()
 }
 
 #' @export
 `$<-.vctrs_list_of` <- function(x, i, value) {
-  value <- vec_cast(value, attr(x, "ptype"))
+  value <- vec_coercible_cast(value, attr(x, "ptype"), x_arg = "value", to_arg = "x")
   NextMethod()
 }
 
