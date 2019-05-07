@@ -141,12 +141,7 @@ vec_coercible_cast <- function(x, to, ..., x_arg = "", to_arg = "") {
   if (!missing(...)) {
     ellipsis::check_dots_empty()
   }
-
-  # Called for the side effect of generating an error if there is no
-  # common type
-  vec_type2(to, x, x_arg = to_arg, y_arg = x_arg)
-
-  vec_cast(x, to)
+  .Call(vctrs_coercible_cast, x, to, x_arg, to_arg)
 }
 
 #' Default cast method

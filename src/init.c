@@ -56,6 +56,7 @@ extern SEXP vctrs_proxy_info(SEXP);
 extern SEXP vctrs_class_type(SEXP);
 extern SEXP df_restore(SEXP, SEXP, SEXP);
 extern SEXP vctrs_recycle(SEXP, SEXP);
+extern SEXP vctrs_coercible_cast(SEXP, SEXP, SEXP, SEXP);
 
 // Defined below
 SEXP vctrs_init(SEXP);
@@ -110,6 +111,7 @@ static const R_CallMethodDef CallEntries[] = {
   {"vctrs_class_type",                 (DL_FUNC) &vctrs_class_type, 1},
   {"vctrs_df_restore",                 (DL_FUNC) &df_restore, 3},
   {"vctrs_recycle",                    (DL_FUNC) &vctrs_recycle, 2},
+  {"vctrs_coercible_cast",             (DL_FUNC) &vctrs_coercible_cast, 4},
   {NULL, NULL, 0}
 };
 
