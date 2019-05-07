@@ -201,6 +201,7 @@ SEXP vec_na(SEXP x, R_len_t n);
 SEXP vec_type(SEXP x);
 SEXP vec_type_finalise(SEXP x);
 bool vec_is_unspecified(SEXP x);
+SEXP vec_recycle(SEXP x, R_len_t size);
 
 SEXP vec_type2(SEXP x,
                SEXP y,

@@ -127,3 +127,45 @@ R_len_t rcrd_size(SEXP x) {
 bool has_dim(SEXP x) {
   return ATTRIB(x) != R_NilValue && Rf_getAttrib(x, R_DimSymbol) != R_NilValue;
 }
+
+// [[ include("vctrs.h") ]]
+SEXP vec_recycle(SEXP x, R_len_t size) {
+  if (x == R_NilValue) {
+    return R_NilValue;
+  }
+
+  R_len_t n_x = vec_size(x);
+
+  if (n_x == size) {
+    return x;
+  }
+
+  if (size == 0L) {
+    return vec_slice(x, R_NilValue);
+  }
+
+  if (n_x == 1L) {
+    // FIXME: Replace with ALTREP repetition
+    SEXP i = PROTECT(Rf_allocVector(INTSXP, size));
+    r_int_fill(i, 1);
+    SEXP out = vec_slice(x, i);
+
+    UNPROTECT(1);
+    return out;
+  }
+
+  Rf_errorcall(R_NilValue, "Incompatible lengths: %d, %d", n_x, size);
+}
+
+// [[ register() ]]
+SEXP vctrs_recycle(SEXP x, SEXP size_obj) {
+  if (x == R_NilValue || size_obj == R_NilValue) {
+    return R_NilValue;
+  }
+
+  size_obj = PROTECT(vec_cast(size_obj, vctrs_shared_empty_int));
+  R_len_t size = r_int_get(size_obj, 0);
+  UNPROTECT(1);
+
+  return vec_recycle(x, size);
+}
