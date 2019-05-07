@@ -7,6 +7,7 @@
 \alias{vec_cast.logical}
 \alias{vec_cast.integer}
 \alias{vec_cast.double}
+\alias{vec_cast.complex}
 \alias{vec_cast.raw}
 \alias{vec_cast.character}
 \alias{vec_cast.list}
@@ -23,6 +24,8 @@ vec_restore(x, to, ..., i = NULL)
 \method{vec_cast}{integer}(x, to)
 
 \method{vec_cast}{double}(x, to)
+
+\method{vec_cast}{complex}(x, to)
 
 \method{vec_cast}{raw}(x, to)
 

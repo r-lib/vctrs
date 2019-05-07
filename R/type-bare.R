@@ -131,6 +131,41 @@ vec_cast.double.default <- function(x, to) {
 
 #' @export
 #' @rdname vec_cast
+#' @export vec_cast.complex
+#' @method vec_cast complex
+vec_cast.complex <- function(x, to) {
+  UseMethod("vec_cast.complex")
+}
+#' @export
+#' @method vec_cast.complex logical
+vec_cast.complex.logical <- function(x, to) {
+  x <- vec_coerce_bare(x, "complex")
+  shape_broadcast(x, to)
+}
+#' @export
+#' @method vec_cast.complex integer
+vec_cast.complex.integer <- vec_cast.complex.logical
+#' @export
+#' @method vec_cast.complex double
+vec_cast.complex.double <- vec_cast.complex.logical
+#' @export
+#' @method vec_cast.complex complex
+vec_cast.complex.complex <- function(x, to) {
+  shape_broadcast(x, to)
+}
+#' @export
+#' @method vec_cast.complex list
+vec_cast.complex.list <- function(x, to) {
+  vec_list_cast(x, to)
+}
+#' @export
+#' @method vec_cast.complex default
+vec_cast.complex.default <- function(x, to) {
+  vec_default_cast(x, to)
+}
+
+#' @export
+#' @rdname vec_cast
 #' @export vec_cast.raw
 #' @method vec_cast raw
 vec_cast.raw <- function(x, to) {

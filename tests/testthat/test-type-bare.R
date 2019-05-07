@@ -92,6 +92,18 @@ test_that("invalid casts generate error", {
   expect_error(vec_cast(factor("a"), double()), class = "vctrs_error_incompatible_cast")
 })
 
+
+# Complex
+
+test_that("safe casts to complex works", {
+  expect_identical(vec_cast(NULL, cpl()), NULL)
+  expect_identical(vec_cast(lgl(TRUE, FALSE), cpl()), cpl(1, 0))
+  expect_identical(vec_cast(int(1, 0), cpl()), cpl(1, 0))
+  expect_identical(vec_cast(dbl(1, 1.5), cpl()), cpl(1, 1.5))
+  expect_identical(vec_cast(list(1, 1.5), cpl()), cpl(1, 1.5))
+})
+
+
 # Character
 
 test_that("safe casts work as expected", {
