@@ -157,9 +157,15 @@ Specify <code>TRUE</code> to index all elements (as in <code>x[]</code>), or <co
     </tr>
     <tr>
       <th>value</th>
-      <td><p>Replacement values.</p></td>
+      <td><p>Replacement values. <code>value</code> is cast to the type of
+<code>x</code>, but only if they have a common type. See below for examples
+of this rule.</p></td>
     </tr>
     </table>
+    
+    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
+
+    <p>A vector of the same type as <code>x</code>.</p>
     
     <h2 class="hasAnchor" id="genericity"><a class="anchor" href="#genericity"></a>Genericity</h2>
 
@@ -183,6 +189,8 @@ from <a href='new_vctr.html'>vctrs_vctr</a> or <a href='new_rcrd.html'>vctrs_rcr
 <li><p><code>vec_slice()</code> only slices along one dimension. For
 two-dimensional types, the first dimension is subsetted.</p></li>
 <li><p><code>vec_slice()</code> preserves attributes by default.</p></li>
+<li><p><code>vec_slice&lt;-()</code> is type-stable and always returns the same type
+as the LHS.</p></li>
 </ul>
     
 
@@ -193,13 +201,140 @@ two-dimensional types, the first dimension is subsetted.</p></li>
 <span class='fu'>vec_slice</span>(<span class='no'>mtcars</span>, <span class='fl'>1</span>:<span class='fl'>3</span>)</div><div class='output co'>#&gt;    mpg cyl disp  hp drat    wt  qsec vs am gear carb
 #&gt; 1 21.0   6  160 110 3.90 2.620 16.46  0  1    4    4
 #&gt; 2 21.0   6  160 110 3.90 2.875 17.02  0  1    4    4
-#&gt; 3 22.8   4  108  93 3.85 2.320 18.61  1  1    4    1</div></pre>
+#&gt; 3 22.8   4  108  93 3.85 2.320 18.61  1  1    4    1</div><div class='input'>
+
+<span class='co'># Type stability --------------------------------------------------</span>
+
+<span class='co'># The assign variant is type stable. It always returns the same</span>
+<span class='co'># type as the input.</span>
+<span class='no'>x</span> <span class='kw'>&lt;-</span> <span class='fl'>1</span>:<span class='fl'>5</span>
+<span class='fu'>vec_slice</span>(<span class='no'>x</span>, <span class='fl'>2</span>) <span class='kw'>&lt;-</span> <span class='fl'>20.0</span>
+
+<span class='co'># `x` is still an integer vector because the RHS was cast to the</span>
+<span class='co'># type of the LHS:</span>
+<span class='fu'><a href='vec_type.html'>vec_type</a></span>(<span class='no'>x</span>)</div><div class='output co'>#&gt; integer(0)</div><div class='input'>
+<span class='co'># Compare to `[&lt;-`:</span>
+<span class='no'>x</span>[<span class='fl'>2</span>] <span class='kw'>&lt;-</span> <span class='fl'>20.0</span>
+<span class='fu'><a href='vec_type.html'>vec_type</a></span>(<span class='no'>x</span>)</div><div class='output co'>#&gt; numeric(0)</div><div class='input'>
+
+<span class='co'># Note that the types must be coercible for the cast to happen.</span>
+<span class='co'># For instance, you can cast a character vector to an integer:</span>
+<span class='fu'><a href='vec_cast.html'>vec_cast</a></span>(<span class='st'>"1"</span>, <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/integer'>integer</a></span>())</div><div class='output co'>#&gt; [1] 1</div><div class='input'>
+<span class='co'># But these types are not coercible:</span>
+<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/try'>try</a></span>(<span class='fu'><a href='vec_type2.html'>vec_type2</a></span>(<span class='st'>"1"</span>, <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/integer'>integer</a></span>()))</div><div class='output co'>#&gt; Error : No common type for &lt;character&gt; and &lt;integer&gt;.
+#&gt; Backtrace:
+#&gt; <span style='color: #555555;'>     </span><span>█
+#&gt; </span><span style='color: #555555;'>  1. </span><span>├─base::tryCatch(...)
+#&gt; </span><span style='color: #555555;'>  2. </span><span>│ └─base:::tryCatchList(expr, classes, parentenv, handlers)
+#&gt; </span><span style='color: #555555;'>  3. </span><span>│   ├─base:::tryCatchOne(...)
+#&gt; </span><span style='color: #555555;'>  4. </span><span>│   │ └─base:::doTryCatch(return(expr), name, parentenv, handler)
+#&gt; </span><span style='color: #555555;'>  5. </span><span>│   └─base:::tryCatchList(expr, names[-nh], parentenv, handlers[-nh])
+#&gt; </span><span style='color: #555555;'>  6. </span><span>│     └─base:::tryCatchOne(expr, names, parentenv, handlers[[1L]])
+#&gt; </span><span style='color: #555555;'>  7. </span><span>│       └─base:::doTryCatch(return(expr), name, parentenv, handler)
+#&gt; </span><span style='color: #555555;'>  8. </span><span>├─base::withCallingHandlers(...)
+#&gt; </span><span style='color: #555555;'>  9. </span><span>├─base::saveRDS(...)
+#&gt; </span><span style='color: #555555;'> 10. </span><span>├─base::do.call(...)
+#&gt; </span><span style='color: #555555;'> 11. </span><span>├─(function (what, args, quote = FALSE, envir = parent.frame()) ...
+#&gt; </span><span style='color: #555555;'> 12. </span><span>├─(function (..., crayon_enabled, crayon_colors, pkgdown_internet) ...
+#&gt; </span><span style='color: #555555;'> 13. </span><span>│ └─pkgdown::build_site(...)
+#&gt; </span><span style='color: #555555;'> 14. </span><span>│   └─pkgdown:::build_site_local(...)
+#&gt; </span><span style='color: #555555;'> 15. </span><span>│     └─pkgdown::build_reference(...)
+#&gt; </span><span style='color: #555555;'> 16. </span><span>│       └─purrr::map(...)
+#&gt; </span><span style='color: #555555;'> 17. </span><span>│         └─pkgdown:::.f(.x[[i]], ...)
+#&gt; </span><span style='color: #555555;'> 18. </span><span>│           └─pkgdown:::data_reference_topic(...)
+#&gt; </span><span style='color: #555555;'> 19. </span><span>│             ├─pkgdown:::as_data(...)
+#&gt; </span><span style='color: #555555;'> 20. </span><span>│             └─pkgdown:::as_data.tag_examples(...)
+#&gt; </span><span style='color: #555555;'> 21. </span><span>│               └─purrr::pmap_chr(...)
+#&gt; </span><span style='color: #555555;'> 22. </span><span>│                 └─pkgdown:::.f(...)
+#&gt; </span><span style='color: #555555;'> 23. </span><span>│                   ├─withr::with_options(...)
+#&gt; </span><span style='color: #555555;'> 24. </span><span>│                   │ └─base::force(code)
+#&gt; </span><span style='color: #555555;'> 25. </span><span>│                   └─evaluate::evaluate(code, env, new_device = TRUE)
+#&gt; </span><span style='color: #555555;'> 26. </span><span>│                     └─evaluate:::evaluate_call(...)
+#&gt; </span><span style='color: #555555;'> 27. </span><span>│                       ├─evaluate:::timing_fn(...)
+#&gt; </span><span style='color: #555555;'> 28. </span><span>│                       ├─evaluate:::handle(...)
+#&gt; </span><span style='color: #555555;'> 29. </span><span>│                       │ └─base::try(f, silent = TRUE)
+#&gt; </span><span style='color: #555555;'> 30. </span><span>│                       │   └─base::tryCatch(...)
+#&gt; </span><span style='color: #555555;'> 31. </span><span>│                       │     └─base:::tryCatchList(expr, classes, parentenv, handlers)
+#&gt; </span><span style='color: #555555;'> 32. </span><span>│                       │       └─base:::tryCatchOne(expr, names, parentenv, handlers[[1L]])
+#&gt; </span><span style='color: #555555;'> 33. </span><span>│                       │         └─base:::doTryCatch(return(expr), name, parentenv, handler)
+#&gt; </span><span style='color: #555555;'> 34. </span><span>│                       ├─base::withCallingHandlers(...)
+#&gt; </span><span style='color: #555555;'> 35. </span><span>│                       ├─base::withVisible(eval(expr, envir, enclos))
+#&gt; </span><span style='color: #555555;'> 36. </span><span>│                       └─base::eval(expr, envir, enclos)
+#&gt; </span><span style='color: #555555;'> 37. </span><span>│                         └─base::eval(expr, envir, enclos)
+#&gt; </span><span style='color: #555555;'> 38. </span><span>│                           ├─base::try(vec_type2("1", integer()))
+#&gt; </span><span style='color: #555555;'> 39. </span><span>│                           │ └─base::tryCatch(...)
+#&gt; </span><span style='color: #555555;'> 40. </span><span>│                           │   └─base:::tryCatchList(expr, classes, parentenv, handlers)
+#&gt; </span><span style='color: #555555;'> 41. </span><span>│                           │     └─base:::tryCatchOne(expr, names, parentenv, handlers[[1L]])
+#&gt; </span><span style='color: #555555;'> 42. </span><span>│                           │       └─base:::doTryCatch(return(expr), name, parentenv, handler)
+#&gt; </span><span style='color: #555555;'> 43. </span><span>│                           └─vctrs::vec_type2("1", integer())
+#&gt; </span><span style='color: #555555;'> 44. </span><span>├─vctrs:::vec_type2_dispatch(x = x, y = y, x_arg = x_arg, y_arg = y_arg)
+#&gt; </span><span style='color: #555555;'> 45. </span><span>├─vctrs::vec_type2.character(x = x, y = y, x_arg = x_arg, y_arg = y_arg) </span><span style='color: #555555;'>/home/travis/build/r-lib/vctrs/R/type2.R:46:2</span><span>
+#&gt; </span><span style='color: #555555;'> 46. </span><span>└─vctrs:::vec_type2.character.default(...) </span><span style='color: #555555;'>/home/travis/build/r-lib/vctrs/R/type2.R:157:23</span><span>
+#&gt; </span><span style='color: #555555;'> 47. </span><span>  └─vctrs::stop_incompatible_type(x, y, x_arg = x_arg, y_arg = y_arg) </span><span style='color: #555555;'>/home/travis/build/r-lib/vctrs/R/type2.R:164:2</span><span>
+#&gt; </span><span style='color: #555555;'> 48. </span><span>    └─vctrs:::stop_incompatible(...) </span><span style='color: #555555;'>/home/travis/build/r-lib/vctrs/R/conditions.R:82:2</span><span></div><div class='input'>
+<span class='co'># Hence you cannot assign character values to an integer or double</span>
+<span class='co'># vector:</span>
+<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/try'>try</a></span>(<span class='fu'>vec_slice</span>(<span class='no'>x</span>, <span class='fl'>2</span>) <span class='kw'>&lt;-</span> <span class='st'>"20"</span>)</div><div class='output co'>#&gt; Error : No common type for `x` &lt;double&gt; and `value` &lt;character&gt;.
+#&gt; Backtrace:
+#&gt; </span><span style='color: #555555;'>     </span><span>█
+#&gt; </span><span style='color: #555555;'>  1. </span><span>├─base::tryCatch(...)
+#&gt; </span><span style='color: #555555;'>  2. </span><span>│ └─base:::tryCatchList(expr, classes, parentenv, handlers)
+#&gt; </span><span style='color: #555555;'>  3. </span><span>│   ├─base:::tryCatchOne(...)
+#&gt; </span><span style='color: #555555;'>  4. </span><span>│   │ └─base:::doTryCatch(return(expr), name, parentenv, handler)
+#&gt; </span><span style='color: #555555;'>  5. </span><span>│   └─base:::tryCatchList(expr, names[-nh], parentenv, handlers[-nh])
+#&gt; </span><span style='color: #555555;'>  6. </span><span>│     └─base:::tryCatchOne(expr, names, parentenv, handlers[[1L]])
+#&gt; </span><span style='color: #555555;'>  7. </span><span>│       └─base:::doTryCatch(return(expr), name, parentenv, handler)
+#&gt; </span><span style='color: #555555;'>  8. </span><span>├─base::withCallingHandlers(...)
+#&gt; </span><span style='color: #555555;'>  9. </span><span>├─base::saveRDS(...)
+#&gt; </span><span style='color: #555555;'> 10. </span><span>├─base::do.call(...)
+#&gt; </span><span style='color: #555555;'> 11. </span><span>├─(function (what, args, quote = FALSE, envir = parent.frame()) ...
+#&gt; </span><span style='color: #555555;'> 12. </span><span>├─(function (..., crayon_enabled, crayon_colors, pkgdown_internet) ...
+#&gt; </span><span style='color: #555555;'> 13. </span><span>│ └─pkgdown::build_site(...)
+#&gt; </span><span style='color: #555555;'> 14. </span><span>│   └─pkgdown:::build_site_local(...)
+#&gt; </span><span style='color: #555555;'> 15. </span><span>│     └─pkgdown::build_reference(...)
+#&gt; </span><span style='color: #555555;'> 16. </span><span>│       └─purrr::map(...)
+#&gt; </span><span style='color: #555555;'> 17. </span><span>│         └─pkgdown:::.f(.x[[i]], ...)
+#&gt; </span><span style='color: #555555;'> 18. </span><span>│           └─pkgdown:::data_reference_topic(...)
+#&gt; </span><span style='color: #555555;'> 19. </span><span>│             ├─pkgdown:::as_data(...)
+#&gt; </span><span style='color: #555555;'> 20. </span><span>│             └─pkgdown:::as_data.tag_examples(...)
+#&gt; </span><span style='color: #555555;'> 21. </span><span>│               └─purrr::pmap_chr(...)
+#&gt; </span><span style='color: #555555;'> 22. </span><span>│                 └─pkgdown:::.f(...)
+#&gt; </span><span style='color: #555555;'> 23. </span><span>│                   ├─withr::with_options(...)
+#&gt; </span><span style='color: #555555;'> 24. </span><span>│                   │ └─base::force(code)
+#&gt; </span><span style='color: #555555;'> 25. </span><span>│                   └─evaluate::evaluate(code, env, new_device = TRUE)
+#&gt; </span><span style='color: #555555;'> 26. </span><span>│                     └─evaluate:::evaluate_call(...)
+#&gt; </span><span style='color: #555555;'> 27. </span><span>│                       ├─evaluate:::timing_fn(...)
+#&gt; </span><span style='color: #555555;'> 28. </span><span>│                       ├─evaluate:::handle(...)
+#&gt; </span><span style='color: #555555;'> 29. </span><span>│                       │ └─base::try(f, silent = TRUE)
+#&gt; </span><span style='color: #555555;'> 30. </span><span>│                       │   └─base::tryCatch(...)
+#&gt; </span><span style='color: #555555;'> 31. </span><span>│                       │     └─base:::tryCatchList(expr, classes, parentenv, handlers)
+#&gt; </span><span style='color: #555555;'> 32. </span><span>│                       │       └─base:::tryCatchOne(expr, names, parentenv, handlers[[1L]])
+#&gt; </span><span style='color: #555555;'> 33. </span><span>│                       │         └─base:::doTryCatch(return(expr), name, parentenv, handler)
+#&gt; </span><span style='color: #555555;'> 34. </span><span>│                       ├─base::withCallingHandlers(...)
+#&gt; </span><span style='color: #555555;'> 35. </span><span>│                       ├─base::withVisible(eval(expr, envir, enclos))
+#&gt; </span><span style='color: #555555;'> 36. </span><span>│                       └─base::eval(expr, envir, enclos)
+#&gt; </span><span style='color: #555555;'> 37. </span><span>│                         └─base::eval(expr, envir, enclos)
+#&gt; </span><span style='color: #555555;'> 38. </span><span>│                           ├─base::try(vec_slice(x, 2) &lt;- "20")
+#&gt; </span><span style='color: #555555;'> 39. </span><span>│                           │ └─base::tryCatch(...)
+#&gt; </span><span style='color: #555555;'> 40. </span><span>│                           │   └─base:::tryCatchList(expr, classes, parentenv, handlers)
+#&gt; </span><span style='color: #555555;'> 41. </span><span>│                           │     └─base:::tryCatchOne(expr, names, parentenv, handlers[[1L]])
+#&gt; </span><span style='color: #555555;'> 42. </span><span>│                           │       └─base:::doTryCatch(return(expr), name, parentenv, handler)
+#&gt; </span><span style='color: #555555;'> 43. </span><span>│                           └─vctrs::`vec_slice&lt;-`(`*tmp*`, 2, value = "20")
+#&gt; </span><span style='color: #555555;'> 44. </span><span>│                             └─vctrs:::vec_coercible_cast(value, x, x_arg = "value", to_arg = "x") </span><span style='color: #555555;'>/home/travis/build/r-lib/vctrs/R/slice.R:112:2</span><span>
+#&gt; </span><span style='color: #555555;'> 45. </span><span>│                               └─vctrs::vec_type2(to, x, x_arg = to_arg, y_arg = x_arg) </span><span style='color: #555555;'>/home/travis/build/r-lib/vctrs/R/cast.R:144:2</span><span>
+#&gt; </span><span style='color: #555555;'> 46. </span><span>├─vctrs:::vec_type2_dispatch(x = x, y = y, x_arg = x_arg, y_arg = y_arg)
+#&gt; </span><span style='color: #555555;'> 47. </span><span>├─vctrs::vec_type2.double(x = x, y = y, x_arg = x_arg, y_arg = y_arg) </span><span style='color: #555555;'>/home/travis/build/r-lib/vctrs/R/type2.R:46:2</span><span>
+#&gt; </span><span style='color: #555555;'> 48. </span><span>└─vctrs:::vec_type2.double.default(...) </span><span style='color: #555555;'>/home/travis/build/r-lib/vctrs/R/type2.R:85:21</span><span>
+#&gt; </span><span style='color: #555555;'> 49. </span><span>  └─vctrs::stop_incompatible_type(x, y, x_arg = x_arg, y_arg = y_arg) </span><span style='color: #555555;'>/home/travis/build/r-lib/vctrs/R/type2.R:143:2</span><span>
+#&gt; </span><span style='color: #555555;'> 50. </span><span>    └─vctrs:::stop_incompatible(...) </span><span style='color: #555555;'>/home/travis/build/r-lib/vctrs/R/conditions.R:82:2</span><span></div></span></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
       <li><a href="#arguments">Arguments</a></li>
       
+      <li><a href="#value">Value</a></li>
+
       <li><a href="#genericity">Genericity</a></li>
 
       <li><a href="#differences-with-base-r-subsetting">Differences with base R subsetting</a></li>
