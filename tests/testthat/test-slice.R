@@ -1,4 +1,8 @@
-context("test-size")
+context("test-slice")
+
+test_that("vec_slice throws error with non-vector inputs", {
+  expect_error(vec_slice(environment(), 1L), "a vector")
+})
 
 test_that("can subset base vectors", {
   i <- 2:3
@@ -113,55 +117,13 @@ test_that("can subset empty data frames", {
   expect_equal(vec_size(vec_slice(df, 1:3)), 3)
 })
 
-test_that("can modify subset", {
-  x0 <- NULL
-  vec_slice(x0, 1L) <- 1
-  expect_identical(x0, NULL)
-
-  x1 <- c(2, 1)
-  vec_slice(x1, 1L) <- 1
-  expect_equal(x1, c(1, 1))
-
-  x2 <- array(c(2, 1, 2, 1), c(2, 2))
-  vec_slice(x2, 1L) <- 1
-  expect_equal(x2, array(1, c(2, 2)))
-
-  x3 <- array(c(2, 1, 2, 1, 2, 1, 2, 1), c(2, 2, 2))
-  vec_slice(x3, 1L) <- 1
-  expect_equal(x3, array(1, c(2, 2, 2)))
-})
-
-test_that("can modify subset using logical index", {
-  x1 <- c(2, 1)
-  vec_slice(x1, TRUE) <- 3
-  expect_equal(x1, c(3, 3))
-  vec_slice(x1, c(TRUE, FALSE)) <- 4
-  expect_equal(x1, c(4, 3))
-
-  expect_error(
-    vec_slice(x1, c(TRUE, FALSE, TRUE)) <- 5,
-    "has size 3 whereas the index has size 2",
-    fixed = TRUE
-  )
-
-  expect_error(
-    vec_slice(mtcars, c(TRUE, FALSE)) <- mtcars[1, ],
-    "has size 2 whereas the index has size 32"
-  )
-})
-
 test_that("ignores NA in logical subsetting", {
   x <- c(NA, 1, 2)
   expect_equal(vec_slice(x, x > 0), c(NA, 1, 2))
-  expect_equal(`vec_slice<-`(x, x > 0, 1), c(NA, 1, 1))
-  expect_equal(`vec_slice<-`(x, x > 0, c(NA, 2:1)), c(NA, 2, 1))
 })
 
 test_that("ignores NA in integer subsetting", {
-  x <- 0:2
-  expect_equal(vec_slice(x, c(NA, 2:3)), c(NA, 1, 2))
-  expect_equal(`vec_slice<-`(x, c(NA, 2:3), 1), c(0, 1, 1))
-  expect_equal(`vec_slice<-`(x, c(NA, 2:3), c(NA, 2:1)), c(0, 2, 1))
+  expect_equal(vec_slice(0:2, c(NA, 2:3)), c(NA, 1, 2))
 })
 
 test_that("can't slice with missing argument", {
@@ -174,36 +136,6 @@ test_that("can slice with NULL argument", {
   expect_identical(vec_slice(1:3, NULL), integer())
   expect_identical(vec_slice(iris, NULL), iris[0, ])
   expect_identical(vec_slice(new_vctr(1:3), NULL), new_vctr(integer()))
-})
-
-test_that("can't modify subset with missing argument", {
-  x <- 1:3
-  expect_error(vec_slice(x, ) <- 2L)
-})
-
-test_that("can modify subset with recycled NA argument", {
-  x <- 1:3
-  vec_slice(x, NA) <- 2L
-  expect_identical(x, 1:3)
-})
-
-test_that("can modify subset with recycled TRUE argument", {
-  x <- 1:3
-  vec_slice(x, TRUE) <- 2L
-  expect_identical(x, rep(2L, 3))
-})
-
-test_that("can modify subset with recycled FALSE argument", {
-  x <- 1:3
-  vec_slice(x, FALSE) <- 2L
-  expect_identical(x, 1:3)
-})
-
-test_that("can modify subset with NULL argument", {
-  x <- 1:3
-  vec_slice(x, NULL) <- 2L
-
-  expect_identical(x, 1:3)
 })
 
 test_that("slicing unclassed structures preserves attributes", {
@@ -230,22 +162,9 @@ test_that("0 is ignored in positive indices", {
   expect_identical(vec_slice(1:3, c(0L, 2L, 0L)), 2L)
 })
 
-test_that("can slice-assign with missing indices", {
-  x <- 1:3
-  y <- 4:6
-  test <- c(NA, TRUE, FALSE)
-  vec_slice(x, test) <- vec_slice(y, test)
-  expect_identical(x, int(1, 5, 3))
-})
-
 test_that("can slice with double indices", {
   expect_identical(vec_slice(1:3, dbl(2, 3)), 2:3)
   expect_lossy(vec_as_index(2^31, 1:3), na_int, x = dbl(), to = int())
-})
-
-test_that("slice-assign checks vectorness", {
-  x <- foobar(list(1))
-  expect_error(vec_slice(x, 1) <- 10, "must be a vector")
 })
 
 test_that("vec_as_index() checks type", {
@@ -398,29 +317,8 @@ test_that("additional subscripts are forwarded to `[`", {
   expect_identical(x[1, 2], exp)
 })
 
-test_that("a coercible RHS is cast to LHS before assignment (#140)", {
-  x <- 1:2
-  expect_error(vec_slice(x, 1) <- "1", class = "vctrs_error_incompatible_type")
-
-  x <- c("foo", "bar")
-  expect_error(vec_slice(x, 1) <- 1, class = "vctrs_error_incompatible_type")
-
-  x <- 1:2
-  expect_error(vec_slice(x, 1) <- 3.5, class = "vctrs_error_cast_lossy")
-
-  allow_lossy_cast(vec_slice(x, 1) <- 3.5)
-  expect_identical(x, int(3, 2))
-})
-
 
 # vec_na ------------------------------------------------------------------
-
-test_that("vec_slice throws error with non-vector inputs", {
-  expect_error(vec_slice(environment(), 1L), "a vector")
-
-  x <- environment()
-  expect_error(vec_slice(x, 1L) <- 1L, "a vector")
-})
 
 test_that("na of atomic vectors is as expected", {
   expect_equal(vec_na(TRUE), NA)
