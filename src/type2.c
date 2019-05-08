@@ -91,15 +91,10 @@ SEXP vec_type2(SEXP x, SEXP y,
 
 // [[ register() ]]
 SEXP vctrs_type2(SEXP x, SEXP y, SEXP x_arg, SEXP y_arg) {
-  if (x_arg == R_NilValue) {
-    x_arg = vctrs_shared_empty_str;
-  } else if (!r_is_string(x_arg)) {
+  if (!r_is_string(x_arg)) {
     Rf_errorcall(R_NilValue, "`x_arg` must be a string");
   }
-
-  if (y_arg == R_NilValue) {
-    y_arg = vctrs_shared_empty_str;
-  } else if (!r_is_string(y_arg)) {
+  if (!r_is_string(y_arg)) {
     Rf_errorcall(R_NilValue, "`y_arg` must be a string");
   }
 
