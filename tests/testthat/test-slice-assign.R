@@ -2,7 +2,7 @@ context("test-slice-assign")
 
 test_that("slice-assign throws error with non-vector inputs", {
   x <- environment()
-  expect_error(vec_slice(x, 1L) <- 1L, "a vector")
+  expect_error(vec_slice(x, 1L) <- 1L, class = "vctrs_error_scalar_type")
 })
 
 test_that("can modify subset", {
@@ -94,7 +94,7 @@ test_that("can slice-assign with missing indices", {
 
 test_that("slice-assign checks vectorness", {
   x <- foobar(list(1))
-  expect_error(vec_slice(x, 1) <- 10, "must be a vector")
+  expect_error(vec_slice(x, 1) <- 10, class = "vctrs_error_scalar_type")
 })
 
 test_that("a coercible RHS is cast to LHS before assignment (#140)", {
