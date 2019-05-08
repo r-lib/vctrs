@@ -57,7 +57,7 @@ vec_ptype_abbr.default <- function(x) {
       integer = "int",
       double = "dbl",
       character = "chr",
-      complex = "cplx",
+      complex = "cpl",
       list = "list",
       expression = "expr"
     )

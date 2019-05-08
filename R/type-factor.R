@@ -43,7 +43,7 @@ vec_ptype_full.factor <- function(x) {
 
 #' @export
 vec_ptype_abbr.factor <- function(x) {
-  "fctr"
+  "fct"
 }
 
 #' @export

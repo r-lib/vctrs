@@ -34,10 +34,15 @@ test_that("atomic vectors and arrays as expected", {
   expect_equal(vec_ptype_full(dbl_mat), "double[,3]")
 })
 
+test_that("complex and factor as expected (#323)", {
+  expect_equal(vec_ptype_abbr(0i), "cpl")
+  expect_equal(vec_ptype_abbr(factor()), "fct")
+})
+
 test_that("I() wraps contents", {
   f <- factor()
 
-  expect_equal(vec_ptype_abbr(I(f)), "I<fctr>")
+  expect_equal(vec_ptype_abbr(I(f)), "I<fct>")
   expect_equal(vec_ptype_full(I(f)), "I<factor<>>")
 })
 

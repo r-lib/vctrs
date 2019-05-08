@@ -4,7 +4,7 @@ test_that("ptype methods are descriptive", {
   f <- factor()
   o <- ordered(character())
 
-  expect_equal(vec_ptype_abbr(f), "fctr")
+  expect_equal(vec_ptype_abbr(f), "fct")
   expect_equal(vec_ptype_abbr(o), "ord")
 
   expect_equal(vec_ptype_full(f), "factor<>")
