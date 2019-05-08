@@ -8,14 +8,13 @@ vec_type2.tbl_df <- function(x, y, ...) UseMethod("vec_type2.tbl_df", y)
 
 #' @method vec_type2.tbl_df data.frame
 #' @export
-vec_type2.tbl_df.data.frame <- function(x, y, ..., x_arg = "", y_arg = "") {
-  df_col_type2(x, y, x_arg, y_arg)
+vec_type2.tbl_df.data.frame <- function(x, y, ...) {
+  abort("Never called: Native implementation")
 }
-
 #' @method vec_type2.data.frame tbl_df
 #' @export
-vec_type2.data.frame.tbl_df <- function(x, y, ..., x_arg = "", y_arg = "") {
-  vec_restore(df_col_type2(x, y, x_arg, y_arg), y)
+vec_type2.data.frame.tbl_df <- function(x, y, ...) {
+  abort("Never called: Native implementation")
 }
 
 #' @method vec_type2.tbl_df default

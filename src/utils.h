@@ -25,6 +25,7 @@ SEXP vctrs_dispatch3(SEXP fn_sym, SEXP fn,
 
 SEXP df_map(SEXP df, SEXP (*fn)(SEXP));
 SEXP with_proxy(SEXP x, SEXP (*rec)(SEXP, bool), SEXP i);
+bool is_tibble(SEXP x);
 
 struct vctrs_arg args_empty;
 
@@ -34,6 +35,9 @@ enum vctrs_type2 vec_typeof2_impl(enum vctrs_type type_x, enum vctrs_type type_y
 
 bool is_compact_rownames(SEXP x);
 R_len_t compact_rownames_length(SEXP x);
+void init_data_frame(SEXP x, R_len_t n);
+void init_tibble(SEXP x, R_len_t n);
+bool is_native_df(SEXP x);
 
 bool (*rlang_is_splice_box)(SEXP);
 SEXP (*rlang_unbox)(SEXP);
@@ -56,6 +60,7 @@ SEXP r_protect(SEXP x);
 bool r_is_true(SEXP x);
 bool r_is_string(SEXP x);
 SEXP r_peek_option(const char* option);
+SEXP r_names(SEXP x);
 
 SEXP r_pairlist(SEXP* tags, SEXP* cars);
 SEXP r_call(SEXP fn, SEXP* tags, SEXP* cars);
@@ -88,6 +93,8 @@ static inline double r_dbl_get(SEXP x, R_len_t i) {
 
 extern SEXP vctrs_ns_env;
 extern SEXP vctrs_shared_empty_str;
+
+extern SEXP classes_data_frame;
 
 extern SEXP syms_i;
 extern SEXP syms_x;

@@ -9,6 +9,13 @@ SEXP (*rlang_unbox)(SEXP) = NULL;
 SEXP (*rlang_env_dots_values)(SEXP) = NULL;
 SEXP (*rlang_env_dots_list)(SEXP) = NULL;
 
+SEXP strings_tbl = NULL;
+SEXP strings_tbl_df = NULL;
+SEXP strings_data_frame = NULL;
+
+SEXP classes_data_frame = NULL;
+SEXP classes_tibble = NULL;
+
 
 bool is_bool(SEXP x) {
   return
@@ -107,6 +114,80 @@ bool is_compact_rownames(SEXP x) {
 R_len_t compact_rownames_length(SEXP x) {
   return abs(INTEGER(x)[1]);
 }
+
+static void init_compact_rownames(SEXP x, R_len_t n);
+static SEXP new_compact_rownames(R_len_t n);
+
+void init_data_frame(SEXP x, R_len_t n) {
+  Rf_setAttrib(x, R_ClassSymbol, classes_data_frame);
+  init_compact_rownames(x, n);
+}
+void init_tibble(SEXP x, R_len_t n) {
+  Rf_setAttrib(x, R_ClassSymbol, classes_tibble);
+  init_compact_rownames(x, n);
+}
+
+static void init_compact_rownames(SEXP x, R_len_t n) {
+  SEXP rn = PROTECT(new_compact_rownames(n));
+  Rf_setAttrib(x, R_RowNamesSymbol, rn);
+  UNPROTECT(1);
+}
+static SEXP new_compact_rownames(R_len_t n) {
+  if (n <= 0) {
+    return vctrs_shared_empty_int;
+  }
+
+  SEXP out = Rf_allocVector(INTSXP, 2);
+  int* out_data = INTEGER(out);
+  out_data[0] = NA_INTEGER;
+  out_data[1] = -n;
+  return out;
+}
+
+
+static bool is_tibble_class(SEXP class);
+static bool is_data_frame_class(SEXP class);
+
+bool is_tibble(SEXP x) {
+  SEXP class = PROTECT(Rf_getAttrib(x, R_ClassSymbol));
+  bool out = is_tibble_class(class);
+  UNPROTECT(1);
+  return out;
+}
+bool is_native_df(SEXP x) {
+  SEXP class = PROTECT(Rf_getAttrib(x, R_ClassSymbol));
+  bool out = is_data_frame_class(class) || is_tibble_class(class);
+  UNPROTECT(1);
+  return out;
+}
+
+static bool is_tibble_class(SEXP class) {
+  if (Rf_length(class) != 3) {
+    return false;
+  }
+
+  SEXP* class_ptr = STRING_PTR(class);
+
+  if (*class_ptr != strings_tbl_df) {
+    return false;
+  }
+  ++class_ptr;
+  if (*class_ptr != strings_tbl) {
+    return false;
+  }
+  ++class_ptr;
+  if (*class_ptr != strings_data_frame) {
+    return false;
+  }
+
+  return true;
+}
+static bool is_data_frame_class(SEXP class) {
+  return
+    Rf_length(class) == 1 &&
+    STRING_ELT(class, 0) == strings_data_frame;
+}
+
 
 inline void never_reached(const char* fn) {
   Rf_error("Internal error in `%s()`: Never reached", fn);
@@ -359,6 +440,26 @@ void vctrs_init_utils(SEXP ns) {
 
   vctrs_shared_empty_str = Rf_mkString("");
   R_PreserveObject(vctrs_shared_empty_str);
+
+
+  classes_data_frame = Rf_allocVector(STRSXP, 1);
+  R_PreserveObject(classes_data_frame);
+
+  strings_data_frame = Rf_mkChar("data.frame");
+  SET_STRING_ELT(classes_data_frame, 0, strings_data_frame);
+
+
+  classes_tibble = Rf_allocVector(STRSXP, 3);
+  R_PreserveObject(classes_tibble);
+
+  strings_tbl_df = Rf_mkChar("tbl_df");
+  SET_STRING_ELT(classes_tibble, 0, strings_tbl_df);
+
+  strings_tbl = Rf_mkChar("tbl");
+  SET_STRING_ELT(classes_tibble, 1, strings_tbl);
+
+  SET_STRING_ELT(classes_tibble, 2, strings_data_frame);
+
 
   syms_i = Rf_install("i");
   syms_x = Rf_install("x");
