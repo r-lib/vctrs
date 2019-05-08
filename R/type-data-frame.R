@@ -79,7 +79,9 @@ vec_ptype_abbr.data.frame <- function(x) {
 vec_type2.data.frame <- function(x, y, ...) UseMethod("vec_type2.data.frame", y)
 #' @method vec_type2.data.frame data.frame
 #' @export
-vec_type2.data.frame.data.frame <- function(x, y, ...) df_col_type2(x, y, ...)
+vec_type2.data.frame.data.frame <- function(x, y, ..., x_arg = "", y_arg = "") {
+  df_col_type2(x, y, x_arg, y_arg)
+}
 #' @method vec_type2.data.frame default
 #' @export
 vec_type2.data.frame.default <- function(x, y, ..., x_arg = "", y_arg = "") {
@@ -124,7 +126,7 @@ df_length <- function(x) {
   }
 }
 
-df_col_type2 <- function(x, y, ..., x_arg = "", y_arg = "") {
+df_col_type2 <- function(x, y, x_arg, y_arg) {
   # Avoid expensive [.data.frame
   x_raw <- vec_data(vec_type(x))
   y_raw <- vec_data(vec_type(y))
