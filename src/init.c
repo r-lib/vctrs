@@ -57,6 +57,7 @@ extern SEXP vctrs_class_type(SEXP);
 extern SEXP df_restore(SEXP, SEXP, SEXP);
 extern SEXP vctrs_recycle(SEXP, SEXP);
 extern SEXP vctrs_coercible_cast(SEXP, SEXP, SEXP, SEXP);
+extern SEXP vec_assign(SEXP, SEXP, SEXP);
 
 // Defined below
 SEXP vctrs_init(SEXP);
@@ -112,6 +113,7 @@ static const R_CallMethodDef CallEntries[] = {
   {"vctrs_df_restore",                 (DL_FUNC) &df_restore, 3},
   {"vctrs_recycle",                    (DL_FUNC) &vctrs_recycle, 2},
   {"vctrs_coercible_cast",             (DL_FUNC) &vctrs_coercible_cast, 4},
+  {"vctrs_assign",                     (DL_FUNC) &vec_assign, 3},
   {NULL, NULL, 0}
 };
 
@@ -131,7 +133,8 @@ void R_init_vctrs(DllInfo *dll)
 
 void vctrs_init_cast(SEXP ns);
 void vctrs_init_data(SEXP ns);
-void vctrs_init_size(SEXP ns);
+void vctrs_init_slice(SEXP ns);
+void vctrs_init_slice_assign(SEXP ns);
 void vctrs_init_type2(SEXP ns);
 void vctrs_init_types(SEXP ns);
 void vctrs_init_unspecified(SEXP ns);
@@ -140,7 +143,8 @@ void vctrs_init_utils(SEXP ns);
 SEXP vctrs_init(SEXP ns) {
   vctrs_init_cast(ns);
   vctrs_init_data(ns);
-  vctrs_init_size(ns);
+  vctrs_init_slice(ns);
+  vctrs_init_slice_assign(ns);
   vctrs_init_type2(ns);
   vctrs_init_types(ns);
   vctrs_init_unspecified(ns);

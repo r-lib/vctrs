@@ -98,33 +98,16 @@ vec_slice_fallback <- function(x, i) {
 #' @export
 #' @rdname vec_slice
 `vec_slice<-` <- function(x, i, value) {
-  if (is_null(x)) {
-    return(x)
-  }
-
-  vec_assert(x)
-  i <- vec_as_index(i, x)
-
-  if (has_dim(x)) {
-    return(vec_assign_fallback(x, i, value))
-  }
-
-  value <- vec_coercible_cast(value, x, x_arg = "value", to_arg = "x")
-  value <- vec_proxy(value)
-  out <- vec_proxy(x)
-
-  value <- vec_recycle(value, vec_size(i))
-
+  .Call(vctrs_assign, x, i, value)
+}
+vec_assign <- function(x, i, value) {
+  .Call(vctrs_assign, x, i, value)
+}
+vec_assign_fallback <- function(x, i, value) {
   existing <- !is.na(i)
   i <- vec_slice(i, existing)
   value <- vec_slice(value, existing)
 
-  out <- vec_assign_fallback(out, i, value)
-
-  vec_restore(out, x)
-}
-
-vec_assign_fallback <- function(x, i, value) {
   value <- vec_recycle(value, vec_size(i))
   value <- vec_coercible_cast(value, x, x_arg = "value", to_arg = "x")
 
