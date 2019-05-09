@@ -115,21 +115,21 @@ test_that("non-vector base types are scalars", {
   expect_false(vec_is(base::c))
   expect_false(vec_is(expression()))
 
-  expect_error(vec_assert(quote(foo)), "must be a vector")
-  expect_error(vec_assert(pairlist("")), "must be a vector")
-  expect_error(vec_assert(function() NULL), "must be a vector")
-  expect_error(vec_assert(env()), "must be a vector")
-  expect_error(vec_assert(~foo), "must be a vector")
-  expect_error(vec_assert(base::`{`), "must be a vector")
-  expect_error(vec_assert(base::c), "must be a vector")
-  expect_error(vec_assert(expression()), "must be a vector")
+  expect_error(vec_assert(quote(foo)), class = "vctrs_error_scalar_type")
+  expect_error(vec_assert(pairlist("")), class = "vctrs_error_scalar_type")
+  expect_error(vec_assert(function() NULL), class = "vctrs_error_scalar_type")
+  expect_error(vec_assert(env()), class = "vctrs_error_scalar_type")
+  expect_error(vec_assert(~foo), class = "vctrs_error_scalar_type")
+  expect_error(vec_assert(base::`{`), class = "vctrs_error_scalar_type")
+  expect_error(vec_assert(base::c), class = "vctrs_error_scalar_type")
+  expect_error(vec_assert(expression()), class = "vctrs_error_scalar_type")
 })
 
 test_that("vec_assert() uses friendly type in error messages", {
    # Friendly type will be generated in rlang in the future. Upstream
    # changes should not cause CRAN failures.
   skip_on_cran()
-  expect_error(vec_assert(function() NULL), "must be a vector, not a function")
+  expect_error(vec_assert(function() NULL), class = "vctrs_error_scalar_type")
 })
 
 test_that("vec_typeof() handles all types", {
