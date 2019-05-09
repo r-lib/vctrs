@@ -76,7 +76,7 @@ can_s3_register_now <- function(generic, class, method, package) {
 
   # Avoid registration failures during loading (pkgload or regular),
   # only register if generic can be accessed
-  return(exists(generic, envir))
+  exists(generic, envir)
 }
 
 # nocov end
