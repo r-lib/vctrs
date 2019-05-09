@@ -497,6 +497,11 @@ is.nan.vctrs_vctr <- function(x) {
 }
 
 #' @export
+`^.vctrs_vctr` <- function(e1, e2) {
+  vec_arith("^", e1, e2)
+}
+
+#' @export
 `%%.vctrs_vctr` <- function(e1, e2) {
   vec_arith("%%", e1, e2)
 }
