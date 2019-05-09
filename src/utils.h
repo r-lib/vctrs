@@ -114,6 +114,8 @@ extern SEXP syms_dots;
 extern SEXP syms_bracket;
 extern SEXP syms_x_arg;
 extern SEXP syms_y_arg;
+extern SEXP syms_out;
+
 #define syms_names R_NamesSymbol
 
 extern SEXP fns_bracket;
