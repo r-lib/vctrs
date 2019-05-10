@@ -3,12 +3,16 @@
 \name{vec_names}
 \alias{vec_names}
 \alias{vec_as_names}
+\alias{vec_repair_names}
 \title{Retrieve and repair names}
 \usage{
 vec_names(x, ..., repair = c("minimal", "unique", "universal"),
   quiet = FALSE)
 
 vec_as_names(names, ..., repair = c("minimal", "unique", "universal"),
+  quiet = FALSE)
+
+vec_repair_names(x, repair = c("minimal", "unique", "universal"), ...,
   quiet = FALSE)
 }
 \arguments{
@@ -30,7 +34,7 @@ safely use the names as variables without causing a syntax
 error.
 }
 
-See \code{\link[=vec_repair_names]{vec_repair_names()}} for a complete overview of names repair.}
+See below for a complete overview of names repair.}
 
 \item{quiet}{By default, the user is informed of any renaming
 caused by repairing the names. This only concerns unique and
@@ -56,6 +60,105 @@ an empty character vector as long as the number of rows.
 according to the \code{repair} argument. It is the r-lib and tidyverse
 equivalent of \code{\link[base:make.names]{base::make.names()}}.
 }
+\section{Overview}{
+
+
+vctrs deals with a few levels of name repair:
+\itemize{
+\item \code{minimal} names exist. The \code{names} attribute is not \code{NULL}. The
+name of an unnamed element is \code{""} and never \code{NA}. For instance,
+\code{\link[=vec_names]{vec_names()}} always returns minimal names and data frames
+created by the tibble package have names that are, at least,
+\code{minimal}.
+\item \code{unique} names are \code{minimal}, have no duplicates, and can be used
+where a variable name is expected.  Empty names, and \code{...} or
+\code{..} followed by a sequence of digits are banned.
+\itemize{
+\item All columns can be accessed by name via \code{df[["name"]]} and
+\code{df$`name` } and \code{with(df, `name`)}.
+}
+\item \code{universal} names are \code{unique} and syntactic (see Details for
+more).
+\itemize{
+\item Names work everywhere, without quoting: \code{df$name} and \code{with(df, name)} and \code{lm(name1 ~ name2, data = df)} and
+\code{dplyr::select(df, name)} all work.
+}
+}
+
+\code{universal} implies \code{unique}, \code{unique} implies \code{minimal}. These
+levels are nested.
+}
+
+\section{\code{minimal} names}{
+
+
+\code{minimal} names exist. The \code{names} attribute is not \code{NULL}. The
+name of an unnamed element is \code{""} and never \code{NA}.
+
+Examples:\preformatted{Original names of a vector with length 3: NULL
+                           minimal names: "" "" ""
+
+                          Original names: "x" NA
+                           minimal names: "x" ""
+}
+}
+
+\section{\code{unique} names}{
+
+
+\code{unique} names are \code{minimal}, have no duplicates, and can be used
+(possibly with backticks) in contexts where a variable is
+expected. Empty names, and \code{...} or \code{..} followed by a sequence of
+digits are banned If a data frame has \code{unique} names, you can
+index it by name, and also access the columns by name.  In
+particular, \code{df[["name"]]} and \code{df$`name`} and also \code{with(df, `name`)} always work.
+
+There are many ways to make names \code{unique}. We append a suffix of the form
+\code{...j} to any name that is \code{""} or a duplicate, where \code{j} is the position.
+We also change \code{..#} and \code{...} to \code{...#}.
+
+Example:\preformatted{Original names:     ""     "x"     "" "y"     "x"  "..2"  "..."
+  unique names: "...1" "x...2" "...3" "y" "x...5" "...6" "...7"
+}
+
+Pre-existing suffixes of the form \code{...j} are always stripped, prior
+to making names \code{unique}, i.e. reconstructing the suffixes. If this
+interacts poorly with your names, you should take control of name
+repair.
+}
+
+\section{\code{universal} names}{
+
+
+\code{universal} names are \code{unique} and syntactic, meaning they:
+\itemize{
+\item Are never empty (inherited from \code{unique}).
+\item Have no duplicates (inherited from \code{unique}).
+\item Are not \code{...}. Do not have the form \code{..i}, where \code{i} is a
+number (inherited from \code{unique}).
+\item Consist of letters, numbers, and the dot \code{.} or underscore \code{_}
+characters.
+\item Start with a letter or start with the dot \code{.} not followed by a
+number.
+\item Are not a \link{reserved} word, e.g., \code{if} or \code{function} or \code{TRUE}.
+}
+
+If a vector has \code{universal} names, variable names can be used
+"as is" in code. They work well with nonstandard evaluation, e.g.,
+\code{df$name} works.
+
+vctrs has a different method of making names syntactic than
+\code{\link[base:make.names]{base::make.names()}}. In general, vctrs prepends one or more dots
+\code{.} until the name is syntactic.
+
+Examples:\preformatted{ Original names:     ""     "x"    NA      "x"
+universal names: "...1" "x...2" "...3" "x...4"
+
+  Original names: "(y)"  "_z"  ".2fa"  "FALSE"
+ universal names: ".y." "._z" "..2fa" ".FALSE"
+}
+}
+
 \examples{
 # By default, `vec_names()` returns minimal names:
 vec_names(1:3)
@@ -67,4 +170,11 @@ vec_names(1:3, repair = "unique")
 x <- c("_foo" = 1, "+" = 2)
 vec_names(x, repair = "universal")
 
+}
+\seealso{
+\code{\link[rlang:names2]{rlang::names2()}} returns the names of an object, after
+making them \code{minimal}.
+
+The \href{https://principles.tidyverse.org/names-attribute.html}{Names attribute}
+section in the "tidyverse package development principles".
 }

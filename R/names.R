@@ -35,12 +35,120 @@
 #'     safely use the names as variables without causing a syntax
 #'     error.
 #'
-#'   See [vec_repair_names()] for a complete overview of names repair.
+#'   See below for a complete overview of names repair.
 #' @param quiet By default, the user is informed of any renaming
 #'   caused by repairing the names. This only concerns unique and
 #'   universal repairing. Set `quiet` to `TRUE` to silence the
 #'   messages.
 #'
+#' @section Overview:
+#'
+#' vctrs deals with a few levels of name repair:
+#'
+#' * `minimal` names exist. The `names` attribute is not `NULL`. The
+#'   name of an unnamed element is `""` and never `NA`. For instance,
+#'   [vec_names()] always returns minimal names and data frames
+#'   created by the tibble package have names that are, at least,
+#'   `minimal`.
+#'
+#' * `unique` names are `minimal`, have no duplicates, and can be used
+#'   where a variable name is expected.  Empty names, and `...` or
+#'   `..` followed by a sequence of digits are banned.
+#'
+#'   - All columns can be accessed by name via `df[["name"]]` and
+#'     ``df$`name` `` and ``with(df, `name`)``.
+#'
+#' * `universal` names are `unique` and syntactic (see Details for
+#'   more).
+#'
+#'   - Names work everywhere, without quoting: `df$name` and `with(df,
+#'     name)` and `lm(name1 ~ name2, data = df)` and
+#'     `dplyr::select(df, name)` all work.
+#'
+#' `universal` implies `unique`, `unique` implies `minimal`. These
+#' levels are nested.
+#'
+#'
+#' @section `minimal` names:
+#'
+#' `minimal` names exist. The `names` attribute is not `NULL`. The
+#' name of an unnamed element is `""` and never `NA`.
+#'
+#' Examples:
+#'
+#' ```
+#' Original names of a vector with length 3: NULL
+#'                            minimal names: "" "" ""
+#'
+#'                           Original names: "x" NA
+#'                            minimal names: "x" ""
+#' ```
+#'
+#'
+#' @section `unique` names:
+#'
+#' `unique` names are `minimal`, have no duplicates, and can be used
+#'  (possibly with backticks) in contexts where a variable is
+#'  expected. Empty names, and `...` or `..` followed by a sequence of
+#'  digits are banned If a data frame has `unique` names, you can
+#'  index it by name, and also access the columns by name.  In
+#'  particular, `df[["name"]]` and `` df$`name` `` and also ``with(df,
+#'  `name`)`` always work.
+#'
+#' There are many ways to make names `unique`. We append a suffix of the form
+#' `...j` to any name that is `""` or a duplicate, where `j` is the position.
+#' We also change `..#` and `...` to `...#`.
+#'
+#' Example:
+#'
+#' ```
+#' Original names:     ""     "x"     "" "y"     "x"  "..2"  "..."
+#'   unique names: "...1" "x...2" "...3" "y" "x...5" "...6" "...7"
+#' ```
+#'
+#' Pre-existing suffixes of the form `...j` are always stripped, prior
+#' to making names `unique`, i.e. reconstructing the suffixes. If this
+#' interacts poorly with your names, you should take control of name
+#' repair.
+#'
+#'
+#' @section `universal` names:
+#'
+#' `universal` names are `unique` and syntactic, meaning they:
+#'
+#'   * Are never empty (inherited from `unique`).
+#'   * Have no duplicates (inherited from `unique`).
+#'   * Are not `...`. Do not have the form `..i`, where `i` is a
+#'     number (inherited from `unique`).
+#'   * Consist of letters, numbers, and the dot `.` or underscore `_`
+#'     characters.
+#'   * Start with a letter or start with the dot `.` not followed by a
+#'     number.
+#'   * Are not a [reserved] word, e.g., `if` or `function` or `TRUE`.
+#'
+#' If a vector has `universal` names, variable names can be used
+#' "as is" in code. They work well with nonstandard evaluation, e.g.,
+#' `df$name` works.
+#'
+#' vctrs has a different method of making names syntactic than
+#' [base::make.names()]. In general, vctrs prepends one or more dots
+#' `.` until the name is syntactic.
+#'
+#' Examples:
+#'
+#' ```
+#'  Original names:     ""     "x"    NA      "x"
+#' universal names: "...1" "x...2" "...3" "x...4"
+#'
+#'   Original names: "(y)"  "_z"  ".2fa"  "FALSE"
+#'  universal names: ".y." "._z" "..2fa" ".FALSE"
+#' ```
+#'
+#' @seealso [rlang::names2()] returns the names of an object, after
+#'   making them `minimal`.
+#'
+#' The [Names attribute](https://principles.tidyverse.org/names-attribute.html)
+#' section in the "tidyverse package development principles".
 #' @examples
 #' # By default, `vec_names()` returns minimal names:
 #' vec_names(1:3)
@@ -129,119 +237,7 @@ validate_minimal <- function(names, n = NULL) {
   names
 }
 
-#' Repair the names of a vector
-#'
-#' @description
-#'
-#' vctrs deals with a few levels of name repair:
-#'
-#' * `minimal` names exist. The `names` attribute is not `NULL`. The
-#'   name of an unnamed element is `""` and never `NA`. For instance,
-#'   [vec_names()] always returns minimal names and data frames
-#'   created by the tibble package have names that are, at least,
-#'   `minimal`.
-#'
-#' * `unique` names are `minimal`, have no duplicates, and can be used
-#'   where a variable name is expected.  Empty names, and `...` or
-#'   `..` followed by a sequence of digits are banned.
-#'
-#'   - All columns can be accessed by name via `df[["name"]]` and
-#'     ``df$`name` `` and ``with(df, `name`)``.
-#'
-#' * `universal` names are `unique` and syntactic (see Details for
-#'   more).
-#'
-#'   - Names work everywhere, without quoting: `df$name` and `with(df,
-#'     name)` and `lm(name1 ~ name2, data = df)` and
-#'     `dplyr::select(df, name)` all work.
-#'
-#' `universal` implies `unique`, `unique` implies `minimal`. These
-#' levels are nested.
-#'
-#'
-#' @inheritParams vec_names
-#'
-#' @section `minimal` names:
-#'
-#' `minimal` names exist. The `names` attribute is not `NULL`. The
-#' name of an unnamed element is `""` and never `NA`.
-#'
-#' Examples:
-#'
-#' ```
-#' Original names of a vector with length 3: NULL
-#'                            minimal names: "" "" ""
-#'
-#'                           Original names: "x" NA
-#'                            minimal names: "x" ""
-#' ```
-#'
-#'
-#' @section `unique` names:
-#'
-#' `unique` names are `minimal`, have no duplicates, and can be used
-#'  (possibly with backticks) in contexts where a variable is
-#'  expected. Empty names, and `...` or `..` followed by a sequence of
-#'  digits are banned If a data frame has `unique` names, you can
-#'  index it by name, and also access the columns by name.  In
-#'  particular, `df[["name"]]` and `` df$`name` `` and also ``with(df,
-#'  `name`)`` always work.
-#'
-#' There are many ways to make names `unique`. We append a suffix of the form
-#' `...j` to any name that is `""` or a duplicate, where `j` is the position.
-#' We also change `..#` and `...` to `...#`.
-#'
-#' Example:
-#'
-#' ```
-#' Original names:     ""     "x"     "" "y"     "x"  "..2"  "..."
-#'   unique names: "...1" "x...2" "...3" "y" "x...5" "...6" "...7"
-#' ```
-#'
-#' Pre-existing suffixes of the form `...j` are always stripped, prior
-#' to making names `unique`, i.e. reconstructing the suffixes. If this
-#' interacts poorly with your names, you should take control of name
-#' repair.
-#'
-#'
-#' @section `universal` names:
-#'
-#' `universal` names are `unique` and syntactic, meaning they:
-#'
-#'   * Are never empty (inherited from `unique`).
-#'   * Have no duplicates (inherited from `unique`).
-#'   * Are not `...`. Do not have the form `..i`, where `i` is a
-#'     number (inherited from `unique`).
-#'   * Consist of letters, numbers, and the dot `.` or underscore `_`
-#'     characters.
-#'   * Start with a letter or start with the dot `.` not followed by a
-#'     number.
-#'   * Are not a [reserved] word, e.g., `if` or `function` or `TRUE`.
-#'
-#' If a vector has `universal` names, variable names can be used
-#' "as is" in code. They work well with nonstandard evaluation, e.g.,
-#' `df$name` works.
-#'
-#' vctrs has a different method of making names syntactic than
-#' [base::make.names()]. In general, vctrs prepends one or more dots
-#' `.` until the name is syntactic.
-#'
-#' Examples:
-#'
-#' ```
-#'  Original names:     ""     "x"    NA      "x"
-#' universal names: "...1" "x...2" "...3" "x...4"
-#'
-#'   Original names: "(y)"  "_z"  ".2fa"  "FALSE"
-#'  universal names: ".y." "._z" "..2fa" ".FALSE"
-#' ```
-#'
-#' @seealso [rlang::names2()] returns the names of an object, after
-#'   making them `minimal`.
-#'
-#' The [Names attribute](https://principles.tidyverse.org/names-attribute.html)
-#' section in the "tidyverse package development principles".
-#'
+#' @rdname vec_names
 #' @export
 vec_repair_names <- function(x,
                              repair = c("minimal", "unique", "universal"),
