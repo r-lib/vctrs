@@ -45,19 +45,19 @@ test_that("size is proxied", {
   expect_size(new_proxy(1:3), 3)
 })
 
-test_that("`NULL` has size 0", {
-  expect_equal(vec_size(NULL), 0)
+test_that("`NULL` has an undefined size", {
+  expect_error(vec_size(NULL), "not defined")
 })
 
 # vec_size_common ---------------------------------------------------------
 
-test_that("vec_size_common with no input returns 0", {
-  expect_equal(vec_size_common(), 0)
+test_that("vec_size_common with no input errors unless `.empty` is provided", {
+  expect_error(vec_size_common(), "no `.empty` value was supplied")
+  expect_error(vec_size_common(NULL), "no `.empty` value was supplied")
+  expect_equal(vec_size_common(.empty = 0L), 0L)
 })
 
 test_that("`NULL` is treated as the absence of input", {
-  expect_equal(vec_size_common(NULL), vec_size_common())
-  expect_equal(vec_size_common(NULL, NULL), vec_size_common())
   expect_equal(vec_size_common(1:5, NULL), vec_size_common(1:5))
 })
 
