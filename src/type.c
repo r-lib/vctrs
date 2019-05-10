@@ -124,10 +124,29 @@ int PROTECT_COUNTERS(struct counters* counters) {
   return 3;
 }
 
+
 void counters_inc(struct counters* counters) {
   ++(counters->next);
   ++(counters->names_next);
 }
+
+// Swap counters so that the `next` counter (the one being increased
+// on iteration) becomes the current counter (the one queried when
+// there is an error)
+void counters_swap(struct counters* counters) {
+  // Swap the counters data
+  SWAP(struct vctrs_arg_counter, counters->curr_counter, counters->next_counter);
+  SWAP(R_len_t*, counters->curr_counter.i, counters->next_counter.i);
+  SWAP(R_len_t*, counters->curr_counter.names_i, counters->next_counter.names_i);
+
+  // Update the handles to `vctrs_arg`
+  counters->curr_arg = (struct vctrs_arg*) &counters->curr_counter;
+  counters->next_arg = (struct vctrs_arg*) &counters->next_counter;
+
+  // Update the current index
+  counters->curr = counters->next;
+}
+
 
 static SEXP vctrs_type_common_impl(SEXP current,
                                    SEXP types,
@@ -142,19 +161,15 @@ static SEXP vctrs_type2_common(SEXP current,
   int left;
   current = vec_type2(current, next, counters->curr_arg, counters->next_arg, &left);
 
-  // Update current if RHS is the common type
+  // Update current if RHS is the common type. Otherwise the previous
+  // counter stays in effect.
   if (!left) {
-    SWAP(struct vctrs_arg_counter, counters->curr_counter, counters->next_counter);
-    SWAP(R_len_t*, counters->curr_counter.i, counters->next_counter.i);
-    SWAP(R_len_t*, counters->curr_counter.names_i, counters->next_counter.names_i);
-    counters->curr_arg = (struct vctrs_arg*) &counters->curr_counter;
-    counters->next_arg = (struct vctrs_arg*) &counters->next_counter;
-    counters->curr = counters->next;
+    counters_swap(counters);
   }
 
   UNPROTECT(1);
   return current;
-};
+}
 
 static SEXP vctrs_type2_common_box(SEXP current,
                                    SEXP next,
