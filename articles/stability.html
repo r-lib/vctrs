@@ -202,17 +202,16 @@ It is size-unstable for the same reasons as <code><a href="https://www.rdocument
 <div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb9-1" data-line-number="1"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="ot">FALSE</span>, <span class="st">"x"</span>)</a>
 <a class="sourceLine" id="cb9-2" data-line-number="2"><span class="co">#&gt; [1] "FALSE" "x"</span></a>
 <a class="sourceLine" id="cb9-3" data-line-number="3"><span class="kw"><a href="../reference/vec_c.html">vec_c</a></span>(<span class="ot">FALSE</span>, <span class="st">"x"</span>)</a>
-<a class="sourceLine" id="cb9-4" data-line-number="4"><span class="co">#&gt; No common type for `list(...)[[1]]` &lt;logical&gt; and `list(...)[[2]]`</span></a>
-<a class="sourceLine" id="cb9-5" data-line-number="5"><span class="co">#&gt; &lt;character&gt;.</span></a>
-<a class="sourceLine" id="cb9-6" data-line-number="6"></a>
-<a class="sourceLine" id="cb9-7" data-line-number="7"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="ot">FALSE</span>, <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/list">list</a></span>(<span class="dv">1</span>))</a>
-<a class="sourceLine" id="cb9-8" data-line-number="8"><span class="co">#&gt; [[1]]</span></a>
-<a class="sourceLine" id="cb9-9" data-line-number="9"><span class="co">#&gt; [1] FALSE</span></a>
-<a class="sourceLine" id="cb9-10" data-line-number="10"><span class="co">#&gt; </span></a>
-<a class="sourceLine" id="cb9-11" data-line-number="11"><span class="co">#&gt; [[2]]</span></a>
-<a class="sourceLine" id="cb9-12" data-line-number="12"><span class="co">#&gt; [1] 1</span></a>
-<a class="sourceLine" id="cb9-13" data-line-number="13"><span class="kw"><a href="../reference/vec_c.html">vec_c</a></span>(<span class="ot">FALSE</span>, <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/list">list</a></span>(<span class="dv">1</span>))</a>
-<a class="sourceLine" id="cb9-14" data-line-number="14"><span class="co">#&gt; No common type for `list(...)[[1]]` &lt;logical&gt; and `list(...)[[2]]` &lt;list&gt;.</span></a></code></pre></div>
+<a class="sourceLine" id="cb9-4" data-line-number="4"><span class="co">#&gt; No common type for `..1` &lt;logical&gt; and `..2` &lt;character&gt;.</span></a>
+<a class="sourceLine" id="cb9-5" data-line-number="5"></a>
+<a class="sourceLine" id="cb9-6" data-line-number="6"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="ot">FALSE</span>, <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/list">list</a></span>(<span class="dv">1</span>))</a>
+<a class="sourceLine" id="cb9-7" data-line-number="7"><span class="co">#&gt; [[1]]</span></a>
+<a class="sourceLine" id="cb9-8" data-line-number="8"><span class="co">#&gt; [1] FALSE</span></a>
+<a class="sourceLine" id="cb9-9" data-line-number="9"><span class="co">#&gt; </span></a>
+<a class="sourceLine" id="cb9-10" data-line-number="10"><span class="co">#&gt; [[2]]</span></a>
+<a class="sourceLine" id="cb9-11" data-line-number="11"><span class="co">#&gt; [1] 1</span></a>
+<a class="sourceLine" id="cb9-12" data-line-number="12"><span class="kw"><a href="../reference/vec_c.html">vec_c</a></span>(<span class="ot">FALSE</span>, <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/list">list</a></span>(<span class="dv">1</span>))</a>
+<a class="sourceLine" id="cb9-13" data-line-number="13"><span class="co">#&gt; No common type for `..1` &lt;logical&gt; and `..2` &lt;list&gt;.</span></a></code></pre></div>
 </div>
 <div id="non-vectors" class="section level3">
 <h3 class="hasAnchor">
@@ -226,18 +225,17 @@ It is size-unstable for the same reasons as <code><a href="https://www.rdocument
 <a class="sourceLine" id="cb11-2" data-line-number="2"><span class="co">#&gt; [[1]]</span></a>
 <a class="sourceLine" id="cb11-3" data-line-number="3"><span class="co">#&gt; function (x, ...) </span></a>
 <a class="sourceLine" id="cb11-4" data-line-number="4"><span class="co">#&gt; UseMethod("mean")</span></a>
-<a class="sourceLine" id="cb11-5" data-line-number="5"><span class="co">#&gt; &lt;bytecode: 0x3c49128&gt;</span></a>
+<a class="sourceLine" id="cb11-5" data-line-number="5"><span class="co">#&gt; &lt;bytecode: 0x2b74128&gt;</span></a>
 <a class="sourceLine" id="cb11-6" data-line-number="6"><span class="co">#&gt; &lt;environment: namespace:base&gt;</span></a>
 <a class="sourceLine" id="cb11-7" data-line-number="7"><span class="co">#&gt; </span></a>
 <a class="sourceLine" id="cb11-8" data-line-number="8"><span class="co">#&gt; [[2]]</span></a>
 <a class="sourceLine" id="cb11-9" data-line-number="9"><span class="co">#&gt; &lt;environment: R_GlobalEnv&gt;</span></a></code></pre></div>
 <p><code><a href="../reference/vec_c.html">vec_c()</a></code> throws an error if the inputs are not vectors, or not automatically coercible:</p>
 <div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb12-1" data-line-number="1"><span class="kw"><a href="../reference/vec_c.html">vec_c</a></span>(mean, <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/environment">globalenv</a></span>())</a>
-<a class="sourceLine" id="cb12-2" data-line-number="2"><span class="co">#&gt; `list(...)[[1]]` must be a vector, not a function</span></a>
+<a class="sourceLine" id="cb12-2" data-line-number="2"><span class="co">#&gt; `..1` must be a vector, not a function</span></a>
 <a class="sourceLine" id="cb12-3" data-line-number="3"></a>
 <a class="sourceLine" id="cb12-4" data-line-number="4"><span class="kw"><a href="../reference/vec_c.html">vec_c</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/Sys.time">Sys.Date</a></span>(), <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/factor">factor</a></span>(<span class="st">"x"</span>), <span class="st">"x"</span>)</a>
-<a class="sourceLine" id="cb12-5" data-line-number="5"><span class="co">#&gt; No common type for `list(...)[[1]]` &lt;date&gt; and `list(...)[[2]]`</span></a>
-<a class="sourceLine" id="cb12-6" data-line-number="6"><span class="co">#&gt; &lt;factor&lt;5a425&gt;&gt;.</span></a></code></pre></div>
+<a class="sourceLine" id="cb12-5" data-line-number="5"><span class="co">#&gt; No common type for `..1` &lt;date&gt; and `..2` &lt;factor&lt;5a425&gt;&gt;.</span></a></code></pre></div>
 </div>
 <div id="factors" class="section level3">
 <h3 class="hasAnchor">
