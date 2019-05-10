@@ -41,6 +41,16 @@ test_that("vec_names() treats data frames and arrays as vectors", {
   expect_identical(vec_names(as.matrix(mtcars)), row.names(mtcars))
 })
 
+test_that("vec_names() accepts and checks repair function", {
+  expect_identical(vec_names(1:2, repair = function(nms) rep_along(nms, "foo")), c("foo", "foo"))
+  expect_error(vec_names(1:2, repair = function(nms) "foo"), "length 1 instead of length 2")
+})
+
+test_that("vec_names() repairs names before invoking repair function", {
+  x <- set_names(1:2, c(NA, NA))
+  expect_identical(vec_names(x, repair = identity), c("", ""))
+})
+
 
 # vec_as_names() -----------------------------------------------------------
 
@@ -52,6 +62,21 @@ test_that("vec_as_names() repairs names", {
   expect_identical(vec_as_names(chr(NA, NA)), c("", ""))
   expect_identical(vec_as_names(chr(NA, NA), repair = "unique"), c("...1", "...2"))
   expect_identical(vec_as_names(chr("_foo", "_bar"), repair = "universal"), c("._foo", "._bar"))
+})
+
+test_that("vec_as_names() accepts and checks repair function", {
+  expect_identical(vec_as_names(c("", ""), repair = ~ rep_along(.x, "foo")), c("foo", "foo"))
+  expect_error(vec_as_names(c("", ""), repair = function(nms) "foo"), "length 1 instead of length 2")
+})
+
+test_that("vec_as_names() repairs names before invoking repair function", {
+  expect_identical(vec_as_names(chr(NA, NA), repair = identity), c("", ""))
+})
+
+test_that("validate_minimal_names() checks names", {
+  expect_error(validate_minimal(1), "must return a character vector")
+  expect_error(validate_minimal(NULL), "can't return `NULL`")
+  expect_error(validate_minimal(chr(NA)), "can't return `NA` values")
 })
 
 

@@ -20,7 +20,11 @@
 #'
 #' @param x A vector.
 #' @param ... These dots are for future extensions and must be empty.
-#' @param repair
+#' @param repair Either a string or a function. If a string, it must
+#'   be one of `"minimal"`, `"unique"`, or `"universal"`. If a
+#'   function, it is invoked with a vector of minmal names and must
+#'   return minimal names, otherwise an error is thrown.
+#'
 #'   * Minimal names are never `NULL` or `NA`. When an element doesn't
 #'     have a name, its minimal name is an empty string.
 #'
@@ -56,6 +60,14 @@ vec_names <- function(x,
   if (!missing(...)) {
     ellipsis::check_dots_empty()
   }
+  repair <- validate_repair(repair)
+
+  if (is_function(repair)) {
+    names <- minimal_names(x)
+    names <- validate_minimal(repair(names), n = length(names))
+    return(names)
+  }
+
   switch(arg_match(repair),
     minimal = minimal_names(x),
     unique = as_unique_names(minimal_names(x), quiet = quiet),
@@ -72,11 +84,49 @@ vec_as_names <- function(names,
   if (!missing(...)) {
     ellipsis::check_dots_empty()
   }
+  repair <- validate_repair(repair)
+
+  if (is_function(repair)) {
+    names <- as_minimal_names(names)
+    names <- validate_minimal(repair(names), n = length(names))
+    return(names)
+  }
+
   switch(arg_match(repair),
     minimal = as_minimal_names(names),
     unique = as_unique_names(as_minimal_names(names), quiet = quiet),
     universal = as_universal_names(as_minimal_names(names), quiet = quiet)
   )
+}
+
+validate_repair <- function(repair) {
+  if (is_formula(repair, scoped = TRUE, lhs = FALSE)) {
+    repair <- as_function(repair)
+  }
+
+  if (is_function(repair)) {
+    repair
+  } else {
+    arg_match(repair, c("minimal", "unique", "universal"))
+  }
+}
+validate_minimal <- function(names, n = NULL) {
+  if (is.null(names)) {
+    abort("Names repair functions can't return `NULL`.")
+  }
+  if (!is_character(names)) {
+    abort("Names repair functions must return a character vector.")
+  }
+  if (!is_null(n) && length(names) != n) {
+    abort(sprintf(
+      "Repaired names have length %d instead of length %d.",
+      length(names), n
+    ))
+  }
+  if (anyNA(names)) {
+    abort("Names repair functions can't return `NA` values.")
+  }
+  names
 }
 
 #' Repair the names of a vector
@@ -197,15 +247,7 @@ vec_repair_names <- function(x,
                              repair = c("minimal", "unique", "universal"),
                              ...,
                              quiet = FALSE) {
-  if (!missing(...)) {
-    ellipsis::check_dots_empty()
-  }
-  names <- switch(arg_match(repair),
-    minimal = minimal_names(x),
-    unique = as_unique_names(minimal_names(x), quiet = quiet),
-    universal = as_universal_names(minimal_names(x), quiet = quiet)
-  )
-  set_bare_names(x, names)
+  set_bare_names(x, vec_names(x, ..., repair = repair, quiet = quiet))
 }
 
 minimal_names <- function(x) {

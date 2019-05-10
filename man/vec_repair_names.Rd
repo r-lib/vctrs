@@ -10,10 +10,13 @@ vec_repair_names(x, repair = c("minimal", "unique", "universal"), ...,
 \arguments{
 \item{x}{A vector.}
 
-\item{repair}{\itemize{
+\item{repair}{Either a string or a function. If a string, it must
+be one of \code{"minimal"}, \code{"unique"}, or \code{"universal"}. If a
+function, it is invoked with a vector of minmal names and must
+return minimal names, otherwise an error is thrown.
+\itemize{
 \item Minimal names are never \code{NULL} or \code{NA}. When an element doesn't
 have a name, its minimal name is an empty string.
-\itemize{
 \item Unique names are unique. A suffix is appended to duplicate
 names to make them unique.
 \item Universal names are unique and syntactic, meaning that you can
@@ -21,8 +24,7 @@ safely use the names as variables without causing a syntax
 error.
 }
 
-See \code{\link[=vec_repair_names]{vec_repair_names()}} for a complete overview of names repair.
-}}
+See \code{\link[=vec_repair_names]{vec_repair_names()}} for a complete overview of names repair.}
 
 \item{...}{These dots are for future extensions and must be empty.}
 
