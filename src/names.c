@@ -30,9 +30,7 @@ SEXP vec_names(SEXP x) {
   return out;
 }
 
-static struct sexp_cow as_minimal_names(struct sexp_cow cow_names) {
-  SEXP names = cow_names.obj;
-
+SEXP vctrs_as_minimal_names(SEXP names) {
   if (TYPEOF(names) != STRSXP) {
     Rf_errorcall(R_NilValue, "`names` must be a character vector");
   }
@@ -48,11 +46,10 @@ static struct sexp_cow as_minimal_names(struct sexp_cow cow_names) {
     }
   }
   if (i == n) {
-    return cow_names;
+    return names;
   }
 
-  cow_names = r_maybe_copy(cow_names);
-  names = cow_names.obj;
+  names = PROTECT(r_maybe_duplicate(names));
 
   for (; i < n; ++i, ++ptr) {
     SEXP elt = *ptr;
@@ -61,30 +58,21 @@ static struct sexp_cow as_minimal_names(struct sexp_cow cow_names) {
     }
   }
 
-  return cow_names;
-}
-
-SEXP vctrs_as_minimal_names(SEXP names) {
-  struct sexp_cow cow_names = PROTECT_COW(names);
-  cow_names = as_minimal_names(cow_names);
-
   UNPROTECT(1);
-  return cow_names.obj;
+  return names;
 }
 
 SEXP vctrs_minimal_names(SEXP x) {
   SEXP names = PROTECT(vec_names(x));
 
   if (names == R_NilValue) {
-    UNPROTECT(1);
-    return Rf_allocVector(STRSXP, vec_size(x));
+    names = Rf_allocVector(STRSXP, vec_size(x));
+  } else {
+    names = vctrs_as_minimal_names(names);
   }
 
-  struct sexp_cow cow_names = PROTECT_COW(names);
-  cow_names = as_minimal_names(cow_names);
-
-  UNPROTECT(2);
-  return cow_names.obj;
+  UNPROTECT(1);
+  return names;
 }
 
 
@@ -92,9 +80,7 @@ void stop_large_name();
 bool is_dotdotint(const char* name);
 ptrdiff_t suffix_pos(const char* name);
 
-static struct sexp_cow as_unique_names(struct sexp_cow cow_names) {
-  SEXP names = cow_names.obj;
-
+static SEXP as_unique_names(SEXP names) {
   if (TYPEOF(names) != STRSXP) {
     Rf_errorcall(R_NilValue, "`names` must be a character vector");
   }
@@ -133,12 +119,11 @@ static struct sexp_cow as_unique_names(struct sexp_cow cow_names) {
   // Return early when no repairs are needed
   if (i == n) {
     UNPROTECT(1);
-    return cow_names;
+    return names;
   }
 
 
-  cow_names = r_maybe_copy(cow_names);
-  names = cow_names.obj;
+  names = PROTECT(r_maybe_duplicate(names));
   ptr = STRING_PTR(names) + i;
 
   for (; i < n; ++i, ++ptr) {
@@ -206,20 +191,19 @@ static struct sexp_cow as_unique_names(struct sexp_cow cow_names) {
     }
   }
 
-  UNPROTECT(1);
-  return cow_names;
+  UNPROTECT(2);
+  return names;
 }
 
 SEXP vctrs_as_unique_names(SEXP names, SEXP quiet) {
-  struct sexp_cow cow_names = PROTECT_COW(names);
-  cow_names = as_unique_names(cow_names);
+  SEXP out = PROTECT(as_unique_names(names));
 
   if (!LOGICAL(quiet)[0]) {
-    describe_repair(names, cow_names.obj);
+    describe_repair(names, out);
   }
 
   UNPROTECT(1);
-  return cow_names.obj;
+  return out;
 }
 
 bool is_dotdotint(const char* name) {
@@ -331,9 +315,7 @@ SEXP vctrs_unique_names(SEXP x, SEXP quiet) {
   if (names == R_NilValue) {
     out = PROTECT(names_iota(vec_size(x)));
   } else {
-    struct sexp_cow cow_names = PROTECT_COW(names);
-    cow_names = as_unique_names(cow_names);
-    out = cow_names.obj;
+    out = PROTECT(as_unique_names(names));
   }
 
   if (!LOGICAL(quiet)[0]) {

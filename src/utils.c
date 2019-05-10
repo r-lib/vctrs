@@ -501,20 +501,12 @@ bool r_is_function(SEXP x) {
   }
 }
 
-struct sexp_cow PROTECT_COW(SEXP x) {
-  PROTECT_INDEX pi;
-  PROTECT_WITH_INDEX(x, &pi);
-
-  struct sexp_cow cow = { x, pi };
-  return cow;
-}
-
-struct sexp_cow r_maybe_copy(struct sexp_cow cow) {
-  if (MAYBE_REFERENCED(cow.obj)) {
-    cow.obj = Rf_shallow_duplicate(cow.obj);
-    REPROTECT(cow.obj, cow.i);
+SEXP r_maybe_duplicate(SEXP x) {
+  if (MAYBE_REFERENCED(x)) {
+    return Rf_shallow_duplicate(x);
+  } else {
+    return x;
   }
-  return cow;
 }
 
 

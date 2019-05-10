@@ -9,15 +9,6 @@
   } while (0)
 
 
-struct sexp_cow {
-  SEXP obj;
-  PROTECT_INDEX i;
-};
-
-struct sexp_cow PROTECT_COW(SEXP x);
-struct sexp_cow r_maybe_copy(struct sexp_cow cow);
-
-
 bool is_bool(SEXP x);
 
 SEXP vctrs_dispatch_n(SEXP fn_sym, SEXP fn,
@@ -74,6 +65,7 @@ bool r_is_true(SEXP x);
 bool r_is_string(SEXP x);
 SEXP r_peek_option(const char* option);
 SEXP r_names(SEXP x);
+SEXP r_maybe_duplicate(SEXP x);
 
 SEXP r_pairlist(SEXP* tags, SEXP* cars);
 SEXP r_call(SEXP fn, SEXP* tags, SEXP* cars);
