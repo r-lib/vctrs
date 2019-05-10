@@ -170,17 +170,14 @@ of this rule.</p></td>
     <h2 class="hasAnchor" id="genericity"><a class="anchor" href="#genericity"></a>Genericity</h2>
 
     
-    <ul>
-<li><p>If the input is a class instance, <code>vec_slice()</code> falls back to the
-base generic <code>[</code>. Note that S3 lists are treated as scalars by
-default, and will cause an error if they don't implement a
-<code><a href='vec_data.html'>vec_proxy()</a></code> method.</p></li>
-<li><p>The vctrs class methods for <code>[</code> call back into <code>vec_slice()</code>.
-They slice the <code><a href='vec_data.html'>vec_proxy()</a></code> and <code><a href='vec_cast.html'>vec_restore()</a></code> the result.</p>
-<p>The tools for calling back into <code>vec_slice()</code> are not exported
-yet, but you can take advantage of this mechanism by inheriting
-from <a href='new_vctr.html'>vctrs_vctr</a> or <a href='new_rcrd.html'>vctrs_rcrd</a>.</p></li>
+    <p>Support for S3 objects depends on whether the object implements a
+<code><a href='vec_data.html'>vec_proxy()</a></code> method.</p><ul>
+<li><p>When a <code><a href='vec_data.html'>vec_proxy()</a></code> method exists, the proxy is sliced and
+<code><a href='vec_cast.html'>vec_restore()</a></code> is called on the result.</p></li>
+<li><p>Otherwise <code>vec_slice()</code> falls back to the base generic <code>[</code>.</p></li>
 </ul>
+    <p>Note that S3 lists are treated as scalars by default, and will
+cause an error if they don't implement a <code><a href='vec_data.html'>vec_proxy()</a></code> method.</p>
     
     <h2 class="hasAnchor" id="differences-with-base-r-subsetting"><a class="anchor" href="#differences-with-base-r-subsetting"></a>Differences with base R subsetting</h2>
 
@@ -320,7 +317,7 @@ as the LHS.</p></li>
 #&gt; </span><span style='color: #555555;'> 41. </span><span>│                           │     └─base:::tryCatchOne(expr, names, parentenv, handlers[[1L]])
 #&gt; </span><span style='color: #555555;'> 42. </span><span>│                           │       └─base:::doTryCatch(return(expr), name, parentenv, handler)
 #&gt; </span><span style='color: #555555;'> 43. </span><span>│                           └─vctrs::`vec_slice&lt;-`(`*tmp*`, 2, value = "20")
-#&gt; </span><span style='color: #555555;'> 44. </span><span>│                             └─vctrs:::vec_coercible_cast(value, x, x_arg = "value", to_arg = "x") </span><span style='color: #555555;'>/home/travis/build/r-lib/vctrs/R/slice.R:112:2</span><span>
+#&gt; </span><span style='color: #555555;'> 44. </span><span>│                             └─vctrs:::vec_coercible_cast(value, x, x_arg = "value", to_arg = "x") </span><span style='color: #555555;'>/home/travis/build/r-lib/vctrs/R/slice.R:106:2</span><span>
 #&gt; </span><span style='color: #555555;'> 45. </span><span>│                               └─vctrs::vec_type2(to, x, x_arg = to_arg, y_arg = x_arg) </span><span style='color: #555555;'>/home/travis/build/r-lib/vctrs/R/cast.R:144:2</span><span>
 #&gt; </span><span style='color: #555555;'> 46. </span><span>├─vctrs:::vec_type2_dispatch(x = x, y = y, x_arg = x_arg, y_arg = y_arg)
 #&gt; </span><span style='color: #555555;'> 47. </span><span>├─vctrs::vec_type2.double(x = x, y = y, x_arg = x_arg, y_arg = y_arg) </span><span style='color: #555555;'>/home/travis/build/r-lib/vctrs/R/type2.R:46:2</span><span>
