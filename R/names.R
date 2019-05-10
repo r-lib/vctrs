@@ -53,7 +53,7 @@ vec_names <- function(x,
                       ...,
                       repair = c("minimal", "unique", "universal"),
                       quiet = FALSE) {
-  if (...length()) {
+  if (!missing(...)) {
     ellipsis::check_dots_empty()
   }
   switch(arg_match(repair),
@@ -69,7 +69,7 @@ vec_as_names <- function(names,
                          ...,
                          repair = c("minimal", "unique", "universal"),
                          quiet = FALSE) {
-  if (...length()) {
+  if (!missing(...)) {
     ellipsis::check_dots_empty()
   }
   switch(arg_match(repair),
@@ -197,7 +197,7 @@ vec_repair_names <- function(x,
                              repair = c("minimal", "unique", "universal"),
                              ...,
                              quiet = FALSE) {
-  if (...length()) {
+  if (!missing(...)) {
     ellipsis::check_dots_empty()
   }
   names <- switch(arg_match(repair),

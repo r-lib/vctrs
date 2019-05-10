@@ -1,6 +1,6 @@
 # nocov start
 .onLoad <- function(libname, pkgname) {
-  backports::import(pkgname, c("strrep", "...length"))
+  backports::import(pkgname, "strrep")
 
   s3_register("pillar::pillar_shaft", "vctrs_vctr")
   s3_register("pillar::pillar_shaft", "vctrs_list_of")

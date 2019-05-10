@@ -36,7 +36,7 @@
 #'   incompatible types (see [stop_incompatible_type()]).
 #' @export
 vec_type2 <- function(x, y, ..., x_arg = "", y_arg = "") {
-  if (...length()) {
+  if (!missing(...)) {
     ellipsis::check_dots_empty()
   }
   return(.Call(vctrs_type2, x, y, x_arg, y_arg))
