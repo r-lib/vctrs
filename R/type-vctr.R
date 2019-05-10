@@ -421,10 +421,10 @@ min.vctrs_vctr <- function(x, ..., na.rm = FALSE) {
   # TODO: implement to do vec_arg_min()
   rank <- xtfrm(x)
 
-  idx <- if (isTRUE(na.rm)) {
-    which.min(rank)
+  if (isTRUE(na.rm)) {
+    idx <- which.min(rank)
   } else {
-    which(vec_equal(rank, min(rank), na_equal = TRUE))
+    idx <- which(vec_equal(rank, min(rank), na_equal = TRUE))
   }
 
   x[[idx[[1]]]]
@@ -435,10 +435,10 @@ max.vctrs_vctr <- function(x, ..., na.rm = FALSE) {
   # TODO: implement to do vec_arg_max()
   rank <- xtfrm(x)
 
-  idx <- if (isTRUE(na.rm)) {
-    which.max(rank)
+  if (isTRUE(na.rm)) {
+    idx <- which.max(rank)
   } else {
-    which(vec_equal(rank, max(rank), na_equal = TRUE))
+    idx <- which(vec_equal(rank, max(rank), na_equal = TRUE))
   }
 
   x[[idx[[1]]]]
