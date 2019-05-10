@@ -110,3 +110,29 @@ test_that("a coercible RHS is cast to LHS before assignment (#140)", {
   allow_lossy_cast(vec_slice(x, 1) <- 3.5)
   expect_identical(x, int(3, 2))
 })
+
+test_that("can use names to vec_slice<-() a named object", {
+  x0 <- c(a = 1, b = 2)
+  x1 <- c(a = 1, a = 2)
+
+  vec_slice(x0, "b") <- 3
+  expect_identical(x0, c(a = 1, b = 3))
+
+  vec_slice(x1, "a") <- 3
+  expect_identical(x1, c(a = 3, a = 2))
+})
+
+test_that("can use names to vec_slice<-() a named object", {
+  x0 <- 1:3
+
+  expect_error(
+    vec_slice(x0, letters[1]) <- 4L,
+    "Can't use character to index an unnamed vector.",
+    fixed = TRUE
+  )
+  expect_error(
+    vec_slice(x0, letters[25:27]) <- 5L,
+    "Can't use character to index an unnamed vector.",
+    fixed = TRUE
+  )
+})
