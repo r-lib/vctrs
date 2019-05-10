@@ -148,7 +148,7 @@ static SEXP new_compact_rownames(R_len_t n) {
 static bool is_tibble_class(SEXP class);
 static bool is_data_frame_class(SEXP class);
 
-bool is_tibble(SEXP x) {
+bool is_bare_tibble(SEXP x) {
   SEXP class = PROTECT(Rf_getAttrib(x, R_ClassSymbol));
   bool out = is_tibble_class(class);
   UNPROTECT(1);
