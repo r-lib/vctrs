@@ -221,11 +221,11 @@ vec_repair_names <- function(x,
                              repair = c("minimal", "unique", "universal"),
                              ...,
                              quiet = FALSE) {
-  set_bare_names(x, vec_names2(x, ..., repair = repair, quiet = quiet))
+  set_names2(x, vec_names2(x, ..., repair = repair, quiet = quiet))
 }
 
 minimal_names <- function(x) {
-  names <- vec_bare_names(x)
+  names <- vec_names(x)
 
   if (is.null(names)) {
     rep_len("", vec_size(x))
@@ -234,7 +234,7 @@ minimal_names <- function(x) {
   }
 }
 
-vec_bare_names <- function(x) {
+vec_names <- function(x) {
   if (vec_dims(x) == 1) {
     names(x)
   } else if (is.data.frame(x)) {
@@ -243,7 +243,7 @@ vec_bare_names <- function(x) {
     rownames(x)
   }
 }
-`vec_bare_names<-` <- function(x, value) {
+`vec_names<-` <- function(x, value) {
   if (vec_dims(x) == 1) {
     names(x) <- value
   } else if (is.data.frame(x)) {
@@ -253,7 +253,7 @@ vec_bare_names <- function(x) {
   }
   x
 }
-set_bare_names <- `vec_bare_names<-`
+set_names2 <- `vec_names<-`
 
 as_minimal_names <- function(names) {
   if (!is_character(names)) {

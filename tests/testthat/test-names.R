@@ -1,30 +1,30 @@
 context("test-names")
 
 
-# vec_bare_names() ---------------------------------------------------------
+# vec_names() ---------------------------------------------------------
 
-test_that("vec_bare_names() retrieves names", {
-  expect_null(vec_bare_names(letters))
-  expect_identical(vec_bare_names(set_names(letters)), letters)
-  expect_null(vec_bare_names(mtcars))
-  expect_identical(vec_bare_names(Titanic), dimnames(Titanic)[[1]])
+test_that("vec_names() retrieves names", {
+  expect_null(vec_names(letters))
+  expect_identical(vec_names(set_names(letters)), letters)
+  expect_null(vec_names(mtcars))
+  expect_identical(vec_names(Titanic), dimnames(Titanic)[[1]])
 })
 
-test_that("vec_bare_names<- sets names", {
+test_that("vec_names<- sets names", {
   x <- letters
-  vec_bare_names(x) <- letters
-  expect_identical(vec_bare_names(x), letters)
-  vec_bare_names(x) <- NULL
-  expect_null(vec_bare_names(x))
+  vec_names(x) <- letters
+  expect_identical(vec_names(x), letters)
+  vec_names(x) <- NULL
+  expect_null(vec_names(x))
 
   y <- iris
-  vec_bare_names(y) <- as.character(-seq_len(vec_size(y)))
+  vec_names(y) <- as.character(-seq_len(vec_size(y)))
   expect_identical(row.names(y), row.names(iris))
-  expect_null(vec_bare_names(y))
+  expect_null(vec_names(y))
 
   z <- ones(3, 2, 1)
-  vec_bare_names(z) <- as.character(1:3)
-  expect_identical(vec_bare_names(z), as.character(1:3))
+  vec_names(z) <- as.character(1:3)
+  expect_identical(vec_names(z), as.character(1:3))
 })
 
 
