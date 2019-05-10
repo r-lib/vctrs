@@ -197,7 +197,7 @@ inline void never_reached(const char* fn) {
 
 static char s3_buf[200];
 
-static SEXP s3_sym(const char* generic, const char* class) {
+static SEXP s3_method_sym(const char* generic, const char* class) {
   int gen_len = strlen(generic);
   int class_len = strlen(class);
   int dot_len = 1;
@@ -216,8 +216,8 @@ static SEXP s3_sym(const char* generic, const char* class) {
 }
 
 // First check in global env, then in method table
-static SEXP get_s3_method(const char* generic, const char* class) {
-  SEXP sym = s3_sym(generic, class);
+static SEXP s3_get_method(const char* generic, const char* class) {
+  SEXP sym = s3_method_sym(generic, class);
 
   SEXP method = r_env_get(R_GlobalEnv, sym);
   if (r_is_function(method)) {
@@ -232,7 +232,7 @@ static SEXP get_s3_method(const char* generic, const char* class) {
   return R_NilValue;
 }
 
-SEXP s3_method(SEXP x, const char* generic) {
+SEXP s3_find_method(SEXP x, const char* generic) {
   if (!OBJECT(x)) {
     return R_NilValue;
   }
@@ -242,7 +242,7 @@ SEXP s3_method(SEXP x, const char* generic) {
   int n_class = Rf_length(class);
 
   for (int i = 0; i < n_class; ++i, ++class_ptr) {
-    SEXP method = get_s3_method(generic, CHAR(*class_ptr));
+    SEXP method = s3_get_method(generic, CHAR(*class_ptr));
     if (method != R_NilValue) {
       UNPROTECT(1);
       return method;

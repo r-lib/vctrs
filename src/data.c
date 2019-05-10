@@ -22,7 +22,7 @@ SEXP vec_proxy(SEXP x) {
 }
 // [[ include("vctrs.h") ]]
 SEXP vec_proxy_method(SEXP x) {
-  return s3_method(x, "vec_proxy");
+  return s3_find_method(x, "vec_proxy");
 }
 // [[ include("vctrs.h") ]]
 SEXP vec_proxy_invoke(SEXP x, SEXP method) {
