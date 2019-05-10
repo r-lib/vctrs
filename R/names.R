@@ -196,7 +196,7 @@ validate_minimal <- function(names, n = NULL) {
   names
 }
 
-vec_names <- function(x,
+vec_names2 <- function(x,
                       ...,
                       repair = c("minimal", "unique", "universal"),
                       quiet = FALSE) {
@@ -221,7 +221,7 @@ vec_repair_names <- function(x,
                              repair = c("minimal", "unique", "universal"),
                              ...,
                              quiet = FALSE) {
-  set_bare_names(x, vec_names(x, ..., repair = repair, quiet = quiet))
+  set_bare_names(x, vec_names2(x, ..., repair = repair, quiet = quiet))
 }
 
 minimal_names <- function(x) {

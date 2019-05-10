@@ -28,27 +28,27 @@ test_that("vec_bare_names<- sets names", {
 })
 
 
-# vec_names() --------------------------------------------------------------
+# vec_names2() -------------------------------------------------------------
 
-test_that("vec_names() repairs names", {
-  expect_identical(vec_names(1:2), c("", ""))
-  expect_identical(vec_names(1:2, repair = "unique"), c("...1", "...2"))
-  expect_identical(vec_names(set_names(1:2, c("_foo", "_bar")), repair = "universal"), c("._foo", "._bar"))
+test_that("vec_names2() repairs names", {
+  expect_identical(vec_names2(1:2), c("", ""))
+  expect_identical(vec_names2(1:2, repair = "unique"), c("...1", "...2"))
+  expect_identical(vec_names2(set_names(1:2, c("_foo", "_bar")), repair = "universal"), c("._foo", "._bar"))
 })
 
-test_that("vec_names() treats data frames and arrays as vectors", {
-  expect_identical(vec_names(mtcars), rep_len("", nrow(mtcars)))
-  expect_identical(vec_names(as.matrix(mtcars)), row.names(mtcars))
+test_that("vec_names2() treats data frames and arrays as vectors", {
+  expect_identical(vec_names2(mtcars), rep_len("", nrow(mtcars)))
+  expect_identical(vec_names2(as.matrix(mtcars)), row.names(mtcars))
 })
 
-test_that("vec_names() accepts and checks repair function", {
-  expect_identical(vec_names(1:2, repair = function(nms) rep_along(nms, "foo")), c("foo", "foo"))
-  expect_error(vec_names(1:2, repair = function(nms) "foo"), "length 1 instead of length 2")
+test_that("vec_names2() accepts and checks repair function", {
+  expect_identical(vec_names2(1:2, repair = function(nms) rep_along(nms, "foo")), c("foo", "foo"))
+  expect_error(vec_names2(1:2, repair = function(nms) "foo"), "length 1 instead of length 2")
 })
 
-test_that("vec_names() repairs names before invoking repair function", {
+test_that("vec_names2() repairs names before invoking repair function", {
   x <- set_names(1:2, c(NA, NA))
-  expect_identical(vec_names(x, repair = identity), c("", ""))
+  expect_identical(vec_names2(x, repair = identity), c("", ""))
 })
 
 
