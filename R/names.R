@@ -161,7 +161,7 @@ vec_as_names <- function(names,
 
   switch(arg_match(repair),
     minimal = as_minimal_names(names),
-    unique = as_unique_names(as_minimal_names(names), quiet = quiet),
+    unique = as_unique_names(names, quiet = quiet),
     universal = as_universal_names(as_minimal_names(names), quiet = quiet)
   )
 }
@@ -213,7 +213,7 @@ vec_names2 <- function(x,
 
   switch(arg_match(repair),
     minimal = minimal_names(x),
-    unique = as_unique_names(minimal_names(x), quiet = quiet),
+    unique = unique_names(x, quiet = quiet),
     universal = as_universal_names(minimal_names(x), quiet = quiet)
   )
 }
@@ -225,23 +225,14 @@ vec_repair_names <- function(x,
 }
 
 minimal_names <- function(x) {
-  names <- vec_names(x)
-
-  if (is.null(names)) {
-    rep_len("", vec_size(x))
-  } else {
-    as_minimal_names(names)
-  }
+  .Call(vctrs_minimal_names, x)
+}
+unique_names <- function(x, quiet = FALSE) {
+  .Call(vctrs_unique_names, x, quiet)
 }
 
 vec_names <- function(x) {
-  if (vec_dims(x) == 1) {
-    names(x)
-  } else if (is.data.frame(x)) {
-    NULL
-  } else {
-    rownames(x)
-  }
+  .Call(vctrs_names, x)
 }
 `vec_names<-` <- function(x, value) {
   if (vec_dims(x) == 1) {
@@ -256,13 +247,10 @@ vec_names <- function(x) {
 set_names2 <- `vec_names<-`
 
 as_minimal_names <- function(names) {
-  if (!is_character(names)) {
-    abort("`names` must be a character vector")
-  }
-  names %|% ""
+  .Call(vctrs_as_minimal_names, names)
 }
 as_unique_names <- function(names, quiet = FALSE) {
-  as_unique_names_impl(names, quiet, FALSE)
+  .Call(vctrs_as_unique_names, names, quiet)
 }
 as_universal_names <- function(names, quiet = FALSE) {
   as_unique_names_impl(names, quiet, TRUE)
@@ -380,7 +368,12 @@ re_match <- function(text, pattern, perl = TRUE, ...) {
 
 
 describe_repair <- function(orig_names, names) {
-  stopifnot(length(orig_names) == length(names))
+  if (is_null(orig_names)) {
+    orig_names <- rep_along(names, "")
+  }
+  if (length(orig_names) != length(names)) {
+    stop("Internal error: New names and old names don't have same length")
+  }
 
   new_names <- names != as_minimal_names(orig_names)
   if (any(new_names)) {

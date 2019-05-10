@@ -10,6 +10,13 @@ test_that("vec_names() retrieves names", {
   expect_identical(vec_names(Titanic), dimnames(Titanic)[[1]])
 })
 
+test_that("vec_names() dispatches", {
+  scoped_global_bindings(
+    names.vctrs_foobar = function(x) "dispatched!"
+  )
+  expect_identical(vec_names(foobar()), "dispatched!")
+})
+
 test_that("vec_names<- sets names", {
   x <- letters
   vec_names(x) <- letters
@@ -126,8 +133,29 @@ test_that("minimal_names() treats data frames and arrays as vectors", {
   expect_identical(minimal_names(as.matrix(mtcars)), row.names(mtcars))
 })
 
+test_that("as_minimal_names() copies on write", {
+  nms <- chr(NA, NA)
+  as_minimal_names(nms)
+  expect_identical(nms, chr(NA, NA))
+
+  nms <- c("a", "b")
+  out <- as_minimal_names(nms)
+  expect_true(is_reference(nms, out))
+})
+
 
 # unique names -------------------------------------------------------------
+
+test_that("unique_names() handles unnamed vectors", {
+  expect_identical(unique_names(1:3), c("...1", "...2", "...3"))
+})
+
+test_that("as_unique_names() is a no-op when no repairs are needed", {
+  x <- c("x", "y")
+  out <- as_unique_names(x)
+  expect_true(is_reference(out, x))
+  expect_identical(out, c("x", "y"))
+})
 
 test_that("as_unique_names() eliminates emptiness and duplication", {
   x <- c("", "x", "y", "x")
@@ -212,6 +240,14 @@ test_that("unique-ification has an 'algebraic'-y property", {
   expect_identical(z1, z2)
   expect_identical(z1, z3)
   expect_identical(z1, z4)
+})
+
+test_that("unique_names() and as_unique_names() are verbose or silent", {
+  expect_message(unique_names(1:2), "-> ...1", fixed = TRUE)
+  expect_message(as_unique_names(c("", "")), "-> ...1", fixed = TRUE)
+
+  expect_message(regexp = NA, unique_names(1:2, quiet = TRUE))
+  expect_message(regexp = NA, as_unique_names(c("", ""), quiet = TRUE))
 })
 
 

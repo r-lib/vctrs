@@ -501,9 +501,21 @@ bool r_is_function(SEXP x) {
   }
 }
 
+SEXP r_maybe_duplicate(SEXP x) {
+  if (MAYBE_REFERENCED(x)) {
+    return Rf_shallow_duplicate(x);
+  } else {
+    return x;
+  }
+}
+
 
 SEXP vctrs_ns_env = NULL;
 SEXP vctrs_shared_empty_str = NULL;
+
+SEXP strings = NULL;
+SEXP strings_empty = NULL;
+SEXP strings_dots = NULL;
 
 SEXP syms_i = NULL;
 SEXP syms_x = NULL;
@@ -516,6 +528,7 @@ SEXP syms_y_arg = NULL;
 
 SEXP fns_bracket = NULL;
 SEXP fns_quote = NULL;
+SEXP fns_names = NULL;
 
 void vctrs_init_utils(SEXP ns) {
   vctrs_ns_env = ns;
@@ -523,6 +536,18 @@ void vctrs_init_utils(SEXP ns) {
 
   vctrs_shared_empty_str = Rf_mkString("");
   R_PreserveObject(vctrs_shared_empty_str);
+
+
+  // Holds the CHARSXP objects because unlike symbols they can be
+  // garbage collected
+  strings = Rf_allocVector(STRSXP, 2);
+  R_PreserveObject(strings);
+
+  strings_dots = Rf_mkChar("...");
+  SET_STRING_ELT(strings, 0, strings_dots);
+
+  strings_empty = Rf_mkChar("");
+  SET_STRING_ELT(strings, 1, strings_empty);
 
 
   classes_data_frame = Rf_allocVector(STRSXP, 1);
@@ -555,6 +580,7 @@ void vctrs_init_utils(SEXP ns) {
 
   fns_bracket = Rf_findVar(syms_bracket, R_BaseEnv);
   fns_quote = Rf_findVar(Rf_install("quote"), R_BaseEnv);
+  fns_names = Rf_findVar(Rf_install("names"), R_BaseEnv);
 
   new_env_call = r_parse_eval("as.call(list(new.env, TRUE, NULL, NULL))", R_BaseEnv);
   R_PreserveObject(new_env_call);

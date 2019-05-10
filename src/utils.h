@@ -65,6 +65,7 @@ bool r_is_true(SEXP x);
 bool r_is_string(SEXP x);
 SEXP r_peek_option(const char* option);
 SEXP r_names(SEXP x);
+SEXP r_maybe_duplicate(SEXP x);
 
 SEXP r_pairlist(SEXP* tags, SEXP* cars);
 SEXP r_call(SEXP fn, SEXP* tags, SEXP* cars);
@@ -102,6 +103,9 @@ extern SEXP vctrs_shared_empty_str;
 
 extern SEXP classes_data_frame;
 
+extern SEXP strings_dots;
+extern SEXP strings_empty;
+
 extern SEXP syms_i;
 extern SEXP syms_x;
 extern SEXP syms_y;
@@ -110,9 +114,11 @@ extern SEXP syms_dots;
 extern SEXP syms_bracket;
 extern SEXP syms_x_arg;
 extern SEXP syms_y_arg;
+#define syms_names R_NamesSymbol
 
 extern SEXP fns_bracket;
 extern SEXP fns_quote;
+extern SEXP fns_names;
 
 
 #endif
