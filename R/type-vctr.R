@@ -422,7 +422,7 @@ min.vctrs_vctr <- function(x, ..., na.rm = FALSE) {
   rank <- xtfrm(x)
 
   idx <- if (isTRUE(na.rm)) {
-    which.max(rank)
+    which.min(rank)
   } else {
     which(vec_equal(rank, min(rank), na_equal = TRUE))
   }
