@@ -15,7 +15,7 @@ R_len_t vec_dim(SEXP x) {
 static R_len_t vec_size_impl(SEXP x, bool dispatch) {
   switch (vec_typeof_impl(x, dispatch)) {
   case vctrs_type_null:
-    return 0;
+    Rf_errorcall(R_NilValue, "The size of `NULL` is not defined.");
 
   case vctrs_type_list:
     if (!vec_is_vector(x)) {
