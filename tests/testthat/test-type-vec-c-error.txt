@@ -1,12 +1,12 @@
 
 vec_c(df1, df2):
 
-No common type for `list(...)[[1]]$x$y$z` <double> and `list(...)[[2]]$x$y$z` <character>. 
+No common type for `..1$x$y$z` <double> and `..2$x$y$z` <character>. 
 
 
 vec_c(df1, df1, df2):
 
-No common type for `list(...)[[1]]$x$y$z` <double> and `list(...)[[3]]$x$y$z` <character>. 
+No common type for `..1$x$y$z` <double> and `..3$x$y$z` <character>. 
 
 
 vec_c(foo = df1, bar = df2):

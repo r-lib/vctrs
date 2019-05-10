@@ -1,17 +1,17 @@
 
 vec_type_common(df1, df2):
 
-No common type for `list(...)[[1]]$x$y$z` <double> and `list(...)[[2]]$x$y$z` <character>. 
+No common type for `..1$x$y$z` <double> and `..2$x$y$z` <character>. 
 
 
 vec_type_common(df1, df1, df2):
 
-No common type for `list(...)[[1]]$x$y$z` <double> and `list(...)[[3]]$x$y$z` <character>. 
+No common type for `..1$x$y$z` <double> and `..3$x$y$z` <character>. 
 
 
 vec_type_common(large_df1, large_df2):
 
-No common type for `list(...)[[1]]$foobarfoobarfoobarfoobarfoobarfoobarfoobarfoobarfoobarfoobarfoobarfoobarfoobarfoobarfoobarfoobarfoobarfoobarfoobarfoobar$y$z` <double> and `list(...)[[2]]$foobarfoobarfoobarfoobarfoobarfoobarfoobarfoobarfoobarfoobarfoobarfoobarfoobarfoobarfoobarfoobarfoobarfoobarfoobarfoobar$y$z` <character>. 
+No common type for `..1$foobarfoobarfoobarfoobarfoobarfoobarfoobarfoobarfoobarfoobarfoobarfoobarfoobarfoobarfoobarfoobarfoobarfoobarfoobarfoobar$y$z` <double> and `..2$foobarfoobarfoobarfoobarfoobarfoobarfoobarfoobarfoobarfoobarfoobarfoobarfoobarfoobarfoobarfoobarfoobarfoobarfoobarfoobar$y$z` <character>. 
 
 
 vec_type_common(foo = TRUE, bar = "foo"):
@@ -31,22 +31,22 @@ No common type for `foo$x$y$z` <double> and `bar$x$y$z` <character>.
 
 vec_type_common(df1, df1, bar = df2):
 
-No common type for `list(...)[[1]]$x$y$z` <double> and `bar$x$y$z` <character>. 
+No common type for `..1$x$y$z` <double> and `bar$x$y$z` <character>. 
 
 
 vec_type_common(TRUE, !!!list(1, "foo")):
 
-No common type for `list(...)[[2]]` <double> and `list(...)[[3]]` <character>. 
+No common type for `..2` <double> and `..3` <character>. 
 
 
 vec_type_common(TRUE, !!!list(1, 2), "foo"):
 
-No common type for `list(...)[[2]]` <double> and `list(...)[[5]]` <character>. 
+No common type for `..2` <double> and `..5` <character>. 
 
 
 vec_type_common(1, !!!list(TRUE, FALSE), "foo"):
 
-No common type for `list(...)[[1]]` <double> and `list(...)[[5]]` <character>. 
+No common type for `..1` <double> and `..5` <character>. 
 
 
 vec_type_common(foo = TRUE, !!!list(FALSE, FALSE), bar = "foo"):
@@ -56,7 +56,7 @@ No common type for `foo` <logical> and `bar` <character>.
 
 vec_type_common(foo = TRUE, !!!list(bar = 1, "foo")):
 
-No common type for `bar` <double> and `list(...)[[3]]` <character>. 
+No common type for `bar` <double> and `..3` <character>. 
 
 
 vec_type_common(foo = TRUE, !!!list(bar = "foo")):

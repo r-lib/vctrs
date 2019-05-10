@@ -140,7 +140,7 @@ static r_ssize_t counter_arg_fill(struct vctrs_arg* self, char* buf, r_ssize_t r
     // FIXME: Check for syntactic names
     len = snprintf(buf, remaining, "%s", r_chr_get_c_string(names, names_i));
   } else {
-    len = snprintf(buf, remaining, "list(...)[[%d]]", i + 1);
+    len = snprintf(buf, remaining, "..%d", i + 1);
   }
 
   if (len >= remaining) {
