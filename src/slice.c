@@ -12,21 +12,11 @@ static void slice_names(SEXP x, SEXP to, SEXP index);
 /**
  * This `vec_slice()` variant falls back to `[` with S3 objects.
  *
- * @param to The type to restore to. We need to pass it along because
- *   `vec_slice_native()` passes a proxy but needs to restore to the
- *   original type.
+ * @param to The type to restore to.
  * @param dispatch When `true`, dispatches to `[` for compatibility
  *   with base R. When `false`, uses native implementations.
  */
 static SEXP vec_slice_impl(SEXP x, SEXP index, SEXP to, bool dispatch);
-
-/**
- * This `vec_slice()` variant takes the [vec_proxy()] of S3 objects
- * and calls `vec_slice_impl()` with dispatch turned off. It should be
- * called from `[` methods that want to implement the semantics of
- * `vec_slice()` for their S3 class.
- */
-static SEXP vec_slice_native(SEXP x, SEXP index);
 
 
 static void stop_bad_index_length(R_len_t data_n, R_len_t i) {
@@ -215,46 +205,21 @@ static SEXP vec_slice_impl(SEXP x, SEXP index, SEXP to, bool dispatch) {
 }
 
 // [[export]]
-SEXP vctrs_slice(SEXP x, SEXP index, SEXP native) {
+SEXP vctrs_slice(SEXP x, SEXP index) {
   if (x == R_NilValue) {
     return x;
   }
 
   index = PROTECT(vec_as_index(index, x));
-
-  SEXP out;
-  if (LOGICAL(native)[0]) {
-    out = vec_slice_native(x, index);
-  } else {
-    out = vec_slice_impl(x, index, x, true);
-  }
+  SEXP out = vec_slice_impl(x, index, x, true);
 
   UNPROTECT(1);
   return out;
 }
 
-
 SEXP vec_slice(SEXP x, SEXP index) {
-  return vctrs_slice(x, index, vctrs_shared_true);
+  return vctrs_slice(x, index);
 }
-
-static SEXP vec_slice_native(SEXP x, SEXP index) {
-  if (has_dim(x)) {
-    return vec_slice_fallback(x, index);
-  }
-
-  switch (vec_typeof(x)) {
-  case vctrs_type_s3: {
-    SEXP proxy = PROTECT(vec_proxy(x));
-    SEXP out = vec_slice_impl(proxy, index, x, false);
-    UNPROTECT(1);
-    return out;
-  }
-  default:
-    return vec_slice_impl(x, index, x, false);
-  }
-}
-
 
 static SEXP int_invert_index(SEXP index, SEXP x);
 static SEXP int_filter_zero(SEXP index, R_len_t x);
