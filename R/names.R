@@ -2,52 +2,15 @@
 #'
 #' @description
 #'
-#' Like `base::names()`, `vec_names()` retrieves the names of a
-#' vector. It has the following differences:
-#'
-#' * It always returns __minimal names__. Whereas `names()` returns
-#'   `NULL` when a vector doesn't have names, `vec_names()` returns a
-#'   character vector of empty strings by default. `NA` names are also
-#'   converted to `""`. You can control how names are repaired with
-#'   the `repair` argument.
-#'
-#' * With arrays it returns the row names. With data frames it returns
-#'   an empty character vector as long as the number of rows.
-#'
 #' `vec_as_names()` takes a character vector of names and repairs it
 #' according to the `repair` argument. It is the r-lib and tidyverse
 #' equivalent of [base::make.names()].
-#'
-#' @param x A vector.
-#' @param ... These dots are for future extensions and must be empty.
-#' @param repair Either a string or a function. If a string, it must
-#'   be one of `"minimal"`, `"unique"`, or `"universal"`. If a
-#'   function, it is invoked with a vector of minmal names and must
-#'   return minimal names, otherwise an error is thrown.
-#'
-#'   * Minimal names are never `NULL` or `NA`. When an element doesn't
-#'     have a name, its minimal name is an empty string.
-#'
-#'   * Unique names are unique. A suffix is appended to duplicate
-#'     names to make them unique.
-#'
-#'   * Universal names are unique and syntactic, meaning that you can
-#'     safely use the names as variables without causing a syntax
-#'     error.
-#'
-#'   See below for a complete overview of names repair.
-#' @param quiet By default, the user is informed of any renaming
-#'   caused by repairing the names. This only concerns unique and
-#'   universal repairing. Set `quiet` to `TRUE` to silence the
-#'   messages.
-#'
-#' @section Overview:
 #'
 #' vctrs deals with a few levels of name repair:
 #'
 #' * `minimal` names exist. The `names` attribute is not `NULL`. The
 #'   name of an unnamed element is `""` and never `NA`. For instance,
-#'   [vec_names()] always returns minimal names and data frames
+#'   `vec_as_names()` always returns minimal names and data frames
 #'   created by the tibble package have names that are, at least,
 #'   `minimal`.
 #'
@@ -68,6 +31,27 @@
 #' `universal` implies `unique`, `unique` implies `minimal`. These
 #' levels are nested.
 #'
+#'
+#' @param names A character vector.
+#' @param ... These dots are for future extensions and must be empty.
+#' @param repair Either a string or a function. If a string, it must
+#'   be one of `"minimal"`, `"unique"`, or `"universal"`. If a
+#'   function, it is invoked with a vector of minmal names and must
+#'   return minimal names, otherwise an error is thrown.
+#'
+#'   * Minimal names are never `NULL` or `NA`. When an element doesn't
+#'     have a name, its minimal name is an empty string.
+#'
+#'   * Unique names are unique. A suffix is appended to duplicate
+#'     names to make them unique.
+#'
+#'   * Universal names are unique and syntactic, meaning that you can
+#'     safely use the names as variables without causing a syntax
+#'     error.
+#' @param quiet By default, the user is informed of any renaming
+#'   caused by repairing the names. This only concerns unique and
+#'   universal repairing. Set `quiet` to `TRUE` to silence the
+#'   messages.
 #'
 #' @section `minimal` names:
 #'
@@ -149,41 +133,16 @@
 #'
 #' The [Names attribute](https://principles.tidyverse.org/names-attribute.html)
 #' section in the "tidyverse package development principles".
+#'
 #' @examples
-#' # By default, `vec_names()` returns minimal names:
-#' vec_names(1:3)
+#' # By default, `vec_as_names()` returns minimal names:
+#' vec_as_names(c(NA, NA, "foo"))
 #'
 #' # You can make them unique:
-#' vec_names(1:3, repair = "unique")
+#' vec_as_names(c(NA, NA, "foo"), repair = "unique")
 #'
 #' # Universal repairing fixes any non-syntactic name:
-#' x <- c("_foo" = 1, "+" = 2)
-#' vec_names(x, repair = "universal")
-#'
-#' @export
-vec_names <- function(x,
-                      ...,
-                      repair = c("minimal", "unique", "universal"),
-                      quiet = FALSE) {
-  if (!missing(...)) {
-    ellipsis::check_dots_empty()
-  }
-  repair <- validate_repair(repair)
-
-  if (is_function(repair)) {
-    names <- minimal_names(x)
-    names <- validate_minimal(repair(names), n = length(names))
-    return(names)
-  }
-
-  switch(arg_match(repair),
-    minimal = minimal_names(x),
-    unique = as_unique_names(minimal_names(x), quiet = quiet),
-    universal = as_universal_names(minimal_names(x), quiet = quiet)
-  )
-}
-#' @rdname vec_names
-#' @param names A character vector.
+#' vec_as_names(c("_foo", "+"), repair = "universal")
 #' @export
 vec_as_names <- function(names,
                          ...,
@@ -237,8 +196,27 @@ validate_minimal <- function(names, n = NULL) {
   names
 }
 
-#' @rdname vec_names
-#' @export
+vec_names <- function(x,
+                      ...,
+                      repair = c("minimal", "unique", "universal"),
+                      quiet = FALSE) {
+  if (!missing(...)) {
+    ellipsis::check_dots_empty()
+  }
+  repair <- validate_repair(repair)
+
+  if (is_function(repair)) {
+    names <- minimal_names(x)
+    names <- validate_minimal(repair(names), n = length(names))
+    return(names)
+  }
+
+  switch(arg_match(repair),
+    minimal = minimal_names(x),
+    unique = as_unique_names(minimal_names(x), quiet = quiet),
+    universal = as_universal_names(minimal_names(x), quiet = quiet)
+  )
+}
 vec_repair_names <- function(x,
                              repair = c("minimal", "unique", "universal"),
                              ...,
