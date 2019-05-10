@@ -480,7 +480,14 @@ bool r_has_name_at(SEXP names, R_len_t i) {
 }
 
 SEXP r_env_get(SEXP env, SEXP sym) {
-  return Rf_findVarInFrame3(env, sym, FALSE);
+  SEXP obj = Rf_findVarInFrame3(env, sym, FALSE);
+
+  // Force lazy loaded bindings
+  if (TYPEOF(obj) == PROMSXP) {
+    obj = Rf_eval(obj, R_BaseEnv);
+  }
+
+  return obj;
 }
 
 bool r_is_function(SEXP x) {
@@ -512,7 +519,7 @@ SEXP fns_quote = NULL;
 
 void vctrs_init_utils(SEXP ns) {
   vctrs_ns_env = ns;
-  vctrs_method_table = Rf_findVar(Rf_install(".__S3MethodsTable__."), ns);
+  vctrs_method_table = r_env_get(ns, Rf_install(".__S3MethodsTable__."));
 
   vctrs_shared_empty_str = Rf_mkString("");
   R_PreserveObject(vctrs_shared_empty_str);
