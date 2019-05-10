@@ -27,8 +27,9 @@ See \code{\link[=vec_repair_names]{vec_repair_names()}} for a complete overview 
 \item{...}{These dots are for future extensions and must be empty.}
 
 \item{quiet}{By default, the user is informed of any renaming
-caused by names repairs. This only concerns unique and universal
-repairing. Set \code{quiet} to \code{TRUE} to silence the messages.}
+caused by repairing the names. This only concerns unique and
+universal repairing. Set \code{quiet} to \code{TRUE} to silence the
+messages.}
 }
 \description{
 vctrs deals with a few levels of name repair:
@@ -40,13 +41,17 @@ created by the tibble package have names that are, at least,
 \code{minimal}.
 \item \code{unique} names are \code{minimal}, have no duplicates, and can be used
 where a variable name is expected.  Empty names, and \code{...} or
-\code{..} followed by a sequence of digits are banned.  - All columns
-can be accessed by name via \code{df[["name"]]} and \code{df$`name`}
-and \code{with(df, `name`)}.
+\code{..} followed by a sequence of digits are banned.
+\itemize{
+\item All columns can be accessed by name via \code{df[["name"]]} and
+\code{df$`name` } and \code{with(df, `name`)}.
+}
 \item \code{universal} names are \code{unique} and syntactic (see Details for
-more).  - Names work everywhere, without quoting: \code{df$name} and
-\code{with(df, name)} and \code{lm(name1 ~ name2, data = df)} and
+more).
+\itemize{
+\item Names work everywhere, without quoting: \code{df$name} and \code{with(df, name)} and \code{lm(name1 ~ name2, data = df)} and
 \code{dplyr::select(df, name)} all work.
+}
 }
 
 \code{universal} implies \code{unique}, \code{unique} implies \code{minimal}. These

@@ -14,6 +14,10 @@
 #' * With arrays it returns the row names. With data frames it returns
 #'   an empty character vector as long as the number of rows.
 #'
+#' `vec_as_names()` takes a character vector of names and repairs it
+#' according to the `repair` argument. It is the r-lib and tidyverse
+#' equivalent of [base::make.names()].
+#'
 #' @param x A vector.
 #' @param ... These dots are for future extensions and must be empty.
 #' @param repair
@@ -29,8 +33,9 @@
 #'
 #'   See [vec_repair_names()] for a complete overview of names repair.
 #' @param quiet By default, the user is informed of any renaming
-#'   caused by names repairs. This only concerns unique and universal
-#'   repairing. Set `quiet` to `TRUE` to silence the messages.
+#'   caused by repairing the names. This only concerns unique and
+#'   universal repairing. Set `quiet` to `TRUE` to silence the
+#'   messages.
 #'
 #' @examples
 #' # By default, `vec_names()` returns minimal names:
@@ -88,14 +93,17 @@ vec_as_names <- function(names,
 #'
 #' * `unique` names are `minimal`, have no duplicates, and can be used
 #'   where a variable name is expected.  Empty names, and `...` or
-#'   `..` followed by a sequence of digits are banned.  - All columns
-#'   can be accessed by name via `df[["name"]]` and `` df$`name` ``
-#'   and ``with(df, `name`)``.
+#'   `..` followed by a sequence of digits are banned.
+#'
+#'   - All columns can be accessed by name via `df[["name"]]` and
+#'     ``df$`name` `` and ``with(df, `name`)``.
 #'
 #' * `universal` names are `unique` and syntactic (see Details for
-#'   more).  - Names work everywhere, without quoting: `df$name` and
-#'   `with(df, name)` and `lm(name1 ~ name2, data = df)` and
-#'   `dplyr::select(df, name)` all work.
+#'   more).
+#'
+#'   - Names work everywhere, without quoting: `df$name` and `with(df,
+#'     name)` and `lm(name1 ~ name2, data = df)` and
+#'     `dplyr::select(df, name)` all work.
 #'
 #' `universal` implies `unique`, `unique` implies `minimal`. These
 #' levels are nested.

@@ -31,8 +31,9 @@ See \code{\link[=vec_repair_names]{vec_repair_names()}} for a complete overview 
 }}
 
 \item{quiet}{By default, the user is informed of any renaming
-caused by names repairs. This only concerns unique and universal
-repairing. Set \code{quiet} to \code{TRUE} to silence the messages.}
+caused by repairing the names. This only concerns unique and
+universal repairing. Set \code{quiet} to \code{TRUE} to silence the
+messages.}
 
 \item{names}{A character vector.}
 }
@@ -48,6 +49,10 @@ the \code{repair} argument.
 \item With arrays it returns the row names. With data frames it returns
 an empty character vector as long as the number of rows.
 }
+
+\code{vec_as_names()} takes a character vector of names and repairs it
+according to the \code{repair} argument. It is the r-lib and tidyverse
+equivalent of \code{\link[base:make.names]{base::make.names()}}.
 }
 \examples{
 # By default, `vec_names()` returns minimal names:
