@@ -7,7 +7,7 @@
 \usage{
 vec_size(x)
 
-vec_size_common(..., .size = NULL)
+vec_size_common(..., .size = NULL, .empty)
 }
 \arguments{
 \item{x, ...}{Vector inputs}
@@ -15,6 +15,9 @@ vec_size_common(..., .size = NULL)
 \item{.size}{If \code{NULL}, the default, the output size is determined by
 recycling the lengths of all elements of \code{...}. Alternatively, you can
 supply \code{.size} to force a known size.}
+
+\item{.empty}{The size used when no input is provided, or when all input
+is \code{NULL}. If not supplied when no input is supplied, an error is thrown.}
 }
 \value{
 An integer (or double for long vectors). Will throw an error

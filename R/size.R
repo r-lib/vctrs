@@ -24,6 +24,8 @@
 #' @param .size If `NULL`, the default, the output size is determined by
 #'   recycling the lengths of all elements of `...`. Alternatively, you can
 #'   supply `.size` to force a known size.
+#' @param .empty The size used when no input is provided, or when all input
+#' is `NULL`. If not supplied when no input is supplied, an error is thrown.
 #' @return An integer (or double for long vectors). Will throw an error
 #'   if `x` is not a vector.
 #'
@@ -48,14 +50,19 @@ vec_size <- function(x) {
 
 #' @export
 #' @rdname vec_size
-vec_size_common <- function(..., .size = NULL) {
+vec_size_common <- function(..., .size = NULL, .empty) {
   if (!is.null(.size)) {
     return(.size)
   }
 
   args <- compact(list2(...))
+
   if (length(args) == 0) {
-    return(0L)
+    if (!missing(.empty)) {
+      return(.empty)
+    } else {
+      abort("`...` is empty, and no `.empty` value was supplied.")
+    }
   }
 
   nobs <- map_int(args, vec_size)
