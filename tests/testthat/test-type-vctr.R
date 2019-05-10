@@ -330,14 +330,21 @@ test_that("summaries preserve class", {
 
 test_that("methods using vec_proxy_compare agree with base", {
   h <- new_hidden(c(1:10))
+  h_na <- new_hidden(c(NA, 1:10))
 
-  expect_agree <- function(f, x) {
+  expect_agree <- function(f, x, na.rm = FALSE) {
     f <- enexpr(f)
-    expect_equal(vec_data((!!f)(x)), (!!f)(vec_data(x)))
+    expect_equal(vec_data((!!f)(x, na.rm = na.rm)), (!!f)(vec_data(x), na.rm = na.rm))
   }
 
   expect_agree(min, h)
   expect_agree(max, h)
+
+  expect_agree(min, h_na)
+  expect_agree(max, h_na)
+
+  expect_agree(min, h_na, na.rm = TRUE)
+  expect_agree(max, h_na, na.rm = TRUE)
 })
 
 test_that("can put in data frame", {
