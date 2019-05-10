@@ -126,25 +126,8 @@ df_length <- function(x) {
   }
 }
 
-df_col_cast <- function(x, to) {
-  # Avoid expensive [.data.frame method
-  out <- vec_data(x)
-
-  # Coerce common columns
-  common <- intersect(names(x), names(to))
-  out[common] <- map2(out[common], to[common], vec_cast)
-
-  # Add new columns
-  from_type <- setdiff(names(to), names(x))
-  out[from_type] <- map(to[from_type], vec_na, n = vec_size(x))
-
-  # Drop extra columns
-  out <- out[names(to)]
+df_lossy_cast <- function(out, x, to) {
   extra <- setdiff(names(x), names(to))
-
-  # Casting doesn't affect number of rows
-  attr(out, "row.names") <- attr(x, "row.names")
-  out <- vec_restore(out, to)
 
   maybe_lossy_cast(
     result = out,

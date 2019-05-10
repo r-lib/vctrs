@@ -4,8 +4,10 @@
 // Initialised at load time
 static SEXP syms_vec_cast_dispatch = NULL;
 static SEXP syms_vec_restore_dispatch = NULL;
+static SEXP syms_df_lossy_cast = NULL;
 static SEXP fns_vec_cast_dispatch = NULL;
 static SEXP fns_vec_restore_dispatch = NULL;
+static SEXP fns_df_lossy_cast = NULL;
 
 
 static SEXP int_as_logical(SEXP x, bool* lossy) {
@@ -173,6 +175,60 @@ static SEXP int_as_double(SEXP x, bool* lossy) {
   return out;
 }
 
+// From dictionary.c
+SEXP vctrs_match(SEXP needles, SEXP haystack);
+
+// Take all columns of `to` and preserve the order. Common columns are
+// cast to their types in `to`. Extra `x` columns are dropped and
+// cause a lossy cast. Extra `to` columns are filled with missing
+// values.
+SEXP df_as_dataframe(SEXP x, SEXP to) {
+  SEXP x_names = PROTECT(r_names(x));
+  SEXP to_names = PROTECT(r_names(to));
+
+  SEXP to_dups_pos = PROTECT(vctrs_match(to_names, x_names));
+  int* to_dups_pos_data = INTEGER(to_dups_pos);
+
+  R_len_t to_len = Rf_length(to_dups_pos);
+  SEXP out = PROTECT(Rf_allocVector(VECSXP, to_len));
+  Rf_setAttrib(out, R_NamesSymbol, to_names);
+
+  R_len_t size = df_size(x);
+  R_len_t common_len = 0;
+
+  for (R_len_t i = 0; i < to_len; ++i) {
+    R_len_t pos = to_dups_pos_data[i];
+
+    SEXP col;
+    if (pos == NA_INTEGER) {
+      col = vec_na(VECTOR_ELT(to, i), size);
+    } else {
+      --pos; // 1-based index
+      ++common_len;
+      col = vec_cast(VECTOR_ELT(x, pos), VECTOR_ELT(to, i));
+    }
+
+    SET_VECTOR_ELT(out, i, col);
+  }
+
+  // Restore data frame size before calling `vec_restore()`. `x` and
+  // `to` might not have any columns to compute the original size.
+  init_data_frame(out, size);
+
+  out = PROTECT(vec_restore(out, to, R_NilValue));
+
+  R_len_t extra_len = Rf_length(x) - common_len;
+  if (extra_len) {
+    out = vctrs_dispatch3(syms_df_lossy_cast, fns_df_lossy_cast,
+                          syms_out, out,
+                          syms_x, x,
+                          syms_to, to);
+  }
+
+  UNPROTECT(5);
+  return out;
+}
+
 static SEXP vec_cast_switch(SEXP x, SEXP to, bool* lossy) {
   switch (vec_typeof(to)) {
   case vctrs_type_logical:
@@ -234,6 +290,14 @@ static SEXP vec_cast_switch(SEXP x, SEXP to, bool* lossy) {
       break;
     }
     break;
+
+  case vctrs_type_dataframe:
+    switch (vec_typeof(x)) {
+    case vctrs_type_dataframe:
+      return df_as_dataframe(x, to);
+    default:
+      break;
+    }
 
   default:
     break;
@@ -400,7 +464,9 @@ SEXP vec_restore(SEXP x, SEXP to, SEXP i) {
 void vctrs_init_cast(SEXP ns) {
   syms_vec_cast_dispatch = Rf_install("vec_cast_dispatch");
   syms_vec_restore_dispatch = Rf_install("vec_restore_dispatch");
+  syms_df_lossy_cast = Rf_install("df_lossy_cast");
 
   fns_vec_cast_dispatch = Rf_findVar(syms_vec_cast_dispatch, ns);
   fns_vec_restore_dispatch = Rf_findVar(syms_vec_restore_dispatch, ns);
+  fns_df_lossy_cast = Rf_findVar(syms_df_lossy_cast, ns);
 }

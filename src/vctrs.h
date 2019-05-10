@@ -146,6 +146,7 @@ R_len_t vec_size(SEXP x);
 R_len_t vec_dim(SEXP x);
 SEXP vec_cast(SEXP x, SEXP to);
 SEXP vec_slice(SEXP x, SEXP index);
+SEXP vec_na(SEXP x, R_len_t n);
 SEXP vec_restore(SEXP x, SEXP to, SEXP i);
 SEXP vec_type(SEXP x);
 SEXP vec_type_finalise(SEXP x);
