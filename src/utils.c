@@ -232,7 +232,7 @@ static SEXP s3_get_method(const char* generic, const char* class) {
   return R_NilValue;
 }
 
-SEXP s3_find_method(SEXP x, const char* generic) {
+SEXP s3_find_method(const char* generic, SEXP x) {
   if (!OBJECT(x)) {
     return R_NilValue;
   }

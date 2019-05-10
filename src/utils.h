@@ -29,7 +29,7 @@ bool is_bare_tibble(SEXP x);
 
 // Returns S3 method for `generic` suitable for the class of `x`. The
 // inheritance hierarchy is explored except for the default method.
-SEXP s3_find_method(SEXP x, const char* generic);
+SEXP s3_find_method(const char* generic, SEXP x);
 
 struct vctrs_arg args_empty;
 
