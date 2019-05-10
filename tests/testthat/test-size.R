@@ -56,29 +56,3 @@ test_that("vec_seq_along returns size-0 output for size-0 input", {
 test_that("vec_na_along can be called with single argument", {
   expect_equal(vec_na_along(1:3), rep(NA_integer_, 3))
 })
-
-# vec_names ---------------------------------------------------------------
-
-test_that("can retrieve names", {
-  expect_null(vec_names(letters))
-  expect_identical(vec_names(set_names(letters)), letters)
-  expect_null(vec_names(mtcars))
-  expect_identical(vec_names(Titanic), dimnames(Titanic)[[1]])
-})
-
-test_that("can set names", {
-  x <- letters
-  vec_names(x) <- letters
-  expect_identical(vec_names(x), letters)
-  vec_names(x) <- NULL
-  expect_null(vec_names(x))
-
-  y <- iris
-  vec_names(y) <- as.character(-seq_len(vec_size(y)))
-  expect_identical(row.names(y), row.names(iris))
-  expect_null(vec_names(y))
-
-  z <- ones(3, 2, 1)
-  vec_names(z) <- as.character(1:3)
-  expect_identical(vec_names(z), as.character(1:3))
-})

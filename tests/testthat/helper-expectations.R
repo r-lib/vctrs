@@ -71,3 +71,11 @@ try2 <- function(expr) {
 expect_known_output_nobang <- function(object, file, ...) {
   expect_known_output(object, file, ...)
 }
+
+expect_syntactic <- function(name, exp_syn_name) {
+  expect_identical(
+    syn_name <- make_syntactic(name),
+    exp_syn_name
+  )
+  expect_identical(syn_name, make.names(syn_name))
+}
