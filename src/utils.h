@@ -26,6 +26,9 @@ SEXP vctrs_dispatch3(SEXP fn_sym, SEXP fn,
 SEXP df_map(SEXP df, SEXP (*fn)(SEXP));
 SEXP with_proxy(SEXP x, SEXP (*rec)(SEXP, bool), SEXP i);
 bool is_bare_tibble(SEXP x);
+
+// Returns S3 method for `generic` suitable for the class of `x`. The
+// inheritance hierarchy is explored except for the default method.
 SEXP s3_find_method(SEXP x, const char* generic);
 
 struct vctrs_arg args_empty;
