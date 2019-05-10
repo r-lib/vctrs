@@ -67,3 +67,7 @@ try2 <- function(expr) {
   cat(paste0("\n", as_label2(substitute(expr)), ":\n\n"))
   cat(catch_cnd(expr, classes = "error")$message, "\n\n")
 }
+
+expect_known_output_nobang <- function(object, file, ...) {
+  expect_known_output(object, file, ...)
+}

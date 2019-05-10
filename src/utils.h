@@ -2,6 +2,13 @@
 #define VCTRS_UTILS_H
 
 
+#define SWAP(T, x, y) do {                      \
+    T tmp = x;                                  \
+    x = y;                                      \
+    y = tmp;                                    \
+  } while (0)
+
+
 bool is_bool(SEXP x);
 
 SEXP vctrs_dispatch_n(SEXP fn_sym, SEXP fn,
@@ -23,7 +30,7 @@ struct vctrs_arg args_empty;
 
 void never_reached(const char* fn) __attribute__((noreturn));
 
-enum vctrs_type2 vec_typeof2_impl(enum vctrs_type type_x, enum vctrs_type type_y);
+enum vctrs_type2 vec_typeof2_impl(enum vctrs_type type_x, enum vctrs_type type_y, int* left);
 
 bool is_compact_rownames(SEXP x);
 R_len_t compact_rownames_length(SEXP x);
@@ -52,6 +59,9 @@ SEXP r_peek_option(const char* option);
 
 SEXP r_pairlist(SEXP* tags, SEXP* cars);
 SEXP r_call(SEXP fn, SEXP* tags, SEXP* cars);
+
+SEXP r_names(SEXP x);
+bool r_has_name_at(SEXP names, R_len_t i);
 
 static inline const char* r_chr_get_c_string(SEXP chr, R_len_t i) {
   return CHAR(STRING_ELT(chr, i));

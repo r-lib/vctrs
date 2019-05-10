@@ -146,8 +146,13 @@ SEXP vec_slice(SEXP x, SEXP index);
 SEXP vec_restore(SEXP x, SEXP to, SEXP i);
 SEXP vec_type(SEXP x);
 SEXP vec_type_finalise(SEXP x);
-SEXP vec_type2(SEXP x, SEXP y, struct vctrs_arg* x_arg, struct vctrs_arg* y_arg);
 bool vec_is_unspecified(SEXP x);
+
+SEXP vec_type2(SEXP x,
+               SEXP y,
+               struct vctrs_arg* x_arg,
+               struct vctrs_arg* y_arg,
+               int* left);
 
 bool is_data_frame(SEXP x);
 bool is_record(SEXP x);

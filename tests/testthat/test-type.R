@@ -61,9 +61,29 @@ test_that("vec_type_common() includes index in argument tag", {
   large_df1 <- set_names(df1, nm)
   large_df2 <- set_names(df2, nm)
 
-  expect_known_output(file = test_path("test-type-vec-type-common-error.txt"), {
+  expect_known_output_nobang(file = test_path("test-type-vec-type-common-error.txt"), {
     try2(vec_type_common(df1, df2))
     try2(vec_type_common(df1, df1, df2))
     try2(vec_type_common(large_df1, large_df2))
+
+    # Names
+    try2(vec_type_common(foo = TRUE, bar = "foo"))
+    try2(vec_type_common(foo = TRUE, baz = FALSE, bar = "foo"))
+    try2(vec_type_common(foo = df1, bar = df2))
+    try2(vec_type_common(df1, df1, bar = df2))
+
+    # One splice box
+    try2(vec_type_common(TRUE, !!!list(1, "foo")))
+    try2(vec_type_common(TRUE, !!!list(1, 2), "foo"))
+    try2(vec_type_common(1, !!!list(TRUE, FALSE), "foo"))
+
+    # One named splice box
+    try2(vec_type_common(foo = TRUE, !!!list(FALSE, FALSE), bar = "foo"))
+    try2(vec_type_common(foo = TRUE, !!!list(bar = 1, "foo")))
+    try2(vec_type_common(foo = TRUE, !!!list(bar = "foo")))
+    try2(vec_type_common(foo = TRUE, !!!list(bar = FALSE), baz = "chr"))
+
+    # Two splice boxes in next and current
+    try2(vec_type_common(foo = TRUE, !!!list(bar = FALSE), !!!list(baz = "chr")))
   })
 })
