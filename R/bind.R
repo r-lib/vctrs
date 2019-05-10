@@ -98,6 +98,9 @@ vec_rbind <- function(..., .ptype = NULL) {
   if (is.null(ptype))
     return(data_frame())
 
+  is_null <- map_lgl(tbls, is_null)
+  tbls <- tbls[!is_null]
+
   ns <- map_int(tbls, vec_size)
   # Use list so we can rely on efficient internal [[<-
   out <- vec_data(vec_na(ptype, sum(ns)))
@@ -143,7 +146,7 @@ vec_cbind <- function(..., .ptype = NULL, .size = NULL) {
   args <- args[!is_null]
 
   # container size: common length of all inputs
-  size <- vec_size_common(!!!args, .size = .size) %||% 0L
+  size <- vec_size_common(!!!args, .size = .size, .empty = 0L)
   args <- map(args, vec_recycle, size = size)
 
   # convert input to columns and prepare output containers
