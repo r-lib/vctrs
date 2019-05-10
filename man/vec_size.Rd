@@ -21,9 +21,10 @@ is \code{NULL}. If not supplied when no input is supplied, an error is thrown.}
 }
 \value{
 An integer (or double for long vectors). Will throw an error
-if \code{x} is not a vector.
+if \code{x} is not a vector or \code{NULL}.
 
-\code{vec_size_common()} will return \code{0} if all inputs are \code{NULL} or absent.
+\code{vec_size_common()} will return \code{.empty} if all inputs are \code{NULL} or
+absent.
 }
 \description{
 \code{vec_size(x)} returns the size of a vector. This is distinct from the
@@ -53,11 +54,6 @@ pronounce, and throws an error when passed non-vector inputs.
 vec_size(1:100)
 vec_size(mtcars)
 vec_size(array(dim = c(3, 5, 10)))
-
-vec_size(NULL)
-# Because vec_size(vec_c(NULL, x)) ==
-#   vec_size(NULL) + vec_size(x) ==
-#   vec_size(x)
 
 vec_size_common(1:10, 1:10)
 vec_size_common(1:10, 1)

@@ -27,19 +27,15 @@
 #' @param .empty The size used when no input is provided, or when all input
 #' is `NULL`. If not supplied when no input is supplied, an error is thrown.
 #' @return An integer (or double for long vectors). Will throw an error
-#'   if `x` is not a vector.
+#'   if `x` is not a vector or `NULL`.
 #'
-#'   `vec_size_common()` will return `0` if all inputs are `NULL` or absent.
+#'   `vec_size_common()` will return `.empty` if all inputs are `NULL` or
+#'   absent.
 #' @export
 #' @examples
 #' vec_size(1:100)
 #' vec_size(mtcars)
 #' vec_size(array(dim = c(3, 5, 10)))
-#'
-#' vec_size(NULL)
-#' # Because vec_size(vec_c(NULL, x)) ==
-#' #   vec_size(NULL) + vec_size(x) ==
-#' #   vec_size(x)
 #'
 #' vec_size_common(1:10, 1:10)
 #' vec_size_common(1:10, 1)
