@@ -149,3 +149,52 @@ static r_ssize_t counter_arg_fill(struct vctrs_arg* self, char* buf, r_ssize_t r
     return len;
   }
 }
+
+
+// Indexing tag that materialises as `$rhs`. The `$` is only written when
+// the arg has a parent.
+
+static r_ssize_t index_arg_fill(struct vctrs_arg* self, char* buf, r_ssize_t remaining);
+static bool is_empty_arg(struct vctrs_arg* arg);
+
+struct vctrs_arg_wrapper new_index_arg(struct vctrs_arg* parent, const char* arg) {
+  struct vctrs_arg_wrapper wrapper = {
+    .iface = {
+      .parent = parent,
+      .fill = &index_arg_fill
+    },
+    .arg = arg
+  };
+
+  return wrapper;
+}
+
+static r_ssize_t index_arg_fill(struct vctrs_arg* self, char* buf, r_ssize_t remaining) {
+  struct vctrs_arg_wrapper* orig = (struct vctrs_arg_wrapper*) self;
+
+  const char* src = orig->arg;
+  size_t len = strlen(src);
+
+  bool child = is_empty_arg(self->parent);
+
+  if (child) {
+    ++len;
+  }
+
+  if (len >= remaining) {
+    return -1;
+  }
+
+  if (child) {
+    *buf++ = '$';
+  }
+  memcpy(buf, src, len);
+  buf[len] = '\0';
+
+  return len;
+}
+
+static bool is_empty_arg(struct vctrs_arg* arg) {
+  char tmp[1];
+  return arg->fill(arg, tmp, 1) != 0;;
+}

@@ -23,6 +23,9 @@ static SEXP vctrs_type2_dispatch(SEXP x,
   return out;
 }
 
+
+static SEXP df_type2(SEXP x, SEXP y, struct vctrs_arg* x_arg, struct vctrs_arg* y_arg);
+
 // [[ include("vctrs.h") ]]
 SEXP vec_type2(SEXP x, SEXP y,
                struct vctrs_arg* x_arg,
@@ -84,22 +87,97 @@ SEXP vec_type2(SEXP x, SEXP y,
   case vctrs_type2_list_list:
     return vctrs_shared_empty_list;
 
+  case vctrs_type2_dataframe_dataframe:
+    return df_type2(x, y, x_arg, y_arg);
+
   default:
     return vctrs_type2_dispatch(x, y, x_arg, y_arg);
   }
 }
 
-// [[ register() ]]
-SEXP vctrs_type2(SEXP x, SEXP y, SEXP x_arg, SEXP y_arg) {
-  if (x_arg == R_NilValue) {
-    x_arg = vctrs_shared_empty_str;
-  } else if (!r_is_string(x_arg)) {
-    Rf_errorcall(R_NilValue, "`x_arg` must be a string");
+
+// From dictionary.c
+SEXP vctrs_match(SEXP needles, SEXP haystack);
+
+SEXP df_type2(SEXP x, SEXP y, struct vctrs_arg* x_arg, struct vctrs_arg* y_arg) {
+  SEXP x_names = PROTECT(r_names(x));
+  SEXP y_names = PROTECT(r_names(y));
+
+  SEXP x_dups_pos = PROTECT(vctrs_match(x_names, y_names));
+  SEXP y_dups_pos = PROTECT(vctrs_match(y_names, x_names));
+
+  int* x_dups_pos_data = INTEGER(x_dups_pos);
+  int* y_dups_pos_data = INTEGER(y_dups_pos);
+
+  R_len_t x_len = Rf_length(x_dups_pos);
+  R_len_t y_len = Rf_length(y_dups_pos);
+
+  // Count columns that are only in `y`
+  R_len_t rest_len = 0;
+  for (R_len_t i = 0; i < y_len; ++i) {
+    if (y_dups_pos_data[i] == NA_INTEGER) {
+      ++rest_len;
+    }
   }
 
-  if (y_arg == R_NilValue) {
-    y_arg = vctrs_shared_empty_str;
-  } else if (!r_is_string(y_arg)) {
+  R_len_t out_len = x_len + rest_len;
+  SEXP out = PROTECT(Rf_allocVector(VECSXP, out_len));
+  SEXP nms = PROTECT(Rf_allocVector(STRSXP, out_len));
+  Rf_setAttrib(out, R_NamesSymbol, nms);
+
+  R_len_t i = 0;
+
+  // Fill in prototypes of all the columns that are in `x`, in order
+  for (; i < x_len; ++i) {
+    R_len_t dup = x_dups_pos_data[i];
+
+    SEXP type;
+    if (dup == NA_INTEGER) {
+      type = vec_type(VECTOR_ELT(x, i));
+    } else {
+      --dup; // 1-based index
+      struct vctrs_arg_wrapper named_x_arg = new_index_arg(x_arg, r_chr_get_c_string(x_names, i));
+      struct vctrs_arg_wrapper named_y_arg = new_index_arg(y_arg, r_chr_get_c_string(y_names, dup));
+      int _left;
+      type = vec_type2(VECTOR_ELT(x, i),
+                       VECTOR_ELT(y, dup),
+                       (struct vctrs_arg*) &named_x_arg,
+                       (struct vctrs_arg*) &named_y_arg,
+                       &_left);
+    }
+
+    SET_VECTOR_ELT(out, i, type);
+    SET_STRING_ELT(nms, i, STRING_ELT(x_names, i));
+  }
+
+  // Fill in prototypes of the columns that are only in `y`
+  for (R_len_t j = 0; i < out_len; ++j) {
+    R_len_t dup = y_dups_pos_data[j];
+    if (dup == NA_INTEGER) {
+      SET_VECTOR_ELT(out, i, vec_type(VECTOR_ELT(y, j)));
+      SET_STRING_ELT(nms, i, STRING_ELT(y_names, j));
+      ++i;
+    }
+  }
+
+  if ((is_bare_tibble(x) && is_native_df(y)) ||
+      (is_bare_tibble(y) && is_native_df(x))) {
+    init_tibble(out, 0);
+  } else {
+    init_data_frame(out, 0);
+  }
+
+  UNPROTECT(6);
+  return out;
+}
+
+
+// [[ register() ]]
+SEXP vctrs_type2(SEXP x, SEXP y, SEXP x_arg, SEXP y_arg) {
+  if (!r_is_string(x_arg)) {
+    Rf_errorcall(R_NilValue, "`x_arg` must be a string");
+  }
+  if (!r_is_string(y_arg)) {
     Rf_errorcall(R_NilValue, "`y_arg` must be a string");
   }
 

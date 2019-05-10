@@ -55,6 +55,8 @@ struct vctrs_arg_counter new_counter_arg(struct vctrs_arg* parent,
                                          R_len_t* i,
                                          SEXP* names,
                                          R_len_t* names_i);
+struct vctrs_arg_wrapper new_index_arg(struct vctrs_arg* parent,
+                                       const char* arg);
 
 /**
  * Materialise an argument tag. Returns a CHARSXP.

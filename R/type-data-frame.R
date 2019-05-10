@@ -79,7 +79,9 @@ vec_ptype_abbr.data.frame <- function(x) {
 vec_type2.data.frame <- function(x, y, ...) UseMethod("vec_type2.data.frame", y)
 #' @method vec_type2.data.frame data.frame
 #' @export
-vec_type2.data.frame.data.frame <- function(x, y, ...) df_col_type2(x, y, ...)
+vec_type2.data.frame.data.frame <- function(x, y, ...) {
+  abort("Never called: Native implementation")
+}
 #' @method vec_type2.data.frame default
 #' @export
 vec_type2.data.frame.default <- function(x, y, ..., x_arg = "", y_arg = "") {
@@ -122,36 +124,6 @@ df_length <- function(x) {
   } else {
     0L
   }
-}
-
-df_col_type2 <- function(x, y, ..., x_arg = "", y_arg = "") {
-  # Avoid expensive [.data.frame
-  x_raw <- vec_data(vec_type(x))
-  y_raw <- vec_data(vec_type(y))
-
-  # Find types
-  names <- set_partition(names(x), names(y))
-  if (length(names$both) > 0) {
-    both <- names$both
-    x_args <- tag_push(x_arg, "$", both)
-    y_args <- tag_push(y_arg, "$", both)
-    common_types <- pmap(list(x_raw[both], y_raw[both], x_arg = x_args, y_arg = y_args), vec_type2)
-    common_types <- set_names(common_types, both)
-  } else {
-    common_types <- list()
-  }
-  only_x_types <- x_raw[names$only_x]
-  only_y_types <- y_raw[names$only_y]
-
-  # Combine and restore order and type
-  out <- c(common_types, only_x_types, only_y_types)
-  out <- out[c(names(x), names$only_y)]
-
-  if (length(out) == 0) {
-    names(out) <- character()
-  }
-
-  vec_restore(out, x)
 }
 
 df_col_cast <- function(x, to) {
