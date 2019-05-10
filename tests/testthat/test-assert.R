@@ -151,7 +151,7 @@ test_that("assertion is not applied on proxy", {
   scoped_global_bindings(
     vec_proxy.vctrs_foobar = unclass,
     vec_restore.vctrs_foobar = function(x, ...) foobar(x),
-    `[.vctrs_foobar` = function(x, i) vec_slice_native(x, i)
+    `[.vctrs_foobar` = function(x, i) vec_slice(x, i)
   )
   x <- foobar(list())
 

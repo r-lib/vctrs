@@ -184,20 +184,21 @@ test_that("can `vec_slice()` records", {
   expect_size(out, 2)
 })
 
-test_that("vec_restore() is called after bare slicing", {
+test_that("vec_restore() is called after proxied slicing", {
   scoped_global_bindings(
+    vec_proxy.vctrs_foobar = identity,
     vec_restore.vctrs_foobar = function(x, to, ..., i) "dispatch"
   )
-  expect_identical(vec_slice_native(foobar(1:3), 2), "dispatch")
+  expect_identical(vec_slice(foobar(1:3), 2), "dispatch")
 })
 
-test_that("vec_slice_native() is proxied", {
+test_that("vec_slice() is proxied", {
   scoped_global_bindings(
     vec_restore.vctrs_proxy = function(x, to, ..., i) new_proxy(x),
     vec_proxy.vctrs_proxy = function(x) proxy_deref(x)
   )
 
-  x <- vec_slice_native(new_proxy(1:3), 2:3)
+  x <- vec_slice(new_proxy(1:3), 2:3)
   expect_identical(proxy_deref(x), 2:3)
 })
 
@@ -229,16 +230,17 @@ test_that("can slice shaped objects by name", {
   expect_error(vec_slice(x, "baz"), "non-existing")
 })
 
-test_that("vec_slice_native() unclasses input before calling `vec_restore()`", {
+test_that("vec_slice() unclasses input before calling `vec_restore()`", {
   class <- NULL
   scoped_global_bindings(
+    vec_proxy.vctrs_foobar = identity,
     vec_restore.vctrs_foobar = function(x, ...) class <<- class(x)
   )
 
   x <- foobar(1:4)
   dim(x) <- c(2, 2)
 
-  vec_slice_native(x, 1)
+  vec_slice(x, 1)
   expect_identical(class, "matrix")
 })
 
@@ -265,16 +267,14 @@ test_that("vec_slice() falls back to `[` with S3 objects", {
   scoped_global_bindings(
     vec_proxy.vctrs_foobar = function(x) unclass(x)
   )
-  expect_identical(vec_slice(foobar(list(NA)), 1), "dispatched")
+  expect_identical(vec_slice(foobar(list(NA)), 1), foobar(list(NA)))
 })
 
 test_that("vec_slice() doesn't call vec_restore() with S3 objects", {
   scoped_global_bindings(
-    vec_proxy.vctrs_foobar = function(x) unclass(x),
-    vec_restore.vctrs_foobar = function(x, to) stop("not called")
+    vec_restore.vctrs_foobar = function(...) stop("not called")
   )
   expect_error(vec_slice(foobar(NA), 1), NA)
-  expect_error(vec_slice(foobar(list(NA)), 1), NA)
 })
 
 test_that("can vec_slice() without inflooping when restore calls math generics", {

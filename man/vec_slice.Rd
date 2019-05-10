@@ -31,18 +31,17 @@ that matches \code{\link[=vec_size]{vec_size()}} instead of \code{length()}.
 }
 \section{Genericity}{
 
-\itemize{
-\item If the input is a class instance, \code{vec_slice()} falls back to the
-base generic \code{[}. Note that S3 lists are treated as scalars by
-default, and will cause an error if they don't implement a
-\code{\link[=vec_proxy]{vec_proxy()}} method.
-\item The vctrs class methods for \code{[} call back into \code{vec_slice()}.
-They slice the \code{\link[=vec_proxy]{vec_proxy()}} and \code{\link[=vec_restore]{vec_restore()}} the result.
 
-The tools for calling back into \code{vec_slice()} are not exported
-yet, but you can take advantage of this mechanism by inheriting
-from \link[=new_vctr]{vctrs_vctr} or \link[=new_rcrd]{vctrs_rcrd}.
+Support for S3 objects depends on whether the object implements a
+\code{\link[=vec_proxy]{vec_proxy()}} method.
+\itemize{
+\item When a \code{vec_proxy()} method exists, the proxy is sliced and
+\code{vec_restore()} is called on the result.
+\item Otherwise \code{vec_slice()} falls back to the base generic \code{[}.
 }
+
+Note that S3 lists are treated as scalars by default, and will
+cause an error if they don't implement a \code{\link[=vec_proxy]{vec_proxy()}} method.
 }
 
 \section{Differences with base R subsetting}{

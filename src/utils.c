@@ -8,6 +8,7 @@ bool (*rlang_is_splice_box)(SEXP) = NULL;
 SEXP (*rlang_unbox)(SEXP) = NULL;
 SEXP (*rlang_env_dots_values)(SEXP) = NULL;
 SEXP (*rlang_env_dots_list)(SEXP) = NULL;
+SEXP vctrs_method_table = NULL;
 
 SEXP strings_tbl = NULL;
 SEXP strings_tbl_df = NULL;
@@ -191,6 +192,65 @@ static bool is_data_frame_class(SEXP class) {
 
 inline void never_reached(const char* fn) {
   Rf_error("Internal error in `%s()`: Never reached", fn);
+}
+
+
+static char s3_buf[200];
+
+static SEXP s3_method_sym(const char* generic, const char* class) {
+  int gen_len = strlen(generic);
+  int class_len = strlen(class);
+  int dot_len = 1;
+  if (gen_len + class_len + dot_len >= 200) {
+    Rf_error("Internal error: Generic or class name is too long.");
+  }
+
+  char* buf = s3_buf;
+
+  memcpy(buf, generic, gen_len); buf += gen_len;
+  *buf = '.'; ++buf;
+  memcpy(buf, class, class_len); buf += class_len;
+  *buf = '\0';
+
+  return Rf_install(s3_buf);
+}
+
+// First check in global env, then in method table
+static SEXP s3_get_method(const char* generic, const char* class) {
+  SEXP sym = s3_method_sym(generic, class);
+
+  SEXP method = r_env_get(R_GlobalEnv, sym);
+  if (r_is_function(method)) {
+    return method;
+  }
+
+  method = r_env_get(vctrs_method_table, sym);
+  if (r_is_function(method)) {
+    return method;
+  }
+
+  return R_NilValue;
+}
+
+SEXP s3_find_method(const char* generic, SEXP x) {
+  if (!OBJECT(x)) {
+    return R_NilValue;
+  }
+
+  SEXP class = PROTECT(Rf_getAttrib(x, R_ClassSymbol));
+  SEXP* class_ptr = STRING_PTR(class);
+  int n_class = Rf_length(class);
+
+  for (int i = 0; i < n_class; ++i, ++class_ptr) {
+    SEXP method = s3_get_method(generic, CHAR(*class_ptr));
+    if (method != R_NilValue) {
+      UNPROTECT(1);
+      return method;
+    }
+  }
+
+  UNPROTECT(1);
+  return R_NilValue;
 }
 
 
@@ -419,6 +479,28 @@ bool r_has_name_at(SEXP names, R_len_t i) {
   return elt != NA_STRING && elt != Rf_mkChar("");
 }
 
+SEXP r_env_get(SEXP env, SEXP sym) {
+  SEXP obj = Rf_findVarInFrame3(env, sym, FALSE);
+
+  // Force lazy loaded bindings
+  if (TYPEOF(obj) == PROMSXP) {
+    obj = Rf_eval(obj, R_BaseEnv);
+  }
+
+  return obj;
+}
+
+bool r_is_function(SEXP x) {
+  switch (TYPEOF(x)) {
+  case CLOSXP:
+  case BUILTINSXP:
+  case SPECIALSXP:
+    return true;
+  default:
+    return false;
+  }
+}
+
 
 SEXP vctrs_ns_env = NULL;
 SEXP vctrs_shared_empty_str = NULL;
@@ -437,6 +519,7 @@ SEXP fns_quote = NULL;
 
 void vctrs_init_utils(SEXP ns) {
   vctrs_ns_env = ns;
+  vctrs_method_table = r_env_get(ns, Rf_install(".__S3MethodsTable__."));
 
   vctrs_shared_empty_str = Rf_mkString("");
   R_PreserveObject(vctrs_shared_empty_str);

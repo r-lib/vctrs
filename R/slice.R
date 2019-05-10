@@ -16,17 +16,16 @@
 #'
 #' @section Genericity:
 #'
-#' * If the input is a class instance, `vec_slice()` falls back to the
-#'   base generic `[`. Note that S3 lists are treated as scalars by
-#'   default, and will cause an error if they don't implement a
-#'   [vec_proxy()] method.
+#' Support for S3 objects depends on whether the object implements a
+#' [vec_proxy()] method.
 #'
-#' * The vctrs class methods for `[` call back into `vec_slice()`.
-#'   They slice the [vec_proxy()] and [vec_restore()] the result.
+#' * When a `vec_proxy()` method exists, the proxy is sliced and
+#'   `vec_restore()` is called on the result.
 #'
-#'   The tools for calling back into `vec_slice()` are not exported
-#'   yet, but you can take advantage of this mechanism by inheriting
-#'   from [vctrs_vctr][new_vctr] or [vctrs_rcrd][new_rcrd].
+#' * Otherwise `vec_slice()` falls back to the base generic `[`.
+#'
+#' Note that S3 lists are treated as scalars by default, and will
+#' cause an error if they don't implement a [vec_proxy()] method.
 #'
 #' @section Differences with base R subsetting:
 #'
@@ -77,7 +76,7 @@
 #' # vector:
 #' try(vec_slice(x, 2) <- "20")
 vec_slice <- function(x, i) {
-  .Call(vctrs_slice, x, i, FALSE)
+  .Call(vctrs_slice, x, i)
 }
 
 # Called when `x` has dimensions
@@ -94,11 +93,6 @@ vec_slice_fallback <- function(x, i) {
   }
 
   vec_restore(out, x)
-}
-
-# No dispatch on `[`, should be called in `[` methods
-vec_slice_native <- function(x, i) {
-  .Call(vctrs_slice, x, i, TRUE)
 }
 
 #' @export
@@ -139,7 +133,7 @@ vec_index <- function(x, i, ...) {
   i <- maybe_missing(i, TRUE)
 
   if (!dots_n(...)) {
-    return(vec_slice_native(x, i))
+    return(vec_slice(x, i))
   }
 
   out <- unclass(vec_proxy(x))
