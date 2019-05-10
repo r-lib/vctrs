@@ -27,7 +27,7 @@
 #' @param .empty The size used when no input is provided, or when all input
 #' is `NULL`. If not supplied when no input is supplied, an error is thrown.
 #' @return An integer (or double for long vectors). Will throw an error
-#'   if `x` is not a vector or `NULL`.
+#'   if `x` is not a vector or is `NULL`.
 #'
 #'   `vec_size_common()` will return `.empty` if all inputs are `NULL` or
 #'   absent.

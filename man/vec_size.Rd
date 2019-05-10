@@ -21,7 +21,7 @@ is \code{NULL}. If not supplied when no input is supplied, an error is thrown.}
 }
 \value{
 An integer (or double for long vectors). Will throw an error
-if \code{x} is not a vector or \code{NULL}.
+if \code{x} is not a vector or is \code{NULL}.
 
 \code{vec_size_common()} will return \code{.empty} if all inputs are \code{NULL} or
 absent.
