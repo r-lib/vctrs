@@ -114,13 +114,6 @@ vec_assign <- function(x, i, value) {
   .Call(vctrs_assign, x, i, value)
 }
 vec_assign_fallback <- function(x, i, value) {
-  existing <- !is.na(i)
-  i <- vec_slice(i, existing)
-  value <- vec_slice(value, existing)
-
-  value <- vec_recycle(value, vec_size(i))
-  value <- vec_coercible_cast(value, x, x_arg = "value", to_arg = "x")
-
   d <- vec_dims(x)
   miss_args <- rep(list(missing_arg()), d - 1)
   eval_bare(expr(x[i, !!!miss_args] <- value))

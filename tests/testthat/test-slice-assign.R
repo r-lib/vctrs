@@ -208,6 +208,7 @@ test_that("a coercible RHS is cast to LHS before assignment (#140)", {
   allow_lossy_cast(vec_slice(x, 1) <- 3.5)
   expect_identical(x, int(3, 2))
 
+  skip("matrix fallback")
   x <- matrix(1:4, 2)
   vec_slice(x, 1) <- matrix(c(FALSE, FALSE), 1)
   expect_identical(x, matrix(int(0, 2, 0, 4), 2))
@@ -249,4 +250,18 @@ test_that("can use names to vec_slice<-() a named object", {
     "Can't use character to index an unnamed vector.",
     fixed = TRUE
   )
+})
+
+test_that("slice-assign falls back to `[<-` when proxy is not implemented", {
+  scoped_global_bindings(
+    `[<-.vctrs_foobar` = function(x, i, value) {
+      x <- unclass(x)
+      x[i] <- "dispatched"
+      x
+    }
+  )
+
+  obj <- foobar(c("foo", "bar", "baz"))
+  vec_slice(obj, 1:2) <- NA
+  expect_identical(obj, c("dispatched", "dispatched", "baz"))
 })

@@ -9,8 +9,10 @@ SEXP fns_vec_assign_fallback = NULL;
 SEXP vec_as_index(SEXP i, SEXP x);
 
 
+static SEXP validate_value(SEXP value, SEXP x, SEXP index);
 static SEXP vec_assign_fallback(SEXP x, SEXP index, SEXP value);
 static SEXP vec_assign_impl(SEXP x, SEXP index, SEXP value, SEXP to, bool dispatch);
+static SEXP oo_assign(SEXP x, SEXP index, SEXP value, SEXP to);
 
 SEXP vec_assign(SEXP x, SEXP index, SEXP value) {
   if (x == R_NilValue) {
@@ -18,8 +20,6 @@ SEXP vec_assign(SEXP x, SEXP index, SEXP value) {
   }
 
   struct vctrs_arg_wrapper x_arg = new_wrapper_arg(NULL, "x");
-  struct vctrs_arg_wrapper value_arg = new_wrapper_arg(NULL, "value");
-
   vec_assert(x, (struct vctrs_arg*) &x_arg);
 
   index = PROTECT(vec_as_index(index, x));
@@ -30,16 +30,33 @@ SEXP vec_assign(SEXP x, SEXP index, SEXP value) {
     return out;
   }
 
+  // Deal with dispatch here because `vec_assign_impl()` takes a
+  // validated `value` (recycled and coerced) and fallback needs to
+  // happen with a bare `value`.
+  enum vctrs_type type = vec_typeof(x);
+  if (type == vctrs_type_s3) {
+    SEXP out = oo_assign(x, index, value, x);
+    UNPROTECT(1);
+    return out;
+  } else {
+    value = PROTECT(validate_value(value, x, index));
+    SEXP out = vec_assign_impl(x, index, value, x, true);
+    UNPROTECT(2);
+    return out;
+  }
+}
+
+static SEXP validate_value(SEXP value, SEXP x, SEXP index) {
+  struct vctrs_arg_wrapper x_arg = new_wrapper_arg(NULL, "x");
+  struct vctrs_arg_wrapper value_arg = new_wrapper_arg(NULL, "value");
   value = PROTECT(vec_coercible_cast(value, x,
                                      (struct vctrs_arg*) &value_arg,
                                      (struct vctrs_arg*) &x_arg));
   value = PROTECT(vec_proxy(value));
-  value = PROTECT(vec_recycle(value, vec_size(index)));
+  value = vec_recycle(value, vec_size(index));
 
-  SEXP out = vec_assign_impl(x, index, value, x, true);
-
-  UNPROTECT(4);
-  return out;
+  UNPROTECT(2);
+  return value;
 }
 
 
@@ -138,11 +155,22 @@ static SEXP df_assign(SEXP x, SEXP index, SEXP value, SEXP to) {
 }
 
 static SEXP oo_assign(SEXP x, SEXP index, SEXP value, SEXP to) {
-  SEXP out = PROTECT(vec_proxy(x));
-  out = PROTECT(vec_assign_impl(out, index, value, to, false));
-  out = vec_restore(out, to, R_NilValue);
+  // If has proxy, take the proxy and recurse. Otherwise, fall back
+  // to `[<-` for compatibility with foreign types.
+  SEXP method = PROTECT(vec_proxy_method(x));
 
-  UNPROTECT(2);
+  SEXP out;
+  if (method == R_NilValue) {
+    out = vec_assign_fallback(x, index, value);
+  } else {
+    value = PROTECT(validate_value(value, x, index));
+    out = PROTECT(vec_proxy(x));
+    out = PROTECT(vec_assign_impl(out, index, value, to, false));
+    out = vec_restore(out, to, R_NilValue);
+    UNPROTECT(3);
+  }
+
+  UNPROTECT(1);
   return out;
 }
 
@@ -157,8 +185,9 @@ static SEXP vec_assign_impl(SEXP x, SEXP index, SEXP value, SEXP to, bool dispat
   case vctrs_type_raw:       return raw_assign(x, index, value);
   case vctrs_type_list:      return list_assign(x, index, value);
   case vctrs_type_dataframe: return df_assign(x, index, value, to);
-  case vctrs_type_s3:        return oo_assign(x, index, value, to);
-  case vctrs_type_null:      Rf_error("Internal error in `vec_assign_impl()`: Unexpected NULL.");
+  case vctrs_type_s3:
+  case vctrs_type_null:      Rf_error("Internal error in `vec_assign_impl()`: Unexpected type %s.",
+                                      vec_type_as_str(vec_typeof(x)));
   case vctrs_type_scalar:    stop_scalar_type(x, args_empty);
   }
 }
