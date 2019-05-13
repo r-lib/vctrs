@@ -25,6 +25,9 @@ SEXP vctrs_dispatch3(SEXP fn_sym, SEXP fn,
 
 SEXP df_map(SEXP df, SEXP (*fn)(SEXP));
 SEXP with_proxy(SEXP x, SEXP (*rec)(SEXP, bool), SEXP i);
+
+bool is_data_frame(SEXP x);
+bool is_bare_data_frame(SEXP x);
 bool is_bare_tibble(SEXP x);
 
 // Returns S3 method for `generic` suitable for the class of `x`. The
@@ -74,6 +77,7 @@ SEXP r_names(SEXP x);
 bool r_has_name_at(SEXP names, R_len_t i);
 SEXP r_env_get(SEXP env, SEXP sym);
 bool r_is_function(SEXP x);
+bool r_chr_has_string(SEXP x, SEXP str);
 
 static inline const char* r_chr_get_c_string(SEXP chr, R_len_t i) {
   return CHAR(STRING_ELT(chr, i));

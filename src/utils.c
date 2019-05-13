@@ -149,13 +149,37 @@ static SEXP new_compact_rownames(R_len_t n) {
 static bool is_tibble_class(SEXP class);
 static bool is_data_frame_class(SEXP class);
 
+bool is_data_frame(SEXP x) {
+  if (!OBJECT(x)) {
+    return false;
+  }
+  SEXP class = PROTECT(Rf_getAttrib(x, R_ClassSymbol));
+  bool out = r_chr_has_string(class, strings_data_frame);
+  UNPROTECT(1);
+  return out;
+}
+bool is_bare_data_frame(SEXP x) {
+  if (!OBJECT(x)) {
+    return false;
+  }
+  SEXP class = PROTECT(Rf_getAttrib(x, R_ClassSymbol));
+  bool out = is_data_frame_class(class);
+  UNPROTECT(1);
+  return out;
+}
 bool is_bare_tibble(SEXP x) {
+  if (!OBJECT(x)) {
+    return false;
+  }
   SEXP class = PROTECT(Rf_getAttrib(x, R_ClassSymbol));
   bool out = is_tibble_class(class);
   UNPROTECT(1);
   return out;
 }
 bool is_native_df(SEXP x) {
+  if (!OBJECT(x)) {
+    return false;
+  }
   SEXP class = PROTECT(Rf_getAttrib(x, R_ClassSymbol));
   bool out = is_data_frame_class(class) || is_tibble_class(class);
   UNPROTECT(1);
@@ -507,6 +531,19 @@ SEXP r_maybe_duplicate(SEXP x) {
   } else {
     return x;
   }
+}
+
+bool r_chr_has_string(SEXP x, SEXP str) {
+  int n = Rf_length(x);
+  SEXP* data = STRING_PTR(x);
+
+  for (int i = 0; i < n; ++i, ++data) {
+    if (*data == str) {
+      return true;
+    }
+  }
+
+  return false;
 }
 
 
