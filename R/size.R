@@ -46,7 +46,7 @@ vec_size <- function(x) {
 
 #' @export
 #' @rdname vec_size
-vec_size_common <- function(..., .size = NULL, .empty) {
+vec_size_common <- function(..., .size = NULL, .empty = NULL) {
   if (!is.null(.size)) {
     return(.size)
   }
@@ -54,10 +54,11 @@ vec_size_common <- function(..., .size = NULL, .empty) {
   args <- compact(list2(...))
 
   if (length(args) == 0) {
-    if (!missing(.empty)) {
-      return(.empty)
-    } else {
+    if (is.null(.empty)) {
       abort("`...` is empty, and no `.empty` value was supplied.")
+    } else {
+      vec_assert(.empty, ptype = integer(), size = 1L)
+      return(.empty)
     }
   }
 

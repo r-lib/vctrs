@@ -57,6 +57,11 @@ test_that("vec_size_common with no input errors unless `.empty` is provided", {
   expect_equal(vec_size_common(.empty = 0L), 0L)
 })
 
+test_that("`.empty` must be a length 1 integer if provided", {
+  expect_error(vec_size_common(.empty = 1), class = "vctrs_error_assert_ptype")
+  expect_error(vec_size_common(.empty = c(1L, 2L)), class = "vctrs_error_assert_size")
+})
+
 test_that("`NULL` is treated as the absence of input", {
   expect_equal(vec_size_common(1:5, NULL), vec_size_common(1:5))
 })
