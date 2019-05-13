@@ -13,17 +13,17 @@ typedef R_xlen_t r_ssize_t;
 // Vector types -------------------------------------------------
 
 enum vctrs_type {
-  vctrs_type_null      = 0,
-  vctrs_type_logical   = 1,
-  vctrs_type_integer   = 2,
-  vctrs_type_double    = 3,
-  vctrs_type_complex   = 4,
-  vctrs_type_character = 5,
-  vctrs_type_raw       = 6,
-  vctrs_type_list      = 7,
-  vctrs_type_dataframe = 8,
-  vctrs_type_s3        = 9,
-  vctrs_type_scalar    = 10
+  vctrs_type_null = 0,
+  vctrs_type_logical,
+  vctrs_type_integer,
+  vctrs_type_double,
+  vctrs_type_complex,
+  vctrs_type_character,
+  vctrs_type_raw,
+  vctrs_type_list,
+  vctrs_type_dataframe,
+  vctrs_type_scalar,
+  vctrs_type_s3 = 255
 };
 
 enum vctrs_type vec_typeof(SEXP x);
