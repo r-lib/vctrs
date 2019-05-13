@@ -202,3 +202,8 @@ test_that("assertion failures are explained", {
     try_cat(vec_assert(data.frame(x = 1, y = 2), data.frame(x = "foo", y = 2)))
   })
 })
+
+test_that("NULL is not a vector", {
+  expect_false(vec_is_vector(NULL))
+  expect_false(vec_is(NULL))
+})

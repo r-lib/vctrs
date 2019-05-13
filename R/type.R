@@ -123,10 +123,6 @@ vec_ptype <- function(...) {
 }
 
 
-vec_is_data_vector <- function(x) {
-  .Call(vctrs_is_vector, x, dispatch = FALSE)
-}
-
 vec_typeof <- function(x) {
   .Call(vctrs_typeof, x, TRUE)
 }

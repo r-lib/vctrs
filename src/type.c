@@ -318,9 +318,11 @@ const char* vec_type_as_str(enum vctrs_type type) {
   never_reached("vec_type_as_str");
 }
 
-static bool vec_is_vector_rec(SEXP x, bool dispatch) {
+// [[ include("vctrs.h") ]]
+bool vec_is_vector(SEXP x) {
   switch (TYPEOF(x)) {
   case NILSXP:
+    return false;
   case LGLSXP:
   case INTSXP:
   case REALSXP:
@@ -338,14 +340,9 @@ static bool vec_is_vector_rec(SEXP x, bool dispatch) {
   }
 }
 
-// [[ include("vctrs.h") ]]
-bool vec_is_vector(SEXP x) {
-  return vec_is_vector_rec(x, true);
-}
-
-// [[ register ]]
-SEXP vctrs_is_vector(SEXP x, SEXP dispatch) {
-  return Rf_ScalarLogical(vec_is_vector_rec(x, LOGICAL(dispatch)[0]));
+// [[ register() ]]
+SEXP vctrs_is_vector(SEXP x) {
+  return Rf_ScalarLogical(vec_is_vector(x));
 }
 
 void vctrs_stop_unsupported_type(enum vctrs_type type, const char* fn) {
