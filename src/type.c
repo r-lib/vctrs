@@ -319,7 +319,7 @@ const char* vec_type_as_str(enum vctrs_type type) {
 }
 
 // [[ include("vctrs.h") ]]
-bool vec_is_vector(SEXP x) {
+bool vec_is_vector_impl(SEXP x, bool dispatch) {
   switch (TYPEOF(x)) {
   case NILSXP:
     return false;
@@ -336,8 +336,12 @@ bool vec_is_vector(SEXP x) {
     }
     // fallthrough
   default:
-    return OBJECT(x) && vec_proxy_method(x) != R_NilValue;
+    return dispatch && OBJECT(x) && vec_proxy_method(x) != R_NilValue;
   }
+}
+// [[ include("vctrs.h") ]]
+bool vec_is_vector(SEXP x) {
+  return vec_is_vector_impl(x, true);
 }
 
 // [[ register() ]]

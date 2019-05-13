@@ -30,6 +30,7 @@ enum vctrs_type vec_typeof(SEXP x);
 enum vctrs_type vec_typeof_impl(SEXP x, bool dispatch);
 
 const char* vec_type_as_str(enum vctrs_type type);
+bool vec_is_vector_impl(SEXP x, bool dispatch);
 bool vec_is_vector(SEXP x);
 bool vec_is_partial(SEXP x);
 
