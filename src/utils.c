@@ -13,6 +13,8 @@ SEXP vctrs_method_table = NULL;
 SEXP strings_tbl = NULL;
 SEXP strings_tbl_df = NULL;
 SEXP strings_data_frame = NULL;
+SEXP strings_vctrs_rcrd = NULL;
+SEXP strings_posixlt = NULL;
 
 SEXP classes_data_frame = NULL;
 SEXP classes_tibble = NULL;
@@ -211,6 +213,21 @@ static bool is_data_frame_class(SEXP class) {
   return
     Rf_length(class) == 1 &&
     STRING_ELT(class, 0) == strings_data_frame;
+}
+
+bool is_record(SEXP x) {
+  if (!OBJECT(x)) {
+    return false;
+  }
+
+  SEXP class = PROTECT(Rf_getAttrib(x, R_ClassSymbol));
+  int n = Rf_length(class);
+
+  SEXP last = STRING_ELT(class, n - 1);
+  bool out = last == strings_vctrs_rcrd || last == strings_posixlt;
+
+  UNPROTECT(1);
+  return out;
 }
 
 
@@ -578,7 +595,7 @@ void vctrs_init_utils(SEXP ns) {
 
   // Holds the CHARSXP objects because unlike symbols they can be
   // garbage collected
-  strings = Rf_allocVector(STRSXP, 2);
+  strings = Rf_allocVector(STRSXP, 4);
   R_PreserveObject(strings);
 
   strings_dots = Rf_mkChar("...");
@@ -586,6 +603,12 @@ void vctrs_init_utils(SEXP ns) {
 
   strings_empty = Rf_mkChar("");
   SET_STRING_ELT(strings, 1, strings_empty);
+
+  strings_vctrs_rcrd = Rf_mkChar("vctrs_rcrd");
+  SET_STRING_ELT(strings, 2, strings_vctrs_rcrd);
+
+  strings_posixlt = Rf_mkChar("POSIXlt");
+  SET_STRING_ELT(strings, 3, strings_posixlt);
 
 
   classes_data_frame = Rf_allocVector(STRSXP, 1);

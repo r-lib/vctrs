@@ -274,11 +274,6 @@ SEXP vec_type_finalise(SEXP x) {
   return vec_type_finalise_rec(x, true);
 }
 
-
-bool is_record(SEXP x) {
-  return Rf_inherits(x, "vctrs_rcrd") || Rf_inherits(x, "POSIXlt");
-}
-
 enum vctrs_type vec_typeof_impl(SEXP x, bool dispatch) {
   switch (TYPEOF(x)) {
   case NILSXP: return vctrs_type_null;

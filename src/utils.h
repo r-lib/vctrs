@@ -29,6 +29,7 @@ SEXP with_proxy(SEXP x, SEXP (*rec)(SEXP, bool), SEXP i);
 bool is_data_frame(SEXP x);
 bool is_bare_data_frame(SEXP x);
 bool is_bare_tibble(SEXP x);
+bool is_record(SEXP x);
 
 // Returns S3 method for `generic` suitable for the class of `x`. The
 // inheritance hierarchy is explored except for the default method.
