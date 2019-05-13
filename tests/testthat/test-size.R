@@ -51,15 +51,15 @@ test_that("`NULL` has an undefined size", {
 
 # vec_size_common ---------------------------------------------------------
 
-test_that("vec_size_common with no input errors unless `.empty` is provided", {
-  expect_error(vec_size_common(), "no `.empty` value was supplied")
-  expect_error(vec_size_common(NULL), "no `.empty` value was supplied")
-  expect_equal(vec_size_common(.empty = 0L), 0L)
+test_that("vec_size_common with no input errors unless `.absent` is provided", {
+  expect_error(vec_size_common(), "no `.absent` value was supplied")
+  expect_error(vec_size_common(NULL), "no `.absent` value was supplied")
+  expect_equal(vec_size_common(.absent = 0L), 0L)
 })
 
-test_that("`.empty` must be a length 1 integer if provided", {
-  expect_error(vec_size_common(.empty = 1), class = "vctrs_error_assert_ptype")
-  expect_error(vec_size_common(.empty = c(1L, 2L)), class = "vctrs_error_assert_size")
+test_that("`.absent` must be a length 1 integer if provided", {
+  expect_error(vec_size_common(.absent = 1), class = "vctrs_error_assert_ptype")
+  expect_error(vec_size_common(.absent = c(1L, 2L)), class = "vctrs_error_assert_size")
 })
 
 test_that("`NULL` is treated as the absence of input", {

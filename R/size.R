@@ -24,12 +24,12 @@
 #' @param .size If `NULL`, the default, the output size is determined by
 #'   recycling the lengths of all elements of `...`. Alternatively, you can
 #'   supply `.size` to force a known size.
-#' @param .empty The size used when no input is provided, or when all input
-#' is `NULL`. If not supplied when no input is supplied, an error is thrown.
+#' @param .absent The size used when no input is provided, or when all input
+#' is `NULL`. If left as `NULL` when no input is supplied, an error is thrown.
 #' @return An integer (or double for long vectors). Will throw an error
 #'   if `x` is not a vector or is `NULL`.
 #'
-#'   `vec_size_common()` will return `.empty` if all inputs are `NULL` or
+#'   `vec_size_common()` will return `.absent` if all inputs are `NULL` or
 #'   absent.
 #' @export
 #' @examples
@@ -46,7 +46,7 @@ vec_size <- function(x) {
 
 #' @export
 #' @rdname vec_size
-vec_size_common <- function(..., .size = NULL, .empty = NULL) {
+vec_size_common <- function(..., .size = NULL, .absent = NULL) {
   if (!is.null(.size)) {
     return(.size)
   }
@@ -54,11 +54,11 @@ vec_size_common <- function(..., .size = NULL, .empty = NULL) {
   args <- compact(list2(...))
 
   if (length(args) == 0) {
-    if (is.null(.empty)) {
-      abort("`...` is empty, and no `.empty` value was supplied.")
+    if (is.null(.absent)) {
+      abort("`...` is empty, and no `.absent` value was supplied.")
     } else {
-      vec_assert(.empty, ptype = integer(), size = 1L)
-      return(.empty)
+      vec_assert(.absent, ptype = integer(), size = 1L)
+      return(.absent)
     }
   }
 

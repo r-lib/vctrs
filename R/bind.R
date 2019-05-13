@@ -146,7 +146,7 @@ vec_cbind <- function(..., .ptype = NULL, .size = NULL) {
   args <- args[!is_null]
 
   # container size: common length of all inputs
-  size <- vec_size_common(!!!args, .size = .size, .empty = 0L)
+  size <- vec_size_common(!!!args, .size = .size, .absent = 0L)
   args <- map(args, vec_recycle, size = size)
 
   # convert input to columns and prepare output containers
