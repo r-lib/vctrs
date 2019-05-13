@@ -33,3 +33,8 @@ test_that("vec_proxy() is a no-op with non vectors", {
   x <- foobar(list())
   expect_identical(vec_proxy(x), x)
 })
+
+test_that("can take the proxy of non-vector objects", {
+  scoped_env_proxy()
+  expect_identical(vec_proxy(new_proxy(1:3)), 1:3)
+})

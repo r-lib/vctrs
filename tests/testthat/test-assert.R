@@ -87,7 +87,8 @@ test_that("non-vector base types are scalars", {
   expect_identical(vec_typeof(pairlist("")), "scalar")
   expect_identical(vec_typeof(function() NULL), "scalar")
   expect_identical(vec_typeof(env()), "scalar")
-  expect_identical(vec_typeof(~foo), "scalar")
+  expect_identical(vec_typeof(quote(foo)), "scalar")
+  expect_identical(vec_typeof(~foo), "s3")
   expect_identical(vec_typeof(base::`{`), "scalar")
   expect_identical(vec_typeof(base::c), "scalar")
   expect_identical(vec_typeof(expression()), "scalar")
@@ -118,6 +119,22 @@ test_that("non-vector base types are scalars", {
   expect_error(vec_assert(base::`{`), class = "vctrs_error_scalar_type")
   expect_error(vec_assert(base::c), class = "vctrs_error_scalar_type")
   expect_error(vec_assert(expression()), class = "vctrs_error_scalar_type")
+})
+
+test_that("non-vector types can be proxied", {
+  x <- new_proxy(1:3)
+
+  expect_identical(vec_typeof(x), "s3")
+  expect_false(vec_is_vector(x))
+  expect_false(vec_is(x))
+  expect_error(vec_assert(x), class = "vctrs_error_scalar_type")
+
+  scoped_env_proxy()
+
+  expect_identical(vec_typeof(x), "s3")
+  expect_true(vec_is_vector(x))
+  expect_true(vec_is(x))
+  expect_error(regexp = NA, vec_assert(x))
 })
 
 test_that("vec_assert() uses friendly type in error messages", {

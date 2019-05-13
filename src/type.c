@@ -293,8 +293,7 @@ enum vctrs_type vec_typeof_impl(SEXP x, bool dispatch) {
     } else {
       return vctrs_type_scalar;
     }
-  default:
-    return vctrs_type_scalar;
+  default: return dispatch && OBJECT(x) ? vctrs_type_s3 : vctrs_type_scalar;
   }
 }
 enum vctrs_type vec_typeof(SEXP x) {
