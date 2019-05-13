@@ -22,3 +22,7 @@ scoped_no_stringsAsFactors <- function(frame = caller_env()) {
 }
 
 tibble <- tibble::tibble
+
+scoped_foobar_proxy <- function(frame = caller_env()) {
+  scoped_global_bindings(.frame = frame, vec_proxy.vctrs_foobar = identity)
+}

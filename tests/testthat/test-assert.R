@@ -67,18 +67,13 @@ test_that("S3 atomic vectors are vectors", {
   expect_true(vec_is_vector(foobar(as.raw(1))))
 })
 
-test_that("bare lists are recursive", {
+test_that("bare lists are vectors", {
   expect_true(vec_is_vector(list()))
 })
 
 test_that("S3 lists are not vectors by default", {
   expect_false(vec_is_vector(foobar()))
-})
-
-test_that("can override `vec_is_vector()` for S3 lists", {
-  scoped_bindings(.env = global_env(),
-    vec_proxy.vctrs_foobar = function(x) unclass(x)
-  )
+  scoped_foobar_proxy()
   expect_true(vec_is_vector(foobar()))
 })
 

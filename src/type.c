@@ -319,26 +319,22 @@ const char* vec_type_as_str(enum vctrs_type type) {
 }
 
 static bool vec_is_vector_rec(SEXP x, bool dispatch) {
-  switch (vec_typeof_impl(x, dispatch)) {
-  case vctrs_type_logical:
-  case vctrs_type_integer:
-  case vctrs_type_double:
-  case vctrs_type_complex:
-  case vctrs_type_character:
-  case vctrs_type_raw:
-  case vctrs_type_list:
-  case vctrs_type_dataframe:
+  switch (TYPEOF(x)) {
+  case NILSXP:
+  case LGLSXP:
+  case INTSXP:
+  case REALSXP:
+  case CPLXSXP:
+  case STRSXP:
+  case RAWSXP:
     return true;
-
-  case vctrs_type_s3: {
-    SEXP proxy = PROTECT(vec_proxy(x));
-    bool out = vec_is_vector_rec(proxy, false);
-    UNPROTECT(1);
-    return out;
-  }
-
+  case VECSXP:
+    if (!OBJECT(x) || is_data_frame(x)) {
+      return true;
+    }
+    // fallthrough
   default:
-    return false;
+    return OBJECT(x) && vec_proxy_method(x) != R_NilValue;
   }
 }
 
