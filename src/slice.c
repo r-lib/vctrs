@@ -177,15 +177,14 @@ static SEXP vec_slice_impl(SEXP x, SEXP index, SEXP to, bool dispatch) {
   }
 
   case vctrs_type_s3: {
-    if (!vec_is_vector(x)) {
-      Rf_errorcall(R_NilValue, "Can't slice a scalar");
-    }
-
     // If has proxy, take the proxy and recurse. Otherwise, fall back
     // to `[` for compatibility with foreign types.
     SEXP method = PROTECT(vec_proxy_method(x));
 
     if (method == R_NilValue) {
+      if (!vec_is_vector(x)) {
+        Rf_errorcall(R_NilValue, "Can't slice a scalar");
+      }
       SEXP call = PROTECT(Rf_lang3(fns_bracket, x, index));
       out = Rf_eval(call, R_GlobalEnv);
       UNPROTECT(2);
