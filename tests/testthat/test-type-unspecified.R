@@ -1,4 +1,4 @@
-context("test-unspecified")
+context("test-type-unspecified")
 
 test_that("unknown type is idempotent", {
   types <- list(
@@ -32,7 +32,7 @@ test_that("subsetting works", {
 })
 
 test_that("has useful print method", {
-  expect_known_output(unspecified(), print = TRUE, file = test_path("test-unspecified.txt"))
+  expect_known_output(unspecified(), print = TRUE, file = test_path("test-type-unspecified.txt"))
 })
 
 test_that("can finalise data frame containing unspecified columns", {
