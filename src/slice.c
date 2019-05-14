@@ -199,7 +199,7 @@ static SEXP vec_slice_impl(SEXP x, SEXP index, SEXP to, bool dispatch) {
 
   default:
     Rf_error("Internal error: Unexpected type `%s` for vector proxy in `vec_slice()`",
-             vec_type_as_str(vec_typeof(x)));
+             vec_type_as_str(vec_typeof_impl(x, dispatch)));
   }
 }
 
