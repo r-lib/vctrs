@@ -280,6 +280,9 @@ struct vctrs_type_info vec_type_info(SEXP x) {
   info.proxy_method = oo ? vec_proxy_method(x) : R_NilValue;
   PROTECT(info.proxy_method);
 
+  // Bare data frames are treated as a base atomic type. Subclasses of
+  // data frames are treated as S3 to give them a chance to be proxied
+  // or implement their own methods for cast, type2, etc.
   if (oo) {
     if (is_bare_data_frame(x)) {
       info.type = vctrs_type_dataframe;
@@ -326,8 +329,10 @@ static enum vctrs_type vec_base_typeof(SEXP x, bool proxied) {
   case STRSXP: return vctrs_type_character;
   case RAWSXP: return vctrs_type_raw;
   case VECSXP:
+    // Bare lists and data frames are vectors
     if (!OBJECT(x)) return vctrs_type_list;
     if (is_data_frame(x)) return vctrs_type_dataframe;
+    // S3 lists are only vectors if they are proxied
     if (proxied) return vctrs_type_list;
     // fallthrough
   default: return vctrs_type_scalar;
