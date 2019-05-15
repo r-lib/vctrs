@@ -303,11 +303,11 @@ struct vctrs_proxy_info vec_proxy_info(SEXP x) {
 
   if (info.proxy_method == R_NilValue) {
     info.type = vec_base_typeof(x, false);
-    info.data = x;
+    info.proxy = x;
   } else {
     SEXP proxy = PROTECT(vec_proxy_invoke(x, info.proxy_method));
     info.type = vec_base_typeof(proxy, true);
-    info.data = proxy;
+    info.proxy = proxy;
     UNPROTECT(1);
   }
 

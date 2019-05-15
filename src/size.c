@@ -16,7 +16,7 @@ static R_len_t vec_size_impl(SEXP x, bool dispatch) {
   int nprot = 0;
 
   struct vctrs_proxy_info info = PROTECT_PROXY_INFO(vec_proxy_info(x), &nprot);
-  SEXP data = info.data;
+  SEXP data = info.proxy;
 
   R_len_t size;
   switch (info.type) {

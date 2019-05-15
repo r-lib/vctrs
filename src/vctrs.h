@@ -29,7 +29,7 @@ enum vctrs_type {
 struct vctrs_proxy_info {
   enum vctrs_type type;
   SEXP proxy_method;
-  SEXP data;
+  SEXP proxy;
 };
 struct vctrs_type_info {
   enum vctrs_type type;
@@ -37,7 +37,7 @@ struct vctrs_type_info {
 };
 
 static inline struct vctrs_proxy_info PROTECT_PROXY_INFO(struct vctrs_proxy_info info, int* n) {
-  *n += 2; PROTECT(info.data); PROTECT(info.proxy_method);
+  *n += 2; PROTECT(info.proxy); PROTECT(info.proxy_method);
   return info;
 }
 static inline struct vctrs_type_info PROTECT_TYPE_INFO(struct vctrs_type_info info, int* n) {
@@ -47,8 +47,8 @@ static inline struct vctrs_type_info PROTECT_TYPE_INFO(struct vctrs_type_info in
 
 struct vctrs_type_info vec_type_info(SEXP x);
 struct vctrs_proxy_info vec_proxy_info(SEXP x);
-enum vctrs_type vec_typeof(SEXP x);
 
+enum vctrs_type vec_typeof(SEXP x);
 const char* vec_type_as_str(enum vctrs_type type);
 bool vec_is_vector(SEXP x);
 bool vec_is_partial(SEXP x);

@@ -145,7 +145,7 @@ static SEXP vec_slice_impl(SEXP x, SEXP index) {
   int nprot = 0;
 
   struct vctrs_proxy_info info = PROTECT_PROXY_INFO(vec_proxy_info(x), &nprot);
-  SEXP data = info.data;
+  SEXP data = info.proxy;
 
   // Fallback to `[` if the class doesn't implement a proxy. This is
   // to be maximally compatible with existing classes.
