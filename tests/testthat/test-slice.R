@@ -261,17 +261,18 @@ test_that("vec_slice() falls back to `[` with S3 objects", {
   scoped_global_bindings(
     `[.vctrs_foobar` = function(x, i, ...) "dispatched"
   )
-  expect_identical(vec_slice(foobar(NA), 1), "dispatched")
+  expect_identical(vec_slice(foobar(NA), 1), foobar("dispatched"))
 
-  expect_error(vec_slice(foobar(list(NA)), 1), "not a vector")
+  expect_error(vec_slice(foobar(list(NA)), 1), "must be a vector")
   scoped_global_bindings(
-    vec_proxy.vctrs_foobar = function(x) unclass(x)
+    vec_proxy.vctrs_foobar = identity
   )
   expect_identical(vec_slice(foobar(list(NA)), 1), foobar(list(NA)))
 })
 
-test_that("vec_slice() doesn't call vec_restore() with S3 objects", {
+test_that("vec_slice() doesn't restore when attributes have already been restored", {
   scoped_global_bindings(
+    `[.vctrs_foobar` = function(x, i, ...) structure("dispatched", foo = "bar"),
     vec_restore.vctrs_foobar = function(...) stop("not called")
   )
   expect_error(vec_slice(foobar(NA), 1), NA)

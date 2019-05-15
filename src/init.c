@@ -49,6 +49,8 @@ extern SEXP vctrs_unique_names(SEXP, SEXP);
 extern SEXP vctrs_as_minimal_names(SEXP);
 extern SEXP vec_names(SEXP);
 extern SEXP vctrs_as_unique_names(SEXP, SEXP);
+extern SEXP df_as_dataframe(SEXP, SEXP);
+extern SEXP vctrs_type2_df_df(SEXP, SEXP, SEXP, SEXP);
 
 // Defined below
 SEXP vctrs_init(SEXP);
@@ -96,6 +98,8 @@ static const R_CallMethodDef CallEntries[] = {
   {"vctrs_as_minimal_names",           (DL_FUNC) &vctrs_as_minimal_names, 1},
   {"vctrs_names",                      (DL_FUNC) &vec_names, 1},
   {"vctrs_as_unique_names",            (DL_FUNC) &vctrs_as_unique_names, 2},
+  {"vctrs_df_as_dataframe",            (DL_FUNC) &df_as_dataframe, 2},
+  {"vctrs_type2_df_df",                (DL_FUNC) &vctrs_type2_df_df, 4},
   {NULL, NULL, 0}
 };
 

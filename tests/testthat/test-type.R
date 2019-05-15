@@ -87,3 +87,16 @@ test_that("vec_type_common() includes index in argument tag", {
     try2(vec_type_common(foo = TRUE, !!!list(bar = FALSE), !!!list(baz = "chr")))
   })
 })
+
+test_that("proxied types are have s3 bare type", {
+  for (x in proxied_empty_types) {
+    expect_identical(vec_typeof_bare(x), "s3")
+  }
+})
+
+test_that("vec_type() preserves attributes of unproxied structures", {
+  expect_identical(vec_type(foobar(dbl(1))), foobar(dbl()))
+
+  # Here `foobar()` is treated as a scalar so is returned as is
+  expect_identical(vec_type(foobar(list(1))), foobar(list(1)))
+})

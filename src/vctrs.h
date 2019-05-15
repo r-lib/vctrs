@@ -26,11 +26,30 @@ enum vctrs_type {
   vctrs_type_s3 = 255
 };
 
+struct vctrs_proxy_info {
+  enum vctrs_type type;
+  SEXP proxy_method;
+  SEXP data;
+};
+struct vctrs_type_info {
+  enum vctrs_type type;
+  SEXP proxy_method;
+};
+
+static inline struct vctrs_proxy_info PROTECT_PROXY_INFO(struct vctrs_proxy_info info, int* n) {
+  *n += 2; PROTECT(info.data); PROTECT(info.proxy_method);
+  return info;
+}
+static inline struct vctrs_type_info PROTECT_TYPE_INFO(struct vctrs_type_info info, int* n) {
+  ++(*n); PROTECT(info.proxy_method);
+  return info;
+}
+
+struct vctrs_type_info vec_typeof_info(SEXP x, bool dispatch);
+struct vctrs_proxy_info vec_proxy_info(SEXP x);
 enum vctrs_type vec_typeof(SEXP x);
-enum vctrs_type vec_typeof_impl(SEXP x, bool dispatch);
 
 const char* vec_type_as_str(enum vctrs_type type);
-bool vec_is_vector_impl(SEXP x, bool dispatch);
 bool vec_is_vector(SEXP x);
 bool vec_is_partial(SEXP x);
 
@@ -149,6 +168,7 @@ SEXP vec_cast(SEXP x, SEXP to);
 SEXP vec_slice(SEXP x, SEXP index);
 SEXP vec_na(SEXP x, R_len_t n);
 SEXP vec_restore(SEXP x, SEXP to, SEXP i);
+SEXP vec_restore_method(SEXP x);
 SEXP vec_type(SEXP x);
 SEXP vec_type_finalise(SEXP x);
 bool vec_is_unspecified(SEXP x);

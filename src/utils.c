@@ -101,16 +101,6 @@ SEXP df_map(SEXP df, SEXP (*fn)(SEXP)) {
   return out;
 }
 
-SEXP with_proxy(SEXP x, SEXP (*rec)(SEXP, bool), SEXP i) {
-  SEXP proxy = PROTECT(vec_proxy(x));
-
-  SEXP out = PROTECT(rec(proxy, false));
-  out = vec_restore(out, x, i);
-
-  UNPROTECT(2);
-  return out;
-}
-
 bool is_compact_rownames(SEXP x) {
   return Rf_length(x) == 2 && INTEGER(x)[0] == NA_INTEGER;
 }
@@ -161,7 +151,7 @@ bool is_data_frame(SEXP x) {
   return out;
 }
 bool is_bare_data_frame(SEXP x) {
-  if (!OBJECT(x)) {
+  if (!OBJECT(x) || TYPEOF(x) != VECSXP) {
     return false;
   }
   SEXP class = PROTECT(Rf_getAttrib(x, R_ClassSymbol));

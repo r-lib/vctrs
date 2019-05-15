@@ -13,48 +13,49 @@ R_len_t vec_dim(SEXP x) {
 }
 
 static R_len_t vec_size_impl(SEXP x, bool dispatch) {
-  switch (vec_typeof_impl(x, dispatch)) {
-  case vctrs_type_null:
-    return 0;
+  int nprot = 0;
 
-  case vctrs_type_list:
-    if (!vec_is_vector(x)) {
-      break;
-    }
-    // fallthrough
+  struct vctrs_proxy_info info = PROTECT_PROXY_INFO(vec_proxy_info(x), &nprot);
+  SEXP data = info.data;
+
+  R_len_t size;
+  switch (info.type) {
+  case vctrs_type_null:
+    size = 0;
+    break;
+
   case vctrs_type_logical:
   case vctrs_type_integer:
   case vctrs_type_double:
   case vctrs_type_complex:
   case vctrs_type_character:
-  case vctrs_type_raw: {
-    SEXP dims = Rf_getAttrib(x, R_DimSymbol);
+  case vctrs_type_raw:
+  case vctrs_type_list: {
+    SEXP dims = Rf_getAttrib(data, R_DimSymbol);
     if (dims == R_NilValue || Rf_length(dims) == 0) {
-      return Rf_length(x);
+      size = Rf_length(data);
+      break;
     }
 
     if (TYPEOF(dims) != INTSXP) {
       Rf_errorcall(R_NilValue, "Corrupt vector: dims is not integer vector");
     }
 
-    return INTEGER(dims)[0];
-  }
-
-  case vctrs_type_dataframe:
-    return df_size(x);
-
-  case vctrs_type_s3: {
-    x = PROTECT(vec_proxy(x));
-    R_len_t n = vec_size_impl(x, false);
-    UNPROTECT(1);
-    return n;
-  }
-
-  default:
+    size = INTEGER(dims)[0];
     break;
   }
 
-  Rf_errorcall(R_NilValue, "`x` is a not a vector");
+  case vctrs_type_dataframe:
+    size = df_size(data);
+    break;
+
+  default: {
+    struct vctrs_arg_wrapper arg = new_wrapper_arg(NULL, "x");
+    stop_scalar_type(x, (struct vctrs_arg*) &arg);
+  }}
+
+  UNPROTECT(nprot);
+  return size;
 }
 R_len_t vec_size(SEXP x) {
   return vec_size_impl(x, true);

@@ -8,6 +8,8 @@
     y = tmp;                                    \
   } while (0)
 
+#define PROTECT_N(x, n) (++*n, PROTECT(x))
+
 
 bool is_bool(SEXP x);
 
@@ -24,7 +26,6 @@ SEXP vctrs_dispatch3(SEXP fn_sym, SEXP fn,
                      SEXP z_sym, SEXP z);
 
 SEXP df_map(SEXP df, SEXP (*fn)(SEXP));
-SEXP with_proxy(SEXP x, SEXP (*rec)(SEXP, bool), SEXP i);
 
 bool is_data_frame(SEXP x);
 bool is_bare_data_frame(SEXP x);
