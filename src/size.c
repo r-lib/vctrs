@@ -12,7 +12,8 @@ R_len_t vec_dim(SEXP x) {
   }
 }
 
-static R_len_t vec_size_impl(SEXP x, bool dispatch) {
+// [[ include("vctrs.h") ]]
+R_len_t vec_size(SEXP x) {
   int nprot = 0;
 
   struct vctrs_proxy_info info = PROTECT_PROXY_INFO(vec_proxy_info(x), &nprot);
@@ -57,8 +58,9 @@ static R_len_t vec_size_impl(SEXP x, bool dispatch) {
   UNPROTECT(nprot);
   return size;
 }
-R_len_t vec_size(SEXP x) {
-  return vec_size_impl(x, true);
+// [[ register() ]]
+SEXP vctrs_size(SEXP x) {
+  return Rf_ScalarInteger(vec_size(x));
 }
 
 R_len_t df_rownames_size(SEXP x) {
@@ -124,10 +126,4 @@ R_len_t rcrd_size(SEXP x) {
 
 bool has_dim(SEXP x) {
   return ATTRIB(x) != R_NilValue && Rf_getAttrib(x, R_DimSymbol) != R_NilValue;
-}
-
-// R interface ------------------------------------------------------------
-
-SEXP vctrs_size(SEXP x) {
-  return Rf_ScalarInteger(vec_size(x));
 }
