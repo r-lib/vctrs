@@ -45,7 +45,7 @@ static inline struct vctrs_type_info PROTECT_TYPE_INFO(struct vctrs_type_info in
   return info;
 }
 
-struct vctrs_type_info vec_typeof_info(SEXP x, bool dispatch);
+struct vctrs_type_info vec_typeof_info(SEXP x);
 struct vctrs_proxy_info vec_proxy_info(SEXP x);
 enum vctrs_type vec_typeof(SEXP x);
 

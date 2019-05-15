@@ -269,58 +269,63 @@ SEXP vec_type_finalise(SEXP x) {
   }
 }
 
-struct vctrs_type_info vec_typeof_info(SEXP x, bool dispatch) {
-  struct vctrs_type_info info;
+static enum vctrs_type vec_base_typeof(SEXP x);
 
+struct vctrs_type_info vec_typeof_info(SEXP x) {
+  struct vctrs_type_info info;
   bool oo = OBJECT(x);
 
   info.proxy_method = oo ? vec_proxy_method(x) : R_NilValue;
   PROTECT(info.proxy_method);
 
-  if (oo && !dispatch) {
+  if (oo) {
     if (is_bare_data_frame(x)) {
       info.type = vctrs_type_dataframe;
     } else {
       info.type = vctrs_type_s3;
     }
-    UNPROTECT(1);
-    return info;
-  }
-
-  if (dispatch) {
-    x = vec_proxy_invoke(x, info.proxy_method);
-  }
-
-  switch (TYPEOF(x)) {
-  // Atomic types are always vectors
-  case NILSXP: info.type = vctrs_type_null; break;
-  case LGLSXP: info.type = vctrs_type_logical; break;
-  case INTSXP: info.type = vctrs_type_integer; break;
-  case REALSXP: info.type = vctrs_type_double; break;
-  case CPLXSXP: info.type = vctrs_type_complex; break;
-  case STRSXP: info.type = vctrs_type_character; break;
-  case RAWSXP: info.type = vctrs_type_raw; break;
-  case VECSXP:
-    if (!oo) {
-      info.type = vctrs_type_list;
-      break;
-    }
-    if (is_data_frame(x)) {
-      info.type = vctrs_type_dataframe;
-      break;
-    }
-    // fallthrough
-  default: info.type = vctrs_type_scalar; break;
+  } else {
+    info.type = vec_base_typeof(x);
   }
 
   UNPROTECT(1);
   return info;
 }
 
-enum vctrs_type vec_typeof(SEXP x) {
-  return vec_typeof_info(x, false).type;
+static struct vctrs_type_info vec_proxy_typeof_info(SEXP x) {
+  struct vctrs_type_info info;
+
+  info.proxy_method = OBJECT(x) ? vec_proxy_method(x) : R_NilValue;
+  PROTECT(info.proxy_method);
+
+  x = PROTECT(vec_proxy_invoke(x, info.proxy_method));
+  info.type = vec_base_typeof(x);
+
+  UNPROTECT(2);
+  return info;
 }
 
+static enum vctrs_type vec_base_typeof(SEXP x) {
+  switch (TYPEOF(x)) {
+  // Atomic types are always vectors
+  case NILSXP: return vctrs_type_null;
+  case LGLSXP: return vctrs_type_logical;
+  case INTSXP: return vctrs_type_integer;
+  case REALSXP: return vctrs_type_double;
+  case CPLXSXP: return vctrs_type_complex;
+  case STRSXP: return vctrs_type_character;
+  case RAWSXP: return vctrs_type_raw;
+  case VECSXP:
+    if (!OBJECT(x)) return vctrs_type_list;
+    if (is_data_frame(x)) return vctrs_type_dataframe;
+    // fallthrough
+  default: return vctrs_type_scalar;
+  }
+}
+
+enum vctrs_type vec_typeof(SEXP x) {
+  return vec_typeof_info(x).type;
+}
 
 static enum vctrs_type vec_proxy_typeof(SEXP x);
 
@@ -329,7 +334,7 @@ struct vctrs_proxy_info vec_proxy_info(SEXP x) {
   int nprot = 0;
   struct vctrs_proxy_info info;
 
-  struct vctrs_type_info type_info = PROTECT_TYPE_INFO(vec_typeof_info(x, true), &nprot);
+  struct vctrs_type_info type_info = PROTECT_TYPE_INFO(vec_proxy_typeof_info(x), &nprot);
   info.proxy_method = type_info.proxy_method;
 
   if (info.proxy_method == R_NilValue) {
@@ -383,7 +388,12 @@ SEXP vctrs_is_vector(SEXP x) {
 
 // [[ register() ]]
 SEXP vctrs_typeof(SEXP x, SEXP dispatch) {
-  enum vctrs_type type = vec_typeof_info(x, LOGICAL(dispatch)[0]).type;
+  enum vctrs_type type;
+  if (LOGICAL(dispatch)[0]) {
+    type = vec_proxy_typeof_info(x).type;
+  } else {
+    type = vec_typeof_info(x).type;
+  }
   return Rf_mkString(vec_type_as_str(type));
 }
 
