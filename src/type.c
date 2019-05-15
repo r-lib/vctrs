@@ -272,7 +272,8 @@ SEXP vec_type_finalise(SEXP x) {
 
 static enum vctrs_type vec_base_typeof(SEXP x, bool proxied);
 
-struct vctrs_type_info vec_typeof_info(SEXP x) {
+// [[ include("vctrs.h") ]]
+struct vctrs_type_info vec_type_info(SEXP x) {
   struct vctrs_type_info info;
   bool oo = OBJECT(x);
 
@@ -349,7 +350,7 @@ SEXP vctrs_is_vector(SEXP x) {
 }
 
 enum vctrs_type vec_typeof(SEXP x) {
-  return vec_typeof_info(x).type;
+  return vec_type_info(x).type;
 }
 // [[ register() ]]
 SEXP vctrs_typeof(SEXP x, SEXP dispatch) {
@@ -357,7 +358,7 @@ SEXP vctrs_typeof(SEXP x, SEXP dispatch) {
   if (LOGICAL(dispatch)[0]) {
     type = vec_proxy_info(x).type;
   } else {
-    type = vec_typeof_info(x).type;
+    type = vec_type_info(x).type;
   }
   return Rf_mkString(vec_type_as_str(type));
 }

@@ -8,7 +8,7 @@ SEXP syms_vec_proxy = NULL;
 // [[ register(); include("vctrs.h") ]]
 SEXP vec_proxy(SEXP x) {
   int nprot = 0;
-  struct vctrs_type_info info = PROTECT_TYPE_INFO(vec_typeof_info(x), &nprot);
+  struct vctrs_type_info info = PROTECT_TYPE_INFO(vec_type_info(x), &nprot);
 
   SEXP out;
   if (info.type == vctrs_type_s3) {
