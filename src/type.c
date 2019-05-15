@@ -269,7 +269,8 @@ SEXP vec_type_finalise(SEXP x) {
   }
 }
 
-static enum vctrs_type vec_base_typeof(SEXP x);
+
+static enum vctrs_type vec_base_typeof(SEXP x, bool proxied);
 
 struct vctrs_type_info vec_typeof_info(SEXP x) {
   struct vctrs_type_info info;
@@ -285,27 +286,35 @@ struct vctrs_type_info vec_typeof_info(SEXP x) {
       info.type = vctrs_type_s3;
     }
   } else {
-    info.type = vec_base_typeof(x);
+    info.type = vec_base_typeof(x, false);
   }
 
   UNPROTECT(1);
   return info;
 }
 
-static struct vctrs_type_info vec_proxy_typeof_info(SEXP x) {
-  struct vctrs_type_info info;
+// [[ include("vctrs.h") ]]
+struct vctrs_proxy_info vec_proxy_info(SEXP x) {
+  struct vctrs_proxy_info info;
 
   info.proxy_method = OBJECT(x) ? vec_proxy_method(x) : R_NilValue;
   PROTECT(info.proxy_method);
 
-  x = PROTECT(vec_proxy_invoke(x, info.proxy_method));
-  info.type = vec_base_typeof(x);
+  if (info.proxy_method == R_NilValue) {
+    info.type = vec_base_typeof(x, false);
+    info.data = x;
+  } else {
+    SEXP proxy = PROTECT(vec_proxy_invoke(x, info.proxy_method));
+    info.type = vec_base_typeof(proxy, true);
+    info.data = proxy;
+    UNPROTECT(1);
+  }
 
-  UNPROTECT(2);
+  UNPROTECT(1);
   return info;
 }
 
-static enum vctrs_type vec_base_typeof(SEXP x) {
+static enum vctrs_type vec_base_typeof(SEXP x, bool proxied) {
   switch (TYPEOF(x)) {
   // Atomic types are always vectors
   case NILSXP: return vctrs_type_null;
@@ -318,59 +327,12 @@ static enum vctrs_type vec_base_typeof(SEXP x) {
   case VECSXP:
     if (!OBJECT(x)) return vctrs_type_list;
     if (is_data_frame(x)) return vctrs_type_dataframe;
+    if (proxied) return vctrs_type_list;
     // fallthrough
   default: return vctrs_type_scalar;
   }
 }
 
-enum vctrs_type vec_typeof(SEXP x) {
-  return vec_typeof_info(x).type;
-}
-
-static enum vctrs_type vec_proxy_typeof(SEXP x);
-
-// [[ include("vctrs.h") ]]
-struct vctrs_proxy_info vec_proxy_info(SEXP x) {
-  int nprot = 0;
-  struct vctrs_proxy_info info;
-
-  struct vctrs_type_info type_info = PROTECT_TYPE_INFO(vec_proxy_typeof_info(x), &nprot);
-  info.proxy_method = type_info.proxy_method;
-
-  if (info.proxy_method == R_NilValue) {
-    info.type = type_info.type;
-    info.data = x;
-  } else {
-    SEXP proxy = PROTECT(vec_proxy_invoke(x, info.proxy_method));
-    info.type = vec_proxy_typeof(proxy);
-    info.data = proxy;
-    UNPROTECT(1);
-  }
-
-  UNPROTECT(nprot);
-  return info;
-}
-
-static enum vctrs_type vec_proxy_typeof(SEXP x) {
-  switch (TYPEOF(x)) {
-  // Atomic types are always vectors
-  case NILSXP: return vctrs_type_null;
-  case LGLSXP: return vctrs_type_logical;
-  case INTSXP: return vctrs_type_integer;
-  case REALSXP: return vctrs_type_double;
-  case CPLXSXP: return vctrs_type_complex;
-  case STRSXP: return vctrs_type_character;
-  case RAWSXP: return vctrs_type_raw;
-  case VECSXP:
-    if (is_data_frame(x)) {
-      return vctrs_type_dataframe;
-    } else {
-      return vctrs_type_list;
-    }
-  default:
-    Rf_error("Internal error: `vec_proxy()` can't return a scalar type");
-  }
-}
 
 // [[ include("vctrs.h") ]]
 bool vec_is_vector(SEXP x) {
@@ -386,11 +348,14 @@ SEXP vctrs_is_vector(SEXP x) {
   return Rf_ScalarLogical(vec_is_vector(x));
 }
 
+enum vctrs_type vec_typeof(SEXP x) {
+  return vec_typeof_info(x).type;
+}
 // [[ register() ]]
 SEXP vctrs_typeof(SEXP x, SEXP dispatch) {
   enum vctrs_type type;
   if (LOGICAL(dispatch)[0]) {
-    type = vec_proxy_typeof_info(x).type;
+    type = vec_proxy_info(x).type;
   } else {
     type = vec_typeof_info(x).type;
   }
