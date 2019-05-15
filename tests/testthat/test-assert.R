@@ -67,18 +67,13 @@ test_that("S3 atomic vectors are vectors", {
   expect_true(vec_is_vector(foobar(as.raw(1))))
 })
 
-test_that("bare lists are recursive", {
+test_that("bare lists are vectors", {
   expect_true(vec_is_vector(list()))
 })
 
 test_that("S3 lists are not vectors by default", {
   expect_false(vec_is_vector(foobar()))
-})
-
-test_that("can override `vec_is_vector()` for S3 lists", {
-  scoped_bindings(.env = global_env(),
-    vec_proxy.vctrs_foobar = function(x) unclass(x)
-  )
+  scoped_foobar_proxy()
   expect_true(vec_is_vector(foobar()))
 })
 
@@ -92,7 +87,8 @@ test_that("non-vector base types are scalars", {
   expect_identical(vec_typeof(pairlist("")), "scalar")
   expect_identical(vec_typeof(function() NULL), "scalar")
   expect_identical(vec_typeof(env()), "scalar")
-  expect_identical(vec_typeof(~foo), "scalar")
+  expect_identical(vec_typeof(quote(foo)), "scalar")
+  expect_identical(vec_typeof(~foo), "s3")
   expect_identical(vec_typeof(base::`{`), "scalar")
   expect_identical(vec_typeof(base::c), "scalar")
   expect_identical(vec_typeof(expression()), "scalar")
@@ -123,6 +119,22 @@ test_that("non-vector base types are scalars", {
   expect_error(vec_assert(base::`{`), class = "vctrs_error_scalar_type")
   expect_error(vec_assert(base::c), class = "vctrs_error_scalar_type")
   expect_error(vec_assert(expression()), class = "vctrs_error_scalar_type")
+})
+
+test_that("non-vector types can be proxied", {
+  x <- new_proxy(1:3)
+
+  expect_identical(vec_typeof(x), "s3")
+  expect_false(vec_is_vector(x))
+  expect_false(vec_is(x))
+  expect_error(vec_assert(x), class = "vctrs_error_scalar_type")
+
+  scoped_env_proxy()
+
+  expect_identical(vec_typeof(x), "s3")
+  expect_true(vec_is_vector(x))
+  expect_true(vec_is(x))
+  expect_error(regexp = NA, vec_assert(x))
 })
 
 test_that("vec_assert() uses friendly type in error messages", {
@@ -206,4 +218,9 @@ test_that("assertion failures are explained", {
     try_cat(vec_assert(data.frame(x = 1, y = 2), data.frame(x = "foo")))
     try_cat(vec_assert(data.frame(x = 1, y = 2), data.frame(x = "foo", y = 2)))
   })
+})
+
+test_that("NULL is not a vector", {
+  expect_false(vec_is_vector(NULL))
+  expect_false(vec_is(NULL))
 })

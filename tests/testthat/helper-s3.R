@@ -16,9 +16,16 @@ new_proxy <- function(x) {
 proxy_deref <- function(x) {
   x[[1]]$x
 }
+scoped_env_proxy <- function(frame = caller_env()) {
+  scoped_global_bindings(.frame = frame, vec_proxy.vctrs_proxy = proxy_deref)
+}
 
 scoped_no_stringsAsFactors <- function(frame = caller_env()) {
   scoped_options(.frame = frame, stringsAsFactors = FALSE)
 }
 
 tibble <- tibble::tibble
+
+scoped_foobar_proxy <- function(frame = caller_env()) {
+  scoped_global_bindings(.frame = frame, vec_proxy.vctrs_foobar = identity)
+}

@@ -293,8 +293,7 @@ enum vctrs_type vec_typeof_impl(SEXP x, bool dispatch) {
     } else {
       return vctrs_type_scalar;
     }
-  default:
-    return vctrs_type_scalar;
+  default: return dispatch && OBJECT(x) ? vctrs_type_s3 : vctrs_type_scalar;
   }
 }
 enum vctrs_type vec_typeof(SEXP x) {
@@ -318,38 +317,35 @@ const char* vec_type_as_str(enum vctrs_type type) {
   never_reached("vec_type_as_str");
 }
 
-static bool vec_is_vector_rec(SEXP x, bool dispatch) {
-  switch (vec_typeof_impl(x, dispatch)) {
-  case vctrs_type_logical:
-  case vctrs_type_integer:
-  case vctrs_type_double:
-  case vctrs_type_complex:
-  case vctrs_type_character:
-  case vctrs_type_raw:
-  case vctrs_type_list:
-  case vctrs_type_dataframe:
-    return true;
-
-  case vctrs_type_s3: {
-    SEXP proxy = PROTECT(vec_proxy(x));
-    bool out = vec_is_vector_rec(proxy, false);
-    UNPROTECT(1);
-    return out;
-  }
-
-  default:
+// [[ include("vctrs.h") ]]
+bool vec_is_vector_impl(SEXP x, bool dispatch) {
+  switch (TYPEOF(x)) {
+  case NILSXP:
     return false;
+  case LGLSXP:
+  case INTSXP:
+  case REALSXP:
+  case CPLXSXP:
+  case STRSXP:
+  case RAWSXP:
+    return true;
+  case VECSXP:
+    if (!OBJECT(x) || is_data_frame(x)) {
+      return true;
+    }
+    // fallthrough
+  default:
+    return dispatch && OBJECT(x) && vec_proxy_method(x) != R_NilValue;
   }
 }
-
 // [[ include("vctrs.h") ]]
 bool vec_is_vector(SEXP x) {
-  return vec_is_vector_rec(x, true);
+  return vec_is_vector_impl(x, true);
 }
 
-// [[ register ]]
-SEXP vctrs_is_vector(SEXP x, SEXP dispatch) {
-  return Rf_ScalarLogical(vec_is_vector_rec(x, LOGICAL(dispatch)[0]));
+// [[ register() ]]
+SEXP vctrs_is_vector(SEXP x) {
+  return Rf_ScalarLogical(vec_is_vector(x));
 }
 
 void vctrs_stop_unsupported_type(enum vctrs_type type, const char* fn) {

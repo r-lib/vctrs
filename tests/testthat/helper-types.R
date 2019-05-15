@@ -10,7 +10,7 @@ empty_types <- list(
   list = list(),
   dataframe = tibble::tibble(),
   s3 = foobar(),
-  scalar = ~foobar
+  scalar = function() NULL
 )
 
 atomics <- list(TRUE, 1L, 1.0, 1i, "foo", bytes(1))
