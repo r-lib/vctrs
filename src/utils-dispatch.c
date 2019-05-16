@@ -66,6 +66,8 @@ static enum vctrs_class_type class_type_impl(SEXP class) {
   SEXP const* class_ptr = STRING_PTR(class);
   SEXP const* p = class_ptr;
 
+  // First check for bare types for which we know how many strings are
+  // the classes composed of
   switch (n) {
   case 1:
     if (*p != strings_data_frame) break;
@@ -77,6 +79,7 @@ static enum vctrs_class_type class_type_impl(SEXP class) {
     return vctrs_class_bare_tibble;
   }}
 
+  // Now check for inherited classes
   p = class_ptr + n - 2;
   SEXP butlast = *p++;
   SEXP last = *p++;
