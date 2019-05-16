@@ -438,12 +438,8 @@ SEXP df_restore(SEXP x, SEXP to, SEXP i) {
   return x;
 }
 
-static SEXP vec_restore_dispatch(SEXP x, SEXP to, SEXP i) {
-  return vctrs_dispatch3(syms_vec_restore_dispatch, fns_vec_restore_dispatch,
-                         syms_x, x,
-                         syms_to, to,
-                         syms_i, i);
-}
+
+static SEXP vec_restore_dispatch(SEXP x, SEXP to, SEXP i);
 
 SEXP vec_restore(SEXP x, SEXP to, SEXP i) {
   if (!OBJECT(to)) {
@@ -458,23 +454,17 @@ SEXP vec_restore(SEXP x, SEXP to, SEXP i) {
   if (is_data_frame(to)) {
     x = PROTECT_N(df_restore(x, to, i), &nprot);
   }
-
-  SEXP method = vec_restore_method(to);
-
-  SEXP out;
-  if (method == R_NilValue) {
-    out = vctrs_restore_default(x, to);
-  } else {
-    out = vec_restore_dispatch(x, to, i);
-  }
+  SEXP out = vec_restore_dispatch(x, to, i);
 
   UNPROTECT(nprot);
   return out;
 }
 
-// [[ include("vctrs.h") ]]
-SEXP vec_restore_method(SEXP x) {
-  return s3_find_method("vec_restore", x);
+static SEXP vec_restore_dispatch(SEXP x, SEXP to, SEXP i) {
+  return vctrs_dispatch3(syms_vec_restore_dispatch, fns_vec_restore_dispatch,
+                         syms_x, x,
+                         syms_to, to,
+                         syms_i, i);
 }
 
 
