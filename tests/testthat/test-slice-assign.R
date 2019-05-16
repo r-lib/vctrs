@@ -208,11 +208,10 @@ test_that("a coercible RHS is cast to LHS before assignment (#140)", {
   allow_lossy_cast(vec_slice(x, 1) <- 3.5)
   expect_identical(x, int(3, 2))
 
-  skip("matrix fallback")
   x <- matrix(1:4, 2)
   vec_slice(x, 1) <- matrix(c(FALSE, FALSE), 1)
   expect_identical(x, matrix(int(0, 2, 0, 4), 2))
-  expect_error(vec_slice(x, 1) <- matrix(c("", ""), 1), class = "vctrs_error_incompatible_type")
+  expect_error(vec_assign(x, 1, matrix(c("", ""), 1)), class = "vctrs_error_incompatible_type")
 })
 
 test_that("slice-assign takes the proxy", {
@@ -253,12 +252,24 @@ test_that("can use names to vec_slice<-() a named object", {
 })
 
 test_that("slice-assign falls back to `[<-` when proxy is not implemented", {
+  obj <- foobar(c("foo", "bar", "baz"))
+  expect_error(vec_slice(obj, 1:2) <- NA, class = "vctrs_error_incompatible_type")
+
+  vec_slice(obj, 1:2) <- foobar("quux")
+
+  vec_type2(foobar(""), foobar(""))
+  vec_cast(foobar(""), foobar(""))
+  #> Error: Can't cast <vctrs_foobar> to <vctrs_foobar>
+
   scoped_global_bindings(
     `[<-.vctrs_foobar` = function(x, i, value) {
       x <- unclass(x)
       x[i] <- "dispatched"
       x
-    }
+    },
+    vec_type2.logical.vctrs_foobar = function(...) foobar(""),
+    vec_type2.vctrs_foobar = function(...) foobar(""),
+    vec_cast.vctrs_foobar = function(x, to, ...) x
   )
 
   obj <- foobar(c("foo", "bar", "baz"))
