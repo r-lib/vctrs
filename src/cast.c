@@ -438,26 +438,33 @@ SEXP df_restore(SEXP x, SEXP to, SEXP i) {
   return x;
 }
 
+
+static SEXP vec_restore_dispatch(SEXP x, SEXP to, SEXP i);
+
+SEXP vec_restore(SEXP x, SEXP to, SEXP i) {
+  if (!OBJECT(to)) {
+    return vctrs_restore_default(x, to);
+  }
+
+  int nprot = 0;
+
+  // Restore methods are passed the original atomic type back, so we
+  // first restore data frames as such before calling the restore
+  // method, if any
+  if (is_data_frame(to)) {
+    x = PROTECT_N(df_restore(x, to, i), &nprot);
+  }
+  SEXP out = vec_restore_dispatch(x, to, i);
+
+  UNPROTECT(nprot);
+  return out;
+}
+
 static SEXP vec_restore_dispatch(SEXP x, SEXP to, SEXP i) {
   return vctrs_dispatch3(syms_vec_restore_dispatch, fns_vec_restore_dispatch,
                          syms_x, x,
                          syms_to, to,
                          syms_i, i);
-}
-
-SEXP vec_restore(SEXP x, SEXP to, SEXP i) {
-  switch (vec_typeof(to)) {
-  case vctrs_type_dataframe: {
-    SEXP out = PROTECT(df_restore(x, to, i));
-    out = vec_restore_dispatch(out, to, i);
-    UNPROTECT(1);
-    return out;
-  }
-  case vctrs_type_s3:
-    return vec_restore_dispatch(x, to, i);
-  default:
-    return vctrs_restore_default(x, to);
-  }
 }
 
 

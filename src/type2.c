@@ -171,7 +171,6 @@ SEXP df_type2(SEXP x, SEXP y, struct vctrs_arg* x_arg, struct vctrs_arg* y_arg) 
   return out;
 }
 
-
 // [[ register() ]]
 SEXP vctrs_type2(SEXP x, SEXP y, SEXP x_arg, SEXP y_arg) {
   if (!r_is_string(x_arg)) {
@@ -187,6 +186,22 @@ SEXP vctrs_type2(SEXP x, SEXP y, SEXP x_arg, SEXP y_arg) {
   int _left;
   return vec_type2(x, y, (struct vctrs_arg*) &x_arg_, (struct vctrs_arg*) &y_arg_, &_left);
 }
+
+// [[ register() ]]
+SEXP vctrs_type2_df_df(SEXP x, SEXP y, SEXP x_arg, SEXP y_arg) {
+  if (!r_is_string(x_arg)) {
+    Rf_errorcall(R_NilValue, "`x_arg` must be a string");
+  }
+  if (!r_is_string(y_arg)) {
+    Rf_errorcall(R_NilValue, "`y_arg` must be a string");
+  }
+
+  struct vctrs_arg_wrapper x_arg_ = new_wrapper_arg(NULL, r_chr_get_c_string(x_arg, 0));
+  struct vctrs_arg_wrapper y_arg_ = new_wrapper_arg(NULL, r_chr_get_c_string(y_arg, 0));
+
+  return df_type2(x, y, (struct vctrs_arg*) &x_arg_, (struct vctrs_arg*) &y_arg_);
+}
+
 
 void vctrs_init_type2(SEXP ns) {
   syms_vec_type2_dispatch = Rf_install("vec_type2_dispatch");

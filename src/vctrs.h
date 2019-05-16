@@ -26,11 +26,61 @@ enum vctrs_type {
   vctrs_type_s3 = 255
 };
 
-enum vctrs_type vec_typeof(SEXP x);
-enum vctrs_type vec_typeof_impl(SEXP x, bool dispatch);
+/**
+ * @member type The vector type of the original data.
+ * @member proxy_method The function of the `vec_proxy()` method, if
+ *   any. This method is looked up with [vec_proxy_method()].
+ */
+struct vctrs_type_info {
+  enum vctrs_type type;
+  SEXP proxy_method;
+};
+/**
+ * @inheritMembers vctrs_type_info
+ * @member type If `proxy_method` was found, the vector type of the
+ *   proxy data. Otherwise, the vector type of the original data.
+ *   This is never `vctrs_type_s3`.
+ * @member proxy If `proxy_method` was found, the result of invoking
+ *   the method. Otherwise, the original data.
+ */
+struct vctrs_proxy_info {
+  enum vctrs_type type;
+  SEXP proxy_method;
+  SEXP proxy;
+};
 
+/**
+ * Return the type information of a vector or its proxy
+ *
+ * `vec_type_info()` returns the vctrs type of `x`. `vec_proxy_info()`
+ * returns the vctrs type of `x` or its proxy if it has one. The
+ * former returns `vctrs_type_s3` with S3 objects (expect for native
+ * types like bare data frames). The latter returns the bare type of
+ * the proxy, if any. It never returns `vctrs_type_s3`.
+ *
+ * `vec_proxy_info()` returns both the proxy method and the proxy
+ * data. `vec_type_info()` only returns the proxy method, which it
+ * needs to determine whether S3 lists and non-vector base types are
+ * scalars or proxied vectors.
+ *
+ * Use `PROTECT_PROXY_INFO()` and `PROTECT_TYPE_INFO()` to protect the
+ * members of the return value. These helpers take a pointer to a
+ * protection counter that can be passed to `UNPROTECT()`.
+ */
+struct vctrs_type_info vec_type_info(SEXP x);
+struct vctrs_proxy_info vec_proxy_info(SEXP x);
+
+static inline struct vctrs_proxy_info PROTECT_PROXY_INFO(struct vctrs_proxy_info info, int* n) {
+  *n += 2; PROTECT(info.proxy); PROTECT(info.proxy_method);
+  return info;
+}
+static inline struct vctrs_type_info PROTECT_TYPE_INFO(struct vctrs_type_info info, int* n) {
+  ++(*n); PROTECT(info.proxy_method);
+  return info;
+}
+
+enum vctrs_type vec_typeof(SEXP x);
 const char* vec_type_as_str(enum vctrs_type type);
-bool vec_is_vector_impl(SEXP x, bool dispatch);
 bool vec_is_vector(SEXP x);
 bool vec_is_partial(SEXP x);
 
@@ -141,14 +191,12 @@ bool vec_is_unspecified(SEXP x);
 #include "arg.h"
 
 SEXP vec_proxy(SEXP x);
-SEXP vec_proxy_method(SEXP x);
-SEXP vec_proxy_invoke(SEXP x, SEXP method);
+SEXP vec_restore(SEXP x, SEXP to, SEXP i);
 R_len_t vec_size(SEXP x);
 R_len_t vec_dim(SEXP x);
 SEXP vec_cast(SEXP x, SEXP to);
 SEXP vec_slice(SEXP x, SEXP index);
 SEXP vec_na(SEXP x, R_len_t n);
-SEXP vec_restore(SEXP x, SEXP to, SEXP i);
 SEXP vec_type(SEXP x);
 SEXP vec_type_finalise(SEXP x);
 bool vec_is_unspecified(SEXP x);

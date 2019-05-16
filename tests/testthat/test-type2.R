@@ -22,12 +22,12 @@ test_that("new classes are uncoercible by default", {
 })
 
 test_that("vec_typeof2() returns common type", {
-  nms <- names(empty_types)
+  nms <- names(base_empty_types)
 
-  for (i in seq_along(empty_types)) {
+  for (i in seq_along(base_empty_types)) {
     this <- nms[[i]]
 
-    for (j in seq_along(empty_types)) {
+    for (j in seq_along(base_empty_types)) {
       that <- nms[[j]]
 
       if (i <= j) {
@@ -35,7 +35,7 @@ test_that("vec_typeof2() returns common type", {
       } else {
         exp <- paste0("vctrs_type2_", that, "_", this)
       }
-      out <- vec_typeof2(empty_types[[this]], empty_types[[that]])
+      out <- vec_typeof2(base_empty_types[[this]], base_empty_types[[that]])
 
       expect_identical(out, exp)
     }

@@ -87,3 +87,38 @@ test_that("vec_type_common() includes index in argument tag", {
     try2(vec_type_common(foo = TRUE, !!!list(bar = FALSE), !!!list(baz = "chr")))
   })
 })
+
+test_that("proxied types are have s3 bare type", {
+  for (x in proxied_empty_types) {
+    expect_identical(vec_typeof_bare(x), "s3")
+  }
+})
+
+test_that("vec_type() preserves attributes of unproxied structures", {
+  expect_identical(vec_type(foobar(dbl(1))), foobar(dbl()))
+
+  # Here `foobar()` is treated as a scalar so is returned as is
+  expect_identical(vec_type(foobar(list(1))), foobar(list(1)))
+})
+
+test_that("can retrieve type info", {
+  exp <- list(type = "integer", proxy_method = NULL)
+  expect_identical(vec_type_info(1:3), exp)
+
+  exp <- list(type = "s3", proxy_method = NULL)
+  expect_identical(vec_type_info(~foo), exp)
+
+  exp <- list(type = "dataframe", proxy_method = vec_proxy.data.frame)
+  expect_identical(vec_type_info(mtcars), exp)
+})
+
+test_that("can retrieve proxy info", {
+  exp <- list(type = "integer", proxy_method = NULL, proxy = 1:3)
+  expect_identical(vec_proxy_info(1:3), exp)
+
+  exp <- list(type = "scalar", proxy_method = NULL, proxy = ~foo)
+  expect_identical(vec_proxy_info(~foo), exp)
+
+  exp <- list(type = "dataframe", proxy_method = vec_proxy.data.frame, proxy = mtcars)
+  expect_identical(vec_proxy_info(mtcars), exp)
+})

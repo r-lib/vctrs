@@ -1,5 +1,5 @@
 
-empty_types <- list(
+base_empty_types <- list(
   null = NULL,
   logical = lgl(),
   integer = int(),
@@ -8,8 +8,20 @@ empty_types <- list(
   character = chr(),
   raw = bytes(),
   list = list(),
+  dataframe = data.frame()
+)
+
+proxied_empty_types <- list(
+  double = new_hidden(),
   dataframe = tibble::tibble(),
-  s3 = foobar(),
+  dataframe = structure(data.frame(), class = c("vctrs_foobar", "data.frame"))
+)
+
+empty_types <- c(
+  base_empty_types,
+  proxied_empty_types,
+  # Non proxied type
+  scalar = foobar(list()),
   scalar = function() NULL
 )
 

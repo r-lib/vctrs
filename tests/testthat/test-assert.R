@@ -88,7 +88,7 @@ test_that("non-vector base types are scalars", {
   expect_identical(vec_typeof(function() NULL), "scalar")
   expect_identical(vec_typeof(env()), "scalar")
   expect_identical(vec_typeof(quote(foo)), "scalar")
-  expect_identical(vec_typeof(~foo), "s3")
+  expect_identical(vec_typeof(~foo), "scalar")
   expect_identical(vec_typeof(base::`{`), "scalar")
   expect_identical(vec_typeof(base::c), "scalar")
   expect_identical(vec_typeof(expression()), "scalar")
@@ -124,14 +124,14 @@ test_that("non-vector base types are scalars", {
 test_that("non-vector types can be proxied", {
   x <- new_proxy(1:3)
 
-  expect_identical(vec_typeof(x), "s3")
+  expect_identical(vec_typeof(x), "scalar")
   expect_false(vec_is_vector(x))
   expect_false(vec_is(x))
   expect_error(vec_assert(x), class = "vctrs_error_scalar_type")
 
   scoped_env_proxy()
 
-  expect_identical(vec_typeof(x), "s3")
+  expect_identical(vec_typeof(x), "integer")
   expect_true(vec_is_vector(x))
   expect_true(vec_is(x))
   expect_error(regexp = NA, vec_assert(x))
@@ -150,7 +150,7 @@ test_that("vec_typeof() handles all types", {
   }
 })
 
-test_that("bare prototypes act as partial types", {
+test_that("bare prototypes don't act as partial types", {
   expect_false(vec_is(foobar(1), dbl()))
   expect_error(vec_assert(foobar(1), dbl()), class = "vctrs_error_assert_ptype")
 })
