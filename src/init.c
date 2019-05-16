@@ -53,6 +53,7 @@ extern SEXP df_as_dataframe(SEXP, SEXP);
 extern SEXP vctrs_type2_df_df(SEXP, SEXP, SEXP, SEXP);
 extern SEXP vctrs_type_info(SEXP);
 extern SEXP vctrs_proxy_info(SEXP);
+extern SEXP vctrs_class_type(SEXP);
 
 // Defined below
 SEXP vctrs_init(SEXP);
@@ -104,6 +105,7 @@ static const R_CallMethodDef CallEntries[] = {
   {"vctrs_type2_df_df",                (DL_FUNC) &vctrs_type2_df_df, 4},
   {"vctrs_type_info",                  (DL_FUNC) &vctrs_type_info, 1},
   {"vctrs_proxy_info",                 (DL_FUNC) &vctrs_proxy_info, 1},
+  {"vctrs_class_type",                 (DL_FUNC) &vctrs_class_type, 1},
   {NULL, NULL, 0}
 };
 

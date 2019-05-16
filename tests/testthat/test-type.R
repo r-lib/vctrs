@@ -122,3 +122,11 @@ test_that("can retrieve proxy info", {
   exp <- list(type = "dataframe", proxy_method = vec_proxy.data.frame, proxy = mtcars)
   expect_identical(vec_proxy_info(mtcars), exp)
 })
+
+test_that("class_type() detects classes", {
+  expect_identical(class_type(data.frame()), "bare_data_frame")
+  expect_identical(class_type(tibble::tibble()), "bare_tibble")
+  expect_identical(class_type(structure(data.frame(), class = c("foo", "bar", "data.frame"))), "data_frame")
+  expect_identical(class_type(NA), "none")
+  expect_identical(class_type(foobar()), "unknown")
+})

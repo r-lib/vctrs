@@ -111,6 +111,11 @@ extern SEXP classes_data_frame;
 
 extern SEXP strings_dots;
 extern SEXP strings_empty;
+extern SEXP strings_tbl;
+extern SEXP strings_tbl_df;
+extern SEXP strings_data_frame;
+extern SEXP strings_vctrs_rcrd;
+extern SEXP strings_posixlt;
 
 extern SEXP syms_i;
 extern SEXP syms_x;
