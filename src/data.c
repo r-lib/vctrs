@@ -28,6 +28,10 @@ SEXP vec_proxy(SEXP x) {
 SEXP vec_proxy_method(SEXP x) {
   return s3_find_method("vec_proxy", x);
 }
+
+// This should be faster than normal dispatch but also means that
+// proxy methods can't call `NextMethod()`. This could be changed if
+// it turns out a problem.
 SEXP vec_proxy_invoke(SEXP x, SEXP method) {
   if (method == R_NilValue) {
     return x;
