@@ -328,7 +328,7 @@ SEXP vec_cast(SEXP x, SEXP to) {
 }
 
 // Copy attributes except names and dim. This duplicates `x` if needed.
-SEXP vctrs_restore_default(SEXP x, SEXP to) {
+SEXP vec_restore_default(SEXP x, SEXP to) {
   int n_protect = 0;
 
   SEXP attrib = PROTECT(Rf_shallow_duplicate(ATTRIB(to)));
@@ -423,7 +423,7 @@ SEXP df_restore(SEXP x, SEXP to, SEXP i) {
     ++n_protect;
   }
 
-  x = PROTECT(vctrs_restore_default(x, to));
+  x = PROTECT(vec_restore_default(x, to));
   ++n_protect;
 
   SEXP rownames = PROTECT(Rf_allocVector(INTSXP, 2));
@@ -442,22 +442,20 @@ SEXP df_restore(SEXP x, SEXP to, SEXP i) {
 static SEXP vec_restore_dispatch(SEXP x, SEXP to, SEXP i);
 
 SEXP vec_restore(SEXP x, SEXP to, SEXP i) {
-  if (!OBJECT(to)) {
-    return vctrs_restore_default(x, to);
-  }
-
-  int nprot = 0;
-
-  // Restore methods are passed the original atomic type back, so we
-  // first restore data frames as such before calling the restore
-  // method, if any
-  if (is_data_frame(to)) {
-    x = PROTECT_N(df_restore(x, to, i), &nprot);
-  }
-  SEXP out = vec_restore_dispatch(x, to, i);
-
-  UNPROTECT(nprot);
-  return out;
+  switch (class_type(to)) {
+  default: return vec_restore_dispatch(x, to, i);
+  case vctrs_class_none: return vec_restore_default(x, to);
+  case vctrs_class_bare_data_frame:
+  case vctrs_class_bare_tibble: return df_restore(x, to, i);
+  case vctrs_class_data_frame: {
+    // Restore methods are passed the original atomic type back, so we
+    // first restore data frames as such before calling the restore
+    // method, if any
+    SEXP out = PROTECT(df_restore(x, to, i));
+    out = vec_restore_dispatch(x, to, i);
+    UNPROTECT(1);
+    return out;
+  }}
 }
 
 static SEXP vec_restore_dispatch(SEXP x, SEXP to, SEXP i) {
