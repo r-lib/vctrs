@@ -322,6 +322,30 @@ struct vctrs_proxy_info vec_proxy_info(SEXP x) {
   return info;
 }
 
+// [[ register() ]]
+SEXP vctrs_type_info(SEXP x) {
+  struct vctrs_type_info info = vec_type_info(x);
+
+  SEXP out = PROTECT(Rf_mkNamed(VECSXP, (const char*[]) { "type", "proxy_method", "" }));
+  SET_VECTOR_ELT(out, 0, Rf_mkString(vec_type_as_str(info.type)));
+  SET_VECTOR_ELT(out, 1, info.proxy_method);
+
+  UNPROTECT(1);
+  return out;
+}
+// [[ register() ]]
+SEXP vctrs_proxy_info(SEXP x) {
+  struct vctrs_proxy_info info = vec_proxy_info(x);
+
+  SEXP out = PROTECT(Rf_mkNamed(VECSXP, (const char*[]) { "type", "proxy_method", "proxy", "" }));
+  SET_VECTOR_ELT(out, 0, Rf_mkString(vec_type_as_str(info.type)));
+  SET_VECTOR_ELT(out, 1, info.proxy_method);
+  SET_VECTOR_ELT(out, 2, info.proxy);
+
+  UNPROTECT(1);
+  return out;
+}
+
 static enum vctrs_type vec_base_typeof(SEXP x, bool proxied) {
   switch (TYPEOF(x)) {
   // Atomic types are always vectors

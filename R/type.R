@@ -129,3 +129,10 @@ vec_typeof <- function(x) {
 vec_typeof_bare <- function(x) {
   .Call(vctrs_typeof, x, FALSE)
 }
+
+vec_type_info <- function(x) {
+  .Call(vctrs_type_info, x)
+}
+vec_proxy_info <- function(x) {
+  .Call(vctrs_proxy_info, x)
+}
