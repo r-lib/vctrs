@@ -47,10 +47,9 @@ vec_type2_dispatch <- function(x, y, ..., x_arg = "", y_arg = "") {
 }
 #' @export
 vec_type2.default <- function(x, y, ..., x_arg = "", y_arg = "") {
-  if (typeof(x) == typeof(y) && identical(attributes(x), attributes(y))) {
+  if (has_same_type(x, y)) {
     return(x)
   }
-
   stop_incompatible_type(x, y, x_arg = x_arg, y_arg = y_arg)
 }
 

@@ -130,6 +130,9 @@ vec_cast_common <- function(..., .to = NULL) {
 
 #' @export
 vec_cast.default <- function(x, to) {
+  if (has_same_type(x, to)) {
+    return(x)
+  }
   stop_incompatible_cast(x, to)
 }
 
