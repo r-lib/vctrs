@@ -270,6 +270,10 @@ SEXP vec_type_finalise(SEXP x) {
 }
 
 
+// From proxy.c
+SEXP vec_proxy_method(SEXP x);
+SEXP vec_proxy_invoke(SEXP x, SEXP method);
+
 static enum vctrs_type vec_base_typeof(SEXP x, bool proxied);
 
 // [[ include("vctrs.h") ]]

@@ -4,6 +4,10 @@
 // Initialised at load time
 SEXP syms_vec_proxy = NULL;
 
+// Defined below
+SEXP vec_proxy_method(SEXP x);
+SEXP vec_proxy_invoke(SEXP x, SEXP method);
+
 
 // [[ register(); include("vctrs.h") ]]
 SEXP vec_proxy(SEXP x) {
@@ -20,11 +24,10 @@ SEXP vec_proxy(SEXP x) {
   UNPROTECT(nprot);
   return out;
 }
-// [[ include("vctrs.h") ]]
+
 SEXP vec_proxy_method(SEXP x) {
   return s3_find_method("vec_proxy", x);
 }
-// [[ include("vctrs.h") ]]
 SEXP vec_proxy_invoke(SEXP x, SEXP method) {
   if (method == R_NilValue) {
     return x;

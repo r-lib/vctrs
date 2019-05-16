@@ -191,15 +191,12 @@ bool vec_is_unspecified(SEXP x);
 #include "arg.h"
 
 SEXP vec_proxy(SEXP x);
-SEXP vec_proxy_method(SEXP x);
-SEXP vec_proxy_invoke(SEXP x, SEXP method);
+SEXP vec_restore(SEXP x, SEXP to, SEXP i);
 R_len_t vec_size(SEXP x);
 R_len_t vec_dim(SEXP x);
 SEXP vec_cast(SEXP x, SEXP to);
 SEXP vec_slice(SEXP x, SEXP index);
 SEXP vec_na(SEXP x, R_len_t n);
-SEXP vec_restore(SEXP x, SEXP to, SEXP i);
-SEXP vec_restore_method(SEXP x);
 SEXP vec_type(SEXP x);
 SEXP vec_type_finalise(SEXP x);
 bool vec_is_unspecified(SEXP x);
