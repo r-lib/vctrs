@@ -2,18 +2,8 @@
 #include "utils.h"
 
 
-enum vctrs_class_type {
-  vctrs_class_data_frame,
-  vctrs_class_bare_data_frame,
-  vctrs_class_bare_tibble,
-  vctrs_class_rcrd,
-  vctrs_class_posixlt,
-  vctrs_class_unknown,
-  vctrs_class_none
-};
-
 // Defined below
-static enum vctrs_class_type class_type(SEXP x);
+enum vctrs_class_type class_type(SEXP x);
 static enum vctrs_class_type class_type_impl(SEXP class);
 static const char* class_type_as_str(enum vctrs_class_type type);
 
@@ -59,7 +49,7 @@ bool is_record(SEXP x) {
 }
 
 
-static enum vctrs_class_type class_type(SEXP x) {
+enum vctrs_class_type class_type(SEXP x) {
   if (!OBJECT(x)) {
     return vctrs_class_none;
   }
