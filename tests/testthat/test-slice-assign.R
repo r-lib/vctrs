@@ -276,3 +276,11 @@ test_that("slice-assign falls back to `[<-` when proxy is not implemented", {
   vec_slice(obj, 1:2) <- NA
   expect_identical(obj, c("dispatched", "dispatched", "baz"))
 })
+
+test_that("index and value are sliced before falling back", {
+  # Work around a bug in base R `[<-`
+  lhs <- foobar(c(NA, 1:4))
+  rhs <- foobar(int(0L, 10L))
+  exp <- foobar(int(10L, 1:4))
+  expect_identical(vec_assign(lhs, c(NA, 1), rhs), exp)
+})
