@@ -14,7 +14,9 @@ SEXP strings_tbl = NULL;
 SEXP strings_tbl_df = NULL;
 SEXP strings_data_frame = NULL;
 SEXP strings_vctrs_rcrd = NULL;
+SEXP strings_posixt = NULL;
 SEXP strings_posixlt = NULL;
+SEXP strings_vctrs_vctr = NULL;
 
 SEXP classes_data_frame = NULL;
 SEXP classes_tibble = NULL;
@@ -136,90 +138,6 @@ static SEXP new_compact_rownames(R_len_t n) {
   out_data[1] = -n;
   return out;
 }
-
-
-static bool is_tibble_class(SEXP class);
-static bool is_data_frame_class(SEXP class);
-
-bool is_data_frame(SEXP x) {
-  if (!OBJECT(x)) {
-    return false;
-  }
-  SEXP class = PROTECT(Rf_getAttrib(x, R_ClassSymbol));
-  bool out = r_chr_has_string(class, strings_data_frame);
-  UNPROTECT(1);
-  return out;
-}
-bool is_bare_data_frame(SEXP x) {
-  if (!OBJECT(x) || TYPEOF(x) != VECSXP) {
-    return false;
-  }
-  SEXP class = PROTECT(Rf_getAttrib(x, R_ClassSymbol));
-  bool out = is_data_frame_class(class);
-  UNPROTECT(1);
-  return out;
-}
-bool is_bare_tibble(SEXP x) {
-  if (!OBJECT(x)) {
-    return false;
-  }
-  SEXP class = PROTECT(Rf_getAttrib(x, R_ClassSymbol));
-  bool out = is_tibble_class(class);
-  UNPROTECT(1);
-  return out;
-}
-bool is_native_df(SEXP x) {
-  if (!OBJECT(x)) {
-    return false;
-  }
-  SEXP class = PROTECT(Rf_getAttrib(x, R_ClassSymbol));
-  bool out = is_data_frame_class(class) || is_tibble_class(class);
-  UNPROTECT(1);
-  return out;
-}
-
-static bool is_tibble_class(SEXP class) {
-  if (Rf_length(class) != 3) {
-    return false;
-  }
-
-  SEXP* class_ptr = STRING_PTR(class);
-
-  if (*class_ptr != strings_tbl_df) {
-    return false;
-  }
-  ++class_ptr;
-  if (*class_ptr != strings_tbl) {
-    return false;
-  }
-  ++class_ptr;
-  if (*class_ptr != strings_data_frame) {
-    return false;
-  }
-
-  return true;
-}
-static bool is_data_frame_class(SEXP class) {
-  return
-    Rf_length(class) == 1 &&
-    STRING_ELT(class, 0) == strings_data_frame;
-}
-
-bool is_record(SEXP x) {
-  if (!OBJECT(x)) {
-    return false;
-  }
-
-  SEXP class = PROTECT(Rf_getAttrib(x, R_ClassSymbol));
-  int n = Rf_length(class);
-
-  SEXP last = STRING_ELT(class, n - 1);
-  bool out = last == strings_vctrs_rcrd || last == strings_posixlt;
-
-  UNPROTECT(1);
-  return out;
-}
-
 
 inline void never_reached(const char* fn) {
   Rf_error("Internal error in `%s()`: Never reached", fn);
@@ -585,7 +503,7 @@ void vctrs_init_utils(SEXP ns) {
 
   // Holds the CHARSXP objects because unlike symbols they can be
   // garbage collected
-  strings = Rf_allocVector(STRSXP, 4);
+  strings = Rf_allocVector(STRSXP, 6);
   R_PreserveObject(strings);
 
   strings_dots = Rf_mkChar("...");
@@ -599,6 +517,12 @@ void vctrs_init_utils(SEXP ns) {
 
   strings_posixlt = Rf_mkChar("POSIXlt");
   SET_STRING_ELT(strings, 3, strings_posixlt);
+
+  strings_posixt = Rf_mkChar("POSIXt");
+  SET_STRING_ELT(strings, 4, strings_posixlt);
+
+  strings_vctrs_vctr = Rf_mkChar("vctrs_vctr");
+  SET_STRING_ELT(strings, 5, strings_vctrs_vctr);
 
 
   classes_data_frame = Rf_allocVector(STRSXP, 1);

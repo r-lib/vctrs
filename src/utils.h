@@ -10,6 +10,16 @@
 
 #define PROTECT_N(x, n) (++*n, PROTECT(x))
 
+enum vctrs_class_type {
+  vctrs_class_data_frame,
+  vctrs_class_bare_data_frame,
+  vctrs_class_bare_tibble,
+  vctrs_class_rcrd,
+  vctrs_class_posixlt,
+  vctrs_class_unknown,
+  vctrs_class_none
+};
+
 
 bool is_bool(SEXP x);
 
@@ -27,6 +37,7 @@ SEXP vctrs_dispatch3(SEXP fn_sym, SEXP fn,
 
 SEXP df_map(SEXP df, SEXP (*fn)(SEXP));
 
+enum vctrs_class_type class_type(SEXP x);
 bool is_data_frame(SEXP x);
 bool is_bare_data_frame(SEXP x);
 bool is_bare_tibble(SEXP x);
@@ -111,6 +122,13 @@ extern SEXP classes_data_frame;
 
 extern SEXP strings_dots;
 extern SEXP strings_empty;
+extern SEXP strings_tbl;
+extern SEXP strings_tbl_df;
+extern SEXP strings_data_frame;
+extern SEXP strings_vctrs_rcrd;
+extern SEXP strings_posixlt;
+extern SEXP strings_posixt;
+extern SEXP strings_vctrs_vctr;
 
 extern SEXP syms_i;
 extern SEXP syms_x;
