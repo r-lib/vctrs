@@ -14,7 +14,9 @@ SEXP strings_tbl = NULL;
 SEXP strings_tbl_df = NULL;
 SEXP strings_data_frame = NULL;
 SEXP strings_vctrs_rcrd = NULL;
+SEXP strings_posixt = NULL;
 SEXP strings_posixlt = NULL;
+SEXP strings_vctrs_vctr = NULL;
 
 SEXP classes_data_frame = NULL;
 SEXP classes_tibble = NULL;
@@ -501,7 +503,7 @@ void vctrs_init_utils(SEXP ns) {
 
   // Holds the CHARSXP objects because unlike symbols they can be
   // garbage collected
-  strings = Rf_allocVector(STRSXP, 4);
+  strings = Rf_allocVector(STRSXP, 6);
   R_PreserveObject(strings);
 
   strings_dots = Rf_mkChar("...");
@@ -515,6 +517,12 @@ void vctrs_init_utils(SEXP ns) {
 
   strings_posixlt = Rf_mkChar("POSIXlt");
   SET_STRING_ELT(strings, 3, strings_posixlt);
+
+  strings_posixt = Rf_mkChar("POSIXt");
+  SET_STRING_ELT(strings, 4, strings_posixlt);
+
+  strings_vctrs_vctr = Rf_mkChar("vctrs_vctr");
+  SET_STRING_ELT(strings, 5, strings_vctrs_vctr);
 
 
   classes_data_frame = Rf_allocVector(STRSXP, 1);

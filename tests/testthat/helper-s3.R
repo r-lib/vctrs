@@ -29,3 +29,8 @@ tibble <- tibble::tibble
 scoped_foobar_proxy <- function(frame = caller_env()) {
   scoped_global_bindings(.frame = frame, vec_proxy.vctrs_foobar = identity)
 }
+
+subclass <- function(x) {
+  class(x) <- c("vctrs_foo", "vctrs_bar", class(x))
+  x
+}

@@ -6,6 +6,8 @@ enum vctrs_class_type {
   vctrs_class_data_frame,
   vctrs_class_bare_data_frame,
   vctrs_class_bare_tibble,
+  vctrs_class_rcrd,
+  vctrs_class_posixlt,
   vctrs_class_unknown,
   vctrs_class_none
 };
@@ -50,18 +52,10 @@ bool is_bare_tibble(SEXP x) {
 
 // [[ include("utils.h") ]]
 bool is_record(SEXP x) {
-  if (!OBJECT(x)) {
-    return false;
-  }
-
-  SEXP class = PROTECT(Rf_getAttrib(x, R_ClassSymbol));
-  int n = Rf_length(class);
-
-  SEXP last = STRING_ELT(class, n - 1);
-  bool out = last == strings_vctrs_rcrd || last == strings_posixlt;
-
-  UNPROTECT(1);
-  return out;
+  enum vctrs_class_type type = class_type(x);
+  return
+    type == vctrs_class_rcrd ||
+    type == vctrs_class_posixlt;
 }
 
 
@@ -79,12 +73,13 @@ static enum vctrs_class_type class_type(SEXP x) {
 
 static enum vctrs_class_type class_type_impl(SEXP class) {
   int n = Rf_length(class);
-  SEXP const* p = STRING_PTR(class);
+  SEXP const* class_ptr = STRING_PTR(class);
+  SEXP const* p = class_ptr;
 
   switch (n) {
   case 1:
-    if (*p == strings_data_frame) return vctrs_class_bare_data_frame;
-    return vctrs_class_unknown;
+    if (*p != strings_data_frame) break;
+    return vctrs_class_bare_data_frame;
   case 3: {
     if (*p++ != strings_tbl_df) break;
     if (*p++ != strings_tbl) break;
@@ -92,9 +87,18 @@ static enum vctrs_class_type class_type_impl(SEXP class) {
     return vctrs_class_bare_tibble;
   }}
 
-  SEXP last = STRING_ELT(class, n - 1);
+  p = class_ptr + n - 2;
+  SEXP butlast = *p++;
+  SEXP last = *p++;
 
-  if (last == strings_data_frame) return vctrs_class_data_frame;
+  if (butlast == strings_posixlt) {
+    if (last == strings_posixt) return vctrs_class_posixlt;
+  } else if (butlast == strings_vctrs_rcrd) {
+    if (last == strings_vctrs_vctr) return vctrs_class_rcrd;
+  } else if (last == strings_data_frame) {
+    return vctrs_class_data_frame;
+  }
+
   return vctrs_class_unknown;
 }
 
@@ -103,6 +107,8 @@ static const char* class_type_as_str(enum vctrs_class_type type) {
   case vctrs_class_data_frame: return "data_frame";
   case vctrs_class_bare_data_frame: return "bare_data_frame";
   case vctrs_class_bare_tibble: return "bare_tibble";
+  case vctrs_class_rcrd: return "rcrd";
+  case vctrs_class_posixlt: return "posixlt";
   case vctrs_class_unknown: return "unknown";
   case vctrs_class_none: return "none";
   }

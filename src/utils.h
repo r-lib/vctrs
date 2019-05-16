@@ -116,6 +116,8 @@ extern SEXP strings_tbl_df;
 extern SEXP strings_data_frame;
 extern SEXP strings_vctrs_rcrd;
 extern SEXP strings_posixlt;
+extern SEXP strings_posixt;
+extern SEXP strings_vctrs_vctr;
 
 extern SEXP syms_i;
 extern SEXP syms_x;
