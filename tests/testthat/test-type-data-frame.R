@@ -137,3 +137,11 @@ test_that("can cast unspecified to data frame", {
 test_that("can restore lists with empty names", {
   expect_identical(vec_restore(list(), data.frame()), data.frame())
 })
+
+test_that("can restore subclasses of data frames", {
+  expect_identical(vec_restore(list(), subclass(data.frame())), subclass(data.frame()))
+  scoped_global_bindings(
+    vec_restore.vctrs_foobar = function(x, to, ..., i) "dispatched"
+  )
+  expect_identical(vec_restore(list(), subclass(data.frame())), "dispatched")
+})

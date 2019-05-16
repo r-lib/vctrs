@@ -31,6 +31,6 @@ scoped_foobar_proxy <- function(frame = caller_env()) {
 }
 
 subclass <- function(x) {
-  class(x) <- c("vctrs_foo", "vctrs_bar", class(x))
+  class(x) <- c("vctrs_foo", "vctrs_foobar", class(x))
   x
 }
