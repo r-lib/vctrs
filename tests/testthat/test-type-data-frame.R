@@ -133,3 +133,7 @@ test_that("can cast unspecified to data frame", {
   df <- data.frame(x = 1, y = 2L)
   expect_identical(vec_cast(unspecified(3), df), vec_na(df, 3))
 })
+
+test_that("can restore lists with empty names", {
+  expect_identical(vec_restore(list(), data.frame()), data.frame())
+})

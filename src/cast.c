@@ -426,6 +426,10 @@ SEXP df_restore(SEXP x, SEXP to, SEXP i) {
   x = PROTECT(vec_restore_default(x, to));
   ++n_protect;
 
+  if (Rf_getAttrib(x, R_NamesSymbol) == R_NilValue) {
+    Rf_setAttrib(x, R_NamesSymbol, vctrs_shared_empty_chr);
+  }
+
   SEXP rownames = PROTECT(Rf_allocVector(INTSXP, 2));
   ++n_protect;
 
