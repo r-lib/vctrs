@@ -74,7 +74,7 @@ vec_proxy_compare.default <- function(x, relax = FALSE) {
 vec_compare <- function(x, y, na_equal = FALSE, .ptype = NULL) {
   args <- vec_recycle_common(x, y)
   args <- vec_cast_common(!!!args, .to = .ptype)
-  .Call(vctrs_compare, vec_proxy_equal(args[[1]]), vec_proxy_equal(args[[2]]), na_equal)
+  .Call(vctrs_compare, vec_proxy_compare(args[[1]]), vec_proxy_compare(args[[2]]), na_equal)
 }
 
 
