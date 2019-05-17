@@ -17,7 +17,10 @@ proxy_deref <- function(x) {
   x[[1]]$x
 }
 scoped_env_proxy <- function(frame = caller_env()) {
-  scoped_global_bindings(.frame = frame, vec_proxy.vctrs_proxy = proxy_deref)
+  scoped_global_bindings(.frame = frame,
+    vec_proxy.vctrs_proxy = proxy_deref,
+    vec_restore.vctrs_proxy = function(x, ...) new_proxy(x)
+  )
 }
 
 scoped_no_stringsAsFactors <- function(frame = caller_env()) {

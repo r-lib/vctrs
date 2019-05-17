@@ -26,9 +26,6 @@ and \code{\link[=min]{min()}}, \code{\link[=max]{max()}}, \code{\link[=median]{m
 \details{
 The default method assumes that all classes built on top of atomic
 vectors or records are orderable. If your class is not, you will need
-to provide a \code{vec_proxy_compare()} method that throws an error. Note
-that the default \code{\link[=vec_proxy_equal]{vec_proxy_equal()}} method calls \code{vec_proxy_compare()} so
-if your object is equal-able but not comparable, you'll need to provide
-methods for both generics.
+to provide a \code{vec_proxy_compare()} method that throws an error.
 }
 \keyword{internal}

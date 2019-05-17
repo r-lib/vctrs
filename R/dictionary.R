@@ -42,7 +42,7 @@ vec_count <- function(x, sort = c("count", "key", "location", "none")) {
   sort <- match.arg(sort)
 
   # Returns key-value pair giving index of first occurence value and count
-  kv <- .Call(vctrs_count, vec_proxy_equal(x))
+  kv <- .Call(vctrs_count, vec_proxy(x))
 
   # rep_along() to support zero-length vectors!
   df <- data.frame(key = rep_along(kv$val, NA), count = kv$val)
@@ -126,21 +126,21 @@ NULL
 #' @rdname vec_duplicate
 #' @export
 vec_duplicate_any <- function(x) {
-  x <- vec_proxy_equal(x)
+  x <- vec_proxy(x)
   .Call(vctrs_duplicated_any, x)
 }
 
 #' @rdname vec_duplicate
 #' @export
 vec_duplicate_detect <- function(x) {
-  x <- vec_proxy_equal(x)
+  x <- vec_proxy(x)
   .Call(vctrs_duplicated, x)
 }
 
 #' @rdname vec_duplicate
 #' @export
 vec_duplicate_id <- function(x) {
-  x <- vec_proxy_equal(x)
+  x <- vec_proxy(x)
   .Call(vctrs_id, x)
 }
 
@@ -186,14 +186,14 @@ vec_unique <- function(x) {
 #' @rdname vec_unique
 #' @export
 vec_unique_loc <- function(x) {
-  x <- vec_proxy_equal(x)
+  x <- vec_proxy(x)
   .Call(vctrs_unique_loc, x)
 }
 
 #' @rdname vec_unique
 #' @export
 vec_unique_count <- function(x) {
-  x <- vec_proxy_equal(x)
+  x <- vec_proxy(x)
   .Call(vctrs_n_distinct, x)
 }
 
@@ -230,14 +230,14 @@ vec_unique_count <- function(x) {
 #' vec_match(c("a", "b"), c("a", "b", "a", "b"))
 vec_match <- function(needles, haystack) {
   v <- vec_cast_common(needles = needles, haystack = haystack)
-  .Call(vctrs_match, vec_proxy_equal(v$needles), vec_proxy_equal(v$haystack))
+  .Call(vctrs_match, vec_proxy(v$needles), vec_proxy(v$haystack))
 }
 
 #' @export
 #' @rdname vec_match
 vec_in <- function(needles, haystack) {
   v <- vec_cast_common(needles = needles, haystack = haystack)
-  .Call(vctrs_in, vec_proxy_equal(v$needles), vec_proxy_equal(v$haystack))
+  .Call(vctrs_in, vec_proxy(v$needles), vec_proxy(v$haystack))
 }
 
 
@@ -284,6 +284,6 @@ vec_split <- function(x, by) {
 # Returns key-index pair giving the index of first key occurence and
 # a list containing the locations of each key
 vec_duplicate_split <- function(x) {
-  x <- vec_proxy_equal(x)
+  x <- vec_proxy(x)
   .Call(vctrs_duplicate_split, x)
 }

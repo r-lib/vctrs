@@ -80,6 +80,7 @@ static inline struct vctrs_type_info PROTECT_TYPE_INFO(struct vctrs_type_info in
 }
 
 enum vctrs_type vec_typeof(SEXP x);
+enum vctrs_type vec_proxy_typeof(SEXP x);
 const char* vec_type_as_str(enum vctrs_type type);
 bool vec_is_vector(SEXP x);
 bool vec_is_partial(SEXP x);

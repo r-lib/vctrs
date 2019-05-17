@@ -65,6 +65,9 @@ test_that("also works for data frames", {
   count <- vec_count(df2, sort = "key")
   expect_equal(count$key, df)
   expect_equal(count$count, vec_count(idx)$count)
+
+  exp <- tibble(x = c(1, 1, 2), y = c(1, 2, 3))
+  expect_identical(vec_unique(vec_slice(exp, c(1, 1, 2, 3))), exp)
 })
 
 

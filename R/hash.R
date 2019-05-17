@@ -1,5 +1,5 @@
 vec_hash <- function(x) {
-  x <- vec_proxy_equal(x)
+  x <- vec_proxy(x)
   as.hexmode(.Call(vctrs_hash, x))
 }
 
