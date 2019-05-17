@@ -165,10 +165,7 @@ future.</p></td>
 
     <p>The default method assumes that all classes built on top of atomic
 vectors or records are orderable. If your class is not, you will need
-to provide a <code>vec_proxy_compare()</code> method that throws an error. Note
-that the default <code><a href='vec_proxy_equal.html'>vec_proxy_equal()</a></code> method calls <code>vec_proxy_compare()</code> so
-if your object is equal-able but not comparable, you'll need to provide
-methods for both generics.</p>
+to provide a <code>vec_proxy_compare()</code> method that throws an error.</p>
     
 
   </div>

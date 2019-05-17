@@ -575,7 +575,7 @@
 <a href="#equality-and-comparison" class="anchor"></a>Equality and comparison</h2>
 <p>vctrs provides two “proxy” generics that lets you control how your class determines equality and ordering:</p>
 <ul>
-<li><p><code><a href="../reference/vec_proxy_equal.html">vec_proxy_equal()</a></code> specifies how to test the elements of your vector for equality. This proxy underpins <code>==</code> and <code>!=</code>, but also <code><a href="https://www.rdocumentation.org/packages/base/topics/unique">unique()</a></code>, <code><a href="https://www.rdocumentation.org/packages/base/topics/duplicated">anyDuplicated()</a></code>, and <code><a href="https://www.rdocumentation.org/packages/base/topics/NA">is.na()</a></code>.</p></li>
+<li><p><code><a href="../reference/vec_data.html">vec_proxy()</a></code> returns the actual data of a vector. It is used in most vctrs primitives, including equality comparison. It underpins <code>==</code>, <code>!=</code>, <code><a href="https://www.rdocumentation.org/packages/base/topics/unique">unique()</a></code>, <code><a href="https://www.rdocumentation.org/packages/base/topics/duplicated">anyDuplicated()</a></code>, and <code><a href="https://www.rdocumentation.org/packages/base/topics/NA">is.na()</a></code>.</p></li>
 <li><p><code><a href="../reference/vec_proxy_compare.html">vec_proxy_compare()</a></code> specifies how to compare the elements of your vector. This proxy is used in <code>&lt;</code>, <code>&lt;=</code>, <code>&gt;=</code>, <code>&gt;</code>, <code><a href="https://www.rdocumentation.org/packages/base/topics/Extremes">min()</a></code>, <code><a href="https://www.rdocumentation.org/packages/base/topics/Extremes">max()</a></code>, <code><a href="https://www.rdocumentation.org/packages/stats/topics/median">median()</a></code>, <code><a href="https://www.rdocumentation.org/packages/stats/topics/quantile">quantile()</a></code>, and <code><a href="https://www.rdocumentation.org/packages/base/topics/xtfrm">xtfrm()</a></code> (used in <code><a href="https://www.rdocumentation.org/packages/base/topics/order">order()</a></code> and <code><a href="https://www.rdocumentation.org/packages/base/topics/sort">sort()</a></code>) methods.</p></li>
 </ul>
 <p>It’s a good idea to define methods for these generics because you get a lot of behaviour for relatively little work.</p>
@@ -583,13 +583,13 @@
 <div id="rational-class-1" class="section level3">
 <h3 class="hasAnchor">
 <a href="#rational-class-1" class="anchor"></a>Rational class</h3>
-<p>Let’s explore these ideas by with the rational class we started on above. By default, <code><a href="../reference/vec_proxy_equal.html">vec_proxy_equal()</a></code> converts a record to a data frame, and the default comparison works column by column:</p>
+<p>Let’s explore these ideas by with the rational class we started on above. By default, <code><a href="../reference/vec_data.html">vec_proxy()</a></code> converts a record to a data frame, and the default comparison works column by column:</p>
 <div class="sourceCode" id="cb45"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb45-1" data-line-number="1">x &lt;-<span class="st"> </span><span class="kw">rational</span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">1</span>, <span class="dv">2</span>), <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">2</span>))</a>
 <a class="sourceLine" id="cb45-2" data-line-number="2">x</a>
 <a class="sourceLine" id="cb45-3" data-line-number="3"><span class="co">#&gt; &lt;rational[4]&gt;</span></a>
 <a class="sourceLine" id="cb45-4" data-line-number="4"><span class="co">#&gt; [1] 1/1 2/1 1/2 2/2</span></a>
 <a class="sourceLine" id="cb45-5" data-line-number="5"></a>
-<a class="sourceLine" id="cb45-6" data-line-number="6"><span class="kw"><a href="../reference/vec_proxy_equal.html">vec_proxy_equal</a></span>(x)</a>
+<a class="sourceLine" id="cb45-6" data-line-number="6"><span class="kw"><a href="../reference/vec_data.html">vec_proxy</a></span>(x)</a>
 <a class="sourceLine" id="cb45-7" data-line-number="7"><span class="co">#&gt;   n d</span></a>
 <a class="sourceLine" id="cb45-8" data-line-number="8"><span class="co">#&gt; 1 1 1</span></a>
 <a class="sourceLine" id="cb45-9" data-line-number="9"><span class="co">#&gt; 2 2 1</span></a>
@@ -598,21 +598,21 @@
 <a class="sourceLine" id="cb45-12" data-line-number="12"></a>
 <a class="sourceLine" id="cb45-13" data-line-number="13">x <span class="op">==</span><span class="st"> </span><span class="kw">rational</span>(<span class="dv">1</span>, <span class="dv">1</span>)</a>
 <a class="sourceLine" id="cb45-14" data-line-number="14"><span class="co">#&gt; [1]  TRUE FALSE FALSE FALSE</span></a></code></pre></div>
-<p>This makes sense as a default, but isn’t correct here because <code>rational(1, 1)</code> represents the same number as <code>rational(2, 2)</code> so they should be equal. We can fix that by implementation <code><a href="../reference/vec_proxy_equal.html">vec_proxy_equal()</a></code> method that by divides <code>n</code> and <code>d</code> by their greatest common divisor:</p>
+<p>This makes sense as a default, but isn’t correct here because <code>rational(1, 1)</code> represents the same number as <code>rational(2, 2)</code> so they should be equal. We can fix that by implementing a <code><a href="../reference/vec_data.html">vec_proxy()</a></code> method that by divides <code>n</code> and <code>d</code> by their greatest common divisor:</p>
 <div class="sourceCode" id="cb46"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb46-1" data-line-number="1"><span class="co"># Thanks to Matthew Lundberg: https://stackoverflow.com/a/21504113/16632 </span></a>
 <a class="sourceLine" id="cb46-2" data-line-number="2">gcd &lt;-<span class="st"> </span><span class="cf">function</span>(x, y) {</a>
 <a class="sourceLine" id="cb46-3" data-line-number="3">  r &lt;-<span class="st"> </span>x <span class="op">%%</span><span class="st"> </span>y</a>
 <a class="sourceLine" id="cb46-4" data-line-number="4">  <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/ifelse">ifelse</a></span>(r, <span class="kw">gcd</span>(y, r), y)</a>
 <a class="sourceLine" id="cb46-5" data-line-number="5">}</a>
 <a class="sourceLine" id="cb46-6" data-line-number="6"></a>
-<a class="sourceLine" id="cb46-7" data-line-number="7">vec_proxy_equal.vctrs_rational &lt;-<span class="st"> </span><span class="cf">function</span>(x) {</a>
+<a class="sourceLine" id="cb46-7" data-line-number="7">vec_proxy.vctrs_rational &lt;-<span class="st"> </span><span class="cf">function</span>(x) {</a>
 <a class="sourceLine" id="cb46-8" data-line-number="8">  n &lt;-<span class="st"> </span><span class="kw"><a href="../reference/fields.html">field</a></span>(x, <span class="st">"n"</span>)</a>
 <a class="sourceLine" id="cb46-9" data-line-number="9">  d &lt;-<span class="st"> </span><span class="kw"><a href="../reference/fields.html">field</a></span>(x, <span class="st">"d"</span>)</a>
 <a class="sourceLine" id="cb46-10" data-line-number="10">  gcd &lt;-<span class="st"> </span><span class="kw">gcd</span>(n, d)</a>
 <a class="sourceLine" id="cb46-11" data-line-number="11">  </a>
 <a class="sourceLine" id="cb46-12" data-line-number="12">  <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/data.frame">data.frame</a></span>(<span class="dt">n =</span> n <span class="op">/</span><span class="st"> </span>gcd, <span class="dt">d =</span> d <span class="op">/</span><span class="st"> </span>gcd)</a>
 <a class="sourceLine" id="cb46-13" data-line-number="13">}</a>
-<a class="sourceLine" id="cb46-14" data-line-number="14"><span class="kw"><a href="../reference/vec_proxy_equal.html">vec_proxy_equal</a></span>(x)</a>
+<a class="sourceLine" id="cb46-14" data-line-number="14"><span class="kw"><a href="../reference/vec_data.html">vec_proxy</a></span>(x)</a>
 <a class="sourceLine" id="cb46-15" data-line-number="15"><span class="co">#&gt;   n d</span></a>
 <a class="sourceLine" id="cb46-16" data-line-number="16"><span class="co">#&gt; 1 1 1</span></a>
 <a class="sourceLine" id="cb46-17" data-line-number="17"><span class="co">#&gt; 2 2 1</span></a>
@@ -621,14 +621,14 @@
 <a class="sourceLine" id="cb46-20" data-line-number="20"></a>
 <a class="sourceLine" id="cb46-21" data-line-number="21">x <span class="op">==</span><span class="st"> </span><span class="kw">rational</span>(<span class="dv">1</span>, <span class="dv">1</span>)</a>
 <a class="sourceLine" id="cb46-22" data-line-number="22"><span class="co">#&gt; [1]  TRUE FALSE FALSE  TRUE</span></a></code></pre></div>
-<p><code><a href="../reference/vec_proxy_equal.html">vec_proxy_equal()</a></code> is also used by <code><a href="https://www.rdocumentation.org/packages/base/topics/unique">unique()</a></code>:</p>
+<p><code><a href="../reference/vec_data.html">vec_proxy()</a></code> is also used by <code><a href="https://www.rdocumentation.org/packages/base/topics/unique">unique()</a></code>:</p>
 <div class="sourceCode" id="cb47"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb47-1" data-line-number="1"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/unique">unique</a></span>(x)</a>
 <a class="sourceLine" id="cb47-2" data-line-number="2"><span class="co">#&gt; &lt;rational[3]&gt;</span></a>
 <a class="sourceLine" id="cb47-3" data-line-number="3"><span class="co">#&gt; [1] 1/1 2/1 1/2</span></a></code></pre></div>
 <p>We need fix <code><a href="https://www.rdocumentation.org/packages/base/topics/sort">sort()</a></code> similarly, since it currently sorts by <code>n</code>, then by <code>d</code>:</p>
 <div class="sourceCode" id="cb48"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb48-1" data-line-number="1"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/sort">sort</a></span>(x)</a>
 <a class="sourceLine" id="cb48-2" data-line-number="2"><span class="co">#&gt; &lt;rational[4]&gt;</span></a>
-<a class="sourceLine" id="cb48-3" data-line-number="3"><span class="co">#&gt; [1] 1/1 1/2 2/1 2/2</span></a></code></pre></div>
+<a class="sourceLine" id="cb48-3" data-line-number="3"><span class="co">#&gt; [1] 1/1 1/2 2/1 1/1</span></a></code></pre></div>
 <p>The easiest fix is to convert the fraction to a decimal and then sort that:</p>
 <div class="sourceCode" id="cb49"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb49-1" data-line-number="1">vec_proxy_compare.vctrs_rational &lt;-<span class="st"> </span><span class="cf">function</span>(x) {</a>
 <a class="sourceLine" id="cb49-2" data-line-number="2">  <span class="kw"><a href="../reference/fields.html">field</a></span>(x, <span class="st">"n"</span>) <span class="op">/</span><span class="st"> </span><span class="kw"><a href="../reference/fields.html">field</a></span>(x, <span class="st">"d"</span>)</a>
@@ -636,8 +636,8 @@
 <a class="sourceLine" id="cb49-4" data-line-number="4"></a>
 <a class="sourceLine" id="cb49-5" data-line-number="5"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/sort">sort</a></span>(x)</a>
 <a class="sourceLine" id="cb49-6" data-line-number="6"><span class="co">#&gt; &lt;rational[4]&gt;</span></a>
-<a class="sourceLine" id="cb49-7" data-line-number="7"><span class="co">#&gt; [1] 1/2 1/1 2/2 2/1</span></a></code></pre></div>
-<p>(We could have used the same approach in <code><a href="../reference/vec_proxy_equal.html">vec_proxy_equal()</a></code>, but when working with floating point numbers it’s not necessarily true that <code>x == y</code> implies that <code>d * x == d * y</code>.)</p>
+<a class="sourceLine" id="cb49-7" data-line-number="7"><span class="co">#&gt; [1] 1/2 1/1 1/1 2/1</span></a></code></pre></div>
+<p>(We could have used the same approach in <code><a href="../reference/vec_data.html">vec_proxy()</a></code>, but when working with floating point numbers it’s not necessarily true that <code>x == y</code> implies that <code>d * x == d * y</code>.)</p>
 </div>
 <div id="polynomial-class" class="section level3">
 <h3 class="hasAnchor">

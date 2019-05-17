@@ -129,6 +129,7 @@
 <a href="#vctrs-0-1-0-9000" class="anchor"></a>vctrs 0.1.0.9000<small> Unreleased </small>
 </h1>
 <ul>
+<li><p><code>vec_proxy_equal()</code> has been removed in favour of <code><a href="../reference/vec_data.html">vec_proxy()</a></code>. The latter is the main customisation point in vctrs, and is now used for equality comparison as well. You can still implement <code><a href="../reference/vec_proxy_compare.html">vec_proxy_compare()</a></code> for ordered comparisons.</p></li>
 <li><p><code>vec_slice&lt;-</code> is now type stable (<a href='https://github.com/r-lib/vctrs/issues/140'>#140</a>). It always returns the same type as the LHS. If needed, the RHS is cast to the correct type, but only if both inputs are coercible. See examples in <code><a href="../reference/vec_slice.html">?vec_slice</a></code>.</p></li>
 <li><p>Lossy casts now throw errors of type <code>vctrs_error_cast_lossy</code>. You can suppress these errors selectively with <code><a href="../reference/vctrs-conditions.html">allow_lossy_cast()</a></code> to get the partial cast results. To implement your own lossy cast operation, call the new exported function <code><a href="../reference/vctrs-conditions.html">maybe_lossy_cast()</a></code>.</p></li>
 <li>
