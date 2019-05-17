@@ -4,7 +4,7 @@
 // Storing pointed values on the stack helps performance for the
 // `!na_equal` cases
 
-int lgl_equal_scalar(int* x, int* y, bool na_equal) {
+static int lgl_equal_scalar(int* x, int* y, bool na_equal) {
   int xi = *x;
   int yj = *y;
   if (na_equal) {
@@ -13,7 +13,7 @@ int lgl_equal_scalar(int* x, int* y, bool na_equal) {
     return (xi == NA_LOGICAL || yj == NA_LOGICAL) ? NA_LOGICAL : xi == yj;
   }
 }
-int int_equal_scalar(int* x, int* y, bool na_equal) {
+static int int_equal_scalar(int* x, int* y, bool na_equal) {
   int xi = *x;
   int yj = *y;
   if (na_equal) {
@@ -22,7 +22,7 @@ int int_equal_scalar(int* x, int* y, bool na_equal) {
     return (xi == NA_INTEGER || yj == NA_INTEGER) ? NA_LOGICAL : xi == yj;
   }
 }
-int dbl_equal_scalar(double* x, double* y, bool na_equal) {
+static int dbl_equal_scalar(double* x, double* y, bool na_equal) {
   double xi = *x;
   double yj = *y;
   if (na_equal) {
@@ -35,7 +35,7 @@ int dbl_equal_scalar(double* x, double* y, bool na_equal) {
   }
   return xi == yj;
 }
-int chr_equal_scalar(SEXP* x, SEXP* y, bool na_equal) {
+static int chr_equal_scalar(SEXP* x, SEXP* y, bool na_equal) {
   SEXP xi = *x;
   SEXP yj = *y;
   if (na_equal) {
@@ -46,11 +46,11 @@ int chr_equal_scalar(SEXP* x, SEXP* y, bool na_equal) {
   }
 }
 
-int list_equal_scalar(SEXP x, R_len_t i, SEXP y, R_len_t j, bool na_equal) {
+static int list_equal_scalar(SEXP x, R_len_t i, SEXP y, R_len_t j, bool na_equal) {
   return equal_object(VECTOR_ELT(x, i), VECTOR_ELT(y, j), na_equal);
 }
 
-int df_equal_scalar(SEXP x, R_len_t i, SEXP y, R_len_t j, bool na_equal) {
+static int df_equal_scalar(SEXP x, R_len_t i, SEXP y, R_len_t j, bool na_equal) {
   if (!is_data_frame(y)) {
     return false;
   }
@@ -79,6 +79,7 @@ int df_equal_scalar(SEXP x, R_len_t i, SEXP y, R_len_t j, bool na_equal) {
   return true;
 }
 
+// [[ include("vctrs.h") ]]
 int equal_scalar(SEXP x, R_len_t i, SEXP y, R_len_t j, bool na_equal) {
   switch (TYPEOF(x)) {
   case LGLSXP: return lgl_equal_scalar(LOGICAL(x) + i, LOGICAL(y) + j, na_equal);
@@ -139,6 +140,7 @@ static inline int vec_equal_attrib(SEXP x, SEXP y, bool na_equal) {
   return true;
 }
 
+// [[ include("vctrs.h") ]]
 int equal_object(SEXP x, SEXP y, bool na_equal) {
   SEXPTYPE type = TYPEOF(x);
 
@@ -242,7 +244,7 @@ int equal_object(SEXP x, SEXP y, bool na_equal) {
   return true;
 }
 
-bool equal_na(SEXP x, int i) {
+static bool equal_na(SEXP x, int i) {
   switch(TYPEOF(x)) {
   case LGLSXP:
     return LOGICAL(x)[i] == NA_LOGICAL;
@@ -271,6 +273,7 @@ bool equal_na(SEXP x, int i) {
   }
 }
 
+// [[ include("vctrs.h") ]]
 bool equal_names(SEXP x, SEXP y) {
   SEXP x_names = Rf_getAttrib(x, R_NamesSymbol);
   SEXP y_names = Rf_getAttrib(y, R_NamesSymbol);
@@ -278,8 +281,8 @@ bool equal_names(SEXP x, SEXP y) {
   return equal_object(x_names, y_names, true);
 }
 
-// R interface -----------------------------------------------------------------
 
+// [[ register() ]]
 SEXP vctrs_equal(SEXP x, SEXP y, SEXP na_equal_) {
   enum vctrs_type type = vec_typeof(x);
   if (type != vec_typeof(y) || vec_size(x) != vec_size(y)) {
@@ -346,6 +349,7 @@ SEXP vctrs_equal(SEXP x, SEXP y, SEXP na_equal_) {
   return out;
 }
 
+// [[ register() ]]
 SEXP vctrs_equal_na(SEXP x) {
   R_len_t n = vec_size(x);
   SEXP out = PROTECT(Rf_allocVector(LGLSXP, n));
@@ -359,6 +363,7 @@ SEXP vctrs_equal_na(SEXP x) {
   return out;
 }
 
+// [[ register() ]]
 SEXP vctrs_equal_object(SEXP x, SEXP y, SEXP na_equal) {
   return Rf_ScalarLogical(equal_object(x, y, Rf_asLogical(na_equal)));
 }
