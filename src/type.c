@@ -367,6 +367,11 @@ static enum vctrs_type vec_base_typeof(SEXP x, bool proxied) {
   }
 }
 
+// [[ include("vctrs.h") ]]
+enum vctrs_type vec_proxy_typeof(SEXP x) {
+  return vec_base_typeof(x, true);
+}
+
 
 // [[ include("vctrs.h") ]]
 bool vec_is_vector(SEXP x) {

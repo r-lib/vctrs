@@ -15,6 +15,7 @@
 #' @keywords internal
 #' @export
 vec_proxy_equal <- function(x) {
+  return(vec_proxy(x))
   UseMethod("vec_proxy_equal")
 }
 

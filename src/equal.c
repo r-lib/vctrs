@@ -19,7 +19,7 @@ int equal_scalar(SEXP x, R_len_t i, SEXP y, R_len_t j, bool na_equal) {
   default: break;
   }
 
-  switch (vec_typeof(x)) {
+  switch (vec_proxy_typeof(x)) {
   case vctrs_type_list: return list_equal_scalar(x, i, y, j, na_equal);
   case vctrs_type_dataframe: return df_equal_scalar(x, i, y, j, na_equal);
   default: break;
@@ -50,8 +50,8 @@ int equal_scalar(SEXP x, R_len_t i, SEXP y, R_len_t j, bool na_equal) {
 
 // [[ register() ]]
 SEXP vctrs_equal(SEXP x, SEXP y, SEXP na_equal_) {
-  enum vctrs_type type = vec_typeof(x);
-  if (type != vec_typeof(y) || vec_size(x) != vec_size(y)) {
+  enum vctrs_type type = vec_proxy_typeof(x);
+  if (type != vec_proxy_typeof(y) || vec_size(x) != vec_size(y)) {
     Rf_errorcall(R_NilValue, "`x` and `y` must have same types and lengths");
   }
 
@@ -144,10 +144,12 @@ static int df_equal_scalar(SEXP x, R_len_t i, SEXP y, R_len_t j, bool na_equal) 
   }
 
   for (int k = 0; k < p; ++k) {
-    SEXP col_x = VECTOR_ELT(x, k);
-    SEXP col_y = VECTOR_ELT(y, k);
+    SEXP col_x = PROTECT(vec_proxy(VECTOR_ELT(x, k)));
+    SEXP col_y = PROTECT(vec_proxy(VECTOR_ELT(y, k)));
 
     int eq = equal_scalar(col_x, i, col_y, j, na_equal);
+    UNPROTECT(2);
+
     if (eq <= 0) {
       return eq;
     }
