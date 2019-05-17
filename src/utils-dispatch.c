@@ -105,4 +105,5 @@ static const char* class_type_as_str(enum vctrs_class_type type) {
   case vctrs_class_unknown: return "unknown";
   case vctrs_class_none: return "none";
   }
+  never_reached("class_type_as_str");
 }
