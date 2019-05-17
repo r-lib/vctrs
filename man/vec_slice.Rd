@@ -3,11 +3,14 @@
 \name{vec_slice}
 \alias{vec_slice}
 \alias{vec_slice<-}
+\alias{vec_assign}
 \title{Get or set observations in a vector}
 \usage{
 vec_slice(x, i)
 
 vec_slice(x, i) <- value
+
+vec_assign(x, i, value)
 }
 \arguments{
 \item{x}{A vector}
@@ -59,11 +62,19 @@ as the LHS.
 x <- sample(10)
 x
 vec_slice(x, 1:3)
-vec_slice(x, 2L) <- 100
+
+# You can assign with the infix variant:
+vec_slice(x, 2) <- 100
 x
 
-vec_slice(mtcars, 1:3)
+# Or with the regular variant that doesn't modify the original input:
+y <- vec_assign(x, 3, 500)
+y
+x
 
+
+# Slicing objects of higher dimension:
+vec_slice(mtcars, 1:3)
 
 # Type stability --------------------------------------------------
 

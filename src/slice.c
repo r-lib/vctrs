@@ -411,7 +411,7 @@ SEXP vec_as_index(SEXP i, SEXP x) {
 }
 
 
-void vctrs_init_size(SEXP ns) {
+void vctrs_init_slice(SEXP ns) {
   syms_vec_slice_fallback = Rf_install("vec_slice_fallback");
   fns_vec_slice_fallback = Rf_findVar(syms_vec_slice_fallback, ns);
 }

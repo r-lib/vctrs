@@ -1,5 +1,8 @@
 # vctrs 0.1.0.9000
 
+* `vec_slice<-` now has a `vec_assign()` alias. Use `vec_assign()`
+  when you don't want to modify the original input.
+
 * `vec_proxy_equal()` has been removed in favour of `vec_proxy()`. The
   latter is the main customisation point in vctrs, and is now used for
   equality comparison as well. You can still implement

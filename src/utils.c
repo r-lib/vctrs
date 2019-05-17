@@ -488,10 +488,14 @@ SEXP syms_bracket = NULL;
 SEXP syms_x_arg = NULL;
 SEXP syms_y_arg = NULL;
 SEXP syms_out = NULL;
+SEXP syms_value = NULL;
 
 SEXP fns_bracket = NULL;
 SEXP fns_quote = NULL;
 SEXP fns_names = NULL;
+
+struct vctrs_arg_wrapper args_empty_;
+struct vctrs_arg* args_empty = NULL;
 
 void vctrs_init_utils(SEXP ns) {
   vctrs_ns_env = ns;
@@ -553,6 +557,7 @@ void vctrs_init_utils(SEXP ns) {
   syms_x_arg = Rf_install("x_arg");
   syms_y_arg = Rf_install("y_arg");
   syms_out = Rf_install("out");
+  syms_value = Rf_install("value");
 
   fns_bracket = Rf_findVar(syms_bracket, R_BaseEnv);
   fns_quote = Rf_findVar(Rf_install("quote"), R_BaseEnv);
@@ -563,6 +568,9 @@ void vctrs_init_utils(SEXP ns) {
 
   new_env__parent_node = CDDR(new_env_call);
   new_env__size_node = CDR(new_env__parent_node);
+
+  args_empty_ = new_wrapper_arg(NULL, "");
+  args_empty = (struct vctrs_arg*) &args_empty_;
 
   rlang_is_splice_box = (bool (*)(SEXP)) R_GetCCallable("rlang", "rlang_is_splice_box");
   rlang_unbox = (SEXP (*)(SEXP)) R_GetCCallable("rlang", "rlang_unbox");

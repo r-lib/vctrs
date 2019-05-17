@@ -47,7 +47,7 @@ bool is_record(SEXP x);
 // inheritance hierarchy is explored except for the default method.
 SEXP s3_find_method(const char* generic, SEXP x);
 
-struct vctrs_arg args_empty;
+struct vctrs_arg* args_empty;
 
 void never_reached(const char* fn) __attribute__((noreturn));
 
@@ -139,6 +139,7 @@ extern SEXP syms_bracket;
 extern SEXP syms_x_arg;
 extern SEXP syms_y_arg;
 extern SEXP syms_out;
+extern SEXP syms_value;
 
 #define syms_names R_NamesSymbol
 

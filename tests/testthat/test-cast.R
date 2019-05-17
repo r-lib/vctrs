@@ -28,6 +28,11 @@ test_that("identical structures can be cast to each other", {
   expect_identical(vec_coercible_cast(foobar("foo"), foobar("bar")), foobar("foo"))
 })
 
+test_that("inputs to vec_coercible_cast() are checked", {
+  expect_error(vec_coercible_cast("", "", x_arg = 1), "must be a string")
+  expect_error(vec_coercible_cast("", "", to_arg = chr()), "must be a string")
+})
+
 
 # vec_restore -------------------------------------------------------------
 
