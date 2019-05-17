@@ -29,6 +29,11 @@ print.vctrs_unspecified <- function(x, ...) {
   cat("<unspecified> [", length(x), "]\n", sep = "")
 }
 
+#' @export
+vec_ptype_abbr.vctrs_unspecified <- function(x) {
+  "???"
+}
+
 is_unspecified <- function(x) {
   .Call(vctrs_is_unspecified, x)
 }
