@@ -30,14 +30,15 @@ Suggests:
     crayon,
     generics,
     knitr,
-    pillar,
+    pillar (>= 1.4.0.9001),
     pkgdown,
     rmarkdown,
     testthat,
     tibble
 Remotes:
     r-lib/rlang,
-    r-lib/ellipsis
+    r-lib/ellipsis,
+    r-lib/pillar
 VignetteBuilder: 
     knitr
 Encoding: UTF-8
