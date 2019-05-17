@@ -652,7 +652,7 @@ vec_proxy(x)
 x == rational(1, 1)
 ```
 
-This makes sense as a default, but isn't correct here because `rational(1, 1)` represents the same number as `rational(2, 2)` so they should be equal. We can fix that by implementation `vec_proxy()` method that by divides `n` and `d` by their greatest common divisor:
+This makes sense as a default, but isn't correct here because `rational(1, 1)` represents the same number as `rational(2, 2)` so they should be equal. We can fix that by implementing a `vec_proxy()` method that by divides `n` and `d` by their greatest common divisor:
 
 ```{r}
 # Thanks to Matthew Lundberg: https://stackoverflow.com/a/21504113/16632 
