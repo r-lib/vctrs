@@ -7,10 +7,7 @@
 #'
 #' The default method assumes that all classes built on top of atomic
 #' vectors or records are orderable. If your class is not, you will need
-#' to provide a `vec_proxy_compare()` method that throws an error. Note
-#' that the default [vec_proxy_equal()] method calls `vec_proxy_compare()` so
-#' if your object is equal-able but not comparable, you'll need to provide
-#' methods for both generics.
+#' to provide a `vec_proxy_compare()` method that throws an error.
 #'
 #' @param x A vector x.
 #' @param relax If `TRUE`, and `x` is otherwise non-comparable, will return

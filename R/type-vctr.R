@@ -30,7 +30,7 @@
 #'   from `generics`.
 #'
 #' * `==`, `!=`, `unique()`, `anyDuplicated()`, and `is.na()` use
-#'   [vec_proxy_equal()].
+#'   [vec_proxy()].
 #'
 #' * `<`, `<=`, `>=`, `>`, `min()`, `max()`, `median()`, `quantile()`,
 #'   and `xtfrm()` methods use [vec_proxy_compare()].
