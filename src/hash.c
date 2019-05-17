@@ -94,6 +94,7 @@ int32_t hash_object(SEXP x) {
   case VECSXP: {
     R_len_t n = vec_size(x);
     for (R_len_t i = 0; i < n; ++i) {
+      // FIXME: Call SEXP dereferencers outside of the loop
       hash = hash_combine(hash, hash_scalar(x, i));
     }
     break;
