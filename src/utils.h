@@ -1,6 +1,8 @@
 #ifndef VCTRS_UTILS_H
 #define VCTRS_UTILS_H
 
+#include "arg-counter.h"
+
 
 #define SWAP(T, x, y) do {                      \
     T tmp = x;                                  \

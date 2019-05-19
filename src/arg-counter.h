@@ -3,6 +3,17 @@
 
 
 struct counters {
+ /* public: */
+
+  // Argument tags for the current value of the reduction (the result
+  // so far) and the next value. These handles typically point to the
+  // local counter args, but might also point to external arg objects
+  // like the initial current arg, or a splice box counter arg.
+  struct vctrs_arg* curr_arg;
+  struct vctrs_arg* next_arg;
+
+ /* private: */
+
   // Global counters
   R_len_t curr;
   R_len_t next;
@@ -15,36 +26,31 @@ struct counters {
   // finished. We protect those from up high.
   PROTECT_INDEX names_pi;
 
-  // Local counters for splice boxes. We need two of those to handle
-  // the `vec_c(!!!list(foo = 1), !!!list(bar = 2))` case.
+  // Local counters for splice boxes. Since the tags are generated
+  // lazily, we need two counter states to handle the
+  // `vec_c(!!!list(foo = 1), !!!list(bar = 2))` case.
   struct counters* next_box_counters;
   struct counters* prev_box_counters;
 
   // Actual counter args are stored here
   struct vctrs_arg_counter curr_counter;
   struct vctrs_arg_counter next_counter;
-
-  // Polymorphic `vctrs_arg` handles. They typically point to the
-  // local counter args, but might also point to external arg objects
-  // like a `.ptype` arg, or a splice box counter arg.
-  struct vctrs_arg* curr_arg;
-  struct vctrs_arg* next_arg;
 };
 
-
-void init_counters(struct counters* counters,
-                   SEXP names,
-                   struct vctrs_arg* curr_arg,
-                   struct counters* prev_box_counters,
-                   struct counters* next_box_counters);
-
-void init_next_box_counters(struct counters* counters, SEXP names);
-
-// Stack-based protection, should be called after `init_counters()`
-int PROTECT_COUNTERS(struct counters* counters);
-
-void counters_inc(struct counters* counters);
+/**
+ * Swap the argument tags of the reduction
+ *
+ * There are two counters used for generating argument tags when an
+ * error occur during a reduction. The first represent the result so
+ * far, and the second the next input. Call `counters_swap()` to set
+ * the counter of the next input as current counter, and start
+ * iterating with a new counter for the next input.
+ */
 void counters_swap(struct counters* counters);
+
+SEXP reduce(SEXP current, struct vctrs_arg* current_arg,
+            SEXP rest,
+            SEXP (*impl)(SEXP current, SEXP next, struct counters* counters));
 
 
 #endif
