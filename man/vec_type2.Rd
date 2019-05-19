@@ -28,7 +28,9 @@ vec_type2(x, y, ..., x_arg = "", y_arg = "")
 \method{vec_type2}{list}(x, y, ...)
 }
 \arguments{
-\item{x, y}{Either vector types; i.e.}
+\item{x, y}{Vector types.}
+
+\item{...}{These dots are for future extensions and must be empty.}
 
 \item{x_arg, y_arg}{Argument names for \code{x} and \code{y}. These are used
 in error messages to inform the user about the locations of
@@ -62,8 +64,8 @@ return the same value as \code{vec_type2.y.x()}; this is currently not enforced,
 but should be tested.
 
 Whenever you implemenet a \code{vec_type2.new_class()} generic/method,
-make sure to always provide \code{vec_type2.new_class.default()} (
-which should call \code{\link[=stop_incompatible_cast]{stop_incompatible_cast()}}) and
+make sure to always provide \code{vec_type2.new_class.default()}
+(which should call \code{\link[=stop_incompatible_type]{stop_incompatible_type()}}) and
 \code{vec_type2.new_class.vctrs_unspecified()} (which should return \code{x}).
 
 See \code{vignette("s3-vector")} for full details.
