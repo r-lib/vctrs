@@ -334,64 +334,10 @@ const char* vec_type_as_str(enum vctrs_type type) {
 }
 
 
-SEXP vctrs_shared_empty_lgl = NULL;
-SEXP vctrs_shared_empty_int = NULL;
-SEXP vctrs_shared_empty_dbl = NULL;
-SEXP vctrs_shared_empty_cpl = NULL;
-SEXP vctrs_shared_empty_chr = NULL;
-SEXP vctrs_shared_empty_raw = NULL;
-SEXP vctrs_shared_empty_list = NULL;
-
-SEXP vctrs_shared_true = NULL;
-SEXP vctrs_shared_false = NULL;
-
-Rcomplex vctrs_shared_na_cpl;
-
 void vctrs_init_types(SEXP ns) {
   syms_vec_is_vector_dispatch = Rf_install("vec_is_vector");
   fns_vec_is_vector_dispatch = Rf_findVar(syms_vec_is_vector_dispatch, ns);
 
   syms_vec_type_finalise_dispatch = Rf_install("vec_type_finalise_dispatch");
   fns_vec_type_finalise_dispatch = Rf_findVar(syms_vec_type_finalise_dispatch, ns);
-
-  vctrs_shared_empty_lgl = Rf_allocVector(LGLSXP, 0);
-  R_PreserveObject(vctrs_shared_empty_lgl);
-  MARK_NOT_MUTABLE(vctrs_shared_empty_lgl);
-
-  vctrs_shared_empty_int = Rf_allocVector(INTSXP, 0);
-  R_PreserveObject(vctrs_shared_empty_int);
-  MARK_NOT_MUTABLE(vctrs_shared_empty_int);
-
-  vctrs_shared_empty_dbl = Rf_allocVector(REALSXP, 0);
-  R_PreserveObject(vctrs_shared_empty_dbl);
-  MARK_NOT_MUTABLE(vctrs_shared_empty_dbl);
-
-  vctrs_shared_empty_cpl = Rf_allocVector(CPLXSXP, 0);
-  R_PreserveObject(vctrs_shared_empty_cpl);
-  MARK_NOT_MUTABLE(vctrs_shared_empty_cpl);
-
-  vctrs_shared_empty_chr = Rf_allocVector(STRSXP, 0);
-  R_PreserveObject(vctrs_shared_empty_chr);
-  MARK_NOT_MUTABLE(vctrs_shared_empty_chr);
-
-  vctrs_shared_empty_raw = Rf_allocVector(RAWSXP, 0);
-  R_PreserveObject(vctrs_shared_empty_raw);
-  MARK_NOT_MUTABLE(vctrs_shared_empty_raw);
-
-  vctrs_shared_empty_list = Rf_allocVector(VECSXP, 0);
-  R_PreserveObject(vctrs_shared_empty_list);
-  MARK_NOT_MUTABLE(vctrs_shared_empty_list);
-
-  vctrs_shared_true = Rf_allocVector(LGLSXP, 1);
-  R_PreserveObject(vctrs_shared_true);
-  MARK_NOT_MUTABLE(vctrs_shared_true);
-  LOGICAL(vctrs_shared_true)[0] = 1;
-
-  vctrs_shared_false = Rf_allocVector(LGLSXP, 1);
-  R_PreserveObject(vctrs_shared_false);
-  MARK_NOT_MUTABLE(vctrs_shared_false);
-  LOGICAL(vctrs_shared_false)[0] = 0;
-
-  vctrs_shared_na_cpl.i = NA_REAL;
-  vctrs_shared_na_cpl.r = NA_REAL;
 }
