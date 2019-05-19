@@ -45,7 +45,7 @@ uint32_t dict_hash_scalar(dictionary* d, SEXP y, R_len_t i) {
 
   // Quadratic probing: will try every slot if d->size is power of 2
   // http://research.cs.vt.edu/AVresearch/hashing/quadratic.php
-  for (int k = 0; k < d->size; ++k) {
+  for (uint32_t k = 0; k < d->size; ++k) {
     uint32_t probe = (hash + k * (k + 1) / 2) % d->size;
     // Rprintf("Probe: %i\n", probe);
 
