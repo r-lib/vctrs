@@ -136,7 +136,8 @@ void vctrs_init_data(SEXP ns);
 void vctrs_init_slice(SEXP ns);
 void vctrs_init_slice_assign(SEXP ns);
 void vctrs_init_type2(SEXP ns);
-void vctrs_init_types(SEXP ns);
+void vctrs_init_type(SEXP ns);
+void vctrs_init_type_info(SEXP ns);
 void vctrs_init_unspecified(SEXP ns);
 void vctrs_init_utils(SEXP ns);
 
@@ -146,7 +147,8 @@ SEXP vctrs_init(SEXP ns) {
   vctrs_init_slice(ns);
   vctrs_init_slice_assign(ns);
   vctrs_init_type2(ns);
-  vctrs_init_types(ns);
+  vctrs_init_type(ns);
+  vctrs_init_type_info(ns);
   vctrs_init_unspecified(ns);
   vctrs_init_utils(ns);
   return R_NilValue;
