@@ -488,10 +488,10 @@ SEXP vctrs_coercible_cast(SEXP x, SEXP to, SEXP x_arg_, SEXP to_arg_) {
     Rf_errorcall(R_NilValue, "`to_arg` must be a string");
   }
 
-  struct vctrs_arg_wrapper x_arg = new_wrapper_arg(NULL, r_chr_get_c_string(x_arg_, 0));
-  struct vctrs_arg_wrapper to_arg = new_wrapper_arg(NULL, r_chr_get_c_string(to_arg_, 0));
+  struct vctrs_arg x_arg = new_wrapper_arg(NULL, r_chr_get_c_string(x_arg_, 0));
+  struct vctrs_arg to_arg = new_wrapper_arg(NULL, r_chr_get_c_string(to_arg_, 0));
 
-  return vec_coercible_cast(x, to, (struct vctrs_arg*) &x_arg, (struct vctrs_arg*) &to_arg);
+  return vec_coercible_cast(x, to, &x_arg, &to_arg);
 }
 
 

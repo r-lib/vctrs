@@ -505,7 +505,7 @@ SEXP fns_bracket = NULL;
 SEXP fns_quote = NULL;
 SEXP fns_names = NULL;
 
-struct vctrs_arg_wrapper args_empty_;
+struct vctrs_arg args_empty_;
 struct vctrs_arg* args_empty = NULL;
 
 void vctrs_init_utils(SEXP ns) {
@@ -623,7 +623,7 @@ void vctrs_init_utils(SEXP ns) {
   new_env__size_node = CDR(new_env__parent_node);
 
   args_empty_ = new_wrapper_arg(NULL, "");
-  args_empty = (struct vctrs_arg*) &args_empty_;
+  args_empty = &args_empty_;
 
   rlang_is_splice_box = (bool (*)(SEXP)) R_GetCCallable("rlang", "rlang_is_splice_box");
   rlang_unbox = (SEXP (*)(SEXP)) R_GetCCallable("rlang", "rlang_unbox");

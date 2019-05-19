@@ -90,11 +90,9 @@ SEXP vctrs_type_common(SEXP call, SEXP op, SEXP args, SEXP env) {
   SEXP types = PROTECT(rlang_env_dots_values(env));
 
   // Start reduction with the `.ptype` argument
-  struct vctrs_arg_wrapper ptype_arg = new_wrapper_arg(NULL, ".ptype");
+  struct vctrs_arg ptype_arg = new_wrapper_arg(NULL, ".ptype");
 
-  SEXP type = PROTECT(reduce(ptype, (struct vctrs_arg*) &ptype_arg,
-                             types,
-                             &vctrs_type2_common));
+  SEXP type = PROTECT(reduce(ptype, &ptype_arg, types, &vctrs_type2_common));
   type = vec_type_finalise(type);
 
   UNPROTECT(3);

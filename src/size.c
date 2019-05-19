@@ -51,8 +51,8 @@ R_len_t vec_size(SEXP x) {
     break;
 
   default: {
-    struct vctrs_arg_wrapper arg = new_wrapper_arg(NULL, "x");
-    stop_scalar_type(x, (struct vctrs_arg*) &arg);
+    struct vctrs_arg arg = new_wrapper_arg(NULL, "x");
+    stop_scalar_type(x, &arg);
   }}
 
   UNPROTECT(nprot);

@@ -16,8 +16,11 @@ void init_counters(struct counters* counters,
   counters->names_curr = 0;
   counters->names_next = 0;
 
-  counters->curr_counter = new_counter_arg(NULL, &counters->curr, &counters->names, &counters->names_curr);
-  counters->next_counter = new_counter_arg(NULL, &counters->next, &counters->names, &counters->names_next);
+  counters->curr_counter_data = new_counter_arg_data(&counters->curr, &counters->names, &counters->names_curr);
+  counters->next_counter_data = new_counter_arg_data(&counters->next, &counters->names, &counters->names_next);
+
+  counters->curr_counter = new_counter_arg(NULL, (void*) &counters->curr_counter_data);
+  counters->next_counter = new_counter_arg(NULL, (void*) &counters->next_counter_data);
 
   counters->curr_arg = curr_arg;
   counters->next_arg = (struct vctrs_arg*) &counters->next_counter;
@@ -60,9 +63,9 @@ void counters_inc(struct counters* counters) {
  */
 void counters_shift(struct counters* counters) {
   // Swap the counters data
-  SWAP(struct vctrs_arg_counter, counters->curr_counter, counters->next_counter);
-  SWAP(R_len_t*, counters->curr_counter.i, counters->next_counter.i);
-  SWAP(R_len_t*, counters->curr_counter.names_i, counters->next_counter.names_i);
+  SWAP(void*, counters->curr_counter.data, counters->next_counter.data);
+  SWAP(R_len_t*, counters->curr_counter_data.i, counters->next_counter_data.i);
+  SWAP(R_len_t*, counters->curr_counter_data.names_i, counters->next_counter_data.names_i);
 
   // Update the handles to `vctrs_arg`
   counters->curr_arg = (struct vctrs_arg*) &counters->curr_counter;
