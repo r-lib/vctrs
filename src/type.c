@@ -1,5 +1,6 @@
 #include "vctrs.h"
 #include "utils.h"
+#include "arg-counter.h"
 
 // Initialised at load time
 static SEXP syms_vec_is_vector_dispatch = NULL;
@@ -52,100 +53,6 @@ SEXP vec_type(SEXP x) {
 bool vec_is_partial(SEXP x) {
   return x == R_NilValue || Rf_inherits(x, "vctrs_partial");
 }
-
-
-struct counters {
-  // Global counters
-  R_len_t curr;
-  R_len_t next;
-
-  SEXP names;
-  R_len_t names_curr;
-  R_len_t names_next;
-
-  // `names` might be from a splice box whose reduction has already
-  // finished. We protect those from up high.
-  PROTECT_INDEX names_pi;
-
-  // Local counters for splice boxes. We need two of those to handle
-  // the `vec_c(!!!list(foo = 1), !!!list(bar = 2))` case.
-  struct counters* next_box_counters;
-  struct counters* prev_box_counters;
-
-  // Actual counter args are stored here
-  struct vctrs_arg_counter curr_counter;
-  struct vctrs_arg_counter next_counter;
-
-  // Polymorphic `vctrs_arg` handles. They typically point to the
-  // local counter args, but might also point to external arg objects
-  // like a `.ptype` arg, or a splice box counter arg.
-  struct vctrs_arg* curr_arg;
-  struct vctrs_arg* next_arg;
-};
-
-void init_counters(struct counters* counters,
-                   SEXP names,
-                   struct vctrs_arg* curr_arg,
-                   struct counters* prev_box_counters,
-                   struct counters* next_box_counters) {
-  counters->curr = 0;
-  counters->next = 0;
-
-  counters->names = names;
-  counters->names_curr = 0;
-  counters->names_next = 0;
-
-  counters->curr_counter = new_counter_arg(NULL, &counters->curr, &counters->names, &counters->names_curr);
-  counters->next_counter = new_counter_arg(NULL, &counters->next, &counters->names, &counters->names_next);
-
-  counters->curr_arg = curr_arg;
-  counters->next_arg = (struct vctrs_arg*) &counters->next_counter;
-
-  counters->prev_box_counters = prev_box_counters;
-  counters->next_box_counters = next_box_counters;
-}
-
-void init_next_box_counters(struct counters* counters, SEXP names) {
-  SWAP(struct counters*, counters->prev_box_counters, counters->next_box_counters);
-  struct counters* next = counters->next_box_counters;
-
-  REPROTECT(names, next->names_pi);
-
-  init_counters(next, names, counters->curr_arg, NULL, NULL);
-  next->next = counters->next;
-}
-
-// Stack-based protection, should be called after `init_counters()`
-int PROTECT_COUNTERS(struct counters* counters) {
-  PROTECT_WITH_INDEX(counters->names, &counters->names_pi);
-  PROTECT_WITH_INDEX(R_NilValue, &counters->prev_box_counters->names_pi);
-  PROTECT_WITH_INDEX(R_NilValue, &counters->next_box_counters->names_pi);
-  return 3;
-}
-
-
-void counters_inc(struct counters* counters) {
-  ++(counters->next);
-  ++(counters->names_next);
-}
-
-// Swap counters so that the `next` counter (the one being increased
-// on iteration) becomes the current counter (the one queried when
-// there is an error)
-void counters_swap(struct counters* counters) {
-  // Swap the counters data
-  SWAP(struct vctrs_arg_counter, counters->curr_counter, counters->next_counter);
-  SWAP(R_len_t*, counters->curr_counter.i, counters->next_counter.i);
-  SWAP(R_len_t*, counters->curr_counter.names_i, counters->next_counter.names_i);
-
-  // Update the handles to `vctrs_arg`
-  counters->curr_arg = (struct vctrs_arg*) &counters->curr_counter;
-  counters->next_arg = (struct vctrs_arg*) &counters->next_counter;
-
-  // Update the current index
-  counters->curr = counters->next;
-}
-
 
 static SEXP vctrs_type_common_impl(SEXP current,
                                    SEXP types,
