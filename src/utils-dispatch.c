@@ -107,3 +107,9 @@ static const char* class_type_as_str(enum vctrs_class_type type) {
   }
   never_reached("class_type_as_str");
 }
+
+
+// [[ include("vctrs.h") ]]
+bool vec_is_partial(SEXP x) {
+  return x == R_NilValue || Rf_inherits(x, "vctrs_partial");
+}
