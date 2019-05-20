@@ -33,8 +33,10 @@ struct counters {
   struct counters* prev_box_counters;
 
   // Actual counter args are stored here
-  struct vctrs_arg_counter curr_counter;
-  struct vctrs_arg_counter next_counter;
+  struct arg_data_counter curr_counter_data;
+  struct arg_data_counter next_counter_data;
+  struct vctrs_arg curr_counter;
+  struct vctrs_arg next_counter;
 };
 
 /**

@@ -26,14 +26,12 @@ SEXP vec_assign(SEXP x, SEXP index, SEXP value) {
     return R_NilValue;
   }
 
-  struct vctrs_arg_wrapper x_arg = new_wrapper_arg(NULL, "x");
-  struct vctrs_arg_wrapper value_arg = new_wrapper_arg(NULL, "value");
-  vec_assert(x, (struct vctrs_arg*) &x_arg);
+  struct vctrs_arg x_arg = new_wrapper_arg(NULL, "x");
+  struct vctrs_arg value_arg = new_wrapper_arg(NULL, "value");
+  vec_assert(x, &x_arg);
 
   // Take the proxy of the RHS before coercing and recycling
-  value = PROTECT(vec_coercible_cast(value, x,
-                                     (struct vctrs_arg*) &value_arg,
-                                     (struct vctrs_arg*) &x_arg));
+  value = PROTECT(vec_coercible_cast(value, x, &value_arg, &x_arg));
   SEXP value_proxy = PROTECT(vec_proxy(value));
 
   index = PROTECT(vec_as_index(index, x));
