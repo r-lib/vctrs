@@ -1,10 +1,14 @@
 # nocov start
+r_version <- NULL
+
 .onLoad <- function(libname, pkgname) {
   backports::import(pkgname, "strrep")
 
   s3_register("generics::as.factor", "vctrs_vctr")
   s3_register("generics::as.ordered", "vctrs_vctr")
   s3_register("generics::as.difftime", "vctrs_vctr")
+
+  r_version <<- as.character(getRversion())
 
   .Call(vctrs_init, ns_env())
 }
