@@ -25,6 +25,14 @@ test_that("vctr class is proxied", {
   expect_true(vec_is(new_vctr(as.list(1:3))))
 })
 
+test_that("attributes must be named", {
+  expect_error(vec_set_attributes(1, list(1)), "must be named")
+  expect_error(vec_set_attributes(1, list(y = 1, 2)), "2 does not")
+})
+
+test_that("can strip all attributes without adding new ones", {
+  expect_equal(vec_set_attributes(structure(1, a = 1), NULL), 1)
+})
 
 # Cast/restore ------------------------------------------------------------
 
