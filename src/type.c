@@ -71,18 +71,7 @@ SEXP vec_type_finalise(SEXP x) {
 }
 
 
-static SEXP vctrs_type_common_impl(SEXP current,
-                                   SEXP types,
-                                   struct counters* counters,
-                                   bool spliced);
-
-static SEXP vctrs_type2_common(SEXP current,
-                               SEXP next,
-                               struct counters* counters);
-
-static SEXP vctrs_type2_common_box(SEXP current,
-                                   SEXP next,
-                                   struct counters* counters);
+static SEXP vctrs_type2_common(SEXP current, SEXP next, struct counters* counters);
 
 // [[ register(external = TRUE) ]]
 SEXP vctrs_type_common(SEXP call, SEXP op, SEXP args, SEXP env) {
@@ -100,58 +89,19 @@ SEXP vctrs_type_common(SEXP call, SEXP op, SEXP args, SEXP env) {
 
   SEXP types = PROTECT(rlang_env_dots_values(env));
 
-  // Store the box counters here as they might outlive their frame
-  struct counters next_box_counters;
-  struct counters prev_box_counters;
-
-  // Start with the `.ptype` argument
+  // Start reduction with the `.ptype` argument
   struct vctrs_arg_wrapper ptype_arg = new_wrapper_arg(NULL, ".ptype");
 
-  struct counters counters;
-  init_counters(&counters,
-                r_names(types),
-                (struct vctrs_arg*) &ptype_arg,
-                &prev_box_counters,
-                &next_box_counters);
-  int n_protect = PROTECT_COUNTERS(&counters);
-
-  SEXP type = PROTECT(vctrs_type_common_impl(ptype, types, &counters, false));
+  SEXP type = PROTECT(reduce(ptype, (struct vctrs_arg*) &ptype_arg,
+                             types,
+                             &vctrs_type2_common));
   type = vec_type_finalise(type);
 
-  UNPROTECT(3 + n_protect);
+  UNPROTECT(3);
   return type;
 }
 
-static SEXP vctrs_type_common_impl(SEXP current,
-                                   SEXP types,
-                                   struct counters* counters,
-                                   bool spliced) {
-  R_len_t n = Rf_length(types);
-
-  for (R_len_t i = 0; i < n; ++i, counters_inc(counters)) {
-    PROTECT(current);
-
-    SEXP next = VECTOR_ELT(types, i);
-
-    // Don't call `rlang_is_splice_box()` if we're already looking at a
-    // spliced list because it's expensive
-    if (spliced || !rlang_is_splice_box(next)) {
-      current = vctrs_type2_common(current, next, counters);
-    } else {
-      next = PROTECT(rlang_unbox(next));
-      current = vctrs_type2_common_box(current, next, counters);
-      UNPROTECT(1);
-    }
-
-    UNPROTECT(1);
-  }
-
-  return current;
-}
-
-static SEXP vctrs_type2_common(SEXP current,
-                               SEXP next,
-                               struct counters* counters) {
+static SEXP vctrs_type2_common(SEXP current, SEXP next, struct counters* counters) {
   next = PROTECT(vec_type(next));
 
   int left;
@@ -160,25 +110,10 @@ static SEXP vctrs_type2_common(SEXP current,
   // Update current if RHS is the common type. Otherwise the previous
   // counter stays in effect.
   if (!left) {
-    counters_swap(counters);
+    counters_shift(counters);
   }
 
   UNPROTECT(1);
-  return current;
-}
-
-static SEXP vctrs_type2_common_box(SEXP current,
-                                   SEXP next,
-                                   struct counters* counters) {
-
-  init_next_box_counters(counters, r_names(next));
-  struct counters* box_counters = counters->next_box_counters;
-
-  current = vctrs_type_common_impl(current, next, box_counters, true);
-
-  counters->curr_arg = box_counters->curr_arg;
-  counters->next = box_counters->next;
-
   return current;
 }
 
