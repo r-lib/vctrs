@@ -67,12 +67,17 @@ vec_structure <- function(.data, ...) {
     structure(.data, ...)
   }
   else {
-    vec_set_attributes(.data, ...)
+    vec_set_attributes(.data, list(...))
   }
 }
 
-vec_set_attributes <- function(.x, ...) {
-  .Call(vctrs_set_attributes, .x, list(...))
+vec_set_attributes <- function(x, attrib) {
+  if (r_version >= '3.6.0') {
+    attributes(x) <- attrib
+    x
+  } else {
+    .Call(vctrs_set_attributes, x, attrib)
+  }
 }
 
 validate_names <- function(.data) {
