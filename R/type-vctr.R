@@ -65,8 +65,7 @@ vec_structure <- function(.data, ...) {
   if (r_version >= '3.6.0') {
     attributes(.data) <- NULL
     structure(.data, ...)
-  }
-  else {
+  } else {
     vec_set_attributes(.data, list(...))
   }
 }
