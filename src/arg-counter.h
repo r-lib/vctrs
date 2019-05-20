@@ -42,11 +42,11 @@ struct counters {
  *
  * There are two counters used for generating argument tags when an
  * error occur during a reduction. The first represent the result so
- * far, and the second the next input. Call `counters_swap()` to set
+ * far, and the second the next input. Call `counters_shift()` to set
  * the counter of the next input as current counter, and start
  * iterating with a new counter for the next input.
  */
-void counters_swap(struct counters* counters);
+void counters_shift(struct counters* counters);
 
 SEXP reduce(SEXP current, struct vctrs_arg* current_arg,
             SEXP rest,

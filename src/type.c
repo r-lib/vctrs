@@ -110,7 +110,7 @@ static SEXP vctrs_type2_common(SEXP current, SEXP next, struct counters* counter
   // Update current if RHS is the common type. Otherwise the previous
   // counter stays in effect.
   if (!left) {
-    counters_swap(counters);
+    counters_shift(counters);
   }
 
   UNPROTECT(1);

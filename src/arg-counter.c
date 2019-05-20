@@ -58,7 +58,7 @@ void counters_inc(struct counters* counters) {
  *
  * [[ include("arg-counter.h") ]]
  */
-void counters_swap(struct counters* counters) {
+void counters_shift(struct counters* counters) {
   // Swap the counters data
   SWAP(struct vctrs_arg_counter, counters->curr_counter, counters->next_counter);
   SWAP(R_len_t*, counters->curr_counter.i, counters->next_counter.i);
