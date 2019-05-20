@@ -1,13 +1,13 @@
 #include "vctrs.h"
 
 // boost::hash_combine from https://stackoverflow.com/questions/35985960
-int32_t hash_combine(int x, int y) {
+static int32_t hash_combine(int x, int y) {
   return x ^ (y + 0x9e3779b9 + (x << 6) + (x >> 2));
 }
 
 // 32-bit mixer from murmurhash
 // https://github.com/aappleby/smhasher/blob/master/src/MurmurHash3.cpp#L68
-int32_t hash_int32(int32_t x) {
+static int32_t hash_int32(int32_t x) {
   x ^= x >> 16;
   x *= 0x85ebca6b;
   x ^= x >> 13;
@@ -19,7 +19,7 @@ int32_t hash_int32(int32_t x) {
 
 // 64-bit mixer from murmurhash
 // https://github.com/aappleby/smhasher/blob/master/src/MurmurHash3.cpp#L81
-int32_t hash_int64(int64_t x) {
+static int32_t hash_int64(int64_t x) {
   x ^= x >> 33;
   x *= UINT64_C(0xff51afd7ed558ccd);
   x ^= x >> 33;
@@ -30,7 +30,7 @@ int32_t hash_int64(int64_t x) {
 
 // Seems like something designed specificaly for doubles should work better
 // but I haven't been able to find anything
-int32_t hash_double(double x) {
+static int32_t hash_double(double x) {
   union {
     double d;
     uint64_t i;
