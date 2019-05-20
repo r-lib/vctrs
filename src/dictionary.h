@@ -18,5 +18,5 @@ typedef struct dictionary dictionary;
 
 void dict_init(dictionary* d, SEXP x);
 void dict_free(dictionary* d);
-uint32_t dict_find(dictionary* d, SEXP y, R_len_t i);
+uint32_t dict_hash_scalar(dictionary* d, SEXP y, R_len_t i);
 void dict_put(dictionary* d, uint32_t k, R_len_t i);
