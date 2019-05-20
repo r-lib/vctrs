@@ -62,7 +62,7 @@ new_vctr <- function(.data, ..., class = character()) {
 }
 
 vec_structure <- function(.data, ...) {
-  if (r_version >= '3.6.0') {
+  if (r_version_at_least_3.6.0) {
     attributes(.data) <- NULL
     structure(.data, ...)
   } else {
@@ -71,7 +71,7 @@ vec_structure <- function(.data, ...) {
 }
 
 vec_set_attributes <- function(x, attrib) {
-  if (r_version >= '3.6.0') {
+  if (r_version_at_least_3.6.0) {
     attributes(x) <- attrib
     x
   } else {
