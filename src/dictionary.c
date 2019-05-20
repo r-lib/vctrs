@@ -48,18 +48,27 @@ uint32_t dict_hash_scalar(dictionary* d, SEXP y, R_len_t i) {
   for (int k = 0; k < d->size; ++k) {
     uint32_t probe = (hv + k * (k + 1) / 2) % d->size;
     // Rprintf("Probe: %i\n", probe);
-    if (k > 1 && probe == hv) // circled back to start
+
+    // If we circled back to start, dictionary is full
+    if (k > 1 && probe == hv) {
       break;
+    }
 
+    // Check for unused slot
     R_len_t idx = d->key[probe];
-    if (idx == DICT_EMPTY) // not used
+    if (idx == DICT_EMPTY) {
       return probe;
+    }
 
-    if (equal_scalar(d->x, idx, y, i, true)) // same value
+    // Check for same value as there might be a collision. If there is
+    // a collision, next iteration will find another spot using
+    // quadratic probing.
+    if (equal_scalar(d->x, idx, y, i, true)) {
       return probe;
+    }
   }
 
-  Rf_errorcall(R_NilValue, "Dictionary is full!");
+  Rf_errorcall(R_NilValue, "Internal error: Dictionary is full!");
 }
 
 void dict_put(dictionary* d, uint32_t hash, R_len_t i) {
