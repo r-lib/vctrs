@@ -86,7 +86,7 @@ static SEXP as_unique_names(SEXP names) {
   }
 
   dictionary d;
-  dict_init(&d, names);
+  dict_init(&d, names, false);
   SEXP dups = PROTECT(Rf_allocVector(INTSXP, d.size));
   int* dups_ptr = INTEGER(dups);
 

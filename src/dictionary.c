@@ -16,7 +16,7 @@ int32_t ceil2(int32_t x) {
 // Dictonary object ------------------------------------------------------------
 
 // Caller is responsible for PROTECTing x
-void dict_init(dictionary* d, SEXP x) {
+void dict_init(dictionary* d, SEXP x, bool hashed) {
   d->x = x;
 
   // assume worst case, that every value is distinct, aiming for a load factor
@@ -31,6 +31,15 @@ void dict_init(dictionary* d, SEXP x) {
   d->key = (R_len_t*) R_alloc(size, sizeof(R_len_t));
   memset(d->key, DICT_EMPTY, size * sizeof(R_len_t));
 
+  if (hashed) {
+    R_len_t n = vec_size(x);
+    d->hash = (uint32_t*) R_alloc(n, sizeof(uint32_t));
+    memset(d->hash, 0, n * sizeof(R_len_t));
+    hash_fill(d->hash, n, x);
+  } else {
+    d->hash = NULL;
+  }
+
   d->size = size;
   d->used = 0;
 }
@@ -40,8 +49,17 @@ void dict_free(dictionary* d) {
 }
 
 uint32_t dict_hash_scalar(dictionary* d, SEXP y, R_len_t i) {
-  uint32_t hash = hash_scalar(y, i);
-  // Rprintf("i: %i hash: %i\n", i, hash);
+  uint32_t hash;
+
+  if (d->hash) {
+    if (d->x != y) {
+      Rf_error("Internal error: Can't compare hashed vector "
+               "with unhashed vector.");
+    }
+    hash = d->hash[i];
+  } else {
+    hash = hash_scalar(y, i);
+  }
 
   // Quadratic probing: will try every slot if d->size is power of 2
   // http://research.cs.vt.edu/AVresearch/hashing/quadratic.php
@@ -82,7 +100,7 @@ void dict_put(dictionary* d, uint32_t hash, R_len_t i) {
 
 SEXP vctrs_unique_loc(SEXP x) {
   dictionary d;
-  dict_init(&d, x);
+  dict_init(&d, x, false);
 
   growable g;
   growable_init(&g, INTSXP, 256);
@@ -105,7 +123,7 @@ SEXP vctrs_unique_loc(SEXP x) {
 
 SEXP vctrs_duplicated_any(SEXP x) {
   dictionary d;
-  dict_init(&d, x);
+  dict_init(&d, x, false);
 
   bool out = false;
   R_len_t n = vec_size(x);
@@ -127,7 +145,7 @@ SEXP vctrs_duplicated_any(SEXP x) {
 
 SEXP vctrs_n_distinct(SEXP x) {
   dictionary d;
-  dict_init(&d, x);
+  dict_init(&d, x, false);
 
   R_len_t n = vec_size(x);
   for (int i = 0; i < n; ++i) {
@@ -143,7 +161,7 @@ SEXP vctrs_n_distinct(SEXP x) {
 
 SEXP vctrs_id(SEXP x) {
   dictionary d;
-  dict_init(&d, x);
+  dict_init(&d, x, false);
 
   R_len_t n = vec_size(x);
   SEXP out = PROTECT(Rf_allocVector(INTSXP, n));
@@ -165,7 +183,7 @@ SEXP vctrs_id(SEXP x) {
 
 SEXP vctrs_match(SEXP needles, SEXP haystack) {
   dictionary d;
-  dict_init(&d, haystack);
+  dict_init(&d, haystack, false);
 
   // Load dictionary with haystack
   R_len_t n_haystack = vec_size(haystack);
@@ -198,7 +216,7 @@ SEXP vctrs_match(SEXP needles, SEXP haystack) {
 
 SEXP vctrs_in(SEXP needles, SEXP haystack) {
   dictionary d;
-  dict_init(&d, haystack);
+  dict_init(&d, haystack, false);
 
   // Load dictionary with haystack
   R_len_t n_haystack = vec_size(haystack);
@@ -226,7 +244,7 @@ SEXP vctrs_in(SEXP needles, SEXP haystack) {
 
 SEXP vctrs_count(SEXP x) {
   dictionary d;
-  dict_init(&d, x);
+  dict_init(&d, x, false);
 
   SEXP val = PROTECT(Rf_allocVector(INTSXP, d.size));
   int* p_val = INTEGER(val);
@@ -273,7 +291,7 @@ SEXP vctrs_count(SEXP x) {
 
 SEXP vctrs_duplicated(SEXP x) {
   dictionary d;
-  dict_init(&d, x);
+  dict_init(&d, x, false);
 
   SEXP val = PROTECT(Rf_allocVector(INTSXP, d.size));
   int* p_val = INTEGER(val);
@@ -305,7 +323,7 @@ SEXP vctrs_duplicated(SEXP x) {
 
 SEXP vctrs_duplicate_split(SEXP x) {
   dictionary d;
-  dict_init(&d, x);
+  dict_init(&d, x, false);
 
   // Tracks the order in which keys are seen
   SEXP tracker = PROTECT(Rf_allocVector(INTSXP, d.size));

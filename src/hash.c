@@ -1,4 +1,5 @@
 #include "vctrs.h"
+#include "utils.h"
 
 // boost::hash_combine from https://stackoverflow.com/questions/35985960
 static int32_t hash_combine(int x, int y) {
@@ -71,20 +72,6 @@ int32_t hash_scalar(SEXP x, R_len_t i) {
   default:
     Rf_errorcall(R_NilValue, "Unsupported type %s", Rf_type2char(TYPEOF(x)));
   }
-}
-
-// [[ register() ]]
-SEXP vctrs_hash(SEXP x) {
-  R_len_t n = vec_size(x);
-  SEXP out = PROTECT(Rf_allocVector(INTSXP, n));
-
-  int32_t* pOut = INTEGER(out);
-  for (R_len_t i = 0; i < n; ++i) {
-    pOut[i] = hash_scalar(x, i);
-  }
-
-  UNPROTECT(1);
-  return out;
 }
 
 static int32_t lgl_hash_scalar(const int* x) {
@@ -226,4 +213,111 @@ static int32_t fn_hash(SEXP x) {
   hash = hash_combine(hash, hash_object(CLOENV(x)));
   hash = hash_combine(hash, hash_object(FORMALS(x)));
   return hash;
+}
+
+
+// Fill hash array -----------------------------------------------------
+
+static void lgl_hash_fill(uint32_t* p, R_len_t size, SEXP x);
+static void int_hash_fill(uint32_t* p, R_len_t size, SEXP x);
+static void dbl_hash_fill(uint32_t* p, R_len_t size, SEXP x);
+static void cpl_hash_fill(uint32_t* p, R_len_t size, SEXP x);
+static void chr_hash_fill(uint32_t* p, R_len_t size, SEXP x);
+static void raw_hash_fill(uint32_t* p, R_len_t size, SEXP x);
+static void list_hash_fill(uint32_t* p, R_len_t size, SEXP x);
+static void df_hash_fill(uint32_t* p, R_len_t size, SEXP x);
+
+// Not compatible with hash_scalar
+// [[ include("vctrs.h") ]]
+void hash_fill(uint32_t* p, R_len_t size, SEXP x) {
+  switch (TYPEOF(x)) {
+  case LGLSXP: lgl_hash_fill(p, size, x); return;
+  case INTSXP: int_hash_fill(p, size, x); return;
+  case REALSXP: dbl_hash_fill(p, size, x); return;
+  case CPLXSXP: cpl_hash_fill(p, size, x); return;
+  case STRSXP: chr_hash_fill(p, size, x); return;
+  case RAWSXP: raw_hash_fill(p, size, x); return;
+  case VECSXP:
+    if (is_data_frame(x)) {
+      df_hash_fill(p, size, x);
+    } else {
+      list_hash_fill(p, size, x);
+    }
+    return;
+  default:
+    Rf_error("Internal error: Unsupported type %s in `hash_fill()`.", Rf_type2char(TYPEOF(x)));
+  }
+}
+
+#define HASH_FILL(CTYPE, CONST_DEREF, HASHER)   \
+  const CTYPE* xp = CONST_DEREF(x);             \
+                                                \
+  for (R_len_t i = 0; i < size; ++i, ++xp) {    \
+    p[i] = hash_combine(p[i], HASHER(xp));      \
+  }
+
+static void lgl_hash_fill(uint32_t* p, R_len_t size, SEXP x) {
+  HASH_FILL(int, LOGICAL_RO, lgl_hash_scalar);
+}
+static void int_hash_fill(uint32_t* p, R_len_t size, SEXP x) {
+  HASH_FILL(int, INTEGER_RO, int_hash_scalar);
+}
+static void dbl_hash_fill(uint32_t* p, R_len_t size, SEXP x) {
+  HASH_FILL(double, REAL_RO, dbl_hash_scalar);
+}
+static void cpl_hash_fill(uint32_t* p, R_len_t size, SEXP x) {
+  HASH_FILL(Rcomplex, COMPLEX_RO, cpl_hash_scalar);
+}
+static void chr_hash_fill(uint32_t* p, R_len_t size, SEXP x) {
+  HASH_FILL(SEXP, STRING_PTR_RO, chr_hash_scalar);
+}
+static void raw_hash_fill(uint32_t* p, R_len_t size, SEXP x) {
+  HASH_FILL(Rbyte, RAW_RO, raw_hash_scalar);
+}
+
+#undef HASH_FILL
+
+
+#define HASH_FILL_BARRIER(HASHER)               \
+  for (R_len_t i = 0; i < size; ++i) {          \
+    p[i] = hash_combine(p[i], HASHER(x, i));    \
+  }
+
+static void list_hash_fill(uint32_t* p, R_len_t size, SEXP x) {
+  HASH_FILL_BARRIER(list_hash_scalar);
+}
+
+#undef HASH_FILL_BARRIER
+
+
+static void df_hash_fill(uint32_t* p, R_len_t size, SEXP x) {
+  R_len_t ncol = Rf_length(x);
+
+  for (R_len_t i = 0; i < ncol; ++i) {
+    // FIXME: Call `vec_proxy()`?
+    SEXP col = VECTOR_ELT(x, i);
+    hash_fill(p, size, col);
+  }
+}
+
+
+// [[ register() ]]
+SEXP vctrs_hash(SEXP x, SEXP rowwise) {
+  x = PROTECT(vec_proxy(x));
+
+  R_len_t n = vec_size(x);
+  SEXP out = PROTECT(Rf_allocVector(INTSXP, n));
+
+  uint32_t* p = (uint32_t*) INTEGER(out);
+
+  if (r_lgl_get(rowwise, 0)) {
+    for (R_len_t i = 0; i < n; ++i) {
+      p[i] = hash_scalar(x, i);
+    }
+  } else {
+    hash_fill(p, n, x);
+  }
+
+  UNPROTECT(2);
+  return out;
 }

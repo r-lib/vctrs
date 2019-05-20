@@ -11,12 +11,13 @@
 struct dictionary {
   SEXP x;
   R_len_t* key;
+  uint32_t* hash;
   uint32_t size;
   uint32_t used;
 };
 typedef struct dictionary dictionary;
 
-void dict_init(dictionary* d, SEXP x);
+void dict_init(dictionary* d, SEXP x, bool hashed);
 void dict_free(dictionary* d);
 uint32_t dict_hash_scalar(dictionary* d, SEXP y, R_len_t i);
 void dict_put(dictionary* d, uint32_t k, R_len_t i);

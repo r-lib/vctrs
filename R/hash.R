@@ -1,6 +1,5 @@
-vec_hash <- function(x) {
-  x <- vec_proxy(x)
-  as.hexmode(.Call(vctrs_hash, x))
+vec_hash <- function(x, rowwise = TRUE) {
+  as.hexmode(.Call(vctrs_hash, x, rowwise))
 }
 
 obj_hash <- function(x) {
