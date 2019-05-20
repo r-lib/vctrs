@@ -108,7 +108,7 @@ SEXP vctrs_set_attributes(SEXP x, SEXP attrib) {
   SEXP names = Rf_getAttrib(attrib, R_NamesSymbol);
 
   if (Rf_isNull(names)) {
-    Rf_errorcall(R_NilValue, "Attributes must have names.");
+    Rf_errorcall(R_NilValue, "Attributes must be named.");
   }
 
   // Check that each element of `names` is named.
