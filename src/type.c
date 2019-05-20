@@ -7,6 +7,7 @@ static SEXP syms_vec_type_finalise_dispatch = NULL;
 static SEXP fns_vec_is_vector_dispatch = NULL;
 static SEXP fns_vec_type_finalise_dispatch = NULL;
 
+
 static SEXP vec_type_slice(SEXP x, SEXP empty) {
   if (ATTRIB(x) == R_NilValue) {
     return empty;
