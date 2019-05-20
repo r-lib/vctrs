@@ -40,17 +40,17 @@ void dict_free(dictionary* d) {
 }
 
 uint32_t dict_hash_scalar(dictionary* d, SEXP y, R_len_t i) {
-  uint32_t hv = hash_scalar(y, i);
-  // Rprintf("i: %i hash: %i\n", i, hv);
+  uint32_t hash = hash_scalar(y, i);
+  // Rprintf("i: %i hash: %i\n", i, hash);
 
-  // quadratic probing: will try every slot if d->size is power of 2
+  // Quadratic probing: will try every slot if d->size is power of 2
   // http://research.cs.vt.edu/AVresearch/hashing/quadratic.php
   for (int k = 0; k < d->size; ++k) {
-    uint32_t probe = (hv + k * (k + 1) / 2) % d->size;
+    uint32_t probe = (hash + k * (k + 1) / 2) % d->size;
     // Rprintf("Probe: %i\n", probe);
 
     // If we circled back to start, dictionary is full
-    if (k > 1 && probe == hv) {
+    if (k > 1 && probe == hash) {
       break;
     }
 
