@@ -58,10 +58,10 @@ new_vctr <- function(.data, ..., class = character()) {
   }
   nms <- validate_names(.data)
 
-  vec_structure(.data, names = nms, ..., class = c(class, "vctrs_vctr"))
+  restructure(.data, names = nms, ..., class = c(class, "vctrs_vctr"))
 }
 
-vec_structure <- function(.data, ...) {
+restructure <- function(.data, ...) {
   if (r_version_at_least_3.6.0) {
     attributes(.data) <- NULL
     structure(.data, ...)
