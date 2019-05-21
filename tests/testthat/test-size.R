@@ -3,7 +3,7 @@ context("test-size")
 # vec_size -----------------------------------------------------------------
 
 test_that("vec_size must be called with vector", {
-  expect_error(vec_size(mean), "must be a vector")
+  expect_error(vec_size(mean), class = "vctrs_error_scalar_type")
 })
 
 test_that("length is number of rows", {

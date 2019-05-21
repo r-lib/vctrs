@@ -1,7 +1,7 @@
 context("test-slice")
 
 test_that("vec_slice throws error with non-vector inputs", {
-  expect_error(vec_slice(environment(), 1L), "a vector")
+  expect_error(vec_slice(environment(), 1L), class = "vctrs_error_scalar_type")
 })
 
 test_that("can subset base vectors", {
@@ -259,7 +259,7 @@ test_that("vec_slice() falls back to `[` with S3 objects", {
   )
   expect_identical(vec_slice(foobar(NA), 1), foobar("dispatched"))
 
-  expect_error(vec_slice(foobar(list(NA)), 1), "must be a vector")
+  expect_error(vec_slice(foobar(list(NA)), 1), class = "vctrs_error_scalar_type")
   scoped_global_bindings(
     vec_proxy.vctrs_foobar = identity
   )
@@ -344,7 +344,7 @@ test_that("can't use names to vec_slice() an unnamed object", {
 # vec_na ------------------------------------------------------------------
 
 test_that("vec_slice throws error with non-vector inputs", {
-  expect_error(vec_slice(environment(), 1L), "a vector")
+  expect_error(vec_slice(environment(), 1L), class = "vctrs_error_scalar_type")
 })
 
 # vec_na ------------------------------------------------------------------
