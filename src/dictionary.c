@@ -39,31 +39,40 @@ void dict_free(dictionary* d) {
   // no cleanup currently needed
 }
 
-uint32_t dict_find(dictionary* d, SEXP y, R_len_t i) {
-  uint32_t hv = hash_scalar(y, i);
-  // Rprintf("i: %i hash: %i\n", i, hv);
+uint32_t dict_hash_scalar(dictionary* d, SEXP y, R_len_t i) {
+  uint32_t hash = hash_scalar(y, i);
+  // Rprintf("i: %i hash: %i\n", i, hash);
 
-  // quadratic probing: will try every slot if d->size is power of 2
+  // Quadratic probing: will try every slot if d->size is power of 2
   // http://research.cs.vt.edu/AVresearch/hashing/quadratic.php
-  for (int k = 0; k < d->size; ++k) {
-    uint32_t probe = (hv + k * (k + 1) / 2) % d->size;
+  for (uint32_t k = 0; k < d->size; ++k) {
+    uint32_t probe = (hash + k * (k + 1) / 2) % d->size;
     // Rprintf("Probe: %i\n", probe);
-    if (k > 1 && probe == hv) // circled back to start
+
+    // If we circled back to start, dictionary is full
+    if (k > 1 && probe == hash) {
       break;
+    }
 
+    // Check for unused slot
     R_len_t idx = d->key[probe];
-    if (idx == DICT_EMPTY) // not used
+    if (idx == DICT_EMPTY) {
       return probe;
+    }
 
-    if (equal_scalar(d->x, idx, y, i, true)) // same value
+    // Check for same value as there might be a collision. If there is
+    // a collision, next iteration will find another spot using
+    // quadratic probing.
+    if (equal_scalar(d->x, idx, y, i, true)) {
       return probe;
+    }
   }
 
-  Rf_errorcall(R_NilValue, "Dictionary is full!");
+  Rf_errorcall(R_NilValue, "Internal error: Dictionary is full!");
 }
 
-void dict_put(dictionary* d, uint32_t k, R_len_t i) {
-  d->key[k] = i;
+void dict_put(dictionary* d, uint32_t hash, R_len_t i) {
+  d->key[hash] = i;
   d->used++;
 }
 
@@ -80,10 +89,10 @@ SEXP vctrs_unique_loc(SEXP x) {
 
   R_len_t n = vec_size(x);
   for (int i = 0; i < n; ++i) {
-    uint32_t k = dict_find(&d, x, i);
+    uint32_t hash = dict_hash_scalar(&d, x, i);
 
-    if (d.key[k] == DICT_EMPTY) {
-      dict_put(&d, k, i);
+    if (d.key[hash] == DICT_EMPTY) {
+      dict_put(&d, hash, i);
       growable_push_int(&g, i + 1);
     }
   }
@@ -102,10 +111,10 @@ SEXP vctrs_duplicated_any(SEXP x) {
   R_len_t n = vec_size(x);
 
   for (int i = 0; i < n; ++i) {
-    uint32_t k = dict_find(&d, x, i);
+    uint32_t hash = dict_hash_scalar(&d, x, i);
 
-    if (d.key[k] == DICT_EMPTY) {
-      dict_put(&d, k, i);
+    if (d.key[hash] == DICT_EMPTY) {
+      dict_put(&d, hash, i);
     } else {
       out = true;
       break;
@@ -122,10 +131,10 @@ SEXP vctrs_n_distinct(SEXP x) {
 
   R_len_t n = vec_size(x);
   for (int i = 0; i < n; ++i) {
-    uint32_t k = dict_find(&d, x, i);
+    uint32_t hash = dict_hash_scalar(&d, x, i);
 
-    if (d.key[k] == DICT_EMPTY)
-      dict_put(&d, k, i);
+    if (d.key[hash] == DICT_EMPTY)
+      dict_put(&d, hash, i);
   }
 
   dict_free(&d);
@@ -141,12 +150,12 @@ SEXP vctrs_id(SEXP x) {
   int* p_out = INTEGER(out);
 
   for (int i = 0; i < n; ++i) {
-    uint32_t k = dict_find(&d, x, i);
+    uint32_t hash = dict_hash_scalar(&d, x, i);
 
-    if (d.key[k] == DICT_EMPTY) {
-      dict_put(&d, k, i);
+    if (d.key[hash] == DICT_EMPTY) {
+      dict_put(&d, hash, i);
     }
-    p_out[i] = d.key[k] + 1;
+    p_out[i] = d.key[hash] + 1;
   }
 
   UNPROTECT(1);
@@ -161,10 +170,10 @@ SEXP vctrs_match(SEXP needles, SEXP haystack) {
   // Load dictionary with haystack
   R_len_t n_haystack = vec_size(haystack);
   for (int i = 0; i < n_haystack; ++i) {
-    uint32_t k = dict_find(&d, haystack, i);
+    uint32_t hash = dict_hash_scalar(&d, haystack, i);
 
-    if (d.key[k] == DICT_EMPTY) {
-      dict_put(&d, k, i);
+    if (d.key[hash] == DICT_EMPTY) {
+      dict_put(&d, hash, i);
     }
   }
 
@@ -174,11 +183,11 @@ SEXP vctrs_match(SEXP needles, SEXP haystack) {
   int* p_out = INTEGER(out);
 
   for (int i = 0; i < n_needle; ++i) {
-    uint32_t k = dict_find(&d, needles, i);
-    if (d.key[k] == DICT_EMPTY) {
+    uint32_t hash = dict_hash_scalar(&d, needles, i);
+    if (d.key[hash] == DICT_EMPTY) {
       p_out[i] = NA_INTEGER;
     } else {
-      p_out[i] = d.key[k] + 1;
+      p_out[i] = d.key[hash] + 1;
     }
   }
   UNPROTECT(1);
@@ -194,10 +203,10 @@ SEXP vctrs_in(SEXP needles, SEXP haystack) {
   // Load dictionary with haystack
   R_len_t n_haystack = vec_size(haystack);
   for (int i = 0; i < n_haystack; ++i) {
-    uint32_t k = dict_find(&d, haystack, i);
+    uint32_t hash = dict_hash_scalar(&d, haystack, i);
 
-    if (d.key[k] == DICT_EMPTY) {
-      dict_put(&d, k, i);
+    if (d.key[hash] == DICT_EMPTY) {
+      dict_put(&d, hash, i);
     }
   }
 
@@ -207,8 +216,8 @@ SEXP vctrs_in(SEXP needles, SEXP haystack) {
   int* p_out = LOGICAL(out);
 
   for (int i = 0; i < n_needle; ++i) {
-    uint32_t k = dict_find(&d, needles, i);
-    p_out[i] = (d.key[k] != DICT_EMPTY);
+    uint32_t hash = dict_hash_scalar(&d, needles, i);
+    p_out[i] = (d.key[hash] != DICT_EMPTY);
   }
   UNPROTECT(1);
   dict_free(&d);
@@ -224,13 +233,13 @@ SEXP vctrs_count(SEXP x) {
 
   R_len_t n = vec_size(x);
   for (int i = 0; i < n; ++i) {
-    int32_t k = dict_find(&d, x, i);
+    int32_t hash = dict_hash_scalar(&d, x, i);
 
-    if (d.key[k] == DICT_EMPTY) {
-      dict_put(&d, k, i);
-      p_val[k] = 0;
+    if (d.key[hash] == DICT_EMPTY) {
+      dict_put(&d, hash, i);
+      p_val[hash] = 0;
     }
-    p_val[k]++;
+    p_val[hash]++;
   }
 
   // Create output
@@ -240,12 +249,12 @@ SEXP vctrs_count(SEXP x) {
   int* p_out_val = INTEGER(out_val);
 
   int i = 0;
-  for (int k = 0; k < d.size; ++k) {
-    if (d.key[k] == DICT_EMPTY)
+  for (int hash = 0; hash < d.size; ++hash) {
+    if (d.key[hash] == DICT_EMPTY)
       continue;
 
-    p_out_key[i] = d.key[k] + 1;
-    p_out_val[i] = p_val[k];
+    p_out_key[i] = d.key[hash] + 1;
+    p_out_val[i] = p_val[hash];
     i++;
   }
 
@@ -271,13 +280,13 @@ SEXP vctrs_duplicated(SEXP x) {
 
   R_len_t n = vec_size(x);
   for (int i = 0; i < n; ++i) {
-    int32_t k = dict_find(&d, x, i);
+    int32_t hash = dict_hash_scalar(&d, x, i);
 
-    if (d.key[k] == DICT_EMPTY) {
-      dict_put(&d, k, i);
-      p_val[k] = 0;
+    if (d.key[hash] == DICT_EMPTY) {
+      dict_put(&d, hash, i);
+      p_val[hash] = 0;
     }
-    p_val[k]++;
+    p_val[hash]++;
   }
 
   // Create output
@@ -285,8 +294,8 @@ SEXP vctrs_duplicated(SEXP x) {
   int* p_out = LOGICAL(out);
 
   for (int i = 0; i < n; ++i) {
-    int32_t k = dict_find(&d, x, i);
-    p_out[i] = p_val[k] != 1;
+    int32_t hash = dict_hash_scalar(&d, x, i);
+    p_out[i] = p_val[hash] != 1;
   }
 
   UNPROTECT(2);
@@ -314,16 +323,16 @@ SEXP vctrs_duplicate_split(SEXP x) {
 
   // Fill dictionary, out_pos, and count
   for (int i = 0; i < n; ++i) {
-    uint32_t k = dict_find(&d, x, i);
+    uint32_t hash = dict_hash_scalar(&d, x, i);
 
-    if (d.key[k] == DICT_EMPTY) {
-      p_tracker[k] = d.used;
-      dict_put(&d, k, i);
-      p_count[k] = 0;
+    if (d.key[hash] == DICT_EMPTY) {
+      p_tracker[hash] = d.used;
+      dict_put(&d, hash, i);
+      p_count[hash] = 0;
     }
 
-    p_out_pos[i] = p_tracker[k];
-    p_count[k]++;
+    p_out_pos[i] = p_tracker[hash];
+    p_count[hash]++;
   }
 
   SEXP out_key = PROTECT(Rf_allocVector(INTSXP, d.used));
@@ -336,25 +345,25 @@ SEXP vctrs_duplicate_split(SEXP x) {
   memset(p_counters, 0, d.used * sizeof(int));
 
   // Set up empty index container
-  for (int k = 0; k < d.size; ++k) {
-    if (d.key[k] == DICT_EMPTY) {
+  for (int hash = 0; hash < d.size; ++hash) {
+    if (d.key[hash] == DICT_EMPTY) {
       continue;
     }
 
-    SET_VECTOR_ELT(out_idx, p_tracker[k], Rf_allocVector(INTSXP, p_count[k]));
+    SET_VECTOR_ELT(out_idx, p_tracker[hash], Rf_allocVector(INTSXP, p_count[hash]));
   }
 
   // Fill index container and key locations
   for (int i = 0; i < n; ++i) {
     int j = p_out_pos[i];
-    int k = p_counters[j];
+    int hash = p_counters[j];
 
-    if (k == 0) {
+    if (hash == 0) {
       p_out_key[j] = i + 1;
     }
 
-    INTEGER(VECTOR_ELT(out_idx, j))[k] = i + 1;
-    p_counters[j] = k + 1;
+    INTEGER(VECTOR_ELT(out_idx, j))[hash] = i + 1;
+    p_counters[j] = hash + 1;
   }
 
   // Construct output

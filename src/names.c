@@ -106,11 +106,11 @@ static SEXP as_unique_names(SEXP names) {
       break;
     }
 
-    int32_t k = dict_find(&d, names, i);
+    int32_t hash = dict_hash_scalar(&d, names, i);
 
-    if (d.key[k] == DICT_EMPTY) {
-      dict_put(&d, k, i);
-      dups_ptr[k] = 1;
+    if (d.key[hash] == DICT_EMPTY) {
+      dict_put(&d, hash, i);
+      dups_ptr[hash] = 1;
     } else {
       break;
     }
@@ -151,26 +151,26 @@ static SEXP as_unique_names(SEXP names) {
     }
 
     // Duplicates need a `...n` suffix
-    int32_t k = dict_find(&d, names, i);
+    int32_t hash = dict_hash_scalar(&d, names, i);
 
-    if (d.key[k] == DICT_EMPTY) {
-      dict_put(&d, k, i);
-      dups_ptr[k] = 0;
+    if (d.key[hash] == DICT_EMPTY) {
+      dict_put(&d, hash, i);
+      dups_ptr[hash] = 0;
 
       // Ensure "" is seen as a duplicate so it always gets a suffix
       if (elt == strings_empty) {
-        dups_ptr[k]++;
+        dups_ptr[hash]++;
       }
     }
-    dups_ptr[k]++;
+    dups_ptr[hash]++;
   }
 
   // Append all duplicates with a suffix
   char buf[100] = "";
 
   for (i = 0, ptr = STRING_PTR(names); i < n; ++i, ++ptr) {
-    int32_t k = dict_find(&d, names, i);
-    if (dups_ptr[k] != 1) {
+    int32_t hash = dict_hash_scalar(&d, names, i);
+    if (dups_ptr[hash] != 1) {
       const char* name = CHAR(*ptr);
 
       int remaining = 100;
