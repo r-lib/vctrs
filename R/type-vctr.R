@@ -56,20 +56,21 @@ new_vctr <- function(.data, ..., class = character()) {
   if (!is_vector(.data)) {
     abort("`.data` must be a vector type.")
   }
-  .data <- validate_attr(.data)
 
-  structure(.data, ..., class = c(class, "vctrs_vctr"))
+  nms <- validate_names(.data)
+  attrib <- list(names = nms, ..., class = c(class, "vctrs_vctr"))
+
+  vec_set_attributes(.data, attrib)
 }
 
-validate_attr <- function(.data) {
+validate_names <- function(.data) {
   nms <- names(.data)
 
   if (!names_all_or_nothing(nms)) {
     stop("If any elements of `.data` are named, all must be named", call. = FALSE)
   }
 
-  attributes(.data) <- list(names = nms)
-  .data
+  nms
 }
 names_all_or_nothing <- function(names) {
   if (is.null(names)) {

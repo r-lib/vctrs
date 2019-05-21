@@ -73,11 +73,11 @@ vec_data <- function(x) {
 
   # TODO: implement with ALTREP to avoid making a copy
   if (is_record(x)) {
-    attributes(x) <- list(names = fields(x))
+    x <- vec_set_attributes(x, list(names = fields(x)))
   } else if (has_dim(x)) {
-    attributes(x) <- list(dim = dim(x), dimnames = dimnames(x))
+    x <- vec_set_attributes(x, list(dim = dim(x), dimnames = dimnames(x)))
   } else {
-    attributes(x) <- list(names = names(x))
+    x <- vec_set_attributes(x, list(names = names(x)))
   }
 
   x

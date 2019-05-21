@@ -6,6 +6,23 @@
   s3_register("generics::as.ordered", "vctrs_vctr")
   s3_register("generics::as.difftime", "vctrs_vctr")
 
+  utils::globalVariables("vec_set_attributes")
+
+  # Prevent two copies from being made by `attributes(x) <- attrib` on R < 3.6.0
+  if (getRversion() >= '3.6.0') {
+    vec_set_attributes <- function(x, attrib) {
+      attributes(x) <- attrib
+      x
+    }
+  } else {
+    vec_set_attributes <- function(x, attrib) {
+      .Call(vctrs_set_attributes, x, attrib)
+    }
+  }
+
+  ns <- ns_env("vctrs")
+  env_bind(ns, vec_set_attributes = vec_set_attributes)
+
   .Call(vctrs_init, ns_env())
 }
 
