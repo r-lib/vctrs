@@ -85,6 +85,8 @@ SEXP vctrs_dispatch3(SEXP fn_sym, SEXP fn,
   return vctrs_dispatch_n(fn_sym, fn, syms, args);
 }
 
+// An alternative to `attributes(x) <- attrib`, which makes
+// two copies on R < 3.6.0
 // [[ register() ]]
 SEXP vctrs_set_attributes(SEXP x, SEXP attrib) {
   R_len_t n_attrib = Rf_length(attrib);
