@@ -56,27 +56,11 @@ new_vctr <- function(.data, ..., class = character()) {
   if (!is_vector(.data)) {
     abort("`.data` must be a vector type.")
   }
+
   nms <- validate_names(.data)
+  attrib <- list(names = nms, ..., class = c(class, "vctrs_vctr"))
 
-  restructure(.data, names = nms, ..., class = c(class, "vctrs_vctr"))
-}
-
-restructure <- function(.data, ...) {
-  if (r_version_at_least_3.6.0) {
-    attributes(.data) <- NULL
-    structure(.data, ...)
-  } else {
-    vec_set_attributes(.data, list(...))
-  }
-}
-
-vec_set_attributes <- function(x, attrib) {
-  if (r_version_at_least_3.6.0) {
-    attributes(x) <- attrib
-    x
-  } else {
-    .Call(vctrs_set_attributes, x, attrib)
-  }
+  vec_set_attributes(.data, attrib)
 }
 
 validate_names <- function(.data) {
