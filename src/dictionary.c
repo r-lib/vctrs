@@ -17,7 +17,7 @@ int32_t ceil2(int32_t x) {
 
 // Caller is responsible for PROTECTing x
 void dict_init_impl(dictionary* d, SEXP x, bool hashed, bool partial) {
-  d->x = x;
+  d->vec = x;
   d->used = 0;
 
   if (partial) {
@@ -62,7 +62,7 @@ uint32_t dict_hash_scalar(dictionary* d, SEXP y, R_len_t i) {
   uint32_t hash;
 
   if (d->hash) {
-    if (d->x != y) {
+    if (d->vec != y) {
       Rf_error("Internal error: Can't compare hashed vector "
                "with unhashed vector.");
     }
@@ -91,7 +91,7 @@ uint32_t dict_hash_scalar(dictionary* d, SEXP y, R_len_t i) {
     // Check for same value as there might be a collision. If there is
     // a collision, next iteration will find another spot using
     // quadratic probing.
-    if (equal_scalar(d->x, idx, y, i, true)) {
+    if (equal_scalar(d->vec, idx, y, i, true)) {
       return probe;
     }
   }

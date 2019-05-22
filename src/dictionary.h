@@ -9,7 +9,7 @@
 // at the R-level).
 
 struct dictionary {
-  SEXP x;
+  SEXP vec;
   R_len_t* key;
   uint32_t* hash;
   uint32_t size;

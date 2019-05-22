@@ -133,7 +133,7 @@ static SEXP as_unique_names(SEXP names) {
     if (elt == NA_STRING || elt == strings_dots || is_dotdotint(CHAR(elt))) {
       elt = strings_empty;
       SET_STRING_ELT(names, i, elt);
-      SET_STRING_ELT(d.x, i, elt);
+      SET_STRING_ELT(d.vec, i, elt);
     }
 
     // Strip `...n` suffixes
@@ -147,7 +147,7 @@ static SEXP as_unique_names(SEXP names) {
 
       elt = Rf_mkChar(buf);
       SET_STRING_ELT(names, i, elt);
-      SET_STRING_ELT(d.x, i, elt);
+      SET_STRING_ELT(d.vec, i, elt);
     }
 
     // Duplicates need a `...n` suffix
