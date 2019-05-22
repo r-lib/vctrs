@@ -16,20 +16,26 @@ int32_t ceil2(int32_t x) {
 // Dictonary object ------------------------------------------------------------
 
 // Caller is responsible for PROTECTing x
-void dict_init(dictionary* d, SEXP x, bool hashed) {
+void dict_init_impl(dictionary* d, SEXP x, bool hashed, bool partial) {
   d->x = x;
+  d->used = 0;
 
-  // assume worst case, that every value is distinct, aiming for a load factor
-  // of at most 77%. We round up to power of 2 to ensure quadratic probing
-  // strategy works.
-  R_len_t size = ceil2(vec_size(x) / 0.77);
-  if (size < 16) {
-    size = 16;
+  if (partial) {
+    d->key = NULL;
+    d->size = 0;
+  } else {
+    // assume worst case, that every value is distinct, aiming for a load factor
+    // of at most 77%. We round up to power of 2 to ensure quadratic probing
+    // strategy works.
+    // Rprintf("size: %i\n", size);
+    R_len_t size = ceil2(vec_size(x) / 0.77);
+    size = (size < 16) ? 16 : size;
+
+    d->key = (R_len_t*) R_alloc(size, sizeof(R_len_t));
+    memset(d->key, DICT_EMPTY, size * sizeof(R_len_t));
+
+    d->size = size;
   }
-  // Rprintf("size: %i\n", size);
-
-  d->key = (R_len_t*) R_alloc(size, sizeof(R_len_t));
-  memset(d->key, DICT_EMPTY, size * sizeof(R_len_t));
 
   if (hashed) {
     R_len_t n = vec_size(x);
@@ -39,9 +45,13 @@ void dict_init(dictionary* d, SEXP x, bool hashed) {
   } else {
     d->hash = NULL;
   }
+}
 
-  d->size = size;
-  d->used = 0;
+void dict_init(dictionary* d, SEXP x, bool hashed) {
+  dict_init_impl(d, x, hashed, false);
+}
+void dict_init_partial(dictionary* d, SEXP x) {
+  dict_init_impl(d, x, true, true);
 }
 
 void dict_free(dictionary* d) {
