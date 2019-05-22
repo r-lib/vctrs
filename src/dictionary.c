@@ -50,25 +50,25 @@ void dict_init_impl(dictionary* d, SEXP x, bool hashed, bool partial) {
 void dict_init(dictionary* d, SEXP x, bool hashed) {
   dict_init_impl(d, x, hashed, false);
 }
-void dict_init_partial(dictionary* d, SEXP x) {
-  dict_init_impl(d, x, true, true);
+void dict_init_partial(dictionary* d, SEXP x, bool hashed) {
+  dict_init_impl(d, x, hashed, true);
 }
 
 void dict_free(dictionary* d) {
   // no cleanup currently needed
 }
 
-uint32_t dict_hash_scalar(dictionary* d, SEXP y, R_len_t i) {
+uint32_t dict_hash_scalar(dictionary* d, dictionary* x, R_len_t i) {
   uint32_t hash;
-
-  if (d->hash) {
-    if (d->vec != y) {
-      Rf_error("Internal error: Can't compare hashed vector "
-               "with unhashed vector.");
+  if (x->hash) {
+    if (!d->hash && vec_size(d->vec)) {
+      // Cached hashes are computed colwise and can't be compared with
+      // rowwise hashes
+      Rf_error("Internal error: `x` has cached keys but not `d`");
     }
-    hash = d->hash[i];
+    hash = x->hash[i];
   } else {
-    hash = hash_scalar(y, i);
+    hash = hash_scalar(x->vec, i);
   }
 
   // Quadratic probing: will try every slot if d->size is power of 2
@@ -91,7 +91,7 @@ uint32_t dict_hash_scalar(dictionary* d, SEXP y, R_len_t i) {
     // Check for same value as there might be a collision. If there is
     // a collision, next iteration will find another spot using
     // quadratic probing.
-    if (equal_scalar(d->vec, idx, y, i, true)) {
+    if (equal_scalar(d->vec, idx, x->vec, i, true)) {
       return probe;
     }
   }
@@ -117,7 +117,7 @@ SEXP vctrs_unique_loc(SEXP x) {
 
   R_len_t n = vec_size(x);
   for (int i = 0; i < n; ++i) {
-    uint32_t hash = dict_hash_scalar(&d, x, i);
+    uint32_t hash = dict_hash_scalar(&d, &d, i);
 
     if (d.key[hash] == DICT_EMPTY) {
       dict_put(&d, hash, i);
@@ -139,7 +139,7 @@ SEXP vctrs_duplicated_any(SEXP x) {
   R_len_t n = vec_size(x);
 
   for (int i = 0; i < n; ++i) {
-    uint32_t hash = dict_hash_scalar(&d, x, i);
+    uint32_t hash = dict_hash_scalar(&d, &d, i);
 
     if (d.key[hash] == DICT_EMPTY) {
       dict_put(&d, hash, i);
@@ -159,7 +159,7 @@ SEXP vctrs_n_distinct(SEXP x) {
 
   R_len_t n = vec_size(x);
   for (int i = 0; i < n; ++i) {
-    uint32_t hash = dict_hash_scalar(&d, x, i);
+    uint32_t hash = dict_hash_scalar(&d, &d, i);
 
     if (d.key[hash] == DICT_EMPTY)
       dict_put(&d, hash, i);
@@ -178,7 +178,7 @@ SEXP vctrs_id(SEXP x) {
   int* p_out = INTEGER(out);
 
   for (int i = 0; i < n; ++i) {
-    uint32_t hash = dict_hash_scalar(&d, x, i);
+    uint32_t hash = dict_hash_scalar(&d, &d, i);
 
     if (d.key[hash] == DICT_EMPTY) {
       dict_put(&d, hash, i);
@@ -193,17 +193,20 @@ SEXP vctrs_id(SEXP x) {
 
 SEXP vctrs_match(SEXP needles, SEXP haystack) {
   dictionary d;
-  dict_init(&d, haystack, false);
+  dict_init(&d, haystack, true);
 
   // Load dictionary with haystack
   R_len_t n_haystack = vec_size(haystack);
   for (int i = 0; i < n_haystack; ++i) {
-    uint32_t hash = dict_hash_scalar(&d, haystack, i);
+    uint32_t hash = dict_hash_scalar(&d, &d, i);
 
     if (d.key[hash] == DICT_EMPTY) {
       dict_put(&d, hash, i);
     }
   }
+
+  dictionary d_needles;
+  dict_init_partial(&d_needles, needles, true);
 
   // Locate needles
   R_len_t n_needle = vec_size(needles);
@@ -211,13 +214,14 @@ SEXP vctrs_match(SEXP needles, SEXP haystack) {
   int* p_out = INTEGER(out);
 
   for (int i = 0; i < n_needle; ++i) {
-    uint32_t hash = dict_hash_scalar(&d, needles, i);
+    uint32_t hash = dict_hash_scalar(&d, &d_needles, i);
     if (d.key[hash] == DICT_EMPTY) {
       p_out[i] = NA_INTEGER;
     } else {
       p_out[i] = d.key[hash] + 1;
     }
   }
+
   UNPROTECT(1);
   dict_free(&d);
   return out;
@@ -226,17 +230,20 @@ SEXP vctrs_match(SEXP needles, SEXP haystack) {
 
 SEXP vctrs_in(SEXP needles, SEXP haystack) {
   dictionary d;
-  dict_init(&d, haystack, false);
+  dict_init(&d, haystack, true);
 
   // Load dictionary with haystack
   R_len_t n_haystack = vec_size(haystack);
   for (int i = 0; i < n_haystack; ++i) {
-    uint32_t hash = dict_hash_scalar(&d, haystack, i);
+    uint32_t hash = dict_hash_scalar(&d, &d, i);
 
     if (d.key[hash] == DICT_EMPTY) {
       dict_put(&d, hash, i);
     }
   }
+
+  dictionary d_needles;
+  dict_init_partial(&d_needles, needles, true);
 
   // Locate needles
   R_len_t n_needle = vec_size(needles);
@@ -244,9 +251,10 @@ SEXP vctrs_in(SEXP needles, SEXP haystack) {
   int* p_out = LOGICAL(out);
 
   for (int i = 0; i < n_needle; ++i) {
-    uint32_t hash = dict_hash_scalar(&d, needles, i);
+    uint32_t hash = dict_hash_scalar(&d, &d_needles, i);
     p_out[i] = (d.key[hash] != DICT_EMPTY);
   }
+
   UNPROTECT(1);
   dict_free(&d);
   return out;
@@ -261,7 +269,7 @@ SEXP vctrs_count(SEXP x) {
 
   R_len_t n = vec_size(x);
   for (int i = 0; i < n; ++i) {
-    int32_t hash = dict_hash_scalar(&d, x, i);
+    int32_t hash = dict_hash_scalar(&d, &d, i);
 
     if (d.key[hash] == DICT_EMPTY) {
       dict_put(&d, hash, i);
@@ -308,7 +316,7 @@ SEXP vctrs_duplicated(SEXP x) {
 
   R_len_t n = vec_size(x);
   for (int i = 0; i < n; ++i) {
-    int32_t hash = dict_hash_scalar(&d, x, i);
+    int32_t hash = dict_hash_scalar(&d, &d, i);
 
     if (d.key[hash] == DICT_EMPTY) {
       dict_put(&d, hash, i);
@@ -322,7 +330,7 @@ SEXP vctrs_duplicated(SEXP x) {
   int* p_out = LOGICAL(out);
 
   for (int i = 0; i < n; ++i) {
-    int32_t hash = dict_hash_scalar(&d, x, i);
+    int32_t hash = dict_hash_scalar(&d, &d, i);
     p_out[i] = p_val[hash] != 1;
   }
 
@@ -351,7 +359,7 @@ SEXP vctrs_duplicate_split(SEXP x) {
 
   // Fill dictionary, out_pos, and count
   for (int i = 0; i < n; ++i) {
-    uint32_t hash = dict_hash_scalar(&d, x, i);
+    uint32_t hash = dict_hash_scalar(&d, &d, i);
 
     if (d.key[hash] == DICT_EMPTY) {
       p_tracker[hash] = d.used;

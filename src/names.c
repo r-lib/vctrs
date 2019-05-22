@@ -106,7 +106,7 @@ static SEXP as_unique_names(SEXP names) {
       break;
     }
 
-    int32_t hash = dict_hash_scalar(&d, names, i);
+    int32_t hash = dict_hash_scalar(&d, &d, i);
 
     if (d.key[hash] == DICT_EMPTY) {
       dict_put(&d, hash, i);
@@ -151,7 +151,7 @@ static SEXP as_unique_names(SEXP names) {
     }
 
     // Duplicates need a `...n` suffix
-    int32_t hash = dict_hash_scalar(&d, names, i);
+    int32_t hash = dict_hash_scalar(&d, &d, i);
 
     if (d.key[hash] == DICT_EMPTY) {
       dict_put(&d, hash, i);
@@ -169,7 +169,7 @@ static SEXP as_unique_names(SEXP names) {
   char buf[100] = "";
 
   for (i = 0, ptr = STRING_PTR(names); i < n; ++i, ++ptr) {
-    int32_t hash = dict_hash_scalar(&d, names, i);
+    int32_t hash = dict_hash_scalar(&d, &d, i);
     if (dups_ptr[hash] != 1) {
       const char* name = CHAR(*ptr);
 
