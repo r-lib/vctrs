@@ -60,7 +60,7 @@ uint32_t dict_hash_with(dictionary* d, dictionary* x, R_len_t i) {
   // Quadratic probing: will try every slot if d->size is power of 2
   // http://research.cs.vt.edu/AVresearch/hashing/quadratic.php
   for (uint32_t k = 0; k < d->size; ++k) {
-    uint32_t probe = (hash + k * (k + 1) / 2) % d->size;
+    uint32_t probe = (hash + k * (k + 1) / 2) & (d->size - 1);
     // Rprintf("Probe: %i\n", probe);
 
     // If we circled back to start, dictionary is full
