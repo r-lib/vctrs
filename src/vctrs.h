@@ -237,6 +237,8 @@ int compare_scalar(SEXP x, R_len_t i, SEXP y, R_len_t j, bool na_equal);
 
 int32_t hash_object(SEXP x);
 int32_t hash_scalar(SEXP x, R_len_t i);
+void hash_fill(uint32_t* p, R_len_t n, SEXP x);
+
 
 // Growable vector -----------------------------------------------
 

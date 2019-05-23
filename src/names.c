@@ -1,5 +1,4 @@
 #include "vctrs.h"
-#include "dictionary.h"
 #include "utils.h"
 
 static void describe_repair(SEXP old, SEXP new);
@@ -76,19 +75,18 @@ SEXP vctrs_minimal_names(SEXP x) {
 }
 
 
-void stop_large_name();
-bool is_dotdotint(const char* name);
-ptrdiff_t suffix_pos(const char* name);
+// From dictionary.c
+SEXP vctrs_duplicated(SEXP x);
+
+static void stop_large_name();
+static bool is_dotdotint(const char* name);
+static ptrdiff_t suffix_pos(const char* name);
+static bool needs_suffix(SEXP str);
 
 static SEXP as_unique_names(SEXP names) {
   if (TYPEOF(names) != STRSXP) {
     Rf_errorcall(R_NilValue, "`names` must be a character vector");
   }
-
-  dictionary d;
-  dict_init(&d, names);
-  SEXP dups = PROTECT(Rf_allocVector(INTSXP, d.size));
-  int* dups_ptr = INTEGER(dups);
 
   R_len_t i = 0;
   R_len_t n = Rf_length(names);
@@ -99,41 +97,26 @@ static SEXP as_unique_names(SEXP names) {
   for (; i < n; ++i, ++ptr) {
     SEXP elt = *ptr;
 
-    if (elt == NA_STRING || elt == strings_dots || elt == strings_empty || is_dotdotint(CHAR(elt))) {
-      break;
-    }
-    if (suffix_pos(CHAR(elt)) >= 0) {
-      break;
-    }
-
-    int32_t hash = dict_hash_scalar(&d, names, i);
-
-    if (d.key[hash] == DICT_EMPTY) {
-      dict_put(&d, hash, i);
-      dups_ptr[hash] = 1;
-    } else {
+    if (needs_suffix(elt) || suffix_pos(CHAR(elt)) >= 0) {
       break;
     }
   }
-
-  // Return early when no repairs are needed
   if (i == n) {
-    UNPROTECT(1);
     return names;
   }
 
-
   names = PROTECT(r_maybe_duplicate(names));
-  ptr = STRING_PTR(names) + i;
+  ptr = STRING_PTR(names);
 
   for (; i < n; ++i, ++ptr) {
     SEXP elt = *ptr;
 
-    // Set `NA` and dots values to "" so they get replaced by `...n` later on
-    if (elt == NA_STRING || elt == strings_dots || is_dotdotint(CHAR(elt))) {
+    // Set `NA` and dots values to "" so they get replaced by `...n`
+    // later on
+    if (needs_suffix(elt)) {
       elt = strings_empty;
       SET_STRING_ELT(names, i, elt);
-      SET_STRING_ELT(d.x, i, elt);
+      continue;
     }
 
     // Strip `...n` suffixes
@@ -147,48 +130,41 @@ static SEXP as_unique_names(SEXP names) {
 
       elt = Rf_mkChar(buf);
       SET_STRING_ELT(names, i, elt);
-      SET_STRING_ELT(d.x, i, elt);
+      continue;
     }
-
-    // Duplicates need a `...n` suffix
-    int32_t hash = dict_hash_scalar(&d, names, i);
-
-    if (d.key[hash] == DICT_EMPTY) {
-      dict_put(&d, hash, i);
-      dups_ptr[hash] = 0;
-
-      // Ensure "" is seen as a duplicate so it always gets a suffix
-      if (elt == strings_empty) {
-        dups_ptr[hash]++;
-      }
-    }
-    dups_ptr[hash]++;
   }
 
   // Append all duplicates with a suffix
   char buf[100] = "";
+  ptr = STRING_PTR(names);
 
-  for (i = 0, ptr = STRING_PTR(names); i < n; ++i, ++ptr) {
-    int32_t hash = dict_hash_scalar(&d, names, i);
-    if (dups_ptr[hash] != 1) {
-      const char* name = CHAR(*ptr);
+  SEXP dups = PROTECT(vctrs_duplicated(names));
+  int* dups_ptr = LOGICAL(dups);
 
-      int remaining = 100;
-      int size = strlen(name);
-      if (size >= 100) {
-        stop_large_name();
-      }
+  for (R_len_t i = 0; i < n; ++i, ++ptr) {
+    SEXP elt = *ptr;
 
-      memcpy(buf, name, size + 1);
-      remaining -= size;
-
-      int needed = snprintf(buf + size, remaining, "...%d", i + 1);
-      if (needed >= remaining) {
-        stop_large_name();
-      }
-
-      SET_STRING_ELT(names, i, Rf_mkChar(buf));
+    if (elt != strings_empty && !dups_ptr[i]) {
+      continue;
     }
+
+    const char* name = CHAR(elt);
+
+    int remaining = 100;
+    int size = strlen(name);
+    if (size >= 100) {
+      stop_large_name();
+    }
+
+    memcpy(buf, name, size + 1);
+    remaining -= size;
+
+    int needed = snprintf(buf + size, remaining, "...%d", i + 1);
+    if (needed >= remaining) {
+      stop_large_name();
+    }
+
+    SET_STRING_ELT(names, i, Rf_mkChar(buf));
   }
 
   UNPROTECT(2);
@@ -206,7 +182,7 @@ SEXP vctrs_as_unique_names(SEXP names, SEXP quiet) {
   return out;
 }
 
-bool is_dotdotint(const char* name) {
+static bool is_dotdotint(const char* name) {
   int n = strlen(name);
 
   if (n < 3) {
@@ -243,7 +219,7 @@ static bool is_digit(const char c) {
   }
 }
 
-ptrdiff_t suffix_pos(const char* name) {
+static ptrdiff_t suffix_pos(const char* name) {
   int n = strlen(name);
 
   const char* suffix_end = NULL;
@@ -302,9 +278,18 @@ ptrdiff_t suffix_pos(const char* name) {
   }
 }
 
-void stop_large_name() {
+static void stop_large_name() {
   Rf_errorcall(R_NilValue, "Can't tidy up name because it is too large");
 }
+
+static bool needs_suffix(SEXP str) {
+  return
+    str == NA_STRING ||
+    str == strings_dots ||
+    str == strings_empty ||
+    is_dotdotint(CHAR(str));
+}
+
 
 static SEXP names_iota(R_len_t n);
 

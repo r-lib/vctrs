@@ -16,32 +16,46 @@ int32_t ceil2(int32_t x) {
 // Dictonary object ------------------------------------------------------------
 
 // Caller is responsible for PROTECTing x
-void dict_init(dictionary* d, SEXP x) {
-  d->x = x;
-
-  // assume worst case, that every value is distinct, aiming for a load factor
-  // of at most 77%. We round up to power of 2 to ensure quadratic probing
-  // strategy works.
-  R_len_t size = ceil2(vec_size(x) / 0.77);
-  if (size < 16) {
-    size = 16;
-  }
-  // Rprintf("size: %i\n", size);
-
-  d->key = (R_len_t*) R_alloc(size, sizeof(R_len_t));
-  memset(d->key, DICT_EMPTY, size * sizeof(R_len_t));
-
-  d->size = size;
+void dict_init_impl(dictionary* d, SEXP x, bool partial) {
+  d->vec = x;
   d->used = 0;
+
+  if (partial) {
+    d->key = NULL;
+    d->size = 0;
+  } else {
+    // assume worst case, that every value is distinct, aiming for a load factor
+    // of at most 77%. We round up to power of 2 to ensure quadratic probing
+    // strategy works.
+    // Rprintf("size: %i\n", size);
+    R_len_t size = ceil2(vec_size(x) / 0.77);
+    size = (size < 16) ? 16 : size;
+
+    d->key = (R_len_t*) R_alloc(size, sizeof(R_len_t));
+    memset(d->key, DICT_EMPTY, size * sizeof(R_len_t));
+
+    d->size = size;
+  }
+
+  R_len_t n = vec_size(x);
+  d->hash = (uint32_t*) R_alloc(n, sizeof(uint32_t));
+  memset(d->hash, 0, n * sizeof(R_len_t));
+  hash_fill(d->hash, n, x);
+}
+
+void dict_init(dictionary* d, SEXP x) {
+  dict_init_impl(d, x, false);
+}
+void dict_init_partial(dictionary* d, SEXP x) {
+  dict_init_impl(d, x, true);
 }
 
 void dict_free(dictionary* d) {
   // no cleanup currently needed
 }
 
-uint32_t dict_hash_scalar(dictionary* d, SEXP y, R_len_t i) {
-  uint32_t hash = hash_scalar(y, i);
-  // Rprintf("i: %i hash: %i\n", i, hash);
+uint32_t dict_hash_with(dictionary* d, dictionary* x, R_len_t i) {
+  uint32_t hash = x->hash[i];
 
   // Quadratic probing: will try every slot if d->size is power of 2
   // http://research.cs.vt.edu/AVresearch/hashing/quadratic.php
@@ -63,13 +77,18 @@ uint32_t dict_hash_scalar(dictionary* d, SEXP y, R_len_t i) {
     // Check for same value as there might be a collision. If there is
     // a collision, next iteration will find another spot using
     // quadratic probing.
-    if (equal_scalar(d->x, idx, y, i, true)) {
+    if (equal_scalar(d->vec, idx, x->vec, i, true)) {
       return probe;
     }
   }
 
   Rf_errorcall(R_NilValue, "Internal error: Dictionary is full!");
 }
+
+uint32_t dict_hash_scalar(dictionary* d, R_len_t i) {
+  return dict_hash_with(d, d, i);
+}
+
 
 void dict_put(dictionary* d, uint32_t hash, R_len_t i) {
   d->key[hash] = i;
@@ -89,7 +108,7 @@ SEXP vctrs_unique_loc(SEXP x) {
 
   R_len_t n = vec_size(x);
   for (int i = 0; i < n; ++i) {
-    uint32_t hash = dict_hash_scalar(&d, x, i);
+    uint32_t hash = dict_hash_scalar(&d, i);
 
     if (d.key[hash] == DICT_EMPTY) {
       dict_put(&d, hash, i);
@@ -111,7 +130,7 @@ SEXP vctrs_duplicated_any(SEXP x) {
   R_len_t n = vec_size(x);
 
   for (int i = 0; i < n; ++i) {
-    uint32_t hash = dict_hash_scalar(&d, x, i);
+    uint32_t hash = dict_hash_scalar(&d, i);
 
     if (d.key[hash] == DICT_EMPTY) {
       dict_put(&d, hash, i);
@@ -131,7 +150,7 @@ SEXP vctrs_n_distinct(SEXP x) {
 
   R_len_t n = vec_size(x);
   for (int i = 0; i < n; ++i) {
-    uint32_t hash = dict_hash_scalar(&d, x, i);
+    uint32_t hash = dict_hash_scalar(&d, i);
 
     if (d.key[hash] == DICT_EMPTY)
       dict_put(&d, hash, i);
@@ -150,7 +169,7 @@ SEXP vctrs_id(SEXP x) {
   int* p_out = INTEGER(out);
 
   for (int i = 0; i < n; ++i) {
-    uint32_t hash = dict_hash_scalar(&d, x, i);
+    uint32_t hash = dict_hash_scalar(&d, i);
 
     if (d.key[hash] == DICT_EMPTY) {
       dict_put(&d, hash, i);
@@ -170,12 +189,15 @@ SEXP vctrs_match(SEXP needles, SEXP haystack) {
   // Load dictionary with haystack
   R_len_t n_haystack = vec_size(haystack);
   for (int i = 0; i < n_haystack; ++i) {
-    uint32_t hash = dict_hash_scalar(&d, haystack, i);
+    uint32_t hash = dict_hash_scalar(&d, i);
 
     if (d.key[hash] == DICT_EMPTY) {
       dict_put(&d, hash, i);
     }
   }
+
+  dictionary d_needles;
+  dict_init_partial(&d_needles, needles);
 
   // Locate needles
   R_len_t n_needle = vec_size(needles);
@@ -183,13 +205,14 @@ SEXP vctrs_match(SEXP needles, SEXP haystack) {
   int* p_out = INTEGER(out);
 
   for (int i = 0; i < n_needle; ++i) {
-    uint32_t hash = dict_hash_scalar(&d, needles, i);
+    uint32_t hash = dict_hash_with(&d, &d_needles, i);
     if (d.key[hash] == DICT_EMPTY) {
       p_out[i] = NA_INTEGER;
     } else {
       p_out[i] = d.key[hash] + 1;
     }
   }
+
   UNPROTECT(1);
   dict_free(&d);
   return out;
@@ -203,12 +226,15 @@ SEXP vctrs_in(SEXP needles, SEXP haystack) {
   // Load dictionary with haystack
   R_len_t n_haystack = vec_size(haystack);
   for (int i = 0; i < n_haystack; ++i) {
-    uint32_t hash = dict_hash_scalar(&d, haystack, i);
+    uint32_t hash = dict_hash_scalar(&d, i);
 
     if (d.key[hash] == DICT_EMPTY) {
       dict_put(&d, hash, i);
     }
   }
+
+  dictionary d_needles;
+  dict_init_partial(&d_needles, needles);
 
   // Locate needles
   R_len_t n_needle = vec_size(needles);
@@ -216,9 +242,10 @@ SEXP vctrs_in(SEXP needles, SEXP haystack) {
   int* p_out = LOGICAL(out);
 
   for (int i = 0; i < n_needle; ++i) {
-    uint32_t hash = dict_hash_scalar(&d, needles, i);
+    uint32_t hash = dict_hash_with(&d, &d_needles, i);
     p_out[i] = (d.key[hash] != DICT_EMPTY);
   }
+
   UNPROTECT(1);
   dict_free(&d);
   return out;
@@ -233,7 +260,7 @@ SEXP vctrs_count(SEXP x) {
 
   R_len_t n = vec_size(x);
   for (int i = 0; i < n; ++i) {
-    int32_t hash = dict_hash_scalar(&d, x, i);
+    int32_t hash = dict_hash_scalar(&d, i);
 
     if (d.key[hash] == DICT_EMPTY) {
       dict_put(&d, hash, i);
@@ -280,7 +307,7 @@ SEXP vctrs_duplicated(SEXP x) {
 
   R_len_t n = vec_size(x);
   for (int i = 0; i < n; ++i) {
-    int32_t hash = dict_hash_scalar(&d, x, i);
+    int32_t hash = dict_hash_scalar(&d, i);
 
     if (d.key[hash] == DICT_EMPTY) {
       dict_put(&d, hash, i);
@@ -294,7 +321,7 @@ SEXP vctrs_duplicated(SEXP x) {
   int* p_out = LOGICAL(out);
 
   for (int i = 0; i < n; ++i) {
-    int32_t hash = dict_hash_scalar(&d, x, i);
+    int32_t hash = dict_hash_scalar(&d, i);
     p_out[i] = p_val[hash] != 1;
   }
 
@@ -323,7 +350,7 @@ SEXP vctrs_duplicate_split(SEXP x) {
 
   // Fill dictionary, out_pos, and count
   for (int i = 0; i < n; ++i) {
-    uint32_t hash = dict_hash_scalar(&d, x, i);
+    uint32_t hash = dict_hash_scalar(&d, i);
 
     if (d.key[hash] == DICT_EMPTY) {
       p_tracker[hash] = d.used;
