@@ -287,8 +287,8 @@ section in the "tidyverse package development principles".</p></div>
 <span class='fu'>vec_as_names</span>(<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='fl'>NA</span>, <span class='fl'>NA</span>, <span class='st'>"foo"</span>))</div><div class='output co'>#&gt; [1] ""    ""    "foo"</div><div class='input'>
 <span class='co'># You can make them unique:</span>
 <span class='fu'>vec_as_names</span>(<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='fl'>NA</span>, <span class='fl'>NA</span>, <span class='st'>"foo"</span>), <span class='kw'>repair</span> <span class='kw'>=</span> <span class='st'>"unique"</span>)</div><div class='output co'>#&gt; <span class='message'>New names:</span>
-#&gt; <span class='message'>* `` -&gt; ...1</span>
-#&gt; <span class='message'>* `` -&gt; ...2</span></div><div class='output co'>#&gt; [1] "...1" "...2" "foo" </div><div class='input'>
+#&gt; <span class='message'>* NA -&gt; ...1</span>
+#&gt; <span class='message'>* NA -&gt; ...2</span></div><div class='output co'>#&gt; [1] "...1" "...2" "foo" </div><div class='input'>
 <span class='co'># Universal repairing fixes any non-syntactic name:</span>
 <span class='fu'>vec_as_names</span>(<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='st'>"_foo"</span>, <span class='st'>"+"</span>), <span class='kw'>repair</span> <span class='kw'>=</span> <span class='st'>"universal"</span>)</div><div class='output co'>#&gt; <span class='message'>New names:</span>
 #&gt; <span class='message'>* `_foo` -&gt; ._foo</span>
