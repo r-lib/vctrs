@@ -229,15 +229,13 @@ vec_unique_count <- function(x) {
 #' # Only the first index of duplicates is returned
 #' vec_match(c("a", "b"), c("a", "b", "a", "b"))
 vec_match <- function(needles, haystack) {
-  v <- vec_cast_common(needles = needles, haystack = haystack)
-  .Call(vctrs_match, vec_proxy(v$needles), vec_proxy(v$haystack))
+  .Call(vctrs_match, needles, haystack)
 }
 
 #' @export
 #' @rdname vec_match
 vec_in <- function(needles, haystack) {
-  v <- vec_cast_common(needles = needles, haystack = haystack)
-  .Call(vctrs_in, vec_proxy(v$needles), vec_proxy(v$haystack))
+  .Call(vctrs_in, needles, haystack)
 }
 
 

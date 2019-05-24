@@ -1,6 +1,11 @@
 #include "vctrs.h"
 #include "dictionary.h"
 
+// Initialised at load time
+struct vctrs_arg args_needles;
+struct vctrs_arg args_haystack;
+
+
 // http://graphics.stanford.edu/~seander/bithacks.html#RoundUpPowerOf2
 int32_t ceil2(int32_t x) {
   x--;
@@ -182,7 +187,18 @@ SEXP vctrs_id(SEXP x) {
   return out;
 }
 
+// [[ register() ]]
 SEXP vctrs_match(SEXP needles, SEXP haystack) {
+  int _;
+  SEXP type = PROTECT(vec_type2(needles, haystack, &args_needles, &args_haystack, &_));
+
+  needles = PROTECT(vec_cast(needles, type));
+  haystack = PROTECT(vec_cast(haystack, type));
+
+  needles = PROTECT(vec_proxy(needles));
+  haystack = PROTECT(vec_proxy(haystack));
+  UNPROTECT(3);
+
   dictionary d;
   dict_init(&d, haystack);
 
@@ -213,13 +229,23 @@ SEXP vctrs_match(SEXP needles, SEXP haystack) {
     }
   }
 
-  UNPROTECT(1);
+  UNPROTECT(3);
   dict_free(&d);
   return out;
 }
 
-
+// [[ register() ]]
 SEXP vctrs_in(SEXP needles, SEXP haystack) {
+  int _;
+  SEXP type = PROTECT(vec_type2(needles, haystack, &args_needles, &args_haystack, &_));
+
+  needles = PROTECT(vec_cast(needles, type));
+  haystack = PROTECT(vec_cast(haystack, type));
+
+  needles = PROTECT(vec_proxy(needles));
+  haystack = PROTECT(vec_proxy(haystack));
+  UNPROTECT(3);
+
   dictionary d;
   dict_init(&d, haystack);
 
@@ -246,7 +272,7 @@ SEXP vctrs_in(SEXP needles, SEXP haystack) {
     p_out[i] = (d.key[hash] != DICT_EMPTY);
   }
 
-  UNPROTECT(1);
+  UNPROTECT(3);
   dict_free(&d);
   return out;
 }
@@ -405,4 +431,10 @@ SEXP vctrs_duplicate_split(SEXP x) {
   UNPROTECT(8);
   dict_free(&d);
   return out;
+}
+
+
+void vctrs_init_dictionary(SEXP ns) {
+  args_needles = new_wrapper_arg(NULL, "needles");
+  args_haystack = new_wrapper_arg(NULL, "haystack");
 }
