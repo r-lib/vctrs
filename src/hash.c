@@ -152,7 +152,11 @@ uint32_t hash_object(SEXP x) {
 
 // [[ register() ]]
 SEXP vctrs_hash_object(SEXP x) {
-  return Rf_ScalarInteger(hash_object(x));
+  SEXP out = PROTECT(Rf_allocVector(RAWSXP, sizeof(uint32_t)));
+  uint32_t hash = hash_object(x);
+  memcpy(RAW(out), &hash, sizeof(uint32_t));
+  UNPROTECT(1);
+  return out;
 }
 
 
@@ -306,9 +310,9 @@ SEXP vctrs_hash(SEXP x, SEXP rowwise) {
   x = PROTECT(vec_proxy(x));
 
   R_len_t n = vec_size(x);
-  SEXP out = PROTECT(Rf_allocVector(INTSXP, n));
+  SEXP out = PROTECT(Rf_allocVector(RAWSXP, n * sizeof(uint32_t)));
 
-  uint32_t* p = (uint32_t*) INTEGER(out);
+  uint32_t* p = (uint32_t*) RAW(out);
 
   if (r_lgl_get(rowwise, 0)) {
     for (R_len_t i = 0; i < n; ++i) {
