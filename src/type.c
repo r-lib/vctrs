@@ -71,15 +71,24 @@ SEXP vec_type_finalise(SEXP x) {
 }
 
 
+SEXP vctrs_type_common_impl(SEXP dots, SEXP ptype);
 static SEXP vctrs_type2_common(SEXP current, SEXP next, struct counters* counters);
 
 // [[ register(external = TRUE) ]]
 SEXP vctrs_type_common(SEXP call, SEXP op, SEXP args, SEXP env) {
   args = CDR(args);
 
+  SEXP types = PROTECT(rlang_env_dots_values(env));
   SEXP ptype = PROTECT(Rf_eval(CAR(args), env));
+
+  SEXP out = vctrs_type_common_impl(types, ptype);
+
+  UNPROTECT(2);
+  return out;
+}
+
+SEXP vctrs_type_common_impl(SEXP dots, SEXP ptype) {
   if (!vec_is_partial(ptype)) {
-    UNPROTECT(1);
     return vec_type(ptype);
   }
 
@@ -87,17 +96,16 @@ SEXP vctrs_type_common(SEXP call, SEXP op, SEXP args, SEXP env) {
     Rf_errorcall(R_NilValue, "strict mode is activated; you must supply complete `.ptype`.");
   }
 
-  SEXP types = PROTECT(rlang_env_dots_values(env));
-
   // Start reduction with the `.ptype` argument
   struct vctrs_arg ptype_arg = new_wrapper_arg(NULL, ".ptype");
 
-  SEXP type = PROTECT(reduce(ptype, &ptype_arg, types, &vctrs_type2_common));
+  SEXP type = PROTECT(reduce(ptype, &ptype_arg, dots, &vctrs_type2_common));
   type = vec_type_finalise(type);
 
-  UNPROTECT(3);
+  UNPROTECT(1);
   return type;
 }
+
 
 static SEXP vctrs_type2_common(SEXP current, SEXP next, struct counters* counters) {
   next = PROTECT(vec_type(next));
