@@ -120,9 +120,11 @@ static const R_CallMethodDef CallEntries[] = {
 };
 
 extern SEXP vctrs_type_common(SEXP, SEXP, SEXP, SEXP);
+extern SEXP vctrs_cast_common(SEXP, SEXP, SEXP, SEXP);
 
 static const R_ExternalMethodDef ExtEntries[] = {
   {"vctrs_type_common",                (DL_FUNC) &vctrs_type_common, 1},
+  {"vctrs_cast_common",                (DL_FUNC) &vctrs_cast_common, 1},
   {NULL, NULL, 0}
 };
 
@@ -135,6 +137,7 @@ void R_init_vctrs(DllInfo *dll)
 
 void vctrs_init_cast(SEXP ns);
 void vctrs_init_data(SEXP ns);
+void vctrs_init_dictionary(SEXP ns);
 void vctrs_init_slice(SEXP ns);
 void vctrs_init_slice_assign(SEXP ns);
 void vctrs_init_type2(SEXP ns);
@@ -146,6 +149,7 @@ void vctrs_init_utils(SEXP ns);
 SEXP vctrs_init(SEXP ns) {
   vctrs_init_cast(ns);
   vctrs_init_data(ns);
+  vctrs_init_dictionary(ns);
   vctrs_init_slice(ns);
   vctrs_init_slice_assign(ns);
   vctrs_init_type2(ns);

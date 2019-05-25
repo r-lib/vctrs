@@ -1,6 +1,11 @@
 #include "vctrs.h"
 #include "dictionary.h"
 
+// Initialised at load time
+struct vctrs_arg args_needles;
+struct vctrs_arg args_haystack;
+
+
 // http://graphics.stanford.edu/~seander/bithacks.html#RoundUpPowerOf2
 int32_t ceil2(int32_t x) {
   x--;
@@ -100,6 +105,8 @@ void dict_put(dictionary* d, uint32_t hash, R_len_t i) {
 // TODO: separate out into individual files
 
 SEXP vctrs_unique_loc(SEXP x) {
+  x = PROTECT(vec_proxy(x));
+
   dictionary d;
   dict_init(&d, x);
 
@@ -117,12 +124,16 @@ SEXP vctrs_unique_loc(SEXP x) {
   }
 
   SEXP out = growable_values(&g);
+
   dict_free(&d);
   growable_free(&g);
+  UNPROTECT(1);
   return out;
 }
 
 SEXP vctrs_duplicated_any(SEXP x) {
+  x = PROTECT(vec_proxy(x));
+
   dictionary d;
   dict_init(&d, x);
 
@@ -141,10 +152,14 @@ SEXP vctrs_duplicated_any(SEXP x) {
   }
 
   dict_free(&d);
+  UNPROTECT(1);
+
   return Rf_ScalarLogical(out);
 }
 
 SEXP vctrs_n_distinct(SEXP x) {
+  x = PROTECT(vec_proxy(x));
+
   dictionary d;
   dict_init(&d, x);
 
@@ -157,10 +172,13 @@ SEXP vctrs_n_distinct(SEXP x) {
   }
 
   dict_free(&d);
+  UNPROTECT(1);
   return Rf_ScalarInteger(d.used);
 }
 
 SEXP vctrs_id(SEXP x) {
+  x = PROTECT(vec_proxy(x));
+
   dictionary d;
   dict_init(&d, x);
 
@@ -177,12 +195,23 @@ SEXP vctrs_id(SEXP x) {
     p_out[i] = d.key[hash] + 1;
   }
 
-  UNPROTECT(1);
+  UNPROTECT(2);
   dict_free(&d);
   return out;
 }
 
+// [[ register() ]]
 SEXP vctrs_match(SEXP needles, SEXP haystack) {
+  int _;
+  SEXP type = PROTECT(vec_type2(needles, haystack, &args_needles, &args_haystack, &_));
+
+  needles = PROTECT(vec_cast(needles, type));
+  haystack = PROTECT(vec_cast(haystack, type));
+
+  needles = PROTECT(vec_proxy(needles));
+  haystack = PROTECT(vec_proxy(haystack));
+  UNPROTECT(3);
+
   dictionary d;
   dict_init(&d, haystack);
 
@@ -213,13 +242,23 @@ SEXP vctrs_match(SEXP needles, SEXP haystack) {
     }
   }
 
-  UNPROTECT(1);
+  UNPROTECT(3);
   dict_free(&d);
   return out;
 }
 
-
+// [[ register() ]]
 SEXP vctrs_in(SEXP needles, SEXP haystack) {
+  int _;
+  SEXP type = PROTECT(vec_type2(needles, haystack, &args_needles, &args_haystack, &_));
+
+  needles = PROTECT(vec_cast(needles, type));
+  haystack = PROTECT(vec_cast(haystack, type));
+
+  needles = PROTECT(vec_proxy(needles));
+  haystack = PROTECT(vec_proxy(haystack));
+  UNPROTECT(3);
+
   dictionary d;
   dict_init(&d, haystack);
 
@@ -246,7 +285,7 @@ SEXP vctrs_in(SEXP needles, SEXP haystack) {
     p_out[i] = (d.key[hash] != DICT_EMPTY);
   }
 
-  UNPROTECT(1);
+  UNPROTECT(3);
   dict_free(&d);
   return out;
 }
@@ -299,6 +338,8 @@ SEXP vctrs_count(SEXP x) {
 }
 
 SEXP vctrs_duplicated(SEXP x) {
+  x = PROTECT(vec_proxy(x));
+
   dictionary d;
   dict_init(&d, x);
 
@@ -325,12 +366,14 @@ SEXP vctrs_duplicated(SEXP x) {
     p_out[i] = p_val[hash] != 1;
   }
 
-  UNPROTECT(2);
+  UNPROTECT(3);
   dict_free(&d);
   return out;
 }
 
 SEXP vctrs_duplicate_split(SEXP x) {
+  x = PROTECT(vec_proxy(x));
+
   dictionary d;
   dict_init(&d, x);
 
@@ -397,12 +440,20 @@ SEXP vctrs_duplicate_split(SEXP x) {
   SEXP out = PROTECT(Rf_allocVector(VECSXP, 2));
   SET_VECTOR_ELT(out, 0, out_key);
   SET_VECTOR_ELT(out, 1, out_idx);
+
   SEXP names = PROTECT(Rf_allocVector(STRSXP, 2));
   SET_STRING_ELT(names, 0, Rf_mkChar("key"));
   SET_STRING_ELT(names, 1, Rf_mkChar("idx"));
+
   Rf_setAttrib(out, R_NamesSymbol, names);
 
-  UNPROTECT(8);
+  UNPROTECT(9);
   dict_free(&d);
   return out;
+}
+
+
+void vctrs_init_dictionary(SEXP ns) {
+  args_needles = new_wrapper_arg(NULL, "needles");
+  args_haystack = new_wrapper_arg(NULL, "haystack");
 }

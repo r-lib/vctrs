@@ -123,9 +123,7 @@ vec_cast_dispatch <- function(x, to) {
 #' @export
 #' @rdname vec_cast
 vec_cast_common <- function(..., .to = NULL) {
-  args <- list2(...)
-  type <- vec_type_common(!!!args, .ptype = .to)
-  map(args, vec_cast, to = type)
+  .External2(vctrs_cast_common, .to)
 }
 
 #' @export

@@ -33,6 +33,10 @@ test_that("inputs to vec_coercible_cast() are checked", {
   expect_error(vec_coercible_cast("", "", to_arg = chr()), "must be a string")
 })
 
+test_that("cast common preserves names", {
+  expect_identical(vec_cast_common(foo = 1, bar = 2L), list(foo = 1, bar = 2))
+})
+
 
 # vec_restore -------------------------------------------------------------
 

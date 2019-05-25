@@ -495,6 +495,41 @@ SEXP vctrs_coercible_cast(SEXP x, SEXP to, SEXP x_arg_, SEXP to_arg_) {
 }
 
 
+SEXP vctrs_type_common_impl(SEXP dots, SEXP ptype);
+
+// [[ include("vctrs.h") ]]
+SEXP vec_cast_common(SEXP xs, SEXP to) {
+  SEXP type = PROTECT(vctrs_type_common_impl(xs, to));
+
+  R_len_t n = Rf_length(xs);
+  SEXP out = PROTECT(Rf_allocVector(VECSXP, n));
+
+  for (R_len_t i = 0; i < n; ++i) {
+    SEXP elt = VECTOR_ELT(xs, i);
+    SET_VECTOR_ELT(out, i, vec_cast(elt, type));
+  }
+
+  SEXP names = PROTECT(Rf_getAttrib(xs, R_NamesSymbol));
+  Rf_setAttrib(out, R_NamesSymbol, names);
+
+  UNPROTECT(3);
+  return out;
+}
+
+// [[ register(external = TRUE) ]]
+SEXP vctrs_cast_common(SEXP call, SEXP op, SEXP args, SEXP env) {
+  args = CDR(args);
+
+  SEXP dots = PROTECT(rlang_env_dots_list(env));
+  SEXP to = PROTECT(Rf_eval(CAR(args), env));
+
+  SEXP out = vec_cast_common(dots, to);
+
+  UNPROTECT(2);
+  return out;
+}
+
+
 void vctrs_init_cast(SEXP ns) {
   syms_vec_cast_dispatch = Rf_install("vec_cast_dispatch");
   syms_vec_restore_dispatch = Rf_install("vec_restore_dispatch");
