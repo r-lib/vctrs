@@ -105,6 +105,8 @@ void dict_put(dictionary* d, uint32_t hash, R_len_t i) {
 // TODO: separate out into individual files
 
 SEXP vctrs_unique_loc(SEXP x) {
+  x = PROTECT(vec_proxy(x));
+
   dictionary d;
   dict_init(&d, x);
 
@@ -122,12 +124,16 @@ SEXP vctrs_unique_loc(SEXP x) {
   }
 
   SEXP out = growable_values(&g);
+
   dict_free(&d);
   growable_free(&g);
+  UNPROTECT(1);
   return out;
 }
 
 SEXP vctrs_duplicated_any(SEXP x) {
+  x = PROTECT(vec_proxy(x));
+
   dictionary d;
   dict_init(&d, x);
 
@@ -146,10 +152,14 @@ SEXP vctrs_duplicated_any(SEXP x) {
   }
 
   dict_free(&d);
+  UNPROTECT(1);
+
   return Rf_ScalarLogical(out);
 }
 
 SEXP vctrs_n_distinct(SEXP x) {
+  x = PROTECT(vec_proxy(x));
+
   dictionary d;
   dict_init(&d, x);
 
@@ -162,10 +172,13 @@ SEXP vctrs_n_distinct(SEXP x) {
   }
 
   dict_free(&d);
+  UNPROTECT(1);
   return Rf_ScalarInteger(d.used);
 }
 
 SEXP vctrs_id(SEXP x) {
+  x = PROTECT(vec_proxy(x));
+
   dictionary d;
   dict_init(&d, x);
 
@@ -182,7 +195,7 @@ SEXP vctrs_id(SEXP x) {
     p_out[i] = d.key[hash] + 1;
   }
 
-  UNPROTECT(1);
+  UNPROTECT(2);
   dict_free(&d);
   return out;
 }
@@ -325,6 +338,8 @@ SEXP vctrs_count(SEXP x) {
 }
 
 SEXP vctrs_duplicated(SEXP x) {
+  x = PROTECT(vec_proxy(x));
+
   dictionary d;
   dict_init(&d, x);
 
@@ -351,12 +366,14 @@ SEXP vctrs_duplicated(SEXP x) {
     p_out[i] = p_val[hash] != 1;
   }
 
-  UNPROTECT(2);
+  UNPROTECT(3);
   dict_free(&d);
   return out;
 }
 
 SEXP vctrs_duplicate_split(SEXP x) {
+  x = PROTECT(vec_proxy(x));
+
   dictionary d;
   dict_init(&d, x);
 
@@ -423,12 +440,14 @@ SEXP vctrs_duplicate_split(SEXP x) {
   SEXP out = PROTECT(Rf_allocVector(VECSXP, 2));
   SET_VECTOR_ELT(out, 0, out_key);
   SET_VECTOR_ELT(out, 1, out_idx);
+
   SEXP names = PROTECT(Rf_allocVector(STRSXP, 2));
   SET_STRING_ELT(names, 0, Rf_mkChar("key"));
   SET_STRING_ELT(names, 1, Rf_mkChar("idx"));
+
   Rf_setAttrib(out, R_NamesSymbol, names);
 
-  UNPROTECT(8);
+  UNPROTECT(9);
   dict_free(&d);
   return out;
 }

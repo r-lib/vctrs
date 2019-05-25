@@ -126,21 +126,18 @@ NULL
 #' @rdname vec_duplicate
 #' @export
 vec_duplicate_any <- function(x) {
-  x <- vec_proxy(x)
   .Call(vctrs_duplicated_any, x)
 }
 
 #' @rdname vec_duplicate
 #' @export
 vec_duplicate_detect <- function(x) {
-  x <- vec_proxy(x)
   .Call(vctrs_duplicated, x)
 }
 
 #' @rdname vec_duplicate
 #' @export
 vec_duplicate_id <- function(x) {
-  x <- vec_proxy(x)
   .Call(vctrs_id, x)
 }
 
@@ -186,14 +183,12 @@ vec_unique <- function(x) {
 #' @rdname vec_unique
 #' @export
 vec_unique_loc <- function(x) {
-  x <- vec_proxy(x)
   .Call(vctrs_unique_loc, x)
 }
 
 #' @rdname vec_unique
 #' @export
 vec_unique_count <- function(x) {
-  x <- vec_proxy(x)
   .Call(vctrs_n_distinct, x)
 }
 
@@ -282,6 +277,5 @@ vec_split <- function(x, by) {
 # Returns key-index pair giving the index of first key occurence and
 # a list containing the locations of each key
 vec_duplicate_split <- function(x) {
-  x <- vec_proxy(x)
   .Call(vctrs_duplicate_split, x)
 }
