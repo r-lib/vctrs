@@ -59,6 +59,7 @@ extern SEXP vctrs_recycle(SEXP, SEXP);
 extern SEXP vctrs_coercible_cast(SEXP, SEXP, SEXP, SEXP);
 extern SEXP vec_assign(SEXP, SEXP, SEXP);
 extern SEXP vctrs_set_attributes(SEXP, SEXP);
+extern SEXP vctrs_as_df_row(SEXP, SEXP);
 
 // Defined below
 SEXP vctrs_init(SEXP);
@@ -116,6 +117,7 @@ static const R_CallMethodDef CallEntries[] = {
   {"vctrs_coercible_cast",             (DL_FUNC) &vctrs_coercible_cast, 4},
   {"vctrs_assign",                     (DL_FUNC) &vec_assign, 3},
   {"vctrs_set_attributes",             (DL_FUNC) &vctrs_set_attributes, 2},
+  {"vctrs_as_df_row",                  (DL_FUNC) &vctrs_as_df_row, 2},
   {NULL, NULL, 0}
 };
 

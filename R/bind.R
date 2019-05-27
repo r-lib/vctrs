@@ -178,27 +178,8 @@ vec_cbind <- function(..., .ptype = NULL, .size = NULL) {
 
 # as_df --------------------------------------------------------------
 
-as_df_row <- function(x, quiet = FALSE) UseMethod("as_df_row")
-
-#' @export
-as_df_row.data.frame <- function(x, quiet = FALSE) x
-
-#' @export
-as_df_row.NULL <- function(x, quiet = FALSE) x
-
-#' @export
-as_df_row.default <- function(x, quiet = FALSE) {
-  if (is_unspecified(x) && identical(names(x), NULL)) {
-    return(x)
-  }
-
-  if (vec_dims(x) == 1L) {
-    x <- as.list(x)
-    x <- vec_repair_names(x, "unique", quiet = quiet)
-    new_data_frame(x, n = 1L)
-  } else {
-    as.data.frame(x)
-  }
+as_df_row <- function(x, quiet = FALSE) {
+  .Call(vctrs_as_df_row, x, quiet)
 }
 
 as_df_col <- function(x, outer_name) UseMethod("as_df_col")

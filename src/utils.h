@@ -45,6 +45,8 @@ bool is_bare_data_frame(SEXP x);
 bool is_bare_tibble(SEXP x);
 bool is_record(SEXP x);
 
+SEXP vec_unique_names(SEXP x, bool quiet);
+
 // Returns S3 method for `generic` suitable for the class of `x`. The
 // inheritance hierarchy is explored except for the default method.
 SEXP s3_find_method(const char* generic, SEXP x);
@@ -116,6 +118,9 @@ static inline double r_dbl_get(SEXP x, R_len_t i) {
   r__vec_get_check(x, i, "r_dbl_get");
   return REAL(x)[i];
 }
+
+SEXP r_as_list(SEXP x);
+SEXP r_as_data_frame(SEXP x);
 
 
 extern SEXP vctrs_ns_env;

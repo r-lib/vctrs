@@ -298,7 +298,7 @@ static bool needs_suffix(SEXP str) {
 
 static SEXP names_iota(R_len_t n);
 
-SEXP vctrs_unique_names(SEXP x, SEXP quiet) {
+SEXP vec_unique_names(SEXP x, bool quiet) {
   SEXP names = PROTECT(Rf_getAttrib(x, R_NamesSymbol));
 
   SEXP out;
@@ -308,12 +308,16 @@ SEXP vctrs_unique_names(SEXP x, SEXP quiet) {
     out = PROTECT(as_unique_names(names));
   }
 
-  if (!LOGICAL(quiet)[0]) {
+  if (!quiet) {
     describe_repair(names, out);
   }
 
   UNPROTECT(2);
   return(out);
+}
+
+SEXP vctrs_unique_names(SEXP x, SEXP quiet) {
+  return vec_unique_names(x, LOGICAL(quiet)[0]);
 }
 
 

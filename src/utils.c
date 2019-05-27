@@ -21,6 +21,11 @@ SEXP strings_vctrs_vctr = NULL;
 SEXP classes_data_frame = NULL;
 SEXP classes_tibble = NULL;
 
+static SEXP syms_as_list = NULL;
+static SEXP syms_as_data_frame = NULL;
+static SEXP fns_as_list = NULL;
+static SEXP fns_as_data_frame = NULL;
+
 
 bool is_bool(SEXP x) {
   return
@@ -497,6 +502,21 @@ bool r_chr_has_string(SEXP x, SEXP str) {
   return false;
 }
 
+SEXP r_as_list(SEXP x) {
+  if (OBJECT(x)) {
+    return vctrs_dispatch1(syms_as_list, fns_as_list, syms_x, x);
+  } else {
+    return Rf_coerceVector(x, VECSXP);
+  }
+}
+SEXP r_as_data_frame(SEXP x) {
+  if (is_bare_data_frame(x)) {
+    return x;
+  } else {
+    return vctrs_dispatch1(syms_as_data_frame, fns_as_data_frame, syms_x, x);
+  }
+}
+
 
 SEXP vctrs_ns_env = NULL;
 SEXP vctrs_shared_empty_str = NULL;
@@ -655,4 +675,9 @@ void vctrs_init_utils(SEXP ns) {
   rlang_unbox = (SEXP (*)(SEXP)) R_GetCCallable("rlang", "rlang_unbox");
   rlang_env_dots_values = (SEXP (*)(SEXP)) R_GetCCallable("rlang", "rlang_env_dots_values");
   rlang_env_dots_list = (SEXP (*)(SEXP)) R_GetCCallable("rlang", "rlang_env_dots_list");
+
+  syms_as_list = Rf_install("as.list");
+  syms_as_data_frame = Rf_install("as.data.frame");
+  fns_as_list = r_env_get(R_BaseEnv, syms_as_list);
+  fns_as_data_frame = r_env_get(R_BaseEnv, syms_as_data_frame);
 }
