@@ -58,8 +58,8 @@ test_that("all inputs coerced to data frames", {
 })
 
 test_that("names are supplied if needed", {
-  expect_message(out <- vec_rbind(data_frame(..1 = 1), 1), "->")
-  expect_equal(out, data_frame(..1 = c(1, 1)))
+  expect_message(out <- vec_rbind(data_frame(...1 = 1), 1), "->")
+  expect_equal(out, data_frame(...1 = c(1, 1)))
 })
 
 test_that("matrix becomes data frame", {
@@ -86,15 +86,15 @@ test_that("can rbind unspecified vectors", {
   expect_identical(vec_rbind(c(y = NA), df), data.frame(y = c(NA, NA), x = c(NA, 1)))
 
   out <- suppressMessages(vec_rbind(c(x = NA, x = NA), df))
-  exp <- data.frame(x..1 = c(NA, NA), x..2 = c(NA, NA), x = c(NA, 1))
+  exp <- data.frame(x...1 = c(NA, NA), x...2 = c(NA, NA), x = c(NA, 1))
   expect_identical(out, exp)
 })
 
 test_that("as_df_row() tidies the names of unspecified vectors", {
   expect_identical(as_df_row(c(NA, NA)), c(NA, NA))
   expect_identical(as_df_row(unspecified(2)), unspecified(2))
-  expect_identical(as_df_row(c(a = NA, a = NA), quiet = TRUE), data.frame(a..1 = NA, a..2 = NA))
-  expect_identical(as_df_row(c(a = TRUE, a = TRUE), quiet = TRUE), data.frame(a..1 = TRUE, a..2 = TRUE))
+  expect_identical(as_df_row(c(a = NA, a = NA), quiet = TRUE), data.frame(a...1 = NA, a...2 = NA))
+  expect_identical(as_df_row(c(a = TRUE, a = TRUE), quiet = TRUE), data.frame(a...1 = TRUE, a...2 = TRUE))
 })
 
 

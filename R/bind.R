@@ -194,9 +194,7 @@ as_df_row.default <- function(x, quiet = FALSE) {
 
   if (vec_dims(x) == 1L) {
     x <- as.list(x)
-    if (is_installed("tibble")) {
-      x <- tibble::set_tidy_names(x, quiet = quiet)
-    }
+    x <- vec_repair_names(x, "unique", quiet = quiet)
     new_data_frame(x, n = 1L)
   } else {
     as.data.frame(x)
