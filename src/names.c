@@ -92,15 +92,20 @@ static SEXP as_unique_names(SEXP names) {
   R_len_t n = Rf_length(names);
   SEXP* ptr = STRING_PTR(names);
 
+  SEXP dups = PROTECT(vctrs_duplicated(names));
+  int* dups_ptr = LOGICAL(dups);
+
   // First quick pass to detect if any repairs are needed. See second
   // part of the loop for the meaning of each branch.
-  for (; i < n; ++i, ++ptr) {
+  for (; i < n; ++i, ++ptr, ++dups_ptr) {
     SEXP elt = *ptr;
 
-    if (needs_suffix(elt) || suffix_pos(CHAR(elt)) >= 0) {
+    if (needs_suffix(elt) || suffix_pos(CHAR(elt)) >= 0 || *dups_ptr) {
       break;
     }
   }
+  UNPROTECT(1);
+
   if (i == n) {
     return names;
   }
@@ -138,8 +143,8 @@ static SEXP as_unique_names(SEXP names) {
   char buf[100] = "";
   ptr = STRING_PTR(names);
 
-  SEXP dups = PROTECT(vctrs_duplicated(names));
-  int* dups_ptr = LOGICAL(dups);
+  dups = PROTECT(vctrs_duplicated(names));
+  dups_ptr = LOGICAL(dups);
 
   for (R_len_t i = 0; i < n; ++i, ++ptr) {
     SEXP elt = *ptr;
