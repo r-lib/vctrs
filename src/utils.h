@@ -121,6 +121,7 @@ extern SEXP vctrs_ns_env;
 extern SEXP vctrs_shared_empty_str;
 
 extern SEXP classes_data_frame;
+extern SEXP classes_tibble;
 
 extern SEXP strings_dots;
 extern SEXP strings_empty;
