@@ -1,6 +1,17 @@
 #include "vctrs.h"
 #include "utils.h"
 
+
+// [[ include("utils.h") ]]
+SEXP new_data_frame(SEXP x, R_len_t n) {
+  x = PROTECT(r_maybe_duplicate(x));
+
+  init_data_frame(x, n);
+
+  UNPROTECT(1);
+  return x;
+}
+
 // [[ include("utils.h") ]]
 bool is_compact_rownames(SEXP x) {
   return Rf_length(x) == 2 && INTEGER(x)[0] == NA_INTEGER;
