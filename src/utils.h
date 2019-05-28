@@ -63,6 +63,8 @@ void init_tibble(SEXP x, R_len_t n);
 bool is_native_df(SEXP x);
 bool is_compact_rownames(SEXP x);
 R_len_t compact_rownames_length(SEXP x);
+SEXP compact_seq(R_len_t from, R_len_t to);
+bool is_compact_seq(SEXP x);
 
 bool (*rlang_is_splice_box)(SEXP);
 SEXP (*rlang_unbox)(SEXP);

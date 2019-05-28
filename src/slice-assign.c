@@ -78,7 +78,7 @@ static SEXP vec_assign_impl(SEXP proxy, SEXP index, SEXP value, bool clone) {
   never_reached("vec_assign_impl");
 }
 
-#define ASSIGN(CTYPE, DEREF, CONST_DEREF)                       \
+#define ASSIGN_INDEX(CTYPE, DEREF, CONST_DEREF)                 \
   R_len_t n = Rf_length(index);                                 \
   int* index_data = INTEGER(index);                             \
                                                                 \
@@ -101,6 +101,35 @@ static SEXP vec_assign_impl(SEXP proxy, SEXP index, SEXP value, bool clone) {
   UNPROTECT(1);                                                 \
   return out
 
+#define ASSIGN_COMPACT(CTYPE, DEREF, CONST_DEREF)               \
+  int* index_data = INTEGER(index);                             \
+  R_len_t from = index_data[0];                                 \
+  R_len_t to = index_data[1];                                   \
+  R_len_t n = to - from;                                        \
+                                                                \
+  if (n != Rf_length(value)) {                                  \
+    Rf_error("Internal error in `vec_assign()`: "               \
+             "`value` should have been recycled to fit `x`.");  \
+  }                                                             \
+                                                                \
+  const CTYPE* value_data = CONST_DEREF(value);                 \
+  SEXP out = PROTECT(clone ? Rf_shallow_duplicate(x) : x);      \
+  CTYPE* out_data = DEREF(out);                                 \
+                                                                \
+  for (R_len_t i = 0, j = from; i < n; ++i, ++j) {              \
+    out_data[j] = value_data[i];                                \
+  }                                                             \
+                                                                \
+  UNPROTECT(1);                                                 \
+  return out
+
+#define ASSIGN(CTYPE, DEREF, CONST_DEREF)       \
+  if (is_compact_seq(index)) {                  \
+    ASSIGN_COMPACT(CTYPE, DEREF, CONST_DEREF);  \
+  } else {                                      \
+    ASSIGN_INDEX(CTYPE, DEREF, CONST_DEREF);    \
+  }
+
 static SEXP lgl_assign(SEXP x, SEXP index, SEXP value, bool clone) {
   ASSIGN(int, LOGICAL, LOGICAL_RO);
 }
@@ -121,9 +150,11 @@ static SEXP raw_assign(SEXP x, SEXP index, SEXP value, bool clone) {
 }
 
 #undef ASSIGN
+#undef ASSIGN_INDEX
+#undef ASSIGN_COMPACT
 
 
-#define ASSIGN_BARRIER(GET, SET)                                \
+#define ASSIGN_BARRIER_INDEX(GET, SET)                          \
   R_len_t n = Rf_length(index);                                 \
   int* index_data = INTEGER(index);                             \
                                                                 \
@@ -144,11 +175,40 @@ static SEXP raw_assign(SEXP x, SEXP index, SEXP value, bool clone) {
   UNPROTECT(1);                                                 \
   return out
 
+#define ASSIGN_BARRIER_COMPACT(GET, SET)                        \
+  int* index_data = INTEGER(index);                             \
+  R_len_t from = index_data[0];                                 \
+  R_len_t to = index_data[1];                                   \
+  R_len_t n = to - from;                                        \
+                                                                \
+  if (n != Rf_length(value)) {                                  \
+    Rf_error("Internal error in `vec_assign()`: "               \
+             "`value` should have been recycled to fit `x`.");  \
+  }                                                             \
+                                                                \
+  SEXP out = PROTECT(clone ? Rf_shallow_duplicate(x) : x);      \
+                                                                \
+  for (R_len_t i = 0, j = from; i < n; ++i, ++j) {              \
+    SET(out, j, GET(value, i));                                 \
+  }                                                             \
+                                                                \
+  UNPROTECT(1);                                                 \
+  return out
+
+#define ASSIGN_BARRIER(GET, SET)                \
+  if (is_compact_seq(index)) {                  \
+    ASSIGN_BARRIER_COMPACT(GET, SET);           \
+  } else {                                      \
+    ASSIGN_BARRIER_INDEX(GET, SET);             \
+  }
+
 static SEXP list_assign(SEXP x, SEXP index, SEXP value, bool clone) {
   ASSIGN_BARRIER(VECTOR_ELT, SET_VECTOR_ELT);
 }
 
 #undef ASSIGN_BARRIER
+#undef ASSIGN_BARRIER_INDEX
+#undef ASSIGN_BARRIER_COMPACT
 
 
 /**

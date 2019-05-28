@@ -102,6 +102,11 @@ test_that("can rbind spliced lists", {
   expect_identical(vec_rbind(!!!data), data_frame(a = c(1, 1), b = c(2, 0)))
 })
 
+test_that("can rbind list columns", {
+  out <- vec_rbind(data_frame(x = list(1, 2)), data_frame(x = list(3)))
+  expect_identical(out, data_frame(x = list(1, 2, 3)))
+})
+
 
 # cols --------------------------------------------------------------------
 

@@ -234,6 +234,27 @@ SEXP s3_find_method(const char* generic, SEXP x) {
 }
 
 
+// Initialised at load time
+SEXP compact_seq_attrib = NULL;
+
+// Returns a compact sequence that `vec_slice()` understands
+SEXP compact_seq(R_len_t from, R_len_t to) {
+  SEXP seq = PROTECT(Rf_allocVector(INTSXP, 2));
+
+  int* p = INTEGER(seq);
+  p[0] = from;
+  p[1] = to;
+
+  SET_ATTRIB(seq, compact_seq_attrib);
+
+  UNPROTECT(1);
+  return seq;
+}
+bool is_compact_seq(SEXP x) {
+  return ATTRIB(x) == compact_seq_attrib;
+}
+
+
 // From rlang
 R_len_t r_lgl_sum(SEXP x, bool na_true) {
   if (TYPEOF(x) != LGLSXP) {
@@ -690,4 +711,9 @@ void vctrs_init_utils(SEXP ns) {
   syms_as_data_frame = Rf_install("as.data.frame");
   fns_as_list = r_env_get(R_BaseEnv, syms_as_list);
   fns_as_data_frame = r_env_get(R_BaseEnv, syms_as_data_frame);
+
+
+  compact_seq_attrib = Rf_cons(R_NilValue, R_NilValue);
+  R_PreserveObject(compact_seq_attrib);
+  SET_TAG(compact_seq_attrib, Rf_install("vctrs_compact_seq"));
 }
