@@ -9,16 +9,15 @@ SEXP fns_vec_assign_fallback = NULL;
 SEXP vec_as_index(SEXP i, SEXP x);
 
 static SEXP vec_assign_fallback(SEXP x, SEXP index, SEXP value);
-static SEXP vec_assign_impl(SEXP x, SEXP index, SEXP value);
-static SEXP lgl_assign(SEXP x, SEXP index, SEXP value);
-static SEXP int_assign(SEXP x, SEXP index, SEXP value);
-static SEXP dbl_assign(SEXP x, SEXP index, SEXP value);
-static SEXP cpl_assign(SEXP x, SEXP index, SEXP value);
-static SEXP chr_assign(SEXP x, SEXP index, SEXP value);
-static SEXP raw_assign(SEXP x, SEXP index, SEXP value);
-static SEXP list_assign(SEXP x, SEXP index, SEXP value);
+static SEXP vec_assign_impl(SEXP x, SEXP index, SEXP value, bool clone);
+static SEXP lgl_assign(SEXP x, SEXP index, SEXP value, bool clone);
+static SEXP int_assign(SEXP x, SEXP index, SEXP value, bool clone);
+static SEXP dbl_assign(SEXP x, SEXP index, SEXP value, bool clone);
+static SEXP cpl_assign(SEXP x, SEXP index, SEXP value, bool clone);
+static SEXP chr_assign(SEXP x, SEXP index, SEXP value, bool clone);
+static SEXP raw_assign(SEXP x, SEXP index, SEXP value, bool clone);
+static SEXP list_assign(SEXP x, SEXP index, SEXP value, bool clone);
 SEXP df_assign(SEXP x, SEXP index, SEXP value, bool clone);
-static SEXP vec_assign_fallback(SEXP x, SEXP index, SEXP value);
 
 
 SEXP vec_assign(SEXP x, SEXP index, SEXP value) {
@@ -46,7 +45,7 @@ SEXP vec_assign(SEXP x, SEXP index, SEXP value) {
     out = vec_assign_fallback(x, index, value_proxy);
     UNPROTECT(1);
   } else {
-    out = PROTECT(vec_assign_impl(info.proxy, index, value_proxy));
+    out = PROTECT(vec_assign_impl(info.proxy, index, value_proxy, true));
     out = vec_restore(out, x, R_NilValue);
     UNPROTECT(1);
   }
@@ -55,16 +54,22 @@ SEXP vec_assign(SEXP x, SEXP index, SEXP value) {
   return out;
 }
 
-static SEXP vec_assign_impl(SEXP proxy, SEXP index, SEXP value) {
+/**
+ * @param clone Whether to shallow duplicate before assignment. With
+ *   data frames, the cloning is recursive. If `false`, make sure you
+ *   own the relevant parts of the vector structure (data frame
+ *   columns in particular).
+ */
+static SEXP vec_assign_impl(SEXP proxy, SEXP index, SEXP value, bool clone) {
   switch (vec_proxy_typeof(proxy)) {
-  case vctrs_type_logical:   return lgl_assign(proxy, index, value);
-  case vctrs_type_integer:   return int_assign(proxy, index, value);
-  case vctrs_type_double:    return dbl_assign(proxy, index, value);
-  case vctrs_type_complex:   return cpl_assign(proxy, index, value);
-  case vctrs_type_character: return chr_assign(proxy, index, value);
-  case vctrs_type_raw:       return raw_assign(proxy, index, value);
-  case vctrs_type_list:      return list_assign(proxy, index, value);
-  case vctrs_type_dataframe: return df_assign(proxy, index, value, true);
+  case vctrs_type_logical:   return lgl_assign(proxy, index, value, clone);
+  case vctrs_type_integer:   return int_assign(proxy, index, value, clone);
+  case vctrs_type_double:    return dbl_assign(proxy, index, value, clone);
+  case vctrs_type_complex:   return cpl_assign(proxy, index, value, clone);
+  case vctrs_type_character: return chr_assign(proxy, index, value, clone);
+  case vctrs_type_raw:       return raw_assign(proxy, index, value, clone);
+  case vctrs_type_list:      return list_assign(proxy, index, value, clone);
+  case vctrs_type_dataframe: return df_assign(proxy, index, value, clone);
   case vctrs_type_s3:
   case vctrs_type_null:      Rf_error("Internal error in `vec_assign_impl()`: Unexpected type %s.",
                                       vec_type_as_str(vec_typeof(proxy)));
@@ -83,7 +88,7 @@ static SEXP vec_assign_impl(SEXP proxy, SEXP index, SEXP value) {
   }                                                             \
                                                                 \
   const CTYPE* value_data = CONST_DEREF(value);                 \
-  SEXP out = PROTECT(Rf_shallow_duplicate(x));                  \
+  SEXP out = PROTECT(clone ? Rf_shallow_duplicate(x) : x);      \
   CTYPE* out_data = DEREF(out);                                 \
                                                                 \
   for (R_len_t i = 0; i < n; ++i) {                             \
@@ -96,22 +101,22 @@ static SEXP vec_assign_impl(SEXP proxy, SEXP index, SEXP value) {
   UNPROTECT(1);                                                 \
   return out
 
-static SEXP lgl_assign(SEXP x, SEXP index, SEXP value) {
+static SEXP lgl_assign(SEXP x, SEXP index, SEXP value, bool clone) {
   ASSIGN(int, LOGICAL, LOGICAL_RO);
 }
-static SEXP int_assign(SEXP x, SEXP index, SEXP value) {
+static SEXP int_assign(SEXP x, SEXP index, SEXP value, bool clone) {
   ASSIGN(int, INTEGER, INTEGER_RO);
 }
-static SEXP dbl_assign(SEXP x, SEXP index, SEXP value) {
+static SEXP dbl_assign(SEXP x, SEXP index, SEXP value, bool clone) {
   ASSIGN(double, REAL, REAL_RO);
 }
-static SEXP cpl_assign(SEXP x, SEXP index, SEXP value) {
+static SEXP cpl_assign(SEXP x, SEXP index, SEXP value, bool clone) {
   ASSIGN(Rcomplex, COMPLEX, COMPLEX_RO);
 }
-static SEXP chr_assign(SEXP x, SEXP index, SEXP value) {
+static SEXP chr_assign(SEXP x, SEXP index, SEXP value, bool clone) {
   ASSIGN(SEXP, STRING_PTR, STRING_PTR_RO);
 }
-static SEXP raw_assign(SEXP x, SEXP index, SEXP value) {
+static SEXP raw_assign(SEXP x, SEXP index, SEXP value, bool clone) {
   ASSIGN(Rbyte, RAW, RAW_RO);
 }
 
@@ -127,7 +132,7 @@ static SEXP raw_assign(SEXP x, SEXP index, SEXP value) {
              "`value` should have been recycled to fit `x`.");  \
   }                                                             \
                                                                 \
-  SEXP out = PROTECT(Rf_shallow_duplicate(x));                  \
+  SEXP out = PROTECT(clone ? Rf_shallow_duplicate(x) : x);      \
                                                                 \
   for (R_len_t i = 0; i < n; ++i) {                             \
     int j = index_data[i];                                      \
@@ -139,7 +144,7 @@ static SEXP raw_assign(SEXP x, SEXP index, SEXP value) {
   UNPROTECT(1);                                                 \
   return out
 
-static SEXP list_assign(SEXP x, SEXP index, SEXP value) {
+static SEXP list_assign(SEXP x, SEXP index, SEXP value, bool clone) {
   ASSIGN_BARRIER(VECTOR_ELT, SET_VECTOR_ELT);
 }
 
@@ -167,7 +172,7 @@ SEXP df_assign(SEXP x, SEXP index, SEXP value, bool clone) {
     SEXP proxy_elt = PROTECT(vec_proxy(out_elt));
     value_elt = PROTECT(vec_proxy(value_elt));
 
-    SEXP assigned = PROTECT(vec_assign_impl(proxy_elt, index, value_elt));
+    SEXP assigned = PROTECT(vec_assign_impl(proxy_elt, index, value_elt, clone));
     assigned = vec_restore(assigned, out_elt, R_NilValue);
 
     SET_VECTOR_ELT(out, i, assigned);
