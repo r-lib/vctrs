@@ -97,6 +97,11 @@ test_that("as_df_row() tidies the names of unspecified vectors", {
   expect_identical(as_df_row(c(a = TRUE, a = TRUE), quiet = TRUE), data.frame(a...1 = TRUE, a...2 = TRUE))
 })
 
+test_that("can rbind spliced lists", {
+  data <- list(c(a = 1, b = 2), c(a = TRUE, b = FALSE))
+  expect_identical(vec_rbind(!!!data), data_frame(a = c(1, 1), b = c(2, 0)))
+})
+
 
 # cols --------------------------------------------------------------------
 

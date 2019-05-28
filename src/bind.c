@@ -1,6 +1,82 @@
 #include "vctrs.h"
 #include "utils.h"
 
+static SEXP vec_rbind(SEXP xs, SEXP ptype);
+static SEXP as_df_row(SEXP x, bool quiet);
+
+
+// [[ register(external = TRUE) ]]
+SEXP vctrs_rbind(SEXP call, SEXP op, SEXP args, SEXP env) {
+  args = CDR(args);
+
+  SEXP xs = PROTECT(rlang_env_dots_list(env));
+  SEXP ptype = PROTECT(Rf_eval(CAR(args), env));
+
+  SEXP out = vec_rbind(xs, ptype);
+
+  UNPROTECT(2);
+  return out;
+}
+
+
+// From type.c
+SEXP vctrs_type_common_impl(SEXP dots, SEXP ptype);
+
+static SEXP vec_rbind(SEXP xs, SEXP ptype) {
+  R_len_t n = Rf_length(xs);
+
+  for (R_len_t i = 0; i < n; ++i) {
+    SET_VECTOR_ELT(xs, i, as_df_row(VECTOR_ELT(xs, i), false));
+  }
+
+  // The common type holds information about common column names,
+  // types, etc. Each element of `xs` needs to be cast to that type
+  // before assignment.
+  ptype = PROTECT(vctrs_type_common_impl(xs, ptype));
+
+  if (ptype == R_NilValue) {
+    UNPROTECT(1);
+    return new_data_frame(vctrs_shared_empty_list, 0);
+  }
+  if (!is_data_frame(ptype)) {
+    Rf_errorcall(R_NilValue, "Can't bind objects that are not coercible to a data frame.");
+  }
+
+  R_len_t nrow = 0;
+
+  SEXP ns_placeholder = PROTECT(Rf_allocVector(INTSXP, n));
+  int* ns = INTEGER(ns_placeholder);
+
+  for (R_len_t i = 0; i < n; ++i) {
+    R_len_t size = vec_size(VECTOR_ELT(xs, i));
+    nrow += size;
+    ns[i] = size;
+  }
+
+  SEXP out = PROTECT(vec_na(ptype, nrow));
+
+  // Assignment assumes 1-based counters
+  R_len_t counter = 1;
+
+  for (R_len_t i = 0; i < n; ++i) {
+    R_len_t size = ns[i];
+    if (!size) {
+      continue;
+    }
+
+    SEXP tbl = PROTECT(vec_cast(VECTOR_ELT(xs, i), ptype));
+    SEXP idx = PROTECT(r_seq(counter, counter + size));
+
+    df_poke(out, idx, tbl);
+
+    counter += size;
+    UNPROTECT(2);
+  }
+
+  UNPROTECT(3);
+  return out;
+}
+
 
 static SEXP as_df_row(SEXP x, bool quiet) {
   if (x == R_NilValue) {

@@ -314,6 +314,16 @@ void r_int_fill_seq(SEXP x, int start) {
   }
 }
 
+SEXP r_seq(R_len_t from, R_len_t to) {
+  R_len_t n = to - from;
+  SEXP seq = PROTECT(Rf_allocVector(INTSXP, n));
+
+  r_int_fill_seq(seq, from);
+
+  UNPROTECT(1);
+  return seq;
+}
+
 
 bool r_int_any_na(SEXP x) {
   int* data = INTEGER(x);

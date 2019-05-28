@@ -8,6 +8,10 @@ SEXP new_data_frame(SEXP x, R_len_t n) {
 
   init_data_frame(x, n);
 
+  if (Rf_length(x) == 0) {
+    Rf_setAttrib(x, R_NamesSymbol, vctrs_shared_empty_chr);
+  }
+
   UNPROTECT(1);
   return x;
 }

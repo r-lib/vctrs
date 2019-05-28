@@ -91,31 +91,7 @@ NULL
 #' @export
 #' @rdname vec_bind
 vec_rbind <- function(..., .ptype = NULL) {
-  args <- list2(...)
-  tbls <- map(args, as_df_row)
-  ptype <- vec_type_common(!!!tbls, .ptype = .ptype)
-
-  if (is.null(ptype))
-    return(data_frame())
-
-  ns <- map_int(tbls, vec_size)
-  # Use list so we can rely on efficient internal [[<-
-  out <- vec_data(vec_na(ptype, sum(ns)))
-
-  pos <- 1
-  for (i in seq_along(ns)) {
-    n <- ns[[i]]
-    if (n == 0L)
-      next
-
-    tbl_i <- vec_data(vec_cast(tbls[[i]], to = ptype))
-    for (j in seq_along(out)) {
-      vec_slice(out[[j]], pos:(pos + n - 1)) <- tbl_i[[j]]
-    }
-    pos <- pos + n
-  }
-
-  vec_restore(out, ptype)
+  .External2(vctrs_rbind, .ptype)
 }
 
 #' @export

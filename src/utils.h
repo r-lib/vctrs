@@ -76,6 +76,7 @@ void r_lgl_fill(SEXP x, int value);
 void r_int_fill(SEXP x, int value);
 
 void r_int_fill_seq(SEXP x, int start);
+SEXP r_seq(R_len_t from, R_len_t to);
 
 bool r_int_any_na(SEXP x);
 

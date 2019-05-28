@@ -146,9 +146,14 @@ static SEXP list_assign(SEXP x, SEXP index, SEXP value) {
 #undef ASSIGN_BARRIER
 
 
-// `out` and `value` must be rectangular lists. `value` must have the
-// same size as `index`.
-// [[ include("vctrs.h") ]]
+/**
+ * `out` and `value` must be rectangular lists. `value` must have the
+ * same size as `index`. The assignment modifies `out` in place but
+ * does not modify its columns in place, i.e. it assumes `out` is a
+ * shallow copy.
+ *
+ * [[ include("vctrs.h") ]]
+ */
 void df_poke(SEXP out, SEXP index, SEXP value) {
   R_len_t n = Rf_length(out);
 
