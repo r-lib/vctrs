@@ -67,7 +67,7 @@ static SEXP vec_rbind(SEXP xs, SEXP ptype) {
     SEXP tbl = PROTECT(vec_cast(VECTOR_ELT(xs, i), ptype));
     SEXP idx = PROTECT(r_seq(counter, counter + size));
 
-    df_poke(out, idx, tbl);
+    df_assign(out, idx, tbl, false);
 
     counter += size;
     UNPROTECT(2);

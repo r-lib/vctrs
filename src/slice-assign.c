@@ -17,7 +17,7 @@ static SEXP cpl_assign(SEXP x, SEXP index, SEXP value);
 static SEXP chr_assign(SEXP x, SEXP index, SEXP value);
 static SEXP raw_assign(SEXP x, SEXP index, SEXP value);
 static SEXP list_assign(SEXP x, SEXP index, SEXP value);
-static SEXP df_assign(SEXP x, SEXP index, SEXP value);
+SEXP df_assign(SEXP x, SEXP index, SEXP value, bool clone);
 static SEXP vec_assign_fallback(SEXP x, SEXP index, SEXP value);
 
 
@@ -64,7 +64,7 @@ static SEXP vec_assign_impl(SEXP proxy, SEXP index, SEXP value) {
   case vctrs_type_character: return chr_assign(proxy, index, value);
   case vctrs_type_raw:       return raw_assign(proxy, index, value);
   case vctrs_type_list:      return list_assign(proxy, index, value);
-  case vctrs_type_dataframe: return df_assign(proxy, index, value);
+  case vctrs_type_dataframe: return df_assign(proxy, index, value, true);
   case vctrs_type_s3:
   case vctrs_type_null:      Rf_error("Internal error in `vec_assign_impl()`: Unexpected type %s.",
                                       vec_type_as_str(vec_typeof(proxy)));
@@ -148,13 +148,12 @@ static SEXP list_assign(SEXP x, SEXP index, SEXP value) {
 
 /**
  * `out` and `value` must be rectangular lists. `value` must have the
- * same size as `index`. The assignment modifies `out` in place but
- * does not modify its columns in place, i.e. it assumes `out` is a
- * shallow copy.
+ * same size as `index`.
  *
  * [[ include("vctrs.h") ]]
  */
-void df_poke(SEXP out, SEXP index, SEXP value) {
+SEXP df_assign(SEXP x, SEXP index, SEXP value, bool clone) {
+  SEXP out = PROTECT(clone ? Rf_shallow_duplicate(x) : x);
   R_len_t n = Rf_length(out);
 
   for (R_len_t i = 0; i < n; ++i) {
@@ -174,11 +173,7 @@ void df_poke(SEXP out, SEXP index, SEXP value) {
     SET_VECTOR_ELT(out, i, assigned);
     UNPROTECT(3);
   }
-}
 
-static SEXP df_assign(SEXP x, SEXP index, SEXP value) {
-  SEXP out = PROTECT(Rf_shallow_duplicate(x));
-  df_poke(out, index, value);
   UNPROTECT(1);
   return out;
 }
