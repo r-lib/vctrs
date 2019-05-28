@@ -96,6 +96,22 @@ vec_proxy.default <- function(x) {
   x
 }
 
+#' Defunct equality proxy
+#'
+#' vctrs now uses [vec_proxy()]. Note that most of the time it's not
+#' necessary to define a proxy for vector equality.
+#'
+#' @param x A vector.
+#'
+#' @keywords internal
+#' @export
+vec_proxy_equal <- function(x) {
+  stop_defunct(paste_line(
+    "`vec_proxy_equal()` is defunct.",
+    "Please use `vec_proxy()` instead (if needed)."
+  ))
+}
+
 is_record <- function(x) {
   UseMethod("is_record")
 }
