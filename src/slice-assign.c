@@ -146,12 +146,14 @@ static SEXP list_assign(SEXP x, SEXP index, SEXP value) {
 #undef ASSIGN_BARRIER
 
 
-static SEXP df_assign(SEXP x, SEXP index, SEXP value) {
-  R_len_t n = Rf_length(x);
-  SEXP out = PROTECT(Rf_shallow_duplicate(x));
+// `out` and `value` must be rectangular lists. `value` must have the
+// same size as `index`.
+// [[ include("vctrs.h") ]]
+void df_poke(SEXP out, SEXP index, SEXP value) {
+  R_len_t n = Rf_length(out);
 
   for (R_len_t i = 0; i < n; ++i) {
-    SEXP out_elt = VECTOR_ELT(x, i);
+    SEXP out_elt = VECTOR_ELT(out, i);
     SEXP value_elt = VECTOR_ELT(value, i);
 
     // No need to cast or recycle because those operations are
@@ -162,13 +164,16 @@ static SEXP df_assign(SEXP x, SEXP index, SEXP value) {
     value_elt = PROTECT(vec_proxy(value_elt));
 
     SEXP assigned = PROTECT(vec_assign_impl(proxy_elt, index, value_elt));
-
     assigned = vec_restore(assigned, out_elt, R_NilValue);
 
     SET_VECTOR_ELT(out, i, assigned);
     UNPROTECT(3);
   }
+}
 
+static SEXP df_assign(SEXP x, SEXP index, SEXP value) {
+  SEXP out = PROTECT(Rf_shallow_duplicate(x));
+  df_poke(out, index, value);
   UNPROTECT(1);
   return out;
 }
