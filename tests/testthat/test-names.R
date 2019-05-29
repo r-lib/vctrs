@@ -250,6 +250,10 @@ test_that("unique_names() and as_unique_names() are verbose or silent", {
   expect_message(regexp = NA, as_unique_names(c("", ""), quiet = TRUE))
 })
 
+test_that("names with only duplicates are repaired", {
+  expect_identical(unique_names(list(x = NA, x = NA)), c("x...1", "x...2"))
+})
+
 
 # Universal names ----------------------------------------------------------
 

@@ -91,31 +91,7 @@ NULL
 #' @export
 #' @rdname vec_bind
 vec_rbind <- function(..., .ptype = NULL) {
-  args <- list2(...)
-  tbls <- map(args, as_df_row)
-  ptype <- vec_type_common(!!!tbls, .ptype = .ptype)
-
-  if (is.null(ptype))
-    return(data_frame())
-
-  ns <- map_int(tbls, vec_size)
-  # Use list so we can rely on efficient internal [[<-
-  out <- vec_data(vec_na(ptype, sum(ns)))
-
-  pos <- 1
-  for (i in seq_along(ns)) {
-    n <- ns[[i]]
-    if (n == 0L)
-      next
-
-    tbl_i <- vec_data(vec_cast(tbls[[i]], to = ptype))
-    for (j in seq_along(out)) {
-      vec_slice(out[[j]], pos:(pos + n - 1)) <- tbl_i[[j]]
-    }
-    pos <- pos + n
-  }
-
-  vec_restore(out, ptype)
+  .External2(vctrs_rbind, .ptype)
 }
 
 #' @export
@@ -178,29 +154,8 @@ vec_cbind <- function(..., .ptype = NULL, .size = NULL) {
 
 # as_df --------------------------------------------------------------
 
-as_df_row <- function(x, quiet = FALSE) UseMethod("as_df_row")
-
-#' @export
-as_df_row.data.frame <- function(x, quiet = FALSE) x
-
-#' @export
-as_df_row.NULL <- function(x, quiet = FALSE) x
-
-#' @export
-as_df_row.default <- function(x, quiet = FALSE) {
-  if (is_unspecified(x) && identical(names(x), NULL)) {
-    return(x)
-  }
-
-  if (vec_dims(x) == 1L) {
-    x <- as.list(x)
-    if (is_installed("tibble")) {
-      x <- tibble::set_tidy_names(x, quiet = quiet)
-    }
-    new_data_frame(x, n = 1L)
-  } else {
-    as.data.frame(x)
-  }
+as_df_row <- function(x, quiet = FALSE) {
+  .Call(vctrs_as_df_row, x, quiet)
 }
 
 as_df_col <- function(x, outer_name) UseMethod("as_df_col")

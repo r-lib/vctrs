@@ -218,6 +218,7 @@ R_len_t df_size(SEXP x);
 R_len_t df_rownames_size(SEXP x);
 R_len_t df_raw_size(SEXP x);
 SEXP df_restore(SEXP x, SEXP to, SEXP i);
+SEXP df_assign(SEXP out, SEXP index, SEXP value, bool clone);
 
 // Most vector predicates return `int` because missing values are
 // propagated as `NA_LOGICAL`
