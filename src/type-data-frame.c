@@ -5,12 +5,7 @@
 // [[ include("utils.h") ]]
 SEXP new_data_frame(SEXP x, R_len_t n) {
   x = PROTECT(r_maybe_duplicate(x));
-
   init_data_frame(x, n);
-
-  if (Rf_length(x) == 0) {
-    Rf_setAttrib(x, R_NamesSymbol, vctrs_shared_empty_chr);
-  }
 
   UNPROTECT(1);
   return x;
@@ -25,17 +20,26 @@ R_len_t compact_rownames_length(SEXP x) {
   return abs(INTEGER(x)[1]);
 }
 
+static void init_bare_data_frame(SEXP x, R_len_t n);
 static void init_compact_rownames(SEXP x, R_len_t n);
 static SEXP new_compact_rownames(R_len_t n);
 
 // [[ include("utils.h") ]]
 void init_data_frame(SEXP x, R_len_t n) {
   Rf_setAttrib(x, R_ClassSymbol, classes_data_frame);
-  init_compact_rownames(x, n);
+  init_bare_data_frame(x, n);
 }
 // [[ include("utils.h") ]]
 void init_tibble(SEXP x, R_len_t n) {
   Rf_setAttrib(x, R_ClassSymbol, classes_tibble);
+  init_bare_data_frame(x, n);
+}
+
+static void init_bare_data_frame(SEXP x, R_len_t n) {
+  if (Rf_length(x) == 0) {
+    Rf_setAttrib(x, R_NamesSymbol, vctrs_shared_empty_chr);
+  }
+
   init_compact_rownames(x, n);
 }
 
