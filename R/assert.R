@@ -1,6 +1,7 @@
 #' Assert an argument has known prototype and/or size
 #'
 #' @description
+#' \Sexpr[results=rd, stage=render]{vctrs:::lifecycle("maturing")}
 #'
 #' * `vec_is()` is a predicate that checks if its input conforms to a
 #'   prototype and/or a size.
@@ -16,6 +17,10 @@
 #' `"vctrs_error_assert_size"` is raised.
 #'
 #' Both errors inherit from `"vctrs_error_assert"`.
+#'
+#' @section Life cycle:
+#'
+#' `vec_is()` is maturing, because it is used in the pillar package.
 #'
 #' @param x A vector argument to check.
 #' @param ptype Prototype to compare against. If the prototype has a

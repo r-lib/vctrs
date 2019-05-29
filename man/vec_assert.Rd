@@ -30,6 +30,7 @@ throws a typed error (see section on error types) or returns \code{x},
 invisibly.
 }
 \description{
+\Sexpr[results=rd, stage=render]{vctrs:::lifecycle("maturing")}
 \itemize{
 \item \code{vec_is()} is a predicate that checks if its input conforms to a
 prototype and/or a size.
@@ -46,5 +47,11 @@ prototype and/or a size.
 }
 
 Both errors inherit from \code{"vctrs_error_assert"}.
+}
+
+\section{Life cycle}{
+
+
+\code{vec_is()} is maturing, because it is used in the pillar package.
 }
 
