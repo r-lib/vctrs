@@ -82,6 +82,8 @@ SEXP r_seq(R_len_t from, R_len_t to);
 
 bool r_int_any_na(SEXP x);
 
+SEXP r_chr_iota(R_len_t n, char* buf, int len, const char* prefix);
+
 SEXP r_new_environment(SEXP parent, R_len_t size);
 
 SEXP r_protect(SEXP x);
