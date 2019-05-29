@@ -42,6 +42,7 @@ static SEXP vec_rbind(SEXP xs, SEXP ptype) {
     Rf_errorcall(R_NilValue, "Can't bind objects that are not coercible to a data frame.");
   }
 
+  // Find individual input sizes and total size of output
   R_len_t nrow = 0;
 
   SEXP ns_placeholder = PROTECT(Rf_allocVector(INTSXP, n));

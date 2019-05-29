@@ -212,8 +212,8 @@ static SEXP list_assign(SEXP x, SEXP index, SEXP value, bool clone) {
 
 
 /**
- * `out` and `value` must be rectangular lists. `value` must have the
- * same size as `index`.
+ * - `out` and `value` must be rectangular lists.
+ * - `value` must have the same size as `index`.
  *
  * [[ include("vctrs.h") ]]
  */
