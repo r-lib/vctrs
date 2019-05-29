@@ -57,7 +57,7 @@ vec_c <- function(..., .ptype = NULL) {
 
     x <- vec_cast(args[[i]], to = ptype)
 
-    names[pos:(pos + n - 1)] <- outer_names(names(args)[[i]], vec_names(args[[i]]), length(x))
+    names[pos:(pos + n - 1)] <- outer_names(vec_names(args[[i]]), names(args)[[i]], length(x))
     vec_slice(out, pos:(pos + n - 1)) <- x
     pos <- pos + n
   }

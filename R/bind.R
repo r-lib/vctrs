@@ -162,7 +162,7 @@ as_df_col <- function(x, outer_name) UseMethod("as_df_col")
 
 #' @export
 as_df_col.data.frame <- function(x, outer_name = NULL) {
-  names(x) <- outer_names(outer_name, names(x), length(x))
+  names(x) <- outer_names(names(x), outer_name, length(x))
   x
 }
 
@@ -172,7 +172,7 @@ as_df_col.default <- function(x, outer_name = NULL) {
     x <- stats::setNames(list(x), outer_name)
     new_data_frame(x)
   } else {
-    colnames(x) <- outer_names(outer_name, colnames(x), ncol(x))
+    colnames(x) <- outer_names(colnames(x), outer_name, ncol(x))
     as.data.frame(x)
   }
 }

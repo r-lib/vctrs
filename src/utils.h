@@ -66,6 +66,8 @@ R_len_t compact_rownames_length(SEXP x);
 SEXP compact_seq(R_len_t from, R_len_t to);
 bool is_compact_seq(SEXP x);
 
+SEXP outer_names(SEXP names, SEXP outer, R_len_t n);
+
 bool (*rlang_is_splice_box)(SEXP);
 SEXP (*rlang_unbox)(SEXP);
 SEXP (*rlang_env_dots_values)(SEXP);
@@ -79,9 +81,9 @@ void r_int_fill(SEXP x, int value);
 
 void r_int_fill_seq(SEXP x, int start);
 SEXP r_seq(R_len_t from, R_len_t to);
-
 bool r_int_any_na(SEXP x);
 
+int r_chr_max_len(SEXP x);
 SEXP r_chr_iota(R_len_t n, char* buf, int len, const char* prefix);
 
 SEXP r_new_environment(SEXP parent, R_len_t size);
@@ -89,6 +91,7 @@ SEXP r_new_environment(SEXP parent, R_len_t size);
 SEXP r_protect(SEXP x);
 bool r_is_true(SEXP x);
 bool r_is_string(SEXP x);
+bool r_is_number(SEXP x);
 SEXP r_peek_option(const char* option);
 SEXP r_names(SEXP x);
 SEXP r_maybe_duplicate(SEXP x);
@@ -98,6 +101,8 @@ SEXP r_call(SEXP fn, SEXP* tags, SEXP* cars);
 
 SEXP r_names(SEXP x);
 bool r_has_name_at(SEXP names, R_len_t i);
+bool r_is_minimal_names(SEXP x);
+bool r_is_empty_names(SEXP x);
 SEXP r_env_get(SEXP env, SEXP sym);
 bool r_is_function(SEXP x);
 bool r_chr_has_string(SEXP x, SEXP str);
@@ -123,9 +128,11 @@ static inline double r_dbl_get(SEXP x, R_len_t i) {
   r__vec_get_check(x, i, "r_dbl_get");
   return REAL(x)[i];
 }
+#define r_chr_get STRING_ELT
 
 #define r_lgl Rf_ScalarLogical
 #define r_int Rf_ScalarInteger
+#define r_str Rf_mkChar
 
 SEXP r_as_list(SEXP x);
 SEXP r_as_data_frame(SEXP x);

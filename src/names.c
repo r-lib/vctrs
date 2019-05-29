@@ -344,3 +344,90 @@ static void describe_repair(SEXP old, SEXP new) {
   Rf_eval(call, vctrs_ns_env);
   UNPROTECT(1);
 }
+
+
+static SEXP outer_names_cat(const char* outer, SEXP names);
+static SEXP outer_names_seq(const char* outer, R_len_t n);
+
+// [[ register() ]]
+SEXP vctrs_outer_names(SEXP names, SEXP outer, SEXP n) {
+  if (names != R_NilValue && TYPEOF(names) != STRSXP) {
+    Rf_error("Internal error: `names` must be `NULL` or a string");
+  }
+  if (!r_is_number(n)) {
+    Rf_error("Internal error: `n` must be a single integer");
+  }
+
+  return outer_names(names, outer, r_int_get(n, 0));
+}
+
+// [[ include("utils.h") ]]
+SEXP outer_names(SEXP names, SEXP outer, R_len_t n) {
+  if (outer == R_NilValue) {
+    return names;
+  }
+
+  if (TYPEOF(outer) != STRSXP || Rf_length(outer) != 1) {
+    Rf_PrintValue(outer);
+    Rf_PrintValue(names);
+    Rf_error("Internal error: `outer` must be a string");
+  }
+
+  SEXP outer_str = r_chr_get(outer, 0);
+  if (outer_str == strings_empty || outer_str == NA_STRING) {
+    return names;
+  }
+
+  if (r_is_empty_names(names)) {
+    if (n == 1) {
+      return outer;
+    } else {
+      return outer_names_seq(CHAR(outer_str), n);
+    }
+  } else {
+    return outer_names_cat(CHAR(outer_str), names);
+  }
+}
+
+static SEXP outer_names_cat(const char* outer, SEXP names) {
+  names = PROTECT(Rf_shallow_duplicate(names));
+  R_len_t n = Rf_length(names);
+
+  int outer_len = strlen(outer);
+  int names_len = r_chr_max_len(names);
+
+  int total_len = outer_len + names_len + strlen("..") + 1;
+
+  R_CheckStack2(total_len);
+  char buf[total_len];
+  buf[total_len - 1] = '\0';
+  char* bufp = buf;
+
+  memcpy(bufp, outer, outer_len); bufp += outer_len;
+  *bufp = '.'; bufp += 1;
+  *bufp = '.'; bufp += 1;
+
+  SEXP* p = STRING_PTR(names);
+
+  for (R_len_t i = 0; i < n; ++i, ++p) {
+    const char* inner = CHAR(*p);
+    int inner_n = strlen(inner);
+
+    memcpy(bufp, inner, inner_n);
+    bufp[inner_n] = '\0';
+
+    SET_STRING_ELT(names, i, r_str(buf));
+  }
+
+  UNPROTECT(1);
+  return names;
+}
+
+static SEXP outer_names_seq(const char* outer, R_len_t n) {
+  int total_len = 24 + strlen(outer) + 1;
+
+  R_CheckStack2(total_len);
+  char buf[total_len];
+
+  return r_chr_iota(n, buf, total_len, outer);
+}
