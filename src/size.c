@@ -3,13 +3,19 @@
 
 R_len_t rcrd_size(SEXP x);
 
+SEXP vec_dim(SEXP x) {
+  SEXP dim = PROTECT(Rf_getAttrib(x, R_DimSymbol));
 
-R_len_t vec_dim(SEXP x) {
-  if (has_dim(x)) {
-    return Rf_length(x);
-  } else {
-    return 1;
+  if (r_is_null(dim)) {
+    dim = Rf_ScalarInteger(Rf_length(x));
   }
+
+  UNPROTECT(1);
+  return dim;
+}
+
+R_len_t vec_dims(SEXP x) {
+  return Rf_length(vec_dim(x));
 }
 
 // [[ include("vctrs.h") ]]

@@ -87,6 +87,7 @@ SEXP r_new_environment(SEXP parent, R_len_t size);
 SEXP r_protect(SEXP x);
 bool r_is_true(SEXP x);
 bool r_is_string(SEXP x);
+bool r_is_null(SEXP x);
 SEXP r_peek_option(const char* option);
 SEXP r_names(SEXP x);
 SEXP r_maybe_duplicate(SEXP x);
