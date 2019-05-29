@@ -26,7 +26,7 @@ Alternatively, you can supply \code{.ptype} to give the output known type.
 If \code{getOption("vctrs.no_guessing")} is \code{TRUE} you must supply this value:
 this is a convenient way to make production code demand fixed types.}
 
-\item{.size}{If, \code{NULL}, the default, will determing the number of
+\item{.size}{If, \code{NULL}, the default, will determine the number of
 rows in \code{vec_cbind()} output by using the standard recycling rules.
 
 Alternatively, specify the desired number of rows, and any inputs
