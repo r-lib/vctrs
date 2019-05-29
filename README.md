@@ -3,11 +3,15 @@
 
 # vctrs <img src="man/figures/logo.png" align="right" width=120 height=139 alt="" />
 
+<!-- badges: start -->
+
 [![Travis build
 status](https://travis-ci.org/r-lib/vctrs.svg?branch=master)](https://travis-ci.org/r-lib/vctrs)
 [![Coverage
 status](https://codecov.io/gh/r-lib/vctrs/branch/master/graph/badge.svg)](https://codecov.io/github/r-lib/vctrs?branch=master)
-[![lifecycle](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://www.tidyverse.org/lifecycle/#experimental)
+[![Lifecycle:
+maturing](https://img.shields.io/badge/lifecycle-maturing-blue.svg)](https://www.tidyverse.org/lifecycle/#maturing)
+<!-- badges: end -->
 
 There are three main goals to the vctrs package, each described in a
 vignette:
