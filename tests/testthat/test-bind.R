@@ -146,7 +146,7 @@ test_that("nameless vectors get tidy defaults", {
 
 test_that("matrix becomes data frame", {
   x <- matrix(1:4, nrow = 2)
-  expect_equal(vec_cbind(x), data.frame(V1 = 1:2, V2 = 3:4))
+  expect_equal(vec_cbind(x), data.frame(..1 = 1:2, ..2 = 3:4))
 
   # respecting outer names
   expect_equal(vec_cbind(x = x), data.frame(x1 = 1:2, x2 = 3:4))

@@ -62,6 +62,7 @@ extern SEXP vctrs_set_attributes(SEXP, SEXP);
 extern SEXP vctrs_as_df_row(SEXP, SEXP);
 extern SEXP vctrs_outer_names(SEXP, SEXP, SEXP);
 extern SEXP vctrs_df_size(SEXP);
+extern SEXP vctrs_as_df_col(SEXP, SEXP);
 
 // Defined below
 SEXP vctrs_init(SEXP);
@@ -122,6 +123,7 @@ static const R_CallMethodDef CallEntries[] = {
   {"vctrs_as_df_row",                  (DL_FUNC) &vctrs_as_df_row, 2},
   {"vctrs_outer_names",                (DL_FUNC) &vctrs_outer_names, 3},
   {"vctrs_df_size",                    (DL_FUNC) &vctrs_df_size, 1},
+  {"vctrs_as_df_col",                  (DL_FUNC) &vctrs_as_df_col, 2},
   {NULL, NULL, 0}
 };
 

@@ -152,27 +152,9 @@ vec_cbind <- function(..., .ptype = NULL, .size = NULL) {
   out
 }
 
-# as_df --------------------------------------------------------------
-
 as_df_row <- function(x, quiet = FALSE) {
   .Call(vctrs_as_df_row, x, quiet)
 }
-
-as_df_col <- function(x, outer_name) UseMethod("as_df_col")
-
-#' @export
-as_df_col.data.frame <- function(x, outer_name = NULL) {
-  names(x) <- outer_names(names(x), outer_name, length(x))
-  x
-}
-
-#' @export
-as_df_col.default <- function(x, outer_name = NULL) {
-  if (vec_dims(x) == 1L) {
-    x <- stats::setNames(list(x), outer_name)
-    new_data_frame(x)
-  } else {
-    colnames(x) <- outer_names(colnames(x), outer_name, ncol(x))
-    as.data.frame(x)
-  }
+as_df_col <- function(x, outer_name) {
+  .Call(vctrs_as_df_col, x, outer_name)
 }

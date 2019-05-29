@@ -259,6 +259,16 @@ bool is_compact_seq(SEXP x) {
 }
 
 
+static SEXP syms_colnames = NULL;
+static SEXP fns_colnames = NULL;
+
+// [[ include("utils.h") ]]
+SEXP colnames(SEXP x) {
+  return vctrs_dispatch1(syms_colnames, fns_colnames,
+                         syms_x, x);
+}
+
+
 // From rlang
 R_len_t r_lgl_sum(SEXP x, bool na_true) {
   if (TYPEOF(x) != LGLSXP) {
@@ -816,9 +826,11 @@ void vctrs_init_utils(SEXP ns) {
 
   syms_as_list = Rf_install("as.list");
   syms_as_data_frame2 = Rf_install("as.data.frame2");
+  syms_colnames = Rf_install("colnames");
+
   fns_as_list = r_env_get(R_BaseEnv, syms_as_list);
   fns_as_data_frame2 = r_env_get(ns, syms_as_data_frame2);
-
+  fns_colnames = r_env_get(R_BaseEnv, syms_colnames);
 
   compact_seq_attrib = Rf_cons(R_NilValue, R_NilValue);
   R_PreserveObject(compact_seq_attrib);

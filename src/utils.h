@@ -68,6 +68,7 @@ bool is_compact_seq(SEXP x);
 
 SEXP outer_names(SEXP names, SEXP outer, R_len_t n);
 SEXP set_rownames(SEXP x, SEXP names);
+SEXP colnames(SEXP x);
 
 bool (*rlang_is_splice_box)(SEXP);
 SEXP (*rlang_unbox)(SEXP);

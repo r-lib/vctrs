@@ -122,3 +122,47 @@ static SEXP as_df_row_impl(SEXP x, bool quiet) {
 SEXP vctrs_as_df_row(SEXP x, SEXP quiet) {
   return as_df_row(x, LOGICAL(quiet)[0]);
 }
+
+
+static SEXP df_as_df_col(SEXP x, SEXP outer);
+static SEXP shaped_as_df_col(SEXP x, SEXP outer);
+
+// [[ register() ]]
+SEXP vctrs_as_df_col(SEXP x, SEXP outer) {
+  if (is_data_frame(x)) {
+    return df_as_df_col(x, outer);
+  }
+  if (vec_dims(x) != 1) {
+    return shaped_as_df_col(x, outer);
+  }
+
+  SEXP out = PROTECT(Rf_allocVector(VECSXP, 1));
+  SET_VECTOR_ELT(out, 0, x);
+  Rf_setAttrib(out, R_NamesSymbol, outer);
+  init_data_frame(out, Rf_length(x));
+
+  UNPROTECT(1);
+  return out;
+}
+
+static SEXP df_as_df_col(SEXP x, SEXP outer) {
+  x = PROTECT(Rf_shallow_duplicate(x));
+
+  SEXP nms = PROTECT(r_names(x));
+  nms = PROTECT(outer_names(nms, outer, Rf_length(x)));
+  Rf_setAttrib(x, R_NamesSymbol, nms);
+
+  UNPROTECT(3);
+  return x;
+}
+
+static SEXP shaped_as_df_col(SEXP x, SEXP outer) {
+  SEXP nms = PROTECT(colnames(x));
+  x = PROTECT(r_as_data_frame(x));
+
+  nms = PROTECT(outer_names(nms, outer, Rf_length(x)));
+  Rf_setAttrib(x, R_NamesSymbol, nms);
+
+  UNPROTECT(3);
+  return x;
+}
