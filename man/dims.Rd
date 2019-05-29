@@ -17,6 +17,7 @@ vec_dims(x)
 \item{x}{A vector}
 }
 \description{
+\Sexpr[results=rd, stage=render]{vctrs:::lifecycle("maturing")}
 \itemize{
 \item \code{vec_empty()} returns \code{TRUE} if \code{vec_size()} is zero.
 \item \code{vec_dims()} gives the dimensionality (i.e. number of dimensions)
@@ -28,6 +29,12 @@ Unlike base R, we treat vectors with \code{NULL} dimensions as 1d. This
 simplifies the type system by eliding a special case. Compared to base R
 equivalent, \code{vec_dim()} returns \code{length()}, not \code{NULL}, when \code{x} is 1d.
 }
+\section{Life cycle}{
+
+
+\code{vec_dim()} is maturing, because it is used in the pillar package.
+}
+
 \examples{
 # Compared to base R
 x <- 1:5
