@@ -239,6 +239,10 @@ SEXP compact_seq_attrib = NULL;
 
 // Returns a compact sequence that `vec_slice()` understands
 SEXP compact_seq(R_len_t from, R_len_t to) {
+  if (to < from) {
+    Rf_error("Internal error: Negative length in `compact_seq()`");
+  }
+
   SEXP seq = PROTECT(Rf_allocVector(INTSXP, 2));
 
   int* p = INTEGER(seq);
@@ -337,6 +341,10 @@ void r_int_fill_seq(SEXP x, int start) {
 
 SEXP r_seq(R_len_t from, R_len_t to) {
   R_len_t n = to - from;
+  if (n < 0) {
+    Rf_error("Internal error: Negative length in `r_seq()`");
+  }
+
   SEXP seq = PROTECT(Rf_allocVector(INTSXP, n));
 
   r_int_fill_seq(seq, from);
