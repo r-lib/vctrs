@@ -571,6 +571,8 @@ SEXP vctrs_shared_true = NULL;
 SEXP vctrs_shared_false = NULL;
 Rcomplex vctrs_shared_na_cpl;
 
+SEXP vctrs_shared_na_lgl = NULL;
+
 SEXP strings = NULL;
 SEXP strings_empty = NULL;
 SEXP strings_dots = NULL;
@@ -684,6 +686,11 @@ void vctrs_init_utils(SEXP ns) {
 
   vctrs_shared_na_cpl.i = NA_REAL;
   vctrs_shared_na_cpl.r = NA_REAL;
+
+
+  vctrs_shared_na_lgl = r_lgl(NA_LOGICAL);
+  R_PreserveObject(vctrs_shared_na_lgl);
+  MARK_NOT_MUTABLE(vctrs_shared_na_lgl);
 
 
   syms_i = Rf_install("i");

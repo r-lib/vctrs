@@ -122,12 +122,17 @@ static inline double r_dbl_get(SEXP x, R_len_t i) {
   return REAL(x)[i];
 }
 
+static inline SEXP r_lgl(int x) {
+  return Rf_ScalarLogical(x);
+}
+
 SEXP r_as_list(SEXP x);
 SEXP r_as_data_frame(SEXP x);
 
 
 extern SEXP vctrs_ns_env;
 extern SEXP vctrs_shared_empty_str;
+extern SEXP vctrs_shared_na_lgl;
 
 extern SEXP classes_data_frame;
 extern SEXP classes_tibble;

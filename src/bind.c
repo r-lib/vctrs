@@ -3,6 +3,7 @@
 
 static SEXP vec_rbind(SEXP xs, SEXP ptype);
 static SEXP as_df_row(SEXP x, bool quiet);
+static SEXP as_df_row_impl(SEXP x, bool quiet);
 
 
 // [[ register(external = TRUE) ]]
@@ -37,6 +38,11 @@ static SEXP vec_rbind(SEXP xs, SEXP ptype) {
   if (ptype == R_NilValue) {
     UNPROTECT(1);
     return new_data_frame(vctrs_shared_empty_list, 0);
+  }
+  if (TYPEOF(ptype) == LGLSXP && !Rf_length(ptype)) {
+    UNPROTECT(1);
+    ptype = as_df_row_impl(vctrs_shared_na_lgl, false);
+    PROTECT(ptype);
   }
   if (!is_data_frame(ptype)) {
     Rf_errorcall(R_NilValue, "Can't bind objects that are not coercible to a data frame.");
@@ -81,18 +87,21 @@ static SEXP vec_rbind(SEXP xs, SEXP ptype) {
   return out;
 }
 
-
 static SEXP as_df_row(SEXP x, bool quiet) {
-  if (x == R_NilValue) {
-    return x;
-  }
   if (vec_is_unspecified(x) && r_names(x) == R_NilValue) {
+    return x;
+  } else {
+    return as_df_row_impl(x, quiet);
+  }
+}
+
+static SEXP as_df_row_impl(SEXP x, bool quiet) {
+  if (x == R_NilValue) {
     return x;
   }
   if (is_data_frame(x)) {
     return x;
   }
-
   if (vec_dim(x) != 1) {
     return r_as_data_frame(x);
   }
