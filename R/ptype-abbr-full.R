@@ -1,32 +1,53 @@
 #' Vector type as a string
 #'
-#' `vec_ptype_full()` displays the full type of the vector. `vec_ptype_abbr()`
-#' provides an abbreviated summary suitable for use in a column heading.
+#' @description
+#' \Sexpr[results=rd, stage=render]{vctrs:::lifecycle("questioning")}
+#' `vec_ptype_full()` displays the full type of the vector.
 #'
 #' @section S3 dispatch:
 #' The default method for `vec_ptype_full()` uses the first element of the
 #' class vector. Override this method if your class has parameters that should
 #' be prominently displayed.
 #'
-#' The default method for `vec_ptype_abbr()` [abbreviate()]s `vec_ptype_full()`
-#' to 8 characters. You should almost always override, aiming for 4-6
-#' characters where possible.
+#' @section Life cycle:
+#' `vec_ptype_full()` is questioning, because it feels that more variants
+#' of a type description need to be accounted for.
+#' See <https://github.com/r-lib/vctrs/issues/139> for details.
 #'
 #' @param x A vector.
 #' @keywords internal
 #' @return A string.
+#' @family vector descriptions
 #' @export
 #' @examples
 #' cat(vec_ptype_full(1:10))
 #' cat(vec_ptype_full(iris))
-#'
-#' cat(vec_ptype_abbr(1:10))
 vec_ptype_full <- function(x) {
   UseMethod("vec_ptype_full")
 }
 
+#' Abbreviated vector type as a string
+#'
+#' @description
+#' \Sexpr[results=rd, stage=render]{vctrs:::lifecycle("maturing")}
+#' `vec_ptype_abbr()` provides an abbreviated summary suitable for use in a column heading.
+#'
+#' @section S3 dispatch:
+#' The default method for `vec_ptype_abbr()` [abbreviate()]s `vec_ptype_full()`
+#' to 8 characters. You should almost always override, aiming for 4-6
+#' characters where possible.
+#'
+#' @section Life cycle:
+#' `vec_ptype_abbr()` is maturing, because it is the designated replacement for [pillar::type_sum()].
+#'
+#' @param x A vector.
+#' @keywords internal
+#' @return A string.
+#' @family vector descriptions
 #' @export
-#' @rdname vec_ptype_full
+#' @examples
+#' cat(vec_ptype_abbr(1:10))
+#' @export
 vec_ptype_abbr <- function(x) {
   UseMethod("vec_ptype_abbr")
 }

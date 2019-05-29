@@ -2,12 +2,9 @@
 % Please edit documentation in R/ptype-abbr-full.R
 \name{vec_ptype_full}
 \alias{vec_ptype_full}
-\alias{vec_ptype_abbr}
 \title{Vector type as a string}
 \usage{
 vec_ptype_full(x)
-
-vec_ptype_abbr(x)
 }
 \arguments{
 \item{x}{A vector.}
@@ -16,24 +13,29 @@ vec_ptype_abbr(x)
 A string.
 }
 \description{
-\code{vec_ptype_full()} displays the full type of the vector. \code{vec_ptype_abbr()}
-provides an abbreviated summary suitable for use in a column heading.
+\Sexpr[results=rd, stage=render]{vctrs:::lifecycle("questioning")}
+\code{vec_ptype_full()} displays the full type of the vector.
 }
 \section{S3 dispatch}{
 
 The default method for \code{vec_ptype_full()} uses the first element of the
 class vector. Override this method if your class has parameters that should
 be prominently displayed.
+}
 
-The default method for \code{vec_ptype_abbr()} \code{\link[=abbreviate]{abbreviate()}}s \code{vec_ptype_full()}
-to 8 characters. You should almost always override, aiming for 4-6
-characters where possible.
+\section{Life cycle}{
+
+\code{vec_ptype_full()} is questioning, because it feels that more variants
+of a type description need to be accounted for.
+See \url{https://github.com/r-lib/vctrs/issues/139} for details.
 }
 
 \examples{
 cat(vec_ptype_full(1:10))
 cat(vec_ptype_full(iris))
-
-cat(vec_ptype_abbr(1:10))
 }
+\seealso{
+Other vector descriptions: \code{\link{vec_ptype_abbr}}
+}
+\concept{vector descriptions}
 \keyword{internal}
