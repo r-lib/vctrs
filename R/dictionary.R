@@ -45,11 +45,12 @@ vec_count <- function(x, sort = c("count", "key", "location", "none")) {
   kv <- .Call(vctrs_count, vec_proxy(x))
 
   # rep_along() to support zero-length vectors!
-  df <- data.frame(key = rep_along(kv$val, NA), count = kv$val)
+  df <- data_frame(key = rep_along(kv$val, NA), count = kv$val)
   df$key <- vec_slice(x, kv$key) # might be a dataframe
 
-  if (sort == "none")
+  if (sort == "none") {
     return(df)
+  }
 
   idx <- switch(sort,
     location = order(kv$key),

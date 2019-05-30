@@ -8,6 +8,16 @@ test_that("vec_count counts number observations", {
   expect_equal(x, data.frame(key = 1:3, count = 1:3))
 })
 
+test_that("vec_count works with matrices", {
+  x <- matrix(c(1, 1, 1, 2, 2, 1), c(3, 2))
+
+  out <- vec_count(x)
+  exp <- data_frame(key = c(NA, NA), count = int(2L, 1L))
+  exp$key <- vec_slice(x, c(1, 3))
+
+  expect_identical(out, exp)
+})
+
 test_that("vec_count works with arrays", {
   x <- array(c(rep(1, 3), rep(2, 3)), dim = c(3, 2, 1))
   expect <- data.frame(key = NA, count = 3)
@@ -68,6 +78,16 @@ test_that("also works for data frames", {
 
   exp <- tibble(x = c(1, 1, 2), y = c(1, 2, 3))
   expect_identical(vec_unique(vec_slice(exp, c(1, 1, 2, 3))), exp)
+})
+
+test_that("vec_unique() handles matrices (#327)", {
+  x <- matrix(c(1, 2, 3, 4), c(2, 2))
+  y <- matrix(c(1, 2, 3, 5), c(2, 2))
+  expect_identical(vec_unique(list(x, x)), list(x))
+  expect_identical(vec_unique(list(x, y)), list(x, y))
+
+  x <- matrix(c(1, 2, 1, 1, 2, 1), nrow = 3)
+  expect_identical(vec_unique(x), vec_slice(x, 1:2))
 })
 
 

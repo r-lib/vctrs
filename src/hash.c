@@ -53,8 +53,14 @@ static uint32_t raw_hash_scalar(const Rbyte* x);
 static uint32_t df_hash_scalar(SEXP x, R_len_t i);
 static uint32_t list_hash_scalar(SEXP x, R_len_t i);
 
+static uint32_t shaped_hash_scalar(SEXP x, R_len_t i);
+
 // [[ include("vctrs.h") ]]
 uint32_t hash_scalar(SEXP x, R_len_t i) {
+  if (has_dim(x)) {
+    return shaped_hash_scalar(x, i);
+  }
+
   switch(TYPEOF(x)) {
   case LGLSXP: return lgl_hash_scalar(LOGICAL(x) + i);
   case INTSXP: return int_hash_scalar(INTEGER(x) + i);
@@ -116,6 +122,16 @@ static uint32_t list_hash_scalar(SEXP x, R_len_t i) {
   return hash_object(VECTOR_ELT(x, i));
 }
 
+// This is slow and matrices / arrays should be converted to data
+// frames ahead of time. The conversion to data frame is only a
+// stopgap, in the long term, we'll hash arrays natively.
+static uint32_t shaped_hash_scalar(SEXP x, R_len_t i) {
+  x = PROTECT(r_as_data_frame(x));
+  uint32_t out = hash_scalar(x, i);
+
+  UNPROTECT(1);
+  return out;
+}
 
 // Hashing objects -----------------------------------------------------
 
@@ -234,6 +250,15 @@ static void df_hash_fill(uint32_t* p, R_len_t size, SEXP x);
 // Not compatible with hash_scalar
 // [[ include("vctrs.h") ]]
 void hash_fill(uint32_t* p, R_len_t size, SEXP x) {
+  if (has_dim(x)) {
+    // The conversion to data frame is only a stopgap, in the long
+    // term, we'll hash arrays natively
+    x = PROTECT(r_as_data_frame(x));
+    hash_fill(p, size, x);
+    UNPROTECT(1);
+    return;
+  }
+
   switch (TYPEOF(x)) {
   case LGLSXP: lgl_hash_fill(p, size, x); return;
   case INTSXP: int_hash_fill(p, size, x); return;
@@ -304,7 +329,6 @@ static void df_hash_fill(uint32_t* p, R_len_t size, SEXP x) {
   }
 }
 
-
 // [[ register() ]]
 SEXP vctrs_hash(SEXP x, SEXP rowwise) {
   x = PROTECT(vec_proxy(x));
@@ -319,6 +343,7 @@ SEXP vctrs_hash(SEXP x, SEXP rowwise) {
       p[i] = hash_scalar(x, i);
     }
   } else {
+    memset(p, 0, n * sizeof(uint32_t));
     hash_fill(p, n, x);
   }
 

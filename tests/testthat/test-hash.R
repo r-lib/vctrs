@@ -69,6 +69,55 @@ test_that("can hash list of non-vectors", {
   )
 })
 
+test_that("can hash matrices rowwise", {
+  x <- matrix(c(1, 2, 3, 4), c(2, 2))
+  expect_identical(
+    vec_hash(x, rowwise = TRUE),
+    vec_hash(x, rowwise = TRUE)
+  )
+
+  y <- matrix(c(1, 2, 3, 5), c(2, 2))
+  expect_false(identical(
+    vec_hash(x, rowwise = TRUE),
+    vec_hash(y, rowwise = TRUE)
+  ))
+})
+
+test_that("can hash matrices non-rowwise", {
+  x <- matrix(c(1, 1, 1, 2, 2, 1), c(3, 2))
+
+  expect_identical(
+    vec_hash(x, rowwise = FALSE),
+    vec_hash(x, rowwise = FALSE)
+  )
+
+  x <- matrix(c(1, 2, 3, 4), c(2, 2))
+
+  expect_identical(
+    vec_hash(x, rowwise = FALSE),
+    vec_hash(x, rowwise = FALSE)
+  )
+
+  expect_false(identical(
+    vec_hash(x, rowwise = FALSE),
+    vec_hash(c(1, 2), rowwise = FALSE)
+  ))
+
+  y <- matrix(c(1, 2, 3, 5), c(2, 2))
+
+  expect_false(identical(
+    vec_hash(x, rowwise = FALSE),
+    vec_hash(y, rowwise = FALSE)
+  ))
+})
+
+test_that("can hash with non-rowwise method", {
+  expect_identical(
+    vec_hash(NA, rowwise = FALSE),
+    vec_hash(NA, rowwise = FALSE),
+  )
+})
+
 
 # Object ------------------------------------------------------------------
 
