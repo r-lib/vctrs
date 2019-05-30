@@ -23,7 +23,7 @@ vec_proxy_compare <- function(x, relax = FALSE) {
 
 #' @export
 vec_proxy_compare.data.frame <- function(x, relax = FALSE) {
-  x[] <- lapply(x[], vec_proxy_compare, relax = TRUE)
+  x[] <- lapply(x[], vec_proxy_compare_default, relax = TRUE)
   x
 }
 
@@ -34,6 +34,14 @@ vec_proxy_compare.POSIXlt <- function(x, relax = FALSE) {
 
 #' @export
 vec_proxy_compare.default <- function(x, relax = FALSE) {
+  if (vec_dims(x) > 1) {
+    as.data.frame(x)
+  } else {
+    vec_proxy_compare_default(x, relax)
+  }
+}
+
+vec_proxy_compare_default <- function(x, relax = FALSE) {
   if (is_bare_list(x)) {
     if (relax) {
       vec_seq_along(x)

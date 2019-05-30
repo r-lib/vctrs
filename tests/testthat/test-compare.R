@@ -81,6 +81,14 @@ test_that("vec_compare() calls vec_proxy_compare()", {
   expect_identical(vec_compare(1:3, foobar(1:3)), int(-1, 0, 1))
 })
 
+test_that("vec_proxy_compare() preserves data frames and vectors", {
+  df <- data_frame(x = 1:2, y = c("a", "b"))
+  expect_identical(vec_proxy_compare(df), df)
+
+  x <- c(NA, "a", "b", "c")
+  expect_identical(vec_proxy_compare(x), x)
+})
+
 
 # order/sort --------------------------------------------------------------
 
