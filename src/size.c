@@ -6,7 +6,7 @@ R_len_t rcrd_size(SEXP x);
 SEXP vec_dim(SEXP x) {
   SEXP dim = PROTECT(Rf_getAttrib(x, R_DimSymbol));
 
-  if (r_is_null(dim)) {
+  if (dim == R_NilValue) {
     dim = Rf_ScalarInteger(Rf_length(x));
   }
 
