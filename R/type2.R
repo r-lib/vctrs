@@ -24,13 +24,14 @@
 #' but should be tested.
 #'
 #' Whenever you implemenet a `vec_type2.new_class()` generic/method,
-#' make sure to always provide `vec_type2.new_class.default()` (
-#' which should call [stop_incompatible_cast()]) and
+#' make sure to always provide `vec_type2.new_class.default()`
+#' (which should call [stop_incompatible_type()]) and
 #' `vec_type2.new_class.vctrs_unspecified()` (which should return `x`).
 #'
 #' See `vignette("s3-vector")` for full details.
 #' @keywords internal
-#' @param x,y Either vector types; i.e.
+#' @inheritParams ellipsis::dots_empty
+#' @param x,y Vector types.
 #' @param x_arg,y_arg Argument names for `x` and `y`. These are used
 #'   in error messages to inform the user about the locations of
 #'   incompatible types (see [stop_incompatible_type()]).
