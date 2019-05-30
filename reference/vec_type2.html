@@ -167,7 +167,11 @@ instead call <code><a href='vec_type.html'>vec_type_common()</a></code>.</p>
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>x, y</th>
-      <td><p>Either vector types; i.e.</p></td>
+      <td><p>Vector types.</p></td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td><p>These dots are for future extensions and must be empty.</p></td>
     </tr>
     <tr>
       <th>x_arg, y_arg</th>
@@ -197,8 +201,8 @@ which call e.g. <code>vec_type2.integer.double()</code>. <code>vec_type2.x.y()</
 return the same value as <code>vec_type2.y.x()</code>; this is currently not enforced,
 but should be tested.</p>
 <p>Whenever you implemenet a <code>vec_type2.new_class()</code> generic/method,
-make sure to always provide <code>vec_type2.new_class.default()</code> (
-which should call <code><a href='vctrs-conditions.html'>stop_incompatible_cast()</a></code>) and
+make sure to always provide <code>vec_type2.new_class.default()</code>
+(which should call <code><a href='vctrs-conditions.html'>stop_incompatible_type()</a></code>) and
 <code>vec_type2.new_class.vctrs_unspecified()</code> (which should return <code>x</code>).</p>
 <p>See <code><a href='../articles/s3-vector.html'>vignette("s3-vector")</a></code> for full details.</p>
     
