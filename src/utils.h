@@ -122,9 +122,8 @@ static inline double r_dbl_get(SEXP x, R_len_t i) {
   return REAL(x)[i];
 }
 
-static inline SEXP r_lgl(int x) {
-  return Rf_ScalarLogical(x);
-}
+#define r_lgl Rf_ScalarLogical
+#define r_int Rf_ScalarInteger
 
 SEXP r_as_list(SEXP x);
 SEXP r_as_data_frame(SEXP x);

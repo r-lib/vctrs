@@ -69,6 +69,20 @@ test_that("can hash list of non-vectors", {
   )
 })
 
+test_that("can hash matrices", {
+  x <- matrix(c(1, 2, 3, 4), c(2, 2))
+  y <- matrix(c(1, 2, 3, 5), c(2, 2))
+
+  expect_false(identical(
+    vec_hash(x, rowwise = TRUE),
+    vec_hash(y, rowwise = TRUE)
+  ))
+  expect_false(identical(
+    vec_hash(x, rowwise = FALSE),
+    vec_hash(y, rowwise = FALSE)
+  ))
+})
+
 
 # Object ------------------------------------------------------------------
 

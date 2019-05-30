@@ -53,8 +53,14 @@ static uint32_t raw_hash_scalar(const Rbyte* x);
 static uint32_t df_hash_scalar(SEXP x, R_len_t i);
 static uint32_t list_hash_scalar(SEXP x, R_len_t i);
 
+static uint32_t shaped_hash_scalar(SEXP x, R_len_t i);
+
 // [[ include("vctrs.h") ]]
 uint32_t hash_scalar(SEXP x, R_len_t i) {
+  if (has_dim(x)) {
+    return shaped_hash_scalar(x, i);
+  }
+
   switch(TYPEOF(x)) {
   case LGLSXP: return lgl_hash_scalar(LOGICAL(x) + i);
   case INTSXP: return int_hash_scalar(INTEGER(x) + i);
@@ -116,6 +122,18 @@ static uint32_t list_hash_scalar(SEXP x, R_len_t i) {
   return hash_object(VECTOR_ELT(x, i));
 }
 
+static uint32_t shaped_hash_scalar(SEXP x, R_len_t i) {
+  // Extract first row
+  SEXP idx = PROTECT(r_int(i + 1));
+  x = PROTECT(vec_slice(x, idx));
+
+  // Zap dims so we can recurse
+  SET_ATTRIB(x, R_NilValue);
+  uint32_t hash = hash_scalar(x, i);
+
+  UNPROTECT(2);
+  return hash;
+}
 
 // Hashing objects -----------------------------------------------------
 
