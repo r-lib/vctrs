@@ -80,6 +80,16 @@ test_that("also works for data frames", {
   expect_identical(vec_unique(vec_slice(exp, c(1, 1, 2, 3))), exp)
 })
 
+test_that("vec_unique() handles matrices (#327)", {
+  x <- matrix(c(1, 2, 3, 4), c(2, 2))
+  y <- matrix(c(1, 2, 3, 5), c(2, 2))
+  expect_identical(vec_unique(list(x, x)), list(x))
+  expect_identical(vec_unique(list(x, y)), list(x, y))
+
+  x <- matrix(c(1, 2, 1, 1, 2, 1), nrow = 3)
+  expect_identical(vec_unique(x), vec_slice(x, 1:2))
+})
+
 
 # matching ----------------------------------------------------------------
 
