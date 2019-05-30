@@ -128,6 +128,10 @@ static inline double r_dbl_get(SEXP x, R_len_t i) {
 SEXP r_as_list(SEXP x);
 SEXP r_as_data_frame(SEXP x);
 
+static inline void r_dbg_save(SEXP x, const char* name) {
+  Rf_defineVar(Rf_install(name), x, R_GlobalEnv);
+}
+
 
 extern SEXP vctrs_ns_env;
 extern SEXP vctrs_shared_empty_str;
