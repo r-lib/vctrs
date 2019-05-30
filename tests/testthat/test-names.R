@@ -8,6 +8,8 @@ test_that("vec_names() retrieves names", {
   expect_identical(vec_names(set_names(letters)), letters)
   expect_null(vec_names(mtcars))
   expect_identical(vec_names(Titanic), dimnames(Titanic)[[1]])
+  x <- matrix(1L, dimnames = list("row", "col"))
+  expect_identical(vec_names(x), dimnames(x)[[1]])
 })
 
 test_that("vec_names() dispatches", {
