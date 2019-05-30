@@ -403,7 +403,13 @@ quantile.vctrs_vctr <- function(x, ..., type = 1, na.rm = FALSE) {
 min.vctrs_vctr <- function(x, ..., na.rm = FALSE) {
   # TODO: implement to do vec_arg_min()
   rank <- xtfrm(x)
-  idx <- if (isTRUE(na.rm)) which.max(rank) else which(rank == min(rank))
+
+  if (isTRUE(na.rm)) {
+    idx <- which.min(rank)
+  } else {
+    idx <- which(vec_equal(rank, min(rank), na_equal = TRUE))
+  }
+
   x[[idx[[1]]]]
 }
 
@@ -411,7 +417,13 @@ min.vctrs_vctr <- function(x, ..., na.rm = FALSE) {
 max.vctrs_vctr <- function(x, ..., na.rm = FALSE) {
   # TODO: implement to do vec_arg_max()
   rank <- xtfrm(x)
-  idx <- if (isTRUE(na.rm)) which.max(rank) else which(rank == max(rank))
+
+  if (isTRUE(na.rm)) {
+    idx <- which.max(rank)
+  } else {
+    idx <- which(vec_equal(rank, max(rank), na_equal = TRUE))
+  }
+
   x[[idx[[1]]]]
 }
 
