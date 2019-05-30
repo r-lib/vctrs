@@ -122,17 +122,14 @@ static uint32_t list_hash_scalar(SEXP x, R_len_t i) {
   return hash_object(VECTOR_ELT(x, i));
 }
 
+// This is slow and matrices / arrays should be converted to data
+// frames ahead of time
 static uint32_t shaped_hash_scalar(SEXP x, R_len_t i) {
-  // Extract first row
-  SEXP idx = PROTECT(r_int(i + 1));
-  x = PROTECT(vec_slice(x, idx));
+  x = PROTECT(r_as_data_frame(x));
+  uint32_t out = hash_scalar(x, i);
 
-  // Zap dims so we can recurse
-  SET_ATTRIB(x, R_NilValue);
-  uint32_t hash = hash_scalar(x, i);
-
-  UNPROTECT(2);
-  return hash;
+  UNPROTECT(1);
+  return out;
 }
 
 // Hashing objects -----------------------------------------------------
@@ -252,6 +249,13 @@ static void df_hash_fill(uint32_t* p, R_len_t size, SEXP x);
 // Not compatible with hash_scalar
 // [[ include("vctrs.h") ]]
 void hash_fill(uint32_t* p, R_len_t size, SEXP x) {
+  if (has_dim(x)) {
+    x = PROTECT(r_as_data_frame(x));
+    hash_fill(p, size, x);
+    UNPROTECT(1);
+    return;
+  }
+
   switch (TYPEOF(x)) {
   case LGLSXP: lgl_hash_fill(p, size, x); return;
   case INTSXP: int_hash_fill(p, size, x); return;
@@ -322,7 +326,6 @@ static void df_hash_fill(uint32_t* p, R_len_t size, SEXP x) {
   }
 }
 
-
 // [[ register() ]]
 SEXP vctrs_hash(SEXP x, SEXP rowwise) {
   x = PROTECT(vec_proxy(x));
@@ -337,6 +340,7 @@ SEXP vctrs_hash(SEXP x, SEXP rowwise) {
       p[i] = hash_scalar(x, i);
     }
   } else {
+    memset(p, 0, n * sizeof(uint32_t));
     hash_fill(p, n, x);
   }
 
