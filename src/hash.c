@@ -142,8 +142,30 @@ static uint32_t chr_hash(SEXP x);
 static uint32_t list_hash(SEXP x);
 static uint32_t node_hash(SEXP x);
 static uint32_t fn_hash(SEXP x);
+static uint32_t sexp_hash(SEXP x);
 
 uint32_t hash_object(SEXP x) {
+  uint32_t hash = sexp_hash(x);
+
+  SEXP attrib = ATTRIB(x);
+  if (attrib != R_NilValue) {
+    hash = hash_combine(hash, hash_object(attrib));
+  }
+
+  return hash;
+}
+
+// [[ register() ]]
+SEXP vctrs_hash_object(SEXP x) {
+  SEXP out = PROTECT(Rf_allocVector(RAWSXP, sizeof(uint32_t)));
+  uint32_t hash = hash_object(x);
+  memcpy(RAW(out), &hash, sizeof(uint32_t));
+  UNPROTECT(1);
+  return out;
+}
+
+
+static uint32_t sexp_hash(SEXP x) {
   switch(TYPEOF(x)) {
   case NILSXP: return 0;
   case LGLSXP: return lgl_hash(x);
@@ -165,16 +187,6 @@ uint32_t hash_object(SEXP x) {
   default: Rf_errorcall(R_NilValue, "Unsupported type %s", Rf_type2char(TYPEOF(x)));
   }
 }
-
-// [[ register() ]]
-SEXP vctrs_hash_object(SEXP x) {
-  SEXP out = PROTECT(Rf_allocVector(RAWSXP, sizeof(uint32_t)));
-  uint32_t hash = hash_object(x);
-  memcpy(RAW(out), &hash, sizeof(uint32_t));
-  UNPROTECT(1);
-  return out;
-}
-
 
 #define HASH(CTYPE, CONST_DEREF, HASHER)        \
   uint32_t hash = 0;                            \
