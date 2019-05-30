@@ -124,9 +124,12 @@ test_that("can hash with non-rowwise method", {
 test_that("equal objects hash to same value", {
   # just test function since they'll recurse through every other object type
   f1 <- function(x, y = NULL) x + y
-  attr(f1, "srcref") <- NULL
   f2 <- function(x, y = NULL) x + y
-  attr(f2, "srcref") <- NULL
+  expect_false(identical(obj_hash(f1), obj_hash(f2)))
+  expect_false(identical(vec_hash(data_frame(x = list(f1))), vec_hash(data_frame(x = list(f2)))))
 
+  attr(f1, "srcref") <- NULL
+  attr(f2, "srcref") <- NULL
   expect_equal(obj_hash(f1), obj_hash(f2))
+  expect_equal(vec_hash(data_frame(x = list(f1))), vec_hash(data_frame(x = list(f2))))
 })
