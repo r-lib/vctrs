@@ -90,6 +90,13 @@ test_that("vec_unique() handles matrices (#327)", {
   expect_identical(vec_unique(x), vec_slice(x, 1:2))
 })
 
+test_that("vec_unique() works with 1D arrays", {
+  # 1D arrays are dispatched to `as.data.frame.vector()` which
+  # currently does not strip dimensions. This caused an infinite
+  # recursion.
+  expect_identical(vec_unique(array(1:2)), array(1:2))
+})
+
 
 # matching ----------------------------------------------------------------
 
