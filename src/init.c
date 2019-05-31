@@ -60,6 +60,7 @@ extern SEXP vctrs_coercible_cast(SEXP, SEXP, SEXP, SEXP);
 extern SEXP vec_assign(SEXP, SEXP, SEXP);
 extern SEXP vctrs_set_attributes(SEXP, SEXP);
 extern SEXP vctrs_as_df_row(SEXP, SEXP);
+extern SEXP vctrs_outer_names(SEXP, SEXP, SEXP);
 
 // Defined below
 SEXP vctrs_init(SEXP);
@@ -118,17 +119,20 @@ static const R_CallMethodDef CallEntries[] = {
   {"vctrs_assign",                     (DL_FUNC) &vec_assign, 3},
   {"vctrs_set_attributes",             (DL_FUNC) &vctrs_set_attributes, 2},
   {"vctrs_as_df_row",                  (DL_FUNC) &vctrs_as_df_row, 2},
+  {"vctrs_outer_names",                (DL_FUNC) &vctrs_outer_names, 3},
   {NULL, NULL, 0}
 };
 
 extern SEXP vctrs_type_common(SEXP, SEXP, SEXP, SEXP);
 extern SEXP vctrs_cast_common(SEXP, SEXP, SEXP, SEXP);
 extern SEXP vctrs_rbind(SEXP, SEXP, SEXP, SEXP);
+extern SEXP vctrs_c(SEXP, SEXP, SEXP, SEXP);
 
 static const R_ExternalMethodDef ExtEntries[] = {
   {"vctrs_type_common",                (DL_FUNC) &vctrs_type_common, 1},
   {"vctrs_cast_common",                (DL_FUNC) &vctrs_cast_common, 1},
   {"vctrs_rbind",                      (DL_FUNC) &vctrs_rbind, 1},
+  {"vctrs_c",                          (DL_FUNC) &vctrs_c, 1},
   {NULL, NULL, 0}
 };
 
@@ -142,6 +146,7 @@ void R_init_vctrs(DllInfo *dll)
 void vctrs_init_cast(SEXP ns);
 void vctrs_init_data(SEXP ns);
 void vctrs_init_dictionary(SEXP ns);
+void vctrs_init_names(SEXP ns);
 void vctrs_init_slice(SEXP ns);
 void vctrs_init_slice_assign(SEXP ns);
 void vctrs_init_type2(SEXP ns);
@@ -154,6 +159,7 @@ SEXP vctrs_init(SEXP ns) {
   vctrs_init_cast(ns);
   vctrs_init_data(ns);
   vctrs_init_dictionary(ns);
+  vctrs_init_names(ns);
   vctrs_init_slice(ns);
   vctrs_init_slice_assign(ns);
   vctrs_init_type2(ns);

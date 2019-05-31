@@ -4,7 +4,7 @@
 static void describe_repair(SEXP old, SEXP new);
 
 
-// [[ register() ]]
+// [[ register(); include("vctrs.h") ]]
 SEXP vec_names(SEXP x) {
   if (OBJECT(x) && Rf_inherits(x, "data.frame")) {
     return R_NilValue;
@@ -323,25 +323,15 @@ SEXP vctrs_unique_names(SEXP x, SEXP quiet) {
 
 // 3 leading '.' + 1 trailing '\0' + 24 characters
 #define TOTAL_BUF_SIZE 28
-#define FREE_BUF_SIZE 25
 
 static SEXP names_iota(R_len_t n) {
-  SEXP nms = PROTECT(Rf_allocVector(STRSXP, n));
+  char buf[TOTAL_BUF_SIZE];
+  SEXP nms = r_chr_iota(n, buf, TOTAL_BUF_SIZE, "...");
 
-  char buf[TOTAL_BUF_SIZE] = "...";
-  char* beg = buf + 3;
-
-  for (R_len_t i = 0; i < n; ++i) {
-    int written = snprintf(beg, FREE_BUF_SIZE, "%d", i + 1);
-
-    if (written >= FREE_BUF_SIZE) {
-      Rf_errorcall(R_NilValue, "Can't write repaired names as there are too many.");
-    }
-
-    SET_STRING_ELT(nms, i, Rf_mkChar(buf));
+  if (nms == R_NilValue) {
+    Rf_errorcall(R_NilValue, "Too many names to repair.");
   }
 
-  UNPROTECT(1);
   return nms;
 }
 
@@ -353,4 +343,128 @@ static void describe_repair(SEXP old, SEXP new) {
   SEXP call = PROTECT(Rf_lang3(Rf_install("describe_repair"), old, new));
   Rf_eval(call, vctrs_ns_env);
   UNPROTECT(1);
+}
+
+
+static SEXP outer_names_cat(const char* outer, SEXP names);
+static SEXP outer_names_seq(const char* outer, R_len_t n);
+
+// [[ register() ]]
+SEXP vctrs_outer_names(SEXP names, SEXP outer, SEXP n) {
+  if (names != R_NilValue && TYPEOF(names) != STRSXP) {
+    Rf_error("Internal error: `names` must be `NULL` or a string");
+  }
+  if (!r_is_number(n)) {
+    Rf_error("Internal error: `n` must be a single integer");
+  }
+
+  return outer_names(names, outer, r_int_get(n, 0));
+}
+
+static SEXP str_as_chr(SEXP x) {
+  if (TYPEOF(x) == STRSXP) {
+    return x;
+  } else {
+    SEXP out = Rf_allocVector(STRSXP, 1);
+    SET_STRING_ELT(out, 0, x);
+    return out;
+  }
+}
+
+// [[ include("utils.h") ]]
+SEXP outer_names(SEXP names, SEXP outer, R_len_t n) {
+  if (outer == R_NilValue) {
+    return names;
+  }
+
+  SEXP outer_str;
+  switch (TYPEOF(outer)) {
+  case STRSXP:
+    if (Rf_length(outer) != 1) {
+      goto bad_outer;
+    }
+    outer_str = STRING_ELT(outer, 0);
+    break;
+  case CHARSXP:
+    outer_str = outer;
+    break;
+  default:
+  bad_outer:
+    Rf_error("Internal error: `outer` must be a string");
+  }
+
+  if (outer_str == strings_empty || outer_str == NA_STRING) {
+    return names;
+  }
+
+  if (r_is_empty_names(names)) {
+    if (n == 1) {
+      return str_as_chr(outer);
+    } else {
+      return outer_names_seq(CHAR(outer_str), n);
+    }
+  } else {
+    return outer_names_cat(CHAR(outer_str), names);
+  }
+}
+
+static SEXP outer_names_cat(const char* outer, SEXP names) {
+  names = PROTECT(Rf_shallow_duplicate(names));
+  R_len_t n = Rf_length(names);
+
+  int outer_len = strlen(outer);
+  int names_len = r_chr_max_len(names);
+
+  int total_len = outer_len + names_len + strlen("..") + 1;
+
+  R_CheckStack2(total_len);
+  char buf[total_len];
+  buf[total_len - 1] = '\0';
+  char* bufp = buf;
+
+  memcpy(bufp, outer, outer_len); bufp += outer_len;
+  *bufp = '.'; bufp += 1;
+  *bufp = '.'; bufp += 1;
+
+  SEXP* p = STRING_PTR(names);
+
+  for (R_len_t i = 0; i < n; ++i, ++p) {
+    const char* inner = CHAR(*p);
+    int inner_n = strlen(inner);
+
+    memcpy(bufp, inner, inner_n);
+    bufp[inner_n] = '\0';
+
+    SET_STRING_ELT(names, i, r_str(buf));
+  }
+
+  UNPROTECT(1);
+  return names;
+}
+
+static SEXP outer_names_seq(const char* outer, R_len_t n) {
+  int total_len = 24 + strlen(outer) + 1;
+
+  R_CheckStack2(total_len);
+  char buf[total_len];
+
+  return r_chr_iota(n, buf, total_len, outer);
+}
+
+
+// Initialised at load time
+SEXP syms_set_rownames = NULL;
+SEXP fns_set_rownames = NULL;
+
+// [[ include("utils.h") ]]
+SEXP set_rownames(SEXP x, SEXP names) {
+  return vctrs_dispatch2(syms_set_rownames, fns_set_rownames,
+                         syms_x, x,
+                         syms_names, names);
+}
+
+
+void vctrs_init_names(SEXP ns) {
+  syms_set_rownames = Rf_install("set_rownames");
+  fns_set_rownames = r_env_get(ns, syms_set_rownames);
 }

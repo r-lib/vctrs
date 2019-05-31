@@ -353,7 +353,6 @@ SEXP r_seq(R_len_t from, R_len_t to) {
   return seq;
 }
 
-
 bool r_int_any_na(SEXP x) {
   int* data = INTEGER(x);
   R_len_t n = Rf_length(x);
@@ -365,6 +364,54 @@ bool r_int_any_na(SEXP x) {
   }
 
   return false;
+}
+
+
+int r_chr_max_len(SEXP x) {
+  R_len_t n = Rf_length(x);
+  SEXP* p = STRING_PTR(x);
+
+  int max = 0;
+  for (R_len_t i = 0; i < n; ++i, ++p) {
+    int len = strlen(CHAR(*p));
+    max = len > max ? len : max;
+  }
+
+  return max;
+}
+
+/**
+ * Create a character vector of sequential integers
+ *
+ * @param n The sequence is from 1 to `n`.
+ * @param buf,len A memory buffer of size `len`.
+ * @param prefix A null-terminated string that is prefixed to the
+ *   sequence.
+ */
+SEXP r_chr_iota(R_len_t n, char* buf, int len, const char* prefix) {
+  int prefix_len = strlen(prefix);
+  if (len - 1 < prefix_len) {
+    Rf_errorcall(R_NilValue, "Internal error: Prefix is larger than iota buffer.");
+  }
+
+  memcpy(buf, prefix, prefix_len);
+  len -= prefix_len;
+  char* beg = buf + prefix_len;
+
+  SEXP out = PROTECT(Rf_allocVector(STRSXP, n));
+
+  for (R_len_t i = 0; i < n; ++i) {
+    int written = snprintf(beg, len, "%d", i + 1);
+
+    if (written >= len) {
+      return R_NilValue;
+    }
+
+    SET_STRING_ELT(out, i, Rf_mkChar(buf));
+  }
+
+  UNPROTECT(1);
+  return out;
 }
 
 
@@ -438,6 +485,11 @@ bool r_is_string(SEXP x) {
     Rf_length(x) == 1 &&
     STRING_ELT(x, 0) != NA_STRING;
 }
+bool r_is_number(SEXP x) {
+  return TYPEOF(x) == INTSXP &&
+    Rf_length(x) == 1 &&
+    INTEGER(x)[0] != NA_INTEGER;
+}
 
 SEXP r_peek_option(const char* option) {
   return Rf_GetOption1(Rf_install(option));
@@ -495,7 +547,47 @@ bool r_has_name_at(SEXP names, R_len_t i) {
   }
 
   SEXP elt = STRING_ELT(names, i);
-  return elt != NA_STRING && elt != Rf_mkChar("");
+  return elt != NA_STRING && elt != strings_empty;
+}
+
+bool r_is_minimal_names(SEXP x) {
+  if (TYPEOF(x) != STRSXP) {
+    return false;
+  }
+
+  R_len_t n = Rf_length(x);
+  const SEXP* p = STRING_PTR_RO(x);
+
+  for (R_len_t i = 0; i < n; ++i, ++p) {
+    SEXP elt = *p;
+    if (elt == NA_STRING || elt == strings_empty) {
+      return false;
+    }
+  }
+
+  return true;
+}
+
+bool r_is_empty_names(SEXP x) {
+  if (TYPEOF(x) != STRSXP) {
+    if (x == R_NilValue) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  R_len_t n = Rf_length(x);
+  const SEXP* p = STRING_PTR_RO(x);
+
+  for (R_len_t i = 0; i < n; ++i, ++p) {
+    SEXP elt = *p;
+    if (elt != NA_STRING && elt != strings_empty) {
+      return false;
+    }
+  }
+
+  return true;
 }
 
 SEXP r_env_get(SEXP env, SEXP sym) {

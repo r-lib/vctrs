@@ -200,11 +200,13 @@ SEXP vec_cast(SEXP x, SEXP to);
 SEXP vec_cast_common(SEXP xs, SEXP to);
 SEXP vec_coercible_cast(SEXP x, SEXP to, struct vctrs_arg* x_arg, struct vctrs_arg* to_arg);
 SEXP vec_slice(SEXP x, SEXP index);
+SEXP vec_assign(SEXP x, SEXP index, SEXP value);
 SEXP vec_na(SEXP x, R_len_t n);
 SEXP vec_type(SEXP x);
 SEXP vec_type_finalise(SEXP x);
 bool vec_is_unspecified(SEXP x);
 SEXP vec_recycle(SEXP x, R_len_t size);
+SEXP vec_names(SEXP x);
 
 SEXP vec_type2(SEXP x,
                SEXP y,

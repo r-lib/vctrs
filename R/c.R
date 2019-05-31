@@ -32,39 +32,5 @@
 #' c(factor("a"), factor("b"))
 #' vec_c(factor("a"), factor("b"))
 vec_c <- function(..., .ptype = NULL) {
-  args <- list2(...)
-
-  ptype <- vec_type_common(!!!args, .ptype = .ptype)
-  if (is.null(ptype))
-    return(NULL)
-
-  is_null <- map_lgl(args, is_null)
-  args <- args[!is_null]
-
-  ns <- map_int(args, vec_size)
-  out <- vec_na(ptype, sum(ns))
-  if (is.null(names(args)) && !has_inner_names(args)) {
-    names <- NULL
-  } else {
-    names <- vec_na(character(), sum(ns))
-  }
-
-  pos <- 1
-  for (i in seq_along(ns)) {
-    n <- ns[[i]]
-    if (n == 0L)
-      next
-
-    x <- vec_cast(args[[i]], to = ptype)
-
-    names[pos:(pos + n - 1)] <- outer_names(names(args)[[i]], vec_names(args[[i]]), length(x))
-    vec_slice(out, pos:(pos + n - 1)) <- x
-    pos <- pos + n
-  }
-
-  if (!is.null(names)) {
-    vec_names(out) <- names
-  }
-
-  out
+  .External2(vctrs_c, .ptype)
 }

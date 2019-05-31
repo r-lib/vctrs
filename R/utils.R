@@ -16,21 +16,8 @@ vec_coerce_bare <- function(x, type) {
 
 # Matches the semantics of c() - based on experimenting with the output
 # of c(), not reading the source code.
-outer_names <- function(outer, names, n) {
-  has_outer <- !is.null(outer) && !outer %in% c("", NA)
-  if (!has_outer)
-    return(names)
-
-  has_inner <- !is.null(names)
-  if (has_inner) {
-    paste0(outer, "..", names)
-  } else {
-    if (n == 1) {
-      outer
-    } else {
-      paste0(outer, seq_len(n))
-    }
-  }
+outer_names <- function(names, outer, n) {
+  .Call(vctrs_outer_names, names, outer, vec_cast(n, int()))
 }
 
 has_inner_names <- function(x) {
