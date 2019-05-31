@@ -54,21 +54,10 @@ static uint32_t df_hash_scalar(SEXP x, R_len_t i);
 static uint32_t list_hash_scalar(SEXP x, R_len_t i);
 static uint32_t shaped_hash_scalar(SEXP x, R_len_t i);
 
-static bool is_dimensional(SEXP x) {
-  if (!has_dim(x)) {
-    return false;
-  }
-
-  // Work around inconsistency with 1D arrays. These are dispatched
-  // to `as.data.frame.vector()` which currently does not strip
-  // dimensions. This caused an infinite recursion.
-  return vec_dims(x) > 1;
-}
-
 
 // [[ include("vctrs.h") ]]
 uint32_t hash_scalar(SEXP x, R_len_t i) {
-  if (is_dimensional(x)) {
+  if (has_dim(x)) {
     return shaped_hash_scalar(x, i);
   }
 
@@ -273,7 +262,7 @@ static void df_hash_fill(uint32_t* p, R_len_t size, SEXP x);
 // Not compatible with hash_scalar
 // [[ include("vctrs.h") ]]
 void hash_fill(uint32_t* p, R_len_t size, SEXP x) {
-  if (is_dimensional(x)) {
+  if (has_dim(x)) {
     // The conversion to data frame is only a stopgap, in the long
     // term, we'll hash arrays natively
     x = PROTECT(r_as_data_frame(x));

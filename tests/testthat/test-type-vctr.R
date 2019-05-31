@@ -406,6 +406,14 @@ test_that("can't transpose", {
   expect_error(t(h), class = "vctrs_error_unsupported")
 })
 
+test_that("shaped vctrs can be cast to data frames", {
+  x <- new_vctr(1:4, dim = 4)
+  expect_identical(as.data.frame(x), data.frame(V1 = 1:4))
+
+  x <- new_vctr(1:4, dim = c(2, 2))
+  expect_identical(as.data.frame(x), data.frame(V1 = 1:2, V2 = 3:4))
+})
+
 
 # slicing -----------------------------------------------------------------
 
