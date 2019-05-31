@@ -8,6 +8,8 @@ test_that("vec_names() retrieves names", {
   expect_identical(vec_names(set_names(letters)), letters)
   expect_null(vec_names(mtcars))
   expect_identical(vec_names(Titanic), dimnames(Titanic)[[1]])
+  x <- matrix(1L, dimnames = list("row", "col"))
+  expect_identical(vec_names(x), dimnames(x)[[1]])
 })
 
 test_that("vec_names() dispatches", {
@@ -248,6 +250,10 @@ test_that("unique_names() and as_unique_names() are verbose or silent", {
 
   expect_message(regexp = NA, unique_names(1:2, quiet = TRUE))
   expect_message(regexp = NA, as_unique_names(c("", ""), quiet = TRUE))
+})
+
+test_that("names with only duplicates are repaired", {
+  expect_identical(unique_names(list(x = NA, x = NA)), c("x...1", "x...2"))
 })
 
 

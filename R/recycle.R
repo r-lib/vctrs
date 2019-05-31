@@ -39,20 +39,7 @@
 #' vec_recycle_common(array(1:2, c(1, 2)), 1:5)
 #' vec_recycle_common(array(1:3, c(1, 3, 1)), 1:5)
 vec_recycle <- function(x, size) {
-  if (is.null(x) || is.null(size))
-    return(NULL)
-
-  n_x <- vec_size(x)
-
-  if (n_x == size) {
-    x
-  } else if (size == 0L) {
-    vec_slice(x, integer())
-  } else if (n_x == 1L) {
-    vec_slice(x, rep(1L, size))
-  } else {
-    abort(paste0("Incompatible lengths: ", n_x, ", ", size, "."))
-  }
+  .Call(vctrs_recycle, x, size)
 }
 
 #' @export

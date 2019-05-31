@@ -13,9 +13,18 @@ SEXP vctrs_method_table = NULL;
 SEXP strings_tbl = NULL;
 SEXP strings_tbl_df = NULL;
 SEXP strings_data_frame = NULL;
+SEXP strings_vctrs_rcrd = NULL;
+SEXP strings_posixt = NULL;
+SEXP strings_posixlt = NULL;
+SEXP strings_vctrs_vctr = NULL;
 
 SEXP classes_data_frame = NULL;
 SEXP classes_tibble = NULL;
+
+static SEXP syms_as_list = NULL;
+static SEXP syms_as_data_frame = NULL;
+static SEXP fns_as_list = NULL;
+static SEXP fns_as_data_frame = NULL;
 
 
 bool is_bool(SEXP x) {
@@ -81,6 +90,68 @@ SEXP vctrs_dispatch3(SEXP fn_sym, SEXP fn,
   return vctrs_dispatch_n(fn_sym, fn, syms, args);
 }
 
+// An alternative to `attributes(x) <- attrib`, which makes
+// two copies on R < 3.6.0
+// [[ register() ]]
+SEXP vctrs_set_attributes(SEXP x, SEXP attrib) {
+  R_len_t n_attrib = Rf_length(attrib);
+  int n_protect = 0;
+
+  if (MAYBE_REFERENCED(x)) {
+    x = PROTECT(Rf_shallow_duplicate(x));
+    ++n_protect;
+  }
+
+  // Remove existing attributes, and unset the object bit
+  SET_ATTRIB(x, R_NilValue);
+  SET_OBJECT(x, 0);
+
+  // Possible early exit after removing attributes
+  if (n_attrib == 0) {
+    UNPROTECT(n_protect);
+    return x;
+  }
+
+  SEXP names = Rf_getAttrib(attrib, R_NamesSymbol);
+
+  if (Rf_isNull(names)) {
+    Rf_errorcall(R_NilValue, "Attributes must be named.");
+  }
+
+  // Check that each element of `names` is named.
+  for (R_len_t i = 0; i < n_attrib; ++i) {
+    SEXP name = STRING_ELT(names, i);
+
+    if (name == NA_STRING || name == R_BlankString) {
+      const char* msg = "All attributes must have names. Attribute %i does not.";
+      Rf_errorcall(R_NilValue, msg, i + 1);
+    }
+  }
+
+  // Always set `dim` first, if it exists. This way it is set before `dimnames`.
+  int dim_pos = -1;
+  for (R_len_t i = 0; i < n_attrib; ++i) {
+    if (!strcmp(CHAR(STRING_ELT(names, i)), "dim")) {
+      dim_pos = i;
+      break;
+    }
+  }
+
+  if (dim_pos != -1) {
+    Rf_setAttrib(x, R_DimSymbol, VECTOR_ELT(attrib, dim_pos));
+  }
+
+  for (R_len_t i = 0; i < n_attrib; ++i) {
+    if (i == dim_pos) {
+      continue;
+    }
+    Rf_setAttrib(x, Rf_installChar(STRING_ELT(names, i)), VECTOR_ELT(attrib, i));
+  }
+
+  UNPROTECT(n_protect);
+  return x;
+}
+
 SEXP df_map(SEXP df, SEXP (*fn)(SEXP)) {
   R_len_t n = Rf_length(df);
   SEXP out = PROTECT(Rf_allocVector(VECSXP, n));
@@ -98,97 +169,6 @@ SEXP df_map(SEXP df, SEXP (*fn)(SEXP)) {
   UNPROTECT(2);
   return out;
 }
-
-SEXP with_proxy(SEXP x, SEXP (*rec)(SEXP, bool), SEXP i) {
-  SEXP proxy = PROTECT(vec_proxy(x));
-
-  SEXP out = PROTECT(rec(proxy, false));
-  out = vec_restore(out, x, i);
-
-  UNPROTECT(2);
-  return out;
-}
-
-bool is_compact_rownames(SEXP x) {
-  return Rf_length(x) == 2 && INTEGER(x)[0] == NA_INTEGER;
-}
-R_len_t compact_rownames_length(SEXP x) {
-  return abs(INTEGER(x)[1]);
-}
-
-static void init_compact_rownames(SEXP x, R_len_t n);
-static SEXP new_compact_rownames(R_len_t n);
-
-void init_data_frame(SEXP x, R_len_t n) {
-  Rf_setAttrib(x, R_ClassSymbol, classes_data_frame);
-  init_compact_rownames(x, n);
-}
-void init_tibble(SEXP x, R_len_t n) {
-  Rf_setAttrib(x, R_ClassSymbol, classes_tibble);
-  init_compact_rownames(x, n);
-}
-
-static void init_compact_rownames(SEXP x, R_len_t n) {
-  SEXP rn = PROTECT(new_compact_rownames(n));
-  Rf_setAttrib(x, R_RowNamesSymbol, rn);
-  UNPROTECT(1);
-}
-static SEXP new_compact_rownames(R_len_t n) {
-  if (n <= 0) {
-    return vctrs_shared_empty_int;
-  }
-
-  SEXP out = Rf_allocVector(INTSXP, 2);
-  int* out_data = INTEGER(out);
-  out_data[0] = NA_INTEGER;
-  out_data[1] = -n;
-  return out;
-}
-
-
-static bool is_tibble_class(SEXP class);
-static bool is_data_frame_class(SEXP class);
-
-bool is_bare_tibble(SEXP x) {
-  SEXP class = PROTECT(Rf_getAttrib(x, R_ClassSymbol));
-  bool out = is_tibble_class(class);
-  UNPROTECT(1);
-  return out;
-}
-bool is_native_df(SEXP x) {
-  SEXP class = PROTECT(Rf_getAttrib(x, R_ClassSymbol));
-  bool out = is_data_frame_class(class) || is_tibble_class(class);
-  UNPROTECT(1);
-  return out;
-}
-
-static bool is_tibble_class(SEXP class) {
-  if (Rf_length(class) != 3) {
-    return false;
-  }
-
-  SEXP* class_ptr = STRING_PTR(class);
-
-  if (*class_ptr != strings_tbl_df) {
-    return false;
-  }
-  ++class_ptr;
-  if (*class_ptr != strings_tbl) {
-    return false;
-  }
-  ++class_ptr;
-  if (*class_ptr != strings_data_frame) {
-    return false;
-  }
-
-  return true;
-}
-static bool is_data_frame_class(SEXP class) {
-  return
-    Rf_length(class) == 1 &&
-    STRING_ELT(class, 0) == strings_data_frame;
-}
-
 
 inline void never_reached(const char* fn) {
   Rf_error("Internal error in `%s()`: Never reached", fn);
@@ -251,6 +231,31 @@ SEXP s3_find_method(const char* generic, SEXP x) {
 
   UNPROTECT(1);
   return R_NilValue;
+}
+
+
+// Initialised at load time
+SEXP compact_seq_attrib = NULL;
+
+// Returns a compact sequence that `vec_slice()` understands
+SEXP compact_seq(R_len_t from, R_len_t to) {
+  if (to < from) {
+    Rf_error("Internal error: Negative length in `compact_seq()`");
+  }
+
+  SEXP seq = PROTECT(Rf_allocVector(INTSXP, 2));
+
+  int* p = INTEGER(seq);
+  p[0] = from;
+  p[1] = to;
+
+  SET_ATTRIB(seq, compact_seq_attrib);
+
+  UNPROTECT(1);
+  return seq;
+}
+bool is_compact_seq(SEXP x) {
+  return ATTRIB(x) == compact_seq_attrib;
 }
 
 
@@ -332,6 +337,20 @@ void r_int_fill_seq(SEXP x, int start) {
   for (R_len_t i = 0; i < n; ++i, ++data, ++start) {
     *data = start;
   }
+}
+
+SEXP r_seq(R_len_t from, R_len_t to) {
+  R_len_t n = to - from;
+  if (n < 0) {
+    Rf_error("Internal error: Negative length in `r_seq()`");
+  }
+
+  SEXP seq = PROTECT(Rf_allocVector(INTSXP, n));
+
+  r_int_fill_seq(seq, from);
+
+  UNPROTECT(1);
+  return seq;
 }
 
 
@@ -509,9 +528,50 @@ SEXP r_maybe_duplicate(SEXP x) {
   }
 }
 
+bool r_chr_has_string(SEXP x, SEXP str) {
+  int n = Rf_length(x);
+  SEXP* data = STRING_PTR(x);
+
+  for (int i = 0; i < n; ++i, ++data) {
+    if (*data == str) {
+      return true;
+    }
+  }
+
+  return false;
+}
+
+SEXP r_as_list(SEXP x) {
+  if (OBJECT(x)) {
+    return vctrs_dispatch1(syms_as_list, fns_as_list, syms_x, x);
+  } else {
+    return Rf_coerceVector(x, VECSXP);
+  }
+}
+SEXP r_as_data_frame(SEXP x) {
+  if (is_bare_data_frame(x)) {
+    return x;
+  } else {
+    return vctrs_dispatch1(syms_as_data_frame, fns_as_data_frame, syms_x, x);
+  }
+}
+
 
 SEXP vctrs_ns_env = NULL;
 SEXP vctrs_shared_empty_str = NULL;
+
+SEXP vctrs_shared_empty_lgl = NULL;
+SEXP vctrs_shared_empty_int = NULL;
+SEXP vctrs_shared_empty_dbl = NULL;
+SEXP vctrs_shared_empty_cpl = NULL;
+SEXP vctrs_shared_empty_chr = NULL;
+SEXP vctrs_shared_empty_raw = NULL;
+SEXP vctrs_shared_empty_list = NULL;
+SEXP vctrs_shared_true = NULL;
+SEXP vctrs_shared_false = NULL;
+Rcomplex vctrs_shared_na_cpl;
+
+SEXP vctrs_shared_na_lgl = NULL;
 
 SEXP strings = NULL;
 SEXP strings_empty = NULL;
@@ -525,10 +585,15 @@ SEXP syms_dots = NULL;
 SEXP syms_bracket = NULL;
 SEXP syms_x_arg = NULL;
 SEXP syms_y_arg = NULL;
+SEXP syms_out = NULL;
+SEXP syms_value = NULL;
 
 SEXP fns_bracket = NULL;
 SEXP fns_quote = NULL;
 SEXP fns_names = NULL;
+
+struct vctrs_arg args_empty_;
+struct vctrs_arg* args_empty = NULL;
 
 void vctrs_init_utils(SEXP ns) {
   vctrs_ns_env = ns;
@@ -540,7 +605,7 @@ void vctrs_init_utils(SEXP ns) {
 
   // Holds the CHARSXP objects because unlike symbols they can be
   // garbage collected
-  strings = Rf_allocVector(STRSXP, 2);
+  strings = Rf_allocVector(STRSXP, 6);
   R_PreserveObject(strings);
 
   strings_dots = Rf_mkChar("...");
@@ -548,6 +613,18 @@ void vctrs_init_utils(SEXP ns) {
 
   strings_empty = Rf_mkChar("");
   SET_STRING_ELT(strings, 1, strings_empty);
+
+  strings_vctrs_rcrd = Rf_mkChar("vctrs_rcrd");
+  SET_STRING_ELT(strings, 2, strings_vctrs_rcrd);
+
+  strings_posixlt = Rf_mkChar("POSIXlt");
+  SET_STRING_ELT(strings, 3, strings_posixlt);
+
+  strings_posixt = Rf_mkChar("POSIXt");
+  SET_STRING_ELT(strings, 4, strings_posixlt);
+
+  strings_vctrs_vctr = Rf_mkChar("vctrs_vctr");
+  SET_STRING_ELT(strings, 5, strings_vctrs_vctr);
 
 
   classes_data_frame = Rf_allocVector(STRSXP, 1);
@@ -569,6 +646,53 @@ void vctrs_init_utils(SEXP ns) {
   SET_STRING_ELT(classes_tibble, 2, strings_data_frame);
 
 
+  vctrs_shared_empty_lgl = Rf_allocVector(LGLSXP, 0);
+  R_PreserveObject(vctrs_shared_empty_lgl);
+  MARK_NOT_MUTABLE(vctrs_shared_empty_lgl);
+
+  vctrs_shared_empty_int = Rf_allocVector(INTSXP, 0);
+  R_PreserveObject(vctrs_shared_empty_int);
+  MARK_NOT_MUTABLE(vctrs_shared_empty_int);
+
+  vctrs_shared_empty_dbl = Rf_allocVector(REALSXP, 0);
+  R_PreserveObject(vctrs_shared_empty_dbl);
+  MARK_NOT_MUTABLE(vctrs_shared_empty_dbl);
+
+  vctrs_shared_empty_cpl = Rf_allocVector(CPLXSXP, 0);
+  R_PreserveObject(vctrs_shared_empty_cpl);
+  MARK_NOT_MUTABLE(vctrs_shared_empty_cpl);
+
+  vctrs_shared_empty_chr = Rf_allocVector(STRSXP, 0);
+  R_PreserveObject(vctrs_shared_empty_chr);
+  MARK_NOT_MUTABLE(vctrs_shared_empty_chr);
+
+  vctrs_shared_empty_raw = Rf_allocVector(RAWSXP, 0);
+  R_PreserveObject(vctrs_shared_empty_raw);
+  MARK_NOT_MUTABLE(vctrs_shared_empty_raw);
+
+  vctrs_shared_empty_list = Rf_allocVector(VECSXP, 0);
+  R_PreserveObject(vctrs_shared_empty_list);
+  MARK_NOT_MUTABLE(vctrs_shared_empty_list);
+
+  vctrs_shared_true = Rf_allocVector(LGLSXP, 1);
+  R_PreserveObject(vctrs_shared_true);
+  MARK_NOT_MUTABLE(vctrs_shared_true);
+  LOGICAL(vctrs_shared_true)[0] = 1;
+
+  vctrs_shared_false = Rf_allocVector(LGLSXP, 1);
+  R_PreserveObject(vctrs_shared_false);
+  MARK_NOT_MUTABLE(vctrs_shared_false);
+  LOGICAL(vctrs_shared_false)[0] = 0;
+
+  vctrs_shared_na_cpl.i = NA_REAL;
+  vctrs_shared_na_cpl.r = NA_REAL;
+
+
+  vctrs_shared_na_lgl = r_lgl(NA_LOGICAL);
+  R_PreserveObject(vctrs_shared_na_lgl);
+  MARK_NOT_MUTABLE(vctrs_shared_na_lgl);
+
+
   syms_i = Rf_install("i");
   syms_x = Rf_install("x");
   syms_y = Rf_install("y");
@@ -577,6 +701,8 @@ void vctrs_init_utils(SEXP ns) {
   syms_bracket = Rf_install("[");
   syms_x_arg = Rf_install("x_arg");
   syms_y_arg = Rf_install("y_arg");
+  syms_out = Rf_install("out");
+  syms_value = Rf_install("value");
 
   fns_bracket = Rf_findVar(syms_bracket, R_BaseEnv);
   fns_quote = Rf_findVar(Rf_install("quote"), R_BaseEnv);
@@ -588,8 +714,21 @@ void vctrs_init_utils(SEXP ns) {
   new_env__parent_node = CDDR(new_env_call);
   new_env__size_node = CDR(new_env__parent_node);
 
+  args_empty_ = new_wrapper_arg(NULL, "");
+  args_empty = &args_empty_;
+
   rlang_is_splice_box = (bool (*)(SEXP)) R_GetCCallable("rlang", "rlang_is_splice_box");
   rlang_unbox = (SEXP (*)(SEXP)) R_GetCCallable("rlang", "rlang_unbox");
   rlang_env_dots_values = (SEXP (*)(SEXP)) R_GetCCallable("rlang", "rlang_env_dots_values");
   rlang_env_dots_list = (SEXP (*)(SEXP)) R_GetCCallable("rlang", "rlang_env_dots_list");
+
+  syms_as_list = Rf_install("as.list");
+  syms_as_data_frame = Rf_install("as.data.frame");
+  fns_as_list = r_env_get(R_BaseEnv, syms_as_list);
+  fns_as_data_frame = r_env_get(R_BaseEnv, syms_as_data_frame);
+
+
+  compact_seq_attrib = Rf_cons(R_NilValue, R_NilValue);
+  R_PreserveObject(compact_seq_attrib);
+  SET_TAG(compact_seq_attrib, Rf_install("vctrs_compact_seq"));
 }

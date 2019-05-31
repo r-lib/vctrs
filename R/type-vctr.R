@@ -30,7 +30,7 @@
 #'   from `generics`.
 #'
 #' * `==`, `!=`, `unique()`, `anyDuplicated()`, and `is.na()` use
-#'   [vec_proxy_equal()].
+#'   [vec_proxy()].
 #'
 #' * `<`, `<=`, `>=`, `>`, `min()`, `max()`, `median()`, `quantile()`,
 #'   and `xtfrm()` methods use [vec_proxy_compare()].
@@ -56,20 +56,21 @@ new_vctr <- function(.data, ..., class = character()) {
   if (!is_vector(.data)) {
     abort("`.data` must be a vector type.")
   }
-  .data <- validate_attr(.data)
 
-  structure(.data, ..., class = c(class, "vctrs_vctr"))
+  nms <- validate_names(.data)
+  attrib <- list(names = nms, ..., class = c(class, "vctrs_vctr"))
+
+  vec_set_attributes(.data, attrib)
 }
 
-validate_attr <- function(.data) {
+validate_names <- function(.data) {
   nms <- names(.data)
 
   if (!names_all_or_nothing(nms)) {
     stop("If any elements of `.data` are named, all must be named", call. = FALSE)
   }
 
-  attributes(.data) <- list(names = nms)
-  .data
+  nms
 }
 names_all_or_nothing <- function(names) {
   if (is.null(names)) {
@@ -135,24 +136,6 @@ print.vctrs_vctr <- function(x, ...) {
 #' @export
 str.vctrs_vctr <- function(object, ...) {
   obj_str(object, ...)
-}
-
-# manually registered in zzz.R
-pillar_shaft.vctrs_vctr <- function(x, ...) {
-  align <- if (is_character(x)) "left" else "right"
-  pillar::new_pillar_shaft_simple(format(x), align = align)
-}
-
-# manually registered in zzz.R
-type_sum.vctrs_vctr <- function(x) {
-  vec_ptype_abbr(x)
-}
-
-# manually registered in zzz.R
-pillar_shaft.vctrs_list_of <- function(x, ...) {
-  out <- paste0("[", map_chr(x, pillar::dim_desc), "]")
-
-  pillar::new_pillar_shaft_simple(out, align = "right")
 }
 
 #' @export
@@ -420,7 +403,13 @@ quantile.vctrs_vctr <- function(x, ..., type = 1, na.rm = FALSE) {
 min.vctrs_vctr <- function(x, ..., na.rm = FALSE) {
   # TODO: implement to do vec_arg_min()
   rank <- xtfrm(x)
-  idx <- if (isTRUE(na.rm)) which.max(rank) else which(rank == min(rank))
+
+  if (isTRUE(na.rm)) {
+    idx <- which.min(rank)
+  } else {
+    idx <- which(vec_equal(rank, min(rank), na_equal = TRUE))
+  }
+
   x[[idx[[1]]]]
 }
 
@@ -428,7 +417,13 @@ min.vctrs_vctr <- function(x, ..., na.rm = FALSE) {
 max.vctrs_vctr <- function(x, ..., na.rm = FALSE) {
   # TODO: implement to do vec_arg_max()
   rank <- xtfrm(x)
-  idx <- if (isTRUE(na.rm)) which.max(rank) else which(rank == max(rank))
+
+  if (isTRUE(na.rm)) {
+    idx <- which.max(rank)
+  } else {
+    idx <- which(vec_equal(rank, max(rank), na_equal = TRUE))
+  }
+
   x[[idx[[1]]]]
 }
 

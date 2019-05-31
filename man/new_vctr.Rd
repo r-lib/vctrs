@@ -42,7 +42,7 @@ package. \code{vctrs} extends these and calls \code{vec_cast()}. To inherit this
 behavior in a package, import and re-export the generic of interest
 from \code{generics}.
 \item \code{==}, \code{!=}, \code{unique()}, \code{anyDuplicated()}, and \code{is.na()} use
-\code{\link[=vec_proxy_equal]{vec_proxy_equal()}}.
+\code{\link[=vec_proxy]{vec_proxy()}}.
 \item \code{<}, \code{<=}, \code{>=}, \code{>}, \code{min()}, \code{max()}, \code{median()}, \code{quantile()},
 and \code{xtfrm()} methods use \code{\link[=vec_proxy_compare]{vec_proxy_compare()}}.
 \item \code{+}, \code{-}, \code{/}, \code{*}, \code{^}, \code{\%\%}, \code{\%/\%}, \code{!}, \code{&}, and \code{|} operators

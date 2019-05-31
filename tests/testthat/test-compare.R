@@ -70,6 +70,26 @@ test_that("vec_proxy_compare() refuses to deal with lists", {
   expect_error(vec_proxy_compare(list()), class = "vctrs_error_unsupported")
 })
 
+test_that("vec_compare() calls vec_proxy_compare()", {
+  scoped_global_bindings(
+    vec_proxy_compare.vctrs_foobar = function(x) rev(x),
+    vec_type2.integer.vctrs_foobar = function(...) foobar(int()),
+    vec_type2.vctrs_foobar = function(...) foobar(int()),
+    vec_cast.vctrs_foobar = function(x, ...) x
+  )
+  expect_identical(vec_compare(1:3, 1:3), int(0, 0, 0))
+  expect_identical(vec_compare(1:3, foobar(1:3)), int(-1, 0, 1))
+})
+
+test_that("vec_proxy_compare() preserves data frames and vectors", {
+  df <- data_frame(x = 1:2, y = c("a", "b"))
+  expect_identical(vec_proxy_compare(df), df)
+
+  x <- c(NA, "a", "b", "c")
+  expect_identical(vec_proxy_compare(x), x)
+})
+
+
 # order/sort --------------------------------------------------------------
 
 test_that("can request NAs sorted first", {

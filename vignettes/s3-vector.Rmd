@@ -484,7 +484,7 @@ x[1]
 
 This works because most of the vctrs methods dispatch to the underlying base function, by first stripping off extra attributes with `vec_data()` and then reapplying them again with `vec_restore()`. The default `vec_restore()` method copies over all attributes, which is not appropriate when the attributes depend on the data.
 
-Note that `vec_restore.class` is subtly different from `vec_cast.class.class()`. `vec_restore()` is used when restoring attributes that have been lost; `vec_cast()` is used for coercions. This is easier to understand with a concrete example. Imagine factors were implemented with `new_vectr()`. `vec_restore.factor()` would restore attributes back to an integer vector, but you would not want to allow manually casting an integer to a factor with `vec_cast()`. 
+Note that `vec_restore.class` is subtly different from `vec_cast.class.class()`. `vec_restore()` is used when restoring attributes that have been lost; `vec_cast()` is used for coercions. This is easier to understand with a concrete example. Imagine factors were implemented with `new_vctr()`. `vec_restore.factor()` would restore attributes back to an integer vector, but you would not want to allow manually casting an integer to a factor with `vec_cast()`. 
 
 
 ## Record-style objects
@@ -629,9 +629,7 @@ decimal2(10, c(0, 5, 99))
 
 vctrs provides two "proxy" generics that lets you control how your class determines equality and ordering:
 
-* `vec_proxy_equal()` specifies how to test the elements of your vector for equality. 
-  This proxy underpins `==` and `!=`, but also `unique()`, `anyDuplicated()`, 
-  and `is.na()`.
+* `vec_proxy()` returns the actual data of a vector. It is used in most vctrs primitives, including equality comparison. It underpins `==`, `!=`, `unique()`, `anyDuplicated()`, and `is.na()`.
 
 * `vec_proxy_compare()` specifies how to compare the elements of your vector.
   This proxy is used in `<`, `<=`, `>=`, `>`, `min()`, `max()`, `median()`, 
@@ -643,18 +641,18 @@ These proxy functions should always return a simple object (typically either a b
 
 ### Rational class
 
-Let's explore these ideas by with the rational class we started on above. By default, `vec_proxy_equal()` converts a record to a data frame, and the default comparison works column by column:
+Let's explore these ideas by with the rational class we started on above. By default, `vec_proxy()` converts a record to a data frame, and the default comparison works column by column:
 
 ```{r}
 x <- rational(c(1, 2, 1, 2), c(1, 1, 2, 2))
 x
 
-vec_proxy_equal(x)
+vec_proxy(x)
 
 x == rational(1, 1)
 ```
 
-This makes sense as a default, but isn't correct here because `rational(1, 1)` represents the same number as `rational(2, 2)` so they should be equal. We can fix that by implementation `vec_proxy_equal()` method that by divides `n` and `d` by their greatest common divisor:
+This makes sense as a default, but isn't correct here because `rational(1, 1)` represents the same number as `rational(2, 2)` so they should be equal. We can fix that by implementing a `vec_proxy()` method that by divides `n` and `d` by their greatest common divisor:
 
 ```{r}
 # Thanks to Matthew Lundberg: https://stackoverflow.com/a/21504113/16632 
@@ -663,19 +661,19 @@ gcd <- function(x, y) {
   ifelse(r, gcd(y, r), y)
 }
 
-vec_proxy_equal.vctrs_rational <- function(x) {
+vec_proxy.vctrs_rational <- function(x) {
   n <- field(x, "n")
   d <- field(x, "d")
   gcd <- gcd(n, d)
   
   data.frame(n = n / gcd, d = d / gcd)
 }
-vec_proxy_equal(x)
+vec_proxy(x)
 
 x == rational(1, 1)
 ```
 
-`vec_proxy_equal()` is also used by `unique()`:
+`vec_proxy()` is also used by `unique()`:
 
 ```{r}
 unique(x)
@@ -697,7 +695,7 @@ vec_proxy_compare.vctrs_rational <- function(x) {
 sort(x)
 ```
 
-(We could have used the same approach in `vec_proxy_equal()`, but when working with floating point numbers it's not necessarily true that `x == y` implies that `d * x == d * y`.)
+(We could have used the same approach in `vec_proxy()`, but when working with floating point numbers it's not necessarily true that `x == y` implies that `d * x == d * y`.)
 
 ### Polynomial class
 

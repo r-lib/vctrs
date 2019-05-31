@@ -13,22 +13,74 @@ typedef R_xlen_t r_ssize_t;
 // Vector types -------------------------------------------------
 
 enum vctrs_type {
-  vctrs_type_null      = 0,
-  vctrs_type_logical   = 1,
-  vctrs_type_integer   = 2,
-  vctrs_type_double    = 3,
-  vctrs_type_complex   = 4,
-  vctrs_type_character = 5,
-  vctrs_type_raw       = 6,
-  vctrs_type_list      = 7,
-  vctrs_type_dataframe = 8,
-  vctrs_type_s3        = 9,
-  vctrs_type_scalar    = 10
+  vctrs_type_null = 0,
+  vctrs_type_logical,
+  vctrs_type_integer,
+  vctrs_type_double,
+  vctrs_type_complex,
+  vctrs_type_character,
+  vctrs_type_raw,
+  vctrs_type_list,
+  vctrs_type_dataframe,
+  vctrs_type_scalar,
+  vctrs_type_s3 = 255
 };
 
-enum vctrs_type vec_typeof(SEXP x);
-enum vctrs_type vec_typeof_impl(SEXP x, bool dispatch);
+/**
+ * @member type The vector type of the original data.
+ * @member proxy_method The function of the `vec_proxy()` method, if
+ *   any. This method is looked up with [vec_proxy_method()].
+ */
+struct vctrs_type_info {
+  enum vctrs_type type;
+  SEXP proxy_method;
+};
+/**
+ * @inheritMembers vctrs_type_info
+ * @member type If `proxy_method` was found, the vector type of the
+ *   proxy data. Otherwise, the vector type of the original data.
+ *   This is never `vctrs_type_s3`.
+ * @member proxy If `proxy_method` was found, the result of invoking
+ *   the method. Otherwise, the original data.
+ */
+struct vctrs_proxy_info {
+  enum vctrs_type type;
+  SEXP proxy_method;
+  SEXP proxy;
+};
 
+/**
+ * Return the type information of a vector or its proxy
+ *
+ * `vec_type_info()` returns the vctrs type of `x`. `vec_proxy_info()`
+ * returns the vctrs type of `x` or its proxy if it has one. The
+ * former returns `vctrs_type_s3` with S3 objects (expect for native
+ * types like bare data frames). The latter returns the bare type of
+ * the proxy, if any. It never returns `vctrs_type_s3`.
+ *
+ * `vec_proxy_info()` returns both the proxy method and the proxy
+ * data. `vec_type_info()` only returns the proxy method, which it
+ * needs to determine whether S3 lists and non-vector base types are
+ * scalars or proxied vectors.
+ *
+ * Use `PROTECT_PROXY_INFO()` and `PROTECT_TYPE_INFO()` to protect the
+ * members of the return value. These helpers take a pointer to a
+ * protection counter that can be passed to `UNPROTECT()`.
+ */
+struct vctrs_type_info vec_type_info(SEXP x);
+struct vctrs_proxy_info vec_proxy_info(SEXP x);
+
+static inline struct vctrs_proxy_info PROTECT_PROXY_INFO(struct vctrs_proxy_info info, int* n) {
+  *n += 2; PROTECT(info.proxy); PROTECT(info.proxy_method);
+  return info;
+}
+static inline struct vctrs_type_info PROTECT_TYPE_INFO(struct vctrs_type_info info, int* n) {
+  ++(*n); PROTECT(info.proxy_method);
+  return info;
+}
+
+enum vctrs_type vec_typeof(SEXP x);
+enum vctrs_type vec_proxy_typeof(SEXP x);
 const char* vec_type_as_str(enum vctrs_type type);
 bool vec_is_vector(SEXP x);
 bool vec_is_partial(SEXP x);
@@ -140,16 +192,19 @@ bool vec_is_unspecified(SEXP x);
 #include "arg.h"
 
 SEXP vec_proxy(SEXP x);
-SEXP vec_proxy_method(SEXP x);
-SEXP vec_proxy_invoke(SEXP x, SEXP method);
-R_len_t vec_size(SEXP x);
-R_len_t vec_dim(SEXP x);
-SEXP vec_cast(SEXP x, SEXP to);
-SEXP vec_slice(SEXP x, SEXP index);
 SEXP vec_restore(SEXP x, SEXP to, SEXP i);
+R_len_t vec_size(SEXP x);
+SEXP vec_dim(SEXP x);
+R_len_t vec_dims(SEXP x);
+SEXP vec_cast(SEXP x, SEXP to);
+SEXP vec_cast_common(SEXP xs, SEXP to);
+SEXP vec_coercible_cast(SEXP x, SEXP to, struct vctrs_arg* x_arg, struct vctrs_arg* to_arg);
+SEXP vec_slice(SEXP x, SEXP index);
+SEXP vec_na(SEXP x, R_len_t n);
 SEXP vec_type(SEXP x);
 SEXP vec_type_finalise(SEXP x);
 bool vec_is_unspecified(SEXP x);
+SEXP vec_recycle(SEXP x, R_len_t size);
 
 SEXP vec_type2(SEXP x,
                SEXP y,
@@ -164,6 +219,7 @@ R_len_t df_size(SEXP x);
 R_len_t df_rownames_size(SEXP x);
 R_len_t df_raw_size(SEXP x);
 SEXP df_restore(SEXP x, SEXP to, SEXP i);
+SEXP df_assign(SEXP out, SEXP index, SEXP value, bool clone);
 
 // Most vector predicates return `int` because missing values are
 // propagated as `NA_LOGICAL`
@@ -182,8 +238,10 @@ bool equal_names(SEXP x, SEXP y);
 int equal_scalar(SEXP x, R_len_t i, SEXP y, R_len_t j, bool na_equal);
 int compare_scalar(SEXP x, R_len_t i, SEXP y, R_len_t j, bool na_equal);
 
-int32_t hash_object(SEXP x);
-int32_t hash_scalar(SEXP x, R_len_t i);
+uint32_t hash_object(SEXP x);
+uint32_t hash_scalar(SEXP x, R_len_t i);
+void hash_fill(uint32_t* p, R_len_t n, SEXP x);
+
 
 // Growable vector -----------------------------------------------
 

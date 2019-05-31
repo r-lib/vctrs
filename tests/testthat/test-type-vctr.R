@@ -25,6 +25,14 @@ test_that("vctr class is proxied", {
   expect_true(vec_is(new_vctr(as.list(1:3))))
 })
 
+test_that("attributes must be named", {
+  expect_error(vec_set_attributes(1, list(1)), "must be named")
+  expect_error(vec_set_attributes(1, list(y = 1, 2)), "2 does not")
+})
+
+test_that("can strip all attributes without adding new ones", {
+  expect_equal(vec_set_attributes(structure(1, a = 1), NULL), 1)
+})
 
 # Cast/restore ------------------------------------------------------------
 
@@ -110,11 +118,12 @@ test_that("is.na<-() supported", {
 })
 
 test_that("comparison functions remapped", {
+  scoped_global_bindings(
+    vec_proxy_compare.bizzaro = function(x) -vec_data(x)
+  )
+
   x1 <- new_vctr(c(1, 2), class = "bizzaro")
   x2 <- new_vctr(2, class = "bizzaro")
-
-  vec_proxy_compare.bizzaro <- function(x) -vec_data(x)
-  registerS3method("vec_proxy_compare", "bizzaro", vec_proxy_compare.bizzaro)
 
   expect_equal(order(x1), c(2L, 1L))
   expect_equal(x1 < x2, c(FALSE, FALSE))
@@ -124,10 +133,10 @@ test_that("comparison functions remapped", {
 })
 
 test_that("operators remapped", {
+  scoped_global_bindings(
+    vec_arith.bizzaro = function(op, x, y) 1L
+  )
   x <- new_vctr(c(1, 2), class = "bizzaro")
-
-  vec_arith.bizzaro <- function(op, x, y) 1L
-  registerS3method("vec_arith", "bizzaro", vec_arith.bizzaro)
 
   expect_equal(x + 1, 1L)
   expect_equal(x - 1, 1L)
@@ -145,10 +154,10 @@ test_that("operators remapped", {
 })
 
 test_that("math functions overridden", {
+  scoped_global_bindings(
+    vec_math.bizzaro = function(fun, x, ...) vec_math_base(fun, 2L)
+  )
   x <- new_vctr(c(1, NA), class = "bizzaro")
-
-  vec_math.bizzaro <- function(fun, x, ...) vec_math_base(fun, 2L)
-  registerS3method("vec_math", "bizzaro", vec_math.bizzaro)
 
   expect_equal(mean(x), 2L)
   expect_equal(sum(x), 2L)
@@ -159,11 +168,11 @@ test_that("math functions overridden", {
 })
 
 test_that("diff matches base R", {
+  scoped_global_bindings(
+    vec_arith.vctrs_minus = function(op, x, y) vec_arith_base(op, x, y)
+  )
   x1 <- cumsum(cumsum(1:10))
   x2 <- new_vctr(x1, class = "vctrs_minus")
-
-  vec_arith.vctrs_minus <- function(op, x, y) vec_arith_base(op, x, y)
-  registerS3method("vec_arith", "vctrs_minus", vec_arith.vctrs_minus)
 
   expect_equal(diff(x2), diff(x1))
   expect_equal(diff(x2, lag = 2L), diff(x1, lag = 2L))
@@ -330,14 +339,21 @@ test_that("summaries preserve class", {
 
 test_that("methods using vec_proxy_compare agree with base", {
   h <- new_hidden(c(1:10))
+  h_na <- new_hidden(c(NA, 1:10))
 
-  expect_agree <- function(f, x) {
+  expect_agree <- function(f, x, na.rm = FALSE) {
     f <- enexpr(f)
-    expect_equal(vec_data((!!f)(x)), (!!f)(vec_data(x)))
+    expect_equal(vec_data((!!f)(x, na.rm = na.rm)), (!!f)(vec_data(x), na.rm = na.rm))
   }
 
   expect_agree(min, h)
   expect_agree(max, h)
+
+  expect_agree(min, h_na)
+  expect_agree(max, h_na)
+
+  expect_agree(min, h_na, na.rm = TRUE)
+  expect_agree(max, h_na, na.rm = TRUE)
 })
 
 test_that("can put in data frame", {

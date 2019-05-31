@@ -123,13 +123,14 @@ vec_cast_dispatch <- function(x, to) {
 #' @export
 #' @rdname vec_cast
 vec_cast_common <- function(..., .to = NULL) {
-  args <- list2(...)
-  type <- vec_type_common(!!!args, .ptype = .to)
-  map(args, vec_cast, to = type)
+  .External2(vctrs_cast_common, .to)
 }
 
 #' @export
 vec_cast.default <- function(x, to) {
+  if (has_same_type(x, to)) {
+    return(x)
+  }
   stop_incompatible_cast(x, to)
 }
 
@@ -138,12 +139,7 @@ vec_coercible_cast <- function(x, to, ..., x_arg = "", to_arg = "") {
   if (!missing(...)) {
     ellipsis::check_dots_empty()
   }
-
-  # Called for the side effect of generating an error if there is no
-  # common type
-  vec_type2(to, x, x_arg = to_arg, y_arg = x_arg)
-
-  vec_cast(x, to)
+  .Call(vctrs_coercible_cast, x, to, x_arg, to_arg)
 }
 
 #' Default cast method

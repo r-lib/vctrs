@@ -70,6 +70,11 @@ vec_ptype_abbr.data.frame <- function(x) {
   paste0("df", vec_ptype_shape(x))
 }
 
+#' @export
+vec_proxy.data.frame <- function(x) {
+  x
+}
+
 # Coercion ----------------------------------------------------------------
 
 #' @rdname new_data_frame
@@ -79,8 +84,8 @@ vec_ptype_abbr.data.frame <- function(x) {
 vec_type2.data.frame <- function(x, y, ...) UseMethod("vec_type2.data.frame", y)
 #' @method vec_type2.data.frame data.frame
 #' @export
-vec_type2.data.frame.data.frame <- function(x, y, ...) {
-  abort("Never called: Native implementation")
+vec_type2.data.frame.data.frame <- function(x, y, ..., x_arg = "", y_arg = "") {
+  .Call(vctrs_type2_df_df, x, y, x_arg, y_arg)
 }
 #' @method vec_type2.data.frame default
 #' @export
@@ -100,14 +105,16 @@ vec_cast.data.frame <- function(x, to) {
 }
 #' @export
 #' @method vec_cast.data.frame data.frame
-vec_cast.data.frame.data.frame <- function(x, to) df_col_cast(x, to)
+vec_cast.data.frame.data.frame <- function(x, to) {
+  .Call(vctrs_df_as_dataframe, x, to)
+}
 #' @export
 #' @method vec_cast.data.frame default
 vec_cast.data.frame.default <- function(x, to) vec_default_cast(x, to)
 
 #' @export
 vec_restore.data.frame <- function(x, to, ..., i = NULL) {
-  x
+  .Call(vctrs_df_restore, x, to, i)
 }
 
 
@@ -126,25 +133,8 @@ df_length <- function(x) {
   }
 }
 
-df_col_cast <- function(x, to) {
-  # Avoid expensive [.data.frame method
-  out <- vec_data(x)
-
-  # Coerce common columns
-  common <- intersect(names(x), names(to))
-  out[common] <- map2(out[common], to[common], vec_cast)
-
-  # Add new columns
-  from_type <- setdiff(names(to), names(x))
-  out[from_type] <- map(to[from_type], vec_na, n = vec_size(x))
-
-  # Drop extra columns
-  out <- out[names(to)]
+df_lossy_cast <- function(out, x, to) {
   extra <- setdiff(names(x), names(to))
-
-  # Casting doesn't affect number of rows
-  attr(out, "row.names") <- attr(x, "row.names")
-  out <- vec_restore(out, to)
 
   maybe_lossy_cast(
     result = out,

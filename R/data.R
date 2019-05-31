@@ -73,11 +73,11 @@ vec_data <- function(x) {
 
   # TODO: implement with ALTREP to avoid making a copy
   if (is_record(x)) {
-    attributes(x) <- list(names = fields(x))
+    x <- vec_set_attributes(x, list(names = fields(x)))
   } else if (has_dim(x)) {
-    attributes(x) <- list(dim = dim(x), dimnames = dimnames(x))
+    x <- vec_set_attributes(x, list(dim = dim(x), dimnames = dimnames(x)))
   } else {
-    attributes(x) <- list(names = names(x))
+    x <- vec_set_attributes(x, list(names = names(x)))
   }
 
   x
@@ -94,6 +94,22 @@ vec_proxy_dispatch <- function(x) {
 #' @export
 vec_proxy.default <- function(x) {
   x
+}
+
+#' Defunct equality proxy
+#'
+#' vctrs now uses [vec_proxy()]. Note that most of the time it's not
+#' necessary to define a proxy for vector equality.
+#'
+#' @param x A vector.
+#'
+#' @keywords internal
+#' @export
+vec_proxy_equal <- function(x) {
+  stop_defunct(paste_line(
+    "`vec_proxy_equal()` is defunct.",
+    "Please use `vec_proxy()` instead (if needed)."
+  ))
 }
 
 is_record <- function(x) {

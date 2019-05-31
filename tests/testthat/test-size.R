@@ -3,7 +3,7 @@ context("test-size")
 # vec_size -----------------------------------------------------------------
 
 test_that("vec_size must be called with vector", {
-  expect_error(vec_size(mean), "not a vector")
+  expect_error(vec_size(mean), class = "vctrs_error_scalar_type")
 })
 
 test_that("length is number of rows", {
@@ -39,10 +39,10 @@ test_that("handles positive short row names (#220)", {
 })
 
 test_that("size is proxied", {
-  scoped_global_bindings(
-    vec_proxy.vctrs_proxy = function(x) x[[1]]$x,
-  )
+  scoped_env_proxy()
   expect_size(new_proxy(1:3), 3)
+  expect_size(new_proxy(list(1, 2, 3)), 3)
+  expect_size(new_proxy(foobar(list(1, 2, 3))), 3)
 })
 
 test_that("`NULL` has an undefined size", {

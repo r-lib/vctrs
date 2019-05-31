@@ -3,61 +3,68 @@
 
 R_len_t rcrd_size(SEXP x);
 
+SEXP vec_dim(SEXP x) {
+  SEXP dim = PROTECT(Rf_getAttrib(x, R_DimSymbol));
 
-R_len_t vec_dim(SEXP x) {
-  if (has_dim(x)) {
-    return Rf_length(x);
-  } else {
-    return 1;
+  if (dim == R_NilValue) {
+    dim = Rf_ScalarInteger(Rf_length(x));
   }
+
+  UNPROTECT(1);
+  return dim;
 }
 
-static R_len_t vec_size_impl(SEXP x, bool dispatch) {
-  switch (vec_typeof_impl(x, dispatch)) {
+R_len_t vec_dims(SEXP x) {
+  return Rf_length(vec_dim(x));
+}
+
+// [[ include("vctrs.h") ]]
+R_len_t vec_size(SEXP x) {
+  int nprot = 0;
+
+  struct vctrs_proxy_info info = PROTECT_PROXY_INFO(vec_proxy_info(x), &nprot);
+  SEXP data = info.proxy;
+
+  R_len_t size;
+  switch (info.type) {
   case vctrs_type_null:
     Rf_errorcall(R_NilValue, "The size of `NULL` is not defined.");
-
-  case vctrs_type_list:
-    if (!vec_is_vector(x)) {
-      break;
-    }
-    // fallthrough
   case vctrs_type_logical:
   case vctrs_type_integer:
   case vctrs_type_double:
   case vctrs_type_complex:
   case vctrs_type_character:
-  case vctrs_type_raw: {
-    SEXP dims = Rf_getAttrib(x, R_DimSymbol);
+  case vctrs_type_raw:
+  case vctrs_type_list: {
+    SEXP dims = Rf_getAttrib(data, R_DimSymbol);
     if (dims == R_NilValue || Rf_length(dims) == 0) {
-      return Rf_length(x);
+      size = Rf_length(data);
+      break;
     }
 
     if (TYPEOF(dims) != INTSXP) {
       Rf_errorcall(R_NilValue, "Corrupt vector: dims is not integer vector");
     }
 
-    return INTEGER(dims)[0];
-  }
-
-  case vctrs_type_dataframe:
-    return df_size(x);
-
-  case vctrs_type_s3: {
-    x = PROTECT(vec_proxy(x));
-    R_len_t n = vec_size_impl(x, false);
-    UNPROTECT(1);
-    return n;
-  }
-
-  default:
+    size = INTEGER(dims)[0];
     break;
   }
 
-  Rf_errorcall(R_NilValue, "`x` is a not a vector");
+  case vctrs_type_dataframe:
+    size = df_size(data);
+    break;
+
+  default: {
+    struct vctrs_arg arg = new_wrapper_arg(NULL, "x");
+    stop_scalar_type(x, &arg);
+  }}
+
+  UNPROTECT(nprot);
+  return size;
 }
-R_len_t vec_size(SEXP x) {
-  return vec_size_impl(x, true);
+// [[ register() ]]
+SEXP vctrs_size(SEXP x) {
+  return Rf_ScalarInteger(vec_size(x));
 }
 
 R_len_t df_rownames_size(SEXP x) {
@@ -125,8 +132,44 @@ bool has_dim(SEXP x) {
   return ATTRIB(x) != R_NilValue && Rf_getAttrib(x, R_DimSymbol) != R_NilValue;
 }
 
-// R interface ------------------------------------------------------------
+// [[ include("vctrs.h") ]]
+SEXP vec_recycle(SEXP x, R_len_t size) {
+  if (x == R_NilValue) {
+    return R_NilValue;
+  }
 
-SEXP vctrs_size(SEXP x) {
-  return Rf_ScalarInteger(vec_size(x));
+  R_len_t n_x = vec_size(x);
+
+  if (n_x == size) {
+    return x;
+  }
+
+  if (size == 0L) {
+    return vec_slice(x, R_NilValue);
+  }
+
+  if (n_x == 1L) {
+    // FIXME: Replace with ALTREP repetition
+    SEXP i = PROTECT(Rf_allocVector(INTSXP, size));
+    r_int_fill(i, 1);
+    SEXP out = vec_slice(x, i);
+
+    UNPROTECT(1);
+    return out;
+  }
+
+  Rf_errorcall(R_NilValue, "Incompatible lengths: %d, %d", n_x, size);
+}
+
+// [[ register() ]]
+SEXP vctrs_recycle(SEXP x, SEXP size_obj) {
+  if (x == R_NilValue || size_obj == R_NilValue) {
+    return R_NilValue;
+  }
+
+  size_obj = PROTECT(vec_cast(size_obj, vctrs_shared_empty_int));
+  R_len_t size = r_int_get(size_obj, 0);
+  UNPROTECT(1);
+
+  return vec_recycle(x, size);
 }

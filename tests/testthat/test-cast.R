@@ -23,6 +23,20 @@ test_that("empty input to vec_cast_common() returns list()", {
   expect_equal(vec_cast_common(NULL, NULL), list(NULL, NULL))
 })
 
+test_that("identical structures can be cast to each other", {
+  expect_identical(vec_cast(foobar("foo"), foobar("bar")), foobar("foo"))
+  expect_identical(vec_coercible_cast(foobar("foo"), foobar("bar")), foobar("foo"))
+})
+
+test_that("inputs to vec_coercible_cast() are checked", {
+  expect_error(vec_coercible_cast("", "", x_arg = 1), "must be a string")
+  expect_error(vec_coercible_cast("", "", to_arg = chr()), "must be a string")
+})
+
+test_that("cast common preserves names", {
+  expect_identical(vec_cast_common(foo = 1, bar = 2L), list(foo = 1, bar = 2))
+})
+
 
 # vec_restore -------------------------------------------------------------
 

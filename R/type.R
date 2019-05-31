@@ -122,12 +122,8 @@ vec_ptype <- function(...) {
   invisible()
 }
 
-
-vec_is_vector <- function(x) {
-  .Call(vctrs_is_vector, x, dispatch = TRUE)
-}
-vec_is_data_vector <- function(x) {
-  .Call(vctrs_is_vector, x, dispatch = FALSE)
+has_same_type <- function(x, y) {
+  typeof(x) == typeof(y) && identical(attributes(x), attributes(y))
 }
 
 vec_typeof <- function(x) {
@@ -135,4 +131,11 @@ vec_typeof <- function(x) {
 }
 vec_typeof_bare <- function(x) {
   .Call(vctrs_typeof, x, FALSE)
+}
+
+vec_type_info <- function(x) {
+  .Call(vctrs_type_info, x)
+}
+vec_proxy_info <- function(x) {
+  .Call(vctrs_proxy_info, x)
 }

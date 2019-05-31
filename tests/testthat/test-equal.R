@@ -4,7 +4,7 @@ context("test-equal")
 # vectorised --------------------------------------------------------------
 
 test_that("throws error for unsuported type", {
-  expect_error(.Call(vctrs_equal, expression(x), expression(x), TRUE), "not a vector")
+  expect_error(.Call(vctrs_equal, expression(x), expression(x), TRUE), class = "vctrs_error_scalar_type")
 })
 
 test_that("C wrapper throws error if length or type doesn't match", {
@@ -216,11 +216,10 @@ test_that("NA do not propagate from function bodies or formals", {
 
 # proxy -------------------------------------------------------------------
 
-test_that("compound objects create data frames", {
-  df <- data.frame(x = 1:2, y = 2:1)
-  expect_s3_class(vec_proxy_equal(df), "data.frame")
-
-  posixlt <- as.POSIXlt(as.Date("2010-10-10") + 0:5)
-  expect_s3_class(vec_proxy_equal(posixlt), "data.frame")
+test_that("vec_equal() is proxied", {
+  scoped_env_proxy()
+  x <- new_proxy(1:3)
+  y <- new_proxy(3:1)
+  expect_identical(vec_equal(x, y), lgl(FALSE, TRUE, FALSE))
 })
 

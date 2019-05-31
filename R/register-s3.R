@@ -54,7 +54,7 @@ s3_register <- function(generic, class, method = NULL) {
   }
   stopifnot(is.function(method))
 
-  if (package %in% loadedNamespaces()) {
+  if (can_s3_register_now(generic, class, method, package)) {
     registerS3method(generic, class, method, envir = asNamespace(package))
   }
 
@@ -65,6 +65,18 @@ s3_register <- function(generic, class, method = NULL) {
       registerS3method(generic, class, method, envir = asNamespace(package))
     }
   )
+}
+
+can_s3_register_now <- function(generic, class, method, package) {
+  if (!(package %in% loadedNamespaces())) {
+    return(FALSE)
+  }
+
+  envir <- asNamespace(package)
+
+  # Avoid registration failures during loading (pkgload or regular),
+  # only register if generic can be accessed
+  exists(generic, envir)
 }
 
 # nocov end

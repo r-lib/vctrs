@@ -1,5 +1,13 @@
 # vctrs 0.1.0.9000
 
+* `vec_slice<-` now has a `vec_assign()` alias. Use `vec_assign()`
+  when you don't want to modify the original input.
+
+* `vec_proxy_equal()` has been removed in favour of `vec_proxy()`. The
+  latter is the main customisation point in vctrs, and is now used for
+  equality comparison as well. You can still implement
+  `vec_proxy_compare()` for ordered comparisons.
+
 * `vec_slice<-` is now type stable (#140). It always returns the same
   type as the LHS. If needed, the RHS is cast to the correct type, but
   only if both inputs are coercible. See examples in `?vec_slice`.

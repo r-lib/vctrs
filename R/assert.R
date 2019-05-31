@@ -92,6 +92,22 @@ vec_is <- function(x, ptype = NULL, size = NULL) {
   TRUE
 }
 
+#' Is object a vector?
+#' @noRd
+#'
+#' @description
+#'
+#' Returns `TRUE` if:
+#'
+#' * `x` is an atomic, whether it has a class or not.
+#' * `x` is a bare list without class.
+#' * `x` implements [vec_proxy()].
+#'
+#' S3 lists are thus treated as scalars unless they implement a proxy.
+vec_is_vector <- function(x) {
+  .Call(vctrs_is_vector, x)
+}
+
 is_same_type <- function(x, ptype) {
   if (is_partial(ptype)) {
     env <- environment()

@@ -7,10 +7,7 @@
 #'
 #' The default method assumes that all classes built on top of atomic
 #' vectors or records are orderable. If your class is not, you will need
-#' to provide a `vec_proxy_compare()` method that throws an error. Note
-#' that the default [vec_proxy_equal()] method calls `vec_proxy_compare()` so
-#' if your object is equal-able but not comparable, you'll need to provide
-#' methods for both generics.
+#' to provide a `vec_proxy_compare()` method that throws an error.
 #'
 #' @param x A vector x.
 #' @param relax If `TRUE`, and `x` is otherwise non-comparable, will return
@@ -26,7 +23,7 @@ vec_proxy_compare <- function(x, relax = FALSE) {
 
 #' @export
 vec_proxy_compare.data.frame <- function(x, relax = FALSE) {
-  x[] <- lapply(x[], vec_proxy_compare, relax = TRUE)
+  x[] <- lapply(x[], vec_proxy_compare_default, relax = TRUE)
   x
 }
 
@@ -37,6 +34,17 @@ vec_proxy_compare.POSIXlt <- function(x, relax = FALSE) {
 
 #' @export
 vec_proxy_compare.default <- function(x, relax = FALSE) {
+  if (vec_dims(x) > 1) {
+    # The conversion to data frame is only a stopgap, in the long
+    # term, we'll hash arrays natively. Note that hashing functions
+    # similarly convert to data frames.
+    as.data.frame(x)
+  } else {
+    vec_proxy_compare_default(x, relax)
+  }
+}
+
+vec_proxy_compare_default <- function(x, relax = FALSE) {
   if (is_bare_list(x)) {
     if (relax) {
       vec_seq_along(x)
@@ -74,7 +82,7 @@ vec_proxy_compare.default <- function(x, relax = FALSE) {
 vec_compare <- function(x, y, na_equal = FALSE, .ptype = NULL) {
   args <- vec_recycle_common(x, y)
   args <- vec_cast_common(!!!args, .to = .ptype)
-  .Call(vctrs_compare, vec_proxy_equal(args[[1]]), vec_proxy_equal(args[[2]]), na_equal)
+  .Call(vctrs_compare, vec_proxy_compare(args[[1]]), vec_proxy_compare(args[[2]]), na_equal)
 }
 
 

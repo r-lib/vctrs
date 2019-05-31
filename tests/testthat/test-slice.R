@@ -1,7 +1,7 @@
 context("test-slice")
 
 test_that("vec_slice throws error with non-vector inputs", {
-  expect_error(vec_slice(environment(), 1L), "a vector")
+  expect_error(vec_slice(environment(), 1L), class = "vctrs_error_scalar_type")
 })
 
 test_that("can subset base vectors", {
@@ -193,11 +193,7 @@ test_that("vec_restore() is called after proxied slicing", {
 })
 
 test_that("vec_slice() is proxied", {
-  scoped_global_bindings(
-    vec_restore.vctrs_proxy = function(x, to, ..., i) new_proxy(x),
-    vec_proxy.vctrs_proxy = function(x) proxy_deref(x)
-  )
-
+  scoped_proxy()
   x <- vec_slice(new_proxy(1:3), 2:3)
   expect_identical(proxy_deref(x), 2:3)
 })
@@ -261,17 +257,18 @@ test_that("vec_slice() falls back to `[` with S3 objects", {
   scoped_global_bindings(
     `[.vctrs_foobar` = function(x, i, ...) "dispatched"
   )
-  expect_identical(vec_slice(foobar(NA), 1), "dispatched")
+  expect_identical(vec_slice(foobar(NA), 1), foobar("dispatched"))
 
-  expect_error(vec_slice(foobar(list(NA)), 1), "not a vector")
+  expect_error(vec_slice(foobar(list(NA)), 1), class = "vctrs_error_scalar_type")
   scoped_global_bindings(
-    vec_proxy.vctrs_foobar = function(x) unclass(x)
+    vec_proxy.vctrs_foobar = identity
   )
   expect_identical(vec_slice(foobar(list(NA)), 1), foobar(list(NA)))
 })
 
-test_that("vec_slice() doesn't call vec_restore() with S3 objects", {
+test_that("vec_slice() doesn't restore when attributes have already been restored", {
   scoped_global_bindings(
+    `[.vctrs_foobar` = function(x, i, ...) structure("dispatched", foo = "bar"),
     vec_restore.vctrs_foobar = function(...) stop("not called")
   )
   expect_error(vec_slice(foobar(NA), 1), NA)
@@ -347,7 +344,7 @@ test_that("can't use names to vec_slice() an unnamed object", {
 # vec_na ------------------------------------------------------------------
 
 test_that("vec_slice throws error with non-vector inputs", {
-  expect_error(vec_slice(environment(), 1L), "a vector")
+  expect_error(vec_slice(environment(), 1L), class = "vctrs_error_scalar_type")
 })
 
 # vec_na ------------------------------------------------------------------

@@ -43,11 +43,19 @@
 #' x <- sample(10)
 #' x
 #' vec_slice(x, 1:3)
-#' vec_slice(x, 2L) <- 100
+#'
+#' # You can assign with the infix variant:
+#' vec_slice(x, 2) <- 100
 #' x
 #'
-#' vec_slice(mtcars, 1:3)
+#' # Or with the regular variant that doesn't modify the original input:
+#' y <- vec_assign(x, 3, 500)
+#' y
+#' x
 #'
+#'
+#' # Slicing objects of higher dimension:
+#' vec_slice(mtcars, 1:3)
 #'
 #' # Type stability --------------------------------------------------
 #'
@@ -95,33 +103,25 @@ vec_slice_fallback <- function(x, i) {
   vec_restore(out, x)
 }
 
-#' @export
 #' @rdname vec_slice
+#' @export
 `vec_slice<-` <- function(x, i, value) {
-  if (is_null(x)) {
-    return(x)
-  }
-
-  vec_assert(x)
-  value <- vec_coercible_cast(value, x, x_arg = "value", to_arg = "x")
-
-  i <- vec_as_index(i, x)
-  value <- vec_recycle(value, vec_size(i))
-
+  .Call(vctrs_assign, x, i, value)
+}
+#' @rdname vec_slice
+#' @export
+vec_assign <- function(x, i, value) {
+  .Call(vctrs_assign, x, i, value)
+}
+vec_assign_fallback <- function(x, i, value) {
+  # Work around bug in base `[<-`
   existing <- !is.na(i)
   i <- vec_slice(i, existing)
   value <- vec_slice(value, existing)
 
   d <- vec_dims(x)
-  if (d == 1) {
-    x[i] <- value
-  } else if (d == 2) {
-    x[i, ] <- value
-  } else {
-    miss_args <- rep(list(missing_arg()), d - 1)
-    eval_bare(expr(x[i, !!!miss_args] <- value))
-  }
-
+  miss_args <- rep(list(missing_arg()), d - 1)
+  eval_bare(expr(x[i, !!!miss_args] <- value))
   x
 }
 

@@ -1,12 +1,26 @@
 #ifndef VCTRS_UTILS_H
 #define VCTRS_UTILS_H
 
+#include "arg-counter.h"
+
 
 #define SWAP(T, x, y) do {                      \
     T tmp = x;                                  \
     x = y;                                      \
     y = tmp;                                    \
   } while (0)
+
+#define PROTECT_N(x, n) (++*n, PROTECT(x))
+
+enum vctrs_class_type {
+  vctrs_class_data_frame,
+  vctrs_class_bare_data_frame,
+  vctrs_class_bare_tibble,
+  vctrs_class_rcrd,
+  vctrs_class_posixlt,
+  vctrs_class_unknown,
+  vctrs_class_none
+};
 
 
 bool is_bool(SEXP x);
@@ -24,24 +38,33 @@ SEXP vctrs_dispatch3(SEXP fn_sym, SEXP fn,
                      SEXP z_sym, SEXP z);
 
 SEXP df_map(SEXP df, SEXP (*fn)(SEXP));
-SEXP with_proxy(SEXP x, SEXP (*rec)(SEXP, bool), SEXP i);
+
+enum vctrs_class_type class_type(SEXP x);
+bool is_data_frame(SEXP x);
+bool is_bare_data_frame(SEXP x);
 bool is_bare_tibble(SEXP x);
+bool is_record(SEXP x);
+
+SEXP vec_unique_names(SEXP x, bool quiet);
 
 // Returns S3 method for `generic` suitable for the class of `x`. The
 // inheritance hierarchy is explored except for the default method.
 SEXP s3_find_method(const char* generic, SEXP x);
 
-struct vctrs_arg args_empty;
+struct vctrs_arg* args_empty;
 
 void never_reached(const char* fn) __attribute__((noreturn));
 
 enum vctrs_type2 vec_typeof2_impl(enum vctrs_type type_x, enum vctrs_type type_y, int* left);
 
-bool is_compact_rownames(SEXP x);
-R_len_t compact_rownames_length(SEXP x);
+SEXP new_data_frame(SEXP x, R_len_t n);
 void init_data_frame(SEXP x, R_len_t n);
 void init_tibble(SEXP x, R_len_t n);
 bool is_native_df(SEXP x);
+bool is_compact_rownames(SEXP x);
+R_len_t compact_rownames_length(SEXP x);
+SEXP compact_seq(R_len_t from, R_len_t to);
+bool is_compact_seq(SEXP x);
 
 bool (*rlang_is_splice_box)(SEXP);
 SEXP (*rlang_unbox)(SEXP);
@@ -55,6 +78,7 @@ void r_lgl_fill(SEXP x, int value);
 void r_int_fill(SEXP x, int value);
 
 void r_int_fill_seq(SEXP x, int start);
+SEXP r_seq(R_len_t from, R_len_t to);
 
 bool r_int_any_na(SEXP x);
 
@@ -74,6 +98,7 @@ SEXP r_names(SEXP x);
 bool r_has_name_at(SEXP names, R_len_t i);
 SEXP r_env_get(SEXP env, SEXP sym);
 bool r_is_function(SEXP x);
+bool r_chr_has_string(SEXP x, SEXP str);
 
 static inline const char* r_chr_get_c_string(SEXP chr, R_len_t i) {
   return CHAR(STRING_ELT(chr, i));
@@ -97,14 +122,33 @@ static inline double r_dbl_get(SEXP x, R_len_t i) {
   return REAL(x)[i];
 }
 
+#define r_lgl Rf_ScalarLogical
+#define r_int Rf_ScalarInteger
+
+SEXP r_as_list(SEXP x);
+SEXP r_as_data_frame(SEXP x);
+
+static inline void r_dbg_save(SEXP x, const char* name) {
+  Rf_defineVar(Rf_install(name), x, R_GlobalEnv);
+}
+
 
 extern SEXP vctrs_ns_env;
 extern SEXP vctrs_shared_empty_str;
+extern SEXP vctrs_shared_na_lgl;
 
 extern SEXP classes_data_frame;
+extern SEXP classes_tibble;
 
 extern SEXP strings_dots;
 extern SEXP strings_empty;
+extern SEXP strings_tbl;
+extern SEXP strings_tbl_df;
+extern SEXP strings_data_frame;
+extern SEXP strings_vctrs_rcrd;
+extern SEXP strings_posixlt;
+extern SEXP strings_posixt;
+extern SEXP strings_vctrs_vctr;
 
 extern SEXP syms_i;
 extern SEXP syms_x;
@@ -114,6 +158,9 @@ extern SEXP syms_dots;
 extern SEXP syms_bracket;
 extern SEXP syms_x_arg;
 extern SEXP syms_y_arg;
+extern SEXP syms_out;
+extern SEXP syms_value;
+
 #define syms_names R_NamesSymbol
 
 extern SEXP fns_bracket;
