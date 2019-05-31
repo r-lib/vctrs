@@ -4,7 +4,7 @@
 static void describe_repair(SEXP old, SEXP new);
 
 
-// [[ register() ]]
+// [[ register(); include("vctrs.h") ]]
 SEXP vec_names(SEXP x) {
   if (OBJECT(x) && Rf_inherits(x, "data.frame")) {
     return R_NilValue;
