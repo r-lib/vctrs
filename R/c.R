@@ -38,6 +38,9 @@ vec_c <- function(..., .ptype = NULL) {
   if (is.null(ptype))
     return(NULL)
 
+  is_null <- map_lgl(args, is_null)
+  args <- args[!is_null]
+
   ns <- map_int(args, vec_size)
   out <- vec_na(ptype, sum(ns))
   if (is.null(names(args)) && !has_inner_names(args)) {

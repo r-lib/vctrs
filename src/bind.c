@@ -55,7 +55,8 @@ static SEXP vec_rbind(SEXP xs, SEXP ptype) {
   int* ns = INTEGER(ns_placeholder);
 
   for (R_len_t i = 0; i < n; ++i) {
-    R_len_t size = vec_size(VECTOR_ELT(xs, i));
+    SEXP elt = VECTOR_ELT(xs, i);
+    R_len_t size = (elt == R_NilValue) ? 0 : vec_size(elt);
     nrow += size;
     ns[i] = size;
   }

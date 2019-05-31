@@ -45,6 +45,31 @@ test_that("size is proxied", {
   expect_size(new_proxy(foobar(list(1, 2, 3))), 3)
 })
 
+test_that("`NULL` has an undefined size", {
+  expect_error(vec_size(NULL), "not defined")
+})
+
+# vec_size_common ---------------------------------------------------------
+
+test_that("vec_size_common with no input errors unless `.absent` is provided", {
+  expect_error(vec_size_common(), "no `.absent` value was supplied")
+  expect_error(vec_size_common(NULL), "no `.absent` value was supplied")
+  expect_equal(vec_size_common(.absent = 0L), 0L)
+})
+
+test_that("`.absent` must be a length 1 integer if provided", {
+  expect_error(vec_size_common(.absent = 1), class = "vctrs_error_assert_ptype")
+  expect_error(vec_size_common(.absent = c(1L, 2L)), class = "vctrs_error_assert_size")
+})
+
+test_that("`NULL` is treated as the absence of input", {
+  expect_equal(vec_size_common(1:5, NULL), vec_size_common(1:5))
+})
+
+test_that("length 0 vectors force a common size of 0", {
+  expect_equal(vec_size_common(integer()), 0)
+  expect_equal(vec_size_common(1:5, integer()), 0)
+})
 
 # sequences ---------------------------------------------------------------
 

@@ -1,11 +1,15 @@
 context("test-compare")
 
+test_that("inputs must be vectors", {
+  expect_error(vec_compare(NULL, 1), class = "vctrs_error_scalar_type")
+  expect_error(vec_compare(1, NULL), class = "vctrs_error_scalar_type")
+})
+
 test_that("matches R ordering", {
   expect_same <- function(x, y) {
     expect_equal(vec_compare(!!x, !!y), cmp(!!x, !!y))
   }
 
-  expect_same(NULL, NULL)
   expect_same(c(NA, FALSE, TRUE), FALSE)
   expect_same(c(NA, -100L, 0L, 100L), 0L)
   expect_same(c(NA, -Inf, -100, 100, Inf), 0L)

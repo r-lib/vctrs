@@ -7,7 +7,7 @@
 \usage{
 vec_size(x)
 
-vec_size_common(..., .size = NULL)
+vec_size_common(..., .size = NULL, .absent = NULL)
 }
 \arguments{
 \item{x, ...}{Vector inputs}
@@ -15,12 +15,16 @@ vec_size_common(..., .size = NULL)
 \item{.size}{If \code{NULL}, the default, the output size is determined by
 recycling the lengths of all elements of \code{...}. Alternatively, you can
 supply \code{.size} to force a known size.}
+
+\item{.absent}{The size used when no input is provided, or when all input
+is \code{NULL}. If left as \code{NULL} when no input is supplied, an error is thrown.}
 }
 \value{
 An integer (or double for long vectors). Will throw an error
-if \code{x} is not a vector.
+if \code{x} is not a vector or is \code{NULL}.
 
-\code{vec_size_common()} will return \code{NULL} if all inputs are \code{NULL} or absent.
+\code{vec_size_common()} will return \code{.absent} if all inputs are \code{NULL} or
+absent.
 }
 \description{
 \code{vec_size(x)} returns the size of a vector. This is distinct from the
@@ -50,11 +54,6 @@ pronounce, and throws an error when passed non-vector inputs.
 vec_size(1:100)
 vec_size(mtcars)
 vec_size(array(dim = c(3, 5, 10)))
-
-vec_size(NULL)
-# Because vec_size(vec_c(NULL, x)) ==
-#   vec_size(NULL) + vec_size(x) ==
-#   vec_size(x)
 
 vec_size_common(1:10, 1:10)
 vec_size_common(1:10, 1)
