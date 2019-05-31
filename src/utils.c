@@ -22,9 +22,9 @@ SEXP classes_data_frame = NULL;
 SEXP classes_tibble = NULL;
 
 static SEXP syms_as_list = NULL;
-static SEXP syms_as_data_frame = NULL;
+static SEXP syms_as_data_frame2 = NULL;
 static SEXP fns_as_list = NULL;
-static SEXP fns_as_data_frame = NULL;
+static SEXP fns_as_data_frame2 = NULL;
 
 
 bool is_bool(SEXP x) {
@@ -644,7 +644,7 @@ SEXP r_as_data_frame(SEXP x) {
   if (is_bare_data_frame(x)) {
     return x;
   } else {
-    return vctrs_dispatch1(syms_as_data_frame, fns_as_data_frame, syms_x, x);
+    return vctrs_dispatch1(syms_as_data_frame2, fns_as_data_frame2, syms_x, x);
   }
 }
 
@@ -815,9 +815,9 @@ void vctrs_init_utils(SEXP ns) {
   rlang_env_dots_list = (SEXP (*)(SEXP)) R_GetCCallable("rlang", "rlang_env_dots_list");
 
   syms_as_list = Rf_install("as.list");
-  syms_as_data_frame = Rf_install("as.data.frame");
+  syms_as_data_frame2 = Rf_install("as.data.frame2");
   fns_as_list = r_env_get(R_BaseEnv, syms_as_list);
-  fns_as_data_frame = r_env_get(R_BaseEnv, syms_as_data_frame);
+  fns_as_data_frame2 = r_env_get(ns, syms_as_data_frame2);
 
 
   compact_seq_attrib = Rf_cons(R_NilValue, R_NilValue);

@@ -273,16 +273,33 @@ as.POSIXct.vctrs_vctr <- function(x, tz = "", ...) {
   vec_cast(x, new_datetime(tzone = tz))
 }
 
+# Work around inconsistencies in as.data.frame() for 1D arrays
+as.data.frame2 <- function(x) {
+  out <- as.data.frame(x)
+
+  if (vec_dims(x) == 1) {
+    # 1D arrays are not stripped from their dimensions
+    out[[1]] <- as.vector(out[[1]])
+
+    # 1D arrays are auto-labelled with substitute()
+    names(out) <- "V1"
+  }
+
+  out
+}
 
 #' @export
 as.data.frame.vctrs_vctr <- function(x,
-                               row.names = NULL,
-                               optional = FALSE,
-                               ...,
-                               nm = paste(deparse(substitute(x), width.cutoff = 500L), collapse = " ")
-                               ) {
-
+                                     row.names = NULL,
+                                     optional = FALSE,
+                                     ...,
+                                     nm = paste(deparse(substitute(x), width.cutoff = 500L), collapse = " ")) {
   force(nm)
+
+  if (has_dim(x)) {
+    return(as.data.frame2(vec_data(x)))
+  }
+
   cols <- list(x)
   if (!optional) {
     names(cols) <- nm

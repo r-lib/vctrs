@@ -95,6 +95,9 @@ test_that("vec_unique() works with 1D arrays", {
   # currently does not strip dimensions. This caused an infinite
   # recursion.
   expect_identical(vec_unique(array(1:2)), array(1:2))
+
+  x <- new_vctr(c(1, 1, 1, 2, 1, 2), dim = c(3, 2))
+  expect_identical(vec_unique(x), new_vctr(c(1, 1, 2, 1), dim = c(2, 2)))
 })
 
 
