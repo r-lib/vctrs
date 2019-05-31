@@ -9,7 +9,7 @@ SEXP fns_vec_assign_fallback = NULL;
 SEXP vec_as_index(SEXP i, SEXP x);
 
 static SEXP vec_assign_fallback(SEXP x, SEXP index, SEXP value);
-static SEXP vec_assign_impl(SEXP x, SEXP index, SEXP value, bool clone);
+SEXP vec_assign_impl(SEXP x, SEXP index, SEXP value, bool clone);
 static SEXP lgl_assign(SEXP x, SEXP index, SEXP value, bool clone);
 static SEXP int_assign(SEXP x, SEXP index, SEXP value, bool clone);
 static SEXP dbl_assign(SEXP x, SEXP index, SEXP value, bool clone);
@@ -20,6 +20,7 @@ static SEXP list_assign(SEXP x, SEXP index, SEXP value, bool clone);
 SEXP df_assign(SEXP x, SEXP index, SEXP value, bool clone);
 
 
+// [[ register(); include("vctrs.h") ]]
 SEXP vec_assign(SEXP x, SEXP index, SEXP value) {
   if (x == R_NilValue) {
     return R_NilValue;
@@ -60,7 +61,7 @@ SEXP vec_assign(SEXP x, SEXP index, SEXP value) {
  *   own the relevant parts of the vector structure (data frame
  *   columns in particular).
  */
-static SEXP vec_assign_impl(SEXP proxy, SEXP index, SEXP value, bool clone) {
+SEXP vec_assign_impl(SEXP proxy, SEXP index, SEXP value, bool clone) {
   switch (vec_proxy_typeof(proxy)) {
   case vctrs_type_logical:   return lgl_assign(proxy, index, value, clone);
   case vctrs_type_integer:   return int_assign(proxy, index, value, clone);
