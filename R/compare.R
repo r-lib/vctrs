@@ -80,8 +80,12 @@ vec_proxy_compare_default <- function(x, relax = FALSE) {
 #' df <- data.frame(x = c(1, 1, 1, 2), y = c(0, 1, 2, 1))
 #' vec_compare(df, data.frame(x = 1, y = 1))
 vec_compare <- function(x, y, na_equal = FALSE, .ptype = NULL) {
+  vec_assert(x)
+  vec_assert(y)
+
   args <- vec_recycle_common(x, y)
   args <- vec_cast_common(!!!args, .to = .ptype)
+
   .Call(vctrs_compare, vec_proxy_compare(args[[1]]), vec_proxy_compare(args[[2]]), na_equal)
 }
 
