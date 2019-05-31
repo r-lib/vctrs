@@ -1,5 +1,5 @@
 expect_dim <- function(x, shape) {
-  dim <- vec_dim(x)
+  dim <- dim2(x)
   expect_equal(dim, !!shape)
 }
 

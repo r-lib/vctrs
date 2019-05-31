@@ -1,5 +1,8 @@
 # vctrs 0.1.0.9000
 
+* `vec_dims()` has been replaced by `vec_n_dim()`. This name more clearly
+  indicates the purpose of the function.
+  
 * New `stop_incompatible_size()` to signal a failure due to mismatched sizes.
 
 * `vec_empty()` has been renamed to `vec_is_empty()`.

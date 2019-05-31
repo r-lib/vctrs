@@ -248,10 +248,10 @@ vec_names <- function(x) {
   .Call(vctrs_names, x)
 }
 `vec_names<-` <- function(x, value) {
-  if (vec_dims(x) == 1) {
-    names(x) <- value
-  } else if (is.data.frame(x)) {
+  if (is.data.frame(x)) {
     # Do not update row names
+  } else if (vec_n_dim(x) == 1) {
+    names(x) <- value
   } else {
     rownames(x) <- value
   }

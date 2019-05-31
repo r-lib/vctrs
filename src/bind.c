@@ -101,7 +101,7 @@ static SEXP as_df_row_impl(SEXP x, bool quiet) {
   if (is_data_frame(x)) {
     return x;
   }
-  if (vec_dims(x) != 1) {
+  if (vec_n_dim(x) != 1) {
     return r_as_data_frame(x);
   }
 

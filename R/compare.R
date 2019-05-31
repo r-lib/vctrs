@@ -34,7 +34,7 @@ vec_proxy_compare.POSIXlt <- function(x, relax = FALSE) {
 
 #' @export
 vec_proxy_compare.default <- function(x, relax = FALSE) {
-  if (vec_dims(x) > 1) {
+  if (vec_n_dim(x) > 1) {
     # The conversion to data frame is only a stopgap, in the long
     # term, we'll hash arrays natively. Note that hashing functions
     # similarly convert to data frames.
