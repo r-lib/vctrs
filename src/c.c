@@ -47,9 +47,11 @@ static SEXP vec_c(SEXP xs, SEXP ptype) {
     ns[i] = size;
   }
 
-  SEXP out = vec_na(ptype, out_size);
   PROTECT_INDEX out_pi;
+  SEXP out = vec_na(ptype, out_size);
   PROTECT_WITH_INDEX(out, &out_pi);
+  out = vec_proxy(out);
+  REPROTECT(out, out_pi);
 
   SEXP idx = PROTECT(compact_seq(0, 0));
   int* idx_ptr = INTEGER(idx);
@@ -98,6 +100,8 @@ static SEXP vec_c(SEXP xs, SEXP ptype) {
   if (has_names) {
     Rf_setAttrib(out, R_NamesSymbol, out_names);
   }
+
+  out = vec_restore(out, ptype, R_NilValue);
 
   UNPROTECT(6);
   return out;

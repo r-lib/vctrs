@@ -70,3 +70,13 @@ test_that("vec_c() includes index in argument tag", {
     try2(vec_c(foo = df1, bar = df2))
   })
 })
+
+test_that("vec_c() handles record classes", {
+  scoped_rational_class()
+
+  out <- vec_c(rational(1, 2), 1L, NA)
+
+  expect_true(vec_is(out, rational(1, 2)))
+  expect_size(out, 3)
+  expect_identical(vec_proxy(out), data.frame(n = c(1L, 1L, NA), d = c(2L, 1L, NA)))
+})
