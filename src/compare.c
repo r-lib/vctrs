@@ -122,11 +122,13 @@ int compare_scalar(SEXP x, R_len_t i, SEXP y, R_len_t j, bool na_equal) {
 // R interface -----------------------------------------------------------------
 
 SEXP vctrs_compare(SEXP x, SEXP y, SEXP na_compare_) {
-  if (TYPEOF(x) != TYPEOF(y) || vec_size(x) != vec_size(y))
+  R_len_t n = vec_size(x);
+
+  if (TYPEOF(x) != TYPEOF(y) || n != vec_size(y)) {
     Rf_errorcall(R_NilValue, "`x` and `y` must have same types and lengths");
+  }
   bool na_compare = Rf_asLogical(na_compare_);
 
-  R_len_t n = vec_size(x);
   SEXP out = PROTECT(Rf_allocVector(INTSXP, n));
   int32_t* p_out = INTEGER(out);
 
