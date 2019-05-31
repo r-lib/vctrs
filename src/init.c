@@ -146,6 +146,7 @@ void R_init_vctrs(DllInfo *dll)
 void vctrs_init_cast(SEXP ns);
 void vctrs_init_data(SEXP ns);
 void vctrs_init_dictionary(SEXP ns);
+void vctrs_init_names(SEXP ns);
 void vctrs_init_slice(SEXP ns);
 void vctrs_init_slice_assign(SEXP ns);
 void vctrs_init_type2(SEXP ns);
@@ -158,6 +159,7 @@ SEXP vctrs_init(SEXP ns) {
   vctrs_init_cast(ns);
   vctrs_init_data(ns);
   vctrs_init_dictionary(ns);
+  vctrs_init_names(ns);
   vctrs_init_slice(ns);
   vctrs_init_slice_assign(ns);
   vctrs_init_type2(ns);

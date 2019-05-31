@@ -420,3 +420,9 @@ tick_if_needed <- function(x) {
   x[needs_ticks] <- tick(x[needs_ticks])
   x
 }
+
+# Used in names.c
+set_rownames <- function(x, names) {
+  rownames(x) <- names
+  x
+}

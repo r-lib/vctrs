@@ -450,3 +450,21 @@ static SEXP outer_names_seq(const char* outer, R_len_t n) {
 
   return r_chr_iota(n, buf, total_len, outer);
 }
+
+
+// Initialised at load time
+SEXP syms_set_rownames = NULL;
+SEXP fns_set_rownames = NULL;
+
+// [[ include("utils.h") ]]
+SEXP set_rownames(SEXP x, SEXP names) {
+  return vctrs_dispatch2(syms_set_rownames, fns_set_rownames,
+                         syms_x, x,
+                         syms_names, names);
+}
+
+
+void vctrs_init_names(SEXP ns) {
+  syms_set_rownames = Rf_install("set_rownames");
+  fns_set_rownames = r_env_get(ns, syms_set_rownames);
+}

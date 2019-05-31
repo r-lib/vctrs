@@ -75,14 +75,15 @@ static SEXP vec_c(SEXP xs, SEXP ptype) {
     SEXP x = VECTOR_ELT(xs, i);
     SEXP elt = PROTECT(vec_cast(x, ptype));
 
+    idx_ptr[0] = counter;
+    idx_ptr[1] = counter + size;
+
     if (is_shaped) {
       SEXP idx = PROTECT(r_seq(counter + 1, counter + size + 1));
       out = vec_assign(out, idx, elt);
       REPROTECT(out, out_pi);
       UNPROTECT(1);
     } else {
-      idx_ptr[0] = counter;
-      idx_ptr[1] = counter + size;
       vec_assign_impl(out, idx, elt, false);
     }
 
@@ -98,7 +99,12 @@ static SEXP vec_c(SEXP xs, SEXP ptype) {
   }
 
   if (has_names) {
-    Rf_setAttrib(out, R_NamesSymbol, out_names);
+    if (is_shaped) {
+      out = set_rownames(out, out_names);
+      REPROTECT(out, out_pi);
+    } else {
+      Rf_setAttrib(out, R_NamesSymbol, out_names);
+    }
   }
 
   out = vec_restore(out, ptype, R_NilValue);
