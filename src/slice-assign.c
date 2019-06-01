@@ -117,9 +117,7 @@ SEXP vec_assign_impl(SEXP proxy, SEXP index, SEXP value, bool clone) {
   SEXP out = PROTECT(clone ? Rf_shallow_duplicate(x) : x);      \
   CTYPE* out_data = DEREF(out);                                 \
                                                                 \
-  for (R_len_t i = 0, j = from; i < n; ++i, ++j) {              \
-    out_data[j] = value_data[i];                                \
-  }                                                             \
+  memcpy(out_data + from, value_data, sizeof(CTYPE) * n);       \
                                                                 \
   UNPROTECT(1);                                                 \
   return out
