@@ -408,8 +408,6 @@ SEXP df_restore(SEXP x, SEXP to, SEXP i) {
                  Rf_type2char(TYPEOF(x)));
   }
 
-  int n_protect = 0;
-
   // Compute size before changing attributes of `x`
   R_len_t size;
   if (i == R_NilValue) {
@@ -418,27 +416,21 @@ SEXP df_restore(SEXP x, SEXP to, SEXP i) {
     size = Rf_length(i);
   }
 
-  if (MAYBE_REFERENCED(x)) {
-    x = PROTECT(Rf_shallow_duplicate(x));
-    ++n_protect;
-  }
-
+  x = PROTECT(r_maybe_duplicate(x));
   x = PROTECT(vec_restore_default(x, to));
-  ++n_protect;
 
   if (Rf_getAttrib(x, R_NamesSymbol) == R_NilValue) {
     Rf_setAttrib(x, R_NamesSymbol, vctrs_shared_empty_chr);
   }
 
   SEXP rownames = PROTECT(Rf_allocVector(INTSXP, 2));
-  ++n_protect;
 
   INTEGER(rownames)[0] = NA_INTEGER;
   INTEGER(rownames)[1] = -size;
 
   Rf_setAttrib(x, R_RowNamesSymbol, rownames);
 
-  UNPROTECT(n_protect);
+  UNPROTECT(3);
   return x;
 }
 
