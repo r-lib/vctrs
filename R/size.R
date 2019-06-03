@@ -72,10 +72,26 @@ vec_size_common <- function(..., .size = NULL, .absent = NULL) {
     }
   }
 
-  nobs <- map_int(args, vec_size)
-  reduce(nobs, vec_size2)
+  common <- reduce(args, vec_size2_common)
+  vec_size(common)
 }
 
+vec_size2_common <- function(x, y) {
+  nx <- vec_size(x)
+  ny <- vec_size(y)
+
+  if (nx == ny) {
+    x
+  } else if (nx == 0L || ny == 0L) {
+    int()
+  } else if (nx == 1L) {
+    y
+  } else if (ny == 1L) {
+    x
+  } else {
+    abort(paste0("Incompatible lengths: ", nx, ", ", ny, "."))
+  }
+}
 vec_size2 <- function(nx, ny) {
   if (nx == ny) {
     nx
