@@ -59,3 +59,16 @@ static SEXP new_compact_rownames(R_len_t n) {
   out_data[1] = -n;
   return out;
 }
+
+SEXP df_container_type(SEXP x) {
+  SEXP type = PROTECT(Rf_allocVector(VECSXP, 0));
+
+  SET_ATTRIB(type, Rf_shallow_duplicate(ATTRIB(x)));
+  SET_OBJECT(type, OBJECT(x));
+  Rf_setAttrib(type, R_NamesSymbol, vctrs_shared_empty_chr);
+
+  init_compact_rownames(type, df_size(x));
+
+  UNPROTECT(1);
+  return type;
+}

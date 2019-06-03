@@ -83,7 +83,8 @@ static bool is_dotdotint(const char* name);
 static ptrdiff_t suffix_pos(const char* name);
 static bool needs_suffix(SEXP str);
 
-static SEXP as_unique_names(SEXP names) {
+// [[ include("vctrs.h") ]]
+SEXP as_unique_names(SEXP names) {
   if (TYPEOF(names) != STRSXP) {
     Rf_errorcall(R_NilValue, "`names` must be a character vector");
   }

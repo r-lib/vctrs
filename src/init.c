@@ -131,6 +131,7 @@ extern SEXP vctrs_type_common(SEXP, SEXP, SEXP, SEXP);
 extern SEXP vctrs_size_common(SEXP, SEXP, SEXP, SEXP);
 extern SEXP vctrs_cast_common(SEXP, SEXP, SEXP, SEXP);
 extern SEXP vctrs_rbind(SEXP, SEXP, SEXP, SEXP);
+extern SEXP vctrs_cbind(SEXP, SEXP, SEXP, SEXP);
 extern SEXP vctrs_c(SEXP, SEXP, SEXP, SEXP);
 
 static const R_ExternalMethodDef ExtEntries[] = {
@@ -138,6 +139,7 @@ static const R_ExternalMethodDef ExtEntries[] = {
   {"vctrs_size_common",                (DL_FUNC) &vctrs_size_common, 2},
   {"vctrs_cast_common",                (DL_FUNC) &vctrs_cast_common, 1},
   {"vctrs_rbind",                      (DL_FUNC) &vctrs_rbind, 1},
+  {"vctrs_cbind",                      (DL_FUNC) &vctrs_cbind, 2},
   {"vctrs_c",                          (DL_FUNC) &vctrs_c, 1},
   {NULL, NULL, 0}
 };

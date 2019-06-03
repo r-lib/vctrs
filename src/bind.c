@@ -4,6 +4,7 @@
 static SEXP vec_rbind(SEXP xs, SEXP ptype);
 static SEXP as_df_row(SEXP x, bool quiet);
 static SEXP as_df_row_impl(SEXP x, bool quiet);
+SEXP vctrs_as_df_col(SEXP x, SEXP outer);
 
 
 // [[ register(external = TRUE) ]]
@@ -121,6 +122,120 @@ static SEXP as_df_row_impl(SEXP x, bool quiet) {
 // [[ register() ]]
 SEXP vctrs_as_df_row(SEXP x, SEXP quiet) {
   return as_df_row(x, LOGICAL(quiet)[0]);
+}
+
+
+static SEXP vec_cbind(SEXP xs, SEXP ptype, SEXP size);
+static SEXP cbind_container_type(SEXP x);
+
+// [[ register(external = TRUE) ]]
+SEXP vctrs_cbind(SEXP call, SEXP op, SEXP args, SEXP env) {
+  args = CDR(args);
+
+  SEXP xs = PROTECT(rlang_env_dots_list(env));
+  SEXP ptype = PROTECT(Rf_eval(CAR(args), env));
+  SEXP size = PROTECT(Rf_eval(CADR(args), env));
+
+  SEXP out = vec_cbind(xs, ptype, size);
+
+  UNPROTECT(3);
+  return out;
+}
+
+static SEXP vec_cbind(SEXP xs, SEXP ptype, SEXP size) {
+  R_len_t n = Rf_length(xs);
+
+  // Find the common container type of inputs
+  SEXP containers = PROTECT(map(xs, &cbind_container_type));
+  ptype = PROTECT(cbind_container_type(ptype));
+
+  SEXP type = PROTECT(vctrs_type_common_impl(containers, ptype));
+  if (type == R_NilValue) {
+    type = new_data_frame(vctrs_shared_empty_list, 0);
+  } else if (!is_data_frame(type)) {
+    type = r_as_data_frame(type);
+  }
+  UNPROTECT(1);
+  PROTECT(type);
+
+
+  R_len_t nrow;
+  if (size == R_NilValue) {
+    nrow = vec_size_common(xs);
+  } else {
+    nrow = size_validate(size, ".size");
+  }
+
+
+  // Convert inputs to data frames, validate, and collect total number of columns
+  SEXP xs_names = PROTECT(r_names(xs));
+  bool has_names = xs_names != R_NilValue;
+  SEXP* xs_names_ptr = has_names ? STRING_PTR(xs_names) : NULL;
+
+  R_len_t ncol = 0;
+  for (R_len_t i = 0; i < n; ++i, ++xs_names_ptr) {
+    SEXP x = VECTOR_ELT(xs, i);
+
+    if (x == R_NilValue) {
+      continue;
+    }
+
+    x = PROTECT(vec_recycle(x, nrow));
+    x = PROTECT(vctrs_as_df_col(x, has_names ? *xs_names_ptr : R_NilValue));
+
+    SET_VECTOR_ELT(xs, i, x);
+    UNPROTECT(2);
+
+    ncol += Rf_length(x);
+  }
+
+
+  // Fill in columns
+  SEXP out = PROTECT(Rf_allocVector(VECSXP, ncol));
+  SEXP names = PROTECT(Rf_allocVector(STRSXP, ncol));
+
+  SEXP idx = PROTECT(compact_seq(0, 0));
+  int* idx_ptr = INTEGER(idx);
+
+  R_len_t counter = 0;
+
+  for (R_len_t i = 0; i < n; ++i) {
+    SEXP x = VECTOR_ELT(xs, i);
+
+    if (x == R_NilValue) {
+      continue;
+    }
+
+    R_len_t xn = Rf_length(x);
+    idx_ptr[0] = counter;
+    idx_ptr[1] = counter + xn;
+
+    list_assign(out, idx, x, false);
+
+    SEXP xnms = PROTECT(r_names(x));
+    if (xnms != R_NilValue) {
+      chr_assign(names, idx, xnms, false);
+    }
+
+    counter += xn;
+    UNPROTECT(1);
+  }
+
+  names = PROTECT(as_unique_names(names));
+  Rf_setAttrib(out, R_NamesSymbol, names);
+
+  out = vec_restore(out, type, R_NilValue);
+
+  UNPROTECT(8);
+  return out;
+}
+
+static SEXP cbind_container_type(SEXP x) {
+  if (is_data_frame(x)) {
+    return df_container_type(x);
+  } else {
+    return R_NilValue;
+  }
 }
 
 

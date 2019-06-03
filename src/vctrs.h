@@ -224,6 +224,9 @@ R_len_t df_rownames_size(SEXP x);
 R_len_t df_raw_size(SEXP x);
 SEXP df_restore(SEXP x, SEXP to, SEXP i);
 SEXP df_restore_impl(SEXP x, SEXP to, R_len_t size);
+
+SEXP chr_assign(SEXP out, SEXP index, SEXP value, bool clone);
+SEXP list_assign(SEXP out, SEXP index, SEXP value, bool clone);
 SEXP df_assign(SEXP out, SEXP index, SEXP value, bool clone);
 
 // Most vector predicates return `int` because missing values are
@@ -247,8 +250,10 @@ uint32_t hash_object(SEXP x);
 uint32_t hash_scalar(SEXP x, R_len_t i);
 void hash_fill(uint32_t* p, R_len_t n, SEXP x);
 
+SEXP as_unique_names(SEXP names);
+
 // Experimental:
-SEXP vec_restore_container(SEXP x, SEXP to);
+SEXP vec_restore_container(SEXP x, SEXP to, R_len_t n);
 
 
 // Growable vector -----------------------------------------------

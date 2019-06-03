@@ -102,54 +102,7 @@ vec_rbind <- function(..., .ptype = NULL) {
 #'   Alternatively, specify the desired number of rows, and any inputs
 #'   of length 1 will be recycled appropriately.
 vec_cbind <- function(..., .ptype = NULL, .size = NULL) {
-  args <- list2(...)
-
-  # container type: common type of all (data frame) inputs
-  # compute early so we can fail fast
-  tbl_empty <- map(args, function(x) {
-    if (is.data.frame(x))
-      x[0]
-  })
-  out <- vec_type_common(!!!tbl_empty, .ptype = .ptype[0])
-  if (is.null(out)) {
-    out <- data_frame()
-  }
-
-  is_null <- map_lgl(args, is_null)
-  args <- args[!is_null]
-
-  # container size: common length of all inputs
-  size <- vec_size_common(!!!args, .size = .size, .absent = 0L)
-  args <- map(args, vec_recycle, size = size)
-
-  # convert input to columns and prepare output containers
-  tbls <- map2(args, names2(args), as_df_col)
-
-  ps <- map_int(tbls, length)
-  cols <- vec_na(list(), sum(ps))
-  names <- vec_na(character(), sum(ps))
-
-  col <- 1
-  for (j in seq_along(tbls)) {
-    p <- ps[[j]]
-    if (p == 0L)
-      next
-
-    cols[col:(col + p - 1)] <- tbls[[j]]
-    names[col:(col + p - 1)] <- names(tbls[[j]]) %||% rep("", p)
-    col <- col + p
-  }
-
-  # Need to document these assumptions, or better, move into
-  # a generic
-  attr(out, "row.names") <- .set_row_names(size)
-  out[seq_along(cols)] <- cols
-  if (is_installed("tibble")) {
-    names <- tibble::tidy_names(names)
-  }
-  names(out) <- names
-
-  out
+  .External2(vctrs_cbind, .ptype, .size)
 }
 
 as_df_row <- function(x, quiet = FALSE) {

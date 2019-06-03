@@ -152,21 +152,26 @@ SEXP vctrs_set_attributes(SEXP x, SEXP attrib) {
   return x;
 }
 
-SEXP df_map(SEXP df, SEXP (*fn)(SEXP)) {
-  R_len_t n = Rf_length(df);
+SEXP map(SEXP x, SEXP (*fn)(SEXP)) {
+  R_len_t n = Rf_length(x);
   SEXP out = PROTECT(Rf_allocVector(VECSXP, n));
 
   for (R_len_t i = 0; i < n; ++i) {
-    SET_VECTOR_ELT(out, i, fn(VECTOR_ELT(df, i)));
+    SET_VECTOR_ELT(out, i, fn(VECTOR_ELT(x, i)));
   }
 
-  // FIXME: Should that be restored?
-  SEXP nms = PROTECT(Rf_getAttrib(df, R_NamesSymbol));
+  SEXP nms = PROTECT(Rf_getAttrib(x, R_NamesSymbol));
   Rf_setAttrib(out, R_NamesSymbol, nms);
 
+  UNPROTECT(2);
+  return out;
+}
+
+SEXP df_map(SEXP df, SEXP (*fn)(SEXP)) {
+  SEXP out = PROTECT(map(df, fn));
   out = df_restore(out, df, vctrs_shared_empty_int);
 
-  UNPROTECT(2);
+  UNPROTECT(1);
   return out;
 }
 

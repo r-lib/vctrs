@@ -37,6 +37,7 @@ SEXP vctrs_dispatch3(SEXP fn_sym, SEXP fn,
                      SEXP y_sym, SEXP y,
                      SEXP z_sym, SEXP z);
 
+SEXP map(SEXP x, SEXP (*fn)(SEXP));
 SEXP df_map(SEXP df, SEXP (*fn)(SEXP));
 
 enum vctrs_class_type class_type(SEXP x);
@@ -63,12 +64,16 @@ void init_tibble(SEXP x, R_len_t n);
 bool is_native_df(SEXP x);
 bool is_compact_rownames(SEXP x);
 R_len_t compact_rownames_length(SEXP x);
+SEXP df_container_type(SEXP x);
+
 SEXP compact_seq(R_len_t from, R_len_t to);
 bool is_compact_seq(SEXP x);
 
 SEXP outer_names(SEXP names, SEXP outer, R_len_t n);
 SEXP set_rownames(SEXP x, SEXP names);
 SEXP colnames(SEXP x);
+
+R_len_t size_validate(SEXP size, const char* arg);
 
 bool (*rlang_is_splice_box)(SEXP);
 SEXP (*rlang_unbox)(SEXP);

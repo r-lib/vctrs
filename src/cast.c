@@ -464,17 +464,13 @@ static SEXP vec_restore_dispatch(SEXP x, SEXP to, SEXP i) {
 
 
 // [[ include("vctrs.h") ]]
-SEXP vec_restore_container(SEXP x, SEXP to) {
+SEXP vec_restore_container(SEXP x, SEXP to, R_len_t n) {
   if (!is_data_frame(to)) {
     Rf_error("Internal error: Container restoration requires data frames.");
   }
 
   x = PROTECT(r_maybe_duplicate(x));
-
-  SEXP nms = PROTECT(Rf_getAttrib(to, R_NamesSymbol));
-  Rf_setAttrib(x, R_NamesSymbol, nms);
-
-  x = df_restore_impl(x, to, df_size(to));
+  x = df_restore_impl(x, to, n);
 
   UNPROTECT(2);
   return x;
