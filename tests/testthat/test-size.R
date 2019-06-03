@@ -58,8 +58,8 @@ test_that("vec_size_common with no input errors unless `.absent` is provided", {
 })
 
 test_that("`.absent` must be a length 1 integer if provided", {
-  expect_error(vec_size_common(.absent = 1), class = "vctrs_error_assert_ptype")
-  expect_error(vec_size_common(.absent = c(1L, 2L)), class = "vctrs_error_assert_size")
+  expect_error(vec_size_common(.absent = 1), "must be a single integer")
+  expect_error(vec_size_common(.absent = c(1L, 2L)), "must be a single integer")
 })
 
 test_that("`NULL` is treated as the absence of input", {
@@ -70,6 +70,18 @@ test_that("length 0 vectors force a common size of 0", {
   expect_equal(vec_size_common(integer()), 0)
   expect_equal(vec_size_common(1:5, integer()), 0)
 })
+
+test_that("argument tags are forwarded", {
+  expect_known_output_nobang(file = test_path("test-type-vec-size-common-error.txt"), {
+    try2(vec_size_common(1:2, 1, 1:4))
+    try2(vec_size_common(foo = 1:2, 1, bar = 1:4))
+  })
+})
+
+test_that("can pass size", {
+  expect_identical(vec_size_common(1:2, 1:3, .size = 5L), 5L)
+})
+
 
 # sequences ---------------------------------------------------------------
 

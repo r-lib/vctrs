@@ -57,41 +57,9 @@ vec_size <- function(x) {
 #' @export
 #' @rdname vec_size
 vec_size_common <- function(..., .size = NULL, .absent = NULL) {
-  if (!is.null(.size)) {
-    return(.size)
-  }
-
-  args <- compact(list2(...))
-
-  if (length(args) == 0) {
-    if (is.null(.absent)) {
-      abort("`...` is empty, and no `.absent` value was supplied.")
-    } else {
-      vec_assert(.absent, ptype = integer(), size = 1L)
-      return(.absent)
-    }
-  }
-
-  common <- reduce(args, vec_size2_common)
-  vec_size(common)
+  .External2(vctrs_size_common, .size, .absent)
 }
 
-vec_size2_common <- function(x, y) {
-  nx <- vec_size(x)
-  ny <- vec_size(y)
-
-  if (nx == ny) {
-    x
-  } else if (nx == 0L || ny == 0L) {
-    int()
-  } else if (nx == 1L) {
-    y
-  } else if (ny == 1L) {
-    x
-  } else {
-    stop_incompatible_size(x, y, nx, ny)
-  }
-}
 vec_size2 <- function(nx, ny) {
   if (nx == ny) {
     nx

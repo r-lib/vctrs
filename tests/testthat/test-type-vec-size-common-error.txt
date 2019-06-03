@@ -1,0 +1,10 @@
+
+vec_size_common(1:2, 1, 1:4):
+
+No common size for `..1` of size [2] and `..3` of size [4]. 
+
+
+vec_size_common(foo = 1:2, 1, bar = 1:4):
+
+No common size for `foo` of size [2] and `bar` of size [4]. 
+

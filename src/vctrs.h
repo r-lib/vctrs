@@ -195,6 +195,7 @@ SEXP vec_proxy(SEXP x);
 SEXP vec_proxy_equal(SEXP x);
 SEXP vec_restore(SEXP x, SEXP to, SEXP i);
 R_len_t vec_size(SEXP x);
+R_len_t vec_size_common(SEXP xs);
 SEXP vec_dim(SEXP x);
 R_len_t vec_dims(SEXP x);
 SEXP vec_cast(SEXP x, SEXP to);
@@ -271,6 +272,11 @@ bool has_dim(SEXP x);
 void vctrs_stop_unsupported_type(enum vctrs_type, const char* fn) __attribute__((noreturn));
 void stop_scalar_type(SEXP x, struct vctrs_arg* arg) __attribute__((noreturn));
 void vec_assert(SEXP x, struct vctrs_arg* arg);
+void stop_incompatible_size(SEXP x, SEXP y,
+                            R_len_t x_size, R_len_t y_size,
+                            struct vctrs_arg* x_arg,
+                            struct vctrs_arg* y_arg)
+  __attribute__((noreturn));
 
 
 // Compatibility ------------------------------------------------
