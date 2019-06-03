@@ -89,7 +89,7 @@ vec_size2_common <- function(x, y) {
   } else if (ny == 1L) {
     x
   } else {
-    abort(paste0("Incompatible lengths: ", nx, ", ", ny, "."))
+    stop_incompatible_size(x, y, nx, ny)
   }
 }
 vec_size2 <- function(nx, ny) {

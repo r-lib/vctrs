@@ -5,6 +5,7 @@
 \alias{stop_incompatible_type}
 \alias{stop_incompatible_cast}
 \alias{stop_incompatible_op}
+\alias{stop_incompatible_size}
 \alias{maybe_lossy_cast}
 \alias{allow_lossy_cast}
 \title{Custom conditions for vctrs package}
@@ -17,6 +18,9 @@ stop_incompatible_cast(x, y, details = NULL, ..., message = NULL,
 
 stop_incompatible_op(op, x, y, details = NULL, ..., message = NULL,
   .subclass = NULL)
+
+stop_incompatible_size(x, y, x_size, y_size, x_arg = "", y_arg = "",
+  details = NULL, ..., message = NULL, .subclass = NULL)
 
 maybe_lossy_cast(result, x, to, lossy = NULL, locations = NULL,
   details = NULL, ..., message = NULL, .subclass = NULL,
