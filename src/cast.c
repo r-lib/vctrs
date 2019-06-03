@@ -412,14 +412,11 @@ SEXP df_restore(SEXP x, SEXP to, SEXP i) {
                  Rf_type2char(TYPEOF(x)));
   }
 
-  // Compute size before changing attributes of `x`
-  R_len_t size;
-  if (i == R_NilValue) {
-    size = df_raw_size(x);
-  } else {
-    size = Rf_length(i);
-  }
+  R_len_t size = (i == R_NilValue) ? df_raw_size(x) : Rf_length(i);
+  return df_restore_impl(x, to, size);
+}
 
+SEXP df_restore_impl(SEXP x, SEXP to, R_len_t size) {
   x = PROTECT(r_maybe_duplicate(x));
   x = PROTECT(vec_restore_default(x, to));
 
@@ -464,6 +461,25 @@ static SEXP vec_restore_dispatch(SEXP x, SEXP to, SEXP i) {
                          syms_to, to,
                          syms_i, i);
 }
+
+
+// [[ include("vctrs.h") ]]
+SEXP vec_restore_container(SEXP x, SEXP to) {
+  if (!is_data_frame(to)) {
+    Rf_error("Internal error: Container restoration requires data frames.");
+  }
+
+  x = PROTECT(r_maybe_duplicate(x));
+
+  SEXP nms = PROTECT(Rf_getAttrib(to, R_NamesSymbol));
+  Rf_setAttrib(x, R_NamesSymbol, nms);
+
+  x = df_restore_impl(x, to, df_size(to));
+
+  UNPROTECT(2);
+  return x;
+}
+
 
 // [[ include("vctrs.h") ]]
 SEXP vec_coercible_cast(SEXP x, SEXP to, struct vctrs_arg* x_arg, struct vctrs_arg* to_arg) {
