@@ -16,7 +16,7 @@ knitr::opts_chunk$set(
 
 This vignette introduces the ideas of type-stability and size-stability. If a function possesses these properties it is substantially easier to reason about because to predict the "shape" of the output, you only need to know the "shape"s of the inputs.
 
-This work is partly motivated by a common pattern that I noticed when reviewing code: if I read the code (without running it!) and I can't predict the type of each variables, I feel very uneasy about the code. This sense is important because most unit tests explore typical inputs, rather than exhaustively testing the strange and unusual. Analysing the types (and size) of variables makes it possible to spot unpleasant edge cases.
+This work is partly motivated by a common pattern that I noticed when reviewing code: if I read the code (without running it!) and I can't predict the type of each variable, I feel very uneasy about the code. This sense is important because most unit tests explore typical inputs, rather than exhaustively testing the strange and unusual. Analysing the types (and size) of variables makes it possible to spot unpleasant edge cases.
 
 ```{r setup}
 library(vctrs)
