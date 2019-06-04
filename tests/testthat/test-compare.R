@@ -117,3 +117,13 @@ test_that("can sort data frames", {
 test_that("can order tibbles that contain non-comparable objects", {
   expect_equal(vec_order(data_frame(list(10, 2, 1))), 1:3)
 })
+
+test_that("can order matrices and arrays (#306)", {
+  x <- matrix(c(1, 1, 1, 1, 2, 1), ncol = 2)
+  expect_identical(vec_order(x), c(1L, 3L, 2L))
+
+  x <- array(1:8, c(2, 2, 2))
+  x[2] <- 1
+  x[3] <- 5
+  expect_identical(vec_order(x), 2:1)
+})
