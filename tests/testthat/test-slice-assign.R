@@ -5,6 +5,12 @@ test_that("slice-assign throws error with non-vector inputs", {
   expect_error(vec_slice(x, 1L) <- 1L, class = "vctrs_error_scalar_type")
 })
 
+test_that("slice-assign throws error with non-vector `value`", {
+  x <- 1L
+  expect_error(vec_slice(x, 1L) <- NULL, class = "vctrs_error_scalar_type")
+  expect_error(vec_slice(x, 1L) <- environment(), class = "vctrs_error_scalar_type")
+})
+
 test_that("can slice-assign NULL", {
   x <- NULL
   vec_slice(x, 1L) <- 1
