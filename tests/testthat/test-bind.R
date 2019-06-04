@@ -154,7 +154,11 @@ test_that("matrix becomes data frame", {
 
 
 test_that("duplicate names are de-deduplicated", {
-  expect_named(vec_cbind(x = 1, x = 1), c("x...1", "x...2"))
+  expect_message(
+    expect_named(vec_cbind(x = 1, x = 1), c("x...1", "x...2")),
+    "x -> x...1",
+    fixed = TRUE
+  )
   expect_named(vec_cbind(data.frame(x = 1), data.frame(x = 1)), c("x...1", "x...2"))
 })
 

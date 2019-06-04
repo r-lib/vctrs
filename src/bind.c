@@ -221,7 +221,7 @@ static SEXP vec_cbind(SEXP xs, SEXP ptype, SEXP size) {
     UNPROTECT(1);
   }
 
-  names = PROTECT(as_unique_names(names));
+  names = PROTECT(as_unique_names(names, false));
   Rf_setAttrib(out, R_NamesSymbol, names);
 
   out = vec_restore(out, type, R_NilValue);

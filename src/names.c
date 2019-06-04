@@ -84,7 +84,7 @@ static ptrdiff_t suffix_pos(const char* name);
 static bool needs_suffix(SEXP str);
 
 // [[ include("vctrs.h") ]]
-SEXP as_unique_names(SEXP names) {
+SEXP as_unique_names(SEXP names, bool quiet) {
   if (TYPEOF(names) != STRSXP) {
     Rf_errorcall(R_NilValue, "`names` must be a character vector");
   }
@@ -111,7 +111,14 @@ SEXP as_unique_names(SEXP names) {
     return names;
   }
 
-  names = PROTECT(r_maybe_duplicate(names));
+  SEXP orig;
+  if (!quiet) {
+    orig = PROTECT(Rf_shallow_duplicate(names));
+  } else {
+    orig = R_NilValue;
+    names = PROTECT(r_maybe_duplicate(names));
+  }
+
   ptr = STRING_PTR(names);
 
   for (; i < n; ++i, ++ptr) {
@@ -173,17 +180,16 @@ SEXP as_unique_names(SEXP names) {
     SET_STRING_ELT(names, i, Rf_mkChar(buf));
   }
 
+  if (!quiet) {
+    describe_repair(orig, names);
+  }
+
   UNPROTECT(2);
   return names;
 }
 
 SEXP vctrs_as_unique_names(SEXP names, SEXP quiet) {
-  SEXP out = PROTECT(as_unique_names(names));
-
-  if (!LOGICAL(quiet)[0]) {
-    describe_repair(names, out);
-  }
-
+  SEXP out = PROTECT(as_unique_names(names, LOGICAL(quiet)[0]));
   UNPROTECT(1);
   return out;
 }
@@ -306,12 +312,11 @@ SEXP vec_unique_names(SEXP x, bool quiet) {
   SEXP out;
   if (names == R_NilValue) {
     out = PROTECT(names_iota(vec_size(x)));
+    if (!quiet) {
+      describe_repair(names, out);
+    }
   } else {
-    out = PROTECT(as_unique_names(names));
-  }
-
-  if (!quiet) {
-    describe_repair(names, out);
+    out = PROTECT(as_unique_names(names, quiet));
   }
 
   UNPROTECT(2);
@@ -345,6 +350,10 @@ static SEXP names_iota(R_len_t n) {
 static void describe_repair(SEXP old, SEXP new) {
   SEXP call = PROTECT(Rf_lang3(Rf_install("describe_repair"), old, new));
   Rf_eval(call, vctrs_ns_env);
+
+  // To reset visibility when called from a `.External2()`
+  Rf_eval(R_NilValue, R_EmptyEnv);
+
   UNPROTECT(1);
 }
 
