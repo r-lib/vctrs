@@ -14,7 +14,7 @@ be the same type as \code{x}.}
 }
 \description{
 Use this inline operator when you need to provide a default value for
-empty (as defined by \code{\link[=vec_empty]{vec_empty()}}) vectors.
+empty (as defined by \code{\link[=vec_is_empty]{vec_is_empty()}}) vectors.
 }
 \examples{
 1:10 \%0\% 5

@@ -1,5 +1,7 @@
 # vctrs 0.1.0.9000
 
+* `vec_empty()` has been renamed to `vec_is_empty()`.
+
 * `vec_slice<-` now has a `vec_assign()` alias. Use `vec_assign()`
   when you don't want to modify the original input.
 
