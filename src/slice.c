@@ -132,8 +132,21 @@ static void slice_names(SEXP x, SEXP to, SEXP index) {
   }
 
   nms = PROTECT(chr_slice(nms, index));
-  Rf_setAttrib(x, R_NamesSymbol, nms);
 
+  // Replace any `NA` name caused by `NA` index with the empty
+  // string. It's ok mutate the names vector since it is freshly
+  // created (and the empty string is persistently protected anyway).
+  R_len_t n = Rf_length(nms);
+  SEXP* nmsp = STRING_PTR(nms);
+  const int* ip = INTEGER_RO(index);
+
+  for (R_len_t i = 0; i < n; ++i) {
+    if (ip[i] == NA_INTEGER) {
+      nmsp[i] = strings_empty;
+    }
+  }
+
+  Rf_setAttrib(x, R_NamesSymbol, nms);
   UNPROTECT(2);
 }
 

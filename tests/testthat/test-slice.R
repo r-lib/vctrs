@@ -343,8 +343,18 @@ test_that("can't use names to vec_slice() an unnamed object", {
 
 test_that("can slice with missing character indices (#244)", {
   expect_identical(vec_as_index(na_chr, c(x = 1, NA)), na_int)
-  expect_identical(vec_slice(c(x = 1), na_chr), set_names(na_dbl, NA))
-  expect_identical(vec_slice(c(x = "foo"), na_chr), set_names(na_chr, NA))
+  expect_identical(vec_slice(c(x = 1), na_chr), set_names(na_dbl, ""))
+  expect_identical(vec_slice(c(x = "foo"), na_chr), set_names(na_chr, ""))
+})
+
+test_that("missing indices don't create NA names", {
+  x <- set_names(letters)
+  expect_identical(vec_slice(x, na_int), set_names(na_chr, ""))
+  expect_identical(vec_slice(x, int(1, NA, 3, NA)), chr(a = "a", NA, c = "c", NA))
+
+  # Preserves existing NA names
+  x <- set_names(1:2, c(NA, "foo"))
+  expect_identical(vec_slice(x, 1:2), x)
 })
 
 
