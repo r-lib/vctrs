@@ -341,6 +341,13 @@ test_that("can't use names to vec_slice() an unnamed object", {
   )
 })
 
+test_that("can slice with missing character indices (#244)", {
+  expect_identical(vec_as_index(na_chr, c(x = 1, NA)), na_int)
+  expect_identical(vec_slice(c(x = 1), na_chr), set_names(na_dbl, NA))
+  expect_identical(vec_slice(c(x = "foo"), na_chr), set_names(na_chr, NA))
+})
+
+
 # vec_na ------------------------------------------------------------------
 
 test_that("vec_slice throws error with non-vector inputs", {

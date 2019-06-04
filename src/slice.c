@@ -387,14 +387,20 @@ static SEXP chr_as_index(SEXP i, SEXP x) {
     Rf_errorcall(R_NilValue, "Can't use character to index an unnamed vector.");
   }
 
-  i = PROTECT(Rf_match(nms, i, NA_INTEGER));
+  SEXP matched = PROTECT(Rf_match(nms, i, NA_INTEGER));
 
-  if (r_int_any_na(i)) {
-    Rf_errorcall(R_NilValue, "Can't index non-existing elements.");
+  R_len_t n = Rf_length(matched);
+  const int* p = INTEGER_RO(matched);
+  const SEXP* ip = STRING_PTR_RO(i);
+
+  for (R_len_t k = 0; k < n; ++k) {
+    if (p[k] == NA_INTEGER && ip[k] != NA_STRING) {
+      Rf_errorcall(R_NilValue, "Can't index non-existing elements.");
+    }
   }
 
   UNPROTECT(1);
-  return i;
+  return matched;
 }
 
 SEXP vec_as_index(SEXP i, SEXP x) {
