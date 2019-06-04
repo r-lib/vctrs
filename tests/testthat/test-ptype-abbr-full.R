@@ -55,3 +55,6 @@ test_that("AsIs class stripped from I()", {
   expect_equal(vec_ptype_full(I(df[0])), "I<myclass<>>")
 })
 
+test_that("named lists are tagged (#322)", {
+  expect_identical(vec_ptype_abbr(list(x = 1, y = 2)), "named list")
+})

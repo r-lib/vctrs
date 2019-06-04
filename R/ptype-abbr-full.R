@@ -51,6 +51,9 @@ vec_ptype_full.default <- function(x) {
 vec_ptype_abbr.default <- function(x) {
   if (is.object(x)) {
     unname(abbreviate(vec_ptype_full(x), 8))
+  } else if (is_list(x)) {
+    named <- is_character(names(x))
+    paste0(if (named) "named ", "list", vec_ptype_shape(x))
   } else if (is_vector(x)) {
     abbr <- switch(typeof(x),
       logical = "lgl",
