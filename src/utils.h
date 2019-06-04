@@ -142,6 +142,8 @@ static inline double r_dbl_get(SEXP x, R_len_t i) {
 #define r_str Rf_mkChar
 #define r_sym Rf_install
 
+#define r_str_as_character Rf_ScalarString
+
 SEXP r_as_list(SEXP x);
 SEXP r_as_data_frame(SEXP x);
 

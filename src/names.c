@@ -299,6 +299,7 @@ static bool needs_suffix(SEXP str) {
 
 static SEXP names_iota(R_len_t n);
 
+// [[ include("utils.h") ]]
 SEXP vec_unique_names(SEXP x, bool quiet) {
   SEXP names = PROTECT(Rf_getAttrib(x, R_NamesSymbol));
 
@@ -317,6 +318,7 @@ SEXP vec_unique_names(SEXP x, bool quiet) {
   return(out);
 }
 
+// [[ register() ]]
 SEXP vctrs_unique_names(SEXP x, SEXP quiet) {
   return vec_unique_names(x, LOGICAL(quiet)[0]);
 }
@@ -359,17 +361,11 @@ SEXP vctrs_outer_names(SEXP names, SEXP outer, SEXP n) {
     Rf_error("Internal error: `n` must be a single integer");
   }
 
-  return outer_names(names, outer, r_int_get(n, 0));
-}
-
-static SEXP str_as_chr(SEXP x) {
-  if (TYPEOF(x) == STRSXP) {
-    return x;
-  } else {
-    SEXP out = Rf_allocVector(STRSXP, 1);
-    SET_STRING_ELT(out, 0, x);
-    return out;
+  if (outer != R_NilValue) {
+    outer = r_chr_get(outer, 0);
   }
+
+  return outer_names(names, outer, r_int_get(n, 0));
 }
 
 // [[ include("utils.h") ]]
@@ -377,35 +373,22 @@ SEXP outer_names(SEXP names, SEXP outer, R_len_t n) {
   if (outer == R_NilValue) {
     return names;
   }
-
-  SEXP outer_str;
-  switch (TYPEOF(outer)) {
-  case STRSXP:
-    if (Rf_length(outer) != 1) {
-      goto bad_outer;
-    }
-    outer_str = STRING_ELT(outer, 0);
-    break;
-  case CHARSXP:
-    outer_str = outer;
-    break;
-  default:
-  bad_outer:
-    Rf_error("Internal error: `outer` must be a string");
+  if (TYPEOF(outer) != CHARSXP) {
+    Rf_error("Internal error: `outer` must be a scalar string.");
   }
 
-  if (outer_str == strings_empty || outer_str == NA_STRING) {
+  if (outer == strings_empty || outer == NA_STRING) {
     return names;
   }
 
   if (r_is_empty_names(names)) {
     if (n == 1) {
-      return str_as_chr(outer);
+      return r_str_as_character(outer);
     } else {
-      return outer_names_seq(CHAR(outer_str), n);
+      return outer_names_seq(CHAR(outer), n);
     }
   } else {
-    return outer_names_cat(CHAR(outer_str), names);
+    return outer_names_cat(CHAR(outer), names);
   }
 }
 

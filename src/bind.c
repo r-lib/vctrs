@@ -1,11 +1,10 @@
 #include "vctrs.h"
 #include "utils.h"
 
+
 static SEXP vec_rbind(SEXP xs, SEXP ptype);
 static SEXP as_df_row(SEXP x, bool quiet);
 static SEXP as_df_row_impl(SEXP x, bool quiet);
-SEXP vctrs_as_df_col(SEXP x, SEXP outer);
-
 
 // [[ register(external = TRUE) ]]
 SEXP vctrs_rbind(SEXP call, SEXP op, SEXP args, SEXP env) {
@@ -125,6 +124,7 @@ SEXP vctrs_as_df_row(SEXP x, SEXP quiet) {
 }
 
 
+static SEXP as_df_col(SEXP x, SEXP outer);
 static SEXP vec_cbind(SEXP xs, SEXP ptype, SEXP size);
 static SEXP cbind_container_type(SEXP x);
 
@@ -181,7 +181,7 @@ static SEXP vec_cbind(SEXP xs, SEXP ptype, SEXP size) {
     }
 
     x = PROTECT(vec_recycle(x, nrow));
-    x = PROTECT(vctrs_as_df_col(x, has_names ? *xs_names_ptr : R_NilValue));
+    x = PROTECT(as_df_col(x, has_names ? *xs_names_ptr : R_NilValue));
 
     SET_VECTOR_ELT(xs, i, x);
     UNPROTECT(2);
@@ -241,19 +241,32 @@ static SEXP cbind_container_type(SEXP x) {
 
 static SEXP df_as_df_col(SEXP x, SEXP outer);
 static SEXP shaped_as_df_col(SEXP x, SEXP outer);
+static SEXP vec_as_df_col(SEXP x, SEXP outer);
 
 // [[ register() ]]
 SEXP vctrs_as_df_col(SEXP x, SEXP outer) {
+  return as_df_col(x, r_chr_get(outer, 0));
+}
+static SEXP as_df_col(SEXP x, SEXP outer) {
   if (is_data_frame(x)) {
     return df_as_df_col(x, outer);
   }
   if (vec_dims(x) != 1) {
     return shaped_as_df_col(x, outer);
   }
+  return vec_as_df_col(x, outer);
+}
 
+static SEXP vec_as_df_col(SEXP x, SEXP outer) {
   SEXP out = PROTECT(Rf_allocVector(VECSXP, 1));
   SET_VECTOR_ELT(out, 0, x);
-  Rf_setAttrib(out, R_NamesSymbol, outer);
+
+  if (outer != R_NilValue) {
+    SEXP names = PROTECT(r_str_as_character(outer));
+    Rf_setAttrib(out, R_NamesSymbol, names);
+    UNPROTECT(1);
+  }
+
   init_data_frame(out, Rf_length(x));
 
   UNPROTECT(1);
