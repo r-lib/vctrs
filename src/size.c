@@ -118,6 +118,11 @@ R_len_t df_raw_size(SEXP x) {
   }
 }
 
+// [[ register() ]]
+SEXP vctrs_df_size(SEXP x) {
+  return r_int(df_raw_size(x));
+}
+
 
 R_len_t rcrd_size(SEXP x) {
   int n = Rf_length(x);

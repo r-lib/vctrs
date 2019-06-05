@@ -17,7 +17,7 @@
 #' new_data_frame(list(x = 1:10, y = 10:1))
 new_data_frame <- function(x = list(), n = NULL, ..., class = character()) {
   stopifnot(is.list(x))
-  n <- n %||% df_length(x)
+  n <- n %||% df_size(x)
   stopifnot(is.integer(n), length(n) == 1L)
 
   # names() should always be a character vector, but we can't enforce that
@@ -120,17 +120,8 @@ vec_restore.data.frame <- function(x, to, ..., i = NULL) {
 
 # Helpers -----------------------------------------------------------------
 
-df_length <- function(x) {
-  # Possibly inefficient because it forces a realisation of row names vector?
-  rn <- attr(x, "row.names", exact = TRUE)
-
-  if (!is.null(rn)) {
-    .row_names_info(x, 2L)
-  } else if (vec_size(x) > 0) {
-    vec_size(x[[1]])
-  } else {
-    0L
-  }
+df_size <- function(x) {
+  .Call(vctrs_df_size, x)
 }
 
 df_lossy_cast <- function(out, x, to) {
