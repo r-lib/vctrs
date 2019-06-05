@@ -68,11 +68,9 @@
 #' @export
 vec_data <- function(x) {
   vec_assert(x)
+  x <- vec_proxy(x)
 
-  # TODO: implement with ALTREP to avoid making a copy
-  if (is_record(x)) {
-    x <- vec_set_attributes(x, list(names = fields(x)))
-  } else if (has_dim(x)) {
+  if (has_dim(x)) {
     x <- vec_set_attributes(x, list(dim = dim(x), dimnames = dimnames(x)))
   } else {
     x <- vec_set_attributes(x, list(names = names(x)))
@@ -109,10 +107,3 @@ vec_proxy_equal <- function(x) {
     "Please use `vec_proxy()` instead (if needed)."
   ))
 }
-
-is_record <- function(x) {
-  UseMethod("is_record")
-}
-is_record.POSIXlt <- function(x) TRUE
-is_record.vctrs_rcrd <- function(x) TRUE
-is_record.default <- function(x) FALSE
