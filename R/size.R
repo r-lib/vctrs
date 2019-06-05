@@ -1,17 +1,16 @@
 #' Number of observations
 #'
-#' `vec_size(x)` returns the size of a vector. This is distinct from the
-#' [length()] of a vector because it generalises to the "number of observations"
-#' for 2d structures, i.e. it's the number of rows in matrix or a data frame.
-#' This definition has the important property that every column of a data frame
-#' (even data frame and matrix columns) have the same size.
+#' @description
+#'
+#' `vec_size(x)` returns the size of a vector. `vec_is_empty()`
+#' returns `TRUE` if the size is zero, `FALSE` otherwise.
+#'
+#' The size is distinct from the [length()] of a vector because it
+#' generalises to the "number of observations" for 2d structures,
+#' i.e. it's the number of rows in matrix or a data frame.  This
+#' definition has the important property that every column of a data
+#' frame (even data frame and matrix columns) have the same size.
 #' `vec_size_common(...)` returns the common size of multiple vectors.
-#'
-#' There is no vctrs helper that retrieves the number of columns: as this
-#' is a property of the [type][vec_ptype()].
-#'
-#' `vec_size()` is equivalent to `NROW()` but has a name that is easier to
-#' pronounce, and throws an error when passed non-vector inputs.
 #'
 #' @seealso [vec_slice()] for a variation of `[` compatible with `vec_size()`,
 #'   and [vec_recycle()] to recycle vectors to common length.
@@ -31,6 +30,17 @@
 #'
 #'   `vec_size_common()` will return `.absent` if all inputs are `NULL` or
 #'   absent.
+#'
+#'
+#' @details
+#'
+#' There is no vctrs helper that retrieves the number of columns: as this
+#' is a property of the [type][vec_ptype()].
+#'
+#' `vec_size()` is equivalent to `NROW()` but has a name that is easier to
+#' pronounce, and throws an error when passed non-vector inputs.
+#'
+#'
 #' @export
 #' @examples
 #' vec_size(1:100)
@@ -78,6 +88,30 @@ vec_size2 <- function(nx, ny) {
   } else {
     abort(paste0("Incompatible lengths: ", nx, ", ", ny, "."))
   }
+}
+
+
+#' @rdname vec_size
+#' @export
+vec_is_empty <- function(x) {
+  vec_size(x) == 0L
+}
+
+#' Default value for empty vectors
+#'
+#' Use this inline operator when you need to provide a default value for
+#' empty (as defined by [vec_is_empty()]) vectors.
+#'
+#' @param x A vector
+#' @param y Value to use to `x` is empty. To preserve type-stability, should
+#'   be the same type as `x`.
+#' @rdname op-empty-default
+#' @export
+#' @examples
+#' 1:10 %0% 5
+#' integer() %0% 5
+`%0%` <- function(x, y) {
+  if (vec_is_empty(x)) y else x
 }
 
 

@@ -3,11 +3,14 @@
 \name{vec_size}
 \alias{vec_size}
 \alias{vec_size_common}
+\alias{vec_is_empty}
 \title{Number of observations}
 \usage{
 vec_size(x)
 
 vec_size_common(..., .size = NULL, .absent = NULL)
+
+vec_is_empty(x)
 }
 \arguments{
 \item{x, ...}{Vector inputs}
@@ -27,11 +30,14 @@ if \code{x} is not a vector or is \code{NULL}.
 absent.
 }
 \description{
-\code{vec_size(x)} returns the size of a vector. This is distinct from the
-\code{\link[=length]{length()}} of a vector because it generalises to the "number of observations"
-for 2d structures, i.e. it's the number of rows in matrix or a data frame.
-This definition has the important property that every column of a data frame
-(even data frame and matrix columns) have the same size.
+\code{vec_size(x)} returns the size of a vector. \code{vec_is_empty()}
+returns \code{TRUE} if the size is zero, \code{FALSE} otherwise.
+
+The size is distinct from the \code{\link[=length]{length()}} of a vector because it
+generalises to the "number of observations" for 2d structures,
+i.e. it's the number of rows in matrix or a data frame.  This
+definition has the important property that every column of a data
+frame (even data frame and matrix columns) have the same size.
 \code{vec_size_common(...)} returns the common size of multiple vectors.
 }
 \details{

@@ -1,6 +1,5 @@
 #' Vector dimensions
 #'
-#' * `vec_is_empty()` returns `TRUE` if `vec_size()` is zero.
 #' * `vec_dims()` gives the dimensionality (i.e. number of dimensions)
 #' * `vec_dim()` returns the size of each dimension
 #'
@@ -16,12 +15,6 @@
 #' dim(x)
 #' vec_dim(x)
 NULL
-
-#' @export
-#' @rdname dims
-vec_is_empty <- function(x) {
-  vec_size(x) == 0L
-}
 
 #' @export
 #' @rdname dims

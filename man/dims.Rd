@@ -2,13 +2,10 @@
 % Please edit documentation in R/dim.R
 \name{dims}
 \alias{dims}
-\alias{vec_is_empty}
 \alias{vec_dim}
 \alias{vec_dims}
 \title{Vector dimensions}
 \usage{
-vec_is_empty(x)
-
 vec_dim(x)
 
 vec_dims(x)
@@ -18,7 +15,6 @@ vec_dims(x)
 }
 \description{
 \itemize{
-\item \code{vec_is_empty()} returns \code{TRUE} if \code{vec_size()} is zero.
 \item \code{vec_dims()} gives the dimensionality (i.e. number of dimensions)
 \item \code{vec_dim()} returns the size of each dimension
 }
