@@ -164,7 +164,7 @@ this is a convenient way to make production code demand fixed types.</p></td>
     </tr>
     <tr>
       <th>.size</th>
-      <td><p>If, <code>NULL</code>, the default, will determing the number of
+      <td><p>If, <code>NULL</code>, the default, will determine the number of
 rows in <code>vec_cbind()</code> output by using the standard recycling rules.</p>
 <p>Alternatively, specify the desired number of rows, and any inputs
 of length 1 will be recycled appropriately.</p></td>
@@ -271,9 +271,9 @@ If there are no non-<code>NULL</code> inputs, the result will be <code><a href='
 #&gt; 1    1    2 1</div><div class='input'>
 <span class='co'># duplicate names are flagged</span>
 <span class='fu'>vec_cbind</span>(<span class='kw'>x</span> <span class='kw'>=</span> <span class='fl'>1</span>, <span class='kw'>x</span> <span class='kw'>=</span> <span class='fl'>2</span>)</div><div class='output co'>#&gt; <span class='message'>New names:</span>
-#&gt; <span class='message'>x -&gt; x..1</span>
-#&gt; <span class='message'>x -&gt; x..2</span></div><div class='output co'>#&gt;   x..1 x..2
-#&gt; 1    1    2</div><div class='input'>
+#&gt; <span class='message'>* x -&gt; x...1</span>
+#&gt; <span class='message'>* x -&gt; x...2</span></div><div class='output co'>#&gt;   x...1 x...2
+#&gt; 1     1     2</div><div class='input'>
 </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
