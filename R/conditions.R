@@ -144,18 +144,18 @@ stop_incompatible_size <- function(x, y,
 
   if (is_null(message)) {
     if (nzchar(x_arg)) {
-      x_name <- paste0("`", x_arg, "` of size")
+      x_name <- paste0("`", x_arg, "`, size")
     } else {
-      x_name <- "vector of size"
+      x_name <- "vector, size"
     }
     if (nzchar(y_arg)) {
-      y_name <- paste0("`", y_arg, "` of size")
+      y_name <- paste0("`", y_arg, "`, size")
     } else {
-      y_name <- "vector of size"
+      y_name <- "vector, size"
     }
 
     message <- glue_lines(
-      "No common size for {x_name} [{x_size}] and {y_name} [{y_size}].",
+      "No common size for {x_name} {x_size}, and {y_name} {y_size}.",
       details
     )
   }
