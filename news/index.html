@@ -129,7 +129,7 @@
 <a href="#vctrs-0-1-0-9000" class="anchor"></a>vctrs 0.1.0.9000<small> Unreleased </small>
 </h1>
 <ul>
-<li><p><code><a href="../reference/vec_empty.html">vec_empty()</a></code> has been renamed to <code><a href="../reference/dims.html">vec_is_empty()</a></code>.</p></li>
+<li><p><code><a href="../reference/vec_empty.html">vec_empty()</a></code> has been renamed to <code><a href="../reference/vec_size.html">vec_is_empty()</a></code>.</p></li>
 <li><p><code>vec_slice&lt;-</code> now has a <code><a href="../reference/vec_slice.html">vec_assign()</a></code> alias. Use <code><a href="../reference/vec_slice.html">vec_assign()</a></code> when you don’t want to modify the original input.</p></li>
 <li><p><code><a href="../reference/vec_proxy_equal.html">vec_proxy_equal()</a></code> has been removed in favour of <code><a href="../reference/vec_data.html">vec_proxy()</a></code>. The latter is the main customisation point in vctrs, and is now used for equality comparison as well. You can still implement <code><a href="../reference/vec_proxy_compare.html">vec_proxy_compare()</a></code> for ordered comparisons.</p></li>
 <li><p><code>vec_slice&lt;-</code> is now type stable (<a href='https://github.com/r-lib/vctrs/issues/140'>#140</a>). It always returns the same type as the LHS. If needed, the RHS is cast to the correct type, but only if both inputs are coercible. See examples in <code><a href="../reference/vec_slice.html">?vec_slice</a></code>.</p></li>

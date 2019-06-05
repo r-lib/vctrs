@@ -32,11 +32,13 @@
 
 <meta property="og:title" content="Number of observations — vec_size" />
 
-<meta property="og:description" content="vec_size(x) returns the size of a vector. This is distinct from the
-length() of a vector because it generalises to the &quot;number of observations&quot;
-for 2d structures, i.e. it's the number of rows in matrix or a data frame.
-This definition has the important property that every column of a data frame
-(even data frame and matrix columns) have the same size.
+<meta property="og:description" content="vec_size(x) returns the size of a vector. vec_is_empty()
+returns TRUE if the size is zero, FALSE otherwise.
+The size is distinct from the length() of a vector because it
+generalises to the &quot;number of observations&quot; for 2d structures,
+i.e. it's the number of rows in matrix or a data frame.  This
+definition has the important property that every column of a data
+frame (even data frame and matrix columns) have the same size.
 vec_size_common(...) returns the common size of multiple vectors." />
 
 <meta property="og:image" content="https://vctrs.r-lib.org/logo.png" />
@@ -134,18 +136,22 @@ vec_size_common(...) returns the common size of multiple vectors." />
 
     <div class="ref-description">
     
-    <p><code>vec_size(x)</code> returns the size of a vector. This is distinct from the
-<code><a href='https://www.rdocumentation.org/packages/base/topics/length'>length()</a></code> of a vector because it generalises to the "number of observations"
-for 2d structures, i.e. it's the number of rows in matrix or a data frame.
-This definition has the important property that every column of a data frame
-(even data frame and matrix columns) have the same size.
+    <p><code>vec_size(x)</code> returns the size of a vector. <code>vec_is_empty()</code>
+returns <code>TRUE</code> if the size is zero, <code>FALSE</code> otherwise.</p>
+<p>The size is distinct from the <code><a href='https://www.rdocumentation.org/packages/base/topics/length'>length()</a></code> of a vector because it
+generalises to the "number of observations" for 2d structures,
+i.e. it's the number of rows in matrix or a data frame.  This
+definition has the important property that every column of a data
+frame (even data frame and matrix columns) have the same size.
 <code>vec_size_common(...)</code> returns the common size of multiple vectors.</p>
     
     </div>
 
     <pre class="usage"><span class='fu'>vec_size</span>(<span class='no'>x</span>)
 
-<span class='fu'>vec_size_common</span>(<span class='no'>...</span>, <span class='kw'>.size</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>.absent</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</pre>
+<span class='fu'>vec_size_common</span>(<span class='no'>...</span>, <span class='kw'>.size</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>.absent</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)
+
+<span class='fu'>vec_is_empty</span>(<span class='no'>x</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
