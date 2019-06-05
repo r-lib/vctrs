@@ -1,5 +1,7 @@
 # vctrs 0.1.0.9000
 
+* New `stop_incompatible_size()` to signal a failure due to mismatched sizes.
+
 * `vec_empty()` has been renamed to `vec_is_empty()`.
 
 * `vec_slice<-` now has a `vec_assign()` alias. Use `vec_assign()`

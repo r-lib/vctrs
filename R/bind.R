@@ -96,83 +96,18 @@ vec_rbind <- function(..., .ptype = NULL) {
 
 #' @export
 #' @rdname vec_bind
-#' @param .size If, `NULL`, the default, will determing the number of
+#' @param .size If, `NULL`, the default, will determine the number of
 #'   rows in `vec_cbind()` output by using the standard recycling rules.
 #'
 #'   Alternatively, specify the desired number of rows, and any inputs
 #'   of length 1 will be recycled appropriately.
 vec_cbind <- function(..., .ptype = NULL, .size = NULL) {
-  args <- list2(...)
-
-  # container type: common type of all (data frame) inputs
-  # compute early so we can fail fast
-  tbl_empty <- map(args, function(x) {
-    if (is.data.frame(x))
-      x[0]
-  })
-  out <- vec_type_common(!!!tbl_empty, .ptype = .ptype[0])
-  if (is.null(out)) {
-    out <- data_frame()
-  }
-
-  is_null <- map_lgl(args, is_null)
-  args <- args[!is_null]
-
-  # container size: common length of all inputs
-  size <- vec_size_common(!!!args, .size = .size, .absent = 0L)
-  args <- map(args, vec_recycle, size = size)
-
-  # convert input to columns and prepare output containers
-  tbls <- map2(args, names2(args), as_df_col)
-
-  ps <- map_int(tbls, length)
-  cols <- vec_na(list(), sum(ps))
-  names <- vec_na(character(), sum(ps))
-
-  col <- 1
-  for (j in seq_along(tbls)) {
-    p <- ps[[j]]
-    if (p == 0L)
-      next
-
-    cols[col:(col + p - 1)] <- tbls[[j]]
-    names[col:(col + p - 1)] <- names(tbls[[j]]) %||% rep("", p)
-    col <- col + p
-  }
-
-  # Need to document these assumptions, or better, move into
-  # a generic
-  attr(out, "row.names") <- .set_row_names(size)
-  out[seq_along(cols)] <- cols
-  if (is_installed("tibble")) {
-    names <- tibble::tidy_names(names)
-  }
-  names(out) <- names
-
-  out
+  .External2(vctrs_cbind, .ptype, .size)
 }
-
-# as_df --------------------------------------------------------------
 
 as_df_row <- function(x, quiet = FALSE) {
   .Call(vctrs_as_df_row, x, quiet)
 }
-
-as_df_col <- function(x, outer_name) UseMethod("as_df_col")
-
-#' @export
-as_df_col.data.frame <- function(x, outer_name = NULL) {
-  names(x) <- outer_names(names(x), outer_name, length(x))
-  x
-}
-
-#' @export
-as_df_col.default <- function(x, outer_name = NULL) {
-  if (vec_dims(x) == 1L) {
-    x <- stats::setNames(list(x), outer_name)
-    new_data_frame(x)
-  } else {
-    colnames(x) <- outer_names(colnames(x), outer_name, ncol(x))
-    as.data.frame(x)
-  }
+as_df_col <- function(x, outer_name) {
+  .Call(vctrs_as_df_col, x, outer_name)
 }

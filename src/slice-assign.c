@@ -14,9 +14,9 @@ static SEXP lgl_assign(SEXP x, SEXP index, SEXP value, bool clone);
 static SEXP int_assign(SEXP x, SEXP index, SEXP value, bool clone);
 static SEXP dbl_assign(SEXP x, SEXP index, SEXP value, bool clone);
 static SEXP cpl_assign(SEXP x, SEXP index, SEXP value, bool clone);
-static SEXP chr_assign(SEXP x, SEXP index, SEXP value, bool clone);
+SEXP chr_assign(SEXP x, SEXP index, SEXP value, bool clone);
 static SEXP raw_assign(SEXP x, SEXP index, SEXP value, bool clone);
-static SEXP list_assign(SEXP x, SEXP index, SEXP value, bool clone);
+SEXP list_assign(SEXP x, SEXP index, SEXP value, bool clone);
 SEXP df_assign(SEXP x, SEXP index, SEXP value, bool clone);
 
 
@@ -142,7 +142,7 @@ static SEXP dbl_assign(SEXP x, SEXP index, SEXP value, bool clone) {
 static SEXP cpl_assign(SEXP x, SEXP index, SEXP value, bool clone) {
   ASSIGN(Rcomplex, COMPLEX, COMPLEX_RO);
 }
-static SEXP chr_assign(SEXP x, SEXP index, SEXP value, bool clone) {
+SEXP chr_assign(SEXP x, SEXP index, SEXP value, bool clone) {
   ASSIGN(SEXP, STRING_PTR, STRING_PTR_RO);
 }
 static SEXP raw_assign(SEXP x, SEXP index, SEXP value, bool clone) {
@@ -202,7 +202,7 @@ static SEXP raw_assign(SEXP x, SEXP index, SEXP value, bool clone) {
     ASSIGN_BARRIER_INDEX(GET, SET);             \
   }
 
-static SEXP list_assign(SEXP x, SEXP index, SEXP value, bool clone) {
+SEXP list_assign(SEXP x, SEXP index, SEXP value, bool clone) {
   ASSIGN_BARRIER(VECTOR_ELT, SET_VECTOR_ELT);
 }
 

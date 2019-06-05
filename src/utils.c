@@ -152,21 +152,26 @@ SEXP vctrs_set_attributes(SEXP x, SEXP attrib) {
   return x;
 }
 
-SEXP df_map(SEXP df, SEXP (*fn)(SEXP)) {
-  R_len_t n = Rf_length(df);
+SEXP map(SEXP x, SEXP (*fn)(SEXP)) {
+  R_len_t n = Rf_length(x);
   SEXP out = PROTECT(Rf_allocVector(VECSXP, n));
 
   for (R_len_t i = 0; i < n; ++i) {
-    SET_VECTOR_ELT(out, i, fn(VECTOR_ELT(df, i)));
+    SET_VECTOR_ELT(out, i, fn(VECTOR_ELT(x, i)));
   }
 
-  // FIXME: Should that be restored?
-  SEXP nms = PROTECT(Rf_getAttrib(df, R_NamesSymbol));
+  SEXP nms = PROTECT(Rf_getAttrib(x, R_NamesSymbol));
   Rf_setAttrib(out, R_NamesSymbol, nms);
 
+  UNPROTECT(2);
+  return out;
+}
+
+SEXP df_map(SEXP df, SEXP (*fn)(SEXP)) {
+  SEXP out = PROTECT(map(df, fn));
   out = df_restore(out, df, vctrs_shared_empty_int);
 
-  UNPROTECT(2);
+  UNPROTECT(1);
   return out;
 }
 
@@ -237,6 +242,11 @@ SEXP s3_find_method(const char* generic, SEXP x) {
 // Initialised at load time
 SEXP compact_seq_attrib = NULL;
 
+void init_compact_seq(int* p, R_len_t from, R_len_t to) {
+  p[0] = from;
+  p[1] = to;
+}
+
 // Returns a compact sequence that `vec_slice()` understands
 SEXP compact_seq(R_len_t from, R_len_t to) {
   if (to < from) {
@@ -246,8 +256,7 @@ SEXP compact_seq(R_len_t from, R_len_t to) {
   SEXP seq = PROTECT(Rf_allocVector(INTSXP, 2));
 
   int* p = INTEGER(seq);
-  p[0] = from;
-  p[1] = to;
+  init_compact_seq(p, from, to);
 
   SET_ATTRIB(seq, compact_seq_attrib);
 
@@ -256,6 +265,16 @@ SEXP compact_seq(R_len_t from, R_len_t to) {
 }
 bool is_compact_seq(SEXP x) {
   return ATTRIB(x) == compact_seq_attrib;
+}
+
+
+static SEXP syms_colnames = NULL;
+static SEXP fns_colnames = NULL;
+
+// [[ include("utils.h") ]]
+SEXP colnames(SEXP x) {
+  return vctrs_dispatch1(syms_colnames, fns_colnames,
+                         syms_x, x);
 }
 
 
@@ -816,9 +835,11 @@ void vctrs_init_utils(SEXP ns) {
 
   syms_as_list = Rf_install("as.list");
   syms_as_data_frame2 = Rf_install("as.data.frame2");
+  syms_colnames = Rf_install("colnames");
+
   fns_as_list = r_env_get(R_BaseEnv, syms_as_list);
   fns_as_data_frame2 = r_env_get(ns, syms_as_data_frame2);
-
+  fns_colnames = r_env_get(R_BaseEnv, syms_colnames);
 
   compact_seq_attrib = Rf_cons(R_NilValue, R_NilValue);
   R_PreserveObject(compact_seq_attrib);

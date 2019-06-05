@@ -57,23 +57,7 @@ vec_size <- function(x) {
 #' @export
 #' @rdname vec_size
 vec_size_common <- function(..., .size = NULL, .absent = NULL) {
-  if (!is.null(.size)) {
-    return(.size)
-  }
-
-  args <- compact(list2(...))
-
-  if (length(args) == 0) {
-    if (is.null(.absent)) {
-      abort("`...` is empty, and no `.absent` value was supplied.")
-    } else {
-      vec_assert(.absent, ptype = integer(), size = 1L)
-      return(.absent)
-    }
-  }
-
-  nobs <- map_int(args, vec_size)
-  reduce(nobs, vec_size2)
+  .External2(vctrs_size_common, .size, .absent)
 }
 
 vec_size2 <- function(nx, ny) {

@@ -128,6 +128,52 @@ stop_incompatible_op <- function(op, x, y, details = NULL, ..., message = NULL, 
 }
 
 #' @rdname vctrs-conditions
+#' @export
+stop_incompatible_size <- function(x, y,
+                                   x_size, y_size,
+                                   x_arg = "", y_arg = "",
+                                   details = NULL,
+                                   ...,
+                                   message = NULL,
+                                   .subclass = NULL) {
+  vec_assert(x)
+  vec_assert(y)
+
+  vec_assert(x_size, int(), 1)
+  vec_assert(y_size, int(), 1)
+
+  if (is_null(message)) {
+    if (nzchar(x_arg)) {
+      x_name <- paste0("`", x_arg, "`, size")
+    } else {
+      x_name <- "vector, size"
+    }
+    if (nzchar(y_arg)) {
+      y_name <- paste0("`", y_arg, "`, size")
+    } else {
+      y_name <- "vector, size"
+    }
+
+    message <- glue_lines(
+      "No common size for {x_name} {x_size}, and {y_name} {y_size}.",
+      details
+    )
+  }
+
+  stop_incompatible(
+    x, y,
+    x_size = x_size,
+    y_size = y_size,
+    x_arg = x_arg,
+    y_arg = y_arg,
+    details = details,
+    ...,
+    message = message,
+    .subclass = c(.subclass, "vctrs_error_incompatible_size")
+  )
+}
+
+#' @rdname vctrs-conditions
 #' @param result The result of a potentially lossy cast.
 #' @param to Type to cast to.
 #' @param lossy A logical vector indicating which elements of `result`

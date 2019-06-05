@@ -141,12 +141,12 @@ test_that("inner names are respected", {
 })
 
 test_that("nameless vectors get tidy defaults", {
-  expect_named(vec_cbind(1:2, 1), c("..1", "..2"))
+  expect_named(vec_cbind(1:2, 1), c("...1", "...2"))
 })
 
 test_that("matrix becomes data frame", {
   x <- matrix(1:4, nrow = 2)
-  expect_equal(vec_cbind(x), data.frame(V1 = 1:2, V2 = 3:4))
+  expect_equal(vec_cbind(x), data.frame(...1 = 1:2, ...2 = 3:4))
 
   # respecting outer names
   expect_equal(vec_cbind(x = x), data.frame(x1 = 1:2, x2 = 3:4))
@@ -154,8 +154,12 @@ test_that("matrix becomes data frame", {
 
 
 test_that("duplicate names are de-deduplicated", {
-  expect_named(vec_cbind(x = 1, x = 1), c("x..1", "x..2"))
-  expect_named(vec_cbind(data.frame(x = 1), data.frame(x = 1)), c("x..1", "x..2"))
+  expect_message(
+    expect_named(vec_cbind(x = 1, x = 1), c("x...1", "x...2")),
+    "x -> x...1",
+    fixed = TRUE
+  )
+  expect_named(vec_cbind(data.frame(x = 1), data.frame(x = 1)), c("x...1", "x...2"))
 })
 
 test_that("rows recycled to longest", {
@@ -188,6 +192,4 @@ test_that("can override default .nrow", {
   expect_dim(vec_cbind(1, .size = 3), c(3, 1))
 })
 
-test_that("can't violate recycling rules", {
-  expect_error(vec_cbind(1:2, .size = 3), "Incompatible")
-})
+

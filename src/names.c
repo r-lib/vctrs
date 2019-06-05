@@ -83,7 +83,8 @@ static bool is_dotdotint(const char* name);
 static ptrdiff_t suffix_pos(const char* name);
 static bool needs_suffix(SEXP str);
 
-static SEXP as_unique_names(SEXP names) {
+// [[ include("vctrs.h") ]]
+SEXP as_unique_names(SEXP names, bool quiet) {
   if (TYPEOF(names) != STRSXP) {
     Rf_errorcall(R_NilValue, "`names` must be a character vector");
   }
@@ -110,7 +111,14 @@ static SEXP as_unique_names(SEXP names) {
     return names;
   }
 
-  names = PROTECT(r_maybe_duplicate(names));
+  SEXP orig;
+  if (!quiet) {
+    orig = PROTECT(Rf_shallow_duplicate(names));
+  } else {
+    orig = R_NilValue;
+    names = PROTECT(r_maybe_duplicate(names));
+  }
+
   ptr = STRING_PTR(names);
 
   for (; i < n; ++i, ++ptr) {
@@ -172,17 +180,16 @@ static SEXP as_unique_names(SEXP names) {
     SET_STRING_ELT(names, i, Rf_mkChar(buf));
   }
 
+  if (!quiet) {
+    describe_repair(orig, names);
+  }
+
   UNPROTECT(2);
   return names;
 }
 
 SEXP vctrs_as_unique_names(SEXP names, SEXP quiet) {
-  SEXP out = PROTECT(as_unique_names(names));
-
-  if (!LOGICAL(quiet)[0]) {
-    describe_repair(names, out);
-  }
-
+  SEXP out = PROTECT(as_unique_names(names, LOGICAL(quiet)[0]));
   UNPROTECT(1);
   return out;
 }
@@ -298,24 +305,25 @@ static bool needs_suffix(SEXP str) {
 
 static SEXP names_iota(R_len_t n);
 
+// [[ include("utils.h") ]]
 SEXP vec_unique_names(SEXP x, bool quiet) {
   SEXP names = PROTECT(Rf_getAttrib(x, R_NamesSymbol));
 
   SEXP out;
   if (names == R_NilValue) {
     out = PROTECT(names_iota(vec_size(x)));
+    if (!quiet) {
+      describe_repair(names, out);
+    }
   } else {
-    out = PROTECT(as_unique_names(names));
-  }
-
-  if (!quiet) {
-    describe_repair(names, out);
+    out = PROTECT(as_unique_names(names, quiet));
   }
 
   UNPROTECT(2);
   return(out);
 }
 
+// [[ register() ]]
 SEXP vctrs_unique_names(SEXP x, SEXP quiet) {
   return vec_unique_names(x, LOGICAL(quiet)[0]);
 }
@@ -342,6 +350,10 @@ static SEXP names_iota(R_len_t n) {
 static void describe_repair(SEXP old, SEXP new) {
   SEXP call = PROTECT(Rf_lang3(Rf_install("describe_repair"), old, new));
   Rf_eval(call, vctrs_ns_env);
+
+  // To reset visibility when called from a `.External2()`
+  Rf_eval(R_NilValue, R_EmptyEnv);
+
   UNPROTECT(1);
 }
 
@@ -358,17 +370,11 @@ SEXP vctrs_outer_names(SEXP names, SEXP outer, SEXP n) {
     Rf_error("Internal error: `n` must be a single integer");
   }
 
-  return outer_names(names, outer, r_int_get(n, 0));
-}
-
-static SEXP str_as_chr(SEXP x) {
-  if (TYPEOF(x) == STRSXP) {
-    return x;
-  } else {
-    SEXP out = Rf_allocVector(STRSXP, 1);
-    SET_STRING_ELT(out, 0, x);
-    return out;
+  if (outer != R_NilValue) {
+    outer = r_chr_get(outer, 0);
   }
+
+  return outer_names(names, outer, r_int_get(n, 0));
 }
 
 // [[ include("utils.h") ]]
@@ -376,35 +382,22 @@ SEXP outer_names(SEXP names, SEXP outer, R_len_t n) {
   if (outer == R_NilValue) {
     return names;
   }
-
-  SEXP outer_str;
-  switch (TYPEOF(outer)) {
-  case STRSXP:
-    if (Rf_length(outer) != 1) {
-      goto bad_outer;
-    }
-    outer_str = STRING_ELT(outer, 0);
-    break;
-  case CHARSXP:
-    outer_str = outer;
-    break;
-  default:
-  bad_outer:
-    Rf_error("Internal error: `outer` must be a string");
+  if (TYPEOF(outer) != CHARSXP) {
+    Rf_error("Internal error: `outer` must be a scalar string.");
   }
 
-  if (outer_str == strings_empty || outer_str == NA_STRING) {
+  if (outer == strings_empty || outer == NA_STRING) {
     return names;
   }
 
   if (r_is_empty_names(names)) {
     if (n == 1) {
-      return str_as_chr(outer);
+      return r_str_as_character(outer);
     } else {
-      return outer_names_seq(CHAR(outer_str), n);
+      return outer_names_seq(CHAR(outer), n);
     }
   } else {
-    return outer_names_cat(CHAR(outer_str), names);
+    return outer_names_cat(CHAR(outer), names);
   }
 }
 

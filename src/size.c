@@ -178,3 +178,15 @@ SEXP vctrs_recycle(SEXP x, SEXP size_obj) {
 
   return vec_recycle(x, size);
 }
+
+
+// [[ include("utils.h") ]]
+R_len_t size_validate(SEXP size, const char* arg) {
+  size = vec_cast(size, vctrs_shared_empty_int);
+
+  if (Rf_length(size) != 1) {
+    Rf_errorcall(R_NilValue, "`%s` must be a single integer.", arg);
+  }
+
+  return r_int_get(size, 0);
+}

@@ -36,8 +36,8 @@ test_that("length 0 causes both outputs to be zero", {
 })
 
 test_that("incompatible lengths get error messages", {
-  expect_error(vec_recycle_common(1:2, 1:3), "Incompatible")
-  expect_error(vec_recycle_common(1:3, 1:2), "Incompatible")
+  expect_error(vec_recycle_common(1:2, 1:3), class = "vctrs_error_incompatible_size")
+  expect_error(vec_recycle_common(1:3, 1:2), class = "vctrs_error_incompatible_size")
 })
 
 # Matrices ----------------------------------------------------------------
