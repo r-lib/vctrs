@@ -145,3 +145,9 @@ test_that("can restore subclasses of data frames", {
   )
   expect_identical(vec_restore(list(), subclass(data.frame())), "dispatched")
 })
+
+test_that("df_as_dataframe() checks for names", {
+  x <- data_frame(1)
+  y <- data_frame(2)
+  expect_error(vec_cast_common(x, y), "must have names")
+})
