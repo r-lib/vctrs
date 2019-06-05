@@ -6,9 +6,10 @@
 #' [vec_unique()] and [vec_duplicate_detect()]); [is.na()] and [anyNA()]
 #' (via [vec_equal_na()]).
 #'
-#' The default method calls [vec_proxy_compare], which makes all vector classes
-#' equal-able by default. If your object is not, provide a
-#' `vec_proxy_equal()` method that throws an error.
+#' The default method calls [vec_proxy()], as the default underlying
+#' vector data should be equal-able in most cases. If your class is
+#' not equal-able, provide a `vec_proxy_equal()` method that throws an
+#' error.
 #'
 #' @param x A vector x.
 #' @return A 1d atomic vector or a data frame.
@@ -17,6 +18,10 @@
 #' @export
 vec_proxy_equal <- function(x) {
   UseMethod("vec_proxy_equal")
+}
+#' @export
+vec_proxy_equal.default <- function(x) {
+  vec_proxy(x)
 }
 
 #' Test if two vectors are equal
