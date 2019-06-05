@@ -192,6 +192,7 @@ bool vec_is_unspecified(SEXP x);
 #include "arg.h"
 
 SEXP vec_proxy(SEXP x);
+SEXP vec_proxy_equal(SEXP x);
 SEXP vec_restore(SEXP x, SEXP to, SEXP i);
 R_len_t vec_size(SEXP x);
 SEXP vec_dim(SEXP x);

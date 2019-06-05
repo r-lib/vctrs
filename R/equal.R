@@ -53,8 +53,8 @@ vec_equal <- function(x, y, na_equal = FALSE, .ptype = NULL) {
   args <- vec_cast_common(!!!args, .to = .ptype)
   .Call(
     vctrs_equal,
-    vec_proxy(args[[1]]),
-    vec_proxy(args[[2]]),
+    vec_proxy_equal(args[[1]]),
+    vec_proxy_equal(args[[2]]),
     na_equal
   )
 }
@@ -62,7 +62,7 @@ vec_equal <- function(x, y, na_equal = FALSE, .ptype = NULL) {
 #' @export
 #' @rdname vec_equal
 vec_equal_na <- function(x) {
-  x <- vec_proxy(x)
+  x <- vec_proxy_equal(x)
   .Call(vctrs_equal_na, x)
 }
 

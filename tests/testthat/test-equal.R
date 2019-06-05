@@ -216,10 +216,29 @@ test_that("NA do not propagate from function bodies or formals", {
 
 # proxy -------------------------------------------------------------------
 
-test_that("vec_equal() is proxied", {
+test_that("vec_equal() takes vec_proxy() by default", {
   scoped_env_proxy()
   x <- new_proxy(1:3)
   y <- new_proxy(3:1)
   expect_identical(vec_equal(x, y), lgl(FALSE, TRUE, FALSE))
 })
 
+test_that("vec_equal() takes vec_proxy_equal() if implemented", {
+  scoped_tuple_methods()
+
+  x <- tuple(1:3, 1:3)
+  y <- tuple(1:3, 4:6)
+
+  # Compare only on first field
+  scoped_global_bindings(
+    vec_proxy_equal.tuple = function(x) field(x, "x")
+  )
+
+  expect_identical(x == y, rep(TRUE, 3))
+  expect_identical(vec_equal(x, y), rep(TRUE, 3))
+
+  # Recursive case
+  foo <- data_frame(x = x)
+  bar <- data_frame(x = y)
+  expect_identical(vec_equal(foo, bar), rep(TRUE, 3))
+})

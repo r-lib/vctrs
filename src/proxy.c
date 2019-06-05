@@ -3,6 +3,8 @@
 
 // Initialised at load time
 SEXP syms_vec_proxy = NULL;
+SEXP syms_vec_proxy_equal = NULL;
+SEXP fns_vec_proxy_equal = NULL;
 
 // Defined below
 SEXP vec_proxy_method(SEXP x);
@@ -41,6 +43,16 @@ SEXP vec_proxy_invoke(SEXP x, SEXP method) {
 }
 
 
+// [[ include("vctrs.h") ]]
+SEXP vec_proxy_equal(SEXP x) {
+  return vctrs_dispatch1(syms_vec_proxy_equal, fns_vec_proxy_equal,
+                         syms_x, x);
+}
+
+
 void vctrs_init_data(SEXP ns) {
   syms_vec_proxy = Rf_install("vec_proxy");
+  syms_vec_proxy_equal = Rf_install("vec_proxy_equal");
+
+  fns_vec_proxy_equal = r_env_get(ns, syms_vec_proxy_equal);
 }
