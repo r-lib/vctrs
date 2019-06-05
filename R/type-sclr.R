@@ -40,7 +40,7 @@ print.vctrs_sclr <- function(x, ...) {
 
 #' @export
 as.list.vctrs_sclr <- function(x, ...) {
-  vec_data(x)
+  vec_set_attributes(x, list(names = names(x)))
 }
 
 #' @export

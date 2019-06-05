@@ -38,3 +38,8 @@ test_that("can take the proxy of non-vector objects", {
   scoped_env_proxy()
   expect_identical(vec_proxy(new_proxy(1:3)), 1:3)
 })
+
+test_that("vec_data() asserts vectorness", {
+  expect_error(vec_data(new_sclr()), class = "vctrs_error_scalar_type")
+  expect_error(vec_data(~foo), class = "vctrs_error_scalar_type")
+})

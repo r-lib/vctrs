@@ -67,9 +67,7 @@
 #'   `vec_restore(vec_data(x), x)` will always yield `x`.
 #' @export
 vec_data <- function(x) {
-  if (!is_vector(x)) {
-    return(x)
-  }
+  vec_assert(x)
 
   # TODO: implement with ALTREP to avoid making a copy
   if (is_record(x)) {
