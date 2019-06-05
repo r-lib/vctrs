@@ -186,6 +186,10 @@ SEXP df_as_dataframe(SEXP x, SEXP to) {
   SEXP x_names = PROTECT(r_names(x));
   SEXP to_names = PROTECT(r_names(to));
 
+  if (x_names == R_NilValue || to_names == R_NilValue) {
+    Rf_error("Internal error in `df_as_dataframe()`: Data frame must have names.");
+  }
+
   SEXP to_dups_pos = PROTECT(vctrs_match(to_names, x_names));
   int* to_dups_pos_data = INTEGER(to_dups_pos);
 

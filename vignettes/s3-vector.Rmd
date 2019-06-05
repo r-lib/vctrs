@@ -627,17 +627,21 @@ decimal2(10, c(0, 5, 99))
 
 ## Equality and comparison
 
-vctrs provides two "proxy" generics that lets you control how your class determines equality and ordering:
+vctrs provides three "proxy" generics. Two of those let you control how your class determines equality and ordering:
 
-* `vec_proxy()` returns the actual data of a vector. It is used in most vctrs primitives, including equality comparison. It underpins `==`, `!=`, `unique()`, `anyDuplicated()`, and `is.na()`.
+* `vec_proxy_equal()` returns a data vector suitable for comparison. It underpins `==`, `!=`, `unique()`, `anyDuplicated()`, and `is.na()`. By default, it just calls `vec_proxy()`.
 
 * `vec_proxy_compare()` specifies how to compare the elements of your vector.
   This proxy is used in `<`, `<=`, `>=`, `>`, `min()`, `max()`, `median()`, 
   `quantile()`, and `xtfrm()` (used in `order()` and `sort()`) methods. 
 
-It's a good idea to define methods for these generics because you get a lot of behaviour for relatively little work.
+By default, `vec_proxy_equal()` and `vec_proxy_compare()` just call `vec_proxy()`.
 
-These proxy functions should always return a simple object (typically either a bare vector or a data frame), that possesses the same properties as your class. This permits efficient implementation of the vctrs internals because it allows dispatch to happen once in R, and then efficient computations can be written in C.
+* `vec_proxy()` returns the actual data of a vector. This is useful when you store the data in a field of your class. Most of the time, you shouldn't need to implement `vec_proxy()`.
+
+You should only implement these proxies when some preprocessing on the data is needed to make elements comparable. In that case, defining these methods will get you a lot of behaviour for relatively little work.
+
+These proxy functions should always return a simple object (either a bare vector or a data frame), that possesses the same properties as your class. This permits efficient implementation of the vctrs internals because it allows dispatch to happen once in R, and then efficient computations can be written in C.
 
 ### Rational class
 
@@ -652,7 +656,7 @@ vec_proxy(x)
 x == rational(1, 1)
 ```
 
-This makes sense as a default, but isn't correct here because `rational(1, 1)` represents the same number as `rational(2, 2)` so they should be equal. We can fix that by implementing a `vec_proxy()` method that by divides `n` and `d` by their greatest common divisor:
+This makes sense as a default, but isn't correct here because `rational(1, 1)` represents the same number as `rational(2, 2)` so they should be equal. We can fix that by implementing a `vec_proxy_equal()` method that by divides `n` and `d` by their greatest common divisor:
 
 ```{r}
 # Thanks to Matthew Lundberg: https://stackoverflow.com/a/21504113/16632 
@@ -661,7 +665,7 @@ gcd <- function(x, y) {
   ifelse(r, gcd(y, r), y)
 }
 
-vec_proxy.vctrs_rational <- function(x) {
+vec_proxy_equal.vctrs_rational <- function(x) {
   n <- field(x, "n")
   d <- field(x, "d")
   gcd <- gcd(n, d)
@@ -673,13 +677,13 @@ vec_proxy(x)
 x == rational(1, 1)
 ```
 
-`vec_proxy()` is also used by `unique()`:
+`vec_proxy_equal()` is also used by `unique()`:
 
 ```{r}
 unique(x)
 ```
 
-We need fix `sort()` similarly, since it currently sorts by `n`, then by `d`:
+We now need to fix `sort()` similarly, since it currently sorts by `n`, then by `d`:
 
 ```{r}
 sort(x)
@@ -695,7 +699,8 @@ vec_proxy_compare.vctrs_rational <- function(x) {
 sort(x)
 ```
 
-(We could have used the same approach in `vec_proxy()`, but when working with floating point numbers it's not necessarily true that `x == y` implies that `d * x == d * y`.)
+(We could have used the same approach in `vec_proxy_equal()`, but when working with floating point numbers it's not necessarily true that `x == y` implies that `d * x == d * y`.)
+
 
 ### Polynomial class
 

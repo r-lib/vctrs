@@ -1,3 +1,29 @@
+#' Equality proxy
+#'
+#' Returns a proxy object (i.e. an atomic vector or data frame of atomic
+#' vectors). For [vctr]s, this determines the behaviour of `==` and
+#' `!=` (via [vec_equal()]); [unique()], [duplicated()] (via
+#' [vec_unique()] and [vec_duplicate_detect()]); [is.na()] and [anyNA()]
+#' (via [vec_equal_na()]).
+#'
+#' The default method calls [vec_proxy()], as the default underlying
+#' vector data should be equal-able in most cases. If your class is
+#' not equal-able, provide a `vec_proxy_equal()` method that throws an
+#' error.
+#'
+#' @param x A vector x.
+#' @return A 1d atomic vector or a data frame.
+#' @keywords internal
+#'
+#' @export
+vec_proxy_equal <- function(x) {
+  UseMethod("vec_proxy_equal")
+}
+#' @export
+vec_proxy_equal.default <- function(x) {
+  vec_proxy(x)
+}
+
 #' Test if two vectors are equal
 #'
 #' `vec_equal_na()` tests a special case: equality with `NA`. It is similar to
@@ -27,8 +53,8 @@ vec_equal <- function(x, y, na_equal = FALSE, .ptype = NULL) {
   args <- vec_cast_common(!!!args, .to = .ptype)
   .Call(
     vctrs_equal,
-    vec_proxy(args[[1]]),
-    vec_proxy(args[[2]]),
+    vec_proxy_equal(args[[1]]),
+    vec_proxy_equal(args[[2]]),
     na_equal
   )
 }
@@ -36,7 +62,7 @@ vec_equal <- function(x, y, na_equal = FALSE, .ptype = NULL) {
 #' @export
 #' @rdname vec_equal
 vec_equal_na <- function(x) {
-  x <- vec_proxy(x)
+  x <- vec_proxy_equal(x)
   .Call(vctrs_equal_na, x)
 }
 

@@ -144,8 +144,8 @@ static int df_equal_scalar(SEXP x, R_len_t i, SEXP y, R_len_t j, bool na_equal) 
   }
 
   for (int k = 0; k < p; ++k) {
-    SEXP col_x = PROTECT(vec_proxy(VECTOR_ELT(x, k)));
-    SEXP col_y = PROTECT(vec_proxy(VECTOR_ELT(y, k)));
+    SEXP col_x = PROTECT(vec_proxy_equal(VECTOR_ELT(x, k)));
+    SEXP col_y = PROTECT(vec_proxy_equal(VECTOR_ELT(y, k)));
 
     int eq = equal_scalar(col_x, i, col_y, j, na_equal);
     UNPROTECT(2);

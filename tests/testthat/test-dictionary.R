@@ -100,6 +100,14 @@ test_that("vec_unique() works with 1D arrays", {
   expect_identical(vec_unique(x), new_vctr(c(1, 1, 2, 1), dim = c(2, 2)))
 })
 
+test_that("unique functions take the equality proxy (#375)", {
+  scoped_comparable_tuple()
+  x <- tuple(c(1, 2, 1), 1:3)
+
+  expect_true(vec_in(tuple(2, 100), x))
+  expect_identical(vec_match(tuple(2, 100), x), 2L)
+})
+
 
 # matching ----------------------------------------------------------------
 
@@ -123,6 +131,20 @@ test_that("vec_match works with empty data frame", {
     new_data_frame(n = 0L)
   )
   expect_equal(out, vec_na(integer(), 3))
+})
+
+test_that("matching functions take the equality proxy (#375)", {
+  scoped_comparable_tuple()
+  x <- tuple(c(1, 2, 1), 1:3)
+
+  expect_identical(vec_unique_loc(x), 1:2)
+  expect_identical(unique(x), tuple(c(1, 2), 1:2))
+
+  expect_true(vec_duplicate_any(x))
+  expect_identical(vec_duplicate_id(x), c(1L, 2L, 1L))
+  expect_identical(vec_unique_count(x), 2L)
+
+  expect_identical(vec_duplicate_detect(x), c(TRUE, FALSE, TRUE))
 })
 
 
@@ -153,4 +175,10 @@ test_that("x and by must be same size", {
     vec_split(1:3, 1:2),
     "same size"
   )
+})
+
+test_that("split takes the equality proxy (#375)", {
+  scoped_comparable_tuple()
+  x <- tuple(c(1, 2, 1), 1:3)
+  expect_identical(nrow(vec_split(1:3, x)), 2L)
 })
