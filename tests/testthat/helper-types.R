@@ -65,6 +65,16 @@ set_tuple_methods <- function(env = global_env()) {
   env_bind(env, !!!tuple_methods)
 }
 
+
+scoped_comparable_tuple <- function(frame = caller_env()) {
+  scoped_tuple_methods(frame = frame)
+
+  # Compare only on first field
+  scoped_global_bindings(.frame = frame,
+    vec_proxy_equal.tuple = function(x) field(x, "x")
+  )
+}
+
 c_na <- function(...) {
   x <- c(...)
   names(x)[names(x) == ""] <- NA_character_

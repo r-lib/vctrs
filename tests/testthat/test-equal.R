@@ -224,15 +224,10 @@ test_that("vec_equal() takes vec_proxy() by default", {
 })
 
 test_that("vec_equal() takes vec_proxy_equal() if implemented", {
-  scoped_tuple_methods()
+  scoped_comparable_tuple()
 
   x <- tuple(1:3, 1:3)
   y <- tuple(1:3, 4:6)
-
-  # Compare only on first field
-  scoped_global_bindings(
-    vec_proxy_equal.tuple = function(x) field(x, "x")
-  )
 
   expect_identical(x == y, rep(TRUE, 3))
   expect_identical(vec_equal(x, y), rep(TRUE, 3))

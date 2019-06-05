@@ -105,7 +105,7 @@ void dict_put(dictionary* d, uint32_t hash, R_len_t i) {
 // TODO: separate out into individual files
 
 SEXP vctrs_unique_loc(SEXP x) {
-  x = PROTECT(vec_proxy(x));
+  x = PROTECT(vec_proxy_equal(x));
 
   dictionary d;
   dict_init(&d, x);
@@ -132,7 +132,7 @@ SEXP vctrs_unique_loc(SEXP x) {
 }
 
 SEXP vctrs_duplicated_any(SEXP x) {
-  x = PROTECT(vec_proxy(x));
+  x = PROTECT(vec_proxy_equal(x));
 
   dictionary d;
   dict_init(&d, x);
@@ -158,7 +158,7 @@ SEXP vctrs_duplicated_any(SEXP x) {
 }
 
 SEXP vctrs_n_distinct(SEXP x) {
-  x = PROTECT(vec_proxy(x));
+  x = PROTECT(vec_proxy_equal(x));
 
   dictionary d;
   dict_init(&d, x);
@@ -177,7 +177,7 @@ SEXP vctrs_n_distinct(SEXP x) {
 }
 
 SEXP vctrs_id(SEXP x) {
-  x = PROTECT(vec_proxy(x));
+  x = PROTECT(vec_proxy_equal(x));
 
   dictionary d;
   dict_init(&d, x);
@@ -208,8 +208,8 @@ SEXP vctrs_match(SEXP needles, SEXP haystack) {
   needles = PROTECT(vec_cast(needles, type));
   haystack = PROTECT(vec_cast(haystack, type));
 
-  needles = PROTECT(vec_proxy(needles));
-  haystack = PROTECT(vec_proxy(haystack));
+  needles = PROTECT(vec_proxy_equal(needles));
+  haystack = PROTECT(vec_proxy_equal(haystack));
   UNPROTECT(3);
 
   dictionary d;
@@ -255,8 +255,8 @@ SEXP vctrs_in(SEXP needles, SEXP haystack) {
   needles = PROTECT(vec_cast(needles, type));
   haystack = PROTECT(vec_cast(haystack, type));
 
-  needles = PROTECT(vec_proxy(needles));
-  haystack = PROTECT(vec_proxy(haystack));
+  needles = PROTECT(vec_proxy_equal(needles));
+  haystack = PROTECT(vec_proxy_equal(haystack));
   UNPROTECT(3);
 
   dictionary d;
@@ -338,7 +338,7 @@ SEXP vctrs_count(SEXP x) {
 }
 
 SEXP vctrs_duplicated(SEXP x) {
-  x = PROTECT(vec_proxy(x));
+  x = PROTECT(vec_proxy_equal(x));
 
   dictionary d;
   dict_init(&d, x);
@@ -372,7 +372,7 @@ SEXP vctrs_duplicated(SEXP x) {
 }
 
 SEXP vctrs_duplicate_split(SEXP x) {
-  x = PROTECT(vec_proxy(x));
+  x = PROTECT(vec_proxy_equal(x));
 
   dictionary d;
   dict_init(&d, x);
