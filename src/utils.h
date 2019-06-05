@@ -66,6 +66,7 @@ bool is_compact_rownames(SEXP x);
 R_len_t compact_rownames_length(SEXP x);
 SEXP df_container_type(SEXP x);
 
+void init_compact_seq(int* p, R_len_t from, R_len_t to);
 SEXP compact_seq(R_len_t from, R_len_t to);
 bool is_compact_seq(SEXP x);
 

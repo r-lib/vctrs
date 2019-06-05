@@ -242,6 +242,11 @@ SEXP s3_find_method(const char* generic, SEXP x) {
 // Initialised at load time
 SEXP compact_seq_attrib = NULL;
 
+void init_compact_seq(int* p, R_len_t from, R_len_t to) {
+  p[0] = from;
+  p[1] = to;
+}
+
 // Returns a compact sequence that `vec_slice()` understands
 SEXP compact_seq(R_len_t from, R_len_t to) {
   if (to < from) {
@@ -251,8 +256,7 @@ SEXP compact_seq(R_len_t from, R_len_t to) {
   SEXP seq = PROTECT(Rf_allocVector(INTSXP, 2));
 
   int* p = INTEGER(seq);
-  p[0] = from;
-  p[1] = to;
+  init_compact_seq(p, from, to);
 
   SET_ATTRIB(seq, compact_seq_attrib);
 

@@ -75,9 +75,7 @@ static SEXP vec_rbind(SEXP xs, SEXP ptype) {
     }
 
     SEXP tbl = PROTECT(vec_cast(VECTOR_ELT(xs, i), ptype));
-    idx_ptr[0] = counter;
-    idx_ptr[1] = counter + size;
-
+    init_compact_seq(idx_ptr, counter, counter + size);
     df_assign(out, idx, tbl, false);
 
     counter += size;
@@ -207,9 +205,7 @@ static SEXP vec_cbind(SEXP xs, SEXP ptype, SEXP size) {
     }
 
     R_len_t xn = Rf_length(x);
-    idx_ptr[0] = counter;
-    idx_ptr[1] = counter + xn;
-
+    init_compact_seq(idx_ptr, counter, counter + xn);
     list_assign(out, idx, x, false);
 
     SEXP xnms = PROTECT(r_names(x));
