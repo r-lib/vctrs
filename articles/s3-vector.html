@@ -628,7 +628,7 @@
 <p>We need fix <code><a href="https://www.rdocumentation.org/packages/base/topics/sort">sort()</a></code> similarly, since it currently sorts by <code>n</code>, then by <code>d</code>:</p>
 <div class="sourceCode" id="cb48"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb48-1" data-line-number="1"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/sort">sort</a></span>(x)</a>
 <a class="sourceLine" id="cb48-2" data-line-number="2"><span class="co">#&gt; &lt;rational[4]&gt;</span></a>
-<a class="sourceLine" id="cb48-3" data-line-number="3"><span class="co">#&gt; [1] 1/1 1/2 2/1 1/1</span></a></code></pre></div>
+<a class="sourceLine" id="cb48-3" data-line-number="3"><span class="co">#&gt; [1] 1/1 1/1 1/2 2/1</span></a></code></pre></div>
 <p>The easiest fix is to convert the fraction to a decimal and then sort that:</p>
 <div class="sourceCode" id="cb49"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb49-1" data-line-number="1">vec_proxy_compare.vctrs_rational &lt;-<span class="st"> </span><span class="cf">function</span>(x) {</a>
 <a class="sourceLine" id="cb49-2" data-line-number="2">  <span class="kw"><a href="../reference/fields.html">field</a></span>(x, <span class="st">"n"</span>) <span class="op">/</span><span class="st"> </span><span class="kw"><a href="../reference/fields.html">field</a></span>(x, <span class="st">"d"</span>)</a>
