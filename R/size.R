@@ -19,17 +19,16 @@
 #' * `vec_size(matrix)` == `vec_size(matrix[, i, drop = FALSE])`
 #' * `vec_size(vec_c(x, y))` == `vec_size(x)` + `vec_size(y)`
 #'
-#' @param x,... Vector inputs
+#' @param x,... Vector inputs or `NULL`.
 #' @param .size If `NULL`, the default, the output size is determined by
 #'   recycling the lengths of all elements of `...`. Alternatively, you can
 #'   supply `.size` to force a known size.
 #' @param .absent The size used when no input is provided, or when all input
 #' is `NULL`. If left as `NULL` when no input is supplied, an error is thrown.
-#' @return An integer (or double for long vectors). Will throw an error
-#'   if `x` is not a vector or is `NULL`.
+#' @return An integer (or double for long vectors).
 #'
-#'   `vec_size_common()` will return `.absent` if all inputs are `NULL` or
-#'   absent.
+#'   `vec_size_common()` returns `.absent` if all inputs are `NULL` or
+#'   absent, `0L` by default.
 #'
 #'
 #' @details
@@ -39,6 +38,24 @@
 #'
 #' `vec_size()` is equivalent to `NROW()` but has a name that is easier to
 #' pronounce, and throws an error when passed non-vector inputs.
+#'
+#'
+#' @section The size of NULL:
+#'
+#' The size of `NULL` is hard-coded to `0L` in `vec_size()`.
+#' `vec_size_common()` returns `.absent` when all inputs are `NULL`
+#' (if only some inputs are `NULL`, they are simply ignored).
+#'
+#' A default size of 0 makes sense because sizes are most often
+#' queried in order to compute a total size while assembling a
+#' collection of vectors. Since we treat `NULL` as an absent input by
+#' principle, we return the identity of sizes under addition to
+#' reflect that an absent input doesn't take up any size.
+#'
+#' Note that other defaults might make sense under different
+#' circumstances. For instance, a default size of 1 makes sense for
+#' finding the common size because 1 is the identity of the recycling
+#' rules.
 #'
 #'
 #' @export
@@ -56,7 +73,7 @@ vec_size <- function(x) {
 
 #' @export
 #' @rdname vec_size
-vec_size_common <- function(..., .size = NULL, .absent = NULL) {
+vec_size_common <- function(..., .size = NULL, .absent = 0L) {
   .External2(vctrs_size_common, .size, .absent)
 }
 

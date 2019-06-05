@@ -8,12 +8,12 @@
 \usage{
 vec_size(x)
 
-vec_size_common(..., .size = NULL, .absent = NULL)
+vec_size_common(..., .size = NULL, .absent = 0L)
 
 vec_is_empty(x)
 }
 \arguments{
-\item{x, ...}{Vector inputs}
+\item{x, ...}{Vector inputs or \code{NULL}.}
 
 \item{.size}{If \code{NULL}, the default, the output size is determined by
 recycling the lengths of all elements of \code{...}. Alternatively, you can
@@ -23,11 +23,10 @@ supply \code{.size} to force a known size.}
 is \code{NULL}. If left as \code{NULL} when no input is supplied, an error is thrown.}
 }
 \value{
-An integer (or double for long vectors). Will throw an error
-if \code{x} is not a vector or is \code{NULL}.
+An integer (or double for long vectors).
 
-\code{vec_size_common()} will return \code{.absent} if all inputs are \code{NULL} or
-absent.
+\code{vec_size_common()} returns \code{.absent} if all inputs are \code{NULL} or
+absent, \code{0L} by default.
 }
 \description{
 \code{vec_size(x)} returns the size of a vector. \code{vec_is_empty()}
@@ -54,6 +53,25 @@ pronounce, and throws an error when passed non-vector inputs.
 \item \code{vec_size(matrix)} == \code{vec_size(matrix[, i, drop = FALSE])}
 \item \code{vec_size(vec_c(x, y))} == \code{vec_size(x)} + \code{vec_size(y)}
 }
+}
+
+\section{The size of NULL}{
+
+
+The size of \code{NULL} is hard-coded to \code{0L} in \code{vec_size()}.
+\code{vec_size_common()} returns \code{.absent} when all inputs are \code{NULL}
+(if only some inputs are \code{NULL}, they are simply ignored).
+
+A default size of 0 makes sense because sizes are most often
+queried in order to compute a total size while assembling a
+collection of vectors. Since we treat \code{NULL} as an absent input by
+principle, we return the identity of sizes under addition to
+reflect that an absent input doesn't take up any size.
+
+Note that other defaults might make sense under different
+circumstances. For instance, a default size of 1 makes sense for
+finding the common size because 1 is the identity of the recycling
+rules.
 }
 
 \examples{

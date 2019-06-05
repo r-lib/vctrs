@@ -159,7 +159,7 @@ static SEXP vec_cbind(SEXP xs, SEXP ptype, SEXP size) {
 
   R_len_t nrow;
   if (size == R_NilValue) {
-    nrow = vec_size_common(xs);
+    nrow = vec_size_common(xs, 0);
   } else {
     nrow = size_validate(size, ".size");
   }

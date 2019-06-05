@@ -28,7 +28,8 @@ R_len_t vec_size(SEXP x) {
   R_len_t size;
   switch (info.type) {
   case vctrs_type_null:
-    Rf_errorcall(R_NilValue, "The size of `NULL` is not defined.");
+    size = 0;
+    break;
   case vctrs_type_logical:
   case vctrs_type_integer:
   case vctrs_type_double:

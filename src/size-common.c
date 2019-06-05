@@ -19,7 +19,7 @@ SEXP vctrs_size_common(SEXP call, SEXP op, SEXP args, SEXP env) {
   }
 
   SEXP xs = PROTECT(rlang_env_dots_list(env));
-  R_len_t common = vec_size_common(xs);
+  R_len_t common = vec_size_common(xs, -1);
 
   SEXP out;
   if (common < 0) {
@@ -39,12 +39,12 @@ SEXP vctrs_size_common(SEXP call, SEXP op, SEXP args, SEXP env) {
 static SEXP vctrs_size2_common(SEXP x, SEXP y, struct counters* counters);
 
 // [[ include("vctrs.h") ]]
-R_len_t vec_size_common(SEXP xs) {
+R_len_t vec_size_common(SEXP xs, R_len_t absent) {
   SEXP common = PROTECT(reduce(R_NilValue, args_empty, xs, &vctrs_size2_common));
   R_len_t out;
 
   if (common == R_NilValue) {
-    out = -1;
+    out = absent;
   } else {
     out = vec_size(common);
   }
