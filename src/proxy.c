@@ -45,8 +45,12 @@ SEXP vec_proxy_invoke(SEXP x, SEXP method) {
 
 // [[ include("vctrs.h") ]]
 SEXP vec_proxy_equal(SEXP x) {
-  return vctrs_dispatch1(syms_vec_proxy_equal, fns_vec_proxy_equal,
-                         syms_x, x);
+  if (vec_typeof(x) == vctrs_type_s3) {
+    return vctrs_dispatch1(syms_vec_proxy_equal, fns_vec_proxy_equal,
+                           syms_x, x);
+  } else {
+    return x;
+  }
 }
 
 
