@@ -139,6 +139,9 @@ stop_incompatible_size <- function(x, y,
   vec_assert(x)
   vec_assert(y)
 
+  vec_assert(x_size, int(), 1)
+  vec_assert(y_size, int(), 1)
+
   if (is_null(message)) {
     if (nzchar(x_arg)) {
       x_name <- paste0("`", x_arg, "` of size")
