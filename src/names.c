@@ -1,8 +1,12 @@
 #include "vctrs.h"
 #include "utils.h"
 
+#include <ctype.h>
+
 static void describe_repair(SEXP old, SEXP new);
 
+// 3 leading '.' + 1 trailing '\0' + 24 characters
+static const int max_iota_size = 28;
 
 // [[ register(); include("vctrs.h") ]]
 SEXP vec_names(SEXP x) {
@@ -136,19 +140,13 @@ SEXP as_unique_names_impl(SEXP names, bool quiet) {
     const char* nm = CHAR(elt);
     int pos = suffix_pos(nm);
     if (pos >= 0) {
-      R_CheckStack2(pos + 1);
-      char buf[pos + 1];
-      memcpy(buf, nm, pos);
-      buf[pos] = '\0';
-
-      elt = Rf_mkChar(buf);
+      elt = Rf_mkCharLenCE(nm, pos, Rf_getCharCE(elt));
       SET_STRING_ELT(new_names, i, elt);
       continue;
     }
   }
 
   // Append all duplicates with a suffix
-  char buf[100] = "";
 
   SEXP dups = PROTECT(vctrs_duplicated(new_names));
   int* const dups_ptr = LOGICAL(dups);
@@ -162,21 +160,22 @@ SEXP as_unique_names_impl(SEXP names, bool quiet) {
 
     const char* name = CHAR(elt);
 
-    int remaining = 100;
-    int size = strlen(name);
-    if (size >= 100) {
-      stop_large_name();
-    }
+    const int size = strlen(name);
+    const int buf_size = size + max_iota_size;
 
-    memcpy(buf, name, size + 1);
-    remaining -= size;
+    R_CheckStack2(buf_size);
+    char buf[buf_size];
+    buf[0] = '\0';
 
-    int needed = snprintf(buf + size, remaining, "...%d", i + 1);
+    memcpy(buf, name, size);
+    const int remaining = buf_size - size;
+
+    const int needed = snprintf(buf + size, remaining, "...%d", i + 1);
     if (needed >= remaining) {
       stop_large_name();
     }
 
-    SET_STRING_ELT(new_names, i, Rf_mkChar(buf));
+    SET_STRING_ELT(new_names, i, Rf_mkCharLenCE(buf, size + needed, Rf_getCharCE(elt)));
   }
 
   if (!quiet) {
