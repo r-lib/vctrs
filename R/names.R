@@ -253,20 +253,12 @@ as_unique_names <- function(names, quiet = FALSE) {
   .Call(vctrs_as_unique_names, names, quiet)
 }
 as_universal_names <- function(names, quiet = FALSE) {
-  as_unique_names_impl(names, quiet, TRUE)
-}
-
-as_unique_names_impl <- function(names, quiet, syntactic) {
   new_names <- rep_along(names, "")
 
   naked_names <- strip_pos(two_to_three_dots(names))
   empty <- naked_names %in% c("", "...")
 
-  if (syntactic) {
-    new_names[!empty] <- make_syntactic(naked_names[!empty])
-  } else {
-    new_names[!empty] <- naked_names[!empty]
-  }
+  new_names[!empty] <- make_syntactic(naked_names[!empty])
 
   needs_suffix <- empty | vec_duplicate_detect(new_names)
   new_names <- append_pos(new_names, needs_suffix = needs_suffix)
