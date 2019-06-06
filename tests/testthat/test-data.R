@@ -49,3 +49,23 @@ test_that("vec_data() is proxied", {
   x <- new_proxy(mtcars)
   expect_identical(vec_data(x), vec_data(mtcars))
 })
+
+# Invariants ---------------------------------------------------------------
+
+test_that("vec_data() preserves names (#245)", {
+  x <- set_names(letters, LETTERS)
+  expect_identical(vec_names(x), vec_names(vec_data(x)))
+
+  x <- diag(2)
+  rownames(x) <- letters[1:2]
+  colnames(x) <- LETTERS[1:2]
+  expect_identical(vec_names(x), vec_names(vec_data(x)))
+})
+
+test_that("vec_data() preserves shape (#245)", {
+  x <- set_names(letters, LETTERS)
+  expect_identical(vec_size(x), vec_size(vec_data(x)))
+
+  x <- diag(2)
+  expect_identical(vec_size(x), vec_size(vec_data(x)))
+})
