@@ -327,12 +327,9 @@ SEXP vctrs_unique_names(SEXP x, SEXP quiet) {
 }
 
 
-// 3 leading '.' + 1 trailing '\0' + 24 characters
-#define TOTAL_BUF_SIZE 28
-
 static SEXP names_iota(R_len_t n) {
-  char buf[TOTAL_BUF_SIZE];
-  SEXP nms = r_chr_iota(n, buf, TOTAL_BUF_SIZE, "...");
+  char buf[max_iota_size];
+  SEXP nms = r_chr_iota(n, buf, max_iota_size, "...");
 
   if (nms == R_NilValue) {
     Rf_errorcall(R_NilValue, "Too many names to repair.");
@@ -341,8 +338,6 @@ static SEXP names_iota(R_len_t n) {
   return nms;
 }
 
-#undef TOTAL_BUF_SIZE
-#undef FREE_BUF_SIZE
 
 
 static void describe_repair(SEXP old, SEXP new) {
