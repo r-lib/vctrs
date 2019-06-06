@@ -78,6 +78,7 @@ SEXP vctrs_minimal_names(SEXP x) {
 // From dictionary.c
 SEXP vctrs_duplicated(SEXP x);
 
+static SEXP as_unique_names_impl(SEXP names, bool quiet);
 static void stop_large_name();
 static bool is_dotdotint(const char* name);
 static ptrdiff_t suffix_pos(const char* name);
@@ -90,18 +91,18 @@ SEXP as_unique_names(SEXP names, bool quiet) {
   }
 
   R_len_t i = 0;
-  R_len_t n = Rf_length(names);
-  SEXP* ptr = STRING_PTR(names);
+  const R_len_t n = Rf_length(names);
+  SEXP* const names_ptr = STRING_PTR(names);
 
   SEXP dups = PROTECT(vctrs_duplicated(names));
-  int* dups_ptr = LOGICAL(dups);
+  int* const dups_ptr = LOGICAL(dups);
 
   // First quick pass to detect if any repairs are needed. See second
   // part of the loop for the meaning of each branch.
-  for (; i < n; ++i, ++ptr, ++dups_ptr) {
-    SEXP elt = *ptr;
+  for (; i < n; ++i) {
+    SEXP elt = names_ptr[i];
 
-    if (needs_suffix(elt) || suffix_pos(CHAR(elt)) >= 0 || *dups_ptr) {
+    if (needs_suffix(elt) || suffix_pos(CHAR(elt)) >= 0 || dups_ptr[i]) {
       break;
     }
   }
@@ -109,26 +110,25 @@ SEXP as_unique_names(SEXP names, bool quiet) {
 
   if (i == n) {
     return names;
-  }
-
-  SEXP orig;
-  if (!quiet) {
-    orig = PROTECT(Rf_shallow_duplicate(names));
   } else {
-    orig = R_NilValue;
-    names = PROTECT(r_maybe_duplicate(names));
+    return(as_unique_names_impl(names, quiet));
   }
+}
 
-  ptr = STRING_PTR(names);
+SEXP as_unique_names_impl(SEXP names, bool quiet) {
+  const R_len_t n = Rf_length(names);
 
-  for (; i < n; ++i, ++ptr) {
-    SEXP elt = *ptr;
+  SEXP new_names = PROTECT(Rf_shallow_duplicate(names));
+  SEXP* const new_names_ptr = STRING_PTR(new_names);
+
+  for (R_len_t i = 0; i < n; ++i) {
+    SEXP elt = new_names_ptr[i];
 
     // Set `NA` and dots values to "" so they get replaced by `...n`
     // later on
     if (needs_suffix(elt)) {
       elt = strings_empty;
-      SET_STRING_ELT(names, i, elt);
+      SET_STRING_ELT(new_names, i, elt);
       continue;
     }
 
@@ -142,20 +142,19 @@ SEXP as_unique_names(SEXP names, bool quiet) {
       buf[pos] = '\0';
 
       elt = Rf_mkChar(buf);
-      SET_STRING_ELT(names, i, elt);
+      SET_STRING_ELT(new_names, i, elt);
       continue;
     }
   }
 
   // Append all duplicates with a suffix
   char buf[100] = "";
-  ptr = STRING_PTR(names);
 
-  dups = PROTECT(vctrs_duplicated(names));
-  dups_ptr = LOGICAL(dups);
+  SEXP dups = PROTECT(vctrs_duplicated(new_names));
+  int* const dups_ptr = LOGICAL(dups);
 
-  for (R_len_t i = 0; i < n; ++i, ++ptr) {
-    SEXP elt = *ptr;
+  for (R_len_t i = 0; i < n; ++i) {
+    SEXP elt = new_names_ptr[i];
 
     if (elt != strings_empty && !dups_ptr[i]) {
       continue;
@@ -177,15 +176,15 @@ SEXP as_unique_names(SEXP names, bool quiet) {
       stop_large_name();
     }
 
-    SET_STRING_ELT(names, i, Rf_mkChar(buf));
+    SET_STRING_ELT(new_names, i, Rf_mkChar(buf));
   }
 
   if (!quiet) {
-    describe_repair(orig, names);
+    describe_repair(names, new_names);
   }
 
   UNPROTECT(2);
-  return names;
+  return new_names;
 }
 
 SEXP vctrs_as_unique_names(SEXP names, SEXP quiet) {
