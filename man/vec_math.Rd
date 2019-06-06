@@ -23,7 +23,7 @@ group generics, the Math group generics, and a handful of other
 mathematical functions like \code{mean()}.
 }
 \details{
-\code{vec_base_arith()} is provided as a convenience for writing methods. It
+\code{vec_math_base()} is provided as a convenience for writing methods. It
 calls the base \code{fun} on the underlying \code{\link[=vec_data]{vec_data()}}.
 }
 \section{Included functions}{

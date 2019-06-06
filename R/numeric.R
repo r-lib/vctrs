@@ -5,7 +5,7 @@
 #' group generics, the Math group generics, and a handful of other
 #' mathematical functions like `mean()`.
 #'
-#' `vec_base_arith()` is provided as a convenience for writing methods. It
+#' `vec_math_base()` is provided as a convenience for writing methods. It
 #' calls the base `fun` on the underlying [vec_data()].
 #'
 #' @section Included functions:
