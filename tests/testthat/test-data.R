@@ -62,10 +62,18 @@ test_that("vec_data() preserves names (#245)", {
   expect_identical(vec_names(x), vec_names(vec_data(x)))
 })
 
-test_that("vec_data() preserves shape (#245)", {
+test_that("vec_data() preserves size (#245)", {
   x <- set_names(letters, LETTERS)
   expect_identical(vec_size(x), vec_size(vec_data(x)))
 
   x <- diag(2)
   expect_identical(vec_size(x), vec_size(vec_data(x)))
+})
+
+test_that("vec_data() preserves dim (#245)", {
+  x <- set_names(letters, LETTERS)
+  expect_identical(vec_dim(x), vec_dim(vec_data(x)))
+
+  x <- diag(2)
+  expect_identical(vec_dim(x), vec_dim(vec_data(x)))
 })
