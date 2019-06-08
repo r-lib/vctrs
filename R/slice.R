@@ -125,8 +125,9 @@ vec_assign_fallback <- function(x, i, value) {
   x
 }
 
-vec_as_index <- function(i, x) {
-  .Call(vctrs_as_index, i, x)
+vec_as_index <- function(i, size, names = NULL) {
+  vec_assert(size, integer(), 1L)
+  .Call(vctrs_as_index, i, size, names)
 }
 
 vec_index <- function(x, i, ...) {
@@ -139,7 +140,7 @@ vec_index <- function(x, i, ...) {
   out <- unclass(vec_proxy(x))
   vec_assert(out)
 
-  i <- vec_as_index(i, out)
+  i <- vec_as_index(i, vec_size(x), vec_names(x))
   vec_restore(out[i, ..., drop = FALSE], x, i = i)
 }
 
