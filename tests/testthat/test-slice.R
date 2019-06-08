@@ -169,6 +169,8 @@ test_that("can slice with double indices", {
 
 test_that("vec_as_index() checks type", {
   expect_error(vec_as_index(quote(foo), 1L), "must be an integer, character, or logical vector, not a symbol")
+  expect_error(vec_as_index("foo", "bar"), class = "vctrs_error_assert_ptype")
+  expect_error(vec_as_index("foo", 1L, names = 1L), "must be a character vector")
 })
 
 test_that("can `vec_slice()` S3 objects without dispatch infloop", {
