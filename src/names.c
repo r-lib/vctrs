@@ -1,3 +1,5 @@
+#include <ctype.h>
+
 #include "vctrs.h"
 #include "utils.h"
 
@@ -213,24 +215,6 @@ static bool is_dotdotint(const char* name) {
   return (bool) strtol(name, NULL, 10);
 }
 
-static bool is_digit(const char c) {
-  switch (c) {
-  case '0':
-  case '1':
-  case '2':
-  case '3':
-  case '4':
-  case '5':
-  case '6':
-  case '7':
-  case '8':
-  case '9':
-    return true;
-  default:
-    return false;
-  }
-}
-
 static ptrdiff_t suffix_pos(const char* name) {
   int n = strlen(name);
 
@@ -248,7 +232,7 @@ static ptrdiff_t suffix_pos(const char* name) {
         continue;
       }
 
-      if (is_digit(c)) {
+      if (isdigit(c)) {
         continue;
       }
 
@@ -257,7 +241,7 @@ static ptrdiff_t suffix_pos(const char* name) {
 
     switch (in_dots) {
     case 0:
-      if (is_digit(c)) {
+      if (isdigit(c)) {
         in_digits = true;
         continue;
       }
@@ -271,7 +255,7 @@ static ptrdiff_t suffix_pos(const char* name) {
       goto done;
     case 3:
       suffix_end = ptr + 1;
-      if (is_digit(c)) {
+      if (isdigit(c)) {
         in_dots = 0;
         in_digits = true;
         continue;
