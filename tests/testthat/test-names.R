@@ -1,6 +1,13 @@
 context("test-names")
 
 
+# API -----------------------------------------------------------------
+
+test_that("Consistent values for repair argument", {
+  expect_identical(formals(validate_repair)$repair, formals(vec_as_names)$repair)
+  expect_identical(formals(validate_repair)$repair, formals(vec_names2)$repair)
+})
+
 # vec_names() ---------------------------------------------------------
 
 test_that("vec_names() retrieves names", {

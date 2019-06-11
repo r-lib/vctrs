@@ -159,14 +159,14 @@ vec_as_names <- function(names,
     return(names)
   }
 
-  switch(arg_match(repair),
+  switch(repair,
     minimal = as_minimal_names(names),
     unique = as_unique_names(names, quiet = quiet),
     universal = as_universal_names(as_minimal_names(names), quiet = quiet)
   )
 }
 
-validate_repair <- function(repair) {
+validate_repair <- function(repair = c("minimal", "unique", "universal")) {
   if (is_formula(repair, scoped = TRUE, lhs = FALSE)) {
     repair <- as_function(repair)
   }
@@ -174,7 +174,7 @@ validate_repair <- function(repair) {
   if (is_function(repair)) {
     repair
   } else {
-    arg_match(repair, c("minimal", "unique", "universal"))
+    arg_match(repair)
   }
 }
 validate_minimal <- function(names, n = NULL) {
@@ -211,7 +211,7 @@ vec_names2 <- function(x,
     return(names)
   }
 
-  switch(arg_match(repair),
+  switch(repair,
     minimal = minimal_names(x),
     unique = unique_names(x, quiet = quiet),
     universal = as_universal_names(minimal_names(x), quiet = quiet)
