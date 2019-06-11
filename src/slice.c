@@ -6,7 +6,7 @@ SEXP syms_vec_slice_fallback = NULL;
 SEXP fns_vec_slice_fallback = NULL;
 
 // Defined below
-SEXP vec_as_index(SEXP i, R_len_t size, SEXP names);
+SEXP vec_as_index(SEXP i, R_len_t n, SEXP names);
 static void slice_names(SEXP x, SEXP to, SEXP index);
 
 /**
@@ -19,11 +19,11 @@ static void slice_names(SEXP x, SEXP to, SEXP index);
 static SEXP vec_slice_impl(SEXP x, SEXP index);
 
 
-static void stop_bad_index_length(R_len_t size, R_len_t i) {
+static void stop_bad_index_length(R_len_t n, R_len_t i) {
   Rf_errorcall(R_NilValue,
                "Can't index beyond the end of a vector.\n"
                "The vector has length %d and you've tried to subset element %d.",
-               size, i);
+               n, i);
 }
 
 #define SLICE(RTYPE, CTYPE, DEREF, CONST_DEREF, NA_VALUE)       \
@@ -243,28 +243,28 @@ SEXP vec_na(SEXP x, R_len_t n) {
 }
 
 
-static SEXP int_invert_index(SEXP index, R_len_t size);
-static SEXP int_filter_zero(SEXP index, R_len_t size);
+static SEXP int_invert_index(SEXP index, R_len_t n);
+static SEXP int_filter_zero(SEXP index, R_len_t n_zero);
 
-static SEXP int_as_index(SEXP index, R_len_t size) {
+static SEXP int_as_index(SEXP index, R_len_t n) {
   const int* data = INTEGER_RO(index);
-  R_len_t n = Rf_length(index);
+  R_len_t index_n = Rf_length(index);
 
   // Zeros need to be filtered out from the index vector.
   // `int_invert_index()` filters them out for negative indices, but
   // positive indices need to go through and `int_filter_zero()`.
   R_len_t n_zero = 0;
 
-  for (R_len_t i = 0; i < n; ++i, ++data) {
+  for (R_len_t i = 0; i < index_n; ++i, ++data) {
     int elt = *data;
     if (elt < 0 && elt != NA_INTEGER) {
-      return int_invert_index(index, size);
+      return int_invert_index(index, n);
     }
     if (elt == 0) {
       ++n_zero;
     }
-    if (elt > size) {
-      stop_bad_index_length(size, elt);
+    if (elt > n) {
+      stop_bad_index_length(n, elt);
     }
   }
 
@@ -276,18 +276,18 @@ static SEXP int_as_index(SEXP index, R_len_t size) {
 }
 
 
-static SEXP lgl_as_index(SEXP i, R_len_t size);
+static SEXP lgl_as_index(SEXP i, R_len_t n);
 
-static SEXP int_invert_index(SEXP index, R_len_t size) {
+static SEXP int_invert_index(SEXP index, R_len_t n) {
   const int* data = INTEGER_RO(index);
-  R_len_t n = Rf_length(index);
+  R_len_t index_n = Rf_length(index);
 
-  SEXP sel = PROTECT(Rf_allocVector(LGLSXP, size));
+  SEXP sel = PROTECT(Rf_allocVector(LGLSXP, n));
   r_lgl_fill(sel, 1);
 
   int* sel_data = LOGICAL(sel);
 
-  for (R_len_t i = 0; i < n; ++i, ++data) {
+  for (R_len_t i = 0; i < index_n; ++i, ++data) {
     int j = *data;
 
     if (j == NA_INTEGER) {
@@ -302,27 +302,27 @@ static SEXP int_invert_index(SEXP index, R_len_t size) {
     }
 
     j = -j;
-    if (j > size) {
-      stop_bad_index_length(size, j);
+    if (j > n) {
+      stop_bad_index_length(n, j);
     }
 
     sel_data[j - 1] = 0;
   }
 
-  SEXP out = lgl_as_index(sel, size);
+  SEXP out = lgl_as_index(sel, n);
 
   UNPROTECT(1);
   return out;
 }
 
 static SEXP int_filter_zero(SEXP index, R_len_t n_zero) {
-  R_len_t n = vec_size(index);
+  R_len_t index_n = vec_size(index);
   const int* data = INTEGER_RO(index);
 
-  SEXP out = PROTECT(Rf_allocVector(INTSXP, n - n_zero));
+  SEXP out = PROTECT(Rf_allocVector(INTSXP, index_n - n_zero));
   int* out_data = INTEGER(out);
 
-  for (R_len_t i = 0; i < n; ++i, ++data) {
+  for (R_len_t i = 0; i < index_n; ++i, ++data) {
     int elt = *data;
     if (elt != 0) {
       *out_data = elt;
@@ -334,18 +334,18 @@ static SEXP int_filter_zero(SEXP index, R_len_t n_zero) {
   return out;
 }
 
-static SEXP dbl_as_index(SEXP i, R_len_t size) {
+static SEXP dbl_as_index(SEXP i, R_len_t n) {
   i = PROTECT(vec_cast(i, vctrs_shared_empty_int));
-  i = int_as_index(i, size);
+  i = int_as_index(i, n);
 
   UNPROTECT(1);
   return i;
 }
 
-static SEXP lgl_as_index(SEXP i, R_len_t size) {
-  R_len_t n = Rf_length(i);
+static SEXP lgl_as_index(SEXP i, R_len_t n) {
+  R_len_t index_n = Rf_length(i);
 
-  if (n == size) {
+  if (index_n == n) {
     return r_lgl_which(i, true);
   }
 
@@ -358,15 +358,15 @@ static SEXP lgl_as_index(SEXP i, R_len_t size) {
    * make `vec_as_index()` an option type just to optimise a rather
    * uncommon case.
    */
-  if (n == 1) {
+  if (index_n == 1) {
     int elt = LOGICAL(i)[0];
     if (elt == NA_LOGICAL) {
-      SEXP out = PROTECT(Rf_allocVector(INTSXP, size));
+      SEXP out = PROTECT(Rf_allocVector(INTSXP, n));
       r_int_fill(out, NA_INTEGER);
       UNPROTECT(1);
       return out;
     } else if (elt) {
-      SEXP out = PROTECT(Rf_allocVector(INTSXP, size));
+      SEXP out = PROTECT(Rf_allocVector(INTSXP, n));
       r_int_fill_seq(out, 1);
       UNPROTECT(1);
       return out;
@@ -378,7 +378,7 @@ static SEXP lgl_as_index(SEXP i, R_len_t size) {
   Rf_errorcall(R_NilValue,
                "Logical indices must have length 1 or be as long as the indexed vector.\n"
                "The vector has size %d whereas the index has size %d.",
-               size, n);
+               n, index_n);
 }
 
 static SEXP chr_as_index(SEXP i, SEXP names) {
@@ -406,12 +406,12 @@ static SEXP chr_as_index(SEXP i, SEXP names) {
   return matched;
 }
 
-SEXP vec_as_index(SEXP i, R_len_t size, SEXP names) {
+SEXP vec_as_index(SEXP i, R_len_t n, SEXP names) {
   switch (TYPEOF(i)) {
   case NILSXP: return vctrs_shared_empty_int;
-  case INTSXP: return int_as_index(i, size);
-  case REALSXP: return dbl_as_index(i, size);
-  case LGLSXP: return lgl_as_index(i, size);
+  case INTSXP: return int_as_index(i, n);
+  case REALSXP: return dbl_as_index(i, n);
+  case LGLSXP: return lgl_as_index(i, n);
   case STRSXP: return chr_as_index(i, names);
 
   default: Rf_errorcall(R_NilValue, "`i` must be an integer, character, or logical vector, not a %s.",
@@ -419,8 +419,8 @@ SEXP vec_as_index(SEXP i, R_len_t size, SEXP names) {
   }
 }
 
-SEXP vctrs_as_index(SEXP i, SEXP size, SEXP names) {
-  return vec_as_index(i, r_int_get(size, 0), names);
+SEXP vctrs_as_index(SEXP i, SEXP n, SEXP names) {
+  return vec_as_index(i, r_int_get(n, 0), names);
 }
 
 void vctrs_init_slice(SEXP ns) {
