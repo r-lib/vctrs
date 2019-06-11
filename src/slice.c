@@ -219,10 +219,10 @@ SEXP vctrs_slice(SEXP x, SEXP index) {
     return x;
   }
 
-  index = PROTECT(vec_as_index(index, vec_size(x), vec_names(x)));
+  index = PROTECT(vec_as_index(index, vec_size(x), PROTECT(vec_names(x))));
   SEXP out = vec_slice_impl(x, index);
 
-  UNPROTECT(1);
+  UNPROTECT(2);
   return out;
 }
 

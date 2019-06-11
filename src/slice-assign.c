@@ -35,7 +35,7 @@ SEXP vec_assign(SEXP x, SEXP index, SEXP value) {
   value = PROTECT(vec_coercible_cast(value, x, &value_arg, &x_arg));
   SEXP value_proxy = PROTECT(vec_proxy(value));
 
-  index = PROTECT(vec_as_index(index, vec_size(x), vec_names(x)));
+  index = PROTECT(vec_as_index(index, vec_size(x), PROTECT(vec_names(x))));
   value_proxy = PROTECT(vec_recycle(value_proxy, vec_size(index)));
 
   struct vctrs_proxy_info info = vec_proxy_info(x);
@@ -52,7 +52,7 @@ SEXP vec_assign(SEXP x, SEXP index, SEXP value) {
     UNPROTECT(1);
   }
 
-  UNPROTECT(4);
+  UNPROTECT(5);
   return out;
 }
 
