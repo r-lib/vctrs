@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>A 1d vector of unspecified type — unspecified • vctrs</title>
+<title>Create an index — vec_as_index • vctrs</title>
 
 <!-- jquery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
@@ -30,11 +30,12 @@
 
 
 
-<meta property="og:title" content="A 1d vector of unspecified type — unspecified" />
+<meta property="og:title" content="Create an index — vec_as_index" />
 
-<meta property="og:description" content="This is a partial type used to represent logical vectors
-that only contain NA. These require special handling because we want to
-allow NA to specify missingness without requiring a type." />
+<meta property="og:description" content="This provides a means of standardizing common indexing methods such as
+integer, character or logical indexing. The input is a vector of one
+of these three types, and the output is always an integer vector that can
+be used for subsetting." />
 
 <meta property="og:image" content="https://vctrs.r-lib.org/logo.png" />
 <meta name="twitter:card" content="summary" />
@@ -124,52 +125,72 @@ allow NA to specify missingness without requiring a type." />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>A 1d vector of unspecified type</h1>
-    <small class="dont-index">Source: <a href='https://github.com/r-lib/vctrs/blob/master/R/type-unspecified.R'><code>R/type-unspecified.R</code></a></small>
-    <div class="hidden name"><code>unspecified.Rd</code></div>
+    <h1>Create an index</h1>
+    <small class="dont-index">Source: <a href='https://github.com/r-lib/vctrs/blob/master/R/slice.R'><code>R/slice.R</code></a></small>
+    <div class="hidden name"><code>vec_as_index.Rd</code></div>
     </div>
 
     <div class="ref-description">
     
-    <p>This is a <a href='new_partial'>partial type</a> used to represent logical vectors
-that only contain <code>NA</code>. These require special handling because we want to
-allow <code>NA</code> to specify missingness without requiring a type.</p>
+    <p>This provides a means of standardizing common indexing methods such as
+integer, character or logical indexing. The input is a vector of one
+of these three types, and the output is always an integer vector that can
+be used for subsetting.</p>
     
     </div>
 
-    <pre class="usage"><span class='fu'>unspecified</span>(<span class='kw'>n</span> <span class='kw'>=</span> <span class='fl'>0</span>)
-
-<span class='co'># S3 method for vctrs_unspecified</span>
-<span class='fu'><a href='vec_type2.html'>vec_type2</a></span>(<span class='no'>x</span>, <span class='no'>y</span>, <span class='no'>...</span>)</pre>
+    <pre class="usage"><span class='fu'>vec_as_index</span>(<span class='no'>i</span>, <span class='no'>n</span>, <span class='kw'>names</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
+      <th>i</th>
+      <td><p>An integer, character or logical vector specifying the positions or
+names of the observations to get/set.
+Specify <code>TRUE</code> to index all elements (as in <code>x[]</code>), or <code>NULL</code>, <code>FALSE</code> or
+<code><a href='https://www.rdocumentation.org/packages/base/topics/integer'>integer()</a></code> to index none (as in <code>x[NULL]</code>).</p></td>
+    </tr>
+    <tr>
       <th>n</th>
-      <td><p>Length of vector</p></td>
+      <td><p>A single integer representing the total size of the
+object that <code>i</code> is meant to index into.</p></td>
+    </tr>
+    <tr>
+      <th>names</th>
+      <td><p>If <code>i</code> is a character vector, <code>names</code> should be a character
+vector that <code>i</code> will be matched against to construct the index. Otherwise,
+not used. The default value of <code>NULL</code> will result in an error
+if <code>i</code> is a character vector.</p></td>
     </tr>
     </table>
     
+    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
+
+    <p>An integer vector that can be used as an index in a subsetting operation.</p>
+    
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'><a href='vec_type.html'>vec_ptype</a></span>()</div><div class='output co'>#&gt; Prototype: NULL</div><div class='input'><span class='fu'><a href='vec_type.html'>vec_ptype</a></span>(<span class='fl'>NA</span>)</div><div class='output co'>#&gt; Prototype: logical</div><div class='input'>
-<span class='fu'><a href='vec_c.html'>vec_c</a></span>(<span class='fl'>NA</span>, <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/factor'>factor</a></span>(<span class='st'>"x"</span>))</div><div class='output co'>#&gt; [1] &lt;NA&gt; x   
-#&gt; Levels: x</div><div class='input'><span class='fu'><a href='vec_c.html'>vec_c</a></span>(<span class='fl'>NA</span>, <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/Sys.time'>Sys.Date</a></span>())</div><div class='output co'>#&gt; [1] NA           "2019-06-11"</div><div class='input'><span class='fu'><a href='vec_c.html'>vec_c</a></span>(<span class='fl'>NA</span>, <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/Sys.time'>Sys.time</a></span>())</div><div class='output co'>#&gt; [1] NA                        "2019-06-11 13:10:35 UTC"</div><div class='input'><span class='fu'><a href='vec_c.html'>vec_c</a></span>(<span class='fl'>NA</span>, <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/list'>list</a></span>(<span class='fl'>1</span>:<span class='fl'>3</span>, <span class='fl'>4</span>:<span class='fl'>5</span>))</div><div class='output co'>#&gt; [[1]]
-#&gt; [1] NA
-#&gt; 
-#&gt; [[2]]
-#&gt; [1] 1 2 3
-#&gt; 
-#&gt; [[3]]
-#&gt; [1] 4 5
-#&gt; </div></pre>
+    <pre class="examples"><div class='input'><span class='no'>x</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/array'>array</a></span>(<span class='fl'>1</span>:<span class='fl'>6</span>, <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='fl'>2</span>, <span class='fl'>3</span>))
+<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/dimnames'>dimnames</a></span>(<span class='no'>x</span>) <span class='kw'>&lt;-</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/list'>list</a></span>(<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='st'>"r1"</span>, <span class='st'>"r2"</span>), <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='st'>"c1"</span>, <span class='st'>"c2"</span>, <span class='st'>"c3"</span>))
+
+<span class='co'># The most common use case validates row indices</span>
+<span class='fu'>vec_as_index</span>(<span class='fl'>1</span>, <span class='fu'><a href='vec_size.html'>vec_size</a></span>(<span class='no'>x</span>))</div><div class='output co'>#&gt; [1] 1</div><div class='input'>
+<span class='co'># Negative indices can be used to index from the back</span>
+<span class='fu'>vec_as_index</span>(-<span class='fl'>1</span>, <span class='fu'><a href='vec_size.html'>vec_size</a></span>(<span class='no'>x</span>))</div><div class='output co'>#&gt; [1] 2</div><div class='input'>
+<span class='co'># Character vectors can be used if `names` are provided</span>
+<span class='fu'>vec_as_index</span>(<span class='st'>"r2"</span>, <span class='fu'><a href='vec_size.html'>vec_size</a></span>(<span class='no'>x</span>), <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/colnames'>rownames</a></span>(<span class='no'>x</span>))</div><div class='output co'>#&gt; [1] 2</div><div class='input'>
+<span class='co'># You can also construct an index for dimensions other than the first</span>
+<span class='fu'>vec_as_index</span>(<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='st'>"c2"</span>, <span class='st'>"c1"</span>), <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/nrow'>ncol</a></span>(<span class='no'>x</span>), <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/colnames'>colnames</a></span>(<span class='no'>x</span>))</div><div class='output co'>#&gt; [1] 2 1</div><div class='input'>
+</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
       <li><a href="#arguments">Arguments</a></li>
-            
+      
+      <li><a href="#value">Value</a></li>
+      
       <li><a href="#examples">Examples</a></li>
     </ul>
 
