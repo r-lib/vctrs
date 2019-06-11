@@ -54,7 +54,7 @@ test_that("can't index beyond the end of a vector", {
 })
 
 test_that("slicing non existing elements fails", {
-  expect_error(vec_as_index("foo", c(f = 1)), "non-existing")
+  expect_error(vec_as_index("foo", 1L, "f"), "non-existing")
   expect_error(vec_slice(c(f = 1), "foo"), "non-existing")
 })
 
@@ -82,19 +82,19 @@ test_that("can subset using logical index", {
 
   expect_error(
     vec_slice(x0, c(TRUE, FALSE, TRUE)),
-    "has size 3 whereas the index has size 2",
+    "has size 2 whereas the index has size 3",
     fixed = TRUE
   )
 
   expect_error(
     vec_slice(x0, lgl()),
-    "has size 0 whereas the index has size 2",
+    "has size 2 whereas the index has size 0",
     fixed = TRUE
   )
 
   expect_error(
     vec_slice(mtcars, c(TRUE, FALSE)),
-    "has size 2 whereas the index has size 32"
+    "has size 32 whereas the index has size 2"
   )
 })
 
@@ -164,11 +164,13 @@ test_that("0 is ignored in positive indices", {
 
 test_that("can slice with double indices", {
   expect_identical(vec_slice(1:3, dbl(2, 3)), 2:3)
-  expect_lossy(vec_as_index(2^31, 1:3), na_int, x = dbl(), to = int())
+  expect_lossy(vec_as_index(2^31, 3L), na_int, x = dbl(), to = int())
 })
 
 test_that("vec_as_index() checks type", {
-  expect_error(vec_as_index(quote(foo), 1), "must be an integer, character, or logical vector, not a symbol")
+  expect_error(vec_as_index(quote(foo), 1L), "must be an integer, character, or logical vector, not a symbol")
+  expect_error(vec_as_index("foo", "bar"), class = "vctrs_error_assert_ptype")
+  expect_error(vec_as_index("foo", 1L, names = 1L), "must be a character vector")
 })
 
 test_that("can `vec_slice()` S3 objects without dispatch infloop", {
@@ -342,7 +344,7 @@ test_that("can't use names to vec_slice() an unnamed object", {
 })
 
 test_that("can slice with missing character indices (#244)", {
-  expect_identical(vec_as_index(na_chr, c(x = 1, NA)), na_int)
+  expect_identical(vec_as_index(na_chr, 2L, c("x", "")), na_int)
   expect_identical(vec_slice(c(x = 1), na_chr), set_names(na_dbl, ""))
   expect_identical(vec_slice(c(x = "foo"), na_chr), set_names(na_chr, ""))
 })
