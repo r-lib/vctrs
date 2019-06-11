@@ -133,7 +133,7 @@ vec_assign_fallback <- function(x, i, value) {
 #' be used for subsetting.
 #'
 #' @inheritParams vec_slice
-#' @param size A single integer representing the total size of the
+#' @param n A single integer representing the total size of the
 #' object that `i` is meant to index into.
 #' @param names If `i` is a character vector, `names` should be a character
 #' vector that `i` will be matched against to construct the index. Otherwise,
@@ -161,9 +161,9 @@ vec_assign_fallback <- function(x, i, value) {
 #'
 #' @keywords internal
 #' @export
-vec_as_index <- function(i, size, names = NULL) {
-  vec_assert(size, integer(), 1L)
-  .Call(vctrs_as_index, i, size, names)
+vec_as_index <- function(i, n, names = NULL) {
+  vec_assert(n, integer(), 1L)
+  .Call(vctrs_as_index, i, n, names)
 }
 
 vec_index <- function(x, i, ...) {

@@ -4,7 +4,7 @@
 \alias{vec_as_index}
 \title{Create an index}
 \usage{
-vec_as_index(i, size, names = NULL)
+vec_as_index(i, n, names = NULL)
 }
 \arguments{
 \item{i}{An integer, character or logical vector specifying the positions or
@@ -12,7 +12,7 @@ names of the observations to get/set.
 Specify \code{TRUE} to index all elements (as in \code{x[]}), or \code{NULL}, \code{FALSE} or
 \code{integer()} to index none (as in \code{x[NULL]}).}
 
-\item{size}{A single integer representing the total size of the
+\item{n}{A single integer representing the total size of the
 object that \code{i} is meant to index into.}
 
 \item{names}{If \code{i} is a character vector, \code{names} should be a character
