@@ -134,11 +134,11 @@ vec_assign_fallback <- function(x, i, value) {
 #'
 #' @inheritParams vec_slice
 #' @param n A single integer representing the total size of the
-#' object that `i` is meant to index into.
+#'   object that `i` is meant to index into.
 #' @param names If `i` is a character vector, `names` should be a character
-#' vector that `i` will be matched against to construct the index. Otherwise,
-#' not used. The default value of `NULL` will result in an error
-#' if `i` is a character vector.
+#'   vector that `i` will be matched against to construct the index. Otherwise,
+#'   not used. The default value of `NULL` will result in an error
+#'   if `i` is a character vector.
 #'
 #' @return
 #' An integer vector that can be used as an index in a subsetting operation.
