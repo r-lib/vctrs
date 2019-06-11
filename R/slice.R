@@ -125,6 +125,42 @@ vec_assign_fallback <- function(x, i, value) {
   x
 }
 
+#' Create an index
+#'
+#' This provides a means of standardizing common indexing methods such as
+#' integer, character or logical indexing. The input is a vector of one
+#' of these three types, and the output is always an integer vector that can
+#' be used for subsetting.
+#'
+#' @inheritParams vec_slice
+#' @param size A single integer representing the total size of the
+#' object that `i` is meant to index into.
+#' @param names If `i` is a character vector, `names` should be a character
+#' vector that `i` will be matched against to construct the index. Otherwise,
+#' not used. The default value of `NULL` will result in an error
+#' if `i` is a character vector.
+#'
+#' @return
+#' An integer vector that can be used as an index in a subsetting operation.
+#'
+#' @examples
+#' x <- array(1:6, c(2, 3))
+#' dimnames(x) <- list(c("r1", "r2"), c("c1", "c2", "c3"))
+#'
+#' # The most common use case validates row indices
+#' vec_as_index(1, vec_size(x))
+#'
+#' # Negative indices can be used to index from the back
+#' vec_as_index(-1, vec_size(x))
+#'
+#' # Character vectors can be used if `names` are provided
+#' vec_as_index("r2", vec_size(x), vec_names(x))
+#'
+#' # You can also construct an index for dimensions other than the first
+#' vec_as_index(c("c2", "c1"), ncol(x), colnames(x))
+#'
+#' @keywords internal
+#' @export
 vec_as_index <- function(i, size, names = NULL) {
   vec_assert(size, integer(), 1L)
   .Call(vctrs_as_index, i, size, names)
