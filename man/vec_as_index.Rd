@@ -40,7 +40,7 @@ vec_as_index(1, vec_size(x))
 vec_as_index(-1, vec_size(x))
 
 # Character vectors can be used if `names` are provided
-vec_as_index("r2", vec_size(x), vec_names(x))
+vec_as_index("r2", vec_size(x), rownames(x))
 
 # You can also construct an index for dimensions other than the first
 vec_as_index(c("c2", "c1"), ncol(x), colnames(x))
