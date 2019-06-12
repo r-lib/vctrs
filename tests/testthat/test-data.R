@@ -8,7 +8,6 @@ test_that("vec_data() preserves names (#245)", {
   rownames(x) <- letters[1:2]
   colnames(x) <- LETTERS[1:2]
   expect_identical(vec_names(x), vec_names(vec_data(x)))
-  expect_identical(dimnames(x), dimnames(vec_data(x)))
 })
 
 test_that("vec_data() preserves size (#245)", {
@@ -19,12 +18,17 @@ test_that("vec_data() preserves size (#245)", {
   expect_identical(vec_size(x), vec_size(vec_data(x)))
 })
 
-test_that("vec_data() preserves dim (#245)", {
+test_that("vec_data() preserves dim and dimnames (#245)", {
   x <- set_names(letters, LETTERS)
   expect_identical(vec_dim(x), vec_dim(vec_data(x)))
 
   x <- diag(2)
   expect_identical(vec_dim(x), vec_dim(vec_data(x)))
+
+  x <- diag(2)
+  rownames(x) <- letters[1:2]
+  colnames(x) <- LETTERS[1:2]
+  expect_identical(dimnames(x), dimnames(vec_data(x)))
 })
 
 test_that("strips vector attributes apart from names, dim and dimnames", {
