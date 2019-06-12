@@ -66,7 +66,7 @@ reset_rownames <- function(x) {
   rownames(x) <- NULL
 
   is_df <- map_lgl(x, is.data.frame)
-  x[is_df] <- lapply(x[is_df], `rownames<-`, NULL)
+  x[is_df] <- lapply(x[is_df], reset_rownames)
 
   x
 }
