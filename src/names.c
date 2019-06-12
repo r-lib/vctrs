@@ -92,33 +92,35 @@ static bool needs_suffix(SEXP str);
 
 // [[ include("vctrs.h") ]]
 SEXP as_unique_names(SEXP names, bool quiet) {
+  if (is_unique_names(names)) {
+    return names;
+  } else {
+    return(as_unique_names_impl(names, quiet));
+  }
+}
+
+// [[ include("vctrs.h") ]]
+bool is_unique_names(SEXP names) {
   if (TYPEOF(names) != STRSXP) {
     Rf_errorcall(R_NilValue, "`names` must be a character vector");
   }
 
-  R_len_t i = 0;
   R_len_t n = Rf_length(names);
   const SEXP* names_ptr = STRING_PTR_RO(names);
 
   SEXP dups = PROTECT(vctrs_duplicated(names));
   const int* dups_ptr = LOGICAL_RO(dups);
 
-  // First quick pass to detect if any repairs are needed. See second
-  // part of the loop for the meaning of each branch.
-  for (; i < n; ++i) {
+  for (R_len_t i = 0; i < n; ++i) {
     SEXP elt = names_ptr[i];
 
     if (needs_suffix(elt) || suffix_pos(CHAR(elt)) >= 0 || dups_ptr[i]) {
-      break;
+      return false;
     }
   }
   UNPROTECT(1);
 
-  if (i == n) {
-    return names;
-  } else {
-    return(as_unique_names_impl(names, quiet));
-  }
+  return true;
 }
 
 SEXP as_unique_names_impl(SEXP names, bool quiet) {
@@ -192,6 +194,11 @@ SEXP vctrs_as_unique_names(SEXP names, SEXP quiet) {
   SEXP out = PROTECT(as_unique_names(names, LOGICAL(quiet)[0]));
   UNPROTECT(1);
   return out;
+}
+
+SEXP vctrs_is_unique_names(SEXP names) {
+  bool out = is_unique_names(names);
+  return Rf_ScalarLogical(out);
 }
 
 static bool is_dotdotint(const char* name) {
