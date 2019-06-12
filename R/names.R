@@ -35,8 +35,8 @@
 #' @param names A character vector.
 #' @param ... These dots are for future extensions and must be empty.
 #' @param repair Either a string or a function. If a string, it must
-#'   be one of `"minimal"`, `"unique"`, or `"universal"`. If a
-#'   function, it is invoked with a vector of minmal names and must
+#'   be one of `"check_unique"`, `"minimal"`, `"unique"`, or `"universal"`.
+#'   If a function, it is invoked with a vector of minimal names and must
 #'   return minimal names, otherwise an error is thrown.
 #'
 #'   * Minimal names are never `NULL` or `NA`. When an element doesn't

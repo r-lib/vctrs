@@ -13,8 +13,8 @@ vec_as_names(names, ..., repair = c("minimal", "unique", "universal"),
 \item{...}{These dots are for future extensions and must be empty.}
 
 \item{repair}{Either a string or a function. If a string, it must
-be one of \code{"minimal"}, \code{"unique"}, or \code{"universal"}. If a
-function, it is invoked with a vector of minmal names and must
+be one of \code{"check_unique"}, \code{"minimal"}, \code{"unique"}, or \code{"universal"}.
+If a function, it is invoked with a vector of minimal names and must
 return minimal names, otherwise an error is thrown.
 \itemize{
 \item Minimal names are never \code{NULL} or \code{NA}. When an element doesn't
