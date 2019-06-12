@@ -99,7 +99,7 @@ SEXP as_unique_names(SEXP names, bool quiet) {
   const SEXP* names_ptr = STRING_PTR_RO(names);
 
   SEXP dups = PROTECT(vctrs_duplicated(names));
-  int* const dups_ptr = LOGICAL(dups);
+  const int* dups_ptr = LOGICAL_RO(dups);
 
   // First quick pass to detect if any repairs are needed. See second
   // part of the loop for the meaning of each branch.
