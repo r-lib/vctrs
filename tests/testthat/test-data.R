@@ -60,6 +60,7 @@ test_that("vec_data() preserves names (#245)", {
   rownames(x) <- letters[1:2]
   colnames(x) <- LETTERS[1:2]
   expect_identical(vec_names(x), vec_names(vec_data(x)))
+  expect_identical(dimnames(x), dimnames(vec_data(x)))
 })
 
 test_that("vec_data() preserves size (#245)", {
