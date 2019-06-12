@@ -132,6 +132,12 @@ SEXP vctrs_unique_loc(SEXP x) {
 }
 
 SEXP vctrs_duplicated_any(SEXP x) {
+  bool out = duplicated_any(x);
+  return Rf_ScalarLogical(out);
+}
+
+// [[ include("vctrs.h") ]]
+bool duplicated_any(SEXP x) {
   x = PROTECT(vec_proxy_equal(x));
 
   dictionary d;
@@ -154,7 +160,7 @@ SEXP vctrs_duplicated_any(SEXP x) {
   dict_free(&d);
   UNPROTECT(1);
 
-  return Rf_ScalarLogical(out);
+  return out;
 }
 
 SEXP vctrs_n_distinct(SEXP x) {

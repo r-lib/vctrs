@@ -108,17 +108,17 @@ bool is_unique_names(SEXP names) {
   R_len_t n = Rf_length(names);
   const SEXP* names_ptr = STRING_PTR_RO(names);
 
-  SEXP dups = PROTECT(vctrs_duplicated(names));
-  const int* dups_ptr = LOGICAL_RO(dups);
+  if (duplicated_any(names)) {
+    return false;
+  }
 
   for (R_len_t i = 0; i < n; ++i) {
     SEXP elt = names_ptr[i];
 
-    if (needs_suffix(elt) || suffix_pos(CHAR(elt)) >= 0 || dups_ptr[i]) {
+    if (needs_suffix(elt) || suffix_pos(CHAR(elt)) >= 0) {
       return false;
     }
   }
-  UNPROTECT(1);
 
   return true;
 }
