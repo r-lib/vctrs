@@ -123,7 +123,7 @@ SEXP as_unique_names_impl(SEXP names, bool quiet) {
   const R_len_t n = Rf_length(names);
 
   SEXP new_names = PROTECT(Rf_shallow_duplicate(names));
-  SEXP* const new_names_ptr = STRING_PTR(new_names);
+  const SEXP* new_names_ptr = STRING_PTR_RO(new_names);
 
   for (R_len_t i = 0; i < n; ++i) {
     SEXP elt = new_names_ptr[i];
