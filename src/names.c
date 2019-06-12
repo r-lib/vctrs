@@ -96,7 +96,7 @@ SEXP as_unique_names(SEXP names, bool quiet) {
 
   R_len_t i = 0;
   const R_len_t n = Rf_length(names);
-  SEXP* const names_ptr = STRING_PTR(names);
+  const SEXP* names_ptr = STRING_PTR_RO(names);
 
   SEXP dups = PROTECT(vctrs_duplicated(names));
   int* const dups_ptr = LOGICAL(dups);
