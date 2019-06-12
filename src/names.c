@@ -95,8 +95,8 @@ SEXP as_unique_names(SEXP names, bool quiet) {
   }
 
   R_len_t i = 0;
-  const R_len_t n = Rf_length(names);
-  const SEXP* names_ptr = STRING_PTR_RO(names);
+  R_len_t n = Rf_length(names);
+  SEXP* names_ptr = STRING_PTR_RO(names);
 
   SEXP dups = PROTECT(vctrs_duplicated(names));
   const int* dups_ptr = LOGICAL_RO(dups);
@@ -120,7 +120,7 @@ SEXP as_unique_names(SEXP names, bool quiet) {
 }
 
 SEXP as_unique_names_impl(SEXP names, bool quiet) {
-  const R_len_t n = Rf_length(names);
+  R_len_t n = Rf_length(names);
 
   SEXP new_names = PROTECT(Rf_shallow_duplicate(names));
   const SEXP* new_names_ptr = STRING_PTR_RO(new_names);
@@ -160,17 +160,17 @@ SEXP as_unique_names_impl(SEXP names, bool quiet) {
 
     const char* name = CHAR(elt);
 
-    const int size = strlen(name);
-    const int buf_size = size + max_iota_size;
+    int size = strlen(name);
+    int buf_size = size + max_iota_size;
 
     R_CheckStack2(buf_size);
     char buf[buf_size];
     buf[0] = '\0';
 
     memcpy(buf, name, size);
-    const int remaining = buf_size - size;
+    int remaining = buf_size - size;
 
-    const int needed = snprintf(buf + size, remaining, "...%d", i + 1);
+    int needed = snprintf(buf + size, remaining, "...%d", i + 1);
     if (needed >= remaining) {
       stop_large_name();
     }
