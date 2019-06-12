@@ -6,7 +6,7 @@
 static void describe_repair(SEXP old, SEXP new);
 
 // 3 leading '.' + 1 trailing '\0' + 24 characters
-static const int max_iota_size = 28;
+static const int MAX_IOTA_SIZE = 28;
 
 // [[ register(); include("vctrs.h") ]]
 SEXP vec_names(SEXP x) {
@@ -161,7 +161,7 @@ SEXP as_unique_names_impl(SEXP names, bool quiet) {
     const char* name = CHAR(elt);
 
     int size = strlen(name);
-    int buf_size = size + max_iota_size;
+    int buf_size = size + MAX_IOTA_SIZE;
 
     R_CheckStack2(buf_size);
     char buf[buf_size];
@@ -328,8 +328,8 @@ SEXP vctrs_unique_names(SEXP x, SEXP quiet) {
 
 
 static SEXP names_iota(R_len_t n) {
-  char buf[max_iota_size];
-  SEXP nms = r_chr_iota(n, buf, max_iota_size, "...");
+  char buf[MAX_IOTA_SIZE];
+  SEXP nms = r_chr_iota(n, buf, MAX_IOTA_SIZE, "...");
 
   if (nms == R_NilValue) {
     Rf_errorcall(R_NilValue, "Too many names to repair.");
