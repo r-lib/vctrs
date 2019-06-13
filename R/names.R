@@ -196,10 +196,23 @@ validate_minimal <- function(names, n = NULL) {
   names
 }
 
+#' Extract repaired names from a vector
+#'
+#' Returns the repaired names from a vector, even if the vector is unnamed.
+#'
+#' @param x A vector with names
+#' @inheritParams vec_as_names
+#'
+#' @return The names of x, repaired
+#' @noRd
 vec_names2 <- function(x,
                       ...,
                       repair = c("minimal", "unique", "universal"),
                       quiet = FALSE) {
+  # This function is an optimized version of:
+  #
+  # vec_as_names(minimal_names(x), repair = repair, quiet = quiet)
+
   if (!missing(...)) {
     ellipsis::check_dots_empty()
   }
