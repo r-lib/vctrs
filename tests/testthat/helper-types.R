@@ -13,7 +13,8 @@ base_empty_types <- list(
 
 proxied_empty_types <- list(
   double = new_hidden(),
-  dataframe = tibble::tibble(),
+  # Don't call tibble here to avoid catch-22, because tibble now uses vctrs
+  dataframe = structure(data.frame(), class = c("tbl_df", "tbl", "data.frame")),
   dataframe = structure(data.frame(), class = c("vctrs_foobar", "data.frame"))
 )
 

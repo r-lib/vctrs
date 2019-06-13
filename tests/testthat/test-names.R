@@ -78,6 +78,15 @@ test_that("vec_as_names() repairs names", {
   expect_identical(vec_as_names(chr(NA, NA)), c("", ""))
   expect_identical(vec_as_names(chr(NA, NA), repair = "unique"), c("...1", "...2"))
   expect_identical(vec_as_names(chr("_foo", "_bar"), repair = "universal"), c("._foo", "._bar"))
+  expect_identical(vec_as_names(chr("a", "b"), repair = "check_unique"), c("a", "b"))
+})
+
+test_that("vec_as_names() checks unique names", {
+  expect_error(vec_as_names(chr(NA), repair = "check_unique"))
+  expect_error(vec_as_names(chr(""), repair = "check_unique"))
+  expect_error(vec_as_names(chr("a", "a"), repair = "check_unique"))
+  expect_error(vec_as_names(chr("..1"), repair = "check_unique"))
+  expect_error(vec_as_names(chr("..."), repair = "check_unique"))
 })
 
 test_that("vec_as_names() keeps the names of a named vector", {
@@ -108,10 +117,18 @@ test_that("vec_as_names() repairs names before invoking repair function", {
   expect_identical(vec_as_names(chr(NA, NA), repair = identity), c("", ""))
 })
 
-test_that("validate_minimal_names() checks names", {
+test_that("validate_minimal() checks names", {
   expect_error(validate_minimal(1), "must return a character vector")
   expect_error(validate_minimal(NULL), "can't return `NULL`")
   expect_error(validate_minimal(chr(NA)), "can't return `NA` values")
+})
+
+test_that("validate_unique() checks unique names", {
+  expect_error(validate_unique(chr(NA)), "`NA`")
+  expect_error(validate_unique(chr("")), class = "vctrs_error_names_cannot_be_empty")
+  expect_error(validate_unique(chr("a", "a")), class = "vctrs_error_names_must_be_unique")
+  expect_error(validate_unique(chr("..1")), class = "vctrs_error_names_cannot_be_dot_dot")
+  expect_error(validate_unique(chr("...")), class = "vctrs_error_names_cannot_be_dot_dot")
 })
 
 

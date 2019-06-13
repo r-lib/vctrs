@@ -4,8 +4,8 @@
 \alias{vec_as_names}
 \title{Retrieve and repair names}
 \usage{
-vec_as_names(names, ..., repair = c("minimal", "unique", "universal"),
-  quiet = FALSE)
+vec_as_names(names, ..., repair = c("minimal", "unique", "universal",
+  "check_unique"), quiet = FALSE)
 }
 \arguments{
 \item{names}{A character vector.}
@@ -13,8 +13,8 @@ vec_as_names(names, ..., repair = c("minimal", "unique", "universal"),
 \item{...}{These dots are for future extensions and must be empty.}
 
 \item{repair}{Either a string or a function. If a string, it must
-be one of \code{"minimal"}, \code{"unique"}, or \code{"universal"}. If a
-function, it is invoked with a vector of minmal names and must
+be one of \code{"check_unique"}, \code{"minimal"}, \code{"unique"}, or \code{"universal"}.
+If a function, it is invoked with a vector of minimal names and must
 return minimal names, otherwise an error is thrown.
 \itemize{
 \item Minimal names are never \code{NULL} or \code{NA}. When an element doesn't
@@ -24,7 +24,11 @@ names to make them unique.
 \item Universal names are unique and syntactic, meaning that you can
 safely use the names as variables without causing a syntax
 error.
-}}
+}
+
+The \code{"check_unique"} option doesn't perform any name repair.
+Instead, an error is raised if the names don't suit the
+\code{"unique"} criteria.}
 
 \item{quiet}{By default, the user is informed of any renaming
 caused by repairing the names. This only concerns unique and

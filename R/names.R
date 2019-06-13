@@ -35,8 +35,8 @@
 #' @param names A character vector.
 #' @param ... These dots are for future extensions and must be empty.
 #' @param repair Either a string or a function. If a string, it must
-#'   be one of `"minimal"`, `"unique"`, or `"universal"`. If a
-#'   function, it is invoked with a vector of minmal names and must
+#'   be one of `"check_unique"`, `"minimal"`, `"unique"`, or `"universal"`.
+#'   If a function, it is invoked with a vector of minimal names and must
 #'   return minimal names, otherwise an error is thrown.
 #'
 #'   * Minimal names are never `NULL` or `NA`. When an element doesn't
@@ -48,6 +48,10 @@
 #'   * Universal names are unique and syntactic, meaning that you can
 #'     safely use the names as variables without causing a syntax
 #'     error.
+#'
+#'   The `"check_unique"` option doesn't perform any name repair.
+#'   Instead, an error is raised if the names don't suit the
+#'   `"unique"` criteria.
 #' @param quiet By default, the user is informed of any renaming
 #'   caused by repairing the names. This only concerns unique and
 #'   universal repairing. Set `quiet` to `TRUE` to silence the
@@ -146,7 +150,7 @@
 #' @export
 vec_as_names <- function(names,
                          ...,
-                         repair = c("minimal", "unique", "universal"),
+                         repair = c("minimal", "unique", "universal", "check_unique"),
                          quiet = FALSE) {
   if (!missing(...)) {
     ellipsis::check_dots_empty()
@@ -167,11 +171,12 @@ vec_as_names <- function(names,
   switch(repair,
     minimal = as_minimal_names(names),
     unique = as_unique_names(names, quiet = quiet),
-    universal = as_universal_names(as_minimal_names(names), quiet = quiet)
+    universal = as_universal_names(as_minimal_names(names), quiet = quiet),
+    check_unique = validate_unique(names)
   )
 }
 
-validate_repair <- function(repair = c("minimal", "unique", "universal")) {
+validate_repair <- function(repair = c("minimal", "unique", "universal", "check_unique")) {
   if (is_formula(repair, scoped = TRUE, lhs = FALSE)) {
     repair <- as_function(repair)
   }
@@ -200,6 +205,25 @@ validate_minimal <- function(names, n = NULL) {
   }
   names
 }
+validate_unique <- function(names, n = NULL) {
+  validate_minimal(names, n)
+
+  empty_names <- which(names == "")
+  if (has_length(empty_names)) {
+    cnd_signal(names_cannot_be_empty(empty_names))
+  }
+
+  dot_dot_name <- grep("^[.][.](?:[.]|[1-9][0-9]*)$", names)
+  if (has_length(dot_dot_name)) {
+    cnd_signal(names_cannot_be_dot_dot(dot_dot_name))
+  }
+
+  if (anyDuplicated(names)) {
+    cnd_signal(names_must_be_unique(which(duplicated(names))))
+  }
+
+  invisible(names)
+}
 
 #' Extract repaired names from a vector
 #'
@@ -211,12 +235,12 @@ validate_minimal <- function(names, n = NULL) {
 #' @return The names of x, repaired
 #' @noRd
 vec_names2 <- function(x,
-                      ...,
-                      repair = c("minimal", "unique", "universal"),
-                      quiet = FALSE) {
+                       ...,
+                       repair = c("minimal", "unique", "universal", "check_unique"),
+                       quiet = FALSE) {
   # This function is an optimized version of:
   #
-  # vec_as_names(minimal_names(x), repair = repair, quiet = quiet)
+  # vec_as_names(minimal_names(x), ..., repair = repair, quiet = quiet)
 
   if (!missing(...)) {
     ellipsis::check_dots_empty()
@@ -237,11 +261,12 @@ vec_names2 <- function(x,
   switch(repair,
     minimal = minimal_names(x),
     unique = unique_names(x, quiet = quiet),
-    universal = as_universal_names(minimal_names(x), quiet = quiet)
+    universal = as_universal_names(minimal_names(x), quiet = quiet),
+    check_unique = validate_unique(minimal_names(x))
   )
 }
 vec_repair_names <- function(x,
-                             repair = c("minimal", "unique", "universal"),
+                             repair = c("minimal", "unique", "universal", "check_unique"),
                              ...,
                              quiet = FALSE) {
   set_names2(x, vec_names2(x, ..., repair = repair, quiet = quiet))
