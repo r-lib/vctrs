@@ -84,6 +84,7 @@ SEXP vctrs_minimal_names(SEXP x) {
 // From dictionary.c
 SEXP vctrs_duplicated(SEXP x);
 
+static bool any_has_suffix(SEXP names);
 static SEXP as_unique_names_impl(SEXP names, bool quiet);
 static void stop_large_name();
 static bool is_dotdotint(const char* name);
@@ -92,7 +93,7 @@ static bool needs_suffix(SEXP str);
 
 // [[ include("vctrs.h") ]]
 SEXP as_unique_names(SEXP names, bool quiet) {
-  if (is_unique_names(names)) {
+  if (is_unique_names(names) && !any_has_suffix(names)) {
     return names;
   } else {
     return(as_unique_names_impl(names, quiet));
@@ -115,12 +116,27 @@ bool is_unique_names(SEXP names) {
   for (R_len_t i = 0; i < n; ++i) {
     SEXP elt = names_ptr[i];
 
-    if (needs_suffix(elt) || suffix_pos(CHAR(elt)) >= 0) {
+    if (needs_suffix(elt)) {
       return false;
     }
   }
 
   return true;
+}
+
+bool any_has_suffix(SEXP names) {
+  R_len_t n = Rf_length(names);
+  const SEXP* names_ptr = STRING_PTR_RO(names);
+
+  for (R_len_t i = 0; i < n; ++i) {
+    SEXP elt = names_ptr[i];
+
+    if (suffix_pos(CHAR(elt)) >= 0) {
+      return true;
+    }
+  }
+
+  return false;
 }
 
 SEXP as_unique_names_impl(SEXP names, bool quiet) {
