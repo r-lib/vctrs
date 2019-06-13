@@ -508,3 +508,30 @@ test_that("make_syntactic(): dot dot then number then non-character", {
     c("..0.", "..1.", "..22.", "..333.")
   )
 })
+
+# Duplication --------------------------------------------------------------
+
+test_that("Name repair duplicates if needed", {
+  x1 <- "fa\u00e7ile"
+  skip_if_not(Encoding(x1) == "UTF-8")
+
+  x3 <- c(x1, x1)
+
+  # Called to check absence of side effect
+  vec_as_names(x3, repair = "unique")
+
+  expect_identical(x3, c("fa\u00e7ile", "fa\u00e7ile"))
+})
+
+# Encoding -------------------------------------------------------------
+
+test_that("Name repair works with non-UTF-8 names", {
+  x1 <- "fa\u00e7ile"
+  skip_if_not(Encoding(x1) == "UTF-8")
+
+  x2 <- iconv(x1, from = "UTF-8", to = "latin1")
+  skip_if_not(Encoding(x2) == "latin1")
+
+  x3 <- c(x2, x2)
+  expect_equal(vec_as_names(x3, repair = "unique"), paste0(x3, "...", 1:2))
+})

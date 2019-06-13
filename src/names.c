@@ -3,8 +3,12 @@
 #include "vctrs.h"
 #include "utils.h"
 
+#include <ctype.h>
+
 static void describe_repair(SEXP old, SEXP new);
 
+// 3 leading '.' + 1 trailing '\0' + 24 characters
+static const int MAX_IOTA_SIZE = 28;
 
 // [[ register(); include("vctrs.h") ]]
 SEXP vec_names(SEXP x) {
@@ -80,6 +84,7 @@ SEXP vctrs_minimal_names(SEXP x) {
 // From dictionary.c
 SEXP vctrs_duplicated(SEXP x);
 
+static SEXP as_unique_names_impl(SEXP names, bool quiet);
 static void stop_large_name();
 static bool is_dotdotint(const char* name);
 static ptrdiff_t suffix_pos(const char* name);
@@ -93,17 +98,17 @@ SEXP as_unique_names(SEXP names, bool quiet) {
 
   R_len_t i = 0;
   R_len_t n = Rf_length(names);
-  SEXP* ptr = STRING_PTR(names);
+  const SEXP* names_ptr = STRING_PTR_RO(names);
 
   SEXP dups = PROTECT(vctrs_duplicated(names));
-  int* dups_ptr = LOGICAL(dups);
+  const int* dups_ptr = LOGICAL_RO(dups);
 
   // First quick pass to detect if any repairs are needed. See second
   // part of the loop for the meaning of each branch.
-  for (; i < n; ++i, ++ptr, ++dups_ptr) {
-    SEXP elt = *ptr;
+  for (; i < n; ++i) {
+    SEXP elt = names_ptr[i];
 
-    if (needs_suffix(elt) || suffix_pos(CHAR(elt)) >= 0 || *dups_ptr) {
+    if (needs_suffix(elt) || suffix_pos(CHAR(elt)) >= 0 || dups_ptr[i]) {
       break;
     }
   }
@@ -111,26 +116,25 @@ SEXP as_unique_names(SEXP names, bool quiet) {
 
   if (i == n) {
     return names;
-  }
-
-  SEXP orig;
-  if (!quiet) {
-    orig = PROTECT(Rf_shallow_duplicate(names));
   } else {
-    orig = R_NilValue;
-    names = PROTECT(r_maybe_duplicate(names));
+    return(as_unique_names_impl(names, quiet));
   }
+}
 
-  ptr = STRING_PTR(names);
+SEXP as_unique_names_impl(SEXP names, bool quiet) {
+  R_len_t n = Rf_length(names);
 
-  for (; i < n; ++i, ++ptr) {
-    SEXP elt = *ptr;
+  SEXP new_names = PROTECT(Rf_shallow_duplicate(names));
+  const SEXP* new_names_ptr = STRING_PTR_RO(new_names);
+
+  for (R_len_t i = 0; i < n; ++i) {
+    SEXP elt = new_names_ptr[i];
 
     // Set `NA` and dots values to "" so they get replaced by `...n`
     // later on
     if (needs_suffix(elt)) {
       elt = strings_empty;
-      SET_STRING_ELT(names, i, elt);
+      SET_STRING_ELT(new_names, i, elt);
       continue;
     }
 
@@ -138,26 +142,19 @@ SEXP as_unique_names(SEXP names, bool quiet) {
     const char* nm = CHAR(elt);
     int pos = suffix_pos(nm);
     if (pos >= 0) {
-      R_CheckStack2(pos + 1);
-      char buf[pos + 1];
-      memcpy(buf, nm, pos);
-      buf[pos] = '\0';
-
-      elt = Rf_mkChar(buf);
-      SET_STRING_ELT(names, i, elt);
+      elt = Rf_mkCharLenCE(nm, pos, Rf_getCharCE(elt));
+      SET_STRING_ELT(new_names, i, elt);
       continue;
     }
   }
 
   // Append all duplicates with a suffix
-  char buf[100] = "";
-  ptr = STRING_PTR(names);
 
-  dups = PROTECT(vctrs_duplicated(names));
-  dups_ptr = LOGICAL(dups);
+  SEXP dups = PROTECT(vctrs_duplicated(new_names));
+  const int* dups_ptr = LOGICAL_RO(dups);
 
-  for (R_len_t i = 0; i < n; ++i, ++ptr) {
-    SEXP elt = *ptr;
+  for (R_len_t i = 0; i < n; ++i) {
+    SEXP elt = new_names_ptr[i];
 
     if (elt != strings_empty && !dups_ptr[i]) {
       continue;
@@ -165,29 +162,30 @@ SEXP as_unique_names(SEXP names, bool quiet) {
 
     const char* name = CHAR(elt);
 
-    int remaining = 100;
     int size = strlen(name);
-    if (size >= 100) {
-      stop_large_name();
-    }
+    int buf_size = size + MAX_IOTA_SIZE;
 
-    memcpy(buf, name, size + 1);
-    remaining -= size;
+    R_CheckStack2(buf_size);
+    char buf[buf_size];
+    buf[0] = '\0';
+
+    memcpy(buf, name, size);
+    int remaining = buf_size - size;
 
     int needed = snprintf(buf + size, remaining, "...%d", i + 1);
     if (needed >= remaining) {
       stop_large_name();
     }
 
-    SET_STRING_ELT(names, i, Rf_mkChar(buf));
+    SET_STRING_ELT(new_names, i, Rf_mkCharLenCE(buf, size + needed, Rf_getCharCE(elt)));
   }
 
   if (!quiet) {
-    describe_repair(orig, names);
+    describe_repair(names, new_names);
   }
 
   UNPROTECT(2);
-  return names;
+  return new_names;
 }
 
 SEXP vctrs_as_unique_names(SEXP names, SEXP quiet) {
@@ -313,12 +311,9 @@ SEXP vctrs_unique_names(SEXP x, SEXP quiet) {
 }
 
 
-// 3 leading '.' + 1 trailing '\0' + 24 characters
-#define TOTAL_BUF_SIZE 28
-
 static SEXP names_iota(R_len_t n) {
-  char buf[TOTAL_BUF_SIZE];
-  SEXP nms = r_chr_iota(n, buf, TOTAL_BUF_SIZE, "...");
+  char buf[MAX_IOTA_SIZE];
+  SEXP nms = r_chr_iota(n, buf, MAX_IOTA_SIZE, "...");
 
   if (nms == R_NilValue) {
     Rf_errorcall(R_NilValue, "Too many names to repair.");
@@ -327,8 +322,6 @@ static SEXP names_iota(R_len_t n) {
   return nms;
 }
 
-#undef TOTAL_BUF_SIZE
-#undef FREE_BUF_SIZE
 
 
 static void describe_repair(SEXP old, SEXP new) {
