@@ -42,7 +42,7 @@ SEXP vctrs_as_minimal_names(SEXP names) {
 
   R_len_t i = 0;
   R_len_t n = Rf_length(names);
-  SEXP* ptr = STRING_PTR(names);
+  const SEXP* ptr = STRING_PTR_RO(names);
 
   for (; i < n; ++i, ++ptr) {
     SEXP elt = *ptr;
