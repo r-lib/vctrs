@@ -197,7 +197,7 @@ SEXP vec_restore(SEXP x, SEXP to, SEXP i);
 R_len_t vec_size(SEXP x);
 R_len_t vec_size_common(SEXP xs, R_len_t absent);
 SEXP vec_dim(SEXP x);
-R_len_t vec_n_dim(SEXP x);
+R_len_t vec_dim_n(SEXP x);
 SEXP vec_cast(SEXP x, SEXP to);
 SEXP vec_cast_common(SEXP xs, SEXP to);
 SEXP vec_coercible_cast(SEXP x, SEXP to, struct vctrs_arg* x_arg, struct vctrs_arg* to_arg);

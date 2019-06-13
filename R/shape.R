@@ -46,7 +46,7 @@ shape_broadcast <- function(x, to) {
   }
 
   # Increase dimensionality if required
-  if (vec_n_dim(x) != length(dim_x)) {
+  if (vec_dim_n(x) != length(dim_x)) {
     dim(x) <- dim_x
   }
 

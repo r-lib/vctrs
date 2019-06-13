@@ -3,19 +3,19 @@
 \name{dim}
 \alias{dim}
 \alias{vec_dim}
-\alias{vec_n_dim}
+\alias{vec_dim_n}
 \title{Vector dimensions}
 \usage{
 vec_dim(x)
 
-vec_n_dim(x)
+vec_dim_n(x)
 }
 \arguments{
 \item{x}{A vector}
 }
 \description{
 \itemize{
-\item \code{vec_n_dim()} gives the dimensionality (i.e. number of dimensions)
+\item \code{vec_dim_n()} gives the dimensionality (i.e. number of dimensions)
 \item \code{vec_dim()} returns the size of each dimension
 }
 }

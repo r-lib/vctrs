@@ -250,7 +250,7 @@ vec_names <- function(x) {
 `vec_names<-` <- function(x, value) {
   if (is.data.frame(x)) {
     # Do not update row names
-  } else if (vec_n_dim(x) == 1) {
+  } else if (vec_dim_n(x) == 1) {
     names(x) <- value
   } else {
     rownames(x) <- value

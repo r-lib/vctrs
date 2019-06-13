@@ -1,6 +1,6 @@
 #' Vector dimensions
 #'
-#' * `vec_n_dim()` gives the dimensionality (i.e. number of dimensions)
+#' * `vec_dim_n()` gives the dimensionality (i.e. number of dimensions)
 #' * `vec_dim()` returns the size of each dimension
 #'
 #' Unlike base R, we treat vectors with `NULL` dimensions as 1d. This
@@ -24,8 +24,8 @@ vec_dim <- function(x) {
 
 #' @export
 #' @rdname dim
-vec_n_dim <- function(x) {
-  .Call(vctrs_n_dim, x)
+vec_dim_n <- function(x) {
+  .Call(vctrs_dim_n, x)
 }
 
 # Unexported counterpart to `vec_dim()` that respects that `dim()` is a generic.

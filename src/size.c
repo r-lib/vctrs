@@ -16,13 +16,13 @@ SEXP vec_dim(SEXP x) {
 }
 
 // [[ include("vctrs.h") ]]
-R_len_t vec_n_dim(SEXP x) {
+R_len_t vec_dim_n(SEXP x) {
   return Rf_length(vec_dim(x));
 }
 
 // [[ register() ]]
-SEXP vctrs_n_dim(SEXP x) {
-  return r_int(vec_n_dim(x));
+SEXP vctrs_dim_n(SEXP x) {
+  return r_int(vec_dim_n(x));
 }
 
 // [[ include("vctrs.h") ]]
