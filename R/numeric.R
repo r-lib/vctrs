@@ -5,7 +5,7 @@
 #' group generics, the Math group generics, and a handful of other
 #' mathematical functions like `mean()`.
 #'
-#' `vec_base_arith()` is provided as a convenience for writing methods. It
+#' `vec_math_base()` is provided as a convenience for writing methods. It
 #' calls the base `fun` on the underlying [vec_data()].
 #'
 #' @section Included functions:
@@ -43,6 +43,8 @@ vec_math <- function(fun, x, ...) {
 #' @export
 vec_math.default <- function(fun, x, ...) {
   if (is_double(x)) {
+    vec_restore(vec_math_base(fun, x, ...), x)
+  } else if (fun %in% c("any", "all") && is_logical(x)) {
     vec_restore(vec_math_base(fun, x, ...), x)
   } else {
     # nocov start

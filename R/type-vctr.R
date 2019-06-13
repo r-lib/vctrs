@@ -418,6 +418,10 @@ quantile.vctrs_vctr <- function(x, ..., type = 1, na.rm = FALSE) {
 
 #' @export
 min.vctrs_vctr <- function(x, ..., na.rm = FALSE) {
+  if (vec_is_empty(x)) {
+    return(vec_cast(Inf, x))
+  }
+
   # TODO: implement to do vec_arg_min()
   rank <- xtfrm(x)
 
@@ -432,6 +436,10 @@ min.vctrs_vctr <- function(x, ..., na.rm = FALSE) {
 
 #' @export
 max.vctrs_vctr <- function(x, ..., na.rm = FALSE) {
+  if (vec_is_empty(x)) {
+    return(vec_cast(-Inf, x))
+  }
+
   # TODO: implement to do vec_arg_max()
   rank <- xtfrm(x)
 

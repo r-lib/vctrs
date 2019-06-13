@@ -427,3 +427,74 @@ test_that("additional subscripts are handled (#269)", {
   expect_identical(x[1, 1], new_2d(1, dim = c(1, 1)))
   expect_identical(x[, 1], new_2d(c(1, 2), dim = c(2, 1)))
 })
+
+
+# summary generics --------------------------------------------------------
+
+test_that("Summary generics behave identically to base for empty vctrs (#88)", {
+  expect_warning(
+    expect_identical(
+      new_vctr(max(numeric())),
+      max(new_vctr(numeric()))
+    )
+  )
+
+  expect_warning(
+    expect_identical(
+      new_vctr(min(numeric())),
+      min(new_vctr(numeric()))
+    )
+  )
+
+  expect_warning(
+    expect_identical(
+      new_vctr(range(numeric())),
+      range(new_vctr(numeric()))
+    )
+  )
+
+  expect_identical(
+    new_vctr(any(logical())),
+    any(new_vctr(logical()))
+  )
+
+  expect_identical(
+    new_vctr(all(logical())),
+    all(new_vctr(logical()))
+  )
+
+  expect_identical(
+    new_vctr(prod(numeric())),
+    prod(new_vctr(numeric()))
+  )
+
+  expect_identical(
+    new_vctr(sum(numeric())),
+    sum(new_vctr(numeric()))
+  )
+
+  expect_identical(
+    new_vctr(cummax(numeric())),
+    cummax(new_vctr(numeric()))
+  )
+
+  expect_identical(
+    new_vctr(cummin(numeric())),
+    cummin(new_vctr(numeric()))
+  )
+
+  expect_identical(
+    new_vctr(cumprod(numeric())),
+    cumprod(new_vctr(numeric()))
+  )
+
+  expect_identical(
+    new_vctr(cumsum(numeric())),
+    cumsum(new_vctr(numeric()))
+  )
+
+  expect_identical(
+    new_vctr(mean(numeric())),
+    mean(new_vctr(numeric()))
+  )
+})
