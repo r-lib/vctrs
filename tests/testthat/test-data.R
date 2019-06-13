@@ -1,17 +1,48 @@
 context("test-data")
 
-test_that("strips vector attributes apart from names", {
-  x <- new_vctr(1:10, a = 1, b = 2)
-  expect_equal(vec_data(x), 1:10)
+test_that("vec_data() preserves names (#245)", {
+  x <- set_names(letters, LETTERS)
+  expect_identical(vec_names(x), vec_names(vec_data(x)))
 
-  x <- new_vctr(c(x = 1, y = 2), a = 1, b = 2)
-  expect_equal(vec_data(x), c(x = 1, y = 2))
+  x <- diag(2)
+  rownames(x) <- letters[1:2]
+  colnames(x) <- LETTERS[1:2]
+  expect_identical(vec_names(x), vec_names(vec_data(x)))
 })
 
-test_that("strips attributes apart from dim and dimnames", {
+test_that("vec_data() preserves size (#245)", {
+  x <- set_names(letters, LETTERS)
+  expect_identical(vec_size(x), vec_size(vec_data(x)))
+
+  x <- diag(2)
+  expect_identical(vec_size(x), vec_size(vec_data(x)))
+})
+
+test_that("vec_data() preserves dim and dimnames (#245)", {
+  x <- set_names(letters, LETTERS)
+  expect_identical(vec_dim(x), vec_dim(vec_data(x)))
+
+  x <- diag(2)
+  expect_identical(vec_dim(x), vec_dim(vec_data(x)))
+
+  x <- diag(2)
+  rownames(x) <- letters[1:2]
+  colnames(x) <- LETTERS[1:2]
+  expect_identical(dimnames(x), dimnames(vec_data(x)))
+})
+
+test_that("strips vector attributes apart from names, dim and dimnames", {
+  x <- new_vctr(1:10, a = 1, b = 2)
+  expect_null(attributes(vec_data(x)))
+
+  x <- new_vctr(c(x = 1, y = 2), a = 1, b = 2)
+  expect_equal(names(attributes(vec_data(x))), "names")
+
+  x <- new_vctr(1, a = 1, dim = c(1L, 1L))
+  expect_equal(names(attributes(vec_data(x))), "dim")
+
   x <- new_vctr(1, a = 1, dim = c(1L, 1L), dimnames = list("foo", "bar"))
-  expect <- matrix(1, nrow = 1L, ncol = 1L, dimnames = list("foo", "bar"))
-  expect_equal(vec_data(x), expect)
+  expect_equal(names(attributes(vec_data(x))), c("dim", "dimnames"))
 })
 
 test_that("vec_proxy() is a no-op with data vectors", {
