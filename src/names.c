@@ -54,7 +54,7 @@ SEXP vctrs_as_minimal_names(SEXP names) {
     return names;
   }
 
-  names = PROTECT(r_maybe_duplicate(names));
+  names = PROTECT(Rf_shallow_duplicate(names));
 
   for (; i < n; ++i, ++ptr) {
     SEXP elt = *ptr;
