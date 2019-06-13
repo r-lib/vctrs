@@ -5,7 +5,7 @@
 
 #include <ctype.h>
 
-static void describe_repair(SEXP old, SEXP new);
+static void describe_repair(SEXP old_names, SEXP new_names);
 
 // 3 leading '.' + 1 trailing '\0' + 24 characters
 static const int MAX_IOTA_SIZE = 28;
@@ -324,8 +324,9 @@ static SEXP names_iota(R_len_t n) {
 
 
 
-static void describe_repair(SEXP old, SEXP new) {
-  SEXP call = PROTECT(Rf_lang3(Rf_install("describe_repair"), old, new));
+static void describe_repair(SEXP old_names, SEXP new_names) {
+  SEXP call = PROTECT(Rf_lang3(Rf_install("describe_repair"),
+    old_names, new_names));
   Rf_eval(call, vctrs_ns_env);
 
   // To reset visibility when called from a `.External2()`
