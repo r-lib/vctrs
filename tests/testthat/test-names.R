@@ -80,6 +80,25 @@ test_that("vec_as_names() repairs names", {
   expect_identical(vec_as_names(chr("_foo", "_bar"), repair = "universal"), c("._foo", "._bar"))
 })
 
+test_that("vec_as_names() keeps the names of a named vector", {
+  x_unnamed <- c(NA, "", "..1", "...2")
+  x_names <- letters[1:4]
+  x <- set_names(x_unnamed, x_names)
+
+  expect_identical(
+    set_names(vec_as_names(x_unnamed, repair = "minimal"), x_names),
+    vec_as_names(x, repair = "minimal")
+  )
+  expect_identical(
+    set_names(vec_as_names(x_unnamed, repair = "unique"), x_names),
+    vec_as_names(x, repair = "unique")
+  )
+  expect_identical(
+    set_names(vec_as_names(x_unnamed, repair = "universal"), x_names),
+    vec_as_names(x, repair = "universal")
+  )
+})
+
 test_that("vec_as_names() accepts and checks repair function", {
   expect_identical(vec_as_names(c("", ""), repair = ~ rep_along(.x, "foo")), c("foo", "foo"))
   expect_error(vec_as_names(c("", ""), repair = function(nms) "foo"), "length 1 instead of length 2")

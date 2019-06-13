@@ -266,7 +266,8 @@ as_unique_names <- function(names, quiet = FALSE) {
   .Call(vctrs_as_unique_names, names, quiet)
 }
 as_universal_names <- function(names, quiet = FALSE) {
-  new_names <- rep_along(names, "")
+  new_names <- names
+  new_names[] <- ""
 
   naked_names <- strip_pos(two_to_three_dots(names))
   empty <- naked_names %in% c("", "...")
