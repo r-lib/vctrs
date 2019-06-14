@@ -250,7 +250,10 @@ uint32_t hash_object(SEXP x);
 uint32_t hash_scalar(SEXP x, R_len_t i);
 void hash_fill(uint32_t* p, R_len_t n, SEXP x);
 
+bool is_unique_names(SEXP names);
 SEXP as_unique_names(SEXP names, bool quiet);
+
+bool duplicated_any(SEXP names);
 
 // Experimental:
 SEXP vec_restore_container(SEXP x, SEXP to, R_len_t n);
