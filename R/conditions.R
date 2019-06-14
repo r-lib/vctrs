@@ -215,7 +215,16 @@ maybe_lossy_cast <- function(result, x, to,
 
   withRestarts(
     vctrs_restart_error_cast_lossy = function() result,
-    stop_lossy_cast(x, to, result, locations = NULL, ...)
+    stop_lossy_cast(
+      x = x,
+      to = to,
+      result = result,
+      locations = locations,
+      details = details,
+      ...,
+      message = message,
+      .subclass = .subclass,
+    )
   )
 }
 stop_lossy_cast <- function(x, to, result,
