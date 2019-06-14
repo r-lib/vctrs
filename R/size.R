@@ -80,8 +80,6 @@ vec_size_common <- function(..., .size = NULL, .absent = 0L) {
 vec_size2 <- function(nx, ny) {
   if (nx == ny) {
     nx
-  } else if (nx == 0L || ny == 0L) {
-    0L
   } else if (nx == 1L) {
     ny
   } else if (ny == 1L) {

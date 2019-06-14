@@ -40,7 +40,7 @@ shape_broadcast <- function(x, to) {
 
   dim_x <- n_dim2(dim_x, dim_to)$x
   dim_to[[1]] <- dim_x[[1]] # don't change number of observations
-  ok <- dim_x == dim_to | dim_x == 1 | dim_to == 0
+  ok <- dim_x == dim_to | dim_x == 1
   if (any(!ok)) {
     stop_incompatible_cast(x, to, details = "Non-recyclable dimensions")
   }
