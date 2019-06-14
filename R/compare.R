@@ -144,7 +144,7 @@ order_proxy <- function(proxy, direction = "asc", na_value = "largest") {
   if (is.data.frame(proxy)) {
     args <- unname(proxy)
     order_expr <- expr(
-      base::order(!!! args, decreasing = decreasing, na.last = na.last)
+      base::order(!!!args, decreasing = decreasing, na.last = na.last)
     )
     eval_bare(order_expr)
   } else if (is_character(proxy) || is_logical(proxy) || is_integer(proxy) || is_double(proxy)) {
