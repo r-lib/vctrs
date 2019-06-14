@@ -276,7 +276,7 @@ as the LHS.</p></li>
 #&gt; </span><span style='color: #555555;'> 45. </span><span>├─vctrs::vec_type2.character(x = x, y = y, x_arg = x_arg, y_arg = y_arg) </span><span style='color: #555555;'>/home/travis/build/r-lib/vctrs/R/type2.R:47:2</span><span>
 #&gt; </span><span style='color: #555555;'> 46. </span><span>└─vctrs:::vec_type2.character.default(...) </span><span style='color: #555555;'>/home/travis/build/r-lib/vctrs/R/type2.R:157:23</span><span>
 #&gt; </span><span style='color: #555555;'> 47. </span><span>  └─vctrs::stop_incompatible_type(x, y, x_arg = x_arg, y_arg = y_arg) </span><span style='color: #555555;'>/home/travis/build/r-lib/vctrs/R/type2.R:164:2</span><span>
-#&gt; </span><span style='color: #555555;'> 48. </span><span>    └─vctrs:::stop_incompatible(...) </span><span style='color: #555555;'>/home/travis/build/r-lib/vctrs/R/conditions.R:82:2</span><span></div><div class='input'>
+#&gt; </span><span style='color: #555555;'> 48. </span><span>    └─vctrs:::stop_incompatible(...) </span><span style='color: #555555;'>/home/travis/build/r-lib/vctrs/R/conditions.R:88:2</span><span></div><div class='input'>
 <span class='co'># Hence you cannot assign character values to an integer or double</span>
 <span class='co'># vector:</span>
 <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/try'>try</a></span>(<span class='fu'>vec_slice</span>(<span class='no'>x</span>, <span class='fl'>2</span>) <span class='kw'>&lt;-</span> <span class='st'>"20"</span>)</div><div class='output co'>#&gt; Error : No common type for `value` &lt;character&gt; and `x` &lt;double&gt;.
@@ -329,7 +329,7 @@ as the LHS.</p></li>
 #&gt; </span><span style='color: #555555;'> 45. </span><span>├─vctrs::vec_type2.character(x = x, y = y, x_arg = x_arg, y_arg = y_arg) </span><span style='color: #555555;'>/home/travis/build/r-lib/vctrs/R/type2.R:47:2</span><span>
 #&gt; </span><span style='color: #555555;'> 46. </span><span>└─vctrs:::vec_type2.character.default(...) </span><span style='color: #555555;'>/home/travis/build/r-lib/vctrs/R/type2.R:157:23</span><span>
 #&gt; </span><span style='color: #555555;'> 47. </span><span>  └─vctrs::stop_incompatible_type(x, y, x_arg = x_arg, y_arg = y_arg) </span><span style='color: #555555;'>/home/travis/build/r-lib/vctrs/R/type2.R:164:2</span><span>
-#&gt; </span><span style='color: #555555;'> 48. </span><span>    └─vctrs:::stop_incompatible(...) </span><span style='color: #555555;'>/home/travis/build/r-lib/vctrs/R/conditions.R:82:2</span><span></div></span></pre>
+#&gt; </span><span style='color: #555555;'> 48. </span><span>    └─vctrs:::stop_incompatible(...) </span><span style='color: #555555;'>/home/travis/build/r-lib/vctrs/R/conditions.R:88:2</span><span></div></span></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
