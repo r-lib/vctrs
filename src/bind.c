@@ -101,7 +101,7 @@ static SEXP as_df_row_impl(SEXP x, bool quiet) {
   if (is_data_frame(x)) {
     return x;
   }
-  if (vec_dims(x) != 1) {
+  if (vec_dim_n(x) != 1) {
     return r_as_data_frame(x);
   }
 
@@ -247,7 +247,7 @@ static SEXP as_df_col(SEXP x, SEXP outer) {
   if (is_data_frame(x)) {
     return df_as_df_col(x, outer);
   }
-  if (vec_dims(x) != 1) {
+  if (vec_dim_n(x) != 1) {
     return shaped_as_df_col(x, outer);
   }
   return vec_as_df_col(x, outer);

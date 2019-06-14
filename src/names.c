@@ -16,7 +16,7 @@ SEXP vec_names(SEXP x) {
     return R_NilValue;
   }
 
-  if (vec_dims(x) == 1) {
+  if (vec_dim_n(x) == 1) {
     if (OBJECT(x)) {
       return vctrs_dispatch1(syms_names, fns_names, syms_x, x);
     } else {

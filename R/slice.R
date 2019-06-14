@@ -92,7 +92,7 @@ vec_slice_fallback <- function(x, i) {
   out <- unclass(vec_proxy(x))
   vec_assert(out)
 
-  d <- vec_dims(out)
+  d <- vec_dim_n(out)
   if (d == 2) {
     out <- out[i, , drop = FALSE]
   } else {
@@ -119,7 +119,7 @@ vec_assign_fallback <- function(x, i, value) {
   i <- vec_slice(i, existing)
   value <- vec_slice(value, existing)
 
-  d <- vec_dims(x)
+  d <- vec_dim_n(x)
   miss_args <- rep(list(missing_arg()), d - 1)
   eval_bare(expr(x[i, !!!miss_args] <- value))
   x

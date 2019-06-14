@@ -17,7 +17,7 @@ shape_match <- function(type, x, y) {
 }
 
 shape_common <- function(x, y) {
-  shape <- dim2(shape(x), shape(y))
+  shape <- n_dim2(shape(x), shape(y))
   map2_int(shape$x, shape$y, vec_size2)
 }
 
@@ -38,7 +38,7 @@ shape_broadcast <- function(x, to) {
     stop_incompatible_cast(x, to, details = "Can not decrease dimensions")
   }
 
-  dim_x <- dim2(dim_x, dim_to)$x
+  dim_x <- n_dim2(dim_x, dim_to)$x
   dim_to[[1]] <- dim_x[[1]] # don't change number of observations
   ok <- dim_x == dim_to | dim_x == 1 | dim_to == 0
   if (any(!ok)) {
@@ -46,7 +46,7 @@ shape_broadcast <- function(x, to) {
   }
 
   # Increase dimensionality if required
-  if (vec_dims(x) != length(dim_x)) {
+  if (vec_dim_n(x) != length(dim_x)) {
     dim(x) <- dim_x
   }
 
@@ -73,7 +73,7 @@ shape <- function(x) {
   vec_dim(x)[-1]
 }
 
-dim2 <- function(x, y) {
+n_dim2 <- function(x, y) {
   nx <- length(x)
   ny <- length(y)
 

@@ -87,7 +87,7 @@ vec_ptype_abbr.AsIs <- function(x) {
 # Helpers -----------------------------------------------------------------
 
 vec_ptype_shape <- function(x) {
-  dim <- vec_dim(x)
+  dim <- dim2(x)
   if (length(dim) == 1) {
     ""
   } else {

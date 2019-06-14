@@ -277,7 +277,7 @@ as.POSIXct.vctrs_vctr <- function(x, tz = "", ...) {
 as.data.frame2 <- function(x) {
   out <- as.data.frame(x)
 
-  if (vec_dims(x) == 1) {
+  if (vec_dim_n(x) == 1) {
     # 1D arrays are not stripped from their dimensions
     out[[1]] <- as.vector(out[[1]])
 
