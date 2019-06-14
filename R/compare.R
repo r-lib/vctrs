@@ -146,12 +146,8 @@ order_proxy <- function(proxy, direction = "asc", na_value = "largest") {
     if (vec_size(proxy) == 0L) {
       return(integer(0L))
     }
-
     args <- unname(proxy)
-    order_expr <- expr(
-      base::order(!!!args, decreasing = decreasing, na.last = na.last)
-    )
-    eval_bare(order_expr)
+    exec(base::order, !!!args, decreasing = decreasing, na.last = na.last)
   } else if (is_character(proxy) || is_logical(proxy) || is_integer(proxy) || is_double(proxy)) {
     order(proxy, decreasing = decreasing, na.last = na.last)
   } else {
