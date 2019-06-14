@@ -26,7 +26,7 @@ obj_print_header <- function(x, ...) {
 
 #' @export
 obj_print_header.default <- function(x, ...) {
-  cat_line("<", vec_ptype_full(x), "[", length(x), "]>")
+  cat_line("<", vec_ptype_full(x), "[", vec_size(x), "]>")
   invisible(x)
 }
 
@@ -120,7 +120,7 @@ obj_str_leaf <- function(x, ...,
   # Avoid spending too much time formatting elements that won't see
   length <- ceiling(width / 2)
   if (length(x) > length) {
-    out <- x[1:length]
+    out <- x[seq2(1, length)]
   } else {
     out <- x
   }
