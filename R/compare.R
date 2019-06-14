@@ -142,6 +142,11 @@ order_proxy <- function(proxy, direction = "asc", na_value = "largest") {
   }
 
   if (is.data.frame(proxy)) {
+    # Avoid empty data frames getting a `NULL` order
+    if (vec_size(proxy) == 0L) {
+      return(integer(0L))
+    }
+
     args <- unname(proxy)
     order_expr <- expr(
       base::order(!!!args, decreasing = decreasing, na.last = na.last)

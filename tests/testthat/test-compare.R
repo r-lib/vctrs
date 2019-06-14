@@ -138,7 +138,7 @@ test_that("can order matrices and arrays (#306)", {
 
 test_that("can order empty data frames (#356)", {
   df1 <- data.frame()
-  expect_equal(vec_order(df1), NULL)
+  expect_equal(vec_order(df1), integer())
 
   df2 <- data.frame(x = numeric(), y = integer())
   expect_equal(vec_order(df2), integer())
