@@ -64,7 +64,7 @@ s3_register <- function(generic, class, method = NULL) {
 
   # Avoid registration failures during loading (pkgload or regular)
   if (!isNamespaceLoaded(package)) {
-    return()
+    return(invisible())
   }
 
   envir <- asNamespace(package)
@@ -73,6 +73,8 @@ s3_register <- function(generic, class, method = NULL) {
   if (exists(generic, envir)) {
     registerS3method(generic, class, method, envir = envir)
   }
+
+  invisible()
 }
 
 # nocov end
