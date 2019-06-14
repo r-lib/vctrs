@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Split a vector into groups — vec_split • vctrs</title>
+<title>Vector dimensions — dim • vctrs</title>
 
 <!-- jquery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
@@ -30,11 +30,12 @@
 
 
 
-<meta property="og:title" content="Split a vector into groups — vec_split" />
+<meta property="og:title" content="Vector dimensions — dim" />
 
-<meta property="og:description" content="This is a generalisation of split() that can split by any type of vector,
-not just factors. Instead of returning the keys in the character names,
-the are returned in a separate parallel vector." />
+<meta property="og:description" content="
+vec_dim_n() gives the dimensionality (i.e. number of dimensions)
+vec_dim() returns the size of each dimension
+" />
 
 <meta property="og:image" content="https://vctrs.r-lib.org/logo.png" />
 <meta name="twitter:card" content="summary" />
@@ -124,69 +125,51 @@ the are returned in a separate parallel vector." />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Split a vector into groups</h1>
-    <small class="dont-index">Source: <a href='https://github.com/r-lib/vctrs/blob/master/R/dictionary.R'><code>R/dictionary.R</code></a></small>
-    <div class="hidden name"><code>vec_split.Rd</code></div>
+    <h1>Vector dimensions</h1>
+    <small class="dont-index">Source: <a href='https://github.com/r-lib/vctrs/blob/master/R/dim.R'><code>R/dim.R</code></a></small>
+    <div class="hidden name"><code>dim.Rd</code></div>
     </div>
 
     <div class="ref-description">
     
-    <p>This is a generalisation of <code><a href='https://www.rdocumentation.org/packages/base/topics/split'>split()</a></code> that can split by any type of vector,
-not just factors. Instead of returning the keys in the character names,
-the are returned in a separate parallel vector.</p>
+    <ul>
+<li><p><code>vec_dim_n()</code> gives the dimensionality (i.e. number of dimensions)</p></li>
+<li><p><code>vec_dim()</code> returns the size of each dimension</p></li>
+</ul>
     
     </div>
 
-    <pre class="usage"><span class='fu'>vec_split</span>(<span class='no'>x</span>, <span class='no'>by</span>)</pre>
+    <pre class="usage"><span class='fu'>vec_dim</span>(<span class='no'>x</span>)
+
+<span class='fu'>vec_dim_n</span>(<span class='no'>x</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>x</th>
-      <td><p>Vector to divide into groups.</p></td>
-    </tr>
-    <tr>
-      <th>by</th>
-      <td><p>Vector whose unique values defines the groups.</p></td>
+      <td><p>A vector</p></td>
     </tr>
     </table>
     
-    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
+    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <p>A data frame with two columns and size equal to
-<code><a href='vec_size.html'>vec_size(vec_unique(by))</a></code>. The <code>key</code> column has the same type as
-<code>by</code>, and the <code>val</code> column has type <code>list_of&lt;vec_type(x)&gt;</code>.</p>
-<p>Note for complex types, the default <code>data.frame</code> print method will be
-suboptimal, and you will want to coerce into a tibble to better
-understand the output.</p>
+    <p>Unlike base R, we treat vectors with <code>NULL</code> dimensions as 1d. This
+simplifies the type system by eliding a special case. Compared to base R
+equivalent, <code>vec_dim()</code> returns <code><a href='https://www.rdocumentation.org/packages/base/topics/length'>length()</a></code>, not <code>NULL</code>, when <code>x</code> is 1d.</p>
     
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'>vec_split</span>(<span class='no'>mtcars</span>$<span class='no'>cyl</span>, <span class='no'>mtcars</span>$<span class='no'>vs</span>)</div><div class='output co'>#&gt;   key                                                  val
-#&gt; 1   0 6, 6, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 4, 8, 6, 8
-#&gt; 2   1             4, 6, 6, 4, 4, 6, 6, 4, 4, 4, 4, 4, 4, 4</div><div class='input'><span class='fu'>vec_split</span>(<span class='no'>mtcars</span>$<span class='no'>cyl</span>, <span class='no'>mtcars</span>[<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='st'>"vs"</span>, <span class='st'>"am"</span>)])</div><div class='output co'>#&gt;   key.vs key.am                                val
-#&gt; 1      0      1                   6, 6, 4, 8, 6, 8
-#&gt; 2      1      1                4, 4, 4, 4, 4, 4, 4
-#&gt; 3      1      0                6, 6, 4, 4, 6, 6, 4
-#&gt; 4      0      0 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8</div><div class='input'>
-<span class='kw'>if</span> (<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/library'>require</a></span>(<span class='st'>"tibble"</span>)) {
-  <span class='fu'><a href='https://tibble.tidyverse.org/reference/as_tibble.html'>as_tibble</a></span>(<span class='fu'>vec_split</span>(<span class='no'>mtcars</span>$<span class='no'>cyl</span>, <span class='no'>mtcars</span>[<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='st'>"vs"</span>, <span class='st'>"am"</span>)]))
-  <span class='fu'><a href='https://tibble.tidyverse.org/reference/as_tibble.html'>as_tibble</a></span>(<span class='fu'>vec_split</span>(<span class='no'>mtcars</span>, <span class='no'>mtcars</span>[<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='st'>"vs"</span>, <span class='st'>"am"</span>)]))
-}</div><div class='output co'>#&gt; <span class='message'>Loading required package: tibble</span></div><div class='output co'>#&gt; <span style='color: #949494;'># A tibble: 4 x 2</span><span>
-#&gt;   key$vs   $am             val
-#&gt;    </span><span style='color: #949494;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #949494;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #949494;font-style: italic;'>&lt;list&lt;df[,11]&gt;&gt;</span><span>
-#&gt; </span><span style='color: #BCBCBC;'>1</span><span>      0     1            [11]
-#&gt; </span><span style='color: #BCBCBC;'>2</span><span>      1     1            [11]
-#&gt; </span><span style='color: #BCBCBC;'>3</span><span>      1     0            [11]
-#&gt; </span><span style='color: #BCBCBC;'>4</span><span>      0     0            [11]</div></span></pre>
+    <pre class="examples"><div class='input'><span class='co'># Compared to base R</span>
+<span class='no'>x</span> <span class='kw'>&lt;-</span> <span class='fl'>1</span>:<span class='fl'>5</span>
+<span class='fu'>dim</span>(<span class='no'>x</span>)</div><div class='output co'>#&gt; NULL</div><div class='input'><span class='fu'>vec_dim</span>(<span class='no'>x</span>)</div><div class='output co'>#&gt; [1] 5</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
       <li><a href="#arguments">Arguments</a></li>
       
-      <li><a href="#value">Value</a></li>
+      <li><a href="#details">Details</a></li>
       
       <li><a href="#examples">Examples</a></li>
     </ul>
