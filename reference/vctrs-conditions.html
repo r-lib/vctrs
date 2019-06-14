@@ -236,6 +236,7 @@ returns the result silently.</p>
 <span class='fu'>maybe_lossy_cast</span>(<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='st'>"foo"</span>, <span class='st'>"bar"</span>), <span class='kw'>NULL</span>, <span class='st'>""</span>, <span class='kw'>lossy</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='fl'>FALSE</span>, <span class='fl'>FALSE</span>))</div><div class='output co'>#&gt; [1] "foo" "bar"</div><div class='input'>
 <span class='co'># If `lossy` has any `TRUE`, an error is thrown:</span>
 <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/try'>try</a></span>(<span class='fu'>maybe_lossy_cast</span>(<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='st'>"foo"</span>, <span class='st'>"bar"</span>), <span class='kw'>NULL</span>, <span class='st'>""</span>, <span class='kw'>lossy</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='fl'>FALSE</span>, <span class='fl'>TRUE</span>)))</div><div class='output co'>#&gt; Error : Lossy cast from &lt;NULL&gt; to &lt;character&gt;.
+#&gt; Locations: 2
 #&gt; Backtrace:
 #&gt; <span style='color: #555555;'>     </span><span>█
 #&gt; </span><span style='color: #555555;'>  1. </span><span>├─base::tryCatch(...)
@@ -284,7 +285,7 @@ returns the result silently.</p>
 #&gt; </span><span style='color: #555555;'> 44. </span><span>                              ├─base::withRestarts(...) </span><span style='color: #555555;'>/home/travis/build/r-lib/vctrs/R/conditions.R:216:2</span><span>
 #&gt; </span><span style='color: #555555;'> 45. </span><span>                              │ └─base:::withOneRestart(expr, restarts[[1L]])
 #&gt; </span><span style='color: #555555;'> 46. </span><span>                              │   └─base:::doWithOneRestart(return(expr), restart)
-#&gt; </span><span style='color: #555555;'> 47. </span><span>                              └─vctrs:::stop_lossy_cast(x, to, result, locations = NULL, ...)</div><div class='input'>
+#&gt; </span><span style='color: #555555;'> 47. </span><span>                              └─vctrs:::stop_lossy_cast(...)</div><div class='input'>
 <span class='co'># Unless lossy casts are allowed:</span>
 <span class='fu'>allow_lossy_cast</span>(
   <span class='fu'>maybe_lossy_cast</span>(<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='st'>"foo"</span>, <span class='st'>"bar"</span>), <span class='kw'>NULL</span>, <span class='st'>""</span>, <span class='kw'>lossy</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='fl'>FALSE</span>, <span class='fl'>TRUE</span>))
