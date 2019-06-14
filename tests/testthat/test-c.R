@@ -86,3 +86,8 @@ test_that("vec_c() handles record classes", {
   expect_size(out, 3)
   expect_identical(vec_proxy(out), data.frame(n = c(1L, 1L, NA), d = c(2L, 1L, NA)))
 })
+
+test_that("can mix named and unnamed vectors (#271)", {
+  expect_identical(vec_c(c(a = 1), 2), c(a = 1, 2))
+  expect_identical(vec_c(0, c(a = 1), 2, b = 3), c(0, a = 1, 2, b =3))
+})

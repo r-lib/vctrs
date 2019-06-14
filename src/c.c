@@ -89,7 +89,9 @@ static SEXP vec_c(SEXP xs, SEXP ptype) {
     if (has_names) {
       SEXP outer = xs_names == R_NilValue ? R_NilValue : STRING_ELT(xs_names, i);
       SEXP x_nms = outer_names(PROTECT(vec_names(x)), outer, size);
-      vec_assign_impl(out_names, idx, x_nms, false);
+      if (x_nms != R_NilValue) {
+        vec_assign_impl(out_names, idx, x_nms, false);
+      }
       UNPROTECT(1);
     }
 
