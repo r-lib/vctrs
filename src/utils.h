@@ -143,6 +143,12 @@ static inline double r_dbl_get(SEXP x, R_len_t i) {
 #define r_str Rf_mkChar
 #define r_sym Rf_install
 
+static inline SEXP r_list(SEXP x) {
+  SEXP out = Rf_allocVector(VECSXP, 1);
+  SET_VECTOR_ELT(out, 0, x);
+  return out;
+}
+
 #define r_str_as_character Rf_ScalarString
 
 SEXP r_as_list(SEXP x);
