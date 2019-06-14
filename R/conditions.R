@@ -1,6 +1,8 @@
 #' Custom conditions for vctrs package
 #'
-#' These errors and warnings have custom classes and structures to make
+#' These functions are called for their side effect of raising
+#' errors and warnings.
+#' These conditions have custom classes and structures to make
 #' testing easier.
 #'
 #' @param x,y Vectors
@@ -49,6 +51,10 @@ stop_incompatible <- function(x, y, details = NULL, ..., message = NULL, .subcla
   )
 }
 
+#' @return
+#' `stop_incompatible_*()` unconditionally raise an error of class
+#' `"vctrs_error_incompatible_*"` and `"vctrs_error_incompatible"`.
+#'
 #' @rdname vctrs-conditions
 #' @export
 stop_incompatible_type <- function(x, y,

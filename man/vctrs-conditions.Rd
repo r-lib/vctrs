@@ -59,8 +59,14 @@ or \code{to} match these \link[=vec_type]{prototypes}.}
 
 \item{subclass}{Use if you want to further customise the class}
 }
+\value{
+\code{stop_incompatible_*()} unconditionally raise an error of class
+\code{"vctrs_error_incompatible_*"} and \code{"vctrs_error_incompatible"}.
+}
 \description{
-These errors and warnings have custom classes and structures to make
+These functions are called for their side effect of raising
+errors and warnings.
+These conditions have custom classes and structures to make
 testing easier.
 }
 \section{Lossy cast errors}{
