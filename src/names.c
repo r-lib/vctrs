@@ -8,7 +8,8 @@
 static void describe_repair(SEXP old_names, SEXP new_names);
 
 // 3 leading '.' + 1 trailing '\0' + 24 characters
-static const int MAX_IOTA_SIZE = 28;
+#define MAX_IOTA_SIZE 28
+
 
 // [[ register(); include("vctrs.h") ]]
 SEXP vec_names(SEXP x) {
