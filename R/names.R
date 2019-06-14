@@ -155,8 +155,13 @@ vec_as_names <- function(names,
 
   if (is_function(repair)) {
     names <- as_minimal_names(names)
-    names <- validate_minimal(repair(names), n = length(names))
-    return(names)
+    new_names <- validate_minimal(repair(names), n = length(names))
+
+    if (!quiet) {
+      describe_repair(names, new_names)
+    }
+
+    return(new_names)
   }
 
   switch(repair,
@@ -220,8 +225,13 @@ vec_names2 <- function(x,
 
   if (is_function(repair)) {
     names <- minimal_names(x)
-    names <- validate_minimal(repair(names), n = length(names))
-    return(names)
+    new_names <- validate_minimal(repair(names), n = length(names))
+
+    if (!quiet) {
+      describe_repair(names, new_names)
+    }
+
+    return(new_names)
   }
 
   switch(repair,

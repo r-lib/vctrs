@@ -400,6 +400,12 @@ test_that("messages by default", {
     "New names:\n* `a:b` -> a.b\n",
     fixed = TRUE
   )
+
+  expect_message(
+    vec_repair_names(set_names(1, "a:b"), ~ make.names(.)),
+    "New names:\n* `a:b` -> a.b\n",
+    fixed = TRUE
+  )
 })
 
 test_that("quiet = TRUE", {
