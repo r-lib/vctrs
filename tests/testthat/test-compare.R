@@ -114,6 +114,14 @@ test_that("can sort data frames", {
   expect_equal(out2, data.frame(x = c(2, 1, 1), y = c(2, 2, 1)))
 })
 
+test_that("can sort empty data frames (#356)", {
+  df1 <- data.frame()
+  expect_equal(vec_sort(df1), df1)
+
+  df2 <- data.frame(x = numeric(), y = integer())
+  expect_equal(vec_sort(df2), df2)
+})
+
 test_that("can order tibbles that contain non-comparable objects", {
   expect_equal(vec_order(data_frame(list(10, 2, 1))), 1:3)
 })
@@ -126,4 +134,12 @@ test_that("can order matrices and arrays (#306)", {
   x[2] <- 1
   x[3] <- 5
   expect_identical(vec_order(x), 2:1)
+})
+
+test_that("can order empty data frames (#356)", {
+  df1 <- data.frame()
+  expect_equal(vec_order(df1), integer())
+
+  df2 <- data.frame(x = numeric(), y = integer())
+  expect_equal(vec_order(df2), integer())
 })
