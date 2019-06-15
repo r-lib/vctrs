@@ -169,7 +169,7 @@ SEXP map(SEXP x, SEXP (*fn)(SEXP)) {
 
 SEXP df_map(SEXP df, SEXP (*fn)(SEXP)) {
   SEXP out = PROTECT(map(df, fn));
-  out = df_restore(out, df, vctrs_shared_empty_int);
+  out = vctrs_df_restore(out, df, vctrs_shared_empty_int);
 
   UNPROTECT(1);
   return out;
