@@ -80,7 +80,7 @@ expect_syntactic <- function(name, exp_syn_name) {
   expect_identical(syn_name, make.names(syn_name))
 }
 
-expect_error_cnd <- function(object, class, message, ..., .fixed = TRUE) {
+expect_error_cnd <- function(object, class, message = NULL, ..., .fixed = TRUE) {
   cnd <- expect_error(object, regexp = message, class = class, fixed = .fixed)
   expect_true(inherits_all(cnd, class))
 
