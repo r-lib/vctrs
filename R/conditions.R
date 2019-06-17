@@ -45,7 +45,7 @@ stop_vctrs <- function(message = NULL, .subclass = NULL, ...) {
 }
 
 stop_incompatible <- function(x, y, details = NULL, ..., message = NULL, .subclass = NULL) {
-  abort(
+  stop_vctrs(
     message,
     .subclass = c(.subclass, "vctrs_error_incompatible"),
     x = x,
@@ -246,7 +246,7 @@ stop_lossy_cast <- function(x, to, result,
     details
   )
 
-  abort(
+  stop_vctrs(
     message,
     x = x,
     y = to,
@@ -314,7 +314,7 @@ maybe_warn_deprecated_lossy_cast <- function(x, to) {
 
 stop_unsupported <- function(x, method) {
   msg <- glue::glue("`{method}.{class(x)[[1]]}()` not supported.")
-  abort(
+  stop_vctrs(
     "vctrs_error_unsupported",
     message = msg,
     x = x,
@@ -324,7 +324,7 @@ stop_unsupported <- function(x, method) {
 
 stop_unimplemented <- function(x, method) {
   msg <- glue::glue("`{method}.{class(x)[[1]]}()` not implemented.")
-  abort(
+  stop_vctrs(
     "vctrs_error_unimplemented",
     message = msg,
     x = x,
@@ -338,7 +338,7 @@ stop_scalar_type <- function(x, arg = NULL) {
   } else {
     msg <- glue::glue("`{ arg }` must be a vector, not { friendly_type_of(x) }")
   }
-  abort(msg, "vctrs_error_scalar_type", actual = x)
+  stop_vctrs(msg, "vctrs_error_scalar_type", actual = x)
 }
 
 
