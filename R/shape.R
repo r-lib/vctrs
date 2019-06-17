@@ -21,6 +21,18 @@ shape_common <- function(x, y) {
   map2_int(shape$x, shape$y, vec_size2)
 }
 
+vec_size2 <- function(nx, ny) {
+  if (nx == ny) {
+    nx
+  } else if (nx == 1L) {
+    ny
+  } else if (ny == 1L) {
+    nx
+  } else {
+    abort(paste0("Incompatible lengths: ", nx, ", ", ny, "."))
+  }
+}
+
 shape_broadcast <- function(x, to) {
   if (is.null(x) || is.null(to)) {
     return(x)

@@ -77,19 +77,6 @@ vec_size_common <- function(..., .size = NULL, .absent = 0L) {
   .External2(vctrs_size_common, .size, .absent)
 }
 
-vec_size2 <- function(nx, ny) {
-  if (nx == ny) {
-    nx
-  } else if (nx == 1L) {
-    ny
-  } else if (ny == 1L) {
-    nx
-  } else {
-    abort(paste0("Incompatible lengths: ", nx, ", ", ny, "."))
-  }
-}
-
-
 #' @rdname vec_size
 #' @export
 vec_is_empty <- function(x) {
