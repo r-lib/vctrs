@@ -36,6 +36,9 @@
 #'
 #'   `NULL` inputs are silently ignored. Empty (e.g. zero row) inputs
 #'   will not appear in the output, but will affect the derived `.ptype`.
+#' @param .name_repair One of `"unique"`, `"universal"`, or
+#'   `"check_unique"`. See [vec_as_names()] for the meaning of these
+#'   options.
 #' @inheritParams vec_c
 #' @return A data frame, or subclass of data frame.
 #'
@@ -108,9 +111,12 @@ NULL
 
 #' @export
 #' @rdname vec_bind
-vec_rbind <- function(..., .ptype = NULL) {
-  .External2(vctrs_rbind, .ptype)
+vec_rbind <- function(...,
+                      .ptype = NULL,
+                      .name_repair = c("unique", "universal", "check_unique")) {
+  .External2(vctrs_rbind, .ptype, .name_repair)
 }
+vec_rbind <- fn_inline_formals(vec_rbind, ".name_repair")
 
 #' @export
 #' @rdname vec_bind
@@ -119,9 +125,6 @@ vec_rbind <- function(..., .ptype = NULL) {
 #'
 #'   Alternatively, specify the desired number of rows, and any inputs
 #'   of length 1 will be recycled appropriately.
-#' @param .name_repair One of `"unique"`, `"universal"`, or
-#'   `"check_unique"`. See [vec_as_names()] for the meaning of these
-#'   options.
 vec_cbind <- function(...,
                       .ptype = NULL,
                       .size = NULL,

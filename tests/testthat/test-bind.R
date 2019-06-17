@@ -126,6 +126,17 @@ test_that("vec_rbind() respects size invariants (#286)", {
   expect_identical(vec_rbind(int(), new_data_frame(n = 2L), int()), new_data_frame(n = 4L))
 })
 
+test_that("can repair names in `vec_rbind()` (#229)", {
+  expect_error(vec_rbind(.name_repair = "none"), "can't be `\"none\"`")
+  expect_error(vec_rbind(.name_repair = "minimal"), "can't be `\"minimal\"`")
+
+  expect_named(vec_rbind(list(a = 1, a = 2), .name_repair = "unique"), c("a...1", "a...2"))
+  expect_error(vec_rbind(list(a = 1, a = 2), .name_repair = "check_unique"), class = "vctrs_error_names_must_be_unique")
+
+  expect_named(vec_rbind(list(`_` = 1)), "_")
+  expect_named(vec_rbind(list(`_` = 1), .name_repair = "universal"), c("._"))
+})
+
 
 # cols --------------------------------------------------------------------
 

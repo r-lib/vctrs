@@ -6,7 +6,8 @@
 \alias{vec_cbind}
 \title{Combine many data frames into one data frame}
 \usage{
-vec_rbind(..., .ptype = NULL)
+vec_rbind(..., .ptype = NULL, .name_repair = c("unique", "universal",
+  "check_unique"))
 
 vec_cbind(..., .ptype = NULL, .size = NULL,
   .name_repair = c("unique", "universal", "check_unique"))
@@ -27,15 +28,15 @@ Alternatively, you can supply \code{.ptype} to give the output known type.
 If \code{getOption("vctrs.no_guessing")} is \code{TRUE} you must supply this value:
 this is a convenient way to make production code demand fixed types.}
 
+\item{.name_repair}{One of \code{"unique"}, \code{"universal"}, or
+\code{"check_unique"}. See \code{\link[=vec_as_names]{vec_as_names()}} for the meaning of these
+options.}
+
 \item{.size}{If, \code{NULL}, the default, will determine the number of
 rows in \code{vec_cbind()} output by using the standard recycling rules.
 
 Alternatively, specify the desired number of rows, and any inputs
 of length 1 will be recycled appropriately.}
-
-\item{.name_repair}{One of \code{"unique"}, \code{"universal"}, or
-\code{"check_unique"}. See \code{\link[=vec_as_names]{vec_as_names()}} for the meaning of these
-options.}
 }
 \value{
 A data frame, or subclass of data frame.
