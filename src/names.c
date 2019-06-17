@@ -459,6 +459,33 @@ SEXP set_rownames(SEXP x, SEXP names) {
 }
 
 
+enum name_repair_arg validate_name_repair(SEXP arg) {
+  if (!Rf_length(arg)) {
+    Rf_errorcall(R_NilValue, "`.name_repair` must be a string. See `?vctrs::vec_as_names`.");
+  }
+
+  arg = r_chr_get(arg, 0);
+
+  if (arg == strings_none) {
+    return name_repair_none;
+  }
+  if (arg == strings_minimal) {
+    return name_repair_minimal;
+  }
+  if (arg == strings_unique) {
+    return name_repair_unique;
+  }
+  if (arg == strings_universal) {
+    return name_repair_universal;
+  }
+  if (arg == strings_check_unique) {
+    return name_repair_check_unique;
+  }
+
+  Rf_errorcall(R_NilValue, "`.name_repair` can't be \"%s\". See `?vctrs::vec_as_names`.", CHAR(arg));
+}
+
+
 void vctrs_init_names(SEXP ns) {
   syms_set_rownames = Rf_install("set_rownames");
   fns_set_rownames = r_env_get(ns, syms_set_rownames);

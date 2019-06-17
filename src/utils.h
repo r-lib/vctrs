@@ -176,6 +176,11 @@ extern SEXP strings_vctrs_rcrd;
 extern SEXP strings_posixlt;
 extern SEXP strings_posixt;
 extern SEXP strings_vctrs_vctr;
+extern SEXP strings_none;
+extern SEXP strings_minimal;
+extern SEXP strings_unique;
+extern SEXP strings_universal;
+extern SEXP strings_check_unique;
 
 extern SEXP syms_i;
 extern SEXP syms_n;
@@ -188,6 +193,7 @@ extern SEXP syms_x_arg;
 extern SEXP syms_y_arg;
 extern SEXP syms_out;
 extern SEXP syms_value;
+extern SEXP syms_quiet;
 
 #define syms_names R_NamesSymbol
 
