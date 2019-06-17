@@ -10,6 +10,42 @@ static void describe_repair(SEXP old_names, SEXP new_names);
 // 3 leading '.' + 1 trailing '\0' + 24 characters
 #define MAX_IOTA_SIZE 28
 
+// Initialised at load time
+SEXP syms_as_universal_names = NULL;
+SEXP syms_validate_unique_names = NULL;
+SEXP fns_as_universal_names = NULL;
+SEXP fns_validate_unique_names = NULL;
+
+// Defined below
+SEXP vctrs_as_minimal_names(SEXP names);
+SEXP vec_as_universal_names(SEXP names, bool quiet);
+SEXP vec_validate_unique_names(SEXP names);
+
+
+// [[ include("vctrs.h") ]]
+SEXP vec_as_names(SEXP names, enum name_repair_arg type, bool quiet) {
+  switch (type) {
+  case name_repair_none: return names;
+  case name_repair_minimal: return vctrs_as_minimal_names(names);
+  case name_repair_unique: return vec_as_unique_names(names, quiet);
+  case name_repair_universal: return vec_as_universal_names(names, quiet);
+  case name_repair_check_unique: return vec_validate_unique_names(names);
+  }
+}
+
+SEXP vec_as_universal_names(SEXP names, bool quiet) {
+  SEXP quiet_obj = PROTECT(r_lgl(quiet));
+  SEXP out = vctrs_dispatch2(syms_as_universal_names, fns_as_universal_names,
+                             syms_names, names,
+                             syms_quiet, quiet_obj);
+  UNPROTECT(1);
+  return out;
+}
+SEXP vec_validate_unique_names(SEXP names) {
+  return vctrs_dispatch1(syms_validate_unique_names, fns_validate_unique_names,
+                         syms_names, names);
+}
+
 
 // [[ register(); include("vctrs.h") ]]
 SEXP vec_names(SEXP x) {
@@ -36,6 +72,7 @@ SEXP vec_names(SEXP x) {
   return out;
 }
 
+// [[ register() ]]
 SEXP vctrs_as_minimal_names(SEXP names) {
   if (TYPEOF(names) != STRSXP) {
     Rf_errorcall(R_NilValue, "`names` must be a character vector");
@@ -68,6 +105,7 @@ SEXP vctrs_as_minimal_names(SEXP names) {
   return names;
 }
 
+// [[ register() ]]
 SEXP vctrs_minimal_names(SEXP x) {
   SEXP names = PROTECT(vec_names(x));
 
@@ -488,5 +526,10 @@ enum name_repair_arg validate_name_repair(SEXP arg) {
 
 void vctrs_init_names(SEXP ns) {
   syms_set_rownames = Rf_install("set_rownames");
+  syms_as_universal_names = Rf_install("as_universal_names");
+  syms_validate_unique_names = Rf_install("validate_unique");
+
   fns_set_rownames = r_env_get(ns, syms_set_rownames);
+  fns_as_universal_names = r_env_get(ns, syms_as_universal_names);
+  fns_validate_unique_names = r_env_get(ns, syms_validate_unique_names);
 }
