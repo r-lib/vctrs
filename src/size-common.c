@@ -68,13 +68,6 @@ static SEXP vctrs_size2_common(SEXP x, SEXP y, struct counters* counters) {
   if (nx == ny) {
     return x;
   }
-  if (nx == 0) {
-    return x;
-  }
-  if (ny == 0) {
-    counters_shift(counters);
-    return y;
-  }
   if (nx == 1) {
     counters_shift(counters);
     return y;
