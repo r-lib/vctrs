@@ -1,4 +1,26 @@
-context("test-vec_recycle_common")
+context("test-recycle")
+
+# vec_recycle -------------------------------------------------------------
+
+test_that("vec_recycle recycles size 1 to any other size", {
+  x <- 1
+  x0 <- numeric()
+  x2 <- c(x, x)
+
+  expect_equal(vec_recycle(x, 1), x)
+  expect_equal(vec_recycle(x, 0), x0)
+  expect_equal(vec_recycle(x, 2), x2)
+})
+
+test_that("incompatible lengths get error messages", {
+  x2 <- c(1, 2)
+
+  expect_error(vec_recycle(x2, 1), "2, 1")
+  expect_error(vec_recycle(x2, 0), "2, 0")
+  expect_error(vec_recycle(x2, 3), "2, 3")
+})
+
+# Empty -------------------------------------------------------------------
 
 test_that("empty input returns empty list", {
   expect_equal(vec_recycle_common(), list())
