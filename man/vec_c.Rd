@@ -4,7 +4,8 @@
 \alias{vec_c}
 \title{Combine many vectors into one vector}
 \usage{
-vec_c(..., .ptype = NULL)
+vec_c(..., .ptype = NULL, .name_repair = c("minimal", "unique",
+  "check_unique", "universal"))
 }
 \arguments{
 \item{...}{Vectors to coerce.}
@@ -15,6 +16,8 @@ computing the common type across all elements of \code{...}.
 Alternatively, you can supply \code{.ptype} to give the output known type.
 If \code{getOption("vctrs.no_guessing")} is \code{TRUE} you must supply this value:
 this is a convenient way to make production code demand fixed types.}
+
+\item{.name_repair}{How to repair names, see \code{repair} options in \code{\link[=vec_as_names]{vec_as_names()}}.}
 }
 \value{
 A vector with class given by \code{.ptype}, and length equal to the

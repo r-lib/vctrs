@@ -91,3 +91,15 @@ test_that("can mix named and unnamed vectors (#271)", {
   expect_identical(vec_c(c(a = 1), 2), c(a = 1, 2))
   expect_identical(vec_c(0, c(a = 1), 2, b = 3), c(0, a = 1, 2, b =3))
 })
+
+test_that("vec_c() repairs names", {
+  # Default minimal repair
+  expect_named(vec_c(a = 1, a = 2, `_` = 3), c("a", "a", "_"))
+  out <- vec_c(!!!set_names(1, NA))
+  expect_named(out, "")
+
+  expect_named(vec_c(a = 1, a = 2, `_` = 3, .name_repair = "unique"), c("a...1", "a...2", "_"))
+  expect_error(vec_c(a = 1, a = 2, `_` = 3, .name_repair = "check_unique"), class = "vctrs_error_names_must_be_unique")
+
+  expect_named(vec_c(a = 1, a = 2, `_` = 3, .name_repair = "universal"), c("a...1", "a...2", "._"))
+})
