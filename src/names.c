@@ -93,7 +93,7 @@ static ptrdiff_t suffix_pos(const char* name);
 static bool needs_suffix(SEXP str);
 
 // [[ include("vctrs.h") ]]
-SEXP as_unique_names(SEXP names, bool quiet) {
+SEXP vec_as_unique_names(SEXP names, bool quiet) {
   if (is_unique_names(names) && !any_has_suffix(names)) {
     return names;
   } else {
@@ -208,7 +208,7 @@ SEXP as_unique_names_impl(SEXP names, bool quiet) {
 }
 
 SEXP vctrs_as_unique_names(SEXP names, SEXP quiet) {
-  SEXP out = PROTECT(as_unique_names(names, LOGICAL(quiet)[0]));
+  SEXP out = PROTECT(vec_as_unique_names(names, LOGICAL(quiet)[0]));
   UNPROTECT(1);
   return out;
 }
@@ -322,7 +322,7 @@ SEXP vec_unique_names(SEXP x, bool quiet) {
       describe_repair(names, out);
     }
   } else {
-    out = PROTECT(as_unique_names(names, quiet));
+    out = PROTECT(vec_as_unique_names(names, quiet));
   }
 
   UNPROTECT(2);
