@@ -41,12 +41,10 @@ recycled to be the same length.
 \examples{
 # Inputs with 1 observation are recycled
 vec_recycle_common(1:5, 5)
+vec_recycle_common(integer(), 5)
 \dontrun{
 vec_recycle_common(1:5, 1:2)
 }
-
-# Inputs with 0 observations
-vec_recycle_common(1:5, integer())
 
 # Data frames and matrices are recycled along their rows
 vec_recycle_common(data.frame(x = 1), 1:5)
