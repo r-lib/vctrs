@@ -129,6 +129,14 @@ vec_cbind <- function(...,
   .External2(vctrs_cbind, .ptype, .size, .name_repair)
 }
 
+# Micro-optimisation: don't compute `.name_repair` at each invokation
+formals(vec_cbind) <- pairlist2(
+  ... = ,
+  .ptype = NULL,
+  .size = NULL,
+  .name_repair = c("unique", "universal", "check_unique")
+)
+
 as_df_row <- function(x, quiet = FALSE) {
   .Call(vctrs_as_df_row, x, quiet)
 }

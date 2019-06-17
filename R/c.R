@@ -37,3 +37,10 @@ vec_c <- function(...,
                   .name_repair = c("minimal", "unique", "check_unique", "universal")) {
   .External2(vctrs_c, .ptype, .name_repair)
 }
+
+# Micro-optimisation: don't compute `.name_repair` at each invokation
+formals(vec_c) <- pairlist2(
+  ... = ,
+  .ptype = NULL,
+  .name_repair = c("minimal", "unique", "check_unique", "universal")
+)
