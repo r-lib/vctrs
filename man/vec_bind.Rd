@@ -49,9 +49,29 @@ across all arguments.
 }
 \section{Invariants}{
 
+
+All inputs are first converted to a data frame. The conversion for
+1d vectors depends on the direction of binding:
+\itemize{
+\item For \code{vec_rbind()}, each element of the vector becomes a column in
+a single row.
+\item For \code{vec_cbind()}, each element of the vector becomes a row in a
+single column.
+}
+
+Once the inputs have all become data frames, the following
+invariants are observed for row-binding:
 \itemize{
 \item \code{vec_size(vec_rbind(x, y)) == vec_size(x) + vec_size(y)}
 \item \code{vec_type(vec_rbind(x, y)) = vec_type_common(x, y)}
+}
+
+Note that if an input is an empty vector, it is first converted to
+a 1-row data frame with 0 columns. Despite being empty, its
+effective size for the total number of rows is 1.
+
+For column-binding, the following invariants apply:
+\itemize{
 \item \code{vec_size(vec_cbind(x, y)) == vec_size_common(x, y)}
 \item \code{vec_type(vec_cbind(x, y)) == vec_cbind(vec_type(x), vec_type(x))}
 }
