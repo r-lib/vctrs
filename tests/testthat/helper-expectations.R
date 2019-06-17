@@ -79,3 +79,12 @@ expect_syntactic <- function(name, exp_syn_name) {
   )
   expect_identical(syn_name, make.names(syn_name))
 }
+
+expect_error_cnd <- function(object, class, message, ...) {
+  cnd <- expect_error(object, regexp = message, class = class)
+  expect_true(inherits_all(cnd, class))
+
+  exp_fields <- list(...)
+  expect_true(is_empty(setdiff(!!names(exp_fields), names(cnd))))
+  expect_equal(cnd[names(exp_fields)], exp_fields)
+}
