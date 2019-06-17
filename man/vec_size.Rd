@@ -81,7 +81,7 @@ vec_size(array(dim = c(3, 5, 10)))
 
 vec_size_common(1:10, 1:10)
 vec_size_common(1:10, 1)
-vec_size_common(1:10, integer())
+vec_size_common(integer(), 1)
 }
 \seealso{
 \code{\link[=vec_slice]{vec_slice()}} for a variation of \code{[} compatible with \code{vec_size()},
