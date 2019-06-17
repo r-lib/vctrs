@@ -20,24 +20,20 @@ test_that("equal lengths returned as is", {
   expect_equal(vec_recycle_common(x[0], x[0]), list(x[0], x[0]))
 })
 
-test_that("length 1 vec_recycle_commond to length of longest", {
+test_that("vec_recycle_common recycles size 1 to any other size", {
   x1 <- 1
   x3 <- rep(1, 3)
+  x0 <- numeric()
 
   expect_equal(vec_recycle_common(x1, x3), list(x3, x3))
   expect_equal(vec_recycle_common(x3, x1), list(x3, x3))
-})
-
-test_that("length 0 causes both outputs to be zero", {
-  x <- 1:3
-
-  expect_equal(vec_recycle_common(x, x[0]), list(x[0], x[0]))
-  expect_equal(vec_recycle_common(x[0], x), list(x[0], x[0]))
+  expect_equal(vec_recycle_common(x1, x0), list(x0, x0))
 })
 
 test_that("incompatible lengths get error messages", {
   expect_error(vec_recycle_common(1:2, 1:3), class = "vctrs_error_incompatible_size")
   expect_error(vec_recycle_common(1:3, 1:2), class = "vctrs_error_incompatible_size")
+  expect_error(vec_recycle_common(numeric(), 1:2), class = "vctrs_error_incompatible_size")
 })
 
 # Matrices ----------------------------------------------------------------
