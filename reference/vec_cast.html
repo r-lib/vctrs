@@ -324,7 +324,8 @@ attributes that don't require special handling for your class.</p>
 #&gt; </span><span style='color: #555555;'> 48. </span><span>    ├─base::withRestarts(...) </span><span style='color: #555555;'>/home/travis/build/r-lib/vctrs/R/conditions.R:220:2</span><span>
 #&gt; </span><span style='color: #555555;'> 49. </span><span>    │ └─base:::withOneRestart(expr, restarts[[1L]])
 #&gt; </span><span style='color: #555555;'> 50. </span><span>    │   └─base:::doWithOneRestart(return(expr), restart)
-#&gt; </span><span style='color: #555555;'> 51. </span><span>    └─vctrs:::stop_lossy_cast(...)</div><div class='input'><span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/try'>try</a></span>(<span class='fu'>vec_cast</span>(<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='fl'>1</span>, <span class='fl'>2</span>), <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/logical'>logical</a></span>()))</div><div class='output co'>#&gt; Error : Lossy cast from &lt;double&gt; to &lt;logical&gt;.
+#&gt; </span><span style='color: #555555;'> 51. </span><span>    └─vctrs:::stop_lossy_cast(...)
+#&gt; </span><span style='color: #555555;'> 52. </span><span>      └─vctrs:::stop_vctrs(...) </span><span style='color: #555555;'>/home/travis/build/r-lib/vctrs/R/conditions.R:249:2</span><span></div><div class='input'><span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/try'>try</a></span>(<span class='fu'>vec_cast</span>(<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='fl'>1</span>, <span class='fl'>2</span>), <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/logical'>logical</a></span>()))</div><div class='output co'>#&gt; Error : Lossy cast from &lt;double&gt; to &lt;logical&gt;.
 #&gt; Locations: 2
 #&gt; Backtrace:
 #&gt; </span><span style='color: #555555;'>     </span><span>█
@@ -378,7 +379,8 @@ attributes that don't require special handling for your class.</p>
 #&gt; </span><span style='color: #555555;'> 48. </span><span>    ├─base::withRestarts(...) </span><span style='color: #555555;'>/home/travis/build/r-lib/vctrs/R/conditions.R:220:2</span><span>
 #&gt; </span><span style='color: #555555;'> 49. </span><span>    │ └─base:::withOneRestart(expr, restarts[[1L]])
 #&gt; </span><span style='color: #555555;'> 50. </span><span>    │   └─base:::doWithOneRestart(return(expr), restart)
-#&gt; </span><span style='color: #555555;'> 51. </span><span>    └─vctrs:::stop_lossy_cast(...)</div><div class='input'>
+#&gt; </span><span style='color: #555555;'> 51. </span><span>    └─vctrs:::stop_lossy_cast(...)
+#&gt; </span><span style='color: #555555;'> 52. </span><span>      └─vctrs:::stop_vctrs(...) </span><span style='color: #555555;'>/home/travis/build/r-lib/vctrs/R/conditions.R:249:2</span><span></div><div class='input'>
 <span class='co'># You can suppress this error and get the partial results</span>
 <span class='fu'><a href='vctrs-conditions.html'>allow_lossy_cast</a></span>(<span class='fu'>vec_cast</span>(<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='fl'>1</span>, <span class='fl'>1.5</span>), <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/integer'>integer</a></span>()))</div><div class='output co'>#&gt; [1] 1 1</div><div class='input'><span class='fu'><a href='vctrs-conditions.html'>allow_lossy_cast</a></span>(<span class='fu'>vec_cast</span>(<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='fl'>1</span>, <span class='fl'>2</span>), <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/logical'>logical</a></span>()))</div><div class='output co'>#&gt; [1] TRUE TRUE</div><div class='input'>
 <span class='co'># By default this suppress all lossy cast errors without</span>
@@ -440,7 +442,8 @@ attributes that don't require special handling for your class.</p>
 #&gt; </span><span style='color: #555555;'> 50. </span><span>    ├─base::withRestarts(...) </span><span style='color: #555555;'>/home/travis/build/r-lib/vctrs/R/conditions.R:220:2</span><span>
 #&gt; </span><span style='color: #555555;'> 51. </span><span>    │ └─base:::withOneRestart(expr, restarts[[1L]])
 #&gt; </span><span style='color: #555555;'> 52. </span><span>    │   └─base:::doWithOneRestart(return(expr), restart)
-#&gt; </span><span style='color: #555555;'> 53. </span><span>    └─vctrs:::stop_lossy_cast(...)</div><div class='input'>
+#&gt; </span><span style='color: #555555;'> 53. </span><span>    └─vctrs:::stop_lossy_cast(...)
+#&gt; </span><span style='color: #555555;'> 54. </span><span>      └─vctrs:::stop_vctrs(...) </span><span style='color: #555555;'>/home/travis/build/r-lib/vctrs/R/conditions.R:249:2</span><span></div><div class='input'>
 <span class='co'># No sensible coercion is possible so an error is generated</span>
 <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/try'>try</a></span>(<span class='fu'>vec_cast</span>(<span class='fl'>1.5</span>, <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/factor'>factor</a></span>(<span class='st'>"a"</span>)))</div><div class='output co'>#&gt; Error : Can't cast &lt;double&gt; to &lt;factor&lt;127a2&gt;&gt;
 #&gt; Backtrace:
@@ -493,7 +496,8 @@ attributes that don't require special handling for your class.</p>
 #&gt; </span><span style='color: #555555;'> 46. </span><span>└─vctrs:::vec_cast.factor.default(x = x, to = to) </span><span style='color: #555555;'>/home/travis/build/r-lib/vctrs/R/type-factor.R:118:2</span><span>
 #&gt; </span><span style='color: #555555;'> 47. </span><span>  └─vctrs::vec_default_cast(x, to) </span><span style='color: #555555;'>/home/travis/build/r-lib/vctrs/R/type-factor.R:146:2</span><span>
 #&gt; </span><span style='color: #555555;'> 48. </span><span>    └─vctrs::stop_incompatible_cast(x, to) </span><span style='color: #555555;'>/home/travis/build/r-lib/vctrs/R/cast.R:164:4</span><span>
-#&gt; </span><span style='color: #555555;'> 49. </span><span>      └─vctrs:::stop_incompatible(...) </span><span style='color: #555555;'>/home/travis/build/r-lib/vctrs/R/conditions.R:112:2</span><span></div><div class='input'>
+#&gt; </span><span style='color: #555555;'> 49. </span><span>      └─vctrs:::stop_incompatible(...) </span><span style='color: #555555;'>/home/travis/build/r-lib/vctrs/R/conditions.R:112:2</span><span>
+#&gt; </span><span style='color: #555555;'> 50. </span><span>        └─vctrs:::stop_vctrs(...) </span><span style='color: #555555;'>/home/travis/build/r-lib/vctrs/R/conditions.R:48:2</span><span></div><div class='input'>
 <span class='co'># Cast to common type</span>
 <span class='fu'>vec_cast_common</span>(<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/factor'>factor</a></span>(<span class='st'>"a"</span>), <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/factor'>factor</a></span>(<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='st'>"a"</span>, <span class='st'>"b"</span>)))</div><div class='output co'>#&gt; [[1]]
 #&gt; [1] a
