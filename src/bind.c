@@ -121,9 +121,8 @@ SEXP vctrs_as_df_row(SEXP x, SEXP quiet) {
   return as_df_row(x, LOGICAL(quiet)[0]);
 }
 
-
 static SEXP as_df_col(SEXP x, SEXP outer);
-static SEXP vec_cbind(SEXP xs, SEXP ptype, SEXP size);
+static SEXP vec_cbind(SEXP xs, SEXP ptype, SEXP size, enum name_repair_arg name_repair);
 static SEXP cbind_container_type(SEXP x);
 
 // [[ register(external = TRUE) ]]
@@ -131,16 +130,28 @@ SEXP vctrs_cbind(SEXP call, SEXP op, SEXP args, SEXP env) {
   args = CDR(args);
 
   SEXP xs = PROTECT(rlang_env_dots_list(env));
-  SEXP ptype = PROTECT(Rf_eval(CAR(args), env));
-  SEXP size = PROTECT(Rf_eval(CADR(args), env));
+  SEXP ptype = PROTECT(Rf_eval(CAR(args), env)); args = CDR(args);
+  SEXP size = PROTECT(Rf_eval(CAR(args), env)); args = CDR(args);
+  SEXP name_repair = PROTECT(Rf_eval(CAR(args), env));
 
-  SEXP out = vec_cbind(xs, ptype, size);
+  enum name_repair_arg repair_arg = validate_name_repair(name_repair);
+  SEXP out = vec_cbind(xs, ptype, size, repair_arg);
 
-  UNPROTECT(3);
+  UNPROTECT(4);
   return out;
 }
 
-static SEXP vec_cbind(SEXP xs, SEXP ptype, SEXP size) {
+static SEXP vec_cbind(SEXP xs, SEXP ptype, SEXP size, enum name_repair_arg name_repair) {
+  switch (name_repair) {
+  case name_repair_unique: break;
+  case name_repair_universal: break;
+  case name_repair_check_unique: break;
+  default: Rf_errorcall(R_NilValue,
+                        "`.name_repair` can't be `\"%s\"`.\n"
+                        "It must be one of `\"unique\"`, `\"universal\"`, or `\"check_unique\"`",
+                        name_repair_arg_as_c_string(name_repair));
+  }
+
   R_len_t n = Rf_length(xs);
 
   // Find the common container type of inputs
@@ -217,7 +228,7 @@ static SEXP vec_cbind(SEXP xs, SEXP ptype, SEXP size) {
     UNPROTECT(1);
   }
 
-  names = PROTECT(vec_as_unique_names(names, false));
+  names = PROTECT(vec_as_names(names, name_repair, false));
   Rf_setAttrib(out, R_NamesSymbol, names);
 
   out = vec_restore(out, type, R_NilValue);

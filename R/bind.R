@@ -119,8 +119,14 @@ vec_rbind <- function(..., .ptype = NULL) {
 #'
 #'   Alternatively, specify the desired number of rows, and any inputs
 #'   of length 1 will be recycled appropriately.
-vec_cbind <- function(..., .ptype = NULL, .size = NULL) {
-  .External2(vctrs_cbind, .ptype, .size)
+#' @param .name_repair One of `"unique"`, `"universal"`, or
+#'   `"check_unique"`. See [vec_as_names()] for the meaning of these
+#'   options.
+vec_cbind <- function(...,
+                      .ptype = NULL,
+                      .size = NULL,
+                      .name_repair = c("unique", "universal", "check_unique")) {
+  .External2(vctrs_cbind, .ptype, .size, .name_repair)
 }
 
 as_df_row <- function(x, quiet = FALSE) {

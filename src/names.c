@@ -523,6 +523,17 @@ enum name_repair_arg validate_name_repair(SEXP arg) {
   Rf_errorcall(R_NilValue, "`.name_repair` can't be \"%s\". See `?vctrs::vec_as_names`.", CHAR(arg));
 }
 
+// [[ include("vctrs.h") ]]
+const char* name_repair_arg_as_c_string(enum name_repair_arg arg) {
+  switch (arg) {
+  case name_repair_none: return "none";
+  case name_repair_minimal: return "minimal";
+  case name_repair_unique: return "unique";
+  case name_repair_universal: return "universal";
+  case name_repair_check_unique: return "check_unique";
+  }
+}
+
 
 void vctrs_init_names(SEXP ns) {
   syms_set_rownames = Rf_install("set_rownames");

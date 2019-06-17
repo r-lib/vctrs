@@ -201,4 +201,12 @@ test_that("can override default .nrow", {
   expect_dim(vec_cbind(1, .size = 3), c(3, 1))
 })
 
+test_that("can repair names in `vec_cbind()` (#227)", {
+  expect_error(vec_cbind(a = 1, a = 2, .name_repair = "none"), "can't be `\"none\"`")
+  expect_error(vec_cbind(a = 1, a = 2, .name_repair = "minimal"), "can't be `\"minimal\"`")
 
+  expect_named(vec_cbind(a = 1, a = 2, .name_repair = "unique"), c("a...1", "a...2"))
+  expect_error(vec_cbind(a = 1, a = 2, .name_repair = "check_unique"), class = "vctrs_error_names_must_be_unique")
+
+  expect_named(vec_cbind(`_` = 1, .name_repair = "universal"), "._")
+})
