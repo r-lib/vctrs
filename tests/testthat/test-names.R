@@ -587,3 +587,33 @@ test_that("Name repair works with non-UTF-8 names", {
   x3 <- c(x2, x2)
   expect_equal(vec_as_names(x3, repair = "unique"), paste0(x3, "...", 1:2))
 })
+
+
+# Conditions -----------------------------------------------------------
+
+test_that("names cannot be empty", {
+  expect_error_cnd(
+    stop_names_cannot_be_empty(1:3),
+    class = c("vctrs_error_names_cannot_be_empty", "vctrs_error_names", "vctrs_error"),
+    message = "Names must not be empty.",
+    locations = 1:3
+  )
+})
+
+test_that("names cannot be dot dot", {
+  expect_error_cnd(
+    stop_names_cannot_be_dot_dot(1:3),
+    class = c("vctrs_error_names_cannot_be_dot_dot", "vctrs_error_names", "vctrs_error"),
+    message = "Names must not be of the form `...` or `..j`.",
+    locations = 1:3
+  )
+})
+
+test_that("names must be unique", {
+  expect_error_cnd(
+    stop_names_must_be_unique(1:3),
+    class = c("vctrs_error_names_must_be_unique", "vctrs_error_names", "vctrs_error"),
+    message = "Names must be unique.",
+    locations = 1:3
+  )
+})

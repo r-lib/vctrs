@@ -40,6 +40,10 @@
 #' @name vctrs-conditions
 NULL
 
+stop_vctrs <- function(message = NULL, .subclass = NULL, ...) {
+  abort(message, .subclass = c(.subclass, "vctrs_error"), ...)
+}
+
 stop_incompatible <- function(x, y, details = NULL, ..., message = NULL, .subclass = NULL) {
   abort(
     message,
@@ -337,7 +341,44 @@ stop_scalar_type <- function(x, arg = NULL) {
   abort(msg, "vctrs_error_scalar_type", actual = x)
 }
 
-# helpers -----------------------------------------------------------------
+
+# Names -------------------------------------------------------------------
+
+stop_names <- function(message, .subclass, locations, ...) {
+  stop_vctrs(
+    message,
+    .subclass = c(.subclass, "vctrs_error_names"),
+    locations = locations,
+    ...
+  )
+}
+
+stop_names_cannot_be_empty <- function(locations) {
+  stop_names(
+    "Names must not be empty.",
+    .subclass = "vctrs_error_names_cannot_be_empty",
+    locations = locations
+  )
+}
+
+stop_names_cannot_be_dot_dot <- function(locations) {
+  stop_names(
+    "Names must not be of the form `...` or `..j`.",
+    .subclass = "vctrs_error_names_cannot_be_dot_dot",
+    locations = locations
+  )
+}
+
+stop_names_must_be_unique <- function(locations) {
+  stop_names(
+    "Names must be unique.",
+    .subclass = "vctrs_error_names_must_be_unique",
+    locations = locations
+  )
+}
+
+
+# Helpers -----------------------------------------------------------------
 
 glue_lines <- function(..., env = parent.frame()) {
   lines <- c(...)

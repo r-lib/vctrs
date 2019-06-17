@@ -80,12 +80,11 @@ expect_syntactic <- function(name, exp_syn_name) {
   expect_identical(syn_name, make.names(syn_name))
 }
 
-expect_cnd_equal <- function(object, .subclass, ..., message) {
-  expect_s3_class(object, "condition")
-  # https://github.com/r-lib/testthat/issues/885
-  walk(.subclass, function(x) expect_s3_class(object, x))
+expect_error_cnd <- function(object, class, message, ...) {
+  cnd <- expect_error(object, regexp = message, class = class)
+  expect_true(inherits_all(cnd, class))
 
-  cnd_names <- list(..., message = message)
-  expect_true(is_empty(setdiff(!!names(cnd_names), names(object))))
-  expect_equal(object[names(cnd_names)], cnd_names)
+  exp_fields <- list(...)
+  expect_true(is_empty(setdiff(!!names(exp_fields), names(cnd))))
+  expect_equal(cnd[names(exp_fields)], exp_fields)
 }

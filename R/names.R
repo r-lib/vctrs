@@ -210,16 +210,16 @@ validate_unique <- function(names, n = NULL) {
 
   empty_names <- which(names == "")
   if (has_length(empty_names)) {
-    cnd_signal(names_cannot_be_empty(empty_names))
+    stop_names_cannot_be_empty(empty_names)
   }
 
   dot_dot_name <- grep("^[.][.](?:[.]|[1-9][0-9]*)$", names)
   if (has_length(dot_dot_name)) {
-    cnd_signal(names_cannot_be_dot_dot(dot_dot_name))
+    stop_names_cannot_be_dot_dot(dot_dot_name)
   }
 
   if (anyDuplicated(names)) {
-    cnd_signal(names_must_be_unique(which(duplicated(names))))
+    stop_names_must_be_unique(which(duplicated(names)))
   }
 
   invisible(names)
