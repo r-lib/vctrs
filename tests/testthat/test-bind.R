@@ -117,6 +117,15 @@ test_that("can rbind unspecified vectors", {
   expect_identical(vec_rbind(NA, NA), data_frame(...1 = lgl(NA, NA)))
 })
 
+test_that("vec_rbind() respects size invariants (#286)", {
+  expect_identical(vec_rbind(), new_data_frame(n = 0L))
+
+  expect_identical(vec_rbind(int(), int()), new_data_frame(n = 2L))
+  expect_identical(vec_rbind(int(), TRUE), new_data_frame(list(...1 = lgl(NA, TRUE))))
+
+  expect_identical(vec_rbind(int(), new_data_frame(n = 2L), int()), new_data_frame(n = 4L))
+})
+
 
 # cols --------------------------------------------------------------------
 
