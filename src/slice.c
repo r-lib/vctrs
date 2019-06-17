@@ -437,22 +437,22 @@ void vctrs_init_slice(SEXP ns) {
 
 SEXP vec_strides(SEXP dim) {
   int* p_dim = INTEGER(dim);
-  R_len_t dim_n = Rf_length(dim);
-  SEXP strides = PROTECT(Rf_allocVector(INTSXP, dim_n));
+  R_len_t shape_n = Rf_length(dim) - 1;
+  SEXP strides = PROTECT(Rf_allocVector(INTSXP, shape_n));
   int* p_strides = INTEGER(strides);
   int stride = 1;
 
-  for (int i = 0; i < dim_n; ++i) {
-    p_strides[i] = stride;
+  for (int i = 0; i < shape_n; ++i) {
     stride *= p_dim[i];
+    p_strides[i] = stride;
   }
 
   UNPROTECT(1);
   return strides;
 }
 
-// The size_index/shape_index are C indexed, but this function returns
-// an R based index for vec_slice() to use
+// size_index is R index based, p_shape_index is C index based, but it
+// still computes the correct R index location
 static int vec_strided_loc(int size_index, int* p_shape_index, int* p_strides, int n) {
   if (size_index == NA_INTEGER) {
     return NA_INTEGER;
@@ -460,8 +460,8 @@ static int vec_strided_loc(int size_index, int* p_shape_index, int* p_strides, i
 
   int loc = size_index;
 
-  for (int i = 1; i < n; ++i) {
-    loc += p_strides[i] * p_shape_index[i - 1];
+  for (int i = 0; i < n; ++i) {
+    loc += p_strides[i] * p_shape_index[i];
   }
 
   return loc;
@@ -514,7 +514,7 @@ SEXP vec_slice_shaped(enum vctrs_type type, SEXP x, SEXP index) {
 
     // Add next 1-D slice position
     for (int j = 0; j < index_n; ++j) {
-      p_slice_index[slice_index_pos] = vec_strided_loc(p_index[j], p_shape_index, p_strides, dim_n);
+      p_slice_index[slice_index_pos] = vec_strided_loc(p_index[j], p_shape_index, p_strides, shape_n);
       slice_index_pos++;
     }
 
