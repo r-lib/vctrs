@@ -41,21 +41,35 @@ test_that("incompatible lengths get error messages", {
 test_that("can vec_recycle_common matrices", {
   x <- matrix(nrow = 4, ncol = 4)
   x1 <- x[1, , drop = FALSE]
-  x0 <- x[0, , drop = FALSE]
 
   expect_equal(vec_recycle_common(x, x), list(x, x))
   expect_equal(vec_recycle_common(x1, x), list(x, x))
-  expect_equal(vec_recycle_common(x0, x), list(x0, x0))
+})
+
+test_that("recycling matrices respects incompatible sizes", {
+  x <- matrix(nrow = 4, ncol = 4)
+  x2 <- x[1:2, , drop = FALSE]
+  x0 <- x[0, , drop = FALSE]
+
+  expect_error(vec_recycle_common(x2, x), class = "vctrs_error_incompatible_size")
+  expect_error(vec_recycle_common(x0, x), class = "vctrs_error_incompatible_size")
 })
 
 test_that("can vec_recycle_common data frames", {
   x <- data.frame(a = rep(1, 3), b = rep(2, 3))
   x1 <- vec_slice(x, 1L)
-  x0 <- vec_slice(x, integer())
 
   expect_equal(vec_recycle_common(x, x), list(x, x))
   expect_equal(vec_recycle_common(x1, x), list(x, x))
-  expect_equal(vec_recycle_common(x0, x), list(x0, x0))
+})
+
+test_that("recycling data frames respects incompatible sizes", {
+  x <- data.frame(a = rep(1, 3), b = rep(2, 3))
+  x2 <- vec_slice(x, 1:2)
+  x0 <- vec_slice(x, integer())
+
+  expect_error(vec_recycle_common(x2, x), class = "vctrs_error_incompatible_size")
+  expect_error(vec_recycle_common(x0, x), class = "vctrs_error_incompatible_size")
 })
 
 test_that("can vec_recycle_common matrix and data frame", {
@@ -63,21 +77,27 @@ test_that("can vec_recycle_common matrix and data frame", {
   df <- data.frame(x = c(1, 1), y = c(2, 2))
 
   expect_equal(
-    vec_recycle_common(vec_slice(mt, integer()), df),
-    list(vec_slice(mt, 0L), vec_slice(df, 0L))
-  )
-  expect_equal(
     vec_recycle_common(vec_slice(mt, 1L), df),
     list(mt, df)
   )
 
   expect_equal(
-    vec_recycle_common(mt, vec_slice(df, 0L)),
-    list(vec_slice(mt, 0L), vec_slice(df, 0L))
-  )
-
-  expect_equal(
     vec_recycle_common(mt, vec_slice(df, 1L)),
     list(mt, df)
+  )
+})
+
+test_that("recycling data frames with matrices respects incompatible sizes", {
+  mt <- matrix(nrow = 2, ncol = 2)
+  df <- data.frame(x = c(1, 1), y = c(2, 2))
+
+  expect_error(
+    vec_recycle_common(vec_slice(mt, integer()), df),
+    class = "vctrs_error_incompatible_size"
+  )
+
+  expect_error(
+    vec_recycle_common(mt, vec_slice(df, 0L)),
+    class = "vctrs_error_incompatible_size"
   )
 })
