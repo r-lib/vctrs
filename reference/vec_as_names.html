@@ -179,8 +179,8 @@ levels are nested.</p>
     
     </div>
 
-    <pre class="usage"><span class='fu'>vec_as_names</span>(<span class='no'>names</span>, <span class='no'>...</span>, <span class='kw'>repair</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='st'>"minimal"</span>, <span class='st'>"unique"</span>, <span class='st'>"universal"</span>),
-  <span class='kw'>quiet</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)</pre>
+    <pre class="usage"><span class='fu'>vec_as_names</span>(<span class='no'>names</span>, <span class='no'>...</span>, <span class='kw'>repair</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='st'>"minimal"</span>, <span class='st'>"unique"</span>, <span class='st'>"universal"</span>,
+  <span class='st'>"check_unique"</span>), <span class='kw'>quiet</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -196,8 +196,8 @@ levels are nested.</p>
     <tr>
       <th>repair</th>
       <td><p>Either a string or a function. If a string, it must
-be one of <code>"minimal"</code>, <code>"unique"</code>, or <code>"universal"</code>. If a
-function, it is invoked with a vector of minmal names and must
+be one of <code>"check_unique"</code>, <code>"minimal"</code>, <code>"unique"</code>, or <code>"universal"</code>.
+If a function, it is invoked with a vector of minimal names and must
 return minimal names, otherwise an error is thrown.</p><ul>
 <li><p>Minimal names are never <code>NULL</code> or <code>NA</code>. When an element doesn't
 have a name, its minimal name is an empty string.</p></li>
@@ -206,7 +206,11 @@ names to make them unique.</p></li>
 <li><p>Universal names are unique and syntactic, meaning that you can
 safely use the names as variables without causing a syntax
 error.</p></li>
-</ul></td>
+</ul>
+
+<p>The <code>"check_unique"</code> option doesn't perform any name repair.
+Instead, an error is raised if the names don't suit the
+<code>"unique"</code> criteria.</p></td>
     </tr>
     <tr>
       <th>quiet</th>

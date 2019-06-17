@@ -321,7 +321,7 @@ attributes that don't require special handling for your class.</p>
 #&gt; </span><span style='color: #555555;'> 45. </span><span>├─vctrs::vec_cast.integer(x = x, to = to) </span><span style='color: #555555;'>/home/travis/build/r-lib/vctrs/R/cast.R:120:2</span><span>
 #&gt; </span><span style='color: #555555;'> 46. </span><span>└─vctrs:::vec_cast.integer.double(x = x, to = to) </span><span style='color: #555555;'>/home/travis/build/r-lib/vctrs/R/type-bare.R:57:2</span><span>
 #&gt; </span><span style='color: #555555;'> 47. </span><span>  └─vctrs::maybe_lossy_cast(out, x, to, lossy) </span><span style='color: #555555;'>/home/travis/build/r-lib/vctrs/R/type-bare.R:76:2</span><span>
-#&gt; </span><span style='color: #555555;'> 48. </span><span>    ├─base::withRestarts(...) </span><span style='color: #555555;'>/home/travis/build/r-lib/vctrs/R/conditions.R:216:2</span><span>
+#&gt; </span><span style='color: #555555;'> 48. </span><span>    ├─base::withRestarts(...) </span><span style='color: #555555;'>/home/travis/build/r-lib/vctrs/R/conditions.R:220:2</span><span>
 #&gt; </span><span style='color: #555555;'> 49. </span><span>    │ └─base:::withOneRestart(expr, restarts[[1L]])
 #&gt; </span><span style='color: #555555;'> 50. </span><span>    │   └─base:::doWithOneRestart(return(expr), restart)
 #&gt; </span><span style='color: #555555;'> 51. </span><span>    └─vctrs:::stop_lossy_cast(...)</div><div class='input'><span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/try'>try</a></span>(<span class='fu'>vec_cast</span>(<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='fl'>1</span>, <span class='fl'>2</span>), <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/logical'>logical</a></span>()))</div><div class='output co'>#&gt; Error : Lossy cast from &lt;double&gt; to &lt;logical&gt;.
@@ -375,7 +375,7 @@ attributes that don't require special handling for your class.</p>
 #&gt; </span><span style='color: #555555;'> 45. </span><span>├─vctrs::vec_cast.logical(x = x, to = to) </span><span style='color: #555555;'>/home/travis/build/r-lib/vctrs/R/cast.R:120:2</span><span>
 #&gt; </span><span style='color: #555555;'> 46. </span><span>└─vctrs:::vec_cast.logical.double(x = x, to = to) </span><span style='color: #555555;'>/home/travis/build/r-lib/vctrs/R/type-bare.R:11:20</span><span>
 #&gt; </span><span style='color: #555555;'> 47. </span><span>  └─vctrs::maybe_lossy_cast(out, x, to, lossy) </span><span style='color: #555555;'>/home/travis/build/r-lib/vctrs/R/type-bare.R:31:2</span><span>
-#&gt; </span><span style='color: #555555;'> 48. </span><span>    ├─base::withRestarts(...) </span><span style='color: #555555;'>/home/travis/build/r-lib/vctrs/R/conditions.R:216:2</span><span>
+#&gt; </span><span style='color: #555555;'> 48. </span><span>    ├─base::withRestarts(...) </span><span style='color: #555555;'>/home/travis/build/r-lib/vctrs/R/conditions.R:220:2</span><span>
 #&gt; </span><span style='color: #555555;'> 49. </span><span>    │ └─base:::withOneRestart(expr, restarts[[1L]])
 #&gt; </span><span style='color: #555555;'> 50. </span><span>    │   └─base:::doWithOneRestart(return(expr), restart)
 #&gt; </span><span style='color: #555555;'> 51. </span><span>    └─vctrs:::stop_lossy_cast(...)</div><div class='input'>
@@ -431,13 +431,13 @@ attributes that don't require special handling for your class.</p>
 #&gt; </span><span style='color: #555555;'> 41. </span><span>│                           │     └─base:::tryCatchOne(expr, names, parentenv, handlers[[1L]])
 #&gt; </span><span style='color: #555555;'> 42. </span><span>│                           │       └─base:::doTryCatch(return(expr), name, parentenv, handler)
 #&gt; </span><span style='color: #555555;'> 43. </span><span>│                           ├─vctrs::allow_lossy_cast(vec_cast(c(1, 2), logical()), to_ptype = integer())
-#&gt; </span><span style='color: #555555;'> 44. </span><span>│                           │ └─base::withCallingHandlers(...) </span><span style='color: #555555;'>/home/travis/build/r-lib/vctrs/R/conditions.R:262:2</span><span>
+#&gt; </span><span style='color: #555555;'> 44. </span><span>│                           │ └─base::withCallingHandlers(...) </span><span style='color: #555555;'>/home/travis/build/r-lib/vctrs/R/conditions.R:266:2</span><span>
 #&gt; </span><span style='color: #555555;'> 45. </span><span>│                           └─vctrs::vec_cast(c(1, 2), logical())
 #&gt; </span><span style='color: #555555;'> 46. </span><span>├─vctrs:::vec_cast_dispatch(x = x, to = to)
 #&gt; </span><span style='color: #555555;'> 47. </span><span>├─vctrs::vec_cast.logical(x = x, to = to) </span><span style='color: #555555;'>/home/travis/build/r-lib/vctrs/R/cast.R:120:2</span><span>
 #&gt; </span><span style='color: #555555;'> 48. </span><span>└─vctrs:::vec_cast.logical.double(x = x, to = to) </span><span style='color: #555555;'>/home/travis/build/r-lib/vctrs/R/type-bare.R:11:20</span><span>
 #&gt; </span><span style='color: #555555;'> 49. </span><span>  └─vctrs::maybe_lossy_cast(out, x, to, lossy) </span><span style='color: #555555;'>/home/travis/build/r-lib/vctrs/R/type-bare.R:31:2</span><span>
-#&gt; </span><span style='color: #555555;'> 50. </span><span>    ├─base::withRestarts(...) </span><span style='color: #555555;'>/home/travis/build/r-lib/vctrs/R/conditions.R:216:2</span><span>
+#&gt; </span><span style='color: #555555;'> 50. </span><span>    ├─base::withRestarts(...) </span><span style='color: #555555;'>/home/travis/build/r-lib/vctrs/R/conditions.R:220:2</span><span>
 #&gt; </span><span style='color: #555555;'> 51. </span><span>    │ └─base:::withOneRestart(expr, restarts[[1L]])
 #&gt; </span><span style='color: #555555;'> 52. </span><span>    │   └─base:::doWithOneRestart(return(expr), restart)
 #&gt; </span><span style='color: #555555;'> 53. </span><span>    └─vctrs:::stop_lossy_cast(...)</div><div class='input'>
@@ -493,7 +493,7 @@ attributes that don't require special handling for your class.</p>
 #&gt; </span><span style='color: #555555;'> 46. </span><span>└─vctrs:::vec_cast.factor.default(x = x, to = to) </span><span style='color: #555555;'>/home/travis/build/r-lib/vctrs/R/type-factor.R:118:2</span><span>
 #&gt; </span><span style='color: #555555;'> 47. </span><span>  └─vctrs::vec_default_cast(x, to) </span><span style='color: #555555;'>/home/travis/build/r-lib/vctrs/R/type-factor.R:146:2</span><span>
 #&gt; </span><span style='color: #555555;'> 48. </span><span>    └─vctrs::stop_incompatible_cast(x, to) </span><span style='color: #555555;'>/home/travis/build/r-lib/vctrs/R/cast.R:164:4</span><span>
-#&gt; </span><span style='color: #555555;'> 49. </span><span>      └─vctrs:::stop_incompatible(...) </span><span style='color: #555555;'>/home/travis/build/r-lib/vctrs/R/conditions.R:108:2</span><span></div><div class='input'>
+#&gt; </span><span style='color: #555555;'> 49. </span><span>      └─vctrs:::stop_incompatible(...) </span><span style='color: #555555;'>/home/travis/build/r-lib/vctrs/R/conditions.R:112:2</span><span></div><div class='input'>
 <span class='co'># Cast to common type</span>
 <span class='fu'>vec_cast_common</span>(<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/factor'>factor</a></span>(<span class='st'>"a"</span>), <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/factor'>factor</a></span>(<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='st'>"a"</span>, <span class='st'>"b"</span>)))</div><div class='output co'>#&gt; [[1]]
 #&gt; [1] a
