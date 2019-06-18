@@ -73,7 +73,7 @@ vec_cast.integer64 <- function(x, to, ...) UseMethod("vec_cast.integer64")
 
 #' @export
 #' @method vec_cast.integer64 default
-vec_cast.integer64.default <- function(x, to, ..., x_arg = "", to_arg = "") {
+vec_cast.integer64.default <- function(x, to, ..., x_arg = "x", to_arg = "to") {
   # Don't use `vec_default_cast()` because integer64 is not compatible
   # with `vec_na()`
   if (is_unspecified(x)) {

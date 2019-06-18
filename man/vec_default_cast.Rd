@@ -4,7 +4,7 @@
 \alias{vec_default_cast}
 \title{Default cast method}
 \usage{
-vec_default_cast(x, to, x_arg = "", to_arg = "")
+vec_default_cast(x, to, x_arg = "x", to_arg = "to")
 }
 \arguments{
 \item{x}{Vectors to cast.}

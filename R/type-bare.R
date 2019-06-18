@@ -16,7 +16,7 @@ vec_cast.logical.logical <- function(x, to, ...) {
 }
 #' @export
 #' @method vec_cast.logical integer
-vec_cast.logical.integer <- function(x, to, ..., x_arg = "", to_arg = "") {
+vec_cast.logical.integer <- function(x, to, ..., x_arg = "x", to_arg = "to") {
   out <- vec_coerce_bare(x, "logical")
   out <- shape_broadcast(out, to)
   lossy <- !x %in% c(0L, 1L)
@@ -24,7 +24,7 @@ vec_cast.logical.integer <- function(x, to, ..., x_arg = "", to_arg = "") {
 }
 #' @export
 #' @method vec_cast.logical double
-vec_cast.logical.double <- function(x, to, ..., x_arg = "", to_arg = "") {
+vec_cast.logical.double <- function(x, to, ..., x_arg = "x", to_arg = "to") {
   out <- vec_coerce_bare(x, "logical")
   out <- shape_broadcast(out, to)
   lossy <- !x %in% c(0, 1)
@@ -32,7 +32,7 @@ vec_cast.logical.double <- function(x, to, ..., x_arg = "", to_arg = "") {
 }
 #' @export
 #' @method vec_cast.logical character
-vec_cast.logical.character <- function(x, to, ..., x_arg = "", to_arg = "") {
+vec_cast.logical.character <- function(x, to, ..., x_arg = "x", to_arg = "to") {
   out <- vec_coerce_bare(x, "logical")
   out <- shape_broadcast(out, to)
   lossy <- !x %in% c("T", "F", "TRUE", "FALSE", "true", "false")
@@ -40,12 +40,12 @@ vec_cast.logical.character <- function(x, to, ..., x_arg = "", to_arg = "") {
 }
 #' @export
 #' @method vec_cast.logical list
-vec_cast.logical.list <- function(x, to, ..., x_arg = "", to_arg = "") {
+vec_cast.logical.list <- function(x, to, ..., x_arg = "x", to_arg = "to") {
   vec_list_cast(x, to, x_arg = x_arg, to_arg = to_arg)
 }
 #' @export
 #' @method vec_cast.logical default
-vec_cast.logical.default <- function(x, to, ..., x_arg = "", to_arg = "") {
+vec_cast.logical.default <- function(x, to, ..., x_arg = "x", to_arg = "to") {
   vec_default_cast(x, to, x_arg = x_arg, to_arg = to_arg)
 }
 
@@ -69,7 +69,7 @@ vec_cast.integer.integer <- function(x, to, ...) {
 }
 #' @export
 #' @method vec_cast.integer double
-vec_cast.integer.double <- function(x, to, ..., x_arg = "", to_arg = "") {
+vec_cast.integer.double <- function(x, to, ..., x_arg = "x", to_arg = "to") {
   out <- suppressWarnings(vec_coerce_bare(x, "integer"))
   lossy <- (out != x) | xor(is.na(x), is.na(out))
   out <- shape_broadcast(out, to)
@@ -80,12 +80,12 @@ vec_cast.integer.double <- function(x, to, ..., x_arg = "", to_arg = "") {
 vec_cast.integer.character <- vec_cast.integer.double
 #' @export
 #' @method vec_cast.integer list
-vec_cast.integer.list <- function(x, to, ..., x_arg = "", to_arg = "") {
+vec_cast.integer.list <- function(x, to, ..., x_arg = "x", to_arg = "to") {
   vec_list_cast(x, to, x_arg = x_arg, to_arg = to_arg)
 }
 #' @export
 #' @method vec_cast.integer default
-vec_cast.integer.default <- function(x, to, ..., x_arg = "", to_arg = "") {
+vec_cast.integer.default <- function(x, to, ..., x_arg = "x", to_arg = "to") {
   vec_default_cast(x, to, x_arg = x_arg, to_arg = to_arg)
 }
 
@@ -107,7 +107,7 @@ vec_cast.double.logical <- function(x, to, ...) {
 vec_cast.double.integer <- vec_cast.double.logical
 #' @export
 #' @method vec_cast.double character
-vec_cast.double.character <- function(x, to, ..., x_arg = "", to_arg = "") {
+vec_cast.double.character <- function(x, to, ..., x_arg = "x", to_arg = "to") {
   out <- suppressWarnings(vec_coerce_bare(x, "double"))
   lossy <- (out != x) | xor(is.na(x), is.na(out))
   out <- shape_broadcast(out, to)
@@ -120,12 +120,12 @@ vec_cast.double.double <- function(x, to, ...) {
 }
 #' @export
 #' @method vec_cast.double list
-vec_cast.double.list <- function(x, to, ..., x_arg = "", to_arg = "") {
+vec_cast.double.list <- function(x, to, ..., x_arg = "x", to_arg = "to") {
   vec_list_cast(x, to, x_arg = x_arg, to_arg = to_arg)
 }
 #' @export
 #' @method vec_cast.double default
-vec_cast.double.default <- function(x, to, ..., x_arg = "", to_arg = "") {
+vec_cast.double.default <- function(x, to, ..., x_arg = "x", to_arg = "to") {
   vec_default_cast(x, to, x_arg = x_arg, to_arg = to_arg)
 }
 
@@ -155,12 +155,12 @@ vec_cast.complex.complex <- function(x, to, ...) {
 }
 #' @export
 #' @method vec_cast.complex list
-vec_cast.complex.list <- function(x, to, ..., x_arg = "", to_arg = "") {
+vec_cast.complex.list <- function(x, to, ..., x_arg = "x", to_arg = "to") {
   vec_list_cast(x, to, x_arg = x_arg, to_arg = to_arg)
 }
 #' @export
 #' @method vec_cast.complex default
-vec_cast.complex.default <- function(x, to, ..., x_arg = "", to_arg = "") {
+vec_cast.complex.default <- function(x, to, ..., x_arg = "x", to_arg = "to") {
   vec_default_cast(x, to, x_arg = x_arg, to_arg = to_arg)
 }
 
@@ -178,12 +178,12 @@ vec_cast.raw.raw <- function(x, to, ...) {
 }
 #' @export
 #' @method vec_cast.raw list
-vec_cast.raw.list <- function(x, to, ..., x_arg = "", to_arg = "") {
+vec_cast.raw.list <- function(x, to, ..., x_arg = "x", to_arg = "to") {
   vec_list_cast(x, to, x_arg = x_arg, to_arg = to_arg)
 }
 #' @export
 #' @method vec_cast.raw default
-vec_cast.raw.default <- function(x, to, ..., x_arg = "", to_arg = "") {
+vec_cast.raw.default <- function(x, to, ..., x_arg = "x", to_arg = "to") {
   vec_default_cast(x, to, x_arg = x_arg, to_arg = to_arg)
 }
 
@@ -219,12 +219,12 @@ vec_cast.character.difftime <- function(x, to, ...) {
 }
 #' @export
 #' @method vec_cast.character list
-vec_cast.character.list <- function(x, to, ..., x_arg = "", to_arg = "") {
+vec_cast.character.list <- function(x, to, ..., x_arg = "x", to_arg = "to") {
   vec_list_cast(x, to, x_arg = x_arg, to_arg = to_arg)
 }
 #' @export
 #' @method vec_cast.character default
-vec_cast.character.default <- function(x, to, ..., x_arg = "", to_arg = "") {
+vec_cast.character.default <- function(x, to, ..., x_arg = "x", to_arg = "to") {
   vec_default_cast(x, to, x_arg = x_arg, to_arg = to_arg)
 }
 
@@ -259,7 +259,7 @@ vec_cast.list.default <- function(x, to, ...) {
 
 # Helpers -----------------------------------------------------------------
 
-lossy_floor <- function(x, to, x_arg = "", to_arg = "") {
+lossy_floor <- function(x, to, x_arg = "x", to_arg = "to") {
   x_floor <- floor(x)
   lossy <- x != x_floor
   maybe_lossy_cast(x_floor, x, to, lossy, x_arg = x_arg, to_arg = to_arg)

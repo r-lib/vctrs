@@ -13,7 +13,7 @@
 \alias{vec_cast.list}
 \title{Cast a vector to specified type}
 \usage{
-vec_cast(x, to, ..., x_arg = "", to_arg = "")
+vec_cast(x, to, ..., x_arg = "x", to_arg = "to")
 
 vec_cast_common(..., .to = NULL)
 
