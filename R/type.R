@@ -6,7 +6,7 @@
 #' inputs, and is designed for interative exploration.
 #'
 #' `vec_type_common()` first finds the prototype of each input, then
-#' finds the common type using [vec_type2()] and [Reduce()].
+#' successively calls [vec_type2()] to find a common type.
 #'
 #' @section Prototype:
 #' A prototype is [size](vec_size) 0 vector containing attributes, but no
