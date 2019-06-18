@@ -412,7 +412,7 @@ SEXP vctrs_df_restore(SEXP x, SEXP to, SEXP i) {
                  Rf_type2char(TYPEOF(x)));
   }
 
-  R_len_t size = (i == R_NilValue) ? df_raw_size(x) : Rf_length(i);
+  R_len_t size = (i == R_NilValue) ? df_raw_size(x) : r_int_get(i, 0);
   return df_restore_impl(x, to, size);
 }
 

@@ -157,6 +157,8 @@ static SEXP vec_slice_impl(SEXP x, SEXP index) {
 
   int nprot = 0;
 
+  SEXP restore_size = PROTECT_N(r_int(Rf_length(index)), &nprot);
+
   struct vctrs_proxy_info info = PROTECT_PROXY_INFO(vec_proxy_info(x), &nprot);
   SEXP data = info.proxy;
 
@@ -173,7 +175,7 @@ static SEXP vec_slice_impl(SEXP x, SEXP index) {
     // Take over attribute restoration only if the `[` method did not
     // restore itself
     if (ATTRIB(out) == R_NilValue) {
-      out = vec_restore(out, x, index);
+      out = vec_restore(out, x, restore_size);
     }
 
     UNPROTECT(nprot);
@@ -194,7 +196,7 @@ static SEXP vec_slice_impl(SEXP x, SEXP index) {
     SEXP out = PROTECT_N(vec_slice_base(info.type, data, index), &nprot);
 
     slice_names(out, x, index);
-    out = vec_restore(out, x, index);
+    out = vec_restore(out, x, restore_size);
 
     UNPROTECT(nprot);
     return out;
@@ -202,7 +204,7 @@ static SEXP vec_slice_impl(SEXP x, SEXP index) {
 
   case vctrs_type_dataframe: {
     SEXP out = PROTECT_N(df_slice(data, index), &nprot);
-    out = vec_restore(out, x, index);
+    out = vec_restore(out, x, restore_size);
     UNPROTECT(nprot);
     return out;
   }

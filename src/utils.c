@@ -169,7 +169,7 @@ SEXP map(SEXP x, SEXP (*fn)(SEXP)) {
 
 SEXP df_map(SEXP df, SEXP (*fn)(SEXP)) {
   SEXP out = PROTECT(map(df, fn));
-  out = vctrs_df_restore(out, df, vctrs_shared_empty_int);
+  out = vctrs_df_restore(out, df, vctrs_shared_zero_int);
 
   UNPROTECT(1);
   return out;
@@ -682,6 +682,7 @@ SEXP vctrs_shared_true = NULL;
 SEXP vctrs_shared_false = NULL;
 Rcomplex vctrs_shared_na_cpl;
 
+SEXP vctrs_shared_zero_int = NULL;
 SEXP vctrs_shared_na_lgl = NULL;
 
 SEXP strings = NULL;
@@ -802,6 +803,11 @@ void vctrs_init_utils(SEXP ns) {
   vctrs_shared_na_lgl = r_lgl(NA_LOGICAL);
   R_PreserveObject(vctrs_shared_na_lgl);
   MARK_NOT_MUTABLE(vctrs_shared_na_lgl);
+
+  vctrs_shared_zero_int = Rf_allocVector(INTSXP, 1);
+  INTEGER(vctrs_shared_zero_int)[0] = 0;
+  R_PreserveObject(vctrs_shared_zero_int);
+  MARK_NOT_MUTABLE(vctrs_shared_zero_int);
 
 
   syms_i = Rf_install("i");

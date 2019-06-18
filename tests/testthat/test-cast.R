@@ -84,7 +84,7 @@ test_that("vec_restore() passes `i` argument to methods", {
   scoped_global_bindings(
     vec_restore.vctrs_foobar = function(x, to, ..., i) i
   )
-  expect_identical(vec_slice(foobar(1:3), 2), 2L)
+  expect_identical(vec_slice(foobar(1:3), 2), 1L)
 })
 
 test_that("dimensions are preserved by default restore method", {
