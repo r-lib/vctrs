@@ -7,13 +7,13 @@
 \alias{vec_cast.integer64}
 \title{64 bit integers}
 \usage{
-\method{vec_ptype_full}{integer64}(x)
+\method{vec_ptype_full}{integer64}(x, ...)
 
-\method{vec_ptype_abbr}{integer64}(x)
+\method{vec_ptype_abbr}{integer64}(x, ...)
 
 \method{vec_type2}{integer64}(x, y, ...)
 
-\method{vec_cast}{integer64}(x, to)
+\method{vec_cast}{integer64}(x, to, ...)
 }
 \description{
 A \code{integer64} is a 64 bits integer vector, implemented in the \code{bit64} package.

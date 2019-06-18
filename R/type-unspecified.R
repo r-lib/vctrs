@@ -30,7 +30,7 @@ print.vctrs_unspecified <- function(x, ...) {
 }
 
 #' @export
-vec_ptype_abbr.vctrs_unspecified <- function(x) {
+vec_ptype_abbr.vctrs_unspecified <- function(x, ...) {
   "???"
 }
 

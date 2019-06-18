@@ -311,13 +311,6 @@ test_that("RHS cast when using subset assign", {
   expect_equal(h, new_hidden(c(1, 2)))
 })
 
-test_that("numeric methods use vec_restore_numeric", {
-  h <- new_hidden(1)
-
-  expect_equal(abs(h), h)
-  expect_equal(sum(h), h)
-})
-
 test_that("c passes on to vec_c", {
   scoped_hidden()
 

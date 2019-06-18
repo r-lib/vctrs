@@ -51,7 +51,7 @@ check_fields <- function(fields) {
 }
 
 #' @export
-vec_proxy.vctrs_rcrd <- function(x) {
+vec_proxy.vctrs_rcrd <- function(x, ...) {
   new_data_frame(unclass(x))
 }
 
@@ -79,11 +79,11 @@ obj_str_data.vctrs_rcrd <- function(x, ...) {
 
 #' @method vec_cast vctrs_rcrd
 #' @export
-vec_cast.vctrs_rcrd <- function(x, to) UseMethod("vec_cast.vctrs_rcrd")
+vec_cast.vctrs_rcrd <- function(x, to, ...) UseMethod("vec_cast.vctrs_rcrd")
 
 #' @method vec_cast.vctrs_rcrd vctrs_rcrd
 #' @export
-vec_cast.vctrs_rcrd.vctrs_rcrd <- function(x, to) {
+vec_cast.vctrs_rcrd.vctrs_rcrd <- function(x, to, ...) {
   # This assumes that we don't have duplicate field names,
   # which is verified even in the constructor.
   if (!setequal(fields(x), fields(to))) {
@@ -101,7 +101,7 @@ vec_cast.vctrs_rcrd.vctrs_rcrd <- function(x, to) {
 
 #' @method vec_cast.vctrs_rcrd default
 #' @export
-vec_cast.vctrs_rcrd.default <- function(x, to) {
+vec_cast.vctrs_rcrd.default <- function(x, to, ...) {
   if (is_bare_list(x)) {
     vec_list_cast(x, to)
   } else {
@@ -185,7 +185,7 @@ as.list.vctrs_rcrd <- function(x, ...) {
 # FIXME
 
 #' @export
-vec_proxy_compare.vctrs_rcrd <- function(x, relax = FALSE) {
+vec_proxy_compare.vctrs_rcrd <- function(x, ..., relax = FALSE) {
   new_data_frame(vec_data(x), n = length(x))
 }
 

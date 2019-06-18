@@ -85,7 +85,7 @@ is_list_of <- function(x) {
 }
 
 #' @export
-vec_proxy.vctrs_list_of <- function(x) {
+vec_proxy.vctrs_list_of <- function(x, ...) {
   unclass(x)
 }
 
@@ -105,7 +105,7 @@ format.vctrs_list_of <- function(x, ...) {
 }
 
 #' @export
-vec_ptype_full.vctrs_list_of <- function(x) {
+vec_ptype_full.vctrs_list_of <- function(x, ...) {
   param <- vec_ptype_full(attr(x, "ptype"))
   if (grepl("\n", param)) {
     param <- paste0(indent(paste0("\n", param), 2), "\n")
@@ -115,7 +115,7 @@ vec_ptype_full.vctrs_list_of <- function(x) {
 }
 
 #' @export
-vec_ptype_abbr.vctrs_list_of <- function(x) {
+vec_ptype_abbr.vctrs_list_of <- function(x, ...) {
   paste0("list<", vec_ptype_abbr(attr(x, "ptype")), ">")
 }
 
@@ -187,12 +187,12 @@ vec_type2.vctrs_list_of.default <- function(x, y, ..., x_arg = "", y_arg = "") {
 #' @export vec_cast.vctrs_list_of
 #' @method vec_cast vctrs_list_of
 #' @export
-vec_cast.vctrs_list_of <- function(x, to) {
+vec_cast.vctrs_list_of <- function(x, to, ...) {
   UseMethod("vec_cast.vctrs_list_of")
 }
 #' @export
 #' @method vec_cast.vctrs_list_of list
-vec_cast.vctrs_list_of.list <- function(x, to) {
+vec_cast.vctrs_list_of.list <- function(x, to, ...) {
   # Casting list to list_of will warn/err if the cast is lossy,
   # but the locations refer to the inner vectors,
   # and the cast fails if all (vector) elements in a single (list) element
@@ -201,7 +201,7 @@ vec_cast.vctrs_list_of.list <- function(x, to) {
 
 #' @export
 #' @method vec_cast.list vctrs_list_of
-vec_cast.list.vctrs_list_of <- function(x, to) {
+vec_cast.list.vctrs_list_of <- function(x, to, ...) {
   # Casting list_of to list is never lossy
   shape_broadcast(as.list(x), to)
 }
@@ -212,7 +212,7 @@ vec_cast.vctrs_list_of.vctrs_list_of <- vec_cast.vctrs_list_of.list
 
 #' @export
 #' @method vec_cast.vctrs_list_of default
-vec_cast.vctrs_list_of.default <- function(x, to) {
+vec_cast.vctrs_list_of.default <- function(x, to, ...) {
   x <- vec_cast(x, attr(to, "ptype"))
   out <- lapply(seq_along(x), function(i) x[[i]])
 

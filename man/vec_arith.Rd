@@ -9,13 +9,13 @@
 \alias{MISSING}
 \title{Arithmetic operations}
 \usage{
-vec_arith(op, x, y)
+vec_arith(op, x, y, ...)
 
-\method{vec_arith}{default}(op, x, y)
+\method{vec_arith}{default}(op, x, y, ...)
 
-\method{vec_arith}{logical}(op, x, y)
+\method{vec_arith}{logical}(op, x, y, ...)
 
-\method{vec_arith}{numeric}(op, x, y)
+\method{vec_arith}{numeric}(op, x, y, ...)
 
 vec_arith_base(op, x, y)
 
@@ -26,6 +26,8 @@ MISSING()
 
 \item{x, y}{A pair of vectors. For \code{!}, unary \code{+} and unary \code{-}, \code{y} will be
 a sentinel object of class \code{MISSING}, as created by \code{MISSING()}.}
+
+\item{...}{These dots are for future extensions and must be empty.}
 }
 \description{
 This generic provides a common double dispatch mechanism for all infix

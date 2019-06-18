@@ -29,19 +29,19 @@ new_duration(x = double(), units = c("secs", "mins", "hours", "days",
 
 \method{vec_type2}{difftime}(x, y, ...)
 
-\method{vec_cast}{Date}(x, to)
+\method{vec_cast}{Date}(x, to, ...)
 
-\method{vec_cast}{POSIXct}(x, to)
+\method{vec_cast}{POSIXct}(x, to, ...)
 
-\method{vec_cast}{POSIXlt}(x, to)
+\method{vec_cast}{POSIXlt}(x, to, ...)
 
-\method{vec_cast}{difftime}(x, to)
+\method{vec_cast}{difftime}(x, to, ...)
 
-\method{vec_arith}{Date}(op, x, y)
+\method{vec_arith}{Date}(op, x, y, ...)
 
-\method{vec_arith}{POSIXct}(op, x, y)
+\method{vec_arith}{POSIXct}(op, x, y, ...)
 
-\method{vec_arith}{difftime}(op, x, y)
+\method{vec_arith}{difftime}(op, x, y, ...)
 }
 \arguments{
 \item{x}{A double vector representing the number of days since UNIX

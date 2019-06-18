@@ -19,7 +19,7 @@ is_list_of(x)
 
 \method{vec_type2}{vctrs_list_of}(x, y, ...)
 
-\method{vec_cast}{vctrs_list_of}(x, to)
+\method{vec_cast}{vctrs_list_of}(x, to, ...)
 }
 \arguments{
 \item{...}{Vectors to coerce.}

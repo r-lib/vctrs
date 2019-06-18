@@ -37,22 +37,26 @@ is_partial <- function(x) {
 }
 
 #' @rdname new_partial
+#' @inheritParams ellipsis::dots_empty
 #' @export
-vec_type_finalise <- function(x) {
+vec_type_finalise <- function(x, ...) {
+  if (!missing(...)) {
+    ellipsis::check_dots_empty()
+  }
   return(.Call(vctrs_type_finalise, x))
   UseMethod("vec_type_finalise")
 }
-vec_type_finalise_dispatch <- function(x) {
+vec_type_finalise_dispatch <- function(x, ...) {
   UseMethod("vec_type_finalise")
 }
 #' @export
-vec_type_finalise.vctrs_partial <- function(x) {
+vec_type_finalise.vctrs_partial <- function(x, ...) {
   # nocov start
   stop_unimplemented(x, "vec_type_finalise")
   # nocov end
 }
 
 #' @export
-vec_type_finalise.default <- function(x) {
+vec_type_finalise.default <- function(x, ...) {
   x
 }

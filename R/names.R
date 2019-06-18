@@ -33,7 +33,6 @@
 #'
 #'
 #' @param names A character vector.
-#' @param ... These dots are for future extensions and must be empty.
 #' @param repair Either a string or a function. If a string, it must
 #'   be one of `"check_unique"`, `"minimal"`, `"unique"`, or `"universal"`.
 #'   If a function, it is invoked with a vector of minimal names and must
@@ -56,6 +55,7 @@
 #'   caused by repairing the names. This only concerns unique and
 #'   universal repairing. Set `quiet` to `TRUE` to silence the
 #'   messages.
+#' @inheritParams ellipsis::dots_empty
 #'
 #' @section `minimal` names:
 #'

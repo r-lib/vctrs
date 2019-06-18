@@ -5,12 +5,14 @@
 \alias{vec_ptype_abbr}
 \title{Vector type as a string}
 \usage{
-vec_ptype_full(x)
+vec_ptype_full(x, ...)
 
-vec_ptype_abbr(x)
+vec_ptype_abbr(x, ...)
 }
 \arguments{
 \item{x}{A vector.}
+
+\item{...}{These dots are for future extensions and must be empty.}
 }
 \value{
 A string.

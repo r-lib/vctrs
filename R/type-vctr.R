@@ -81,7 +81,7 @@ names_all_or_nothing <- function(names) {
 }
 
 #' @export
-vec_proxy.vctrs_vctr <- function(x) {
+vec_proxy.vctrs_vctr <- function(x, ...) {
   if (is_list(x)) {
     unclass(x)
   } else {
@@ -99,11 +99,11 @@ vec_restore.vctrs_vctr <- function(x, to, ..., i = NULL) {
 
 #' @method vec_cast vctrs_vctr
 #' @export
-vec_cast.vctrs_vctr <- function(x, to) UseMethod("vec_cast.vctrs_vctr")
+vec_cast.vctrs_vctr <- function(x, to, ...) UseMethod("vec_cast.vctrs_vctr")
 
 #' @method vec_cast.vctrs_vctr default
 #' @export
-vec_cast.vctrs_vctr.default <- function(x, to) {
+vec_cast.vctrs_vctr.default <- function(x, to, ...) {
   # These are not strictly necessary, but make bootstrapping a new class
   # a bit simpler
   if (is.object(x)) {
@@ -603,8 +603,6 @@ new_hidden <- function(x = double()) {
 }
 format.hidden <- function(x, ...) rep("xxx", length(x))
 
-vec_restore_numeric.hidden <- function(x, to) new_hidden(x)
-
 scoped_hidden <- function(frame = caller_env()) {
   scoped_bindings(.env = global_env(), .frame = frame,
     vec_type2.hidden         = function(x, y, ...) UseMethod("vec_type2.hidden", y),
@@ -617,13 +615,13 @@ scoped_hidden <- function(frame = caller_env()) {
     vec_type2.hidden.logical = function(x, y, ...) new_hidden(),
     vec_type2.logical.hidden = function(x, y, ...) new_hidden(),
 
-    vec_cast.hidden          = function(x, to) UseMethod("vec_cast.hidden"),
-    vec_cast.hidden.default  = function(x, to) stop_incompatible_cast(x, to),
-    vec_cast.hidden.hidden   = function(x, to) x,
-    vec_cast.hidden.double   = function(x, to) new_hidden(vec_data(x)),
-    vec_cast.double.hidden   = function(x, to) vec_data(x),
-    vec_cast.hidden.logical  = function(x, to) new_hidden(as.double(x)),
-    vec_cast.logical.hidden  = function(x, to) as.logical(vec_data(x))
+    vec_cast.hidden          = function(x, to, ...) UseMethod("vec_cast.hidden"),
+    vec_cast.hidden.default  = function(x, to, ...) stop_incompatible_cast(x, to),
+    vec_cast.hidden.hidden   = function(x, to, ...) x,
+    vec_cast.hidden.double   = function(x, to, ...) new_hidden(vec_data(x)),
+    vec_cast.double.hidden   = function(x, to, ...) vec_data(x),
+    vec_cast.hidden.logical  = function(x, to, ...) new_hidden(as.double(x)),
+    vec_cast.logical.hidden  = function(x, to, ...) as.logical(vec_data(x))
   )
 }
 

@@ -10,7 +10,7 @@ new_data_frame(x = list(), n = NULL, ..., class = character())
 
 \method{vec_type2}{data.frame}(x, y, ...)
 
-\method{vec_cast}{data.frame}(x, to)
+\method{vec_cast}{data.frame}(x, to, ...)
 }
 \arguments{
 \item{x}{A named list of equal-length vectors. The lengths are not
