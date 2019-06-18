@@ -122,8 +122,8 @@ is_same_type <- function(x, ptype) {
 
 vec_assert_type_explain <- function(x, type, arg) {
   arg <- str_backtick(arg)
-  x <- vec_ptype_full(x)
-  type <- vec_ptype_full(type)
+  x <- paste0("<", vec_ptype_full(x), ">")
+  type <- paste0("<", vec_ptype_full(type), ">")
 
   intro <- paste0(arg, " must be a vector with type")
   intro <- layout_type(intro, type)
