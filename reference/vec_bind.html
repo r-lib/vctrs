@@ -139,9 +139,11 @@ across all arguments.</p>
     
     </div>
 
-    <pre class="usage"><span class='fu'>vec_rbind</span>(<span class='no'>...</span>, <span class='kw'>.ptype</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)
+    <pre class="usage"><span class='fu'>vec_rbind</span>(<span class='no'>...</span>, <span class='kw'>.ptype</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>.name_repair</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='st'>"unique"</span>, <span class='st'>"universal"</span>,
+  <span class='st'>"check_unique"</span>))
 
-<span class='fu'>vec_cbind</span>(<span class='no'>...</span>, <span class='kw'>.ptype</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>.size</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</pre>
+<span class='fu'>vec_cbind</span>(<span class='no'>...</span>, <span class='kw'>.ptype</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>.size</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>.name_repair</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='st'>"unique"</span>, <span class='st'>"universal"</span>, <span class='st'>"check_unique"</span>, <span class='st'>"minimal"</span>))</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -161,6 +163,19 @@ computing the common type across all elements of <code>...</code>.</p>
 <p>Alternatively, you can supply <code>.ptype</code> to give the output known type.
 If <code><a href='https://www.rdocumentation.org/packages/base/topics/options'>getOption("vctrs.no_guessing")</a></code> is <code>TRUE</code> you must supply this value:
 this is a convenient way to make production code demand fixed types.</p></td>
+    </tr>
+    <tr>
+      <th>.name_repair</th>
+      <td><p>One of <code>"unique"</code>, <code>"universal"</code>, or
+<code>"check_unique"</code>. See <code><a href='vec_as_names.html'>vec_as_names()</a></code> for the meaning of these
+options.</p>
+<p>With <code>vec_rbind()</code>, the repair function is applied to all inputs
+separately. This is because <code>vec_rbind()</code> needs to align their
+columns before binding the rows, and thus needs all inputs to
+have unique names. On the other hand, <code>vec_cbind()</code> applies the
+repair function after all inputs have been concatenated together
+in a final data frame. Hence <code>vec_cbind()</code> allows the more
+permissive minimal names repair.</p></td>
     </tr>
     <tr>
       <th>.size</th>
