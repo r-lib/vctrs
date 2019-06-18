@@ -54,9 +54,9 @@ tuple_methods <- list(
     stop_incompatible_type(x, y, x_arg = x_arg, y_arg = y_arg)
   },
 
-  vec_cast.tuple = function(x, to) UseMethod("vec_cast.tuple"),
-  vec_cast.tuple.list = function(x, to) vec_list_cast (x, to),
-  vec_cast.tuple.tuple = function(x, to) x
+  vec_cast.tuple = function(x, to, ...) UseMethod("vec_cast.tuple"),
+  vec_cast.tuple.list = function(x, to, ...) vec_list_cast (x, to),
+  vec_cast.tuple.tuple = function(x, to, ...) x
 )
 
 scoped_tuple_methods <- function(frame = caller_env()) {
@@ -72,7 +72,7 @@ scoped_comparable_tuple <- function(frame = caller_env()) {
 
   # Compare only on first field
   scoped_global_bindings(.frame = frame,
-    vec_proxy_equal.tuple = function(x) field(x, "x")
+    vec_proxy_equal.tuple = function(x, ...) field(x, "x")
   )
 }
 

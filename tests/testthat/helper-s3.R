@@ -11,15 +11,15 @@ scoped_global_bindings <- function(..., .frame = caller_env()) {
 }
 scoped_proxy <- function(frame = caller_env()) {
   scoped_global_bindings(.frame = frame,
-    vec_proxy.vctrs_proxy = function(x) proxy_deref(x),
-    vec_restore.vctrs_proxy = function(x, to, ..., i) new_proxy(x),
+    vec_proxy.vctrs_proxy = function(x, ...) proxy_deref(x),
+    vec_restore.vctrs_proxy = function(x, to, ...) new_proxy(x),
 
     vec_type2.vctrs_proxy = function(x, y, ...) UseMethod("vec_type2.vctrs_proxy", y),
     vec_type2.vctrs_proxy.vctrs_proxy = function(x, y, ...) new_proxy(vec_type(proxy_deref(x))),
 
-    vec_cast.vctrs_proxy = function(x, to) UseMethod("vec_cast.vctrs_proxy"),
-    vec_cast.vctrs_proxy.default = function(x, to) stop_incompatible_cast(x, to),
-    vec_cast.vctrs_proxy.vctrs_proxy = function(x, to) x
+    vec_cast.vctrs_proxy = function(x, to, ...) UseMethod("vec_cast.vctrs_proxy"),
+    vec_cast.vctrs_proxy.default = function(x, to, ...) stop_incompatible_cast(x, to),
+    vec_cast.vctrs_proxy.vctrs_proxy = function(x, to, ...) x
   )
 }
 
