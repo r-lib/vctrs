@@ -202,14 +202,16 @@ static SEXP vec_slice_impl(SEXP x, SEXP index) {
       if (names != R_NilValue) {
         names = PROTECT_N(Rf_shallow_duplicate(names), &nprot);
         SEXP row_names = VECTOR_ELT(names, 0);
-        SET_VECTOR_ELT(names, 0, slice_names(row_names, index));
+        row_names = PROTECT_N(slice_names(row_names, index), &nprot);
+        SET_VECTOR_ELT(names, 0, row_names);
         Rf_setAttrib(out, R_DimNamesSymbol, names);
       }
     } else {
       out = PROTECT_N(vec_slice_base(info.type, data, index), &nprot);
 
       SEXP names = PROTECT_N(Rf_getAttrib(x, R_NamesSymbol), &nprot);
-      Rf_setAttrib(out, R_NamesSymbol, slice_names(names, index));
+      names = PROTECT_N(slice_names(names, index), &nprot);
+      Rf_setAttrib(out, R_NamesSymbol, names);
     }
 
     out = vec_restore(out, x, index);
