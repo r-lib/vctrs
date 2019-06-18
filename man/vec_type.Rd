@@ -34,7 +34,7 @@ inputs, and is designed for interative exploration.
 }
 \details{
 \code{vec_type_common()} first finds the prototype of each input, then
-finds the common type using \code{\link[=vec_type2]{vec_type2()}} and \code{\link[=Reduce]{Reduce()}}.
+successively calls \code{\link[=vec_type2]{vec_type2()}} to find a common type.
 }
 \section{Prototype}{
 
