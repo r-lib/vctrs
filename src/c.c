@@ -7,7 +7,7 @@ SEXP vctrs_type_common_impl(SEXP dots, SEXP ptype);
 // From slice-assign.c
 SEXP vec_assign_impl(SEXP proxy, SEXP index, SEXP value, bool clone);
 
-static SEXP vec_c(SEXP xs, SEXP ptype);
+static SEXP vec_c(SEXP xs, SEXP ptype, enum name_repair_arg name_repair);
 static bool list_has_inner_names(SEXP xs);
 
 
@@ -16,15 +16,17 @@ SEXP vctrs_c(SEXP call, SEXP op, SEXP args, SEXP env) {
   args = CDR(args);
 
   SEXP xs = PROTECT(rlang_env_dots_list(env));
-  SEXP ptype = PROTECT(Rf_eval(CAR(args), env));
+  SEXP ptype = PROTECT(Rf_eval(CAR(args), env)); args = CDR(args);
+  SEXP name_repair = PROTECT(Rf_eval(CAR(args), env));
 
-  SEXP out = vec_c(xs, ptype);
+  enum name_repair_arg repair_arg = validate_name_repair(name_repair);
+  SEXP out = vec_c(xs, ptype, repair_arg);
 
-  UNPROTECT(2);
+  UNPROTECT(3);
   return out;
 }
 
-static SEXP vec_c(SEXP xs, SEXP ptype) {
+static SEXP vec_c(SEXP xs, SEXP ptype, enum name_repair_arg name_repair) {
   R_len_t n = Rf_length(xs);
 
   ptype = PROTECT(vctrs_type_common_impl(xs, ptype));
@@ -100,12 +102,16 @@ static SEXP vec_c(SEXP xs, SEXP ptype) {
   }
 
   if (has_names) {
+    out_names = PROTECT(vec_as_names(out_names, name_repair, false));
+
     if (is_shaped) {
       out = set_rownames(out, out_names);
       REPROTECT(out, out_pi);
     } else {
       Rf_setAttrib(out, R_NamesSymbol, out_names);
     }
+
+    UNPROTECT(1);
   }
 
   out = vec_restore(out, ptype, R_NilValue);

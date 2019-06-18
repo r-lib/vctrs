@@ -250,13 +250,27 @@ uint32_t hash_object(SEXP x);
 uint32_t hash_scalar(SEXP x, R_len_t i);
 void hash_fill(uint32_t* p, R_len_t n, SEXP x);
 
-bool is_unique_names(SEXP names);
-SEXP as_unique_names(SEXP names, bool quiet);
-
 bool duplicated_any(SEXP names);
 
 
-// Growable vector -----------------------------------------------
+// Names --------------------------------------------------------
+
+enum name_repair_arg {
+  name_repair_none,
+  name_repair_minimal,
+  name_repair_unique,
+  name_repair_universal,
+  name_repair_check_unique
+};
+
+const char* name_repair_arg_as_c_string(enum name_repair_arg arg);
+enum name_repair_arg validate_name_repair(SEXP arg);
+SEXP vec_as_names(SEXP names, enum name_repair_arg type, bool quiet);
+bool is_unique_names(SEXP names);
+SEXP vec_as_unique_names(SEXP names, bool quiet);
+
+
+// Growable vector ----------------------------------------------
 
 struct growable {
   SEXP x;

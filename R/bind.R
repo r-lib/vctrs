@@ -36,6 +36,17 @@
 #'
 #'   `NULL` inputs are silently ignored. Empty (e.g. zero row) inputs
 #'   will not appear in the output, but will affect the derived `.ptype`.
+#' @param .name_repair One of `"unique"`, `"universal"`, or
+#'   `"check_unique"`. See [vec_as_names()] for the meaning of these
+#'   options.
+#'
+#'   With `vec_rbind()`, the repair function is applied to all inputs
+#'   separately. This is because `vec_rbind()` needs to align their
+#'   columns before binding the rows, and thus needs all inputs to
+#'   have unique names. On the other hand, `vec_cbind()` applies the
+#'   repair function after all inputs have been concatenated together
+#'   in a final data frame. Hence `vec_cbind()` allows the more
+#'   permissive minimal names repair.
 #' @inheritParams vec_c
 #' @return A data frame, or subclass of data frame.
 #'
@@ -108,9 +119,12 @@ NULL
 
 #' @export
 #' @rdname vec_bind
-vec_rbind <- function(..., .ptype = NULL) {
-  .External2(vctrs_rbind, .ptype)
+vec_rbind <- function(...,
+                      .ptype = NULL,
+                      .name_repair = c("unique", "universal", "check_unique")) {
+  .External2(vctrs_rbind, .ptype, .name_repair)
 }
+vec_rbind <- fn_inline_formals(vec_rbind, ".name_repair")
 
 #' @export
 #' @rdname vec_bind
@@ -119,9 +133,13 @@ vec_rbind <- function(..., .ptype = NULL) {
 #'
 #'   Alternatively, specify the desired number of rows, and any inputs
 #'   of length 1 will be recycled appropriately.
-vec_cbind <- function(..., .ptype = NULL, .size = NULL) {
-  .External2(vctrs_cbind, .ptype, .size)
+vec_cbind <- function(...,
+                      .ptype = NULL,
+                      .size = NULL,
+                      .name_repair = c("unique", "universal", "check_unique", "minimal")) {
+  .External2(vctrs_cbind, .ptype, .size, .name_repair)
 }
+vec_cbind <- fn_inline_formals(vec_cbind, ".name_repair")
 
 as_df_row <- function(x, quiet = FALSE) {
   .Call(vctrs_as_df_row, x, quiet)

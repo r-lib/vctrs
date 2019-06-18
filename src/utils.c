@@ -688,6 +688,11 @@ SEXP vctrs_shared_na_lgl = NULL;
 SEXP strings = NULL;
 SEXP strings_empty = NULL;
 SEXP strings_dots = NULL;
+SEXP strings_none = NULL;
+SEXP strings_minimal = NULL;
+SEXP strings_unique = NULL;
+SEXP strings_universal = NULL;
+SEXP strings_check_unique = NULL;
 
 SEXP syms_i = NULL;
 SEXP syms_n = NULL;
@@ -700,6 +705,7 @@ SEXP syms_x_arg = NULL;
 SEXP syms_y_arg = NULL;
 SEXP syms_out = NULL;
 SEXP syms_value = NULL;
+SEXP syms_quiet = NULL;
 
 SEXP fns_bracket = NULL;
 SEXP fns_quote = NULL;
@@ -718,7 +724,7 @@ void vctrs_init_utils(SEXP ns) {
 
   // Holds the CHARSXP objects because unlike symbols they can be
   // garbage collected
-  strings = Rf_allocVector(STRSXP, 6);
+  strings = Rf_allocVector(STRSXP, 11);
   R_PreserveObject(strings);
 
   strings_dots = Rf_mkChar("...");
@@ -738,6 +744,21 @@ void vctrs_init_utils(SEXP ns) {
 
   strings_vctrs_vctr = Rf_mkChar("vctrs_vctr");
   SET_STRING_ELT(strings, 5, strings_vctrs_vctr);
+
+  strings_none = Rf_mkChar("none");
+  SET_STRING_ELT(strings, 6, strings_none);
+
+  strings_minimal = Rf_mkChar("minimal");
+  SET_STRING_ELT(strings, 7, strings_minimal);
+
+  strings_unique = Rf_mkChar("unique");
+  SET_STRING_ELT(strings, 8, strings_unique);
+
+  strings_universal = Rf_mkChar("universal");
+  SET_STRING_ELT(strings, 9, strings_universal);
+
+  strings_check_unique = Rf_mkChar("check_unique");
+  SET_STRING_ELT(strings, 10, strings_check_unique);
 
 
   classes_data_frame = Rf_allocVector(STRSXP, 1);
@@ -822,6 +843,7 @@ void vctrs_init_utils(SEXP ns) {
   syms_y_arg = Rf_install("y_arg");
   syms_out = Rf_install("out");
   syms_value = Rf_install("value");
+  syms_quiet = Rf_install("quiet");
 
   fns_bracket = Rf_findVar(syms_bracket, R_BaseEnv);
   fns_quote = Rf_findVar(Rf_install("quote"), R_BaseEnv);

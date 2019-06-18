@@ -7,6 +7,7 @@
 #' * `vec_type(vec_c(x, y)) == vec_type_common(x, y)`.
 #'
 #' @param ... Vectors to coerce.
+#' @param .name_repair How to repair names, see `repair` options in [vec_as_names()].
 #' @return A vector with class given by `.ptype`, and length equal to the
 #'   sum of the `vec_size()` of the contents of `...`.
 #'
@@ -31,6 +32,9 @@
 #' # Factors -----------------------------
 #' c(factor("a"), factor("b"))
 #' vec_c(factor("a"), factor("b"))
-vec_c <- function(..., .ptype = NULL) {
-  .External2(vctrs_c, .ptype)
+vec_c <- function(...,
+                  .ptype = NULL,
+                  .name_repair = c("minimal", "unique", "check_unique", "universal")) {
+  .External2(vctrs_c, .ptype, .name_repair)
 }
+vec_c <- fn_inline_formals(vec_c, ".name_repair")
