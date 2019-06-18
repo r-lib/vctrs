@@ -42,10 +42,13 @@ vec_restore(x, to, ..., n = NULL)
 \code{vec_cast()} and \code{vec_restore()}, these dots are only for future
 extensions and should be empty.}
 
-\item{n}{The total size to restore to. This is currently passed by
-\code{vec_slice()} to solve edge cases arising in data frame restoration.
-In most cases you don't need this information and can safely
-ignore that argument.}
+\item{n}{\Sexpr[results=rd, stage=render]{vctrs:::lifecycle("experimental")}
+The total size to restore to. This is currently passed by
+\code{vec_slice()} to solve edge cases arising in data frame
+restoration. In most cases you don't need this information and
+can safely ignore that argument. This parameter should be
+considered internal and experimental, it might change in the
+future.}
 }
 \value{
 A vector the same length as \code{x} with the same type as \code{to},

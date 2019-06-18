@@ -80,10 +80,13 @@
 #'   `vec_cast()` and `vec_restore()`, these dots are only for future
 #'   extensions and should be empty.
 #' @param to,.to Type to cast to. If `NULL`, `x` will be returned as is.
-#' @param n The total size to restore to. This is currently passed by
-#'   `vec_slice()` to solve edge cases arising in data frame restoration.
-#'   In most cases you don't need this information and can safely
-#'   ignore that argument.
+#' @param n \Sexpr[results=rd, stage=render]{vctrs:::lifecycle("experimental")}
+#'   The total size to restore to. This is currently passed by
+#'   `vec_slice()` to solve edge cases arising in data frame
+#'   restoration. In most cases you don't need this information and
+#'   can safely ignore that argument. This parameter should be
+#'   considered internal and experimental, it might change in the
+#'   future.
 #' @return A vector the same length as `x` with the same type as `to`,
 #'   or an error if the cast is not possible. An error is generated if
 #'   information is lost when casting between compatible types (i.e. when
