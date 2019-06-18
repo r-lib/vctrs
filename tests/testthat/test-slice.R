@@ -15,6 +15,18 @@ test_that("can subset base vectors", {
   expect_identical(vec_slice(list(1, 2, 3), i), list(2, 3))
 })
 
+test_that("can subset shaped base vectors", {
+  i <- 2:3
+  mat <- as.matrix
+  expect_identical(vec_slice(mat(lgl(1, 0, 1)), i), mat(lgl(0, 1)))
+  expect_identical(vec_slice(mat(int(1, 2, 3)), i), mat(int(2, 3)))
+  expect_identical(vec_slice(mat(dbl(1, 2, 3)), i), mat(dbl(2, 3)))
+  expect_identical(vec_slice(mat(cpl(1, 2, 3)), i), mat(cpl(2, 3)))
+  expect_identical(vec_slice(mat(chr("1", "2", "3")), i), mat(chr("2", "3")))
+  expect_identical(vec_slice(mat(bytes(1, 2, 3)), i), mat(bytes(2, 3)))
+  expect_identical(vec_slice(mat(list(1, 2, 3)), i), mat(list(2, 3)))
+})
+
 test_that("can subset with missing indices", {
   for (i in list(int(2L, NA), lgl(FALSE, TRUE, NA))) {
     expect_identical(vec_slice(lgl(1, 0, 1), i), lgl(0, NA))
