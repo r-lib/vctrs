@@ -464,20 +464,6 @@ static SEXP vec_restore_dispatch(SEXP x, SEXP to, SEXP i) {
 
 
 // [[ include("vctrs.h") ]]
-SEXP vec_restore_container(SEXP x, SEXP to, R_len_t n) {
-  if (!is_data_frame(to)) {
-    Rf_error("Internal error: Container restoration requires data frames.");
-  }
-
-  x = PROTECT(r_maybe_duplicate(x));
-  x = df_restore_impl(x, to, n);
-
-  UNPROTECT(2);
-  return x;
-}
-
-
-// [[ include("vctrs.h") ]]
 SEXP vec_coercible_cast(SEXP x, SEXP to, struct vctrs_arg* x_arg, struct vctrs_arg* to_arg) {
   // Called for the side effect of generating an error if there is no
   // common type
