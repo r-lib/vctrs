@@ -1,7 +1,7 @@
 #include "vctrs.h"
 #include "utils.h"
 
-SEXP vec_strides(const int* p_dim, const R_len_t shape_n) {
+static SEXP vec_strides(const int* p_dim, const R_len_t shape_n) {
   SEXP strides = PROTECT(Rf_allocVector(INTSXP, shape_n));
   int* p_strides = INTEGER(strides);
   int stride = 1;
@@ -15,8 +15,6 @@ SEXP vec_strides(const int* p_dim, const R_len_t shape_n) {
   return strides;
 }
 
-// size_index is R index based, p_shape_index is C index based, but it
-// still computes the correct R index location
 static int vec_strided_loc(const int size_index,
                            const int* p_shape_index,
                            const int* p_strides,
@@ -41,46 +39,45 @@ struct vec_slice_shaped_info {
 };
 
 #define SLICE_SHAPED(RTYPE, CTYPE, DEREF, CONST_DEREF, NA_VALUE) \
+  SEXP out = PROTECT(Rf_allocArray(RTYPE, info.out_dim));        \
+  CTYPE* out_data = DEREF(out);                                  \
+  const CTYPE* x_data = CONST_DEREF(x);                          \
                                                                  \
-SEXP out = PROTECT(Rf_allocArray(RTYPE, info.out_dim));          \
-CTYPE* out_data = DEREF(out);                                    \
-const CTYPE* x_data = CONST_DEREF(x);                            \
+  int out_loc = 0;                                               \
                                                                  \
-int out_loc = 0;                                                 \
+  for (int i = 0; i < info.n_shape_elements; ++i) {              \
                                                                  \
-for (int i = 0; i < info.n_shape_elements; ++i) {                \
+    /* Add next 1-D slice position */                            \
+    for (int j = 0; j < info.index_n; ++j) {                     \
+      int size_index = info.p_index[j];                          \
                                                                  \
-  /* Add next 1-D slice position */                              \
-  for (int j = 0; j < info.index_n; ++j) {                       \
-    int size_index = info.p_index[j];                            \
+      if (size_index == NA_INTEGER) {                            \
+        out_data[out_loc] = NA_VALUE;                            \
+      } else {                                                   \
+        int loc = vec_strided_loc(                               \
+          size_index - 1,                                        \
+          info.p_shape_index,                                    \
+          info.p_strides,                                        \
+          info.shape_n                                           \
+        );                                                       \
+        out_data[out_loc] = x_data[loc];                         \
+      }                                                          \
                                                                  \
-    if (size_index == NA_INTEGER) {                              \
-      out_data[out_loc] = NA_VALUE;                              \
-    } else {                                                     \
-      int loc = vec_strided_loc(                                 \
-        size_index - 1,                                          \
-        info.p_shape_index,                                      \
-        info.p_strides,                                          \
-        info.shape_n                                             \
-      );                                                         \
-      out_data[out_loc] = x_data[loc];                           \
+      out_loc++;                                                 \
     }                                                            \
                                                                  \
-    out_loc++;                                                   \
-  }                                                              \
-                                                                 \
-  /* Update shape index */                                       \
-  for (int j = 0; j < info.shape_n; ++j) {                       \
-    info.p_shape_index[j]++;                                     \
-    if (info.p_shape_index[j] < info.p_dim[j + 1]) {             \
-      break;                                                     \
+    /* Update shape index */                                     \
+    for (int j = 0; j < info.shape_n; ++j) {                     \
+      info.p_shape_index[j]++;                                   \
+      if (info.p_shape_index[j] < info.p_dim[j + 1]) {           \
+        break;                                                   \
+      }                                                          \
+      info.p_shape_index[j] = 0;                                 \
     }                                                            \
-    info.p_shape_index[j] = 0;                                   \
   }                                                              \
-}                                                                \
                                                                  \
-UNPROTECT(1);                                                    \
-return out
+  UNPROTECT(1);                                                  \
+  return out
 
 static SEXP lgl_slice_shaped(SEXP x, SEXP index, struct vec_slice_shaped_info info) {
   SLICE_SHAPED(LGLSXP, int, LOGICAL, LOGICAL_RO, NA_LOGICAL);
@@ -104,45 +101,44 @@ static SEXP raw_slice_shaped(SEXP x, SEXP index, struct vec_slice_shaped_info in
 #undef SLICE_SHAPED
 
 #define SLICE_BARRIER_SHAPED(RTYPE, GET, SET, NA_VALUE)        \
+  SEXP out = PROTECT(Rf_allocArray(RTYPE, info.out_dim));      \
                                                                \
-SEXP out = PROTECT(Rf_allocArray(RTYPE, info.out_dim));        \
+  int out_loc = 0;                                             \
                                                                \
-int out_loc = 0;                                               \
+  for (int i = 0; i < info.n_shape_elements; ++i) {            \
                                                                \
-for (int i = 0; i < info.n_shape_elements; ++i) {              \
+    /* Add next 1-D slice position */                          \
+    for (int j = 0; j < info.index_n; ++j) {                   \
+      int size_index = info.p_index[j];                        \
                                                                \
-  /* Add next 1-D slice position */                            \
-  for (int j = 0; j < info.index_n; ++j) {                     \
-    int size_index = info.p_index[j];                          \
+      if (size_index == NA_INTEGER) {                          \
+        SET(out, out_loc, NA_VALUE);                           \
+      } else {                                                 \
+        int loc = vec_strided_loc(                             \
+          size_index - 1,                                      \
+          info.p_shape_index,                                  \
+          info.p_strides,                                      \
+          info.shape_n                                         \
+        );                                                     \
+        SEXP elt = GET(x, loc);                                \
+        SET(out, out_loc, elt);                                \
+      }                                                        \
                                                                \
-    if (size_index == NA_INTEGER) {                            \
-      SET(out, out_loc, NA_VALUE);                             \
-    } else {                                                   \
-      int loc = vec_strided_loc(                               \
-        size_index - 1,                                        \
-        info.p_shape_index,                                    \
-        info.p_strides,                                        \
-        info.shape_n                                           \
-      );                                                       \
-      SEXP elt = GET(x, loc);                                  \
-      SET(out, out_loc, elt);                                  \
+      out_loc++;                                               \
     }                                                          \
                                                                \
-    out_loc++;                                                 \
-  }                                                            \
-                                                               \
-  /* Update shape index */                                     \
-  for (int j = 0; j < info.shape_n; ++j) {                     \
-    info.p_shape_index[j]++;                                   \
-    if (info.p_shape_index[j] < info.p_dim[j + 1]) {           \
-      break;                                                   \
+    /* Update shape index */                                   \
+    for (int j = 0; j < info.shape_n; ++j) {                   \
+      info.p_shape_index[j]++;                                 \
+      if (info.p_shape_index[j] < info.p_dim[j + 1]) {         \
+        break;                                                 \
+      }                                                        \
+      info.p_shape_index[j] = 0;                               \
     }                                                          \
-    info.p_shape_index[j] = 0;                                 \
   }                                                            \
-}                                                              \
                                                                \
-UNPROTECT(1);                                                  \
-return out
+  UNPROTECT(1);                                                \
+  return out
 
 static SEXP list_slice_shaped(SEXP x, SEXP index, struct vec_slice_shaped_info info) {
   SLICE_BARRIER_SHAPED(VECSXP, VECTOR_ELT, SET_VECTOR_ELT, R_NilValue);
