@@ -163,8 +163,14 @@ static SEXP vec_slice_impl(SEXP x, SEXP index) {
       Rf_errorcall(R_NilValue, "Can't slice a scalar");
     }
 
-    SEXP call = PROTECT_N(Rf_lang3(fns_bracket, x, index), &nprot);
-    SEXP out = PROTECT_N(Rf_eval(call, R_GlobalEnv), &nprot);
+    SEXP out;
+
+    if (has_dim(x)) {
+      out = PROTECT_N(vec_slice_fallback(x, index), &nprot);
+    } else {
+      SEXP call = PROTECT_N(Rf_lang3(fns_bracket, x, index), &nprot);
+      out = PROTECT_N(Rf_eval(call, R_GlobalEnv), &nprot);
+    }
 
     // Take over attribute restoration only if the `[` method did not
     // restore itself
