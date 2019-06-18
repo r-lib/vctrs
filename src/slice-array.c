@@ -1,6 +1,53 @@
 #include "vctrs.h"
 #include "utils.h"
 
+/*
+ * Array slicing works by treating the array as a 1D structure, and transforming
+ * the `index` passed from R into a series of 1D indices that are used to
+ * extract elements from `x` into the new result.
+ *
+ * Strides represent the offset between elements in the same dimension. For
+ * a (2, 2, 2) array, the strides would be [1, 2, 4]. This means that if you
+ * flattened this 3D array to 1D in a column major order, there is 1 space
+ * between row elements, 2 spaces between column elements and 4 spaces between
+ * elements in the third dimension. In practice, we only need the shape strides
+ * since the first stride is always 1, so `vec_strides()` only returns the shape
+ * strides. Strides are computed as a cumulative product of the `dim`, with an
+ * initial value of `1`, this is what `vec_strides()` does.
+ *
+ * Using the strides, any array index can be converted to a 1D index.
+ * This is what `vec_strided_loc()` does. In a (2, 2, 2) array, to find
+ * the location at the index [1, 0, 1] (C-based index, 2nd row, 1st col,
+ * 2nd elem in 3rd dim) you compute a sum product between the array index
+ * and the strides. So it looks like:
+ * loc = 1 * (1) + 0 * (2) + 1 * (4) = 5
+ * (loc is a C-based index into `x`)
+ * Since the first stride is always one, we leave it off and just do:
+ * loc = 1 + 0 * (2) + 1 * (4) = 5
+ *
+ * Example:
+ * x = (3, 3, 2) array
+ * vec_slice(x, 2:3)
+ *
+ * strides = [3, 9] // (shape strides)
+ *
+ * Indices are C-based
+ *
+ *         | array index | x index | how?
+ * -------------------------------------------------------
+ * out[0]  | [1, 0, 0]   | 1       | 1 + 0 * (3) + 0 * (9)
+ * out[1]  | [2, 0, 0]   | 2       |
+ * out[2]  | [1, 1, 0]   | 4       |
+ * ...     | ...         | ...     |
+ * out[9]  | [2, 1, 1]   | 14      | 2 + 1 * (3) + 1 * (9)
+ * out[10] | [1, 2, 1]   | 16      |
+ * out[11] | [2, 2, 1]   | 17      |
+ *            ^  ^  ^
+ *            |   \/
+ *            |    |- shape_index
+ *            |- size_index
+ */
+
 static SEXP vec_strides(const int* p_dim, const R_len_t shape_n) {
   SEXP strides = PROTECT(Rf_allocVector(INTSXP, shape_n));
   int* p_strides = INTEGER(strides);
@@ -26,6 +73,8 @@ static int vec_strided_loc(const int size_index,
   return loc;
 }
 
+// To keep the #define as compact as possible, we use a struct to pass around
+// important information.
 struct vec_slice_shaped_info {
   const int* p_dim;
   const int* p_strides;
@@ -47,7 +96,7 @@ struct vec_slice_shaped_info {
                                                                  \
   for (int i = 0; i < info.n_shape_elements; ++i) {              \
                                                                  \
-    /* Add next 1-D slice position */                            \
+    /* Find and add the next `x` element */                      \
     for (int j = 0; j < info.index_n; ++j) {                     \
       int size_index = info.p_index[j];                          \
                                                                  \
@@ -66,7 +115,7 @@ struct vec_slice_shaped_info {
       out_loc++;                                                 \
     }                                                            \
                                                                  \
-    /* Update shape index */                                     \
+    /* Update shape_index */                                     \
     for (int j = 0; j < info.shape_n; ++j) {                     \
       info.p_shape_index[j]++;                                   \
       if (info.p_shape_index[j] < info.p_dim[j + 1]) {           \
@@ -107,7 +156,7 @@ static SEXP raw_slice_shaped(SEXP x, SEXP index, struct vec_slice_shaped_info in
                                                                \
   for (int i = 0; i < info.n_shape_elements; ++i) {            \
                                                                \
-    /* Add next 1-D slice position */                          \
+    /* Find and add the next `x` element */                    \
     for (int j = 0; j < info.index_n; ++j) {                   \
       int size_index = info.p_index[j];                        \
                                                                \
@@ -127,7 +176,7 @@ static SEXP raw_slice_shaped(SEXP x, SEXP index, struct vec_slice_shaped_info in
       out_loc++;                                               \
     }                                                          \
                                                                \
-    /* Update shape index */                                   \
+    /* Update shape_index */                                   \
     for (int j = 0; j < info.shape_n; ++j) {                   \
       info.p_shape_index[j]++;                                 \
       if (info.p_shape_index[j] < info.p_dim[j + 1]) {         \
@@ -158,7 +207,7 @@ SEXP vec_slice_shaped_base(enum vctrs_type type,
   case vctrs_type_character: return chr_slice_shaped(x, index, info);
   case vctrs_type_raw:       return raw_slice_shaped(x, index, info);
   case vctrs_type_list:      return list_slice_shaped(x, index, info);
-  default: Rf_error("Internal error: Non-vector base type `%s` in `vec_slice_base()`",
+  default: Rf_error("Internal error: Non-vector base type `%s` in `vec_slice_shaped_base()`",
                     vec_type_as_str(type));
   }
 }
