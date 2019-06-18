@@ -13,8 +13,8 @@
 stop_incompatible_type(x, y, x_arg = "", y_arg = "", details = NULL,
   ..., message = NULL, .subclass = NULL)
 
-stop_incompatible_cast(x, y, details = NULL, ..., message = NULL,
-  .subclass = NULL)
+stop_incompatible_cast(x, y, details = NULL, ..., x_arg = "",
+  to_arg = "", message = NULL, .subclass = NULL)
 
 stop_incompatible_op(op, x, y, details = NULL, ..., message = NULL,
   .subclass = NULL)

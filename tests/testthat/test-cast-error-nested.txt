@@ -1,0 +1,16 @@
+
+vec_cast(x, y):
+
+Lossy cast from `a$b` <character> to `a$b` <double>.
+Locations: 1 
+
+
+vec_cast(x, y):
+
+Can't cast `a$b` <factor<bd40e>> to `a$b` <double>. 
+
+
+vec_cast_common(x, y):
+
+No common type for `..1$a$b` <factor<bd40e>> and `..2$a$b` <double>. 
+
