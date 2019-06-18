@@ -7,10 +7,12 @@
 \usage{
 vec_data(x)
 
-vec_proxy(x)
+vec_proxy(x, ...)
 }
 \arguments{
 \item{x}{A vector or object implementing \code{vec_proxy()}.}
+
+\item{...}{These dots are for future extensions and must be empty.}
 }
 \value{
 The data underlying \code{x}, free from any attributes except the names.

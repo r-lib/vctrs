@@ -79,31 +79,19 @@ vec_data <- function(x) {
   x
 }
 #' @rdname vec_data
+#' @inheritParams ellipsis::dots_empty
 #' @export
-vec_proxy <- function(x) {
+vec_proxy <- function(x, ...) {
+  if (!missing(...)) {
+    ellipsis::check_dots_empty()
+  }
   return(.Call(vctrs_proxy, x))
   UseMethod("vec_proxy")
 }
-vec_proxy_dispatch <- function(x) {
+vec_proxy_dispatch <- function(x, ...) {
   UseMethod("vec_proxy")
 }
 #' @export
-vec_proxy.default <- function(x) {
+vec_proxy.default <- function(x, ...) {
   x
-}
-
-#' Defunct equality proxy
-#'
-#' vctrs now uses [vec_proxy()]. Note that most of the time it's not
-#' necessary to define a proxy for vector equality.
-#'
-#' @param x A vector.
-#'
-#' @keywords internal
-#' @export
-vec_proxy_equal <- function(x) {
-  stop_defunct(paste_line(
-    "`vec_proxy_equal()` is defunct.",
-    "Please use `vec_proxy()` instead (if needed)."
-  ))
 }

@@ -4,10 +4,12 @@
 \alias{vec_proxy_compare}
 \title{Comparison proxy}
 \usage{
-vec_proxy_compare(x, relax = FALSE)
+vec_proxy_compare(x, ..., relax = FALSE)
 }
 \arguments{
 \item{x}{A vector x.}
+
+\item{...}{These dots are for future extensions and must be empty.}
 
 \item{relax}{If \code{TRUE}, and \code{x} is otherwise non-comparable, will return
 \code{vec_seq_along(x)}. This allows a data frame to be orderable, even if

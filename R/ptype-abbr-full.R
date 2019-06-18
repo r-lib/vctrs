@@ -13,6 +13,8 @@
 #' characters where possible.
 #'
 #' @param x A vector.
+#' @inheritParams ellipsis::dots_empty
+#'
 #' @keywords internal
 #' @return A string.
 #' @export
@@ -21,23 +23,29 @@
 #' cat(vec_ptype_full(iris))
 #'
 #' cat(vec_ptype_abbr(1:10))
-vec_ptype_full <- function(x) {
+vec_ptype_full <- function(x, ...) {
+  if (!missing(...)) {
+    ellipsis::check_dots_empty()
+  }
   UseMethod("vec_ptype_full")
 }
 
 #' @export
 #' @rdname vec_ptype_full
-vec_ptype_abbr <- function(x) {
+vec_ptype_abbr <- function(x, ...) {
+  if (!missing(...)) {
+    ellipsis::check_dots_empty()
+  }
   UseMethod("vec_ptype_abbr")
 }
 
-vec_ptype_full.NULL <- function(x) "NULL"
-vec_ptype_abbr.NULL <- function(x) "NULL"
+vec_ptype_full.NULL <- function(x, ...) "NULL"
+vec_ptype_abbr.NULL <- function(x, ...) "NULL"
 
 # Default: base types and fallback for S3/S4 ------------------------------
 
 #' @export
-vec_ptype_full.default <- function(x) {
+vec_ptype_full.default <- function(x, ...) {
   if (is.object(x)) {
     class(x)[[1]]
   } else if (is_vector(x)) {
@@ -48,7 +56,7 @@ vec_ptype_full.default <- function(x) {
 }
 
 #' @export
-vec_ptype_abbr.default <- function(x) {
+vec_ptype_abbr.default <- function(x, ...) {
   if (is.object(x)) {
     unname(abbreviate(vec_ptype_full(x), 8))
   } else if (is_list(x)) {
@@ -73,13 +81,13 @@ vec_ptype_abbr.default <- function(x) {
 # AsIs --------------------------------------------------------------------
 
 #' @export
-vec_ptype_full.AsIs <- function(x) {
+vec_ptype_full.AsIs <- function(x, ...) {
   class(x) <- setdiff(class(x), "AsIs")
   paste0("I<", vec_ptype_full(x), ">")
 }
 
 #' @export
-vec_ptype_abbr.AsIs <- function(x) {
+vec_ptype_abbr.AsIs <- function(x, ...) {
   class(x) <- setdiff(class(x), "AsIs")
   paste0("I<", vec_ptype_abbr(x), ">")
 }

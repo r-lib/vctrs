@@ -39,7 +39,7 @@ new_partial_frame <- function(partial = data.frame(), learned = data.frame()) {
 }
 
 #' @export
-vec_ptype_full.vctrs_partial_frame <- function(x) {
+vec_ptype_full.vctrs_partial_frame <- function(x, ...) {
   both <- c(as.list(x$partial), as.list(x$learned))
 
   types <- map_chr(both, vec_ptype_full)
@@ -57,7 +57,7 @@ vec_ptype_full.vctrs_partial_frame <- function(x) {
 }
 
 #' @export
-vec_ptype_abbr.vctrs_partial_frame <- function(x) {
+vec_ptype_abbr.vctrs_partial_frame <- function(x, ...) {
   "prtl"
 }
 
@@ -88,7 +88,7 @@ vec_type2.data.frame.vctrs_partial_frame <- function(x, y, ...) {
 }
 
 #' @export
-vec_type_finalise.vctrs_partial_frame <- function(x) {
+vec_type_finalise.vctrs_partial_frame <- function(x, ...) {
   out <- x$learned
   out[names(x$partial)] <- x$partial
 

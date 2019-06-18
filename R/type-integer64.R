@@ -11,13 +11,13 @@
 #' @keywords internal
 #' @rdname int64
 #' @export
-vec_ptype_full.integer64 <- function(x) {
+vec_ptype_full.integer64 <- function(x, ...) {
   "integer64"
 }
 
 #' @rdname int64
 #' @export
-vec_ptype_abbr.integer64 <- function(x) {
+vec_ptype_abbr.integer64 <- function(x, ...) {
   "int64"
 }
 
@@ -69,11 +69,11 @@ vec_type2.logical.integer64 <- function(x, y, ...) bit64::integer64()
 #' @rdname int64
 #' @export vec_cast.integer64
 #' @method vec_cast integer64
-vec_cast.integer64 <- function(x, to) UseMethod("vec_cast.integer64")
+vec_cast.integer64 <- function(x, to, ...) UseMethod("vec_cast.integer64")
 
 #' @export
 #' @method vec_cast.integer64 default
-vec_cast.integer64.default <- function(x, to) {
+vec_cast.integer64.default <- function(x, to, ...) {
   # Don't use `vec_default_cast()` because integer64 is not compatible
   # with `vec_na()`
   if (is_unspecified(x)) {
@@ -85,52 +85,52 @@ vec_cast.integer64.default <- function(x, to) {
 
 #' @export
 #' @method vec_cast.integer64 integer64
-vec_cast.integer64.integer64 <- function(x, to) x
+vec_cast.integer64.integer64 <- function(x, to, ...) x
 
 #' @export
 #' @method vec_cast.integer64 integer
-vec_cast.integer64.integer <- function(x, to) {
+vec_cast.integer64.integer <- function(x, to, ...) {
   bit64::as.integer64(x)
 }
 
 #' @export
 #' @method vec_cast.integer integer64
-vec_cast.integer.integer64 <- function(x, to) {
+vec_cast.integer.integer64 <- function(x, to, ...) {
   as.integer(x)
 }
 
 #' @export
 #' @method vec_cast.integer64 logical
-vec_cast.integer64.logical <- function(x, to) {
+vec_cast.integer64.logical <- function(x, to, ...) {
   bit64::as.integer64(x)
 }
 
 #' @export
 #' @method vec_cast.logical integer64
-vec_cast.logical.integer64 <- function(x, to) {
+vec_cast.logical.integer64 <- function(x, to, ...) {
   as.logical(x)
 }
 
 #' @export
 #' @method vec_cast.integer64 character
-vec_cast.integer64.character <- function(x, to) {
+vec_cast.integer64.character <- function(x, to, ...) {
   bit64::as.integer64(x)
 }
 
 #' @export
 #' @method vec_cast.character integer64
-vec_cast.character.integer64 <- function(x, to) {
+vec_cast.character.integer64 <- function(x, to, ...) {
   as.character(x)
 }
 
 #' @export
 #' @method vec_cast.integer64 double
-vec_cast.integer64.double <- function(x, to) {
+vec_cast.integer64.double <- function(x, to, ...) {
   bit64::as.integer64(x)
 }
 
 #' @export
 #' @method vec_cast.double integer64
-vec_cast.double.integer64 <- function(x, to) {
+vec_cast.double.integer64 <- function(x, to, ...) {
   as.double(x)
 }

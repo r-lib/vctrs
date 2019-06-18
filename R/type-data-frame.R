@@ -44,7 +44,7 @@ data_frame <- function(...) {
 }
 
 #' @export
-vec_ptype_full.data.frame <- function(x) {
+vec_ptype_full.data.frame <- function(x, ...) {
   if (length(x) == 0) {
     return(paste0(class(x)[[1]], "<>"))
   } else if (length(x) == 1) {
@@ -66,12 +66,12 @@ vec_ptype_full.data.frame <- function(x) {
 }
 
 #' @export
-vec_ptype_abbr.data.frame <- function(x) {
+vec_ptype_abbr.data.frame <- function(x, ...) {
   paste0("df", vec_ptype_shape(x))
 }
 
 #' @export
-vec_proxy.data.frame <- function(x) {
+vec_proxy.data.frame <- function(x, ...) {
   x
 }
 
@@ -100,17 +100,17 @@ vec_type2.data.frame.default <- function(x, y, ..., x_arg = "", y_arg = "") {
 #' @export vec_cast.data.frame
 #' @method vec_cast data.frame
 #' @export
-vec_cast.data.frame <- function(x, to) {
+vec_cast.data.frame <- function(x, to, ...) {
   UseMethod("vec_cast.data.frame")
 }
 #' @export
 #' @method vec_cast.data.frame data.frame
-vec_cast.data.frame.data.frame <- function(x, to) {
+vec_cast.data.frame.data.frame <- function(x, to, ...) {
   .Call(vctrs_df_as_dataframe, x, to)
 }
 #' @export
 #' @method vec_cast.data.frame default
-vec_cast.data.frame.default <- function(x, to) vec_default_cast(x, to)
+vec_cast.data.frame.default <- function(x, to, ...) vec_default_cast(x, to)
 
 #' @export
 vec_restore.data.frame <- function(x, to, ..., i = NULL) {

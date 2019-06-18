@@ -10,7 +10,7 @@ new_partial(..., class = character())
 
 is_partial(x)
 
-vec_type_finalise(x)
+vec_type_finalise(x, ...)
 }
 \arguments{
 \item{...}{Attributes of the partial type}

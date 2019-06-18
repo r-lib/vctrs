@@ -76,8 +76,9 @@
 #' attributes that don't require special handling for your class.
 #'
 #' @param x Vectors to cast.
-#' @param ... For `vec_cast()`, vectors to cast. For `vec_restore()`,
-#'   these dots are only for future extensions and should be empty.
+#' @param ... For `vec_cast_common()`, vectors to cast. For
+#'   `vec_cast()` and `vec_restore()`, these dots are only for future
+#'   extensions and should be empty.
 #' @param to,.to Type to cast to. If `NULL`, `x` will be returned as is.
 #' @param i The index vector used to slice `x` when restoration is
 #'   triggered by [vec_slice()]. In most cases you don't need this
@@ -112,7 +113,10 @@
 #' # Cast to common type
 #' vec_cast_common(factor("a"), factor(c("a", "b")))
 #' vec_cast_common(factor("a"), Sys.Date(), .to = list())
-vec_cast <- function(x, to) {
+vec_cast <- function(x, to, ...) {
+  if (!missing(...)) {
+    ellipsis::check_dots_empty()
+  }
   return(.Call(vctrs_cast, x, to))
   UseMethod("vec_cast", to)
 }
@@ -127,7 +131,7 @@ vec_cast_common <- function(..., .to = NULL) {
 }
 
 #' @export
-vec_cast.default <- function(x, to) {
+vec_cast.default <- function(x, to, ...) {
   if (has_same_type(x, to)) {
     return(x)
   }

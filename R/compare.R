@@ -14,26 +14,30 @@
 #'   `vec_seq_along(x)`. This allows a data frame to be orderable, even if
 #'   one of its components is not. This is experimental and may change in the
 #'   future.
+#' @inheritParams ellipsis::dots_empty
 #' @return A 1d atomic vector or a data frame.
 #' @keywords internal
 #' @export
-vec_proxy_compare <- function(x, relax = FALSE) {
+vec_proxy_compare <- function(x, ..., relax = FALSE) {
+  if (!missing(...)) {
+    ellipsis::check_dots_empty()
+  }
   UseMethod("vec_proxy_compare")
 }
 
 #' @export
-vec_proxy_compare.data.frame <- function(x, relax = FALSE) {
+vec_proxy_compare.data.frame <- function(x, ..., relax = FALSE) {
   x[] <- lapply(x[], vec_proxy_compare_default, relax = TRUE)
   x
 }
 
 #' @export
-vec_proxy_compare.POSIXlt <- function(x, relax = FALSE) {
+vec_proxy_compare.POSIXlt <- function(x, ..., relax = FALSE) {
   new_data_frame(vec_data(x), n = length(x))
 }
 
 #' @export
-vec_proxy_compare.default <- function(x, relax = FALSE) {
+vec_proxy_compare.default <- function(x, ..., relax = FALSE) {
   if (vec_dim_n(x) > 1) {
     # The conversion to data frame is only a stopgap, in the long
     # term, we'll hash arrays natively. Note that hashing functions

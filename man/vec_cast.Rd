@@ -13,33 +13,34 @@
 \alias{vec_cast.list}
 \title{Cast a vector to specified type}
 \usage{
-vec_cast(x, to)
+vec_cast(x, to, ...)
 
 vec_cast_common(..., .to = NULL)
 
 vec_restore(x, to, ..., i = NULL)
 
-\method{vec_cast}{logical}(x, to)
+\method{vec_cast}{logical}(x, to, ...)
 
-\method{vec_cast}{integer}(x, to)
+\method{vec_cast}{integer}(x, to, ...)
 
-\method{vec_cast}{double}(x, to)
+\method{vec_cast}{double}(x, to, ...)
 
-\method{vec_cast}{complex}(x, to)
+\method{vec_cast}{complex}(x, to, ...)
 
-\method{vec_cast}{raw}(x, to)
+\method{vec_cast}{raw}(x, to, ...)
 
-\method{vec_cast}{character}(x, to)
+\method{vec_cast}{character}(x, to, ...)
 
-\method{vec_cast}{list}(x, to)
+\method{vec_cast}{list}(x, to, ...)
 }
 \arguments{
 \item{x}{Vectors to cast.}
 
 \item{to, .to}{Type to cast to. If \code{NULL}, \code{x} will be returned as is.}
 
-\item{...}{For \code{vec_cast()}, vectors to cast. For \code{vec_restore()},
-these dots are only for future extensions and should be empty.}
+\item{...}{For \code{vec_cast_common()}, vectors to cast. For
+\code{vec_cast()} and \code{vec_restore()}, these dots are only for future
+extensions and should be empty.}
 
 \item{i}{The index vector used to slice \code{x} when restoration is
 triggered by \code{\link[=vec_slice]{vec_slice()}}. In most cases you don't need this

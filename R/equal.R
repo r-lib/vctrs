@@ -12,15 +12,20 @@
 #' error.
 #'
 #' @param x A vector x.
+#' @inheritParams ellipsis::dots_empty
+#'
 #' @return A 1d atomic vector or a data frame.
 #' @keywords internal
 #'
 #' @export
-vec_proxy_equal <- function(x) {
+vec_proxy_equal <- function(x, ...) {
+  if (!missing(...)) {
+    ellipsis::check_dots_empty()
+  }
   UseMethod("vec_proxy_equal")
 }
 #' @export
-vec_proxy_equal.default <- function(x) {
+vec_proxy_equal.default <- function(x, ...) {
   vec_proxy(x)
 }
 

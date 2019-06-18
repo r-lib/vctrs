@@ -37,22 +37,22 @@ new_ordered <- function(x = integer(), levels = character()) {
 # Print -------------------------------------------------------------------
 
 #' @export
-vec_ptype_full.factor <- function(x) {
+vec_ptype_full.factor <- function(x, ...) {
   paste0("factor<", hash_label(levels(x)), ">")
 }
 
 #' @export
-vec_ptype_abbr.factor <- function(x) {
+vec_ptype_abbr.factor <- function(x, ...) {
   "fct"
 }
 
 #' @export
-vec_ptype_full.ordered <- function(x) {
+vec_ptype_full.ordered <- function(x, ...) {
   paste0("ordered<", hash_label(levels(x)), ">")
 }
 
 #' @export
-vec_ptype_abbr.ordered <- function(x) {
+vec_ptype_abbr.ordered <- function(x, ...) {
   "ord"
 }
 
@@ -114,13 +114,13 @@ vec_type2.ordered.ordered <- function(x, y, ...) new_ordered(levels = levels_uni
 #' @export vec_cast.factor
 #' @method vec_cast factor
 #' @export
-vec_cast.factor <- function(x, to) {
+vec_cast.factor <- function(x, to, ...) {
   UseMethod("vec_cast.factor")
 }
 
 #' @export
 #' @method vec_cast.factor factor
-vec_cast.factor.factor <- function(x, to) {
+vec_cast.factor.factor <- function(x, to, ...) {
   if (length(levels(to)) == 0L) {
     factor(as.character(x), levels = unique(x), ordered = is.ordered(to))
   } else {
@@ -134,15 +134,15 @@ vec_cast.factor.factor <- function(x, to) {
 vec_cast.factor.character <- vec_cast.factor.factor
 #' @export
 #' @method vec_cast.character factor
-vec_cast.character.factor <- function(x, to) as.character(x)
+vec_cast.character.factor <- function(x, to, ...) as.character(x)
 #' @export
 #' @method vec_cast.factor list
-vec_cast.factor.list <- function(x, to) {
+vec_cast.factor.list <- function(x, to, ...) {
   vec_list_cast(x, to)
 }
 #' @export
 #' @method vec_cast.factor default
-vec_cast.factor.default <- function(x, to) {
+vec_cast.factor.default <- function(x, to, ...) {
   vec_default_cast(x, to)
 }
 
@@ -154,7 +154,7 @@ vec_math.factor <- function(fun, x, ...) {
 }
 
 #' @export
-vec_arith.factor <- function(op, x, y) {
+vec_arith.factor <- function(op, x, y, ...) {
   stop_unsupported(x, op)
 }
 

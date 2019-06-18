@@ -17,7 +17,7 @@ new_ordered(x = integer(), levels = character())
 
 \method{vec_type2}{ordered}(x, y, ...)
 
-\method{vec_cast}{factor}(x, to)
+\method{vec_cast}{factor}(x, to, ...)
 }
 \arguments{
 \item{x}{Integer values which index in to \code{levels}.}
