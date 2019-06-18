@@ -187,7 +187,7 @@
 <a class="sourceLine" id="cb9-6" data-line-number="6"><span class="co">#&gt; 4  100%</span></a>
 <a class="sourceLine" id="cb9-7" data-line-number="7"><span class="co">#&gt; 5  &lt;NA&gt;</span></a></code></pre></div>
 <p>For optimal display, I recommend also defining an abbreviated type name, which should be 4-5 letters for commonly used vectors. This is used in tibbles and in <code><a href="https://www.rdocumentation.org/packages/utils/topics/str">str()</a></code>:</p>
-<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb10-1" data-line-number="1">vec_ptype_abbr.vctrs_percent &lt;-<span class="st"> </span><span class="cf">function</span>(x) {</a>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb10-1" data-line-number="1">vec_ptype_abbr.vctrs_percent &lt;-<span class="st"> </span><span class="cf">function</span>(x, ...) {</a>
 <a class="sourceLine" id="cb10-2" data-line-number="2">  <span class="st">"prcnt"</span></a>
 <a class="sourceLine" id="cb10-3" data-line-number="3">}</a>
 <a class="sourceLine" id="cb10-4" data-line-number="4"></a>
@@ -225,8 +225,8 @@
 <a class="sourceLine" id="cb11-4" data-line-number="4">}</a>
 <a class="sourceLine" id="cb11-5" data-line-number="5">vec_type2.MYCLASS.vctrs_unspecified &lt;-<span class="st"> </span><span class="cf">function</span>(x, y, ...) x</a>
 <a class="sourceLine" id="cb11-6" data-line-number="6"></a>
-<a class="sourceLine" id="cb11-7" data-line-number="7">vec_cast.MYCLASS &lt;-<span class="st"> </span><span class="cf">function</span>(x, to) <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/UseMethod">UseMethod</a></span>(<span class="st">"vec_cast.MYCLASS"</span>)</a>
-<a class="sourceLine" id="cb11-8" data-line-number="8">vec_cast.MYCLASS.default &lt;-<span class="st"> </span><span class="cf">function</span>(x, to) <span class="kw"><a href="../reference/vec_default_cast.html">vec_default_cast</a></span>(x, to)</a></code></pre></div>
+<a class="sourceLine" id="cb11-7" data-line-number="7">vec_cast.MYCLASS &lt;-<span class="st"> </span><span class="cf">function</span>(x, to, ...) <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/UseMethod">UseMethod</a></span>(<span class="st">"vec_cast.MYCLASS"</span>)</a>
+<a class="sourceLine" id="cb11-8" data-line-number="8">vec_cast.MYCLASS.default &lt;-<span class="st"> </span><span class="cf">function</span>(x, to, ...) <span class="kw"><a href="../reference/vec_default_cast.html">vec_default_cast</a></span>(x, to)</a></code></pre></div>
 <p>We’ll discuss what this boilerplate does in the upcoming sections; just remember you’ll always need to copy and paste it when creating a new S3 class.</p>
 </div>
 <div id="percent" class="section level3">
@@ -256,13 +256,13 @@
 <a class="sourceLine" id="cb16-4" data-line-number="4"><span class="co">#&gt; 1. ( &lt;vctrs_percent&gt; , &lt;double&gt;        ) = &lt;double&gt;       </span></a>
 <a class="sourceLine" id="cb16-5" data-line-number="5"><span class="co">#&gt; 2. ( &lt;double&gt;        , &lt;vctrs_percent&gt; ) = &lt;double&gt;</span></a></code></pre></div>
 <p>Next we implement explicit casting, again starting with the boilerplate:</p>
-<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb17-1" data-line-number="1">vec_cast.vctrs_percent &lt;-<span class="st"> </span><span class="cf">function</span>(x, to) <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/UseMethod">UseMethod</a></span>(<span class="st">"vec_cast.vctrs_percent"</span>)</a>
-<a class="sourceLine" id="cb17-2" data-line-number="2">vec_cast.vctrs_percent.default &lt;-<span class="st"> </span><span class="cf">function</span>(x, to) <span class="kw"><a href="../reference/vec_default_cast.html">vec_default_cast</a></span>(x, to)</a></code></pre></div>
+<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb17-1" data-line-number="1">vec_cast.vctrs_percent &lt;-<span class="st"> </span><span class="cf">function</span>(x, to, ...) <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/UseMethod">UseMethod</a></span>(<span class="st">"vec_cast.vctrs_percent"</span>)</a>
+<a class="sourceLine" id="cb17-2" data-line-number="2">vec_cast.vctrs_percent.default &lt;-<span class="st"> </span><span class="cf">function</span>(x, to, ...) <span class="kw"><a href="../reference/vec_default_cast.html">vec_default_cast</a></span>(x, to)</a></code></pre></div>
 <p>Then providing a method to coerce a percent to a percent:</p>
-<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb18-1" data-line-number="1">vec_cast.vctrs_percent.vctrs_percent &lt;-<span class="st"> </span><span class="cf">function</span>(x, to) x</a></code></pre></div>
+<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb18-1" data-line-number="1">vec_cast.vctrs_percent.vctrs_percent &lt;-<span class="st"> </span><span class="cf">function</span>(x, to, ...) x</a></code></pre></div>
 <p>And then for converting back and forth between doubles. To convert a double to a percent we use the <code>percent()</code> helper (not the constructor; this is unvalidated user input). To convert a <code>percent</code> to a double, we strip the attributes.</p>
-<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb19-1" data-line-number="1">vec_cast.vctrs_percent.double &lt;-<span class="st"> </span><span class="cf">function</span>(x, to) <span class="kw">percent</span>(x)</a>
-<a class="sourceLine" id="cb19-2" data-line-number="2">vec_cast.double.vctrs_percent &lt;-<span class="st"> </span><span class="cf">function</span>(x, to) <span class="kw"><a href="../reference/vec_data.html">vec_data</a></span>(x)</a></code></pre></div>
+<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb19-1" data-line-number="1">vec_cast.vctrs_percent.double &lt;-<span class="st"> </span><span class="cf">function</span>(x, to, ...) <span class="kw">percent</span>(x)</a>
+<a class="sourceLine" id="cb19-2" data-line-number="2">vec_cast.double.vctrs_percent &lt;-<span class="st"> </span><span class="cf">function</span>(x, to, ...) <span class="kw"><a href="../reference/vec_data.html">vec_data</a></span>(x)</a></code></pre></div>
 <p>Then we can check this works with <code><a href="../reference/vec_cast.html">vec_cast()</a></code>:</p>
 <div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb20-1" data-line-number="1"><span class="kw"><a href="../reference/vec_cast.html">vec_cast</a></span>(<span class="fl">0.5</span>, <span class="kw">percent</span>())</a>
 <a class="sourceLine" id="cb20-2" data-line-number="2"><span class="co">#&gt; &lt;vctrs_percent[1]&gt;</span></a>
@@ -327,7 +327,7 @@
 <a class="sourceLine" id="cb24-18" data-line-number="18">  <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/sprintf">sprintf</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/paste">paste0</a></span>(<span class="st">"%-0."</span>, <span class="kw">digits</span>(x), <span class="st">"f"</span>), x)</a>
 <a class="sourceLine" id="cb24-19" data-line-number="19">}</a>
 <a class="sourceLine" id="cb24-20" data-line-number="20"></a>
-<a class="sourceLine" id="cb24-21" data-line-number="21">vec_ptype_abbr.vctrs_decimal &lt;-<span class="st"> </span><span class="cf">function</span>(x) {</a>
+<a class="sourceLine" id="cb24-21" data-line-number="21">vec_ptype_abbr.vctrs_decimal &lt;-<span class="st"> </span><span class="cf">function</span>(x, ...) {</a>
 <a class="sourceLine" id="cb24-22" data-line-number="22">  <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/paste">paste0</a></span>(<span class="st">"dec"</span>)</a>
 <a class="sourceLine" id="cb24-23" data-line-number="23">}</a>
 <a class="sourceLine" id="cb24-24" data-line-number="24"></a>
@@ -344,7 +344,7 @@
 <a class="sourceLine" id="cb25-5" data-line-number="5"><span class="co">#&gt; &lt;vctrs_decimal[1]&gt;</span></a>
 <a class="sourceLine" id="cb25-6" data-line-number="6"><span class="co">#&gt; [1] 0.1</span></a></code></pre></div>
 <p>For the sake of exposition, we’ll assume that <code>digits</code> is an important attribute of the class, and should be included in the full type:</p>
-<div class="sourceCode" id="cb26"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb26-1" data-line-number="1">vec_ptype_full.vctrs_decimal &lt;-<span class="st"> </span><span class="cf">function</span>(x) {</a>
+<div class="sourceCode" id="cb26"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb26-1" data-line-number="1">vec_ptype_full.vctrs_decimal &lt;-<span class="st"> </span><span class="cf">function</span>(x, ...) {</a>
 <a class="sourceLine" id="cb26-2" data-line-number="2">  <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/paste">paste0</a></span>(<span class="st">"decimal&lt;"</span>, <span class="kw">digits</span>(x), <span class="st">"&gt;"</span>)</a>
 <a class="sourceLine" id="cb26-3" data-line-number="3">}</a>
 <a class="sourceLine" id="cb26-4" data-line-number="4"></a>
@@ -358,8 +358,8 @@
 <a class="sourceLine" id="cb27-4" data-line-number="4">}</a>
 <a class="sourceLine" id="cb27-5" data-line-number="5">vec_type2.vctrs_decimal.vctrs_unspecified &lt;-<span class="st"> </span><span class="cf">function</span>(x, y, ...) x</a>
 <a class="sourceLine" id="cb27-6" data-line-number="6"></a>
-<a class="sourceLine" id="cb27-7" data-line-number="7">vec_cast.vctrs_decimal &lt;-<span class="st"> </span><span class="cf">function</span>(x, to) <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/UseMethod">UseMethod</a></span>(<span class="st">"vec_cast.vctrs_decimal"</span>)</a>
-<a class="sourceLine" id="cb27-8" data-line-number="8">vec_cast.vctrs_decimal.default &lt;-<span class="st"> </span><span class="cf">function</span>(x, to) <span class="kw"><a href="../reference/vec_default_cast.html">vec_default_cast</a></span>(x, to)</a></code></pre></div>
+<a class="sourceLine" id="cb27-7" data-line-number="7">vec_cast.vctrs_decimal &lt;-<span class="st"> </span><span class="cf">function</span>(x, to, ...) <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/UseMethod">UseMethod</a></span>(<span class="st">"vec_cast.vctrs_decimal"</span>)</a>
+<a class="sourceLine" id="cb27-8" data-line-number="8">vec_cast.vctrs_decimal.default &lt;-<span class="st"> </span><span class="cf">function</span>(x, to, ...) <span class="kw"><a href="../reference/vec_default_cast.html">vec_default_cast</a></span>(x, to)</a></code></pre></div>
 <p>Casting and coercing from one decimal to another requires a little thought as the values of the <code>digits</code> attribute might be different, and we need some way to reconcile them. Here I’ve chosen to chose the maximum of the two; other reasonable options are to take the value from the left-hand side or throw an error.</p>
 <div class="sourceCode" id="cb28"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb28-1" data-line-number="1">vec_type2.vctrs_decimal.vctrs_decimal &lt;-<span class="st"> </span><span class="cf">function</span>(x, y, ...) {</a>
 <a class="sourceLine" id="cb28-2" data-line-number="2">  <span class="kw">new_decimal</span>(<span class="dt">digits =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/Extremes">max</a></span>(<span class="kw">digits</span>(x), <span class="kw">digits</span>(y)))</a>
@@ -375,8 +375,8 @@
 <div class="sourceCode" id="cb29"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb29-1" data-line-number="1">vec_type2.vctrs_decimal.double &lt;-<span class="st"> </span><span class="cf">function</span>(x, y, ...) x</a>
 <a class="sourceLine" id="cb29-2" data-line-number="2">vec_type2.double.vctrs_decimal &lt;-<span class="st"> </span><span class="cf">function</span>(x, y, ...) y</a>
 <a class="sourceLine" id="cb29-3" data-line-number="3"></a>
-<a class="sourceLine" id="cb29-4" data-line-number="4">vec_cast.vctrs_decimal.double  &lt;-<span class="st"> </span><span class="cf">function</span>(x, to) <span class="kw">new_decimal</span>(x, <span class="dt">digits =</span> <span class="kw">digits</span>(to))</a>
-<a class="sourceLine" id="cb29-5" data-line-number="5">vec_cast.double.vctrs_decimal  &lt;-<span class="st"> </span><span class="cf">function</span>(x, to) <span class="kw"><a href="../reference/vec_data.html">vec_data</a></span>(x)</a>
+<a class="sourceLine" id="cb29-4" data-line-number="4">vec_cast.vctrs_decimal.double  &lt;-<span class="st"> </span><span class="cf">function</span>(x, to, ...) <span class="kw">new_decimal</span>(x, <span class="dt">digits =</span> <span class="kw">digits</span>(to))</a>
+<a class="sourceLine" id="cb29-5" data-line-number="5">vec_cast.double.vctrs_decimal  &lt;-<span class="st"> </span><span class="cf">function</span>(x, to, ...) <span class="kw"><a href="../reference/vec_data.html">vec_data</a></span>(x)</a>
 <a class="sourceLine" id="cb29-6" data-line-number="6"></a>
 <a class="sourceLine" id="cb29-7" data-line-number="7"><span class="kw"><a href="../reference/vec_c.html">vec_c</a></span>(<span class="kw">decimal</span>(<span class="dv">1</span>, <span class="dt">digits =</span> <span class="dv">1</span>), pi)</a>
 <a class="sourceLine" id="cb29-8" data-line-number="8"><span class="co">#&gt; &lt;decimal&lt;1&gt;[2]&gt;</span></a>
@@ -509,8 +509,8 @@
 <a class="sourceLine" id="cb41-8" data-line-number="8">  out</a>
 <a class="sourceLine" id="cb41-9" data-line-number="9">}</a>
 <a class="sourceLine" id="cb41-10" data-line-number="10"></a>
-<a class="sourceLine" id="cb41-11" data-line-number="11">vec_ptype_abbr.vctrs_rational &lt;-<span class="st"> </span><span class="cf">function</span>(x) <span class="st">"rtnl"</span></a>
-<a class="sourceLine" id="cb41-12" data-line-number="12">vec_ptype_full.vctrs_rational &lt;-<span class="st"> </span><span class="cf">function</span>(x) <span class="st">"rational"</span></a>
+<a class="sourceLine" id="cb41-11" data-line-number="11">vec_ptype_abbr.vctrs_rational &lt;-<span class="st"> </span><span class="cf">function</span>(x, ...) <span class="st">"rtnl"</span></a>
+<a class="sourceLine" id="cb41-12" data-line-number="12">vec_ptype_full.vctrs_rational &lt;-<span class="st"> </span><span class="cf">function</span>(x, ...) <span class="st">"rational"</span></a>
 <a class="sourceLine" id="cb41-13" data-line-number="13"></a>
 <a class="sourceLine" id="cb41-14" data-line-number="14">x</a>
 <a class="sourceLine" id="cb41-15" data-line-number="15"><span class="co">#&gt; &lt;rational[10]&gt;</span></a>
@@ -528,11 +528,11 @@
 <a class="sourceLine" id="cb43-7" data-line-number="7">vec_type2.vctrs_rational.integer &lt;-<span class="st"> </span><span class="cf">function</span>(x, y, ...) <span class="kw">new_rational</span>()</a>
 <a class="sourceLine" id="cb43-8" data-line-number="8">vec_type2.integer.vctrs_rational &lt;-<span class="st"> </span><span class="cf">function</span>(x, y, ...) <span class="kw">new_rational</span>()</a>
 <a class="sourceLine" id="cb43-9" data-line-number="9"></a>
-<a class="sourceLine" id="cb43-10" data-line-number="10">vec_cast.vctrs_rational &lt;-<span class="st"> </span><span class="cf">function</span>(x, to) <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/UseMethod">UseMethod</a></span>(<span class="st">"vec_cast.vctrs_rational"</span>)</a>
-<a class="sourceLine" id="cb43-11" data-line-number="11">vec_cast.vctrs_rational.default &lt;-<span class="st"> </span><span class="cf">function</span>(x, to) <span class="kw"><a href="../reference/vec_default_cast.html">vec_default_cast</a></span>(x, to)</a>
-<a class="sourceLine" id="cb43-12" data-line-number="12">vec_cast.vctrs_rational.vctrs_rational &lt;-<span class="st"> </span><span class="cf">function</span>(x, to) x</a>
-<a class="sourceLine" id="cb43-13" data-line-number="13">vec_cast.double.vctrs_rational &lt;-<span class="st"> </span><span class="cf">function</span>(x, to) <span class="kw"><a href="../reference/fields.html">field</a></span>(x, <span class="st">"n"</span>) <span class="op">/</span><span class="st"> </span><span class="kw"><a href="../reference/fields.html">field</a></span>(x, <span class="st">"d"</span>)</a>
-<a class="sourceLine" id="cb43-14" data-line-number="14">vec_cast.vctrs_rational.integer &lt;-<span class="st"> </span><span class="cf">function</span>(x, to) <span class="kw">rational</span>(x, <span class="dv">1</span>)</a>
+<a class="sourceLine" id="cb43-10" data-line-number="10">vec_cast.vctrs_rational &lt;-<span class="st"> </span><span class="cf">function</span>(x, to, ...) <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/UseMethod">UseMethod</a></span>(<span class="st">"vec_cast.vctrs_rational"</span>)</a>
+<a class="sourceLine" id="cb43-11" data-line-number="11">vec_cast.vctrs_rational.default &lt;-<span class="st"> </span><span class="cf">function</span>(x, to, ...) <span class="kw"><a href="../reference/vec_default_cast.html">vec_default_cast</a></span>(x, to)</a>
+<a class="sourceLine" id="cb43-12" data-line-number="12">vec_cast.vctrs_rational.vctrs_rational &lt;-<span class="st"> </span><span class="cf">function</span>(x, to, ...) x</a>
+<a class="sourceLine" id="cb43-13" data-line-number="13">vec_cast.double.vctrs_rational &lt;-<span class="st"> </span><span class="cf">function</span>(x, to, ...) <span class="kw"><a href="../reference/fields.html">field</a></span>(x, <span class="st">"n"</span>) <span class="op">/</span><span class="st"> </span><span class="kw"><a href="../reference/fields.html">field</a></span>(x, <span class="st">"d"</span>)</a>
+<a class="sourceLine" id="cb43-14" data-line-number="14">vec_cast.vctrs_rational.integer &lt;-<span class="st"> </span><span class="cf">function</span>(x, to, ...) <span class="kw">rational</span>(x, <span class="dv">1</span>)</a>
 <a class="sourceLine" id="cb43-15" data-line-number="15"></a>
 <a class="sourceLine" id="cb43-16" data-line-number="16"><span class="kw"><a href="../reference/vec_c.html">vec_c</a></span>(<span class="kw">rational</span>(<span class="dv">1</span>, <span class="dv">2</span>), 1L, <span class="ot">NA</span>)</a>
 <a class="sourceLine" id="cb43-17" data-line-number="17"><span class="co">#&gt; &lt;rational[3]&gt;</span></a>
@@ -611,7 +611,7 @@
 <a class="sourceLine" id="cb46-4" data-line-number="4">  <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/ifelse">ifelse</a></span>(r, <span class="kw">gcd</span>(y, r), y)</a>
 <a class="sourceLine" id="cb46-5" data-line-number="5">}</a>
 <a class="sourceLine" id="cb46-6" data-line-number="6"></a>
-<a class="sourceLine" id="cb46-7" data-line-number="7">vec_proxy_equal.vctrs_rational &lt;-<span class="st"> </span><span class="cf">function</span>(x) {</a>
+<a class="sourceLine" id="cb46-7" data-line-number="7">vec_proxy_equal.vctrs_rational &lt;-<span class="st"> </span><span class="cf">function</span>(x, ...) {</a>
 <a class="sourceLine" id="cb46-8" data-line-number="8">  n &lt;-<span class="st"> </span><span class="kw"><a href="../reference/fields.html">field</a></span>(x, <span class="st">"n"</span>)</a>
 <a class="sourceLine" id="cb46-9" data-line-number="9">  d &lt;-<span class="st"> </span><span class="kw"><a href="../reference/fields.html">field</a></span>(x, <span class="st">"d"</span>)</a>
 <a class="sourceLine" id="cb46-10" data-line-number="10">  gcd &lt;-<span class="st"> </span><span class="kw">gcd</span>(n, d)</a>
@@ -636,7 +636,7 @@
 <a class="sourceLine" id="cb48-2" data-line-number="2"><span class="co">#&gt; &lt;rational[4]&gt;</span></a>
 <a class="sourceLine" id="cb48-3" data-line-number="3"><span class="co">#&gt; [1] 1/1 1/2 2/1 2/2</span></a></code></pre></div>
 <p>The easiest fix is to convert the fraction to a decimal and then sort that:</p>
-<div class="sourceCode" id="cb49"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb49-1" data-line-number="1">vec_proxy_compare.vctrs_rational &lt;-<span class="st"> </span><span class="cf">function</span>(x) {</a>
+<div class="sourceCode" id="cb49"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb49-1" data-line-number="1">vec_proxy_compare.vctrs_rational &lt;-<span class="st"> </span><span class="cf">function</span>(x, ...) {</a>
 <a class="sourceLine" id="cb49-2" data-line-number="2">  <span class="kw"><a href="../reference/fields.html">field</a></span>(x, <span class="st">"n"</span>) <span class="op">/</span><span class="st"> </span><span class="kw"><a href="../reference/fields.html">field</a></span>(x, <span class="st">"d"</span>)</a>
 <a class="sourceLine" id="cb49-3" data-line-number="3">}</a>
 <a class="sourceLine" id="cb49-4" data-line-number="4"></a>
@@ -659,8 +659,8 @@
 <a class="sourceLine" id="cb50-8" data-line-number="8">  <span class="kw">new_poly</span>(x)</a>
 <a class="sourceLine" id="cb50-9" data-line-number="9">}</a>
 <a class="sourceLine" id="cb50-10" data-line-number="10"></a>
-<a class="sourceLine" id="cb50-11" data-line-number="11">vec_ptype_full.vctrs_poly &lt;-<span class="st"> </span><span class="cf">function</span>(x) <span class="st">"polynomial"</span></a>
-<a class="sourceLine" id="cb50-12" data-line-number="12">vec_ptype_abbr.vctrs_poly &lt;-<span class="st"> </span><span class="cf">function</span>(x) <span class="st">"poly"</span></a>
+<a class="sourceLine" id="cb50-11" data-line-number="11">vec_ptype_full.vctrs_poly &lt;-<span class="st"> </span><span class="cf">function</span>(x, ...) <span class="st">"polynomial"</span></a>
+<a class="sourceLine" id="cb50-12" data-line-number="12">vec_ptype_abbr.vctrs_poly &lt;-<span class="st"> </span><span class="cf">function</span>(x, ...) <span class="st">"poly"</span></a>
 <a class="sourceLine" id="cb50-13" data-line-number="13"></a>
 <a class="sourceLine" id="cb50-14" data-line-number="14">format.vctrs_poly &lt;-<span class="st"> </span><span class="cf">function</span>(x, ...) {</a>
 <a class="sourceLine" id="cb50-15" data-line-number="15">  format_one &lt;-<span class="st"> </span><span class="cf">function</span>(x) {</a>
@@ -678,7 +678,7 @@
 <a class="sourceLine" id="cb50-27" data-line-number="27">  <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/lapply">vapply</a></span>(x, format_one, <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/character">character</a></span>(<span class="dv">1</span>))</a>
 <a class="sourceLine" id="cb50-28" data-line-number="28">}</a>
 <a class="sourceLine" id="cb50-29" data-line-number="29"></a>
-<a class="sourceLine" id="cb50-30" data-line-number="30">obj_print_data.vctrs_poly &lt;-<span class="st"> </span><span class="cf">function</span>(x) {</a>
+<a class="sourceLine" id="cb50-30" data-line-number="30">obj_print_data.vctrs_poly &lt;-<span class="st"> </span><span class="cf">function</span>(x, ...) {</a>
 <a class="sourceLine" id="cb50-31" data-line-number="31">  <span class="cf">if</span> (<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/length">length</a></span>(x) <span class="op">==</span><span class="st"> </span><span class="dv">0</span>)</a>
 <a class="sourceLine" id="cb50-32" data-line-number="32">    <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/function">return</a></span>()</a>
 <a class="sourceLine" id="cb50-33" data-line-number="33">  <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/print">print</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/format">format</a></span>(x), <span class="dt">quote =</span> <span class="ot">FALSE</span>)</a>
@@ -703,7 +703,7 @@
 <div class="sourceCode" id="cb53"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb53-1" data-line-number="1"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/sort">sort</a></span>(p)</a>
 <a class="sourceLine" id="cb53-2" data-line-number="2"><span class="co">#&gt; Invalid type returned by `vec_proxy_compare()`.</span></a></code></pre></div>
 <p>So we need to define a <code><a href="../reference/vec_proxy_compare.html">vec_proxy_compare()</a></code> method:</p>
-<div class="sourceCode" id="cb54"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb54-1" data-line-number="1">vec_proxy_compare.vctrs_poly &lt;-<span class="st"> </span><span class="cf">function</span>(x) {</a>
+<div class="sourceCode" id="cb54"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb54-1" data-line-number="1">vec_proxy_compare.vctrs_poly &lt;-<span class="st"> </span><span class="cf">function</span>(x, ...) {</a>
 <a class="sourceLine" id="cb54-2" data-line-number="2">  x_raw &lt;-<span class="st"> </span><span class="kw"><a href="../reference/vec_data.html">vec_data</a></span>(x)</a>
 <a class="sourceLine" id="cb54-3" data-line-number="3">  <span class="co"># First figure out the maximum length</span></a>
 <a class="sourceLine" id="cb54-4" data-line-number="4">  n &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/Extremes">max</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/lapply">vapply</a></span>(x_raw, length, <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/integer">integer</a></span>(<span class="dv">1</span>)))</a>
@@ -733,10 +733,10 @@
 </ul>
 <p>Both generics define the behaviour for multiple functions because <code>sum.vctrs_vctr(x)</code> calls <code>vec_math.vctrs_vctr("sum", x)</code>, and <code>x + y</code> calls <code>vec_math.x_class.y_class("+", x, y)</code>. They’re accompanied by <code><a href="../reference/vec_math.html">vec_math_base()</a></code> and <code><a href="../reference/vec_arith.html">vec_arith_base()</a></code> which make it easy to call the underlying base R functions.</p>
 <p><code><a href="../reference/vec_arith.html">vec_arith()</a></code> uses double dispatch, and needs the following standard boilerplate:</p>
-<div class="sourceCode" id="cb55"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb55-1" data-line-number="1">vec_arith.MYCLASS &lt;-<span class="st"> </span><span class="cf">function</span>(op, x, y) {</a>
+<div class="sourceCode" id="cb55"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb55-1" data-line-number="1">vec_arith.MYCLASS &lt;-<span class="st"> </span><span class="cf">function</span>(op, x, y, ...) {</a>
 <a class="sourceLine" id="cb55-2" data-line-number="2">  <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/UseMethod">UseMethod</a></span>(<span class="st">"vec_arith.MYCLASS"</span>, y)</a>
 <a class="sourceLine" id="cb55-3" data-line-number="3">}</a>
-<a class="sourceLine" id="cb55-4" data-line-number="4">vec_arith.MYCLASS.default &lt;-<span class="st"> </span><span class="cf">function</span>(op, x, y) {</a>
+<a class="sourceLine" id="cb55-4" data-line-number="4">vec_arith.MYCLASS.default &lt;-<span class="st"> </span><span class="cf">function</span>(op, x, y, ...) {</a>
 <a class="sourceLine" id="cb55-5" data-line-number="5">  <span class="kw"><a href="../reference/vctrs-conditions.html">stop_incompatible_op</a></span>(op, x, y)</a>
 <a class="sourceLine" id="cb55-6" data-line-number="6">}</a></code></pre></div>
 <div id="cached-sum-class" class="section level3">
@@ -793,14 +793,14 @@
 <li><p>For a combination of meter and number multiplication and division by a number are acceptable. Addition and subtraction don’t make much sense as we, strictly speaking, are dealing with objects of different nature.</p></li>
 </ul>
 <p><code><a href="../reference/vec_arith.html">vec_arith()</a></code> is another function that uses double dispatch, so as usual we start with a template.</p>
-<div class="sourceCode" id="cb60"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb60-1" data-line-number="1">vec_arith.vctrs_meter &lt;-<span class="st"> </span><span class="cf">function</span>(op, x, y) {</a>
+<div class="sourceCode" id="cb60"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb60-1" data-line-number="1">vec_arith.vctrs_meter &lt;-<span class="st"> </span><span class="cf">function</span>(op, x, y, ...) {</a>
 <a class="sourceLine" id="cb60-2" data-line-number="2">  <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/UseMethod">UseMethod</a></span>(<span class="st">"vec_arith.vctrs_meter"</span>, y)</a>
 <a class="sourceLine" id="cb60-3" data-line-number="3">}</a>
-<a class="sourceLine" id="cb60-4" data-line-number="4">vec_arith.vctrs_meter.default &lt;-<span class="st"> </span><span class="cf">function</span>(op, x, y) {</a>
+<a class="sourceLine" id="cb60-4" data-line-number="4">vec_arith.vctrs_meter.default &lt;-<span class="st"> </span><span class="cf">function</span>(op, x, y, ...) {</a>
 <a class="sourceLine" id="cb60-5" data-line-number="5">  <span class="kw"><a href="../reference/vctrs-conditions.html">stop_incompatible_op</a></span>(op, x, y)</a>
 <a class="sourceLine" id="cb60-6" data-line-number="6">}</a></code></pre></div>
 <p>Then write the method for two meter objects. We use a switch statement to cover the cases we care about, and <code><a href="../reference/vctrs-conditions.html">stop_incompatible_op()</a></code> to throw an informative error message for everything else.</p>
-<div class="sourceCode" id="cb61"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb61-1" data-line-number="1">vec_arith.vctrs_meter.vctrs_meter &lt;-<span class="st"> </span><span class="cf">function</span>(op, x, y) {</a>
+<div class="sourceCode" id="cb61"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb61-1" data-line-number="1">vec_arith.vctrs_meter.vctrs_meter &lt;-<span class="st"> </span><span class="cf">function</span>(op, x, y, ...) {</a>
 <a class="sourceLine" id="cb61-2" data-line-number="2">  <span class="cf">switch</span>(</a>
 <a class="sourceLine" id="cb61-3" data-line-number="3">    op,</a>
 <a class="sourceLine" id="cb61-4" data-line-number="4">    <span class="st">"+"</span> =<span class="st"> </span>,</a>
@@ -821,7 +821,7 @@
 <a class="sourceLine" id="cb61-19" data-line-number="19"><span class="kw">meter</span>(<span class="dv">10</span>) <span class="op">*</span><span class="st"> </span><span class="kw">meter</span>(<span class="dv">1</span>)</a>
 <a class="sourceLine" id="cb61-20" data-line-number="20"><span class="co">#&gt; &lt;vctrs_meter&gt; * &lt;vctrs_meter&gt; is not permitted</span></a></code></pre></div>
 <p>Next we write the pair of methods for arithmetic with a meter and a number. These are almost identical, but while <code>meter(10) / 2</code> makes sense, <code>2 / meter(10)</code> does not (as addition and subtraction).</p>
-<div class="sourceCode" id="cb62"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb62-1" data-line-number="1">vec_arith.vctrs_meter.numeric &lt;-<span class="st"> </span><span class="cf">function</span>(op, x, y) {</a>
+<div class="sourceCode" id="cb62"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb62-1" data-line-number="1">vec_arith.vctrs_meter.numeric &lt;-<span class="st"> </span><span class="cf">function</span>(op, x, y, ...) {</a>
 <a class="sourceLine" id="cb62-2" data-line-number="2">  <span class="cf">switch</span>(</a>
 <a class="sourceLine" id="cb62-3" data-line-number="3">    op,</a>
 <a class="sourceLine" id="cb62-4" data-line-number="4">    <span class="st">"/"</span> =<span class="st"> </span>,</a>
@@ -829,7 +829,7 @@
 <a class="sourceLine" id="cb62-6" data-line-number="6">    <span class="kw"><a href="../reference/vctrs-conditions.html">stop_incompatible_op</a></span>(op, x, y)</a>
 <a class="sourceLine" id="cb62-7" data-line-number="7">  )</a>
 <a class="sourceLine" id="cb62-8" data-line-number="8">}</a>
-<a class="sourceLine" id="cb62-9" data-line-number="9">vec_arith.numeric.vctrs_meter &lt;-<span class="st"> </span><span class="cf">function</span>(op, x, y) {</a>
+<a class="sourceLine" id="cb62-9" data-line-number="9">vec_arith.numeric.vctrs_meter &lt;-<span class="st"> </span><span class="cf">function</span>(op, x, y, ...) {</a>
 <a class="sourceLine" id="cb62-10" data-line-number="10">  <span class="cf">switch</span>(</a>
 <a class="sourceLine" id="cb62-11" data-line-number="11">    op,</a>
 <a class="sourceLine" id="cb62-12" data-line-number="12">    <span class="st">"*"</span> =<span class="st"> </span><span class="kw">new_meter</span>(<span class="kw"><a href="../reference/vec_arith.html">vec_arith_base</a></span>(op, x, y)),</a>
@@ -851,7 +851,7 @@
 <a class="sourceLine" id="cb62-28" data-line-number="28"><span class="kw">meter</span>(<span class="dv">20</span>) <span class="op">+</span><span class="st"> </span><span class="dv">10</span></a>
 <a class="sourceLine" id="cb62-29" data-line-number="29"><span class="co">#&gt; &lt;vctrs_meter&gt; + &lt;double&gt; is not permitted</span></a></code></pre></div>
 <p>For completeness, we also need <code>vec_arith.vctrs_meter.MISSING</code> for the unary <code>+</code> and <code>-</code> operators:</p>
-<div class="sourceCode" id="cb63"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb63-1" data-line-number="1">vec_arith.vctrs_meter.MISSING &lt;-<span class="st"> </span><span class="cf">function</span>(op, x, y) {</a>
+<div class="sourceCode" id="cb63"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb63-1" data-line-number="1">vec_arith.vctrs_meter.MISSING &lt;-<span class="st"> </span><span class="cf">function</span>(op, x, y, ...) {</a>
 <a class="sourceLine" id="cb63-2" data-line-number="2">  <span class="cf">switch</span>(op, </a>
 <a class="sourceLine" id="cb63-3" data-line-number="3">    <span class="st">`</span><span class="dt">-</span><span class="st">`</span> =<span class="st"> </span>x <span class="op">*</span><span class="st"> </span><span class="dv">-1</span>,</a>
 <a class="sourceLine" id="cb63-4" data-line-number="4">    <span class="st">`</span><span class="dt">+</span><span class="st">`</span> =<span class="st"> </span>x,</a>
@@ -874,12 +874,12 @@
 <div class="sourceCode" id="cb64"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb64-1" data-line-number="1"><span class="co">#' @method vec_cast vctrs_percent</span></a>
 <a class="sourceLine" id="cb64-2" data-line-number="2"><span class="co">#' @export</span></a>
 <a class="sourceLine" id="cb64-3" data-line-number="3"><span class="co">#' @export vec_cast.vctrs_percent</span></a>
-<a class="sourceLine" id="cb64-4" data-line-number="4">vec_cast.vctrs_percent &lt;-<span class="st"> </span><span class="cf">function</span>(x, to) {</a>
+<a class="sourceLine" id="cb64-4" data-line-number="4">vec_cast.vctrs_percent &lt;-<span class="st"> </span><span class="cf">function</span>(x, to, ...) {</a>
 <a class="sourceLine" id="cb64-5" data-line-number="5">} </a></code></pre></div>
 <p>You also need to register the individual double-dispatch methods. Again, this is harder than it should be because roxygen’s heuristics aren’t quite right. That means you need to describe the <code>@method</code> explicitly:</p>
 <div class="sourceCode" id="cb65"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb65-1" data-line-number="1"><span class="co">#' @method vec_cast.binned double</span></a>
 <a class="sourceLine" id="cb65-2" data-line-number="2"><span class="co">#' @export</span></a>
-<a class="sourceLine" id="cb65-3" data-line-number="3">vec_cast.binned.double &lt;-<span class="st"> </span><span class="cf">function</span>(x, y) {</a>
+<a class="sourceLine" id="cb65-3" data-line-number="3">vec_cast.binned.double &lt;-<span class="st"> </span><span class="cf">function</span>(x, y, ...) {</a>
 <a class="sourceLine" id="cb65-4" data-line-number="4">}</a></code></pre></div>
 <p>Hopefully future versions of roxygen will make these exports less painful.</p>
 </div>
