@@ -185,20 +185,20 @@ vec_cast.Date.Date <- function(x, to, ...) {
 }
 #' @export
 #' @method vec_cast.Date POSIXt
-vec_cast.Date.POSIXt <- function(x, to, ...) {
+vec_cast.Date.POSIXt <- function(x, to, ..., x_arg = "", to_arg = "") {
   out <- as.Date(x)
   lossy <- abs(x - as.POSIXct(out)) > 1e-9
-  maybe_lossy_cast(out, x, to, lossy)
+  maybe_lossy_cast(out, x, to, lossy, x_arg = x_arg, to_arg = to_arg)
 }
 #' @export
 #' @method vec_cast.Date list
-vec_cast.Date.list <- function(x, to, ...) {
-  vec_list_cast(x, to)
+vec_cast.Date.list <- function(x, to, ..., x_arg = "", to_arg = "") {
+  vec_list_cast(x, to, x_arg = x_arg, to_arg = to_arg)
 }
 #' @export
 #' @method vec_cast.Date default
-vec_cast.Date.default <- function(x, to, ...) {
-  vec_default_cast(x, to)
+vec_cast.Date.default <- function(x, to, ..., x_arg = "", to_arg = "") {
+  vec_default_cast(x, to, x_arg = x_arg, to_arg = to_arg)
 }
 
 #' @rdname new_date
@@ -235,13 +235,13 @@ vec_cast.POSIXct.POSIXct <- function(x, to, ...) {
 }
 #' @export
 #' @method vec_cast.POSIXct list
-vec_cast.POSIXct.list <- function(x, to, ...) {
-  vec_list_cast(x, to)
+vec_cast.POSIXct.list <- function(x, to, ..., x_arg = "", to_arg = "") {
+  vec_list_cast(x, to, x_arg = x_arg, to_arg = to_arg)
 }
 #' @export
 #' @method vec_cast.POSIXct default
-vec_cast.POSIXct.default <- function(x, to, ...) {
-  vec_default_cast(x, to)
+vec_cast.POSIXct.default <- function(x, to, ..., x_arg = "", to_arg = "") {
+  vec_default_cast(x, to, x_arg = x_arg, to_arg = to_arg)
 }
 
 #' @rdname new_date
@@ -278,13 +278,13 @@ vec_cast.POSIXlt.POSIXct <- function(x, to, ...) {
 }
 #' @export
 #' @method vec_cast.POSIXlt list
-vec_cast.POSIXlt.list <- function(x, to, ...) {
-  vec_list_cast(x, to)
+vec_cast.POSIXlt.list <- function(x, to, ..., x_arg = "", to_arg = "") {
+  vec_list_cast(x, to, x_arg = x_arg, to_arg = to_arg)
 }
 #' @export
 #' @method vec_cast.POSIXlt default
-vec_cast.POSIXlt.default <- function(x, to, ...) {
-  vec_default_cast(x, to)
+vec_cast.POSIXlt.default <- function(x, to, ..., x_arg = "", to_arg = "") {
+  vec_default_cast(x, to, x_arg = x_arg, to_arg = to_arg)
 }
 
 
@@ -313,13 +313,13 @@ vec_cast.difftime.difftime <- function(x, to, ...) {
 }
 #' @export
 #' @method vec_cast.difftime list
-vec_cast.difftime.list <- function(x, to, ...) {
-  vec_list_cast(x, to)
+vec_cast.difftime.list <- function(x, to, ..., x_arg = "", to_arg = "") {
+  vec_list_cast(x, to, x_arg = x_arg, to_arg = to_arg)
 }
 #' @export
 #' @method vec_cast.difftime default
-vec_cast.difftime.default <- function(x, to, ...) {
-  vec_default_cast(x, to)
+vec_cast.difftime.default <- function(x, to, ..., x_arg = "", to_arg = "") {
+  vec_default_cast(x, to, x_arg = x_arg, to_arg = to_arg)
 }
 
 

@@ -120,13 +120,13 @@ vec_cast.factor <- function(x, to, ...) {
 
 #' @export
 #' @method vec_cast.factor factor
-vec_cast.factor.factor <- function(x, to, ...) {
+vec_cast.factor.factor <- function(x, to, ..., x_arg = "", to_arg = "") {
   if (length(levels(to)) == 0L) {
     factor(as.character(x), levels = unique(x), ordered = is.ordered(to))
   } else {
     lossy <- !(x %in% levels(to) | is.na(x))
     out <- factor(x, levels = levels(to), ordered = is.ordered(to))
-    maybe_lossy_cast(out, x, to, lossy)
+    maybe_lossy_cast(out, x, to, lossy, x_arg = x_arg, to_arg = to_arg)
   }
 }
 #' @export
@@ -137,13 +137,13 @@ vec_cast.factor.character <- vec_cast.factor.factor
 vec_cast.character.factor <- function(x, to, ...) as.character(x)
 #' @export
 #' @method vec_cast.factor list
-vec_cast.factor.list <- function(x, to, ...) {
-  vec_list_cast(x, to)
+vec_cast.factor.list <- function(x, to, ..., x_arg = "", to_arg = "") {
+  vec_list_cast(x, to, x_arg = x_arg, to_arg = to_arg)
 }
 #' @export
 #' @method vec_cast.factor default
-vec_cast.factor.default <- function(x, to, ...) {
-  vec_default_cast(x, to)
+vec_cast.factor.default <- function(x, to, ..., x_arg = "", to_arg = "") {
+  vec_default_cast(x, to, x_arg = x_arg, to_arg = to_arg)
 }
 
 # Math and arithmetic -----------------------------------------------------

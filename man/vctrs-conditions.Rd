@@ -23,8 +23,8 @@ stop_incompatible_size(x, y, x_size, y_size, x_arg = "", y_arg = "",
   details = NULL, ..., message = NULL, .subclass = NULL)
 
 maybe_lossy_cast(result, x, to, lossy = NULL, locations = NULL,
-  details = NULL, ..., message = NULL, .subclass = NULL,
-  .deprecation = FALSE)
+  details = NULL, ..., x_arg = "", to_arg = "", message = NULL,
+  .subclass = NULL, .deprecation = FALSE)
 
 allow_lossy_cast(expr, x_ptype = NULL, to_ptype = NULL)
 }

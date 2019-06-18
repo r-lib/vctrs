@@ -101,9 +101,9 @@ vec_cast.vctrs_rcrd.vctrs_rcrd <- function(x, to, ...) {
 
 #' @method vec_cast.vctrs_rcrd default
 #' @export
-vec_cast.vctrs_rcrd.default <- function(x, to, ...) {
+vec_cast.vctrs_rcrd.default <- function(x, to, ..., x_arg = "", to_arg = "") {
   if (is_bare_list(x)) {
-    vec_list_cast(x, to)
+    vec_list_cast(x, to, x_arg = x_arg, to_arg = to_arg)
   } else {
     stop_incompatible_cast(x, to)
   }

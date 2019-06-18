@@ -4,12 +4,20 @@
 \alias{vec_default_cast}
 \title{Default cast method}
 \usage{
-vec_default_cast(x, to)
+vec_default_cast(x, to, x_arg = "", to_arg = "")
 }
 \arguments{
 \item{x}{Vectors to cast.}
 
 \item{to}{Type to cast to. If \code{NULL}, \code{x} will be returned as is.}
+
+\item{x_arg}{Argument names for \code{x} and \code{to}. These are used
+in error messages to inform the user about the locations of
+incompatible types (see \code{\link[=stop_incompatible_type]{stop_incompatible_type()}}).}
+
+\item{to_arg}{Argument names for \code{x} and \code{to}. These are used
+in error messages to inform the user about the locations of
+incompatible types (see \code{\link[=stop_incompatible_type]{stop_incompatible_type()}}).}
 }
 \description{
 This function should typically be called from the default

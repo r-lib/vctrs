@@ -4,12 +4,14 @@
 \alias{vec_list_cast}
 \title{Cast a list to vector of specific type}
 \usage{
-vec_list_cast(x, to)
+vec_list_cast(x, to, ..., x_arg = "", to_arg = "")
 }
 \arguments{
 \item{x}{A list}
 
 \item{to}{Type to coerce to}
+
+\item{...}{These dots are for future extensions and must be empty.}
 }
 \description{
 This is a function for developers to use when extending vctrs. It casts

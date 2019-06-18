@@ -204,6 +204,8 @@ maybe_lossy_cast <- function(result, x, to,
                              locations = NULL,
                              details = NULL,
                              ...,
+                             x_arg = "",
+                             to_arg = "",
                              message = NULL,
                              .subclass = NULL,
                              .deprecation = FALSE) {
