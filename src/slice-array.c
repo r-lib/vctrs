@@ -83,7 +83,7 @@ struct vec_slice_shaped_info {
   R_len_t dim_n;
   R_len_t shape_n;
   R_len_t index_n;
-  R_len_t n_shape_elements;
+  R_len_t shape_elem_n;
   SEXP out_dim;
 };
 
@@ -94,7 +94,7 @@ struct vec_slice_shaped_info {
                                                                  \
   int out_loc = 0;                                               \
                                                                  \
-  for (int i = 0; i < info.n_shape_elements; ++i) {              \
+  for (int i = 0; i < info.shape_elem_n; ++i) {                  \
                                                                  \
     /* Find and add the next `x` element */                      \
     for (int j = 0; j < info.index_n; ++j) {                     \
@@ -154,7 +154,7 @@ static SEXP raw_slice_shaped(SEXP x, SEXP index, struct vec_slice_shaped_info in
                                                                \
   int out_loc = 0;                                             \
                                                                \
-  for (int i = 0; i < info.n_shape_elements; ++i) {            \
+  for (int i = 0; i < info.shape_elem_n; ++i) {                \
                                                                \
     /* Find and add the next `x` element */                    \
     for (int j = 0; j < info.index_n; ++j) {                   \
@@ -238,9 +238,9 @@ SEXP vec_slice_shaped(enum vctrs_type type, SEXP x, SEXP index) {
     info.p_shape_index[i] = 0;
   }
 
-  info.n_shape_elements = 1;
+  info.shape_elem_n = 1;
   for (int i = 1; i < info.dim_n; ++i) {
-    info.n_shape_elements *= info.p_dim[i];
+    info.shape_elem_n *= info.p_dim[i];
   }
 
   SEXP out = vec_slice_shaped_base(type, x, index, info);
