@@ -189,7 +189,7 @@ test_that("can `vec_slice()` records", {
 test_that("vec_restore() is called after proxied slicing", {
   scoped_global_bindings(
     vec_proxy.vctrs_foobar = identity,
-    vec_restore.vctrs_foobar = function(x, to, ..., i) "dispatch"
+    vec_restore.vctrs_foobar = function(x, to, ...) "dispatch"
   )
   expect_identical(vec_slice(foobar(1:3), 2), "dispatch")
 })

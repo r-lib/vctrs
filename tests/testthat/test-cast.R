@@ -80,11 +80,11 @@ test_that("can use vctrs primitives from vec_restore() without inflooping", {
   expect_identical(vec_slice(foobar, 2), "woot")
 })
 
-test_that("vec_restore() passes `i` argument to methods", {
+test_that("vec_restore() passes `n` argument to methods", {
   scoped_global_bindings(
-    vec_restore.vctrs_foobar = function(x, to, ..., i) i
+    vec_restore.vctrs_foobar = function(x, to, ..., n) n
   )
-  expect_identical(vec_slice(foobar(1:3), 2), 2L)
+  expect_identical(vec_slice(foobar(1:3), 2), 1L)
 })
 
 test_that("dimensions are preserved by default restore method", {
@@ -114,11 +114,11 @@ test_that("names attribute isn't set when restoring 1D arrays using 2D+ objects"
 
 test_that("arguments are not inlined in the dispatch call (#300)", {
   scoped_global_bindings(
-    vec_restore.vctrs_foobar = function(x, to, ..., i) sys.call(),
+    vec_restore.vctrs_foobar = function(x, to, ..., n) sys.call(),
     vec_proxy.vctrs_foobar = unclass
   )
   call <- vec_restore(foobar(list(1)), foobar(list(1)))
-  expect_equal(call, quote(vec_restore.vctrs_foobar(x = x, to = to, i = i)))
+  expect_equal(call, quote(vec_restore.vctrs_foobar(x = x, to = to, n = n)))
 })
 
 

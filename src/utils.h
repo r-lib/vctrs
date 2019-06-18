@@ -162,6 +162,7 @@ static inline void r_dbg_save(SEXP x, const char* name) {
 extern SEXP vctrs_ns_env;
 extern SEXP vctrs_shared_empty_str;
 extern SEXP vctrs_shared_na_lgl;
+extern SEXP vctrs_shared_zero_int;
 
 extern SEXP classes_data_frame;
 extern SEXP classes_tibble;
@@ -177,6 +178,7 @@ extern SEXP strings_posixt;
 extern SEXP strings_vctrs_vctr;
 
 extern SEXP syms_i;
+extern SEXP syms_n;
 extern SEXP syms_x;
 extern SEXP syms_y;
 extern SEXP syms_to;
