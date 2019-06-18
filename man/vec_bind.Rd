@@ -30,7 +30,15 @@ this is a convenient way to make production code demand fixed types.}
 
 \item{.name_repair}{One of \code{"unique"}, \code{"universal"}, or
 \code{"check_unique"}. See \code{\link[=vec_as_names]{vec_as_names()}} for the meaning of these
-options.}
+options.
+
+With \code{vec_rbind()}, the repair function is applied to all inputs
+separately. This is because \code{vec_rbind()} needs to align their
+columns before binding the rows, and thus needs all inputs to
+have unique names. On the other hand, \code{vec_cbind()} applies the
+repair function after all inputs have been concatenated together
+in a final data frame. Hence \code{vec_cbind()} allows the more
+permissive minimal names repair.}
 
 \item{.size}{If, \code{NULL}, the default, will determine the number of
 rows in \code{vec_cbind()} output by using the standard recycling rules.

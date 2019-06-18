@@ -39,6 +39,14 @@
 #' @param .name_repair One of `"unique"`, `"universal"`, or
 #'   `"check_unique"`. See [vec_as_names()] for the meaning of these
 #'   options.
+#'
+#'   With `vec_rbind()`, the repair function is applied to all inputs
+#'   separately. This is because `vec_rbind()` needs to align their
+#'   columns before binding the rows, and thus needs all inputs to
+#'   have unique names. On the other hand, `vec_cbind()` applies the
+#'   repair function after all inputs have been concatenated together
+#'   in a final data frame. Hence `vec_cbind()` allows the more
+#'   permissive minimal names repair.
 #' @inheritParams vec_c
 #' @return A data frame, or subclass of data frame.
 #'
