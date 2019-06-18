@@ -7,7 +7,7 @@ SEXP fns_vec_slice_fallback = NULL;
 
 // Defined below
 SEXP vec_as_index(SEXP i, R_len_t n, SEXP names);
-static void slice_names(SEXP x, SEXP to, SEXP index);
+static SEXP slice_names(SEXP names, SEXP index);
 
 /**
  * This `vec_slice()` variant falls back to `[` with S3 objects.
@@ -123,38 +123,32 @@ static SEXP vec_slice_base(enum vctrs_type type, SEXP x, SEXP index) {
                     vec_type_as_str(type));
   }
 }
-static void slice_names(SEXP x, SEXP to, SEXP index) {
-  SEXP nms = PROTECT(Rf_getAttrib(to, R_NamesSymbol));
 
-  if (nms == R_NilValue) {
-    UNPROTECT(1);
-    return;
+static SEXP slice_names(SEXP names, SEXP index) {
+  if (names == R_NilValue) {
+    return names;
   }
 
-  nms = PROTECT(chr_slice(nms, index));
+  names = PROTECT(chr_slice(names, index));
 
   // Replace any `NA` name caused by `NA` index with the empty
   // string. It's ok mutate the names vector since it is freshly
   // created (and the empty string is persistently protected anyway).
-  R_len_t n = Rf_length(nms);
-  SEXP* nmsp = STRING_PTR(nms);
+  R_len_t n = Rf_length(names);
+  SEXP* namesp = STRING_PTR(names);
   const int* ip = INTEGER_RO(index);
 
   for (R_len_t i = 0; i < n; ++i) {
     if (ip[i] == NA_INTEGER) {
-      nmsp[i] = strings_empty;
+      namesp[i] = strings_empty;
     }
   }
 
-  Rf_setAttrib(x, R_NamesSymbol, nms);
-  UNPROTECT(2);
+  UNPROTECT(1);
+  return names;
 }
 
 static SEXP vec_slice_impl(SEXP x, SEXP index) {
-  if (has_dim(x)) {
-    return vec_slice_fallback(x, index);
-  }
-
   int nprot = 0;
 
   SEXP restore_size = PROTECT_N(r_int(Rf_length(index)), &nprot);
@@ -169,8 +163,14 @@ static SEXP vec_slice_impl(SEXP x, SEXP index) {
       Rf_errorcall(R_NilValue, "Can't slice a scalar");
     }
 
-    SEXP call = PROTECT_N(Rf_lang3(fns_bracket, x, index), &nprot);
-    SEXP out = PROTECT_N(Rf_eval(call, R_GlobalEnv), &nprot);
+    SEXP out;
+
+    if (has_dim(x)) {
+      out = PROTECT_N(vec_slice_fallback(x, index), &nprot);
+    } else {
+      SEXP call = PROTECT_N(Rf_lang3(fns_bracket, x, index), &nprot);
+      out = PROTECT_N(Rf_eval(call, R_GlobalEnv), &nprot);
+    }
 
     // Take over attribute restoration only if the `[` method did not
     // restore itself
@@ -193,10 +193,28 @@ static SEXP vec_slice_impl(SEXP x, SEXP index) {
   case vctrs_type_character:
   case vctrs_type_raw:
   case vctrs_type_list: {
-    SEXP out = PROTECT_N(vec_slice_base(info.type, data, index), &nprot);
+    SEXP out;
 
-    slice_names(out, x, index);
-    out = vec_restore(out, x, restore_size);
+    if (has_dim(x)) {
+      out = PROTECT_N(vec_slice_shaped(info.type, data, index), &nprot);
+
+      SEXP names = PROTECT_N(Rf_getAttrib(x, R_DimNamesSymbol), &nprot);
+      if (names != R_NilValue) {
+        names = PROTECT_N(Rf_shallow_duplicate(names), &nprot);
+        SEXP row_names = VECTOR_ELT(names, 0);
+        row_names = PROTECT_N(slice_names(row_names, index), &nprot);
+        SET_VECTOR_ELT(names, 0, row_names);
+        Rf_setAttrib(out, R_DimNamesSymbol, names);
+      }
+    } else {
+      out = PROTECT_N(vec_slice_base(info.type, data, index), &nprot);
+
+      SEXP names = PROTECT_N(Rf_getAttrib(x, R_NamesSymbol), &nprot);
+      names = PROTECT_N(slice_names(names, index), &nprot);
+      Rf_setAttrib(out, R_NamesSymbol, names);
+    }
+
+    out = vec_restore(out, x, index);
 
     UNPROTECT(nprot);
     return out;
