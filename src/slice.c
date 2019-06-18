@@ -8,7 +8,6 @@ SEXP fns_vec_slice_fallback = NULL;
 // Defined below
 SEXP vec_as_index(SEXP i, R_len_t n, SEXP names);
 static SEXP slice_names(SEXP names, SEXP index);
-SEXP vec_slice_shaped(enum vctrs_type type, SEXP x, SEXP index);
 
 /**
  * This `vec_slice()` variant falls back to `[` with S3 objects.
@@ -192,6 +191,14 @@ static SEXP vec_slice_impl(SEXP x, SEXP index) {
 
     if (has_dim(x)) {
       out = PROTECT_N(vec_slice_shaped(info.type, data, index), &nprot);
+
+      SEXP names = PROTECT_N(Rf_getAttrib(x, R_DimNamesSymbol), &nprot);
+      if (names != R_NilValue) {
+        names = PROTECT_N(Rf_shallow_duplicate(names), &nprot);
+        SEXP row_names = VECTOR_ELT(names, 0);
+        SET_VECTOR_ELT(names, 0, slice_names(row_names, index));
+        Rf_setAttrib(out, R_DimNamesSymbol, names);
+      }
     } else {
       out = PROTECT_N(vec_slice_base(info.type, data, index), &nprot);
 
@@ -431,116 +438,4 @@ SEXP vctrs_as_index(SEXP i, SEXP n, SEXP names) {
 void vctrs_init_slice(SEXP ns) {
   syms_vec_slice_fallback = Rf_install("vec_slice_fallback");
   fns_vec_slice_fallback = Rf_findVar(syms_vec_slice_fallback, ns);
-}
-
-// -----------------------------------------------------------------------------
-
-SEXP vec_strides(SEXP dim) {
-  int* p_dim = INTEGER(dim);
-  R_len_t shape_n = Rf_length(dim) - 1;
-  SEXP strides = PROTECT(Rf_allocVector(INTSXP, shape_n));
-  int* p_strides = INTEGER(strides);
-  int stride = 1;
-
-  for (int i = 0; i < shape_n; ++i) {
-    stride *= p_dim[i];
-    p_strides[i] = stride;
-  }
-
-  UNPROTECT(1);
-  return strides;
-}
-
-// size_index is R index based, p_shape_index is C index based, but it
-// still computes the correct R index location
-static int vec_strided_loc(int size_index, int* p_shape_index, int* p_strides, int n) {
-  if (size_index == NA_INTEGER) {
-    return NA_INTEGER;
-  }
-
-  int loc = size_index;
-
-  for (int i = 0; i < n; ++i) {
-    loc += p_strides[i] * p_shape_index[i];
-  }
-
-  return loc;
-}
-
-SEXP vec_slice_shaped(enum vctrs_type type, SEXP x, SEXP index) {
-  int nprot = 0;
-
-  int* p_index = INTEGER(index);
-  R_len_t index_n = Rf_length(index);
-
-  SEXP dim = PROTECT_N(vec_dim(x), &nprot);
-  int* p_dim = INTEGER(dim);
-  R_len_t dim_n = Rf_length(dim);
-  R_len_t shape_n = dim_n - 1;
-
-  SEXP strides = PROTECT_N(vec_strides(dim), &nprot);
-  int* p_strides = INTEGER(strides);
-
-  R_len_t out_n = index_n;
-  R_len_t n_shape_elements = 1;
-
-  for (int i = 1; i < dim_n; ++i) {
-    n_shape_elements *= p_dim[i];
-  }
-
-  out_n *= n_shape_elements;
-
-  SEXP out_dim = PROTECT_N(Rf_allocVector(INTSXP, dim_n), &nprot);
-  int* p_out_dim = INTEGER(out_dim);
-  p_out_dim[0] = index_n;
-
-  for (int i = 1; i < dim_n; ++i) {
-    p_out_dim[i] = p_dim[i];
-  }
-
-  int slice_index_pos = 0;
-  SEXP slice_index = PROTECT_N(Rf_allocVector(INTSXP, out_n), &nprot);
-  int* p_slice_index = INTEGER(slice_index);
-
-  SEXP shape_index = PROTECT_N(Rf_allocVector(INTSXP, shape_n), &nprot);
-  int* p_shape_index = INTEGER(shape_index);
-
-  // Initialize shape index to 0
-  for (int i = 0; i < shape_n; ++i) {
-    p_shape_index[i] = 0;
-  }
-
-  for (int i = 0; i < n_shape_elements; ++i) {
-
-    // Add next 1-D slice position
-    for (int j = 0; j < index_n; ++j) {
-      p_slice_index[slice_index_pos] = vec_strided_loc(p_index[j], p_shape_index, p_strides, shape_n);
-      slice_index_pos++;
-    }
-
-    // Update shape index
-    for (int j = 0; j < shape_n; ++j) {
-      p_shape_index[j]++;
-      if (p_shape_index[j] < p_dim[j + 1]) {
-        break;
-      }
-      p_shape_index[j] = 0;
-    }
-  }
-
-  SEXP out = PROTECT_N(vec_slice_base(type, x, slice_index), &nprot);
-  SET_ATTRIB(out, R_NilValue);
-
-  Rf_setAttrib(out, R_DimSymbol, out_dim);
-
-  SEXP names = PROTECT_N(Rf_getAttrib(x, R_DimNamesSymbol), &nprot);
-  if (names != R_NilValue) {
-    names = PROTECT_N(Rf_shallow_duplicate(names), &nprot);
-    SEXP row_names = VECTOR_ELT(names, 0);
-    SET_VECTOR_ELT(names, 0, slice_names(row_names, index));
-    Rf_setAttrib(out, R_DimNamesSymbol, names);
-  }
-
-  UNPROTECT(nprot);
-  return out;
 }
