@@ -128,7 +128,7 @@ vec_rbind <- fn_inline_formals(vec_rbind, ".name_repair")
 vec_cbind <- function(...,
                       .ptype = NULL,
                       .size = NULL,
-                      .name_repair = c("unique", "universal", "check_unique")) {
+                      .name_repair = c("unique", "universal", "check_unique", "minimal")) {
   .External2(vctrs_cbind, .ptype, .size, .name_repair)
 }
 vec_cbind <- fn_inline_formals(vec_cbind, ".name_repair")

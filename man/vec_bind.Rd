@@ -10,7 +10,7 @@ vec_rbind(..., .ptype = NULL, .name_repair = c("unique", "universal",
   "check_unique"))
 
 vec_cbind(..., .ptype = NULL, .size = NULL,
-  .name_repair = c("unique", "universal", "check_unique"))
+  .name_repair = c("unique", "universal", "check_unique", "minimal"))
 }
 \arguments{
 \item{...}{Data frames or vectors.

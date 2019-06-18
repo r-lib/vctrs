@@ -5,7 +5,7 @@
 static SEXP vec_rbind(SEXP xs, SEXP ptype, enum name_repair_arg name_repair);
 static SEXP as_df_row(SEXP x, enum name_repair_arg name_repair, bool quiet);
 static SEXP as_df_row_impl(SEXP x, enum name_repair_arg name_repair, bool quiet);
-enum name_repair_arg validate_bind_name_repair(SEXP name_repair);
+enum name_repair_arg validate_bind_name_repair(SEXP name_repair, bool allow_minimal);
 
 // [[ register(external = TRUE) ]]
 SEXP vctrs_rbind(SEXP call, SEXP op, SEXP args, SEXP env) {
@@ -15,7 +15,7 @@ SEXP vctrs_rbind(SEXP call, SEXP op, SEXP args, SEXP env) {
   SEXP ptype = PROTECT(Rf_eval(CAR(args), env)); args = CDR(args);
   SEXP name_repair = PROTECT(Rf_eval(CAR(args), env));
 
-  enum name_repair_arg repair_arg = validate_bind_name_repair(name_repair);
+  enum name_repair_arg repair_arg = validate_bind_name_repair(name_repair, false);
   SEXP out = vec_rbind(xs, ptype, repair_arg);
 
   UNPROTECT(3);
@@ -142,7 +142,7 @@ SEXP vctrs_cbind(SEXP call, SEXP op, SEXP args, SEXP env) {
   SEXP size = PROTECT(Rf_eval(CAR(args), env)); args = CDR(args);
   SEXP name_repair = PROTECT(Rf_eval(CAR(args), env));
 
-  enum name_repair_arg repair_arg = validate_bind_name_repair(name_repair);
+  enum name_repair_arg repair_arg = validate_bind_name_repair(name_repair, true);
   SEXP out = vec_cbind(xs, ptype, size, repair_arg);
 
   UNPROTECT(4);
@@ -300,17 +300,26 @@ static SEXP shaped_as_df_col(SEXP x, SEXP outer) {
   return x;
 }
 
-enum name_repair_arg validate_bind_name_repair(SEXP name_repair) {
+enum name_repair_arg validate_bind_name_repair(SEXP name_repair, bool allow_minimal) {
   enum name_repair_arg arg = validate_name_repair(name_repair);
 
   switch (arg) {
   case name_repair_unique: break;
   case name_repair_universal: break;
   case name_repair_check_unique: break;
-  default: Rf_errorcall(R_NilValue,
-                        "`.name_repair` can't be `\"%s\"`.\n"
-                        "It must be one of `\"unique\"`, `\"universal\"`, or `\"check_unique\"`",
-                        name_repair_arg_as_c_string(arg));
+  case name_repair_minimal: if (allow_minimal) break;
+  default:
+    if (allow_minimal) {
+      Rf_errorcall(R_NilValue,
+                   "`.name_repair` can't be `\"%s\"`.\n"
+                   "It must be one of `\"unique\"`, `\"universal\"`, `\"check_unique\"`, or `\"minimal\"`.",
+                   name_repair_arg_as_c_string(arg));
+    } else {
+      Rf_errorcall(R_NilValue,
+                   "`.name_repair` can't be `\"%s\"`.\n"
+                   "It must be one of `\"unique\"`, `\"universal\"`, or `\"check_unique\"`.",
+                   name_repair_arg_as_c_string(arg));
+    }
   }
 
   return arg;
