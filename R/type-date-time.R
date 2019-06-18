@@ -64,6 +64,10 @@ new_duration <- function(x = double(), units = c("secs", "mins", "hours", "days"
 vec_proxy.POSIXlt <- function(x, ...) {
   new_data_frame(unclass(x))
 }
+#' @export
+vec_proxy_compare.POSIXlt <- function(x, ..., relax = FALSE) {
+  new_data_frame(vec_data(x), n = length(x))
+}
 
 
 # Print ------------------------------------------------------------------

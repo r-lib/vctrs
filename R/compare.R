@@ -26,17 +26,6 @@ vec_proxy_compare <- function(x, ..., relax = FALSE) {
 }
 
 #' @export
-vec_proxy_compare.data.frame <- function(x, ..., relax = FALSE) {
-  x[] <- lapply(x[], vec_proxy_compare_default, relax = TRUE)
-  x
-}
-
-#' @export
-vec_proxy_compare.POSIXlt <- function(x, ..., relax = FALSE) {
-  new_data_frame(vec_data(x), n = length(x))
-}
-
-#' @export
 vec_proxy_compare.default <- function(x, ..., relax = FALSE) {
   if (vec_dim_n(x) > 1) {
     # The conversion to data frame is only a stopgap, in the long
