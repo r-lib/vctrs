@@ -690,6 +690,7 @@ SEXP strings_empty = NULL;
 SEXP strings_dots = NULL;
 
 SEXP syms_i = NULL;
+SEXP syms_n = NULL;
 SEXP syms_x = NULL;
 SEXP syms_y = NULL;
 SEXP syms_to = NULL;
@@ -811,6 +812,7 @@ void vctrs_init_utils(SEXP ns) {
 
 
   syms_i = Rf_install("i");
+  syms_n = Rf_install("n");
   syms_x = Rf_install("x");
   syms_y = Rf_install("y");
   syms_to = Rf_install("to");

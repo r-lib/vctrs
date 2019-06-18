@@ -177,7 +177,7 @@ vec_index <- function(x, i, ...) {
   vec_assert(out)
 
   i <- vec_as_index(i, vec_size(x), vec_names(x))
-  vec_restore(out[i, ..., drop = FALSE], x, i = i)
+  vec_restore(out[i, ..., drop = FALSE], x, n = length(i))
 }
 
 #' Create a missing vector

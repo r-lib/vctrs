@@ -178,6 +178,7 @@ extern SEXP strings_posixt;
 extern SEXP strings_vctrs_vctr;
 
 extern SEXP syms_i;
+extern SEXP syms_n;
 extern SEXP syms_x;
 extern SEXP syms_y;
 extern SEXP syms_to;
