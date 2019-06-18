@@ -139,16 +139,16 @@ overcoming the limitations of the base <a href='https://www.rdocumentation.org/p
     
     </div>
 
-    <pre class="usage"><span class='fu'>vec_arith</span>(<span class='no'>op</span>, <span class='no'>x</span>, <span class='no'>y</span>)
+    <pre class="usage"><span class='fu'>vec_arith</span>(<span class='no'>op</span>, <span class='no'>x</span>, <span class='no'>y</span>, <span class='no'>...</span>)
 
 <span class='co'># S3 method for default</span>
-<span class='fu'>vec_arith</span>(<span class='no'>op</span>, <span class='no'>x</span>, <span class='no'>y</span>)
+<span class='fu'>vec_arith</span>(<span class='no'>op</span>, <span class='no'>x</span>, <span class='no'>y</span>, <span class='no'>...</span>)
 
 <span class='co'># S3 method for logical</span>
-<span class='fu'>vec_arith</span>(<span class='no'>op</span>, <span class='no'>x</span>, <span class='no'>y</span>)
+<span class='fu'>vec_arith</span>(<span class='no'>op</span>, <span class='no'>x</span>, <span class='no'>y</span>, <span class='no'>...</span>)
 
 <span class='co'># S3 method for numeric</span>
-<span class='fu'>vec_arith</span>(<span class='no'>op</span>, <span class='no'>x</span>, <span class='no'>y</span>)
+<span class='fu'>vec_arith</span>(<span class='no'>op</span>, <span class='no'>x</span>, <span class='no'>y</span>, <span class='no'>...</span>)
 
 <span class='fu'>vec_arith_base</span>(<span class='no'>op</span>, <span class='no'>x</span>, <span class='no'>y</span>)
 
@@ -165,6 +165,10 @@ overcoming the limitations of the base <a href='https://www.rdocumentation.org/p
       <th>x, y</th>
       <td><p>A pair of vectors. For <code>!</code>, unary <code>+</code> and unary <code>-</code>, <code>y</code> will be
 a sentinel object of class <code>MISSING</code>, as created by <code>MISSING()</code>.</p></td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td><p>These dots are for future extensions and must be empty.</p></td>
     </tr>
     </table>
     

@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Defunct equality proxy — vec_proxy_equal • vctrs</title>
+<title>Equality proxy — vec_proxy_equal • vctrs</title>
 
 <!-- jquery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
@@ -30,11 +30,9 @@
 
 
 
-<meta property="og:title" content="Defunct equality proxy — vec_proxy_equal" />
+<meta property="og:title" content="Equality proxy — vec_proxy_equal" />
 
-<meta property="og:description" content="vctrs now uses vec_proxy(). Note that most of the time it's not
-necessary to define a proxy for vector equality.
-Returns a proxy object (i.e. an atomic vector or data frame of atomic
+<meta property="og:description" content="Returns a proxy object (i.e. an atomic vector or data frame of atomic
 vectors). For vctrs, this determines the behaviour of == and
 != (via vec_equal()); unique(), duplicated() (via
 vec_unique() and vec_duplicate_detect()); is.na() and anyNA()
@@ -128,16 +126,14 @@ vec_unique() and vec_duplicate_detect()); is.na() and anyNA()
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Defunct equality proxy</h1>
-    <small class="dont-index">Source: <a href='https://github.com/r-lib/vctrs/blob/master/R/data.R'><code>R/data.R</code></a>, <a href='https://github.com/r-lib/vctrs/blob/master/R/equal.R'><code>R/equal.R</code></a></small>
+    <h1>Equality proxy</h1>
+    <small class="dont-index">Source: <a href='https://github.com/r-lib/vctrs/blob/master/R/equal.R'><code>R/equal.R</code></a></small>
     <div class="hidden name"><code>vec_proxy_equal.Rd</code></div>
     </div>
 
     <div class="ref-description">
     
-    <p>vctrs now uses <code><a href='vec_data.html'>vec_proxy()</a></code>. Note that most of the time it's not
-necessary to define a proxy for vector equality.</p>
-<p>Returns a proxy object (i.e. an atomic vector or data frame of atomic
+    <p>Returns a proxy object (i.e. an atomic vector or data frame of atomic
 vectors). For <a href='new_vctr.html'>vctr</a>s, this determines the behaviour of <code>==</code> and
 <code>!=</code> (via <code><a href='vec_equal.html'>vec_equal()</a></code>); <code><a href='https://www.rdocumentation.org/packages/base/topics/unique'>unique()</a></code>, <code><a href='https://www.rdocumentation.org/packages/base/topics/duplicated'>duplicated()</a></code> (via
 <code><a href='vec_unique.html'>vec_unique()</a></code> and <code><a href='vec_duplicate.html'>vec_duplicate_detect()</a></code>); <code><a href='https://www.rdocumentation.org/packages/base/topics/NA'>is.na()</a></code> and <code><a href='https://www.rdocumentation.org/packages/base/topics/NA'>anyNA()</a></code>
@@ -145,20 +141,18 @@ vectors). For <a href='new_vctr.html'>vctr</a>s, this determines the behaviour o
     
     </div>
 
-    <pre class="usage"><span class='fu'>vec_proxy_equal</span>(<span class='no'>x</span>)
-
-<span class='fu'>vec_proxy_equal</span>(<span class='no'>x</span>)</pre>
+    <pre class="usage"><span class='fu'>vec_proxy_equal</span>(<span class='no'>x</span>, <span class='no'>...</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>x</th>
-      <td><p>A vector.</p></td>
+      <td><p>A vector x.</p></td>
     </tr>
     <tr>
-      <th>x</th>
-      <td><p>A vector x.</p></td>
+      <th>...</th>
+      <td><p>These dots are for future extensions and must be empty.</p></td>
     </tr>
     </table>
     
