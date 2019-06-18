@@ -166,7 +166,7 @@ data.frame(x)
 For optimal display, I recommend also defining an abbreviated type name, which should be 4-5 letters for commonly used vectors. This is used in tibbles and in `str()`:
 
 ```{r}
-vec_ptype_abbr.vctrs_percent <- function(x) {
+vec_ptype_abbr.vctrs_percent <- function(x, ...) {
   "prcnt"
 }
 
@@ -205,8 +205,8 @@ vec_type2.MYCLASS.default <- function(x, y, ..., x_arg = "", y_arg = "") {
 }
 vec_type2.MYCLASS.vctrs_unspecified <- function(x, y, ...) x
 
-vec_cast.MYCLASS <- function(x, to) UseMethod("vec_cast.MYCLASS")
-vec_cast.MYCLASS.default <- function(x, to) vec_default_cast(x, to)
+vec_cast.MYCLASS <- function(x, to, ...) UseMethod("vec_cast.MYCLASS")
+vec_cast.MYCLASS.default <- function(x, to, ...) vec_default_cast(x, to)
 ```
 
 We'll discuss what this boilerplate does in the upcoming sections; just remember you'll always need to copy and paste it when creating a new S3 class.
@@ -258,8 +258,8 @@ vec_ptype(percent(), double(), percent())
 Next we implement explicit casting, again starting with the boilerplate:
 
 ```{r}
-vec_cast.vctrs_percent <- function(x, to) UseMethod("vec_cast.vctrs_percent")
-vec_cast.vctrs_percent.default <- function(x, to) vec_default_cast(x, to)
+vec_cast.vctrs_percent <- function(x, to, ...) UseMethod("vec_cast.vctrs_percent")
+vec_cast.vctrs_percent.default <- function(x, to, ...) vec_default_cast(x, to)
 ```
 ```{r, include = FALSE}
 s3_register("vctrs::vec_cast", "vctrs_percent")
@@ -268,14 +268,14 @@ s3_register("vctrs::vec_cast", "vctrs_percent")
 Then providing a method to coerce a percent to a percent:
 
 ```{r}
-vec_cast.vctrs_percent.vctrs_percent <- function(x, to) x
+vec_cast.vctrs_percent.vctrs_percent <- function(x, to, ...) x
 ```
 
 And then for converting back and forth between doubles. To convert a double to a percent we use the `percent()` helper (not the constructor; this is unvalidated user input). To convert a `percent` to a double, we strip the attributes.
 
 ```{r}
-vec_cast.vctrs_percent.double <- function(x, to) percent(x)
-vec_cast.double.vctrs_percent <- function(x, to) vec_data(x)
+vec_cast.vctrs_percent.double <- function(x, to, ...) percent(x)
+vec_cast.double.vctrs_percent <- function(x, to, ...) vec_data(x)
 ```
 
 Then we can check this works with `vec_cast()`:
@@ -348,7 +348,7 @@ format.vctrs_decimal <- function(x, ...) {
   sprintf(paste0("%-0.", digits(x), "f"), x)
 }
 
-vec_ptype_abbr.vctrs_decimal <- function(x) {
+vec_ptype_abbr.vctrs_decimal <- function(x, ...) {
   paste0("dec")
 }
 
@@ -368,7 +368,7 @@ x[[1]]
 For the sake of exposition, we'll assume that `digits` is an important attribute of the class, and should be included in the full type:
 
 ```{r}
-vec_ptype_full.vctrs_decimal <- function(x) {
+vec_ptype_full.vctrs_decimal <- function(x, ...) {
   paste0("decimal<", digits(x), ">")
 }
 
@@ -384,8 +384,8 @@ vec_type2.vctrs_decimal.default <- function(x, y, ..., x_arg = "", y_arg = "") {
 }
 vec_type2.vctrs_decimal.vctrs_unspecified <- function(x, y, ...) x
 
-vec_cast.vctrs_decimal <- function(x, to) UseMethod("vec_cast.vctrs_decimal")
-vec_cast.vctrs_decimal.default <- function(x, to) vec_default_cast(x, to)
+vec_cast.vctrs_decimal <- function(x, to, ...) UseMethod("vec_cast.vctrs_decimal")
+vec_cast.vctrs_decimal.default <- function(x, to, ...) vec_default_cast(x, to)
 ```
 
 Casting and coercing from one decimal to another requires a little thought as the values of the `digits` attribute might be different, and we need some way to reconcile them. Here I've chosen to chose the maximum of the two; other reasonable options are to take the value from the left-hand side or throw an error.
@@ -407,8 +407,8 @@ Finally, I can implement coercion to and from other types, like doubles. When au
 vec_type2.vctrs_decimal.double <- function(x, y, ...) x
 vec_type2.double.vctrs_decimal <- function(x, y, ...) y
 
-vec_cast.vctrs_decimal.double  <- function(x, to) new_decimal(x, digits = digits(to))
-vec_cast.double.vctrs_decimal  <- function(x, to) vec_data(x)
+vec_cast.vctrs_decimal.double  <- function(x, to, ...) new_decimal(x, digits = digits(to))
+vec_cast.double.vctrs_decimal  <- function(x, to, ...) vec_data(x)
 
 vec_c(decimal(1, digits = 1), pi)
 vec_c(pi, decimal(1, digits = 1))
@@ -559,8 +559,8 @@ format.vctrs_rational <- function(x, ...) {
   out
 }
 
-vec_ptype_abbr.vctrs_rational <- function(x) "rtnl"
-vec_ptype_full.vctrs_rational <- function(x) "rational"
+vec_ptype_abbr.vctrs_rational <- function(x, ...) "rtnl"
+vec_ptype_full.vctrs_rational <- function(x, ...) "rational"
 
 x
 ```
@@ -583,11 +583,11 @@ vec_type2.vctrs_rational.vctrs_rational <- function(x, y, ...) new_rational()
 vec_type2.vctrs_rational.integer <- function(x, y, ...) new_rational()
 vec_type2.integer.vctrs_rational <- function(x, y, ...) new_rational()
 
-vec_cast.vctrs_rational <- function(x, to) UseMethod("vec_cast.vctrs_rational")
-vec_cast.vctrs_rational.default <- function(x, to) vec_default_cast(x, to)
-vec_cast.vctrs_rational.vctrs_rational <- function(x, to) x
-vec_cast.double.vctrs_rational <- function(x, to) field(x, "n") / field(x, "d")
-vec_cast.vctrs_rational.integer <- function(x, to) rational(x, 1)
+vec_cast.vctrs_rational <- function(x, to, ...) UseMethod("vec_cast.vctrs_rational")
+vec_cast.vctrs_rational.default <- function(x, to, ...) vec_default_cast(x, to)
+vec_cast.vctrs_rational.vctrs_rational <- function(x, to, ...) x
+vec_cast.double.vctrs_rational <- function(x, to, ...) field(x, "n") / field(x, "d")
+vec_cast.vctrs_rational.integer <- function(x, to, ...) rational(x, 1)
 
 vec_c(rational(1, 2), 1L, NA)
 ```
@@ -665,7 +665,7 @@ gcd <- function(x, y) {
   ifelse(r, gcd(y, r), y)
 }
 
-vec_proxy_equal.vctrs_rational <- function(x) {
+vec_proxy_equal.vctrs_rational <- function(x, ...) {
   n <- field(x, "n")
   d <- field(x, "d")
   gcd <- gcd(n, d)
@@ -692,7 +692,7 @@ sort(x)
 The easiest fix is to convert the fraction to a decimal and then sort that:
 
 ```{r}
-vec_proxy_compare.vctrs_rational <- function(x) {
+vec_proxy_compare.vctrs_rational <- function(x, ...) {
   field(x, "n") / field(x, "d")
 }
 
@@ -717,8 +717,8 @@ poly <- function(...) {
   new_poly(x)
 }
 
-vec_ptype_full.vctrs_poly <- function(x) "polynomial"
-vec_ptype_abbr.vctrs_poly <- function(x) "poly"
+vec_ptype_full.vctrs_poly <- function(x, ...) "polynomial"
+vec_ptype_abbr.vctrs_poly <- function(x, ...) "poly"
 
 format.vctrs_poly <- function(x, ...) {
   format_one <- function(x) {
@@ -736,7 +736,7 @@ format.vctrs_poly <- function(x, ...) {
   vapply(x, format_one, character(1))
 }
 
-obj_print_data.vctrs_poly <- function(x) {
+obj_print_data.vctrs_poly <- function(x, ...) {
   if (length(x) == 0)
     return()
   print(format(x), quote = FALSE)
@@ -769,7 +769,7 @@ sort(p)
 So we need to define a `vec_proxy_compare()` method:
 
 ```{r}
-vec_proxy_compare.vctrs_poly <- function(x) {
+vec_proxy_compare.vctrs_poly <- function(x, ...) {
   x_raw <- vec_data(x)
   # First figure out the maximum length
   n <- max(vapply(x_raw, length, integer(1)))
@@ -802,10 +802,10 @@ Both generics define the behaviour for multiple functions because `sum.vctrs_vct
 `vec_arith()` uses double dispatch, and needs the following standard boilerplate:
 
 ```{r}
-vec_arith.MYCLASS <- function(op, x, y) {
+vec_arith.MYCLASS <- function(op, x, y, ...) {
   UseMethod("vec_arith.MYCLASS", y)
 }
-vec_arith.MYCLASS.default <- function(op, x, y) {
+vec_arith.MYCLASS.default <- function(op, x, y, ...) {
   stop_incompatible_op(op, x, y)
 }
 ```
@@ -875,10 +875,10 @@ To allow these infix functions to work, we'll need to provide `vec_arith()` gene
 `vec_arith()` is another function that uses double dispatch, so as usual we start with a template.
   
 ```{r}
-vec_arith.vctrs_meter <- function(op, x, y) {
+vec_arith.vctrs_meter <- function(op, x, y, ...) {
   UseMethod("vec_arith.vctrs_meter", y)
 }
-vec_arith.vctrs_meter.default <- function(op, x, y) {
+vec_arith.vctrs_meter.default <- function(op, x, y, ...) {
   stop_incompatible_op(op, x, y)
 }
 ```
@@ -886,7 +886,7 @@ vec_arith.vctrs_meter.default <- function(op, x, y) {
 Then write the method for two meter objects. We use a switch statement to cover the cases we care about, and `stop_incompatible_op()` to throw an informative error message for everything else.
 
 ```{r, error = TRUE}
-vec_arith.vctrs_meter.vctrs_meter <- function(op, x, y) {
+vec_arith.vctrs_meter.vctrs_meter <- function(op, x, y, ...) {
   switch(
     op,
     "+" = ,
@@ -905,7 +905,7 @@ meter(10) * meter(1)
 Next we write the pair of methods for arithmetic with a meter and a number. These are almost identical, but while `meter(10) / 2` makes sense, `2 / meter(10)` does not (as addition and subtraction).
 
 ```{r, error = TRUE}
-vec_arith.vctrs_meter.numeric <- function(op, x, y) {
+vec_arith.vctrs_meter.numeric <- function(op, x, y, ...) {
   switch(
     op,
     "/" = ,
@@ -913,7 +913,7 @@ vec_arith.vctrs_meter.numeric <- function(op, x, y) {
     stop_incompatible_op(op, x, y)
   )
 }
-vec_arith.numeric.vctrs_meter <- function(op, x, y) {
+vec_arith.numeric.vctrs_meter <- function(op, x, y, ...) {
   switch(
     op,
     "*" = new_meter(vec_arith_base(op, x, y)),
@@ -931,7 +931,7 @@ meter(20) + 10
 For completeness, we also need `vec_arith.vctrs_meter.MISSING` for the unary `+` and `-` operators:
 
 ```{r}
-vec_arith.vctrs_meter.MISSING <- function(op, x, y) {
+vec_arith.vctrs_meter.MISSING <- function(op, x, y, ...) {
   switch(op, 
     `-` = x * -1,
     `+` = x,
@@ -952,7 +952,7 @@ This problem wasn't considered in the design of roxygen2, so you have to be quit
 #' @method vec_cast vctrs_percent
 #' @export
 #' @export vec_cast.vctrs_percent
-vec_cast.vctrs_percent <- function(x, to) {
+vec_cast.vctrs_percent <- function(x, to, ...) {
 } 
 ```
 
@@ -961,7 +961,7 @@ You also need to register the individual double-dispatch methods. Again, this is
 ```{r}
 #' @method vec_cast.binned double
 #' @export
-vec_cast.binned.double <- function(x, y) {
+vec_cast.binned.double <- function(x, y, ...) {
 }
 ```
 
