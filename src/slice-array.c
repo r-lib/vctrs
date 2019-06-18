@@ -226,13 +226,12 @@ SEXP vec_slice_shaped(enum vctrs_type type, SEXP x, SEXP index) {
   SEXP strides = PROTECT(vec_strides(info.p_dim, info.shape_n));
   info.p_strides = INTEGER_RO(strides);
 
-  info.out_dim = PROTECT(Rf_allocVector(INTSXP, info.dim_n));
-  int* p_out_dim = INTEGER(info.out_dim);
-  p_out_dim[0] = info.index_n;
-  for (int i = 1; i < info.dim_n; ++i) {
-    p_out_dim[i] = info.p_dim[i];
-  }
+  // `out_dim` has the same shape as `x`, with an altered size
+  // corresponding to the length of the `index`
+  info.out_dim = PROTECT(Rf_shallow_duplicate(dim));
+  INTEGER(info.out_dim)[0] = info.index_n;
 
+  // Initialize `shape_index` to 0
   SEXP shape_index = PROTECT(Rf_allocVector(INTSXP, info.shape_n));
   info.p_shape_index = INTEGER(shape_index);
   for (int i = 0; i < info.shape_n; ++i) {
