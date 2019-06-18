@@ -74,8 +74,9 @@ static SEXP vec_c(SEXP xs, SEXP ptype, enum name_repair_arg name_repair) {
       continue;
     }
 
+    // TODO
     SEXP x = VECTOR_ELT(xs, i);
-    SEXP elt = PROTECT(vec_cast(x, ptype));
+    SEXP elt = PROTECT(vec_cast(x, ptype, args_empty, args_empty));
 
     init_compact_seq(idx_ptr, counter, counter + size);
 

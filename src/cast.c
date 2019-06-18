@@ -209,7 +209,7 @@ SEXP df_as_dataframe(SEXP x, SEXP to) {
     } else {
       --pos; // 1-based index
       ++common_len;
-      col = vec_cast(VECTOR_ELT(x, pos), VECTOR_ELT(to, i));
+      col = vec_cast(VECTOR_ELT(x, pos), VECTOR_ELT(to, i), args_empty, args_empty);
     }
 
     SET_VECTOR_ELT(out, i, col);
@@ -310,7 +310,23 @@ static SEXP vec_cast_switch(SEXP x, SEXP to, bool* lossy) {
   return R_NilValue;
 }
 
-SEXP vec_cast(SEXP x, SEXP to) {
+// [[ register() ]]
+SEXP vctrs_cast(SEXP x, SEXP to, SEXP x_arg_, SEXP to_arg_) {
+  if (!r_is_string(x_arg_)) {
+    Rf_errorcall(R_NilValue, "`x_arg` must be a string");
+  }
+  if (!r_is_string(to_arg_)) {
+    Rf_errorcall(R_NilValue, "`to_arg` must be a string");
+  }
+
+  struct vctrs_arg x_arg = new_wrapper_arg(NULL, r_chr_get_c_string(x_arg_, 0));
+  struct vctrs_arg to_arg = new_wrapper_arg(NULL, r_chr_get_c_string(to_arg_, 0));
+
+  return vec_cast(x, to, &x_arg, &to_arg);
+}
+
+// [[ include("vctrs.h") ]]
+SEXP vec_cast(SEXP x, SEXP to, struct vctrs_arg* x_arg, struct vctrs_arg* to_arg) {
   if (x == R_NilValue || to == R_NilValue) {
     return x;
   }
@@ -323,9 +339,11 @@ SEXP vec_cast(SEXP x, SEXP to) {
   }
 
   if (lossy || out == R_NilValue) {
-    return vctrs_dispatch2(syms_vec_cast_dispatch, fns_vec_cast_dispatch,
+    return vctrs_dispatch4(syms_vec_cast_dispatch, fns_vec_cast_dispatch,
                            syms_x, x,
-                           syms_to, to);
+                           syms_to, to,
+                           syms_x_arg, vctrs_arg(x_arg),
+                           syms_to_arg, vctrs_arg(to_arg));
   }
 
   return out;
@@ -470,7 +488,7 @@ SEXP vec_coercible_cast(SEXP x, SEXP to, struct vctrs_arg* x_arg, struct vctrs_a
   int _left;
   vec_type2(x, to, x_arg, to_arg, &_left);
 
-  return vec_cast(x, to);
+  return vec_cast(x, to, x_arg, to_arg);
 }
 
 // [[ register() ]]
@@ -500,7 +518,8 @@ SEXP vec_cast_common(SEXP xs, SEXP to) {
 
   for (R_len_t i = 0; i < n; ++i) {
     SEXP elt = VECTOR_ELT(xs, i);
-    SET_VECTOR_ELT(out, i, vec_cast(elt, type));
+    // TODO
+    SET_VECTOR_ELT(out, i, vec_cast(elt, type, args_empty, args_empty));
   }
 
   SEXP names = PROTECT(Rf_getAttrib(xs, R_NamesSymbol));

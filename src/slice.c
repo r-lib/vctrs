@@ -355,7 +355,7 @@ static SEXP int_filter_zero(SEXP index, R_len_t n_zero) {
 }
 
 static SEXP dbl_as_index(SEXP i, R_len_t n) {
-  i = PROTECT(vec_cast(i, vctrs_shared_empty_int));
+  i = PROTECT(vec_cast(i, vctrs_shared_empty_int, args_empty, args_empty));
   i = int_as_index(i, n);
 
   UNPROTECT(1);
