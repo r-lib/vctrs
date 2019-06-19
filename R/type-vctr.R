@@ -38,10 +38,9 @@
 #' * `+`, `-`, `/`, `*`, `^`, `%%`, `%/%`, `!`, `&`, and `|` operators
 #'   use [vec_arith()].
 #'
-#' * Mathematical operations including the Summary group generics (`max`,
-#'   `min`, `range`, `prod`, `sum`, `any`, `all`), the Math group generics
-#'   (`abs`, `sign`, etc), `mean()`, `is.nan()`, `is.finite()`, and
-#'   `is.infinite()` use [vec_math()].
+#' * Mathematical operations including the Summary group generics (`prod`,
+#'   `sum`, `any`, `all`), the Math group generics (`abs`, `sign`, etc),
+#'   `mean()`, `is.nan()`, `is.finite()`, and `is.infinite()` use [vec_math()].
 #'
 #' * `dims()`, `dims<-()`, `dimnames()`, `dimnames<-`, `levels()`, and
 #'   `levels<-` methods throw errors.
