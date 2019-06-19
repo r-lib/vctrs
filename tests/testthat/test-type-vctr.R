@@ -424,6 +424,24 @@ test_that("additional subscripts are handled (#269)", {
 
 # summary generics --------------------------------------------------------
 
+test_that("na.rm is forwarded to summary generics", {
+  x <- new_vctr(dbl(1, 2, NA))
+
+  expect_identical(mean(x, na.rm = FALSE), new_vctr(dbl(NA)))
+  expect_identical(mean(x, na.rm = TRUE), new_vctr(1.5))
+
+  expect_identical(min(x, na.rm = FALSE), new_vctr(dbl(NA)))
+  expect_identical(min(x, na.rm = TRUE), new_vctr(1))
+
+  expect_identical(max(x, na.rm = FALSE), new_vctr(dbl(NA)))
+  expect_identical(max(x, na.rm = TRUE), new_vctr(2))
+
+  x <- new_vctr(lgl(TRUE, NA))
+
+  expect_identical(all(x, na.rm = FALSE), new_vctr(lgl(NA)))
+  expect_identical(all(x, na.rm = TRUE), new_vctr(TRUE))
+})
+
 test_that("Summary generics behave identically to base for empty vctrs (#88)", {
   expect_warning(
     expect_identical(

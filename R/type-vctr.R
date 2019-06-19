@@ -462,13 +462,12 @@ Math.vctrs_vctr <- function(x, ...) {
 
 #' @export
 Summary.vctrs_vctr <- function(..., na.rm = FALSE) {
-  x <- vec_c(...)
-  vec_math(.Generic, x, na.rm = TRUE)
+  vec_math(.Generic, vec_c(...), na.rm = na.rm)
 }
 
 #' @export
 mean.vctrs_vctr <- function(x, ..., na.rm = FALSE) {
-  vec_math("mean", x, na.rm = TRUE)
+  vec_math("mean", x, na.rm = na.rm)
 }
 
 #' @export
