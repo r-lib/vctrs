@@ -226,7 +226,7 @@ as the LHS.</p></li>
 <span class='co'># For instance, you can cast a character vector to an integer:</span>
 <span class='fu'><a href='vec_cast.html'>vec_cast</a></span>(<span class='st'>"1"</span>, <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/integer'>integer</a></span>())</div><div class='output co'>#&gt; [1] 1</div><div class='input'>
 <span class='co'># But these types are not coercible:</span>
-<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/try'>try</a></span>(<span class='fu'><a href='vec_type2.html'>vec_type2</a></span>(<span class='st'>"1"</span>, <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/integer'>integer</a></span>()))</div><div class='output co'>#&gt; Error : No common type for &lt;character&gt; and &lt;integer&gt;.
+<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/try'>try</a></span>(<span class='fu'><a href='vec_type2.html'>vec_type2</a></span>(<span class='st'>"1"</span>, <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/integer'>integer</a></span>()))</div><div class='output co'>#&gt; Error : No common type for `x` &lt;character&gt; and `y` &lt;integer&gt;.
 #&gt; Backtrace:
 #&gt; <span style='color: #555555;'>     </span><span>█
 #&gt; </span><span style='color: #555555;'>  1. </span><span>├─base::tryCatch(...)
