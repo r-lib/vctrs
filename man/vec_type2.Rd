@@ -13,7 +13,7 @@
 \usage{
 \method{vec_type2}{tbl_df}(x, y, ...)
 
-vec_type2(x, y, ..., x_arg = "", y_arg = "")
+vec_type2(x, y, ..., x_arg = "x", y_arg = "y")
 
 \method{vec_type2}{logical}(x, y, ...)
 
