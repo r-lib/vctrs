@@ -42,9 +42,7 @@ scoped_rational_class <- function(frame = caller_env()) {
     vec_ptype_full.vctrs_rational = function(x, ...) "rational",
 
     vec_type2.vctrs_rational = function(x, y, ...) UseMethod("vec_type2.vctrs_rational", y),
-    vec_type2.vctrs_rational.default = function(x, y, ..., x_arg = "", y_arg = "") {
-      stop_incompatible_type(x, y, x_arg = x_arg, y_arg = y_arg)
-    },
+    vec_type2.vctrs_rational.default = function(x, y, ...) stop_incompatible_type(x, y, ...),
     vec_type2.vctrs_rational.vctrs_unspecified = function(x, y, ...) x,
     vec_type2.vctrs_rational.vctrs_rational = function(x, y, ...) new_rational(),
     vec_type2.vctrs_rational.integer = function(x, y, ...) new_rational(),

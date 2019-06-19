@@ -33,7 +33,7 @@ vec_type2.integer64 <- function(x, y, ...) {
 }
 #' @method vec_type2.integer64 default
 #' @export
-vec_type2.integer64.default <- function(x, y, ..., x_arg = "", y_arg = "") {
+vec_type2.integer64.default <- function(x, y, ..., x_arg = "x", y_arg = "y") {
   stop_incompatible_type(x, y, x_arg = x_arg, y_arg = y_arg)
 }
 

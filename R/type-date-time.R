@@ -118,7 +118,7 @@ vec_ptype_abbr.difftime <- function(x, ...) {
 vec_type2.Date <- function(x, y, ...) UseMethod("vec_type2.Date", y)
 #' @method vec_type2.Date default
 #' @export
-vec_type2.Date.default <- function(x, y, ..., x_arg = "", y_arg = "") {
+vec_type2.Date.default <- function(x, y, ..., x_arg = "x", y_arg = "y") {
   stop_incompatible_type(x, y, x_arg = x_arg, y_arg = y_arg)
 }
 #' @method vec_type2.Date Date
@@ -132,7 +132,7 @@ vec_type2.Date.Date <- function(x, y, ...) new_date()
 vec_type2.POSIXt <- function(x, y, ...) UseMethod("vec_type2.POSIXt", y)
 #' @method vec_type2.POSIXt default
 #' @export
-vec_type2.POSIXt.default <- function(x, y, ..., x_arg = "", y_arg = "") {
+vec_type2.POSIXt.default <- function(x, y, ..., x_arg = "x", y_arg = "y") {
   stop_incompatible_type(x, y, x_arg = x_arg, y_arg = y_arg)
 }
 #' @method vec_type2.POSIXt Date
@@ -152,7 +152,7 @@ vec_type2.POSIXt.POSIXt <- function(x, y, ...) new_datetime(tzone = tzone_union(
 vec_type2.difftime <- function(x, y, ...) UseMethod("vec_type2.difftime", y)
 #' @method vec_type2.difftime default
 #' @export
-vec_type2.difftime.default <- function(x, y, ..., x_arg = "", y_arg = "") {
+vec_type2.difftime.default <- function(x, y, ..., x_arg = "x", y_arg = "y") {
   stop_incompatible_type(x, y, x_arg = x_arg, y_arg = y_arg)
 }
 #' @method vec_type2.difftime difftime
