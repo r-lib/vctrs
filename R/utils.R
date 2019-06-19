@@ -143,11 +143,3 @@ paste_line <- function (...) {
 has_dim <- function(x) {
   !is.null(attr(x, "dim"))
 }
-
-tag_push <- function(tag, sep, suffix) {
-  if (nzchar(tag)) {
-    paste0(tag, sep, suffix)
-  } else {
-    suffix
-  }
-}
