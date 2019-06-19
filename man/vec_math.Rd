@@ -5,12 +5,12 @@
 \alias{vec_math_base}
 \title{Mathematical operations}
 \usage{
-vec_math(fun, x, ...)
+vec_math(fn, x, ...)
 
-vec_math_base(fun, x, ...)
+vec_math_base(fn, x, ...)
 }
 \arguments{
-\item{fun}{An mathematical function as a string}
+\item{fn}{An mathematical function as a string}
 
 \item{x}{A vector}
 
@@ -24,7 +24,7 @@ mathematical functions like \code{mean()}.
 }
 \details{
 \code{vec_math_base()} is provided as a convenience for writing methods. It
-calls the base \code{fun} on the underlying \code{\link[=vec_data]{vec_data()}}.
+calls the base \code{fn} on the underlying \code{\link[=vec_data]{vec_data()}}.
 }
 \section{Included functions}{
 

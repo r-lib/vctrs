@@ -149,8 +149,8 @@ vec_cast.factor.default <- function(x, to, ..., x_arg = "", to_arg = "") {
 # Math and arithmetic -----------------------------------------------------
 
 #' @export
-vec_math.factor <- function(fun, x, ...) {
-  stop_unsupported(x, fun)
+vec_math.factor <- function(fn, x, ...) {
+  stop_unsupported(x, fn)
 }
 
 #' @export

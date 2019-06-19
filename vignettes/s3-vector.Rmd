@@ -454,12 +454,12 @@ x
 We'll also override `sum()` and `mean()` to use the attribute. This is easiest to do with `vec_math()`, which you'll learn about later.
 
 ```{r}
-vec_math.vctrs_cached_sum <- function(fun, x, ...) {
+vec_math.vctrs_cached_sum <- function(fn, x, ...) {
   cat("Using cache\n")
-  switch(fun,
+  switch(fn,
     sum = attr(x, "sum"),
     mean = attr(x, "sum") / length(x),
-    vec_math_base(fun, x, ...)
+    vec_math_base(fn, x, ...)
   )
 }
 
@@ -789,7 +789,7 @@ sort(poly(1, c(1, 0, 0), c(1, 0)))
 
 vctrs also provides two mathematical generics that allow you to define a broad swath of mathematical behaviour at once:
 
-*  `vec_math(fun, x, ...)` specifies the behaviour of mathematical functions 
+*  `vec_math(fn, x, ...)` specifies the behaviour of mathematical functions 
    like `abs()`, `sum()`, and `mean()`. (See `?vec_math()` for the complete
    list.)
    
@@ -815,11 +815,11 @@ vec_arith.MYCLASS.default <- function(op, x, y, ...) {
 I showed an example of `vec_math()` to define `sum()` and `mean()` methods `cached_sum`. Now let's talk about exactly how it works. Most `vec_math()` functions will have a similar form. You use a switch statement to handle the methods that you care about, and fall back to `vec_math_base()` for those that you don't care about.
 
 ```{r}
-vec_math.vctrs_cached_sum <- function(fun, x, ...) {
-  switch(fun,
+vec_math.vctrs_cached_sum <- function(fn, x, ...) {
+  switch(fn,
     sum = attr(x, "sum"),
     mean = attr(x, "sum") / length(x),
-    vec_math_base(fun, x, ...)
+    vec_math_base(fn, x, ...)
   )
 }
 ```

@@ -76,7 +76,7 @@ To make these ideas concrete, let's apply them to a few base functions:
     data frames (it iterates over the columns).
     
 1.  `vapply()` is type-stable version of `sapply()` because 
-    `vec_ptype(vapply(x, fun, template))` is always `vec_ptype(template)`.  
+    `vec_ptype(vapply(x, fn, template))` is always `vec_ptype(template)`.  
     It is size-unstable for the same reasons as `sapply()`.
 
 1.  `c()` is type-unstable because `c(x, y)` doesn't always the same type 
