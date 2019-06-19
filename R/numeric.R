@@ -1,8 +1,8 @@
 #' Mathematical operations
 #'
 #' This generic provides a common dispatch mechanism for all regular unary
-#' mathematical functions. It is used as a common wrapper around the Summary
-#' group generics, the Math group generics, and a handful of other
+#' mathematical functions. It is used as a common wrapper around many of the
+#' Summary group generics, the Math group generics, and a handful of other
 #' mathematical functions like `mean()`.
 #'
 #' `vec_math_base()` is provided as a convenience for writing methods. It
@@ -11,7 +11,7 @@
 #' @section Included functions:
 #'
 #' * From the [Summary] group generic:
-#'   `max()`, `min()`, `range()`, `prod()`, `sum()`, `any()`, `all()`.
+#'   `prod()`, `sum()`, `any()`, `all()`.
 #'
 #' * From the [Math] group generic:
 #'   `abs()`, `sign()`, `sqrt()`, `ceiling()`, `floor()`, `trunc()`, `cummax()`,
