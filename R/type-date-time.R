@@ -512,10 +512,10 @@ units_union <- function(x, y) {
 # Math --------------------------------------------------------------------
 
 #' @export
-vec_math.Date <- function(fun, x, ...) {
-  stop_unsupported(x, fun)
+vec_math.Date <- function(.fn, .x, ...) {
+  stop_unsupported(.x, .fn)
 }
 #' @export
-vec_math.POSIXct <- function(fun, x, ...) {
-  stop_unsupported(x, fun)
+vec_math.POSIXct <- function(.fn, .x, ...) {
+  stop_unsupported(.x, .fn)
 }

@@ -155,7 +155,7 @@ test_that("operators remapped", {
 
 test_that("math functions overridden", {
   scoped_global_bindings(
-    vec_math.bizzaro = function(fun, x, ...) vec_math_base(fun, 2L)
+    vec_math.bizzaro = function(fn, x, ...) vec_math_base(fn, 2L)
   )
   x <- new_vctr(c(1, NA), class = "bizzaro")
 
