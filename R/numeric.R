@@ -42,15 +42,22 @@ vec_math <- function(fun, x, ...) {
 
 #' @export
 vec_math.default <- function(fun, x, ...) {
-  if (is_double(x)) {
-    vec_restore(vec_math_base(fun, x, ...), x)
-  } else if (fun %in% c("any", "all") && is_logical(x)) {
-    vec_restore(vec_math_base(fun, x, ...), x)
-  } else {
-    # nocov start
+  if (!is_double(x) && !is_logical_dispatch(fun, x)) {
     stop_unimplemented(x, "vec_math")
-    # nocov end
   }
+
+  out <- vec_math_base(fun, x, ...)
+
+  # Don't restore output of logical predicates like `any()`,
+  # `is.finite()`, or `is.nan()`
+  if (is_double(out)) {
+    out <- vec_restore(out, x)
+  }
+
+  out
+}
+is_logical_dispatch <- function(fun, x) {
+  is_logical(x) && fun %in% c("any", "all")
 }
 
 #' @export
