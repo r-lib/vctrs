@@ -1,5 +1,9 @@
 # vctrs 0.1.0.9000
 
+* Predicate generics now consistently return logical vectors when
+  passed a `vctrs_vctr` class. They used to restore the output to
+  their input type (#251).
+
 * `vec_c()`, `vec_rbind()`, and `vec_cbind()` gain a `.name_repair`
   argument (#227, #229).
 

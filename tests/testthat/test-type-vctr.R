@@ -438,8 +438,8 @@ test_that("na.rm is forwarded to summary generics", {
 
   x <- new_vctr(lgl(TRUE, NA))
 
-  expect_identical(all(x, na.rm = FALSE), new_vctr(lgl(NA)))
-  expect_identical(all(x, na.rm = TRUE), new_vctr(TRUE))
+  expect_identical(all(x, na.rm = FALSE), lgl(NA))
+  expect_identical(all(x, na.rm = TRUE), TRUE)
 })
 
 test_that("Summary generics behave identically to base for empty vctrs (#88)", {
@@ -462,16 +462,6 @@ test_that("Summary generics behave identically to base for empty vctrs (#88)", {
       new_vctr(range(numeric())),
       range(new_vctr(numeric()))
     )
-  )
-
-  expect_identical(
-    new_vctr(any(logical())),
-    any(new_vctr(logical()))
-  )
-
-  expect_identical(
-    new_vctr(all(logical())),
-    all(new_vctr(logical()))
   )
 
   expect_identical(
@@ -508,4 +498,15 @@ test_that("Summary generics behave identically to base for empty vctrs (#88)", {
     new_vctr(mean(numeric())),
     mean(new_vctr(numeric()))
   )
+})
+
+test_that("generic predicates return logical vectors (#251)", {
+  x <- new_vctr(c(1, 2))
+  expect_identical(is.finite(x), c(TRUE, TRUE))
+  expect_identical(is.infinite(x), c(FALSE, FALSE))
+  expect_identical(is.nan(x), c(FALSE, FALSE))
+
+  x <- new_vctr(TRUE)
+  expect_identical(any(x), TRUE)
+  expect_identical(all(x), TRUE)
 })
