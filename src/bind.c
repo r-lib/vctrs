@@ -118,27 +118,7 @@ static SEXP vec_rbind(SEXP xs, SEXP ptype, SEXP id, enum name_repair_arg name_re
   }
 
   if (id != R_NilValue) {
-    SEXP out_names = PROTECT(r_names(out));
-    R_len_t id_pos = r_chr_find(out_names, id);
-
-    if (id_pos < 0) {
-      R_len_t ncol = Rf_length(out);
-
-      SEXP tmp = PROTECT_N(r_resize(out, ncol + 1), &nprot);
-      Rf_copyMostAttrib(out, tmp);
-
-      out = tmp;
-      SEXP out_names = PROTECT(r_names(out));
-
-      SET_VECTOR_ELT(out, ncol, id_col);
-      SET_STRING_ELT(out_names, ncol, id);
-
-      UNPROTECT(1);
-    } else {
-      SET_VECTOR_ELT(out, id_pos, id_col);
-    }
-
-    UNPROTECT(1);
+    out = df_poke_at(out, id, id_col);
   }
 
   UNPROTECT(4 + nprot);
