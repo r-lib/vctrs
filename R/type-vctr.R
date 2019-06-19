@@ -454,21 +454,7 @@ max.vctrs_vctr <- function(x, ..., na.rm = FALSE) {
 
 #' @export
 range.vctrs_vctr <- function(x, ..., na.rm = FALSE) {
-  if (vec_is_empty(x)) {
-    return(vec_cast(c(Inf, -Inf), x))
-  }
-
-  rank <- xtfrm(x)
-
-  if (isTRUE(na.rm)) {
-    idx_min <- which.min(rank)
-    idx_max <- which.max(rank)
-  } else {
-    idx_min <- which(vec_equal(rank, min(rank), na_equal = TRUE))
-    idx_max <- which(vec_equal(rank, max(rank), na_equal = TRUE))
-  }
-
-  c(x[[idx_min]], x[[idx_max]])
+  c(min(x, na.rm = na.rm), max(x, na.rm = na.rm))
 }
 
 # Numeric -----------------------------------------------------------------
