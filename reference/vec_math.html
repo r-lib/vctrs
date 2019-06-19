@@ -33,8 +33,8 @@
 <meta property="og:title" content="Mathematical operations — vec_math" />
 
 <meta property="og:description" content="This generic provides a common dispatch mechanism for all regular unary
-mathematical functions. It is used as a common wrapper around the Summary
-group generics, the Math group generics, and a handful of other
+mathematical functions. It is used as a common wrapper around many of the
+Summary group generics, the Math group generics, and a handful of other
 mathematical functions like mean()." />
 
 <meta property="og:image" content="https://vctrs.r-lib.org/logo.png" />
@@ -133,8 +133,8 @@ mathematical functions like mean()." />
     <div class="ref-description">
     
     <p>This generic provides a common dispatch mechanism for all regular unary
-mathematical functions. It is used as a common wrapper around the Summary
-group generics, the Math group generics, and a handful of other
+mathematical functions. It is used as a common wrapper around many of the
+Summary group generics, the Math group generics, and a handful of other
 mathematical functions like <code><a href='https://www.rdocumentation.org/packages/base/topics/mean'>mean()</a></code>.</p>
     
     </div>
@@ -163,14 +163,14 @@ mathematical functions like <code><a href='https://www.rdocumentation.org/packag
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
     <p><code>vec_math_base()</code> is provided as a convenience for writing methods. It
-calls the base <code>fn</code> on the underlying <code><a href='vec_data.html'>vec_data()</a></code>.</p>
+calls the base <code>.fn</code> on the underlying <code><a href='vec_data.html'>vec_data()</a></code>.</p>
     
     <h2 class="hasAnchor" id="included-functions"><a class="anchor" href="#included-functions"></a>Included functions</h2>
 
     
     <ul>
 <li><p>From the <a href='https://www.rdocumentation.org/packages/base/topics/groupGeneric'>Summary</a> group generic:
-<code><a href='https://www.rdocumentation.org/packages/base/topics/Extremes'>max()</a></code>, <code><a href='https://www.rdocumentation.org/packages/base/topics/Extremes'>min()</a></code>, <code><a href='https://www.rdocumentation.org/packages/base/topics/range'>range()</a></code>, <code>prod</code>, <code><a href='https://www.rdocumentation.org/packages/base/topics/sum'>sum()</a></code>, <code><a href='https://www.rdocumentation.org/packages/base/topics/any'>any()</a></code>, <code><a href='https://www.rdocumentation.org/packages/base/topics/all'>all()</a></code>.</p></li>
+<code><a href='https://www.rdocumentation.org/packages/base/topics/prod'>prod()</a></code>, <code><a href='https://www.rdocumentation.org/packages/base/topics/sum'>sum()</a></code>, <code><a href='https://www.rdocumentation.org/packages/base/topics/any'>any()</a></code>, <code><a href='https://www.rdocumentation.org/packages/base/topics/all'>all()</a></code>.</p></li>
 <li><p>From the <a href='https://www.rdocumentation.org/packages/base/topics/groupGeneric'>Math</a> group generic:
 <code><a href='https://www.rdocumentation.org/packages/base/topics/MathFun'>abs()</a></code>, <code><a href='https://www.rdocumentation.org/packages/base/topics/sign'>sign()</a></code>, <code><a href='https://www.rdocumentation.org/packages/base/topics/MathFun'>sqrt()</a></code>, <code><a href='https://www.rdocumentation.org/packages/base/topics/Round'>ceiling()</a></code>, <code><a href='https://www.rdocumentation.org/packages/base/topics/Round'>floor()</a></code>, <code><a href='https://www.rdocumentation.org/packages/base/topics/Round'>trunc()</a></code>, <code><a href='https://www.rdocumentation.org/packages/base/topics/cumsum'>cummax()</a></code>,
 <code><a href='https://www.rdocumentation.org/packages/base/topics/cumsum'>cummin()</a></code>, <code><a href='https://www.rdocumentation.org/packages/base/topics/cumsum'>cumprod()</a></code>, <code><a href='https://www.rdocumentation.org/packages/base/topics/cumsum'>cumsum()</a></code>, <code><a href='https://www.rdocumentation.org/packages/base/topics/Log'>log()</a></code>, <code><a href='https://www.rdocumentation.org/packages/base/topics/Log'>log10()</a></code>, <code><a href='https://www.rdocumentation.org/packages/base/topics/Log'>log2()</a></code>,
