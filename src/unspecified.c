@@ -10,7 +10,7 @@ SEXP vctrs_shared_empty_uns = NULL;
 SEXP vec_unspecified(R_len_t n) {
   SEXP out = PROTECT(Rf_allocVector(LGLSXP, n));
 
-  r_lgl_fill(out, NA_LOGICAL);
+  r_lgl_fill(out, NA_LOGICAL, n);
   SET_ATTRIB(out, unspecified_attrib);
   SET_OBJECT(out, 1);
 

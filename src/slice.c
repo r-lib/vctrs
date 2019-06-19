@@ -254,7 +254,7 @@ SEXP vec_slice(SEXP x, SEXP index) {
 SEXP vec_na(SEXP x, R_len_t n) {
   // FIXME: Use ALTREP to avoid allocation of index vector
   SEXP i = PROTECT(Rf_allocVector(INTSXP, n));
-  r_int_fill(i, NA_INTEGER);
+  r_int_fill(i, NA_INTEGER, n);
 
   SEXP out = vec_slice_impl(x, i);
 
@@ -303,7 +303,7 @@ static SEXP int_invert_index(SEXP index, R_len_t n) {
   R_len_t index_n = Rf_length(index);
 
   SEXP sel = PROTECT(Rf_allocVector(LGLSXP, n));
-  r_lgl_fill(sel, 1);
+  r_lgl_fill(sel, 1, n);
 
   int* sel_data = LOGICAL(sel);
 
@@ -382,12 +382,12 @@ static SEXP lgl_as_index(SEXP i, R_len_t n) {
     int elt = LOGICAL(i)[0];
     if (elt == NA_LOGICAL) {
       SEXP out = PROTECT(Rf_allocVector(INTSXP, n));
-      r_int_fill(out, NA_INTEGER);
+      r_int_fill(out, NA_INTEGER, n);
       UNPROTECT(1);
       return out;
     } else if (elt) {
       SEXP out = PROTECT(Rf_allocVector(INTSXP, n));
-      r_int_fill_seq(out, 1);
+      r_int_fill_seq(out, 1, n);
       UNPROTECT(1);
       return out;
     } else {

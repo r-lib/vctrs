@@ -342,24 +342,22 @@ SEXP r_lgl_which(SEXP x, bool na_propagate) {
 
 
 #define FILL(CTYPE, DEREF)                      \
-  R_len_t n = Rf_length(x);                     \
   CTYPE* data = DEREF(x);                       \
                                                 \
   for (R_len_t i = 0; i < n; ++i, ++data)       \
     *data = value
 
-void r_lgl_fill(SEXP x, int value) {
+void r_lgl_fill(SEXP x, int value, R_len_t n) {
   FILL(int, LOGICAL);
 }
-void r_int_fill(SEXP x, int value) {
+void r_int_fill(SEXP x, int value, R_len_t n) {
   FILL(int, INTEGER);
 }
 
 #undef FILL
 
 
-void r_int_fill_seq(SEXP x, int start) {
-  R_len_t n = Rf_length(x);
+void r_int_fill_seq(SEXP x, int start, R_len_t n) {
   int* data = INTEGER(x);
 
   for (R_len_t i = 0; i < n; ++i, ++data, ++start) {
@@ -374,8 +372,7 @@ SEXP r_seq(R_len_t from, R_len_t to) {
   }
 
   SEXP seq = PROTECT(Rf_allocVector(INTSXP, n));
-
-  r_int_fill_seq(seq, from);
+  r_int_fill_seq(seq, from, n);
 
   UNPROTECT(1);
   return seq;

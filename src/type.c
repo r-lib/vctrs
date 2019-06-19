@@ -55,8 +55,9 @@ static SEXP lgl_type(SEXP x) {
 SEXP vec_type_finalise(SEXP x) {
   if (OBJECT(x)) {
     if (vec_is_unspecified(x)) {
-      SEXP out = PROTECT(Rf_allocVector(LGLSXP, Rf_length(x)));
-      r_lgl_fill(out, NA_LOGICAL);
+      R_len_t n = Rf_length(x);
+      SEXP out = PROTECT(Rf_allocVector(LGLSXP, n));
+      r_lgl_fill(out, NA_LOGICAL, n);
       UNPROTECT(1);
       return out;
     }
