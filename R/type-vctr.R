@@ -13,7 +13,7 @@
 #'
 #' * `[[` and `[` use `NextMethod()` dispatch to the underlying base function,
 #'    then restore attributes with `vec_restore()`.
-#'    `rep()` and `length<-()` work similarly.
+#'    `rep()` and `length<-` work similarly.
 #'
 #' * `[[<-` and `[<-` cast `value` to same type as `x`, then call
 #'   `NextMethod()`.
@@ -43,8 +43,8 @@
 #'   etc), `mean()`, `is.nan()`, `is.finite()`, and `is.infinite()`
 #'   use [vec_math()].
 #'
-#' * `dims()`, `dims<-()`, `dimnames()`, `dimnames<-()`, `levels()`, and
-#'   `levels<-()` methods throw errors.
+#' * `dims()`, `dims<-`, `dimnames()`, `dimnames<-`, `levels()`, and
+#'   `levels<-` methods throw errors.
 #'
 #' @param .data Foundation of class. Must be a vector
 #' @param ... Name-value pairs defining attributes

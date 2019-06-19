@@ -29,7 +29,7 @@ you as they've been carefully planned to be internally consistent.
 \itemize{
 \item \code{[[} and \code{[} use \code{NextMethod()} dispatch to the underlying base function,
 then restore attributes with \code{vec_restore()}.
-\code{rep()} and \code{length<-()} work similarly.
+\code{rep()} and \code{length<-} work similarly.
 \item \code{[[<-} and \code{[<-} cast \code{value} to same type as \code{x}, then call
 \code{NextMethod()}.
 \item \code{as.logical()}, \code{as.integer()}, \code{as.numeric()}, \code{as.character()},
@@ -51,8 +51,8 @@ use \code{\link[=vec_arith]{vec_arith()}}.
 \code{sum()}, \code{any()}, \code{all()}), the Math group generics (\code{abs()}, \code{sign()},
 etc), \code{mean()}, \code{is.nan()}, \code{is.finite()}, and \code{is.infinite()}
 use \code{\link[=vec_math]{vec_math()}}.
-\item \code{dims()}, \code{dims<-()}, \code{dimnames()}, \code{dimnames<-()}, \code{levels()}, and
-\code{levels<-()} methods throw errors.
+\item \code{dims()}, \code{dims<-}, \code{dimnames()}, \code{dimnames<-}, \code{levels()}, and
+\code{levels<-} methods throw errors.
 }
 }
 
