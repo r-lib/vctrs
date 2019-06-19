@@ -1,5 +1,10 @@
 # vctrs 0.1.0.9000
 
+* New `.names_to` parameter for `vec_rbind()`. If supplied, this
+  should be the name of a column where the names of the inputs are
+  copied. This is similar to the `.id` parameter of
+  `dplyr::bind_rows()`.
+
 * Predicate generics now consistently return logical vectors when
   passed a `vctrs_vctr` class. They used to restore the output to
   their input type (#251).

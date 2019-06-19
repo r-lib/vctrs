@@ -36,10 +36,10 @@
 #'
 #'   `NULL` inputs are silently ignored. Empty (e.g. zero row) inputs
 #'   will not appear in the output, but will affect the derived `.ptype`.
-#' @param .id Optionally, the name of an identifier column. The
-#'   identifying values are taken from the names supplied in `...`,
-#'   and a column is added to the data frame if necessary. If
-#'   supplied, `...` must be named.
+#' @param .names_to Optionally, the name of a column where the names
+#'   of `...` arguments are copied. These names are useful to identify
+#'   which row comes from which input. If supplied, `...` must be
+#'   named.
 #' @param .name_repair One of `"unique"`, `"universal"`, or
 #'   `"check_unique"`. See [vec_as_names()] for the meaning of these
 #'   options.
@@ -125,9 +125,9 @@ NULL
 #' @rdname vec_bind
 vec_rbind <- function(...,
                       .ptype = NULL,
-                      .id = NULL,
+                      .names_to = NULL,
                       .name_repair = c("unique", "universal", "check_unique")) {
-  .External2(vctrs_rbind, .ptype, .id, .name_repair)
+  .External2(vctrs_rbind, .ptype, .names_to, .name_repair)
 }
 vec_rbind <- fn_inline_formals(vec_rbind, ".name_repair")
 
