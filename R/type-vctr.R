@@ -32,8 +32,8 @@
 #' * `==`, `!=`, `unique()`, `anyDuplicated()`, and `is.na()` use
 #'   [vec_proxy()].
 #'
-#' * `<`, `<=`, `>=`, `>`, `min()`, `max()`, `median()`, `quantile()`,
-#'   and `xtfrm()` methods use [vec_proxy_compare()].
+#' * `<`, `<=`, `>=`, `>`, `min()`, `max()`, `range()`, `median()`,
+#'   `quantile()`, and `xtfrm()` methods use [vec_proxy_compare()].
 #'
 #' * `+`, `-`, `/`, `*`, `^`, `%%`, `%/%`, `!`, `&`, and `|` operators
 #'   use [vec_arith()].

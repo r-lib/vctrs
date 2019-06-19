@@ -43,8 +43,8 @@ behavior in a package, import and re-export the generic of interest
 from \code{generics}.
 \item \code{==}, \code{!=}, \code{unique()}, \code{anyDuplicated()}, and \code{is.na()} use
 \code{\link[=vec_proxy]{vec_proxy()}}.
-\item \code{<}, \code{<=}, \code{>=}, \code{>}, \code{min()}, \code{max()}, \code{median()}, \code{quantile()},
-and \code{xtfrm()} methods use \code{\link[=vec_proxy_compare]{vec_proxy_compare()}}.
+\item \code{<}, \code{<=}, \code{>=}, \code{>}, \code{min()}, \code{max()}, \code{range()}, \code{median()},
+\code{quantile()}, and \code{xtfrm()} methods use \code{\link[=vec_proxy_compare]{vec_proxy_compare()}}.
 \item \code{+}, \code{-}, \code{/}, \code{*}, \code{^}, \code{\%\%}, \code{\%/\%}, \code{!}, \code{&}, and \code{|} operators
 use \code{\link[=vec_arith]{vec_arith()}}.
 \item Mathematical operations including the Summary group generics (\code{max},
