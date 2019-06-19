@@ -52,7 +52,7 @@ static SEXP vec_c(SEXP xs, SEXP ptype, enum name_repair_arg name_repair) {
   PROTECT_INDEX out_pi;
   SEXP out = vec_na(ptype, out_size);
   PROTECT_WITH_INDEX(out, &out_pi);
-  out = vec_proxy(out);
+  out = vctrs_vec_proxy(out);
   REPROTECT(out, out_pi);
 
   SEXP idx = PROTECT(compact_seq(0, 0));
@@ -82,7 +82,7 @@ static SEXP vec_c(SEXP xs, SEXP ptype, enum name_repair_arg name_repair) {
 
     if (is_shaped) {
       SEXP idx = PROTECT(r_seq(counter + 1, counter + size + 1));
-      out = vec_assign(out, idx, elt);
+      out = vctrs_vec_assign(out, idx, elt);
       REPROTECT(out, out_pi);
       UNPROTECT(1);
     } else {
@@ -91,7 +91,7 @@ static SEXP vec_c(SEXP xs, SEXP ptype, enum name_repair_arg name_repair) {
 
     if (has_names) {
       SEXP outer = xs_names == R_NilValue ? R_NilValue : STRING_ELT(xs_names, i);
-      SEXP x_nms = outer_names(PROTECT(vec_names(x)), outer, size);
+      SEXP x_nms = outer_names(PROTECT(vctrs_vec_names(x)), outer, size);
       if (x_nms != R_NilValue) {
         vec_assign_impl(out_names, idx, x_nms, false);
       }
@@ -115,7 +115,7 @@ static SEXP vec_c(SEXP xs, SEXP ptype, enum name_repair_arg name_repair) {
     UNPROTECT(1);
   }
 
-  out = vec_restore(out, ptype, R_NilValue);
+  out = vctrs_vec_restore(out, ptype, R_NilValue);
 
   UNPROTECT(6);
   return out;
@@ -127,7 +127,7 @@ static bool list_has_inner_names(SEXP xs) {
 
   for (R_len_t i = 0; i < n; ++i) {
     SEXP elt = VECTOR_ELT(xs, i);
-    if (vec_names(elt) != R_NilValue) {
+    if (vctrs_vec_names(elt) != R_NilValue) {
       return true;
     }
   }

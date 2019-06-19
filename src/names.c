@@ -48,7 +48,7 @@ SEXP vec_validate_unique_names(SEXP names) {
 
 
 // [[ register(); include("vctrs.h") ]]
-SEXP vec_names(SEXP x) {
+SEXP vctrs_vec_names(SEXP x) {
   if (OBJECT(x) && Rf_inherits(x, "data.frame")) {
     return R_NilValue;
   }
@@ -107,7 +107,7 @@ SEXP vctrs_as_minimal_names(SEXP names) {
 
 // [[ register() ]]
 SEXP vctrs_minimal_names(SEXP x) {
-  SEXP names = PROTECT(vec_names(x));
+  SEXP names = PROTECT(vctrs_vec_names(x));
 
   if (names == R_NilValue) {
     names = Rf_allocVector(STRSXP, vec_size(x));

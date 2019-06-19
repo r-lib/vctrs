@@ -30,7 +30,7 @@ extern SEXP vctrs_compare(SEXP, SEXP, SEXP);
 extern SEXP vctrs_match(SEXP, SEXP);
 extern SEXP vctrs_duplicated_any(SEXP);
 extern SEXP vctrs_size(SEXP);
-extern SEXP vec_dim(SEXP x);
+extern SEXP vctrs_vec_dim(SEXP x);
 extern SEXP vctrs_dim_n(SEXP x);
 extern SEXP vctrs_is_unspecified(SEXP);
 extern SEXP vctrs_typeof(SEXP, SEXP);
@@ -40,16 +40,16 @@ extern SEXP vctrs_typeof2(SEXP, SEXP);
 extern SEXP vctrs_cast(SEXP, SEXP, SEXP, SEXP);
 extern SEXP vctrs_as_index(SEXP, SEXP, SEXP);
 extern SEXP vctrs_slice(SEXP, SEXP);
-extern SEXP vec_restore(SEXP, SEXP, SEXP);
-extern SEXP vec_restore_default(SEXP, SEXP);
-extern SEXP vec_proxy(SEXP);
+extern SEXP vctrs_vec_restore(SEXP, SEXP, SEXP);
+extern SEXP vctrs_vec_restore_default(SEXP, SEXP);
+extern SEXP vctrs_vec_proxy(SEXP);
 extern SEXP vctrs_unspecified(SEXP);
-extern SEXP vec_type(SEXP);
-extern SEXP vec_type_finalise(SEXP);
+extern SEXP vctrs_vec_type(SEXP);
+extern SEXP vctrs_vec_type_finalise(SEXP);
 extern SEXP vctrs_minimal_names(SEXP);
 extern SEXP vctrs_unique_names(SEXP, SEXP);
 extern SEXP vctrs_as_minimal_names(SEXP);
-extern SEXP vec_names(SEXP);
+extern SEXP vctrs_vec_names(SEXP);
 extern SEXP vctrs_is_unique_names(SEXP);
 extern SEXP vctrs_as_unique_names(SEXP, SEXP);
 extern SEXP vctrs_df_as_dataframe(SEXP, SEXP, SEXP, SEXP);
@@ -60,7 +60,7 @@ extern SEXP vctrs_class_type(SEXP);
 extern SEXP vctrs_df_restore(SEXP, SEXP, SEXP);
 extern SEXP vctrs_recycle(SEXP, SEXP);
 extern SEXP vctrs_coercible_cast(SEXP, SEXP, SEXP, SEXP);
-extern SEXP vec_assign(SEXP, SEXP, SEXP);
+extern SEXP vctrs_vec_assign(SEXP, SEXP, SEXP);
 extern SEXP vctrs_set_attributes(SEXP, SEXP);
 extern SEXP vctrs_as_df_row(SEXP, SEXP);
 extern SEXP vctrs_outer_names(SEXP, SEXP, SEXP);
@@ -89,7 +89,7 @@ static const R_CallMethodDef CallEntries[] = {
   {"vctrs_id",                         (DL_FUNC) &vctrs_id, 1},
   {"vctrs_n_distinct",                 (DL_FUNC) &vctrs_n_distinct, 1},
   {"vctrs_size",                       (DL_FUNC) &vctrs_size, 1},
-  {"vctrs_dim",                        (DL_FUNC) &vec_dim, 1},
+  {"vctrs_dim",                        (DL_FUNC) &vctrs_vec_dim, 1},
   {"vctrs_dim_n",                      (DL_FUNC) &vctrs_dim_n, 1},
   {"vctrs_is_unspecified",             (DL_FUNC) &vctrs_is_unspecified, 1},
   {"vctrs_equal",                      (DL_FUNC) &vctrs_equal, 3},
@@ -104,16 +104,16 @@ static const R_CallMethodDef CallEntries[] = {
   {"vctrs_cast",                       (DL_FUNC) &vctrs_cast, 4},
   {"vctrs_as_index",                   (DL_FUNC) &vctrs_as_index, 3},
   {"vctrs_slice",                      (DL_FUNC) &vctrs_slice, 2},
-  {"vctrs_restore",                    (DL_FUNC) &vec_restore, 3},
-  {"vctrs_restore_default",            (DL_FUNC) &vec_restore_default, 2},
-  {"vctrs_proxy",                      (DL_FUNC) &vec_proxy, 1},
+  {"vctrs_restore",                    (DL_FUNC) &vctrs_vec_restore, 3},
+  {"vctrs_restore_default",            (DL_FUNC) &vctrs_vec_restore_default, 2},
+  {"vctrs_proxy",                      (DL_FUNC) &vctrs_vec_proxy, 1},
   {"vctrs_unspecified",                (DL_FUNC) &vctrs_unspecified, 1},
-  {"vctrs_type",                       (DL_FUNC) &vec_type, 1},
-  {"vctrs_type_finalise",              (DL_FUNC) &vec_type_finalise, 1},
+  {"vctrs_type",                       (DL_FUNC) &vctrs_vec_type, 1},
+  {"vctrs_type_finalise",              (DL_FUNC) &vctrs_vec_type_finalise, 1},
   {"vctrs_minimal_names",              (DL_FUNC) &vctrs_minimal_names, 1},
   {"vctrs_unique_names",               (DL_FUNC) &vctrs_unique_names, 2},
   {"vctrs_as_minimal_names",           (DL_FUNC) &vctrs_as_minimal_names, 1},
-  {"vctrs_names",                      (DL_FUNC) &vec_names, 1},
+  {"vctrs_names",                      (DL_FUNC) &vctrs_vec_names, 1},
   {"vctrs_is_unique_names",            (DL_FUNC) &vctrs_is_unique_names, 1},
   {"vctrs_as_unique_names",            (DL_FUNC) &vctrs_as_unique_names, 2},
   {"vctrs_df_as_dataframe",            (DL_FUNC) &vctrs_df_as_dataframe, 4},
@@ -124,7 +124,7 @@ static const R_CallMethodDef CallEntries[] = {
   {"vctrs_df_restore",                 (DL_FUNC) &vctrs_df_restore, 3},
   {"vctrs_recycle",                    (DL_FUNC) &vctrs_recycle, 2},
   {"vctrs_coercible_cast",             (DL_FUNC) &vctrs_coercible_cast, 4},
-  {"vctrs_assign",                     (DL_FUNC) &vec_assign, 3},
+  {"vctrs_assign",                     (DL_FUNC) &vctrs_vec_assign, 3},
   {"vctrs_set_attributes",             (DL_FUNC) &vctrs_set_attributes, 2},
   {"vctrs_as_df_row",                  (DL_FUNC) &vctrs_as_df_row, 2},
   {"vctrs_outer_names",                (DL_FUNC) &vctrs_outer_names, 3},

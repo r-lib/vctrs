@@ -11,7 +11,7 @@ static SEXP vec_type_slice(SEXP x, SEXP empty);
 static SEXP lgl_type(SEXP x);
 
 // [[ include("vctrs.h"); register() ]]
-SEXP vec_type(SEXP x) {
+SEXP vctrs_vec_type(SEXP x) {
   switch (vec_typeof(x)) {
   case vctrs_type_scalar:    return x;
   case vctrs_type_null:      return R_NilValue;
@@ -22,7 +22,7 @@ SEXP vec_type(SEXP x) {
   case vctrs_type_character: return vec_type_slice(x, vctrs_shared_empty_chr);
   case vctrs_type_raw:       return vec_type_slice(x, vctrs_shared_empty_raw);
   case vctrs_type_list:      return vec_type_slice(x, vctrs_shared_empty_list);
-  case vctrs_type_dataframe: return df_map(x, &vec_type);
+  case vctrs_type_dataframe: return df_map(x, &vctrs_vec_type);
   case vctrs_type_s3: {
     if (vec_is_vector(x)) {
       return vec_slice(x, R_NilValue);
@@ -52,7 +52,7 @@ static SEXP lgl_type(SEXP x) {
 
 
 // [[ include("vctrs.h"); register() ]]
-SEXP vec_type_finalise(SEXP x) {
+SEXP vctrs_vec_type_finalise(SEXP x) {
   if (OBJECT(x)) {
     if (vec_is_unspecified(x)) {
       R_len_t n = Rf_length(x);
@@ -64,7 +64,7 @@ SEXP vec_type_finalise(SEXP x) {
   }
 
   switch (vec_typeof(x)) {
-  case vctrs_type_dataframe: return df_map(x, &vec_type_finalise);
+  case vctrs_type_dataframe: return df_map(x, &vctrs_vec_type_finalise);
   case vctrs_type_s3:        return vctrs_dispatch1(syms_vec_type_finalise_dispatch, fns_vec_type_finalise_dispatch,
                                                     syms_x, x);
   default:                   return x;
@@ -90,7 +90,7 @@ SEXP vctrs_type_common(SEXP call, SEXP op, SEXP args, SEXP env) {
 
 SEXP vctrs_type_common_impl(SEXP dots, SEXP ptype) {
   if (!vec_is_partial(ptype)) {
-    return vec_type(ptype);
+    return vctrs_vec_type(ptype);
   }
 
   if (r_is_true(r_peek_option("vctrs.no_guessing"))) {
@@ -101,7 +101,7 @@ SEXP vctrs_type_common_impl(SEXP dots, SEXP ptype) {
   struct vctrs_arg ptype_arg = new_wrapper_arg(NULL, ".ptype");
 
   SEXP type = PROTECT(reduce(ptype, &ptype_arg, dots, &vctrs_type2_common));
-  type = vec_type_finalise(type);
+  type = vctrs_vec_type_finalise(type);
 
   UNPROTECT(1);
   return type;
@@ -109,7 +109,7 @@ SEXP vctrs_type_common_impl(SEXP dots, SEXP ptype) {
 
 
 static SEXP vctrs_type2_common(SEXP current, SEXP next, struct counters* counters) {
-  next = PROTECT(vec_type(next));
+  next = PROTECT(vctrs_vec_type(next));
 
   int left;
   current = vec_type2(current, next, counters->curr_arg, counters->next_arg, &left);

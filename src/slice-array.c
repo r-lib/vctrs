@@ -214,7 +214,7 @@ SEXP vec_slice_shaped_base(enum vctrs_type type,
 
 SEXP vec_slice_shaped(enum vctrs_type type, SEXP x, SEXP index) {
 
-  SEXP dim = PROTECT(vec_dim(x));
+  SEXP dim = PROTECT(vctrs_vec_dim(x));
 
   struct vec_slice_shaped_info info;
   info.p_dim = INTEGER_RO(dim);

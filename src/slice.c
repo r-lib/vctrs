@@ -175,7 +175,7 @@ static SEXP vec_slice_impl(SEXP x, SEXP index) {
     // Take over attribute restoration only if the `[` method did not
     // restore itself
     if (ATTRIB(out) == R_NilValue) {
-      out = vec_restore(out, x, restore_size);
+      out = vctrs_vec_restore(out, x, restore_size);
     }
 
     UNPROTECT(nprot);
@@ -214,7 +214,7 @@ static SEXP vec_slice_impl(SEXP x, SEXP index) {
       Rf_setAttrib(out, R_NamesSymbol, names);
     }
 
-    out = vec_restore(out, x, index);
+    out = vctrs_vec_restore(out, x, index);
 
     UNPROTECT(nprot);
     return out;
@@ -222,7 +222,7 @@ static SEXP vec_slice_impl(SEXP x, SEXP index) {
 
   case vctrs_type_dataframe: {
     SEXP out = PROTECT_N(df_slice(data, index), &nprot);
-    out = vec_restore(out, x, restore_size);
+    out = vctrs_vec_restore(out, x, restore_size);
     UNPROTECT(nprot);
     return out;
   }
@@ -239,7 +239,7 @@ SEXP vctrs_slice(SEXP x, SEXP index) {
     return x;
   }
 
-  index = PROTECT(vec_as_index(index, vec_size(x), PROTECT(vec_names(x))));
+  index = PROTECT(vec_as_index(index, vec_size(x), PROTECT(vctrs_vec_names(x))));
   SEXP out = vec_slice_impl(x, index);
 
   UNPROTECT(2);

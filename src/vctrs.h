@@ -28,7 +28,7 @@ enum vctrs_type {
 
 /**
  * @member type The vector type of the original data.
- * @member proxy_method The function of the `vec_proxy()` method, if
+ * @member proxy_method The function of the `vctrs_vec_proxy()` method, if
  *   any. This method is looked up with [vec_proxy_method()].
  */
 struct vctrs_type_info {
@@ -191,25 +191,25 @@ bool vec_is_unspecified(SEXP x);
 
 #include "arg.h"
 
-SEXP vec_proxy(SEXP x);
+SEXP vctrs_vec_proxy(SEXP x);
 SEXP vec_proxy_equal(SEXP x);
-SEXP vec_restore(SEXP x, SEXP to, SEXP i);
+SEXP vctrs_vec_restore(SEXP x, SEXP to, SEXP i);
 R_len_t vec_size(SEXP x);
 R_len_t vec_size_common(SEXP xs, R_len_t absent);
-SEXP vec_dim(SEXP x);
+SEXP vctrs_vec_dim(SEXP x);
 R_len_t vec_dim_n(SEXP x);
 SEXP vec_cast(SEXP x, SEXP to, struct vctrs_arg* x_arg, struct vctrs_arg* to_arg);
 SEXP vec_cast_common(SEXP xs, SEXP to);
 SEXP vec_coercible_cast(SEXP x, SEXP to, struct vctrs_arg* x_arg, struct vctrs_arg* to_arg);
 SEXP vec_slice(SEXP x, SEXP index);
 SEXP vec_slice_shaped(enum vctrs_type type, SEXP x, SEXP index);
-SEXP vec_assign(SEXP x, SEXP index, SEXP value);
+SEXP vctrs_vec_assign(SEXP x, SEXP index, SEXP value);
 SEXP vec_na(SEXP x, R_len_t n);
-SEXP vec_type(SEXP x);
-SEXP vec_type_finalise(SEXP x);
+SEXP vctrs_vec_type(SEXP x);
+SEXP vctrs_vec_type_finalise(SEXP x);
 bool vec_is_unspecified(SEXP x);
 SEXP vec_recycle(SEXP x, R_len_t size);
-SEXP vec_names(SEXP x);
+SEXP vctrs_vec_names(SEXP x);
 
 SEXP vec_type2(SEXP x,
                SEXP y,

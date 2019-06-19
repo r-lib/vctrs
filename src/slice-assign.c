@@ -21,7 +21,7 @@ SEXP df_assign(SEXP x, SEXP index, SEXP value, bool clone);
 
 
 // [[ register(); include("vctrs.h") ]]
-SEXP vec_assign(SEXP x, SEXP index, SEXP value) {
+SEXP vctrs_vec_assign(SEXP x, SEXP index, SEXP value) {
   if (x == R_NilValue) {
     return R_NilValue;
   }
@@ -33,9 +33,9 @@ SEXP vec_assign(SEXP x, SEXP index, SEXP value) {
 
   // Take the proxy of the RHS before coercing and recycling
   value = PROTECT(vec_coercible_cast(value, x, &value_arg, &x_arg));
-  SEXP value_proxy = PROTECT(vec_proxy(value));
+  SEXP value_proxy = PROTECT(vctrs_vec_proxy(value));
 
-  index = PROTECT(vec_as_index(index, vec_size(x), PROTECT(vec_names(x))));
+  index = PROTECT(vec_as_index(index, vec_size(x), PROTECT(vctrs_vec_names(x))));
   value_proxy = PROTECT(vec_recycle(value_proxy, vec_size(index)));
 
   struct vctrs_proxy_info info = vec_proxy_info(x);
@@ -43,12 +43,12 @@ SEXP vec_assign(SEXP x, SEXP index, SEXP value) {
   SEXP out;
   if ((OBJECT(x) && info.proxy_method == R_NilValue) || has_dim(x)) {
     // Restore the value before falling back to `[<-`
-    value = PROTECT(vec_restore(value_proxy, value, R_NilValue));
+    value = PROTECT(vctrs_vec_restore(value_proxy, value, R_NilValue));
     out = vec_assign_fallback(x, index, value_proxy);
     UNPROTECT(1);
   } else {
     out = PROTECT(vec_assign_impl(info.proxy, index, value_proxy, true));
-    out = vec_restore(out, x, R_NilValue);
+    out = vctrs_vec_restore(out, x, R_NilValue);
     UNPROTECT(1);
   }
 
@@ -85,7 +85,7 @@ SEXP vec_assign_impl(SEXP proxy, SEXP index, SEXP value, bool clone) {
   int* index_data = INTEGER(index);                             \
                                                                 \
   if (n != Rf_length(value)) {                                  \
-    Rf_error("Internal error in `vec_assign()`: "               \
+    Rf_error("Internal error in `vctrs_vec_assign()`: "               \
              "`value` should have been recycled to fit `x`.");  \
   }                                                             \
                                                                 \
@@ -110,7 +110,7 @@ SEXP vec_assign_impl(SEXP proxy, SEXP index, SEXP value, bool clone) {
   R_len_t n = to - from;                                        \
                                                                 \
   if (n != Rf_length(value)) {                                  \
-    Rf_error("Internal error in `vec_assign()`: "               \
+    Rf_error("Internal error in `vctrs_vec_assign()`: "               \
              "`value` should have been recycled to fit `x`.");  \
   }                                                             \
                                                                 \
@@ -159,7 +159,7 @@ static SEXP raw_assign(SEXP x, SEXP index, SEXP value, bool clone) {
   int* index_data = INTEGER(index);                             \
                                                                 \
   if (n != Rf_length(value)) {                                  \
-    Rf_error("Internal error in `vec_assign()`: "               \
+    Rf_error("Internal error in `vctrs_vec_assign()`: "               \
              "`value` should have been recycled to fit `x`.");  \
   }                                                             \
                                                                 \
@@ -182,7 +182,7 @@ static SEXP raw_assign(SEXP x, SEXP index, SEXP value, bool clone) {
   R_len_t n = to - from;                                        \
                                                                 \
   if (n != Rf_length(value)) {                                  \
-    Rf_error("Internal error in `vec_assign()`: "               \
+    Rf_error("Internal error in `vctrs_vec_assign()`: "               \
              "`value` should have been recycled to fit `x`.");  \
   }                                                             \
                                                                 \
@@ -229,11 +229,11 @@ SEXP df_assign(SEXP x, SEXP index, SEXP value, bool clone) {
     // recursive and have already been performed. However, proxy and
     // restore are not recursive so need to be done for each element
     // we recurse into.
-    SEXP proxy_elt = PROTECT(vec_proxy(out_elt));
-    value_elt = PROTECT(vec_proxy(value_elt));
+    SEXP proxy_elt = PROTECT(vctrs_vec_proxy(out_elt));
+    value_elt = PROTECT(vctrs_vec_proxy(value_elt));
 
     SEXP assigned = PROTECT(vec_assign_impl(proxy_elt, index, value_elt, clone));
-    assigned = vec_restore(assigned, out_elt, R_NilValue);
+    assigned = vctrs_vec_restore(assigned, out_elt, R_NilValue);
 
     SET_VECTOR_ELT(out, i, assigned);
     UNPROTECT(3);

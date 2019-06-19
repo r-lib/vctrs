@@ -238,11 +238,11 @@ static SEXP df_as_dataframe(SEXP x, SEXP to, struct vctrs_arg* x_arg, struct vct
     SET_VECTOR_ELT(out, i, col);
   }
 
-  // Restore data frame size before calling `vec_restore()`. `x` and
+  // Restore data frame size before calling `vctrs_vec_restore()`. `x` and
   // `to` might not have any columns to compute the original size.
   init_data_frame(out, size);
 
-  out = PROTECT(vec_restore(out, to, R_NilValue));
+  out = PROTECT(vctrs_vec_restore(out, to, R_NilValue));
 
   R_len_t extra_len = Rf_length(x) - common_len;
   if (extra_len) {
@@ -373,7 +373,7 @@ SEXP vec_cast(SEXP x, SEXP to, struct vctrs_arg* x_arg, struct vctrs_arg* to_arg
 }
 
 // Copy attributes except names and dim. This duplicates `x` if needed.
-SEXP vec_restore_default(SEXP x, SEXP to) {
+SEXP vctrs_vec_restore_default(SEXP x, SEXP to) {
   int n_protect = 0;
 
   SEXP attrib = PROTECT(Rf_shallow_duplicate(ATTRIB(to)));
@@ -459,7 +459,7 @@ SEXP vctrs_df_restore(SEXP x, SEXP to, SEXP n) {
 
 SEXP df_restore_impl(SEXP x, SEXP to, R_len_t size) {
   x = PROTECT(r_maybe_duplicate(x));
-  x = PROTECT(vec_restore_default(x, to));
+  x = PROTECT(vctrs_vec_restore_default(x, to));
 
   if (Rf_getAttrib(x, R_NamesSymbol) == R_NilValue) {
     Rf_setAttrib(x, R_NamesSymbol, vctrs_shared_empty_chr);
@@ -479,10 +479,10 @@ SEXP df_restore_impl(SEXP x, SEXP to, R_len_t size) {
 
 static SEXP vec_restore_dispatch(SEXP x, SEXP to, SEXP n);
 
-SEXP vec_restore(SEXP x, SEXP to, SEXP n) {
+SEXP vctrs_vec_restore(SEXP x, SEXP to, SEXP n) {
   switch (class_type(to)) {
   default: return vec_restore_dispatch(x, to, n);
-  case vctrs_class_none: return vec_restore_default(x, to);
+  case vctrs_class_none: return vctrs_vec_restore_default(x, to);
   case vctrs_class_bare_data_frame:
   case vctrs_class_bare_tibble: return vctrs_df_restore(x, to, n);
   case vctrs_class_data_frame: {

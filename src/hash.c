@@ -335,7 +335,7 @@ static void df_hash_fill(uint32_t* p, R_len_t size, SEXP x) {
   R_len_t ncol = Rf_length(x);
 
   for (R_len_t i = 0; i < ncol; ++i) {
-    // FIXME: Call `vec_proxy()`?
+    // FIXME: Call `vctrs_vec_proxy()`?
     SEXP col = VECTOR_ELT(x, i);
     hash_fill(p, size, col);
   }
@@ -343,7 +343,7 @@ static void df_hash_fill(uint32_t* p, R_len_t size, SEXP x) {
 
 // [[ register() ]]
 SEXP vctrs_hash(SEXP x, SEXP rowwise) {
-  x = PROTECT(vec_proxy(x));
+  x = PROTECT(vctrs_vec_proxy(x));
 
   R_len_t n = vec_size(x);
   SEXP out = PROTECT(Rf_allocVector(RAWSXP, n * sizeof(uint32_t)));
