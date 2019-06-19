@@ -467,3 +467,45 @@ set_rownames <- function(x, names) {
   rownames(x) <- names
   x
 }
+
+#' Repair names with legacy method
+#'
+#' This standardises names with the legacy approach that was used in
+#' tidyverse packages (such as tibble, tidyr, and readxl) before
+#' [vec_as_names()] was implemented. This tool is meant to help
+#' transitioning to the new name repairing standard and will be
+#' deprecated and removed from the package some time in the future.
+#'
+#' @inheritParams vec_as_names
+#' @param prefix,sep Prefix and separator for repaired names.
+#'
+#' @examples
+#' if (is_installed("tibble")) {
+#'
+#' library(tibble)
+#'
+#' # Names repair is turned off by default in tibble:
+#' try(tibble(a = 1, a = 2))
+#'
+#' # You can turn it on by supplying a repair method:
+#' tibble(a = 1, a = 2, .name_repair = "universal")
+#'
+#' # If you prefer the legacy method, use `vec_as_names_legacy()`:
+#' tibble(a = 1, a = 2, .name_repair = vec_as_names_legacy)
+#'
+#' }
+#' @keywords internal
+#' @export
+vec_as_names_legacy <- function(names, prefix = "V", sep = "") {
+  if (length(names) == 0) {
+    return(character())
+  }
+
+  blank <- names == ""
+  names[!blank] <- make.unique(names[!blank], sep = sep)
+
+  new_nms <- setdiff(paste(prefix, seq_along(names), sep = sep), names)
+  names[blank] <- new_nms[seq_len(sum(blank))]
+
+  names
+}

@@ -617,3 +617,13 @@ test_that("names must be unique", {
     locations = 1:3
   )
 })
+
+
+# Legacy repair --------------------------------------------------------
+
+test_that("vec_as_names_legacy() works", {
+  expect_identical(vec_as_names_legacy(c("a", "a", "")), c("a", "a1", "V1"))
+  expect_identical(vec_as_names_legacy(c("a", "a", ""), sep = "_"), c("a", "a_1", "V_1"))
+  expect_identical(vec_as_names_legacy(c("a", "a", ""), prefix = "foo"), c("a", "a1", "foo1"))
+  expect_identical(vec_as_names_legacy(c("a", "a", ""), prefix = "foo", sep = "_"), c("a", "a_1", "foo_1"))
+})
