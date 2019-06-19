@@ -480,7 +480,7 @@ set_rownames <- function(x, names) {
 #' @param prefix,sep Prefix and separator for repaired names.
 #'
 #' @examples
-#' if (is_installed("tibble")) {
+#' if (rlang::is_installed("tibble")) {
 #'
 #' library(tibble)
 #'

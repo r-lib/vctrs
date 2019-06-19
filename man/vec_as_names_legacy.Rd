@@ -19,7 +19,7 @@ transitioning to the new name repairing standard and will be
 deprecated and removed from the package some time in the future.
 }
 \examples{
-if (is_installed("tibble")) {
+if (rlang::is_installed("tibble")) {
 
 library(tibble)
 
