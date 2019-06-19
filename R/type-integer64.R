@@ -33,7 +33,7 @@ vec_type2.integer64 <- function(x, y, ...) {
 }
 #' @method vec_type2.integer64 default
 #' @export
-vec_type2.integer64.default <- function(x, y, ..., x_arg = "", y_arg = "") {
+vec_type2.integer64.default <- function(x, y, ..., x_arg = "x", y_arg = "y") {
   stop_incompatible_type(x, y, x_arg = x_arg, y_arg = y_arg)
 }
 
@@ -73,13 +73,13 @@ vec_cast.integer64 <- function(x, to, ...) UseMethod("vec_cast.integer64")
 
 #' @export
 #' @method vec_cast.integer64 default
-vec_cast.integer64.default <- function(x, to, ...) {
+vec_cast.integer64.default <- function(x, to, ..., x_arg = "x", to_arg = "to") {
   # Don't use `vec_default_cast()` because integer64 is not compatible
   # with `vec_na()`
   if (is_unspecified(x)) {
     bit64::as.integer64(unclass(x))
   } else {
-    stop_incompatible_cast(x, to)
+    stop_incompatible_cast(x, to, x_arg = x_arg, to_arg = to_arg)
   }
 }
 

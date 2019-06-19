@@ -36,6 +36,11 @@ SEXP vctrs_dispatch3(SEXP fn_sym, SEXP fn,
                      SEXP x_sym, SEXP x,
                      SEXP y_sym, SEXP y,
                      SEXP z_sym, SEXP z);
+SEXP vctrs_dispatch4(SEXP fn_sym, SEXP fn,
+                     SEXP w_sym, SEXP w,
+                     SEXP x_sym, SEXP x,
+                     SEXP y_sym, SEXP y,
+                     SEXP z_sym, SEXP z);
 
 SEXP map(SEXP x, SEXP (*fn)(SEXP));
 SEXP df_map(SEXP df, SEXP (*fn)(SEXP));
@@ -191,6 +196,7 @@ extern SEXP syms_dots;
 extern SEXP syms_bracket;
 extern SEXP syms_x_arg;
 extern SEXP syms_y_arg;
+extern SEXP syms_to_arg;
 extern SEXP syms_out;
 extern SEXP syms_value;
 extern SEXP syms_quiet;

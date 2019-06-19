@@ -180,7 +180,7 @@ SEXP vctrs_recycle(SEXP x, SEXP size_obj) {
     return R_NilValue;
   }
 
-  size_obj = PROTECT(vec_cast(size_obj, vctrs_shared_empty_int));
+  size_obj = PROTECT(vec_cast(size_obj, vctrs_shared_empty_int, args_empty, args_empty));
   R_len_t size = r_int_get(size_obj, 0);
   UNPROTECT(1);
 
@@ -190,7 +190,7 @@ SEXP vctrs_recycle(SEXP x, SEXP size_obj) {
 
 // [[ include("utils.h") ]]
 R_len_t size_validate(SEXP size, const char* arg) {
-  size = vec_cast(size, vctrs_shared_empty_int);
+  size = vec_cast(size, vctrs_shared_empty_int, args_empty, args_empty);
 
   if (Rf_length(size) != 1) {
     Rf_errorcall(R_NilValue, "`%s` must be a single integer.", arg);

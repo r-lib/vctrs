@@ -24,7 +24,7 @@ SEXP vctrs_unspecified(SEXP n) {
     Rf_errorcall(R_NilValue, "`n` must be a single number");
   }
   if (TYPEOF(n) != INTSXP) {
-    n = vec_cast(n, vctrs_shared_empty_int);
+    n = vec_cast(n, vctrs_shared_empty_int, args_empty, args_empty);
   }
   int len = INTEGER(n)[0];
   return vec_unspecified(len);

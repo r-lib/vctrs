@@ -86,11 +86,14 @@ test_that("vec_type2() methods forward args to stop_incompatible_type()", {
 })
 
 test_that("vec_type2() data frame methods builds argument tags", {
-  df1 <- tibble(x = tibble(y = tibble(z = 1)))
-  df2 <- tibble(x = tibble(y = tibble(z = "a")))
-  expect_known_output(file = test_path("test-type2-nested-data-frames-error.txt"), {
-    err <- catch_cnd(vec_type2(df1, df2), classes = "error")
-    cat(err$message, "\n")
+  expect_known_output(file = test_path("test-type2-error-messages.txt"), {
+    cat_line("Bare objects:")
+    try2(vec_type2("foo", 10))
+
+    cat_line("Nested dataframes:")
+    df1 <- tibble(x = tibble(y = tibble(z = 1)))
+    df2 <- tibble(x = tibble(y = tibble(z = "a")))
+    try2(vec_type2(df1, df2))
   })
 })
 

@@ -13,7 +13,7 @@
 \alias{vec_cast.list}
 \title{Cast a vector to specified type}
 \usage{
-vec_cast(x, to, ...)
+vec_cast(x, to, ..., x_arg = "x", to_arg = "to")
 
 vec_cast_common(..., .to = NULL)
 
@@ -41,6 +41,10 @@ vec_restore(x, to, ..., n = NULL)
 \item{...}{For \code{vec_cast_common()}, vectors to cast. For
 \code{vec_cast()} and \code{vec_restore()}, these dots are only for future
 extensions and should be empty.}
+
+\item{x_arg, to_arg}{Argument names for \code{x} and \code{to}. These are used
+in error messages to inform the user about the locations of
+incompatible types (see \code{\link[=stop_incompatible_type]{stop_incompatible_type()}}).}
 
 \item{n}{\Sexpr[results=rd, stage=render]{vctrs:::lifecycle("experimental")}
 The total size to restore to. This is currently passed by

@@ -36,25 +36,25 @@
 #'   in error messages to inform the user about the locations of
 #'   incompatible types (see [stop_incompatible_type()]).
 #' @export
-vec_type2 <- function(x, y, ..., x_arg = "", y_arg = "") {
+vec_type2 <- function(x, y, ..., x_arg = "x", y_arg = "y") {
   if (!missing(...)) {
     ellipsis::check_dots_empty()
   }
   return(.Call(vctrs_type2, x, y, x_arg, y_arg))
   UseMethod("vec_type2")
 }
-vec_type2_dispatch <- function(x, y, ..., x_arg = "", y_arg = "") {
+vec_type2_dispatch <- function(x, y, ..., x_arg = "x", y_arg = "y") {
   UseMethod("vec_type2")
 }
 #' @export
-vec_type2.default <- function(x, y, ..., x_arg = "", y_arg = "") {
+vec_type2.default <- function(x, y, ..., x_arg = "x", y_arg = "y") {
   if (has_same_type(x, y)) {
     return(x)
   }
   stop_incompatible_type(x, y, x_arg = x_arg, y_arg = y_arg)
 }
 
-vec_default_type2 <- function(x, y, ..., x_arg = "", y_arg = "") {
+vec_default_type2 <- function(x, y, ..., x_arg = "x", y_arg = "y") {
   if (is_unspecified(y)) {
     return(vec_type(x))
   }
@@ -129,22 +129,22 @@ vec_type2.raw.raw         <- function(x, y, ...) shape_match(raw(), x, y)
 
 #' @method vec_type2.logical default
 #' @export
-vec_type2.logical.default <- function(x, y, ..., x_arg = "", y_arg = "") {
+vec_type2.logical.default <- function(x, y, ..., x_arg = "x", y_arg = "y") {
   stop_incompatible_type(x, y, x_arg = x_arg, y_arg = y_arg)
 }
 #' @method vec_type2.integer default
 #' @export
-vec_type2.integer.default <- function(x, y, ..., x_arg = "", y_arg = "") {
+vec_type2.integer.default <- function(x, y, ..., x_arg = "x", y_arg = "y") {
   stop_incompatible_type(x, y, x_arg = x_arg, y_arg = y_arg)
 }
 #' @method vec_type2.double default
 #' @export
-vec_type2.double.default <- function(x, y, ..., x_arg = "", y_arg = "") {
+vec_type2.double.default <- function(x, y, ..., x_arg = "x", y_arg = "y") {
   stop_incompatible_type(x, y, x_arg = x_arg, y_arg = y_arg)
 }
 #' @method vec_type2.raw default
 #' @export
-vec_type2.raw.default <- function(x, y, ..., x_arg = "", y_arg = "") {
+vec_type2.raw.default <- function(x, y, ..., x_arg = "x", y_arg = "y") {
   stop_incompatible_type(x, y, x_arg = x_arg, y_arg = y_arg)
 }
 
@@ -160,7 +160,7 @@ vec_type2.character <- function(x, y, ...) UseMethod("vec_type2.character", y)
 vec_type2.character.character <- function(x, y, ...) shape_match(character(), x, y)
 #' @method vec_type2.character default
 #' @export
-vec_type2.character.default <- function(x, y, ..., x_arg = "", y_arg = "") {
+vec_type2.character.default <- function(x, y, ..., x_arg = "x", y_arg = "y") {
   stop_incompatible_type(x, y, x_arg = x_arg, y_arg = y_arg)
 }
 
@@ -176,6 +176,6 @@ vec_type2.list <- function(x, y, ...) UseMethod("vec_type2.list", y)
 vec_type2.list.list <- function(x, y, ...) shape_match(list(), x, y)
 #' @method vec_type2.list default
 #' @export
-vec_type2.list.default <- function(x, y, ..., x_arg = "", y_arg = "") {
+vec_type2.list.default <- function(x, y, ..., x_arg = "x", y_arg = "y") {
   stop_incompatible_type(x, y, x_arg = x_arg, y_arg = y_arg)
 }

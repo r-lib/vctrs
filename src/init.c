@@ -37,7 +37,7 @@ extern SEXP vctrs_typeof(SEXP, SEXP);
 extern SEXP vctrs_is_vector(SEXP);
 extern SEXP vctrs_type2(SEXP, SEXP, SEXP, SEXP);
 extern SEXP vctrs_typeof2(SEXP, SEXP);
-extern SEXP vec_cast(SEXP, SEXP);
+extern SEXP vctrs_cast(SEXP, SEXP, SEXP, SEXP);
 extern SEXP vctrs_as_index(SEXP, SEXP, SEXP);
 extern SEXP vctrs_slice(SEXP, SEXP);
 extern SEXP vec_restore(SEXP, SEXP, SEXP);
@@ -52,7 +52,7 @@ extern SEXP vctrs_as_minimal_names(SEXP);
 extern SEXP vec_names(SEXP);
 extern SEXP vctrs_is_unique_names(SEXP);
 extern SEXP vctrs_as_unique_names(SEXP, SEXP);
-extern SEXP df_as_dataframe(SEXP, SEXP);
+extern SEXP vctrs_df_as_dataframe(SEXP, SEXP, SEXP, SEXP);
 extern SEXP vctrs_type2_df_df(SEXP, SEXP, SEXP, SEXP);
 extern SEXP vctrs_type_info(SEXP);
 extern SEXP vctrs_proxy_info(SEXP);
@@ -101,7 +101,7 @@ static const R_CallMethodDef CallEntries[] = {
   {"vctrs_is_vector",                  (DL_FUNC) &vctrs_is_vector, 1},
   {"vctrs_type2",                      (DL_FUNC) &vctrs_type2, 4},
   {"vctrs_typeof2",                    (DL_FUNC) &vctrs_typeof2, 2},
-  {"vctrs_cast",                       (DL_FUNC) &vec_cast, 2},
+  {"vctrs_cast",                       (DL_FUNC) &vctrs_cast, 4},
   {"vctrs_as_index",                   (DL_FUNC) &vctrs_as_index, 3},
   {"vctrs_slice",                      (DL_FUNC) &vctrs_slice, 2},
   {"vctrs_restore",                    (DL_FUNC) &vec_restore, 3},
@@ -116,7 +116,7 @@ static const R_CallMethodDef CallEntries[] = {
   {"vctrs_names",                      (DL_FUNC) &vec_names, 1},
   {"vctrs_is_unique_names",            (DL_FUNC) &vctrs_is_unique_names, 1},
   {"vctrs_as_unique_names",            (DL_FUNC) &vctrs_as_unique_names, 2},
-  {"vctrs_df_as_dataframe",            (DL_FUNC) &df_as_dataframe, 2},
+  {"vctrs_df_as_dataframe",            (DL_FUNC) &vctrs_df_as_dataframe, 4},
   {"vctrs_type2_df_df",                (DL_FUNC) &vctrs_type2_df_df, 4},
   {"vctrs_type_info",                  (DL_FUNC) &vctrs_type_info, 1},
   {"vctrs_proxy_info",                 (DL_FUNC) &vctrs_proxy_info, 1},

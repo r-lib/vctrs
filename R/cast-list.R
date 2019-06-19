@@ -10,9 +10,14 @@
 #'
 #' @param x A list
 #' @param to Type to coerce to
+#' @inheritParams ellipsis::dots_empty
+#'
 #' @export
 #' @keywords internal
-vec_list_cast <- function(x, to) {
+vec_list_cast <- function(x, to, ..., x_arg = "", to_arg = "") {
+  if (!missing(...)) {
+    ellipsis::check_dots_empty()
+  }
   ns <- map_int(x, vec_size)
 
   n <- vec_size(x)
@@ -20,10 +25,12 @@ vec_list_cast <- function(x, to) {
 
   for (i in seq_len(n)) {
     val <- x[[i]]
-    if (length(val) == 0)
+    if (length(val) == 0) {
       next
+    }
 
-    vec_slice(out, i) <- vec_cast(vec_slice(val, 1L), to)
+    val <- vec_slice(val, 1L)
+    vec_slice(out, i) <- vec_cast(val, to, x_arg = x_arg, to_arg = to_arg)
   }
 
   if (!is.object(to)) {

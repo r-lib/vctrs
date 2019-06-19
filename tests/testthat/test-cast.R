@@ -37,6 +37,31 @@ test_that("cast common preserves names", {
   expect_identical(vec_cast_common(foo = 1, bar = 2L), list(foo = 1, bar = 2))
 })
 
+test_that("cast errors create helpful messages (#57, #225)", {
+  expect_known_output(file = test_path("test-cast-error-nested.txt"), {
+    # Lossy cast
+    try2(vec_cast("foo", 10))
+
+    # Incompatible cast
+    try2(vec_cast(factor("foo"), 10))
+
+
+    ## Nested data frames
+
+    # Lossy cast
+    x <- tibble(a = tibble(b = "foo"))
+    y <- tibble(a = tibble(b = 10))
+    try2(vec_cast(x, y))
+
+    # Incompatible cast
+    x <- tibble(a = tibble(b = factor("foo")))
+    try2(vec_cast(x, y))
+
+    # Common cast error
+    try2(vec_cast_common(x, y))
+  })
+})
+
 
 # vec_restore -------------------------------------------------------------
 

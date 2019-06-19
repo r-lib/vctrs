@@ -102,17 +102,30 @@ stop_incompatible_type <- function(x, y,
 
 #' @rdname vctrs-conditions
 #' @export
-stop_incompatible_cast <- function(x, y, details = NULL, ..., message = NULL, .subclass = NULL) {
+stop_incompatible_cast <- function(x,
+                                   y,
+                                   details = NULL,
+                                   ...,
+                                   x_arg = "",
+                                   to_arg = "",
+                                   message = NULL,
+                                   .subclass = NULL) {
+  if (is_null(message)) {
+    x_label <- format_arg_label(vec_ptype_full(x), x_arg)
+    to_label <- format_arg_label(vec_ptype_full(y), to_arg)
 
-  message <- message %||% glue_lines(
-    "Can't cast <{vec_ptype_full(x)}> to <{vec_ptype_full(y)}>",
-    details
-  )
+    message <- glue_lines(
+      "Can't cast {x_label} to {to_label}.",
+      details
+    )
+  }
 
   stop_incompatible(
     x, y,
     details = details,
     ...,
+    x_arg = x_arg,
+    y_arg = to_arg,
     message = message,
     .subclass = c(.subclass, "vctrs_error_incompatible_cast")
   )
@@ -204,6 +217,8 @@ maybe_lossy_cast <- function(result, x, to,
                              locations = NULL,
                              details = NULL,
                              ...,
+                             x_arg = "",
+                             to_arg = "",
                              message = NULL,
                              .subclass = NULL,
                              .deprecation = FALSE) {
@@ -211,7 +226,7 @@ maybe_lossy_cast <- function(result, x, to,
     return(result)
   }
   if (.deprecation) {
-    maybe_warn_deprecated_lossy_cast(x, to)
+    maybe_warn_deprecated_lossy_cast(x, to, x_arg, to_arg)
     return(result)
   }
 
@@ -226,8 +241,10 @@ maybe_lossy_cast <- function(result, x, to,
       locations = locations,
       details = details,
       ...,
+      x_arg = x_arg,
+      to_arg = to_arg,
       message = message,
-      .subclass = .subclass,
+      .subclass = .subclass
     )
   )
 }
@@ -235,16 +252,24 @@ stop_lossy_cast <- function(x, to, result,
                             locations = NULL,
                             details = NULL,
                             ...,
+                            x_arg = "",
+                            to_arg = "",
                             message = NULL,
                             .subclass = NULL) {
   if (length(locations)) {
     locations <- inline_list("Locations: ", locations)
   }
-  message <- message %||% glue_lines(
-    "Lossy cast from <{vec_ptype_full(x)}> to <{vec_ptype_full(to)}>.",
-    locations,
-    details
-  )
+
+  if (is_null(message)) {
+    x_label <- format_arg_label(vec_ptype_full(x), x_arg)
+    to_label <- format_arg_label(vec_ptype_full(to), to_arg)
+
+    message <- glue_lines(
+      "Lossy cast from {x_label} to {to_label}.",
+      locations,
+      details
+    )
+  }
 
   stop_vctrs(
     message,
@@ -278,7 +303,7 @@ allow_lossy_cast <- function(expr, x_ptype = NULL, to_ptype = NULL) {
   )
 }
 
-maybe_warn_deprecated_lossy_cast <- function(x, to) {
+maybe_warn_deprecated_lossy_cast <- function(x, to, x_arg, to_arg) {
   # Returns `TRUE` if `allow_lossy_cast()` is on the stack and accepts
   # to handle the condition
   handled <- withRestarts(
@@ -293,8 +318,9 @@ maybe_warn_deprecated_lossy_cast <- function(x, to) {
     return(invisible())
   }
 
-  from <- vec_ptype_abbr(x)
-  to <- vec_ptype_abbr(to)
+  from <- format_arg_label(vec_ptype_abbr(x), x_arg)
+  to <- format_arg_label(vec_ptype_abbr(to), to_arg)
+
   warn_deprecated(paste_line(
     glue::glue("We detected a lossy transformation from `{ from }` to `{ to }`."),
     "The result will contain lower-resolution values or missing values.",
@@ -384,4 +410,13 @@ glue_lines <- function(..., env = parent.frame()) {
   lines <- c(...)
   out <- map_chr(lines, glue::glue, .envir = env)
   paste(out, collapse = "\n")
+}
+
+format_arg_label <- function(type, arg = "") {
+  type <- paste0("<", type, ">")
+  if (nzchar(arg)) {
+    paste0("`", arg, "` ", type)
+  } else {
+    type
+  }
 }

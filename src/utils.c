@@ -89,6 +89,15 @@ SEXP vctrs_dispatch3(SEXP fn_sym, SEXP fn,
   SEXP args[4] = { x, y, z, NULL };
   return vctrs_dispatch_n(fn_sym, fn, syms, args);
 }
+SEXP vctrs_dispatch4(SEXP fn_sym, SEXP fn,
+                     SEXP w_sym, SEXP w,
+                     SEXP x_sym, SEXP x,
+                     SEXP y_sym, SEXP y,
+                     SEXP z_sym, SEXP z) {
+  SEXP syms[5] = { w_sym, x_sym, y_sym, z_sym, NULL };
+  SEXP args[5] = { w, x, y, z, NULL };
+  return vctrs_dispatch_n(fn_sym, fn, syms, args);
+}
 
 // An alternative to `attributes(x) <- attrib`, which makes
 // two copies on R < 3.6.0
@@ -703,6 +712,7 @@ SEXP syms_dots = NULL;
 SEXP syms_bracket = NULL;
 SEXP syms_x_arg = NULL;
 SEXP syms_y_arg = NULL;
+SEXP syms_to_arg = NULL;
 SEXP syms_out = NULL;
 SEXP syms_value = NULL;
 SEXP syms_quiet = NULL;
@@ -841,6 +851,7 @@ void vctrs_init_utils(SEXP ns) {
   syms_bracket = Rf_install("[");
   syms_x_arg = Rf_install("x_arg");
   syms_y_arg = Rf_install("y_arg");
+  syms_to_arg = Rf_install("to_arg");
   syms_out = Rf_install("out");
   syms_value = Rf_install("value");
   syms_quiet = Rf_install("quiet");

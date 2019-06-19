@@ -175,14 +175,33 @@ static SEXP int_as_double(SEXP x, bool* lossy) {
   return out;
 }
 
+
 // From dictionary.c
 SEXP vctrs_match(SEXP needles, SEXP haystack);
+
+// Defined below
+static SEXP df_as_dataframe(SEXP x, SEXP to, struct vctrs_arg* x_arg, struct vctrs_arg* to_arg);
+
+// [[ register() ]]
+SEXP vctrs_df_as_dataframe(SEXP x, SEXP to, SEXP x_arg_, SEXP to_arg_) {
+  if (!r_is_string(x_arg_)) {
+    Rf_errorcall(R_NilValue, "`x_arg` must be a string");
+  }
+  if (!r_is_string(to_arg_)) {
+    Rf_errorcall(R_NilValue, "`to_arg` must be a string");
+  }
+
+  struct vctrs_arg x_arg = new_wrapper_arg(NULL, r_chr_get_c_string(x_arg_, 0));
+  struct vctrs_arg to_arg = new_wrapper_arg(NULL, r_chr_get_c_string(to_arg_, 0));
+
+  return df_as_dataframe(x, to, &x_arg, &to_arg);
+}
 
 // Take all columns of `to` and preserve the order. Common columns are
 // cast to their types in `to`. Extra `x` columns are dropped and
 // cause a lossy cast. Extra `to` columns are filled with missing
 // values.
-SEXP df_as_dataframe(SEXP x, SEXP to) {
+static SEXP df_as_dataframe(SEXP x, SEXP to, struct vctrs_arg* x_arg, struct vctrs_arg* to_arg) {
   SEXP x_names = PROTECT(r_names(x));
   SEXP to_names = PROTECT(r_names(to));
 
@@ -208,8 +227,12 @@ SEXP df_as_dataframe(SEXP x, SEXP to) {
       col = vec_na(VECTOR_ELT(to, i), size);
     } else {
       --pos; // 1-based index
+      struct arg_data_index x_arg_data = new_index_arg_data(r_chr_get_c_string(x_names, pos), x_arg);
+      struct arg_data_index to_arg_data = new_index_arg_data(r_chr_get_c_string(to_names, i), to_arg);
+      struct vctrs_arg named_x_arg = new_index_arg(x_arg, &x_arg_data);
+      struct vctrs_arg named_to_arg = new_index_arg(to_arg, &to_arg_data);
       ++common_len;
-      col = vec_cast(VECTOR_ELT(x, pos), VECTOR_ELT(to, i));
+      col = vec_cast(VECTOR_ELT(x, pos), VECTOR_ELT(to, i), &named_x_arg, &named_to_arg);
     }
 
     SET_VECTOR_ELT(out, i, col);
@@ -233,7 +256,7 @@ SEXP df_as_dataframe(SEXP x, SEXP to) {
   return out;
 }
 
-static SEXP vec_cast_switch(SEXP x, SEXP to, bool* lossy) {
+static SEXP vec_cast_switch(SEXP x, SEXP to, bool* lossy, struct vctrs_arg* x_arg, struct vctrs_arg* to_arg) {
   switch (vec_typeof(to)) {
   case vctrs_type_logical:
     switch (vec_typeof(x)) {
@@ -298,7 +321,7 @@ static SEXP vec_cast_switch(SEXP x, SEXP to, bool* lossy) {
   case vctrs_type_dataframe:
     switch (vec_typeof(x)) {
     case vctrs_type_dataframe:
-      return df_as_dataframe(x, to);
+      return df_as_dataframe(x, to, x_arg, to_arg);
     default:
       break;
     }
@@ -310,7 +333,23 @@ static SEXP vec_cast_switch(SEXP x, SEXP to, bool* lossy) {
   return R_NilValue;
 }
 
-SEXP vec_cast(SEXP x, SEXP to) {
+// [[ register() ]]
+SEXP vctrs_cast(SEXP x, SEXP to, SEXP x_arg_, SEXP to_arg_) {
+  if (!r_is_string(x_arg_)) {
+    Rf_errorcall(R_NilValue, "`x_arg` must be a string");
+  }
+  if (!r_is_string(to_arg_)) {
+    Rf_errorcall(R_NilValue, "`to_arg` must be a string");
+  }
+
+  struct vctrs_arg x_arg = new_wrapper_arg(NULL, r_chr_get_c_string(x_arg_, 0));
+  struct vctrs_arg to_arg = new_wrapper_arg(NULL, r_chr_get_c_string(to_arg_, 0));
+
+  return vec_cast(x, to, &x_arg, &to_arg);
+}
+
+// [[ include("vctrs.h") ]]
+SEXP vec_cast(SEXP x, SEXP to, struct vctrs_arg* x_arg, struct vctrs_arg* to_arg) {
   if (x == R_NilValue || to == R_NilValue) {
     return x;
   }
@@ -319,13 +358,15 @@ SEXP vec_cast(SEXP x, SEXP to) {
   SEXP out = R_NilValue;
 
   if (!has_dim(x) && !has_dim(to)) {
-    out = vec_cast_switch(x, to, &lossy);
+    out = vec_cast_switch(x, to, &lossy, x_arg, to_arg);
   }
 
   if (lossy || out == R_NilValue) {
-    return vctrs_dispatch2(syms_vec_cast_dispatch, fns_vec_cast_dispatch,
+    return vctrs_dispatch4(syms_vec_cast_dispatch, fns_vec_cast_dispatch,
                            syms_x, x,
-                           syms_to, to);
+                           syms_to, to,
+                           syms_x_arg, vctrs_arg(x_arg),
+                           syms_to_arg, vctrs_arg(to_arg));
   }
 
   return out;
@@ -470,7 +511,7 @@ SEXP vec_coercible_cast(SEXP x, SEXP to, struct vctrs_arg* x_arg, struct vctrs_a
   int _left;
   vec_type2(x, to, x_arg, to_arg, &_left);
 
-  return vec_cast(x, to);
+  return vec_cast(x, to, x_arg, to_arg);
 }
 
 // [[ register() ]]
@@ -500,7 +541,8 @@ SEXP vec_cast_common(SEXP xs, SEXP to) {
 
   for (R_len_t i = 0; i < n; ++i) {
     SEXP elt = VECTOR_ELT(xs, i);
-    SET_VECTOR_ELT(out, i, vec_cast(elt, type));
+    // TODO
+    SET_VECTOR_ELT(out, i, vec_cast(elt, type, args_empty, args_empty));
   }
 
   SEXP names = PROTECT(Rf_getAttrib(xs, R_NamesSymbol));

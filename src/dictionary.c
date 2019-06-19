@@ -1,5 +1,6 @@
 #include "vctrs.h"
 #include "dictionary.h"
+#include "utils.h"
 
 // Initialised at load time
 struct vctrs_arg args_needles;
@@ -211,8 +212,8 @@ SEXP vctrs_match(SEXP needles, SEXP haystack) {
   int _;
   SEXP type = PROTECT(vec_type2(needles, haystack, &args_needles, &args_haystack, &_));
 
-  needles = PROTECT(vec_cast(needles, type));
-  haystack = PROTECT(vec_cast(haystack, type));
+  needles = PROTECT(vec_cast(needles, type, args_empty, args_empty));
+  haystack = PROTECT(vec_cast(haystack, type, args_empty, args_empty));
 
   needles = PROTECT(vec_proxy_equal(needles));
   haystack = PROTECT(vec_proxy_equal(haystack));
@@ -258,8 +259,8 @@ SEXP vctrs_in(SEXP needles, SEXP haystack) {
   int _;
   SEXP type = PROTECT(vec_type2(needles, haystack, &args_needles, &args_haystack, &_));
 
-  needles = PROTECT(vec_cast(needles, type));
-  haystack = PROTECT(vec_cast(haystack, type));
+  needles = PROTECT(vec_cast(needles, type, args_empty, args_empty));
+  haystack = PROTECT(vec_cast(haystack, type, args_empty, args_empty));
 
   needles = PROTECT(vec_proxy_equal(needles));
   haystack = PROTECT(vec_proxy_equal(haystack));

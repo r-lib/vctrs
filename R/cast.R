@@ -87,6 +87,9 @@
 #'   can safely ignore that argument. This parameter should be
 #'   considered internal and experimental, it might change in the
 #'   future.
+#' @param x_arg,to_arg Argument names for `x` and `to`. These are used
+#'   in error messages to inform the user about the locations of
+#'   incompatible types (see [stop_incompatible_type()]).
 #' @return A vector the same length as `x` with the same type as `to`,
 #'   or an error if the cast is not possible. An error is generated if
 #'   information is lost when casting between compatible types (i.e. when
@@ -117,14 +120,14 @@
 #' # Cast to common type
 #' vec_cast_common(factor("a"), factor(c("a", "b")))
 #' vec_cast_common(factor("a"), Sys.Date(), .to = list())
-vec_cast <- function(x, to, ...) {
+vec_cast <- function(x, to, ..., x_arg = "x", to_arg = "to") {
   if (!missing(...)) {
     ellipsis::check_dots_empty()
   }
-  return(.Call(vctrs_cast, x, to))
+  return(.Call(vctrs_cast, x, to, x_arg, to_arg))
   UseMethod("vec_cast", to)
 }
-vec_cast_dispatch <- function(x, to) {
+vec_cast_dispatch <- function(x, to, ..., x_arg = "x", to_arg = "to") {
   UseMethod("vec_cast", to)
 }
 
@@ -135,15 +138,15 @@ vec_cast_common <- function(..., .to = NULL) {
 }
 
 #' @export
-vec_cast.default <- function(x, to, ...) {
+vec_cast.default <- function(x, to, ..., x_arg = "x", to_arg = "to") {
   if (has_same_type(x, to)) {
     return(x)
   }
-  stop_incompatible_cast(x, to)
+  stop_incompatible_cast(x, to, x_arg = x_arg, to_arg = to_arg)
 }
 
 # Cast `x` to `to` but only if they are coercible
-vec_coercible_cast <- function(x, to, ..., x_arg = "", to_arg = "") {
+vec_coercible_cast <- function(x, to, ..., x_arg = "x", to_arg = "to") {
   if (!missing(...)) {
     ellipsis::check_dots_empty()
   }
@@ -165,11 +168,11 @@ vec_coercible_cast <- function(x, to, ..., x_arg = "", to_arg = "") {
 #'
 #' @inheritParams vec_cast
 #' @export
-vec_default_cast <- function(x, to) {
+vec_default_cast <- function(x, to, x_arg = "x", to_arg = "to") {
   if (is_unspecified(x)) {
     vec_na(to, length(x))
   } else {
-    stop_incompatible_cast(x, to)
+    stop_incompatible_cast(x, to, x_arg = x_arg, to_arg = to_arg)
   }
 }
 

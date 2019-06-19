@@ -77,7 +77,8 @@ static SEXP vec_rbind(SEXP xs, SEXP ptype, enum name_repair_arg name_repair) {
       continue;
     }
 
-    SEXP tbl = PROTECT(vec_cast(VECTOR_ELT(xs, i), ptype));
+    // TODO
+    SEXP tbl = PROTECT(vec_cast(VECTOR_ELT(xs, i), ptype, args_empty, args_empty));
     init_compact_seq(idx_ptr, counter, counter + size);
     df_assign(out, idx, tbl, false);
 
