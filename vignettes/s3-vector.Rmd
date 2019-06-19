@@ -454,12 +454,12 @@ x
 We'll also override `sum()` and `mean()` to use the attribute. This is easiest to do with `vec_math()`, which you'll learn about later.
 
 ```{r}
-vec_math.vctrs_cached_sum <- function(fn, x, ...) {
+vec_math.vctrs_cached_sum <- function(.fn, .x, ...) {
   cat("Using cache\n")
-  switch(fn,
-    sum = attr(x, "sum"),
-    mean = attr(x, "sum") / length(x),
-    vec_math_base(fn, x, ...)
+  switch(.fn,
+    sum = attr(.x, "sum"),
+    mean = attr(.x, "sum") / length(.x),
+    vec_math_base(.fn, .x, ...)
   )
 }
 
@@ -815,11 +815,11 @@ vec_arith.MYCLASS.default <- function(op, x, y, ...) {
 I showed an example of `vec_math()` to define `sum()` and `mean()` methods `cached_sum`. Now let's talk about exactly how it works. Most `vec_math()` functions will have a similar form. You use a switch statement to handle the methods that you care about, and fall back to `vec_math_base()` for those that you don't care about.
 
 ```{r}
-vec_math.vctrs_cached_sum <- function(fn, x, ...) {
-  switch(fn,
-    sum = attr(x, "sum"),
-    mean = attr(x, "sum") / length(x),
-    vec_math_base(fn, x, ...)
+vec_math.vctrs_cached_sum <- function(.fn, .x, ...) {
+  switch(.fn,
+    sum = attr(.x, "sum"),
+    mean = attr(.x, "sum") / length(.x),
+    vec_math_base(.fn, .x, ...)
   )
 }
 ```

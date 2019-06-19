@@ -5,16 +5,16 @@
 \alias{vec_math_base}
 \title{Mathematical operations}
 \usage{
-vec_math(fn, x, ...)
+vec_math(.fn, .x, ...)
 
-vec_math_base(fn, x, ...)
+vec_math_base(.fn, .x, ...)
 }
 \arguments{
-\item{fn}{An mathematical function as a string}
+\item{.fn}{A mathematical function from the base package, as a string.}
 
-\item{x}{A vector}
+\item{.x}{A vector.}
 
-\item{...}{An additional arguments.}
+\item{...}{Additional arguments passed to \code{.fn}.}
 }
 \description{
 This generic provides a common dispatch mechanism for all regular unary

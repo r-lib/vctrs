@@ -190,6 +190,6 @@ vec_proxy_compare.vctrs_rcrd <- function(x, ..., relax = FALSE) {
 }
 
 #' @export
-vec_math.vctrs_rcrd <- function(fn, x, ...) {
-  stop_unsupported(x, "vec_math")
+vec_math.vctrs_rcrd <- function(.fn, .x, ...) {
+  stop_unsupported(.x, "vec_math")
 }
