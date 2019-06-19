@@ -30,7 +30,7 @@ calls the base \code{fn} on the underlying \code{\link[=vec_data]{vec_data()}}.
 
 \itemize{
 \item From the \link{Summary} group generic:
-\code{max()}, \code{min()}, \code{range()}, \code{prod}, \code{sum()}, \code{any()}, \code{all()}.
+\code{max()}, \code{min()}, \code{range()}, \code{prod()}, \code{sum()}, \code{any()}, \code{all()}.
 \item From the \link{Math} group generic:
 \code{abs()}, \code{sign()}, \code{sqrt()}, \code{ceiling()}, \code{floor()}, \code{trunc()}, \code{cummax()},
 \code{cummin()}, \code{cumprod()}, \code{cumsum()}, \code{log()}, \code{log10()}, \code{log2()},

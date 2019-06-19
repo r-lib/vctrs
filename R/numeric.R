@@ -11,7 +11,7 @@
 #' @section Included functions:
 #'
 #' * From the [Summary] group generic:
-#'   `max()`, `min()`, `range()`, `prod`, `sum()`, `any()`, `all()`.
+#'   `max()`, `min()`, `range()`, `prod()`, `sum()`, `any()`, `all()`.
 #'
 #' * From the [Math] group generic:
 #'   `abs()`, `sign()`, `sqrt()`, `ceiling()`, `floor()`, `trunc()`, `cummax()`,
