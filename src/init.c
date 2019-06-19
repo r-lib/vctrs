@@ -144,7 +144,7 @@ static const R_ExternalMethodDef ExtEntries[] = {
   {"vctrs_type_common",                (DL_FUNC) &vctrs_type_common, 1},
   {"vctrs_size_common",                (DL_FUNC) &vctrs_size_common, 2},
   {"vctrs_cast_common",                (DL_FUNC) &vctrs_cast_common, 1},
-  {"vctrs_rbind",                      (DL_FUNC) &vctrs_rbind, 2},
+  {"vctrs_rbind",                      (DL_FUNC) &vctrs_rbind, 3},
   {"vctrs_cbind",                      (DL_FUNC) &vctrs_cbind, 3},
   {"vctrs_c",                          (DL_FUNC) &vctrs_c, 2},
   {NULL, NULL, 0}

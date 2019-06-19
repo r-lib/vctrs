@@ -96,6 +96,10 @@ void r_int_fill_seq(SEXP x, int start, R_len_t n);
 SEXP r_seq(R_len_t from, R_len_t to);
 bool r_int_any_na(SEXP x);
 
+R_len_t r_chr_find(SEXP x, SEXP value);
+
+#define r_resize Rf_xlengthgets
+
 int r_chr_max_len(SEXP x);
 SEXP r_chr_iota(R_len_t n, char* buf, int len, const char* prefix);
 
@@ -114,6 +118,7 @@ SEXP r_call(SEXP fn, SEXP* tags, SEXP* cars);
 
 SEXP r_names(SEXP x);
 bool r_has_name_at(SEXP names, R_len_t i);
+bool r_is_names(SEXP names);
 bool r_is_minimal_names(SEXP x);
 bool r_is_empty_names(SEXP x);
 SEXP r_env_get(SEXP env, SEXP sym);

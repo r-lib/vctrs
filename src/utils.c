@@ -378,6 +378,25 @@ SEXP r_seq(R_len_t from, R_len_t to) {
   return seq;
 }
 
+
+#define FIND(CTYPE, CONST_DEREF)                \
+  R_len_t n = Rf_length(x);                     \
+  const CTYPE* data = CONST_DEREF(x);           \
+                                                \
+  for (R_len_t i = 0; i < n; ++i) {             \
+    if (data[i] == value) {                     \
+      return i;                                 \
+    }                                           \
+  }                                             \
+  return -1
+
+R_len_t r_chr_find(SEXP x, SEXP value) {
+  FIND(SEXP, STRING_PTR_RO);
+}
+
+#undef FIND
+
+
 bool r_int_any_na(SEXP x) {
   int* data = INTEGER(x);
   R_len_t n = Rf_length(x);
@@ -645,12 +664,30 @@ SEXP r_maybe_duplicate(SEXP x) {
   }
 }
 
-bool r_chr_has_string(SEXP x, SEXP str) {
-  int n = Rf_length(x);
-  SEXP* data = STRING_PTR(x);
+bool r_is_names(SEXP names) {
+  if (names == R_NilValue) {
+    return false;
+  }
 
-  for (int i = 0; i < n; ++i, ++data) {
-    if (*data == str) {
+  R_len_t n = Rf_length(names);
+  const SEXP* p = STRING_PTR_RO(names);
+
+  for (R_len_t i = 0; i < n; ++i, ++p) {
+    SEXP nm = *p;
+    if (nm == strings_empty || nm == NA_STRING) {
+      return false;
+    }
+  }
+
+  return true;
+}
+
+bool r_chr_has_string(SEXP x, SEXP str) {
+  R_len_t n = Rf_length(x);
+  const SEXP* xp = STRING_PTR_RO(x);
+
+  for (R_len_t i = 0; i < n; ++i, ++xp) {
+    if (*xp == str) {
       return true;
     }
   }

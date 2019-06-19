@@ -222,3 +222,22 @@ test_that("can repair names in `vec_cbind()` (#227)", {
 
   expect_named(vec_cbind(a = 1, a = 2, .name_repair = "minimal"), c("a", "a"))
 })
+
+test_that("can supply `.id` to `vec_rbind()` (#229)", {
+  expect_error(vec_rbind(.id = letters), "must be")
+  expect_error(vec_rbind(.id = 10), "must be")
+  expect_error(vec_rbind(mtcars, mtcars, .id = "foo"), "must have names")
+  expect_error(vec_rbind(a = mtcars, mtcars, .id = "foo"), "must have names")
+
+  x <- data_frame(foo = 1:2, bar = 3:4)
+  y <- data_frame(foo = 5L, bar = 6L)
+
+  expect_identical(
+    vec_rbind(a = x, b = y, .id = "quux"),
+    data_frame(foo = c(1L, 2L, 5L), bar = c(3L, 4L, 6L), quux = c("a", "a", "b"))
+  )
+  expect_identical(
+    vec_rbind(a = x, b = y, .id = "foo"),
+    data_frame(foo = c("a", "a", "b"), bar = c(3L, 4L, 6L))
+  )
+})
