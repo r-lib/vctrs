@@ -2,7 +2,7 @@
 #include "utils.h"
 
 
-static SEXP vec_rbind(SEXP xs, SEXP ptype, const char* id, enum name_repair_arg name_repair);
+static SEXP vec_rbind(SEXP xs, SEXP ptype, SEXP id, enum name_repair_arg name_repair);
 static SEXP as_df_row(SEXP x, enum name_repair_arg name_repair, bool quiet);
 static SEXP as_df_row_impl(SEXP x, enum name_repair_arg name_repair, bool quiet);
 enum name_repair_arg validate_bind_name_repair(SEXP name_repair, bool allow_minimal);
@@ -16,16 +16,15 @@ SEXP vctrs_rbind(SEXP call, SEXP op, SEXP args, SEXP env) {
   SEXP id = PROTECT(Rf_eval(CAR(args), env)); args = CDR(args);
   SEXP name_repair = PROTECT(Rf_eval(CAR(args), env));
 
-  const char* id_arg = NULL;
   if (id != R_NilValue) {
     if (!r_is_string(id)) {
       Rf_errorcall(R_NilValue, "`.id` must be `NULL` or a string.");
     }
-    id_arg = r_chr_get_c_string(id, 0);
+    id = r_chr_get(id, 0);
   }
 
   enum name_repair_arg repair_arg = validate_bind_name_repair(name_repair, false);
-  SEXP out = vec_rbind(xs, ptype, id_arg, repair_arg);
+  SEXP out = vec_rbind(xs, ptype, id, repair_arg);
 
   UNPROTECT(4);
   return out;
@@ -35,7 +34,7 @@ SEXP vctrs_rbind(SEXP call, SEXP op, SEXP args, SEXP env) {
 // From type.c
 SEXP vctrs_type_common_impl(SEXP dots, SEXP ptype);
 
-static SEXP vec_rbind(SEXP xs, SEXP ptype, const char* id, enum name_repair_arg name_repair) {
+static SEXP vec_rbind(SEXP xs, SEXP ptype, SEXP id, enum name_repair_arg name_repair) {
   R_len_t n = Rf_length(xs);
 
   for (R_len_t i = 0; i < n; ++i) {
@@ -82,7 +81,7 @@ static SEXP vec_rbind(SEXP xs, SEXP ptype, const char* id, enum name_repair_arg 
   const SEXP* xs_names_p = NULL;
 
   int nprot = 0;
-  if (id) {
+  if (id != R_NilValue) {
     SEXP xs_names = PROTECT_N(r_names(xs), &nprot);
 
     if (!r_is_names(xs_names)) {
@@ -103,7 +102,7 @@ static SEXP vec_rbind(SEXP xs, SEXP ptype, const char* id, enum name_repair_arg 
       continue;
     }
 
-    if (id) {
+    if (id != R_NilValue) {
       SEXP nm = xs_names_p[i];
       for (R_len_t j = 0; j < size; ++j, ++id_col_p) {
         *id_col_p = nm;
@@ -118,9 +117,9 @@ static SEXP vec_rbind(SEXP xs, SEXP ptype, const char* id, enum name_repair_arg 
     UNPROTECT(1);
   }
 
-  if (id) {
+  if (id != R_NilValue) {
     SEXP out_names = PROTECT(r_names(out));
-    R_len_t id_pos = r_chr_find(out_names, r_str(id));
+    R_len_t id_pos = r_chr_find(out_names, id);
 
     if (id_pos < 0) {
       R_len_t ncol = Rf_length(out);
@@ -132,7 +131,7 @@ static SEXP vec_rbind(SEXP xs, SEXP ptype, const char* id, enum name_repair_arg 
       SEXP out_names = PROTECT(r_names(out));
 
       SET_VECTOR_ELT(out, ncol, id_col);
-      SET_STRING_ELT(out_names, ncol, r_str(id));
+      SET_STRING_ELT(out_names, ncol, id);
 
       UNPROTECT(1);
     } else {
