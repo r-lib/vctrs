@@ -419,12 +419,12 @@
 <a class="sourceLine" id="cb32-9" data-line-number="9"><span class="co">#&gt;  [7] 0.40353812 0.06366146 0.38870131 0.97554784</span></a>
 <a class="sourceLine" id="cb32-10" data-line-number="10"><span class="co">#&gt; # Sum: 3.83</span></a></code></pre></div>
 <p>We’ll also override <code><a href="https://www.rdocumentation.org/packages/base/topics/sum">sum()</a></code> and <code><a href="https://www.rdocumentation.org/packages/base/topics/mean">mean()</a></code> to use the attribute. This is easiest to do with <code><a href="../reference/vec_math.html">vec_math()</a></code>, which you’ll learn about later.</p>
-<div class="sourceCode" id="cb33"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb33-1" data-line-number="1">vec_math.vctrs_cached_sum &lt;-<span class="st"> </span><span class="cf">function</span>(fun, x, ...) {</a>
+<div class="sourceCode" id="cb33"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb33-1" data-line-number="1">vec_math.vctrs_cached_sum &lt;-<span class="st"> </span><span class="cf">function</span>(.fn, .x, ...) {</a>
 <a class="sourceLine" id="cb33-2" data-line-number="2">  <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/cat">cat</a></span>(<span class="st">"Using cache</span><span class="ch">\n</span><span class="st">"</span>)</a>
-<a class="sourceLine" id="cb33-3" data-line-number="3">  <span class="cf">switch</span>(fun,</a>
-<a class="sourceLine" id="cb33-4" data-line-number="4">    <span class="dt">sum =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/attr">attr</a></span>(x, <span class="st">"sum"</span>),</a>
-<a class="sourceLine" id="cb33-5" data-line-number="5">    <span class="dt">mean =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/attr">attr</a></span>(x, <span class="st">"sum"</span>) <span class="op">/</span><span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/length">length</a></span>(x),</a>
-<a class="sourceLine" id="cb33-6" data-line-number="6">    <span class="kw"><a href="../reference/vec_math.html">vec_math_base</a></span>(fun, x, ...)</a>
+<a class="sourceLine" id="cb33-3" data-line-number="3">  <span class="cf">switch</span>(.fn,</a>
+<a class="sourceLine" id="cb33-4" data-line-number="4">    <span class="dt">sum =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/attr">attr</a></span>(.x, <span class="st">"sum"</span>),</a>
+<a class="sourceLine" id="cb33-5" data-line-number="5">    <span class="dt">mean =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/attr">attr</a></span>(.x, <span class="st">"sum"</span>) <span class="op">/</span><span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/length">length</a></span>(.x),</a>
+<a class="sourceLine" id="cb33-6" data-line-number="6">    <span class="kw"><a href="../reference/vec_math.html">vec_math_base</a></span>(.fn, .x, ...)</a>
 <a class="sourceLine" id="cb33-7" data-line-number="7">  )</a>
 <a class="sourceLine" id="cb33-8" data-line-number="8">}</a>
 <a class="sourceLine" id="cb33-9" data-line-number="9"></a>
@@ -728,7 +728,7 @@
 <a href="#arithmetic" class="anchor"></a>Arithmetic</h2>
 <p>vctrs also provides two mathematical generics that allow you to define a broad swath of mathematical behaviour at once:</p>
 <ul>
-<li><p><code><a href="../reference/vec_math.html">vec_math(fun, x, ...)</a></code> specifies the behaviour of mathematical functions like <code><a href="https://www.rdocumentation.org/packages/base/topics/MathFun">abs()</a></code>, <code><a href="https://www.rdocumentation.org/packages/base/topics/sum">sum()</a></code>, and <code><a href="https://www.rdocumentation.org/packages/base/topics/mean">mean()</a></code>. (See <code>?vec_math()</code> for the complete list.)</p></li>
+<li><p><code><a href="../reference/vec_math.html">vec_math(fn, x, ...)</a></code> specifies the behaviour of mathematical functions like <code><a href="https://www.rdocumentation.org/packages/base/topics/MathFun">abs()</a></code>, <code><a href="https://www.rdocumentation.org/packages/base/topics/sum">sum()</a></code>, and <code><a href="https://www.rdocumentation.org/packages/base/topics/mean">mean()</a></code>. (See <code>?vec_math()</code> for the complete list.)</p></li>
 <li><p><code><a href="../reference/vec_arith.html">vec_arith(op, x, y)</a></code> specifies the behaviour of the arithmetic operations like <code>+</code>, <code>-</code>, and <code>%%</code>. (See <code>?vec_arith()</code> for the complete list.)</p></li>
 </ul>
 <p>Both generics define the behaviour for multiple functions because <code>sum.vctrs_vctr(x)</code> calls <code>vec_math.vctrs_vctr("sum", x)</code>, and <code>x + y</code> calls <code>vec_math.x_class.y_class("+", x, y)</code>. They’re accompanied by <code><a href="../reference/vec_math.html">vec_math_base()</a></code> and <code><a href="../reference/vec_arith.html">vec_arith_base()</a></code> which make it easy to call the underlying base R functions.</p>
@@ -743,11 +743,11 @@
 <h3 class="hasAnchor">
 <a href="#cached-sum-class" class="anchor"></a>Cached sum class</h3>
 <p>I showed an example of <code><a href="../reference/vec_math.html">vec_math()</a></code> to define <code><a href="https://www.rdocumentation.org/packages/base/topics/sum">sum()</a></code> and <code><a href="https://www.rdocumentation.org/packages/base/topics/mean">mean()</a></code> methods <code>cached_sum</code>. Now let’s talk about exactly how it works. Most <code><a href="../reference/vec_math.html">vec_math()</a></code> functions will have a similar form. You use a switch statement to handle the methods that you care about, and fall back to <code><a href="../reference/vec_math.html">vec_math_base()</a></code> for those that you don’t care about.</p>
-<div class="sourceCode" id="cb56"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb56-1" data-line-number="1">vec_math.vctrs_cached_sum &lt;-<span class="st"> </span><span class="cf">function</span>(fun, x, ...) {</a>
-<a class="sourceLine" id="cb56-2" data-line-number="2">  <span class="cf">switch</span>(fun,</a>
-<a class="sourceLine" id="cb56-3" data-line-number="3">    <span class="dt">sum =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/attr">attr</a></span>(x, <span class="st">"sum"</span>),</a>
-<a class="sourceLine" id="cb56-4" data-line-number="4">    <span class="dt">mean =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/attr">attr</a></span>(x, <span class="st">"sum"</span>) <span class="op">/</span><span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/length">length</a></span>(x),</a>
-<a class="sourceLine" id="cb56-5" data-line-number="5">    <span class="kw"><a href="../reference/vec_math.html">vec_math_base</a></span>(fun, x, ...)</a>
+<div class="sourceCode" id="cb56"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb56-1" data-line-number="1">vec_math.vctrs_cached_sum &lt;-<span class="st"> </span><span class="cf">function</span>(.fn, .x, ...) {</a>
+<a class="sourceLine" id="cb56-2" data-line-number="2">  <span class="cf">switch</span>(.fn,</a>
+<a class="sourceLine" id="cb56-3" data-line-number="3">    <span class="dt">sum =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/attr">attr</a></span>(.x, <span class="st">"sum"</span>),</a>
+<a class="sourceLine" id="cb56-4" data-line-number="4">    <span class="dt">mean =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/attr">attr</a></span>(.x, <span class="st">"sum"</span>) <span class="op">/</span><span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/length">length</a></span>(.x),</a>
+<a class="sourceLine" id="cb56-5" data-line-number="5">    <span class="kw"><a href="../reference/vec_math.html">vec_math_base</a></span>(.fn, .x, ...)</a>
 <a class="sourceLine" id="cb56-6" data-line-number="6">  )</a>
 <a class="sourceLine" id="cb56-7" data-line-number="7">}</a></code></pre></div>
 </div>

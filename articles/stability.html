@@ -142,7 +142,7 @@
 <a class="sourceLine" id="cb3-4" data-line-number="4"><span class="co">#&gt; Prototype: list</span></a></code></pre></div>
 <p>It’s not quite size-stable, <code><a href="../reference/vec_size.html">vec_size(sapply(x, f))</a></code> is <code><a href="../reference/vec_size.html">vec_size(x)</a></code> for vectors, but not for matrices (the output is transposed) or data frames (it iterates over the columns).</p>
 </li>
-<li><p><code><a href="https://www.rdocumentation.org/packages/base/topics/lapply">vapply()</a></code> is type-stable version of <code><a href="https://www.rdocumentation.org/packages/base/topics/lapply">sapply()</a></code> because <code><a href="../reference/vec_type.html">vec_ptype(vapply(x, fun, template))</a></code> is always <code><a href="../reference/vec_type.html">vec_ptype(template)</a></code>.<br>
+<li><p><code><a href="https://www.rdocumentation.org/packages/base/topics/lapply">vapply()</a></code> is type-stable version of <code><a href="https://www.rdocumentation.org/packages/base/topics/lapply">sapply()</a></code> because <code><a href="../reference/vec_type.html">vec_ptype(vapply(x, fn, template))</a></code> is always <code><a href="../reference/vec_type.html">vec_ptype(template)</a></code>.<br>
 It is size-unstable for the same reasons as <code><a href="https://www.rdocumentation.org/packages/base/topics/lapply">sapply()</a></code>.</p></li>
 <li>
 <p><code><a href="https://www.rdocumentation.org/packages/base/topics/c">c()</a></code> is type-unstable because <code><a href="https://www.rdocumentation.org/packages/base/topics/c">c(x, y)</a></code> doesn’t always the same type as <code><a href="https://www.rdocumentation.org/packages/base/topics/c">c(y, x)</a></code>.</p>
@@ -225,7 +225,7 @@ It is size-unstable for the same reasons as <code><a href="https://www.rdocument
 <a class="sourceLine" id="cb11-2" data-line-number="2"><span class="co">#&gt; [[1]]</span></a>
 <a class="sourceLine" id="cb11-3" data-line-number="3"><span class="co">#&gt; function (x, ...) </span></a>
 <a class="sourceLine" id="cb11-4" data-line-number="4"><span class="co">#&gt; UseMethod("mean")</span></a>
-<a class="sourceLine" id="cb11-5" data-line-number="5"><span class="co">#&gt; &lt;bytecode: 0x446c378&gt;</span></a>
+<a class="sourceLine" id="cb11-5" data-line-number="5"><span class="co">#&gt; &lt;bytecode: 0x4227378&gt;</span></a>
 <a class="sourceLine" id="cb11-6" data-line-number="6"><span class="co">#&gt; &lt;environment: namespace:base&gt;</span></a>
 <a class="sourceLine" id="cb11-7" data-line-number="7"><span class="co">#&gt; </span></a>
 <a class="sourceLine" id="cb11-8" data-line-number="8"><span class="co">#&gt; [[2]]</span></a>

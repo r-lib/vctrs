@@ -139,31 +139,31 @@ mathematical functions like <code><a href='https://www.rdocumentation.org/packag
     
     </div>
 
-    <pre class="usage"><span class='fu'>vec_math</span>(<span class='no'>fun</span>, <span class='no'>x</span>, <span class='no'>...</span>)
+    <pre class="usage"><span class='fu'>vec_math</span>(<span class='no'>.fn</span>, <span class='no'>.x</span>, <span class='no'>...</span>)
 
-<span class='fu'>vec_math_base</span>(<span class='no'>fun</span>, <span class='no'>x</span>, <span class='no'>...</span>)</pre>
+<span class='fu'>vec_math_base</span>(<span class='no'>.fn</span>, <span class='no'>.x</span>, <span class='no'>...</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>fun</th>
-      <td><p>An mathematical function as a string</p></td>
+      <th>.fn</th>
+      <td><p>A mathematical function from the base package, as a string.</p></td>
     </tr>
     <tr>
-      <th>x</th>
-      <td><p>A vector</p></td>
+      <th>.x</th>
+      <td><p>A vector.</p></td>
     </tr>
     <tr>
       <th>...</th>
-      <td><p>An additional arguments.</p></td>
+      <td><p>Additional arguments passed to <code>.fn</code>.</p></td>
     </tr>
     </table>
     
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
     <p><code>vec_math_base()</code> is provided as a convenience for writing methods. It
-calls the base <code>fun</code> on the underlying <code><a href='vec_data.html'>vec_data()</a></code>.</p>
+calls the base <code>fn</code> on the underlying <code><a href='vec_data.html'>vec_data()</a></code>.</p>
     
     <h2 class="hasAnchor" id="included-functions"><a class="anchor" href="#included-functions"></a>Included functions</h2>
 
