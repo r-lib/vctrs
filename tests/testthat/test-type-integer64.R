@@ -53,3 +53,9 @@ test_that("vec_ptype_abbr.integer64", {
   expect_equal(vec_ptype_abbr(bit64::as.integer64(1:10)), "int64")
   expect_equal(vec_ptype_full(bit64::as.integer64(1:10)), "integer64")
 })
+
+test_that("can sort integer64", {
+  x <- bit64::as.integer64(c(-1, -3, -2, 1))
+  expect_identical(vec_order(x), int(2, 3, 1, 4))
+  expect_identical(x[vec_order(x)], bit64::as.integer64(c(-3, -2, -1, 1)))
+})

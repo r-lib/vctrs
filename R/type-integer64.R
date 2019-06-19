@@ -1,3 +1,9 @@
+
+#' @export
+vec_proxy_compare.integer64 <- function(x, ...) {
+  bit64::rank.integer64(x)
+}
+
 # Print -------------------------------------------------------------------
 
 #' 64 bit integers
