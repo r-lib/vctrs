@@ -6,7 +6,7 @@
 #' mathematical functions like `mean()`.
 #'
 #' `vec_math_base()` is provided as a convenience for writing methods. It
-#' calls the base `fn` on the underlying [vec_data()].
+#' calls the base `.fn` on the underlying [vec_data()].
 #'
 #' @section Included functions:
 #'

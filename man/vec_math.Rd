@@ -24,7 +24,7 @@ mathematical functions like \code{mean()}.
 }
 \details{
 \code{vec_math_base()} is provided as a convenience for writing methods. It
-calls the base \code{fn} on the underlying \code{\link[=vec_data]{vec_data()}}.
+calls the base \code{.fn} on the underlying \code{\link[=vec_data]{vec_data()}}.
 }
 \section{Included functions}{
 
