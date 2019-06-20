@@ -287,7 +287,36 @@ SEXP colnames(SEXP x) {
 }
 
 
-// From rlang
+void r_vec_ptr_inc(SEXPTYPE type, void** p, R_len_t i) {
+  switch (type) {
+  case STRSXP: *((SEXP**) p) += i; return;
+  case INTSXP: *((int**) p) += i; return;
+  default: Rf_error("Unimplemented type in `r_vec_ptr_inc()`.");
+  }
+}
+
+#define FILL(CTYPE, PTR, VAL_PTR, VAL_I, N)             \
+  do {                                                  \
+    CTYPE* data = (CTYPE*) PTR;                         \
+    CTYPE* end = data + N + 1;                          \
+    CTYPE value = ((const CTYPE*) VAL_PTR)[VAL_I];      \
+                                                        \
+    while (data != end) {                               \
+      *data++ = value;                                  \
+    }                                                   \
+  } while (false)
+
+void r_vec_fill(SEXPTYPE type, void* p, const void* value_p, R_len_t value_i, R_len_t n) {
+  switch (type) {
+  case STRSXP: FILL(SEXP, p, value_p, value_i, n); return;
+  case INTSXP: FILL(int, p, value_p, value_i, n); return;
+  default: Rf_error("Internal error: Unimplemented type in `r_fill()`");
+  }
+}
+
+#undef FILL
+
+
 R_len_t r_lgl_sum(SEXP x, bool na_true) {
   if (TYPEOF(x) != LGLSXP) {
     Rf_errorcall(R_NilValue, "Internal error: Excepted logical vector in `r_lgl_sum()`");

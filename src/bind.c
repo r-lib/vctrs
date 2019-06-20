@@ -76,21 +76,29 @@ static SEXP vec_rbind(SEXP xs, SEXP ptype, SEXP names_to, enum name_repair_arg n
   SEXP idx = PROTECT(compact_seq(0, 0));
   int* idx_ptr = INTEGER(idx);
 
-  SEXP names_to_col = R_NilValue;
-  SEXP* names_to_p = NULL;
-  const SEXP* xs_names_p = NULL;
-
   int nprot = 0;
+  SEXP names_to_col = R_NilValue;
+  SEXPTYPE names_to_type;
+  void* names_to_p = NULL;
+  const void* index_p = NULL;
+
   if (names_to != R_NilValue) {
-    SEXP xs_names = PROTECT_N(r_names(xs), &nprot);
+    SEXP index = PROTECT_N(r_names(xs), &nprot);
 
-    if (!r_is_names(xs_names)) {
-      Rf_errorcall(R_NilValue, "Inputs must have names when `.names_to` is supplied");
+    if (index == R_NilValue) {
+      index = PROTECT_N(Rf_allocVector(INTSXP, n), &nprot);
+      index_p = (const void*) INTEGER_RO(index);
+      r_int_fill_seq(index, 1, n);
+
+      names_to_type = INTSXP;
+      names_to_col = PROTECT_N(Rf_allocVector(INTSXP, nrow), &nprot);
+      names_to_p = (void*) INTEGER(names_to_col);
+    } else {
+      index_p = (const void*) STRING_PTR_RO(index);
+      names_to_type = STRSXP;
+      names_to_col = PROTECT_N(Rf_allocVector(STRSXP, nrow), &nprot);
+      names_to_p = (void*) STRING_PTR(names_to_col);
     }
-    xs_names_p = STRING_PTR_RO(xs_names);
-
-    names_to_col = PROTECT_N(Rf_allocVector(STRSXP, nrow), &nprot);
-    names_to_p = STRING_PTR(names_to_col);
   }
 
   // Compact sequences use 0-based counters
@@ -103,10 +111,8 @@ static SEXP vec_rbind(SEXP xs, SEXP ptype, SEXP names_to, enum name_repair_arg n
     }
 
     if (names_to != R_NilValue) {
-      SEXP nm = xs_names_p[i];
-      for (R_len_t j = 0; j < size; ++j, ++names_to_p) {
-        *names_to_p = nm;
-      }
+      r_vec_fill(names_to_type, names_to_p, index_p, i, size);
+      r_vec_ptr_inc(names_to_type, &names_to_p, size);
     }
 
     SEXP tbl = PROTECT(vec_cast(VECTOR_ELT(xs, i), ptype, args_empty, args_empty));

@@ -88,6 +88,9 @@ SEXP (*rlang_unbox)(SEXP);
 SEXP (*rlang_env_dots_values)(SEXP);
 SEXP (*rlang_env_dots_list)(SEXP);
 
+void r_vec_ptr_inc(SEXPTYPE type, void** p, R_len_t i);
+void r_vec_fill(SEXPTYPE type, void* p, const void* value_p, R_len_t value_i, R_len_t n);
+
 R_len_t r_lgl_sum(SEXP lgl, bool na_true);
 SEXP r_lgl_which(SEXP x, bool na_true);
 
