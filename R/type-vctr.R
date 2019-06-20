@@ -32,18 +32,18 @@
 #' * `==`, `!=`, `unique()`, `anyDuplicated()`, and `is.na()` use
 #'   [vec_proxy()].
 #'
-#' * `<`, `<=`, `>=`, `>`, `min()`, `max()`, `median()`, `quantile()`,
-#'   and `xtfrm()` methods use [vec_proxy_compare()].
+#' * `<`, `<=`, `>=`, `>`, `min()`, `max()`, `range()`, `median()`,
+#'   `quantile()`, and `xtfrm()` methods use [vec_proxy_compare()].
 #'
 #' * `+`, `-`, `/`, `*`, `^`, `%%`, `%/%`, `!`, `&`, and `|` operators
 #'   use [vec_arith()].
 #'
-#' * Mathematical operations including the Summary group generics (`max`,
-#'   `min`, `range`, `prod`, `sum`, `any`, `all`), the Math group generics
-#'   (`abs`, `sign`, etc), `mean()`, `is.nan()`, `is.finite()`, and
-#'   `is.infinite()` use [vec_math()].
+#' * Mathematical operations including the Summary group generics (`prod()`,
+#'   `sum()`, `any()`, `all()`), the Math group generics (`abs()`, `sign()`,
+#'   etc), `mean()`, `is.nan()`, `is.finite()`, and `is.infinite()`
+#'   use [vec_math()].
 #'
-#' * `dims()`, `dims<-()`, `dimnames()`, `dimnames<-`, `levels()`, and
+#' * `dims()`, `dims<-`, `dimnames()`, `dimnames<-`, `levels()`, and
 #'   `levels<-` methods throw errors.
 #'
 #' @param .data Foundation of class. Must be a vector
@@ -452,6 +452,25 @@ max.vctrs_vctr <- function(x, ..., na.rm = FALSE) {
   x[[idx[[1]]]]
 }
 
+#' @export
+range.vctrs_vctr <- function(x, ..., na.rm = FALSE) {
+  if (vec_is_empty(x)) {
+    return(vec_cast(c(Inf, -Inf), x))
+  }
+
+  # Inline `min()` / `max()` to only call `xtfrm()` once
+  rank <- xtfrm(x)
+
+  if (isTRUE(na.rm)) {
+    idx_min <- which.min(rank)
+    idx_max <- which.max(rank)
+  } else {
+    idx_min <- which(vec_equal(rank, min(rank), na_equal = TRUE))
+    idx_max <- which(vec_equal(rank, max(rank), na_equal = TRUE))
+  }
+
+  c(x[[idx_min[[1]]]], x[[idx_max[[1]]]])
+}
 
 # Numeric -----------------------------------------------------------------
 

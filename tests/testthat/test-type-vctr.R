@@ -341,12 +341,15 @@ test_that("methods using vec_proxy_compare agree with base", {
 
   expect_agree(min, h)
   expect_agree(max, h)
+  expect_agree(range, h)
 
   expect_agree(min, h_na)
   expect_agree(max, h_na)
+  expect_agree(range, h_na)
 
   expect_agree(min, h_na, na.rm = TRUE)
   expect_agree(max, h_na, na.rm = TRUE)
+  expect_agree(range, h_na, na.rm = TRUE)
 })
 
 test_that("can put in data frame", {
