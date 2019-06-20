@@ -617,3 +617,20 @@ test_that("names must be unique", {
     locations = 1:3
   )
 })
+
+
+# Legacy repair --------------------------------------------------------
+
+test_that("vec_as_names_legacy() works", {
+  expect_identical(vec_as_names_legacy(chr()), chr())
+  expect_identical(vec_as_names_legacy(c("a", "a", "", "")), c("a", "a1", "V1", "V2"))
+  expect_identical(vec_as_names_legacy(c("a", "a", "", ""), sep = "_"), c("a", "a_1", "V_1", "V_2"))
+  expect_identical(vec_as_names_legacy(c("a", "a", "", ""), prefix = "foo"), c("a", "a1", "foo1", "foo2"))
+  expect_identical(vec_as_names_legacy(c("a", "a", "", ""), prefix = "foo", sep = "_"), c("a", "a_1", "foo_1", "foo_2"))
+
+  # From tibble
+  expect_identical(vec_as_names_legacy(c("x", "x")), c("x", "x1"))
+  expect_identical(vec_as_names_legacy(c("", "")), c("V1", "V2"))
+  expect_identical(vec_as_names_legacy(c("", "V1")), c("V2", "V1"))
+  expect_identical(vec_as_names_legacy(c("", "V", "V")), c("V2", "V", "V1"))
+})
