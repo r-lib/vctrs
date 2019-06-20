@@ -84,21 +84,15 @@ static SEXP vec_rbind(SEXP xs, SEXP ptype, SEXP names_to, enum name_repair_arg n
 
   if (names_to != R_NilValue) {
     SEXP index = PROTECT_N(r_names(xs), &nprot);
-
     if (index == R_NilValue) {
       index = PROTECT_N(Rf_allocVector(INTSXP, n), &nprot);
-      index_p = (const void*) INTEGER_RO(index);
       r_int_fill_seq(index, 1, n);
-
-      names_to_type = INTSXP;
-      names_to_col = PROTECT_N(Rf_allocVector(INTSXP, nrow), &nprot);
-      names_to_p = (void*) INTEGER(names_to_col);
-    } else {
-      index_p = (const void*) STRING_PTR_RO(index);
-      names_to_type = STRSXP;
-      names_to_col = PROTECT_N(Rf_allocVector(STRSXP, nrow), &nprot);
-      names_to_p = (void*) STRING_PTR(names_to_col);
     }
+    index_p = r_vec_const_deref(index);
+
+    names_to_type = TYPEOF(index);
+    names_to_col = PROTECT_N(Rf_allocVector(names_to_type, nrow), &nprot);
+    names_to_p = r_vec_deref(names_to_col);
   }
 
   // Compact sequences use 0-based counters
@@ -110,14 +104,15 @@ static SEXP vec_rbind(SEXP xs, SEXP ptype, SEXP names_to, enum name_repair_arg n
       continue;
     }
 
+    SEXP tbl = PROTECT(vec_cast(VECTOR_ELT(xs, i), ptype, args_empty, args_empty));
+    init_compact_seq(idx_ptr, counter, counter + size);
+    df_assign(out, idx, tbl, false);
+
+    // Assign current name to group vector, if supplied
     if (names_to != R_NilValue) {
       r_vec_fill(names_to_type, names_to_p, index_p, i, size);
       r_vec_ptr_inc(names_to_type, &names_to_p, size);
     }
-
-    SEXP tbl = PROTECT(vec_cast(VECTOR_ELT(xs, i), ptype, args_empty, args_empty));
-    init_compact_seq(idx_ptr, counter, counter + size);
-    df_assign(out, idx, tbl, false);
 
     counter += size;
     UNPROTECT(1);

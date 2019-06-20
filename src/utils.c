@@ -287,6 +287,21 @@ SEXP colnames(SEXP x) {
 }
 
 
+void* r_vec_deref(SEXP x) {
+  switch (TYPEOF(x)) {
+  case INTSXP: return INTEGER(x);
+  case STRSXP: return STRING_PTR(x);
+  default: Rf_error("Unimplemented type in `r_vec_deref()`.");
+  }
+}
+const void* r_vec_const_deref(SEXP x) {
+  switch (TYPEOF(x)) {
+  case INTSXP: return INTEGER_RO(x);
+  case STRSXP: return STRING_PTR_RO(x);
+  default: Rf_error("Unimplemented type in `r_vec_deref()`.");
+  }
+}
+
 void r_vec_ptr_inc(SEXPTYPE type, void** p, R_len_t i) {
   switch (type) {
   case STRSXP: *((SEXP**) p) += i; return;
