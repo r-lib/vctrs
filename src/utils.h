@@ -70,6 +70,8 @@ bool is_native_df(SEXP x);
 bool is_compact_rownames(SEXP x);
 R_len_t compact_rownames_length(SEXP x);
 SEXP df_container_type(SEXP x);
+SEXP df_poke(SEXP x, R_len_t i, SEXP value);
+SEXP df_poke_at(SEXP x, SEXP name, SEXP value);
 
 void init_compact_seq(int* p, R_len_t from, R_len_t to);
 SEXP compact_seq(R_len_t from, R_len_t to);
@@ -86,6 +88,11 @@ SEXP (*rlang_unbox)(SEXP);
 SEXP (*rlang_env_dots_values)(SEXP);
 SEXP (*rlang_env_dots_list)(SEXP);
 
+void* r_vec_deref(SEXP x);
+const void* r_vec_const_deref(SEXP x);
+void r_vec_ptr_inc(SEXPTYPE type, void** p, R_len_t i);
+void r_vec_fill(SEXPTYPE type, void* p, const void* value_p, R_len_t value_i, R_len_t n);
+
 R_len_t r_lgl_sum(SEXP lgl, bool na_true);
 SEXP r_lgl_which(SEXP x, bool na_true);
 
@@ -95,6 +102,10 @@ void r_int_fill(SEXP x, int value, R_len_t n);
 void r_int_fill_seq(SEXP x, int start, R_len_t n);
 SEXP r_seq(R_len_t from, R_len_t to);
 bool r_int_any_na(SEXP x);
+
+R_len_t r_chr_find(SEXP x, SEXP value);
+
+#define r_resize Rf_xlengthgets
 
 int r_chr_max_len(SEXP x);
 SEXP r_chr_iota(R_len_t n, char* buf, int len, const char* prefix);
@@ -114,6 +125,7 @@ SEXP r_call(SEXP fn, SEXP* tags, SEXP* cars);
 
 SEXP r_names(SEXP x);
 bool r_has_name_at(SEXP names, R_len_t i);
+bool r_is_names(SEXP names);
 bool r_is_minimal_names(SEXP x);
 bool r_is_empty_names(SEXP x);
 SEXP r_env_get(SEXP env, SEXP sym);

@@ -222,3 +222,33 @@ test_that("can repair names in `vec_cbind()` (#227)", {
 
   expect_named(vec_cbind(a = 1, a = 2, .name_repair = "minimal"), c("a", "a"))
 })
+
+test_that("can supply `.names_to` to `vec_rbind()` (#229)", {
+  expect_error(vec_rbind(.names_to = letters), "must be")
+  expect_error(vec_rbind(.names_to = 10), "must be")
+
+  x <- data_frame(foo = 1:2, bar = 3:4)
+  y <- data_frame(foo = 5L, bar = 6L)
+
+  expect_identical(
+    vec_rbind(a = x, b = y, .names_to = "quux"),
+    data_frame(foo = c(1L, 2L, 5L), bar = c(3L, 4L, 6L), quux = c("a", "a", "b"))
+  )
+  expect_identical(
+    vec_rbind(a = x, b = y, .names_to = "foo"),
+    data_frame(foo = c("a", "a", "b"), bar = c(3L, 4L, 6L))
+  )
+
+  # No names
+  expect_identical(
+    vec_rbind(x, y, .names_to = "quux"),
+    data_frame(foo = c(1L, 2L, 5L), bar = c(3L, 4L, 6L), quux = c(1L, 1L, 2L))
+  )
+  expect_identical(
+    vec_rbind(x, y, .names_to = "foo"),
+    data_frame(foo = c(1L, 1L, 2L), bar = c(3L, 4L, 6L))
+  )
+
+  # Partial names
+  expect_identical(vec_rbind(x, b = y, .names_to = "quux")$quux, c("", "", "b"))
+})

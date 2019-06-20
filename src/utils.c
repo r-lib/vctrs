@@ -287,7 +287,51 @@ SEXP colnames(SEXP x) {
 }
 
 
-// From rlang
+void* r_vec_deref(SEXP x) {
+  switch (TYPEOF(x)) {
+  case INTSXP: return INTEGER(x);
+  case STRSXP: return STRING_PTR(x);
+  default: Rf_error("Unimplemented type in `r_vec_deref()`.");
+  }
+}
+const void* r_vec_const_deref(SEXP x) {
+  switch (TYPEOF(x)) {
+  case INTSXP: return INTEGER_RO(x);
+  case STRSXP: return STRING_PTR_RO(x);
+  default: Rf_error("Unimplemented type in `r_vec_deref()`.");
+  }
+}
+
+void r_vec_ptr_inc(SEXPTYPE type, void** p, R_len_t i) {
+  switch (type) {
+  case STRSXP: *((SEXP**) p) += i; return;
+  case INTSXP: *((int**) p) += i; return;
+  default: Rf_error("Unimplemented type in `r_vec_ptr_inc()`.");
+  }
+}
+
+#define FILL(CTYPE, PTR, VAL_PTR, VAL_I, N)             \
+  do {                                                  \
+    CTYPE* data = (CTYPE*) PTR;                         \
+    CTYPE* end = data + N + 1;                          \
+    CTYPE value = ((const CTYPE*) VAL_PTR)[VAL_I];      \
+                                                        \
+    while (data != end) {                               \
+      *data++ = value;                                  \
+    }                                                   \
+  } while (false)
+
+void r_vec_fill(SEXPTYPE type, void* p, const void* value_p, R_len_t value_i, R_len_t n) {
+  switch (type) {
+  case STRSXP: FILL(SEXP, p, value_p, value_i, n); return;
+  case INTSXP: FILL(int, p, value_p, value_i, n); return;
+  default: Rf_error("Internal error: Unimplemented type in `r_fill()`");
+  }
+}
+
+#undef FILL
+
+
 R_len_t r_lgl_sum(SEXP x, bool na_true) {
   if (TYPEOF(x) != LGLSXP) {
     Rf_errorcall(R_NilValue, "Internal error: Excepted logical vector in `r_lgl_sum()`");
@@ -377,6 +421,25 @@ SEXP r_seq(R_len_t from, R_len_t to) {
   UNPROTECT(1);
   return seq;
 }
+
+
+#define FIND(CTYPE, CONST_DEREF)                \
+  R_len_t n = Rf_length(x);                     \
+  const CTYPE* data = CONST_DEREF(x);           \
+                                                \
+  for (R_len_t i = 0; i < n; ++i) {             \
+    if (data[i] == value) {                     \
+      return i;                                 \
+    }                                           \
+  }                                             \
+  return -1
+
+R_len_t r_chr_find(SEXP x, SEXP value) {
+  FIND(SEXP, STRING_PTR_RO);
+}
+
+#undef FIND
+
 
 bool r_int_any_na(SEXP x) {
   int* data = INTEGER(x);
@@ -645,12 +708,30 @@ SEXP r_maybe_duplicate(SEXP x) {
   }
 }
 
-bool r_chr_has_string(SEXP x, SEXP str) {
-  int n = Rf_length(x);
-  SEXP* data = STRING_PTR(x);
+bool r_is_names(SEXP names) {
+  if (names == R_NilValue) {
+    return false;
+  }
 
-  for (int i = 0; i < n; ++i, ++data) {
-    if (*data == str) {
+  R_len_t n = Rf_length(names);
+  const SEXP* p = STRING_PTR_RO(names);
+
+  for (R_len_t i = 0; i < n; ++i, ++p) {
+    SEXP nm = *p;
+    if (nm == strings_empty || nm == NA_STRING) {
+      return false;
+    }
+  }
+
+  return true;
+}
+
+bool r_chr_has_string(SEXP x, SEXP str) {
+  R_len_t n = Rf_length(x);
+  const SEXP* xp = STRING_PTR_RO(x);
+
+  for (R_len_t i = 0; i < n; ++i, ++xp) {
+    if (*xp == str) {
       return true;
     }
   }

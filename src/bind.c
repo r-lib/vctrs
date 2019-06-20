@@ -2,7 +2,7 @@
 #include "utils.h"
 
 
-static SEXP vec_rbind(SEXP xs, SEXP ptype, enum name_repair_arg name_repair);
+static SEXP vec_rbind(SEXP xs, SEXP ptype, SEXP id, enum name_repair_arg name_repair);
 static SEXP as_df_row(SEXP x, enum name_repair_arg name_repair, bool quiet);
 static SEXP as_df_row_impl(SEXP x, enum name_repair_arg name_repair, bool quiet);
 enum name_repair_arg validate_bind_name_repair(SEXP name_repair, bool allow_minimal);
@@ -13,12 +13,20 @@ SEXP vctrs_rbind(SEXP call, SEXP op, SEXP args, SEXP env) {
 
   SEXP xs = PROTECT(rlang_env_dots_list(env));
   SEXP ptype = PROTECT(Rf_eval(CAR(args), env)); args = CDR(args);
+  SEXP names_to = PROTECT(Rf_eval(CAR(args), env)); args = CDR(args);
   SEXP name_repair = PROTECT(Rf_eval(CAR(args), env));
 
-  enum name_repair_arg repair_arg = validate_bind_name_repair(name_repair, false);
-  SEXP out = vec_rbind(xs, ptype, repair_arg);
+  if (names_to != R_NilValue) {
+    if (!r_is_string(names_to)) {
+      Rf_errorcall(R_NilValue, "`.names_to` must be `NULL` or a string.");
+    }
+    names_to = r_chr_get(names_to, 0);
+  }
 
-  UNPROTECT(3);
+  enum name_repair_arg repair_arg = validate_bind_name_repair(name_repair, false);
+  SEXP out = vec_rbind(xs, ptype, names_to, repair_arg);
+
+  UNPROTECT(4);
   return out;
 }
 
@@ -26,7 +34,7 @@ SEXP vctrs_rbind(SEXP call, SEXP op, SEXP args, SEXP env) {
 // From type.c
 SEXP vctrs_type_common_impl(SEXP dots, SEXP ptype);
 
-static SEXP vec_rbind(SEXP xs, SEXP ptype, enum name_repair_arg name_repair) {
+static SEXP vec_rbind(SEXP xs, SEXP ptype, SEXP names_to, enum name_repair_arg name_repair) {
   R_len_t n = Rf_length(xs);
 
   for (R_len_t i = 0; i < n; ++i) {
@@ -68,6 +76,25 @@ static SEXP vec_rbind(SEXP xs, SEXP ptype, enum name_repair_arg name_repair) {
   SEXP idx = PROTECT(compact_seq(0, 0));
   int* idx_ptr = INTEGER(idx);
 
+  int nprot = 0;
+  SEXP names_to_col = R_NilValue;
+  SEXPTYPE names_to_type;
+  void* names_to_p = NULL;
+  const void* index_p = NULL;
+
+  if (names_to != R_NilValue) {
+    SEXP index = PROTECT_N(r_names(xs), &nprot);
+    if (index == R_NilValue) {
+      index = PROTECT_N(Rf_allocVector(INTSXP, n), &nprot);
+      r_int_fill_seq(index, 1, n);
+    }
+    index_p = r_vec_const_deref(index);
+
+    names_to_type = TYPEOF(index);
+    names_to_col = PROTECT_N(Rf_allocVector(names_to_type, nrow), &nprot);
+    names_to_p = r_vec_deref(names_to_col);
+  }
+
   // Compact sequences use 0-based counters
   R_len_t counter = 0;
 
@@ -77,16 +104,25 @@ static SEXP vec_rbind(SEXP xs, SEXP ptype, enum name_repair_arg name_repair) {
       continue;
     }
 
-    // TODO
     SEXP tbl = PROTECT(vec_cast(VECTOR_ELT(xs, i), ptype, args_empty, args_empty));
     init_compact_seq(idx_ptr, counter, counter + size);
     df_assign(out, idx, tbl, false);
+
+    // Assign current name to group vector, if supplied
+    if (names_to != R_NilValue) {
+      r_vec_fill(names_to_type, names_to_p, index_p, i, size);
+      r_vec_ptr_inc(names_to_type, &names_to_p, size);
+    }
 
     counter += size;
     UNPROTECT(1);
   }
 
-  UNPROTECT(4);
+  if (names_to != R_NilValue) {
+    out = df_poke_at(out, names_to, names_to_col);
+  }
+
+  UNPROTECT(4 + nprot);
   return out;
 }
 

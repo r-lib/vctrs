@@ -72,3 +72,38 @@ SEXP df_container_type(SEXP x) {
   UNPROTECT(1);
   return type;
 }
+
+// If negative index, value is appended
+SEXP df_poke(SEXP x, R_len_t i, SEXP value) {
+  if (i >= 0) {
+    SET_VECTOR_ELT(x, i, value);
+    return x;
+  }
+
+  R_len_t ncol = Rf_length(x);
+
+  SEXP tmp = PROTECT(r_resize(x, ncol + 1));
+  Rf_copyMostAttrib(x, tmp);
+  x = tmp;
+
+  SET_VECTOR_ELT(x, ncol, value);
+
+  UNPROTECT(1);
+  return x;
+}
+SEXP df_poke_at(SEXP x, SEXP name, SEXP value) {
+  SEXP names = PROTECT(r_names(x));
+  R_len_t i = r_chr_find(names, name);
+  UNPROTECT(1);
+
+  x = PROTECT(df_poke(x, i, value));
+
+  if (i < 0) {
+    SEXP names = PROTECT(r_names(x));
+    SET_STRING_ELT(names, Rf_length(x) - 1, name);
+    UNPROTECT(1);
+  }
+
+  UNPROTECT(1);
+  return x;
+}
