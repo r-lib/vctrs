@@ -634,3 +634,33 @@ test_that("vec_as_names_legacy() works", {
   expect_identical(vec_as_names_legacy(c("", "V1")), c("V2", "V1"))
   expect_identical(vec_as_names_legacy(c("", "V", "V")), c("V2", "V", "V1"))
 })
+
+
+# Name specification ---------------------------------------------------
+
+test_that("NULL name specs works with scalars", {
+  expect_identical(apply_name_spec(NULL, "foo", NULL, 1L), "foo")
+  expect_named(vec_c(foo = 1), "foo")
+
+  expect_error(apply_name_spec(NULL, "foo", c("a", "b")), "vector of length > 1")
+  expect_error(vec_c(foo = c(a = 1, b = 2)), "vector of length > 1")
+
+  expect_error(apply_name_spec(NULL, "foo", NULL, 2L), "vector of length > 1")
+  expect_error(vec_c(foo = 1:2), "vector of length > 1")
+})
+
+test_that("function name spec is applied", {
+  spec <- function(outer, inner) {
+    sep <- if (is_character(inner)) "_" else ":"
+    paste0(outer, sep, inner)
+  }
+
+  expect_identical(apply_name_spec(spec, "foo", NULL, 1L), "foo")
+  expect_named(vec_c(foo = 1, .name_spec = spec), "foo")
+
+  expect_identical(apply_name_spec(spec, "foo", c("a", "b")), c("foo_a", "foo_b"))
+  expect_named(vec_c(foo = c(a = 1, b = 2), .name_spec = spec), c("foo_a", "foo_b"))
+
+  expect_identical(apply_name_spec(spec, "foo", NULL, 2L), c("foo:1", "foo:2"))
+  expect_named(vec_c(foo = 1:2, .name_spec = spec), c("foo:1", "foo:2"))
+})

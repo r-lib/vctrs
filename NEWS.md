@@ -1,6 +1,22 @@
 # vctrs 0.1.0.9000
 
-* `vec_na()` has been renamed to `vec_init()`, as the primary use case 
+* `vec_c()` now fails when an input is supplied with a name but has
+  internal names or is length > 1:
+
+  ```
+  vec_c(foo = c(a = 1))
+  #> Error: Can't merge the outer name `foo` with a named vector.
+  #> Please supply a `.name_spec` specification.
+
+  vec_c(foo = 1:3)
+  #> Error: Can't merge the outer name `foo` with a vector of length > 1.
+  #> Please supply a `.name_spec` specification.
+  ```
+
+  You can supply a name specification that describes how to combine
+  the external name of the input with its internal names or positions.
+
+* `vec_na()` has been renamed to `vec_init()`, as the primary use case
   is to initialize an output container.
 
 * New `.names_to` parameter for `vec_rbind()`. If supplied, this

@@ -77,6 +77,7 @@ void init_compact_seq(int* p, R_len_t from, R_len_t to);
 SEXP compact_seq(R_len_t from, R_len_t to);
 bool is_compact_seq(SEXP x);
 
+SEXP apply_name_spec(SEXP name_spec, SEXP outer, SEXP inner, R_len_t n);
 SEXP outer_names(SEXP names, SEXP outer, R_len_t n);
 SEXP set_rownames(SEXP x, SEXP names);
 SEXP colnames(SEXP x);
@@ -212,6 +213,9 @@ extern SEXP syms_to_arg;
 extern SEXP syms_out;
 extern SEXP syms_value;
 extern SEXP syms_quiet;
+extern SEXP syms_dot_name_spec;
+extern SEXP syms_outer;
+extern SEXP syms_inner;
 
 #define syms_names R_NamesSymbol
 

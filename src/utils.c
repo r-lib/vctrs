@@ -794,6 +794,9 @@ SEXP syms_to_arg = NULL;
 SEXP syms_out = NULL;
 SEXP syms_value = NULL;
 SEXP syms_quiet = NULL;
+SEXP syms_dot_name_spec = NULL;
+SEXP syms_outer = NULL;
+SEXP syms_inner = NULL;
 
 SEXP fns_bracket = NULL;
 SEXP fns_quote = NULL;
@@ -933,6 +936,9 @@ void vctrs_init_utils(SEXP ns) {
   syms_out = Rf_install("out");
   syms_value = Rf_install("value");
   syms_quiet = Rf_install("quiet");
+  syms_dot_name_spec = Rf_install(".name_spec");
+  syms_outer = Rf_install("outer");
+  syms_inner = Rf_install("inner");
 
   fns_bracket = Rf_findVar(syms_bracket, R_BaseEnv);
   fns_quote = Rf_findVar(Rf_install("quote"), R_BaseEnv);

@@ -448,6 +448,58 @@ SEXP outer_names(SEXP names, SEXP outer, R_len_t n) {
   }
 }
 
+// [[ register() ]]
+SEXP vctrs_apply_name_spec(SEXP name_spec, SEXP outer, SEXP inner, SEXP n) {
+  return apply_name_spec(name_spec, r_chr_get(outer, 0), inner, r_int_get(n, 0));
+}
+
+// [[ include("utils.h") ]]
+SEXP apply_name_spec(SEXP name_spec, SEXP outer, SEXP inner, R_len_t n) {
+  if (outer == R_NilValue) {
+    return inner;
+  }
+  if (TYPEOF(outer) != CHARSXP) {
+    Rf_error("Internal error: `outer` must be a scalar string.");
+  }
+
+  if (outer == strings_empty || outer == NA_STRING) {
+    return inner;
+  }
+
+  outer = PROTECT(r_str_as_character(outer));
+
+  if (r_is_empty_names(inner)) {
+    if (n == 1) {
+      UNPROTECT(1);
+      return outer;
+    }
+    inner = PROTECT(r_seq(1, n + 1));
+  } else {
+    inner = PROTECT(inner);
+  }
+
+  if (name_spec == R_NilValue) {
+    Rf_errorcall(R_NilValue,
+                 "Can't merge the outer name `%s` with a vector of length > 1.\n"
+                 "Please supply a `.name_spec` specification.",
+                 r_chr_get_c_string(outer, 0));
+  }
+
+  SEXP out = vctrs_dispatch2(syms_dot_name_spec, name_spec,
+                             syms_outer, outer,
+                             syms_inner, inner);
+
+  if (TYPEOF(out) != STRSXP) {
+    Rf_errorcall(R_NilValue, "`.name_spec` must return a character vector.");
+  }
+  if (Rf_length(out) != n) {
+    Rf_errorcall(R_NilValue, "`.name_spec` must return a character vector as long as `inner`.");
+  }
+
+  UNPROTECT(2);
+  return out;
+}
+
 static SEXP outer_names_cat(const char* outer, SEXP names) {
   names = PROTECT(Rf_shallow_duplicate(names));
   R_len_t n = Rf_length(names);

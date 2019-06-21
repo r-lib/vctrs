@@ -509,3 +509,7 @@ vec_as_names_legacy <- function(names, prefix = "V", sep = "") {
 
   names
 }
+
+apply_name_spec <- function(name_spec, outer, inner, n = length(inner)) {
+  .Call(vctrs_apply_name_spec, name_spec, outer, inner, n)
+}

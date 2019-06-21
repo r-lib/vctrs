@@ -7,6 +7,20 @@
 #' * `vec_type(vec_c(x, y)) == vec_type_common(x, y)`.
 #'
 #' @param ... Vectors to coerce.
+#' @param .name_spec A name specification for combining outer and
+#'   inner names. This is relevant for inputs passed with a name, when
+#'   these inputs are themselves named, like `outer = c(inner = 1)`,
+#'   or when they have length greater than 1: `outer = 1:2`. By
+#'   default, these cases trigger an error. You can resolve the error
+#'   by providing a specification that describes how to combine the
+#'   names or the indices of the inner vector with the name of the
+#'   input. This specification can be:
+#'
+#'   * A function of two arguments. The exterior name is passed as a
+#'     string to the first argument, and the inner names or positions
+#'     are passed as second argument.
+#'
+#'   * TODO.
 #' @param .name_repair How to repair names, see `repair` options in [vec_as_names()].
 #' @return A vector with class given by `.ptype`, and length equal to the
 #'   sum of the `vec_size()` of the contents of `...`.
@@ -34,7 +48,8 @@
 #' vec_c(factor("a"), factor("b"))
 vec_c <- function(...,
                   .ptype = NULL,
+                  .name_spec = NULL,
                   .name_repair = c("minimal", "unique", "check_unique", "universal")) {
-  .External2(vctrs_c, .ptype, .name_repair)
+  .External2(vctrs_c, .ptype, .name_spec, .name_repair)
 }
 vec_c <- fn_inline_formals(vec_c, ".name_repair")
