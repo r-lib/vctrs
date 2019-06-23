@@ -2,17 +2,17 @@
 % Please edit documentation in R/slice.R
 \name{vec_init}
 \alias{vec_init}
-\title{Create a missing vector}
+\title{Initialize a vector}
 \usage{
 vec_init(x, n = 1L)
 }
 \arguments{
-\item{x}{Template of missing vector}
+\item{x}{Template of vector to initialize.}
 
-\item{n}{Desired size of result}
+\item{n}{Desired size of result.}
 }
 \description{
-Create a missing vector
+Initialize a vector
 }
 \examples{
 vec_init(1:10, 3)
