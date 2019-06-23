@@ -72,7 +72,7 @@ static SEXP vec_rbind(SEXP xs, SEXP ptype, SEXP names_to, enum name_repair_arg n
     ns[i] = size;
   }
 
-  SEXP out = PROTECT(vec_na(ptype, nrow));
+  SEXP out = PROTECT(vec_init(ptype, nrow));
   SEXP idx = PROTECT(compact_seq(0, 0));
   int* idx_ptr = INTEGER(idx);
 

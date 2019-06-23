@@ -21,7 +21,7 @@ vec_list_cast <- function(x, to, ..., x_arg = "", to_arg = "") {
   ns <- map_int(x, vec_size)
 
   n <- vec_size(x)
-  out <- vec_na(to, n)
+  out <- vec_init(to, n)
 
   for (i in seq_len(n)) {
     val <- x[[i]]

@@ -162,7 +162,7 @@ vec_coercible_cast <- function(x, to, ..., x_arg = "x", to_arg = "to") {
 #' It does two things:
 #'
 #' * If `x` is an [unspecified] vector, it automatically casts it to
-#'   `to` using [vec_na()].
+#'   `to` using [vec_init()].
 #'
 #' * Otherwise, an error is thrown with [stop_incompatible_cast()].
 #'
@@ -170,7 +170,7 @@ vec_coercible_cast <- function(x, to, ..., x_arg = "x", to_arg = "to") {
 #' @export
 vec_default_cast <- function(x, to, x_arg = "x", to_arg = "to") {
   if (is_unspecified(x)) {
-    vec_na(to, length(x))
+    vec_init(to, length(x))
   } else {
     stop_incompatible_cast(x, to, x_arg = x_arg, to_arg = to_arg)
   }

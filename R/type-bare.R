@@ -244,7 +244,7 @@ vec_cast.list.list <- function(x, to, ...) {
 #' @method vec_cast.list default
 vec_cast.list.default <- function(x, to, ...) {
   if (inherits(x, "vctrs_unspecified")) {
-    return(vec_na(to, length(x)))
+    return(vec_init(to, length(x)))
   }
 
   out <- lapply(seq_along(x), function(i) x[[i]])

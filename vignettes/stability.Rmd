@@ -306,7 +306,7 @@ vec_c(m, 1)
 
 ### Implementation
 
-The basic implementation of `vec_c()` is reasonably simple. We first figure out the properties of the output, i.e. the common type and total size, and then allocate it with `vec_na()`, and then insert each input into the correct place in the output.
+The basic implementation of `vec_c()` is reasonably simple. We first figure out the properties of the output, i.e. the common type and total size, and then allocate it with `vec_init()`, and then insert each input into the correct place in the output.
 
 ```{r, eval = FALSE}
 vec_c <- function(...) {
@@ -317,7 +317,7 @@ vec_c <- function(...) {
     return(NULL)
 
   ns <- map_int(args, vec_size)
-  out <- vec_na(ptype, sum(ns))
+  out <- vec_init(ptype, sum(ns))
 
   pos <- 1
   for (i in seq_along(ns)) {
@@ -364,7 +364,7 @@ if_else <- function(test, yes, no) {
   c(yes, no) %<-% vec_cast_common(yes, no)
   c(test, yes, no) %<-% vec_recycle_common(test, yes, no)
 
-  out <- vec_na(yes, vec_size(yes))
+  out <- vec_init(yes, vec_size(yes))
   vec_slice(out, test) <- vec_slice(yes, test)
   vec_slice(out, !test) <- vec_slice(no, !test)
 

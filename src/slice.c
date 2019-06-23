@@ -251,7 +251,7 @@ SEXP vec_slice(SEXP x, SEXP index) {
 }
 
 // [[ include("vctrs.h") ]]
-SEXP vec_na(SEXP x, R_len_t n) {
+SEXP vec_init(SEXP x, R_len_t n) {
   // FIXME: Use ALTREP to avoid allocation of index vector
   SEXP i = PROTECT(Rf_allocVector(INTSXP, n));
   r_int_fill(i, NA_INTEGER, n);

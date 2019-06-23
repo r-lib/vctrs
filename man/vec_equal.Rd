@@ -29,7 +29,7 @@ A logical vector the same size as. Will only contain \code{NA}s if \code{na_equa
 \item Considered data frames and records to be missing if every component
 is missing.
 This preserves the invariant that \code{vec_equal_na(x)} is equal to
-\code{vec_equal(x, vec_na(x), na_equal = TRUE)}.
+\code{vec_equal(x, vec_init(x), na_equal = TRUE)}.
 }
 }
 \examples{
