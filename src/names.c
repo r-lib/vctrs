@@ -31,6 +31,7 @@ SEXP vec_as_names(SEXP names, enum name_repair_arg type, bool quiet) {
   case name_repair_universal: return vec_as_universal_names(names, quiet);
   case name_repair_check_unique: return vec_validate_unique_names(names);
   }
+  never_reached("vec_as_names");
 }
 
 SEXP vec_as_universal_names(SEXP names, bool quiet) {
@@ -532,6 +533,7 @@ const char* name_repair_arg_as_c_string(enum name_repair_arg arg) {
   case name_repair_universal: return "universal";
   case name_repair_check_unique: return "check_unique";
   }
+  never_reached("name_repair_arg_as_c_string");
 }
 
 

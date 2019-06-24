@@ -185,7 +185,7 @@ SEXP df_map(SEXP df, SEXP (*fn)(SEXP)) {
 }
 
 inline void never_reached(const char* fn) {
-  Rf_error("Internal error in `%s()`: Never reached", fn);
+  Rf_error("Internal error in `%s()`: Reached the unreachable.", fn);
 }
 
 
