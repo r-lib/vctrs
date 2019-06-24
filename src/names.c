@@ -478,12 +478,18 @@ SEXP apply_name_spec(SEXP name_spec, SEXP outer, SEXP inner, R_len_t n) {
     inner = PROTECT(inner);
   }
 
-  if (name_spec == R_NilValue) {
+  switch (TYPEOF(name_spec)) {
+  case NILSXP:
     Rf_errorcall(R_NilValue,
                  "Can't merge the outer name `%s` with a vector of length > 1.\n"
                  "Please supply a `.name_spec` specification.",
                  r_chr_get_c_string(outer, 0));
+  case CLOSXP:
+    break;
+  default:
+    name_spec = r_as_function(name_spec, ".name_spec");
   }
+  PROTECT(name_spec);
 
   SEXP out = vctrs_dispatch2(syms_dot_name_spec, name_spec,
                              syms_outer, outer,
@@ -496,7 +502,7 @@ SEXP apply_name_spec(SEXP name_spec, SEXP outer, SEXP inner, R_len_t n) {
     Rf_errorcall(R_NilValue, "`.name_spec` must return a character vector as long as `inner`.");
   }
 
-  UNPROTECT(2);
+  UNPROTECT(3);
   return out;
 }
 

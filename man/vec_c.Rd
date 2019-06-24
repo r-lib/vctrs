@@ -29,7 +29,7 @@ input. This specification can be:
 \item A function of two arguments. The exterior name is passed as a
 string to the first argument, and the inner names or positions
 are passed as second argument.
-\item TODO.
+\item An anonymous function as a purrr-style formula.
 }}
 
 \item{.name_repair}{How to repair names, see \code{repair} options in \code{\link[=vec_as_names]{vec_as_names()}}.}

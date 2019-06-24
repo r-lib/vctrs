@@ -112,6 +112,8 @@ int r_chr_max_len(SEXP x);
 SEXP r_chr_iota(R_len_t n, char* buf, int len, const char* prefix);
 
 SEXP r_new_environment(SEXP parent, R_len_t size);
+SEXP r_new_function(SEXP formals, SEXP body, SEXP env);
+SEXP r_as_function(SEXP x, const char* arg);
 
 SEXP r_protect(SEXP x);
 bool r_is_true(SEXP x);
@@ -216,6 +218,9 @@ extern SEXP syms_quiet;
 extern SEXP syms_dot_name_spec;
 extern SEXP syms_outer;
 extern SEXP syms_inner;
+extern SEXP syms_tilde;
+extern SEXP syms_dot_environment;
+extern SEXP syms_missing;
 
 #define syms_names R_NamesSymbol
 
