@@ -1,5 +1,8 @@
 # vctrs 0.1.0.9000
 
+* `vec_na()` has been renamed to `vec_init()`, as one of the primary use cases 
+  is to initialize an output container.
+
 * New `.names_to` parameter for `vec_rbind()`. If supplied, this
   should be the name of a column where the names of the inputs are
   copied. This is similar to the `.id` parameter of
