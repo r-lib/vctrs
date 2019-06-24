@@ -468,12 +468,9 @@ SEXP apply_name_spec(SEXP name_spec, SEXP outer, SEXP inner, R_len_t n) {
     return inner;
   }
 
-  outer = PROTECT(r_str_as_character(outer));
-
   if (r_is_empty_names(inner)) {
     if (n == 1) {
-      UNPROTECT(1);
-      return outer;
+      return r_str_as_character(outer);
     }
     inner = PROTECT(r_seq(1, n + 1));
   } else {
@@ -493,12 +490,16 @@ SEXP apply_name_spec(SEXP name_spec, SEXP outer, SEXP inner, R_len_t n) {
     Rf_errorcall(R_NilValue,
                  "Can't merge the outer name `%s` with a vector of length > 1.\n"
                  "Please supply a `.name_spec` specification.",
-                 r_chr_get_c_string(outer, 0));
+                 CHAR(outer));
   }
   PROTECT(name_spec);
 
+  // Recycle `outer` so specs don't need to refer to both `outer` and `inner`
+  SEXP outer_chr = PROTECT(Rf_allocVector(STRSXP, n));
+  r_chr_fill(outer_chr, outer, n);
+
   SEXP out = vctrs_dispatch2(syms_dot_name_spec, name_spec,
-                             syms_outer, outer,
+                             syms_outer, outer_chr,
                              syms_inner, inner);
 
   if (TYPEOF(out) != STRSXP) {

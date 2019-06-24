@@ -99,6 +99,7 @@ SEXP r_lgl_which(SEXP x, bool na_true);
 
 void r_lgl_fill(SEXP x, int value, R_len_t n);
 void r_int_fill(SEXP x, int value, R_len_t n);
+void r_chr_fill(SEXP x, SEXP value, R_len_t n);
 
 void r_int_fill_seq(SEXP x, int start, R_len_t n);
 SEXP r_seq(R_len_t from, R_len_t to);

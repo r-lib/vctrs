@@ -397,6 +397,9 @@ void r_lgl_fill(SEXP x, int value, R_len_t n) {
 void r_int_fill(SEXP x, int value, R_len_t n) {
   FILL(int, INTEGER);
 }
+void r_chr_fill(SEXP x, SEXP value, R_len_t n) {
+  FILL(SEXP, STRING_PTR);
+}
 
 #undef FILL
 
