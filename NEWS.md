@@ -1,6 +1,6 @@
 # vctrs 0.1.0.9000
 
-* `vec_na()` has been renamed to `vec_init()`, as one of the primary use cases 
+* `vec_na()` has been renamed to `vec_init()`, as the primary use case 
   is to initialize an output container.
 
 * New `.names_to` parameter for `vec_rbind()`. If supplied, this
