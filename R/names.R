@@ -510,6 +510,80 @@ vec_as_names_legacy <- function(names, prefix = "V", sep = "") {
   names
 }
 
+
+#' Name specifications
+#'
+#' @description
+#'
+#' A name specification describes how to combine an external name with
+#' internal names. This sort of name combination arises when
+#' concatenating vectors or flattening lists. There are two possible
+#' cases:
+#'
+#' * Named vector:
+#'
+#'   ```
+#'   vec_c(external = c(internal1 = 1, internal2 = 2))
+#'   ```
+#'
+#' * Unnamed vector:
+#'
+#'   ```
+#'   vec_c(external = 1:2)
+#'   ```
+#'
+#' In r-lib and tidyverse packages, these cases are errors by default.
+#' To work around this, you can provide a name specification that
+#' describes how to combine the external and internal names of inputs.
+#' Name specifications can refer to:
+#'
+#' * `outer`: The external name recycled to the size of the input
+#'   vector.
+#'
+#' * `inner`: Either the names of the input vector, or a sequence of
+#'   integer from 1 to the size of the vector if it is unnamed.
+#'
+#' @param name_spec,.name_spec A name specification for combining
+#'   outer and inner names. This is relevant for inputs passed with a
+#'   name, when these inputs are themselves named, like `outer =
+#'   c(inner = 1)`, or when they have length greater than 1: `outer =
+#'   1:2`. By default, these cases trigger an error. You can resolve
+#'   the error by providing a specification that describes how to
+#'   combine the names or the indices of the inner vector with the
+#'   name of the input. This specification can be:
+#'
+#'   * A function of two arguments. The exterior name is passed as a
+#'     string to the first argument, and the inner names or positions
+#'     are passed as second argument.
+#'
+#'   * An anonymous function as a purrr-style formula.
+#'
+#'   * A glue specification of the form `"{outer}_{inner}"`.
+#'
+#'   See the [name specification topic][name_spec].
+#'
+#' @examples
+#' # By default, named inputs must be length 1:
+#' vec_c(name = 1)         # ok
+#' try(vec_c(name = 1:3))  # bad
+#'
+#' # They also can't have internal names, even if scalar:
+#' try(vec_c(name = c(internal = 1)))  # bad
+#'
+#' # Pass a name specification to work around this. A specification
+#' # can be a glue string referring to `outer` and `inner`:
+#' vec_c(name = 1:3, other = 4:5, .name_spec = "{outer}")
+#' vec_c(name = 1:3, other = 4:5, .name_spec = "{outer}_{inner}")
+#'
+#' # They can also be functions:
+#' my_spec <- function(outer, inner) paste(outer, inner, sep = "_")
+#' vec_c(name = 1:3, other = 4:5, .name_spec = my_spec)
+#'
+#' # Or purrr-style formulas for anonymous functions:
+#' vec_c(name = 1:3, other = 4:5, .name_spec = ~ paste0(.x, .y))
+#' @name name_spec
+NULL
+
 apply_name_spec <- function(name_spec, outer, inner, n = length(inner)) {
   .Call(vctrs_apply_name_spec, name_spec, outer, inner, n)
 }

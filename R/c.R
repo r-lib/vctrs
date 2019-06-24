@@ -7,22 +7,6 @@
 #' * `vec_type(vec_c(x, y)) == vec_type_common(x, y)`.
 #'
 #' @param ... Vectors to coerce.
-#' @param .name_spec A name specification for combining outer and
-#'   inner names. This is relevant for inputs passed with a name, when
-#'   these inputs are themselves named, like `outer = c(inner = 1)`,
-#'   or when they have length greater than 1: `outer = 1:2`. By
-#'   default, these cases trigger an error. You can resolve the error
-#'   by providing a specification that describes how to combine the
-#'   names or the indices of the inner vector with the name of the
-#'   input. This specification can be:
-#'
-#'   * A function of two arguments. The exterior name is passed as a
-#'     string to the first argument, and the inner names or positions
-#'     are passed as second argument.
-#'
-#'   * An anonymous function as a purrr-style formula.
-#'
-#'   * A glue specification of the form `"{outer}_{inner}"`.
 #' @param .name_repair How to repair names, see `repair` options in [vec_as_names()].
 #' @return A vector with class given by `.ptype`, and length equal to the
 #'   sum of the `vec_size()` of the contents of `...`.
@@ -31,6 +15,7 @@
 #'   (inner names) or if the arguments are named (outer names). If both
 #'   inner and outer names are present, they are combined with a `.`.
 #' @inheritParams vec_ptype
+#' @inheritParams name_spec
 #' @seealso [vec_cbind()]/[vec_rbind()] for combining data frames by rows
 #'   or columns.
 #' @export
@@ -48,6 +33,16 @@
 #' # Factors -----------------------------
 #' c(factor("a"), factor("b"))
 #' vec_c(factor("a"), factor("b"))
+#'
+#'
+#' # By default, named inputs must be length 1:
+#' vec_c(name = 1)
+#' try(vec_c(name = 1:3))
+#'
+#' # Pass a name specification to work around this:
+#' vec_c(name = 1:3, .name_spec = "{outer}_{inner}")
+#'
+#' # See `?name_spec` for more examples of name specifications.
 vec_c <- function(...,
                   .ptype = NULL,
                   .name_spec = NULL,
