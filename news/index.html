@@ -63,7 +63,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">vctrs</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.0.9004</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.0.9005</span>
       </span>
     </div>
 
@@ -129,6 +129,7 @@
 <a href="#vctrs-0-1-0-9000" class="anchor"></a>vctrs 0.1.0.9000<small> Unreleased </small>
 </h1>
 <ul>
+<li><p><code>vec_na()</code> has been renamed to <code><a href="../reference/vec_init.html">vec_init()</a></code>, as the primary use case is to initialize an output container.</p></li>
 <li><p>New <code>.names_to</code> parameter for <code><a href="../reference/vec_bind.html">vec_rbind()</a></code>. If supplied, this should be the name of a column where the names of the inputs are copied. This is similar to the <code>.id</code> parameter of <code>dplyr::bind_rows()</code>.</p></li>
 <li><p>Predicate generics now consistently return logical vectors when passed a <code>vctrs_vctr</code> class. They used to restore the output to their input type (<a href='https://github.com/r-lib/vctrs/issues/251'>#251</a>).</p></li>
 <li><p><code><a href="../reference/vec_c.html">vec_c()</a></code>, <code><a href="../reference/vec_bind.html">vec_rbind()</a></code>, and <code><a href="../reference/vec_bind.html">vec_cbind()</a></code> gain a <code>.name_repair</code> argument (<a href='https://github.com/r-lib/vctrs/issues/227'>#227</a>, <a href='https://github.com/r-lib/vctrs/issues/229'>#229</a>).</p></li>
