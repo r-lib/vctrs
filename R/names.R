@@ -513,3 +513,12 @@ vec_as_names_legacy <- function(names, prefix = "V", sep = "") {
 apply_name_spec <- function(name_spec, outer, inner, n = length(inner)) {
   .Call(vctrs_apply_name_spec, name_spec, outer, inner, n)
 }
+
+glue_as_name_spec <- function(`_spec`) {
+  function(inner, outer) {
+    glue::glue(`_spec`)
+  }
+}
+
+# Evaluate glue specs in a child of base for now
+environment(glue_as_name_spec) <- baseenv()

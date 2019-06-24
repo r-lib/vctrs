@@ -453,6 +453,8 @@ SEXP vctrs_apply_name_spec(SEXP name_spec, SEXP outer, SEXP inner, SEXP n) {
   return apply_name_spec(name_spec, r_chr_get(outer, 0), inner, r_int_get(n, 0));
 }
 
+static SEXP glue_as_name_spec(SEXP spec);
+
 // [[ include("utils.h") ]]
 SEXP apply_name_spec(SEXP name_spec, SEXP outer, SEXP inner, R_len_t n) {
   if (outer == R_NilValue) {
@@ -479,15 +481,19 @@ SEXP apply_name_spec(SEXP name_spec, SEXP outer, SEXP inner, R_len_t n) {
   }
 
   switch (TYPEOF(name_spec)) {
+  case CLOSXP:
+    break;
+  case STRSXP:
+    name_spec = glue_as_name_spec(name_spec);
+    break;
+  default:
+    name_spec = r_as_function(name_spec, ".name_spec");
+    break;
   case NILSXP:
     Rf_errorcall(R_NilValue,
                  "Can't merge the outer name `%s` with a vector of length > 1.\n"
                  "Please supply a `.name_spec` specification.",
                  r_chr_get_c_string(outer, 0));
-  case CLOSXP:
-    break;
-  default:
-    name_spec = r_as_function(name_spec, ".name_spec");
   }
   PROTECT(name_spec);
 
@@ -505,6 +511,20 @@ SEXP apply_name_spec(SEXP name_spec, SEXP outer, SEXP inner, R_len_t n) {
   UNPROTECT(3);
   return out;
 }
+
+
+static SEXP syms_glue_as_name_spec = NULL;
+static SEXP fns_glue_as_name_spec = NULL;
+static SEXP syms_internal_spec = NULL;
+
+static SEXP glue_as_name_spec(SEXP spec) {
+  if (!r_is_string(spec)) {
+    Rf_errorcall(R_NilValue, "Glue specification in `.name_spec` must be a single string.");
+  }
+  return vctrs_dispatch1(syms_glue_as_name_spec, fns_glue_as_name_spec,
+                         syms_internal_spec, spec);
+}
+
 
 static SEXP outer_names_cat(const char* outer, SEXP names) {
   names = PROTECT(Rf_shallow_duplicate(names));
@@ -609,4 +629,8 @@ void vctrs_init_names(SEXP ns) {
   fns_set_rownames = r_env_get(ns, syms_set_rownames);
   fns_as_universal_names = r_env_get(ns, syms_as_universal_names);
   fns_validate_unique_names = r_env_get(ns, syms_validate_unique_names);
+
+  syms_glue_as_name_spec = Rf_install("glue_as_name_spec");
+  fns_glue_as_name_spec = r_env_get(ns, syms_glue_as_name_spec);
+  syms_internal_spec = Rf_install("_spec");
 }

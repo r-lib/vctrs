@@ -669,3 +669,9 @@ test_that("can pass lambda formula as name spec", {
   expect_named(vec_c(foo = c(a = 1, b = 2), .name_spec = ~ paste(.x, .y, sep = "_")), c("foo_a", "foo_b"))
   expect_error(vec_c(foo = c(a = 1, b = 2), .name_spec = env()), "Can't convert `.name_spec`", fixed = TRUE)
 })
+
+test_that("can pass glue string as name spec", {
+  expect_named(vec_c(foo = c(a = 1, b = 2), .name_spec = "{outer}_{inner}"), c("foo_a", "foo_b"))
+  expect_named(vec_c(foo = 1:2, .name_spec = "{outer}_{inner}"), c("foo_1", "foo_2"))
+  expect_error(vec_c(foo = c(a = 1, b = 2), .name_spec = c("a", "b")), "single string")
+})

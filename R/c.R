@@ -21,6 +21,8 @@
 #'     are passed as second argument.
 #'
 #'   * An anonymous function as a purrr-style formula.
+#'
+#'   * A glue specification of the form `"{outer}_{inner}"`.
 #' @param .name_repair How to repair names, see `repair` options in [vec_as_names()].
 #' @return A vector with class given by `.ptype`, and length equal to the
 #'   sum of the `vec_size()` of the contents of `...`.

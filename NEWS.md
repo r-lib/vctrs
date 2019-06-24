@@ -14,7 +14,16 @@
   ```
 
   You can supply a name specification that describes how to combine
-  the external name of the input with its internal names or positions.
+  the external name of the input with its internal names or positions:
+
+  ```
+  # Name spec as glue string:
+  vec_c(foo = c(a = 1), .name_spec = "{outer}_{inner}")
+
+  # Name spec as a function:
+  vec_c(foo = c(a = 1), .name_spec = function(outer, inner) paste(outer, inner, sep = "_"))
+  vec_c(foo = c(a = 1), .name_spec = ~ paste(.x, .y, sep = "_"))
+  ```
 
 * `vec_na()` has been renamed to `vec_init()`, as the primary use case
   is to initialize an output container.

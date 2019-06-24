@@ -30,6 +30,7 @@ input. This specification can be:
 string to the first argument, and the inner names or positions
 are passed as second argument.
 \item An anonymous function as a purrr-style formula.
+\item A glue specification of the form \code{"{outer}_{inner}"}.
 }}
 
 \item{.name_repair}{How to repair names, see \code{repair} options in \code{\link[=vec_as_names]{vec_as_names()}}.}
