@@ -180,15 +180,15 @@ vec_index <- function(x, i, ...) {
   vec_restore(out[i, ..., drop = FALSE], x, n = length(i))
 }
 
-#' Create a missing vector
+#' Initialize a vector
 #'
-#' @param x Template of missing vector
-#' @param n Desired size of result
+#' @param x Template of vector to initialize.
+#' @param n Desired size of result.
 #' @export
 #' @examples
-#' vec_na(1:10, 3)
-#' vec_na(Sys.Date(), 5)
-#' vec_na(mtcars, 2)
-vec_na <- function(x, n = 1L) {
+#' vec_init(1:10, 3)
+#' vec_init(Sys.Date(), 5)
+#' vec_init(mtcars, 2)
+vec_init <- function(x, n = 1L) {
   vec_slice(x, rep_len(NA_integer_, n))
 }

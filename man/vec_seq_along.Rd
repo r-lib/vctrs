@@ -2,12 +2,12 @@
 % Please edit documentation in R/size.R
 \name{vec_seq_along}
 \alias{vec_seq_along}
-\alias{vec_na_along}
+\alias{vec_init_along}
 \title{Useful sequences}
 \usage{
 vec_seq_along(x)
 
-vec_na_along(x, y = x)
+vec_init_along(x, y = x)
 }
 \arguments{
 \item{x, y}{Vectors}
@@ -15,16 +15,16 @@ vec_na_along(x, y = x)
 \value{
 \itemize{
 \item \code{vec_seq_along()} an integer vector with the same size as \code{x}.
-\item \code{vec_na_along()} a vector with the same type as \code{x} and the same size
+\item \code{vec_init_along()} a vector with the same type as \code{x} and the same size
 as \code{y}.
 }
 }
 \description{
 \code{vec_seq_along()} is equivalent to \code{\link[=seq_along]{seq_along()}} but uses size, not length.
-\code{vec_na_along()} creates a vector of missing values with size matching
+\code{vec_init_along()} creates a vector of missing values with size matching
 an existing object.
 }
 \examples{
 vec_seq_along(mtcars)
-vec_na_along(head(mtcars))
+vec_init_along(head(mtcars))
 }

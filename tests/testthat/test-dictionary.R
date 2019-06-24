@@ -130,7 +130,7 @@ test_that("vec_match works with empty data frame", {
     new_data_frame(n = 3L),
     new_data_frame(n = 0L)
   )
-  expect_equal(out, vec_na(integer(), 3))
+  expect_equal(out, vec_init(integer(), 3))
 })
 
 test_that("matching functions take the equality proxy (#375)", {

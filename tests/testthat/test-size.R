@@ -90,6 +90,6 @@ test_that("vec_seq_along returns size-0 output for size-0 input", {
   expect_equal(vec_seq_along(data.frame()), integer())
 })
 
-test_that("vec_na_along can be called with single argument", {
-  expect_equal(vec_na_along(1:3), rep(NA_integer_, 3))
+test_that("vec_init_along can be called with single argument", {
+  expect_equal(vec_init_along(1:3), rep(NA_integer_, 3))
 })

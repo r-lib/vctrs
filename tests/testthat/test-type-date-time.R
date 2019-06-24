@@ -141,10 +141,10 @@ test_that("dates become midnight in date-time tzone", {
 test_that("can cast NA and unspecified to POSIXct and POSIXlt", {
   dtc <- as.POSIXct("2020-01-01")
   dtl <- as.POSIXlt("2020-01-01")
-  expect_identical(vec_cast(NA, dtc), vec_na(dtc))
-  expect_identical(vec_cast(NA, dtl), vec_na(dtl))
-  expect_identical(vec_cast(unspecified(2), dtc), vec_na(dtc, 2))
-  expect_identical(vec_cast(unspecified(2), dtl), vec_na(dtl, 2))
+  expect_identical(vec_cast(NA, dtc), vec_init(dtc))
+  expect_identical(vec_cast(NA, dtl), vec_init(dtl))
+  expect_identical(vec_cast(unspecified(2), dtc), vec_init(dtc, 2))
+  expect_identical(vec_cast(unspecified(2), dtl), vec_init(dtl, 2))
 })
 
 

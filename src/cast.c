@@ -224,7 +224,7 @@ static SEXP df_as_dataframe(SEXP x, SEXP to, struct vctrs_arg* x_arg, struct vct
 
     SEXP col;
     if (pos == NA_INTEGER) {
-      col = vec_na(VECTOR_ELT(to, i), size);
+      col = vec_init(VECTOR_ELT(to, i), size);
     } else {
       --pos; // 1-based index
       struct arg_data_index x_arg_data = new_index_arg_data(r_chr_get_c_string(x_names, pos), x_arg);

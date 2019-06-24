@@ -606,7 +606,7 @@ levels.vctrs_vctr <- function(x) {
   # even if base R is more lenient here.
   vec_assert(value, logical())
 
-  vec_slice(x, value) <- vec_na(x)
+  vec_slice(x, value) <- vec_init(x)
   x
 }
 

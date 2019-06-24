@@ -314,7 +314,7 @@ vec_slice(df, 5:6)
 
 `vec_slice(data.frame(x), i)` equals `data.frame(vec_slice(x, i))` (modulo variable and row names).
 
-Prototypes are generated with `vec_slice(x, 0L)`; given a prototype, you can generate a vector of given size (filled with `NA`s) with `vec_na()`
+Prototypes are generated with `vec_slice(x, 0L)`; given a prototype, you can initialize a vector of given size (filled with `NA`s) with `vec_init()`.
 
 ### Common sizes: recycling rules
 

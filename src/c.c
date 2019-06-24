@@ -50,7 +50,7 @@ static SEXP vec_c(SEXP xs, SEXP ptype, enum name_repair_arg name_repair) {
   }
 
   PROTECT_INDEX out_pi;
-  SEXP out = vec_na(ptype, out_size);
+  SEXP out = vec_init(ptype, out_size);
   PROTECT_WITH_INDEX(out, &out_pi);
   out = vec_proxy(out);
   REPROTECT(out, out_pi);

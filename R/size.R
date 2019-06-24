@@ -121,25 +121,25 @@ vec_is_empty <- function(x) {
 #' Useful sequences
 #'
 #' `vec_seq_along()` is equivalent to [seq_along()] but uses size, not length.
-#' `vec_na_along()` creates a vector of missing values with size matching
+#' `vec_init_along()` creates a vector of missing values with size matching
 #' an existing object.
 #'
 #' @param x,y Vectors
 #' @return
 #' * `vec_seq_along()` an integer vector with the same size as `x`.
-#' * `vec_na_along()` a vector with the same type as `x` and the same size
+#' * `vec_init_along()` a vector with the same type as `x` and the same size
 #'   as `y`.
 #' @export
 #' @examples
 #' vec_seq_along(mtcars)
-#' vec_na_along(head(mtcars))
+#' vec_init_along(head(mtcars))
 vec_seq_along <- function(x) {
   seq_len(vec_size(x))
 }
 
 #' @export
 #' @rdname vec_seq_along
-vec_na_along <- function(x, y = x) {
+vec_init_along <- function(x, y = x) {
   vec_slice(x, rep_len(NA_integer_, vec_size(y)))
 }
 

@@ -93,7 +93,7 @@
   a two-column data frame containing unique values of `by` aligned with 
   matching `x` values (#196).
 
-* New `vec_seq_along()` and `vec_na_along()` create useful sequences (#189).
+* New `vec_seq_along()` and `vec_init_along()` create useful sequences (#189).
 
 * `vec_equal_na()` now returns `TRUE` for data frames and records when every
   component is mising, not when _any_ component is missing (#201).

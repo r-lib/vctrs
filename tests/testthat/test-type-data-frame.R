@@ -131,7 +131,7 @@ test_that("cast to empty data frame preserves number of rows", {
 
 test_that("can cast unspecified to data frame", {
   df <- data.frame(x = 1, y = 2L)
-  expect_identical(vec_cast(unspecified(3), df), vec_na(df, 3))
+  expect_identical(vec_cast(unspecified(3), df), vec_init(df, 3))
 })
 
 test_that("can restore lists with empty names", {

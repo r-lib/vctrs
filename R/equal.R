@@ -37,7 +37,7 @@ vec_proxy_equal.default <- function(x, ...) {
 #' * Considered data frames and records to be missing if every component
 #'   is missing.
 #' This preserves the invariant that `vec_equal_na(x)` is equal to
-#' `vec_equal(x, vec_na(x), na_equal = TRUE)`.
+#' `vec_equal(x, vec_init(x), na_equal = TRUE)`.
 #'
 #' @inheritParams vec_compare
 #' @return A logical vector the same size as. Will only contain `NA`s if `na_equal` is `FALSE`.
