@@ -33,7 +33,7 @@
 <meta property="og:title" content="Useful sequences — vec_seq_along" />
 
 <meta property="og:description" content="vec_seq_along() is equivalent to seq_along() but uses size, not length.
-vec_na_along() creates a vector of missing values with size matching
+vec_init_along() creates a vector of missing values with size matching
 an existing object." />
 
 <meta property="og:image" content="https://vctrs.r-lib.org/logo.png" />
@@ -132,14 +132,14 @@ an existing object." />
     <div class="ref-description">
     
     <p><code>vec_seq_along()</code> is equivalent to <code><a href='https://www.rdocumentation.org/packages/base/topics/seq'>seq_along()</a></code> but uses size, not length.
-<code>vec_na_along()</code> creates a vector of missing values with size matching
+<code>vec_init_along()</code> creates a vector of missing values with size matching
 an existing object.</p>
     
     </div>
 
     <pre class="usage"><span class='fu'>vec_seq_along</span>(<span class='no'>x</span>)
 
-<span class='fu'>vec_na_along</span>(<span class='no'>x</span>, <span class='kw'>y</span> <span class='kw'>=</span> <span class='no'>x</span>)</pre>
+<span class='fu'>vec_init_along</span>(<span class='no'>x</span>, <span class='kw'>y</span> <span class='kw'>=</span> <span class='no'>x</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -155,7 +155,7 @@ an existing object.</p>
     
 <ul>
 <li><p><code>vec_seq_along()</code> an integer vector with the same size as <code>x</code>.</p></li>
-<li><p><code>vec_na_along()</code> a vector with the same type as <code>x</code> and the same size
+<li><p><code>vec_init_along()</code> a vector with the same type as <code>x</code> and the same size
 as <code>y</code>.</p></li>
 </ul>
 
@@ -163,7 +163,7 @@ as <code>y</code>.</p></li>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='fu'>vec_seq_along</span>(<span class='no'>mtcars</span>)</div><div class='output co'>#&gt;  [1]  1  2  3  4  5  6  7  8  9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25
-#&gt; [26] 26 27 28 29 30 31 32</div><div class='input'><span class='fu'>vec_na_along</span>(<span class='fu'><a href='https://www.rdocumentation.org/packages/utils/topics/head'>head</a></span>(<span class='no'>mtcars</span>))</div><div class='output co'>#&gt;   mpg cyl disp hp drat wt qsec vs am gear carb
+#&gt; [26] 26 27 28 29 30 31 32</div><div class='input'><span class='fu'>vec_init_along</span>(<span class='fu'><a href='https://www.rdocumentation.org/packages/utils/topics/head'>head</a></span>(<span class='no'>mtcars</span>))</div><div class='output co'>#&gt;   mpg cyl disp hp drat wt qsec vs am gear carb
 #&gt; 1  NA  NA   NA NA   NA NA   NA NA NA   NA   NA
 #&gt; 2  NA  NA   NA NA   NA NA   NA NA NA   NA   NA
 #&gt; 3  NA  NA   NA NA   NA NA   NA NA NA   NA   NA

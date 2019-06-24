@@ -219,13 +219,13 @@ It is size-unstable for the same reasons as <code><a href="https://www.rdocument
 <p>As far as I can tell <code><a href="https://www.rdocumentation.org/packages/base/topics/c">c()</a></code> never throws an error. No matter how bizarre the inputs, it always returns something:</p>
 <div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb10-1" data-line-number="1"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/Sys.time">Sys.Date</a></span>(), <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/factor">factor</a></span>(<span class="st">"x"</span>), <span class="st">"x"</span>)</a>
 <a class="sourceLine" id="cb10-2" data-line-number="2"><span class="co">#&gt; Warning in as.POSIXlt.Date(x): NAs introduced by coercion</span></a>
-<a class="sourceLine" id="cb10-3" data-line-number="3"><span class="co">#&gt; [1] "2019-06-21" "1970-01-02" NA</span></a></code></pre></div>
+<a class="sourceLine" id="cb10-3" data-line-number="3"><span class="co">#&gt; [1] "2019-06-24" "1970-01-02" NA</span></a></code></pre></div>
 <p>If the inputs aren’t vectors, <code><a href="https://www.rdocumentation.org/packages/base/topics/c">c()</a></code> automatically puts them in a list:</p>
 <div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb11-1" data-line-number="1"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(mean, <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/environment">globalenv</a></span>())</a>
 <a class="sourceLine" id="cb11-2" data-line-number="2"><span class="co">#&gt; [[1]]</span></a>
 <a class="sourceLine" id="cb11-3" data-line-number="3"><span class="co">#&gt; function (x, ...) </span></a>
 <a class="sourceLine" id="cb11-4" data-line-number="4"><span class="co">#&gt; UseMethod("mean")</span></a>
-<a class="sourceLine" id="cb11-5" data-line-number="5"><span class="co">#&gt; &lt;bytecode: 0x3894378&gt;</span></a>
+<a class="sourceLine" id="cb11-5" data-line-number="5"><span class="co">#&gt; &lt;bytecode: 0x3138378&gt;</span></a>
 <a class="sourceLine" id="cb11-6" data-line-number="6"><span class="co">#&gt; &lt;environment: namespace:base&gt;</span></a>
 <a class="sourceLine" id="cb11-7" data-line-number="7"><span class="co">#&gt; </span></a>
 <a class="sourceLine" id="cb11-8" data-line-number="8"><span class="co">#&gt; [[2]]</span></a>
@@ -357,7 +357,7 @@ It is size-unstable for the same reasons as <code><a href="https://www.rdocument
 <div id="implementation" class="section level3">
 <h3 class="hasAnchor">
 <a href="#implementation" class="anchor"></a>Implementation</h3>
-<p>The basic implementation of <code><a href="../reference/vec_c.html">vec_c()</a></code> is reasonably simple. We first figure out the properties of the output, i.e. the common type and total size, and then allocate it with <code><a href="../reference/vec_na.html">vec_na()</a></code>, and then insert each input into the correct place in the output.</p>
+<p>The basic implementation of <code><a href="../reference/vec_c.html">vec_c()</a></code> is reasonably simple. We first figure out the properties of the output, i.e. the common type and total size, and then allocate it with <code><a href="../reference/vec_init.html">vec_init()</a></code>, and then insert each input into the correct place in the output.</p>
 <div class="sourceCode" id="cb26"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb26-1" data-line-number="1">vec_c &lt;-<span class="st"> </span><span class="cf">function</span>(...) {</a>
 <a class="sourceLine" id="cb26-2" data-line-number="2">  args &lt;-<span class="st"> </span><span class="kw">compact</span>(<span class="kw">list2</span>(...))</a>
 <a class="sourceLine" id="cb26-3" data-line-number="3"></a>
@@ -366,7 +366,7 @@ It is size-unstable for the same reasons as <code><a href="https://www.rdocument
 <a class="sourceLine" id="cb26-6" data-line-number="6">    <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/function">return</a></span>(<span class="ot">NULL</span>)</a>
 <a class="sourceLine" id="cb26-7" data-line-number="7"></a>
 <a class="sourceLine" id="cb26-8" data-line-number="8">  ns &lt;-<span class="st"> </span><span class="kw">map_int</span>(args, vec_size)</a>
-<a class="sourceLine" id="cb26-9" data-line-number="9">  out &lt;-<span class="st"> </span><span class="kw"><a href="../reference/vec_na.html">vec_na</a></span>(ptype, <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/sum">sum</a></span>(ns))</a>
+<a class="sourceLine" id="cb26-9" data-line-number="9">  out &lt;-<span class="st"> </span><span class="kw"><a href="../reference/vec_init.html">vec_init</a></span>(ptype, <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/sum">sum</a></span>(ns))</a>
 <a class="sourceLine" id="cb26-10" data-line-number="10"></a>
 <a class="sourceLine" id="cb26-11" data-line-number="11">  pos &lt;-<span class="st"> </span><span class="dv">1</span></a>
 <a class="sourceLine" id="cb26-12" data-line-number="12">  <span class="cf">for</span> (i <span class="cf">in</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/seq">seq_along</a></span>(ns)) {</a>
@@ -400,7 +400,7 @@ It is size-unstable for the same reasons as <code><a href="https://www.rdocument
 <a class="sourceLine" id="cb27-3" data-line-number="3">  <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(yes, no) <span class="op">%&lt;-%</span><span class="st"> </span><span class="kw"><a href="../reference/vec_cast.html">vec_cast_common</a></span>(yes, no)</a>
 <a class="sourceLine" id="cb27-4" data-line-number="4">  <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(test, yes, no) <span class="op">%&lt;-%</span><span class="st"> </span><span class="kw"><a href="../reference/vec_recycle.html">vec_recycle_common</a></span>(test, yes, no)</a>
 <a class="sourceLine" id="cb27-5" data-line-number="5"></a>
-<a class="sourceLine" id="cb27-6" data-line-number="6">  out &lt;-<span class="st"> </span><span class="kw"><a href="../reference/vec_na.html">vec_na</a></span>(yes, <span class="kw"><a href="../reference/vec_size.html">vec_size</a></span>(yes))</a>
+<a class="sourceLine" id="cb27-6" data-line-number="6">  out &lt;-<span class="st"> </span><span class="kw"><a href="../reference/vec_init.html">vec_init</a></span>(yes, <span class="kw"><a href="../reference/vec_size.html">vec_size</a></span>(yes))</a>
 <a class="sourceLine" id="cb27-7" data-line-number="7">  <span class="kw"><a href="../reference/vec_slice.html">vec_slice</a></span>(out, test) &lt;-<span class="st"> </span><span class="kw"><a href="../reference/vec_slice.html">vec_slice</a></span>(yes, test)</a>
 <a class="sourceLine" id="cb27-8" data-line-number="8">  <span class="kw"><a href="../reference/vec_slice.html">vec_slice</a></span>(out, <span class="op">!</span>test) &lt;-<span class="st"> </span><span class="kw"><a href="../reference/vec_slice.html">vec_slice</a></span>(no, <span class="op">!</span>test)</a>
 <a class="sourceLine" id="cb27-9" data-line-number="9"></a>
@@ -414,7 +414,7 @@ It is size-unstable for the same reasons as <code><a href="https://www.rdocument
 <a class="sourceLine" id="cb27-17" data-line-number="17"><span class="co">#&gt; [1] &lt;NA&gt;  big   big   small small</span></a>
 <a class="sourceLine" id="cb27-18" data-line-number="18"><span class="co">#&gt; Levels: small big</span></a>
 <a class="sourceLine" id="cb27-19" data-line-number="19"><span class="kw">if_else</span>(x <span class="op">&gt;</span><span class="st"> </span><span class="dv">2</span>, <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/Sys.time">Sys.Date</a></span>(), <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/Sys.time">Sys.Date</a></span>() <span class="op">+</span><span class="st"> </span><span class="dv">7</span>)</a>
-<a class="sourceLine" id="cb27-20" data-line-number="20"><span class="co">#&gt; [1] NA           "2019-06-28" "2019-06-28" "2019-06-21" "2019-06-21"</span></a></code></pre></div>
+<a class="sourceLine" id="cb27-20" data-line-number="20"><span class="co">#&gt; [1] NA           "2019-07-01" "2019-07-01" "2019-06-24" "2019-06-24"</span></a></code></pre></div>
 <p>By using <code><a href="../reference/vec_size.html">vec_size()</a></code> and <code><a href="../reference/vec_slice.html">vec_slice()</a></code> this definition of <code>if_else()</code> automatically works with data.frames and matrices:</p>
 <div class="sourceCode" id="cb28"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb28-1" data-line-number="1"><span class="kw">if_else</span>(x <span class="op">&gt;</span><span class="st"> </span><span class="dv">2</span>, <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/data.frame">data.frame</a></span>(<span class="dt">x =</span> <span class="dv">1</span>), <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/data.frame">data.frame</a></span>(<span class="dt">y =</span> <span class="dv">2</span>))</a>
 <a class="sourceLine" id="cb28-2" data-line-number="2"><span class="co">#&gt;    x  y</span></a>

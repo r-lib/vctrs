@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Test if two vectors are equal — vec_equal • vctrs</title>
+<title>Initialize a vector — vec_init • vctrs</title>
 
 <!-- jquery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
@@ -30,16 +30,9 @@
 
 
 
-<meta property="og:title" content="Test if two vectors are equal — vec_equal" />
+<meta property="og:title" content="Initialize a vector — vec_init" />
 
-<meta property="og:description" content="vec_equal_na() tests a special case: equality with NA. It is similar to
-is.na but:
-Considers the missing element of a list to be NULL.
-Considered data frames and records to be missing if every component
-is missing.
-This preserves the invariant that vec_equal_na(x) is equal to
-vec_equal(x, vec_init(x), na_equal = TRUE).
-" />
+<meta property="og:description" content="Initialize a vector" />
 
 <meta property="og:image" content="https://vctrs.r-lib.org/logo.png" />
 <meta name="twitter:card" content="summary" />
@@ -129,67 +122,43 @@ vec_equal(x, vec_init(x), na_equal = TRUE).
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Test if two vectors are equal</h1>
-    <small class="dont-index">Source: <a href='https://github.com/r-lib/vctrs/blob/master/R/equal.R'><code>R/equal.R</code></a></small>
-    <div class="hidden name"><code>vec_equal.Rd</code></div>
+    <h1>Initialize a vector</h1>
+    <small class="dont-index">Source: <a href='https://github.com/r-lib/vctrs/blob/master/R/slice.R'><code>R/slice.R</code></a></small>
+    <div class="hidden name"><code>vec_init.Rd</code></div>
     </div>
 
     <div class="ref-description">
     
-    <p><code>vec_equal_na()</code> tests a special case: equality with <code>NA</code>. It is similar to
-<a href='https://www.rdocumentation.org/packages/base/topics/NA'>is.na</a> but:</p><ul>
-<li><p>Considers the missing element of a list to be <code>NULL</code>.</p></li>
-<li><p>Considered data frames and records to be missing if every component
-is missing.
-This preserves the invariant that <code>vec_equal_na(x)</code> is equal to
-<code>vec_equal(x, vec_init(x), na_equal = TRUE)</code>.</p></li>
-</ul>
+    <p>Initialize a vector</p>
     
     </div>
 
-    <pre class="usage"><span class='fu'>vec_equal</span>(<span class='no'>x</span>, <span class='no'>y</span>, <span class='kw'>na_equal</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>.ptype</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)
-
-<span class='fu'>vec_equal_na</span>(<span class='no'>x</span>)</pre>
+    <pre class="usage"><span class='fu'>vec_init</span>(<span class='no'>x</span>, <span class='kw'>n</span> <span class='kw'>=</span> <span class='fl'>1L</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>x</th>
-      <td><p>Vectors with compatible types and lengths.</p></td>
+      <td><p>Template of vector to initialize.</p></td>
     </tr>
     <tr>
-      <th>y</th>
-      <td><p>Vectors with compatible types and lengths.</p></td>
-    </tr>
-    <tr>
-      <th>na_equal</th>
-      <td><p>Should <code>NA</code> values be considered equal?</p></td>
-    </tr>
-    <tr>
-      <th>.ptype</th>
-      <td><p>Override to optionally specify common type</p></td>
+      <th>n</th>
+      <td><p>Desired size of result.</p></td>
     </tr>
     </table>
     
-    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
-
-    <p>A logical vector the same size as. Will only contain <code>NA</code>s if <code>na_equal</code> is <code>FALSE</code>.</p>
-    
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'>vec_equal</span>(<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='fl'>TRUE</span>, <span class='fl'>FALSE</span>, <span class='fl'>NA</span>), <span class='fl'>FALSE</span>)</div><div class='output co'>#&gt; [1] FALSE  TRUE    NA</div><div class='input'><span class='fu'>vec_equal</span>(<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='fl'>TRUE</span>, <span class='fl'>FALSE</span>, <span class='fl'>NA</span>), <span class='fl'>FALSE</span>, <span class='kw'>na_equal</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</div><div class='output co'>#&gt; [1] FALSE  TRUE FALSE</div><div class='input'><span class='fu'>vec_equal_na</span>(<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='fl'>TRUE</span>, <span class='fl'>FALSE</span>, <span class='fl'>NA</span>))</div><div class='output co'>#&gt; [1] FALSE FALSE  TRUE</div><div class='input'>
-<span class='fu'>vec_equal</span>(<span class='fl'>5</span>, <span class='fl'>1</span>:<span class='fl'>10</span>)</div><div class='output co'>#&gt;  [1] FALSE FALSE FALSE FALSE  TRUE FALSE FALSE FALSE FALSE FALSE</div><div class='input'><span class='fu'>vec_equal</span>(<span class='st'>"d"</span>, <span class='no'>letters</span>[<span class='fl'>1</span>:<span class='fl'>10</span>])</div><div class='output co'>#&gt;  [1] FALSE FALSE FALSE  TRUE FALSE FALSE FALSE FALSE FALSE FALSE</div><div class='input'>
-<span class='no'>df</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/data.frame'>data.frame</a></span>(<span class='kw'>x</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='fl'>1</span>, <span class='fl'>1</span>, <span class='fl'>2</span>, <span class='fl'>1</span>, <span class='fl'>NA</span>), <span class='kw'>y</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='fl'>1</span>, <span class='fl'>2</span>, <span class='fl'>1</span>, <span class='fl'>NA</span>, <span class='fl'>NA</span>))
-<span class='fu'>vec_equal</span>(<span class='no'>df</span>, <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/data.frame'>data.frame</a></span>(<span class='kw'>x</span> <span class='kw'>=</span> <span class='fl'>1</span>, <span class='kw'>y</span> <span class='kw'>=</span> <span class='fl'>2</span>))</div><div class='output co'>#&gt; [1] FALSE  TRUE FALSE    NA    NA</div><div class='input'><span class='fu'>vec_equal_na</span>(<span class='no'>df</span>)</div><div class='output co'>#&gt; [1] FALSE FALSE FALSE FALSE  TRUE</div></pre>
+    <pre class="examples"><div class='input'><span class='fu'>vec_init</span>(<span class='fl'>1</span>:<span class='fl'>10</span>, <span class='fl'>3</span>)</div><div class='output co'>#&gt; [1] NA NA NA</div><div class='input'><span class='fu'>vec_init</span>(<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/Sys.time'>Sys.Date</a></span>(), <span class='fl'>5</span>)</div><div class='output co'>#&gt; [1] NA NA NA NA NA</div><div class='input'><span class='fu'>vec_init</span>(<span class='no'>mtcars</span>, <span class='fl'>2</span>)</div><div class='output co'>#&gt;   mpg cyl disp hp drat wt qsec vs am gear carb
+#&gt; 1  NA  NA   NA NA   NA NA   NA NA NA   NA   NA
+#&gt; 2  NA  NA   NA NA   NA NA   NA NA NA   NA   NA</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
       <li><a href="#arguments">Arguments</a></li>
-      
-      <li><a href="#value">Value</a></li>
-      
+            
       <li><a href="#examples">Examples</a></li>
     </ul>
 

@@ -106,6 +106,9 @@
     <loc>https://vctrs.r-lib.org/reference/vec_equal.html</loc>
   </url>
   <url>
+    <loc>https://vctrs.r-lib.org/reference/vec_init.html</loc>
+  </url>
+  <url>
     <loc>https://vctrs.r-lib.org/reference/vec_list_cast.html</loc>
   </url>
   <url>
@@ -113,9 +116,6 @@
   </url>
   <url>
     <loc>https://vctrs.r-lib.org/reference/vec_math.html</loc>
-  </url>
-  <url>
-    <loc>https://vctrs.r-lib.org/reference/vec_na.html</loc>
   </url>
   <url>
     <loc>https://vctrs.r-lib.org/reference/vec_order.html</loc>
