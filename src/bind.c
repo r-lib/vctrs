@@ -78,7 +78,7 @@ static SEXP vec_rbind(SEXP xs, SEXP ptype, SEXP names_to, enum name_repair_arg n
 
   int nprot = 0;
   SEXP names_to_col = R_NilValue;
-  SEXPTYPE names_to_type;
+  SEXPTYPE names_to_type = 99;
   void* names_to_p = NULL;
   const void* index_p = NULL;
 
