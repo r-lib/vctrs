@@ -20,6 +20,11 @@ static SEXP int_as_logical(SEXP x, bool* lossy) {
   for (R_len_t i = 0; i < n; ++i, ++data, ++out_data) {
     int elt = *data;
 
+    if (elt == NA_INTEGER) {
+      *out_data = NA_LOGICAL;
+      continue;
+    }
+
     if (elt != 0 && elt != 1) {
       *lossy = true;
       UNPROTECT(1);

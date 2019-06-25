@@ -25,6 +25,21 @@ test_that("safe casts work as expected", {
   expect_equal(vec_cast(list(1, 0), logical()), exp)
 })
 
+test_that("NA casts work as expected", {
+  exp <- lgl(NA)
+  to <- lgl()
+
+  expect_equal(vec_cast(int(NA), to), exp)
+})
+
+test_that("Shaped NA casts work as expected", {
+  mat <- matrix
+  exp_mat <- mat(lgl(NA))
+  to_mat <- matrix(lgl())
+
+  expect_equal(vec_cast(mat(int(NA)), to_mat), exp_mat)
+})
+
 test_that("lossy casts generate warning", {
   expect_lossy(vec_cast(int(2L, 1L), lgl()),                lgl(TRUE, TRUE), x = int(),  to = lgl())
   expect_lossy(vec_cast(dbl(2, 1), lgl()),                  lgl(TRUE, TRUE), x = dbl(),  to = lgl())
