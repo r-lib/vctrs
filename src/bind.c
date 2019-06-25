@@ -226,13 +226,15 @@ static SEXP vec_cbind(SEXP xs, SEXP ptype, SEXP size, enum name_repair_arg name_
 
     x = PROTECT(vec_recycle(x, nrow));
 
-    SEXP outer = has_names ? xs_names_p[i] : strings_empty;
-    x = PROTECT(as_df_col(x, outer));
+    SEXP outer_name = has_names ? xs_names_p[i] : strings_empty;
+    x = PROTECT(as_df_col(x, outer_name));
 
     SET_VECTOR_ELT(xs, i, x);
     UNPROTECT(2);
 
-    ncol += Rf_length(x);
+    // Named inputs are packed in a single column
+    R_len_t x_ncol = outer_name == strings_empty ? Rf_length(x) : 1;
+    ncol += x_ncol;
   }
 
 
@@ -249,6 +251,14 @@ static SEXP vec_cbind(SEXP xs, SEXP ptype, SEXP size, enum name_repair_arg name_
     SEXP x = VECTOR_ELT(xs, i);
 
     if (x == R_NilValue) {
+      continue;
+    }
+
+    SEXP outer_name = has_names ? xs_names_p[i] : strings_empty;
+    if (outer_name != strings_empty) {
+      SET_VECTOR_ELT(out, counter, x);
+      SET_STRING_ELT(names, counter, outer_name);
+      ++counter;
       continue;
     }
 
@@ -283,7 +293,6 @@ static SEXP cbind_container_type(SEXP x) {
 }
 
 
-static SEXP df_as_df_col(SEXP x, SEXP outer);
 static SEXP shaped_as_df_col(SEXP x, SEXP outer);
 static SEXP vec_as_df_col(SEXP x, SEXP outer);
 
@@ -293,7 +302,7 @@ SEXP vctrs_as_df_col(SEXP x, SEXP outer) {
 }
 static SEXP as_df_col(SEXP x, SEXP outer) {
   if (is_data_frame(x)) {
-    return df_as_df_col(x, outer);
+    return Rf_shallow_duplicate(x);
   }
   if (vec_dim_n(x) != 1) {
     return shaped_as_df_col(x, outer);
@@ -315,17 +324,6 @@ static SEXP vec_as_df_col(SEXP x, SEXP outer) {
 
   UNPROTECT(1);
   return out;
-}
-
-static SEXP df_as_df_col(SEXP x, SEXP outer) {
-  x = PROTECT(Rf_shallow_duplicate(x));
-
-  SEXP nms = PROTECT(r_names(x));
-  nms = PROTECT(outer_names(nms, outer, Rf_length(x)));
-  Rf_setAttrib(x, R_NamesSymbol, nms);
-
-  UNPROTECT(3);
-  return x;
 }
 
 static SEXP shaped_as_df_col(SEXP x, SEXP outer) {
