@@ -42,7 +42,7 @@ test_that("combines outer an inner names", {
   expect_equal(vec_c(c(x = 1)), c(x = 1))
 
   expect_equal(vec_c(c(x = 1:2)), c(x1 = 1, x2 = 2))
-  expect_equal(vec_c(y = c(x = 1)), c(y..x = 1))
+  expect_error(vec_c(y = c(x = 1)), "Please supply")
 })
 
 test_that("can bind data.frame columns", {

@@ -397,6 +397,9 @@ void r_lgl_fill(SEXP x, int value, R_len_t n) {
 void r_int_fill(SEXP x, int value, R_len_t n) {
   FILL(int, INTEGER);
 }
+void r_chr_fill(SEXP x, SEXP value, R_len_t n) {
+  FILL(SEXP, STRING_PTR);
+}
 
 #undef FILL
 
@@ -552,6 +555,26 @@ SEXP r_new_environment(SEXP parent, R_len_t size) {
   SETCAR(new_env__parent_node, R_NilValue);
 
   return env;
+}
+
+static SEXP new_function_call = NULL;
+static SEXP new_function__formals_node = NULL;
+static SEXP new_function__body_node = NULL;
+static SEXP new_function__env_node = NULL;
+
+SEXP r_new_function(SEXP formals, SEXP body, SEXP env) {
+  SETCAR(new_function__formals_node, formals);
+  SETCAR(new_function__body_node, body);
+  SETCAR(new_function__env_node, env);
+
+  SEXP fn = Rf_eval(new_function_call, R_BaseEnv);
+
+  // Free for gc
+  SETCAR(new_function__formals_node, R_NilValue);
+  SETCAR(new_function__body_node, R_NilValue);
+  SETCAR(new_function__env_node, R_NilValue);
+
+  return fn;
 }
 
 // [[ include("utils.h") ]]
@@ -754,6 +777,32 @@ SEXP r_as_data_frame(SEXP x) {
   }
 }
 
+SEXP rlang_formula_formals = NULL;
+
+SEXP r_as_function(SEXP x, const char* arg) {
+  switch (TYPEOF(x)) {
+  case CLOSXP:
+  case BUILTINSXP:
+  case SPECIALSXP:
+    return x;
+  case LANGSXP:
+    if (CAR(x) == syms_tilde && CDDR(x) == R_NilValue) {
+      SEXP env = PROTECT(Rf_getAttrib(x, syms_dot_environment));
+      if (env == R_NilValue) {
+        Rf_errorcall(R_NilValue, "Can't transform formula to function because it doesn't have an environment.");
+      }
+
+      SEXP fn = r_new_function(rlang_formula_formals, CADR(x), env);
+
+      UNPROTECT(1);
+      return fn;
+    }
+    // else fallthrough;
+  default:
+    Rf_errorcall(R_NilValue, "Can't convert `%s` to a function", arg);
+  }
+}
+
 
 SEXP vctrs_ns_env = NULL;
 SEXP vctrs_shared_empty_str = NULL;
@@ -794,6 +843,12 @@ SEXP syms_to_arg = NULL;
 SEXP syms_out = NULL;
 SEXP syms_value = NULL;
 SEXP syms_quiet = NULL;
+SEXP syms_dot_name_spec = NULL;
+SEXP syms_outer = NULL;
+SEXP syms_inner = NULL;
+SEXP syms_tilde = NULL;
+SEXP syms_dot_environment = NULL;
+SEXP syms_missing = NULL;
 
 SEXP fns_bracket = NULL;
 SEXP fns_quote = NULL;
@@ -933,6 +988,12 @@ void vctrs_init_utils(SEXP ns) {
   syms_out = Rf_install("out");
   syms_value = Rf_install("value");
   syms_quiet = Rf_install("quiet");
+  syms_dot_name_spec = Rf_install(".name_spec");
+  syms_outer = Rf_install("outer");
+  syms_inner = Rf_install("inner");
+  syms_tilde = Rf_install("~");
+  syms_dot_environment = Rf_install(".Environment");
+  syms_missing = R_MissingArg;
 
   fns_bracket = Rf_findVar(syms_bracket, R_BaseEnv);
   fns_quote = Rf_findVar(Rf_install("quote"), R_BaseEnv);
@@ -943,6 +1004,17 @@ void vctrs_init_utils(SEXP ns) {
 
   new_env__parent_node = CDDR(new_env_call);
   new_env__size_node = CDR(new_env__parent_node);
+
+  new_function_call = r_parse_eval("as.call(list(`function`, NULL, NULL, NULL))", R_BaseEnv);
+  R_PreserveObject(new_function_call);
+
+  new_function__formals_node = CDR(new_function_call);
+  new_function__body_node = CDR(new_function__formals_node);
+  new_function__env_node = CDR(new_function__body_node);
+
+  const char* formals_code = "pairlist2(... = , .x = quote(..1), .y = quote(..2), . = quote(..1))";
+  rlang_formula_formals = r_parse_eval(formals_code, ns);
+  R_PreserveObject(rlang_formula_formals);
 
   args_empty_ = new_wrapper_arg(NULL, "");
   args_empty = &args_empty_;

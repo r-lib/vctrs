@@ -4,8 +4,8 @@
 \alias{vec_c}
 \title{Combine many vectors into one vector}
 \usage{
-vec_c(..., .ptype = NULL, .name_repair = c("minimal", "unique",
-  "check_unique", "universal"))
+vec_c(..., .ptype = NULL, .name_spec = NULL,
+  .name_repair = c("minimal", "unique", "check_unique", "universal"))
 }
 \arguments{
 \item{...}{Vectors to coerce.}
@@ -16,6 +16,22 @@ computing the common type across all elements of \code{...}.
 Alternatively, you can supply \code{.ptype} to give the output known type.
 If \code{getOption("vctrs.no_guessing")} is \code{TRUE} you must supply this value:
 this is a convenient way to make production code demand fixed types.}
+
+\item{.name_spec}{A name specification for combining
+inner and outer names. This is relevant for inputs passed with a
+name, when these inputs are themselves named, like \code{outer = c(inner = 1)}, or when they have length greater than 1: \code{outer = 1:2}. By default, these cases trigger an error. You can resolve
+the error by providing a specification that describes how to
+combine the names or the indices of the inner vector with the
+name of the input. This specification can be:
+\itemize{
+\item A function of two arguments. The outer name is passed as a
+string to the first argument, and the inner names or positions
+are passed as second argument.
+\item An anonymous function as a purrr-style formula.
+\item A glue specification of the form \code{"{outer}_{inner}"}.
+}
+
+See the \link[=name_spec]{name specification topic}.}
 
 \item{.name_repair}{How to repair names, see \code{repair} options in \code{\link[=vec_as_names]{vec_as_names()}}.}
 }
@@ -52,6 +68,16 @@ vec_c(Sys.time(), Sys.Date())
 # Factors -----------------------------
 c(factor("a"), factor("b"))
 vec_c(factor("a"), factor("b"))
+
+
+# By default, named inputs must be length 1:
+vec_c(name = 1)
+try(vec_c(name = 1:3))
+
+# Pass a name specification to work around this:
+vec_c(name = 1:3, .name_spec = "{outer}_{inner}")
+
+# See `?name_spec` for more examples of name specifications.
 }
 \seealso{
 \code{\link[=vec_cbind]{vec_cbind()}}/\code{\link[=vec_rbind]{vec_rbind()}} for combining data frames by rows

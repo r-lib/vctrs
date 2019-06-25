@@ -77,6 +77,7 @@ void init_compact_seq(int* p, R_len_t from, R_len_t to);
 SEXP compact_seq(R_len_t from, R_len_t to);
 bool is_compact_seq(SEXP x);
 
+SEXP apply_name_spec(SEXP name_spec, SEXP outer, SEXP inner, R_len_t n);
 SEXP outer_names(SEXP names, SEXP outer, R_len_t n);
 SEXP set_rownames(SEXP x, SEXP names);
 SEXP colnames(SEXP x);
@@ -98,6 +99,7 @@ SEXP r_lgl_which(SEXP x, bool na_true);
 
 void r_lgl_fill(SEXP x, int value, R_len_t n);
 void r_int_fill(SEXP x, int value, R_len_t n);
+void r_chr_fill(SEXP x, SEXP value, R_len_t n);
 
 void r_int_fill_seq(SEXP x, int start, R_len_t n);
 SEXP r_seq(R_len_t from, R_len_t to);
@@ -111,6 +113,8 @@ int r_chr_max_len(SEXP x);
 SEXP r_chr_iota(R_len_t n, char* buf, int len, const char* prefix);
 
 SEXP r_new_environment(SEXP parent, R_len_t size);
+SEXP r_new_function(SEXP formals, SEXP body, SEXP env);
+SEXP r_as_function(SEXP x, const char* arg);
 
 SEXP r_protect(SEXP x);
 bool r_is_true(SEXP x);
@@ -212,6 +216,12 @@ extern SEXP syms_to_arg;
 extern SEXP syms_out;
 extern SEXP syms_value;
 extern SEXP syms_quiet;
+extern SEXP syms_dot_name_spec;
+extern SEXP syms_outer;
+extern SEXP syms_inner;
+extern SEXP syms_tilde;
+extern SEXP syms_dot_environment;
+extern SEXP syms_missing;
 
 #define syms_names R_NamesSymbol
 

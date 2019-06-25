@@ -448,6 +448,85 @@ SEXP outer_names(SEXP names, SEXP outer, R_len_t n) {
   }
 }
 
+// [[ register() ]]
+SEXP vctrs_apply_name_spec(SEXP name_spec, SEXP outer, SEXP inner, SEXP n) {
+  return apply_name_spec(name_spec, r_chr_get(outer, 0), inner, r_int_get(n, 0));
+}
+
+static SEXP glue_as_name_spec(SEXP spec);
+
+// [[ include("utils.h") ]]
+SEXP apply_name_spec(SEXP name_spec, SEXP outer, SEXP inner, R_len_t n) {
+  if (outer == R_NilValue) {
+    return inner;
+  }
+  if (TYPEOF(outer) != CHARSXP) {
+    Rf_error("Internal error: `outer` must be a scalar string.");
+  }
+
+  if (outer == strings_empty || outer == NA_STRING) {
+    return inner;
+  }
+
+  if (r_is_empty_names(inner)) {
+    if (n == 1) {
+      return r_str_as_character(outer);
+    }
+    inner = PROTECT(r_seq(1, n + 1));
+  } else {
+    inner = PROTECT(inner);
+  }
+
+  switch (TYPEOF(name_spec)) {
+  case CLOSXP:
+    break;
+  case STRSXP:
+    name_spec = glue_as_name_spec(name_spec);
+    break;
+  default:
+    name_spec = r_as_function(name_spec, ".name_spec");
+    break;
+  case NILSXP:
+    Rf_errorcall(R_NilValue,
+                 "Can't merge the outer name `%s` with a vector of length > 1.\n"
+                 "Please supply a `.name_spec` specification.",
+                 CHAR(outer));
+  }
+  PROTECT(name_spec);
+
+  // Recycle `outer` so specs don't need to refer to both `outer` and `inner`
+  SEXP outer_chr = PROTECT(Rf_allocVector(STRSXP, n));
+  r_chr_fill(outer_chr, outer, n);
+
+  SEXP out = vctrs_dispatch2(syms_dot_name_spec, name_spec,
+                             syms_outer, outer_chr,
+                             syms_inner, inner);
+
+  if (TYPEOF(out) != STRSXP) {
+    Rf_errorcall(R_NilValue, "`.name_spec` must return a character vector.");
+  }
+  if (Rf_length(out) != n) {
+    Rf_errorcall(R_NilValue, "`.name_spec` must return a character vector as long as `inner`.");
+  }
+
+  UNPROTECT(3);
+  return out;
+}
+
+
+static SEXP syms_glue_as_name_spec = NULL;
+static SEXP fns_glue_as_name_spec = NULL;
+static SEXP syms_internal_spec = NULL;
+
+static SEXP glue_as_name_spec(SEXP spec) {
+  if (!r_is_string(spec)) {
+    Rf_errorcall(R_NilValue, "Glue specification in `.name_spec` must be a single string.");
+  }
+  return vctrs_dispatch1(syms_glue_as_name_spec, fns_glue_as_name_spec,
+                         syms_internal_spec, spec);
+}
+
+
 static SEXP outer_names_cat(const char* outer, SEXP names) {
   names = PROTECT(Rf_shallow_duplicate(names));
   R_len_t n = Rf_length(names);
@@ -551,4 +630,8 @@ void vctrs_init_names(SEXP ns) {
   fns_set_rownames = r_env_get(ns, syms_set_rownames);
   fns_as_universal_names = r_env_get(ns, syms_as_universal_names);
   fns_validate_unique_names = r_env_get(ns, syms_validate_unique_names);
+
+  syms_glue_as_name_spec = Rf_install("glue_as_name_spec");
+  fns_glue_as_name_spec = r_env_get(ns, syms_glue_as_name_spec);
+  syms_internal_spec = Rf_install("_spec");
 }

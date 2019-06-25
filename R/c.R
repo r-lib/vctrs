@@ -15,6 +15,7 @@
 #'   (inner names) or if the arguments are named (outer names). If both
 #'   inner and outer names are present, they are combined with a `.`.
 #' @inheritParams vec_ptype
+#' @inheritParams name_spec
 #' @seealso [vec_cbind()]/[vec_rbind()] for combining data frames by rows
 #'   or columns.
 #' @export
@@ -32,9 +33,20 @@
 #' # Factors -----------------------------
 #' c(factor("a"), factor("b"))
 #' vec_c(factor("a"), factor("b"))
+#'
+#'
+#' # By default, named inputs must be length 1:
+#' vec_c(name = 1)
+#' try(vec_c(name = 1:3))
+#'
+#' # Pass a name specification to work around this:
+#' vec_c(name = 1:3, .name_spec = "{outer}_{inner}")
+#'
+#' # See `?name_spec` for more examples of name specifications.
 vec_c <- function(...,
                   .ptype = NULL,
+                  .name_spec = NULL,
                   .name_repair = c("minimal", "unique", "check_unique", "universal")) {
-  .External2(vctrs_c, .ptype, .name_repair)
+  .External2(vctrs_c, .ptype, .name_spec, .name_repair)
 }
 vec_c <- fn_inline_formals(vec_c, ".name_repair")
