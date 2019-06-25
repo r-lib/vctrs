@@ -214,10 +214,10 @@ static SEXP vec_cbind(SEXP xs, SEXP ptype, SEXP size, enum name_repair_arg name_
   // Convert inputs to data frames, validate, and collect total number of columns
   SEXP xs_names = PROTECT(r_names(xs));
   bool has_names = xs_names != R_NilValue;
-  SEXP* xs_names_ptr = has_names ? STRING_PTR(xs_names) : NULL;
+  SEXP* xs_names_p = has_names ? STRING_PTR(xs_names) : NULL;
 
   R_len_t ncol = 0;
-  for (R_len_t i = 0; i < n; ++i, ++xs_names_ptr) {
+  for (R_len_t i = 0; i < n; ++i) {
     SEXP x = VECTOR_ELT(xs, i);
 
     if (x == R_NilValue) {
@@ -225,7 +225,7 @@ static SEXP vec_cbind(SEXP xs, SEXP ptype, SEXP size, enum name_repair_arg name_
     }
 
     x = PROTECT(vec_recycle(x, nrow));
-    x = PROTECT(as_df_col(x, has_names ? *xs_names_ptr : R_NilValue));
+    x = PROTECT(as_df_col(x, has_names ? xs_names_p[i] : R_NilValue));
 
     SET_VECTOR_ELT(xs, i, x);
     UNPROTECT(2);
