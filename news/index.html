@@ -129,6 +129,23 @@
 <a href="#vctrs-0-1-0-9000" class="anchor"></a>vctrs 0.1.0.9000<small> Unreleased </small>
 </h1>
 <ul>
+<li>
+<p><code><a href="../reference/vec_c.html">vec_c()</a></code> now fails when an input is supplied with a name but has internal names or is length &gt; 1:</p>
+<pre><code><a href="../reference/vec_c.html">vec_c(foo = c(a = 1))
+#&gt; Error: Can't merge the outer name `foo` with a named vector.
+#&gt; Please supply a `.name_spec` specification.
+
+vec_c(foo = 1:3)
+#&gt; Error: Can't merge the outer name `foo` with a vector of length &gt; 1.
+#&gt; Please supply a `.name_spec` specification.</a></code></pre>
+<p>You can supply a name specification that describes how to combine the external name of the input with its internal names or positions:</p>
+<pre><code><a href="../reference/vec_c.html"># Name spec as glue string:
+vec_c(foo = c(a = 1), .name_spec = "{outer}_{inner}")
+
+# Name spec as a function:
+vec_c(foo = c(a = 1), .name_spec = function(outer, inner) paste(outer, inner, sep = "_"))
+vec_c(foo = c(a = 1), .name_spec = ~ paste(.x, .y, sep = "_"))</a></code></pre>
+</li>
 <li><p><code>vec_na()</code> has been renamed to <code><a href="../reference/vec_init.html">vec_init()</a></code>, as the primary use case is to initialize an output container.</p></li>
 <li><p>New <code>.names_to</code> parameter for <code><a href="../reference/vec_bind.html">vec_rbind()</a></code>. If supplied, this should be the name of a column where the names of the inputs are copied. This is similar to the <code>.id</code> parameter of <code>dplyr::bind_rows()</code>.</p></li>
 <li><p>Predicate generics now consistently return logical vectors when passed a <code>vctrs_vctr</code> class. They used to restore the output to their input type (<a href='https://github.com/r-lib/vctrs/issues/251'>#251</a>).</p></li>

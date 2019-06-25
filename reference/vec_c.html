@@ -133,8 +133,8 @@
     
     </div>
 
-    <pre class="usage"><span class='fu'>vec_c</span>(<span class='no'>...</span>, <span class='kw'>.ptype</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>.name_repair</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='st'>"minimal"</span>, <span class='st'>"unique"</span>,
-  <span class='st'>"check_unique"</span>, <span class='st'>"universal"</span>))</pre>
+    <pre class="usage"><span class='fu'>vec_c</span>(<span class='no'>...</span>, <span class='kw'>.ptype</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>.name_spec</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>.name_repair</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='st'>"minimal"</span>, <span class='st'>"unique"</span>, <span class='st'>"check_unique"</span>, <span class='st'>"universal"</span>))</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -150,6 +150,23 @@ computing the common type across all elements of <code>...</code>.</p>
 <p>Alternatively, you can supply <code>.ptype</code> to give the output known type.
 If <code><a href='https://www.rdocumentation.org/packages/base/topics/options'>getOption("vctrs.no_guessing")</a></code> is <code>TRUE</code> you must supply this value:
 this is a convenient way to make production code demand fixed types.</p></td>
+    </tr>
+    <tr>
+      <th>.name_spec</th>
+      <td><p>A name specification for combining
+inner and outer names. This is relevant for inputs passed with a
+name, when these inputs are themselves named, like <code>outer = c(inner = 1)</code>, or when they have length greater than 1: <code>outer = 1:2</code>. By default, these cases trigger an error. You can resolve
+the error by providing a specification that describes how to
+combine the names or the indices of the inner vector with the
+name of the input. This specification can be:</p><ul>
+<li><p>A function of two arguments. The outer name is passed as a
+string to the first argument, and the inner names or positions
+are passed as second argument.</p></li>
+<li><p>An anonymous function as a purrr-style formula.</p></li>
+<li><p>A glue specification of the form <code>"{outer}_{inner}"</code>.</p></li>
+</ul>
+
+<p>See the <a href='name_spec.html'>name specification topic</a>.</p></td>
     </tr>
     <tr>
       <th>.name_repair</th>
@@ -182,11 +199,21 @@ or columns.</p></div>
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='fu'>vec_c</span>(<span class='fl'>FALSE</span>, <span class='fl'>1L</span>, <span class='fl'>1.5</span>)</div><div class='output co'>#&gt; [1] 0.0 1.0 1.5</div><div class='input'><span class='fu'>vec_c</span>(<span class='fl'>FALSE</span>, <span class='fl'>1L</span>, <span class='st'>"x"</span>, <span class='kw'>.ptype</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/character'>character</a></span>())</div><div class='output co'>#&gt; [1] "FALSE" "1"     "x"    </div><div class='input'>
 <span class='co'># Date/times --------------------------</span>
-<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/Sys.time'>Sys.Date</a></span>(), <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/Sys.time'>Sys.time</a></span>())</div><div class='output co'>#&gt; [1] "2019-06-25"    "4277071-01-25"</div><div class='input'><span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/Sys.time'>Sys.time</a></span>(), <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/Sys.time'>Sys.Date</a></span>())</div><div class='output co'>#&gt; [1] "2019-06-25 07:43:21 UTC" "1970-01-01 05:01:12 UTC"</div><div class='input'>
-<span class='fu'>vec_c</span>(<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/Sys.time'>Sys.Date</a></span>(), <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/Sys.time'>Sys.time</a></span>())</div><div class='output co'>#&gt; [1] "2019-06-25 00:00:00 UTC" "2019-06-25 07:43:21 UTC"</div><div class='input'><span class='fu'>vec_c</span>(<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/Sys.time'>Sys.time</a></span>(), <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/Sys.time'>Sys.Date</a></span>())</div><div class='output co'>#&gt; [1] "2019-06-25 07:43:21 UTC" "2019-06-25 00:00:00 UTC"</div><div class='input'>
+<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/Sys.time'>Sys.Date</a></span>(), <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/Sys.time'>Sys.time</a></span>())</div><div class='output co'>#&gt; [1] "2019-06-25"    "4277130-05-14"</div><div class='input'><span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/Sys.time'>Sys.time</a></span>(), <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/Sys.time'>Sys.Date</a></span>())</div><div class='output co'>#&gt; [1] "2019-06-25 13:44:19 UTC" "1970-01-01 05:01:12 UTC"</div><div class='input'>
+<span class='fu'>vec_c</span>(<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/Sys.time'>Sys.Date</a></span>(), <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/Sys.time'>Sys.time</a></span>())</div><div class='output co'>#&gt; [1] "2019-06-25 00:00:00 UTC" "2019-06-25 13:44:19 UTC"</div><div class='input'><span class='fu'>vec_c</span>(<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/Sys.time'>Sys.time</a></span>(), <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/Sys.time'>Sys.Date</a></span>())</div><div class='output co'>#&gt; [1] "2019-06-25 13:44:19 UTC" "2019-06-25 00:00:00 UTC"</div><div class='input'>
 <span class='co'># Factors -----------------------------</span>
 <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/factor'>factor</a></span>(<span class='st'>"a"</span>), <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/factor'>factor</a></span>(<span class='st'>"b"</span>))</div><div class='output co'>#&gt; [1] 1 1</div><div class='input'><span class='fu'>vec_c</span>(<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/factor'>factor</a></span>(<span class='st'>"a"</span>), <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/factor'>factor</a></span>(<span class='st'>"b"</span>))</div><div class='output co'>#&gt; [1] a b
-#&gt; Levels: a b</div></pre>
+#&gt; Levels: a b</div><div class='input'>
+
+<span class='co'># By default, named inputs must be length 1:</span>
+<span class='fu'>vec_c</span>(<span class='kw'>name</span> <span class='kw'>=</span> <span class='fl'>1</span>)</div><div class='output co'>#&gt; name 
+#&gt;    1 </div><div class='input'><span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/try'>try</a></span>(<span class='fu'>vec_c</span>(<span class='kw'>name</span> <span class='kw'>=</span> <span class='fl'>1</span>:<span class='fl'>3</span>))</div><div class='output co'>#&gt; Error : Can't merge the outer name `name` with a vector of length &gt; 1.
+#&gt; Please supply a `.name_spec` specification.</div><div class='input'>
+<span class='co'># Pass a name specification to work around this:</span>
+<span class='fu'>vec_c</span>(<span class='kw'>name</span> <span class='kw'>=</span> <span class='fl'>1</span>:<span class='fl'>3</span>, <span class='kw'>.name_spec</span> <span class='kw'>=</span> <span class='st'>"{outer}_{inner}"</span>)</div><div class='output co'>#&gt; name_1 name_2 name_3 
+#&gt;      1      2      3 </div><div class='input'>
+# See `?name_spec` for more examples of name specifications.
+</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
