@@ -29,9 +29,11 @@ test_that("NA casts work as expected", {
   exp <- lgl(NA)
   to <- lgl()
 
+  expect_equal(vec_cast(lgl(NA), to), exp)
   expect_equal(vec_cast(int(NA), to), exp)
   expect_equal(vec_cast(dbl(NA), to), exp)
   expect_equal(vec_cast(chr(NA), to), exp)
+  expect_equal(vec_cast(list(NA), to), exp)
 })
 
 test_that("Shaped NA casts work as expected", {
@@ -39,9 +41,11 @@ test_that("Shaped NA casts work as expected", {
   exp_mat <- mat(lgl(NA))
   to_mat <- matrix(lgl())
 
+  expect_equal(vec_cast(mat(lgl(NA)), to_mat), exp_mat)
   expect_equal(vec_cast(mat(int(NA)), to_mat), exp_mat)
   expect_equal(vec_cast(mat(dbl(NA)), to_mat), exp_mat)
   expect_equal(vec_cast(mat(chr(NA)), to_mat), exp_mat)
+  expect_equal(vec_cast(mat(list(NA)), to_mat), exp_mat)
 })
 
 test_that("lossy casts generate warning", {
@@ -79,6 +83,29 @@ test_that("safe casts work as expected", {
   expect_equal(vec_cast(list(1L, 2L), integer()), int(1L, 2L))
 })
 
+test_that("NA casts work as expected", {
+  exp <- int(NA)
+  to <- int()
+
+  expect_equal(vec_cast(lgl(NA), to), exp)
+  expect_equal(vec_cast(int(NA), to), exp)
+  expect_equal(vec_cast(dbl(NA), to), exp)
+  expect_equal(vec_cast(chr(NA), to), exp)
+  expect_equal(vec_cast(list(NA), to), exp)
+})
+
+test_that("Shaped NA casts work as expected", {
+  mat <- matrix
+  exp_mat <- mat(int(NA))
+  to_mat <- matrix(int())
+
+  expect_equal(vec_cast(mat(lgl(NA)), to_mat), exp_mat)
+  expect_equal(vec_cast(mat(int(NA)), to_mat), exp_mat)
+  expect_equal(vec_cast(mat(dbl(NA)), to_mat), exp_mat)
+  expect_equal(vec_cast(mat(chr(NA)), to_mat), exp_mat)
+  expect_equal(vec_cast(mat(list(NA)), to_mat), exp_mat)
+})
+
 test_that("lossy casts generate error", {
   expect_lossy(vec_cast(c(2.5, 2), int()),     int(2, 2), x = dbl(), to = int())
   expect_lossy(vec_cast(c("2.5", "2"), int()), int(2, 2), x = chr(), to = int())
@@ -103,6 +130,29 @@ test_that("safe casts work as expected", {
   expect_equal(vec_cast(list(1, 1.5), double()), dbl(1, 1.5))
 })
 
+test_that("NA casts work as expected", {
+  exp <- dbl(NA)
+  to <- dbl()
+
+  expect_equal(vec_cast(lgl(NA), to), exp)
+  expect_equal(vec_cast(int(NA), to), exp)
+  expect_equal(vec_cast(dbl(NA), to), exp)
+  expect_equal(vec_cast(chr(NA), to), exp)
+  expect_equal(vec_cast(list(NA), to), exp)
+})
+
+test_that("Shaped NA casts work as expected", {
+  mat <- matrix
+  exp_mat <- mat(dbl(NA))
+  to_mat <- matrix(dbl())
+
+  expect_equal(vec_cast(mat(lgl(NA)), to_mat), exp_mat)
+  expect_equal(vec_cast(mat(int(NA)), to_mat), exp_mat)
+  expect_equal(vec_cast(mat(dbl(NA)), to_mat), exp_mat)
+  expect_equal(vec_cast(mat(chr(NA)), to_mat), exp_mat)
+  expect_equal(vec_cast(mat(list(NA)), to_mat), exp_mat)
+})
+
 test_that("lossy casts generate warning", {
   expect_lossy(vec_cast(c("2.5", "x"), dbl()), dbl(2.5, NA), x = chr(), to = dbl())
 })
@@ -122,6 +172,27 @@ test_that("safe casts to complex works", {
   expect_identical(vec_cast(list(1, 1.5), cpl()), cpl(1, 1.5))
 })
 
+test_that("NA casts work as expected", {
+  exp <- cpl(NA)
+  to <- cpl()
+
+  expect_equal(vec_cast(lgl(NA), to), exp)
+  expect_equal(vec_cast(int(NA), to), exp)
+  expect_equal(vec_cast(dbl(NA), to), exp)
+  expect_equal(vec_cast(list(NA), to), exp)
+})
+
+test_that("Shaped NA casts work as expected", {
+  mat <- matrix
+  exp_mat <- mat(cpl(NA))
+  to_mat <- matrix(cpl())
+
+  expect_equal(vec_cast(mat(lgl(NA)), to_mat), exp_mat)
+  expect_equal(vec_cast(mat(int(NA)), to_mat), exp_mat)
+  expect_equal(vec_cast(mat(dbl(NA)), to_mat), exp_mat)
+  expect_equal(vec_cast(mat(list(NA)), to_mat), exp_mat)
+})
+
 
 # Character
 
@@ -130,6 +201,29 @@ test_that("safe casts work as expected", {
   expect_equal(vec_cast(NA, character()), NA_character_)
   expect_equal(vec_cast(lgl(TRUE, FALSE), character()), chr("TRUE", "FALSE"))
   expect_equal(vec_cast(list("x", "y"), character()), chr("x", "y"))
+})
+
+test_that("NA casts work as expected", {
+  exp <- chr(NA)
+  to <- chr()
+
+  expect_equal(vec_cast(lgl(NA), to), exp)
+  expect_equal(vec_cast(int(NA), to), exp)
+  expect_equal(vec_cast(dbl(NA), to), exp)
+  expect_equal(vec_cast(chr(NA), to), exp)
+  expect_equal(vec_cast(list(NA), to), exp)
+})
+
+test_that("Shaped NA casts work as expected", {
+  mat <- matrix
+  exp_mat <- mat(chr(NA))
+  to_mat <- matrix(chr())
+
+  expect_equal(vec_cast(mat(lgl(NA)), to_mat), exp_mat)
+  expect_equal(vec_cast(mat(int(NA)), to_mat), exp_mat)
+  expect_equal(vec_cast(mat(dbl(NA)), to_mat), exp_mat)
+  expect_equal(vec_cast(mat(chr(NA)), to_mat), exp_mat)
+  expect_equal(vec_cast(mat(list(NA)), to_mat), exp_mat)
 })
 
 test_that("difftime gets special treatment", {
