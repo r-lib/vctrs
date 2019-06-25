@@ -355,14 +355,32 @@ static bool needs_suffix(SEXP str) {
 
 
 static SEXP names_iota(R_len_t n);
+static SEXP vec_unique_names_impl(SEXP names, R_len_t n, bool quiet);
+
+// [[ register() ]]
+SEXP vctrs_unique_names(SEXP x, SEXP quiet) {
+  return vec_unique_names(x, LOGICAL(quiet)[0]);
+}
 
 // [[ include("utils.h") ]]
 SEXP vec_unique_names(SEXP x, bool quiet) {
   SEXP names = PROTECT(Rf_getAttrib(x, R_NamesSymbol));
+  SEXP out = vec_unique_names_impl(names, vec_size(x), quiet);
+  UNPROTECT(1);
+  return out;
+}
+// [[ include("utils.h") ]]
+SEXP vec_unique_colnames(SEXP x, bool quiet) {
+  SEXP names = PROTECT(colnames(x));
+  SEXP out = vec_unique_names_impl(names, Rf_ncols(x), quiet);
+  UNPROTECT(1);
+  return out;
+}
 
+static SEXP vec_unique_names_impl(SEXP names, R_len_t n, bool quiet) {
   SEXP out;
   if (names == R_NilValue) {
-    out = PROTECT(names_iota(vec_size(x)));
+    out = PROTECT(names_iota(n));
     if (!quiet) {
       describe_repair(names, out);
     }
@@ -370,15 +388,9 @@ SEXP vec_unique_names(SEXP x, bool quiet) {
     out = PROTECT(vec_as_unique_names(names, quiet));
   }
 
-  UNPROTECT(2);
+  UNPROTECT(1);
   return(out);
 }
-
-// [[ register() ]]
-SEXP vctrs_unique_names(SEXP x, SEXP quiet) {
-  return vec_unique_names(x, LOGICAL(quiet)[0]);
-}
-
 
 static SEXP names_iota(R_len_t n) {
   char buf[MAX_IOTA_SIZE];

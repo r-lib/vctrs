@@ -52,6 +52,7 @@ bool is_bare_tibble(SEXP x);
 bool is_record(SEXP x);
 
 SEXP vec_unique_names(SEXP x, bool quiet);
+SEXP vec_unique_colnames(SEXP x, bool quiet);
 
 // Returns S3 method for `generic` suitable for the class of `x`. The
 // inheritance hierarchy is explored except for the default method.

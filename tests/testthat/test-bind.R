@@ -169,7 +169,7 @@ test_that("matrix becomes data frame", {
   expect_equal(vec_cbind(x), data.frame(...1 = 1:2, ...2 = 3:4))
 
   # Packed if named
-  expect_equal(vec_cbind(x = x), data_frame(x = data_frame(x1 = 1:2, x2 = 3:4)))
+  expect_equal(vec_cbind(x = x), data_frame(x = data_frame(...1 = 1:2, ...2 = 3:4)))
 })
 
 
@@ -265,9 +265,7 @@ test_that("vec_cbind() packs named data frames (#446)", {
 
 test_that("vec_cbind() packs named matrices", {
   expect_identical(vec_cbind(matrix(1:4, 2)), data_frame(...1 = 1:2, ...2 = 3:4))
-
-  # FIXME: Names should be repaired
-  expect_identical(vec_cbind(x = matrix(1:4, 2)), data_frame(x = data_frame(x1 = 1:2, x2 = 3:4)))
+  expect_identical(vec_cbind(x = matrix(1:4, 2)), data_frame(x = data_frame(...1 = 1:2, ...2 = 3:4)))
 })
 
 test_that("vec_cbind() never packs named vectors", {

@@ -320,6 +320,15 @@ static SEXP as_df_col(SEXP x, SEXP outer, bool* allow_pack) {
   return vec_as_df_col(x, outer);
 }
 
+static SEXP shaped_as_df_col(SEXP x, SEXP outer) {
+  SEXP nms = PROTECT(vec_unique_colnames(x, false));
+  x = PROTECT(r_as_data_frame(x));
+  Rf_setAttrib(x, R_NamesSymbol, nms);
+
+  UNPROTECT(2);
+  return x;
+}
+
 static SEXP vec_as_df_col(SEXP x, SEXP outer) {
   SEXP out = PROTECT(Rf_allocVector(VECSXP, 1));
   SET_VECTOR_ELT(out, 0, x);
@@ -334,17 +343,6 @@ static SEXP vec_as_df_col(SEXP x, SEXP outer) {
 
   UNPROTECT(1);
   return out;
-}
-
-static SEXP shaped_as_df_col(SEXP x, SEXP outer) {
-  SEXP nms = PROTECT(colnames(x));
-  x = PROTECT(r_as_data_frame(x));
-
-  nms = PROTECT(outer_names(nms, outer, Rf_length(x)));
-  Rf_setAttrib(x, R_NamesSymbol, nms);
-
-  UNPROTECT(3);
-  return x;
 }
 
 enum name_repair_arg validate_bind_name_repair(SEXP name_repair, bool allow_minimal) {
