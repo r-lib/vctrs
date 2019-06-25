@@ -225,7 +225,9 @@ static SEXP vec_cbind(SEXP xs, SEXP ptype, SEXP size, enum name_repair_arg name_
     }
 
     x = PROTECT(vec_recycle(x, nrow));
-    x = PROTECT(as_df_col(x, has_names ? xs_names_p[i] : R_NilValue));
+
+    SEXP outer = has_names ? xs_names_p[i] : strings_empty;
+    x = PROTECT(as_df_col(x, outer));
 
     SET_VECTOR_ELT(xs, i, x);
     UNPROTECT(2);
@@ -303,7 +305,7 @@ static SEXP vec_as_df_col(SEXP x, SEXP outer) {
   SEXP out = PROTECT(Rf_allocVector(VECSXP, 1));
   SET_VECTOR_ELT(out, 0, x);
 
-  if (outer != R_NilValue) {
+  if (outer != strings_empty) {
     SEXP names = PROTECT(r_str_as_character(outer));
     Rf_setAttrib(out, R_NamesSymbol, names);
     UNPROTECT(1);
