@@ -120,10 +120,13 @@ SEXP vctrs_field_get(SEXP x, SEXP index) {
 SEXP vctrs_field_set(SEXP x, SEXP index, SEXP value) {
   check_rcrd(x);
 
-  if (!vec_is_vector(value))
-    Rf_errorcall(R_NilValue, "Invalid value: not a vector");
-  if (vec_size(value) != vec_size(x))
-    Rf_errorcall(R_NilValue, "Invalid value: incorrect length");
+  if (!vec_is_vector(value)) {
+    Rf_errorcall(R_NilValue, "Invalid value: not a vector.");
+  }
+
+  if (vec_size(value) != vec_size(x)) {
+    Rf_errorcall(R_NilValue, "Invalid value: incorrect length.");
+  }
 
   return vctrs_list_set(x, index, value);
 }
