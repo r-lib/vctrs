@@ -5,13 +5,13 @@
 \title{Name specifications}
 \arguments{
 \item{name_spec, .name_spec}{A name specification for combining
-outer and inner names. This is relevant for inputs passed with a
+inner and outer names. This is relevant for inputs passed with a
 name, when these inputs are themselves named, like \code{outer = c(inner = 1)}, or when they have length greater than 1: \code{outer = 1:2}. By default, these cases trigger an error. You can resolve
 the error by providing a specification that describes how to
 combine the names or the indices of the inner vector with the
 name of the input. This specification can be:
 \itemize{
-\item A function of two arguments. The exterior name is passed as a
+\item A function of two arguments. The outer name is passed as a
 string to the first argument, and the inner names or positions
 are passed as second argument.
 \item An anonymous function as a purrr-style formula.
@@ -21,21 +21,21 @@ are passed as second argument.
 See the \link[=name_spec]{name specification topic}.}
 }
 \description{
-A name specification describes how to combine an external name with
-internal names. This sort of name combination arises when
-concatenating vectors or flattening lists. There are two possible
-cases:
+A name specification describes how to combine an inner and outer
+names. This sort of name combination arises when concatenating
+vectors or flattening lists. There are two possible cases:
 \itemize{
-\item Named vector:\preformatted{vec_c(external = c(internal1 = 1, internal2 = 2))
+\item Named vector:\preformatted{vec_c(outer = c(inner1 = 1, inner2 = 2))
 }
-\item Unnamed vector:\preformatted{vec_c(external = 1:2)
+\item Unnamed vector:\preformatted{vec_c(outer = 1:2)
 }
 }
 
-In r-lib and tidyverse packages, these cases are errors by default.
-To work around this, you can provide a name specification that
-describes how to combine the external and internal names of inputs.
-Name specifications can refer to:
+In r-lib and tidyverse packages, these cases are errors by default,
+because there's no behaviour that works well for every case.
+Instead, you can provide a name specification that describes how to
+combine the inner and outer names of inputs. Name specifications
+can refer to:
 \itemize{
 \item \code{outer}: The external name recycled to the size of the input
 vector.

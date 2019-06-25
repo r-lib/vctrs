@@ -515,27 +515,27 @@ vec_as_names_legacy <- function(names, prefix = "V", sep = "") {
 #'
 #' @description
 #'
-#' A name specification describes how to combine an external name with
-#' internal names. This sort of name combination arises when
-#' concatenating vectors or flattening lists. There are two possible
-#' cases:
+#' A name specification describes how to combine an inner and outer
+#' names. This sort of name combination arises when concatenating
+#' vectors or flattening lists. There are two possible cases:
 #'
 #' * Named vector:
 #'
 #'   ```
-#'   vec_c(external = c(internal1 = 1, internal2 = 2))
+#'   vec_c(outer = c(inner1 = 1, inner2 = 2))
 #'   ```
 #'
 #' * Unnamed vector:
 #'
 #'   ```
-#'   vec_c(external = 1:2)
+#'   vec_c(outer = 1:2)
 #'   ```
 #'
-#' In r-lib and tidyverse packages, these cases are errors by default.
-#' To work around this, you can provide a name specification that
-#' describes how to combine the external and internal names of inputs.
-#' Name specifications can refer to:
+#' In r-lib and tidyverse packages, these cases are errors by default,
+#' because there's no behaviour that works well for every case.
+#' Instead, you can provide a name specification that describes how to
+#' combine the inner and outer names of inputs. Name specifications
+#' can refer to:
 #'
 #' * `outer`: The external name recycled to the size of the input
 #'   vector.
@@ -544,7 +544,7 @@ vec_as_names_legacy <- function(names, prefix = "V", sep = "") {
 #'   integer from 1 to the size of the vector if it is unnamed.
 #'
 #' @param name_spec,.name_spec A name specification for combining
-#'   outer and inner names. This is relevant for inputs passed with a
+#'   inner and outer names. This is relevant for inputs passed with a
 #'   name, when these inputs are themselves named, like `outer =
 #'   c(inner = 1)`, or when they have length greater than 1: `outer =
 #'   1:2`. By default, these cases trigger an error. You can resolve
@@ -552,7 +552,7 @@ vec_as_names_legacy <- function(names, prefix = "V", sep = "") {
 #'   combine the names or the indices of the inner vector with the
 #'   name of the input. This specification can be:
 #'
-#'   * A function of two arguments. The exterior name is passed as a
+#'   * A function of two arguments. The outer name is passed as a
 #'     string to the first argument, and the inner names or positions
 #'     are passed as second argument.
 #'
