@@ -1,5 +1,33 @@
 # vctrs 0.1.0.9000
 
+* `vec_cbind()` now turns named data frames to packed columns.
+
+  ```r
+  data <- tibble::tibble(x = 1:3, y = letters[1:3])
+  data <- vec_cbind(data, packed = data)
+  # A tibble: 3 x 3
+        x y     packed$x $y
+    <int> <chr>    <int> <chr>
+  1     1 a            1 a
+  2     2 b            2 b
+  3     3 c            3 c
+  ```
+
+  Packed data frames are nested in a single column. This makes it
+  possible to access it through a single name:
+
+  ```r
+  data$packed
+  # A tibble: 3 x 2
+        x y
+    <int> <chr>
+  1     1 a
+  2     2 b
+  3     3 c
+  ```
+
+  We are planning to use this syntax more widely in the tidyverse.
+
 * `vec_init()` checks input is a vector.
 
 * `vec_c()` now fails when an input is supplied with a name but has

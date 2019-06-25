@@ -31,8 +31,9 @@
 #' * `vec_type(vec_cbind(x, y)) == vec_cbind(vec_type(x), vec_type(x))`
 #' @param ... Data frames or vectors.
 #'
-#'   `vec_rbind()` ignores names. `vec_cbind()` preserves outer names,
-#'   combining with inner names if also present.
+#'   `vec_rbind()` ignores names unless `.names_to` is supplied.
+#'   `vec_cbind()` creates packed data frame columns with named
+#'   inputs.
 #'
 #'   `NULL` inputs are silently ignored. Empty (e.g. zero row) inputs
 #'   will not appear in the output, but will affect the derived `.ptype`.
@@ -109,11 +110,22 @@
 #'   y = letters[1:3]
 #' )
 #'
-#' # outer names are combined with inner names
-#' vec_cbind(
+#' # if you supply a named data frame, it is packed in a single column
+#' data <- vec_cbind(
 #'   x = data.frame(a = 1, b = 2),
 #'   y = 1
 #' )
+#' data
+#'
+#' # Packed data frames are nested in a single column. This makes it
+#' # possible to access it through a single name:
+#' data$x
+#'
+#' # since the base print method is suboptimal with packed data
+#' # frames, it is recommended to use tibble to work with these:
+#' if (rlang::is_installed("tibble")) {
+#'   vec_cbind(x = tibble::tibble(a = 1, b = 2), y = 1)
+#' }
 #'
 #' # duplicate names are flagged
 #' vec_cbind(x = 1, x = 2)
