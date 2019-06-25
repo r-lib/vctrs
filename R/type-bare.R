@@ -71,7 +71,8 @@ vec_cast.integer.integer <- function(x, to, ...) {
 #' @method vec_cast.integer double
 vec_cast.integer.double <- function(x, to, ..., x_arg = "x", to_arg = "to") {
   out <- suppressWarnings(vec_coerce_bare(x, "integer"))
-  lossy <- (out != x) | xor(is.na(x), is.na(out))
+  x_na <- is.na(x)
+  lossy <- (out != x & !x_na) | xor(x_na, is.na(out))
   out <- shape_broadcast(out, to)
   maybe_lossy_cast(out, x, to, lossy, x_arg = x_arg, to_arg = to_arg)
 }
