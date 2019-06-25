@@ -27,7 +27,7 @@ vec_cast.logical.integer <- function(x, to, ..., x_arg = "x", to_arg = "to") {
 vec_cast.logical.double <- function(x, to, ..., x_arg = "x", to_arg = "to") {
   out <- vec_coerce_bare(x, "logical")
   out <- shape_broadcast(out, to)
-  lossy <- !x %in% c(0, 1)
+  lossy <- !x %in% c(0, 1, NA_real_)
   maybe_lossy_cast(out, x, to, lossy, x_arg = x_arg, to_arg = to_arg)
 }
 #' @export
@@ -35,7 +35,7 @@ vec_cast.logical.double <- function(x, to, ..., x_arg = "x", to_arg = "to") {
 vec_cast.logical.character <- function(x, to, ..., x_arg = "x", to_arg = "to") {
   out <- vec_coerce_bare(x, "logical")
   out <- shape_broadcast(out, to)
-  lossy <- !x %in% c("T", "F", "TRUE", "FALSE", "true", "false")
+  lossy <- !x %in% c("T", "F", "TRUE", "FALSE", "true", "false", NA_character_)
   maybe_lossy_cast(out, x, to, lossy, x_arg = x_arg, to_arg = to_arg)
 }
 #' @export

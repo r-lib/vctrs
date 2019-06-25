@@ -48,13 +48,18 @@ static SEXP dbl_as_logical(SEXP x, bool* lossy) {
   for (R_len_t i = 0; i < n; ++i, ++data, ++out_data) {
     double elt = *data;
 
+    if (isnan(elt)) {
+      *out_data = NA_LOGICAL;
+      continue;
+    }
+
     if (elt != 0 && elt != 1) {
       *lossy = true;
       UNPROTECT(1);
       return R_NilValue;
     }
 
-    *out_data = isnan(elt) ? NA_LOGICAL : (int) elt;
+    *out_data = (int) elt;
   }
 
   UNPROTECT(1);
@@ -69,7 +74,13 @@ static SEXP chr_as_logical(SEXP x, bool* lossy) {
   int* out_data = LOGICAL(out);
 
   for (R_len_t i = 0; i < n; ++i, ++data, ++out_data) {
-    const char* elt = CHAR(*data);
+    SEXP str = *data;
+    if (str == NA_STRING) {
+      *out_data = NA_LOGICAL;
+      continue;
+    }
+
+    const char* elt = CHAR(str);
     switch (elt[0]) {
     case 'T':
       if (elt[1] == '\0' || strcmp(elt, "TRUE") == 0) {

@@ -30,6 +30,8 @@ test_that("NA casts work as expected", {
   to <- lgl()
 
   expect_equal(vec_cast(int(NA), to), exp)
+  expect_equal(vec_cast(dbl(NA), to), exp)
+  expect_equal(vec_cast(chr(NA), to), exp)
 })
 
 test_that("Shaped NA casts work as expected", {
@@ -38,6 +40,8 @@ test_that("Shaped NA casts work as expected", {
   to_mat <- matrix(lgl())
 
   expect_equal(vec_cast(mat(int(NA)), to_mat), exp_mat)
+  expect_equal(vec_cast(mat(dbl(NA)), to_mat), exp_mat)
+  expect_equal(vec_cast(mat(chr(NA)), to_mat), exp_mat)
 })
 
 test_that("lossy casts generate warning", {
