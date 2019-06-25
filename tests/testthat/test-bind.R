@@ -258,7 +258,19 @@ test_that("vec_cbind() returns visibly (#452)", {
   expect_visible(vctrs::vec_cbind(x = 1, .name_repair = "check_unique"))
 })
 
-test_that("vec_cbind() packs named inputs (#446)", {
+test_that("vec_cbind() packs named data frames (#446)", {
   expect_identical(vec_cbind(data_frame(y = 1:3)), data_frame(y = 1:3))
   expect_identical(vec_cbind(x = data_frame(y = 1:3)), data_frame(x = data_frame(y = 1:3)))
+})
+
+test_that("vec_cbind() packs named matrices", {
+  expect_identical(vec_cbind(matrix(1:4, 2)), data_frame(...1 = 1:2, ...2 = 3:4))
+
+  # FIXME: Names should be repaired
+  expect_identical(vec_cbind(x = matrix(1:4, 2)), data_frame(x = data_frame(x1 = 1:2, x2 = 3:4)))
+})
+
+test_that("vec_cbind() never packs named vectors", {
+  expect_identical(vec_cbind(1:2), data_frame(...1 = 1:2))
+  expect_identical(vec_cbind(x = 1:2), data_frame(x = 1:2))
 })
