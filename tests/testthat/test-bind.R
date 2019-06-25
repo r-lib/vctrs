@@ -252,3 +252,8 @@ test_that("can supply `.names_to` to `vec_rbind()` (#229)", {
   # Partial names
   expect_identical(vec_rbind(x, b = y, .names_to = "quux")$quux, c("", "", "b"))
 })
+
+test_that("vec_cbind() returns visibly (#452)", {
+  # Shouldn't be needed once `check_unique` is implemented in C
+  expect_visible(vctrs::vec_cbind(x = 1, .name_repair = "check_unique"))
+})

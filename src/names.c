@@ -43,8 +43,14 @@ SEXP vec_as_universal_names(SEXP names, bool quiet) {
   return out;
 }
 SEXP vec_validate_unique_names(SEXP names) {
-  return vctrs_dispatch1(syms_validate_unique_names, fns_validate_unique_names,
-                         syms_names, names);
+  SEXP out = PROTECT(vctrs_dispatch1(syms_validate_unique_names, fns_validate_unique_names,
+                                     syms_names, names));
+
+  // Restore visibility
+  Rf_eval(R_NilValue, R_EmptyEnv);
+
+  UNPROTECT(1);
+  return out;
 }
 
 
