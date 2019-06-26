@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Find the common type for a pair of vector types — vec_type2.tbl_df • vctrs</title>
+<title>Find the common type for a pair of vector types — vec_type2.logical • vctrs</title>
 
 <!-- jquery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
@@ -30,7 +30,7 @@
 
 
 
-<meta property="og:title" content="Find the common type for a pair of vector types — vec_type2.tbl_df" />
+<meta property="og:title" content="Find the common type for a pair of vector types — vec_type2.logical" />
 
 <meta property="og:description" content="vec_type2() finds the common type for a pair of vectors, or dies trying.
 It forms the foundation of the vctrs type system, along with vec_cast().
@@ -126,7 +126,7 @@ instead call vec_type_common()." />
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Find the common type for a pair of vector types</h1>
-    <small class="dont-index">Source: <a href='https://github.com/r-lib/vctrs/blob/master/R/type-tibble.R'><code>R/type-tibble.R</code></a>, <a href='https://github.com/r-lib/vctrs/blob/master/R/type2.R'><code>R/type2.R</code></a></small>
+    <small class="dont-index">Source: <a href='https://github.com/r-lib/vctrs/blob/master/R/type-bare.R'><code>R/type-bare.R</code></a>, <a href='https://github.com/r-lib/vctrs/blob/master/R/type-tibble.R'><code>R/type-tibble.R</code></a>, <a href='https://github.com/r-lib/vctrs/blob/master/R/type2.R'><code>R/type2.R</code></a></small>
     <div class="hidden name"><code>vec_type2.Rd</code></div>
     </div>
 
@@ -139,12 +139,7 @@ instead call <code><a href='vec_type.html'>vec_type_common()</a></code>.</p>
     
     </div>
 
-    <pre class="usage"><span class='co'># S3 method for tbl_df</span>
-<span class='fu'>vec_type2</span>(<span class='no'>x</span>, <span class='no'>y</span>, <span class='no'>...</span>)
-
-<span class='fu'>vec_type2</span>(<span class='no'>x</span>, <span class='no'>y</span>, <span class='no'>...</span>, <span class='kw'>x_arg</span> <span class='kw'>=</span> <span class='st'>"x"</span>, <span class='kw'>y_arg</span> <span class='kw'>=</span> <span class='st'>"y"</span>)
-
-<span class='co'># S3 method for logical</span>
+    <pre class="usage"><span class='co'># S3 method for logical</span>
 <span class='fu'>vec_type2</span>(<span class='no'>x</span>, <span class='no'>y</span>, <span class='no'>...</span>)
 
 <span class='co'># S3 method for integer</span>
@@ -153,14 +148,19 @@ instead call <code><a href='vec_type.html'>vec_type_common()</a></code>.</p>
 <span class='co'># S3 method for double</span>
 <span class='fu'>vec_type2</span>(<span class='no'>x</span>, <span class='no'>y</span>, <span class='no'>...</span>)
 
-<span class='co'># S3 method for raw</span>
-<span class='fu'>vec_type2</span>(<span class='no'>x</span>, <span class='no'>y</span>, <span class='no'>...</span>)
-
 <span class='co'># S3 method for character</span>
 <span class='fu'>vec_type2</span>(<span class='no'>x</span>, <span class='no'>y</span>, <span class='no'>...</span>)
 
+<span class='co'># S3 method for raw</span>
+<span class='fu'>vec_type2</span>(<span class='no'>x</span>, <span class='no'>y</span>, <span class='no'>...</span>)
+
 <span class='co'># S3 method for list</span>
-<span class='fu'>vec_type2</span>(<span class='no'>x</span>, <span class='no'>y</span>, <span class='no'>...</span>)</pre>
+<span class='fu'>vec_type2</span>(<span class='no'>x</span>, <span class='no'>y</span>, <span class='no'>...</span>)
+
+<span class='co'># S3 method for tbl_df</span>
+<span class='fu'>vec_type2</span>(<span class='no'>x</span>, <span class='no'>y</span>, <span class='no'>...</span>)
+
+<span class='fu'>vec_type2</span>(<span class='no'>x</span>, <span class='no'>y</span>, <span class='no'>...</span>, <span class='kw'>x_arg</span> <span class='kw'>=</span> <span class='st'>"x"</span>, <span class='kw'>y_arg</span> <span class='kw'>=</span> <span class='st'>"y"</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
