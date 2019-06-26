@@ -262,6 +262,12 @@ test_that("vec_cbind() packs named data frames (#446)", {
   expect_identical(vec_cbind(x = data_frame(y = 1:3)), data_frame(x = data_frame(y = 1:3)))
 })
 
+test_that("vec_cbind() packs 1d arrays", {
+  a <- array(1:2)
+  expect_identical(vec_cbind(a), data_frame(...1 = 1:2))
+  expect_identical(vec_cbind(x = a), data_frame(x = a))
+})
+
 test_that("vec_cbind() packs named matrices", {
   m <- matrix(1:4, 2)
   expect_identical(vec_cbind(m), data_frame(...1 = 1:2, ...2 = 3:4))

@@ -312,10 +312,12 @@ static SEXP as_df_col(SEXP x, SEXP outer, bool* allow_pack) {
     *allow_pack = true;
     return Rf_shallow_duplicate(x);
   }
-  if (vec_dim_n(x) != 1) {
+
+  if (vec_bare_dim_n(x) > 0) {
     *allow_pack = true;
     return shaped_as_df_col(x, outer);
   }
+
   *allow_pack = false;
   return vec_as_df_col(x, outer);
 }
