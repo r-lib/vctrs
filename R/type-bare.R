@@ -139,7 +139,7 @@ vec_cast.logical.logical <- function(x, to, ...) {
 vec_cast.logical.integer <- function(x, to, ..., x_arg = "x", to_arg = "to") {
   out <- vec_coerce_bare(x, "logical")
   out <- shape_broadcast(out, to)
-  lossy <- !x %in% c(0L, 1L)
+  lossy <- !x %in% c(0L, 1L, NA_integer_)
   maybe_lossy_cast(out, x, to, lossy, x_arg = x_arg, to_arg = to_arg)
 }
 #' @export
@@ -147,7 +147,7 @@ vec_cast.logical.integer <- function(x, to, ..., x_arg = "x", to_arg = "to") {
 vec_cast.logical.double <- function(x, to, ..., x_arg = "x", to_arg = "to") {
   out <- vec_coerce_bare(x, "logical")
   out <- shape_broadcast(out, to)
-  lossy <- !x %in% c(0, 1)
+  lossy <- !x %in% c(0, 1, NA_real_)
   maybe_lossy_cast(out, x, to, lossy, x_arg = x_arg, to_arg = to_arg)
 }
 #' @export
@@ -155,7 +155,7 @@ vec_cast.logical.double <- function(x, to, ..., x_arg = "x", to_arg = "to") {
 vec_cast.logical.character <- function(x, to, ..., x_arg = "x", to_arg = "to") {
   out <- vec_coerce_bare(x, "logical")
   out <- shape_broadcast(out, to)
-  lossy <- !x %in% c("T", "F", "TRUE", "FALSE", "true", "false")
+  lossy <- !x %in% c("T", "F", "TRUE", "FALSE", "true", "false", NA_character_)
   maybe_lossy_cast(out, x, to, lossy, x_arg = x_arg, to_arg = to_arg)
 }
 #' @export
@@ -191,7 +191,8 @@ vec_cast.integer.integer <- function(x, to, ...) {
 #' @method vec_cast.integer double
 vec_cast.integer.double <- function(x, to, ..., x_arg = "x", to_arg = "to") {
   out <- suppressWarnings(vec_coerce_bare(x, "integer"))
-  lossy <- (out != x) | xor(is.na(x), is.na(out))
+  x_na <- is.na(x)
+  lossy <- (out != x & !x_na) | xor(x_na, is.na(out))
   out <- shape_broadcast(out, to)
   maybe_lossy_cast(out, x, to, lossy, x_arg = x_arg, to_arg = to_arg)
 }
@@ -229,7 +230,8 @@ vec_cast.double.integer <- vec_cast.double.logical
 #' @method vec_cast.double character
 vec_cast.double.character <- function(x, to, ..., x_arg = "x", to_arg = "to") {
   out <- suppressWarnings(vec_coerce_bare(x, "double"))
-  lossy <- (out != x) | xor(is.na(x), is.na(out))
+  x_na <- is.na(x)
+  lossy <- (out != x & !x_na) | xor(x_na, is.na(out))
   out <- shape_broadcast(out, to)
   maybe_lossy_cast(out, x, to, lossy, x_arg = x_arg, to_arg = to_arg)
 }
