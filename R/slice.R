@@ -190,6 +190,5 @@ vec_index <- function(x, i, ...) {
 #' vec_init(Sys.Date(), 5)
 #' vec_init(mtcars, 2)
 vec_init <- function(x, n = 1L) {
-  vec_assert(x)
   vec_slice(x, rep_len(NA_integer_, n))
 }

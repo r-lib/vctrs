@@ -235,9 +235,7 @@ static SEXP vec_slice_impl(SEXP x, SEXP index) {
 
 // [[export]]
 SEXP vctrs_slice(SEXP x, SEXP index) {
-  if (x == R_NilValue) {
-    return x;
-  }
+  vec_assert(x, args_empty);
 
   index = PROTECT(vec_as_index(index, vec_size(x), PROTECT(vec_names(x))));
   SEXP out = vec_slice_impl(x, index);

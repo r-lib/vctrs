@@ -76,14 +76,12 @@ test_that("can subset object of any dimensionality", {
   x2 <- ones(2, 3)
   x3 <- ones(2, 3, 4)
   x4 <- ones(2, 3, 4, 5)
-  x5 <- NULL
 
   expect_equal(vec_slice(x0, 1L), 1)
   expect_identical(vec_slice(x1, 1L), ones(1))
   expect_identical(vec_slice(x2, 1L), ones(1, 3))
   expect_identical(vec_slice(x3, 1L), ones(1, 3, 4))
   expect_identical(vec_slice(x4, 1L), ones(1, 3, 4, 5))
-  expect_identical(vec_slice(x5, 1L), NULL)
 })
 
 test_that("can subset using logical index", {
@@ -373,6 +371,10 @@ test_that("missing indices don't create NA names", {
 
 test_that("vec_slice throws error with non-vector inputs", {
   expect_error(vec_slice(environment(), 1L), class = "vctrs_error_scalar_type")
+})
+
+test_that("vec_slice() asserts vectorness (#301)", {
+  expect_error(vec_slice(NULL, 1), class = "vctrs_error_scalar_type")
 })
 
 
