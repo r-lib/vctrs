@@ -62,9 +62,9 @@ test_that("names are supplied if needed", {
   expect_equal(out, data_frame(...1 = c(1, 1)))
 })
 
-test_that("matrix becomes data frame", {
+test_that("matrix becomes data frame and has names properly repaired", {
   x <- matrix(1:4, nrow = 2)
-  expect_equal(vec_rbind(x), data.frame(V1 = 1:2, V2 = 3:4))
+  expect_equal(vec_rbind(x), data.frame(...1 = 1:2, ...2 = 3:4))
 })
 
 test_that("can bind data.frame columns", {

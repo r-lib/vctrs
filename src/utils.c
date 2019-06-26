@@ -775,9 +775,16 @@ SEXP r_as_list(SEXP x) {
 SEXP r_as_data_frame(SEXP x) {
   if (is_bare_data_frame(x)) {
     return x;
-  } else {
-    return vctrs_dispatch1(syms_as_data_frame2, fns_as_data_frame2, syms_x, x);
   }
+
+  SEXP out = PROTECT(vctrs_dispatch1(syms_as_data_frame2, fns_as_data_frame2, syms_x, x));
+
+  SEXP names = PROTECT(vec_unique_colnames(x, false));
+  r_poke_names(out, names);
+
+  UNPROTECT(2);
+  return out;
+
 }
 
 SEXP rlang_formula_formals = NULL;

@@ -146,7 +146,7 @@ static SEXP as_df_row_impl(SEXP x, enum name_repair_arg name_repair, bool quiet)
   if (ndim > 2) {
     Rf_errorcall(R_NilValue, "Can't bind arrays.");
   }
-  if (ndim != 1) {
+  if (ndim == 2) {
     return r_as_data_frame(x);
   }
 
