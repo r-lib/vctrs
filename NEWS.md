@@ -1,5 +1,7 @@
 # vctrs 0.1.0.9000
 
+* `vec_init()` checks input is a vector.
+
 * `vec_c()` now fails when an input is supplied with a name but has
   internal names or is length > 1:
 

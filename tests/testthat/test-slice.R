@@ -371,12 +371,10 @@ test_that("missing indices don't create NA names", {
   expect_identical(vec_slice(x, 1:2), x)
 })
 
-
-# vec_init ----------------------------------------------------------------
-
 test_that("vec_slice throws error with non-vector inputs", {
   expect_error(vec_slice(environment(), 1L), class = "vctrs_error_scalar_type")
 })
+
 
 # vec_init ----------------------------------------------------------------
 
@@ -417,4 +415,8 @@ test_that("na of list-array is 1d slice", {
   x2 <- vec_init(x1)
 
   expect_equal(x2, array(list(), c(1, 3, 4)))
+})
+
+test_that("vec_init() asserts vectorness (#301)", {
+  expect_error(vec_init(NULL), class = "vctrs_error_scalar_type")
 })
