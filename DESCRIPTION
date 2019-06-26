@@ -19,10 +19,10 @@ Depends:
     R (>= 3.2)
 Imports: 
     backports,
-    ellipsis (>= 0.1.0.9000),
+    ellipsis (>= 0.2.0),
     digest,
     glue,
-    rlang (>= 0.3.4.9003),
+    rlang (>= 0.4.0),
     zeallot
 Suggests: 
     bit64,
@@ -30,15 +30,11 @@ Suggests:
     crayon,
     generics,
     knitr,
-    pillar (>= 1.4.0.9001),
+    pillar (>= 1.4.1),
     pkgdown,
     rmarkdown,
     testthat,
     tibble
-Remotes:
-    r-lib/rlang,
-    r-lib/ellipsis,
-    r-lib/pillar
 VignetteBuilder: 
     knitr
 Encoding: UTF-8
