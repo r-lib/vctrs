@@ -310,3 +310,9 @@ test_that("index and value are sliced before falling back", {
   exp <- foobar(int(10L, 1:4))
   expect_identical(vec_assign(lhs, c(NA, 1), rhs), exp)
 })
+
+test_that("can assign to data frame", {
+  x <- data_frame(x = 1:3)
+  y <- data_frame(x = 20)
+  expect_identical(vec_assign(x, 2, y), data_frame(x = int(1, 20, 3)))
+})
