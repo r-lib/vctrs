@@ -189,7 +189,7 @@
 <ul>
 <li><p><code><a href="https://www.rdocumentation.org/packages/base/topics/class">class(vec_type_common(x, y))</a></code> equals <code><a href="https://www.rdocumentation.org/packages/base/topics/class">class(vec_type_common(y, x))</a></code>.</p></li>
 <li><p><code>class(vec_type_common(x, vec_type_common(y, z))</code> equals <code><a href="https://www.rdocumentation.org/packages/base/topics/class">class(vec_type_common(vec_type_common(x, y), z))</a></code>.</p></li>
-<li><p><code>vec_type_common(x, NULL) == x</code>.</p></li>
+<li><p><code>vec_type_common(x, NULL) == vec_type(x)</code>.</p></li>
 </ul>
 <p>i.e. <code><a href="../reference/vec_type.html">vec_type_common()</a></code> is both commutative and associative (with respect to class), and has an identity element, <code>NULL</code>, i.e. it’s a <strong>commutative monoid</strong>. This means the underlying implementation is quite simple: we can find the common type of any number of objects by progressively finding the common type of pairs of objects.</p>
 <p>Like with <code><a href="../reference/vec_type.html">vec_type()</a></code>, the easiest way to explore <code><a href="../reference/vec_type.html">vec_type_common()</a></code> is with <code><a href="../reference/vec_type.html">vec_ptype()</a></code>: when given multiple inputs, it will print their common prototype. (In other words: program with <code><a href="../reference/vec_type.html">vec_type_common()</a></code> but play with <code><a href="../reference/vec_type.html">vec_ptype()</a></code>.)</p>
@@ -394,11 +394,11 @@
 <a class="sourceLine" id="cb23-2" data-line-number="2">df &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/data.frame">data.frame</a></span>(<span class="dt">x =</span> x)</a>
 <a class="sourceLine" id="cb23-3" data-line-number="3"></a>
 <a class="sourceLine" id="cb23-4" data-line-number="4"><span class="kw"><a href="../reference/vec_slice.html">vec_slice</a></span>(x, <span class="dv">5</span><span class="op">:</span><span class="dv">6</span>)</a>
-<a class="sourceLine" id="cb23-5" data-line-number="5"><span class="co">#&gt; [1] 9 2</span></a>
+<a class="sourceLine" id="cb23-5" data-line-number="5"><span class="co">#&gt; [1] 3 8</span></a>
 <a class="sourceLine" id="cb23-6" data-line-number="6"><span class="kw"><a href="../reference/vec_slice.html">vec_slice</a></span>(df, <span class="dv">5</span><span class="op">:</span><span class="dv">6</span>)</a>
 <a class="sourceLine" id="cb23-7" data-line-number="7"><span class="co">#&gt;   x</span></a>
-<a class="sourceLine" id="cb23-8" data-line-number="8"><span class="co">#&gt; 1 9</span></a>
-<a class="sourceLine" id="cb23-9" data-line-number="9"><span class="co">#&gt; 2 2</span></a></code></pre></div>
+<a class="sourceLine" id="cb23-8" data-line-number="8"><span class="co">#&gt; 1 3</span></a>
+<a class="sourceLine" id="cb23-9" data-line-number="9"><span class="co">#&gt; 2 8</span></a></code></pre></div>
 <p><code><a href="../reference/vec_slice.html">vec_slice(data.frame(x), i)</a></code> equals <code><a href="https://www.rdocumentation.org/packages/base/topics/data.frame">data.frame(vec_slice(x, i))</a></code> (modulo variable and row names).</p>
 <p>Prototypes are generated with <code><a href="../reference/vec_slice.html">vec_slice(x, 0L)</a></code>; given a prototype, you can initialize a vector of given size (filled with <code>NA</code>s) with <code><a href="../reference/vec_init.html">vec_init()</a></code>.</p>
 </div>
