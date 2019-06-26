@@ -283,6 +283,26 @@ test_that("slice-assign falls back to `[<-` when proxy is not implemented", {
   expect_identical(obj, c("dispatched", "dispatched", "baz"))
 })
 
+test_that("slice-assign restores value before falling back to `[<-` (#443)", {
+  called <- FALSE
+
+  scoped_global_bindings(
+    vec_proxy.vctrs_proxy = proxy_deref,
+    vec_restore.vctrs_proxy = function(x, to, ...) new_proxy(x),
+    vec_type2.vctrs_proxy = function(...) new_proxy(NA),
+    vec_cast.vctrs_foobar = function(x, ...) proxy_deref(x),
+    `[<-.vctrs_foobar` = function(x, i, value) {
+      called <<- TRUE
+      expect_is(value, "vctrs_proxy")
+    }
+  )
+
+  x <- foobar(1)
+  y <- new_proxy(10)
+  vec_slice(x, 1) <- y
+  expect_true(called)
+})
+
 test_that("index and value are sliced before falling back", {
   # Work around a bug in base R `[<-`
   lhs <- foobar(c(NA, 1:4))

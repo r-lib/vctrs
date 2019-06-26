@@ -32,9 +32,11 @@ SEXP vec_assign(SEXP x, SEXP index, SEXP value) {
   vec_assert(value, &value_arg);
 
   // Take the proxy of the RHS before coercing and recycling
+  SEXP value_orig = value;
   value = PROTECT(vec_coercible_cast(value, x, &value_arg, &x_arg));
   SEXP value_proxy = PROTECT(vec_proxy(value));
 
+  // Recycle the proxy of `value`
   index = PROTECT(vec_as_index(index, vec_size(x), PROTECT(vec_names(x))));
   value_proxy = PROTECT(vec_recycle(value_proxy, vec_size(index)));
 
@@ -43,8 +45,8 @@ SEXP vec_assign(SEXP x, SEXP index, SEXP value) {
   SEXP out;
   if ((OBJECT(x) && info.proxy_method == R_NilValue) || has_dim(x)) {
     // Restore the value before falling back to `[<-`
-    value = PROTECT(vec_restore(value_proxy, value, R_NilValue));
-    out = vec_assign_fallback(x, index, value_proxy);
+    value = PROTECT(vec_restore(value_proxy, value_orig, R_NilValue));
+    out = vec_assign_fallback(x, index, value);
     UNPROTECT(1);
   } else {
     out = PROTECT(vec_assign_impl(info.proxy, index, value_proxy, true));
