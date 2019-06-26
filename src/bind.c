@@ -141,7 +141,12 @@ static SEXP as_df_row_impl(SEXP x, enum name_repair_arg name_repair, bool quiet)
   if (is_data_frame(x)) {
     return x;
   }
-  if (vec_dim_n(x) != 1) {
+
+  R_len_t ndim = vec_dim_n(x);
+  if (ndim > 2) {
+    Rf_errorcall(R_NilValue, "Can't bind arrays.");
+  }
+  if (ndim != 1) {
     return r_as_data_frame(x);
   }
 
@@ -313,7 +318,11 @@ static SEXP as_df_col(SEXP x, SEXP outer, bool* allow_pack) {
     return Rf_shallow_duplicate(x);
   }
 
-  if (vec_bare_dim_n(x) > 0) {
+  R_len_t ndim = vec_bare_dim_n(x);
+  if (ndim > 2) {
+    Rf_errorcall(R_NilValue, "Can't bind arrays.");
+  }
+  if (ndim > 0) {
     *allow_pack = true;
     return shaped_as_df_col(x, outer);
   }
