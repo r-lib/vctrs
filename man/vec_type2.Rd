@@ -9,6 +9,7 @@
 \alias{vec_type2.list}
 \alias{vec_type2.tbl_df}
 \alias{vec_type2}
+\alias{vec_default_type2}
 \title{Find the common type for a pair of vector types}
 \usage{
 \method{vec_type2}{logical}(x, y, ...)
@@ -26,6 +27,8 @@
 \method{vec_type2}{tbl_df}(x, y, ...)
 
 vec_type2(x, y, ..., x_arg = "x", y_arg = "y")
+
+vec_default_type2(x, y, ..., x_arg = "x", y_arg = "y")
 }
 \arguments{
 \item{x, y}{Vector types.}
@@ -64,9 +67,8 @@ return the same value as \code{vec_type2.y.x()}; this is currently not enforced,
 but should be tested.
 
 Whenever you implemenet a \code{vec_type2.new_class()} generic/method,
-make sure to always provide \code{vec_type2.new_class.default()}
-(which should call \code{\link[=stop_incompatible_type]{stop_incompatible_type()}}) and
-\code{vec_type2.new_class.vctrs_unspecified()} (which should return \code{x}).
+make sure to always provide \code{vec_type2.new_class.default()}. It
+should normally call \code{vec_default_type2()}.
 
 See \code{vignette("s3-vector")} for full details.
 }

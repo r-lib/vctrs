@@ -24,9 +24,8 @@
 #' but should be tested.
 #'
 #' Whenever you implemenet a `vec_type2.new_class()` generic/method,
-#' make sure to always provide `vec_type2.new_class.default()`
-#' (which should call [stop_incompatible_type()]) and
-#' `vec_type2.new_class.vctrs_unspecified()` (which should return `x`).
+#' make sure to always provide `vec_type2.new_class.default()`. It
+#' should normally call `vec_default_type2()`.
 #'
 #' See `vignette("s3-vector")` for full details.
 #' @keywords internal
@@ -53,7 +52,8 @@ vec_type2.default <- function(x, y, ..., x_arg = "x", y_arg = "y") {
   }
   stop_incompatible_type(x, y, x_arg = x_arg, y_arg = y_arg)
 }
-
+#' @rdname vec_type2
+#' @export
 vec_default_type2 <- function(x, y, ..., x_arg = "x", y_arg = "y") {
   if (is_unspecified(y)) {
     # FIXME: Should `vec_type()` make that check?

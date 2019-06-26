@@ -319,3 +319,10 @@ test_that("can assign to data frame", {
   y <- data_frame(x = 20)
   expect_identical(vec_assign(x, 2, y), data_frame(x = int(1, 20, 3)))
 })
+
+test_that("can slice-assign unspecified vectors with default type2 method", {
+  scoped_rational_class()
+  x <- rational(1:2, 2:3)
+  x[[1]] <- NA
+  expect_identical(x, rational(c(NA, 2L), c(NA, 3L)))
+})
