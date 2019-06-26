@@ -359,7 +359,7 @@ stop_unimplemented <- function(x, method) {
 }
 
 stop_scalar_type <- function(x, arg = NULL) {
-  if (is_null(arg)) {
+  if (is_null(arg) || !nzchar(arg)) {
     msg <- glue::glue("Expected a vector, not { friendly_type_of(x) }")
   } else {
     msg <- glue::glue("`{ arg }` must be a vector, not { friendly_type_of(x) }")
