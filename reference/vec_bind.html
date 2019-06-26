@@ -151,8 +151,9 @@ across all arguments.</p>
     <tr>
       <th>...</th>
       <td><p>Data frames or vectors.</p>
-<p><code>vec_rbind()</code> ignores names. <code>vec_cbind()</code> preserves outer names,
-combining with inner names if also present.</p>
+<p><code>vec_rbind()</code> ignores names unless <code>.names_to</code> is supplied.
+<code>vec_cbind()</code> creates packed data frame columns with named
+inputs.</p>
 <p><code>NULL</code> inputs are silently ignored. Empty (e.g. zero row) inputs
 will not appear in the output, but will affect the derived <code>.ptype</code>.</p></td>
     </tr>
@@ -298,18 +299,31 @@ effective size for the total number of rows is 1.</p>
 #&gt; 1 1 a
 #&gt; 2 1 b
 #&gt; 3 1 c</div><div class='input'>
-<span class='co'># outer names are combined with inner names</span>
-<span class='fu'>vec_cbind</span>(
+<span class='co'># if you supply a named data frame, it is packed in a single column</span>
+<span class='no'>data</span> <span class='kw'>&lt;-</span> <span class='fu'>vec_cbind</span>(
   <span class='kw'>x</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/data.frame'>data.frame</a></span>(<span class='kw'>a</span> <span class='kw'>=</span> <span class='fl'>1</span>, <span class='kw'>b</span> <span class='kw'>=</span> <span class='fl'>2</span>),
   <span class='kw'>y</span> <span class='kw'>=</span> <span class='fl'>1</span>
-)</div><div class='output co'>#&gt;   x..a x..b y
-#&gt; 1    1    2 1</div><div class='input'>
+)
+<span class='no'>data</span></div><div class='output co'>#&gt;   x.a x.b y
+#&gt; 1   1   2 1</div><div class='input'>
+<span class='co'># Packed data frames are nested in a single column. This makes it</span>
+<span class='co'># possible to access it through a single name:</span>
+<span class='no'>data</span>$<span class='no'>x</span></div><div class='output co'>#&gt;   a b
+#&gt; 1 1 2</div><div class='input'>
+<span class='co'># since the base print method is suboptimal with packed data</span>
+<span class='co'># frames, it is recommended to use tibble to work with these:</span>
+<span class='kw'>if</span> (<span class='kw pkg'>rlang</span><span class='kw ns'>::</span><span class='fu'><a href='https://rlang.r-lib.org/reference/is_installed.html'>is_installed</a></span>(<span class='st'>"tibble"</span>)) {
+  <span class='fu'>vec_cbind</span>(<span class='kw'>x</span> <span class='kw'>=</span> <span class='kw pkg'>tibble</span><span class='kw ns'>::</span><span class='fu'><a href='https://tibble.tidyverse.org/reference/tibble.html'>tibble</a></span>(<span class='kw'>a</span> <span class='kw'>=</span> <span class='fl'>1</span>, <span class='kw'>b</span> <span class='kw'>=</span> <span class='fl'>2</span>), <span class='kw'>y</span> <span class='kw'>=</span> <span class='fl'>1</span>)
+}</div><div class='output co'>#&gt; <span style='color: #949494;'># A tibble: 1 x 2</span><span>
+#&gt;     x$a    $b     y
+#&gt;   </span><span style='color: #949494;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #949494;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #949494;font-style: italic;'>&lt;dbl&gt;</span><span>
+#&gt; </span><span style='color: #BCBCBC;'>1</span><span>     1     2     1</div><div class='input'>
 <span class='co'># duplicate names are flagged</span>
 <span class='fu'>vec_cbind</span>(<span class='kw'>x</span> <span class='kw'>=</span> <span class='fl'>1</span>, <span class='kw'>x</span> <span class='kw'>=</span> <span class='fl'>2</span>)</div><div class='output co'>#&gt; <span class='message'>New names:</span>
 #&gt; <span class='message'>* x -&gt; x...1</span>
 #&gt; <span class='message'>* x -&gt; x...2</span></div><div class='output co'>#&gt;   x...1 x...2
 #&gt; 1     1     2</div><div class='input'>
-</div></pre>
+</div></span></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
