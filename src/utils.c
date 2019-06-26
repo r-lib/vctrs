@@ -646,6 +646,9 @@ SEXP r_call(SEXP fn, SEXP* tags, SEXP* cars) {
 SEXP r_names(SEXP x) {
   return Rf_getAttrib(x, R_NamesSymbol);
 }
+SEXP r_poke_names(SEXP x, SEXP names) {
+  return Rf_setAttrib(x, R_NamesSymbol, names);
+}
 
 bool r_has_name_at(SEXP names, R_len_t i) {
   if (TYPEOF(names) != STRSXP) {

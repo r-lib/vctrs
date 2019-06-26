@@ -272,3 +272,26 @@ test_that("vec_cbind() never packs named vectors", {
   expect_identical(vec_cbind(1:2), data_frame(...1 = 1:2))
   expect_identical(vec_cbind(x = 1:2), data_frame(x = 1:2))
 })
+
+test_that("names are repaired late if unpacked", {
+  out1 <- vec_cbind(a = 1, data_frame(b = 2, b = 3))
+  out2 <- vec_cbind(a = 1, as.matrix(data_frame(b = 2, b = 3)))
+  out3 <- vec_cbind(a = 1, matrix(1:2, nrow = 1))
+  expect_named(out1, c("a", "b...2", "b...3"))
+  expect_named(out2, c("a", "b...2", "b...3"))
+  expect_named(out3, c("a", "...2", "...3"))
+})
+
+test_that("names are repaired early if packed", {
+  out1 <- vec_cbind(a = 1, packed = data_frame(b = 2, b = 3))
+  out2 <- vec_cbind(a = 1, packed = as.matrix(data_frame(b = 2, b = 3)))
+  out3 <- vec_cbind(a = 1, packed = matrix(1:2, nrow = 1))
+
+  expect_named(out1, c("a", "packed"))
+  expect_named(out2, c("a", "packed"))
+  expect_named(out3, c("a", "packed"))
+
+  expect_named(out1$packed, c("b...1", "b...2"))
+  expect_named(out2$packed, c("b...1", "b...2"))
+  expect_named(out3$packed, c("...1", "...2"))
+})
