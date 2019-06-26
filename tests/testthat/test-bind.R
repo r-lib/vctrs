@@ -137,6 +137,10 @@ test_that("can repair names in `vec_rbind()` (#229)", {
   expect_named(vec_rbind(list(`_` = 1), .name_repair = "universal"), c("._"))
 })
 
+test_that("vec_rbind() fails with arrays of dimensionality > 3", {
+  expect_error(vec_rbind(array(NA, c(1, 1, 1))), "Can't bind arrays")
+})
+
 
 # cols --------------------------------------------------------------------
 
@@ -153,7 +157,7 @@ test_that("NULL is idempotent", {
 
 test_that("outer names are respected", {
   expect_named(vec_cbind(x = 1, y = 4), c("x", "y"))
-  expect_named(vec_cbind(a = data.frame(x = 1)), "a..x")
+  expect_named(vec_cbind(a = data.frame(x = 1)), "a")
 })
 
 test_that("inner names are respected", {
@@ -168,10 +172,9 @@ test_that("matrix becomes data frame", {
   x <- matrix(1:4, nrow = 2)
   expect_equal(vec_cbind(x), data.frame(...1 = 1:2, ...2 = 3:4))
 
-  # respecting outer names
-  expect_equal(vec_cbind(x = x), data.frame(x1 = 1:2, x2 = 3:4))
+  # Packed if named
+  expect_equal(vec_cbind(x = x), data_frame(x = x))
 })
-
 
 test_that("duplicate names are de-deduplicated", {
   expect_message(
@@ -192,7 +195,7 @@ test_that("rows recycled to longest", {
 
   expect_dim(
     vec_cbind(
-      x = data.frame(a = 1, b = 2),
+      data.frame(a = 1, b = 2),
       y = 1:3
     ),
     c(3, 3)
@@ -256,4 +259,55 @@ test_that("can supply `.names_to` to `vec_rbind()` (#229)", {
 test_that("vec_cbind() returns visibly (#452)", {
   # Shouldn't be needed once `check_unique` is implemented in C
   expect_visible(vctrs::vec_cbind(x = 1, .name_repair = "check_unique"))
+})
+
+test_that("vec_cbind() packs named data frames (#446)", {
+  expect_identical(vec_cbind(data_frame(y = 1:3)), data_frame(y = 1:3))
+  expect_identical(vec_cbind(x = data_frame(y = 1:3)), data_frame(x = data_frame(y = 1:3)))
+})
+
+test_that("vec_cbind() packs 1d arrays", {
+  a <- array(1:2)
+  expect_identical(vec_cbind(a), data_frame(...1 = 1:2))
+  expect_identical(vec_cbind(x = a), data_frame(x = a))
+})
+
+test_that("vec_cbind() packs named matrices", {
+  m <- matrix(1:4, 2)
+  expect_identical(vec_cbind(m), data_frame(...1 = 1:2, ...2 = 3:4))
+  expect_identical(vec_cbind(x = m), data_frame(x = m))
+})
+
+test_that("vec_cbind() never packs named vectors", {
+  expect_identical(vec_cbind(1:2), data_frame(...1 = 1:2))
+  expect_identical(vec_cbind(x = 1:2), data_frame(x = 1:2))
+})
+
+test_that("names are repaired late if unpacked", {
+  out1 <- vec_cbind(a = 1, data_frame(b = 2, b = 3))
+  out2 <- vec_cbind(a = 1, as.matrix(data_frame(b = 2, b = 3)))
+  out3 <- vec_cbind(a = 1, matrix(1:2, nrow = 1))
+  expect_named(out1, c("a", "b...2", "b...3"))
+  expect_named(out2, c("a", "b...2", "b...3"))
+  expect_named(out3, c("a", "...2", "...3"))
+})
+
+test_that("names are not repaired if packed", {
+  out1 <- vec_cbind(a = 1, packed = data_frame(b = 2, b = 3))
+  out2 <- vec_cbind(a = 1, packed = as.matrix(data_frame(b = 2, b = 3)))
+  out3 <- vec_cbind(a = 1, packed = matrix(1:2, nrow = 1))
+
+  expect_named(out1, c("a", "packed"))
+  expect_named(out2, c("a", "packed"))
+  expect_named(out3, c("a", "packed"))
+
+  expect_named(out1$packed, c("b", "b"))
+  expect_identical(colnames(out2$packed), c("b", "b"))
+  expect_identical(colnames(out3$packed), NULL)
+})
+
+test_that("vec_cbind() fails with arrays of dimensionality > 3", {
+  a <- array(NA, c(1, 1, 1))
+  expect_error(vec_cbind(a), "Can't bind arrays")
+  expect_error(vec_cbind(x = a), "Can't bind arrays")
 })

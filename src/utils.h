@@ -52,6 +52,7 @@ bool is_bare_tibble(SEXP x);
 bool is_record(SEXP x);
 
 SEXP vec_unique_names(SEXP x, bool quiet);
+SEXP vec_unique_colnames(SEXP x, bool quiet);
 
 // Returns S3 method for `generic` suitable for the class of `x`. The
 // inheritance hierarchy is explored except for the default method.
@@ -121,13 +122,13 @@ bool r_is_true(SEXP x);
 bool r_is_string(SEXP x);
 bool r_is_number(SEXP x);
 SEXP r_peek_option(const char* option);
-SEXP r_names(SEXP x);
 SEXP r_maybe_duplicate(SEXP x);
 
 SEXP r_pairlist(SEXP* tags, SEXP* cars);
 SEXP r_call(SEXP fn, SEXP* tags, SEXP* cars);
 
 SEXP r_names(SEXP x);
+SEXP r_poke_names(SEXP x, SEXP names);
 bool r_has_name_at(SEXP names, R_len_t i);
 bool r_is_names(SEXP names);
 bool r_is_minimal_names(SEXP x);
