@@ -76,3 +76,13 @@ test_that("field<- checks inputs", {
   expect_error(field(r, "x") <- 1:3, "Invalid value")
   expect_error(field(r, "x") <- environment(), "Invalid value")
 })
+
+test_that("field<- respects size, not length (#450)", {
+  r1 <- new_rcrd(list(df = new_data_frame(n = 2L)))
+  new_df <- data.frame(x = 1:2)
+
+  field(r1, 'df') <- new_df
+  expect_equal(field(r1, "df"), new_df)
+
+  expect_error(field(r1, 'df') <- new_data_frame(n = 3L), "Invalid value")
+})
