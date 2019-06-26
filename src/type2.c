@@ -36,14 +36,14 @@ SEXP vec_type2(SEXP x, SEXP y,
       vec_assert(y, y_arg);
     }
     *left = y == R_NilValue;
-    return y;
+    return vec_type(y);
   }
   if (y == R_NilValue) {
     if (!vec_is_partial(x)) {
       vec_assert(x, x_arg);
     }
     *left = x == R_NilValue;
-    return x;
+    return vec_type(x);
   }
 
   if (has_dim(x) || has_dim(y)) {

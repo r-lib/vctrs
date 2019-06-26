@@ -100,3 +100,8 @@ test_that("vec_type2() data frame methods builds argument tags", {
 test_that("stop_incompatible_type() can be called without argument tags", {
   expect_error(stop_incompatible_type(1, 2, x_arg = "", y_arg = ""), "<double> and <double>", class = "vctrs_error_incompatible_type")
 })
+
+test_that("vec_type2() returns empty prototype when other input is NULL", {
+  expect_identical(vec_type2(1:5, NULL), int())
+  expect_identical(vec_type2(NULL, 1:5), int())
+})
