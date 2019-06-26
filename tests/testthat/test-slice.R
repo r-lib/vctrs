@@ -41,19 +41,22 @@ test_that("can subset with missing indices", {
 
 test_that("can subset with a recycled NA", {
   expect_identical(vec_slice(1:3, NA), int(NA, NA, NA))
-  expect_identical(vec_slice(mtcars, NA), unrownames(mtcars[NA, ]))
   expect_identical(vec_slice(new_vctr(1:3), NA), new_vctr(int(NA, NA, NA)))
+
+  rownames <- rep_len("", nrow(mtcars))
+  rownames <- vec_as_names(rownames, repair = "unique")
+  expect_identical(vec_slice(mtcars, NA), structure(mtcars[NA, ], row.names = rownames))
 })
 
 test_that("can subset with a recycled TRUE", {
   expect_identical(vec_slice(1:3, TRUE), 1:3)
-  expect_identical(vec_slice(mtcars, TRUE), unrownames(mtcars))
+  expect_identical(vec_slice(mtcars, TRUE), mtcars)
   expect_identical(vec_slice(new_vctr(1:3), TRUE), new_vctr(1:3))
 })
 
 test_that("can subset with a recycled FALSE", {
   expect_identical(vec_slice(1:3, FALSE), int())
-  expect_identical(vec_slice(mtcars, FALSE), unrownames(mtcars[NULL, ]))
+  expect_identical(vec_slice(mtcars, FALSE), mtcars[NULL, ])
   expect_identical(vec_slice(new_vctr(1:3), FALSE), new_vctr(integer()))
 })
 

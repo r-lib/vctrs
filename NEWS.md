@@ -1,5 +1,7 @@
 # vctrs 0.1.0.9000
 
+* `vec_slice()` now supports row names.
+
 * We have renamed the `type` particle to `ptype`:
 
   - `vec_type()` => `vec_ptype()`

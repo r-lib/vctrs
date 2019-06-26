@@ -8,6 +8,7 @@ SEXP fns_vec_slice_fallback = NULL;
 // Defined below
 SEXP vec_as_index(SEXP i, R_len_t n, SEXP names);
 static SEXP slice_names(SEXP names, SEXP index);
+static SEXP slice_rownames(SEXP names, SEXP index);
 
 /**
  * This `vec_slice()` variant falls back to `[` with S3 objects.
@@ -90,14 +91,23 @@ static SEXP df_slice(SEXP x, SEXP index) {
   SEXP out = PROTECT(Rf_allocVector(VECSXP, n));
 
   // FIXME: Should that be restored?
-  SEXP nms = Rf_getAttrib(x, R_NamesSymbol);
+  SEXP nms = PROTECT(Rf_getAttrib(x, R_NamesSymbol));
   Rf_setAttrib(out, R_NamesSymbol, nms);
+  UNPROTECT(1);
 
   for (R_len_t i = 0; i < n; ++i) {
     SEXP elt = VECTOR_ELT(x, i);
     SEXP sliced = vec_slice_impl(elt, index);
     SET_VECTOR_ELT(out, i, sliced);
   }
+
+  SEXP row_nms = PROTECT(Rf_getAttrib(x, R_RowNamesSymbol));
+  if (TYPEOF(row_nms) == STRSXP) {
+    row_nms = PROTECT(slice_rownames(row_nms, index));
+    Rf_setAttrib(out, R_RowNamesSymbol, row_nms);
+    UNPROTECT(1);
+  }
+  UNPROTECT(1);
 
   UNPROTECT(1);
   return out;
@@ -143,6 +153,19 @@ static SEXP slice_names(SEXP names, SEXP index) {
       namesp[i] = strings_empty;
     }
   }
+
+  UNPROTECT(1);
+  return names;
+}
+static SEXP slice_rownames(SEXP names, SEXP index) {
+  if (names == R_NilValue) {
+    return names;
+  }
+
+  names = PROTECT(chr_slice(names, index));
+
+  // Rownames can't contain `NA` or duplicates
+  names = vec_as_unique_names(names, false);
 
   UNPROTECT(1);
   return names;
