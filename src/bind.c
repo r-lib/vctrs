@@ -299,7 +299,6 @@ static SEXP cbind_container_type(SEXP x) {
 }
 
 
-static SEXP df_as_df_col(SEXP x, SEXP outer);
 static SEXP shaped_as_df_col(SEXP x, SEXP outer);
 static SEXP vec_as_df_col(SEXP x, SEXP outer);
 
@@ -311,7 +310,7 @@ SEXP vctrs_as_df_col(SEXP x, SEXP outer) {
 static SEXP as_df_col(SEXP x, SEXP outer, bool* allow_pack) {
   if (is_data_frame(x)) {
     *allow_pack = true;
-    return df_as_df_col(x, outer);
+    return Rf_shallow_duplicate(x);
   }
   if (vec_dim_n(x) != 1) {
     *allow_pack = true;
@@ -321,36 +320,19 @@ static SEXP as_df_col(SEXP x, SEXP outer, bool* allow_pack) {
   return vec_as_df_col(x, outer);
 }
 
-static SEXP df_as_df_col(SEXP x, SEXP outer) {
-  x = PROTECT(Rf_shallow_duplicate(x));
-
-  // If packed, repair right away. Otherwise, repair after unpacking
-  // and concatenation.
+static SEXP shaped_as_df_col(SEXP x, SEXP outer) {
+  // If packed, store array as a column
   if (outer != strings_empty) {
-    SEXP nms;
-    nms = PROTECT(vec_unique_names(x, false));
-    r_poke_names(x, nms);
-    UNPROTECT(1);
+    return x;
   }
 
-  UNPROTECT(1);
-  return x;
-}
-
-static SEXP shaped_as_df_col(SEXP x, SEXP outer) {
+  // If unpacked, transform to data frame first. We repair names
+  // after unpacking and concatenation.
   SEXP out = PROTECT(r_as_data_frame(x));
 
-  // If packed, repair right away. Otherwise, repair after unpacking
-  // and concatenation.
-  if (outer == strings_empty) {
-    // Remove names repaired by `as.data.frame()`
-    if (colnames(x) == R_NilValue) {
-      r_poke_names(out, R_NilValue);
-    }
-  } else {
-    SEXP nms = PROTECT(vec_unique_colnames(x, false));
-    r_poke_names(out, nms);
-    UNPROTECT(1);
+  // Remove names if they were repaired by `as.data.frame()`
+  if (colnames(x) == R_NilValue) {
+    r_poke_names(out, R_NilValue);
   }
 
   UNPROTECT(1);

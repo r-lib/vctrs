@@ -169,9 +169,8 @@ test_that("matrix becomes data frame", {
   expect_equal(vec_cbind(x), data.frame(...1 = 1:2, ...2 = 3:4))
 
   # Packed if named
-  expect_equal(vec_cbind(x = x), data_frame(x = data_frame(...1 = 1:2, ...2 = 3:4)))
+  expect_equal(vec_cbind(x = x), data_frame(x = x))
 })
-
 
 test_that("duplicate names are de-deduplicated", {
   expect_message(
@@ -264,8 +263,9 @@ test_that("vec_cbind() packs named data frames (#446)", {
 })
 
 test_that("vec_cbind() packs named matrices", {
-  expect_identical(vec_cbind(matrix(1:4, 2)), data_frame(...1 = 1:2, ...2 = 3:4))
-  expect_identical(vec_cbind(x = matrix(1:4, 2)), data_frame(x = data_frame(...1 = 1:2, ...2 = 3:4)))
+  m <- matrix(1:4, 2)
+  expect_identical(vec_cbind(m), data_frame(...1 = 1:2, ...2 = 3:4))
+  expect_identical(vec_cbind(x = m), data_frame(x = m))
 })
 
 test_that("vec_cbind() never packs named vectors", {
@@ -282,7 +282,7 @@ test_that("names are repaired late if unpacked", {
   expect_named(out3, c("a", "...2", "...3"))
 })
 
-test_that("names are repaired early if packed", {
+test_that("names are not repaired if packed", {
   out1 <- vec_cbind(a = 1, packed = data_frame(b = 2, b = 3))
   out2 <- vec_cbind(a = 1, packed = as.matrix(data_frame(b = 2, b = 3)))
   out3 <- vec_cbind(a = 1, packed = matrix(1:2, nrow = 1))
@@ -291,7 +291,7 @@ test_that("names are repaired early if packed", {
   expect_named(out2, c("a", "packed"))
   expect_named(out3, c("a", "packed"))
 
-  expect_named(out1$packed, c("b...1", "b...2"))
-  expect_named(out2$packed, c("b...1", "b...2"))
-  expect_named(out3$packed, c("...1", "...2"))
+  expect_named(out1$packed, c("b", "b"))
+  expect_identical(colnames(out2$packed), c("b", "b"))
+  expect_identical(colnames(out3$packed), NULL)
 })
