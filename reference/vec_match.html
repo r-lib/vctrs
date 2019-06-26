@@ -171,15 +171,6 @@ logical vector; <code>vec_match()</code> returns an integer vector.</p>
 so these functions consider all <code>NAs</code> to be equal. (Similarly,
 all <code>NaN</code> are also considered to be equal.)</p>
     
-    <h2 class="hasAnchor" id="performance"><a class="anchor" href="#performance"></a>Performance</h2>
-
-    
-    <p>These functions are currently slightly slower than their base equivalents.
-This is primarily because they do a little more checking and coercion
-in R, which makes them both a little safer and more generic. Additionally,
-the C code underlying vctrs has not yet been implemented: we expect
-some performance improvements when that happens.</p>
-    
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='no'>hadley</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/strsplit'>strsplit</a></span>(<span class='st'>"hadley"</span>, <span class='st'>""</span>)<span class='kw'>[[</span><span class='fl'>1</span>]]
@@ -199,8 +190,6 @@ some performance improvements when that happens.</p>
       <li><a href="#details">Details</a></li>
 
       <li><a href="#missing-values">Missing values</a></li>
-
-      <li><a href="#performance">Performance</a></li>
       
       <li><a href="#examples">Examples</a></li>
     </ul>
