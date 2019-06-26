@@ -115,7 +115,7 @@ It's often important to combine vectors with multiple types. vctrs provides a co
 * `class(vec_type_common(x, vec_type_common(y, z))` equals 
   `class(vec_type_common(vec_type_common(x, y), z))`.
   
-* `vec_type_common(x, NULL) == x`.
+* `vec_type_common(x, NULL) == vec_type(x)`.
 
 i.e. `vec_type_common()` is both commutative and associative (with respect to class), and has an identity element, `NULL`, i.e. it's a __commutative monoid__. This means the underlying implementation is quite simple: we can find the common type of any number of objects by progressively finding the common type of pairs of objects.
 
