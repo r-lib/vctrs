@@ -100,6 +100,14 @@ test_that("vec_unique() works with 1D arrays", {
   expect_identical(vec_unique(x), new_vctr(c(1, 1, 2, 1), dim = c(2, 2)))
 })
 
+test_that("vec_unique() works with 1D arrays with NULL dimnames (#461)", {
+  # Arrays are converted to data frames, and in that conversion colnames
+  # are detected only for 2D arrays, since colnames(x) here would be an error
+  x <- array(c(1, 1), dimnames = list(NULL))
+  exp <- array(1, dimnames = list(NULL))
+
+  expect_equal(vec_unique(x), exp)
+})
 test_that("unique functions take the equality proxy (#375)", {
   scoped_comparable_tuple()
   x <- tuple(c(1, 2, 1), 1:3)
