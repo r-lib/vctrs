@@ -323,15 +323,10 @@ Closely related to the definition of size are the __recycling rules__. The recyc
 ```{r}
 vec_size_common(1:3, 1:3, 1:3)
 vec_size_common(1:10, 1)
-vec_size_common(integer(), 1:3)
+vec_size_common(integer(), 1)
 ```
 
-vctrs obeys a stricter set of recycling rules than base R, only recycling under two circumstances:
-
-* Vectors of size 1 can be recycled to any size.
-* Vectors of any size can be recycled to size 0.
-
-All other size combinations will generate an error. This strictness prevents common mistakes like `dest == c("IAH", "HOU"))`, at the cost of occasionally requiring an explicit calls to `rep()`.
+vctrs obeys a stricter set of recycling rules than base R. Vectors of size 1 are recycled to any other size. All other size combinations will generate an error. This strictness prevents common mistakes like `dest == c("IAH", "HOU"))`, at the cost of occasionally requiring an explicit calls to `rep()`.
 
 ```{r, echo = FALSE, fig.cap="Summary of vctrs recycling rules. X indicates n error"}
 knitr::include_graphics("../man/figures/sizes-recycling.png", dpi = 300)
@@ -344,7 +339,6 @@ You can apply the recycling rules in two ways:
     ```{r}
     vec_recycle(1:3, 3)
     vec_recycle(1, 10)
-    vec_recycle(1:3, 0)
     ```
     
 *  If you have multiple vectors and you want to recycle them to the same
@@ -353,7 +347,6 @@ You can apply the recycling rules in two ways:
     ```{r}
     vec_recycle_common(1:3, 1:3)
     vec_recycle_common(1:10, 1)
-    vec_recycle_common(integer(), 1:3)
     ```
 
 ## Appendix: recycling in base R

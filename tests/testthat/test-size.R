@@ -66,9 +66,15 @@ test_that("`NULL` is treated as the absence of input", {
   expect_equal(vec_size_common(1:5, NULL), vec_size_common(1:5))
 })
 
-test_that("length 0 vectors force a common size of 0", {
-  expect_equal(vec_size_common(integer()), 0)
-  expect_equal(vec_size_common(1:5, integer()), 0)
+test_that("size 1 is overshadowed by any other size", {
+  expect_equal(vec_size_common(1, integer()), 0)
+  expect_equal(vec_size_common(1, 1:5), 5)
+})
+
+test_that("if not size 1, sizes must be identical", {
+  expect_equal(vec_size_common(integer(), integer()), 0)
+  expect_error(vec_size_common(1:2, integer()), class = "vctrs_error_incompatible_size")
+  expect_error(vec_size_common(1:2, 1:3), class = "vctrs_error_incompatible_size")
 })
 
 test_that("argument tags are forwarded", {

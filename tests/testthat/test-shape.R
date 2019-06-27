@@ -17,6 +17,7 @@ test_that("length is ignored", {
   expect_equal(shape_common(int(5, 1), int(10, 1)), 1L)
   expect_equal(shape_common(int(5, 1, 2), int(10, 1, 2)), c(1L, 2L))
   expect_equal(shape_common(int(10, 1, 2), int(5, 1, 2)), c(1L, 2L))
+  expect_equal(shape_common(int(0, 1, 5), int(1, 5, 1)), c(5L, 5L))
 })
 
 test_that("recycling rules applied", {
@@ -29,8 +30,9 @@ test_that("recycling rules applied", {
   expect_equal(shape_common(int(1, 5, 1), int(1, 1, 5)), c(5L, 5L))
   expect_equal(shape_common(int(1, 1, 1), int(1, 5, 5)), c(5L, 5L))
 
-  expect_equal(shape_common(int(1, 0, 5), int(1, 5, 1)), c(0L, 5L))
-  expect_equal(shape_common(int(1, 5, 0), int(1, 1, 5)), c(5L, 0L))
+  expect_equal(shape_common(int(1, 0, 5), int(1, 1, 1)), c(0L, 5L))
+  expect_error(shape_common(int(1, 0, 5), int(1, 5, 1)), "0, 5")
+  expect_error(shape_common(int(1, 5, 0), int(1, 1, 5)), "0, 5")
 })
 
 # broadcasting -------------------------------------------------------------
@@ -53,7 +55,7 @@ test_that("can broadcast to higher dimension, but not lower", {
   )
 })
 
-test_that("recyling rules applied", {
+test_that("recycling rules applied", {
   expect_equal(
     shape_broadcast(array(1:4, c(1, 1, 4)), int(0, 4, 4))[1, , ],
     matrix(1:4, 4, 4, byrow = TRUE)
@@ -62,6 +64,23 @@ test_that("recyling rules applied", {
   expect_equal(
     shape_broadcast(array(1:4, c(1, 4, 1)), int(0, 4, 4))[1, , ],
     matrix(1:4, 4, 4)
+  )
+
+  expect_equal(
+    shape_broadcast(array(1L, c(1, 1)), int(1, 0)),
+    matrix(integer(), nrow = 1)
+  )
+
+  expect_error(
+    shape_broadcast(array(1L, c(1, 2)), int(1, 0)),
+    "Non-recyclable dimensions",
+    class = "vctrs_error_incompatible_cast"
+  )
+
+  expect_error(
+    shape_broadcast(array(1L, c(1, 0)), int(1, 1)),
+    "Non-recyclable dimensions",
+    class = "vctrs_error_incompatible_cast"
   )
 })
 

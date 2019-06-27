@@ -66,7 +66,7 @@
 #'
 #' vec_size_common(1:10, 1:10)
 #' vec_size_common(1:10, 1)
-#' vec_size_common(1:10, integer())
+#' vec_size_common(integer(), 1)
 vec_size <- function(x) {
   .Call(vctrs_size, x)
 }
@@ -76,21 +76,6 @@ vec_size <- function(x) {
 vec_size_common <- function(..., .size = NULL, .absent = 0L) {
   .External2(vctrs_size_common, .size, .absent)
 }
-
-vec_size2 <- function(nx, ny) {
-  if (nx == ny) {
-    nx
-  } else if (nx == 0L || ny == 0L) {
-    0L
-  } else if (nx == 1L) {
-    ny
-  } else if (ny == 1L) {
-    nx
-  } else {
-    abort(paste0("Incompatible lengths: ", nx, ", ", ny, "."))
-  }
-}
-
 
 #' @rdname vec_size
 #' @export

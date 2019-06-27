@@ -169,10 +169,6 @@ SEXP vec_recycle(SEXP x, R_len_t size) {
     return x;
   }
 
-  if (size == 0L) {
-    return vec_slice(x, R_NilValue);
-  }
-
   if (n_x == 1L) {
     // FIXME: Replace with ALTREP repetition
     SEXP i = PROTECT(Rf_allocVector(INTSXP, size));

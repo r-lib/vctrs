@@ -18,7 +18,19 @@ shape_match <- function(type, x, y) {
 
 shape_common <- function(x, y) {
   shape <- n_dim2(shape(x), shape(y))
-  map2_int(shape$x, shape$y, vec_size2)
+  map2_int(shape$x, shape$y, axis2)
+}
+
+axis2 <- function(nx, ny) {
+  if (nx == ny) {
+    nx
+  } else if (nx == 1L) {
+    ny
+  } else if (ny == 1L) {
+    nx
+  } else {
+    abort(paste0("Incompatible lengths: ", nx, ", ", ny, "."))
+  }
 }
 
 shape_broadcast <- function(x, to) {
@@ -40,7 +52,7 @@ shape_broadcast <- function(x, to) {
 
   dim_x <- n_dim2(dim_x, dim_to)$x
   dim_to[[1]] <- dim_x[[1]] # don't change number of observations
-  ok <- dim_x == dim_to | dim_x == 1 | dim_to == 0
+  ok <- dim_x == dim_to | dim_x == 1
   if (any(!ok)) {
     stop_incompatible_cast(x, to, details = "Non-recyclable dimensions")
   }
