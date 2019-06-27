@@ -83,6 +83,21 @@ vec_type2.list <- function(x, y, ...) UseMethod("vec_type2.list", y)
 #' @method vec_type2.list list
 #' @export
 vec_type2.list.list <- function(x, y, ...) shape_match(list(), x, y)
+#' @method vec_type2.logical list
+#' @export
+vec_type2.logical.list <- function(x, y, ..., x_arg = "x", y_arg = "y") {
+  # Prevent `NA` from being a common type of lists. This way:
+  #
+  # ```
+  # vec_slice(x, 1) <- NA        # Fails
+  # vec_slice(x, 1) <- list(NA)  # Succeeds
+  # ```
+  if (is_unspecified(x)) {
+    stop_incompatible_type(x, y, x_arg = x_arg, y_arg = y_arg)
+  } else {
+    vec_default_type2(x, y, x_arg = x_arg, y_arg = y_arg)
+  }
+}
 
 
 # Default
@@ -90,27 +105,33 @@ vec_type2.list.list <- function(x, y, ...) shape_match(list(), x, y)
 #' @method vec_type2.logical default
 #' @export
 vec_type2.logical.default <- function(x, y, ..., x_arg = "x", y_arg = "y") {
-  stop_incompatible_type(x, y, x_arg = x_arg, y_arg = y_arg)
+  if (is_unspecified(x)) {
+    # # FIXME: Should `vec_type()` make that check?
+    # vec_assert(y)
+    vec_type(y)
+  } else {
+    vec_default_type2(x, y, x_arg = x_arg, y_arg = y_arg)
+  }
 }
 #' @method vec_type2.integer default
 #' @export
 vec_type2.integer.default <- function(x, y, ..., x_arg = "x", y_arg = "y") {
-  stop_incompatible_type(x, y, x_arg = x_arg, y_arg = y_arg)
+  vec_default_type2(x, y, x_arg = x_arg, y_arg = y_arg)
 }
 #' @method vec_type2.double default
 #' @export
 vec_type2.double.default <- function(x, y, ..., x_arg = "x", y_arg = "y") {
-  stop_incompatible_type(x, y, x_arg = x_arg, y_arg = y_arg)
+  vec_default_type2(x, y, x_arg = x_arg, y_arg = y_arg)
 }
 #' @method vec_type2.character default
 #' @export
 vec_type2.character.default <- function(x, y, ..., x_arg = "x", y_arg = "y") {
-  stop_incompatible_type(x, y, x_arg = x_arg, y_arg = y_arg)
+  vec_default_type2(x, y, x_arg = x_arg, y_arg = y_arg)
 }
 #' @method vec_type2.raw default
 #' @export
 vec_type2.raw.default <- function(x, y, ..., x_arg = "x", y_arg = "y") {
-  stop_incompatible_type(x, y, x_arg = x_arg, y_arg = y_arg)
+  vec_default_type2(x, y, x_arg = x_arg, y_arg = y_arg)
 }
 #' @method vec_type2.list default
 #' @export

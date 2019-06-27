@@ -85,6 +85,9 @@ test_that("atomics can't be assigned in lists", {
   x <- list(NULL)
   expect_error(vec_slice(x, 1) <- NA, class = "vctrs_error_incompatible_type")
   expect_error(vec_assign(x, 1, NA), class = "vctrs_error_incompatible_type")
+
+  expect_error(vec_slice(x, 1) <- "foo", class = "vctrs_error_incompatible_type")
+  expect_error(vec_assign(x, 1, "foo"), class = "vctrs_error_incompatible_type")
 })
 
 test_that("can assign and slice-assign data frames", {
@@ -259,7 +262,7 @@ test_that("can use names to vec_slice<-() a named object", {
 
 test_that("slice-assign falls back to `[<-` when proxy is not implemented", {
   obj <- foobar(c("foo", "bar", "baz"))
-  expect_error(vec_slice(obj, 1:2) <- NA, class = "vctrs_error_incompatible_type")
+  expect_error(vec_slice(obj, 1:2) <- NA, class = "vctrs_error_incompatible_cast")
 
   vec_slice(obj, 1:2) <- foobar("quux")
 
@@ -315,4 +318,11 @@ test_that("can assign to data frame", {
   x <- data_frame(x = 1:3)
   y <- data_frame(x = 20)
   expect_identical(vec_assign(x, 2, y), data_frame(x = int(1, 20, 3)))
+})
+
+test_that("can slice-assign unspecified vectors with default type2 method", {
+  scoped_rational_class()
+  x <- rational(1:2, 2:3)
+  x[[1]] <- NA
+  expect_identical(x, rational(c(NA, 2L), c(NA, 3L)))
 })

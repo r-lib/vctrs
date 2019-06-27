@@ -53,6 +53,10 @@ static SEXP lgl_type(SEXP x) {
 
 // [[ include("vctrs.h"); register() ]]
 SEXP vec_type_finalise(SEXP x) {
+  if (x == R_NilValue) {
+    return x;
+  }
+
   if (OBJECT(x)) {
     if (vec_is_unspecified(x)) {
       R_len_t n = Rf_length(x);
@@ -61,6 +65,10 @@ SEXP vec_type_finalise(SEXP x) {
       UNPROTECT(1);
       return out;
     }
+  }
+
+  if (!vec_is_partial(x)) {
+    vec_assert(x, args_empty);
   }
 
   switch (vec_typeof(x)) {

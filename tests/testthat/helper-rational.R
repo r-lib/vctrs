@@ -41,8 +41,7 @@ rational_methods <- list(
   vec_ptype_full.vctrs_rational = function(x, ...) "rational",
 
   vec_type2.vctrs_rational = function(x, y, ...) UseMethod("vec_type2.vctrs_rational", y),
-  vec_type2.vctrs_rational.default = function(x, y, ...) stop_incompatible_type(x, y, ...),
-  vec_type2.vctrs_rational.vctrs_unspecified = function(x, y, ...) x,
+  vec_type2.vctrs_rational.default = function(x, y, ...) vec_default_type2(x, y, ...),
   vec_type2.vctrs_rational.vctrs_rational = function(x, y, ...) new_rational(),
   vec_type2.vctrs_rational.integer = function(x, y, ...) new_rational(),
   vec_type2.integer.vctrs_rational = function(x, y, ...) new_rational(),
