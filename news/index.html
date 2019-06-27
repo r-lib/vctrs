@@ -129,6 +129,7 @@
 <a href="#vctrs-0-1-0-9000" class="anchor"></a>vctrs 0.1.0.9000<small> Unreleased </small>
 </h1>
 <ul>
+<li><p><code><a href="../reference/list_of.html">list_of()</a></code> now has an <code><a href="https://www.rdocumentation.org/packages/base/topics/character">as.character()</a></code> method. It uses <code><a href="../reference/vec_ptype_full.html">vec_ptype_abbr()</a></code> to collapse complex objects into their type representation (tidyverse/tidyr<a href='https://github.com/r-lib/vctrs/issues/654'>#654</a>).</p></li>
 <li>
 <p><code><a href="../reference/vec_bind.html">vec_cbind()</a></code> now turns named data frames to packed columns.</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" data-line-number="1">data &lt;-<span class="st"> </span>tibble<span class="op">::</span><span class="kw"><a href="https://tibble.tidyverse.org/reference/tibble.html">tibble</a></span>(<span class="dt">x =</span> <span class="dv">1</span><span class="op">:</span><span class="dv">3</span>, <span class="dt">y =</span> letters[<span class="dv">1</span><span class="op">:</span><span class="dv">3</span>])</a>
