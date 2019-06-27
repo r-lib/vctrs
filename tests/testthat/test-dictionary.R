@@ -108,6 +108,12 @@ test_that("vec_unique() works with 1D arrays with NULL dimnames (#461)", {
 
   expect_equal(vec_unique(x), exp)
 })
+
+test_that("vec_unique() does silent name repair with array to data frame conversion (#461)", {
+  x <- matrix(c(1, 2), 2, 2, byrow = TRUE)
+  expect_silent(vec_unique(x))
+})
+
 test_that("unique functions take the equality proxy (#375)", {
   scoped_comparable_tuple()
   x <- tuple(c(1, 2, 1), 1:3)
