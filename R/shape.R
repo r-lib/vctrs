@@ -18,10 +18,10 @@ shape_match <- function(type, x, y) {
 
 shape_common <- function(x, y) {
   shape <- n_dim2(shape(x), shape(y))
-  map2_int(shape$x, shape$y, shape_size2)
+  map2_int(shape$x, shape$y, axis2)
 }
 
-shape_size2 <- function(nx, ny) {
+axis2 <- function(nx, ny) {
   if (nx == ny) {
     nx
   } else if (nx == 1L) {
