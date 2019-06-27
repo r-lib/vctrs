@@ -127,6 +127,10 @@ as.list.vctrs_list_of <- function(x, ...) {
   attr(x, "class") <- NULL
   x
 }
+#' @export
+as.character.vctrs_list_of <- function(x, ...) {
+  map_chr(x, function(elt) paste0("<", vec_ptype_abbr(elt), ">"))
+}
 
 #' @export
 `[[.vctrs_list_of` <- function(x, i, ...) {

@@ -1,5 +1,9 @@
 # vctrs 0.1.0.9000
 
+* `list_of()` now has an `as.character()` method. It uses
+  `vec_ptype_abbr()` to collapse complex objects into their type
+  representation (tidyverse/tidyr#654).
+
 * `vec_cbind()` now turns named data frames to packed columns.
 
   ```r

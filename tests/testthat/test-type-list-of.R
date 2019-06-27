@@ -174,3 +174,8 @@ test_that("validation", {
     class = "vctrs_error_cast_lossy"
   )
 })
+
+test_that("list_of() has as.character() method (tidyverse/tidyr#654)", {
+  exp <- rep(paste0("<", vec_ptype_abbr(mtcars), ">"), 2)
+  expect_identical(as.character(list_of(mtcars, mtcars)), exp)
+})
