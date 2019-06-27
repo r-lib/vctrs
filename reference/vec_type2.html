@@ -160,7 +160,9 @@ instead call <code><a href='vec_type.html'>vec_type_common()</a></code>.</p>
 <span class='co'># S3 method for tbl_df</span>
 <span class='fu'>vec_type2</span>(<span class='no'>x</span>, <span class='no'>y</span>, <span class='no'>...</span>)
 
-<span class='fu'>vec_type2</span>(<span class='no'>x</span>, <span class='no'>y</span>, <span class='no'>...</span>, <span class='kw'>x_arg</span> <span class='kw'>=</span> <span class='st'>"x"</span>, <span class='kw'>y_arg</span> <span class='kw'>=</span> <span class='st'>"y"</span>)</pre>
+<span class='fu'>vec_type2</span>(<span class='no'>x</span>, <span class='no'>y</span>, <span class='no'>...</span>, <span class='kw'>x_arg</span> <span class='kw'>=</span> <span class='st'>"x"</span>, <span class='kw'>y_arg</span> <span class='kw'>=</span> <span class='st'>"y"</span>)
+
+<span class='fu'>vec_default_type2</span>(<span class='no'>x</span>, <span class='no'>y</span>, <span class='no'>...</span>, <span class='kw'>x_arg</span> <span class='kw'>=</span> <span class='st'>"x"</span>, <span class='kw'>y_arg</span> <span class='kw'>=</span> <span class='st'>"y"</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -201,9 +203,8 @@ which call e.g. <code>vec_type2.integer.double()</code>. <code>vec_type2.x.y()</
 return the same value as <code>vec_type2.y.x()</code>; this is currently not enforced,
 but should be tested.</p>
 <p>Whenever you implemenet a <code>vec_type2.new_class()</code> generic/method,
-make sure to always provide <code>vec_type2.new_class.default()</code>
-(which should call <code><a href='vctrs-conditions.html'>stop_incompatible_type()</a></code>) and
-<code>vec_type2.new_class.vctrs_unspecified()</code> (which should return <code>x</code>).</p>
+make sure to always provide <code>vec_type2.new_class.default()</code>. It
+should normally call <code>vec_default_type2()</code>.</p>
 <p>See <code><a href='../articles/s3-vector.html'>vignette("s3-vector")</a></code> for full details.</p>
     
 
