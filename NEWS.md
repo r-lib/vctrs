@@ -1,5 +1,13 @@
 # vctrs 0.1.0.9000
 
+* We have renamed the `type` particle to `ptype`:
+
+  - `vec_type()` => `vec_ptype()`
+  - `vec_type2()` => `vec_ptype2()`
+  - `vec_type_common()` => `vec_ptype_common()`
+
+  Consequently, `vec_ptype()` was renamed to `vec_ptype_show()`.
+
 * `list_of()` now has an `as.character()` method. It uses
   `vec_ptype_abbr()` to collapse complex objects into their type
   representation (tidyverse/tidyr#654).
