@@ -147,7 +147,7 @@ static SEXP as_df_row_impl(SEXP x, enum name_repair_arg name_repair, bool quiet)
     Rf_errorcall(R_NilValue, "Can't bind arrays.");
   }
   if (ndim == 2) {
-    return r_as_data_frame(x);
+    return r_as_data_frame(x, false);
   }
 
   x = PROTECT(r_as_list(x));
@@ -202,7 +202,7 @@ static SEXP vec_cbind(SEXP xs, SEXP ptype, SEXP size, enum name_repair_arg name_
   if (type == R_NilValue) {
     type = new_data_frame(vctrs_shared_empty_list, 0);
   } else if (!is_data_frame(type)) {
-    type = r_as_data_frame(type);
+    type = r_as_data_frame(type, false);
   }
   UNPROTECT(1);
   PROTECT(type);
@@ -339,7 +339,7 @@ static SEXP shaped_as_df_col(SEXP x, SEXP outer) {
 
   // If unpacked, transform to data frame first. We repair names
   // after unpacking and concatenation.
-  SEXP out = PROTECT(r_as_data_frame(x));
+  SEXP out = PROTECT(r_as_data_frame(x, false));
 
   // Remove names if they were repaired by `as.data.frame()`
   if (colnames(x) == R_NilValue) {

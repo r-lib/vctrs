@@ -355,7 +355,7 @@ static bool needs_suffix(SEXP str) {
 
 
 static SEXP names_iota(R_len_t n);
-static SEXP vec_unique_names_impl(SEXP names, R_len_t n, bool quiet);
+SEXP vec_unique_names_impl(SEXP names, R_len_t n, bool quiet);
 
 // [[ register() ]]
 SEXP vctrs_unique_names(SEXP x, SEXP quiet) {
@@ -377,7 +377,8 @@ SEXP vec_unique_colnames(SEXP x, bool quiet) {
   return out;
 }
 
-static SEXP vec_unique_names_impl(SEXP names, R_len_t n, bool quiet) {
+// [[ include("utils.h") ]]
+SEXP vec_unique_names_impl(SEXP names, R_len_t n, bool quiet) {
   SEXP out;
   if (names == R_NilValue) {
     out = PROTECT(names_iota(n));

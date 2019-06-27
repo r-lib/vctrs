@@ -772,14 +772,21 @@ SEXP r_as_list(SEXP x) {
     return Rf_coerceVector(x, VECSXP);
   }
 }
-SEXP r_as_data_frame(SEXP x) {
+
+SEXP r_as_data_frame(SEXP x, bool quiet) {
   if (is_bare_data_frame(x)) {
     return x;
   }
 
   SEXP out = PROTECT(vctrs_dispatch1(syms_as_data_frame2, fns_as_data_frame2, syms_x, x));
 
-  SEXP names = PROTECT(vec_unique_colnames(x, false));
+  SEXP names;
+  if (vec_dim_n(x) == 2) {
+    names = PROTECT(vec_unique_colnames(x, quiet));
+  } else {
+    names = PROTECT(vec_unique_names_impl(R_NilValue, Rf_length(out), quiet));
+  }
+
   r_poke_names(out, names);
 
   UNPROTECT(2);

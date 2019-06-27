@@ -52,6 +52,7 @@ bool is_bare_tibble(SEXP x);
 bool is_record(SEXP x);
 
 SEXP vec_unique_names(SEXP x, bool quiet);
+SEXP vec_unique_names_impl(SEXP names, R_len_t n, bool quiet);
 SEXP vec_unique_colnames(SEXP x, bool quiet);
 
 // Returns S3 method for `generic` suitable for the class of `x`. The
@@ -174,7 +175,7 @@ static inline SEXP r_list(SEXP x) {
 #define r_str_as_character Rf_ScalarString
 
 SEXP r_as_list(SEXP x);
-SEXP r_as_data_frame(SEXP x);
+SEXP r_as_data_frame(SEXP x, bool quiet);
 
 static inline void r_dbg_save(SEXP x, const char* name) {
   Rf_defineVar(Rf_install(name), x, R_GlobalEnv);

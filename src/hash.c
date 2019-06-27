@@ -126,7 +126,7 @@ static uint32_t list_hash_scalar(SEXP x, R_len_t i) {
 // frames ahead of time. The conversion to data frame is only a
 // stopgap, in the long term, we'll hash arrays natively.
 static uint32_t shaped_hash_scalar(SEXP x, R_len_t i) {
-  x = PROTECT(r_as_data_frame(x));
+  x = PROTECT(r_as_data_frame(x, true));
   uint32_t out = hash_scalar(x, i);
 
   UNPROTECT(1);
@@ -265,7 +265,7 @@ void hash_fill(uint32_t* p, R_len_t size, SEXP x) {
   if (has_dim(x)) {
     // The conversion to data frame is only a stopgap, in the long
     // term, we'll hash arrays natively
-    x = PROTECT(r_as_data_frame(x));
+    x = PROTECT(r_as_data_frame(x, true));
     hash_fill(p, size, x);
     UNPROTECT(1);
     return;
