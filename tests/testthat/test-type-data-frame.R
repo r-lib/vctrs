@@ -35,7 +35,7 @@ test_that("embedded data frames print nicely", {
 
 test_that("data frame only combines with other data frames or NULL", {
   dt <- data.frame(x = 1)
-  expect_equal(vec_type_common(dt, NULL), vec_type(dt))
+  expect_equal(vec_type_common(dt, NULL), vec_ptype(dt))
   expect_error(vec_type_common(dt, 1:10), class = "vctrs_error_incompatible_type")
 })
 

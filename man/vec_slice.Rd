@@ -85,11 +85,11 @@ vec_slice(x, 2) <- 20.0
 
 # `x` is still an integer vector because the RHS was cast to the
 # type of the LHS:
-vec_type(x)
+vec_ptype(x)
 
 # Compare to `[<-`:
 x[2] <- 20.0
-vec_type(x)
+vec_ptype(x)
 
 
 # Note that the types must be coercible for the cast to happen.

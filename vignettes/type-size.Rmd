@@ -40,7 +40,7 @@ Conveniently, you can create many prototypes using existing base functions (e.g,
 
 ### Base prototypes
 
-`vec_type()` creates a prototype from an existing object. However, many base vectors have uninformative printing methods for 0-length subsets, so vctrs also provides `vec_ptype_show()`, which prints the prototype in a friendly way (and returns nothing).
+`vec_ptype()` creates a prototype from an existing object. However, many base vectors have uninformative printing methods for 0-length subsets, so vctrs also provides `vec_ptype_show()`, which prints the prototype in a friendly way (and returns nothing).
 
 Using `vec_ptype_show()` allows us to see the prototypes base R classes:.
 
@@ -77,7 +77,7 @@ Using `vec_ptype_show()` allows us to see the prototypes base R classes:.
     contain all levels:
     
     ```{r}
-    vec_type(factor("a"))
+    vec_ptype(factor("a"))
     ```
     
 *   Base R has three key date time classes: dates, date-times (`POSIXct`),
@@ -115,11 +115,11 @@ It's often important to combine vectors with multiple types. vctrs provides a co
 * `class(vec_type_common(x, vec_type_common(y, z))` equals 
   `class(vec_type_common(vec_type_common(x, y), z))`.
   
-* `vec_type_common(x, NULL) == vec_type(x)`.
+* `vec_type_common(x, NULL) == vec_ptype(x)`.
 
 i.e. `vec_type_common()` is both commutative and associative (with respect to class), and has an identity element, `NULL`, i.e. it's a __commutative monoid__. This means the underlying implementation is quite simple: we can find the common type of any number of objects by progressively finding the common type of pairs of objects.
 
-Like with `vec_type()`, the easiest way to explore `vec_type_common()` is with `vec_ptype_show()`: when given multiple inputs, it will print their common prototype. (In other words: program with `vec_type_common()` but play with `vec_ptype_show()`.)
+Like with `vec_ptype()`, the easiest way to explore `vec_type_common()` is with `vec_ptype_show()`: when given multiple inputs, it will print their common prototype. (In other words: program with `vec_type_common()` but play with `vec_ptype_show()`.)
 
 *   The common type of atomic vectors is computed very similar to rules of base 
     R, except that we do not coerce to character automatically:

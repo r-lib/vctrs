@@ -50,7 +50,7 @@ Combine all arguments into a new vector of common type.
 
 \itemize{
 \item \code{vec_size(vec_c(x, y)) == vec_size(x) + vec_size(y)}
-\item \code{vec_type(vec_c(x, y)) == vec_type_common(x, y)}.
+\item \code{vec_ptype(vec_c(x, y)) == vec_type_common(x, y)}.
 }
 }
 

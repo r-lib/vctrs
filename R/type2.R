@@ -56,9 +56,9 @@ vec_type2.default <- function(x, y, ..., x_arg = "x", y_arg = "y") {
 #' @export
 vec_default_type2 <- function(x, y, ..., x_arg = "x", y_arg = "y") {
   if (is_unspecified(y)) {
-    # FIXME: Should `vec_type()` make that check?
+    # FIXME: Should `vec_ptype()` make that check?
     vec_assert(x)
-    return(vec_type(x))
+    return(vec_ptype(x))
   }
   stop_incompatible_type(x, y, x_arg = x_arg, y_arg = y_arg)
 }

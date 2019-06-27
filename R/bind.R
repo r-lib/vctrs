@@ -19,7 +19,7 @@
 #' invariants are observed for row-binding:
 #'
 #' * `vec_size(vec_rbind(x, y)) == vec_size(x) + vec_size(y)`
-#' * `vec_type(vec_rbind(x, y)) = vec_type_common(x, y)`
+#' * `vec_ptype(vec_rbind(x, y)) = vec_type_common(x, y)`
 #'
 #' Note that if an input is an empty vector, it is first converted to
 #' a 1-row data frame with 0 columns. Despite being empty, its
@@ -28,7 +28,7 @@
 #' For column-binding, the following invariants apply:
 #'
 #' * `vec_size(vec_cbind(x, y)) == vec_size_common(x, y)`
-#' * `vec_type(vec_cbind(x, y)) == vec_cbind(vec_type(x), vec_type(x))`
+#' * `vec_ptype(vec_cbind(x, y)) == vec_cbind(vec_ptype(x), vec_ptype(x))`
 #' @param ... Data frames or vectors.
 #'
 #'   `vec_rbind()` ignores names unless `.names_to` is supplied.

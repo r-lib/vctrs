@@ -16,7 +16,7 @@
 #' )
 partial_frame <- function(...) {
   args <- list2(...)
-  args <- lapply(args, vec_type)
+  args <- lapply(args, vec_ptype)
 
   partial <- new_data_frame(args, n = 0L)
   new_partial_frame(partial)

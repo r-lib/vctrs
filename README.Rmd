@@ -23,7 +23,7 @@ knitr::opts_chunk$set(
 
 There are three main goals to the vctrs package, each described in a vignette:
 
-* To propose `vec_size()` and `vec_type()` as alternatives to `length()` and
+* To propose `vec_size()` and `vec_ptype()` as alternatives to `length()` and
   `class()`; `vignette("type-size")`. These definitions are paired with a
   framework for type-coercion and size-recycling.
   

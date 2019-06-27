@@ -240,7 +240,7 @@ vec_in <- function(needles, haystack) {
 #' @param by Vector whose unique values defines the groups.
 #' @return A data frame with two columns and size equal to
 #'   `vec_size(vec_unique(by))`. The `key` column has the same type as
-#'   `by`, and the `val` column has type `list_of<vec_type(x)>`.
+#'   `by`, and the `val` column has type `list_of<vec_ptype(x)>`.
 #'
 #'   Note for complex types, the default `data.frame` print method will be
 #'   suboptimal, and you will want to coerce into a tibble to better
@@ -263,7 +263,7 @@ vec_split <- function(x, by) {
   keys <- vec_slice(by, ki$key)
   x_split <- map(ki$idx, vec_slice, x = x)
 
-  vals <- new_list_of(x_split, vec_type(x))
+  vals <- new_list_of(x_split, vec_ptype(x))
 
   new_data_frame(list(key = keys, val = vals), n = vec_size(keys))
 }

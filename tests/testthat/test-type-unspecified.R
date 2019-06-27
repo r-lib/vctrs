@@ -38,7 +38,7 @@ test_that("has useful print method", {
 test_that("can finalise data frame containing unspecified columns", {
   df <- data.frame(y = NA, x = c(1, 2, NA))
 
-  ptype <- vec_type(df)
+  ptype <- vec_ptype(df)
   expect_identical(ptype$y, unspecified())
 
   finalised <- vec_type_finalise(ptype)

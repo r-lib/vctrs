@@ -106,9 +106,9 @@ vec_type2.logical.list <- function(x, y, ..., x_arg = "x", y_arg = "y") {
 #' @export
 vec_type2.logical.default <- function(x, y, ..., x_arg = "x", y_arg = "y") {
   if (is_unspecified(x)) {
-    # # FIXME: Should `vec_type()` make that check?
+    # # FIXME: Should `vec_ptype()` make that check?
     # vec_assert(y)
-    vec_type(y)
+    vec_ptype(y)
   } else {
     vec_default_type2(x, y, x_arg = x_arg, y_arg = y_arg)
   }

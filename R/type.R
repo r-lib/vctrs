@@ -1,6 +1,6 @@
 #' Find the prototype of a set of vectors
 #'
-#' `vec_type()` finds the prototype of a single vector.
+#' `vec_ptype()` finds the prototype of a single vector.
 #' `vec_type_common()` finds the common type of multiple vectors.
 #' `vec_ptype_show()` nicely prints the common type of any number of
 #' inputs, and is designed for interative exploration.
@@ -25,7 +25,7 @@
 #'   Alternatively, you can supply `.ptype` to give the output known type.
 #'   If `getOption("vctrs.no_guessing")` is `TRUE` you must supply this value:
 #'   this is a convenient way to make production code demand fixed types.
-#' @return `vec_type()` and `vec_type_common()` return a prototype
+#' @return `vec_ptype()` and `vec_type_common()` return a prototype
 #'   (a size-0 vector)
 #' @export
 #' @examples
@@ -61,18 +61,18 @@
 #'   data.frame(y = 2),
 #'   data.frame(z = "a")
 #' )
-vec_type <- function(x) {
+vec_ptype <- function(x) {
   .Call(vctrs_type, x)
 }
 
 #' @export
-#' @rdname vec_type
+#' @rdname vec_ptype
 vec_type_common <- function(..., .ptype = NULL) {
   .External2(vctrs_type_common, .ptype)
 }
 
 #' @export
-#' @rdname vec_type
+#' @rdname vec_ptype
 vec_ptype_show <- function(...) {
   args <- compact(list2(...))
   n <- length(args)
@@ -81,7 +81,7 @@ vec_ptype_show <- function(...) {
   } else if (n == 1) {
     cat_line("Prototype: ", vec_ptype_full(args[[1]]))
   } else {
-    in_types <- map(args, vec_type)
+    in_types <- map(args, vec_ptype)
     out_types <- vector("list", length(in_types))
     out_types[[1]] <- in_types[[1]]
     for (i in seq2(2, n)) {
