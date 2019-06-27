@@ -10,6 +10,8 @@
 #' The common size of two vectors defines the recycling rules, and can be
 #' summarise with the following table:
 #'
+#' \figure{sizes-recycling.png}
+#'
 #' (Note `NULL`s are handled specially; they are treated like empty
 #' arguments and hence don't affect the size)
 #'
