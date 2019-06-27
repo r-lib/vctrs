@@ -41,7 +41,7 @@ frame (even data frame and matrix columns) have the same size.
 }
 \details{
 There is no vctrs helper that retrieves the number of columns: as this
-is a property of the \link[=vec_ptype]{type}.
+is a property of the \link[=vec_ptype_show]{type}.
 
 \code{vec_size()} is equivalent to \code{NROW()} but has a name that is easier to
 pronounce, and throws an error when passed non-vector inputs.

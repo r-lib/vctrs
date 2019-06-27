@@ -18,8 +18,8 @@ that only contain \code{NA}. These require special handling because we want to
 allow \code{NA} to specify missingness without requiring a type.
 }
 \examples{
-vec_ptype()
-vec_ptype(NA)
+vec_ptype_show()
+vec_ptype_show(NA)
 
 vec_c(NA, factor("x"))
 vec_c(NA, Sys.Date())

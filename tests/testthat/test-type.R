@@ -41,10 +41,10 @@ test_that("non-missing logical get correct type", {
 })
 
 test_that("output tests", {
-  expect_known_output(vec_ptype(), "out/vec-ptype-0.txt")
-  expect_known_output(vec_ptype(integer()), "out/vec-ptype-1.txt")
-  expect_known_output(vec_ptype(integer(), double()), "out/vec-ptype-2.txt")
-  expect_known_output(vec_ptype(logical(), integer(), double()), "out/vec-ptype-3.txt")
+  expect_known_output(vec_ptype_show(), "out/vec-ptype-0.txt")
+  expect_known_output(vec_ptype_show(integer()), "out/vec-ptype-1.txt")
+  expect_known_output(vec_ptype_show(integer(), double()), "out/vec-ptype-2.txt")
+  expect_known_output(vec_ptype_show(logical(), integer(), double()), "out/vec-ptype-3.txt")
 })
 
 test_that("vec_type_common() handles matrices", {

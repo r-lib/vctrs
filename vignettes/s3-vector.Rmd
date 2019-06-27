@@ -248,10 +248,10 @@ vec_type2.vctrs_percent.double <- function(x, y, ...) double()
 vec_type2.double.vctrs_percent <- function(x, y, ...) double()
 ```
 
-We can check that we've implemented this correctly with `vec_ptype()`:
+We can check that we've implemented this correctly with `vec_ptype_show()`:
 
 ```{r}
-vec_ptype(percent(), double(), percent())
+vec_ptype_show(percent(), double(), percent())
 ```
 
 Next we implement explicit casting, again starting with the boilerplate:

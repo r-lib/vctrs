@@ -9,10 +9,10 @@ test_that("data frames print nicely", {
     file = test_path("test-type-data-frame.txt"),
     {
       cat("mtcars:\n")
-      vec_ptype(mtcars)
+      vec_ptype_show(mtcars)
       cat("\n")
       cat("iris:\n")
-      vec_ptype(iris)
+      vec_ptype_show(iris)
     }
   )
 })
@@ -26,7 +26,7 @@ test_that("embedded data frames print nicely", {
   expect_known_output(
     file = test_path("test-type-data-frame-embedded.txt"),
     {
-      vec_ptype(df)
+      vec_ptype_show(df)
     }
   )
 })

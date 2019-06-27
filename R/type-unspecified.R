@@ -8,8 +8,8 @@
 #' @param n Length of vector
 #' @export
 #' @examples
-#' vec_ptype()
-#' vec_ptype(NA)
+#' vec_ptype_show()
+#' vec_ptype_show(NA)
 #'
 #' vec_c(NA, factor("x"))
 #' vec_c(NA, Sys.Date())
