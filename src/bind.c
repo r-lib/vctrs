@@ -147,7 +147,11 @@ static SEXP as_df_row_impl(SEXP x, enum name_repair_arg name_repair, bool quiet)
     Rf_errorcall(R_NilValue, "Can't bind arrays.");
   }
   if (ndim == 2) {
-    return r_as_data_frame(x);
+    SEXP names = PROTECT(vec_unique_colnames(x, false));
+    SEXP out = r_as_data_frame(x);
+    r_poke_names(out, names);
+    UNPROTECT(1);
+    return out;
   }
 
   x = PROTECT(r_as_list(x));

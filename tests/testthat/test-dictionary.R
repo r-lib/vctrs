@@ -147,6 +147,16 @@ test_that("matching functions take the equality proxy (#375)", {
   expect_identical(vec_duplicate_detect(x), c(TRUE, FALSE, TRUE))
 })
 
+test_that("can take the unique loc of 1d arrays (#461)", {
+  x <- array(c(1, 1, 2, 2, 3))
+  y <- array(c(1, 1, 2, 2, 3), dimnames = list(NULL))
+  expect_identical(vctrs::vec_unique_loc(x), int(1, 3, 5))
+  expect_identical(vctrs::vec_unique_loc(y), int(1, 3, 5))
+
+  z <- array(c(1, 1, 2, 2, 3, 4), c(3, 2))
+  expect_silent(expect_identical(vctrs::vec_unique_loc(y), int(1, 3, 5)))
+})
+
 
 # splits ------------------------------------------------------------------
 
