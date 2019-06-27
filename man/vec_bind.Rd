@@ -83,7 +83,7 @@ Once the inputs have all become data frames, the following
 invariants are observed for row-binding:
 \itemize{
 \item \code{vec_size(vec_rbind(x, y)) == vec_size(x) + vec_size(y)}
-\item \code{vec_ptype(vec_rbind(x, y)) = vec_type_common(x, y)}
+\item \code{vec_ptype(vec_rbind(x, y)) = vec_ptype_common(x, y)}
 }
 
 Note that if an input is an empty vector, it is first converted to

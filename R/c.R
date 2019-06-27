@@ -4,7 +4,7 @@
 #'
 #' @section Invariants:
 #' * `vec_size(vec_c(x, y)) == vec_size(x) + vec_size(y)`
-#' * `vec_ptype(vec_c(x, y)) == vec_type_common(x, y)`.
+#' * `vec_ptype(vec_c(x, y)) == vec_ptype_common(x, y)`.
 #'
 #' @param ... Vectors to coerce.
 #' @param .name_repair How to repair names, see `repair` options in [vec_as_names()].

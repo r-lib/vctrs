@@ -59,7 +59,7 @@ test_that("vec_c() handles matrices", {
   m <- matrix(1:4, nrow = 2)
   dimnames(m) <- list(c("foo", "bar"), c("baz", "quux"))
 
-  # FIXME: `vec_type_common(m, m)` doesn't return dimension names
+  # FIXME: `vec_ptype_common(m, m)` doesn't return dimension names
   exp <- matrix(c(1:2, 1:2, 3:4, 3:4), nrow = 4)
   rownames(exp) <- c("foo", "bar", "foo", "bar")
 

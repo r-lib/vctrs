@@ -21,7 +21,7 @@
 list_of <- function(..., .ptype = NULL) {
   args <- list2(...)
 
-  ptype <- vec_type_common(!!!args, .ptype = .ptype)
+  ptype <- vec_ptype_common(!!!args, .ptype = .ptype)
   if (is.null(ptype)) {
     abort("Could not find common type for elements of `x`.")
   }

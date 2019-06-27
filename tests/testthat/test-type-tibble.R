@@ -4,8 +4,8 @@ test_that("tibble beats data frame", {
   df <- new_data_frame()
   dt <- tibble::tibble()
 
-  expect_s3_class(vec_type_common(dt, df), "tbl_df")
-  expect_s3_class(vec_type_common(df, dt), "tbl_df")
+  expect_s3_class(vec_ptype_common(dt, df), "tbl_df")
+  expect_s3_class(vec_ptype_common(df, dt), "tbl_df")
 })
 
 test_that("can cast tibble to df and vice versa", {

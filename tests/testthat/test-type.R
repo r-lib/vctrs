@@ -8,36 +8,36 @@ test_that("vec_ptype() is a no-op for non-vectors", {
 })
 
 test_that(".ptype argument overrides others", {
-  expect_equal(vec_type_common(.ptype = 1:10), numeric())
+  expect_equal(vec_ptype_common(.ptype = 1:10), numeric())
 })
 
 test_that(".ptype required in strict mode", {
   old <- options(vctrs.no_guessing = TRUE)
   on.exit(options(old))
 
-  expect_error(vec_type_common(), "strict mode")
+  expect_error(vec_ptype_common(), "strict mode")
 })
 
 test_that("can feed ptype into itself", {
-  expect_equal(vec_type_common(vec_type_common(1:10)), numeric())
+  expect_equal(vec_ptype_common(vec_ptype_common(1:10)), numeric())
 })
 
 test_that("finalised prototypes created from under specified inputs", {
-  expect_equal(vec_type_common(), NULL)
-  expect_equal(vec_type_common(NULL), NULL)
+  expect_equal(vec_ptype_common(), NULL)
+  expect_equal(vec_ptype_common(NULL), NULL)
 
-  expect_equal(vec_type_common(NA), logical())
-  expect_equal(vec_type_common(NA, NULL), logical())
-  expect_equal(vec_type_common(NULL, NA), logical())
+  expect_equal(vec_ptype_common(NA), logical())
+  expect_equal(vec_ptype_common(NA, NULL), logical())
+  expect_equal(vec_ptype_common(NULL, NA), logical())
 })
 
 test_that("finalised prototypes created from under specified data frame cols", {
   df <- data.frame(x = NA)
-  expect_equal(vec_type_common(df)$x, logical())
+  expect_equal(vec_ptype_common(df)$x, logical())
 })
 
 test_that("non-missing logical get correct type", {
-  expect_equal(vec_type_common(TRUE), logical())
+  expect_equal(vec_ptype_common(TRUE), logical())
 })
 
 test_that("output tests", {
@@ -47,12 +47,12 @@ test_that("output tests", {
   expect_known_output(vec_ptype_show(logical(), integer(), double()), "out/vec-ptype-3.txt")
 })
 
-test_that("vec_type_common() handles matrices", {
+test_that("vec_ptype_common() handles matrices", {
   m <- matrix(1:4, nrow = 2)
-  expect_identical(vec_type_common(m, m), matrix(int(), ncol = 2))
+  expect_identical(vec_ptype_common(m, m), matrix(int(), ncol = 2))
 })
 
-test_that("vec_type_common() includes index in argument tag", {
+test_that("vec_ptype_common() includes index in argument tag", {
   df1 <- tibble(x = tibble(y = tibble(z = 1)))
   df2 <- tibble(x = tibble(y = tibble(z = "a")))
 
@@ -62,29 +62,29 @@ test_that("vec_type_common() includes index in argument tag", {
   large_df2 <- set_names(df2, nm)
 
   expect_known_output_nobang(file = test_path("test-type-vec-type-common-error.txt"), {
-    try2(vec_type_common(df1, df2))
-    try2(vec_type_common(df1, df1, df2))
-    try2(vec_type_common(large_df1, large_df2))
+    try2(vec_ptype_common(df1, df2))
+    try2(vec_ptype_common(df1, df1, df2))
+    try2(vec_ptype_common(large_df1, large_df2))
 
     # Names
-    try2(vec_type_common(foo = TRUE, bar = "foo"))
-    try2(vec_type_common(foo = TRUE, baz = FALSE, bar = "foo"))
-    try2(vec_type_common(foo = df1, bar = df2))
-    try2(vec_type_common(df1, df1, bar = df2))
+    try2(vec_ptype_common(foo = TRUE, bar = "foo"))
+    try2(vec_ptype_common(foo = TRUE, baz = FALSE, bar = "foo"))
+    try2(vec_ptype_common(foo = df1, bar = df2))
+    try2(vec_ptype_common(df1, df1, bar = df2))
 
     # One splice box
-    try2(vec_type_common(TRUE, !!!list(1, "foo")))
-    try2(vec_type_common(TRUE, !!!list(1, 2), "foo"))
-    try2(vec_type_common(1, !!!list(TRUE, FALSE), "foo"))
+    try2(vec_ptype_common(TRUE, !!!list(1, "foo")))
+    try2(vec_ptype_common(TRUE, !!!list(1, 2), "foo"))
+    try2(vec_ptype_common(1, !!!list(TRUE, FALSE), "foo"))
 
     # One named splice box
-    try2(vec_type_common(foo = TRUE, !!!list(FALSE, FALSE), bar = "foo"))
-    try2(vec_type_common(foo = TRUE, !!!list(bar = 1, "foo")))
-    try2(vec_type_common(foo = TRUE, !!!list(bar = "foo")))
-    try2(vec_type_common(foo = TRUE, !!!list(bar = FALSE), baz = "chr"))
+    try2(vec_ptype_common(foo = TRUE, !!!list(FALSE, FALSE), bar = "foo"))
+    try2(vec_ptype_common(foo = TRUE, !!!list(bar = 1, "foo")))
+    try2(vec_ptype_common(foo = TRUE, !!!list(bar = "foo")))
+    try2(vec_ptype_common(foo = TRUE, !!!list(bar = FALSE), baz = "chr"))
 
     # Two splice boxes in next and current
-    try2(vec_type_common(foo = TRUE, !!!list(bar = FALSE), !!!list(baz = "chr")))
+    try2(vec_ptype_common(foo = TRUE, !!!list(bar = FALSE), !!!list(baz = "chr")))
   })
 })
 

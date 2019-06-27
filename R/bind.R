@@ -19,7 +19,7 @@
 #' invariants are observed for row-binding:
 #'
 #' * `vec_size(vec_rbind(x, y)) == vec_size(x) + vec_size(y)`
-#' * `vec_ptype(vec_rbind(x, y)) = vec_type_common(x, y)`
+#' * `vec_ptype(vec_rbind(x, y)) = vec_ptype_common(x, y)`
 #'
 #' Note that if an input is an empty vector, it is first converted to
 #' a 1-row data frame with 0 columns. Despite being empty, its

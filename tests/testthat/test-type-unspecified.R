@@ -44,7 +44,7 @@ test_that("can finalise data frame containing unspecified columns", {
   finalised <- vec_type_finalise(ptype)
   expect_identical(finalised$y, lgl())
 
-  common <- vec_type_common(df, df)
+  common <- vec_ptype_common(df, df)
   expect_identical(common$y, lgl())
 })
 

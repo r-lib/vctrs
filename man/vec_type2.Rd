@@ -43,7 +43,7 @@ incompatible types (see \code{\link[=stop_incompatible_type]{stop_incompatible_t
 \code{vec_type2()} finds the common type for a pair of vectors, or dies trying.
 It forms the foundation of the vctrs type system, along with \code{\link[=vec_cast]{vec_cast()}}.
 This powers type coercion but should not usually be called directly;
-instead call \code{\link[=vec_type_common]{vec_type_common()}}.
+instead call \code{\link[=vec_ptype_common]{vec_ptype_common()}}.
 }
 \section{Coercion rules}{
 

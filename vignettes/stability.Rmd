@@ -125,7 +125,7 @@ With this understand of type- and size-stability in hand, we'll use them to anal
 
 In this section we'll compare and contrast `c()` and `vec_c()`. `vec_c()` is both type- and size-stable because it possesses the following invariants:
 
-* `vec_ptype(vec_c(x, y))` equals `vec_type_common(x, y)`.
+* `vec_ptype(vec_c(x, y))` equals `vec_ptype_common(x, y)`.
 * `vec_size(vec_c(x, y))` equals `vec_size(x) + vec_size(y)`.
 
 `c()` has another undesirable property in that it's not consistent with `unlist()`, i.e. `unlist(list(x, y))` does not always equal `c(x, y)`; i.e. base R has multiple sets of type-coercion rules. I won't consider this problem further here.
@@ -312,7 +312,7 @@ The basic implementation of `vec_c()` is reasonably simple. We first figure out 
 vec_c <- function(...) {
   args <- compact(list2(...))
 
-  ptype <- vec_type_common(!!!args)
+  ptype <- vec_ptype_common(!!!args)
   if (is.null(ptype))
     return(NULL)
 
@@ -345,7 +345,7 @@ I found it much easier understand what `ifelse()` _should_ do once I internalise
 * The first argument must be logical.
 
 * `vec_ptype(if_else(test, yes, no))` equals 
-  `vec_type_common(yes, no)`. Unlike `ifelse()` this implies
+  `vec_ptype_common(yes, no)`. Unlike `ifelse()` this implies
   that `if_else()` must always evaluate both `yes` and `no` in order
   to figure out the correct type. I think this consistent with `&&` (scalar
   operation, short circuits) and `&` (vectorised, evaluates both sides).

@@ -113,7 +113,7 @@ is_same_type <- function(x, ptype) {
     env <- environment()
     ptype <- tryCatch(
       vctrs_error_incompatible_type = function(...) return_from(env, FALSE),
-      vec_type_common(x, ptype)
+      vec_ptype_common(x, ptype)
     )
   }
 

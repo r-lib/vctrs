@@ -14,15 +14,15 @@ test_that("order of variables comes from data", {
   pf <- partial_frame(y = 1, x = 2)
   df <- data.frame(x = 1, y = 2)
 
-  expect_named(vec_type_common(pf, df), c("x", "y"))
-  expect_named(vec_type_common(df, pf), c("x", "y"))
+  expect_named(vec_ptype_common(pf, df), c("x", "y"))
+  expect_named(vec_ptype_common(df, pf), c("x", "y"))
 })
 
 test_that("partial variables added to end if not in data", {
   pf <- partial_frame(y = 1)
   df <- data.frame(x = 1)
-  expect_named(vec_type_common(pf, df), c("x", "y"))
-  expect_named(vec_type_common(df, pf), c("x", "y"))
+  expect_named(vec_ptype_common(pf, df), c("x", "y"))
+  expect_named(vec_ptype_common(df, pf), c("x", "y"))
 })
 
 test_that("can assert partial frames based on column presence", {
@@ -62,13 +62,13 @@ test_that("dispatch is symmetric with tibbles", {
 test_that("can take the common type with partial frames", {
   exp <- tibble::tibble(x = dbl(), y = chr(), a = chr())
 
-  out <- vec_type_common(
+  out <- vec_ptype_common(
     partial_frame(x = double(), a = character()),
     tibble::tibble(x = 1L, y = "a")
   )
   expect_identical(out, exp)
 
-  out <- vec_type_common(
+  out <- vec_ptype_common(
     tibble::tibble(x = 1L, y = "a"),
     partial_frame(x = double(), a = character())
   )

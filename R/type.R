@@ -1,11 +1,11 @@
 #' Find the prototype of a set of vectors
 #'
 #' `vec_ptype()` finds the prototype of a single vector.
-#' `vec_type_common()` finds the common type of multiple vectors.
+#' `vec_ptype_common()` finds the common type of multiple vectors.
 #' `vec_ptype_show()` nicely prints the common type of any number of
 #' inputs, and is designed for interative exploration.
 #'
-#' `vec_type_common()` first finds the prototype of each input, then
+#' `vec_ptype_common()` first finds the prototype of each input, then
 #' successively calls [vec_type2()] to find a common type.
 #'
 #' @section Prototype:
@@ -25,7 +25,7 @@
 #'   Alternatively, you can supply `.ptype` to give the output known type.
 #'   If `getOption("vctrs.no_guessing")` is `TRUE` you must supply this value:
 #'   this is a convenient way to make production code demand fixed types.
-#' @return `vec_ptype()` and `vec_type_common()` return a prototype
+#' @return `vec_ptype()` and `vec_ptype_common()` return a prototype
 #'   (a size-0 vector)
 #' @export
 #' @examples
@@ -67,7 +67,7 @@ vec_ptype <- function(x) {
 
 #' @export
 #' @rdname vec_ptype
-vec_type_common <- function(..., .ptype = NULL) {
+vec_ptype_common <- function(..., .ptype = NULL) {
   .External2(vctrs_type_common, .ptype)
 }
 
