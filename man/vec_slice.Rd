@@ -97,7 +97,7 @@ vec_ptype(x)
 vec_cast("1", integer())
 
 # But these types are not coercible:
-try(vec_type2("1", integer()))
+try(vec_ptype2("1", integer()))
 
 # Hence you cannot assign character values to an integer or double
 # vector:

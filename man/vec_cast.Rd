@@ -62,7 +62,7 @@ there is no 1-to-1 mapping for a specific value).
 }
 \description{
 \code{vec_cast()} provides general coercions from one type of vector to another,
-and along with \code{\link[=vec_type2]{vec_type2()}} forms the foundation of the vctrs type system.
+and along with \code{\link[=vec_ptype2]{vec_ptype2()}} forms the foundation of the vctrs type system.
 It should generally not be called by R users, but is important for R
 developers. \code{vec_restore()} is designed specifically for casting a bare
 vector to the original type; it's useful when relying \code{NextMethod()} for

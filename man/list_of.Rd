@@ -5,7 +5,7 @@
 \alias{as_list_of}
 \alias{validate_list_of}
 \alias{is_list_of}
-\alias{vec_type2.vctrs_list_of}
+\alias{vec_ptype2.vctrs_list_of}
 \alias{vec_cast.vctrs_list_of}
 \title{\code{list_of} S3 class for homogenous lists}
 \usage{
@@ -17,7 +17,7 @@ validate_list_of(x)
 
 is_list_of(x)
 
-\method{vec_type2}{vctrs_list_of}(x, y, ...)
+\method{vec_ptype2}{vctrs_list_of}(x, y, ...)
 
 \method{vec_cast}{vctrs_list_of}(x, to, ...)
 }
@@ -33,7 +33,7 @@ this is a convenient way to make production code demand fixed types.}
 
 \item{x}{For \code{as_list_of()}, a vector to be coerced to list_of.}
 
-\item{y, to}{Arguments to \code{vec_type2()} and \code{vec_cast()}.}
+\item{y, to}{Arguments to \code{vec_ptype2()} and \code{vec_cast()}.}
 }
 \description{
 A \code{list_of} object is a list where each element has the same type.

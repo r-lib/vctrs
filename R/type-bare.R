@@ -2,90 +2,90 @@
 
 # Numeric-ish
 
-#' @rdname vec_type2
-#' @export vec_type2.logical
-#' @method vec_type2 logical
+#' @rdname vec_ptype2
+#' @export vec_ptype2.logical
+#' @method vec_ptype2 logical
 #' @export
-vec_type2.logical <- function(x, y, ...) UseMethod("vec_type2.logical", y)
-#' @rdname vec_type2
-#' @export vec_type2.integer
-#' @method vec_type2 integer
+vec_ptype2.logical <- function(x, y, ...) UseMethod("vec_ptype2.logical", y)
+#' @rdname vec_ptype2
+#' @export vec_ptype2.integer
+#' @method vec_ptype2 integer
 #' @export
-vec_type2.integer <- function(x, y, ...) UseMethod("vec_type2.integer", y)
-#' @rdname vec_type2
-#' @export vec_type2.double
-#' @method vec_type2 double
+vec_ptype2.integer <- function(x, y, ...) UseMethod("vec_ptype2.integer", y)
+#' @rdname vec_ptype2
+#' @export vec_ptype2.double
+#' @method vec_ptype2 double
 #' @export
-vec_type2.double <- function(x, y, ...) UseMethod("vec_type2.double", y)
+vec_ptype2.double <- function(x, y, ...) UseMethod("vec_ptype2.double", y)
 
-#' @method vec_type2.logical logical
+#' @method vec_ptype2.logical logical
 #' @export
-vec_type2.logical.logical <- function(x, y, ...) shape_match(logical(), x, y)
-
-#' @export
-#' @method vec_type2.integer integer
-vec_type2.integer.integer <- function(x, y, ...) shape_match(integer(), x, y)
-#' @export
-#' @method vec_type2.logical integer
-vec_type2.logical.integer <- function(x, y, ...) shape_match(integer(), x, y)
-#' @export
-#' @method vec_type2.integer logical
-vec_type2.integer.logical <- function(x, y, ...) shape_match(integer(), x, y)
+vec_ptype2.logical.logical <- function(x, y, ...) shape_match(logical(), x, y)
 
 #' @export
-#' @method vec_type2.double double
-vec_type2.double.double <- function(x, y, ...) shape_match(double(), x, y)
+#' @method vec_ptype2.integer integer
+vec_ptype2.integer.integer <- function(x, y, ...) shape_match(integer(), x, y)
 #' @export
-#' @method vec_type2.logical double
-vec_type2.logical.double <- function(x, y, ...) shape_match(double(), x, y)
+#' @method vec_ptype2.logical integer
+vec_ptype2.logical.integer <- function(x, y, ...) shape_match(integer(), x, y)
 #' @export
-#' @method vec_type2.double logical
-vec_type2.double.logical <- function(x, y, ...) shape_match(double(), x, y)
+#' @method vec_ptype2.integer logical
+vec_ptype2.integer.logical <- function(x, y, ...) shape_match(integer(), x, y)
+
 #' @export
-#' @method vec_type2.integer double
-vec_type2.integer.double <- function(x, y, ...) shape_match(double(), x, y)
+#' @method vec_ptype2.double double
+vec_ptype2.double.double <- function(x, y, ...) shape_match(double(), x, y)
 #' @export
-#' @method vec_type2.double integer
-vec_type2.double.integer <- function(x, y, ...) shape_match(double(), x, y)
+#' @method vec_ptype2.logical double
+vec_ptype2.logical.double <- function(x, y, ...) shape_match(double(), x, y)
+#' @export
+#' @method vec_ptype2.double logical
+vec_ptype2.double.logical <- function(x, y, ...) shape_match(double(), x, y)
+#' @export
+#' @method vec_ptype2.integer double
+vec_ptype2.integer.double <- function(x, y, ...) shape_match(double(), x, y)
+#' @export
+#' @method vec_ptype2.double integer
+vec_ptype2.double.integer <- function(x, y, ...) shape_match(double(), x, y)
 
 
 # Character
 
-#' @rdname vec_type2
-#' @export vec_type2.character
-#' @method vec_type2 character
+#' @rdname vec_ptype2
+#' @export vec_ptype2.character
+#' @method vec_ptype2 character
 #' @export
-vec_type2.character <- function(x, y, ...) UseMethod("vec_type2.character", y)
-#' @method vec_type2.character character
+vec_ptype2.character <- function(x, y, ...) UseMethod("vec_ptype2.character", y)
+#' @method vec_ptype2.character character
 #' @export
-vec_type2.character.character <- function(x, y, ...) shape_match(character(), x, y)
+vec_ptype2.character.character <- function(x, y, ...) shape_match(character(), x, y)
 
 
 # Raw
 
-#' @rdname vec_type2
-#' @export vec_type2.raw
-#' @method vec_type2 raw
+#' @rdname vec_ptype2
+#' @export vec_ptype2.raw
+#' @method vec_ptype2 raw
 #' @export
-vec_type2.raw <- function(x, y, ...) UseMethod("vec_type2.raw", y)
+vec_ptype2.raw <- function(x, y, ...) UseMethod("vec_ptype2.raw", y)
 #' @export
-#' @method vec_type2.raw raw
-vec_type2.raw.raw <- function(x, y, ...) shape_match(raw(), x, y)
+#' @method vec_ptype2.raw raw
+vec_ptype2.raw.raw <- function(x, y, ...) shape_match(raw(), x, y)
 
 
 # Lists
 
-#' @rdname vec_type2
-#' @export vec_type2.list
-#' @method vec_type2 list
+#' @rdname vec_ptype2
+#' @export vec_ptype2.list
+#' @method vec_ptype2 list
 #' @export
-vec_type2.list <- function(x, y, ...) UseMethod("vec_type2.list", y)
-#' @method vec_type2.list list
+vec_ptype2.list <- function(x, y, ...) UseMethod("vec_ptype2.list", y)
+#' @method vec_ptype2.list list
 #' @export
-vec_type2.list.list <- function(x, y, ...) shape_match(list(), x, y)
-#' @method vec_type2.logical list
+vec_ptype2.list.list <- function(x, y, ...) shape_match(list(), x, y)
+#' @method vec_ptype2.logical list
 #' @export
-vec_type2.logical.list <- function(x, y, ..., x_arg = "x", y_arg = "y") {
+vec_ptype2.logical.list <- function(x, y, ..., x_arg = "x", y_arg = "y") {
   # Prevent `NA` from being a common type of lists. This way:
   #
   # ```
@@ -95,47 +95,47 @@ vec_type2.logical.list <- function(x, y, ..., x_arg = "x", y_arg = "y") {
   if (is_unspecified(x)) {
     stop_incompatible_type(x, y, x_arg = x_arg, y_arg = y_arg)
   } else {
-    vec_default_type2(x, y, x_arg = x_arg, y_arg = y_arg)
+    vec_default_ptype2(x, y, x_arg = x_arg, y_arg = y_arg)
   }
 }
 
 
 # Default
 
-#' @method vec_type2.logical default
+#' @method vec_ptype2.logical default
 #' @export
-vec_type2.logical.default <- function(x, y, ..., x_arg = "x", y_arg = "y") {
+vec_ptype2.logical.default <- function(x, y, ..., x_arg = "x", y_arg = "y") {
   if (is_unspecified(x)) {
     # # FIXME: Should `vec_ptype()` make that check?
     # vec_assert(y)
     vec_ptype(y)
   } else {
-    vec_default_type2(x, y, x_arg = x_arg, y_arg = y_arg)
+    vec_default_ptype2(x, y, x_arg = x_arg, y_arg = y_arg)
   }
 }
-#' @method vec_type2.integer default
+#' @method vec_ptype2.integer default
 #' @export
-vec_type2.integer.default <- function(x, y, ..., x_arg = "x", y_arg = "y") {
-  vec_default_type2(x, y, x_arg = x_arg, y_arg = y_arg)
+vec_ptype2.integer.default <- function(x, y, ..., x_arg = "x", y_arg = "y") {
+  vec_default_ptype2(x, y, x_arg = x_arg, y_arg = y_arg)
 }
-#' @method vec_type2.double default
+#' @method vec_ptype2.double default
 #' @export
-vec_type2.double.default <- function(x, y, ..., x_arg = "x", y_arg = "y") {
-  vec_default_type2(x, y, x_arg = x_arg, y_arg = y_arg)
+vec_ptype2.double.default <- function(x, y, ..., x_arg = "x", y_arg = "y") {
+  vec_default_ptype2(x, y, x_arg = x_arg, y_arg = y_arg)
 }
-#' @method vec_type2.character default
+#' @method vec_ptype2.character default
 #' @export
-vec_type2.character.default <- function(x, y, ..., x_arg = "x", y_arg = "y") {
-  vec_default_type2(x, y, x_arg = x_arg, y_arg = y_arg)
+vec_ptype2.character.default <- function(x, y, ..., x_arg = "x", y_arg = "y") {
+  vec_default_ptype2(x, y, x_arg = x_arg, y_arg = y_arg)
 }
-#' @method vec_type2.raw default
+#' @method vec_ptype2.raw default
 #' @export
-vec_type2.raw.default <- function(x, y, ..., x_arg = "x", y_arg = "y") {
-  vec_default_type2(x, y, x_arg = x_arg, y_arg = y_arg)
+vec_ptype2.raw.default <- function(x, y, ..., x_arg = "x", y_arg = "y") {
+  vec_default_ptype2(x, y, x_arg = x_arg, y_arg = y_arg)
 }
-#' @method vec_type2.list default
+#' @method vec_ptype2.list default
 #' @export
-vec_type2.list.default <- function(x, y, ..., x_arg = "x", y_arg = "y") {
+vec_ptype2.list.default <- function(x, y, ..., x_arg = "x", y_arg = "y") {
   stop_incompatible_type(x, y, x_arg = x_arg, y_arg = y_arg)
 }
 

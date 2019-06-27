@@ -16,10 +16,10 @@ test_that("unknown type is idempotent", {
     new_duration()
   )
 
-  lhs <- map(types, vec_type2, x = unspecified())
+  lhs <- map(types, vec_ptype2, x = unspecified())
   expect_equal(types, lhs)
 
-  rhs <- map(types, vec_type2, y = unspecified())
+  rhs <- map(types, vec_ptype2, y = unspecified())
   expect_equal(types, rhs)
 })
 

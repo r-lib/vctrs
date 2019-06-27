@@ -266,7 +266,7 @@ test_that("slice-assign falls back to `[<-` when proxy is not implemented", {
 
   vec_slice(obj, 1:2) <- foobar("quux")
 
-  vec_type2(foobar(""), foobar(""))
+  vec_ptype2(foobar(""), foobar(""))
   vec_cast(foobar(""), foobar(""))
   #> Error: Can't cast <vctrs_foobar> to <vctrs_foobar>
 
@@ -276,8 +276,8 @@ test_that("slice-assign falls back to `[<-` when proxy is not implemented", {
       x[i] <- "dispatched"
       x
     },
-    vec_type2.logical.vctrs_foobar = function(...) foobar(""),
-    vec_type2.vctrs_foobar = function(...) foobar(""),
+    vec_ptype2.logical.vctrs_foobar = function(...) foobar(""),
+    vec_ptype2.vctrs_foobar = function(...) foobar(""),
     vec_cast.vctrs_foobar = function(x, to, ...) x
   )
 
@@ -292,7 +292,7 @@ test_that("slice-assign restores value before falling back to `[<-` (#443)", {
   scoped_global_bindings(
     vec_proxy.vctrs_proxy = proxy_deref,
     vec_restore.vctrs_proxy = function(x, to, ...) new_proxy(x),
-    vec_type2.vctrs_proxy = function(...) new_proxy(NA),
+    vec_ptype2.vctrs_proxy = function(...) new_proxy(NA),
     vec_cast.vctrs_foobar = function(x, ...) proxy_deref(x),
     `[<-.vctrs_foobar` = function(x, i, value) {
       called <<- TRUE

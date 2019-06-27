@@ -77,8 +77,8 @@ test_that("vec_proxy_compare() refuses to deal with lists", {
 test_that("vec_compare() calls vec_proxy_compare()", {
   scoped_global_bindings(
     vec_proxy_compare.vctrs_foobar = function(x) rev(x),
-    vec_type2.integer.vctrs_foobar = function(...) foobar(int()),
-    vec_type2.vctrs_foobar = function(...) foobar(int()),
+    vec_ptype2.integer.vctrs_foobar = function(...) foobar(int()),
+    vec_ptype2.vctrs_foobar = function(...) foobar(int()),
     vec_cast.vctrs_foobar = function(x, ...) x
   )
   expect_identical(vec_compare(1:3, 1:3), int(0, 0, 0))

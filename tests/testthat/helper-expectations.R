@@ -12,7 +12,7 @@ expect_lossy <- function(expr, result, x = NULL, to = NULL) {
 }
 
 expect_args <- function(x, y, x_arg, y_arg) {
-  err <- catch_cnd(vec_type2(x, y, x_arg = x_arg, y_arg = y_arg), classes = "vctrs_error_incompatible_type")
+  err <- catch_cnd(vec_ptype2(x, y, x_arg = x_arg, y_arg = y_arg), classes = "vctrs_error_incompatible_type")
   expect_true(!is_null(err))
 
   expect_true(grepl(paste0("for `", x_arg, "`"), err$message, fixed = TRUE))

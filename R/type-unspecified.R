@@ -49,40 +49,40 @@ ununspecify <- function(x) {
 # Type system -------------------------------------------------------------
 
 #' @rdname unspecified
-#' @export vec_type2.vctrs_unspecified
+#' @export vec_ptype2.vctrs_unspecified
 #' @export
-vec_type2.vctrs_unspecified <- function(x, y, ...) vec_ptype(y)
+vec_ptype2.vctrs_unspecified <- function(x, y, ...) vec_ptype(y)
 
-#' @method vec_type2.logical vctrs_unspecified
+#' @method vec_ptype2.logical vctrs_unspecified
 #' @export
-vec_type2.logical.vctrs_unspecified <- function(x, y, ...) vec_ptype(x)
-#' @method vec_type2.integer vctrs_unspecified
+vec_ptype2.logical.vctrs_unspecified <- function(x, y, ...) vec_ptype(x)
+#' @method vec_ptype2.integer vctrs_unspecified
 #' @export
-vec_type2.integer.vctrs_unspecified <- function(x, y, ...) vec_ptype(x)
-#' @method vec_type2.double vctrs_unspecified
+vec_ptype2.integer.vctrs_unspecified <- function(x, y, ...) vec_ptype(x)
+#' @method vec_ptype2.double vctrs_unspecified
 #' @export
-vec_type2.double.vctrs_unspecified <- function(x, y, ...) vec_ptype(x)
-#' @method vec_type2.character vctrs_unspecified
+vec_ptype2.double.vctrs_unspecified <- function(x, y, ...) vec_ptype(x)
+#' @method vec_ptype2.character vctrs_unspecified
 #' @export
-vec_type2.character.vctrs_unspecified <- function(x, y, ...) vec_ptype(x)
-#' @method vec_type2.factor vctrs_unspecified
+vec_ptype2.character.vctrs_unspecified <- function(x, y, ...) vec_ptype(x)
+#' @method vec_ptype2.factor vctrs_unspecified
 #' @export
-vec_type2.factor.vctrs_unspecified <- function(x, y, ...) vec_ptype(x)
-#' @method vec_type2.ordered vctrs_unspecified
+vec_ptype2.factor.vctrs_unspecified <- function(x, y, ...) vec_ptype(x)
+#' @method vec_ptype2.ordered vctrs_unspecified
 #' @export
-vec_type2.ordered.vctrs_unspecified <- function(x, y, ...) vec_ptype(x)
-#' @method vec_type2.list vctrs_unspecified
+vec_ptype2.ordered.vctrs_unspecified <- function(x, y, ...) vec_ptype(x)
+#' @method vec_ptype2.list vctrs_unspecified
 #' @export
-vec_type2.list.vctrs_unspecified <- function(x, y, ...) vec_ptype(x)
-#' @method vec_type2.vctrs_list_of vctrs_unspecified
+vec_ptype2.list.vctrs_unspecified <- function(x, y, ...) vec_ptype(x)
+#' @method vec_ptype2.vctrs_list_of vctrs_unspecified
 #' @export
-vec_type2.vctrs_list_of.vctrs_unspecified <- function(x, y, ...) vec_ptype(x)
-#' @method vec_type2.Date vctrs_unspecified
+vec_ptype2.vctrs_list_of.vctrs_unspecified <- function(x, y, ...) vec_ptype(x)
+#' @method vec_ptype2.Date vctrs_unspecified
 #' @export
-vec_type2.Date.vctrs_unspecified <- function(x, y, ...) vec_ptype(x)
-#' @method vec_type2.POSIXt vctrs_unspecified
+vec_ptype2.Date.vctrs_unspecified <- function(x, y, ...) vec_ptype(x)
+#' @method vec_ptype2.POSIXt vctrs_unspecified
 #' @export
-vec_type2.POSIXt.vctrs_unspecified <- function(x, y, ...) vec_ptype(x)
-#' @method vec_type2.difftime vctrs_unspecified
+vec_ptype2.POSIXt.vctrs_unspecified <- function(x, y, ...) vec_ptype(x)
+#' @method vec_ptype2.difftime vctrs_unspecified
 #' @export
-vec_type2.difftime.vctrs_unspecified <- function(x, y, ...) vec_ptype(x)
+vec_ptype2.difftime.vctrs_unspecified <- function(x, y, ...) vec_ptype(x)

@@ -623,13 +623,13 @@ format.hidden <- function(x, ...) rep("xxx", length(x))
 
 scoped_hidden <- function(frame = caller_env()) {
   scoped_bindings(.env = global_env(), .frame = frame,
-    vec_type2.hidden         = function(x, y, ...) UseMethod("vec_type2.hidden", y),
-    vec_type2.hidden.default = function(x, y, ...) stop_incompatible_type(x, y, ...),
-    vec_type2.hidden.hidden  = function(x, y, ...) new_hidden(),
-    vec_type2.hidden.double  = function(x, y, ...) new_hidden(),
-    vec_type2.double.hidden  = function(x, y, ...) new_hidden(),
-    vec_type2.hidden.logical = function(x, y, ...) new_hidden(),
-    vec_type2.logical.hidden = function(x, y, ...) new_hidden(),
+    vec_ptype2.hidden         = function(x, y, ...) UseMethod("vec_ptype2.hidden", y),
+    vec_ptype2.hidden.default = function(x, y, ...) stop_incompatible_type(x, y, ...),
+    vec_ptype2.hidden.hidden  = function(x, y, ...) new_hidden(),
+    vec_ptype2.hidden.double  = function(x, y, ...) new_hidden(),
+    vec_ptype2.double.hidden  = function(x, y, ...) new_hidden(),
+    vec_ptype2.hidden.logical = function(x, y, ...) new_hidden(),
+    vec_ptype2.logical.hidden = function(x, y, ...) new_hidden(),
 
     vec_cast.hidden          = function(x, to, ...) UseMethod("vec_cast.hidden"),
     vec_cast.hidden.default  = function(x, to, ...) stop_incompatible_cast(x, to, ...),

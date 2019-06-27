@@ -1,7 +1,7 @@
 context("test-partial-frame")
 
 test_that("has ok print method", {
-  pf <- vec_type2(partial_frame(x = 1L), data.frame(y = 2))
+  pf <- vec_ptype2(partial_frame(x = 1L), data.frame(y = 2))
   expect_known_output(
     print(pf),
     test_path("test-partial-frame-print.txt")
@@ -49,13 +49,13 @@ test_that("can assert partial frames based on column type", {
 
 test_that("incompatible data frames are an error", {
   df <- data.frame(y = 1)
-  expect_error(vec_type2(df, partial_frame(y = chr())), class = "vctrs_error_incompatible_type")
+  expect_error(vec_ptype2(df, partial_frame(y = chr())), class = "vctrs_error_incompatible_type")
   expect_error(new_partial_frame(df, data.frame(y = chr())), class = "vctrs_error_incompatible_type")
 })
 
 test_that("dispatch is symmetric with tibbles", {
-  left <- vec_type2(partial_frame(x = 1), tibble::tibble(x = 1))
-  right <- vec_type2(tibble::tibble(x = 1), partial_frame(x = 1))
+  left <- vec_ptype2(partial_frame(x = 1), tibble::tibble(x = 1))
+  right <- vec_ptype2(tibble::tibble(x = 1), partial_frame(x = 1))
   expect_identical(left, right)
 })
 

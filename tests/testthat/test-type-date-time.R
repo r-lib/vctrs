@@ -47,21 +47,21 @@ test_that("tz comes from first non-empty", {
   x <- as.POSIXct("2020-01-01")
   y <- as.POSIXct("2020-01-01", tz = "America/New_York")
 
-  expect_equal(vec_type2(x, y), y[0])
-  expect_equal(vec_type2(y, x), y[0])
+  expect_equal(vec_ptype2(x, y), y[0])
+  expect_equal(vec_ptype2(y, x), y[0])
 
   z <- as.POSIXct("2020-01-01", tz = "Pacific/Auckland")
-  expect_equal(vec_type2(y, z), y[0])
-  expect_equal(vec_type2(z, y), z[0])
+  expect_equal(vec_ptype2(y, z), y[0])
+  expect_equal(vec_ptype2(z, y), z[0])
 })
 
 test_that("POSIXlt always steered towards POSIXct", {
   dtc <- as.POSIXct("2020-01-01")
   dtl <- as.POSIXlt("2020-01-01")
 
-  expect_equal(vec_type2(dtc, dtl), dtc[0])
-  expect_equal(vec_type2(dtl, dtc), dtc[0])
-  expect_equal(vec_type2(dtl, dtl), dtc[0])
+  expect_equal(vec_ptype2(dtc, dtl), dtc[0])
+  expect_equal(vec_ptype2(dtl, dtc), dtc[0])
+  expect_equal(vec_ptype2(dtl, dtl), dtc[0])
 })
 
 

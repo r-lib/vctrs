@@ -6,7 +6,7 @@
 #' inputs, and is designed for interative exploration.
 #'
 #' `vec_ptype_common()` first finds the prototype of each input, then
-#' successively calls [vec_type2()] to find a common type.
+#' successively calls [vec_ptype2()] to find a common type.
 #'
 #' @section Prototype:
 #' A prototype is [size](vec_size) 0 vector containing attributes, but no
@@ -85,7 +85,7 @@ vec_ptype_show <- function(...) {
     out_types <- vector("list", length(in_types))
     out_types[[1]] <- in_types[[1]]
     for (i in seq2(2, n)) {
-      out_types[[i]] <- vec_type2(out_types[[i - 1]], in_types[[i]])
+      out_types[[i]] <- vec_ptype2(out_types[[i - 1]], in_types[[i]])
     }
 
     in_full <- paste0("<", map_chr(in_types, vec_ptype_full), ">")

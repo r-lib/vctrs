@@ -3,8 +3,8 @@
 \name{new_factor}
 \alias{new_factor}
 \alias{new_ordered}
-\alias{vec_type2.factor}
-\alias{vec_type2.ordered}
+\alias{vec_ptype2.factor}
+\alias{vec_ptype2.ordered}
 \alias{vec_cast.factor}
 \title{Factor/ordered factor S3 class}
 \usage{
@@ -13,9 +13,9 @@ new_factor(x = integer(), levels = character(), ...,
 
 new_ordered(x = integer(), levels = character())
 
-\method{vec_type2}{factor}(x, y, ...)
+\method{vec_ptype2}{factor}(x, y, ...)
 
-\method{vec_type2}{ordered}(x, y, ...)
+\method{vec_ptype2}{ordered}(x, y, ...)
 
 \method{vec_cast}{factor}(x, to, ...)
 }

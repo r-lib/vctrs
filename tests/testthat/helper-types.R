@@ -47,10 +47,10 @@ tuple_methods <- list(
     paste0("(", field(x, "x"), ",", field(x, "y"), ")")
   },
 
-  vec_type2.tuple = function(x, y, ...)  UseMethod("vec_type2.tuple", y),
-  vec_type2.tuple.vctrs_unspecified = function(x, y, ...) tuple(),
-  vec_type2.tuple.tuple = function(x, y, ...) tuple(),
-  vec_type2.tuple.default = function(x, y, ..., x_arg = "x", y_arg = "y") {
+  vec_ptype2.tuple = function(x, y, ...)  UseMethod("vec_ptype2.tuple", y),
+  vec_ptype2.tuple.vctrs_unspecified = function(x, y, ...) tuple(),
+  vec_ptype2.tuple.tuple = function(x, y, ...) tuple(),
+  vec_ptype2.tuple.default = function(x, y, ..., x_arg = "x", y_arg = "y") {
     stop_incompatible_type(x, y, x_arg = x_arg, y_arg = y_arg)
   },
 
