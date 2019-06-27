@@ -164,6 +164,7 @@ will use the common size from <code><a href='vec_size.html'>vec_size_common()</a
     
     <p>The common size of two vectors defines the recycling rules, and can be
 summarise with the following table:</p>
+<p><img src='figures/sizes-recycling.png' alt='' /></p>
 <p>(Note <code>NULL</code>s are handled specially; they are treated like empty
 arguments and hence don't affect the size)</p>
 <p>This is a stricter set of rules than base R, which will usually
@@ -180,16 +181,14 @@ recycled to be the same length.</p>
 #&gt; 
 #&gt; [[2]]
 #&gt; [1] 5 5 5 5 5
-#&gt; </div><span class='co'># NOT RUN {</span>
-<span class='fu'>vec_recycle_common</span>(<span class='fl'>1</span>:<span class='fl'>5</span>, <span class='fl'>1</span>:<span class='fl'>2</span>)
-<span class='co'># }</span><div class='input'>
-<span class='co'># Inputs with 0 observations</span>
-<span class='fu'>vec_recycle_common</span>(<span class='fl'>1</span>:<span class='fl'>5</span>, <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/integer'>integer</a></span>())</div><div class='output co'>#&gt; [[1]]
+#&gt; </div><div class='input'><span class='fu'>vec_recycle_common</span>(<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/integer'>integer</a></span>(), <span class='fl'>5</span>)</div><div class='output co'>#&gt; [[1]]
 #&gt; integer(0)
 #&gt; 
 #&gt; [[2]]
-#&gt; integer(0)
-#&gt; </div><div class='input'>
+#&gt; numeric(0)
+#&gt; </div><span class='co'># NOT RUN {</span>
+<span class='fu'>vec_recycle_common</span>(<span class='fl'>1</span>:<span class='fl'>5</span>, <span class='fl'>1</span>:<span class='fl'>2</span>)
+<span class='co'># }</span><div class='input'>
 <span class='co'># Data frames and matrices are recycled along their rows</span>
 <span class='fu'>vec_recycle_common</span>(<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/data.frame'>data.frame</a></span>(<span class='kw'>x</span> <span class='kw'>=</span> <span class='fl'>1</span>), <span class='fl'>1</span>:<span class='fl'>5</span>)</div><div class='output co'>#&gt; [[1]]
 #&gt;   x

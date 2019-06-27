@@ -394,11 +394,11 @@
 <a class="sourceLine" id="cb23-2" data-line-number="2">df &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/data.frame">data.frame</a></span>(<span class="dt">x =</span> x)</a>
 <a class="sourceLine" id="cb23-3" data-line-number="3"></a>
 <a class="sourceLine" id="cb23-4" data-line-number="4"><span class="kw"><a href="../reference/vec_slice.html">vec_slice</a></span>(x, <span class="dv">5</span><span class="op">:</span><span class="dv">6</span>)</a>
-<a class="sourceLine" id="cb23-5" data-line-number="5"><span class="co">#&gt; [1] 3 2</span></a>
+<a class="sourceLine" id="cb23-5" data-line-number="5"><span class="co">#&gt; [1] 1 9</span></a>
 <a class="sourceLine" id="cb23-6" data-line-number="6"><span class="kw"><a href="../reference/vec_slice.html">vec_slice</a></span>(df, <span class="dv">5</span><span class="op">:</span><span class="dv">6</span>)</a>
 <a class="sourceLine" id="cb23-7" data-line-number="7"><span class="co">#&gt;   x</span></a>
-<a class="sourceLine" id="cb23-8" data-line-number="8"><span class="co">#&gt; 1 3</span></a>
-<a class="sourceLine" id="cb23-9" data-line-number="9"><span class="co">#&gt; 2 2</span></a></code></pre></div>
+<a class="sourceLine" id="cb23-8" data-line-number="8"><span class="co">#&gt; 1 1</span></a>
+<a class="sourceLine" id="cb23-9" data-line-number="9"><span class="co">#&gt; 2 9</span></a></code></pre></div>
 <p><code><a href="../reference/vec_slice.html">vec_slice(data.frame(x), i)</a></code> equals <code><a href="https://www.rdocumentation.org/packages/base/topics/data.frame">data.frame(vec_slice(x, i))</a></code> (modulo variable and row names).</p>
 <p>Prototypes are generated with <code><a href="../reference/vec_slice.html">vec_slice(x, 0L)</a></code>; given a prototype, you can initialize a vector of given size (filled with <code>NA</code>s) with <code><a href="../reference/vec_init.html">vec_init()</a></code>.</p>
 </div>
@@ -410,14 +410,9 @@
 <a class="sourceLine" id="cb24-2" data-line-number="2"><span class="co">#&gt; [1] 3</span></a>
 <a class="sourceLine" id="cb24-3" data-line-number="3"><span class="kw"><a href="../reference/vec_size.html">vec_size_common</a></span>(<span class="dv">1</span><span class="op">:</span><span class="dv">10</span>, <span class="dv">1</span>)</a>
 <a class="sourceLine" id="cb24-4" data-line-number="4"><span class="co">#&gt; [1] 10</span></a>
-<a class="sourceLine" id="cb24-5" data-line-number="5"><span class="kw"><a href="../reference/vec_size.html">vec_size_common</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/integer">integer</a></span>(), <span class="dv">1</span><span class="op">:</span><span class="dv">3</span>)</a>
+<a class="sourceLine" id="cb24-5" data-line-number="5"><span class="kw"><a href="../reference/vec_size.html">vec_size_common</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/integer">integer</a></span>(), <span class="dv">1</span>)</a>
 <a class="sourceLine" id="cb24-6" data-line-number="6"><span class="co">#&gt; [1] 0</span></a></code></pre></div>
-<p>vctrs obeys a stricter set of recycling rules than base R, only recycling under two circumstances:</p>
-<ul>
-<li>Vectors of size 1 can be recycled to any size.</li>
-<li>Vectors of any size can be recycled to size 0.</li>
-</ul>
-<p>All other size combinations will generate an error. This strictness prevents common mistakes like <code>dest == c("IAH", "HOU"))</code>, at the cost of occasionally requiring an explicit calls to <code><a href="https://www.rdocumentation.org/packages/base/topics/rep">rep()</a></code>.</p>
+<p>vctrs obeys a stricter set of recycling rules than base R. Vectors of size 1 are recycled to any other size. All other size combinations will generate an error. This strictness prevents common mistakes like <code>dest == c("IAH", "HOU"))</code>, at the cost of occasionally requiring an explicit calls to <code><a href="https://www.rdocumentation.org/packages/base/topics/rep">rep()</a></code>.</p>
 <div class="figure">
 <img src="../man/figures/sizes-recycling.png" alt="Summary of vctrs recycling rules. X indicates n error"><p class="caption">Summary of vctrs recycling rules. X indicates n error</p>
 </div>
@@ -428,9 +423,7 @@
 <div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb25-1" data-line-number="1"><span class="kw"><a href="../reference/vec_recycle.html">vec_recycle</a></span>(<span class="dv">1</span><span class="op">:</span><span class="dv">3</span>, <span class="dv">3</span>)</a>
 <a class="sourceLine" id="cb25-2" data-line-number="2"><span class="co">#&gt; [1] 1 2 3</span></a>
 <a class="sourceLine" id="cb25-3" data-line-number="3"><span class="kw"><a href="../reference/vec_recycle.html">vec_recycle</a></span>(<span class="dv">1</span>, <span class="dv">10</span>)</a>
-<a class="sourceLine" id="cb25-4" data-line-number="4"><span class="co">#&gt;  [1] 1 1 1 1 1 1 1 1 1 1</span></a>
-<a class="sourceLine" id="cb25-5" data-line-number="5"><span class="kw"><a href="../reference/vec_recycle.html">vec_recycle</a></span>(<span class="dv">1</span><span class="op">:</span><span class="dv">3</span>, <span class="dv">0</span>)</a>
-<a class="sourceLine" id="cb25-6" data-line-number="6"><span class="co">#&gt; integer(0)</span></a></code></pre></div>
+<a class="sourceLine" id="cb25-4" data-line-number="4"><span class="co">#&gt;  [1] 1 1 1 1 1 1 1 1 1 1</span></a></code></pre></div>
 </li>
 <li>
 <p>If you have multiple vectors and you want to recycle them to the same size, use <code><a href="../reference/vec_recycle.html">vec_recycle_common()</a></code>:</p>
@@ -445,13 +438,7 @@
 <a class="sourceLine" id="cb26-9" data-line-number="9"><span class="co">#&gt;  [1]  1  2  3  4  5  6  7  8  9 10</span></a>
 <a class="sourceLine" id="cb26-10" data-line-number="10"><span class="co">#&gt; </span></a>
 <a class="sourceLine" id="cb26-11" data-line-number="11"><span class="co">#&gt; [[2]]</span></a>
-<a class="sourceLine" id="cb26-12" data-line-number="12"><span class="co">#&gt;  [1] 1 1 1 1 1 1 1 1 1 1</span></a>
-<a class="sourceLine" id="cb26-13" data-line-number="13"><span class="kw"><a href="../reference/vec_recycle.html">vec_recycle_common</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/integer">integer</a></span>(), <span class="dv">1</span><span class="op">:</span><span class="dv">3</span>)</a>
-<a class="sourceLine" id="cb26-14" data-line-number="14"><span class="co">#&gt; [[1]]</span></a>
-<a class="sourceLine" id="cb26-15" data-line-number="15"><span class="co">#&gt; integer(0)</span></a>
-<a class="sourceLine" id="cb26-16" data-line-number="16"><span class="co">#&gt; </span></a>
-<a class="sourceLine" id="cb26-17" data-line-number="17"><span class="co">#&gt; [[2]]</span></a>
-<a class="sourceLine" id="cb26-18" data-line-number="18"><span class="co">#&gt; integer(0)</span></a></code></pre></div>
+<a class="sourceLine" id="cb26-12" data-line-number="12"><span class="co">#&gt;  [1] 1 1 1 1 1 1 1 1 1 1</span></a></code></pre></div>
 </li>
 </ul>
 </div>
