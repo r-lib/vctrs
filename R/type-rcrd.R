@@ -54,6 +54,12 @@ check_fields <- function(fields) {
 vec_proxy.vctrs_rcrd <- function(x, ...) {
   new_data_frame(unclass(x))
 }
+#' @export
+vec_restore.vctrs_rcrd <- function(x, to, ...) {
+  x <- NextMethod()
+  attr(x, "row.names") <- NULL
+  x
+}
 
 #' @export
 length.vctrs_rcrd <- function(x) {

@@ -419,7 +419,8 @@ SEXP vec_restore_default(SEXP x, SEXP to) {
       SEXP tag = TAG(node);
 
       if (tag == R_NamesSymbol || tag == R_DimSymbol ||
-          tag == R_DimNamesSymbol || tag == R_ClassSymbol) {
+          tag == R_DimNamesSymbol || tag == R_ClassSymbol ||
+          tag == R_RowNamesSymbol) {
         if (tag == R_ClassSymbol) {
           class = CAR(node);
         }
@@ -444,12 +445,18 @@ SEXP vec_restore_default(SEXP x, SEXP to) {
 
   if (dim == R_NilValue) {
     SEXP nms = PROTECT(Rf_getAttrib(x, R_NamesSymbol));
+    SEXP rownms = PROTECT(Rf_getAttrib(x, R_RowNamesSymbol));
+
     SET_ATTRIB(x, attrib);
+
     Rf_setAttrib(x, R_NamesSymbol, nms);
-    UNPROTECT(1);
+    Rf_setAttrib(x, R_RowNamesSymbol, rownms);
+    UNPROTECT(2);
   } else {
     SEXP dimnames = PROTECT(Rf_getAttrib(x, R_DimNamesSymbol));
+
     SET_ATTRIB(x, attrib);
+
     Rf_setAttrib(x, R_DimSymbol, dim);
     Rf_setAttrib(x, R_DimNamesSymbol, dimnames);
     UNPROTECT(1);
@@ -481,12 +488,16 @@ SEXP df_restore_impl(SEXP x, SEXP to, R_len_t size) {
     Rf_setAttrib(x, R_NamesSymbol, vctrs_shared_empty_chr);
   }
 
-  SEXP rownames = PROTECT(Rf_allocVector(INTSXP, 2));
+  SEXP rownames = PROTECT(Rf_getAttrib(x, R_RowNamesSymbol));
+  if (rownames == R_NilValue) {
+    rownames = PROTECT(Rf_allocVector(INTSXP, 2));
 
-  INTEGER(rownames)[0] = NA_INTEGER;
-  INTEGER(rownames)[1] = -size;
+    INTEGER(rownames)[0] = NA_INTEGER;
+    INTEGER(rownames)[1] = -size;
 
-  Rf_setAttrib(x, R_RowNamesSymbol, rownames);
+    Rf_setAttrib(x, R_RowNamesSymbol, rownames);
+    UNPROTECT(1);
+  }
 
   UNPROTECT(3);
   return x;
