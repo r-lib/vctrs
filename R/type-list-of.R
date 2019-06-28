@@ -9,7 +9,7 @@
 #'
 #' @inheritParams vec_c
 #' @param x For `as_list_of()`, a vector to be coerced to list_of.
-#' @param y,to Arguments to `vec_type2()` and `vec_cast()`.
+#' @param y,to Arguments to `vec_ptype2()` and `vec_cast()`.
 #' @export
 #' @examples
 #' x <- list_of(1:3, 5:6, 10:15)
@@ -21,7 +21,7 @@
 list_of <- function(..., .ptype = NULL) {
   args <- list2(...)
 
-  ptype <- vec_type_common(!!!args, .ptype = .ptype)
+  ptype <- vec_ptype_common(!!!args, .ptype = .ptype)
   if (is.null(ptype)) {
     abort("Could not find common type for elements of `x`.")
   }
@@ -171,19 +171,19 @@ as.character.vctrs_list_of <- function(x, ...) {
 # Type system -------------------------------------------------------------
 
 #' @rdname list_of
-#' @export vec_type2.vctrs_list_of
-#' @method vec_type2 vctrs_list_of
+#' @export vec_ptype2.vctrs_list_of
+#' @method vec_ptype2 vctrs_list_of
 #' @export
-vec_type2.vctrs_list_of <- function(x, y, ...) UseMethod("vec_type2.vctrs_list_of", y)
-#' @method vec_type2.vctrs_list_of vctrs_list_of
+vec_ptype2.vctrs_list_of <- function(x, y, ...) UseMethod("vec_ptype2.vctrs_list_of", y)
+#' @method vec_ptype2.vctrs_list_of vctrs_list_of
 #' @export
-vec_type2.vctrs_list_of.vctrs_list_of <- function(x, y, ...) {
-  type <- vec_type2(attr(x, "ptype"), attr(y, "ptype"))
+vec_ptype2.vctrs_list_of.vctrs_list_of <- function(x, y, ...) {
+  type <- vec_ptype2(attr(x, "ptype"), attr(y, "ptype"))
   new_list_of(list(), type)
 }
-#' @method vec_type2.vctrs_list_of default
+#' @method vec_ptype2.vctrs_list_of default
 #' @export
-vec_type2.vctrs_list_of.default <- function(x, y, ..., x_arg = "x", y_arg = "y") {
+vec_ptype2.vctrs_list_of.default <- function(x, y, ..., x_arg = "x", y_arg = "y") {
   stop_incompatible_type(x, y, x_arg = x_arg, y_arg = y_arg)
 }
 

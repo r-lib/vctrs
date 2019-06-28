@@ -1,7 +1,7 @@
 #' Cast a vector to specified type
 #'
 #' `vec_cast()` provides general coercions from one type of vector to another,
-#' and along with [vec_type2()] forms the foundation of the vctrs type system.
+#' and along with [vec_ptype2()] forms the foundation of the vctrs type system.
 #' It should generally not be called by R users, but is important for R
 #' developers. `vec_restore()` is designed specifically for casting a bare
 #' vector to the original type; it's useful when relying `NextMethod()` for

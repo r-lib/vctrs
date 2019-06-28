@@ -1,4 +1,4 @@
-# nocov start --- compat-lifecycle --- 2019-01-02 Wed 13:22
+# nocov start --- compat-lifecycle --- 2019-06-13 Wed 10:58
 
 # This file serves as a reference for currently unexported rlang
 # lifecycle functions. Please find the most recent version in rlang's
@@ -59,8 +59,8 @@
 NULL
 
 signal_soft_deprecated <- function(msg, id = msg, env = caller_env(2)) {
+  msg <- lifecycle_validate_message(msg)
   stopifnot(
-    rlang::is_string(msg),
     rlang::is_string(id),
     rlang::is_environment(env)
   )
@@ -101,10 +101,8 @@ signal_soft_deprecated <- function(msg, id = msg, env = caller_env(2)) {
 }
 
 warn_deprecated <- function(msg, id = msg) {
-  stopifnot(
-    rlang::is_string(msg),
-    rlang::is_string(id)
-  )
+  msg <- lifecycle_validate_message(msg)
+  stopifnot(rlang::is_string(id))
 
   if (rlang::is_true(rlang::peek_option("lifecycle_disable_warnings"))) {
     return(invisible(NULL))
@@ -121,7 +119,7 @@ warn_deprecated <- function(msg, id = msg) {
   silver <- function(x) if (has_colour()) crayon::silver(x) else x
 
   if (rlang::is_true(rlang::peek_option("lifecycle_warnings_as_errors"))) {
-    .Signal <- .Defunct
+    .Signal <- stop_defunct
   } else {
     .Signal <- .Deprecated
   }
@@ -135,8 +133,15 @@ warn_deprecated <- function(msg, id = msg) {
 deprecation_env <- new.env(parent = emptyenv())
 
 stop_defunct <- function(msg) {
-  stopifnot(rlang::is_string(msg))
-  .Defunct(msg = msg)
+  msg <- lifecycle_validate_message(msg)
+  err <- cnd(
+    c("defunctError", "error", "condition"),
+    old = NULL,
+    new = NULL,
+    package = NULL,
+    message = msg
+  )
+  stop(err)
 }
 
 scoped_lifecycle_silence <- function(frame = rlang::caller_env()) {
@@ -245,6 +250,11 @@ lifecycle_img <- function(stage, url) {
 upcase1 <- function(x) {
   substr(x, 1, 1) <- toupper(substr(x, 1, 1))
   x
+}
+
+lifecycle_validate_message <- function(msg) {
+  stopifnot(is_character(msg))
+  paste0(msg, collapse = "\n")
 }
 
 

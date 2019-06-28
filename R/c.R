@@ -4,7 +4,7 @@
 #'
 #' @section Invariants:
 #' * `vec_size(vec_c(x, y)) == vec_size(x) + vec_size(y)`
-#' * `vec_type(vec_c(x, y)) == vec_type_common(x, y)`.
+#' * `vec_ptype(vec_c(x, y)) == vec_ptype_common(x, y)`.
 #'
 #' @param ... Vectors to coerce.
 #' @param .name_repair How to repair names, see `repair` options in [vec_as_names()].
@@ -14,7 +14,7 @@
 #'   The vector will have names if the individual components have names
 #'   (inner names) or if the arguments are named (outer names). If both
 #'   inner and outer names are present, they are combined with a `.`.
-#' @inheritParams vec_ptype
+#' @inheritParams vec_ptype_show
 #' @inheritParams name_spec
 #' @seealso [vec_cbind()]/[vec_rbind()] for combining data frames by rows
 #'   or columns.

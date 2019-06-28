@@ -1,12 +1,12 @@
 Bare objects:
 
-vec_type2("foo", 10):
+vec_ptype2("foo", 10):
 
 No common type for `x` <character> and `y` <double>. 
 
 Nested dataframes:
 
-vec_type2(df1, df2):
+vec_ptype2(df1, df2):
 
 No common type for `x$x$y$z` <double> and `y$x$y$z` <character>. 
 

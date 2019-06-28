@@ -16,7 +16,7 @@
 #' )
 partial_frame <- function(...) {
   args <- list2(...)
-  args <- lapply(args, vec_type)
+  args <- lapply(args, vec_ptype)
 
   partial <- new_data_frame(args, n = 0L)
   new_partial_frame(partial)
@@ -29,7 +29,7 @@ new_partial_frame <- function(partial = data.frame(), learned = data.frame()) {
   )
 
   # Fails if `learned` is not compatible with `partial`
-  vec_type2(partial, learned)
+  vec_ptype2(partial, learned)
 
   new_partial(
     partial = partial,
@@ -61,30 +61,30 @@ vec_ptype_abbr.vctrs_partial_frame <- function(x, ...) {
   "prtl"
 }
 
-#' @method vec_type2 vctrs_partial_frame
+#' @method vec_ptype2 vctrs_partial_frame
 #' @export
-vec_type2.vctrs_partial_frame <- function(x, y, ...) {
-  UseMethod("vec_type2.vctrs_partial_frame", y)
+vec_ptype2.vctrs_partial_frame <- function(x, y, ...) {
+  UseMethod("vec_ptype2.vctrs_partial_frame", y)
 }
 
-#' @method vec_type2.vctrs_partial_frame vctrs_partial_frame
+#' @method vec_ptype2.vctrs_partial_frame vctrs_partial_frame
 #' @export
-vec_type2.vctrs_partial_frame.vctrs_partial_frame <- function(x, y, ...) {
-  partial <- vec_type2(x$partial, y$partial)
-  learned <- vec_type2(x$learned, y$learned)
+vec_ptype2.vctrs_partial_frame.vctrs_partial_frame <- function(x, y, ...) {
+  partial <- vec_ptype2(x$partial, y$partial)
+  learned <- vec_ptype2(x$learned, y$learned)
   new_partial_frame(partial, learned)
 }
 
-#' @method vec_type2.vctrs_partial_frame data.frame
+#' @method vec_ptype2.vctrs_partial_frame data.frame
 #' @export
-vec_type2.vctrs_partial_frame.data.frame <- function(x, y, ...) {
-  new_partial_frame(x$partial, vec_type2(x$learned, y))
+vec_ptype2.vctrs_partial_frame.data.frame <- function(x, y, ...) {
+  new_partial_frame(x$partial, vec_ptype2(x$learned, y))
 }
 
-#' @method vec_type2.data.frame vctrs_partial_frame
+#' @method vec_ptype2.data.frame vctrs_partial_frame
 #' @export
-vec_type2.data.frame.vctrs_partial_frame <- function(x, y, ...) {
-  new_partial_frame(y$partial, vec_type2(y$learned, x))
+vec_ptype2.data.frame.vctrs_partial_frame <- function(x, y, ...) {
+  new_partial_frame(y$partial, vec_ptype2(y$learned, x))
 }
 
 #' @export

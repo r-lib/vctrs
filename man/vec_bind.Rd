@@ -55,7 +55,7 @@ of length 1 will be recycled appropriately.}
 \value{
 A data frame, or subclass of data frame.
 
-If \code{...} is a mix of different data frame subclases, \code{vec_type2()}
+If \code{...} is a mix of different data frame subclases, \code{vec_ptype2()}
 will be used to determine the output type. For \code{vec_rbind()}, this
 will determine the type of the container and the type of each column;
 for \code{vec_cbind()} it only determines the type of the output container.
@@ -83,7 +83,7 @@ Once the inputs have all become data frames, the following
 invariants are observed for row-binding:
 \itemize{
 \item \code{vec_size(vec_rbind(x, y)) == vec_size(x) + vec_size(y)}
-\item \code{vec_type(vec_rbind(x, y)) = vec_type_common(x, y)}
+\item \code{vec_ptype(vec_rbind(x, y)) = vec_ptype_common(x, y)}
 }
 
 Note that if an input is an empty vector, it is first converted to
@@ -93,7 +93,7 @@ effective size for the total number of rows is 1.
 For column-binding, the following invariants apply:
 \itemize{
 \item \code{vec_size(vec_cbind(x, y)) == vec_size_common(x, y)}
-\item \code{vec_type(vec_cbind(x, y)) == vec_cbind(vec_type(x), vec_type(x))}
+\item \code{vec_ptype(vec_cbind(x, y)) == vec_cbind(vec_ptype(x), vec_ptype(x))}
 }
 }
 

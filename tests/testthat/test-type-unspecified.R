@@ -16,10 +16,10 @@ test_that("unknown type is idempotent", {
     new_duration()
   )
 
-  lhs <- map(types, vec_type2, x = unspecified())
+  lhs <- map(types, vec_ptype2, x = unspecified())
   expect_equal(types, lhs)
 
-  rhs <- map(types, vec_type2, y = unspecified())
+  rhs <- map(types, vec_ptype2, y = unspecified())
   expect_equal(types, rhs)
 })
 
@@ -38,13 +38,13 @@ test_that("has useful print method", {
 test_that("can finalise data frame containing unspecified columns", {
   df <- data.frame(y = NA, x = c(1, 2, NA))
 
-  ptype <- vec_type(df)
+  ptype <- vec_ptype(df)
   expect_identical(ptype$y, unspecified())
 
   finalised <- vec_type_finalise(ptype)
   expect_identical(finalised$y, lgl())
 
-  common <- vec_type_common(df, df)
+  common <- vec_ptype_common(df, df)
   expect_identical(common$y, lgl())
 })
 

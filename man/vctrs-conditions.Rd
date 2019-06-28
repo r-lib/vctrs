@@ -55,7 +55,7 @@ to a stricter conversion scheme. The warning advises your users
 to wrap their code with \code{allow_lossy_cast()}.}
 
 \item{x_ptype, to_ptype}{Suppress only the casting errors where \code{x}
-or \code{to} match these \link[=vec_type]{prototypes}.}
+or \code{to} match these \link[=vec_ptype]{prototypes}.}
 
 \item{subclass}{Use if you want to further customise the class}
 }

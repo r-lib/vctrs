@@ -36,15 +36,15 @@ test_that("factors level are unioned", {
   fa <- factor(levels = "a")
   fb <- factor(levels = "b")
 
-  expect_equal(vec_type_common(fa, fb), factor(levels = c("a", "b")))
-  expect_equal(vec_type_common(fb, fa), factor(levels = c("b", "a")))
+  expect_equal(vec_ptype_common(fa, fb), factor(levels = c("a", "b")))
+  expect_equal(vec_ptype_common(fb, fa), factor(levels = c("b", "a")))
 })
 
 test_that("coercion errors with factors", {
   f <- factor(levels = "a")
 
-  expect_error(vec_type_common(f, logical()), class = "vctrs_error_incompatible_type")
-  expect_error(vec_type_common(logical(), f), class = "vctrs_error_incompatible_type")
+  expect_error(vec_ptype_common(f, logical()), class = "vctrs_error_incompatible_type")
+  expect_error(vec_ptype_common(logical(), f), class = "vctrs_error_incompatible_type")
 })
 
 # Casting -----------------------------------------------------------------

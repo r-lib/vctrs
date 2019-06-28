@@ -3,7 +3,7 @@
 \name{vec_ptype_full.integer64}
 \alias{vec_ptype_full.integer64}
 \alias{vec_ptype_abbr.integer64}
-\alias{vec_type2.integer64}
+\alias{vec_ptype2.integer64}
 \alias{vec_cast.integer64}
 \title{64 bit integers}
 \usage{
@@ -11,7 +11,7 @@
 
 \method{vec_ptype_abbr}{integer64}(x, ...)
 
-\method{vec_type2}{integer64}(x, y, ...)
+\method{vec_ptype2}{integer64}(x, y, ...)
 
 \method{vec_cast}{integer64}(x, to, ...)
 }

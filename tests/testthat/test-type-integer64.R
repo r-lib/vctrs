@@ -23,30 +23,30 @@ test_that("casting of integer64 works", {
   expect_error(vec_cast(factor(), x), class = "vctrs_error_incompatible_cast")
 })
 
-test_that("vec_type2 for integer64 works", {
+test_that("vec_ptype2 for integer64 works", {
   x <- bit64::as.integer64(1:10)
-  expect_equal(vec_type2(x, x), bit64::integer64())
+  expect_equal(vec_ptype2(x, x), bit64::integer64())
 
-  expect_equal(vec_type2(x, 1L), bit64::integer64())
-  expect_equal(vec_type2(1L, x), bit64::integer64())
+  expect_equal(vec_ptype2(x, 1L), bit64::integer64())
+  expect_equal(vec_ptype2(1L, x), bit64::integer64())
 
-  expect_equal(vec_type2(x, TRUE), bit64::integer64())
-  expect_equal(vec_type2(TRUE, x), bit64::integer64())
+  expect_equal(vec_ptype2(x, TRUE), bit64::integer64())
+  expect_equal(vec_ptype2(TRUE, x), bit64::integer64())
 
-  expect_equal(vec_type2(x, NA), bit64::integer64())
-  expect_equal(vec_type2(NA, x), bit64::integer64())
+  expect_equal(vec_ptype2(x, NA), bit64::integer64())
+  expect_equal(vec_ptype2(NA, x), bit64::integer64())
 
-  expect_equal(vec_type2(unspecified(), x), bit64::integer64())
-  expect_equal(vec_type2(x, unspecified()), bit64::integer64())
+  expect_equal(vec_ptype2(unspecified(), x), bit64::integer64())
+  expect_equal(vec_ptype2(x, unspecified()), bit64::integer64())
 
-  expect_error(vec_type2(x, 1))
-  expect_error(vec_type2(1, x))
+  expect_error(vec_ptype2(x, 1))
+  expect_error(vec_ptype2(1, x))
 
-  expect_error(vec_type2(x, ""))
-  expect_error(vec_type2("", x))
+  expect_error(vec_ptype2(x, ""))
+  expect_error(vec_ptype2("", x))
 
-  expect_error(vec_type2(data.frame(), x))
-  expect_error(vec_type2(x, data.frame()))
+  expect_error(vec_ptype2(data.frame(), x))
+  expect_error(vec_ptype2(x, data.frame()))
 })
 
 test_that("vec_ptype_abbr.integer64", {

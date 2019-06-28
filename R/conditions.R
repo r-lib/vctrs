@@ -285,7 +285,7 @@ stop_lossy_cast <- function(x, to, result,
 }
 #' @rdname vctrs-conditions
 #' @param x_ptype,to_ptype Suppress only the casting errors where `x`
-#'   or `to` match these [prototypes][vec_type].
+#'   or `to` match these [prototypes][vec_ptype].
 #' @export
 allow_lossy_cast <- function(expr, x_ptype = NULL, to_ptype = NULL) {
   withCallingHandlers(

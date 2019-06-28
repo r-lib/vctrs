@@ -85,11 +85,11 @@ vec_slice(x, 2) <- 20.0
 
 # `x` is still an integer vector because the RHS was cast to the
 # type of the LHS:
-vec_type(x)
+vec_ptype(x)
 
 # Compare to `[<-`:
 x[2] <- 20.0
-vec_type(x)
+vec_ptype(x)
 
 
 # Note that the types must be coercible for the cast to happen.
@@ -97,7 +97,7 @@ vec_type(x)
 vec_cast("1", integer())
 
 # But these types are not coercible:
-try(vec_type2("1", integer()))
+try(vec_ptype2("1", integer()))
 
 # Hence you cannot assign character values to an integer or double
 # vector:

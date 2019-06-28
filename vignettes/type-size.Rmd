@@ -14,7 +14,7 @@ knitr::opts_chunk$set(
 )
 ```
 
-Rather than using `class()` and `length()`, vctrs has notions of prototype (`vec_ptype()`) and size (`vec_size()`). This vignette motivates why these alternatives are necessary, and connects their definitions to type coercion and the recycling rules.
+Rather than using `class()` and `length()`, vctrs has notions of prototype (`vec_ptype_show()`) and size (`vec_size()`). This vignette motivates why these alternatives are necessary, and connects their definitions to type coercion and the recycling rules.
 
 Size and prototype are motivated by thinking about the optimal behaviour for `c()` and `rbind()`, particularly inspired by data frames with columns that are matrices or data frames.
 
@@ -40,27 +40,27 @@ Conveniently, you can create many prototypes using existing base functions (e.g,
 
 ### Base prototypes
 
-`vec_type()` creates a prototype from an existing object. However, many base vectors have uninformative printing methods for 0-length subsets, so vctrs also provides `vec_ptype()`, which prints the prototype in a friendly way (and returns nothing).
+`vec_ptype()` creates a prototype from an existing object. However, many base vectors have uninformative printing methods for 0-length subsets, so vctrs also provides `vec_ptype_show()`, which prints the prototype in a friendly way (and returns nothing).
 
-Using `vec_ptype()` allows us to see the prototypes base R classes:.
+Using `vec_ptype_show()` allows us to see the prototypes base R classes:.
 
 *  Atomic vectors have no attributes, and just display the underlying `typeof()`:
 
     ```{r}
-    vec_ptype(FALSE)
-    vec_ptype(1L)
-    vec_ptype(2.5)
-    vec_ptype("three")
-    vec_ptype(list(1, 2, 3))
+    vec_ptype_show(FALSE)
+    vec_ptype_show(1L)
+    vec_ptype_show(2.5)
+    vec_ptype_show("three")
+    vec_ptype_show(list(1, 2, 3))
     ```
 
 *  The prototype of matrices and arrays include the base type, and the 
    dimensions after the first:
 
     ```{r}
-    vec_ptype(array(logical(), c(2, 3)))
-    vec_ptype(array(integer(), c(2, 3, 4)))
-    vec_ptype(array(character(), c(2, 3, 4, 5)))
+    vec_ptype_show(array(logical(), c(2, 3)))
+    vec_ptype_show(array(integer(), c(2, 3, 4)))
+    vec_ptype_show(array(character(), c(2, 3, 4, 5)))
     ```
 
 *  The prototype of a factor includes its levels. Levels are a character vector,
@@ -69,15 +69,15 @@ Using `vec_ptype()` allows us to see the prototypes base R classes:.
    equal.
 
     ```{r}
-    vec_ptype(factor("a"))
-    vec_ptype(ordered("b"))
+    vec_ptype_show(factor("a"))
+    vec_ptype_show(ordered("b"))
     ```
     
-    While `vec_ptype()` prints only the hash, the prototype object itself does
+    While `vec_ptype_show()` prints only the hash, the prototype object itself does
     contain all levels:
     
     ```{r}
-    vec_type(factor("a"))
+    vec_ptype(factor("a"))
     ```
     
 *   Base R has three key date time classes: dates, date-times (`POSIXct`),
@@ -85,16 +85,16 @@ Using `vec_ptype()` allows us to see the prototypes base R classes:.
     a unit.
 
     ```{r}
-    vec_ptype(Sys.Date())
-    vec_ptype(Sys.time())
-    vec_ptype(as.difftime(10, units = "mins"))
+    vec_ptype_show(Sys.Date())
+    vec_ptype_show(Sys.time())
+    vec_ptype_show(as.difftime(10, units = "mins"))
     ```
 
 *   Data frames have the most complex prototype: the prototype of a data frame
     is the name and prototype of each column:
     
     ```{r}
-    vec_ptype(data.frame(a = FALSE, b = 1L, c = 2.5, d = "x"))
+    vec_ptype_show(data.frame(a = FALSE, b = 1L, c = 2.5, d = "x"))
     ```
 
     Data frames can have columns that are themselves data frames, making this
@@ -103,42 +103,42 @@ Using `vec_ptype()` allows us to see the prototypes base R classes:.
     ```{r}
     df <- data.frame(x = FALSE)
     df$y <- data.frame(a = 1L, b = 2.5)
-    vec_ptype(df)
+    vec_ptype_show(df)
     ```
 
 ### Coercing to common type
 
-It's often important to combine vectors with multiple types. vctrs provides a consistent set of rules for coercion, via `vec_type_common()`. `vec_type_common()` possesses the following invariants:
+It's often important to combine vectors with multiple types. vctrs provides a consistent set of rules for coercion, via `vec_ptype_common()`. `vec_ptype_common()` possesses the following invariants:
 
-* `class(vec_type_common(x, y))` equals `class(vec_type_common(y, x))`.
+* `class(vec_ptype_common(x, y))` equals `class(vec_ptype_common(y, x))`.
 
-* `class(vec_type_common(x, vec_type_common(y, z))` equals 
-  `class(vec_type_common(vec_type_common(x, y), z))`.
+* `class(vec_ptype_common(x, vec_ptype_common(y, z))` equals 
+  `class(vec_ptype_common(vec_ptype_common(x, y), z))`.
   
-* `vec_type_common(x, NULL) == vec_type(x)`.
+* `vec_ptype_common(x, NULL) == vec_ptype(x)`.
 
-i.e. `vec_type_common()` is both commutative and associative (with respect to class), and has an identity element, `NULL`, i.e. it's a __commutative monoid__. This means the underlying implementation is quite simple: we can find the common type of any number of objects by progressively finding the common type of pairs of objects.
+i.e. `vec_ptype_common()` is both commutative and associative (with respect to class), and has an identity element, `NULL`, i.e. it's a __commutative monoid__. This means the underlying implementation is quite simple: we can find the common type of any number of objects by progressively finding the common type of pairs of objects.
 
-Like with `vec_type()`, the easiest way to explore `vec_type_common()` is with `vec_ptype()`: when given multiple inputs, it will print their common prototype. (In other words: program with `vec_type_common()` but play with `vec_ptype()`.)
+Like with `vec_ptype()`, the easiest way to explore `vec_ptype_common()` is with `vec_ptype_show()`: when given multiple inputs, it will print their common prototype. (In other words: program with `vec_ptype_common()` but play with `vec_ptype_show()`.)
 
 *   The common type of atomic vectors is computed very similar to rules of base 
     R, except that we do not coerce to character automatically:
     
     ```{r, error = TRUE}
-    vec_ptype(logical(), integer(), double())
+    vec_ptype_show(logical(), integer(), double())
     
-    vec_ptype(logical(), character())
+    vec_ptype_show(logical(), character())
     ```
 
 *   Matrices and arrays are automatically broadcast to higher dimensions:
 
     ```{r}
-    vec_ptype(
+    vec_ptype_show(
       array(1, c(0, 1)), 
       array(1, c(0, 2))
     )
     
-    vec_ptype(
+    vec_ptype_show(
       array(1, c(0, 1)), 
       array(1, c(0, 3)),
       array(1, c(0, 3, 4)),
@@ -149,7 +149,7 @@ Like with `vec_type()`, the easiest way to explore `vec_type_common()` is with `
     Provided that the dimensions follow the vctrs recycling rules:
     
     ```{r, error = TRUE}
-    vec_ptype(
+    vec_ptype_show(
       array(1, c(0, 2)), 
       array(1, c(0, 3))
     )
@@ -161,20 +161,20 @@ Like with `vec_type()`, the easiest way to explore `vec_type_common()` is with `
     fa <- factor("a")
     fb <- factor("b")
     
-    levels(vec_type_common(fa, fb))
-    levels(vec_type_common(fb, fa))
+    levels(vec_ptype_common(fa, fb))
+    levels(vec_ptype_common(fb, fa))
     ```
 
 *   Combining a date and date-time yields a date-time:
 
     ```{r}
-    vec_ptype(new_date(), new_datetime())
+    vec_ptype_show(new_date(), new_datetime())
     ```
 
     When combining two date times, the timezone is taken from the first input:
 
     ```{r}
-    vec_ptype(
+    vec_ptype_show(
       new_datetime(tzone = "US/Central"), 
       new_datetime(tzone = "Pacific/Auckland")
     )
@@ -184,7 +184,7 @@ Like with `vec_type()`, the easiest way to explore `vec_type_common()` is with `
     win:
 
     ```{r}
-    vec_ptype(
+    vec_ptype_show(
       new_datetime(tzone = ""), 
       new_datetime(tzone = ""), 
       new_datetime(tzone = "Pacific/Auckland")
@@ -195,7 +195,7 @@ Like with `vec_type()`, the easiest way to explore `vec_type_common()` is with `
     occurs in both data frames:
     
     ```{r}
-    vec_ptype(
+    vec_ptype_show(
       data.frame(x = FALSE), 
       data.frame(x = 1L),
       data.frame(x = 2.5)
@@ -205,7 +205,7 @@ Like with `vec_type()`, the easiest way to explore `vec_type_common()` is with `
     And the union of the columns that only occur in one:
 
     ```{r}
-    vec_ptype(data.frame(x = 1, y = 1), data.frame(y = 1, z = 1))
+    vec_ptype_show(data.frame(x = 1, y = 1), data.frame(y = 1, z = 1))
     ```
 
     Note that new columns are added on the right-hand side. This is consistent
@@ -213,7 +213,7 @@ Like with `vec_type()`, the easiest way to explore `vec_type_common()` is with `
 
 ### Casting to specified type
 
-`vec_type_common()` finds the common type of a set of vector. Typically, however, what you want is a set of vectors coerced to that common type. That's the job of `vec_cast_common()`:
+`vec_ptype_common()` finds the common type of a set of vector. Typically, however, what you want is a set of vectors coerced to that common type. That's the job of `vec_cast_common()`:
 
 ```{r}
 str(vec_cast_common(

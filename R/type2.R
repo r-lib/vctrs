@@ -1,9 +1,9 @@
 #' Find the common type for a pair of vector types
 #'
-#' `vec_type2()` finds the common type for a pair of vectors, or dies trying.
+#' `vec_ptype2()` finds the common type for a pair of vectors, or dies trying.
 #' It forms the foundation of the vctrs type system, along with [vec_cast()].
 #' This powers type coercion but should not usually be called directly;
-#' instead call [vec_type_common()].
+#' instead call [vec_ptype_common()].
 #'
 #' @section Coercion rules:
 #' vctrs thinks of the vector types as forming a partially ordered set, or
@@ -17,15 +17,15 @@
 #' \figure{coerce.png}
 #'
 #' @section S3 dispatch:
-#' `vec_type2()` dispatches on both arguments. This is implemented by having
-#' methods of `vec_type2()`, e.g. `vec_type2.integer()` also be S3 generics,
-#' which call e.g. `vec_type2.integer.double()`. `vec_type2.x.y()` must
-#' return the same value as `vec_type2.y.x()`; this is currently not enforced,
+#' `vec_ptype2()` dispatches on both arguments. This is implemented by having
+#' methods of `vec_ptype2()`, e.g. `vec_ptype2.integer()` also be S3 generics,
+#' which call e.g. `vec_ptype2.integer.double()`. `vec_ptype2.x.y()` must
+#' return the same value as `vec_ptype2.y.x()`; this is currently not enforced,
 #' but should be tested.
 #'
-#' Whenever you implemenet a `vec_type2.new_class()` generic/method,
-#' make sure to always provide `vec_type2.new_class.default()`. It
-#' should normally call `vec_default_type2()`.
+#' Whenever you implemenet a `vec_ptype2.new_class()` generic/method,
+#' make sure to always provide `vec_ptype2.new_class.default()`. It
+#' should normally call `vec_default_ptype2()`.
 #'
 #' See `vignette("s3-vector")` for full details.
 #' @keywords internal
@@ -35,30 +35,30 @@
 #'   in error messages to inform the user about the locations of
 #'   incompatible types (see [stop_incompatible_type()]).
 #' @export
-vec_type2 <- function(x, y, ..., x_arg = "x", y_arg = "y") {
+vec_ptype2 <- function(x, y, ..., x_arg = "x", y_arg = "y") {
   if (!missing(...)) {
     ellipsis::check_dots_empty()
   }
   return(.Call(vctrs_type2, x, y, x_arg, y_arg))
-  UseMethod("vec_type2")
+  UseMethod("vec_ptype2")
 }
 vec_type2_dispatch <- function(x, y, ..., x_arg = "x", y_arg = "y") {
-  UseMethod("vec_type2")
+  UseMethod("vec_ptype2")
 }
 #' @export
-vec_type2.default <- function(x, y, ..., x_arg = "x", y_arg = "y") {
+vec_ptype2.default <- function(x, y, ..., x_arg = "x", y_arg = "y") {
   if (has_same_type(x, y)) {
     return(x)
   }
   stop_incompatible_type(x, y, x_arg = x_arg, y_arg = y_arg)
 }
-#' @rdname vec_type2
+#' @rdname vec_ptype2
 #' @export
-vec_default_type2 <- function(x, y, ..., x_arg = "x", y_arg = "y") {
+vec_default_ptype2 <- function(x, y, ..., x_arg = "x", y_arg = "y") {
   if (is_unspecified(y)) {
-    # FIXME: Should `vec_type()` make that check?
+    # FIXME: Should `vec_ptype()` make that check?
     vec_assert(x)
-    return(vec_type(x))
+    return(vec_ptype(x))
   }
   stop_incompatible_type(x, y, x_arg = x_arg, y_arg = y_arg)
 }

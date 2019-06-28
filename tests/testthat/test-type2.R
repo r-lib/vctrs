@@ -17,8 +17,8 @@ test_that("base coercions are symmetric and unchanging", {
 
 test_that("new classes are uncoercible by default", {
   x <- structure(1:10, class = "vctrs_nonexistant")
-  expect_error(vec_type2(1, x), class = "vctrs_error_incompatible_type")
-  expect_error(vec_type2(x, 1), class = "vctrs_error_incompatible_type")
+  expect_error(vec_ptype2(1, x), class = "vctrs_error_incompatible_type")
+  expect_error(vec_ptype2(x, 1), class = "vctrs_error_incompatible_type")
 })
 
 test_that("vec_typeof2() returns common type", {
@@ -42,33 +42,33 @@ test_that("vec_typeof2() returns common type", {
   }
 })
 
-test_that("vec_type2() dispatches when inputs have shape", {
-  expect_identical(dim(vec_type2(int(), matrix(nrow = 3, ncol = 4))), c(0L, 4L))
-  expect_identical(dim(vec_type2(matrix("", nrow = 3), c("", "", ""))), c(0L, 1L))
+test_that("vec_ptype2() dispatches when inputs have shape", {
+  expect_identical(dim(vec_ptype2(int(), matrix(nrow = 3, ncol = 4))), c(0L, 4L))
+  expect_identical(dim(vec_ptype2(matrix("", nrow = 3), c("", "", ""))), c(0L, 1L))
 })
 
-test_that("vec_type2() requires vectors", {
-  expect_error(vec_type2(NULL, quote(name)), class = "vctrs_error_scalar_type")
-  expect_error(vec_type2(NA, quote(name)), class = "vctrs_error_scalar_type")
-  expect_error(vec_type2(list(), quote(name)), class = "vctrs_error_scalar_type")
-  expect_error(vec_type2(quote(name), NULL), class = "vctrs_error_scalar_type")
-  expect_error(vec_type2(quote(name), NA), class = "vctrs_error_scalar_type")
-  expect_error(vec_type2(quote(name), list()), class = "vctrs_error_scalar_type")
-  expect_error(vec_type2(quote(name), quote(name)), class = "vctrs_error_scalar_type")
+test_that("vec_ptype2() requires vectors", {
+  expect_error(vec_ptype2(NULL, quote(name)), class = "vctrs_error_scalar_type")
+  expect_error(vec_ptype2(NA, quote(name)), class = "vctrs_error_scalar_type")
+  expect_error(vec_ptype2(list(), quote(name)), class = "vctrs_error_scalar_type")
+  expect_error(vec_ptype2(quote(name), NULL), class = "vctrs_error_scalar_type")
+  expect_error(vec_ptype2(quote(name), NA), class = "vctrs_error_scalar_type")
+  expect_error(vec_ptype2(quote(name), list()), class = "vctrs_error_scalar_type")
+  expect_error(vec_ptype2(quote(name), quote(name)), class = "vctrs_error_scalar_type")
 })
 
-test_that("vec_type2() forwards argument tag", {
-  expect_error(vec_type2(quote(name), list(), x_arg = "foo"), "`foo`", class = "vctrs_error_scalar_type")
-  expect_error(vec_type2(list(), quote(name), y_arg = "foo"), "`foo`", class = "vctrs_error_scalar_type")
+test_that("vec_ptype2() forwards argument tag", {
+  expect_error(vec_ptype2(quote(name), list(), x_arg = "foo"), "`foo`", class = "vctrs_error_scalar_type")
+  expect_error(vec_ptype2(list(), quote(name), y_arg = "foo"), "`foo`", class = "vctrs_error_scalar_type")
 })
 
 test_that("stop_incompatible_type() checks for scalars", {
   expect_error(stop_incompatible_type(NA, foobar()), class = "vctrs_error_scalar_type")
-  expect_error(vec_type_common(NA, foobar()), class = "vctrs_error_scalar_type")
-  expect_error(vec_type_common(foobar(), list()), class = "vctrs_error_scalar_type")
+  expect_error(vec_ptype_common(NA, foobar()), class = "vctrs_error_scalar_type")
+  expect_error(vec_ptype_common(foobar(), list()), class = "vctrs_error_scalar_type")
 })
 
-test_that("vec_type2() methods forward args to stop_incompatible_type()", {
+test_that("vec_ptype2() methods forward args to stop_incompatible_type()", {
   expect_args(new_hidden(), NA, x_arg = "foo", y_arg = "bar")
   expect_args(lgl(), new_hidden(), x_arg = "foo", y_arg = "bar")
   expect_args(int(), new_hidden(), x_arg = "foo", y_arg = "bar")
@@ -85,15 +85,15 @@ test_that("vec_type2() methods forward args to stop_incompatible_type()", {
   expect_args(bit64::as.integer64(1), new_hidden(), x_arg = "foo", y_arg = "bar")
 })
 
-test_that("vec_type2() data frame methods builds argument tags", {
+test_that("vec_ptype2() data frame methods builds argument tags", {
   expect_known_output(file = test_path("test-type2-error-messages.txt"), {
     cat_line("Bare objects:")
-    try2(vec_type2("foo", 10))
+    try2(vec_ptype2("foo", 10))
 
     cat_line("Nested dataframes:")
     df1 <- tibble(x = tibble(y = tibble(z = 1)))
     df2 <- tibble(x = tibble(y = tibble(z = "a")))
-    try2(vec_type2(df1, df2))
+    try2(vec_ptype2(df1, df2))
   })
 })
 
@@ -101,7 +101,7 @@ test_that("stop_incompatible_type() can be called without argument tags", {
   expect_error(stop_incompatible_type(1, 2, x_arg = "", y_arg = ""), "<double> and <double>", class = "vctrs_error_incompatible_type")
 })
 
-test_that("vec_type2() returns empty prototype when other input is NULL", {
-  expect_identical(vec_type2(1:5, NULL), int())
-  expect_identical(vec_type2(NULL, 1:5), int())
+test_that("vec_ptype2() returns empty prototype when other input is NULL", {
+  expect_identical(vec_ptype2(1:5, NULL), int())
+  expect_identical(vec_ptype2(NULL, 1:5), int())
 })

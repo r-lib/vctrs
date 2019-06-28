@@ -200,8 +200,8 @@ test_that("can not provide invalid names", {
 
 test_that("can use [ and [[ with names", {
   scoped_global_bindings(
-    vec_type2.vctrs_vctr = function(...) dbl(),
-    vec_type2.double.vctrs_vctr = function(...) dbl()
+    vec_ptype2.vctrs_vctr = function(...) dbl(),
+    vec_ptype2.double.vctrs_vctr = function(...) dbl()
   )
   x <- new_vctr(c(a = 1, b = 2))
 
@@ -216,8 +216,8 @@ test_that("can use [ and [[ with names", {
 
 test_that("can use [ and [[ with names - list vctr", {
   scoped_global_bindings(
-    vec_type2.vctrs_vctr = function(...) list(),
-    vec_type2.list.vctrs_vctr = function(...) list()
+    vec_ptype2.vctrs_vctr = function(...) list(),
+    vec_ptype2.list.vctrs_vctr = function(...) list()
   )
   y <- new_vctr(list(a = 1, b = 2))
   y[["c"]] <- 3
@@ -229,8 +229,8 @@ test_that("can use [ and [[ with names - list vctr", {
 test_that("can use [[<- to replace n-dimensional elements", {
   scoped_global_bindings(
     vec_restore.vctrs_mtrx = function(x, to, ...) x,
-    vec_type2.double.vctrs_mtrx = function(...) dbl(),
-    vec_type2.vctrs_mtrx = function(...) dbl()
+    vec_ptype2.double.vctrs_mtrx = function(...) dbl(),
+    vec_ptype2.vctrs_mtrx = function(...) dbl()
   )
   x <- new_vctr(rep(1, times = 4), dim = c(2, 2), class = "vctrs_mtrx")
   x[[2, 2]] <- 4

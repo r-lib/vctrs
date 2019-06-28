@@ -34,7 +34,7 @@
 #' @details
 #'
 #' There is no vctrs helper that retrieves the number of columns: as this
-#' is a property of the [type][vec_ptype()].
+#' is a property of the [type][vec_ptype_show()].
 #'
 #' `vec_size()` is equivalent to `NROW()` but has a name that is easier to
 #' pronounce, and throws an error when passed non-vector inputs.

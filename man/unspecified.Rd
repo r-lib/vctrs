@@ -2,12 +2,12 @@
 % Please edit documentation in R/type-unspecified.R
 \name{unspecified}
 \alias{unspecified}
-\alias{vec_type2.vctrs_unspecified}
+\alias{vec_ptype2.vctrs_unspecified}
 \title{A 1d vector of unspecified type}
 \usage{
 unspecified(n = 0)
 
-\method{vec_type2}{vctrs_unspecified}(x, y, ...)
+\method{vec_ptype2}{vctrs_unspecified}(x, y, ...)
 }
 \arguments{
 \item{n}{Length of vector}
@@ -18,8 +18,8 @@ that only contain \code{NA}. These require special handling because we want to
 allow \code{NA} to specify missingness without requiring a type.
 }
 \examples{
-vec_ptype()
-vec_ptype(NA)
+vec_ptype_show()
+vec_ptype_show(NA)
 
 vec_c(NA, factor("x"))
 vec_c(NA, Sys.Date())

@@ -14,8 +14,8 @@ scoped_proxy <- function(frame = caller_env()) {
     vec_proxy.vctrs_proxy = function(x, ...) proxy_deref(x),
     vec_restore.vctrs_proxy = function(x, to, ...) new_proxy(x),
 
-    vec_type2.vctrs_proxy = function(x, y, ...) UseMethod("vec_type2.vctrs_proxy", y),
-    vec_type2.vctrs_proxy.vctrs_proxy = function(x, y, ...) new_proxy(vec_type(proxy_deref(x))),
+    vec_ptype2.vctrs_proxy = function(x, y, ...) UseMethod("vec_ptype2.vctrs_proxy", y),
+    vec_ptype2.vctrs_proxy.vctrs_proxy = function(x, y, ...) new_proxy(vec_ptype(proxy_deref(x))),
 
     vec_cast.vctrs_proxy = function(x, to, ...) UseMethod("vec_cast.vctrs_proxy"),
     vec_cast.vctrs_proxy.default = function(x, to, ...) stop_incompatible_cast(x, to),

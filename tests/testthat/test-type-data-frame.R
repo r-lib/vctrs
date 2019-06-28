@@ -9,10 +9,10 @@ test_that("data frames print nicely", {
     file = test_path("test-type-data-frame.txt"),
     {
       cat("mtcars:\n")
-      vec_ptype(mtcars)
+      vec_ptype_show(mtcars)
       cat("\n")
       cat("iris:\n")
-      vec_ptype(iris)
+      vec_ptype_show(iris)
     }
   )
 })
@@ -26,7 +26,7 @@ test_that("embedded data frames print nicely", {
   expect_known_output(
     file = test_path("test-type-data-frame-embedded.txt"),
     {
-      vec_ptype(df)
+      vec_ptype_show(df)
     }
   )
 })
@@ -35,15 +35,15 @@ test_that("embedded data frames print nicely", {
 
 test_that("data frame only combines with other data frames or NULL", {
   dt <- data.frame(x = 1)
-  expect_equal(vec_type_common(dt, NULL), vec_type(dt))
-  expect_error(vec_type_common(dt, 1:10), class = "vctrs_error_incompatible_type")
+  expect_equal(vec_ptype_common(dt, NULL), vec_ptype(dt))
+  expect_error(vec_ptype_common(dt, 1:10), class = "vctrs_error_incompatible_type")
 })
 
 test_that("data frame takes max of individual variables", {
   dt1 <- data.frame(x = FALSE, y = 1L)
   dt2 <- data.frame(x = 1.5, y = 1.5)
 
-  expect_equal(vec_type_common(dt1, dt2), vec_type_common(dt2))
+  expect_equal(vec_ptype_common(dt1, dt2), vec_ptype_common(dt2))
 })
 
 test_that("data frame combines variables", {
@@ -52,14 +52,14 @@ test_that("data frame combines variables", {
 
   dt3 <- max(dt1, dt2)
   expect_equal(
-    vec_type_common(dt1, dt2),
-    vec_type_common(data.frame(x = double(), y = double()))
+    vec_ptype_common(dt1, dt2),
+    vec_ptype_common(data.frame(x = double(), y = double()))
   )
 })
 
 test_that("empty data frame still has names", {
   df <- data.frame()
-  out <- vec_type_common(df, df)
+  out <- vec_ptype_common(df, df)
 
   expect_equal(names(out), character())
 })
@@ -102,7 +102,7 @@ test_that("column order matches type", {
   df1 <- data.frame(x = 1, y = "a")
   df2 <- data.frame(x = TRUE, z = 3)
 
-  df3 <- vec_cast(df2, vec_type_common(df1, df2))
+  df3 <- vec_cast(df2, vec_ptype_common(df1, df2))
   expect_named(df3, c("x", "y", "z"))
 })
 

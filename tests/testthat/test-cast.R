@@ -93,7 +93,7 @@ test_that("data frame vec_restore() checks type", {
 test_that("can use vctrs primitives from vec_restore() without inflooping", {
   scoped_global_bindings(
     vec_restore.vctrs_foobar = function(x, to, ...) {
-      vec_type(x)
+      vec_ptype(x)
       vec_init(x)
       vec_assert(x)
       vec_slice(x, 0)
