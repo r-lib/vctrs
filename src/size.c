@@ -8,7 +8,7 @@ SEXP vec_dim(SEXP x) {
   SEXP dim = PROTECT(vec_bare_dim(x));
 
   if (dim == R_NilValue) {
-    dim = r_int(Rf_length(x));
+    dim = r_int(vec_size(x));
   }
 
   UNPROTECT(1);
