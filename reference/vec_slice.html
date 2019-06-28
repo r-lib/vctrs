@@ -217,16 +217,16 @@ as the LHS.</p></li>
 
 <span class='co'># `x` is still an integer vector because the RHS was cast to the</span>
 <span class='co'># type of the LHS:</span>
-<span class='fu'><a href='vec_type.html'>vec_type</a></span>(<span class='no'>x</span>)</div><div class='output co'>#&gt; integer(0)</div><div class='input'>
+<span class='fu'><a href='vec_ptype.html'>vec_ptype</a></span>(<span class='no'>x</span>)</div><div class='output co'>#&gt; integer(0)</div><div class='input'>
 <span class='co'># Compare to `[&lt;-`:</span>
 <span class='no'>x</span>[<span class='fl'>2</span>] <span class='kw'>&lt;-</span> <span class='fl'>20.0</span>
-<span class='fu'><a href='vec_type.html'>vec_type</a></span>(<span class='no'>x</span>)</div><div class='output co'>#&gt; numeric(0)</div><div class='input'>
+<span class='fu'><a href='vec_ptype.html'>vec_ptype</a></span>(<span class='no'>x</span>)</div><div class='output co'>#&gt; numeric(0)</div><div class='input'>
 
 <span class='co'># Note that the types must be coercible for the cast to happen.</span>
 <span class='co'># For instance, you can cast a character vector to an integer:</span>
 <span class='fu'><a href='vec_cast.html'>vec_cast</a></span>(<span class='st'>"1"</span>, <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/integer'>integer</a></span>())</div><div class='output co'>#&gt; [1] 1</div><div class='input'>
 <span class='co'># But these types are not coercible:</span>
-<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/try'>try</a></span>(<span class='fu'><a href='vec_type2.html'>vec_type2</a></span>(<span class='st'>"1"</span>, <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/integer'>integer</a></span>()))</div><div class='output co'>#&gt; Error : No common type for `x` &lt;character&gt; and `y` &lt;integer&gt;.
+<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/try'>try</a></span>(<span class='fu'><a href='vec_ptype2.html'>vec_ptype2</a></span>(<span class='st'>"1"</span>, <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/integer'>integer</a></span>()))</div><div class='output co'>#&gt; Error : No common type for `x` &lt;character&gt; and `y` &lt;integer&gt;.
 #&gt; Backtrace:
 #&gt; <span style='color: #555555;'>     </span><span>█
 #&gt; </span><span style='color: #555555;'>  1. </span><span>├─base::tryCatch(...)
@@ -266,16 +266,16 @@ as the LHS.</p></li>
 #&gt; </span><span style='color: #555555;'> 35. </span><span>│                       ├─base::withVisible(eval(expr, envir, enclos))
 #&gt; </span><span style='color: #555555;'> 36. </span><span>│                       └─base::eval(expr, envir, enclos)
 #&gt; </span><span style='color: #555555;'> 37. </span><span>│                         └─base::eval(expr, envir, enclos)
-#&gt; </span><span style='color: #555555;'> 38. </span><span>│                           ├─base::try(vec_type2("1", integer()))
+#&gt; </span><span style='color: #555555;'> 38. </span><span>│                           ├─base::try(vec_ptype2("1", integer()))
 #&gt; </span><span style='color: #555555;'> 39. </span><span>│                           │ └─base::tryCatch(...)
 #&gt; </span><span style='color: #555555;'> 40. </span><span>│                           │   └─base:::tryCatchList(expr, classes, parentenv, handlers)
 #&gt; </span><span style='color: #555555;'> 41. </span><span>│                           │     └─base:::tryCatchOne(expr, names, parentenv, handlers[[1L]])
 #&gt; </span><span style='color: #555555;'> 42. </span><span>│                           │       └─base:::doTryCatch(return(expr), name, parentenv, handler)
-#&gt; </span><span style='color: #555555;'> 43. </span><span>│                           └─vctrs::vec_type2("1", integer())
+#&gt; </span><span style='color: #555555;'> 43. </span><span>│                           └─vctrs::vec_ptype2("1", integer())
 #&gt; </span><span style='color: #555555;'> 44. </span><span>├─vctrs:::vec_type2_dispatch(x = x, y = y, x_arg = x_arg, y_arg = y_arg)
-#&gt; </span><span style='color: #555555;'> 45. </span><span>├─vctrs::vec_type2.character(x = x, y = y, x_arg = x_arg, y_arg = y_arg) </span><span style='color: #555555;'>/home/travis/build/r-lib/vctrs/R/type2.R:46:2</span><span>
-#&gt; </span><span style='color: #555555;'> 46. </span><span>└─vctrs:::vec_type2.character.default(...) </span><span style='color: #555555;'>/home/travis/build/r-lib/vctrs/R/type-bare.R:58:23</span><span>
-#&gt; </span><span style='color: #555555;'> 47. </span><span>  └─vctrs::vec_default_type2(x, y, x_arg = x_arg, y_arg = y_arg) </span><span style='color: #555555;'>/home/travis/build/r-lib/vctrs/R/type-bare.R:129:2</span><span>
+#&gt; </span><span style='color: #555555;'> 45. </span><span>├─vctrs::vec_ptype2.character(x = x, y = y, x_arg = x_arg, y_arg = y_arg) </span><span style='color: #555555;'>/home/travis/build/r-lib/vctrs/R/type2.R:46:2</span><span>
+#&gt; </span><span style='color: #555555;'> 46. </span><span>└─vctrs:::vec_ptype2.character.default(...) </span><span style='color: #555555;'>/home/travis/build/r-lib/vctrs/R/type-bare.R:58:24</span><span>
+#&gt; </span><span style='color: #555555;'> 47. </span><span>  └─vctrs::vec_default_ptype2(x, y, x_arg = x_arg, y_arg = y_arg) </span><span style='color: #555555;'>/home/travis/build/r-lib/vctrs/R/type-bare.R:129:2</span><span>
 #&gt; </span><span style='color: #555555;'> 48. </span><span>    └─vctrs::stop_incompatible_type(x, y, x_arg = x_arg, y_arg = y_arg) </span><span style='color: #555555;'>/home/travis/build/r-lib/vctrs/R/type2.R:63:2</span><span>
 #&gt; </span><span style='color: #555555;'> 49. </span><span>      └─vctrs:::stop_incompatible(...) </span><span style='color: #555555;'>/home/travis/build/r-lib/vctrs/R/conditions.R:92:2</span><span>
 #&gt; </span><span style='color: #555555;'> 50. </span><span>        └─vctrs:::stop_vctrs(...) </span><span style='color: #555555;'>/home/travis/build/r-lib/vctrs/R/conditions.R:48:2</span><span></div><div class='input'>
@@ -328,9 +328,9 @@ as the LHS.</p></li>
 #&gt; </span><span style='color: #555555;'> 42. </span><span>│                           │       └─base:::doTryCatch(return(expr), name, parentenv, handler)
 #&gt; </span><span style='color: #555555;'> 43. </span><span>│                           └─vctrs::`vec_slice&lt;-`(`*tmp*`, 2, value = "20")
 #&gt; </span><span style='color: #555555;'> 44. </span><span>├─vctrs:::vec_type2_dispatch(x = x, y = y, x_arg = x_arg, y_arg = y_arg)
-#&gt; </span><span style='color: #555555;'> 45. </span><span>├─vctrs::vec_type2.character(x = x, y = y, x_arg = x_arg, y_arg = y_arg) </span><span style='color: #555555;'>/home/travis/build/r-lib/vctrs/R/type2.R:46:2</span><span>
-#&gt; </span><span style='color: #555555;'> 46. </span><span>└─vctrs:::vec_type2.character.default(...) </span><span style='color: #555555;'>/home/travis/build/r-lib/vctrs/R/type-bare.R:58:23</span><span>
-#&gt; </span><span style='color: #555555;'> 47. </span><span>  └─vctrs::vec_default_type2(x, y, x_arg = x_arg, y_arg = y_arg) </span><span style='color: #555555;'>/home/travis/build/r-lib/vctrs/R/type-bare.R:129:2</span><span>
+#&gt; </span><span style='color: #555555;'> 45. </span><span>├─vctrs::vec_ptype2.character(x = x, y = y, x_arg = x_arg, y_arg = y_arg) </span><span style='color: #555555;'>/home/travis/build/r-lib/vctrs/R/type2.R:46:2</span><span>
+#&gt; </span><span style='color: #555555;'> 46. </span><span>└─vctrs:::vec_ptype2.character.default(...) </span><span style='color: #555555;'>/home/travis/build/r-lib/vctrs/R/type-bare.R:58:24</span><span>
+#&gt; </span><span style='color: #555555;'> 47. </span><span>  └─vctrs::vec_default_ptype2(x, y, x_arg = x_arg, y_arg = y_arg) </span><span style='color: #555555;'>/home/travis/build/r-lib/vctrs/R/type-bare.R:129:2</span><span>
 #&gt; </span><span style='color: #555555;'> 48. </span><span>    └─vctrs::stop_incompatible_type(x, y, x_arg = x_arg, y_arg = y_arg) </span><span style='color: #555555;'>/home/travis/build/r-lib/vctrs/R/type2.R:63:2</span><span>
 #&gt; </span><span style='color: #555555;'> 49. </span><span>      └─vctrs:::stop_incompatible(...) </span><span style='color: #555555;'>/home/travis/build/r-lib/vctrs/R/conditions.R:92:2</span><span>
 #&gt; </span><span style='color: #555555;'> 50. </span><span>        └─vctrs:::stop_vctrs(...) </span><span style='color: #555555;'>/home/travis/build/r-lib/vctrs/R/conditions.R:48:2</span><span></div></span></pre>

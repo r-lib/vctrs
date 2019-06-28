@@ -33,7 +33,7 @@
 <meta property="og:title" content="Cast a vector to specified type — vec_cast" />
 
 <meta property="og:description" content="vec_cast() provides general coercions from one type of vector to another,
-and along with vec_type2() forms the foundation of the vctrs type system.
+and along with vec_ptype2() forms the foundation of the vctrs type system.
 It should generally not be called by R users, but is important for R
 developers. vec_restore() is designed specifically for casting a bare
 vector to the original type; it's useful when relying NextMethod() for
@@ -136,7 +136,7 @@ vectors to the same type." />
     <div class="ref-description">
     
     <p><code>vec_cast()</code> provides general coercions from one type of vector to another,
-and along with <code><a href='vec_type2.html'>vec_type2()</a></code> forms the foundation of the vctrs type system.
+and along with <code><a href='vec_ptype2.html'>vec_ptype2()</a></code> forms the foundation of the vctrs type system.
 It should generally not be called by R users, but is important for R
 developers. <code>vec_restore()</code> is designed specifically for casting a bare
 vector to the original type; it's useful when relying <code><a href='https://www.rdocumentation.org/packages/base/topics/UseMethod'>NextMethod()</a></code> for
@@ -526,7 +526,7 @@ attributes that don't require special handling for your class.</p>
 #&gt; 
 #&gt; [[2]]
 #&gt; [[2]][[1]]
-#&gt; [1] "2019-06-27"
+#&gt; [1] "2019-06-28"
 #&gt; 
 #&gt; </div></span></pre>
   </div>

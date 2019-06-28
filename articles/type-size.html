@@ -97,7 +97,7 @@
 
     
     
-<p>Rather than using <code><a href="https://www.rdocumentation.org/packages/base/topics/class">class()</a></code> and <code><a href="https://www.rdocumentation.org/packages/base/topics/length">length()</a></code>, vctrs has notions of prototype (<code><a href="../reference/vec_type.html">vec_ptype()</a></code>) and size (<code><a href="../reference/vec_size.html">vec_size()</a></code>). This vignette motivates why these alternatives are necessary, and connects their definitions to type coercion and the recycling rules.</p>
+<p>Rather than using <code><a href="https://www.rdocumentation.org/packages/base/topics/class">class()</a></code> and <code><a href="https://www.rdocumentation.org/packages/base/topics/length">length()</a></code>, vctrs has notions of prototype (<code><a href="../reference/vec_ptype.html">vec_ptype_show()</a></code>) and size (<code><a href="../reference/vec_size.html">vec_size()</a></code>). This vignette motivates why these alternatives are necessary, and connects their definitions to type coercion and the recycling rules.</p>
 <p>Size and prototype are motivated by thinking about the optimal behaviour for <code><a href="https://www.rdocumentation.org/packages/base/topics/c">c()</a></code> and <code><a href="https://www.rdocumentation.org/packages/base/topics/cbind">rbind()</a></code>, particularly inspired by data frames with columns that are matrices or data frames.</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" data-line-number="1"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">library</a></span>(vctrs)</a></code></pre></div>
 <div id="prototype" class="section level2">
@@ -113,54 +113,54 @@
 <div id="base-prototypes" class="section level3">
 <h3 class="hasAnchor">
 <a href="#base-prototypes" class="anchor"></a>Base prototypes</h3>
-<p><code><a href="../reference/vec_type.html">vec_type()</a></code> creates a prototype from an existing object. However, many base vectors have uninformative printing methods for 0-length subsets, so vctrs also provides <code><a href="../reference/vec_type.html">vec_ptype()</a></code>, which prints the prototype in a friendly way (and returns nothing).</p>
-<p>Using <code><a href="../reference/vec_type.html">vec_ptype()</a></code> allows us to see the prototypes base R classes:.</p>
+<p><code><a href="../reference/vec_ptype.html">vec_ptype()</a></code> creates a prototype from an existing object. However, many base vectors have uninformative printing methods for 0-length subsets, so vctrs also provides <code><a href="../reference/vec_ptype.html">vec_ptype_show()</a></code>, which prints the prototype in a friendly way (and returns nothing).</p>
+<p>Using <code><a href="../reference/vec_ptype.html">vec_ptype_show()</a></code> allows us to see the prototypes base R classes:.</p>
 <ul>
 <li>
 <p>Atomic vectors have no attributes, and just display the underlying <code><a href="https://www.rdocumentation.org/packages/base/topics/typeof">typeof()</a></code>:</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" data-line-number="1"><span class="kw"><a href="../reference/vec_type.html">vec_ptype</a></span>(<span class="ot">FALSE</span>)</a>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" data-line-number="1"><span class="kw"><a href="../reference/vec_ptype.html">vec_ptype_show</a></span>(<span class="ot">FALSE</span>)</a>
 <a class="sourceLine" id="cb2-2" data-line-number="2"><span class="co">#&gt; Prototype: logical</span></a>
-<a class="sourceLine" id="cb2-3" data-line-number="3"><span class="kw"><a href="../reference/vec_type.html">vec_ptype</a></span>(1L)</a>
+<a class="sourceLine" id="cb2-3" data-line-number="3"><span class="kw"><a href="../reference/vec_ptype.html">vec_ptype_show</a></span>(1L)</a>
 <a class="sourceLine" id="cb2-4" data-line-number="4"><span class="co">#&gt; Prototype: integer</span></a>
-<a class="sourceLine" id="cb2-5" data-line-number="5"><span class="kw"><a href="../reference/vec_type.html">vec_ptype</a></span>(<span class="fl">2.5</span>)</a>
+<a class="sourceLine" id="cb2-5" data-line-number="5"><span class="kw"><a href="../reference/vec_ptype.html">vec_ptype_show</a></span>(<span class="fl">2.5</span>)</a>
 <a class="sourceLine" id="cb2-6" data-line-number="6"><span class="co">#&gt; Prototype: double</span></a>
-<a class="sourceLine" id="cb2-7" data-line-number="7"><span class="kw"><a href="../reference/vec_type.html">vec_ptype</a></span>(<span class="st">"three"</span>)</a>
+<a class="sourceLine" id="cb2-7" data-line-number="7"><span class="kw"><a href="../reference/vec_ptype.html">vec_ptype_show</a></span>(<span class="st">"three"</span>)</a>
 <a class="sourceLine" id="cb2-8" data-line-number="8"><span class="co">#&gt; Prototype: character</span></a>
-<a class="sourceLine" id="cb2-9" data-line-number="9"><span class="kw"><a href="../reference/vec_type.html">vec_ptype</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/list">list</a></span>(<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>))</a>
+<a class="sourceLine" id="cb2-9" data-line-number="9"><span class="kw"><a href="../reference/vec_ptype.html">vec_ptype_show</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/list">list</a></span>(<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>))</a>
 <a class="sourceLine" id="cb2-10" data-line-number="10"><span class="co">#&gt; Prototype: list</span></a></code></pre></div>
 </li>
 <li>
 <p>The prototype of matrices and arrays include the base type, and the dimensions after the first:</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" data-line-number="1"><span class="kw"><a href="../reference/vec_type.html">vec_ptype</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/array">array</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/logical">logical</a></span>(), <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="dv">2</span>, <span class="dv">3</span>)))</a>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" data-line-number="1"><span class="kw"><a href="../reference/vec_ptype.html">vec_ptype_show</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/array">array</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/logical">logical</a></span>(), <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="dv">2</span>, <span class="dv">3</span>)))</a>
 <a class="sourceLine" id="cb3-2" data-line-number="2"><span class="co">#&gt; Prototype: logical[,3]</span></a>
-<a class="sourceLine" id="cb3-3" data-line-number="3"><span class="kw"><a href="../reference/vec_type.html">vec_ptype</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/array">array</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/integer">integer</a></span>(), <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">4</span>)))</a>
+<a class="sourceLine" id="cb3-3" data-line-number="3"><span class="kw"><a href="../reference/vec_ptype.html">vec_ptype_show</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/array">array</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/integer">integer</a></span>(), <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">4</span>)))</a>
 <a class="sourceLine" id="cb3-4" data-line-number="4"><span class="co">#&gt; Prototype: integer[,3,4]</span></a>
-<a class="sourceLine" id="cb3-5" data-line-number="5"><span class="kw"><a href="../reference/vec_type.html">vec_ptype</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/array">array</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/character">character</a></span>(), <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">4</span>, <span class="dv">5</span>)))</a>
+<a class="sourceLine" id="cb3-5" data-line-number="5"><span class="kw"><a href="../reference/vec_ptype.html">vec_ptype_show</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/array">array</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/character">character</a></span>(), <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">4</span>, <span class="dv">5</span>)))</a>
 <a class="sourceLine" id="cb3-6" data-line-number="6"><span class="co">#&gt; Prototype: character[,3,4,5]</span></a></code></pre></div>
 </li>
 <li>
 <p>The prototype of a factor includes its levels. Levels are a character vector, which can be arbitrarily long, so the prototype just shows a hash. If the hash of two factors is equal it’s highly likely that their levels are also equal.</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" data-line-number="1"><span class="kw"><a href="../reference/vec_type.html">vec_ptype</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/factor">factor</a></span>(<span class="st">"a"</span>))</a>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" data-line-number="1"><span class="kw"><a href="../reference/vec_ptype.html">vec_ptype_show</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/factor">factor</a></span>(<span class="st">"a"</span>))</a>
 <a class="sourceLine" id="cb4-2" data-line-number="2"><span class="co">#&gt; Prototype: factor&lt;127a2&gt;</span></a>
-<a class="sourceLine" id="cb4-3" data-line-number="3"><span class="kw"><a href="../reference/vec_type.html">vec_ptype</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/factor">ordered</a></span>(<span class="st">"b"</span>))</a>
+<a class="sourceLine" id="cb4-3" data-line-number="3"><span class="kw"><a href="../reference/vec_ptype.html">vec_ptype_show</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/factor">ordered</a></span>(<span class="st">"b"</span>))</a>
 <a class="sourceLine" id="cb4-4" data-line-number="4"><span class="co">#&gt; Prototype: ordered&lt;ddf10&gt;</span></a></code></pre></div>
-<p>While <code><a href="../reference/vec_type.html">vec_ptype()</a></code> prints only the hash, the prototype object itself does contain all levels:</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" data-line-number="1"><span class="kw"><a href="../reference/vec_type.html">vec_type</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/factor">factor</a></span>(<span class="st">"a"</span>))</a>
+<p>While <code><a href="../reference/vec_ptype.html">vec_ptype_show()</a></code> prints only the hash, the prototype object itself does contain all levels:</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" data-line-number="1"><span class="kw"><a href="../reference/vec_ptype.html">vec_ptype</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/factor">factor</a></span>(<span class="st">"a"</span>))</a>
 <a class="sourceLine" id="cb5-2" data-line-number="2"><span class="co">#&gt; factor(0)</span></a>
 <a class="sourceLine" id="cb5-3" data-line-number="3"><span class="co">#&gt; Levels: a</span></a></code></pre></div>
 </li>
 <li>
 <p>Base R has three key date time classes: dates, date-times (<code>POSIXct</code>), and durations (<code>difftime)</code>. Date-times have a timezone, and durations have a unit.</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" data-line-number="1"><span class="kw"><a href="../reference/vec_type.html">vec_ptype</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/Sys.time">Sys.Date</a></span>())</a>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" data-line-number="1"><span class="kw"><a href="../reference/vec_ptype.html">vec_ptype_show</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/Sys.time">Sys.Date</a></span>())</a>
 <a class="sourceLine" id="cb6-2" data-line-number="2"><span class="co">#&gt; Prototype: date</span></a>
-<a class="sourceLine" id="cb6-3" data-line-number="3"><span class="kw"><a href="../reference/vec_type.html">vec_ptype</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/Sys.time">Sys.time</a></span>())</a>
+<a class="sourceLine" id="cb6-3" data-line-number="3"><span class="kw"><a href="../reference/vec_ptype.html">vec_ptype_show</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/Sys.time">Sys.time</a></span>())</a>
 <a class="sourceLine" id="cb6-4" data-line-number="4"><span class="co">#&gt; Prototype: datetime&lt;local&gt;</span></a>
-<a class="sourceLine" id="cb6-5" data-line-number="5"><span class="kw"><a href="../reference/vec_type.html">vec_ptype</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/difftime">as.difftime</a></span>(<span class="dv">10</span>, <span class="dt">units =</span> <span class="st">"mins"</span>))</a>
+<a class="sourceLine" id="cb6-5" data-line-number="5"><span class="kw"><a href="../reference/vec_ptype.html">vec_ptype_show</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/difftime">as.difftime</a></span>(<span class="dv">10</span>, <span class="dt">units =</span> <span class="st">"mins"</span>))</a>
 <a class="sourceLine" id="cb6-6" data-line-number="6"><span class="co">#&gt; Prototype: duration&lt;mins&gt;</span></a></code></pre></div>
 </li>
 <li>
 <p>Data frames have the most complex prototype: the prototype of a data frame is the name and prototype of each column:</p>
-<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" data-line-number="1"><span class="kw"><a href="../reference/vec_type.html">vec_ptype</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/data.frame">data.frame</a></span>(<span class="dt">a =</span> <span class="ot">FALSE</span>, <span class="dt">b =</span> 1L, <span class="dt">c =</span> <span class="fl">2.5</span>, <span class="dt">d =</span> <span class="st">"x"</span>))</a>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" data-line-number="1"><span class="kw"><a href="../reference/vec_ptype.html">vec_ptype_show</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/data.frame">data.frame</a></span>(<span class="dt">a =</span> <span class="ot">FALSE</span>, <span class="dt">b =</span> 1L, <span class="dt">c =</span> <span class="fl">2.5</span>, <span class="dt">d =</span> <span class="st">"x"</span>))</a>
 <a class="sourceLine" id="cb7-2" data-line-number="2"><span class="co">#&gt; Prototype: data.frame&lt;</span></a>
 <a class="sourceLine" id="cb7-3" data-line-number="3"><span class="co">#&gt;   a: logical</span></a>
 <a class="sourceLine" id="cb7-4" data-line-number="4"><span class="co">#&gt;   b: integer</span></a>
@@ -170,7 +170,7 @@
 <p>Data frames can have columns that are themselves data frames, making this a “recursive” type:</p>
 <div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb8-1" data-line-number="1">df &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/data.frame">data.frame</a></span>(<span class="dt">x =</span> <span class="ot">FALSE</span>)</a>
 <a class="sourceLine" id="cb8-2" data-line-number="2">df<span class="op">$</span>y &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/data.frame">data.frame</a></span>(<span class="dt">a =</span> 1L, <span class="dt">b =</span> <span class="fl">2.5</span>)</a>
-<a class="sourceLine" id="cb8-3" data-line-number="3"><span class="kw"><a href="../reference/vec_type.html">vec_ptype</a></span>(df)</a>
+<a class="sourceLine" id="cb8-3" data-line-number="3"><span class="kw"><a href="../reference/vec_ptype.html">vec_ptype_show</a></span>(df)</a>
 <a class="sourceLine" id="cb8-4" data-line-number="4"><span class="co">#&gt; Prototype: data.frame&lt;</span></a>
 <a class="sourceLine" id="cb8-5" data-line-number="5"><span class="co">#&gt;   x: logical</span></a>
 <a class="sourceLine" id="cb8-6" data-line-number="6"><span class="co">#&gt;   y: </span></a>
@@ -185,29 +185,29 @@
 <div id="coercing-to-common-type" class="section level3">
 <h3 class="hasAnchor">
 <a href="#coercing-to-common-type" class="anchor"></a>Coercing to common type</h3>
-<p>It’s often important to combine vectors with multiple types. vctrs provides a consistent set of rules for coercion, via <code><a href="../reference/vec_type.html">vec_type_common()</a></code>. <code><a href="../reference/vec_type.html">vec_type_common()</a></code> possesses the following invariants:</p>
+<p>It’s often important to combine vectors with multiple types. vctrs provides a consistent set of rules for coercion, via <code><a href="../reference/vec_ptype.html">vec_ptype_common()</a></code>. <code><a href="../reference/vec_ptype.html">vec_ptype_common()</a></code> possesses the following invariants:</p>
 <ul>
-<li><p><code><a href="https://www.rdocumentation.org/packages/base/topics/class">class(vec_type_common(x, y))</a></code> equals <code><a href="https://www.rdocumentation.org/packages/base/topics/class">class(vec_type_common(y, x))</a></code>.</p></li>
-<li><p><code>class(vec_type_common(x, vec_type_common(y, z))</code> equals <code><a href="https://www.rdocumentation.org/packages/base/topics/class">class(vec_type_common(vec_type_common(x, y), z))</a></code>.</p></li>
-<li><p><code>vec_type_common(x, NULL) == vec_type(x)</code>.</p></li>
+<li><p><code><a href="https://www.rdocumentation.org/packages/base/topics/class">class(vec_ptype_common(x, y))</a></code> equals <code><a href="https://www.rdocumentation.org/packages/base/topics/class">class(vec_ptype_common(y, x))</a></code>.</p></li>
+<li><p><code>class(vec_ptype_common(x, vec_ptype_common(y, z))</code> equals <code><a href="https://www.rdocumentation.org/packages/base/topics/class">class(vec_ptype_common(vec_ptype_common(x, y), z))</a></code>.</p></li>
+<li><p><code>vec_ptype_common(x, NULL) == vec_ptype(x)</code>.</p></li>
 </ul>
-<p>i.e. <code><a href="../reference/vec_type.html">vec_type_common()</a></code> is both commutative and associative (with respect to class), and has an identity element, <code>NULL</code>, i.e. it’s a <strong>commutative monoid</strong>. This means the underlying implementation is quite simple: we can find the common type of any number of objects by progressively finding the common type of pairs of objects.</p>
-<p>Like with <code><a href="../reference/vec_type.html">vec_type()</a></code>, the easiest way to explore <code><a href="../reference/vec_type.html">vec_type_common()</a></code> is with <code><a href="../reference/vec_type.html">vec_ptype()</a></code>: when given multiple inputs, it will print their common prototype. (In other words: program with <code><a href="../reference/vec_type.html">vec_type_common()</a></code> but play with <code><a href="../reference/vec_type.html">vec_ptype()</a></code>.)</p>
+<p>i.e. <code><a href="../reference/vec_ptype.html">vec_ptype_common()</a></code> is both commutative and associative (with respect to class), and has an identity element, <code>NULL</code>, i.e. it’s a <strong>commutative monoid</strong>. This means the underlying implementation is quite simple: we can find the common type of any number of objects by progressively finding the common type of pairs of objects.</p>
+<p>Like with <code><a href="../reference/vec_ptype.html">vec_ptype()</a></code>, the easiest way to explore <code><a href="../reference/vec_ptype.html">vec_ptype_common()</a></code> is with <code><a href="../reference/vec_ptype.html">vec_ptype_show()</a></code>: when given multiple inputs, it will print their common prototype. (In other words: program with <code><a href="../reference/vec_ptype.html">vec_ptype_common()</a></code> but play with <code><a href="../reference/vec_ptype.html">vec_ptype_show()</a></code>.)</p>
 <ul>
 <li>
 <p>The common type of atomic vectors is computed very similar to rules of base R, except that we do not coerce to character automatically:</p>
-<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb9-1" data-line-number="1"><span class="kw"><a href="../reference/vec_type.html">vec_ptype</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/logical">logical</a></span>(), <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/integer">integer</a></span>(), <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/double">double</a></span>())</a>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb9-1" data-line-number="1"><span class="kw"><a href="../reference/vec_ptype.html">vec_ptype_show</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/logical">logical</a></span>(), <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/integer">integer</a></span>(), <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/double">double</a></span>())</a>
 <a class="sourceLine" id="cb9-2" data-line-number="2"><span class="co">#&gt; Prototype: &lt;double&gt;</span></a>
 <a class="sourceLine" id="cb9-3" data-line-number="3"><span class="co">#&gt; 0. (           , &lt;logical&gt; ) = &lt;logical&gt;</span></a>
 <a class="sourceLine" id="cb9-4" data-line-number="4"><span class="co">#&gt; 1. ( &lt;logical&gt; , &lt;integer&gt; ) = &lt;integer&gt;</span></a>
 <a class="sourceLine" id="cb9-5" data-line-number="5"><span class="co">#&gt; 2. ( &lt;integer&gt; , &lt;double&gt;  ) = &lt;double&gt;</span></a>
 <a class="sourceLine" id="cb9-6" data-line-number="6"></a>
-<a class="sourceLine" id="cb9-7" data-line-number="7"><span class="kw"><a href="../reference/vec_type.html">vec_ptype</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/logical">logical</a></span>(), <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/character">character</a></span>())</a>
+<a class="sourceLine" id="cb9-7" data-line-number="7"><span class="kw"><a href="../reference/vec_ptype.html">vec_ptype_show</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/logical">logical</a></span>(), <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/character">character</a></span>())</a>
 <a class="sourceLine" id="cb9-8" data-line-number="8"><span class="co">#&gt; No common type for `x` &lt;logical&gt; and `y` &lt;character&gt;.</span></a></code></pre></div>
 </li>
 <li>
 <p>Matrices and arrays are automatically broadcast to higher dimensions:</p>
-<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb10-1" data-line-number="1"><span class="kw"><a href="../reference/vec_type.html">vec_ptype</a></span>(</a>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb10-1" data-line-number="1"><span class="kw"><a href="../reference/vec_ptype.html">vec_ptype_show</a></span>(</a>
 <a class="sourceLine" id="cb10-2" data-line-number="2">  <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/array">array</a></span>(<span class="dv">1</span>, <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="dv">0</span>, <span class="dv">1</span>)), </a>
 <a class="sourceLine" id="cb10-3" data-line-number="3">  <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/array">array</a></span>(<span class="dv">1</span>, <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="dv">0</span>, <span class="dv">2</span>))</a>
 <a class="sourceLine" id="cb10-4" data-line-number="4">)</a>
@@ -215,7 +215,7 @@
 <a class="sourceLine" id="cb10-6" data-line-number="6"><span class="co">#&gt; 0. (              , &lt;double[,1]&gt; ) = &lt;double[,1]&gt;</span></a>
 <a class="sourceLine" id="cb10-7" data-line-number="7"><span class="co">#&gt; 1. ( &lt;double[,1]&gt; , &lt;double[,2]&gt; ) = &lt;double[,2]&gt;</span></a>
 <a class="sourceLine" id="cb10-8" data-line-number="8"></a>
-<a class="sourceLine" id="cb10-9" data-line-number="9"><span class="kw"><a href="../reference/vec_type.html">vec_ptype</a></span>(</a>
+<a class="sourceLine" id="cb10-9" data-line-number="9"><span class="kw"><a href="../reference/vec_ptype.html">vec_ptype_show</a></span>(</a>
 <a class="sourceLine" id="cb10-10" data-line-number="10">  <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/array">array</a></span>(<span class="dv">1</span>, <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="dv">0</span>, <span class="dv">1</span>)), </a>
 <a class="sourceLine" id="cb10-11" data-line-number="11">  <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/array">array</a></span>(<span class="dv">1</span>, <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="dv">0</span>, <span class="dv">3</span>)),</a>
 <a class="sourceLine" id="cb10-12" data-line-number="12">  <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/array">array</a></span>(<span class="dv">1</span>, <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="dv">0</span>, <span class="dv">3</span>, <span class="dv">4</span>)),</a>
@@ -227,7 +227,7 @@
 <a class="sourceLine" id="cb10-18" data-line-number="18"><span class="co">#&gt; 2. ( &lt;double[,3]&gt;   , &lt;double[,3,4]&gt;   ) = &lt;double[,3,4]&gt;  </span></a>
 <a class="sourceLine" id="cb10-19" data-line-number="19"><span class="co">#&gt; 3. ( &lt;double[,3,4]&gt; , &lt;double[,3,4,5]&gt; ) = &lt;double[,3,4,5]&gt;</span></a></code></pre></div>
 <p>Provided that the dimensions follow the vctrs recycling rules:</p>
-<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb11-1" data-line-number="1"><span class="kw"><a href="../reference/vec_type.html">vec_ptype</a></span>(</a>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb11-1" data-line-number="1"><span class="kw"><a href="../reference/vec_ptype.html">vec_ptype_show</a></span>(</a>
 <a class="sourceLine" id="cb11-2" data-line-number="2">  <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/array">array</a></span>(<span class="dv">1</span>, <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="dv">0</span>, <span class="dv">2</span>)), </a>
 <a class="sourceLine" id="cb11-3" data-line-number="3">  <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/array">array</a></span>(<span class="dv">1</span>, <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="dv">0</span>, <span class="dv">3</span>))</a>
 <a class="sourceLine" id="cb11-4" data-line-number="4">)</a>
@@ -238,19 +238,19 @@
 <div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb12-1" data-line-number="1">fa &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/factor">factor</a></span>(<span class="st">"a"</span>)</a>
 <a class="sourceLine" id="cb12-2" data-line-number="2">fb &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/factor">factor</a></span>(<span class="st">"b"</span>)</a>
 <a class="sourceLine" id="cb12-3" data-line-number="3"></a>
-<a class="sourceLine" id="cb12-4" data-line-number="4"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/levels">levels</a></span>(<span class="kw"><a href="../reference/vec_type.html">vec_type_common</a></span>(fa, fb))</a>
+<a class="sourceLine" id="cb12-4" data-line-number="4"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/levels">levels</a></span>(<span class="kw"><a href="../reference/vec_ptype.html">vec_ptype_common</a></span>(fa, fb))</a>
 <a class="sourceLine" id="cb12-5" data-line-number="5"><span class="co">#&gt; [1] "a" "b"</span></a>
-<a class="sourceLine" id="cb12-6" data-line-number="6"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/levels">levels</a></span>(<span class="kw"><a href="../reference/vec_type.html">vec_type_common</a></span>(fb, fa))</a>
+<a class="sourceLine" id="cb12-6" data-line-number="6"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/levels">levels</a></span>(<span class="kw"><a href="../reference/vec_ptype.html">vec_ptype_common</a></span>(fb, fa))</a>
 <a class="sourceLine" id="cb12-7" data-line-number="7"><span class="co">#&gt; [1] "b" "a"</span></a></code></pre></div>
 </li>
 <li>
 <p>Combining a date and date-time yields a date-time:</p>
-<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb13-1" data-line-number="1"><span class="kw"><a href="../reference/vec_type.html">vec_ptype</a></span>(<span class="kw"><a href="../reference/new_date.html">new_date</a></span>(), <span class="kw"><a href="../reference/new_date.html">new_datetime</a></span>())</a>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb13-1" data-line-number="1"><span class="kw"><a href="../reference/vec_ptype.html">vec_ptype_show</a></span>(<span class="kw"><a href="../reference/new_date.html">new_date</a></span>(), <span class="kw"><a href="../reference/new_date.html">new_datetime</a></span>())</a>
 <a class="sourceLine" id="cb13-2" data-line-number="2"><span class="co">#&gt; Prototype: &lt;datetime&lt;local&gt;&gt;</span></a>
 <a class="sourceLine" id="cb13-3" data-line-number="3"><span class="co">#&gt; 0. (        , &lt;date&gt;            ) = &lt;date&gt;           </span></a>
 <a class="sourceLine" id="cb13-4" data-line-number="4"><span class="co">#&gt; 1. ( &lt;date&gt; , &lt;datetime&lt;local&gt;&gt; ) = &lt;datetime&lt;local&gt;&gt;</span></a></code></pre></div>
 <p>When combining two date times, the timezone is taken from the first input:</p>
-<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb14-1" data-line-number="1"><span class="kw"><a href="../reference/vec_type.html">vec_ptype</a></span>(</a>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb14-1" data-line-number="1"><span class="kw"><a href="../reference/vec_ptype.html">vec_ptype_show</a></span>(</a>
 <a class="sourceLine" id="cb14-2" data-line-number="2">  <span class="kw"><a href="../reference/new_date.html">new_datetime</a></span>(<span class="dt">tzone =</span> <span class="st">"US/Central"</span>), </a>
 <a class="sourceLine" id="cb14-3" data-line-number="3">  <span class="kw"><a href="../reference/new_date.html">new_datetime</a></span>(<span class="dt">tzone =</span> <span class="st">"Pacific/Auckland"</span>)</a>
 <a class="sourceLine" id="cb14-4" data-line-number="4">)</a>
@@ -258,7 +258,7 @@
 <a class="sourceLine" id="cb14-6" data-line-number="6"><span class="co">#&gt; 0. (                        , &lt;datetime&lt;US/Central&gt;&gt;       ) = &lt;datetime&lt;US/Central&gt;&gt;</span></a>
 <a class="sourceLine" id="cb14-7" data-line-number="7"><span class="co">#&gt; 1. ( &lt;datetime&lt;US/Central&gt;&gt; , &lt;datetime&lt;Pacific/Auckland&gt;&gt; ) = &lt;datetime&lt;US/Central&gt;&gt;</span></a></code></pre></div>
 <p>Unless it’s the local timezone, in which case any explicit time zone will win:</p>
-<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb15-1" data-line-number="1"><span class="kw"><a href="../reference/vec_type.html">vec_ptype</a></span>(</a>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb15-1" data-line-number="1"><span class="kw"><a href="../reference/vec_ptype.html">vec_ptype_show</a></span>(</a>
 <a class="sourceLine" id="cb15-2" data-line-number="2">  <span class="kw"><a href="../reference/new_date.html">new_datetime</a></span>(<span class="dt">tzone =</span> <span class="st">""</span>), </a>
 <a class="sourceLine" id="cb15-3" data-line-number="3">  <span class="kw"><a href="../reference/new_date.html">new_datetime</a></span>(<span class="dt">tzone =</span> <span class="st">""</span>), </a>
 <a class="sourceLine" id="cb15-4" data-line-number="4">  <span class="kw"><a href="../reference/new_date.html">new_datetime</a></span>(<span class="dt">tzone =</span> <span class="st">"Pacific/Auckland"</span>)</a>
@@ -270,7 +270,7 @@
 </li>
 <li>
 <p>The common type of two data frames is the common type of each column that occurs in both data frames:</p>
-<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb16-1" data-line-number="1"><span class="kw"><a href="../reference/vec_type.html">vec_ptype</a></span>(</a>
+<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb16-1" data-line-number="1"><span class="kw"><a href="../reference/vec_ptype.html">vec_ptype_show</a></span>(</a>
 <a class="sourceLine" id="cb16-2" data-line-number="2">  <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/data.frame">data.frame</a></span>(<span class="dt">x =</span> <span class="ot">FALSE</span>), </a>
 <a class="sourceLine" id="cb16-3" data-line-number="3">  <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/data.frame">data.frame</a></span>(<span class="dt">x =</span> 1L),</a>
 <a class="sourceLine" id="cb16-4" data-line-number="4">  <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/data.frame">data.frame</a></span>(<span class="dt">x =</span> <span class="fl">2.5</span>)</a>
@@ -280,7 +280,7 @@
 <a class="sourceLine" id="cb16-8" data-line-number="8"><span class="co">#&gt; 1. ( &lt;data.frame&lt;x:logical&gt;&gt; , &lt;data.frame&lt;x:integer&gt;&gt; ) = &lt;data.frame&lt;x:integer&gt;&gt;</span></a>
 <a class="sourceLine" id="cb16-9" data-line-number="9"><span class="co">#&gt; 2. ( &lt;data.frame&lt;x:integer&gt;&gt; , &lt;data.frame&lt;x:double&gt;&gt;  ) = &lt;data.frame&lt;x:double&gt;&gt;</span></a></code></pre></div>
 <p>And the union of the columns that only occur in one:</p>
-<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb17-1" data-line-number="1"><span class="kw"><a href="../reference/vec_type.html">vec_ptype</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/data.frame">data.frame</a></span>(<span class="dt">x =</span> <span class="dv">1</span>, <span class="dt">y =</span> <span class="dv">1</span>), <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/data.frame">data.frame</a></span>(<span class="dt">y =</span> <span class="dv">1</span>, <span class="dt">z =</span> <span class="dv">1</span>))</a>
+<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb17-1" data-line-number="1"><span class="kw"><a href="../reference/vec_ptype.html">vec_ptype_show</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/data.frame">data.frame</a></span>(<span class="dt">x =</span> <span class="dv">1</span>, <span class="dt">y =</span> <span class="dv">1</span>), <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/data.frame">data.frame</a></span>(<span class="dt">y =</span> <span class="dv">1</span>, <span class="dt">z =</span> <span class="dv">1</span>))</a>
 <a class="sourceLine" id="cb17-2" data-line-number="2"><span class="co">#&gt; Prototype: &lt;data.frame&lt;</span></a>
 <a class="sourceLine" id="cb17-3" data-line-number="3"><span class="co">#&gt;   x: double</span></a>
 <a class="sourceLine" id="cb17-4" data-line-number="4"><span class="co">#&gt;   y: double</span></a>
@@ -302,7 +302,7 @@
 <div id="casting-to-specified-type" class="section level3">
 <h3 class="hasAnchor">
 <a href="#casting-to-specified-type" class="anchor"></a>Casting to specified type</h3>
-<p><code><a href="../reference/vec_type.html">vec_type_common()</a></code> finds the common type of a set of vector. Typically, however, what you want is a set of vectors coerced to that common type. That’s the job of <code><a href="../reference/vec_cast.html">vec_cast_common()</a></code>:</p>
+<p><code><a href="../reference/vec_ptype.html">vec_ptype_common()</a></code> finds the common type of a set of vector. Typically, however, what you want is a set of vectors coerced to that common type. That’s the job of <code><a href="../reference/vec_cast.html">vec_cast_common()</a></code>:</p>
 <div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb18-1" data-line-number="1"><span class="kw"><a href="https://www.rdocumentation.org/packages/utils/topics/str">str</a></span>(<span class="kw"><a href="../reference/vec_cast.html">vec_cast_common</a></span>(</a>
 <a class="sourceLine" id="cb18-2" data-line-number="2">  <span class="ot">FALSE</span>, </a>
 <a class="sourceLine" id="cb18-3" data-line-number="3">  <span class="dv">1</span><span class="op">:</span><span class="dv">5</span>, </a>
@@ -394,11 +394,11 @@
 <a class="sourceLine" id="cb23-2" data-line-number="2">df &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/data.frame">data.frame</a></span>(<span class="dt">x =</span> x)</a>
 <a class="sourceLine" id="cb23-3" data-line-number="3"></a>
 <a class="sourceLine" id="cb23-4" data-line-number="4"><span class="kw"><a href="../reference/vec_slice.html">vec_slice</a></span>(x, <span class="dv">5</span><span class="op">:</span><span class="dv">6</span>)</a>
-<a class="sourceLine" id="cb23-5" data-line-number="5"><span class="co">#&gt; [1] 1 9</span></a>
+<a class="sourceLine" id="cb23-5" data-line-number="5"><span class="co">#&gt; [1] 10  7</span></a>
 <a class="sourceLine" id="cb23-6" data-line-number="6"><span class="kw"><a href="../reference/vec_slice.html">vec_slice</a></span>(df, <span class="dv">5</span><span class="op">:</span><span class="dv">6</span>)</a>
-<a class="sourceLine" id="cb23-7" data-line-number="7"><span class="co">#&gt;   x</span></a>
-<a class="sourceLine" id="cb23-8" data-line-number="8"><span class="co">#&gt; 1 1</span></a>
-<a class="sourceLine" id="cb23-9" data-line-number="9"><span class="co">#&gt; 2 9</span></a></code></pre></div>
+<a class="sourceLine" id="cb23-7" data-line-number="7"><span class="co">#&gt;    x</span></a>
+<a class="sourceLine" id="cb23-8" data-line-number="8"><span class="co">#&gt; 1 10</span></a>
+<a class="sourceLine" id="cb23-9" data-line-number="9"><span class="co">#&gt; 2  7</span></a></code></pre></div>
 <p><code><a href="../reference/vec_slice.html">vec_slice(data.frame(x), i)</a></code> equals <code><a href="https://www.rdocumentation.org/packages/base/topics/data.frame">data.frame(vec_slice(x, i))</a></code> (modulo variable and row names).</p>
 <p>Prototypes are generated with <code><a href="../reference/vec_slice.html">vec_slice(x, 0L)</a></code>; given a prototype, you can initialize a vector of given size (filled with <code>NA</code>s) with <code><a href="../reference/vec_init.html">vec_init()</a></code>.</p>
 </div>

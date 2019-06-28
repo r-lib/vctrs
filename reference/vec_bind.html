@@ -197,7 +197,7 @@ of length 1 will be recycled appropriately.</p></td>
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
     <p>A data frame, or subclass of data frame.</p>
-<p>If <code>...</code> is a mix of different data frame subclases, <code><a href='vec_type2.html'>vec_type2()</a></code>
+<p>If <code>...</code> is a mix of different data frame subclases, <code><a href='vec_ptype2.html'>vec_ptype2()</a></code>
 will be used to determine the output type. For <code>vec_rbind()</code>, this
 will determine the type of the container and the type of each column;
 for <code>vec_cbind()</code> it only determines the type of the output container.
@@ -216,14 +216,14 @@ single column.</p></li>
     <p>Once the inputs have all become data frames, the following
 invariants are observed for row-binding:</p><ul>
 <li><p><code>vec_size(vec_rbind(x, y)) == vec_size(x) + vec_size(y)</code></p></li>
-<li><p><code>vec_type(vec_rbind(x, y)) = vec_type_common(x, y)</code></p></li>
+<li><p><code>vec_ptype(vec_rbind(x, y)) = vec_ptype_common(x, y)</code></p></li>
 </ul>
     <p>Note that if an input is an empty vector, it is first converted to
 a 1-row data frame with 0 columns. Despite being empty, its
 effective size for the total number of rows is 1.</p>
 <p>For column-binding, the following invariants apply:</p><ul>
 <li><p><code>vec_size(vec_cbind(x, y)) == vec_size_common(x, y)</code></p></li>
-<li><p><code>vec_type(vec_cbind(x, y)) == vec_cbind(vec_type(x), vec_type(x))</code></p></li>
+<li><p><code>vec_ptype(vec_cbind(x, y)) == vec_cbind(vec_ptype(x), vec_ptype(x))</code></p></li>
 </ul>
     
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>

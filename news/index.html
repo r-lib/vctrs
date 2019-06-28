@@ -129,6 +129,21 @@
 <a href="#vctrs-0-1-0-9000" class="anchor"></a>vctrs 0.1.0.9000<small> Unreleased </small>
 </h1>
 <ul>
+<li>
+<p>We have renamed the <code>type</code> particle to <code>ptype</code>:</p>
+<ul>
+<li>
+<code><a href="../reference/vec_type.html">vec_type()</a></code> =&gt; <code><a href="../reference/vec_ptype.html">vec_ptype()</a></code>
+</li>
+<li>
+<code><a href="../reference/vec_type.html">vec_type2()</a></code> =&gt; <code><a href="../reference/vec_ptype2.html">vec_ptype2()</a></code>
+</li>
+<li>
+<code><a href="../reference/vec_type.html">vec_type_common()</a></code> =&gt; <code><a href="../reference/vec_ptype.html">vec_ptype_common()</a></code>
+</li>
+</ul>
+<p>Consequently, <code><a href="../reference/vec_ptype.html">vec_ptype()</a></code> was renamed to <code><a href="../reference/vec_ptype.html">vec_ptype_show()</a></code>.</p>
+</li>
 <li><p><code><a href="../reference/list_of.html">list_of()</a></code> now has an <code><a href="https://www.rdocumentation.org/packages/base/topics/character">as.character()</a></code> method. It uses <code><a href="../reference/vec_ptype_full.html">vec_ptype_abbr()</a></code> to collapse complex objects into their type representation (tidyverse/tidyr<a href='https://github.com/r-lib/vctrs/issues/654'>#654</a>).</p></li>
 <li>
 <p><code><a href="../reference/vec_bind.html">vec_cbind()</a></code> now turns named data frames to packed columns.</p>
@@ -203,7 +218,7 @@ vec_proxy.vctrs_list_of &lt;- function(x) {
 <li><p>New <code><a href="../reference/vec_split.html">vec_split(x, by)</a></code> is a generalisation of <code><a href="https://www.rdocumentation.org/packages/base/topics/split">split()</a></code> that can divide a vector into groups formed by the unique values of another vector. Returns a two-column data frame containing unique values of <code>by</code> aligned with matching <code>x</code> values (<a href='https://github.com/r-lib/vctrs/issues/196'>#196</a>).</p></li>
 <li><p>New <code><a href="../reference/vec_seq_along.html">vec_seq_along()</a></code> and <code><a href="../reference/vec_seq_along.html">vec_init_along()</a></code> create useful sequences (<a href='https://github.com/r-lib/vctrs/issues/189'>#189</a>).</p></li>
 <li><p><code><a href="../reference/vec_equal.html">vec_equal_na()</a></code> now returns <code>TRUE</code> for data frames and records when every component is mising, not when <em>any</em> component is missing (<a href='https://github.com/r-lib/vctrs/issues/201'>#201</a>).</p></li>
-<li><p><code><a href="../reference/vec_type2.html">vec_type2(x, data.frame())</a></code> ensures that the returned object has names that are a length-0 character vector.</p></li>
+<li><p><code><a href="../reference/vec_type.html">vec_type2(x, data.frame())</a></code> ensures that the returned object has names that are a length-0 character vector.</p></li>
 <li><p><code><a href="../reference/vec_cast.html">vec_cast(x, data.frame())</a></code> preserves the number of rows in the <code>x</code>.</p></li>
 <li><p>Added a <code>NEWS.md</code> file to track changes to the package.</p></li>
 <li><p>Using classed errors of class <code>"vctrs_error_assert"</code> for failed assertions, and of class <code>"vctrs_error_incompatible"</code> (with subclasses <code>_type</code>, <code>_cast</code> and <code>_op</code>) for errors on incompatible types (<a href='https://github.com/r-lib/vctrs/issues/184'>#184</a>).</p></li>

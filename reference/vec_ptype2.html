@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Data frame class — new_data_frame • vctrs</title>
+<title>Find the common type for a pair of vector types — vec_ptype2.logical • vctrs</title>
 
 <!-- jquery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
@@ -30,12 +30,12 @@
 
 
 
-<meta property="og:title" content="Data frame class — new_data_frame" />
+<meta property="og:title" content="Find the common type for a pair of vector types — vec_ptype2.logical" />
 
-<meta property="og:description" content="A data.frame data.frame() is a list with &quot;row.names&quot; attribute. Each
-element of the list must be named, and of the same length. These functions
-help the base data.frame classes fit in to the vctrs type system by
-providing constructors, coercion functions, and casting functions." />
+<meta property="og:description" content="vec_ptype2() finds the common type for a pair of vectors, or dies trying.
+It forms the foundation of the vctrs type system, along with vec_cast().
+This powers type coercion but should not usually be called directly;
+instead call vec_ptype_common()." />
 
 <meta property="og:image" content="https://vctrs.r-lib.org/logo.png" />
 <meta name="twitter:card" content="summary" />
@@ -125,69 +125,99 @@ providing constructors, coercion functions, and casting functions." />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Data frame class</h1>
-    <small class="dont-index">Source: <a href='https://github.com/r-lib/vctrs/blob/master/R/type-data-frame.R'><code>R/type-data-frame.R</code></a></small>
-    <div class="hidden name"><code>new_data_frame.Rd</code></div>
+    <h1>Find the common type for a pair of vector types</h1>
+    <small class="dont-index">Source: <a href='https://github.com/r-lib/vctrs/blob/master/R/type-bare.R'><code>R/type-bare.R</code></a>, <a href='https://github.com/r-lib/vctrs/blob/master/R/type-tibble.R'><code>R/type-tibble.R</code></a>, <a href='https://github.com/r-lib/vctrs/blob/master/R/type2.R'><code>R/type2.R</code></a></small>
+    <div class="hidden name"><code>vec_ptype2.Rd</code></div>
     </div>
 
     <div class="ref-description">
     
-    <p>A <code>data.frame</code> <code><a href='https://www.rdocumentation.org/packages/base/topics/data.frame'>data.frame()</a></code> is a list with "row.names" attribute. Each
-element of the list must be named, and of the same length. These functions
-help the base data.frame classes fit in to the vctrs type system by
-providing constructors, coercion functions, and casting functions.</p>
+    <p><code>vec_ptype2()</code> finds the common type for a pair of vectors, or dies trying.
+It forms the foundation of the vctrs type system, along with <code><a href='vec_cast.html'>vec_cast()</a></code>.
+This powers type coercion but should not usually be called directly;
+instead call <code><a href='vec_ptype.html'>vec_ptype_common()</a></code>.</p>
     
     </div>
 
-    <pre class="usage"><span class='fu'>new_data_frame</span>(<span class='kw'>x</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/list'>list</a></span>(), <span class='kw'>n</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='no'>...</span>, <span class='kw'>class</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/character'>character</a></span>())
+    <pre class="usage"><span class='co'># S3 method for logical</span>
+<span class='fu'>vec_ptype2</span>(<span class='no'>x</span>, <span class='no'>y</span>, <span class='no'>...</span>)
 
-<span class='co'># S3 method for data.frame</span>
-<span class='fu'><a href='vec_ptype2.html'>vec_ptype2</a></span>(<span class='no'>x</span>, <span class='no'>y</span>, <span class='no'>...</span>)
+<span class='co'># S3 method for integer</span>
+<span class='fu'>vec_ptype2</span>(<span class='no'>x</span>, <span class='no'>y</span>, <span class='no'>...</span>)
 
-<span class='co'># S3 method for data.frame</span>
-<span class='fu'><a href='vec_cast.html'>vec_cast</a></span>(<span class='no'>x</span>, <span class='no'>to</span>, <span class='no'>...</span>)</pre>
+<span class='co'># S3 method for double</span>
+<span class='fu'>vec_ptype2</span>(<span class='no'>x</span>, <span class='no'>y</span>, <span class='no'>...</span>)
+
+<span class='co'># S3 method for character</span>
+<span class='fu'>vec_ptype2</span>(<span class='no'>x</span>, <span class='no'>y</span>, <span class='no'>...</span>)
+
+<span class='co'># S3 method for raw</span>
+<span class='fu'>vec_ptype2</span>(<span class='no'>x</span>, <span class='no'>y</span>, <span class='no'>...</span>)
+
+<span class='co'># S3 method for list</span>
+<span class='fu'>vec_ptype2</span>(<span class='no'>x</span>, <span class='no'>y</span>, <span class='no'>...</span>)
+
+<span class='co'># S3 method for tbl_df</span>
+<span class='fu'>vec_ptype2</span>(<span class='no'>x</span>, <span class='no'>y</span>, <span class='no'>...</span>)
+
+<span class='fu'>vec_ptype2</span>(<span class='no'>x</span>, <span class='no'>y</span>, <span class='no'>...</span>, <span class='kw'>x_arg</span> <span class='kw'>=</span> <span class='st'>"x"</span>, <span class='kw'>y_arg</span> <span class='kw'>=</span> <span class='st'>"y"</span>)
+
+<span class='fu'>vec_default_ptype2</span>(<span class='no'>x</span>, <span class='no'>y</span>, <span class='no'>...</span>, <span class='kw'>x_arg</span> <span class='kw'>=</span> <span class='st'>"x"</span>, <span class='kw'>y_arg</span> <span class='kw'>=</span> <span class='st'>"y"</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>x</th>
-      <td><p>A named list of equal-length vectors. The lengths are not
-checked; it is responsibility of the caller to make sure they are
-equal.</p></td>
+      <th>x, y</th>
+      <td><p>Vector types.</p></td>
     </tr>
     <tr>
-      <th>n</th>
-      <td><p>Number of rows. If <code>NULL</code>, will be computed from the length of
-the first element of <code>x</code>.</p></td>
+      <th>...</th>
+      <td><p>These dots are for future extensions and must be empty.</p></td>
     </tr>
     <tr>
-      <th>..., class</th>
-      <td><p>Additional arguments for creating subclasses.</p></td>
+      <th>x_arg, y_arg</th>
+      <td><p>Argument names for <code>x</code> and <code>y</code>. These are used
+in error messages to inform the user about the locations of
+incompatible types (see <code><a href='vctrs-conditions.html'>stop_incompatible_type()</a></code>).</p></td>
     </tr>
     </table>
     
+    <h2 class="hasAnchor" id="coercion-rules"><a class="anchor" href="#coercion-rules"></a>Coercion rules</h2>
 
-    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'>new_data_frame</span>(<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/list'>list</a></span>(<span class='kw'>x</span> <span class='kw'>=</span> <span class='fl'>1</span>:<span class='fl'>10</span>, <span class='kw'>y</span> <span class='kw'>=</span> <span class='fl'>10</span>:<span class='fl'>1</span>))</div><div class='output co'>#&gt;     x  y
-#&gt; 1   1 10
-#&gt; 2   2  9
-#&gt; 3   3  8
-#&gt; 4   4  7
-#&gt; 5   5  6
-#&gt; 6   6  5
-#&gt; 7   7  4
-#&gt; 8   8  3
-#&gt; 9   9  2
-#&gt; 10 10  1</div></pre>
+    
+    <p>vctrs thinks of the vector types as forming a partially ordered set, or
+poset. Then finding the common type from a set of types is a matter of
+finding the least-upper-bound; if the least-upper-bound does not exist,
+there is no common type. This is the case for many pairs of 1d vectors.</p>
+<p>The poset of the most important base vectors is shown below:
+(where datetime stands for <code>POSIXt</code>, and date for <code>Date</code>)</p>
+<p><img src='figures/coerce.png' alt='' /></p>
+    
+    <h2 class="hasAnchor" id="s-dispatch"><a class="anchor" href="#s-dispatch"></a>S3 dispatch</h2>
+
+    
+    <p><code>vec_ptype2()</code> dispatches on both arguments. This is implemented by having
+methods of <code>vec_ptype2()</code>, e.g. <code>vec_ptype2.integer()</code> also be S3 generics,
+which call e.g. <code>vec_ptype2.integer.double()</code>. <code>vec_ptype2.x.y()</code> must
+return the same value as <code>vec_ptype2.y.x()</code>; this is currently not enforced,
+but should be tested.</p>
+<p>Whenever you implemenet a <code>vec_ptype2.new_class()</code> generic/method,
+make sure to always provide <code>vec_ptype2.new_class.default()</code>. It
+should normally call <code>vec_default_ptype2()</code>.</p>
+<p>See <code><a href='../articles/s3-vector.html'>vignette("s3-vector")</a></code> for full details.</p>
+    
+
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
       <li><a href="#arguments">Arguments</a></li>
-            
-      <li><a href="#examples">Examples</a></li>
-    </ul>
+      
+      <li><a href="#coercion-rules">Coercion rules</a></li>
+
+      <li><a href="#s-dispatch">S3 dispatch</a></li>
+          </ul>
 
   </div>
 </div>
