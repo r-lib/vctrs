@@ -165,7 +165,7 @@ static SEXP slice_rownames(SEXP names, SEXP index) {
   names = PROTECT(chr_slice(names, index));
 
   // Rownames can't contain `NA` or duplicates
-  names = vec_as_unique_names(names, false);
+  names = vec_as_unique_names(names, true);
 
   UNPROTECT(1);
   return names;
