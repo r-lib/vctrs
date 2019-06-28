@@ -204,10 +204,10 @@ as the LHS.</p></li>
 <span class='no'>y</span></div><div class='output co'>#&gt;  [1]   9 100 500  10   5   6   8   4   7   2</div><div class='input'><span class='no'>x</span></div><div class='output co'>#&gt;  [1]   9 100   1  10   5   6   8   4   7   2</div><div class='input'>
 
 <span class='co'># Slicing objects of higher dimension:</span>
-<span class='fu'>vec_slice</span>(<span class='no'>mtcars</span>, <span class='fl'>1</span>:<span class='fl'>3</span>)</div><div class='output co'>#&gt;    mpg cyl disp  hp drat    wt  qsec vs am gear carb
-#&gt; 1 21.0   6  160 110 3.90 2.620 16.46  0  1    4    4
-#&gt; 2 21.0   6  160 110 3.90 2.875 17.02  0  1    4    4
-#&gt; 3 22.8   4  108  93 3.85 2.320 18.61  1  1    4    1</div><div class='input'>
+<span class='fu'>vec_slice</span>(<span class='no'>mtcars</span>, <span class='fl'>1</span>:<span class='fl'>3</span>)</div><div class='output co'>#&gt;                mpg cyl disp  hp drat    wt  qsec vs am gear carb
+#&gt; Mazda RX4     21.0   6  160 110 3.90 2.620 16.46  0  1    4    4
+#&gt; Mazda RX4 Wag 21.0   6  160 110 3.90 2.875 17.02  0  1    4    4
+#&gt; Datsun 710    22.8   4  108  93 3.85 2.320 18.61  1  1    4    1</div><div class='input'>
 <span class='co'># Type stability --------------------------------------------------</span>
 
 <span class='co'># The assign variant is type stable. It always returns the same</span>
