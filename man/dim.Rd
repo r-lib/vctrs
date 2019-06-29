@@ -4,7 +4,7 @@
 \alias{dim}
 \alias{vec_dim}
 \alias{vec_dim_n}
-\title{Vector dimensions}
+\title{Actual vector dimensions}
 \usage{
 vec_dim(x)
 
@@ -18,11 +18,14 @@ vec_dim_n(x)
 \item \code{vec_dim_n()} gives the dimensionality (i.e. number of dimensions)
 \item \code{vec_dim()} returns the size of each dimension
 }
+
+These functions access the raw \code{"dim"} attribute of the object
+and do not dispatch over the \code{\link[=dim]{dim()}} generic.
 }
 \details{
 Unlike base R, we treat vectors with \code{NULL} dimensions as 1d. This
-simplifies the type system by eliding a special case. Compared to base R
-equivalent, \code{vec_dim()} returns \code{length()}, not \code{NULL}, when \code{x} is 1d.
+simplifies the type system by eliding a special case. Compared to the base R
+equivalent, \code{vec_dim()} returns \code{\link[=length]{length()}}, not \code{NULL}, when \code{x} is 1d.
 }
 \examples{
 # Compared to base R

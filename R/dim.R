@@ -1,11 +1,16 @@
-#' Vector dimensions
+#' Actual vector dimensions
 #'
+#' @description
 #' * `vec_dim_n()` gives the dimensionality (i.e. number of dimensions)
 #' * `vec_dim()` returns the size of each dimension
 #'
+#' These functions access the raw `"dim"` attribute of the object
+#' and do not dispatch over the [dim()] generic.
+#'
+#' @details
 #' Unlike base R, we treat vectors with `NULL` dimensions as 1d. This
-#' simplifies the type system by eliding a special case. Compared to base R
-#' equivalent, `vec_dim()` returns `length()`, not `NULL`, when `x` is 1d.
+#' simplifies the type system by eliding a special case. Compared to the base R
+#' equivalent, `vec_dim()` returns [length()], not `NULL`, when `x` is 1d.
 #'
 #' @param x A vector
 #' @name dim
