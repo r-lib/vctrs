@@ -33,3 +33,7 @@ x <- 1:5
 dim(x)
 vec_dim(x)
 }
+\seealso{
+\code{\link[=dim2]{dim2()}}, a variant of \code{\link[=dim]{dim()}} that returns \code{\link[=length]{length()}} if an object
+doesn't have dimensions.
+}
