@@ -2,7 +2,7 @@
 #include "utils.h"
 
 // boost::hash_combine from https://stackoverflow.com/questions/35985960
-static uint32_t hash_combine(int x, int y) {
+static uint32_t hash_combine(uint32_t x, uint32_t y) {
   return x ^ (y + 0x9e3779b9 + (x << 6) + (x >> 2));
 }
 

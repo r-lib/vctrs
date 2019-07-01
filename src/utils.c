@@ -372,11 +372,10 @@ SEXP r_lgl_which(SEXP x, bool na_propagate) {
 
     if (elt) {
       if (na_propagate && elt == NA_LOGICAL) {
-        *which_data = NA_INTEGER;
-      } else {
-        *which_data = i + 1;
+        *which_data++ = NA_INTEGER;
+      } else if (elt != NA_LOGICAL) {
+        *which_data++ = i + 1;
       }
-      ++which_data;
     }
   }
 

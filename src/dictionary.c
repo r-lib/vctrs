@@ -45,8 +45,11 @@ void dict_init_impl(dictionary* d, SEXP x, bool partial) {
 
   R_len_t n = vec_size(x);
   d->hash = (uint32_t*) R_alloc(n, sizeof(uint32_t));
-  memset(d->hash, 0, n * sizeof(R_len_t));
-  hash_fill(d->hash, n, x);
+
+  if (d->hash) {
+    memset(d->hash, 0, n * sizeof(R_len_t));
+    hash_fill(d->hash, n, x);
+  }
 }
 
 void dict_init(dictionary* d, SEXP x) {
