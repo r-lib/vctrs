@@ -55,11 +55,19 @@ s3_register <- function(generic, class, method = NULL) {
   package <- pieces[[1]]
   generic <- pieces[[2]]
 
-  method_ns <- environmentName(topenv(parent.frame()))
+  caller <- parent.frame()
 
+  get_method_env <- function() {
+    top <- topenv(caller)
+    if (isNamespace(top)) {
+      asNamespace(environmentName(top))
+    } else {
+      caller
+    }
+  }
   get_method <- function(method, env) {
     if (is.null(method)) {
-      get(paste0(generic, ".", class), envir = asNamespace(method_ns))
+      get(paste0(generic, ".", class), envir = get_method_env())
     } else {
       method
     }
