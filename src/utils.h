@@ -78,6 +78,10 @@ void init_compact_seq(int* p, R_len_t from, R_len_t to);
 SEXP compact_seq(R_len_t from, R_len_t to);
 bool is_compact_seq(SEXP x);
 
+void init_compact_rep(int* p, R_len_t i, R_len_t n);
+SEXP compact_rep(R_len_t i, R_len_t n);
+bool is_compact_rep(SEXP x);
+
 SEXP apply_name_spec(SEXP name_spec, SEXP outer, SEXP inner, R_len_t n);
 SEXP outer_names(SEXP names, SEXP outer, R_len_t n);
 SEXP set_rownames(SEXP x, SEXP names);
