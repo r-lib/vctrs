@@ -58,7 +58,12 @@ s3_register <- function(generic, class, method = NULL) {
   setHook(
     packageEvent(package, "onLoad"),
     function(...) {
-      registerS3method(generic, class, method, envir = asNamespace(package))
+      ns <- asNamespace(package)
+
+      # Refresh the method, it might have been updated by `devtools::load_all()`
+      method <- get(paste0(generic, ".", class), envir = ns)
+
+      registerS3method(generic, class, method, envir = ns)
     }
   )
 
