@@ -6,6 +6,14 @@
   s3_register("generics::as.ordered", "vctrs_vctr")
   s3_register("generics::as.difftime", "vctrs_vctr")
 
+  # Remove once tibble has implemented the methods
+  if (is_installed("tibble") && !env_has(ns_env("tibble"), "vec_ptype2.tbl_df")) {
+    s3_register("vctrs::vec_ptype2", "tbl_df")
+    s3_register("vctrs::vec_ptype2.tbl_df", "default")
+    s3_register("vctrs::vec_ptype2.tbl_df", "data.frame")
+    s3_register("vctrs::vec_ptype2.data.frame", "tbl_df")
+  }
+
   utils::globalVariables("vec_set_attributes")
 
   # Prevent two copies from being made by `attributes(x) <- attrib` on R < 3.6.0
