@@ -27,6 +27,12 @@
 #' @param method Optionally, the implementation of the method. By default,
 #'   this will be found by looking for a function called `generic.class`
 #'   in the package environment.
+#'
+#'   Note that providing `method` can be dangerous if you use
+#'   devtools. When the namespace of the method is reloaded by
+#'   `devtools::load_all()`, the function will keep inheriting from
+#'   the old namespace. This might cause crashes because of dangling
+#'   `.Call()` pointers.
 #' @export
 #' @examples
 #' # A typical use case is to dynamically register tibble/pillar methods
@@ -49,10 +55,18 @@ s3_register <- function(generic, class, method = NULL) {
   package <- pieces[[1]]
   generic <- pieces[[2]]
 
-  if (is.null(method)) {
-    method <- get(paste0(generic, ".", class), envir = parent.frame())
+  method_ns <- environmentName(topenv(parent.frame()))
+
+  get_method <- function(method, env) {
+    if (is.null(method)) {
+      get(paste0(generic, ".", class), envir = asNamespace(method_ns))
+    } else {
+      method
+    }
   }
-  stopifnot(is.function(method))
+
+  method_fn <- get_method(method)
+  stopifnot(is.function(method_fn))
 
   # Always register hook in case package is later unloaded & reloaded
   setHook(
@@ -61,9 +75,9 @@ s3_register <- function(generic, class, method = NULL) {
       ns <- asNamespace(package)
 
       # Refresh the method, it might have been updated by `devtools::load_all()`
-      method <- get(paste0(generic, ".", class), envir = ns)
+      method_fn <- get_method(method)
 
-      registerS3method(generic, class, method, envir = ns)
+      registerS3method(generic, class, method_fn, envir = ns)
     }
   )
 
@@ -76,7 +90,7 @@ s3_register <- function(generic, class, method = NULL) {
 
   # Only register if generic can be accessed
   if (exists(generic, envir)) {
-    registerS3method(generic, class, method, envir = envir)
+    registerS3method(generic, class, method_fn, envir = envir)
   }
 
   invisible()

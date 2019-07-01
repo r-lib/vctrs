@@ -13,7 +13,13 @@ s3_register(generic, class, method = NULL)
 
 \item{method}{Optionally, the implementation of the method. By default,
 this will be found by looking for a function called \code{generic.class}
-in the package environment.}
+in the package environment.
+
+Note that providing \code{method} can be dangerous if you use
+devtools. When the namespace of the method is reloaded by
+\code{devtools::load_all()}, the function will keep inheriting from
+the old namespace. This might cause crashes because of dangling
+\code{.Call()} pointers.}
 }
 \description{
 Generally, the recommend way to register an S3 method is to use the
