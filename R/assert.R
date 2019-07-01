@@ -38,7 +38,7 @@ vec_assert <- function(x, ptype = NULL, size = NULL, arg = as_label(substitute(x
 
   if (!is_null(ptype)) {
     ptype <- vec_ptype(ptype)
-    x_type <- vec_type_finalise(vec_ptype(x))
+    x_type <- vec_ptype_finalise(vec_ptype(x))
     if (!is_same_type(x_type, ptype)) {
       msg <- vec_assert_type_explain(x_type, ptype, arg)
       abort(
@@ -75,7 +75,7 @@ vec_is <- function(x, ptype = NULL, size = NULL) {
 
   if (!is_null(ptype)) {
     ptype <- vec_ptype(ptype)
-    x_type <- vec_type_finalise(vec_ptype(x))
+    x_type <- vec_ptype_finalise(vec_ptype(x))
     if (!is_same_type(x_type, ptype)) {
       return(FALSE)
     }

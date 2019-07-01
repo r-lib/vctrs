@@ -134,6 +134,6 @@ static SEXP vctrs_type2_common(SEXP current, SEXP next, struct counters* counter
 
 
 void vctrs_init_type(SEXP ns) {
-  syms_vec_type_finalise_dispatch = Rf_install("vec_type_finalise_dispatch");
+  syms_vec_type_finalise_dispatch = Rf_install("vec_ptype_finalise_dispatch");
   fns_vec_type_finalise_dispatch = Rf_findVar(syms_vec_type_finalise_dispatch, ns);
 }

@@ -3,14 +3,14 @@
 \name{new_partial}
 \alias{new_partial}
 \alias{is_partial}
-\alias{vec_type_finalise}
+\alias{vec_ptype_finalise}
 \title{Partial type}
 \usage{
 new_partial(..., class = character())
 
 is_partial(x)
 
-vec_type_finalise(x, ...)
+vec_ptype_finalise(x, ...)
 }
 \arguments{
 \item{...}{Attributes of the partial type}
@@ -20,7 +20,7 @@ vec_type_finalise(x, ...)
 \description{
 Use \code{new_partial()} when constructing a new partial type subclass;
 and use \code{is_partial()} to test if an type is partial. All subclasses
-need to provide a \code{vec_type_finalise()} method.
+need to provide a \code{vec_ptype_finalise()} method.
 }
 \details{
 As the name suggests, a partial type \emph{partially} specifies a type, and

@@ -2,7 +2,7 @@
 #'
 #' Use `new_partial()` when constructing a new partial type subclass;
 #' and use `is_partial()` to test if an type is partial. All subclasses
-#' need to provide a `vec_type_finalise()` method.
+#' need to provide a `vec_ptype_finalise()` method.
 #'
 #' As the name suggests, a partial type _partially_ specifies a type, and
 #' it must be combined with data to yield a full type. A useful example
@@ -39,24 +39,24 @@ is_partial <- function(x) {
 #' @rdname new_partial
 #' @inheritParams ellipsis::dots_empty
 #' @export
-vec_type_finalise <- function(x, ...) {
+vec_ptype_finalise <- function(x, ...) {
   if (!missing(...)) {
     ellipsis::check_dots_empty()
   }
   return(.Call(vctrs_type_finalise, x))
-  UseMethod("vec_type_finalise")
+  UseMethod("vec_ptype_finalise")
 }
-vec_type_finalise_dispatch <- function(x, ...) {
-  UseMethod("vec_type_finalise")
+vec_ptype_finalise_dispatch <- function(x, ...) {
+  UseMethod("vec_ptype_finalise")
 }
 #' @export
-vec_type_finalise.vctrs_partial <- function(x, ...) {
+vec_ptype_finalise.vctrs_partial <- function(x, ...) {
   # nocov start
-  stop_unimplemented(x, "vec_type_finalise")
+  stop_unimplemented(x, "vec_ptype_finalise")
   # nocov end
 }
 
 #' @export
-vec_type_finalise.default <- function(x, ...) {
+vec_ptype_finalise.default <- function(x, ...) {
   x
 }

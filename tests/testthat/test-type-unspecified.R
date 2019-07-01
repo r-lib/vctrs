@@ -41,7 +41,7 @@ test_that("can finalise data frame containing unspecified columns", {
   ptype <- vec_ptype(df)
   expect_identical(ptype$y, unspecified())
 
-  finalised <- vec_type_finalise(ptype)
+  finalised <- vec_ptype_finalise(ptype)
   expect_identical(finalised$y, lgl())
 
   common <- vec_ptype_common(df, df)
@@ -65,7 +65,7 @@ test_that("S3 vectors and shaped vectors are never unspecified", {
 })
 
 test_that("can finalise lengthy unspecified vectors", {
-  expect_identical(vec_type_finalise(unspecified(3)), rep(NA, 3))
+  expect_identical(vec_ptype_finalise(unspecified(3)), rep(NA, 3))
   expect_identical(ununspecify(unspecified(3)), rep(NA, 3))
 })
 

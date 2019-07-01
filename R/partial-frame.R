@@ -88,7 +88,7 @@ vec_ptype2.data.frame.vctrs_partial_frame <- function(x, y, ...) {
 }
 
 #' @export
-vec_type_finalise.vctrs_partial_frame <- function(x, ...) {
+vec_ptype_finalise.vctrs_partial_frame <- function(x, ...) {
   out <- x$learned
   out[names(x$partial)] <- x$partial
 
