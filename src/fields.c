@@ -36,7 +36,7 @@ int find_offset(SEXP x, SEXP index) {
 
     return val;
   } else if (TYPEOF(index) == REALSXP) {
-    int val = REAL(index)[0];
+    double val = REAL(index)[0];
 
     if (R_IsNA(val))
       Rf_errorcall(R_NilValue, "Invalid index: NA_real_");
@@ -45,7 +45,11 @@ int find_offset(SEXP x, SEXP index) {
     if (val < 0 || val >= n)
       Rf_errorcall(R_NilValue, "Invalid index: out of bounds");
 
-    return val;
+    if (val > R_LEN_T_MAX) {
+      Rf_errorcall(R_NilValue, "Invalid index: too large");
+    }
+
+    return (int) val;
   } else if (TYPEOF(index) == STRSXP) {
     SEXP names = Rf_getAttrib(x, R_NamesSymbol);
     if (names == R_NilValue)
