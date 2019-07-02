@@ -494,6 +494,7 @@ SEXP r_chr_iota(R_len_t n, char* buf, int len, const char* prefix) {
     int written = snprintf(beg, len, "%d", i + 1);
 
     if (written >= len) {
+      UNPROTECT(1);
       return R_NilValue;
     }
 
