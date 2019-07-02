@@ -6,18 +6,43 @@ reference:
   - vec_data
   - vec_ptype
   - vec_size
+  - vec_is
+  - vec_assert
 
 - title: Casting and combining
   contents:
   - vec_c
   - vec_cbind
 
-- title: Matching
+- title: Slicing and recycling
+  contents:
+  - vec_init
+  - vec_slice
+  - vec_assign
+  - vec_recycle
+
+- title: Equality and ordering
+  contents:
+  - vec_equal
+  - vec_compare
+
+- title: Sorting
+  contents:
+  - vec_sort
+  - vec_order
+
+- title: Matching and splitting
   contents:
   - vec_count
   - vec_duplicate
   - vec_unique
   - vec_in
+  - vec_split
+
+- title: Sequences and repetitions
+  contents:
+  - vec_repeat
+  - vec_seq_along
 
 - title: New classes
   contents:
@@ -28,12 +53,20 @@ reference:
   - vctr
   - vec_cast
   - vec_list_cast
-  - vec_type2
-  - vec_grp_compare
+  - vec_ptype2
+  - vec_proxy_compare
   - vec_proxy_equal
   - vec_ptype_full
+  - vec_ptype_finalise
   - "vctrs-conditions"
   - rcrd
   - fields
   - s3_register
   - vec_resize
+  - vec_arith
+  - vec_math
+  - unspecified
+  - vec_default_cast
+  - vec_default_ptype2
+  - vec_as_names
+  - vec_as_index

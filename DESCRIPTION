@@ -1,11 +1,19 @@
 Package: vctrs
 Title: Vector Helpers
-Version: 0.1.99.9000
+Version: 0.2.0
 Authors@R: 
     c(person(given = "Hadley",
              family = "Wickham",
              role = c("aut", "cre"),
              email = "hadley@rstudio.com"),
+      person(given = "Lionel",
+             family = "Henry",
+             role = "aut",
+             email = "lionel@rstudio.com"),
+      person(given = "Davis",
+             family = "Vaughan",
+             role = "aut",
+             email = "davis@rstudio.com"),
       person(given = "RStudio",
              role = "cph"))
 Description: Defines new notions of prototype and size that are

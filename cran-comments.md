@@ -1,15 +1,17 @@
-This is a resubmission, fixing an obvious problem in the description.
-
----
 
 ## Test environments
-* local OS X install, R 3.5.1
-* ubuntu 14.04 (on travis-ci), R 3.5.1
-* win-builder (devel and release)
+
+* local macOS: release
+* Travis Ubuntu: 3.2, 3.3, oldrel, release, devel
+* win-builder: release, devel
+* R-Hub: UBSAN, rchk, and valgrind builds
 
 ## R CMD check results
 
-0 errors | 0 warnings | 1 note
+0 errors | 0 warnings | 0 notes
 
-* This is a new release.
- 
+There are 3 reverse dependencies, two of which are broken by this
+vctrs release (evaluator and probably).
+
+- We will send an update of {probably} shortly.
+- We have notified the maintainer of {evaluator} of the failure.

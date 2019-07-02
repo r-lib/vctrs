@@ -9,7 +9,7 @@
 #' successively calls [vec_ptype2()] to find a common type.
 #'
 #' @section Prototype:
-#' A prototype is [size](vec_size) 0 vector containing attributes, but no
+#' A prototype is [size][vec_size] 0 vector containing attributes, but no
 #' data. Generally, this is just `vec_slice(x, 0L)`, but some inputs
 #' require special handling.
 #'

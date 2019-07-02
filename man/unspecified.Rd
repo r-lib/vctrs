@@ -13,7 +13,7 @@ unspecified(n = 0)
 \item{n}{Length of vector}
 }
 \description{
-This is a \href{new_partial}{partial type} used to represent logical vectors
+This is a \link[=new_partial]{partial type} used to represent logical vectors
 that only contain \code{NA}. These require special handling because we want to
 allow \code{NA} to specify missingness without requiring a type.
 }
