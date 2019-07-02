@@ -14,7 +14,7 @@ This special class can be passed as a \code{ptype} in order to specify that the
 result should be a factor that contains at least the specified levels.
 }
 \examples{
-# Assert that `x` is a factor with any levels
+# Assert that `x` is a factor
 vec_assert(factor("x"), partial_factor())
 
 # Or enforce a minimum set of levels

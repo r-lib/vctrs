@@ -6,7 +6,7 @@
 #' @inheritParams new_factor
 #' @export
 #' @examples
-#' # Assert that `x` is a factor with any levels
+#' # Assert that `x` is a factor
 #' vec_assert(factor("x"), partial_factor())
 #'
 #' # Or enforce a minimum set of levels
