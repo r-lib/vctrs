@@ -27,6 +27,15 @@
 #'   this is a convenient way to make production code demand fixed types.
 #' @return `vec_ptype()` and `vec_ptype_common()` return a prototype
 #'   (a size-0 vector)
+#'
+#' @section The prototype of `NULL`:
+#'
+#' In general we treat `NULL` as an absence of argument (which is
+#' often an error). In the case of `vec_ptype()` and
+#' `vec_ptype_common()`, we have chosen `NULL` as the identity of the
+#' common type monoid: the common type of `foo` and `NULL` is always
+#' `foo`. For this reason, the prototype of `NULL` is `NULL`.
+#'
 #' @export
 #' @examples
 #' # Unknown types ------------------------------------------
