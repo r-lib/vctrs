@@ -11,7 +11,7 @@ partial_factor(levels = character())
 }
 \description{
 This special class can be passed as a \code{ptype} in order to specify that the
-result should be a factor with at least some minimum set of levels.
+result should be a factor that contains at least the specified levels.
 }
 \examples{
 # Assert that `x` is a factor with any levels
