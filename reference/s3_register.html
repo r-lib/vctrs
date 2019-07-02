@@ -166,7 +166,12 @@ and paste the function source into your own package.)</p>
       <th>method</th>
       <td><p>Optionally, the implementation of the method. By default,
 this will be found by looking for a function called <code>generic.class</code>
-in the package environment.</p></td>
+in the package environment.</p>
+<p>Note that providing <code>method</code> can be dangerous if you use
+devtools. When the namespace of the method is reloaded by
+<code>devtools::load_all()</code>, the function will keep inheriting from
+the old namespace. This might cause crashes because of dangling
+<code><a href='https://www.rdocumentation.org/packages/base/topics/CallExternal'>.Call()</a></code> pointers.</p></td>
     </tr>
     </table>
     
