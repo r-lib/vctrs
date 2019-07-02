@@ -276,6 +276,56 @@ bool is_compact_seq(SEXP x) {
   return ATTRIB(x) == compact_seq_attrib;
 }
 
+// Initialised at load time
+SEXP compact_rep_attrib = NULL;
+
+void init_compact_rep(int* p, R_len_t i, R_len_t n) {
+  p[0] = i;
+  p[1] = n;
+}
+
+// Returns a compact repetition that `vec_slice()` understands
+// `i` should be an R-based index
+SEXP compact_rep(R_len_t i, R_len_t n) {
+  if (n < 0) {
+    Rf_error("Internal error: Negative `n` in `compact_rep()`.");
+  }
+
+  SEXP rep = PROTECT(Rf_allocVector(INTSXP, 2));
+
+  int* p = INTEGER(rep);
+  init_compact_rep(p, i, n);
+
+  SET_ATTRIB(rep, compact_rep_attrib);
+
+  UNPROTECT(1);
+  return rep;
+}
+
+bool is_compact_rep(SEXP x) {
+  return ATTRIB(x) == compact_rep_attrib;
+}
+
+SEXP compact_rep_materialize(SEXP x) {
+  int i = r_int_get(x, 0);
+  int n = r_int_get(x, 1);
+
+  SEXP out = PROTECT(Rf_allocVector(INTSXP, n));
+  r_int_fill(out, i, n);
+
+  UNPROTECT(1);
+  return out;
+}
+
+R_len_t vec_index_size(SEXP x) {
+  if (is_compact_rep(x)) {
+    return r_int_get(x, 1);
+  } else if (is_compact_seq(x)) {
+    return r_int_get(x, 1) - r_int_get(x, 0);
+  } else {
+    return vec_size(x);
+  }
+}
 
 static SEXP syms_colnames = NULL;
 static SEXP fns_colnames = NULL;
@@ -1039,4 +1089,8 @@ void vctrs_init_utils(SEXP ns) {
   compact_seq_attrib = Rf_cons(R_NilValue, R_NilValue);
   R_PreserveObject(compact_seq_attrib);
   SET_TAG(compact_seq_attrib, Rf_install("vctrs_compact_seq"));
+
+  compact_rep_attrib = Rf_cons(R_NilValue, R_NilValue);
+  R_PreserveObject(compact_rep_attrib);
+  SET_TAG(compact_rep_attrib, Rf_install("vctrs_compact_rep"));
 }

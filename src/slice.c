@@ -17,7 +17,7 @@ static SEXP slice_rownames(SEXP names, SEXP index);
  * @param dispatch When `true`, dispatches to `[` for compatibility
  *   with base R. When `false`, uses native implementations.
  */
-static SEXP vec_slice_impl(SEXP x, SEXP index);
+SEXP vec_slice_impl(SEXP x, SEXP index);
 
 
 static void stop_bad_index_length(R_len_t n, R_len_t i) {
@@ -27,21 +27,47 @@ static void stop_bad_index_length(R_len_t n, R_len_t i) {
                n, i);
 }
 
-#define SLICE(RTYPE, CTYPE, DEREF, CONST_DEREF, NA_VALUE)       \
-  const CTYPE* data = CONST_DEREF(x);                           \
-  R_len_t n = Rf_length(index);                                 \
-  int* index_data = INTEGER(index);                             \
-                                                                \
-  SEXP out = PROTECT(Rf_allocVector(RTYPE, n));                 \
-  CTYPE* out_data = DEREF(out);                                 \
-                                                                \
-  for (R_len_t i = 0; i < n; ++i, ++index_data, ++out_data) {   \
-    int j = *index_data;                                        \
-    *out_data = (j == NA_INTEGER) ? NA_VALUE : data[j - 1];     \
-  }                                                             \
-                                                                \
-  UNPROTECT(1);                                                 \
+#define SLICE_INDEX(RTYPE, CTYPE, DEREF, CONST_DEREF, NA_VALUE)   \
+  const CTYPE* data = CONST_DEREF(x);                             \
+  R_len_t n = Rf_length(index);                                   \
+  int* index_data = INTEGER(index);                               \
+                                                                  \
+  SEXP out = PROTECT(Rf_allocVector(RTYPE, n));                   \
+  CTYPE* out_data = DEREF(out);                                   \
+                                                                  \
+  for (R_len_t i = 0; i < n; ++i, ++index_data, ++out_data) {     \
+    int j = *index_data;                                          \
+    *out_data = (j == NA_INTEGER) ? NA_VALUE : data[j - 1];       \
+  }                                                               \
+                                                                  \
+  UNPROTECT(1);                                                   \
   return out
+
+#define SLICE_COMPACT_REP(RTYPE, CTYPE, DEREF, CONST_DEREF, NA_VALUE) \
+  const CTYPE* data = CONST_DEREF(x);                                 \
+                                                                      \
+  int* index_data = INTEGER(index);                                   \
+  R_len_t j = index_data[0];                                          \
+  R_len_t n = index_data[1];                                          \
+                                                                      \
+  SEXP out = PROTECT(Rf_allocVector(RTYPE, n));                       \
+  CTYPE* out_data = DEREF(out);                                       \
+                                                                      \
+  CTYPE elt = (j == NA_INTEGER) ? NA_VALUE : data[j - 1];             \
+                                                                      \
+  for (R_len_t i = 0; i < n; ++i, ++out_data) {                       \
+    *out_data = elt;                                                  \
+  }                                                                   \
+                                                                      \
+  UNPROTECT(1);                                                       \
+  return out
+
+#define SLICE(RTYPE, CTYPE, DEREF, CONST_DEREF, NA_VALUE)          \
+  if (is_compact_rep(index)) {                                     \
+    SLICE_COMPACT_REP(RTYPE, CTYPE, DEREF, CONST_DEREF, NA_VALUE); \
+  } else {                                                         \
+    SLICE_INDEX(RTYPE, CTYPE, DEREF, CONST_DEREF, NA_VALUE);       \
+  }
 
 static SEXP lgl_slice(SEXP x, SEXP index) {
   SLICE(LGLSXP, int, LOGICAL, LOGICAL_RO, NA_LOGICAL);
@@ -63,9 +89,10 @@ static SEXP raw_slice(SEXP x, SEXP index) {
 }
 
 #undef SLICE
+#undef SLICE_COMPACT_REP
+#undef SLICE_INDEX
 
-
-#define SLICE_BARRIER(RTYPE, GET, SET, NA_VALUE)                \
+#define SLICE_BARRIER_INDEX(RTYPE, GET, SET, NA_VALUE)          \
   R_len_t n = Rf_length(index);                                 \
   int* index_data = INTEGER(index);                             \
                                                                 \
@@ -80,11 +107,37 @@ static SEXP raw_slice(SEXP x, SEXP index) {
   UNPROTECT(1);                                                 \
   return out
 
+
+#define SLICE_BARRIER_COMPACT_REP(RTYPE, GET, SET, NA_VALUE)    \
+  int* index_data = INTEGER(index);                             \
+  R_len_t j = index_data[0];                                    \
+  R_len_t n = index_data[1];                                    \
+                                                                \
+  SEXP out = PROTECT(Rf_allocVector(RTYPE, n));                 \
+                                                                \
+  SEXP elt = (j == NA_INTEGER) ? NA_VALUE : GET(x, j - 1);      \
+                                                                \
+  for (R_len_t i = 0; i < n; ++i) {                             \
+    SET(out, i, elt);                                           \
+  }                                                             \
+                                                                \
+  UNPROTECT(1);                                                 \
+  return out
+
+#define SLICE_BARRIER(RTYPE, GET, SET, NA_VALUE)            \
+  if (is_compact_rep(index)) {                              \
+    SLICE_BARRIER_COMPACT_REP(RTYPE, GET, SET, NA_VALUE);   \
+  } else {                                                  \
+    SLICE_BARRIER_INDEX(RTYPE, GET, SET, NA_VALUE);         \
+  }
+
 static SEXP list_slice(SEXP x, SEXP index) {
   SLICE_BARRIER(VECSXP, VECTOR_ELT, SET_VECTOR_ELT, R_NilValue);
 }
 
 #undef SLICE_BARRIER
+#undef SLICE_BARRIER_COMPACT_REP
+#undef SLICE_BARRIER_INDEX
 
 static SEXP df_slice(SEXP x, SEXP index) {
   R_len_t n = Rf_length(x);
@@ -171,10 +224,10 @@ static SEXP slice_rownames(SEXP names, SEXP index) {
   return names;
 }
 
-static SEXP vec_slice_impl(SEXP x, SEXP index) {
+SEXP vec_slice_impl(SEXP x, SEXP index) {
   int nprot = 0;
 
-  SEXP restore_size = PROTECT_N(r_int(Rf_length(index)), &nprot);
+  SEXP restore_size = PROTECT_N(r_int(vec_index_size(index)), &nprot);
 
   struct vctrs_proxy_info info = vec_proxy_info(x);
   PROTECT_PROXY_INFO(&info, &nprot);
@@ -186,6 +239,10 @@ static SEXP vec_slice_impl(SEXP x, SEXP index) {
   if (OBJECT(x) && info.proxy_method == R_NilValue) {
     if (info.type == vctrs_type_scalar) {
       Rf_errorcall(R_NilValue, "Can't slice a scalar");
+    }
+
+    if (is_compact_rep(index)) {
+      index = PROTECT_N(compact_rep_materialize(index), &nprot);
     }
 
     SEXP out;
@@ -239,7 +296,7 @@ static SEXP vec_slice_impl(SEXP x, SEXP index) {
       Rf_setAttrib(out, R_NamesSymbol, names);
     }
 
-    out = vec_restore(out, x, index);
+    out = vec_restore(out, x, restore_size);
 
     UNPROTECT(nprot);
     return out;
@@ -275,9 +332,7 @@ SEXP vec_slice(SEXP x, SEXP index) {
 
 // [[ include("vctrs.h") ]]
 SEXP vec_init(SEXP x, R_len_t n) {
-  // FIXME: Use ALTREP to avoid allocation of index vector
-  SEXP i = PROTECT(Rf_allocVector(INTSXP, n));
-  r_int_fill(i, NA_INTEGER, n);
+  SEXP i = PROTECT(compact_rep(NA_INTEGER, n));
 
   SEXP out = vec_slice_impl(x, i);
 

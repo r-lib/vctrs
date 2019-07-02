@@ -3,6 +3,9 @@
 
 R_len_t rcrd_size(SEXP x);
 
+// From slice.c
+SEXP vec_slice_impl(SEXP x, SEXP index);
+
 // [[ register(); include("vctrs.h") ]]
 SEXP vec_dim(SEXP x) {
   SEXP dim = PROTECT(vec_bare_dim(x));
@@ -172,10 +175,8 @@ SEXP vec_recycle(SEXP x, R_len_t size) {
   }
 
   if (n_x == 1L) {
-    // FIXME: Replace with ALTREP repetition
-    SEXP i = PROTECT(Rf_allocVector(INTSXP, size));
-    r_int_fill(i, 1, size);
-    SEXP out = vec_slice(x, i);
+    SEXP i = PROTECT(compact_rep(1, size));
+    SEXP out = vec_slice_impl(x, i);
 
     UNPROTECT(1);
     return out;
