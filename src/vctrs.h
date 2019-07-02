@@ -279,16 +279,23 @@ SEXP vec_as_unique_names(SEXP names, bool quiet);
 
 struct growable {
   SEXP x;
-  int32_t idx;
+  PROTECT_INDEX idx;
   int n;
   int capacity;
 };
 typedef struct growable growable;
 
 void growable_init(growable* g, SEXPTYPE type, int capacity);
-void growable_free(growable* g);
 void growable_push_int(growable* g, int i);
 SEXP growable_values(growable* g);
+
+#define PROTECT_GROWABLE(g, n) do {             \
+    PROTECT_WITH_INDEX((g)->x, &((g)->idx));    \
+    *n += 1;                                    \
+  } while(0)
+
+#define UNPROTECT_GROWABLE(g) do { UNPROTECT(1);} while(0)
+
 
 // Shape --------------------------------------------------------
 
