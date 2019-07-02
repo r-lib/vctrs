@@ -243,10 +243,7 @@ SEXP vec_slice_impl(SEXP x, SEXP index) {
     }
 
     if (is_compact_rep(index)) {
-      int i = r_int_get(index, 0);
-      int n = r_int_get(index, 1);
-      index = PROTECT_N(Rf_allocVector(INTSXP, n), &nprot);
-      r_int_fill(index, i, n);
+      index = PROTECT_N(compact_rep_materialize(index), &nprot);
     }
 
     SEXP out;

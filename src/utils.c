@@ -301,10 +301,21 @@ SEXP compact_rep(R_len_t i, R_len_t n) {
   UNPROTECT(1);
   return rep;
 }
+
 bool is_compact_rep(SEXP x) {
   return ATTRIB(x) == compact_rep_attrib;
 }
 
+SEXP compact_rep_materialize(SEXP x) {
+  int i = r_int_get(x, 0);
+  int n = r_int_get(x, 1);
+
+  SEXP out = PROTECT(Rf_allocVector(INTSXP, n));
+  r_int_fill(out, i, n);
+
+  UNPROTECT(1);
+  return out;
+}
 
 static SEXP syms_colnames = NULL;
 static SEXP fns_colnames = NULL;
