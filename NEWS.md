@@ -107,6 +107,7 @@ or possible cast.
   ```r
   data <- tibble::tibble(x = 1:3, y = letters[1:3])
   data <- vec_cbind(data, packed = data)
+  data
   # A tibble: 3 x 3
         x y     packed$x $y
     <int> <chr>    <int> <chr>
@@ -131,10 +132,10 @@ or possible cast.
   We are planning to use this syntax more widely in the tidyverse.
 
 * New `vec_is()` function to check whether a vector conforms to a
-  protopty and/or a size. Unlike `vec_assert()`, it doesn't throw
+  prototype and/or a size. Unlike `vec_assert()`, it doesn't throw
   errors but returns `TRUE` or `FALSE` (#79).
 
-  Called without a specific type or size, it tests whether an object
+  Called without a specific type or size, `vec_assert()` tests whether an object
   is a data vector or a scalar. S3 lists are treated as scalars by
   default. Implement a `vec_is_vector()` for your class to override
   this property (or derive from `vctrs_vctr`).
@@ -191,13 +192,13 @@ or possible cast.
 * New `vec_seq_along()` and `vec_init_along()` create useful sequences (#189).
 
 * `vec_equal_na()` now returns `TRUE` for data frames and records when
-  every component is mising, not when _any_ component is missing
+  every component is missing, not when _any_ component is missing
   (#201).
 
 * `vec_type2(x, data.frame())` ensures that the returned object has
   names that are a length-0 character vector.
 
-* `vec_cast(x, data.frame())` preserves the number of rows in the `x`.
+* `vec_cast(x, data.frame())` preserves the number of rows in `x`.
 
 * Added a `NEWS.md` file to track changes to the package.
 
