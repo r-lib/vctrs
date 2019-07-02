@@ -1,0 +1,3 @@
+partial_factor<
+  5a425 {partial}
+>
