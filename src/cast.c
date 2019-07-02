@@ -377,14 +377,16 @@ SEXP vec_cast(SEXP x, SEXP to, struct vctrs_arg* x_arg, struct vctrs_arg* to_arg
     out = vec_cast_switch(x, to, &lossy, x_arg, to_arg);
   }
 
-  if (lossy || out == R_NilValue) {
-    return vctrs_dispatch4(syms_vec_cast_dispatch, fns_vec_cast_dispatch,
-                           syms_x, x,
-                           syms_to, to,
-                           syms_x_arg, vctrs_arg(x_arg),
-                           syms_to_arg, vctrs_arg(to_arg));
+  if (!lossy && out != R_NilValue) {
+    return out;
   }
 
+  out = vctrs_dispatch4(syms_vec_cast_dispatch, fns_vec_cast_dispatch,
+                        syms_x, x,
+                        syms_to, to,
+                        syms_x_arg, PROTECT(vctrs_arg(x_arg)),
+                        syms_to_arg, PROTECT(vctrs_arg(to_arg)));
+  UNPROTECT(2);
   return out;
 }
 
