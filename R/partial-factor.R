@@ -102,6 +102,6 @@ vec_ptype2.factor.vctrs_partial_factor <- function(x, y, ...) {
 }
 
 #' @export
-vec_type_finalise.vctrs_partial_factor <- function(x, ...) {
+vec_ptype_finalise.vctrs_partial_factor <- function(x, ...) {
   vec_ptype2(x$learned, x$partial)
 }
