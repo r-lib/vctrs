@@ -1,7 +1,7 @@
 #' Partially specify a factor
 #'
 #' This special class can be passed as a `ptype` in order to specify that the
-#' result should be a factor with at least some minimum set of levels.
+#' result should be a factor that contains at least the specified levels.
 #'
 #' @inheritParams new_factor
 #' @export
