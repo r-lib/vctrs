@@ -83,6 +83,8 @@ SEXP compact_rep(R_len_t i, R_len_t n);
 bool is_compact_rep(SEXP x);
 SEXP compact_rep_materialize(SEXP x);
 
+R_len_t vec_index_size(SEXP x);
+
 SEXP apply_name_spec(SEXP name_spec, SEXP outer, SEXP inner, R_len_t n);
 SEXP outer_names(SEXP names, SEXP outer, R_len_t n);
 SEXP set_rownames(SEXP x, SEXP names);

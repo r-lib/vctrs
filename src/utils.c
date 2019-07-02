@@ -317,6 +317,16 @@ SEXP compact_rep_materialize(SEXP x) {
   return out;
 }
 
+R_len_t vec_index_size(SEXP x) {
+  if (is_compact_rep(x)) {
+    return r_int_get(x, 1);
+  } else if (is_compact_seq(x)) {
+    return r_int_get(x, 1) - r_int_get(x, 0);
+  } else {
+    return vec_size(x);
+  }
+}
+
 static SEXP syms_colnames = NULL;
 static SEXP fns_colnames = NULL;
 

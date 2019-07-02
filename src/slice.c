@@ -227,8 +227,7 @@ static SEXP slice_rownames(SEXP names, SEXP index) {
 SEXP vec_slice_impl(SEXP x, SEXP index) {
   int nprot = 0;
 
-  int index_n = is_compact_rep(index) ? r_int_get(index, 1) : Rf_length(index);
-  SEXP restore_size = PROTECT_N(r_int(index_n), &nprot);
+  SEXP restore_size = PROTECT_N(r_int(vec_index_size(index)), &nprot);
 
   struct vctrs_proxy_info info = vec_proxy_info(x);
   PROTECT_PROXY_INFO(&info, &nprot);

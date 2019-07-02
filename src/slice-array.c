@@ -330,7 +330,7 @@ SEXP vec_slice_shaped(enum vctrs_type type, SEXP x, SEXP index) {
   info.p_index = INTEGER_RO(index);
   info.dim_n = Rf_length(dim);
   info.shape_n = info.dim_n - 1;
-  info.index_n = is_compact_rep(index) ? info.p_index[1] : Rf_length(index);
+  info.index_n = vec_index_size(index);
 
   SEXP strides = PROTECT(vec_strides(info.p_dim, info.shape_n));
   info.p_strides = INTEGER_RO(strides);
