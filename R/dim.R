@@ -8,7 +8,7 @@
 #' equivalent, `vec_dim()` returns `length()`, not `NULL`, when `x` is 1d.
 #'
 #' @param x A vector
-#' @name dim
+#' @noRd
 #' @examples
 #' # Compared to base R
 #' x <- 1:5
@@ -16,14 +16,10 @@
 #' vec_dim(x)
 NULL
 
-#' @export
-#' @rdname dim
+# FIXME: Should `vec_dim()` return the size instead of the length?
 vec_dim <- function(x) {
   .Call(vctrs_dim, x)
 }
-
-#' @export
-#' @rdname dim
 vec_dim_n <- function(x) {
   .Call(vctrs_dim_n, x)
 }

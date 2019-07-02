@@ -64,10 +64,9 @@ or possible cast.
   get the partial cast results. To implement your own lossy cast
   operation, call the new exported function `maybe_lossy_cast()`.
 
-* `vec_dims()` has been replaced by `vec_dim_n()`. This name more clearly
-  indicates the purpose of the function.
-
 * `vec_empty()` has been renamed to `vec_is_empty()`.
+
+* `vec_dim()` and `vec_dims()` are no longer exported.
 
 
 ## New features
