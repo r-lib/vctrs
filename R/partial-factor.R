@@ -67,7 +67,7 @@ vec_ptype_full.vctrs_partial_factor <- function(x, ...) {
 
 #' @export
 vec_ptype_abbr.vctrs_partial_factor <- function(x, ...) {
-  "prtl"
+  "prtl_fctr"
 }
 
 #' @method vec_ptype2 vctrs_partial_factor

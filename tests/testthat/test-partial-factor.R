@@ -25,7 +25,7 @@ test_that("has ok print method", {
     test_path("test-partial-factor-print-learned.txt")
   )
 
-  expect_equal(vec_ptype_abbr(partial), "prtl")
+  expect_equal(vec_ptype_abbr(partial), "prtl_fctr")
 })
 
 test_that("order of levels comes from data", {
