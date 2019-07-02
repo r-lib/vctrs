@@ -38,7 +38,7 @@ successively calls \code{\link[=vec_ptype2]{vec_ptype2()}} to find a common type
 }
 \section{Prototype}{
 
-A prototype is \href{vec_size}{size} 0 vector containing attributes, but no
+A prototype is \link[=vec_size]{size} 0 vector containing attributes, but no
 data. Generally, this is just \code{vec_slice(x, 0L)}, but some inputs
 require special handling.
 

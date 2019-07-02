@@ -1,6 +1,6 @@
 #' A 1d vector of unspecified type
 #'
-#' This is a [partial type](new_partial) used to represent logical vectors
+#' This is a [partial type][new_partial] used to represent logical vectors
 #' that only contain `NA`. These require special handling because we want to
 #' allow `NA` to specify missingness without requiring a type.
 #'
