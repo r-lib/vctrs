@@ -705,13 +705,14 @@ bool r_is_empty_names(SEXP x) {
 }
 
 SEXP r_env_get(SEXP env, SEXP sym) {
-  SEXP obj = Rf_findVarInFrame3(env, sym, FALSE);
+  SEXP obj = PROTECT(Rf_findVarInFrame3(env, sym, FALSE));
 
   // Force lazy loaded bindings
   if (TYPEOF(obj) == PROMSXP) {
     obj = Rf_eval(obj, R_BaseEnv);
   }
 
+  UNPROTECT(1);
   return obj;
 }
 
