@@ -19,10 +19,11 @@ or possible cast.
 
 ## Breaking changes
 
-* Lossy casts now throw errors of type `vctrs_error_cast_lossy`.  You
-  can suppress these errors selectively with `allow_lossy_cast()` to
-  get the partial cast results. To implement your own lossy cast
-  operation, call the new exported function `maybe_lossy_cast()`.
+* Lossy casts now throw errors of type `vctrs_error_cast_lossy`.
+  Previously these were warnings. You can suppress these errors
+  selectively with `allow_lossy_cast()` to get the partial cast
+  results. To implement your own lossy cast operation, call the new
+  exported function `maybe_lossy_cast()`.
 
 * `vec_c()` now fails when an input is supplied with a name but has
   internal names or is length > 1:
@@ -99,6 +100,19 @@ or possible cast.
 * `vec_c()`, `vec_rbind()`, and `vec_cbind()` gain a `.name_repair`
   argument (#227, #229).
 
+* `vec_c()`, `vec_rbind()`, `vec_cbind()`, and all functions relying
+  on `vec_ptype_common()` now have more informative error messages
+  when some of the inputs have nested data frames that are not
+  convergent:
+
+  ```
+  df1 <- tibble(foo = tibble(bar = tibble(x = 1:3, y = letters[1:3])))
+  df2 <- tibble(foo = tibble(bar = tibble(x = 1:3, y = 4:6)))
+
+  vec_rbind(df1, df2)
+  #> Error: No common type for `..1$foo$bar$y` <character> and `..2$foo$bar$y` <integer>.
+  ```
+
 * `vec_cbind()` now turns named data frames to packed columns.
 
   ```r
@@ -132,10 +146,10 @@ or possible cast.
   prototype and/or a size. Unlike `vec_assert()`, it doesn't throw
   errors but returns `TRUE` or `FALSE` (#79).
 
-  Called without a specific type or size, `vec_assert()` tests whether an object
-  is a data vector or a scalar. S3 lists are treated as scalars by
-  default. Implement a `vec_is_vector()` for your class to override
-  this property (or derive from `vctrs_vctr`).
+  Called without a specific type or size, `vec_assert()` tests whether
+  an object is a data vector or a scalar. S3 lists are treated as
+  scalars by default. Implement a `vec_is_vector()` for your class to
+  override this property (or derive from `vctrs_vctr`).
 
 * New `vec_order()` and `vec_sort()` for ordering and sorting
   generalised vectors.
@@ -147,7 +161,7 @@ or possible cast.
 
 * New `vec_seq_along()` and `vec_init_along()` create useful sequences (#189).
 
-* `vec_slice()` now supports row names.
+* `vec_slice()` now preserves character row names, if present.
 
 * New `vec_split(x, by)` is a generalisation of `split()` that can divide
   a vector into groups formed by the unique values of another vector. Returns
