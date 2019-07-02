@@ -63,7 +63,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">vctrs</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.99.9000</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.0</span>
       </span>
     </div>
 
@@ -124,9 +124,9 @@
       <small>Source: <a href='https://github.com/r-lib/vctrs/blob/master/NEWS.md'><code>NEWS.md</code></a></small>
     </div>
 
-    <div id="vctrs-0-1-99-9000" class="section level1">
+    <div id="vctrs-0-2-0" class="section level1">
 <h1 class="page-header">
-<a href="#vctrs-0-1-99-9000" class="anchor"></a>vctrs 0.1.99.9000<small> Unreleased </small>
+<a href="#vctrs-0-2-0" class="anchor"></a>vctrs 0.2.0<small> Unreleased </small>
 </h1>
 <p>With the 0.2.0 release, many vctrs functions have been rewritten with native C code to improve performance. Functions like <code><a href="../reference/vec_c.html">vec_c()</a></code> and <code><a href="../reference/vec_bind.html">vec_rbind()</a></code> should now be fast enough to be used in packages. This is an ongoing effort, for instance the handling of factors and dates has not been rewritten yet. These classes still slow down vctrs primitives.</p>
 <p>The API in 0.2.0 has been updated, please see a list of breaking changes below. vctrs has now graduated from experimental to a maturing package (see the <a href="https://www.tidyverse.org/lifecycle/">lifecycle of tidyverse packages</a>). Please note that API changes are still planned for future releases, for instance <code><a href="../reference/vec_ptype2.html">vec_ptype2()</a></code> and <code><a href="../reference/vec_cast.html">vec_cast()</a></code> might need to return a sentinel instead of failing with an error when there is no common type or possible cast.</p>
@@ -134,21 +134,7 @@
 <h2 class="hasAnchor">
 <a href="#breaking-changes" class="anchor"></a>Breaking changes</h2>
 <ul>
-<li>
-<p>We have renamed the <code>type</code> particle to <code>ptype</code>:</p>
-<ul>
-<li>
-<code><a href="../reference/vec_type.html">vec_type()</a></code> =&gt; <code><a href="../reference/vec_ptype.html">vec_ptype()</a></code>
-</li>
-<li>
-<code><a href="../reference/vec_type.html">vec_type2()</a></code> =&gt; <code><a href="../reference/vec_ptype2.html">vec_ptype2()</a></code>
-</li>
-<li>
-<code><a href="../reference/vec_type.html">vec_type_common()</a></code> =&gt; <code><a href="../reference/vec_ptype.html">vec_ptype_common()</a></code>
-</li>
-</ul>
-<p>Consequently, <code><a href="../reference/vec_ptype.html">vec_ptype()</a></code> was renamed to <code><a href="../reference/vec_ptype.html">vec_ptype_show()</a></code>.</p>
-</li>
+<li><p>Lossy casts now throw errors of type <code>vctrs_error_cast_lossy</code>. Previously these were warnings. You can suppress these errors selectively with <code><a href="../reference/vctrs-conditions.html">allow_lossy_cast()</a></code> to get the partial cast results. To implement your own lossy cast operation, call the new exported function <code><a href="../reference/vctrs-conditions.html">maybe_lossy_cast()</a></code>.</p></li>
 <li>
 <p><code><a href="../reference/vec_c.html">vec_c()</a></code> now fails when an input is supplied with a name but has internal names or is length &gt; 1:</p>
 <pre><code><a href="../reference/vec_c.html">vec_c(foo = c(a = 1))
@@ -166,11 +152,25 @@ vec_c(foo = c(a = 1), .name_spec = "{outer}_{inner}")
 vec_c(foo = c(a = 1), .name_spec = function(outer, inner) paste(outer, inner, sep = "_"))
 vec_c(foo = c(a = 1), .name_spec = ~ paste(.x, .y, sep = "_"))</a></code></pre>
 </li>
-<li><p><code>vec_na()</code> has been renamed to <code><a href="../reference/vec_init.html">vec_init()</a></code>, as the primary use case is to initialize an output container.</p></li>
-<li><p><code>vec_slice&lt;-</code> is now type stable (<a href='https://github.com/r-lib/vctrs/issues/140'>#140</a>). It always returns the same type as the LHS. If needed, the RHS is cast to the correct type, but only if both inputs are coercible. See examples in <code><a href="../reference/vec_slice.html">?vec_slice</a></code>.</p></li>
-<li><p>Lossy casts now throw errors of type <code>vctrs_error_cast_lossy</code>. You can suppress these errors selectively with <code><a href="../reference/vctrs-conditions.html">allow_lossy_cast()</a></code> to get the partial cast results. To implement your own lossy cast operation, call the new exported function <code><a href="../reference/vctrs-conditions.html">maybe_lossy_cast()</a></code>.</p></li>
 <li><p><code><a href="../reference/vec_empty.html">vec_empty()</a></code> has been renamed to <code><a href="../reference/vec_size.html">vec_is_empty()</a></code>.</p></li>
 <li><p><code>vec_dim()</code> and <code>vec_dims()</code> are no longer exported.</p></li>
+<li><p><code>vec_na()</code> has been renamed to <code><a href="../reference/vec_init.html">vec_init()</a></code>, as the primary use case is to initialize an output container.</p></li>
+<li><p><code>vec_slice&lt;-</code> is now type stable (<a href='https://github.com/r-lib/vctrs/issues/140'>#140</a>). It always returns the same type as the LHS. If needed, the RHS is cast to the correct type, but only if both inputs are coercible. See examples in <code><a href="../reference/vec_slice.html">?vec_slice</a></code>.</p></li>
+<li>
+<p>We have renamed the <code>type</code> particle to <code>ptype</code>:</p>
+<ul>
+<li>
+<code><a href="../reference/vec_type.html">vec_type()</a></code> =&gt; <code><a href="../reference/vec_ptype.html">vec_ptype()</a></code>
+</li>
+<li>
+<code><a href="../reference/vec_type.html">vec_type2()</a></code> =&gt; <code><a href="../reference/vec_ptype2.html">vec_ptype2()</a></code>
+</li>
+<li>
+<code><a href="../reference/vec_type.html">vec_type_common()</a></code> =&gt; <code><a href="../reference/vec_ptype.html">vec_ptype_common()</a></code>
+</li>
+</ul>
+<p>Consequently, <code><a href="../reference/vec_ptype.html">vec_ptype()</a></code> was renamed to <code><a href="../reference/vec_ptype.html">vec_ptype_show()</a></code>.</p>
+</li>
 </ul>
 </div>
 <div id="new-features" class="section level2">
@@ -186,62 +186,70 @@ vec_proxy.vctrs_list_of &lt;- function(x) {
 }</code></pre>
 <p>If you inherit from <code>vctrs_vctr</code> or <code>vctrs_rcrd</code> you don’t need to implement <code><a href="../reference/vec_data.html">vec_proxy()</a></code>.</p>
 </li>
-<li><p><code><a href="../reference/vec_slice.html">vec_slice()</a></code> now supports row names.</p></li>
-<li><p><code><a href="../reference/list_of.html">list_of()</a></code> now has an <code><a href="https://www.rdocumentation.org/packages/base/topics/character">as.character()</a></code> method. It uses <code><a href="../reference/vec_ptype_full.html">vec_ptype_abbr()</a></code> to collapse complex objects into their type representation (tidyverse/tidyr<a href='https://github.com/r-lib/vctrs/issues/654'>#654</a>).</p></li>
+<li><p><code><a href="../reference/vec_c.html">vec_c()</a></code>, <code><a href="../reference/vec_bind.html">vec_rbind()</a></code>, and <code><a href="../reference/vec_bind.html">vec_cbind()</a></code> gain a <code>.name_repair</code> argument (<a href='https://github.com/r-lib/vctrs/issues/227'>#227</a>, <a href='https://github.com/r-lib/vctrs/issues/229'>#229</a>).</p></li>
+<li>
+<p><code><a href="../reference/vec_c.html">vec_c()</a></code>, <code><a href="../reference/vec_bind.html">vec_rbind()</a></code>, <code><a href="../reference/vec_bind.html">vec_cbind()</a></code>, and all functions relying on <code><a href="../reference/vec_ptype.html">vec_ptype_common()</a></code> now have more informative error messages when some of the inputs have nested data frames that are not convergent:</p>
+<pre><code>df1 &lt;- tibble(foo = tibble(bar = tibble(x = 1:3, y = letters[1:3])))
+df2 &lt;- tibble(foo = tibble(bar = tibble(x = 1:3, y = 4:6)))
+
+vec_rbind(df1, df2)
+#&gt; Error: No common type for `..1$foo$bar$y` &lt;character&gt; and `..2$foo$bar$y` &lt;integer&gt;.</code></pre>
+</li>
 <li>
 <p><code><a href="../reference/vec_bind.html">vec_cbind()</a></code> now turns named data frames to packed columns.</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" data-line-number="1">data &lt;-<span class="st"> </span>tibble<span class="op">::</span><span class="kw"><a href="https://tibble.tidyverse.org/reference/tibble.html">tibble</a></span>(<span class="dt">x =</span> <span class="dv">1</span><span class="op">:</span><span class="dv">3</span>, <span class="dt">y =</span> letters[<span class="dv">1</span><span class="op">:</span><span class="dv">3</span>])</a>
-<a class="sourceLine" id="cb4-2" data-line-number="2">data &lt;-<span class="st"> </span><span class="kw"><a href="../reference/vec_bind.html">vec_cbind</a></span>(data, <span class="dt">packed =</span> data)</a>
-<a class="sourceLine" id="cb4-3" data-line-number="3"><span class="co"># A tibble: 3 x 3</span></a>
-<a class="sourceLine" id="cb4-4" data-line-number="4">      x y     packed<span class="op">$</span>x <span class="op">$</span>y</a>
-<a class="sourceLine" id="cb4-5" data-line-number="5">  <span class="op">&lt;</span>int<span class="op">&gt;</span><span class="st"> </span><span class="er">&lt;</span>chr<span class="op">&gt;</span><span class="st">    </span><span class="er">&lt;</span>int<span class="op">&gt;</span><span class="st"> </span><span class="er">&lt;</span>chr<span class="op">&gt;</span></a>
-<a class="sourceLine" id="cb4-6" data-line-number="6"><span class="dv">1</span>     <span class="dv">1</span> a            <span class="dv">1</span> a</a>
-<a class="sourceLine" id="cb4-7" data-line-number="7"><span class="dv">2</span>     <span class="dv">2</span> b            <span class="dv">2</span> b</a>
-<a class="sourceLine" id="cb4-8" data-line-number="8"><span class="dv">3</span>     <span class="dv">3</span> c            <span class="dv">3</span> c</a></code></pre></div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" data-line-number="1">data &lt;-<span class="st"> </span>tibble<span class="op">::</span><span class="kw"><a href="https://tibble.tidyverse.org/reference/tibble.html">tibble</a></span>(<span class="dt">x =</span> <span class="dv">1</span><span class="op">:</span><span class="dv">3</span>, <span class="dt">y =</span> letters[<span class="dv">1</span><span class="op">:</span><span class="dv">3</span>])</a>
+<a class="sourceLine" id="cb5-2" data-line-number="2">data &lt;-<span class="st"> </span><span class="kw"><a href="../reference/vec_bind.html">vec_cbind</a></span>(data, <span class="dt">packed =</span> data)</a>
+<a class="sourceLine" id="cb5-3" data-line-number="3">data</a>
+<a class="sourceLine" id="cb5-4" data-line-number="4"><span class="co"># A tibble: 3 x 3</span></a>
+<a class="sourceLine" id="cb5-5" data-line-number="5">      x y     packed<span class="op">$</span>x <span class="op">$</span>y</a>
+<a class="sourceLine" id="cb5-6" data-line-number="6">  <span class="op">&lt;</span>int<span class="op">&gt;</span><span class="st"> </span><span class="er">&lt;</span>chr<span class="op">&gt;</span><span class="st">    </span><span class="er">&lt;</span>int<span class="op">&gt;</span><span class="st"> </span><span class="er">&lt;</span>chr<span class="op">&gt;</span></a>
+<a class="sourceLine" id="cb5-7" data-line-number="7"><span class="dv">1</span>     <span class="dv">1</span> a            <span class="dv">1</span> a</a>
+<a class="sourceLine" id="cb5-8" data-line-number="8"><span class="dv">2</span>     <span class="dv">2</span> b            <span class="dv">2</span> b</a>
+<a class="sourceLine" id="cb5-9" data-line-number="9"><span class="dv">3</span>     <span class="dv">3</span> c            <span class="dv">3</span> c</a></code></pre></div>
 <p>Packed data frames are nested in a single column. This makes it possible to access it through a single name:</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" data-line-number="1">data<span class="op">$</span>packed</a>
-<a class="sourceLine" id="cb5-2" data-line-number="2"><span class="co"># A tibble: 3 x 2</span></a>
-<a class="sourceLine" id="cb5-3" data-line-number="3">      x y</a>
-<a class="sourceLine" id="cb5-4" data-line-number="4">  <span class="op">&lt;</span>int<span class="op">&gt;</span><span class="st"> </span><span class="er">&lt;</span>chr<span class="op">&gt;</span></a>
-<a class="sourceLine" id="cb5-5" data-line-number="5"><span class="dv">1</span>     <span class="dv">1</span> a</a>
-<a class="sourceLine" id="cb5-6" data-line-number="6"><span class="dv">2</span>     <span class="dv">2</span> b</a>
-<a class="sourceLine" id="cb5-7" data-line-number="7"><span class="dv">3</span>     <span class="dv">3</span> c</a></code></pre></div>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" data-line-number="1">data<span class="op">$</span>packed</a>
+<a class="sourceLine" id="cb6-2" data-line-number="2"><span class="co"># A tibble: 3 x 2</span></a>
+<a class="sourceLine" id="cb6-3" data-line-number="3">      x y</a>
+<a class="sourceLine" id="cb6-4" data-line-number="4">  <span class="op">&lt;</span>int<span class="op">&gt;</span><span class="st"> </span><span class="er">&lt;</span>chr<span class="op">&gt;</span></a>
+<a class="sourceLine" id="cb6-5" data-line-number="5"><span class="dv">1</span>     <span class="dv">1</span> a</a>
+<a class="sourceLine" id="cb6-6" data-line-number="6"><span class="dv">2</span>     <span class="dv">2</span> b</a>
+<a class="sourceLine" id="cb6-7" data-line-number="7"><span class="dv">3</span>     <span class="dv">3</span> c</a></code></pre></div>
 <p>We are planning to use this syntax more widely in the tidyverse.</p>
 </li>
 <li>
-<p>New <code><a href="../reference/vec_assert.html">vec_is()</a></code> function to check whether a vector conforms to a protopty and/or a size. Unlike <code><a href="../reference/vec_assert.html">vec_assert()</a></code>, it doesn’t throw errors but returns <code>TRUE</code> or <code>FALSE</code> (<a href='https://github.com/r-lib/vctrs/issues/79'>#79</a>).</p>
-<p>Called without a specific type or size, it tests whether an object is a data vector or a scalar. S3 lists are treated as scalars by default. Implement a <code>vec_is_vector()</code> for your class to override this property (or derive from <code>vctrs_vctr</code>).</p>
+<p>New <code><a href="../reference/vec_assert.html">vec_is()</a></code> function to check whether a vector conforms to a prototype and/or a size. Unlike <code><a href="../reference/vec_assert.html">vec_assert()</a></code>, it doesn’t throw errors but returns <code>TRUE</code> or <code>FALSE</code> (<a href='https://github.com/r-lib/vctrs/issues/79'>#79</a>).</p>
+<p>Called without a specific type or size, <code><a href="../reference/vec_assert.html">vec_assert()</a></code> tests whether an object is a data vector or a scalar. S3 lists are treated as scalars by default. Implement a <code>vec_is_vector()</code> for your class to override this property (or derive from <code>vctrs_vctr</code>).</p>
 </li>
-<li><p>New <code><a href="../reference/vec_split.html">vec_split(x, by)</a></code> is a generalisation of <code><a href="https://www.rdocumentation.org/packages/base/topics/split">split()</a></code> that can divide a vector into groups formed by the unique values of another vector. Returns a two-column data frame containing unique values of <code>by</code> aligned with matching <code>x</code> values (<a href='https://github.com/r-lib/vctrs/issues/196'>#196</a>).</p></li>
-<li><p><code><a href="../reference/vec_init.html">vec_init()</a></code> checks input is a vector.</p></li>
+<li><p>New <code><a href="../reference/vec_order.html">vec_order()</a></code> and <code><a href="../reference/vec_order.html">vec_sort()</a></code> for ordering and sorting generalised vectors.</p></li>
 <li><p>New <code>.names_to</code> parameter for <code><a href="../reference/vec_bind.html">vec_rbind()</a></code>. If supplied, this should be the name of a column where the names of the inputs are copied. This is similar to the <code>.id</code> parameter of <code>dplyr::bind_rows()</code>.</p></li>
-<li><p><code><a href="../reference/vec_c.html">vec_c()</a></code>, <code><a href="../reference/vec_bind.html">vec_rbind()</a></code>, and <code><a href="../reference/vec_bind.html">vec_cbind()</a></code> gain a <code>.name_repair</code> argument (<a href='https://github.com/r-lib/vctrs/issues/227'>#227</a>, <a href='https://github.com/r-lib/vctrs/issues/229'>#229</a>).</p></li>
+<li><p>New <code><a href="../reference/vec_seq_along.html">vec_seq_along()</a></code> and <code><a href="../reference/vec_seq_along.html">vec_init_along()</a></code> create useful sequences (<a href='https://github.com/r-lib/vctrs/issues/189'>#189</a>).</p></li>
+<li><p><code><a href="../reference/vec_slice.html">vec_slice()</a></code> now preserves character row names, if present.</p></li>
+<li><p>New <code><a href="../reference/vec_split.html">vec_split(x, by)</a></code> is a generalisation of <code><a href="https://www.rdocumentation.org/packages/base/topics/split">split()</a></code> that can divide a vector into groups formed by the unique values of another vector. Returns a two-column data frame containing unique values of <code>by</code> aligned with matching <code>x</code> values (<a href='https://github.com/r-lib/vctrs/issues/196'>#196</a>).</p></li>
 </ul>
 </div>
 <div id="other-features-and-bug-fixes" class="section level2">
 <h2 class="hasAnchor">
 <a href="#other-features-and-bug-fixes" class="anchor"></a>Other features and bug fixes</h2>
 <ul>
-<li><p>Predicate generics now consistently return logical vectors when passed a <code>vctrs_vctr</code> class. They used to restore the output to their input type (<a href='https://github.com/r-lib/vctrs/issues/251'>#251</a>).</p></li>
-<li><p>New <code><a href="../reference/vctrs-conditions.html">stop_incompatible_size()</a></code> to signal a failure due to mismatched sizes.</p></li>
-<li><p><code>vec_slice&lt;-</code> now has a <code><a href="../reference/vec_slice.html">vec_assign()</a></code> alias. Use <code><a href="../reference/vec_slice.html">vec_assign()</a></code> when you don’t want to modify the original input.</p></li>
-<li><p><code><a href="../reference/vec_slice.html">vec_slice()</a></code> now calls <code><a href="../reference/vec_cast.html">vec_restore()</a></code> automatically. Unlike the default <code>[</code> method from base R, attributes are preserved by default.</p></li>
-<li><p><code><a href="../reference/vec_size.html">vec_size()</a></code> now works with positive short row names. This fixes issues with data frames created with jsonlite (<a href='https://github.com/r-lib/vctrs/issues/220'>#220</a>).</p></li>
-<li><p>New <code><a href="../reference/list_of.html">validate_list_of()</a></code> (<a href='https://github.com/r-lib/vctrs/issues/193'>#193</a>).</p></li>
-<li><p><code><a href="../reference/vec_equal.html">vec_equal()</a></code> now handles missing values symmetrically (<a href='https://github.com/r-lib/vctrs/issues/204'>#204</a>).</p></li>
-<li><p><code><a href="../reference/vec_proxy_compare.html">vec_proxy_compare()</a></code> gains an experimental <code>relax</code> argument, which allows data frames to be orderable even if all their columns are not (<a href='https://github.com/r-lib/vctrs/issues/210'>#210</a>).</p></li>
-<li><p>New <code><a href="../reference/vec_order.html">vec_order()</a></code> and <code><a href="../reference/vec_order.html">vec_sort()</a></code> for ordering and sorting generalised vectors.</p></li>
-<li><p>New <code><a href="../reference/vec_repeat.html">vec_repeat()</a></code> for repeating each element of a vector the same number of times.</p></li>
-<li><p><code><a href="../reference/vec_slice.html">vec_slice()</a></code> can correct slice 0-row data frames (<a href='https://github.com/r-lib/vctrs/issues/179'>#179</a>).</p></li>
-<li><p>New <code><a href="../reference/vec_seq_along.html">vec_seq_along()</a></code> and <code><a href="../reference/vec_seq_along.html">vec_init_along()</a></code> create useful sequences (<a href='https://github.com/r-lib/vctrs/issues/189'>#189</a>).</p></li>
-<li><p><code><a href="../reference/vec_equal.html">vec_equal_na()</a></code> now returns <code>TRUE</code> for data frames and records when every component is mising, not when <em>any</em> component is missing (<a href='https://github.com/r-lib/vctrs/issues/201'>#201</a>).</p></li>
-<li><p><code><a href="../reference/vec_type.html">vec_type2(x, data.frame())</a></code> ensures that the returned object has names that are a length-0 character vector.</p></li>
-<li><p><code><a href="../reference/vec_cast.html">vec_cast(x, data.frame())</a></code> preserves the number of rows in the <code>x</code>.</p></li>
-<li><p>Added a <code>NEWS.md</code> file to track changes to the package.</p></li>
 <li><p>Using classed errors of class <code>"vctrs_error_assert"</code> for failed assertions, and of class <code>"vctrs_error_incompatible"</code> (with subclasses <code>_type</code>, <code>_cast</code> and <code>_op</code>) for errors on incompatible types (<a href='https://github.com/r-lib/vctrs/issues/184'>#184</a>).</p></li>
 <li><p>Character indexing is now only supported for named objects, an error is raised for unnamed objects (<a href='https://github.com/r-lib/vctrs/issues/171'>#171</a>).</p></li>
-<li><p><code><a href="../reference/vec_c.html">vec_c()</a></code> and <code><a href="../reference/vec_bind.html">vec_rbind()</a></code> now handle data.frame columns properly (<a href='https://github.com/yutannihilation'>@yutannihilation</a>, <a href='https://github.com/r-lib/vctrs/issues/182'>#182</a>).</p></li>
+<li><p>Predicate generics now consistently return logical vectors when passed a <code>vctrs_vctr</code> class. They used to restore the output to their input type (<a href='https://github.com/r-lib/vctrs/issues/251'>#251</a>).</p></li>
+<li><p><code><a href="../reference/list_of.html">list_of()</a></code> now has an <code><a href="https://www.rdocumentation.org/packages/base/topics/character">as.character()</a></code> method. It uses <code><a href="../reference/vec_ptype_full.html">vec_ptype_abbr()</a></code> to collapse complex objects into their type representation (tidyverse/tidyr<a href='https://github.com/r-lib/vctrs/issues/654'>#654</a>).</p></li>
+<li><p>New <code><a href="../reference/vctrs-conditions.html">stop_incompatible_size()</a></code> to signal a failure due to mismatched sizes.</p></li>
+<li><p>New <code><a href="../reference/list_of.html">validate_list_of()</a></code> (<a href='https://github.com/r-lib/vctrs/issues/193'>#193</a>).</p></li>
 <li><p><code><a href="../reference/vec_arith.html">vec_arith()</a></code> is consistent with base R when combining <code>difftime</code> and <code>date</code>, with a warning if casts are lossy (<a href='https://github.com/r-lib/vctrs/issues/192'>#192</a>).</p></li>
+<li><p><code><a href="../reference/vec_c.html">vec_c()</a></code> and <code><a href="../reference/vec_bind.html">vec_rbind()</a></code> now handle data.frame columns properly (<a href='https://github.com/yutannihilation'>@yutannihilation</a>, <a href='https://github.com/r-lib/vctrs/issues/182'>#182</a>).</p></li>
+<li><p><code><a href="../reference/vec_cast.html">vec_cast(x, data.frame())</a></code> preserves the number of rows in <code>x</code>.</p></li>
+<li><p><code><a href="../reference/vec_equal.html">vec_equal()</a></code> now handles missing values symmetrically (<a href='https://github.com/r-lib/vctrs/issues/204'>#204</a>).</p></li>
+<li><p><code><a href="../reference/vec_equal.html">vec_equal_na()</a></code> now returns <code>TRUE</code> for data frames and records when every component is missing, not when <em>any</em> component is missing (<a href='https://github.com/r-lib/vctrs/issues/201'>#201</a>).</p></li>
+<li><p><code><a href="../reference/vec_init.html">vec_init()</a></code> checks input is a vector.</p></li>
+<li><p><code><a href="../reference/vec_proxy_compare.html">vec_proxy_compare()</a></code> gains an experimental <code>relax</code> argument, which allows data frames to be orderable even if all their columns are not (<a href='https://github.com/r-lib/vctrs/issues/210'>#210</a>).</p></li>
+<li><p><code><a href="../reference/vec_size.html">vec_size()</a></code> now works with positive short row names. This fixes issues with data frames created with jsonlite (<a href='https://github.com/r-lib/vctrs/issues/220'>#220</a>).</p></li>
+<li><p><code>vec_slice&lt;-</code> now has a <code><a href="../reference/vec_slice.html">vec_assign()</a></code> alias. Use <code><a href="../reference/vec_slice.html">vec_assign()</a></code> when you don’t want to modify the original input.</p></li>
+<li><p><code><a href="../reference/vec_slice.html">vec_slice()</a></code> now calls <code><a href="../reference/vec_cast.html">vec_restore()</a></code> automatically. Unlike the default <code>[</code> method from base R, attributes are preserved by default.</p></li>
+<li><p><code><a href="../reference/vec_slice.html">vec_slice()</a></code> can correct slice 0-row data frames (<a href='https://github.com/r-lib/vctrs/issues/179'>#179</a>).</p></li>
+<li><p>New <code><a href="../reference/vec_repeat.html">vec_repeat()</a></code> for repeating each element of a vector the same number of times.</p></li>
+<li><p><code><a href="../reference/vec_type.html">vec_type2(x, data.frame())</a></code> ensures that the returned object has names that are a length-0 character vector.</p></li>
 </ul>
 </div>
 </div>
@@ -251,7 +259,7 @@ vec_proxy.vctrs_list_of &lt;- function(x) {
     <div id="tocnav">
       <h2>Contents</h2>
       <ul class="nav nav-pills nav-stacked">
-        <li><a href="#vctrs-0-1-99-9000">0.1.99.9000</a></li>
+        <li><a href="#vctrs-0-2-0">0.2.0</a></li>
       </ul>
     </div>
   </div>
@@ -260,7 +268,7 @@ vec_proxy.vctrs_list_of &lt;- function(x) {
 
       <footer>
       <div class="copyright">
-  <p>Developed by <a href='http://hadley.nz'>Hadley Wickham</a>.</p>
+  <p>Developed by <a href='http://hadley.nz'>Hadley Wickham</a>, Lionel Henry, Davis Vaughan.</p>
 </div>
 
 <div class="pkgdown">

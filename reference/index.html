@@ -63,7 +63,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">vctrs</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.99.9000</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.0</span>
       </span>
     </div>
 
@@ -156,6 +156,12 @@
           <p><code><a href="vec_size.html">vec_size()</a></code> <code><a href="vec_size.html">vec_size_common()</a></code> <code><a href="vec_size.html">vec_is_empty()</a></code> </p>
         </td>
         <td><p>Number of observations</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="vec_assert.html">vec_assert()</a></code> <code><a href="vec_assert.html">vec_is()</a></code> </p>
+        </td>
+        <td><p>Assert an argument has known prototype and/or size</p></td>
       </tr>
     </tbody><tbody>
       <tr>
@@ -180,7 +186,67 @@
     </tbody><tbody>
       <tr>
         <th colspan="2">
-          <h2 id="section-matching" class="hasAnchor"><a href="#section-matching" class="anchor"></a>Matching</h2>
+          <h2 id="section-slicing-and-recycling" class="hasAnchor"><a href="#section-slicing-and-recycling" class="anchor"></a>Slicing and recycling</h2>
+          <p class="section-desc"></p>
+        </th>
+      </tr>
+      <tr>
+        
+        <td>
+          <p><code><a href="vec_init.html">vec_init()</a></code> </p>
+        </td>
+        <td><p>Initialize a vector</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="vec_slice.html">vec_slice()</a></code> <code><a href="vec_slice.html">`vec_slice<-`()</a></code> <code><a href="vec_slice.html">vec_assign()</a></code> </p>
+        </td>
+        <td><p>Get or set observations in a vector</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="vec_recycle.html">vec_recycle()</a></code> <code><a href="vec_recycle.html">vec_recycle_common()</a></code> </p>
+        </td>
+        <td><p>Vector recycling</p></td>
+      </tr>
+    </tbody><tbody>
+      <tr>
+        <th colspan="2">
+          <h2 id="section-equality-and-ordering" class="hasAnchor"><a href="#section-equality-and-ordering" class="anchor"></a>Equality and ordering</h2>
+          <p class="section-desc"></p>
+        </th>
+      </tr>
+      <tr>
+        
+        <td>
+          <p><code><a href="vec_equal.html">vec_equal()</a></code> <code><a href="vec_equal.html">vec_equal_na()</a></code> </p>
+        </td>
+        <td><p>Test if two vectors are equal</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="vec_compare.html">vec_compare()</a></code> </p>
+        </td>
+        <td><p>Compare two vectors</p></td>
+      </tr>
+    </tbody><tbody>
+      <tr>
+        <th colspan="2">
+          <h2 id="section-sorting" class="hasAnchor"><a href="#section-sorting" class="anchor"></a>Sorting</h2>
+          <p class="section-desc"></p>
+        </th>
+      </tr>
+      <tr>
+        
+        <td>
+          <p><code><a href="vec_order.html">vec_order()</a></code> <code><a href="vec_order.html">vec_sort()</a></code> </p>
+        </td>
+        <td><p>Order and sort vectors</p></td>
+      </tr>
+    </tbody><tbody>
+      <tr>
+        <th colspan="2">
+          <h2 id="section-matching-and-splitting" class="hasAnchor"><a href="#section-matching-and-splitting" class="anchor"></a>Matching and splitting</h2>
           <p class="section-desc"></p>
         </th>
       </tr>
@@ -208,6 +274,32 @@
           <p><code><a href="vec_match.html">vec_match()</a></code> <code><a href="vec_match.html">vec_in()</a></code> </p>
         </td>
         <td><p>Find matching observations across vectors</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="vec_split.html">vec_split()</a></code> </p>
+        </td>
+        <td><p>Split a vector into groups</p></td>
+      </tr>
+    </tbody><tbody>
+      <tr>
+        <th colspan="2">
+          <h2 id="section-sequences-and-repetitions" class="hasAnchor"><a href="#section-sequences-and-repetitions" class="anchor"></a>Sequences and repetitions</h2>
+          <p class="section-desc"></p>
+        </th>
+      </tr>
+      <tr>
+        
+        <td>
+          <p><code><a href="vec_repeat.html">vec_repeat()</a></code> </p>
+        </td>
+        <td><p>Expand the length of a vector</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="vec_seq_along.html">vec_seq_along()</a></code> <code><a href="vec_seq_along.html">vec_init_along()</a></code> </p>
+        </td>
+        <td><p>Useful sequences</p></td>
       </tr>
     </tbody><tbody>
       <tr>
@@ -251,9 +343,15 @@
       </tr><tr>
         
         <td>
-          <p><code><a href="vec_type.html">vec_type()</a></code> <code><a href="vec_type.html">vec_type_common()</a></code> <code><a href="vec_type.html">vec_type2()</a></code> </p>
+          <p><code><a href="vec_ptype2.html">vec_ptype2()</a></code> <code><a href="vec_ptype2.html">vec_default_ptype2()</a></code> </p>
         </td>
-        <td><p>Deprecated type functions</p></td>
+        <td><p>Find the common type for a pair of vector types</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="vec_proxy_compare.html">vec_proxy_compare()</a></code> </p>
+        </td>
+        <td><p>Comparison proxy</p></td>
       </tr><tr>
         
         <td>
@@ -266,6 +364,12 @@
           <p><code><a href="vec_ptype_full.html">vec_ptype_full()</a></code> <code><a href="vec_ptype_full.html">vec_ptype_abbr()</a></code> </p>
         </td>
         <td><p>Vector type as a string</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="new_partial.html">new_partial()</a></code> <code><a href="new_partial.html">is_partial()</a></code> <code><a href="new_partial.html">vec_ptype_finalise()</a></code> </p>
+        </td>
+        <td><p>Partial type</p></td>
       </tr><tr>
         
         <td>
@@ -290,6 +394,42 @@
           <p><code><a href="s3_register.html">s3_register()</a></code> </p>
         </td>
         <td><p>Register a method for a suggested dependency</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="vec_arith.html">vec_arith()</a></code> <code><a href="vec_arith.html">vec_arith_base()</a></code> <code><a href="vec_arith.html">MISSING()</a></code> </p>
+        </td>
+        <td><p>Arithmetic operations</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="vec_math.html">vec_math()</a></code> <code><a href="vec_math.html">vec_math_base()</a></code> </p>
+        </td>
+        <td><p>Mathematical operations</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="unspecified.html">unspecified()</a></code> <code><a href="unspecified.html">vec_ptype2(<i>&lt;vctrs_unspecified&gt;</i>)</a></code> </p>
+        </td>
+        <td><p>A 1d vector of unspecified type</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="vec_default_cast.html">vec_default_cast()</a></code> </p>
+        </td>
+        <td><p>Default cast method</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="vec_as_names.html">vec_as_names()</a></code> </p>
+        </td>
+        <td><p>Retrieve and repair names</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="vec_as_index.html">vec_as_index()</a></code> </p>
+        </td>
+        <td><p>Create an index</p></td>
       </tr>
     </tbody>
     </table>
@@ -300,7 +440,11 @@
     <ul class="nav nav-pills nav-stacked">
       <li><a href="#section-foundations">Foundations</a></li>
       <li><a href="#section-casting-and-combining">Casting and combining</a></li>
-      <li><a href="#section-matching">Matching</a></li>
+      <li><a href="#section-slicing-and-recycling">Slicing and recycling</a></li>
+      <li><a href="#section-equality-and-ordering">Equality and ordering</a></li>
+      <li><a href="#section-sorting">Sorting</a></li>
+      <li><a href="#section-matching-and-splitting">Matching and splitting</a></li>
+      <li><a href="#section-sequences-and-repetitions">Sequences and repetitions</a></li>
       <li><a href="#section-new-classes">New classes</a></li>
       <li><a href="#section-developer-tools">Developer tools</a></li>
     </ul>
@@ -309,7 +453,7 @@
 
       <footer>
       <div class="copyright">
-  <p>Developed by <a href='http://hadley.nz'>Hadley Wickham</a>.</p>
+  <p>Developed by <a href='http://hadley.nz'>Hadley Wickham</a>, Lionel Henry, Davis Vaughan.</p>
 </div>
 
 <div class="pkgdown">
