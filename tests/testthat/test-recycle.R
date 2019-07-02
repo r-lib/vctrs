@@ -20,6 +20,26 @@ test_that("incompatible lengths get error messages", {
   expect_error(vec_recycle(x2, 3), "2, 3")
 })
 
+test_that("can recycle arrays", {
+  x <- matrix(1:2, 1)
+  x2 <- matrix(1:2, 2, 2, byrow = TRUE)
+  x0 <- matrix(integer(), 0, 2)
+
+  expect_equal(vec_recycle(x, 1), x)
+  expect_equal(vec_recycle(x, 0), x0)
+  expect_equal(vec_recycle(x, 2), x2)
+
+  # List arrays
+  data <- c(list(1), list(2))
+  x <- matrix(data, 1)
+  x2 <- matrix(data, 2, 2, byrow = TRUE)
+  x0 <- matrix(list(), 0, 2)
+
+  expect_equal(vec_recycle(x, 1), x)
+  expect_equal(vec_recycle(x, 0), x0)
+  expect_equal(vec_recycle(x, 2), x2)
+})
+
 # Empty -------------------------------------------------------------------
 
 test_that("empty input returns empty list", {
