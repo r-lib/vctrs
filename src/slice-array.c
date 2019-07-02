@@ -130,7 +130,8 @@ struct vec_slice_shaped_info {
                                                                                \
   int size_index = info.p_index[0];                                            \
   if (size_index == NA_INTEGER) {                                              \
-    for (int i = 0; i < info.shape_elem_n; ++i, ++out_data) {                  \
+    R_len_t out_n = info.shape_elem_n * info.index_n;                          \
+    for (int i = 0; i < out_n; ++i, ++out_data) {                              \
       *out_data = NA_VALUE;                                                    \
     }                                                                          \
     UNPROTECT(1);                                                              \
@@ -241,7 +242,8 @@ static SEXP raw_slice_shaped(SEXP x, SEXP index, struct vec_slice_shaped_info in
                                                                       \
   int size_index = info.p_index[0];                                   \
   if (size_index == NA_INTEGER) {                                     \
-    for (int i = 0; i < info.shape_elem_n; ++i) {                     \
+    R_len_t out_n = info.shape_elem_n * info.index_n;                 \
+    for (int i = 0; i < out_n; ++i) {                                 \
       SET(out, i, NA_VALUE);                                          \
     }                                                                 \
     UNPROTECT(1);                                                     \
