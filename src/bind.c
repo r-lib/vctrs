@@ -35,6 +35,7 @@ SEXP vctrs_rbind(SEXP call, SEXP op, SEXP args, SEXP env) {
 SEXP vctrs_type_common_impl(SEXP dots, SEXP ptype);
 
 static SEXP vec_rbind(SEXP xs, SEXP ptype, SEXP names_to, enum name_repair_arg name_repair) {
+  int nprot = 0;
   R_len_t n = Rf_length(xs);
 
   for (R_len_t i = 0; i < n; ++i) {
@@ -44,16 +45,15 @@ static SEXP vec_rbind(SEXP xs, SEXP ptype, SEXP names_to, enum name_repair_arg n
   // The common type holds information about common column names,
   // types, etc. Each element of `xs` needs to be cast to that type
   // before assignment.
-  ptype = PROTECT(vctrs_type_common_impl(xs, ptype));
+  ptype = PROTECT_N(vctrs_type_common_impl(xs, ptype), &nprot);
 
   if (ptype == R_NilValue) {
-    UNPROTECT(1);
+    UNPROTECT(nprot);
     return new_data_frame(vctrs_shared_empty_list, 0);
   }
   if (TYPEOF(ptype) == LGLSXP && !Rf_length(ptype)) {
-    UNPROTECT(1);
     ptype = as_df_row_impl(vctrs_shared_na_lgl, name_repair, false);
-    PROTECT(ptype);
+    PROTECT_N(ptype, &nprot);
   }
   if (!is_data_frame(ptype)) {
     Rf_errorcall(R_NilValue, "Can't bind objects that are not coercible to a data frame.");
@@ -62,7 +62,7 @@ static SEXP vec_rbind(SEXP xs, SEXP ptype, SEXP names_to, enum name_repair_arg n
   // Find individual input sizes and total size of output
   R_len_t nrow = 0;
 
-  SEXP ns_placeholder = PROTECT(Rf_allocVector(INTSXP, n));
+  SEXP ns_placeholder = PROTECT_N(Rf_allocVector(INTSXP, n), &nprot);
   int* ns = INTEGER(ns_placeholder);
 
   for (R_len_t i = 0; i < n; ++i) {
@@ -72,11 +72,10 @@ static SEXP vec_rbind(SEXP xs, SEXP ptype, SEXP names_to, enum name_repair_arg n
     ns[i] = size;
   }
 
-  SEXP out = PROTECT(vec_init(ptype, nrow));
-  SEXP idx = PROTECT(compact_seq(0, 0));
+  SEXP out = PROTECT_N(vec_init(ptype, nrow), &nprot);
+  SEXP idx = PROTECT_N(compact_seq(0, 0), &nprot);
   int* idx_ptr = INTEGER(idx);
 
-  int nprot = 0;
   SEXP names_to_col = R_NilValue;
   SEXPTYPE names_to_type = 99;
   void* names_to_p = NULL;
@@ -122,7 +121,7 @@ static SEXP vec_rbind(SEXP xs, SEXP ptype, SEXP names_to, enum name_repair_arg n
     out = df_poke_at(out, names_to, names_to_col);
   }
 
-  UNPROTECT(4 + nprot);
+  UNPROTECT(nprot);
   return out;
 }
 
