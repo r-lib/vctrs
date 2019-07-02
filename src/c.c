@@ -96,11 +96,11 @@ static SEXP vec_c(SEXP xs,
     if (has_names) {
       SEXP outer = xs_names == R_NilValue ? R_NilValue : STRING_ELT(xs_names, i);
       SEXP inner = PROTECT(vec_names(x));
-      SEXP x_nms = apply_name_spec(name_spec, outer, inner, size);
+      SEXP x_nms = PROTECT(apply_name_spec(name_spec, outer, inner, size));
       if (x_nms != R_NilValue) {
         vec_assign_impl(out_names, idx, x_nms, false);
       }
-      UNPROTECT(1);
+      UNPROTECT(2);
     }
 
     counter += size;

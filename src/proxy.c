@@ -14,7 +14,8 @@ SEXP vec_proxy_invoke(SEXP x, SEXP method);
 // [[ register(); include("vctrs.h") ]]
 SEXP vec_proxy(SEXP x) {
   int nprot = 0;
-  struct vctrs_type_info info = PROTECT_TYPE_INFO(vec_type_info(x), &nprot);
+  struct vctrs_type_info info = vec_type_info(x);
+  PROTECT_TYPE_INFO(&info, &nprot);
 
   SEXP out;
   if (info.type == vctrs_type_s3) {

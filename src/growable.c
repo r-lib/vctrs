@@ -2,14 +2,8 @@
 
 void growable_init(growable* g, SEXPTYPE type, int capacity) {
   g->x = Rf_allocVector(type, capacity);
-  PROTECT_WITH_INDEX(g->x, &g->idx);
-
   g->n = 0;
   g->capacity = capacity;
-}
-
-void growable_free(growable* g) {
-  UNPROTECT(1);
 }
 
 void growable_push_int(growable* g, int i) {

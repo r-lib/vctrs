@@ -176,7 +176,9 @@ static SEXP vec_slice_impl(SEXP x, SEXP index) {
 
   SEXP restore_size = PROTECT_N(r_int(Rf_length(index)), &nprot);
 
-  struct vctrs_proxy_info info = PROTECT_PROXY_INFO(vec_proxy_info(x), &nprot);
+  struct vctrs_proxy_info info = vec_proxy_info(x);
+  PROTECT_PROXY_INFO(&info, &nprot);
+
   SEXP data = info.proxy;
 
   // Fallback to `[` if the class doesn't implement a proxy. This is

@@ -40,12 +40,12 @@ void init_next_box_counters(struct counters* counters, SEXP names) {
 }
 
 // Stack-based protection, should be called after `init_counters()`
-int PROTECT_COUNTERS(struct counters* counters) {
-  PROTECT_WITH_INDEX(counters->names, &counters->names_pi);
-  PROTECT_WITH_INDEX(R_NilValue, &counters->prev_box_counters->names_pi);
-  PROTECT_WITH_INDEX(R_NilValue, &counters->next_box_counters->names_pi);
-  return 3;
-}
+#define PROTECT_COUNTERS(counters, nprot) do {                                \
+    PROTECT_WITH_INDEX((counters)->names, &(counters)->names_pi);             \
+    PROTECT_WITH_INDEX(R_NilValue, &(counters)->prev_box_counters->names_pi); \
+    PROTECT_WITH_INDEX(R_NilValue, &(counters)->next_box_counters->names_pi); \
+    *nprot += 3;                                                              \
+  } while(0)
 
 
 void counters_inc(struct counters* counters) {
@@ -98,11 +98,12 @@ SEXP reduce(SEXP current, struct vctrs_arg* current_arg,
                 current_arg,
                 &prev_box_counters,
                 &next_box_counters);
-  int n_protect = PROTECT_COUNTERS(&counters);
+  int nprot = 0;
+  PROTECT_COUNTERS(&counters, &nprot);
 
   SEXP out = reduce_impl(current, rest, &counters, false, impl);
 
-  UNPROTECT(n_protect);
+  UNPROTECT(nprot);
   return out;
 }
 

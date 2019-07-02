@@ -109,13 +109,15 @@ void dict_put(dictionary* d, uint32_t hash, R_len_t i) {
 // TODO: separate out into individual files
 
 SEXP vctrs_unique_loc(SEXP x) {
-  x = PROTECT(vec_proxy_equal(x));
+  int nprot = 0;
+  x = PROTECT_N(vec_proxy_equal(x), &nprot);
 
   dictionary d;
   dict_init(&d, x);
 
   growable g;
   growable_init(&g, INTSXP, 256);
+  PROTECT_GROWABLE(&g, &nprot);
 
   R_len_t n = vec_size(x);
   for (int i = 0; i < n; ++i) {
@@ -130,8 +132,7 @@ SEXP vctrs_unique_loc(SEXP x) {
   SEXP out = growable_values(&g);
 
   dict_free(&d);
-  growable_free(&g);
-  UNPROTECT(1);
+  UNPROTECT(nprot);
   return out;
 }
 
@@ -220,7 +221,6 @@ SEXP vctrs_match(SEXP needles, SEXP haystack) {
 
   needles = PROTECT(vec_proxy_equal(needles));
   haystack = PROTECT(vec_proxy_equal(haystack));
-  UNPROTECT(3);
 
   dictionary d;
   dict_init(&d, haystack);
@@ -252,7 +252,7 @@ SEXP vctrs_match(SEXP needles, SEXP haystack) {
     }
   }
 
-  UNPROTECT(3);
+  UNPROTECT(6);
   dict_free(&d);
   return out;
 }
@@ -267,7 +267,6 @@ SEXP vctrs_in(SEXP needles, SEXP haystack) {
 
   needles = PROTECT(vec_proxy_equal(needles));
   haystack = PROTECT(vec_proxy_equal(haystack));
-  UNPROTECT(3);
 
   dictionary d;
   dict_init(&d, haystack);
@@ -295,7 +294,7 @@ SEXP vctrs_in(SEXP needles, SEXP haystack) {
     p_out[i] = (d.key[hash] != DICT_EMPTY);
   }
 
-  UNPROTECT(3);
+  UNPROTECT(6);
   dict_free(&d);
   return out;
 }

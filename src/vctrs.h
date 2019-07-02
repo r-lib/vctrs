@@ -70,14 +70,16 @@ struct vctrs_proxy_info {
 struct vctrs_type_info vec_type_info(SEXP x);
 struct vctrs_proxy_info vec_proxy_info(SEXP x);
 
-static inline struct vctrs_proxy_info PROTECT_PROXY_INFO(struct vctrs_proxy_info info, int* n) {
-  *n += 2; PROTECT(info.proxy); PROTECT(info.proxy_method);
-  return info;
-}
-static inline struct vctrs_type_info PROTECT_TYPE_INFO(struct vctrs_type_info info, int* n) {
-  ++(*n); PROTECT(info.proxy_method);
-  return info;
-}
+#define PROTECT_PROXY_INFO(info, n) do {        \
+    PROTECT((info)->proxy);                     \
+    PROTECT((info)->proxy_method);              \
+    *n += 2;                                    \
+  } while (0)
+
+#define PROTECT_TYPE_INFO(info, n) do {         \
+    PROTECT((info)->proxy_method);              \
+    *n += 1;                                    \
+  } while (0)
 
 enum vctrs_type vec_typeof(SEXP x);
 enum vctrs_type vec_proxy_typeof(SEXP x);
@@ -277,16 +279,23 @@ SEXP vec_as_unique_names(SEXP names, bool quiet);
 
 struct growable {
   SEXP x;
-  int32_t idx;
+  PROTECT_INDEX idx;
   int n;
   int capacity;
 };
 typedef struct growable growable;
 
 void growable_init(growable* g, SEXPTYPE type, int capacity);
-void growable_free(growable* g);
 void growable_push_int(growable* g, int i);
 SEXP growable_values(growable* g);
+
+#define PROTECT_GROWABLE(g, n) do {             \
+    PROTECT_WITH_INDEX((g)->x, &((g)->idx));    \
+    *n += 1;                                    \
+  } while(0)
+
+#define UNPROTECT_GROWABLE(g) do { UNPROTECT(1);} while(0)
+
 
 // Shape --------------------------------------------------------
 
