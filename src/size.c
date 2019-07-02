@@ -41,7 +41,9 @@ R_len_t vec_bare_dim_n(SEXP x) {
 R_len_t vec_size(SEXP x) {
   int nprot = 0;
 
-  struct vctrs_proxy_info info = PROTECT_PROXY_INFO(vec_proxy_info(x), &nprot);
+  struct vctrs_proxy_info info = vec_proxy_info(x);
+  PROTECT_PROXY_INFO(&info, &nprot);
+
   SEXP data = info.proxy;
 
   R_len_t size;
