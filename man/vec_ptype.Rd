@@ -48,6 +48,16 @@ other 1d type. This allows bare \code{NA}s to represent missing values for
 any 1d vector type.
 }
 
+\section{The prototype of \code{NULL}}{
+
+
+In general we treat \code{NULL} as an absence of argument (which is
+often an error). In the case of \code{vec_ptype()} and
+\code{vec_ptype_common()}, we have chosen \code{NULL} as the identity of the
+common type monoid: the common type of \code{foo} and \code{NULL} is always
+\code{foo}. For this reason, the prototype of \code{NULL} is \code{NULL}.
+}
+
 \examples{
 # Unknown types ------------------------------------------
 vec_ptype_show()
