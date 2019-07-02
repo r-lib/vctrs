@@ -26,18 +26,18 @@ reference:
   - vec_equal
   - vec_compare
 
-- title: Sorting and splitting
+- title: Sorting
   contents:
-  - vec_split
   - vec_sort
   - vec_order
 
-- title: Matching
+- title: Matching and splitting
   contents:
   - vec_count
   - vec_duplicate
   - vec_unique
   - vec_in
+  - vec_split
 
 - title: Sequences and repetitions
   contents:
