@@ -316,10 +316,13 @@ static inline int vec_equal_attrib(SEXP x, SEXP y, bool na_equal) {
 
 // [[ include("vctrs.h") ]]
 bool equal_names(SEXP x, SEXP y) {
-  SEXP x_names = Rf_getAttrib(x, R_NamesSymbol);
-  SEXP y_names = Rf_getAttrib(y, R_NamesSymbol);
+  SEXP x_names = PROTECT(Rf_getAttrib(x, R_NamesSymbol));
+  SEXP y_names = PROTECT(Rf_getAttrib(y, R_NamesSymbol));
 
-  return equal_object(x_names, y_names, true);
+  bool out = equal_object(x_names, y_names, true);
+
+  UNPROTECT(2);
+  return out;
 }
 
 

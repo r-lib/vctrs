@@ -51,7 +51,7 @@ int find_offset(SEXP x, SEXP index) {
 
     return (int) val;
   } else if (TYPEOF(index) == STRSXP) {
-    SEXP names = Rf_getAttrib(x, R_NamesSymbol);
+    SEXP names = PROTECT(Rf_getAttrib(x, R_NamesSymbol));
     if (names == R_NilValue)
       Rf_errorcall(R_NilValue, "Corrupt x: no names");
 
@@ -68,8 +68,10 @@ int find_offset(SEXP x, SEXP index) {
       if (name_j == NA_STRING)
         Rf_errorcall(R_NilValue, "Corrupt x: element %i is unnamed", j + 1);
 
-      if (equal_string(val_0, &val_0_chr, name_j))
+      if (equal_string(val_0, &val_0_chr, name_j)) {
+        UNPROTECT(1);
         return j;
+      }
     }
     Rf_errorcall(R_NilValue, "Invalid index: field name '%s' not found", val_0_chr);
   } else {
