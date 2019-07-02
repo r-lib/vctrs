@@ -92,16 +92,14 @@ struct vec_slice_shaped_info {
   CTYPE* out_data = DEREF(out);                                        \
   const CTYPE* x_data = CONST_DEREF(x);                                \
                                                                        \
-  int out_loc = 0;                                                     \
-                                                                       \
   for (int i = 0; i < info.shape_elem_n; ++i) {                        \
                                                                        \
     /* Find and add the next `x` element */                            \
-    for (int j = 0; j < info.index_n; ++j) {                           \
+    for (int j = 0; j < info.index_n; ++j, ++out_data) {               \
       int size_index = info.p_index[j];                                \
                                                                        \
       if (size_index == NA_INTEGER) {                                  \
-        out_data[out_loc] = NA_VALUE;                                  \
+        *out_data = NA_VALUE;                                          \
       } else {                                                         \
         int loc = vec_strided_loc(                                     \
           size_index - 1,                                              \
@@ -109,10 +107,8 @@ struct vec_slice_shaped_info {
           info.p_strides,                                              \
           info.shape_n                                                 \
         );                                                             \
-        out_data[out_loc] = x_data[loc];                               \
+        *out_data = x_data[loc];                                       \
       }                                                                \
-                                                                       \
-      out_loc++;                                                       \
     }                                                                  \
                                                                        \
     /* Update shape_index */                                           \
@@ -142,7 +138,6 @@ struct vec_slice_shaped_info {
   }                                                                            \
                                                                                \
   const CTYPE* x_data = CONST_DEREF(x);                                        \
-  int out_loc = 0;                                                             \
                                                                                \
   /* Convert to C index */                                                     \
   size_index = size_index - 1;                                                 \
@@ -150,15 +145,14 @@ struct vec_slice_shaped_info {
   for (int i = 0; i < info.shape_elem_n; ++i) {                                \
                                                                                \
     /* Find and add the next `x` element */                                    \
-    for (int j = 0; j < info.index_n; ++j) {                                   \
+    for (int j = 0; j < info.index_n; ++j, ++out_data) {                       \
       int loc = vec_strided_loc(                                               \
         size_index,                                                            \
         info.p_shape_index,                                                    \
         info.p_strides,                                                        \
         info.shape_n                                                           \
       );                                                                       \
-      out_data[out_loc] = x_data[loc];                                         \
-      out_loc++;                                                               \
+      *out_data = x_data[loc];                                                 \
     }                                                                          \
                                                                                \
     /* Update shape_index */                                                   \
@@ -212,7 +206,7 @@ static SEXP raw_slice_shaped(SEXP x, SEXP index, struct vec_slice_shaped_info in
   for (int i = 0; i < info.shape_elem_n; ++i) {                \
                                                                \
     /* Find and add the next `x` element */                    \
-    for (int j = 0; j < info.index_n; ++j) {                   \
+    for (int j = 0; j < info.index_n; ++j, ++out_loc) {        \
       int size_index = info.p_index[j];                        \
                                                                \
       if (size_index == NA_INTEGER) {                          \
@@ -227,8 +221,6 @@ static SEXP raw_slice_shaped(SEXP x, SEXP index, struct vec_slice_shaped_info in
         SEXP elt = GET(x, loc);                                \
         SET(out, out_loc, elt);                                \
       }                                                        \
-                                                               \
-      out_loc++;                                               \
     }                                                          \
                                                                \
     /* Update shape_index */                                   \
@@ -264,7 +256,7 @@ static SEXP raw_slice_shaped(SEXP x, SEXP index, struct vec_slice_shaped_info in
   for (int i = 0; i < info.shape_elem_n; ++i) {                       \
                                                                       \
     /* Find and add the next `x` element */                           \
-    for (int j = 0; j < info.index_n; ++j) {                          \
+    for (int j = 0; j < info.index_n; ++j, ++out_loc) {               \
       int loc = vec_strided_loc(                                      \
         size_index,                                                   \
         info.p_shape_index,                                           \
@@ -273,7 +265,6 @@ static SEXP raw_slice_shaped(SEXP x, SEXP index, struct vec_slice_shaped_info in
       );                                                              \
       SEXP elt = GET(x, loc);                                         \
       SET(out, out_loc, elt);                                         \
-      out_loc++;                                                      \
     }                                                                 \
                                                                       \
     /* Update shape_index */                                          \
