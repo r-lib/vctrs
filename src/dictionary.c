@@ -221,7 +221,6 @@ SEXP vctrs_match(SEXP needles, SEXP haystack) {
 
   needles = PROTECT(vec_proxy_equal(needles));
   haystack = PROTECT(vec_proxy_equal(haystack));
-  UNPROTECT(3);
 
   dictionary d;
   dict_init(&d, haystack);
@@ -253,7 +252,7 @@ SEXP vctrs_match(SEXP needles, SEXP haystack) {
     }
   }
 
-  UNPROTECT(3);
+  UNPROTECT(6);
   dict_free(&d);
   return out;
 }
@@ -268,7 +267,6 @@ SEXP vctrs_in(SEXP needles, SEXP haystack) {
 
   needles = PROTECT(vec_proxy_equal(needles));
   haystack = PROTECT(vec_proxy_equal(haystack));
-  UNPROTECT(3);
 
   dictionary d;
   dict_init(&d, haystack);
@@ -296,7 +294,7 @@ SEXP vctrs_in(SEXP needles, SEXP haystack) {
     p_out[i] = (d.key[hash] != DICT_EMPTY);
   }
 
-  UNPROTECT(3);
+  UNPROTECT(6);
   dict_free(&d);
   return out;
 }
