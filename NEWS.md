@@ -1,5 +1,5 @@
 
-# vctrs 0.1.99.9000
+# vctrs 0.2.0
 
 With the 0.2.0 release, many vctrs functions have been rewritten with
 native C code to improve performance. Functions like `vec_c()` and
