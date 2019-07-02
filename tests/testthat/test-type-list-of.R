@@ -36,6 +36,8 @@ test_that("is_list_of as expected", {
 })
 
 test_that("print method gives human friendly output", {
+  skip_on_cran() # Depends on tibble
+
   x <- list_of(1, 2:3)
 
   expect_known_output({
