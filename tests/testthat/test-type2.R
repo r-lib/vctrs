@@ -123,3 +123,10 @@ test_that("Subclasses of data.frame dispatch to `vec_ptype2()` methods", {
   expect_identical(vec_ptype2(quux, mtcars), "dispatched!")
   expect_identical(vec_ptype2(mtcars, quux), "dispatched!")
 })
+
+test_that("Subclasses of `tbl_df` have `tbl_df` common type (#481)", {
+  quux <- tibble()
+  quux <- structure(quux, class = c("quux", class(quux)))
+  expect_identical(vec_ptype2(quux, tibble()), tibble())
+  expect_identical(vec_ptype2(tibble(), quux), tibble())
+})

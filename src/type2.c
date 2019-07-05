@@ -162,12 +162,7 @@ SEXP df_type2(SEXP x, SEXP y, struct vctrs_arg* x_arg, struct vctrs_arg* y_arg) 
     }
   }
 
-  if ((is_bare_tibble(x) && is_native_df(y)) ||
-      (is_bare_tibble(y) && is_native_df(x))) {
-    init_tibble(out, 0);
-  } else {
-    init_data_frame(out, 0);
-  }
+  init_data_frame(out, 0);
 
   UNPROTECT(6);
   return out;
