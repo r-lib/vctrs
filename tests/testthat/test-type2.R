@@ -105,3 +105,21 @@ test_that("vec_ptype2() returns empty prototype when other input is NULL", {
   expect_identical(vec_ptype2(1:5, NULL), int())
   expect_identical(vec_ptype2(NULL, 1:5), int())
 })
+
+test_that("Subclasses of data.frame dispatch to `vec_ptype2()` methods", {
+  scoped_global_bindings(
+    vec_ptype2.quuxframe = function(x, y, ...) UseMethod("vec_ptype2.quuxframe"),
+    vec_ptype2.quuxframe.data.frame = function(x, y, ...) "dispatched!",
+    vec_ptype2.data.frame.quuxframe = function(x, y, ...) "dispatched!"
+  )
+
+  quux <- structure(data.frame(), class = c("quuxframe", "data.frame"))
+
+  expect_identical(vec_ptype2(quux, mtcars), "dispatched!")
+  expect_identical(vec_ptype2(mtcars, quux), "dispatched!")
+
+  quux <- structure(data.frame(), class = c("quuxframe", "tbl_df", "data.frame"))
+
+  expect_identical(vec_ptype2(quux, mtcars), "dispatched!")
+  expect_identical(vec_ptype2(mtcars, quux), "dispatched!")
+})
