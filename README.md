@@ -16,7 +16,7 @@ maturing](https://img.shields.io/badge/lifecycle-maturing-blue.svg)](https://www
 There are three main goals to the vctrs package, each described in a
 vignette:
 
-  - To propose `vec_size()` and `vec_type()` as alternatives to
+  - To propose `vec_size()` and `vec_ptype()` as alternatives to
     `length()` and `class()`; `vignette("type-size")`. These definitions
     are paired with a framework for type-coercion and size-recycling.
 
@@ -61,7 +61,7 @@ devtools::install_github("r-lib/vctrs")
 library(vctrs)
 
 # Prototypes
-str(vec_type_common(FALSE, 1L, 2.5))
+str(vec_ptype_common(FALSE, 1L, 2.5))
 #>  num(0)
 str(vec_cast_common(FALSE, 1L, 2.5))
 #> List of 3
@@ -96,10 +96,10 @@ dttm <- as.POSIXct(dt)
 c(dt, dttm)
 #> [1] "2020-01-01"    "4321940-06-07"
 c(dttm, dt)
-#> [1] "2019-12-31 18:00:00 CST" "1969-12-31 23:04:22 CST"
+#> [1] "2020-01-01 01:00:00 CET" "1970-01-01 06:04:22 CET"
 ```
 
-This behaviour arises because `c()` has dual purposes: as well as it’s
+This behaviour arises because `c()` has dual purposes: as well as its
 primary duty of combining vectors, it has a secondary duty of stripping
 attributes. For example, `?POSIXct` suggests that you should use `c()`
 if you want to reset the timezone.
