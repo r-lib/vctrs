@@ -84,6 +84,6 @@ c(dt, dttm)
 c(dttm, dt)
 ```
 
-This behaviour arises because `c()` has dual purposes: as well as it's primary duty of combining vectors, it has a secondary duty of stripping attributes. For example, `?POSIXct` suggests that you should use `c()` if you want to reset the timezone. 
+This behaviour arises because `c()` has dual purposes: as well as its primary duty of combining vectors, it has a secondary duty of stripping attributes. For example, `?POSIXct` suggests that you should use `c()` if you want to reset the timezone. 
 
 The second problem is that `dplyr::bind_rows()` is not extensible by others. Currently, it handles arbitrary S3 classes using heuristics, but these often fail, and it feels like we really need to think through the problem in order to build a principled solution. This intersects with the need to cleanly support more types of data frame columns including lists of data frames, data frames, and matrices.
