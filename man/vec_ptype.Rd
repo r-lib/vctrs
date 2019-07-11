@@ -30,7 +30,7 @@ this is a convenient way to make production code demand fixed types.}
 \code{vec_ptype()} finds the prototype of a single vector.
 \code{vec_ptype_common()} finds the common type of multiple vectors.
 \code{vec_ptype_show()} nicely prints the common type of any number of
-inputs, and is designed for interative exploration.
+inputs, and is designed for interactive exploration.
 }
 \details{
 \code{vec_ptype_common()} first finds the prototype of each input, then

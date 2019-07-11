@@ -32,7 +32,7 @@ vignette:
     implementation considerably simpler and more robust.
 
 vctrs is a developer-focussed package. Understanding and extending vctrs
-requires some effort from developers, but should be invisible to most
+requires some effort from developers but should be invisible to most
 users. It’s our hope that having an underlying theory will mean that
 users can build up an accurate mental model without explicitly learning
 the theory. vctrs will typically be used by other packages, making it
@@ -48,7 +48,7 @@ Install vctrs from CRAN with:
 install.packages("vctrs")
 ```
 
-Alternatively, if you need to development version, install it with:
+Alternatively, if you need the development version, install it with:
 
 ``` r
 # install.packages("devtools")
@@ -80,7 +80,7 @@ str(vec_recycle_common(1, 1:10))
 
 ## Motivation
 
-The original motivation for vctrs from two separate, but related
+The original motivation for vctrs from two separate but related
 problems. The first problem is that `base::c()` has rather undesirable
 behaviour when you mix different S3 vectors:
 
@@ -96,7 +96,7 @@ dttm <- as.POSIXct(dt)
 c(dt, dttm)
 #> [1] "2020-01-01"    "4321940-06-07"
 c(dttm, dt)
-#> [1] "2020-01-01 01:00:00 CET" "1970-01-01 06:04:22 CET"
+#> [1] "2019-12-31 16:00:00 PST" "1969-12-31 21:04:22 PST"
 ```
 
 This behaviour arises because `c()` has dual purposes: as well as its
@@ -108,5 +108,5 @@ The second problem is that `dplyr::bind_rows()` is not extensible by
 others. Currently, it handles arbitrary S3 classes using heuristics, but
 these often fail, and it feels like we really need to think through the
 problem in order to build a principled solution. This intersects with
-the need to cleanly support more types of data frame columns including
+the need to cleanly support more types of data frame columns, including
 lists of data frames, data frames, and matrices.

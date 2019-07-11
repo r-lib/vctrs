@@ -3,7 +3,7 @@
 #' `vec_ptype()` finds the prototype of a single vector.
 #' `vec_ptype_common()` finds the common type of multiple vectors.
 #' `vec_ptype_show()` nicely prints the common type of any number of
-#' inputs, and is designed for interative exploration.
+#' inputs, and is designed for interactive exploration.
 #'
 #' `vec_ptype_common()` first finds the prototype of each input, then
 #' successively calls [vec_ptype2()] to find a common type.

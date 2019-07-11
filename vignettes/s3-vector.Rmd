@@ -69,19 +69,19 @@ In this section you'll learn how to create a new vctrs class by calling `new_vct
 * You can immediately put your new vector class in a data frame because 
   `as.data.frame.vctrs_vctr()` does the right thing.
 
-* Subsetting (`[`, `[[`, `$`), `length<-`, and `rep()` methods automatically
+* Subsetting (`[`, `[[`, and `$`), `length<-`, and `rep()` methods automatically
   preserve attributes because they use `vec_restore()`. A default 
   `vec_restore()` works for all classes where the attributes are 
   data-independent, and can easily be customised when the attributes do 
   depend on the data.
 
-* Default subset-assignment methods (`[<-`, `[[<-`, `$<-`) follow the principle 
+* Default subset-assignment methods (`[<-`, `[[<-`, and `$<-`) follow the principle 
   that the new values should be coerced to match the existing vector. This 
   gives predictable behaviour and clear error messages.
 
 ### Percent class
 
-In this section, I'll show you how to make a `percent` class, i.e. a double vector that is printed as a percentage. We start by defining a low-level [constructor](https://adv-r.hadley.nz/s3.html#s3-constrcutor) that uses `vec_assert()` to checks types and/or sizes then calls `new_vctr()`. 
+In this section, I'll show you how to make a `percent` class, i.e., a double vector that is printed as a percentage. We start by defining a low-level [constructor](https://adv-r.hadley.nz/s3.html#s3-constrcutor) that uses `vec_assert()` to checks types and/or sizes then calls `new_vctr()`. 
 
 `percent` is built on a double vector of any length and doesn't have any attributes.
 
@@ -225,7 +225,7 @@ vec_ptype2.vctrs_percent.default <- function(x, y, ..., x_arg = "x", y_arg = "y"
 s3_register("vctrs::vec_ptype2", "vctrs_percent")
 ```
 
-The default method provides a user friendly error message if the coercion doesn't exist, and makes sure `NA` is handled in a standard way. `NA` is technically a logical vector, but we want to stand in for a missing value of any type.
+The default method provides a user friendly error message if the coercion doesn't exist and makes sure `NA` is handled in a standard way. `NA` is technically a logical vector, but we want to stand in for a missing value of any type.
 
 ```{r, error = TRUE}
 vec_ptype2("bogus", percent())
@@ -239,7 +239,7 @@ Next, start by saying that a `vctrs_percent` combined with a `vctrs_percent` yie
 vec_ptype2.vctrs_percent.vctrs_percent <- function(x, y, ...) new_percent()
 ```
 
-Next we define methods that say that combining a `percent` and double should yield a `double`. We avoid returning a `percent` here, because errors in the scale (1 vs. 0.01) are more obvious with raw numbers.
+Next we define methods that say that combining a `percent` and double should yield a `double`. We avoid returning a `percent` here because errors in the scale (1 vs. 0.01) are more obvious with raw numbers.
 
 Because double dispatch is a bit of a hack, we need to provide two methods. It's your responsibility to ensure that each pair return the same result: if they don't you will get weird and unpredictable behaviour.
 
@@ -284,7 +284,7 @@ vec_cast(0.5, percent())
 vec_cast(percent(0.5), double())
 ```
 
-Once you've implemented `vec_ptype2()` and `vec_cast()` you get `vec_c()`, `[<-` and `[[<-` implementations for free.
+Once you've implemented `vec_ptype2()` and `vec_cast()` you get `vec_c()`, `[<-`, and `[[<-` implementations for free.
 
 ```{r, error = TRUE}
 vec_c(percent(0.5), 1)
@@ -355,16 +355,16 @@ x <- decimal(runif(10), 1L)
 x
 ```
 
-Note that I provide a little helper to extract the `digits` attribute. This makes the code a little easier to read, and should not be exported.
+Note that I provide a little helper to extract the `digits` attribute. This makes the code a little easier to read and should not be exported.
 
-By default, vctrs assumes that attributes are independent of the data, and so are automatically preserved. You'll see what to do if the attributes are data dependent in the next section.
+By default, vctrs assumes that attributes are independent of the data and so are automatically preserved. You'll see what to do if the attributes are data dependent in the next section.
 
 ```{r}
 x[1:2]
 x[[1]]
 ```
 
-For the sake of exposition, we'll assume that `digits` is an important attribute of the class, and should be included in the full type:
+For the sake of exposition, we'll assume that `digits` is an important attribute of the class and should be included in the full type:
 
 ```{r}
 vec_ptype_full.vctrs_decimal <- function(x, ...) {
@@ -386,7 +386,7 @@ vec_cast.vctrs_decimal <- function(x, to, ...) UseMethod("vec_cast.vctrs_decimal
 vec_cast.vctrs_decimal.default <- function(x, to, ...) vec_default_cast(x, to)
 ```
 
-Casting and coercing from one decimal to another requires a little thought as the values of the `digits` attribute might be different, and we need some way to reconcile them. Here I've chosen to chose the maximum of the two; other reasonable options are to take the value from the left-hand side or throw an error.
+Casting and coercing from one decimal to another requires a little thought as the values of the `digits` attribute might be different, and we need some way to reconcile them. Here I've decided to chose the maximum of the two; other reasonable options are to take the value from the left-hand side or throw an error.
 
 ```{r}
 vec_ptype2.vctrs_decimal.vctrs_decimal <- function(x, y, ...) {
@@ -399,7 +399,7 @@ vec_cast.vctrs_decimal.vctrs_decimal <- function(x, to, ...) {
 vec_c(decimal(1/100, digits = 3), decimal(2/100, digits = 2))
 ```
 
-Finally, I can implement coercion to and from other types, like doubles. When automatically coercing, I choose the richer type (i.e. the decimal).
+Finally, I can implement coercion to and from other types, like doubles. When automatically coercing, I choose the richer type (i.e., the decimal).
 
 ```{r}
 vec_ptype2.vctrs_decimal.double <- function(x, y, ...) x
@@ -480,7 +480,7 @@ vec_restore.vctrs_cached_sum <- function(x, to, ..., i = NULL) {
 x[1]
 ```
 
-This works because most of the vctrs methods dispatch to the underlying base function, by first stripping off extra attributes with `vec_data()` and then reapplying them again with `vec_restore()`. The default `vec_restore()` method copies over all attributes, which is not appropriate when the attributes depend on the data.
+This works because most of the vctrs methods dispatch to the underlying base function by first stripping off extra attributes with `vec_data()` and then reapplying them again with `vec_restore()`. The default `vec_restore()` method copies over all attributes, which is not appropriate when the attributes depend on the data.
 
 Note that `vec_restore.class` is subtly different from `vec_cast.class.class()`. `vec_restore()` is used when restoring attributes that have been lost; `vec_cast()` is used for coercions. This is easier to understand with a concrete example. Imagine factors were implemented with `new_vctr()`. `vec_restore.factor()` would restore attributes back to an integer vector, but you would not want to allow manually casting an integer to a factor with `vec_cast()`. 
 
@@ -504,9 +504,9 @@ vctrs makes it easy to create new record-style classes using `new_rcrd()`, which
 
 ### Rational class
 
-A fraction, or rational number can be represented by a pair of integer vectors representing the numerator (the number on top) and the denominator (the number on bottom), where the length of each vector must be the same. To represent such a data structure we turn to a new base data type: the record (or rcrd for short).
+A fraction, or rational number, can be represented by a pair of integer vectors representing the numerator (the number on top) and the denominator (the number on bottom), where the length of each vector must be the same. To represent such a data structure we turn to a new base data type: the record (or rcrd for short).
 
-As usual we start with low-level and user-friendly constructors. The low-level constructor calls `new_rcrd()` which needs a named list of equal-length vectors.
+As usual we start with low-level and user-friendly constructors. The low-level constructor calls `new_rcrd()`, which needs a named list of equal-length vectors.
 
 ```{r}
 new_rational <- function(n = integer(), d = integer()) {
@@ -591,9 +591,9 @@ vec_c(rational(1, 2), 1L, NA)
 
 ### Decimal2 class
 
-The previous implementation of `decimal` was built on top of doubles. This is a bad idea because decimal vectors are typically used when you care about precise values (i.e. dollars and cents in a bank account), and double values suffer from floating point problems. 
+The previous implementation of `decimal` was built on top of doubles. This is a bad idea because decimal vectors are typically used when you care about precise values (i.e., dollars and cents in a bank account), and double values suffer from floating point problems. 
 
-A better implementation of a decimal class would be to use pair of integers, one for the value to the left of the decimal point, and the other for the value to the right (divided by a `scale`). The code is a very quick sketch of how you might start creating such a class:
+A better implementation of a decimal class would be to use pair of integers, one for the value to the left of the decimal point, and the other for the value to the right (divided by a `scale`). The following code is a very quick sketch of how you might start creating such a class:
 
 ```{r}
 new_decimal2 <- function(l, r, scale = 2L) {
@@ -624,9 +624,9 @@ decimal2(10, c(0, 5, 99))
 
 ## Equality and comparison
 
-vctrs provides three "proxy" generics. Two of those let you control how your class determines equality and ordering:
+vctrs provides three "proxy" generics. Two of these let you control how your class determines equality and ordering:
 
-* `vec_proxy_equal()` returns a data vector suitable for comparison. It underpins `==`, `!=`, `unique()`, `anyDuplicated()`, and `is.na()`. By default, it just calls `vec_proxy()`.
+* `vec_proxy_equal()` returns a data vector suitable for comparison. It underpins `==`, `!=`, `unique()`, `anyDuplicated()`, and `is.na()`.
 
 * `vec_proxy_compare()` specifies how to compare the elements of your vector.
   This proxy is used in `<`, `<=`, `>=`, `>`, `min()`, `max()`, `median()`, 
@@ -638,7 +638,7 @@ By default, `vec_proxy_equal()` and `vec_proxy_compare()` just call `vec_proxy()
 
 You should only implement these proxies when some preprocessing on the data is needed to make elements comparable. In that case, defining these methods will get you a lot of behaviour for relatively little work.
 
-These proxy functions should always return a simple object (either a bare vector or a data frame), that possesses the same properties as your class. This permits efficient implementation of the vctrs internals because it allows dispatch to happen once in R, and then efficient computations can be written in C.
+These proxy functions should always return a simple object (either a bare vector or a data frame) that possesses the same properties as your class. This permits efficient implementation of the vctrs internals because it allows dispatch to happen once in R, and then efficient computations can be written in C.
 
 ### Rational class
 
@@ -653,7 +653,7 @@ vec_proxy(x)
 x == rational(1, 1)
 ```
 
-This makes sense as a default, but isn't correct here because `rational(1, 1)` represents the same number as `rational(2, 2)` so they should be equal. We can fix that by implementing a `vec_proxy_equal()` method that by divides `n` and `d` by their greatest common divisor:
+This makes sense as a default but isn't correct here because `rational(1, 1)` represents the same number as `rational(2, 2)`, so they should be equal. We can fix that by implementing a `vec_proxy_equal()` method that divides `n` and `d` by their greatest common divisor:
 
 ```{r}
 # Thanks to Matthew Lundberg: https://stackoverflow.com/a/21504113/16632 
@@ -757,7 +757,7 @@ Equality works out of the box because we can tell if two integer vectors are equ
 p == poly(c(1, 0, 1))
 ```
 
-But we can't order them, because lists are not comparable:
+But we can't order them because lists are not comparable:
 
 ```{r, error = TRUE}
 sort(p)
@@ -796,7 +796,7 @@ vctrs also provides two mathematical generics that allow you to define a broad s
 Both generics define the behaviour for multiple functions because `sum.vctrs_vctr(x)` calls `vec_math.vctrs_vctr("sum", x)`, and `x + y` calls
 `vec_math.x_class.y_class("+", x, y)`. They're accompanied by `vec_math_base()` and `vec_arith_base()` which make it easy to call the underlying base R functions.
 
-`vec_arith()` uses double dispatch, and needs the following standard boilerplate:
+`vec_arith()` uses double dispatch and needs the following standard boilerplate:
 
 ```{r}
 vec_arith.MYCLASS <- function(op, x, y, ...) {
@@ -809,7 +809,7 @@ vec_arith.MYCLASS.default <- function(op, x, y, ...) {
 
 ### Cached sum class
 
-I showed an example of `vec_math()` to define `sum()` and `mean()` methods `cached_sum`. Now let's talk about exactly how it works. Most `vec_math()` functions will have a similar form. You use a switch statement to handle the methods that you care about, and fall back to `vec_math_base()` for those that you don't care about.
+I showed an example of `vec_math()` to define `sum()` and `mean()` methods for `cached_sum`. Now let's talk about exactly how it works. Most `vec_math()` functions will have a similar form. You use a switch statement to handle the methods that you care about and fall back to `vec_math_base()` for those that you don't care about.
 
 ```{r}
 vec_math.vctrs_cached_sum <- function(.fn, .x, ...) {
@@ -863,7 +863,7 @@ To allow these infix functions to work, we'll need to provide `vec_arith()` gene
 
 * It makes sense to add and subtract meters: that yields another meter.
   We can divide a meter by another meter (yielding a unitless number), but
-  we can't multiply meters (because that would yield an area.)
+  we can't multiply meters (because that would yield an area).
   
 * For a combination of meter and number multiplication and division by a number
   are acceptable. Addition and subtraction don't make much sense as we, strictly
@@ -880,7 +880,7 @@ vec_arith.vctrs_meter.default <- function(op, x, y, ...) {
 }
 ```
 
-Then write the method for two meter objects. We use a switch statement to cover the cases we care about, and `stop_incompatible_op()` to throw an informative error message for everything else.
+Then write the method for two meter objects. We use a switch statement to cover the cases we care about and `stop_incompatible_op()` to throw an informative error message for everything else.
 
 ```{r, error = TRUE}
 vec_arith.vctrs_meter.vctrs_meter <- function(op, x, y, ...) {
@@ -899,7 +899,7 @@ meter(10) / meter(1)
 meter(10) * meter(1)
 ```
 
-Next we write the pair of methods for arithmetic with a meter and a number. These are almost identical, but while `meter(10) / 2` makes sense, `2 / meter(10)` does not (as addition and subtraction).
+Next we write the pair of methods for arithmetic with a meter and a number. These are almost identical, but while `meter(10) / 2` makes sense, `2 / meter(10)` does not (and neither do addition and subtraction).
 
 ```{r, error = TRUE}
 vec_arith.vctrs_meter.numeric <- function(op, x, y, ...) {
