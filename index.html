@@ -106,13 +106,13 @@
 <li><p>To define type- and size-stability as desirable function properties, use them to analyse existing base function, and to propose better alternatives; <code><a href="articles/stability.html">vignette("stability")</a></code>. This work has been particularly motivated by thinking about the ideal properties of <code><a href="https://www.rdocumentation.org/packages/base/topics/c">c()</a></code>, <code><a href="https://www.rdocumentation.org/packages/base/topics/ifelse">ifelse()</a></code>, and <code><a href="https://www.rdocumentation.org/packages/base/topics/cbind">rbind()</a></code>.</p></li>
 <li><p>To provide a new <code>vctr</code> base class that makes it easy to create new S3 vectors; <code><a href="articles/s3-vector.html">vignette("s3-vector")</a></code>. vctrs provides methods for many base generics in terms of a few new vctrs generics, making implementation considerably simpler and more robust.</p></li>
 </ul>
-<p>vctrs is a developer-focussed package. Understanding and extending vctrs requires some effort from developers, but should be invisible to most users. It’s our hope that having an underlying theory will mean that users can build up an accurate mental model without explicitly learning the theory. vctrs will typically be used by other packages, making it easy for them to provide new classes of S3 vectors that are supported throughout the tidyverse (and beyond). For that reason, vctrs has few dependencies.</p>
+<p>vctrs is a developer-focussed package. Understanding and extending vctrs requires some effort from developers but should be invisible to most users. It’s our hope that having an underlying theory will mean that users can build up an accurate mental model without explicitly learning the theory. vctrs will typically be used by other packages, making it easy for them to provide new classes of S3 vectors that are supported throughout the tidyverse (and beyond). For that reason, vctrs has few dependencies.</p>
 <div id="installation" class="section level2">
 <h2 class="hasAnchor">
 <a href="#installation" class="anchor"></a>Installation</h2>
 <p>Install vctrs from CRAN with:</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" data-line-number="1"><span class="kw"><a href="https://www.rdocumentation.org/packages/utils/topics/install.packages">install.packages</a></span>(<span class="st">"vctrs"</span>)</a></code></pre></div>
-<p>Alternatively, if you need to development version, install it with:</p>
+<p>Alternatively, if you need the development version, install it with:</p>
 <div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" data-line-number="1"><span class="co"># install.packages("devtools")</span></a>
 <a class="sourceLine" id="cb2-2" data-line-number="2">devtools<span class="op">::</span><span class="kw">install_github</span>(<span class="st">"r-lib/vctrs"</span>)</a></code></pre></div>
 </div>
@@ -141,7 +141,7 @@
 <div id="motivation" class="section level2">
 <h2 class="hasAnchor">
 <a href="#motivation" class="anchor"></a>Motivation</h2>
-<p>The original motivation for vctrs from two separate, but related problems. The first problem is that <code><a href="https://www.rdocumentation.org/packages/base/topics/c">base::c()</a></code> has rather undesirable behaviour when you mix different S3 vectors:</p>
+<p>The original motivation for vctrs from two separate but related problems. The first problem is that <code><a href="https://www.rdocumentation.org/packages/base/topics/c">base::c()</a></code> has rather undesirable behaviour when you mix different S3 vectors:</p>
 <div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" data-line-number="1"><span class="co"># combining factors makes integers</span></a>
 <a class="sourceLine" id="cb4-2" data-line-number="2"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/factor">factor</a></span>(<span class="st">"a"</span>), <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/factor">factor</a></span>(<span class="st">"b"</span>))</a>
 <a class="sourceLine" id="cb4-3" data-line-number="3"><span class="co">#&gt; [1] 1 1</span></a>
@@ -155,7 +155,7 @@
 <a class="sourceLine" id="cb4-11" data-line-number="11"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(dttm, dt)</a>
 <a class="sourceLine" id="cb4-12" data-line-number="12"><span class="co">#&gt; [1] "2020-01-01 00:00:00 UTC" "1970-01-01 05:04:22 UTC"</span></a></code></pre></div>
 <p>This behaviour arises because <code><a href="https://www.rdocumentation.org/packages/base/topics/c">c()</a></code> has dual purposes: as well as its primary duty of combining vectors, it has a secondary duty of stripping attributes. For example, <code><a href="https://www.rdocumentation.org/packages/base/topics/DateTimeClasses">?POSIXct</a></code> suggests that you should use <code><a href="https://www.rdocumentation.org/packages/base/topics/c">c()</a></code> if you want to reset the timezone.</p>
-<p>The second problem is that <code>dplyr::bind_rows()</code> is not extensible by others. Currently, it handles arbitrary S3 classes using heuristics, but these often fail, and it feels like we really need to think through the problem in order to build a principled solution. This intersects with the need to cleanly support more types of data frame columns including lists of data frames, data frames, and matrices.</p>
+<p>The second problem is that <code>dplyr::bind_rows()</code> is not extensible by others. Currently, it handles arbitrary S3 classes using heuristics, but these often fail, and it feels like we really need to think through the problem in order to build a principled solution. This intersects with the need to cleanly support more types of data frame columns, including lists of data frames, data frames, and matrices.</p>
 </div>
 </div>
   </div>

@@ -97,27 +97,27 @@
 
     
     
-<p>Rather than using <code><a href="https://www.rdocumentation.org/packages/base/topics/class">class()</a></code> and <code><a href="https://www.rdocumentation.org/packages/base/topics/length">length()</a></code>, vctrs has notions of prototype (<code><a href="../reference/vec_ptype.html">vec_ptype_show()</a></code>) and size (<code><a href="../reference/vec_size.html">vec_size()</a></code>). This vignette motivates why these alternatives are necessary, and connects their definitions to type coercion and the recycling rules.</p>
+<p>Rather than using <code><a href="https://www.rdocumentation.org/packages/base/topics/class">class()</a></code> and <code><a href="https://www.rdocumentation.org/packages/base/topics/length">length()</a></code>, vctrs has notions of prototype (<code><a href="../reference/vec_ptype.html">vec_ptype_show()</a></code>) and size (<code><a href="../reference/vec_size.html">vec_size()</a></code>). This vignette discusses the motivation for why these alternatives are necessary and connects their definitions to type coercion and the recycling rules.</p>
 <p>Size and prototype are motivated by thinking about the optimal behaviour for <code><a href="https://www.rdocumentation.org/packages/base/topics/c">c()</a></code> and <code><a href="https://www.rdocumentation.org/packages/base/topics/cbind">rbind()</a></code>, particularly inspired by data frames with columns that are matrices or data frames.</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" data-line-number="1"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">library</a></span>(vctrs)</a></code></pre></div>
 <div id="prototype" class="section level2">
 <h2 class="hasAnchor">
 <a href="#prototype" class="anchor"></a>Prototype</h2>
-<p>The idea of a prototype is to capture the metadata associated with a vector, without capturing any data. Unfortunately, the <code><a href="https://www.rdocumentation.org/packages/base/topics/class">class()</a></code> of an object is inadequate for this purpose:</p>
+<p>The idea of a prototype is to capture the metadata associated with a vector without capturing any data. Unfortunately, the <code><a href="https://www.rdocumentation.org/packages/base/topics/class">class()</a></code> of an object is inadequate for this purpose:</p>
 <ul>
-<li><p>The <code><a href="https://www.rdocumentation.org/packages/base/topics/class">class()</a></code> doesn’t include attributes. Attributes are important because, for example, they store the levels of a factor, and the timezone of a <code>POSIXct</code>. You can not combine two factors or two <code>POSIXct</code>s without thinking about the attribute.</p></li>
-<li><p>The <code><a href="https://www.rdocumentation.org/packages/base/topics/class">class()</a></code> of a matrix is “matrix”, and doesn’t include the type of the underlying vector, or the dimensionality.</p></li>
+<li><p>The <code><a href="https://www.rdocumentation.org/packages/base/topics/class">class()</a></code> doesn’t include attributes. Attributes are important because, for example, they store the levels of a factor and the timezone of a <code>POSIXct</code>. You cannot combine two factors or two <code>POSIXct</code>s without thinking about the attributes.</p></li>
+<li><p>The <code><a href="https://www.rdocumentation.org/packages/base/topics/class">class()</a></code> of a matrix is “matrix” and doesn’t include the type of the underlying vector or the dimensionality.</p></li>
 </ul>
-<p>Instead vctrs takes advantage of R’s vectorised nature and uses a <strong>prototype</strong>, a 0-observation slice of the vector (this is basically <code>x[0]</code> but with some subtleties we’ll come back to later) . This is a miniature version of the vector that contains all of the attributes but none of the data.</p>
-<p>Conveniently, you can create many prototypes using existing base functions (e.g, <code><a href="https://www.rdocumentation.org/packages/base/topics/double">double()</a></code>, <code><a href="https://www.rdocumentation.org/packages/base/topics/factor">factor(levels = c("a", "b"))</a></code>). vctrs provides a few helpers (e.g. <code><a href="../reference/new_date.html">new_date()</a></code>, <code><a href="../reference/new_date.html">new_datetime()</a></code>, <code><a href="../reference/new_date.html">new_duration()</a></code>) where the equivalents in base R are missing.</p>
+<p>Instead, vctrs takes advantage of R’s vectorised nature and uses a <strong>prototype</strong>, a 0-observation slice of the vector (this is basically <code>x[0]</code> but with some subtleties we’ll come back to later). This is a miniature version of the vector that contains all of the attributes but none of the data.</p>
+<p>Conveniently, you can create many prototypes using existing base functions (e.g, <code><a href="https://www.rdocumentation.org/packages/base/topics/double">double()</a></code> and <code><a href="https://www.rdocumentation.org/packages/base/topics/factor">factor(levels = c("a", "b"))</a></code>). vctrs provides a few helpers (e.g. <code><a href="../reference/new_date.html">new_date()</a></code>, <code><a href="../reference/new_date.html">new_datetime()</a></code>, and <code><a href="../reference/new_date.html">new_duration()</a></code>) where the equivalents in base R are missing.</p>
 <div id="base-prototypes" class="section level3">
 <h3 class="hasAnchor">
 <a href="#base-prototypes" class="anchor"></a>Base prototypes</h3>
 <p><code><a href="../reference/vec_ptype.html">vec_ptype()</a></code> creates a prototype from an existing object. However, many base vectors have uninformative printing methods for 0-length subsets, so vctrs also provides <code><a href="../reference/vec_ptype.html">vec_ptype_show()</a></code>, which prints the prototype in a friendly way (and returns nothing).</p>
-<p>Using <code><a href="../reference/vec_ptype.html">vec_ptype_show()</a></code> allows us to see the prototypes base R classes:.</p>
+<p>Using <code><a href="../reference/vec_ptype.html">vec_ptype_show()</a></code> allows us to see the prototypes base R classes:</p>
 <ul>
 <li>
-<p>Atomic vectors have no attributes, and just display the underlying <code><a href="https://www.rdocumentation.org/packages/base/topics/typeof">typeof()</a></code>:</p>
+<p>Atomic vectors have no attributes and just display the underlying <code><a href="https://www.rdocumentation.org/packages/base/topics/typeof">typeof()</a></code>:</p>
 <div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" data-line-number="1"><span class="kw"><a href="../reference/vec_ptype.html">vec_ptype_show</a></span>(<span class="ot">FALSE</span>)</a>
 <a class="sourceLine" id="cb2-2" data-line-number="2"><span class="co">#&gt; Prototype: logical</span></a>
 <a class="sourceLine" id="cb2-3" data-line-number="3"><span class="kw"><a href="../reference/vec_ptype.html">vec_ptype_show</a></span>(1L)</a>
@@ -130,7 +130,7 @@
 <a class="sourceLine" id="cb2-10" data-line-number="10"><span class="co">#&gt; Prototype: list</span></a></code></pre></div>
 </li>
 <li>
-<p>The prototype of matrices and arrays include the base type, and the dimensions after the first:</p>
+<p>The prototype of matrices and arrays include the base type and the dimensions after the first:</p>
 <div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" data-line-number="1"><span class="kw"><a href="../reference/vec_ptype.html">vec_ptype_show</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/array">array</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/logical">logical</a></span>(), <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="dv">2</span>, <span class="dv">3</span>)))</a>
 <a class="sourceLine" id="cb3-2" data-line-number="2"><span class="co">#&gt; Prototype: logical[,3]</span></a>
 <a class="sourceLine" id="cb3-3" data-line-number="3"><span class="kw"><a href="../reference/vec_ptype.html">vec_ptype_show</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/array">array</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/integer">integer</a></span>(), <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">4</span>)))</a>
@@ -139,7 +139,7 @@
 <a class="sourceLine" id="cb3-6" data-line-number="6"><span class="co">#&gt; Prototype: character[,3,4,5]</span></a></code></pre></div>
 </li>
 <li>
-<p>The prototype of a factor includes its levels. Levels are a character vector, which can be arbitrarily long, so the prototype just shows a hash. If the hash of two factors is equal it’s highly likely that their levels are also equal.</p>
+<p>The prototype of a factor includes its levels. Levels are a character vector, which can be arbitrarily long, so the prototype just shows a hash. If the hash of two factors is equal, it’s highly likely that their levels are also equal.</p>
 <div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" data-line-number="1"><span class="kw"><a href="../reference/vec_ptype.html">vec_ptype_show</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/factor">factor</a></span>(<span class="st">"a"</span>))</a>
 <a class="sourceLine" id="cb4-2" data-line-number="2"><span class="co">#&gt; Prototype: factor&lt;127a2&gt;</span></a>
 <a class="sourceLine" id="cb4-3" data-line-number="3"><span class="kw"><a href="../reference/vec_ptype.html">vec_ptype_show</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/factor">ordered</a></span>(<span class="st">"b"</span>))</a>
@@ -191,11 +191,11 @@
 <li><p><code>class(vec_ptype_common(x, vec_ptype_common(y, z))</code> equals <code><a href="https://www.rdocumentation.org/packages/base/topics/class">class(vec_ptype_common(vec_ptype_common(x, y), z))</a></code>.</p></li>
 <li><p><code>vec_ptype_common(x, NULL) == vec_ptype(x)</code>.</p></li>
 </ul>
-<p>i.e. <code><a href="../reference/vec_ptype.html">vec_ptype_common()</a></code> is both commutative and associative (with respect to class), and has an identity element, <code>NULL</code>, i.e. it’s a <strong>commutative monoid</strong>. This means the underlying implementation is quite simple: we can find the common type of any number of objects by progressively finding the common type of pairs of objects.</p>
+<p>i.e., <code><a href="../reference/vec_ptype.html">vec_ptype_common()</a></code> is both commutative and associative (with respect to class) and has an identity element, <code>NULL</code>; i.e., it’s a <strong>commutative monoid</strong>. This means the underlying implementation is quite simple: we can find the common type of any number of objects by progressively finding the common type of pairs of objects.</p>
 <p>Like with <code><a href="../reference/vec_ptype.html">vec_ptype()</a></code>, the easiest way to explore <code><a href="../reference/vec_ptype.html">vec_ptype_common()</a></code> is with <code><a href="../reference/vec_ptype.html">vec_ptype_show()</a></code>: when given multiple inputs, it will print their common prototype. (In other words: program with <code><a href="../reference/vec_ptype.html">vec_ptype_common()</a></code> but play with <code><a href="../reference/vec_ptype.html">vec_ptype_show()</a></code>.)</p>
 <ul>
 <li>
-<p>The common type of atomic vectors is computed very similar to rules of base R, except that we do not coerce to character automatically:</p>
+<p>The common type of atomic vectors is computed very similar to the rules of base R, except that we do not coerce to character automatically:</p>
 <div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb9-1" data-line-number="1"><span class="kw"><a href="../reference/vec_ptype.html">vec_ptype_show</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/logical">logical</a></span>(), <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/integer">integer</a></span>(), <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/double">double</a></span>())</a>
 <a class="sourceLine" id="cb9-2" data-line-number="2"><span class="co">#&gt; Prototype: &lt;double&gt;</span></a>
 <a class="sourceLine" id="cb9-3" data-line-number="3"><span class="co">#&gt; 0. (           , &lt;logical&gt; ) = &lt;logical&gt;</span></a>
@@ -340,7 +340,7 @@
 <a class="sourceLine" id="cb19-5" data-line-number="5"><span class="co"># Cast fails</span></a>
 <a class="sourceLine" id="cb19-6" data-line-number="6"><span class="kw"><a href="../reference/vec_cast.html">vec_cast</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="fl">1.5</span>, <span class="fl">2.5</span>), <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/factor">factor</a></span>(<span class="st">"a"</span>))</a>
 <a class="sourceLine" id="cb19-7" data-line-number="7"><span class="co">#&gt; Can't cast `x` &lt;double&gt; to `to` &lt;factor&lt;127a2&gt;&gt;.</span></a></code></pre></div>
-<p>If a cast is possible in general (i.e. double -&gt; integer), but information is lost for a specific input (e.g. 1.5 -&gt; 1), it will generate an error.</p>
+<p>If a cast is possible in general (i.e., double -&gt; integer), but information is lost for a specific input (e.g. 1.5 -&gt; 1), it will generate an error.</p>
 <div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb20-1" data-line-number="1"><span class="kw"><a href="../reference/vec_cast.html">vec_cast</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="fl">1.5</span>, <span class="dv">2</span>), <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/integer">integer</a></span>())</a>
 <a class="sourceLine" id="cb20-2" data-line-number="2"><span class="co">#&gt; Lossy cast from `x` &lt;double&gt; to `to` &lt;integer&gt;.</span></a>
 <a class="sourceLine" id="cb20-3" data-line-number="3"><span class="co">#&gt; Locations: 1</span></a></code></pre></div>
@@ -365,15 +365,15 @@
 <div id="size" class="section level2">
 <h2 class="hasAnchor">
 <a href="#size" class="anchor"></a>Size</h2>
-<p><code><a href="../reference/vec_size.html">vec_size()</a></code> was motivated by the need to have an invariant that describes the number of “observations” in a data structure. This is particularly important for data frames as it’s useful to have some function such that <code>f(data.frame(x))</code> equals <code>f(x)</code>. No base function has this property:</p>
+<p><code><a href="../reference/vec_size.html">vec_size()</a></code> was motivated by the need to have an invariant that describes the number of “observations” in a data structure. This is particularly important for data frames, as it’s useful to have some function such that <code>f(data.frame(x))</code> equals <code>f(x)</code>. No base function has this property:</p>
 <ul>
-<li><p><code><a href="https://www.rdocumentation.org/packages/base/topics/length">length(data.frame(x))</a></code> equals <code>1</code>, because the length of a data frame is the number of columns.</p></li>
-<li><p><code><a href="https://www.rdocumentation.org/packages/base/topics/nrow">nrow(data.frame(x))</a></code> does not equal <code><a href="https://www.rdocumentation.org/packages/base/topics/nrow">nrow(x)</a></code>, because <code><a href="https://www.rdocumentation.org/packages/base/topics/nrow">nrow()</a></code> of a vector is <code>NULL</code>.</p></li>
+<li><p><code><a href="https://www.rdocumentation.org/packages/base/topics/length">length(data.frame(x))</a></code> equals <code>1</code> because the length of a data frame is the number of columns.</p></li>
+<li><p><code><a href="https://www.rdocumentation.org/packages/base/topics/nrow">nrow(data.frame(x))</a></code> does not equal <code><a href="https://www.rdocumentation.org/packages/base/topics/nrow">nrow(x)</a></code> because <code><a href="https://www.rdocumentation.org/packages/base/topics/nrow">nrow()</a></code> of a vector is <code>NULL</code>.</p></li>
 <li><p><code><a href="https://www.rdocumentation.org/packages/base/topics/nrow">NROW(data.frame(x))</a></code> equals <code><a href="https://www.rdocumentation.org/packages/base/topics/nrow">NROW(x)</a></code> for vector <code>x</code>, so is almost what we want. But because <code><a href="https://www.rdocumentation.org/packages/base/topics/nrow">NROW()</a></code> is defined in terms of <code><a href="https://www.rdocumentation.org/packages/base/topics/length">length()</a></code>, it returns a value for every object, even types that can’t go in a data frame, e.g. <code><a href="https://www.rdocumentation.org/packages/base/topics/data.frame">data.frame(mean)</a></code> errors even though <code><a href="https://www.rdocumentation.org/packages/base/topics/nrow">NROW(mean)</a></code> is <code>1</code>.</p></li>
 </ul>
 <p>We define <code><a href="../reference/vec_size.html">vec_size()</a></code> as follows:</p>
 <ul>
-<li>It is the length of 1d vectors</li>
+<li>It is the length of 1d vectors.</li>
 <li>It is the number of rows of data frames, matrices, and arrays.</li>
 <li>It throws error for non vectors.</li>
 </ul>
@@ -381,7 +381,7 @@
 <div id="slicing" class="section level3">
 <h3 class="hasAnchor">
 <a href="#slicing" class="anchor"></a>Slicing</h3>
-<p><code><a href="../reference/vec_slice.html">vec_slice()</a></code> is to <code><a href="../reference/vec_size.html">vec_size()</a></code> as <code>[</code> is to <code><a href="https://www.rdocumentation.org/packages/base/topics/length">length()</a></code>; i.e. it allows you to select observations, regardless of the dimensionality of the underlying object. <code><a href="../reference/vec_slice.html">vec_slice(x, i)</a></code> is equivalent to:</p>
+<p><code><a href="../reference/vec_slice.html">vec_slice()</a></code> is to <code><a href="../reference/vec_size.html">vec_size()</a></code> as <code>[</code> is to <code><a href="https://www.rdocumentation.org/packages/base/topics/length">length()</a></code>; i.e., it allows you to select observations regardless of the dimensionality of the underlying object. <code><a href="../reference/vec_slice.html">vec_slice(x, i)</a></code> is equivalent to:</p>
 <ul>
 <li>
 <code>x[i]</code> when <code>x</code> is a vector.</li>
@@ -394,18 +394,18 @@
 <a class="sourceLine" id="cb23-2" data-line-number="2">df &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/data.frame">data.frame</a></span>(<span class="dt">x =</span> x)</a>
 <a class="sourceLine" id="cb23-3" data-line-number="3"></a>
 <a class="sourceLine" id="cb23-4" data-line-number="4"><span class="kw"><a href="../reference/vec_slice.html">vec_slice</a></span>(x, <span class="dv">5</span><span class="op">:</span><span class="dv">6</span>)</a>
-<a class="sourceLine" id="cb23-5" data-line-number="5"><span class="co">#&gt; [1] 8 5</span></a>
+<a class="sourceLine" id="cb23-5" data-line-number="5"><span class="co">#&gt; [1] 9 6</span></a>
 <a class="sourceLine" id="cb23-6" data-line-number="6"><span class="kw"><a href="../reference/vec_slice.html">vec_slice</a></span>(df, <span class="dv">5</span><span class="op">:</span><span class="dv">6</span>)</a>
 <a class="sourceLine" id="cb23-7" data-line-number="7"><span class="co">#&gt;   x</span></a>
-<a class="sourceLine" id="cb23-8" data-line-number="8"><span class="co">#&gt; 1 8</span></a>
-<a class="sourceLine" id="cb23-9" data-line-number="9"><span class="co">#&gt; 2 5</span></a></code></pre></div>
+<a class="sourceLine" id="cb23-8" data-line-number="8"><span class="co">#&gt; 1 9</span></a>
+<a class="sourceLine" id="cb23-9" data-line-number="9"><span class="co">#&gt; 2 6</span></a></code></pre></div>
 <p><code><a href="../reference/vec_slice.html">vec_slice(data.frame(x), i)</a></code> equals <code><a href="https://www.rdocumentation.org/packages/base/topics/data.frame">data.frame(vec_slice(x, i))</a></code> (modulo variable and row names).</p>
 <p>Prototypes are generated with <code><a href="../reference/vec_slice.html">vec_slice(x, 0L)</a></code>; given a prototype, you can initialize a vector of given size (filled with <code>NA</code>s) with <code><a href="../reference/vec_init.html">vec_init()</a></code>.</p>
 </div>
 <div id="common-sizes-recycling-rules" class="section level3">
 <h3 class="hasAnchor">
 <a href="#common-sizes-recycling-rules" class="anchor"></a>Common sizes: recycling rules</h3>
-<p>Closely related to the definition of size are the <strong>recycling rules</strong>. The recycling rules determine the size of the output when two vectors of different sizes are combined. In vctrs, the recycling rules are encoded in <code><a href="../reference/vec_size.html">vec_size_common()</a></code> which give the common size of a set of vectors:</p>
+<p>Closely related to the definition of size are the <strong>recycling rules</strong>. The recycling rules determine the size of the output when two vectors of different sizes are combined. In vctrs, the recycling rules are encoded in <code><a href="../reference/vec_size.html">vec_size_common()</a></code>, which gives the common size of a set of vectors:</p>
 <div class="sourceCode" id="cb24"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb24-1" data-line-number="1"><span class="kw"><a href="../reference/vec_size.html">vec_size_common</a></span>(<span class="dv">1</span><span class="op">:</span><span class="dv">3</span>, <span class="dv">1</span><span class="op">:</span><span class="dv">3</span>, <span class="dv">1</span><span class="op">:</span><span class="dv">3</span>)</a>
 <a class="sourceLine" id="cb24-2" data-line-number="2"><span class="co">#&gt; [1] 3</span></a>
 <a class="sourceLine" id="cb24-3" data-line-number="3"><span class="kw"><a href="../reference/vec_size.html">vec_size_common</a></span>(<span class="dv">1</span><span class="op">:</span><span class="dv">10</span>, <span class="dv">1</span>)</a>
@@ -446,7 +446,7 @@
 <div id="appendix-recycling-in-base-r" class="section level2">
 <h2 class="hasAnchor">
 <a href="#appendix-recycling-in-base-r" class="anchor"></a>Appendix: recycling in base R</h2>
-<p>The recycling rules in base R are described in <a href="https://cran.r-project.org/doc/manuals/r-release/R-lang.html#Recycling-rules">The R Language Definition</a> but are not implemented in a single function, and thus are not applied consistently. Here I give a brief overview of their most common realisation, as well as showing some of the exceptions.</p>
+<p>The recycling rules in base R are described in <a href="https://cran.r-project.org/doc/manuals/r-release/R-lang.html#Recycling-rules">The R Language Definition</a> but are not implemented in a single function and thus are not applied consistently. Here, I give a brief overview of their most common realisation, as well as showing some of the exceptions.</p>
 <p>Generally, in base R, when a pair of vectors is not the same length, the shorter vector is recycled to the same length as the longer:</p>
 <div class="sourceCode" id="cb27"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb27-1" data-line-number="1"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/rep">rep</a></span>(<span class="dv">1</span>, <span class="dv">6</span>) <span class="op">+</span><span class="st"> </span><span class="dv">1</span></a>
 <a class="sourceLine" id="cb27-2" data-line-number="2"><span class="co">#&gt; [1] 2 2 2 2 2 2</span></a>

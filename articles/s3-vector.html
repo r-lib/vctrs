@@ -125,13 +125,13 @@
 <ul>
 <li><p>The <code><a href="https://www.rdocumentation.org/packages/base/topics/print">print()</a></code> and <code><a href="https://www.rdocumentation.org/packages/utils/topics/str">str()</a></code> methods are defined in terms of <code><a href="https://www.rdocumentation.org/packages/base/topics/format">format()</a></code> so you get a pleasant, consistent display as soon as you’ve made your <code><a href="https://www.rdocumentation.org/packages/base/topics/format">format()</a></code> method.</p></li>
 <li><p>You can immediately put your new vector class in a data frame because <code>as.data.frame.vctrs_vctr()</code> does the right thing.</p></li>
-<li><p>Subsetting (<code>[</code>, <code>[[</code>, <code>$</code>), <code>length&lt;-</code>, and <code><a href="https://www.rdocumentation.org/packages/base/topics/rep">rep()</a></code> methods automatically preserve attributes because they use <code><a href="../reference/vec_cast.html">vec_restore()</a></code>. A default <code><a href="../reference/vec_cast.html">vec_restore()</a></code> works for all classes where the attributes are data-independent, and can easily be customised when the attributes do depend on the data.</p></li>
-<li><p>Default subset-assignment methods (<code>[&lt;-</code>, <code>[[&lt;-</code>, <code>$&lt;-</code>) follow the principle that the new values should be coerced to match the existing vector. This gives predictable behaviour and clear error messages.</p></li>
+<li><p>Subsetting (<code>[</code>, <code>[[</code>, and <code>$</code>), <code>length&lt;-</code>, and <code><a href="https://www.rdocumentation.org/packages/base/topics/rep">rep()</a></code> methods automatically preserve attributes because they use <code><a href="../reference/vec_cast.html">vec_restore()</a></code>. A default <code><a href="../reference/vec_cast.html">vec_restore()</a></code> works for all classes where the attributes are data-independent, and can easily be customised when the attributes do depend on the data.</p></li>
+<li><p>Default subset-assignment methods (<code>[&lt;-</code>, <code>[[&lt;-</code>, and <code>$&lt;-</code>) follow the principle that the new values should be coerced to match the existing vector. This gives predictable behaviour and clear error messages.</p></li>
 </ul>
 <div id="percent-class" class="section level3">
 <h3 class="hasAnchor">
 <a href="#percent-class" class="anchor"></a>Percent class</h3>
-<p>In this section, I’ll show you how to make a <code>percent</code> class, i.e. a double vector that is printed as a percentage. We start by defining a low-level <a href="https://adv-r.hadley.nz/s3.html#s3-constrcutor">constructor</a> that uses <code><a href="../reference/vec_assert.html">vec_assert()</a></code> to checks types and/or sizes then calls <code><a href="../reference/new_vctr.html">new_vctr()</a></code>.</p>
+<p>In this section, I’ll show you how to make a <code>percent</code> class, i.e., a double vector that is printed as a percentage. We start by defining a low-level <a href="https://adv-r.hadley.nz/s3.html#s3-constrcutor">constructor</a> that uses <code><a href="../reference/vec_assert.html">vec_assert()</a></code> to checks types and/or sizes then calls <code><a href="../reference/new_vctr.html">new_vctr()</a></code>.</p>
 <p><code>percent</code> is built on a double vector of any length and doesn’t have any attributes.</p>
 <div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" data-line-number="1">new_percent &lt;-<span class="st"> </span><span class="cf">function</span>(<span class="dt">x =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/double">double</a></span>()) {</a>
 <a class="sourceLine" id="cb2-2" data-line-number="2">  <span class="kw"><a href="../reference/vec_assert.html">vec_assert</a></span>(x, <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/double">double</a></span>())</a>
@@ -236,7 +236,7 @@
 <a class="sourceLine" id="cb12-2" data-line-number="2">vec_ptype2.vctrs_percent.default &lt;-<span class="st"> </span><span class="cf">function</span>(x, y, ..., <span class="dt">x_arg =</span> <span class="st">"x"</span>, <span class="dt">y_arg =</span> <span class="st">"y"</span>) {</a>
 <a class="sourceLine" id="cb12-3" data-line-number="3">  <span class="kw"><a href="../reference/vec_ptype2.html">vec_default_ptype2</a></span>(x, y, <span class="dt">x_arg =</span> x_arg, <span class="dt">y_arg =</span> y_arg)</a>
 <a class="sourceLine" id="cb12-4" data-line-number="4">}</a></code></pre></div>
-<p>The default method provides a user friendly error message if the coercion doesn’t exist, and makes sure <code>NA</code> is handled in a standard way. <code>NA</code> is technically a logical vector, but we want to stand in for a missing value of any type.</p>
+<p>The default method provides a user friendly error message if the coercion doesn’t exist and makes sure <code>NA</code> is handled in a standard way. <code>NA</code> is technically a logical vector, but we want to stand in for a missing value of any type.</p>
 <div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb13-1" data-line-number="1"><span class="kw"><a href="../reference/vec_ptype2.html">vec_ptype2</a></span>(<span class="st">"bogus"</span>, <span class="kw">percent</span>())</a>
 <a class="sourceLine" id="cb13-2" data-line-number="2"><span class="co">#&gt; No common type for `x` &lt;character&gt; and `y` &lt;vctrs_percent&gt;.</span></a>
 <a class="sourceLine" id="cb13-3" data-line-number="3"><span class="kw"><a href="../reference/vec_ptype2.html">vec_ptype2</a></span>(<span class="kw">percent</span>(), <span class="ot">NA</span>)</a>
@@ -245,7 +245,7 @@
 <a class="sourceLine" id="cb13-6" data-line-number="6"><span class="co">#&gt; &lt;vctrs_percent[0]&gt;</span></a></code></pre></div>
 <p>Next, start by saying that a <code>vctrs_percent</code> combined with a <code>vctrs_percent</code> yields a <code>vctrs_percent</code>, which we indicate by returning a prototype generated by the constructor.</p>
 <div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb14-1" data-line-number="1">vec_ptype2.vctrs_percent.vctrs_percent &lt;-<span class="st"> </span><span class="cf">function</span>(x, y, ...) <span class="kw">new_percent</span>()</a></code></pre></div>
-<p>Next we define methods that say that combining a <code>percent</code> and double should yield a <code>double</code>. We avoid returning a <code>percent</code> here, because errors in the scale (1 vs. 0.01) are more obvious with raw numbers.</p>
+<p>Next we define methods that say that combining a <code>percent</code> and double should yield a <code>double</code>. We avoid returning a <code>percent</code> here because errors in the scale (1 vs. 0.01) are more obvious with raw numbers.</p>
 <p>Because double dispatch is a bit of a hack, we need to provide two methods. It’s your responsibility to ensure that each pair return the same result: if they don’t you will get weird and unpredictable behaviour.</p>
 <div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb15-1" data-line-number="1">vec_ptype2.vctrs_percent.double &lt;-<span class="st"> </span><span class="cf">function</span>(x, y, ...) <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/double">double</a></span>()</a>
 <a class="sourceLine" id="cb15-2" data-line-number="2">vec_ptype2.double.vctrs_percent &lt;-<span class="st"> </span><span class="cf">function</span>(x, y, ...) <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/double">double</a></span>()</a></code></pre></div>
@@ -269,7 +269,7 @@
 <a class="sourceLine" id="cb20-3" data-line-number="3"><span class="co">#&gt; [1] 50%</span></a>
 <a class="sourceLine" id="cb20-4" data-line-number="4"><span class="kw"><a href="../reference/vec_cast.html">vec_cast</a></span>(<span class="kw">percent</span>(<span class="fl">0.5</span>), <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/double">double</a></span>())</a>
 <a class="sourceLine" id="cb20-5" data-line-number="5"><span class="co">#&gt; [1] 0.5</span></a></code></pre></div>
-<p>Once you’ve implemented <code><a href="../reference/vec_ptype2.html">vec_ptype2()</a></code> and <code><a href="../reference/vec_cast.html">vec_cast()</a></code> you get <code><a href="../reference/vec_c.html">vec_c()</a></code>, <code>[&lt;-</code> and <code>[[&lt;-</code> implementations for free.</p>
+<p>Once you’ve implemented <code><a href="../reference/vec_ptype2.html">vec_ptype2()</a></code> and <code><a href="../reference/vec_cast.html">vec_cast()</a></code> you get <code><a href="../reference/vec_c.html">vec_c()</a></code>, <code>[&lt;-</code>, and <code>[[&lt;-</code> implementations for free.</p>
 <div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb21-1" data-line-number="1"><span class="kw"><a href="../reference/vec_c.html">vec_c</a></span>(<span class="kw">percent</span>(<span class="fl">0.5</span>), <span class="dv">1</span>)</a>
 <a class="sourceLine" id="cb21-2" data-line-number="2"><span class="co">#&gt; [1] 0.5 1.0</span></a>
 <a class="sourceLine" id="cb21-3" data-line-number="3"><span class="kw"><a href="../reference/vec_c.html">vec_c</a></span>(<span class="ot">NA</span>, <span class="kw">percent</span>(<span class="fl">0.5</span>))</a>
@@ -335,15 +335,15 @@
 <a class="sourceLine" id="cb24-26" data-line-number="26">x</a>
 <a class="sourceLine" id="cb24-27" data-line-number="27"><span class="co">#&gt; &lt;vctrs_decimal[10]&gt;</span></a>
 <a class="sourceLine" id="cb24-28" data-line-number="28"><span class="co">#&gt;  [1] 0.1 0.8 0.6 0.2 0.0 0.5 0.5 0.3 0.7 0.8</span></a></code></pre></div>
-<p>Note that I provide a little helper to extract the <code>digits</code> attribute. This makes the code a little easier to read, and should not be exported.</p>
-<p>By default, vctrs assumes that attributes are independent of the data, and so are automatically preserved. You’ll see what to do if the attributes are data dependent in the next section.</p>
+<p>Note that I provide a little helper to extract the <code>digits</code> attribute. This makes the code a little easier to read and should not be exported.</p>
+<p>By default, vctrs assumes that attributes are independent of the data and so are automatically preserved. You’ll see what to do if the attributes are data dependent in the next section.</p>
 <div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb25-1" data-line-number="1">x[<span class="dv">1</span><span class="op">:</span><span class="dv">2</span>]</a>
 <a class="sourceLine" id="cb25-2" data-line-number="2"><span class="co">#&gt; &lt;vctrs_decimal[2]&gt;</span></a>
 <a class="sourceLine" id="cb25-3" data-line-number="3"><span class="co">#&gt; [1] 0.1 0.8</span></a>
 <a class="sourceLine" id="cb25-4" data-line-number="4">x[[<span class="dv">1</span>]]</a>
 <a class="sourceLine" id="cb25-5" data-line-number="5"><span class="co">#&gt; &lt;vctrs_decimal[1]&gt;</span></a>
 <a class="sourceLine" id="cb25-6" data-line-number="6"><span class="co">#&gt; [1] 0.1</span></a></code></pre></div>
-<p>For the sake of exposition, we’ll assume that <code>digits</code> is an important attribute of the class, and should be included in the full type:</p>
+<p>For the sake of exposition, we’ll assume that <code>digits</code> is an important attribute of the class and should be included in the full type:</p>
 <div class="sourceCode" id="cb26"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb26-1" data-line-number="1">vec_ptype_full.vctrs_decimal &lt;-<span class="st"> </span><span class="cf">function</span>(x, ...) {</a>
 <a class="sourceLine" id="cb26-2" data-line-number="2">  <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/paste">paste0</a></span>(<span class="st">"decimal&lt;"</span>, <span class="kw">digits</span>(x), <span class="st">"&gt;"</span>)</a>
 <a class="sourceLine" id="cb26-3" data-line-number="3">}</a>
@@ -359,7 +359,7 @@
 <a class="sourceLine" id="cb27-5" data-line-number="5"></a>
 <a class="sourceLine" id="cb27-6" data-line-number="6">vec_cast.vctrs_decimal &lt;-<span class="st"> </span><span class="cf">function</span>(x, to, ...) <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/UseMethod">UseMethod</a></span>(<span class="st">"vec_cast.vctrs_decimal"</span>)</a>
 <a class="sourceLine" id="cb27-7" data-line-number="7">vec_cast.vctrs_decimal.default &lt;-<span class="st"> </span><span class="cf">function</span>(x, to, ...) <span class="kw"><a href="../reference/vec_default_cast.html">vec_default_cast</a></span>(x, to)</a></code></pre></div>
-<p>Casting and coercing from one decimal to another requires a little thought as the values of the <code>digits</code> attribute might be different, and we need some way to reconcile them. Here I’ve chosen to chose the maximum of the two; other reasonable options are to take the value from the left-hand side or throw an error.</p>
+<p>Casting and coercing from one decimal to another requires a little thought as the values of the <code>digits</code> attribute might be different, and we need some way to reconcile them. Here I’ve decided to chose the maximum of the two; other reasonable options are to take the value from the left-hand side or throw an error.</p>
 <div class="sourceCode" id="cb28"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb28-1" data-line-number="1">vec_ptype2.vctrs_decimal.vctrs_decimal &lt;-<span class="st"> </span><span class="cf">function</span>(x, y, ...) {</a>
 <a class="sourceLine" id="cb28-2" data-line-number="2">  <span class="kw">new_decimal</span>(<span class="dt">digits =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/Extremes">max</a></span>(<span class="kw">digits</span>(x), <span class="kw">digits</span>(y)))</a>
 <a class="sourceLine" id="cb28-3" data-line-number="3">}</a>
@@ -370,7 +370,7 @@
 <a class="sourceLine" id="cb28-8" data-line-number="8"><span class="kw"><a href="../reference/vec_c.html">vec_c</a></span>(<span class="kw">decimal</span>(<span class="dv">1</span><span class="op">/</span><span class="dv">100</span>, <span class="dt">digits =</span> <span class="dv">3</span>), <span class="kw">decimal</span>(<span class="dv">2</span><span class="op">/</span><span class="dv">100</span>, <span class="dt">digits =</span> <span class="dv">2</span>))</a>
 <a class="sourceLine" id="cb28-9" data-line-number="9"><span class="co">#&gt; &lt;decimal&lt;3&gt;[2]&gt;</span></a>
 <a class="sourceLine" id="cb28-10" data-line-number="10"><span class="co">#&gt; [1] 0.010 0.020</span></a></code></pre></div>
-<p>Finally, I can implement coercion to and from other types, like doubles. When automatically coercing, I choose the richer type (i.e. the decimal).</p>
+<p>Finally, I can implement coercion to and from other types, like doubles. When automatically coercing, I choose the richer type (i.e., the decimal).</p>
 <div class="sourceCode" id="cb29"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb29-1" data-line-number="1">vec_ptype2.vctrs_decimal.double &lt;-<span class="st"> </span><span class="cf">function</span>(x, y, ...) x</a>
 <a class="sourceLine" id="cb29-2" data-line-number="2">vec_ptype2.double.vctrs_decimal &lt;-<span class="st"> </span><span class="cf">function</span>(x, y, ...) y</a>
 <a class="sourceLine" id="cb29-3" data-line-number="3"></a>
@@ -444,7 +444,7 @@
 <a class="sourceLine" id="cb35-6" data-line-number="6"><span class="co">#&gt; &lt;vctrs_cached_sum[1]&gt;</span></a>
 <a class="sourceLine" id="cb35-7" data-line-number="7"><span class="co">#&gt; [1] 0.8746007</span></a>
 <a class="sourceLine" id="cb35-8" data-line-number="8"><span class="co">#&gt; # Sum: 0.875</span></a></code></pre></div>
-<p>This works because most of the vctrs methods dispatch to the underlying base function, by first stripping off extra attributes with <code><a href="../reference/vec_data.html">vec_data()</a></code> and then reapplying them again with <code><a href="../reference/vec_cast.html">vec_restore()</a></code>. The default <code><a href="../reference/vec_cast.html">vec_restore()</a></code> method copies over all attributes, which is not appropriate when the attributes depend on the data.</p>
+<p>This works because most of the vctrs methods dispatch to the underlying base function by first stripping off extra attributes with <code><a href="../reference/vec_data.html">vec_data()</a></code> and then reapplying them again with <code><a href="../reference/vec_cast.html">vec_restore()</a></code>. The default <code><a href="../reference/vec_cast.html">vec_restore()</a></code> method copies over all attributes, which is not appropriate when the attributes depend on the data.</p>
 <p>Note that <code>vec_restore.class</code> is subtly different from <code>vec_cast.class.class()</code>. <code><a href="../reference/vec_cast.html">vec_restore()</a></code> is used when restoring attributes that have been lost; <code><a href="../reference/vec_cast.html">vec_cast()</a></code> is used for coercions. This is easier to understand with a concrete example. Imagine factors were implemented with <code><a href="../reference/new_vctr.html">new_vctr()</a></code>. <code>vec_restore.factor()</code> would restore attributes back to an integer vector, but you would not want to allow manually casting an integer to a factor with <code><a href="../reference/vec_cast.html">vec_cast()</a></code>.</p>
 </div>
 </div>
@@ -470,8 +470,8 @@
 <div id="rational-class" class="section level3">
 <h3 class="hasAnchor">
 <a href="#rational-class" class="anchor"></a>Rational class</h3>
-<p>A fraction, or rational number can be represented by a pair of integer vectors representing the numerator (the number on top) and the denominator (the number on bottom), where the length of each vector must be the same. To represent such a data structure we turn to a new base data type: the record (or rcrd for short).</p>
-<p>As usual we start with low-level and user-friendly constructors. The low-level constructor calls <code><a href="../reference/new_rcrd.html">new_rcrd()</a></code> which needs a named list of equal-length vectors.</p>
+<p>A fraction, or rational number, can be represented by a pair of integer vectors representing the numerator (the number on top) and the denominator (the number on bottom), where the length of each vector must be the same. To represent such a data structure we turn to a new base data type: the record (or rcrd for short).</p>
+<p>As usual we start with low-level and user-friendly constructors. The low-level constructor calls <code><a href="../reference/new_rcrd.html">new_rcrd()</a></code>, which needs a named list of equal-length vectors.</p>
 <div class="sourceCode" id="cb37"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb37-1" data-line-number="1">new_rational &lt;-<span class="st"> </span><span class="cf">function</span>(<span class="dt">n =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/integer">integer</a></span>(), <span class="dt">d =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/integer">integer</a></span>()) {</a>
 <a class="sourceLine" id="cb37-2" data-line-number="2">  <span class="kw"><a href="../reference/vec_assert.html">vec_assert</a></span>(n, <span class="dt">ptype =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/integer">integer</a></span>())</a>
 <a class="sourceLine" id="cb37-3" data-line-number="3">  <span class="kw"><a href="../reference/vec_assert.html">vec_assert</a></span>(d, <span class="dt">ptype =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/integer">integer</a></span>())</a>
@@ -539,8 +539,8 @@
 <div id="decimal2-class" class="section level3">
 <h3 class="hasAnchor">
 <a href="#decimal2-class" class="anchor"></a>Decimal2 class</h3>
-<p>The previous implementation of <code>decimal</code> was built on top of doubles. This is a bad idea because decimal vectors are typically used when you care about precise values (i.e. dollars and cents in a bank account), and double values suffer from floating point problems.</p>
-<p>A better implementation of a decimal class would be to use pair of integers, one for the value to the left of the decimal point, and the other for the value to the right (divided by a <code>scale</code>). The code is a very quick sketch of how you might start creating such a class:</p>
+<p>The previous implementation of <code>decimal</code> was built on top of doubles. This is a bad idea because decimal vectors are typically used when you care about precise values (i.e., dollars and cents in a bank account), and double values suffer from floating point problems.</p>
+<p>A better implementation of a decimal class would be to use pair of integers, one for the value to the left of the decimal point, and the other for the value to the right (divided by a <code>scale</code>). The following code is a very quick sketch of how you might start creating such a class:</p>
 <div class="sourceCode" id="cb44"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb44-1" data-line-number="1">new_decimal2 &lt;-<span class="st"> </span><span class="cf">function</span>(l, r, <span class="dt">scale =</span> 2L) {</a>
 <a class="sourceLine" id="cb44-2" data-line-number="2">  <span class="kw"><a href="../reference/vec_assert.html">vec_assert</a></span>(l, <span class="dt">ptype =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/integer">integer</a></span>())</a>
 <a class="sourceLine" id="cb44-3" data-line-number="3">  <span class="kw"><a href="../reference/vec_assert.html">vec_assert</a></span>(r, <span class="dt">ptype =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/integer">integer</a></span>())</a>
@@ -572,9 +572,9 @@
 <div id="equality-and-comparison" class="section level2">
 <h2 class="hasAnchor">
 <a href="#equality-and-comparison" class="anchor"></a>Equality and comparison</h2>
-<p>vctrs provides three “proxy” generics. Two of those let you control how your class determines equality and ordering:</p>
+<p>vctrs provides three “proxy” generics. Two of these let you control how your class determines equality and ordering:</p>
 <ul>
-<li><p><code><a href="../reference/vec_proxy_equal.html">vec_proxy_equal()</a></code> returns a data vector suitable for comparison. It underpins <code>==</code>, <code>!=</code>, <code><a href="https://www.rdocumentation.org/packages/base/topics/unique">unique()</a></code>, <code><a href="https://www.rdocumentation.org/packages/base/topics/duplicated">anyDuplicated()</a></code>, and <code><a href="https://www.rdocumentation.org/packages/base/topics/NA">is.na()</a></code>. By default, it just calls <code><a href="../reference/vec_data.html">vec_proxy()</a></code>.</p></li>
+<li><p><code><a href="../reference/vec_proxy_equal.html">vec_proxy_equal()</a></code> returns a data vector suitable for comparison. It underpins <code>==</code>, <code>!=</code>, <code><a href="https://www.rdocumentation.org/packages/base/topics/unique">unique()</a></code>, <code><a href="https://www.rdocumentation.org/packages/base/topics/duplicated">anyDuplicated()</a></code>, and <code><a href="https://www.rdocumentation.org/packages/base/topics/NA">is.na()</a></code>.</p></li>
 <li><p><code><a href="../reference/vec_proxy_compare.html">vec_proxy_compare()</a></code> specifies how to compare the elements of your vector. This proxy is used in <code>&lt;</code>, <code>&lt;=</code>, <code>&gt;=</code>, <code>&gt;</code>, <code><a href="https://www.rdocumentation.org/packages/base/topics/Extremes">min()</a></code>, <code><a href="https://www.rdocumentation.org/packages/base/topics/Extremes">max()</a></code>, <code><a href="https://www.rdocumentation.org/packages/stats/topics/median">median()</a></code>, <code><a href="https://www.rdocumentation.org/packages/stats/topics/quantile">quantile()</a></code>, and <code><a href="https://www.rdocumentation.org/packages/base/topics/xtfrm">xtfrm()</a></code> (used in <code><a href="https://www.rdocumentation.org/packages/base/topics/order">order()</a></code> and <code><a href="https://www.rdocumentation.org/packages/base/topics/sort">sort()</a></code>) methods.</p></li>
 </ul>
 <p>By default, <code><a href="../reference/vec_proxy_equal.html">vec_proxy_equal()</a></code> and <code><a href="../reference/vec_proxy_compare.html">vec_proxy_compare()</a></code> just call <code><a href="../reference/vec_data.html">vec_proxy()</a></code>.</p>
@@ -583,7 +583,7 @@
 <code><a href="../reference/vec_data.html">vec_proxy()</a></code> returns the actual data of a vector. This is useful when you store the data in a field of your class. Most of the time, you shouldn’t need to implement <code><a href="../reference/vec_data.html">vec_proxy()</a></code>.</li>
 </ul>
 <p>You should only implement these proxies when some preprocessing on the data is needed to make elements comparable. In that case, defining these methods will get you a lot of behaviour for relatively little work.</p>
-<p>These proxy functions should always return a simple object (either a bare vector or a data frame), that possesses the same properties as your class. This permits efficient implementation of the vctrs internals because it allows dispatch to happen once in R, and then efficient computations can be written in C.</p>
+<p>These proxy functions should always return a simple object (either a bare vector or a data frame) that possesses the same properties as your class. This permits efficient implementation of the vctrs internals because it allows dispatch to happen once in R, and then efficient computations can be written in C.</p>
 <div id="rational-class-1" class="section level3">
 <h3 class="hasAnchor">
 <a href="#rational-class-1" class="anchor"></a>Rational class</h3>
@@ -602,7 +602,7 @@
 <a class="sourceLine" id="cb45-12" data-line-number="12"></a>
 <a class="sourceLine" id="cb45-13" data-line-number="13">x <span class="op">==</span><span class="st"> </span><span class="kw">rational</span>(<span class="dv">1</span>, <span class="dv">1</span>)</a>
 <a class="sourceLine" id="cb45-14" data-line-number="14"><span class="co">#&gt; [1]  TRUE FALSE FALSE FALSE</span></a></code></pre></div>
-<p>This makes sense as a default, but isn’t correct here because <code>rational(1, 1)</code> represents the same number as <code>rational(2, 2)</code> so they should be equal. We can fix that by implementing a <code><a href="../reference/vec_proxy_equal.html">vec_proxy_equal()</a></code> method that by divides <code>n</code> and <code>d</code> by their greatest common divisor:</p>
+<p>This makes sense as a default but isn’t correct here because <code>rational(1, 1)</code> represents the same number as <code>rational(2, 2)</code>, so they should be equal. We can fix that by implementing a <code><a href="../reference/vec_proxy_equal.html">vec_proxy_equal()</a></code> method that divides <code>n</code> and <code>d</code> by their greatest common divisor:</p>
 <div class="sourceCode" id="cb46"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb46-1" data-line-number="1"><span class="co"># Thanks to Matthew Lundberg: https://stackoverflow.com/a/21504113/16632 </span></a>
 <a class="sourceLine" id="cb46-2" data-line-number="2">gcd &lt;-<span class="st"> </span><span class="cf">function</span>(x, y) {</a>
 <a class="sourceLine" id="cb46-3" data-line-number="3">  r &lt;-<span class="st"> </span>x <span class="op">%%</span><span class="st"> </span>y</a>
@@ -697,7 +697,7 @@
 <p>Equality works out of the box because we can tell if two integer vectors are equal:</p>
 <div class="sourceCode" id="cb52"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb52-1" data-line-number="1">p <span class="op">==</span><span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/stats/topics/poly">poly</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">1</span>))</a>
 <a class="sourceLine" id="cb52-2" data-line-number="2"><span class="co">#&gt; [1] FALSE  TRUE FALSE</span></a></code></pre></div>
-<p>But we can’t order them, because lists are not comparable:</p>
+<p>But we can’t order them because lists are not comparable:</p>
 <div class="sourceCode" id="cb53"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb53-1" data-line-number="1"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/sort">sort</a></span>(p)</a>
 <a class="sourceLine" id="cb53-2" data-line-number="2"><span class="co">#&gt; Invalid type returned by `vec_proxy_compare()`.</span></a></code></pre></div>
 <p>So we need to define a <code><a href="../reference/vec_proxy_compare.html">vec_proxy_compare()</a></code> method:</p>
@@ -730,7 +730,7 @@
 <li><p><code><a href="../reference/vec_arith.html">vec_arith(op, x, y)</a></code> specifies the behaviour of the arithmetic operations like <code>+</code>, <code>-</code>, and <code>%%</code>. (See <code>?vec_arith()</code> for the complete list.)</p></li>
 </ul>
 <p>Both generics define the behaviour for multiple functions because <code>sum.vctrs_vctr(x)</code> calls <code>vec_math.vctrs_vctr("sum", x)</code>, and <code>x + y</code> calls <code>vec_math.x_class.y_class("+", x, y)</code>. They’re accompanied by <code><a href="../reference/vec_math.html">vec_math_base()</a></code> and <code><a href="../reference/vec_arith.html">vec_arith_base()</a></code> which make it easy to call the underlying base R functions.</p>
-<p><code><a href="../reference/vec_arith.html">vec_arith()</a></code> uses double dispatch, and needs the following standard boilerplate:</p>
+<p><code><a href="../reference/vec_arith.html">vec_arith()</a></code> uses double dispatch and needs the following standard boilerplate:</p>
 <div class="sourceCode" id="cb55"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb55-1" data-line-number="1">vec_arith.MYCLASS &lt;-<span class="st"> </span><span class="cf">function</span>(op, x, y, ...) {</a>
 <a class="sourceLine" id="cb55-2" data-line-number="2">  <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/UseMethod">UseMethod</a></span>(<span class="st">"vec_arith.MYCLASS"</span>, y)</a>
 <a class="sourceLine" id="cb55-3" data-line-number="3">}</a>
@@ -740,7 +740,7 @@
 <div id="cached-sum-class" class="section level3">
 <h3 class="hasAnchor">
 <a href="#cached-sum-class" class="anchor"></a>Cached sum class</h3>
-<p>I showed an example of <code><a href="../reference/vec_math.html">vec_math()</a></code> to define <code><a href="https://www.rdocumentation.org/packages/base/topics/sum">sum()</a></code> and <code><a href="https://www.rdocumentation.org/packages/base/topics/mean">mean()</a></code> methods <code>cached_sum</code>. Now let’s talk about exactly how it works. Most <code><a href="../reference/vec_math.html">vec_math()</a></code> functions will have a similar form. You use a switch statement to handle the methods that you care about, and fall back to <code><a href="../reference/vec_math.html">vec_math_base()</a></code> for those that you don’t care about.</p>
+<p>I showed an example of <code><a href="../reference/vec_math.html">vec_math()</a></code> to define <code><a href="https://www.rdocumentation.org/packages/base/topics/sum">sum()</a></code> and <code><a href="https://www.rdocumentation.org/packages/base/topics/mean">mean()</a></code> methods for <code>cached_sum</code>. Now let’s talk about exactly how it works. Most <code><a href="../reference/vec_math.html">vec_math()</a></code> functions will have a similar form. You use a switch statement to handle the methods that you care about and fall back to <code><a href="../reference/vec_math.html">vec_math_base()</a></code> for those that you don’t care about.</p>
 <div class="sourceCode" id="cb56"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb56-1" data-line-number="1">vec_math.vctrs_cached_sum &lt;-<span class="st"> </span><span class="cf">function</span>(.fn, .x, ...) {</a>
 <a class="sourceLine" id="cb56-2" data-line-number="2">  <span class="cf">switch</span>(.fn,</a>
 <a class="sourceLine" id="cb56-3" data-line-number="3">    <span class="dt">sum =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/attr">attr</a></span>(.x, <span class="st">"sum"</span>),</a>
@@ -787,7 +787,7 @@
 <a class="sourceLine" id="cb59-6" data-line-number="6"><span class="co">#&gt; &lt;vctrs_meter&gt; * &lt;double&gt; is not permitted</span></a></code></pre></div>
 <p>To allow these infix functions to work, we’ll need to provide <code><a href="../reference/vec_arith.html">vec_arith()</a></code> generic. But before we do that, let’s think about what combinations of inputs we should support:</p>
 <ul>
-<li><p>It makes sense to add and subtract meters: that yields another meter. We can divide a meter by another meter (yielding a unitless number), but we can’t multiply meters (because that would yield an area.)</p></li>
+<li><p>It makes sense to add and subtract meters: that yields another meter. We can divide a meter by another meter (yielding a unitless number), but we can’t multiply meters (because that would yield an area).</p></li>
 <li><p>For a combination of meter and number multiplication and division by a number are acceptable. Addition and subtraction don’t make much sense as we, strictly speaking, are dealing with objects of different nature.</p></li>
 </ul>
 <p><code><a href="../reference/vec_arith.html">vec_arith()</a></code> is another function that uses double dispatch, so as usual we start with a template.</p>
@@ -797,7 +797,7 @@
 <a class="sourceLine" id="cb60-4" data-line-number="4">vec_arith.vctrs_meter.default &lt;-<span class="st"> </span><span class="cf">function</span>(op, x, y, ...) {</a>
 <a class="sourceLine" id="cb60-5" data-line-number="5">  <span class="kw"><a href="../reference/vctrs-conditions.html">stop_incompatible_op</a></span>(op, x, y)</a>
 <a class="sourceLine" id="cb60-6" data-line-number="6">}</a></code></pre></div>
-<p>Then write the method for two meter objects. We use a switch statement to cover the cases we care about, and <code><a href="../reference/vctrs-conditions.html">stop_incompatible_op()</a></code> to throw an informative error message for everything else.</p>
+<p>Then write the method for two meter objects. We use a switch statement to cover the cases we care about and <code><a href="../reference/vctrs-conditions.html">stop_incompatible_op()</a></code> to throw an informative error message for everything else.</p>
 <div class="sourceCode" id="cb61"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb61-1" data-line-number="1">vec_arith.vctrs_meter.vctrs_meter &lt;-<span class="st"> </span><span class="cf">function</span>(op, x, y, ...) {</a>
 <a class="sourceLine" id="cb61-2" data-line-number="2">  <span class="cf">switch</span>(</a>
 <a class="sourceLine" id="cb61-3" data-line-number="3">    op,</a>
@@ -818,7 +818,7 @@
 <a class="sourceLine" id="cb61-18" data-line-number="18"><span class="co">#&gt; [1] 10</span></a>
 <a class="sourceLine" id="cb61-19" data-line-number="19"><span class="kw">meter</span>(<span class="dv">10</span>) <span class="op">*</span><span class="st"> </span><span class="kw">meter</span>(<span class="dv">1</span>)</a>
 <a class="sourceLine" id="cb61-20" data-line-number="20"><span class="co">#&gt; &lt;vctrs_meter&gt; * &lt;vctrs_meter&gt; is not permitted</span></a></code></pre></div>
-<p>Next we write the pair of methods for arithmetic with a meter and a number. These are almost identical, but while <code>meter(10) / 2</code> makes sense, <code>2 / meter(10)</code> does not (as addition and subtraction).</p>
+<p>Next we write the pair of methods for arithmetic with a meter and a number. These are almost identical, but while <code>meter(10) / 2</code> makes sense, <code>2 / meter(10)</code> does not (and neither do addition and subtraction).</p>
 <div class="sourceCode" id="cb62"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb62-1" data-line-number="1">vec_arith.vctrs_meter.numeric &lt;-<span class="st"> </span><span class="cf">function</span>(op, x, y, ...) {</a>
 <a class="sourceLine" id="cb62-2" data-line-number="2">  <span class="cf">switch</span>(</a>
 <a class="sourceLine" id="cb62-3" data-line-number="3">    op,</a>

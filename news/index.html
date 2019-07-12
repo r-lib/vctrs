@@ -131,7 +131,7 @@
 </div>
     <div id="vctrs-0-2-0" class="section level1">
 <h1 class="page-header">
-<a href="#vctrs-0-2-0" class="anchor"></a>vctrs 0.2.0<small> Unreleased </small>
+<a href="#vctrs-0-2-0" class="anchor"></a>vctrs 0.2.0<small> 2019-07-05 </small>
 </h1>
 <p>With the 0.2.0 release, many vctrs functions have been rewritten with native C code to improve performance. Functions like <code><a href="../reference/vec_c.html">vec_c()</a></code> and <code><a href="../reference/vec_bind.html">vec_rbind()</a></code> should now be fast enough to be used in packages. This is an ongoing effort, for instance the handling of factors and dates has not been rewritten yet. These classes still slow down vctrs primitives.</p>
 <p>The API in 0.2.0 has been updated, please see a list of breaking changes below. vctrs has now graduated from experimental to a maturing package (see the <a href="https://www.tidyverse.org/lifecycle/">lifecycle of tidyverse packages</a>). Please note that API changes are still planned for future releases, for instance <code><a href="../reference/vec_ptype2.html">vec_ptype2()</a></code> and <code><a href="../reference/vec_cast.html">vec_cast()</a></code> might need to return a sentinel instead of failing with an error when there is no common type or possible cast.</p>
