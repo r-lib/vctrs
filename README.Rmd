@@ -25,7 +25,8 @@ There are three main goals to the vctrs package, each described in a vignette:
 
 * To propose `vec_size()` and `vec_ptype()` as alternatives to `length()` and
   `class()`; `vignette("type-size")`. These definitions are paired with a
-  framework for size-recycling and type-coercion.
+  framework for size-recycling and type-coercion. `ptype` should evoke the
+  notion of a protoype, i.e. the original or typical form of something.
   
 * To define size- and type-stability as desirable function properties, use
   them to analyse existing base function, and to propose better alternatives;
