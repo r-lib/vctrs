@@ -25,9 +25,9 @@ There are three main goals to the vctrs package, each described in a vignette:
 
 * To propose `vec_size()` and `vec_ptype()` as alternatives to `length()` and
   `class()`; `vignette("type-size")`. These definitions are paired with a
-  framework for type-coercion and size-recycling.
+  framework for size-recycling and type-coercion.
   
-* To define type- and size-stability as desirable function properties, use
+* To define size- and type-stability as desirable function properties, use
   them to analyse existing base function, and to propose better alternatives;
   `vignette("stability")`. This work has been particularly motivated by
   thinking about the ideal properties of `c()`, `ifelse()`, and `rbind()`.
@@ -59,13 +59,13 @@ devtools::install_github("r-lib/vctrs")
 ```{r}
 library(vctrs)
 
-# Prototypes
-str(vec_ptype_common(FALSE, 1L, 2.5))
-str(vec_cast_common(FALSE, 1L, 2.5))
-
 # Sizes
 str(vec_size_common(1, 1:10))
 str(vec_recycle_common(1, 1:10))
+
+# Prototypes
+str(vec_ptype_common(FALSE, 1L, 2.5))
+str(vec_cast_common(FALSE, 1L, 2.5))
 ```
 
 ## Motivation
