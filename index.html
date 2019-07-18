@@ -102,11 +102,11 @@
 
 <p>There are three main goals to the vctrs package, each described in a vignette:</p>
 <ul>
-<li><p>To propose <code><a href="reference/vec_size.html">vec_size()</a></code> and <code><a href="reference/vec_ptype.html">vec_ptype()</a></code> as alternatives to <code><a href="https://www.rdocumentation.org/packages/base/topics/length">length()</a></code> and <code><a href="https://www.rdocumentation.org/packages/base/topics/class">class()</a></code>; <code><a href="articles/type-size.html">vignette("type-size")</a></code>. These definitions are paired with a framework for type-coercion and size-recycling.</p></li>
-<li><p>To define type- and size-stability as desirable function properties, use them to analyse existing base function, and to propose better alternatives; <code><a href="articles/stability.html">vignette("stability")</a></code>. This work has been particularly motivated by thinking about the ideal properties of <code><a href="https://www.rdocumentation.org/packages/base/topics/c">c()</a></code>, <code><a href="https://www.rdocumentation.org/packages/base/topics/ifelse">ifelse()</a></code>, and <code><a href="https://www.rdocumentation.org/packages/base/topics/cbind">rbind()</a></code>.</p></li>
+<li><p>To propose <code><a href="reference/vec_size.html">vec_size()</a></code> and <code><a href="reference/vec_ptype.html">vec_ptype()</a></code> as alternatives to <code><a href="https://www.rdocumentation.org/packages/base/topics/length">length()</a></code> and <code><a href="https://www.rdocumentation.org/packages/base/topics/class">class()</a></code>; <code><a href="articles/type-size.html">vignette("type-size")</a></code>. These definitions are paired with a framework for size-recycling and type-coercion. <code>ptype</code> should evoke the notion of a prototype, i.e. the original or typical form of something.</p></li>
+<li><p>To define size- and type-stability as desirable function properties, use them to analyse existing base functions, and to propose better alternatives; <code><a href="articles/stability.html">vignette("stability")</a></code>. This work has been particularly motivated by thinking about the ideal properties of <code><a href="https://www.rdocumentation.org/packages/base/topics/c">c()</a></code>, <code><a href="https://www.rdocumentation.org/packages/base/topics/ifelse">ifelse()</a></code>, and <code><a href="https://www.rdocumentation.org/packages/base/topics/cbind">rbind()</a></code>.</p></li>
 <li><p>To provide a new <code>vctr</code> base class that makes it easy to create new S3 vectors; <code><a href="articles/s3-vector.html">vignette("s3-vector")</a></code>. vctrs provides methods for many base generics in terms of a few new vctrs generics, making implementation considerably simpler and more robust.</p></li>
 </ul>
-<p>vctrs is a developer-focussed package. Understanding and extending vctrs requires some effort from developers but should be invisible to most users. It’s our hope that having an underlying theory will mean that users can build up an accurate mental model without explicitly learning the theory. vctrs will typically be used by other packages, making it easy for them to provide new classes of S3 vectors that are supported throughout the tidyverse (and beyond). For that reason, vctrs has few dependencies.</p>
+<p>vctrs is a developer-focussed package. Understanding and extending vctrs requires some effort from developers, but should be invisible to most users. It’s our hope that having an underlying theory will mean that users can build up an accurate mental model without explicitly learning the theory. vctrs will typically be used by other packages, making it easy for them to provide new classes of S3 vectors that are supported throughout the tidyverse (and beyond). For that reason, vctrs has few dependencies.</p>
 <div id="installation" class="section level2">
 <h2 class="hasAnchor">
 <a href="#installation" class="anchor"></a>Installation</h2>
@@ -121,33 +121,33 @@
 <a href="#usage" class="anchor"></a>Usage</h2>
 <div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" data-line-number="1"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">library</a></span>(vctrs)</a>
 <a class="sourceLine" id="cb3-2" data-line-number="2"></a>
-<a class="sourceLine" id="cb3-3" data-line-number="3"><span class="co"># Prototypes</span></a>
-<a class="sourceLine" id="cb3-4" data-line-number="4"><span class="kw"><a href="https://www.rdocumentation.org/packages/utils/topics/str">str</a></span>(<span class="kw"><a href="reference/vec_ptype.html">vec_ptype_common</a></span>(<span class="ot">FALSE</span>, 1L, <span class="fl">2.5</span>))</a>
-<a class="sourceLine" id="cb3-5" data-line-number="5"><span class="co">#&gt;  num(0)</span></a>
-<a class="sourceLine" id="cb3-6" data-line-number="6"><span class="kw"><a href="https://www.rdocumentation.org/packages/utils/topics/str">str</a></span>(<span class="kw"><a href="reference/vec_cast.html">vec_cast_common</a></span>(<span class="ot">FALSE</span>, 1L, <span class="fl">2.5</span>))</a>
-<a class="sourceLine" id="cb3-7" data-line-number="7"><span class="co">#&gt; List of 3</span></a>
-<a class="sourceLine" id="cb3-8" data-line-number="8"><span class="co">#&gt;  $ : num 0</span></a>
-<a class="sourceLine" id="cb3-9" data-line-number="9"><span class="co">#&gt;  $ : num 1</span></a>
-<a class="sourceLine" id="cb3-10" data-line-number="10"><span class="co">#&gt;  $ : num 2.5</span></a>
-<a class="sourceLine" id="cb3-11" data-line-number="11"></a>
-<a class="sourceLine" id="cb3-12" data-line-number="12"><span class="co"># Sizes</span></a>
-<a class="sourceLine" id="cb3-13" data-line-number="13"><span class="kw"><a href="https://www.rdocumentation.org/packages/utils/topics/str">str</a></span>(<span class="kw"><a href="reference/vec_size.html">vec_size_common</a></span>(<span class="dv">1</span>, <span class="dv">1</span><span class="op">:</span><span class="dv">10</span>))</a>
-<a class="sourceLine" id="cb3-14" data-line-number="14"><span class="co">#&gt;  int 10</span></a>
-<a class="sourceLine" id="cb3-15" data-line-number="15"><span class="kw"><a href="https://www.rdocumentation.org/packages/utils/topics/str">str</a></span>(<span class="kw"><a href="reference/vec_recycle.html">vec_recycle_common</a></span>(<span class="dv">1</span>, <span class="dv">1</span><span class="op">:</span><span class="dv">10</span>))</a>
-<a class="sourceLine" id="cb3-16" data-line-number="16"><span class="co">#&gt; List of 2</span></a>
-<a class="sourceLine" id="cb3-17" data-line-number="17"><span class="co">#&gt;  $ : num [1:10] 1 1 1 1 1 1 1 1 1 1</span></a>
-<a class="sourceLine" id="cb3-18" data-line-number="18"><span class="co">#&gt;  $ : int [1:10] 1 2 3 4 5 6 7 8 9 10</span></a></code></pre></div>
+<a class="sourceLine" id="cb3-3" data-line-number="3"><span class="co"># Sizes</span></a>
+<a class="sourceLine" id="cb3-4" data-line-number="4"><span class="kw"><a href="https://www.rdocumentation.org/packages/utils/topics/str">str</a></span>(<span class="kw"><a href="reference/vec_size.html">vec_size_common</a></span>(<span class="dv">1</span>, <span class="dv">1</span><span class="op">:</span><span class="dv">10</span>))</a>
+<a class="sourceLine" id="cb3-5" data-line-number="5"><span class="co">#&gt;  int 10</span></a>
+<a class="sourceLine" id="cb3-6" data-line-number="6"><span class="kw"><a href="https://www.rdocumentation.org/packages/utils/topics/str">str</a></span>(<span class="kw"><a href="reference/vec_recycle.html">vec_recycle_common</a></span>(<span class="dv">1</span>, <span class="dv">1</span><span class="op">:</span><span class="dv">10</span>))</a>
+<a class="sourceLine" id="cb3-7" data-line-number="7"><span class="co">#&gt; List of 2</span></a>
+<a class="sourceLine" id="cb3-8" data-line-number="8"><span class="co">#&gt;  $ : num [1:10] 1 1 1 1 1 1 1 1 1 1</span></a>
+<a class="sourceLine" id="cb3-9" data-line-number="9"><span class="co">#&gt;  $ : int [1:10] 1 2 3 4 5 6 7 8 9 10</span></a>
+<a class="sourceLine" id="cb3-10" data-line-number="10"></a>
+<a class="sourceLine" id="cb3-11" data-line-number="11"><span class="co"># Prototypes</span></a>
+<a class="sourceLine" id="cb3-12" data-line-number="12"><span class="kw"><a href="https://www.rdocumentation.org/packages/utils/topics/str">str</a></span>(<span class="kw"><a href="reference/vec_ptype.html">vec_ptype_common</a></span>(<span class="ot">FALSE</span>, 1L, <span class="fl">2.5</span>))</a>
+<a class="sourceLine" id="cb3-13" data-line-number="13"><span class="co">#&gt;  num(0)</span></a>
+<a class="sourceLine" id="cb3-14" data-line-number="14"><span class="kw"><a href="https://www.rdocumentation.org/packages/utils/topics/str">str</a></span>(<span class="kw"><a href="reference/vec_cast.html">vec_cast_common</a></span>(<span class="ot">FALSE</span>, 1L, <span class="fl">2.5</span>))</a>
+<a class="sourceLine" id="cb3-15" data-line-number="15"><span class="co">#&gt; List of 3</span></a>
+<a class="sourceLine" id="cb3-16" data-line-number="16"><span class="co">#&gt;  $ : num 0</span></a>
+<a class="sourceLine" id="cb3-17" data-line-number="17"><span class="co">#&gt;  $ : num 1</span></a>
+<a class="sourceLine" id="cb3-18" data-line-number="18"><span class="co">#&gt;  $ : num 2.5</span></a></code></pre></div>
 </div>
 <div id="motivation" class="section level2">
 <h2 class="hasAnchor">
 <a href="#motivation" class="anchor"></a>Motivation</h2>
-<p>The original motivation for vctrs from two separate but related problems. The first problem is that <code><a href="https://www.rdocumentation.org/packages/base/topics/c">base::c()</a></code> has rather undesirable behaviour when you mix different S3 vectors:</p>
+<p>The original motivation for vctrs comes from two separate but related problems. The first problem is that <code><a href="https://www.rdocumentation.org/packages/base/topics/c">base::c()</a></code> has rather undesirable behaviour when you mix different S3 vectors:</p>
 <div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" data-line-number="1"><span class="co"># combining factors makes integers</span></a>
 <a class="sourceLine" id="cb4-2" data-line-number="2"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/factor">factor</a></span>(<span class="st">"a"</span>), <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/factor">factor</a></span>(<span class="st">"b"</span>))</a>
 <a class="sourceLine" id="cb4-3" data-line-number="3"><span class="co">#&gt; [1] 1 1</span></a>
 <a class="sourceLine" id="cb4-4" data-line-number="4"></a>
-<a class="sourceLine" id="cb4-5" data-line-number="5"><span class="co"># combing dates and date-times give incorrect values</span></a>
-<a class="sourceLine" id="cb4-6" data-line-number="6">dt &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/as.Date">as.Date</a></span>(<span class="st">"2020-01-1"</span>)</a>
+<a class="sourceLine" id="cb4-5" data-line-number="5"><span class="co"># combining dates and date-times gives incorrect values; also, order matters</span></a>
+<a class="sourceLine" id="cb4-6" data-line-number="6">dt &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/as.Date">as.Date</a></span>(<span class="st">"2020-01-01"</span>)</a>
 <a class="sourceLine" id="cb4-7" data-line-number="7">dttm &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/as.POSIXlt">as.POSIXct</a></span>(dt)</a>
 <a class="sourceLine" id="cb4-8" data-line-number="8"></a>
 <a class="sourceLine" id="cb4-9" data-line-number="9"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(dt, dttm)</a>
