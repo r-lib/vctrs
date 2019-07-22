@@ -57,6 +57,17 @@ test_that("hashes are consistent from run to run", {
   )
   hash <- lapply(df, vec_hash)
 
+  # Big-endian results are byte-swapped, but otherwise equivalent.
+  # Swap results so that there's no need to save results twice.
+  if (.Platform$endian == "big") {
+    hash <- lapply(
+      hash,
+      function(x) {
+        writeBin(readBin(x, "int", 100, endian = "big"), x, endian = "little")
+      }
+    )
+  }
+
   scoped_options(max.print = 99999)
   expect_known_output(print(hash), file = test_path("test-hash-hash.txt"))
 })
