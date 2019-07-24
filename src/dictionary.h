@@ -29,7 +29,10 @@ typedef struct dictionary dictionary;
  */
 void dict_init(dictionary* d, SEXP x);
 void dict_init_partial(dictionary* d, SEXP x);
-void dict_free(dictionary* d);
+
+#define PROTECT_DICT(d, n) do {                 \
+  } while(0)
+
 
 /**
  * Find key hash for a vector element
