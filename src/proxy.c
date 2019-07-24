@@ -28,6 +28,46 @@ SEXP vec_proxy(SEXP x) {
   return out;
 }
 
+// [[ include("vctrs.h") ]]
+SEXP vec_proxy_recursive(SEXP x, enum vctrs_proxy_kind kind) {
+  switch (kind) {
+  case vctrs_proxy_default: x = PROTECT(vec_proxy(x)); break;
+  case vctrs_proxy_equal: x = PROTECT(vec_proxy_equal(x)); break;
+  case vctrs_proxy_compare: Rf_error("Internal error: Unimplemented proxy kind");
+  }
+
+  if (is_data_frame(x)) {
+    x = PROTECT(r_maybe_duplicate(x));
+    R_len_t n = Rf_length(x);
+
+    for (R_len_t i = 0; i < n; ++i) {
+      SEXP col = vec_proxy_recursive(VECTOR_ELT(x, i), kind);
+      SET_VECTOR_ELT(x, i, col);
+    }
+
+    UNPROTECT(1);
+  }
+
+  UNPROTECT(1);
+  return x;
+}
+
+// [[ register() ]]
+SEXP vctrs_proxy_recursive(SEXP x, SEXP kind_) {
+  enum vctrs_proxy_kind kind;
+  if (kind_ == Rf_install("default")) {
+    kind = vctrs_proxy_default;
+  } else if (kind_ == Rf_install("equal")) {
+    kind = vctrs_proxy_equal;
+  } else if (kind_ == Rf_install("compare")) {
+    kind = vctrs_proxy_compare;
+  } else {
+    Rf_error("Internal error: Unexpected proxy kind `%s`.", CHAR(PRINTNAME(kind_)));
+  }
+
+  return vec_proxy_recursive(x, kind);
+}
+
 SEXP vec_proxy_method(SEXP x) {
   return s3_find_method("vec_proxy", x);
 }

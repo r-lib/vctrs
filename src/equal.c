@@ -9,6 +9,9 @@ static int list_equal_scalar(SEXP x, R_len_t i, SEXP y, R_len_t j, bool na_equal
 static int df_equal_scalar(SEXP x, R_len_t i, SEXP y, R_len_t j, bool na_equal);
 
 
+// If `x` is a data frame, it must have been recursively proxied
+// beforehand
+//
 // [[ include("vctrs.h") ]]
 int equal_scalar(SEXP x, R_len_t i, SEXP y, R_len_t j, bool na_equal) {
   switch (TYPEOF(x)) {
@@ -50,6 +53,9 @@ int equal_scalar(SEXP x, R_len_t i, SEXP y, R_len_t j, bool na_equal) {
 
 // [[ register() ]]
 SEXP vctrs_equal(SEXP x, SEXP y, SEXP na_equal_) {
+  x = PROTECT(vec_proxy_recursive(x, vctrs_proxy_equal));
+  y = PROTECT(vec_proxy_recursive(y, vctrs_proxy_equal));
+
   enum vctrs_type type = vec_proxy_typeof(x);
   if (type != vec_proxy_typeof(y) || vec_size(x) != vec_size(y)) {
     Rf_errorcall(R_NilValue, "`x` and `y` must have same types and lengths");
@@ -72,7 +78,7 @@ SEXP vctrs_equal(SEXP x, SEXP y, SEXP na_equal_) {
   default:                   Rf_error("Unimplemented type in `vctrs_equal()`");
   }
 
-  UNPROTECT(1);
+  UNPROTECT(3);
   return out;
 }
 
@@ -144,11 +150,7 @@ static int df_equal_scalar(SEXP x, R_len_t i, SEXP y, R_len_t j, bool na_equal) 
   }
 
   for (int k = 0; k < p; ++k) {
-    SEXP col_x = PROTECT(vec_proxy_equal(VECTOR_ELT(x, k)));
-    SEXP col_y = PROTECT(vec_proxy_equal(VECTOR_ELT(y, k)));
-
-    int eq = equal_scalar(col_x, i, col_y, j, na_equal);
-    UNPROTECT(2);
+    int eq = equal_scalar(VECTOR_ELT(x, k), i, VECTOR_ELT(y, k), j, na_equal);
 
     if (eq <= 0) {
       return eq;
@@ -342,9 +344,9 @@ static bool equal_na(SEXP x, int i) {
       int p = Rf_length(x);
 
       for (int k = 0; k < p; ++k) {
-        SEXP col = VECTOR_ELT(x, k);
-        if (!equal_na(col, i))
+        if (!equal_na(VECTOR_ELT(x, k), i)) {
           return false;
+        }
       }
       return true;
     } else {
@@ -361,10 +363,12 @@ SEXP vctrs_equal_na(SEXP x) {
   SEXP out = PROTECT(Rf_allocVector(LGLSXP, n));
   int32_t* p_out = LOGICAL(out);
 
+  x = PROTECT(vec_proxy_recursive(x, vctrs_proxy_equal));
+
   for (R_len_t i = 0; i < n; ++i) {
     p_out[i] = equal_na(x, i);
   }
 
-  UNPROTECT(1);
+  UNPROTECT(2);
   return out;
 }
