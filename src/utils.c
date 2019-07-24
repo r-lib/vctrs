@@ -363,7 +363,7 @@ void r_vec_ptr_inc(SEXPTYPE type, void** p, R_len_t i) {
 #define FILL(CTYPE, PTR, VAL_PTR, VAL_I, N)             \
   do {                                                  \
     CTYPE* data = (CTYPE*) PTR;                         \
-    CTYPE* end = data + N + 1;                          \
+    CTYPE* end = data + N;                              \
     CTYPE value = ((const CTYPE*) VAL_PTR)[VAL_I];      \
                                                         \
     while (data != end) {                               \
