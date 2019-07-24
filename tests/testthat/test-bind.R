@@ -107,6 +107,17 @@ test_that("can rbind list columns", {
   expect_identical(out, data_frame(x = list(1, 2, 3)))
 })
 
+test_that("can rbind lists", {
+  out <- vec_rbind(list(x = 1:2))
+  expect_identical(out, data_frame(x = list(c(1L, 2L))))
+
+  out <- vec_rbind(list(x = 1:2, y = 3L))
+  expect_identical(out, data_frame(x = list(c(1L, 2L)), y = list(3L)))
+
+  out <- vec_rbind(list(x = 1, y = 2), list(y = "string"))
+  expect_identical(out, data_frame(x = list(1, NULL), y = list(2, "string")))
+})
+
 test_that("can rbind missing vectors", {
   expect_identical(vec_rbind(na_int), data_frame(...1 = na_int))
   expect_identical(vec_rbind(na_int, na_int), data_frame(...1 = int(na_int, na_int)))
