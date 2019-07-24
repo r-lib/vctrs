@@ -125,6 +125,20 @@ static SEXP vec_rbind(SEXP xs, SEXP ptype, SEXP names_to, enum name_repair_arg n
   return out;
 }
 
+// Each element of the resulting list will have size 1
+static SEXP as_list_row(SEXP x) {
+  R_len_t size = vec_size(x);
+
+  SEXP out = PROTECT(Rf_allocVector(VECSXP, size));
+
+  for (R_len_t i = 0; i < size; ++i) {
+    SET_VECTOR_ELT(out, i, vec_slice(x, r_int(i + 1)));
+  }
+
+  UNPROTECT(1);
+  return out;
+}
+
 static SEXP as_df_row(SEXP x, enum name_repair_arg name_repair, bool quiet) {
   if (vec_is_unspecified(x) && r_names(x) == R_NilValue) {
     return x;
@@ -151,7 +165,7 @@ static SEXP as_df_row_impl(SEXP x, enum name_repair_arg name_repair, bool quiet)
     SEXP names = PROTECT(vec_unique_colnames(x, false));
     SEXP out = r_as_data_frame(x);
     r_poke_names(out, names);
-    UNPROTECT(1);
+    UNPROTECT(2);
     return out;
   }
 
@@ -165,18 +179,12 @@ static SEXP as_df_row_impl(SEXP x, enum name_repair_arg name_repair, bool quiet)
   // Remove names, as we promote them to data frame column names
   Rf_setAttrib(x, R_NamesSymbol, R_NilValue);
 
-  R_len_t size = vec_size(x);
-
-  SEXP tmp = PROTECT(Rf_allocVector(VECSXP, size));
-  for (R_len_t i = 0; i < size; ++i) {
-    SET_VECTOR_ELT(tmp, i, vec_slice(x, r_int(i + 1)));
-  }
-  x = tmp;
+  x = as_list_row(x);
 
   Rf_setAttrib(x, R_NamesSymbol, nms);
   x = new_data_frame(x, 1);
 
-  UNPROTECT(4);
+  UNPROTECT(3);
   return x;
 }
 
