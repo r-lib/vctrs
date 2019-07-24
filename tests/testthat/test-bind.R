@@ -137,6 +137,17 @@ test_that("can repair names in `vec_rbind()` (#229)", {
   expect_named(vec_rbind(list(`_` = 1), .name_repair = "universal"), c("._"))
 })
 
+test_that("can construct an id column", {
+  df <- data.frame(x = 1)
+
+  expect_named(vec_rbind(df, df, .names_to = "id"), c("x", "id"))
+  expect_equal(vec_rbind(df, df, .names_to = "id")$id, c(1L, 2L))
+
+  expect_equal(vec_rbind(a = df, b = df, .names_to = "id")$id, c("a", "b"))
+
+  expect_equal(vec_rbind(a = df, df, .names_to = "id")$id, c("a", ""))
+})
+
 test_that("vec_rbind() fails with arrays of dimensionality > 3", {
   expect_error(vec_rbind(array(NA, c(1, 1, 1))), "Can't bind arrays")
 })

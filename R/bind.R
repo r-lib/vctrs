@@ -39,8 +39,8 @@
 #'   will not appear in the output, but will affect the derived `.ptype`.
 #' @param .names_to Optionally, the name of a column where the names
 #'   of `...` arguments are copied. These names are useful to identify
-#'   which row comes from which input. If supplied, `...` must be
-#'   named.
+#'   which row comes from which input. If supplied and `...` is not named,
+#'   an integer column is used to identify the rows.
 #' @param .name_repair One of `"unique"`, `"universal"`, or
 #'   `"check_unique"`. See [vec_as_names()] for the meaning of these
 #'   options.
