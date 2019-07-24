@@ -95,3 +95,7 @@ vec_proxy_dispatch <- function(x, ...) {
 vec_proxy.default <- function(x, ...) {
   x
 }
+
+vec_proxy_recursive <- function(x, kind = "default") {
+  .Call(vctrs_proxy_recursive, x, sym(kind))
+}
