@@ -29,15 +29,19 @@ SEXP vec_proxy(SEXP x) {
 }
 
 // [[ include("vctrs.h") ]]
-SEXP vec_proxy_recursive(SEXP x) {
-  x = PROTECT(vec_proxy(x));
+SEXP vec_proxy_recursive(SEXP x, enum vctrs_proxy_kind kind) {
+  switch (kind) {
+  case vctrs_proxy_default: x = PROTECT(vec_proxy(x)); break;
+  case vctrs_proxy_equal: x = PROTECT(vec_proxy_equal(x)); break;
+  case vctrs_proxy_compare: Rf_error("Internal error: Unimplemented proxy kind");
+  }
 
   if (is_data_frame(x)) {
     x = PROTECT(r_maybe_duplicate(x));
     R_len_t n = Rf_length(x);
 
     for (R_len_t i = 0; i < n; ++i) {
-      SEXP col = vec_proxy_recursive(VECTOR_ELT(x, i));
+      SEXP col = vec_proxy_recursive(VECTOR_ELT(x, i), kind);
       SET_VECTOR_ELT(x, i, col);
     }
 

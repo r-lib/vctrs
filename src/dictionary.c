@@ -33,7 +33,7 @@ void dict_init_partial(dictionary* d, SEXP x) {
 }
 
 static void dict_init_impl(dictionary* d, SEXP x, bool partial) {
-  d->vec = PROTECT(vec_proxy_recursive(x));
+  d->vec = PROTECT(vec_proxy_recursive(x, vctrs_proxy_equal));
   d->used = 0;
 
   if (partial) {
