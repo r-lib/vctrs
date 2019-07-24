@@ -141,6 +141,8 @@ static SEXP as_df_row_impl(SEXP x, enum name_repair_arg name_repair, bool quiet)
     return x;
   }
 
+  x = PROTECT(r_maybe_duplicate(x));
+
   R_len_t ndim = vec_dim_n(x);
   if (ndim > 2) {
     Rf_errorcall(R_NilValue, "Can't bind arrays.");
@@ -153,8 +155,6 @@ static SEXP as_df_row_impl(SEXP x, enum name_repair_arg name_repair, bool quiet)
     return out;
   }
 
-  x = PROTECT(r_as_list(x));
-
   SEXP nms = PROTECT(r_names(x));
   if (nms == R_NilValue) {
     nms = PROTECT(vec_unique_names(x, quiet));
@@ -162,10 +162,21 @@ static SEXP as_df_row_impl(SEXP x, enum name_repair_arg name_repair, bool quiet)
     nms = PROTECT(vec_as_names(nms, name_repair, quiet));
   }
 
+  // Remove names, as we promote them to data frame column names
+  Rf_setAttrib(x, R_NamesSymbol, R_NilValue);
+
+  R_len_t size = vec_size(x);
+
+  SEXP tmp = PROTECT(Rf_allocVector(VECSXP, size));
+  for (R_len_t i = 0; i < size; ++i) {
+    SET_VECTOR_ELT(tmp, i, vec_slice(x, r_int(i + 1)));
+  }
+  x = tmp;
+
   Rf_setAttrib(x, R_NamesSymbol, nms);
   x = new_data_frame(x, 1);
 
-  UNPROTECT(3);
+  UNPROTECT(4);
   return x;
 }
 
