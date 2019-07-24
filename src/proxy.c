@@ -28,6 +28,26 @@ SEXP vec_proxy(SEXP x) {
   return out;
 }
 
+// [[ include("vctrs.h") ]]
+SEXP vec_proxy_recursive(SEXP x) {
+  x = PROTECT(vec_proxy(x));
+
+  if (is_data_frame(x)) {
+    x = PROTECT(r_maybe_duplicate(x));
+    R_len_t n = Rf_length(x);
+
+    for (R_len_t i = 0; i < n; ++i) {
+      SEXP col = vec_proxy_recursive(VECTOR_ELT(x, i));
+      SET_VECTOR_ELT(x, i, col);
+    }
+
+    UNPROTECT(1);
+  }
+
+  UNPROTECT(1);
+  return x;
+}
+
 SEXP vec_proxy_method(SEXP x) {
   return s3_find_method("vec_proxy", x);
 }

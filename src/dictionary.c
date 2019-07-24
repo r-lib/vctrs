@@ -33,7 +33,7 @@ void dict_init_partial(dictionary* d, SEXP x) {
 }
 
 static void dict_init_impl(dictionary* d, SEXP x, bool partial) {
-  d->vec = x;
+  d->vec = PROTECT(vec_proxy_recursive(x));
   d->used = 0;
 
   if (partial) {
@@ -60,6 +60,8 @@ static void dict_init_impl(dictionary* d, SEXP x, bool partial) {
     memset(d->hash, 0, n * sizeof(R_len_t));
     hash_fill(d->hash, n, x);
   }
+
+  UNPROTECT(1);
 }
 
 uint32_t dict_hash_with(dictionary* d, dictionary* x, R_len_t i) {
