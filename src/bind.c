@@ -129,13 +129,17 @@ static SEXP vec_rbind(SEXP xs, SEXP ptype, SEXP names_to, enum name_repair_arg n
 static SEXP as_list_row(SEXP x) {
   R_len_t size = vec_size(x);
 
+  SEXP index = PROTECT(r_int(0));
+  int* p_index = INTEGER(index);
+
   SEXP out = PROTECT(Rf_allocVector(VECSXP, size));
 
   for (R_len_t i = 0; i < size; ++i) {
-    SET_VECTOR_ELT(out, i, vec_slice(x, r_int(i + 1)));
+    *p_index = i + 1;
+    SET_VECTOR_ELT(out, i, vec_slice_impl(x, index));
   }
 
-  UNPROTECT(1);
+  UNPROTECT(2);
   return out;
 }
 
