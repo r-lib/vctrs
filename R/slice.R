@@ -192,3 +192,8 @@ vec_index <- function(x, i, ...) {
 vec_init <- function(x, n = 1L) {
   vec_slice(x, rep_len(NA_integer_, n))
 }
+
+# Used internally by `vec_rbind()`, but exported for testing
+vec_split_list <- function(x) {
+  .Call(vctrs_split_list, x)
+}

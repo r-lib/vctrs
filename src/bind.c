@@ -180,12 +180,14 @@ static SEXP as_df_row_impl(SEXP x, enum name_repair_arg name_repair, bool quiet)
 
   x = PROTECT(r_maybe_duplicate(x));
 
-  // Remove names, as we promote them to data frame column names
-  Rf_setAttrib(x, R_NamesSymbol, R_NilValue);
+  // Remove names as they are promoted to data frame column names.
+  // (This also speeds up `vec_split_list()` by bypassing name handling)
+  r_poke_names(x, R_NilValue);
 
-  x = as_list_row(x);
+  x = vec_split_list(x);
 
-  Rf_setAttrib(x, R_NamesSymbol, nms);
+  r_poke_names(x, nms);
+
   x = new_data_frame(x, 1);
 
   UNPROTECT(3);
