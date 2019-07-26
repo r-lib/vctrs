@@ -561,13 +561,9 @@ SEXP vec_split_list(SEXP x) {
       for (R_len_t i = 0; i < size; ++i) {
         ++(*p_index);
 
+        // `vec_slice_fallback()` will also `vec_restore()` for us
         elt = vec_slice_fallback(x, index);
         REPROTECT(elt, elt_prot_idx);
-
-        // Restore attributes only if fallback doesn't
-        if (ATTRIB(elt) == R_NilValue) {
-          elt = vec_restore(elt, x, restore_size);
-        }
 
         SET_VECTOR_ELT(out, i, elt);
       }
