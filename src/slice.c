@@ -523,8 +523,9 @@ SEXP vctrs_as_index(SEXP i, SEXP n, SEXP names) {
   return vec_as_index(i, r_int_get(n, 0), names);
 }
 
-// Used in `as_df_row()` to turn `x` into a list where each element is size 1
-// containing the i-th element of `x`
+// Used in `as_df_row()` to turn `x` into a list like:
+// list(vec_slice(x, 1L), vec_slice(x, 2L), ...)
+// but in a more efficient way
 // [[ include("vctrs.h"); register() ]]
 SEXP vec_split_list(SEXP x) {
   int nprot = 0;
