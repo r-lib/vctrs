@@ -76,7 +76,7 @@ vec_proxy.data.frame <- function(x, ...) {
 }
 #' @export
 vec_proxy_compare.data.frame <- function(x, ..., relax = FALSE) {
-  x[] <- lapply(x[], vec_proxy_compare_default, relax = TRUE)
+  x[] <- lapply(x[], vec_proxy_compare, relax = TRUE)
   x
 }
 
