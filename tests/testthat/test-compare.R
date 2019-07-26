@@ -155,3 +155,13 @@ test_that("can order empty data frames (#356)", {
   df2 <- data.frame(x = numeric(), y = integer())
   expect_equal(vec_order(df2), integer())
 })
+
+test_that("can order data frames with data frame columns", {
+  df <- data.frame(x = 1:5, y = 1:5)
+  df$y <- data.frame(a = 1:5, b = 1:5)
+  expect_equal(
+    vec_order(df),
+    vec_order(data.frame(x = 1:5, a = 1:5, b = 1:5))
+  )
+})
+
