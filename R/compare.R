@@ -140,10 +140,10 @@ order_proxy <- function(proxy, direction = "asc", na_value = "largest") {
       return(integer(0L))
     }
     args <- map(unname(proxy), function(.x) {
-      if (is.data.frame(.x))
-        vec_order(.x, direction = direction, na_value = na_value)
-      else
-        .x
+      if (is.data.frame(.x)) {
+        .x <- vec_order(.x, direction = direction, na_value = na_value)
+      }
+      .x
     })
     exec("order", !!!args, decreasing = decreasing, na.last = na.last)
   } else if (is_character(proxy) || is_logical(proxy) || is_integer(proxy) || is_double(proxy)) {
