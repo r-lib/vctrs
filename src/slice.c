@@ -610,16 +610,16 @@ SEXP vec_split_list(SEXP x) {
   case vctrs_type_raw:
   case vctrs_type_list: {
     if (has_dim(x)) {
-      SEXP names = PROTECT_N(Rf_getAttrib(x, R_DimNamesSymbol), &nprot);
+      SEXP dim_names = PROTECT_N(Rf_getAttrib(x, R_DimNamesSymbol), &nprot);
 
       SEXP row_names;
-      if (names != R_NilValue) {
-        row_names = VECTOR_ELT(names, 0);
+      if (dim_names != R_NilValue) {
+        row_names = VECTOR_ELT(dim_names, 0);
       }
 
-      PROTECT_INDEX new_names_prot_idx;
-      SEXP new_names = R_NilValue;
-      PROTECT_WITH_INDEX(new_names, &new_names_prot_idx);
+      PROTECT_INDEX new_dim_names_prot_idx;
+      SEXP new_dim_names = R_NilValue;
+      PROTECT_WITH_INDEX(new_dim_names, &new_dim_names_prot_idx);
       ++nprot;
 
       PROTECT_INDEX new_row_names_prot_idx;
@@ -633,16 +633,20 @@ SEXP vec_split_list(SEXP x) {
         elt = vec_slice_shaped(info.type, data, index);
         REPROTECT(elt, elt_prot_idx);
 
-        if (names != R_NilValue) {
-          new_names = Rf_shallow_duplicate(names);
-          REPROTECT(new_names, new_names_prot_idx);
+        if (dim_names != R_NilValue) {
+          if (row_names != R_NilValue) {
+            new_dim_names = Rf_shallow_duplicate(dim_names);
+            REPROTECT(new_dim_names, new_dim_names_prot_idx);
 
-          new_row_names = slice_names(row_names, index);
-          REPROTECT(new_row_names, new_row_names_prot_idx);
+            new_row_names = slice_names(row_names, index);
+            REPROTECT(new_row_names, new_row_names_prot_idx);
 
-          SET_VECTOR_ELT(new_names, 0, new_row_names);
+            SET_VECTOR_ELT(new_dim_names, 0, new_row_names);
 
-          Rf_setAttrib(elt, R_DimNamesSymbol, new_names);
+            Rf_setAttrib(elt, R_DimNamesSymbol, new_dim_names);
+          } else {
+            Rf_setAttrib(elt, R_DimNamesSymbol, dim_names);
+          }
         }
 
         elt = vec_restore(elt, x, restore_size);

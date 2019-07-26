@@ -481,6 +481,11 @@ test_that("matrix / array row names are kept", {
   expect_equal(lapply(vec_split_list(x), rownames), list("r1", "r2"))
 })
 
+test_that("matrices / arrays without row names have other dimension names kept", {
+  x <- array(1:12, c(2, 2, 2), dimnames = list(NULL, c("c1", "c2")))
+  expect_equal(lapply(vec_split_list(x), colnames), list(c("c1", "c2"), c("c1", "c2")))
+})
+
 test_that("vec_split_list throws error with non-vector inputs", {
   expect_error(vec_split_list(environment()), class = "vctrs_error_scalar_type")
 })
