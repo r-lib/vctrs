@@ -531,6 +531,8 @@ SEXP vec_split_list(SEXP x) {
 
   R_len_t size = vec_size(x);
 
+  SEXP restore_size = PROTECT_N(r_int(1), &nprot);
+
   struct vctrs_proxy_info info = vec_proxy_info(x);
   PROTECT_PROXY_INFO(&info, &nprot);
 
@@ -562,7 +564,7 @@ SEXP vec_split_list(SEXP x) {
         REPROTECT(elt, elt_prot_idx);
 
         if (ATTRIB(elt) == R_NilValue) {
-          elt = vec_restore(elt, x, R_NilValue);
+          elt = vec_restore(elt, x, restore_size);
         }
 
         SET_VECTOR_ELT(out, i, elt);
@@ -572,22 +574,21 @@ SEXP vec_split_list(SEXP x) {
       return out;
     }
 
-    PROTECT_INDEX call_prot_idx;
-    SEXP call = R_NilValue;
-    PROTECT_WITH_INDEX(call, &call_prot_idx);
-    ++nprot;
+    // Construct call with symbols, not values, for performance
+    SEXP call = PROTECT_N(Rf_lang3(fns_bracket, syms_x, syms_i), &nprot);
+
+    SEXP env = PROTECT_N(r_new_environment(R_GlobalEnv, 2), &nprot);
+    Rf_defineVar(syms_i, index, env);
+    Rf_defineVar(syms_x, x, env);
 
     for (R_len_t i = 0; i < size; ++i) {
       ++(*p_index);
 
-      call = Rf_lang3(fns_bracket, x, index);
-      REPROTECT(call, call_prot_idx);
-
-      elt = Rf_eval(call, R_GlobalEnv);
+      elt = Rf_eval(call, env);
       REPROTECT(elt, elt_prot_idx);
 
       if (ATTRIB(elt) == R_NilValue) {
-        elt = vec_restore(elt, x, R_NilValue);
+        elt = vec_restore(elt, x, restore_size);
       }
 
       SET_VECTOR_ELT(out, i, elt);
@@ -645,7 +646,7 @@ SEXP vec_split_list(SEXP x) {
           Rf_setAttrib(elt, R_DimNamesSymbol, new_names);
         }
 
-        elt = vec_restore(elt, x, R_NilValue);
+        elt = vec_restore(elt, x, restore_size);
 
         SET_VECTOR_ELT(out, i, elt);
       }
@@ -673,7 +674,7 @@ SEXP vec_split_list(SEXP x) {
         r_poke_names(elt, name);
       }
 
-      elt = vec_restore(elt, x, R_NilValue);
+      elt = vec_restore(elt, x, restore_size);
 
       SET_VECTOR_ELT(out, i, elt);
     }
@@ -689,7 +690,7 @@ SEXP vec_split_list(SEXP x) {
       elt = df_slice(data, index);
       REPROTECT(elt, elt_prot_idx);
 
-      elt = vec_restore(elt, x, R_NilValue);
+      elt = vec_restore(elt, x, restore_size);
 
       SET_VECTOR_ELT(out, i, elt);
     }
