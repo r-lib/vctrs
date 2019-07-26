@@ -141,29 +141,33 @@ static SEXP as_df_row_impl(SEXP x, enum name_repair_arg name_repair, bool quiet)
     return x;
   }
 
+  int nprot = 0;
+
   R_len_t ndim = vec_dim_n(x);
   if (ndim > 2) {
     Rf_errorcall(R_NilValue, "Can't bind arrays.");
   }
   if (ndim == 2) {
-    SEXP names = PROTECT(vec_unique_colnames(x, false));
+    SEXP names = PROTECT_N(vec_unique_colnames(x, false), &nprot);
     SEXP out = r_as_data_frame(x);
     r_poke_names(out, names);
-    UNPROTECT(1);
+    UNPROTECT(nprot);
     return out;
   }
 
-  SEXP nms = PROTECT(vec_names(x));
-  if (nms == R_NilValue) {
-    nms = PROTECT(vec_unique_names(x, quiet));
-  } else {
-    nms = PROTECT(vec_as_names(nms, name_repair, quiet));
-  }
-
-  x = PROTECT(r_maybe_duplicate(x));
+  SEXP nms = PROTECT_N(vec_names(x), &nprot);
 
   // Remove names as they are promoted to data frame column names
-  r_poke_names(x, R_NilValue);
+  if (nms != R_NilValue) {
+    x = PROTECT_N(r_maybe_duplicate(x), &nprot);
+    r_poke_names(x, R_NilValue);
+  }
+
+  if (nms == R_NilValue) {
+    nms = PROTECT_N(vec_unique_names(x, quiet), &nprot);
+  } else {
+    nms = PROTECT_N(vec_as_names(nms, name_repair, quiet), &nprot);
+  }
 
   x = vec_split_list(x);
 
@@ -171,7 +175,7 @@ static SEXP as_df_row_impl(SEXP x, enum name_repair_arg name_repair, bool quiet)
 
   x = new_data_frame(x, 1);
 
-  UNPROTECT(3);
+  UNPROTECT(nprot);
   return x;
 }
 
