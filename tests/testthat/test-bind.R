@@ -187,17 +187,6 @@ test_that("vec_rbind() fails with arrays of dimensionality > 3", {
   expect_error(vec_rbind(array(NA, c(1, 1, 1))), "Can't bind arrays")
 })
 
-test_that("attributes on inputs are retained", {
-  x <- structure(1:2, stuff = "stuff", names = c("a", "b"))
-
-  exp <- data_frame(
-    a = structure(1L, stuff = "stuff"),
-    b = structure(2L, stuff = "stuff")
-  )
-
-  expect_equal(vec_rbind(x), exp)
-})
-
 # cols --------------------------------------------------------------------
 
 test_that("empty inputs give data frame", {
