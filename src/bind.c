@@ -153,7 +153,7 @@ static SEXP as_df_row_impl(SEXP x, enum name_repair_arg name_repair, bool quiet)
     return out;
   }
 
-  SEXP nms = PROTECT(r_names(x));
+  SEXP nms = PROTECT(vec_names(x));
   if (nms == R_NilValue) {
     nms = PROTECT(vec_unique_names(x, quiet));
   } else {

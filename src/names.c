@@ -364,7 +364,7 @@ SEXP vctrs_unique_names(SEXP x, SEXP quiet) {
 
 // [[ include("utils.h") ]]
 SEXP vec_unique_names(SEXP x, bool quiet) {
-  SEXP names = PROTECT(Rf_getAttrib(x, R_NamesSymbol));
+  SEXP names = PROTECT(vec_names(x));
   SEXP out = vec_unique_names_impl(names, vec_size(x), quiet);
   UNPROTECT(1);
   return out;

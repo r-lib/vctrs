@@ -118,18 +118,28 @@ test_that("can rbind lists", {
   expect_identical(out, data_frame(x = list(1, NULL), y = list(2, "string")))
 })
 
-test_that("can rbind classed vectors", {
+test_that("can rbind factors", {
   fctr <- factor(c("a", "b"))
   expect_equal(vec_rbind(fctr), data_frame(...1 = fctr[1], ...2 = fctr[2]))
 
-  fctr <- set_names(fctr)
-  expect_equal(vec_rbind(fctr), data_frame(a = unname(fctr[1]), b = unname(fctr[2])))
+  fctr_named <- set_names(fctr)
+  expect_equal(vec_rbind(fctr_named), data_frame(a = fctr[1], b = fctr[2]))
+})
 
+test_that("can rbind dates", {
   date <- new_date(c(0, 1))
   expect_equal(vec_rbind(date), data_frame(...1 = date[1], ...2 = date[2]))
 
-  date <- set_names(date, c("a", "b"))
-  expect_equal(vec_rbind(date), data_frame(a = unname(date[1]), b = unname(date[2])))
+  date_named <- set_names(date, c("a", "b"))
+  expect_equal(vec_rbind(date_named), data_frame(a = date[1], b = date[2]))
+})
+
+test_that("can rbind POSIXlt objects", {
+  datetime <- as.POSIXlt(new_datetime(0))
+  expect_equal(vec_rbind(datetime, datetime), data_frame(...1 = c(datetime, datetime)))
+
+  datetime_named <- set_names(datetime, "col")
+  expect_equal(vec_rbind(datetime_named, datetime_named), data_frame(col = c(datetime, datetime)))
 })
 
 test_that("can rbind missing vectors", {
