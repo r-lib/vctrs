@@ -138,6 +138,16 @@ test_that("can hash 1D arrays", {
   expect_identical(vec_hash(array(1:2), FALSE), vec_hash(1:2, FALSE))
 })
 
+test_that("can hash raw vectors", {
+  expect_identical(vec_hash(0:255), vec_hash(as.raw(0:255)))
+})
+
+test_that("can hash complex vectors", {
+  expect_identical(
+    vec_hash(c(1, 2) + 0i),
+    vec_hash(matrix(c(1, 2, 0, 0), ncol = 2))
+  )
+})
 
 # Object ------------------------------------------------------------------
 
