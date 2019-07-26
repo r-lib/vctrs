@@ -125,24 +125,6 @@ static SEXP vec_rbind(SEXP xs, SEXP ptype, SEXP names_to, enum name_repair_arg n
   return out;
 }
 
-// Each element of the resulting list will have size 1
-static SEXP as_list_row(SEXP x) {
-  R_len_t size = vec_size(x);
-
-  SEXP index = PROTECT(r_int(0));
-  int* p_index = INTEGER(index);
-
-  SEXP out = PROTECT(Rf_allocVector(VECSXP, size));
-
-  for (R_len_t i = 0; i < size; ++i) {
-    *p_index = i + 1;
-    SET_VECTOR_ELT(out, i, vec_slice_impl(x, index));
-  }
-
-  UNPROTECT(2);
-  return out;
-}
-
 static SEXP as_df_row(SEXP x, enum name_repair_arg name_repair, bool quiet) {
   if (vec_is_unspecified(x) && r_names(x) == R_NilValue) {
     return x;
