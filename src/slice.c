@@ -564,6 +564,7 @@ SEXP vec_split_list(SEXP x) {
         elt = vec_slice_fallback(x, index);
         REPROTECT(elt, elt_prot_idx);
 
+        // Restore attributes only if fallback doesn't
         if (ATTRIB(elt) == R_NilValue) {
           elt = vec_restore(elt, x, restore_size);
         }
@@ -588,6 +589,7 @@ SEXP vec_split_list(SEXP x) {
       elt = Rf_eval(call, env);
       REPROTECT(elt, elt_prot_idx);
 
+      // Restore attributes only if `[` fallback doesn't
       if (ATTRIB(elt) == R_NilValue) {
         elt = vec_restore(elt, x, restore_size);
       }
