@@ -162,8 +162,7 @@ static SEXP as_df_row_impl(SEXP x, enum name_repair_arg name_repair, bool quiet)
 
   x = PROTECT(r_maybe_duplicate(x));
 
-  // Remove names as they are promoted to data frame column names.
-  // (This also speeds up `vec_split_list()` by bypassing name handling)
+  // Remove names as they are promoted to data frame column names
   r_poke_names(x, R_NilValue);
 
   x = vec_split_list(x);
