@@ -134,12 +134,12 @@ test_that("can rbind dates", {
   expect_equal(vec_rbind(date_named), data_frame(a = date[1], b = date[2]))
 })
 
-test_that("can rbind POSIXlt objects", {
+test_that("can rbind POSIXlt objects into POSIXct objects", {
   datetime <- as.POSIXlt(new_datetime(0))
-  expect_equal(vec_rbind(datetime, datetime), data_frame(...1 = c(datetime, datetime)))
+  expect_is(vec_rbind(datetime_lt, datetime_lt)[[1]], "POSIXct")
 
   datetime_named <- set_names(datetime, "col")
-  expect_equal(vec_rbind(datetime_named, datetime_named), data_frame(col = c(datetime, datetime)))
+  expect_named(vec_rbind(datetime_named, datetime_named), "col")
 })
 
 test_that("can rbind missing vectors", {
