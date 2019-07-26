@@ -97,13 +97,16 @@ static uint32_t dbl_hash_scalar(const double* x) {
   return hash_double(val);
 }
 static uint32_t cpl_hash_scalar(const Rcomplex* x) {
-  Rf_error("Hashing is not implemented for complex vectors.");
+  uint32_t hash = 0;
+  hash = hash_combine(hash, dbl_hash_scalar(&x->r));
+  hash = hash_combine(hash, dbl_hash_scalar(&x->i));
+  return hash;
 }
 static uint32_t chr_hash_scalar(const SEXP* x) {
   return hash_object(*x);
 }
 static uint32_t raw_hash_scalar(const Rbyte* x) {
-  Rf_error("Hashing is not implemented for raw vectors.");
+  return hash_int32(*x);
 }
 
 static uint32_t df_hash_scalar(SEXP x, R_len_t i) {
