@@ -118,6 +118,20 @@ test_that("can rbind lists", {
   expect_identical(out, data_frame(x = list(1, NULL), y = list(2, "string")))
 })
 
+test_that("can rbind classed vectors", {
+  fctr <- factor(c("a", "b"))
+  expect_equal(vec_rbind(fctr), data_frame(...1 = fctr[1], ...2 = fctr[2]))
+
+  fctr <- set_names(fctr)
+  expect_equal(vec_rbind(fctr), data_frame(a = unname(fctr[1]), b = unname(fctr[2])))
+
+  date <- new_date(c(0, 1))
+  expect_equal(vec_rbind(date), data_frame(...1 = date[1], ...2 = date[2]))
+
+  date <- set_names(date, c("a", "b"))
+  expect_equal(vec_rbind(date), data_frame(a = unname(date[1]), b = unname(date[2])))
+})
+
 test_that("can rbind missing vectors", {
   expect_identical(vec_rbind(na_int), data_frame(...1 = na_int))
   expect_identical(vec_rbind(na_int, na_int), data_frame(...1 = int(na_int, na_int)))
