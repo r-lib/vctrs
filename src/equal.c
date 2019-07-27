@@ -5,7 +5,7 @@ static int lgl_equal_scalar(const int* x, const int* y, bool na_equal);
 static int int_equal_scalar(const int* x, const int* y, bool na_equal);
 static int dbl_equal_scalar(const double* x, const double* y, bool na_equal);
 static int raw_equal_scalar(const Rbyte* x, const Rbyte* y, bool na_equal);
-static int cplx_equal_scalar(const Rcomplex* x, const Rcomplex* y, bool na_equal);
+static int cpl_equal_scalar(const Rcomplex* x, const Rcomplex* y, bool na_equal);
 static int chr_equal_scalar(const SEXP* x, const SEXP* y, bool na_equal);
 static int list_equal_scalar(SEXP x, R_len_t i, SEXP y, R_len_t j, bool na_equal);
 static int df_equal_scalar(SEXP x, R_len_t i, SEXP y, R_len_t j, bool na_equal);
@@ -22,7 +22,7 @@ int equal_scalar(SEXP x, R_len_t i, SEXP y, R_len_t j, bool na_equal) {
   case REALSXP: return dbl_equal_scalar(REAL(x) + i, REAL(y) + j, na_equal);
   case STRSXP: return chr_equal_scalar(STRING_PTR(x) + i, STRING_PTR(y) + j, na_equal);
   case RAWSXP: return raw_equal_scalar(RAW(x) + i, RAW(y) + j, na_equal);
-  case CPLXSXP: return cplx_equal_scalar(COMPLEX(x) + i, COMPLEX(y) + j, na_equal);
+  case CPLXSXP: return cpl_equal_scalar(COMPLEX(x) + i, COMPLEX(y) + j, na_equal);
   default: break;
   }
 
@@ -76,7 +76,7 @@ SEXP vctrs_equal(SEXP x, SEXP y, SEXP na_equal_) {
   case vctrs_type_integer:   EQUAL(int, INTEGER_RO, int_equal_scalar); break;
   case vctrs_type_double:    EQUAL(double, REAL_RO, dbl_equal_scalar); break;
   case vctrs_type_raw:       EQUAL(Rbyte, RAW_RO, raw_equal_scalar); break;
-  case vctrs_type_complex:   EQUAL(Rcomplex, COMPLEX_RO, cplx_equal_scalar); break;
+  case vctrs_type_complex:   EQUAL(Rcomplex, COMPLEX_RO, cpl_equal_scalar); break;
   case vctrs_type_character: EQUAL(SEXP, STRING_PTR_RO, chr_equal_scalar); break;
   case vctrs_type_list:      EQUAL_BARRIER(list_equal_scalar); break;
   case vctrs_type_dataframe: EQUAL_BARRIER(df_equal_scalar); break;
@@ -112,7 +112,7 @@ static int int_equal_scalar(const int* x, const int* y, bool na_equal) {
   }
 }
 static int raw_equal_scalar(const Rbyte* x, const Rbyte* y, bool na_equal) {
-  // raw vectors have no notion of missing value
+  // Raw vectors have no notion of missing value
   return *x == *y;
 }
 static int dbl_equal_scalar(const double* x, const double* y, bool na_equal) {
@@ -128,7 +128,7 @@ static int dbl_equal_scalar(const double* x, const double* y, bool na_equal) {
   }
   return xi == yj;
 }
-static int cplx_equal_scalar(const Rcomplex* x, const Rcomplex* y, bool na_equal) {
+static int cpl_equal_scalar(const Rcomplex* x, const Rcomplex* y, bool na_equal) {
   int real_equal = dbl_equal_scalar(&x->r, &y->r, na_equal);
   int imag_equal = dbl_equal_scalar(&x->i, &y->i, na_equal);
   if (real_equal == NA_LOGICAL || imag_equal == NA_LOGICAL) {
