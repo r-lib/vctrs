@@ -257,6 +257,8 @@ void init_compact_seq(int* p, R_len_t from, R_len_t to) {
 }
 
 // Returns a compact sequence that `vec_slice()` understands
+// `from` and `to` are 0-based
+// The sequence is generated as `[from, to)`
 SEXP compact_seq(R_len_t from, R_len_t to) {
   if (to < from) {
     Rf_error("Internal error: Negative length in `compact_seq()`");
@@ -274,6 +276,18 @@ SEXP compact_seq(R_len_t from, R_len_t to) {
 }
 bool is_compact_seq(SEXP x) {
   return ATTRIB(x) == compact_seq_attrib;
+}
+
+SEXP compact_seq_materialize(SEXP x) {
+  R_len_t from = r_int_get(x, 0);
+  R_len_t to = r_int_get(x, 1);
+  R_len_t n = from - to;
+
+  SEXP out = PROTECT(Rf_allocVector(INTSXP, n));
+  r_int_fill_seq(out, from, n);
+
+  UNPROTECT(1);
+  return out;
 }
 
 // Initialised at load time
@@ -315,6 +329,20 @@ SEXP compact_rep_materialize(SEXP x) {
 
   UNPROTECT(1);
   return out;
+}
+
+bool is_compact(SEXP x) {
+  return is_compact_rep(x) || is_compact_seq(x);
+}
+
+SEXP compact_materialize(SEXP x) {
+  if (is_compact_rep(x)) {
+    return compact_rep_materialize(x);
+  } else if (is_compact_seq(x)) {
+    return compact_seq_materialize(x);
+  } else {
+    Rf_errorcall(R_NilValue, "Internal error: `x` must be a compact seq or rep.");
+  }
 }
 
 R_len_t vec_index_size(SEXP x) {

@@ -62,9 +62,27 @@ static void stop_bad_index_length(R_len_t n, R_len_t i) {
   UNPROTECT(1);                                                       \
   return out
 
+#define SLICE_COMPACT_SEQ(RTYPE, CTYPE, DEREF, CONST_DEREF)           \
+  const CTYPE* data = CONST_DEREF(x);                                 \
+                                                                      \
+  int* index_data = INTEGER(index);                                   \
+  R_len_t from = index_data[0];                                       \
+  R_len_t to = index_data[1];                                         \
+  R_len_t n = to - from;                                              \
+                                                                      \
+  SEXP out = PROTECT(Rf_allocVector(RTYPE, n));                       \
+  CTYPE* out_data = DEREF(out);                                       \
+                                                                      \
+  memcpy(out_data, data + from, sizeof(CTYPE) * n);                   \
+                                                                      \
+  UNPROTECT(1);                                                       \
+  return out
+
 #define SLICE(RTYPE, CTYPE, DEREF, CONST_DEREF, NA_VALUE)          \
   if (is_compact_rep(index)) {                                     \
     SLICE_COMPACT_REP(RTYPE, CTYPE, DEREF, CONST_DEREF, NA_VALUE); \
+  } else if (is_compact_seq(index)) {                              \
+    SLICE_COMPACT_SEQ(RTYPE, CTYPE, DEREF, CONST_DEREF);           \
   } else {                                                         \
     SLICE_INDEX(RTYPE, CTYPE, DEREF, CONST_DEREF, NA_VALUE);       \
   }
@@ -90,6 +108,7 @@ static SEXP raw_slice(SEXP x, SEXP index) {
 
 #undef SLICE
 #undef SLICE_COMPACT_REP
+#undef SLICE_COMPACT_SEQ
 #undef SLICE_INDEX
 
 #define SLICE_BARRIER_INDEX(RTYPE, GET, SET, NA_VALUE)          \
@@ -241,8 +260,8 @@ SEXP vec_slice_impl(SEXP x, SEXP index) {
       Rf_errorcall(R_NilValue, "Can't slice a scalar");
     }
 
-    if (is_compact_rep(index)) {
-      index = PROTECT_N(compact_rep_materialize(index), &nprot);
+    if (is_compact(index)) {
+      index = PROTECT_N(compact_materialize(index), &nprot);
     }
 
     SEXP out;
@@ -342,6 +361,14 @@ SEXP vec_init(SEXP x, R_len_t n) {
   return out;
 }
 
+SEXP vec_slice_seq(SEXP x, SEXP from, SEXP to) {
+  SEXP index = PROTECT(compact_seq(INTEGER(from)[0], INTEGER(to)[0]));
+
+  SEXP out = vec_slice_impl(x, index);
+
+  UNPROTECT(1);
+  return out;
+}
 
 static SEXP int_invert_index(SEXP index, R_len_t n);
 static SEXP int_filter_zero(SEXP index, R_len_t n_zero);

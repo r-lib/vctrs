@@ -192,3 +192,8 @@ vec_index <- function(x, i, ...) {
 vec_init <- function(x, n = 1L) {
   vec_slice(x, rep_len(NA_integer_, n))
 }
+
+# Exposed for testing
+vec_slice_seq <- function(x, from, to) {
+  .Call(vctrs_slice_seq, x, from - 1L, to - 1L)
+}
