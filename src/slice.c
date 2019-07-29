@@ -382,9 +382,13 @@ SEXP vec_init(SEXP x, R_len_t n) {
   return out;
 }
 
+// Exported for testing
+// [[ register() ]]
 SEXP vec_slice_seq(SEXP x, SEXP from, SEXP to) {
-  SEXP index = PROTECT(compact_seq(INTEGER(from)[0], INTEGER(to)[0]));
+  R_len_t from_ = r_int_get(from, 0);
+  R_len_t to_ = r_int_get(to, 0);
 
+  SEXP index = PROTECT(compact_seq(from_, to_));
   SEXP out = vec_slice_impl(x, index);
 
   UNPROTECT(1);
