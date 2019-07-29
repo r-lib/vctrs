@@ -470,7 +470,7 @@ test_that("can subset object of any dimensionality with compact seqs", {
   expect_identical(vec_slice_seq(x4, 0L, 1L), ones(1, 3, 4, 5))
 })
 
-test_that("can subset data frames", {
+test_that("can subset data frames with compact seqs", {
   df <- data_frame(x = 1:5, y = letters[1:5])
   expect_equal(vec_slice_seq(df, 0L, 0L), vec_slice(df, integer()))
   expect_equal(vec_slice_seq(df, 0L, 1L), vec_slice(df, 1L))
