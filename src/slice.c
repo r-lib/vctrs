@@ -564,11 +564,12 @@ SEXP split_list_fallback(SEXP x) {
   SEXP out = PROTECT(Rf_allocVector(VECSXP, size));
 
   // Construct call with symbols, not values, for performance
-  SEXP call = PROTECT(Rf_lang3(fns_bracket, syms_x, syms_i));
+  SEXP call = PROTECT(Rf_lang3(syms_bracket, syms_x, syms_i));
 
   SEXP env = PROTECT(r_new_environment(R_GlobalEnv, 2));
-  Rf_defineVar(syms_i, index, env);
+  Rf_defineVar(syms_bracket, fns_bracket, env);
   Rf_defineVar(syms_x, x, env);
+  Rf_defineVar(syms_i, index, env);
 
   for (R_len_t i = 0; i < size; ++i) {
     ++(*p_index);
