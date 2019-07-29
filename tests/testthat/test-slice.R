@@ -481,3 +481,9 @@ test_that("can subset data frames with compact seqs", {
   expect_equal(vec_slice_seq(df, 0L, 1L), vec_slice(df, 1L))
   expect_equal(vec_slice_seq(df, 0L, 3L), vec_slice(df, 1:3))
 })
+
+test_that("can subset S3 objects using the fallback method with compact seqs", {
+  x <- factor(c("a", "b", "c", "d"))
+  expect_equal(vec_slice_seq(x, 0L, 0L), vec_slice(x, integer()))
+  expect_equal(vec_slice_seq(x, 2L, 4L), vec_slice(x, 3:4))
+})
