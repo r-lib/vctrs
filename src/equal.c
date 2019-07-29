@@ -214,6 +214,8 @@ int equal_object(SEXP x, SEXP y, bool na_equal) {
   case INTSXP:
   case REALSXP:
   case STRSXP:
+  case RAWSXP:
+  case CPLXSXP:
   case VECSXP: {
     R_len_t n = vec_size(x);
     if (n != vec_size(y)) {
