@@ -143,22 +143,22 @@ static SEXP raw_slice(SEXP x, SEXP index) {
   UNPROTECT(1);                                                 \
   return out
 
-#define SLICE_BARRIER_COMPACT_SEQ(RTYPE, GET, SET)                      \
-  int* index_data = INTEGER(index);                                     \
-  R_len_t from = index_data[0];                                         \
-  R_len_t to = index_data[1];                                           \
-  R_len_t n = to - from;                                                \
-                                                                        \
-  SEXP out = PROTECT(Rf_allocVector(RTYPE, n));                         \
-                                                                        \
-  R_len_t j = from;                                                     \
-                                                                        \
-  for (R_len_t i = 0; i < n; ++i, ++j) {                                \
-    SEXP elt = GET(x, j);                                               \
-    SET(out, i, elt);                                                   \
-  }                                                                     \
-                                                                        \
-  UNPROTECT(1);                                                         \
+#define SLICE_BARRIER_COMPACT_SEQ(RTYPE, GET, SET)  \
+  int* index_data = INTEGER(index);                 \
+  R_len_t from = index_data[0];                     \
+  R_len_t to = index_data[1];                       \
+  R_len_t n = to - from;                            \
+                                                    \
+  SEXP out = PROTECT(Rf_allocVector(RTYPE, n));     \
+                                                    \
+  R_len_t j = from;                                 \
+                                                    \
+  for (R_len_t i = 0; i < n; ++i, ++j) {            \
+    SEXP elt = GET(x, j);                           \
+    SET(out, i, elt);                               \
+  }                                                 \
+                                                    \
+  UNPROTECT(1);                                     \
   return out
 
 #define SLICE_BARRIER(RTYPE, GET, SET, NA_VALUE)            \
