@@ -432,7 +432,7 @@ test_that("vec_init() asserts vectorness (#301)", {
 # `from` and `to` are 0-based
 
 test_that("can subset base vectors with compact seqs", {
-  from <- 1L
+  from <- 2L
   to <- 3L
   expect_identical(vec_slice_seq(lgl(1, 0, 1), from, to), lgl(0, 1))
   expect_identical(vec_slice_seq(int(1, 2, 3), from, to), int(2, 3))
@@ -444,7 +444,7 @@ test_that("can subset base vectors with compact seqs", {
 })
 
 test_that("can subset shaped base vectors with compact seqs", {
-  from <- 1L
+  from <- 2L
   to <- 3L
   mat <- as.matrix
   expect_identical(vec_slice_seq(mat(lgl(1, 0, 1)), from, to), mat(lgl(0, 1)))
@@ -463,27 +463,27 @@ test_that("can subset object of any dimensionality with compact seqs", {
   x3 <- ones(2, 3, 4)
   x4 <- ones(2, 3, 4, 5)
 
-  expect_equal(vec_slice_seq(x0, 0L, 1L), 1)
-  expect_identical(vec_slice_seq(x1, 0L, 1L), ones(1))
-  expect_identical(vec_slice_seq(x2, 0L, 1L), ones(1, 3))
-  expect_identical(vec_slice_seq(x3, 0L, 1L), ones(1, 3, 4))
-  expect_identical(vec_slice_seq(x4, 0L, 1L), ones(1, 3, 4, 5))
+  expect_equal(vec_slice_seq(x0, 1L, 1L), 1)
+  expect_identical(vec_slice_seq(x1, 1L, 1L), ones(1))
+  expect_identical(vec_slice_seq(x2, 1L, 1L), ones(1, 3))
+  expect_identical(vec_slice_seq(x3, 1L, 1L), ones(1, 3, 4))
+  expect_identical(vec_slice_seq(x4, 1L, 1L), ones(1, 3, 4, 5))
 })
 
 test_that("can subset data frames with compact seqs", {
   df <- data_frame(x = 1:5, y = letters[1:5])
-  expect_equal(vec_slice_seq(df, 0L, 0L), vec_slice(df, integer()))
-  expect_equal(vec_slice_seq(df, 0L, 1L), vec_slice(df, 1L))
-  expect_equal(vec_slice_seq(df, 0L, 3L), vec_slice(df, 1:3))
+  expect_equal(vec_slice_seq(df, 1L, 0L), vec_slice(df, integer()))
+  expect_equal(vec_slice_seq(df, 1L, 1L), vec_slice(df, 1L))
+  expect_equal(vec_slice_seq(df, 1L, 3L), vec_slice(df, 1:3))
 
   df$df <- df
-  expect_equal(vec_slice_seq(df, 0L, 0L), vec_slice(df, integer()))
-  expect_equal(vec_slice_seq(df, 0L, 1L), vec_slice(df, 1L))
-  expect_equal(vec_slice_seq(df, 0L, 3L), vec_slice(df, 1:3))
+  expect_equal(vec_slice_seq(df, 1L, 0L), vec_slice(df, integer()))
+  expect_equal(vec_slice_seq(df, 1L, 1L), vec_slice(df, 1L))
+  expect_equal(vec_slice_seq(df, 1L, 3L), vec_slice(df, 1:3))
 })
 
 test_that("can subset S3 objects using the fallback method with compact seqs", {
   x <- factor(c("a", "b", "c", "d"))
-  expect_equal(vec_slice_seq(x, 0L, 0L), vec_slice(x, integer()))
-  expect_equal(vec_slice_seq(x, 2L, 4L), vec_slice(x, 3:4))
+  expect_equal(vec_slice_seq(x, 1L, 0L), vec_slice(x, integer()))
+  expect_equal(vec_slice_seq(x, 3L, 4L), vec_slice(x, 3:4))
 })

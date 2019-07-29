@@ -194,8 +194,7 @@ vec_init <- function(x, n = 1L) {
 }
 
 # Exposed for testing
-# Sliced as `[from, to)`
-# `from` and `to` are 0-based
+# Used here like `vec_slice(x, from:to)`
 vec_slice_seq <- function(x, from, to) {
-  .Call(vctrs_slice_seq, x, from, to)
+  .Call(vctrs_slice_seq, x, from - 1L, to)
 }
