@@ -320,9 +320,46 @@ static SEXP raw_slice_shaped(SEXP x, SEXP index, struct vec_slice_shaped_info in
   UNPROTECT(1);                                                       \
   return out
 
+#define SLICE_BARRIER_SHAPED_COMPACT_SEQ(RTYPE, GET, SET)                      \
+  SEXP out = PROTECT(Rf_allocArray(RTYPE, info.out_dim));                      \
+                                                                               \
+  int from = info.p_index[0];                                                  \
+  int to = info.p_index[1];                                                    \
+                                                                               \
+  int out_loc = 0;                                                             \
+                                                                               \
+  for (int i = 0; i < info.shape_elem_n; ++i) {                                \
+                                                                               \
+    /* Find and add the next `x` element */                                    \
+    for (int size_index = from; size_index < to; ++size_index, ++out_loc) {    \
+      int loc = vec_strided_loc(                                               \
+        size_index,                                                            \
+        info.p_shape_index,                                                    \
+        info.p_strides,                                                        \
+        info.shape_n                                                           \
+      );                                                                       \
+      SEXP elt = GET(x, loc);                                                  \
+      SET(out, out_loc, elt);                                                  \
+    }                                                                          \
+                                                                               \
+    /* Update shape_index */                                                   \
+    for (int j = 0; j < info.shape_n; ++j) {                                   \
+      info.p_shape_index[j]++;                                                 \
+      if (info.p_shape_index[j] < info.p_dim[j + 1]) {                         \
+        break;                                                                 \
+      }                                                                        \
+      info.p_shape_index[j] = 0;                                               \
+    }                                                                          \
+  }                                                                            \
+                                                                               \
+  UNPROTECT(1);                                                                \
+  return out
+
 #define SLICE_BARRIER_SHAPED(RTYPE, GET, SET, NA_VALUE)          \
   if (is_compact_rep(index)) {                                   \
     SLICE_BARRIER_SHAPED_COMPACT_REP(RTYPE, GET, SET, NA_VALUE); \
+  } else if (is_compact_seq(index)) {                            \
+    SLICE_BARRIER_SHAPED_COMPACT_SEQ(RTYPE, GET, SET);           \
   } else {                                                       \
     SLICE_BARRIER_SHAPED_INDEX(RTYPE, GET, SET, NA_VALUE);       \
   }
@@ -333,6 +370,7 @@ static SEXP list_slice_shaped(SEXP x, SEXP index, struct vec_slice_shaped_info i
 
 #undef SLICE_BARRIER_SHAPED
 #undef SLICE_BARRIER_SHAPED_COMPACT_REP
+#undef SLICE_BARRIER_SHAPED_COMPACT_SEQ
 #undef SLICE_BARRIER_SHAPED_INDEX
 
 SEXP vec_slice_shaped_base(enum vctrs_type type,
