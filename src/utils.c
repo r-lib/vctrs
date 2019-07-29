@@ -251,29 +251,64 @@ SEXP s3_find_method(const char* generic, SEXP x) {
 // Initialised at load time
 SEXP compact_seq_attrib = NULL;
 
-void init_compact_seq(int* p, R_len_t from, R_len_t to) {
-  p[0] = from;
-  p[1] = to;
+// p[0] = Start value
+// p[1] = Sequence size. Always >= 1.
+// p[2] = Increasing step if `from <= to`, decreasing step if `from > to`
+void init_compact_seq(int* p, R_len_t start, R_len_t size, bool increasing) {
+  int step = increasing ? 1 : -1;
+
+  p[0] = start;
+  p[1] = size;
+  p[2] = step;
 }
 
 // Returns a compact sequence that `vec_slice()` understands
-SEXP compact_seq(R_len_t from, R_len_t to) {
-  if (to < from) {
-    Rf_error("Internal error: Negative length in `compact_seq()`");
+// `start` is 0-based
+// The sequence is generated as `[start, start +/- size]`
+SEXP compact_seq(R_len_t start, R_len_t size, bool increasing) {
+  if (start < 0) {
+    Rf_error("Internal error: `start` must not be negative in `compact_seq()`.");
   }
 
-  SEXP seq = PROTECT(Rf_allocVector(INTSXP, 2));
+  if (size < 0) {
+    Rf_error("Internal error: `size` must not be negative in `compact_seq()`.");
+  }
 
-  int* p = INTEGER(seq);
-  init_compact_seq(p, from, to);
+  if (!increasing && size > start + 1) {
+    Rf_error("Internal error: If constructing a decreasing sequence, `size` must not be larger than `start` in `compact_seq()`.");
+  }
 
-  SET_ATTRIB(seq, compact_seq_attrib);
+  SEXP info = PROTECT(Rf_allocVector(INTSXP, 3));
+
+  int* p = INTEGER(info);
+  init_compact_seq(p, start, size, increasing);
+
+  SET_ATTRIB(info, compact_seq_attrib);
 
   UNPROTECT(1);
-  return seq;
+  return info;
 }
+
 bool is_compact_seq(SEXP x) {
   return ATTRIB(x) == compact_seq_attrib;
+}
+
+// Materialize a 1-based sequence
+SEXP compact_seq_materialize(SEXP x) {
+  int* p = INTEGER(x);
+  R_len_t start = p[0] + 1;
+  R_len_t size = p[1];
+  R_len_t step = p[2];
+
+  SEXP out = PROTECT(Rf_allocVector(INTSXP, size));
+  int* out_data = INTEGER(out);
+
+  for (R_len_t i = 0; i < size; ++i, ++out_data, start += step) {
+    *out_data = start;
+  }
+
+  UNPROTECT(1);
+  return out;
 }
 
 // Initialised at load time
@@ -317,11 +352,25 @@ SEXP compact_rep_materialize(SEXP x) {
   return out;
 }
 
+bool is_compact(SEXP x) {
+  return is_compact_rep(x) || is_compact_seq(x);
+}
+
+SEXP compact_materialize(SEXP x) {
+  if (is_compact_rep(x)) {
+    return compact_rep_materialize(x);
+  } else if (is_compact_seq(x)) {
+    return compact_seq_materialize(x);
+  } else {
+    Rf_errorcall(R_NilValue, "Internal error: `x` must be a compact seq or rep.");
+  }
+}
+
 R_len_t vec_index_size(SEXP x) {
   if (is_compact_rep(x)) {
     return r_int_get(x, 1);
   } else if (is_compact_seq(x)) {
-    return r_int_get(x, 1) - r_int_get(x, 0);
+    return r_int_get(x, 1);
   } else {
     return vec_size(x);
   }

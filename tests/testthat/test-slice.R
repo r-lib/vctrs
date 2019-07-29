@@ -511,3 +511,124 @@ test_that("vec_split_along() falls back to `[` for shaped objects with no proxy"
   dim(x) <- c(1, 1)
   expect_equal(vec_split_along(x), list(x))
 })
+
+# vec_slice + compact_seq -------------------------------------------------
+
+# `start` is 0-based
+
+test_that("can subset base vectors with compact seqs", {
+  start <- 1L
+  size <- 2L
+  increasing <- TRUE
+  expect_identical(vec_slice_seq(lgl(1, 0, 1), start, size, increasing), lgl(0, 1))
+  expect_identical(vec_slice_seq(int(1, 2, 3), start, size, increasing), int(2, 3))
+  expect_identical(vec_slice_seq(dbl(1, 2, 3), start, size, increasing), dbl(2, 3))
+  expect_identical(vec_slice_seq(cpl(1, 2, 3), start, size, increasing), cpl(2, 3))
+  expect_identical(vec_slice_seq(chr("1", "2", "3"), start, size, increasing), chr("2", "3"))
+  expect_identical(vec_slice_seq(bytes(1, 2, 3), start, size, increasing), bytes(2, 3))
+  expect_identical(vec_slice_seq(list(1, 2, 3), start, size, increasing), list(2, 3))
+})
+
+test_that("can subset base vectors with decreasing compact seqs", {
+  start <- 2L
+  size <- 2L
+  increasing <- FALSE
+  expect_identical(vec_slice_seq(lgl(1, 0, 1), start, size, increasing), lgl(1, 0))
+  expect_identical(vec_slice_seq(int(1, 2, 3), start, size, increasing), int(3, 2))
+  expect_identical(vec_slice_seq(dbl(1, 2, 3), start, size, increasing), dbl(3, 2))
+  expect_identical(vec_slice_seq(cpl(1, 2, 3), start, size, increasing), cpl(3, 2))
+  expect_identical(vec_slice_seq(chr("1", "2", "3"), start, size, increasing), chr("3", "2"))
+  expect_identical(vec_slice_seq(bytes(1, 2, 3), start, size, increasing), bytes(3, 2))
+  expect_identical(vec_slice_seq(list(1, 2, 3), start, size, increasing), list(3, 2))
+})
+
+test_that("can subset base vectors with size 0 compact seqs", {
+  start <- 1L
+  size <- 0L
+  increasing <- TRUE
+  expect_identical(vec_slice_seq(lgl(1, 0, 1), start, size, increasing), lgl())
+  expect_identical(vec_slice_seq(int(1, 2, 3), start, size, increasing), int())
+  expect_identical(vec_slice_seq(dbl(1, 2, 3), start, size, increasing), dbl())
+  expect_identical(vec_slice_seq(cpl(1, 2, 3), start, size, increasing), cpl())
+  expect_identical(vec_slice_seq(chr("1", "2", "3"), start, size, increasing), chr())
+  expect_identical(vec_slice_seq(bytes(1, 2, 3), start, size, increasing), bytes())
+  expect_identical(vec_slice_seq(list(1, 2, 3), start, size, increasing), list())
+})
+
+test_that("can subset shaped base vectors with compact seqs", {
+  start <- 1L
+  size <- 2L
+  increasing <- TRUE
+  mat <- as.matrix
+  expect_identical(vec_slice_seq(mat(lgl(1, 0, 1)), start, size, increasing), mat(lgl(0, 1)))
+  expect_identical(vec_slice_seq(mat(int(1, 2, 3)), start, size, increasing), mat(int(2, 3)))
+  expect_identical(vec_slice_seq(mat(dbl(1, 2, 3)), start, size, increasing), mat(dbl(2, 3)))
+  expect_identical(vec_slice_seq(mat(cpl(1, 2, 3)), start, size, increasing), mat(cpl(2, 3)))
+  expect_identical(vec_slice_seq(mat(chr("1", "2", "3")), start, size, increasing), mat(chr("2", "3")))
+  expect_identical(vec_slice_seq(mat(bytes(1, 2, 3)), start, size, increasing), mat(bytes(2, 3)))
+  expect_identical(vec_slice_seq(mat(list(1, 2, 3)), start, size, increasing), mat(list(2, 3)))
+})
+
+test_that("can subset shaped base vectors with decreasing compact seqs", {
+  start <- 2L
+  size <- 2L
+  increasing <- FALSE
+  mat <- as.matrix
+  expect_identical(vec_slice_seq(mat(lgl(1, 0, 1)), start, size, increasing), mat(lgl(1, 0)))
+  expect_identical(vec_slice_seq(mat(int(1, 2, 3)), start, size, increasing), mat(int(3, 2)))
+  expect_identical(vec_slice_seq(mat(dbl(1, 2, 3)), start, size, increasing), mat(dbl(3, 2)))
+  expect_identical(vec_slice_seq(mat(cpl(1, 2, 3)), start, size, increasing), mat(cpl(3, 2)))
+  expect_identical(vec_slice_seq(mat(chr("1", "2", "3")), start, size, increasing), mat(chr("3", "2")))
+  expect_identical(vec_slice_seq(mat(bytes(1, 2, 3)), start, size, increasing), mat(bytes(3, 2)))
+  expect_identical(vec_slice_seq(mat(list(1, 2, 3)), start, size, increasing), mat(list(3, 2)))
+})
+
+test_that("can subset shaped base vectors with size 0 compact seqs", {
+  start <- 1L
+  size <- 0L
+  increasing <- TRUE
+  mat <- as.matrix
+  expect_identical(vec_slice_seq(mat(lgl(1, 0, 1)), start, size, increasing), mat(lgl()))
+  expect_identical(vec_slice_seq(mat(int(1, 2, 3)), start, size, increasing), mat(int()))
+  expect_identical(vec_slice_seq(mat(dbl(1, 2, 3)), start, size, increasing), mat(dbl()))
+  expect_identical(vec_slice_seq(mat(cpl(1, 2, 3)), start, size, increasing), mat(cpl()))
+  expect_identical(vec_slice_seq(mat(chr("1", "2", "3")), start, size, increasing), mat(chr()))
+  expect_identical(vec_slice_seq(mat(bytes(1, 2, 3)), start, size, increasing), mat(bytes()))
+  expect_identical(vec_slice_seq(mat(list(1, 2, 3)), start, size, increasing), mat(list()))
+})
+
+test_that("can subset object of any dimensionality with compact seqs", {
+  x0 <- c(1, 1)
+  x1 <- ones(2)
+  x2 <- ones(2, 3)
+  x3 <- ones(2, 3, 4)
+  x4 <- ones(2, 3, 4, 5)
+
+  expect_equal(vec_slice_seq(x0, 0L, 1L), 1)
+  expect_identical(vec_slice_seq(x1, 0L, 1L), ones(1))
+  expect_identical(vec_slice_seq(x2, 0L, 1L), ones(1, 3))
+  expect_identical(vec_slice_seq(x3, 0L, 1L), ones(1, 3, 4))
+  expect_identical(vec_slice_seq(x4, 0L, 1L), ones(1, 3, 4, 5))
+})
+
+test_that("can subset data frames with compact seqs", {
+  df <- data_frame(x = 1:5, y = letters[1:5])
+  expect_equal(vec_slice_seq(df, 0L, 0L), vec_slice(df, integer()))
+  expect_equal(vec_slice_seq(df, 0L, 1L), vec_slice(df, 1L))
+  expect_equal(vec_slice_seq(df, 0L, 3L), vec_slice(df, 1:3))
+  expect_equal(vec_slice_seq(df, 2L, 3L, FALSE), vec_slice(df, 3:1))
+
+  df$df <- df
+  expect_equal(vec_slice_seq(df, 0L, 0L), vec_slice(df, integer()))
+  expect_equal(vec_slice_seq(df, 0L, 1L), vec_slice(df, 1L))
+  expect_equal(vec_slice_seq(df, 0L, 3L), vec_slice(df, 1:3))
+  expect_equal(vec_slice_seq(df, 2L, 3L, FALSE), vec_slice(df, 3:1))
+})
+
+test_that("can subset S3 objects using the fallback method with compact seqs", {
+  x <- factor(c("a", "b", "c", "d"))
+  expect_equal(vec_slice_seq(x, 0L, 0L), vec_slice(x, integer()))
+  expect_equal(vec_slice_seq(x, 0L, 1L), vec_slice(x, 1L))
+  expect_equal(vec_slice_seq(x, 2L, 2L), vec_slice(x, 3:4))
+  expect_equal(vec_slice_seq(x, 3L, 2L, FALSE), vec_slice(x, 4:3))
+})

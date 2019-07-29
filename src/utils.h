@@ -74,15 +74,16 @@ SEXP df_container_type(SEXP x);
 SEXP df_poke(SEXP x, R_len_t i, SEXP value);
 SEXP df_poke_at(SEXP x, SEXP name, SEXP value);
 
-void init_compact_seq(int* p, R_len_t from, R_len_t to);
-SEXP compact_seq(R_len_t from, R_len_t to);
+void init_compact_seq(int* p, R_len_t start, R_len_t size, bool increasing);
+SEXP compact_seq(R_len_t start, R_len_t size, bool increasing);
 bool is_compact_seq(SEXP x);
 
 void init_compact_rep(int* p, R_len_t i, R_len_t n);
 SEXP compact_rep(R_len_t i, R_len_t n);
 bool is_compact_rep(SEXP x);
-SEXP compact_rep_materialize(SEXP x);
 
+bool is_compact(SEXP x);
+SEXP compact_materialize(SEXP x);
 R_len_t vec_index_size(SEXP x);
 
 SEXP apply_name_spec(SEXP name_spec, SEXP outer, SEXP inner, R_len_t n);

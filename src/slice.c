@@ -62,9 +62,29 @@ static void stop_bad_index_length(R_len_t n, R_len_t i) {
   UNPROTECT(1);                                                       \
   return out
 
+#define SLICE_COMPACT_SEQ(RTYPE, CTYPE, DEREF, CONST_DEREF)           \
+  int* index_data = INTEGER(index);                                   \
+  R_len_t start = index_data[0];                                      \
+  R_len_t n = index_data[1];                                          \
+  R_len_t step = index_data[2];                                       \
+                                                                      \
+  const CTYPE* data = CONST_DEREF(x) + start;                         \
+                                                                      \
+  SEXP out = PROTECT(Rf_allocVector(RTYPE, n));                       \
+  CTYPE* out_data = DEREF(out);                                       \
+                                                                      \
+  for (int i = 0; i < n; ++i, ++out_data, data += step) {             \
+    *out_data = *data;                                                \
+  }                                                                   \
+                                                                      \
+  UNPROTECT(1);                                                       \
+  return out
+
 #define SLICE(RTYPE, CTYPE, DEREF, CONST_DEREF, NA_VALUE)          \
   if (is_compact_rep(index)) {                                     \
     SLICE_COMPACT_REP(RTYPE, CTYPE, DEREF, CONST_DEREF, NA_VALUE); \
+  } else if (is_compact_seq(index)) {                              \
+    SLICE_COMPACT_SEQ(RTYPE, CTYPE, DEREF, CONST_DEREF);           \
   } else {                                                         \
     SLICE_INDEX(RTYPE, CTYPE, DEREF, CONST_DEREF, NA_VALUE);       \
   }
@@ -90,6 +110,7 @@ static SEXP raw_slice(SEXP x, SEXP index) {
 
 #undef SLICE
 #undef SLICE_COMPACT_REP
+#undef SLICE_COMPACT_SEQ
 #undef SLICE_INDEX
 
 #define SLICE_BARRIER_INDEX(RTYPE, GET, SET, NA_VALUE)          \
@@ -124,9 +145,26 @@ static SEXP raw_slice(SEXP x, SEXP index) {
   UNPROTECT(1);                                                 \
   return out
 
+#define SLICE_BARRIER_COMPACT_SEQ(RTYPE, GET, SET)  \
+  int* index_data = INTEGER(index);                 \
+  R_len_t start = index_data[0];                    \
+  R_len_t n = index_data[1];                        \
+  R_len_t step = index_data[2];                     \
+                                                    \
+  SEXP out = PROTECT(Rf_allocVector(RTYPE, n));     \
+                                                    \
+  for (R_len_t i = 0; i < n; ++i, start += step) {  \
+    SET(out, i, GET(x, start));                     \
+  }                                                 \
+                                                    \
+  UNPROTECT(1);                                     \
+  return out
+
 #define SLICE_BARRIER(RTYPE, GET, SET, NA_VALUE)            \
   if (is_compact_rep(index)) {                              \
     SLICE_BARRIER_COMPACT_REP(RTYPE, GET, SET, NA_VALUE);   \
+  } else if (is_compact_seq(index)) {                       \
+    SLICE_BARRIER_COMPACT_SEQ(RTYPE, GET, SET);             \
   } else {                                                  \
     SLICE_BARRIER_INDEX(RTYPE, GET, SET, NA_VALUE);         \
   }
@@ -137,6 +175,7 @@ static SEXP list_slice(SEXP x, SEXP index) {
 
 #undef SLICE_BARRIER
 #undef SLICE_BARRIER_COMPACT_REP
+#undef SLICE_BARRIER_COMPACT_SEQ
 #undef SLICE_BARRIER_INDEX
 
 static SEXP df_slice(SEXP x, SEXP index) {
@@ -241,8 +280,8 @@ SEXP vec_slice_impl(SEXP x, SEXP index) {
       Rf_errorcall(R_NilValue, "Can't slice a scalar");
     }
 
-    if (is_compact_rep(index)) {
-      index = PROTECT_N(compact_rep_materialize(index), &nprot);
+    if (is_compact(index)) {
+      index = PROTECT_N(compact_materialize(index), &nprot);
     }
 
     SEXP out;
@@ -342,6 +381,19 @@ SEXP vec_init(SEXP x, R_len_t n) {
   return out;
 }
 
+// Exported for testing
+// [[ register() ]]
+SEXP vec_slice_seq(SEXP x, SEXP start, SEXP size, SEXP increasing) {
+  R_len_t start_ = r_int_get(start, 0);
+  R_len_t size_ = r_int_get(size, 0);
+  bool increasing_ = r_lgl_get(increasing, 0);
+
+  SEXP index = PROTECT(compact_seq(start_, size_, increasing_));
+  SEXP out = vec_slice_impl(x, index);
+
+  UNPROTECT(1);
+  return out;
+}
 
 static SEXP int_invert_index(SEXP index, R_len_t n);
 static SEXP int_filter_zero(SEXP index, R_len_t n_zero);
