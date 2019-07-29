@@ -250,8 +250,10 @@ SEXP vec_slice_impl(SEXP x, SEXP index) {
     if (has_dim(x)) {
       out = PROTECT_N(vec_slice_fallback(x, index), &nprot);
     } else {
-      SEXP call = PROTECT_N(Rf_lang3(fns_bracket, x, index), &nprot);
-      out = PROTECT_N(Rf_eval(call, R_GlobalEnv), &nprot);
+      out = PROTECT_N(
+        vctrs_dispatch2(syms_bracket, fns_bracket, syms_x, x, syms_i, index),
+        &nprot
+      );
     }
 
     // Take over attribute restoration only if the `[` method did not
