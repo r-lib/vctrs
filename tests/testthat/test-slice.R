@@ -425,3 +425,59 @@ test_that("na of list-array is 1d slice", {
 test_that("vec_init() asserts vectorness (#301)", {
   expect_error(vec_init(NULL), class = "vctrs_error_scalar_type")
 })
+
+# vec_slice + compact_seq -------------------------------------------------
+
+# Slices `[from, to)`
+# `from` and `to` are 0-based
+
+test_that("can subset base vectors with compact seqs", {
+  from <- 1L
+  to <- 3L
+  expect_identical(vec_slice_seq(lgl(1, 0, 1), from, to), lgl(0, 1))
+  expect_identical(vec_slice_seq(int(1, 2, 3), from, to), int(2, 3))
+  expect_identical(vec_slice_seq(dbl(1, 2, 3), from, to), dbl(2, 3))
+  expect_identical(vec_slice_seq(cpl(1, 2, 3), from, to), cpl(2, 3))
+  expect_identical(vec_slice_seq(chr("1", "2", "3"), from, to), chr("2", "3"))
+  expect_identical(vec_slice_seq(bytes(1, 2, 3), from, to), bytes(2, 3))
+  expect_identical(vec_slice_seq(list(1, 2, 3), from, to), list(2, 3))
+})
+
+test_that("can subset shaped base vectors with compact seqs", {
+  from <- 1L
+  to <- 3L
+  mat <- as.matrix
+  expect_identical(vec_slice_seq(mat(lgl(1, 0, 1)), from, to), mat(lgl(0, 1)))
+  expect_identical(vec_slice_seq(mat(int(1, 2, 3)), from, to), mat(int(2, 3)))
+  expect_identical(vec_slice_seq(mat(dbl(1, 2, 3)), from, to), mat(dbl(2, 3)))
+  expect_identical(vec_slice_seq(mat(cpl(1, 2, 3)), from, to), mat(cpl(2, 3)))
+  expect_identical(vec_slice_seq(mat(chr("1", "2", "3")), from, to), mat(chr("2", "3")))
+  expect_identical(vec_slice_seq(mat(bytes(1, 2, 3)), from, to), mat(bytes(2, 3)))
+  expect_identical(vec_slice_seq(mat(list(1, 2, 3)), from, to), mat(list(2, 3)))
+})
+
+test_that("can subset object of any dimensionality with compact seqs", {
+  x0 <- c(1, 1)
+  x1 <- ones(2)
+  x2 <- ones(2, 3)
+  x3 <- ones(2, 3, 4)
+  x4 <- ones(2, 3, 4, 5)
+
+  expect_equal(vec_slice_seq(x0, 0L, 1L), 1)
+  expect_identical(vec_slice_seq(x1, 0L, 1L), ones(1))
+  expect_identical(vec_slice_seq(x2, 0L, 1L), ones(1, 3))
+  expect_identical(vec_slice_seq(x3, 0L, 1L), ones(1, 3, 4))
+  expect_identical(vec_slice_seq(x4, 0L, 1L), ones(1, 3, 4, 5))
+})
+
+test_that("can subset data frames", {
+  df <- data_frame(x = 1:5, y = letters[1:5])
+  expect_equal(vec_slice_seq(df, 0L, 0L), vec_slice(df, integer()))
+  expect_equal(vec_slice_seq(df, 0L, 1L), vec_slice(df, 1L))
+  expect_equal(vec_slice_seq(df, 0L, 3L), vec_slice(df, 1:3))
+
+  df$df <- df
+  expect_equal(vec_slice_seq(df, 0L, 0L), vec_slice(df, integer()))
+  expect_equal(vec_slice_seq(df, 0L, 1L), vec_slice(df, 1L))
+  expect_equal(vec_slice_seq(df, 0L, 3L), vec_slice(df, 1:3))
+})
