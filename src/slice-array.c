@@ -169,9 +169,46 @@ struct vec_slice_shaped_info {
   UNPROTECT(1);                                                                \
   return out
 
+#define SLICE_SHAPED_COMPACT_SEQ(RTYPE, CTYPE, DEREF, CONST_DEREF)               \
+  SEXP out = PROTECT(Rf_allocArray(RTYPE, info.out_dim));                        \
+  CTYPE* out_data = DEREF(out);                                                  \
+                                                                                 \
+  int from = info.p_index[0];                                                    \
+  int to = info.p_index[1];                                                      \
+                                                                                 \
+  const CTYPE* x_data = CONST_DEREF(x);                                          \
+                                                                                 \
+  for (int i = 0; i < info.shape_elem_n; ++i) {                                  \
+                                                                                 \
+    /* Find and add the next `x` element */                                      \
+    for (int size_index = from; size_index < to; ++size_index, ++out_data) {     \
+      int loc = vec_strided_loc(                                                 \
+        size_index,                                                              \
+        info.p_shape_index,                                                      \
+        info.p_strides,                                                          \
+        info.shape_n                                                             \
+      );                                                                         \
+      *out_data = x_data[loc];                                                   \
+    }                                                                            \
+                                                                                 \
+    /* Update shape_index */                                                     \
+    for (int j = 0; j < info.shape_n; ++j) {                                     \
+      info.p_shape_index[j]++;                                                   \
+      if (info.p_shape_index[j] < info.p_dim[j + 1]) {                           \
+        break;                                                                   \
+      }                                                                          \
+      info.p_shape_index[j] = 0;                                                 \
+    }                                                                            \
+  }                                                                              \
+                                                                                 \
+  UNPROTECT(1);                                                                  \
+  return out
+
 #define SLICE_SHAPED(RTYPE, CTYPE, DEREF, CONST_DEREF, NA_VALUE)          \
   if (is_compact_rep(index)) {                                            \
     SLICE_SHAPED_COMPACT_REP(RTYPE, CTYPE, DEREF, CONST_DEREF, NA_VALUE); \
+  } else if (is_compact_seq(index)) {                                     \
+    SLICE_SHAPED_COMPACT_SEQ(RTYPE, CTYPE, DEREF, CONST_DEREF);           \
   } else {                                                                \
     SLICE_SHAPED_INDEX(RTYPE, CTYPE, DEREF, CONST_DEREF, NA_VALUE);       \
   }
