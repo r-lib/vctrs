@@ -15,6 +15,7 @@ test_that("matches R ordering", {
   expect_same(c(NA, -Inf, -100, 100, Inf), 0L)
   expect_same(c(NA, NaN, 0), NA)
   expect_same(c(NA, "a", "b", "c"), "b")
+  expect_same(as.raw(2:5), as.raw(4))
 })
 
 test_that("NAs equal when requested", {

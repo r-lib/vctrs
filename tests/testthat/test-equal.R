@@ -19,6 +19,8 @@ test_that("correct behaviour for basic vectors", {
   expect_equal(vec_equal(c("1", "2"), "1"), c(TRUE, FALSE))
   expect_equal(vec_equal(list(1:3, 1:2), list(1:3)), c(TRUE, FALSE))
   expect_equal(vec_equal(list(1:3, 1.5), list(1:3)), c(TRUE, FALSE))
+  expect_equal(vec_equal(list(as.raw(1:3), as.raw(1.5)), list(as.raw(1:3))), c(TRUE, FALSE))
+  expect_equal(vec_equal(c(1, 2) + 1i, 1+1i), c(TRUE, FALSE))
 })
 
 test_that("NAs are equal", {
