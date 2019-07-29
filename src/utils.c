@@ -278,13 +278,14 @@ bool is_compact_seq(SEXP x) {
   return ATTRIB(x) == compact_seq_attrib;
 }
 
+// Materialize a 1-based sequence
 SEXP compact_seq_materialize(SEXP x) {
   R_len_t from = r_int_get(x, 0);
   R_len_t to = r_int_get(x, 1);
-  R_len_t n = from - to;
+  R_len_t n = to - from;
 
   SEXP out = PROTECT(Rf_allocVector(INTSXP, n));
-  r_int_fill_seq(out, from, n);
+  r_int_fill_seq(out, from + 1, n);
 
   UNPROTECT(1);
   return out;
