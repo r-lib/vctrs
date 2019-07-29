@@ -234,6 +234,7 @@ static SEXP raw_slice_shaped(SEXP x, SEXP index, struct vec_slice_shaped_info in
 
 #undef SLICE_SHAPED
 #undef SLICE_SHAPED_COMPACT_REP
+#undef SLICE_SHAPED_COMPACT_SEQ
 #undef SLICE_SHAPED_INDEX
 
 #define SLICE_BARRIER_SHAPED_INDEX(RTYPE, GET, SET, NA_VALUE)  \
