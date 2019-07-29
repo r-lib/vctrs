@@ -176,6 +176,7 @@ static SEXP list_slice(SEXP x, SEXP index) {
 
 #undef SLICE_BARRIER
 #undef SLICE_BARRIER_COMPACT_REP
+#undef SLICE_BARRIER_COMPACT_SEQ
 #undef SLICE_BARRIER_INDEX
 
 static SEXP df_slice(SEXP x, SEXP index) {
