@@ -192,3 +192,24 @@ test_that("split takes the equality proxy (#375)", {
   x <- tuple(c(1, 2, 1), 1:3)
   expect_identical(nrow(vec_split(1:3, x)), 2L)
 })
+
+# split id ---------------------------------------------------------------
+
+test_that("can locate unique groups of an empty vector", {
+  out <- vec_split_id(integer())
+
+  expect_s3_class(out, "data.frame")
+  expect_equal(out$key, integer())
+  expect_equal(out$id, list())
+})
+
+test_that("`x` must be a vector", {
+  expect_error(vec_split_id(environment()), class = "vctrs_error_scalar_type")
+})
+
+test_that("`key` column retains full type information", {
+  x <- factor(letters[c(1, 2, 1)], levels = letters[1:3])
+  out <- vec_split_id(x)
+
+  expect_equal(levels(out$key), levels(x))
+})
