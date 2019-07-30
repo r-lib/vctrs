@@ -209,6 +209,8 @@ extern SEXP strings_minimal;
 extern SEXP strings_unique;
 extern SEXP strings_universal;
 extern SEXP strings_check_unique;
+extern SEXP strings_key;
+extern SEXP strings_id;
 
 extern SEXP syms_i;
 extern SEXP syms_n;
