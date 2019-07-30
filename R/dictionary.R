@@ -271,8 +271,9 @@ vec_split <- function(x, by) {
 
 #' Locate unique groups in a vector
 #'
-#' This locates unique values in `x` and returns both the unique values and the
-#' locations of those values. It is used to power [vec_split()].
+#' This locates unique groups in `x` and returns both the unique values and
+#' the locations of every appearance of each value. It is used to power
+#' [vec_split()].
 #'
 #' @param x A vector to locate unique groups for.
 #' @return A data frame with two columns and size equal to

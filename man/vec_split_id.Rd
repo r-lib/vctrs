@@ -19,8 +19,9 @@ suboptimal, and you will want to coerce into a tibble to better understand
 the output.
 }
 \description{
-This locates unique values in \code{x} and returns both the unique values and the
-locations of those values. It is used to power \code{\link[=vec_split]{vec_split()}}.
+This locates unique groups in \code{x} and returns both the unique values and
+the locations of every appearance of each value. It is used to power
+\code{\link[=vec_split]{vec_split()}}.
 }
 \examples{
 vec_split_id(mtcars$vs)
