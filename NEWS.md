@@ -1,6 +1,10 @@
 
 # vctrs 0.2.0.9000
 
+* New `vec_split_id()` for locating unique groups in a vector. This 
+  helps power `vec_split()` by returning the unique values and their 
+  locations in the original vector (#514).
+
 * Equality and ordering methods are now implemented for raw and
   complex vectors (@romainfrancois).
 
