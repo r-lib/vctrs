@@ -394,10 +394,10 @@ SEXP vctrs_duplicated(SEXP x) {
 SEXP vctrs_split_id(SEXP x) {
   int nprot = 0;
 
-  x = PROTECT_N(vec_proxy_equal(x), &nprot);
+  SEXP proxy = PROTECT_N(vec_proxy_equal(x), &nprot);
 
   dictionary d;
-  dict_init(&d, x);
+  dict_init(&d, proxy);
   PROTECT_DICT(&d, &nprot);
 
   // Tracks the order in which keys are seen
@@ -408,7 +408,7 @@ SEXP vctrs_split_id(SEXP x) {
   SEXP count = PROTECT_N(Rf_allocVector(INTSXP, d.size), &nprot);
   int* p_count = INTEGER(count);
 
-  R_len_t n = vec_size(x);
+  R_len_t n = vec_size(proxy);
 
   // Tells us which element of the index list x[i] goes in
   SEXP out_pos = PROTECT_N(Rf_allocVector(INTSXP, n), &nprot);
