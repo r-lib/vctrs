@@ -391,7 +391,7 @@ SEXP vctrs_duplicated(SEXP x) {
   return out;
 }
 
-SEXP vctrs_duplicate_split(SEXP x) {
+SEXP vctrs_split_id(SEXP x) {
   int nprot = 0;
 
   x = PROTECT_N(vec_proxy_equal(x), &nprot);
