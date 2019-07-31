@@ -523,7 +523,7 @@ SEXP vctrs_as_index(SEXP i, SEXP n, SEXP names) {
   return vec_as_index(i, r_int_get(n, 0), names);
 }
 
-SEXP split_list_fallback_shaped(SEXP x) {
+SEXP split_along_fallback_shaped(SEXP x) {
   R_len_t size = vec_size(x);
 
   SEXP index = PROTECT(r_int(0));
@@ -549,7 +549,7 @@ SEXP split_list_fallback_shaped(SEXP x) {
   return out;
 }
 
-SEXP split_list_fallback(SEXP x) {
+SEXP split_along_fallback(SEXP x) {
   R_len_t size = vec_size(x);
 
   SEXP restore_size = PROTECT(r_int(1));
@@ -589,7 +589,7 @@ SEXP split_list_fallback(SEXP x) {
   return out;
 }
 
-SEXP split_list_shaped(SEXP x, struct vctrs_proxy_info info) {
+SEXP split_along_shaped(SEXP x, struct vctrs_proxy_info info) {
   R_len_t size = vec_size(x);
 
   SEXP restore_size = PROTECT(r_int(1));
@@ -651,7 +651,7 @@ SEXP split_list_shaped(SEXP x, struct vctrs_proxy_info info) {
   return out;
 }
 
-SEXP split_list(SEXP x, struct vctrs_proxy_info info) {
+SEXP split_along(SEXP x, struct vctrs_proxy_info info) {
   R_len_t size = vec_size(x);
 
   SEXP restore_size = PROTECT(r_int(1));
@@ -694,7 +694,7 @@ SEXP split_list(SEXP x, struct vctrs_proxy_info info) {
   return out;
 }
 
-SEXP split_list_df(SEXP x, struct vctrs_proxy_info info) {
+SEXP split_along_df(SEXP x, struct vctrs_proxy_info info) {
   R_len_t size = vec_size(x);
 
   SEXP restore_size = PROTECT(r_int(1));
@@ -729,7 +729,7 @@ SEXP split_list_df(SEXP x, struct vctrs_proxy_info info) {
 // list(vec_slice(x, 1L), vec_slice(x, 2L), ...)
 // but in a more efficient way
 // [[ include("vctrs.h"); register() ]]
-SEXP vec_split_list(SEXP x) {
+SEXP vec_split_along(SEXP x) {
   int nprot = 0;
 
   struct vctrs_proxy_info info = vec_proxy_info(x);
@@ -744,11 +744,11 @@ SEXP vec_split_list(SEXP x) {
 
     if (has_dim(x)) {
       UNPROTECT(nprot);
-      return split_list_fallback_shaped(x);
+      return split_along_fallback_shaped(x);
     }
 
     UNPROTECT(nprot);
-    return split_list_fallback(x);
+    return split_along_fallback(x);
   }
 
   switch (info.type) {
@@ -765,20 +765,20 @@ SEXP vec_split_list(SEXP x) {
   case vctrs_type_list: {
     if (has_dim(x)) {
       UNPROTECT(nprot);
-      return split_list_shaped(x, info);
+      return split_along_shaped(x, info);
     }
 
     UNPROTECT(nprot);
-    return split_list(x, info);
+    return split_along(x, info);
   }
 
   case vctrs_type_dataframe: {
     UNPROTECT(nprot);
-    return split_list_df(x, info);
+    return split_along_df(x, info);
   }
   default:
     vec_assert(x, args_empty);
-    Rf_error("Internal error: Unexpected type `%s` for vector proxy in `vec_split_list()`",
+    Rf_error("Internal error: Unexpected type `%s` for vector proxy in `vec_split_along()`",
              vec_type_as_str(info.type));
   }
 }
