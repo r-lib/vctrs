@@ -253,7 +253,7 @@ SEXP compact_seq_attrib = NULL;
 
 // p[0] = Start value
 // p[1] = Sequence size. Always >= 1.
-// p[2] = Increasing step if `from <= to`, decreasing step if `from > to`
+// p[2] = Step size to increment/decrement `start` with
 void init_compact_seq(int* p, R_len_t start, R_len_t size, bool increasing) {
   int step = increasing ? 1 : -1;
 
@@ -263,8 +263,9 @@ void init_compact_seq(int* p, R_len_t start, R_len_t size, bool increasing) {
 }
 
 // Returns a compact sequence that `vec_slice()` understands
+// The sequence is generally generated as `[start, start +/- size)`
+// If `size == 0` a 0-length sequence is generated
 // `start` is 0-based
-// The sequence is generated as `[start, start +/- size]`
 SEXP compact_seq(R_len_t start, R_len_t size, bool increasing) {
   if (start < 0) {
     Rf_error("Internal error: `start` must not be negative in `compact_seq()`.");
