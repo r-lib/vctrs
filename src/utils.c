@@ -21,9 +21,7 @@ SEXP strings_vctrs_vctr = NULL;
 SEXP classes_data_frame = NULL;
 SEXP classes_tibble = NULL;
 
-static SEXP syms_as_list = NULL;
 static SEXP syms_as_data_frame2 = NULL;
-static SEXP fns_as_list = NULL;
 static SEXP fns_as_data_frame2 = NULL;
 
 
@@ -816,13 +814,6 @@ bool r_chr_has_string(SEXP x, SEXP str) {
   return false;
 }
 
-SEXP r_as_list(SEXP x) {
-  if (OBJECT(x)) {
-    return vctrs_dispatch1(syms_as_list, fns_as_list, syms_x, x);
-  } else {
-    return Rf_coerceVector(x, VECSXP);
-  }
-}
 SEXP r_as_data_frame(SEXP x) {
   if (is_bare_data_frame(x)) {
     return x;
@@ -1078,11 +1069,9 @@ void vctrs_init_utils(SEXP ns) {
   rlang_env_dots_values = (SEXP (*)(SEXP)) R_GetCCallable("rlang", "rlang_env_dots_values");
   rlang_env_dots_list = (SEXP (*)(SEXP)) R_GetCCallable("rlang", "rlang_env_dots_list");
 
-  syms_as_list = Rf_install("as.list");
   syms_as_data_frame2 = Rf_install("as.data.frame2");
   syms_colnames = Rf_install("colnames");
 
-  fns_as_list = r_env_get(R_BaseEnv, syms_as_list);
   fns_as_data_frame2 = r_env_get(ns, syms_as_data_frame2);
   fns_colnames = r_env_get(R_BaseEnv, syms_colnames);
 

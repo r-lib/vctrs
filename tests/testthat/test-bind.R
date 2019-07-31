@@ -107,6 +107,41 @@ test_that("can rbind list columns", {
   expect_identical(out, data_frame(x = list(1, 2, 3)))
 })
 
+test_that("can rbind lists", {
+  out <- vec_rbind(list(x = 1:2))
+  expect_identical(out, data_frame(x = list(c(1L, 2L))))
+
+  out <- vec_rbind(list(x = 1:2, y = 3L))
+  expect_identical(out, data_frame(x = list(c(1L, 2L)), y = list(3L)))
+
+  out <- vec_rbind(list(x = 1, y = 2), list(y = "string"))
+  expect_identical(out, data_frame(x = list(1, NULL), y = list(2, "string")))
+})
+
+test_that("can rbind factors", {
+  fctr <- factor(c("a", "b"))
+  expect_equal(vec_rbind(fctr), data_frame(...1 = fctr[1], ...2 = fctr[2]))
+
+  fctr_named <- set_names(fctr)
+  expect_equal(vec_rbind(fctr_named), data_frame(a = fctr[1], b = fctr[2]))
+})
+
+test_that("can rbind dates", {
+  date <- new_date(c(0, 1))
+  expect_equal(vec_rbind(date), data_frame(...1 = date[1], ...2 = date[2]))
+
+  date_named <- set_names(date, c("a", "b"))
+  expect_equal(vec_rbind(date_named), data_frame(a = date[1], b = date[2]))
+})
+
+test_that("can rbind POSIXlt objects into POSIXct objects", {
+  datetime <- as.POSIXlt(new_datetime(0))
+  expect_is(vec_rbind(datetime, datetime)[[1]], "POSIXct")
+
+  datetime_named <- set_names(datetime, "col")
+  expect_named(vec_rbind(datetime_named, datetime_named), "col")
+})
+
 test_that("can rbind missing vectors", {
   expect_identical(vec_rbind(na_int), data_frame(...1 = na_int))
   expect_identical(vec_rbind(na_int, na_int), data_frame(...1 = int(na_int, na_int)))
@@ -151,7 +186,6 @@ test_that("can construct an id column", {
 test_that("vec_rbind() fails with arrays of dimensionality > 3", {
   expect_error(vec_rbind(array(NA, c(1, 1, 1))), "Can't bind arrays")
 })
-
 
 # cols --------------------------------------------------------------------
 

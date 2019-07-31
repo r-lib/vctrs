@@ -180,7 +180,6 @@ static inline SEXP r_list(SEXP x) {
 
 #define r_str_as_character Rf_ScalarString
 
-SEXP r_as_list(SEXP x);
 SEXP r_as_data_frame(SEXP x);
 
 static inline void r_dbg_save(SEXP x, const char* name) {

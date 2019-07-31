@@ -425,3 +425,89 @@ test_that("na of list-array is 1d slice", {
 test_that("vec_init() asserts vectorness (#301)", {
   expect_error(vec_init(NULL), class = "vctrs_error_scalar_type")
 })
+
+# vec_split_along ---------------------------------------------------------
+
+test_that("`NULL` is passed through", {
+  expect_equal(vec_split_along(NULL), NULL)
+})
+
+test_that("atomics are split into a list", {
+  expect_equal(vec_split_along(1:5), lapply(1:5, identity))
+  expect_equal(vec_split_along(letters), lapply(letters, identity))
+})
+
+test_that("atomic names are kept", {
+  x <- set_names(1:5)
+  expect_equal(lapply(vec_split_along(x), names), as.list(names(x)))
+})
+
+test_that("base R classed objects are split into a list", {
+  fctr <- factor(c("a", "b"))
+  expect_equal(vec_split_along(fctr), lapply(vec_seq_along(fctr), vec_slice, x = fctr))
+
+  date <- new_date(c(0, 1))
+  expect_equal(vec_split_along(date), lapply(vec_seq_along(date), vec_slice, x = date))
+})
+
+test_that("base R classed object names are kept", {
+  fctr <- set_names(factor(c("a", "b")))
+  expect_equal(lapply(vec_split_along(fctr), names), as.list(names(fctr)))
+})
+
+test_that("list elements are split", {
+  x <- list(1, 2)
+  expect_equal(vec_split_along(list(1, 2)), lapply(vec_seq_along(x), vec_slice, x = x))
+})
+
+test_that("data frames are split rowwise", {
+  x <- data_frame(x = 1:2, y = c("a", "b"))
+  expect_equal(vec_split_along(x), lapply(vec_seq_along(x), vec_slice, x = x))
+})
+
+test_that("data frame row names are kept", {
+  x <- data_frame(x = 1:2, y = c("a", "b"))
+  rownames(x) <- c("r1", "r2")
+  expect_equal(lapply(vec_split_along(x), rownames), list("r1", "r2"))
+})
+
+test_that("matrices / arrays are split rowwise", {
+  x <- array(1:12, c(2, 2, 2))
+  expect_equal(vec_split_along(x), lapply(vec_seq_along(x), vec_slice, x = x))
+})
+
+test_that("matrix / array row names are kept", {
+  x <- array(1:12, c(2, 2, 2), dimnames = list(c("r1", "r2"), c("c1", "c2")))
+  expect_equal(lapply(vec_split_along(x), rownames), list("r1", "r2"))
+})
+
+test_that("matrices / arrays without row names have other dimension names kept", {
+  x <- array(1:12, c(2, 2, 2), dimnames = list(NULL, c("c1", "c2")))
+  expect_equal(lapply(vec_split_along(x), colnames), list(c("c1", "c2"), c("c1", "c2")))
+})
+
+test_that("vec_split_along throws error with non-vector inputs", {
+  expect_error(vec_split_along(environment()), class = "vctrs_error_scalar_type")
+})
+
+test_that("vec_split_along() doesn't restore when attributes have already been restored", {
+  scoped_global_bindings(
+    `[.vctrs_foobar` = function(x, i, ...) structure("dispatched", foo = "bar"),
+    vec_restore.vctrs_foobar = function(...) structure("dispatched-and-restored", foo = "bar")
+  )
+  expect_equal(vec_split_along(foobar(NA)), list(structure("dispatched", foo = "bar")))
+})
+
+test_that("vec_split_along() restores when attributes have not been restored by `[`", {
+  scoped_global_bindings(
+    `[.vctrs_foobar` = function(x, i, ...) "dispatched",
+    vec_restore.vctrs_foobar = function(...) "dispatched-and-restored"
+  )
+  expect_equal(vec_split_along(foobar(NA)), list("dispatched-and-restored"))
+})
+
+test_that("vec_split_along() falls back to `[` for shaped objects with no proxy", {
+  x <- foobar(1)
+  dim(x) <- c(1, 1)
+  expect_equal(vec_split_along(x), list(x))
+})
