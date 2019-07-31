@@ -197,3 +197,8 @@ vec_init <- function(x, n = 1L) {
 vec_split_along <- function(x) {
   .Call(vctrs_split_along, x)
 }
+
+# Exposed for testing (`start` is 0-based)
+vec_slice_seq <- function(x, start, size, increasing = TRUE) {
+  .Call(vctrs_slice_seq, x, start, size, increasing)
+}
