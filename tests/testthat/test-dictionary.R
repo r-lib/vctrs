@@ -200,7 +200,7 @@ test_that("can locate unique groups of an empty vector", {
 
   expect_s3_class(out, "data.frame")
   expect_equal(out$key, integer())
-  expect_equal(out$id, list())
+  expect_equal(out$id, list_of(.ptype = integer()))
 })
 
 test_that("can locate unique groups of a data frame", {
@@ -234,9 +234,9 @@ test_that("vec_split_id takes the equality proxy", {
   scoped_comparable_tuple()
   x <- tuple(c(1, 2, 1), 1:3)
   expect_equal(vec_split_id(x)$key, x[1:2])
-  expect_equal(vec_split_id(x)$id, list(c(1L, 3L), 2L))
+  expect_equal(vec_split_id(x)$id, list_of(c(1L, 3L), 2L))
 
   x <- as.POSIXlt(new_datetime(c(1, 2, 1)))
   expect_equal(vec_split_id(x)$key, x[1:2])
-  expect_equal(vec_split_id(x)$id, list(c(1L, 3L), 2L))
+  expect_equal(vec_split_id(x)$id, list_of(c(1L, 3L), 2L))
 })
