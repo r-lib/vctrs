@@ -17,9 +17,11 @@ SEXP strings_vctrs_rcrd = NULL;
 SEXP strings_posixt = NULL;
 SEXP strings_posixlt = NULL;
 SEXP strings_vctrs_vctr = NULL;
+SEXP strings_vctrs_list_of = NULL;
 
 SEXP classes_data_frame = NULL;
 SEXP classes_tibble = NULL;
+SEXP classes_list_of = NULL;
 
 static SEXP syms_as_data_frame2 = NULL;
 static SEXP fns_as_data_frame2 = NULL;
@@ -874,6 +876,8 @@ SEXP strings_minimal = NULL;
 SEXP strings_unique = NULL;
 SEXP strings_universal = NULL;
 SEXP strings_check_unique = NULL;
+SEXP strings_key = NULL;
+SEXP strings_id = NULL;
 
 SEXP syms_i = NULL;
 SEXP syms_n = NULL;
@@ -893,6 +897,7 @@ SEXP syms_outer = NULL;
 SEXP syms_inner = NULL;
 SEXP syms_tilde = NULL;
 SEXP syms_dot_environment = NULL;
+SEXP syms_ptype = NULL;
 SEXP syms_missing = NULL;
 
 SEXP fns_bracket = NULL;
@@ -912,7 +917,7 @@ void vctrs_init_utils(SEXP ns) {
 
   // Holds the CHARSXP objects because unlike symbols they can be
   // garbage collected
-  strings = Rf_allocVector(STRSXP, 11);
+  strings = Rf_allocVector(STRSXP, 13);
   R_PreserveObject(strings);
 
   strings_dots = Rf_mkChar("...");
@@ -948,6 +953,12 @@ void vctrs_init_utils(SEXP ns) {
   strings_check_unique = Rf_mkChar("check_unique");
   SET_STRING_ELT(strings, 10, strings_check_unique);
 
+  strings_key = Rf_mkChar("key");
+  SET_STRING_ELT(strings, 11, strings_key);
+
+  strings_id = Rf_mkChar("id");
+  SET_STRING_ELT(strings, 12, strings_id);
+
 
   classes_data_frame = Rf_allocVector(STRSXP, 1);
   R_PreserveObject(classes_data_frame);
@@ -966,6 +977,15 @@ void vctrs_init_utils(SEXP ns) {
   SET_STRING_ELT(classes_tibble, 1, strings_tbl);
 
   SET_STRING_ELT(classes_tibble, 2, strings_data_frame);
+
+
+  classes_list_of = Rf_allocVector(STRSXP, 2);
+  R_PreserveObject(classes_list_of);
+
+  strings_vctrs_list_of = Rf_mkChar("vctrs_list_of");
+  SET_STRING_ELT(classes_list_of, 0, strings_vctrs_list_of);
+
+  SET_STRING_ELT(classes_list_of, 1, strings_vctrs_vctr);
 
 
   vctrs_shared_empty_lgl = Rf_allocVector(LGLSXP, 0);
@@ -1038,6 +1058,7 @@ void vctrs_init_utils(SEXP ns) {
   syms_inner = Rf_install("inner");
   syms_tilde = Rf_install("~");
   syms_dot_environment = Rf_install(".Environment");
+  syms_ptype = Rf_install("ptype");
   syms_missing = R_MissingArg;
 
   fns_bracket = Rf_findVar(syms_bracket, R_BaseEnv);

@@ -391,13 +391,13 @@ SEXP vctrs_duplicated(SEXP x) {
   return out;
 }
 
-SEXP vctrs_duplicate_split(SEXP x) {
+SEXP vctrs_split_id(SEXP x) {
   int nprot = 0;
 
-  x = PROTECT_N(vec_proxy_equal(x), &nprot);
+  SEXP proxy = PROTECT_N(vec_proxy_equal(x), &nprot);
 
   dictionary d;
-  dict_init(&d, x);
+  dict_init(&d, proxy);
   PROTECT_DICT(&d, &nprot);
 
   // Tracks the order in which keys are seen
@@ -408,7 +408,7 @@ SEXP vctrs_duplicate_split(SEXP x) {
   SEXP count = PROTECT_N(Rf_allocVector(INTSXP, d.size), &nprot);
   int* p_count = INTEGER(count);
 
-  R_len_t n = vec_size(x);
+  R_len_t n = vec_size(proxy);
 
   // Tells us which element of the index list x[i] goes in
   SEXP out_pos = PROTECT_N(Rf_allocVector(INTSXP, n), &nprot);
@@ -428,10 +428,14 @@ SEXP vctrs_duplicate_split(SEXP x) {
     p_count[hash]++;
   }
 
-  SEXP out_key = PROTECT_N(Rf_allocVector(INTSXP, d.used), &nprot);
-  int* p_out_key = INTEGER(out_key);
+  // Track the first position of each key in `x`
+  SEXP key_id = PROTECT_N(Rf_allocVector(INTSXP, d.used), &nprot);
+  int* p_key_id = INTEGER(key_id);
 
-  SEXP out_idx = PROTECT_N(Rf_allocVector(VECSXP, d.used), &nprot);
+  // TODO - Replace ad hoc construction of `list_of<int>` with constructor
+  SEXP out_id = PROTECT_N(Rf_allocVector(VECSXP, d.used), &nprot);
+  Rf_setAttrib(out_id, R_ClassSymbol, classes_list_of);
+  Rf_setAttrib(out_id, syms_ptype, vctrs_shared_empty_int);
 
   SEXP counters = PROTECT_N(Rf_allocVector(INTSXP, d.used), &nprot);
   int* p_counters = INTEGER(counters);
@@ -443,7 +447,7 @@ SEXP vctrs_duplicate_split(SEXP x) {
       continue;
     }
 
-    SET_VECTOR_ELT(out_idx, p_tracker[hash], Rf_allocVector(INTSXP, p_count[hash]));
+    SET_VECTOR_ELT(out_id, p_tracker[hash], Rf_allocVector(INTSXP, p_count[hash]));
   }
 
   // Fill index container and key locations
@@ -452,23 +456,27 @@ SEXP vctrs_duplicate_split(SEXP x) {
     int hash = p_counters[j];
 
     if (hash == 0) {
-      p_out_key[j] = i + 1;
+      p_key_id[j] = i + 1;
     }
 
-    INTEGER(VECTOR_ELT(out_idx, j))[hash] = i + 1;
+    INTEGER(VECTOR_ELT(out_id, j))[hash] = i + 1;
     p_counters[j] = hash + 1;
   }
 
-  // Construct output
+  SEXP out_key = PROTECT_N(vec_slice(x, key_id), &nprot);
+
+  // Construct output data frame
   SEXP out = PROTECT_N(Rf_allocVector(VECSXP, 2), &nprot);
   SET_VECTOR_ELT(out, 0, out_key);
-  SET_VECTOR_ELT(out, 1, out_idx);
+  SET_VECTOR_ELT(out, 1, out_id);
 
   SEXP names = PROTECT_N(Rf_allocVector(STRSXP, 2), &nprot);
-  SET_STRING_ELT(names, 0, Rf_mkChar("key"));
-  SET_STRING_ELT(names, 1, Rf_mkChar("idx"));
+  SET_STRING_ELT(names, 0, strings_key);
+  SET_STRING_ELT(names, 1, strings_id);
 
   Rf_setAttrib(out, R_NamesSymbol, names);
+
+  out = new_data_frame(out, d.used);
 
   UNPROTECT(nprot);
   return out;

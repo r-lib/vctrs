@@ -259,17 +259,39 @@ vec_split <- function(x, by) {
     abort("`x` and `by` must have same size")
   }
 
-  ki <- vec_duplicate_split(by)
-  keys <- vec_slice(by, ki$key)
-  x_split <- map(ki$idx, vec_slice, x = x)
+  out <- vec_split_id(by)
 
-  vals <- new_list_of(x_split, vec_ptype(x))
+  x_split <- map(out$id, vec_slice, x = x)
+  out$val <- new_list_of(x_split, vec_ptype(x))
 
-  new_data_frame(list(key = keys, val = vals), n = vec_size(keys))
+  out$id <- NULL
+
+  out
 }
 
-# Returns key-index pair giving the index of first key occurence and
-# a list containing the locations of each key
-vec_duplicate_split <- function(x) {
-  .Call(vctrs_duplicate_split, x)
+#' Locate unique groups in a vector
+#'
+#' This locates unique groups in `x` and returns both the unique values and
+#' the locations of every appearance of each value. It is used to power
+#' [vec_split()].
+#'
+#' @param x A vector to locate unique groups for.
+#' @return A data frame with two columns and size equal to
+#'   `vec_size(vec_unique(x))`. The `key` column has the same type as `x`, and
+#'   the `id` column is a `list_of<integer>`.
+#'
+#'   Note for complex types, the default `data.frame` print method will be
+#'   suboptimal, and you will want to coerce into a tibble to better understand
+#'   the output.
+#' @seealso [vec_split]
+#' @export
+#' @examples
+#' vec_split_id(mtcars$vs)
+#' vec_split_id(mtcars[c("vs", "am")])
+#'
+#' if (require("tibble")) {
+#'   as_tibble(vec_split_id(mtcars[c("vs", "am")]))
+#' }
+vec_split_id <- function(x) {
+  .Call(vctrs_split_id, x)
 }

@@ -192,3 +192,51 @@ test_that("split takes the equality proxy (#375)", {
   x <- tuple(c(1, 2, 1), 1:3)
   expect_identical(nrow(vec_split(1:3, x)), 2L)
 })
+
+# split id ---------------------------------------------------------------
+
+test_that("can locate unique groups of an empty vector", {
+  out <- vec_split_id(integer())
+
+  expect_s3_class(out, "data.frame")
+  expect_equal(out$key, integer())
+  expect_equal(out$id, list_of(.ptype = integer()))
+})
+
+test_that("can locate unique groups of a data frame", {
+  df <- data_frame(x = c(1, 1, 1, 2, 2), y = c("a", "a", "b", "a", "b"))
+  out <- vec_split_id(df)
+
+  expect_equal(nrow(out), 4L)
+  expect_equal(out$key, vec_unique(df))
+})
+
+test_that("can locate unique groups of a data frame with a list column", {
+  df <- data_frame(x = list(1:2, 1:2, "a", 5.5, "a"))
+  out <- vec_split_id(df)
+
+  expect_equal(nrow(out), 3L)
+  expect_equal(out$key, vec_unique(df))
+})
+
+test_that("`x` must be a vector", {
+  expect_error(vec_split_id(environment()), class = "vctrs_error_scalar_type")
+})
+
+test_that("`key` column retains full type information", {
+  x <- factor(letters[c(1, 2, 1)], levels = letters[1:3])
+  out <- vec_split_id(x)
+
+  expect_equal(levels(out$key), levels(x))
+})
+
+test_that("vec_split_id takes the equality proxy", {
+  scoped_comparable_tuple()
+  x <- tuple(c(1, 2, 1), 1:3)
+  expect_equal(vec_split_id(x)$key, x[1:2])
+  expect_equal(vec_split_id(x)$id, list_of(c(1L, 3L), 2L))
+
+  x <- as.POSIXlt(new_datetime(c(1, 2, 1)))
+  expect_equal(vec_split_id(x)$key, x[1:2])
+  expect_equal(vec_split_id(x)$id, list_of(c(1L, 3L), 2L))
+})
