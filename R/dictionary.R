@@ -269,6 +269,10 @@ vec_split <- function(x, by) {
   out
 }
 
+vec_split2 <- function(x, by) {
+  .Call(vctrs_split, x, by)
+}
+
 #' Locate unique groups in a vector
 #'
 #' This locates unique groups in `x` and returns both the unique values and

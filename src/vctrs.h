@@ -213,7 +213,7 @@ SEXP vec_cast(SEXP x, SEXP to, struct vctrs_arg* x_arg, struct vctrs_arg* to_arg
 SEXP vec_cast_common(SEXP xs, SEXP to);
 SEXP vec_coercible_cast(SEXP x, SEXP to, struct vctrs_arg* x_arg, struct vctrs_arg* to_arg);
 SEXP vec_slice(SEXP x, SEXP index);
-SEXP vec_split_along(SEXP x);
+SEXP vec_split_along(SEXP x, SEXP indices, bool check_index);
 SEXP vec_slice_shaped(enum vctrs_type type, SEXP x, SEXP index);
 SEXP vec_assign(SEXP x, SEXP index, SEXP value);
 SEXP vec_init(SEXP x, R_len_t n);

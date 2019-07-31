@@ -391,7 +391,7 @@ SEXP vctrs_duplicated(SEXP x) {
   return out;
 }
 
-SEXP vctrs_split_id(SEXP x) {
+SEXP vec_split_id(SEXP x) {
   int nprot = 0;
 
   SEXP proxy = PROTECT_N(vec_proxy_equal(x), &nprot);
@@ -477,6 +477,31 @@ SEXP vctrs_split_id(SEXP x) {
   out = new_data_frame(out, d.used);
 
   UNPROTECT(nprot);
+  return out;
+}
+
+SEXP vec_split(SEXP x, SEXP by) {
+  if (vec_size(x) != vec_size(by)) {
+    Rf_errorcall(R_NilValue, "`x` and `by` must have the same size.");
+  }
+
+  SEXP out = PROTECT(vec_split_id(by));
+
+  SEXP indices = VECTOR_ELT(out, 1);
+
+  SEXP val = PROTECT(vec_split_along(x, indices, false));
+
+  // init_list_of()
+  Rf_setAttrib(val, R_ClassSymbol, classes_list_of);
+  Rf_setAttrib(val, syms_ptype, vec_type(x));
+
+  SET_VECTOR_ELT(out, 1, val);
+
+  SEXP names = PROTECT(Rf_getAttrib(out, R_NamesSymbol));
+  SET_STRING_ELT(names, 1, Rf_mkChar("val"));
+  Rf_setAttrib(out, R_NamesSymbol, names);
+
+  UNPROTECT(3);
   return out;
 }
 

@@ -194,8 +194,8 @@ vec_init <- function(x, n = 1L) {
 }
 
 # Used internally by `vec_rbind()`, but exported for testing
-vec_split_along <- function(x) {
-  .Call(vctrs_split_along, x)
+vec_split_along <- function(x, indices = NULL) {
+  .Call(vctrs_split_along, x, indices)
 }
 
 # Exposed for testing (`start` is 0-based)

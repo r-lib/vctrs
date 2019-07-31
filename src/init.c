@@ -19,7 +19,8 @@ extern SEXP vctrs_hash_object(SEXP);
 extern SEXP vctrs_equal_object(SEXP, SEXP, SEXP);
 extern SEXP vctrs_in(SEXP, SEXP);
 extern SEXP vctrs_duplicated(SEXP);
-extern SEXP vctrs_split_id(SEXP);
+extern SEXP vec_split_id(SEXP);
+extern SEXP vec_split(SEXP, SEXP);
 extern SEXP vctrs_unique_loc(SEXP);
 extern SEXP vctrs_count(SEXP);
 extern SEXP vctrs_id(SEXP);
@@ -40,7 +41,7 @@ extern SEXP vctrs_typeof2(SEXP, SEXP);
 extern SEXP vctrs_cast(SEXP, SEXP, SEXP, SEXP);
 extern SEXP vctrs_as_index(SEXP, SEXP, SEXP);
 extern SEXP vctrs_slice(SEXP, SEXP);
-extern SEXP vec_split_along(SEXP);
+extern SEXP vctrs_split_along(SEXP, SEXP);
 extern SEXP vec_slice_seq(SEXP, SEXP, SEXP, SEXP);
 extern SEXP vec_restore(SEXP, SEXP, SEXP);
 extern SEXP vec_restore_default(SEXP, SEXP);
@@ -89,7 +90,8 @@ static const R_CallMethodDef CallEntries[] = {
   {"vctrs_in",                         (DL_FUNC) &vctrs_in, 2},
   {"vctrs_unique_loc",                 (DL_FUNC) &vctrs_unique_loc, 1},
   {"vctrs_duplicated",                 (DL_FUNC) &vctrs_duplicated, 1},
-  {"vctrs_split_id",                   (DL_FUNC) &vctrs_split_id, 1},
+  {"vctrs_split_id",                   (DL_FUNC) &vec_split_id, 1},
+  {"vctrs_split",                      (DL_FUNC) &vec_split, 2},
   {"vctrs_duplicated_any",             (DL_FUNC) &vctrs_duplicated_any, 1},
   {"vctrs_count",                      (DL_FUNC) &vctrs_count, 1},
   {"vctrs_id",                         (DL_FUNC) &vctrs_id, 1},
@@ -110,7 +112,7 @@ static const R_CallMethodDef CallEntries[] = {
   {"vctrs_cast",                       (DL_FUNC) &vctrs_cast, 4},
   {"vctrs_as_index",                   (DL_FUNC) &vctrs_as_index, 3},
   {"vctrs_slice",                      (DL_FUNC) &vctrs_slice, 2},
-  {"vctrs_split_along",                (DL_FUNC) &vec_split_along, 1},
+  {"vctrs_split_along",                (DL_FUNC) &vctrs_split_along, 2},
   {"vctrs_slice_seq",                  (DL_FUNC) &vec_slice_seq, 4},
   {"vctrs_restore",                    (DL_FUNC) &vec_restore, 3},
   {"vctrs_restore_default",            (DL_FUNC) &vec_restore_default, 2},
