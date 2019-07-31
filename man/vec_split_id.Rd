@@ -12,7 +12,7 @@ vec_split_id(x)
 \value{
 A data frame with two columns and size equal to
 \code{vec_size(vec_unique(x))}. The \code{key} column has the same type as \code{x}, and
-the \code{id} column is a list of integers.
+the \code{id} column is a \code{list_of<integer>}.
 
 Note for complex types, the default \code{data.frame} print method will be
 suboptimal, and you will want to coerce into a tibble to better understand

@@ -278,7 +278,7 @@ vec_split <- function(x, by) {
 #' @param x A vector to locate unique groups for.
 #' @return A data frame with two columns and size equal to
 #'   `vec_size(vec_unique(x))`. The `key` column has the same type as `x`, and
-#'   the `id` column is a list of integers.
+#'   the `id` column is a `list_of<integer>`.
 #'
 #'   Note for complex types, the default `data.frame` print method will be
 #'   suboptimal, and you will want to coerce into a tibble to better understand
