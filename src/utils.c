@@ -17,9 +17,11 @@ SEXP strings_vctrs_rcrd = NULL;
 SEXP strings_posixt = NULL;
 SEXP strings_posixlt = NULL;
 SEXP strings_vctrs_vctr = NULL;
+SEXP strings_vctrs_list_of = NULL;
 
 SEXP classes_data_frame = NULL;
 SEXP classes_tibble = NULL;
+SEXP classes_list_of = NULL;
 
 static SEXP syms_as_data_frame2 = NULL;
 static SEXP fns_as_data_frame2 = NULL;
@@ -895,6 +897,7 @@ SEXP syms_outer = NULL;
 SEXP syms_inner = NULL;
 SEXP syms_tilde = NULL;
 SEXP syms_dot_environment = NULL;
+SEXP syms_ptype = NULL;
 SEXP syms_missing = NULL;
 
 SEXP fns_bracket = NULL;
@@ -976,6 +979,15 @@ void vctrs_init_utils(SEXP ns) {
   SET_STRING_ELT(classes_tibble, 2, strings_data_frame);
 
 
+  classes_list_of = Rf_allocVector(STRSXP, 2);
+  R_PreserveObject(classes_list_of);
+
+  strings_vctrs_list_of = Rf_mkChar("vctrs_list_of");
+  SET_STRING_ELT(classes_list_of, 0, strings_vctrs_list_of);
+
+  SET_STRING_ELT(classes_list_of, 1, strings_vctrs_vctr);
+
+
   vctrs_shared_empty_lgl = Rf_allocVector(LGLSXP, 0);
   R_PreserveObject(vctrs_shared_empty_lgl);
   MARK_NOT_MUTABLE(vctrs_shared_empty_lgl);
@@ -1046,6 +1058,7 @@ void vctrs_init_utils(SEXP ns) {
   syms_inner = Rf_install("inner");
   syms_tilde = Rf_install("~");
   syms_dot_environment = Rf_install(".Environment");
+  syms_ptype = Rf_install("ptype");
   syms_missing = R_MissingArg;
 
   fns_bracket = Rf_findVar(syms_bracket, R_BaseEnv);

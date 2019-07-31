@@ -194,6 +194,7 @@ extern SEXP vctrs_shared_zero_int;
 
 extern SEXP classes_data_frame;
 extern SEXP classes_tibble;
+extern SEXP classes_list_of;
 
 extern SEXP strings_dots;
 extern SEXP strings_empty;
@@ -230,6 +231,7 @@ extern SEXP syms_outer;
 extern SEXP syms_inner;
 extern SEXP syms_tilde;
 extern SEXP syms_dot_environment;
+extern SEXP syms_ptype;
 extern SEXP syms_missing;
 
 #define syms_names R_NamesSymbol
