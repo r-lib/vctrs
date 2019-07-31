@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>A 1d vector of unspecified type — unspecified • vctrs</title>
+<title>Locate unique groups in a vector — vec_split_id • vctrs</title>
 
 <!-- jquery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
@@ -30,11 +30,11 @@
 
 
 
-<meta property="og:title" content="A 1d vector of unspecified type — unspecified" />
+<meta property="og:title" content="Locate unique groups in a vector — vec_split_id" />
 
-<meta property="og:description" content="This is a partial type used to represent logical vectors
-that only contain NA. These require special handling because we want to
-allow NA to specify missingness without requiring a type." />
+<meta property="og:description" content="This locates unique groups in x and returns both the unique values and
+the locations of every appearance of each value. It is used to power
+vec_split()." />
 
 <meta property="og:image" content="https://vctrs.r-lib.org/logo.png" />
 <meta name="twitter:card" content="summary" />
@@ -124,52 +124,71 @@ allow NA to specify missingness without requiring a type." />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>A 1d vector of unspecified type</h1>
-    <small class="dont-index">Source: <a href='https://github.com/r-lib/vctrs/blob/master/R/type-unspecified.R'><code>R/type-unspecified.R</code></a></small>
-    <div class="hidden name"><code>unspecified.Rd</code></div>
+    <h1>Locate unique groups in a vector</h1>
+    <small class="dont-index">Source: <a href='https://github.com/r-lib/vctrs/blob/master/R/dictionary.R'><code>R/dictionary.R</code></a></small>
+    <div class="hidden name"><code>vec_split_id.Rd</code></div>
     </div>
 
     <div class="ref-description">
     
-    <p>This is a <a href='new_partial.html'>partial type</a> used to represent logical vectors
-that only contain <code>NA</code>. These require special handling because we want to
-allow <code>NA</code> to specify missingness without requiring a type.</p>
+    <p>This locates unique groups in <code>x</code> and returns both the unique values and
+the locations of every appearance of each value. It is used to power
+<code><a href='vec_split.html'>vec_split()</a></code>.</p>
     
     </div>
 
-    <pre class="usage"><span class='fu'>unspecified</span>(<span class='kw'>n</span> <span class='kw'>=</span> <span class='fl'>0</span>)
-
-<span class='co'># S3 method for vctrs_unspecified</span>
-<span class='fu'><a href='vec_ptype2.html'>vec_ptype2</a></span>(<span class='no'>x</span>, <span class='no'>y</span>, <span class='no'>...</span>)</pre>
+    <pre class="usage"><span class='fu'>vec_split_id</span>(<span class='no'>x</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>n</th>
-      <td><p>Length of vector</p></td>
+      <th>x</th>
+      <td><p>A vector to locate unique groups for.</p></td>
     </tr>
     </table>
     
+    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
+
+    <p>A data frame with two columns and size equal to
+<code><a href='vec_size.html'>vec_size(vec_unique(x))</a></code>. The <code>key</code> column has the same type as <code>x</code>, and
+the <code>id</code> column is a <code>list_of&lt;integer&gt;</code>.</p>
+<p>Note for complex types, the default <code>data.frame</code> print method will be
+suboptimal, and you will want to coerce into a tibble to better understand
+the output.</p>
+    
+    <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
+
+    <div class='dont-index'><p><a href='vec_split.html'>vec_split</a></p></div>
+    
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'><a href='vec_ptype.html'>vec_ptype_show</a></span>()</div><div class='output co'>#&gt; Prototype: NULL</div><div class='input'><span class='fu'><a href='vec_ptype.html'>vec_ptype_show</a></span>(<span class='fl'>NA</span>)</div><div class='output co'>#&gt; Prototype: logical</div><div class='input'>
-<span class='fu'><a href='vec_c.html'>vec_c</a></span>(<span class='fl'>NA</span>, <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/factor'>factor</a></span>(<span class='st'>"x"</span>))</div><div class='output co'>#&gt; [1] &lt;NA&gt; x   
-#&gt; Levels: x</div><div class='input'><span class='fu'><a href='vec_c.html'>vec_c</a></span>(<span class='fl'>NA</span>, <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/Sys.time'>Sys.Date</a></span>())</div><div class='output co'>#&gt; [1] NA           "2019-07-31"</div><div class='input'><span class='fu'><a href='vec_c.html'>vec_c</a></span>(<span class='fl'>NA</span>, <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/Sys.time'>Sys.time</a></span>())</div><div class='output co'>#&gt; [1] NA                        "2019-07-31 14:06:45 UTC"</div><div class='input'><span class='fu'><a href='vec_c.html'>vec_c</a></span>(<span class='fl'>NA</span>, <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/list'>list</a></span>(<span class='fl'>1</span>:<span class='fl'>3</span>, <span class='fl'>4</span>:<span class='fl'>5</span>))</div><div class='output co'>#&gt; [[1]]
-#&gt; [1] NA
-#&gt; 
-#&gt; [[2]]
-#&gt; [1] 1 2 3
-#&gt; 
-#&gt; [[3]]
-#&gt; [1] 4 5
-#&gt; </div></pre>
+    <pre class="examples"><div class='input'><span class='fu'>vec_split_id</span>(<span class='no'>mtcars</span>$<span class='no'>vs</span>)</div><div class='output co'>#&gt;   key                                                                 id
+#&gt; 1   0 1, 2, 5, 7, 12, 13, 14, 15, 16, 17, 22, 23, 24, 25, 27, 29, 30, 31
+#&gt; 2   1                  3, 4, 6, 8, 9, 10, 11, 18, 19, 20, 21, 26, 28, 32</div><div class='input'><span class='fu'>vec_split_id</span>(<span class='no'>mtcars</span>[<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='st'>"vs"</span>, <span class='st'>"am"</span>)])</div><div class='output co'>#&gt;   key.vs key.am                                           id
+#&gt; 1      0      1                         1, 2, 27, 29, 30, 31
+#&gt; 2      1      1                    3, 18, 19, 20, 26, 28, 32
+#&gt; 3      1      0                       4, 6, 8, 9, 10, 11, 21
+#&gt; 4      0      0 5, 7, 12, 13, 14, 15, 16, 17, 22, 23, 24, 25</div><div class='input'>
+<span class='kw'>if</span> (<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/library'>require</a></span>(<span class='st'>"tibble"</span>)) {
+  <span class='fu'><a href='https://tibble.tidyverse.org/reference/as_tibble.html'>as_tibble</a></span>(<span class='fu'>vec_split_id</span>(<span class='no'>mtcars</span>[<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='st'>"vs"</span>, <span class='st'>"am"</span>)]))
+}</div><div class='output co'>#&gt; <span style='color: #949494;'># A tibble: 4 x 2</span><span>
+#&gt;   key$vs   $am          id
+#&gt;    </span><span style='color: #949494;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #949494;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #949494;font-style: italic;'>&lt;list&lt;int&gt;&gt;</span><span>
+#&gt; </span><span style='color: #BCBCBC;'>1</span><span>      0     1         [6]
+#&gt; </span><span style='color: #BCBCBC;'>2</span><span>      1     1         [7]
+#&gt; </span><span style='color: #BCBCBC;'>3</span><span>      1     0         [7]
+#&gt; </span><span style='color: #BCBCBC;'>4</span><span>      0     0        [12]</div></span></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
       <li><a href="#arguments">Arguments</a></li>
-            
+      
+      <li><a href="#value">Value</a></li>
+
+      <li><a href="#see-also">See also</a></li>
+      
       <li><a href="#examples">Examples</a></li>
     </ul>
 
