@@ -497,7 +497,7 @@ SEXP vec_split(SEXP x, SEXP by) {
   SET_VECTOR_ELT(out, 1, val);
 
   SEXP names = PROTECT(Rf_getAttrib(out, R_NamesSymbol));
-  SET_STRING_ELT(names, 1, Rf_mkChar("val"));
+  SET_STRING_ELT(names, 1, strings_val);
   Rf_setAttrib(out, R_NamesSymbol, names);
 
   UNPROTECT(4);
