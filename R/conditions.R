@@ -256,8 +256,9 @@ stop_lossy_cast <- function(x, to, result,
                             to_arg = "",
                             message = NULL,
                             .subclass = NULL) {
+  locations_message <- locations
   if (length(locations)) {
-    locations <- inline_list("Locations: ", locations)
+    locations_message <- inline_list("Locations: ", locations_message)
   }
 
   if (is_null(message)) {
@@ -266,7 +267,7 @@ stop_lossy_cast <- function(x, to, result,
 
     message <- glue_lines(
       "Lossy cast from {x_label} to {to_label}.",
-      locations,
+      locations_message,
       details
     )
   }
