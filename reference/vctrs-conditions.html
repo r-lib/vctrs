@@ -286,7 +286,7 @@ returns the result silently.</p>
 #&gt; </span><span style='color: #555555;'> 45. </span><span>                              │ └─base:::withOneRestart(expr, restarts[[1L]])
 #&gt; </span><span style='color: #555555;'> 46. </span><span>                              │   └─base:::doWithOneRestart(return(expr), restart)
 #&gt; </span><span style='color: #555555;'> 47. </span><span>                              └─vctrs:::stop_lossy_cast(...)
-#&gt; </span><span style='color: #555555;'> 48. </span><span>                                └─vctrs:::stop_vctrs(...) </span><span style='color: #555555;'>/home/travis/build/r-lib/vctrs/R/conditions.R:274:2</span><span></div><div class='input'>
+#&gt; </span><span style='color: #555555;'> 48. </span><span>                                └─vctrs:::stop_vctrs(...) </span><span style='color: #555555;'>/home/travis/build/r-lib/vctrs/R/conditions.R:275:2</span><span></div><div class='input'>
 <span class='co'># Unless lossy casts are allowed:</span>
 <span class='fu'>allow_lossy_cast</span>(
   <span class='fu'>maybe_lossy_cast</span>(<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='st'>"foo"</span>, <span class='st'>"bar"</span>), <span class='kw'>NULL</span>, <span class='st'>""</span>, <span class='kw'>lossy</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='fl'>FALSE</span>, <span class='fl'>TRUE</span>))
