@@ -432,10 +432,8 @@ SEXP vctrs_split_id(SEXP x) {
   SEXP key_id = PROTECT_N(Rf_allocVector(INTSXP, d.used), &nprot);
   int* p_key_id = INTEGER(key_id);
 
-  // TODO - Replace ad hoc construction of `list_of<int>` with constructor
   SEXP out_id = PROTECT_N(Rf_allocVector(VECSXP, d.used), &nprot);
-  Rf_setAttrib(out_id, R_ClassSymbol, classes_list_of);
-  Rf_setAttrib(out_id, syms_ptype, vctrs_shared_empty_int);
+  init_list_of(out_id, vctrs_shared_empty_int);
 
   SEXP counters = PROTECT_N(Rf_allocVector(INTSXP, d.used), &nprot);
   int* p_counters = INTEGER(counters);

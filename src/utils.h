@@ -64,6 +64,9 @@ void never_reached(const char* fn) __attribute__((noreturn));
 
 enum vctrs_type2 vec_typeof2_impl(enum vctrs_type type_x, enum vctrs_type type_y, int* left);
 
+SEXP new_list_of(SEXP x, SEXP ptype);
+void init_list_of(SEXP x, SEXP ptype);
+
 SEXP new_data_frame(SEXP x, R_len_t n);
 void init_data_frame(SEXP x, R_len_t n);
 void init_tibble(SEXP x, R_len_t n);
