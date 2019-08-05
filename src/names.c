@@ -603,6 +603,32 @@ static SEXP set_names_fallback(SEXP x, SEXP names) {
                          syms_names, names);
 }
 
+static void check_names(SEXP x, SEXP names) {
+  if (names == R_NilValue) {
+    return;
+  }
+
+  if (TYPEOF(names) != STRSXP) {
+    Rf_errorcall(
+      R_NilValue,
+      "`names` must be a character vector, not a %s.",
+      Rf_type2char(TYPEOF(names))
+    );
+  }
+
+  R_len_t x_size = vec_size(x);
+  R_len_t names_size = vec_size(names);
+
+  if (x_size != names_size) {
+    Rf_errorcall(
+      R_NilValue,
+      "The size of `names`, %i, must be the same as the size of `x`, %i.",
+      names_size,
+      x_size
+    );
+  }
+}
+
 SEXP vec_set_rownames(SEXP x, SEXP names) {
   if (OBJECT(x)) {
     return set_rownames_fallback(x, names);
@@ -639,6 +665,8 @@ SEXP vec_set_names(SEXP x, SEXP names) {
   if (is_data_frame(x)) {
     return x;
   }
+
+  check_names(x, names);
 
   if (has_dim(x)) {
     return vec_set_rownames(x, names);

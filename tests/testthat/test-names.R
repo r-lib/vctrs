@@ -224,6 +224,11 @@ test_that("vec_set_names() can set NULL names", {
   expect_equal(vec_set_names(x_mat_named, NULL), exp)
 })
 
+test_that("vec_set_names() errors with bad `names`", {
+  expect_error(vec_set_names(1, 1), "character vector, not a double")
+  expect_error(vec_set_names(1, c("x", "y")), "The size of `names`, 2")
+})
+
 # minimal names -------------------------------------------------------------
 
 test_that("minimal names are made from `n` when `name = NULL`", {
