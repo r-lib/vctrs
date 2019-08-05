@@ -620,7 +620,7 @@ SEXP vec_set_rownames(SEXP x, SEXP names) {
 
   SEXP dim_names = Rf_getAttrib(x, R_DimNamesSymbol);
 
-  // Early exit when no new row names, and no existing row names
+  // Early exit when no new row names and no existing row names
   if (names == R_NilValue) {
     if (dim_names == R_NilValue || VECTOR_ELT(dim_names, 0) == R_NilValue) {
       return x;
@@ -656,7 +656,7 @@ SEXP vec_set_names(SEXP x, SEXP names) {
     return set_names_fallback(x, names);
   }
 
-  // Early exit if no new names, and no existing names
+  // Early exit if no new names and no existing names
   if (names == R_NilValue && Rf_getAttrib(x, R_NamesSymbol) == R_NilValue) {
     return x;
   }
