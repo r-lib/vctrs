@@ -112,8 +112,9 @@ static SEXP vec_c(SEXP xs,
 
   if (has_names) {
     out_names = PROTECT(vec_as_names(out_names, name_repair, false));
-    out = PROTECT(vec_set_names(out, out_names));
-    UNPROTECT(2);
+    out = vec_set_names(out, out_names);
+    REPROTECT(out, out_pi);
+    UNPROTECT(1);
   }
 
   UNPROTECT(6);
