@@ -587,7 +587,7 @@ static SEXP outer_names_seq(const char* outer, R_len_t n) {
 SEXP syms_set_rownames_fallback = NULL;
 SEXP fns_set_rownames_fallback = NULL;
 
-static SEXP set_rownames(SEXP x, SEXP names) {
+static SEXP set_rownames_fallback(SEXP x, SEXP names) {
   return vctrs_dispatch2(syms_set_rownames_fallback, fns_set_rownames_fallback,
                          syms_x, x,
                          syms_names, names);
@@ -597,7 +597,7 @@ static SEXP set_rownames(SEXP x, SEXP names) {
 SEXP syms_set_names_fallback = NULL;
 SEXP fns_set_names_fallback = NULL;
 
-static SEXP set_names(SEXP x, SEXP names) {
+static SEXP set_names_fallback(SEXP x, SEXP names) {
   return vctrs_dispatch2(syms_set_names_fallback, fns_set_names_fallback,
                          syms_x, x,
                          syms_names, names);
@@ -613,7 +613,7 @@ SEXP vec_set_rownames(SEXP x, SEXP names) {
   }
 
   if (OBJECT(x)) {
-    return set_rownames(x, names);
+    return set_rownames_fallback(x, names);
   }
 
   int nprot = 0;
@@ -653,7 +653,7 @@ SEXP vec_set_names(SEXP x, SEXP names) {
   }
 
   if (OBJECT(x)) {
-    return set_names(x, names);
+    return set_names_fallback(x, names);
   }
 
   // Early exit if no new names, and no existing names
