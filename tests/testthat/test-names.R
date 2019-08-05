@@ -147,6 +147,82 @@ test_that("vec_repair_names() handles data frames and arrays", {
   expect_identical(row.names(vec_repair_names(as.matrix(df), "unique")), c("...1", "...2"))
 })
 
+# vec_set_names() -----------------------------------------------------------
+
+test_that("vec_set_names() sets atomic names", {
+  x <- 1:2
+  names <- c("x1", "x2")
+  exp <- set_names(x, names)
+  expect_equal(vec_set_names(x, names), exp)
+})
+
+test_that("vec_set_names() sets matrix/array names", {
+  x <- matrix(1:2)
+  names <- c("x1", "x2")
+  exp <- x
+  rownames(exp) <- names
+  expect_equal(vec_set_names(x, names), exp)
+
+  y <- array(1:4, dim = c(2, 1, 2))
+  exp <- y
+  rownames(exp) <- names
+  expect_equal(vec_set_names(y, names), exp)
+})
+
+test_that("vec_set_names() does not set row names on data frames", {
+  x <- data.frame(a = 1, b = 2)
+  expect_equal(vec_set_names(x, "r1"), x)
+})
+
+test_that("vec_set_names() leaves existing data frame row names intact", {
+  x <- data.frame(a = 1, b = 2, row.names = "original")
+  expect_equal(rownames(vec_set_names(x, "new")), "original")
+})
+
+test_that("vec_set_names() correctly sets names on POSIXlt objects", {
+  x <- as.POSIXlt(new_datetime(0))
+  exp <- set_names(x, "a")
+  expect_equal(vec_set_names(x, "a"), exp)
+})
+
+test_that("vec_set_names() falls back to `names<-` with proxied objects", {
+  x <- structure(1, class = "foobar")
+  exp <- set_names(x, "a")
+
+  expect_equal(vec_set_names(x, "a"), exp)
+
+  scoped_global_bindings(`names<-.foobar` = function(x, value) "fallback!")
+  expect_equal(vec_set_names(x, "a"), "fallback!")
+})
+
+test_that("vec_set_names() falls back to `rownames<-` with shaped proxied objects", {
+  x <- structure(1:2, dim = c(2L, 1L), class = "foobar")
+  names <- c("r1", "r2")
+  exp <- x
+  rownames(exp) <- names
+
+  expect_equal(vec_set_names(x, names), exp)
+
+  # `rownames<-` is not generic, but eventually calls `dimnames<-` which is
+  scoped_global_bindings(`dimnames<-.foobar` = function(x, value) "fallback!")
+  expect_equal(vec_set_names(x, names), "fallback!")
+})
+
+test_that("vec_set_names() can set NULL names", {
+  x <- 1:2
+  expect_equal(vec_set_names(x, NULL), x)
+
+  x_named <- set_names(x)
+  expect_equal(vec_set_names(x_named, NULL), x)
+
+  x_mat <- as.matrix(x)
+  expect_equal(vec_set_names(x_mat, NULL), x_mat)
+
+  x_mat_named <- x_mat
+  rownames(x_mat_named) <- c("1", "2")
+  exp <- matrix(x_mat, dimnames = list(NULL, NULL))
+  expect_equal(vec_set_names(x_mat_named, NULL), exp)
+})
 
 # minimal names -------------------------------------------------------------
 

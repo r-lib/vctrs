@@ -474,6 +474,10 @@ set_names_fallback <- function(x, names) {
   x
 }
 
+vec_set_names <- function(x, names) {
+  .Call(vctrs_set_names, x, names)
+}
+
 #' Repair names with legacy method
 #'
 #' This standardises names with the legacy approach that was used in

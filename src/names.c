@@ -641,7 +641,7 @@ SEXP vec_set_rownames(SEXP x, SEXP names) {
   return x;
 }
 
-// [[ include("utils.h") ]]
+// [[ include("utils.h"); register() ]]
 SEXP vec_set_names(SEXP x, SEXP names) {
   // Never on a data frame
   if (is_data_frame(x)) {
