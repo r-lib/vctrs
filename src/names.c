@@ -603,7 +603,6 @@ static SEXP set_names_fallback(SEXP x, SEXP names) {
                          syms_names, names);
 }
 
-// [[ include("utils.h") ]]
 SEXP vec_set_rownames(SEXP x, SEXP names) {
   if (!has_dim(x)) {
     Rf_errorcall(

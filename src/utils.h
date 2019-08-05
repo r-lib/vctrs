@@ -91,7 +91,6 @@ R_len_t vec_index_size(SEXP x);
 
 SEXP apply_name_spec(SEXP name_spec, SEXP outer, SEXP inner, R_len_t n);
 SEXP outer_names(SEXP names, SEXP outer, R_len_t n);
-SEXP vec_set_rownames(SEXP x, SEXP names);
 SEXP vec_set_names(SEXP x, SEXP names);
 SEXP colnames(SEXP x);
 
