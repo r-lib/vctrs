@@ -64,6 +64,7 @@ static SEXP vec_c(SEXP xs,
 
   SEXP xs_names = PROTECT(r_names(xs));
   bool has_names = xs_names != R_NilValue || list_has_inner_names(xs);
+  has_names = has_names && !is_data_frame(ptype);
   SEXP out_names = has_names ? Rf_allocVector(STRSXP, out_size) : R_NilValue;
   PROTECT(out_names);
 
