@@ -109,15 +109,8 @@ static SEXP vec_c(SEXP xs,
 
   if (has_names) {
     out_names = PROTECT(vec_as_names(out_names, name_repair, false));
-
-    if (is_shaped) {
-      out = set_rownames(out, out_names);
-      REPROTECT(out, out_pi);
-    } else {
-      Rf_setAttrib(out, R_NamesSymbol, out_names);
-    }
-
-    UNPROTECT(1);
+    out = PROTECT(vec_set_names(out, out_names));
+    UNPROTECT(2);
   }
 
   out = vec_restore(out, ptype, R_NilValue);
