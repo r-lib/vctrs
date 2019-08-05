@@ -604,13 +604,6 @@ static SEXP set_names_fallback(SEXP x, SEXP names) {
 }
 
 SEXP vec_set_rownames(SEXP x, SEXP names) {
-  if (!has_dim(x)) {
-    Rf_errorcall(
-      R_NilValue,
-      "Internal error: Cannot set row names on a non-shaped object."
-    );
-  }
-
   if (OBJECT(x)) {
     return set_rownames_fallback(x, names);
   }
