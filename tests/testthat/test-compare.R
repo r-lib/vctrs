@@ -157,12 +157,10 @@ test_that("can order empty data frames (#356)", {
   expect_equal(vec_order(df2), integer())
 })
 
-test_that("can order data frames with data frame columns", {
-  df <- data.frame(x = 1:5, y = 1:5)
-  df$y <- data.frame(a = 1:5, b = 1:5)
+test_that("can order data frames with data frame columns (#527)", {
   expect_equal(
-    vec_order(df),
-    vec_order(data.frame(x = 1:5, a = 1:5, b = 1:5))
+    vec_order(iris),
+    vec_order(data_frame(iris = iris))
   )
 })
 
