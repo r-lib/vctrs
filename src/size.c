@@ -182,7 +182,7 @@ SEXP vec_recycle(SEXP x, R_len_t size) {
     return out;
   }
 
-  Rf_errorcall(R_NilValue, "Incompatible lengths: %d, %d", n_x, size);
+  stop_recycle_incompatible_size(n_x, size);
 }
 
 // [[ register() ]]
