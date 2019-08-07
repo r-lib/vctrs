@@ -64,6 +64,8 @@ test_that("vec_c() handles matrices", {
   rownames(exp) <- c("foo", "bar", "foo", "bar")
 
   expect_identical(vec_c(m, m), exp)
+
+  expect_error(vec_c(outer = m), "Please supply")
 })
 
 test_that("vec_c() includes index in argument tag", {
@@ -102,4 +104,35 @@ test_that("vec_c() repairs names", {
   expect_error(vec_c(a = 1, a = 2, `_` = 3, .name_repair = "check_unique"), class = "vctrs_error_names_must_be_unique")
 
   expect_named(vec_c(a = 1, a = 2, `_` = 3, .name_repair = "universal"), c("a...1", "a...2", "._"))
+})
+
+test_that("vec_c() doesn't use outer names for data frames (#524)", {
+  x <- data.frame(inner = 1)
+  expect_equal(vec_c(outer = x), x)
+
+  a <- data.frame(x = 1L)
+  b <- data.frame(x = 2L)
+  expect_equal(vec_c(foo = a, bar = b), data.frame(x = 1:2))
+})
+
+test_that("vec_c() drops data frame row names", {
+  x <- data.frame(a = 1, row.names = "r1")
+  y <- data.frame(a = 2, row.names = "r2")
+  expect_equal(rownames(vec_c(x, y)), c("1", "2"))
+})
+
+test_that("vec_c() outer names work with proxied objects", {
+  x <- as.POSIXlt(new_datetime(0))
+  exp <- set_names(x, "outer")
+  expect_equal(vec_c(outer = x), exp)
+
+  named_x <- set_names(x, "inner")
+  exp <- set_names(named_x, "outer_inner")
+  expect_error(vec_c(outer = named_x), "Please supply")
+  expect_equal(vec_c(outer = named_x, .name_spec = "{outer}_{inner}"), exp)
+
+  xs <- as.POSIXlt(new_datetime(c(0, 1)))
+  exp <- set_names(xs, c("outer_1", "outer_2"))
+  expect_error(vec_c(outer = xs), "Please supply")
+  expect_equal(vec_c(outer = xs, .name_spec = "{outer}_{inner}"), exp)
 })

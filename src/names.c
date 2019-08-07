@@ -584,14 +584,111 @@ static SEXP outer_names_seq(const char* outer, R_len_t n) {
 
 
 // Initialised at load time
-SEXP syms_set_rownames = NULL;
-SEXP fns_set_rownames = NULL;
+SEXP syms_set_rownames_fallback = NULL;
+SEXP fns_set_rownames_fallback = NULL;
 
-// [[ include("utils.h") ]]
-SEXP set_rownames(SEXP x, SEXP names) {
-  return vctrs_dispatch2(syms_set_rownames, fns_set_rownames,
+static SEXP set_rownames_fallback(SEXP x, SEXP names) {
+  return vctrs_dispatch2(syms_set_rownames_fallback, fns_set_rownames_fallback,
                          syms_x, x,
                          syms_names, names);
+}
+
+// Initialised at load time
+SEXP syms_set_names_fallback = NULL;
+SEXP fns_set_names_fallback = NULL;
+
+static SEXP set_names_fallback(SEXP x, SEXP names) {
+  return vctrs_dispatch2(syms_set_names_fallback, fns_set_names_fallback,
+                         syms_x, x,
+                         syms_names, names);
+}
+
+static void check_names(SEXP x, SEXP names) {
+  if (names == R_NilValue) {
+    return;
+  }
+
+  if (TYPEOF(names) != STRSXP) {
+    Rf_errorcall(
+      R_NilValue,
+      "`names` must be a character vector, not a %s.",
+      Rf_type2char(TYPEOF(names))
+    );
+  }
+
+  R_len_t x_size = vec_size(x);
+  R_len_t names_size = vec_size(names);
+
+  if (x_size != names_size) {
+    Rf_errorcall(
+      R_NilValue,
+      "The size of `names`, %i, must be the same as the size of `x`, %i.",
+      names_size,
+      x_size
+    );
+  }
+}
+
+SEXP vec_set_rownames(SEXP x, SEXP names) {
+  if (OBJECT(x)) {
+    return set_rownames_fallback(x, names);
+  }
+
+  int nprot = 0;
+
+  SEXP dim_names = Rf_getAttrib(x, R_DimNamesSymbol);
+
+  // Early exit when no new row names and no existing row names
+  if (names == R_NilValue) {
+    if (dim_names == R_NilValue || VECTOR_ELT(dim_names, 0) == R_NilValue) {
+      return x;
+    }
+  }
+
+  x = PROTECT_N(r_maybe_duplicate(x), &nprot);
+
+  if (dim_names == R_NilValue) {
+    dim_names = PROTECT_N(Rf_allocVector(VECSXP, vec_dim_n(x)), &nprot);
+  }
+
+  SET_VECTOR_ELT(dim_names, 0, names);
+
+  Rf_setAttrib(x, R_DimNamesSymbol, dim_names);
+
+  UNPROTECT(nprot);
+  return x;
+}
+
+// FIXME: Do we need to get the vec_proxy() and only fall back if it doesn't
+// exist? See #526 and #531 for discussion and the related issue.
+// [[ include("utils.h"); register() ]]
+SEXP vec_set_names(SEXP x, SEXP names) {
+  // Never on a data frame
+  if (is_data_frame(x)) {
+    return x;
+  }
+
+  check_names(x, names);
+
+  if (has_dim(x)) {
+    return vec_set_rownames(x, names);
+  }
+
+  if (OBJECT(x)) {
+    return set_names_fallback(x, names);
+  }
+
+  // Early exit if no new names and no existing names
+  if (names == R_NilValue && Rf_getAttrib(x, R_NamesSymbol) == R_NilValue) {
+    return x;
+  }
+
+  x = PROTECT(r_maybe_duplicate(x));
+
+  Rf_setAttrib(x, R_NamesSymbol, names);
+
+  UNPROTECT(1);
+  return x;
 }
 
 
@@ -635,11 +732,13 @@ const char* name_repair_arg_as_c_string(enum name_repair_arg arg) {
 
 
 void vctrs_init_names(SEXP ns) {
-  syms_set_rownames = Rf_install("set_rownames");
+  syms_set_rownames_fallback = Rf_install("set_rownames_fallback");
+  syms_set_names_fallback = Rf_install("set_names_fallback");
   syms_as_universal_names = Rf_install("as_universal_names");
   syms_validate_unique_names = Rf_install("validate_unique");
 
-  fns_set_rownames = r_env_get(ns, syms_set_rownames);
+  fns_set_rownames_fallback = r_env_get(ns, syms_set_rownames_fallback);
+  fns_set_names_fallback = r_env_get(ns, syms_set_names_fallback);
   fns_as_universal_names = r_env_get(ns, syms_as_universal_names);
   fns_validate_unique_names = r_env_get(ns, syms_validate_unique_names);
 

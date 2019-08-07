@@ -463,9 +463,19 @@ tick_if_needed <- function(x) {
 }
 
 # Used in names.c
-set_rownames <- function(x, names) {
+set_rownames_fallback <- function(x, names) {
   rownames(x) <- names
   x
+}
+
+# Used in names.c
+set_names_fallback <- function(x, names) {
+  names(x) <- names
+  x
+}
+
+vec_set_names <- function(x, names) {
+  .Call(vctrs_set_names, x, names)
 }
 
 #' Repair names with legacy method
