@@ -23,7 +23,8 @@
 #' recycled to be the same length.
 #'
 #' @param x,... Vectors to recycle.
-#' @param size,.size Desired output size. If omitted in `vec_recycle_common()`
+#' @param size Desired output size.
+#' @param .size Desired output size. If omitted,
 #'   will use the common size from [vec_size_common()].
 #' @export
 #' @examples

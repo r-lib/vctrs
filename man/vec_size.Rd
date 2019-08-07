@@ -17,7 +17,8 @@ vec_is_empty(x)
 
 \item{.size}{If \code{NULL}, the default, the output size is determined by
 recycling the lengths of all elements of \code{...}. Alternatively, you can
-supply \code{.size} to force a known size.}
+supply \code{.size} to force a known size; in this case, \code{x} and \code{...} are
+ignored.}
 
 \item{.absent}{The size used when no input is provided, or when all input
 is \code{NULL}. If left as \code{NULL} when no input is supplied, an error is thrown.}
