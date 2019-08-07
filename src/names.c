@@ -659,6 +659,8 @@ SEXP vec_set_rownames(SEXP x, SEXP names) {
   return x;
 }
 
+// FIXME: Do we need to get the vec_proxy() and only fall back if it doesn't
+// exist? See #526 and #531 for discussion and the related issue.
 // [[ include("utils.h"); register() ]]
 SEXP vec_set_names(SEXP x, SEXP names) {
   // Never on a data frame
