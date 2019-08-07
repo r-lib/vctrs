@@ -853,18 +853,18 @@ SEXP split_along_df(SEXP x, SEXP indices, bool check_index, struct vctrs_proxy_i
 
   // Pre-load the `out` container with lists that will become data frames
   for (int i = 0; i < out_size; ++i) {
-    if (has_indices) {
-      index = VECTOR_ELT(indices, i);
-
-      if (check_index) {
-        index = vec_as_index(index, x_size, row_names);
-        REPROTECT(index, index_prot_idx);
-      }
-    } else {
-      ++(*p_index);
-    }
-
     if (has_row_names) {
+      if (has_indices) {
+        index = VECTOR_ELT(indices, i);
+
+        if (check_index) {
+          index = vec_as_index(index, x_size, row_names);
+          REPROTECT(index, index_prot_idx);
+        }
+      } else {
+        ++(*p_index);
+      }
+
       sliced_rownames = slice_rownames(row_names, index);
       REPROTECT(sliced_rownames, sliced_rownames_prot_idx);
     }
@@ -877,7 +877,7 @@ SEXP split_along_df(SEXP x, SEXP indices, bool check_index, struct vctrs_proxy_i
   // into the appropriate data frame column in the `out` list
   for (int i = 0; i < n_col; ++i) {
     SEXP col = VECTOR_ELT(data, i);
-    SEXP split_col = PROTECT(vec_split_along(col, indices, false));
+    SEXP split_col = PROTECT(vec_split_along(col, indices, check_index));
 
     for (int j = 0; j < out_size; ++j) {
       SEXP out_elt = VECTOR_ELT(out, j);
