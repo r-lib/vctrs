@@ -831,7 +831,8 @@ SEXP split_along_df(SEXP x, SEXP indices, bool check_index, struct vctrs_proxy_i
 
   bool has_indices = indices != R_NilValue;
 
-  if (has_indices) {
+  // We are going to be overwriting index elements in this case
+  if (has_indices && check_index) {
     indices = PROTECT_N(r_maybe_duplicate(indices), &nprot);
   }
 
@@ -848,13 +849,13 @@ SEXP split_along_df(SEXP x, SEXP indices, bool check_index, struct vctrs_proxy_i
 
   SEXP data = info.proxy;
 
-  int n_col = Rf_length(x);
-  SEXP names = Rf_getAttrib(x, R_NamesSymbol);
+  int n_cols = Rf_length(x);
+  SEXP col_names = Rf_getAttrib(x, R_NamesSymbol);
   SEXP row_names = Rf_getAttrib(x, R_RowNamesSymbol);
 
-  PROTECT_INDEX sliced_rownames_prot_idx;
-  SEXP sliced_rownames = R_NilValue;
-  PROTECT_WITH_INDEX(sliced_rownames, &sliced_rownames_prot_idx);
+  PROTECT_INDEX sliced_row_names_prot_idx;
+  SEXP sliced_row_names = R_NilValue;
+  PROTECT_WITH_INDEX(sliced_row_names, &sliced_row_names_prot_idx);
   ++nprot;
 
   bool has_row_names = TYPEOF(row_names) == STRSXP;
@@ -864,6 +865,7 @@ SEXP split_along_df(SEXP x, SEXP indices, bool check_index, struct vctrs_proxy_i
     if (has_indices) {
       index = VECTOR_ELT(indices, i);
 
+      // If we have to check the index, we also update it
       if (check_index) {
         index = vec_as_index(index, x_size, row_names);
         REPROTECT(index, index_prot_idx);
@@ -874,23 +876,23 @@ SEXP split_along_df(SEXP x, SEXP indices, bool check_index, struct vctrs_proxy_i
     }
 
     if (has_row_names) {
-      sliced_rownames = slice_rownames(row_names, index);
-      REPROTECT(sliced_rownames, sliced_rownames_prot_idx);
+      sliced_row_names = slice_rownames(row_names, index);
+      REPROTECT(sliced_row_names, sliced_row_names_prot_idx);
     }
 
-    SEXP elt = df_slice_init(n_col, names, sliced_rownames);
+    SEXP elt = df_slice_init(n_cols, col_names, sliced_row_names);
     SET_VECTOR_ELT(out, i, elt);
   }
 
   // Split each column according to the indices, and then assign the results
   // into the appropriate data frame column in the `out` list
-  for (int i = 0; i < n_col; ++i) {
+  for (int i = 0; i < n_cols; ++i) {
     SEXP col = VECTOR_ELT(data, i);
-    SEXP split_col = PROTECT(vec_split_along(col, indices, false));
+    SEXP split = PROTECT(vec_split_along(col, indices, false));
 
     for (int j = 0; j < out_size; ++j) {
-      SEXP out_elt = VECTOR_ELT(out, j);
-      SET_VECTOR_ELT(out_elt, i, VECTOR_ELT(split_col, j));
+      SEXP elt = VECTOR_ELT(out, j);
+      SET_VECTOR_ELT(elt, i, VECTOR_ELT(split, j));
     }
 
     UNPROTECT(1);
@@ -898,9 +900,9 @@ SEXP split_along_df(SEXP x, SEXP indices, bool check_index, struct vctrs_proxy_i
 
   // Restore each data frame
   for (int i = 0; i < out_size; ++i) {
-    SEXP out_elt = VECTOR_ELT(out, i);
-    out_elt = vec_restore(out_elt, x, R_NilValue);
-    SET_VECTOR_ELT(out, i, out_elt);
+    SEXP elt = VECTOR_ELT(out, i);
+    elt = vec_restore(elt, x, R_NilValue);
+    SET_VECTOR_ELT(out, i, elt);
   }
 
   UNPROTECT(nprot);
