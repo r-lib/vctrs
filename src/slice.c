@@ -837,15 +837,11 @@ SEXP split_along_df(SEXP x, SEXP indices, bool check_index, struct vctrs_proxy_i
   PROTECT_WITH_INDEX(index, &index_prot_idx);
   int* p_index = INTEGER(index);
 
-  PROTECT_INDEX elt_prot_idx;
-  SEXP elt = R_NilValue;
-  PROTECT_WITH_INDEX(elt, &elt_prot_idx);
-
   SEXP out = PROTECT(Rf_allocVector(VECSXP, out_size));
 
   SEXP data = info.proxy;
 
-  int n = Rf_length(x);
+  int n_col = Rf_length(x);
   SEXP names = Rf_getAttrib(x, R_NamesSymbol);
   SEXP row_names = Rf_getAttrib(x, R_RowNamesSymbol);
 
@@ -873,13 +869,13 @@ SEXP split_along_df(SEXP x, SEXP indices, bool check_index, struct vctrs_proxy_i
       REPROTECT(sliced_rownames, sliced_rownames_prot_idx);
     }
 
-    SEXP elt = df_slice_init(n, names, sliced_rownames);
+    SEXP elt = df_slice_init(n_col, names, sliced_rownames);
     SET_VECTOR_ELT(out, i, elt);
   }
 
   // Split each column according to the indices, and then assign the results
   // into the appropriate data frame column in the `out` list
-  for (int i = 0; i < n; ++i) {
+  for (int i = 0; i < n_col; ++i) {
     SEXP col = VECTOR_ELT(data, i);
     SEXP split_col = PROTECT(vec_split_along(col, indices, false));
 
@@ -898,7 +894,7 @@ SEXP split_along_df(SEXP x, SEXP indices, bool check_index, struct vctrs_proxy_i
     SET_VECTOR_ELT(out, i, out_elt);
   }
 
-  UNPROTECT(4);
+  UNPROTECT(3);
   return out;
 }
 
