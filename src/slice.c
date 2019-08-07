@@ -848,7 +848,11 @@ SEXP split_along_df(SEXP x, SEXP indices, bool check_index, struct vctrs_proxy_i
   int n = Rf_length(x);
   SEXP names = Rf_getAttrib(x, R_NamesSymbol);
   SEXP row_names = Rf_getAttrib(x, R_RowNamesSymbol);
+
+  PROTECT_INDEX sliced_rownames_prot_idx;
   SEXP sliced_rownames = R_NilValue;
+  PROTECT_WITH_INDEX(sliced_rownames, &sliced_rownames_prot_idx);
+
   bool has_row_names = TYPEOF(row_names) == STRSXP;
 
   // Pre-load the `out` container with lists that will become data frames
@@ -865,12 +869,12 @@ SEXP split_along_df(SEXP x, SEXP indices, bool check_index, struct vctrs_proxy_i
     }
 
     if (has_row_names) {
-      sliced_rownames = PROTECT(slice_rownames(row_names, index));
+      sliced_rownames = slice_rownames(row_names, index);
+      REPROTECT(sliced_rownames, sliced_rownames_prot_idx);
     }
 
     SEXP elt = df_slice_init(n, names, sliced_rownames);
     SET_VECTOR_ELT(out, i, elt);
-    UNPROTECT(1);
   }
 
   // Split each column according to the indices, and then assign the results
@@ -894,7 +898,7 @@ SEXP split_along_df(SEXP x, SEXP indices, bool check_index, struct vctrs_proxy_i
     SET_VECTOR_ELT(out, i, out_elt);
   }
 
-  UNPROTECT(3);
+  UNPROTECT(4);
   return out;
 }
 
