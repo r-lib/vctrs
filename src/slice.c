@@ -839,8 +839,6 @@ SEXP split_along_df(SEXP x, SEXP indices, bool check_index, struct vctrs_proxy_i
   R_len_t x_size = vec_size(x);
   R_len_t out_size = has_indices ? vec_size(indices) : x_size;
 
-  int restore_sizes[out_size];
-
   PROTECT_INDEX index_prot_idx;
   SEXP index = r_int(0);
   PROTECT_WITH_INDEX(index, &index_prot_idx);
@@ -866,7 +864,6 @@ SEXP split_along_df(SEXP x, SEXP indices, bool check_index, struct vctrs_proxy_i
   for (int i = 0; i < out_size; ++i) {
     if (has_indices) {
       index = VECTOR_ELT(indices, i);
-      restore_sizes[i] = vec_size(index);
 
       // If we have to check the index, we also update it
       if (check_index) {
@@ -876,7 +873,6 @@ SEXP split_along_df(SEXP x, SEXP indices, bool check_index, struct vctrs_proxy_i
       }
     } else {
       ++(*p_index);
-      restore_sizes[i] = 1;
     }
 
     if (has_row_names) {
@@ -902,10 +898,16 @@ SEXP split_along_df(SEXP x, SEXP indices, bool check_index, struct vctrs_proxy_i
     UNPROTECT(1);
   }
 
+  SEXP restore_size = PROTECT_N(Rf_ScalarInteger(1), &nprot);
+  int* p_restore_size = INTEGER(restore_size);
+
   // Restore each data frame
   for (int i = 0; i < out_size; ++i) {
+    if (has_indices) {
+      *p_restore_size = vec_size(VECTOR_ELT(indices, i));
+    }
     SEXP elt = VECTOR_ELT(out, i);
-    elt = vec_restore(elt, x, Rf_ScalarInteger(restore_sizes[i]));
+    elt = vec_restore(elt, x, restore_size);
     SET_VECTOR_ELT(out, i, elt);
   }
 
