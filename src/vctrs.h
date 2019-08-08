@@ -320,6 +320,8 @@ void stop_incompatible_size(SEXP x, SEXP y,
                             struct vctrs_arg* x_arg,
                             struct vctrs_arg* y_arg)
   __attribute__((noreturn));
+void stop_recycle_incompatible_size(R_len_t x_size, R_len_t size)
+  __attribute__((noreturn));
 
 
 // Compatibility ------------------------------------------------
