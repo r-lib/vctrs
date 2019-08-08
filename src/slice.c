@@ -193,7 +193,7 @@ static SEXP df_slice(SEXP x, SEXP index) {
     SET_VECTOR_ELT(out, i, sliced);
   }
 
-  SEXP row_nms = PROTECT(Rf_getAttrib(x, R_RowNamesSymbol));
+  SEXP row_nms = PROTECT(get_rownames(x));
   if (TYPEOF(row_nms) == STRSXP) {
     row_nms = PROTECT(slice_rownames(row_nms, index));
     Rf_setAttrib(out, R_RowNamesSymbol, row_nms);

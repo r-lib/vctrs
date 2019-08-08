@@ -124,6 +124,16 @@ test_that("restore generates correct row/col names", {
   expect_equal(.row_names_info(df2), -2)
 })
 
+test_that("restore keeps automatic row/col names", {
+  df1 <- data.frame(x = NA, y = 1:4, z = 1:4)
+  df1$x <- data.frame(a = 1:4, b = 1:4)
+
+  df2 <- vec_restore(df1, df1)
+
+  expect_named(df2, c("x", "y", "z"))
+  expect_equal(.row_names_info(df2), -4)
+})
+
 test_that("cast to empty data frame preserves number of rows", {
   out <- vec_cast(new_data_frame(n = 10L), new_data_frame())
   expect_equal(nrow(out), 10L)

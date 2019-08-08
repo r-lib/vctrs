@@ -60,6 +60,25 @@ static SEXP new_compact_rownames(R_len_t n) {
   return out;
 }
 
+// [[ include("utils.h") ]]
+SEXP get_rownames(SEXP x) {
+  // Required, because getAttrib() already does the transformation to a vector,
+  // and getAttrib0() is hidden
+  SEXP node = ATTRIB(x);
+
+  while (node != R_NilValue) {
+    SEXP tag = TAG(node);
+
+    if (tag == R_RowNamesSymbol) {
+      return CAR(node);
+    }
+
+    node = CDR(node);
+  }
+
+  return R_NilValue;
+}
+
 SEXP df_container_type(SEXP x) {
   SEXP type = PROTECT(Rf_allocVector(VECSXP, 0));
 
