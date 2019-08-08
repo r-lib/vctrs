@@ -21,7 +21,6 @@ R_len_t compact_rownames_length(SEXP x) {
 }
 
 static void init_bare_data_frame(SEXP x, R_len_t n);
-static void init_compact_rownames(SEXP x, R_len_t n);
 static SEXP new_compact_rownames(R_len_t n);
 
 // [[ include("utils.h") ]]
@@ -43,11 +42,13 @@ static void init_bare_data_frame(SEXP x, R_len_t n) {
   init_compact_rownames(x, n);
 }
 
-static void init_compact_rownames(SEXP x, R_len_t n) {
+// [[ include("utils.h") ]]
+void init_compact_rownames(SEXP x, R_len_t n) {
   SEXP rn = PROTECT(new_compact_rownames(n));
   Rf_setAttrib(x, R_RowNamesSymbol, rn);
   UNPROTECT(1);
 }
+
 static SEXP new_compact_rownames(R_len_t n) {
   if (n <= 0) {
     return vctrs_shared_empty_int;

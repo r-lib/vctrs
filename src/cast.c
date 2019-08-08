@@ -494,13 +494,7 @@ SEXP df_restore_impl(SEXP x, SEXP to, R_len_t size) {
 
   SEXP rownames = PROTECT(get_rownames(x));
   if (rownames == R_NilValue) {
-    rownames = PROTECT(Rf_allocVector(INTSXP, 2));
-
-    INTEGER(rownames)[0] = NA_INTEGER;
-    INTEGER(rownames)[1] = -size;
-
-    Rf_setAttrib(x, R_RowNamesSymbol, rownames);
-    UNPROTECT(1);
+    init_compact_rownames(x, size);
   }
 
   UNPROTECT(3);
