@@ -34,12 +34,13 @@ new_data_frame <- function(x = list(), n = NULL, ..., class = character()) {
   }
 
   new_attributes <- list(
+    names = names(x),
     ...,
     class = c(class, "data.frame"),
     row.names = .set_row_names(n)
   )
 
-  attributes(x) <- c(attributes(x), new_attributes)
+  attributes(x) <- new_attributes
 
   x
 }
