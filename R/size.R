@@ -22,7 +22,8 @@
 #' @param x,... Vector inputs or `NULL`.
 #' @param .size If `NULL`, the default, the output size is determined by
 #'   recycling the lengths of all elements of `...`. Alternatively, you can
-#'   supply `.size` to force a known size.
+#'   supply `.size` to force a known size; in this case, `x` and `...` are
+#'   ignored.
 #' @param .absent The size used when no input is provided, or when all input
 #' is `NULL`. If left as `NULL` when no input is supplied, an error is thrown.
 #' @return An integer (or double for long vectors).

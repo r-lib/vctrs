@@ -12,7 +12,9 @@ vec_recycle_common(..., .size = NULL)
 \arguments{
 \item{x, ...}{Vectors to recycle.}
 
-\item{size, .size}{Desired output size. If omitted in \code{vec_recycle_common()}
+\item{size}{Desired output size.}
+
+\item{.size}{Desired output size. If omitted,
 will use the common size from \code{\link[=vec_size_common]{vec_size_common()}}.}
 }
 \description{
