@@ -21,7 +21,6 @@ R_len_t compact_rownames_length(SEXP x) {
 }
 
 static void init_bare_data_frame(SEXP x, R_len_t n);
-static void init_compact_rownames(SEXP x, R_len_t n);
 static SEXP new_compact_rownames(R_len_t n);
 
 // [[ include("utils.h") ]]
@@ -43,11 +42,13 @@ static void init_bare_data_frame(SEXP x, R_len_t n) {
   init_compact_rownames(x, n);
 }
 
-static void init_compact_rownames(SEXP x, R_len_t n) {
+// [[ include("utils.h") ]]
+void init_compact_rownames(SEXP x, R_len_t n) {
   SEXP rn = PROTECT(new_compact_rownames(n));
   Rf_setAttrib(x, R_RowNamesSymbol, rn);
   UNPROTECT(1);
 }
+
 static SEXP new_compact_rownames(R_len_t n) {
   if (n <= 0) {
     return vctrs_shared_empty_int;
@@ -58,6 +59,25 @@ static SEXP new_compact_rownames(R_len_t n) {
   out_data[0] = NA_INTEGER;
   out_data[1] = -n;
   return out;
+}
+
+// [[ include("utils.h") ]]
+SEXP get_rownames(SEXP x) {
+  // Required, because getAttrib() already does the transformation to a vector,
+  // and getAttrib0() is hidden
+  SEXP node = ATTRIB(x);
+
+  while (node != R_NilValue) {
+    SEXP tag = TAG(node);
+
+    if (tag == R_RowNamesSymbol) {
+      return CAR(node);
+    }
+
+    node = CDR(node);
+  }
+
+  return R_NilValue;
 }
 
 SEXP df_container_type(SEXP x) {
