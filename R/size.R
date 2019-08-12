@@ -12,6 +12,9 @@
 #' frame (even data frame and matrix columns) have the same size.
 #' `vec_size_common(...)` returns the common size of multiple vectors.
 #'
+#' `vec_sizes()` returns a vector of sizes of elements in a list, `vec_sizes()` is
+#' to `vec_size()` what [lengths()] is to [length()].
+#'
 #' @seealso [vec_slice()] for a variation of `[` compatible with `vec_size()`,
 #'   and [vec_recycle()] to recycle vectors to common length.
 #' @section Invariants:
@@ -76,6 +79,12 @@ vec_size <- function(x) {
 #' @rdname vec_size
 vec_size_common <- function(..., .size = NULL, .absent = 0L) {
   .External2(vctrs_size_common, .size, .absent)
+}
+
+#' @rdname vec_size
+#' @export
+vec_sizes <- function(x) {
+  .Call(vctrs_sizes, x)
 }
 
 #' @rdname vec_size

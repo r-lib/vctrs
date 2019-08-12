@@ -98,6 +98,21 @@ SEXP vctrs_size(SEXP x) {
   return Rf_ScalarInteger(vec_size(x));
 }
 
+// [[ register() ]]
+SEXP vctrs_sizes(SEXP x) {
+  if (TYPEOF(x) != VECSXP) {
+    Rf_errorcall(R_NilValue, "vec_sizes() only applies to lists");
+  }
+  R_len_t n = Rf_length(x);
+  SEXP sizes = PROTECT(Rf_allocVector(INTSXP, n));
+  int* p_sizes = INTEGER(sizes);
+  for (R_len_t i = 0; i < n; i++) {
+    p_sizes[i] = vec_size(VECTOR_ELT(x, i));
+  }
+  UNPROTECT(1);
+  return sizes;
+}
+
 R_len_t df_rownames_size(SEXP x) {
   for (SEXP attr = ATTRIB(x); attr != R_NilValue; attr = CDR(attr)) {
     if (TAG(attr) != R_RowNamesSymbol) {

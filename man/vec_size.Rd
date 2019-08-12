@@ -3,12 +3,15 @@
 \name{vec_size}
 \alias{vec_size}
 \alias{vec_size_common}
+\alias{vec_sizes}
 \alias{vec_is_empty}
 \title{Number of observations}
 \usage{
 vec_size(x)
 
 vec_size_common(..., .size = NULL, .absent = 0L)
+
+vec_sizes(x)
 
 vec_is_empty(x)
 }
@@ -39,6 +42,9 @@ i.e. it's the number of rows in matrix or a data frame.  This
 definition has the important property that every column of a data
 frame (even data frame and matrix columns) have the same size.
 \code{vec_size_common(...)} returns the common size of multiple vectors.
+
+\code{vec_sizes()} returns a vector of sizes of elements in a list, \code{vec_sizes()} is
+to \code{vec_size()} what \code{\link[=lengths]{lengths()}} is to \code{\link[=length]{length()}}.
 }
 \details{
 There is no vctrs helper that retrieves the number of columns: as this
