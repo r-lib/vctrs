@@ -73,12 +73,17 @@ extern SEXP vctrs_as_df_col(SEXP, SEXP);
 extern SEXP vctrs_apply_name_spec(SEXP, SEXP, SEXP, SEXP);
 extern SEXP vctrs_proxy_recursive(SEXP, SEXP);
 
-// C callables only
+// Very experimental - C callables only
 extern R_len_t vec_size(SEXP);
 extern SEXP vec_init(SEXP, R_len_t);
 extern SEXP vec_assign_impl(SEXP, SEXP, SEXP, bool);
 extern SEXP vec_slice_impl(SEXP, SEXP);
 extern SEXP vec_names(SEXP);
+
+// Extremely experimental - C callables required for
+// efficient use of `vec_slice_impl()`
+extern SEXP compact_seq(R_len_t, R_len_t, bool);
+extern SEXP init_compact_seq(int*, R_len_t, R_len_t, bool);
 
 // Defined below
 SEXP vctrs_init(SEXP);
@@ -173,6 +178,7 @@ void R_init_vctrs(DllInfo *dll)
     R_registerRoutines(dll, NULL, CallEntries, NULL, ExtEntries);
     R_useDynamicSymbols(dll, FALSE);
 
+    // Very experimental
     R_RegisterCCallable("vctrs", "vec_size", (DL_FUNC) &vec_size);
     R_RegisterCCallable("vctrs", "vec_proxy", (DL_FUNC) &vec_proxy);
     R_RegisterCCallable("vctrs", "vec_restore", (DL_FUNC) &vec_restore);
@@ -182,6 +188,10 @@ void R_init_vctrs(DllInfo *dll)
     R_RegisterCCallable("vctrs", "vec_slice_impl", (DL_FUNC) &vec_slice_impl);
     R_RegisterCCallable("vctrs", "vec_names", (DL_FUNC) &vec_names);
     R_RegisterCCallable("vctrs", "vec_set_names", (DL_FUNC) &vec_set_names);
+
+    // Extremely experimental
+    R_RegisterCCallable("vctrs", "compact_seq", (DL_FUNC) &compact_seq);
+    R_RegisterCCallable("vctrs", "init_compact_seq", (DL_FUNC) &init_compact_seq);
 }
 
 

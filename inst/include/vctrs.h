@@ -95,4 +95,25 @@ static R_INLINE SEXP vec_set_names(SEXP x, SEXP names) {
   return fn(x, names);
 }
 
+
+static R_INLINE SEXP compact_seq(R_len_t start, R_len_t size, bool increasing) {
+  static SEXP (*fn)(R_len_t, R_len_t, bool) = NULL;
+
+  if (fn == NULL) {
+    fn = (SEXP (*)(R_len_t, R_len_t, bool)) R_GetCCallable("vctrs", "compact_seq");
+  }
+
+  return fn(start, size, increasing);
+}
+
+static R_INLINE SEXP init_compact_seq(int* p, R_len_t start, R_len_t size, bool increasing) {
+  static SEXP (*fn)(int*, R_len_t, R_len_t, bool) = NULL;
+
+  if (fn == NULL) {
+    fn = (SEXP (*)(int*, R_len_t, R_len_t, bool)) R_GetCCallable("vctrs", "init_compact_seq");
+  }
+
+  return fn(p, start, size, increasing);
+}
+
 #endif
