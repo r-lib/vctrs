@@ -1,6 +1,7 @@
 #include <R.h>
 #include <Rinternals.h>
 #include <stdlib.h> // for NULL
+#include <stdbool.h> // for bool
 #include <R_ext/Rdynload.h>
 
 /* FIXME:
@@ -72,6 +73,12 @@ extern SEXP vctrs_as_df_col(SEXP, SEXP);
 extern SEXP vctrs_apply_name_spec(SEXP, SEXP, SEXP, SEXP);
 extern SEXP vctrs_proxy_recursive(SEXP, SEXP);
 
+// C callables only
+extern R_len_t vec_size(SEXP);
+extern SEXP vec_init(SEXP, R_len_t);
+extern SEXP vec_assign_impl(SEXP, SEXP, SEXP, bool);
+extern SEXP vec_slice_impl(SEXP, SEXP);
+extern SEXP vec_names(SEXP);
 
 // Defined below
 SEXP vctrs_init(SEXP);
@@ -165,6 +172,16 @@ void R_init_vctrs(DllInfo *dll)
 {
     R_registerRoutines(dll, NULL, CallEntries, NULL, ExtEntries);
     R_useDynamicSymbols(dll, FALSE);
+
+    R_RegisterCCallable("vctrs", "vec_size", (DL_FUNC) &vec_size);
+    R_RegisterCCallable("vctrs", "vec_proxy", (DL_FUNC) &vec_proxy);
+    R_RegisterCCallable("vctrs", "vec_restore", (DL_FUNC) &vec_restore);
+    R_RegisterCCallable("vctrs", "vctrs_cast", (DL_FUNC) &vctrs_cast);
+    R_RegisterCCallable("vctrs", "vec_init", (DL_FUNC) &vec_init);
+    R_RegisterCCallable("vctrs", "vec_assign_impl", (DL_FUNC) &vec_assign_impl);
+    R_RegisterCCallable("vctrs", "vec_slice_impl", (DL_FUNC) &vec_slice_impl);
+    R_RegisterCCallable("vctrs", "vec_names", (DL_FUNC) &vec_names);
+    R_RegisterCCallable("vctrs", "vec_set_names", (DL_FUNC) &vec_set_names);
 }
 
 
