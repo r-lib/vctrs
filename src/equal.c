@@ -349,47 +349,110 @@ bool equal_names(SEXP x, SEXP y) {
 }
 
 
-static bool equal_na(SEXP x, int i) {
-  switch(TYPEOF(x)) {
-  case LGLSXP:
-    return LOGICAL(x)[i] == NA_LOGICAL;
-  case INTSXP:
-    return INTEGER(x)[i] == NA_INTEGER;
-  case REALSXP:
-    // is.na(NaN) is TRUE
-    return isnan(REAL(x)[i]);
-  case STRSXP:
-    return STRING_ELT(x, i) == NA_STRING;
-  case VECSXP:
-    if (is_data_frame(x)) {
-      int p = Rf_length(x);
+static int lgl_equal_na_scalar(const int* x);
+static int int_equal_na_scalar(const int* x);
+static int dbl_equal_na_scalar(const double* x);
+static int chr_equal_na_scalar(const SEXP* x);
+static int list_equal_na_scalar(SEXP x, R_len_t i);
+static int df_equal_na_scalar(SEXP x, R_len_t i);
 
-      for (int k = 0; k < p; ++k) {
-        if (!equal_na(VECTOR_ELT(x, k), i)) {
-          return false;
-        }
-      }
-      return true;
-    } else {
-      return Rf_isNull(VECTOR_ELT(x, i));
-    }
-  default:
-    Rf_errorcall(R_NilValue, "Unsupported type %s", Rf_type2char(TYPEOF(x)));
+// If `x` is a data frame, it must have been recursively proxied
+// beforehand so we can safely use `TYPEOF(x)`
+//
+// [[ include("vctrs.h") ]]
+int equal_na(SEXP x, R_len_t i) {
+  switch (TYPEOF(x)) {
+  case LGLSXP: return lgl_equal_na_scalar(LOGICAL(x) + i);
+  case INTSXP: return int_equal_na_scalar(INTEGER(x) + i);
+  case REALSXP: return dbl_equal_na_scalar(REAL(x) + i);
+  case STRSXP: return chr_equal_na_scalar(STRING_PTR(x) + i);
+  default: break;
   }
+
+  switch (vec_proxy_typeof(x)) {
+  case vctrs_type_list: return list_equal_na_scalar(x, i);
+  case vctrs_type_dataframe: return df_equal_na_scalar(x, i);
+  default: break;
+  }
+
+  vctrs_stop_unsupported_type(vec_typeof(x), "equal_na()");
 }
+
+#define EQUAL_NA(CTYPE, CONST_DEREF, SCALAR_EQUAL_NA)   \
+do {                                                    \
+  const CTYPE* xp = CONST_DEREF(x);                     \
+                                                        \
+  for (R_len_t i = 0; i < n; ++i, ++xp) {               \
+    p[i] = SCALAR_EQUAL_NA(xp);                         \
+  }                                                     \
+}                                                       \
+while (0)
+
+#define EQUAL_NA_BARRIER(SCALAR_EQUAL_NA)               \
+do {                                                    \
+  for (R_len_t i = 0; i < n; ++i) {                     \
+    p[i] = SCALAR_EQUAL_NA(x, i);                       \
+  }                                                     \
+}                                                       \
+while (0)
 
 // [[ register() ]]
 SEXP vctrs_equal_na(SEXP x) {
   R_len_t n = vec_size(x);
   SEXP out = PROTECT(Rf_allocVector(LGLSXP, n));
-  int32_t* p_out = LOGICAL(out);
+  int32_t* p = LOGICAL(out);
 
   x = PROTECT(vec_proxy_recursive(x, vctrs_proxy_equal));
 
-  for (R_len_t i = 0; i < n; ++i) {
-    p_out[i] = equal_na(x, i);
+  enum vctrs_type type = vec_proxy_typeof(x);
+
+  switch (type) {
+  case vctrs_type_logical:   EQUAL_NA(int, LOGICAL_RO, lgl_equal_na_scalar); break;
+  case vctrs_type_integer:   EQUAL_NA(int, INTEGER_RO, int_equal_na_scalar); break;
+  case vctrs_type_double:    EQUAL_NA(double, REAL_RO, dbl_equal_na_scalar); break;
+  case vctrs_type_character: EQUAL_NA(SEXP, STRING_PTR_RO, chr_equal_na_scalar); break;
+  case vctrs_type_list:      EQUAL_NA_BARRIER(list_equal_na_scalar); break;
+  case vctrs_type_dataframe: EQUAL_NA_BARRIER(df_equal_na_scalar); break;
+  case vctrs_type_scalar:    Rf_errorcall(R_NilValue, "Can't detect `NA` values in scalars with `vctrs_equal_na()`.");
+  default:                   Rf_error("Unimplemented type in `vctrs_equal_na()`.");
   }
 
   UNPROTECT(2);
   return out;
+}
+
+#undef EQUAL_NA
+#undef EQUAL_NA_BARRIER
+
+static int lgl_equal_na_scalar(const int* x) {
+  return *x == NA_LOGICAL;
+}
+
+static int int_equal_na_scalar(const int* x) {
+  return *x == NA_INTEGER;
+}
+
+static int dbl_equal_na_scalar(const double* x) {
+  // is.na(NaN) is TRUE
+  return isnan(*x);
+}
+
+static int chr_equal_na_scalar(const SEXP* x) {
+  return *x == NA_STRING;
+}
+
+static int list_equal_na_scalar(SEXP x, R_len_t i) {
+  return Rf_isNull(VECTOR_ELT(x, i));
+}
+
+static int df_equal_na_scalar(SEXP x, R_len_t i) {
+  int n_col = Rf_length(x);
+
+  for (int k = 0; k < n_col; ++k) {
+    if (!equal_na(VECTOR_ELT(x, k), i)) {
+      return false;
+    }
+  }
+
+  return true;
 }
