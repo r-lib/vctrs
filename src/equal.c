@@ -358,8 +358,6 @@ static int df_equal_na_scalar(SEXP x, R_len_t i);
 
 // If `x` is a data frame, it must have been recursively proxied
 // beforehand so we can safely use `TYPEOF(x)`
-//
-// [[ include("vctrs.h") ]]
 int equal_na(SEXP x, R_len_t i) {
   switch (TYPEOF(x)) {
   case LGLSXP: return lgl_equal_na_scalar(LOGICAL(x) + i);
