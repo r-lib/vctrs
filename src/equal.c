@@ -378,23 +378,23 @@ int equal_na(SEXP x, R_len_t i) {
   vctrs_stop_unsupported_type(vec_typeof(x), "equal_na()");
 }
 
-#define EQUAL_NA(CTYPE, CONST_DEREF, SCALAR_EQUAL_NA)   \
-do {                                                    \
-  const CTYPE* xp = CONST_DEREF(x);                     \
-                                                        \
-  for (R_len_t i = 0; i < n; ++i, ++xp) {               \
-    p[i] = SCALAR_EQUAL_NA(xp);                         \
-  }                                                     \
-}                                                       \
-while (0)
+#define EQUAL_NA(CTYPE, CONST_DEREF, SCALAR_EQUAL_NA)     \
+  do {                                                    \
+    const CTYPE* xp = CONST_DEREF(x);                     \
+                                                          \
+    for (R_len_t i = 0; i < n; ++i, ++xp) {               \
+      p[i] = SCALAR_EQUAL_NA(xp);                         \
+    }                                                     \
+  }                                                       \
+  while (0)
 
-#define EQUAL_NA_BARRIER(SCALAR_EQUAL_NA)               \
-do {                                                    \
-  for (R_len_t i = 0; i < n; ++i) {                     \
-    p[i] = SCALAR_EQUAL_NA(x, i);                       \
-  }                                                     \
-}                                                       \
-while (0)
+#define EQUAL_NA_BARRIER(SCALAR_EQUAL_NA)                 \
+  do {                                                    \
+    for (R_len_t i = 0; i < n; ++i) {                     \
+      p[i] = SCALAR_EQUAL_NA(x, i);                       \
+    }                                                     \
+  }                                                       \
+  while (0)
 
 // [[ register() ]]
 SEXP vctrs_equal_na(SEXP x) {
