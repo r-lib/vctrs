@@ -133,6 +133,12 @@ test_that("vectorised over rows of a data frame", {
   expect_equal(vec_equal_na(df), c(FALSE, FALSE, FALSE, TRUE))
 })
 
+test_that("works recursively with data frame columns", {
+  df <- data.frame(x = c(1, 1, NA, NA))
+  df$df <- data.frame(y = c(NA, 1, 1, NA), z = c(1, NA, 1, NA))
+  expect_equal(vec_equal_na(df), c(FALSE, FALSE, FALSE, TRUE))
+})
+
 test_that("NA propagate symmetrically (#204)", {
   exp <- c(NA, NA)
 
