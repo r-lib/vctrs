@@ -180,7 +180,6 @@ void R_init_vctrs(DllInfo *dll)
     R_useDynamicSymbols(dll, FALSE);
 
     // Very experimental
-    R_RegisterCCallable("vctrs", "vec_size", (DL_FUNC) &vec_size);
     R_RegisterCCallable("vctrs", "vec_proxy", (DL_FUNC) &vec_proxy);
     R_RegisterCCallable("vctrs", "vec_restore", (DL_FUNC) &vec_restore);
     R_RegisterCCallable("vctrs", "vec_init", (DL_FUNC) &vec_init);
@@ -194,6 +193,9 @@ void R_init_vctrs(DllInfo *dll)
     R_RegisterCCallable("vctrs", "vctrs_cast", (DL_FUNC) &vctrs_cast);
     R_RegisterCCallable("vctrs", "compact_seq", (DL_FUNC) &compact_seq);
     R_RegisterCCallable("vctrs", "init_compact_seq", (DL_FUNC) &init_compact_seq);
+
+    // Extremely experimental as eventually this might support R_xlen_t
+    R_RegisterCCallable("vctrs", "vec_size", (DL_FUNC) &vec_size);
 }
 
 

@@ -5,7 +5,6 @@
 #include <R_ext/Rdynload.h>
 #include <stdbool.h>
 
-R_len_t (*vec_size)(SEXP);
 SEXP (*vec_proxy)(SEXP);
 SEXP (*vec_restore)(SEXP, SEXP, SEXP);
 SEXP (*vec_init)(SEXP, R_len_t);

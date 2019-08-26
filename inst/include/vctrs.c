@@ -1,6 +1,5 @@
 #include "vctrs.h"
 
-R_len_t (*vec_size)(SEXP) = NULL;
 SEXP (*vec_proxy)(SEXP) = NULL;
 SEXP (*vec_restore)(SEXP, SEXP, SEXP) = NULL;
 SEXP (*vec_init)(SEXP, R_len_t) = NULL;
@@ -10,7 +9,6 @@ SEXP (*vec_names)(SEXP) = NULL;
 SEXP (*vec_set_names)(SEXP, SEXP) = NULL;
 
 void vctrs_init_api() {
-  vec_size = (R_len_t (*)(SEXP)) R_GetCCallable("vctrs", "vec_size");
   vec_proxy = (SEXP (*)(SEXP)) R_GetCCallable("vctrs", "vec_proxy");
   vec_restore = (SEXP (*)(SEXP, SEXP, SEXP)) R_GetCCallable("vctrs", "vec_restore");
   vec_init = (SEXP (*)(SEXP, R_len_t)) R_GetCCallable("vctrs", "vec_init");
