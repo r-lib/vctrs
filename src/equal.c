@@ -138,17 +138,28 @@ static int cpl_equal_scalar(const Rcomplex* x, const Rcomplex* y, bool na_equal)
   }
 }
 
-// TODO - doesn't work when comparing a string with "bytes" encoding
-// to another string with a different encoding. `Rf_translateCharUTF8()`
-// fails to convert with a nice error.
+// This follows the same rules as base R's Seql()
+// - Try pointer comparison, if equal, done.
+// - If encoding was the same, or one was UTF8 and the other was LATIN1, done
+//   as they are either different with the same encoding, or just incompatible.
+// - We are then left with the possibility of:
+//   - unknown / utf8
+//   - unknown / latin1
+//   - bytes / utf8 (error, can't translate bytes)
+//   - bytes / latin1 (error, can't translate bytes)
 static int chr_equal_scalar_impl(const SEXP x, const SEXP y) {
-  // String pointers are the same. Always means equivalent.
+  // String pointers are the same. Always equivalent.
   if (x == y) {
     return 1;
   }
 
-  // String pointers were different, but encoding is the same
-  if (Rf_getCharCE(x) == Rf_getCharCE(y)) {
+  int x_ce = Rf_getCharCE(x);
+  int y_ce = Rf_getCharCE(y);
+
+  bool x_known_encoding = (x_ce == CE_UTF8) || (x_ce == CE_LATIN1);
+  bool y_known_encoding = (y_ce == CE_UTF8) || (y_ce == CE_LATIN1);
+
+  if (x_known_encoding == y_known_encoding) {
     return 0;
   }
 
