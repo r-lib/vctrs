@@ -108,6 +108,65 @@ test_that("unique functions take the equality proxy (#375)", {
   expect_identical(vec_match(tuple(2, 100), x), 2L)
 })
 
+test_that("vec_unique() can detect uniqueness with UTF-8 VS unknown encodings (#553)", {
+  utf8 <- "temp (\u00B0C)"
+
+  unknown <- utf8
+  Encoding(unknown) <- "unknown"
+
+  x <- c(unknown, utf8)
+
+  expect_equal(vec_unique(x), x[1])
+  expect_equal(vec_unique(x), unique(x))
+})
+
+test_that("vec_unique() treats Latin1 vs unknown encoded strings as not equal", {
+  unknown <- "fa\xE7ile"
+
+  latin1 <- unknown
+  Encoding(latin1) <- "latin1"
+
+  x <- c(unknown, latin1)
+
+  expect_equal(vec_unique(x), x)
+  expect_equal(vec_unique(x), unique(x))
+})
+
+test_that("vec_unique() returns differently encoded strings in the order they appear", {
+  utf8 <- "temp (\u00B0C)"
+
+  unknown <- utf8
+  Encoding(unknown) <- "unknown"
+
+  x <- c(unknown, utf8)
+  y <- c(utf8, unknown)
+
+  expect_equal(Encoding(vec_unique(x)), "unknown")
+  expect_equal(Encoding(vec_unique(y)), "UTF-8")
+})
+
+test_that("vec_unique() can determine uniqueness when the encoding is the same", {
+  unknown <- "fa\xE7ile"
+
+  latin1 <- unknown
+  Encoding(latin1) <- "latin1"
+
+  utf8 <- unknown
+  Encoding(utf8) <- "UTF-8"
+
+  x <- c(unknown, unknown)
+  y <- c(latin1, latin1)
+  z <- c(utf8, utf8)
+
+  expect_equal(vec_unique(x), x[1])
+  expect_equal(vec_unique(x), unique(x))
+
+  expect_equal(vec_unique(y), y[1])
+  expect_equal(vec_unique(y), unique(y))
+
+  expect_equal(vec_unique(z), z[1])
+  expect_equal(vec_unique(z), unique(z))
+})
 
 # matching ----------------------------------------------------------------
 
