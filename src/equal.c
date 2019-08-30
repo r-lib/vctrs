@@ -148,7 +148,6 @@ static int cpl_equal_scalar(const Rcomplex* x, const Rcomplex* y, bool na_equal)
 //   - bytes / utf8 (error, can't translate bytes)
 //   - bytes / latin1 (error, can't translate bytes)
 static int chr_equal_scalar_impl(const SEXP x, const SEXP y) {
-  // String pointers are the same. Always equivalent.
   if (x == y) {
     return 1;
   }
