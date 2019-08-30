@@ -153,8 +153,8 @@ static uint32_t sexp_hash(SEXP x);
 uint32_t hash_object(SEXP x) {
   uint32_t hash = sexp_hash(x);
 
-  // CHARSXP object have attributes that are purely related to the cache
-  // https://github.com/wch/r-source/blob/5a156a0865362bb8381dcd69ac335f5174a4f60c/src/main/identical.c#L99
+  // Skip attribute check on CHARSXP, which might have attribute related
+  // to the global string pool (#555)
   if (TYPEOF(x) == CHARSXP) {
     return hash;
   }
