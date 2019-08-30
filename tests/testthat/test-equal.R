@@ -69,6 +69,47 @@ test_that("data frames must have same size and columns", {
 
 })
 
+test_that("UTF-8 strings with UTF-8 VS unknown encodings are equal (#553)", {
+  x <- "temp (\u00B0C)"
+
+  y <- x
+  Encoding(y) <- "unknown"
+
+  expect_equal(vec_equal(x, y), x == y)
+})
+
+test_that("Latin1 strings with Latin1 VS unknown encodings are not equal", {
+  x <- "fa\xE7ile"
+  y <- x
+  Encoding(y) <- "latin1"
+
+  expect_equal(vec_equal(x, y), x == y)
+
+  # Still not equal
+  Encoding(y) <- "UTF-8"
+  expect_equal(vec_equal(x, y), x == y)
+
+  # Both must be UTF-8 in this case
+  Encoding(x) <- "UTF-8"
+  expect_equal(vec_equal(x, y), x == y)
+})
+
+test_that("equality can be determined when strings have identical encodings", {
+  x <- "fa\xE7ile"
+
+  Encoding(x) <- "unknown"
+  expect_equal(vec_equal(x, x), x == x)
+
+  Encoding(x) <- "latin1"
+  expect_equal(vec_equal(x, x), x == x)
+
+  Encoding(x) <- "UTF-8"
+  expect_equal(vec_equal(x, x), x == x)
+
+  Encoding(x) <- "bytes"
+  expect_equal(vec_equal(x, x), x == x)
+})
+
 # object ------------------------------------------------------------------
 
 test_that("can compare NULL",{
@@ -220,7 +261,6 @@ test_that("NA do not propagate from function bodies or formals", {
   expect_true(vec_equal(list(fn), list(fn)))
   expect_false(vec_equal(list(fn), list(other)))
 })
-
 
 # proxy -------------------------------------------------------------------
 
