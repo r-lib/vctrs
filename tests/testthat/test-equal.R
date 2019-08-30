@@ -70,43 +70,55 @@ test_that("data frames must have same size and columns", {
 })
 
 test_that("UTF-8 strings with UTF-8 VS unknown encodings are equal (#553)", {
-  x <- "temp (\u00B0C)"
+  utf8 <- "temp (\u00B0C)"
 
-  y <- x
-  Encoding(y) <- "unknown"
+  unknown <- utf8
+  Encoding(unknown) <- "unknown"
 
-  expect_equal(vec_equal(x, y), x == y)
+  expect_true(vec_equal(utf8, unknown))
+  expect_equal(vec_equal(utf8, unknown), utf8 == unknown)
 })
 
-test_that("Latin1 strings with Latin1 VS unknown encodings are not equal", {
-  x <- "fa\xE7ile"
-  y <- x
-  Encoding(y) <- "latin1"
+test_that("Latin1 characters with Latin1 VS unknown encodings are not equal", {
+  unknown <- "fa\xE7ile"
+  latin1 <- unknown
+  Encoding(latin1) <- "latin1"
 
-  expect_equal(vec_equal(x, y), x == y)
+  expect_false(vec_equal(unknown, latin1))
+  expect_equal(vec_equal(unknown, latin1), unknown == latin1)
 
   # Still not equal
-  Encoding(y) <- "UTF-8"
-  expect_equal(vec_equal(x, y), x == y)
+  latin1_as_utf8 <- latin1
+  Encoding(latin1_as_utf8) <- "UTF-8"
+
+  expect_false(vec_equal(unknown, latin1_as_utf8))
+  expect_equal(vec_equal(unknown, latin1_as_utf8), unknown == latin1_as_utf8)
 
   # Both must be UTF-8 in this case
-  Encoding(x) <- "UTF-8"
-  expect_equal(vec_equal(x, y), x == y)
+  unknown_as_utf8 <- unknown
+  Encoding(unknown_as_utf8) <- "UTF-8"
+
+  expect_true(vec_equal(unknown_as_utf8, latin1_as_utf8))
+  expect_equal(vec_equal(unknown_as_utf8, latin1_as_utf8), unknown_as_utf8 == latin1_as_utf8)
 })
 
 test_that("equality can be determined when strings have identical encodings", {
   x <- "fa\xE7ile"
 
-  Encoding(x) <- "unknown"
+  # unknown
+  expect_true(vec_equal(x, x))
   expect_equal(vec_equal(x, x), x == x)
 
   Encoding(x) <- "latin1"
+  expect_true(vec_equal(x, x))
   expect_equal(vec_equal(x, x), x == x)
 
   Encoding(x) <- "UTF-8"
+  expect_true(vec_equal(x, x))
   expect_equal(vec_equal(x, x), x == x)
 
   Encoding(x) <- "bytes"
+  expect_true(vec_equal(x, x))
   expect_equal(vec_equal(x, x), x == x)
 })
 
