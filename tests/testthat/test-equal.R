@@ -274,6 +274,7 @@ test_that("NA do not propagate from function bodies or formals", {
   expect_false(vec_equal(list(fn), list(other)))
 })
 
+
 # proxy -------------------------------------------------------------------
 
 test_that("vec_equal() takes vec_proxy() by default", {
