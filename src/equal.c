@@ -138,12 +138,21 @@ static int cpl_equal_scalar(const Rcomplex* x, const Rcomplex* y, bool na_equal)
   }
 }
 
+// TODO - doesn't work when comparing a string with "bytes" encoding
+// to another string with a different encoding. `Rf_translateCharUTF8()`
+// fails to convert with a nice error.
 static int chr_equal_scalar_impl(const SEXP x, const SEXP y) {
-  if (Rf_getCharCE(x) == Rf_getCharCE(y)) {
-    return x == y;
-  } else {
-    return !strcmp(Rf_translateCharUTF8(x), Rf_translateCharUTF8(y));
+  // String pointers are the same. Always means equivalent.
+  if (x == y) {
+    return 1;
   }
+
+  // String pointers were different, but encoding is the same
+  if (Rf_getCharCE(x) == Rf_getCharCE(y)) {
+    return 0;
+  }
+
+  return !strcmp(Rf_translateCharUTF8(x), Rf_translateCharUTF8(y));
 }
 
 static int chr_equal_scalar(const SEXP* x, const SEXP* y, bool na_equal) {
