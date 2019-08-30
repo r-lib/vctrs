@@ -41,6 +41,9 @@ static uint32_t hash_double(double x) {
   return hash_int64(value.i);
 }
 
+static uint32_t hash_char(SEXP x) {
+  return hash_int64((int64_t) *Rf_translateCharUTF8(x));
+}
 
 // Hashing scalars -----------------------------------------------------
 
@@ -150,6 +153,12 @@ static uint32_t sexp_hash(SEXP x);
 uint32_t hash_object(SEXP x) {
   uint32_t hash = sexp_hash(x);
 
+  // CHARSXP object have attributes that are purely related to the cache
+  // https://github.com/wch/r-source/blob/5a156a0865362bb8381dcd69ac335f5174a4f60c/src/main/identical.c#L99
+  if (TYPEOF(x) == CHARSXP) {
+    return hash;
+  }
+
   SEXP attrib = ATTRIB(x);
   if (attrib != R_NilValue) {
     hash = hash_combine(hash, hash_object(attrib));
@@ -176,6 +185,7 @@ static uint32_t sexp_hash(SEXP x) {
   case REALSXP: return dbl_hash(x);
   case STRSXP: return chr_hash(x);
   case VECSXP: return list_hash(x);
+  case CHARSXP: return hash_char(x);
   case DOTSXP:
   case LANGSXP:
   case LISTSXP:
@@ -184,7 +194,6 @@ static uint32_t sexp_hash(SEXP x) {
   case SYMSXP:
   case SPECIALSXP:
   case BUILTINSXP:
-  case CHARSXP:
   case ENVSXP:
   case EXTPTRSXP: return hash_int64((intptr_t) x);
   default: Rf_errorcall(R_NilValue, "Unsupported type %s", Rf_type2char(TYPEOF(x)));

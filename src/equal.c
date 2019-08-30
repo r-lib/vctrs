@@ -137,14 +137,18 @@ static int cpl_equal_scalar(const Rcomplex* x, const Rcomplex* y, bool na_equal)
     return real_equal && imag_equal;
   }
 }
+
+static int chr_equal_scalar_impl(const SEXP x, const SEXP y) {
+  return !strcmp(Rf_translateCharUTF8(x), Rf_translateCharUTF8(y));
+}
+
 static int chr_equal_scalar(const SEXP* x, const SEXP* y, bool na_equal) {
   const SEXP xi = *x;
   const SEXP yj = *y;
   if (na_equal) {
-    // Ignoring encoding for now
-    return xi == yj;
+    return chr_equal_scalar_impl(xi, yj);
   } else {
-    return (xi == NA_STRING || yj == NA_STRING) ? NA_LOGICAL : xi == yj;
+    return (xi == NA_STRING || yj == NA_STRING) ? NA_LOGICAL : chr_equal_scalar_impl(xi, yj);
   }
 }
 
