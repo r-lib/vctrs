@@ -50,6 +50,7 @@ static uint32_t hash_char_convert(SEXP x) {
     return hash_char(x);
   }
 
+  // Rf_translateCharUTF8() requires manual memory handling
   const void *vmax = vmaxget();
 
   const char* utf8 = Rf_translateCharUTF8(x);
