@@ -45,20 +45,37 @@ static uint32_t hash_char(SEXP x) {
   return hash_int64((int64_t) x);
 }
 
-static uint32_t hash_char_convert(SEXP x) {
-  if (Rf_getCharCE(x) == CE_UTF8) {
+static uint32_t hash_char_convert2(SEXP x) {
+  if (CHAR_IS_UTF8(x)) {
     return hash_char(x);
   }
 
   // Rf_translateCharUTF8() requires manual memory handling
   const void *vmax = vmaxget();
 
-  const char* utf8 = Rf_translateCharUTF8(x);
-  x = PROTECT(Rf_mkCharCE(utf8, CE_UTF8));
+  const char* x_utf8 = Rf_translateCharUTF8(x);
+  x = PROTECT(Rf_mkCharCE(x_utf8, CE_UTF8));
+
+  UNPROTECT(1);
+  vmaxset(vmax);
+  return hash_char(x);
+}
+
+static uint32_t hash_char_convert(SEXP x) {
+  // Rf_translateCharUTF8() requires manual memory handling
+  const void *vmax = vmaxget();
+
+  const char* x_utf8 = CHAR_IS_UTF8(x) ? CHAR(x) : Rf_translateCharUTF8(x);
+
+  uint64_t hash = hash_int64((int64_t) *x_utf8);
+  x_utf8++;
+
+  while(*x_utf8++) {
+    hash = hash_combine(hash, hash_int64((int64_t) *x_utf8));
+  }
 
   vmaxset(vmax);
-  UNPROTECT(1);
-  return hash_char(x);
+  return hash;
 }
 
 // UTF-8 conversion is:
@@ -66,23 +83,41 @@ static uint32_t hash_char_convert(SEXP x) {
 // - If none are bytes, conversion is required if any are UTF-8 or Latin1
 static bool requires_utf8_convert(SEXP x, R_len_t size) {
   const SEXP* xp = STRING_PTR_RO(x);
-  int char_ce;
-  bool convert = false;
+  SEXP xp_val;
+
+  bool any_utf8 = false;
+  bool any_latin1 = false;
+  bool any_unknown = false;
 
   for (R_len_t i = 0; i < size; ++i, ++xp) {
-    char_ce = Rf_getCharCE(*xp);
+    xp_val = *xp;
 
-    if (char_ce == CE_BYTES) {
-      convert = false;
-      break;
+    if (CHAR_IS_BYTES(xp_val)) {
+      return false;
     }
 
-    if (char_ce == CE_UTF8 || char_ce == CE_LATIN1) {
-      convert = true;
+    if (!any_utf8 && CHAR_IS_UTF8(xp_val)) {
+      any_utf8 = true;
+      continue;
     }
+
+    if (!any_latin1 && CHAR_IS_LATIN(xp_val)) {
+      any_latin1 = true;
+      continue;
+    }
+
+    any_unknown = true;
   }
 
-  return convert;
+  if (any_utf8 & (any_latin1 || any_unknown)) {
+    return true;
+  }
+
+  if (any_latin1 & any_unknown) {
+    return true;
+  }
+
+  return false;
 }
 
 // Hashing scalars -----------------------------------------------------

@@ -9,6 +9,8 @@
 // sxpinfo.gp is exposed through LEVELS(), and
 // CHARSXP info is extractable through a bitwise and
 #define CHAR_IS_BYTES(x) (LEVELS(x) & 2)
+#define CHAR_IS_UTF8(x) (LEVELS(x) & 8)
+#define CHAR_IS_LATIN(x) (LEVELS(x) & 4)
 #define CHAR_IS_UTF8_OR_LATIN(x) (LEVELS(x) & (4 | 8))
 
 typedef R_xlen_t r_ssize_t;
