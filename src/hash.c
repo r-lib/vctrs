@@ -61,6 +61,9 @@ static uint32_t hash_char_convert(SEXP x) {
   return hash_char(x);
 }
 
+// UTF-8 conversion is:
+// - Not required if any are bytes
+// - If none are bytes, conversion is required if any are UTF-8 or Latin1
 static bool requires_utf8_convert(SEXP x, R_len_t size) {
   const SEXP* xp = STRING_PTR_RO(x);
   int char_ce;
