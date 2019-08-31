@@ -143,12 +143,6 @@ static uint32_t sexp_hash(SEXP x);
 uint32_t hash_object(SEXP x) {
   uint32_t hash = sexp_hash(x);
 
-  // Skip attribute check on CHARSXP, which might have an attribute related
-  // to the global string pool (#555)
-  if (TYPEOF(x) == CHARSXP) {
-    return hash;
-  }
-
   SEXP attrib = ATTRIB(x);
   if (attrib != R_NilValue) {
     hash = hash_combine(hash, hash_object(attrib));
