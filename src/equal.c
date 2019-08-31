@@ -138,15 +138,38 @@ static int cpl_equal_scalar(const Rcomplex* x, const Rcomplex* y, bool na_equal)
   }
 }
 
-// This follows the same rules as base R's Seql()
-// - Try pointer comparison, if equal, done.
-// - If encoding was the same, or one was UTF8 and the other was LATIN1, done
-//   as they are either different with the same encoding, or just incompatible.
-// - We are then left with the possibility of:
-//   - unknown / utf8
-//   - unknown / latin1
-//   - bytes / utf8 (error, can't translate bytes)
-//   - bytes / latin1 (error, can't translate bytes)
+// Translate when:
+// - Unknown + Latin1
+// - Unknown + UTF-8
+// - Latin1 + Unknown
+// - UTF-8 + Unknown
+static bool requires_translation(const int x, const int y) {
+  bool x_known = (x == CE_UTF8 || x == CE_LATIN1);
+  bool y_known = (y == CE_UTF8 || y == CE_LATIN1);
+
+  if (x_known && y_known) {
+    return false;
+  }
+
+  if (!x_known && y_known) {
+    if (x == CE_BYTES) {
+      return false;
+    } else {
+      return true;
+    }
+  }
+
+  if (!y_known && x_known) {
+    if (y == CE_BYTES) {
+      return false;
+    } else {
+      return true;
+    }
+  }
+
+  return false;
+}
+
 static int chr_equal_scalar_impl(const SEXP x, const SEXP y) {
   if (x == y) {
     return 1;
@@ -155,14 +178,13 @@ static int chr_equal_scalar_impl(const SEXP x, const SEXP y) {
   int x_ce = Rf_getCharCE(x);
   int y_ce = Rf_getCharCE(y);
 
-  bool x_known_encoding = (x_ce == CE_UTF8) || (x_ce == CE_LATIN1);
-  bool y_known_encoding = (y_ce == CE_UTF8) || (y_ce == CE_LATIN1);
+  bool translate = requires_translation(x_ce, y_ce);
 
-  if (x_known_encoding == y_known_encoding) {
-    return 0;
+  if (translate) {
+    return !strcmp(Rf_translateCharUTF8(x), Rf_translateCharUTF8(y));
   }
 
-  return !strcmp(Rf_translateCharUTF8(x), Rf_translateCharUTF8(y));
+  return 0;
 }
 
 static int chr_equal_scalar(const SEXP* x, const SEXP* y, bool na_equal) {
