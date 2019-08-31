@@ -401,7 +401,7 @@ static void df_hash_fill(uint32_t* p, R_len_t size, SEXP x) {
 }
 
 // [[ register() ]]
-SEXP vctrs_hash(SEXP x, SEXP rowwise) {
+SEXP vctrs_hash(SEXP x) {
   x = PROTECT(vec_proxy(x));
 
   R_len_t n = vec_size(x);
@@ -409,14 +409,8 @@ SEXP vctrs_hash(SEXP x, SEXP rowwise) {
 
   uint32_t* p = (uint32_t*) RAW(out);
 
-  if (r_lgl_get(rowwise, 0)) {
-    // for (R_len_t i = 0; i < n; ++i) {
-    //   p[i] = hash_scalar(x, i);
-    // }
-  } else {
-    memset(p, 0, n * sizeof(uint32_t));
-    hash_fill(p, n, x);
-  }
+  memset(p, 0, n * sizeof(uint32_t));
+  hash_fill(p, n, x);
 
   UNPROTECT(2);
   return out;

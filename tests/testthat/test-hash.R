@@ -30,15 +30,15 @@ test_that("same string hashes to same value", {
   expect_false(identical(x[5:8], x[9:12]))
 })
 
-test_that("list hashes to values of individual values", {
-  x <- vec_hash(list(1:3, letters))
-  expect_identical(x[1:4], obj_hash(1:3))
-  expect_identical(x[5:8], obj_hash(letters))
-
-  x <- map(list(list(1:3), list(letters)), vec_hash)
-  expect_identical(x[[1]], obj_hash(1:3))
-  expect_identical(x[[2]], obj_hash(letters))
-})
+# test_that("list hashes to values of individual values", {
+#   x <- vec_hash(list(1:3, letters))
+#   expect_identical(x[1:4], obj_hash(1:3))
+#   expect_identical(x[5:8], obj_hash(letters))
+#
+#   x <- map(list(list(1:3), list(letters)), vec_hash)
+#   expect_identical(x[[1]], obj_hash(1:3))
+#   expect_identical(x[[2]], obj_hash(letters))
+# })
 
 test_that("hash of data frame works down rows", {
   df <- data.frame(x = 1:3, y = 1:3)
@@ -72,61 +72,47 @@ test_that("hashes are consistent from run to run", {
   expect_known_output(print(hash), file = test_path("test-hash-hash.txt"))
 })
 
-test_that("can hash list of non-vectors", {
-  x <- list(quote(x), mean)
+# test_that("can hash list of non-vectors", {
+#   x <- list(quote(x), mean)
+#
+#   expect_equal(
+#     vec_hash(x),
+#     c(obj_hash(x[[1]]), obj_hash(x[[2]]))
+#   )
+# })
 
-  expect_equal(
-    vec_hash(x),
-    c(obj_hash(x[[1]]), obj_hash(x[[2]]))
-  )
-})
-
-test_that("can hash matrices rowwise", {
-  x <- matrix(c(1, 2, 3, 4), c(2, 2))
-  expect_identical(
-    vec_hash(x, rowwise = TRUE),
-    vec_hash(x, rowwise = TRUE)
-  )
-
-  y <- matrix(c(1, 2, 3, 5), c(2, 2))
-  expect_false(identical(
-    vec_hash(x, rowwise = TRUE),
-    vec_hash(y, rowwise = TRUE)
-  ))
-})
-
-test_that("can hash matrices non-rowwise", {
+test_that("can hash matrices", {
   x <- matrix(c(1, 1, 1, 2, 2, 1), c(3, 2))
 
   expect_identical(
-    vec_hash(x, rowwise = FALSE),
-    vec_hash(x, rowwise = FALSE)
+    vec_hash(x),
+    vec_hash(x)
   )
 
   x <- matrix(c(1, 2, 3, 4), c(2, 2))
 
   expect_identical(
-    vec_hash(x, rowwise = FALSE),
-    vec_hash(x, rowwise = FALSE)
+    vec_hash(x),
+    vec_hash(x)
   )
 
   expect_false(identical(
-    vec_hash(x, rowwise = FALSE),
-    vec_hash(c(1, 2), rowwise = FALSE)
+    vec_hash(x),
+    vec_hash(c(1, 2))
   ))
 
   y <- matrix(c(1, 2, 3, 5), c(2, 2))
 
   expect_false(identical(
-    vec_hash(x, rowwise = FALSE),
-    vec_hash(y, rowwise = FALSE)
+    vec_hash(x),
+    vec_hash(y)
   ))
 })
 
-test_that("can hash with non-rowwise method", {
+test_that("can hash NA", {
   expect_identical(
-    vec_hash(NA, rowwise = FALSE),
-    vec_hash(NA, rowwise = FALSE),
+    vec_hash(NA),
+    vec_hash(NA),
   )
 })
 
@@ -134,20 +120,20 @@ test_that("can hash 1D arrays", {
   # 1D arrays are dispatched to `as.data.frame.vector()` which
   # currently does not strip dimensions. This caused an infinite
   # recursion.
-  expect_length(vec_hash(array(1:2), TRUE), 8)
-  expect_identical(vec_hash(array(1:2), FALSE), vec_hash(1:2, FALSE))
+  expect_length(vec_hash(array(1:2)), 8)
+  expect_identical(vec_hash(array(1:2)), vec_hash(1:2))
 })
 
 test_that("can hash raw vectors", {
   expect_identical(vec_hash(0:255), vec_hash(as.raw(0:255)))
 })
 
-test_that("can hash complex vectors", {
-  expect_identical(
-    vec_hash(c(1, 2) + 0i),
-    vec_hash(matrix(c(1, 2, 0, 0), ncol = 2))
-  )
-})
+# test_that("can hash complex vectors", {
+#   expect_identical(
+#     vec_hash(c(1, 2) + 0i),
+#     vec_hash(matrix(c(1, 2, 0, 0), ncol = 2))
+#   )
+# })
 
 # Object ------------------------------------------------------------------
 
