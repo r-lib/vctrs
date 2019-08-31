@@ -90,35 +90,8 @@ static uint32_t cpl_hash_scalar(const Rcomplex* x);
 static uint32_t chr_hash_scalar(const SEXP* x);
 static uint32_t chr_hash_scalar_convert(const SEXP* x);
 static uint32_t raw_hash_scalar(const Rbyte* x);
-// static uint32_t df_hash_scalar(SEXP x, R_len_t i);
 static uint32_t list_hash_scalar(SEXP x, R_len_t i);
-// static uint32_t shaped_hash_scalar(SEXP x, R_len_t i);
 
-
-// // [[ include("vctrs.h") ]]
-// uint32_t hash_scalar(SEXP x, R_len_t i) {
-//   if (has_dim(x)) {
-//     return shaped_hash_scalar(x, i);
-//   }
-//
-//   switch(TYPEOF(x)) {
-//   case LGLSXP: return lgl_hash_scalar(LOGICAL(x) + i);
-//   case INTSXP: return int_hash_scalar(INTEGER(x) + i);
-//   case REALSXP: return dbl_hash_scalar(REAL(x) + i);
-//   case CPLXSXP: return cpl_hash_scalar(COMPLEX(x) + i);
-//   case STRSXP: return chr_hash_scalar(STRING_PTR(x) + i);
-//   case RAWSXP: return raw_hash_scalar(RAW(x) + i);
-//   case VECSXP: {
-//     if (is_data_frame(x)) {
-//       return df_hash_scalar(x, i);
-//     } else {
-//       return list_hash_scalar(x, i);
-//     }
-//   }
-//   default:
-//     Rf_errorcall(R_NilValue, "Unsupported type %s", Rf_type2char(TYPEOF(x)));
-//   }
-// }
 
 static uint32_t lgl_hash_scalar(const int* x) {
   return hash_int32(*x);
@@ -152,32 +125,9 @@ static uint32_t raw_hash_scalar(const Rbyte* x) {
   return hash_int32(*x);
 }
 
-// static uint32_t df_hash_scalar(SEXP x, R_len_t i) {
-//   uint32_t hash = 0;
-//   R_len_t p = Rf_length(x);
-//
-//   for (R_len_t j = 0; j < p; ++j) {
-//     SEXP col = VECTOR_ELT(x, j);
-//     hash = hash_combine(hash, hash_scalar(col, i));
-//   }
-//
-//   return hash;
-// }
-
 static uint32_t list_hash_scalar(SEXP x, R_len_t i) {
   return hash_object(VECTOR_ELT(x, i));
 }
-
-// // This is slow and matrices / arrays should be converted to data
-// // frames ahead of time. The conversion to data frame is only a
-// // stopgap, in the long term, we'll hash arrays natively.
-// static uint32_t shaped_hash_scalar(SEXP x, R_len_t i) {
-//   x = PROTECT(r_as_data_frame(x));
-//   uint32_t out = hash_scalar(x, i);
-//
-//   UNPROTECT(1);
-//   return out;
-// }
 
 // Hashing objects -----------------------------------------------------
 
