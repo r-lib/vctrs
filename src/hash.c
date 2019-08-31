@@ -41,8 +41,36 @@ static uint32_t hash_double(double x) {
   return hash_int64(value.i);
 }
 
+static uint32_t hash_char_convert(SEXP x) {
+  const void *vmax = vmaxget();
+  const char* x_chr = Rf_translateCharUTF8(x);
+  vmaxset(vmax);
+  return hash_int64((int64_t) *x_chr);
+}
+
 static uint32_t hash_char(SEXP x) {
-  return hash_int64((int64_t) *Rf_translateCharUTF8(x));
+  return hash_int64((int64_t) x);
+}
+
+static bool requires_utf8_convert(SEXP x, R_len_t size) {
+  const SEXP* xp = STRING_PTR_RO(x);
+  int char_ce;
+  bool convert = false;
+
+  for (R_len_t i = 0; i < size; ++i, ++xp) {
+    char_ce = Rf_getCharCE(*xp);
+
+    if (char_ce == CE_BYTES) {
+      convert = false;
+      break;
+    }
+
+    if (char_ce == CE_UTF8 || char_ce == CE_LATIN1) {
+      convert = true;
+    }
+  }
+
+  return convert;
 }
 
 // Hashing scalars -----------------------------------------------------
@@ -52,6 +80,7 @@ static uint32_t int_hash_scalar(const int* x);
 static uint32_t dbl_hash_scalar(const double* x);
 static uint32_t cpl_hash_scalar(const Rcomplex* x);
 static uint32_t chr_hash_scalar(const SEXP* x);
+static uint32_t chr_hash_scalar_convert(const SEXP* x);
 static uint32_t raw_hash_scalar(const Rbyte* x);
 // static uint32_t df_hash_scalar(SEXP x, R_len_t i);
 static uint32_t list_hash_scalar(SEXP x, R_len_t i);
@@ -106,7 +135,10 @@ static uint32_t cpl_hash_scalar(const Rcomplex* x) {
   return hash;
 }
 static uint32_t chr_hash_scalar(const SEXP* x) {
-  return hash_object(*x);
+  return hash_char(*x);
+}
+static uint32_t chr_hash_scalar_convert(const SEXP* x) {
+  return hash_char_convert(*x);
 }
 static uint32_t raw_hash_scalar(const Rbyte* x) {
   return hash_int32(*x);
@@ -185,7 +217,6 @@ static uint32_t sexp_hash(SEXP x) {
   case REALSXP: return dbl_hash(x);
   case STRSXP: return chr_hash(x);
   case VECSXP: return list_hash(x);
-  case CHARSXP: return hash_char(x);
   case DOTSXP:
   case LANGSXP:
   case LISTSXP:
@@ -221,7 +252,11 @@ static uint32_t dbl_hash(SEXP x) {
   HASH(double, REAL_RO, dbl_hash_scalar);
 }
 static uint32_t chr_hash(SEXP x) {
-  HASH(SEXP, STRING_PTR_RO, chr_hash_scalar);
+  if (requires_utf8_convert(x, Rf_length(x))) {
+    HASH(SEXP, STRING_PTR_RO, chr_hash_scalar_convert);
+  } else {
+    HASH(SEXP, STRING_PTR_RO, chr_hash_scalar);
+  }
 }
 
 #undef HASH
@@ -322,7 +357,11 @@ static void cpl_hash_fill(uint32_t* p, R_len_t size, SEXP x) {
   HASH_FILL(Rcomplex, COMPLEX_RO, cpl_hash_scalar);
 }
 static void chr_hash_fill(uint32_t* p, R_len_t size, SEXP x) {
-  HASH_FILL(SEXP, STRING_PTR_RO, chr_hash_scalar);
+  if (requires_utf8_convert(x, size)) {
+    HASH_FILL(SEXP, STRING_PTR_RO, chr_hash_scalar_convert);
+  } else {
+    HASH_FILL(SEXP, STRING_PTR_RO, chr_hash_scalar);
+  }
 }
 static void raw_hash_fill(uint32_t* p, R_len_t size, SEXP x) {
   HASH_FILL(Rbyte, RAW_RO, raw_hash_scalar);
