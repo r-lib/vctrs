@@ -41,15 +41,23 @@ static uint32_t hash_double(double x) {
   return hash_int64(value.i);
 }
 
-static uint32_t hash_char_convert(SEXP x) {
-  const void *vmax = vmaxget();
-  const char* x_chr = Rf_translateCharUTF8(x);
-  vmaxset(vmax);
-  return hash_int64((int64_t) *x_chr);
-}
-
 static uint32_t hash_char(SEXP x) {
   return hash_int64((int64_t) x);
+}
+
+static uint32_t hash_char_convert(SEXP x) {
+  if (Rf_getCharCE(x) == CE_UTF8) {
+    return hash_char(x);
+  }
+
+  const void *vmax = vmaxget();
+
+  const char* utf8 = Rf_translateCharUTF8(x);
+  x = PROTECT(Rf_mkCharCE(utf8, CE_UTF8));
+
+  vmaxset(vmax);
+  UNPROTECT(1);
+  return hash_char(x);
 }
 
 static bool requires_utf8_convert(SEXP x, R_len_t size) {
