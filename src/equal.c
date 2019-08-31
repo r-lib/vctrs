@@ -143,24 +143,22 @@ static int cpl_equal_scalar(const Rcomplex* x, const Rcomplex* y, bool na_equal)
 // - Unknown + UTF-8
 // - Latin1 + Unknown
 // - UTF-8 + Unknown
-static bool requires_translation(const int x, const int y) {
-  bool x_known = (x == CE_UTF8 || x == CE_LATIN1);
-  bool y_known = (y == CE_UTF8 || y == CE_LATIN1);
+static bool requires_translation(const SEXP x, const SEXP y) {
+  bool x_known = CHAR_IS_UTF8_OR_LATIN(x);
+  bool y_known = CHAR_IS_UTF8_OR_LATIN(y);
 
-  if (x_known && y_known) {
-    return false;
-  }
-
-  if (!x_known && y_known) {
-    if (x == CE_BYTES) {
+  if (x_known) {
+    if (y_known) {
+      return false;
+    } else if (CHAR_IS_BYTES(y)) {
       return false;
     } else {
       return true;
     }
   }
 
-  if (!y_known && x_known) {
-    if (y == CE_BYTES) {
+  if (y_known) {
+    if (CHAR_IS_BYTES(x)) {
       return false;
     } else {
       return true;
@@ -175,12 +173,7 @@ static int chr_equal_scalar_impl(const SEXP x, const SEXP y) {
     return 1;
   }
 
-  int x_ce = Rf_getCharCE(x);
-  int y_ce = Rf_getCharCE(y);
-
-  bool translate = requires_translation(x_ce, y_ce);
-
-  if (translate) {
+  if (requires_translation(x, y)) {
     return !strcmp(Rf_translateCharUTF8(x), Rf_translateCharUTF8(y));
   }
 
