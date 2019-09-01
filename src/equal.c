@@ -138,34 +138,29 @@ static int cpl_equal_scalar(const Rcomplex* x, const Rcomplex* y, bool na_equal)
   }
 }
 
-// Translate when:
-// - Unknown + Latin1
-// - Unknown + UTF-8
-// - Latin1 + Unknown
-// - UTF-8 + Unknown
+// - CHAR_ENC_TYPE - Any of these means don't convert:
+//  - (utf8 + utf8)
+//  - (latin1 + latin1)
+//  - (unknown + unknown)
+//  - (bytes + bytes)
+//  - (unknown + bytes)
+// - CHAR_IS_BYTES - Any of these means don't convert:
+//  - (bytes + utf8)
+//  - (bytes + latin1)
+// - Any of these means convert:
+//  - (utf8 + latin1)
+//  - (unknown + utf8)
+//  - (unknown + latin1)
 static bool requires_translation(const SEXP x, const SEXP y) {
-  bool x_known = CHAR_IS_UTF8_OR_LATIN(x);
-  bool y_known = CHAR_IS_UTF8_OR_LATIN(y);
-
-  if (x_known) {
-    if (y_known) {
-      return false;
-    } else if (CHAR_IS_BYTES(y)) {
-      return false;
-    } else {
-      return true;
-    }
+  if (CHAR_ENC_TYPE(x) == CHAR_ENC_TYPE(y)) {
+    return false;
   }
 
-  if (y_known) {
-    if (CHAR_IS_BYTES(x)) {
-      return false;
-    } else {
-      return true;
-    }
+  if (CHAR_IS_BYTES(x) || CHAR_IS_BYTES(y)) {
+    return false;
   }
 
-  return false;
+  return true;
 }
 
 static int chr_equal_scalar_impl(const SEXP x, const SEXP y) {
