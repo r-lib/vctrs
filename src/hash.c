@@ -45,22 +45,6 @@ static uint32_t hash_char(SEXP x) {
   return hash_int64((int64_t) x);
 }
 
-static uint32_t hash_char_convert2(SEXP x) {
-  if (CHAR_IS_UTF8(x)) {
-    return hash_char(x);
-  }
-
-  // Rf_translateCharUTF8() requires manual memory handling
-  const void *vmax = vmaxget();
-
-  const char* x_utf8 = Rf_translateCharUTF8(x);
-  x = PROTECT(Rf_mkCharCE(x_utf8, CE_UTF8));
-
-  UNPROTECT(1);
-  vmaxset(vmax);
-  return hash_char(x);
-}
-
 static uint32_t hash_char_convert(SEXP x) {
   // Rf_translateCharUTF8() requires manual memory handling
   const void *vmax = vmaxget();
