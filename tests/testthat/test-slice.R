@@ -1,7 +1,10 @@
-context("test-slice")
-
 test_that("vec_slice throws error with non-vector inputs", {
   expect_error(vec_slice(environment(), 1L), class = "vctrs_error_scalar_type")
+})
+
+test_that("vec_slice throws error with non-vector indexes", {
+  expect_error(vec_slice(1:3, Sys.Date()), class = "vctrs_error_incompatible_cast")
+  expect_error(vec_slice(1:3, matrix(TRUE, nrow = 1)), "must have one dimension")
 })
 
 test_that("can subset base vectors", {
@@ -199,6 +202,8 @@ test_that("vec_as_index() checks type", {
   expect_error(vec_as_index(quote(foo), 1L), class = "vctrs_error_index_bad_type")
   expect_error(vec_as_index("foo", "bar"), class = "vctrs_error_assert_ptype")
   expect_error(vec_as_index("foo", 1L, names = 1L), "must be a character vector")
+  expect_error(vec_as_index(Sys.Date(), 3L), class = "vctrs_error_index_bad_type")
+  expect_error(vec_as_index(matrix(TRUE, nrow = 1), 3L), "must have one dimension")
 })
 
 test_that("can `vec_slice()` S3 objects without dispatch infloop", {
