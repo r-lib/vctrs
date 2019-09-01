@@ -78,9 +78,19 @@ static uint32_t hash_char_convert(SEXP x) {
   return hash;
 }
 
-// UTF-8 conversion is:
-// - Not required if any are bytes
-// - If none are bytes, conversion is required if any are UTF-8 or Latin1
+// - CHAR_IS_BYTES - Any of these means don't convert:
+//  - (bytes + bytes)
+//  - (bytes + unknown)
+//  - (bytes + utf8)
+//  - (bytes + latin1)
+// - Any of these means don't convert:
+//  - (utf8 + utf8)
+//  - (latin1 + latin1)
+//  - (unknown + unknown)
+// - Any of these means convert:
+//  - (utf8 + latin1)
+//  - (unknown + utf8)
+//  - (unknown + latin1)
 static bool requires_utf8_convert(SEXP x, R_len_t size) {
   const SEXP* xp = STRING_PTR_RO(x);
   SEXP xp_val;
@@ -89,24 +99,32 @@ static bool requires_utf8_convert(SEXP x, R_len_t size) {
   bool any_latin1 = false;
   bool any_unknown = false;
 
+  bool none_utf8;
+  bool none_latin1;
+
   for (R_len_t i = 0; i < size; ++i, ++xp) {
     xp_val = *xp;
+
+    none_utf8 = !any_utf8;
+    none_latin1 = !any_latin1;
 
     if (CHAR_IS_BYTES(xp_val)) {
       return false;
     }
 
-    if (!any_utf8 && CHAR_IS_UTF8(xp_val)) {
+    if (none_utf8 && CHAR_IS_UTF8(xp_val)) {
       any_utf8 = true;
       continue;
     }
 
-    if (!any_latin1 && CHAR_IS_LATIN(xp_val)) {
+    if (none_latin1 && CHAR_IS_LATIN(xp_val)) {
       any_latin1 = true;
       continue;
     }
 
-    any_unknown = true;
+    if (none_latin1 && none_utf8) {
+      any_unknown = true;
+    }
   }
 
   if (any_utf8 & (any_latin1 || any_unknown)) {
