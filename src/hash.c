@@ -83,7 +83,7 @@ static uint32_t hash_char_convert(SEXP x) {
 //  - (bytes + unknown)
 //  - (bytes + utf8)
 //  - (bytes + latin1)
-// - Any of these means don't convert:
+// - CHAR_ENC_TYPE - Any of these means don't convert:
 //  - (utf8 + utf8)
 //  - (latin1 + latin1)
 //  - (unknown + unknown)
@@ -95,47 +95,28 @@ static bool requires_utf8_convert(SEXP x, R_len_t size) {
   const SEXP* xp = STRING_PTR_RO(x);
   SEXP xp_val;
 
-  bool any_utf8 = false;
-  bool any_latin1 = false;
-  bool any_unknown = false;
-
-  bool none_utf8;
-  bool none_latin1;
+  bool convert = false;
+  int first_encoding = CHAR_ENC_TYPE(*xp);
 
   for (R_len_t i = 0; i < size; ++i, ++xp) {
     xp_val = *xp;
-
-    none_utf8 = !any_utf8;
-    none_latin1 = !any_latin1;
 
     if (CHAR_IS_BYTES(xp_val)) {
       return false;
     }
 
-    if (none_utf8 && CHAR_IS_UTF8(xp_val)) {
-      any_utf8 = true;
+    if (convert) {
       continue;
     }
 
-    if (none_latin1 && CHAR_IS_LATIN(xp_val)) {
-      any_latin1 = true;
+    if (CHAR_ENC_TYPE(xp_val) == first_encoding) {
       continue;
     }
 
-    if (none_latin1 && none_utf8) {
-      any_unknown = true;
-    }
+    convert = true;
   }
 
-  if (any_utf8 & (any_latin1 || any_unknown)) {
-    return true;
-  }
-
-  if (any_latin1 & any_unknown) {
-    return true;
-  }
-
-  return false;
+  return convert;
 }
 
 // Hashing scalars -----------------------------------------------------
