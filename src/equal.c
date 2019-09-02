@@ -169,7 +169,10 @@ static int chr_equal_scalar_impl(const SEXP x, const SEXP y) {
   }
 
   if (requires_translation(x, y)) {
-    return !strcmp(Rf_translateCharUTF8(x), Rf_translateCharUTF8(y));
+    const void *vmax = vmaxget();
+    int out = !strcmp(Rf_translateCharUTF8(x), Rf_translateCharUTF8(y));
+    vmaxset(vmax);
+    return out;
   }
 
   return 0;
