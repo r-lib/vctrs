@@ -67,7 +67,7 @@ static uint32_t hash_char_translate(SEXP x) {
 //   (utf8 + utf8), (latin1 + latin1), (unknown + unknown)
 // - Translate these:
 //   (utf8 + latin1), (unknown + utf8), (unknown + latin1)
-static bool vec_requires_translation(SEXP x, R_len_t size) {
+static bool chr_requires_translation(SEXP x, R_len_t size) {
   const SEXP* xp = STRING_PTR_RO(x);
   SEXP xp_val;
 
@@ -218,7 +218,7 @@ static uint32_t dbl_hash(SEXP x) {
   HASH(double, REAL_RO, dbl_hash_scalar);
 }
 static uint32_t chr_hash(SEXP x) {
-  if (vec_requires_translation(x, Rf_length(x))) {
+  if (chr_requires_translation(x, Rf_length(x))) {
     HASH(SEXP, STRING_PTR_RO, chr_hash_scalar_translate);
   } else {
     HASH(SEXP, STRING_PTR_RO, chr_hash_scalar);
@@ -323,7 +323,7 @@ static void cpl_hash_fill(uint32_t* p, R_len_t size, SEXP x) {
   HASH_FILL(Rcomplex, COMPLEX_RO, cpl_hash_scalar);
 }
 static void chr_hash_fill(uint32_t* p, R_len_t size, SEXP x) {
-  if (vec_requires_translation(x, size)) {
+  if (chr_requires_translation(x, size)) {
     HASH_FILL(SEXP, STRING_PTR_RO, chr_hash_scalar_translate);
   } else {
     HASH_FILL(SEXP, STRING_PTR_RO, chr_hash_scalar);
