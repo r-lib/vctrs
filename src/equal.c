@@ -146,7 +146,7 @@ static int cpl_equal_scalar(const Rcomplex* x, const Rcomplex* y, bool na_equal)
 //   (bytes + utf8), (bytes + latin1)
 // - Translate these:
 //   (utf8 + latin1), (unknown + utf8), (unknown + latin1)
-static bool requires_translation(const SEXP x, const SEXP y) {
+static bool scalar_requires_translation(const SEXP x, const SEXP y) {
   if (CHAR_ENC_TYPE(x) == CHAR_ENC_TYPE(y)) {
     return false;
   }
@@ -163,7 +163,7 @@ static int chr_equal_scalar_impl(const SEXP x, const SEXP y) {
     return 1;
   }
 
-  if (requires_translation(x, y)) {
+  if (scalar_requires_translation(x, y)) {
     const void *vmax = vmaxget();
     int out = !strcmp(Rf_translateCharUTF8(x), Rf_translateCharUTF8(y));
     vmaxset(vmax);

@@ -45,8 +45,7 @@ static uint32_t hash_char(SEXP x) {
   return hash_int64((int64_t) x);
 }
 
-static uint32_t hash_char_convert(SEXP x) {
-  // Rf_translateCharUTF8() requires manual memory handling
+static uint32_t hash_char_translate(SEXP x) {
   const void *vmax = vmaxget();
 
   const char* x_utf8 = CHAR_IS_UTF8(x) ? CHAR(x) : Rf_translateCharUTF8(x);
@@ -62,24 +61,18 @@ static uint32_t hash_char_convert(SEXP x) {
   return hash;
 }
 
-// - CHAR_IS_BYTES - Any of these means don't convert:
-//  - (bytes + bytes)
-//  - (bytes + unknown)
-//  - (bytes + utf8)
-//  - (bytes + latin1)
-// - CHAR_ENC_TYPE - Any of these means don't convert:
-//  - (utf8 + utf8)
-//  - (latin1 + latin1)
-//  - (unknown + unknown)
-// - Any of these means convert:
-//  - (utf8 + latin1)
-//  - (unknown + utf8)
-//  - (unknown + latin1)
-static bool requires_utf8_convert(SEXP x, R_len_t size) {
+// Determine if `x` must be translated to UTF-8
+// - CHAR_IS_BYTES - Don't translate these cases:
+//   (bytes + bytes), (bytes + unknown), (bytes + utf8), (bytes + latin1)
+// - CHAR_ENC_TYPE - Don't translate these cases:
+//   (utf8 + utf8), (latin1 + latin1), (unknown + unknown)
+// - Translate these:
+//   (utf8 + latin1), (unknown + utf8), (unknown + latin1)
+static bool vec_requires_translation(SEXP x, R_len_t size) {
   const SEXP* xp = STRING_PTR_RO(x);
   SEXP xp_val;
 
-  bool convert = false;
+  bool translate = false;
   int first_encoding = CHAR_ENC_TYPE(*xp);
 
   for (R_len_t i = 0; i < size; ++i, ++xp) {
@@ -89,7 +82,7 @@ static bool requires_utf8_convert(SEXP x, R_len_t size) {
       return false;
     }
 
-    if (convert) {
+    if (translate) {
       continue;
     }
 
@@ -97,10 +90,10 @@ static bool requires_utf8_convert(SEXP x, R_len_t size) {
       continue;
     }
 
-    convert = true;
+    translate = true;
   }
 
-  return convert;
+  return translate;
 }
 
 // Hashing scalars -----------------------------------------------------
@@ -110,7 +103,7 @@ static uint32_t int_hash_scalar(const int* x);
 static uint32_t dbl_hash_scalar(const double* x);
 static uint32_t cpl_hash_scalar(const Rcomplex* x);
 static uint32_t chr_hash_scalar(const SEXP* x);
-static uint32_t chr_hash_scalar_convert(const SEXP* x);
+static uint32_t chr_hash_scalar_translate(const SEXP* x);
 static uint32_t raw_hash_scalar(const Rbyte* x);
 static uint32_t list_hash_scalar(SEXP x, R_len_t i);
 
@@ -140,8 +133,8 @@ static uint32_t cpl_hash_scalar(const Rcomplex* x) {
 static uint32_t chr_hash_scalar(const SEXP* x) {
   return hash_char(*x);
 }
-static uint32_t chr_hash_scalar_convert(const SEXP* x) {
-  return hash_char_convert(*x);
+static uint32_t chr_hash_scalar_translate(const SEXP* x) {
+  return hash_char_translate(*x);
 }
 static uint32_t raw_hash_scalar(const Rbyte* x) {
   return hash_int32(*x);
@@ -226,8 +219,8 @@ static uint32_t dbl_hash(SEXP x) {
   HASH(double, REAL_RO, dbl_hash_scalar);
 }
 static uint32_t chr_hash(SEXP x) {
-  if (requires_utf8_convert(x, Rf_length(x))) {
-    HASH(SEXP, STRING_PTR_RO, chr_hash_scalar_convert);
+  if (vec_requires_translation(x, Rf_length(x))) {
+    HASH(SEXP, STRING_PTR_RO, chr_hash_scalar_translate);
   } else {
     HASH(SEXP, STRING_PTR_RO, chr_hash_scalar);
   }
@@ -331,8 +324,8 @@ static void cpl_hash_fill(uint32_t* p, R_len_t size, SEXP x) {
   HASH_FILL(Rcomplex, COMPLEX_RO, cpl_hash_scalar);
 }
 static void chr_hash_fill(uint32_t* p, R_len_t size, SEXP x) {
-  if (requires_utf8_convert(x, size)) {
-    HASH_FILL(SEXP, STRING_PTR_RO, chr_hash_scalar_convert);
+  if (vec_requires_translation(x, size)) {
+    HASH_FILL(SEXP, STRING_PTR_RO, chr_hash_scalar_translate);
   } else {
     HASH_FILL(SEXP, STRING_PTR_RO, chr_hash_scalar);
   }
