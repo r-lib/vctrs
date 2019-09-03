@@ -50,8 +50,7 @@ static uint32_t hash_char_translate(SEXP x) {
 
   const char* x_utf8 = CHAR_IS_UTF8(x) ? CHAR(x) : Rf_translateCharUTF8(x);
 
-  uint32_t hash = hash_int64((int64_t) *x_utf8);
-  x_utf8++;
+  uint32_t hash = 0;
 
   while(*x_utf8++) {
     hash = hash_combine(hash, hash_int64((int64_t) *x_utf8));
