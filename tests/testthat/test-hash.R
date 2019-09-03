@@ -30,15 +30,15 @@ test_that("same string hashes to same value", {
   expect_false(identical(x[5:8], x[9:12]))
 })
 
-# test_that("list hashes to values of individual values", {
-#   x <- vec_hash(list(1:3, letters))
-#   expect_identical(x[1:4], obj_hash(1:3))
-#   expect_identical(x[5:8], obj_hash(letters))
-#
-#   x <- map(list(list(1:3), list(letters)), vec_hash)
-#   expect_identical(x[[1]], obj_hash(1:3))
-#   expect_identical(x[[2]], obj_hash(letters))
-# })
+test_that("list hashes to values of individual values", {
+  x <- vec_hash(list(1:3, letters))
+  expect_identical(x[1:4], obj_hash(1:3))
+  expect_identical(x[5:8], obj_hash(letters))
+
+  x <- map(list(list(1:3), list(letters)), vec_hash)
+  expect_identical(x[[1]], obj_hash(1:3))
+  expect_identical(x[[2]], obj_hash(letters))
+})
 
 test_that("hash of data frame works down rows", {
   df <- data.frame(x = 1:3, y = 1:3)
@@ -72,14 +72,14 @@ test_that("hashes are consistent from run to run", {
   expect_known_output(print(hash), file = test_path("test-hash-hash.txt"))
 })
 
-# test_that("can hash list of non-vectors", {
-#   x <- list(quote(x), mean)
-#
-#   expect_equal(
-#     vec_hash(x),
-#     c(obj_hash(x[[1]]), obj_hash(x[[2]]))
-#   )
-# })
+test_that("can hash list of non-vectors", {
+  x <- list(quote(x), mean)
+
+  expect_equal(
+    vec_hash(x),
+    c(obj_hash(x[[1]]), obj_hash(x[[2]]))
+  )
+})
 
 test_that("can hash matrices", {
   x <- matrix(c(1, 1, 1, 2, 2, 1), c(3, 2))
@@ -128,12 +128,12 @@ test_that("can hash raw vectors", {
   expect_identical(vec_hash(0:255), vec_hash(as.raw(0:255)))
 })
 
-# test_that("can hash complex vectors", {
-#   expect_identical(
-#     vec_hash(c(1, 2) + 0i),
-#     vec_hash(matrix(c(1, 2, 0, 0), ncol = 2))
-#   )
-# })
+test_that("can hash complex vectors", {
+  expect_identical(
+    vec_hash(c(1, 2) + 0i),
+    c(obj_hash(c(1, 0)), obj_hash(c(2, 0)))
+  )
+})
 
 # Object ------------------------------------------------------------------
 
