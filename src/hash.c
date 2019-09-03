@@ -42,7 +42,57 @@ static uint32_t hash_double(double x) {
 }
 
 static uint32_t hash_char(SEXP x) {
-  return hash_int64((int64_t) *Rf_translateCharUTF8(x));
+  return hash_int64((int64_t) x);
+}
+
+static uint32_t hash_char_translate(SEXP x) {
+  const void *vmax = vmaxget();
+
+  const char* x_utf8 = CHAR_IS_UTF8(x) ? CHAR(x) : Rf_translateCharUTF8(x);
+
+  uint32_t hash = 0;
+
+  while(*x_utf8++) {
+    hash = hash_combine(hash, hash_int64((int64_t) *x_utf8));
+  }
+
+  vmaxset(vmax);
+  return hash;
+}
+
+// Determine if `x` must be translated to UTF-8
+// - CHAR_IS_BYTES - Don't translate these cases:
+//   (bytes + bytes), (bytes + unknown), (bytes + utf8), (bytes + latin1)
+// - CHAR_ENC_TYPE - Don't translate these cases:
+//   (utf8 + utf8), (latin1 + latin1), (unknown + unknown)
+// - Translate these:
+//   (utf8 + latin1), (unknown + utf8), (unknown + latin1)
+static bool chr_requires_translation(SEXP x, R_len_t size) {
+  const SEXP* xp = STRING_PTR_RO(x);
+  SEXP xp_val;
+
+  bool translate = false;
+  int first_encoding = CHAR_ENC_TYPE(*xp);
+
+  for (R_len_t i = 0; i < size; ++i, ++xp) {
+    xp_val = *xp;
+
+    if (CHAR_IS_BYTES(xp_val)) {
+      return false;
+    }
+
+    if (translate) {
+      continue;
+    }
+
+    if (CHAR_ENC_TYPE(xp_val) == first_encoding) {
+      continue;
+    }
+
+    translate = true;
+  }
+
+  return translate;
 }
 
 // Hashing scalars -----------------------------------------------------
@@ -52,36 +102,10 @@ static uint32_t int_hash_scalar(const int* x);
 static uint32_t dbl_hash_scalar(const double* x);
 static uint32_t cpl_hash_scalar(const Rcomplex* x);
 static uint32_t chr_hash_scalar(const SEXP* x);
+static uint32_t chr_hash_scalar_translate(const SEXP* x);
 static uint32_t raw_hash_scalar(const Rbyte* x);
-static uint32_t df_hash_scalar(SEXP x, R_len_t i);
 static uint32_t list_hash_scalar(SEXP x, R_len_t i);
-static uint32_t shaped_hash_scalar(SEXP x, R_len_t i);
 
-
-// [[ include("vctrs.h") ]]
-uint32_t hash_scalar(SEXP x, R_len_t i) {
-  if (has_dim(x)) {
-    return shaped_hash_scalar(x, i);
-  }
-
-  switch(TYPEOF(x)) {
-  case LGLSXP: return lgl_hash_scalar(LOGICAL(x) + i);
-  case INTSXP: return int_hash_scalar(INTEGER(x) + i);
-  case REALSXP: return dbl_hash_scalar(REAL(x) + i);
-  case CPLXSXP: return cpl_hash_scalar(COMPLEX(x) + i);
-  case STRSXP: return chr_hash_scalar(STRING_PTR(x) + i);
-  case RAWSXP: return raw_hash_scalar(RAW(x) + i);
-  case VECSXP: {
-    if (is_data_frame(x)) {
-      return df_hash_scalar(x, i);
-    } else {
-      return list_hash_scalar(x, i);
-    }
-  }
-  default:
-    Rf_errorcall(R_NilValue, "Unsupported type %s", Rf_type2char(TYPEOF(x)));
-  }
-}
 
 static uint32_t lgl_hash_scalar(const int* x) {
   return hash_int32(*x);
@@ -106,37 +130,17 @@ static uint32_t cpl_hash_scalar(const Rcomplex* x) {
   return hash;
 }
 static uint32_t chr_hash_scalar(const SEXP* x) {
-  return hash_object(*x);
+  return hash_char(*x);
+}
+static uint32_t chr_hash_scalar_translate(const SEXP* x) {
+  return hash_char_translate(*x);
 }
 static uint32_t raw_hash_scalar(const Rbyte* x) {
   return hash_int32(*x);
 }
 
-static uint32_t df_hash_scalar(SEXP x, R_len_t i) {
-  uint32_t hash = 0;
-  R_len_t p = Rf_length(x);
-
-  for (R_len_t j = 0; j < p; ++j) {
-    SEXP col = VECTOR_ELT(x, j);
-    hash = hash_combine(hash, hash_scalar(col, i));
-  }
-
-  return hash;
-}
-
 static uint32_t list_hash_scalar(SEXP x, R_len_t i) {
   return hash_object(VECTOR_ELT(x, i));
-}
-
-// This is slow and matrices / arrays should be converted to data
-// frames ahead of time. The conversion to data frame is only a
-// stopgap, in the long term, we'll hash arrays natively.
-static uint32_t shaped_hash_scalar(SEXP x, R_len_t i) {
-  x = PROTECT(r_as_data_frame(x));
-  uint32_t out = hash_scalar(x, i);
-
-  UNPROTECT(1);
-  return out;
 }
 
 // Hashing objects -----------------------------------------------------
@@ -153,12 +157,6 @@ static uint32_t sexp_hash(SEXP x);
 uint32_t hash_object(SEXP x) {
   uint32_t hash = sexp_hash(x);
 
-  // Skip attribute check on CHARSXP, which might have an attribute related
-  // to the global string pool (#555)
-  if (TYPEOF(x) == CHARSXP) {
-    return hash;
-  }
-
   SEXP attrib = ATTRIB(x);
   if (attrib != R_NilValue) {
     hash = hash_combine(hash, hash_object(attrib));
@@ -170,7 +168,8 @@ uint32_t hash_object(SEXP x) {
 // [[ register() ]]
 SEXP vctrs_hash_object(SEXP x) {
   SEXP out = PROTECT(Rf_allocVector(RAWSXP, sizeof(uint32_t)));
-  uint32_t hash = hash_object(x);
+  uint32_t hash = 0;
+  hash = hash_combine(hash, hash_object(x));
   memcpy(RAW(out), &hash, sizeof(uint32_t));
   UNPROTECT(1);
   return out;
@@ -185,7 +184,6 @@ static uint32_t sexp_hash(SEXP x) {
   case REALSXP: return dbl_hash(x);
   case STRSXP: return chr_hash(x);
   case VECSXP: return list_hash(x);
-  case CHARSXP: return hash_char(x);
   case DOTSXP:
   case LANGSXP:
   case LISTSXP:
@@ -221,7 +219,11 @@ static uint32_t dbl_hash(SEXP x) {
   HASH(double, REAL_RO, dbl_hash_scalar);
 }
 static uint32_t chr_hash(SEXP x) {
-  HASH(SEXP, STRING_PTR_RO, chr_hash_scalar);
+  if (chr_requires_translation(x, Rf_length(x))) {
+    HASH(SEXP, STRING_PTR_RO, chr_hash_scalar_translate);
+  } else {
+    HASH(SEXP, STRING_PTR_RO, chr_hash_scalar);
+  }
 }
 
 #undef HASH
@@ -322,7 +324,11 @@ static void cpl_hash_fill(uint32_t* p, R_len_t size, SEXP x) {
   HASH_FILL(Rcomplex, COMPLEX_RO, cpl_hash_scalar);
 }
 static void chr_hash_fill(uint32_t* p, R_len_t size, SEXP x) {
-  HASH_FILL(SEXP, STRING_PTR_RO, chr_hash_scalar);
+  if (chr_requires_translation(x, size)) {
+    HASH_FILL(SEXP, STRING_PTR_RO, chr_hash_scalar_translate);
+  } else {
+    HASH_FILL(SEXP, STRING_PTR_RO, chr_hash_scalar);
+  }
 }
 static void raw_hash_fill(uint32_t* p, R_len_t size, SEXP x) {
   HASH_FILL(Rbyte, RAW_RO, raw_hash_scalar);
@@ -354,7 +360,7 @@ static void df_hash_fill(uint32_t* p, R_len_t size, SEXP x) {
 }
 
 // [[ register() ]]
-SEXP vctrs_hash(SEXP x, SEXP rowwise) {
+SEXP vctrs_hash(SEXP x) {
   x = PROTECT(vec_proxy(x));
 
   R_len_t n = vec_size(x);
@@ -362,14 +368,8 @@ SEXP vctrs_hash(SEXP x, SEXP rowwise) {
 
   uint32_t* p = (uint32_t*) RAW(out);
 
-  if (r_lgl_get(rowwise, 0)) {
-    for (R_len_t i = 0; i < n; ++i) {
-      p[i] = hash_scalar(x, i);
-    }
-  } else {
-    memset(p, 0, n * sizeof(uint32_t));
-    hash_fill(p, n, x);
-  }
+  memset(p, 0, n * sizeof(uint32_t));
+  hash_fill(p, n, x);
 
   UNPROTECT(2);
   return out;

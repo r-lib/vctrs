@@ -6,6 +6,16 @@
 #include <stdbool.h>
 #include <stdint.h>
 
+// `sxpinfo.gp` is exposed through `LEVELS()`, and CHARSXP info is
+// extractable through a bitwise and. This copies the unexposed
+// interface in Defn.h
+#define BYTES_MASK 2
+#define LATIN1_MASK 4
+#define UTF8_MASK 8
+
+#define CHAR_IS_BYTES(x) (LEVELS(x) & BYTES_MASK)
+#define CHAR_IS_UTF8(x) (LEVELS(x) & UTF8_MASK)
+#define CHAR_ENC_TYPE(x) (LEVELS(x) & (UTF8_MASK | LATIN1_MASK))
 
 typedef R_xlen_t r_ssize_t;
 
@@ -260,7 +270,6 @@ int equal_scalar(SEXP x, R_len_t i, SEXP y, R_len_t j, bool na_equal);
 int compare_scalar(SEXP x, R_len_t i, SEXP y, R_len_t j, bool na_equal);
 
 uint32_t hash_object(SEXP x);
-uint32_t hash_scalar(SEXP x, R_len_t i);
 void hash_fill(uint32_t* p, R_len_t n, SEXP x);
 
 bool duplicated_any(SEXP names);

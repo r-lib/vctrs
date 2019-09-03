@@ -69,37 +69,19 @@ test_that("data frames must have same size and columns", {
 
 })
 
-test_that("UTF-8 strings with UTF-8 VS unknown encodings are equal (#553)", {
-  utf8 <- "temp (\u00B0C)"
+test_that("can determine equality of strings with different encodings (#553)", {
+  utf8 <- "\u00B0C"
 
   unknown <- utf8
   Encoding(unknown) <- "unknown"
 
+  latin1 <- iconv(utf8, "UTF-8", "latin1")
+
   expect_true(vec_equal(utf8, unknown))
   expect_equal(vec_equal(utf8, unknown), utf8 == unknown)
-})
 
-test_that("Latin1 characters with Latin1 VS unknown encodings are not equal", {
-  unknown <- "fa\xE7ile"
-  latin1 <- unknown
-  Encoding(latin1) <- "latin1"
-
-  expect_false(vec_equal(unknown, latin1))
-  expect_equal(vec_equal(unknown, latin1), unknown == latin1)
-
-  # Still not equal
-  latin1_as_utf8 <- latin1
-  Encoding(latin1_as_utf8) <- "UTF-8"
-
-  expect_false(vec_equal(unknown, latin1_as_utf8))
-  expect_equal(vec_equal(unknown, latin1_as_utf8), unknown == latin1_as_utf8)
-
-  # Both must be UTF-8 in this case
-  unknown_as_utf8 <- unknown
-  Encoding(unknown_as_utf8) <- "UTF-8"
-
-  expect_true(vec_equal(unknown_as_utf8, latin1_as_utf8))
-  expect_equal(vec_equal(unknown_as_utf8, latin1_as_utf8), unknown_as_utf8 == latin1_as_utf8)
+  expect_true(vec_equal(utf8, latin1))
+  expect_equal(vec_equal(utf8, latin1), utf8 == latin1)
 })
 
 test_that("equality can be determined when strings have identical encodings", {
@@ -113,13 +95,28 @@ test_that("equality can be determined when strings have identical encodings", {
   expect_true(vec_equal(x, x))
   expect_equal(vec_equal(x, x), x == x)
 
-  Encoding(x) <- "UTF-8"
+  x <- iconv(x, "latin1", "UTF-8")
   expect_true(vec_equal(x, x))
   expect_equal(vec_equal(x, x), x == x)
 
   Encoding(x) <- "bytes"
   expect_true(vec_equal(x, x))
   expect_equal(vec_equal(x, x), x == x)
+})
+
+test_that("equality can be determined with bytes strings", {
+  utf8 <- "\u00B0C"
+
+  bytes <- utf8
+  Encoding(bytes) <- "bytes"
+
+  expect_true(vec_equal(bytes, bytes))
+  expect_equal(vec_equal(bytes, bytes), bytes == bytes)
+
+  # Error with base R, but they aren't equal
+  # utf8 == bytes
+
+  expect_false(vec_equal(utf8, bytes))
 })
 
 # object ------------------------------------------------------------------
