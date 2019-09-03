@@ -168,7 +168,8 @@ uint32_t hash_object(SEXP x) {
 // [[ register() ]]
 SEXP vctrs_hash_object(SEXP x) {
   SEXP out = PROTECT(Rf_allocVector(RAWSXP, sizeof(uint32_t)));
-  uint32_t hash = hash_object(x);
+  uint32_t hash = 0;
+  hash = hash_combine(hash, hash_object(x));
   memcpy(RAW(out), &hash, sizeof(uint32_t));
   UNPROTECT(1);
   return out;
