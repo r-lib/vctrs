@@ -6,11 +6,16 @@
 #include <stdbool.h>
 #include <stdint.h>
 
-// sxpinfo.gp is exposed through LEVELS(), and
-// CHARSXP info is extractable through a bitwise and
-#define CHAR_IS_BYTES(x) (LEVELS(x) & 2)
-#define CHAR_IS_UTF8(x) (LEVELS(x) & 8)
-#define CHAR_ENC_TYPE(x) (LEVELS(x) & 12) // (8 | 4)
+// `sxpinfo.gp` is exposed through `LEVELS()`, and CHARSXP info is
+// extractable through a bitwise and. This copies the unexposed
+// interface in Defn.h
+#define BYTES_MASK 2
+#define LATIN1_MASK 4
+#define UTF8_MASK 8
+
+#define CHAR_IS_BYTES(x) (LEVELS(x) & BYTES_MASK)
+#define CHAR_IS_UTF8(x) (LEVELS(x) & UTF8_MASK)
+#define CHAR_ENC_TYPE(x) (LEVELS(x) & (UTF8_MASK | LATIN1_MASK))
 
 typedef R_xlen_t r_ssize_t;
 
