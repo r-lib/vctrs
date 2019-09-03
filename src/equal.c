@@ -138,19 +138,14 @@ static int cpl_equal_scalar(const Rcomplex* x, const Rcomplex* y, bool na_equal)
   }
 }
 
-// - CHAR_ENC_TYPE - Any of these means don't convert:
-//  - (utf8 + utf8)
-//  - (latin1 + latin1)
-//  - (unknown + unknown)
-//  - (bytes + bytes)
-//  - (unknown + bytes)
-// - CHAR_IS_BYTES - Any of these means don't convert:
-//  - (bytes + utf8)
-//  - (bytes + latin1)
-// - Any of these means convert:
-//  - (utf8 + latin1)
-//  - (unknown + utf8)
-//  - (unknown + latin1)
+// The minimal number of checks required to determine if we need to translate.
+// - CHAR_ENC_TYPE - Don't translate these cases:
+//   (utf8 + utf8), (latin1 + latin1), (unknown + unknown), (bytes + bytes),
+//   (unknown + bytes)
+// - CHAR_IS_BYTES - Don't translate these cases:
+//   (bytes + utf8), (bytes + latin1)
+// - Translate these:
+//   (utf8 + latin1), (unknown + utf8), (unknown + latin1)
 static bool requires_translation(const SEXP x, const SEXP y) {
   if (CHAR_ENC_TYPE(x) == CHAR_ENC_TYPE(y)) {
     return false;
