@@ -226,12 +226,18 @@ SEXP vctrs_match(SEXP needles, SEXP haystack) {
   needles = PROTECT_N(vec_proxy_equal(needles), &nprot);
   haystack = PROTECT_N(vec_proxy_equal(haystack), &nprot);
 
+  R_len_t n_haystack = vec_size(haystack);
+  R_len_t n_needle = vec_size(needles);
+
+  SEXP translated = PROTECT_N(translate_common_encoding(needles, n_needle, haystack, n_haystack), &nprot);
+  needles = VECTOR_ELT(translated, 0);
+  haystack = VECTOR_ELT(translated, 1);
+
   dictionary d;
   dict_init(&d, haystack);
   PROTECT_DICT(&d, &nprot);
 
   // Load dictionary with haystack
-  R_len_t n_haystack = vec_size(haystack);
   for (int i = 0; i < n_haystack; ++i) {
     uint32_t hash = dict_hash_scalar(&d, i);
 
@@ -244,7 +250,6 @@ SEXP vctrs_match(SEXP needles, SEXP haystack) {
   dict_init_partial(&d_needles, needles);
 
   // Locate needles
-  R_len_t n_needle = vec_size(needles);
   SEXP out = PROTECT_N(Rf_allocVector(INTSXP, n_needle), &nprot);
   int* p_out = INTEGER(out);
 
@@ -274,12 +279,18 @@ SEXP vctrs_in(SEXP needles, SEXP haystack) {
   needles = PROTECT_N(vec_proxy_equal(needles), &nprot);
   haystack = PROTECT_N(vec_proxy_equal(haystack), &nprot);
 
+  R_len_t n_haystack = vec_size(haystack);
+  R_len_t n_needle = vec_size(needles);
+
+  SEXP translated = PROTECT_N(translate_common_encoding(needles, n_needle, haystack, n_haystack), &nprot);
+  needles = VECTOR_ELT(translated, 0);
+  haystack = VECTOR_ELT(translated, 1);
+
   dictionary d;
   dict_init(&d, haystack);
   PROTECT_DICT(&d, &nprot);
 
   // Load dictionary with haystack
-  R_len_t n_haystack = vec_size(haystack);
   for (int i = 0; i < n_haystack; ++i) {
     uint32_t hash = dict_hash_scalar(&d, i);
 
@@ -293,7 +304,6 @@ SEXP vctrs_in(SEXP needles, SEXP haystack) {
   PROTECT_DICT(&d_needles, &nprot);
 
   // Locate needles
-  R_len_t n_needle = vec_size(needles);
   SEXP out = PROTECT_N(Rf_allocVector(LGLSXP, n_needle), &nprot);
   int* p_out = LOGICAL(out);
 

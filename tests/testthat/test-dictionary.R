@@ -232,6 +232,75 @@ test_that("can take the unique loc of 1d arrays (#461)", {
   expect_silent(expect_identical(vctrs::vec_unique_loc(y), int(1, 3, 5)))
 })
 
+test_that("can use matching functions with strings with different encodings", {
+  utf8 <- "\u00B0C"
+
+  unknown <- utf8
+  Encoding(unknown) <- "unknown"
+
+  latin1 <- iconv(utf8, "UTF-8", "latin1")
+
+  expect_equal(vec_match(utf8, unknown), 1L)
+  expect_equal(vec_match(utf8, unknown), match(utf8, unknown))
+
+  expect_equal(vec_match(utf8, latin1), 1L)
+  expect_equal(vec_match(utf8, latin1), match(utf8, latin1))
+
+  expect_equal(vec_in(utf8, unknown), TRUE)
+  expect_equal(vec_in(utf8, unknown), utf8 %in% unknown)
+
+  expect_equal(vec_in(utf8, latin1), TRUE)
+  expect_equal(vec_in(utf8, latin1), utf8 %in% latin1)
+})
+
+test_that("can use matching functions within the same encoding", {
+  unknown <- "fa\xE7ile"
+
+  latin1 <- unknown
+  Encoding(latin1) <- "latin1"
+
+  utf8 <- enc2utf8(latin1)
+
+  bytes <- unknown
+  Encoding(bytes) <- "bytes"
+
+  expect_equal(vec_match(unknown, unknown), 1L)
+  expect_equal(vec_match(unknown, unknown), match(unknown, unknown))
+
+  expect_equal(vec_match(latin1, latin1), 1L)
+  expect_equal(vec_match(latin1, latin1), match(latin1, latin1))
+
+  expect_equal(vec_match(utf8, utf8), 1L)
+  expect_equal(vec_match(utf8, utf8), match(utf8, utf8))
+
+  expect_equal(vec_match(bytes, bytes), 1L)
+  expect_equal(vec_match(bytes, bytes), match(bytes, bytes))
+
+  expect_equal(vec_in(unknown, unknown), TRUE)
+  expect_equal(vec_in(unknown, unknown), unknown %in% unknown)
+
+  expect_equal(vec_in(latin1, latin1), TRUE)
+  expect_equal(vec_in(latin1, latin1), latin1 %in% latin1)
+
+  expect_equal(vec_in(utf8, utf8), TRUE)
+  expect_equal(vec_in(utf8, utf8), utf8 %in% utf8)
+
+  expect_equal(vec_in(bytes, bytes), TRUE)
+  expect_equal(vec_in(bytes, bytes), bytes %in% bytes)
+})
+
+test_that("can use matching functions with lists of characters with different encodings", {
+  latin1 <- "fa\xE7ile"
+  Encoding(latin1) <- "latin1"
+
+  utf8 <- enc2utf8(latin1)
+
+  lst_latin1 <- list("ascii", latin1)
+  lst_utf8 <- list(utf8)
+
+  expect_equal(vec_match(lst_utf8, lst_latin1), 2L)
+  expect_equal(vec_match(lst_utf8, lst_latin1), match(lst_utf8, lst_latin1))
+})
 
 # splits ------------------------------------------------------------------
 

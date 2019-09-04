@@ -6,16 +6,6 @@
 #include <stdbool.h>
 #include <stdint.h>
 
-// `sxpinfo.gp` is exposed through `LEVELS()`, and CHARSXP info is
-// extractable through a bitwise and. This copies the unexposed
-// interface in Defn.h
-#define BYTES_MASK 2
-#define LATIN1_MASK 4
-#define UTF8_MASK 8
-
-#define CHAR_IS_UTF8(x) (LEVELS(x) & UTF8_MASK)
-#define CHAR_ENC_TYPE(x) (LEVELS(x) & (BYTES_MASK | UTF8_MASK | LATIN1_MASK))
-
 typedef R_xlen_t r_ssize_t;
 
 
@@ -290,6 +280,20 @@ SEXP vec_as_names(SEXP names, enum name_repair_arg type, bool quiet);
 bool is_unique_names(SEXP names);
 SEXP vec_as_unique_names(SEXP names, bool quiet);
 
+// Character translation ----------------------------------------
+
+// `sxpinfo.gp` is exposed through `LEVELS()`, and CHARSXP info is
+// extractable through a bitwise and. This copies the unexposed
+// interface in Defn.h
+#define BYTES_MASK 2
+#define LATIN1_MASK 4
+#define UTF8_MASK 8
+
+#define CHAR_IS_UTF8(x) (LEVELS(x) & UTF8_MASK)
+#define CHAR_ENC_TYPE(x) (LEVELS(x) & (BYTES_MASK | UTF8_MASK | LATIN1_MASK))
+
+bool chr_requires_translation(SEXP x, R_len_t size);
+SEXP translate_common_encoding(SEXP x, R_len_t x_size, SEXP y, R_len_t y_size);
 
 // Growable vector ----------------------------------------------
 
