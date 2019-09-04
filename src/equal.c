@@ -137,14 +137,36 @@ static int cpl_equal_scalar(const Rcomplex* x, const Rcomplex* y, bool na_equal)
     return real_equal && imag_equal;
   }
 }
+
+// UTF-8 translation is successful in these cases:
+// - (utf8 + latin1), (unknown + utf8), (unknown + latin1)
+// UTF-8 translation fails purposefully in these cases:
+// - (bytes + utf8), (bytes + latin1), (bytes + unknown)
+// UTF-8 translation is not attempted in these cases:
+// - (utf8 + utf8), (latin1 + latin1), (unknown + unknown), (bytes + bytes)
+
+static int chr_equal_scalar_impl(const SEXP x, const SEXP y) {
+  if (x == y) {
+    return 1;
+  }
+
+  if (CHAR_ENC_TYPE(x) != CHAR_ENC_TYPE(y)) {
+    const void *vmax = vmaxget();
+    int out = !strcmp(Rf_translateCharUTF8(x), Rf_translateCharUTF8(y));
+    vmaxset(vmax);
+    return out;
+  }
+
+  return 0;
+}
+
 static int chr_equal_scalar(const SEXP* x, const SEXP* y, bool na_equal) {
   const SEXP xi = *x;
   const SEXP yj = *y;
   if (na_equal) {
-    // Ignoring encoding for now
-    return xi == yj;
+    return chr_equal_scalar_impl(xi, yj);
   } else {
-    return (xi == NA_STRING || yj == NA_STRING) ? NA_LOGICAL : xi == yj;
+    return (xi == NA_STRING || yj == NA_STRING) ? NA_LOGICAL : chr_equal_scalar_impl(xi, yj);
   }
 }
 

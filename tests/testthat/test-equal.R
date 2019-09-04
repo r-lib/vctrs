@@ -69,6 +69,57 @@ test_that("data frames must have same size and columns", {
 
 })
 
+test_that("can determine equality of strings with different encodings (#553)", {
+  utf8 <- "\u00B0C"
+
+  unknown <- utf8
+  Encoding(unknown) <- "unknown"
+
+  latin1 <- iconv(utf8, "UTF-8", "latin1")
+
+  expect_true(vec_equal(utf8, unknown))
+  expect_equal(vec_equal(utf8, unknown), utf8 == unknown)
+
+  expect_true(vec_equal(utf8, latin1))
+  expect_equal(vec_equal(utf8, latin1), utf8 == latin1)
+})
+
+test_that("equality can be determined when strings have identical encodings", {
+  x <- "fa\xE7ile"
+
+  # unknown
+  expect_true(vec_equal(x, x))
+  expect_equal(vec_equal(x, x), x == x)
+
+  Encoding(x) <- "latin1"
+  expect_true(vec_equal(x, x))
+  expect_equal(vec_equal(x, x), x == x)
+
+  x <- iconv(x, "latin1", "UTF-8")
+  expect_true(vec_equal(x, x))
+  expect_equal(vec_equal(x, x), x == x)
+
+  Encoding(x) <- "bytes"
+  expect_true(vec_equal(x, x))
+  expect_equal(vec_equal(x, x), x == x)
+})
+
+test_that("equality is known to fail when comparing bytes to other encodings", {
+  utf8 <- "\u00B0C"
+
+  bytes <- utf8
+  Encoding(bytes) <- "bytes"
+
+  unknown <- utf8
+  Encoding(unknown) <- "unknown"
+
+  latin1 <- iconv(utf8, "UTF-8", "latin1")
+
+  expect_error(vec_equal(bytes, utf8), '"bytes" encoding is not allowed')
+  expect_error(vec_equal(bytes, unknown), '"bytes" encoding is not allowed')
+  expect_error(vec_equal(bytes, latin1), '"bytes" encoding is not allowed')
+})
+
 # object ------------------------------------------------------------------
 
 test_that("can compare NULL",{
