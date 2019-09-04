@@ -13,7 +13,6 @@
 #define LATIN1_MASK 4
 #define UTF8_MASK 8
 
-#define CHAR_IS_BYTES(x) (LEVELS(x) & BYTES_MASK)
 #define CHAR_IS_UTF8(x) (LEVELS(x) & UTF8_MASK)
 #define CHAR_ENC_TYPE(x) (LEVELS(x) & (BYTES_MASK | UTF8_MASK | LATIN1_MASK))
 

@@ -143,9 +143,13 @@ test_that("vec_unique() can determine uniqueness when the encoding is the same",
 
   utf8 <- enc2utf8(latin1)
 
+  bytes <- unknown
+  Encoding(bytes) <- "bytes"
+
   x <- c(unknown, unknown)
   y <- c(latin1, latin1)
   z <- c(utf8, utf8)
+  w <- c(bytes, bytes)
 
   expect_equal(vec_unique(x), x[1])
   expect_equal(vec_unique(x), unique(x))
@@ -155,25 +159,29 @@ test_that("vec_unique() can determine uniqueness when the encoding is the same",
 
   expect_equal(vec_unique(z), z[1])
   expect_equal(vec_unique(z), unique(z))
+
+  expect_equal(vec_unique(w), w[1])
+  expect_equal(vec_unique(w), unique(w))
 })
 
-test_that("vec_unique() works with bytes strings", {
+test_that("vec_unique() fails purposefully with bytes strings and other encodings", {
   utf8 <- "\u00B0C"
 
   bytes <- utf8
   Encoding(bytes) <- "bytes"
 
-  x <- c(bytes, bytes)
+  unknown <- utf8
+  Encoding(unknown) <- "unknown"
 
-  expect_equal(vec_unique(x), x[1])
-  expect_equal(vec_unique(x), unique(x))
+  latin1 <- iconv(utf8, "UTF-8", "latin1")
 
-  y <- c(bytes, utf8)
+  bytes_utf8 <- c(bytes, utf8)
+  bytes_unknown <- c(bytes, unknown)
+  bytes_latin1 <- c(bytes, latin1)
 
-  # Error with base R
-  # unique(y)
-
-  expect_equal(vec_unique(y), y)
+  expect_error(vec_unique(bytes_utf8), '"bytes" encoding is not allowed')
+  expect_error(vec_unique(bytes_unknown), '"bytes" encoding is not allowed')
+  expect_error(vec_unique(bytes_latin1), '"bytes" encoding is not allowed')
 })
 
 # matching ----------------------------------------------------------------

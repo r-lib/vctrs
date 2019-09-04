@@ -61,38 +61,23 @@ static uint32_t hash_char_translate(SEXP x) {
 }
 
 // Determine if `x` must be translated to UTF-8
-// - CHAR_IS_BYTES - Don't translate these cases:
-//   (bytes + bytes), (bytes + unknown), (bytes + utf8), (bytes + latin1)
-// - CHAR_ENC_TYPE - Don't translate these cases:
-//   (utf8 + utf8), (latin1 + latin1), (unknown + unknown)
-// - Translate these:
-//   (utf8 + latin1), (unknown + utf8), (unknown + latin1)
+// UTF-8 translation will be successful in these cases:
+// - (utf8 + latin1), (unknown + utf8), (unknown + latin1)
+// UTF-8 translation will fail purposefully in these cases:
+// - (bytes + utf8), (bytes + latin1), (bytes + unknown)
+// UTF-8 translation is not attempted in these cases:
+// - (utf8 + utf8), (latin1 + latin1), (unknown + unknown), (bytes + bytes)
 static bool chr_requires_translation(SEXP x, R_len_t size) {
   const SEXP* xp = STRING_PTR_RO(x);
-  SEXP xp_val;
-
-  bool translate = false;
-  int first_encoding = CHAR_ENC_TYPE(*xp);
+  int reference_encoding = CHAR_ENC_TYPE(*xp);
 
   for (R_len_t i = 0; i < size; ++i, ++xp) {
-    xp_val = *xp;
-
-    if (CHAR_IS_BYTES(xp_val)) {
-      return false;
+    if (CHAR_ENC_TYPE(*xp) != reference_encoding) {
+      return true;
     }
-
-    if (translate) {
-      continue;
-    }
-
-    if (CHAR_ENC_TYPE(xp_val) == first_encoding) {
-      continue;
-    }
-
-    translate = true;
   }
 
-  return translate;
+  return false;
 }
 
 // Hashing scalars -----------------------------------------------------
