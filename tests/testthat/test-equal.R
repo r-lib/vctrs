@@ -104,19 +104,20 @@ test_that("equality can be determined when strings have identical encodings", {
   expect_equal(vec_equal(x, x), x == x)
 })
 
-test_that("equality can be determined with bytes strings", {
+test_that("equality is known to fail when comparing bytes to other encodings", {
   utf8 <- "\u00B0C"
 
   bytes <- utf8
   Encoding(bytes) <- "bytes"
 
-  expect_true(vec_equal(bytes, bytes))
-  expect_equal(vec_equal(bytes, bytes), bytes == bytes)
+  unknown <- utf8
+  Encoding(unknown) <- "unknown"
 
-  # Error with base R, but they aren't equal
-  # utf8 == bytes
+  latin1 <- iconv(utf8, "UTF-8", "latin1")
 
-  expect_false(vec_equal(utf8, bytes))
+  expect_error(vec_equal(bytes, utf8), '"bytes" encoding is not allowed')
+  expect_error(vec_equal(bytes, unknown), '"bytes" encoding is not allowed')
+  expect_error(vec_equal(bytes, latin1), '"bytes" encoding is not allowed')
 })
 
 # object ------------------------------------------------------------------

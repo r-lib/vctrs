@@ -138,32 +138,19 @@ static int cpl_equal_scalar(const Rcomplex* x, const Rcomplex* y, bool na_equal)
   }
 }
 
-// The minimal number of checks required to determine if we need to translate.
-// - CHAR_ENC_TYPE - Don't translate these cases:
-//   (utf8 + utf8), (latin1 + latin1), (unknown + unknown), (bytes + bytes),
-//   (unknown + bytes)
-// - CHAR_IS_BYTES - Don't translate these cases:
-//   (bytes + utf8), (bytes + latin1)
-// - Translate these:
-//   (utf8 + latin1), (unknown + utf8), (unknown + latin1)
-static bool scalar_requires_translation(const SEXP x, const SEXP y) {
-  if (CHAR_ENC_TYPE(x) == CHAR_ENC_TYPE(y)) {
-    return false;
-  }
-
-  if (CHAR_IS_BYTES(x) || CHAR_IS_BYTES(y)) {
-    return false;
-  }
-
-  return true;
-}
+// UTF-8 translation is successful in these cases:
+// - (utf8 + latin1), (unknown + utf8), (unknown + latin1)
+// UTF-8 translation fails purposefully in these cases:
+// - (bytes + utf8), (bytes + latin1), (bytes + unknown)
+// UTF-8 translation is not attempted in these cases:
+// - (utf8 + utf8), (latin1 + latin1), (unknown + unknown), (bytes + bytes)
 
 static int chr_equal_scalar_impl(const SEXP x, const SEXP y) {
   if (x == y) {
     return 1;
   }
 
-  if (scalar_requires_translation(x, y)) {
+  if (CHAR_ENC_TYPE(x) != CHAR_ENC_TYPE(y)) {
     const void *vmax = vmaxget();
     int out = !strcmp(Rf_translateCharUTF8(x), Rf_translateCharUTF8(y));
     vmaxset(vmax);

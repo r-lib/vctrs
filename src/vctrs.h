@@ -15,7 +15,7 @@
 
 #define CHAR_IS_BYTES(x) (LEVELS(x) & BYTES_MASK)
 #define CHAR_IS_UTF8(x) (LEVELS(x) & UTF8_MASK)
-#define CHAR_ENC_TYPE(x) (LEVELS(x) & (UTF8_MASK | LATIN1_MASK))
+#define CHAR_ENC_TYPE(x) (LEVELS(x) & (BYTES_MASK | UTF8_MASK | LATIN1_MASK))
 
 typedef R_xlen_t r_ssize_t;
 
