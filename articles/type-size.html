@@ -6,9 +6,16 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Prototypes and sizes • vctrs</title>
+<!-- favicons --><link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="../favicon-32x32.png">
+<link rel="apple-touch-icon" type="image/png" sizes="180x180" href="../apple-touch-icon.png">
+<link rel="apple-touch-icon" type="image/png" sizes="120x120" href="../apple-touch-icon-120x120.png">
+<link rel="apple-touch-icon" type="image/png" sizes="76x76" href="../apple-touch-icon-76x76.png">
+<link rel="apple-touch-icon" type="image/png" sizes="60x60" href="../apple-touch-icon-60x60.png">
 <!-- jquery --><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script><!-- Bootstrap --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha256-916EbMg70RQy9LHiGkXzG8hSg9EdNy97GazNG/aiY1w=" crossorigin="anonymous">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha256-U5ZEeKfGNOja007MMD3YBI0A3OSZOQbeG6z2f2Y0hu8=" crossorigin="anonymous"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha256-eZrrJcwDc/3uDhsdt61sL2oOBY362qM3lon1gyExkL0=" crossorigin="anonymous">
-<!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.4/clipboard.min.js" integrity="sha256-FiZwavyI2V6+EXO1U+xzLG3IKldpiTFf3153ea9zikQ=" crossorigin="anonymous"></script><!-- sticky kit --><script src="https://cdnjs.cloudflare.com/ajax/libs/sticky-kit/1.1.3/sticky-kit.min.js" integrity="sha256-c4Rlo1ZozqTPE2RLuvbusY3+SU1pQaJC0TjuhygMipw=" crossorigin="anonymous"></script><!-- pkgdown --><link href="../pkgdown.css" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha256-U5ZEeKfGNOja007MMD3YBI0A3OSZOQbeG6z2f2Y0hu8=" crossorigin="anonymous"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/all.min.css" integrity="sha256-nAmazAk6vS34Xqo0BSrTb+abbtFlgsFK7NKSi6o7Y78=" crossorigin="anonymous">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/v4-shims.min.css" integrity="sha256-6qHlizsOWFskGlwVOKuns+D1nB6ssZrHQrNj1wGplHc=" crossorigin="anonymous">
+<!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.4/clipboard.min.js" integrity="sha256-FiZwavyI2V6+EXO1U+xzLG3IKldpiTFf3153ea9zikQ=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/headroom.min.js" integrity="sha256-DJFC1kqIhelURkuza0AvYal5RxMtpzLjFhsnVIeuk+U=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- pkgdown --><link href="../pkgdown.css" rel="stylesheet">
 <script src="../pkgdown.js"></script><meta property="og:title" content="Prototypes and sizes">
 <meta property="og:description" content="">
 <meta property="og:image" content="https://vctrs.r-lib.org/logo.png">
@@ -39,7 +46,7 @@
       <ul class="nav navbar-nav">
 <li>
   <a href="../index.html">
-    <span class="fa fa-home fa-lg"></span>
+    <span class="fas fa fas fa-home fa-lg"></span>
      
   </a>
 </li>
@@ -71,7 +78,7 @@
 <ul class="nav navbar-nav navbar-right">
 <li>
   <a href="https://github.com/r-lib/vctrs">
-    <span class="fa fa-github fa-lg"></span>
+    <span class="fab fa fab fa-github fa-lg"></span>
      
   </a>
 </li>
@@ -84,6 +91,7 @@
 <!--/.navbar -->
 
       
+
       </header><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
@@ -97,19 +105,19 @@
 
     
     
-<p>Rather than using <code><a href="https://www.rdocumentation.org/packages/base/topics/class">class()</a></code> and <code><a href="https://www.rdocumentation.org/packages/base/topics/length">length()</a></code>, vctrs has notions of prototype (<code><a href="../reference/vec_ptype.html">vec_ptype_show()</a></code>) and size (<code><a href="../reference/vec_size.html">vec_size()</a></code>). This vignette discusses the motivation for why these alternatives are necessary and connects their definitions to type coercion and the recycling rules.</p>
-<p>Size and prototype are motivated by thinking about the optimal behaviour for <code><a href="https://www.rdocumentation.org/packages/base/topics/c">c()</a></code> and <code><a href="https://www.rdocumentation.org/packages/base/topics/cbind">rbind()</a></code>, particularly inspired by data frames with columns that are matrices or data frames.</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" data-line-number="1"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">library</a></span>(vctrs)</a></code></pre></div>
+<p>Rather than using <code><a href="https://rdrr.io/r/base/class.html">class()</a></code> and <code><a href="https://rdrr.io/r/base/length.html">length()</a></code>, vctrs has notions of prototype (<code><a href="../reference/vec_ptype.html">vec_ptype_show()</a></code>) and size (<code><a href="../reference/vec_size.html">vec_size()</a></code>). This vignette discusses the motivation for why these alternatives are necessary and connects their definitions to type coercion and the recycling rules.</p>
+<p>Size and prototype are motivated by thinking about the optimal behaviour for <code><a href="https://rdrr.io/r/base/c.html">c()</a></code> and <code><a href="https://rdrr.io/r/base/cbind.html">rbind()</a></code>, particularly inspired by data frames with columns that are matrices or data frames.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" data-line-number="1"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(vctrs)</a></code></pre></div>
 <div id="prototype" class="section level2">
 <h2 class="hasAnchor">
 <a href="#prototype" class="anchor"></a>Prototype</h2>
-<p>The idea of a prototype is to capture the metadata associated with a vector without capturing any data. Unfortunately, the <code><a href="https://www.rdocumentation.org/packages/base/topics/class">class()</a></code> of an object is inadequate for this purpose:</p>
+<p>The idea of a prototype is to capture the metadata associated with a vector without capturing any data. Unfortunately, the <code><a href="https://rdrr.io/r/base/class.html">class()</a></code> of an object is inadequate for this purpose:</p>
 <ul>
-<li><p>The <code><a href="https://www.rdocumentation.org/packages/base/topics/class">class()</a></code> doesn’t include attributes. Attributes are important because, for example, they store the levels of a factor and the timezone of a <code>POSIXct</code>. You cannot combine two factors or two <code>POSIXct</code>s without thinking about the attributes.</p></li>
-<li><p>The <code><a href="https://www.rdocumentation.org/packages/base/topics/class">class()</a></code> of a matrix is “matrix” and doesn’t include the type of the underlying vector or the dimensionality.</p></li>
+<li><p>The <code><a href="https://rdrr.io/r/base/class.html">class()</a></code> doesn’t include attributes. Attributes are important because, for example, they store the levels of a factor and the timezone of a <code>POSIXct</code>. You cannot combine two factors or two <code>POSIXct</code>s without thinking about the attributes.</p></li>
+<li><p>The <code><a href="https://rdrr.io/r/base/class.html">class()</a></code> of a matrix is “matrix” and doesn’t include the type of the underlying vector or the dimensionality.</p></li>
 </ul>
 <p>Instead, vctrs takes advantage of R’s vectorised nature and uses a <strong>prototype</strong>, a 0-observation slice of the vector (this is basically <code>x[0]</code> but with some subtleties we’ll come back to later). This is a miniature version of the vector that contains all of the attributes but none of the data.</p>
-<p>Conveniently, you can create many prototypes using existing base functions (e.g, <code><a href="https://www.rdocumentation.org/packages/base/topics/double">double()</a></code> and <code><a href="https://www.rdocumentation.org/packages/base/topics/factor">factor(levels = c("a", "b"))</a></code>). vctrs provides a few helpers (e.g. <code><a href="../reference/new_date.html">new_date()</a></code>, <code><a href="../reference/new_date.html">new_datetime()</a></code>, and <code><a href="../reference/new_date.html">new_duration()</a></code>) where the equivalents in base R are missing.</p>
+<p>Conveniently, you can create many prototypes using existing base functions (e.g, <code><a href="https://rdrr.io/r/base/double.html">double()</a></code> and <code><a href="https://rdrr.io/r/base/factor.html">factor(levels = c("a", "b"))</a></code>). vctrs provides a few helpers (e.g. <code><a href="../reference/new_date.html">new_date()</a></code>, <code><a href="../reference/new_date.html">new_datetime()</a></code>, and <code><a href="../reference/new_date.html">new_duration()</a></code>) where the equivalents in base R are missing.</p>
 <div id="base-prototypes" class="section level3">
 <h3 class="hasAnchor">
 <a href="#base-prototypes" class="anchor"></a>Base prototypes</h3>
@@ -117,7 +125,7 @@
 <p>Using <code><a href="../reference/vec_ptype.html">vec_ptype_show()</a></code> allows us to see the prototypes base R classes:</p>
 <ul>
 <li>
-<p>Atomic vectors have no attributes and just display the underlying <code><a href="https://www.rdocumentation.org/packages/base/topics/typeof">typeof()</a></code>:</p>
+<p>Atomic vectors have no attributes and just display the underlying <code><a href="https://rdrr.io/r/base/typeof.html">typeof()</a></code>:</p>
 <div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" data-line-number="1"><span class="kw"><a href="../reference/vec_ptype.html">vec_ptype_show</a></span>(<span class="ot">FALSE</span>)</a>
 <a class="sourceLine" id="cb2-2" data-line-number="2"><span class="co">#&gt; Prototype: logical</span></a>
 <a class="sourceLine" id="cb2-3" data-line-number="3"><span class="kw"><a href="../reference/vec_ptype.html">vec_ptype_show</a></span>(1L)</a>
@@ -126,41 +134,41 @@
 <a class="sourceLine" id="cb2-6" data-line-number="6"><span class="co">#&gt; Prototype: double</span></a>
 <a class="sourceLine" id="cb2-7" data-line-number="7"><span class="kw"><a href="../reference/vec_ptype.html">vec_ptype_show</a></span>(<span class="st">"three"</span>)</a>
 <a class="sourceLine" id="cb2-8" data-line-number="8"><span class="co">#&gt; Prototype: character</span></a>
-<a class="sourceLine" id="cb2-9" data-line-number="9"><span class="kw"><a href="../reference/vec_ptype.html">vec_ptype_show</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/list">list</a></span>(<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>))</a>
+<a class="sourceLine" id="cb2-9" data-line-number="9"><span class="kw"><a href="../reference/vec_ptype.html">vec_ptype_show</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/list.html">list</a></span>(<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>))</a>
 <a class="sourceLine" id="cb2-10" data-line-number="10"><span class="co">#&gt; Prototype: list</span></a></code></pre></div>
 </li>
 <li>
 <p>The prototype of matrices and arrays include the base type and the dimensions after the first:</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" data-line-number="1"><span class="kw"><a href="../reference/vec_ptype.html">vec_ptype_show</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/array">array</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/logical">logical</a></span>(), <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="dv">2</span>, <span class="dv">3</span>)))</a>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" data-line-number="1"><span class="kw"><a href="../reference/vec_ptype.html">vec_ptype_show</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/array.html">array</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/logical.html">logical</a></span>(), <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="dv">2</span>, <span class="dv">3</span>)))</a>
 <a class="sourceLine" id="cb3-2" data-line-number="2"><span class="co">#&gt; Prototype: logical[,3]</span></a>
-<a class="sourceLine" id="cb3-3" data-line-number="3"><span class="kw"><a href="../reference/vec_ptype.html">vec_ptype_show</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/array">array</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/integer">integer</a></span>(), <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">4</span>)))</a>
+<a class="sourceLine" id="cb3-3" data-line-number="3"><span class="kw"><a href="../reference/vec_ptype.html">vec_ptype_show</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/array.html">array</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/integer.html">integer</a></span>(), <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">4</span>)))</a>
 <a class="sourceLine" id="cb3-4" data-line-number="4"><span class="co">#&gt; Prototype: integer[,3,4]</span></a>
-<a class="sourceLine" id="cb3-5" data-line-number="5"><span class="kw"><a href="../reference/vec_ptype.html">vec_ptype_show</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/array">array</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/character">character</a></span>(), <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">4</span>, <span class="dv">5</span>)))</a>
+<a class="sourceLine" id="cb3-5" data-line-number="5"><span class="kw"><a href="../reference/vec_ptype.html">vec_ptype_show</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/array.html">array</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/character.html">character</a></span>(), <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">4</span>, <span class="dv">5</span>)))</a>
 <a class="sourceLine" id="cb3-6" data-line-number="6"><span class="co">#&gt; Prototype: character[,3,4,5]</span></a></code></pre></div>
 </li>
 <li>
 <p>The prototype of a factor includes its levels. Levels are a character vector, which can be arbitrarily long, so the prototype just shows a hash. If the hash of two factors is equal, it’s highly likely that their levels are also equal.</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" data-line-number="1"><span class="kw"><a href="../reference/vec_ptype.html">vec_ptype_show</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/factor">factor</a></span>(<span class="st">"a"</span>))</a>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" data-line-number="1"><span class="kw"><a href="../reference/vec_ptype.html">vec_ptype_show</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/factor.html">factor</a></span>(<span class="st">"a"</span>))</a>
 <a class="sourceLine" id="cb4-2" data-line-number="2"><span class="co">#&gt; Prototype: factor&lt;127a2&gt;</span></a>
-<a class="sourceLine" id="cb4-3" data-line-number="3"><span class="kw"><a href="../reference/vec_ptype.html">vec_ptype_show</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/factor">ordered</a></span>(<span class="st">"b"</span>))</a>
+<a class="sourceLine" id="cb4-3" data-line-number="3"><span class="kw"><a href="../reference/vec_ptype.html">vec_ptype_show</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/factor.html">ordered</a></span>(<span class="st">"b"</span>))</a>
 <a class="sourceLine" id="cb4-4" data-line-number="4"><span class="co">#&gt; Prototype: ordered&lt;ddf10&gt;</span></a></code></pre></div>
 <p>While <code><a href="../reference/vec_ptype.html">vec_ptype_show()</a></code> prints only the hash, the prototype object itself does contain all levels:</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" data-line-number="1"><span class="kw"><a href="../reference/vec_ptype.html">vec_ptype</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/factor">factor</a></span>(<span class="st">"a"</span>))</a>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" data-line-number="1"><span class="kw"><a href="../reference/vec_ptype.html">vec_ptype</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/factor.html">factor</a></span>(<span class="st">"a"</span>))</a>
 <a class="sourceLine" id="cb5-2" data-line-number="2"><span class="co">#&gt; factor(0)</span></a>
 <a class="sourceLine" id="cb5-3" data-line-number="3"><span class="co">#&gt; Levels: a</span></a></code></pre></div>
 </li>
 <li>
 <p>Base R has three key date time classes: dates, date-times (<code>POSIXct</code>), and durations (<code>difftime)</code>. Date-times have a timezone, and durations have a unit.</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" data-line-number="1"><span class="kw"><a href="../reference/vec_ptype.html">vec_ptype_show</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/Sys.time">Sys.Date</a></span>())</a>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" data-line-number="1"><span class="kw"><a href="../reference/vec_ptype.html">vec_ptype_show</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/Sys.time.html">Sys.Date</a></span>())</a>
 <a class="sourceLine" id="cb6-2" data-line-number="2"><span class="co">#&gt; Prototype: date</span></a>
-<a class="sourceLine" id="cb6-3" data-line-number="3"><span class="kw"><a href="../reference/vec_ptype.html">vec_ptype_show</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/Sys.time">Sys.time</a></span>())</a>
+<a class="sourceLine" id="cb6-3" data-line-number="3"><span class="kw"><a href="../reference/vec_ptype.html">vec_ptype_show</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/Sys.time.html">Sys.time</a></span>())</a>
 <a class="sourceLine" id="cb6-4" data-line-number="4"><span class="co">#&gt; Prototype: datetime&lt;local&gt;</span></a>
-<a class="sourceLine" id="cb6-5" data-line-number="5"><span class="kw"><a href="../reference/vec_ptype.html">vec_ptype_show</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/difftime">as.difftime</a></span>(<span class="dv">10</span>, <span class="dt">units =</span> <span class="st">"mins"</span>))</a>
+<a class="sourceLine" id="cb6-5" data-line-number="5"><span class="kw"><a href="../reference/vec_ptype.html">vec_ptype_show</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/difftime.html">as.difftime</a></span>(<span class="dv">10</span>, <span class="dt">units =</span> <span class="st">"mins"</span>))</a>
 <a class="sourceLine" id="cb6-6" data-line-number="6"><span class="co">#&gt; Prototype: duration&lt;mins&gt;</span></a></code></pre></div>
 </li>
 <li>
 <p>Data frames have the most complex prototype: the prototype of a data frame is the name and prototype of each column:</p>
-<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" data-line-number="1"><span class="kw"><a href="../reference/vec_ptype.html">vec_ptype_show</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/data.frame">data.frame</a></span>(<span class="dt">a =</span> <span class="ot">FALSE</span>, <span class="dt">b =</span> 1L, <span class="dt">c =</span> <span class="fl">2.5</span>, <span class="dt">d =</span> <span class="st">"x"</span>))</a>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" data-line-number="1"><span class="kw"><a href="../reference/vec_ptype.html">vec_ptype_show</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span>(<span class="dt">a =</span> <span class="ot">FALSE</span>, <span class="dt">b =</span> 1L, <span class="dt">c =</span> <span class="fl">2.5</span>, <span class="dt">d =</span> <span class="st">"x"</span>))</a>
 <a class="sourceLine" id="cb7-2" data-line-number="2"><span class="co">#&gt; Prototype: data.frame&lt;</span></a>
 <a class="sourceLine" id="cb7-3" data-line-number="3"><span class="co">#&gt;   a: logical</span></a>
 <a class="sourceLine" id="cb7-4" data-line-number="4"><span class="co">#&gt;   b: integer</span></a>
@@ -168,8 +176,8 @@
 <a class="sourceLine" id="cb7-6" data-line-number="6"><span class="co">#&gt;   d: factor&lt;5a425&gt;</span></a>
 <a class="sourceLine" id="cb7-7" data-line-number="7"><span class="co">#&gt; &gt;</span></a></code></pre></div>
 <p>Data frames can have columns that are themselves data frames, making this a “recursive” type:</p>
-<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb8-1" data-line-number="1">df &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/data.frame">data.frame</a></span>(<span class="dt">x =</span> <span class="ot">FALSE</span>)</a>
-<a class="sourceLine" id="cb8-2" data-line-number="2">df<span class="op">$</span>y &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/data.frame">data.frame</a></span>(<span class="dt">a =</span> 1L, <span class="dt">b =</span> <span class="fl">2.5</span>)</a>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb8-1" data-line-number="1">df &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span>(<span class="dt">x =</span> <span class="ot">FALSE</span>)</a>
+<a class="sourceLine" id="cb8-2" data-line-number="2">df<span class="op">$</span>y &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span>(<span class="dt">a =</span> 1L, <span class="dt">b =</span> <span class="fl">2.5</span>)</a>
 <a class="sourceLine" id="cb8-3" data-line-number="3"><span class="kw"><a href="../reference/vec_ptype.html">vec_ptype_show</a></span>(df)</a>
 <a class="sourceLine" id="cb8-4" data-line-number="4"><span class="co">#&gt; Prototype: data.frame&lt;</span></a>
 <a class="sourceLine" id="cb8-5" data-line-number="5"><span class="co">#&gt;   x: logical</span></a>
@@ -187,8 +195,8 @@
 <a href="#coercing-to-common-type" class="anchor"></a>Coercing to common type</h3>
 <p>It’s often important to combine vectors with multiple types. vctrs provides a consistent set of rules for coercion, via <code><a href="../reference/vec_ptype.html">vec_ptype_common()</a></code>. <code><a href="../reference/vec_ptype.html">vec_ptype_common()</a></code> possesses the following invariants:</p>
 <ul>
-<li><p><code><a href="https://www.rdocumentation.org/packages/base/topics/class">class(vec_ptype_common(x, y))</a></code> equals <code><a href="https://www.rdocumentation.org/packages/base/topics/class">class(vec_ptype_common(y, x))</a></code>.</p></li>
-<li><p><code>class(vec_ptype_common(x, vec_ptype_common(y, z))</code> equals <code><a href="https://www.rdocumentation.org/packages/base/topics/class">class(vec_ptype_common(vec_ptype_common(x, y), z))</a></code>.</p></li>
+<li><p><code><a href="https://rdrr.io/r/base/class.html">class(vec_ptype_common(x, y))</a></code> equals <code><a href="https://rdrr.io/r/base/class.html">class(vec_ptype_common(y, x))</a></code>.</p></li>
+<li><p><code>class(vec_ptype_common(x, vec_ptype_common(y, z))</code> equals <code><a href="https://rdrr.io/r/base/class.html">class(vec_ptype_common(vec_ptype_common(x, y), z))</a></code>.</p></li>
 <li><p><code>vec_ptype_common(x, NULL) == vec_ptype(x)</code>.</p></li>
 </ul>
 <p>i.e., <code><a href="../reference/vec_ptype.html">vec_ptype_common()</a></code> is both commutative and associative (with respect to class) and has an identity element, <code>NULL</code>; i.e., it’s a <strong>commutative monoid</strong>. This means the underlying implementation is quite simple: we can find the common type of any number of objects by progressively finding the common type of pairs of objects.</p>
@@ -196,30 +204,30 @@
 <ul>
 <li>
 <p>The common type of atomic vectors is computed very similar to the rules of base R, except that we do not coerce to character automatically:</p>
-<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb9-1" data-line-number="1"><span class="kw"><a href="../reference/vec_ptype.html">vec_ptype_show</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/logical">logical</a></span>(), <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/integer">integer</a></span>(), <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/double">double</a></span>())</a>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb9-1" data-line-number="1"><span class="kw"><a href="../reference/vec_ptype.html">vec_ptype_show</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/logical.html">logical</a></span>(), <span class="kw"><a href="https://rdrr.io/r/base/integer.html">integer</a></span>(), <span class="kw"><a href="https://rdrr.io/r/base/double.html">double</a></span>())</a>
 <a class="sourceLine" id="cb9-2" data-line-number="2"><span class="co">#&gt; Prototype: &lt;double&gt;</span></a>
 <a class="sourceLine" id="cb9-3" data-line-number="3"><span class="co">#&gt; 0. (           , &lt;logical&gt; ) = &lt;logical&gt;</span></a>
 <a class="sourceLine" id="cb9-4" data-line-number="4"><span class="co">#&gt; 1. ( &lt;logical&gt; , &lt;integer&gt; ) = &lt;integer&gt;</span></a>
 <a class="sourceLine" id="cb9-5" data-line-number="5"><span class="co">#&gt; 2. ( &lt;integer&gt; , &lt;double&gt;  ) = &lt;double&gt;</span></a>
 <a class="sourceLine" id="cb9-6" data-line-number="6"></a>
-<a class="sourceLine" id="cb9-7" data-line-number="7"><span class="kw"><a href="../reference/vec_ptype.html">vec_ptype_show</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/logical">logical</a></span>(), <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/character">character</a></span>())</a>
+<a class="sourceLine" id="cb9-7" data-line-number="7"><span class="kw"><a href="../reference/vec_ptype.html">vec_ptype_show</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/logical.html">logical</a></span>(), <span class="kw"><a href="https://rdrr.io/r/base/character.html">character</a></span>())</a>
 <a class="sourceLine" id="cb9-8" data-line-number="8"><span class="co">#&gt; No common type for `x` &lt;logical&gt; and `y` &lt;character&gt;.</span></a></code></pre></div>
 </li>
 <li>
 <p>Matrices and arrays are automatically broadcast to higher dimensions:</p>
 <div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb10-1" data-line-number="1"><span class="kw"><a href="../reference/vec_ptype.html">vec_ptype_show</a></span>(</a>
-<a class="sourceLine" id="cb10-2" data-line-number="2">  <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/array">array</a></span>(<span class="dv">1</span>, <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="dv">0</span>, <span class="dv">1</span>)), </a>
-<a class="sourceLine" id="cb10-3" data-line-number="3">  <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/array">array</a></span>(<span class="dv">1</span>, <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="dv">0</span>, <span class="dv">2</span>))</a>
+<a class="sourceLine" id="cb10-2" data-line-number="2">  <span class="kw"><a href="https://rdrr.io/r/base/array.html">array</a></span>(<span class="dv">1</span>, <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="dv">0</span>, <span class="dv">1</span>)), </a>
+<a class="sourceLine" id="cb10-3" data-line-number="3">  <span class="kw"><a href="https://rdrr.io/r/base/array.html">array</a></span>(<span class="dv">1</span>, <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="dv">0</span>, <span class="dv">2</span>))</a>
 <a class="sourceLine" id="cb10-4" data-line-number="4">)</a>
 <a class="sourceLine" id="cb10-5" data-line-number="5"><span class="co">#&gt; Prototype: &lt;double[,2]&gt;</span></a>
 <a class="sourceLine" id="cb10-6" data-line-number="6"><span class="co">#&gt; 0. (              , &lt;double[,1]&gt; ) = &lt;double[,1]&gt;</span></a>
 <a class="sourceLine" id="cb10-7" data-line-number="7"><span class="co">#&gt; 1. ( &lt;double[,1]&gt; , &lt;double[,2]&gt; ) = &lt;double[,2]&gt;</span></a>
 <a class="sourceLine" id="cb10-8" data-line-number="8"></a>
 <a class="sourceLine" id="cb10-9" data-line-number="9"><span class="kw"><a href="../reference/vec_ptype.html">vec_ptype_show</a></span>(</a>
-<a class="sourceLine" id="cb10-10" data-line-number="10">  <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/array">array</a></span>(<span class="dv">1</span>, <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="dv">0</span>, <span class="dv">1</span>)), </a>
-<a class="sourceLine" id="cb10-11" data-line-number="11">  <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/array">array</a></span>(<span class="dv">1</span>, <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="dv">0</span>, <span class="dv">3</span>)),</a>
-<a class="sourceLine" id="cb10-12" data-line-number="12">  <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/array">array</a></span>(<span class="dv">1</span>, <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="dv">0</span>, <span class="dv">3</span>, <span class="dv">4</span>)),</a>
-<a class="sourceLine" id="cb10-13" data-line-number="13">  <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/array">array</a></span>(<span class="dv">1</span>, <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="dv">0</span>, <span class="dv">3</span>, <span class="dv">4</span>, <span class="dv">5</span>))</a>
+<a class="sourceLine" id="cb10-10" data-line-number="10">  <span class="kw"><a href="https://rdrr.io/r/base/array.html">array</a></span>(<span class="dv">1</span>, <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="dv">0</span>, <span class="dv">1</span>)), </a>
+<a class="sourceLine" id="cb10-11" data-line-number="11">  <span class="kw"><a href="https://rdrr.io/r/base/array.html">array</a></span>(<span class="dv">1</span>, <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="dv">0</span>, <span class="dv">3</span>)),</a>
+<a class="sourceLine" id="cb10-12" data-line-number="12">  <span class="kw"><a href="https://rdrr.io/r/base/array.html">array</a></span>(<span class="dv">1</span>, <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="dv">0</span>, <span class="dv">3</span>, <span class="dv">4</span>)),</a>
+<a class="sourceLine" id="cb10-13" data-line-number="13">  <span class="kw"><a href="https://rdrr.io/r/base/array.html">array</a></span>(<span class="dv">1</span>, <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="dv">0</span>, <span class="dv">3</span>, <span class="dv">4</span>, <span class="dv">5</span>))</a>
 <a class="sourceLine" id="cb10-14" data-line-number="14">)</a>
 <a class="sourceLine" id="cb10-15" data-line-number="15"><span class="co">#&gt; Prototype: &lt;double[,3,4,5]&gt;</span></a>
 <a class="sourceLine" id="cb10-16" data-line-number="16"><span class="co">#&gt; 0. (                , &lt;double[,1]&gt;     ) = &lt;double[,1]&gt;    </span></a>
@@ -228,19 +236,19 @@
 <a class="sourceLine" id="cb10-19" data-line-number="19"><span class="co">#&gt; 3. ( &lt;double[,3,4]&gt; , &lt;double[,3,4,5]&gt; ) = &lt;double[,3,4,5]&gt;</span></a></code></pre></div>
 <p>Provided that the dimensions follow the vctrs recycling rules:</p>
 <div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb11-1" data-line-number="1"><span class="kw"><a href="../reference/vec_ptype.html">vec_ptype_show</a></span>(</a>
-<a class="sourceLine" id="cb11-2" data-line-number="2">  <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/array">array</a></span>(<span class="dv">1</span>, <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="dv">0</span>, <span class="dv">2</span>)), </a>
-<a class="sourceLine" id="cb11-3" data-line-number="3">  <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/array">array</a></span>(<span class="dv">1</span>, <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="dv">0</span>, <span class="dv">3</span>))</a>
+<a class="sourceLine" id="cb11-2" data-line-number="2">  <span class="kw"><a href="https://rdrr.io/r/base/array.html">array</a></span>(<span class="dv">1</span>, <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="dv">0</span>, <span class="dv">2</span>)), </a>
+<a class="sourceLine" id="cb11-3" data-line-number="3">  <span class="kw"><a href="https://rdrr.io/r/base/array.html">array</a></span>(<span class="dv">1</span>, <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="dv">0</span>, <span class="dv">3</span>))</a>
 <a class="sourceLine" id="cb11-4" data-line-number="4">)</a>
 <a class="sourceLine" id="cb11-5" data-line-number="5"><span class="co">#&gt; Incompatible lengths: 2, 3.</span></a></code></pre></div>
 </li>
 <li>
 <p>Factors combine levels in the order in which they appear.</p>
-<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb12-1" data-line-number="1">fa &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/factor">factor</a></span>(<span class="st">"a"</span>)</a>
-<a class="sourceLine" id="cb12-2" data-line-number="2">fb &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/factor">factor</a></span>(<span class="st">"b"</span>)</a>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb12-1" data-line-number="1">fa &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/factor.html">factor</a></span>(<span class="st">"a"</span>)</a>
+<a class="sourceLine" id="cb12-2" data-line-number="2">fb &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/factor.html">factor</a></span>(<span class="st">"b"</span>)</a>
 <a class="sourceLine" id="cb12-3" data-line-number="3"></a>
-<a class="sourceLine" id="cb12-4" data-line-number="4"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/levels">levels</a></span>(<span class="kw"><a href="../reference/vec_ptype.html">vec_ptype_common</a></span>(fa, fb))</a>
+<a class="sourceLine" id="cb12-4" data-line-number="4"><span class="kw"><a href="https://rdrr.io/r/base/levels.html">levels</a></span>(<span class="kw"><a href="../reference/vec_ptype.html">vec_ptype_common</a></span>(fa, fb))</a>
 <a class="sourceLine" id="cb12-5" data-line-number="5"><span class="co">#&gt; [1] "a" "b"</span></a>
-<a class="sourceLine" id="cb12-6" data-line-number="6"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/levels">levels</a></span>(<span class="kw"><a href="../reference/vec_ptype.html">vec_ptype_common</a></span>(fb, fa))</a>
+<a class="sourceLine" id="cb12-6" data-line-number="6"><span class="kw"><a href="https://rdrr.io/r/base/levels.html">levels</a></span>(<span class="kw"><a href="../reference/vec_ptype.html">vec_ptype_common</a></span>(fb, fa))</a>
 <a class="sourceLine" id="cb12-7" data-line-number="7"><span class="co">#&gt; [1] "b" "a"</span></a></code></pre></div>
 </li>
 <li>
@@ -271,16 +279,16 @@
 <li>
 <p>The common type of two data frames is the common type of each column that occurs in both data frames:</p>
 <div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb16-1" data-line-number="1"><span class="kw"><a href="../reference/vec_ptype.html">vec_ptype_show</a></span>(</a>
-<a class="sourceLine" id="cb16-2" data-line-number="2">  <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/data.frame">data.frame</a></span>(<span class="dt">x =</span> <span class="ot">FALSE</span>), </a>
-<a class="sourceLine" id="cb16-3" data-line-number="3">  <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/data.frame">data.frame</a></span>(<span class="dt">x =</span> 1L),</a>
-<a class="sourceLine" id="cb16-4" data-line-number="4">  <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/data.frame">data.frame</a></span>(<span class="dt">x =</span> <span class="fl">2.5</span>)</a>
+<a class="sourceLine" id="cb16-2" data-line-number="2">  <span class="kw"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span>(<span class="dt">x =</span> <span class="ot">FALSE</span>), </a>
+<a class="sourceLine" id="cb16-3" data-line-number="3">  <span class="kw"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span>(<span class="dt">x =</span> 1L),</a>
+<a class="sourceLine" id="cb16-4" data-line-number="4">  <span class="kw"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span>(<span class="dt">x =</span> <span class="fl">2.5</span>)</a>
 <a class="sourceLine" id="cb16-5" data-line-number="5">)</a>
 <a class="sourceLine" id="cb16-6" data-line-number="6"><span class="co">#&gt; Prototype: &lt;data.frame&lt;x:double&gt;&gt;</span></a>
 <a class="sourceLine" id="cb16-7" data-line-number="7"><span class="co">#&gt; 0. (                         , &lt;data.frame&lt;x:logical&gt;&gt; ) = &lt;data.frame&lt;x:logical&gt;&gt;</span></a>
 <a class="sourceLine" id="cb16-8" data-line-number="8"><span class="co">#&gt; 1. ( &lt;data.frame&lt;x:logical&gt;&gt; , &lt;data.frame&lt;x:integer&gt;&gt; ) = &lt;data.frame&lt;x:integer&gt;&gt;</span></a>
 <a class="sourceLine" id="cb16-9" data-line-number="9"><span class="co">#&gt; 2. ( &lt;data.frame&lt;x:integer&gt;&gt; , &lt;data.frame&lt;x:double&gt;&gt;  ) = &lt;data.frame&lt;x:double&gt;&gt;</span></a></code></pre></div>
 <p>And the union of the columns that only occur in one:</p>
-<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb17-1" data-line-number="1"><span class="kw"><a href="../reference/vec_ptype.html">vec_ptype_show</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/data.frame">data.frame</a></span>(<span class="dt">x =</span> <span class="dv">1</span>, <span class="dt">y =</span> <span class="dv">1</span>), <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/data.frame">data.frame</a></span>(<span class="dt">y =</span> <span class="dv">1</span>, <span class="dt">z =</span> <span class="dv">1</span>))</a>
+<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb17-1" data-line-number="1"><span class="kw"><a href="../reference/vec_ptype.html">vec_ptype_show</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span>(<span class="dt">x =</span> <span class="dv">1</span>, <span class="dt">y =</span> <span class="dv">1</span>), <span class="kw"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span>(<span class="dt">y =</span> <span class="dv">1</span>, <span class="dt">z =</span> <span class="dv">1</span>))</a>
 <a class="sourceLine" id="cb17-2" data-line-number="2"><span class="co">#&gt; Prototype: &lt;data.frame&lt;</span></a>
 <a class="sourceLine" id="cb17-3" data-line-number="3"><span class="co">#&gt;   x: double</span></a>
 <a class="sourceLine" id="cb17-4" data-line-number="4"><span class="co">#&gt;   y: double</span></a>
@@ -303,7 +311,7 @@
 <h3 class="hasAnchor">
 <a href="#casting-to-specified-type" class="anchor"></a>Casting to specified type</h3>
 <p><code><a href="../reference/vec_ptype.html">vec_ptype_common()</a></code> finds the common type of a set of vector. Typically, however, what you want is a set of vectors coerced to that common type. That’s the job of <code><a href="../reference/vec_cast.html">vec_cast_common()</a></code>:</p>
-<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb18-1" data-line-number="1"><span class="kw"><a href="https://www.rdocumentation.org/packages/utils/topics/str">str</a></span>(<span class="kw"><a href="../reference/vec_cast.html">vec_cast_common</a></span>(</a>
+<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb18-1" data-line-number="1"><span class="kw"><a href="https://rdrr.io/r/utils/str.html">str</a></span>(<span class="kw"><a href="../reference/vec_cast.html">vec_cast_common</a></span>(</a>
 <a class="sourceLine" id="cb18-2" data-line-number="2">  <span class="ot">FALSE</span>, </a>
 <a class="sourceLine" id="cb18-3" data-line-number="3">  <span class="dv">1</span><span class="op">:</span><span class="dv">5</span>, </a>
 <a class="sourceLine" id="cb18-4" data-line-number="4">  <span class="fl">2.5</span></a>
@@ -313,17 +321,17 @@
 <a class="sourceLine" id="cb18-8" data-line-number="8"><span class="co">#&gt;  $ : num [1:5] 1 2 3 4 5</span></a>
 <a class="sourceLine" id="cb18-9" data-line-number="9"><span class="co">#&gt;  $ : num 2.5</span></a>
 <a class="sourceLine" id="cb18-10" data-line-number="10"></a>
-<a class="sourceLine" id="cb18-11" data-line-number="11"><span class="kw"><a href="https://www.rdocumentation.org/packages/utils/topics/str">str</a></span>(<span class="kw"><a href="../reference/vec_cast.html">vec_cast_common</a></span>(</a>
-<a class="sourceLine" id="cb18-12" data-line-number="12">  <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/factor">factor</a></span>(<span class="st">"x"</span>), </a>
-<a class="sourceLine" id="cb18-13" data-line-number="13">  <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/factor">factor</a></span>(<span class="st">"y"</span>)</a>
+<a class="sourceLine" id="cb18-11" data-line-number="11"><span class="kw"><a href="https://rdrr.io/r/utils/str.html">str</a></span>(<span class="kw"><a href="../reference/vec_cast.html">vec_cast_common</a></span>(</a>
+<a class="sourceLine" id="cb18-12" data-line-number="12">  <span class="kw"><a href="https://rdrr.io/r/base/factor.html">factor</a></span>(<span class="st">"x"</span>), </a>
+<a class="sourceLine" id="cb18-13" data-line-number="13">  <span class="kw"><a href="https://rdrr.io/r/base/factor.html">factor</a></span>(<span class="st">"y"</span>)</a>
 <a class="sourceLine" id="cb18-14" data-line-number="14">))</a>
 <a class="sourceLine" id="cb18-15" data-line-number="15"><span class="co">#&gt; List of 2</span></a>
 <a class="sourceLine" id="cb18-16" data-line-number="16"><span class="co">#&gt;  $ : Factor w/ 2 levels "x","y": 1</span></a>
 <a class="sourceLine" id="cb18-17" data-line-number="17"><span class="co">#&gt;  $ : Factor w/ 2 levels "x","y": 2</span></a>
 <a class="sourceLine" id="cb18-18" data-line-number="18"></a>
-<a class="sourceLine" id="cb18-19" data-line-number="19"><span class="kw"><a href="https://www.rdocumentation.org/packages/utils/topics/str">str</a></span>(<span class="kw"><a href="../reference/vec_cast.html">vec_cast_common</a></span>(</a>
-<a class="sourceLine" id="cb18-20" data-line-number="20">  <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/data.frame">data.frame</a></span>(<span class="dt">x =</span> <span class="dv">1</span>),</a>
-<a class="sourceLine" id="cb18-21" data-line-number="21">  <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/data.frame">data.frame</a></span>(<span class="dt">y =</span> <span class="dv">1</span><span class="op">:</span><span class="dv">2</span>)</a>
+<a class="sourceLine" id="cb18-19" data-line-number="19"><span class="kw"><a href="https://rdrr.io/r/utils/str.html">str</a></span>(<span class="kw"><a href="../reference/vec_cast.html">vec_cast_common</a></span>(</a>
+<a class="sourceLine" id="cb18-20" data-line-number="20">  <span class="kw"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span>(<span class="dt">x =</span> <span class="dv">1</span>),</a>
+<a class="sourceLine" id="cb18-21" data-line-number="21">  <span class="kw"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span>(<span class="dt">y =</span> <span class="dv">1</span><span class="op">:</span><span class="dv">2</span>)</a>
 <a class="sourceLine" id="cb18-22" data-line-number="22">))</a>
 <a class="sourceLine" id="cb18-23" data-line-number="23"><span class="co">#&gt; List of 2</span></a>
 <a class="sourceLine" id="cb18-24" data-line-number="24"><span class="co">#&gt;  $ :'data.frame':    1 obs. of  2 variables:</span></a>
@@ -334,26 +342,26 @@
 <a class="sourceLine" id="cb18-29" data-line-number="29"><span class="co">#&gt;   ..$ y: int [1:2] 1 2</span></a></code></pre></div>
 <p>Alternatively, you can cast to a specific prototype using <code><a href="../reference/vec_cast.html">vec_cast()</a></code>:</p>
 <div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb19-1" data-line-number="1"><span class="co"># Cast succeeds</span></a>
-<a class="sourceLine" id="cb19-2" data-line-number="2"><span class="kw"><a href="../reference/vec_cast.html">vec_cast</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="dv">1</span>, <span class="dv">2</span>), <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/integer">integer</a></span>())</a>
+<a class="sourceLine" id="cb19-2" data-line-number="2"><span class="kw"><a href="../reference/vec_cast.html">vec_cast</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="dv">1</span>, <span class="dv">2</span>), <span class="kw"><a href="https://rdrr.io/r/base/integer.html">integer</a></span>())</a>
 <a class="sourceLine" id="cb19-3" data-line-number="3"><span class="co">#&gt; [1] 1 2</span></a>
 <a class="sourceLine" id="cb19-4" data-line-number="4"></a>
 <a class="sourceLine" id="cb19-5" data-line-number="5"><span class="co"># Cast fails</span></a>
-<a class="sourceLine" id="cb19-6" data-line-number="6"><span class="kw"><a href="../reference/vec_cast.html">vec_cast</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="fl">1.5</span>, <span class="fl">2.5</span>), <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/factor">factor</a></span>(<span class="st">"a"</span>))</a>
+<a class="sourceLine" id="cb19-6" data-line-number="6"><span class="kw"><a href="../reference/vec_cast.html">vec_cast</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">1.5</span>, <span class="fl">2.5</span>), <span class="kw"><a href="https://rdrr.io/r/base/factor.html">factor</a></span>(<span class="st">"a"</span>))</a>
 <a class="sourceLine" id="cb19-7" data-line-number="7"><span class="co">#&gt; Can't cast `x` &lt;double&gt; to `to` &lt;factor&lt;127a2&gt;&gt;.</span></a></code></pre></div>
 <p>If a cast is possible in general (i.e., double -&gt; integer), but information is lost for a specific input (e.g. 1.5 -&gt; 1), it will generate an error.</p>
-<div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb20-1" data-line-number="1"><span class="kw"><a href="../reference/vec_cast.html">vec_cast</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="fl">1.5</span>, <span class="dv">2</span>), <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/integer">integer</a></span>())</a>
+<div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb20-1" data-line-number="1"><span class="kw"><a href="../reference/vec_cast.html">vec_cast</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">1.5</span>, <span class="dv">2</span>), <span class="kw"><a href="https://rdrr.io/r/base/integer.html">integer</a></span>())</a>
 <a class="sourceLine" id="cb20-2" data-line-number="2"><span class="co">#&gt; Lossy cast from `x` &lt;double&gt; to `to` &lt;integer&gt;.</span></a>
 <a class="sourceLine" id="cb20-3" data-line-number="3"><span class="co">#&gt; Locations: 1</span></a></code></pre></div>
 <p>You can suppress the lossy cast errors with <code><a href="../reference/vctrs-conditions.html">allow_lossy_cast()</a></code>:</p>
 <div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb21-1" data-line-number="1"><span class="kw"><a href="../reference/vctrs-conditions.html">allow_lossy_cast</a></span>(</a>
-<a class="sourceLine" id="cb21-2" data-line-number="2">  <span class="kw"><a href="../reference/vec_cast.html">vec_cast</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="fl">1.5</span>, <span class="dv">2</span>), <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/integer">integer</a></span>())</a>
+<a class="sourceLine" id="cb21-2" data-line-number="2">  <span class="kw"><a href="../reference/vec_cast.html">vec_cast</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">1.5</span>, <span class="dv">2</span>), <span class="kw"><a href="https://rdrr.io/r/base/integer.html">integer</a></span>())</a>
 <a class="sourceLine" id="cb21-3" data-line-number="3">)</a>
 <a class="sourceLine" id="cb21-4" data-line-number="4"><span class="co">#&gt; [1] 1 2</span></a></code></pre></div>
 <p>This will suppress all lossy cast errors. Supply prototypes if you want to be specific about the type of lossy cast allowed:</p>
 <div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb22-1" data-line-number="1"><span class="kw"><a href="../reference/vctrs-conditions.html">allow_lossy_cast</a></span>(</a>
-<a class="sourceLine" id="cb22-2" data-line-number="2">  <span class="kw"><a href="../reference/vec_cast.html">vec_cast</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="fl">1.5</span>, <span class="dv">2</span>), <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/integer">integer</a></span>()),</a>
-<a class="sourceLine" id="cb22-3" data-line-number="3">  <span class="dt">x_ptype =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/double">double</a></span>(),</a>
-<a class="sourceLine" id="cb22-4" data-line-number="4">  <span class="dt">to_ptype =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/integer">integer</a></span>()</a>
+<a class="sourceLine" id="cb22-2" data-line-number="2">  <span class="kw"><a href="../reference/vec_cast.html">vec_cast</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">1.5</span>, <span class="dv">2</span>), <span class="kw"><a href="https://rdrr.io/r/base/integer.html">integer</a></span>()),</a>
+<a class="sourceLine" id="cb22-3" data-line-number="3">  <span class="dt">x_ptype =</span> <span class="kw"><a href="https://rdrr.io/r/base/double.html">double</a></span>(),</a>
+<a class="sourceLine" id="cb22-4" data-line-number="4">  <span class="dt">to_ptype =</span> <span class="kw"><a href="https://rdrr.io/r/base/integer.html">integer</a></span>()</a>
 <a class="sourceLine" id="cb22-5" data-line-number="5">)</a>
 <a class="sourceLine" id="cb22-6" data-line-number="6"><span class="co">#&gt; [1] 1 2</span></a></code></pre></div>
 <p>The set of casts is more permissive than the set of coercions and is summarised in the diagram below. Coercions are shown by arrows; possible casts are shown with circles.</p>
@@ -367,9 +375,9 @@
 <a href="#size" class="anchor"></a>Size</h2>
 <p><code><a href="../reference/vec_size.html">vec_size()</a></code> was motivated by the need to have an invariant that describes the number of “observations” in a data structure. This is particularly important for data frames, as it’s useful to have some function such that <code>f(data.frame(x))</code> equals <code>f(x)</code>. No base function has this property:</p>
 <ul>
-<li><p><code><a href="https://www.rdocumentation.org/packages/base/topics/length">length(data.frame(x))</a></code> equals <code>1</code> because the length of a data frame is the number of columns.</p></li>
-<li><p><code><a href="https://www.rdocumentation.org/packages/base/topics/nrow">nrow(data.frame(x))</a></code> does not equal <code><a href="https://www.rdocumentation.org/packages/base/topics/nrow">nrow(x)</a></code> because <code><a href="https://www.rdocumentation.org/packages/base/topics/nrow">nrow()</a></code> of a vector is <code>NULL</code>.</p></li>
-<li><p><code><a href="https://www.rdocumentation.org/packages/base/topics/nrow">NROW(data.frame(x))</a></code> equals <code><a href="https://www.rdocumentation.org/packages/base/topics/nrow">NROW(x)</a></code> for vector <code>x</code>, so is almost what we want. But because <code><a href="https://www.rdocumentation.org/packages/base/topics/nrow">NROW()</a></code> is defined in terms of <code><a href="https://www.rdocumentation.org/packages/base/topics/length">length()</a></code>, it returns a value for every object, even types that can’t go in a data frame, e.g. <code><a href="https://www.rdocumentation.org/packages/base/topics/data.frame">data.frame(mean)</a></code> errors even though <code><a href="https://www.rdocumentation.org/packages/base/topics/nrow">NROW(mean)</a></code> is <code>1</code>.</p></li>
+<li><p><code><a href="https://rdrr.io/r/base/length.html">length(data.frame(x))</a></code> equals <code>1</code> because the length of a data frame is the number of columns.</p></li>
+<li><p><code><a href="https://rdrr.io/r/base/nrow.html">nrow(data.frame(x))</a></code> does not equal <code><a href="https://rdrr.io/r/base/nrow.html">nrow(x)</a></code> because <code><a href="https://rdrr.io/r/base/nrow.html">nrow()</a></code> of a vector is <code>NULL</code>.</p></li>
+<li><p><code><a href="https://rdrr.io/r/base/nrow.html">NROW(data.frame(x))</a></code> equals <code><a href="https://rdrr.io/r/base/nrow.html">NROW(x)</a></code> for vector <code>x</code>, so is almost what we want. But because <code><a href="https://rdrr.io/r/base/nrow.html">NROW()</a></code> is defined in terms of <code><a href="https://rdrr.io/r/base/length.html">length()</a></code>, it returns a value for every object, even types that can’t go in a data frame, e.g. <code><a href="https://rdrr.io/r/base/data.frame.html">data.frame(mean)</a></code> errors even though <code><a href="https://rdrr.io/r/base/nrow.html">NROW(mean)</a></code> is <code>1</code>.</p></li>
 </ul>
 <p>We define <code><a href="../reference/vec_size.html">vec_size()</a></code> as follows:</p>
 <ul>
@@ -381,7 +389,7 @@
 <div id="slicing" class="section level3">
 <h3 class="hasAnchor">
 <a href="#slicing" class="anchor"></a>Slicing</h3>
-<p><code><a href="../reference/vec_slice.html">vec_slice()</a></code> is to <code><a href="../reference/vec_size.html">vec_size()</a></code> as <code>[</code> is to <code><a href="https://www.rdocumentation.org/packages/base/topics/length">length()</a></code>; i.e., it allows you to select observations regardless of the dimensionality of the underlying object. <code><a href="../reference/vec_slice.html">vec_slice(x, i)</a></code> is equivalent to:</p>
+<p><code><a href="../reference/vec_slice.html">vec_slice()</a></code> is to <code><a href="../reference/vec_size.html">vec_size()</a></code> as <code><a href="https://rdrr.io/r/base/Extract.html">[</a></code> is to <code><a href="https://rdrr.io/r/base/length.html">length()</a></code>; i.e., it allows you to select observations regardless of the dimensionality of the underlying object. <code><a href="../reference/vec_slice.html">vec_slice(x, i)</a></code> is equivalent to:</p>
 <ul>
 <li>
 <code>x[i]</code> when <code>x</code> is a vector.</li>
@@ -390,16 +398,16 @@
 <li>
 <code>x[i, , , drop = FALSE]</code> when <code>x</code> is a 3d array.</li>
 </ul>
-<div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb23-1" data-line-number="1">x &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/sample">sample</a></span>(<span class="dv">1</span><span class="op">:</span><span class="dv">10</span>)</a>
-<a class="sourceLine" id="cb23-2" data-line-number="2">df &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/data.frame">data.frame</a></span>(<span class="dt">x =</span> x)</a>
+<div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb23-1" data-line-number="1">x &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/sample.html">sample</a></span>(<span class="dv">1</span><span class="op">:</span><span class="dv">10</span>)</a>
+<a class="sourceLine" id="cb23-2" data-line-number="2">df &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span>(<span class="dt">x =</span> x)</a>
 <a class="sourceLine" id="cb23-3" data-line-number="3"></a>
 <a class="sourceLine" id="cb23-4" data-line-number="4"><span class="kw"><a href="../reference/vec_slice.html">vec_slice</a></span>(x, <span class="dv">5</span><span class="op">:</span><span class="dv">6</span>)</a>
-<a class="sourceLine" id="cb23-5" data-line-number="5"><span class="co">#&gt; [1] 6 2</span></a>
+<a class="sourceLine" id="cb23-5" data-line-number="5"><span class="co">#&gt; [1] 10  5</span></a>
 <a class="sourceLine" id="cb23-6" data-line-number="6"><span class="kw"><a href="../reference/vec_slice.html">vec_slice</a></span>(df, <span class="dv">5</span><span class="op">:</span><span class="dv">6</span>)</a>
-<a class="sourceLine" id="cb23-7" data-line-number="7"><span class="co">#&gt;   x</span></a>
-<a class="sourceLine" id="cb23-8" data-line-number="8"><span class="co">#&gt; 1 6</span></a>
-<a class="sourceLine" id="cb23-9" data-line-number="9"><span class="co">#&gt; 2 2</span></a></code></pre></div>
-<p><code><a href="../reference/vec_slice.html">vec_slice(data.frame(x), i)</a></code> equals <code><a href="https://www.rdocumentation.org/packages/base/topics/data.frame">data.frame(vec_slice(x, i))</a></code> (modulo variable and row names).</p>
+<a class="sourceLine" id="cb23-7" data-line-number="7"><span class="co">#&gt;    x</span></a>
+<a class="sourceLine" id="cb23-8" data-line-number="8"><span class="co">#&gt; 1 10</span></a>
+<a class="sourceLine" id="cb23-9" data-line-number="9"><span class="co">#&gt; 2  5</span></a></code></pre></div>
+<p><code><a href="../reference/vec_slice.html">vec_slice(data.frame(x), i)</a></code> equals <code><a href="https://rdrr.io/r/base/data.frame.html">data.frame(vec_slice(x, i))</a></code> (modulo variable and row names).</p>
 <p>Prototypes are generated with <code><a href="../reference/vec_slice.html">vec_slice(x, 0L)</a></code>; given a prototype, you can initialize a vector of given size (filled with <code>NA</code>s) with <code><a href="../reference/vec_init.html">vec_init()</a></code>.</p>
 </div>
 <div id="common-sizes-recycling-rules" class="section level3">
@@ -410,9 +418,9 @@
 <a class="sourceLine" id="cb24-2" data-line-number="2"><span class="co">#&gt; [1] 3</span></a>
 <a class="sourceLine" id="cb24-3" data-line-number="3"><span class="kw"><a href="../reference/vec_size.html">vec_size_common</a></span>(<span class="dv">1</span><span class="op">:</span><span class="dv">10</span>, <span class="dv">1</span>)</a>
 <a class="sourceLine" id="cb24-4" data-line-number="4"><span class="co">#&gt; [1] 10</span></a>
-<a class="sourceLine" id="cb24-5" data-line-number="5"><span class="kw"><a href="../reference/vec_size.html">vec_size_common</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/integer">integer</a></span>(), <span class="dv">1</span>)</a>
+<a class="sourceLine" id="cb24-5" data-line-number="5"><span class="kw"><a href="../reference/vec_size.html">vec_size_common</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/integer.html">integer</a></span>(), <span class="dv">1</span>)</a>
 <a class="sourceLine" id="cb24-6" data-line-number="6"><span class="co">#&gt; [1] 0</span></a></code></pre></div>
-<p>vctrs obeys a stricter set of recycling rules than base R. Vectors of size 1 are recycled to any other size. All other size combinations will generate an error. This strictness prevents common mistakes like <code>dest == c("IAH", "HOU"))</code>, at the cost of occasionally requiring an explicit calls to <code><a href="https://www.rdocumentation.org/packages/base/topics/rep">rep()</a></code>.</p>
+<p>vctrs obeys a stricter set of recycling rules than base R. Vectors of size 1 are recycled to any other size. All other size combinations will generate an error. This strictness prevents common mistakes like <code>dest == c("IAH", "HOU"))</code>, at the cost of occasionally requiring an explicit calls to <code><a href="https://rdrr.io/r/base/rep.html">rep()</a></code>.</p>
 <div class="figure">
 <img src="../man/figures/sizes-recycling.png" alt="Summary of vctrs recycling rules. X indicates n error"><p class="caption">Summary of vctrs recycling rules. X indicates n error</p>
 </div>
@@ -448,61 +456,62 @@
 <a href="#appendix-recycling-in-base-r" class="anchor"></a>Appendix: recycling in base R</h2>
 <p>The recycling rules in base R are described in <a href="https://cran.r-project.org/doc/manuals/r-release/R-lang.html#Recycling-rules">The R Language Definition</a> but are not implemented in a single function and thus are not applied consistently. Here, I give a brief overview of their most common realisation, as well as showing some of the exceptions.</p>
 <p>Generally, in base R, when a pair of vectors is not the same length, the shorter vector is recycled to the same length as the longer:</p>
-<div class="sourceCode" id="cb27"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb27-1" data-line-number="1"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/rep">rep</a></span>(<span class="dv">1</span>, <span class="dv">6</span>) <span class="op">+</span><span class="st"> </span><span class="dv">1</span></a>
+<div class="sourceCode" id="cb27"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb27-1" data-line-number="1"><span class="kw"><a href="https://rdrr.io/r/base/rep.html">rep</a></span>(<span class="dv">1</span>, <span class="dv">6</span>) <span class="op">+</span><span class="st"> </span><span class="dv">1</span></a>
 <a class="sourceLine" id="cb27-2" data-line-number="2"><span class="co">#&gt; [1] 2 2 2 2 2 2</span></a>
-<a class="sourceLine" id="cb27-3" data-line-number="3"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/rep">rep</a></span>(<span class="dv">1</span>, <span class="dv">6</span>) <span class="op">+</span><span class="st"> </span><span class="dv">1</span><span class="op">:</span><span class="dv">2</span></a>
+<a class="sourceLine" id="cb27-3" data-line-number="3"><span class="kw"><a href="https://rdrr.io/r/base/rep.html">rep</a></span>(<span class="dv">1</span>, <span class="dv">6</span>) <span class="op">+</span><span class="st"> </span><span class="dv">1</span><span class="op">:</span><span class="dv">2</span></a>
 <a class="sourceLine" id="cb27-4" data-line-number="4"><span class="co">#&gt; [1] 2 3 2 3 2 3</span></a>
-<a class="sourceLine" id="cb27-5" data-line-number="5"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/rep">rep</a></span>(<span class="dv">1</span>, <span class="dv">6</span>) <span class="op">+</span><span class="st"> </span><span class="dv">1</span><span class="op">:</span><span class="dv">3</span></a>
+<a class="sourceLine" id="cb27-5" data-line-number="5"><span class="kw"><a href="https://rdrr.io/r/base/rep.html">rep</a></span>(<span class="dv">1</span>, <span class="dv">6</span>) <span class="op">+</span><span class="st"> </span><span class="dv">1</span><span class="op">:</span><span class="dv">3</span></a>
 <a class="sourceLine" id="cb27-6" data-line-number="6"><span class="co">#&gt; [1] 2 3 4 2 3 4</span></a></code></pre></div>
 <p>If the length of the longer vector is not an integer multiple of the length of the shorter, you usually get a warning:</p>
-<div class="sourceCode" id="cb28"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb28-1" data-line-number="1"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/invisible">invisible</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/Extremes">pmax</a></span>(<span class="dv">1</span><span class="op">:</span><span class="dv">2</span>, <span class="dv">1</span><span class="op">:</span><span class="dv">3</span>))</a>
+<div class="sourceCode" id="cb28"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb28-1" data-line-number="1"><span class="kw"><a href="https://rdrr.io/r/base/invisible.html">invisible</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/Extremes.html">pmax</a></span>(<span class="dv">1</span><span class="op">:</span><span class="dv">2</span>, <span class="dv">1</span><span class="op">:</span><span class="dv">3</span>))</a>
 <a class="sourceLine" id="cb28-2" data-line-number="2"><span class="co">#&gt; Warning in pmax(1:2, 1:3): an argument will be fractionally recycled</span></a>
-<a class="sourceLine" id="cb28-3" data-line-number="3"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/invisible">invisible</a></span>(<span class="dv">1</span><span class="op">:</span><span class="dv">2</span> <span class="op">+</span><span class="st"> </span><span class="dv">1</span><span class="op">:</span><span class="dv">3</span>)</a>
+<a class="sourceLine" id="cb28-3" data-line-number="3"><span class="kw"><a href="https://rdrr.io/r/base/invisible.html">invisible</a></span>(<span class="dv">1</span><span class="op">:</span><span class="dv">2</span> <span class="op">+</span><span class="st"> </span><span class="dv">1</span><span class="op">:</span><span class="dv">3</span>)</a>
 <a class="sourceLine" id="cb28-4" data-line-number="4"><span class="co">#&gt; Warning in 1:2 + 1:3: longer object length is not a multiple of shorter</span></a>
 <a class="sourceLine" id="cb28-5" data-line-number="5"><span class="co">#&gt; object length</span></a>
-<a class="sourceLine" id="cb28-6" data-line-number="6"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/invisible">invisible</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/cbind">cbind</a></span>(<span class="dv">1</span><span class="op">:</span><span class="dv">2</span>, <span class="dv">1</span><span class="op">:</span><span class="dv">3</span>))</a>
+<a class="sourceLine" id="cb28-6" data-line-number="6"><span class="kw"><a href="https://rdrr.io/r/base/invisible.html">invisible</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/cbind.html">cbind</a></span>(<span class="dv">1</span><span class="op">:</span><span class="dv">2</span>, <span class="dv">1</span><span class="op">:</span><span class="dv">3</span>))</a>
 <a class="sourceLine" id="cb28-7" data-line-number="7"><span class="co">#&gt; Warning in cbind(1:2, 1:3): number of rows of result is not a multiple of</span></a>
 <a class="sourceLine" id="cb28-8" data-line-number="8"><span class="co">#&gt; vector length (arg 1)</span></a></code></pre></div>
 <p>But some functions recycle silently:</p>
-<div class="sourceCode" id="cb29"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb29-1" data-line-number="1"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/length">length</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/Trig">atan2</a></span>(<span class="dv">1</span><span class="op">:</span><span class="dv">3</span>, <span class="dv">1</span><span class="op">:</span><span class="dv">2</span>))</a>
+<div class="sourceCode" id="cb29"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb29-1" data-line-number="1"><span class="kw"><a href="https://rdrr.io/r/base/length.html">length</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/Trig.html">atan2</a></span>(<span class="dv">1</span><span class="op">:</span><span class="dv">3</span>, <span class="dv">1</span><span class="op">:</span><span class="dv">2</span>))</a>
 <a class="sourceLine" id="cb29-2" data-line-number="2"><span class="co">#&gt; [1] 3</span></a>
-<a class="sourceLine" id="cb29-3" data-line-number="3"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/length">length</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/paste">paste</a></span>(<span class="dv">1</span><span class="op">:</span><span class="dv">3</span>, <span class="dv">1</span><span class="op">:</span><span class="dv">2</span>))</a>
+<a class="sourceLine" id="cb29-3" data-line-number="3"><span class="kw"><a href="https://rdrr.io/r/base/length.html">length</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/paste.html">paste</a></span>(<span class="dv">1</span><span class="op">:</span><span class="dv">3</span>, <span class="dv">1</span><span class="op">:</span><span class="dv">2</span>))</a>
 <a class="sourceLine" id="cb29-4" data-line-number="4"><span class="co">#&gt; [1] 3</span></a>
-<a class="sourceLine" id="cb29-5" data-line-number="5"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/length">length</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/ifelse">ifelse</a></span>(<span class="dv">1</span><span class="op">:</span><span class="dv">3</span>, <span class="dv">1</span><span class="op">:</span><span class="dv">2</span>, <span class="dv">1</span><span class="op">:</span><span class="dv">2</span>))</a>
+<a class="sourceLine" id="cb29-5" data-line-number="5"><span class="kw"><a href="https://rdrr.io/r/base/length.html">length</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span>(<span class="dv">1</span><span class="op">:</span><span class="dv">3</span>, <span class="dv">1</span><span class="op">:</span><span class="dv">2</span>, <span class="dv">1</span><span class="op">:</span><span class="dv">2</span>))</a>
 <a class="sourceLine" id="cb29-6" data-line-number="6"><span class="co">#&gt; [1] 3</span></a></code></pre></div>
-<p>And <code><a href="https://www.rdocumentation.org/packages/base/topics/data.frame">data.frame()</a></code> throws an error:</p>
-<div class="sourceCode" id="cb30"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb30-1" data-line-number="1"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/data.frame">data.frame</a></span>(<span class="dv">1</span><span class="op">:</span><span class="dv">2</span>, <span class="dv">1</span><span class="op">:</span><span class="dv">3</span>)</a>
+<p>And <code><a href="https://rdrr.io/r/base/data.frame.html">data.frame()</a></code> throws an error:</p>
+<div class="sourceCode" id="cb30"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb30-1" data-line-number="1"><span class="kw"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span>(<span class="dv">1</span><span class="op">:</span><span class="dv">2</span>, <span class="dv">1</span><span class="op">:</span><span class="dv">3</span>)</a>
 <a class="sourceLine" id="cb30-2" data-line-number="2"><span class="co">#&gt; Error in data.frame(1:2, 1:3): arguments imply differing number of rows: 2, 3</span></a></code></pre></div>
 <p>The R language definition states that “any arithmetic operation involving a zero-length vector has a zero-length result”. But outside of arithmetic, this rule is not consistently followed:</p>
 <div class="sourceCode" id="cb31"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb31-1" data-line-number="1"><span class="co"># length-0 output</span></a>
-<a class="sourceLine" id="cb31-2" data-line-number="2"><span class="dv">1</span><span class="op">:</span><span class="dv">2</span> <span class="op">+</span><span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/integer">integer</a></span>()</a>
+<a class="sourceLine" id="cb31-2" data-line-number="2"><span class="dv">1</span><span class="op">:</span><span class="dv">2</span> <span class="op">+</span><span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/integer.html">integer</a></span>()</a>
 <a class="sourceLine" id="cb31-3" data-line-number="3"><span class="co">#&gt; integer(0)</span></a>
-<a class="sourceLine" id="cb31-4" data-line-number="4"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/Trig">atan2</a></span>(<span class="dv">1</span><span class="op">:</span><span class="dv">2</span>, <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/integer">integer</a></span>())</a>
+<a class="sourceLine" id="cb31-4" data-line-number="4"><span class="kw"><a href="https://rdrr.io/r/base/Trig.html">atan2</a></span>(<span class="dv">1</span><span class="op">:</span><span class="dv">2</span>, <span class="kw"><a href="https://rdrr.io/r/base/integer.html">integer</a></span>())</a>
 <a class="sourceLine" id="cb31-5" data-line-number="5"><span class="co">#&gt; numeric(0)</span></a>
-<a class="sourceLine" id="cb31-6" data-line-number="6"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/Extremes">pmax</a></span>(<span class="dv">1</span><span class="op">:</span><span class="dv">2</span>, <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/integer">integer</a></span>())</a>
+<a class="sourceLine" id="cb31-6" data-line-number="6"><span class="kw"><a href="https://rdrr.io/r/base/Extremes.html">pmax</a></span>(<span class="dv">1</span><span class="op">:</span><span class="dv">2</span>, <span class="kw"><a href="https://rdrr.io/r/base/integer.html">integer</a></span>())</a>
 <a class="sourceLine" id="cb31-7" data-line-number="7"><span class="co">#&gt; integer(0)</span></a>
 <a class="sourceLine" id="cb31-8" data-line-number="8"></a>
 <a class="sourceLine" id="cb31-9" data-line-number="9"><span class="co"># dropped</span></a>
-<a class="sourceLine" id="cb31-10" data-line-number="10"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/cbind">cbind</a></span>(<span class="dv">1</span><span class="op">:</span><span class="dv">2</span>, <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/integer">integer</a></span>())</a>
+<a class="sourceLine" id="cb31-10" data-line-number="10"><span class="kw"><a href="https://rdrr.io/r/base/cbind.html">cbind</a></span>(<span class="dv">1</span><span class="op">:</span><span class="dv">2</span>, <span class="kw"><a href="https://rdrr.io/r/base/integer.html">integer</a></span>())</a>
 <a class="sourceLine" id="cb31-11" data-line-number="11"><span class="co">#&gt;      [,1]</span></a>
 <a class="sourceLine" id="cb31-12" data-line-number="12"><span class="co">#&gt; [1,]    1</span></a>
 <a class="sourceLine" id="cb31-13" data-line-number="13"><span class="co">#&gt; [2,]    2</span></a>
 <a class="sourceLine" id="cb31-14" data-line-number="14"></a>
 <a class="sourceLine" id="cb31-15" data-line-number="15"><span class="co"># recycled to length of first</span></a>
-<a class="sourceLine" id="cb31-16" data-line-number="16"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/ifelse">ifelse</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/rep">rep</a></span>(<span class="ot">TRUE</span>, <span class="dv">4</span>), <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/integer">integer</a></span>(), <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/character">character</a></span>())</a>
+<a class="sourceLine" id="cb31-16" data-line-number="16"><span class="kw"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/rep.html">rep</a></span>(<span class="ot">TRUE</span>, <span class="dv">4</span>), <span class="kw"><a href="https://rdrr.io/r/base/integer.html">integer</a></span>(), <span class="kw"><a href="https://rdrr.io/r/base/character.html">character</a></span>())</a>
 <a class="sourceLine" id="cb31-17" data-line-number="17"><span class="co">#&gt; [1] NA NA NA NA</span></a>
 <a class="sourceLine" id="cb31-18" data-line-number="18"></a>
 <a class="sourceLine" id="cb31-19" data-line-number="19"><span class="co"># preserved-ish</span></a>
-<a class="sourceLine" id="cb31-20" data-line-number="20"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/paste">paste</a></span>(<span class="dv">1</span><span class="op">:</span><span class="dv">2</span>, <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/integer">integer</a></span>())</a>
+<a class="sourceLine" id="cb31-20" data-line-number="20"><span class="kw"><a href="https://rdrr.io/r/base/paste.html">paste</a></span>(<span class="dv">1</span><span class="op">:</span><span class="dv">2</span>, <span class="kw"><a href="https://rdrr.io/r/base/integer.html">integer</a></span>())</a>
 <a class="sourceLine" id="cb31-21" data-line-number="21"><span class="co">#&gt; [1] "1 " "2 "</span></a>
 <a class="sourceLine" id="cb31-22" data-line-number="22"></a>
 <a class="sourceLine" id="cb31-23" data-line-number="23"><span class="co"># Errors</span></a>
-<a class="sourceLine" id="cb31-24" data-line-number="24"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/data.frame">data.frame</a></span>(<span class="dv">1</span><span class="op">:</span><span class="dv">2</span>, <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/integer">integer</a></span>())</a>
+<a class="sourceLine" id="cb31-24" data-line-number="24"><span class="kw"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span>(<span class="dv">1</span><span class="op">:</span><span class="dv">2</span>, <span class="kw"><a href="https://rdrr.io/r/base/integer.html">integer</a></span>())</a>
 <a class="sourceLine" id="cb31-25" data-line-number="25"><span class="co">#&gt; Error in data.frame(1:2, integer()): arguments imply differing number of rows: 2, 0</span></a></code></pre></div>
 </div>
   </div>
 
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
+
         <div id="tocnav">
       <h2 class="hasAnchor">
 <a href="#tocnav" class="anchor"></a>Contents</h2>
@@ -517,17 +526,20 @@
 </div>
 
 
+
       <footer><div class="copyright">
   <p>Developed by <a href="http://hadley.nz">Hadley Wickham</a>, Lionel Henry, Davis Vaughan.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.3.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.4.0.</p>
 </div>
+
       </footer>
 </div>
 
   
+
 
   </body>
 </html>

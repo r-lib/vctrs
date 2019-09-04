@@ -8,21 +8,32 @@
 
 <title>Cast a vector to specified type — vec_cast • vctrs</title>
 
+<!-- favicons -->
+<link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="../favicon-32x32.png">
+<link rel="apple-touch-icon" type="image/png" sizes="180x180" href="../apple-touch-icon.png" />
+<link rel="apple-touch-icon" type="image/png" sizes="120x120" href="../apple-touch-icon-120x120.png" />
+<link rel="apple-touch-icon" type="image/png" sizes="76x76" href="../apple-touch-icon-76x76.png" />
+<link rel="apple-touch-icon" type="image/png" sizes="60x60" href="../apple-touch-icon-60x60.png" />
+
 <!-- jquery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
 <!-- Bootstrap -->
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha256-916EbMg70RQy9LHiGkXzG8hSg9EdNy97GazNG/aiY1w=" crossorigin="anonymous" />
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha256-U5ZEeKfGNOja007MMD3YBI0A3OSZOQbeG6z2f2Y0hu8=" crossorigin="anonymous"></script>
 
 <!-- Font Awesome icons -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha256-eZrrJcwDc/3uDhsdt61sL2oOBY362qM3lon1gyExkL0=" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/all.min.css" integrity="sha256-nAmazAk6vS34Xqo0BSrTb+abbtFlgsFK7NKSi6o7Y78=" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/v4-shims.min.css" integrity="sha256-6qHlizsOWFskGlwVOKuns+D1nB6ssZrHQrNj1wGplHc=" crossorigin="anonymous" />
 
 <!-- clipboard.js -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.4/clipboard.min.js" integrity="sha256-FiZwavyI2V6+EXO1U+xzLG3IKldpiTFf3153ea9zikQ=" crossorigin="anonymous"></script>
 
-<!-- sticky kit -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/sticky-kit/1.1.3/sticky-kit.min.js" integrity="sha256-c4Rlo1ZozqTPE2RLuvbusY3+SU1pQaJC0TjuhygMipw=" crossorigin="anonymous"></script>
+<!-- headroom.js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/headroom.min.js" integrity="sha256-DJFC1kqIhelURkuza0AvYal5RxMtpzLjFhsnVIeuk+U=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script>
 
 <!-- pkgdown -->
 <link href="../pkgdown.css" rel="stylesheet">
@@ -30,8 +41,8 @@
 
 
 
-<meta property="og:title" content="Cast a vector to specified type — vec_cast" />
 
+<meta property="og:title" content="Cast a vector to specified type — vec_cast" />
 <meta property="og:description" content="vec_cast() provides general coercions from one type of vector to another,
 and along with vec_ptype2() forms the foundation of the vctrs type system.
 It should generally not be called by R users, but is important for R
@@ -39,9 +50,9 @@ developers. vec_restore() is designed specifically for casting a bare
 vector to the original type; it's useful when relying NextMethod() for
 the actual implementation. vec_cast_common(...) casts a collection to
 vectors to the same type." />
-
 <meta property="og:image" content="https://vctrs.r-lib.org/logo.png" />
 <meta name="twitter:card" content="summary" />
+
 
 
 
@@ -53,6 +64,7 @@ vectors to the same type." />
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
 <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
 <![endif]-->
+
 
 
   </head>
@@ -79,7 +91,7 @@ vectors to the same type." />
       <ul class="nav navbar-nav">
         <li>
   <a href="../index.html">
-    <span class="fa fa-home fa-lg"></span>
+    <span class="fas fa fas fa-home fa-lg"></span>
      
   </a>
 </li>
@@ -108,11 +120,10 @@ vectors to the same type." />
   <a href="../news/index.html">Changelog</a>
 </li>
       </ul>
-      
       <ul class="nav navbar-nav navbar-right">
         <li>
   <a href="https://github.com/r-lib/vctrs">
-    <span class="fa fa-github fa-lg"></span>
+    <span class="fab fa fab fa-github fa-lg"></span>
      
   </a>
 </li>
@@ -123,6 +134,7 @@ vectors to the same type." />
 </div><!--/.navbar -->
 
       
+
       </header>
 
 <div class="row">
@@ -134,15 +146,13 @@ vectors to the same type." />
     </div>
 
     <div class="ref-description">
-    
     <p><code>vec_cast()</code> provides general coercions from one type of vector to another,
 and along with <code><a href='vec_ptype2.html'>vec_ptype2()</a></code> forms the foundation of the vctrs type system.
 It should generally not be called by R users, but is important for R
 developers. <code>vec_restore()</code> is designed specifically for casting a bare
-vector to the original type; it's useful when relying <code><a href='https://www.rdocumentation.org/packages/base/topics/UseMethod'>NextMethod()</a></code> for
+vector to the original type; it's useful when relying <code><a href='https://rdrr.io/r/base/UseMethod.html'>NextMethod()</a></code> for
 the actual implementation. <code>vec_cast_common(...)</code> casts a collection to
 vectors to the same type.</p>
-    
     </div>
 
     <pre class="usage"><span class='fu'>vec_cast</span>(<span class='no'>x</span>, <span class='no'>to</span>, <span class='no'>...</span>, <span class='kw'>x_arg</span> <span class='kw'>=</span> <span class='st'>"x"</span>, <span class='kw'>to_arg</span> <span class='kw'>=</span> <span class='st'>"to"</span>)
@@ -171,7 +181,7 @@ vectors to the same type.</p>
 
 <span class='co'># S3 method for list</span>
 <span class='fu'>vec_cast</span>(<span class='no'>x</span>, <span class='no'>to</span>, <span class='no'>...</span>)</pre>
-    
+
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
@@ -207,18 +217,18 @@ considered internal and experimental, it might change in the
 future.</p></td>
     </tr>
     </table>
-    
+
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
     <p>A vector the same length as <code>x</code> with the same type as <code>to</code>,
 or an error if the cast is not possible. An error is generated if
 information is lost when casting between compatible types (i.e. when
 there is no 1-to-1 mapping for a specific value).</p>
-    
     <h2 class="hasAnchor" id="casting-rules"><a class="anchor" href="#casting-rules"></a>Casting rules</h2>
 
     
-    <p>Casting is more flexible than coercion, and allows for the possibility of
+
+<p>Casting is more flexible than coercion, and allows for the possibility of
 information loss. This diagram summarises possible coercions. <code>vec_cast()</code>
 from any type connected to another type, provided that the arrows are
 followed in only one direction. For example you can cast from logical to
@@ -232,11 +242,11 @@ list must be of length 1, and must be coercible to type <code>to</code>. This en
 that a round-trip to and form list is possible, without opening the door
 to very flexible list flattening (which should be the job of a more
 specialised function).</p>
-    
     <h2 class="hasAnchor" id="s-dispatch"><a class="anchor" href="#s-dispatch"></a>S3 dispatch</h2>
 
     
-    <p><code>vec_cast()</code> dispatches on both arguments because casting depends on both
+
+<p><code>vec_cast()</code> dispatches on both arguments because casting depends on both
 the type of <code>x</code> and of <code>to</code>. This is implemented by having methods of
 <code>vec_cast()</code>, e.g. <code>vec_cast.integer()</code> also be S3 generics, which call
 e.g. <code>vec_cast.integer.double()</code>.</p>
@@ -248,12 +258,13 @@ that <code>as.integer.double()</code> would.</p>
 make sure to always provide <code>vec_cast.new_class.default()</code> and
 call <code><a href='vec_default_cast.html'>vec_default_cast()</a></code> from that method.</p>
 <p>See <code><a href='../articles/s3-vector.html'>vignette("s3-vector")</a></code> for full details.</p>
-    
     <h2 class="hasAnchor" id="restoring-attributes"><a class="anchor" href="#restoring-attributes"></a>Restoring attributes</h2>
 
     
-    <p>A restore is a specialised type of cast, primarily used in
-conjunction with <code><a href='https://www.rdocumentation.org/packages/base/topics/UseMethod'>NextMethod()</a></code> or a C-level function that works on
+
+
+<p>A restore is a specialised type of cast, primarily used in
+conjunction with <code><a href='https://rdrr.io/r/base/UseMethod.html'>NextMethod()</a></code> or a C-level function that works on
 the underlying data structure. A <code>vec_restore()</code> method can make
 the following assumptions about <code>x</code>:</p><ul>
 <li><p>It has the correct type.</p></li>
@@ -262,13 +273,14 @@ the following assumptions about <code>x</code>:</p><ul>
 <li><p>It is unclassed. This way you can call vctrs generics with <code>x</code>
 without triggering an infinite loop of restoration.</p></li>
 </ul>
-    <p>The length may be different (for example after <code><a href='vec_slice.html'>vec_slice()</a></code> has
+
+<p>The length may be different (for example after <code><a href='vec_slice.html'>vec_slice()</a></code> has
 been called), and all other attributes may have been lost. The
 method should restore all attributes so that after restoration,
 <code>vec_restore(vec_data(x), x)</code> yields <code>x</code>.</p>
 <p>To understand the difference between <code>vec_cast()</code> and <code>vec_restore()</code>
 think about factors: it doesn't make sense to cast an integer to a factor,
-but if <code><a href='https://www.rdocumentation.org/packages/base/topics/UseMethod'>NextMethod()</a></code> or another low-level function has stripped attributes,
+but if <code><a href='https://rdrr.io/r/base/UseMethod.html'>NextMethod()</a></code> or another low-level function has stripped attributes,
 you still need to be able to restore them.</p>
 <p>The default method copies across all attributes so you only need to
 provide your own method if your attributes require special care
@@ -276,13 +288,12 @@ provide your own method if your attributes require special care
 your own method, bear in mind that many R users add attributes to track
 additional metadata that is important to them, so you should preserve any
 attributes that don't require special handling for your class.</p>
-    
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='co'># x is a double, but no information is lost</span>
-<span class='fu'>vec_cast</span>(<span class='fl'>1</span>, <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/integer'>integer</a></span>())</div><div class='output co'>#&gt; [1] 1</div><div class='input'>
+<span class='fu'>vec_cast</span>(<span class='fl'>1</span>, <span class='fu'><a href='https://rdrr.io/r/base/integer.html'>integer</a></span>())</div><div class='output co'>#&gt; [1] 1</div><div class='input'>
 <span class='co'># When information is lost the cast fails</span>
-<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/try'>try</a></span>(<span class='fu'>vec_cast</span>(<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='fl'>1</span>, <span class='fl'>1.5</span>), <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/integer'>integer</a></span>()))</div><div class='output co'>#&gt; Error : Lossy cast from `x` &lt;double&gt; to `to` &lt;integer&gt;.
+<span class='fu'><a href='https://rdrr.io/r/base/try.html'>try</a></span>(<span class='fu'>vec_cast</span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>, <span class='fl'>1.5</span>), <span class='fu'><a href='https://rdrr.io/r/base/integer.html'>integer</a></span>()))</div><div class='output co'>#&gt; Error : Lossy cast from `x` &lt;double&gt; to `to` &lt;integer&gt;.
 #&gt; Locations: 2
 #&gt; Backtrace:
 #&gt; <span style='color: #555555;'>     </span><span>█
@@ -304,40 +315,36 @@ attributes that don't require special handling for your class.</p>
 #&gt; </span><span style='color: #555555;'> 16. </span><span>│       └─purrr::map(...)
 #&gt; </span><span style='color: #555555;'> 17. </span><span>│         └─pkgdown:::.f(.x[[i]], ...)
 #&gt; </span><span style='color: #555555;'> 18. </span><span>│           └─pkgdown:::data_reference_topic(...)
-#&gt; </span><span style='color: #555555;'> 19. </span><span>│             ├─pkgdown:::as_data(...)
-#&gt; </span><span style='color: #555555;'> 20. </span><span>│             └─pkgdown:::as_data.tag_examples(...)
-#&gt; </span><span style='color: #555555;'> 21. </span><span>│               └─purrr::pmap_chr(...)
-#&gt; </span><span style='color: #555555;'> 22. </span><span>│                 └─pkgdown:::.f(...)
-#&gt; </span><span style='color: #555555;'> 23. </span><span>│                   ├─withr::with_options(...)
-#&gt; </span><span style='color: #555555;'> 24. </span><span>│                   │ └─base::force(code)
-#&gt; </span><span style='color: #555555;'> 25. </span><span>│                   └─evaluate::evaluate(code, env, new_device = TRUE)
-#&gt; </span><span style='color: #555555;'> 26. </span><span>│                     └─evaluate:::evaluate_call(...)
-#&gt; </span><span style='color: #555555;'> 27. </span><span>│                       ├─evaluate:::timing_fn(...)
-#&gt; </span><span style='color: #555555;'> 28. </span><span>│                       ├─evaluate:::handle(...)
-#&gt; </span><span style='color: #555555;'> 29. </span><span>│                       │ └─base::try(f, silent = TRUE)
-#&gt; </span><span style='color: #555555;'> 30. </span><span>│                       │   └─base::tryCatch(...)
-#&gt; </span><span style='color: #555555;'> 31. </span><span>│                       │     └─base:::tryCatchList(expr, classes, parentenv, handlers)
-#&gt; </span><span style='color: #555555;'> 32. </span><span>│                       │       └─base:::tryCatchOne(expr, names, parentenv, handlers[[1L]])
-#&gt; </span><span style='color: #555555;'> 33. </span><span>│                       │         └─base:::doTryCatch(return(expr), name, parentenv, handler)
-#&gt; </span><span style='color: #555555;'> 34. </span><span>│                       ├─base::withCallingHandlers(...)
-#&gt; </span><span style='color: #555555;'> 35. </span><span>│                       ├─base::withVisible(eval(expr, envir, enclos))
-#&gt; </span><span style='color: #555555;'> 36. </span><span>│                       └─base::eval(expr, envir, enclos)
-#&gt; </span><span style='color: #555555;'> 37. </span><span>│                         └─base::eval(expr, envir, enclos)
-#&gt; </span><span style='color: #555555;'> 38. </span><span>│                           ├─base::try(vec_cast(c(1, 1.5), integer()))
-#&gt; </span><span style='color: #555555;'> 39. </span><span>│                           │ └─base::tryCatch(...)
-#&gt; </span><span style='color: #555555;'> 40. </span><span>│                           │   └─base:::tryCatchList(expr, classes, parentenv, handlers)
-#&gt; </span><span style='color: #555555;'> 41. </span><span>│                           │     └─base:::tryCatchOne(expr, names, parentenv, handlers[[1L]])
-#&gt; </span><span style='color: #555555;'> 42. </span><span>│                           │       └─base:::doTryCatch(return(expr), name, parentenv, handler)
-#&gt; </span><span style='color: #555555;'> 43. </span><span>│                           └─vctrs::vec_cast(c(1, 1.5), integer())
-#&gt; </span><span style='color: #555555;'> 44. </span><span>├─vctrs:::vec_cast_dispatch(x = x, to = to, x_arg = x_arg, to_arg = to_arg)
-#&gt; </span><span style='color: #555555;'> 45. </span><span>├─vctrs::vec_cast.integer(x = x, to = to, x_arg = x_arg, to_arg = to_arg) </span><span style='color: #555555;'>/home/travis/build/r-lib/vctrs/R/cast.R:131:2</span><span>
-#&gt; </span><span style='color: #555555;'> 46. </span><span>└─vctrs:::vec_cast.integer.double(...) </span><span style='color: #555555;'>/home/travis/build/r-lib/vctrs/R/type-bare.R:198:2</span><span>
-#&gt; </span><span style='color: #555555;'> 47. </span><span>  └─vctrs::maybe_lossy_cast(out, x, to, lossy, x_arg = x_arg, to_arg = to_arg) </span><span style='color: #555555;'>/home/travis/build/r-lib/vctrs/R/type-bare.R:218:2</span><span>
-#&gt; </span><span style='color: #555555;'> 48. </span><span>    ├─base::withRestarts(...) </span><span style='color: #555555;'>/home/travis/build/r-lib/vctrs/R/conditions.R:235:2</span><span>
-#&gt; </span><span style='color: #555555;'> 49. </span><span>    │ └─base:::withOneRestart(expr, restarts[[1L]])
-#&gt; </span><span style='color: #555555;'> 50. </span><span>    │   └─base:::doWithOneRestart(return(expr), restart)
-#&gt; </span><span style='color: #555555;'> 51. </span><span>    └─vctrs:::stop_lossy_cast(...)
-#&gt; </span><span style='color: #555555;'> 52. </span><span>      └─vctrs:::stop_vctrs(...) </span><span style='color: #555555;'>/home/travis/build/r-lib/vctrs/R/conditions.R:275:2</span><span></div><div class='input'><span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/try'>try</a></span>(<span class='fu'>vec_cast</span>(<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='fl'>1</span>, <span class='fl'>2</span>), <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/logical'>logical</a></span>()))</div><div class='output co'>#&gt; Error : Lossy cast from `x` &lt;double&gt; to `to` &lt;logical&gt;.
+#&gt; </span><span style='color: #555555;'> 19. </span><span>│             └─pkgdown:::run_examples(...)
+#&gt; </span><span style='color: #555555;'> 20. </span><span>│               └─pkgdown:::highlight_examples(code, topic, env = env)
+#&gt; </span><span style='color: #555555;'> 21. </span><span>│                 └─evaluate::evaluate(x, child_env(env), new_device = TRUE)
+#&gt; </span><span style='color: #555555;'> 22. </span><span>│                   └─evaluate:::evaluate_call(...)
+#&gt; </span><span style='color: #555555;'> 23. </span><span>│                     ├─evaluate:::timing_fn(...)
+#&gt; </span><span style='color: #555555;'> 24. </span><span>│                     ├─evaluate:::handle(...)
+#&gt; </span><span style='color: #555555;'> 25. </span><span>│                     │ └─base::try(f, silent = TRUE)
+#&gt; </span><span style='color: #555555;'> 26. </span><span>│                     │   └─base::tryCatch(...)
+#&gt; </span><span style='color: #555555;'> 27. </span><span>│                     │     └─base:::tryCatchList(expr, classes, parentenv, handlers)
+#&gt; </span><span style='color: #555555;'> 28. </span><span>│                     │       └─base:::tryCatchOne(expr, names, parentenv, handlers[[1L]])
+#&gt; </span><span style='color: #555555;'> 29. </span><span>│                     │         └─base:::doTryCatch(return(expr), name, parentenv, handler)
+#&gt; </span><span style='color: #555555;'> 30. </span><span>│                     ├─base::withCallingHandlers(...)
+#&gt; </span><span style='color: #555555;'> 31. </span><span>│                     ├─base::withVisible(eval(expr, envir, enclos))
+#&gt; </span><span style='color: #555555;'> 32. </span><span>│                     └─base::eval(expr, envir, enclos)
+#&gt; </span><span style='color: #555555;'> 33. </span><span>│                       └─base::eval(expr, envir, enclos)
+#&gt; </span><span style='color: #555555;'> 34. </span><span>│                         ├─base::try(vec_cast(c(1, 1.5), integer()))
+#&gt; </span><span style='color: #555555;'> 35. </span><span>│                         │ └─base::tryCatch(...)
+#&gt; </span><span style='color: #555555;'> 36. </span><span>│                         │   └─base:::tryCatchList(expr, classes, parentenv, handlers)
+#&gt; </span><span style='color: #555555;'> 37. </span><span>│                         │     └─base:::tryCatchOne(expr, names, parentenv, handlers[[1L]])
+#&gt; </span><span style='color: #555555;'> 38. </span><span>│                         │       └─base:::doTryCatch(return(expr), name, parentenv, handler)
+#&gt; </span><span style='color: #555555;'> 39. </span><span>│                         └─vctrs::vec_cast(c(1, 1.5), integer())
+#&gt; </span><span style='color: #555555;'> 40. </span><span>├─vctrs:::vec_cast_dispatch(x = x, to = to, x_arg = x_arg, to_arg = to_arg)
+#&gt; </span><span style='color: #555555;'> 41. </span><span>├─vctrs::vec_cast.integer(x = x, to = to, x_arg = x_arg, to_arg = to_arg)
+#&gt; </span><span style='color: #555555;'> 42. </span><span>└─vctrs:::vec_cast.integer.double(...)
+#&gt; </span><span style='color: #555555;'> 43. </span><span>  └─vctrs::maybe_lossy_cast(out, x, to, lossy, x_arg = x_arg, to_arg = to_arg)
+#&gt; </span><span style='color: #555555;'> 44. </span><span>    ├─base::withRestarts(...)
+#&gt; </span><span style='color: #555555;'> 45. </span><span>    │ └─base:::withOneRestart(expr, restarts[[1L]])
+#&gt; </span><span style='color: #555555;'> 46. </span><span>    │   └─base:::doWithOneRestart(return(expr), restart)
+#&gt; </span><span style='color: #555555;'> 47. </span><span>    └─vctrs:::stop_lossy_cast(...)
+#&gt; </span><span style='color: #555555;'> 48. </span><span>      └─vctrs:::stop_vctrs(...)</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/try.html'>try</a></span>(<span class='fu'>vec_cast</span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>, <span class='fl'>2</span>), <span class='fu'><a href='https://rdrr.io/r/base/logical.html'>logical</a></span>()))</div><div class='output co'>#&gt; Error : Lossy cast from `x` &lt;double&gt; to `to` &lt;logical&gt;.
 #&gt; Locations: 2
 #&gt; Backtrace:
 #&gt; </span><span style='color: #555555;'>     </span><span>█
@@ -359,46 +366,42 @@ attributes that don't require special handling for your class.</p>
 #&gt; </span><span style='color: #555555;'> 16. </span><span>│       └─purrr::map(...)
 #&gt; </span><span style='color: #555555;'> 17. </span><span>│         └─pkgdown:::.f(.x[[i]], ...)
 #&gt; </span><span style='color: #555555;'> 18. </span><span>│           └─pkgdown:::data_reference_topic(...)
-#&gt; </span><span style='color: #555555;'> 19. </span><span>│             ├─pkgdown:::as_data(...)
-#&gt; </span><span style='color: #555555;'> 20. </span><span>│             └─pkgdown:::as_data.tag_examples(...)
-#&gt; </span><span style='color: #555555;'> 21. </span><span>│               └─purrr::pmap_chr(...)
-#&gt; </span><span style='color: #555555;'> 22. </span><span>│                 └─pkgdown:::.f(...)
-#&gt; </span><span style='color: #555555;'> 23. </span><span>│                   ├─withr::with_options(...)
-#&gt; </span><span style='color: #555555;'> 24. </span><span>│                   │ └─base::force(code)
-#&gt; </span><span style='color: #555555;'> 25. </span><span>│                   └─evaluate::evaluate(code, env, new_device = TRUE)
-#&gt; </span><span style='color: #555555;'> 26. </span><span>│                     └─evaluate:::evaluate_call(...)
-#&gt; </span><span style='color: #555555;'> 27. </span><span>│                       ├─evaluate:::timing_fn(...)
-#&gt; </span><span style='color: #555555;'> 28. </span><span>│                       ├─evaluate:::handle(...)
-#&gt; </span><span style='color: #555555;'> 29. </span><span>│                       │ └─base::try(f, silent = TRUE)
-#&gt; </span><span style='color: #555555;'> 30. </span><span>│                       │   └─base::tryCatch(...)
-#&gt; </span><span style='color: #555555;'> 31. </span><span>│                       │     └─base:::tryCatchList(expr, classes, parentenv, handlers)
-#&gt; </span><span style='color: #555555;'> 32. </span><span>│                       │       └─base:::tryCatchOne(expr, names, parentenv, handlers[[1L]])
-#&gt; </span><span style='color: #555555;'> 33. </span><span>│                       │         └─base:::doTryCatch(return(expr), name, parentenv, handler)
-#&gt; </span><span style='color: #555555;'> 34. </span><span>│                       ├─base::withCallingHandlers(...)
-#&gt; </span><span style='color: #555555;'> 35. </span><span>│                       ├─base::withVisible(eval(expr, envir, enclos))
-#&gt; </span><span style='color: #555555;'> 36. </span><span>│                       └─base::eval(expr, envir, enclos)
-#&gt; </span><span style='color: #555555;'> 37. </span><span>│                         └─base::eval(expr, envir, enclos)
-#&gt; </span><span style='color: #555555;'> 38. </span><span>│                           ├─base::try(vec_cast(c(1, 2), logical()))
-#&gt; </span><span style='color: #555555;'> 39. </span><span>│                           │ └─base::tryCatch(...)
-#&gt; </span><span style='color: #555555;'> 40. </span><span>│                           │   └─base:::tryCatchList(expr, classes, parentenv, handlers)
-#&gt; </span><span style='color: #555555;'> 41. </span><span>│                           │     └─base:::tryCatchOne(expr, names, parentenv, handlers[[1L]])
-#&gt; </span><span style='color: #555555;'> 42. </span><span>│                           │       └─base:::doTryCatch(return(expr), name, parentenv, handler)
-#&gt; </span><span style='color: #555555;'> 43. </span><span>│                           └─vctrs::vec_cast(c(1, 2), logical())
-#&gt; </span><span style='color: #555555;'> 44. </span><span>├─vctrs:::vec_cast_dispatch(x = x, to = to, x_arg = x_arg, to_arg = to_arg)
-#&gt; </span><span style='color: #555555;'> 45. </span><span>├─vctrs::vec_cast.logical(x = x, to = to, x_arg = x_arg, to_arg = to_arg) </span><span style='color: #555555;'>/home/travis/build/r-lib/vctrs/R/cast.R:131:2</span><span>
-#&gt; </span><span style='color: #555555;'> 46. </span><span>└─vctrs:::vec_cast.logical.double(...) </span><span style='color: #555555;'>/home/travis/build/r-lib/vctrs/R/type-bare.R:152:20</span><span>
-#&gt; </span><span style='color: #555555;'> 47. </span><span>  └─vctrs::maybe_lossy_cast(out, x, to, lossy, x_arg = x_arg, to_arg = to_arg) </span><span style='color: #555555;'>/home/travis/build/r-lib/vctrs/R/type-bare.R:172:2</span><span>
-#&gt; </span><span style='color: #555555;'> 48. </span><span>    ├─base::withRestarts(...) </span><span style='color: #555555;'>/home/travis/build/r-lib/vctrs/R/conditions.R:235:2</span><span>
-#&gt; </span><span style='color: #555555;'> 49. </span><span>    │ └─base:::withOneRestart(expr, restarts[[1L]])
-#&gt; </span><span style='color: #555555;'> 50. </span><span>    │   └─base:::doWithOneRestart(return(expr), restart)
-#&gt; </span><span style='color: #555555;'> 51. </span><span>    └─vctrs:::stop_lossy_cast(...)
-#&gt; </span><span style='color: #555555;'> 52. </span><span>      └─vctrs:::stop_vctrs(...) </span><span style='color: #555555;'>/home/travis/build/r-lib/vctrs/R/conditions.R:275:2</span><span></div><div class='input'>
+#&gt; </span><span style='color: #555555;'> 19. </span><span>│             └─pkgdown:::run_examples(...)
+#&gt; </span><span style='color: #555555;'> 20. </span><span>│               └─pkgdown:::highlight_examples(code, topic, env = env)
+#&gt; </span><span style='color: #555555;'> 21. </span><span>│                 └─evaluate::evaluate(x, child_env(env), new_device = TRUE)
+#&gt; </span><span style='color: #555555;'> 22. </span><span>│                   └─evaluate:::evaluate_call(...)
+#&gt; </span><span style='color: #555555;'> 23. </span><span>│                     ├─evaluate:::timing_fn(...)
+#&gt; </span><span style='color: #555555;'> 24. </span><span>│                     ├─evaluate:::handle(...)
+#&gt; </span><span style='color: #555555;'> 25. </span><span>│                     │ └─base::try(f, silent = TRUE)
+#&gt; </span><span style='color: #555555;'> 26. </span><span>│                     │   └─base::tryCatch(...)
+#&gt; </span><span style='color: #555555;'> 27. </span><span>│                     │     └─base:::tryCatchList(expr, classes, parentenv, handlers)
+#&gt; </span><span style='color: #555555;'> 28. </span><span>│                     │       └─base:::tryCatchOne(expr, names, parentenv, handlers[[1L]])
+#&gt; </span><span style='color: #555555;'> 29. </span><span>│                     │         └─base:::doTryCatch(return(expr), name, parentenv, handler)
+#&gt; </span><span style='color: #555555;'> 30. </span><span>│                     ├─base::withCallingHandlers(...)
+#&gt; </span><span style='color: #555555;'> 31. </span><span>│                     ├─base::withVisible(eval(expr, envir, enclos))
+#&gt; </span><span style='color: #555555;'> 32. </span><span>│                     └─base::eval(expr, envir, enclos)
+#&gt; </span><span style='color: #555555;'> 33. </span><span>│                       └─base::eval(expr, envir, enclos)
+#&gt; </span><span style='color: #555555;'> 34. </span><span>│                         ├─base::try(vec_cast(c(1, 2), logical()))
+#&gt; </span><span style='color: #555555;'> 35. </span><span>│                         │ └─base::tryCatch(...)
+#&gt; </span><span style='color: #555555;'> 36. </span><span>│                         │   └─base:::tryCatchList(expr, classes, parentenv, handlers)
+#&gt; </span><span style='color: #555555;'> 37. </span><span>│                         │     └─base:::tryCatchOne(expr, names, parentenv, handlers[[1L]])
+#&gt; </span><span style='color: #555555;'> 38. </span><span>│                         │       └─base:::doTryCatch(return(expr), name, parentenv, handler)
+#&gt; </span><span style='color: #555555;'> 39. </span><span>│                         └─vctrs::vec_cast(c(1, 2), logical())
+#&gt; </span><span style='color: #555555;'> 40. </span><span>├─vctrs:::vec_cast_dispatch(x = x, to = to, x_arg = x_arg, to_arg = to_arg)
+#&gt; </span><span style='color: #555555;'> 41. </span><span>├─vctrs::vec_cast.logical(x = x, to = to, x_arg = x_arg, to_arg = to_arg)
+#&gt; </span><span style='color: #555555;'> 42. </span><span>└─vctrs:::vec_cast.logical.double(...)
+#&gt; </span><span style='color: #555555;'> 43. </span><span>  └─vctrs::maybe_lossy_cast(out, x, to, lossy, x_arg = x_arg, to_arg = to_arg)
+#&gt; </span><span style='color: #555555;'> 44. </span><span>    ├─base::withRestarts(...)
+#&gt; </span><span style='color: #555555;'> 45. </span><span>    │ └─base:::withOneRestart(expr, restarts[[1L]])
+#&gt; </span><span style='color: #555555;'> 46. </span><span>    │   └─base:::doWithOneRestart(return(expr), restart)
+#&gt; </span><span style='color: #555555;'> 47. </span><span>    └─vctrs:::stop_lossy_cast(...)
+#&gt; </span><span style='color: #555555;'> 48. </span><span>      └─vctrs:::stop_vctrs(...)</div><div class='input'>
 <span class='co'># You can suppress this error and get the partial results</span>
-<span class='fu'><a href='vctrs-conditions.html'>allow_lossy_cast</a></span>(<span class='fu'>vec_cast</span>(<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='fl'>1</span>, <span class='fl'>1.5</span>), <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/integer'>integer</a></span>()))</div><div class='output co'>#&gt; [1] 1 1</div><div class='input'><span class='fu'><a href='vctrs-conditions.html'>allow_lossy_cast</a></span>(<span class='fu'>vec_cast</span>(<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='fl'>1</span>, <span class='fl'>2</span>), <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/logical'>logical</a></span>()))</div><div class='output co'>#&gt; [1] TRUE TRUE</div><div class='input'>
+<span class='fu'><a href='vctrs-conditions.html'>allow_lossy_cast</a></span>(<span class='fu'>vec_cast</span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>, <span class='fl'>1.5</span>), <span class='fu'><a href='https://rdrr.io/r/base/integer.html'>integer</a></span>()))</div><div class='output co'>#&gt; [1] 1 1</div><div class='input'><span class='fu'><a href='vctrs-conditions.html'>allow_lossy_cast</a></span>(<span class='fu'>vec_cast</span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>, <span class='fl'>2</span>), <span class='fu'><a href='https://rdrr.io/r/base/logical.html'>logical</a></span>()))</div><div class='output co'>#&gt; [1] TRUE TRUE</div><div class='input'>
 <span class='co'># By default this suppress all lossy cast errors without</span>
 <span class='co'># distinction, but you can be specific about what cast is allowed</span>
 <span class='co'># by supplying prototypes</span>
-<span class='fu'><a href='vctrs-conditions.html'>allow_lossy_cast</a></span>(<span class='fu'>vec_cast</span>(<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='fl'>1</span>, <span class='fl'>1.5</span>), <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/integer'>integer</a></span>()), <span class='kw'>to_ptype</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/integer'>integer</a></span>())</div><div class='output co'>#&gt; [1] 1 1</div><div class='input'><span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/try'>try</a></span>(<span class='fu'><a href='vctrs-conditions.html'>allow_lossy_cast</a></span>(<span class='fu'>vec_cast</span>(<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='fl'>1</span>, <span class='fl'>2</span>), <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/logical'>logical</a></span>()), <span class='kw'>to_ptype</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/integer'>integer</a></span>()))</div><div class='output co'>#&gt; Error : Lossy cast from `x` &lt;double&gt; to `to` &lt;logical&gt;.
+<span class='fu'><a href='vctrs-conditions.html'>allow_lossy_cast</a></span>(<span class='fu'>vec_cast</span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>, <span class='fl'>1.5</span>), <span class='fu'><a href='https://rdrr.io/r/base/integer.html'>integer</a></span>()), <span class='kw'>to_ptype</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/integer.html'>integer</a></span>())</div><div class='output co'>#&gt; [1] 1 1</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/try.html'>try</a></span>(<span class='fu'><a href='vctrs-conditions.html'>allow_lossy_cast</a></span>(<span class='fu'>vec_cast</span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>, <span class='fl'>2</span>), <span class='fu'><a href='https://rdrr.io/r/base/logical.html'>logical</a></span>()), <span class='kw'>to_ptype</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/integer.html'>integer</a></span>()))</div><div class='output co'>#&gt; Error : Lossy cast from `x` &lt;double&gt; to `to` &lt;logical&gt;.
 #&gt; Locations: 2
 #&gt; Backtrace:
 #&gt; </span><span style='color: #555555;'>     </span><span>█
@@ -420,44 +423,40 @@ attributes that don't require special handling for your class.</p>
 #&gt; </span><span style='color: #555555;'> 16. </span><span>│       └─purrr::map(...)
 #&gt; </span><span style='color: #555555;'> 17. </span><span>│         └─pkgdown:::.f(.x[[i]], ...)
 #&gt; </span><span style='color: #555555;'> 18. </span><span>│           └─pkgdown:::data_reference_topic(...)
-#&gt; </span><span style='color: #555555;'> 19. </span><span>│             ├─pkgdown:::as_data(...)
-#&gt; </span><span style='color: #555555;'> 20. </span><span>│             └─pkgdown:::as_data.tag_examples(...)
-#&gt; </span><span style='color: #555555;'> 21. </span><span>│               └─purrr::pmap_chr(...)
-#&gt; </span><span style='color: #555555;'> 22. </span><span>│                 └─pkgdown:::.f(...)
-#&gt; </span><span style='color: #555555;'> 23. </span><span>│                   ├─withr::with_options(...)
-#&gt; </span><span style='color: #555555;'> 24. </span><span>│                   │ └─base::force(code)
-#&gt; </span><span style='color: #555555;'> 25. </span><span>│                   └─evaluate::evaluate(code, env, new_device = TRUE)
-#&gt; </span><span style='color: #555555;'> 26. </span><span>│                     └─evaluate:::evaluate_call(...)
-#&gt; </span><span style='color: #555555;'> 27. </span><span>│                       ├─evaluate:::timing_fn(...)
-#&gt; </span><span style='color: #555555;'> 28. </span><span>│                       ├─evaluate:::handle(...)
-#&gt; </span><span style='color: #555555;'> 29. </span><span>│                       │ └─base::try(f, silent = TRUE)
-#&gt; </span><span style='color: #555555;'> 30. </span><span>│                       │   └─base::tryCatch(...)
-#&gt; </span><span style='color: #555555;'> 31. </span><span>│                       │     └─base:::tryCatchList(expr, classes, parentenv, handlers)
-#&gt; </span><span style='color: #555555;'> 32. </span><span>│                       │       └─base:::tryCatchOne(expr, names, parentenv, handlers[[1L]])
-#&gt; </span><span style='color: #555555;'> 33. </span><span>│                       │         └─base:::doTryCatch(return(expr), name, parentenv, handler)
-#&gt; </span><span style='color: #555555;'> 34. </span><span>│                       ├─base::withCallingHandlers(...)
-#&gt; </span><span style='color: #555555;'> 35. </span><span>│                       ├─base::withVisible(eval(expr, envir, enclos))
-#&gt; </span><span style='color: #555555;'> 36. </span><span>│                       └─base::eval(expr, envir, enclos)
-#&gt; </span><span style='color: #555555;'> 37. </span><span>│                         └─base::eval(expr, envir, enclos)
-#&gt; </span><span style='color: #555555;'> 38. </span><span>│                           ├─base::try(allow_lossy_cast(vec_cast(c(1, 2), logical()), to_ptype = integer()))
-#&gt; </span><span style='color: #555555;'> 39. </span><span>│                           │ └─base::tryCatch(...)
-#&gt; </span><span style='color: #555555;'> 40. </span><span>│                           │   └─base:::tryCatchList(expr, classes, parentenv, handlers)
-#&gt; </span><span style='color: #555555;'> 41. </span><span>│                           │     └─base:::tryCatchOne(expr, names, parentenv, handlers[[1L]])
-#&gt; </span><span style='color: #555555;'> 42. </span><span>│                           │       └─base:::doTryCatch(return(expr), name, parentenv, handler)
-#&gt; </span><span style='color: #555555;'> 43. </span><span>│                           ├─vctrs::allow_lossy_cast(vec_cast(c(1, 2), logical()), to_ptype = integer())
-#&gt; </span><span style='color: #555555;'> 44. </span><span>│                           │ └─base::withCallingHandlers(...) </span><span style='color: #555555;'>/home/travis/build/r-lib/vctrs/R/conditions.R:292:2</span><span>
-#&gt; </span><span style='color: #555555;'> 45. </span><span>│                           └─vctrs::vec_cast(c(1, 2), logical())
-#&gt; </span><span style='color: #555555;'> 46. </span><span>├─vctrs:::vec_cast_dispatch(x = x, to = to, x_arg = x_arg, to_arg = to_arg)
-#&gt; </span><span style='color: #555555;'> 47. </span><span>├─vctrs::vec_cast.logical(x = x, to = to, x_arg = x_arg, to_arg = to_arg) </span><span style='color: #555555;'>/home/travis/build/r-lib/vctrs/R/cast.R:131:2</span><span>
-#&gt; </span><span style='color: #555555;'> 48. </span><span>└─vctrs:::vec_cast.logical.double(...) </span><span style='color: #555555;'>/home/travis/build/r-lib/vctrs/R/type-bare.R:152:20</span><span>
-#&gt; </span><span style='color: #555555;'> 49. </span><span>  └─vctrs::maybe_lossy_cast(out, x, to, lossy, x_arg = x_arg, to_arg = to_arg) </span><span style='color: #555555;'>/home/travis/build/r-lib/vctrs/R/type-bare.R:172:2</span><span>
-#&gt; </span><span style='color: #555555;'> 50. </span><span>    ├─base::withRestarts(...) </span><span style='color: #555555;'>/home/travis/build/r-lib/vctrs/R/conditions.R:235:2</span><span>
-#&gt; </span><span style='color: #555555;'> 51. </span><span>    │ └─base:::withOneRestart(expr, restarts[[1L]])
-#&gt; </span><span style='color: #555555;'> 52. </span><span>    │   └─base:::doWithOneRestart(return(expr), restart)
-#&gt; </span><span style='color: #555555;'> 53. </span><span>    └─vctrs:::stop_lossy_cast(...)
-#&gt; </span><span style='color: #555555;'> 54. </span><span>      └─vctrs:::stop_vctrs(...) </span><span style='color: #555555;'>/home/travis/build/r-lib/vctrs/R/conditions.R:275:2</span><span></div><div class='input'>
+#&gt; </span><span style='color: #555555;'> 19. </span><span>│             └─pkgdown:::run_examples(...)
+#&gt; </span><span style='color: #555555;'> 20. </span><span>│               └─pkgdown:::highlight_examples(code, topic, env = env)
+#&gt; </span><span style='color: #555555;'> 21. </span><span>│                 └─evaluate::evaluate(x, child_env(env), new_device = TRUE)
+#&gt; </span><span style='color: #555555;'> 22. </span><span>│                   └─evaluate:::evaluate_call(...)
+#&gt; </span><span style='color: #555555;'> 23. </span><span>│                     ├─evaluate:::timing_fn(...)
+#&gt; </span><span style='color: #555555;'> 24. </span><span>│                     ├─evaluate:::handle(...)
+#&gt; </span><span style='color: #555555;'> 25. </span><span>│                     │ └─base::try(f, silent = TRUE)
+#&gt; </span><span style='color: #555555;'> 26. </span><span>│                     │   └─base::tryCatch(...)
+#&gt; </span><span style='color: #555555;'> 27. </span><span>│                     │     └─base:::tryCatchList(expr, classes, parentenv, handlers)
+#&gt; </span><span style='color: #555555;'> 28. </span><span>│                     │       └─base:::tryCatchOne(expr, names, parentenv, handlers[[1L]])
+#&gt; </span><span style='color: #555555;'> 29. </span><span>│                     │         └─base:::doTryCatch(return(expr), name, parentenv, handler)
+#&gt; </span><span style='color: #555555;'> 30. </span><span>│                     ├─base::withCallingHandlers(...)
+#&gt; </span><span style='color: #555555;'> 31. </span><span>│                     ├─base::withVisible(eval(expr, envir, enclos))
+#&gt; </span><span style='color: #555555;'> 32. </span><span>│                     └─base::eval(expr, envir, enclos)
+#&gt; </span><span style='color: #555555;'> 33. </span><span>│                       └─base::eval(expr, envir, enclos)
+#&gt; </span><span style='color: #555555;'> 34. </span><span>│                         ├─base::try(allow_lossy_cast(vec_cast(c(1, 2), logical()), to_ptype = integer()))
+#&gt; </span><span style='color: #555555;'> 35. </span><span>│                         │ └─base::tryCatch(...)
+#&gt; </span><span style='color: #555555;'> 36. </span><span>│                         │   └─base:::tryCatchList(expr, classes, parentenv, handlers)
+#&gt; </span><span style='color: #555555;'> 37. </span><span>│                         │     └─base:::tryCatchOne(expr, names, parentenv, handlers[[1L]])
+#&gt; </span><span style='color: #555555;'> 38. </span><span>│                         │       └─base:::doTryCatch(return(expr), name, parentenv, handler)
+#&gt; </span><span style='color: #555555;'> 39. </span><span>│                         ├─vctrs::allow_lossy_cast(vec_cast(c(1, 2), logical()), to_ptype = integer())
+#&gt; </span><span style='color: #555555;'> 40. </span><span>│                         │ └─base::withCallingHandlers(...)
+#&gt; </span><span style='color: #555555;'> 41. </span><span>│                         └─vctrs::vec_cast(c(1, 2), logical())
+#&gt; </span><span style='color: #555555;'> 42. </span><span>├─vctrs:::vec_cast_dispatch(x = x, to = to, x_arg = x_arg, to_arg = to_arg)
+#&gt; </span><span style='color: #555555;'> 43. </span><span>├─vctrs::vec_cast.logical(x = x, to = to, x_arg = x_arg, to_arg = to_arg)
+#&gt; </span><span style='color: #555555;'> 44. </span><span>└─vctrs:::vec_cast.logical.double(...)
+#&gt; </span><span style='color: #555555;'> 45. </span><span>  └─vctrs::maybe_lossy_cast(out, x, to, lossy, x_arg = x_arg, to_arg = to_arg)
+#&gt; </span><span style='color: #555555;'> 46. </span><span>    ├─base::withRestarts(...)
+#&gt; </span><span style='color: #555555;'> 47. </span><span>    │ └─base:::withOneRestart(expr, restarts[[1L]])
+#&gt; </span><span style='color: #555555;'> 48. </span><span>    │   └─base:::doWithOneRestart(return(expr), restart)
+#&gt; </span><span style='color: #555555;'> 49. </span><span>    └─vctrs:::stop_lossy_cast(...)
+#&gt; </span><span style='color: #555555;'> 50. </span><span>      └─vctrs:::stop_vctrs(...)</div><div class='input'>
 <span class='co'># No sensible coercion is possible so an error is generated</span>
-<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/try'>try</a></span>(<span class='fu'>vec_cast</span>(<span class='fl'>1.5</span>, <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/factor'>factor</a></span>(<span class='st'>"a"</span>)))</div><div class='output co'>#&gt; Error : Can't cast `x` &lt;double&gt; to `to` &lt;factor&lt;127a2&gt;&gt;.
+<span class='fu'><a href='https://rdrr.io/r/base/try.html'>try</a></span>(<span class='fu'>vec_cast</span>(<span class='fl'>1.5</span>, <span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span>(<span class='st'>"a"</span>)))</div><div class='output co'>#&gt; Error : Can't cast `x` &lt;double&gt; to `to` &lt;factor&lt;127a2&gt;&gt;.
 #&gt; Backtrace:
 #&gt; </span><span style='color: #555555;'>     </span><span>█
 #&gt; </span><span style='color: #555555;'>  1. </span><span>├─base::tryCatch(...)
@@ -478,47 +477,43 @@ attributes that don't require special handling for your class.</p>
 #&gt; </span><span style='color: #555555;'> 16. </span><span>│       └─purrr::map(...)
 #&gt; </span><span style='color: #555555;'> 17. </span><span>│         └─pkgdown:::.f(.x[[i]], ...)
 #&gt; </span><span style='color: #555555;'> 18. </span><span>│           └─pkgdown:::data_reference_topic(...)
-#&gt; </span><span style='color: #555555;'> 19. </span><span>│             ├─pkgdown:::as_data(...)
-#&gt; </span><span style='color: #555555;'> 20. </span><span>│             └─pkgdown:::as_data.tag_examples(...)
-#&gt; </span><span style='color: #555555;'> 21. </span><span>│               └─purrr::pmap_chr(...)
-#&gt; </span><span style='color: #555555;'> 22. </span><span>│                 └─pkgdown:::.f(...)
-#&gt; </span><span style='color: #555555;'> 23. </span><span>│                   ├─withr::with_options(...)
-#&gt; </span><span style='color: #555555;'> 24. </span><span>│                   │ └─base::force(code)
-#&gt; </span><span style='color: #555555;'> 25. </span><span>│                   └─evaluate::evaluate(code, env, new_device = TRUE)
-#&gt; </span><span style='color: #555555;'> 26. </span><span>│                     └─evaluate:::evaluate_call(...)
-#&gt; </span><span style='color: #555555;'> 27. </span><span>│                       ├─evaluate:::timing_fn(...)
-#&gt; </span><span style='color: #555555;'> 28. </span><span>│                       ├─evaluate:::handle(...)
-#&gt; </span><span style='color: #555555;'> 29. </span><span>│                       │ └─base::try(f, silent = TRUE)
-#&gt; </span><span style='color: #555555;'> 30. </span><span>│                       │   └─base::tryCatch(...)
-#&gt; </span><span style='color: #555555;'> 31. </span><span>│                       │     └─base:::tryCatchList(expr, classes, parentenv, handlers)
-#&gt; </span><span style='color: #555555;'> 32. </span><span>│                       │       └─base:::tryCatchOne(expr, names, parentenv, handlers[[1L]])
-#&gt; </span><span style='color: #555555;'> 33. </span><span>│                       │         └─base:::doTryCatch(return(expr), name, parentenv, handler)
-#&gt; </span><span style='color: #555555;'> 34. </span><span>│                       ├─base::withCallingHandlers(...)
-#&gt; </span><span style='color: #555555;'> 35. </span><span>│                       ├─base::withVisible(eval(expr, envir, enclos))
-#&gt; </span><span style='color: #555555;'> 36. </span><span>│                       └─base::eval(expr, envir, enclos)
-#&gt; </span><span style='color: #555555;'> 37. </span><span>│                         └─base::eval(expr, envir, enclos)
-#&gt; </span><span style='color: #555555;'> 38. </span><span>│                           ├─base::try(vec_cast(1.5, factor("a")))
-#&gt; </span><span style='color: #555555;'> 39. </span><span>│                           │ └─base::tryCatch(...)
-#&gt; </span><span style='color: #555555;'> 40. </span><span>│                           │   └─base:::tryCatchList(expr, classes, parentenv, handlers)
-#&gt; </span><span style='color: #555555;'> 41. </span><span>│                           │     └─base:::tryCatchOne(expr, names, parentenv, handlers[[1L]])
-#&gt; </span><span style='color: #555555;'> 42. </span><span>│                           │       └─base:::doTryCatch(return(expr), name, parentenv, handler)
-#&gt; </span><span style='color: #555555;'> 43. </span><span>│                           └─vctrs::vec_cast(1.5, factor("a"))
-#&gt; </span><span style='color: #555555;'> 44. </span><span>├─vctrs:::vec_cast_dispatch(x = x, to = to, x_arg = x_arg, to_arg = to_arg)
-#&gt; </span><span style='color: #555555;'> 45. </span><span>├─vctrs::vec_cast.factor(x = x, to = to, x_arg = x_arg, to_arg = to_arg) </span><span style='color: #555555;'>/home/travis/build/r-lib/vctrs/R/cast.R:131:2</span><span>
-#&gt; </span><span style='color: #555555;'> 46. </span><span>└─vctrs:::vec_cast.factor.default(...) </span><span style='color: #555555;'>/home/travis/build/r-lib/vctrs/R/type-factor.R:118:2</span><span>
-#&gt; </span><span style='color: #555555;'> 47. </span><span>  └─vctrs::vec_default_cast(x, to, x_arg = x_arg, to_arg = to_arg) </span><span style='color: #555555;'>/home/travis/build/r-lib/vctrs/R/type-factor.R:146:2</span><span>
-#&gt; </span><span style='color: #555555;'> 48. </span><span>    └─vctrs::stop_incompatible_cast(x, to, x_arg = x_arg, to_arg = to_arg) </span><span style='color: #555555;'>/home/travis/build/r-lib/vctrs/R/cast.R:175:4</span><span>
-#&gt; </span><span style='color: #555555;'> 49. </span><span>      └─vctrs:::stop_incompatible(...) </span><span style='color: #555555;'>/home/travis/build/r-lib/vctrs/R/conditions.R:123:2</span><span>
-#&gt; </span><span style='color: #555555;'> 50. </span><span>        └─vctrs:::stop_vctrs(...) </span><span style='color: #555555;'>/home/travis/build/r-lib/vctrs/R/conditions.R:48:2</span><span></div><div class='input'>
+#&gt; </span><span style='color: #555555;'> 19. </span><span>│             └─pkgdown:::run_examples(...)
+#&gt; </span><span style='color: #555555;'> 20. </span><span>│               └─pkgdown:::highlight_examples(code, topic, env = env)
+#&gt; </span><span style='color: #555555;'> 21. </span><span>│                 └─evaluate::evaluate(x, child_env(env), new_device = TRUE)
+#&gt; </span><span style='color: #555555;'> 22. </span><span>│                   └─evaluate:::evaluate_call(...)
+#&gt; </span><span style='color: #555555;'> 23. </span><span>│                     ├─evaluate:::timing_fn(...)
+#&gt; </span><span style='color: #555555;'> 24. </span><span>│                     ├─evaluate:::handle(...)
+#&gt; </span><span style='color: #555555;'> 25. </span><span>│                     │ └─base::try(f, silent = TRUE)
+#&gt; </span><span style='color: #555555;'> 26. </span><span>│                     │   └─base::tryCatch(...)
+#&gt; </span><span style='color: #555555;'> 27. </span><span>│                     │     └─base:::tryCatchList(expr, classes, parentenv, handlers)
+#&gt; </span><span style='color: #555555;'> 28. </span><span>│                     │       └─base:::tryCatchOne(expr, names, parentenv, handlers[[1L]])
+#&gt; </span><span style='color: #555555;'> 29. </span><span>│                     │         └─base:::doTryCatch(return(expr), name, parentenv, handler)
+#&gt; </span><span style='color: #555555;'> 30. </span><span>│                     ├─base::withCallingHandlers(...)
+#&gt; </span><span style='color: #555555;'> 31. </span><span>│                     ├─base::withVisible(eval(expr, envir, enclos))
+#&gt; </span><span style='color: #555555;'> 32. </span><span>│                     └─base::eval(expr, envir, enclos)
+#&gt; </span><span style='color: #555555;'> 33. </span><span>│                       └─base::eval(expr, envir, enclos)
+#&gt; </span><span style='color: #555555;'> 34. </span><span>│                         ├─base::try(vec_cast(1.5, factor("a")))
+#&gt; </span><span style='color: #555555;'> 35. </span><span>│                         │ └─base::tryCatch(...)
+#&gt; </span><span style='color: #555555;'> 36. </span><span>│                         │   └─base:::tryCatchList(expr, classes, parentenv, handlers)
+#&gt; </span><span style='color: #555555;'> 37. </span><span>│                         │     └─base:::tryCatchOne(expr, names, parentenv, handlers[[1L]])
+#&gt; </span><span style='color: #555555;'> 38. </span><span>│                         │       └─base:::doTryCatch(return(expr), name, parentenv, handler)
+#&gt; </span><span style='color: #555555;'> 39. </span><span>│                         └─vctrs::vec_cast(1.5, factor("a"))
+#&gt; </span><span style='color: #555555;'> 40. </span><span>├─vctrs:::vec_cast_dispatch(x = x, to = to, x_arg = x_arg, to_arg = to_arg)
+#&gt; </span><span style='color: #555555;'> 41. </span><span>├─vctrs::vec_cast.factor(x = x, to = to, x_arg = x_arg, to_arg = to_arg)
+#&gt; </span><span style='color: #555555;'> 42. </span><span>└─vctrs:::vec_cast.factor.default(...)
+#&gt; </span><span style='color: #555555;'> 43. </span><span>  └─vctrs::vec_default_cast(x, to, x_arg = x_arg, to_arg = to_arg)
+#&gt; </span><span style='color: #555555;'> 44. </span><span>    └─vctrs::stop_incompatible_cast(x, to, x_arg = x_arg, to_arg = to_arg)
+#&gt; </span><span style='color: #555555;'> 45. </span><span>      └─vctrs:::stop_incompatible(...)
+#&gt; </span><span style='color: #555555;'> 46. </span><span>        └─vctrs:::stop_vctrs(...)</div><div class='input'>
 <span class='co'># Cast to common type</span>
-<span class='fu'>vec_cast_common</span>(<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/factor'>factor</a></span>(<span class='st'>"a"</span>), <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/factor'>factor</a></span>(<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='st'>"a"</span>, <span class='st'>"b"</span>)))</div><div class='output co'>#&gt; [[1]]
+<span class='fu'>vec_cast_common</span>(<span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span>(<span class='st'>"a"</span>), <span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"a"</span>, <span class='st'>"b"</span>)))</div><div class='output co'>#&gt; [[1]]
 #&gt; [1] a
 #&gt; Levels: a b
 #&gt; 
 #&gt; [[2]]
 #&gt; [1] a b
 #&gt; Levels: a b
-#&gt; </div><div class='input'><span class='fu'>vec_cast_common</span>(<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/factor'>factor</a></span>(<span class='st'>"a"</span>), <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/Sys.time'>Sys.Date</a></span>(), <span class='kw'>.to</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/list'>list</a></span>())</div><div class='output co'>#&gt; [[1]]
+#&gt; </div><div class='input'><span class='fu'>vec_cast_common</span>(<span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span>(<span class='st'>"a"</span>), <span class='fu'><a href='https://rdrr.io/r/base/Sys.time.html'>Sys.Date</a></span>(), <span class='kw'>.to</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>())</div><div class='output co'>#&gt; [[1]]
 #&gt; [[1]][[1]]
 #&gt; [1] a
 #&gt; Levels: a
@@ -526,7 +521,7 @@ attributes that don't require special handling for your class.</p>
 #&gt; 
 #&gt; [[2]]
 #&gt; [[2]][[1]]
-#&gt; [1] "2019-08-26"
+#&gt; [1] "2019-09-04"
 #&gt; 
 #&gt; </div></span></pre>
   </div>
@@ -534,20 +529,16 @@ attributes that don't require special handling for your class.</p>
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
       <li><a href="#arguments">Arguments</a></li>
-      
       <li><a href="#value">Value</a></li>
-
       <li><a href="#casting-rules">Casting rules</a></li>
-
       <li><a href="#s-dispatch">S3 dispatch</a></li>
-
       <li><a href="#restoring-attributes">Restoring attributes</a></li>
-      
       <li><a href="#examples">Examples</a></li>
     </ul>
 
   </div>
 </div>
+
 
       <footer>
       <div class="copyright">
@@ -555,13 +546,16 @@ attributes that don't require special handling for your class.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.3.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.4.0.</p>
 </div>
+
       </footer>
    </div>
 
   
 
+
   </body>
 </html>
+
 
