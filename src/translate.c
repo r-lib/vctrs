@@ -26,10 +26,10 @@ bool translation_required_chr(SEXP x, R_len_t size) {
     return false;
   }
 
-  const SEXP* xp = STRING_PTR_RO(x);
-  int reference = CHAR_ENC_TYPE(*xp);
+  const SEXP* p_x = STRING_PTR_RO(x);
+  int reference = CHAR_ENC_TYPE(*p_x);
 
-  return translation_required_chr_impl(xp, size, reference);
+  return translation_required_chr_impl(p_x, size, reference);
 }
 
 // Check if `x` or `y` need to be translated to UTF-8, relative to each other
@@ -178,12 +178,12 @@ static SEXP translate_encoding_chr(SEXP x, R_len_t size) {
 }
 
 static SEXP translate_encoding_list(SEXP x, R_len_t size) {
-  SEXP x_elt;
+  SEXP elt;
   x = PROTECT(r_maybe_duplicate(x));
 
   for (int i = 0; i < size; ++i) {
-    x_elt = VECTOR_ELT(x, i);
-    SET_VECTOR_ELT(x, i, translate_encoding(x_elt, vec_size(x_elt)));
+    elt = VECTOR_ELT(x, i);
+    SET_VECTOR_ELT(x, i, translate_encoding(elt, vec_size(elt)));
   }
 
   UNPROTECT(1);
@@ -191,14 +191,14 @@ static SEXP translate_encoding_list(SEXP x, R_len_t size) {
 }
 
 static SEXP translate_encoding_df(SEXP x, R_len_t size) {
-  SEXP x_col;
+  SEXP col;
   x = PROTECT(r_maybe_duplicate(x));
 
   int n_col = Rf_length(x);
 
   for (int i = 0; i < n_col; ++i) {
-    x_col = VECTOR_ELT(x, i);
-    SET_VECTOR_ELT(x, i, translate_encoding(x_col, size));
+    col = VECTOR_ELT(x, i);
+    SET_VECTOR_ELT(x, i, translate_encoding(col, size));
   }
 
   UNPROTECT(1);
@@ -268,8 +268,8 @@ static SEXP translate_encoding_list2(SEXP x, R_len_t x_size, SEXP y, R_len_t y_s
 }
 
 static SEXP translate_encoding_df2(SEXP x, R_len_t x_size, SEXP y, R_len_t y_size) {
-  SEXP x_i;
-  SEXP y_i;
+  SEXP x_elt;
+  SEXP y_elt;
   SEXP translated;
 
   x = PROTECT(r_maybe_duplicate(x));
@@ -280,10 +280,10 @@ static SEXP translate_encoding_df2(SEXP x, R_len_t x_size, SEXP y, R_len_t y_siz
   int n_col = Rf_length(x);
 
   for (int i = 0; i < n_col; ++i) {
-    x_i = VECTOR_ELT(x, i);
-    y_i = VECTOR_ELT(y, i);
+    x_elt = VECTOR_ELT(x, i);
+    y_elt = VECTOR_ELT(y, i);
 
-    translated = PROTECT(translate_encoding2(x_i, x_size, y_i, y_size));
+    translated = PROTECT(translate_encoding2(x_elt, x_size, y_elt, y_size));
 
     SET_VECTOR_ELT(x, i, VECTOR_ELT(translated, 0));
     SET_VECTOR_ELT(y, i, VECTOR_ELT(translated, 1));
