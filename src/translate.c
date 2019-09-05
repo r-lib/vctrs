@@ -61,7 +61,7 @@ static bool any_known_encoding(SEXP x, R_len_t size) {
   case vctrs_type_character: return any_known_encoding_chr(x, size);
   case vctrs_type_list: return any_known_encoding_list(x, size);
   case vctrs_type_dataframe: return any_known_encoding_df(x, size);
-  default: return true;
+  default: return false;
   }
 }
 
