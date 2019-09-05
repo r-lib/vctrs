@@ -253,6 +253,20 @@ test_that("can use matching functions with strings with different encodings", {
   expect_equal(vec_in(utf8, latin1), utf8 %in% latin1)
 })
 
+test_that("can use matching functions when one string has multiple encodings", {
+  utf8 <- "\u00B0C"
+
+  unknown <- utf8
+  Encoding(unknown) <- "unknown"
+
+  latin1 <- iconv(utf8, "UTF-8", "latin1")
+
+  x <- c(utf8, unknown)
+
+  expect_equal(vec_match(x, latin1), c(1L, 1L))
+  expect_equal(vec_match(x, latin1), match(x, latin1))
+})
+
 test_that("can use matching functions within the same encoding", {
   unknown <- "fa\xE7ile"
 
@@ -295,11 +309,64 @@ test_that("can use matching functions with lists of characters with different en
 
   utf8 <- enc2utf8(latin1)
 
-  lst_latin1 <- list("ascii", latin1)
+  lst_ascii <- list("ascii")
+  lst_latin1 <- list(latin1)
+  lst_ascii_latin1 <- c(lst_ascii, lst_latin1)
   lst_utf8 <- list(utf8)
 
-  expect_equal(vec_match(lst_utf8, lst_latin1), 2L)
-  expect_equal(vec_match(lst_utf8, lst_latin1), match(lst_utf8, lst_latin1))
+  lst_of_lst_utf8 <- list(lst_utf8)
+  lst_of_lst_ascii_latin1 <- list(lst_ascii, lst_latin1)
+
+  expect_equal(vec_match(lst_ascii, lst_ascii), 1L)
+  expect_equal(vec_in(lst_ascii, lst_ascii), TRUE)
+
+  expect_equal(vec_match(lst_utf8, lst_ascii_latin1), 2L)
+  expect_equal(vec_in(lst_utf8, lst_ascii_latin1), TRUE)
+
+  expect_equal(vec_match(lst_utf8, lst_ascii_latin1), match(lst_utf8, lst_ascii_latin1))
+  expect_equal(vec_in(lst_utf8, lst_ascii_latin1), lst_utf8 %in% lst_ascii_latin1)
+
+  expect_equal(vec_match(lst_of_lst_utf8, lst_of_lst_ascii_latin1), 2L)
+  expect_equal(vec_in(lst_of_lst_utf8, lst_of_lst_ascii_latin1), TRUE)
+
+  expect_equal(vec_match(lst_of_lst_utf8, lst_of_lst_ascii_latin1), match(lst_of_lst_utf8, lst_of_lst_ascii_latin1))
+  expect_equal(vec_in(lst_of_lst_utf8, lst_of_lst_ascii_latin1), lst_of_lst_utf8 %in% lst_of_lst_ascii_latin1)
+})
+
+test_that("can use matching functions with data frames with string columns", {
+  utf8 <- "\u00B0C"
+
+  unknown <- utf8
+  Encoding(unknown) <- "unknown"
+
+  df_utf8 <- data_frame(x = utf8, y = 2)
+  df_unknown <- data_frame(x = c(unknown, unknown), y = c(1, 2))
+
+  expect_equal(vec_match(df_unknown, df_unknown), 1:2)
+  expect_equal(vec_in(df_unknown, df_unknown), c(TRUE, TRUE))
+
+  expect_equal(vec_match(df_utf8, df_unknown), 2L)
+  expect_equal(vec_in(df_utf8, df_unknown), TRUE)
+})
+
+test_that("can use matching functions with lists of data frames with string columns", {
+  utf8 <- "\u00B0C"
+
+  unknown <- utf8
+  Encoding(unknown) <- "unknown"
+
+  df_utf8 <- data_frame(x = utf8, y = 2)
+  df_unknown_1 <- data_frame(x = unknown, y = 1)
+  df_unknown_2 <- data_frame(x = unknown, y = 2)
+
+  lst_of_df_utf8 <- list(df_utf8)
+  lst_of_df_unknown <- list(df_unknown_1, df_unknown_2)
+
+  expect_equal(vec_match(lst_of_df_unknown, lst_of_df_unknown), 1:2)
+  expect_equal(vec_in(lst_of_df_unknown, lst_of_df_unknown), c(TRUE, TRUE))
+
+  expect_equal(vec_match(lst_of_df_utf8, lst_of_df_unknown), 2L)
+  expect_equal(vec_in(lst_of_df_utf8, lst_of_df_unknown), TRUE)
 })
 
 # splits ------------------------------------------------------------------
