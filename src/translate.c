@@ -57,7 +57,7 @@ static bool any_known_encoding_list(SEXP x, R_len_t size);
 static bool any_known_encoding_df(SEXP x, R_len_t size);
 
 static bool any_known_encoding(SEXP x, R_len_t size) {
-  switch (vec_typeof(x)) {
+  switch (vec_proxy_typeof(x)) {
   case vctrs_type_character: return any_known_encoding_chr(x, size);
   case vctrs_type_list: return any_known_encoding_list(x, size);
   case vctrs_type_dataframe: return any_known_encoding_df(x, size);
@@ -112,7 +112,7 @@ static SEXP translate_encoding_list(SEXP x, R_len_t size);
 static SEXP translate_encoding_df(SEXP x, R_len_t size);
 
 static SEXP translate_encoding(SEXP x, R_len_t size) {
-  switch (vec_typeof(x)) {
+  switch (vec_proxy_typeof(x)) {
   case vctrs_type_character: return translate_encoding_chr(x, size);
   case vctrs_type_list: return translate_encoding_list(x, size);
   case vctrs_type_dataframe: return translate_encoding_df(x, size);
@@ -187,7 +187,7 @@ static SEXP translate_encoding_df2(SEXP x, R_len_t x_size, SEXP y, R_len_t y_siz
 
 // [[ include("vctrs.h") ]]
 SEXP translate_encoding2(SEXP x, R_len_t x_size, SEXP y, R_len_t y_size) {
-  switch (vec_typeof(x)) {
+  switch (vec_proxy_typeof(x)) {
   case vctrs_type_character: return translate_encoding_chr2(x, x_size, y, y_size);
   case vctrs_type_list: return translate_encoding_list2(x, x_size, y, y_size);
   case vctrs_type_dataframe: return translate_encoding_df2(x, x_size, y, y_size);
