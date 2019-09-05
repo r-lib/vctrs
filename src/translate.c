@@ -49,8 +49,8 @@ static bool translation_required_chr2(SEXP x, R_len_t x_size, SEXP y, R_len_t y_
 // -----------------------------------------------------------------------------
 // Utilities required for checking if any character elements of a list have a
 // "known" encoding. This implies that we have to convert all character
-// elements of the list to UTF-8. This function is required by
-// `translate_common_encoding_list()`.
+// elements of the list to UTF-8. This function is solely used by
+// `translate_encoding_list2()`.
 
 static bool any_known_encoding_chr(SEXP x, R_len_t size);
 static bool any_known_encoding_list(SEXP x, R_len_t size);
@@ -105,7 +105,7 @@ static bool any_known_encoding_df(SEXP x, R_len_t size) {
 
 // -----------------------------------------------------------------------------
 // Utilities required for translating the character vector elements of a list
-// to UTF-8. This function is required by `translate_common_encoding_list()`.
+// to UTF-8. This function is solely used by `translate_encoding_list2()`.
 
 static SEXP translate_encoding_chr(SEXP x, R_len_t size);
 static SEXP translate_encoding_list(SEXP x, R_len_t size);
