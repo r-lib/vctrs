@@ -292,8 +292,8 @@ SEXP vec_as_unique_names(SEXP names, bool quiet);
 #define CHAR_IS_UTF8(x) (LEVELS(x) & UTF8_MASK)
 #define CHAR_ENC_TYPE(x) (LEVELS(x) & (BYTES_MASK | UTF8_MASK | LATIN1_MASK))
 
-bool chr_requires_translation(SEXP x, R_len_t size);
-SEXP translate_common_encoding(SEXP x, R_len_t x_size, SEXP y, R_len_t y_size);
+bool translation_required_chr(SEXP x, R_len_t size);
+SEXP translate_encoding2(SEXP x, R_len_t x_size, SEXP y, R_len_t y_size);
 
 // Growable vector ----------------------------------------------
 

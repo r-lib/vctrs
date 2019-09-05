@@ -184,7 +184,7 @@ static uint32_t dbl_hash(SEXP x) {
   HASH(double, REAL_RO, dbl_hash_scalar);
 }
 static uint32_t chr_hash(SEXP x) {
-  if (chr_requires_translation(x, Rf_length(x))) {
+  if (translation_required_chr(x, Rf_length(x))) {
     HASH(SEXP, STRING_PTR_RO, chr_hash_scalar_translate);
   } else {
     HASH(SEXP, STRING_PTR_RO, chr_hash_scalar);
@@ -289,7 +289,7 @@ static void cpl_hash_fill(uint32_t* p, R_len_t size, SEXP x) {
   HASH_FILL(Rcomplex, COMPLEX_RO, cpl_hash_scalar);
 }
 static void chr_hash_fill(uint32_t* p, R_len_t size, SEXP x) {
-  if (chr_requires_translation(x, size)) {
+  if (translation_required_chr(x, size)) {
     HASH_FILL(SEXP, STRING_PTR_RO, chr_hash_scalar_translate);
   } else {
     HASH_FILL(SEXP, STRING_PTR_RO, chr_hash_scalar);

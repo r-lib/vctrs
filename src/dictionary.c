@@ -229,7 +229,7 @@ SEXP vctrs_match(SEXP needles, SEXP haystack) {
   R_len_t n_haystack = vec_size(haystack);
   R_len_t n_needle = vec_size(needles);
 
-  SEXP translated = PROTECT_N(translate_common_encoding(needles, n_needle, haystack, n_haystack), &nprot);
+  SEXP translated = PROTECT_N(translate_encoding2(needles, n_needle, haystack, n_haystack), &nprot);
   needles = VECTOR_ELT(translated, 0);
   haystack = VECTOR_ELT(translated, 1);
 
@@ -282,7 +282,7 @@ SEXP vctrs_in(SEXP needles, SEXP haystack) {
   R_len_t n_haystack = vec_size(haystack);
   R_len_t n_needle = vec_size(needles);
 
-  SEXP translated = PROTECT_N(translate_common_encoding(needles, n_needle, haystack, n_haystack), &nprot);
+  SEXP translated = PROTECT_N(translate_encoding2(needles, n_needle, haystack, n_haystack), &nprot);
   needles = VECTOR_ELT(translated, 0);
   haystack = VECTOR_ELT(translated, 1);
 
