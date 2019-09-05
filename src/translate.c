@@ -255,7 +255,7 @@ static SEXP translate_encoding_chr2(SEXP x, R_len_t x_size, SEXP y, R_len_t y_si
 static SEXP translate_encoding_list2(SEXP x, R_len_t x_size, SEXP y, R_len_t y_size) {
   SEXP out = PROTECT(Rf_allocVector(VECSXP, 2));
 
-  if (any_known_encoding(x, x_size) || any_known_encoding(y, y_size)) {
+  if (any_known_encoding_list(x, x_size) || any_known_encoding_list(y, y_size)) {
     SET_VECTOR_ELT(out, 0, translate_encoding_list(x, x_size));
     SET_VECTOR_ELT(out, 1, translate_encoding_list(y, y_size));
   } else {
