@@ -22,6 +22,10 @@ static bool translation_required_chr_impl(const SEXP* x, R_len_t size, int refer
 
 // [[ include("vctrs.h") ]]
 bool translation_required_chr(SEXP x, R_len_t size) {
+  if (size == 0) {
+    return false;
+  }
+
   const SEXP* xp = STRING_PTR_RO(x);
   int reference = CHAR_ENC_TYPE(*xp);
 
@@ -30,14 +34,34 @@ bool translation_required_chr(SEXP x, R_len_t size) {
 
 // Check if `x` or `y` need to be translated to UTF-8, relative to each other
 static bool translation_required_chr2(SEXP x, R_len_t x_size, SEXP y, R_len_t y_size) {
-  const SEXP* p_x = STRING_PTR_RO(x);
+  const SEXP* p_x;
+  const SEXP* p_y;
+
+  bool x_empty = x_size == 0;
+  bool y_empty = y_size == 0;
+
+  if (x_empty && y_empty) {
+    return false;
+  }
+
+  if (x_empty) {
+    p_y = STRING_PTR_RO(y);
+    return translation_required_chr_impl(p_y, y_size, CHAR_ENC_TYPE(*p_y));
+  }
+
+  if (y_empty) {
+    p_x = STRING_PTR_RO(x);
+    return translation_required_chr_impl(p_x, x_size, CHAR_ENC_TYPE(*p_x));
+  }
+
+  p_x = STRING_PTR_RO(x);
   int reference = CHAR_ENC_TYPE(*p_x);
 
   if (translation_required_chr_impl(p_x, x_size, reference)) {
     return true;
   }
 
-  const SEXP* p_y = STRING_PTR_RO(y);
+  p_y = STRING_PTR_RO(y);
 
   if (translation_required_chr_impl(p_y, y_size, reference)) {
     return true;
@@ -66,6 +90,10 @@ static bool any_known_encoding(SEXP x, R_len_t size) {
 }
 
 static bool any_known_encoding_chr(SEXP x, R_len_t size) {
+  if (size == 0) {
+    return false;
+  }
+
   const SEXP* p_x = STRING_PTR_RO(x);
 
   for (int i = 0; i < size; ++i, ++p_x) {
@@ -121,6 +149,10 @@ static SEXP translate_encoding(SEXP x, R_len_t size) {
 }
 
 static SEXP translate_encoding_chr(SEXP x, R_len_t size) {
+  if (size == 0) {
+    return x;
+  }
+
   const SEXP* p_x = STRING_PTR_RO(x);
 
   SEXP out = PROTECT(Rf_allocVector(STRSXP, size));
