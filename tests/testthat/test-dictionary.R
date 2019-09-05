@@ -349,6 +349,22 @@ test_that("can use matching functions with data frames with string columns", {
   expect_equal(vec_in(df_utf8, df_unknown), TRUE)
 })
 
+test_that("can use matching functions with data frame subclasses with string columns", {
+  utf8 <- "\u00B0C"
+
+  unknown <- utf8
+  Encoding(unknown) <- "unknown"
+
+  df_utf8 <- new_data_frame(list(x = utf8, y = 2), class = "subclass")
+  df_unknown <- new_data_frame(list(x = c(unknown, unknown), y = c(1, 2)), class = "subclass")
+
+  expect_equal(vec_match(df_unknown, df_unknown), 1:2)
+  expect_equal(vec_in(df_unknown, df_unknown), c(TRUE, TRUE))
+
+  expect_equal(vec_match(df_utf8, df_unknown), 2L)
+  expect_equal(vec_in(df_utf8, df_unknown), TRUE)
+})
+
 test_that("can use matching functions with lists of data frames with string columns", {
   utf8 <- "\u00B0C"
 
