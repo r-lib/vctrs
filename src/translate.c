@@ -10,9 +10,9 @@
 // UTF-8 translation is not attempted in these cases:
 // - (utf8 + utf8), (latin1 + latin1), (unknown + unknown), (bytes + bytes)
 
-static bool translation_required_chr_impl(const SEXP* x, R_len_t size, int reference) {
+static bool translation_required_chr_impl(const SEXP* x, R_len_t size, cetype_t reference) {
   for (R_len_t i = 0; i < size; ++i, ++x) {
-    if (CHAR_ENC_TYPE(*x) != reference) {
+    if (Rf_getCharCE(*x) != reference) {
       return true;
     }
   }
@@ -27,7 +27,7 @@ bool translation_required_chr(SEXP x, R_len_t size) {
   }
 
   const SEXP* p_x = STRING_PTR_RO(x);
-  int reference = CHAR_ENC_TYPE(*p_x);
+  cetype_t reference = Rf_getCharCE(*p_x);
 
   return translation_required_chr_impl(p_x, size, reference);
 }
@@ -46,16 +46,16 @@ static bool translation_required_chr2(SEXP x, R_len_t x_size, SEXP y, R_len_t y_
 
   if (x_empty) {
     p_y = STRING_PTR_RO(y);
-    return translation_required_chr_impl(p_y, y_size, CHAR_ENC_TYPE(*p_y));
+    return translation_required_chr_impl(p_y, y_size, Rf_getCharCE(*p_y));
   }
 
   if (y_empty) {
     p_x = STRING_PTR_RO(x);
-    return translation_required_chr_impl(p_x, x_size, CHAR_ENC_TYPE(*p_x));
+    return translation_required_chr_impl(p_x, x_size, Rf_getCharCE(*p_x));
   }
 
   p_x = STRING_PTR_RO(x);
-  int reference = CHAR_ENC_TYPE(*p_x);
+  cetype_t reference = Rf_getCharCE(*p_x);
 
   if (translation_required_chr_impl(p_x, x_size, reference)) {
     return true;
@@ -97,7 +97,7 @@ static bool any_known_encoding_chr(SEXP x, R_len_t size) {
   const SEXP* p_x = STRING_PTR_RO(x);
 
   for (int i = 0; i < size; ++i, ++p_x) {
-    if (CHAR_ENC_TYPE(*p_x) != 0) {
+    if (Rf_getCharCE(*p_x) != CE_NATIVE) {
       return true;
     }
   }
@@ -164,7 +164,7 @@ static SEXP translate_encoding_chr(SEXP x, R_len_t size) {
   for (int i = 0; i < size; ++i, ++p_x, ++p_out) {
     chr = *p_x;
 
-    if (CHAR_IS_UTF8(chr)) {
+    if (Rf_getCharCE(chr) == CE_UTF8) {
       *p_out = chr;
       continue;
     }

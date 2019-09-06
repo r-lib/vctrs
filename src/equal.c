@@ -150,7 +150,7 @@ static int chr_equal_scalar_impl(const SEXP x, const SEXP y) {
     return 1;
   }
 
-  if (CHAR_ENC_TYPE(x) != CHAR_ENC_TYPE(y)) {
+  if (Rf_getCharCE(x) != Rf_getCharCE(y)) {
     const void *vmax = vmaxget();
     int out = !strcmp(Rf_translateCharUTF8(x), Rf_translateCharUTF8(y));
     vmaxset(vmax);

@@ -48,7 +48,7 @@ static uint32_t hash_char(SEXP x) {
 static uint32_t hash_char_translate(SEXP x) {
   const void *vmax = vmaxget();
 
-  const char* x_utf8 = CHAR_IS_UTF8(x) ? CHAR(x) : Rf_translateCharUTF8(x);
+  const char* x_utf8 = Rf_getCharCE(x) == CE_UTF8 ? CHAR(x) : Rf_translateCharUTF8(x);
 
   uint32_t hash = 0;
 
