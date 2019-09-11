@@ -457,6 +457,14 @@ test_that("`key` column retains full type information", {
   expect_equal(levels(out$key), levels(x))
 })
 
+test_that("`key` and `value` retain names", {
+  x <- c(a = 1, b = 2, c = 1, a = 1)
+  split <- vec_split(x, x)
+  expect_identical(split$key, c(a = 1, b = 2))
+  expect_identical(split$val[[1]], c(a = 1, c = 1, a = 1))
+  expect_identical(split$val[[2]], c(b = 2))
+})
+
 test_that("vec_split_id takes the equality proxy", {
   scoped_comparable_tuple()
   x <- tuple(c(1, 2, 1), 1:3)
