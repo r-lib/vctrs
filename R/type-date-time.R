@@ -37,6 +37,9 @@ new_date <- function(x = double()) {
 new_datetime <- function(x = double(), tzone = "") {
   tzone <- tzone %||% ""
 
+  if (is.integer(x)) {
+    x <- as.double(x)
+  }
   stopifnot(is.double(x))
   stopifnot(is.character(tzone))
 
@@ -58,6 +61,11 @@ new_duration <- function(x = double(), units = c("secs", "mins", "hours", "days"
     units = units,
     class = "difftime"
   )
+}
+
+#' @export
+vec_proxy.POSIXct <- function(x, ...) {
+  new_datetime(x, attr(x, "tzone"))
 }
 
 #' @export
