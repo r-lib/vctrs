@@ -77,10 +77,7 @@ test_that("can determine equality of strings with different encodings (#553)", {
 
   latin1 <- iconv(utf8, "UTF-8", "latin1")
 
-  expect_true(vec_equal(utf8, unknown))
   expect_equal(vec_equal(utf8, unknown), utf8 == unknown)
-
-  expect_true(vec_equal(utf8, latin1))
   expect_equal(vec_equal(utf8, latin1), utf8 == latin1)
 })
 

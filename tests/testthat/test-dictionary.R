@@ -118,7 +118,6 @@ test_that("vec_unique() can detect uniqueness with the same string in various en
 
   x <- c(unknown, utf8, latin1)
 
-  expect_equal(vec_unique(x), x[1])
   expect_equal(vec_unique(x), unique(x))
 })
 
@@ -131,8 +130,8 @@ test_that("vec_unique() returns differently encoded strings in the order they ap
   x <- c(unknown, utf8)
   y <- c(utf8, unknown)
 
-  expect_equal(Encoding(vec_unique(x)), "unknown")
-  expect_equal(Encoding(vec_unique(y)), "UTF-8")
+  expect_equal(Encoding(vec_unique(x)), Encoding(unique(x)))
+  expect_equal(Encoding(vec_unique(y)), Encoding(unique(y)))
 })
 
 test_that("vec_unique() can determine uniqueness when the encoding is the same", {
@@ -240,16 +239,10 @@ test_that("can use matching functions with strings with different encodings", {
 
   latin1 <- iconv(utf8, "UTF-8", "latin1")
 
-  expect_equal(vec_match(utf8, unknown), 1L)
   expect_equal(vec_match(utf8, unknown), match(utf8, unknown))
-
-  expect_equal(vec_match(utf8, latin1), 1L)
   expect_equal(vec_match(utf8, latin1), match(utf8, latin1))
 
-  expect_equal(vec_in(utf8, unknown), TRUE)
   expect_equal(vec_in(utf8, unknown), utf8 %in% unknown)
-
-  expect_equal(vec_in(utf8, latin1), TRUE)
   expect_equal(vec_in(utf8, latin1), utf8 %in% latin1)
 })
 
@@ -263,7 +256,6 @@ test_that("can use matching functions when one string has multiple encodings", {
 
   x <- c(utf8, unknown)
 
-  expect_equal(vec_match(x, latin1), c(1L, 1L))
   expect_equal(vec_match(x, latin1), match(x, latin1))
 })
 
@@ -345,8 +337,16 @@ test_that("can use matching functions with data frames with string columns", {
   expect_equal(vec_match(df_unknown, df_unknown), 1:2)
   expect_equal(vec_in(df_unknown, df_unknown), c(TRUE, TRUE))
 
-  expect_equal(vec_match(df_utf8, df_unknown), 2L)
-  expect_equal(vec_in(df_utf8, df_unknown), TRUE)
+  if (on_windows()) {
+    exp_match <- NA_integer_
+    exp_in <- FALSE
+  } else {
+    exp_match <- 2L
+    exp_in <- TRUE
+  }
+
+  expect_equal(vec_match(df_utf8, df_unknown), exp_match)
+  expect_equal(vec_in(df_utf8, df_unknown), exp_in)
 })
 
 test_that("can use matching functions with data frame subclasses with string columns", {
@@ -361,8 +361,16 @@ test_that("can use matching functions with data frame subclasses with string col
   expect_equal(vec_match(df_unknown, df_unknown), 1:2)
   expect_equal(vec_in(df_unknown, df_unknown), c(TRUE, TRUE))
 
-  expect_equal(vec_match(df_utf8, df_unknown), 2L)
-  expect_equal(vec_in(df_utf8, df_unknown), TRUE)
+  if (on_windows()) {
+    exp_match <- NA_integer_
+    exp_in <- FALSE
+  } else {
+    exp_match <- 2L
+    exp_in <- TRUE
+  }
+
+  expect_equal(vec_match(df_utf8, df_unknown), exp_match)
+  expect_equal(vec_in(df_utf8, df_unknown), exp_in)
 })
 
 test_that("can use matching functions with lists of data frames with string columns", {
@@ -381,8 +389,16 @@ test_that("can use matching functions with lists of data frames with string colu
   expect_equal(vec_match(lst_of_df_unknown, lst_of_df_unknown), 1:2)
   expect_equal(vec_in(lst_of_df_unknown, lst_of_df_unknown), c(TRUE, TRUE))
 
-  expect_equal(vec_match(lst_of_df_utf8, lst_of_df_unknown), 2L)
-  expect_equal(vec_in(lst_of_df_utf8, lst_of_df_unknown), TRUE)
+  if (on_windows()) {
+    exp_match <- NA_integer_
+    exp_in <- FALSE
+  } else {
+    exp_match <- 2L
+    exp_in <- TRUE
+  }
+
+  expect_equal(vec_match(lst_of_df_utf8, lst_of_df_unknown), exp_match)
+  expect_equal(vec_in(lst_of_df_utf8, lst_of_df_unknown), exp_in)
 })
 
 # splits ------------------------------------------------------------------
