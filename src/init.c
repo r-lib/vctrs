@@ -197,7 +197,7 @@ void R_init_vctrs(DllInfo *dll)
     R_RegisterCCallable("vctrs", "init_compact_seq", (DL_FUNC) &init_compact_seq);
 
     // Extremely experimental as eventually this might support R_xlen_t
-    R_RegisterCCallable("vctrs", "vec_short_size", (DL_FUNC) &vec_size);
+    R_RegisterCCallable("vctrs", "short_vec_size", (DL_FUNC) &vec_size);
 }
 
 
