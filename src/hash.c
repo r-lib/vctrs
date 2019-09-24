@@ -42,7 +42,7 @@ static uint32_t hash_double(double x) {
 }
 
 static uint32_t hash_char(SEXP x) {
-  return hash_int64((int64_t) x);
+  return hash_int64((intptr_t) x);
 }
 
 static uint32_t hash_char_translate(SEXP x) {
@@ -53,7 +53,7 @@ static uint32_t hash_char_translate(SEXP x) {
   uint32_t hash = 0;
 
   while(*x_utf8++) {
-    hash = hash_combine(hash, hash_int64((int64_t) *x_utf8));
+    hash = hash_combine(hash, hash_int64((intptr_t) *x_utf8));
   }
 
   vmaxset(vmax);
