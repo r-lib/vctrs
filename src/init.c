@@ -183,7 +183,6 @@ void R_init_vctrs(DllInfo *dll)
     // Very experimental
     R_RegisterCCallable("vctrs", "vec_proxy", (DL_FUNC) &vec_proxy);
     R_RegisterCCallable("vctrs", "vec_restore", (DL_FUNC) &vec_restore);
-    R_RegisterCCallable("vctrs", "vec_init", (DL_FUNC) &vec_init);
     R_RegisterCCallable("vctrs", "vec_assign_impl", (DL_FUNC) &vec_assign_impl);
     R_RegisterCCallable("vctrs", "vec_slice_impl", (DL_FUNC) &vec_slice_impl);
     R_RegisterCCallable("vctrs", "vec_names", (DL_FUNC) &vec_names);
@@ -198,6 +197,7 @@ void R_init_vctrs(DllInfo *dll)
     // Extremely experimental as eventually these might support R_xlen_t
     R_RegisterCCallable("vctrs", "short_vec_size", (DL_FUNC) &vec_size);
     R_RegisterCCallable("vctrs", "short_vec_recycle", (DL_FUNC) &vec_recycle);
+    R_RegisterCCallable("vctrs", "short_vec_init", (DL_FUNC) &vec_init);
 }
 
 
