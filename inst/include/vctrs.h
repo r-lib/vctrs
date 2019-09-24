@@ -7,7 +7,6 @@
 
 SEXP (*vec_proxy)(SEXP);
 SEXP (*vec_restore)(SEXP, SEXP, SEXP);
-SEXP (*vec_init)(SEXP, R_len_t);
 SEXP (*vec_assign_impl)(SEXP, SEXP, SEXP, bool);
 SEXP (*vec_slice_impl)(SEXP, SEXP);
 SEXP (*vec_names)(SEXP);
