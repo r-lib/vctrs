@@ -5,6 +5,9 @@
 
 <!-- badges: start -->
 
+[![Azure pipelines build status](https://img.shields.io/azure-devops/build/r-lib/vctrs/9)](https://dev.azure.com/r-lib/vctrs/_build/latest?definitionId=9&branchName=master)
+[![Azure pipelines test status](https://img.shields.io/azure-devops/tests/r-lib/vctrs/9?color=brightgreen&compact_message)](https://dev.azure.com/r-lib/vctrs/_build/latest?definitionId=9&branchName=master)
+[![Azure pipelines coverage status](https://img.shields.io/azure-devops/coverage/r-lib/vctrs/9)](https://dev.azure.com/r-lib/vctrs/_build/latest?definitionId=9&branchName=master)
 [![Travis build
 status](https://travis-ci.org/r-lib/vctrs.svg?branch=master)](https://travis-ci.org/r-lib/vctrs)
 [![Coverage
