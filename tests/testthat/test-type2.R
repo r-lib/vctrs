@@ -132,9 +132,9 @@ test_that("Subclasses of `tbl_df` have `tbl_df` common type (#481)", {
 })
 
 test_that("Column name encodings are handled correctly in the common type (#553)", {
-  name_utf8 <- "\u00B0C"
-  name_unknown <- name_utf8
-  Encoding(name_unknown) <- "unknown"
+  string <- "\u00B0C"
+  name_utf8 <- iconv(string, from = Encoding(string), to = "UTF-8")
+  name_unknown <- iconv(string, from = Encoding(string), to = "", mark = FALSE)
 
   data <- list(chr())
 
