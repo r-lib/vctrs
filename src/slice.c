@@ -659,7 +659,7 @@ SEXP split_along_shaped(SEXP x, struct vctrs_proxy_info info) {
 
   SEXP dim_names = PROTECT(Rf_getAttrib(x, R_DimNamesSymbol));
 
-  SEXP row_names;
+  SEXP row_names = R_NilValue;
   if (dim_names != R_NilValue) {
     row_names = VECTOR_ELT(dim_names, 0);
   }
