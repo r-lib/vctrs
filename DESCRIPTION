@@ -37,6 +37,7 @@ Suggests:
     covr,
     crayon,
     generics,
+    jsonlite,
     knitr,
     pillar (>= 1.4.1),
     pkgdown,

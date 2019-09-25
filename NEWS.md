@@ -8,6 +8,8 @@
 * Equality and ordering methods are now implemented for raw and
   complex vectors (@romainfrancois).
 
+* `list_of` vctrs now include a 'list' class for compatibility with 
+   legacy S4 list methods, including jsonlite.
 
 # vctrs 0.2.0
 

@@ -181,3 +181,8 @@ test_that("list_of() has as.character() method (tidyverse/tidyr#654)", {
   exp <- rep(paste0("<", vec_ptype_abbr(mtcars), ">"), 2)
   expect_identical(as.character(list_of(mtcars, mtcars)), exp)
 })
+
+test_that("list_of can be serialized as list", {
+  json <- jsonlite::toJSON(new_list_of(list(1, "a", 3)), auto_unbox = TRUE)
+  expect_equal(unclass(json), '[1,"a",3]')
+})
