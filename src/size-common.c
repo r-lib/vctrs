@@ -8,9 +8,9 @@ SEXP vctrs_size_common(SEXP call, SEXP op, SEXP args, SEXP env) {
 
   SEXP size = PROTECT(Rf_eval(CAR(args), env)); args = CDR(args);
   if (size != R_NilValue) {
-    size_validate(size, ".size");
+    R_len_t out = size_validate(size, ".size");
     UNPROTECT(1);
-    return size;
+    return r_int(out);
   }
 
   SEXP absent = PROTECT(Rf_eval(CAR(args), env));
