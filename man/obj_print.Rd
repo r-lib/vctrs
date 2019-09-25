@@ -34,7 +34,7 @@ obj_str_footer(x, ...)
 \code{\link[=str]{str()}} for commonly used options}
 }
 \description{
-These are contructed to be more easily extensible since you can override
+These are constructed to be more easily extensible since you can override
 the \code{_header()}, \code{_data()} or \code{_footer()} components individually. The
 default methods are built on top of \code{format()}.
 }

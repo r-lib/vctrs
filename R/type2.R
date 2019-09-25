@@ -23,7 +23,7 @@
 #' return the same value as `vec_ptype2.y.x()`; this is currently not enforced,
 #' but should be tested.
 #'
-#' Whenever you implemenet a `vec_ptype2.new_class()` generic/method,
+#' Whenever you implement a `vec_ptype2.new_class()` generic/method,
 #' make sure to always provide `vec_ptype2.new_class.default()`. It
 #' should normally call `vec_default_ptype2()`.
 #'

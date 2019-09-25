@@ -1,7 +1,7 @@
 #' Register a method for a suggested dependency
 #'
 #' Generally, the recommend way to register an S3 method is to use the
-#' `S3Method()` namespace directive (often generated automatically be the
+#' `S3Method()` namespace directive (often generated automatically by the
 #' `@export` roxygen2 tag). However, this technique requires that the generic
 #' be in an imported package, and sometimes you want to suggest a package,
 #' and only provide a method when that package is loaded. `s3_register()`
@@ -36,7 +36,7 @@
 #' @export
 #' @examples
 #' # A typical use case is to dynamically register tibble/pillar methods
-#' # for your class. That way you avoid creating a hard depedency on packages
+#' # for your class. That way you avoid creating a hard dependency on packages
 #' # that are not essential, while still providing finer control over
 #' # printing when they are used.
 #'

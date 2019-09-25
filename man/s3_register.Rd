@@ -23,7 +23,7 @@ the old namespace. This might cause crashes because of dangling
 }
 \description{
 Generally, the recommend way to register an S3 method is to use the
-\code{S3Method()} namespace directive (often generated automatically be the
+\code{S3Method()} namespace directive (often generated automatically by the
 \code{@export} roxygen2 tag). However, this technique requires that the generic
 be in an imported package, and sometimes you want to suggest a package,
 and only provide a method when that package is loaded. \code{s3_register()}
@@ -44,7 +44,7 @@ by using "delayed method registration", i.e. placing the following in your
 }
 \examples{
 # A typical use case is to dynamically register tibble/pillar methods
-# for your class. That way you avoid creating a hard depedency on packages
+# for your class. That way you avoid creating a hard dependency on packages
 # that are not essential, while still providing finer control over
 # printing when they are used.
 

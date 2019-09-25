@@ -2,7 +2,7 @@
 
 #' `print()` and `str()` generics.
 #'
-#' These are contructed to be more easily extensible since you can override
+#' These are constructed to be more easily extensible since you can override
 #' the `_header()`, `_data()` or `_footer()` components individually. The
 #' default methods are built on top of `format()`.
 #'

@@ -55,7 +55,7 @@ of length 1 will be recycled appropriately.}
 \value{
 A data frame, or subclass of data frame.
 
-If \code{...} is a mix of different data frame subclases, \code{vec_ptype2()}
+If \code{...} is a mix of different data frame subclasses, \code{vec_ptype2()}
 will be used to determine the output type. For \code{vec_rbind()}, this
 will determine the type of the container and the type of each column;
 for \code{vec_cbind()} it only determines the type of the output container.

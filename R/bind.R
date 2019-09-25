@@ -55,7 +55,7 @@
 #' @inheritParams vec_c
 #' @return A data frame, or subclass of data frame.
 #'
-#'   If `...` is a mix of different data frame subclases, `vec_ptype2()`
+#'   If `...` is a mix of different data frame subclasses, `vec_ptype2()`
 #'   will be used to determine the output type. For `vec_rbind()`, this
 #'   will determine the type of the container and the type of each column;
 #'   for `vec_cbind()` it only determines the type of the output container.

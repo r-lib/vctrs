@@ -17,7 +17,7 @@ vec_unique_count(x)
 }
 \value{
 \itemize{
-\item \code{vec_unique()}: a vector the same type as \code{x} containining only unique
+\item \code{vec_unique()}: a vector the same type as \code{x} containing only unique
 values.
 \item \code{vec_unique_loc()}: an integer vector, giving locations of unique values.
 \item \code{vec_unique_count()}: an integer vector of length 1, giving the
