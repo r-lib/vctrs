@@ -62,7 +62,10 @@ new_list_of <- function(x = list(), ptype = logical(), ..., class = character())
   stopifnot(is.list(x))
   stopifnot(vec_size(ptype) == 0)
 
-  new_vctr(x, ..., ptype = ptype, class = c(class, "vctrs_list_of"))
+  # Append 'list' class after 'vctrs_vctr'
+  out <- new_vctr(x, ..., ptype = ptype, class = c(class, "vctrs_list_of"))
+  class(out) <- c(class(out), "list")
+  out
 }
 
 #' @export

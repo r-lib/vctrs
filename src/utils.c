@@ -1029,13 +1029,14 @@ void vctrs_init_utils(SEXP ns) {
   SET_STRING_ELT(classes_tibble, 2, strings_data_frame);
 
 
-  classes_list_of = Rf_allocVector(STRSXP, 2);
+  classes_list_of = Rf_allocVector(STRSXP, 3);
   R_PreserveObject(classes_list_of);
 
   strings_vctrs_list_of = Rf_mkChar("vctrs_list_of");
   SET_STRING_ELT(classes_list_of, 0, strings_vctrs_list_of);
 
   SET_STRING_ELT(classes_list_of, 1, strings_vctrs_vctr);
+  SET_STRING_ELT(classes_list_of, 2, Rf_mkChar("list"));
 
 
   vctrs_shared_empty_lgl = Rf_allocVector(LGLSXP, 0);
