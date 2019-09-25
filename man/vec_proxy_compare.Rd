@@ -21,7 +21,7 @@ A 1d atomic vector or a data frame.
 }
 \description{
 Returns a proxy object (i.e. an atomic vector or data frame of atomic
-vectors). For \link{vctr}s, this determins the behaviour of \code{\link[=order]{order()}} and
+vectors). For \link{vctr}s, this determines the behaviour of \code{\link[=order]{order()}} and
 \code{\link[=sort]{sort()}} (via \code{\link[=xtfrm]{xtfrm()}}); \code{<}, \code{>}, \code{>=} and \code{<=} (via \code{\link[=vec_compare]{vec_compare()}});
 and \code{\link[=min]{min()}}, \code{\link[=max]{max()}}, \code{\link[=median]{median()}}, and \code{\link[=quantile]{quantile()}}.
 }

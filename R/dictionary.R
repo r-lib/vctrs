@@ -41,7 +41,7 @@
 vec_count <- function(x, sort = c("count", "key", "location", "none")) {
   sort <- match.arg(sort)
 
-  # Returns key-value pair giving index of first occurence value and count
+  # Returns key-value pair giving index of first occurrence value and count
   kv <- .Call(vctrs_count, vec_proxy(x))
 
   # rep_along() to support zero-length vectors!
@@ -82,7 +82,7 @@ reset_rownames <- function(x) {
 #'   reports all duplicated values, not just the second and subsequent
 #'   repetitions.
 #' * `vec_duplicate_id()`: returns an integer vector giving the location of
-#'   the first occurence of the value.
+#'   the first occurrence of the value.
 #'
 #' @section Missing values:
 #' In most cases, missing values are not considered to be equal, i.e.
@@ -146,7 +146,7 @@ vec_duplicate_id <- function(x) {
 #' @inherit vec_duplicate sections
 #' @param x A vector (including a data frame).
 #' @return
-#' * `vec_unique()`: a vector the same type as `x` containining only unique
+#' * `vec_unique()`: a vector the same type as `x` containing only unique
 #'    values.
 #' * `vec_unique_loc()`: an integer vector, giving locations of unique values.
 #' * `vec_unique_count()`: an integer vector of length 1, giving the
@@ -195,7 +195,7 @@ vec_unique_count <- function(x) {
 #' haystack. `vec_match()` returns an integer vector giving location of
 #' `needle` in `haystack`, or `NA` if it's not found.
 #'
-#' `vec_in()` is equivalent to [%in%]; `vec_match()` is equivalen to `match()`.
+#' `vec_in()` is equivalent to [%in%]; `vec_match()` is equivalent to `match()`.
 #'
 #' @inherit vec_duplicate sections
 #' @param needles,haystack Vector of `needles` to search for in vector haystack.

@@ -1,7 +1,7 @@
 #' Comparison proxy
 #'
 #' Returns a proxy object (i.e. an atomic vector or data frame of atomic
-#' vectors). For [vctr]s, this determins the behaviour of [order()] and
+#' vectors). For [vctr]s, this determines the behaviour of [order()] and
 #' [sort()] (via [xtfrm()]); `<`, `>`, `>=` and `<=` (via [vec_compare()]);
 #' and [min()], [max()], [median()], and [quantile()].
 #'

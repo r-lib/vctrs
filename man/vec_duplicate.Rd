@@ -32,7 +32,7 @@ element of the vector is duplicated elsewhere. Unlike \code{\link[=duplicated]{d
 reports all duplicated values, not just the second and subsequent
 repetitions.
 \item \code{vec_duplicate_id()}: returns an integer vector giving the location of
-the first occurence of the value.
+the first occurrence of the value.
 }
 }
 \section{Missing values}{

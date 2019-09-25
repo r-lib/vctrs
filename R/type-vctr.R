@@ -26,7 +26,7 @@
 #' * `as.factor()`, `as.ordered()` and `as.difftime()` are not generic functions
 #'   in base R, but have been reimplemented as generics in the `generics`
 #'   package. `vctrs` extends these and calls `vec_cast()`. To inherit this
-#'   behavior in a package, import and re-export the generic of interest
+#'   behaviour in a package, import and re-export the generic of interest
 #'   from `generics`.
 #'
 #' * `==`, `!=`, `unique()`, `anyDuplicated()`, and `is.na()` use

@@ -63,7 +63,7 @@ which call e.g. \code{vec_ptype2.integer.double()}. \code{vec_ptype2.x.y()} must
 return the same value as \code{vec_ptype2.y.x()}; this is currently not enforced,
 but should be tested.
 
-Whenever you implemenet a \code{vec_ptype2.new_class()} generic/method,
+Whenever you implement a \code{vec_ptype2.new_class()} generic/method,
 make sure to always provide \code{vec_ptype2.new_class.default()}. It
 should normally call \code{vec_default_ptype2()}.
 
