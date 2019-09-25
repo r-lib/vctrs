@@ -34,38 +34,69 @@ bool is_bool(SEXP x) {
     LOGICAL(x)[0] != NA_LOGICAL;
 }
 
+
+static SEXP vctrs_eval_mask_n_impl(SEXP fn, SEXP* syms, SEXP* args, SEXP mask);
+
 /**
- * Dispatch with two arguments
+ * Evaluate with masked arguments
  *
- * @param fn The method to call.
- * @param syms A null-terminated array of symbols. The arguments `args`
- *   are assigned to these symbols. The assignment occurs in `env` and
- *   the dispatch call refers to these symbols.
+ * This takes two arrays of argument (`args`) and argument names
+ * `syms`). The names should correspond to formal arguments of `fn`.
+ * Elements of `args` are assigned to their corresponding name in
+ * `syms` in a child of `env`. A call to `fn` is constructed with the
+ * CARs and TAGs assigned symmetrically to the elements of
+ * `syms`. This way the arguments are masked by symbols corresponding
+ * to the formal parameters.
+ *
+ * @param fn The function to call.
+ * @param syms A null-terminated array of symbols. The arguments
+ *   `args` are assigned to these symbols. The assignment occurs in a
+ *   child of `env` and the dispatch call refers to these symbols.
  * @param args A null-terminated array of arguments passed to the method.
- * @param env The environment in which to dispatch. Should be the
- *   global environment or inherit from it so methods defined there
- *   are picked up. If the global environment, a child is created so
- *   the call components can be masked.
+ * @param env The environment in which to evaluate.
+ */
+SEXP vctrs_eval_mask_n(SEXP fn, SEXP* syms, SEXP* args, SEXP env) {
+  SEXP mask = PROTECT(r_new_environment(env, 4));
+  SEXP out = vctrs_eval_mask_n_impl(fn, syms, args, mask);
+
+  UNPROTECT(1);
+  return out;
+}
+SEXP vctrs_eval_mask1(SEXP fn,
+                      SEXP x_sym, SEXP x,
+                      SEXP env) {
+  SEXP syms[2] = { x_sym, NULL };
+  SEXP args[2] = { x, NULL };
+  return vctrs_eval_mask_n(fn, syms, args, env);
+}
+SEXP vctrs_eval_mask2(SEXP fn,
+                      SEXP x_sym, SEXP x,
+                      SEXP y_sym, SEXP y,
+                      SEXP env) {
+  SEXP syms[3] = { x_sym, y_sym, NULL };
+  SEXP args[3] = { x, y, NULL };
+  return vctrs_eval_mask_n(fn, syms, args, env);
+}
+
+/**
+ * Dispatch in the global environment
  *
- *   If `env` contains dots, the dispatch call forwards dots.
+ * Like `vctrs_eval_mask_n()`, the arguments `args` are are assigned
+ * to the symbols `syms`. In addition, the function `fn` is assigned
+ * to `fn_sym`. The mask is a direct child of the global environment
+ * so that method dispatch finds globally defined methods.
+ *
+ * @param fn_sym A symbol to which `fn` is assigned.
+ * @inheritParams vctrs_eval_mask_n
  */
 SEXP vctrs_dispatch_n(SEXP fn_sym, SEXP fn, SEXP* syms, SEXP* args) {
-  // Create a child so we can mask the call components
-  SEXP env = PROTECT(r_new_environment(R_GlobalEnv, 4));
+  // Mask `fn` with `fn_sym`. We dispatch in the global environment.
+  SEXP mask = PROTECT(r_new_environment(R_GlobalEnv, 4));
+  Rf_defineVar(fn_sym, fn, mask);
 
-  // Forward new values in the dispatch environment
-  Rf_defineVar(fn_sym, fn, env);
+  SEXP out = vctrs_eval_mask_n_impl(fn_sym, syms, args, mask);
 
-  SEXP dispatch_call = PROTECT(r_call(fn_sym, syms, syms));
-
-  while (*syms) {
-    Rf_defineVar(*syms, *args, env);
-    ++syms; ++args;
-  }
-
-  SEXP out = Rf_eval(dispatch_call, env);
-
-  UNPROTECT(2);
+  UNPROTECT(1);
   return out;
 }
 SEXP vctrs_dispatch1(SEXP fn_sym, SEXP fn,
@@ -97,6 +128,20 @@ SEXP vctrs_dispatch4(SEXP fn_sym, SEXP fn,
   SEXP syms[5] = { w_sym, x_sym, y_sym, z_sym, NULL };
   SEXP args[5] = { w, x, y, z, NULL };
   return vctrs_dispatch_n(fn_sym, fn, syms, args);
+}
+
+static SEXP vctrs_eval_mask_n_impl(SEXP fn, SEXP* syms, SEXP* args, SEXP mask) {
+  SEXP call = PROTECT(r_call(fn, syms, syms));
+
+  while (*syms) {
+    Rf_defineVar(*syms, *args, mask);
+    ++syms; ++args;
+  }
+
+  SEXP out = Rf_eval(call, mask);
+
+  UNPROTECT(1);
+  return out;
 }
 
 // An alternative to `attributes(x) <- attrib`, which makes

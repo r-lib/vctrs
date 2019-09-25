@@ -25,6 +25,17 @@ enum vctrs_class_type {
 
 bool is_bool(SEXP x);
 
+SEXP vctrs_eval_mask_n(SEXP fn,
+                       SEXP* syms, SEXP* args,
+                       SEXP env);
+SEXP vctrs_eval_mask1(SEXP fn,
+                      SEXP x_sym, SEXP x,
+                      SEXP env);
+SEXP vctrs_eval_mask2(SEXP fn,
+                      SEXP x_sym, SEXP x,
+                      SEXP y_sym, SEXP y,
+                      SEXP env);
+
 SEXP vctrs_dispatch_n(SEXP fn_sym, SEXP fn,
                       SEXP* syms, SEXP* args);
 SEXP vctrs_dispatch1(SEXP fn_sym, SEXP fn,
