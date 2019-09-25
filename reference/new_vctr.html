@@ -188,7 +188,7 @@ method uses a standard technique to wrap a vector in a data frame.</p></li>
 <li><p><code><a href='https://rdrr.io/r/base/factor.html'>as.factor()</a></code>, <code><a href='https://rdrr.io/r/base/factor.html'>as.ordered()</a></code> and <code><a href='https://rdrr.io/r/base/difftime.html'>as.difftime()</a></code> are not generic functions
 in base R, but have been reimplemented as generics in the <code>generics</code>
 package. <code>vctrs</code> extends these and calls <code><a href='vec_cast.html'>vec_cast()</a></code>. To inherit this
-behavior in a package, import and re-export the generic of interest
+behaviour in a package, import and re-export the generic of interest
 from <code>generics</code>.</p></li>
 <li><p><code>==</code>, <code>!=</code>, <code><a href='https://rdrr.io/r/base/unique.html'>unique()</a></code>, <code><a href='https://rdrr.io/r/base/duplicated.html'>anyDuplicated()</a></code>, and <code><a href='https://rdrr.io/r/base/NA.html'>is.na()</a></code> use
 <code><a href='vec_data.html'>vec_proxy()</a></code>.</p></li>

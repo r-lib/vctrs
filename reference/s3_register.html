@@ -44,7 +44,7 @@
 
 <meta property="og:title" content="Register a method for a suggested dependency — s3_register" />
 <meta property="og:description" content="Generally, the recommend way to register an S3 method is to use the
-S3Method() namespace directive (often generated automatically be the
+S3Method() namespace directive (often generated automatically by the
 @export roxygen2 tag). However, this technique requires that the generic
 be in an imported package, and sometimes you want to suggest a package,
 and only provide a method when that package is loaded. s3_register()
@@ -149,7 +149,7 @@ and paste the function source into your own package.)" />
 
     <div class="ref-description">
     <p>Generally, the recommend way to register an S3 method is to use the
-<code>S3Method()</code> namespace directive (often generated automatically be the
+<code>S3Method()</code> namespace directive (often generated automatically by the
 <code>@export</code> roxygen2 tag). However, this technique requires that the generic
 be in an imported package, and sometimes you want to suggest a package,
 and only provide a method when that package is loaded. <code>s3_register()</code>
@@ -199,7 +199,7 @@ by using "delayed method registration", i.e. placing the following in your
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='co'># A typical use case is to dynamically register tibble/pillar methods</span>
-<span class='co'># for your class. That way you avoid creating a hard depedency on packages</span>
+<span class='co'># for your class. That way you avoid creating a hard dependency on packages</span>
 <span class='co'># that are not essential, while still providing finer control over</span>
 <span class='co'># printing when they are used.</span>
 
