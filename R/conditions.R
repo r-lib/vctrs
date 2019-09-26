@@ -373,7 +373,7 @@ stop_recycle_incompatible_size <- function(x_size, size) {
   vec_assert(size, int(), 1)
 
   message <- glue_lines(
-    "Vector of length {x_size} cannot be recycled to length {size}. Only vectors of length one or of the same length can be recycled."
+    "Vector of length {x_size} cannot be recycled to length {size}. Only vectors of length one can be recycled."
   )
 
   stop_vctrs(
