@@ -17,6 +17,14 @@ test_that("dates and times are vectors", {
   expect_true(vec_is(as.POSIXlt("2020-01-01")))
 })
 
+test_that("vec_c() converts POSIXct with int representation to double representation (#540)", {
+  time1 <- seq(as.POSIXct("2015-12-01", tz = "UTC"), length.out = 2, by = "days")
+  time2 <- vec_c(time1)
+  expect_true(is.double(time2))
+
+  time3 <- vec_c(time1, time1)
+  expect_true(is.double(time3))
+})
 
 # coerce ------------------------------------------------------------------
 
