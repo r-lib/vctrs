@@ -226,10 +226,10 @@ test_that("can take the unique loc of 1d arrays (#461)", {
 })
 
 test_that("can use matching functions with strings with different encodings", {
-  string <- "\u00B0C"
-  utf8 <- iconv(string, from = Encoding(string), to = "UTF-8")
-  unknown <- iconv(string, from = Encoding(string), to = "", mark = FALSE)
-  latin1 <- iconv(string, from = Encoding(string), to = "latin1")
+  enc <- encodings()
+  utf8 <- enc$utf8
+  unknown <- enc$unknown
+  latin1 <- enc$latin1
 
   expect_equal(vec_match(utf8, unknown), 1L)
   expect_equal(vec_match(utf8, unknown), match(utf8, unknown))
@@ -245,25 +245,21 @@ test_that("can use matching functions with strings with different encodings", {
 })
 
 test_that("can use matching functions when one string has multiple encodings", {
-  string <- "\u00B0C"
-  utf8 <- iconv(string, from = Encoding(string), to = "UTF-8")
-  unknown <- iconv(string, from = Encoding(string), to = "", mark = FALSE)
-  latin1 <- iconv(string, from = Encoding(string), to = "latin1")
+  enc <- encodings()
 
-  x <- c(utf8, unknown)
+  x <- c(enc$utf8, enc$unknown)
+  latin1 <- enc$latin1
 
   expect_equal(vec_match(x, latin1), c(1L, 1L))
   expect_equal(vec_match(x, latin1), match(x, latin1))
 })
 
 test_that("can use matching functions within the same encoding", {
-  string <- "\u00B0C"
-  utf8 <- iconv(string, from = Encoding(string), to = "UTF-8")
-  unknown <- iconv(string, from = Encoding(string), to = "", mark = FALSE)
-  latin1 <- iconv(string, from = Encoding(string), to = "latin1")
-
-  bytes <- unknown
-  Encoding(bytes) <- "bytes"
+  enc <- encodings()
+  utf8 <- enc$utf8
+  unknown <- enc$unknown
+  latin1 <- enc$latin1
+  bytes <- enc$bytes
 
   expect_equal(vec_match(unknown, unknown), 1L)
   expect_equal(vec_match(unknown, unknown), match(unknown, unknown))
@@ -291,9 +287,9 @@ test_that("can use matching functions within the same encoding", {
 })
 
 test_that("can use matching functions with lists of characters with different encodings", {
-  string <- "\u00B0C"
-  utf8 <- iconv(string, from = Encoding(string), to = "UTF-8")
-  latin1 <- iconv(string, from = Encoding(string), to = "latin1")
+  enc <- encodings()
+  utf8 <- enc$utf8
+  latin1 <- enc$latin1
 
   lst_ascii <- list("ascii")
   lst_latin1 <- list(latin1)
@@ -320,9 +316,9 @@ test_that("can use matching functions with lists of characters with different en
 })
 
 test_that("can use matching functions with data frames with string columns", {
-  string <- "\u00B0C"
-  utf8 <- iconv(string, from = Encoding(string), to = "UTF-8")
-  unknown <- iconv(string, from = Encoding(string), to = "", mark = FALSE)
+  enc <- encodings()
+  utf8 <- enc$utf8
+  unknown <- enc$unknown
 
   df_utf8 <- data_frame(x = utf8, y = 2)
   df_unknown <- data_frame(x = c(unknown, unknown), y = c(1, 2))
@@ -335,9 +331,9 @@ test_that("can use matching functions with data frames with string columns", {
 })
 
 test_that("can use matching functions with data frame subclasses with string columns", {
-  string <- "\u00B0C"
-  utf8 <- iconv(string, from = Encoding(string), to = "UTF-8")
-  unknown <- iconv(string, from = Encoding(string), to = "", mark = FALSE)
+  enc <- encodings()
+  utf8 <- enc$utf8
+  unknown <- enc$unknown
 
   df_utf8 <- new_data_frame(list(x = utf8, y = 2), class = "subclass")
   df_unknown <- new_data_frame(list(x = c(unknown, unknown), y = c(1, 2)), class = "subclass")
@@ -350,9 +346,9 @@ test_that("can use matching functions with data frame subclasses with string col
 })
 
 test_that("can use matching functions with lists of data frames with string columns", {
-  string <- "\u00B0C"
-  utf8 <- iconv(string, from = Encoding(string), to = "UTF-8")
-  unknown <- iconv(string, from = Encoding(string), to = "", mark = FALSE)
+  enc <- encodings()
+  utf8 <- enc$utf8
+  unknown <- enc$unknown
 
   df_utf8 <- data_frame(x = utf8, y = 2)
   df_unknown_1 <- data_frame(x = unknown, y = 1)
