@@ -109,42 +109,29 @@ test_that("unique functions take the equality proxy (#375)", {
 })
 
 test_that("vec_unique() can detect uniqueness with the same string in various encodings (#553)", {
-  string <- "\u00B0C"
-  utf8 <- iconv(string, from = Encoding(string), to = "UTF-8")
-  unknown <- iconv(string, from = Encoding(string), to = "", mark = FALSE)
-  latin1 <- iconv(string, from = Encoding(string), to = "latin1")
-
-  x <- c(unknown, utf8, latin1)
+  enc <- encodings()
+  x <- c(enc$unknown, enc$utf8, enc$latin1)
 
   expect_equal(vec_unique(x), x[1])
   expect_equal(vec_unique(x), unique(x))
 })
 
 test_that("vec_unique() returns differently encoded strings in the order they appear", {
-  string <- "\u00B0C"
-  utf8 <- iconv(string, from = Encoding(string), to = "UTF-8")
-  unknown <- iconv(string, from = Encoding(string), to = "", mark = FALSE)
-
-  x <- c(unknown, utf8)
-  y <- c(utf8, unknown)
+  enc <- encodings()
+  x <- c(enc$unknown, enc$utf8)
+  y <- c(enc$utf8, enc$unknown)
 
   expect_equal(Encoding(vec_unique(x)), "unknown")
   expect_equal(Encoding(vec_unique(y)), "UTF-8")
 })
 
 test_that("vec_unique() can determine uniqueness when the encoding is the same", {
-  string <- "\u00B0C"
-  utf8 <- iconv(string, from = Encoding(string), to = "UTF-8")
-  unknown <- iconv(string, from = Encoding(string), to = "", mark = FALSE)
-  latin1 <- iconv(string, from = Encoding(string), to = "latin1")
+  enc <- encodings()
 
-  bytes <- unknown
-  Encoding(bytes) <- "bytes"
-
-  x <- c(unknown, unknown)
-  y <- c(latin1, latin1)
-  z <- c(utf8, utf8)
-  w <- c(bytes, bytes)
+  x <- c(enc$unknown, enc$unknown)
+  y <- c(enc$latin1, enc$latin1)
+  z <- c(enc$utf8, enc$utf8)
+  w <- c(enc$bytes, enc$bytes)
 
   expect_equal(vec_unique(x), x[1])
   expect_equal(vec_unique(x), unique(x))
@@ -160,17 +147,11 @@ test_that("vec_unique() can determine uniqueness when the encoding is the same",
 })
 
 test_that("vec_unique() fails purposefully with bytes strings and other encodings", {
-  string <- "\u00B0C"
-  utf8 <- iconv(string, from = Encoding(string), to = "UTF-8")
-  unknown <- iconv(string, from = Encoding(string), to = "", mark = FALSE)
-  latin1 <- iconv(string, from = Encoding(string), to = "latin1")
+  enc <- encodings()
 
-  bytes <- utf8
-  Encoding(bytes) <- "bytes"
-
-  bytes_utf8 <- c(bytes, utf8)
-  bytes_unknown <- c(bytes, unknown)
-  bytes_latin1 <- c(bytes, latin1)
+  bytes_utf8 <- c(enc$bytes, enc$utf8)
+  bytes_unknown <- c(enc$bytes, enc$unknown)
+  bytes_latin1 <- c(enc$bytes, enc$latin1)
 
   expect_error(vec_unique(bytes_utf8), '"bytes" encoding is not allowed')
   expect_error(vec_unique(bytes_unknown), '"bytes" encoding is not allowed')
