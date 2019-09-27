@@ -454,7 +454,9 @@ static int int_equal_na_scalar(const int* x) {
 
 static int dbl_equal_na_scalar(const double* x) {
   // is.na(NaN) is TRUE
-  return isnan(*x);
+  // isnan() does not consistently return 1 and 0 on all platforms,
+  // but R's ISNAN() does
+  return ISNAN(*x);
 }
 
 static int chr_equal_na_scalar(const SEXP* x) {
