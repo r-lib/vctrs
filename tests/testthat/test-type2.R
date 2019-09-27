@@ -136,8 +136,8 @@ test_that("Column name encodings are handled correctly in the common type (#553)
 
   data <- list(chr())
 
-  df_utf <- tibble::as_tibble(set_names(data, encs$utf))
+  df_utf8 <- tibble::as_tibble(set_names(data, encs$utf8))
   df_unknown <- tibble::as_tibble(set_names(data, encs$unknown))
 
-  expect_identical(vec_ptype2(df_utf, df_unknown), df_utf)
+  expect_identical(vec_ptype2(df_utf8, df_unknown), df_utf8)
 })
