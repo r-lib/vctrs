@@ -20,8 +20,7 @@ static bool chr_translation_required_impl(const SEXP* x, R_len_t size, cetype_t 
   return false;
 }
 
-// [[ include("vctrs.h") ]]
-bool chr_translation_required(SEXP x, R_len_t size) {
+static bool chr_translation_required(SEXP x, R_len_t size) {
   if (size == 0) {
     return false;
   }
@@ -71,10 +70,9 @@ static bool chr_translation_required2(SEXP x, R_len_t x_size, SEXP y, R_len_t y_
 }
 
 // -----------------------------------------------------------------------------
-// Utilities required for checking if any character elements of a list have a
+// Utilities to check if any character elements of a list have a
 // "known" encoding. This implies that we have to convert all character
-// elements of the list to UTF-8. This function is solely used by
-// `translate_encoding_list2()`.
+// elements of the list to UTF-8.
 
 static bool chr_any_known_encoding(SEXP x, R_len_t size);
 static bool list_any_known_encoding(SEXP x, R_len_t size);
@@ -132,14 +130,15 @@ static bool df_any_known_encoding(SEXP x, R_len_t size) {
 }
 
 // -----------------------------------------------------------------------------
-// Utilities required for translating the character vector elements of a list
-// to UTF-8. This function is solely used by `translate_encoding_list2()`.
+// Utilities to recursively translate all character vector elements to UTF-8.
+// This does not check if a translation is required.
 
 static SEXP chr_translate_encoding(SEXP x, R_len_t size);
 static SEXP list_translate_encoding(SEXP x, R_len_t size);
 static SEXP df_translate_encoding(SEXP x, R_len_t size);
 
-static SEXP obj_translate_encoding(SEXP x, R_len_t size) {
+// [[ include("vctrs.h") ]]
+SEXP obj_translate_encoding(SEXP x, R_len_t size) {
   switch (vec_proxy_typeof(x)) {
   case vctrs_type_character: return chr_translate_encoding(x, size);
   case vctrs_type_list: return list_translate_encoding(x, size);
@@ -206,11 +205,56 @@ static SEXP df_translate_encoding(SEXP x, R_len_t size) {
 }
 
 // -----------------------------------------------------------------------------
+// Utility for maybe translating encodings.
+// - If `x` is a character vector requiring translation, translate it.
+// - If `x` is a list where any element is a "known" encoding, force a
+//   translation of every element in the list.
+// - If `x` is a data frame, translate the columns one by one, independently.
+
+static SEXP chr_maybe_translate_encoding(SEXP x, R_len_t size);
+static SEXP list_maybe_translate_encoding(SEXP x, R_len_t size);
+static SEXP df_maybe_translate_encoding(SEXP x, R_len_t size);
+
+// [[ include("vctrs.h") ]]
+SEXP obj_maybe_translate_encoding(SEXP x, R_len_t size) {
+  switch (vec_proxy_typeof(x)) {
+  case vctrs_type_character: return chr_maybe_translate_encoding(x, size);
+  case vctrs_type_list: return list_maybe_translate_encoding(x, size);
+  case vctrs_type_dataframe: return df_maybe_translate_encoding(x, size);
+  default: return x;
+  }
+}
+
+static SEXP chr_maybe_translate_encoding(SEXP x, R_len_t size) {
+  return chr_translation_required(x, size) ? chr_translate_encoding(x, size) : x;
+}
+
+static SEXP list_maybe_translate_encoding(SEXP x, R_len_t size) {
+  return list_any_known_encoding(x, size) ? list_translate_encoding(x, size) : x;
+}
+
+static SEXP df_maybe_translate_encoding(SEXP x, R_len_t size) {
+  int n_col = Rf_length(x);
+
+  x = PROTECT(r_maybe_duplicate(x));
+
+  SEXP elt;
+
+  for (int i = 0; i < n_col; ++i) {
+    elt = VECTOR_ELT(x, i);
+    SET_VECTOR_ELT(x, i, obj_maybe_translate_encoding(elt, size));
+  }
+
+  UNPROTECT(1);
+  return x;
+}
+
+// -----------------------------------------------------------------------------
 
 static SEXP translate_none(SEXP x, SEXP y);
-static SEXP chr_translate_encoding2(SEXP x, R_len_t x_size, SEXP y, R_len_t y_size);
-static SEXP list_translate_encoding2(SEXP x, R_len_t x_size, SEXP y, R_len_t y_size);
-static SEXP df_translate_encoding2(SEXP x, R_len_t x_size, SEXP y, R_len_t y_size);
+static SEXP chr_maybe_translate_encoding2(SEXP x, R_len_t x_size, SEXP y, R_len_t y_size);
+static SEXP list_maybe_translate_encoding2(SEXP x, R_len_t x_size, SEXP y, R_len_t y_size);
+static SEXP df_maybe_translate_encoding2(SEXP x, R_len_t x_size, SEXP y, R_len_t y_size);
 
 // Notes:
 // - Assumes that `x` and `y` are the same type from calling `vec_cast()`.
@@ -218,11 +262,11 @@ static SEXP df_translate_encoding2(SEXP x, R_len_t x_size, SEXP y, R_len_t y_siz
 // - Returns a list holding `x` and `y` translated to their common encoding.
 
 // [[ include("vctrs.h") ]]
-SEXP obj_translate_encoding2(SEXP x, R_len_t x_size, SEXP y, R_len_t y_size) {
+SEXP obj_maybe_translate_encoding2(SEXP x, R_len_t x_size, SEXP y, R_len_t y_size) {
   switch (vec_proxy_typeof(x)) {
-  case vctrs_type_character: return chr_translate_encoding2(x, x_size, y, y_size);
-  case vctrs_type_list: return list_translate_encoding2(x, x_size, y, y_size);
-  case vctrs_type_dataframe: return df_translate_encoding2(x, x_size, y, y_size);
+  case vctrs_type_character: return chr_maybe_translate_encoding2(x, x_size, y, y_size);
+  case vctrs_type_list: return list_maybe_translate_encoding2(x, x_size, y, y_size);
+  case vctrs_type_dataframe: return df_maybe_translate_encoding2(x, x_size, y, y_size);
   default: return translate_none(x, y);
   }
 }
@@ -237,7 +281,7 @@ static SEXP translate_none(SEXP x, SEXP y) {
   return out;
 }
 
-static SEXP chr_translate_encoding2(SEXP x, R_len_t x_size, SEXP y, R_len_t y_size) {
+static SEXP chr_maybe_translate_encoding2(SEXP x, R_len_t x_size, SEXP y, R_len_t y_size) {
   SEXP out = PROTECT(Rf_allocVector(VECSXP, 2));
 
   if (chr_translation_required2(x, x_size, y, y_size)) {
@@ -252,7 +296,7 @@ static SEXP chr_translate_encoding2(SEXP x, R_len_t x_size, SEXP y, R_len_t y_si
   return out;
 }
 
-static SEXP list_translate_encoding2(SEXP x, R_len_t x_size, SEXP y, R_len_t y_size) {
+static SEXP list_maybe_translate_encoding2(SEXP x, R_len_t x_size, SEXP y, R_len_t y_size) {
   SEXP out = PROTECT(Rf_allocVector(VECSXP, 2));
 
   if (list_any_known_encoding(x, x_size) || list_any_known_encoding(y, y_size)) {
@@ -267,7 +311,7 @@ static SEXP list_translate_encoding2(SEXP x, R_len_t x_size, SEXP y, R_len_t y_s
   return out;
 }
 
-static SEXP df_translate_encoding2(SEXP x, R_len_t x_size, SEXP y, R_len_t y_size) {
+static SEXP df_maybe_translate_encoding2(SEXP x, R_len_t x_size, SEXP y, R_len_t y_size) {
   SEXP x_elt;
   SEXP y_elt;
   SEXP translated;
@@ -283,7 +327,7 @@ static SEXP df_translate_encoding2(SEXP x, R_len_t x_size, SEXP y, R_len_t y_siz
     x_elt = VECTOR_ELT(x, i);
     y_elt = VECTOR_ELT(y, i);
 
-    translated = PROTECT(obj_translate_encoding2(x_elt, x_size, y_elt, y_size));
+    translated = PROTECT(obj_maybe_translate_encoding2(x_elt, x_size, y_elt, y_size));
 
     SET_VECTOR_ELT(x, i, VECTOR_ELT(translated, 0));
     SET_VECTOR_ELT(y, i, VECTOR_ELT(translated, 1));

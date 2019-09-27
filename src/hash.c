@@ -45,21 +45,6 @@ static uint32_t hash_char(SEXP x) {
   return hash_int64((intptr_t) x);
 }
 
-static uint32_t hash_char_translate(SEXP x) {
-  const void *vmax = vmaxget();
-
-  const char* x_utf8 = Rf_getCharCE(x) == CE_UTF8 ? CHAR(x) : Rf_translateCharUTF8(x);
-
-  uint32_t hash = 0;
-
-  while(*x_utf8++) {
-    hash = hash_combine(hash, hash_int64((intptr_t) *x_utf8));
-  }
-
-  vmaxset(vmax);
-  return hash;
-}
-
 // Hashing scalars -----------------------------------------------------
 
 static uint32_t lgl_hash_scalar(const int* x);
@@ -67,7 +52,6 @@ static uint32_t int_hash_scalar(const int* x);
 static uint32_t dbl_hash_scalar(const double* x);
 static uint32_t cpl_hash_scalar(const Rcomplex* x);
 static uint32_t chr_hash_scalar(const SEXP* x);
-static uint32_t chr_hash_scalar_translate(const SEXP* x);
 static uint32_t raw_hash_scalar(const Rbyte* x);
 static uint32_t list_hash_scalar(SEXP x, R_len_t i);
 
@@ -96,9 +80,6 @@ static uint32_t cpl_hash_scalar(const Rcomplex* x) {
 }
 static uint32_t chr_hash_scalar(const SEXP* x) {
   return hash_char(*x);
-}
-static uint32_t chr_hash_scalar_translate(const SEXP* x) {
-  return hash_char_translate(*x);
 }
 static uint32_t raw_hash_scalar(const Rbyte* x) {
   return hash_int32(*x);
@@ -184,11 +165,7 @@ static uint32_t dbl_hash(SEXP x) {
   HASH(double, REAL_RO, dbl_hash_scalar);
 }
 static uint32_t chr_hash(SEXP x) {
-  if (chr_translation_required(x, Rf_length(x))) {
-    HASH(SEXP, STRING_PTR_RO, chr_hash_scalar_translate);
-  } else {
-    HASH(SEXP, STRING_PTR_RO, chr_hash_scalar);
-  }
+  HASH(SEXP, STRING_PTR_RO, chr_hash_scalar);
 }
 
 #undef HASH
@@ -289,11 +266,7 @@ static void cpl_hash_fill(uint32_t* p, R_len_t size, SEXP x) {
   HASH_FILL(Rcomplex, COMPLEX_RO, cpl_hash_scalar);
 }
 static void chr_hash_fill(uint32_t* p, R_len_t size, SEXP x) {
-  if (chr_translation_required(x, size)) {
-    HASH_FILL(SEXP, STRING_PTR_RO, chr_hash_scalar_translate);
-  } else {
-    HASH_FILL(SEXP, STRING_PTR_RO, chr_hash_scalar);
-  }
+  HASH_FILL(SEXP, STRING_PTR_RO, chr_hash_scalar);
 }
 static void raw_hash_fill(uint32_t* p, R_len_t size, SEXP x) {
   HASH_FILL(Rbyte, RAW_RO, raw_hash_scalar);

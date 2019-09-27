@@ -111,7 +111,11 @@ void dict_put(dictionary* d, uint32_t hash, R_len_t i) {
 
 SEXP vctrs_unique_loc(SEXP x) {
   int nprot = 0;
+
+  R_len_t n = vec_size(x);
+
   x = PROTECT_N(vec_proxy_equal(x), &nprot);
+  x = PROTECT_N(obj_maybe_translate_encoding(x, n), &nprot);
 
   dictionary d;
   dict_init(&d, x);
@@ -121,7 +125,6 @@ SEXP vctrs_unique_loc(SEXP x) {
   growable_init(&g, INTSXP, 256);
   PROTECT_GROWABLE(&g, &nprot);
 
-  R_len_t n = vec_size(x);
   for (int i = 0; i < n; ++i) {
     uint32_t hash = dict_hash_scalar(&d, i);
 
@@ -229,7 +232,7 @@ SEXP vctrs_match(SEXP needles, SEXP haystack) {
   R_len_t n_haystack = vec_size(haystack);
   R_len_t n_needle = vec_size(needles);
 
-  SEXP translated = PROTECT_N(obj_translate_encoding2(needles, n_needle, haystack, n_haystack), &nprot);
+  SEXP translated = PROTECT_N(obj_maybe_translate_encoding2(needles, n_needle, haystack, n_haystack), &nprot);
   needles = VECTOR_ELT(translated, 0);
   haystack = VECTOR_ELT(translated, 1);
 
@@ -282,7 +285,7 @@ SEXP vctrs_in(SEXP needles, SEXP haystack) {
   R_len_t n_haystack = vec_size(haystack);
   R_len_t n_needle = vec_size(needles);
 
-  SEXP translated = PROTECT_N(obj_translate_encoding2(needles, n_needle, haystack, n_haystack), &nprot);
+  SEXP translated = PROTECT_N(obj_maybe_translate_encoding2(needles, n_needle, haystack, n_haystack), &nprot);
   needles = VECTOR_ELT(translated, 0);
   haystack = VECTOR_ELT(translated, 1);
 
