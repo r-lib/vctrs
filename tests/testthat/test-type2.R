@@ -133,13 +133,13 @@ test_that("Subclasses of `tbl_df` have `tbl_df` common type (#481)", {
 
 test_that("Column name encodings are handled correctly in the common type (#553)", {
   enc <- encodings()
-  name_utf8 <- enc$utf8
+  name_utf <- enc$utf
   name_unknown <- enc$unknown
 
   data <- list(chr())
 
-  df_utf8 <- tibble::as_tibble(set_names(data, name_utf8))
+  df_utf <- tibble::as_tibble(set_names(data, name_utf))
   df_unknown <- tibble::as_tibble(set_names(data, name_unknown))
 
-  expect_identical(vec_ptype2(df_utf8, df_unknown), df_utf8)
+  expect_identical(vec_ptype2(df_utf, df_unknown), df_utf)
 })

@@ -110,7 +110,7 @@ test_that("unique functions take the equality proxy (#375)", {
 
 test_that("vec_unique() can detect uniqueness with the same string in various encodings (#553)", {
   enc <- encodings()
-  x <- c(enc$unknown, enc$utf8, enc$latin1)
+  x <- c(enc$unknown, enc$utf, enc$latin1)
 
   expect_equal(vec_unique(x), x[1])
   expect_equal(vec_unique(x), unique(x))
@@ -118,8 +118,8 @@ test_that("vec_unique() can detect uniqueness with the same string in various en
 
 test_that("vec_unique() returns differently encoded strings in the order they appear", {
   enc <- encodings()
-  x <- c(enc$unknown, enc$utf8)
-  y <- c(enc$utf8, enc$unknown)
+  x <- c(enc$unknown, enc$utf)
+  y <- c(enc$utf, enc$unknown)
 
   expect_equal(Encoding(vec_unique(x)), "unknown")
   expect_equal(Encoding(vec_unique(y)), "UTF-8")
@@ -130,7 +130,7 @@ test_that("vec_unique() can determine uniqueness when the encoding is the same",
 
   x <- c(enc$unknown, enc$unknown)
   y <- c(enc$latin1, enc$latin1)
-  z <- c(enc$utf8, enc$utf8)
+  z <- c(enc$utf, enc$utf)
   w <- c(enc$bytes, enc$bytes)
 
   expect_equal(vec_unique(x), x[1])
@@ -149,11 +149,11 @@ test_that("vec_unique() can determine uniqueness when the encoding is the same",
 test_that("vec_unique() fails purposefully with bytes strings and other encodings", {
   enc <- encodings()
 
-  bytes_utf8 <- c(enc$bytes, enc$utf8)
+  bytes_utf <- c(enc$bytes, enc$utf)
   bytes_unknown <- c(enc$bytes, enc$unknown)
   bytes_latin1 <- c(enc$bytes, enc$latin1)
 
-  expect_error(vec_unique(bytes_utf8), '"bytes" encoding is not allowed')
+  expect_error(vec_unique(bytes_utf), '"bytes" encoding is not allowed')
   expect_error(vec_unique(bytes_unknown), '"bytes" encoding is not allowed')
   expect_error(vec_unique(bytes_latin1), '"bytes" encoding is not allowed')
 })
@@ -208,27 +208,27 @@ test_that("can take the unique loc of 1d arrays (#461)", {
 
 test_that("can use matching functions with strings with different encodings", {
   enc <- encodings()
-  utf8 <- enc$utf8
+  utf <- enc$utf
   unknown <- enc$unknown
   latin1 <- enc$latin1
 
-  expect_equal(vec_match(utf8, unknown), 1L)
-  expect_equal(vec_match(utf8, unknown), match(utf8, unknown))
+  expect_equal(vec_match(utf, unknown), 1L)
+  expect_equal(vec_match(utf, unknown), match(utf, unknown))
 
-  expect_equal(vec_match(utf8, latin1), 1L)
-  expect_equal(vec_match(utf8, latin1), match(utf8, latin1))
+  expect_equal(vec_match(utf, latin1), 1L)
+  expect_equal(vec_match(utf, latin1), match(utf, latin1))
 
-  expect_equal(vec_in(utf8, unknown), TRUE)
-  expect_equal(vec_in(utf8, unknown), utf8 %in% unknown)
+  expect_equal(vec_in(utf, unknown), TRUE)
+  expect_equal(vec_in(utf, unknown), utf %in% unknown)
 
-  expect_equal(vec_in(utf8, latin1), TRUE)
-  expect_equal(vec_in(utf8, latin1), utf8 %in% latin1)
+  expect_equal(vec_in(utf, latin1), TRUE)
+  expect_equal(vec_in(utf, latin1), utf %in% latin1)
 })
 
 test_that("can use matching functions when one string has multiple encodings", {
   enc <- encodings()
 
-  x <- c(enc$utf8, enc$unknown)
+  x <- c(enc$utf, enc$unknown)
   latin1 <- enc$latin1
 
   expect_equal(vec_match(x, latin1), c(1L, 1L))
@@ -237,7 +237,7 @@ test_that("can use matching functions when one string has multiple encodings", {
 
 test_that("can use matching functions within the same encoding", {
   enc <- encodings()
-  utf8 <- enc$utf8
+  utf <- enc$utf
   unknown <- enc$unknown
   latin1 <- enc$latin1
   bytes <- enc$bytes
@@ -248,8 +248,8 @@ test_that("can use matching functions within the same encoding", {
   expect_equal(vec_match(latin1, latin1), 1L)
   expect_equal(vec_match(latin1, latin1), match(latin1, latin1))
 
-  expect_equal(vec_match(utf8, utf8), 1L)
-  expect_equal(vec_match(utf8, utf8), match(utf8, utf8))
+  expect_equal(vec_match(utf, utf), 1L)
+  expect_equal(vec_match(utf, utf), match(utf, utf))
 
   expect_equal(vec_match(bytes, bytes), 1L)
   expect_equal(vec_match(bytes, bytes), match(bytes, bytes))
@@ -260,8 +260,8 @@ test_that("can use matching functions within the same encoding", {
   expect_equal(vec_in(latin1, latin1), TRUE)
   expect_equal(vec_in(latin1, latin1), latin1 %in% latin1)
 
-  expect_equal(vec_in(utf8, utf8), TRUE)
-  expect_equal(vec_in(utf8, utf8), utf8 %in% utf8)
+  expect_equal(vec_in(utf, utf), TRUE)
+  expect_equal(vec_in(utf, utf), utf %in% utf)
 
   expect_equal(vec_in(bytes, bytes), TRUE)
   expect_equal(vec_in(bytes, bytes), bytes %in% bytes)
@@ -269,80 +269,80 @@ test_that("can use matching functions within the same encoding", {
 
 test_that("can use matching functions with lists of characters with different encodings", {
   enc <- encodings()
-  utf8 <- enc$utf8
+  utf <- enc$utf
   latin1 <- enc$latin1
 
   lst_ascii <- list("ascii")
   lst_latin1 <- list(latin1)
   lst_ascii_latin1 <- c(lst_ascii, lst_latin1)
-  lst_utf8 <- list(utf8)
+  lst_utf <- list(utf)
 
-  lst_of_lst_utf8 <- list(lst_utf8)
+  lst_of_lst_utf <- list(lst_utf)
   lst_of_lst_ascii_latin1 <- list(lst_ascii, lst_latin1)
 
   expect_equal(vec_match(lst_ascii, lst_ascii), 1L)
   expect_equal(vec_in(lst_ascii, lst_ascii), TRUE)
 
-  expect_equal(vec_match(lst_utf8, lst_ascii_latin1), 2L)
-  expect_equal(vec_in(lst_utf8, lst_ascii_latin1), TRUE)
+  expect_equal(vec_match(lst_utf, lst_ascii_latin1), 2L)
+  expect_equal(vec_in(lst_utf, lst_ascii_latin1), TRUE)
 
-  expect_equal(vec_match(lst_utf8, lst_ascii_latin1), match(lst_utf8, lst_ascii_latin1))
-  expect_equal(vec_in(lst_utf8, lst_ascii_latin1), lst_utf8 %in% lst_ascii_latin1)
+  expect_equal(vec_match(lst_utf, lst_ascii_latin1), match(lst_utf, lst_ascii_latin1))
+  expect_equal(vec_in(lst_utf, lst_ascii_latin1), lst_utf %in% lst_ascii_latin1)
 
-  expect_equal(vec_match(lst_of_lst_utf8, lst_of_lst_ascii_latin1), 2L)
-  expect_equal(vec_in(lst_of_lst_utf8, lst_of_lst_ascii_latin1), TRUE)
+  expect_equal(vec_match(lst_of_lst_utf, lst_of_lst_ascii_latin1), 2L)
+  expect_equal(vec_in(lst_of_lst_utf, lst_of_lst_ascii_latin1), TRUE)
 
-  expect_equal(vec_match(lst_of_lst_utf8, lst_of_lst_ascii_latin1), match(lst_of_lst_utf8, lst_of_lst_ascii_latin1))
-  expect_equal(vec_in(lst_of_lst_utf8, lst_of_lst_ascii_latin1), lst_of_lst_utf8 %in% lst_of_lst_ascii_latin1)
+  expect_equal(vec_match(lst_of_lst_utf, lst_of_lst_ascii_latin1), match(lst_of_lst_utf, lst_of_lst_ascii_latin1))
+  expect_equal(vec_in(lst_of_lst_utf, lst_of_lst_ascii_latin1), lst_of_lst_utf %in% lst_of_lst_ascii_latin1)
 })
 
 test_that("can use matching functions with data frames with string columns", {
   enc <- encodings()
-  utf8 <- enc$utf8
+  utf <- enc$utf
   unknown <- enc$unknown
 
-  df_utf8 <- data_frame(x = utf8, y = 2)
+  df_utf <- data_frame(x = utf, y = 2)
   df_unknown <- data_frame(x = c(unknown, unknown), y = c(1, 2))
 
   expect_equal(vec_match(df_unknown, df_unknown), 1:2)
   expect_equal(vec_in(df_unknown, df_unknown), c(TRUE, TRUE))
 
-  expect_equal(vec_match(df_utf8, df_unknown), 2L)
-  expect_equal(vec_in(df_utf8, df_unknown), TRUE)
+  expect_equal(vec_match(df_utf, df_unknown), 2L)
+  expect_equal(vec_in(df_utf, df_unknown), TRUE)
 })
 
 test_that("can use matching functions with data frame subclasses with string columns", {
   enc <- encodings()
-  utf8 <- enc$utf8
+  utf <- enc$utf
   unknown <- enc$unknown
 
-  df_utf8 <- new_data_frame(list(x = utf8, y = 2), class = "subclass")
+  df_utf <- new_data_frame(list(x = utf, y = 2), class = "subclass")
   df_unknown <- new_data_frame(list(x = c(unknown, unknown), y = c(1, 2)), class = "subclass")
 
   expect_equal(vec_match(df_unknown, df_unknown), 1:2)
   expect_equal(vec_in(df_unknown, df_unknown), c(TRUE, TRUE))
 
-  expect_equal(vec_match(df_utf8, df_unknown), 2L)
-  expect_equal(vec_in(df_utf8, df_unknown), TRUE)
+  expect_equal(vec_match(df_utf, df_unknown), 2L)
+  expect_equal(vec_in(df_utf, df_unknown), TRUE)
 })
 
 test_that("can use matching functions with lists of data frames with string columns", {
   enc <- encodings()
-  utf8 <- enc$utf8
+  utf <- enc$utf
   unknown <- enc$unknown
 
-  df_utf8 <- data_frame(x = utf8, y = 2)
+  df_utf <- data_frame(x = utf, y = 2)
   df_unknown_1 <- data_frame(x = unknown, y = 1)
   df_unknown_2 <- data_frame(x = unknown, y = 2)
 
-  lst_of_df_utf8 <- list(df_utf8)
+  lst_of_df_utf <- list(df_utf)
   lst_of_df_unknown <- list(df_unknown_1, df_unknown_2)
 
   expect_equal(vec_match(lst_of_df_unknown, lst_of_df_unknown), 1:2)
   expect_equal(vec_in(lst_of_df_unknown, lst_of_df_unknown), c(TRUE, TRUE))
 
-  expect_equal(vec_match(lst_of_df_utf8, lst_of_df_unknown), 2L)
-  expect_equal(vec_in(lst_of_df_utf8, lst_of_df_unknown), TRUE)
+  expect_equal(vec_match(lst_of_df_utf, lst_of_df_unknown), 2L)
+  expect_equal(vec_in(lst_of_df_utf, lst_of_df_unknown), TRUE)
 })
 
 # splits ------------------------------------------------------------------
