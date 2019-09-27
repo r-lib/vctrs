@@ -46,12 +46,5 @@ vec_recycle <- function(x, size) {
 #' @export
 #' @rdname vec_recycle
 vec_recycle_common <- function(..., .size = NULL) {
-  args <- list2(...)
-  size <- vec_size_common(!!!args, .size = .size, .absent = na_int)
-
-  if (identical(size, na_int)) {
-    args
-  } else {
-    map(args, vec_recycle, size = size)
-  }
+  .External2(vctrs_recycle_common, .size)
 }
