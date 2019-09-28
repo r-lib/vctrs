@@ -148,14 +148,17 @@ SEXP vctrs_duplicated_any(SEXP x) {
 // [[ include("vctrs.h") ]]
 bool duplicated_any(SEXP x) {
   int nprot = 0;
+
+  R_len_t n = vec_size(x);
+
   x = PROTECT_N(vec_proxy_equal(x), &nprot);
+  x = PROTECT_N(obj_maybe_translate_encoding(x, n), &nprot);
 
   dictionary d;
   dict_init(&d, x);
   PROTECT_DICT(&d, &nprot);
 
   bool out = false;
-  R_len_t n = vec_size(x);
 
   for (int i = 0; i < n; ++i) {
     uint32_t hash = dict_hash_scalar(&d, i);
@@ -174,13 +177,16 @@ bool duplicated_any(SEXP x) {
 
 SEXP vctrs_n_distinct(SEXP x) {
   int nprot = 0;
+
+  R_len_t n = vec_size(x);
+
   x = PROTECT_N(vec_proxy_equal(x), &nprot);
+  x = PROTECT_N(obj_maybe_translate_encoding(x, n), &nprot);
 
   dictionary d;
   dict_init(&d, x);
   PROTECT_DICT(&d, &nprot);
 
-  R_len_t n = vec_size(x);
   for (int i = 0; i < n; ++i) {
     uint32_t hash = dict_hash_scalar(&d, i);
 
@@ -194,13 +200,16 @@ SEXP vctrs_n_distinct(SEXP x) {
 
 SEXP vctrs_id(SEXP x) {
   int nprot = 0;
+
+  R_len_t n = vec_size(x);
+
   x = PROTECT_N(vec_proxy_equal(x), &nprot);
+  x = PROTECT_N(obj_maybe_translate_encoding(x, n), &nprot);
 
   dictionary d;
   dict_init(&d, x);
   PROTECT_DICT(&d, &nprot);
 
-  R_len_t n = vec_size(x);
   SEXP out = PROTECT_N(Rf_allocVector(INTSXP, n), &nprot);
   int* p_out = INTEGER(out);
 
@@ -322,6 +331,10 @@ SEXP vctrs_in(SEXP needles, SEXP haystack) {
 SEXP vctrs_count(SEXP x) {
   int nprot = 0;
 
+  R_len_t n = vec_size(x);
+
+  x = PROTECT_N(obj_maybe_translate_encoding(x, n), &nprot);
+
   dictionary d;
   dict_init(&d, x);
   PROTECT_DICT(&d, &nprot);
@@ -329,7 +342,6 @@ SEXP vctrs_count(SEXP x) {
   SEXP val = PROTECT_N(Rf_allocVector(INTSXP, d.size), &nprot);
   int* p_val = INTEGER(val);
 
-  R_len_t n = vec_size(x);
   for (int i = 0; i < n; ++i) {
     int32_t hash = dict_hash_scalar(&d, i);
 
@@ -371,7 +383,10 @@ SEXP vctrs_count(SEXP x) {
 SEXP vctrs_duplicated(SEXP x) {
   int nprot = 0;
 
+  R_len_t n = vec_size(x);
+
   x = PROTECT_N(vec_proxy_equal(x), &nprot);
+  x = PROTECT_N(obj_maybe_translate_encoding(x, n), &nprot);
 
   dictionary d;
   dict_init(&d, x);
@@ -380,7 +395,6 @@ SEXP vctrs_duplicated(SEXP x) {
   SEXP val = PROTECT_N(Rf_allocVector(INTSXP, d.size), &nprot);
   int* p_val = INTEGER(val);
 
-  R_len_t n = vec_size(x);
   for (int i = 0; i < n; ++i) {
     int32_t hash = dict_hash_scalar(&d, i);
 
@@ -407,7 +421,10 @@ SEXP vctrs_duplicated(SEXP x) {
 SEXP vctrs_split_id(SEXP x) {
   int nprot = 0;
 
+  R_len_t n = vec_size(x);
+
   SEXP proxy = PROTECT_N(vec_proxy_equal(x), &nprot);
+  proxy = PROTECT_N(obj_maybe_translate_encoding(proxy, n), &nprot);
 
   dictionary d;
   dict_init(&d, proxy);
@@ -420,8 +437,6 @@ SEXP vctrs_split_id(SEXP x) {
   // Collects the counts of each key
   SEXP count = PROTECT_N(Rf_allocVector(INTSXP, d.size), &nprot);
   int* p_count = INTEGER(count);
-
-  R_len_t n = vec_size(proxy);
 
   // Tells us which element of the index list x[i] goes in
   SEXP out_pos = PROTECT_N(Rf_allocVector(INTSXP, n), &nprot);
