@@ -70,54 +70,30 @@ test_that("data frames must have same size and columns", {
 })
 
 test_that("can determine equality of strings with different encodings (#553)", {
-  utf8 <- "\u00B0C"
-
-  unknown <- utf8
-  Encoding(unknown) <- "unknown"
-
-  latin1 <- iconv(utf8, "UTF-8", "latin1")
-
-  expect_true(vec_equal(utf8, unknown))
-  expect_equal(vec_equal(utf8, unknown), utf8 == unknown)
-
-  expect_true(vec_equal(utf8, latin1))
-  expect_equal(vec_equal(utf8, latin1), utf8 == latin1)
+  for (x_encoding in encodings()) {
+    for (y_encoding in encodings()) {
+      expect_equal(vec_equal(x_encoding, y_encoding), TRUE)
+      expect_equal(vec_equal(x_encoding, y_encoding), x_encoding == y_encoding)
+    }
+  }
 })
 
 test_that("equality can be determined when strings have identical encodings", {
-  x <- "fa\xE7ile"
+  encs <- c(encodings(), list(bytes = encoding_bytes()))
 
-  # unknown
-  expect_true(vec_equal(x, x))
-  expect_equal(vec_equal(x, x), x == x)
-
-  Encoding(x) <- "latin1"
-  expect_true(vec_equal(x, x))
-  expect_equal(vec_equal(x, x), x == x)
-
-  x <- iconv(x, "latin1", "UTF-8")
-  expect_true(vec_equal(x, x))
-  expect_equal(vec_equal(x, x), x == x)
-
-  Encoding(x) <- "bytes"
-  expect_true(vec_equal(x, x))
-  expect_equal(vec_equal(x, x), x == x)
+  for (enc in encs) {
+    expect_true(vec_equal(enc, enc))
+    expect_equal(vec_equal(enc, enc), enc == enc)
+  }
 })
 
 test_that("equality is known to fail when comparing bytes to other encodings", {
-  utf8 <- "\u00B0C"
+  error <- "translating strings with \"bytes\" encoding"
 
-  bytes <- utf8
-  Encoding(bytes) <- "bytes"
-
-  unknown <- utf8
-  Encoding(unknown) <- "unknown"
-
-  latin1 <- iconv(utf8, "UTF-8", "latin1")
-
-  expect_error(vec_equal(bytes, utf8), '"bytes" encoding is not allowed')
-  expect_error(vec_equal(bytes, unknown), '"bytes" encoding is not allowed')
-  expect_error(vec_equal(bytes, latin1), '"bytes" encoding is not allowed')
+  for (enc in encodings()) {
+    expect_error(vec_equal(encoding_bytes(), enc), error)
+    expect_error(vec_equal(enc, encoding_bytes()), error)
+  }
 })
 
 # object ------------------------------------------------------------------
