@@ -2,6 +2,8 @@
 #include "utils.h"
 
 // -----------------------------------------------------------------------------
+// Helpers for determining if UTF-8 translation is required for character
+// vectors
 
 // UTF-8 translation will be successful in these cases:
 // - (utf8 + latin1), (unknown + utf8), (unknown + latin1)
@@ -71,8 +73,9 @@ static bool chr_translation_required2(SEXP x, R_len_t x_size, SEXP y, R_len_t y_
 
 // -----------------------------------------------------------------------------
 // Utilities to check if any character elements of a list have a
-// "known" encoding. This implies that we have to convert all character
-// elements of the list to UTF-8.
+// "known" encoding (UTF-8 or Latin1). This implies that we have to convert
+// all character elements of the list to UTF-8. Only `list_any_known_encoding()`
+// is ever called directly.
 
 static bool chr_any_known_encoding(SEXP x, R_len_t size);
 static bool list_any_known_encoding(SEXP x, R_len_t size);
@@ -130,7 +133,7 @@ static bool df_any_known_encoding(SEXP x, R_len_t size) {
 }
 
 // -----------------------------------------------------------------------------
-// Utilities to recursively translate all character vector elements to UTF-8.
+// Utilities to translate all character vector elements of an object to UTF-8.
 // This does not check if a translation is required.
 
 static SEXP chr_translate_encoding(SEXP x, R_len_t size);
@@ -205,9 +208,10 @@ static SEXP df_translate_encoding(SEXP x, R_len_t size) {
 }
 
 // -----------------------------------------------------------------------------
-// Utility for maybe translating encodings.
+// Utilities for translating encodings within one vector, if required.
+
 // - If `x` is a character vector requiring translation, translate it.
-// - If `x` is a list where any element is a "known" encoding, force a
+// - If `x` is a list where any element has a "known" encoding, force a
 //   translation of every element in the list.
 // - If `x` is a data frame, translate the columns one by one, independently.
 
@@ -250,6 +254,8 @@ static SEXP df_maybe_translate_encoding(SEXP x, R_len_t size) {
 }
 
 // -----------------------------------------------------------------------------
+// Utilities for translating encodings of `x` and `y` relative to each other,
+// if required.
 
 static SEXP translate_none(SEXP x, SEXP y);
 static SEXP chr_maybe_translate_encoding2(SEXP x, R_len_t x_size, SEXP y, R_len_t y_size);
