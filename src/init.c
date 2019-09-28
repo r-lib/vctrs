@@ -72,6 +72,8 @@ extern SEXP vctrs_df_size(SEXP);
 extern SEXP vctrs_as_df_col(SEXP, SEXP);
 extern SEXP vctrs_apply_name_spec(SEXP, SEXP, SEXP, SEXP);
 extern SEXP vctrs_proxy_recursive(SEXP, SEXP);
+extern SEXP vctrs_maybe_translate_encoding(SEXP);
+extern SEXP vctrs_maybe_translate_encoding2(SEXP, SEXP);
 
 // Very experimental
 // Available in the API header
@@ -155,6 +157,8 @@ static const R_CallMethodDef CallEntries[] = {
   {"vctrs_as_df_col",                  (DL_FUNC) &vctrs_as_df_col, 2},
   {"vctrs_apply_name_spec",            (DL_FUNC) &vctrs_apply_name_spec, 4},
   {"vctrs_proxy_recursive",            (DL_FUNC) &vctrs_proxy_recursive, 2},
+  {"vctrs_maybe_translate_encoding",   (DL_FUNC) &vctrs_maybe_translate_encoding, 1},
+  {"vctrs_maybe_translate_encoding2",  (DL_FUNC) &vctrs_maybe_translate_encoding2, 2},
   {NULL, NULL, 0}
 };
 

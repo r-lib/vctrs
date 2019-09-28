@@ -347,3 +347,30 @@ static SEXP df_maybe_translate_encoding2(SEXP x, R_len_t x_size, SEXP y, R_len_t
   UNPROTECT(3);
   return out;
 }
+
+// -----------------------------------------------------------------------------
+
+// [[ register() ]]
+SEXP vctrs_maybe_translate_encoding(SEXP x) {
+  return obj_maybe_translate_encoding(x, vec_size(x));
+}
+
+// [[ register() ]]
+SEXP vctrs_maybe_translate_encoding2(SEXP x, SEXP y) {
+  struct vctrs_arg args_x = new_wrapper_arg(NULL, "x");
+  struct vctrs_arg args_y = new_wrapper_arg(NULL, "y");
+
+  int _;
+
+  SEXP type = PROTECT(vec_type2(x, y, &args_x, &args_y, &_));
+
+  x = PROTECT(vec_cast(x, type, args_empty, args_empty));
+  y = PROTECT(vec_cast(y, type, args_empty, args_empty));
+
+  x = PROTECT(vec_proxy_equal(x));
+  y = PROTECT(vec_proxy_equal(y));
+
+  UNPROTECT(5);
+  return obj_maybe_translate_encoding2(x, vec_size(x), y, vec_size(y));
+}
+
