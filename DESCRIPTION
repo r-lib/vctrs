@@ -42,7 +42,8 @@ Suggests:
     pkgdown,
     rmarkdown,
     testthat,
-    tibble
+    tibble,
+    xml2
 VignetteBuilder: 
     knitr
 Encoding: UTF-8

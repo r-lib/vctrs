@@ -11,3 +11,4 @@
 ^\.Rproj\.user$
 ^TAGS$
 ^revdep$
+^azure-pipelines\.yml$
