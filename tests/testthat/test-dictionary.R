@@ -108,37 +108,17 @@ test_that("unique functions take the equality proxy (#375)", {
   expect_identical(vec_match(tuple(2, 100), x), 2L)
 })
 
-test_that("vec_unique() can detect uniqueness with the same string in various encodings (#553)", {
-  x <- unlist(encodings(), use.names = FALSE)
-
-  expect_equal(vec_unique(x), x[1])
-  expect_equal(vec_unique(x), unique(x))
+test_that("vec_unique() works with different encodings", {
+  expect_equal(vec_unique(encodings()), encodings()[1])
 })
 
 test_that("vec_unique() returns differently encoded strings in the order they appear", {
-  enc <- encodings()
-  x <- c(enc$unknown, enc$utf8)
-  y <- c(enc$utf8, enc$unknown)
+  encs <- encodings()
+  x <- c(encs$unknown, encs$utf8)
+  y <- c(encs$utf8, encs$unknown)
 
-  expect_equal(Encoding(vec_unique(x)), "unknown")
-  expect_equal(Encoding(vec_unique(y)), "UTF-8")
-})
-
-test_that("vec_unique() can determine uniqueness when the encoding is the same", {
-  encs <- c(encodings(), list(bytes = encoding_bytes()))
-
-  for (enc in encs) {
-    x <- c(enc, enc)
-    expect_equal(vec_unique(x), x[1])
-    expect_equal(vec_unique(x), unique(x))
-  }
-})
-
-test_that("vec_unique() fails purposefully with bytes strings and other encodings", {
-  for (enc in encodings()) {
-    x <- c(encoding_bytes(), enc)
-    expect_error(vec_unique(x), "translating strings with \"bytes\" encoding")
-  }
+  expect_equal_encoding(vec_unique(x), encs$unknown)
+  expect_equal_encoding(vec_unique(y), encs$utf8)
 })
 
 # matching ----------------------------------------------------------------
@@ -189,122 +169,9 @@ test_that("can take the unique loc of 1d arrays (#461)", {
   expect_silent(expect_identical(vctrs::vec_unique_loc(y), int(1, 3, 5)))
 })
 
-test_that("can use matching functions with various encoding combinations", {
-  encs <- encodings()
-
-  for (x_enc in encs) {
-    for (y_enc in encs) {
-      expect_equal(vec_match(x_enc, y_enc), 1L)
-      expect_equal(vec_match(x_enc, y_enc), match(x_enc, y_enc))
-
-      expect_equal(vec_in(x_enc, y_enc), TRUE)
-      expect_equal(vec_in(x_enc, y_enc), x_enc %in% y_enc)
-    }
-  }
-})
-
-test_that("can use matching functions with strings containing only bytes", {
-  bytes <- encoding_bytes()
-
-  expect_equal(vec_match(bytes, bytes), 1L)
-  expect_equal(vec_match(bytes, bytes), match(bytes, bytes))
-
-  expect_equal(vec_in(bytes, bytes), TRUE)
-  expect_equal(vec_in(bytes, bytes), bytes %in% bytes)
-})
-
-test_that("cannot use matching functions when mixing bytes with other encodings", {
-  encs <- encodings()
-  bytes <- encoding_bytes()
-
-  error <- "translating strings with \"bytes\" encoding"
-
-  for (enc in encs) {
-    expect_error(vec_match(enc, bytes), error)
-    expect_error(vec_match(bytes, enc), error)
-
-    expect_error(vec_in(enc, bytes), error)
-    expect_error(vec_in(bytes, enc), error)
-  }
-})
-
-test_that("can use matching functions when one string has multiple encodings", {
-  encs <- encodings()
-
-  utf8_unknown <- c(encs$utf8, encs$unknown)
-
-  expect_equal(vec_match(utf8_unknown, encs$latin1), c(1L, 1L))
-  expect_equal(vec_match(utf8_unknown, encs$latin1), match(utf8_unknown, encs$latin1))
-})
-
-test_that("can use matching functions with lists of characters with different encodings", {
-  encs <- encodings()
-
-  lst_ascii <- list("ascii")
-  lst_latin1 <- list(encs$latin1)
-  lst_ascii_latin1 <- c(lst_ascii, lst_latin1)
-  lst_utf8 <- list(encs$utf8)
-
-  lst_of_lst_utf8 <- list(lst_utf8)
-  lst_of_lst_ascii_latin1 <- list(lst_ascii, lst_latin1)
-
-  expect_equal(vec_match(lst_ascii, lst_ascii), 1L)
-  expect_equal(vec_in(lst_ascii, lst_ascii), TRUE)
-
-  expect_equal(vec_match(lst_utf8, lst_ascii_latin1), 2L)
-  expect_equal(vec_in(lst_utf8, lst_ascii_latin1), TRUE)
-
-  expect_equal(vec_match(lst_utf8, lst_ascii_latin1), match(lst_utf8, lst_ascii_latin1))
-  expect_equal(vec_in(lst_utf8, lst_ascii_latin1), lst_utf8 %in% lst_ascii_latin1)
-
-  expect_equal(vec_match(lst_of_lst_utf8, lst_of_lst_ascii_latin1), 2L)
-  expect_equal(vec_in(lst_of_lst_utf8, lst_of_lst_ascii_latin1), TRUE)
-
-  expect_equal(vec_match(lst_of_lst_utf8, lst_of_lst_ascii_latin1), match(lst_of_lst_utf8, lst_of_lst_ascii_latin1))
-  expect_equal(vec_in(lst_of_lst_utf8, lst_of_lst_ascii_latin1), lst_of_lst_utf8 %in% lst_of_lst_ascii_latin1)
-})
-
-test_that("can use matching functions with data frames with string columns", {
-  encs <- encodings()
-
-  df_utf8 <- data_frame(x = encs$utf8, y = 2)
-  df_unknown <- data_frame(x = rep(encs$unknown, 2), y = c(1, 2))
-
-  expect_equal(vec_match(df_unknown, df_unknown), 1:2)
-  expect_equal(vec_in(df_unknown, df_unknown), c(TRUE, TRUE))
-
-  expect_equal(vec_match(df_utf8, df_unknown), 2L)
-  expect_equal(vec_in(df_utf8, df_unknown), TRUE)
-})
-
-test_that("can use matching functions with data frame subclasses with string columns", {
-  encs <- encodings()
-
-  df_utf8 <- new_data_frame(list(x = encs$utf8, y = 2), class = "subclass")
-  df_unknown <- new_data_frame(list(x = rep(encs$unknown, 2), y = c(1, 2)), class = "subclass")
-
-  expect_equal(vec_match(df_unknown, df_unknown), 1:2)
-  expect_equal(vec_in(df_unknown, df_unknown), c(TRUE, TRUE))
-
-  expect_equal(vec_match(df_utf8, df_unknown), 2L)
-  expect_equal(vec_in(df_utf8, df_unknown), TRUE)
-})
-
-test_that("can use matching functions with lists of data frames with string columns", {
-  encs <- encodings()
-
-  df_utf8 <- data_frame(x = encs$utf8, y = 2)
-  df_unknown_1 <- data_frame(x = encs$unknown, y = 1)
-  df_unknown_2 <- data_frame(x = encs$unknown, y = 2)
-
-  lst_of_df_utf8 <- list(df_utf8)
-  lst_of_df_unknown <- list(df_unknown_1, df_unknown_2)
-
-  expect_equal(vec_match(lst_of_df_unknown, lst_of_df_unknown), 1:2)
-  expect_equal(vec_in(lst_of_df_unknown, lst_of_df_unknown), c(TRUE, TRUE))
-
-  expect_equal(vec_match(lst_of_df_utf8, lst_of_df_unknown), 2L)
-  expect_equal(vec_in(lst_of_df_utf8, lst_of_df_unknown), TRUE)
+test_that("matching functions work with different encodings", {
+  expect_equal(vec_match(encodings(), encodings()[1]), rep(1, 3))
+  expect_equal(vec_in(encodings(), encodings()[1]), rep(TRUE, 3))
 })
 
 # splits ------------------------------------------------------------------
