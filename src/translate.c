@@ -157,7 +157,7 @@ static SEXP chr_translate_encoding(SEXP x, R_len_t size) {
 
   const SEXP* p_x = STRING_PTR_RO(x);
 
-  SEXP out = PROTECT(Rf_allocVector(STRSXP, size));
+  SEXP out = PROTECT(r_maybe_duplicate(x));
   SEXP* p_out = STRING_PTR(out);
 
   SEXP chr;

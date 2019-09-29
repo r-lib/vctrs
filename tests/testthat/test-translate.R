@@ -34,6 +34,15 @@ test_that("translation fails purposefully when mixing with bytes with other enco
   }
 })
 
+test_that("attributes are kept on translation (#599)", {
+  encs <- encodings()
+
+  x <- c(encs$utf8, encs$latin1)
+  x <- structure(x, names = c("a", "b"), extra = 1)
+
+  expect_equal(attributes(obj_maybe_translate_encoding(x)), attributes(x))
+})
+
 # ------------------------------------------------------------------------------
 # obj_maybe_translate_encoding2()
 
