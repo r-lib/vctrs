@@ -30,6 +30,10 @@ test_that("vec_count works for zero-length input", {
   expect_equal(x, data.frame(key = integer(), count = integer()))
 })
 
+test_that("vec_count works with different encodings", {
+  x <- vec_count(encodings())
+  expect_equal(x, new_data_frame(list(key = encodings()[1], count = 3L)))
+})
 
 # duplicates and uniques --------------------------------------------------
 
@@ -108,8 +112,20 @@ test_that("unique functions take the equality proxy (#375)", {
   expect_identical(vec_match(tuple(2, 100), x), 2L)
 })
 
-test_that("vec_unique() works with different encodings", {
-  expect_equal(vec_unique(encodings()), encodings()[1])
+test_that("unique functions work with different encodings", {
+  encs <- encodings()
+
+  expect_equal(vec_unique(encs), encs[1])
+  expect_equal(vec_unique_count(encs), 1L)
+  expect_equal(vec_unique_loc(encs), 1L)
+})
+
+test_that("duplicate functions works with different encodings", {
+  encs <- encodings()
+
+  expect_equal(vec_duplicate_id(encs), rep(1, 3))
+  expect_equal(vec_duplicate_detect(encs), rep(TRUE, 3))
+  expect_equal(vec_duplicate_any(encs), TRUE)
 })
 
 test_that("vec_unique() returns differently encoded strings in the order they appear", {
@@ -170,8 +186,10 @@ test_that("can take the unique loc of 1d arrays (#461)", {
 })
 
 test_that("matching functions work with different encodings", {
-  expect_equal(vec_match(encodings(), encodings()[1]), rep(1, 3))
-  expect_equal(vec_in(encodings(), encodings()[1]), rep(TRUE, 3))
+  encs <- encodings()
+
+  expect_equal(vec_match(encs, encs[1]), rep(1, 3))
+  expect_equal(vec_in(encs, encs[1]), rep(TRUE, 3))
 })
 
 # splits ------------------------------------------------------------------
@@ -207,6 +225,11 @@ test_that("split takes the equality proxy (#375)", {
   scoped_comparable_tuple()
   x <- tuple(c(1, 2, 1), 1:3)
   expect_identical(nrow(vec_split(1:3, x)), 2L)
+})
+
+test_that("split works with different encodings", {
+  encs <- encodings()
+  expect_identical(nrow(vec_split(1:3, encs)), 1L)
 })
 
 # split id ---------------------------------------------------------------
@@ -263,4 +286,9 @@ test_that("vec_split_id takes the equality proxy", {
   x <- as.POSIXlt(new_datetime(c(1, 2, 1)))
   expect_equal(vec_split_id(x)$key, x[1:2])
   expect_equal(vec_split_id(x)$id, list_of(c(1L, 3L), 2L))
+})
+
+test_that("vec_split_id works with different encodings", {
+  encs <- encodings()
+  expect_identical(nrow(vec_split_id(encs)), 1L)
 })
