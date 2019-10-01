@@ -650,8 +650,8 @@ test_that("vec_as_position() returns a position", {
 })
 
 test_that("vec_as_position() requires integer or character inputs", {
-  expect_error(vec_as_position(TRUE, 10L), class = "vctrs_error_index_position_bad_type")
-  expect_error(vec_as_position(mtcars, 10L), class = "vctrs_error_index_position_bad_type")
+  expect_error(vec_as_position(TRUE, 10L), class = "vctrs_error_position_bad_type")
+  expect_error(vec_as_position(mtcars, 10L), class = "vctrs_error_position_bad_type")
   verify_output(test_path("out", "error-position-type.txt"), {
     vec_as_position(TRUE, 10L)
     vec_as_position(mtcars, 10L)
@@ -659,8 +659,8 @@ test_that("vec_as_position() requires integer or character inputs", {
 })
 
 test_that("vec_as_position() requires length 1 inputs", {
-  expect_error(vec_as_position(1:2, 2L), class = "vctrs_error_index_position_bad_size")
-  expect_error(vec_as_position(c("foo", "bar"), 2L, c("foo", "bar")), class = "vctrs_error_index_position_bad_size")
+  expect_error(vec_as_position(1:2, 2L), class = "vctrs_error_position_bad_type")
+  expect_error(vec_as_position(c("foo", "bar"), 2L, c("foo", "bar")), class = "vctrs_error_position_bad_type")
   verify_output(test_path("out", "error-position-size.txt"), {
     vec_as_position(1:2, 2L)
     vec_as_position(mtcars, 10L)
@@ -668,8 +668,8 @@ test_that("vec_as_position() requires length 1 inputs", {
 })
 
 test_that("vec_as_position() requires positive integers", {
-  expect_error(vec_as_position(0, 2L), class = "vctrs_error_index_position_bad_sign")
-  expect_error(vec_as_position(-1, 2L), class = "vctrs_error_index_position_bad_sign")
+  expect_error(vec_as_position(0, 2L), class = "vctrs_error_position_bad_value")
+  expect_error(vec_as_position(-1, 2L), class = "vctrs_error_position_bad_value")
   verify_output(test_path("out", "error-position-sign.txt"), {
     vec_as_position(0, 2L)
     vec_as_position(-1, 2L)

@@ -188,65 +188,69 @@ vec_as_position <- function(i, n, names = NULL) {
   }
 
   type <- typeof(i)
-  if (!type %in% c("integer", "character")) {
-    stop_position_incompatible_type(i)
-  }
-  if (length(i) != 1L) {
-    stop_position_incompatible_size(i)
+  if (!type %in% c("integer", "character") || length(i) != 1L) {
+    stop_position_bad_type(i)
   }
   if (type == "integer" && i < 1L) {
-    stop_position_incompatible_sign(i)
+    stop_position_bad_value(i)
   }
 
   vec_as_index(i, n, names = names)
 }
 
-stop_position_incompatible_type <- function(i) {
+stop_position_bad_type <- function(i) {
   # Should we derive from `stop_incompatible_type()` once we have
   # union types? The index is incompatible with `union<chr(), int()>`.
-  abort("", "vctrs_error_index_position_bad_type", i = i)
+  abort("", "vctrs_error_position_bad_type", i = i)
 }
-stop_position_incompatible_size <- function(i) {
-  abort("", "vctrs_error_index_position_bad_size", i = i)
-}
-stop_position_incompatible_sign <- function(i) {
-  abort("", "vctrs_error_index_position_bad_sign", i = i)
+stop_position_bad_value <- function(i) {
+  abort("", "vctrs_error_position_bad_value", i = i)
 }
 
 #' @export
-conditionMessage.vctrs_error_index_position_bad_type <- function(c) {
+conditionMessage.vctrs_error_position_bad_type <- function(c) {
   if (!nzchar(c$message)) {
-    type <- vec_ptype_full(c$i)
-    c$message <- glue_lines(
-      "Must extract with a single number or a name.",
-      "`i` has the wrong type `{type}`."
-    )
+    i <- c$i
+
+    if (!typeof(i) %in% c("integer", "character")) {
+      type <- vec_ptype_full(c$i)
+      c$message <- glue_lines(
+        "Must extract with a single number or a name.",
+        "`i` has the wrong type `{type}`."
+      )
+      return(NextMethod())
+    }
+
+    if (length(i) != 1L) {
+      size <- length(c$i)
+      c$message <- glue_lines(
+        "Must extract with a single number or a name.",
+        "`i` has the wrong size `{size}`"
+      )
+      return(NextMethod())
+    }
   }
+
   NextMethod()
 }
 #' @export
-conditionMessage.vctrs_error_index_position_bad_size <- function(c) {
+conditionMessage.vctrs_error_position_bad_value <- function(c) {
   if (!nzchar(c$message)) {
-    size <- length(c$i)
-    c$message <- glue_lines(
-      "Must extract with a single number or a name.",
-      "`i` has the wrong size `{size}`"
-    )
+    i <- c$i
+
+    if (i < 1L) {
+      c$message <- glue_lines(
+        "Must extract with a positive number.",
+        if (i == 0L) {
+          "`i` can't be zero."
+        } else {
+          "`i` has the wrong sign: {i}."
+        }
+      )
+      return(NextMethod())
+    }
   }
-  NextMethod()
-}
-#' @export
-conditionMessage.vctrs_error_index_position_bad_sign <- function(c) {
-  if (!nzchar(c$message)) {
-    c$message <- glue_lines(
-      "Must extract with a positive number.",
-      if (c$i == 0L) {
-        "`i` can't be zero."
-      } else {
-        "`i` has the wrong sign: {c$i}."
-      }
-    )
-  }
+
   NextMethod()
 }
 
