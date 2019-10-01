@@ -1,6 +1,9 @@
 
 # vctrs 0.2.0.9000
 
+* New `stop_index_oob_position()` and `stop_index_oob_name()`
+  functions to throw out-of-bounds errors.
+
 * New `vec_split_id()` for locating unique groups in a vector. This 
   helps power `vec_split()` by returning the unique values and their 
   locations in the original vector (#514).

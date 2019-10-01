@@ -418,6 +418,22 @@ stop_names_must_be_unique <- function(locations) {
   )
 }
 
+#' Out-of-bounds errors
+#'
+#' @description
+#'
+#' * `stop_index_oob_position()` throws errors of class
+#'   `vctrs_error_index_oob_position` containing fields `i` and
+#'   `size`.
+#'
+#' * `stop_index_oob_name()` throws errors of class
+#'   `vctrs_error_index_oob_name` containing fields `i` and `names`.
+#'
+#' @param i For `stop_index_oob_position()`, a number. For
+#'   `stop_index_oob_name()`, a name.
+#' @param size The length of the vector to subset from.
+#' @inheritParams rlang::abort
+#' @export
 stop_index_oob_position <- function(i, size, ..., .subclass = NULL) {
   abort(
     "",
@@ -427,6 +443,9 @@ stop_index_oob_position <- function(i, size, ..., .subclass = NULL) {
     ...
   )
 }
+#' @rdname stop_index_oob_position
+#' @param names The names of the vector to subset from.
+#' @export
 stop_index_oob_name <- function(i, names, ..., .subclass = NULL) {
   abort(
     "",
