@@ -418,6 +418,97 @@ stop_names_must_be_unique <- function(locations) {
   )
 }
 
+#' Out-of-bounds errors
+#'
+#' @description
+#'
+#' * `stop_index_oob_positions()` throws errors of class
+#'   `vctrs_error_index_oob_positions` containing fields `i` and
+#'   `size`.
+#'
+#' * `stop_index_oob_names()` throws errors of class
+#'   `vctrs_error_index_oob_names` containing fields `i` and `names`.
+#'
+#' @param i For `stop_index_oob_positions()`, a numeric vector of
+#'   positions. For `stop_index_oob_names()`, a character vector of
+#'   names. `i` may contain both out-of-bounds and within-bounds
+#'   elements, only the former are used to construct the error
+#'   message.
+#' @param size The length of the vector to subset from.
+#' @inheritParams rlang::abort
+#' @export
+stop_index_oob_positions <- function(i, size, ..., .subclass = NULL) {
+  abort(
+    "",
+    .subclass = c(.subclass, "vctrs_error_index_oob_positions"),
+    i = i,
+    size = size,
+    ...
+  )
+}
+#' @rdname stop_index_oob_positions
+#' @param names The names of the vector to subset from.
+#' @export
+stop_index_oob_names <- function(i, names, ..., .subclass = NULL) {
+  abort(
+    "",
+    .subclass = c(.subclass, "vctrs_error_index_oob_names"),
+    i = i,
+    names = names,
+    ...
+  )
+}
+#' @export
+conditionMessage.vctrs_error_index_oob_positions <- function(c) {
+  if (!nzchar(c$message)) {
+    i <- c$i
+
+    # In case of negative indexing
+    i <- abs(i)
+
+    oob <- i[i > c$size]
+    oob_enum <- enumerate(oob)
+
+    c$message <- glue_lines(
+      "Must index existing elements.",
+      "* There are only {c$size} elements.",
+      ngettext(
+        length(oob),
+        "* Can't subset position {oob_enum}.",
+        "* Can't subset positions {oob_enum}."
+      )
+    )
+  }
+
+  NextMethod()
+}
+#' @export
+conditionMessage.vctrs_error_index_oob_names <- function(c) {
+  if (!nzchar(c$message)) {
+    oob <- c$i[!c$i %in% c$names]
+    oob_enum <- enumerate(glue::backtick(oob))
+
+    c$message <- glue_lines(
+      "Must index existing elements.",
+      ngettext(
+        length(oob),
+        "* Can't subset element with unknown name {oob_enum}.",
+        "* Can't subset elements with unknown names {oob_enum}."
+      )
+    )
+  }
+
+  NextMethod()
+}
+
+enumerate <- function(x, max = 5L) {
+  if (length(x) > max) {
+    # Last `.` is part of the error message
+    paste0(glue::glue_collapse(x[seq2(1, max)], ", "), ", ..")
+  } else {
+    glue::glue_collapse(x, ", ", last = " and ")
+  }
+}
 
 # Helpers -----------------------------------------------------------------
 

@@ -251,6 +251,7 @@ extern SEXP syms_tilde;
 extern SEXP syms_dot_environment;
 extern SEXP syms_ptype;
 extern SEXP syms_missing;
+extern SEXP syms_size;
 
 #define syms_names R_NamesSymbol
 

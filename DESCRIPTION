@@ -44,6 +44,9 @@ Suggests:
     testthat,
     tibble,
     xml2
+Remotes:
+    r-lib/rlang,
+    r-lib/testthat
 VignetteBuilder: 
     knitr
 Encoding: UTF-8

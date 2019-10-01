@@ -994,6 +994,7 @@ SEXP syms_tilde = NULL;
 SEXP syms_dot_environment = NULL;
 SEXP syms_ptype = NULL;
 SEXP syms_missing = NULL;
+SEXP syms_size = NULL;
 
 SEXP fns_bracket = NULL;
 SEXP fns_quote = NULL;
@@ -1155,6 +1156,7 @@ void vctrs_init_utils(SEXP ns) {
   syms_dot_environment = Rf_install(".Environment");
   syms_ptype = Rf_install("ptype");
   syms_missing = R_MissingArg;
+  syms_size = Rf_install("size");
 
   fns_bracket = Rf_findVar(syms_bracket, R_BaseEnv);
   fns_quote = Rf_findVar(Rf_install("quote"), R_BaseEnv);
