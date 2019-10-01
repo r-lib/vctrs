@@ -20,20 +20,17 @@ static SEXP slice_rownames(SEXP names, SEXP index);
 SEXP vec_slice_impl(SEXP x, SEXP index);
 
 
-static void stop_index_oob_position(R_len_t i, R_len_t size) {
-  SEXP i_obj = PROTECT(r_int(i));
+static void stop_index_oob_position(SEXP i, R_len_t size) {
   SEXP size_obj = PROTECT(r_int(size));
-
   vctrs_eval_mask2(Rf_install("stop_index_oob_position"),
-                   syms_i, i_obj,
+                   syms_i, i,
                    syms_size, size_obj,
                    vctrs_ns_env);
 
-  UNPROTECT(2);
+  UNPROTECT(1);
   never_reached("stop_index_oob_position");
 }
 static void stop_index_oob_name(SEXP i, SEXP names) {
-  i = PROTECT(Rf_ScalarString(i));
   vctrs_eval_mask2(Rf_install("stop_index_oob_name"),
                    syms_i, i,
                    syms_names, names,
@@ -432,7 +429,7 @@ static SEXP int_as_index(SEXP index, R_len_t n) {
       ++n_zero;
     }
     if (elt > n) {
-      stop_index_oob_position(elt, n);
+      stop_index_oob_position(index, n);
     }
   }
 
@@ -471,7 +468,7 @@ static SEXP int_invert_index(SEXP index, R_len_t n) {
 
     j = -j;
     if (j > n) {
-      stop_index_oob_position(j, n);
+      stop_index_oob_position(index, n);
     }
 
     sel_data[j - 1] = 0;
@@ -566,7 +563,7 @@ static SEXP chr_as_index(SEXP i, SEXP names) {
 
   for (R_len_t k = 0; k < n; ++k) {
     if (p[k] == NA_INTEGER && ip[k] != NA_STRING) {
-      stop_index_oob_name(STRING_ELT(i, k), names);
+      stop_index_oob_name(i, names);
     }
   }
 

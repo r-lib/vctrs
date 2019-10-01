@@ -61,22 +61,21 @@ test_that("can subset with a recycled FALSE", {
 })
 
 test_that("can't index beyond the end of a vector", {
-  expect_error(
-    vec_slice(1:2, 3L),
-    "Must index an existing element.",
-    class = "vctrs_error_index_oob_position"
-  )
-  expect_error(
-    vec_slice(1:2, -3L),
-    "Must index an existing element.",
-    class = "vctrs_error_index_oob_position"
-  )
+  expect_error(vec_slice(1:2, 3L), class = "vctrs_error_index_oob_position")
+  expect_error(vec_slice(1:2, -3L), class = "vctrs_error_index_oob_position")
 })
 
 test_that("oob error messages are properly constructed", {
   verify_output(test_path("out", "error-index-oob.txt"), {
     vec_slice(1:2, 3L)
     vec_slice(c(bar = 1), "foo")
+
+    "Multiple OOB indices"
+    vec_slice(letters, c(100, 1000))
+    vec_slice(letters, c(1, 100:103, 2, 104:110))
+
+    vec_slice(set_names(letters), c("foo", "bar"))
+    vec_slice(set_names(letters), toupper(letters))
   })
 })
 

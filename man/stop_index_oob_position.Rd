@@ -10,8 +10,11 @@ stop_index_oob_position(i, size, ..., .subclass = NULL)
 stop_index_oob_name(i, names, ..., .subclass = NULL)
 }
 \arguments{
-\item{i}{For \code{stop_index_oob_position()}, a number. For
-\code{stop_index_oob_name()}, a name.}
+\item{i}{For \code{stop_index_oob_position()}, a numeric vector of
+positions. For \code{stop_index_oob_name()}, a character vector of
+names. \code{i} may contain both out-of-bounds and within-bounds
+elements, only the former are used to construct the error
+message.}
 
 \item{size}{The length of the vector to subset from.}
 

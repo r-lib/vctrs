@@ -1,7 +1,22 @@
 > vec_slice(1:2, 3L)
-Error: Must index an existing element.
+Error: Must index existing elements.
 * There are only 2 elements.
 * Can't subset position 3.
 > vec_slice(c(bar = 1), "foo")
-Error: Must index an existing element.
+Error: Must index existing elements.
 * Can't subset element with unknown name `foo`.
+> # Multiple OOB indices
+> vec_slice(letters, c(100, 1000))
+Error: Must index existing elements.
+* There are only 26 elements.
+* Can't subset positions 100 and 1000.
+> vec_slice(letters, c(1, 100:103, 2, 104:110))
+Error: Must index existing elements.
+* There are only 26 elements.
+* Can't subset positions 100, 101, 102, 103, 104, ...
+> vec_slice(set_names(letters), c("foo", "bar"))
+Error: Must index existing elements.
+* Can't subset elements with unknown names `foo` and `bar`.
+> vec_slice(set_names(letters), toupper(letters))
+Error: Must index existing elements.
+* Can't subset elements with unknown names `A`, `B`, `C`, `D`, `E`, ...
