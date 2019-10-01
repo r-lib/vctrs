@@ -643,3 +643,40 @@ test_that("can subset S3 objects using the fallback method with compact seqs", {
   expect_equal(vec_slice_seq(x, 2L, 2L), vec_slice(x, 3:4))
   expect_equal(vec_slice_seq(x, 3L, 2L, FALSE), vec_slice(x, 4:3))
 })
+
+test_that("vec_as_position() returns a position", {
+  expect_identical(vec_as_position(2, 2L), 2L)
+  expect_identical(vec_as_position("foo", 2L, c("bar", "foo")), 2L)
+})
+
+test_that("vec_as_position() requires integer or character inputs", {
+  expect_error(vec_as_position(TRUE, 10L), class = "vctrs_error_index_position_bad_type")
+  expect_error(vec_as_position(mtcars, 10L), class = "vctrs_error_index_position_bad_type")
+  verify_output(test_path("out", "error-position-type.txt"), {
+    vec_as_position(TRUE, 10L)
+    vec_as_position(mtcars, 10L)
+  })
+})
+
+test_that("vec_as_position() requires length 1 inputs", {
+  expect_error(vec_as_position(1:2, 2L), class = "vctrs_error_index_position_bad_size")
+  expect_error(vec_as_position(c("foo", "bar"), 2L, c("foo", "bar")), class = "vctrs_error_index_position_bad_size")
+  verify_output(test_path("out", "error-position-size.txt"), {
+    vec_as_position(1:2, 2L)
+    vec_as_position(mtcars, 10L)
+  })
+})
+
+test_that("vec_as_position() requires positive integers", {
+  expect_error(vec_as_position(0, 2L), class = "vctrs_error_index_position_bad_sign")
+  expect_error(vec_as_position(-1, 2L), class = "vctrs_error_index_position_bad_sign")
+  verify_output(test_path("out", "error-position-sign.txt"), {
+    vec_as_position(0, 2L)
+    vec_as_position(-1, 2L)
+  })
+})
+
+test_that("vec_as_position() requires existing elements", {
+  expect_error(vec_as_position(10L, 2L), class = "vctrs_error_index_oob_positions")
+  expect_error(vec_as_position("foo", 1L, names = "bar"), class = "vctrs_error_index_oob_names")
+})

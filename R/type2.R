@@ -66,3 +66,14 @@ vec_default_ptype2 <- function(x, y, ..., x_arg = "x", y_arg = "y") {
 vec_typeof2 <- function(x, y) {
   .Call(vctrs_typeof2, x, y)
 }
+
+# https://github.com/r-lib/vctrs/issues/571
+vec_is_coercible <- function(x, to, ..., x_arg = "x", to_arg = "to") {
+  tryCatch(
+    vctrs_error_incompatible_type = function(...) FALSE,
+    {
+      vctrs::vec_ptype2(x, to, ..., x_arg = x_arg, y_arg = to_arg)
+      TRUE
+    }
+  )
+}

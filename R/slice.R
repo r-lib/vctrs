@@ -125,12 +125,19 @@ vec_assign_fallback <- function(x, i, value) {
   x
 }
 
-#' Create an index
+#' Create an index vector or a position
 #'
-#' This provides a means of standardizing common indexing methods such as
-#' integer, character or logical indexing. The input is a vector of one
-#' of these three types, and the output is always an integer vector that can
-#' be used for subsetting.
+#' These helpers provide a means of standardizing common indexing
+#' methods such as integer, character or logical indexing.
+#'
+#' * `vec_as_index()` accepts integer, character, or logical vectors
+#'   of any sizes. The output is always an integer vector of the same
+#'   size that can be used for subsetting. This is suitable for
+#'   indexing with `[` or [vec_slice()].
+#'
+#' * `vec_as_position()` accepts a single number or string. It returns
+#'   a single position as a integer vector of size 1. This is suitable
+#'   for extracting with `[[`.
 #'
 #' @inheritParams vec_slice
 #' @param n A single integer representing the total size of the
@@ -140,8 +147,10 @@ vec_assign_fallback <- function(x, i, value) {
 #'   not used. The default value of `NULL` will result in an error
 #'   if `i` is a character vector.
 #'
-#' @return
-#' An integer vector that can be used as an index in a subsetting operation.
+#' @return `vec_as_index()` returns an integer vector that can be used
+#'   as an index in a subsetting operation. `vec_as_position()`
+#'   returns an integer of size 1 that can be used a scalar index for
+#'   extracting an element.
 #'
 #' @examples
 #' x <- array(1:6, c(2, 3))
@@ -164,6 +173,81 @@ vec_assign_fallback <- function(x, i, value) {
 vec_as_index <- function(i, n, names = NULL) {
   vec_assert(n, integer(), 1L)
   .Call(vctrs_as_index, i, n, names)
+}
+#' @rdname vec_as_index
+#' @export
+vec_as_position <- function(i, n, names = NULL) {
+  if (is.object(i)) {
+    if (vec_is_coercible(i, int())) {
+      i <- vec_cast(i, int())
+    } else if (vec_is_coercible(i, chr())) {
+      i <- vec_cast(i, chr())
+    }
+  } else if (typeof(i) == "double") {
+    i <- vec_coercible_cast(i, int())
+  }
+
+  type <- typeof(i)
+  if (!type %in% c("integer", "character")) {
+    stop_position_incompatible_type(i)
+  }
+  if (length(i) != 1L) {
+    stop_position_incompatible_size(i)
+  }
+  if (type == "integer" && i < 1L) {
+    stop_position_incompatible_sign(i)
+  }
+
+  vec_as_index(i, n, names = names)
+}
+
+stop_position_incompatible_type <- function(i) {
+  # Should we derive from `stop_incompatible_type()` once we have
+  # union types? The index is incompatible with `union<chr(), int()>`.
+  abort("", "vctrs_error_index_position_bad_type", i = i)
+}
+stop_position_incompatible_size <- function(i) {
+  abort("", "vctrs_error_index_position_bad_size", i = i)
+}
+stop_position_incompatible_sign <- function(i) {
+  abort("", "vctrs_error_index_position_bad_sign", i = i)
+}
+
+#' @export
+conditionMessage.vctrs_error_index_position_bad_type <- function(c) {
+  if (!nzchar(c$message)) {
+    type <- vec_ptype_full(c$i)
+    c$message <- glue_lines(
+      "Must extract with a single number or a name.",
+      "`i` has the wrong type `{type}`."
+    )
+  }
+  NextMethod()
+}
+#' @export
+conditionMessage.vctrs_error_index_position_bad_size <- function(c) {
+  if (!nzchar(c$message)) {
+    size <- length(c$i)
+    c$message <- glue_lines(
+      "Must extract with a single number or a name.",
+      "`i` has the wrong size `{size}`"
+    )
+  }
+  NextMethod()
+}
+#' @export
+conditionMessage.vctrs_error_index_position_bad_sign <- function(c) {
+  if (!nzchar(c$message)) {
+    c$message <- glue_lines(
+      "Must extract with a positive number.",
+      if (c$i == 0L) {
+        "`i` can't be zero."
+      } else {
+        "`i` has the wrong sign: {c$i}."
+      }
+    )
+  }
+  NextMethod()
 }
 
 vec_index <- function(x, i, ...) {

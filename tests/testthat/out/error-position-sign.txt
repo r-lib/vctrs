@@ -1,0 +1,6 @@
+> vec_as_position(0, 2L)
+Error: Must extract with a positive number.
+`i` can't be zero.
+> vec_as_position(-1, 2L)
+Error: Must extract with a positive number.
+`i` has the wrong sign: -1.
