@@ -224,3 +224,8 @@ test_that("NULL is not a vector", {
   expect_false(vec_is_vector(NULL))
   expect_false(vec_is(NULL))
 })
+
+test_that("expression() is a vector", {
+  expect_true(vec_is(expression()))
+  expect_true(vec_is(expression(1, 2 + 3)))
+})

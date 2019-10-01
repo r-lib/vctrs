@@ -45,6 +45,11 @@ test_that("size is proxied", {
   expect_size(new_proxy(foobar(list(1, 2, 3))), 3)
 })
 
+test_that("expression() has proper size", {
+  expect_identical(vec_size(expression()), 0L)
+  expect_identical(vec_size(expression(1, 2 + 3)), 0L)
+})
+
 test_that("`NULL` has size zero", {
   expect_identical(vec_size(NULL), 0L)
 })
