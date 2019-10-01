@@ -191,7 +191,7 @@ vec_as_position <- function(i, n, names = NULL) {
   if (!type %in% c("integer", "character") || length(i) != 1L) {
     stop_position_bad_type(i)
   }
-  if (type == "integer" && i < 1L) {
+  if (is.na(i) || (type == "integer" && i < 1L)) {
     stop_position_bad_value(i)
   }
 
@@ -237,6 +237,14 @@ conditionMessage.vctrs_error_position_bad_type <- function(c) {
 conditionMessage.vctrs_error_position_bad_value <- function(c) {
   if (!nzchar(c$message)) {
     i <- c$i
+
+    if (is.na(i)) {
+      c$message <- paste_line(
+        "Must extract with a known position or a known name.",
+        "* `i` can't be `NA`."
+      )
+      return(NextMethod())
+    }
 
     if (i < 1L) {
       c$message <- glue_lines(

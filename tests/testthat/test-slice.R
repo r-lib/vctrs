@@ -680,3 +680,12 @@ test_that("vec_as_position() requires existing elements", {
   expect_error(vec_as_position(10L, 2L), class = "vctrs_error_index_oob_positions")
   expect_error(vec_as_position("foo", 1L, names = "bar"), class = "vctrs_error_index_oob_names")
 })
+
+test_that("vec_as_position() fails with NA", {
+  expect_error(vec_as_position(na_int, 2L), class = "vctrs_error_position_bad_value")
+  expect_error(vec_as_position(na_chr, 1L, names = "foo"), class = "vctrs_error_position_bad_value")
+  verify_output(test_path("out", "error-position-na.txt"), {
+    vec_as_position(na_int, 2L)
+    vec_as_position(na_chr, 1L, names = "foo")
+  })
+})
