@@ -1,0 +1,7 @@
+> vec_slice(1:2, 3L)
+Error: Must index an existing element.
+* There are only 2 elements.
+* Can't subset position 3.
+> vec_slice(c(bar = 1), "foo")
+Error: Must index an existing element.
+* Can't subset unknown element `foo`.

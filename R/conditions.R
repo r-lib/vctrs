@@ -418,6 +418,46 @@ stop_names_must_be_unique <- function(locations) {
   )
 }
 
+stop_index_oob_position <- function(i, size, ..., .subclass = NULL) {
+  abort(
+    "",
+    .subclass = c(.subclass, "vctrs_error_index_oob_position"),
+    i = i,
+    size = size,
+    ...
+  )
+}
+stop_index_oob_name <- function(i, names, ..., .subclass = NULL) {
+  abort(
+    "",
+    .subclass = c(.subclass, "vctrs_error_index_oob_name"),
+    i = i,
+    names = names,
+    ...
+  )
+}
+#' @export
+conditionMessage.vctrs_error_index_oob_position <- function(c) {
+  if (!nzchar(c$message)) {
+    c$message <- glue_lines(
+      "Must index an existing element.",
+      "* There are only {c$size} elements.",
+      "* Can't subset position {c$i}."
+    )
+  }
+  NextMethod()
+}
+#' @export
+conditionMessage.vctrs_error_index_oob_name <- function(c) {
+  if (!nzchar(c$message)) {
+    c$message <- glue_lines(
+      "Must index an existing element.",
+      "* Can't subset unknown element `{c$i}`."
+    )
+  }
+  NextMethod()
+}
+
 
 # Helpers -----------------------------------------------------------------
 

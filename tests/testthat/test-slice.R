@@ -61,16 +61,28 @@ test_that("can subset with a recycled FALSE", {
 })
 
 test_that("can't index beyond the end of a vector", {
-  expect_error(vec_slice(1:2, 3L), glue::glue(
-    "Can't index beyond the end of a vector.\n",
-    "The vector has length 2 and you've tried to subset element 3."
-  ))
-  expect_error(vec_slice(1:2, -3L), "Can't index beyond the end of a vector.")
+  expect_error(
+    vec_slice(1:2, 3L),
+    "Must index an existing element.",
+    class = "vctrs_error_index_oob_position"
+  )
+  expect_error(
+    vec_slice(1:2, -3L),
+    "Must index an existing element.",
+    class = "vctrs_error_index_oob_position"
+  )
+})
+
+test_that("oob error messages are properly constructed", {
+  verify_output(test_path("out", "error-index-oob.txt"), {
+    vec_slice(1:2, 3L)
+    vec_slice(c(bar = 1), "foo")
+  })
 })
 
 test_that("slicing non existing elements fails", {
-  expect_error(vec_as_index("foo", 1L, "f"), "non-existing")
-  expect_error(vec_slice(c(f = 1), "foo"), "non-existing")
+  expect_error(vec_as_index("foo", 1L, "f"), class = "vctrs_error_index_oob_name")
+  expect_error(vec_slice(c(f = 1), "foo"), class = "vctrs_error_index_oob_name")
 })
 
 test_that("can subset object of any dimensionality", {
@@ -238,7 +250,7 @@ test_that("can slice shaped objects by name", {
   dimnames(x) <- list(c("foo", "bar"))
 
   expect_equal(vec_slice(x, "foo"), vec_slice(x, 1L))
-  expect_error(vec_slice(x, "baz"), "non-existing")
+  expect_error(vec_slice(x, "baz"), class = "vctrs_error_index_oob_name")
 })
 
 test_that("vec_slice() unclasses input before calling `vec_restore()`", {
@@ -337,8 +349,8 @@ test_that("can use names to vec_slice() a named object", {
   expect_identical(vec_slice(x0, letters[2:1]), c(b = 2, a = 1))
   expect_identical(vec_slice(x1, letters[1]), c(a = 1))
 
-  expect_error(vec_slice(x0, letters[3:1]), "non-existing")
-  expect_error(vec_slice(x1, letters[2]), "non-existing")
+  expect_error(vec_slice(x0, letters[3:1]), class = "vctrs_error_index_oob_name")
+  expect_error(vec_slice(x1, letters[2]), class = "vctrs_error_index_oob_name")
 })
 
 test_that("can't use names to vec_slice() an unnamed object", {

@@ -20,11 +20,27 @@ static SEXP slice_rownames(SEXP names, SEXP index);
 SEXP vec_slice_impl(SEXP x, SEXP index);
 
 
-static void stop_bad_index_length(R_len_t n, R_len_t i) {
-  Rf_errorcall(R_NilValue,
-               "Can't index beyond the end of a vector.\n"
-               "The vector has length %d and you've tried to subset element %d.",
-               n, i);
+static void stop_index_oob_position(R_len_t i, R_len_t size) {
+  SEXP i_obj = PROTECT(r_int(i));
+  SEXP size_obj = PROTECT(r_int(size));
+
+  vctrs_eval_mask2(Rf_install("stop_index_oob_position"),
+                   syms_i, i_obj,
+                   syms_size, size_obj,
+                   vctrs_ns_env);
+
+  UNPROTECT(2);
+  never_reached("stop_index_oob_position");
+}
+static void stop_index_oob_name(SEXP i, SEXP names) {
+  i = PROTECT(Rf_ScalarString(i));
+  vctrs_eval_mask2(Rf_install("stop_index_oob_name"),
+                   syms_i, i,
+                   syms_names, names,
+                   vctrs_ns_env);
+
+  UNPROTECT(1);
+  never_reached("stop_index_oob_name");
 }
 
 #define SLICE_INDEX(RTYPE, CTYPE, DEREF, CONST_DEREF, NA_VALUE)   \
@@ -416,7 +432,7 @@ static SEXP int_as_index(SEXP index, R_len_t n) {
       ++n_zero;
     }
     if (elt > n) {
-      stop_bad_index_length(n, elt);
+      stop_index_oob_position(elt, n);
     }
   }
 
@@ -455,7 +471,7 @@ static SEXP int_invert_index(SEXP index, R_len_t n) {
 
     j = -j;
     if (j > n) {
-      stop_bad_index_length(n, j);
+      stop_index_oob_position(j, n);
     }
 
     sel_data[j - 1] = 0;
@@ -550,7 +566,7 @@ static SEXP chr_as_index(SEXP i, SEXP names) {
 
   for (R_len_t k = 0; k < n; ++k) {
     if (p[k] == NA_INTEGER && ip[k] != NA_STRING) {
-      Rf_errorcall(R_NilValue, "Can't index non-existing elements.");
+      stop_index_oob_name(STRING_ELT(i, k), names);
     }
   }
 
