@@ -1,7 +1,7 @@
 
 # vctrs 0.2.0.9000
 
-* New `stop_index_oob_position()` and `stop_index_oob_name()`
+* New `stop_index_oob_positions()` and `stop_index_oob_names()`
   functions to throw out-of-bounds errors.
 
 * New `vec_split_id()` for locating unique groups in a vector. This 

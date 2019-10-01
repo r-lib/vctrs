@@ -20,24 +20,24 @@ static SEXP slice_rownames(SEXP names, SEXP index);
 SEXP vec_slice_impl(SEXP x, SEXP index);
 
 
-static void stop_index_oob_position(SEXP i, R_len_t size) {
+static void stop_index_oob_positions(SEXP i, R_len_t size) {
   SEXP size_obj = PROTECT(r_int(size));
-  vctrs_eval_mask2(Rf_install("stop_index_oob_position"),
+  vctrs_eval_mask2(Rf_install("stop_index_oob_positions"),
                    syms_i, i,
                    syms_size, size_obj,
                    vctrs_ns_env);
 
   UNPROTECT(1);
-  never_reached("stop_index_oob_position");
+  never_reached("stop_index_oob_positions");
 }
-static void stop_index_oob_name(SEXP i, SEXP names) {
-  vctrs_eval_mask2(Rf_install("stop_index_oob_name"),
+static void stop_index_oob_names(SEXP i, SEXP names) {
+  vctrs_eval_mask2(Rf_install("stop_index_oob_names"),
                    syms_i, i,
                    syms_names, names,
                    vctrs_ns_env);
 
   UNPROTECT(1);
-  never_reached("stop_index_oob_name");
+  never_reached("stop_index_oob_names");
 }
 
 #define SLICE_INDEX(RTYPE, CTYPE, DEREF, CONST_DEREF, NA_VALUE)   \
@@ -429,7 +429,7 @@ static SEXP int_as_index(SEXP index, R_len_t n) {
       ++n_zero;
     }
     if (elt > n) {
-      stop_index_oob_position(index, n);
+      stop_index_oob_positions(index, n);
     }
   }
 
@@ -468,7 +468,7 @@ static SEXP int_invert_index(SEXP index, R_len_t n) {
 
     j = -j;
     if (j > n) {
-      stop_index_oob_position(index, n);
+      stop_index_oob_positions(index, n);
     }
 
     sel_data[j - 1] = 0;
@@ -563,7 +563,7 @@ static SEXP chr_as_index(SEXP i, SEXP names) {
 
   for (R_len_t k = 0; k < n; ++k) {
     if (p[k] == NA_INTEGER && ip[k] != NA_STRING) {
-      stop_index_oob_name(i, names);
+      stop_index_oob_names(i, names);
     }
   }
 
