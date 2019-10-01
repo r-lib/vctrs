@@ -471,7 +471,7 @@ conditionMessage.vctrs_error_index_oob_name <- function(c) {
   if (!nzchar(c$message)) {
     c$message <- glue_lines(
       "Must index an existing element.",
-      "* Can't subset unknown element `{c$i}`."
+      "* Can't subset element with unknown name `{c$i}`."
     )
   }
   NextMethod()

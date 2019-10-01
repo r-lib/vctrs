@@ -4,4 +4,4 @@ Error: Must index an existing element.
 * Can't subset position 3.
 > vec_slice(c(bar = 1), "foo")
 Error: Must index an existing element.
-* Can't subset unknown element `foo`.
+* Can't subset element with unknown name `foo`.
