@@ -91,7 +91,6 @@ test_that("non-vector base types are scalars", {
   expect_identical(vec_typeof(~foo), "scalar")
   expect_identical(vec_typeof(base::`{`), "scalar")
   expect_identical(vec_typeof(base::c), "scalar")
-  expect_identical(vec_typeof(expression()), "scalar")
 
   expect_false(vec_is_vector(quote(foo)))
   expect_false(vec_is_vector(pairlist("")))
@@ -100,7 +99,6 @@ test_that("non-vector base types are scalars", {
   expect_false(vec_is_vector(~foo))
   expect_false(vec_is_vector(base::`{`))
   expect_false(vec_is_vector(base::c))
-  expect_false(vec_is_vector(expression()))
 
   expect_false(vec_is(quote(foo)))
   expect_false(vec_is(pairlist("")))
@@ -109,7 +107,6 @@ test_that("non-vector base types are scalars", {
   expect_false(vec_is(~foo))
   expect_false(vec_is(base::`{`))
   expect_false(vec_is(base::c))
-  expect_false(vec_is(expression()))
 
   expect_error(vec_assert(quote(foo)), class = "vctrs_error_scalar_type")
   expect_error(vec_assert(pairlist("")), class = "vctrs_error_scalar_type")
@@ -118,7 +115,6 @@ test_that("non-vector base types are scalars", {
   expect_error(vec_assert(~foo), class = "vctrs_error_scalar_type")
   expect_error(vec_assert(base::`{`), class = "vctrs_error_scalar_type")
   expect_error(vec_assert(base::c), class = "vctrs_error_scalar_type")
-  expect_error(vec_assert(expression()), class = "vctrs_error_scalar_type")
 })
 
 test_that("non-vector types can be proxied", {
@@ -226,6 +222,7 @@ test_that("NULL is not a vector", {
 })
 
 test_that("expression() is a vector", {
+  expect_identical(vec_typeof(expression()), "list")
   expect_true(vec_is(expression()))
   expect_true(vec_is(expression(1, 2 + 3)))
 })

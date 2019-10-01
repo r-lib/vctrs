@@ -93,6 +93,7 @@ static enum vctrs_type vec_base_typeof(SEXP x, bool proxied) {
   case CPLXSXP: return vctrs_type_complex;
   case STRSXP: return vctrs_type_character;
   case RAWSXP: return vctrs_type_raw;
+  case EXPRSXP: return vctrs_type_list;
   case VECSXP:
     // Bare lists and data frames are vectors
     if (!OBJECT(x)) return vctrs_type_list;

@@ -47,7 +47,7 @@ test_that("size is proxied", {
 
 test_that("expression() has proper size", {
   expect_identical(vec_size(expression()), 0L)
-  expect_identical(vec_size(expression(1, 2 + 3)), 0L)
+  expect_identical(vec_size(expression(1, 2 + 3)), 2L)
 })
 
 test_that("`NULL` has size zero", {

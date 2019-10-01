@@ -4,7 +4,7 @@ context("test-equal")
 # vectorised --------------------------------------------------------------
 
 test_that("throws error for unsuported type", {
-  expect_error(.Call(vctrs_equal, expression(x), expression(x), TRUE), class = "vctrs_error_scalar_type")
+  expect_error(.Call(vctrs_equal, function() {}, function() {}, TRUE), class = "vctrs_error_scalar_type")
 })
 
 test_that("C wrapper throws error if length or type doesn't match", {
