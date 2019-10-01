@@ -1,9 +1,9 @@
 > vec_as_position(TRUE, 10L)
 Error: Must extract with a single number or a name.
-`i` has the wrong type `logical`.
+* `i` has the wrong type `logical`.
 > vec_as_position(mtcars, 10L)
 Error: Must extract with a single number or a name.
-`i` has the wrong type `data.frame<
+* `i` has the wrong type `data.frame<
   mpg : double
   cyl : double
   disp: double

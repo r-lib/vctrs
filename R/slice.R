@@ -216,7 +216,7 @@ conditionMessage.vctrs_error_position_bad_type <- function(c) {
       type <- vec_ptype_full(c$i)
       c$message <- glue_lines(
         "Must extract with a single number or a name.",
-        "`i` has the wrong type `{type}`."
+        "* `i` has the wrong type `{type}`."
       )
       return(NextMethod())
     }
@@ -225,7 +225,7 @@ conditionMessage.vctrs_error_position_bad_type <- function(c) {
       size <- length(c$i)
       c$message <- glue_lines(
         "Must extract with a single number or a name.",
-        "`i` has the wrong size `{size}`"
+        "* `i` has the wrong size `{size}`"
       )
       return(NextMethod())
     }
@@ -242,9 +242,9 @@ conditionMessage.vctrs_error_position_bad_value <- function(c) {
       c$message <- glue_lines(
         "Must extract with a positive number.",
         if (i == 0L) {
-          "`i` can't be zero."
+          "* `i` can't be zero."
         } else {
-          "`i` has the wrong sign: {i}."
+          "* `i` has the wrong sign: {i}."
         }
       )
       return(NextMethod())
