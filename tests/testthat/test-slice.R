@@ -668,8 +668,8 @@ test_that("vec_as_position() requires length 1 inputs", {
 })
 
 test_that("vec_as_position() requires positive integers", {
-  expect_error(vec_as_position(0, 2L), class = "vctrs_error_position_bad_value")
-  expect_error(vec_as_position(-1, 2L), class = "vctrs_error_position_bad_value")
+  expect_error(vec_as_position(0, 2L), class = "vctrs_error_position_bad_type")
+  expect_error(vec_as_position(-1, 2L), class = "vctrs_error_position_bad_type")
   verify_output(test_path("out", "error-position-sign.txt"), {
     vec_as_position(0, 2L)
     vec_as_position(-1, 2L)
@@ -682,8 +682,8 @@ test_that("vec_as_position() requires existing elements", {
 })
 
 test_that("vec_as_position() fails with NA", {
-  expect_error(vec_as_position(na_int, 2L), class = "vctrs_error_position_bad_value")
-  expect_error(vec_as_position(na_chr, 1L, names = "foo"), class = "vctrs_error_position_bad_value")
+  expect_error(vec_as_position(na_int, 2L), class = "vctrs_error_position_bad_type")
+  expect_error(vec_as_position(na_chr, 1L, names = "foo"), class = "vctrs_error_position_bad_type")
   verify_output(test_path("out", "error-position-na.txt"), {
     vec_as_position(na_int, 2L)
     vec_as_position(na_chr, 1L, names = "foo")

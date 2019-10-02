@@ -190,11 +190,11 @@ vec_as_position <- function(i, n, names = NULL) {
   }
 
   type <- typeof(i)
-  if (!type %in% c("integer", "character") || length(i) != 1L) {
+  if (!type %in% c("integer", "character") ||
+      length(i) != 1L ||
+      is.na(i) ||
+      (type == "integer" && i < 1L)) {
     stop_position_bad_type(i)
-  }
-  if (is.na(i) || (type == "integer" && i < 1L)) {
-    stop_position_bad_value(i)
   }
 
   vec_as_index(i, n, names = names)
@@ -204,9 +204,6 @@ stop_position_bad_type <- function(i) {
   # Should we derive from `stop_incompatible_type()` once we have
   # union types? The index is incompatible with `union<chr(), int()>`.
   abort("", "vctrs_error_position_bad_type", i = i)
-}
-stop_position_bad_value <- function(i) {
-  abort("", "vctrs_error_position_bad_value", i = i)
 }
 
 #' @export
@@ -231,14 +228,6 @@ conditionMessage.vctrs_error_position_bad_type <- function(c) {
       )
       return(NextMethod())
     }
-  }
-
-  NextMethod()
-}
-#' @export
-conditionMessage.vctrs_error_position_bad_value <- function(c) {
-  if (!nzchar(c$message)) {
-    i <- c$i
 
     if (is.na(i)) {
       c$message <- paste_line(
