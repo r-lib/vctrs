@@ -131,9 +131,11 @@ vec_assign_fallback <- function(x, i, value) {
 #' methods such as integer, character or logical indexing.
 #'
 #' * `vec_as_index()` accepts integer, character, or logical vectors
-#'   of any sizes. The output is always an integer vector of the same
-#'   size that can be used for subsetting. This is suitable for
-#'   indexing with `[` or [vec_slice()].
+#'   of any size. The output is always an integer vector that is
+#'   suitable for subsetting with `[` or [vec_slice()]. It might be a
+#'   different size than the input because negative selections are
+#'   transformed to positive ones and logical vectors are transformed
+#'   to a vector of indices for the `TRUE` positions.
 #'
 #' * `vec_as_position()` accepts a single number or string. It returns
 #'   a single position as a integer vector of size 1. This is suitable
