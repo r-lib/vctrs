@@ -34,7 +34,6 @@ Imports:
     zeallot
 Suggests: 
     bit64,
-    cli,
     covr,
     crayon,
     generics,

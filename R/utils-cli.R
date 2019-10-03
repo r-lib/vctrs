@@ -84,39 +84,16 @@ is_info_list <- function(nms) {
 }
 
 info <- function() {
-  if (is_installed("cli")) {
-    i <- cli::symbol$info
-  } else {
-    i <- "i"
-  }
   if (is_installed("crayon")) {
-    crayon::blue(i)
+    crayon::blue("i")
   } else {
-    i
+    "i"
   }
 }
 cross <- function() {
-  if (is_installed("cli")) {
-    x <- cli::symbol$cross
-  } else {
-    x <- "x"
-  }
   if (is_installed("crayon")) {
-    crayon::red(x)
+    crayon::red("x")
   } else {
-    x
+    "x"
   }
-}
-
-cli_is_utf8_output <- function() {
-  opt <- getOption("cli.unicode", NULL)
-  if (!is.null(opt)) {
-    isTRUE(opt)
-  } else {
-    l10n_info()$`UTF-8` && !cli_is_latex_output()
-  }
-}
-cli_is_latex_output <- function() {
-  if (!("knitr" %in% loadedNamespaces())) return(FALSE)
-  get("is_latex_output", asNamespace("knitr"))()
 }
