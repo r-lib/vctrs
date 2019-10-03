@@ -217,8 +217,10 @@ conditionMessage.vctrs_error_position_bad_type <- function(c) {
     type <- vec_ptype_full(c$i)
     return(glue_lines(
       lead,
-      "* Positions and names must be integer or character.",
-      "* `{arg}` has the wrong type `{type}`."
+      glue_error_bullets(
+        i = "Positions and names must be integer or character.",
+        x = "`{arg}` has the wrong type `{type}`."
+      )
     ))
   }
 
@@ -226,28 +228,35 @@ conditionMessage.vctrs_error_position_bad_type <- function(c) {
     size <- length(c$i)
     return(glue_lines(
       lead,
-      "* Positions and names must be size 1.",
-      "* `{arg}` has the wrong size `{size}`."
+      glue_error_bullets(
+        i = "Positions and names must be size 1.",
+        x = "`{arg}` has the wrong size `{size}`."
+      )
     ))
   }
 
   if (is.na(i)) {
     return(glue_lines(
       lead,
-      "* Positions and names can't be missing.",
-      "* `{arg}` can't be `NA`."
+      glue_error_bullets(
+        i = "Positions and names can't be missing.",
+        x = "`{arg}` can't be `NA`."
+      )
     ))
   }
 
   if (i < 1L) {
     return(glue_lines(
       lead,
-      "* Positions must be positive integers.",
-      if (i == 0L) {
-        "* `{arg}` can't be zero."
-      } else {
-        "* `{arg}` has the wrong sign: {i}."
-      }
+      glue_error_bullets(
+        i = "Positions must be positive integers.",
+        x =
+          if (i == 0L) {
+            "`{arg}` can't be zero."
+          } else {
+            "`{arg}` has the wrong sign: {i}."
+          }
+      )
     ))
   }
 

@@ -1,8 +1,8 @@
 > vec_as_position(0, 2L)
 Error: Must extract with a single position or name.
-* Positions must be positive integers.
-* `i` can't be zero.
+ℹ Positions must be positive integers.
+✖ `i` can't be zero.
 > vec_as_position(-1, 2L)
 Error: Must extract with a single position or name.
-* Positions must be positive integers.
-* `i` has the wrong sign: -1.
+ℹ Positions must be positive integers.
+✖ `i` has the wrong sign: -1.

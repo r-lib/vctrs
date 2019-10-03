@@ -513,8 +513,7 @@ enumerate <- function(x, max = 5L) {
 # Helpers -----------------------------------------------------------------
 
 glue_lines <- function(..., env = parent.frame()) {
-  lines <- c(...)
-  out <- map_chr(lines, glue::glue, .envir = env)
+  out <- map_chr(chr(...), glue::glue, .envir = env)
   paste(out, collapse = "\n")
 }
 
