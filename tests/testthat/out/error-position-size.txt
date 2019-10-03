@@ -1,7 +1,7 @@
 > vec_as_position(1:2, 2L)
 Error: Must extract with a single position or name.
 ℹ Positions and names must be size 1.
-✖ `i` has the wrong size `2`.
+✖ `i` has the wrong size 2.
 > vec_as_position(mtcars, 10L)
 Error: Must extract with a single position or name.
 ℹ Positions and names must be integer or character.

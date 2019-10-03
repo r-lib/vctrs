@@ -234,7 +234,7 @@ conditionMessage.vctrs_error_position_bad_type <- function(c) {
       lead,
       glue_error_bullets(
         i = "Positions and names must be size 1.",
-        x = "`{arg}` has the wrong size `{size}`."
+        x = "`{arg}` has the wrong size {size}."
       )
     ))
   }
