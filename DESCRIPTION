@@ -45,7 +45,7 @@ Suggests:
     tibble,
     xml2
 Remotes:
-    r-lib/rlang,
+    r-lib/rlang@2b17474555d688d9298dfac052576fbd3a67554a,
     r-lib/testthat
 VignetteBuilder: 
     knitr

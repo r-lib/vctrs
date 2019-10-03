@@ -208,49 +208,43 @@ stop_position_bad_type <- function(i) {
 
 #' @export
 conditionMessage.vctrs_error_position_bad_type <- function(c) {
-  if (!nzchar(c$message)) {
-    i <- c$i
+  i <- c$i
 
-    if (!typeof(i) %in% c("integer", "character")) {
-      type <- vec_ptype_full(c$i)
-      c$message <- glue_lines(
-        "Must extract with a single number or a name.",
-        "* `i` has the wrong type `{type}`."
-      )
-      return(NextMethod())
-    }
-
-    if (length(i) != 1L) {
-      size <- length(c$i)
-      c$message <- glue_lines(
-        "Must extract with a single number or a name.",
-        "* `i` has the wrong size `{size}`"
-      )
-      return(NextMethod())
-    }
-
-    if (is.na(i)) {
-      c$message <- paste_line(
-        "Must extract with a known position or a known name.",
-        "* `i` can't be `NA`."
-      )
-      return(NextMethod())
-    }
-
-    if (i < 1L) {
-      c$message <- glue_lines(
-        "Must extract with a positive number.",
-        if (i == 0L) {
-          "* `i` can't be zero."
-        } else {
-          "* `i` has the wrong sign: {i}."
-        }
-      )
-      return(NextMethod())
-    }
+  if (!typeof(i) %in% c("integer", "character")) {
+    type <- vec_ptype_full(c$i)
+    return(glue_lines(
+      "Must extract with a single number or a name.",
+      "* `i` has the wrong type `{type}`."
+    ))
   }
 
-  NextMethod()
+  if (length(i) != 1L) {
+    size <- length(c$i)
+    return(glue_lines(
+      "Must extract with a single number or a name.",
+      "* `i` has the wrong size `{size}`"
+    ))
+  }
+
+  if (is.na(i)) {
+    return(paste_line(
+      "Must extract with a known position or a known name.",
+      "* `i` can't be `NA`."
+    ))
+  }
+
+  if (i < 1L) {
+    return(glue_lines(
+      "Must extract with a positive number.",
+      if (i == 0L) {
+        "* `i` can't be zero."
+      } else {
+        "* `i` has the wrong sign: {i}."
+      }
+    ))
+  }
+
+  stop("Internal error: Unexpected state while handling `vctrs_error_position_bad_type`.")
 }
 
 vec_index <- function(x, i, ...) {
