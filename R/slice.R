@@ -209,37 +209,44 @@ stop_position_bad_type <- function(i) {
 #' @export
 conditionMessage.vctrs_error_position_bad_type <- function(c) {
   i <- c$i
+  arg <- c$arg %||% "i"
+
+  lead <- "Must extract with a single position or name."
 
   if (!typeof(i) %in% c("integer", "character")) {
     type <- vec_ptype_full(c$i)
     return(glue_lines(
-      "Must extract with a single number or a name.",
-      "* `i` has the wrong type `{type}`."
+      lead,
+      "* Positions and names must be integer or character.",
+      "* `{arg}` has the wrong type `{type}`."
     ))
   }
 
   if (length(i) != 1L) {
     size <- length(c$i)
     return(glue_lines(
-      "Must extract with a single number or a name.",
-      "* `i` has the wrong size `{size}`"
+      lead,
+      "* Positions and names must be size 1.",
+      "* `{arg}` has the wrong size `{size}`."
     ))
   }
 
   if (is.na(i)) {
-    return(paste_line(
-      "Must extract with a known position or a known name.",
-      "* `i` can't be `NA`."
+    return(glue_lines(
+      lead,
+      "* Positions and names can't be missing.",
+      "* `{arg}` can't be `NA`."
     ))
   }
 
   if (i < 1L) {
     return(glue_lines(
-      "Must extract with a positive number.",
+      lead,
+      "* Positions must be positive integers.",
       if (i == 0L) {
-        "* `i` can't be zero."
+        "* `{arg}` can't be zero."
       } else {
-        "* `i` has the wrong sign: {i}."
+        "* `{arg}` has the wrong sign: {i}."
       }
     ))
   }
