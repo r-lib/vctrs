@@ -141,3 +141,19 @@ test_that("Column name encodings are handled correctly in the common type (#553)
 
   expect_identical(vec_ptype2(df_utf8, df_unknown), df_utf8)
 })
+
+test_that("vec_is_subtype() determines subtyping relationship", {
+  expect_true(vec_is_subtype(lgl(), int()))
+  expect_false(vec_is_subtype(int(), lgl()))
+
+  expect_false(vec_is_subtype(lgl(), chr()))
+  expect_false(vec_is_subtype(chr(), lgl()))
+
+  scoped_global_bindings(
+    vec_ptype2.vctrs_foobar = function(x, y, ...) UseMethod("vec_ptype2.vctrs_foobar", y),
+    vec_ptype2.vctrs_foobar.logical = function(x, y, ...) logical(),
+    vec_ptype2.logical.vctrs_foobar = function(x, y, ...) logical()
+  )
+  expect_true(vec_is_subtype(foobar(TRUE), lgl()))
+  expect_false(vec_is_subtype(lgl(), foobar(TRUE)))
+})

@@ -77,3 +77,13 @@ vec_is_coercible <- function(x, to, ..., x_arg = "x", to_arg = "to") {
     }
   )
 }
+
+vec_is_subtype <- function(x, super, ..., x_arg = "x", super_arg = "super") {
+  tryCatch(
+    vctrs_error_incompatible_type = function(...) FALSE,
+    {
+      common <- vctrs::vec_ptype2(x, super, ..., x_arg = x_arg, y_arg = super_arg)
+      vec_is(common, super)
+    }
+  )
+}
