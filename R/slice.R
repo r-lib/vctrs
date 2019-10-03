@@ -184,8 +184,10 @@ vec_as_position <- function(i, n, names = NULL) {
       i <- vec_cast(i, int())
     } else if (vec_is_coercible(i, chr())) {
       i <- vec_cast(i, chr())
+    } else {
+      stop_position_bad_type(i)
     }
-  } else if (typeof(i) == "double") {
+  } else if (is_double(i)) {
     i <- vec_coercible_cast(i, int())
   }
 
@@ -213,7 +215,7 @@ conditionMessage.vctrs_error_position_bad_type <- function(c) {
 
   lead <- "Must extract with a single position or name."
 
-  if (!typeof(i) %in% c("integer", "character")) {
+  if (is.object(i) || !typeof(i) %in% c("integer", "character")) {
     type <- vec_ptype_full(c$i)
     return(glue_lines(
       lead,

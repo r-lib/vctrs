@@ -658,6 +658,11 @@ test_that("vec_as_position() requires integer or character inputs", {
   })
 })
 
+test_that("vec_as_position() requires integer- or character-like OO inputs", {
+  expect_identical(vec_as_position(factor("foo"), 2L, c("bar", "foo")), 2L)
+  expect_error(vec_as_position(foobar(1L), 10L), class = "vctrs_error_position_bad_type")
+})
+
 test_that("vec_as_position() requires length 1 inputs", {
   expect_error(vec_as_position(1:2, 2L), class = "vctrs_error_position_bad_type")
   expect_error(vec_as_position(c("foo", "bar"), 2L, c("foo", "bar")), class = "vctrs_error_position_bad_type")
