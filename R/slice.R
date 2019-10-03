@@ -180,9 +180,11 @@ vec_as_index <- function(i, n, names = NULL) {
 #' @export
 vec_as_position <- function(i, n, names = NULL) {
   if (is.object(i)) {
-    if (vec_is_coercible(i, int())) {
+    if (vec_is_subtype(i, lgl())) {
+      stop_position_bad_type(i)
+    } else if (vec_is_subtype(i, int())) {
       i <- vec_cast(i, int())
-    } else if (vec_is_coercible(i, chr())) {
+    } else if (vec_is_subtype(i, chr())) {
       i <- vec_cast(i, chr())
     } else {
       stop_position_bad_type(i)

@@ -661,6 +661,20 @@ test_that("vec_as_position() requires integer or character inputs", {
 test_that("vec_as_position() requires integer- or character-like OO inputs", {
   expect_identical(vec_as_position(factor("foo"), 2L, c("bar", "foo")), 2L)
   expect_error(vec_as_position(foobar(1L), 10L), class = "vctrs_error_position_bad_type")
+
+  # Define subtype of logical and integer
+  scoped_global_bindings(
+    vec_ptype2.vctrs_foobar = function(x, y, ...) UseMethod("vec_ptype2.vctrs_foobar", y),
+    vec_ptype2.vctrs_foobar.default = function(x, y, ...) vec_default_ptype2(x, y, ...),
+    vec_ptype2.vctrs_foobar.logical = function(x, y, ...) logical(),
+    vec_ptype2.vctrs_foobar.integer = function(x, y, ...) integer(),
+    vec_ptype2.logical.vctrs_foobar = function(x, y, ...) logical(),
+    vec_ptype2.integer.vctrs_foobar = function(x, y, ...) integer(),
+    vec_cast.vctrs_foobar = function(x, to, ...) UseMethod("vec_cast.vctrs_foobar"),
+    vec_cast.vctrs_foobar.integer = function(x, to, ...) foobar(x),
+    vec_cast.integer.vctrs_foobar = function(x, to, ...) vec_cast(unclass(x), int())
+  )
+  expect_error(vec_as_position(foobar(TRUE), 10L), class = "vctrs_error_position_bad_type")
 })
 
 test_that("vec_as_position() requires length 1 inputs", {
