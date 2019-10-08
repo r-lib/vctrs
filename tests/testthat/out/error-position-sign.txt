@@ -5,4 +5,4 @@ x `i` can't be zero.
 > vec_as_position(-1, 2L)
 Error: Must extract with a single position or name.
 i Positions must be positive integers.
-x `i` has the wrong sign: -1.
+x `i` (with value -1) has the wrong sign.

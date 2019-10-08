@@ -258,7 +258,7 @@ conditionMessage.vctrs_error_position_bad_type <- function(c) {
           if (i == 0L) {
             "`{arg}` can't be zero."
           } else {
-            "`{arg}` has the wrong sign: {i}."
+            "`{arg}` (with value {i}) has the wrong sign."
           }
       )
     ))
