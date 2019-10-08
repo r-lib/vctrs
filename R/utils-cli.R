@@ -48,3 +48,52 @@ str_backtick <- function(x) {
 str_is_multiline <- function(x) {
   grepl("\n", x)
 }
+
+glue_error_bullets <- function(..., env = caller_env()) {
+  msgs <- map_chr(list2(...), glue::glue, .envir = env)
+  nms <- names2(msgs)
+  stopifnot(is_info_list(nms))
+
+  bullets <- ifelse(nms == "i", info(), cross())
+  bullets <- paste(bullets, msgs, collapse = "\n")
+  bullets
+}
+
+is_info_list <- function(nms) {
+  if (!all(nms %in% c("i", "x"))) {
+    return(FALSE)
+  }
+
+  n <- length(nms)
+  if (n == 0L) {
+    return(TRUE)
+  }
+
+  if (nms[[1]] == "x") {
+    return(all(nms[-1] == "x"))
+  }
+
+  xi <- match("x", nms)
+  if (is.na(xi)) {
+    return(TRUE)
+  }
+
+  is <- nms[seq2(1L, xi - 1L)]
+  xs <- nms[seq2(xi, n)]
+  all(is == "i") && all(xs == "x")
+}
+
+info <- function() {
+  if (is_installed("crayon")) {
+    crayon::blue("i")
+  } else {
+    "i"
+  }
+}
+cross <- function() {
+  if (is_installed("crayon")) {
+    crayon::red("x")
+  } else {
+    "x"
+  }
+}

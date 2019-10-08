@@ -1,6 +1,6 @@
 Package: vctrs
 Title: Vector Helpers
-Version: 0.2.0.9004
+Version: 0.2.0.9005
 Authors@R: 
     c(person(given = "Hadley",
              family = "Wickham",
@@ -30,7 +30,7 @@ Imports:
     ellipsis (>= 0.2.0),
     digest,
     glue,
-    rlang (>= 0.4.0),
+    rlang (>= 0.4.0.9003),
     zeallot
 Suggests: 
     bit64,

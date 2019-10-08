@@ -125,12 +125,21 @@ vec_assign_fallback <- function(x, i, value) {
   x
 }
 
-#' Create an index
+#' Create an index vector or a position
 #'
-#' This provides a means of standardizing common indexing methods such as
-#' integer, character or logical indexing. The input is a vector of one
-#' of these three types, and the output is always an integer vector that can
-#' be used for subsetting.
+#' These helpers provide a means of standardizing common indexing
+#' methods such as integer, character or logical indexing.
+#'
+#' * `vec_as_index()` accepts integer, character, or logical vectors
+#'   of any size. The output is always an integer vector that is
+#'   suitable for subsetting with `[` or [vec_slice()]. It might be a
+#'   different size than the input because negative selections are
+#'   transformed to positive ones and logical vectors are transformed
+#'   to a vector of indices for the `TRUE` positions.
+#'
+#' * `vec_as_position()` accepts a single number or string. It returns
+#'   a single position as a integer vector of size 1. This is suitable
+#'   for extracting with `[[`.
 #'
 #' @inheritParams vec_slice
 #' @param n A single integer representing the total size of the
@@ -140,8 +149,10 @@ vec_assign_fallback <- function(x, i, value) {
 #'   not used. The default value of `NULL` will result in an error
 #'   if `i` is a character vector.
 #'
-#' @return
-#' An integer vector that can be used as an index in a subsetting operation.
+#' @return `vec_as_index()` returns an integer vector that can be used
+#'   as an index in a subsetting operation. `vec_as_position()`
+#'   returns an integer of size 1 that can be used a scalar index for
+#'   extracting an element.
 #'
 #' @examples
 #' x <- array(1:6, c(2, 3))
@@ -164,6 +175,96 @@ vec_assign_fallback <- function(x, i, value) {
 vec_as_index <- function(i, n, names = NULL) {
   vec_assert(n, integer(), 1L)
   .Call(vctrs_as_index, i, n, names)
+}
+#' @rdname vec_as_index
+#' @export
+vec_as_position <- function(i, n, names = NULL) {
+  if (is.object(i)) {
+    if (vec_is_subtype(i, lgl())) {
+      stop_position_bad_type(i)
+    } else if (vec_is_subtype(i, int())) {
+      i <- vec_cast(i, int())
+    } else if (vec_is_subtype(i, chr())) {
+      i <- vec_cast(i, chr())
+    } else {
+      stop_position_bad_type(i)
+    }
+  } else if (is_double(i)) {
+    i <- vec_coercible_cast(i, int())
+  }
+
+  type <- typeof(i)
+  if (!type %in% c("integer", "character") ||
+      length(i) != 1L ||
+      is.na(i) ||
+      (type == "integer" && i < 1L)) {
+    stop_position_bad_type(i)
+  }
+
+  vec_as_index(i, n, names = names)
+}
+
+stop_position_bad_type <- function(i) {
+  # Should we derive from `stop_incompatible_type()` once we have
+  # union types? The index is incompatible with `union<chr(), int()>`.
+  abort("", "vctrs_error_position_bad_type", i = i)
+}
+
+#' @export
+conditionMessage.vctrs_error_position_bad_type <- function(c) {
+  i <- c$i
+  arg <- c$arg %||% "i"
+
+  lead <- "Must extract with a single position or name."
+
+  if (is.object(i) || !typeof(i) %in% c("integer", "character")) {
+    type <- vec_ptype_full(c$i)
+    return(glue_lines(
+      lead,
+      glue_error_bullets(
+        i = "Positions and names must be integer or character.",
+        x = "`{arg}` has the wrong type `{type}`."
+      )
+    ))
+  }
+
+  if (length(i) != 1L) {
+    size <- length(c$i)
+    return(glue_lines(
+      lead,
+      glue_error_bullets(
+        i = "Positions and names must be size 1.",
+        x = "`{arg}` has the wrong size {size}."
+      )
+    ))
+  }
+
+  if (is.na(i)) {
+    return(glue_lines(
+      lead,
+      glue_error_bullets(
+        i = "Positions and names can't be missing.",
+        x = "`{arg}` can't be `NA`."
+      )
+    ))
+  }
+
+  if (i < 1L) {
+    return(glue_lines(
+      lead,
+      glue_error_bullets(
+        i = "Positions must be positive integers.",
+        x =
+          if (i == 0L) {
+            "`{arg}` can't be zero."
+          } else {
+            "`{arg}` (with value {i}) has the wrong sign."
+          }
+      )
+    ))
+  }
+
+  stop("Internal error: Unexpected state while handling `vctrs_error_position_bad_type`.")
 }
 
 vec_index <- function(x, i, ...) {

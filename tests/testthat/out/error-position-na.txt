@@ -1,0 +1,8 @@
+> vec_as_position(na_int, 2L)
+Error: Must extract with a single position or name.
+i Positions and names can't be missing.
+x `i` can't be `NA`.
+> vec_as_position(na_chr, 1L, names = "foo")
+Error: Must extract with a single position or name.
+i Positions and names can't be missing.
+x `i` can't be `NA`.

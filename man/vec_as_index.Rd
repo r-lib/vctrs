@@ -2,9 +2,12 @@
 % Please edit documentation in R/slice.R
 \name{vec_as_index}
 \alias{vec_as_index}
-\title{Create an index}
+\alias{vec_as_position}
+\title{Create an index vector or a position}
 \usage{
 vec_as_index(i, n, names = NULL)
+
+vec_as_position(i, n, names = NULL)
 }
 \arguments{
 \item{i}{An integer, character or logical vector specifying the positions or
@@ -21,13 +24,27 @@ not used. The default value of \code{NULL} will result in an error
 if \code{i} is a character vector.}
 }
 \value{
-An integer vector that can be used as an index in a subsetting operation.
+\code{vec_as_index()} returns an integer vector that can be used
+as an index in a subsetting operation. \code{vec_as_position()}
+returns an integer of size 1 that can be used a scalar index for
+extracting an element.
 }
 \description{
-This provides a means of standardizing common indexing methods such as
-integer, character or logical indexing. The input is a vector of one
-of these three types, and the output is always an integer vector that can
-be used for subsetting.
+These helpers provide a means of standardizing common indexing
+methods such as integer, character or logical indexing.
+}
+\details{
+\itemize{
+\item \code{vec_as_index()} accepts integer, character, or logical vectors
+of any size. The output is always an integer vector that is
+suitable for subsetting with \code{[} or \code{\link[=vec_slice]{vec_slice()}}. It might be a
+different size than the input because negative selections are
+transformed to positive ones and logical vectors are transformed
+to a vector of indices for the \code{TRUE} positions.
+\item \code{vec_as_position()} accepts a single number or string. It returns
+a single position as a integer vector of size 1. This is suitable
+for extracting with \code{[[}.
+}
 }
 \examples{
 x <- array(1:6, c(2, 3))

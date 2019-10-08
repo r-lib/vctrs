@@ -643,3 +643,68 @@ test_that("can subset S3 objects using the fallback method with compact seqs", {
   expect_equal(vec_slice_seq(x, 2L, 2L), vec_slice(x, 3:4))
   expect_equal(vec_slice_seq(x, 3L, 2L, FALSE), vec_slice(x, 4:3))
 })
+
+test_that("vec_as_position() returns a position", {
+  expect_identical(vec_as_position(2, 2L), 2L)
+  expect_identical(vec_as_position("foo", 2L, c("bar", "foo")), 2L)
+})
+
+test_that("vec_as_position() requires integer or character inputs", {
+  expect_error(vec_as_position(TRUE, 10L), class = "vctrs_error_position_bad_type")
+  expect_error(vec_as_position(mtcars, 10L), class = "vctrs_error_position_bad_type")
+  verify_output(test_path("out", "error-position-type.txt"), {
+    vec_as_position(TRUE, 10L)
+    vec_as_position(mtcars, 10L)
+  })
+})
+
+test_that("vec_as_position() requires integer- or character-like OO inputs", {
+  expect_identical(vec_as_position(factor("foo"), 2L, c("bar", "foo")), 2L)
+  expect_error(vec_as_position(foobar(1L), 10L), class = "vctrs_error_position_bad_type")
+
+  # Define subtype of logical and integer
+  scoped_global_bindings(
+    vec_ptype2.vctrs_foobar = function(x, y, ...) UseMethod("vec_ptype2.vctrs_foobar", y),
+    vec_ptype2.vctrs_foobar.default = function(x, y, ...) vec_default_ptype2(x, y, ...),
+    vec_ptype2.vctrs_foobar.logical = function(x, y, ...) logical(),
+    vec_ptype2.vctrs_foobar.integer = function(x, y, ...) integer(),
+    vec_ptype2.logical.vctrs_foobar = function(x, y, ...) logical(),
+    vec_ptype2.integer.vctrs_foobar = function(x, y, ...) integer(),
+    vec_cast.vctrs_foobar = function(x, to, ...) UseMethod("vec_cast.vctrs_foobar"),
+    vec_cast.vctrs_foobar.integer = function(x, to, ...) foobar(x),
+    vec_cast.integer.vctrs_foobar = function(x, to, ...) vec_cast(unclass(x), int())
+  )
+  expect_error(vec_as_position(foobar(TRUE), 10L), class = "vctrs_error_position_bad_type")
+})
+
+test_that("vec_as_position() requires length 1 inputs", {
+  expect_error(vec_as_position(1:2, 2L), class = "vctrs_error_position_bad_type")
+  expect_error(vec_as_position(c("foo", "bar"), 2L, c("foo", "bar")), class = "vctrs_error_position_bad_type")
+  verify_output(test_path("out", "error-position-size.txt"), {
+    vec_as_position(1:2, 2L)
+    vec_as_position(mtcars, 10L)
+  })
+})
+
+test_that("vec_as_position() requires positive integers", {
+  expect_error(vec_as_position(0, 2L), class = "vctrs_error_position_bad_type")
+  expect_error(vec_as_position(-1, 2L), class = "vctrs_error_position_bad_type")
+  verify_output(test_path("out", "error-position-sign.txt"), {
+    vec_as_position(0, 2L)
+    vec_as_position(-1, 2L)
+  })
+})
+
+test_that("vec_as_position() requires existing elements", {
+  expect_error(vec_as_position(10L, 2L), class = "vctrs_error_index_oob_positions")
+  expect_error(vec_as_position("foo", 1L, names = "bar"), class = "vctrs_error_index_oob_names")
+})
+
+test_that("vec_as_position() fails with NA", {
+  expect_error(vec_as_position(na_int, 2L), class = "vctrs_error_position_bad_type")
+  expect_error(vec_as_position(na_chr, 1L, names = "foo"), class = "vctrs_error_position_bad_type")
+  verify_output(test_path("out", "error-position-na.txt"), {
+    vec_as_position(na_int, 2L)
+    vec_as_position(na_chr, 1L, names = "foo")
+  })
+})
