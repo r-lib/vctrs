@@ -78,7 +78,7 @@ result should be a factor that contains at least the specified levels." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">vctrs</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.0.9003</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.0.9004</span>
       </span>
     </div>
 
@@ -165,48 +165,7 @@ result should be a factor that contains at least the specified levels.</p>
 <span class='co'># because it tries to match the levels exactly</span>
 <span class='co'># rather than learning them from the data.</span>
 <span class='fu'><a href='https://rdrr.io/r/base/try.html'>try</a></span>(<span class='fu'><a href='vec_assert.html'>vec_assert</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span>(<span class='st'>"x"</span>), <span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span>()))</div><div class='output co'>#&gt; Error : `factor("x")` must be a vector with type &lt;factor&lt;&gt;&gt;.
-#&gt; Instead, it has type &lt;factor&lt;5a425&gt;&gt;.
-#&gt; Backtrace:
-#&gt; <span style='color: #555555;'>     </span><span>█
-#&gt; </span><span style='color: #555555;'>  1. </span><span>├─base::tryCatch(...)
-#&gt; </span><span style='color: #555555;'>  2. </span><span>│ └─base:::tryCatchList(expr, classes, parentenv, handlers)
-#&gt; </span><span style='color: #555555;'>  3. </span><span>│   ├─base:::tryCatchOne(...)
-#&gt; </span><span style='color: #555555;'>  4. </span><span>│   │ └─base:::doTryCatch(return(expr), name, parentenv, handler)
-#&gt; </span><span style='color: #555555;'>  5. </span><span>│   └─base:::tryCatchList(expr, names[-nh], parentenv, handlers[-nh])
-#&gt; </span><span style='color: #555555;'>  6. </span><span>│     └─base:::tryCatchOne(expr, names, parentenv, handlers[[1L]])
-#&gt; </span><span style='color: #555555;'>  7. </span><span>│       └─base:::doTryCatch(return(expr), name, parentenv, handler)
-#&gt; </span><span style='color: #555555;'>  8. </span><span>├─base::withCallingHandlers(...)
-#&gt; </span><span style='color: #555555;'>  9. </span><span>├─base::saveRDS(...)
-#&gt; </span><span style='color: #555555;'> 10. </span><span>├─base::do.call(...)
-#&gt; </span><span style='color: #555555;'> 11. </span><span>├─(function (what, args, quote = FALSE, envir = parent.frame()) ...
-#&gt; </span><span style='color: #555555;'> 12. </span><span>└─(function (..., crayon_enabled, crayon_colors, pkgdown_internet) ...
-#&gt; </span><span style='color: #555555;'> 13. </span><span>  └─pkgdown::build_site(...)
-#&gt; </span><span style='color: #555555;'> 14. </span><span>    └─pkgdown:::build_site_local(...)
-#&gt; </span><span style='color: #555555;'> 15. </span><span>      └─pkgdown::build_reference(...)
-#&gt; </span><span style='color: #555555;'> 16. </span><span>        └─purrr::map(...)
-#&gt; </span><span style='color: #555555;'> 17. </span><span>          └─pkgdown:::.f(.x[[i]], ...)
-#&gt; </span><span style='color: #555555;'> 18. </span><span>            └─pkgdown:::data_reference_topic(...)
-#&gt; </span><span style='color: #555555;'> 19. </span><span>              └─pkgdown:::run_examples(...)
-#&gt; </span><span style='color: #555555;'> 20. </span><span>                └─pkgdown:::highlight_examples(code, topic, env = env)
-#&gt; </span><span style='color: #555555;'> 21. </span><span>                  └─evaluate::evaluate(x, child_env(env), new_device = TRUE)
-#&gt; </span><span style='color: #555555;'> 22. </span><span>                    └─evaluate:::evaluate_call(...)
-#&gt; </span><span style='color: #555555;'> 23. </span><span>                      ├─evaluate:::timing_fn(...)
-#&gt; </span><span style='color: #555555;'> 24. </span><span>                      ├─evaluate:::handle(...)
-#&gt; </span><span style='color: #555555;'> 25. </span><span>                      │ └─base::try(f, silent = TRUE)
-#&gt; </span><span style='color: #555555;'> 26. </span><span>                      │   └─base::tryCatch(...)
-#&gt; </span><span style='color: #555555;'> 27. </span><span>                      │     └─base:::tryCatchList(expr, classes, parentenv, handlers)
-#&gt; </span><span style='color: #555555;'> 28. </span><span>                      │       └─base:::tryCatchOne(expr, names, parentenv, handlers[[1L]])
-#&gt; </span><span style='color: #555555;'> 29. </span><span>                      │         └─base:::doTryCatch(return(expr), name, parentenv, handler)
-#&gt; </span><span style='color: #555555;'> 30. </span><span>                      ├─base::withCallingHandlers(...)
-#&gt; </span><span style='color: #555555;'> 31. </span><span>                      ├─base::withVisible(eval(expr, envir, enclos))
-#&gt; </span><span style='color: #555555;'> 32. </span><span>                      └─base::eval(expr, envir, enclos)
-#&gt; </span><span style='color: #555555;'> 33. </span><span>                        └─base::eval(expr, envir, enclos)
-#&gt; </span><span style='color: #555555;'> 34. </span><span>                          ├─base::try(vec_assert(factor("x"), factor()))
-#&gt; </span><span style='color: #555555;'> 35. </span><span>                          │ └─base::tryCatch(...)
-#&gt; </span><span style='color: #555555;'> 36. </span><span>                          │   └─base:::tryCatchList(expr, classes, parentenv, handlers)
-#&gt; </span><span style='color: #555555;'> 37. </span><span>                          │     └─base:::tryCatchOne(expr, names, parentenv, handlers[[1L]])
-#&gt; </span><span style='color: #555555;'> 38. </span><span>                          │       └─base:::doTryCatch(return(expr), name, parentenv, handler)
-#&gt; </span><span style='color: #555555;'> 39. </span><span>                          └─vctrs::vec_assert(factor("x"), factor())</div><div class='input'>
+#&gt; Instead, it has type &lt;factor&lt;5a425&gt;&gt;.</div><div class='input'>
 <span class='co'># You can also enforce a minimum set of levels</span>
 <span class='fu'><a href='https://rdrr.io/r/base/try.html'>try</a></span>(<span class='fu'><a href='vec_assert.html'>vec_assert</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span>(<span class='st'>"x"</span>), <span class='fu'>partial_factor</span>(<span class='st'>"y"</span>)))</div><div class='output co'>#&gt; Error : `factor("x")` must be a vector with type:
 #&gt; 
@@ -214,48 +173,7 @@ result should be a factor that contains at least the specified levels.</p>
 #&gt;     df698 {partial}
 #&gt;   &gt;&gt;
 #&gt; 
-#&gt; Instead, it has type &lt;factor&lt;5a425&gt;&gt;.
-#&gt; Backtrace:
-#&gt; </span><span style='color: #555555;'>     </span><span>█
-#&gt; </span><span style='color: #555555;'>  1. </span><span>├─base::tryCatch(...)
-#&gt; </span><span style='color: #555555;'>  2. </span><span>│ └─base:::tryCatchList(expr, classes, parentenv, handlers)
-#&gt; </span><span style='color: #555555;'>  3. </span><span>│   ├─base:::tryCatchOne(...)
-#&gt; </span><span style='color: #555555;'>  4. </span><span>│   │ └─base:::doTryCatch(return(expr), name, parentenv, handler)
-#&gt; </span><span style='color: #555555;'>  5. </span><span>│   └─base:::tryCatchList(expr, names[-nh], parentenv, handlers[-nh])
-#&gt; </span><span style='color: #555555;'>  6. </span><span>│     └─base:::tryCatchOne(expr, names, parentenv, handlers[[1L]])
-#&gt; </span><span style='color: #555555;'>  7. </span><span>│       └─base:::doTryCatch(return(expr), name, parentenv, handler)
-#&gt; </span><span style='color: #555555;'>  8. </span><span>├─base::withCallingHandlers(...)
-#&gt; </span><span style='color: #555555;'>  9. </span><span>├─base::saveRDS(...)
-#&gt; </span><span style='color: #555555;'> 10. </span><span>├─base::do.call(...)
-#&gt; </span><span style='color: #555555;'> 11. </span><span>├─(function (what, args, quote = FALSE, envir = parent.frame()) ...
-#&gt; </span><span style='color: #555555;'> 12. </span><span>└─(function (..., crayon_enabled, crayon_colors, pkgdown_internet) ...
-#&gt; </span><span style='color: #555555;'> 13. </span><span>  └─pkgdown::build_site(...)
-#&gt; </span><span style='color: #555555;'> 14. </span><span>    └─pkgdown:::build_site_local(...)
-#&gt; </span><span style='color: #555555;'> 15. </span><span>      └─pkgdown::build_reference(...)
-#&gt; </span><span style='color: #555555;'> 16. </span><span>        └─purrr::map(...)
-#&gt; </span><span style='color: #555555;'> 17. </span><span>          └─pkgdown:::.f(.x[[i]], ...)
-#&gt; </span><span style='color: #555555;'> 18. </span><span>            └─pkgdown:::data_reference_topic(...)
-#&gt; </span><span style='color: #555555;'> 19. </span><span>              └─pkgdown:::run_examples(...)
-#&gt; </span><span style='color: #555555;'> 20. </span><span>                └─pkgdown:::highlight_examples(code, topic, env = env)
-#&gt; </span><span style='color: #555555;'> 21. </span><span>                  └─evaluate::evaluate(x, child_env(env), new_device = TRUE)
-#&gt; </span><span style='color: #555555;'> 22. </span><span>                    └─evaluate:::evaluate_call(...)
-#&gt; </span><span style='color: #555555;'> 23. </span><span>                      ├─evaluate:::timing_fn(...)
-#&gt; </span><span style='color: #555555;'> 24. </span><span>                      ├─evaluate:::handle(...)
-#&gt; </span><span style='color: #555555;'> 25. </span><span>                      │ └─base::try(f, silent = TRUE)
-#&gt; </span><span style='color: #555555;'> 26. </span><span>                      │   └─base::tryCatch(...)
-#&gt; </span><span style='color: #555555;'> 27. </span><span>                      │     └─base:::tryCatchList(expr, classes, parentenv, handlers)
-#&gt; </span><span style='color: #555555;'> 28. </span><span>                      │       └─base:::tryCatchOne(expr, names, parentenv, handlers[[1L]])
-#&gt; </span><span style='color: #555555;'> 29. </span><span>                      │         └─base:::doTryCatch(return(expr), name, parentenv, handler)
-#&gt; </span><span style='color: #555555;'> 30. </span><span>                      ├─base::withCallingHandlers(...)
-#&gt; </span><span style='color: #555555;'> 31. </span><span>                      ├─base::withVisible(eval(expr, envir, enclos))
-#&gt; </span><span style='color: #555555;'> 32. </span><span>                      └─base::eval(expr, envir, enclos)
-#&gt; </span><span style='color: #555555;'> 33. </span><span>                        └─base::eval(expr, envir, enclos)
-#&gt; </span><span style='color: #555555;'> 34. </span><span>                          ├─base::try(vec_assert(factor("x"), partial_factor("y")))
-#&gt; </span><span style='color: #555555;'> 35. </span><span>                          │ └─base::tryCatch(...)
-#&gt; </span><span style='color: #555555;'> 36. </span><span>                          │   └─base:::tryCatchList(expr, classes, parentenv, handlers)
-#&gt; </span><span style='color: #555555;'> 37. </span><span>                          │     └─base:::tryCatchOne(expr, names, parentenv, handlers[[1L]])
-#&gt; </span><span style='color: #555555;'> 38. </span><span>                          │       └─base:::doTryCatch(return(expr), name, parentenv, handler)
-#&gt; </span><span style='color: #555555;'> 39. </span><span>                          └─vctrs::vec_assert(factor("x"), partial_factor("y"))</div><div class='input'>
+#&gt; Instead, it has type &lt;factor&lt;5a425&gt;&gt;.</div><div class='input'>
 <span class='fu'><a href='vec_assert.html'>vec_assert</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"x"</span>, <span class='st'>"y"</span>)), <span class='fu'>partial_factor</span>(<span class='st'>"y"</span>))
 
 <span class='no'>pf</span> <span class='kw'>&lt;-</span> <span class='fu'>partial_factor</span>(<span class='kw'>levels</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"x"</span>, <span class='st'>"y"</span>))
@@ -264,7 +182,7 @@ result should be a factor that contains at least the specified levels.</p>
 #&gt; &gt;</div><div class='input'>
 <span class='fu'><a href='vec_ptype.html'>vec_ptype_common</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span>(<span class='st'>"v"</span>), <span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span>(<span class='st'>"w"</span>), <span class='kw'>.ptype</span> <span class='kw'>=</span> <span class='no'>pf</span>)</div><div class='output co'>#&gt; factor(0)
 #&gt; Levels: v w x y</div><div class='input'>
-</div></span></pre>
+</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
