@@ -179,6 +179,9 @@ vec_as_index <- function(i, n, names = NULL) {
 #' @rdname vec_as_index
 #' @export
 vec_as_position <- function(i, n, names = NULL) {
+  if (!vec_is(i)) {
+    stop_position_bad_type(i)
+  }
   if (is.object(i)) {
     if (vec_is_subtype(i, lgl())) {
       stop_position_bad_type(i)
@@ -218,7 +221,13 @@ conditionMessage.vctrs_error_position_bad_type <- function(c) {
   lead <- "Must extract with a single position or name."
 
   if (is.object(i) || !typeof(i) %in% c("integer", "character")) {
-    type <- vec_ptype_full(c$i)
+    if (vec_is(i)) {
+      type <- vec_ptype_full(i)
+    } else if (is.object(i)) {
+      type <- paste(class(i), collapse = "/")
+    } else {
+      type <- typeof(i)
+    }
     return(glue_lines(
       lead,
       glue_error_bullets(

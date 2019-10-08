@@ -652,9 +652,14 @@ test_that("vec_as_position() returns a position", {
 test_that("vec_as_position() requires integer or character inputs", {
   expect_error(vec_as_position(TRUE, 10L), class = "vctrs_error_position_bad_type")
   expect_error(vec_as_position(mtcars, 10L), class = "vctrs_error_position_bad_type")
+  expect_error(vec_as_position(env(), 10L), class = "vctrs_error_position_bad_type")
+  expect_error(vec_as_position(foobar(), 10L), class = "vctrs_error_position_bad_type")
+
   verify_output(test_path("out", "error-position-type.txt"), {
     vec_as_position(TRUE, 10L)
     vec_as_position(mtcars, 10L)
+    vec_as_position(env(), 10L)
+    vec_as_position(foobar(), 10L)
   })
 })
 

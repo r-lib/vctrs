@@ -18,3 +18,11 @@ x `i` has the wrong type `data.frame<
   gear: double
   carb: double
 >`.
+> vec_as_position(env(), 10L)
+Error: Must extract with a single position or name.
+i Positions and names must be integer or character.
+x `i` has the wrong type `environment`.
+> vec_as_position(foobar(), 10L)
+Error: Must extract with a single position or name.
+i Positions and names must be integer or character.
+x `i` has the wrong type `vctrs_foobar`.
