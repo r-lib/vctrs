@@ -140,8 +140,7 @@ static SEXP chr_translate_encoding(SEXP x, R_len_t size);
 static SEXP list_translate_encoding(SEXP x, R_len_t size);
 static SEXP df_translate_encoding(SEXP x, R_len_t size);
 
-// [[ include("vctrs.h") ]]
-SEXP obj_translate_encoding(SEXP x, R_len_t size) {
+static SEXP obj_translate_encoding(SEXP x, R_len_t size) {
   switch (vec_proxy_typeof(x)) {
   case vctrs_type_character: return chr_translate_encoding(x, size);
   case vctrs_type_list: return list_translate_encoding(x, size);
