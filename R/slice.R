@@ -231,8 +231,8 @@ conditionMessage.vctrs_error_position_bad_type <- function(c) {
     return(glue_lines(
       lead,
       glue_error_bullets(
-        i = "Positions and names must be integer or character.",
-        x = "`{arg}` has the wrong type `{type}`."
+        x = "`{arg}` has the wrong type `{type}`.",
+        i = "Positions and names must be integer or character."
       )
     ))
   }
@@ -242,8 +242,8 @@ conditionMessage.vctrs_error_position_bad_type <- function(c) {
     return(glue_lines(
       lead,
       glue_error_bullets(
-        i = "Positions and names must be size 1.",
-        x = "`{arg}` has the wrong size {size}."
+        x = "`{arg}` has the wrong size {size}.",
+        i = "Positions and names must be size 1."
       )
     ))
   }
@@ -252,8 +252,8 @@ conditionMessage.vctrs_error_position_bad_type <- function(c) {
     return(glue_lines(
       lead,
       glue_error_bullets(
-        i = "Positions and names can't be missing.",
-        x = "`{arg}` can't be `NA`."
+        x = "`{arg}` can't be `NA`.",
+        i = "Positions and names can't be missing."
       )
     ))
   }
@@ -262,13 +262,13 @@ conditionMessage.vctrs_error_position_bad_type <- function(c) {
     return(glue_lines(
       lead,
       glue_error_bullets(
-        i = "Positions must be positive integers.",
         x =
           if (i == 0L) {
             "`{arg}` can't be zero."
           } else {
             "`{arg}` (with value {i}) has the wrong sign."
-          }
+          },
+        i = "Positions must be positive integers."
       )
     ))
   }

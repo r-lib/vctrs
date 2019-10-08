@@ -471,12 +471,12 @@ conditionMessage.vctrs_error_index_oob_positions <- function(c) {
   glue_lines(
     "Must index existing elements.",
     glue_error_bullets(
-      i = "There are only {c$size} elements.",
       x = ngettext(
         length(oob),
         "Can't subset position {oob_enum}.",
         "Can't subset positions {oob_enum}."
-      )
+      ),
+      i = "There are only {c$size} elements."
     )
   )
 }

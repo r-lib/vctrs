@@ -1,10 +1,9 @@
 > vec_as_position(TRUE, 10L)
 Error: Must extract with a single position or name.
-i Positions and names must be integer or character.
 x `i` has the wrong type `logical`.
+i Positions and names must be integer or character.
 > vec_as_position(mtcars, 10L)
 Error: Must extract with a single position or name.
-i Positions and names must be integer or character.
 x `i` has the wrong type `data.frame<
   mpg : double
   cyl : double
@@ -18,11 +17,12 @@ x `i` has the wrong type `data.frame<
   gear: double
   carb: double
 >`.
+i Positions and names must be integer or character.
 > vec_as_position(env(), 10L)
 Error: Must extract with a single position or name.
-i Positions and names must be integer or character.
 x `i` has the wrong type `environment`.
+i Positions and names must be integer or character.
 > vec_as_position(foobar(), 10L)
 Error: Must extract with a single position or name.
-i Positions and names must be integer or character.
 x `i` has the wrong type `vctrs_foobar`.
+i Positions and names must be integer or character.
