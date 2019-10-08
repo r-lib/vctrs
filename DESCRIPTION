@@ -1,6 +1,6 @@
 Package: vctrs
 Title: Vector Helpers
-Version: 0.2.0.9004
+Version: 0.2.0.9005
 Authors@R: 
     c(person(given = "Hadley",
              family = "Wickham",
