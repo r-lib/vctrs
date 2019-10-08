@@ -179,6 +179,11 @@ vec_as_index <- function(i, n, names = NULL) {
 #' @rdname vec_as_index
 #' @export
 vec_as_position <- function(i, n, names = NULL) {
+  i <- vec_coerce_position(i)
+  vec_as_index(i, n, names = names)
+}
+
+vec_coerce_position <- function(i) {
   if (!vec_is(i)) {
     stop_position_bad_type(i)
   }
@@ -204,7 +209,7 @@ vec_as_position <- function(i, n, names = NULL) {
     stop_position_bad_type(i)
   }
 
-  vec_as_index(i, n, names = names)
+  i
 }
 
 stop_position_bad_type <- function(i) {
