@@ -18,3 +18,8 @@ encoding_bytes <- function() {
 
   bytes
 }
+
+expect_equal_encoding <- function(object, expected) {
+  c(object, expected) %<-% vec_recycle_common(object, expected)
+  expect_equal(Encoding(object), Encoding(expected))
+}

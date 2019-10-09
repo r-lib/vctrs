@@ -283,8 +283,8 @@ SEXP vec_as_unique_names(SEXP names, bool quiet);
 
 // Character translation ----------------------------------------
 
-bool chr_translation_required(SEXP x, R_len_t size);
-SEXP obj_translate_encoding2(SEXP x, R_len_t x_size, SEXP y, R_len_t y_size);
+SEXP obj_maybe_translate_encoding(SEXP x, R_len_t size);
+SEXP obj_maybe_translate_encoding2(SEXP x, R_len_t x_size, SEXP y, R_len_t y_size);
 
 // Growable vector ----------------------------------------------
 
