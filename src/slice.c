@@ -573,6 +573,7 @@ static SEXP chr_as_index(SEXP i, SEXP names) {
   return matched;
 }
 
+// [[ include("vctrs.h") ]]
 SEXP vec_as_index(SEXP i, R_len_t n, SEXP names) {
   switch (TYPEOF(i)) {
   case NILSXP: return vctrs_shared_empty_int;

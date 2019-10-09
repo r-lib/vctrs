@@ -100,6 +100,7 @@ struct vctrs_split_info {
   int* p_restore_size;
   SEXP index;
   int* p_index;
+  bool has_indices;
   SEXP elt;
   R_len_t out_size;
   SEXP out;
@@ -133,8 +134,10 @@ struct vctrs_split_info init_split_info(SEXP x, SEXP indices) {
 
   if (indices == R_NilValue) {
     info.out_size = vec_size(x);
+    info.has_indices = false;
   } else {
     info.out_size = vec_size(indices);
+    info.has_indices = true;
   }
 
   info.out = PROTECT_N(Rf_allocVector(VECSXP, info.out_size), &nprot);
@@ -156,13 +159,45 @@ SEXP split_along_df(SEXP x, struct vctrs_split_info info);
 SEXP split_along_fallback(SEXP x, struct vctrs_split_info info);
 SEXP split_along_fallback_shaped(SEXP x, struct vctrs_split_info info);
 
+SEXP vec_split_along_impl(SEXP x, struct vctrs_split_info info, SEXP indices);
+
+SEXP as_split_indices(SEXP indices, SEXP x, struct vctrs_split_info info) {
+  if (indices == R_NilValue) {
+    return indices;
+  }
+
+  if (TYPEOF(indices) != VECSXP) {
+    Rf_errorcall(R_NilValue, "`indices` must be a `list_of<int>`, or `NULL`.");
+  }
+
+  SEXP index;
+  indices = PROTECT(r_maybe_duplicate(indices));
+
+  for (int i = 0; i < info.out_size; ++i) {
+    index = VECTOR_ELT(indices, i);
+    SET_VECTOR_ELT(indices, i, vec_as_index(index, vec_size(x), vec_names(x)));
+  }
+
+  UNPROTECT(1);
+  return indices;
+}
+
 // [[ include("vctrs.h") ]]
-SEXP vec_split_along(SEXP x) {
+SEXP vec_split_along(SEXP x, SEXP indices) {
   int nprot = 0;
 
-  struct vctrs_split_info info = init_split_info(x, R_NilValue);
+  struct vctrs_split_info info = init_split_info(x, indices);
   PROTECT_SPLIT_INFO(&info, &nprot);
 
+  indices = PROTECT_N(as_split_indices(indices, x, info), &nprot);
+
+  SEXP out = PROTECT_N(vec_split_along_impl(x, info, indices), &nprot);
+
+  UNPROTECT(nprot);
+  return out;
+}
+
+SEXP vec_split_along_impl(SEXP x, struct vctrs_split_info info, SEXP indices) {
   struct vctrs_proxy_info proxy_info = info.proxy_info;
 
   // Fallback to `[` if the class doesn't implement a proxy. This is
@@ -173,17 +208,14 @@ SEXP vec_split_along(SEXP x) {
     }
 
     if (has_dim(x)) {
-      UNPROTECT(nprot);
       return split_along_fallback_shaped(x, info);
     }
 
-    UNPROTECT(nprot);
     return split_along_fallback(x, info);
   }
 
   switch (proxy_info.type) {
   case vctrs_type_null: {
-    UNPROTECT(nprot);
     return R_NilValue;
   }
   case vctrs_type_logical:
@@ -194,22 +226,20 @@ SEXP vec_split_along(SEXP x) {
   case vctrs_type_raw:
   case vctrs_type_list: {
     if (has_dim(x)) {
-      UNPROTECT(nprot);
       return split_along_shaped(x, info);
     }
 
-    UNPROTECT(nprot);
     return split_along(x, info);
   }
-
   case vctrs_type_dataframe: {
-    UNPROTECT(nprot);
     return split_along_df(x, info);
   }
   default:
     vec_assert(x, args_empty);
-    Rf_error("Internal error: Unexpected type `%s` for vector proxy in `vec_split_along()`",
-             vec_type_as_str(proxy_info.type));
+    Rf_error(
+      "Internal error: Unexpected type `%s` for vector proxy in `vec_split_along()`",
+      vec_type_as_str(proxy_info.type)
+    );
   }
 }
 
