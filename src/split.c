@@ -152,7 +152,7 @@ struct vctrs_split_info init_split_info(SEXP x, SEXP indices) {
 // list(vec_slice(x, 1L), vec_slice(x, 2L), ...)
 // but in a more efficient way
 
-SEXP split_along(SEXP x, struct vctrs_split_info info);
+SEXP split_along(SEXP x, struct vctrs_split_info info, SEXP indices);
 SEXP split_along_shaped(SEXP x, struct vctrs_split_info info);
 SEXP split_along_df(SEXP x, struct vctrs_split_info info);
 
@@ -229,7 +229,7 @@ SEXP vec_split_along_impl(SEXP x, struct vctrs_split_info info, SEXP indices) {
       return split_along_shaped(x, info);
     }
 
-    return split_along(x, info);
+    return split_along(x, info, indices);
   }
   case vctrs_type_dataframe: {
     return split_along_df(x, info);
@@ -243,7 +243,7 @@ SEXP vec_split_along_impl(SEXP x, struct vctrs_split_info info, SEXP indices) {
   }
 }
 
-SEXP split_along(SEXP x, struct vctrs_split_info info) {
+SEXP split_along(SEXP x, struct vctrs_split_info info, SEXP indices) {
   SEXP names = PROTECT(Rf_getAttrib(x, R_NamesSymbol));
 
   PROTECT_INDEX name_prot_idx;
@@ -251,7 +251,12 @@ SEXP split_along(SEXP x, struct vctrs_split_info info) {
   PROTECT_WITH_INDEX(name, &name_prot_idx);
 
   for (R_len_t i = 0; i < info.out_size; ++i) {
-    ++(*info.p_index);
+    if (info.has_indices) {
+      info.index = VECTOR_ELT(indices, i);
+      *info.p_restore_size = vec_size(info.index);
+    } else {
+      ++(*info.p_index);
+    }
 
     info.elt = PROTECT(vec_slice_base(info.proxy_info.type, info.proxy_info.proxy, info.index));
 
