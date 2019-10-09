@@ -257,10 +257,6 @@ SEXP vec_split_along_impl(SEXP x, struct vctrs_split_info info, SEXP indices) {
 SEXP split_along(SEXP x, struct vctrs_split_info info, SEXP indices) {
   SEXP names = PROTECT(Rf_getAttrib(x, R_NamesSymbol));
 
-  PROTECT_INDEX name_prot_idx;
-  SEXP name = R_NilValue;
-  PROTECT_WITH_INDEX(name, &name_prot_idx);
-
   for (R_len_t i = 0; i < info.out_size; ++i) {
     if (info.has_indices) {
       info.index = VECTOR_ELT(indices, i);
@@ -272,9 +268,9 @@ SEXP split_along(SEXP x, struct vctrs_split_info info, SEXP indices) {
     info.elt = PROTECT(vec_slice_base(info.proxy_info.type, info.proxy_info.proxy, info.index));
 
     if (names != R_NilValue) {
-      name = slice_names(names, info.index);
-      REPROTECT(name, name_prot_idx);
-      r_poke_names(info.elt, name);
+      SEXP elt_names = PROTECT(slice_names(names, info.index));
+      r_poke_names(info.elt, elt_names);
+      UNPROTECT(1);
     }
 
     info.elt = vec_restore(info.elt, x, info.restore_size);
@@ -283,7 +279,7 @@ SEXP split_along(SEXP x, struct vctrs_split_info info, SEXP indices) {
     UNPROTECT(1);
   }
 
-  UNPROTECT(2);
+  UNPROTECT(1);
   return info.out;
 }
 
