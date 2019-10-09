@@ -733,3 +733,11 @@ test_that("vec_as_position() fails with NA", {
     vec_as_position(na_chr, 1L, names = "foo")
   })
 })
+
+test_that("vec_as_position() doesn't allow lossy casts", {
+  expect_error(vec_as_position(2^31, 3L), class = "vctrs_error_cast_lossy")
+
+  # Lossy casts generate missing values, which are disallowed
+  err <- expect_error(allow_lossy_cast(vec_as_position(2^31, 3L)), class = "vctrs_error_index_bad_type")
+  expect_identical(err$i, na_int)
+})
