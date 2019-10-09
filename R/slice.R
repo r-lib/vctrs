@@ -185,22 +185,22 @@ vec_as_position <- function(i, n, names = NULL) {
 }
 
 vec_coerce_index <- function(i) {
-  maybe_get(vec_maybe_index(i))
+  maybe_get(vec_maybe_coerce_index(i))
 }
 vec_is_index <- function(i) {
-  maybe <- vec_maybe_index(i)
+  maybe <- vec_maybe_coerce_index(i)
   is_null(maybe$error)
 }
 
 vec_coerce_position <- function(i) {
-  maybe_get(vec_maybe_position(i))
+  maybe_get(vec_maybe_coerce_position(i))
 }
 vec_is_position <- function(i) {
-  maybe <- vec_maybe_position(i)
+  maybe <- vec_maybe_coerce_position(i)
   is_null(maybe$error)
 }
 
-vec_maybe_index <- function(i) {
+vec_maybe_coerce_index <- function(i) {
   if (!vec_is(i)) {
     return(maybe(error = new_error_index_bad_type(i)))
   }
@@ -223,12 +223,12 @@ vec_maybe_index <- function(i) {
   maybe(i)
 }
 
-vec_maybe_position <- function(i) {
+vec_maybe_coerce_position <- function(i) {
   if (is.object(i) && vec_is(i) && vec_is_subtype(i, lgl())) {
     return(maybe(error = new_error_position_bad_type(i)))
   }
 
-  maybe <- vec_maybe_index(i)
+  maybe <- vec_maybe_coerce_index(i)
 
   # Return a subclass of index error
   if (!is_null(maybe$error)) {
