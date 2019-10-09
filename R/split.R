@@ -63,3 +63,8 @@ vec_split <- function(x, by) {
 vec_split_id <- function(x) {
   .Call(vctrs_split_id, x)
 }
+
+# Used internally by `vec_rbind()`, but exported for testing
+vec_split_along <- function(x) {
+  .Call(vctrs_split_along, x)
+}
