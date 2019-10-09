@@ -155,19 +155,25 @@ SEXP split_along_df(SEXP x, struct vctrs_split_info info, SEXP indices);
 SEXP split_along_fallback(SEXP x, struct vctrs_split_info info, SEXP indices);
 SEXP split_along_fallback_shaped(SEXP x, struct vctrs_split_info info, SEXP indices);
 
-SEXP as_split_indices(SEXP indices, SEXP x, struct vctrs_split_info info);
+SEXP as_split_indices(SEXP indices, SEXP x);
 
 SEXP vec_split_along_impl(SEXP x, struct vctrs_split_info info, SEXP indices);
 
 
-// [[ include("vctrs.h"); register() ]]
+// [[ register() ]]
+SEXP vctrs_split_along(SEXP x, SEXP indices) {
+  indices = PROTECT(as_split_indices(indices, x));
+
+  UNPROTECT(1);
+  return vec_split_along(x, indices);
+}
+
+// [[ include("vctrs.h") ]]
 SEXP vec_split_along(SEXP x, SEXP indices) {
   int nprot = 0;
 
   struct vctrs_split_info info = init_split_info(x, indices);
   PROTECT_SPLIT_INFO(&info, &nprot);
-
-  indices = PROTECT_N(as_split_indices(indices, x, info), &nprot);
 
   SEXP out = PROTECT_N(vec_split_along_impl(x, info, indices), &nprot);
 
@@ -379,7 +385,7 @@ SEXP split_along_fallback_shaped(SEXP x, struct vctrs_split_info info, SEXP indi
   return info.out;
 }
 
-SEXP as_split_indices(SEXP indices, SEXP x, struct vctrs_split_info info) {
+SEXP as_split_indices(SEXP indices, SEXP x) {
   if (indices == R_NilValue) {
     return indices;
   }
@@ -391,12 +397,13 @@ SEXP as_split_indices(SEXP indices, SEXP x, struct vctrs_split_info info) {
   SEXP index;
   indices = PROTECT(r_maybe_duplicate(indices));
 
-  R_len_t size = vec_size(x);
+  R_len_t size_indices = vec_size(indices);
+  R_len_t size_x = vec_size(x);
   SEXP names = PROTECT(vec_names(x));
 
-  for (int i = 0; i < info.out_size; ++i) {
+  for (int i = 0; i < size_indices; ++i) {
     index = VECTOR_ELT(indices, i);
-    SET_VECTOR_ELT(indices, i, vec_as_index(index, size, names));
+    SET_VECTOR_ELT(indices, i, vec_as_index(index, size_x, names));
   }
 
   UNPROTECT(2);
