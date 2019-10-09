@@ -361,6 +361,9 @@ SEXP split_along_fallback(SEXP x, struct vctrs_split_info info, SEXP indices) {
     if (info.has_indices) {
       info.index = VECTOR_ELT(indices, i);
       *info.p_restore_size = vec_size(info.index);
+
+      // Must redefine after altering
+      Rf_defineVar(syms_i, info.index, env);
     } else {
       ++(*info.p_index);
     }
