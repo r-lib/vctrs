@@ -243,3 +243,8 @@ test_that("fallback method with `indices` works", {
   )
 })
 
+test_that("vec_split_along() falls back to `[` for shaped objects with no proxy when indices are provided", {
+  x <- foobar(1)
+  dim(x) <- c(1, 1)
+  expect_equal(vec_split_along(x, list(1, 1)), list(x, x))
+})
