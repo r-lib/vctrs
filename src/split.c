@@ -384,7 +384,7 @@ SEXP as_split_indices(SEXP indices, SEXP x, struct vctrs_split_info info) {
   }
 
   if (TYPEOF(indices) != VECSXP) {
-    Rf_errorcall(R_NilValue, "`indices` must be a `list_of<int>`, or `NULL`.");
+    Rf_errorcall(R_NilValue, "`indices` must be a list of index values, or `NULL`.");
   }
 
   SEXP index;
