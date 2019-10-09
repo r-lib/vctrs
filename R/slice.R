@@ -184,18 +184,25 @@ vec_as_position <- function(i, n, names = NULL) {
 }
 
 vec_coerce_position <- function(i) {
+  maybe_get(vec_maybe_position(i))
+}
+vec_is_position <- function(i) {
+  maybe <- vec_maybe_position(i)
+  is_null(maybe$error)
+}
+vec_maybe_position <- function(i) {
   if (!vec_is(i)) {
-    stop_position_bad_type(i)
+    return(maybe(error = new_error_position_bad_type(i)))
   }
   if (is.object(i)) {
     if (vec_is_subtype(i, lgl())) {
-      stop_position_bad_type(i)
+      return(maybe(error = new_error_position_bad_type(i)))
     } else if (vec_is_subtype(i, int())) {
       i <- vec_cast(i, int())
     } else if (vec_is_subtype(i, chr())) {
       i <- vec_cast(i, chr())
     } else {
-      stop_position_bad_type(i)
+      return(maybe(error = new_error_position_bad_type(i)))
     }
   } else if (is_double(i)) {
     i <- vec_coercible_cast(i, int())
@@ -206,16 +213,14 @@ vec_coerce_position <- function(i) {
       length(i) != 1L ||
       is.na(i) ||
       (type == "integer" && i < 1L)) {
-    stop_position_bad_type(i)
+    return(maybe(error = new_error_position_bad_type(i)))
   }
 
-  i
+  maybe(i)
 }
 
-stop_position_bad_type <- function(i) {
-  # Should we derive from `stop_incompatible_type()` once we have
-  # union types? The index is incompatible with `union<chr(), int()>`.
-  abort("", "vctrs_error_position_bad_type", i = i)
+new_error_position_bad_type <- function(i, ..., .subclass = NULL) {
+  error_cnd(c(.subclass, "vctrs_error_position_bad_type"), i = i)
 }
 
 #' @export

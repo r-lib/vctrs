@@ -85,3 +85,16 @@ paste_line <- function (...) {
 has_dim <- function(x) {
   !is.null(attr(x, "dim"))
 }
+
+maybe <- function(value = NULL, error = NULL) {
+  structure(
+    list(value = value, error = error),
+    class = "rlang_maybe"
+  )
+}
+maybe_get <- function(x) {
+  if (!is_null(x$error)) {
+    cnd_signal(x$error)
+  }
+  x$value
+}
