@@ -160,7 +160,7 @@ SEXP as_split_indices(SEXP indices, SEXP x, struct vctrs_split_info info);
 SEXP vec_split_along_impl(SEXP x, struct vctrs_split_info info, SEXP indices);
 
 
-// [[ include("vctrs.h") ]]
+// [[ include("vctrs.h"); register() ]]
 SEXP vec_split_along(SEXP x, SEXP indices) {
   int nprot = 0;
 
