@@ -7,7 +7,6 @@ SEXP fns_vec_slice_fallback = NULL;
 
 // Defined below
 SEXP vec_as_index(SEXP i, R_len_t n, SEXP names);
-static SEXP slice_rownames(SEXP names, SEXP index);
 
 /**
  * This `vec_slice()` variant falls back to `[` with S3 objects.
@@ -190,6 +189,7 @@ static SEXP list_slice(SEXP x, SEXP index) {
 #undef SLICE_BARRIER_COMPACT_SEQ
 #undef SLICE_BARRIER_INDEX
 
+// TODO - remove me from API
 // [[ include("vctrs.h") ]]
 SEXP df_slice(SEXP x, SEXP index) {
   R_len_t n = Rf_length(x);
@@ -264,7 +264,9 @@ SEXP slice_names(SEXP names, SEXP index) {
   UNPROTECT(1);
   return names;
 }
-static SEXP slice_rownames(SEXP names, SEXP index) {
+
+// [[ include("vctrs.h") ]]
+SEXP slice_rownames(SEXP names, SEXP index) {
   if (names == R_NilValue) {
     return names;
   }

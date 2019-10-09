@@ -234,6 +234,7 @@ SEXP vec_type2(SEXP x,
                int* left);
 
 SEXP slice_names(SEXP names, SEXP index);
+SEXP slice_rownames(SEXP names, SEXP index);
 
 bool is_data_frame(SEXP x);
 bool is_record(SEXP x);

@@ -287,7 +287,7 @@ SEXP split_along(SEXP x, struct vctrs_split_info info, SEXP indices) {
   return info.out;
 }
 
-SEXP split_along_df(SEXP x, struct vctrs_split_info info, SEXP indices) {
+SEXP split_along_df2(SEXP x, struct vctrs_split_info info, SEXP indices) {
   for (R_len_t i = 0; i < info.out_size; ++i) {
     if (info.has_indices) {
       info.index = VECTOR_ELT(indices, i);
@@ -304,6 +304,64 @@ SEXP split_along_df(SEXP x, struct vctrs_split_info info, SEXP indices) {
     UNPROTECT(1);
   }
 
+  return info.out;
+}
+
+SEXP split_along_df(SEXP x, struct vctrs_split_info info, SEXP indices) {
+  int n_cols = Rf_length(x);
+
+  SEXP col_names = PROTECT(Rf_getAttrib(x, R_NamesSymbol));
+  SEXP row_names = PROTECT(get_rownames(x));
+
+  bool has_row_names = TYPEOF(row_names) == STRSXP;
+
+  // Pre-load the `out` container with lists that will become data frames
+  for (R_len_t i = 0; i < info.out_size; ++i) {
+    info.elt = PROTECT(Rf_allocVector(VECSXP, n_cols));
+
+    Rf_setAttrib(info.elt, R_NamesSymbol, col_names);
+
+    if (has_row_names) {
+      if (info.has_indices) {
+        info.index = VECTOR_ELT(indices, i);
+      } else {
+        ++(*info.p_index);
+      }
+
+      Rf_setAttrib(info.elt, R_RowNamesSymbol, slice_rownames(row_names, info.index));
+    }
+
+    SET_VECTOR_ELT(info.out, i, info.elt);
+    UNPROTECT(1);
+  }
+
+  // Split each column according to the indices, and then assign the results
+  // into the appropriate data frame column in the `out` list
+  for (int i = 0; i < n_cols; ++i) {
+    SEXP col = VECTOR_ELT(info.proxy_info.proxy, i);
+    SEXP split = PROTECT(vec_split_along(col, indices));
+
+    for (int j = 0; j < info.out_size; ++j) {
+      info.elt = VECTOR_ELT(info.out, j);
+      SET_VECTOR_ELT(info.elt, i, VECTOR_ELT(split, j));
+    }
+
+    UNPROTECT(1);
+  }
+
+  // Restore each data frame
+  for (int i = 0; i < info.out_size; ++i) {
+    if (info.has_indices) {
+      *info.p_restore_size = vec_size(VECTOR_ELT(indices, i));
+    }
+
+    info.elt = VECTOR_ELT(info.out, i);
+    info.elt = vec_restore(info.elt, x, info.restore_size);
+
+    SET_VECTOR_ELT(info.out, i, info.elt);
+  }
+
+  UNPROTECT(2);
   return info.out;
 }
 
