@@ -148,39 +148,16 @@ struct vctrs_split_info init_split_info(SEXP x, SEXP indices) {
 
 // -----------------------------------------------------------------------------
 
-// Used in `as_df_row()` to turn `x` into a list like:
-// list(vec_slice(x, 1L), vec_slice(x, 2L), ...)
-// but in a more efficient way
-
 SEXP split_along(SEXP x, struct vctrs_split_info info, SEXP indices);
 SEXP split_along_shaped(SEXP x, struct vctrs_split_info info, SEXP indices);
 SEXP split_along_df(SEXP x, struct vctrs_split_info info, SEXP indices);
-
 SEXP split_along_fallback(SEXP x, struct vctrs_split_info info, SEXP indices);
 SEXP split_along_fallback_shaped(SEXP x, struct vctrs_split_info info, SEXP indices);
 
+SEXP as_split_indices(SEXP indices, SEXP x, struct vctrs_split_info info);
+
 SEXP vec_split_along_impl(SEXP x, struct vctrs_split_info info, SEXP indices);
 
-SEXP as_split_indices(SEXP indices, SEXP x, struct vctrs_split_info info) {
-  if (indices == R_NilValue) {
-    return indices;
-  }
-
-  if (TYPEOF(indices) != VECSXP) {
-    Rf_errorcall(R_NilValue, "`indices` must be a `list_of<int>`, or `NULL`.");
-  }
-
-  SEXP index;
-  indices = PROTECT(r_maybe_duplicate(indices));
-
-  for (int i = 0; i < info.out_size; ++i) {
-    index = VECTOR_ELT(indices, i);
-    SET_VECTOR_ELT(indices, i, vec_as_index(index, vec_size(x), vec_names(x)));
-  }
-
-  UNPROTECT(1);
-  return indices;
-}
 
 // [[ include("vctrs.h") ]]
 SEXP vec_split_along(SEXP x, SEXP indices) {
@@ -399,4 +376,25 @@ SEXP split_along_fallback_shaped(SEXP x, struct vctrs_split_info info, SEXP indi
   }
 
   return info.out;
+}
+
+SEXP as_split_indices(SEXP indices, SEXP x, struct vctrs_split_info info) {
+  if (indices == R_NilValue) {
+    return indices;
+  }
+
+  if (TYPEOF(indices) != VECSXP) {
+    Rf_errorcall(R_NilValue, "`indices` must be a `list_of<int>`, or `NULL`.");
+  }
+
+  SEXP index;
+  indices = PROTECT(r_maybe_duplicate(indices));
+
+  for (int i = 0; i < info.out_size; ++i) {
+    index = VECTOR_ELT(indices, i);
+    SET_VECTOR_ELT(indices, i, vec_as_index(index, vec_size(x), vec_names(x)));
+  }
+
+  UNPROTECT(1);
+  return indices;
 }
