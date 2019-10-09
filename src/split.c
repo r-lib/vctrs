@@ -156,7 +156,7 @@ SEXP split_along(SEXP x, struct vctrs_split_info info, SEXP indices);
 SEXP split_along_shaped(SEXP x, struct vctrs_split_info info, SEXP indices);
 SEXP split_along_df(SEXP x, struct vctrs_split_info info);
 
-SEXP split_along_fallback(SEXP x, struct vctrs_split_info info);
+SEXP split_along_fallback(SEXP x, struct vctrs_split_info info, SEXP indices);
 SEXP split_along_fallback_shaped(SEXP x, struct vctrs_split_info info);
 
 SEXP vec_split_along_impl(SEXP x, struct vctrs_split_info info, SEXP indices);
@@ -211,7 +211,7 @@ SEXP vec_split_along_impl(SEXP x, struct vctrs_split_info info, SEXP indices) {
       return split_along_fallback_shaped(x, info);
     }
 
-    return split_along_fallback(x, info);
+    return split_along_fallback(x, info, indices);
   }
 
   switch (proxy_info.type) {
@@ -343,7 +343,7 @@ SEXP split_along_shaped(SEXP x, struct vctrs_split_info info, SEXP indices) {
   return info.out;
 }
 
-SEXP split_along_fallback(SEXP x, struct vctrs_split_info info) {
+SEXP split_along_fallback(SEXP x, struct vctrs_split_info info, SEXP indices) {
   // Construct call with symbols, not values, for performance
   SEXP call = PROTECT(Rf_lang3(syms_bracket, syms_x, syms_i));
 
@@ -353,7 +353,12 @@ SEXP split_along_fallback(SEXP x, struct vctrs_split_info info) {
   Rf_defineVar(syms_i, info.index, env);
 
   for (R_len_t i = 0; i < info.out_size; ++i) {
-    ++(*info.p_index);
+    if (info.has_indices) {
+      info.index = VECTOR_ELT(indices, i);
+      *info.p_restore_size = vec_size(info.index);
+    } else {
+      ++(*info.p_index);
+    }
 
     info.elt = PROTECT(Rf_eval(call, env));
 
