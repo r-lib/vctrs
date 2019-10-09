@@ -666,9 +666,23 @@ test_that("vec_as_position() requires integer or character inputs", {
   })
 })
 
-test_that("vec_as_position() requires integer- or character-like OO inputs", {
+test_that("vec_as_index() requires integer, character, or logical inputs", {
+  expect_error(vec_as_index(mtcars, 10L), class = "vctrs_error_index_bad_type")
+  expect_error(vec_as_index(env(), 10L), class = "vctrs_error_index_bad_type")
+  expect_error(vec_as_index(foobar(), 10L), class = "vctrs_error_index_bad_type")
+
+  verify_output(test_path("out", "error-index-type.txt"), {
+    vec_as_index(mtcars, 10L)
+    vec_as_index(env(), 10L)
+    vec_as_index(foobar(), 10L)
+  })
+})
+
+test_that("vec_as_position() and vec_as_index() require integer- or character-like OO inputs", {
   expect_identical(vec_as_position(factor("foo"), 2L, c("bar", "foo")), 2L)
+  expect_identical(vec_as_index(factor("foo"), 2L, c("bar", "foo")), 2L)
   expect_error(vec_as_position(foobar(1L), 10L), class = "vctrs_error_position_bad_type")
+  expect_error(vec_as_index(foobar(1L), 10L), class = "vctrs_error_index_bad_type")
 
   # Define subtype of logical and integer
   scoped_global_bindings(
@@ -683,6 +697,14 @@ test_that("vec_as_position() requires integer- or character-like OO inputs", {
     vec_cast.integer.vctrs_foobar = function(x, to, ...) vec_cast(unclass(x), int())
   )
   expect_error(vec_as_position(foobar(TRUE), 10L), class = "vctrs_error_position_bad_type")
+  expect_identical(vec_as_index(foobar(TRUE), 10L), 1L)
+})
+
+test_that("vec_as_position() and vec_as_index() require existing elements", {
+  expect_error(vec_as_position(10L, 2L), class = "vctrs_error_index_oob_positions")
+  expect_error(vec_as_position("foo", 1L, names = "bar"), class = "vctrs_error_index_oob_names")
+  expect_error(vec_as_index(10L, 2L), class = "vctrs_error_index_oob_positions")
+  expect_error(vec_as_index("foo", 1L, names = "bar"), class = "vctrs_error_index_oob_names")
 })
 
 test_that("vec_as_position() requires length 1 inputs", {
@@ -701,11 +723,6 @@ test_that("vec_as_position() requires positive integers", {
     vec_as_position(0, 2L)
     vec_as_position(-1, 2L)
   })
-})
-
-test_that("vec_as_position() requires existing elements", {
-  expect_error(vec_as_position(10L, 2L), class = "vctrs_error_index_oob_positions")
-  expect_error(vec_as_position("foo", 1L, names = "bar"), class = "vctrs_error_index_oob_names")
 })
 
 test_that("vec_as_position() fails with NA", {

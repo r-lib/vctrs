@@ -1,0 +1,24 @@
+> vec_as_index(mtcars, 10L)
+Error: Must subset with positions or names.
+x `i` has the wrong type `data.frame<
+  mpg : double
+  cyl : double
+  disp: double
+  hp  : double
+  drat: double
+  wt  : double
+  qsec: double
+  vs  : double
+  am  : double
+  gear: double
+  carb: double
+>`.
+i Positions and names must be integer, logical, or character.
+> vec_as_index(env(), 10L)
+Error: Must subset with positions or names.
+x `i` has the wrong type `environment`.
+i Positions and names must be integer, logical, or character.
+> vec_as_index(foobar(), 10L)
+Error: Must subset with positions or names.
+x `i` has the wrong type `vctrs_foobar`.
+i Positions and names must be integer, logical, or character.

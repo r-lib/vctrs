@@ -98,3 +98,13 @@ maybe_get <- function(x) {
   }
   x$value
 }
+
+obj_type <- function(x) {
+  if (vec_is(x)) {
+    vec_ptype_full(x)
+  } else if (is.object(x)) {
+    paste(class(x), collapse = "/")
+  } else {
+    typeof(x)
+  }
+}

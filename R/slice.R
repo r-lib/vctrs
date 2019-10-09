@@ -271,19 +271,32 @@ new_error_position_bad_type <- function(i, ..., .subclass = NULL) {
 conditionMessage.vctrs_error_index_bad_type <- function(c) {
   i <- c$i
   arg <- c$arg %||% "i"
+  issue <- "Must subset with positions or names."
 
-  lead <- "Must extract with a single position or name."
+  if (is.object(i) || !typeof(i) %in% c("integer", "character", "logical")) {
+    type <- obj_type(i)
+    return(glue_lines(
+      issue,
+      glue_error_bullets(
+        x = "`{arg}` has the wrong type `{type}`.",
+        i = "Positions and names must be integer, logical, or character."
+      )
+    ))
+  }
+
+  stop("Internal error: Unexpected state while handling `vctrs_error_index_bad_type`.")
+}
+
+#' @export
+conditionMessage.vctrs_error_position_bad_type <- function(c) {
+  i <- c$i
+  arg <- c$arg %||% "i"
+  issue <- "Must extract with a single position or name."
 
   if (is.object(i) || !typeof(i) %in% c("integer", "character")) {
-    if (vec_is(i)) {
-      type <- vec_ptype_full(i)
-    } else if (is.object(i)) {
-      type <- paste(class(i), collapse = "/")
-    } else {
-      type <- typeof(i)
-    }
+    type <- obj_type(i)
     return(glue_lines(
-      lead,
+      issue,
       glue_error_bullets(
         x = "`{arg}` has the wrong type `{type}`.",
         i = "Positions and names must be integer or character."
@@ -294,7 +307,7 @@ conditionMessage.vctrs_error_index_bad_type <- function(c) {
   if (length(i) != 1L) {
     size <- length(c$i)
     return(glue_lines(
-      lead,
+      issue,
       glue_error_bullets(
         x = "`{arg}` has the wrong size {size}.",
         i = "Positions and names must be size 1."
@@ -304,7 +317,7 @@ conditionMessage.vctrs_error_index_bad_type <- function(c) {
 
   if (is.na(i)) {
     return(glue_lines(
-      lead,
+      issue,
       glue_error_bullets(
         x = "`{arg}` can't be `NA`.",
         i = "Positions and names can't be missing."
@@ -314,7 +327,7 @@ conditionMessage.vctrs_error_index_bad_type <- function(c) {
 
   if (i < 1L) {
     return(glue_lines(
-      lead,
+      issue,
       glue_error_bullets(
         x =
           if (i == 0L) {
@@ -327,7 +340,7 @@ conditionMessage.vctrs_error_index_bad_type <- function(c) {
     ))
   }
 
-  stop("Internal error: Unexpected state while handling `vctrs_error_index_bad_type`.")
+  stop("Internal error: Unexpected state while handling `vctrs_error_position_bad_type`.")
 }
 
 vec_index <- function(x, i, ...) {
