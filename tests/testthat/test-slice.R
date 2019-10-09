@@ -52,6 +52,9 @@ test_that("can subset with a recycled TRUE", {
   expect_identical(vec_slice(1:3, TRUE), 1:3)
   expect_identical(vec_slice(mtcars, TRUE), mtcars)
   expect_identical(vec_slice(new_vctr(1:3), TRUE), new_vctr(1:3))
+
+  skip("FIXME")
+  expect_identical(vec_as_index(TRUE, length(2)), 1:2)
 })
 
 test_that("can subset with a recycled FALSE", {
@@ -192,7 +195,7 @@ test_that("can slice with double indices", {
 })
 
 test_that("vec_as_index() checks type", {
-  expect_error(vec_as_index(quote(foo), 1L), "must be an integer, character, or logical vector, not a symbol")
+  expect_error(vec_as_index(quote(foo), 1L), class = "vctrs_error_index_bad_type")
   expect_error(vec_as_index("foo", "bar"), class = "vctrs_error_assert_ptype")
   expect_error(vec_as_index("foo", 1L, names = 1L), "must be a character vector")
 })
