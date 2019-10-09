@@ -1,3 +1,5 @@
+context("test-split")
+
 # splits ------------------------------------------------------------------
 
 test_that("can split empty vector", {
