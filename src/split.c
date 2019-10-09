@@ -157,7 +157,7 @@ SEXP split_along_shaped(SEXP x, struct vctrs_split_info info, SEXP indices);
 SEXP split_along_df(SEXP x, struct vctrs_split_info info);
 
 SEXP split_along_fallback(SEXP x, struct vctrs_split_info info, SEXP indices);
-SEXP split_along_fallback_shaped(SEXP x, struct vctrs_split_info info);
+SEXP split_along_fallback_shaped(SEXP x, struct vctrs_split_info info, SEXP indices);
 
 SEXP vec_split_along_impl(SEXP x, struct vctrs_split_info info, SEXP indices);
 
@@ -208,7 +208,7 @@ SEXP vec_split_along_impl(SEXP x, struct vctrs_split_info info, SEXP indices) {
     }
 
     if (has_dim(x)) {
-      return split_along_fallback_shaped(x, info);
+      return split_along_fallback_shaped(x, info, indices);
     }
 
     return split_along_fallback(x, info, indices);
@@ -375,9 +375,13 @@ SEXP split_along_fallback(SEXP x, struct vctrs_split_info info, SEXP indices) {
   return info.out;
 }
 
-SEXP split_along_fallback_shaped(SEXP x, struct vctrs_split_info info) {
+SEXP split_along_fallback_shaped(SEXP x, struct vctrs_split_info info, SEXP indices) {
   for (R_len_t i = 0; i < info.out_size; ++i) {
-    ++(*info.p_index);
+    if (info.has_indices) {
+      info.index = VECTOR_ELT(indices, i);
+    } else {
+      ++(*info.p_index);
+    }
 
     // `vec_slice_fallback()` will also `vec_restore()` for us
     info.elt = PROTECT(vec_slice_fallback(x, info.index));
