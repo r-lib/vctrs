@@ -973,6 +973,7 @@ SEXP strings_universal = NULL;
 SEXP strings_check_unique = NULL;
 SEXP strings_key = NULL;
 SEXP strings_id = NULL;
+SEXP strings_val = NULL;
 
 SEXP syms_i = NULL;
 SEXP syms_n = NULL;
@@ -1013,7 +1014,7 @@ void vctrs_init_utils(SEXP ns) {
 
   // Holds the CHARSXP objects because unlike symbols they can be
   // garbage collected
-  strings = Rf_allocVector(STRSXP, 13);
+  strings = Rf_allocVector(STRSXP, 14);
   R_PreserveObject(strings);
 
   strings_dots = Rf_mkChar("...");
@@ -1054,6 +1055,9 @@ void vctrs_init_utils(SEXP ns) {
 
   strings_id = Rf_mkChar("id");
   SET_STRING_ELT(strings, 12, strings_id);
+
+  strings_val = Rf_mkChar("val");
+  SET_STRING_ELT(strings, 13, strings_val);
 
 
   classes_data_frame = Rf_allocVector(STRSXP, 1);

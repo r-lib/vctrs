@@ -23,18 +23,7 @@
 #'   as_tibble(vec_split(mtcars, mtcars[c("vs", "am")]))
 #' }
 vec_split <- function(x, by) {
-  if (vec_size(x) != vec_size(by)) {
-    abort("`x` and `by` must have same size")
-  }
-
-  out <- vec_split_id(by)
-
-  x_split <- map(out$id, vec_slice, x = x)
-  out$val <- new_list_of(x_split, vec_ptype(x))
-
-  out$id <- NULL
-
-  out
+  .Call(vctrs_split, x, by)
 }
 
 #' Locate unique groups in a vector
