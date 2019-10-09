@@ -184,3 +184,62 @@ test_that("vec_split_along() falls back to `[` for shaped objects with no proxy"
   dim(x) <- c(1, 1)
   expect_equal(vec_split_along(x), list(x))
 })
+
+test_that("vec_split_along(<atomic>, indices =) can be equivalent to the default behavior", {
+  x <- 1:5
+  indices <- as.list(vec_seq_along(x))
+
+  expect_equal(vec_split_along(x), vec_split_along(x, indices))
+})
+
+test_that("vec_split_along(<data.frame>, indices =) can be equivalent to the default behavior", {
+  x <- data.frame(x = 1:5)
+  indices <- as.list(vec_seq_along(x))
+
+  expect_equal(vec_split_along(x), vec_split_along(x, indices))
+})
+
+test_that("vec_split_along(<array>, indices =) can be equivalent to the default behavior", {
+  x <- array(1:8, c(2, 2, 2))
+  indices <- as.list(vec_seq_along(x))
+
+  expect_equal(vec_split_along(x), vec_split_along(x, indices))
+})
+
+test_that("`indices` can use names", {
+  x <- set_names(1:3, c("a", "b", "c"))
+
+  expect_equal(
+    vec_split_along(x, list(1, 2:3)),
+    vec_split_along(x, list("a", c("b", "c")))
+  )
+})
+
+test_that("`indices` can use array row names", {
+  x <- array(1:4, c(2, 2), dimnames = list(c("r1", "r2")))
+
+  expect_equal(
+    vec_split_along(x, list("r1")),
+    vec_split_along(x, list(1))
+  )
+})
+
+test_that("`indices` cannot use data frame row names", {
+  df <- data.frame(x = 1, row.names = "r1")
+  expect_error(vec_split_along(df, list("r1")), "Can't use character")
+})
+
+test_that("`indices` must be a list of index values", {
+  expect_error(vec_split_along(1, 1), "must be a list of index values")
+})
+
+test_that("fallback method with `indices` works", {
+  fctr <- factor(c("a", "b"))
+  indices <- list(1, c(1, 2))
+
+  expect_equal(
+    vec_split_along(fctr, indices),
+    map(indices, vec_slice, x = fctr)
+  )
+})
+

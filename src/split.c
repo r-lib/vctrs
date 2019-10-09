@@ -390,11 +390,14 @@ SEXP as_split_indices(SEXP indices, SEXP x, struct vctrs_split_info info) {
   SEXP index;
   indices = PROTECT(r_maybe_duplicate(indices));
 
+  R_len_t size = vec_size(x);
+  SEXP names = PROTECT(vec_names(x));
+
   for (int i = 0; i < info.out_size; ++i) {
     index = VECTOR_ELT(indices, i);
-    SET_VECTOR_ELT(indices, i, vec_as_index(index, vec_size(x), vec_names(x)));
+    SET_VECTOR_ELT(indices, i, vec_as_index(index, size, names));
   }
 
-  UNPROTECT(1);
+  UNPROTECT(2);
   return indices;
 }
