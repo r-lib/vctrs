@@ -2,7 +2,8 @@
 #include "utils.h"
 #include "dictionary.h"
 
-SEXP vctrs_split_id(SEXP x) {
+// [[ register() ]]
+SEXP vec_split_id(SEXP x) {
   int nprot = 0;
 
   R_len_t n = vec_size(x);
