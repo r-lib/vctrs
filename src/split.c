@@ -94,41 +94,94 @@ SEXP vctrs_split_id(SEXP x) {
 
 // -----------------------------------------------------------------------------
 
-SEXP split_along(SEXP x, struct vctrs_proxy_info info);
-SEXP split_along_shaped(SEXP x, struct vctrs_proxy_info info);
-SEXP split_along_df(SEXP x, struct vctrs_proxy_info info);
+struct vctrs_split_info {
+  struct vctrs_proxy_info proxy_info;
+  SEXP restore_size;
+  int* p_restore_size;
+  SEXP index;
+  int* p_index;
+  SEXP elt;
+  R_len_t out_size;
+  SEXP out;
+};
 
-SEXP split_along_fallback(SEXP x);
-SEXP split_along_fallback_shaped(SEXP x);
+#define PROTECT_SPLIT_INFO(info, n) do {                  \
+  PROTECT_PROXY_INFO(&(info)->proxy_info, n);             \
+  PROTECT((info)->restore_size);                          \
+  PROTECT((info)->index);                                 \
+  PROTECT((info)->elt);                                   \
+  PROTECT((info)->out);                                   \
+  *n += 4;                                                \
+} while (0)                                               \
+
+struct vctrs_split_info init_split_info(SEXP x, SEXP indices) {
+  int nprot = 0;
+
+  struct vctrs_split_info info;
+
+  struct vctrs_proxy_info proxy_info = vec_proxy_info(x);
+  PROTECT_PROXY_INFO(&proxy_info, &nprot);
+  info.proxy_info = proxy_info;
+
+  info.restore_size = PROTECT_N(r_int(1), &nprot);
+  info.p_restore_size = INTEGER(info.restore_size);
+
+  info.index = PROTECT_N(r_int(0), &nprot);
+  info.p_index = INTEGER(info.index);
+
+  info.elt = R_NilValue;
+
+  if (indices == R_NilValue) {
+    info.out_size = vec_size(x);
+  } else {
+    info.out_size = vec_size(indices);
+  }
+
+  info.out = PROTECT_N(Rf_allocVector(VECSXP, info.out_size), &nprot);
+
+  UNPROTECT(nprot);
+  return info;
+}
+
+// -----------------------------------------------------------------------------
 
 // Used in `as_df_row()` to turn `x` into a list like:
 // list(vec_slice(x, 1L), vec_slice(x, 2L), ...)
 // but in a more efficient way
 
-// [[ include("vctrs.h"); register() ]]
+SEXP split_along(SEXP x, struct vctrs_split_info info);
+SEXP split_along_shaped(SEXP x, struct vctrs_split_info info);
+SEXP split_along_df(SEXP x, struct vctrs_split_info info);
+
+SEXP split_along_fallback(SEXP x, struct vctrs_split_info info);
+SEXP split_along_fallback_shaped(SEXP x, struct vctrs_split_info info);
+
+// [[ include("vctrs.h") ]]
 SEXP vec_split_along(SEXP x) {
   int nprot = 0;
 
-  struct vctrs_proxy_info info = vec_proxy_info(x);
-  PROTECT_PROXY_INFO(&info, &nprot);
+  struct vctrs_split_info info = init_split_info(x, R_NilValue);
+  PROTECT_SPLIT_INFO(&info, &nprot);
+
+  struct vctrs_proxy_info proxy_info = info.proxy_info;
 
   // Fallback to `[` if the class doesn't implement a proxy. This is
   // to be maximally compatible with existing classes.
-  if (OBJECT(x) && info.proxy_method == R_NilValue) {
-    if (info.type == vctrs_type_scalar) {
+  if (OBJECT(x) && proxy_info.proxy_method == R_NilValue) {
+    if (proxy_info.type == vctrs_type_scalar) {
       Rf_errorcall(R_NilValue, "Can't slice a scalar");
     }
 
     if (has_dim(x)) {
       UNPROTECT(nprot);
-      return split_along_fallback_shaped(x);
+      return split_along_fallback_shaped(x, info);
     }
 
     UNPROTECT(nprot);
-    return split_along_fallback(x);
+    return split_along_fallback(x, info);
   }
 
-  switch (info.type) {
+  switch (proxy_info.type) {
   case vctrs_type_null: {
     UNPROTECT(nprot);
     return R_NilValue;
@@ -156,100 +209,54 @@ SEXP vec_split_along(SEXP x) {
   default:
     vec_assert(x, args_empty);
     Rf_error("Internal error: Unexpected type `%s` for vector proxy in `vec_split_along()`",
-             vec_type_as_str(info.type));
+             vec_type_as_str(proxy_info.type));
   }
 }
 
-SEXP split_along(SEXP x, struct vctrs_proxy_info info) {
-  R_len_t size = vec_size(x);
-
-  SEXP restore_size = PROTECT(r_int(1));
-
-  SEXP index = PROTECT(r_int(0));
-  int* p_index = INTEGER(index);
-
-  PROTECT_INDEX elt_prot_idx;
-  SEXP elt = R_NilValue;
-  PROTECT_WITH_INDEX(elt, &elt_prot_idx);
-
-  SEXP out = PROTECT(Rf_allocVector(VECSXP, size));
-
-  SEXP data = info.proxy;
-
+SEXP split_along(SEXP x, struct vctrs_split_info info) {
   SEXP names = PROTECT(Rf_getAttrib(x, R_NamesSymbol));
 
   PROTECT_INDEX name_prot_idx;
   SEXP name = R_NilValue;
   PROTECT_WITH_INDEX(name, &name_prot_idx);
 
-  for (R_len_t i = 0; i < size; ++i) {
-    ++(*p_index);
+  for (R_len_t i = 0; i < info.out_size; ++i) {
+    ++(*info.p_index);
 
-    elt = vec_slice_base(info.type, data, index);
-    REPROTECT(elt, elt_prot_idx);
+    info.elt = PROTECT(vec_slice_base(info.proxy_info.type, info.proxy_info.proxy, info.index));
 
     if (names != R_NilValue) {
-      name = slice_names(names, index);
+      name = slice_names(names, info.index);
       REPROTECT(name, name_prot_idx);
-      r_poke_names(elt, name);
+      r_poke_names(info.elt, name);
     }
 
-    elt = vec_restore(elt, x, restore_size);
+    info.elt = vec_restore(info.elt, x, info.restore_size);
 
-    SET_VECTOR_ELT(out, i, elt);
+    SET_VECTOR_ELT(info.out, i, info.elt);
+    UNPROTECT(1);
   }
 
-  UNPROTECT(6);
-  return out;
+  UNPROTECT(2);
+  return info.out;
 }
 
-SEXP split_along_df(SEXP x, struct vctrs_proxy_info info) {
-  R_len_t size = vec_size(x);
+SEXP split_along_df(SEXP x, struct vctrs_split_info info) {
+  for (R_len_t i = 0; i < info.out_size; ++i) {
+    ++(*info.p_index);
 
-  SEXP restore_size = PROTECT(r_int(1));
+    info.elt = PROTECT(df_slice(info.proxy_info.proxy, info.index));
 
-  SEXP index = PROTECT(r_int(0));
-  int* p_index = INTEGER(index);
+    info.elt = vec_restore(info.elt, x, info.restore_size);
 
-  PROTECT_INDEX elt_prot_idx;
-  SEXP elt = R_NilValue;
-  PROTECT_WITH_INDEX(elt, &elt_prot_idx);
-
-  SEXP out = PROTECT(Rf_allocVector(VECSXP, size));
-
-  SEXP data = info.proxy;
-
-  for (R_len_t i = 0; i < size; ++i) {
-    ++(*p_index);
-
-    elt = df_slice(data, index);
-    REPROTECT(elt, elt_prot_idx);
-
-    elt = vec_restore(elt, x, restore_size);
-
-    SET_VECTOR_ELT(out, i, elt);
+    SET_VECTOR_ELT(info.out, i, info.elt);
+    UNPROTECT(1);
   }
 
-  UNPROTECT(4);
-  return out;
+  return info.out;
 }
 
-SEXP split_along_shaped(SEXP x, struct vctrs_proxy_info info) {
-  R_len_t size = vec_size(x);
-
-  SEXP restore_size = PROTECT(r_int(1));
-
-  SEXP index = PROTECT(r_int(0));
-  int* p_index = INTEGER(index);
-
-  PROTECT_INDEX elt_prot_idx;
-  SEXP elt = R_NilValue;
-  PROTECT_WITH_INDEX(elt, &elt_prot_idx);
-
-  SEXP out = PROTECT(Rf_allocVector(VECSXP, size));
-
-  SEXP data = info.proxy;
-
+SEXP split_along_shaped(SEXP x, struct vctrs_split_info info) {
   SEXP dim_names = PROTECT(Rf_getAttrib(x, R_DimNamesSymbol));
 
   SEXP row_names = R_NilValue;
@@ -265,99 +272,74 @@ SEXP split_along_shaped(SEXP x, struct vctrs_proxy_info info) {
   SEXP new_row_names = R_NilValue;
   PROTECT_WITH_INDEX(new_row_names, &new_row_names_prot_idx);
 
-  for (R_len_t i = 0; i < size; ++i) {
-    ++(*p_index);
+  for (R_len_t i = 0; i < info.out_size; ++i) {
+    ++(*info.p_index);
 
-    elt = vec_slice_shaped(info.type, data, index);
-    REPROTECT(elt, elt_prot_idx);
+    info.elt = PROTECT(vec_slice_shaped(info.proxy_info.type, info.proxy_info.proxy, info.index));
 
     if (dim_names != R_NilValue) {
       if (row_names != R_NilValue) {
         new_dim_names = Rf_shallow_duplicate(dim_names);
         REPROTECT(new_dim_names, new_dim_names_prot_idx);
 
-        new_row_names = slice_names(row_names, index);
+        new_row_names = slice_names(row_names, info.index);
         REPROTECT(new_row_names, new_row_names_prot_idx);
 
         SET_VECTOR_ELT(new_dim_names, 0, new_row_names);
 
-        Rf_setAttrib(elt, R_DimNamesSymbol, new_dim_names);
+        Rf_setAttrib(info.elt, R_DimNamesSymbol, new_dim_names);
       } else {
-        Rf_setAttrib(elt, R_DimNamesSymbol, dim_names);
+        Rf_setAttrib(info.elt, R_DimNamesSymbol, dim_names);
       }
     }
 
-    elt = vec_restore(elt, x, restore_size);
+    info.elt = vec_restore(info.elt, x, info.restore_size);
 
-    SET_VECTOR_ELT(out, i, elt);
+    SET_VECTOR_ELT(info.out, i, info.elt);
+    UNPROTECT(1);
   }
 
-  UNPROTECT(7);
-  return out;
+  UNPROTECT(3);
+  return info.out;
 }
 
-SEXP split_along_fallback(SEXP x) {
-  R_len_t size = vec_size(x);
-
-  SEXP restore_size = PROTECT(r_int(1));
-
-  SEXP index = PROTECT(r_int(0));
-  int* p_index = INTEGER(index);
-
-  PROTECT_INDEX elt_prot_idx;
-  SEXP elt = R_NilValue;
-  PROTECT_WITH_INDEX(elt, &elt_prot_idx);
-
-  SEXP out = PROTECT(Rf_allocVector(VECSXP, size));
-
+SEXP split_along_fallback(SEXP x, struct vctrs_split_info info) {
   // Construct call with symbols, not values, for performance
   SEXP call = PROTECT(Rf_lang3(syms_bracket, syms_x, syms_i));
 
   SEXP env = PROTECT(r_new_environment(R_GlobalEnv, 2));
   Rf_defineVar(syms_bracket, fns_bracket, env);
   Rf_defineVar(syms_x, x, env);
-  Rf_defineVar(syms_i, index, env);
+  Rf_defineVar(syms_i, info.index, env);
 
-  for (R_len_t i = 0; i < size; ++i) {
-    ++(*p_index);
+  for (R_len_t i = 0; i < info.out_size; ++i) {
+    ++(*info.p_index);
 
-    elt = Rf_eval(call, env);
-    REPROTECT(elt, elt_prot_idx);
+    info.elt = PROTECT(Rf_eval(call, env));
 
     // Restore attributes only if `[` fallback doesn't
-    if (ATTRIB(elt) == R_NilValue) {
-      elt = vec_restore(elt, x, restore_size);
+    if (ATTRIB(info.elt) == R_NilValue) {
+      info.elt = vec_restore(info.elt, x, info.restore_size);
     }
 
-    SET_VECTOR_ELT(out, i, elt);
+    SET_VECTOR_ELT(info.out, i, info.elt);
+    UNPROTECT(1);
   }
 
-  UNPROTECT(6);
-  return out;
+  UNPROTECT(2);
+  return info.out;
 }
 
-SEXP split_along_fallback_shaped(SEXP x) {
-  R_len_t size = vec_size(x);
-
-  SEXP index = PROTECT(r_int(0));
-  int* p_index = INTEGER(index);
-
-  PROTECT_INDEX elt_prot_idx;
-  SEXP elt = R_NilValue;
-  PROTECT_WITH_INDEX(elt, &elt_prot_idx);
-
-  SEXP out = PROTECT(Rf_allocVector(VECSXP, size));
-
-  for (R_len_t i = 0; i < size; ++i) {
-    ++(*p_index);
+SEXP split_along_fallback_shaped(SEXP x, struct vctrs_split_info info) {
+  for (R_len_t i = 0; i < info.out_size; ++i) {
+    ++(*info.p_index);
 
     // `vec_slice_fallback()` will also `vec_restore()` for us
-    elt = vec_slice_fallback(x, index);
-    REPROTECT(elt, elt_prot_idx);
+    info.elt = PROTECT(vec_slice_fallback(x, info.index));
 
-    SET_VECTOR_ELT(out, i, elt);
+    SET_VECTOR_ELT(info.out, i, info.elt);
+    UNPROTECT(1);
   }
 
-  UNPROTECT(3);
-  return out;
+  return info.out;
 }
