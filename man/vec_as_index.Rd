@@ -46,6 +46,14 @@ a single position as a integer vector of size 1. This is suitable
 for extracting with \code{[[}.
 }
 }
+\section{Coercers}{
+
+
+\code{vec_coerce_index()} and \code{vec_coerce_position()} are lower level
+variants that only perform coercions to one of the accepted base
+types (logical, integer, character). The values are not checked.
+}
+
 \examples{
 x <- array(1:6, c(2, 3))
 dimnames(x) <- list(c("r1", "r2"), c("c1", "c2", "c3"))

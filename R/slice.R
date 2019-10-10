@@ -154,6 +154,12 @@ vec_assign_fallback <- function(x, i, value) {
 #'   returns an integer of size 1 that can be used a scalar index for
 #'   extracting an element.
 #'
+#' @section Coercers:
+#'
+#' `vec_coerce_index()` and `vec_coerce_position()` are lower level
+#' variants that only perform coercions to one of the accepted base
+#' types (logical, integer, character). The values are not checked.
+#'
 #' @examples
 #' x <- array(1:6, c(2, 3))
 #' dimnames(x) <- list(c("r1", "r2"), c("c1", "c2", "c3"))
@@ -184,6 +190,7 @@ vec_as_position <- function(i, n, names = NULL) {
   vec_as_index(i, n, names = names)
 }
 
+#' @export
 vec_coerce_index <- function(i) {
   maybe_get(vec_maybe_coerce_index(i))
 }
@@ -192,6 +199,7 @@ vec_is_index <- function(i) {
   is_null(maybe$error)
 }
 
+#' @export
 vec_coerce_position <- function(i) {
   maybe_get(vec_maybe_coerce_position(i))
 }
