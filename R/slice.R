@@ -158,7 +158,9 @@ vec_assign_fallback <- function(x, i, value) {
 #'
 #' `vec_coerce_index()` and `vec_coerce_position()` are lower level
 #' variants that only perform coercions to one of the accepted base
-#' types (logical, integer, character). The values are not checked.
+#' types (logical, integer, character). Unlike `vec_as_index()` and
+#' `vec_as_position()`, they don't check the restrictions on the
+#' values (e.g. that a position cannot be negative).
 #'
 #' @examples
 #' x <- array(1:6, c(2, 3))
@@ -183,31 +185,10 @@ vec_as_index <- function(i, n, names = NULL) {
   i <- vec_coerce_index(i)
   .Call(vctrs_as_index, i, n, names)
 }
-#' @rdname vec_as_index
-#' @export
-vec_as_position <- function(i, n, names = NULL) {
-  i <- vec_coerce_position(i)
-  vec_as_index(i, n, names = names)
-}
-
 #' @export
 vec_coerce_index <- function(i) {
   maybe_get(vec_maybe_coerce_index(i))
 }
-vec_is_index <- function(i) {
-  maybe <- vec_maybe_coerce_index(i)
-  is_null(maybe$error)
-}
-
-#' @export
-vec_coerce_position <- function(i) {
-  maybe_get(vec_maybe_coerce_position(i))
-}
-vec_is_position <- function(i) {
-  maybe <- vec_maybe_coerce_position(i)
-  is_null(maybe$error)
-}
-
 vec_maybe_coerce_index <- function(i) {
   if (!vec_is(i)) {
     return(maybe(error = new_error_index_bad_type(i)))
@@ -231,6 +212,17 @@ vec_maybe_coerce_index <- function(i) {
   maybe(i)
 }
 
+#' @rdname vec_as_index
+#' @export
+vec_as_position <- function(i, n, names = NULL) {
+  maybe_get(vec_maybe_as_position(i, n = n, names = names))
+}
+#' @rdname vec_as_index
+#' @export
+vec_coerce_position <- function(i) {
+  maybe_get(vec_maybe_coerce_position(i))
+}
+
 vec_maybe_coerce_position <- function(i) {
   if (is.object(i) && vec_is(i) && vec_is_subtype(i, lgl())) {
     return(maybe(error = new_error_position_bad_type(i)))
@@ -250,14 +242,31 @@ vec_maybe_coerce_position <- function(i) {
     return(maybe(error = new_error_position_bad_type(i)))
   }
 
+  maybe
+}
+vec_maybe_as_position <- function(i, n, names = NULL) {
+  maybe <- vec_maybe_coerce_position(i)
+
+  if (!is_null(maybe$error)) {
+    return(maybe)
+  }
+
   # Positions must be size 1, can't be NA, and must be positive
+  i <- maybe$value
   if (length(i) != 1L ||
       is.na(i) ||
       (typeof(i) == "integer" && i < 1L)) {
     return(maybe(error = new_error_position_bad_type(i)))
   }
 
-  maybe
+  # FIXME: Use maybe approach in internal implementation?
+  tryCatch(
+    maybe(.Call(vctrs_as_index, i, n, names)),
+    # FIXME: All index error should inherit from "vctrs_error_index"
+    vctrs_error_index_bad_type = function(err) {
+      maybe(error = new_error_position_bad_type(i, parent = err))
+    }
+  )
 }
 
 new_error_index_bad_type <- function(i, ..., .subclass = NULL) {

@@ -3,11 +3,14 @@
 \name{vec_as_index}
 \alias{vec_as_index}
 \alias{vec_as_position}
+\alias{vec_coerce_position}
 \title{Create an index vector or a position}
 \usage{
 vec_as_index(i, n, names = NULL)
 
 vec_as_position(i, n, names = NULL)
+
+vec_coerce_position(i)
 }
 \arguments{
 \item{i}{An integer, character or logical vector specifying the positions or
@@ -51,7 +54,9 @@ for extracting with \code{[[}.
 
 \code{vec_coerce_index()} and \code{vec_coerce_position()} are lower level
 variants that only perform coercions to one of the accepted base
-types (logical, integer, character). The values are not checked.
+types (logical, integer, character). Unlike \code{vec_as_index()} and
+\code{vec_as_position()}, they don't check the restrictions on the
+values (e.g. that a position cannot be negative).
 }
 
 \examples{
