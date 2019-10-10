@@ -6,3 +6,8 @@ i Positions and names can't be missing.
 Error: Must extract with a single position or name.
 x `i` can't be `NA`.
 i Positions and names can't be missing.
+> # Custom `arg`
+> vec_as_position(na_int, 2L)
+Error: Must extract with a single position or name.
+x `i` can't be `NA`.
+i Positions and names can't be missing.

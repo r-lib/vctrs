@@ -1,6 +1,9 @@
 
 # vctrs 0.2.0.9000
 
+* `vec_as_index()` gains an `arg` parameter to specify the name of
+  inputs. This is useful when it is used for type-checking.
+
 * Support for multiple character encodings has been added to functions that
   compare elements within a single vector, such as `vec_unique()`, and across
   multiple vectors, such as `vec_match()`. When multiple encodings are

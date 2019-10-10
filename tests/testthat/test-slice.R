@@ -657,12 +657,18 @@ test_that("vec_as_position() requires integer or character inputs", {
   expect_error(vec_as_position(mtcars, 10L), class = "vctrs_error_position_bad_type")
   expect_error(vec_as_position(env(), 10L), class = "vctrs_error_position_bad_type")
   expect_error(vec_as_position(foobar(), 10L), class = "vctrs_error_position_bad_type")
+  expect_error(vec_as_position(2.5, 10L), class = "vctrs_error_cast_lossy")
 
   verify_output(test_path("out", "error-position-type.txt"), {
     vec_as_position(TRUE, 10L)
     vec_as_position(mtcars, 10L)
     vec_as_position(env(), 10L)
     vec_as_position(foobar(), 10L)
+    vec_as_position(2.5, 3L)
+
+    "Custom `arg`"
+    vec_as_position(foobar(), 10L, arg = "foo")
+    vec_as_position(2.5, 3L, arg = "foo") # FIXME
   })
 })
 
@@ -670,11 +676,17 @@ test_that("vec_as_index() requires integer, character, or logical inputs", {
   expect_error(vec_as_index(mtcars, 10L), class = "vctrs_error_index_bad_type")
   expect_error(vec_as_index(env(), 10L), class = "vctrs_error_index_bad_type")
   expect_error(vec_as_index(foobar(), 10L), class = "vctrs_error_index_bad_type")
+  expect_error(vec_as_index(2.5, 10L), class = "vctrs_error_cast_lossy")
 
   verify_output(test_path("out", "error-index-type.txt"), {
     vec_as_index(mtcars, 10L)
     vec_as_index(env(), 10L)
     vec_as_index(foobar(), 10L)
+    vec_as_index(2.5, 3L)
+
+    "FIXME: Custom `arg`"
+    vec_as_index(foobar(), 10L, arg = "foo")
+    vec_as_index(2.5, 3L, arg = "foo")
   })
 })
 
@@ -710,27 +722,41 @@ test_that("vec_as_position() and vec_as_index() require existing elements", {
 test_that("vec_as_position() requires length 1 inputs", {
   expect_error(vec_as_position(1:2, 2L), class = "vctrs_error_position_bad_type")
   expect_error(vec_as_position(c("foo", "bar"), 2L, c("foo", "bar")), class = "vctrs_error_position_bad_type")
+
   verify_output(test_path("out", "error-position-size.txt"), {
     vec_as_position(1:2, 2L)
     vec_as_position(mtcars, 10L)
+    vec_as_position(1:2, 2L, arg = "foo")
+    vec_as_position(mtcars, 10L, arg = "foo")
+
+    "Custom `arg`"
+    vec_as_position(1:2, 2L, arg = "foo")
   })
 })
 
 test_that("vec_as_position() requires positive integers", {
   expect_error(vec_as_position(0, 2L), class = "vctrs_error_position_bad_type")
   expect_error(vec_as_position(-1, 2L), class = "vctrs_error_position_bad_type")
+
   verify_output(test_path("out", "error-position-sign.txt"), {
     vec_as_position(0, 2L)
     vec_as_position(-1, 2L)
+
+    "Custom `arg`"
+    vec_as_position(0, 2L, arg = "foo")
   })
 })
 
 test_that("vec_as_position() fails with NA", {
   expect_error(vec_as_position(na_int, 2L), class = "vctrs_error_position_bad_type")
   expect_error(vec_as_position(na_chr, 1L, names = "foo"), class = "vctrs_error_position_bad_type")
+
   verify_output(test_path("out", "error-position-na.txt"), {
     vec_as_position(na_int, 2L)
     vec_as_position(na_chr, 1L, names = "foo")
+
+    "Custom `arg`"
+    vec_as_position(na_int, 2L)
   })
 })
 

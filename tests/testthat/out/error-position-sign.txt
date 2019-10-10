@@ -6,3 +6,8 @@ i Positions must be positive integers.
 Error: Must extract with a single position or name.
 x `i` (with value -1) has the wrong sign.
 i Positions must be positive integers.
+> # Custom `arg`
+> vec_as_position(0, 2L, arg = "foo")
+Error: Must extract with a single position or name.
+x `foo` can't be zero.
+i Positions must be positive integers.
