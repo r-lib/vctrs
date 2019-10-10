@@ -148,9 +148,8 @@ struct vctrs_split_info init_split_info(SEXP x, SEXP indices) {
 
   struct vctrs_split_info info;
 
-  struct vctrs_proxy_info proxy_info = vec_proxy_info(x);
-  PROTECT_PROXY_INFO(&proxy_info, &nprot);
-  info.proxy_info = proxy_info;
+  info.proxy_info = vec_proxy_info(x);
+  PROTECT_PROXY_INFO(&info.proxy_info, &nprot);
 
   info.restore_size = PROTECT_N(r_int(1), &nprot);
   info.p_restore_size = INTEGER(info.restore_size);
