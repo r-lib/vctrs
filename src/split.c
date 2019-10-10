@@ -190,8 +190,10 @@ SEXP vec_split_along_impl(SEXP x, struct vctrs_split_info info, SEXP indices);
 SEXP vctrs_split_along(SEXP x, SEXP indices) {
   indices = PROTECT(as_split_indices(indices, x));
 
-  UNPROTECT(1);
-  return vec_split_along(x, indices);
+  SEXP out = PROTECT(vec_split_along(x, indices));
+
+  UNPROTECT(2);
+  return out;
 }
 
 // [[ include("vctrs.h") ]]
