@@ -122,6 +122,22 @@ SEXP vec_split(SEXP x, SEXP by) {
 
 // -----------------------------------------------------------------------------
 
+/*
+ * @member proxy_info The result of `vec_proxy_info(x)`.
+ * @member restore_size The restore size used in each call to `vec_restore()`.
+ *   Will always be 1 for `indices = NULL`.
+ * @member p_restore_size A pointer to update the restore size.
+ * @member index The current index value. If `indices` are provided, this is
+ *   the i-th element of indices. For the default of `indices = NULL`, this
+ *   starts at 0 and is incremented by 1 repeatedly through `p_index`.
+ * @member p_index A pointer to increment the `index` value for the default
+ *   case.
+ * @member has_indices Information about whether or not indices were provided.
+ * @member elt The current element of `out`.
+ * @member out_size The size of `out`. Will be `vec_size(x)` in the default
+ *   case, otherwise will be `vec_size(indices)`.
+ * @member out The list container for the result.
+ */
 struct vctrs_split_info {
   struct vctrs_proxy_info proxy_info;
   SEXP restore_size;
