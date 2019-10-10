@@ -30,7 +30,7 @@ Imports:
     ellipsis (>= 0.2.0),
     digest,
     glue,
-    rlang (>= 0.4.0.9004),
+    rlang (>= 0.4.0.9005),
     zeallot
 Suggests: 
     bit64,
@@ -45,7 +45,7 @@ Suggests:
     tibble,
     xml2
 Remotes:
-    r-lib/rlang,
+    lionel-/rlang@08bcbaa9,
     r-lib/testthat
 VignetteBuilder: 
     knitr

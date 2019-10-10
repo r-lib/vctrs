@@ -109,16 +109,3 @@ obj_type <- function(x) {
     typeof(x)
   }
 }
-
-cnd_message <- function(cnd) {
-  paste_line(
-    cnd_issue(cnd),
-    cnd_bullets(cnd)
-  )
-}
-cnd_issue <- function(cnd, ...) {
-  UseMethod("cnd_issue")
-}
-cnd_bullets <- function(cnd, ...) {
-  UseMethod("cnd_bullets")
-}

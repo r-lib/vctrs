@@ -303,8 +303,8 @@ cnd_bullets.vctrs_error_index_bad_type <- function(cnd) {
   arg <- cnd$arg %||% "i"
   if (is.object(i) || !typeof(i) %in% c("integer", "character", "logical")) {
     type <- obj_type(i)
-    return(glue_error_bullets(
-      x = "`{arg}` has the wrong type `{type}`.",
+    return(c(
+      x = glue::glue("`{arg}` has the wrong type `{type}`."),
       i = "Positions and names must be integer, logical, or character."
     ))
   }
@@ -323,34 +323,34 @@ cnd_bullets.vctrs_error_position_bad_type <- function(cnd) {
 
   if (is.object(i) || !typeof(i) %in% c("integer", "character")) {
     type <- obj_type(i)
-    return(glue_error_bullets(
-      x = "`{arg}` has the wrong type `{type}`.",
+    return(c(
+      x = glue::glue("`{arg}` has the wrong type `{type}`."),
       i = "Positions and names must be integer or character."
     ))
   }
 
   if (length(i) != 1L) {
     size <- length(cnd$i)
-    return(glue_error_bullets(
-      x = "`{arg}` has the wrong size {size}.",
+    return(c(
+      x = glue::glue("`{arg}` has the wrong size {size}."),
       i = "Positions and names must be size 1."
     ))
   }
 
   if (is.na(i)) {
-    return(glue_error_bullets(
-      x = "`{arg}` can't be `NA`.",
+    return(c(
+      x = glue::glue("`{arg}` can't be `NA`."),
       i = "Positions and names can't be missing."
     ))
   }
 
   if (i < 1L) {
-    return(glue_error_bullets(
+    return(c(
       x =
         if (i == 0L) {
-          "`{arg}` can't be zero."
+          glue::glue("`{arg}` can't be zero.")
         } else {
-          "`{arg}` (with value {i}) has the wrong sign."
+          glue::glue("`{arg}` (with value {i}) has the wrong sign.")
         },
       i = "Positions must be positive integers."
     ))

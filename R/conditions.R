@@ -485,10 +485,6 @@ stop_index <- function(i, ..., .subclass = NULL) {
     ...
   )
 }
-#' @export
-conditionMessage.vctrs_error_index <- function(c) {
-  cnd_message(c)
-}
 
 #' @export
 cnd_issue.vctrs_error_index_oob_positions <- function(cnd) {
