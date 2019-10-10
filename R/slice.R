@@ -201,7 +201,16 @@ vec_maybe_coerce_index <- function(i, arg) {
       return(maybe(error = new_error_index_bad_type(i, .arg = arg)))
     }
   } else if (is_double(i)) {
-    i <- vec_coercible_cast(i, int())
+    return(tryCatch(
+      maybe(vec_coercible_cast(i, int())),
+      vctrs_error_cast_lossy = function(err) {
+        maybe(error = new_error_index_bad_type(
+          i = i,
+          parent = err,
+          .bullets = cnd_bullets_index_lossy_cast
+        ))
+      }
+    ))
   }
 
   if (!typeof(i) %in% c("integer", "character", "logical")) {
@@ -340,6 +349,9 @@ cnd_bullets.vctrs_error_index_bad_type <- function(cnd) {
     x = glue::glue("`{arg}` has the wrong type `{type}`."),
     i = "Positions and names must be integer, logical, or character."
   )
+}
+cnd_bullets_index_lossy_cast <- function(cnd, ...) {
+  c(x = cnd_issue(cnd$parent))
 }
 
 #' @export
