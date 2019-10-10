@@ -2,7 +2,7 @@
 vec_cast("foo", 10):
 
 Lossy cast from `x` <character> to `to` <double>.
-Locations: 1 
+* Locations: 1 
 
 
 vec_cast(factor("foo"), 10):
@@ -13,7 +13,7 @@ Can't cast `x` <factor<bd40e>> to `to` <double>.
 vec_cast(x, y):
 
 Lossy cast from `x$a$b` <character> to `to$a$b` <double>.
-Locations: 1 
+* Locations: 1 
 
 
 vec_cast(x, y):

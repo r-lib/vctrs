@@ -32,7 +32,7 @@ i Positions and names must be integer or character.
 
 > vec_as_position(2.5, 3L)
 Error: Lossy cast from `x` <double> to `to` <integer>.
-Locations: 1
+* Locations: 1
 
 
 Custom `arg`
@@ -45,5 +45,5 @@ i Positions and names must be integer or character.
 
 > vec_as_position(2.5, 3L, arg = "foo")
 Error: Lossy cast from `x` <double> to `to` <integer>.
-Locations: 1
+* Locations: 1
 
