@@ -334,7 +334,6 @@ SEXP split_along_df(SEXP x, struct vctrs_split_info info, SEXP indices) {
 
     info.elt = VECTOR_ELT(info.out, i);
     info.elt = vec_restore(info.elt, x, info.restore_size);
-
     SET_VECTOR_ELT(info.out, i, info.elt);
   }
 
@@ -350,14 +349,6 @@ SEXP split_along_shaped(SEXP x, struct vctrs_split_info info, SEXP indices) {
     row_names = VECTOR_ELT(dim_names, 0);
   }
 
-  PROTECT_INDEX new_dim_names_prot_idx;
-  SEXP new_dim_names = R_NilValue;
-  PROTECT_WITH_INDEX(new_dim_names, &new_dim_names_prot_idx);
-
-  PROTECT_INDEX new_row_names_prot_idx;
-  SEXP new_row_names = R_NilValue;
-  PROTECT_WITH_INDEX(new_row_names, &new_row_names_prot_idx);
-
   for (R_len_t i = 0; i < info.out_size; ++i) {
     if (info.has_indices) {
       info.index = VECTOR_ELT(indices, i);
@@ -370,15 +361,12 @@ SEXP split_along_shaped(SEXP x, struct vctrs_split_info info, SEXP indices) {
 
     if (dim_names != R_NilValue) {
       if (row_names != R_NilValue) {
-        new_dim_names = Rf_shallow_duplicate(dim_names);
-        REPROTECT(new_dim_names, new_dim_names_prot_idx);
-
-        new_row_names = slice_names(row_names, info.index);
-        REPROTECT(new_row_names, new_row_names_prot_idx);
+        SEXP new_dim_names = PROTECT(Rf_shallow_duplicate(dim_names));
+        SEXP new_row_names = PROTECT(slice_names(row_names, info.index));
 
         SET_VECTOR_ELT(new_dim_names, 0, new_row_names);
-
         Rf_setAttrib(info.elt, R_DimNamesSymbol, new_dim_names);
+        UNPROTECT(2);
       } else {
         Rf_setAttrib(info.elt, R_DimNamesSymbol, dim_names);
       }
@@ -390,7 +378,7 @@ SEXP split_along_shaped(SEXP x, struct vctrs_split_info info, SEXP indices) {
     UNPROTECT(1);
   }
 
-  UNPROTECT(3);
+  UNPROTECT(1);
   return info.out;
 }
 
