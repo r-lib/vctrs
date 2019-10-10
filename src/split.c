@@ -284,26 +284,6 @@ SEXP split_along(SEXP x, struct vctrs_split_info info, SEXP indices) {
   return info.out;
 }
 
-SEXP split_along_df2(SEXP x, struct vctrs_split_info info, SEXP indices) {
-  for (R_len_t i = 0; i < info.out_size; ++i) {
-    if (info.has_indices) {
-      info.index = VECTOR_ELT(indices, i);
-      *info.p_restore_size = vec_size(info.index);
-    } else {
-      ++(*info.p_index);
-    }
-
-    info.elt = PROTECT(df_slice(info.proxy_info.proxy, info.index));
-
-    info.elt = vec_restore(info.elt, x, info.restore_size);
-
-    SET_VECTOR_ELT(info.out, i, info.elt);
-    UNPROTECT(1);
-  }
-
-  return info.out;
-}
-
 SEXP split_along_df(SEXP x, struct vctrs_split_info info, SEXP indices) {
   int n_cols = Rf_length(x);
 
