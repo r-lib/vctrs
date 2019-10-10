@@ -766,7 +766,7 @@ test_that("vec_as_position() doesn't allow lossy casts", {
   expect_error(vec_as_position(2^31, 3L), class = "vctrs_error_position_bad_type")
 
   # Lossy casts generate missing values, which are disallowed
-  expect_error(allow_lossy_cast(vec_as_position(2^31, 3L)), class = "vctrs_error_index_bad_type")
+  expect_error(allow_lossy_cast(vec_as_position(2^31, 3L)), class = "vctrs_error_position_bad_type")
 })
 
 test_that("all index errors inherit from `vctrs_error_index`", {
@@ -775,6 +775,7 @@ test_that("all index errors inherit from `vctrs_error_index`", {
   expect_error(vec_as_index(foobar(1L), 2L), class = "vctrs_error_index")
   expect_error(vec_as_index(1.5, 2L), class = "vctrs_error_index")
   expect_error(vec_as_position(TRUE, 2L), class = "vctrs_error_index")
+  expect_error(vec_as_position(1.5, 2L), class = "vctrs_error_index")
 })
 
 test_that("all OOB errors inherit from `vctrs_error_index_oob`", {

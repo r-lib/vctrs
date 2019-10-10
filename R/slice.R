@@ -201,7 +201,7 @@ vec_maybe_coerce_index <- function(i, arg) {
       return(maybe(error = new_error_index_bad_type(i, .arg = arg)))
     }
   } else if (is_double(i)) {
-    return(tryCatch(
+    maybe <- tryCatch(
       maybe(vec_coercible_cast(i, int())),
       vctrs_error_cast_lossy = function(err) {
         maybe(error = new_error_index_bad_type(
@@ -210,7 +210,8 @@ vec_maybe_coerce_index <- function(i, arg) {
           .bullets = cnd_bullets_index_lossy_cast
         ))
       }
-    ))
+    )
+    return(maybe)
   }
 
   if (!typeof(i) %in% c("integer", "character", "logical")) {
@@ -247,11 +248,20 @@ vec_maybe_coerce_position <- function(i, arg) {
 
   # Return a subclass of index error
   if (!is_null(maybe$error)) {
+    parent <- maybe$error$parent
+    if (inherits(parent, "vctrs_error_cast_lossy")) {
+      bullets <- cnd_bullets_index_lossy_cast
+    } else {
+      bullets <- cnd_bullets_position_bad_base_type
+    }
+
     maybe$error <- new_error_position_bad_type(
       i = maybe$error$i,
       .arg = arg,
-      .bullets = cnd_bullets_position_bad_base_type
+      .bullets = bullets,
+      parent = maybe$error$parent
     )
+
     return(maybe)
   }
 
