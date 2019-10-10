@@ -453,8 +453,7 @@ stop_names_must_be_unique <- function(locations) {
 #' @inheritParams rlang::abort
 #' @export
 stop_index_oob_positions <- function(i, size, ..., .subclass = NULL) {
-  abort(
-    "",
+  stop_index(
     .subclass = c(.subclass, "vctrs_error_index_oob_positions"),
     i = i,
     size = size,
@@ -465,14 +464,21 @@ stop_index_oob_positions <- function(i, size, ..., .subclass = NULL) {
 #' @param names The names of the vector to subset from.
 #' @export
 stop_index_oob_names <- function(i, names, ..., .subclass = NULL) {
-  abort(
-    "",
+  stop_index(
     .subclass = c(.subclass, "vctrs_error_index_oob_names"),
     i = i,
     names = names,
     ...
   )
 }
+stop_index <- function(i, ..., .subclass = NULL) {
+  abort(
+    .subclass = c(.subclass, "vctrs_error_index"),
+    i = i,
+    ...
+  )
+}
+
 #' @export
 conditionMessage.vctrs_error_index_oob_positions <- function(c) {
   i <- c$i

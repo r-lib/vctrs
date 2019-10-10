@@ -741,3 +741,12 @@ test_that("vec_as_position() doesn't allow lossy casts", {
   err <- expect_error(allow_lossy_cast(vec_as_position(2^31, 3L)), class = "vctrs_error_index_bad_type")
   expect_identical(err$i, na_int)
 })
+
+test_that("all index errors inherit from `vctrs_error_index`", {
+  expect_error(vec_as_index(100, 2L), class = "vctrs_error_index")
+  expect_error(vec_as_index("foo", 2L, names = c("bar", "baz")), class = "vctrs_error_index")
+  expect_error(vec_as_index(foobar(1L), 2L), class = "vctrs_error_index")
+  expect_error(vec_as_position(TRUE, 2L), class = "vctrs_error_index")
+  skip("FIXME")
+  expect_error(vec_as_index(1.5, 2L), class = "vctrs_error_index")
+})

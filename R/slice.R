@@ -258,9 +258,16 @@ vec_maybe_as_position <- function(i, n, names = NULL) {
   )
 }
 
-new_error_index_bad_type <- function(i, ..., .subclass = NULL) {
+new_index_error <- function(.subclass = NULL, i, ...) {
   error_cnd(
-    c(.subclass, "vctrs_error_index_bad_type"),
+    .subclass = c(.subclass, "vctrs_error_index"),
+    i = i,
+    ...
+  )
+}
+new_error_index_bad_type <- function(i, ..., .subclass = NULL) {
+  new_index_error(
+    .subclass = c(.subclass, "vctrs_error_index_bad_type"),
     i = i,
     ...
   )
