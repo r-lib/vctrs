@@ -189,8 +189,6 @@ static SEXP list_slice(SEXP x, SEXP index) {
 #undef SLICE_BARRIER_COMPACT_SEQ
 #undef SLICE_BARRIER_INDEX
 
-// TODO - remove me from API
-// [[ include("vctrs.h") ]]
 SEXP df_slice(SEXP x, SEXP index) {
   R_len_t n = Rf_length(x);
   SEXP out = PROTECT(Rf_allocVector(VECSXP, n));

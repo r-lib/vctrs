@@ -215,7 +215,6 @@ SEXP vec_as_index(SEXP i, R_len_t n, SEXP names);
 SEXP vec_slice(SEXP x, SEXP index);
 SEXP vec_slice_fallback(SEXP x, SEXP index);
 SEXP vec_slice_base(enum vctrs_type type, SEXP x, SEXP index);
-SEXP df_slice(SEXP x, SEXP index);
 SEXP vec_split_along(SEXP x, SEXP indices);
 SEXP vec_slice_shaped(enum vctrs_type type, SEXP x, SEXP index);
 SEXP vec_assign(SEXP x, SEXP index, SEXP value);
