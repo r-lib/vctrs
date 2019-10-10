@@ -485,43 +485,49 @@ stop_index <- function(i, ..., .subclass = NULL) {
     ...
   )
 }
+#' @export
+conditionMessage.vctrs_error_index <- function(c) {
+  cnd_message(c)
+}
 
 #' @export
-conditionMessage.vctrs_error_index_oob_positions <- function(c) {
-  i <- c$i
+cnd_issue.vctrs_error_index_oob_positions <- function(cnd) {
+  "Must index existing elements."
+}
+#' @export
+cnd_bullets.vctrs_error_index_oob_positions <- function(cnd) {
+  i <- cnd$i
 
   # In case of negative indexing
   i <- abs(i)
 
-  oob <- i[i > c$size]
+  oob <- i[i > cnd$size]
   oob_enum <- enumerate(oob)
 
-  glue_lines(
-    "Must index existing elements.",
-    glue_error_bullets(
-      x = ngettext(
-        length(oob),
-        "Can't subset position {oob_enum}.",
-        "Can't subset positions {oob_enum}."
-      ),
-      i = "There are only {c$size} elements."
-    )
+  c(
+    x = glue::glue(ngettext(
+      length(oob),
+      "Can't subset position {oob_enum}.",
+      "Can't subset positions {oob_enum}."
+    )),
+    i = glue::glue("There are only {cnd$size} elements.")
   )
 }
 #' @export
-conditionMessage.vctrs_error_index_oob_names <- function(c) {
-  oob <- c$i[!c$i %in% c$names]
+cnd_issue.vctrs_error_index_oob_names <- function(cnd) {
+  "Must index existing elements."
+}
+#' @export
+cnd_bullets.vctrs_error_index_oob_names <- function(cnd) {
+  oob <- cnd$i[!cnd$i %in% cnd$names]
   oob_enum <- enumerate(glue::backtick(oob))
 
-  glue_lines(
-    "Must index existing elements.",
-    glue_error_bullets(
-      x = ngettext(
-        length(oob),
-        "Can't subset element with unknown name {oob_enum}.",
-        "Can't subset elements with unknown names {oob_enum}."
-      )
-    )
+  c(
+    x = glue::glue(ngettext(
+      length(oob),
+      "Can't subset element with unknown name {oob_enum}.",
+      "Can't subset elements with unknown names {oob_enum}."
+    ))
   )
 }
 

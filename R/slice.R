@@ -294,19 +294,18 @@ new_error_position_bad_type <- function(i, ..., arg = "i", .subclass = NULL) {
 }
 
 #' @export
-conditionMessage.vctrs_error_index_bad_type <- function(c) {
-  i <- c$i
-  arg <- c$arg %||% "i"
-  issue <- "Must subset with positions or names."
-
+cnd_issue.vctrs_error_index_bad_type <- function(cnd) {
+  "Must subset with positions or names."
+}
+#' @export
+cnd_bullets.vctrs_error_index_bad_type <- function(cnd) {
+  i <- cnd$i
+  arg <- cnd$arg %||% "i"
   if (is.object(i) || !typeof(i) %in% c("integer", "character", "logical")) {
     type <- obj_type(i)
-    return(glue_lines(
-      issue,
-      glue_error_bullets(
-        x = "`{arg}` has the wrong type `{type}`.",
-        i = "Positions and names must be integer, logical, or character."
-      )
+    return(glue_error_bullets(
+      x = "`{arg}` has the wrong type `{type}`.",
+      i = "Positions and names must be integer, logical, or character."
     ))
   }
 
@@ -314,55 +313,46 @@ conditionMessage.vctrs_error_index_bad_type <- function(c) {
 }
 
 #' @export
-conditionMessage.vctrs_error_position_bad_type <- function(c) {
-  i <- c$i
-  arg <- c$arg %||% "i"
-  issue <- "Must extract with a single position or name."
+cnd_issue.vctrs_error_position_bad_type <- function(cnd) {
+  "Must extract with a single position or name."
+}
+#' @export
+cnd_bullets.vctrs_error_position_bad_type <- function(cnd) {
+  i <- cnd$i
+  arg <- cnd$arg %||% "i"
 
   if (is.object(i) || !typeof(i) %in% c("integer", "character")) {
     type <- obj_type(i)
-    return(glue_lines(
-      issue,
-      glue_error_bullets(
-        x = "`{arg}` has the wrong type `{type}`.",
-        i = "Positions and names must be integer or character."
-      )
+    return(glue_error_bullets(
+      x = "`{arg}` has the wrong type `{type}`.",
+      i = "Positions and names must be integer or character."
     ))
   }
 
   if (length(i) != 1L) {
-    size <- length(c$i)
-    return(glue_lines(
-      issue,
-      glue_error_bullets(
-        x = "`{arg}` has the wrong size {size}.",
-        i = "Positions and names must be size 1."
-      )
+    size <- length(cnd$i)
+    return(glue_error_bullets(
+      x = "`{arg}` has the wrong size {size}.",
+      i = "Positions and names must be size 1."
     ))
   }
 
   if (is.na(i)) {
-    return(glue_lines(
-      issue,
-      glue_error_bullets(
-        x = "`{arg}` can't be `NA`.",
-        i = "Positions and names can't be missing."
-      )
+    return(glue_error_bullets(
+      x = "`{arg}` can't be `NA`.",
+      i = "Positions and names can't be missing."
     ))
   }
 
   if (i < 1L) {
-    return(glue_lines(
-      issue,
-      glue_error_bullets(
-        x =
-          if (i == 0L) {
-            "`{arg}` can't be zero."
-          } else {
-            "`{arg}` (with value {i}) has the wrong sign."
-          },
-        i = "Positions must be positive integers."
-      )
+    return(glue_error_bullets(
+      x =
+        if (i == 0L) {
+          "`{arg}` can't be zero."
+        } else {
+          "`{arg}` (with value {i}) has the wrong sign."
+        },
+      i = "Positions must be positive integers."
     ))
   }
 
