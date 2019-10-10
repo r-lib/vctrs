@@ -750,3 +750,8 @@ test_that("all index errors inherit from `vctrs_error_index`", {
   skip("FIXME")
   expect_error(vec_as_index(1.5, 2L), class = "vctrs_error_index")
 })
+
+test_that("all OOB errors inherit from `vctrs_error_index_oob`", {
+  expect_error(vec_as_index(100, 2L), class = "vctrs_error_index_oob")
+  expect_error(vec_as_index("foo", 2L, names = c("bar", "baz")), class = "vctrs_error_index_oob")
+})
