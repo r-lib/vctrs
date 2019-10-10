@@ -284,6 +284,17 @@ stop_lossy_cast <- function(x, to, result,
     .subclass = c(.subclass, "vctrs_error_cast_lossy")
   )
 }
+# Used in maybe_warn_deprecated_lossy_cast()
+new_error_cast_lossy <- function(x, to, x_arg = "", to_arg = "") {
+  error_cnd(
+    "vctrs_error_cast_lossy",
+    x = x,
+    to = to,
+    x_arg = x_arg,
+    to_arg = to_arg
+  )
+}
+
 #' @rdname vctrs-conditions
 #' @param x_ptype,to_ptype Suppress only the casting errors where `x`
 #'   or `to` match these [prototypes][vec_ptype].
@@ -310,7 +321,11 @@ maybe_warn_deprecated_lossy_cast <- function(x, to, x_arg, to_arg) {
   handled <- withRestarts(
     vctrs_restart_error_cast_lossy = function() TRUE,
     {
-      cnd_signal(cnd("vctrs_error_cast_lossy", x = x, to = to))
+      # Signal fully formed condition but strip the error classes in
+      # case someone is catching: This is not an abortive condition.
+      cnd <- new_error_cast_lossy(x, to, x_arg = x_arg, to_arg = to_arg)
+      class(cnd) <- setdiff(class(cnd), c("error", "rlang_error"))
+      signalCondition(cnd)
       FALSE
     }
   )
