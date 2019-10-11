@@ -18,3 +18,28 @@ x `i` has the wrong type `data.frame<
   carb: double
 >`.
 i Positions and names must be integer or character.
+> vec_as_position(1:2, 2L, arg = "foo")
+Error: Must extract with a single position or name.
+x `foo` has the wrong size 2.
+i Positions and names must be size 1.
+> vec_as_position(mtcars, 10L, arg = "foo")
+Error: Must extract with a single position or name.
+x `foo` has the wrong type `data.frame<
+  mpg : double
+  cyl : double
+  disp: double
+  hp  : double
+  drat: double
+  wt  : double
+  qsec: double
+  vs  : double
+  am  : double
+  gear: double
+  carb: double
+>`.
+i Positions and names must be integer or character.
+> # Custom `arg`
+> vec_as_position(1:2, 2L, arg = "foo")
+Error: Must extract with a single position or name.
+x `foo` has the wrong size 2.
+i Positions and names must be size 1.

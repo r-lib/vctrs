@@ -5,9 +5,9 @@
 \alias{vec_as_position}
 \title{Create an index vector or a position}
 \usage{
-vec_as_index(i, n, names = NULL)
+vec_as_index(i, n, names = NULL, ..., arg = "i")
 
-vec_as_position(i, n, names = NULL)
+vec_as_position(i, n, names = NULL, ..., arg = "i")
 }
 \arguments{
 \item{i}{An integer, character or logical vector specifying the positions or
@@ -22,6 +22,10 @@ object that \code{i} is meant to index into.}
 vector that \code{i} will be matched against to construct the index. Otherwise,
 not used. The default value of \code{NULL} will result in an error
 if \code{i} is a character vector.}
+
+\item{arg}{The argument name to be displayed in error messages when
+\code{vec_as_index()} and \code{vec_as_position()} are used to check the
+type of a function input.}
 }
 \value{
 \code{vec_as_index()} returns an integer vector that can be used

@@ -148,6 +148,9 @@ vec_assign_fallback <- function(x, i, value) {
 #'   vector that `i` will be matched against to construct the index. Otherwise,
 #'   not used. The default value of `NULL` will result in an error
 #'   if `i` is a character vector.
+#' @param arg The argument name to be displayed in error messages when
+#'   `vec_as_index()` and `vec_as_position()` are used to check the
+#'   type of a function input.
 #'
 #' @return `vec_as_index()` returns an integer vector that can be used
 #'   as an index in a subsetting operation. `vec_as_position()`
@@ -172,15 +175,17 @@ vec_assign_fallback <- function(x, i, value) {
 #'
 #' @keywords internal
 #' @export
-vec_as_index <- function(i, n, names = NULL) {
+vec_as_index <- function(i, n, names = NULL, ..., arg = "i") {
+  if (!missing(...)) ellipsis::check_dots_empty()
   vec_assert(n, integer(), 1L)
-  i <- vec_coerce_index(i)
+  i <- vec_coerce_index(i, arg = arg)
   .Call(vctrs_as_index, i, n, names)
 }
-vec_coerce_index <- function(i) {
-  maybe_get(vec_maybe_coerce_index(i))
+vec_coerce_index <- function(i, ..., arg = "i") {
+  if (!missing(...)) ellipsis::check_dots_empty()
+  maybe_get(vec_maybe_coerce_index(i, arg = arg))
 }
-vec_maybe_coerce_index <- function(i) {
+vec_maybe_coerce_index <- function(i, arg) {
   if (!vec_is(i)) {
     return(maybe(error = new_error_index_bad_type(i)))
   }
@@ -205,36 +210,41 @@ vec_maybe_coerce_index <- function(i) {
 
 #' @rdname vec_as_index
 #' @export
-vec_as_position <- function(i, n, names = NULL) {
-  maybe_get(vec_maybe_as_position(i, n = n, names = names))
+vec_as_position <- function(i, n, names = NULL, ..., arg = "i") {
+  if (!missing(...)) ellipsis::check_dots_empty()
+  maybe_get(vec_maybe_as_position(i, n = n, names = names, arg = arg))
 }
-vec_coerce_position <- function(i) {
-  maybe_get(vec_maybe_coerce_position(i))
+vec_coerce_position <- function(i, ..., arg = "i") {
+  if (!missing(...)) ellipsis::check_dots_empty()
+  maybe_get(vec_maybe_coerce_position(i, arg))
 }
 
-vec_maybe_coerce_position <- function(i) {
+vec_maybe_coerce_position <- function(i, arg) {
   if (is.object(i) && vec_is(i) && vec_is_subtype(i, lgl())) {
-    return(maybe(error = new_error_position_bad_type(i)))
+    return(maybe(error = new_error_position_bad_type(i, arg = arg)))
   }
 
-  maybe <- vec_maybe_coerce_index(i)
+  maybe <- vec_maybe_coerce_index(i, arg)
 
   # Return a subclass of index error
   if (!is_null(maybe$error)) {
-    maybe$error <- new_error_position_bad_type(i = maybe$error$i)
+    maybe$error <- new_error_position_bad_type(
+      i = maybe$error$i,
+      arg = arg
+    )
     return(maybe)
   }
 
   i <- maybe$value
 
   if (typeof(i) == "logical") {
-    return(maybe(error = new_error_position_bad_type(i)))
+    return(maybe(error = new_error_position_bad_type(i, arg = arg)))
   }
 
   maybe
 }
-vec_maybe_as_position <- function(i, n, names = NULL) {
-  maybe <- vec_maybe_coerce_position(i)
+vec_maybe_as_position <- function(i, n, names = NULL, arg = "i") {
+  maybe <- vec_maybe_coerce_position(i, arg = arg)
 
   if (!is_null(maybe$error)) {
     return(maybe)
@@ -245,7 +255,7 @@ vec_maybe_as_position <- function(i, n, names = NULL) {
   if (length(i) != 1L ||
       is.na(i) ||
       (typeof(i) == "integer" && i < 1L)) {
-    return(maybe(error = new_error_position_bad_type(i)))
+    return(maybe(error = new_error_position_bad_type(i, arg = arg)))
   }
 
   # FIXME: Use maybe approach in internal implementation?
@@ -253,29 +263,32 @@ vec_maybe_as_position <- function(i, n, names = NULL) {
     maybe(.Call(vctrs_as_index, i, n, names)),
     # FIXME: All index error should inherit from "vctrs_error_index"
     vctrs_error_index_bad_type = function(err) {
-      maybe(error = new_error_position_bad_type(i, parent = err))
+      maybe(error = new_error_position_bad_type(i, parent = err, arg = arg))
     }
   )
 }
 
-new_index_error <- function(.subclass = NULL, i, ...) {
+new_index_error <- function(.subclass = NULL, i, ..., arg = "i") {
   error_cnd(
     .subclass = c(.subclass, "vctrs_error_index"),
     i = i,
+    arg = arg,
     ...
   )
 }
-new_error_index_bad_type <- function(i, ..., .subclass = NULL) {
+new_error_index_bad_type <- function(i, ..., arg = "i", .subclass = NULL) {
   new_index_error(
     .subclass = c(.subclass, "vctrs_error_index_bad_type"),
     i = i,
+    arg = arg,
     ...
   )
 }
-new_error_position_bad_type <- function(i, ..., .subclass = NULL) {
+new_error_position_bad_type <- function(i, ..., arg = "i", .subclass = NULL) {
   new_error_index_bad_type(
     .subclass = c(.subclass, "vctrs_error_position_bad_type"),
     i = i,
+    arg = arg,
     ...
   )
 }
