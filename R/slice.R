@@ -405,6 +405,11 @@ vec_init <- function(x, n = 1L) {
   vec_slice(x, rep_len(NA_integer_, n))
 }
 
+# Used internally by `vec_rbind()`, but exported for testing
+vec_split_along <- function(x, indices = NULL) {
+  .Call(vctrs_split_along, x, indices)
+}
+
 # Exposed for testing (`start` is 0-based)
 vec_slice_seq <- function(x, start, size, increasing = TRUE) {
   .Call(vctrs_slice_seq, x, start, size, increasing)
