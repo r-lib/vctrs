@@ -218,6 +218,7 @@ static SEXP df_slice(SEXP x, SEXP index) {
   return out;
 }
 
+
 static SEXP vec_slice_fallback(SEXP x, SEXP index) {
   return vctrs_dispatch2(syms_vec_slice_fallback, fns_vec_slice_fallback,
                          syms_x, x,
@@ -261,7 +262,6 @@ static SEXP slice_names(SEXP names, SEXP index) {
   UNPROTECT(1);
   return names;
 }
-
 static SEXP slice_rownames(SEXP names, SEXP index) {
   if (names == R_NilValue) {
     return names;
