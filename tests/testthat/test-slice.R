@@ -52,6 +52,9 @@ test_that("can subset with a recycled TRUE", {
   expect_identical(vec_slice(1:3, TRUE), 1:3)
   expect_identical(vec_slice(mtcars, TRUE), mtcars)
   expect_identical(vec_slice(new_vctr(1:3), TRUE), new_vctr(1:3))
+
+  skip("FIXME")
+  expect_identical(vec_as_index(TRUE, length(2)), 1:2)
 })
 
 test_that("can subset with a recycled FALSE", {
@@ -192,7 +195,7 @@ test_that("can slice with double indices", {
 })
 
 test_that("vec_as_index() checks type", {
-  expect_error(vec_as_index(quote(foo), 1L), "must be an integer, character, or logical vector, not a symbol")
+  expect_error(vec_as_index(quote(foo), 1L), class = "vctrs_error_index_bad_type")
   expect_error(vec_as_index("foo", "bar"), class = "vctrs_error_assert_ptype")
   expect_error(vec_as_index("foo", 1L, names = 1L), "must be a character vector")
 })
@@ -663,9 +666,23 @@ test_that("vec_as_position() requires integer or character inputs", {
   })
 })
 
-test_that("vec_as_position() requires integer- or character-like OO inputs", {
+test_that("vec_as_index() requires integer, character, or logical inputs", {
+  expect_error(vec_as_index(mtcars, 10L), class = "vctrs_error_index_bad_type")
+  expect_error(vec_as_index(env(), 10L), class = "vctrs_error_index_bad_type")
+  expect_error(vec_as_index(foobar(), 10L), class = "vctrs_error_index_bad_type")
+
+  verify_output(test_path("out", "error-index-type.txt"), {
+    vec_as_index(mtcars, 10L)
+    vec_as_index(env(), 10L)
+    vec_as_index(foobar(), 10L)
+  })
+})
+
+test_that("vec_as_position() and vec_as_index() require integer- or character-like OO inputs", {
   expect_identical(vec_as_position(factor("foo"), 2L, c("bar", "foo")), 2L)
+  expect_identical(vec_as_index(factor("foo"), 2L, c("bar", "foo")), 2L)
   expect_error(vec_as_position(foobar(1L), 10L), class = "vctrs_error_position_bad_type")
+  expect_error(vec_as_index(foobar(1L), 10L), class = "vctrs_error_index_bad_type")
 
   # Define subtype of logical and integer
   scoped_global_bindings(
@@ -680,6 +697,14 @@ test_that("vec_as_position() requires integer- or character-like OO inputs", {
     vec_cast.integer.vctrs_foobar = function(x, to, ...) vec_cast(unclass(x), int())
   )
   expect_error(vec_as_position(foobar(TRUE), 10L), class = "vctrs_error_position_bad_type")
+  expect_identical(vec_as_index(foobar(TRUE), 10L), 1L)
+})
+
+test_that("vec_as_position() and vec_as_index() require existing elements", {
+  expect_error(vec_as_position(10L, 2L), class = "vctrs_error_index_oob_positions")
+  expect_error(vec_as_position("foo", 1L, names = "bar"), class = "vctrs_error_index_oob_names")
+  expect_error(vec_as_index(10L, 2L), class = "vctrs_error_index_oob_positions")
+  expect_error(vec_as_index("foo", 1L, names = "bar"), class = "vctrs_error_index_oob_names")
 })
 
 test_that("vec_as_position() requires length 1 inputs", {
@@ -700,11 +725,6 @@ test_that("vec_as_position() requires positive integers", {
   })
 })
 
-test_that("vec_as_position() requires existing elements", {
-  expect_error(vec_as_position(10L, 2L), class = "vctrs_error_index_oob_positions")
-  expect_error(vec_as_position("foo", 1L, names = "bar"), class = "vctrs_error_index_oob_names")
-})
-
 test_that("vec_as_position() fails with NA", {
   expect_error(vec_as_position(na_int, 2L), class = "vctrs_error_position_bad_type")
   expect_error(vec_as_position(na_chr, 1L, names = "foo"), class = "vctrs_error_position_bad_type")
@@ -712,4 +732,12 @@ test_that("vec_as_position() fails with NA", {
     vec_as_position(na_int, 2L)
     vec_as_position(na_chr, 1L, names = "foo")
   })
+})
+
+test_that("vec_as_position() doesn't allow lossy casts", {
+  expect_error(vec_as_position(2^31, 3L), class = "vctrs_error_cast_lossy")
+
+  # Lossy casts generate missing values, which are disallowed
+  err <- expect_error(allow_lossy_cast(vec_as_position(2^31, 3L)), class = "vctrs_error_index_bad_type")
+  expect_identical(err$i, na_int)
 })
