@@ -145,9 +145,9 @@ methods such as integer, character or logical indexing." />
 methods such as integer, character or logical indexing.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>vec_as_index</span>(<span class='no'>i</span>, <span class='no'>n</span>, <span class='kw'>names</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)
+    <pre class="usage"><span class='fu'>vec_as_index</span>(<span class='no'>i</span>, <span class='no'>n</span>, <span class='kw'>names</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='no'>...</span>, <span class='kw'>arg</span> <span class='kw'>=</span> <span class='st'>"i"</span>)
 
-<span class='fu'>vec_as_position</span>(<span class='no'>i</span>, <span class='no'>n</span>, <span class='kw'>names</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</pre>
+<span class='fu'>vec_as_position</span>(<span class='no'>i</span>, <span class='no'>n</span>, <span class='kw'>names</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='no'>...</span>, <span class='kw'>arg</span> <span class='kw'>=</span> <span class='st'>"i"</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -170,6 +170,12 @@ object that <code>i</code> is meant to index into.</p></td>
 vector that <code>i</code> will be matched against to construct the index. Otherwise,
 not used. The default value of <code>NULL</code> will result in an error
 if <code>i</code> is a character vector.</p></td>
+    </tr>
+    <tr>
+      <th>arg</th>
+      <td><p>The argument name to be displayed in error messages when
+<code>vec_as_index()</code> and <code>vec_as_position()</code> are used to check the
+type of a function input.</p></td>
     </tr>
     </table>
 
