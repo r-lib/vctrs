@@ -1,17 +1,17 @@
 
 # vctrs 0.2.0.9000
 
-* Support for multiple character encodings has been added to functions that 
-  compare elements within a single vector, such as `vec_unique()`, and across 
-  multiple vectors, such as `vec_match()`. When multiple encodings are 
-  encountered, a translation to UTF-8 is performed before any comparisons are 
+* Support for multiple character encodings has been added to functions that
+  compare elements within a single vector, such as `vec_unique()`, and across
+  multiple vectors, such as `vec_match()`. When multiple encodings are
+  encountered, a translation to UTF-8 is performed before any comparisons are
   made (#600, #553).
 
 * New `stop_index_oob_positions()` and `stop_index_oob_names()`
   functions to throw out-of-bounds errors.
 
-* New `vec_split_id()` for locating unique groups in a vector. This 
-  helps power `vec_split()` by returning the unique values and their 
+* New `vec_split_id()` for locating unique groups in a vector. This
+  helps power `vec_split()` by returning the unique values and their
   locations in the original vector (#514).
 
 * Equality and ordering methods are now implemented for raw and
