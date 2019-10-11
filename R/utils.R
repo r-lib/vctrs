@@ -86,6 +86,7 @@ has_dim <- function(x) {
   !is.null(attr(x, "dim"))
 }
 
+# Experimental
 maybe <- function(value = NULL, error = NULL) {
   structure(
     list(value = value, error = error),
