@@ -3,14 +3,11 @@
 \name{vec_as_index}
 \alias{vec_as_index}
 \alias{vec_as_position}
-\alias{vec_coerce_position}
 \title{Create an index vector or a position}
 \usage{
 vec_as_index(i, n, names = NULL)
 
 vec_as_position(i, n, names = NULL)
-
-vec_coerce_position(i)
 }
 \arguments{
 \item{i}{An integer, character or logical vector specifying the positions or
@@ -49,16 +46,6 @@ a single position as a integer vector of size 1. This is suitable
 for extracting with \code{[[}.
 }
 }
-\section{Coercers}{
-
-
-\code{vec_coerce_index()} and \code{vec_coerce_position()} are lower level
-variants that only perform coercions to one of the accepted base
-types (logical, integer, character). Unlike \code{vec_as_index()} and
-\code{vec_as_position()}, they don't check the restrictions on the
-values (e.g. that a position cannot be negative).
-}
-
 \examples{
 x <- array(1:6, c(2, 3))
 dimnames(x) <- list(c("r1", "r2"), c("c1", "c2", "c3"))
