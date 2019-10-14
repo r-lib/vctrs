@@ -202,7 +202,7 @@ vec_maybe_coerce_index <- function(i, arg) {
     }
   } else if (is_double(i)) {
     maybe <- tryCatch(
-      maybe(vec_coercible_cast(i, int())),
+      maybe(vec_coercible_cast(i, int(), x_arg = arg, to_arg = "")),
       vctrs_error_cast_lossy = function(err) {
         maybe(error = new_error_index_bad_type(
           i = i,

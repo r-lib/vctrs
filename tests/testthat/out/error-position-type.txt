@@ -32,8 +32,7 @@ i Positions and names must be integer or character.
 
 > vec_as_position(2.5, 3L)
 Error: Must extract with a single position or name.
-x `i` has the wrong type `double`.
-i Positions and names must be integer or character.
+x Lossy cast from `i` <double> to <integer>.
 
 
 Custom `arg`
@@ -46,6 +45,5 @@ i Positions and names must be integer or character.
 
 > vec_as_position(2.5, 3L, arg = "foo")
 Error: Must extract with a single position or name.
-x `foo` has the wrong type `double`.
-i Positions and names must be integer or character.
+x Lossy cast from `foo` <double> to <integer>.
 

@@ -669,7 +669,7 @@ test_that("vec_as_position() requires integer or character inputs", {
 
     "# Custom `arg`"
     vec_as_position(foobar(), 10L, arg = "foo")
-    vec_as_position(2.5, 3L, arg = "foo") # FIXME
+    vec_as_position(2.5, 3L, arg = "foo")
   })
 })
 

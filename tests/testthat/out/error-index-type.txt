@@ -27,7 +27,7 @@ i Positions and names must be integer, logical, or character.
 
 > vec_as_index(2.5, 3L)
 Error: Must subset with positions or names.
-x Lossy cast from `x` <double> to `to` <integer>.
+x Lossy cast from `i` <double> to <integer>.
 
 
 Custom `arg`
@@ -45,5 +45,5 @@ i Positions and names must be integer, logical, or character.
 
 > vec_as_index(2.5, 3L, arg = "foo")
 Error: Must subset with positions or names.
-x Lossy cast from `x` <double> to `to` <integer>.
+x Lossy cast from `foo` <double> to <integer>.
 
