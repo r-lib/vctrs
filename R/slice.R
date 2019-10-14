@@ -151,6 +151,8 @@ vec_assign_fallback <- function(x, i, value) {
 #' @param arg The argument name to be displayed in error messages when
 #'   `vec_as_index()` and `vec_as_position()` are used to check the
 #'   type of a function input.
+#' @param convert_negative Should negative indices be converted to
+#'   positive ones?
 #' @param allow_negative,allow_missing Experimental. These options
 #'   control which constraints are applied to position values.
 #'
@@ -177,11 +179,17 @@ vec_assign_fallback <- function(x, i, value) {
 #'
 #' @keywords internal
 #' @export
-vec_as_index <- function(i, n, names = NULL, ..., arg = "i") {
+vec_as_index <- function(i, n,
+                         names = NULL,
+                         ...,
+                         convert_negative = TRUE,
+                         arg = "i") {
   if (!missing(...)) ellipsis::check_dots_empty()
+
   vec_assert(n, integer(), 1L)
   i <- vec_coerce_index(i, arg = arg)
-  .Call(vctrs_as_index, i, n, names)
+
+  .Call(vctrs_as_index, i, n, names, convert_negative)
 }
 vec_coerce_index <- function(i, ..., arg = "i") {
   if (!missing(...)) ellipsis::check_dots_empty()
@@ -360,7 +368,7 @@ vec_maybe_as_position <- function(i,
   # FIXME: Use maybe approach in internal implementation?
   err <- NULL
   i <- tryCatch(
-    .Call(vctrs_as_index, i, n, names),
+    vec_as_index(i, n, names = names, arg = arg),
     vctrs_error_index_bad_type = function(err) {
       err <<- err
       i
