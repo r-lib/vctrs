@@ -187,7 +187,7 @@ vec_coerce_index <- function(i, ..., arg = "i") {
 }
 vec_maybe_coerce_index <- function(i, arg) {
   if (!vec_is(i)) {
-    return(maybe(error = new_error_index_bad_type(i)))
+    return(maybe(error = new_error_index_bad_type(i, .arg = arg)))
   }
   if (is.object(i)) {
     if (vec_is_subtype(i, int())) {
@@ -195,14 +195,14 @@ vec_maybe_coerce_index <- function(i, arg) {
     } else if (vec_is_subtype(i, chr())) {
       i <- vec_cast(i, chr())
     } else {
-      return(maybe(error = new_error_index_bad_type(i)))
+      return(maybe(error = new_error_index_bad_type(i, .arg = arg)))
     }
   } else if (is_double(i)) {
     i <- vec_coercible_cast(i, int())
   }
 
   if (!typeof(i) %in% c("integer", "character", "logical")) {
-    return(maybe(error = new_error_index_bad_type(i)))
+    return(maybe(error = new_error_index_bad_type(i, .arg = arg)))
   }
 
   maybe(i)

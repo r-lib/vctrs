@@ -684,7 +684,7 @@ test_that("vec_as_index() requires integer, character, or logical inputs", {
     vec_as_index(foobar(), 10L)
     vec_as_index(2.5, 3L)
 
-    "FIXME: Custom `arg`"
+    vec_as_index(env(), 10L, arg = "foo")
     vec_as_index(foobar(), 10L, arg = "foo")
     vec_as_index(2.5, 3L, arg = "foo")
   })
