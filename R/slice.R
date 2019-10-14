@@ -151,6 +151,8 @@ vec_assign_fallback <- function(x, i, value) {
 #' @param arg The argument name to be displayed in error messages when
 #'   `vec_as_index()` and `vec_as_position()` are used to check the
 #'   type of a function input.
+#' @param allow_negative,allow_missing Experimental. These options
+#'   control which constraints are applied to position values.
 #'
 #' @return `vec_as_index()` returns an integer vector that can be used
 #'   as an index in a subsetting operation. `vec_as_position()`
@@ -229,16 +231,34 @@ vec_maybe_coerce_index <- function(i, arg) {
 
 #' @rdname vec_as_index
 #' @export
-vec_as_position <- function(i, n, names = NULL, ..., arg = "i") {
+vec_as_position <- function(i, n,
+                            names = NULL,
+                            ...,
+                            allow_missing = FALSE,
+                            allow_negative = FALSE,
+                            arg = "i") {
   if (!missing(...)) ellipsis::check_dots_empty()
-  maybe_get(vec_maybe_as_position(i, n = n, names = names, arg = arg))
+  maybe_get(vec_maybe_as_position(
+    i,
+    n = n,
+    names = names,
+    allow_missing = allow_missing,
+    allow_negative = allow_negative,
+    arg = arg
+  ))
 }
-vec_coerce_position <- function(i, ..., arg = "i") {
+vec_coerce_position <- function(i,
+                                ...,
+                                arg = "i") {
   if (!missing(...)) ellipsis::check_dots_empty()
   maybe_get(vec_maybe_coerce_position(i, arg))
 }
 
-vec_maybe_coerce_position <- function(i, arg) {
+vec_maybe_coerce_position <- function(i, arg, allow_missing) {
+  if (is_unspecified(i)) {
+    i <- vec_cast(i, int())
+  }
+
   if (is.object(i) && vec_is(i) && vec_is_subtype(i, lgl())) {
     return(maybe(error = new_error_position_bad_type(
       i = i,
@@ -280,8 +300,13 @@ vec_maybe_coerce_position <- function(i, arg) {
 
   maybe
 }
-vec_maybe_as_position <- function(i, n, names = NULL, arg = "i") {
-  maybe <- vec_maybe_coerce_position(i, arg = arg)
+vec_maybe_as_position <- function(i,
+                                  n,
+                                  names,
+                                  allow_missing,
+                                  allow_negative,
+                                  arg) {
+  maybe <- vec_maybe_coerce_position(i, arg = arg, allow_missing = allow_missing)
 
   if (!is_null(maybe$error)) {
     return(maybe)
@@ -298,30 +323,59 @@ vec_maybe_as_position <- function(i, n, names = NULL, arg = "i") {
     )))
   }
 
+  neg <- typeof(i) == "integer" && !is.na(i) && i < 0L
+  if (allow_negative && neg) {
+    i <- -i
+  }
+
   if (is.na(i)) {
+    if (!allow_missing && is.na(i)) {
+      maybe <- maybe(error = new_error_position_bad_type(
+        i = i,
+        .arg = arg,
+        .bullets = cnd_bullets_position_need_present
+      ))
+    } else {
+      maybe <- maybe(i)
+    }
+    return(maybe)
+  }
+
+  if (i == 0L) {
     return(maybe(error = new_error_position_bad_type(
       i = i,
       .arg = arg,
-      .bullets = cnd_bullets_position_need_present
+      .bullets = cnd_bullets_position_need_non_zero
     )))
   }
 
-  if (typeof(i) == "integer" && i < 1L) {
+  if (!allow_negative && neg) {
     return(maybe(error = new_error_position_bad_type(
       i = i,
       .arg = arg,
-      .bullets = cnd_bullets_position_need_positive
+      .bullets = cnd_bullets_position_need_non_negative
     )))
   }
 
   # FIXME: Use maybe approach in internal implementation?
-  tryCatch(
-    maybe(.Call(vctrs_as_index, i, n, names)),
-    # FIXME: All index error should inherit from "vctrs_error_index"
+  err <- NULL
+  i <- tryCatch(
+    .Call(vctrs_as_index, i, n, names),
     vctrs_error_index_bad_type = function(err) {
-      maybe(error = new_error_position_bad_type(i, parent = err, .arg = arg))
+      err <<- err
+      i
     }
   )
+
+  if (neg) {
+    i <- -i
+  }
+
+  if (is_null(err)) {
+    maybe(i)
+  } else {
+    maybe(error = new_error_position_bad_type(i, parent = err, .arg = arg))
+  }
 }
 
 new_index_error <- function(.subclass = NULL, i, ..., .arg = "i") {
@@ -395,16 +449,17 @@ cnd_bullets_position_need_present <- function(cnd, ...) {
     i = "Positions and names can't be missing."
   )
 }
-cnd_bullets_position_need_positive <- function(cnd, ...) {
+cnd_bullets_position_need_non_zero <- function(cnd, ...) {
   arg <- cnd$.arg %||% "i"
-  i <- cnd$i
   c(
-    x =
-      if (i == 0L) {
-        glue::glue("`{arg}` can't be zero.")
-      } else {
-        glue::glue("`{arg}` (with value {i}) has the wrong sign.")
-      },
+    x = glue::glue("`{arg}` can't be zero."),
+    i = "Positions must be positive integers."
+  )
+}
+cnd_bullets_position_need_non_negative <- function(cnd, ...) {
+  arg <- cnd$.arg %||% "i"
+  c(
+    x = glue::glue("`{arg}` (with value {cnd$i}) has the wrong sign."),
     i = "Positions must be positive integers."
   )
 }

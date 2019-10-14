@@ -7,7 +7,8 @@
 \usage{
 vec_as_index(i, n, names = NULL, ..., arg = "i")
 
-vec_as_position(i, n, names = NULL, ..., arg = "i")
+vec_as_position(i, n, names = NULL, ..., allow_negative = FALSE,
+  allow_missing = FALSE, arg = "i")
 }
 \arguments{
 \item{i}{An integer, character or logical vector specifying the positions or
@@ -26,6 +27,9 @@ if \code{i} is a character vector.}
 \item{arg}{The argument name to be displayed in error messages when
 \code{vec_as_index()} and \code{vec_as_position()} are used to check the
 type of a function input.}
+
+\item{allow_negative, allow_missing}{Experimental. These options
+control which constraints are applied to position values.}
 }
 \value{
 \code{vec_as_index()} returns an integer vector that can be used
