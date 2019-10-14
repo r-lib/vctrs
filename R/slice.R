@@ -127,6 +127,8 @@ vec_assign_fallback <- function(x, i, value) {
 
 #' Create an index vector or a position
 #'
+#' @description
+#'
 #' These helpers provide a means of standardizing common indexing
 #' methods such as integer, character or logical indexing.
 #'
@@ -255,6 +257,20 @@ vec_as_position <- function(i, n,
     arg = arg
   ))
 }
+#' Coerce to the base type of a position
+#'
+#' @description
+#'
+#' \Sexpr[results=rd, stage=render]{vctrs:::lifecycle("experimental")}
+#'
+#' This coerces `i` to the base type expected by [vec_as_position()].
+#' The resulting vector is not checked in any way (length,
+#' missingness, negative elements).
+#'
+#' @inheritParams vec_as_position
+#'
+#' @keywords internal
+#' @export
 vec_coerce_position <- function(i,
                                 ...,
                                 arg = "i") {

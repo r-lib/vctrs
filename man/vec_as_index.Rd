@@ -44,8 +44,6 @@ extracting an element.
 \description{
 These helpers provide a means of standardizing common indexing
 methods such as integer, character or logical indexing.
-}
-\details{
 \itemize{
 \item \code{vec_as_index()} accepts integer, character, or logical vectors
 of any size. The output is always an integer vector that is
