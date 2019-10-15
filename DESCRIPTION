@@ -41,7 +41,7 @@ Suggests:
     pillar (>= 1.4.1),
     pkgdown,
     rmarkdown,
-    testthat,
+    testthat (>= 2.2.1.9002),
     tibble,
     xml2
 Remotes:

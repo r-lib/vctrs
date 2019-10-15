@@ -14,25 +14,36 @@ x `i` has the wrong type `data.frame<
   carb: double
 >`.
 i Positions and names must be integer, logical, or character.
+
 > vec_as_index(env(), 10L)
 Error: Must subset with positions or names.
 x `i` has the wrong type `environment`.
 i Positions and names must be integer, logical, or character.
+
 > vec_as_index(foobar(), 10L)
 Error: Must subset with positions or names.
 x `i` has the wrong type `vctrs_foobar`.
 i Positions and names must be integer, logical, or character.
+
 > vec_as_index(2.5, 3L)
 Error: Lossy cast from `x` <double> to `to` <integer>.
 Locations: 1
+
+
+Custom `arg`
+============
+
 > vec_as_index(env(), 10L, arg = "foo")
 Error: Must subset with positions or names.
 x `foo` has the wrong type `environment`.
 i Positions and names must be integer, logical, or character.
+
 > vec_as_index(foobar(), 10L, arg = "foo")
 Error: Must subset with positions or names.
 x `foo` has the wrong type `vctrs_foobar`.
 i Positions and names must be integer, logical, or character.
+
 > vec_as_index(2.5, 3L, arg = "foo")
 Error: Lossy cast from `x` <double> to `to` <integer>.
 Locations: 1
+

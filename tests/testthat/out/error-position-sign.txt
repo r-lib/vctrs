@@ -2,12 +2,18 @@
 Error: Must extract with a single position or name.
 x `i` can't be zero.
 i Positions must be positive integers.
+
 > vec_as_position(-1, 2L)
 Error: Must extract with a single position or name.
 x `i` (with value -1) has the wrong sign.
 i Positions must be positive integers.
-> # Custom `arg`
+
+
+Custom `arg`
+============
+
 > vec_as_position(0, 2L, arg = "foo")
 Error: Must extract with a single position or name.
 x `foo` can't be zero.
 i Positions must be positive integers.
+

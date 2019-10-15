@@ -666,7 +666,7 @@ test_that("vec_as_position() requires integer or character inputs", {
     vec_as_position(foobar(), 10L)
     vec_as_position(2.5, 3L)
 
-    "Custom `arg`"
+    "# Custom `arg`"
     vec_as_position(foobar(), 10L, arg = "foo")
     vec_as_position(2.5, 3L, arg = "foo") # FIXME
   })
@@ -684,6 +684,7 @@ test_that("vec_as_index() requires integer, character, or logical inputs", {
     vec_as_index(foobar(), 10L)
     vec_as_index(2.5, 3L)
 
+    "# Custom `arg`"
     vec_as_index(env(), 10L, arg = "foo")
     vec_as_index(foobar(), 10L, arg = "foo")
     vec_as_index(2.5, 3L, arg = "foo")
@@ -726,10 +727,10 @@ test_that("vec_as_position() requires length 1 inputs", {
   verify_output(test_path("out", "error-position-size.txt"), {
     vec_as_position(1:2, 2L)
     vec_as_position(mtcars, 10L)
+
+    "# Custom `arg`"
     vec_as_position(1:2, 2L, arg = "foo")
     vec_as_position(mtcars, 10L, arg = "foo")
-
-    "Custom `arg`"
     vec_as_position(1:2, 2L, arg = "foo")
   })
 })
@@ -742,7 +743,7 @@ test_that("vec_as_position() requires positive integers", {
     vec_as_position(0, 2L)
     vec_as_position(-1, 2L)
 
-    "Custom `arg`"
+    "# Custom `arg`"
     vec_as_position(0, 2L, arg = "foo")
   })
 })
@@ -755,7 +756,7 @@ test_that("vec_as_position() fails with NA", {
     vec_as_position(na_int, 2L)
     vec_as_position(na_chr, 1L, names = "foo")
 
-    "Custom `arg`"
+    "# Custom `arg`"
     vec_as_position(na_int, 2L)
   })
 })

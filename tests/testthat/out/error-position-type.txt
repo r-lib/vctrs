@@ -2,6 +2,7 @@
 Error: Must extract with a single position or name.
 x `i` has the wrong type `logical`.
 i Positions and names must be integer or character.
+
 > vec_as_position(mtcars, 10L)
 Error: Must extract with a single position or name.
 x `i` has the wrong type `data.frame<
@@ -18,22 +19,31 @@ x `i` has the wrong type `data.frame<
   carb: double
 >`.
 i Positions and names must be integer or character.
+
 > vec_as_position(env(), 10L)
 Error: Must extract with a single position or name.
 x `i` has the wrong type `environment`.
 i Positions and names must be integer or character.
+
 > vec_as_position(foobar(), 10L)
 Error: Must extract with a single position or name.
 x `i` has the wrong type `vctrs_foobar`.
 i Positions and names must be integer or character.
+
 > vec_as_position(2.5, 3L)
 Error: Lossy cast from `x` <double> to `to` <integer>.
 Locations: 1
-> # Custom `arg`
+
+
+Custom `arg`
+============
+
 > vec_as_position(foobar(), 10L, arg = "foo")
 Error: Must extract with a single position or name.
 x `foo` has the wrong type `vctrs_foobar`.
 i Positions and names must be integer or character.
+
 > vec_as_position(2.5, 3L, arg = "foo")
 Error: Lossy cast from `x` <double> to `to` <integer>.
 Locations: 1
+
