@@ -382,7 +382,7 @@ do {                                                         \
     if (SCALAR_EQUAL(x0, xp, na_equal)) {                    \
       continue;                                              \
     }                                                        \
-    *p = 0;                                                  \
+    *p = false;                                              \
     break;                                                   \
   }                                                          \
 }                                                            \
@@ -394,7 +394,7 @@ do {                                                    \
     if (SCALAR_EQUAL(x, 0, x, i, na_equal)) {           \
       continue;                                         \
     }                                                   \
-    *p = 0;                                             \
+    *p = false;                                         \
     break;                                              \
   }                                                     \
 }                                                       \
@@ -408,7 +408,7 @@ SEXP vctrs_duplicated_all(SEXP x, SEXP na_equal_) {
 
   SEXP out = PROTECT(Rf_allocVector(LGLSXP, 1));
   int32_t* p = LOGICAL(out);
-  *p = 1;
+  *p = true;
 
   R_len_t n = vec_size(x);
 
