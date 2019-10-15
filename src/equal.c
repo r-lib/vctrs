@@ -372,7 +372,7 @@ bool equal_names(SEXP x, SEXP y) {
 
 // -----------------------------------------------------------------------------
 
-#define DUPLICATED_ALL(CTYPE, CONST_DEREF, SCALAR_EQUAL)     \
+#define DUPLICATE_ALL(CTYPE, CONST_DEREF, SCALAR_EQUAL)      \
 do {                                                         \
   const CTYPE* x0 = CONST_DEREF(x);                          \
   const CTYPE* xp = CONST_DEREF(x);                          \
@@ -388,7 +388,7 @@ do {                                                         \
 }                                                            \
 while (0)
 
-#define DUPLICATED_ALL_BARRIER(SCALAR_EQUAL)            \
+#define DUPLICATE_ALL_BARRIER(SCALAR_EQUAL)             \
 do {                                                    \
   for (R_len_t i = 1; i < n; ++i) {                     \
     if (SCALAR_EQUAL(x, 0, x, i, na_equal)) {           \
@@ -401,7 +401,7 @@ do {                                                    \
 while (0)
 
 // [[ register() ]]
-SEXP vctrs_duplicated_all(SEXP x, SEXP na_equal_) {
+SEXP vctrs_duplicate_all(SEXP x, SEXP na_equal_) {
   x = PROTECT(vec_proxy_recursive(x, vctrs_proxy_equal));
 
   bool na_equal = Rf_asLogical(na_equal_);
@@ -418,14 +418,14 @@ SEXP vctrs_duplicated_all(SEXP x, SEXP na_equal_) {
   }
 
   switch (vec_proxy_typeof(x)) {
-  case vctrs_type_logical:   DUPLICATED_ALL(int, LOGICAL_RO, lgl_equal_scalar); break;
-  case vctrs_type_integer:   DUPLICATED_ALL(int, INTEGER_RO, int_equal_scalar); break;
-  case vctrs_type_double:    DUPLICATED_ALL(double, REAL_RO, dbl_equal_scalar); break;
-  case vctrs_type_raw:       DUPLICATED_ALL(Rbyte, RAW_RO, raw_equal_scalar); break;
-  case vctrs_type_complex:   DUPLICATED_ALL(Rcomplex, COMPLEX_RO, cpl_equal_scalar); break;
-  case vctrs_type_character: DUPLICATED_ALL(SEXP, STRING_PTR_RO, chr_equal_scalar); break;
-  case vctrs_type_list:      DUPLICATED_ALL_BARRIER(list_equal_scalar); break;
-  case vctrs_type_dataframe: DUPLICATED_ALL_BARRIER(df_equal_scalar); break;
+  case vctrs_type_logical:   DUPLICATE_ALL(int, LOGICAL_RO, lgl_equal_scalar); break;
+  case vctrs_type_integer:   DUPLICATE_ALL(int, INTEGER_RO, int_equal_scalar); break;
+  case vctrs_type_double:    DUPLICATE_ALL(double, REAL_RO, dbl_equal_scalar); break;
+  case vctrs_type_raw:       DUPLICATE_ALL(Rbyte, RAW_RO, raw_equal_scalar); break;
+  case vctrs_type_complex:   DUPLICATE_ALL(Rcomplex, COMPLEX_RO, cpl_equal_scalar); break;
+  case vctrs_type_character: DUPLICATE_ALL(SEXP, STRING_PTR_RO, chr_equal_scalar); break;
+  case vctrs_type_list:      DUPLICATE_ALL_BARRIER(list_equal_scalar); break;
+  case vctrs_type_dataframe: DUPLICATE_ALL_BARRIER(df_equal_scalar); break;
   case vctrs_type_scalar:    Rf_errorcall(R_NilValue, "Can't compare scalars with `vctrs_duplicated_all()`");
   default:                   Rf_error("Unimplemented type in `vctrs_duplicated_all()`");
   }
@@ -434,8 +434,8 @@ SEXP vctrs_duplicated_all(SEXP x, SEXP na_equal_) {
   return out;
 }
 
-#undef DUPLICATED_ALL
-#undef DUPLICATED_ALL_BARRIER
+#undef DUPLICATE_ALL
+#undef DUPLICATE_ALL_BARRIER
 
 // -----------------------------------------------------------------------------
 
