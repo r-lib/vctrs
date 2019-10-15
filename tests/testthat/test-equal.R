@@ -304,6 +304,12 @@ test_that("correct behavior for size 0 input", {
   expect_true(vec_duplicate_all(new_data_frame()))
 })
 
+test_that("correct behavior for size 1 input", {
+  expect_true(vec_duplicate_all(1))
+  expect_true(vec_duplicate_all(list(1)))
+  expect_true(vec_duplicate_all(data_frame(x = 1)))
+})
+
 test_that("NAs are considered duplicates", {
   expect_true(vec_duplicate_all(c(NA, NA)))
   expect_true(vec_duplicate_all(c(NA_integer_, NA_integer_)))
