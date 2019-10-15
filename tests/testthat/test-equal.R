@@ -297,6 +297,13 @@ test_that("correct behaviour for basic vectors", {
   expect_false(vec_duplicate_all(c(1, 2) + 2i))
 })
 
+test_that("correct behavior for size 0 input", {
+  expect_true(vec_duplicate_all(NULL))
+  expect_true(vec_duplicate_all(integer()))
+  expect_true(vec_duplicate_all(list()))
+  expect_true(vec_duplicate_all(new_data_frame()))
+})
+
 test_that("NAs are considered duplicates", {
   expect_true(vec_duplicate_all(c(NA, NA)))
   expect_true(vec_duplicate_all(c(NA_integer_, NA_integer_)))
