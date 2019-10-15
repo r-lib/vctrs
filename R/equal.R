@@ -66,7 +66,7 @@ vec_equal_na <- function(x) {
 }
 
 #' @export
-#' @rdname vec_equal
+#' @rdname vec_duplicate
 vec_duplicate_all <- function(x) {
   .Call(vctrs_duplicate_all, x)
 }

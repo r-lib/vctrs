@@ -3,14 +3,11 @@
 \name{vec_equal}
 \alias{vec_equal}
 \alias{vec_equal_na}
-\alias{vec_duplicate_all}
 \title{Test if two vectors are equal}
 \usage{
 vec_equal(x, y, na_equal = FALSE, .ptype = NULL)
 
 vec_equal_na(x)
-
-vec_duplicate_all(x)
 }
 \arguments{
 \item{x}{Vectors with compatible types and lengths.}
