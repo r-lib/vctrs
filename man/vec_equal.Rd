@@ -10,7 +10,7 @@ vec_equal(x, y, na_equal = FALSE, .ptype = NULL)
 
 vec_equal_na(x)
 
-vec_duplicate_all(x, na_equal = FALSE)
+vec_duplicate_all(x)
 }
 \arguments{
 \item{x}{Vectors with compatible types and lengths.}

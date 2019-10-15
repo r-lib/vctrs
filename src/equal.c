@@ -379,7 +379,7 @@ do {                                                         \
   xp++;                                                      \
                                                              \
   for (R_len_t i = 1; i < n; ++i, ++xp) {                    \
-    if (SCALAR_EQUAL(x0, xp, na_equal)) {                    \
+    if (SCALAR_EQUAL(x0, xp, true)) {                        \
       continue;                                              \
     }                                                        \
     *p = false;                                              \
@@ -391,7 +391,7 @@ while (0)
 #define DUPLICATE_ALL_BARRIER(SCALAR_EQUAL)             \
 do {                                                    \
   for (R_len_t i = 1; i < n; ++i) {                     \
-    if (SCALAR_EQUAL(x, 0, x, i, na_equal)) {           \
+    if (SCALAR_EQUAL(x, 0, x, i, true)) {               \
       continue;                                         \
     }                                                   \
     *p = false;                                         \
@@ -401,10 +401,8 @@ do {                                                    \
 while (0)
 
 // [[ register() ]]
-SEXP vctrs_duplicate_all(SEXP x, SEXP na_equal_) {
+SEXP vctrs_duplicate_all(SEXP x) {
   x = PROTECT(vec_proxy_recursive(x, vctrs_proxy_equal));
-
-  bool na_equal = Rf_asLogical(na_equal_);
 
   SEXP out = PROTECT(Rf_allocVector(LGLSXP, 1));
   int32_t* p = LOGICAL(out);
