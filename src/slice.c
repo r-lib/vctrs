@@ -875,6 +875,11 @@ static SEXP split_along_fallback(SEXP x, SEXP indices, struct vctrs_split_info i
   // Construct call with symbols, not values, for performance
   SEXP call = PROTECT(Rf_lang3(syms_bracket, syms_x, syms_i));
 
+  // Evaluate in a child of the global environment to allow dispatch
+  // to custom functions. We define `[` to point to its base
+  // definition to ensure consistent look-up. This is the same logic
+  // as in `vctrs_dispatch_n()`, reimplemented here to allow repeated
+  // evaluations in a loop.
   SEXP env = PROTECT(r_new_environment(R_GlobalEnv, 2));
   Rf_defineVar(syms_bracket, fns_bracket, env);
   Rf_defineVar(syms_x, x, env);
