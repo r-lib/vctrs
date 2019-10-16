@@ -521,7 +521,7 @@ SEXP vec_split(SEXP x, SEXP by) {
 
   SEXP ptype = PROTECT(vec_type(x));
 
-  SEXP val = PROTECT(vec_split_along(x, indices));
+  SEXP val = PROTECT(vec_split_with(x, indices));
   init_list_of(val, ptype);
 
   SET_VECTOR_ELT(out, 1, val);

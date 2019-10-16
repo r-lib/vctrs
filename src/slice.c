@@ -654,44 +654,44 @@ static struct vctrs_split_info init_split_info(SEXP x, SEXP indices) {
 
 // -----------------------------------------------------------------------------
 
-static SEXP split_along(SEXP x, SEXP indices, struct vctrs_split_info info);
-static SEXP split_along_shaped(SEXP x, SEXP indices, struct vctrs_split_info info);
-static SEXP split_along_df(SEXP x, SEXP indices, struct vctrs_split_info info);
-static SEXP split_along_fallback(SEXP x, SEXP indices, struct vctrs_split_info info);
-static SEXP split_along_fallback_shaped(SEXP x, SEXP indices, struct vctrs_split_info info);
+static SEXP split_with(SEXP x, SEXP indices, struct vctrs_split_info info);
+static SEXP split_with_shaped(SEXP x, SEXP indices, struct vctrs_split_info info);
+static SEXP split_with_df(SEXP x, SEXP indices, struct vctrs_split_info info);
+static SEXP split_with_fallback(SEXP x, SEXP indices, struct vctrs_split_info info);
+static SEXP split_with_fallback_shaped(SEXP x, SEXP indices, struct vctrs_split_info info);
 
 static SEXP vec_as_indices(SEXP indices, R_len_t n, SEXP names);
 
-static SEXP vec_split_along_impl(SEXP x, SEXP indices, struct vctrs_split_info info);
+static SEXP vec_split_with_impl(SEXP x, SEXP indices, struct vctrs_split_info info);
 
 
 // [[ register() ]]
-SEXP vctrs_split_along(SEXP x, SEXP indices) {
+SEXP vctrs_split_with(SEXP x, SEXP indices) {
   R_len_t n = vec_size(x);
   SEXP names = PROTECT(vec_names(x));
 
   indices = PROTECT(vec_as_indices(indices, n, names));
 
-  SEXP out = PROTECT(vec_split_along(x, indices));
+  SEXP out = PROTECT(vec_split_with(x, indices));
 
   UNPROTECT(3);
   return out;
 }
 
 // [[ include("vctrs.h") ]]
-SEXP vec_split_along(SEXP x, SEXP indices) {
+SEXP vec_split_with(SEXP x, SEXP indices) {
   int nprot = 0;
 
   struct vctrs_split_info info = init_split_info(x, indices);
   PROTECT_SPLIT_INFO(&info, &nprot);
 
-  SEXP out = PROTECT_N(vec_split_along_impl(x, indices, info), &nprot);
+  SEXP out = PROTECT_N(vec_split_with_impl(x, indices, info), &nprot);
 
   UNPROTECT(nprot);
   return out;
 }
 
-static SEXP vec_split_along_impl(SEXP x, SEXP indices, struct vctrs_split_info info) {
+static SEXP vec_split_with_impl(SEXP x, SEXP indices, struct vctrs_split_info info) {
   struct vctrs_proxy_info proxy_info = info.proxy_info;
 
   // Fallback to `[` if the class doesn't implement a proxy. This is
@@ -702,10 +702,10 @@ static SEXP vec_split_along_impl(SEXP x, SEXP indices, struct vctrs_split_info i
     }
 
     if (has_dim(x)) {
-      return split_along_fallback_shaped(x, indices, info);
+      return split_with_fallback_shaped(x, indices, info);
     }
 
-    return split_along_fallback(x, indices, info);
+    return split_with_fallback(x, indices, info);
   }
 
   switch (proxy_info.type) {
@@ -720,24 +720,24 @@ static SEXP vec_split_along_impl(SEXP x, SEXP indices, struct vctrs_split_info i
   case vctrs_type_raw:
   case vctrs_type_list: {
     if (has_dim(x)) {
-      return split_along_shaped(x, indices, info);
+      return split_with_shaped(x, indices, info);
     }
 
-    return split_along(x, indices, info);
+    return split_with(x, indices, info);
   }
   case vctrs_type_dataframe: {
-    return split_along_df(x, indices, info);
+    return split_with_df(x, indices, info);
   }
   default:
     vec_assert(x, args_empty);
     Rf_error(
-      "Internal error: Unexpected type `%s` for vector proxy in `vec_split_along()`",
+      "Internal error: Unexpected type `%s` for vector proxy in `vec_split_with()`",
       vec_type_as_str(proxy_info.type)
     );
   }
 }
 
-static SEXP split_along(SEXP x, SEXP indices, struct vctrs_split_info info) {
+static SEXP split_with(SEXP x, SEXP indices, struct vctrs_split_info info) {
   SEXP elt;
   SEXP names = PROTECT(Rf_getAttrib(x, R_NamesSymbol));
 
@@ -767,7 +767,7 @@ static SEXP split_along(SEXP x, SEXP indices, struct vctrs_split_info info) {
   return info.out;
 }
 
-static SEXP split_along_df(SEXP x, SEXP indices, struct vctrs_split_info info) {
+static SEXP split_with_df(SEXP x, SEXP indices, struct vctrs_split_info info) {
   SEXP elt;
 
   int n_cols = Rf_length(x);
@@ -801,7 +801,7 @@ static SEXP split_along_df(SEXP x, SEXP indices, struct vctrs_split_info info) {
   // into the appropriate data frame column in the `out` list
   for (int i = 0; i < n_cols; ++i) {
     SEXP col = VECTOR_ELT(info.proxy_info.proxy, i);
-    SEXP split = PROTECT(vec_split_along(col, indices));
+    SEXP split = PROTECT(vec_split_with(col, indices));
 
     for (int j = 0; j < info.out_size; ++j) {
       elt = VECTOR_ELT(info.out, j);
@@ -826,7 +826,7 @@ static SEXP split_along_df(SEXP x, SEXP indices, struct vctrs_split_info info) {
   return info.out;
 }
 
-static SEXP split_along_shaped(SEXP x, SEXP indices, struct vctrs_split_info info) {
+static SEXP split_with_shaped(SEXP x, SEXP indices, struct vctrs_split_info info) {
   SEXP elt;
 
   SEXP dim_names = PROTECT(Rf_getAttrib(x, R_DimNamesSymbol));
@@ -869,7 +869,7 @@ static SEXP split_along_shaped(SEXP x, SEXP indices, struct vctrs_split_info inf
   return info.out;
 }
 
-static SEXP split_along_fallback(SEXP x, SEXP indices, struct vctrs_split_info info) {
+static SEXP split_with_fallback(SEXP x, SEXP indices, struct vctrs_split_info info) {
   SEXP elt;
 
   // Construct call with symbols, not values, for performance
@@ -911,7 +911,7 @@ static SEXP split_along_fallback(SEXP x, SEXP indices, struct vctrs_split_info i
   return info.out;
 }
 
-static SEXP split_along_fallback_shaped(SEXP x, SEXP indices, struct vctrs_split_info info) {
+static SEXP split_with_fallback_shaped(SEXP x, SEXP indices, struct vctrs_split_info info) {
   SEXP elt;
 
   for (R_len_t i = 0; i < info.out_size; ++i) {
