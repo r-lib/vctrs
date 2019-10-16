@@ -424,8 +424,8 @@ SEXP vctrs_duplicate_all(SEXP x) {
   case vctrs_type_character: DUPLICATE_ALL(SEXP, STRING_PTR_RO, chr_equal_scalar); break;
   case vctrs_type_list:      DUPLICATE_ALL_BARRIER(list_equal_scalar); break;
   case vctrs_type_dataframe: DUPLICATE_ALL_BARRIER(df_equal_scalar); break;
-  case vctrs_type_scalar:    Rf_errorcall(R_NilValue, "Can't compare scalars with `vctrs_duplicated_all()`");
-  default:                   Rf_error("Unimplemented type in `vctrs_duplicated_all()`");
+  case vctrs_type_scalar:    Rf_errorcall(R_NilValue, "Can't detect duplicates in scalars with `vctrs_duplicate_all()`");
+  default:                   Rf_error("Unimplemented type in `vctrs_duplicate_all()`");
   }
 
   UNPROTECT(2);
