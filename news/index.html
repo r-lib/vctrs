@@ -142,6 +142,7 @@
 <a href="#vctrs-0-2-0-9000" class="anchor"></a>vctrs 0.2.0.9000<small> Unreleased </small>
 </h1>
 <ul>
+<li><p>New <code><a href="../reference/vec_duplicate.html">vec_duplicate_all()</a></code> for detecting if all values in a vector are equivalent.</p></li>
 <li><p><code><a href="../reference/vec_as_index.html">vec_as_index()</a></code> gains an <code>arg</code> parameter to specify the name of inputs. This is useful when it is used for type-checking.</p></li>
 <li><p>Support for multiple character encodings has been added to functions that compare elements within a single vector, such as <code><a href="../reference/vec_unique.html">vec_unique()</a></code>, and across multiple vectors, such as <code><a href="../reference/vec_match.html">vec_match()</a></code>. When multiple encodings are encountered, a translation to UTF-8 is performed before any comparisons are made (<a href='https://github.com/r-lib/vctrs/issues/600'>#600</a>, <a href='https://github.com/r-lib/vctrs/issues/553'>#553</a>).</p></li>
 <li><p>New <code><a href="../reference/stop_index_oob_positions.html">stop_index_oob_positions()</a></code> and <code><a href="../reference/stop_index_oob_positions.html">stop_index_oob_names()</a></code> functions to throw out-of-bounds errors.</p></li>
