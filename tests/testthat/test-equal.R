@@ -275,7 +275,7 @@ test_that("vec_equal() takes vec_proxy_equal() if implemented", {
 
 # duplicate all ----------------------------------------------------------
 
-test_that("throws error for unsuported type", {
+test_that("throws error for unsupported type", {
   expect_error(vec_duplicate_all(expression(x)), class = "vctrs_error_scalar_type")
 })
 
