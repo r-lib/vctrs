@@ -519,10 +519,8 @@ SEXP vec_split(SEXP x, SEXP by) {
 
   SEXP indices = VECTOR_ELT(out, 1);
 
-  SEXP ptype = PROTECT(vec_type(x));
-
-  SEXP val = PROTECT(vec_split_with(x, indices));
-  init_list_of(val, ptype);
+  SEXP val = PROTECT(vec_split_with_impl(x, indices));
+  init_list_of(val, vec_type(x));
 
   SET_VECTOR_ELT(out, 1, val);
 
@@ -530,7 +528,7 @@ SEXP vec_split(SEXP x, SEXP by) {
   SET_STRING_ELT(names, 1, strings_val);
   Rf_setAttrib(out, R_NamesSymbol, names);
 
-  UNPROTECT(4);
+  UNPROTECT(3);
   return out;
 }
 
