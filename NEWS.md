@@ -1,6 +1,9 @@
 
 # vctrs 0.2.0.9000
 
+* New `vec_duplicate_all()` for detecting if all values in a vector are
+  equivalent.
+
 * `vec_as_index()` gains an `arg` parameter to specify the name of
   inputs. This is useful when it is used for type-checking.
 
