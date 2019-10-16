@@ -600,7 +600,7 @@ SEXP vctrs_as_index(SEXP i, SEXP n, SEXP names) {
  *   starts at 0 and is incremented by 1 repeatedly through `p_index`.
  * @member p_index A pointer to increment the `index` value for the default
  *   case.
- * @member has_indices Information about whether or not indices were provided.
+ * @member has_indices Whether indices were provided.
  * @member out_size The size of `out`. Will be `vec_size(x)` in the default
  *   case, otherwise will be `vec_size(indices)`.
  * @member out The list container for the result.
@@ -885,7 +885,7 @@ static SEXP split_along_fallback(SEXP x, SEXP indices, struct vctrs_split_info i
       info.index = VECTOR_ELT(indices, i);
       *info.p_restore_size = vec_size(info.index);
 
-      // Must redefine after altering
+      // Update `i` binding with the new index value
       Rf_defineVar(syms_i, info.index, env);
     } else {
       ++(*info.p_index);
