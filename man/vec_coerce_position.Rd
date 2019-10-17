@@ -4,13 +4,20 @@
 \alias{vec_coerce_position}
 \title{Coerce to the base type of a position}
 \usage{
-vec_coerce_position(i, ..., arg = "i")
+vec_coerce_position(i, ..., allow_types = c("position", "name"),
+  arg = "i")
 }
 \arguments{
 \item{i}{An integer, character or logical vector specifying the positions or
 names of the observations to get/set.
 Specify \code{TRUE} to index all elements (as in \code{x[]}), or \code{NULL}, \code{FALSE} or
 \code{integer()} to index none (as in \code{x[NULL]}).}
+
+\item{allow_types}{Character vector indicating which kind of
+position is allowed as input: \code{"position"} and \code{"name"}.
+Locations must be coercible to integers (possibly from double)
+and names must be subtypes of character. Indicators (of type
+logical) are not allowed as positions.}
 
 \item{arg}{The argument name to be displayed in error messages when
 \code{vec_as_index()} and \code{vec_as_position()} are used to check the
