@@ -193,14 +193,65 @@ vec_as_index <- function(i, n,
 
   .Call(vctrs_as_index, i, n, names, convert_negative)
 }
-vec_coerce_index <- function(i, ..., arg = "i") {
+#' @rdname vec_as_index
+#' @export
+vec_as_position <- function(i, n,
+                            names = NULL,
+                            ...,
+                            allow_missing = FALSE,
+                            allow_negative = FALSE,
+                            arg = "i") {
+  if (!missing(...)) ellipsis::check_dots_empty()
+  maybe_get(vec_maybe_as_position(
+    i,
+    n = n,
+    names = names,
+    allow_missing = allow_missing,
+    allow_negative = allow_negative,
+    arg = arg
+  ))
+}
+
+#' Coerce to the base type of a position
+#'
+#' @description
+#'
+#' \Sexpr[results=rd, stage=render]{vctrs:::lifecycle("experimental")}
+#'
+#' This coerces `i` to the base type expected by [vec_as_index()] or
+#' [vec_as_position()]. The resulting vector is not checked in any
+#' way (length, missingness, negative elements).
+#'
+#' @inheritParams vec_as_index
+#' @param allow_types Character vector indicating which kind of
+#'   position is allowed as input: `"indicator"`, `"position"`, or
+#'   `"name"`. Indicators must be subtypes of logical.  Locations must
+#'   be coercible to integers (possibly from double) and names must be
+#'   subtypes of character.
+#'
+#' @keywords internal
+#' @export
+vec_coerce_index <- function(i,
+                             ...,
+                             allow_types = c("indicator", "position", "name"),
+                             arg = "i") {
   if (!missing(...)) ellipsis::check_dots_empty()
  maybe_get(vec_maybe_coerce_index(
     i,
     arg = arg,
-    allow_types = c("indicator", "position", "name")
+    allow_types = allow_types
   ))
 }
+#' @rdname vec_coerce_index
+#' @export
+vec_coerce_position <- function(i,
+                                ...,
+                                allow_types = c("position", "name"),
+                                arg = "i") {
+  if (!missing(...)) ellipsis::check_dots_empty()
+  maybe_get(vec_maybe_coerce_position(i, arg, allow_types = allow_types))
+}
+
 vec_maybe_coerce_index <- function(i, arg, allow_types) {
   allow_types <- as_opts_index_type(allow_types)
 
@@ -261,51 +312,6 @@ vec_maybe_coerce_index <- function(i, arg, allow_types) {
   names(i) <- nms
 
   maybe(i)
-}
-
-#' @rdname vec_as_index
-#' @export
-vec_as_position <- function(i, n,
-                            names = NULL,
-                            ...,
-                            allow_missing = FALSE,
-                            allow_negative = FALSE,
-                            arg = "i") {
-  if (!missing(...)) ellipsis::check_dots_empty()
-  maybe_get(vec_maybe_as_position(
-    i,
-    n = n,
-    names = names,
-    allow_missing = allow_missing,
-    allow_negative = allow_negative,
-    arg = arg
-  ))
-}
-#' Coerce to the base type of a position
-#'
-#' @description
-#'
-#' \Sexpr[results=rd, stage=render]{vctrs:::lifecycle("experimental")}
-#'
-#' This coerces `i` to the base type expected by [vec_as_position()].
-#' The resulting vector is not checked in any way (length,
-#' missingness, negative elements).
-#'
-#' @inheritParams vec_as_position
-#' @param allow_types Character vector indicating which kind of
-#'   position is allowed as input: `"position"` and `"name"`.
-#'   Locations must be coercible to integers (possibly from double)
-#'   and names must be subtypes of character. Indicators (of type
-#'   logical) are not allowed as positions.
-#'
-#' @keywords internal
-#' @export
-vec_coerce_position <- function(i,
-                                ...,
-                                allow_types = c("position", "name"),
-                                arg = "i") {
-  if (!missing(...)) ellipsis::check_dots_empty()
-  maybe_get(vec_maybe_coerce_position(i, arg, allow_types = allow_types))
 }
 
 vec_maybe_coerce_position <- function(i, arg, allow_missing, allow_types) {
