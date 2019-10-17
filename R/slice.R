@@ -266,7 +266,9 @@ vec_maybe_coerce_index <- function(i, arg, allow_types) {
   nms <- names(i)
 
   if (is.object(i)) {
-    if (vec_is_subtype(i, int())) {
+    if (vec_is_subtype(i, lgl())) {
+      i <- vec_cast(i, lgl())
+    } else if (vec_is_subtype(i, int())) {
       i <- vec_cast(i, int())
     } else if (vec_is_subtype(i, chr())) {
       i <- vec_cast(i, chr())
@@ -319,15 +321,6 @@ vec_maybe_coerce_position <- function(i, arg, allow_missing, allow_types) {
 
   if (is_unspecified(i)) {
     i <- vec_cast(i, int())
-  }
-
-  if (is.object(i) && vec_is(i) && vec_is_subtype(i, lgl())) {
-    return(maybe(error = new_error_position_bad_type(
-      i = i,
-      allow_types = allow_types,
-      .arg = arg,
-      .bullets = cnd_bullets_position_bad_base_type
-    )))
   }
 
   maybe <- vec_maybe_coerce_index(i, arg, allow_types = allow_types)

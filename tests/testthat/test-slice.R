@@ -708,10 +708,12 @@ test_that("vec_as_position() and vec_as_index() require integer- or character-li
     vec_ptype2.integer.vctrs_foobar = function(x, y, ...) integer(),
     vec_cast.vctrs_foobar = function(x, to, ...) UseMethod("vec_cast.vctrs_foobar"),
     vec_cast.vctrs_foobar.integer = function(x, to, ...) foobar(x),
-    vec_cast.integer.vctrs_foobar = function(x, to, ...) vec_cast(unclass(x), int())
+    vec_cast.integer.vctrs_foobar = function(x, to, ...) vec_cast(unclass(x), int()),
+    vec_cast.logical.vctrs_foobar = function(x, to, ...) vec_cast(unclass(x), lgl())
   )
   expect_error(vec_as_position(foobar(TRUE), 10L), class = "vctrs_error_position_bad_type")
-  expect_identical(vec_as_index(foobar(TRUE), 10L), 1L)
+  expect_identical(vec_as_index(foobar(TRUE), 10L), 1:10)
+  expect_identical(vec_as_index(foobar(FALSE), 10L), int())
 })
 
 test_that("vec_as_position() and vec_as_index() require existing elements", {
@@ -807,6 +809,15 @@ test_that("vec_as_position() optionally allows missing and negative positions", 
 test_that("vec_as_index() optionally allows negative indices", {
   expect_identical(vec_as_index(dbl(1, -1), 2L, convert_negative = FALSE), int(1L, -1L))
   expect_error(vec_as_index(c(1, -10), 2L, convert_negative = FALSE), class = "vctrs_error_index_oob_positions")
+})
+
+test_that("vec_coerce_index() handles `allow_types`", {
+  verify_output(test_path("out", "test-coerce-index-allow-types.txt"), {
+    vec_coerce_index(1L, allow_types = "name")
+    vec_coerce_index("foo", allow_types = "position")
+    vec_coerce_index(TRUE, allow_types = c("position", "name"))
+    vec_coerce_index("foo", allow_types = c("indicator", "position"))
+  })
 })
 
 test_that("vec_coerce_position() handles `allow_types`", {
