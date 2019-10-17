@@ -817,6 +817,7 @@ test_that("vec_as_index() optionally allows negative indices", {
 
 test_that("vec_coerce_index() handles `allow_types`", {
   expect_identical(vec_coerce_index(NA, allow_types = c("position", "name")), na_int)
+  expect_identical(vec_coerce_index(NA, allow_types = "name"), na_chr)
 
   verify_output(test_path("out", "test-coerce-index-allow-types.txt"), {
     vec_coerce_index(1L, allow_types = "name")
