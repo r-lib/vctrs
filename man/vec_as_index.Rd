@@ -6,7 +6,7 @@
 \title{Create an index vector or a position}
 \usage{
 vec_as_index(i, n, names = NULL, ..., convert_negative = TRUE,
-  arg = "i")
+  allow_types = c("indicator", "position", "name"), arg = "i")
 
 vec_as_position(i, n, names = NULL, ..., allow_missing = FALSE,
   allow_negative = FALSE, arg = "i")
@@ -27,6 +27,12 @@ if \code{i} is a character vector.}
 
 \item{convert_negative}{Should negative indices be converted to
 positive ones?}
+
+\item{allow_types}{Experimental. Character vector indicating one or
+several types of position to be allowed as input: \code{"indicator"},
+\code{"position"}, or \code{"name"}. Indicators must be subtypes of
+logical. Locations must be coercible to integers (possibly from
+a larger type like double). Names must be subtypes of character.}
 
 \item{arg}{The argument name to be displayed in error messages when
 \code{vec_as_index()} and \code{vec_as_position()} are used to check the

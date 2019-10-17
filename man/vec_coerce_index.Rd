@@ -17,11 +17,11 @@ names of the observations to get/set.
 Specify \code{TRUE} to index all elements (as in \code{x[]}), or \code{NULL}, \code{FALSE} or
 \code{integer()} to index none (as in \code{x[NULL]}).}
 
-\item{allow_types}{Character vector indicating which kind of
-position is allowed as input: \code{"indicator"}, \code{"position"}, or
-\code{"name"}. Indicators must be subtypes of logical.  Locations must
-be coercible to integers (possibly from double) and names must be
-subtypes of character.}
+\item{allow_types}{Experimental. Character vector indicating one or
+several types of position to be allowed as input: \code{"indicator"},
+\code{"position"}, or \code{"name"}. Indicators must be subtypes of
+logical. Locations must be coercible to integers (possibly from
+a larger type like double). Names must be subtypes of character.}
 
 \item{arg}{The argument name to be displayed in error messages when
 \code{vec_as_index()} and \code{vec_as_position()} are used to check the

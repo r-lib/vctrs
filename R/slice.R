@@ -157,6 +157,11 @@ vec_assign_fallback <- function(x, i, value) {
 #'   positive ones?
 #' @param allow_negative,allow_missing Experimental. These options
 #'   control which constraints are applied to position values.
+#' @param allow_types Experimental. Character vector indicating one or
+#'   several types of position to be allowed as input: `"indicator"`,
+#'   `"position"`, or `"name"`. Indicators must be subtypes of
+#'   logical. Locations must be coercible to integers (possibly from
+#'   a larger type like double). Names must be subtypes of character.
 #'
 #' @return `vec_as_index()` returns an integer vector that can be used
 #'   as an index in a subsetting operation. `vec_as_position()`
@@ -185,11 +190,12 @@ vec_as_index <- function(i, n,
                          names = NULL,
                          ...,
                          convert_negative = TRUE,
+                         allow_types = c("indicator", "position", "name"),
                          arg = "i") {
   if (!missing(...)) ellipsis::check_dots_empty()
 
   vec_assert(n, integer(), 1L)
-  i <- vec_coerce_index(i, arg = arg)
+  i <- vec_coerce_index(i, arg = arg, allow_types = allow_types)
 
   .Call(vctrs_as_index, i, n, names, convert_negative)
 }
@@ -223,12 +229,6 @@ vec_as_position <- function(i, n,
 #' way (length, missingness, negative elements).
 #'
 #' @inheritParams vec_as_index
-#' @param allow_types Character vector indicating which kind of
-#'   position is allowed as input: `"indicator"`, `"position"`, or
-#'   `"name"`. Indicators must be subtypes of logical.  Locations must
-#'   be coercible to integers (possibly from double) and names must be
-#'   subtypes of character.
-#'
 #' @keywords internal
 #' @export
 vec_coerce_index <- function(i,
