@@ -1,6 +1,8 @@
 
 # vctrs 0.2.0.9000
 
+* `vec_as_index()` now preserves names of its inputs if possible.
+
 * New `vec_duplicate_all()` for detecting if all values in a vector are
   equivalent.
 

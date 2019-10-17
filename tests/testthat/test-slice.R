@@ -788,6 +788,10 @@ test_that("vec_as_index() preserves names if possible", {
   expect_identical(vec_as_index(c(a = 1, b = 3), 3L), c(a = 1L, b = 3L))
   expect_identical(vec_as_index(c(a = "z", b = "y"), 26L, letters), c(a = 26L, b = 25L))
 
+  expect_identical(vec_as_index(c(foo = TRUE, bar = FALSE, baz = TRUE), 3L), c(foo = 1L, baz = 3L))
+  expect_identical(vec_as_index(c(foo = TRUE), 3L), c(foo = 1L, foo = 2L, foo = 3L))
+  expect_identical(vec_as_index(c(foo = NA), 3L), c(foo = na_int, foo = na_int, foo = na_int))
+
   # Names of negative selections are dropped
   expect_identical(vec_as_index(c(a = -1L, b = -3L), 3L), 2L)
 })
