@@ -202,15 +202,18 @@ vec_maybe_coerce_index <- function(i, arg) {
     }
   } else if (is_double(i)) {
     maybe <- tryCatch(
-      maybe(vec_coercible_cast(i, int(), x_arg = arg, to_arg = "")),
-      vctrs_error_cast_lossy = function(err) {
-        maybe(error = new_error_index_bad_type(
-          i = i,
-          parent = err,
-          .bullets = cnd_bullets_index_lossy_cast
-        ))
-      }
-    )
+    {
+      i <- vec_coercible_cast(i, int(), x_arg = arg, to_arg = "")
+      names(i) <- nms
+      maybe(i)
+    },
+    vctrs_error_cast_lossy = function(err) {
+      maybe(error = new_error_index_bad_type(
+        i = i,
+        parent = err,
+        .bullets = cnd_bullets_index_lossy_cast
+      ))
+    })
     return(maybe)
   }
 
