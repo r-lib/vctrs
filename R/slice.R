@@ -196,7 +196,7 @@ vec_as_index <- function(i, n,
   vec_assert(n, integer(), 1L)
   i <- vec_coerce_index(i, arg = arg, allow_types = allow_types)
 
-  convert_values <- as_opts_index_convert_values(convert_values)
+  convert_values <- as_opts_index_convert_values(convert_values, arg = arg)
   .Call(vctrs_as_index, i, n, names, convert_values)
 }
 #' @rdname vec_as_index
@@ -255,7 +255,7 @@ vec_coerce_position <- function(i,
 }
 
 vec_maybe_coerce_index <- function(i, arg, allow_types) {
-  allow_types <- as_opts_index_type(allow_types)
+  allow_types <- as_opts_index_type(allow_types, arg = arg)
 
   if (!vec_is(i)) {
     return(maybe(error = new_error_index_bad_type(
@@ -326,7 +326,7 @@ vec_maybe_coerce_index <- function(i, arg, allow_types) {
 }
 
 vec_maybe_coerce_position <- function(i, arg, allow_types) {
-  allow_types <- as_opts_position_type(allow_types)
+  allow_types <- as_opts_position_type(allow_types, arg = arg)
   maybe <- vec_maybe_coerce_index(i, arg, allow_types = allow_types)
 
   # Return a subclass of index error
@@ -369,7 +369,7 @@ vec_maybe_as_position <- function(i,
                                   arg) {
   allow_types <- c("position", "name")
 
-  allow_values <- as_opts_position_values(allow_values)
+  allow_values <- as_opts_position_values(allow_values, arg = arg)
   allow_missing <- allow_values[["missing"]]
   allow_negative <- allow_values[["negative"]]
 
@@ -473,48 +473,51 @@ collapse_index_type <- function(allow_types, plural = FALSE) {
   types
 }
 
-as_opts_index_type <- function(x) {
+as_opts_index_type <- function(x, arg = NULL) {
   if (inherits(x, "vctrs_opts_index_type")) {
     return(x)
   }
   new_opts(
     x,
     index_type_opts,
-    subclass = "vctrs_opts_index_type"
+    subclass = "vctrs_opts_index_type",
+    arg = arg
   )
 }
-as_opts_position_type <- function(x) {
+as_opts_position_type <- function(x, arg = NULL) {
   if ("indicator" %in% x) {
     abort("Indicators can't be position.")
   }
-  as_opts_index_type(x)
+  as_opts_index_type(x, arg = arg)
 }
 
 
 position_values_opts <- c("missing", "negative")
 
-as_opts_position_values <- function(x) {
+as_opts_position_values <- function(x, arg = NULL) {
   if (inherits(x, "vctrs_opts_position_values")) {
     return(x)
   }
   new_opts(
     x,
     position_values_opts,
-    subclass = "vctrs_opts_position_values"
+    subclass = "vctrs_opts_position_values",
+    arg = arg
   )
 }
 
 
 index_convert_values_opts <- "negative"
 
-as_opts_index_convert_values <- function(x) {
+as_opts_index_convert_values <- function(x, arg = NULL) {
   if (inherits(x, "vctrs_opts_index_convert_values")) {
     return(x)
   }
   new_opts(
     x,
     index_convert_values_opts,
-    subclass = "vctrs_opts_index_convert_values"
+    subclass = "vctrs_opts_index_convert_values",
+    arg = arg
   )
 }
 

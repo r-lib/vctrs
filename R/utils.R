@@ -110,7 +110,18 @@ obj_type <- function(x) {
   }
 }
 
-new_opts <- function(x, opts, subclass = NULL) {
+new_opts <- function(x, opts, subclass = NULL, arg = NULL) {
+  if (!all(x %in% opts)) {
+    if (is_null(arg)) {
+      arg <- "Argument"
+    } else {
+      arg <- glue::glue("`{arg}`")
+    }
+    opts <- encodeString(opts, quote = "\"")
+    opts <- glue::glue_collapse(opts, sep = ", ", last = " or ")
+    abort(glue::glue("{arg} must be one of {opts}."))
+  }
+
   structure(
     set_names(opts %in% x, opts),
     class = c(subclass, "vctrs_opts")
