@@ -297,6 +297,12 @@ vec_maybe_coerce_index <- function(i, arg, allow_types) {
     return(maybe)
   }
 
+  # Coerce unspecified vectors to integer only if logical indices
+  # are not allowed
+  if (!allow_types[["indicator"]] && is_unspecified(i)) {
+    i <- vec_cast(i, int())
+  }
+
   allowed <- switch(typeof(i),
     logical = allow_types[["indicator"]],
     integer = allow_types[["position"]],
@@ -318,11 +324,6 @@ vec_maybe_coerce_index <- function(i, arg, allow_types) {
 
 vec_maybe_coerce_position <- function(i, arg, allow_missing, allow_types) {
   allow_types <- as_opts_position_type(allow_types)
-
-  if (is_unspecified(i)) {
-    i <- vec_cast(i, int())
-  }
-
   maybe <- vec_maybe_coerce_index(i, arg, allow_types = allow_types)
 
   # Return a subclass of index error
