@@ -811,8 +811,8 @@ test_that("vec_as_position() optionally allows missing and negative positions", 
 })
 
 test_that("vec_as_index() optionally allows negative indices", {
-  expect_identical(vec_as_index(dbl(1, -1), 2L, convert_negative = FALSE), int(1L, -1L))
-  expect_error(vec_as_index(c(1, -10), 2L, convert_negative = FALSE), class = "vctrs_error_index_oob_positions")
+  expect_identical(vec_as_index(dbl(1, -1), 2L, convert_values = NULL), int(1L, -1L))
+  expect_error(vec_as_index(c(1, -10), 2L, convert_values = NULL), class = "vctrs_error_index_oob_positions")
 })
 
 test_that("vec_coerce_index() handles `allow_types`", {
