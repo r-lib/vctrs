@@ -189,6 +189,9 @@ vec_maybe_coerce_index <- function(i, arg) {
   if (!vec_is(i)) {
     return(maybe(error = new_error_index_bad_type(i, .arg = arg)))
   }
+
+  nms <- names(i)
+
   if (is.object(i)) {
     if (vec_is_subtype(i, int())) {
       i <- vec_cast(i, int())
@@ -204,6 +207,9 @@ vec_maybe_coerce_index <- function(i, arg) {
   if (!typeof(i) %in% c("integer", "character", "logical")) {
     return(maybe(error = new_error_index_bad_type(i, .arg = arg)))
   }
+
+  # FIXME: Work around lack of name restoration in `vec_cast()`
+  names(i) <- nms
 
   maybe(i)
 }

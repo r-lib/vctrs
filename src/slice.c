@@ -511,10 +511,20 @@ static SEXP lgl_as_index(SEXP i, R_len_t n) {
   R_len_t index_n = Rf_length(i);
 
   if (index_n == n) {
-    return r_lgl_which(i, true);
+    SEXP out = PROTECT(r_lgl_which(i, true));
+
+    SEXP nms = PROTECT(r_names(i));
+    if (nms != R_NilValue) {
+      nms = PROTECT(vec_slice(nms, out));
+      r_poke_names(out, nms);
+      UNPROTECT(1);
+    }
+
+    UNPROTECT(2);
+    return out;
   }
 
-  /* A single `TRUE` or `FALSE` index is recycled to the full vector
+  /* A single `TRUE` or `FALSE` index is recycled_nms to the full vector
    * size. This means `TRUE` is synonym for missing index (i.e. no
    * subsetting) and `FALSE` is synonym for empty index.
    *
@@ -525,19 +535,28 @@ static SEXP lgl_as_index(SEXP i, R_len_t n) {
    */
   if (index_n == 1) {
     int elt = LOGICAL(i)[0];
+
+    SEXP out;
     if (elt == NA_LOGICAL) {
-      SEXP out = PROTECT(Rf_allocVector(INTSXP, n));
+      out = PROTECT(Rf_allocVector(INTSXP, n));
       r_int_fill(out, NA_INTEGER, n);
-      UNPROTECT(1);
-      return out;
     } else if (elt) {
-      SEXP out = PROTECT(Rf_allocVector(INTSXP, n));
+      out = PROTECT(Rf_allocVector(INTSXP, n));
       r_int_fill_seq(out, 1, n);
-      UNPROTECT(1);
-      return out;
     } else {
       return vctrs_shared_empty_int;
     }
+
+    SEXP nms = PROTECT(r_names(i));
+    if (nms != R_NilValue) {
+      SEXP recycled_nms = PROTECT(Rf_allocVector(STRSXP, n));
+      r_chr_fill(recycled_nms, r_chr_get(nms, 0), n);
+      r_poke_names(out, recycled_nms);
+      UNPROTECT(1);
+    }
+
+    UNPROTECT(2);
+    return out;
   }
 
   Rf_errorcall(R_NilValue,
@@ -566,6 +585,8 @@ static SEXP chr_as_index(SEXP i, SEXP names) {
       stop_index_oob_names(i, names);
     }
   }
+
+  r_poke_names(matched, PROTECT(r_names(i))); UNPROTECT(1);
 
   UNPROTECT(1);
   return matched;
