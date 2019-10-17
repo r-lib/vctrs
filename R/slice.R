@@ -306,7 +306,8 @@ vec_maybe_coerce_index <- function(i, arg, allow_types) {
   allowed <- switch(typeof(i),
     logical = allow_types[["indicator"]],
     integer = allow_types[["position"]],
-    character = allow_types[["name"]]
+    character = allow_types[["name"]],
+    FALSE
   )
   if (!allowed) {
     return(maybe(error = new_error_index_bad_type(
