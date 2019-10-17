@@ -109,3 +109,10 @@ obj_type <- function(x) {
     typeof(x)
   }
 }
+
+new_opts <- function(x, opts, subclass = NULL) {
+  structure(
+    set_names(opts %in% x, opts),
+    class = c(subclass, "vctrs_opts")
+  )
+}

@@ -8,8 +8,8 @@
 vec_as_index(i, n, names = NULL, ..., convert_negative = TRUE,
   allow_types = c("indicator", "position", "name"), arg = "i")
 
-vec_as_position(i, n, names = NULL, ..., allow_missing = FALSE,
-  allow_negative = FALSE, arg = "i")
+vec_as_position(i, n, names = NULL, ..., allow_values = NULL,
+  arg = "i")
 }
 \arguments{
 \item{i}{An integer, character or logical vector specifying the positions or
@@ -38,8 +38,10 @@ a larger type like double). Names must be subtypes of character.}
 \code{vec_as_index()} and \code{vec_as_position()} are used to check the
 type of a function input.}
 
-\item{allow_negative, allow_missing}{Experimental. These options
-control which constraints are applied to position values.}
+\item{allow_values}{Experimental. Character vector indicating zero,
+one or several types of values to be allowed as input:
+\code{"negative"} or \code{"missing"}. By default, positions can't be
+negative or missing.}
 }
 \value{
 \code{vec_as_index()} returns an integer vector that can be used

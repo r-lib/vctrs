@@ -155,8 +155,6 @@ vec_assign_fallback <- function(x, i, value) {
 #'   type of a function input.
 #' @param convert_negative Should negative indices be converted to
 #'   positive ones?
-#' @param allow_negative,allow_missing Experimental. These options
-#'   control which constraints are applied to position values.
 #' @param allow_types Experimental. Character vector indicating one or
 #'   several types of position to be allowed as input: `"indicator"`,
 #'   `"position"`, or `"name"`. Indicators must be subtypes of
@@ -200,20 +198,22 @@ vec_as_index <- function(i, n,
   .Call(vctrs_as_index, i, n, names, convert_negative)
 }
 #' @rdname vec_as_index
+#' @param allow_values Experimental. Character vector indicating zero,
+#'   one or several types of values to be allowed as input:
+#'   `"negative"` or `"missing"`. By default, positions can't be
+#'   negative or missing.
 #' @export
 vec_as_position <- function(i, n,
                             names = NULL,
                             ...,
-                            allow_missing = FALSE,
-                            allow_negative = FALSE,
+                            allow_values = NULL,
                             arg = "i") {
   if (!missing(...)) ellipsis::check_dots_empty()
   maybe_get(vec_maybe_as_position(
     i,
     n = n,
     names = names,
-    allow_missing = allow_missing,
-    allow_negative = allow_negative,
+    allow_values = allow_values,
     arg = arg
   ))
 }
@@ -323,7 +323,7 @@ vec_maybe_coerce_index <- function(i, arg, allow_types) {
   maybe(i)
 }
 
-vec_maybe_coerce_position <- function(i, arg, allow_missing, allow_types) {
+vec_maybe_coerce_position <- function(i, arg, allow_types) {
   allow_types <- as_opts_position_type(allow_types)
   maybe <- vec_maybe_coerce_index(i, arg, allow_types = allow_types)
 
@@ -363,15 +363,17 @@ vec_maybe_coerce_position <- function(i, arg, allow_missing, allow_types) {
 vec_maybe_as_position <- function(i,
                                   n,
                                   names,
-                                  allow_missing,
-                                  allow_negative,
+                                  allow_values,
                                   arg) {
   allow_types <- c("position", "name")
+
+  allow_values <- as_opts_position_values(allow_values)
+  allow_missing <- allow_values[["missing"]]
+  allow_negative <- allow_values[["negative"]]
 
   maybe <- vec_maybe_coerce_position(
     i = i,
     arg = arg,
-    allow_missing = allow_missing,
     allow_types = allow_types
   )
 
@@ -486,12 +488,20 @@ as_opts_position_type <- function(x) {
   as_opts_index_type(x)
 }
 
-new_opts <- function(x, opts, subclass = NULL) {
-  structure(
-    set_names(opts %in% x, opts),
-    class = c(subclass, "vctrs_opts")
+
+position_values_opts <- c("missing", "negative")
+
+as_opts_position_values <- function(x) {
+  if (inherits(x, "vctrs_opts_index_values")) {
+    return(x)
+  }
+  new_opts(
+    x,
+    position_values_opts,
+    subclass = "vctrs_opts_position_values"
   )
 }
+
 
 new_index_error <- function(.subclass = NULL, i, ..., .arg = "i") {
   error_cnd(

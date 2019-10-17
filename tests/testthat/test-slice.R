@@ -803,11 +803,11 @@ test_that("vec_as_index() preserves names if possible", {
 })
 
 test_that("vec_as_position() optionally allows missing and negative positions", {
-  expect_identical(vec_as_position(NA, 2L, allow_missing = TRUE), na_int)
-  expect_identical(vec_as_position(-1, 2L, allow_negative = TRUE), -1L)
-  expect_error(vec_as_position(-3, 2L, allow_negative = TRUE), class = "vctrs_error_index_oob_positions")
-  expect_error(vec_as_position(letters, 2L, allow_negative = TRUE), class = "vctrs_error_position_bad_type")
-  expect_error(vec_as_position(0, 2L, allow_negative = TRUE), class = "vctrs_error_position_bad_type")
+  expect_identical(vec_as_position(NA, 2L, allow_values = "missing"), na_int)
+  expect_identical(vec_as_position(-1, 2L, allow_values = "negative"), -1L)
+  expect_error(vec_as_position(-3, 2L, allow_values = "negative"), class = "vctrs_error_index_oob_positions")
+  expect_error(vec_as_position(letters, 2L, allow_values = "negative"), class = "vctrs_error_position_bad_type")
+  expect_error(vec_as_position(0, 2L, allow_values = "negative"), class = "vctrs_error_position_bad_type")
 })
 
 test_that("vec_as_index() optionally allows negative indices", {
