@@ -786,6 +786,7 @@ test_that("all OOB errors inherit from `vctrs_error_index_oob`", {
 test_that("vec_as_index() preserves names if possible", {
   expect_identical(vec_as_index(c(a = 1L, b = 3L), 3L), c(a = 1L, b = 3L))
   expect_identical(vec_as_index(c(a = 1, b = 3), 3L), c(a = 1L, b = 3L))
+  expect_identical(vec_as_index(c(a = "z", b = "y"), 26L, letters), c(a = 26L, b = 25L))
 
   # Names of negative selections are dropped
   expect_identical(vec_as_index(c(a = -1L, b = -3L), 3L), 2L)

@@ -567,6 +567,8 @@ static SEXP chr_as_index(SEXP i, SEXP names) {
     }
   }
 
+  r_poke_names(matched, PROTECT(r_names(i))); UNPROTECT(1);
+
   UNPROTECT(1);
   return matched;
 }
