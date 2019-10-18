@@ -1,0 +1,15 @@
+> vec_coerce_position(1L, allow_types = "name")
+Error: Must extract with a single index.
+x `i` has the wrong type `integer`.
+i This index must be a name.
+
+> vec_coerce_position("foo", allow_types = "position")
+Error: Must extract with a single index.
+x `i` has the wrong type `character`.
+i This index must be a position.
+
+> vec_coerce_position(TRUE, allow_types = c("position", "name"))
+Error: Must extract with a single index.
+x `i` has the wrong type `logical`.
+i This index must be a position or a name.
+

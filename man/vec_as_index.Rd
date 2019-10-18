@@ -5,9 +5,11 @@
 \alias{vec_as_position}
 \title{Create an index vector or a position}
 \usage{
-vec_as_index(i, n, names = NULL, ..., arg = "i")
+vec_as_index(i, n, names = NULL, ..., allow_types = c("indicator",
+  "position", "name"), convert_values = "negative", arg = "i")
 
-vec_as_position(i, n, names = NULL, ..., arg = "i")
+vec_as_position(i, n, names = NULL, ..., allow_values = NULL,
+  arg = "i")
 }
 \arguments{
 \item{i}{An integer, character or logical vector specifying the positions or
@@ -23,9 +25,24 @@ vector that \code{i} will be matched against to construct the index. Otherwise,
 not used. The default value of \code{NULL} will result in an error
 if \code{i} is a character vector.}
 
+\item{allow_types}{Experimental. Character vector indicating one or
+several types of position to be allowed as input: \code{"indicator"},
+\code{"position"}, or \code{"name"}. Indicators must be subtypes of
+logical. Locations must be coercible to integers (possibly from
+a larger type like double). Names must be subtypes of character.}
+
+\item{convert_values}{Experimental. Character vector indicating
+what types of values should be converted. Can currently only be
+set to \code{"negative"}.}
+
 \item{arg}{The argument name to be displayed in error messages when
 \code{vec_as_index()} and \code{vec_as_position()} are used to check the
 type of a function input.}
+
+\item{allow_values}{Experimental. Character vector indicating zero,
+one or several types of values to be allowed as input:
+\code{"negative"} or \code{"missing"}. By default, positions can't be
+negative or missing.}
 }
 \value{
 \code{vec_as_index()} returns an integer vector that can be used
@@ -36,8 +53,6 @@ extracting an element.
 \description{
 These helpers provide a means of standardizing common indexing
 methods such as integer, character or logical indexing.
-}
-\details{
 \itemize{
 \item \code{vec_as_index()} accepts integer, character, or logical vectors
 of any size. The output is always an integer vector that is

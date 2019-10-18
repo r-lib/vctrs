@@ -256,34 +256,49 @@ stop_lossy_cast <- function(x, to, result,
                             to_arg = "",
                             message = NULL,
                             .subclass = NULL) {
-  locations_message <- locations
-  if (length(locations)) {
-    locations_message <- inline_list("Locations: ", locations_message)
-  }
-
-  if (is_null(message)) {
-    x_label <- format_arg_label(vec_ptype_full(x), x_arg)
-    to_label <- format_arg_label(vec_ptype_full(to), to_arg)
-
-    message <- glue_lines(
-      "Lossy cast from {x_label} to {to_label}.",
-      locations_message,
-      details
-    )
-  }
-
   stop_vctrs(
     message,
     x = x,
     y = to,
     to = to,
     result = result,
+    x_arg = x_arg,
+    to_arg = to_arg,
     locations = locations,
     details = details,
     ...,
     .subclass = c(.subclass, "vctrs_error_cast_lossy")
   )
 }
+
+#' @export
+conditionMessage.vctrs_error_cast_lossy <- function(c) {
+  # FIXME: Remove `message` argument
+  if (is_string(c$message) && nzchar(c$message)) {
+    return(c$message)
+  }
+
+  # FIXME: Add `cnd_details()`?
+  glue_lines(
+    cnd_message(c),
+    c$details
+  )
+}
+#' @export
+cnd_issue.vctrs_error_cast_lossy <- function(cnd, ...) {
+  x_label <- format_arg_label(vec_ptype_full(cnd$x), cnd$x_arg)
+  to_label <- format_arg_label(vec_ptype_full(cnd$to), cnd$to_arg)
+  glue::glue("Lossy cast from {x_label} to {to_label}.")
+}
+#' @export
+cnd_bullets.vctrs_error_cast_lossy <- function(cnd, ...) {
+  if (length(cnd$locations)) {
+    inline_list("Locations: ", cnd$locations)
+  } else {
+    character()
+  }
+}
+
 # Used in maybe_warn_deprecated_lossy_cast()
 new_error_cast_lossy <- function(x, to, x_arg = "", to_arg = "") {
   error_cnd(

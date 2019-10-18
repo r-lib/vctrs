@@ -18,3 +18,21 @@ test_that("outer name vectorised if needed", {
 test_that("outer and inner names are combined", {
   expect_equal(outer_names("x", "y", 1), c("y..x"))
 })
+
+test_that("options are created", {
+  expect_identical(
+    unclass(new_opts(c("a", "c"), letters[1:4])),
+    c(a = TRUE, b = FALSE, c = TRUE, d = FALSE)
+  )
+})
+
+test_that("can't supply unknown option", {
+  expect_error(
+    new_opts(c("a", "foo"), letters[1:4]),
+    "Argument must be one of \"a\", \"b\", \"c\" or \"d\""
+  )
+  expect_error(
+    new_opts(c("a", "foo"), letters[1:4], arg = "foo"),
+    "`foo` must be one of \"a\", \"b\", \"c\" or \"d\""
+  )
+})

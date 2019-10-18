@@ -27,14 +27,6 @@ static SEXP syms_as_data_frame2 = NULL;
 static SEXP fns_as_data_frame2 = NULL;
 
 
-bool is_bool(SEXP x) {
-  return
-    TYPEOF(x) == LGLSXP &&
-    Rf_length(x) == 1 &&
-    LOGICAL(x)[0] != NA_LOGICAL;
-}
-
-
 static SEXP vctrs_eval_mask_n_impl(SEXP fn, SEXP* syms, SEXP* args, SEXP mask);
 
 /**
@@ -727,8 +719,10 @@ SEXP r_protect(SEXP x) {
   return Rf_lang2(fns_quote, x);
 }
 
+// [[ include("utils.h") ]]
 bool r_is_bool(SEXP x) {
-  return TYPEOF(x) == LGLSXP &&
+  return
+    TYPEOF(x) == LGLSXP &&
     Rf_length(x) == 1 &&
     LOGICAL(x)[0] != NA_LOGICAL;
 }
