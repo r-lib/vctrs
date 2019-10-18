@@ -1,6 +1,9 @@
 
 # vctrs 0.2.0.9000
 
+* New `vec_chop()` for repeatedly slicing a vector. It efficiently captures
+  the pattern of `map(indices, vec_slice, x = x)`.
+
 * `vec_as_index()` now preserves names of its inputs if possible.
 
 * New `vec_duplicate_all()` for detecting if all values in a vector are
