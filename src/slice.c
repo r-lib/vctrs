@@ -605,7 +605,7 @@ SEXP vctrs_as_index(SEXP i, SEXP n, SEXP names) {
  *   case, otherwise will be `vec_size(indices)`.
  * @member out The list container for the result.
  */
-struct vctrs_split_info {
+struct vctrs_chop_info {
   struct vctrs_proxy_info proxy_info;
   SEXP restore_size;
   int* p_restore_size;
@@ -616,18 +616,18 @@ struct vctrs_split_info {
   SEXP out;
 };
 
-#define PROTECT_SPLIT_INFO(info, n) do {       \
-  PROTECT_PROXY_INFO(&(info)->proxy_info, n);  \
-  PROTECT((info)->restore_size);               \
-  PROTECT((info)->index);                      \
-  PROTECT((info)->out);                        \
-  *n += 3;                                     \
-} while (0)                                    \
+#define PROTECT_CHOP_INFO(info, n) do {       \
+  PROTECT_PROXY_INFO(&(info)->proxy_info, n); \
+  PROTECT((info)->restore_size);              \
+  PROTECT((info)->index);                     \
+  PROTECT((info)->out);                       \
+  *n += 3;                                    \
+} while (0)                                   \
 
-static struct vctrs_split_info init_split_info(SEXP x, SEXP indices) {
+static struct vctrs_chop_info init_chop_info(SEXP x, SEXP indices) {
   int nprot = 0;
 
-  struct vctrs_split_info info;
+  struct vctrs_chop_info info;
 
   info.proxy_info = vec_proxy_info(x);
   PROTECT_PROXY_INFO(&info.proxy_info, &nprot);
@@ -654,98 +654,52 @@ static struct vctrs_split_info init_split_info(SEXP x, SEXP indices) {
 
 // -----------------------------------------------------------------------------
 
-static SEXP split_with(SEXP x, SEXP indices, struct vctrs_split_info info);
-static SEXP split_with_shaped(SEXP x, SEXP indices, struct vctrs_split_info info);
-static SEXP split_with_df(SEXP x, SEXP indices, struct vctrs_split_info info);
-static SEXP split_with_fallback(SEXP x, SEXP indices, struct vctrs_split_info info);
-static SEXP split_with_fallback_shaped(SEXP x, SEXP indices, struct vctrs_split_info info);
+static SEXP chop(SEXP x, SEXP indices, struct vctrs_chop_info info);
+static SEXP chop_shaped(SEXP x, SEXP indices, struct vctrs_chop_info info);
+static SEXP chop_df(SEXP x, SEXP indices, struct vctrs_chop_info info);
+static SEXP chop_fallback(SEXP x, SEXP indices, struct vctrs_chop_info info);
+static SEXP chop_fallback_shaped(SEXP x, SEXP indices, struct vctrs_chop_info info);
 
-static SEXP vec_split_with_base(SEXP x, SEXP indices, struct vctrs_split_info info);
+static SEXP vec_chop_impl(SEXP x, SEXP indices);
+static SEXP vec_chop_base(SEXP x, SEXP indices, struct vctrs_chop_info info);
 
 static SEXP vec_as_indices(SEXP indices, R_len_t n, SEXP names);
-static SEXP new_split_data_frame(SEXP idx, SEXP val, R_len_t size);
-
-/*
- * `vctrs_split_with()` validates user supplied `indices`.
- *
- * `vec_split_with()` does not validate `indices`, and is suitable for internal
- * use where you know `indices` is a list of valid integer values.
- *
- * `vec_split_with_impl()` and `vec_split_along_impl()` return bare lists of
- * the result of splitting `x`. They are useful internally when the entire
- * data frame result is not needed, and a bare list is more useful than the
- * list_of object.
- */
 
 // [[ register() ]]
-SEXP vec_split_along(SEXP x) {
-  vec_assert(x, args_empty);
-
-  SEXP val = PROTECT(vec_split_along_impl(x));
-  init_list_of(val, vec_type(x));
-
-  R_len_t size = vec_size(val);
-
-  // TODO - Use ALTREP sequence
-  SEXP idx = PROTECT(Rf_allocVector(INTSXP, size));
-  r_int_fill_seq(idx, 1, size);
-
-  SEXP out = PROTECT(new_split_data_frame(idx, val, size));
-
-  UNPROTECT(3);
-  return out;
-}
-
-// [[ include("vctrs.h") ]]
-SEXP vec_split_along_impl(SEXP x) {
-  return vec_split_with_impl(x, R_NilValue);
-}
-
-// [[ register() ]]
-SEXP vctrs_split_with(SEXP x, SEXP indices) {
+SEXP vctrs_chop(SEXP x, SEXP indices) {
   R_len_t n = vec_size(x);
   SEXP names = PROTECT(vec_names(x));
 
   indices = PROTECT(vec_as_indices(indices, n, names));
 
-  SEXP out = PROTECT(vec_split_with(x, indices));
+  SEXP out = PROTECT(vec_chop(x, indices));
 
   UNPROTECT(3);
   return out;
 }
 
 // [[ include("vctrs.h") ]]
-SEXP vec_split_with(SEXP x, SEXP indices) {
-  vec_assert(x, args_empty);
+SEXP vec_chop(SEXP x, SEXP indices) {
+  SEXP out = PROTECT(vec_chop_impl(x, indices));
+  init_list_of(out, vec_type(x));
 
-  SEXP val = PROTECT(vec_split_with_impl(x, indices));
-  init_list_of(val, vec_type(x));
-
-  SEXP idx = PROTECT(r_maybe_duplicate(indices));
-  init_list_of(idx, vctrs_shared_empty_int);
-
-  R_len_t size = vec_size(val);
-
-  SEXP out = PROTECT(new_split_data_frame(idx, val, size));
-
-  UNPROTECT(3);
+  UNPROTECT(1);
   return out;
 }
 
-// [[ include("vctrs.h") ]]
-SEXP vec_split_with_impl(SEXP x, SEXP indices) {
+static SEXP vec_chop_impl(SEXP x, SEXP indices) {
   int nprot = 0;
 
-  struct vctrs_split_info info = init_split_info(x, indices);
-  PROTECT_SPLIT_INFO(&info, &nprot);
+  struct vctrs_chop_info info = init_chop_info(x, indices);
+  PROTECT_CHOP_INFO(&info, &nprot);
 
-  SEXP out = PROTECT_N(vec_split_with_base(x, indices, info), &nprot);
+  SEXP out = PROTECT_N(vec_chop_base(x, indices, info), &nprot);
 
   UNPROTECT(nprot);
   return out;
 }
 
-static SEXP vec_split_with_base(SEXP x, SEXP indices, struct vctrs_split_info info) {
+static SEXP vec_chop_base(SEXP x, SEXP indices, struct vctrs_chop_info info) {
   struct vctrs_proxy_info proxy_info = info.proxy_info;
 
   // Fallback to `[` if the class doesn't implement a proxy. This is
@@ -756,16 +710,13 @@ static SEXP vec_split_with_base(SEXP x, SEXP indices, struct vctrs_split_info in
     }
 
     if (has_dim(x)) {
-      return split_with_fallback_shaped(x, indices, info);
+      return chop_fallback_shaped(x, indices, info);
     }
 
-    return split_with_fallback(x, indices, info);
+    return chop_fallback(x, indices, info);
   }
 
   switch (proxy_info.type) {
-  case vctrs_type_null: {
-    return R_NilValue;
-  }
   case vctrs_type_logical:
   case vctrs_type_integer:
   case vctrs_type_double:
@@ -774,24 +725,24 @@ static SEXP vec_split_with_base(SEXP x, SEXP indices, struct vctrs_split_info in
   case vctrs_type_raw:
   case vctrs_type_list: {
     if (has_dim(x)) {
-      return split_with_shaped(x, indices, info);
+      return chop_shaped(x, indices, info);
     }
 
-    return split_with(x, indices, info);
+    return chop(x, indices, info);
   }
   case vctrs_type_dataframe: {
-    return split_with_df(x, indices, info);
+    return chop_df(x, indices, info);
   }
   default:
     vec_assert(x, args_empty);
     Rf_error(
-      "Internal error: Unexpected type `%s` for vector proxy in `vec_split_with()`",
+      "Internal error: Unexpected type `%s` for vector proxy in `vec_chop()`",
       vec_type_as_str(proxy_info.type)
     );
   }
 }
 
-static SEXP split_with(SEXP x, SEXP indices, struct vctrs_split_info info) {
+static SEXP chop(SEXP x, SEXP indices, struct vctrs_chop_info info) {
   SEXP elt;
   SEXP names = PROTECT(Rf_getAttrib(x, R_NamesSymbol));
 
@@ -821,7 +772,7 @@ static SEXP split_with(SEXP x, SEXP indices, struct vctrs_split_info info) {
   return info.out;
 }
 
-static SEXP split_with_df(SEXP x, SEXP indices, struct vctrs_split_info info) {
+static SEXP chop_df(SEXP x, SEXP indices, struct vctrs_chop_info info) {
   SEXP elt;
 
   int n_cols = Rf_length(x);
@@ -855,7 +806,7 @@ static SEXP split_with_df(SEXP x, SEXP indices, struct vctrs_split_info info) {
   // into the appropriate data frame column in the `out` list
   for (int i = 0; i < n_cols; ++i) {
     SEXP col = VECTOR_ELT(info.proxy_info.proxy, i);
-    SEXP split = PROTECT(vec_split_with_impl(col, indices));
+    SEXP split = PROTECT(vec_chop_impl(col, indices));
 
     for (int j = 0; j < info.out_size; ++j) {
       elt = VECTOR_ELT(info.out, j);
@@ -880,7 +831,7 @@ static SEXP split_with_df(SEXP x, SEXP indices, struct vctrs_split_info info) {
   return info.out;
 }
 
-static SEXP split_with_shaped(SEXP x, SEXP indices, struct vctrs_split_info info) {
+static SEXP chop_shaped(SEXP x, SEXP indices, struct vctrs_chop_info info) {
   SEXP elt;
 
   SEXP dim_names = PROTECT(Rf_getAttrib(x, R_DimNamesSymbol));
@@ -923,7 +874,7 @@ static SEXP split_with_shaped(SEXP x, SEXP indices, struct vctrs_split_info info
   return info.out;
 }
 
-static SEXP split_with_fallback(SEXP x, SEXP indices, struct vctrs_split_info info) {
+static SEXP chop_fallback(SEXP x, SEXP indices, struct vctrs_chop_info info) {
   SEXP elt;
 
   // Construct call with symbols, not values, for performance
@@ -965,7 +916,7 @@ static SEXP split_with_fallback(SEXP x, SEXP indices, struct vctrs_split_info in
   return info.out;
 }
 
-static SEXP split_with_fallback_shaped(SEXP x, SEXP indices, struct vctrs_split_info info) {
+static SEXP chop_fallback_shaped(SEXP x, SEXP indices, struct vctrs_chop_info info) {
   SEXP elt;
 
   for (R_len_t i = 0; i < info.out_size; ++i) {
@@ -986,8 +937,12 @@ static SEXP split_with_fallback_shaped(SEXP x, SEXP indices, struct vctrs_split_
 }
 
 static SEXP vec_as_indices(SEXP indices, R_len_t n, SEXP names) {
+  if (indices == R_NilValue) {
+    return indices;
+  }
+
   if (TYPEOF(indices) != VECSXP) {
-    Rf_errorcall(R_NilValue, "`indices` must be a list of index values.");
+    Rf_errorcall(R_NilValue, "`indices` must be a list of index values, or `NULL`.");
   }
 
   SEXP index;
@@ -1002,23 +957,6 @@ static SEXP vec_as_indices(SEXP indices, R_len_t n, SEXP names) {
 
   UNPROTECT(1);
   return indices;
-}
-
-static SEXP new_split_data_frame(SEXP idx, SEXP val, R_len_t size) {
-  SEXP out = PROTECT(Rf_allocVector(VECSXP, 2));
-  SET_VECTOR_ELT(out, 0, idx);
-  SET_VECTOR_ELT(out, 1, val);
-
-  SEXP names = PROTECT(Rf_allocVector(STRSXP, 2));
-  SET_STRING_ELT(names, 0, strings_idx);
-  SET_STRING_ELT(names, 1, strings_val);
-
-  Rf_setAttrib(out, R_NamesSymbol, names);
-
-  out = new_data_frame(out, size);
-
-  UNPROTECT(2);
-  return out;
 }
 
 // -----------------------------------------------------------------------------

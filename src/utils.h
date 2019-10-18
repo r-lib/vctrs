@@ -231,7 +231,6 @@ extern SEXP strings_check_unique;
 extern SEXP strings_key;
 extern SEXP strings_id;
 extern SEXP strings_val;
-extern SEXP strings_idx;
 
 extern SEXP syms_i;
 extern SEXP syms_n;

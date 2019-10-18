@@ -169,7 +169,10 @@ static SEXP as_df_row_impl(SEXP x, enum name_repair_arg name_repair, bool quiet)
     nms = PROTECT_N(vec_as_names(nms, name_repair, quiet), &nprot);
   }
 
-  x = PROTECT_N(vec_split_along_impl(x), &nprot);
+  x = PROTECT_N(vec_chop(x, R_NilValue), &nprot);
+
+  // Clear list_of class info
+  SET_ATTRIB(x, R_NilValue);
 
   r_poke_names(x, nms);
 
