@@ -1,0 +1,20 @@
+> vec_coerce_index(1L, allow_types = "name")
+Error: Must subset with an index vector.
+x `i` has the wrong type `integer`.
+i These indices must be names.
+
+> vec_coerce_index("foo", allow_types = "position")
+Error: Must subset with an index vector.
+x `i` has the wrong type `character`.
+i These indices must be positions.
+
+> vec_coerce_index(TRUE, allow_types = c("position", "name"))
+Error: Must subset with an index vector.
+x `i` has the wrong type `logical`.
+i These indices must be positions or names.
+
+> vec_coerce_index("foo", allow_types = c("indicator", "position"))
+Error: Must subset with an index vector.
+x `i` has the wrong type `character`.
+i These indices must be indicators or positions.
+

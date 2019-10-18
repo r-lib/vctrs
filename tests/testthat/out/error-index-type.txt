@@ -1,5 +1,5 @@
 > vec_as_index(mtcars, 10L)
-Error: Must subset with positions or names.
+Error: Must subset with an index vector.
 x `i` has the wrong type `data.frame<
   mpg : double
   cyl : double
@@ -13,37 +13,47 @@ x `i` has the wrong type `data.frame<
   gear: double
   carb: double
 >`.
-i Positions and names must be integer, logical, or character.
+i These indices must be indicators, positions or names.
 
 > vec_as_index(env(), 10L)
-Error: Must subset with positions or names.
+Error: Must subset with an index vector.
 x `i` has the wrong type `environment`.
-i Positions and names must be integer, logical, or character.
+i These indices must be indicators, positions or names.
 
 > vec_as_index(foobar(), 10L)
-Error: Must subset with positions or names.
+Error: Must subset with an index vector.
 x `i` has the wrong type `vctrs_foobar`.
-i Positions and names must be integer, logical, or character.
+i These indices must be indicators, positions or names.
 
 > vec_as_index(2.5, 3L)
-Error: Must subset with positions or names.
+Error: Must subset with an index vector.
 x Lossy cast from `i` <double> to <integer>.
+
+> vec_as_index(list(), 10L)
+Error: Must subset with an index vector.
+x `i` has the wrong type `list`.
+i These indices must be indicators, positions or names.
+
+> vec_as_index(function() NULL, 10L)
+Error: Must subset with an index vector.
+x `i` has the wrong type `closure`.
+i These indices must be indicators, positions or names.
 
 
 Custom `arg`
 ============
 
 > vec_as_index(env(), 10L, arg = "foo")
-Error: Must subset with positions or names.
+Error: Must subset with an index vector.
 x `foo` has the wrong type `environment`.
-i Positions and names must be integer, logical, or character.
+i These indices must be indicators, positions or names.
 
 > vec_as_index(foobar(), 10L, arg = "foo")
-Error: Must subset with positions or names.
+Error: Must subset with an index vector.
 x `foo` has the wrong type `vctrs_foobar`.
-i Positions and names must be integer, logical, or character.
+i These indices must be indicators, positions or names.
 
 > vec_as_index(2.5, 3L, arg = "foo")
-Error: Must subset with positions or names.
+Error: Must subset with an index vector.
 x Lossy cast from `foo` <double> to <integer>.
 

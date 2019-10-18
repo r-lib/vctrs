@@ -1,19 +1,19 @@
 > vec_as_position(na_int, 2L)
-Error: Must extract with a single position or name.
+Error: Must extract with a single index.
 x `i` can't be `NA`.
-i Positions and names can't be missing.
+i This index can't be missing.
 
 > vec_as_position(na_chr, 1L, names = "foo")
-Error: Must extract with a single position or name.
+Error: Must extract with a single index.
 x `i` can't be `NA`.
-i Positions and names can't be missing.
+i This index can't be missing.
 
 
 Custom `arg`
 ============
 
 > vec_as_position(na_int, 2L)
-Error: Must extract with a single position or name.
+Error: Must extract with a single index.
 x `i` can't be `NA`.
-i Positions and names can't be missing.
+i This index can't be missing.
 

@@ -1,12 +1,12 @@
 #include "vctrs.h"
 #include "utils.h"
+#include "slice.h"
 
 // Initialised at load time
 SEXP syms_vec_slice_fallback = NULL;
 SEXP fns_vec_slice_fallback = NULL;
 
 // Defined below
-SEXP vec_as_index(SEXP i, R_len_t n, SEXP names);
 static SEXP slice_names(SEXP names, SEXP index);
 static SEXP slice_rownames(SEXP names, SEXP index);
 
@@ -411,7 +411,8 @@ SEXP vec_slice_seq(SEXP x, SEXP start, SEXP size, SEXP increasing) {
 static SEXP int_invert_index(SEXP index, R_len_t n);
 static SEXP int_filter_zero(SEXP index, R_len_t n_zero);
 
-static SEXP int_as_index(SEXP index, R_len_t n) {
+static SEXP int_as_index(SEXP index, R_len_t n,
+                         struct vec_as_index_options* opts) {
   const int* data = INTEGER_RO(index);
   R_len_t index_n = Rf_length(index);
 
@@ -420,15 +421,17 @@ static SEXP int_as_index(SEXP index, R_len_t n) {
   // positive indices need to go through and `int_filter_zero()`.
   R_len_t n_zero = 0;
 
+  bool convert_negative = opts->convert_negative;
+
   for (R_len_t i = 0; i < index_n; ++i, ++data) {
     int elt = *data;
-    if (elt < 0 && elt != NA_INTEGER) {
+    if (convert_negative && elt < 0 && elt != NA_INTEGER) {
       return int_invert_index(index, n);
     }
     if (elt == 0) {
       ++n_zero;
     }
-    if (elt > n) {
+    if (abs(elt) > n) {
       stop_index_oob_positions(index, n);
     }
   }
@@ -499,9 +502,9 @@ static SEXP int_filter_zero(SEXP index, R_len_t n_zero) {
   return out;
 }
 
-static SEXP dbl_as_index(SEXP i, R_len_t n) {
+static SEXP dbl_as_index(SEXP i, R_len_t n, struct vec_as_index_options* opts) {
   i = PROTECT(vec_cast(i, vctrs_shared_empty_int, args_empty, args_empty));
-  i = int_as_index(i, n);
+  i = int_as_index(i, n, opts);
 
   UNPROTECT(1);
   return i;
@@ -593,10 +596,16 @@ static SEXP chr_as_index(SEXP i, SEXP names) {
 }
 
 SEXP vec_as_index(SEXP i, R_len_t n, SEXP names) {
+  struct vec_as_index_options opts = { .convert_negative = true };
+  return vec_as_index_opts(i, n, names, &opts);
+}
+
+SEXP vec_as_index_opts(SEXP i, R_len_t n, SEXP names,
+                       struct vec_as_index_options* opts) {
   switch (TYPEOF(i)) {
   case NILSXP: return vctrs_shared_empty_int;
-  case INTSXP: return int_as_index(i, n);
-  case REALSXP: return dbl_as_index(i, n);
+  case INTSXP: return int_as_index(i, n, opts);
+  case REALSXP: return dbl_as_index(i, n, opts);
   case LGLSXP: return lgl_as_index(i, n);
   case STRSXP: return chr_as_index(i, names);
 
@@ -605,8 +614,12 @@ SEXP vec_as_index(SEXP i, R_len_t n, SEXP names) {
   }
 }
 
-SEXP vctrs_as_index(SEXP i, SEXP n, SEXP names) {
-  return vec_as_index(i, r_int_get(n, 0), names);
+SEXP vctrs_as_index(SEXP i, SEXP n, SEXP names, SEXP convert_negative) {
+  if (!r_is_bool(convert_negative)) {
+    Rf_error("Internal error: `convert_negative` must be a boolean");
+  }
+  struct vec_as_index_options opts = { .convert_negative = LOGICAL(convert_negative)[0]};
+  return vec_as_index_opts(i, r_int_get(n, 0), names, &opts);
 }
 
 SEXP split_along_fallback_shaped(SEXP x) {
