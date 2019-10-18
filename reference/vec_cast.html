@@ -294,15 +294,15 @@ attributes that don't require special handling for your class.</p>
 <span class='fu'>vec_cast</span>(<span class='fl'>1</span>, <span class='fu'><a href='https://rdrr.io/r/base/integer.html'>integer</a></span>())</div><div class='output co'>#&gt; [1] 1</div><div class='input'>
 <span class='co'># When information is lost the cast fails</span>
 <span class='fu'><a href='https://rdrr.io/r/base/try.html'>try</a></span>(<span class='fu'>vec_cast</span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>, <span class='fl'>1.5</span>), <span class='fu'><a href='https://rdrr.io/r/base/integer.html'>integer</a></span>()))</div><div class='output co'>#&gt; Error : Lossy cast from `x` &lt;double&gt; to `to` &lt;integer&gt;.
-#&gt; Locations: 2</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/try.html'>try</a></span>(<span class='fu'>vec_cast</span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>, <span class='fl'>2</span>), <span class='fu'><a href='https://rdrr.io/r/base/logical.html'>logical</a></span>()))</div><div class='output co'>#&gt; Error : Lossy cast from `x` &lt;double&gt; to `to` &lt;logical&gt;.
-#&gt; Locations: 2</div><div class='input'>
+#&gt; * Locations: 2</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/try.html'>try</a></span>(<span class='fu'>vec_cast</span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>, <span class='fl'>2</span>), <span class='fu'><a href='https://rdrr.io/r/base/logical.html'>logical</a></span>()))</div><div class='output co'>#&gt; Error : Lossy cast from `x` &lt;double&gt; to `to` &lt;logical&gt;.
+#&gt; * Locations: 2</div><div class='input'>
 <span class='co'># You can suppress this error and get the partial results</span>
 <span class='fu'><a href='vctrs-conditions.html'>allow_lossy_cast</a></span>(<span class='fu'>vec_cast</span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>, <span class='fl'>1.5</span>), <span class='fu'><a href='https://rdrr.io/r/base/integer.html'>integer</a></span>()))</div><div class='output co'>#&gt; [1] 1 1</div><div class='input'><span class='fu'><a href='vctrs-conditions.html'>allow_lossy_cast</a></span>(<span class='fu'>vec_cast</span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>, <span class='fl'>2</span>), <span class='fu'><a href='https://rdrr.io/r/base/logical.html'>logical</a></span>()))</div><div class='output co'>#&gt; [1] TRUE TRUE</div><div class='input'>
 <span class='co'># By default this suppress all lossy cast errors without</span>
 <span class='co'># distinction, but you can be specific about what cast is allowed</span>
 <span class='co'># by supplying prototypes</span>
 <span class='fu'><a href='vctrs-conditions.html'>allow_lossy_cast</a></span>(<span class='fu'>vec_cast</span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>, <span class='fl'>1.5</span>), <span class='fu'><a href='https://rdrr.io/r/base/integer.html'>integer</a></span>()), <span class='kw'>to_ptype</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/integer.html'>integer</a></span>())</div><div class='output co'>#&gt; [1] 1 1</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/try.html'>try</a></span>(<span class='fu'><a href='vctrs-conditions.html'>allow_lossy_cast</a></span>(<span class='fu'>vec_cast</span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>, <span class='fl'>2</span>), <span class='fu'><a href='https://rdrr.io/r/base/logical.html'>logical</a></span>()), <span class='kw'>to_ptype</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/integer.html'>integer</a></span>()))</div><div class='output co'>#&gt; Error : Lossy cast from `x` &lt;double&gt; to `to` &lt;logical&gt;.
-#&gt; Locations: 2</div><div class='input'>
+#&gt; * Locations: 2</div><div class='input'>
 <span class='co'># No sensible coercion is possible so an error is generated</span>
 <span class='fu'><a href='https://rdrr.io/r/base/try.html'>try</a></span>(<span class='fu'>vec_cast</span>(<span class='fl'>1.5</span>, <span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span>(<span class='st'>"a"</span>)))</div><div class='output co'>#&gt; Error : Can't cast `x` &lt;double&gt; to `to` &lt;factor&lt;127a2&gt;&gt;.</div><div class='input'>
 <span class='co'># Cast to common type</span>
@@ -321,7 +321,7 @@ attributes that don't require special handling for your class.</p>
 #&gt; 
 #&gt; [[2]]
 #&gt; [[2]][[1]]
-#&gt; [1] "2019-10-17"
+#&gt; [1] "2019-10-18"
 #&gt; 
 #&gt; </div></pre>
   </div>
