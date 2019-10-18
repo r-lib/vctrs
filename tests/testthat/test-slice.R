@@ -191,7 +191,8 @@ test_that("0 is ignored in positive indices", {
 
 test_that("can slice with double indices", {
   expect_identical(vec_slice(1:3, dbl(2, 3)), 2:3)
-  expect_lossy(vec_as_index(2^31, 3L), na_int, x = dbl(), to = int())
+  err <- expect_error(vec_as_index(2^31, 3L), class = "vctrs_error_index_bad_type")
+  expect_is(err$parent, "vctrs_error_cast_lossy")
 })
 
 test_that("vec_as_index() checks type", {
@@ -657,7 +658,7 @@ test_that("vec_as_position() requires integer or character inputs", {
   expect_error(vec_as_position(mtcars, 10L), class = "vctrs_error_position_bad_type")
   expect_error(vec_as_position(env(), 10L), class = "vctrs_error_position_bad_type")
   expect_error(vec_as_position(foobar(), 10L), class = "vctrs_error_position_bad_type")
-  expect_error(vec_as_position(2.5, 10L), class = "vctrs_error_cast_lossy")
+  expect_error(vec_as_position(2.5, 10L), class = "vctrs_error_position_bad_type")
 
   verify_output(test_path("out", "error-position-type.txt"), {
     vec_as_position(TRUE, 10L)
@@ -668,7 +669,7 @@ test_that("vec_as_position() requires integer or character inputs", {
 
     "# Custom `arg`"
     vec_as_position(foobar(), 10L, arg = "foo")
-    vec_as_position(2.5, 3L, arg = "foo") # FIXME
+    vec_as_position(2.5, 3L, arg = "foo")
   })
 })
 
@@ -676,7 +677,7 @@ test_that("vec_as_index() requires integer, character, or logical inputs", {
   expect_error(vec_as_index(mtcars, 10L), class = "vctrs_error_index_bad_type")
   expect_error(vec_as_index(env(), 10L), class = "vctrs_error_index_bad_type")
   expect_error(vec_as_index(foobar(), 10L), class = "vctrs_error_index_bad_type")
-  expect_error(vec_as_index(2.5, 10L), class = "vctrs_error_cast_lossy")
+  expect_error(vec_as_index(2.5, 10L), class = "vctrs_error_index_bad_type")
 
   verify_output(test_path("out", "error-index-type.txt"), {
     vec_as_index(mtcars, 10L)
@@ -762,20 +763,19 @@ test_that("vec_as_position() fails with NA", {
 })
 
 test_that("vec_as_position() doesn't allow lossy casts", {
-  expect_error(vec_as_position(2^31, 3L), class = "vctrs_error_cast_lossy")
+  expect_error(vec_as_position(2^31, 3L), class = "vctrs_error_position_bad_type")
 
   # Lossy casts generate missing values, which are disallowed
-  err <- expect_error(allow_lossy_cast(vec_as_position(2^31, 3L)), class = "vctrs_error_index_bad_type")
-  expect_identical(err$i, na_int)
+  expect_error(allow_lossy_cast(vec_as_position(2^31, 3L)), class = "vctrs_error_position_bad_type")
 })
 
 test_that("all index errors inherit from `vctrs_error_index`", {
   expect_error(vec_as_index(100, 2L), class = "vctrs_error_index")
   expect_error(vec_as_index("foo", 2L, names = c("bar", "baz")), class = "vctrs_error_index")
   expect_error(vec_as_index(foobar(1L), 2L), class = "vctrs_error_index")
-  expect_error(vec_as_position(TRUE, 2L), class = "vctrs_error_index")
-  skip("FIXME")
   expect_error(vec_as_index(1.5, 2L), class = "vctrs_error_index")
+  expect_error(vec_as_position(TRUE, 2L), class = "vctrs_error_index")
+  expect_error(vec_as_position(1.5, 2L), class = "vctrs_error_index")
 })
 
 test_that("all OOB errors inherit from `vctrs_error_index_oob`", {

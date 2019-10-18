@@ -31,8 +31,8 @@ x `i` has the wrong type `vctrs_foobar`.
 i Positions and names must be integer or character.
 
 > vec_as_position(2.5, 3L)
-Error: Lossy cast from `x` <double> to `to` <integer>.
-Locations: 1
+Error: Must extract with a single position or name.
+x Lossy cast from `i` <double> to <integer>.
 
 
 Custom `arg`
@@ -44,6 +44,6 @@ x `foo` has the wrong type `vctrs_foobar`.
 i Positions and names must be integer or character.
 
 > vec_as_position(2.5, 3L, arg = "foo")
-Error: Lossy cast from `x` <double> to `to` <integer>.
-Locations: 1
+Error: Must extract with a single position or name.
+x Lossy cast from `foo` <double> to <integer>.
 
