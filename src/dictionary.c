@@ -409,6 +409,9 @@ SEXP vctrs_group(SEXP x) {
     }
   }
 
+  SEXP n_groups = PROTECT_N(Rf_ScalarInteger(d.used), &nprot);
+  Rf_setAttrib(out, syms_n, n_groups);
+
   UNPROTECT(nprot);
   return out;
 }
