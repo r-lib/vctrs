@@ -75,10 +75,10 @@ reset_rownames <- function(x) {
 #'
 #' @param x A vector
 #' @examples
-#' vec_group(mtcars[c("vs", "am")])
+#' vec_group_id(mtcars[c("vs", "am")])
 #' @export
-vec_group <- function(x) {
-  .Call(vctrs_group, x)
+vec_group_id <- function(x) {
+  .Call(vctrs_group_id, x)
 }
 
 # Duplicates --------------------------------------------------------------

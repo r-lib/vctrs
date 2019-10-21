@@ -226,6 +226,42 @@ SEXP vctrs_id(SEXP x) {
   return out;
 }
 
+SEXP vctrs_group_id(SEXP x) {
+  int nprot = 0;
+
+  R_len_t n = vec_size(x);
+
+  x = PROTECT_N(obj_maybe_translate_encoding(x, n), &nprot);
+
+  dictionary d;
+  dict_init(&d, x);
+  PROTECT_DICT(&d, &nprot);
+
+  SEXP out = PROTECT_N(Rf_allocVector(INTSXP, n), &nprot);
+  int* p_out = INTEGER(out);
+
+  R_len_t g = 1;
+
+  for (int i = 0; i < n; ++i) {
+    int32_t hash = dict_hash_scalar(&d, i);
+    R_len_t key = d.key[hash];
+
+    if (key == DICT_EMPTY) {
+      dict_put(&d, hash, i);
+      p_out[i] = g;
+      g++;
+    } else {
+      p_out[i] = p_out[key];
+    }
+  }
+
+  SEXP n_groups = PROTECT_N(Rf_ScalarInteger(d.used), &nprot);
+  Rf_setAttrib(out, syms_n, n_groups);
+
+  UNPROTECT(nprot);
+  return out;
+}
+
 // [[ register() ]]
 SEXP vctrs_match(SEXP needles, SEXP haystack) {
   int nprot = 0;
@@ -375,42 +411,6 @@ SEXP vctrs_count(SEXP x) {
   SET_STRING_ELT(names, 0, Rf_mkChar("key"));
   SET_STRING_ELT(names, 1, Rf_mkChar("val"));
   Rf_setAttrib(out, R_NamesSymbol, names);
-
-  UNPROTECT(nprot);
-  return out;
-}
-
-SEXP vctrs_group(SEXP x) {
-  int nprot = 0;
-
-  R_len_t n = vec_size(x);
-
-  x = PROTECT_N(obj_maybe_translate_encoding(x, n), &nprot);
-
-  dictionary d;
-  dict_init(&d, x);
-  PROTECT_DICT(&d, &nprot);
-
-  SEXP out = PROTECT_N(Rf_allocVector(INTSXP, n), &nprot);
-  int* p_out = INTEGER(out);
-
-  R_len_t g = 1;
-
-  for (int i = 0; i < n; ++i) {
-    int32_t hash = dict_hash_scalar(&d, i);
-    R_len_t key = d.key[hash];
-
-    if (key == DICT_EMPTY) {
-      dict_put(&d, hash, i);
-      p_out[i] = g;
-      g++;
-    } else {
-      p_out[i] = p_out[key];
-    }
-  }
-
-  SEXP n_groups = PROTECT_N(Rf_ScalarInteger(d.used), &nprot);
-  Rf_setAttrib(out, syms_n, n_groups);
 
   UNPROTECT(nprot);
   return out;
