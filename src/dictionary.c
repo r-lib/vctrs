@@ -431,66 +431,70 @@ SEXP vec_split_id(SEXP x) {
   dict_init(&d, proxy);
   PROTECT_DICT(&d, &nprot);
 
-  // Tracks the order in which keys are seen
-  SEXP tracker = PROTECT_N(Rf_allocVector(INTSXP, d.size), &nprot);
-  int* p_tracker = INTEGER(tracker);
+  SEXP groups = PROTECT_N(Rf_allocVector(INTSXP, n), &nprot);
+  int* p_groups = INTEGER(groups);
 
-  // Collects the counts of each key
-  SEXP count = PROTECT_N(Rf_allocVector(INTSXP, d.size), &nprot);
-  int* p_count = INTEGER(count);
+  R_len_t g = 0;
 
-  // Tells us which element of the index list x[i] goes in
-  SEXP out_pos = PROTECT_N(Rf_allocVector(INTSXP, n), &nprot);
-  int* p_out_pos = INTEGER(out_pos);
-
-  // Fill dictionary, out_pos, and count
+  // Locate groups, this is essentially `vec_group()`
   for (int i = 0; i < n; ++i) {
-    uint32_t hash = dict_hash_scalar(&d, i);
+    int32_t hash = dict_hash_scalar(&d, i);
+    R_len_t key = d.key[hash];
 
-    if (d.key[hash] == DICT_EMPTY) {
-      p_tracker[hash] = d.used;
+    if (key == DICT_EMPTY) {
       dict_put(&d, hash, i);
-      p_count[hash] = 0;
+      p_groups[i] = g;
+      g++;
+    } else {
+      p_groups[i] = p_groups[key];
     }
-
-    p_out_pos[i] = p_tracker[hash];
-    p_count[hash]++;
   }
 
-  // Track the first position of each key in `x`
-  SEXP key_id = PROTECT_N(Rf_allocVector(INTSXP, d.used), &nprot);
-  int* p_key_id = INTEGER(key_id);
+  int n_groups = d.used;
 
-  SEXP out_id = PROTECT_N(Rf_allocVector(VECSXP, d.used), &nprot);
+  // Location of first occurence of each group in `x`
+  SEXP key_idx = PROTECT_N(Rf_allocVector(INTSXP, n_groups), &nprot);
+  int* p_key_idx = INTEGER(key_idx);
+  int key_id_current = 0;
+
+  // Count of the number of elements in each group
+  SEXP counts = PROTECT_N(Rf_allocVector(INTSXP, n_groups), &nprot);
+  int* p_counts = INTEGER(counts);
+  memset(p_counts, 0, n_groups * sizeof(int));
+
+  for (int i = 0; i < n; ++i) {
+    int group = p_groups[i];
+
+    if (group == key_id_current) {
+      p_key_idx[key_id_current] = i + 1;
+      key_id_current++;
+    }
+
+    p_counts[group]++;
+  }
+
+  SEXP out_id = PROTECT_N(Rf_allocVector(VECSXP, n_groups), &nprot);
   init_list_of(out_id, vctrs_shared_empty_int);
 
-  SEXP counters = PROTECT_N(Rf_allocVector(INTSXP, d.used), &nprot);
-  int* p_counters = INTEGER(counters);
-  memset(p_counters, 0, d.used * sizeof(int));
-
-  // Set up empty index container
-  for (int hash = 0; hash < d.size; ++hash) {
-    if (d.key[hash] == DICT_EMPTY) {
-      continue;
-    }
-
-    SET_VECTOR_ELT(out_id, p_tracker[hash], Rf_allocVector(INTSXP, p_count[hash]));
+  // Initialize `out$id` to a list of group indices with sizes corresponding
+  // to the number of elements in that group
+  for (int i = 0; i < n_groups; ++i) {
+    SET_VECTOR_ELT(out_id, i, Rf_allocVector(INTSXP, p_counts[i]));
   }
 
-  // Fill index container and key locations
+  SEXP group_indices = PROTECT_N(Rf_allocVector(INTSXP, n_groups), &nprot);
+  int* p_group_indices = INTEGER(group_indices);
+  memset(p_group_indices, 0, n_groups * sizeof(int));
+
+  // Fill in the index values for each group
   for (int i = 0; i < n; ++i) {
-    int j = p_out_pos[i];
-    int hash = p_counters[j];
-
-    if (hash == 0) {
-      p_key_id[j] = i + 1;
-    }
-
-    INTEGER(VECTOR_ELT(out_id, j))[hash] = i + 1;
-    p_counters[j] = hash + 1;
+    int group = p_groups[i];
+    int group_index = p_group_indices[group];
+    INTEGER(VECTOR_ELT(out_id, group))[group_index] = i + 1;
+    p_group_indices[group]++;
   }
 
-  SEXP out_key = PROTECT_N(vec_slice(x, key_id), &nprot);
+  SEXP out_key = PROTECT_N(vec_slice(x, key_idx), &nprot);
 
   // Construct output data frame
   SEXP out = PROTECT_N(Rf_allocVector(VECSXP, 2), &nprot);
@@ -503,7 +507,7 @@ SEXP vec_split_id(SEXP x) {
 
   Rf_setAttrib(out, R_NamesSymbol, names);
 
-  out = new_data_frame(out, d.used);
+  out = new_data_frame(out, n_groups);
 
   UNPROTECT(nprot);
   return out;
