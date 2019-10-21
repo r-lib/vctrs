@@ -71,6 +71,16 @@ reset_rownames <- function(x) {
   x
 }
 
+#' Locate groups
+#'
+#' @param x A vector
+#' @examples
+#' vec_group(mtcars[c("vs", "am")])
+#' @export
+vec_group <- function(x) {
+  .Call(vctrs_group, x)
+}
+
 # Duplicates --------------------------------------------------------------
 
 #' Find duplicated values
