@@ -380,6 +380,39 @@ SEXP vctrs_count(SEXP x) {
   return out;
 }
 
+SEXP vctrs_group(SEXP x) {
+  int nprot = 0;
+
+  R_len_t n = vec_size(x);
+
+  x = PROTECT_N(obj_maybe_translate_encoding(x, n), &nprot);
+
+  dictionary d;
+  dict_init(&d, x);
+  PROTECT_DICT(&d, &nprot);
+
+  SEXP out = PROTECT_N(Rf_allocVector(INTSXP, n), &nprot);
+  int* p_out = INTEGER(out);
+
+  R_len_t g = 1;
+
+  for (int i = 0; i < n; ++i) {
+    int32_t hash = dict_hash_scalar(&d, i);
+    R_len_t key = d.key[hash];
+
+    if (key == DICT_EMPTY) {
+      dict_put(&d, hash, i);
+      p_out[i] = g;
+      g++;
+    } else {
+      p_out[i] = p_out[key];
+    }
+  }
+
+  UNPROTECT(nprot);
+  return out;
+}
+
 SEXP vctrs_duplicated(SEXP x) {
   int nprot = 0;
 
