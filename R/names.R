@@ -238,10 +238,6 @@ vec_names2 <- function(x,
                        ...,
                        repair = c("minimal", "unique", "universal", "check_unique"),
                        quiet = FALSE) {
-  # This function is an optimized version of:
-  #
-  # vec_as_names(minimal_names(x), ..., repair = repair, quiet = quiet)
-
   if (!missing(...)) {
     ellipsis::check_dots_empty()
   }
