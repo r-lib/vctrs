@@ -473,13 +473,13 @@ SEXP vec_split_id(SEXP x) {
     p_counts[group]++;
   }
 
-  SEXP out_id = PROTECT_N(Rf_allocVector(VECSXP, n_groups), &nprot);
-  init_list_of(out_id, vctrs_shared_empty_int);
+  SEXP out_pos = PROTECT_N(Rf_allocVector(VECSXP, n_groups), &nprot);
+  init_list_of(out_pos, vctrs_shared_empty_int);
 
-  // Initialize `out_id` to a list of integers with sizes corresponding
+  // Initialize `out_pos` to a list of integers with sizes corresponding
   // to the number of elements in that group
   for (int i = 0; i < n_groups; ++i) {
-    SET_VECTOR_ELT(out_id, i, Rf_allocVector(INTSXP, p_counts[i]));
+    SET_VECTOR_ELT(out_pos, i, Rf_allocVector(INTSXP, p_counts[i]));
   }
 
   // The current position we are updating, each group has its own counter
@@ -491,7 +491,7 @@ SEXP vec_split_id(SEXP x) {
   for (int i = 0; i < n; ++i) {
     int group = p_groups[i];
     int position = p_positions[group];
-    INTEGER(VECTOR_ELT(out_id, group))[position] = i + 1;
+    INTEGER(VECTOR_ELT(out_pos, group))[position] = i + 1;
     p_positions[group]++;
   }
 
@@ -500,10 +500,12 @@ SEXP vec_split_id(SEXP x) {
   // Construct output data frame
   SEXP out = PROTECT_N(Rf_allocVector(VECSXP, 2), &nprot);
   SET_VECTOR_ELT(out, 0, out_key);
-  SET_VECTOR_ELT(out, 1, out_id);
+  SET_VECTOR_ELT(out, 1, out_pos);
 
   SEXP names = PROTECT_N(Rf_allocVector(STRSXP, 2), &nprot);
   SET_STRING_ELT(names, 0, strings_key);
+  // TODO - Change to `strings_pos` when we change
+  // `vec_split_id()` -> `vec_group_pos()`
   SET_STRING_ELT(names, 1, strings_id);
 
   Rf_setAttrib(out, R_NamesSymbol, names);
