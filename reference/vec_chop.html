@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Count unique values in a vector — vec_count • vctrs</title>
+<title>Repeatedly slice a vector — vec_chop • vctrs</title>
 
 <!-- favicons -->
 <link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
@@ -42,11 +42,9 @@
 
 
 
-<meta property="og:title" content="Count unique values in a vector — vec_count" />
-<meta property="og:description" content="Count the number of unique values in a vector. vec_count() has two
-important differences to table(): it returns a data frame, and when
-given multiple inputs (as a data frame), it only counts combinations that
-appear in the input." />
+<meta property="og:title" content="Repeatedly slice a vector — vec_chop" />
+<meta property="og:description" content="vec_chop() provides an efficient method to repeatedly slice a vector. It
+captures the pattern of map(indices, vec_slice, x = x)." />
 <meta property="og:image" content="https://vctrs.r-lib.org/logo.png" />
 <meta name="twitter:card" content="summary" />
 
@@ -137,121 +135,89 @@ appear in the input." />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Count unique values in a vector</h1>
-    <small class="dont-index">Source: <a href='https://github.com/r-lib/vctrs/blob/master/R/dictionary.R'><code>R/dictionary.R</code></a></small>
-    <div class="hidden name"><code>vec_count.Rd</code></div>
+    <h1>Repeatedly slice a vector</h1>
+    <small class="dont-index">Source: <a href='https://github.com/r-lib/vctrs/blob/master/R/slice.R'><code>R/slice.R</code></a></small>
+    <div class="hidden name"><code>vec_chop.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Count the number of unique values in a vector. <code>vec_count()</code> has two
-important differences to <code><a href='https://rdrr.io/r/base/table.html'>table()</a></code>: it returns a data frame, and when
-given multiple inputs (as a data frame), it only counts combinations that
-appear in the input.</p>
+    <p><code>vec_chop()</code> provides an efficient method to repeatedly slice a vector. It
+captures the pattern of <code>map(indices, vec_slice, x = x)</code>.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>vec_count</span>(<span class='no'>x</span>, <span class='kw'>sort</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"count"</span>, <span class='st'>"key"</span>, <span class='st'>"location"</span>, <span class='st'>"none"</span>))</pre>
+    <pre class="usage"><span class='fu'>vec_chop</span>(<span class='no'>x</span>, <span class='kw'>indices</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>x</th>
-      <td><p>A vector (including a data frame).</p></td>
+      <td><p>A vector</p></td>
     </tr>
     <tr>
-      <th>sort</th>
-      <td><p>One of "count", "key", "location", or "none".</p><ul>
-<li><p>"count", the default, puts most frequent values at top</p></li>
-<li><p>"key", orders by the output key column (i.e. unique values of <code>x</code>)</p></li>
-<li><p>"location", orders by location where key first seen. This is useful
-if you want to match the counts up to other unique/duplicated functions.</p></li>
-<li><p>"none", leaves unordered.</p></li>
-</ul></td>
+      <th>indices</th>
+      <td><p>A list of index values to slice <code>x</code> with, or <code>NULL</code>. Each
+element of the list must be an integer, character or logical vector that
+would be valid as an index in <code><a href='vec_slice.html'>vec_slice()</a></code>. If <code>NULL</code>, <code>x</code> is split into
+its individual elements, equivalent to using an <code>indices</code> of
+<code><a href='https://rdrr.io/r/base/list.html'>as.list(vec_seq_along(x))</a></code>.</p></td>
     </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>A data frame with columns <code>key</code> (same type as <code>x</code>) and
-<code>count</code> (an integer vector).</p>
+    <p>A vector of type <code>list_of&lt;vec_ptype(x)&gt;</code> and size <code><a href='vec_size.html'>vec_size(indices)</a></code>
+or, if <code>indices == NULL</code>, <code><a href='vec_size.html'>vec_size(x)</a></code>.</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'>vec_count</span>(<span class='no'>mtcars</span>$<span class='no'>vs</span>)</div><div class='output co'>#&gt;   key count
-#&gt; 1   0    18
-#&gt; 2   1    14</div><div class='input'><span class='fu'>vec_count</span>(<span class='no'>iris</span>$<span class='no'>Species</span>)</div><div class='output co'>#&gt;          key count
-#&gt; 1     setosa    50
-#&gt; 2 versicolor    50
-#&gt; 3  virginica    50</div><div class='input'>
-<span class='co'># If you count a data frame you'll get a data frame</span>
-<span class='co'># column in the output</span>
-<span class='fu'><a href='https://rdrr.io/r/utils/str.html'>str</a></span>(<span class='fu'>vec_count</span>(<span class='no'>mtcars</span>[<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"vs"</span>, <span class='st'>"am"</span>)]))</div><div class='output co'>#&gt; 'data.frame':	4 obs. of  2 variables:
-#&gt;  $ key  :'data.frame':	4 obs. of  2 variables:
-#&gt;   ..$ vs: num  0 1 1 0
-#&gt;   ..$ am: num  0 1 0 1
-#&gt;  $ count: int  12 7 7 6</div><div class='input'>
-<span class='co'># Sorting ---------------------------------------</span>
-
-<span class='no'>x</span> <span class='kw'>&lt;-</span> <span class='no'>letters</span>[<span class='fu'><a href='https://rdrr.io/r/stats/Poisson.html'>rpois</a></span>(<span class='fl'>100</span>, <span class='fl'>6</span>)]
-<span class='co'># default is to sort by frequency</span>
-<span class='fu'>vec_count</span>(<span class='no'>x</span>)</div><div class='output co'>#&gt;    key count
-#&gt; 1    f    21
-#&gt; 2    e    19
-#&gt; 3    g    16
-#&gt; 4    d    14
-#&gt; 5    h     9
-#&gt; 6    b     6
-#&gt; 7    c     4
-#&gt; 8    j     3
-#&gt; 9    i     2
-#&gt; 10   k     2
-#&gt; 11   l     2
-#&gt; 12   n     1
-#&gt; 13   a     1</div><div class='input'>
-<span class='co'># by can sort by key</span>
-<span class='fu'>vec_count</span>(<span class='no'>x</span>, <span class='kw'>sort</span> <span class='kw'>=</span> <span class='st'>"key"</span>)</div><div class='output co'>#&gt;    key count
-#&gt; 1    a     1
-#&gt; 2    b     6
-#&gt; 3    c     4
-#&gt; 4    d    14
-#&gt; 5    e    19
-#&gt; 6    f    21
-#&gt; 7    g    16
-#&gt; 8    h     9
-#&gt; 9    i     2
-#&gt; 10   j     3
-#&gt; 11   k     2
-#&gt; 12   l     2
-#&gt; 13   n     1</div><div class='input'>
-<span class='co'># or location of first value</span>
-<span class='fu'>vec_count</span>(<span class='no'>x</span>, <span class='kw'>sort</span> <span class='kw'>=</span> <span class='st'>"location"</span>)</div><div class='output co'>#&gt;    key count
-#&gt; 1    e    19
-#&gt; 2    d    14
-#&gt; 3    c     4
-#&gt; 4    k     2
-#&gt; 5    g    16
-#&gt; 6    l     2
-#&gt; 7    b     6
-#&gt; 8    f    21
-#&gt; 9    j     3
-#&gt; 10   h     9
-#&gt; 11   i     2
-#&gt; 12   n     1
-#&gt; 13   a     1</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span>(<span class='no'>x</span>)</div><div class='output co'>#&gt; [1] "e" "e" "d" "e" "c" "e"</div><div class='input'>
-<span class='co'># or not at all</span>
-<span class='fu'>vec_count</span>(<span class='no'>x</span>, <span class='kw'>sort</span> <span class='kw'>=</span> <span class='st'>"none"</span>)</div><div class='output co'>#&gt;    key count
-#&gt; 1    b     6
-#&gt; 2    n     1
-#&gt; 3    c     4
-#&gt; 4    e    19
-#&gt; 5    h     9
-#&gt; 6    f    21
-#&gt; 7    g    16
-#&gt; 8    j     3
-#&gt; 9    i     2
-#&gt; 10   a     1
-#&gt; 11   k     2
-#&gt; 12   l     2
-#&gt; 13   d    14</div></pre>
+    <pre class="examples"><div class='input'><span class='fu'>vec_chop</span>(<span class='fl'>1</span>:<span class='fl'>5</span>)</div><div class='output co'>#&gt; &lt;list_of&lt;integer&gt;[5]&gt;
+#&gt; [[1]]
+#&gt; [1] 1
+#&gt; 
+#&gt; [[2]]
+#&gt; [1] 2
+#&gt; 
+#&gt; [[3]]
+#&gt; [1] 3
+#&gt; 
+#&gt; [[4]]
+#&gt; [1] 4
+#&gt; 
+#&gt; [[5]]
+#&gt; [1] 5
+#&gt; </div><div class='input'><span class='fu'>vec_chop</span>(<span class='fl'>1</span>:<span class='fl'>5</span>, <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(<span class='fl'>1</span>, <span class='fl'>1</span>:<span class='fl'>2</span>))</div><div class='output co'>#&gt; &lt;list_of&lt;integer&gt;[2]&gt;
+#&gt; [[1]]
+#&gt; [1] 1
+#&gt; 
+#&gt; [[2]]
+#&gt; [1] 1 2
+#&gt; </div><div class='input'><span class='fu'>vec_chop</span>(<span class='no'>mtcars</span>, <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(<span class='fl'>1</span>:<span class='fl'>3</span>, <span class='fl'>4</span>:<span class='fl'>6</span>))</div><div class='output co'>#&gt; &lt;list_of&lt;
+#&gt;   data.frame&lt;
+#&gt;     mpg : double
+#&gt;     cyl : double
+#&gt;     disp: double
+#&gt;     hp  : double
+#&gt;     drat: double
+#&gt;     wt  : double
+#&gt;     qsec: double
+#&gt;     vs  : double
+#&gt;     am  : double
+#&gt;     gear: double
+#&gt;     carb: double
+#&gt;   &gt;
+#&gt; &gt;[2]&gt;
+#&gt; [[1]]
+#&gt;                mpg cyl disp  hp drat    wt  qsec vs am gear carb
+#&gt; Mazda RX4     21.0   6  160 110 3.90 2.620 16.46  0  1    4    4
+#&gt; Mazda RX4 Wag 21.0   6  160 110 3.90 2.875 17.02  0  1    4    4
+#&gt; Datsun 710    22.8   4  108  93 3.85 2.320 18.61  1  1    4    1
+#&gt; 
+#&gt; [[2]]
+#&gt;                    mpg cyl disp  hp drat    wt  qsec vs am gear carb
+#&gt; Hornet 4 Drive    21.4   6  258 110 3.08 3.215 19.44  1  0    3    1
+#&gt; Hornet Sportabout 18.7   8  360 175 3.15 3.440 17.02  0  0    3    2
+#&gt; Valiant           18.1   6  225 105 2.76 3.460 20.22  1  0    3    1
+#&gt; </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
