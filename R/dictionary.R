@@ -95,6 +95,14 @@ vec_group_id <- function(x) {
   .Call(vctrs_group_id, x)
 }
 
+#' Identify groups encoded as rle
+#'
+#' @param x A vector
+#' @export
+vec_group_rle <- function(x) {
+  .Call(vctrs_group_rle, x)
+}
+
 # Duplicates --------------------------------------------------------------
 
 #' Find duplicated values
