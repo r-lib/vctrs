@@ -431,79 +431,86 @@ SEXP vec_split_id(SEXP x) {
   dict_init(&d, proxy);
   PROTECT_DICT(&d, &nprot);
 
-  // Tracks the order in which keys are seen
-  SEXP tracker = PROTECT_N(Rf_allocVector(INTSXP, d.size), &nprot);
-  int* p_tracker = INTEGER(tracker);
+  SEXP groups = PROTECT_N(Rf_allocVector(INTSXP, n), &nprot);
+  int* p_groups = INTEGER(groups);
 
-  // Collects the counts of each key
-  SEXP count = PROTECT_N(Rf_allocVector(INTSXP, d.size), &nprot);
-  int* p_count = INTEGER(count);
+  R_len_t g = 0;
 
-  // Tells us which element of the index list x[i] goes in
-  SEXP out_pos = PROTECT_N(Rf_allocVector(INTSXP, n), &nprot);
-  int* p_out_pos = INTEGER(out_pos);
-
-  // Fill dictionary, out_pos, and count
+  // Identify groups, this is essentially `vec_group_id()`
   for (int i = 0; i < n; ++i) {
-    uint32_t hash = dict_hash_scalar(&d, i);
+    int32_t hash = dict_hash_scalar(&d, i);
+    R_len_t key = d.key[hash];
 
-    if (d.key[hash] == DICT_EMPTY) {
-      p_tracker[hash] = d.used;
+    if (key == DICT_EMPTY) {
       dict_put(&d, hash, i);
-      p_count[hash] = 0;
+      p_groups[i] = g;
+      ++g;
+    } else {
+      p_groups[i] = p_groups[key];
     }
-
-    p_out_pos[i] = p_tracker[hash];
-    p_count[hash]++;
   }
 
-  // Track the first position of each key in `x`
-  SEXP key_id = PROTECT_N(Rf_allocVector(INTSXP, d.used), &nprot);
-  int* p_key_id = INTEGER(key_id);
+  int n_groups = d.used;
 
-  SEXP out_id = PROTECT_N(Rf_allocVector(VECSXP, d.used), &nprot);
-  init_list_of(out_id, vctrs_shared_empty_int);
+  // Position of first occurence of each group in `x`
+  SEXP key_pos = PROTECT_N(Rf_allocVector(INTSXP, n_groups), &nprot);
+  int* p_key_pos = INTEGER(key_pos);
+  int key_pos_current = 0;
 
-  SEXP counters = PROTECT_N(Rf_allocVector(INTSXP, d.used), &nprot);
-  int* p_counters = INTEGER(counters);
-  memset(p_counters, 0, d.used * sizeof(int));
+  // Count of the number of elements in each group
+  SEXP counts = PROTECT_N(Rf_allocVector(INTSXP, n_groups), &nprot);
+  int* p_counts = INTEGER(counts);
+  memset(p_counts, 0, n_groups * sizeof(int));
 
-  // Set up empty index container
-  for (int hash = 0; hash < d.size; ++hash) {
-    if (d.key[hash] == DICT_EMPTY) {
-      continue;
-    }
-
-    SET_VECTOR_ELT(out_id, p_tracker[hash], Rf_allocVector(INTSXP, p_count[hash]));
-  }
-
-  // Fill index container and key locations
   for (int i = 0; i < n; ++i) {
-    int j = p_out_pos[i];
-    int hash = p_counters[j];
+    int group = p_groups[i];
 
-    if (hash == 0) {
-      p_key_id[j] = i + 1;
+    if (group == key_pos_current) {
+      p_key_pos[key_pos_current] = i + 1;
+      key_pos_current++;
     }
 
-    INTEGER(VECTOR_ELT(out_id, j))[hash] = i + 1;
-    p_counters[j] = hash + 1;
+    p_counts[group]++;
   }
 
-  SEXP out_key = PROTECT_N(vec_slice(x, key_id), &nprot);
+  SEXP out_pos = PROTECT_N(Rf_allocVector(VECSXP, n_groups), &nprot);
+  init_list_of(out_pos, vctrs_shared_empty_int);
+
+  // Initialize `out_pos` to a list of integers with sizes corresponding
+  // to the number of elements in that group
+  for (int i = 0; i < n_groups; ++i) {
+    SET_VECTOR_ELT(out_pos, i, Rf_allocVector(INTSXP, p_counts[i]));
+  }
+
+  // The current position we are updating, each group has its own counter
+  SEXP positions = PROTECT_N(Rf_allocVector(INTSXP, n_groups), &nprot);
+  int* p_positions = INTEGER(positions);
+  memset(p_positions, 0, n_groups * sizeof(int));
+
+  // Fill in the position values for each group
+  for (int i = 0; i < n; ++i) {
+    int group = p_groups[i];
+    int position = p_positions[group];
+    INTEGER(VECTOR_ELT(out_pos, group))[position] = i + 1;
+    p_positions[group]++;
+  }
+
+  SEXP out_key = PROTECT_N(vec_slice(x, key_pos), &nprot);
 
   // Construct output data frame
   SEXP out = PROTECT_N(Rf_allocVector(VECSXP, 2), &nprot);
   SET_VECTOR_ELT(out, 0, out_key);
-  SET_VECTOR_ELT(out, 1, out_id);
+  SET_VECTOR_ELT(out, 1, out_pos);
 
   SEXP names = PROTECT_N(Rf_allocVector(STRSXP, 2), &nprot);
   SET_STRING_ELT(names, 0, strings_key);
+  // TODO - Change to `strings_pos` when we change
+  // `vec_split_id()` -> `vec_group_pos()`
   SET_STRING_ELT(names, 1, strings_id);
 
   Rf_setAttrib(out, R_NamesSymbol, names);
 
-  out = new_data_frame(out, d.used);
+  out = new_data_frame(out, n_groups);
 
   UNPROTECT(nprot);
   return out;
