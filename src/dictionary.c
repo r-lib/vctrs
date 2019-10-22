@@ -444,7 +444,7 @@ SEXP vec_split_id(SEXP x) {
     if (key == DICT_EMPTY) {
       dict_put(&d, hash, i);
       p_groups[i] = g;
-      g++;
+      ++g;
     } else {
       p_groups[i] = p_groups[key];
     }
