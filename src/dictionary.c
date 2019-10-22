@@ -250,7 +250,7 @@ SEXP vctrs_group_id(SEXP x) {
     if (key == DICT_EMPTY) {
       dict_put(&d, hash, i);
       p_out[i] = g;
-      g++;
+      ++g;
     } else {
       p_out[i] = p_out[key];
     }
