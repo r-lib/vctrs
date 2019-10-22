@@ -319,7 +319,7 @@ SEXP vctrs_group_rle(SEXP x) {
   *p_g = 1;
   *p_l = 1;
 
-  int pos = 0;
+  int pos = 1;
 
   for (int i = 1; i < n; ++i) {
     if (equal_scalar(x, i - 1, x, i, true)) {
@@ -329,7 +329,6 @@ SEXP vctrs_group_rle(SEXP x) {
 
     ++p_l;
     *p_l = 1;
-    ++pos;
 
     // Check if we have seen this value before
     int32_t hash = dict_hash_scalar(&d, i);
@@ -341,10 +340,12 @@ SEXP vctrs_group_rle(SEXP x) {
     } else {
       p_g[pos] = p_g[p_map[hash]];
     }
+
+    ++pos;
   }
 
-  g = PROTECT_N(Rf_lengthgets(g, pos + 1), &nprot);
-  l = PROTECT_N(Rf_lengthgets(l, pos + 1), &nprot);
+  g = PROTECT_N(Rf_lengthgets(g, pos), &nprot);
+  l = PROTECT_N(Rf_lengthgets(l, pos), &nprot);
 
   SEXP out = new_group_rle(g, l, d.used);
 
