@@ -213,7 +213,7 @@ extern SEXP vctrs_shared_zero_int;
 extern SEXP classes_data_frame;
 extern SEXP classes_tibble;
 extern SEXP classes_list_of;
-extern SEXP classes_vctrs_rcrd;
+extern SEXP classes_vctrs_group_rle;
 
 extern SEXP strings_dots;
 extern SEXP strings_empty;

@@ -277,8 +277,7 @@ static SEXP new_group_rle(SEXP g, SEXP l, R_len_t n) {
   SEXP n_groups = PROTECT(Rf_ScalarInteger(n));
   Rf_setAttrib(out, syms_n, n_groups);
 
-  // TODO - Breaks because there is no format.vctrs_rcrd method
-  // Rf_setAttrib(out, R_ClassSymbol, classes_vctrs_rcrd);
+  Rf_setAttrib(out, R_ClassSymbol, classes_vctrs_group_rle);
 
   UNPROTECT(3);
   return out;

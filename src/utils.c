@@ -22,7 +22,7 @@ SEXP strings_vctrs_list_of = NULL;
 SEXP classes_data_frame = NULL;
 SEXP classes_tibble = NULL;
 SEXP classes_list_of = NULL;
-SEXP classes_vctrs_rcrd = NULL;
+SEXP classes_vctrs_group_rle = NULL;
 
 static SEXP syms_as_data_frame2 = NULL;
 static SEXP fns_as_data_frame2 = NULL;
@@ -1091,11 +1091,12 @@ void vctrs_init_utils(SEXP ns) {
   SET_STRING_ELT(classes_list_of, 1, strings_vctrs_vctr);
 
 
-  classes_vctrs_rcrd = Rf_allocVector(STRSXP, 2);
-  R_PreserveObject(classes_vctrs_rcrd);
+  classes_vctrs_group_rle = Rf_allocVector(STRSXP, 3);
+  R_PreserveObject(classes_vctrs_group_rle);
 
-  SET_STRING_ELT(classes_vctrs_rcrd, 0, strings_vctrs_rcrd);
-  SET_STRING_ELT(classes_vctrs_rcrd, 1, strings_vctrs_vctr);
+  SET_STRING_ELT(classes_vctrs_group_rle, 0, Rf_mkChar("vctrs_group_rle"));
+  SET_STRING_ELT(classes_vctrs_group_rle, 1, strings_vctrs_rcrd);
+  SET_STRING_ELT(classes_vctrs_group_rle, 2, strings_vctrs_vctr);
 
 
   vctrs_shared_empty_lgl = Rf_allocVector(LGLSXP, 0);
