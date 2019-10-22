@@ -1,12 +1,12 @@
 > vec_as_position(na_int, 2L)
 Error: Must extract with a single index.
-x `i` can't be `NA`.
-i This index can't be missing.
+x `i` has the wrong type `integer`.
+i These indices must be NA.
 
 > vec_as_position(na_chr, 1L, names = "foo")
 Error: Must extract with a single index.
-x `i` can't be `NA`.
-i This index can't be missing.
+x `i` has the wrong type `character`.
+i These indices must be NA.
 
 
 Custom `arg`
@@ -14,6 +14,6 @@ Custom `arg`
 
 > vec_as_position(na_int, 2L)
 Error: Must extract with a single index.
-x `i` can't be `NA`.
-i This index can't be missing.
+x `i` has the wrong type `integer`.
+i These indices must be NA.
 

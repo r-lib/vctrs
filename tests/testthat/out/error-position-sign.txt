@@ -1,12 +1,12 @@
 > vec_as_position(0, 2L)
 Error: Must extract with a single index.
-x `i` can't be zero.
-i This index must be a positive integer.
+x `i` has the wrong type `integer`.
+i These indices must be NA.
 
 > vec_as_position(-1, 2L)
 Error: Must extract with a single index.
-x `i` (with value -1) has the wrong sign.
-i This index must be a positive integer.
+x `i` has the wrong type `integer`.
+i These indices must be NA.
 
 
 Custom `arg`
@@ -14,6 +14,6 @@ Custom `arg`
 
 > vec_as_position(0, 2L, arg = "foo")
 Error: Must extract with a single index.
-x `foo` can't be zero.
-i This index must be a positive integer.
+x `foo` has the wrong type `integer`.
+i These indices must be NA.
 

@@ -1,7 +1,7 @@
 > vec_as_position(1:2, 2L)
 Error: Must extract with a single index.
-x `i` has the wrong size 2.
-i This index must be size 1.
+x `i` has the wrong type `integer`.
+i These indices must be NA.
 
 > vec_as_position(mtcars, 10L)
 Error: Must extract with a single index.
@@ -18,7 +18,7 @@ x `i` has the wrong type `data.frame<
   gear: double
   carb: double
 >`.
-i This index must be a position or a name.
+i These indices must be positions or names.
 
 
 Custom `arg`
@@ -26,8 +26,8 @@ Custom `arg`
 
 > vec_as_position(1:2, 2L, arg = "foo")
 Error: Must extract with a single index.
-x `foo` has the wrong size 2.
-i This index must be size 1.
+x `foo` has the wrong type `integer`.
+i These indices must be NA.
 
 > vec_as_position(mtcars, 10L, arg = "foo")
 Error: Must extract with a single index.
@@ -44,10 +44,10 @@ x `foo` has the wrong type `data.frame<
   gear: double
   carb: double
 >`.
-i This index must be a position or a name.
+i These indices must be positions or names.
 
 > vec_as_position(1:2, 2L, arg = "foo")
 Error: Must extract with a single index.
-x `foo` has the wrong size 2.
-i This index must be size 1.
+x `foo` has the wrong type `integer`.
+i These indices must be NA.
 

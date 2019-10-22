@@ -27,7 +27,8 @@ i These indices must be indicators, positions or names.
 
 > vec_as_index(2.5, 3L)
 Error: Must subset with an index vector.
-x Lossy cast from `i` <double> to <integer>.
+x `i` has the wrong type `double`.
+i These indices must be indicators, positions or names.
 
 > vec_as_index(list(), 10L)
 Error: Must subset with an index vector.
@@ -55,5 +56,6 @@ i These indices must be indicators, positions or names.
 
 > vec_as_index(2.5, 3L, arg = "foo")
 Error: Must subset with an index vector.
-x Lossy cast from `foo` <double> to <integer>.
+x `i` has the wrong type `double`.
+i These indices must be indicators, positions or names.
 
