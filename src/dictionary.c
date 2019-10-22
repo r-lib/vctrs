@@ -436,7 +436,7 @@ SEXP vec_split_id(SEXP x) {
 
   R_len_t g = 0;
 
-  // Locate groups, this is essentially `vec_group()`
+  // Identify groups, this is essentially `vec_group_id()`
   for (int i = 0; i < n; ++i) {
     int32_t hash = dict_hash_scalar(&d, i);
     R_len_t key = d.key[hash];
