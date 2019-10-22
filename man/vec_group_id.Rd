@@ -2,16 +2,29 @@
 % Please edit documentation in R/dictionary.R
 \name{vec_group_id}
 \alias{vec_group_id}
-\title{Locate groups}
+\title{Identify groups}
 \usage{
 vec_group_id(x)
 }
 \arguments{
 \item{x}{A vector}
 }
+\value{
+An integer vector with a single attribute, \code{n}.
+}
 \description{
-Locate groups
+\Sexpr[results=rd, stage=render]{vctrs:::lifecycle("experimental")}
+
+\code{vec_group_id()} returns an identifier for the group that each element of \code{x}
+falls in, constructed in the order that they appear. The number of groups is
+also returned as an attribute, \code{n}.
 }
 \examples{
-vec_group_id(mtcars[c("vs", "am")])
+vec_group_id(c("r", "s", "t", "a", "t", "s"))
+
+groups <- mtcars[c("vs", "am")]
+vec_group_id(groups)
+
+# `vec_group_id()` is equivalent to
+vec_match(groups, vec_unique(groups))
 }

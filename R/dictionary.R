@@ -71,12 +71,26 @@ reset_rownames <- function(x) {
   x
 }
 
-#' Locate groups
+#' Identify groups
 #'
+#' @description
+#'
+#' \Sexpr[results=rd, stage=render]{vctrs:::lifecycle("experimental")}
+#'
+#' `vec_group_id()` returns an identifier for the group that each element of `x`
+#' falls in, constructed in the order that they appear. The number of groups is
+#' also returned as an attribute, `n`.
 #' @param x A vector
-#' @examples
-#' vec_group_id(mtcars[c("vs", "am")])
+#' @return An integer vector with a single attribute, `n`.
 #' @export
+#' @examples
+#' vec_group_id(c("r", "s", "t", "a", "t", "s"))
+#'
+#' groups <- mtcars[c("vs", "am")]
+#' vec_group_id(groups)
+#'
+#' # `vec_group_id()` is equivalent to
+#' vec_match(groups, vec_unique(groups))
 vec_group_id <- function(x) {
   .Call(vctrs_group_id, x)
 }
