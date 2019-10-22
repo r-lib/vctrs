@@ -302,20 +302,20 @@ SEXP vctrs_group_rle(SEXP x) {
   SEXP l = PROTECT_N(Rf_allocVector(INTSXP, n), &nprot);
   int* p_l = INTEGER(l);
 
-  SEXP map = PROTECT_N(Rf_allocVector(INTSXP, d.size), &nprot);
-  int* p_map = INTEGER(map);
-
   if (n == 0) {
     SEXP out = PROTECT_N(new_group_rle(g, l, 0), &nprot);
     UNPROTECT(nprot);
     return out;
   }
 
-  // First value has not been seen
+  // Integer vector that maps `hash` values to positions in `g`
+  SEXP map = PROTECT_N(Rf_allocVector(INTSXP, d.size), &nprot);
+  int* p_map = INTEGER(map);
+
+  // Initialize first value
   int32_t hash = dict_hash_scalar(&d, 0);
   dict_put(&d, hash, 0);
   p_map[hash] = 0;
-
   *p_g = 1;
   *p_l = 1;
 
