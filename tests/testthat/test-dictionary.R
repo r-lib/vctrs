@@ -76,6 +76,14 @@ test_that("vec_group_id works with different encodings", {
   expect_equal(vec_group_id(encodings()), expect)
 })
 
+test_that("vec_group_id takes the equality proxy", {
+  scoped_comparable_tuple()
+  x <- tuple(c(1, 2, 1, 1), c(1, 1, 1, 2))
+  # Compares on only the first field
+  expect <- structure(c(1L, 2L, 1L, 1L), n = 2L)
+  expect_equal(vec_group_id(x), expect)
+})
+
 # duplicates and uniques --------------------------------------------------
 
 test_that("vec_duplicated reports on duplicates regardless of position", {
