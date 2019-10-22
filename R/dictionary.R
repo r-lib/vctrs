@@ -141,6 +141,19 @@ obj_print_header.vctrs_group_rle <- function(x, ...) {
   invisible(x)
 }
 
+# For testing
+new_group_rle <- function(group, length, n) {
+  vec_assert(group, integer())
+  vec_assert(length, integer())
+  vec_assert(n, integer(), 1L)
+
+  if (vec_size(group) != vec_size(length)) {
+    abort("`group` and `length` must have the same size.")
+  }
+
+  new_rcrd(list(group = group, length = length), n = n, class = "vctrs_group_rle")
+}
+
 # Duplicates --------------------------------------------------------------
 
 #' Find duplicated values
