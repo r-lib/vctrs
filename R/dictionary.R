@@ -71,33 +71,49 @@ reset_rownames <- function(x) {
   x
 }
 
+# Groups -----------------------------------------------------------------
+
 #' Identify groups
 #'
 #' @description
 #'
 #' \Sexpr[results=rd, stage=render]{vctrs:::lifecycle("experimental")}
 #'
-#' `vec_group_id()` returns an identifier for the group that each element of `x`
-#' falls in, constructed in the order that they appear. The number of groups is
-#' also returned as an attribute, `n`.
+#' * `vec_group_id()` returns an identifier for the group that each element of
+#'   `x` falls in, constructed in the order that they appear. The number of
+#'   groups is also returned as an attribute, `n`.
+#'
+#' * `vec_group_rle()` locates groups in `x` and returns them run length
+#'   encoded in the order that they appear. The return value is a list holding
+#'   the `group` identifiers and the run `length` of the corresponding group.
+#'   The number of groups is also returned as an attribute, `n`.
+#'
 #' @param x A vector
-#' @return An integer vector with a single attribute, `n`.
-#' @export
+#' @return
+#'   * `vec_group_id()`: An integer vector with the same size as `x`.
+#'   * `vec_group_rle()`: A list with two integer vector elements: `group` and
+#'     `length`.
+#' @name vec_group
 #' @examples
-#' vec_group_id(c("r", "s", "t", "a", "t", "s"))
+#' purrr <- c("p", "u", "r", "r", "r")
+#' vec_group_id(purrr)
+#' vec_group_rle(purrr)
 #'
 #' groups <- mtcars[c("vs", "am")]
 #' vec_group_id(groups)
+#' vec_group_rle(groups)
 #'
 #' # `vec_group_id()` is equivalent to
 #' vec_match(groups, vec_unique(groups))
+NULL
+
+#' @rdname vec_group
+#' @export
 vec_group_id <- function(x) {
   .Call(vctrs_group_id, x)
 }
 
-#' Identify groups encoded as rle
-#'
-#' @param x A vector
+#' @rdname vec_group
 #' @export
 vec_group_rle <- function(x) {
   .Call(vctrs_group_rle, x)
