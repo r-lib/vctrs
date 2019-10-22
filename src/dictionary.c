@@ -452,10 +452,10 @@ SEXP vec_split_id(SEXP x) {
 
   int n_groups = d.used;
 
-  // Location of first occurence of each group in `x`
-  SEXP key_idx = PROTECT_N(Rf_allocVector(INTSXP, n_groups), &nprot);
-  int* p_key_idx = INTEGER(key_idx);
-  int key_id_current = 0;
+  // Position of first occurence of each group in `x`
+  SEXP key_pos = PROTECT_N(Rf_allocVector(INTSXP, n_groups), &nprot);
+  int* p_key_pos = INTEGER(key_pos);
+  int key_pos_current = 0;
 
   // Count of the number of elements in each group
   SEXP counts = PROTECT_N(Rf_allocVector(INTSXP, n_groups), &nprot);
@@ -465,9 +465,9 @@ SEXP vec_split_id(SEXP x) {
   for (int i = 0; i < n; ++i) {
     int group = p_groups[i];
 
-    if (group == key_id_current) {
-      p_key_idx[key_id_current] = i + 1;
-      key_id_current++;
+    if (group == key_pos_current) {
+      p_key_pos[key_pos_current] = i + 1;
+      key_pos_current++;
     }
 
     p_counts[group]++;
@@ -476,25 +476,26 @@ SEXP vec_split_id(SEXP x) {
   SEXP out_id = PROTECT_N(Rf_allocVector(VECSXP, n_groups), &nprot);
   init_list_of(out_id, vctrs_shared_empty_int);
 
-  // Initialize `out$id` to a list of group indices with sizes corresponding
+  // Initialize `out_id` to a list of integers with sizes corresponding
   // to the number of elements in that group
   for (int i = 0; i < n_groups; ++i) {
     SET_VECTOR_ELT(out_id, i, Rf_allocVector(INTSXP, p_counts[i]));
   }
 
-  SEXP group_indices = PROTECT_N(Rf_allocVector(INTSXP, n_groups), &nprot);
-  int* p_group_indices = INTEGER(group_indices);
-  memset(p_group_indices, 0, n_groups * sizeof(int));
+  // The current position we are updating, each group has its own counter
+  SEXP positions = PROTECT_N(Rf_allocVector(INTSXP, n_groups), &nprot);
+  int* p_positions = INTEGER(positions);
+  memset(p_positions, 0, n_groups * sizeof(int));
 
-  // Fill in the index values for each group
+  // Fill in the position values for each group
   for (int i = 0; i < n; ++i) {
     int group = p_groups[i];
-    int group_index = p_group_indices[group];
-    INTEGER(VECTOR_ELT(out_id, group))[group_index] = i + 1;
-    p_group_indices[group]++;
+    int position = p_positions[group];
+    INTEGER(VECTOR_ELT(out_id, group))[position] = i + 1;
+    p_positions[group]++;
   }
 
-  SEXP out_key = PROTECT_N(vec_slice(x, key_idx), &nprot);
+  SEXP out_key = PROTECT_N(vec_slice(x, key_pos), &nprot);
 
   // Construct output data frame
   SEXP out = PROTECT_N(Rf_allocVector(VECSXP, 2), &nprot);
