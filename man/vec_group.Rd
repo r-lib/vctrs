@@ -16,8 +16,8 @@ vec_group_rle(x)
 \value{
 \itemize{
 \item \code{vec_group_id()}: An integer vector with the same size as \code{x}.
-\item \code{vec_group_rle()}: A list with two integer vector elements: \code{group} and
-\code{length}.
+\item \code{vec_group_rle()}: A \code{vctrs_group_rle} rcrd object with two integer
+vector fields: \code{group} and \code{length}.
 }
 }
 \description{
@@ -27,9 +27,10 @@ vec_group_rle(x)
 \code{x} falls in, constructed in the order that they appear. The number of
 groups is also returned as an attribute, \code{n}.
 \item \code{vec_group_rle()} locates groups in \code{x} and returns them run length
-encoded in the order that they appear. The return value is a list holding
-the \code{group} identifiers and the run \code{length} of the corresponding group.
-The number of groups is also returned as an attribute, \code{n}.
+encoded in the order that they appear. The return value is a rcrd object
+with fields for the \code{group} identifiers and the run \code{length} of the
+corresponding group. The number of groups is also returned as an
+attribute, \code{n}.
 }
 }
 \examples{
@@ -39,7 +40,13 @@ vec_group_rle(purrr)
 
 groups <- mtcars[c("vs", "am")]
 vec_group_id(groups)
-vec_group_rle(groups)
+
+group_rle <- vec_group_rle(groups)
+group_rle
+
+# Access fields with `field()`
+field(group_rle, "group")
+field(group_rle, "length")
 
 # `vec_group_id()` is equivalent to
 vec_match(groups, vec_unique(groups))

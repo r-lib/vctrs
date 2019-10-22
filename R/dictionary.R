@@ -84,15 +84,16 @@ reset_rownames <- function(x) {
 #'   groups is also returned as an attribute, `n`.
 #'
 #' * `vec_group_rle()` locates groups in `x` and returns them run length
-#'   encoded in the order that they appear. The return value is a list holding
-#'   the `group` identifiers and the run `length` of the corresponding group.
-#'   The number of groups is also returned as an attribute, `n`.
+#'   encoded in the order that they appear. The return value is a rcrd object
+#'   with fields for the `group` identifiers and the run `length` of the
+#'   corresponding group. The number of groups is also returned as an
+#'   attribute, `n`.
 #'
 #' @param x A vector
 #' @return
 #'   * `vec_group_id()`: An integer vector with the same size as `x`.
-#'   * `vec_group_rle()`: A list with two integer vector elements: `group` and
-#'     `length`.
+#'   * `vec_group_rle()`: A `vctrs_group_rle` rcrd object with two integer
+#'     vector fields: `group` and `length`.
 #' @name vec_group
 #' @examples
 #' purrr <- c("p", "u", "r", "r", "r")
@@ -101,7 +102,13 @@ reset_rownames <- function(x) {
 #'
 #' groups <- mtcars[c("vs", "am")]
 #' vec_group_id(groups)
-#' vec_group_rle(groups)
+#'
+#' group_rle <- vec_group_rle(groups)
+#' group_rle
+#'
+#' # Access fields with `field()`
+#' field(group_rle, "group")
+#' field(group_rle, "length")
 #'
 #' # `vec_group_id()` is equivalent to
 #' vec_match(groups, vec_unique(groups))
