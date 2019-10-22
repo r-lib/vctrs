@@ -35,6 +35,47 @@ test_that("vec_count works with different encodings", {
   expect_equal(x, new_data_frame(list(key = encodings()[1], count = 3L)))
 })
 
+# groups ------------------------------------------------------------------
+
+test_that("vec_group_id detects groups in order of appearance", {
+  x <- c(2, 4, 2, 1, 4)
+  expect <- structure(c(1L, 2L, 1L, 3L, 2L), n = 3L)
+  expect_equal(vec_group_id(x), expect)
+})
+
+test_that("vec_group_id works for size 0 input", {
+  expect <- structure(integer(), n = 0L)
+  expect_equal(vec_group_id(NULL), expect)
+  expect_equal(vec_group_id(numeric()), expect)
+})
+
+test_that("vec_group_id works on base S3 objects", {
+  x <- factor(c("x", "y", "x"))
+  expect <- structure(c(1L, 2L, 1L), n = 2L)
+  expect_equal(vec_group_id(x), expect)
+
+  x <- new_date(c(0, 1, 0))
+  expect <- structure(c(1L, 2L, 1L), n = 2L)
+  expect_equal(vec_group_id(x), expect)
+})
+
+test_that("vec_group_id works row wise on data frames", {
+  df <- data.frame(x = c(1, 2, 1, 1), y = c(2, 3, 2, 3))
+  expect <- structure(c(1L, 2L, 1L, 3L), n = 3L)
+  expect_equal(vec_group_id(df), expect)
+})
+
+test_that("vec_group_id works row wise on arrays", {
+  x <- array(c(1, 1, 1, 2, 4, 2), c(3, 2))
+  expect <- structure(c(1L, 2L, 1L), n = 2L)
+  expect_equal(vec_group_id(x), expect)
+})
+
+test_that("vec_group_id works with different encodings", {
+  expect <- structure(c(1L, 1L, 1L), n = 1L)
+  expect_equal(vec_group_id(encodings()), expect)
+})
+
 # duplicates and uniques --------------------------------------------------
 
 test_that("vec_duplicated reports on duplicates regardless of position", {
