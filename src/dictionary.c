@@ -270,8 +270,8 @@ static SEXP new_group_rle(SEXP g, SEXP l, R_len_t n) {
   SET_VECTOR_ELT(out, 1, l);
 
   SEXP names = PROTECT(Rf_allocVector(STRSXP, 2));
-  SET_STRING_ELT(names, 0, Rf_mkChar("group"));
-  SET_STRING_ELT(names, 1, Rf_mkChar("length"));
+  SET_STRING_ELT(names, 0, strings_group);
+  SET_STRING_ELT(names, 1, strings_length);
   Rf_setAttrib(out, R_NamesSymbol, names);
 
   SEXP n_groups = PROTECT(Rf_ScalarInteger(n));
