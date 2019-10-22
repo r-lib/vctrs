@@ -119,6 +119,21 @@ vec_group_rle <- function(x) {
   .Call(vctrs_group_rle, x)
 }
 
+#' @export
+format.vctrs_group_rle <- function(x, ...) {
+  group <- field(x, "group")
+  length <- field(x, "length")
+  paste0(group, "x", length)
+}
+
+#' @export
+obj_print_header.vctrs_group_rle <- function(x, ...) {
+  size <- vec_size(x)
+  n <- attr(x, "n")
+  cat_line("<", vec_ptype_full(x), "[", size, "][n = ", n, "]>")
+  invisible(x)
+}
+
 # Duplicates --------------------------------------------------------------
 
 #' Find duplicated values
