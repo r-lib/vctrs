@@ -314,7 +314,7 @@ SEXP vctrs_group_rle(SEXP x) {
   // First value has not been seen
   int32_t hash = dict_hash_scalar(&d, 0);
   dict_put(&d, hash, 0);
-  p_map[0] = 0;
+  p_map[hash] = 0;
 
   *p_g = 1;
   *p_l = 1;
@@ -333,14 +333,13 @@ SEXP vctrs_group_rle(SEXP x) {
 
     // Check if we have seen this value before
     int32_t hash = dict_hash_scalar(&d, i);
-    R_len_t key = d.key[hash];
 
-    if (key == DICT_EMPTY) {
+    if (d.key[hash] == DICT_EMPTY) {
       dict_put(&d, hash, i);
-      p_map[i] = pos;
+      p_map[hash] = pos;
       p_g[pos] = d.used;
     } else {
-      p_g[pos] = p_g[p_map[key]];
+      p_g[pos] = p_g[p_map[hash]];
     }
   }
 
