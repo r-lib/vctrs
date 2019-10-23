@@ -3,7 +3,11 @@
 
 * New experimental `vec_group_rle()` for returning run length encoded groups.
 
-* New experimental `vec_group_id()` for identifying groups in a vector.
+* New experimental `vec_group_id()` for constructing group identifiers from a
+  vector.
+
+* New experimental `vec_group_pos()` for locating the positions of unique
+  groups in a vector (#514).
 
 * New `vec_chop()` for repeatedly slicing a vector. It efficiently captures
   the pattern of `map(indices, vec_slice, x = x)`.
@@ -24,10 +28,6 @@
 
 * New `stop_index_oob_positions()` and `stop_index_oob_names()`
   functions to throw out-of-bounds errors.
-
-* New `vec_split_id()` for locating unique groups in a vector. This
-  helps power `vec_split()` by returning the unique values and their
-  locations in the original vector (#514).
 
 * Equality and ordering methods are now implemented for raw and
   complex vectors (@romainfrancois).
