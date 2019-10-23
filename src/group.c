@@ -134,6 +134,8 @@ static SEXP new_group_rle(SEXP g, SEXP l, R_len_t n) {
   return out;
 }
 
+// -----------------------------------------------------------------------------
+
 // [[ register() ]]
 SEXP vec_group_pos(SEXP x) {
   int nprot = 0;
