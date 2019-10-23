@@ -220,9 +220,7 @@ SEXP vec_group_pos(SEXP x) {
 
   SEXP names = PROTECT_N(Rf_allocVector(STRSXP, 2), &nprot);
   SET_STRING_ELT(names, 0, strings_key);
-  // TODO - Change to `strings_pos` when we change
-  // `vec_split_id()` -> `vec_group_pos()`
-  SET_STRING_ELT(names, 1, strings_id);
+  SET_STRING_ELT(names, 1, strings_pos);
 
   Rf_setAttrib(out, R_NamesSymbol, names);
 
