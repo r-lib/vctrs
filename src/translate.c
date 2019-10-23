@@ -93,7 +93,6 @@ static bool obj_any_known_encoding(SEXP x, R_len_t size) {
 // For usage on list elements. They have unknown size, and might be scalars.
 static bool elt_any_known_encoding(SEXP x) {
   switch (vec_proxy_typeof(x)) {
-  case vctrs_type_scalar: return false;
   case vctrs_type_character: return chr_any_known_encoding(x, vec_size(x));
   case vctrs_type_list: return list_any_known_encoding(x, vec_size(x));
   case vctrs_type_dataframe: return df_any_known_encoding(x, vec_size(x));
@@ -163,7 +162,6 @@ static SEXP obj_translate_encoding(SEXP x, R_len_t size) {
 // For usage on list elements. They have unknown size, and might be scalars.
 static SEXP elt_translate_encoding(SEXP x) {
   switch (vec_proxy_typeof(x)) {
-  case vctrs_type_scalar: return x;
   case vctrs_type_character: return chr_translate_encoding(x, vec_size(x));
   case vctrs_type_list: return list_translate_encoding(x, vec_size(x));
   case vctrs_type_dataframe: return df_translate_encoding(x, vec_size(x));
