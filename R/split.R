@@ -1,7 +1,3 @@
-
-
-# Splitting ---------------------------------------------------------------
-
 #' Split a vector into groups
 #'
 #' This is a generalisation of [split()] that can split by any type of vector,
