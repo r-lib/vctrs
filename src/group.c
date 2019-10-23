@@ -136,7 +136,7 @@ static SEXP new_group_rle(SEXP g, SEXP l, R_len_t n) {
 
 // -----------------------------------------------------------------------------
 
-// [[ register() ]]
+// [[ include("vctrs.h"); register() ]]
 SEXP vec_group_pos(SEXP x) {
   int nprot = 0;
 
