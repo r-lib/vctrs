@@ -1,6 +1,10 @@
 
 # vctrs 0.2.0.9000
 
+* New experimental `vec_group_rle()` for returning run length encoded groups.
+
+* New experimental `vec_group_id()` for identifying groups in a vector.
+
 * New `vec_chop()` for repeatedly slicing a vector. It efficiently captures
   the pattern of `map(indices, vec_slice, x = x)`.
 

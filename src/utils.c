@@ -22,6 +22,7 @@ SEXP strings_vctrs_list_of = NULL;
 SEXP classes_data_frame = NULL;
 SEXP classes_tibble = NULL;
 SEXP classes_list_of = NULL;
+SEXP classes_vctrs_group_rle = NULL;
 
 static SEXP syms_as_data_frame2 = NULL;
 static SEXP fns_as_data_frame2 = NULL;
@@ -968,6 +969,8 @@ SEXP strings_check_unique = NULL;
 SEXP strings_key = NULL;
 SEXP strings_id = NULL;
 SEXP strings_val = NULL;
+SEXP strings_group = NULL;
+SEXP strings_length = NULL;
 
 SEXP syms_i = NULL;
 SEXP syms_n = NULL;
@@ -1008,7 +1011,7 @@ void vctrs_init_utils(SEXP ns) {
 
   // Holds the CHARSXP objects because unlike symbols they can be
   // garbage collected
-  strings = Rf_allocVector(STRSXP, 14);
+  strings = Rf_allocVector(STRSXP, 16);
   R_PreserveObject(strings);
 
   strings_dots = Rf_mkChar("...");
@@ -1053,6 +1056,12 @@ void vctrs_init_utils(SEXP ns) {
   strings_val = Rf_mkChar("val");
   SET_STRING_ELT(strings, 13, strings_val);
 
+  strings_group = Rf_mkChar("group");
+  SET_STRING_ELT(strings, 14, strings_group);
+
+  strings_length = Rf_mkChar("length");
+  SET_STRING_ELT(strings, 15, strings_length);
+
 
   classes_data_frame = Rf_allocVector(STRSXP, 1);
   R_PreserveObject(classes_data_frame);
@@ -1080,6 +1089,14 @@ void vctrs_init_utils(SEXP ns) {
   SET_STRING_ELT(classes_list_of, 0, strings_vctrs_list_of);
 
   SET_STRING_ELT(classes_list_of, 1, strings_vctrs_vctr);
+
+
+  classes_vctrs_group_rle = Rf_allocVector(STRSXP, 3);
+  R_PreserveObject(classes_vctrs_group_rle);
+
+  SET_STRING_ELT(classes_vctrs_group_rle, 0, Rf_mkChar("vctrs_group_rle"));
+  SET_STRING_ELT(classes_vctrs_group_rle, 1, strings_vctrs_rcrd);
+  SET_STRING_ELT(classes_vctrs_group_rle, 2, strings_vctrs_vctr);
 
 
   vctrs_shared_empty_lgl = Rf_allocVector(LGLSXP, 0);
