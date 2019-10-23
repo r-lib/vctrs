@@ -97,6 +97,18 @@ test_that("vec_group_rle works row wise on data frames", {
   expect_equal(vec_group_rle(df), expect)
 })
 
+test_that("can access fields", {
+  x <- vec_group_rle(c(1, 1, 2))
+  expect_equal(fields(x), c("group", "length"))
+  expect_identical(field(x, "group"), c(1L, 2L))
+  expect_identical(field(x, "length"), c(2L, 1L))
+})
+
+test_that("can access number of groups", {
+  x <- vec_group_rle(c(1, 1, 2))
+  expect_identical(attr(x, "n"), 2L)
+})
+
 test_that("print method is useful", {
   x <- new_group_rle(c(1L, 2L, 1L), c(3L, 2L, 1L), 2L)
   expect_known_output(print(x), file = test_path("test-type-group-rle.txt"))
