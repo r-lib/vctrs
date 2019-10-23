@@ -1,5 +1,4 @@
-
-# splits ------------------------------------------------------------------
+context("test-split")
 
 test_that("can split empty vector", {
   out <- vec_split(integer(), character())
