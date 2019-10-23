@@ -77,21 +77,26 @@ static bool chr_translation_required2(SEXP x, R_len_t x_size, SEXP y, R_len_t y_
 // all character elements of the list to UTF-8. Only `list_any_known_encoding()`
 // is ever called directly.
 
-static bool obj_any_known_encoding_impl(SEXP x, R_len_t size, enum vctrs_type type);
-
 static bool chr_any_known_encoding(SEXP x, R_len_t size);
 static bool list_any_known_encoding(SEXP x, R_len_t size);
 static bool df_any_known_encoding(SEXP x, R_len_t size);
 
 static bool obj_any_known_encoding(SEXP x, R_len_t size) {
-  return obj_any_known_encoding_impl(x, size, vec_proxy_typeof(x));
-}
-
-static bool obj_any_known_encoding_impl(SEXP x, R_len_t size, enum vctrs_type type) {
-  switch (type) {
+  switch (vec_proxy_typeof(x)) {
   case vctrs_type_character: return chr_any_known_encoding(x, size);
   case vctrs_type_list: return list_any_known_encoding(x, size);
   case vctrs_type_dataframe: return df_any_known_encoding(x, size);
+  default: return false;
+  }
+}
+
+// For usage on list elements. They have unknown size, and might be scalars.
+static bool elt_any_known_encoding(SEXP x) {
+  switch (vec_proxy_typeof(x)) {
+  case vctrs_type_scalar: return false;
+  case vctrs_type_character: return chr_any_known_encoding(x, vec_size(x));
+  case vctrs_type_list: return list_any_known_encoding(x, vec_size(x));
+  case vctrs_type_dataframe: return df_any_known_encoding(x, vec_size(x));
   default: return false;
   }
 }
@@ -117,13 +122,8 @@ static bool list_any_known_encoding(SEXP x, R_len_t size) {
 
   for (int i = 0; i < size; ++i) {
     elt = VECTOR_ELT(x, i);
-    enum vctrs_type type = vec_proxy_typeof(elt);
 
-    if (type == vctrs_type_scalar) {
-      continue;
-    }
-
-    if (obj_any_known_encoding_impl(elt, vec_size(elt), type)) {
+    if (elt_any_known_encoding(elt)) {
       return true;
     }
   }
@@ -147,21 +147,26 @@ static bool df_any_known_encoding(SEXP x, R_len_t size) {
 // Utilities to translate all character vector elements of an object to UTF-8.
 // This does not check if a translation is required.
 
-static SEXP obj_translate_encoding_impl(SEXP x, R_len_t size, enum vctrs_type type);
-
 static SEXP chr_translate_encoding(SEXP x, R_len_t size);
 static SEXP list_translate_encoding(SEXP x, R_len_t size);
 static SEXP df_translate_encoding(SEXP x, R_len_t size);
 
 static SEXP obj_translate_encoding(SEXP x, R_len_t size) {
-  return obj_translate_encoding_impl(x, size, vec_proxy_typeof(x));
-}
-
-static SEXP obj_translate_encoding_impl(SEXP x, R_len_t size, enum vctrs_type type) {
-  switch (type) {
+  switch (vec_proxy_typeof(x)) {
   case vctrs_type_character: return chr_translate_encoding(x, size);
   case vctrs_type_list: return list_translate_encoding(x, size);
   case vctrs_type_dataframe: return df_translate_encoding(x, size);
+  default: return x;
+  }
+}
+
+// For usage on list elements. They have unknown size, and might be scalars.
+static SEXP elt_translate_encoding(SEXP x) {
+  switch (vec_proxy_typeof(x)) {
+  case vctrs_type_scalar: return x;
+  case vctrs_type_character: return chr_translate_encoding(x, vec_size(x));
+  case vctrs_type_list: return list_translate_encoding(x, vec_size(x));
+  case vctrs_type_dataframe: return df_translate_encoding(x, vec_size(x));
   default: return x;
   }
 }
@@ -201,13 +206,7 @@ static SEXP list_translate_encoding(SEXP x, R_len_t size) {
 
   for (int i = 0; i < size; ++i) {
     elt = VECTOR_ELT(x, i);
-    enum vctrs_type type = vec_proxy_typeof(elt);
-
-    if (type == vctrs_type_scalar) {
-      continue;
-    }
-
-    SET_VECTOR_ELT(x, i, obj_translate_encoding_impl(elt, vec_size(elt), type));
+    SET_VECTOR_ELT(x, i, elt_translate_encoding(elt));
   }
 
   UNPROTECT(1);
