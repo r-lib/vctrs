@@ -264,29 +264,4 @@ vec_split <- function(x, by) {
   .Call(vctrs_split, x, by)
 }
 
-#' Locate unique groups in a vector
-#'
-#' This locates unique groups in `x` and returns both the unique values and
-#' the locations of every appearance of each value. It is used to power
-#' [vec_split()].
-#'
-#' @param x A vector to locate unique groups for.
-#' @return A data frame with two columns and size equal to
-#'   `vec_size(vec_unique(x))`. The `key` column has the same type as `x`, and
-#'   the `id` column is a `list_of<integer>`.
-#'
-#'   Note for complex types, the default `data.frame` print method will be
-#'   suboptimal, and you will want to coerce into a tibble to better understand
-#'   the output.
-#' @seealso [vec_split]
-#' @export
-#' @examples
-#' vec_split_id(mtcars$vs)
-#' vec_split_id(mtcars[c("vs", "am")])
-#'
-#' if (require("tibble")) {
-#'   as_tibble(vec_split_id(mtcars[c("vs", "am")]))
-#' }
-vec_split_id <- function(x) {
-  .Call(vctrs_split_id, x)
-}
+
