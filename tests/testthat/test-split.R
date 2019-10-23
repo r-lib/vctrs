@@ -38,3 +38,11 @@ test_that("split works with different encodings", {
   expect_identical(nrow(vec_split(1:3, encs)), 1L)
 })
 
+test_that("`key` and `value` retain names", {
+  x <- c(a = 1, b = 2, c = 1, a = 1)
+  split <- vec_split(x, x)
+  expect_identical(split$key, c(a = 1, b = 2))
+  expect_identical(split$val[[1]], c(a = 1, c = 1, a = 1))
+  expect_identical(split$val[[2]], c(b = 2))
+})
+
