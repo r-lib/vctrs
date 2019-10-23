@@ -20,7 +20,6 @@ extern SEXP vctrs_hash_object(SEXP);
 extern SEXP vctrs_equal_object(SEXP, SEXP, SEXP);
 extern SEXP vctrs_in(SEXP, SEXP);
 extern SEXP vctrs_duplicated(SEXP);
-extern SEXP vec_split_id(SEXP);
 extern SEXP vec_split(SEXP, SEXP);
 extern SEXP vctrs_unique_loc(SEXP);
 extern SEXP vctrs_count(SEXP);
@@ -28,6 +27,7 @@ extern SEXP vctrs_id(SEXP);
 extern SEXP vctrs_n_distinct(SEXP);
 extern SEXP vctrs_group_id(SEXP);
 extern SEXP vctrs_group_rle(SEXP);
+extern SEXP vec_group_pos(SEXP);
 extern SEXP vctrs_equal(SEXP, SEXP, SEXP);
 extern SEXP vctrs_duplicate_all(SEXP);
 extern SEXP vctrs_equal_na(SEXP);
@@ -109,7 +109,6 @@ static const R_CallMethodDef CallEntries[] = {
   {"vctrs_in",                         (DL_FUNC) &vctrs_in, 2},
   {"vctrs_unique_loc",                 (DL_FUNC) &vctrs_unique_loc, 1},
   {"vctrs_duplicated",                 (DL_FUNC) &vctrs_duplicated, 1},
-  {"vctrs_split_id",                   (DL_FUNC) &vec_split_id, 1},
   {"vctrs_split",                      (DL_FUNC) &vec_split, 2},
   {"vctrs_duplicated_any",             (DL_FUNC) &vctrs_duplicated_any, 1},
   {"vctrs_count",                      (DL_FUNC) &vctrs_count, 1},
@@ -117,6 +116,7 @@ static const R_CallMethodDef CallEntries[] = {
   {"vctrs_n_distinct",                 (DL_FUNC) &vctrs_n_distinct, 1},
   {"vctrs_group_id",                   (DL_FUNC) &vctrs_group_id, 1},
   {"vctrs_group_rle",                  (DL_FUNC) &vctrs_group_rle, 1},
+  {"vctrs_group_pos",                  (DL_FUNC) &vec_group_pos, 1},
   {"vctrs_size",                       (DL_FUNC) &vctrs_size, 1},
   {"vctrs_dim",                        (DL_FUNC) &vec_dim, 1},
   {"vctrs_dim_n",                      (DL_FUNC) &vctrs_dim_n, 1},

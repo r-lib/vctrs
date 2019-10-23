@@ -967,7 +967,7 @@ SEXP strings_unique = NULL;
 SEXP strings_universal = NULL;
 SEXP strings_check_unique = NULL;
 SEXP strings_key = NULL;
-SEXP strings_id = NULL;
+SEXP strings_pos = NULL;
 SEXP strings_val = NULL;
 SEXP strings_group = NULL;
 SEXP strings_length = NULL;
@@ -1050,8 +1050,8 @@ void vctrs_init_utils(SEXP ns) {
   strings_key = Rf_mkChar("key");
   SET_STRING_ELT(strings, 11, strings_key);
 
-  strings_id = Rf_mkChar("id");
-  SET_STRING_ELT(strings, 12, strings_id);
+  strings_pos = Rf_mkChar("pos");
+  SET_STRING_ELT(strings, 12, strings_pos);
 
   strings_val = Rf_mkChar("val");
   SET_STRING_ELT(strings, 13, strings_val);
