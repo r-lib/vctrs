@@ -335,6 +335,19 @@ test_that("data frames are compared row wise", {
   expect_false(vec_duplicate_all(df2))
 })
 
+test_that("the equality proxy is taken recursively", {
+  scoped_comparable_tuple()
+
+  x <- tuple(c(1, 1, 2), 1:3)
+  df <- data_frame(x = x)
+
+  y <- tuple(c(1, 1, 1), 1:3)
+  df2 <- data_frame(y = y)
+
+  expect_equal(vec_duplicate_all(df), FALSE)
+  expect_equal(vec_duplicate_all(df2), TRUE)
+})
+
 test_that("can detect duplicates among strings with different encodings", {
   for (x_encoding in encodings()) {
     for (y_encoding in encodings()) {
