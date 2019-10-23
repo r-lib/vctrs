@@ -333,6 +333,7 @@ SEXP vctrs_count(SEXP x) {
 
   R_len_t n = vec_size(x);
 
+  x = PROTECT_N(vec_proxy_equal(x), &nprot);
   x = PROTECT_N(obj_maybe_translate_encoding(x, n), &nprot);
 
   dictionary d;
