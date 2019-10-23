@@ -424,7 +424,7 @@ SEXP vec_split(SEXP x, SEXP by) {
     Rf_errorcall(R_NilValue, "`x` and `by` must have the same size.");
   }
 
-  SEXP out = PROTECT(vec_split_id(by));
+  SEXP out = PROTECT(vec_group_pos(by));
 
   SEXP indices = VECTOR_ELT(out, 1);
 

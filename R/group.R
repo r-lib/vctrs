@@ -62,14 +62,14 @@ vec_group_id <- function(x) {
 #' @seealso [vec_split]
 #' @export
 #' @examples
-#' vec_split_id(mtcars$vs)
-#' vec_split_id(mtcars[c("vs", "am")])
+#' vec_group_pos(mtcars$vs)
+#' vec_group_pos(mtcars[c("vs", "am")])
 #'
 #' if (require("tibble")) {
-#'   as_tibble(vec_split_id(mtcars[c("vs", "am")]))
+#'   as_tibble(vec_group_pos(mtcars[c("vs", "am")]))
 #' }
-vec_split_id <- function(x) {
-  .Call(vctrs_split_id, x)
+vec_group_pos <- function(x) {
+  .Call(vctrs_group_pos, x)
 }
 
 #' @rdname vec_group

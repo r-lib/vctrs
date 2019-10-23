@@ -135,7 +135,7 @@ static SEXP new_group_rle(SEXP g, SEXP l, R_len_t n) {
 }
 
 // [[ register() ]]
-SEXP vec_split_id(SEXP x) {
+SEXP vec_group_pos(SEXP x) {
   int nprot = 0;
 
   R_len_t n = vec_size(x);

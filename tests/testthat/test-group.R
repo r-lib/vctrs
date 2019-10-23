@@ -114,10 +114,10 @@ test_that("print method is useful", {
   expect_known_output(print(x), file = test_path("test-type-group-rle.txt"))
 })
 
-# split id ---------------------------------------------------------------
+# group pos --------------------------------------------------------------
 
 test_that("can locate unique groups of an empty vector", {
-  out <- vec_split_id(integer())
+  out <- vec_group_pos(integer())
 
   expect_s3_class(out, "data.frame")
   expect_equal(out$key, integer())
@@ -126,7 +126,7 @@ test_that("can locate unique groups of an empty vector", {
 
 test_that("can locate unique groups of a data frame", {
   df <- data_frame(x = c(1, 1, 1, 2, 2), y = c("a", "a", "b", "a", "b"))
-  out <- vec_split_id(df)
+  out <- vec_group_pos(df)
 
   expect_equal(nrow(out), 4L)
   expect_equal(out$key, vec_unique(df))
@@ -134,19 +134,19 @@ test_that("can locate unique groups of a data frame", {
 
 test_that("can locate unique groups of a data frame with a list column", {
   df <- data_frame(x = list(1:2, 1:2, "a", 5.5, "a"))
-  out <- vec_split_id(df)
+  out <- vec_group_pos(df)
 
   expect_equal(nrow(out), 3L)
   expect_equal(out$key, vec_unique(df))
 })
 
 test_that("`x` must be a vector", {
-  expect_error(vec_split_id(environment()), class = "vctrs_error_scalar_type")
+  expect_error(vec_group_pos(environment()), class = "vctrs_error_scalar_type")
 })
 
 test_that("`key` column retains full type information", {
   x <- factor(letters[c(1, 2, 1)], levels = letters[1:3])
-  out <- vec_split_id(x)
+  out <- vec_group_pos(x)
 
   expect_equal(levels(out$key), levels(x))
 })
@@ -159,18 +159,18 @@ test_that("`key` and `value` retain names", {
   expect_identical(split$val[[2]], c(b = 2))
 })
 
-test_that("vec_split_id takes the equality proxy", {
+test_that("vec_group_pos takes the equality proxy", {
   scoped_comparable_tuple()
   x <- tuple(c(1, 2, 1), 1:3)
-  expect_equal(vec_split_id(x)$key, x[1:2])
-  expect_equal(vec_split_id(x)$id, list_of(c(1L, 3L), 2L))
+  expect_equal(vec_group_pos(x)$key, x[1:2])
+  expect_equal(vec_group_pos(x)$id, list_of(c(1L, 3L), 2L))
 
   x <- as.POSIXlt(new_datetime(c(1, 2, 1)))
-  expect_equal(vec_split_id(x)$key, x[1:2])
-  expect_equal(vec_split_id(x)$id, list_of(c(1L, 3L), 2L))
+  expect_equal(vec_group_pos(x)$key, x[1:2])
+  expect_equal(vec_group_pos(x)$id, list_of(c(1L, 3L), 2L))
 })
 
-test_that("vec_split_id works with different encodings", {
+test_that("vec_group_pos works with different encodings", {
   encs <- encodings()
-  expect_identical(nrow(vec_split_id(encs)), 1L)
+  expect_identical(nrow(vec_group_pos(encs)), 1L)
 })
