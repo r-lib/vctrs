@@ -214,6 +214,9 @@ static SEXP df_translate_encoding(SEXP x, R_len_t size) {
 //   translation of every element in the list.
 // - If `x` is a data frame, translate the columns one by one, independently.
 
+// Notes:
+// - Assumes that `x` has been proxied recursively.
+
 static SEXP chr_maybe_translate_encoding(SEXP x, R_len_t size);
 static SEXP list_maybe_translate_encoding(SEXP x, R_len_t size);
 static SEXP df_maybe_translate_encoding(SEXP x, R_len_t size);
@@ -263,6 +266,7 @@ static SEXP df_maybe_translate_encoding2(SEXP x, R_len_t x_size, SEXP y, R_len_t
 
 // Notes:
 // - Assumes that `x` and `y` are the same type from calling `vec_cast()`.
+// - Assumes that `x` and `y` have been recursively proxied.
 // - Does not assume that `x` and `y` are the same size.
 // - Returns a list holding `x` and `y` translated to their common encoding.
 
