@@ -2,6 +2,7 @@
 #include "utils.h"
 #include "dictionary.h"
 
+// [[ register() ]]
 SEXP vctrs_group_id(SEXP x) {
   int nprot = 0;
 
@@ -43,6 +44,7 @@ SEXP vctrs_group_id(SEXP x) {
 
 static SEXP new_group_rle(SEXP g, SEXP l, R_len_t n);
 
+// [[ register() ]]
 SEXP vctrs_group_rle(SEXP x) {
   int nprot = 0;
 
