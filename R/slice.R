@@ -292,7 +292,7 @@ vec_maybe_coerce_index <- function(i, arg, allow_types) {
       maybe(error = new_error_index_bad_type(
         i = i,
         parent = err,
-        .bullets = cnd_bullets_index_lossy_cast,
+        cnd_bullets = cnd_bullets_index_lossy_cast,
         allow_types = allow_types
       ))
     })
@@ -346,7 +346,7 @@ vec_maybe_coerce_position <- function(i, arg, allow_types) {
       i = maybe$error$i,
       allow_types = allow_types,
       .arg = arg,
-      .bullets = bullets,
+      cnd_bullets = bullets,
       parent = maybe$error$parent
     )
 
@@ -360,7 +360,7 @@ vec_maybe_coerce_position <- function(i, arg, allow_types) {
       i = i,
       allow_types = allow_types,
       .arg = arg,
-      .bullets = cnd_bullets_position_bad_base_type
+      cnd_bullets = cnd_bullets_position_bad_base_type
     )))
   }
 
@@ -395,7 +395,7 @@ vec_maybe_as_position <- function(i,
       i = i,
       allow_types = allow_types,
       .arg = arg,
-      .bullets = cnd_bullets_position_need_scalar
+      cnd_bullets = cnd_bullets_position_need_scalar
     )))
   }
 
@@ -410,7 +410,7 @@ vec_maybe_as_position <- function(i,
         i = i,
         allow_types = allow_types,
         .arg = arg,
-        .bullets = cnd_bullets_position_need_present
+        cnd_bullets = cnd_bullets_position_need_present
       ))
     } else {
       maybe <- maybe(i)
@@ -423,7 +423,7 @@ vec_maybe_as_position <- function(i,
       i = i,
       allow_types = allow_types,
       .arg = arg,
-      .bullets = cnd_bullets_position_need_non_zero
+      cnd_bullets = cnd_bullets_position_need_non_zero
     )))
   }
 
@@ -432,7 +432,7 @@ vec_maybe_as_position <- function(i,
       i = i,
       allow_types = allow_types,
       .arg = arg,
-      .bullets = cnd_bullets_position_need_non_negative
+      cnd_bullets = cnd_bullets_position_need_non_negative
     )))
   }
 
