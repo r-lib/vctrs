@@ -32,6 +32,11 @@ static uint32_t hash_int64(int64_t x) {
 // Seems like something designed specificaly for doubles should work better
 // but I haven't been able to find anything
 static uint32_t hash_double(double x) {
+  // Treat positive/negative 0 as equivalent
+  if (x == 0.0) {
+    x = 0.0;
+  }
+
   union {
     double d;
     uint64_t i;
