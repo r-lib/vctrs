@@ -1,6 +1,9 @@
 
 # vctrs 0.2.0.9000
 
+* Positive and negative 0 are now considered equivalent by all functions that
+  check for equality or uniqueness (#637).
+
 * New experimental `vec_group_rle()` for returning run length encoded groups.
 
 * New experimental `vec_group_id()` for constructing group identifiers from a
