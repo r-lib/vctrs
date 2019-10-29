@@ -112,6 +112,12 @@ test_that("unique functions take the equality proxy (#375)", {
   expect_identical(vec_match(tuple(2, 100), x), 2L)
 })
 
+test_that("unique functions treat positive and negative 0 as equivalent (#637)", {
+  expect_equal(vec_unique(c(0, -0)), 0)
+  expect_equal(vec_unique_count(c(0, -0)), 1)
+  expect_equal(vec_unique_loc(c(0, -0)), 1)
+})
+
 test_that("unique functions work with different encodings", {
   encs <- encodings()
 
