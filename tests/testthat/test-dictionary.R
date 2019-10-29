@@ -144,6 +144,12 @@ test_that("duplicate functions take the equality proxy recursively", {
   expect_equal(vec_duplicate_id(df), c(1, 1, 3))
 })
 
+test_that("unique functions treat positive and negative 0 as equivalent (#637)", {
+  expect_equal(vec_unique(c(0, -0)), 0)
+  expect_equal(vec_unique_count(c(0, -0)), 1)
+  expect_equal(vec_unique_loc(c(0, -0)), 1)
+})
+
 test_that("unique functions work with different encodings", {
   encs <- encodings()
 

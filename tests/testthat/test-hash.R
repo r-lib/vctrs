@@ -135,6 +135,10 @@ test_that("can hash complex vectors", {
   )
 })
 
+test_that("hash treats positive and negative 0 as equivalent (#637)", {
+  expect_equal(vec_hash(-0), vec_hash(0))
+})
+
 # Object ------------------------------------------------------------------
 
 test_that("equal objects hash to same value", {
