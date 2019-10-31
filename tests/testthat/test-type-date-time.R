@@ -11,6 +11,11 @@ test_that("date-times have informative types", {
   expect_equal(vec_ptype_full(new_duration(10)), "duration<secs>")
 })
 
+test_that("vec_ptype() returns a double date for integer dates", {
+  x <- structure(0L, class = "Date")
+  expect_true(is.double(vec_ptype(x)))
+})
+
 test_that("dates and times are vectors", {
   expect_true(vec_is(Sys.Date()))
   expect_true(vec_is(as.POSIXct("2020-01-01")))
@@ -24,6 +29,22 @@ test_that("vec_c() converts POSIXct with int representation to double representa
 
   time3 <- vec_c(time1, time1)
   expect_true(is.double(time3))
+})
+
+test_that("vec_c() and vec_rbind() convert Dates with int representation to double representation (#396)", {
+  x <- structure(0L, class = "Date")
+  df <- data.frame(x = x)
+
+  expect_true(is.double(vec_c(x)))
+  expect_true(is.double(vec_c(x, x)))
+
+  expect_true(is.double(vec_rbind(df)$x))
+  expect_true(is.double(vec_rbind(df, df)$x))
+})
+
+test_that("vec_proxy() returns a double for Dates with int representation", {
+  x <- structure(0L, class = "Date")
+  expect_true(is.double(vec_proxy(x)))
 })
 
 # coerce ------------------------------------------------------------------
@@ -102,6 +123,10 @@ test_that("can cast NA and unspecified to Date", {
   expect_identical(vec_cast(unspecified(2), new_date()), new_date(dbl(NA, NA)))
 })
 
+test_that("casting an integer date to another date returns a double date", {
+  x <- structure(0L, class = "Date")
+  expect_true(is.double(vec_cast(x, x)))
+})
 
 # cast: datetimes -----------------------------------------------------------
 
