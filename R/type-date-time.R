@@ -64,6 +64,11 @@ new_duration <- function(x = double(), units = c("secs", "mins", "hours", "days"
 }
 
 #' @export
+vec_proxy.Date <- function(x, ...) {
+  as_double_date(x)
+}
+
+#' @export
 vec_proxy.POSIXct <- function(x, ...) {
   new_datetime(x, attr(x, "tzone"))
 }
@@ -189,7 +194,7 @@ vec_cast.Date.character <- function(x, to, ...) {
 #' @export
 #' @method vec_cast.Date Date
 vec_cast.Date.Date <- function(x, to, ...) {
-  x
+  as_double_date(x)
 }
 #' @export
 #' @method vec_cast.Date POSIXt
@@ -514,6 +519,14 @@ units_union <- function(x, y) {
     units(x)
   } else {
     "secs"
+  }
+}
+
+as_double_date <- function(x) {
+  if (is.integer(x)) {
+    new_date(as.double(x))
+  } else {
+    x
   }
 }
 
