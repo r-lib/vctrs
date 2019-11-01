@@ -35,6 +35,16 @@ test_that("vec_count works with different encodings", {
   expect_equal(x, new_data_frame(list(key = encodings()[1], count = 3L)))
 })
 
+test_that("vec_count recursively takes the equality proxy", {
+  scoped_comparable_tuple()
+
+  x <- tuple(c(1, 1, 2), 1:3)
+  df <- data_frame(x = x)
+  expect <- data_frame(key = vec_slice(df, c(1, 3)), count = c(2L, 1L))
+
+  expect_equal(vec_count(df), expect)
+})
+
 # duplicates and uniques --------------------------------------------------
 
 test_that("vec_duplicated reports on duplicates regardless of position", {
@@ -110,6 +120,28 @@ test_that("unique functions take the equality proxy (#375)", {
 
   expect_true(vec_in(tuple(2, 100), x))
   expect_identical(vec_match(tuple(2, 100), x), 2L)
+})
+
+test_that("unique functions take the equality proxy recursively", {
+  scoped_comparable_tuple()
+
+  x <- tuple(c(1, 1, 2), 1:3)
+  df <- data_frame(x = x)
+
+  expect_equal(vec_unique(df), vec_slice(df, c(1, 3)))
+  expect_equal(vec_unique_count(df), 2L)
+  expect_equal(vec_unique_loc(df), c(1, 3))
+})
+
+test_that("duplicate functions take the equality proxy recursively", {
+  scoped_comparable_tuple()
+
+  x <- tuple(c(1, 1, 2), 1:3)
+  df <- data_frame(x = x)
+
+  expect_equal(vec_duplicate_any(df), TRUE)
+  expect_equal(vec_duplicate_detect(df), c(TRUE, TRUE, FALSE))
+  expect_equal(vec_duplicate_id(df), c(1, 1, 3))
 })
 
 test_that("unique functions treat positive and negative 0 as equivalent (#637)", {
@@ -196,4 +228,17 @@ test_that("matching functions work with different encodings", {
 
   expect_equal(vec_match(encs, encs[1]), rep(1, 3))
   expect_equal(vec_in(encs, encs[1]), rep(TRUE, 3))
+})
+
+test_that("matching functions take the equality proxy recursively", {
+  scoped_comparable_tuple()
+
+  x <- tuple(c(1, 2), 1:2)
+  df <- data_frame(x = x)
+
+  y <- tuple(c(2, 3), c(3, 3))
+  df2 <- data_frame(x = y)
+
+  expect_equal(vec_match(df, df2), c(NA, 1))
+  expect_equal(vec_in(df, df2), c(FALSE, TRUE))
 })

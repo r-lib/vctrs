@@ -49,6 +49,17 @@ test_that("vec_group_id takes the equality proxy", {
   expect_equal(vec_group_id(x), expect)
 })
 
+test_that("vec_group_id takes the equality proxy recursively", {
+  scoped_comparable_tuple()
+
+  x <- tuple(c(1, 2, 1, 1), 1:4)
+  df <- data_frame(x = x)
+
+  expect <- structure(c(1L, 2L, 1L, 1L), n = 2L)
+
+  expect_equal(vec_group_id(df), expect)
+})
+
 # group rle ---------------------------------------------------------------
 
 test_that("vec_group_rle returns a `vctrs_group_rle` object", {
@@ -94,6 +105,17 @@ test_that("vec_group_rle takes the equality proxy", {
 test_that("vec_group_rle works row wise on data frames", {
   df <- data.frame(x = c(1, 1, 2, 1), y = c(2, 2, 3, 2))
   expect <- new_group_rle(c(1L, 2L, 1L), c(2L, 1L, 1L), 2L)
+  expect_equal(vec_group_rle(df), expect)
+})
+
+test_that("vec_group_rle takes the equality proxy recursively", {
+  scoped_comparable_tuple()
+
+  x <- tuple(c(1, 2, 1, 1), 1:4)
+  df <- data_frame(x = x)
+
+  expect <- new_group_rle(c(1L, 2L, 1L), c(1L, 1L, 2L), 2L)
+
   expect_equal(vec_group_rle(df), expect)
 })
 
@@ -160,6 +182,17 @@ test_that("vec_group_pos takes the equality proxy", {
   x <- as.POSIXlt(new_datetime(c(1, 2, 1)))
   expect_equal(vec_group_pos(x)$key, x[1:2])
   expect_equal(vec_group_pos(x)$pos, list_of(c(1L, 3L), 2L))
+})
+
+test_that("vec_group_pos takes the equality proxy recursively", {
+  scoped_comparable_tuple()
+
+  x <- tuple(c(1, 2, 1, 1), 1:4)
+  df <- data_frame(x = x)
+
+  expect <- data_frame(key = vec_slice(df, c(1, 2)), pos = list_of(c(1L, 3L, 4L), 2L))
+
+  expect_equal(vec_group_pos(df), expect)
 })
 
 test_that("vec_group_pos works with different encodings", {
