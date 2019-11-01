@@ -1,4 +1,4 @@
-> vec_as_index(mtcars, 10L)
+> vec_as_index(mtcars, 10)
 Error: Must subset with an index vector.
 x `i` has the wrong type `data.frame<
   mpg : double
@@ -15,26 +15,26 @@ x `i` has the wrong type `data.frame<
 >`.
 i These indices must be indicators, positions or names.
 
-> vec_as_index(env(), 10L)
+> vec_as_index(env(), 10)
 Error: Must subset with an index vector.
 x `i` has the wrong type `environment`.
 i These indices must be indicators, positions or names.
 
-> vec_as_index(foobar(), 10L)
+> vec_as_index(foobar(), 10)
 Error: Must subset with an index vector.
 x `i` has the wrong type `vctrs_foobar`.
 i These indices must be indicators, positions or names.
 
-> vec_as_index(2.5, 3L)
+> vec_as_index(2.5, 3)
 Error: Must subset with an index vector.
 x Lossy cast from `i` <double> to <integer>.
 
-> vec_as_index(list(), 10L)
+> vec_as_index(list(), 10)
 Error: Must subset with an index vector.
 x `i` has the wrong type `list`.
 i These indices must be indicators, positions or names.
 
-> vec_as_index(function() NULL, 10L)
+> vec_as_index(function() NULL, 10)
 Error: Must subset with an index vector.
 x `i` has the wrong type `closure`.
 i These indices must be indicators, positions or names.
@@ -43,17 +43,17 @@ i These indices must be indicators, positions or names.
 Custom `arg`
 ============
 
-> vec_as_index(env(), 10L, arg = "foo")
+> vec_as_index(env(), 10, arg = "foo")
 Error: Must subset with an index vector.
 x `foo` has the wrong type `environment`.
 i These indices must be indicators, positions or names.
 
-> vec_as_index(foobar(), 10L, arg = "foo")
+> vec_as_index(foobar(), 10, arg = "foo")
 Error: Must subset with an index vector.
 x `foo` has the wrong type `vctrs_foobar`.
 i These indices must be indicators, positions or names.
 
-> vec_as_index(2.5, 3L, arg = "foo")
+> vec_as_index(2.5, 3, arg = "foo")
 Error: Must subset with an index vector.
 x Lossy cast from `foo` <double> to <integer>.
 

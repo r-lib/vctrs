@@ -1,9 +1,9 @@
-> vec_as_position(TRUE, 10L)
+> vec_as_position(TRUE, 10)
 Error: Must extract with a single index.
 x `i` has the wrong type `logical`.
 i This index must be a position or a name.
 
-> vec_as_position(mtcars, 10L)
+> vec_as_position(mtcars, 10)
 Error: Must extract with a single index.
 x `i` has the wrong type `data.frame<
   mpg : double
@@ -20,17 +20,17 @@ x `i` has the wrong type `data.frame<
 >`.
 i This index must be a position or a name.
 
-> vec_as_position(env(), 10L)
+> vec_as_position(env(), 10)
 Error: Must extract with a single index.
 x `i` has the wrong type `environment`.
 i This index must be a position or a name.
 
-> vec_as_position(foobar(), 10L)
+> vec_as_position(foobar(), 10)
 Error: Must extract with a single index.
 x `i` has the wrong type `vctrs_foobar`.
 i This index must be a position or a name.
 
-> vec_as_position(2.5, 3L)
+> vec_as_position(2.5, 3)
 Error: Must extract with a single index.
 x Lossy cast from `i` <double> to <integer>.
 
@@ -38,12 +38,12 @@ x Lossy cast from `i` <double> to <integer>.
 Custom `arg`
 ============
 
-> vec_as_position(foobar(), 10L, arg = "foo")
+> vec_as_position(foobar(), 10, arg = "foo")
 Error: Must extract with a single index.
 x `foo` has the wrong type `vctrs_foobar`.
 i This index must be a position or a name.
 
-> vec_as_position(2.5, 3L, arg = "foo")
+> vec_as_position(2.5, 3, arg = "foo")
 Error: Must extract with a single index.
 x Lossy cast from `foo` <double> to <integer>.
 
