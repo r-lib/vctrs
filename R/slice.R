@@ -238,7 +238,7 @@ vec_coerce_index <- function(i,
                              allow_types = c("indicator", "position", "name"),
                              arg = "i") {
   if (!missing(...)) ellipsis::check_dots_empty()
- maybe_get(vec_maybe_coerce_index(
+  maybe_get(vec_maybe_coerce_index(
     i,
     arg = arg,
     allow_types = allow_types

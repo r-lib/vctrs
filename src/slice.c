@@ -602,6 +602,11 @@ SEXP vec_as_index(SEXP i, R_len_t n, SEXP names) {
 
 SEXP vec_as_index_opts(SEXP i, R_len_t n, SEXP names,
                        struct vec_as_index_options* opts) {
+
+  if (vec_dim_n(i) != 1) {
+    Rf_errorcall(R_NilValue, "`i` must have one dimension, not %d.", vec_dim_n(i));
+  }
+
   switch (TYPEOF(i)) {
   case NILSXP: return vctrs_shared_empty_int;
   case INTSXP: return int_as_index(i, n, opts);
