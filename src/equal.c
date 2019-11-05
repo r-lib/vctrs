@@ -23,15 +23,16 @@ int equal_scalar(SEXP x, R_len_t i, SEXP y, R_len_t j, bool na_equal) {
   case STRSXP: return chr_equal_scalar(STRING_PTR(x) + i, STRING_PTR(y) + j, na_equal);
   case RAWSXP: return raw_equal_scalar(RAW(x) + i, RAW(y) + j, na_equal);
   case CPLXSXP: return cpl_equal_scalar(COMPLEX(x) + i, COMPLEX(y) + j, na_equal);
-  case VECSXP: {
-    if (is_data_frame(x)) {
-      return df_equal_scalar(x, i, y, j, na_equal);
-    }
+  default: break;
+  }
 
-    return list_equal_scalar(x, i, y, j, na_equal);
+  switch (vec_proxy_typeof(x)) {
+  case vctrs_type_list: return list_equal_scalar(x, i, y, j, na_equal);
+  case vctrs_type_dataframe: return df_equal_scalar(x, i, y, j, na_equal);
+  default: break;
   }
-  default: vctrs_stop_unsupported_type(vec_typeof(x), "equal_scalar()");
-  }
+
+  vctrs_stop_unsupported_type(vec_typeof(x), "equal_scalar()");
 }
 
 
