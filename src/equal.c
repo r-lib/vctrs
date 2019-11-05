@@ -174,10 +174,6 @@ static int list_equal_scalar(SEXP x, R_len_t i, SEXP y, R_len_t j, bool na_equal
 }
 
 static int df_equal_scalar(SEXP x, R_len_t i, SEXP y, R_len_t j, bool na_equal) {
-  if (!is_data_frame(y)) {
-    return false;
-  }
-
   int p = Rf_length(x);
   if (p != Rf_length(y)) {
     return false;
