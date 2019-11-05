@@ -70,10 +70,13 @@ static uint32_t int_hash_scalar(const int* x) {
 static uint32_t dbl_hash_scalar(const double* x) {
   double val = *x;
   // Hash all NAs and NaNs to same value (i.e. ignoring significand)
-  if (R_IsNA(val)) {
-    val = NA_REAL;
-  } else if (R_IsNaN(val)) {
-    val = R_NaN;
+  // Avoid calling both expensive `R_IsNA()` and `R_IsNaN()` checks
+  if (isnan(val)) {
+    if (R_IsNA(val)) {
+      val = NA_REAL;
+    } else {
+      val = R_NaN;
+    }
   }
   return hash_double(val);
 }
