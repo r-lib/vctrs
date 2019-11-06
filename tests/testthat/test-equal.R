@@ -43,13 +43,18 @@ test_that("can compare data frames", {
 })
 
 test_that("data frames must have same size and columns", {
-  expect_false(.Call(vctrs_equal,
+  expect_error(.Call(vctrs_equal,
     data.frame(x = 1),
     data.frame(x = 1, y = 2),
     TRUE
-  ))
+    ),
+    "must have the same number of columns"
+  )
 
-  expect_false(.Call(vctrs_equal,
+  # Names are not checked, as `vec_cast_common()` should take care of the type.
+  # So if `vec_cast_common()` is not called, or is improperly specified, then
+  # this could result in false equality.
+  expect_true(.Call(vctrs_equal,
     data.frame(x = 1),
     data.frame(y = 1),
     TRUE
