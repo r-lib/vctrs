@@ -59,7 +59,11 @@ test_that("C code doesn't crash with bad inputs", {
   df <- data.frame(x = c(1, 1, 1), y = c(-1, 0, 1))
 
   expect_error(.Call(vctrs_compare, df, df[1], TRUE), "not comparable")
-  expect_error(.Call(vctrs_compare, df, setNames(df, c("x", "z")), TRUE), "not comparable")
+
+  # Names are not checked, as `vec_cast_common()` should take care of the type.
+  # So if `vec_cast_common()` is not called, or is improperly specified, then
+  # this could result in false equality.
+  expect_equal(.Call(vctrs_compare, df, setNames(df, c("x", "z")), TRUE), c(0, 0, 0))
 })
 
 test_that("xtfrm.vctrs_vctr works for variety of base classes", {
