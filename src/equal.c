@@ -118,10 +118,17 @@ static int raw_equal_scalar(const Rbyte* x, const Rbyte* y, bool na_equal) {
 static int dbl_equal_scalar(const double* x, const double* y, bool na_equal) {
   const double xi = *x;
   const double yj = *y;
+
   if (na_equal) {
-    if (R_IsNA(xi)) return R_IsNA(yj);
-    if (R_IsNaN(xi)) return R_IsNaN(yj);
-    if (isnan(yj)) return false;
+    switch(dbl_missing_indicator(xi)) {
+    case vctrs_indicator_exists: break;
+    case vctrs_indicator_na: return dbl_missing_indicator(yj) == vctrs_indicator_na;
+    case vctrs_indicator_nan: return dbl_missing_indicator(yj) == vctrs_indicator_nan;
+    }
+
+    if (isnan(yj)) {
+      return false;
+    }
   } else {
     if (isnan(xi) || isnan(yj)) return NA_LOGICAL;
   }
