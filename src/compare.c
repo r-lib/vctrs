@@ -245,6 +245,7 @@ static SEXP df_compare_impl(SEXP x, SEXP y, bool na_equal, SEXP info, R_len_t n)
 
     info = vec_compare_col(x_col, y_col, na_equal, info, n);
 
+    // If we know all comparison values, break
     count = VECTOR_ELT(info, 2);
     if (*INTEGER(count) == 0) {
       break;
