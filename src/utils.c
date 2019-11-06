@@ -285,6 +285,21 @@ SEXP s3_find_method(const char* generic, SEXP x) {
   return R_NilValue;
 }
 
+// [[ include("vctrs.h") ]]
+enum vctrs_indicator dbl_missing_indicator(double x) {
+  if (isnan(x)) {
+    vctrs_indicator_t indicator;
+    indicator.value = x;
+
+    if (indicator.key[vctrs_indicator_pos] == 1954) {
+      return vctrs_indicator_na;
+    }
+
+    return vctrs_indicator_nan;
+  }
+
+  return vctrs_indicator_exists;
+}
 
 // Initialised at load time
 SEXP compact_seq_attrib = NULL;

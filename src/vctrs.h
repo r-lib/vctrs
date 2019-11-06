@@ -265,6 +265,38 @@ void hash_fill(uint32_t* p, R_len_t n, SEXP x);
 
 bool duplicated_any(SEXP names);
 
+// Missing values -----------------------------------------------
+
+// IEEE 754 defines binary64 as
+// * 1  bit : sign
+// * 11 bits: exponent
+// * 52 bits: significand
+//
+// R stores the value "1954" in the last 32 bits: this payload marks
+// the value as a NA, not a regular NaN.
+//
+// On big endian systems, this corresponds to the second element of an
+// integer array of size 2. On little endian systems, this is flipped
+// and the NA marker is in the first element.
+
+#ifdef WORDS_BIGENDIAN
+static const int vctrs_indicator_pos = 1;
+#else
+static const int vctrs_indicator_pos = 0;
+#endif
+
+typedef union {
+  double value;        // 8 bytes
+  unsigned int key[2]; // 4 * 2 bytes
+} vctrs_indicator_t;
+
+enum vctrs_indicator {
+  vctrs_indicator_exists,
+  vctrs_indicator_na,
+  vctrs_indicator_nan
+};
+
+enum vctrs_indicator dbl_missing_indicator(double x);
 
 // Names --------------------------------------------------------
 
