@@ -267,7 +267,8 @@ bool duplicated_any(SEXP names);
 
 // Missing values -----------------------------------------------
 
-// IEEE 754 defines binary64 as
+// Annex F of C99 specifies that `double` should conform to the IEEE 754
+// type `binary64`, which is defined as:
 // * 1  bit : sign
 // * 11 bits: exponent
 // * 52 bits: significand
