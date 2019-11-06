@@ -97,10 +97,6 @@ static int chr_compare_scalar(const SEXP* x, const SEXP* y, bool na_equal) {
 }
 
 static int df_compare_scalar(SEXP x, R_len_t i, SEXP y, R_len_t j, bool na_equal, int n_col) {
-  if (n_col == 0) {
-    stop_not_comparable(x, y, "data frame with zero columns");
-  }
-
   int cmp;
 
   for (int k = 0; k < n_col; ++k) {
@@ -138,6 +134,10 @@ int compare_scalar(SEXP x, R_len_t i, SEXP y, R_len_t j, bool na_equal) {
       stop_not_comparable(x, y, "must have the same number of columns");
     }
 
+    if (n_col == 0) {
+      stop_not_comparable(x, y, "data frame with zero columns");
+    }
+
     return df_compare_scalar(x, i, y, j, na_equal, n_col);
   }
   default: break;
@@ -148,56 +148,24 @@ int compare_scalar(SEXP x, R_len_t i, SEXP y, R_len_t j, bool na_equal) {
 
 // -----------------------------------------------------------------------------
 
-SEXP vec_compare_col(SEXP x, SEXP y, bool na_equal, SEXP info, R_len_t n);
+static SEXP df_compare(SEXP x, SEXP y, bool na_equal, R_len_t n);
 
 #define COMPARE(CTYPE, CONST_DEREF, SCALAR_COMPARE)     \
 do {                                                    \
-  const CTYPE* xp = CONST_DEREF(x);                     \
-  const CTYPE* yp = CONST_DEREF(y);                     \
+  SEXP out = PROTECT(Rf_allocVector(INTSXP, n));        \
+  int* p_out = INTEGER(out);                            \
                                                         \
-  for (R_len_t i = 0; i < n; ++i, ++xp, ++yp) {         \
-    p[i] = SCALAR_COMPARE(xp, yp, na_equal);            \
+  const CTYPE* p_x = CONST_DEREF(x);                    \
+  const CTYPE* p_y = CONST_DEREF(y);                    \
+                                                        \
+  for (R_len_t i = 0; i < n; ++i, ++p_x, ++p_y) {       \
+    p_out[i] = SCALAR_COMPARE(p_x, p_y, na_equal);      \
   }                                                     \
+                                                        \
+  UNPROTECT(1);                                         \
+  return out;                                           \
 }                                                       \
 while (0)
-
-#define COMPARE_DF()                                                       \
-do {                                                                       \
-  int n_col = Rf_length(x);                                                \
-                                                                           \
-  if (n_col != Rf_length(y)) {                                             \
-    stop_not_comparable(x, y, "must have the same number of columns");     \
-  }                                                                        \
-                                                                           \
-  SEXP x_col;                                                              \
-  SEXP y_col;                                                              \
-                                                                           \
-  SEXP info = PROTECT(Rf_allocVector(VECSXP, 3));                          \
-  SEXP skip = PROTECT(Rf_allocVector(LGLSXP, n));                          \
-  SEXP count = PROTECT(Rf_allocVector(INTSXP, 1));                         \
-  INTEGER(count)[0] = n;                                                   \
-                                                                           \
-  int* p_skip = LOGICAL(skip);                                             \
-  memset(p_skip, 0, n * sizeof(int));                                      \
-                                                                           \
-  memset(p, 0, n * sizeof(int));                                           \
-                                                                           \
-  SET_VECTOR_ELT(info, 0, out);                                            \
-  SET_VECTOR_ELT(info, 1, skip);                                           \
-  SET_VECTOR_ELT(info, 2, count);                                          \
-                                                                           \
-  for (R_len_t i = 0; i < n_col; ++i) {                                    \
-    x_col = VECTOR_ELT(x, i);                                              \
-    y_col = VECTOR_ELT(y, i);                                              \
-                                                                           \
-    info = vec_compare_col(x_col, y_col, na_equal, info, n);               \
-  }                                                                        \
-                                                                           \
-  out = VECTOR_ELT(info, 0);                                               \
-  UNPROTECT(3);                                                            \
-}                                                                          \
-while (0)
-
 
 // [[ register() ]]
 SEXP vctrs_compare(SEXP x, SEXP y, SEXP na_equal_) {
@@ -210,37 +178,103 @@ SEXP vctrs_compare(SEXP x, SEXP y, SEXP na_equal_) {
     stop_not_comparable(x, y, "must have the same types and lengths");
   }
 
-  SEXP out = PROTECT(Rf_allocVector(INTSXP, n));
-  int32_t* p = INTEGER(out);
-
   switch (type) {
-  case vctrs_type_logical:   COMPARE(int, LOGICAL_RO, lgl_compare_scalar); break;
-  case vctrs_type_integer:   COMPARE(int, INTEGER_RO, int_compare_scalar); break;
-  case vctrs_type_double:    COMPARE(double, REAL_RO, dbl_compare_scalar); break;
-  case vctrs_type_character: COMPARE(SEXP, STRING_PTR_RO, chr_compare_scalar); break;
-  case vctrs_type_dataframe: COMPARE_DF(); break;
+  case vctrs_type_logical:   COMPARE(int, LOGICAL_RO, lgl_compare_scalar);
+  case vctrs_type_integer:   COMPARE(int, INTEGER_RO, int_compare_scalar);
+  case vctrs_type_double:    COMPARE(double, REAL_RO, dbl_compare_scalar);
+  case vctrs_type_character: COMPARE(SEXP, STRING_PTR_RO, chr_compare_scalar);
+  case vctrs_type_dataframe: return df_compare(x, y, na_equal, n);
   case vctrs_type_scalar:    Rf_errorcall(R_NilValue, "Can't compare scalars with `vctrs_compare()`");
   case vctrs_type_list:      Rf_errorcall(R_NilValue, "Can't compare lists with `vctrs_compare()`");
   default:                   Rf_error("Unimplemented type in `vctrs_compare()`");
   }
+}
 
-  UNPROTECT(1);
+#undef COMPARE
+
+// -----------------------------------------------------------------------------
+
+static SEXP vec_compare_col(SEXP x, SEXP y, bool na_equal, SEXP info, R_len_t n);
+static SEXP df_compare_impl(SEXP x, SEXP y, bool na_equal, SEXP info, R_len_t n);
+
+static SEXP df_compare(SEXP x, SEXP y, bool na_equal, R_len_t n) {
+  // Skip nothing to begin with
+  SEXP skip = PROTECT(Rf_allocVector(LGLSXP, n));
+  int* p_skip = LOGICAL(skip);
+  memset(p_skip, 0, n * sizeof(int));
+
+  SEXP count = PROTECT(Rf_allocVector(INTSXP, 1));
+  *INTEGER(count) = n;
+
+  // Initialize to "equality" value
+  SEXP out = PROTECT(Rf_allocVector(INTSXP, n));
+  int* p_out = INTEGER(out);
+  memset(p_out, 0, n * sizeof(int));
+
+  SEXP info = PROTECT(Rf_allocVector(VECSXP, 3));
+  SET_VECTOR_ELT(info, 0, out);
+  SET_VECTOR_ELT(info, 1, skip);
+  SET_VECTOR_ELT(info, 2, count);
+
+  info = df_compare_impl(x, y, na_equal, info, n);
+
+  out = VECTOR_ELT(info, 0);
+
+  UNPROTECT(4);
   return out;
 }
 
+static SEXP df_compare_impl(SEXP x, SEXP y, bool na_equal, SEXP info, R_len_t n) {
+  int n_col = Rf_length(x);
+
+  if (n_col == 0) {
+    stop_not_comparable(x, y, "data frame with zero columns");
+  }
+
+  if (n_col != Rf_length(y)) {
+    stop_not_comparable(x, y, "must have the same number of columns");
+  }
+
+  SEXP x_col;
+  SEXP y_col;
+  SEXP count;
+
+  for (R_len_t i = 0; i < n_col; ++i) {
+    x_col = VECTOR_ELT(x, i);
+    y_col = VECTOR_ELT(y, i);
+
+    info = vec_compare_col(x_col, y_col, na_equal, info, n);
+
+    count = VECTOR_ELT(info, 2);
+    if (*INTEGER(count) == 0) {
+      break;
+    }
+  }
+
+  return info;
+}
+
+// -----------------------------------------------------------------------------
+
 #define COMPARE_COL(CTYPE, CONST_DEREF, SCALAR_COMPARE)     \
 do {                                                        \
+  SEXP out = VECTOR_ELT(info, 0);                           \
+  SEXP skip = VECTOR_ELT(info, 1);                          \
+  SEXP count = VECTOR_ELT(info, 2);                         \
+                                                            \
+  int* p_out = INTEGER(out);                                \
+  int* p_skip = LOGICAL(skip);                              \
+  int* p_count = INTEGER(count);                            \
+                                                            \
   const CTYPE* p_x = CONST_DEREF(x);                        \
   const CTYPE* p_y = CONST_DEREF(y);                        \
-                                                            \
-  int cmp;                                                  \
                                                             \
   for (R_len_t i = 0; i < n; ++i, ++p_skip, ++p_x, ++p_y) { \
     if (*p_skip) {                                          \
       continue;                                             \
     }                                                       \
                                                             \
-    cmp = SCALAR_COMPARE(p_x, p_y, na_equal);               \
+    int cmp = SCALAR_COMPARE(p_x, p_y, na_equal);           \
                                                             \
     if (cmp != 0) {                                         \
       p_out[i] = cmp;                                       \
@@ -252,57 +286,26 @@ do {                                                        \
       }                                                     \
     }                                                       \
   }                                                         \
+                                                            \
+  SET_VECTOR_ELT(info, 0, out);                             \
+  SET_VECTOR_ELT(info, 1, skip);                            \
+  SET_VECTOR_ELT(info, 2, count);                           \
+                                                            \
+  return info;                                              \
 }                                                           \
 while (0)
 
-#define COMPARE_DF_COL()                                       \
-do {                                                           \
-  int n_col = Rf_length(x);                                    \
-                                                               \
-  SEXP x_col;                                                  \
-  SEXP y_col;                                                  \
-                                                               \
-  for (R_len_t i = 0; i < n_col; ++i) {                        \
-    x_col = VECTOR_ELT(x, i);                                  \
-    y_col = VECTOR_ELT(y, i);                                  \
-                                                               \
-    info = vec_compare_col(x_col, y_col, na_equal, info, n);   \
-  }                                                            \
-                                                               \
-  return info;                                                 \
-}                                                              \
-while (0)
-
-SEXP vec_compare_col(SEXP x, SEXP y, bool na_equal, SEXP info, R_len_t n) {
-  SEXP out = VECTOR_ELT(info, 0);
-  SEXP skip = VECTOR_ELT(info, 1);
-  SEXP count = VECTOR_ELT(info, 2);
-
-  int* p_out = INTEGER(out);
-  int* p_skip = LOGICAL(skip);
-  int* p_count = INTEGER(count);
-
-  if (*p_count == 0) {
-    return info;
-  }
-
+static SEXP vec_compare_col(SEXP x, SEXP y, bool na_equal, SEXP info, R_len_t n) {
   switch (vec_proxy_typeof(x)) {
-  case vctrs_type_logical:   COMPARE_COL(int, LOGICAL_RO, lgl_compare_scalar); break;
-  case vctrs_type_integer:   COMPARE_COL(int, INTEGER_RO, int_compare_scalar); break;
-  case vctrs_type_double:    COMPARE_COL(double, REAL_RO, dbl_compare_scalar); break;
-  case vctrs_type_character: COMPARE_COL(SEXP, STRING_PTR_RO, chr_compare_scalar); break;
-  case vctrs_type_dataframe: COMPARE_DF_COL();
+  case vctrs_type_logical:   COMPARE_COL(int, LOGICAL_RO, lgl_compare_scalar);
+  case vctrs_type_integer:   COMPARE_COL(int, INTEGER_RO, int_compare_scalar);
+  case vctrs_type_double:    COMPARE_COL(double, REAL_RO, dbl_compare_scalar);
+  case vctrs_type_character: COMPARE_COL(SEXP, STRING_PTR_RO, chr_compare_scalar);
+  case vctrs_type_dataframe: return df_compare_impl(x, y, na_equal, info, n);
   case vctrs_type_scalar:    Rf_errorcall(R_NilValue, "Can't compare scalars with `vctrs_compare()`");
   case vctrs_type_list:      Rf_errorcall(R_NilValue, "Can't compare lists with `vctrs_compare()`");
   default:                   Rf_error("Unimplemented type in `vctrs_compare()`");
   }
-
-  SET_VECTOR_ELT(info, 0, out);
-  SET_VECTOR_ELT(info, 1, skip);
-  SET_VECTOR_ELT(info, 2, count);
-
-  return info;
 }
 
-#undef COMPARE
-#undef COMPARE_DF
+#undef COMPARE_COL
