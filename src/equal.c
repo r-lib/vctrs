@@ -120,10 +120,10 @@ static int dbl_equal_scalar(const double* x, const double* y, bool na_equal) {
   const double yj = *y;
 
   if (na_equal) {
-    switch (dbl_missing_indicator(xi)) {
-    case vctrs_indicator_exists: break;
-    case vctrs_indicator_na: return dbl_missing_indicator(yj) == vctrs_indicator_na;
-    case vctrs_indicator_nan: return dbl_missing_indicator(yj) == vctrs_indicator_nan;
+    switch (dbl_missingness(xi)) {
+    case vctrs_missingness_none: break;
+    case vctrs_missingness_na: return dbl_missingness(yj) == vctrs_missingness_na;
+    case vctrs_missingness_nan: return dbl_missingness(yj) == vctrs_missingness_nan;
     }
 
     if (isnan(yj)) {

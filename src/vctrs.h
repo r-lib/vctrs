@@ -289,15 +289,15 @@ static const int vctrs_indicator_pos = 0;
 typedef union {
   double value;        // 8 bytes
   unsigned int key[2]; // 4 * 2 bytes
-} vctrs_indicator_t;
+} vctrs_missingness_indicator_t;
 
-enum vctrs_indicator {
-  vctrs_indicator_exists,
-  vctrs_indicator_na,
-  vctrs_indicator_nan
+enum vctrs_missingness {
+  vctrs_missingness_none,
+  vctrs_missingness_na,
+  vctrs_missingness_nan
 };
 
-enum vctrs_indicator dbl_missing_indicator(double x);
+enum vctrs_missingness dbl_missingness(double x);
 
 // Names --------------------------------------------------------
 

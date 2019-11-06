@@ -44,29 +44,29 @@ int compare_scalar(SEXP x, R_len_t i, SEXP y, R_len_t j, bool na_equal) {
   case REALSXP: {
     double xi = REAL(x)[i], yj = REAL(y)[j];
     if (na_equal) {
-      enum vctrs_indicator x_indicator = dbl_missing_indicator(xi);
-      enum vctrs_indicator y_indicator = dbl_missing_indicator(yj);
+      enum vctrs_missingness x_missingness = dbl_missingness(xi);
+      enum vctrs_missingness y_missingness = dbl_missingness(yj);
 
-      switch (x_indicator) {
-      case vctrs_indicator_exists: {
-        switch (y_indicator) {
-        case vctrs_indicator_exists: return dcmp(xi, yj);
-        case vctrs_indicator_na: return 1L;
-        case vctrs_indicator_nan: return 1L;
+      switch (x_missingness) {
+      case vctrs_missingness_none: {
+        switch (y_missingness) {
+        case vctrs_missingness_none: return dcmp(xi, yj);
+        case vctrs_missingness_na: return 1L;
+        case vctrs_missingness_nan: return 1L;
         }
       }
-      case vctrs_indicator_na: {
-        switch (y_indicator) {
-        case vctrs_indicator_exists: return -1;
-        case vctrs_indicator_na: return 0;
-        case vctrs_indicator_nan: return 1;
+      case vctrs_missingness_na: {
+        switch (y_missingness) {
+        case vctrs_missingness_none: return -1;
+        case vctrs_missingness_na: return 0;
+        case vctrs_missingness_nan: return 1;
         }
       }
-      case vctrs_indicator_nan: {
-        switch (y_indicator) {
-        case vctrs_indicator_exists: return -1;
-        case vctrs_indicator_na: return -1;
-        case vctrs_indicator_nan: return 0;
+      case vctrs_missingness_nan: {
+        switch (y_missingness) {
+        case vctrs_missingness_none: return -1;
+        case vctrs_missingness_na: return -1;
+        case vctrs_missingness_nan: return 0;
         }
       }
       }
