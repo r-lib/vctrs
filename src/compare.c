@@ -47,23 +47,23 @@ int compare_scalar(SEXP x, R_len_t i, SEXP y, R_len_t j, bool na_equal) {
       enum vctrs_indicator x_indicator = dbl_missing_indicator(xi);
       enum vctrs_indicator y_indicator = dbl_missing_indicator(yj);
 
-      switch(x_indicator) {
+      switch (x_indicator) {
       case vctrs_indicator_exists: {
-        switch(y_indicator) {
+        switch (y_indicator) {
         case vctrs_indicator_exists: return dcmp(xi, yj);
         case vctrs_indicator_na: return 1L;
         case vctrs_indicator_nan: return 1L;
         }
       }
       case vctrs_indicator_na: {
-        switch(y_indicator) {
+        switch (y_indicator) {
         case vctrs_indicator_exists: return -1;
         case vctrs_indicator_na: return 0;
         case vctrs_indicator_nan: return 1;
         }
       }
       case vctrs_indicator_nan: {
-        switch(y_indicator) {
+        switch (y_indicator) {
         case vctrs_indicator_exists: return -1;
         case vctrs_indicator_na: return -1;
         case vctrs_indicator_nan: return 0;

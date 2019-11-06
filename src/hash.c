@@ -71,7 +71,7 @@ static uint32_t dbl_hash_scalar(const double* x) {
   double val = *x;
 
   // Hash all NAs and NaNs to same value (i.e. ignoring significand)
-  switch(dbl_missing_indicator(val)) {
+  switch (dbl_missing_indicator(val)) {
   case vctrs_indicator_exists: break;
   case vctrs_indicator_na: val = NA_REAL; break;
   case vctrs_indicator_nan: val = R_NaN; break;
