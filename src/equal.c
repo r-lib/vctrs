@@ -200,6 +200,30 @@ static int df_equal_scalar(SEXP x, R_len_t i, SEXP y, R_len_t j, bool na_equal) 
   return true;
 }
 
+#define EQUAL_ALL(CTYPE, CONST_DEREF, SCALAR_EQUAL)       \
+  do {                                                    \
+    const CTYPE* xp = CONST_DEREF(x);                     \
+    const CTYPE* yp = CONST_DEREF(y);                     \
+                                                          \
+    for (R_len_t i = 0; i < n; ++i, ++xp, ++yp) {         \
+      eq = SCALAR_EQUAL(xp, yp, na_equal);                \
+      if (eq <= 0) {                                      \
+        break;                                            \
+      }                                                   \
+    }                                                     \
+  }                                                       \
+  while (0)
+
+#define EQUAL_ALL_BARRIER(SCALAR_EQUAL)                   \
+  do {                                                    \
+    for (R_len_t i = 0; i < n; ++i) {                     \
+      eq = SCALAR_EQUAL(x, i, y, i, na_equal);            \
+      if (eq <= 0) {                                      \
+        break;                                            \
+      }                                                   \
+    }                                                     \
+  }                                                       \
+  while (0)
 
 static inline bool obj_equal_attrib(SEXP x, SEXP y);
 static inline int vec_equal_attrib(SEXP x, SEXP y, bool na_equal);
@@ -231,32 +255,14 @@ int equal_object(SEXP x, SEXP y, bool na_equal) {
   }
 
   switch(type) {
+  // Handled below
   case LGLSXP:
   case INTSXP:
   case REALSXP:
   case STRSXP:
   case RAWSXP:
   case CPLXSXP:
-  case VECSXP: {
-    R_len_t n = vec_size(x);
-    if (n != vec_size(y)) {
-      return false;
-    }
-
-    int eq_attr = vec_equal_attrib(x, y, na_equal);
-    if (eq_attr <= 0) {
-      return eq_attr;
-    }
-
-    for (R_len_t i = 0; i < n; ++i) {
-      int eq = equal_scalar(x, i, y, i, na_equal);
-      if (eq <= 0) {
-        return eq;
-      }
-    }
-
-    return true;
-  }
+  case VECSXP: break;
 
   case DOTSXP:
   case LANGSXP:
@@ -307,8 +313,34 @@ int equal_object(SEXP x, SEXP y, bool na_equal) {
     Rf_errorcall(R_NilValue, "Unsupported type %s", Rf_type2char(TYPEOF(x)));
   }
 
-  return true;
+  R_len_t n = Rf_length(x);
+  if (n != Rf_length(y)) {
+    return false;
+  }
+
+  int eq_attr = vec_equal_attrib(x, y, na_equal);
+  if (eq_attr <= 0) {
+    return eq_attr;
+  }
+
+  int eq = true;
+
+  switch (type) {
+  case LGLSXP:  EQUAL_ALL(int, LOGICAL_RO, lgl_equal_scalar); break;
+  case INTSXP:  EQUAL_ALL(int, INTEGER_RO, int_equal_scalar); break;
+  case REALSXP: EQUAL_ALL(double, REAL_RO, dbl_equal_scalar); break;
+  case STRSXP:  EQUAL_ALL(SEXP, STRING_PTR_RO, chr_equal_scalar); break;
+  case RAWSXP:  EQUAL_ALL(Rbyte, RAW_RO, raw_equal_scalar); break;
+  case CPLXSXP: EQUAL_ALL(Rcomplex, COMPLEX_RO, cpl_equal_scalar); break;
+  case VECSXP:  EQUAL_ALL_BARRIER(list_equal_scalar); break;
+  default:      Rf_errorcall(R_NilValue, "Internal error: Unexpected type in `equal_object()`");
+  }
+
+  return eq;
 }
+
+#undef EQUAL_ALL
+#undef EQUAL_ALL_BARRIER
 
 // [[ register() ]]
 SEXP vctrs_equal_object(SEXP x, SEXP y, SEXP na_equal) {

@@ -69,6 +69,20 @@ test_that("data frames must have same size and columns", {
 
 })
 
+test_that("can compare lists of scalars (#643)", {
+  lst <- list(new_sclr(x = 1))
+  expect_true(vec_equal(lst, lst))
+
+  lst <- list(new_sclr(y = NA))
+  expect_equal(vec_equal(lst, lst), NA)
+  expect_true(vec_equal(lst, lst, na_equal = TRUE))
+
+  df <- data.frame(x = c(1, 4, 3), y = c(2, 8, 9))
+  model <- lm(y ~ x, df)
+  lst <- list(model)
+  expect_true(vec_equal(lst, lst))
+})
+
 test_that("can determine equality of strings with different encodings (#553)", {
   for (x_encoding in encodings()) {
     for (y_encoding in encodings()) {
