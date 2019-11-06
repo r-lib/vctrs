@@ -44,30 +44,31 @@ int compare_scalar(SEXP x, R_len_t i, SEXP y, R_len_t j, bool na_equal) {
   case REALSXP: {
     double xi = REAL(x)[i], yj = REAL(y)[j];
     if (na_equal) {
-      if (R_IsNA(xi)) {
-        if (R_IsNaN(yj)) {
-          return 1;
-        } else if (R_IsNA(yj)) {
-          return 0;
-        } else {
-          return -1;
+      enum vctrs_indicator x_indicator = dbl_missing_indicator(xi);
+      enum vctrs_indicator y_indicator = dbl_missing_indicator(yj);
+
+      switch(x_indicator) {
+      case vctrs_indicator_exists: {
+        switch(y_indicator) {
+        case vctrs_indicator_exists: return dcmp(xi, yj);
+        case vctrs_indicator_na: return 1L;
+        case vctrs_indicator_nan: return 1L;
         }
-      } else if (R_IsNaN(xi)) {
-        if (R_IsNaN(yj)) {
-          return 0;
-        } else if (R_IsNA(yj)) {
-          return -1;
-        } else {
-          return -1;
+      }
+      case vctrs_indicator_na: {
+        switch(y_indicator) {
+        case vctrs_indicator_exists: return -1;
+        case vctrs_indicator_na: return 0;
+        case vctrs_indicator_nan: return 1;
         }
-      } else {
-        if (R_IsNaN(yj)) {
-          return 1L;
-        } else if (R_IsNA(yj)) {
-          return 1L;
-        } else {
-          return dcmp(xi, yj);
+      }
+      case vctrs_indicator_nan: {
+        switch(y_indicator) {
+        case vctrs_indicator_exists: return -1;
+        case vctrs_indicator_na: return -1;
+        case vctrs_indicator_nan: return 0;
         }
+      }
       }
     } else {
       return (isnan(xi) || isnan(yj)) ? NA_INTEGER : dcmp(xi, yj);
