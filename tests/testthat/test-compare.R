@@ -111,6 +111,11 @@ test_that("vec_proxy_compare() handles data frame with a POSIXlt column", {
   )
 })
 
+test_that("`na_equal` is validated", {
+  expect_error(vec_compare(1, 1, na_equal = 1), class = "vctrs_error_assert_ptype")
+  expect_error(vec_compare(1, 1, na_equal = c(TRUE, FALSE)), class = "vctrs_error_assert_size")
+})
+
 # order/sort --------------------------------------------------------------
 
 test_that("can request NAs sorted first", {
