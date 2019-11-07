@@ -116,6 +116,31 @@ test_that("`na_equal` is validated", {
   expect_error(vec_compare(1, 1, na_equal = c(TRUE, FALSE)), class = "vctrs_error_assert_size")
 })
 
+test_that("can compare strings with different encodings", {
+  for (x_encoding in encodings()) {
+    for (y_encoding in encodings()) {
+      expect_equal(vec_compare(x_encoding, y_encoding), 0L)
+    }
+  }
+})
+
+test_that("equality can always be determined when strings have identical encodings", {
+  encs <- c(encodings(), list(bytes = encoding_bytes()))
+
+  for (enc in encs) {
+    expect_equal(vec_compare(enc, enc), 0L)
+  }
+})
+
+test_that("equality is known to fail when comparing bytes to other encodings", {
+  error <- "translating strings with \"bytes\" encoding"
+
+  for (enc in encodings()) {
+    expect_error(vec_compare(encoding_bytes(), enc), error)
+    expect_error(vec_compare(enc, encoding_bytes()), error)
+  }
+})
+
 # order/sort --------------------------------------------------------------
 
 test_that("can request NAs sorted first", {

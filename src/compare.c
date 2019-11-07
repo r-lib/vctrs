@@ -14,11 +14,33 @@ static int dcmp(double x, double y) {
   return (x > y) - (x < y);
 }
 
+// UTF-8 translation is successful in these cases:
+// - (utf8 + latin1), (unknown + utf8), (unknown + latin1)
+// UTF-8 translation fails purposefully in these cases:
+// - (bytes + utf8), (bytes + latin1), (bytes + unknown)
+// UTF-8 translation is not attempted in these cases:
+// - (utf8 + utf8), (latin1 + latin1), (unknown + unknown), (bytes + bytes)
+
 static int scmp(SEXP x, SEXP y) {
-  if (x == y)
+  if (x == y) {
     return 0;
-  int cmp = strcmp(CHAR(x), CHAR(y));
-  return cmp / abs(cmp);
+  }
+
+  // Same encoding
+  if (Rf_getCharCE(x) == Rf_getCharCE(y)) {
+    int cmp = strcmp(CHAR(x), CHAR(y));
+    return cmp / abs(cmp);
+  }
+
+  const void *vmax = vmaxget();
+  int cmp = strcmp(Rf_translateCharUTF8(x), Rf_translateCharUTF8(y));
+  vmaxset(vmax);
+
+  if (cmp == 0) {
+    return cmp;
+  } else {
+    return cmp / abs(cmp);
+  }
 }
 
 // -----------------------------------------------------------------------------
@@ -80,7 +102,6 @@ static int dbl_compare_scalar(const double* x, const double* y, bool na_equal) {
   }
 }
 
-// TODO - Handle translations
 static int chr_compare_scalar(const SEXP* x, const SEXP* y, bool na_equal) {
   const SEXP xi = *x;
   const SEXP yj = *y;
