@@ -259,13 +259,9 @@ static SEXP df_compare_impl(SEXP x, SEXP y, bool na_equal, SEXP info, R_len_t n)
 
 #define COMPARE_COL(CTYPE, CONST_DEREF, SCALAR_COMPARE)     \
 do {                                                        \
-  SEXP out = VECTOR_ELT(info, 0);                           \
-  SEXP skip = VECTOR_ELT(info, 1);                          \
-  SEXP count = VECTOR_ELT(info, 2);                         \
-                                                            \
-  int* p_out = INTEGER(out);                                \
-  int* p_skip = LOGICAL(skip);                              \
-  int* p_count = INTEGER(count);                            \
+  int* p_out = INTEGER(VECTOR_ELT(info, 0));                \
+  int* p_skip = LOGICAL(VECTOR_ELT(info, 1));               \
+  int* p_count = INTEGER(VECTOR_ELT(info, 2));              \
                                                             \
   const CTYPE* p_x = CONST_DEREF(x);                        \
   const CTYPE* p_y = CONST_DEREF(y);                        \
@@ -287,10 +283,6 @@ do {                                                        \
       }                                                     \
     }                                                       \
   }                                                         \
-                                                            \
-  SET_VECTOR_ELT(info, 0, out);                             \
-  SET_VECTOR_ELT(info, 1, skip);                            \
-  SET_VECTOR_ELT(info, 2, count);                           \
                                                             \
   return info;                                              \
 }                                                           \
