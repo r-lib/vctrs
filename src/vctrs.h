@@ -290,10 +290,10 @@ static const int vctrs_indicator_pos = 1;
 static const int vctrs_indicator_pos = 0;
 #endif
 
-typedef union {
+union vctrs_dbl_indicator {
   double value;        // 8 bytes
   unsigned int key[2]; // 4 * 2 bytes
-} vctrs_dbl_indicator;
+};
 
 enum vctrs_dbl_type {
   vctrs_dbl_number,

@@ -295,7 +295,7 @@ enum vctrs_dbl_type dbl_type(double x) {
   VCTRS_ASSERT(sizeof(double) == sizeof(int64_t));
   VCTRS_ASSERT(sizeof(double) == 2 * sizeof(int));
 
-  vctrs_dbl_indicator indicator;
+  union vctrs_dbl_indicator indicator;
   indicator.value = x;
 
   if (indicator.key[vctrs_indicator_pos] == 1954) {
