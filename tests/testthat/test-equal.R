@@ -17,9 +17,11 @@ test_that("correct behaviour for basic vectors", {
   expect_equal(vec_equal(c(1L, 2L), 1L), c(TRUE, FALSE))
   expect_equal(vec_equal(c(1, 2), 1), c(TRUE, FALSE))
   expect_equal(vec_equal(c("1", "2"), "1"), c(TRUE, FALSE))
+  expect_equal(vec_equal(as.raw(1:2), as.raw(1L)), c(TRUE, FALSE))
   expect_equal(vec_equal(list(1:3, 1:2), list(1:3)), c(TRUE, FALSE))
   expect_equal(vec_equal(list(1:3, 1.5), list(1:3)), c(TRUE, FALSE))
   expect_equal(vec_equal(list(as.raw(1:3), as.raw(1.5)), list(as.raw(1:3))), c(TRUE, FALSE))
+  expect_equal(vec_equal(list(1+1i, 1+0i), list(1+1i)), c(TRUE, FALSE))
   expect_equal(vec_equal(c(1, 2) + 1i, 1+1i), c(TRUE, FALSE))
 })
 
@@ -42,6 +44,48 @@ test_that("can compare data frames", {
   expect_equal(vec_equal(df, df[1, ]), c(TRUE, FALSE))
 })
 
+test_that("can compare data frames with various types of columns", {
+  x1 <- data_frame(x = 1, y = 2)
+  y1 <- data_frame(x = 2, y = 1)
+
+  x2 <- data_frame(x = "a")
+  y2 <- data_frame(x = "b")
+
+  x3 <- data_frame(x = FALSE)
+  y3 <- data_frame(x = TRUE)
+
+  x4 <- data_frame(x = 1L)
+  y4 <- data_frame(x = 2L)
+
+  x5 <- data_frame(x = as.raw(0))
+  y5 <- data_frame(x = as.raw(1))
+
+  x6 <- data_frame(x = 1+0i)
+  y6 <- data_frame(x = 1+1i)
+
+  expect_false(vec_equal(x1, y1))
+  expect_false(vec_equal(x2, y2))
+  expect_false(vec_equal(x3, y3))
+  expect_false(vec_equal(x4, y4))
+  expect_false(vec_equal(x5, y5))
+  expect_false(vec_equal(x6, y6))
+})
+
+test_that("can compare data frames with data frame columns", {
+  df1 <- data_frame(x = data_frame(a = 1))
+  df2 <- data_frame(x = data_frame(a = 2))
+
+  expect_true(vec_equal(df1, df1))
+  expect_false(vec_equal(df1, df2))
+})
+
+test_that("can compare data frames with list columns", {
+  df1 <- data_frame(x = list(a = 1, b = 2), y = c(1, 1))
+  df2 <- data_frame(x = list(a = 0, b = 2), y = c(1, 1))
+
+  expect_equal(vec_equal(df1, df2), c(FALSE, TRUE))
+})
+
 test_that("data frames must have same size and columns", {
   expect_error(.Call(vctrs_equal,
     data.frame(x = 1),
@@ -60,6 +104,14 @@ test_that("data frames must have same size and columns", {
     TRUE
   ))
 
+  expect_error(.Call(vctrs_equal,
+    data.frame(x = 1:2, y = 3:4),
+    data.frame(x = 1, y = 2),
+    TRUE
+    ),
+    "must have same types and lengths"
+  )
+
   expect_false(.Call(vctrs_equal,
     data.frame(x = 1),
     data.frame(x = 2),
@@ -72,6 +124,11 @@ test_that("data frames must have same size and columns", {
     TRUE
   ))
 
+})
+
+test_that("can compare data frames with 0 columns", {
+  x <- new_data_frame(n = 1L)
+  expect_true(vec_equal(x, x))
 })
 
 test_that("can compare lists of scalars (#643)", {
@@ -113,6 +170,11 @@ test_that("equality is known to fail when comparing bytes to other encodings", {
     expect_error(vec_equal(encoding_bytes(), enc), error)
     expect_error(vec_equal(enc, encoding_bytes()), error)
   }
+})
+
+test_that("`na_equal` is validated", {
+  expect_error(vec_equal(1, 1, na_equal = 1), class = "vctrs_error_assert_ptype")
+  expect_error(vec_equal(1, 1, na_equal = c(TRUE, FALSE)), class = "vctrs_error_assert_size")
 })
 
 # object ------------------------------------------------------------------
