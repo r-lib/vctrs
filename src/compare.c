@@ -174,13 +174,13 @@ static SEXP df_compare(SEXP x, SEXP y, bool na_equal, R_len_t n);
 
 #define COMPARE(CTYPE, CONST_DEREF, SCALAR_COMPARE)     \
 do {                                                    \
-  SEXP out = PROTECT(Rf_allocVector(INTSXP, n));        \
+  SEXP out = PROTECT(Rf_allocVector(INTSXP, size));     \
   int* p_out = INTEGER(out);                            \
                                                         \
   const CTYPE* p_x = CONST_DEREF(x);                    \
   const CTYPE* p_y = CONST_DEREF(y);                    \
                                                         \
-  for (R_len_t i = 0; i < n; ++i, ++p_x, ++p_y) {       \
+  for (R_len_t i = 0; i < size; ++i, ++p_x, ++p_y) {    \
     p_out[i] = SCALAR_COMPARE(p_x, p_y, na_equal);      \
   }                                                     \
                                                         \
@@ -193,10 +193,10 @@ while (0)
 SEXP vctrs_compare(SEXP x, SEXP y, SEXP na_equal_) {
   bool na_equal = Rf_asLogical(na_equal_);
 
-  R_len_t n = vec_size(x);
+  R_len_t size = vec_size(x);
 
   enum vctrs_type type = vec_proxy_typeof(x);
-  if (type != vec_proxy_typeof(y) || n != vec_size(y)) {
+  if (type != vec_proxy_typeof(y) || size != vec_size(y)) {
     stop_not_comparable(x, y, "must have the same types and lengths");
   }
 
@@ -205,7 +205,7 @@ SEXP vctrs_compare(SEXP x, SEXP y, SEXP na_equal_) {
   case vctrs_type_integer:   COMPARE(int, INTEGER_RO, int_compare_scalar);
   case vctrs_type_double:    COMPARE(double, REAL_RO, dbl_compare_scalar);
   case vctrs_type_character: COMPARE(SEXP, STRING_PTR_RO, chr_compare_scalar);
-  case vctrs_type_dataframe: return df_compare(x, y, na_equal, n);
+  case vctrs_type_dataframe: return df_compare(x, y, na_equal, size);
   case vctrs_type_scalar:    Rf_errorcall(R_NilValue, "Can't compare scalars with `vctrs_compare()`");
   case vctrs_type_list:      Rf_errorcall(R_NilValue, "Can't compare lists with `vctrs_compare()`");
   default:                   Rf_error("Unimplemented type in `vctrs_compare()`");
