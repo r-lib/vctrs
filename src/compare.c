@@ -79,8 +79,8 @@ static inline int dbl_compare_scalar(const double* x, const double* y, bool na_e
     case vctrs_dbl_number: {
       switch (y_class) {
       case vctrs_dbl_number: return dcmp(xi, yj);
-      case vctrs_dbl_missing: return 1L;
-      case vctrs_dbl_nan: return 1L;
+      case vctrs_dbl_missing: return 1;
+      case vctrs_dbl_nan: return 1;
       }
     }
     case vctrs_dbl_missing: {
