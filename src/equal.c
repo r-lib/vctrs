@@ -50,13 +50,13 @@ static SEXP df_equal(SEXP x, SEXP y, bool na_equal, R_len_t n_row);
 #define EQUAL(CTYPE, CONST_DEREF, SCALAR_EQUAL)         \
   do {                                                  \
     SEXP out = PROTECT(Rf_allocVector(LGLSXP, size));   \
-    int32_t* p = LOGICAL(out);                          \
+    int32_t* p_out = LOGICAL(out);                      \
                                                         \
-    const CTYPE* xp = CONST_DEREF(x);                   \
-    const CTYPE* yp = CONST_DEREF(y);                   \
+    const CTYPE* p_x = CONST_DEREF(x);                  \
+    const CTYPE* p_y = CONST_DEREF(y);                  \
                                                         \
-    for (R_len_t i = 0; i < size; ++i, ++xp, ++yp) {    \
-      p[i] = SCALAR_EQUAL(xp, yp, na_equal);            \
+    for (R_len_t i = 0; i < size; ++i, ++p_x, ++p_y) {  \
+      p_out[i] = SCALAR_EQUAL(p_x, p_y, na_equal);      \
     }                                                   \
                                                         \
     UNPROTECT(3);                                       \
@@ -67,10 +67,10 @@ static SEXP df_equal(SEXP x, SEXP y, bool na_equal, R_len_t n_row);
 #define EQUAL_BARRIER(SCALAR_EQUAL)                     \
   do {                                                  \
     SEXP out = PROTECT(Rf_allocVector(LGLSXP, size));   \
-    int32_t* p = LOGICAL(out);                          \
+    int32_t* p_out = LOGICAL(out);                      \
                                                         \
     for (R_len_t i = 0; i < size; ++i) {                \
-      p[i] = SCALAR_EQUAL(x, i, y, i, na_equal);        \
+      p_out[i] = SCALAR_EQUAL(x, i, y, i, na_equal);    \
     }                                                   \
                                                         \
     UNPROTECT(3);                                       \
@@ -220,11 +220,11 @@ static int df_equal_scalar(SEXP x, R_len_t i, SEXP y, R_len_t j, bool na_equal, 
 
 #define EQUAL_ALL(CTYPE, CONST_DEREF, SCALAR_EQUAL)       \
   do {                                                    \
-    const CTYPE* xp = CONST_DEREF(x);                     \
-    const CTYPE* yp = CONST_DEREF(y);                     \
+    const CTYPE* p_x = CONST_DEREF(x);                    \
+    const CTYPE* p_y = CONST_DEREF(y);                    \
                                                           \
-    for (R_len_t i = 0; i < n; ++i, ++xp, ++yp) {         \
-      eq = SCALAR_EQUAL(xp, yp, na_equal);                \
+    for (R_len_t i = 0; i < n; ++i, ++p_x, ++p_y) {       \
+      eq = SCALAR_EQUAL(p_x, p_y, na_equal);              \
       if (eq <= 0) {                                      \
         break;                                            \
       }                                                   \
