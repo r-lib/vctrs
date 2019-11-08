@@ -72,30 +72,31 @@ static int dbl_compare_scalar(const double* x, const double* y, bool na_equal) {
   double yj = *y;
 
   if (na_equal) {
-    if (R_IsNA(xi)) {
-      if (R_IsNaN(yj)) {
-        return 1;
-      } else if (R_IsNA(yj)) {
-        return 0;
-      } else {
-        return -1;
+    enum vctrs_dbl_class x_class = dbl_classify(xi);
+    enum vctrs_dbl_class y_class = dbl_classify(yj);
+
+    switch (x_class) {
+    case vctrs_dbl_number: {
+      switch (y_class) {
+      case vctrs_dbl_number: return dcmp(xi, yj);
+      case vctrs_dbl_missing: return 1L;
+      case vctrs_dbl_nan: return 1L;
       }
-    } else if (R_IsNaN(xi)) {
-      if (R_IsNaN(yj)) {
-        return 0;
-      } else if (R_IsNA(yj)) {
-        return -1;
-      } else {
-        return -1;
+    }
+    case vctrs_dbl_missing: {
+      switch (y_class) {
+      case vctrs_dbl_number: return -1;
+      case vctrs_dbl_missing: return 0;
+      case vctrs_dbl_nan: return 1;
       }
-    } else {
-      if (R_IsNaN(yj)) {
-        return 1L;
-      } else if (R_IsNA(yj)) {
-        return 1L;
-      } else {
-        return dcmp(xi, yj);
+    }
+    case vctrs_dbl_nan: {
+      switch (y_class) {
+      case vctrs_dbl_number: return -1;
+      case vctrs_dbl_missing: return -1;
+      case vctrs_dbl_nan: return 0;
       }
+    }
     }
   } else {
     return (isnan(xi) || isnan(yj)) ? NA_INTEGER : dcmp(xi, yj);
