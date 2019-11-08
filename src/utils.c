@@ -291,10 +291,6 @@ enum vctrs_dbl_type dbl_type(double x) {
     return vctrs_dbl_number;
   }
 
-  // We assume the following in `union vctrs_dbl_indicator`
-  VCTRS_ASSERT(sizeof(double) == sizeof(int64_t));
-  VCTRS_ASSERT(sizeof(double) == 2 * sizeof(int));
-
   union vctrs_dbl_indicator indicator;
   indicator.value = x;
 
@@ -1234,4 +1230,8 @@ void vctrs_init_utils(SEXP ns) {
   compact_rep_attrib = Rf_cons(R_NilValue, R_NilValue);
   R_PreserveObject(compact_rep_attrib);
   SET_TAG(compact_rep_attrib, Rf_install("vctrs_compact_rep"));
+
+  // We assume the following in `union vctrs_dbl_indicator`
+  VCTRS_ASSERT(sizeof(double) == sizeof(int64_t));
+  VCTRS_ASSERT(sizeof(double) == 2 * sizeof(int));
 }
