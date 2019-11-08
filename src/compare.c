@@ -44,8 +44,8 @@ int compare_scalar(SEXP x, R_len_t i, SEXP y, R_len_t j, bool na_equal) {
   case REALSXP: {
     double xi = REAL(x)[i], yj = REAL(y)[j];
     if (na_equal) {
-      enum vctrs_dbl_type x_type = dbl_type(xi);
-      enum vctrs_dbl_type y_type = dbl_type(yj);
+      enum vctrs_dbl_type x_type = dbl_classify(xi);
+      enum vctrs_dbl_type y_type = dbl_classify(yj);
 
       switch (x_type) {
       case vctrs_dbl_number: {

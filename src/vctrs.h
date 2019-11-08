@@ -282,7 +282,7 @@ bool duplicated_any(SEXP names);
 // integer array of size 2. On little endian systems, this is flipped
 // and the NA marker is in the first element.
 //
-// The type assumptions made here are asserted in `dbl_type()`
+// The type assumptions made here are asserted in `dbl_classify()`
 
 #ifdef WORDS_BIGENDIAN
 static const int vctrs_indicator_pos = 1;
@@ -301,7 +301,7 @@ enum vctrs_dbl_type {
   vctrs_dbl_nan
 };
 
-enum vctrs_dbl_type dbl_type(double x);
+enum vctrs_dbl_type dbl_classify(double x);
 
 // Names --------------------------------------------------------
 

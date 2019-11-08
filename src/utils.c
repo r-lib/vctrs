@@ -286,7 +286,7 @@ SEXP s3_find_method(const char* generic, SEXP x) {
 }
 
 // [[ include("vctrs.h") ]]
-enum vctrs_dbl_type dbl_type(double x) {
+enum vctrs_dbl_type dbl_classify(double x) {
   if (!isnan(x)) {
     return vctrs_dbl_number;
   }
