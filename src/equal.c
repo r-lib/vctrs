@@ -49,7 +49,7 @@ int equal_scalar(SEXP x, R_len_t i, SEXP y, R_len_t j, bool na_equal) {
     const CTYPE* xp = CONST_DEREF(x);                   \
     const CTYPE* yp = CONST_DEREF(y);                   \
                                                         \
-    for (R_len_t i = 0; i < n; ++i, ++xp, ++yp) {       \
+    for (R_len_t i = 0; i < size; ++i, ++xp, ++yp) {    \
       p[i] = SCALAR_EQUAL(xp, yp, na_equal);            \
     }                                                   \
   }                                                     \
@@ -57,7 +57,7 @@ int equal_scalar(SEXP x, R_len_t i, SEXP y, R_len_t j, bool na_equal) {
 
 #define EQUAL_BARRIER(SCALAR_EQUAL)                     \
   do {                                                  \
-    for (R_len_t i = 0; i < n; ++i) {                   \
+    for (R_len_t i = 0; i < size; ++i) {                \
       p[i] = SCALAR_EQUAL(x, i, y, i, na_equal);        \
     }                                                   \
   }                                                     \
@@ -71,7 +71,7 @@ int equal_scalar(SEXP x, R_len_t i, SEXP y, R_len_t j, bool na_equal) {
       Rf_errorcall(R_NilValue, "`x` and `y` must have the same number of columns"); \
     }                                                                               \
                                                                                     \
-    for (R_len_t i = 0; i < n; ++i) {                                               \
+    for (R_len_t i = 0; i < size; ++i) {                                            \
       p[i] = SCALAR_EQUAL(x, i, y, i, na_equal, n_col);                             \
     }                                                                               \
   }                                                                                 \
@@ -89,8 +89,8 @@ SEXP vctrs_equal(SEXP x, SEXP y, SEXP na_equal_) {
 
   bool na_equal = Rf_asLogical(na_equal_);
 
-  R_len_t n = vec_size(x);
-  SEXP out = PROTECT(Rf_allocVector(LGLSXP, n));
+  R_len_t size = vec_size(x);
+  SEXP out = PROTECT(Rf_allocVector(LGLSXP, size));
   int32_t* p = LOGICAL(out);
 
   switch (type) {
