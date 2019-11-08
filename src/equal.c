@@ -421,32 +421,20 @@ bool equal_names(SEXP x, SEXP y) {
 
 // -----------------------------------------------------------------------------
 
-/**
- * @member out An integer vector of size `n_row` containing the output of the
- *   row wise data frame equality comparison.
- * @member row_known A logical vector of size `n_row`. Initially, all values
- *   are initialized to `FALSE`. As we iterate along the columns, we flip the
- *   corresponding row's `row_known` value to `TRUE` if the equality comparison
- *   determines that the rows are not equal. Once a row's `row_known` value is
- *   `TRUE`, we never check that row again as we continue through the columns.
- * @member remaining The number of `row_known` values that are still `FALSE`.
- *   If this hits `0` before we traverse the entire data frame, we can exit
- *   immediately because all equality comparison values are already known.
- */
-struct vctrs_df_equal_info {
-  SEXP out;
-  SEXP row_known;
-  R_len_t remaining;
-};
+static struct vctrs_df_rowwise_info vec_equal_col(SEXP x,
+                                                  SEXP y,
+                                                  bool na_equal,
+                                                  struct vctrs_df_rowwise_info info,
+                                                  R_len_t n_row);
 
-#define PROTECT_DF_EQUAL_INFO(info, n) do {  \
-  PROTECT((info)->out);                      \
-  PROTECT((info)->row_known);                \
-  *n += 2;                                   \
-} while (0)
+static struct vctrs_df_rowwise_info df_equal_impl(SEXP x,
+                                                  SEXP y,
+                                                  bool na_equal,
+                                                  struct vctrs_df_rowwise_info info,
+                                                  R_len_t n_row);
 
-static struct vctrs_df_equal_info init_equal_info(R_len_t n_row) {
-  struct vctrs_df_equal_info info;
+static struct vctrs_df_rowwise_info init_rowwise_equal_info(R_len_t n_row) {
+  struct vctrs_df_rowwise_info info;
 
   // Initialize to "equality" value
   // and only change if we learn that it differs
@@ -468,25 +456,11 @@ static struct vctrs_df_equal_info init_equal_info(R_len_t n_row) {
   return info;
 }
 
-// -----------------------------------------------------------------------------
-
-static struct vctrs_df_equal_info vec_equal_col(SEXP x,
-                                                SEXP y,
-                                                bool na_equal,
-                                                struct vctrs_df_equal_info info,
-                                                R_len_t n_row);
-
-static struct vctrs_df_equal_info df_equal_impl(SEXP x,
-                                                SEXP y,
-                                                bool na_equal,
-                                                struct vctrs_df_equal_info info,
-                                                R_len_t n_row);
-
 static SEXP df_equal(SEXP x, SEXP y, bool na_equal, R_len_t n_row) {
   int nprot = 0;
 
-  struct vctrs_df_equal_info info = init_equal_info(n_row);
-  PROTECT_DF_EQUAL_INFO(&info, &nprot);
+  struct vctrs_df_rowwise_info info = init_rowwise_equal_info(n_row);
+  PROTECT_DF_ROWWISE_INFO(&info, &nprot);
 
   info = df_equal_impl(x, y, na_equal, info, n_row);
 
@@ -494,11 +468,11 @@ static SEXP df_equal(SEXP x, SEXP y, bool na_equal, R_len_t n_row) {
   return info.out;
 }
 
-static struct vctrs_df_equal_info df_equal_impl(SEXP x,
-                                                SEXP y,
-                                                bool na_equal,
-                                                struct vctrs_df_equal_info info,
-                                                R_len_t n_row) {
+static struct vctrs_df_rowwise_info df_equal_impl(SEXP x,
+                                                  SEXP y,
+                                                  bool na_equal,
+                                                  struct vctrs_df_rowwise_info info,
+                                                  R_len_t n_row) {
   int n_col = Rf_length(x);
 
   if (n_col != Rf_length(y)) {
@@ -579,11 +553,11 @@ do {                                                   \
 }                                                      \
 while (0)
 
-static struct vctrs_df_equal_info vec_equal_col(SEXP x,
-                                                SEXP y,
-                                                bool na_equal,
-                                                struct vctrs_df_equal_info info,
-                                                R_len_t n_row) {
+static struct vctrs_df_rowwise_info vec_equal_col(SEXP x,
+                                                  SEXP y,
+                                                  bool na_equal,
+                                                  struct vctrs_df_rowwise_info info,
+                                                  R_len_t n_row) {
   switch (vec_proxy_typeof(x)) {
   case vctrs_type_logical:   EQUAL_COL(int, LOGICAL_RO, lgl_equal_scalar);
   case vctrs_type_integer:   EQUAL_COL(int, INTEGER_RO, int_equal_scalar);
