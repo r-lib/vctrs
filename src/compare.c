@@ -257,18 +257,14 @@ static SEXP df_compare_impl(SEXP x, SEXP y, bool na_equal, SEXP info, R_len_t n)
     stop_not_comparable(x, y, "must have the same number of columns");
   }
 
-  SEXP x_col;
-  SEXP y_col;
-  int* p_count;
-
   for (R_len_t i = 0; i < n_col; ++i) {
-    x_col = VECTOR_ELT(x, i);
-    y_col = VECTOR_ELT(y, i);
+    SEXP x_col = VECTOR_ELT(x, i);
+    SEXP y_col = VECTOR_ELT(y, i);
 
     info = vec_compare_col(x_col, y_col, na_equal, info, n);
 
     // If we know all comparison values, break
-    p_count = INTEGER(VECTOR_ELT(info, 2));
+    int* p_count = INTEGER(VECTOR_ELT(info, 2));
     if (*p_count == 0) {
       break;
     }
