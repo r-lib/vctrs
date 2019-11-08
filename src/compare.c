@@ -216,37 +216,69 @@ SEXP vctrs_compare(SEXP x, SEXP y, SEXP na_equal_) {
 
 // -----------------------------------------------------------------------------
 
-static SEXP vec_compare_col(SEXP x, SEXP y, bool na_equal, SEXP info, R_len_t n);
-static SEXP df_compare_impl(SEXP x, SEXP y, bool na_equal, SEXP info, R_len_t n);
+struct vctrs_df_compare_info {
+  SEXP out;
+  SEXP row_known;
+  R_len_t remaining;
+};
 
-static SEXP df_compare(SEXP x, SEXP y, bool na_equal, R_len_t n) {
-  // Skip nothing to begin with
-  SEXP skip = PROTECT(Rf_allocVector(LGLSXP, n));
-  int* p_skip = LOGICAL(skip);
-  memset(p_skip, 0, n * sizeof(int));
+#define PROTECT_DF_COMPARE_INFO(info, n) do {  \
+  PROTECT((info)->out);                        \
+  PROTECT((info)->row_known);                  \
+  *n += 2;                                     \
+} while (0)
 
-  SEXP count = PROTECT(Rf_allocVector(INTSXP, 1));
-  *INTEGER(count) = n;
+static struct vctrs_df_compare_info init_compare_info(R_len_t n) {
+  struct vctrs_df_compare_info info;
 
   // Initialize to "equality" value
-  SEXP out = PROTECT(Rf_allocVector(INTSXP, n));
-  int* p_out = INTEGER(out);
+  // and only change if we learn that it differs
+  info.out = PROTECT(Rf_allocVector(INTSXP, n));
+  int* p_out = INTEGER(info.out);
   memset(p_out, 0, n * sizeof(int));
 
-  SEXP info = PROTECT(Rf_allocVector(VECSXP, 3));
-  SET_VECTOR_ELT(info, 0, out);
-  SET_VECTOR_ELT(info, 1, skip);
-  SET_VECTOR_ELT(info, 2, count);
+  // To begin with, no rows have a known comparison value
+  info.row_known = PROTECT(Rf_allocVector(LGLSXP, n));
+  int* p_row_known = LOGICAL(info.row_known);
+  memset(p_row_known, 0, n * sizeof(int));
+
+  info.remaining = n;
+
+  UNPROTECT(2);
+  return info;
+}
+
+// -----------------------------------------------------------------------------
+
+static struct vctrs_df_compare_info vec_compare_col(SEXP x,
+                                                    SEXP y,
+                                                    bool na_equal,
+                                                    struct vctrs_df_compare_info info,
+                                                    R_len_t n);
+
+static struct vctrs_df_compare_info df_compare_impl(SEXP x,
+                                                    SEXP y,
+                                                    bool na_equal,
+                                                    struct vctrs_df_compare_info info,
+                                                    R_len_t n);
+
+static SEXP df_compare(SEXP x, SEXP y, bool na_equal, R_len_t n) {
+  int nprot = 0;
+
+  struct vctrs_df_compare_info info = init_compare_info(n);
+  PROTECT_DF_COMPARE_INFO(&info, &nprot);
 
   info = df_compare_impl(x, y, na_equal, info, n);
 
-  out = VECTOR_ELT(info, 0);
-
-  UNPROTECT(4);
-  return out;
+  UNPROTECT(nprot);
+  return info.out;
 }
 
-static SEXP df_compare_impl(SEXP x, SEXP y, bool na_equal, SEXP info, R_len_t n) {
+static struct vctrs_df_compare_info df_compare_impl(SEXP x,
+                                                    SEXP y,
+                                                    bool na_equal,
+                                                    struct vctrs_df_compare_info info,
+                                                    R_len_t n) {
   int n_col = Rf_length(x);
 
   if (n_col == 0) {
@@ -264,8 +296,7 @@ static SEXP df_compare_impl(SEXP x, SEXP y, bool na_equal, SEXP info, R_len_t n)
     info = vec_compare_col(x_col, y_col, na_equal, info, n);
 
     // If we know all comparison values, break
-    int* p_count = INTEGER(VECTOR_ELT(info, 2));
-    if (*p_count == 0) {
+    if (info.remaining == 0) {
       break;
     }
   }
@@ -275,38 +306,41 @@ static SEXP df_compare_impl(SEXP x, SEXP y, bool na_equal, SEXP info, R_len_t n)
 
 // -----------------------------------------------------------------------------
 
-#define COMPARE_COL(CTYPE, CONST_DEREF, SCALAR_COMPARE)     \
-do {                                                        \
-  int* p_out = INTEGER(VECTOR_ELT(info, 0));                \
-  int* p_skip = LOGICAL(VECTOR_ELT(info, 1));               \
-  int* p_count = INTEGER(VECTOR_ELT(info, 2));              \
-                                                            \
-  const CTYPE* p_x = CONST_DEREF(x);                        \
-  const CTYPE* p_y = CONST_DEREF(y);                        \
-                                                            \
-  for (R_len_t i = 0; i < n; ++i, ++p_skip, ++p_x, ++p_y) { \
-    if (*p_skip) {                                          \
-      continue;                                             \
-    }                                                       \
-                                                            \
-    int cmp = SCALAR_COMPARE(p_x, p_y, na_equal);           \
-                                                            \
-    if (cmp != 0) {                                         \
-      p_out[i] = cmp;                                       \
-      *p_skip = true;                                       \
-      --(*p_count);                                         \
-                                                            \
-      if (*p_count == 0) {                                  \
-        break;                                              \
-      }                                                     \
-    }                                                       \
-  }                                                         \
-                                                            \
-  return info;                                              \
-}                                                           \
+#define COMPARE_COL(CTYPE, CONST_DEREF, SCALAR_COMPARE)          \
+do {                                                             \
+  int* p_out = INTEGER(info.out);                                \
+  int* p_row_known = LOGICAL(info.row_known);                    \
+                                                                 \
+  const CTYPE* p_x = CONST_DEREF(x);                             \
+  const CTYPE* p_y = CONST_DEREF(y);                             \
+                                                                 \
+  for (R_len_t i = 0; i < n; ++i, ++p_row_known, ++p_x, ++p_y) { \
+    if (*p_row_known) {                                          \
+      continue;                                                  \
+    }                                                            \
+                                                                 \
+    int cmp = SCALAR_COMPARE(p_x, p_y, na_equal);                \
+                                                                 \
+    if (cmp != 0) {                                              \
+      p_out[i] = cmp;                                            \
+      *p_row_known = true;                                       \
+      --info.remaining;                                          \
+                                                                 \
+      if (info.remaining == 0) {                                 \
+        break;                                                   \
+      }                                                          \
+    }                                                            \
+  }                                                              \
+                                                                 \
+  return info;                                                   \
+}                                                                \
 while (0)
 
-static SEXP vec_compare_col(SEXP x, SEXP y, bool na_equal, SEXP info, R_len_t n) {
+static struct vctrs_df_compare_info vec_compare_col(SEXP x,
+                                                    SEXP y,
+                                                    bool na_equal,
+                                                    struct vctrs_df_compare_info info,
+                                                    R_len_t n) {
   switch (vec_proxy_typeof(x)) {
   case vctrs_type_logical:   COMPARE_COL(int, LOGICAL_RO, lgl_compare_scalar);
   case vctrs_type_integer:   COMPARE_COL(int, INTEGER_RO, int_compare_scalar);
