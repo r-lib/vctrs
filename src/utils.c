@@ -291,6 +291,10 @@ enum vctrs_dbl_type dbl_type(double x) {
     return vctrs_dbl_number;
   }
 
+  // We assume the following in `union vctrs_dbl_indicator`
+  VCTRS_ASSERT(sizeof(double) == sizeof(int64_t));
+  VCTRS_ASSERT(sizeof(double) == 2 * sizeof(int));
+
   vctrs_dbl_indicator indicator;
   indicator.value = x;
 

@@ -8,6 +8,8 @@
 
 typedef R_xlen_t r_ssize_t;
 
+#define VCTRS_ASSERT(condition) ((void)sizeof(char[1 - 2*!(condition)]))
+
 
 // Vector types -------------------------------------------------
 
@@ -279,6 +281,8 @@ bool duplicated_any(SEXP names);
 // On big endian systems, this corresponds to the second element of an
 // integer array of size 2. On little endian systems, this is flipped
 // and the NA marker is in the first element.
+//
+// The type assumptions made here are asserted in `dbl_type()`
 
 #ifdef WORDS_BIGENDIAN
 static const int vctrs_indicator_pos = 1;
