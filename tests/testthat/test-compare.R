@@ -100,6 +100,10 @@ test_that("C code doesn't crash with bad inputs", {
   # So if `vec_cast_common()` is not called, or is improperly specified, then
   # this could result in false equality.
   expect_equal(.Call(vctrs_compare, df, setNames(df, c("x", "z")), TRUE), c(0, 0, 0))
+
+  df1 <- new_data_frame(list(x = 1:3, y = c(1, 1, 1)))
+  df2 <- new_data_frame(list(y = 1:2, x = 1:2))
+  expect_error(.Call(vctrs_compare, df1, df2, TRUE), "must have the same types and lengths")
 })
 
 test_that("xtfrm.vctrs_vctr works for variety of base classes", {
@@ -176,7 +180,7 @@ test_that("can compare equal strings with different encodings", {
   }
 })
 
-test_that("can compare different strings with different encodings", {
+test_that("can compare non-equal strings with different encodings", {
   x <- "x"
   y <- encodings()$latin1
 
@@ -184,7 +188,7 @@ test_that("can compare different strings with different encodings", {
 })
 
 test_that("equality can always be determined when strings have identical encodings", {
-  encs <- c(encodings(), list(bytes = encoding_bytes()))
+  encs <- list2(!!!encodings(), bytes = encoding_bytes())
 
   for (enc in encs) {
     expect_equal(vec_compare(enc, enc), 0L)
