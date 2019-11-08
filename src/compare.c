@@ -45,7 +45,7 @@ static int scmp(SEXP x, SEXP y) {
 
 // -----------------------------------------------------------------------------
 
-static int lgl_compare_scalar(const int* x, const int* y, bool na_equal) {
+static inline int lgl_compare_scalar(const int* x, const int* y, bool na_equal) {
   int xi = *x;
   int yj = *y;
 
@@ -56,7 +56,7 @@ static int lgl_compare_scalar(const int* x, const int* y, bool na_equal) {
   }
 }
 
-static int int_compare_scalar(const int* x, const int* y, bool na_equal) {
+static inline int int_compare_scalar(const int* x, const int* y, bool na_equal) {
   int xi = *x;
   int yj = *y;
 
@@ -67,7 +67,7 @@ static int int_compare_scalar(const int* x, const int* y, bool na_equal) {
   }
 }
 
-static int dbl_compare_scalar(const double* x, const double* y, bool na_equal) {
+static inline int dbl_compare_scalar(const double* x, const double* y, bool na_equal) {
   double xi = *x;
   double yj = *y;
 
@@ -103,7 +103,7 @@ static int dbl_compare_scalar(const double* x, const double* y, bool na_equal) {
   }
 }
 
-static int chr_compare_scalar(const SEXP* x, const SEXP* y, bool na_equal) {
+static inline int chr_compare_scalar(const SEXP* x, const SEXP* y, bool na_equal) {
   const SEXP xi = *x;
   const SEXP yj = *y;
 
@@ -118,7 +118,7 @@ static int chr_compare_scalar(const SEXP* x, const SEXP* y, bool na_equal) {
   }
 }
 
-static int df_compare_scalar(SEXP x, R_len_t i, SEXP y, R_len_t j, bool na_equal, int n_col) {
+static inline int df_compare_scalar(SEXP x, R_len_t i, SEXP y, R_len_t j, bool na_equal, int n_col) {
   int cmp;
 
   for (int k = 0; k < n_col; ++k) {
