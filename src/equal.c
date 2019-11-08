@@ -82,14 +82,15 @@ SEXP vctrs_equal(SEXP x, SEXP y, SEXP na_equal_) {
   x = PROTECT(vec_proxy_recursive(x, vctrs_proxy_equal));
   y = PROTECT(vec_proxy_recursive(y, vctrs_proxy_equal));
 
+  R_len_t size = vec_size(x);
+
   enum vctrs_type type = vec_proxy_typeof(x);
-  if (type != vec_proxy_typeof(y) || vec_size(x) != vec_size(y)) {
+  if (type != vec_proxy_typeof(y) || size != vec_size(y)) {
     Rf_errorcall(R_NilValue, "`x` and `y` must have same types and lengths");
   }
 
   bool na_equal = Rf_asLogical(na_equal_);
 
-  R_len_t size = vec_size(x);
   SEXP out = PROTECT(Rf_allocVector(LGLSXP, size));
   int32_t* p = LOGICAL(out);
 
