@@ -216,6 +216,19 @@ SEXP vctrs_compare(SEXP x, SEXP y, SEXP na_equal_) {
 
 // -----------------------------------------------------------------------------
 
+/**
+ * @member out An integer vector of size `n_row` containing the output of the
+ *   row wise data frame comparison.
+ * @member row_known A logical vector of size `n_row`. Initially, all values
+ *   are initialized to `FALSE`. As we iterate along the columns, we flip the
+ *   corresponding row's `row_known` value to `TRUE` if we can determine it
+ *   from the current column comparison (i.e. the comparison returns less than
+ *   or greater than). Once a row's `row_known` value is `TRUE`, we never check
+ *   that row again as we continue through the columns.
+ * @member remaining The number of `row_known` values that are still `FALSE`.
+ *   If this hits `0` before we traverse the entire data frame, we can exit
+ *   immediately because all comparison values are already known.
+ */
 struct vctrs_df_compare_info {
   SEXP out;
   SEXP row_known;
