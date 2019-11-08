@@ -1,4 +1,5 @@
 #include "vctrs.h"
+#include "utils.h"
 #include <strings.h>
 
 static void stop_not_comparable(SEXP x, SEXP y, const char* message) {
@@ -101,6 +102,8 @@ static inline int dbl_compare_scalar(const double* x, const double* y, bool na_e
   } else {
     return (isnan(xi) || isnan(yj)) ? NA_INTEGER : dcmp(xi, yj);
   }
+
+  never_reached("dbl_compare_scalar");
 }
 
 static inline int chr_compare_scalar(const SEXP* x, const SEXP* y, bool na_equal) {
