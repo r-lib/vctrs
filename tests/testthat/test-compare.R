@@ -55,11 +55,55 @@ test_that("data frames are compared column by column", {
   expect_equal(vec_compare(df1[2:1], df1[2, 2:1]), c(-1, 0, 1))
 })
 
+test_that("can compare data frames with various types of columns", {
+  x1 <- data_frame(x = 1, y = 2)
+  y1 <- data_frame(x = 2, y = 1)
+
+  x2 <- data_frame(x = "a")
+  y2 <- data_frame(x = "b")
+
+  x3 <- data_frame(x = FALSE)
+  y3 <- data_frame(x = TRUE)
+
+  x4 <- data_frame(x = 1L)
+  y4 <- data_frame(x = 2L)
+
+  expect_equal(vec_compare(x1, y1), -1)
+  expect_equal(vec_compare(x2, y2), -1)
+  expect_equal(vec_compare(x3, y3), -1)
+  expect_equal(vec_compare(x4, y4), -1)
+})
+
+test_that("can compare data frames with data frame columns", {
+  df1 <- data_frame(x = data_frame(a = 1))
+  df2 <- data_frame(x = data_frame(a = 2))
+
+  expect_equal(vec_compare(df1, df1), 0)
+  expect_equal(vec_compare(df1, df2), -1)
+})
+
+test_that("can compare data frames with list columns because of `vec_proxy_compare(relax = TRUE)`", {
+  # lists are replaced with `vec_seq_along()`,
+  # so `list(a = 1)` and `list(a = 0)` look equivalent
+  df1 <- data_frame(x = list(a = 1), y = 2)
+  df2 <- data_frame(x = list(a = 0), y = 3)
+
+  expect_equal(vec_compare(df1, df2), -1)
+})
+
 test_that("C code doesn't crash with bad inputs", {
   df <- data.frame(x = c(1, 1, 1), y = c(-1, 0, 1))
 
   expect_error(.Call(vctrs_compare, df, df[1], TRUE), "not comparable")
-  expect_error(.Call(vctrs_compare, df, setNames(df, c("x", "z")), TRUE), "not comparable")
+
+  # Names are not checked, as `vec_cast_common()` should take care of the type.
+  # So if `vec_cast_common()` is not called, or is improperly specified, then
+  # this could result in false equality.
+  expect_equal(.Call(vctrs_compare, df, setNames(df, c("x", "z")), TRUE), c(0, 0, 0))
+
+  df1 <- new_data_frame(list(x = 1:3, y = c(1, 1, 1)))
+  df2 <- new_data_frame(list(y = 1:2, x = 1:2))
+  expect_error(.Call(vctrs_compare, df1, df2, TRUE), "must have the same types and lengths")
 })
 
 test_that("xtfrm.vctrs_vctr works for variety of base classes", {
@@ -105,6 +149,59 @@ test_that("vec_proxy_compare() handles data frame with a POSIXlt column", {
     vec_proxy_compare(df),
     vec_proxy_compare(df2)
   )
+})
+
+test_that("error is thrown with data frames with 0 columns", {
+  x <- new_data_frame(n = 1L)
+  expect_error(vec_compare(x, x), "data frame with zero columns")
+})
+
+test_that("error is thrown when comparing lists", {
+  expect_error(vec_compare(list(), list()), class = "vctrs_error_unsupported")
+  expect_error(.Call(vctrs_compare, list(), list(), FALSE), "Can't compare lists")
+})
+
+test_that("error is thrown when comparing scalars", {
+  x <- new_sclr(x = 1)
+  expect_error(vec_compare(x, x), class = "vctrs_error_scalar_type")
+  expect_error(.Call(vctrs_compare, x, x, FALSE), class = "vctrs_error_scalar_type")
+})
+
+test_that("`na_equal` is validated", {
+  expect_error(vec_compare(1, 1, na_equal = 1), class = "vctrs_error_assert_ptype")
+  expect_error(vec_compare(1, 1, na_equal = c(TRUE, FALSE)), class = "vctrs_error_assert_size")
+})
+
+test_that("can compare equal strings with different encodings", {
+  for (x_encoding in encodings()) {
+    for (y_encoding in encodings()) {
+      expect_equal(vec_compare(x_encoding, y_encoding), 0L)
+    }
+  }
+})
+
+test_that("can compare non-equal strings with different encodings", {
+  x <- "x"
+  y <- encodings()$latin1
+
+  expect_equal(vec_compare(x, y), -1L)
+})
+
+test_that("equality can always be determined when strings have identical encodings", {
+  encs <- list2(!!!encodings(), bytes = encoding_bytes())
+
+  for (enc in encs) {
+    expect_equal(vec_compare(enc, enc), 0L)
+  }
+})
+
+test_that("equality is known to fail when comparing bytes to other encodings", {
+  error <- "translating strings with \"bytes\" encoding"
+
+  for (enc in encodings()) {
+    expect_error(vec_compare(encoding_bytes(), enc), error)
+    expect_error(vec_compare(enc, encoding_bytes()), error)
+  }
 })
 
 # order/sort --------------------------------------------------------------
