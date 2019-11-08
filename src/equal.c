@@ -46,25 +46,40 @@ int equal_scalar(SEXP x, R_len_t i, SEXP y, R_len_t j, bool na_equal) {
 
 #define EQUAL(CTYPE, CONST_DEREF, SCALAR_EQUAL)         \
   do {                                                  \
+    SEXP out = PROTECT(Rf_allocVector(LGLSXP, size));   \
+    int32_t* p = LOGICAL(out);                          \
+                                                        \
     const CTYPE* xp = CONST_DEREF(x);                   \
     const CTYPE* yp = CONST_DEREF(y);                   \
                                                         \
     for (R_len_t i = 0; i < size; ++i, ++xp, ++yp) {    \
       p[i] = SCALAR_EQUAL(xp, yp, na_equal);            \
     }                                                   \
+                                                        \
+    UNPROTECT(3);                                       \
+    return out;                                         \
   }                                                     \
   while (0)
 
 #define EQUAL_BARRIER(SCALAR_EQUAL)                     \
   do {                                                  \
+    SEXP out = PROTECT(Rf_allocVector(LGLSXP, size));   \
+    int32_t* p = LOGICAL(out);                          \
+                                                        \
     for (R_len_t i = 0; i < size; ++i) {                \
       p[i] = SCALAR_EQUAL(x, i, y, i, na_equal);        \
     }                                                   \
+                                                        \
+    UNPROTECT(3);                                       \
+    return out;                                         \
   }                                                     \
   while (0)
 
 #define EQUAL_DF(SCALAR_EQUAL)                                                      \
   do {                                                                              \
+    SEXP out = PROTECT(Rf_allocVector(LGLSXP, size));                               \
+    int32_t* p = LOGICAL(out);                                                      \
+                                                                                    \
     int n_col = Rf_length(x);                                                       \
                                                                                     \
     if (n_col != Rf_length(y)) {                                                    \
@@ -74,6 +89,9 @@ int equal_scalar(SEXP x, R_len_t i, SEXP y, R_len_t j, bool na_equal) {
     for (R_len_t i = 0; i < size; ++i) {                                            \
       p[i] = SCALAR_EQUAL(x, i, y, i, na_equal, n_col);                             \
     }                                                                               \
+                                                                                    \
+    UNPROTECT(3);                                                                   \
+    return out;                                                                     \
   }                                                                                 \
   while (0)
 
@@ -91,9 +109,6 @@ SEXP vctrs_equal(SEXP x, SEXP y, SEXP na_equal_) {
 
   bool na_equal = Rf_asLogical(na_equal_);
 
-  SEXP out = PROTECT(Rf_allocVector(LGLSXP, size));
-  int32_t* p = LOGICAL(out);
-
   switch (type) {
   case vctrs_type_logical:   EQUAL(int, LOGICAL_RO, lgl_equal_scalar); break;
   case vctrs_type_integer:   EQUAL(int, INTEGER_RO, int_equal_scalar); break;
@@ -106,9 +121,6 @@ SEXP vctrs_equal(SEXP x, SEXP y, SEXP na_equal_) {
   case vctrs_type_scalar:    Rf_errorcall(R_NilValue, "Can't compare scalars with `vctrs_equal()`");
   default:                   Rf_error("Unimplemented type in `vctrs_equal()`");
   }
-
-  UNPROTECT(3);
-  return out;
 }
 
 #undef EQUAL
