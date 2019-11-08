@@ -8,6 +8,8 @@
 
 typedef R_xlen_t r_ssize_t;
 
+#define VCTRS_ASSERT(condition) ((void)sizeof(char[1 - 2*!(condition)]))
+
 
 // Vector types -------------------------------------------------
 
@@ -265,6 +267,41 @@ void hash_fill(uint32_t* p, R_len_t n, SEXP x);
 
 bool duplicated_any(SEXP names);
 
+// Missing values -----------------------------------------------
+
+// Annex F of C99 specifies that `double` should conform to the IEEE 754
+// type `binary64`, which is defined as:
+// * 1  bit : sign
+// * 11 bits: exponent
+// * 52 bits: significand
+//
+// R stores the value "1954" in the last 32 bits: this payload marks
+// the value as a NA, not a regular NaN.
+//
+// On big endian systems, this corresponds to the second element of an
+// integer array of size 2. On little endian systems, this is flipped
+// and the NA marker is in the first element.
+//
+// The type assumptions made here are asserted in `vctrs_init_utils()`
+
+#ifdef WORDS_BIGENDIAN
+static const int vctrs_indicator_pos = 1;
+#else
+static const int vctrs_indicator_pos = 0;
+#endif
+
+union vctrs_dbl_indicator {
+  double value;        // 8 bytes
+  unsigned int key[2]; // 4 * 2 bytes
+};
+
+enum vctrs_dbl_class {
+  vctrs_dbl_number,
+  vctrs_dbl_missing,
+  vctrs_dbl_nan
+};
+
+enum vctrs_dbl_class dbl_classify(double x);
 
 // Names --------------------------------------------------------
 

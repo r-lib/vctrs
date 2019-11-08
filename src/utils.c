@@ -285,6 +285,21 @@ SEXP s3_find_method(const char* generic, SEXP x) {
   return R_NilValue;
 }
 
+// [[ include("vctrs.h") ]]
+enum vctrs_dbl_class dbl_classify(double x) {
+  if (!isnan(x)) {
+    return vctrs_dbl_number;
+  }
+
+  union vctrs_dbl_indicator indicator;
+  indicator.value = x;
+
+  if (indicator.key[vctrs_indicator_pos] == 1954) {
+    return vctrs_dbl_missing;
+  } else {
+    return vctrs_dbl_nan;
+  }
+}
 
 // Initialised at load time
 SEXP compact_seq_attrib = NULL;
@@ -1215,4 +1230,8 @@ void vctrs_init_utils(SEXP ns) {
   compact_rep_attrib = Rf_cons(R_NilValue, R_NilValue);
   R_PreserveObject(compact_rep_attrib);
   SET_TAG(compact_rep_attrib, Rf_install("vctrs_compact_rep"));
+
+  // We assume the following in `union vctrs_dbl_indicator`
+  VCTRS_ASSERT(sizeof(double) == sizeof(int64_t));
+  VCTRS_ASSERT(sizeof(double) == 2 * sizeof(int));
 }

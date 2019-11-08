@@ -69,12 +69,14 @@ static uint32_t int_hash_scalar(const int* x) {
 }
 static uint32_t dbl_hash_scalar(const double* x) {
   double val = *x;
+
   // Hash all NAs and NaNs to same value (i.e. ignoring significand)
-  if (R_IsNA(val)) {
-    val = NA_REAL;
-  } else if (R_IsNaN(val)) {
-    val = R_NaN;
+  switch (dbl_classify(val)) {
+  case vctrs_dbl_number: break;
+  case vctrs_dbl_missing: val = NA_REAL; break;
+  case vctrs_dbl_nan: val = R_NaN; break;
   }
+
   return hash_double(val);
 }
 static uint32_t cpl_hash_scalar(const Rcomplex* x) {
