@@ -110,14 +110,14 @@ SEXP vctrs_equal(SEXP x, SEXP y, SEXP na_equal_) {
   bool na_equal = Rf_asLogical(na_equal_);
 
   switch (type) {
-  case vctrs_type_logical:   EQUAL(int, LOGICAL_RO, lgl_equal_scalar); break;
-  case vctrs_type_integer:   EQUAL(int, INTEGER_RO, int_equal_scalar); break;
-  case vctrs_type_double:    EQUAL(double, REAL_RO, dbl_equal_scalar); break;
-  case vctrs_type_raw:       EQUAL(Rbyte, RAW_RO, raw_equal_scalar); break;
-  case vctrs_type_complex:   EQUAL(Rcomplex, COMPLEX_RO, cpl_equal_scalar); break;
-  case vctrs_type_character: EQUAL(SEXP, STRING_PTR_RO, chr_equal_scalar); break;
-  case vctrs_type_list:      EQUAL_BARRIER(list_equal_scalar); break;
-  case vctrs_type_dataframe: EQUAL_DF(df_equal_scalar); break;
+  case vctrs_type_logical:   EQUAL(int, LOGICAL_RO, lgl_equal_scalar);
+  case vctrs_type_integer:   EQUAL(int, INTEGER_RO, int_equal_scalar);
+  case vctrs_type_double:    EQUAL(double, REAL_RO, dbl_equal_scalar);
+  case vctrs_type_raw:       EQUAL(Rbyte, RAW_RO, raw_equal_scalar);
+  case vctrs_type_complex:   EQUAL(Rcomplex, COMPLEX_RO, cpl_equal_scalar);
+  case vctrs_type_character: EQUAL(SEXP, STRING_PTR_RO, chr_equal_scalar);
+  case vctrs_type_list:      EQUAL_BARRIER(list_equal_scalar);
+  case vctrs_type_dataframe: EQUAL_DF(df_equal_scalar);
   case vctrs_type_scalar:    Rf_errorcall(R_NilValue, "Can't compare scalars with `vctrs_equal()`");
   default:                   Rf_error("Unimplemented type in `vctrs_equal()`");
   }
