@@ -295,13 +295,13 @@ union vctrs_dbl_indicator {
   unsigned int key[2]; // 4 * 2 bytes
 };
 
-enum vctrs_dbl_type {
+enum vctrs_dbl_class {
   vctrs_dbl_number,
   vctrs_dbl_missing,
   vctrs_dbl_nan
 };
 
-enum vctrs_dbl_type dbl_classify(double x);
+enum vctrs_dbl_class dbl_classify(double x);
 
 // Names --------------------------------------------------------
 

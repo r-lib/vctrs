@@ -44,26 +44,26 @@ int compare_scalar(SEXP x, R_len_t i, SEXP y, R_len_t j, bool na_equal) {
   case REALSXP: {
     double xi = REAL(x)[i], yj = REAL(y)[j];
     if (na_equal) {
-      enum vctrs_dbl_type x_type = dbl_classify(xi);
-      enum vctrs_dbl_type y_type = dbl_classify(yj);
+      enum vctrs_dbl_class x_class = dbl_classify(xi);
+      enum vctrs_dbl_class y_class = dbl_classify(yj);
 
-      switch (x_type) {
+      switch (x_class) {
       case vctrs_dbl_number: {
-        switch (y_type) {
+        switch (y_class) {
         case vctrs_dbl_number: return dcmp(xi, yj);
         case vctrs_dbl_missing: return 1L;
         case vctrs_dbl_nan: return 1L;
         }
       }
       case vctrs_dbl_missing: {
-        switch (y_type) {
+        switch (y_class) {
         case vctrs_dbl_number: return -1;
         case vctrs_dbl_missing: return 0;
         case vctrs_dbl_nan: return 1;
         }
       }
       case vctrs_dbl_nan: {
-        switch (y_type) {
+        switch (y_class) {
         case vctrs_dbl_number: return -1;
         case vctrs_dbl_missing: return -1;
         case vctrs_dbl_nan: return 0;
