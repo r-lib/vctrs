@@ -407,3 +407,12 @@ lossy_floor <- function(x, to, x_arg = "x", to_arg = "to") {
   lossy <- x != x_floor
   maybe_lossy_cast(x_floor, x, to, lossy, x_arg = x_arg, to_arg = to_arg)
 }
+
+shape_match <- function(type, x, y) {
+  if (!is.object(x) && !is.object(y)) {
+    shape <- shape_common(x, y)
+    new_shape(type, shape)
+  } else {
+    type
+  }
+}

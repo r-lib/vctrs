@@ -1,5 +1,29 @@
 context("test-type-bare")
 
+# shape_match -------------------------------------------------------------
+
+test_that("array dimensions are preserved", {
+  mat1 <- matrix(lgl(), nrow = 1, ncol = 1)
+  mat2 <- matrix(lgl(), nrow = 2, ncol = 2)
+  mat3 <- matrix(lgl(), nrow = 2, ncol = 3)
+
+  expect_equal(vec_ptype2(mat1, mat1), matrix(lgl(), nrow = 0, ncol = 1))
+  expect_equal(vec_ptype2(mat1, mat2), matrix(lgl(), nrow = 0, ncol = 2))
+  expect_error(vec_ptype2(mat2, mat3), "Incompatible")
+})
+
+test_that("extensions of base vectors collapse to base type", {
+  x <- structure("x", class = c("foo", "character"))
+  expect_equal(vec_ptype2(x, x), character())
+  expect_equal(vec_ptype2(x, character()), character())
+  expect_equal(vec_ptype2(character(), x), character())
+})
+
+test_that("shape_match()", {
+  expect_identical(shape_match(integer(), int(5), int(10)), new_shape(integer()))
+  expect_identical(shape_match(integer(), int(5, 1), int(10, 1)), new_shape(integer(), 1))
+  expect_identical(shape_match(integer(), int(5, 1, 2), int(10, 1, 2)), new_shape(integer(), 1:2))
+})
 
 # vec_cast() --------------------------------------------------------------
 

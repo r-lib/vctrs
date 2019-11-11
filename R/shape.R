@@ -11,15 +11,6 @@ new_shape <- function(type, shape = NULL) {
   }
 }
 
-shape_match <- function(type, x, y) {
-  if (!is.object(x) && !is.object(y)) {
-    shape <- shape_common(x, y)
-    new_shape(type, shape)
-  } else {
-    type
-  }
-}
-
 shape_common <- function(x, y) {
   shape <- n_dim2(shape(x), shape(y))
   map2_int(shape$x, shape$y, axis2)
