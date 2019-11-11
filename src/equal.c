@@ -293,7 +293,15 @@ int equal_object(SEXP x, SEXP y, bool na_equal) {
     if (eq <= 0) {
       return eq;
     }
-    eq = equal_object(CDR(x), CDR(y), na_equal);
+
+    x = CDR(x);
+    y = CDR(y);
+
+    if (x == R_NilValue && y == R_NilValue) {
+      return true;
+    }
+
+    eq = equal_object(x, y, na_equal);
     if (eq <= 0) {
       return eq;
     }

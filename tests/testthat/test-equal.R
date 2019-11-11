@@ -137,6 +137,7 @@ test_that("can compare objects with reference semantics", {
 test_that("can compare pairlists", {
   expect_true(obj_equal(quote(x + y), quote(x + y)))
   expect_true(obj_equal(pairlist(x = 1, y = 2), pairlist(x = 1, y = 2)))
+  expect_true(obj_equal(pairlist(x = 1, y = 2), pairlist(x = 1, y = 2), na_equal = FALSE))
 })
 
 test_that("can compare functions", {
