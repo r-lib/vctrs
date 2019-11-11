@@ -1,6 +1,13 @@
 
 # vctrs 0.2.0.9000
 
+* `new_vctr()` gains a `extends_type` argument which determines whether or not
+  the class of the underlying type will be include in the class. This generally
+  should be set to `TRUE`, unless your class does not behave like the underlying
+  type; for example a `factor()` should not inherit from `integer`.
+
+* `list_of()` now inherits from "list" (#593)
+
 * Positive and negative 0 are now considered equivalent by all functions that
   check for equality or uniqueness (#637).
 

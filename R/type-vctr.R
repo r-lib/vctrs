@@ -49,16 +49,21 @@
 #' @param .data Foundation of class. Must be a vector
 #' @param ... Name-value pairs defining attributes
 #' @param class Name of subclass.
+#' @param extends_type Does this class extend the base type of `.data`?
+#'   i.e. does the resulting object extend the behaviour the underlying
+#'   type?
 #' @export
 #' @keywords internal
 #' @aliases vctr
-new_vctr <- function(.data, ..., class = character()) {
+new_vctr <- function(.data, ..., class = character(), extends_type = TRUE) {
   if (!is_vector(.data)) {
     abort("`.data` must be a vector type.")
   }
 
   nms <- validate_names(.data)
-  attrib <- list(names = nms, ..., class = c(class, "vctrs_vctr"))
+
+  class <- c(class, "vctrs_vctr", if (extends_type) class(.data))
+  attrib <- list(names = nms, ..., class = class)
 
   vec_set_attributes(.data, attrib)
 }
