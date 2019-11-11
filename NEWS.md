@@ -1,6 +1,10 @@
 
 # vctrs 0.2.0.9000
 
+* `vec_ptype()` has relaxed default behaviour for base types; now if two
+  vectors both inherit from (e.g.) "character", the common type is also
+  "character" (#497).
+
 * Positive and negative 0 are now considered equivalent by all functions that
   check for equality or uniqueness (#637).
 

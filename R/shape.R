@@ -12,8 +12,12 @@ new_shape <- function(type, shape = NULL) {
 }
 
 shape_match <- function(type, x, y) {
-  shape <- shape_common(x, y)
-  new_shape(type, shape)
+  if (!is.object(x) && !is.object(y)) {
+    shape <- shape_common(x, y)
+    new_shape(type, shape)
+  } else {
+    type
+  }
 }
 
 shape_common <- function(x, y) {
@@ -78,10 +82,6 @@ shape_broadcast <- function(x, to) {
 # Helpers -----------------------------------------------------------------
 
 shape <- function(x) {
-  if (is.object(x)) {
-    abort("Only bare vectors have shapes.")
-  }
-
   vec_dim(x)[-1]
 }
 
