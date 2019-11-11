@@ -254,6 +254,7 @@ int equal_object(SEXP x, SEXP y, bool na_equal) {
   // Pointer comparison is safe for these types
   switch (type) {
   case NILSXP:
+    return x == y ? (na_equal ? true : NA_LOGICAL) : false;
   case SYMSXP:
   case SPECIALSXP:
   case BUILTINSXP:

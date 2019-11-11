@@ -28,6 +28,7 @@ test_that("NAs are equal", {
   expect_true(vec_equal(NA_integer_, NA_integer_, na_equal = TRUE))
   expect_true(vec_equal(NA_real_, NA_real_, na_equal = TRUE))
   expect_true(vec_equal(NA_character_, NA_character_, na_equal = TRUE))
+  expect_true(vec_equal(list(NULL), list(NULL), na_equal = TRUE))
 })
 
 test_that("double special values", {
@@ -35,6 +36,10 @@ test_that("double special values", {
   expect_equal(vec_equal(c(NA, NaN), NA, na_equal = TRUE), c(TRUE, FALSE))
   expect_true(vec_equal(Inf, Inf))
   expect_true(vec_equal(-Inf, -Inf))
+})
+
+test_that("`list(NULL)` is considered a missing value (#653)", {
+  expect_equal(vec_equal(list(NULL), list(NULL)), NA)
 })
 
 test_that("can compare data frames", {
