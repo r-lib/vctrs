@@ -40,6 +40,9 @@
 * `vec_equal()` now correctly treats `NULL` as the missing value element for
   lists (#653).
 
+* `vec_cast()` now casts data frames to lists row wise to preserve the invariant
+  of `vec_size(vec_cast(x, to)) == vec_size(x)` (#639). 
+
 * Positive and negative 0 are now considered equivalent by all functions that
   check for equality or uniqueness (#637).
 
