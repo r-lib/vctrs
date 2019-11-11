@@ -188,7 +188,7 @@ test_that("can compare non-equal strings with different encodings", {
 })
 
 test_that("equality can always be determined when strings have identical encodings", {
-  encs <- list2(!!!encodings(), bytes = encoding_bytes())
+  encs <- encodings(bytes = TRUE)
 
   for (enc in encs) {
     expect_equal(vec_compare(enc, enc), 0L)
