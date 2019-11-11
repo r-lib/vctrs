@@ -20,6 +20,8 @@ test_that("extensions of base vectors collapse to base type", {
 })
 
 test_that("shape_match()", {
+  int <- function(...) array(NA_integer_, c(...))
+
   expect_identical(shape_match(integer(), int(5), int(10)), new_shape(integer()))
   expect_identical(shape_match(integer(), int(5, 1), int(10, 1)), new_shape(integer(), 1))
   expect_identical(shape_match(integer(), int(5, 1, 2), int(10, 1, 2)), new_shape(integer(), 1:2))
