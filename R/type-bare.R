@@ -417,7 +417,15 @@ vec_cast.list.default <- function(x, to, ...) {
     return(vec_init(to, length(x)))
   }
 
-  out <- lapply(seq_along(x), function(i) x[[i]])
+  # FIXME - Use real `vec_get()` implementation
+  if (is.data.frame(x)) {
+    row.names(x) <- NULL
+    vec_get <- function(i) vec_slice(x, i)
+  } else {
+    vec_get <- function(i) x[[i]]
+  }
+
+  out <- lapply(vec_seq_along(x), vec_get)
 
   if (!is.object(to)) {
     out <- shape_broadcast(out, to)

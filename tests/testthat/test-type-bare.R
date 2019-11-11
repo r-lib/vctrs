@@ -314,6 +314,11 @@ test_that("dimensionality matches to" ,{
   expect_dim(vec_cast(TRUE, x2), c(1, 2))
 })
 
+test_that("data frames are cast to list row wise (#639)", {
+  x <- data.frame(x = 1:2, row.names = c("a", "b"))
+  expect <- list(data.frame(x = 1L), data.frame(x = 2L))
+  expect_equal(vec_cast(x, list()), expect)
+})
 
 # Unspecified
 
