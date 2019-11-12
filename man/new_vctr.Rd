@@ -14,7 +14,7 @@ new_vctr(.data, ..., class = character(), inherit_base_type = TRUE)
 
 \item{class}{Name of subclass.}
 
-\item{extends_type}{Does this class extend the base type of \code{.data}?
+\item{inherit_base_type}{Does this class extend the base type of \code{.data}?
 i.e. does the resulting object extend the behaviour the underlying
 type?}
 }
