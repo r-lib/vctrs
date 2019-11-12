@@ -441,8 +441,8 @@ static struct vctrs_df_rowwise_info init_rowwise_equal_info(R_len_t n_row) {
   info.out = PROTECT(Rf_allocVector(LGLSXP, n_row));
   int* p_out = LOGICAL(info.out);
 
-  for (R_len_t i = 0; i < n_row; ++i, ++p_out) {
-    *p_out = 1;
+  for (R_len_t i = 0; i < n_row; ++i) {
+    p_out[i] = 1;
   }
 
   // To begin with, no rows have a known comparison value
