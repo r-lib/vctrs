@@ -41,11 +41,9 @@ Suggests:
     pillar (>= 1.4.1),
     pkgdown,
     rmarkdown,
-    testthat (>= 2.2.1.9002),
+    testthat (>= 2.3.0),
     tibble,
     xml2
-Remotes:
-    r-lib/testthat
 VignetteBuilder: 
     knitr
 Encoding: UTF-8
