@@ -1,6 +1,9 @@
 
 # vctrs 0.2.0.9000
 
+* `vec_equal()` now correctly treats `NULL` as the missing value element for
+  lists (#653).
+
 * Positive and negative 0 are now considered equivalent by all functions that
   check for equality or uniqueness (#637).
 
