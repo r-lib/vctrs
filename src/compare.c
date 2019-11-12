@@ -303,8 +303,8 @@ do {                                                                 \
   const CTYPE* p_x = CONST_DEREF(x);                                 \
   const CTYPE* p_y = CONST_DEREF(y);                                 \
                                                                      \
-  for (R_len_t i = 0; i < n_row; ++i, ++p_row_known, ++p_x, ++p_y) { \
-    if (*p_row_known) {                                              \
+  for (R_len_t i = 0; i < n_row; ++i, ++p_x, ++p_y) {                \
+    if (p_row_known[i]) {                                            \
       continue;                                                      \
     }                                                                \
                                                                      \
@@ -312,7 +312,7 @@ do {                                                                 \
                                                                      \
     if (cmp != 0) {                                                  \
       p_out[i] = cmp;                                                \
-      *p_row_known = true;                                           \
+      p_row_known[i] = true;                                         \
       --info.remaining;                                              \
                                                                      \
       if (info.remaining == 0) {                                     \
