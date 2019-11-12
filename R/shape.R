@@ -11,11 +11,6 @@ new_shape <- function(type, shape = NULL) {
   }
 }
 
-shape_match <- function(type, x, y) {
-  shape <- shape_common(x, y)
-  new_shape(type, shape)
-}
-
 shape_common <- function(x, y) {
   shape <- n_dim2(shape(x), shape(y))
   map2_int(shape$x, shape$y, axis2)
@@ -78,10 +73,6 @@ shape_broadcast <- function(x, to) {
 # Helpers -----------------------------------------------------------------
 
 shape <- function(x) {
-  if (is.object(x)) {
-    abort("Only bare vectors have shapes.")
-  }
-
   vec_dim(x)[-1]
 }
 
