@@ -25,6 +25,11 @@ test_that("vctr class is proxied", {
   expect_true(vec_is(new_vctr(as.list(1:3))))
 })
 
+test_that("Can opt out of base type", {
+  x <- new_vctr(1, class = "x", inherit_base_type = FALSE)
+  expect_s3_class(x, c("x", "vctrs_vctr"), exact = TRUE)
+})
+
 test_that("attributes must be named", {
   expect_error(vec_set_attributes(1, list(1)), "must be named")
   expect_error(vec_set_attributes(1, list(y = 1, 2)), "2 does not")
