@@ -75,7 +75,7 @@ test_that("restoring to atomic vector of different type throws error", {
 })
 
 test_that("base coercion methods mapped to vec_cast", {
-  x <- new_vctr(1)
+  x <- new_vctr(1, inherit_base_type = FALSE)
 
   expect_error(as.logical(x), class = "vctrs_error_incompatible_cast")
   expect_error(as.integer(x), class = "vctrs_error_incompatible_cast")
@@ -100,14 +100,14 @@ test_that("as.data.frame creates data frame", {
 # equality + comparison + arith + math ---------------------------------------
 
 test_that("equality functions remapped", {
-  x <- new_vctr(c(1, 1, NA))
+  x <- new_vctr(c(1, 1, NA), inherit_base_type = FALSE)
 
   expect_error(x == 1, class = "vctrs_error_incompatible_type")
   expect_error(x != 1, class = "vctrs_error_incompatible_type")
   expect_equal(is.na(x), c(FALSE, FALSE, TRUE))
   expect_true(anyNA(x))
 
-  expect_equal(unique(x), new_vctr(c(1, NA)))
+  expect_equal(unique(x), new_vctr(c(1, NA), inherit_base_type = FALSE))
   expect_equal(duplicated(x), c(FALSE, TRUE, FALSE))
   expect_true(anyDuplicated(x))
 })

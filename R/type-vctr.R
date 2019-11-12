@@ -62,7 +62,7 @@ new_vctr <- function(.data, ..., class = character(), inherit_base_type = TRUE) 
 
   nms <- validate_names(.data)
 
-  class <- c(class, "vctrs_vctr", if (inherit_base_type) class(.data))
+  class <- c(class, "vctrs_vctr", if (inherit_base_type) typeof(.data))
   attrib <- list(names = nms, ..., class = class)
 
   vec_set_attributes(.data, attrib)
@@ -622,7 +622,7 @@ levels.vctrs_vctr <- function(x) {
 # nocov start
 new_hidden <- function(x = double()) {
   stopifnot(is.numeric(x))
-  new_vctr(vec_cast(x, double()), class = "hidden")
+  new_vctr(vec_cast(x, double()), class = "hidden", inherit_base_type = FALSE)
 }
 format.hidden <- function(x, ...) rep("xxx", length(x))
 
