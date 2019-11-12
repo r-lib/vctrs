@@ -98,7 +98,7 @@ test_that("can determine equality of strings with different encodings (#553)", {
 })
 
 test_that("equality can be determined when strings have identical encodings", {
-  encs <- c(encodings(), list(bytes = encoding_bytes()))
+  encs <- encodings(bytes = TRUE)
 
   for (enc in encs) {
     expect_true(vec_equal(enc, enc))

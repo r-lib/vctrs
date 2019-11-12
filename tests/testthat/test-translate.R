@@ -12,7 +12,7 @@ test_that("can translate a character vector of various encodings (#553)", {
 })
 
 test_that("does not perform translation when encodings are all the same", {
-  encs <- c(encodings(), list(bytes = encoding_bytes()))
+  encs <- encodings(bytes = TRUE)
 
   for (enc in encs) {
     x <- c(enc, enc)
