@@ -219,33 +219,20 @@ SEXP vctrs_compare(SEXP x, SEXP y, SEXP na_equal_) {
 
 // -----------------------------------------------------------------------------
 
-/**
- * @member out An integer vector of size `n_row` containing the output of the
- *   row wise data frame comparison.
- * @member row_known A logical vector of size `n_row`. Initially, all values
- *   are initialized to `FALSE`. As we iterate along the columns, we flip the
- *   corresponding row's `row_known` value to `TRUE` if we can determine it
- *   from the current column comparison (i.e. the comparison returns less than
- *   or greater than). Once a row's `row_known` value is `TRUE`, we never check
- *   that row again as we continue through the columns.
- * @member remaining The number of `row_known` values that are still `FALSE`.
- *   If this hits `0` before we traverse the entire data frame, we can exit
- *   immediately because all comparison values are already known.
- */
-struct vctrs_df_compare_info {
-  SEXP out;
-  SEXP row_known;
-  R_len_t remaining;
-};
+static struct vctrs_df_rowwise_info vec_compare_col(SEXP x,
+                                                    SEXP y,
+                                                    bool na_equal,
+                                                    struct vctrs_df_rowwise_info info,
+                                                    R_len_t n_row);
 
-#define PROTECT_DF_COMPARE_INFO(info, n) do {  \
-  PROTECT((info)->out);                        \
-  PROTECT((info)->row_known);                  \
-  *n += 2;                                     \
-} while (0)
+static struct vctrs_df_rowwise_info df_compare_impl(SEXP x,
+                                                    SEXP y,
+                                                    bool na_equal,
+                                                    struct vctrs_df_rowwise_info info,
+                                                    R_len_t n_row);
 
-static struct vctrs_df_compare_info init_compare_info(R_len_t n_row) {
-  struct vctrs_df_compare_info info;
+static struct vctrs_df_rowwise_info init_rowwise_compare_info(R_len_t n_row) {
+  struct vctrs_df_rowwise_info info;
 
   // Initialize to "equality" value
   // and only change if we learn that it differs
@@ -254,9 +241,9 @@ static struct vctrs_df_compare_info init_compare_info(R_len_t n_row) {
   memset(p_out, 0, n_row * sizeof(int));
 
   // To begin with, no rows have a known comparison value
-  info.row_known = PROTECT(Rf_allocVector(LGLSXP, n_row));
-  int* p_row_known = LOGICAL(info.row_known);
-  memset(p_row_known, 0, n_row * sizeof(int));
+  info.row_known = PROTECT(Rf_allocVector(RAWSXP, n_row * sizeof(bool)));
+  info.p_row_known = (bool*) RAW(info.row_known);
+  memset(info.p_row_known, false, n_row * sizeof(bool));
 
   info.remaining = n_row;
 
@@ -264,25 +251,11 @@ static struct vctrs_df_compare_info init_compare_info(R_len_t n_row) {
   return info;
 }
 
-// -----------------------------------------------------------------------------
-
-static struct vctrs_df_compare_info vec_compare_col(SEXP x,
-                                                    SEXP y,
-                                                    bool na_equal,
-                                                    struct vctrs_df_compare_info info,
-                                                    R_len_t n_row);
-
-static struct vctrs_df_compare_info df_compare_impl(SEXP x,
-                                                    SEXP y,
-                                                    bool na_equal,
-                                                    struct vctrs_df_compare_info info,
-                                                    R_len_t n_row);
-
 static SEXP df_compare(SEXP x, SEXP y, bool na_equal, R_len_t n_row) {
   int nprot = 0;
 
-  struct vctrs_df_compare_info info = init_compare_info(n_row);
-  PROTECT_DF_COMPARE_INFO(&info, &nprot);
+  struct vctrs_df_rowwise_info info = init_rowwise_compare_info(n_row);
+  PROTECT_DF_ROWWISE_INFO(&info, &nprot);
 
   info = df_compare_impl(x, y, na_equal, info, n_row);
 
@@ -290,10 +263,10 @@ static SEXP df_compare(SEXP x, SEXP y, bool na_equal, R_len_t n_row) {
   return info.out;
 }
 
-static struct vctrs_df_compare_info df_compare_impl(SEXP x,
+static struct vctrs_df_rowwise_info df_compare_impl(SEXP x,
                                                     SEXP y,
                                                     bool na_equal,
-                                                    struct vctrs_df_compare_info info,
+                                                    struct vctrs_df_rowwise_info info,
                                                     R_len_t n_row) {
   int n_col = Rf_length(x);
 
@@ -325,13 +298,12 @@ static struct vctrs_df_compare_info df_compare_impl(SEXP x,
 #define COMPARE_COL(CTYPE, CONST_DEREF, SCALAR_COMPARE)              \
 do {                                                                 \
   int* p_out = INTEGER(info.out);                                    \
-  int* p_row_known = LOGICAL(info.row_known);                        \
                                                                      \
   const CTYPE* p_x = CONST_DEREF(x);                                 \
   const CTYPE* p_y = CONST_DEREF(y);                                 \
                                                                      \
-  for (R_len_t i = 0; i < n_row; ++i, ++p_row_known, ++p_x, ++p_y) { \
-    if (*p_row_known) {                                              \
+  for (R_len_t i = 0; i < n_row; ++i, ++p_x, ++p_y) {                \
+    if (info.p_row_known[i]) {                                       \
       continue;                                                      \
     }                                                                \
                                                                      \
@@ -339,7 +311,7 @@ do {                                                                 \
                                                                      \
     if (cmp != 0) {                                                  \
       p_out[i] = cmp;                                                \
-      *p_row_known = true;                                           \
+      info.p_row_known[i] = true;                                    \
       --info.remaining;                                              \
                                                                      \
       if (info.remaining == 0) {                                     \
@@ -352,10 +324,10 @@ do {                                                                 \
 }                                                                    \
 while (0)
 
-static struct vctrs_df_compare_info vec_compare_col(SEXP x,
+static struct vctrs_df_rowwise_info vec_compare_col(SEXP x,
                                                     SEXP y,
                                                     bool na_equal,
-                                                    struct vctrs_df_compare_info info,
+                                                    struct vctrs_df_rowwise_info info,
                                                     R_len_t n_row) {
   switch (vec_proxy_typeof(x)) {
   case vctrs_type_logical:   COMPARE_COL(int, LOGICAL_RO, lgl_compare_scalar);

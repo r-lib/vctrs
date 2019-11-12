@@ -54,6 +54,7 @@ vec_proxy_equal.default <- function(x, ...) {
 #' vec_equal(df, data.frame(x = 1, y = 2))
 #' vec_equal_na(df)
 vec_equal <- function(x, y, na_equal = FALSE, .ptype = NULL) {
+  vec_assert(na_equal, ptype = logical(), size = 1L)
   args <- vec_recycle_common(x, y)
   args <- vec_cast_common(!!!args, .to = .ptype)
   .Call(vctrs_equal, args[[1]], args[[2]], na_equal)

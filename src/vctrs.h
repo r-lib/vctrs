@@ -267,6 +267,40 @@ void hash_fill(uint32_t* p, R_len_t n, SEXP x);
 
 bool duplicated_any(SEXP names);
 
+// Rowwise operations -------------------------------------------
+
+// Used in functions that treat data frames as vectors of rows, but
+// iterate over them column wise. Examples are `vec_equal()` and
+// `vec_compare()`.
+
+/**
+ * @member out A vector of size `n_row` containing the output of the
+ *   row wise data frame operation.
+ * @member row_known A boolean array of size `n_row`. Allocated on the R heap.
+ *   Initially, all values are initialized to `false`. As we iterate along the
+ *   columns, we flip the corresponding row's `row_known` value to `true` if we
+ *   can determine the `out` value for that row from the current columns.
+ *   Once a row's `row_known` value is `true`, we never check that row again
+ *   as we continue through the columns.
+ * @member p_row_known A pointer to the boolean array stored in `row_known`.
+ *   Initialized with `(bool*) RAW(info.row_known)`.
+ * @member remaining The number of `row_known` values that are still `false`.
+ *   If this hits `0` before we traverse the entire data frame, we can exit
+ *   immediately because all `out` values are already known.
+ */
+struct vctrs_df_rowwise_info {
+  SEXP out;
+  SEXP row_known;
+  bool* p_row_known;
+  R_len_t remaining;
+};
+
+#define PROTECT_DF_ROWWISE_INFO(info, n) do {  \
+  PROTECT((info)->out);                        \
+  PROTECT((info)->row_known);                  \
+  *n += 2;                                     \
+} while (0)
+
 // Missing values -----------------------------------------------
 
 // Annex F of C99 specifies that `double` should conform to the IEEE 754
