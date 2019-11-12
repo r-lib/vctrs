@@ -1,6 +1,10 @@
 
 # vctrs 0.2.0.9000
 
+* `vec_ptype()` has relaxed default behaviour for base types; now if two
+  vectors both inherit from (e.g.) "character", the common type is also
+  "character" (#497).
+
 * `vec_equal()` now correctly treats `NULL` as the missing value element for
   lists (#653).
 

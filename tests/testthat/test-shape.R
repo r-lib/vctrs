@@ -6,12 +6,6 @@ int <- function(...) {
 
 # common shape ------------------------------------------------------------
 
-test_that("shape_match()", {
-  expect_identical(shape_match(integer(), int(5), int(10)), new_shape(integer()))
-  expect_identical(shape_match(integer(), int(5, 1), int(10, 1)), new_shape(integer(), 1))
-  expect_identical(shape_match(integer(), int(5, 1, 2), int(10, 1, 2)), new_shape(integer(), 1:2))
-})
-
 test_that("length is ignored", {
   expect_equal(shape_common(int(5), int(10)), integer())
   expect_equal(shape_common(int(5, 1), int(10, 1)), 1L)
@@ -81,13 +75,5 @@ test_that("recycling rules applied", {
     shape_broadcast(array(1L, c(1, 0)), int(1, 1)),
     "Non-recyclable dimensions",
     class = "vctrs_error_incompatible_cast"
-  )
-})
-
-test_that("shape of vector not supported", {
-  expect_error(
-    shape(new_vctr(1:4)),
-    "Only bare vectors have shapes.",
-    fixed = TRUE
   )
 })
