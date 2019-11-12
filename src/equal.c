@@ -446,9 +446,9 @@ static struct vctrs_df_rowwise_info init_rowwise_equal_info(R_len_t n_row) {
   }
 
   // To begin with, no rows have a known comparison value
-  info.row_known = PROTECT(Rf_allocVector(LGLSXP, n_row));
-  int* p_row_known = LOGICAL(info.row_known);
-  memset(p_row_known, 0, n_row * sizeof(int));
+  info.row_known = PROTECT(Rf_allocVector(RAWSXP, n_row * sizeof(bool)));
+  info.p_row_known = (bool*) RAW(info.row_known);
+  memset(info.p_row_known, false, n_row * sizeof(bool));
 
   info.remaining = n_row;
 
@@ -499,13 +499,12 @@ static struct vctrs_df_rowwise_info df_equal_impl(SEXP x,
 #define EQUAL_COL(CTYPE, CONST_DEREF, SCALAR_EQUAL)                  \
 do {                                                                 \
   int* p_out = LOGICAL(info.out);                                    \
-  int* p_row_known = LOGICAL(info.row_known);                        \
                                                                      \
   const CTYPE* p_x = CONST_DEREF(x);                                 \
   const CTYPE* p_y = CONST_DEREF(y);                                 \
                                                                      \
   for (R_len_t i = 0; i < n_row; ++i, ++p_x, ++p_y) {                \
-    if (p_row_known[i]) {                                            \
+    if (info.p_row_known[i]) {                                       \
       continue;                                                      \
     }                                                                \
                                                                      \
@@ -513,7 +512,7 @@ do {                                                                 \
                                                                      \
     if (eq <= 0) {                                                   \
       p_out[i] = eq;                                                 \
-      p_row_known[i] = true;                                         \
+      info.p_row_known[i] = true;                                    \
       --info.remaining;                                              \
                                                                      \
       if (info.remaining == 0) {                                     \
@@ -529,10 +528,9 @@ while (0)
 #define EQUAL_COL_BARRIER(SCALAR_EQUAL)                \
 do {                                                   \
   int* p_out = LOGICAL(info.out);                      \
-  int* p_row_known = LOGICAL(info.row_known);          \
                                                        \
   for (R_len_t i = 0; i < n_row; ++i) {                \
-    if (p_row_known[i]) {                              \
+    if (info.p_row_known[i]) {                         \
       continue;                                        \
     }                                                  \
                                                        \
@@ -540,7 +538,7 @@ do {                                                   \
                                                        \
     if (eq <= 0) {                                     \
       p_out[i] = eq;                                   \
-      p_row_known[i] = true;                           \
+      info.p_row_known[i] = true;                      \
       --info.remaining;                                \
                                                        \
       if (info.remaining == 0) {                       \

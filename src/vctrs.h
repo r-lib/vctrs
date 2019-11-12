@@ -276,19 +276,23 @@ bool duplicated_any(SEXP names);
 /**
  * @member out A vector of size `n_row` containing the output of the
  *   row wise data frame operation.
- * @member row_known A logical vector of size `n_row`. Initially, all values
- *   are initialized to `FALSE`. As we iterate along the columns, we flip the
- *   corresponding row's `row_known` value to `TRUE` if we can determine the
+ * @member row_known A boolean array of size `n_row`. It is intended to be
+ *   constructed from and managed by a RAWSXP. Initially, all values are
+ *   initialized to `false`. As we iterate along the columns, we flip the
+ *   corresponding row's `row_known` value to `true` if we can determine the
  *   `out` value for that row from the current columns. Once a row's `row_known`
- *   value is `TRUE`, we never check that row again as we continue through the
+ *   value is `true`, we never check that row again as we continue through the
  *   columns.
- * @member remaining The number of `row_known` values that are still `FALSE`.
+ * @member p_row_known A pointer to the boolean array stored in `row_known`.
+ *   Initialized with `(bool*) RAW(info.row_known)`.
+ * @member remaining The number of `row_known` values that are still `false`.
  *   If this hits `0` before we traverse the entire data frame, we can exit
  *   immediately because all `out` values are already known.
  */
 struct vctrs_df_rowwise_info {
   SEXP out;
   SEXP row_known;
+  bool* p_row_known;
   R_len_t remaining;
 };
 
