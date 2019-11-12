@@ -25,7 +25,7 @@ vec_list_cast <- function(x, to, ..., x_arg = "", to_arg = "") {
 
   for (i in seq_len(n)) {
     val <- x[[i]]
-    if (length(val) == 0) {
+    if (vec_size(val) == 0) {
       next
     }
 
