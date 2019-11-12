@@ -28,6 +28,7 @@ test_that("NAs are equal", {
   expect_true(vec_equal(NA_integer_, NA_integer_, na_equal = TRUE))
   expect_true(vec_equal(NA_real_, NA_real_, na_equal = TRUE))
   expect_true(vec_equal(NA_character_, NA_character_, na_equal = TRUE))
+  expect_true(vec_equal(list(NULL), list(NULL), na_equal = TRUE))
 })
 
 test_that("double special values", {
@@ -35,6 +36,10 @@ test_that("double special values", {
   expect_equal(vec_equal(c(NA, NaN), NA, na_equal = TRUE), c(TRUE, FALSE))
   expect_true(vec_equal(Inf, Inf))
   expect_true(vec_equal(-Inf, -Inf))
+})
+
+test_that("`list(NULL)` is considered a missing value (#653)", {
+  expect_equal(vec_equal(list(NULL), list(NULL)), NA)
 })
 
 test_that("can compare data frames", {
@@ -98,7 +103,7 @@ test_that("can determine equality of strings with different encodings (#553)", {
 })
 
 test_that("equality can be determined when strings have identical encodings", {
-  encs <- c(encodings(), list(bytes = encoding_bytes()))
+  encs <- encodings(bytes = TRUE)
 
   for (enc in encs) {
     expect_true(vec_equal(enc, enc))
@@ -119,6 +124,7 @@ test_that("equality is known to fail when comparing bytes to other encodings", {
 
 test_that("can compare NULL",{
   expect_true(obj_equal(NULL, NULL))
+  expect_equal(obj_equal(NULL, NULL, na_equal = FALSE), NA)
 })
 
 test_that("can compare objects with reference semantics", {
@@ -132,6 +138,7 @@ test_that("can compare objects with reference semantics", {
 test_that("can compare pairlists", {
   expect_true(obj_equal(quote(x + y), quote(x + y)))
   expect_true(obj_equal(pairlist(x = 1, y = 2), pairlist(x = 1, y = 2)))
+  expect_true(obj_equal(pairlist(x = 1, y = 2), pairlist(x = 1, y = 2), na_equal = FALSE))
 })
 
 test_that("can compare functions", {

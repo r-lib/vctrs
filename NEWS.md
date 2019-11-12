@@ -5,6 +5,9 @@
   vectors both inherit from (e.g.) "character", the common type is also
   "character" (#497).
 
+* `vec_equal()` now correctly treats `NULL` as the missing value element for
+  lists (#653).
+
 * Positive and negative 0 are now considered equivalent by all functions that
   check for equality or uniqueness (#637).
 
