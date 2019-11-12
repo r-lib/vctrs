@@ -193,6 +193,7 @@ vec_as_index <- function(i, n,
                          arg = "i") {
   if (!missing(...)) ellipsis::check_dots_empty()
 
+  n <- vec_coercible_cast(n, integer())
   vec_assert(n, integer(), 1L)
   i <- vec_coerce_index(i, arg = arg, allow_types = allow_types)
 

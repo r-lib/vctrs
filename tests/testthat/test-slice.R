@@ -55,9 +55,7 @@ test_that("can subset with a recycled TRUE", {
   expect_identical(vec_slice(1:3, TRUE), 1:3)
   expect_identical(vec_slice(mtcars, TRUE), mtcars)
   expect_identical(vec_slice(new_vctr(1:3), TRUE), new_vctr(1:3))
-
-  skip("FIXME")
-  expect_identical(vec_as_index(TRUE, length(2)), 1:2)
+  expect_identical(vec_as_index(TRUE, 2), 1:2)
 })
 
 test_that("can subset with a recycled FALSE", {
@@ -200,7 +198,7 @@ test_that("can slice with double indices", {
 
 test_that("vec_as_index() checks type", {
   expect_error(vec_as_index(quote(foo), 1L), class = "vctrs_error_index_bad_type")
-  expect_error(vec_as_index("foo", "bar"), class = "vctrs_error_assert_ptype")
+  expect_error(vec_as_index("foo", "bar"), class = "vctrs_error_incompatible_type")
   expect_error(vec_as_index("foo", 1L, names = 1L), "must be a character vector")
   expect_error(vec_as_index(Sys.Date(), 3L), class = "vctrs_error_index_bad_type")
   expect_error(vec_as_index(matrix(TRUE, nrow = 1), 3L), "must have one dimension")
@@ -380,6 +378,11 @@ test_that("can slice with missing character indices (#244)", {
   expect_identical(vec_as_index(na_chr, 2L, c("x", "")), na_int)
   expect_identical(vec_slice(c(x = 1), na_chr), set_names(na_dbl, ""))
   expect_identical(vec_slice(c(x = "foo"), na_chr), set_names(na_chr, ""))
+})
+
+test_that("can slice with numerics (#577)", {
+  expect_identical(vec_as_index(1:2, 3), 1:2)
+  expect_error(vec_as_index(1:2, 3.5), class = "vctrs_error_cast_lossy")
 })
 
 test_that("missing indices don't create NA names", {
