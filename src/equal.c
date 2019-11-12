@@ -50,7 +50,7 @@ static SEXP df_equal(SEXP x, SEXP y, bool na_equal, R_len_t n_row);
 #define EQUAL(CTYPE, CONST_DEREF, SCALAR_EQUAL)         \
   do {                                                  \
     SEXP out = PROTECT(Rf_allocVector(LGLSXP, size));   \
-    int32_t* p_out = LOGICAL(out);                      \
+    int* p_out = LOGICAL(out);                          \
                                                         \
     const CTYPE* p_x = CONST_DEREF(x);                  \
     const CTYPE* p_y = CONST_DEREF(y);                  \
@@ -67,7 +67,7 @@ static SEXP df_equal(SEXP x, SEXP y, bool na_equal, R_len_t n_row);
 #define EQUAL_BARRIER(SCALAR_EQUAL)                     \
   do {                                                  \
     SEXP out = PROTECT(Rf_allocVector(LGLSXP, size));   \
-    int32_t* p_out = LOGICAL(out);                      \
+    int* p_out = LOGICAL(out);                          \
                                                         \
     for (R_len_t i = 0; i < size; ++i) {                \
       p_out[i] = SCALAR_EQUAL(x, i, y, i, na_equal);    \
