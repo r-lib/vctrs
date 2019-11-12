@@ -417,15 +417,7 @@ vec_cast.list.default <- function(x, to, ...) {
     return(vec_init(to, length(x)))
   }
 
-  # FIXME - Use real `vec_get()` implementation
-  if (is.data.frame(x)) {
-    row.names(x) <- NULL
-    vec_get <- function(i) vec_slice(x, i)
-  } else {
-    vec_get <- function(i) x[[i]]
-  }
-
-  out <- lapply(vec_seq_along(x), vec_get)
+  out <- lapply(vec_seq_along(x), function(i) x[[i]])
 
   if (!is.object(to)) {
     out <- shape_broadcast(out, to)
@@ -434,6 +426,20 @@ vec_cast.list.default <- function(x, to, ...) {
   out
 }
 
+#' @export
+#' @method vec_cast.list data.frame
+vec_cast.list.data.frame <- function(x, to, ...) {
+  # FIXME - Replace with the `vec_chop()`
+  # equivalent for `vec_get()`
+  row.names(x) <- NULL
+  out <- vec_chop(x)
+
+  # FIXME - Remove after #660 where `vec_chop()`
+  # should return a bare list
+  attributes(out) <- NULL
+
+  out
+}
 
 # compare ------------------------------------------------------------
 
