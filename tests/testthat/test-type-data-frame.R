@@ -144,6 +144,16 @@ test_that("can cast unspecified to data frame", {
   expect_identical(vec_cast(unspecified(3), df), vec_init(df, 3))
 })
 
+test_that("can cast list of data frames to data frame", {
+  df <- data.frame(x = 1, y = 2L)
+  expect_equal(vec_cast(list(df, df), df), vec_slice(df, c(1, 1)))
+})
+
+test_that("can only cast list of data frames to data frame if they are all size 1", {
+  df <- data.frame(x = 1:2)
+  expect_error(vec_cast(list(df), df), class = "vctrs_error_cast_lossy")
+})
+
 test_that("can restore lists with empty names", {
   expect_identical(vec_restore(list(), data.frame()), data.frame())
 })
