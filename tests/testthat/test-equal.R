@@ -124,6 +124,7 @@ test_that("equality is known to fail when comparing bytes to other encodings", {
 
 test_that("can compare NULL",{
   expect_true(obj_equal(NULL, NULL))
+  expect_equal(obj_equal(NULL, NULL, na_equal = FALSE), NA)
 })
 
 test_that("can compare objects with reference semantics", {
