@@ -146,6 +146,25 @@ test_that("can hash lists of expressions", {
   )
 })
 
+test_that("vec_hash(pool = FALSE) produces same hash for same values", {
+  strings <- c("x", "y", "z")
+  x <- vec_hash(strings, pool = FALSE)
+  y <- do.call(c, map(strings, vec_hash, pool = FALSE))
+  expect_identical(x, y)
+})
+
+test_that("vec_hash(pool = FALSE) is reproducible between R sessions", {
+  x <- c("a", "b", "c")
+
+  verify_output(test_path("test-hash-pool.txt"), {
+    "Hashing character vectors"
+    vec_hash(x, pool = FALSE)
+
+    "Hashing lists of characters"
+    vec_hash(list(x), pool = FALSE)
+  })
+})
+
 # Object ------------------------------------------------------------------
 
 test_that("equal objects hash to same value", {
@@ -170,5 +189,14 @@ test_that("expression vectors hash to the same value as lists of calls/names", {
   expect_equal(
     obj_hash(expression(mean(), sd())),
     obj_hash(list(call("mean"), call("sd")))
+  )
+})
+
+test_that("obj_hash(pool = FALSE) produces the same results as vec_hash(pool = FALSE)", {
+  x <- c("a", "b", "c")
+
+  expect_equal(
+    obj_hash(x, pool = FALSE),
+    vec_hash(list(x), pool = FALSE),
   )
 })

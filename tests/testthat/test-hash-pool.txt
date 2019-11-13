@@ -1,0 +1,8 @@
+> # Hashing character vectors
+> vec_hash(x, pool = FALSE)
+ [1] bf 2f 3a 9e c0 2f 3a 9e c1 2f 3a 9e
+
+> # Hashing lists of characters
+> vec_hash(list(x), pool = FALSE)
+[1] de f9 50 44
+
