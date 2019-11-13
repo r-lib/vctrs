@@ -43,6 +43,31 @@ test_that("attributes are kept on translation (#599)", {
   expect_equal(attributes(obj_maybe_translate_encoding(x)), attributes(x))
 })
 
+test_that("translation is robust against scalar types contained in lists (#633)", {
+  x <- list(a = z ~ y, b = z ~ z)
+  expect_equal(obj_maybe_translate_encoding(x), x)
+})
+
+test_that("translation can still occur even if a scalar type is in a list", {
+  encs <- encodings()
+  x <- list(a = z ~ y, b = encs$latin1)
+
+  result <- obj_maybe_translate_encoding(x)
+
+  expect_equal_encoding(result$b, encs$utf8)
+})
+
+test_that("translation occurs inside scalars contained in a list", {
+  encs <- encodings()
+
+  scalar <- structure(list(x = encs$latin1), class = "scalar_list")
+  lst <- list(scalar)
+
+  result <- obj_maybe_translate_encoding(lst)
+
+  expect_equal_encoding(result[[1]]$x, encs$utf8)
+})
+
 # ------------------------------------------------------------------------------
 # obj_maybe_translate_encoding2()
 
@@ -187,4 +212,10 @@ test_that("all elements are affected when any translation is required in a list"
   expect_equal_encoding(result1[[1]], encs$utf8)
   expect_equal_encoding(result2[[1]], encs$utf8)
   expect_equal_encoding(result2[[2]]$x, encs$utf8)
+})
+
+test_that("translation is robust against scalar types contained in lists (#633)", {
+  x <- list(a = z ~ y, b = z ~ z)
+  y <- list(a = c ~ d, b = e ~ f)
+  expect_equal(obj_maybe_translate_encoding2(x, y), list(x, y))
 })

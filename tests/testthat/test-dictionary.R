@@ -158,6 +158,14 @@ test_that("unique functions work with different encodings", {
   expect_equal(vec_unique_loc(encs), 1L)
 })
 
+test_that("unique functions can handle scalar types in lists", {
+  x <- list(x = a ~ b, y = a ~ b, z = a ~ c)
+  expect_equal(vec_unique(x), vec_slice(x, c(1, 3)))
+
+  x <- list(x = call("x"), y = call("y"), z = call("x"))
+  expect_equal(vec_unique(x), vec_slice(x, c(1, 2)))
+})
+
 test_that("duplicate functions works with different encodings", {
   encs <- encodings()
 
