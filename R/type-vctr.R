@@ -49,16 +49,21 @@
 #' @param .data Foundation of class. Must be a vector
 #' @param ... Name-value pairs defining attributes
 #' @param class Name of subclass.
+#' @param inherit_base_type Does this class extend the base type of `.data`?
+#'   i.e. does the resulting object extend the behaviour the underlying
+#'   type?
 #' @export
 #' @keywords internal
 #' @aliases vctr
-new_vctr <- function(.data, ..., class = character()) {
+new_vctr <- function(.data, ..., class = character(), inherit_base_type = TRUE) {
   if (!is_vector(.data)) {
     abort("`.data` must be a vector type.")
   }
 
   nms <- validate_names(.data)
-  attrib <- list(names = nms, ..., class = c(class, "vctrs_vctr"))
+
+  class <- c(class, "vctrs_vctr", if (inherit_base_type) typeof(.data))
+  attrib <- list(names = nms, ..., class = class)
 
   vec_set_attributes(.data, attrib)
 }
@@ -617,7 +622,7 @@ levels.vctrs_vctr <- function(x) {
 # nocov start
 new_hidden <- function(x = double()) {
   stopifnot(is.numeric(x))
-  new_vctr(vec_cast(x, double()), class = "hidden")
+  new_vctr(vec_cast(x, double()), class = "hidden", inherit_base_type = FALSE)
 }
 format.hidden <- function(x, ...) rep("xxx", length(x))
 

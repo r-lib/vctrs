@@ -2,7 +2,7 @@ context("test-type-vctr")
 
 test_that("constructor sets attributes", {
   x <- new_vctr(1:4, class = "x", x = 1)
-  expect_equal(x, structure(1:4, class = c("x", "vctrs_vctr"), x = 1))
+  expect_equal(x, structure(1:4, class = c("x", "vctrs_vctr", "integer"), x = 1))
 })
 
 test_that(".data must be a vector", {
@@ -23,6 +23,11 @@ test_that("vctr class is proxied", {
   expect_identical(vec_proxy(new_vctr(1:3)), new_vctr(1:3))
   expect_identical(vec_proxy(new_vctr(as.list(1:3))), unclass(new_vctr(as.list(1:3))))
   expect_true(vec_is(new_vctr(as.list(1:3))))
+})
+
+test_that("Can opt out of base type", {
+  x <- new_vctr(1, class = "x", inherit_base_type = FALSE)
+  expect_s3_class(x, c("x", "vctrs_vctr"), exact = TRUE)
 })
 
 test_that("attributes must be named", {
@@ -70,7 +75,7 @@ test_that("restoring to atomic vector of different type throws error", {
 })
 
 test_that("base coercion methods mapped to vec_cast", {
-  x <- new_vctr(1)
+  x <- new_vctr(1, inherit_base_type = FALSE)
 
   expect_error(as.logical(x), class = "vctrs_error_incompatible_cast")
   expect_error(as.integer(x), class = "vctrs_error_incompatible_cast")
@@ -95,14 +100,14 @@ test_that("as.data.frame creates data frame", {
 # equality + comparison + arith + math ---------------------------------------
 
 test_that("equality functions remapped", {
-  x <- new_vctr(c(1, 1, NA))
+  x <- new_vctr(c(1, 1, NA), inherit_base_type = FALSE)
 
   expect_error(x == 1, class = "vctrs_error_incompatible_type")
   expect_error(x != 1, class = "vctrs_error_incompatible_type")
   expect_equal(is.na(x), c(FALSE, FALSE, TRUE))
   expect_true(anyNA(x))
 
-  expect_equal(unique(x), new_vctr(c(1, NA)))
+  expect_equal(unique(x), new_vctr(c(1, NA), inherit_base_type = FALSE))
   expect_equal(duplicated(x), c(FALSE, TRUE, FALSE))
   expect_true(anyDuplicated(x))
 })
