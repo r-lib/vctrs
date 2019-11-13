@@ -100,7 +100,7 @@ dttm <- as.POSIXct(dt)
 c(dt, dttm)
 #> [1] "2020-01-01"    "4321940-06-07"
 c(dttm, dt)
-#> [1] "2019-12-31 19:00:00 EST" "1970-01-01 00:04:22 EST"
+#> [1] "2019-12-31 16:00:00 PST" "1969-12-31 21:04:22 PST"
 ```
 
 This behaviour arises because `c()` has dual purposes: as well as its
