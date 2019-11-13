@@ -253,7 +253,7 @@ static int df_equal_scalar(SEXP x, R_len_t i, SEXP y, R_len_t j, bool na_equal, 
   }                                                       \
   while (0)
 
-static inline int vec_equal_attrib(SEXP x, SEXP y);
+static inline bool vec_equal_attrib(SEXP x, SEXP y);
 
 // [[ include("vctrs.h") ]]
 bool equal_object(SEXP x, SEXP y) {
@@ -375,7 +375,7 @@ SEXP vctrs_equal_object(SEXP x, SEXP y) {
 
 // TODO: Sort attributes by tag before comparison
 
-static inline int vec_equal_attrib(SEXP x, SEXP y) {
+static inline bool vec_equal_attrib(SEXP x, SEXP y) {
   SEXP x_attrs = ATTRIB(x);
   SEXP y_attrs = ATTRIB(y);
 
