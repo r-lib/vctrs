@@ -402,11 +402,11 @@
 <a class="sourceLine" id="cb23-2" data-line-number="2">df &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span>(<span class="dt">x =</span> x)</a>
 <a class="sourceLine" id="cb23-3" data-line-number="3"></a>
 <a class="sourceLine" id="cb23-4" data-line-number="4"><span class="kw"><a href="../reference/vec_slice.html">vec_slice</a></span>(x, <span class="dv">5</span><span class="op">:</span><span class="dv">6</span>)</a>
-<a class="sourceLine" id="cb23-5" data-line-number="5"><span class="co">#&gt; [1] 3 8</span></a>
+<a class="sourceLine" id="cb23-5" data-line-number="5"><span class="co">#&gt; [1] 2 3</span></a>
 <a class="sourceLine" id="cb23-6" data-line-number="6"><span class="kw"><a href="../reference/vec_slice.html">vec_slice</a></span>(df, <span class="dv">5</span><span class="op">:</span><span class="dv">6</span>)</a>
 <a class="sourceLine" id="cb23-7" data-line-number="7"><span class="co">#&gt;   x</span></a>
-<a class="sourceLine" id="cb23-8" data-line-number="8"><span class="co">#&gt; 1 3</span></a>
-<a class="sourceLine" id="cb23-9" data-line-number="9"><span class="co">#&gt; 2 8</span></a></code></pre></div>
+<a class="sourceLine" id="cb23-8" data-line-number="8"><span class="co">#&gt; 1 2</span></a>
+<a class="sourceLine" id="cb23-9" data-line-number="9"><span class="co">#&gt; 2 3</span></a></code></pre></div>
 <p><code><a href="../reference/vec_slice.html">vec_slice(data.frame(x), i)</a></code> equals <code><a href="https://rdrr.io/r/base/data.frame.html">data.frame(vec_slice(x, i))</a></code> (modulo variable and row names).</p>
 <p>Prototypes are generated with <code><a href="../reference/vec_slice.html">vec_slice(x, 0L)</a></code>; given a prototype, you can initialize a vector of given size (filled with <code>NA</code>s) with <code><a href="../reference/vec_init.html">vec_init()</a></code>.</p>
 </div>
@@ -466,11 +466,11 @@
 <div class="sourceCode" id="cb28"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb28-1" data-line-number="1"><span class="kw"><a href="https://rdrr.io/r/base/invisible.html">invisible</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/Extremes.html">pmax</a></span>(<span class="dv">1</span><span class="op">:</span><span class="dv">2</span>, <span class="dv">1</span><span class="op">:</span><span class="dv">3</span>))</a>
 <a class="sourceLine" id="cb28-2" data-line-number="2"><span class="co">#&gt; Warning in pmax(1:2, 1:3): an argument will be fractionally recycled</span></a>
 <a class="sourceLine" id="cb28-3" data-line-number="3"><span class="kw"><a href="https://rdrr.io/r/base/invisible.html">invisible</a></span>(<span class="dv">1</span><span class="op">:</span><span class="dv">2</span> <span class="op">+</span><span class="st"> </span><span class="dv">1</span><span class="op">:</span><span class="dv">3</span>)</a>
-<a class="sourceLine" id="cb28-4" data-line-number="4"><span class="co">#&gt; Warning in 1:2 + 1:3: longer object length is not a multiple of shorter</span></a>
-<a class="sourceLine" id="cb28-5" data-line-number="5"><span class="co">#&gt; object length</span></a>
+<a class="sourceLine" id="cb28-4" data-line-number="4"><span class="co">#&gt; Warning in 1:2 + 1:3: longer object length is not a multiple of shorter object</span></a>
+<a class="sourceLine" id="cb28-5" data-line-number="5"><span class="co">#&gt; length</span></a>
 <a class="sourceLine" id="cb28-6" data-line-number="6"><span class="kw"><a href="https://rdrr.io/r/base/invisible.html">invisible</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/cbind.html">cbind</a></span>(<span class="dv">1</span><span class="op">:</span><span class="dv">2</span>, <span class="dv">1</span><span class="op">:</span><span class="dv">3</span>))</a>
-<a class="sourceLine" id="cb28-7" data-line-number="7"><span class="co">#&gt; Warning in cbind(1:2, 1:3): number of rows of result is not a multiple of</span></a>
-<a class="sourceLine" id="cb28-8" data-line-number="8"><span class="co">#&gt; vector length (arg 1)</span></a></code></pre></div>
+<a class="sourceLine" id="cb28-7" data-line-number="7"><span class="co">#&gt; Warning in cbind(1:2, 1:3): number of rows of result is not a multiple of vector</span></a>
+<a class="sourceLine" id="cb28-8" data-line-number="8"><span class="co">#&gt; length (arg 1)</span></a></code></pre></div>
 <p>But some functions recycle silently:</p>
 <div class="sourceCode" id="cb29"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb29-1" data-line-number="1"><span class="kw"><a href="https://rdrr.io/r/base/length.html">length</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/Trig.html">atan2</a></span>(<span class="dv">1</span><span class="op">:</span><span class="dv">3</span>, <span class="dv">1</span><span class="op">:</span><span class="dv">2</span>))</a>
 <a class="sourceLine" id="cb29-2" data-line-number="2"><span class="co">#&gt; [1] 3</span></a>
