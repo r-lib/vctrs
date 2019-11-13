@@ -247,6 +247,9 @@ test_that("can compare expressions", {
 test_that("`na_equal` works with expressions", {
   expect_true(obj_equal(expression(NA), expression(NA)))
   expect_equal(obj_equal(expression(NA), expression(NA), na_equal = FALSE), NA)
+
+  expect_true(obj_equal(expression(NULL), expression(NULL)))
+  expect_equal(obj_equal(expression(NULL), expression(NULL), na_equal = FALSE), NA)
 })
 
 # na ----------------------------------------------------------------------
