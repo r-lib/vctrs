@@ -135,12 +135,8 @@ static bool chr_any_known_encoding(SEXP x, R_len_t size) {
 }
 
 static bool list_any_known_encoding(SEXP x, R_len_t size) {
-  SEXP elt;
-
   for (int i = 0; i < size; ++i) {
-    elt = VECTOR_ELT(x, i);
-
-    if (elt_any_known_encoding(elt)) {
+    if (elt_any_known_encoding(VECTOR_ELT(x, i))) {
       return true;
     }
   }
@@ -215,11 +211,10 @@ static SEXP chr_translate_encoding(SEXP x, R_len_t size) {
   SEXP out = PROTECT(r_maybe_duplicate(x));
   SEXP* p_out = STRING_PTR(out);
 
-  SEXP chr;
   const void *vmax = vmaxget();
 
   for (int i = 0; i < size; ++i, ++p_x, ++p_out) {
-    chr = *p_x;
+    SEXP chr = *p_x;
 
     if (Rf_getCharCE(chr) == CE_UTF8) {
       *p_out = chr;
@@ -235,11 +230,10 @@ static SEXP chr_translate_encoding(SEXP x, R_len_t size) {
 }
 
 static SEXP list_translate_encoding(SEXP x, R_len_t size) {
-  SEXP elt;
   x = PROTECT(r_maybe_duplicate(x));
 
   for (int i = 0; i < size; ++i) {
-    elt = VECTOR_ELT(x, i);
+    SEXP elt = VECTOR_ELT(x, i);
     SET_VECTOR_ELT(x, i, elt_translate_encoding(elt));
   }
 
@@ -248,13 +242,12 @@ static SEXP list_translate_encoding(SEXP x, R_len_t size) {
 }
 
 static SEXP df_translate_encoding(SEXP x, R_len_t size) {
-  SEXP col;
-  x = PROTECT(r_maybe_duplicate(x));
-
   int n_col = Rf_length(x);
 
+  x = PROTECT(r_maybe_duplicate(x));
+
   for (int i = 0; i < n_col; ++i) {
-    col = VECTOR_ELT(x, i);
+    SEXP col = VECTOR_ELT(x, i);
     SET_VECTOR_ELT(x, i, obj_translate_encoding(col, size));
   }
 
@@ -306,10 +299,8 @@ static SEXP df_maybe_translate_encoding(SEXP x, R_len_t size) {
 
   x = PROTECT(r_maybe_duplicate(x));
 
-  SEXP elt;
-
   for (int i = 0; i < n_col; ++i) {
-    elt = VECTOR_ELT(x, i);
+    SEXP elt = VECTOR_ELT(x, i);
     SET_VECTOR_ELT(x, i, obj_maybe_translate_encoding(elt, size));
   }
 
@@ -391,22 +382,18 @@ static SEXP list_maybe_translate_encoding2(SEXP x, R_len_t x_size, SEXP y, R_len
 }
 
 static SEXP df_maybe_translate_encoding2(SEXP x, R_len_t x_size, SEXP y, R_len_t y_size) {
-  SEXP x_elt;
-  SEXP y_elt;
-  SEXP translated;
+  int n_col = Rf_length(x);
 
   x = PROTECT(r_maybe_duplicate(x));
   y = PROTECT(r_maybe_duplicate(y));
 
   SEXP out = PROTECT(Rf_allocVector(VECSXP, 2));
 
-  int n_col = Rf_length(x);
-
   for (int i = 0; i < n_col; ++i) {
-    x_elt = VECTOR_ELT(x, i);
-    y_elt = VECTOR_ELT(y, i);
+    SEXP x_elt = VECTOR_ELT(x, i);
+    SEXP y_elt = VECTOR_ELT(y, i);
 
-    translated = PROTECT(obj_maybe_translate_encoding2(x_elt, x_size, y_elt, y_size));
+    SEXP translated = PROTECT(obj_maybe_translate_encoding2(x_elt, x_size, y_elt, y_size));
 
     SET_VECTOR_ELT(x, i, VECTOR_ELT(translated, 0));
     SET_VECTOR_ELT(y, i, VECTOR_ELT(translated, 1));
