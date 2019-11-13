@@ -1,6 +1,11 @@
 
 # vctrs 0.2.0.9000
 
+* Lists of expressions are now supported in `vec_equal()` and functions that
+  compare elements, such as `vec_unique()` and `vec_match()`. This ensures that
+  they work with the result of modeling functions like `glm()` and `mgcv::gam()`
+  which store "family" objects containing expressions (#643).
+
 * `vec_ptype()` has relaxed default behaviour for base types; now if two
   vectors both inherit from (e.g.) "character", the common type is also
   "character" (#497).
