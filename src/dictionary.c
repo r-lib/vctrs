@@ -62,7 +62,7 @@ static void dict_init_impl(dictionary* d, SEXP x, bool partial) {
 
   if (d->hash) {
     memset(d->hash, 0, n * sizeof(R_len_t));
-    hash_fill(d->hash, n, x);
+    hash_fill(d->hash, n, x, true);
   }
 }
 
