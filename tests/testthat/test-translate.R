@@ -50,9 +50,11 @@ test_that("translation is robust against scalar types contained in lists (#633)"
 
 test_that("translation can still occur even if a scalar type is in a list", {
   encs <- encodings()
-  x <- list(a = z ~ y, b = encs$utf8, c = encs$latin1)
-  expect <- list(a = z ~ y, b = encs$utf8, c = encs$utf8)
-  expect_equal(obj_maybe_translate_encoding(x), expect)
+  x <- list(a = z ~ y, b = encs$latin1)
+
+  result <- obj_maybe_translate_encoding(x)
+
+  expect_equal_encoding(result$b, encs$utf8)
 })
 
 test_that("translation occurs inside scalars contained in a list", {
