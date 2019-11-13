@@ -182,6 +182,13 @@ test_that("`na_equal` is validated", {
   expect_error(vec_equal(1, 1, na_equal = c(TRUE, FALSE)), class = "vctrs_error_assert_size")
 })
 
+test_that("can compare lists of expressions", {
+  x <- list(expression(x), expression(y))
+  y <- list(expression(x))
+
+  expect_equal(vec_equal(x, y), c(TRUE, FALSE))
+})
+
 # object ------------------------------------------------------------------
 
 test_that("can compare NULL",{
@@ -230,6 +237,16 @@ test_that("not equal if attributes not equal", {
   x1 <- structure(1:10, x = 1, y = 2)
   x2 <- structure(1:10, x = 1, y = 3)
   expect_false(obj_equal(x1, x2))
+})
+
+test_that("can compare expressions", {
+  expect_true(obj_equal(expression(x), expression(x)))
+  expect_false(obj_equal(expression(x), expression(y)))
+})
+
+test_that("`na_equal` works with expressions", {
+  expect_true(obj_equal(expression(NA), expression(NA)))
+  expect_equal(obj_equal(expression(NA), expression(NA), na_equal = FALSE), NA)
 })
 
 # na ----------------------------------------------------------------------
