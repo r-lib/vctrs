@@ -82,21 +82,39 @@ static bool list_any_known_encoding(SEXP x, R_len_t size);
 static bool df_any_known_encoding(SEXP x, R_len_t size);
 
 static bool obj_any_known_encoding(SEXP x, R_len_t size) {
-  switch (vec_proxy_typeof(x)) {
-  case vctrs_type_character: return chr_any_known_encoding(x, size);
-  case vctrs_type_list: return list_any_known_encoding(x, size);
-  case vctrs_type_dataframe: return df_any_known_encoding(x, size);
-  default: return false;
+  switch (TYPEOF(x)) {
+  case STRSXP: {
+    return chr_any_known_encoding(x, size);
+  }
+  case VECSXP: {
+    if (is_data_frame(x)) {
+      return df_any_known_encoding(x, size);
+    } else {
+      return list_any_known_encoding(x, size);
+    }
+  }
+  default: {
+    return false;
+  }
   }
 }
 
 // For usage on list elements. They have unknown size, and might be scalars.
 static bool elt_any_known_encoding(SEXP x) {
-  switch (vec_proxy_typeof(x)) {
-  case vctrs_type_character: return chr_any_known_encoding(x, vec_size(x));
-  case vctrs_type_list: return list_any_known_encoding(x, vec_size(x));
-  case vctrs_type_dataframe: return df_any_known_encoding(x, vec_size(x));
-  default: return false;
+  switch (TYPEOF(x)) {
+  case STRSXP: {
+    return chr_any_known_encoding(x, Rf_length(x));
+  }
+  case VECSXP: {
+    if (is_data_frame(x)) {
+      return df_any_known_encoding(x, vec_size(x));
+    } else {
+      return list_any_known_encoding(x, Rf_length(x));
+    }
+  }
+  default: {
+    return false;
+  }
   }
 }
 
@@ -151,21 +169,39 @@ static SEXP list_translate_encoding(SEXP x, R_len_t size);
 static SEXP df_translate_encoding(SEXP x, R_len_t size);
 
 static SEXP obj_translate_encoding(SEXP x, R_len_t size) {
-  switch (vec_proxy_typeof(x)) {
-  case vctrs_type_character: return chr_translate_encoding(x, size);
-  case vctrs_type_list: return list_translate_encoding(x, size);
-  case vctrs_type_dataframe: return df_translate_encoding(x, size);
-  default: return x;
+  switch (TYPEOF(x)) {
+  case STRSXP: {
+    return chr_translate_encoding(x, size);
+  }
+  case VECSXP: {
+    if (is_data_frame(x)) {
+      return df_translate_encoding(x, size);
+    } else {
+      return list_translate_encoding(x, size);
+    }
+  }
+  default: {
+    return x;
+  }
   }
 }
 
 // For usage on list elements. They have unknown size, and might be scalars.
 static SEXP elt_translate_encoding(SEXP x) {
-  switch (vec_proxy_typeof(x)) {
-  case vctrs_type_character: return chr_translate_encoding(x, vec_size(x));
-  case vctrs_type_list: return list_translate_encoding(x, vec_size(x));
-  case vctrs_type_dataframe: return df_translate_encoding(x, vec_size(x));
-  default: return x;
+  switch (TYPEOF(x)) {
+  case STRSXP: {
+    return chr_translate_encoding(x, Rf_length(x));
+  }
+  case VECSXP: {
+    if (is_data_frame(x)) {
+      return df_translate_encoding(x, vec_size(x));
+    } else {
+      return list_translate_encoding(x, Rf_length(x));
+    }
+  }
+  default: {
+    return x;
+  }
   }
 }
 
@@ -240,11 +276,20 @@ static SEXP df_maybe_translate_encoding(SEXP x, R_len_t size);
 
 // [[ include("vctrs.h") ]]
 SEXP obj_maybe_translate_encoding(SEXP x, R_len_t size) {
-  switch (vec_proxy_typeof(x)) {
-  case vctrs_type_character: return chr_maybe_translate_encoding(x, size);
-  case vctrs_type_list: return list_maybe_translate_encoding(x, size);
-  case vctrs_type_dataframe: return df_maybe_translate_encoding(x, size);
-  default: return x;
+  switch (TYPEOF(x)) {
+  case STRSXP: {
+    return chr_maybe_translate_encoding(x, size);
+  }
+  case VECSXP: {
+    if (is_data_frame(x)) {
+      return df_maybe_translate_encoding(x, size);
+    } else {
+      return list_maybe_translate_encoding(x, size);
+    }
+  }
+  default: {
+    return x;
+  }
   }
 }
 
@@ -288,11 +333,20 @@ static SEXP df_maybe_translate_encoding2(SEXP x, R_len_t x_size, SEXP y, R_len_t
 
 // [[ include("vctrs.h") ]]
 SEXP obj_maybe_translate_encoding2(SEXP x, R_len_t x_size, SEXP y, R_len_t y_size) {
-  switch (vec_proxy_typeof(x)) {
-  case vctrs_type_character: return chr_maybe_translate_encoding2(x, x_size, y, y_size);
-  case vctrs_type_list: return list_maybe_translate_encoding2(x, x_size, y, y_size);
-  case vctrs_type_dataframe: return df_maybe_translate_encoding2(x, x_size, y, y_size);
-  default: return translate_none(x, y);
+  switch (TYPEOF(x)) {
+  case STRSXP: {
+    return chr_maybe_translate_encoding2(x, x_size, y, y_size);
+  }
+  case VECSXP: {
+    if (is_data_frame(x)) {
+      return df_maybe_translate_encoding2(x, x_size, y, y_size);
+    } else {
+      return list_maybe_translate_encoding2(x, x_size, y, y_size);
+    }
+  }
+  default: {
+    return translate_none(x, y);
+  }
   }
 }
 
