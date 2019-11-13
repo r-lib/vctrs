@@ -55,6 +55,17 @@ test_that("translation can still occur even if a scalar type is in a list", {
   expect_equal(obj_maybe_translate_encoding(x), expect)
 })
 
+test_that("translation occurs inside scalars contained in a list", {
+  encs <- encodings()
+
+  scalar <- structure(list(x = encs$latin1), class = "scalar_list")
+  lst <- list(scalar)
+
+  result <- obj_maybe_translate_encoding(lst)
+
+  expect_equal_encoding(result[[1]]$x, encs$utf8)
+})
+
 # ------------------------------------------------------------------------------
 # obj_maybe_translate_encoding2()
 
