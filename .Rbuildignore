@@ -11,6 +11,5 @@
 ^\.Rproj\.user$
 ^TAGS$
 ^revdep$
-^azure-pipelines\.yml$
 ^\.github/workflows/R-CMD-check\.yaml$
 ^\.github/workflows/pr-commands\.yaml$
