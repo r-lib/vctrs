@@ -144,6 +144,9 @@ static bool list_any_known_encoding(SEXP x, R_len_t size) {
   return false;
 }
 
+// Data frames have a separate path from lists here purely for
+// performance reasons. We know the size of each column, and can
+// pass that information through.
 static bool df_any_known_encoding(SEXP x, R_len_t size) {
   int n_col = Rf_length(x);
 
