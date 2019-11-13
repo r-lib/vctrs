@@ -18,6 +18,7 @@ SEXP strings_posixt = NULL;
 SEXP strings_posixlt = NULL;
 SEXP strings_vctrs_vctr = NULL;
 SEXP strings_vctrs_list_of = NULL;
+SEXP strings_list = NULL;
 
 SEXP classes_data_frame = NULL;
 SEXP classes_tibble = NULL;
@@ -1097,13 +1098,13 @@ void vctrs_init_utils(SEXP ns) {
   SET_STRING_ELT(classes_tibble, 2, strings_data_frame);
 
 
-  classes_list_of = Rf_allocVector(STRSXP, 2);
+  classes_list_of = Rf_allocVector(STRSXP, 3);
   R_PreserveObject(classes_list_of);
 
   strings_vctrs_list_of = Rf_mkChar("vctrs_list_of");
   SET_STRING_ELT(classes_list_of, 0, strings_vctrs_list_of);
-
   SET_STRING_ELT(classes_list_of, 1, strings_vctrs_vctr);
+  SET_STRING_ELT(classes_list_of, 2, Rf_mkChar("list"));
 
 
   classes_vctrs_group_rle = Rf_allocVector(STRSXP, 3);

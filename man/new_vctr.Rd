@@ -5,7 +5,7 @@
 \alias{vctr}
 \title{vctr (vector) S3 class}
 \usage{
-new_vctr(.data, ..., class = character())
+new_vctr(.data, ..., class = character(), inherit_base_type = TRUE)
 }
 \arguments{
 \item{.data}{Foundation of class. Must be a vector}
@@ -13,6 +13,10 @@ new_vctr(.data, ..., class = character())
 \item{...}{Name-value pairs defining attributes}
 
 \item{class}{Name of subclass.}
+
+\item{inherit_base_type}{Does this class extend the base type of \code{.data}?
+i.e. does the resulting object extend the behaviour the underlying
+type?}
 }
 \description{
 This abstract class provides a set of useful default methods that makes it
