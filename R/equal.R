@@ -72,6 +72,6 @@ vec_duplicate_all <- function(x) {
   .Call(vctrs_duplicate_all, x)
 }
 
-obj_equal <- function(x, y, na_equal = TRUE) {
-  .Call(vctrs_equal_object, x, y, na_equal)
+obj_equal <- function(x, y) {
+  .Call(vctrs_equal_object, x, y)
 }

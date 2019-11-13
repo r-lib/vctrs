@@ -245,9 +245,9 @@ SEXP chr_assign(SEXP out, SEXP index, SEXP value, bool clone);
 SEXP list_assign(SEXP out, SEXP index, SEXP value, bool clone);
 SEXP df_assign(SEXP out, SEXP index, SEXP value, bool clone);
 
-// Most vector predicates return `int` because missing values are
-// propagated as `NA_LOGICAL`
-int equal_object(SEXP x, SEXP y, bool na_equal);
+// equal_object() never propagates missingness, so
+// it can return a `bool`
+bool equal_object(SEXP x, SEXP y);
 bool equal_names(SEXP x, SEXP y);
 
 /**
