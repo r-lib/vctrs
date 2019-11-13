@@ -149,7 +149,7 @@ considerably easier to get started with a new S3 vector class. See
 vector classes.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>new_vctr</span>(<span class='no'>.data</span>, <span class='no'>...</span>, <span class='kw'>class</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/character.html'>character</a></span>())</pre>
+    <pre class="usage"><span class='fu'>new_vctr</span>(<span class='no'>.data</span>, <span class='no'>...</span>, <span class='kw'>class</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/character.html'>character</a></span>(), <span class='kw'>inherit_base_type</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -165,6 +165,12 @@ vector classes.</p>
     <tr>
       <th>class</th>
       <td><p>Name of subclass.</p></td>
+    </tr>
+    <tr>
+      <th>inherit_base_type</th>
+      <td><p>Does this class extend the base type of <code>.data</code>?
+i.e. does the resulting object extend the behaviour the underlying
+type?</p></td>
     </tr>
     </table>
 

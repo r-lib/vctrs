@@ -142,6 +142,8 @@
 <a href="#vctrs-0-2-0-9000" class="anchor"></a>vctrs 0.2.0.9000<small> Unreleased </small>
 </h1>
 <ul>
+<li><p><code><a href="../reference/new_vctr.html">new_vctr()</a></code> gains a <code>inherit_base_type</code> argument which determines whether or not the class of the underlying type will be included in the class. This generally should be set to <code>TRUE</code>, unless your class does not behave like the underlying type; for example a <code><a href="https://rdrr.io/r/base/factor.html">factor()</a></code> should not inherit from <code>integer</code>.</p></li>
+<li><p><code><a href="../reference/list_of.html">list_of()</a></code> now inherits from “list” (<a href='https://github.com/r-lib/vctrs/issues/593'>#593</a>)</p></li>
 <li><p><code><a href="../reference/vec_ptype.html">vec_ptype()</a></code> has relaxed default behaviour for base types; now if two vectors both inherit from (e.g.) “character”, the common type is also “character” (<a href='https://github.com/r-lib/vctrs/issues/497'>#497</a>).</p></li>
 <li><p><code><a href="../reference/vec_equal.html">vec_equal()</a></code> now correctly treats <code>NULL</code> as the missing value element for lists (<a href='https://github.com/r-lib/vctrs/issues/653'>#653</a>).</p></li>
 <li><p>Positive and negative 0 are now considered equivalent by all functions that check for equality or uniqueness (<a href='https://github.com/r-lib/vctrs/issues/637'>#637</a>).</p></li>
