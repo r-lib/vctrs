@@ -1,6 +1,12 @@
 
 # vctrs 0.2.0.9000
 
+* `vec_equal()` no longer propagates missing values when comparing list
+  elements. This means that `vec_equal(list(NULL), list(NULL))` will continue to
+  return `NA` because `NULL` is the missing element for a list, but now
+  `vec_equal(list(NA), list(NA))` returns `TRUE` because the `NA` values are
+  compared directly without checking for missingness.
+
 * Lists of expressions are now supported in `vec_equal()` and functions that
   compare elements, such as `vec_unique()` and `vec_match()`. This ensures that
   they work with the result of modeling functions like `glm()` and `mgcv::gam()`

@@ -42,6 +42,7 @@ test_that("double special values", {
 
 test_that("`list(NULL)` is considered a missing value (#653)", {
   expect_equal(vec_equal(list(NULL), list(NULL)), NA)
+  expect_equal(vec_equal(list(NULL), list(1)), NA)
 })
 
 test_that("can compare data frames", {
@@ -140,9 +141,9 @@ test_that("can compare lists of scalars (#643)", {
   lst <- list(new_sclr(x = 1))
   expect_true(vec_equal(lst, lst))
 
+  # NA does not propagate
   lst <- list(new_sclr(y = NA))
-  expect_equal(vec_equal(lst, lst), NA)
-  expect_true(vec_equal(lst, lst, na_equal = TRUE))
+  expect_true(vec_equal(lst, lst))
 
   df <- data.frame(x = c(1, 4, 3), y = c(2, 8, 9))
   model <- lm(y ~ x, df)
@@ -193,7 +194,6 @@ test_that("can compare lists of expressions", {
 
 test_that("can compare NULL",{
   expect_true(obj_equal(NULL, NULL))
-  expect_equal(obj_equal(NULL, NULL, na_equal = FALSE), NA)
 })
 
 test_that("can compare objects with reference semantics", {
@@ -207,7 +207,6 @@ test_that("can compare objects with reference semantics", {
 test_that("can compare pairlists", {
   expect_true(obj_equal(quote(x + y), quote(x + y)))
   expect_true(obj_equal(pairlist(x = 1, y = 2), pairlist(x = 1, y = 2)))
-  expect_true(obj_equal(pairlist(x = 1, y = 2), pairlist(x = 1, y = 2), na_equal = FALSE))
 })
 
 test_that("can compare functions", {
@@ -242,14 +241,6 @@ test_that("not equal if attributes not equal", {
 test_that("can compare expressions", {
   expect_true(obj_equal(expression(x), expression(x)))
   expect_false(obj_equal(expression(x), expression(y)))
-})
-
-test_that("`na_equal` works with expressions", {
-  expect_true(obj_equal(expression(NA), expression(NA)))
-  expect_equal(obj_equal(expression(NA), expression(NA), na_equal = FALSE), NA)
-
-  expect_true(obj_equal(expression(NULL), expression(NULL)))
-  expect_equal(obj_equal(expression(NULL), expression(NULL), na_equal = FALSE), NA)
 })
 
 # na ----------------------------------------------------------------------
@@ -308,29 +299,19 @@ test_that("NA propagate from data frames columns", {
   expect_identical(vec_equal(y, x, na_equal = TRUE), c(FALSE, FALSE, FALSE))
 })
 
-test_that("NA propagate from list components", {
-  expect_identical(obj_equal(NA, NA, na_equal = FALSE), NA)
-  expect_identical(vec_equal(list(NA), list(NA)), NA)
-
-  expect_true(obj_equal(NA, NA, na_equal = TRUE))
-  expect_true(vec_equal(list(NA), list(NA), na_equal = TRUE))
+test_that("NA do not propagate from list components (#662)", {
+  expect_true(obj_equal(NA, NA))
+  expect_true(vec_equal(list(NA), list(NA)))
 })
 
-test_that("NA propagate from vector names when comparing objects (#217)", {
-  # FIXME: Not clear what should we do in the recursive case. Should we
-  # compare attributes of non S3 vectors at all?
-
+test_that("NA do not propagate from names when comparing objects", {
   x <- set_names(1:3, c("a", "b", NA))
   y <- set_names(1:3, c("a", NA, NA))
 
-  expect_identical(obj_equal(x, x, na_equal = FALSE), NA)
-  expect_identical(obj_equal(x, x, na_equal = TRUE), TRUE)
+  expect_true(obj_equal(x, x))
+  expect_false(obj_equal(x, y))
 
-  expect_identical(obj_equal(x, y, na_equal = FALSE), NA)
-  expect_identical(obj_equal(x, y, na_equal = TRUE), FALSE)
-
-  expect_identical(vec_equal(list(x, x, y), list(x, y, y)), c(NA, NA, NA))
-  expect_identical(vec_equal(list(x, x, y), list(x, y, y), na_equal = TRUE), c(TRUE, FALSE, TRUE))
+  expect_equal(vec_equal(list(x, x, y), list(x, y, y)), c(TRUE, FALSE, TRUE))
 })
 
 test_that("NA do not propagate from attributes", {
