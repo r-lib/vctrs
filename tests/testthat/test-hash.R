@@ -139,6 +139,13 @@ test_that("hash treats positive and negative 0 as equivalent (#637)", {
   expect_equal(vec_hash(-0), vec_hash(0))
 })
 
+test_that("can hash lists of expressions", {
+  expect_equal(
+    vec_hash(list(expression(x), expression(y))),
+    c(obj_hash(expression(x)), obj_hash(expression(y)))
+  )
+})
+
 # Object ------------------------------------------------------------------
 
 test_that("equal objects hash to same value", {
@@ -152,4 +159,16 @@ test_that("equal objects hash to same value", {
   attr(f2, "srcref") <- NULL
   expect_equal(obj_hash(f1), obj_hash(f2))
   expect_equal(vec_hash(data_frame(x = list(f1))), vec_hash(data_frame(x = list(f2))))
+})
+
+test_that("expression vectors hash to the same value as lists of calls/names", {
+  expect_equal(
+    obj_hash(expression(x, y)),
+    obj_hash(list(as.name("x"), as.name("y")))
+  )
+
+  expect_equal(
+    obj_hash(expression(mean(), sd())),
+    obj_hash(list(call("mean"), call("sd")))
+  )
 })

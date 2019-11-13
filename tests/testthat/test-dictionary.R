@@ -183,6 +183,17 @@ test_that("vec_unique() returns differently encoded strings in the order they ap
   expect_equal_encoding(vec_unique(y), encs$utf8)
 })
 
+test_that("vec_unique() works on lists containing expressions", {
+  x <- list(expression(x), expression(y), expression(x))
+  expect_equal(vec_unique(x), x[1:2])
+})
+
+test_that("vec_unique() works with glm objects (#643)", {
+  # class(model$family$initialize) == "expression"
+  model <- glm(mpg ~ wt, data = mtcars)
+  expect_equal(vec_unique(list(model, model)), list(model))
+})
+
 # matching ----------------------------------------------------------------
 
 test_that("vec_match() matches match()", {

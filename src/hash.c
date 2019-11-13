@@ -136,6 +136,7 @@ static uint32_t sexp_hash(SEXP x) {
   case INTSXP: return int_hash(x);
   case REALSXP: return dbl_hash(x);
   case STRSXP: return chr_hash(x);
+  case EXPRSXP:
   case VECSXP: return list_hash(x);
   case DOTSXP:
   case LANGSXP:

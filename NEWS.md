@@ -1,6 +1,11 @@
 
 # vctrs 0.2.0.9000
 
+* Lists of expressions are now supported in `vec_equal()` and functions that
+  compare elements, such as `vec_unique()` and `vec_match()`. This ensures that
+  they work with the result of modeling functions like `glm()` and `mgcv::gam()`
+  which store "family" objects containing expressions (#643).
+
 * `new_vctr()` gains a `inherit_base_type` argument which determines whether or 
   not the class of the underlying type will be included in the class. This 
   generally should be set to `TRUE`, unless your class does not behave like the 

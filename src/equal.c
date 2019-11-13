@@ -281,6 +281,7 @@ int equal_object(SEXP x, SEXP y, bool na_equal) {
   case STRSXP:
   case RAWSXP:
   case CPLXSXP:
+  case EXPRSXP:
   case VECSXP: break;
 
   case DOTSXP:
@@ -359,6 +360,7 @@ int equal_object(SEXP x, SEXP y, bool na_equal) {
   case STRSXP:  EQUAL_ALL(SEXP, STRING_PTR_RO, chr_equal_scalar); break;
   case RAWSXP:  EQUAL_ALL(Rbyte, RAW_RO, raw_equal_scalar); break;
   case CPLXSXP: EQUAL_ALL(Rcomplex, COMPLEX_RO, cpl_equal_scalar); break;
+  case EXPRSXP:
   case VECSXP:  EQUAL_ALL_BARRIER(list_equal_scalar); break;
   default:      Rf_errorcall(R_NilValue, "Internal error: Unexpected type in `equal_object()`");
   }
