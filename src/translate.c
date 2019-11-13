@@ -13,8 +13,8 @@
 // - (utf8 + utf8), (latin1 + latin1), (unknown + unknown), (bytes + bytes)
 
 static bool chr_translation_required_impl(const SEXP* x, R_len_t size, cetype_t reference) {
-  for (R_len_t i = 0; i < size; ++i, ++x) {
-    if (Rf_getCharCE(*x) != reference) {
+  for (R_len_t i = 0; i < size; ++i) {
+    if (Rf_getCharCE(x[i]) != reference) {
       return true;
     }
   }
@@ -125,8 +125,8 @@ static bool chr_any_known_encoding(SEXP x, R_len_t size) {
 
   const SEXP* p_x = STRING_PTR_RO(x);
 
-  for (int i = 0; i < size; ++i, ++p_x) {
-    if (Rf_getCharCE(*p_x) != CE_NATIVE) {
+  for (int i = 0; i < size; ++i) {
+    if (Rf_getCharCE(p_x[i]) != CE_NATIVE) {
       return true;
     }
   }
@@ -213,15 +213,15 @@ static SEXP chr_translate_encoding(SEXP x, R_len_t size) {
 
   const void *vmax = vmaxget();
 
-  for (int i = 0; i < size; ++i, ++p_x, ++p_out) {
-    SEXP chr = *p_x;
+  for (int i = 0; i < size; ++i) {
+    SEXP chr = p_x[i];
 
     if (Rf_getCharCE(chr) == CE_UTF8) {
-      *p_out = chr;
+      p_out[i] = chr;
       continue;
     }
 
-    *p_out = Rf_mkCharCE(Rf_translateCharUTF8(chr), CE_UTF8);
+    p_out[i] = Rf_mkCharCE(Rf_translateCharUTF8(chr), CE_UTF8);
   }
 
   vmaxset(vmax);
