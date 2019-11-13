@@ -164,9 +164,11 @@ hash_label <- function(x, length = 5) {
   if (length(x) == 0) {
     ""
   } else {
-    # Can't use hash() currently because it hashes the string pointers
-    # for performance, so the values in the test change each time
-    substr(digest::digest(x), 1, length)
+    # `obj_hash()` with strings is only reproducible
+    # between R sessions if `pool = FALSE`
+    hash <- obj_hash(x, pool = FALSE)
+    hash <- paste0(hash, collapse = "")
+    substr(hash, 1, length)
   }
 }
 

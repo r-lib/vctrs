@@ -7,7 +7,7 @@ Lossy cast from `x` <character> to `to` <double>.
 
 vec_cast(factor("foo"), 10):
 
-Can't cast `x` <factor<bd40e>> to `to` <double>. 
+Can't cast `x` <factor<fb66f>> to `to` <double>. 
 
 
 vec_cast(x, y):
@@ -18,10 +18,10 @@ Lossy cast from `x$a$b` <character> to `to$a$b` <double>.
 
 vec_cast(x, y):
 
-Can't cast `x$a$b` <factor<bd40e>> to `to$a$b` <double>. 
+Can't cast `x$a$b` <factor<fb66f>> to `to$a$b` <double>. 
 
 
 vec_cast_common(x, y):
 
-No common type for `..1$a$b` <factor<bd40e>> and `..2$a$b` <double>. 
+No common type for `..1$a$b` <factor<fb66f>> and `..2$a$b` <double>. 
 

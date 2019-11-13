@@ -28,7 +28,6 @@ Depends:
 Imports: 
     backports,
     ellipsis (>= 0.2.0),
-    digest,
     glue,
     rlang (>= 0.4.1),
     zeallot
