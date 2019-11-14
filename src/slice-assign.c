@@ -43,7 +43,7 @@ SEXP vec_assign(SEXP x, SEXP index, SEXP value) {
   struct vctrs_proxy_info info = vec_proxy_info(x);
 
   SEXP out;
-  if ((OBJECT(x) && info.proxy_method == R_NilValue) || has_dim(x)) {
+  if (vec_requires_fallback(x, info) || has_dim(x)) {
     // Restore the value before falling back to `[<-`
     value = PROTECT(vec_restore(value_proxy, value_orig, R_NilValue));
     out = vec_assign_fallback(x, index, value);

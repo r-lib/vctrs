@@ -225,6 +225,12 @@ static SEXP vec_slice_fallback(SEXP x, SEXP index) {
                          syms_i, index);
 }
 
+bool vec_requires_fallback(SEXP x, struct vctrs_proxy_info info) {
+  return OBJECT(x) &&
+    info.proxy_method == R_NilValue &&
+    info.type != vctrs_type_dataframe;
+}
+
 static SEXP vec_slice_base(enum vctrs_type type, SEXP x, SEXP index) {
   switch (type) {
   case vctrs_type_logical:   return lgl_slice(x, index);
@@ -288,7 +294,7 @@ SEXP vec_slice_impl(SEXP x, SEXP index) {
 
   // Fallback to `[` if the class doesn't implement a proxy. This is
   // to be maximally compatible with existing classes.
-  if (OBJECT(x) && info.proxy_method == R_NilValue) {
+  if (vec_requires_fallback(x, info)) {
     if (info.type == vctrs_type_scalar) {
       Rf_errorcall(R_NilValue, "Can't slice a scalar");
     }
@@ -743,7 +749,7 @@ static SEXP vec_chop_base(SEXP x, SEXP indices, struct vctrs_chop_info info) {
 
   // Fallback to `[` if the class doesn't implement a proxy. This is
   // to be maximally compatible with existing classes.
-  if (OBJECT(x) && proxy_info.proxy_method == R_NilValue) {
+  if (vec_requires_fallback(x, proxy_info)) {
     if (proxy_info.type == vctrs_type_scalar) {
       Rf_errorcall(R_NilValue, "Can't slice a scalar");
     }
