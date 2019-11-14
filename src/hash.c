@@ -60,7 +60,7 @@ static uint32_t hash_char_sexp(SEXP x) {
 static uint32_t hash_char(SEXP x) {
   uint32_t hash = 5381;
 
-  const char *string = CHAR(x);
+  const char* string = CHAR(x);
   int chr = *string++;
 
   while (chr) {
