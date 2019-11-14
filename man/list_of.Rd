@@ -37,11 +37,11 @@ this is a convenient way to make production code demand fixed types.}
 }
 \description{
 A \code{list_of} object is a list where each element has the same type.
-Modifying the list with \code{$}, \code{[}, and \code{[[} preserves the constraint
+Modifying the list with \verb{$}, \verb{[}, and \verb{[[} preserves the constraint
 by coercing all input items.
 }
 \details{
-Unlike regular lists, setting a list element to \code{NULL} using \code{[[}
+Unlike regular lists, setting a list element to \code{NULL} using \verb{[[}
 does not remove it.
 }
 \examples{

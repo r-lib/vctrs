@@ -5,11 +5,14 @@
 \alias{vec_coerce_position}
 \title{Coerce to the base type of a position}
 \usage{
-vec_coerce_index(i, ..., allow_types = c("indicator", "position",
-  "name"), arg = "i")
+vec_coerce_index(
+  i,
+  ...,
+  allow_types = c("indicator", "position", "name"),
+  arg = "i"
+)
 
-vec_coerce_position(i, ..., allow_types = c("position", "name"),
-  arg = "i")
+vec_coerce_position(i, ..., allow_types = c("position", "name"), arg = "i")
 }
 \arguments{
 \item{i}{An integer, character or logical vector specifying the positions or

@@ -24,14 +24,14 @@ MISSING()
 \arguments{
 \item{op}{An arithmetic operator as a string}
 
-\item{x, y}{A pair of vectors. For \code{!}, unary \code{+} and unary \code{-}, \code{y} will be
+\item{x, y}{A pair of vectors. For \verb{!}, unary \verb{+} and unary \verb{-}, \code{y} will be
 a sentinel object of class \code{MISSING}, as created by \code{MISSING()}.}
 
 \item{...}{These dots are for future extensions and must be empty.}
 }
 \description{
 This generic provides a common double dispatch mechanism for all infix
-operators (\code{+}, \code{-}, \code{/}, \code{*}, \code{^}, \code{\%\%}, \code{\%/\%}, \code{!}, \code{&}, \code{|}). It is used
+operators (\verb{+}, \verb{-}, \verb{/}, \verb{*}, \verb{^}, \verb{\%\%}, \verb{\%/\%}, \verb{!}, \verb{&}, \verb{|}). It is used
 to power the default arithmetic and boolean operators for \link{vctr}s objects,
 overcoming the limitations of the base \link{Ops} generic.
 }
@@ -40,7 +40,7 @@ overcoming the limitations of the base \link{Ops} generic.
 recycles \code{x} and \code{y} to common length then calls the base operator with the
 underlying \code{\link[=vec_data]{vec_data()}}.
 
-\code{vec_arith()} is also used in \code{diff.vctrs_vctr()} method via \code{-}.
+\code{vec_arith()} is also used in \code{diff.vctrs_vctr()} method via \verb{-}.
 }
 \examples{
 d <- as.Date("2018-01-01")

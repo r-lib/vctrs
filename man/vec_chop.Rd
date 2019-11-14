@@ -16,7 +16,7 @@ its individual elements, equivalent to using an \code{indices} of
 \code{as.list(vec_seq_along(x))}.}
 }
 \value{
-A vector of type \code{list_of<vec_ptype(x)>} and size \code{vec_size(indices)}
+A vector of type \verb{list_of<vec_ptype(x)>} and size \code{vec_size(indices)}
 or, if \code{indices == NULL}, \code{vec_size(x)}.
 }
 \description{

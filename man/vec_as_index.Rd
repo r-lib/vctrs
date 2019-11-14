@@ -5,11 +5,17 @@
 \alias{vec_as_position}
 \title{Create an index vector or a position}
 \usage{
-vec_as_index(i, n, names = NULL, ..., allow_types = c("indicator",
-  "position", "name"), convert_values = "negative", arg = "i")
+vec_as_index(
+  i,
+  n,
+  names = NULL,
+  ...,
+  allow_types = c("indicator", "position", "name"),
+  convert_values = "negative",
+  arg = "i"
+)
 
-vec_as_position(i, n, names = NULL, ..., allow_values = NULL,
-  arg = "i")
+vec_as_position(i, n, names = NULL, ..., allow_values = NULL, arg = "i")
 }
 \arguments{
 \item{i}{An integer, character or logical vector specifying the positions or
@@ -56,13 +62,13 @@ methods such as integer, character or logical indexing.
 \itemize{
 \item \code{vec_as_index()} accepts integer, character, or logical vectors
 of any size. The output is always an integer vector that is
-suitable for subsetting with \code{[} or \code{\link[=vec_slice]{vec_slice()}}. It might be a
+suitable for subsetting with \verb{[} or \code{\link[=vec_slice]{vec_slice()}}. It might be a
 different size than the input because negative selections are
 transformed to positive ones and logical vectors are transformed
 to a vector of indices for the \code{TRUE} positions.
 \item \code{vec_as_position()} accepts a single number or string. It returns
 a single position as a integer vector of size 1. This is suitable
-for extracting with \code{[[}.
+for extracting with \verb{[[}.
 }
 }
 \examples{

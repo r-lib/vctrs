@@ -8,8 +8,7 @@
 \alias{vec_cast.factor}
 \title{Factor/ordered factor S3 class}
 \usage{
-new_factor(x = integer(), levels = character(), ...,
-  class = character())
+new_factor(x = integer(), levels = character(), ..., class = character())
 
 new_ordered(x = integer(), levels = character())
 
