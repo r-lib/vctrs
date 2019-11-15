@@ -1,29 +1,36 @@
-#' Hash a vector
+#' Hash an object
 #'
-#' `vec_hash()` hashes a vector and returns the hash as a raw vector. Each
-#' element of `x` is coded with 32-bit hashes. This results in a raw vector
-#' that is 4 times the size of `x`.
+#' @description
+#' \Sexpr[results=rd, stage=render]{vctrs:::lifecycle("experimental")}
+#'
+#' `obj_hash()` hashes an object by coding each element of `x` with 32-bit
+#' hashes and combining them together. The hash is returned as a raw vector of
+#' size 4.
+#'
+#' @details
+#' `obj_hash()` is extremely experimental, and no strong reproducibility
+#' assumptions should be made. Because of this, if you use `obj_hash()` the
+#' hash results should not be tested in unit tests as they might change without
+#' warning.
+#'
+#' It is possible that some objects have a non-trivial chance to produce the
+#' same hash value.
 #'
 #' @param x A vector
 #' @param pool A logical. Should R's global string pool be used to hash
 #'   characters? If `TRUE`, the hashing will be faster, but will not be
 #'   reproducible between R sessions.
-#' @return A raw vector of hash values of size `4 * vec_size(x)`.
+#' @return The hash value as a raw vector of size 4.
 #' @export
 #' @examples
-#' vec_hash(1:2)
-#'
-#' vec_hash(mtcars)
-#'
-#' # To consistently get a size 4 hash for any
-#' # vector, wrap it in a list
-#' vec_hash(list(mtcars))
-vec_hash <- function(x, pool = TRUE) {
-  vec_assert(pool, ptype = logical(), size = 1L)
-  .Call(vctrs_hash, x, pool)
-}
-
+#' obj_hash(1:2)
+#' obj_hash(mtcars)
 obj_hash <- function(x, pool = TRUE) {
   vec_assert(pool, ptype = logical(), size = 1L)
   .Call(vctrs_hash_object, x, pool)
+}
+
+vec_hash <- function(x, pool = TRUE) {
+  vec_assert(pool, ptype = logical(), size = 1L)
+  .Call(vctrs_hash, x, pool)
 }
