@@ -1,7 +1,9 @@
 
 # vctrs 0.2.0.9000
 
-* New `vec_hash()` for hashing vectors.
+* New experimental `obj_hash()` for hashing objects. This algorithm is still
+  subject to change, so please do not make any strong reproducibility
+  assumptions at this time.
 
 * `vec_equal()` no longer propagates missing values when comparing list
   elements. This means that `vec_equal(list(NULL), list(NULL))` will continue to
