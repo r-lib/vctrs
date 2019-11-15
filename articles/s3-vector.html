@@ -107,7 +107,8 @@
     
 <p>This vignette shows you how to create your own S3 vector classes. It focuses on the aspects of making a vector class that every class needs to worry about; you’ll also need to provide methods that actually make the vector useful.</p>
 <p>I assume that you’re already familiar with the basic machinery of S3, and the vocabulary I use in Advanced R: constructor, helper, and validator. If not, I recommend reading at least the first two sections of <a href="https://adv-r.hadley.nz/s3.html">the S3 chapter</a> of <em>Advanced R</em>.</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" data-line-number="1"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(vctrs)</a></code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" data-line-number="1"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(vctrs)</a>
+<a class="sourceLine" id="cb1-2" data-line-number="2"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(zeallot)</a></code></pre></div>
 <p>This vignette works through five big topics:</p>
 <ul>
 <li>The basics of creating a new vector class with vctrs.</li>
