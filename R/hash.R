@@ -21,6 +21,7 @@
 #'   characters? If `TRUE`, the hashing will be faster, but will not be
 #'   reproducible between R sessions.
 #' @return The hash value as a raw vector of size 4.
+#' @keywords internal
 #' @export
 #' @examples
 #' obj_hash(1:2)

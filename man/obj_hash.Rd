@@ -36,3 +36,4 @@ same hash value.
 obj_hash(1:2)
 obj_hash(mtcars)
 }
+\keyword{internal}
