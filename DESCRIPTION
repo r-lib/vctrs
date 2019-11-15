@@ -30,8 +30,7 @@ Imports:
     ellipsis (>= 0.2.0),
     digest,
     glue,
-    rlang (>= 0.4.1),
-    zeallot
+    rlang (>= 0.4.1)
 Suggests: 
     bit64,
     covr,
@@ -43,7 +42,8 @@ Suggests:
     rmarkdown,
     testthat (>= 2.3.0),
     tibble,
-    xml2
+    xml2,
+    zeallot
 VignetteBuilder: 
     knitr
 Encoding: UTF-8

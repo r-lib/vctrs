@@ -8,9 +8,9 @@ new_rational <- function(n = integer(), d = integer()) {
 }
 
 rational <- function(n, d) {
-  c(n, d) %<-% vec_cast_common(n, d, .to = integer())
-  c(n, d) %<-% vec_recycle_common(n, d)
-  new_rational(n, d)
+  args <- vec_cast_common(n, d, .to = integer())
+  args <- vec_recycle_common(!!! args)
+  new_rational(args[[1L]], args[[2L]])
 }
 
 format.vctrs_rational <- function(x, ...) {

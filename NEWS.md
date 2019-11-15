@@ -1,6 +1,9 @@
 
 # vctrs 0.2.0.9000
 
+* zeallot has been moved from Imports to Suggests, meaning that `%<-%` is no
+  longer re-exported from vctrs.
+
 * `vec_equal()` no longer propagates missing values when comparing list
   elements. This means that `vec_equal(list(NULL), list(NULL))` will continue to
   return `NA` because `NULL` is the missing element for a list, but now
