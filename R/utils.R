@@ -1,5 +1,9 @@
+str_dup <- function(x, times) {
+  paste0(rep(x, times = times), collapse = "")
+}
+
 indent <- function(x, n) {
-  pad <- strrep(" ", n)
+  pad <- str_dup(" ", n)
   map_chr(x, gsub, pattern = "(\n+)", replacement = paste0("\\1", pad))
 }
 
