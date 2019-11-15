@@ -200,3 +200,10 @@ test_that("obj_hash(pool = FALSE) produces the same results as vec_hash(pool = F
     vec_hash(list(x), pool = FALSE),
   )
 })
+
+test_that("obj_hash(pool = FALSE) treats `NA_character_` and `'NA'` as equivalent", {
+  expect_equal(
+    obj_hash(NA_character_, pool = FALSE),
+    obj_hash("NA", pool = FALSE)
+  )
+})
