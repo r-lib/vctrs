@@ -458,7 +458,9 @@ vec_arith.difftime.Date <- function(op, x, y, ...) {
 #' @export
 vec_arith.difftime.difftime <- function(op, x, y, ...) {
   # Ensure x and y have same units
-  c(x, y) %<-% vec_cast_common(x, y)
+  args <- vec_cast_common(x, y)
+  x <- args[[1L]]
+  y <- args[[2L]]
 
   switch(op,
     `+`   = vec_restore(vec_arith_base(op, x, y), x),

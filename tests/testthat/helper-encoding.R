@@ -26,6 +26,6 @@ encoding_bytes <- function() {
 }
 
 expect_equal_encoding <- function(object, expected) {
-  c(object, expected) %<-% vec_recycle_common(object, expected)
-  expect_equal(Encoding(object), Encoding(expected))
+  args <- vec_recycle_common(object, expected)
+  expect_equal(Encoding(args[[1L]]), Encoding(args[[2L]]))
 }

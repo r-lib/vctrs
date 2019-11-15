@@ -49,16 +49,6 @@ inline_list <- function(title, x, width = getOption("width"), quote = "") {
   paste0(title, x)
 }
 
-#' Destructuring assignment
-#'
-#' See \code{zeallot::\link[zeallot]{\%<-\%}} for details.
-#' @importFrom zeallot %<-%
-#' @export
-#' @rdname unpack-assign
-#' @name %<-%
-#' @keywords internal
-`%<-%`
-
 has_unique_names <- function(x) {
   nms <- names(x)
 
