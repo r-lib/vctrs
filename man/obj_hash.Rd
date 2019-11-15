@@ -7,7 +7,7 @@
 obj_hash(x, pool = TRUE)
 }
 \arguments{
-\item{x}{A vector}
+\item{x}{An object}
 
 \item{pool}{A logical. Should R's global string pool be used to hash
 characters? If \code{TRUE}, the hashing will be faster, but will not be

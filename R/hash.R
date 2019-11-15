@@ -16,7 +16,7 @@
 #' It is possible that some objects have a non-trivial chance to produce the
 #' same hash value.
 #'
-#' @param x A vector
+#' @param x An object
 #' @param pool A logical. Should R's global string pool be used to hash
 #'   characters? If `TRUE`, the hashing will be faster, but will not be
 #'   reproducible between R sessions.
