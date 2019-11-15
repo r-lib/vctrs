@@ -21,6 +21,7 @@ I assume that you're already familiar with the basic machinery of S3, and the vo
 
 ```{r setup}
 library(vctrs)
+library(zeallot)
 ```
 
 This vignette works through five big topics:

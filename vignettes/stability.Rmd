@@ -20,6 +20,7 @@ This work is partly motivated by a common pattern that I noticed when reviewing 
 
 ```{r setup}
 library(vctrs)
+library(zeallot)
 ```
 
 ## Definitions
