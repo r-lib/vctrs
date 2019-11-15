@@ -670,8 +670,8 @@ vec_init <- function(x, n = 1L) {
 #'   would be valid as an index in [vec_slice()]. If `NULL`, `x` is split into
 #'   its individual elements, equivalent to using an `indices` of
 #'   `as.list(vec_seq_along(x))`.
-#' @return A vector of type `list_of<vec_ptype(x)>` and size `vec_size(indices)`
-#'   or, if `indices == NULL`, `vec_size(x)`.
+#' @return A list of size `vec_size(indices)` or, if `indices == NULL`,
+#'   `vec_size(x)`.
 #' @export
 #' @examples
 #' vec_chop(1:5)

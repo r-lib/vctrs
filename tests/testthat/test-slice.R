@@ -456,12 +456,12 @@ test_that("vec_chop() throws error with non-vector inputs", {
   expect_error(vec_chop(environment()), class = "vctrs_error_scalar_type")
 })
 
-test_that("atomics are split into a list_of", {
+test_that("atomics are split into a list", {
   x <- 1:5
-  expect_equal(vec_chop(x), as_list_of(as.list(x)))
+  expect_equal(vec_chop(x), as.list(x))
 
   x <- letters[1:5]
-  expect_equal(vec_chop(x), as_list_of(as.list(x)))
+  expect_equal(vec_chop(x), as.list(x))
 })
 
 test_that("atomic names are kept", {
@@ -472,11 +472,11 @@ test_that("atomic names are kept", {
 
 test_that("base R classed objects are split into a list", {
   fctr <- factor(c("a", "b"))
-  expect <- as_list_of(lapply(vec_seq_along(fctr), vec_slice, x = fctr))
+  expect <- lapply(vec_seq_along(fctr), vec_slice, x = fctr)
   expect_equal(vec_chop(fctr), expect)
 
   date <- new_date(c(0, 1))
-  expect <- as_list_of(lapply(vec_seq_along(date), vec_slice, x = date))
+  expect <- lapply(vec_seq_along(date), vec_slice, x = date)
   expect_equal(vec_chop(date), expect)
 })
 
@@ -488,13 +488,13 @@ test_that("base R classed object names are kept", {
 
 test_that("list elements are split", {
   x <- list(1, 2)
-  result <- list_of(vec_slice(x, 1), vec_slice(x, 2))
+  result <- list(vec_slice(x, 1), vec_slice(x, 2))
   expect_equal(vec_chop(x), result)
 })
 
 test_that("data frames are split rowwise", {
   x <- data_frame(x = 1:2, y = c("a", "b"))
-  result <- list_of(vec_slice(x, 1), vec_slice(x, 2))
+  result <- list(vec_slice(x, 1), vec_slice(x, 2))
   expect_equal(vec_chop(x), result)
 })
 
@@ -507,7 +507,7 @@ test_that("data frame row names are kept", {
 
 test_that("matrices / arrays are split rowwise", {
   x <- array(1:12, c(2, 2, 2))
-  result <- list_of(vec_slice(x, 1), vec_slice(x, 2))
+  result <- list(vec_slice(x, 1), vec_slice(x, 2))
   expect_equal(vec_chop(x), result)
 })
 
@@ -557,14 +557,14 @@ test_that("`indices` are validated", {
 })
 
 test_that("size 0 `indices` list is allowed", {
-  expect_equal(vec_chop(1, list()), list_of(.ptype = numeric()))
+  expect_equal(vec_chop(1, list()), list())
 })
 
 test_that("individual index values of size 0 are allowed", {
-  expect_equal(vec_chop(1, list(integer())), list_of(numeric()))
+  expect_equal(vec_chop(1, list(integer())), list(numeric()))
 
   df <- data.frame(a = 1, b = "1")
-  expect_equal(vec_chop(df, list(integer())), list_of(vec_ptype(df)))
+  expect_equal(vec_chop(df, list(integer())), list(vec_ptype(df)))
 })
 
 test_that("data frame row names are kept when `indices` are used", {
@@ -621,7 +621,7 @@ test_that("fallback method with `indices` works", {
 
   expect_equal(
     vec_chop(fctr, indices),
-    as_list_of(map(indices, vec_slice, x = fctr))
+    map(indices, vec_slice, x = fctr)
   )
 })
 

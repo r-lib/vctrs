@@ -805,14 +805,6 @@ SEXP vctrs_chop(SEXP x, SEXP indices) {
 
 // [[ include("vctrs.h") ]]
 SEXP vec_chop(SEXP x, SEXP indices) {
-  SEXP out = PROTECT(vec_chop_impl(x, indices));
-  init_list_of(out, vec_type(x));
-
-  UNPROTECT(1);
-  return out;
-}
-
-static SEXP vec_chop_impl(SEXP x, SEXP indices) {
   int nprot = 0;
 
   struct vctrs_chop_info info = init_chop_info(x, indices);
@@ -941,7 +933,7 @@ static SEXP chop_df(SEXP x, SEXP indices, struct vctrs_chop_info info) {
   // into the appropriate data frame column in the `out` list
   for (int i = 0; i < n_cols; ++i) {
     SEXP col = VECTOR_ELT(info.proxy_info.proxy, i);
-    SEXP split = PROTECT(vec_chop_impl(col, indices));
+    SEXP split = PROTECT(vec_chop(col, indices));
 
     for (int j = 0; j < info.out_size; ++j) {
       elt = VECTOR_ELT(info.out, j);
