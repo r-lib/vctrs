@@ -57,7 +57,7 @@ test_that("vec_ptype_common() includes index in argument tag", {
   df2 <- tibble(x = tibble(y = tibble(z = "a")))
 
   # Create a column name too large for default buffer
-  nm <- strrep("foobarfoobar", 10)
+  nm <- str_dup("foobarfoobar", 10)
   large_df1 <- set_names(df1, nm)
   large_df2 <- set_names(df2, nm)
 
