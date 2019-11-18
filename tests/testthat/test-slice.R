@@ -632,6 +632,17 @@ test_that("vec_chop() falls back to `[` for shaped objects with no proxy when in
   expect_equal(result, x)
 })
 
+# vec_slice + compact_rep -------------------------------------------------
+
+# `i` is 1-based
+
+test_that("names are repaired correctly with compact reps and `NA_integer_`", {
+  x <- list(a = 1L, b = 2L)
+  expect <- set_names(list(NULL, NULL), c("", ""))
+
+  expect_equal(vec_slice_rep(x, NA_integer_, 2L), expect)
+})
+
 # vec_slice + compact_seq -------------------------------------------------
 
 # `start` is 0-based

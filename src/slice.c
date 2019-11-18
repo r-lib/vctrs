@@ -245,6 +245,36 @@ static SEXP vec_slice_base(enum vctrs_type type, SEXP x, SEXP index) {
   }
 }
 
+// Replace any `NA` name caused by `NA` index with the empty
+// string. It's ok mutate the names vector since it is freshly
+// created (and the empty string is persistently protected anyway).
+static void repair_na_names(SEXP names, SEXP index) {
+  R_len_t n = Rf_length(names);
+
+  if (n == 0) {
+    return;
+  }
+
+  SEXP* p_names = STRING_PTR(names);
+
+  // Special handling for a compact_rep object with repeated `NA`
+  if (is_compact_rep(index)) {
+    for (R_len_t i = 0; i < n; ++i) {
+      p_names[i] = strings_empty;
+    }
+
+    return;
+  }
+
+  const int* p_i = INTEGER_RO(index);
+
+  for (R_len_t i = 0; i < n; ++i) {
+    if (p_i[i] == NA_INTEGER) {
+      p_names[i] = strings_empty;
+    }
+  }
+}
+
 static SEXP slice_names(SEXP names, SEXP index) {
   if (names == R_NilValue) {
     return names;
@@ -252,18 +282,7 @@ static SEXP slice_names(SEXP names, SEXP index) {
 
   names = PROTECT(chr_slice(names, index));
 
-  // Replace any `NA` name caused by `NA` index with the empty
-  // string. It's ok mutate the names vector since it is freshly
-  // created (and the empty string is persistently protected anyway).
-  R_len_t n = Rf_length(names);
-  SEXP* namesp = STRING_PTR(names);
-  const int* ip = INTEGER_RO(index);
-
-  for (R_len_t i = 0; i < n; ++i) {
-    if (ip[i] == NA_INTEGER) {
-      namesp[i] = strings_empty;
-    }
-  }
+  repair_na_names(names, index);
 
   UNPROTECT(1);
   return names;
@@ -408,6 +427,19 @@ SEXP vec_slice_seq(SEXP x, SEXP start, SEXP size, SEXP increasing) {
   bool increasing_ = r_lgl_get(increasing, 0);
 
   SEXP index = PROTECT(compact_seq(start_, size_, increasing_));
+  SEXP out = vec_slice_impl(x, index);
+
+  UNPROTECT(1);
+  return out;
+}
+
+// Exported for testing
+// [[ register() ]]
+SEXP vec_slice_rep(SEXP x, SEXP i, SEXP n) {
+  R_len_t i_ = r_int_get(i, 0);
+  R_len_t n_ = r_int_get(n, 0);
+
+  SEXP index = PROTECT(compact_rep(i_, n_));
   SEXP out = vec_slice_impl(x, index);
 
   UNPROTECT(1);
