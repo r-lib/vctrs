@@ -23,7 +23,7 @@ vec_group_rle(x)
 \code{vec_size(vec_unique(x))}.
 \itemize{
 \item A \code{key} column of type \code{vec_ptype(x)}
-\item A \code{pos} column of type \verb{list_of<integer>}
+\item A \code{pos} column of type list, with elements of type integer.
 }
 \item \code{vec_group_rle()}: A \code{vctrs_group_rle} rcrd object with two integer
 vector fields: \code{group} and \code{length}.

@@ -192,7 +192,6 @@ SEXP vec_group_pos(SEXP x) {
   }
 
   SEXP out_pos = PROTECT_N(Rf_allocVector(VECSXP, n_groups), &nprot);
-  init_list_of(out_pos, vctrs_shared_empty_int);
 
   // Initialize `out_pos` to a list of integers with sizes corresponding
   // to the number of elements in that group
