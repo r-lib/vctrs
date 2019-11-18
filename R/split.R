@@ -8,7 +8,8 @@
 #' @param by Vector whose unique values defines the groups.
 #' @return A data frame with two columns and size equal to
 #'   `vec_size(vec_unique(by))`. The `key` column has the same type as
-#'   `by`, and the `val` column has type `list_of<vec_ptype(x)>`.
+#'   `by`, and the `val` column is a list containing elements of type
+#'   `vec_ptype(x)`.
 #'
 #'   Note for complex types, the default `data.frame` print method will be
 #'   suboptimal, and you will want to coerce into a tibble to better

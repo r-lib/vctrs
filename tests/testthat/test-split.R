@@ -5,7 +5,7 @@ test_that("can split empty vector", {
 
   expect_s3_class(out, "data.frame")
   expect_equal(out$key, character())
-  expect_equal(out$val, list_of(.ptype = integer()))
+  expect_equal(out$val, list())
 })
 
 test_that("split data frame with data frame", {
@@ -14,7 +14,7 @@ test_that("split data frame with data frame", {
 
   expect_s3_class(out, "data.frame")
   expect_equal(out$key, data.frame(x = c(1, 2), y = c(1, 1)))
-  expect_equal(out$val, list_of(
+  expect_equal(out$val, list(
     data.frame(x = c(1, 1), y = c(1, 1)),
     data.frame(x = 2, y = 1)
   ))
