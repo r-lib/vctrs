@@ -219,6 +219,26 @@ test_that("Shaped NA casts work as expected", {
   expect_equal(vec_cast(mat(list(NA)), to_mat), exp_mat)
 })
 
+test_that("complex is coercible to numeric types", {
+  expect_identical(vec_ptype2(cpl(), NULL), cpl())
+  expect_identical(vec_ptype2(NULL, cpl()), cpl())
+
+  expect_identical(vec_ptype2(cpl(), int()), cpl())
+  expect_identical(vec_ptype2(int(), cpl()), cpl())
+
+  expect_identical(vec_ptype2(cpl(), dbl()), cpl())
+  expect_identical(vec_ptype2(dbl(), cpl()), cpl())
+
+  expect_identical(vec_ptype2(cpl(), cpl()), cpl())
+
+  expect_identical(vec_c(0, 1i), cpl(0i, 1i))
+})
+
+test_that("complex is not coercible to logical", {
+  expect_error(vec_ptype2(cpl(), lgl()), class = "vctrs_error_incompatible_type")
+  expect_error(vec_ptype2(lgl(), cpl()), class = "vctrs_error_incompatible_type")
+})
+
 
 # Character
 

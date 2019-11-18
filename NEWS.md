@@ -1,6 +1,9 @@
 
 # vctrs 0.2.0.9000
 
+* Complex numbers are coercible with teh numeric types integer and
+  double (#564).
+
 * zeallot has been moved from Imports to Suggests, meaning that `%<-%` is no
   longer re-exported from vctrs.
 

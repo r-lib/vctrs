@@ -17,6 +17,11 @@ vec_ptype2.integer <- function(x, y, ...) UseMethod("vec_ptype2.integer", y)
 #' @method vec_ptype2 double
 #' @export
 vec_ptype2.double <- function(x, y, ...) UseMethod("vec_ptype2.double", y)
+#' @rdname vec_ptype2
+#' @export vec_ptype2.complex
+#' @method vec_ptype2 complex
+#' @export
+vec_ptype2.complex <- function(x, y, ...) UseMethod("vec_ptype2.complex", y)
 
 #' @method vec_ptype2.logical logical
 #' @export
@@ -47,6 +52,23 @@ vec_ptype2.integer.double <- function(x, y, ...) shape_match(double(), x, y)
 #' @export
 #' @method vec_ptype2.double integer
 vec_ptype2.double.integer <- function(x, y, ...) shape_match(double(), x, y)
+
+#' @export
+#' @method vec_ptype2.complex complex
+vec_ptype2.complex.complex <- function(x, y, ...) shape_match(complex(), x, y)
+#' @export
+#' @method vec_ptype2.integer complex
+vec_ptype2.integer.complex <- function(x, y, ...) shape_match(complex(), x, y)
+#' @export
+#' @method vec_ptype2.complex integer
+vec_ptype2.complex.integer <- function(x, y, ...) shape_match(complex(), x, y)
+#' @export
+#' @method vec_ptype2.double complex
+vec_ptype2.double.complex <- function(x, y, ...) shape_match(complex(), x, y)
+#' @export
+#' @method vec_ptype2.complex double
+vec_ptype2.complex.double <- function(x, y, ...) shape_match(complex(), x, y)
+
 
 
 # Character
@@ -121,6 +143,11 @@ vec_ptype2.integer.default <- function(x, y, ..., x_arg = "x", y_arg = "y") {
 #' @method vec_ptype2.double default
 #' @export
 vec_ptype2.double.default <- function(x, y, ..., x_arg = "x", y_arg = "y") {
+  vec_default_ptype2(x, y, x_arg = x_arg, y_arg = y_arg)
+}
+#' @method vec_ptype2.complex default
+#' @export
+vec_ptype2.complex.default <- function(x, y, ..., x_arg = "x", y_arg = "y") {
   vec_default_ptype2(x, y, x_arg = x_arg, y_arg = y_arg)
 }
 #' @method vec_ptype2.character default
