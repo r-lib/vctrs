@@ -249,6 +249,11 @@ static SEXP vec_slice_base(enum vctrs_type type, SEXP x, SEXP index) {
 // string. It's ok mutate the names vector since it is freshly
 // created (and the empty string is persistently protected anyway).
 static void repair_na_names(SEXP names, SEXP index) {
+  // No possible way to have `NA_integer_` in a compact seq
+  if (is_compact_seq(index)) {
+    return;
+  }
+
   R_len_t n = Rf_length(names);
 
   if (n == 0) {
