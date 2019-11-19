@@ -522,7 +522,7 @@ SEXP vec_restore(SEXP x, SEXP to, R_len_t n) {
     // first restore data frames as such before calling the restore
     // method, if any
     SEXP out = PROTECT(vctrs_df_restore(x, to, n));
-    out = vec_restore_dispatch(x, to, n);
+    out = vec_restore_dispatch(out, to, n);
     UNPROTECT(1);
     return out;
   }}
