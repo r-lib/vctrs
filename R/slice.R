@@ -679,3 +679,8 @@ vec_chop <- function(x, indices = NULL) {
 vec_slice_seq <- function(x, start, size, increasing = TRUE) {
   .Call(vctrs_slice_seq, x, start, size, increasing)
 }
+
+# Exposed for testing (`i` is 1-based)
+vec_slice_rep <- function(x, i, n) {
+  .Call(vctrs_slice_rep, x, i, n)
+}
