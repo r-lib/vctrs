@@ -36,21 +36,26 @@ SEXP vec_assign(SEXP x, SEXP index, SEXP value) {
   value = PROTECT(vec_coercible_cast(value, x, &value_arg, &x_arg));
   SEXP value_proxy = PROTECT(vec_proxy(value));
 
+  R_len_t x_size = vec_size(x);
+
+  index = PROTECT(vec_as_index(index, x_size, PROTECT(vec_names(x))));
+
+  R_len_t index_size = vec_size(index);
+
   // Recycle the proxy of `value`
-  index = PROTECT(vec_as_index(index, vec_size(x), PROTECT(vec_names(x))));
-  value_proxy = PROTECT(vec_recycle(value_proxy, vec_size(index)));
+  value_proxy = PROTECT(vec_recycle(value_proxy, index_size));
 
   struct vctrs_proxy_info info = vec_proxy_info(x);
 
   SEXP out;
   if (vec_requires_fallback(x, info) || has_dim(x)) {
     // Restore the value before falling back to `[<-`
-    value = PROTECT(vec_restore(value_proxy, value_orig, VCTRS_UNKNOWN_SIZE));
+    value = PROTECT(vec_restore(value_proxy, value_orig, index_size));
     out = vec_assign_fallback(x, index, value);
     UNPROTECT(1);
   } else {
     out = PROTECT(vec_assign_impl(info.proxy, index, value_proxy, true));
-    out = vec_restore(out, x, VCTRS_UNKNOWN_SIZE);
+    out = vec_restore(out, x, x_size);
     UNPROTECT(1);
   }
 
