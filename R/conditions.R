@@ -285,15 +285,15 @@ conditionMessage.vctrs_error_cast_lossy <- function(c) {
   )
 }
 #' @export
-cnd_issue.vctrs_error_cast_lossy <- function(cnd, ...) {
+cnd_header.vctrs_error_cast_lossy <- function(cnd, ...) {
   x_label <- format_arg_label(vec_ptype_full(cnd$x), cnd$x_arg)
   to_label <- format_arg_label(vec_ptype_full(cnd$to), cnd$to_arg)
   glue::glue("Lossy cast from {x_label} to {to_label}.")
 }
 #' @export
-cnd_bullets.vctrs_error_cast_lossy <- function(cnd, ...) {
+cnd_body.vctrs_error_cast_lossy <- function(cnd, ...) {
   if (length(cnd$locations)) {
-    inline_list("Locations: ", cnd$locations)
+    format_error_bullets(inline_list("Locations: ", cnd$locations))
   } else {
     character()
   }
@@ -502,11 +502,11 @@ stop_index <- function(i, ..., .subclass = NULL) {
 }
 
 #' @export
-cnd_issue.vctrs_error_index_oob_positions <- function(cnd) {
+cnd_header.vctrs_error_index_oob_positions <- function(cnd) {
   "Must index existing elements."
 }
 #' @export
-cnd_bullets.vctrs_error_index_oob_positions <- function(cnd) {
+cnd_body.vctrs_error_index_oob_positions <- function(cnd) {
   i <- cnd$i
 
   # In case of negative indexing
@@ -515,31 +515,31 @@ cnd_bullets.vctrs_error_index_oob_positions <- function(cnd) {
   oob <- i[i > cnd$size]
   oob_enum <- enumerate(oob)
 
-  c(
+  format_error_bullets(c(
     x = glue::glue(ngettext(
       length(oob),
       "Can't subset position {oob_enum}.",
       "Can't subset positions {oob_enum}."
     )),
     i = glue::glue("There are only {cnd$size} elements.")
-  )
+  ))
 }
 #' @export
-cnd_issue.vctrs_error_index_oob_names <- function(cnd) {
+cnd_header.vctrs_error_index_oob_names <- function(cnd) {
   "Must index existing elements."
 }
 #' @export
-cnd_bullets.vctrs_error_index_oob_names <- function(cnd) {
+cnd_body.vctrs_error_index_oob_names <- function(cnd) {
   oob <- cnd$i[!cnd$i %in% cnd$names]
   oob_enum <- enumerate(glue::backtick(oob))
 
-  c(
+  format_error_bullets(c(
     x = glue::glue(ngettext(
       length(oob),
       "Can't subset element with unknown name {oob_enum}.",
       "Can't subset elements with unknown names {oob_enum}."
     ))
-  )
+  ))
 }
 
 enumerate <- function(x, max = 5L) {
