@@ -258,7 +258,7 @@ static SEXP df_as_dataframe(SEXP x, SEXP to, struct vctrs_arg* x_arg, struct vct
   // `to` might not have any columns to compute the original size.
   init_data_frame(out, size);
 
-  out = PROTECT(vec_restore(out, to, R_NilValue));
+  out = PROTECT(vec_restore(out, to, VCTRS_UNKNOWN_SIZE));
 
   R_len_t extra_len = Rf_length(x) - common_len;
   if (extra_len) {
@@ -474,14 +474,17 @@ SEXP vec_restore_default(SEXP x, SEXP to) {
   return x;
 }
 
-SEXP vctrs_df_restore(SEXP x, SEXP to, SEXP n) {
+SEXP vctrs_df_restore(SEXP x, SEXP to, R_len_t n) {
   if (TYPEOF(x) != VECSXP) {
     Rf_errorcall(R_NilValue, "Internal error: Attempt to restore data frame from a %s.",
                  Rf_type2char(TYPEOF(x)));
   }
 
-  R_len_t size = (n == R_NilValue) ? df_raw_size(x) : r_int_get(n, 0);
-  return df_restore_impl(x, to, size);
+  if (n == VCTRS_UNKNOWN_SIZE) {
+    n = df_raw_size(x);
+  }
+
+  return df_restore_impl(x, to, n);
 }
 
 SEXP df_restore_impl(SEXP x, SEXP to, R_len_t size) {
@@ -502,9 +505,13 @@ SEXP df_restore_impl(SEXP x, SEXP to, R_len_t size) {
 }
 
 
-static SEXP vec_restore_dispatch(SEXP x, SEXP to, SEXP n);
+static SEXP vec_restore_dispatch(SEXP x, SEXP to, R_len_t n);
 
-SEXP vec_restore(SEXP x, SEXP to, SEXP n) {
+// If `n = -1`, the size is considered to be unknown.
+// This is better specified as `n = VCTRS_UNKNOWN_SIZE`.
+
+// [[ include("vctrs.h") ]]
+SEXP vec_restore(SEXP x, SEXP to, R_len_t n) {
   switch (class_type(to)) {
   default: return vec_restore_dispatch(x, to, n);
   case vctrs_class_none: return vec_restore_default(x, to);
@@ -521,11 +528,25 @@ SEXP vec_restore(SEXP x, SEXP to, SEXP n) {
   }}
 }
 
-static SEXP vec_restore_dispatch(SEXP x, SEXP to, SEXP n) {
-  return vctrs_dispatch3(syms_vec_restore_dispatch, fns_vec_restore_dispatch,
-                         syms_x, x,
-                         syms_to, to,
-                         syms_n, n);
+// [[ register() ]]
+SEXP vctrs_restore(SEXP x, SEXP to, SEXP n_) {
+  R_len_t n = (n_ == R_NilValue) ? VCTRS_UNKNOWN_SIZE : r_int_get(n_, 0);
+  return vec_restore(x, to, n);
+}
+
+static SEXP vec_restore_dispatch(SEXP x, SEXP to, R_len_t n) {
+  SEXP n_ = (n == VCTRS_UNKNOWN_SIZE) ? R_NilValue : r_int(n);
+  PROTECT(n_);
+
+  SEXP out = vctrs_dispatch3(
+    syms_vec_restore_dispatch, fns_vec_restore_dispatch,
+    syms_x, x,
+    syms_to, to,
+    syms_n, n_
+  );
+
+  UNPROTECT(1);
+  return out;
 }
 
 

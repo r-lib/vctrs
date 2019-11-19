@@ -6,7 +6,6 @@
 #include <stdbool.h>
 
 SEXP (*vec_proxy)(SEXP);
-SEXP (*vec_restore)(SEXP, SEXP, SEXP);
 SEXP (*vec_assign_impl)(SEXP, SEXP, SEXP, bool);
 SEXP (*vec_slice_impl)(SEXP, SEXP);
 SEXP (*vec_names)(SEXP);

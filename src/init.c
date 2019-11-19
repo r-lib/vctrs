@@ -48,7 +48,7 @@ extern SEXP vctrs_slice(SEXP, SEXP);
 extern SEXP vctrs_chop(SEXP, SEXP);
 extern SEXP vec_slice_seq(SEXP, SEXP, SEXP, SEXP);
 extern SEXP vec_slice_rep(SEXP, SEXP, SEXP);
-extern SEXP vec_restore(SEXP, SEXP, SEXP);
+extern SEXP vctrs_restore(SEXP, SEXP, SEXP);
 extern SEXP vec_restore_default(SEXP, SEXP);
 extern SEXP vec_proxy(SEXP);
 extern SEXP vctrs_unspecified(SEXP);
@@ -88,6 +88,7 @@ extern SEXP vec_assign_impl(SEXP, SEXP, SEXP, bool);
 extern SEXP vec_slice_impl(SEXP, SEXP);
 extern SEXP vec_names(SEXP);
 extern SEXP vec_recycle(SEXP, R_len_t);
+extern SEXP vec_restore(SEXP, SEXP, R_len_t);
 
 // Extremely experimental
 // Exported but not directly available in the API header
@@ -138,7 +139,7 @@ static const R_CallMethodDef CallEntries[] = {
   {"vctrs_chop",                       (DL_FUNC) &vctrs_chop, 2},
   {"vctrs_slice_seq",                  (DL_FUNC) &vec_slice_seq, 4},
   {"vctrs_slice_rep",                  (DL_FUNC) &vec_slice_rep, 3},
-  {"vctrs_restore",                    (DL_FUNC) &vec_restore, 3},
+  {"vctrs_restore",                    (DL_FUNC) &vctrs_restore, 3},
   {"vctrs_restore_default",            (DL_FUNC) &vec_restore_default, 2},
   {"vctrs_proxy",                      (DL_FUNC) &vec_proxy, 1},
   {"vctrs_unspecified",                (DL_FUNC) &vctrs_unspecified, 1},
@@ -198,7 +199,6 @@ void R_init_vctrs(DllInfo *dll)
 
     // Very experimental
     R_RegisterCCallable("vctrs", "vec_proxy", (DL_FUNC) &vec_proxy);
-    R_RegisterCCallable("vctrs", "vec_restore", (DL_FUNC) &vec_restore);
     R_RegisterCCallable("vctrs", "vec_assign_impl", (DL_FUNC) &vec_assign_impl);
     R_RegisterCCallable("vctrs", "vec_slice_impl", (DL_FUNC) &vec_slice_impl);
     R_RegisterCCallable("vctrs", "vec_names", (DL_FUNC) &vec_names);
@@ -214,6 +214,7 @@ void R_init_vctrs(DllInfo *dll)
     R_RegisterCCallable("vctrs", "short_vec_size", (DL_FUNC) &vec_size);
     R_RegisterCCallable("vctrs", "short_vec_recycle", (DL_FUNC) &vec_recycle);
     R_RegisterCCallable("vctrs", "short_vec_init", (DL_FUNC) &vec_init);
+    R_RegisterCCallable("vctrs", "short_vec_restore", (DL_FUNC) &vec_restore);
 }
 
 

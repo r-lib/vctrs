@@ -305,7 +305,7 @@ static SEXP vec_cbind(SEXP xs, SEXP ptype, SEXP size, enum name_repair_arg name_
   names = PROTECT(vec_as_names(names, name_repair, false));
   Rf_setAttrib(out, R_NamesSymbol, names);
 
-  out = vec_restore(out, type, R_NilValue);
+  out = vec_restore(out, type, VCTRS_UNKNOWN_SIZE);
 
   UNPROTECT(8);
   return out;

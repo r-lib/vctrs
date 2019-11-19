@@ -45,12 +45,12 @@ SEXP vec_assign(SEXP x, SEXP index, SEXP value) {
   SEXP out;
   if (vec_requires_fallback(x, info) || has_dim(x)) {
     // Restore the value before falling back to `[<-`
-    value = PROTECT(vec_restore(value_proxy, value_orig, R_NilValue));
+    value = PROTECT(vec_restore(value_proxy, value_orig, VCTRS_UNKNOWN_SIZE));
     out = vec_assign_fallback(x, index, value);
     UNPROTECT(1);
   } else {
     out = PROTECT(vec_assign_impl(info.proxy, index, value_proxy, true));
-    out = vec_restore(out, x, R_NilValue);
+    out = vec_restore(out, x, VCTRS_UNKNOWN_SIZE);
     UNPROTECT(1);
   }
 
@@ -237,7 +237,7 @@ SEXP df_assign(SEXP x, SEXP index, SEXP value, bool clone) {
     value_elt = PROTECT(vec_proxy(value_elt));
 
     SEXP assigned = PROTECT(vec_assign_impl(proxy_elt, index, value_elt, clone));
-    assigned = vec_restore(assigned, out_elt, R_NilValue);
+    assigned = vec_restore(assigned, out_elt, VCTRS_UNKNOWN_SIZE);
 
     SET_VECTOR_ELT(out, i, assigned);
     UNPROTECT(3);
