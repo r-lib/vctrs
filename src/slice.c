@@ -247,8 +247,13 @@ static SEXP vec_slice_base(enum vctrs_type type, SEXP x, SEXP index) {
 
 // Replace any `NA` name caused by `NA` index with the empty
 // string. It's ok mutate the names vector since it is freshly
-// created (and the empty string is persistently protected anyway).
+// created, but we make an additional check for that anyways
+// (and the empty string is persistently protected anyway).
 static void repair_na_names(SEXP names, SEXP index) {
+  if (!NO_REFERENCES(names)) {
+    Rf_errorcall(R_NilValue, "Internal error: `names` must not be referenced.");
+  }
+
   // No possible way to have `NA_integer_` in a compact seq
   if (is_compact_seq(index)) {
     return;
