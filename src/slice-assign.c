@@ -242,7 +242,7 @@ SEXP df_assign(SEXP x, SEXP index, SEXP value, bool clone) {
     value_elt = PROTECT(vec_proxy(value_elt));
 
     SEXP assigned = PROTECT(vec_assign_impl(proxy_elt, index, value_elt, clone));
-    assigned = vec_restore(assigned, out_elt, VCTRS_UNKNOWN_SIZE);
+    assigned = vec_restore(assigned, out_elt, NA_INTEGER);
 
     SET_VECTOR_ELT(out, i, assigned);
     UNPROTECT(3);

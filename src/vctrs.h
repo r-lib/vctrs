@@ -10,7 +10,6 @@ typedef R_xlen_t r_ssize_t;
 
 #define VCTRS_ASSERT(condition) ((void)sizeof(char[1 - 2*!(condition)]))
 
-#define VCTRS_UNKNOWN_SIZE -1
 
 // Vector types -------------------------------------------------
 

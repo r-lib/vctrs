@@ -108,7 +108,7 @@ static SEXP vec_c(SEXP xs,
     UNPROTECT(1);
   }
 
-  out = vec_restore(out, ptype, VCTRS_UNKNOWN_SIZE);
+  out = vec_restore(out, ptype, NA_INTEGER);
 
   if (has_names) {
     out_names = PROTECT(vec_as_names(out_names, name_repair, false));

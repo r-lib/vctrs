@@ -258,7 +258,7 @@ static SEXP df_as_dataframe(SEXP x, SEXP to, struct vctrs_arg* x_arg, struct vct
   // `to` might not have any columns to compute the original size.
   init_data_frame(out, size);
 
-  out = PROTECT(vec_restore(out, to, VCTRS_UNKNOWN_SIZE));
+  out = PROTECT(vec_restore(out, to, NA_INTEGER));
 
   R_len_t extra_len = Rf_length(x) - common_len;
   if (extra_len) {
@@ -480,7 +480,7 @@ SEXP vctrs_df_restore(SEXP x, SEXP to, R_len_t n) {
                  Rf_type2char(TYPEOF(x)));
   }
 
-  if (n == VCTRS_UNKNOWN_SIZE) {
+  if (n == NA_INTEGER) {
     n = df_raw_size(x);
   }
 
@@ -507,8 +507,7 @@ SEXP df_restore_impl(SEXP x, SEXP to, R_len_t size) {
 
 static SEXP vec_restore_dispatch(SEXP x, SEXP to, R_len_t n);
 
-// If `n = -1`, the size is considered to be unknown.
-// This is better specified as `n = VCTRS_UNKNOWN_SIZE`.
+// If `n = NA_INTEGER`, the size is considered to be unknown.
 
 // [[ include("vctrs.h") ]]
 SEXP vec_restore(SEXP x, SEXP to, R_len_t n) {
@@ -530,12 +529,12 @@ SEXP vec_restore(SEXP x, SEXP to, R_len_t n) {
 
 // [[ register() ]]
 SEXP vctrs_restore(SEXP x, SEXP to, SEXP n_) {
-  R_len_t n = (n_ == R_NilValue) ? VCTRS_UNKNOWN_SIZE : r_int_get(n_, 0);
+  R_len_t n = (n_ == R_NilValue) ? NA_INTEGER : r_int_get(n_, 0);
   return vec_restore(x, to, n);
 }
 
 static SEXP vec_restore_dispatch(SEXP x, SEXP to, R_len_t n) {
-  SEXP n_ = (n == VCTRS_UNKNOWN_SIZE) ? R_NilValue : r_int(n);
+  SEXP n_ = (n == NA_INTEGER) ? R_NilValue : r_int(n);
   PROTECT(n_);
 
   SEXP out = vctrs_dispatch3(
