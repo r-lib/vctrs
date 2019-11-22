@@ -29,7 +29,7 @@
   ns <- ns_env("vctrs")
   env_bind(ns, vec_set_attributes = vec_set_attributes)
 
-  .Call(vctrs_init, ns_env())
+  .Call(vctrs_init_library, ns_env())
 }
 
 # nocov end
