@@ -421,12 +421,21 @@ SEXP vec_slice(SEXP x, SEXP index) {
 
 // [[ include("vctrs.h") ]]
 SEXP vec_init(SEXP x, R_len_t n) {
+  struct vctrs_arg x_arg = new_wrapper_arg(NULL, "x");
+  vec_assert(x, &x_arg);
+
   SEXP i = PROTECT(compact_rep(NA_INTEGER, n));
 
   SEXP out = vec_slice_impl(x, i);
 
   UNPROTECT(1);
   return out;
+}
+
+// [[ register() ]]
+SEXP vctrs_init(SEXP x, SEXP n) {
+  R_len_t n_ = r_int_get(n, 0);
+  return vec_init(x, n_);
 }
 
 // Exported for testing

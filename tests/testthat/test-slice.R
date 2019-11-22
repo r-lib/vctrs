@@ -446,7 +446,7 @@ test_that("na of list-array is 1d slice", {
 })
 
 test_that("vec_init() asserts vectorness (#301)", {
-  expect_error(vec_init(NULL), class = "vctrs_error_scalar_type")
+  expect_error(vec_init(NULL, 1L), class = "vctrs_error_scalar_type")
 })
 
 # vec_chop ----------------------------------------------------------------
