@@ -85,6 +85,6 @@ vec_size_common(1:10, 1)
 vec_size_common(integer(), 1)
 }
 \seealso{
-\code{\link[=vec_slice]{vec_slice()}} for a variation of \verb{[} compatible with \code{vec_size()},
+\code{\link[=vec_slice]{vec_slice()}} for a variation of \code{[} compatible with \code{vec_size()},
 and \code{\link[=vec_recycle]{vec_recycle()}} to recycle vectors to common length.
 }

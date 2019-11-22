@@ -62,13 +62,13 @@ methods such as integer, character or logical indexing.
 \itemize{
 \item \code{vec_as_index()} accepts integer, character, or logical vectors
 of any size. The output is always an integer vector that is
-suitable for subsetting with \verb{[} or \code{\link[=vec_slice]{vec_slice()}}. It might be a
+suitable for subsetting with \code{[} or \code{\link[=vec_slice]{vec_slice()}}. It might be a
 different size than the input because negative selections are
 transformed to positive ones and logical vectors are transformed
 to a vector of indices for the \code{TRUE} positions.
 \item \code{vec_as_position()} accepts a single number or string. It returns
 a single position as a integer vector of size 1. This is suitable
-for extracting with \verb{[[}.
+for extracting with \code{[[}.
 }
 }
 \examples{

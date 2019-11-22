@@ -120,7 +120,7 @@ number (inherited from \code{unique}).
 characters.
 \item Start with a letter or start with the dot \code{.} not followed by a
 number.
-\item Are not a \link{reserved} word, e.g., \verb{if} or \verb{function} or \code{TRUE}.
+\item Are not a \link{reserved} word, e.g., \code{if} or \code{function} or \code{TRUE}.
 }
 
 If a vector has \code{universal} names, variable names can be used

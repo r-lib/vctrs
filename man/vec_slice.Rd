@@ -29,7 +29,7 @@ A vector of the same type as \code{x}.
 }
 \description{
 This provides a common interface to extracting and modifying observations
-for all vector types, regardless of dimensionality. It is an analog to \verb{[}
+for all vector types, regardless of dimensionality. It is an analog to \code{[}
 that matches \code{\link[=vec_size]{vec_size()}} instead of \code{length()}.
 }
 \section{Genericity}{
@@ -40,7 +40,7 @@ Support for S3 objects depends on whether the object implements a
 \itemize{
 \item When a \code{vec_proxy()} method exists, the proxy is sliced and
 \code{vec_restore()} is called on the result.
-\item Otherwise \code{vec_slice()} falls back to the base generic \verb{[}.
+\item Otherwise \code{vec_slice()} falls back to the base generic \code{[}.
 }
 
 Note that S3 lists are treated as scalars by default, and will
