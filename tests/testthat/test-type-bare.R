@@ -291,6 +291,12 @@ test_that("invalid casts generate error", {
   expect_error(vec_cast(double(1), raw()), class = "vctrs_error_incompatible_cast")
 })
 
+test_that("can sort raw", {
+  x <- as.raw(c(3, 1, 2, 4))
+  expect_identical(vec_order(x), int(2, 3, 1, 4))
+  expect_identical(x[vec_order(x)], as.raw(1:4))
+})
+
 
 # Lists
 
