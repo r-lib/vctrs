@@ -53,7 +53,7 @@ cause an error if they don't implement a \code{\link[=vec_proxy]{vec_proxy()}} m
 \item \code{vec_slice()} only slices along one dimension. For
 two-dimensional types, the first dimension is subsetted.
 \item \code{vec_slice()} preserves attributes by default.
-\item \code{vec_slice<-()} is type-stable and always returns the same type
+\item \verb{vec_slice<-()} is type-stable and always returns the same type
 as the LHS.
 }
 }

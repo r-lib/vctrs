@@ -14,7 +14,7 @@ vec_split(x, by)
 \value{
 A data frame with two columns and size equal to
 \code{vec_size(vec_unique(by))}. The \code{key} column has the same type as
-\code{by}, and the \code{val} column has type \code{list_of<vec_ptype(x)>}.
+\code{by}, and the \code{val} column has type \verb{list_of<vec_ptype(x)>}.
 
 Note for complex types, the default \code{data.frame} print method will be
 suboptimal, and you will want to coerce into a tibble to better
