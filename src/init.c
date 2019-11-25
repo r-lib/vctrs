@@ -45,6 +45,7 @@ extern SEXP vctrs_typeof2(SEXP, SEXP);
 extern SEXP vctrs_cast(SEXP, SEXP, SEXP, SEXP);
 extern SEXP vctrs_as_index(SEXP, SEXP, SEXP, SEXP);
 extern SEXP vctrs_slice(SEXP, SEXP);
+extern SEXP vctrs_init(SEXP, SEXP);
 extern SEXP vctrs_chop(SEXP, SEXP);
 extern SEXP vec_slice_seq(SEXP, SEXP, SEXP, SEXP);
 extern SEXP vec_slice_rep(SEXP, SEXP, SEXP);
@@ -95,7 +96,7 @@ extern SEXP compact_seq(R_len_t, R_len_t, bool);
 extern SEXP init_compact_seq(int*, R_len_t, R_len_t, bool);
 
 // Defined below
-SEXP vctrs_init(SEXP);
+SEXP vctrs_init_library(SEXP);
 
 static const R_CallMethodDef CallEntries[] = {
   {"vctrs_list_get",                   (DL_FUNC) &vctrs_list_get, 2},
@@ -128,13 +129,14 @@ static const R_CallMethodDef CallEntries[] = {
   {"vctrs_compare",                    (DL_FUNC) &vctrs_compare, 3},
   {"vctrs_match",                      (DL_FUNC) &vctrs_match, 2},
   {"vctrs_typeof",                     (DL_FUNC) &vctrs_typeof, 2},
-  {"vctrs_init",                       (DL_FUNC) &vctrs_init, 1},
+  {"vctrs_init_library",               (DL_FUNC) &vctrs_init_library, 1},
   {"vctrs_is_vector",                  (DL_FUNC) &vctrs_is_vector, 1},
   {"vctrs_type2",                      (DL_FUNC) &vctrs_type2, 4},
   {"vctrs_typeof2",                    (DL_FUNC) &vctrs_typeof2, 2},
   {"vctrs_cast",                       (DL_FUNC) &vctrs_cast, 4},
   {"vctrs_as_index",                   (DL_FUNC) &vctrs_as_index, 4},
   {"vctrs_slice",                      (DL_FUNC) &vctrs_slice, 2},
+  {"vctrs_init",                       (DL_FUNC) &vctrs_init, 2},
   {"vctrs_chop",                       (DL_FUNC) &vctrs_chop, 2},
   {"vctrs_slice_seq",                  (DL_FUNC) &vec_slice_seq, 4},
   {"vctrs_slice_rep",                  (DL_FUNC) &vec_slice_rep, 3},
@@ -229,7 +231,7 @@ void vctrs_init_type_info(SEXP ns);
 void vctrs_init_unspecified(SEXP ns);
 void vctrs_init_utils(SEXP ns);
 
-SEXP vctrs_init(SEXP ns) {
+SEXP vctrs_init_library(SEXP ns) {
   vctrs_init_cast(ns);
   vctrs_init_data(ns);
   vctrs_init_dictionary(ns);
