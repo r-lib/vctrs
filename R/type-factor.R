@@ -66,7 +66,7 @@ vec_ptype2.factor <- function(x, y, ...) UseMethod("vec_ptype2.factor", y)
 #' @method vec_ptype2.factor default
 #' @export
 vec_ptype2.factor.default <- function(x, y, ..., x_arg = "x", y_arg = "y") {
-  stop_incompatible_type(x, y, x_arg = x_arg, y_arg = y_arg)
+  vec_default_ptype2(x, y, x_arg = x_arg, y_arg = y_arg)
 }
 #' @method vec_ptype2.character factor
 #' @export
@@ -77,15 +77,6 @@ vec_ptype2.factor.character <- function(x, y, ...) character()
 #' @method vec_ptype2.factor factor
 #' @export
 vec_ptype2.factor.factor <- function(x, y, ...) new_factor(levels = levels_union(x, y))
-#' @method vec_ptype2.factor logical
-#' @export
-vec_ptype2.factor.logical <- function(x, y, ..., x_arg = "x", y_arg = "y") {
-  if (is_unspecified(y)) {
-    vec_ptype(x)
-  } else {
-    stop_incompatible_type(x, y, x_arg = x_arg, y_arg = y_arg)
-  }
-}
 
 #' @rdname new_factor
 #' @export vec_ptype2.ordered
@@ -95,7 +86,7 @@ vec_ptype2.ordered <- function(x, y, ...) UseMethod("vec_ptype2.ordered", y)
 #' @method vec_ptype2.ordered default
 #' @export
 vec_ptype2.ordered.default <- function(x, y, ..., x_arg = "x", y_arg = "y") {
-  stop_incompatible_type(x, y, x_arg = x_arg, y_arg = y_arg)
+  vec_default_ptype2(x, y, x_arg = x_arg, y_arg = y_arg)
 }
 #' @method vec_ptype2.ordered character
 #' @export

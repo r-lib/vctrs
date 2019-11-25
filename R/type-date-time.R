@@ -132,7 +132,7 @@ vec_ptype2.Date <- function(x, y, ...) UseMethod("vec_ptype2.Date", y)
 #' @method vec_ptype2.Date default
 #' @export
 vec_ptype2.Date.default <- function(x, y, ..., x_arg = "x", y_arg = "y") {
-  stop_incompatible_type(x, y, x_arg = x_arg, y_arg = y_arg)
+  vec_default_ptype2(x, y, x_arg = x_arg, y_arg = y_arg)
 }
 #' @method vec_ptype2.Date Date
 #' @export
@@ -146,7 +146,7 @@ vec_ptype2.POSIXt <- function(x, y, ...) UseMethod("vec_ptype2.POSIXt", y)
 #' @method vec_ptype2.POSIXt default
 #' @export
 vec_ptype2.POSIXt.default <- function(x, y, ..., x_arg = "x", y_arg = "y") {
-  stop_incompatible_type(x, y, x_arg = x_arg, y_arg = y_arg)
+  vec_default_ptype2(x, y, x_arg = x_arg, y_arg = y_arg)
 }
 #' @method vec_ptype2.POSIXt Date
 #' @export
@@ -166,7 +166,7 @@ vec_ptype2.difftime <- function(x, y, ...) UseMethod("vec_ptype2.difftime", y)
 #' @method vec_ptype2.difftime default
 #' @export
 vec_ptype2.difftime.default <- function(x, y, ..., x_arg = "x", y_arg = "y") {
-  stop_incompatible_type(x, y, x_arg = x_arg, y_arg = y_arg)
+  vec_default_ptype2(x, y, x_arg = x_arg, y_arg = y_arg)
 }
 #' @method vec_ptype2.difftime difftime
 #' @export
