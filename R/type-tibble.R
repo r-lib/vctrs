@@ -48,7 +48,7 @@ tbl_ptype2.data.frame.tbl_df <- function(x, y, ..., x_arg = "x", y_arg = "y") {
   }
 }
 
-#' Common prototype for grouped data frames
+#' Double dispatch methods for grouped data frames
 #' @inheritParams vec_ptype2
 #' @export vec_ptype2.grouped_df
 #' @export
@@ -81,6 +81,25 @@ vec_ptype2.data.frame.grouped_df <- function(x, y, ...) {
 vec_ptype2.grouped_df.data.frame <- function(x, y, ...) {
   ptype <- vec_ptype2(as.data.frame(x), y)
   dplyr::grouped_df(ptype, vars = dplyr::group_vars(x))
+}
+
+#' @rdname vec_ptype2.grouped_df
+#' @inheritParams vec_cast
+#' @export vec_cast.grouped_df
+#' @export
+#' @method vec_cast grouped_df
+vec_cast.grouped_df <- function(x, to, ...) {
+  UseMethod("vec_cast.grouped_df")
+}
+#' @export
+#' @method vec_cast.grouped_df default
+vec_cast.grouped_df.default <- function(x, to, ..., x_arg = "", to_arg = "") {
+  vec_default_cast(x, to, x_arg = x_arg, to_arg = to_arg)
+}
+#' @export
+#' @method vec_cast.grouped_df data.frame
+vec_cast.grouped_df.data.frame <- function(x, to, ...) {
+  dplyr::grouped_df(x, vars = dplyr::group_vars(to))
 }
 
 #' @export

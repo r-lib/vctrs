@@ -2,9 +2,12 @@
 % Please edit documentation in R/type-tibble.R
 \name{vec_ptype2.grouped_df}
 \alias{vec_ptype2.grouped_df}
-\title{Common prototype for grouped data frames}
+\alias{vec_cast.grouped_df}
+\title{Double dispatch methods for grouped data frames}
 \usage{
 \method{vec_ptype2}{grouped_df}(x, y, ...)
+
+\method{vec_cast}{grouped_df}(x, to, ...)
 }
 \arguments{
 \item{x}{Vector types.}
@@ -12,7 +15,9 @@
 \item{y}{Vector types.}
 
 \item{...}{These dots are for future extensions and must be empty.}
+
+\item{to}{Type to cast to. If \code{NULL}, \code{x} will be returned as is.}
 }
 \description{
-Common prototype for grouped data frames
+Double dispatch methods for grouped data frames
 }

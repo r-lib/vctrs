@@ -86,3 +86,10 @@ test_that("groups are recomputed after restoration", {
     unstructure(dplyr::group_data(out))
   )
 })
+
+test_that("can cast data frame to grouped-df", {
+  expect_equal(
+    vec_cast(mtcars[1:3], dplyr::group_by(mtcars, cyl)),
+    dplyr::group_by(mtcars[1:3], cyl)
+  )
+})
