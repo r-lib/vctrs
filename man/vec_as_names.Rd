@@ -4,8 +4,12 @@
 \alias{vec_as_names}
 \title{Retrieve and repair names}
 \usage{
-vec_as_names(names, ..., repair = c("minimal", "unique", "universal",
-  "check_unique"), quiet = FALSE)
+vec_as_names(
+  names,
+  ...,
+  repair = c("minimal", "unique", "universal", "check_unique"),
+  quiet = FALSE
+)
 }
 \arguments{
 \item{names}{A character vector.}
@@ -112,7 +116,7 @@ repair.
 \item Have no duplicates (inherited from \code{unique}).
 \item Are not \code{...}. Do not have the form \code{..i}, where \code{i} is a
 number (inherited from \code{unique}).
-\item Consist of letters, numbers, and the dot \code{.} or underscore \code{_}
+\item Consist of letters, numbers, and the dot \code{.} or underscore \verb{_}
 characters.
 \item Start with a letter or start with the dot \code{.} not followed by a
 number.

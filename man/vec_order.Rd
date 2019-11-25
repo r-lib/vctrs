@@ -5,11 +5,9 @@
 \alias{vec_sort}
 \title{Order and sort vectors}
 \usage{
-vec_order(x, direction = c("asc", "desc"), na_value = c("largest",
-  "smallest"))
+vec_order(x, direction = c("asc", "desc"), na_value = c("largest", "smallest"))
 
-vec_sort(x, direction = c("asc", "desc"), na_value = c("largest",
-  "smallest"))
+vec_sort(x, direction = c("asc", "desc"), na_value = c("largest", "smallest"))
 }
 \arguments{
 \item{x}{A vector}

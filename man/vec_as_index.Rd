@@ -5,11 +5,17 @@
 \alias{vec_as_position}
 \title{Create an index vector or a position}
 \usage{
-vec_as_index(i, n, names = NULL, ..., allow_types = c("indicator",
-  "position", "name"), convert_values = "negative", arg = "i")
+vec_as_index(
+  i,
+  n,
+  names = NULL,
+  ...,
+  allow_types = c("indicator", "position", "name"),
+  convert_values = "negative",
+  arg = "i"
+)
 
-vec_as_position(i, n, names = NULL, ..., allow_values = NULL,
-  arg = "i")
+vec_as_position(i, n, names = NULL, ..., allow_values = NULL, arg = "i")
 }
 \arguments{
 \item{i}{An integer, character or logical vector specifying the positions or

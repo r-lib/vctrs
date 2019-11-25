@@ -6,11 +6,19 @@
 \alias{vec_cbind}
 \title{Combine many data frames into one data frame}
 \usage{
-vec_rbind(..., .ptype = NULL, .names_to = NULL,
-  .name_repair = c("unique", "universal", "check_unique"))
+vec_rbind(
+  ...,
+  .ptype = NULL,
+  .names_to = NULL,
+  .name_repair = c("unique", "universal", "check_unique")
+)
 
-vec_cbind(..., .ptype = NULL, .size = NULL,
-  .name_repair = c("unique", "universal", "check_unique", "minimal"))
+vec_cbind(
+  ...,
+  .ptype = NULL,
+  .size = NULL,
+  .name_repair = c("unique", "universal", "check_unique", "minimal")
+)
 }
 \arguments{
 \item{...}{Data frames or vectors.
