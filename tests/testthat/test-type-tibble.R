@@ -45,3 +45,35 @@ test_that("tibbles have common tabular type with data frames", {
   expect_identical(tbl_ptype2(tibble::tibble(x = 1), mtcars), tibble::tibble())
   expect_identical(tbl_ptype2(mtcars, tibble::tibble(x = 1)), tibble::tibble())
 })
+
+
+# grouped_df ---------------------------------------------------------
+
+test_that("common type of grouped-df and df is df", {
+  gdf <- dplyr::group_by(mtcars, cyl)
+
+  expect_grouped_cyl <- function(x) {
+    expect_is(x, "grouped_df")
+    expect_identical(dplyr::group_vars(x), "cyl")
+    expect_named(x, names(mtcars))
+  }
+
+  expect_grouped_cyl(vec_ptype_common(gdf, mtcars[1:3]))
+  expect_grouped_cyl(vec_ptype_common(mtcars[1:3], gdf))
+  expect_grouped_cyl(vec_ptype_common(gdf, mtcars["drat"]))
+})
+
+test_that("common type of two grouped-df takes union of groups", {
+  gdf1 <- dplyr::group_by(mtcars, cyl)
+  gdf2 <- dplyr::group_by(mtcars, vs, am)
+
+  expect_grouped <- function(x, groups) {
+    expect_is(x, "grouped_df")
+    expect_identical(dplyr::group_vars(x), groups)
+    expect_named(x, names(mtcars))
+  }
+
+  expect_grouped(vec_ptype_common(gdf1, gdf1), "cyl")
+  expect_grouped(vec_ptype_common(gdf1, gdf2), c("cyl", "vs", "am"))
+  expect_grouped(vec_ptype_common(gdf2, gdf1), c("vs", "am", "cyl"))
+})
