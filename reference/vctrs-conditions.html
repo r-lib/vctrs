@@ -149,21 +149,65 @@ These conditions have custom classes and structures to make
 testing easier.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>stop_incompatible_type</span>(<span class='no'>x</span>, <span class='no'>y</span>, <span class='kw'>x_arg</span> <span class='kw'>=</span> <span class='st'>""</span>, <span class='kw'>y_arg</span> <span class='kw'>=</span> <span class='st'>""</span>, <span class='kw'>details</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='no'>...</span>, <span class='kw'>message</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>.subclass</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)
+    <pre class="usage"><span class='fu'>stop_incompatible_type</span>(
+  <span class='no'>x</span>,
+  <span class='no'>y</span>,
+  <span class='kw'>x_arg</span> <span class='kw'>=</span> <span class='st'>""</span>,
+  <span class='kw'>y_arg</span> <span class='kw'>=</span> <span class='st'>""</span>,
+  <span class='kw'>details</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='no'>...</span>,
+  <span class='kw'>message</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>.subclass</span> <span class='kw'>=</span> <span class='kw'>NULL</span>
+)
 
-<span class='fu'>stop_incompatible_cast</span>(<span class='no'>x</span>, <span class='no'>y</span>, <span class='kw'>details</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='no'>...</span>, <span class='kw'>x_arg</span> <span class='kw'>=</span> <span class='st'>""</span>,
-  <span class='kw'>to_arg</span> <span class='kw'>=</span> <span class='st'>""</span>, <span class='kw'>message</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>.subclass</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)
+<span class='fu'>stop_incompatible_cast</span>(
+  <span class='no'>x</span>,
+  <span class='no'>y</span>,
+  <span class='kw'>details</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='no'>...</span>,
+  <span class='kw'>x_arg</span> <span class='kw'>=</span> <span class='st'>""</span>,
+  <span class='kw'>to_arg</span> <span class='kw'>=</span> <span class='st'>""</span>,
+  <span class='kw'>message</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>.subclass</span> <span class='kw'>=</span> <span class='kw'>NULL</span>
+)
 
-<span class='fu'>stop_incompatible_op</span>(<span class='no'>op</span>, <span class='no'>x</span>, <span class='no'>y</span>, <span class='kw'>details</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='no'>...</span>, <span class='kw'>message</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>.subclass</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)
+<span class='fu'>stop_incompatible_op</span>(
+  <span class='no'>op</span>,
+  <span class='no'>x</span>,
+  <span class='no'>y</span>,
+  <span class='kw'>details</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='no'>...</span>,
+  <span class='kw'>message</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>.subclass</span> <span class='kw'>=</span> <span class='kw'>NULL</span>
+)
 
-<span class='fu'>stop_incompatible_size</span>(<span class='no'>x</span>, <span class='no'>y</span>, <span class='no'>x_size</span>, <span class='no'>y_size</span>, <span class='kw'>x_arg</span> <span class='kw'>=</span> <span class='st'>""</span>, <span class='kw'>y_arg</span> <span class='kw'>=</span> <span class='st'>""</span>,
-  <span class='kw'>details</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='no'>...</span>, <span class='kw'>message</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>.subclass</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)
+<span class='fu'>stop_incompatible_size</span>(
+  <span class='no'>x</span>,
+  <span class='no'>y</span>,
+  <span class='no'>x_size</span>,
+  <span class='no'>y_size</span>,
+  <span class='kw'>x_arg</span> <span class='kw'>=</span> <span class='st'>""</span>,
+  <span class='kw'>y_arg</span> <span class='kw'>=</span> <span class='st'>""</span>,
+  <span class='kw'>details</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='no'>...</span>,
+  <span class='kw'>message</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>.subclass</span> <span class='kw'>=</span> <span class='kw'>NULL</span>
+)
 
-<span class='fu'>maybe_lossy_cast</span>(<span class='no'>result</span>, <span class='no'>x</span>, <span class='no'>to</span>, <span class='kw'>lossy</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>locations</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>details</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='no'>...</span>, <span class='kw'>x_arg</span> <span class='kw'>=</span> <span class='st'>""</span>, <span class='kw'>to_arg</span> <span class='kw'>=</span> <span class='st'>""</span>, <span class='kw'>message</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>.subclass</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>.deprecation</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)
+<span class='fu'>maybe_lossy_cast</span>(
+  <span class='no'>result</span>,
+  <span class='no'>x</span>,
+  <span class='no'>to</span>,
+  <span class='kw'>lossy</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>locations</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>details</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='no'>...</span>,
+  <span class='kw'>x_arg</span> <span class='kw'>=</span> <span class='st'>""</span>,
+  <span class='kw'>to_arg</span> <span class='kw'>=</span> <span class='st'>""</span>,
+  <span class='kw'>message</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>.subclass</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>.deprecation</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>
+)
 
 <span class='fu'>allow_lossy_cast</span>(<span class='no'>expr</span>, <span class='kw'>x_ptype</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>to_ptype</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</pre>
 
