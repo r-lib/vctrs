@@ -82,3 +82,41 @@ vec_ptype2.grouped_df.data.frame <- function(x, y, ...) {
   ptype <- vec_ptype2(as.data.frame(x), y)
   dplyr::grouped_df(ptype, vars = dplyr::group_vars(x))
 }
+
+#' @export
+vec_proxy.grouped_df <- function(x, ...) {
+  x <- grouped_df_wrap(x)
+  NextMethod()
+}
+#' @export
+vec_restore.grouped_df <- function(x, to, ...) {
+  grouped_df_unwrap(NextMethod())
+}
+
+grouped_df_wrap <- function(x) {
+  groups <- dplyr::group_vars(x)
+  x[groups] <- map2(groups, x[groups], wrap_group_col)
+  x
+}
+wrap_group_col <- function(name, x) {
+  new_data_frame(
+    list2(!!name := x),
+    n = length(x),
+    class = "rlib__grouped_column"
+  )
+}
+
+grouped_df_unwrap <- function(x) {
+  groups_ind <- map_lgl(x, is_wrapped_group_col)
+  groups_vars <- names(x)[groups_ind]
+
+  x <- as.data.frame(x)
+  x[] <- map_if(x, groups_ind, `[[`, 1L)
+
+  # If recomputing groups every time is too slow, perhaps we can cache
+  # the groups
+  dplyr::grouped_df(x, groups_vars)
+}
+is_wrapped_group_col <- function(x) {
+  inherits(x, "rlib__grouped_column")
+}

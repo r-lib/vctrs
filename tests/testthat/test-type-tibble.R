@@ -77,3 +77,12 @@ test_that("common type of two grouped-df takes union of groups", {
   expect_grouped(vec_ptype_common(gdf1, gdf2), c("cyl", "vs", "am"))
   expect_grouped(vec_ptype_common(gdf2, gdf1), c("vs", "am", "cyl"))
 })
+
+test_that("groups are recomputed after restoration", {
+  gdf <- dplyr::group_by(mtcars, cyl)
+  out <- vec_restore(vec_proxy(gdf), to = gdf)
+  expect_identical(
+    unstructure(dplyr::group_data(gdf)),
+    unstructure(dplyr::group_data(out))
+  )
+})
