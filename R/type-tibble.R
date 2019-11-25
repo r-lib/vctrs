@@ -105,6 +105,8 @@ vec_cast.grouped_df.data.frame <- function(x, to, ...) {
 #' @export
 vec_proxy.grouped_df <- function(x, ...) {
   x <- grouped_df_wrap(x)
+  class <- class(x)
+  class(x) <- class[-match("grouped_df", class)]
   NextMethod()
 }
 #' @export

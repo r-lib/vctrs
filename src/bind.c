@@ -59,6 +59,8 @@ static SEXP vec_rbind(SEXP xs, SEXP ptype, SEXP names_to, enum name_repair_arg n
     Rf_errorcall(R_NilValue, "Can't bind objects that are not coercible to a data frame.");
   }
 
+  SEXP proxy = PROTECT_N(vec_proxy(ptype), &nprot);
+
   // Find individual input sizes and total size of output
   R_len_t nrow = 0;
 
@@ -72,7 +74,7 @@ static SEXP vec_rbind(SEXP xs, SEXP ptype, SEXP names_to, enum name_repair_arg n
     ns[i] = size;
   }
 
-  SEXP out = PROTECT_N(vec_init(ptype, nrow), &nprot);
+  SEXP out = PROTECT_N(vec_init(proxy, nrow), &nprot);
   SEXP idx = PROTECT_N(compact_seq(0, 0, true), &nprot);
   int* idx_ptr = INTEGER(idx);
 
@@ -103,7 +105,11 @@ static SEXP vec_rbind(SEXP xs, SEXP ptype, SEXP names_to, enum name_repair_arg n
       continue;
     }
 
+    // First cast, then take proxy, to give a chance to proxy methods
+    // to instrument elements (e.g. wrap in data frame columns with meta-data)
     SEXP tbl = PROTECT(vec_cast(VECTOR_ELT(xs, i), ptype, args_empty, args_empty));
+    tbl = PROTECT(vec_proxy(tbl));
+
     init_compact_seq(idx_ptr, counter, size, true);
     df_assign(out, idx, tbl, false);
 
@@ -114,12 +120,14 @@ static SEXP vec_rbind(SEXP xs, SEXP ptype, SEXP names_to, enum name_repair_arg n
     }
 
     counter += size;
-    UNPROTECT(1);
+    UNPROTECT(2);
   }
 
   if (names_to != R_NilValue) {
-    out = df_poke_at(out, names_to, names_to_col);
+    out = PROTECT_N(df_poke_at(out, names_to, names_to_col), &nprot);
   }
+
+  out = vec_restore(out, ptype, R_NilValue);
 
   UNPROTECT(nprot);
   return out;

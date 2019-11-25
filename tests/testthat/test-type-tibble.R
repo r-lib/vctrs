@@ -79,3 +79,28 @@ test_that("can cast data frame to grouped-df", {
     dplyr::group_by(mtcars[1:3], cyl)
   )
 })
+
+test_that("can rbind grouped-dfs", {
+  gdf <- dplyr::group_by(mtcars, cyl)
+  exp <- dplyr::group_by(vec_rbind(mtcars, mtcars), cyl)
+  exp_data <- unstructure(dplyr::group_data(exp))
+
+  out <- vec_rbind(gdf, gdf)
+  expect_grouped(out, "cyl")
+  expect_identical(unstructure(dplyr::group_data(out)), exp_data)
+
+  out <- vec_rbind(gdf, mtcars)
+  expect_grouped(out, "cyl")
+  expect_identical(unstructure(dplyr::group_data(out)), exp_data)
+
+  out <- vec_rbind(mtcars, gdf)
+  expect_grouped(out, "cyl")
+  expect_identical(unstructure(dplyr::group_data(out)), exp_data)
+
+  gdf2 <- dplyr::group_by(mtcars, vs, am)
+  out <- vec_rbind(gdf2, mtcars, gdf)
+  exp_data <- dplyr::group_by(vec_rbind(mtcars, mtcars, mtcars), cyl, vs, am)
+  exp_data <- unstructure(dplyr::group_data(exp_data))
+  expect_grouped(out, c("cyl", "vs", "am"))
+  expect_identical(unstructure(dplyr::group_data(out)), exp_data)
+})
