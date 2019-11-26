@@ -321,7 +321,7 @@ static SEXP vec_cbind(SEXP xs, SEXP ptype, SEXP size, enum name_repair_arg name_
 
 static SEXP cbind_container_type(SEXP x) {
   if (is_data_frame(x)) {
-    return df_container_type(x);
+    return vec_type(x);
   } else {
     return R_NilValue;
   }
