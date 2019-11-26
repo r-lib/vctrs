@@ -140,3 +140,13 @@ test_that("can cbind grouped-dfs", {
   expect_identical(dplyr::group_vars(out), c("cyl", "vs", "am"))
   expect_named(out, names(mtcars)[c(1:3, 4:6, 8:10)])
 })
+
+test_that("can concatenate grouped-dfs", {
+  out <- vec_c(
+    dplyr::group_by(mtcars, cyl),
+    mtcars,
+    dplyr::group_by(mtcars, cyl, am)
+  )
+  expect_is(out, "grouped_df")
+  expect_identical(dplyr::group_vars(out), c("cyl", "am"))
+})
