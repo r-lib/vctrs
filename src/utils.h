@@ -53,7 +53,11 @@ SEXP vctrs_dispatch4(SEXP fn_sym, SEXP fn,
                      SEXP y_sym, SEXP y,
                      SEXP z_sym, SEXP z);
 
+
+SEXP r_get(SEXP x, R_len_t i);
+
 SEXP map(SEXP x, SEXP (*fn)(SEXP));
+SEXP map2(SEXP x, SEXP y, SEXP (*fn)(SEXP, SEXP));
 SEXP df_map(SEXP df, SEXP (*fn)(SEXP));
 
 enum vctrs_class_type class_type(SEXP x);

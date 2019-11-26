@@ -200,12 +200,36 @@ SEXP vctrs_set_attributes(SEXP x, SEXP attrib) {
   return x;
 }
 
+SEXP r_get(SEXP x, R_len_t i) {
+  switch (TYPEOF(x)) {
+  case NILSXP: return R_NilValue; // Useful for default values
+  case VECSXP: return VECTOR_ELT(x, i);
+  case STRSXP: return STRING_ELT(x, i);
+  default: Rf_error("Internal error: Unimplemented type in `r_get()`.");
+  }
+}
+
 SEXP map(SEXP x, SEXP (*fn)(SEXP)) {
   R_len_t n = Rf_length(x);
   SEXP out = PROTECT(Rf_allocVector(VECSXP, n));
 
   for (R_len_t i = 0; i < n; ++i) {
     SET_VECTOR_ELT(out, i, fn(VECTOR_ELT(x, i)));
+  }
+
+  SEXP nms = PROTECT(Rf_getAttrib(x, R_NamesSymbol));
+  Rf_setAttrib(out, R_NamesSymbol, nms);
+
+  UNPROTECT(2);
+  return out;
+}
+
+SEXP map2(SEXP x, SEXP y, SEXP (*fn)(SEXP, SEXP)) {
+  R_len_t n = Rf_length(x);
+  SEXP out = PROTECT(Rf_allocVector(VECSXP, n));
+
+  for (R_len_t i = 0; i < n; ++i) {
+    SET_VECTOR_ELT(out, i, fn(VECTOR_ELT(x, i), r_get(y, i)));
   }
 
   SEXP nms = PROTECT(Rf_getAttrib(x, R_NamesSymbol));

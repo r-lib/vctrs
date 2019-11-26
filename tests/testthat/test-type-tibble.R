@@ -104,3 +104,34 @@ test_that("can rbind grouped-dfs", {
   expect_grouped(out, c("cyl", "vs", "am"))
   expect_identical(unstructure(dplyr::group_data(out)), exp_data)
 })
+
+test_that("can cbind grouped-dfs", {
+  gdf <- dplyr::group_by(mtcars, cyl)
+  exp <- dplyr::group_by(vec_cbind(mtcars, mtcars), cyl...2, cyl...13)
+  exp_data <- unstructure(dplyr::group_data(exp))
+
+  expect_cbinded <- function(out, groups) {
+    repaired_names <- vec_as_names(rep(names(mtcars), 2), repair = "unique")
+    expect_grouped(out, groups, names = repaired_names)
+  }
+  expect_cbinded(vec_cbind(gdf, gdf), groups = c("cyl...2", "cyl...13"))
+  expect_cbinded(vec_cbind(gdf, mtcars), groups = c("cyl...2"))
+  expect_cbinded(vec_cbind(mtcars, gdf), groups = c("cyl...13"))
+
+  out <- vec_cbind(
+    dplyr::group_by(mtcars[1:3], cyl),
+    dplyr::group_by(mtcars, am, vs)
+  )
+  expect_named(out, names(vec_cbind(mtcars[1:3], mtcars)))
+  expect_identical(dplyr::group_vars(out), c("cyl...2", "vs", "am"))
+
+  gdf1 <- dplyr::group_by(mtcars[1:3], cyl)
+  gdf2 <- dplyr::group_by(mtcars[8:10], vs, am)
+  out <- vec_cbind(
+    gdf1,
+    mtcars[4:6],
+    gdf2
+  )
+  expect_identical(dplyr::group_vars(out), c("cyl", "vs", "am"))
+  expect_named(out, names(mtcars)[c(1:3, 4:6, 8:10)])
+})
