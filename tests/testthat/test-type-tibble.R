@@ -74,9 +74,14 @@ test_that("groups are recomputed after restoration", {
 })
 
 test_that("can cast data frame to grouped-df", {
+  gdf <- dplyr::group_by(mtcars, cyl)
   expect_equal(
-    vec_cast(mtcars[1:3], dplyr::group_by(mtcars, cyl)),
-    dplyr::group_by(mtcars[1:3], cyl)
+    vec_cast(mtcars[1:3], gdf),
+    dplyr::group_by(vec_cast(mtcars[1:3], mtcars), cyl)
+  )
+  expect_equal(
+    vec_cast(dplyr::group_by(mtcars[8:10], vs, am), gdf),
+    dplyr::group_by(vec_cast(mtcars[8:10], mtcars), cyl)
   )
 })
 

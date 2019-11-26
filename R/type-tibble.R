@@ -99,6 +99,11 @@ vec_cast.grouped_df.default <- function(x, to, ..., x_arg = "", to_arg = "") {
 #' @export
 #' @method vec_cast.grouped_df data.frame
 vec_cast.grouped_df.data.frame <- function(x, to, ...) {
+  # Cast to data frame type first. This ensures `x` contains all
+  # columns in `to`. Can this delegation be encoded in a
+  # `next_method2()` primitive for double dispatch generics?
+  x <- vec_cast(x, as.data.frame(to))
+
   dplyr::grouped_df(x, vars = dplyr::group_vars(to))
 }
 
