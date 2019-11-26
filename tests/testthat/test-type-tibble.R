@@ -49,11 +49,19 @@ test_that("tibbles have common tabular type with data frames", {
 
 # grouped_df ---------------------------------------------------------
 
-test_that("common type of grouped-df and df is df", {
+test_that("common type of grouped-df and df is grouped-df", {
   gdf <- dplyr::group_by(mtcars, cyl)
   expect_grouped(vec_ptype_common(gdf, mtcars[1:3]), "cyl")
   expect_grouped(vec_ptype_common(mtcars[1:3], gdf), "cyl")
   expect_grouped(vec_ptype_common(gdf, mtcars["drat"]), "cyl")
+})
+
+test_that("common type of grouped-df and tbl-df is grouped-df", {
+  gdf <- dplyr::group_by(mtcars, cyl)
+  tbl <- dplyr::as_tibble(mtcars)
+  expect_grouped(vec_ptype_common(gdf, tbl[1:3]), "cyl")
+  expect_grouped(vec_ptype_common(tbl[1:3], gdf), "cyl")
+  expect_grouped(vec_ptype_common(gdf, tbl["drat"]), "cyl")
 })
 
 test_that("common type of two grouped-df takes union of groups", {

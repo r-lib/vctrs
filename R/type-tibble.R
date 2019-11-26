@@ -83,6 +83,14 @@ vec_ptype2.grouped_df.data.frame <- function(x, y, ...) {
   dplyr::grouped_df(ptype, vars = dplyr::group_vars(x))
 }
 
+# Can this be inherited from data.frame somehow?
+#' @export
+#' @method vec_ptype2.tbl_df grouped_df
+vec_ptype2.tbl_df.grouped_df <- function(x, y, ...) {
+  ptype <- vec_ptype2(x, as.data.frame(y))
+  dplyr::grouped_df(ptype, vars = dplyr::group_vars(y))
+}
+
 #' @rdname vec_ptype2.grouped_df
 #' @inheritParams vec_cast
 #' @export vec_cast.grouped_df
