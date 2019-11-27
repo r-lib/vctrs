@@ -47,6 +47,29 @@ test_that("coercion errors with factors", {
   expect_error(vec_ptype_common(logical(), f), class = "vctrs_error_incompatible_type")
 })
 
+test_that("vec_ptype2(<factor>, NA) is symmetric (#687)", {
+  fct <- new_factor()
+  expect_identical(
+    vec_ptype2(fct, NA),
+    vec_ptype2(NA, fct)
+  )
+
+  fct <- new_ordered()
+  expect_identical(
+    vec_ptype2(fct, NA),
+    vec_ptype2(NA, fct)
+  )
+})
+
+test_that("vec_ptype2(<factor>, NA) is symmetric (#687)", {
+  i64 <- bit64::integer64()
+  expect_identical(
+    vec_ptype2(i64, NA),
+    vec_ptype2(NA, i64)
+  )
+})
+
+
 # Casting -----------------------------------------------------------------
 
 test_that("safe casts work as expected", {

@@ -93,6 +93,30 @@ test_that("POSIXlt always steered towards POSIXct", {
   expect_equal(vec_ptype2(dtl, dtl), dtc[0])
 })
 
+test_that("vec_ptype2(<Date>, NA) is symmetric (#687)", {
+  date <- new_date()
+  expect_identical(
+    vec_ptype2(date, NA),
+    vec_ptype2(NA, date)
+  )
+})
+
+test_that("vec_ptype2(<POSIXt>, NA) is symmetric (#687)", {
+  time <- Sys.time()
+  expect_identical(
+    vec_ptype2(time, NA),
+    vec_ptype2(NA, time)
+  )
+})
+
+test_that("vec_ptype2(<difftime>, NA) is symmetric (#687)", {
+  dtime <- Sys.time() - Sys.time()
+  expect_identical(
+    vec_ptype2(dtime, NA),
+    vec_ptype2(NA, dtime)
+  )
+})
+
 
 # cast: dates ---------------------------------------------------------------
 
