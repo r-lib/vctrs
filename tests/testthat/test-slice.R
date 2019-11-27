@@ -242,17 +242,17 @@ test_that("can slice shaped objects by name", {
 })
 
 test_that("vec_slice() unclasses input before calling `vec_restore()`", {
-  class <- NULL
+  oo <- NULL
   scoped_global_bindings(
     vec_proxy.vctrs_foobar = identity,
-    vec_restore.vctrs_foobar = function(x, ...) class <<- class(x)
+    vec_restore.vctrs_foobar = function(x, ...) oo <<- is.object(x)
   )
 
   x <- foobar(1:4)
   dim(x) <- c(2, 2)
 
   vec_slice(x, 1)
-  expect_identical(class, "matrix")
+  expect_false(oo)
 })
 
 test_that("can call `vec_slice()` from `[` methods with shaped objects without infloop", {
