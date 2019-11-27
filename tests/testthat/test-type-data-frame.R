@@ -150,7 +150,7 @@ test_that("can restore lists with empty names", {
 
 test_that("can restore subclasses of data frames", {
   expect_identical(vec_restore(list(), subclass(data.frame())), subclass(data.frame()))
-  scoped_global_bindings(
+  local_methods(
     vec_restore.vctrs_foobar = function(x, to, ..., i) "dispatched"
   )
   expect_identical(vec_restore(list(), subclass(data.frame())), "dispatched")

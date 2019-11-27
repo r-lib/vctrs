@@ -28,7 +28,7 @@ test_that("x and by must be same size", {
 })
 
 test_that("split takes the equality proxy (#375)", {
-  scoped_comparable_tuple()
+  local_comparable_tuple()
   x <- tuple(c(1, 2, 1), 1:3)
   expect_identical(nrow(vec_split(1:3, x)), 2L)
 })

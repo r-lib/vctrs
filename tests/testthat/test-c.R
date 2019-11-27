@@ -80,7 +80,7 @@ test_that("vec_c() includes index in argument tag", {
 })
 
 test_that("vec_c() handles record classes", {
-  scoped_rational_class()
+  local_rational_class()
 
   out <- vec_c(rational(1, 2), 1L, NA)
 

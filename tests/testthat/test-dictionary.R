@@ -36,7 +36,7 @@ test_that("vec_count works with different encodings", {
 })
 
 test_that("vec_count recursively takes the equality proxy", {
-  scoped_comparable_tuple()
+  local_comparable_tuple()
 
   x <- tuple(c(1, 1, 2), 1:3)
   df <- data_frame(x = x)
@@ -115,7 +115,7 @@ test_that("vec_unique() works with 1D arrays", {
 })
 
 test_that("unique functions take the equality proxy (#375)", {
-  scoped_comparable_tuple()
+  local_comparable_tuple()
   x <- tuple(c(1, 2, 1), 1:3)
 
   expect_true(vec_in(tuple(2, 100), x))
@@ -123,7 +123,7 @@ test_that("unique functions take the equality proxy (#375)", {
 })
 
 test_that("unique functions take the equality proxy recursively", {
-  scoped_comparable_tuple()
+  local_comparable_tuple()
 
   x <- tuple(c(1, 1, 2), 1:3)
   df <- data_frame(x = x)
@@ -134,7 +134,7 @@ test_that("unique functions take the equality proxy recursively", {
 })
 
 test_that("duplicate functions take the equality proxy recursively", {
-  scoped_comparable_tuple()
+  local_comparable_tuple()
 
   x <- tuple(c(1, 1, 2), 1:3)
   df <- data_frame(x = x)
@@ -219,7 +219,7 @@ test_that("vec_match works with empty data frame", {
 })
 
 test_that("matching functions take the equality proxy (#375)", {
-  scoped_comparable_tuple()
+  local_comparable_tuple()
   x <- tuple(c(1, 2, 1), 1:3)
 
   expect_identical(vec_unique_loc(x), 1:2)
@@ -250,7 +250,7 @@ test_that("matching functions work with different encodings", {
 })
 
 test_that("matching functions take the equality proxy recursively", {
-  scoped_comparable_tuple()
+  local_comparable_tuple()
 
   x <- tuple(c(1, 2), 1:2)
   df <- data_frame(x = x)

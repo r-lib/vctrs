@@ -91,7 +91,7 @@ test_that("data frame vec_restore() checks type", {
 })
 
 test_that("can use vctrs primitives from vec_restore() without inflooping", {
-  scoped_global_bindings(
+  local_methods(
     vec_restore.vctrs_foobar = function(x, to, ...) {
       vec_ptype(x)
       vec_init(x)
@@ -106,7 +106,7 @@ test_that("can use vctrs primitives from vec_restore() without inflooping", {
 })
 
 test_that("vec_restore() passes `n` argument to methods", {
-  scoped_global_bindings(
+  local_methods(
     vec_restore.vctrs_foobar = function(x, to, ..., n) n
   )
   expect_identical(vec_slice(foobar(1:3), 2), 1L)
@@ -138,7 +138,7 @@ test_that("names attribute isn't set when restoring 1D arrays using 2D+ objects"
 })
 
 test_that("arguments are not inlined in the dispatch call (#300)", {
-  scoped_global_bindings(
+  local_methods(
     vec_restore.vctrs_foobar = function(x, to, ..., n) sys.call(),
     vec_proxy.vctrs_foobar = unclass
   )
@@ -161,7 +161,7 @@ test_that("can suppress cast errors selectively", {
 })
 
 test_that("can signal deprecation warnings for lossy casts", {
-  scoped_lifecycle_warnings()
+  local_lifecycle_warnings()
 
   lossy_cast <- function() {
     maybe_lossy_cast(TRUE, factor("foo"), factor("bar"), lossy = TRUE, .deprecation = TRUE)

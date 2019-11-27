@@ -341,14 +341,14 @@ test_that("NA do not propagate from function bodies or formals", {
 # proxy -------------------------------------------------------------------
 
 test_that("vec_equal() takes vec_proxy() by default", {
-  scoped_env_proxy()
+  local_env_proxy()
   x <- new_proxy(1:3)
   y <- new_proxy(3:1)
   expect_identical(vec_equal(x, y), lgl(FALSE, TRUE, FALSE))
 })
 
 test_that("vec_equal() takes vec_proxy_equal() if implemented", {
-  scoped_comparable_tuple()
+  local_comparable_tuple()
 
   x <- tuple(1:3, 1:3)
   y <- tuple(1:3, 4:6)
@@ -425,7 +425,7 @@ test_that("data frames are compared row wise", {
 })
 
 test_that("the equality proxy is taken recursively", {
-  scoped_comparable_tuple()
+  local_comparable_tuple()
 
   x <- tuple(c(1, 1, 2), 1:3)
   df <- data_frame(x = x)

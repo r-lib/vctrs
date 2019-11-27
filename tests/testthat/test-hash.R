@@ -68,7 +68,7 @@ test_that("hashes are consistent from run to run", {
     )
   }
 
-  scoped_options(max.print = 99999)
+  local_options(max.print = 99999)
   expect_known_output(print(hash), file = test_path("test-hash-hash.txt"))
 })
 

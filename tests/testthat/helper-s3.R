@@ -6,11 +6,11 @@ unrownames <- function(x) {
   x
 }
 
-scoped_global_bindings <- function(..., .frame = caller_env()) {
-  scoped_bindings(..., .env = global_env(), .frame = .frame)
+local_methods <- function(..., .frame = caller_env()) {
+  local_bindings(..., .env = global_env(), .frame = .frame)
 }
-scoped_proxy <- function(frame = caller_env()) {
-  scoped_global_bindings(.frame = frame,
+local_proxy <- function(frame = caller_env()) {
+  local_methods(.frame = frame,
     vec_proxy.vctrs_proxy = function(x, ...) proxy_deref(x),
     vec_restore.vctrs_proxy = function(x, to, ...) new_proxy(x),
 
@@ -30,21 +30,21 @@ new_proxy <- function(x) {
 proxy_deref <- function(x) {
   x[[1]]$x
 }
-scoped_env_proxy <- function(frame = caller_env()) {
-  scoped_global_bindings(.frame = frame,
+local_env_proxy <- function(frame = caller_env()) {
+  local_methods(.frame = frame,
     vec_proxy.vctrs_proxy = proxy_deref,
     vec_restore.vctrs_proxy = function(x, ...) new_proxy(x)
   )
 }
 
-scoped_no_stringsAsFactors <- function(frame = caller_env()) {
-  scoped_options(.frame = frame, stringsAsFactors = FALSE)
+local_no_stringsAsFactors <- function(frame = caller_env()) {
+  local_options(.frame = frame, stringsAsFactors = FALSE)
 }
 
 tibble <- tibble::tibble
 
-scoped_foobar_proxy <- function(frame = caller_env()) {
-  scoped_global_bindings(.frame = frame, vec_proxy.vctrs_foobar = identity)
+local_foobar_proxy <- function(frame = caller_env()) {
+  local_methods(.frame = frame, vec_proxy.vctrs_foobar = identity)
 }
 
 subclass <- function(x) {

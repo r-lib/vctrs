@@ -42,7 +42,7 @@ test_that("vec_group_id works with different encodings", {
 })
 
 test_that("vec_group_id takes the equality proxy", {
-  scoped_comparable_tuple()
+  local_comparable_tuple()
   x <- tuple(c(1, 2, 1, 1), c(1, 1, 1, 2))
   # Compares on only the first field
   expect <- structure(c(1L, 2L, 1L, 1L), n = 2L)
@@ -50,7 +50,7 @@ test_that("vec_group_id takes the equality proxy", {
 })
 
 test_that("vec_group_id takes the equality proxy recursively", {
-  scoped_comparable_tuple()
+  local_comparable_tuple()
 
   x <- tuple(c(1, 2, 1, 1), 1:4)
   df <- data_frame(x = x)
@@ -95,7 +95,7 @@ test_that("vec_group_rle works on base S3 objects", {
 })
 
 test_that("vec_group_rle takes the equality proxy", {
-  scoped_comparable_tuple()
+  local_comparable_tuple()
   x <- tuple(c(1, 2, 1, 1), c(1, 1, 1, 2))
   # Compares on only the first field
   expect <- new_group_rle(c(1L, 2L, 1L), c(1L, 1L, 2L), 2L)
@@ -109,7 +109,7 @@ test_that("vec_group_rle works row wise on data frames", {
 })
 
 test_that("vec_group_rle takes the equality proxy recursively", {
-  scoped_comparable_tuple()
+  local_comparable_tuple()
 
   x <- tuple(c(1, 2, 1, 1), 1:4)
   df <- data_frame(x = x)
@@ -174,7 +174,7 @@ test_that("`key` column retains full type information", {
 })
 
 test_that("vec_group_pos takes the equality proxy", {
-  scoped_comparable_tuple()
+  local_comparable_tuple()
   x <- tuple(c(1, 2, 1), 1:3)
   expect_equal(vec_group_pos(x)$key, x[1:2])
   expect_equal(vec_group_pos(x)$pos, list_of(c(1L, 3L), 2L))
@@ -185,7 +185,7 @@ test_that("vec_group_pos takes the equality proxy", {
 })
 
 test_that("vec_group_pos takes the equality proxy recursively", {
-  scoped_comparable_tuple()
+  local_comparable_tuple()
 
   x <- tuple(c(1, 2, 1, 1), 1:4)
   df <- data_frame(x = x)

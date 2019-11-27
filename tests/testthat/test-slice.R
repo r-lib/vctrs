@@ -218,7 +218,7 @@ test_that("can `vec_slice()` records", {
 })
 
 test_that("vec_restore() is called after proxied slicing", {
-  scoped_global_bindings(
+  local_methods(
     vec_proxy.vctrs_foobar = identity,
     vec_restore.vctrs_foobar = function(x, to, ...) "dispatch"
   )
@@ -226,7 +226,7 @@ test_that("vec_restore() is called after proxied slicing", {
 })
 
 test_that("vec_slice() is proxied", {
-  scoped_proxy()
+  local_proxy()
   x <- vec_slice(new_proxy(1:3), 2:3)
   expect_identical(proxy_deref(x), 2:3)
 })
@@ -234,7 +234,7 @@ test_that("vec_slice() is proxied", {
 test_that("dimensions are preserved by vec_slice()", {
   attrib <- NULL
 
-  scoped_global_bindings(
+  local_methods(
     vec_restore.vctrs_foobar = function(x, ...) attrib <<- attributes(x)
   )
 
@@ -261,7 +261,7 @@ test_that("can slice shaped objects by name", {
 
 test_that("vec_slice() unclasses input before calling `vec_restore()`", {
   oo <- NULL
-  scoped_global_bindings(
+  local_methods(
     vec_proxy.vctrs_foobar = identity,
     vec_restore.vctrs_foobar = function(x, ...) oo <<- is.object(x)
   )
@@ -274,7 +274,7 @@ test_that("vec_slice() unclasses input before calling `vec_restore()`", {
 })
 
 test_that("can call `vec_slice()` from `[` methods with shaped objects without infloop", {
-  scoped_global_bindings(
+  local_methods(
     `[.vctrs_foobar` = function(x, i, ...) vec_slice(x, i)
   )
 
@@ -287,20 +287,20 @@ test_that("can call `vec_slice()` from `[` methods with shaped objects without i
 })
 
 test_that("vec_slice() falls back to `[` with S3 objects", {
-  scoped_global_bindings(
+  local_methods(
     `[.vctrs_foobar` = function(x, i, ...) "dispatched"
   )
   expect_identical(vec_slice(foobar(NA), 1), foobar("dispatched"))
 
   expect_error(vec_slice(foobar(list(NA)), 1), class = "vctrs_error_scalar_type")
-  scoped_global_bindings(
+  local_methods(
     vec_proxy.vctrs_foobar = identity
   )
   expect_identical(vec_slice(foobar(list(NA)), 1), foobar(list(NA)))
 })
 
 test_that("vec_slice() doesn't restore when attributes have already been restored", {
-  scoped_global_bindings(
+  local_methods(
     `[.vctrs_foobar` = function(x, i, ...) structure("dispatched", foo = "bar"),
     vec_restore.vctrs_foobar = function(...) stop("not called")
   )
@@ -308,7 +308,7 @@ test_that("vec_slice() doesn't restore when attributes have already been restore
 })
 
 test_that("can vec_slice() without inflooping when restore calls math generics", {
-  scoped_global_bindings(
+  local_methods(
     new_foobar = function(x) {
       new_vctr(as.double(x), class = "vctrs_foobar")
     },
@@ -326,7 +326,7 @@ test_that("can vec_slice() without inflooping when restore calls math generics",
 })
 
 test_that("vec_restore() is called after slicing data frames", {
-  scoped_global_bindings(
+  local_methods(
     vec_restore.vctrs_tabble = function(...) "dispatched"
   )
   df <- structure(mtcars, class = c("vctrs_tabble", "data.frame"))
@@ -334,7 +334,7 @@ test_that("vec_restore() is called after slicing data frames", {
 })
 
 test_that("additional subscripts are forwarded to `[`", {
-  scoped_global_bindings(
+  local_methods(
     `[.vctrs_foobar` = function(x, i, ...) vec_index(x, i, ...)
   )
 
@@ -524,7 +524,7 @@ test_that("matrices / arrays without row names have other dimension names kept",
 })
 
 test_that("vec_chop() doesn't restore when attributes have already been restored", {
-  scoped_global_bindings(
+  local_methods(
     `[.vctrs_foobar` = function(x, i, ...) structure("dispatched", foo = "bar"),
     vec_restore.vctrs_foobar = function(...) structure("dispatched-and-restored", foo = "bar")
   )
@@ -534,7 +534,7 @@ test_that("vec_chop() doesn't restore when attributes have already been restored
 })
 
 test_that("vec_chop() restores when attributes have not been restored by `[`", {
-  scoped_global_bindings(
+  local_methods(
     `[.vctrs_foobar` = function(x, i, ...) "dispatched",
     vec_restore.vctrs_foobar = function(...) "dispatched-and-restored"
   )
@@ -819,7 +819,7 @@ test_that("vec_as_position() and vec_as_index() require integer- or character-li
   expect_error(vec_as_index(foobar(1L), 10L), class = "vctrs_error_index_bad_type")
 
   # Define subtype of logical and integer
-  scoped_global_bindings(
+  local_methods(
     vec_ptype2.vctrs_foobar = function(x, y, ...) UseMethod("vec_ptype2.vctrs_foobar", y),
     vec_ptype2.vctrs_foobar.default = function(x, y, ...) vec_default_ptype2(x, y, ...),
     vec_ptype2.vctrs_foobar.logical = function(x, y, ...) logical(),

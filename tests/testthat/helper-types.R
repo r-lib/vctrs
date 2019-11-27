@@ -59,19 +59,19 @@ tuple_methods <- list(
   vec_cast.tuple.tuple = function(x, to, ...) x
 )
 
-scoped_tuple_methods <- function(frame = caller_env()) {
-  scoped_global_bindings(.frame = frame, !!!tuple_methods)
+local_tuple_methods <- function(frame = caller_env()) {
+  local_methods(.frame = frame, !!!tuple_methods)
 }
 set_tuple_methods <- function(env = global_env()) {
   env_bind(env, !!!tuple_methods)
 }
 
 
-scoped_comparable_tuple <- function(frame = caller_env()) {
-  scoped_tuple_methods(frame = frame)
+local_comparable_tuple <- function(frame = caller_env()) {
+  local_tuple_methods(frame = frame)
 
   # Compare only on first field
-  scoped_global_bindings(.frame = frame,
+  local_methods(.frame = frame,
     vec_proxy_equal.tuple = function(x, ...) field(x, "x")
   )
 }

@@ -134,7 +134,7 @@ test_that("subset assignment throws error", {
 # use simple class to test essential features of rcrds
 
 test_that("print and str use format", {
-  scoped_tuple_methods()
+  local_tuple_methods()
   r <- tuple(1, 1:100)
 
   expect_known_output(
@@ -150,7 +150,7 @@ test_that("print and str use format", {
 })
 
 test_that("subsetting methods applied to each field", {
-  scoped_tuple_methods()
+  local_tuple_methods()
   x <- tuple(1:2, 1)
 
   expect_equal(x[1], tuple(1, 1))
@@ -163,7 +163,7 @@ test_that("subsetting methods applied to each field", {
 })
 
 test_that("subset assignment modifies each field", {
-  scoped_tuple_methods()
+  local_tuple_methods()
   x <- tuple(c(1, 1), c(2, 2))
 
   x[[1]] <- tuple(3, 3)
@@ -174,7 +174,7 @@ test_that("subset assignment modifies each field", {
 })
 
 test_that("subset assignment recycles", {
-  scoped_tuple_methods()
+  local_tuple_methods()
 
   x <- tuple(c(1, 1), c(2, 2))
   x[1:2] <- tuple(1, 1)
@@ -185,7 +185,7 @@ test_that("subset assignment recycles", {
 })
 
 test_that("can sort rcrd", {
-  scoped_tuple_methods()
+  local_tuple_methods()
   x <- tuple(c(1, 2, 1), c(3, 1, 2))
   expect_equal(xtfrm(x), c(2, 3, 1))
   expect_equal(order(x), c(3, 1, 2))
@@ -193,7 +193,7 @@ test_that("can sort rcrd", {
 })
 
 test_that("can use dictionary methods on a rcrd", {
-  scoped_tuple_methods()
+  local_tuple_methods()
   x <- tuple(c(1, 2, 1), c(3, 1, 3))
   expect_equal(unique(x), x[1:2])
   expect_equal(duplicated(x), c(FALSE, FALSE, TRUE))
@@ -201,14 +201,14 @@ test_that("can use dictionary methods on a rcrd", {
 })
 
 test_that("can round trip through list", {
-  scoped_tuple_methods()
+  local_tuple_methods()
   t <- tuple(1:2, 3:4)
   l <- expect_equal(vec_cast(t, list()), list(tuple(1, 3), tuple(2, 4)))
   expect_equal(vec_cast(l, t), t)
 })
 
 test_that("dangerous methods marked as unimplemented", {
-  scoped_tuple_methods()
+  local_tuple_methods()
   t <- tuple()
 
   expect_error(mean(t), class = "vctrs_error_unsupported")

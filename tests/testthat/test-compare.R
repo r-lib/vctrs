@@ -120,7 +120,7 @@ test_that("vec_proxy_compare() refuses to deal with lists", {
 })
 
 test_that("vec_compare() calls vec_proxy_compare()", {
-  scoped_global_bindings(
+  local_methods(
     vec_proxy_compare.vctrs_foobar = function(x) rev(x),
     vec_ptype2.integer.vctrs_foobar = function(...) foobar(int()),
     vec_ptype2.vctrs_foobar = function(...) foobar(int()),

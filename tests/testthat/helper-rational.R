@@ -56,8 +56,8 @@ rational_methods <- list(
   vec_proxy_compare.vctrs_rational = vec_proxy_compare.vctrs_rational
 )
 
-scoped_rational_class <- function(frame = caller_env()) {
-  scoped_global_bindings(.frame = frame, !!!rational_methods)
+local_rational_class <- function(frame = caller_env()) {
+  local_methods(.frame = frame, !!!rational_methods)
 }
 
 env_bind(global_env(), !!!rational_methods)

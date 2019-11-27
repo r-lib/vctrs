@@ -626,8 +626,8 @@ new_hidden <- function(x = double()) {
 }
 format.hidden <- function(x, ...) rep("xxx", length(x))
 
-scoped_hidden <- function(frame = caller_env()) {
-  scoped_bindings(.env = global_env(), .frame = frame,
+local_hidden <- function(frame = caller_env()) {
+  local_bindings(.env = global_env(), .frame = frame,
     vec_ptype2.hidden         = function(x, y, ...) UseMethod("vec_ptype2.hidden", y),
     vec_ptype2.hidden.default = function(x, y, ...) stop_incompatible_type(x, y, ...),
     vec_ptype2.hidden.hidden  = function(x, y, ...) new_hidden(),
