@@ -188,10 +188,13 @@ test_that("list_of() has as.character() method (tidyverse/tidyr#654)", {
 })
 
 test_that("vec_ptype2(<list_of<>>, NA) is symmetric (#687)", {
-  skip("vec_ptype2(NA, lof) not functional yet")
   lof <- list_of(1, 2, 3)
-  expect_identical(
+  expect_error(
     vec_ptype2(lof, NA),
-    vec_ptype2(NA, lof)
+    class = "vctrs_error_incompatible_type"
+  )
+  expect_error(
+    vec_ptype2(NA, lof),
+    class = "vctrs_error_incompatible_type"
   )
 })
