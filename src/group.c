@@ -8,7 +8,7 @@ SEXP vctrs_group_id(SEXP x) {
 
   R_len_t n = vec_size(x);
 
-  x = PROTECT_N(vec_proxy_recursive(x, vctrs_proxy_equal), &nprot);
+  x = PROTECT_N(vec_proxy_equal(x), &nprot);
   x = PROTECT_N(obj_maybe_translate_encoding(x, n), &nprot);
 
   dictionary d;
@@ -50,7 +50,7 @@ SEXP vctrs_group_rle(SEXP x) {
 
   R_len_t n = vec_size(x);
 
-  x = PROTECT_N(vec_proxy_recursive(x, vctrs_proxy_equal), &nprot);
+  x = PROTECT_N(vec_proxy_equal(x), &nprot);
   x = PROTECT_N(obj_maybe_translate_encoding(x, n), &nprot);
 
   dictionary d;
@@ -142,7 +142,7 @@ SEXP vec_group_pos(SEXP x) {
 
   R_len_t n = vec_size(x);
 
-  SEXP proxy = PROTECT_N(vec_proxy_recursive(x, vctrs_proxy_equal), &nprot);
+  SEXP proxy = PROTECT_N(vec_proxy_equal(x), &nprot);
   proxy = PROTECT_N(obj_maybe_translate_encoding(proxy, n), &nprot);
 
   dictionary d;

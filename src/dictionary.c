@@ -116,7 +116,7 @@ SEXP vctrs_unique_loc(SEXP x) {
 
   R_len_t n = vec_size(x);
 
-  x = PROTECT_N(vec_proxy_recursive(x, vctrs_proxy_equal), &nprot);
+  x = PROTECT_N(vec_proxy_equal(x), &nprot);
   x = PROTECT_N(obj_maybe_translate_encoding(x, n), &nprot);
 
   dictionary d;
@@ -153,7 +153,7 @@ bool duplicated_any(SEXP x) {
 
   R_len_t n = vec_size(x);
 
-  x = PROTECT_N(vec_proxy_recursive(x, vctrs_proxy_equal), &nprot);
+  x = PROTECT_N(vec_proxy_equal(x), &nprot);
   x = PROTECT_N(obj_maybe_translate_encoding(x, n), &nprot);
 
   dictionary d;
@@ -182,7 +182,7 @@ SEXP vctrs_n_distinct(SEXP x) {
 
   R_len_t n = vec_size(x);
 
-  x = PROTECT_N(vec_proxy_recursive(x, vctrs_proxy_equal), &nprot);
+  x = PROTECT_N(vec_proxy_equal(x), &nprot);
   x = PROTECT_N(obj_maybe_translate_encoding(x, n), &nprot);
 
   dictionary d;
@@ -205,7 +205,7 @@ SEXP vctrs_id(SEXP x) {
 
   R_len_t n = vec_size(x);
 
-  x = PROTECT_N(vec_proxy_recursive(x, vctrs_proxy_equal), &nprot);
+  x = PROTECT_N(vec_proxy_equal(x), &nprot);
   x = PROTECT_N(obj_maybe_translate_encoding(x, n), &nprot);
 
   dictionary d;
@@ -237,8 +237,8 @@ SEXP vctrs_match(SEXP needles, SEXP haystack) {
   needles = PROTECT_N(vec_cast(needles, type, args_empty, args_empty), &nprot);
   haystack = PROTECT_N(vec_cast(haystack, type, args_empty, args_empty), &nprot);
 
-  needles = PROTECT_N(vec_proxy_recursive(needles, vctrs_proxy_equal), &nprot);
-  haystack = PROTECT_N(vec_proxy_recursive(haystack, vctrs_proxy_equal), &nprot);
+  needles = PROTECT_N(vec_proxy_equal(needles), &nprot);
+  haystack = PROTECT_N(vec_proxy_equal(haystack), &nprot);
 
   R_len_t n_haystack = vec_size(haystack);
   R_len_t n_needle = vec_size(needles);
@@ -290,8 +290,8 @@ SEXP vctrs_in(SEXP needles, SEXP haystack) {
   needles = PROTECT_N(vec_cast(needles, type, args_empty, args_empty), &nprot);
   haystack = PROTECT_N(vec_cast(haystack, type, args_empty, args_empty), &nprot);
 
-  needles = PROTECT_N(vec_proxy_recursive(needles, vctrs_proxy_equal), &nprot);
-  haystack = PROTECT_N(vec_proxy_recursive(haystack, vctrs_proxy_equal), &nprot);
+  needles = PROTECT_N(vec_proxy_equal(needles), &nprot);
+  haystack = PROTECT_N(vec_proxy_equal(haystack), &nprot);
 
   R_len_t n_haystack = vec_size(haystack);
   R_len_t n_needle = vec_size(needles);
@@ -335,7 +335,7 @@ SEXP vctrs_count(SEXP x) {
 
   R_len_t n = vec_size(x);
 
-  x = PROTECT_N(vec_proxy_recursive(x, vctrs_proxy_equal), &nprot);
+  x = PROTECT_N(vec_proxy_equal(x), &nprot);
   x = PROTECT_N(obj_maybe_translate_encoding(x, n), &nprot);
 
   dictionary d;
@@ -388,7 +388,7 @@ SEXP vctrs_duplicated(SEXP x) {
 
   R_len_t n = vec_size(x);
 
-  x = PROTECT_N(vec_proxy_recursive(x, vctrs_proxy_equal), &nprot);
+  x = PROTECT_N(vec_proxy_equal(x), &nprot);
   x = PROTECT_N(obj_maybe_translate_encoding(x, n), &nprot);
 
   dictionary d;

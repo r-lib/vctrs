@@ -80,8 +80,8 @@ static SEXP df_equal(SEXP x, SEXP y, bool na_equal, R_len_t n_row);
 
 // [[ register() ]]
 SEXP vctrs_equal(SEXP x, SEXP y, SEXP na_equal_) {
-  x = PROTECT(vec_proxy_recursive(x, vctrs_proxy_equal));
-  y = PROTECT(vec_proxy_recursive(y, vctrs_proxy_equal));
+  x = PROTECT(vec_proxy_equal(x));
+  y = PROTECT(vec_proxy_equal(y));
 
   R_len_t size = vec_size(x);
 
@@ -614,7 +614,7 @@ while (0)
 
 // [[ register() ]]
 SEXP vctrs_duplicate_all(SEXP x) {
-  x = PROTECT(vec_proxy_recursive(x, vctrs_proxy_equal));
+  x = PROTECT(vec_proxy_equal(x));
 
   SEXP out = PROTECT(Rf_allocVector(LGLSXP, 1));
   int32_t* p = LOGICAL(out);
@@ -701,7 +701,7 @@ SEXP vctrs_equal_na(SEXP x) {
   SEXP out = PROTECT(Rf_allocVector(LGLSXP, n));
   int32_t* p = LOGICAL(out);
 
-  x = PROTECT(vec_proxy_recursive(x, vctrs_proxy_equal));
+  x = PROTECT(vec_proxy_equal(x));
 
   enum vctrs_type type = vec_proxy_typeof(x);
 
