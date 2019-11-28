@@ -79,3 +79,13 @@ test_that("vec_data() is proxied", {
   x <- new_proxy(mtcars)
   expect_identical(vec_data(x), vec_data(mtcars))
 })
+
+test_that("vec_proxy_equal() is recursive over data frames (#641)", {
+  x <- new_data_frame(list(x = foobar(1:3)))
+  default <- vec_proxy_equal(x)
+  expect_is(default$x, "vctrs_foobar")
+
+  local_methods(vec_proxy_equal.vctrs_foobar = function(...) c(0, 0, 0))
+  overridden <- vec_proxy_equal(x)
+  expect_identical(overridden$x, c(0, 0, 0))
+})

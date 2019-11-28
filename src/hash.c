@@ -299,7 +299,6 @@ static void df_hash_fill(uint32_t* p, R_len_t size, SEXP x) {
   R_len_t ncol = Rf_length(x);
 
   for (R_len_t i = 0; i < ncol; ++i) {
-    // FIXME: Call `vec_proxy()`?
     SEXP col = VECTOR_ELT(x, i);
     hash_fill(p, size, col);
   }
