@@ -99,3 +99,20 @@ vec_proxy.default <- function(x, ...) {
 vec_proxy_recursive <- function(x, kind = "default") {
   .Call(vctrs_proxy_recursive, x, sym(kind))
 }
+
+#' @export
+#' @rdname vec_cast
+vec_restore <- function(x, to, ..., n = NULL) {
+  if (!missing(...)) {
+    ellipsis::check_dots_empty()
+  }
+  return(.Call(vctrs_restore, x, to, n))
+  UseMethod("vec_restore", to)
+}
+vec_restore_dispatch <- function(x, to, ..., n = NULL) {
+  UseMethod("vec_restore", to)
+}
+#' @export
+vec_restore.default <- function(x, to, ..., n = NULL) {
+  .Call(vctrs_restore_default, x, to)
+}
