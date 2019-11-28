@@ -1,4 +1,3 @@
-context("test-data")
 
 test_that("vec_data() preserves names (#245)", {
   x <- set_names(letters, LETTERS)
