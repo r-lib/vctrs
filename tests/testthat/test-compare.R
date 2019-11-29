@@ -261,3 +261,12 @@ test_that("can order data frames with data frame columns (#527)", {
   )
 })
 
+test_that("can order data frames (and subclasses) with matrix columns", {
+  df <- new_data_frame(n = 2L)
+
+  df$x <- new_data_frame(list(y = matrix(1:2, 2)))
+  expect_identical(vec_order(df), 1:2)
+
+  df$x <- tibble::tibble(y = matrix(1:2, 2))
+  expect_identical(vec_order(df), 1:2)
+})
