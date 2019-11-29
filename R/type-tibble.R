@@ -112,7 +112,11 @@ vec_cast.grouped_df.data.frame <- function(x, to, ...) {
   # `next_method2()` primitive for double dispatch generics?
   x <- vec_cast(x, as.data.frame(to))
 
-  dplyr::grouped_df(x, vars = dplyr::group_vars(to))
+  dplyr::grouped_df(
+    x,
+    vars = dplyr::group_vars(to),
+    drop = dplyr::group_by_drop_default(to)
+  )
 }
 
 #' @export
@@ -122,7 +126,7 @@ vec_proxy.grouped_df <- function(x, ...) {
 }
 #' @export
 vec_restore.grouped_df <- function(x, to, ...) {
-  grouped_df_unwrap(NextMethod())
+  grouped_df_unwrap(NextMethod(), to)
 }
 
 grouped_df_wrap <- function(x) {
@@ -143,7 +147,7 @@ wrap_group_col <- function(name, x) {
   )
 }
 
-grouped_df_unwrap <- function(x) {
+grouped_df_unwrap <- function(x, to) {
   groups_ind <- map_lgl(x, is_wrapped_group_col)
   groups_vars <- names(x)[groups_ind]
 
@@ -152,7 +156,11 @@ grouped_df_unwrap <- function(x) {
 
   # If recomputing groups every time is too slow, perhaps we can cache
   # the groups
-  dplyr::grouped_df(x, groups_vars)
+  dplyr::grouped_df(
+    x,
+    groups_vars,
+    drop = dplyr::group_by_drop_default(to)
+  )
 }
 is_wrapped_group_col <- function(x) {
   inherits(x, "rlib__grouped_column")

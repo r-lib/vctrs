@@ -81,6 +81,14 @@ test_that("groups are recomputed after restoration", {
   )
 })
 
+test_that("drop is restored", {
+  proxy <- vec_proxy(dplyr::group_by(mtcars, cyl))
+  drop_true <- vec_restore(proxy, dplyr::group_by(mtcars, cyl, .drop = TRUE))
+  drop_false <- vec_restore(proxy, dplyr::group_by(mtcars, cyl, .drop = FALSE))
+  expect_true(dplyr::group_by_drop_default(drop_true))
+  expect_false(dplyr::group_by_drop_default(drop_false))
+})
+
 test_that("can cast data frame to grouped-df", {
   gdf <- dplyr::group_by(mtcars, cyl)
   expect_equal(
@@ -91,6 +99,11 @@ test_that("can cast data frame to grouped-df", {
     vec_cast(dplyr::group_by(mtcars[8:10], vs, am), gdf),
     dplyr::group_by(vec_cast(mtcars[8:10], mtcars), cyl)
   )
+
+  drop_true <- vec_cast(mtcars, dplyr::group_by(mtcars, cyl, .drop = TRUE))
+  drop_false <- vec_cast(mtcars, dplyr::group_by(mtcars, cyl, .drop = FALSE))
+  expect_true(dplyr::group_by_drop_default(drop_true))
+  expect_false(dplyr::group_by_drop_default(drop_false))
 })
 
 test_that("can rbind grouped-dfs", {
