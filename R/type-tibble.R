@@ -118,8 +118,6 @@ vec_cast.grouped_df.data.frame <- function(x, to, ...) {
 #' @export
 vec_proxy.grouped_df <- function(x, ...) {
   x <- grouped_df_wrap(x)
-  class <- class(x)
-  class(x) <- class[-match("grouped_df", class)]
   NextMethod()
 }
 #' @export
@@ -129,6 +127,11 @@ vec_restore.grouped_df <- function(x, to, ...) {
 
 grouped_df_wrap <- function(x) {
   groups <- dplyr::group_vars(x)
+
+  # Prevent recursion into `grouped_df` implementations while
+  # manipulating the proxy
+  class(x) <- "data.frame"
+
   x[groups] <- map2(groups, x[groups], wrap_group_col)
   x
 }

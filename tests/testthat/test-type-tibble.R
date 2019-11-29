@@ -158,3 +158,8 @@ test_that("can concatenate grouped-dfs", {
   expect_is(out, "grouped_df")
   expect_identical(dplyr::group_vars(out), c("cyl", "am"))
 })
+
+test_that("can slice grouped-dfs", {
+  out <- vec_slice(dplyr::group_by(mtcars, cyl), 0)
+  expect_identical(dplyr::group_vars(out), "cyl")
+})
