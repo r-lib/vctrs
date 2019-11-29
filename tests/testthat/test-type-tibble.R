@@ -163,3 +163,8 @@ test_that("can slice grouped-dfs", {
   out <- vec_slice(dplyr::group_by(mtcars, cyl), 0)
   expect_identical(dplyr::group_vars(out), "cyl")
 })
+
+test_that("grouped columns are equal to ungrouped ones", {
+  gdf <- dplyr::group_by(mtcars, cyl)
+  expect_identical(vec_equal(gdf, mtcars), rep(TRUE, nrow(mtcars)))
+})
