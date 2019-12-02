@@ -52,6 +52,7 @@ extern SEXP vec_slice_rep(SEXP, SEXP, SEXP);
 extern SEXP vec_restore(SEXP, SEXP, SEXP);
 extern SEXP vec_restore_default(SEXP, SEXP);
 extern SEXP vec_proxy(SEXP);
+extern SEXP vec_proxy_equal(SEXP);
 extern SEXP vctrs_unspecified(SEXP);
 extern SEXP vec_type(SEXP);
 extern SEXP vec_type_finalise(SEXP);
@@ -143,6 +144,7 @@ static const R_CallMethodDef CallEntries[] = {
   {"vctrs_restore",                    (DL_FUNC) &vec_restore, 3},
   {"vctrs_restore_default",            (DL_FUNC) &vec_restore_default, 2},
   {"vctrs_proxy",                      (DL_FUNC) &vec_proxy, 1},
+  {"vctrs_proxy_equal",                (DL_FUNC) &vec_proxy_equal, 1},
   {"vctrs_unspecified",                (DL_FUNC) &vctrs_unspecified, 1},
   {"vctrs_type",                       (DL_FUNC) &vec_type, 1},
   {"vctrs_type_finalise",              (DL_FUNC) &vec_type_finalise, 1},

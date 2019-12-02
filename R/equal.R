@@ -11,6 +11,9 @@
 #' not equal-able, provide a `vec_proxy_equal()` method that throws an
 #' error.
 #'
+#' If the proxy for `x` is a data frame, `vec_proxy_equal()` is
+#' recursively applied on all columns as well.
+#'
 #' @param x A vector x.
 #' @inheritParams ellipsis::dots_empty
 #'
@@ -22,6 +25,10 @@ vec_proxy_equal <- function(x, ...) {
   if (!missing(...)) {
     ellipsis::check_dots_empty()
   }
+  return(.Call(vctrs_proxy_equal, x))
+  UseMethod("vec_proxy_equal")
+}
+vec_proxy_equal_dispatch <- function(x, ...) {
   UseMethod("vec_proxy_equal")
 }
 #' @export

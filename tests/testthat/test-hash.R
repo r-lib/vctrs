@@ -146,6 +146,17 @@ test_that("can hash lists of expressions", {
   )
 })
 
+test_that("vec_hash() uses recursive equality proxy", {
+  x <- new_data_frame(list(x = foobar(1:3)))
+  default <- vec_hash(x)
+
+  local_methods(vec_proxy_equal.vctrs_foobar = function(...) c(0, 0, 0))
+  overridden <- vec_hash(x)
+
+  expect_false(identical(default, overridden))
+})
+
+
 # Object ------------------------------------------------------------------
 
 test_that("equal objects hash to same value", {

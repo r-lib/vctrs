@@ -26,5 +26,8 @@ The default method calls \code{\link[=vec_proxy]{vec_proxy()}}, as the default u
 vector data should be equal-able in most cases. If your class is
 not equal-able, provide a \code{vec_proxy_equal()} method that throws an
 error.
+
+If the proxy for \code{x} is a data frame, \code{vec_proxy_equal()} is
+recursively applied on all columns as well.
 }
 \keyword{internal}
