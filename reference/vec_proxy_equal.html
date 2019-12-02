@@ -175,6 +175,8 @@ vectors). For <a href='new_vctr.html'>vctr</a>s, this determines the behaviour o
 vector data should be equal-able in most cases. If your class is
 not equal-able, provide a <code>vec_proxy_equal()</code> method that throws an
 error.</p>
+<p>If the proxy for <code>x</code> is a data frame, <code>vec_proxy_equal()</code> is
+recursively applied on all columns as well.</p>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
