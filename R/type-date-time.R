@@ -64,6 +64,11 @@ new_duration <- function(x = double(), units = c("secs", "mins", "hours", "days"
 }
 
 #' @export
+vec_proxy.Date <- function(x, ...) {
+  as_double_date(x)
+}
+
+#' @export
 vec_proxy.POSIXct <- function(x, ...) {
   new_datetime(x, attr(x, "tzone"))
 }
@@ -127,7 +132,7 @@ vec_ptype2.Date <- function(x, y, ...) UseMethod("vec_ptype2.Date", y)
 #' @method vec_ptype2.Date default
 #' @export
 vec_ptype2.Date.default <- function(x, y, ..., x_arg = "x", y_arg = "y") {
-  stop_incompatible_type(x, y, x_arg = x_arg, y_arg = y_arg)
+  vec_default_ptype2(x, y, x_arg = x_arg, y_arg = y_arg)
 }
 #' @method vec_ptype2.Date Date
 #' @export
@@ -141,7 +146,7 @@ vec_ptype2.POSIXt <- function(x, y, ...) UseMethod("vec_ptype2.POSIXt", y)
 #' @method vec_ptype2.POSIXt default
 #' @export
 vec_ptype2.POSIXt.default <- function(x, y, ..., x_arg = "x", y_arg = "y") {
-  stop_incompatible_type(x, y, x_arg = x_arg, y_arg = y_arg)
+  vec_default_ptype2(x, y, x_arg = x_arg, y_arg = y_arg)
 }
 #' @method vec_ptype2.POSIXt Date
 #' @export
@@ -161,7 +166,7 @@ vec_ptype2.difftime <- function(x, y, ...) UseMethod("vec_ptype2.difftime", y)
 #' @method vec_ptype2.difftime default
 #' @export
 vec_ptype2.difftime.default <- function(x, y, ..., x_arg = "x", y_arg = "y") {
-  stop_incompatible_type(x, y, x_arg = x_arg, y_arg = y_arg)
+  vec_default_ptype2(x, y, x_arg = x_arg, y_arg = y_arg)
 }
 #' @method vec_ptype2.difftime difftime
 #' @export
@@ -189,7 +194,7 @@ vec_cast.Date.character <- function(x, to, ...) {
 #' @export
 #' @method vec_cast.Date Date
 vec_cast.Date.Date <- function(x, to, ...) {
-  x
+  as_double_date(x)
 }
 #' @export
 #' @method vec_cast.Date POSIXt
@@ -453,7 +458,9 @@ vec_arith.difftime.Date <- function(op, x, y, ...) {
 #' @export
 vec_arith.difftime.difftime <- function(op, x, y, ...) {
   # Ensure x and y have same units
-  c(x, y) %<-% vec_cast_common(x, y)
+  args <- vec_cast_common(x, y)
+  x <- args[[1L]]
+  y <- args[[2L]]
 
   switch(op,
     `+`   = vec_restore(vec_arith_base(op, x, y), x),
@@ -514,6 +521,14 @@ units_union <- function(x, y) {
     units(x)
   } else {
     "secs"
+  }
+}
+
+as_double_date <- function(x) {
+  if (is.integer(x)) {
+    new_date(as.double(x))
+  } else {
+    x
   }
 }
 

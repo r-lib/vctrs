@@ -1,7 +1,10 @@
-context("test-slice")
-
 test_that("vec_slice throws error with non-vector inputs", {
   expect_error(vec_slice(environment(), 1L), class = "vctrs_error_scalar_type")
+})
+
+test_that("vec_slice throws error with non-vector indexes", {
+  expect_error(vec_slice(1:3, Sys.Date()), class = "vctrs_error_incompatible_cast")
+  expect_error(vec_slice(1:3, matrix(TRUE, nrow = 1)), "must have one dimension")
 })
 
 test_that("can subset base vectors", {
@@ -52,9 +55,7 @@ test_that("can subset with a recycled TRUE", {
   expect_identical(vec_slice(1:3, TRUE), 1:3)
   expect_identical(vec_slice(mtcars, TRUE), mtcars)
   expect_identical(vec_slice(new_vctr(1:3), TRUE), new_vctr(1:3))
-
-  skip("FIXME")
-  expect_identical(vec_as_index(TRUE, length(2)), 1:2)
+  expect_identical(vec_as_index(TRUE, 2), 1:2)
 })
 
 test_that("can subset with a recycled FALSE", {
@@ -197,8 +198,10 @@ test_that("can slice with double indices", {
 
 test_that("vec_as_index() checks type", {
   expect_error(vec_as_index(quote(foo), 1L), class = "vctrs_error_index_bad_type")
-  expect_error(vec_as_index("foo", "bar"), class = "vctrs_error_assert_ptype")
+  expect_error(vec_as_index("foo", "bar"), class = "vctrs_error_incompatible_type")
   expect_error(vec_as_index("foo", 1L, names = 1L), "must be a character vector")
+  expect_error(vec_as_index(Sys.Date(), 3L), class = "vctrs_error_index_bad_type")
+  expect_error(vec_as_index(matrix(TRUE, nrow = 1), 3L), "must have one dimension")
 })
 
 test_that("can `vec_slice()` S3 objects without dispatch infloop", {
@@ -215,7 +218,7 @@ test_that("can `vec_slice()` records", {
 })
 
 test_that("vec_restore() is called after proxied slicing", {
-  scoped_global_bindings(
+  local_methods(
     vec_proxy.vctrs_foobar = identity,
     vec_restore.vctrs_foobar = function(x, to, ...) "dispatch"
   )
@@ -223,7 +226,7 @@ test_that("vec_restore() is called after proxied slicing", {
 })
 
 test_that("vec_slice() is proxied", {
-  scoped_proxy()
+  local_proxy()
   x <- vec_slice(new_proxy(1:3), 2:3)
   expect_identical(proxy_deref(x), 2:3)
 })
@@ -231,7 +234,7 @@ test_that("vec_slice() is proxied", {
 test_that("dimensions are preserved by vec_slice()", {
   attrib <- NULL
 
-  scoped_global_bindings(
+  local_methods(
     vec_restore.vctrs_foobar = function(x, ...) attrib <<- attributes(x)
   )
 
@@ -257,21 +260,21 @@ test_that("can slice shaped objects by name", {
 })
 
 test_that("vec_slice() unclasses input before calling `vec_restore()`", {
-  class <- NULL
-  scoped_global_bindings(
+  oo <- NULL
+  local_methods(
     vec_proxy.vctrs_foobar = identity,
-    vec_restore.vctrs_foobar = function(x, ...) class <<- class(x)
+    vec_restore.vctrs_foobar = function(x, ...) oo <<- is.object(x)
   )
 
   x <- foobar(1:4)
   dim(x) <- c(2, 2)
 
   vec_slice(x, 1)
-  expect_identical(class, "matrix")
+  expect_false(oo)
 })
 
 test_that("can call `vec_slice()` from `[` methods with shaped objects without infloop", {
-  scoped_global_bindings(
+  local_methods(
     `[.vctrs_foobar` = function(x, i, ...) vec_slice(x, i)
   )
 
@@ -284,20 +287,20 @@ test_that("can call `vec_slice()` from `[` methods with shaped objects without i
 })
 
 test_that("vec_slice() falls back to `[` with S3 objects", {
-  scoped_global_bindings(
+  local_methods(
     `[.vctrs_foobar` = function(x, i, ...) "dispatched"
   )
   expect_identical(vec_slice(foobar(NA), 1), foobar("dispatched"))
 
   expect_error(vec_slice(foobar(list(NA)), 1), class = "vctrs_error_scalar_type")
-  scoped_global_bindings(
+  local_methods(
     vec_proxy.vctrs_foobar = identity
   )
   expect_identical(vec_slice(foobar(list(NA)), 1), foobar(list(NA)))
 })
 
 test_that("vec_slice() doesn't restore when attributes have already been restored", {
-  scoped_global_bindings(
+  local_methods(
     `[.vctrs_foobar` = function(x, i, ...) structure("dispatched", foo = "bar"),
     vec_restore.vctrs_foobar = function(...) stop("not called")
   )
@@ -305,7 +308,7 @@ test_that("vec_slice() doesn't restore when attributes have already been restore
 })
 
 test_that("can vec_slice() without inflooping when restore calls math generics", {
-  scoped_global_bindings(
+  local_methods(
     new_foobar = function(x) {
       new_vctr(as.double(x), class = "vctrs_foobar")
     },
@@ -323,7 +326,7 @@ test_that("can vec_slice() without inflooping when restore calls math generics",
 })
 
 test_that("vec_restore() is called after slicing data frames", {
-  scoped_global_bindings(
+  local_methods(
     vec_restore.vctrs_tabble = function(...) "dispatched"
   )
   df <- structure(mtcars, class = c("vctrs_tabble", "data.frame"))
@@ -331,7 +334,7 @@ test_that("vec_restore() is called after slicing data frames", {
 })
 
 test_that("additional subscripts are forwarded to `[`", {
-  scoped_global_bindings(
+  local_methods(
     `[.vctrs_foobar` = function(x, i, ...) vec_index(x, i, ...)
   )
 
@@ -375,6 +378,11 @@ test_that("can slice with missing character indices (#244)", {
   expect_identical(vec_as_index(na_chr, 2L, c("x", "")), na_int)
   expect_identical(vec_slice(c(x = 1), na_chr), set_names(na_dbl, ""))
   expect_identical(vec_slice(c(x = "foo"), na_chr), set_names(na_chr, ""))
+})
+
+test_that("can slice with numerics (#577)", {
+  expect_identical(vec_as_index(1:2, 3), 1:2)
+  expect_error(vec_as_index(1:2, 3.5), class = "vctrs_error_cast_lossy")
 })
 
 test_that("missing indices don't create NA names", {
@@ -502,7 +510,7 @@ test_that("row names are lost from shaped S3 objects", {
 })
 
 test_that("vec_get() falls back to `[[` with S3 objects", {
-  scoped_global_bindings(
+  local_methods(
     `[[.vctrs_foobar` = function(x, i, ...) "dispatched"
   )
   expect_identical(vec_get(foobar(NA), 1), foobar("dispatched"))
@@ -511,7 +519,7 @@ test_that("vec_get() falls back to `[[` with S3 objects", {
 test_that("can extract from S3 lists that implement a proxy", {
   expect_error(vec_get(foobar(list(NA)), 1), class = "vctrs_error_scalar_type")
 
-  scoped_global_bindings(
+  local_methods(
     vec_proxy.vctrs_foobar = identity
   )
 
@@ -519,7 +527,7 @@ test_that("can extract from S3 lists that implement a proxy", {
 })
 
 test_that("vec_get() doesn't restore when attributes have already been restored", {
-  scoped_global_bindings(
+  local_methods(
     `[[.vctrs_foobar` = function(x, i, ...) structure("dispatched", foo = "bar"),
     vec_restore.vctrs_foobar = function(...) stop("not called")
   )
@@ -527,7 +535,7 @@ test_that("vec_get() doesn't restore when attributes have already been restored"
 })
 
 test_that("vec_restore() is called after extracting from data frames", {
-  scoped_global_bindings(
+  local_methods(
     vec_restore.vctrs_tabble = function(...) "dispatched"
   )
   df <- structure(mtcars, class = c("vctrs_tabble", "data.frame"))
@@ -576,93 +584,201 @@ test_that("na of list-array is 1d slice", {
 })
 
 test_that("vec_init() asserts vectorness (#301)", {
-  expect_error(vec_init(NULL), class = "vctrs_error_scalar_type")
+  expect_error(vec_init(NULL, 1L), class = "vctrs_error_scalar_type")
 })
 
-# vec_split_along ---------------------------------------------------------
+# vec_chop ----------------------------------------------------------------
 
-test_that("`NULL` is passed through", {
-  expect_equal(vec_split_along(NULL), NULL)
+test_that("vec_chop() throws error with non-vector inputs", {
+  expect_error(vec_chop(NULL), class = "vctrs_error_scalar_type")
+  expect_error(vec_chop(environment()), class = "vctrs_error_scalar_type")
 })
 
-test_that("atomics are split into a list", {
-  expect_equal(vec_split_along(1:5), lapply(1:5, identity))
-  expect_equal(vec_split_along(letters), lapply(letters, identity))
+test_that("atomics are split into a list_of", {
+  x <- 1:5
+  expect_equal(vec_chop(x), as_list_of(as.list(x)))
+
+  x <- letters[1:5]
+  expect_equal(vec_chop(x), as_list_of(as.list(x)))
 })
 
 test_that("atomic names are kept", {
   x <- set_names(1:5)
-  expect_equal(lapply(vec_split_along(x), names), as.list(names(x)))
+  result <- lapply(vec_chop(x), names)
+  expect_equal(result, as.list(names(x)))
 })
 
 test_that("base R classed objects are split into a list", {
   fctr <- factor(c("a", "b"))
-  expect_equal(vec_split_along(fctr), lapply(vec_seq_along(fctr), vec_slice, x = fctr))
+  expect <- as_list_of(lapply(vec_seq_along(fctr), vec_slice, x = fctr))
+  expect_equal(vec_chop(fctr), expect)
 
   date <- new_date(c(0, 1))
-  expect_equal(vec_split_along(date), lapply(vec_seq_along(date), vec_slice, x = date))
+  expect <- as_list_of(lapply(vec_seq_along(date), vec_slice, x = date))
+  expect_equal(vec_chop(date), expect)
 })
 
 test_that("base R classed object names are kept", {
   fctr <- set_names(factor(c("a", "b")))
-  expect_equal(lapply(vec_split_along(fctr), names), as.list(names(fctr)))
+  result <- lapply(vec_chop(fctr), names)
+  expect_equal(result, as.list(names(fctr)))
 })
 
 test_that("list elements are split", {
   x <- list(1, 2)
-  expect_equal(vec_split_along(list(1, 2)), lapply(vec_seq_along(x), vec_slice, x = x))
+  result <- list_of(vec_slice(x, 1), vec_slice(x, 2))
+  expect_equal(vec_chop(x), result)
 })
 
 test_that("data frames are split rowwise", {
   x <- data_frame(x = 1:2, y = c("a", "b"))
-  expect_equal(vec_split_along(x), lapply(vec_seq_along(x), vec_slice, x = x))
+  result <- list_of(vec_slice(x, 1), vec_slice(x, 2))
+  expect_equal(vec_chop(x), result)
 })
 
 test_that("data frame row names are kept", {
   x <- data_frame(x = 1:2, y = c("a", "b"))
   rownames(x) <- c("r1", "r2")
-  expect_equal(lapply(vec_split_along(x), rownames), list("r1", "r2"))
+  result <- lapply(vec_chop(x), rownames)
+  expect_equal(result, list("r1", "r2"))
 })
 
 test_that("matrices / arrays are split rowwise", {
   x <- array(1:12, c(2, 2, 2))
-  expect_equal(vec_split_along(x), lapply(vec_seq_along(x), vec_slice, x = x))
+  result <- list_of(vec_slice(x, 1), vec_slice(x, 2))
+  expect_equal(vec_chop(x), result)
 })
 
 test_that("matrix / array row names are kept", {
   x <- array(1:12, c(2, 2, 2), dimnames = list(c("r1", "r2"), c("c1", "c2")))
-  expect_equal(lapply(vec_split_along(x), rownames), list("r1", "r2"))
+  result <- lapply(vec_chop(x), rownames)
+  expect_equal(result, list("r1", "r2"))
 })
 
 test_that("matrices / arrays without row names have other dimension names kept", {
   x <- array(1:12, c(2, 2, 2), dimnames = list(NULL, c("c1", "c2")))
-  expect_equal(lapply(vec_split_along(x), colnames), list(c("c1", "c2"), c("c1", "c2")))
+  result <- lapply(vec_chop(x), colnames)
+  expect_equal(result, list(c("c1", "c2"), c("c1", "c2")))
 })
 
-test_that("vec_split_along throws error with non-vector inputs", {
-  expect_error(vec_split_along(environment()), class = "vctrs_error_scalar_type")
-})
-
-test_that("vec_split_along() doesn't restore when attributes have already been restored", {
-  scoped_global_bindings(
+test_that("vec_chop() doesn't restore when attributes have already been restored", {
+  local_methods(
     `[.vctrs_foobar` = function(x, i, ...) structure("dispatched", foo = "bar"),
     vec_restore.vctrs_foobar = function(...) structure("dispatched-and-restored", foo = "bar")
   )
-  expect_equal(vec_split_along(foobar(NA)), list(structure("dispatched", foo = "bar")))
+
+  result <- vec_chop(foobar(NA))[[1]]
+  expect_equal(result, structure("dispatched", foo = "bar"))
 })
 
-test_that("vec_split_along() restores when attributes have not been restored by `[`", {
-  scoped_global_bindings(
+test_that("vec_chop() restores when attributes have not been restored by `[`", {
+  local_methods(
     `[.vctrs_foobar` = function(x, i, ...) "dispatched",
     vec_restore.vctrs_foobar = function(...) "dispatched-and-restored"
   )
-  expect_equal(vec_split_along(foobar(NA)), list("dispatched-and-restored"))
+
+  result <- vec_chop(foobar(NA))[[1]]
+  expect_equal(result, "dispatched-and-restored")
 })
 
-test_that("vec_split_along() falls back to `[` for shaped objects with no proxy", {
+test_that("vec_chop() falls back to `[` for shaped objects with no proxy", {
   x <- foobar(1)
   dim(x) <- c(1, 1)
-  expect_equal(vec_split_along(x), list(x))
+  result <- vec_chop(x)[[1]]
+  expect_equal(result, x)
+})
+
+test_that("`indices` are validated", {
+  expect_error(vec_chop(1, 1), "`indices` must be a list of index values, or `NULL`")
+  expect_error(vec_chop(1, list(1.5)), class = "vctrs_error_cast_lossy")
+  expect_error(vec_chop(1, list(2)), class = "vctrs_error_index_oob_positions")
+})
+
+test_that("size 0 `indices` list is allowed", {
+  expect_equal(vec_chop(1, list()), list_of(.ptype = numeric()))
+})
+
+test_that("individual index values of size 0 are allowed", {
+  expect_equal(vec_chop(1, list(integer())), list_of(numeric()))
+
+  df <- data.frame(a = 1, b = "1")
+  expect_equal(vec_chop(df, list(integer())), list_of(vec_ptype(df)))
+})
+
+test_that("data frame row names are kept when `indices` are used", {
+  x <- data_frame(x = 1:2, y = c("a", "b"))
+  rownames(x) <- c("r1", "r2")
+  result <- lapply(vec_chop(x, list(1, 1:2)), rownames)
+  expect_equal(result, list("r1", c("r1", "r2")))
+})
+
+test_that("vec_chop(<atomic>, indices =) can be equivalent to the default", {
+  x <- 1:5
+  indices <- as.list(vec_seq_along(x))
+  expect_equal(vec_chop(x, indices), vec_chop(x))
+})
+
+test_that("vec_chop(<data.frame>, indices =) can be equivalent to the default", {
+  x <- data.frame(x = 1:5)
+  indices <- as.list(vec_seq_along(x))
+  expect_equal(vec_chop(x, indices), vec_chop(x))
+})
+
+test_that("vec_chop(<array>, indices =) can be equivalent to the default", {
+  x <- array(1:8, c(2, 2, 2))
+  indices <- as.list(vec_seq_along(x))
+  expect_equal(vec_chop(x, indices), vec_chop(x))
+})
+
+test_that("`indices` can use names", {
+  x <- set_names(1:3, c("a", "b", "c"))
+
+  expect_equal(
+    vec_chop(x, list(1, 2:3)),
+    vec_chop(x, list("a", c("b", "c")))
+  )
+})
+
+test_that("`indices` can use array row names", {
+  x <- array(1:4, c(2, 2), dimnames = list(c("r1", "r2")))
+
+  expect_equal(
+    vec_chop(x, list("r1")),
+    vec_chop(x, list(1))
+  )
+})
+
+test_that("`indices` cannot use data frame row names", {
+  df <- data.frame(x = 1, row.names = "r1")
+  expect_error(vec_chop(df, list("r1")), "Can't use character")
+})
+
+test_that("fallback method with `indices` works", {
+  fctr <- factor(c("a", "b"))
+  indices <- list(1, c(1, 2))
+
+  expect_equal(
+    vec_chop(fctr, indices),
+    as_list_of(map(indices, vec_slice, x = fctr))
+  )
+})
+
+test_that("vec_chop() falls back to `[` for shaped objects with no proxy when indices are provided", {
+  x <- foobar(1)
+  dim(x) <- c(1, 1)
+  result <- vec_chop(x, list(1))[[1]]
+  expect_equal(result, x)
+})
+
+# vec_slice + compact_rep -------------------------------------------------
+
+# `i` is 1-based
+
+test_that("names are repaired correctly with compact reps and `NA_integer_`", {
+  x <- list(a = 1L, b = 2L)
+  expect <- set_names(list(NULL, NULL), c("", ""))
+
+  expect_equal(vec_slice_rep(x, NA_integer_, 2L), expect)
 })
 
 # vec_slice + compact_seq -------------------------------------------------
@@ -841,7 +957,7 @@ test_that("vec_as_position() and vec_as_index() require integer- or character-li
   expect_error(vec_as_index(foobar(1L), 10L), class = "vctrs_error_index_bad_type")
 
   # Define subtype of logical and integer
-  scoped_global_bindings(
+  local_methods(
     vec_ptype2.vctrs_foobar = function(x, y, ...) UseMethod("vec_ptype2.vctrs_foobar", y),
     vec_ptype2.vctrs_foobar.default = function(x, y, ...) vec_default_ptype2(x, y, ...),
     vec_ptype2.vctrs_foobar.logical = function(x, y, ...) logical(),

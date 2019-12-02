@@ -75,6 +75,7 @@ vec_proxy_compare_default <- function(x, relax = FALSE) {
 vec_compare <- function(x, y, na_equal = FALSE, .ptype = NULL) {
   vec_assert(x)
   vec_assert(y)
+  vec_assert(na_equal, ptype = logical(), size = 1L)
 
   args <- vec_recycle_common(x, y)
   args <- vec_cast_common(!!!args, .to = .ptype)

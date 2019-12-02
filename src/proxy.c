@@ -3,8 +3,8 @@
 
 // Initialised at load time
 SEXP syms_vec_proxy = NULL;
-SEXP syms_vec_proxy_equal = NULL;
-SEXP fns_vec_proxy_equal = NULL;
+SEXP syms_vec_proxy_equal_dispatch = NULL;
+SEXP fns_vec_proxy_equal_dispatch = NULL;
 
 // Defined below
 SEXP vec_proxy_method(SEXP x);
@@ -28,11 +28,24 @@ SEXP vec_proxy(SEXP x) {
   return out;
 }
 
+// [[ register(); include("vctrs.h") ]]
+SEXP vec_proxy_equal(SEXP x) {
+  return vec_proxy_recursive(x, vctrs_proxy_equal);
+}
+SEXP vec_proxy_equal_dispatch(SEXP x) {
+  if (vec_typeof(x) == vctrs_type_s3) {
+    return vctrs_dispatch1(syms_vec_proxy_equal_dispatch, fns_vec_proxy_equal_dispatch,
+                           syms_x, x);
+  } else {
+    return x;
+  }
+}
+
 // [[ include("vctrs.h") ]]
 SEXP vec_proxy_recursive(SEXP x, enum vctrs_proxy_kind kind) {
   switch (kind) {
   case vctrs_proxy_default: x = PROTECT(vec_proxy(x)); break;
-  case vctrs_proxy_equal: x = PROTECT(vec_proxy_equal(x)); break;
+  case vctrs_proxy_equal: x = PROTECT(vec_proxy_equal_dispatch(x)); break;
   case vctrs_proxy_compare: Rf_error("Internal error: Unimplemented proxy kind");
   }
 
@@ -84,20 +97,9 @@ SEXP vec_proxy_invoke(SEXP x, SEXP method) {
 }
 
 
-// [[ include("vctrs.h") ]]
-SEXP vec_proxy_equal(SEXP x) {
-  if (vec_typeof(x) == vctrs_type_s3) {
-    return vctrs_dispatch1(syms_vec_proxy_equal, fns_vec_proxy_equal,
-                           syms_x, x);
-  } else {
-    return x;
-  }
-}
-
-
 void vctrs_init_data(SEXP ns) {
   syms_vec_proxy = Rf_install("vec_proxy");
-  syms_vec_proxy_equal = Rf_install("vec_proxy_equal");
+  syms_vec_proxy_equal_dispatch = Rf_install("vec_proxy_equal_dispatch");
 
-  fns_vec_proxy_equal = r_env_get(ns, syms_vec_proxy_equal);
+  fns_vec_proxy_equal_dispatch = r_env_get(ns, syms_vec_proxy_equal_dispatch);
 }

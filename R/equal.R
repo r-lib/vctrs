@@ -11,6 +11,9 @@
 #' not equal-able, provide a `vec_proxy_equal()` method that throws an
 #' error.
 #'
+#' If the proxy for `x` is a data frame, `vec_proxy_equal()` is
+#' recursively applied on all columns as well.
+#'
 #' @param x A vector x.
 #' @inheritParams ellipsis::dots_empty
 #'
@@ -22,6 +25,10 @@ vec_proxy_equal <- function(x, ...) {
   if (!missing(...)) {
     ellipsis::check_dots_empty()
   }
+  return(.Call(vctrs_proxy_equal, x))
+  UseMethod("vec_proxy_equal")
+}
+vec_proxy_equal_dispatch <- function(x, ...) {
   UseMethod("vec_proxy_equal")
 }
 #' @export
@@ -54,6 +61,7 @@ vec_proxy_equal.default <- function(x, ...) {
 #' vec_equal(df, data.frame(x = 1, y = 2))
 #' vec_equal_na(df)
 vec_equal <- function(x, y, na_equal = FALSE, .ptype = NULL) {
+  vec_assert(na_equal, ptype = logical(), size = 1L)
   args <- vec_recycle_common(x, y)
   args <- vec_cast_common(!!!args, .to = .ptype)
   .Call(vctrs_equal, args[[1]], args[[2]], na_equal)
@@ -71,6 +79,6 @@ vec_duplicate_all <- function(x) {
   .Call(vctrs_duplicate_all, x)
 }
 
-obj_equal <- function(x, y, na_equal = TRUE) {
-  .Call(vctrs_equal_object, x, y, na_equal)
+obj_equal <- function(x, y) {
+  .Call(vctrs_equal_object, x, y)
 }

@@ -1,5 +1,31 @@
 context("test-type-bare")
 
+# shape_match -------------------------------------------------------------
+
+test_that("array dimensions are preserved", {
+  mat1 <- matrix(lgl(), nrow = 1, ncol = 1)
+  mat2 <- matrix(lgl(), nrow = 2, ncol = 2)
+  mat3 <- matrix(lgl(), nrow = 2, ncol = 3)
+
+  expect_equal(vec_ptype2(mat1, mat1), matrix(lgl(), nrow = 0, ncol = 1))
+  expect_equal(vec_ptype2(mat1, mat2), matrix(lgl(), nrow = 0, ncol = 2))
+  expect_error(vec_ptype2(mat2, mat3), "Incompatible")
+})
+
+test_that("extensions of base vectors collapse to base type", {
+  x <- structure("x", class = c("foo", "character"))
+  expect_equal(vec_ptype2(x, x), character())
+  expect_equal(vec_ptype2(x, character()), character())
+  expect_equal(vec_ptype2(character(), x), character())
+})
+
+test_that("shape_match()", {
+  int <- function(...) array(NA_integer_, c(...))
+
+  expect_identical(shape_match(integer(), int(5), int(10)), new_shape(integer()))
+  expect_identical(shape_match(integer(), int(5, 1), int(10, 1)), new_shape(integer(), 1))
+  expect_identical(shape_match(integer(), int(5, 1, 2), int(10, 1, 2)), new_shape(integer(), 1:2))
+})
 
 # vec_cast() --------------------------------------------------------------
 
@@ -193,6 +219,26 @@ test_that("Shaped NA casts work as expected", {
   expect_equal(vec_cast(mat(list(NA)), to_mat), exp_mat)
 })
 
+test_that("complex is coercible to numeric types", {
+  expect_identical(vec_ptype2(cpl(), NULL), cpl())
+  expect_identical(vec_ptype2(NULL, cpl()), cpl())
+
+  expect_identical(vec_ptype2(cpl(), int()), cpl())
+  expect_identical(vec_ptype2(int(), cpl()), cpl())
+
+  expect_identical(vec_ptype2(cpl(), dbl()), cpl())
+  expect_identical(vec_ptype2(dbl(), cpl()), cpl())
+
+  expect_identical(vec_ptype2(cpl(), cpl()), cpl())
+
+  expect_identical(vec_c(0, 1i), cpl(0i, 1i))
+})
+
+test_that("complex is not coercible to logical", {
+  expect_error(vec_ptype2(cpl(), lgl()), class = "vctrs_error_incompatible_type")
+  expect_error(vec_ptype2(lgl(), cpl()), class = "vctrs_error_incompatible_type")
+})
+
 
 # Character
 
@@ -243,6 +289,12 @@ test_that("safe casts work as expected", {
 test_that("invalid casts generate error", {
   expect_error(vec_cast(raw(1), double()), class = "vctrs_error_incompatible_cast")
   expect_error(vec_cast(double(1), raw()), class = "vctrs_error_incompatible_cast")
+})
+
+test_that("can sort raw", {
+  x <- as.raw(c(3, 1, 2, 4))
+  expect_identical(vec_order(x), int(2, 3, 1, 4))
+  expect_identical(x[vec_order(x)], as.raw(1:4))
 })
 
 

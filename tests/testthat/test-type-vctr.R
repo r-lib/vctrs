@@ -2,7 +2,7 @@ context("test-type-vctr")
 
 test_that("constructor sets attributes", {
   x <- new_vctr(1:4, class = "x", x = 1)
-  expect_equal(x, structure(1:4, class = c("x", "vctrs_vctr"), x = 1))
+  expect_equal(x, structure(1:4, class = c("x", "vctrs_vctr", "integer"), x = 1))
 })
 
 test_that(".data must be a vector", {
@@ -23,6 +23,11 @@ test_that("vctr class is proxied", {
   expect_identical(vec_proxy(new_vctr(1:3)), new_vctr(1:3))
   expect_identical(vec_proxy(new_vctr(as.list(1:3))), unclass(new_vctr(as.list(1:3))))
   expect_true(vec_is(new_vctr(as.list(1:3))))
+})
+
+test_that("Can opt out of base type", {
+  x <- new_vctr(1, class = "x", inherit_base_type = FALSE)
+  expect_s3_class(x, c("x", "vctrs_vctr"), exact = TRUE)
 })
 
 test_that("attributes must be named", {
@@ -70,7 +75,7 @@ test_that("restoring to atomic vector of different type throws error", {
 })
 
 test_that("base coercion methods mapped to vec_cast", {
-  x <- new_vctr(1)
+  x <- new_vctr(1, inherit_base_type = FALSE)
 
   expect_error(as.logical(x), class = "vctrs_error_incompatible_cast")
   expect_error(as.integer(x), class = "vctrs_error_incompatible_cast")
@@ -95,14 +100,14 @@ test_that("as.data.frame creates data frame", {
 # equality + comparison + arith + math ---------------------------------------
 
 test_that("equality functions remapped", {
-  x <- new_vctr(c(1, 1, NA))
+  x <- new_vctr(c(1, 1, NA), inherit_base_type = FALSE)
 
   expect_error(x == 1, class = "vctrs_error_incompatible_type")
   expect_error(x != 1, class = "vctrs_error_incompatible_type")
   expect_equal(is.na(x), c(FALSE, FALSE, TRUE))
   expect_true(anyNA(x))
 
-  expect_equal(unique(x), new_vctr(c(1, NA)))
+  expect_equal(unique(x), new_vctr(c(1, NA), inherit_base_type = FALSE))
   expect_equal(duplicated(x), c(FALSE, TRUE, FALSE))
   expect_true(anyDuplicated(x))
 })
@@ -118,7 +123,7 @@ test_that("is.na<-() supported", {
 })
 
 test_that("comparison functions remapped", {
-  scoped_global_bindings(
+  local_methods(
     vec_proxy_compare.bizzaro = function(x) -vec_data(x)
   )
 
@@ -133,7 +138,7 @@ test_that("comparison functions remapped", {
 })
 
 test_that("operators remapped", {
-  scoped_global_bindings(
+  local_methods(
     vec_arith.bizzaro = function(op, x, y) 1L
   )
   x <- new_vctr(c(1, 2), class = "bizzaro")
@@ -154,7 +159,7 @@ test_that("operators remapped", {
 })
 
 test_that("math functions overridden", {
-  scoped_global_bindings(
+  local_methods(
     vec_math.bizzaro = function(fn, x, ...) vec_math_base(fn, 2L)
   )
   x <- new_vctr(c(1, NA), class = "bizzaro")
@@ -168,7 +173,7 @@ test_that("math functions overridden", {
 })
 
 test_that("diff matches base R", {
-  scoped_global_bindings(
+  local_methods(
     vec_arith.vctrs_minus = function(op, x, y) vec_arith_base(op, x, y)
   )
   x1 <- cumsum(cumsum(1:10))
@@ -199,7 +204,7 @@ test_that("can not provide invalid names", {
 })
 
 test_that("can use [ and [[ with names", {
-  scoped_global_bindings(
+  local_methods(
     vec_ptype2.vctrs_vctr = function(...) dbl(),
     vec_ptype2.double.vctrs_vctr = function(...) dbl()
   )
@@ -215,7 +220,7 @@ test_that("can use [ and [[ with names", {
 })
 
 test_that("can use [ and [[ with names - list vctr", {
-  scoped_global_bindings(
+  local_methods(
     vec_ptype2.vctrs_vctr = function(...) list(),
     vec_ptype2.list.vctrs_vctr = function(...) list()
   )
@@ -227,7 +232,7 @@ test_that("can use [ and [[ with names - list vctr", {
 })
 
 test_that("can use [[<- to replace n-dimensional elements", {
-  scoped_global_bindings(
+  local_methods(
     vec_restore.vctrs_mtrx = function(x, to, ...) x,
     vec_ptype2.double.vctrs_mtrx = function(...) dbl(),
     vec_ptype2.vctrs_mtrx = function(...) dbl()
@@ -298,7 +303,7 @@ test_that("class preserved when subsetting", {
 })
 
 test_that("RHS cast when using subset assign", {
-  scoped_hidden()
+  local_hidden()
   h <- new_hidden(1)
 
   expect_error(h[[1]] <- "x", class = "vctrs_error_incompatible_type")
@@ -312,7 +317,7 @@ test_that("RHS cast when using subset assign", {
 })
 
 test_that("c passes on to vec_c", {
-  scoped_hidden()
+  local_hidden()
 
   h <- new_hidden(1)
 
@@ -360,7 +365,7 @@ test_that("can put in data frame", {
 })
 
 test_that("base coercions default to vec_cast", {
-  scoped_hidden()
+  local_hidden()
   h <- new_hidden(1)
   expect_error(as.character(h), class = "vctrs_error_incompatible_cast")
   expect_error(as.integer(h), class = "vctrs_error_incompatible_cast")

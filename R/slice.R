@@ -198,6 +198,7 @@ vec_as_index <- function(i, n,
                          arg = "i") {
   if (!missing(...)) ellipsis::check_dots_empty()
 
+  n <- vec_coercible_cast(n, integer())
   vec_assert(n, integer(), 1L)
   i <- vec_coerce_index(i, arg = arg, allow_types = allow_types)
 
@@ -243,7 +244,7 @@ vec_coerce_index <- function(i,
                              allow_types = c("indicator", "position", "name"),
                              arg = "i") {
   if (!missing(...)) ellipsis::check_dots_empty()
- maybe_get(vec_maybe_coerce_index(
+  maybe_get(vec_maybe_coerce_index(
     i,
     arg = arg,
     allow_types = allow_types
@@ -297,7 +298,7 @@ vec_maybe_coerce_index <- function(i, arg, allow_types) {
       maybe(error = new_error_index_bad_type(
         i = i,
         parent = err,
-        .bullets = cnd_bullets_index_lossy_cast,
+        body = cnd_bullets_index_lossy_cast,
         allow_types = allow_types
       ))
     })
@@ -351,7 +352,7 @@ vec_maybe_coerce_position <- function(i, arg, allow_types) {
       i = maybe$error$i,
       allow_types = allow_types,
       .arg = arg,
-      .bullets = bullets,
+      body = bullets,
       parent = maybe$error$parent
     )
 
@@ -365,7 +366,7 @@ vec_maybe_coerce_position <- function(i, arg, allow_types) {
       i = i,
       allow_types = allow_types,
       .arg = arg,
-      .bullets = cnd_bullets_position_bad_base_type
+      body = cnd_bullets_position_bad_base_type
     )))
   }
 
@@ -400,7 +401,7 @@ vec_maybe_as_position <- function(i,
       i = i,
       allow_types = allow_types,
       .arg = arg,
-      .bullets = cnd_bullets_position_need_scalar
+      body = cnd_bullets_position_need_scalar
     )))
   }
 
@@ -415,7 +416,7 @@ vec_maybe_as_position <- function(i,
         i = i,
         allow_types = allow_types,
         .arg = arg,
-        .bullets = cnd_bullets_position_need_present
+        body = cnd_bullets_position_need_present
       ))
     } else {
       maybe <- maybe(i)
@@ -428,7 +429,7 @@ vec_maybe_as_position <- function(i,
       i = i,
       allow_types = allow_types,
       .arg = arg,
-      .bullets = cnd_bullets_position_need_non_zero
+      body = cnd_bullets_position_need_non_zero
     )))
   }
 
@@ -437,7 +438,7 @@ vec_maybe_as_position <- function(i,
       i = i,
       allow_types = allow_types,
       .arg = arg,
-      .bullets = cnd_bullets_position_need_non_negative
+      body = cnd_bullets_position_need_non_negative
     )))
   }
 
@@ -567,26 +568,26 @@ new_error_position_bad_type <- function(i,
 }
 
 #' @export
-cnd_issue.vctrs_error_index_bad_type <- function(cnd) {
+cnd_header.vctrs_error_index_bad_type <- function(cnd) {
   "Must subset with an index vector."
 }
 #' @export
-cnd_bullets.vctrs_error_index_bad_type <- function(cnd) {
+cnd_body.vctrs_error_index_bad_type <- function(cnd) {
   arg <- cnd$.arg %||% "i"
   type <- obj_type(cnd$i)
   expected_types <- collapse_index_type(cnd$allow_types, plural = TRUE)
 
-  c(
+  format_error_bullets(c(
     x = glue::glue("`{arg}` has the wrong type `{type}`."),
     i = glue::glue("These indices must be {expected_types}.")
-  )
+  ))
 }
 cnd_bullets_index_lossy_cast <- function(cnd, ...) {
-  c(x = cnd_issue(cnd$parent))
+  format_error_bullets(c(x = cnd_header(cnd$parent)))
 }
 
 #' @export
-cnd_issue.vctrs_error_position_bad_type <- function(cnd) {
+cnd_header.vctrs_error_position_bad_type <- function(cnd) {
   "Must extract with a single index."
 }
 
@@ -595,39 +596,39 @@ cnd_bullets_position_bad_base_type <- function(cnd, ...) {
   type <- obj_type(cnd$i)
   expected_types <- collapse_index_type(cnd$allow_types)
 
-  c(
+  format_error_bullets(c(
     x = glue::glue("`{arg}` has the wrong type `{type}`."),
     i = glue::glue("This index must be {expected_types}.")
-  )
+  ))
 }
 cnd_bullets_position_need_scalar <- function(cnd, ...) {
   arg <- cnd$.arg %||% "i"
   size <- length(cnd$i)
-  c(
+  format_error_bullets(c(
     x = glue::glue("`{arg}` has the wrong size {size}."),
     i = "This index must be size 1."
-  )
+  ))
 }
 cnd_bullets_position_need_present <- function(cnd, ...) {
   arg <- cnd$.arg %||% "i"
-  c(
+  format_error_bullets(c(
     x = glue::glue("`{arg}` can't be `NA`."),
     i = "This index can't be missing."
-  )
+  ))
 }
 cnd_bullets_position_need_non_zero <- function(cnd, ...) {
   arg <- cnd$.arg %||% "i"
-  c(
+  format_error_bullets(c(
     x = glue::glue("`{arg}` can't be zero."),
     i = "This index must be a positive integer."
-  )
+  ))
 }
 cnd_bullets_position_need_non_negative <- function(cnd, ...) {
   arg <- cnd$.arg %||% "i"
-  c(
+  format_error_bullets(c(
     x = glue::glue("`{arg}` (with value {cnd$i}) has the wrong sign."),
     i = "This index must be a positive integer."
-  )
+  ))
 }
 
 vec_index <- function(x, i, ...) {
@@ -654,15 +655,40 @@ vec_index <- function(x, i, ...) {
 #' vec_init(Sys.Date(), 5)
 #' vec_init(mtcars, 2)
 vec_init <- function(x, n = 1L) {
-  vec_slice(x, rep_len(NA_integer_, n))
+  n <- vec_cast(n, integer())
+  vec_assert(n, size = 1L)
+
+  .Call(vctrs_init, x, n)
 }
 
-# Used internally by `vec_rbind()`, but exported for testing
-vec_split_along <- function(x) {
-  .Call(vctrs_split_along, x)
+#' Repeatedly slice a vector
+#'
+#' `vec_chop()` provides an efficient method to repeatedly slice a vector. It
+#' captures the pattern of `map(indices, vec_slice, x = x)`.
+#'
+#' @param x A vector
+#' @param indices A list of index values to slice `x` with, or `NULL`. Each
+#'   element of the list must be an integer, character or logical vector that
+#'   would be valid as an index in [vec_slice()]. If `NULL`, `x` is split into
+#'   its individual elements, equivalent to using an `indices` of
+#'   `as.list(vec_seq_along(x))`.
+#' @return A vector of type `list_of<vec_ptype(x)>` and size `vec_size(indices)`
+#'   or, if `indices == NULL`, `vec_size(x)`.
+#' @export
+#' @examples
+#' vec_chop(1:5)
+#' vec_chop(1:5, list(1, 1:2))
+#' vec_chop(mtcars, list(1:3, 4:6))
+vec_chop <- function(x, indices = NULL) {
+  .Call(vctrs_chop, x, indices)
 }
 
 # Exposed for testing (`start` is 0-based)
 vec_slice_seq <- function(x, start, size, increasing = TRUE) {
   .Call(vctrs_slice_seq, x, start, size, increasing)
+}
+
+# Exposed for testing (`i` is 1-based)
+vec_slice_rep <- function(x, i, n) {
+  .Call(vctrs_slice_rep, x, i, n)
 }

@@ -8,7 +8,7 @@ static int raw_equal_scalar(const Rbyte* x, const Rbyte* y, bool na_equal);
 static int cpl_equal_scalar(const Rcomplex* x, const Rcomplex* y, bool na_equal);
 static int chr_equal_scalar(const SEXP* x, const SEXP* y, bool na_equal);
 static int list_equal_scalar(SEXP x, R_len_t i, SEXP y, R_len_t j, bool na_equal);
-static int df_equal_scalar(SEXP x, R_len_t i, SEXP y, R_len_t j, bool na_equal);
+static int df_equal_scalar(SEXP x, R_len_t i, SEXP y, R_len_t j, bool na_equal, int n_col);
 
 
 // If `x` is a data frame, it must have been recursively proxied
@@ -28,68 +28,92 @@ int equal_scalar(SEXP x, R_len_t i, SEXP y, R_len_t j, bool na_equal) {
 
   switch (vec_proxy_typeof(x)) {
   case vctrs_type_list: return list_equal_scalar(x, i, y, j, na_equal);
-  case vctrs_type_dataframe: return df_equal_scalar(x, i, y, j, na_equal);
+  case vctrs_type_dataframe: {
+    int n_col = Rf_length(x);
+
+    if (n_col != Rf_length(y)) {
+      Rf_errorcall(R_NilValue, "`x` and `y` must have the same number of columns");
+    }
+
+    return df_equal_scalar(x, i, y, j, na_equal, n_col);
+  }
   default: break;
   }
 
   vctrs_stop_unsupported_type(vec_typeof(x), "equal_scalar()");
 }
 
+// -----------------------------------------------------------------------------
+
+static SEXP df_equal(SEXP x, SEXP y, bool na_equal, R_len_t n_row);
 
 #define EQUAL(CTYPE, CONST_DEREF, SCALAR_EQUAL)         \
   do {                                                  \
-    const CTYPE* xp = CONST_DEREF(x);                   \
-    const CTYPE* yp = CONST_DEREF(y);                   \
+    SEXP out = PROTECT(Rf_allocVector(LGLSXP, size));   \
+    int* p_out = LOGICAL(out);                          \
                                                         \
-    for (R_len_t i = 0; i < n; ++i, ++xp, ++yp) {       \
-      p[i] = SCALAR_EQUAL(xp, yp, na_equal);            \
+    const CTYPE* p_x = CONST_DEREF(x);                  \
+    const CTYPE* p_y = CONST_DEREF(y);                  \
+                                                        \
+    for (R_len_t i = 0; i < size; ++i, ++p_x, ++p_y) {  \
+      p_out[i] = SCALAR_EQUAL(p_x, p_y, na_equal);      \
     }                                                   \
+                                                        \
+    UNPROTECT(3);                                       \
+    return out;                                         \
   }                                                     \
   while (0)
 
 #define EQUAL_BARRIER(SCALAR_EQUAL)                     \
   do {                                                  \
-    for (R_len_t i = 0; i < n; ++i) {                   \
-      p[i] = SCALAR_EQUAL(x, i, y, i, na_equal);        \
+    SEXP out = PROTECT(Rf_allocVector(LGLSXP, size));   \
+    int* p_out = LOGICAL(out);                          \
+                                                        \
+    for (R_len_t i = 0; i < size; ++i) {                \
+      p_out[i] = SCALAR_EQUAL(x, i, y, i, na_equal);    \
     }                                                   \
+                                                        \
+    UNPROTECT(3);                                       \
+    return out;                                         \
   }                                                     \
   while (0)
 
 // [[ register() ]]
 SEXP vctrs_equal(SEXP x, SEXP y, SEXP na_equal_) {
-  x = PROTECT(vec_proxy_recursive(x, vctrs_proxy_equal));
-  y = PROTECT(vec_proxy_recursive(y, vctrs_proxy_equal));
+  x = PROTECT(vec_proxy_equal(x));
+  y = PROTECT(vec_proxy_equal(y));
+
+  R_len_t size = vec_size(x);
 
   enum vctrs_type type = vec_proxy_typeof(x);
-  if (type != vec_proxy_typeof(y) || vec_size(x) != vec_size(y)) {
+  if (type != vec_proxy_typeof(y) || size != vec_size(y)) {
     Rf_errorcall(R_NilValue, "`x` and `y` must have same types and lengths");
   }
 
   bool na_equal = Rf_asLogical(na_equal_);
 
-  R_len_t n = vec_size(x);
-  SEXP out = PROTECT(Rf_allocVector(LGLSXP, n));
-  int32_t* p = LOGICAL(out);
-
   switch (type) {
-  case vctrs_type_logical:   EQUAL(int, LOGICAL_RO, lgl_equal_scalar); break;
-  case vctrs_type_integer:   EQUAL(int, INTEGER_RO, int_equal_scalar); break;
-  case vctrs_type_double:    EQUAL(double, REAL_RO, dbl_equal_scalar); break;
-  case vctrs_type_raw:       EQUAL(Rbyte, RAW_RO, raw_equal_scalar); break;
-  case vctrs_type_complex:   EQUAL(Rcomplex, COMPLEX_RO, cpl_equal_scalar); break;
-  case vctrs_type_character: EQUAL(SEXP, STRING_PTR_RO, chr_equal_scalar); break;
-  case vctrs_type_list:      EQUAL_BARRIER(list_equal_scalar); break;
-  case vctrs_type_dataframe: EQUAL_BARRIER(df_equal_scalar); break;
+  case vctrs_type_logical:   EQUAL(int, LOGICAL_RO, lgl_equal_scalar);
+  case vctrs_type_integer:   EQUAL(int, INTEGER_RO, int_equal_scalar);
+  case vctrs_type_double:    EQUAL(double, REAL_RO, dbl_equal_scalar);
+  case vctrs_type_raw:       EQUAL(Rbyte, RAW_RO, raw_equal_scalar);
+  case vctrs_type_complex:   EQUAL(Rcomplex, COMPLEX_RO, cpl_equal_scalar);
+  case vctrs_type_character: EQUAL(SEXP, STRING_PTR_RO, chr_equal_scalar);
+  case vctrs_type_list:      EQUAL_BARRIER(list_equal_scalar);
+  case vctrs_type_dataframe: {
+    SEXP out = PROTECT(df_equal(x, y, na_equal, size));
+    UNPROTECT(3);
+    return out;
+  }
   case vctrs_type_scalar:    Rf_errorcall(R_NilValue, "Can't compare scalars with `vctrs_equal()`");
   default:                   Rf_error("Unimplemented type in `vctrs_equal()`");
   }
-
-  UNPROTECT(3);
-  return out;
 }
 
 #undef EQUAL
 #undef EQUAL_BARRIER
+
+// -----------------------------------------------------------------------------
 
 // Storing pointed values on the stack helps performance for the
 // `!na_equal` cases
@@ -118,10 +142,17 @@ static int raw_equal_scalar(const Rbyte* x, const Rbyte* y, bool na_equal) {
 static int dbl_equal_scalar(const double* x, const double* y, bool na_equal) {
   const double xi = *x;
   const double yj = *y;
+
   if (na_equal) {
-    if (R_IsNA(xi)) return R_IsNA(yj);
-    if (R_IsNaN(xi)) return R_IsNaN(yj);
-    if (isnan(yj)) return false;
+    switch (dbl_classify(xi)) {
+    case vctrs_dbl_number: break;
+    case vctrs_dbl_missing: return dbl_classify(yj) == vctrs_dbl_missing;
+    case vctrs_dbl_nan: return dbl_classify(yj) == vctrs_dbl_nan;
+    }
+
+    if (isnan(yj)) {
+      return false;
+    }
   } else {
     if (isnan(xi) || isnan(yj)) return NA_LOGICAL;
   }
@@ -170,26 +201,18 @@ static int chr_equal_scalar(const SEXP* x, const SEXP* y, bool na_equal) {
 }
 
 static int list_equal_scalar(SEXP x, R_len_t i, SEXP y, R_len_t j, bool na_equal) {
-  return equal_object(VECTOR_ELT(x, i), VECTOR_ELT(y, j), na_equal);
+  const SEXP xi = VECTOR_ELT(x, i);
+  const SEXP yj = VECTOR_ELT(y, j);
+
+  if (na_equal) {
+    return equal_object(xi, yj);
+  } else {
+    return (xi == R_NilValue || yj == R_NilValue) ? NA_LOGICAL : equal_object(xi, yj);
+  }
 }
 
-static int df_equal_scalar(SEXP x, R_len_t i, SEXP y, R_len_t j, bool na_equal) {
-  if (!is_data_frame(y)) {
-    return false;
-  }
-
-  int p = Rf_length(x);
-  if (p != Rf_length(y)) {
-    return false;
-  }
-
-  // Don't worry about names missingness because properly formed
-  // data frames shouldn't have any missing names
-  if (!equal_names(x, y)) {
-    return false;
-  }
-
-  for (int k = 0; k < p; ++k) {
+static int df_equal_scalar(SEXP x, R_len_t i, SEXP y, R_len_t j, bool na_equal, int n_col) {
+  for (int k = 0; k < n_col; ++k) {
     int eq = equal_scalar(VECTOR_ELT(x, k), i, VECTOR_ELT(y, k), j, na_equal);
 
     if (eq <= 0) {
@@ -200,19 +223,47 @@ static int df_equal_scalar(SEXP x, R_len_t i, SEXP y, R_len_t j, bool na_equal) 
   return true;
 }
 
+// -----------------------------------------------------------------------------
 
-static inline bool obj_equal_attrib(SEXP x, SEXP y);
-static inline int vec_equal_attrib(SEXP x, SEXP y, bool na_equal);
+// Missingness is never propagated through objects,
+// so `na_equal` is always `true` in these macros
+
+#define EQUAL_ALL(CTYPE, CONST_DEREF, SCALAR_EQUAL)       \
+  do {                                                    \
+    const CTYPE* p_x = CONST_DEREF(x);                    \
+    const CTYPE* p_y = CONST_DEREF(y);                    \
+                                                          \
+    for (R_len_t i = 0; i < n; ++i, ++p_x, ++p_y) {       \
+      if (!SCALAR_EQUAL(p_x, p_y, true)) {                \
+        return false;                                     \
+      }                                                   \
+    }                                                     \
+    return true;                                          \
+  }                                                       \
+  while (0)
+
+#define EQUAL_ALL_BARRIER(SCALAR_EQUAL)                   \
+  do {                                                    \
+    for (R_len_t i = 0; i < n; ++i) {                     \
+      if (!SCALAR_EQUAL(x, i, y, i, true)) {              \
+        return false;                                     \
+      }                                                   \
+    }                                                     \
+    return true;                                          \
+  }                                                       \
+  while (0)
+
+static inline bool vec_equal_attrib(SEXP x, SEXP y);
 
 // [[ include("vctrs.h") ]]
-int equal_object(SEXP x, SEXP y, bool na_equal) {
+bool equal_object(SEXP x, SEXP y) {
   SEXPTYPE type = TYPEOF(x);
 
   if (type != TYPEOF(y)) {
     return false;
   }
 
-  // Pointer comparison is safe for these types
+  // Pointer comparison is all that is required for these types
   switch (type) {
   case NILSXP:
   case SYMSXP:
@@ -224,71 +275,56 @@ int equal_object(SEXP x, SEXP y, bool na_equal) {
     return x == y;
   }
 
-  // For other types, pointer comparison is only relevant when missing
-  // values are not propagated
-  if (na_equal && x == y) {
+  // For other types, try a pointer comparison first before
+  // performing an in depth equality check
+  if (x == y) {
     return true;
   }
 
   switch(type) {
+  // Handled below
   case LGLSXP:
   case INTSXP:
   case REALSXP:
   case STRSXP:
   case RAWSXP:
   case CPLXSXP:
-  case VECSXP: {
-    R_len_t n = vec_size(x);
-    if (n != vec_size(y)) {
-      return false;
-    }
-
-    int eq_attr = vec_equal_attrib(x, y, na_equal);
-    if (eq_attr <= 0) {
-      return eq_attr;
-    }
-
-    for (R_len_t i = 0; i < n; ++i) {
-      int eq = equal_scalar(x, i, y, i, na_equal);
-      if (eq <= 0) {
-        return eq;
-      }
-    }
-
-    return true;
-  }
+  case EXPRSXP:
+  case VECSXP: break;
 
   case DOTSXP:
   case LANGSXP:
   case LISTSXP:
   case BCODESXP: {
-    if (!obj_equal_attrib(x, y)) {
+    if (!equal_object(ATTRIB(x), ATTRIB(y))) {
       return false;
     }
 
-    int eq;
-    eq = equal_object(CAR(x), CAR(y), na_equal);
-    if (eq <= 0) {
-      return eq;
+    if (!equal_object(CAR(x), CAR(y))) {
+      return false;
     }
-    eq = equal_object(CDR(x), CDR(y), na_equal);
-    if (eq <= 0) {
-      return eq;
+
+    x = CDR(x);
+    y = CDR(y);
+
+    if (!equal_object(x, y)) {
+      return false;
     }
+
     return true;
   }
 
   case CLOSXP:
-    if (!obj_equal_attrib(x, y)) {
+    if (!equal_object(ATTRIB(x), ATTRIB(y))) {
       return false;
     }
-    if (!equal_object(BODY(x), BODY(y), true)) {
+    if (!equal_object(BODY(x), BODY(y))) {
       return false;
     }
-    if (!equal_object(CLOENV(x), CLOENV(y), true)) {
+    if (!equal_object(CLOENV(x), CLOENV(y))) {
       return false;
     }
-    if (!equal_object(FORMALS(x), FORMALS(y), true)) {
+    if (!equal_object(FORMALS(x), FORMALS(y))) {
       return false;
     }
     return true;
@@ -307,24 +343,39 @@ int equal_object(SEXP x, SEXP y, bool na_equal) {
     Rf_errorcall(R_NilValue, "Unsupported type %s", Rf_type2char(TYPEOF(x)));
   }
 
-  return true;
+  R_len_t n = Rf_length(x);
+  if (n != Rf_length(y)) {
+    return false;
+  }
+
+  if (!vec_equal_attrib(x, y)) {
+    return false;
+  }
+
+  switch (type) {
+  case LGLSXP:  EQUAL_ALL(int, LOGICAL_RO, lgl_equal_scalar);
+  case INTSXP:  EQUAL_ALL(int, INTEGER_RO, int_equal_scalar);
+  case REALSXP: EQUAL_ALL(double, REAL_RO, dbl_equal_scalar);
+  case STRSXP:  EQUAL_ALL(SEXP, STRING_PTR_RO, chr_equal_scalar);
+  case RAWSXP:  EQUAL_ALL(Rbyte, RAW_RO, raw_equal_scalar);
+  case CPLXSXP: EQUAL_ALL(Rcomplex, COMPLEX_RO, cpl_equal_scalar);
+  case EXPRSXP:
+  case VECSXP:  EQUAL_ALL_BARRIER(list_equal_scalar);
+  default:      Rf_errorcall(R_NilValue, "Internal error: Unexpected type in `equal_object()`");
+  }
 }
 
+#undef EQUAL_ALL
+#undef EQUAL_ALL_BARRIER
+
 // [[ register() ]]
-SEXP vctrs_equal_object(SEXP x, SEXP y, SEXP na_equal) {
-  return Rf_ScalarLogical(equal_object(x, y, Rf_asLogical(na_equal)));
+SEXP vctrs_equal_object(SEXP x, SEXP y) {
+  return Rf_ScalarLogical(equal_object(x, y));
 }
 
 // TODO: Sort attributes by tag before comparison
 
-// We don't propagate missingness from attributes because any missing
-// values in there are probably actual data
-static inline bool obj_equal_attrib(SEXP x, SEXP y) {
-  return equal_object(ATTRIB(x), ATTRIB(y), true);
-}
-
-// Same as `obj_` variant but propagates NA only for names
-static inline int vec_equal_attrib(SEXP x, SEXP y, bool na_equal) {
+static inline bool vec_equal_attrib(SEXP x, SEXP y) {
   SEXP x_attrs = ATTRIB(x);
   SEXP y_attrs = ATTRIB(y);
 
@@ -340,14 +391,8 @@ static inline int vec_equal_attrib(SEXP x, SEXP y, bool na_equal) {
       return false;
     }
 
-    int eq;
-    if (x_tag == R_NamesSymbol) {
-      eq = equal_object(CAR(x_attrs), CAR(y_attrs), na_equal);
-    } else {
-      eq = equal_object(CAR(x_attrs), CAR(y_attrs), true);
-    }
-    if (eq <= 0) {
-      return(eq);
+    if (!equal_object(CAR(x_attrs), CAR(y_attrs))) {
+      return false;
     }
 
     x_attrs = CDR(x_attrs);
@@ -363,11 +408,165 @@ bool equal_names(SEXP x, SEXP y) {
   SEXP x_names = PROTECT(Rf_getAttrib(x, R_NamesSymbol));
   SEXP y_names = PROTECT(Rf_getAttrib(y, R_NamesSymbol));
 
-  bool out = equal_object(x_names, y_names, true);
+  bool out = equal_object(x_names, y_names);
 
   UNPROTECT(2);
   return out;
 }
+
+// -----------------------------------------------------------------------------
+
+static struct vctrs_df_rowwise_info vec_equal_col(SEXP x,
+                                                  SEXP y,
+                                                  bool na_equal,
+                                                  struct vctrs_df_rowwise_info info,
+                                                  R_len_t n_row);
+
+static struct vctrs_df_rowwise_info df_equal_impl(SEXP x,
+                                                  SEXP y,
+                                                  bool na_equal,
+                                                  struct vctrs_df_rowwise_info info,
+                                                  R_len_t n_row);
+
+static struct vctrs_df_rowwise_info init_rowwise_equal_info(R_len_t n_row) {
+  struct vctrs_df_rowwise_info info;
+
+  // Initialize to "equality" value
+  // and only change if we learn that it differs
+  info.out = PROTECT(Rf_allocVector(LGLSXP, n_row));
+  int* p_out = LOGICAL(info.out);
+
+  for (R_len_t i = 0; i < n_row; ++i) {
+    p_out[i] = 1;
+  }
+
+  // To begin with, no rows have a known comparison value
+  info.row_known = PROTECT(Rf_allocVector(RAWSXP, n_row * sizeof(bool)));
+  info.p_row_known = (bool*) RAW(info.row_known);
+  memset(info.p_row_known, false, n_row * sizeof(bool));
+
+  info.remaining = n_row;
+
+  UNPROTECT(2);
+  return info;
+}
+
+static SEXP df_equal(SEXP x, SEXP y, bool na_equal, R_len_t n_row) {
+  int nprot = 0;
+
+  struct vctrs_df_rowwise_info info = init_rowwise_equal_info(n_row);
+  PROTECT_DF_ROWWISE_INFO(&info, &nprot);
+
+  info = df_equal_impl(x, y, na_equal, info, n_row);
+
+  UNPROTECT(nprot);
+  return info.out;
+}
+
+static struct vctrs_df_rowwise_info df_equal_impl(SEXP x,
+                                                  SEXP y,
+                                                  bool na_equal,
+                                                  struct vctrs_df_rowwise_info info,
+                                                  R_len_t n_row) {
+  int n_col = Rf_length(x);
+
+  if (n_col != Rf_length(y)) {
+    Rf_errorcall(R_NilValue, "`x` and `y` must have the same number of columns");
+  }
+
+  for (R_len_t i = 0; i < n_col; ++i) {
+    SEXP x_col = VECTOR_ELT(x, i);
+    SEXP y_col = VECTOR_ELT(y, i);
+
+    info = vec_equal_col(x_col, y_col, na_equal, info, n_row);
+
+    // If we know all comparison values, break
+    if (info.remaining == 0) {
+      break;
+    }
+  }
+
+  return info;
+}
+
+// -----------------------------------------------------------------------------
+
+#define EQUAL_COL(CTYPE, CONST_DEREF, SCALAR_EQUAL)                  \
+do {                                                                 \
+  int* p_out = LOGICAL(info.out);                                    \
+                                                                     \
+  const CTYPE* p_x = CONST_DEREF(x);                                 \
+  const CTYPE* p_y = CONST_DEREF(y);                                 \
+                                                                     \
+  for (R_len_t i = 0; i < n_row; ++i, ++p_x, ++p_y) {                \
+    if (info.p_row_known[i]) {                                       \
+      continue;                                                      \
+    }                                                                \
+                                                                     \
+    int eq = SCALAR_EQUAL(p_x, p_y, na_equal);                       \
+                                                                     \
+    if (eq <= 0) {                                                   \
+      p_out[i] = eq;                                                 \
+      info.p_row_known[i] = true;                                    \
+      --info.remaining;                                              \
+                                                                     \
+      if (info.remaining == 0) {                                     \
+        break;                                                       \
+      }                                                              \
+    }                                                                \
+  }                                                                  \
+                                                                     \
+  return info;                                                       \
+}                                                                    \
+while (0)
+
+#define EQUAL_COL_BARRIER(SCALAR_EQUAL)                \
+do {                                                   \
+  int* p_out = LOGICAL(info.out);                      \
+                                                       \
+  for (R_len_t i = 0; i < n_row; ++i) {                \
+    if (info.p_row_known[i]) {                         \
+      continue;                                        \
+    }                                                  \
+                                                       \
+    int eq = SCALAR_EQUAL(x, i, y, i, na_equal);       \
+                                                       \
+    if (eq <= 0) {                                     \
+      p_out[i] = eq;                                   \
+      info.p_row_known[i] = true;                      \
+      --info.remaining;                                \
+                                                       \
+      if (info.remaining == 0) {                       \
+        break;                                         \
+      }                                                \
+    }                                                  \
+  }                                                    \
+                                                       \
+  return info;                                         \
+}                                                      \
+while (0)
+
+static struct vctrs_df_rowwise_info vec_equal_col(SEXP x,
+                                                  SEXP y,
+                                                  bool na_equal,
+                                                  struct vctrs_df_rowwise_info info,
+                                                  R_len_t n_row) {
+  switch (vec_proxy_typeof(x)) {
+  case vctrs_type_logical:   EQUAL_COL(int, LOGICAL_RO, lgl_equal_scalar);
+  case vctrs_type_integer:   EQUAL_COL(int, INTEGER_RO, int_equal_scalar);
+  case vctrs_type_double:    EQUAL_COL(double, REAL_RO, dbl_equal_scalar);
+  case vctrs_type_raw:       EQUAL_COL(Rbyte, RAW_RO, raw_equal_scalar);
+  case vctrs_type_complex:   EQUAL_COL(Rcomplex, COMPLEX_RO, cpl_equal_scalar);
+  case vctrs_type_character: EQUAL_COL(SEXP, STRING_PTR_RO, chr_equal_scalar);
+  case vctrs_type_list:      EQUAL_COL_BARRIER(list_equal_scalar);
+  case vctrs_type_dataframe: return df_equal_impl(x, y, na_equal, info, n_row);
+  case vctrs_type_scalar:    Rf_errorcall(R_NilValue, "Can't compare scalars with `vctrs_equal()`");
+  default:                   Rf_error("Unimplemented type in `vctrs_equal()`");
+  }
+}
+
+#undef EQUAL_COL
+#undef EQUAL_COL_BARRIER
 
 // -----------------------------------------------------------------------------
 
@@ -399,9 +598,23 @@ do {                                                    \
 }                                                       \
 while (0)
 
+#define DUPLICATE_ALL_DF(SCALAR_EQUAL)                  \
+do {                                                    \
+  int n_col = Rf_length(x);                             \
+                                                        \
+  for (R_len_t i = 1; i < n; ++i) {                     \
+    if (SCALAR_EQUAL(x, 0, x, i, true, n_col)) {        \
+      continue;                                         \
+    }                                                   \
+    *p = false;                                         \
+    break;                                              \
+  }                                                     \
+}                                                       \
+while (0)
+
 // [[ register() ]]
 SEXP vctrs_duplicate_all(SEXP x) {
-  x = PROTECT(vec_proxy_recursive(x, vctrs_proxy_equal));
+  x = PROTECT(vec_proxy_equal(x));
 
   SEXP out = PROTECT(Rf_allocVector(LGLSXP, 1));
   int32_t* p = LOGICAL(out);
@@ -422,7 +635,7 @@ SEXP vctrs_duplicate_all(SEXP x) {
   case vctrs_type_complex:   DUPLICATE_ALL(Rcomplex, COMPLEX_RO, cpl_equal_scalar); break;
   case vctrs_type_character: DUPLICATE_ALL(SEXP, STRING_PTR_RO, chr_equal_scalar); break;
   case vctrs_type_list:      DUPLICATE_ALL_BARRIER(list_equal_scalar); break;
-  case vctrs_type_dataframe: DUPLICATE_ALL_BARRIER(df_equal_scalar); break;
+  case vctrs_type_dataframe: DUPLICATE_ALL_DF(df_equal_scalar); break;
   case vctrs_type_scalar:    Rf_errorcall(R_NilValue, "Can't detect duplicates in scalars with `vctrs_duplicate_all()`");
   default:                   Rf_error("Unimplemented type in `vctrs_duplicate_all()`");
   }
@@ -433,6 +646,7 @@ SEXP vctrs_duplicate_all(SEXP x) {
 
 #undef DUPLICATE_ALL
 #undef DUPLICATE_ALL_BARRIER
+#undef DUPLICATE_ALL_DF
 
 // -----------------------------------------------------------------------------
 
@@ -487,7 +701,7 @@ SEXP vctrs_equal_na(SEXP x) {
   SEXP out = PROTECT(Rf_allocVector(LGLSXP, n));
   int32_t* p = LOGICAL(out);
 
-  x = PROTECT(vec_proxy_recursive(x, vctrs_proxy_equal));
+  x = PROTECT(vec_proxy_equal(x));
 
   enum vctrs_type type = vec_proxy_typeof(x);
 

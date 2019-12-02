@@ -107,7 +107,7 @@ test_that("vec_ptype2() returns empty prototype when other input is NULL", {
 })
 
 test_that("Subclasses of data.frame dispatch to `vec_ptype2()` methods", {
-  scoped_global_bindings(
+  local_methods(
     vec_ptype2.quuxframe = function(x, y, ...) UseMethod("vec_ptype2.quuxframe"),
     vec_ptype2.quuxframe.data.frame = function(x, y, ...) "dispatched!",
     vec_ptype2.data.frame.quuxframe = function(x, y, ...) "dispatched!"
@@ -149,7 +149,7 @@ test_that("vec_is_subtype() determines subtyping relationship", {
   expect_false(vec_is_subtype(lgl(), chr()))
   expect_false(vec_is_subtype(chr(), lgl()))
 
-  scoped_global_bindings(
+  local_methods(
     vec_ptype2.vctrs_foobar = function(x, y, ...) UseMethod("vec_ptype2.vctrs_foobar", y),
     vec_ptype2.vctrs_foobar.logical = function(x, y, ...) logical(),
     vec_ptype2.logical.vctrs_foobar = function(x, y, ...) logical()

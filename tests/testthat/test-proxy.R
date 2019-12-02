@@ -1,4 +1,3 @@
-context("test-data")
 
 test_that("vec_data() preserves names (#245)", {
   x <- set_names(letters, LETTERS)
@@ -66,7 +65,7 @@ test_that("vec_proxy() is a no-op with non vectors", {
 })
 
 test_that("can take the proxy of non-vector objects", {
-  scoped_env_proxy()
+  local_env_proxy()
   expect_identical(vec_proxy(new_proxy(1:3)), 1:3)
 })
 
@@ -76,7 +75,17 @@ test_that("vec_data() asserts vectorness", {
 })
 
 test_that("vec_data() is proxied", {
-  scoped_env_proxy()
+  local_env_proxy()
   x <- new_proxy(mtcars)
   expect_identical(vec_data(x), vec_data(mtcars))
+})
+
+test_that("vec_proxy_equal() is recursive over data frames (#641)", {
+  x <- new_data_frame(list(x = foobar(1:3)))
+  default <- vec_proxy_equal(x)
+  expect_is(default$x, "vctrs_foobar")
+
+  local_methods(vec_proxy_equal.vctrs_foobar = function(...) c(0, 0, 0))
+  overridden <- vec_proxy_equal(x)
+  expect_identical(overridden$x, c(0, 0, 0))
 })

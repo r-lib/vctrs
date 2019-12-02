@@ -26,12 +26,10 @@ BugReports: https://github.com/r-lib/vctrs/issues
 Depends: 
     R (>= 3.2)
 Imports: 
-    backports,
     ellipsis (>= 0.2.0),
     digest,
     glue,
-    rlang (>= 0.4.0.9005),
-    zeallot
+    rlang (>= 0.4.2)
 Suggests: 
     bit64,
     covr,
@@ -41,16 +39,14 @@ Suggests:
     pillar (>= 1.4.1),
     pkgdown,
     rmarkdown,
-    testthat (>= 2.2.1.9002),
+    testthat (>= 2.3.0),
     tibble,
-    xml2
-Remotes:
-    r-lib/rlang,
-    r-lib/testthat
+    xml2,
+    zeallot
 VignetteBuilder: 
     knitr
 Encoding: UTF-8
 Language: en-GB
 LazyData: true
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 6.1.1
+RoxygenNote: 7.0.1

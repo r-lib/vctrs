@@ -20,7 +20,7 @@ test_that("vec_names() retrieves names", {
 })
 
 test_that("vec_names() dispatches", {
-  scoped_global_bindings(
+  local_methods(
     names.vctrs_foobar = function(x) "dispatched!"
   )
   expect_identical(vec_names(foobar()), "dispatched!")
@@ -191,7 +191,7 @@ test_that("vec_set_names() falls back to `names<-` with proxied objects", {
 
   expect_equal(vec_set_names(x, "a"), exp)
 
-  scoped_global_bindings(`names<-.foobar` = function(x, value) "fallback!")
+  local_methods(`names<-.foobar` = function(x, value) "fallback!")
   expect_equal(vec_set_names(x, "a"), "fallback!")
 })
 
@@ -204,7 +204,7 @@ test_that("vec_set_names() falls back to `rownames<-` with shaped proxied object
   expect_equal(vec_set_names(x, names), exp)
 
   # `rownames<-` is not generic, but eventually calls `dimnames<-` which is
-  scoped_global_bindings(`dimnames<-.foobar` = function(x, value) "fallback!")
+  local_methods(`dimnames<-.foobar` = function(x, value) "fallback!")
   expect_equal(vec_set_names(x, names), "fallback!")
 })
 

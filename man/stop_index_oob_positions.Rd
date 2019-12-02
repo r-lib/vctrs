@@ -20,8 +20,10 @@ message.}
 
 \item{...}{Additional data to be stored in the condition object.}
 
-\item{.subclass}{Subclass of the condition. This allows your users
-to selectively handle the conditions signalled by your functions.}
+\item{.subclass}{This argument was renamed to \code{class} in rlang
+0.4.2.  It will be deprecated in the next major version. This is
+for consistency with our conventions for class constructors
+documented in \url{https://adv-r.hadley.nz/s3.html#s3-subclassing}.}
 
 \item{names}{The names of the vector to subset from.}
 }

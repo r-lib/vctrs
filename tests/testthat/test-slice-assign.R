@@ -224,7 +224,7 @@ test_that("a coercible RHS is cast to LHS before assignment (#140)", {
 })
 
 test_that("slice-assign takes the proxy", {
-  scoped_proxy()
+  local_proxy()
 
   x <- new_proxy(1:3)
   y <- new_proxy(20:21)
@@ -270,7 +270,7 @@ test_that("slice-assign falls back to `[<-` when proxy is not implemented", {
   vec_cast(foobar(""), foobar(""))
   #> Error: Can't cast <vctrs_foobar> to <vctrs_foobar>
 
-  scoped_global_bindings(
+  local_methods(
     `[<-.vctrs_foobar` = function(x, i, value) {
       x <- unclass(x)
       x[i] <- "dispatched"
@@ -289,7 +289,7 @@ test_that("slice-assign falls back to `[<-` when proxy is not implemented", {
 test_that("slice-assign restores value before falling back to `[<-` (#443)", {
   called <- FALSE
 
-  scoped_global_bindings(
+  local_methods(
     vec_proxy.vctrs_proxy = proxy_deref,
     vec_restore.vctrs_proxy = function(x, to, ...) new_proxy(x),
     vec_ptype2.vctrs_proxy = function(...) new_proxy(NA),
@@ -321,7 +321,7 @@ test_that("can assign to data frame", {
 })
 
 test_that("can slice-assign unspecified vectors with default type2 method", {
-  scoped_rational_class()
+  local_rational_class()
   x <- rational(1:2, 2:3)
   x[[1]] <- NA
   expect_identical(x, rational(c(NA, 2L), c(NA, 3L)))

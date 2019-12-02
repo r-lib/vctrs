@@ -1,7 +1,5 @@
 # nocov start
 .onLoad <- function(libname, pkgname) {
-  backports::import(pkgname, "strrep")
-
   s3_register("generics::as.factor", "vctrs_vctr")
   s3_register("generics::as.ordered", "vctrs_vctr")
   s3_register("generics::as.difftime", "vctrs_vctr")
@@ -31,7 +29,7 @@
   ns <- ns_env("vctrs")
   env_bind(ns, vec_set_attributes = vec_set_attributes)
 
-  .Call(vctrs_init, ns_env())
+  .Call(vctrs_init_library, ns_env())
 }
 
 # nocov end

@@ -35,6 +35,16 @@ test_that("vec_count works with different encodings", {
   expect_equal(x, new_data_frame(list(key = encodings()[1], count = 3L)))
 })
 
+test_that("vec_count recursively takes the equality proxy", {
+  local_comparable_tuple()
+
+  x <- tuple(c(1, 1, 2), 1:3)
+  df <- data_frame(x = x)
+  expect <- data_frame(key = vec_slice(df, c(1, 3)), count = c(2L, 1L))
+
+  expect_equal(vec_count(df), expect)
+})
+
 # duplicates and uniques --------------------------------------------------
 
 test_that("vec_duplicated reports on duplicates regardless of position", {
@@ -105,11 +115,39 @@ test_that("vec_unique() works with 1D arrays", {
 })
 
 test_that("unique functions take the equality proxy (#375)", {
-  scoped_comparable_tuple()
+  local_comparable_tuple()
   x <- tuple(c(1, 2, 1), 1:3)
 
   expect_true(vec_in(tuple(2, 100), x))
   expect_identical(vec_match(tuple(2, 100), x), 2L)
+})
+
+test_that("unique functions take the equality proxy recursively", {
+  local_comparable_tuple()
+
+  x <- tuple(c(1, 1, 2), 1:3)
+  df <- data_frame(x = x)
+
+  expect_equal(vec_unique(df), vec_slice(df, c(1, 3)))
+  expect_equal(vec_unique_count(df), 2L)
+  expect_equal(vec_unique_loc(df), c(1, 3))
+})
+
+test_that("duplicate functions take the equality proxy recursively", {
+  local_comparable_tuple()
+
+  x <- tuple(c(1, 1, 2), 1:3)
+  df <- data_frame(x = x)
+
+  expect_equal(vec_duplicate_any(df), TRUE)
+  expect_equal(vec_duplicate_detect(df), c(TRUE, TRUE, FALSE))
+  expect_equal(vec_duplicate_id(df), c(1, 1, 3))
+})
+
+test_that("unique functions treat positive and negative 0 as equivalent (#637)", {
+  expect_equal(vec_unique(c(0, -0)), 0)
+  expect_equal(vec_unique_count(c(0, -0)), 1)
+  expect_equal(vec_unique_loc(c(0, -0)), 1)
 })
 
 test_that("unique functions work with different encodings", {
@@ -118,6 +156,14 @@ test_that("unique functions work with different encodings", {
   expect_equal(vec_unique(encs), encs[1])
   expect_equal(vec_unique_count(encs), 1L)
   expect_equal(vec_unique_loc(encs), 1L)
+})
+
+test_that("unique functions can handle scalar types in lists", {
+  x <- list(x = a ~ b, y = a ~ b, z = a ~ c)
+  expect_equal(vec_unique(x), vec_slice(x, c(1, 3)))
+
+  x <- list(x = call("x"), y = call("y"), z = call("x"))
+  expect_equal(vec_unique(x), vec_slice(x, c(1, 2)))
 })
 
 test_that("duplicate functions works with different encodings", {
@@ -135,6 +181,17 @@ test_that("vec_unique() returns differently encoded strings in the order they ap
 
   expect_equal_encoding(vec_unique(x), encs$unknown)
   expect_equal_encoding(vec_unique(y), encs$utf8)
+})
+
+test_that("vec_unique() works on lists containing expressions", {
+  x <- list(expression(x), expression(y), expression(x))
+  expect_equal(vec_unique(x), x[1:2])
+})
+
+test_that("vec_unique() works with glm objects (#643)", {
+  # class(model$family$initialize) == "expression"
+  model <- glm(mpg ~ wt, data = mtcars)
+  expect_equal(vec_unique(list(model, model)), list(model))
 })
 
 # matching ----------------------------------------------------------------
@@ -162,7 +219,7 @@ test_that("vec_match works with empty data frame", {
 })
 
 test_that("matching functions take the equality proxy (#375)", {
-  scoped_comparable_tuple()
+  local_comparable_tuple()
   x <- tuple(c(1, 2, 1), 1:3)
 
   expect_identical(vec_unique_loc(x), 1:2)
@@ -192,103 +249,15 @@ test_that("matching functions work with different encodings", {
   expect_equal(vec_in(encs, encs[1]), rep(TRUE, 3))
 })
 
-# splits ------------------------------------------------------------------
+test_that("matching functions take the equality proxy recursively", {
+  local_comparable_tuple()
 
-test_that("can split empty vector", {
-  out <- vec_split(integer(), character())
+  x <- tuple(c(1, 2), 1:2)
+  df <- data_frame(x = x)
 
-  expect_s3_class(out, "data.frame")
-  expect_equal(out$key, character())
-  expect_equal(out$val, list_of(.ptype = integer()))
-})
+  y <- tuple(c(2, 3), c(3, 3))
+  df2 <- data_frame(x = y)
 
-test_that("split data frame with data frame", {
-  df <- data.frame(x = c(1, 1, 2), y = c(1, 1, 1))
-  out <- vec_split(df, df)
-
-  expect_s3_class(out, "data.frame")
-  expect_equal(out$key, data.frame(x = c(1, 2), y = c(1, 1)))
-  expect_equal(out$val, list_of(
-    data.frame(x = c(1, 1), y = c(1, 1)),
-    data.frame(x = 2, y = 1)
-  ))
-})
-
-test_that("x and by must be same size", {
-  expect_error(
-    vec_split(1:3, 1:2),
-    "same size"
-  )
-})
-
-test_that("split takes the equality proxy (#375)", {
-  scoped_comparable_tuple()
-  x <- tuple(c(1, 2, 1), 1:3)
-  expect_identical(nrow(vec_split(1:3, x)), 2L)
-})
-
-test_that("split works with different encodings", {
-  encs <- encodings()
-  expect_identical(nrow(vec_split(1:3, encs)), 1L)
-})
-
-# split id ---------------------------------------------------------------
-
-test_that("can locate unique groups of an empty vector", {
-  out <- vec_split_id(integer())
-
-  expect_s3_class(out, "data.frame")
-  expect_equal(out$key, integer())
-  expect_equal(out$id, list_of(.ptype = integer()))
-})
-
-test_that("can locate unique groups of a data frame", {
-  df <- data_frame(x = c(1, 1, 1, 2, 2), y = c("a", "a", "b", "a", "b"))
-  out <- vec_split_id(df)
-
-  expect_equal(nrow(out), 4L)
-  expect_equal(out$key, vec_unique(df))
-})
-
-test_that("can locate unique groups of a data frame with a list column", {
-  df <- data_frame(x = list(1:2, 1:2, "a", 5.5, "a"))
-  out <- vec_split_id(df)
-
-  expect_equal(nrow(out), 3L)
-  expect_equal(out$key, vec_unique(df))
-})
-
-test_that("`x` must be a vector", {
-  expect_error(vec_split_id(environment()), class = "vctrs_error_scalar_type")
-})
-
-test_that("`key` column retains full type information", {
-  x <- factor(letters[c(1, 2, 1)], levels = letters[1:3])
-  out <- vec_split_id(x)
-
-  expect_equal(levels(out$key), levels(x))
-})
-
-test_that("`key` and `value` retain names", {
-  x <- c(a = 1, b = 2, c = 1, a = 1)
-  split <- vec_split(x, x)
-  expect_identical(split$key, c(a = 1, b = 2))
-  expect_identical(split$val[[1]], c(a = 1, c = 1, a = 1))
-  expect_identical(split$val[[2]], c(b = 2))
-})
-
-test_that("vec_split_id takes the equality proxy", {
-  scoped_comparable_tuple()
-  x <- tuple(c(1, 2, 1), 1:3)
-  expect_equal(vec_split_id(x)$key, x[1:2])
-  expect_equal(vec_split_id(x)$id, list_of(c(1L, 3L), 2L))
-
-  x <- as.POSIXlt(new_datetime(c(1, 2, 1)))
-  expect_equal(vec_split_id(x)$key, x[1:2])
-  expect_equal(vec_split_id(x)$id, list_of(c(1L, 3L), 2L))
-})
-
-test_that("vec_split_id works with different encodings", {
-  encs <- encodings()
-  expect_identical(nrow(vec_split_id(encs)), 1L)
+  expect_equal(vec_match(df, df2), c(NA, 1))
+  expect_equal(vec_in(df, df2), c(FALSE, TRUE))
 })

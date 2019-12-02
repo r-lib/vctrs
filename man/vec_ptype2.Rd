@@ -4,6 +4,7 @@
 \alias{vec_ptype2.logical}
 \alias{vec_ptype2.integer}
 \alias{vec_ptype2.double}
+\alias{vec_ptype2.complex}
 \alias{vec_ptype2.character}
 \alias{vec_ptype2.raw}
 \alias{vec_ptype2.list}
@@ -16,6 +17,8 @@
 \method{vec_ptype2}{integer}(x, y, ...)
 
 \method{vec_ptype2}{double}(x, y, ...)
+
+\method{vec_ptype2}{complex}(x, y, ...)
 
 \method{vec_ptype2}{character}(x, y, ...)
 

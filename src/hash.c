@@ -32,6 +32,11 @@ static uint32_t hash_int64(int64_t x) {
 // Seems like something designed specificaly for doubles should work better
 // but I haven't been able to find anything
 static uint32_t hash_double(double x) {
+  // Treat positive/negative 0 as equivalent
+  if (x == 0.0) {
+    x = 0.0;
+  }
+
   union {
     double d;
     uint64_t i;
@@ -64,12 +69,14 @@ static uint32_t int_hash_scalar(const int* x) {
 }
 static uint32_t dbl_hash_scalar(const double* x) {
   double val = *x;
+
   // Hash all NAs and NaNs to same value (i.e. ignoring significand)
-  if (R_IsNA(val)) {
-    val = NA_REAL;
-  } else if (R_IsNaN(val)) {
-    val = R_NaN;
+  switch (dbl_classify(val)) {
+  case vctrs_dbl_number: break;
+  case vctrs_dbl_missing: val = NA_REAL; break;
+  case vctrs_dbl_nan: val = R_NaN; break;
   }
+
   return hash_double(val);
 }
 static uint32_t cpl_hash_scalar(const Rcomplex* x) {
@@ -129,6 +136,7 @@ static uint32_t sexp_hash(SEXP x) {
   case INTSXP: return int_hash(x);
   case REALSXP: return dbl_hash(x);
   case STRSXP: return chr_hash(x);
+  case EXPRSXP:
   case VECSXP: return list_hash(x);
   case DOTSXP:
   case LANGSXP:
@@ -291,7 +299,6 @@ static void df_hash_fill(uint32_t* p, R_len_t size, SEXP x) {
   R_len_t ncol = Rf_length(x);
 
   for (R_len_t i = 0; i < ncol; ++i) {
-    // FIXME: Call `vec_proxy()`?
     SEXP col = VECTOR_ELT(x, i);
     hash_fill(p, size, col);
   }
@@ -299,7 +306,7 @@ static void df_hash_fill(uint32_t* p, R_len_t size, SEXP x) {
 
 // [[ register() ]]
 SEXP vctrs_hash(SEXP x) {
-  x = PROTECT(vec_proxy(x));
+  x = PROTECT(vec_proxy_equal(x));
 
   R_len_t n = vec_size(x);
   SEXP out = PROTECT(Rf_allocVector(RAWSXP, n * sizeof(uint32_t)));

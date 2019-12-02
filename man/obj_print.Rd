@@ -35,7 +35,7 @@ obj_str_footer(x, ...)
 }
 \description{
 These are constructed to be more easily extensible since you can override
-the \code{_header()}, \code{_data()} or \code{_footer()} components individually. The
+the \verb{_header()}, \verb{_data()} or \verb{_footer()} components individually. The
 default methods are built on top of \code{format()}.
 }
 \keyword{internal}

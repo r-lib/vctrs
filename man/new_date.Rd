@@ -20,8 +20,7 @@ new_date(x = double())
 
 new_datetime(x = double(), tzone = "")
 
-new_duration(x = double(), units = c("secs", "mins", "hours", "days",
-  "weeks"))
+new_duration(x = double(), units = c("secs", "mins", "hours", "days", "weeks"))
 
 \method{vec_ptype2}{Date}(x, y, ...)
 

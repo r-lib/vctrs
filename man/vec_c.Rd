@@ -4,8 +4,12 @@
 \alias{vec_c}
 \title{Combine many vectors into one vector}
 \usage{
-vec_c(..., .ptype = NULL, .name_spec = NULL,
-  .name_repair = c("minimal", "unique", "check_unique", "universal"))
+vec_c(
+  ...,
+  .ptype = NULL,
+  .name_spec = NULL,
+  .name_repair = c("minimal", "unique", "check_unique", "universal")
+)
 }
 \arguments{
 \item{...}{Vectors to coerce.}

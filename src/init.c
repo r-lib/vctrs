@@ -17,14 +17,17 @@ extern SEXP vctrs_fields(SEXP);
 extern SEXP vctrs_n_fields(SEXP);
 extern SEXP vctrs_hash(SEXP);
 extern SEXP vctrs_hash_object(SEXP);
-extern SEXP vctrs_equal_object(SEXP, SEXP, SEXP);
+extern SEXP vctrs_equal_object(SEXP, SEXP);
 extern SEXP vctrs_in(SEXP, SEXP);
 extern SEXP vctrs_duplicated(SEXP);
-extern SEXP vctrs_split_id(SEXP);
 extern SEXP vctrs_unique_loc(SEXP);
 extern SEXP vctrs_count(SEXP);
 extern SEXP vctrs_id(SEXP);
 extern SEXP vctrs_n_distinct(SEXP);
+extern SEXP vec_split(SEXP, SEXP);
+extern SEXP vctrs_group_id(SEXP);
+extern SEXP vctrs_group_rle(SEXP);
+extern SEXP vec_group_pos(SEXP);
 extern SEXP vctrs_equal(SEXP, SEXP, SEXP);
 extern SEXP vctrs_duplicate_all(SEXP);
 extern SEXP vctrs_equal_na(SEXP);
@@ -43,11 +46,14 @@ extern SEXP vctrs_cast(SEXP, SEXP, SEXP, SEXP);
 extern SEXP vctrs_as_index(SEXP, SEXP, SEXP, SEXP);
 extern SEXP vctrs_slice(SEXP, SEXP);
 extern SEXP vctrs_get(SEXP, SEXP);
-extern SEXP vec_split_along(SEXP);
+extern SEXP vctrs_init(SEXP, SEXP);
+extern SEXP vctrs_chop(SEXP, SEXP);
 extern SEXP vec_slice_seq(SEXP, SEXP, SEXP, SEXP);
+extern SEXP vec_slice_rep(SEXP, SEXP, SEXP);
 extern SEXP vec_restore(SEXP, SEXP, SEXP);
 extern SEXP vec_restore_default(SEXP, SEXP);
 extern SEXP vec_proxy(SEXP);
+extern SEXP vec_proxy_equal(SEXP);
 extern SEXP vctrs_unspecified(SEXP);
 extern SEXP vec_type(SEXP);
 extern SEXP vec_type_finalise(SEXP);
@@ -92,7 +98,7 @@ extern SEXP compact_seq(R_len_t, R_len_t, bool);
 extern SEXP init_compact_seq(int*, R_len_t, R_len_t, bool);
 
 // Defined below
-SEXP vctrs_init(SEXP);
+SEXP vctrs_init_library(SEXP);
 
 static const R_CallMethodDef CallEntries[] = {
   {"vctrs_list_get",                   (DL_FUNC) &vctrs_list_get, 2},
@@ -103,15 +109,18 @@ static const R_CallMethodDef CallEntries[] = {
   {"vctrs_n_fields",                   (DL_FUNC) &vctrs_n_fields, 1},
   {"vctrs_hash",                       (DL_FUNC) &vctrs_hash, 1},
   {"vctrs_hash_object",                (DL_FUNC) &vctrs_hash_object, 1},
-  {"vctrs_equal_object",               (DL_FUNC) &vctrs_equal_object, 3},
+  {"vctrs_equal_object",               (DL_FUNC) &vctrs_equal_object, 2},
   {"vctrs_in",                         (DL_FUNC) &vctrs_in, 2},
   {"vctrs_unique_loc",                 (DL_FUNC) &vctrs_unique_loc, 1},
   {"vctrs_duplicated",                 (DL_FUNC) &vctrs_duplicated, 1},
-  {"vctrs_split_id",                   (DL_FUNC) &vctrs_split_id, 1},
   {"vctrs_duplicated_any",             (DL_FUNC) &vctrs_duplicated_any, 1},
   {"vctrs_count",                      (DL_FUNC) &vctrs_count, 1},
   {"vctrs_id",                         (DL_FUNC) &vctrs_id, 1},
   {"vctrs_n_distinct",                 (DL_FUNC) &vctrs_n_distinct, 1},
+  {"vctrs_split",                      (DL_FUNC) &vec_split, 2},
+  {"vctrs_group_id",                   (DL_FUNC) &vctrs_group_id, 1},
+  {"vctrs_group_rle",                  (DL_FUNC) &vctrs_group_rle, 1},
+  {"vctrs_group_pos",                  (DL_FUNC) &vec_group_pos, 1},
   {"vctrs_size",                       (DL_FUNC) &vctrs_size, 1},
   {"vctrs_dim",                        (DL_FUNC) &vec_dim, 1},
   {"vctrs_dim_n",                      (DL_FUNC) &vctrs_dim_n, 1},
@@ -122,7 +131,7 @@ static const R_CallMethodDef CallEntries[] = {
   {"vctrs_compare",                    (DL_FUNC) &vctrs_compare, 3},
   {"vctrs_match",                      (DL_FUNC) &vctrs_match, 2},
   {"vctrs_typeof",                     (DL_FUNC) &vctrs_typeof, 2},
-  {"vctrs_init",                       (DL_FUNC) &vctrs_init, 1},
+  {"vctrs_init_library",               (DL_FUNC) &vctrs_init_library, 1},
   {"vctrs_is_vector",                  (DL_FUNC) &vctrs_is_vector, 1},
   {"vctrs_type2",                      (DL_FUNC) &vctrs_type2, 4},
   {"vctrs_typeof2",                    (DL_FUNC) &vctrs_typeof2, 2},
@@ -130,11 +139,14 @@ static const R_CallMethodDef CallEntries[] = {
   {"vctrs_as_index",                   (DL_FUNC) &vctrs_as_index, 4},
   {"vctrs_slice",                      (DL_FUNC) &vctrs_slice, 2},
   {"vctrs_get",                        (DL_FUNC) &vctrs_get, 2},
-  {"vctrs_split_along",                (DL_FUNC) &vec_split_along, 1},
+  {"vctrs_init",                       (DL_FUNC) &vctrs_init, 2},
+  {"vctrs_chop",                       (DL_FUNC) &vctrs_chop, 2},
   {"vctrs_slice_seq",                  (DL_FUNC) &vec_slice_seq, 4},
+  {"vctrs_slice_rep",                  (DL_FUNC) &vec_slice_rep, 3},
   {"vctrs_restore",                    (DL_FUNC) &vec_restore, 3},
   {"vctrs_restore_default",            (DL_FUNC) &vec_restore_default, 2},
   {"vctrs_proxy",                      (DL_FUNC) &vec_proxy, 1},
+  {"vctrs_proxy_equal",                (DL_FUNC) &vec_proxy_equal, 1},
   {"vctrs_unspecified",                (DL_FUNC) &vctrs_unspecified, 1},
   {"vctrs_type",                       (DL_FUNC) &vec_type, 1},
   {"vctrs_type_finalise",              (DL_FUNC) &vec_type_finalise, 1},
@@ -215,6 +227,7 @@ void vctrs_init_cast(SEXP ns);
 void vctrs_init_data(SEXP ns);
 void vctrs_init_dictionary(SEXP ns);
 void vctrs_init_names(SEXP ns);
+void vctrs_init_proxy_restore(SEXP ns);
 void vctrs_init_slice(SEXP ns);
 void vctrs_init_slice_assign(SEXP ns);
 void vctrs_init_type2(SEXP ns);
@@ -223,11 +236,12 @@ void vctrs_init_type_info(SEXP ns);
 void vctrs_init_unspecified(SEXP ns);
 void vctrs_init_utils(SEXP ns);
 
-SEXP vctrs_init(SEXP ns) {
+SEXP vctrs_init_library(SEXP ns) {
   vctrs_init_cast(ns);
   vctrs_init_data(ns);
   vctrs_init_dictionary(ns);
   vctrs_init_names(ns);
+  vctrs_init_proxy_restore(ns);
   vctrs_init_slice(ns);
   vctrs_init_slice_assign(ns);
   vctrs_init_type2(ns);

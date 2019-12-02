@@ -39,7 +39,7 @@ test_that("handles positive short row names (#220)", {
 })
 
 test_that("size is proxied", {
-  scoped_env_proxy()
+  local_env_proxy()
   expect_size(new_proxy(1:3), 3)
   expect_size(new_proxy(list(1, 2, 3)), 3)
   expect_size(new_proxy(foobar(list(1, 2, 3))), 3)

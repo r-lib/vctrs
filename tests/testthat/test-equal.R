@@ -17,9 +17,11 @@ test_that("correct behaviour for basic vectors", {
   expect_equal(vec_equal(c(1L, 2L), 1L), c(TRUE, FALSE))
   expect_equal(vec_equal(c(1, 2), 1), c(TRUE, FALSE))
   expect_equal(vec_equal(c("1", "2"), "1"), c(TRUE, FALSE))
+  expect_equal(vec_equal(as.raw(1:2), as.raw(1L)), c(TRUE, FALSE))
   expect_equal(vec_equal(list(1:3, 1:2), list(1:3)), c(TRUE, FALSE))
   expect_equal(vec_equal(list(1:3, 1.5), list(1:3)), c(TRUE, FALSE))
   expect_equal(vec_equal(list(as.raw(1:3), as.raw(1.5)), list(as.raw(1:3))), c(TRUE, FALSE))
+  expect_equal(vec_equal(list(1+1i, 1+0i), list(1+1i)), c(TRUE, FALSE))
   expect_equal(vec_equal(c(1, 2) + 1i, 1+1i), c(TRUE, FALSE))
 })
 
@@ -28,6 +30,7 @@ test_that("NAs are equal", {
   expect_true(vec_equal(NA_integer_, NA_integer_, na_equal = TRUE))
   expect_true(vec_equal(NA_real_, NA_real_, na_equal = TRUE))
   expect_true(vec_equal(NA_character_, NA_character_, na_equal = TRUE))
+  expect_true(vec_equal(list(NULL), list(NULL), na_equal = TRUE))
 })
 
 test_that("double special values", {
@@ -37,23 +40,83 @@ test_that("double special values", {
   expect_true(vec_equal(-Inf, -Inf))
 })
 
+test_that("`list(NULL)` is considered a missing value (#653)", {
+  expect_equal(vec_equal(list(NULL), list(NULL)), NA)
+  expect_equal(vec_equal(list(NULL), list(1)), NA)
+})
+
 test_that("can compare data frames", {
   df <- data.frame(x = 1:2, y = letters[2:1], stringsAsFactors = FALSE)
   expect_equal(vec_equal(df, df[1, ]), c(TRUE, FALSE))
 })
 
+test_that("can compare data frames with various types of columns", {
+  x1 <- data_frame(x = 1, y = 2)
+  y1 <- data_frame(x = 2, y = 1)
+
+  x2 <- data_frame(x = "a")
+  y2 <- data_frame(x = "b")
+
+  x3 <- data_frame(x = FALSE)
+  y3 <- data_frame(x = TRUE)
+
+  x4 <- data_frame(x = 1L)
+  y4 <- data_frame(x = 2L)
+
+  x5 <- data_frame(x = as.raw(0))
+  y5 <- data_frame(x = as.raw(1))
+
+  x6 <- data_frame(x = 1+0i)
+  y6 <- data_frame(x = 1+1i)
+
+  expect_false(vec_equal(x1, y1))
+  expect_false(vec_equal(x2, y2))
+  expect_false(vec_equal(x3, y3))
+  expect_false(vec_equal(x4, y4))
+  expect_false(vec_equal(x5, y5))
+  expect_false(vec_equal(x6, y6))
+})
+
+test_that("can compare data frames with data frame columns", {
+  df1 <- data_frame(x = data_frame(a = 1))
+  df2 <- data_frame(x = data_frame(a = 2))
+
+  expect_true(vec_equal(df1, df1))
+  expect_false(vec_equal(df1, df2))
+})
+
+test_that("can compare data frames with list columns", {
+  df1 <- data_frame(x = list(a = 1, b = 2), y = c(1, 1))
+  df2 <- data_frame(x = list(a = 0, b = 2), y = c(1, 1))
+
+  expect_equal(vec_equal(df1, df2), c(FALSE, TRUE))
+})
+
 test_that("data frames must have same size and columns", {
-  expect_false(.Call(vctrs_equal,
+  expect_error(.Call(vctrs_equal,
     data.frame(x = 1),
     data.frame(x = 1, y = 2),
     TRUE
-  ))
+    ),
+    "must have the same number of columns"
+  )
 
-  expect_false(.Call(vctrs_equal,
+  # Names are not checked, as `vec_cast_common()` should take care of the type.
+  # So if `vec_cast_common()` is not called, or is improperly specified, then
+  # this could result in false equality.
+  expect_true(.Call(vctrs_equal,
     data.frame(x = 1),
     data.frame(y = 1),
     TRUE
   ))
+
+  expect_error(.Call(vctrs_equal,
+    data.frame(x = 1:2, y = 3:4),
+    data.frame(x = 1, y = 2),
+    TRUE
+    ),
+    "must have same types and lengths"
+  )
 
   expect_false(.Call(vctrs_equal,
     data.frame(x = 1),
@@ -69,6 +132,25 @@ test_that("data frames must have same size and columns", {
 
 })
 
+test_that("can compare data frames with 0 columns", {
+  x <- new_data_frame(n = 1L)
+  expect_true(vec_equal(x, x))
+})
+
+test_that("can compare lists of scalars (#643)", {
+  lst <- list(new_sclr(x = 1))
+  expect_true(vec_equal(lst, lst))
+
+  # NA does not propagate
+  lst <- list(new_sclr(y = NA))
+  expect_true(vec_equal(lst, lst))
+
+  df <- data.frame(x = c(1, 4, 3), y = c(2, 8, 9))
+  model <- lm(y ~ x, df)
+  lst <- list(model)
+  expect_true(vec_equal(lst, lst))
+})
+
 test_that("can determine equality of strings with different encodings (#553)", {
   for (x_encoding in encodings()) {
     for (y_encoding in encodings()) {
@@ -79,7 +161,7 @@ test_that("can determine equality of strings with different encodings (#553)", {
 })
 
 test_that("equality can be determined when strings have identical encodings", {
-  encs <- c(encodings(), list(bytes = encoding_bytes()))
+  encs <- encodings(bytes = TRUE)
 
   for (enc in encs) {
     expect_true(vec_equal(enc, enc))
@@ -94,6 +176,18 @@ test_that("equality is known to fail when comparing bytes to other encodings", {
     expect_error(vec_equal(encoding_bytes(), enc), error)
     expect_error(vec_equal(enc, encoding_bytes()), error)
   }
+})
+
+test_that("`na_equal` is validated", {
+  expect_error(vec_equal(1, 1, na_equal = 1), class = "vctrs_error_assert_ptype")
+  expect_error(vec_equal(1, 1, na_equal = c(TRUE, FALSE)), class = "vctrs_error_assert_size")
+})
+
+test_that("can compare lists of expressions", {
+  x <- list(expression(x), expression(y))
+  y <- list(expression(x))
+
+  expect_equal(vec_equal(x, y), c(TRUE, FALSE))
 })
 
 # object ------------------------------------------------------------------
@@ -142,6 +236,11 @@ test_that("not equal if attributes not equal", {
   x1 <- structure(1:10, x = 1, y = 2)
   x2 <- structure(1:10, x = 1, y = 3)
   expect_false(obj_equal(x1, x2))
+})
+
+test_that("can compare expressions", {
+  expect_true(obj_equal(expression(x), expression(x)))
+  expect_false(obj_equal(expression(x), expression(y)))
 })
 
 # na ----------------------------------------------------------------------
@@ -200,29 +299,19 @@ test_that("NA propagate from data frames columns", {
   expect_identical(vec_equal(y, x, na_equal = TRUE), c(FALSE, FALSE, FALSE))
 })
 
-test_that("NA propagate from list components", {
-  expect_identical(obj_equal(NA, NA, na_equal = FALSE), NA)
-  expect_identical(vec_equal(list(NA), list(NA)), NA)
-
-  expect_true(obj_equal(NA, NA, na_equal = TRUE))
-  expect_true(vec_equal(list(NA), list(NA), na_equal = TRUE))
+test_that("NA do not propagate from list components (#662)", {
+  expect_true(obj_equal(NA, NA))
+  expect_true(vec_equal(list(NA), list(NA)))
 })
 
-test_that("NA propagate from vector names when comparing objects (#217)", {
-  # FIXME: Not clear what should we do in the recursive case. Should we
-  # compare attributes of non S3 vectors at all?
-
+test_that("NA do not propagate from names when comparing objects", {
   x <- set_names(1:3, c("a", "b", NA))
   y <- set_names(1:3, c("a", NA, NA))
 
-  expect_identical(obj_equal(x, x, na_equal = FALSE), NA)
-  expect_identical(obj_equal(x, x, na_equal = TRUE), TRUE)
+  expect_true(obj_equal(x, x))
+  expect_false(obj_equal(x, y))
 
-  expect_identical(obj_equal(x, y, na_equal = FALSE), NA)
-  expect_identical(obj_equal(x, y, na_equal = TRUE), FALSE)
-
-  expect_identical(vec_equal(list(x, x, y), list(x, y, y)), c(NA, NA, NA))
-  expect_identical(vec_equal(list(x, x, y), list(x, y, y), na_equal = TRUE), c(TRUE, FALSE, TRUE))
+  expect_equal(vec_equal(list(x, x, y), list(x, y, y)), c(TRUE, FALSE, TRUE))
 })
 
 test_that("NA do not propagate from attributes", {
@@ -252,14 +341,14 @@ test_that("NA do not propagate from function bodies or formals", {
 # proxy -------------------------------------------------------------------
 
 test_that("vec_equal() takes vec_proxy() by default", {
-  scoped_env_proxy()
+  local_env_proxy()
   x <- new_proxy(1:3)
   y <- new_proxy(3:1)
   expect_identical(vec_equal(x, y), lgl(FALSE, TRUE, FALSE))
 })
 
 test_that("vec_equal() takes vec_proxy_equal() if implemented", {
-  scoped_comparable_tuple()
+  local_comparable_tuple()
 
   x <- tuple(1:3, 1:3)
   y <- tuple(1:3, 4:6)
@@ -333,6 +422,19 @@ test_that("data frames are compared row wise", {
 
   df2 <- data_frame(x = c(1, 2), y = c("a", "a"))
   expect_false(vec_duplicate_all(df2))
+})
+
+test_that("the equality proxy is taken recursively", {
+  local_comparable_tuple()
+
+  x <- tuple(c(1, 1, 2), 1:3)
+  df <- data_frame(x = x)
+
+  y <- tuple(c(1, 1, 1), 1:3)
+  df2 <- data_frame(y = y)
+
+  expect_equal(vec_duplicate_all(df), FALSE)
+  expect_equal(vec_duplicate_all(df2), TRUE)
 })
 
 test_that("can detect duplicates among strings with different encodings", {

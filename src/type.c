@@ -117,8 +117,6 @@ SEXP vctrs_type_common_impl(SEXP dots, SEXP ptype) {
 
 
 static SEXP vctrs_type2_common(SEXP current, SEXP next, struct counters* counters) {
-  next = PROTECT(vec_type(next));
-
   int left;
   current = vec_type2(current, next, counters->curr_arg, counters->next_arg, &left);
 
@@ -128,7 +126,6 @@ static SEXP vctrs_type2_common(SEXP current, SEXP next, struct counters* counter
     counters_shift(counters);
   }
 
-  UNPROTECT(1);
   return current;
 }
 

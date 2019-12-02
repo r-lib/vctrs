@@ -18,10 +18,12 @@ SEXP strings_posixt = NULL;
 SEXP strings_posixlt = NULL;
 SEXP strings_vctrs_vctr = NULL;
 SEXP strings_vctrs_list_of = NULL;
+SEXP strings_list = NULL;
 
 SEXP classes_data_frame = NULL;
 SEXP classes_tibble = NULL;
 SEXP classes_list_of = NULL;
+SEXP classes_vctrs_group_rle = NULL;
 
 static SEXP syms_as_data_frame2 = NULL;
 static SEXP fns_as_data_frame2 = NULL;
@@ -284,6 +286,21 @@ SEXP s3_find_method(const char* generic, SEXP x) {
   return R_NilValue;
 }
 
+// [[ include("vctrs.h") ]]
+enum vctrs_dbl_class dbl_classify(double x) {
+  if (!isnan(x)) {
+    return vctrs_dbl_number;
+  }
+
+  union vctrs_dbl_indicator indicator;
+  indicator.value = x;
+
+  if (indicator.key[vctrs_indicator_pos] == 1954) {
+    return vctrs_dbl_missing;
+  } else {
+    return vctrs_dbl_nan;
+  }
+}
 
 // Initialised at load time
 SEXP compact_seq_attrib = NULL;
@@ -966,7 +983,10 @@ SEXP strings_unique = NULL;
 SEXP strings_universal = NULL;
 SEXP strings_check_unique = NULL;
 SEXP strings_key = NULL;
-SEXP strings_id = NULL;
+SEXP strings_pos = NULL;
+SEXP strings_val = NULL;
+SEXP strings_group = NULL;
+SEXP strings_length = NULL;
 
 SEXP syms_i = NULL;
 SEXP syms_n = NULL;
@@ -1009,7 +1029,7 @@ void vctrs_init_utils(SEXP ns) {
 
   // Holds the CHARSXP objects because unlike symbols they can be
   // garbage collected
-  strings = Rf_allocVector(STRSXP, 13);
+  strings = Rf_allocVector(STRSXP, 16);
   R_PreserveObject(strings);
 
   strings_dots = Rf_mkChar("...");
@@ -1048,8 +1068,17 @@ void vctrs_init_utils(SEXP ns) {
   strings_key = Rf_mkChar("key");
   SET_STRING_ELT(strings, 11, strings_key);
 
-  strings_id = Rf_mkChar("id");
-  SET_STRING_ELT(strings, 12, strings_id);
+  strings_pos = Rf_mkChar("pos");
+  SET_STRING_ELT(strings, 12, strings_pos);
+
+  strings_val = Rf_mkChar("val");
+  SET_STRING_ELT(strings, 13, strings_val);
+
+  strings_group = Rf_mkChar("group");
+  SET_STRING_ELT(strings, 14, strings_group);
+
+  strings_length = Rf_mkChar("length");
+  SET_STRING_ELT(strings, 15, strings_length);
 
 
   classes_data_frame = Rf_allocVector(STRSXP, 1);
@@ -1071,13 +1100,21 @@ void vctrs_init_utils(SEXP ns) {
   SET_STRING_ELT(classes_tibble, 2, strings_data_frame);
 
 
-  classes_list_of = Rf_allocVector(STRSXP, 2);
+  classes_list_of = Rf_allocVector(STRSXP, 3);
   R_PreserveObject(classes_list_of);
 
   strings_vctrs_list_of = Rf_mkChar("vctrs_list_of");
   SET_STRING_ELT(classes_list_of, 0, strings_vctrs_list_of);
-
   SET_STRING_ELT(classes_list_of, 1, strings_vctrs_vctr);
+  SET_STRING_ELT(classes_list_of, 2, Rf_mkChar("list"));
+
+
+  classes_vctrs_group_rle = Rf_allocVector(STRSXP, 3);
+  R_PreserveObject(classes_vctrs_group_rle);
+
+  SET_STRING_ELT(classes_vctrs_group_rle, 0, Rf_mkChar("vctrs_group_rle"));
+  SET_STRING_ELT(classes_vctrs_group_rle, 1, strings_vctrs_rcrd);
+  SET_STRING_ELT(classes_vctrs_group_rle, 2, strings_vctrs_vctr);
 
 
   vctrs_shared_empty_lgl = Rf_allocVector(LGLSXP, 0);
@@ -1198,4 +1235,8 @@ void vctrs_init_utils(SEXP ns) {
   compact_rep_attrib = Rf_cons(R_NilValue, R_NilValue);
   R_PreserveObject(compact_rep_attrib);
   SET_TAG(compact_rep_attrib, Rf_install("vctrs_compact_rep"));
+
+  // We assume the following in `union vctrs_dbl_indicator`
+  VCTRS_ASSERT(sizeof(double) == sizeof(int64_t));
+  VCTRS_ASSERT(sizeof(double) == 2 * sizeof(int));
 }

@@ -57,7 +57,7 @@ test_that("vec_ptype_common() includes index in argument tag", {
   df2 <- tibble(x = tibble(y = tibble(z = "a")))
 
   # Create a column name too large for default buffer
-  nm <- strrep("foobarfoobar", 10)
+  nm <- str_dup("foobarfoobar", 10)
   large_df1 <- set_names(df1, nm)
   large_df2 <- set_names(df2, nm)
 
@@ -108,8 +108,9 @@ test_that("can retrieve type info", {
   exp <- list(type = "s3", proxy_method = NULL)
   expect_identical(vec_type_info(~foo), exp)
 
-  exp <- list(type = "dataframe", proxy_method = vec_proxy.data.frame)
-  expect_identical(vec_type_info(mtcars), exp)
+  x <- as.POSIXlt(new_datetime(0))
+  exp <- list(type = "s3", proxy_method = vec_proxy.POSIXlt)
+  expect_identical(vec_type_info(x), exp)
 })
 
 test_that("can retrieve proxy info", {
@@ -119,8 +120,10 @@ test_that("can retrieve proxy info", {
   exp <- list(type = "scalar", proxy_method = NULL, proxy = ~foo)
   expect_identical(vec_proxy_info(~foo), exp)
 
-  exp <- list(type = "dataframe", proxy_method = vec_proxy.data.frame, proxy = mtcars)
-  expect_identical(vec_proxy_info(mtcars), exp)
+  x <- as.POSIXlt(new_datetime(0))
+  proxy <- new_data_frame(unclass(x))
+  exp <- list(type = "dataframe", proxy_method = vec_proxy.POSIXlt, proxy = proxy)
+  expect_identical(vec_proxy_info(x), exp)
 })
 
 test_that("class_type() detects classes", {

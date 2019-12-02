@@ -8,6 +8,8 @@
 
 typedef R_xlen_t r_ssize_t;
 
+#define VCTRS_ASSERT(condition) ((void)sizeof(char[1 - 2*!(condition)]))
+
 
 // Vector types -------------------------------------------------
 
@@ -212,9 +214,10 @@ SEXP vec_cast(SEXP x, SEXP to, struct vctrs_arg* x_arg, struct vctrs_arg* to_arg
 SEXP vec_cast_common(SEXP xs, SEXP to);
 SEXP vec_coercible_cast(SEXP x, SEXP to, struct vctrs_arg* x_arg, struct vctrs_arg* to_arg);
 SEXP vec_slice(SEXP x, SEXP index);
-SEXP vec_split_along(SEXP x);
+SEXP vec_chop(SEXP x, SEXP indices);
 SEXP vec_slice_shaped(enum vctrs_type type, SEXP x, SEXP index);
 SEXP vec_assign(SEXP x, SEXP index, SEXP value);
+bool vec_requires_fallback(SEXP x, struct vctrs_proxy_info info);
 SEXP vec_init(SEXP x, R_len_t n);
 SEXP vec_type(SEXP x);
 SEXP vec_type_finalise(SEXP x);
@@ -222,6 +225,7 @@ bool vec_is_unspecified(SEXP x);
 SEXP vec_recycle(SEXP x, R_len_t size);
 SEXP vec_recycle_common(SEXP xs, R_len_t size);
 SEXP vec_names(SEXP x);
+SEXP vec_group_pos(SEXP x);
 
 SEXP vec_type2(SEXP x,
                SEXP y,
@@ -242,9 +246,9 @@ SEXP chr_assign(SEXP out, SEXP index, SEXP value, bool clone);
 SEXP list_assign(SEXP out, SEXP index, SEXP value, bool clone);
 SEXP df_assign(SEXP out, SEXP index, SEXP value, bool clone);
 
-// Most vector predicates return `int` because missing values are
-// propagated as `NA_LOGICAL`
-int equal_object(SEXP x, SEXP y, bool na_equal);
+// equal_object() never propagates missingness, so
+// it can return a `bool`
+bool equal_object(SEXP x, SEXP y);
 bool equal_names(SEXP x, SEXP y);
 
 /**
@@ -264,6 +268,75 @@ void hash_fill(uint32_t* p, R_len_t n, SEXP x);
 
 bool duplicated_any(SEXP names);
 
+// Rowwise operations -------------------------------------------
+
+// Used in functions that treat data frames as vectors of rows, but
+// iterate over them column wise. Examples are `vec_equal()` and
+// `vec_compare()`.
+
+/**
+ * @member out A vector of size `n_row` containing the output of the
+ *   row wise data frame operation.
+ * @member row_known A boolean array of size `n_row`. Allocated on the R heap.
+ *   Initially, all values are initialized to `false`. As we iterate along the
+ *   columns, we flip the corresponding row's `row_known` value to `true` if we
+ *   can determine the `out` value for that row from the current columns.
+ *   Once a row's `row_known` value is `true`, we never check that row again
+ *   as we continue through the columns.
+ * @member p_row_known A pointer to the boolean array stored in `row_known`.
+ *   Initialized with `(bool*) RAW(info.row_known)`.
+ * @member remaining The number of `row_known` values that are still `false`.
+ *   If this hits `0` before we traverse the entire data frame, we can exit
+ *   immediately because all `out` values are already known.
+ */
+struct vctrs_df_rowwise_info {
+  SEXP out;
+  SEXP row_known;
+  bool* p_row_known;
+  R_len_t remaining;
+};
+
+#define PROTECT_DF_ROWWISE_INFO(info, n) do {  \
+  PROTECT((info)->out);                        \
+  PROTECT((info)->row_known);                  \
+  *n += 2;                                     \
+} while (0)
+
+// Missing values -----------------------------------------------
+
+// Annex F of C99 specifies that `double` should conform to the IEEE 754
+// type `binary64`, which is defined as:
+// * 1  bit : sign
+// * 11 bits: exponent
+// * 52 bits: significand
+//
+// R stores the value "1954" in the last 32 bits: this payload marks
+// the value as a NA, not a regular NaN.
+//
+// On big endian systems, this corresponds to the second element of an
+// integer array of size 2. On little endian systems, this is flipped
+// and the NA marker is in the first element.
+//
+// The type assumptions made here are asserted in `vctrs_init_utils()`
+
+#ifdef WORDS_BIGENDIAN
+static const int vctrs_indicator_pos = 1;
+#else
+static const int vctrs_indicator_pos = 0;
+#endif
+
+union vctrs_dbl_indicator {
+  double value;        // 8 bytes
+  unsigned int key[2]; // 4 * 2 bytes
+};
+
+enum vctrs_dbl_class {
+  vctrs_dbl_number,
+  vctrs_dbl_missing,
+  vctrs_dbl_nan
+};
+
+enum vctrs_dbl_class dbl_classify(double x);
 
 // Names --------------------------------------------------------
 

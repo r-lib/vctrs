@@ -217,6 +217,12 @@ static SEXP vec_slice_fallback(SEXP x, SEXP index) {
                          syms_i, index);
 }
 
+bool vec_requires_fallback(SEXP x, struct vctrs_proxy_info info) {
+  return OBJECT(x) &&
+    info.proxy_method == R_NilValue &&
+    info.type != vctrs_type_dataframe;
+}
+
 static SEXP vec_slice_base(enum vctrs_type type, SEXP x, SEXP index) {
   switch (type) {
   case vctrs_type_logical:   return lgl_slice(x, index);
@@ -231,6 +237,46 @@ static SEXP vec_slice_base(enum vctrs_type type, SEXP x, SEXP index) {
   }
 }
 
+// Replace any `NA` name caused by `NA` index with the empty
+// string. It's ok mutate the names vector since it is freshly
+// created, but we make an additional check for that anyways
+// (and the empty string is persistently protected anyway).
+static void repair_na_names(SEXP names, SEXP index) {
+  if (!NO_REFERENCES(names)) {
+    Rf_errorcall(R_NilValue, "Internal error: `names` must not be referenced.");
+  }
+
+  // No possible way to have `NA_integer_` in a compact seq
+  if (is_compact_seq(index)) {
+    return;
+  }
+
+  R_len_t n = Rf_length(names);
+
+  if (n == 0) {
+    return;
+  }
+
+  SEXP* p_names = STRING_PTR(names);
+
+  // Special handling for a compact_rep object with repeated `NA`
+  if (is_compact_rep(index)) {
+    for (R_len_t i = 0; i < n; ++i) {
+      p_names[i] = strings_empty;
+    }
+
+    return;
+  }
+
+  const int* p_i = INTEGER_RO(index);
+
+  for (R_len_t i = 0; i < n; ++i) {
+    if (p_i[i] == NA_INTEGER) {
+      p_names[i] = strings_empty;
+    }
+  }
+}
+
 static SEXP slice_names(SEXP names, SEXP index) {
   if (names == R_NilValue) {
     return names;
@@ -238,18 +284,7 @@ static SEXP slice_names(SEXP names, SEXP index) {
 
   names = PROTECT(chr_slice(names, index));
 
-  // Replace any `NA` name caused by `NA` index with the empty
-  // string. It's ok mutate the names vector since it is freshly
-  // created (and the empty string is persistently protected anyway).
-  R_len_t n = Rf_length(names);
-  SEXP* namesp = STRING_PTR(names);
-  const int* ip = INTEGER_RO(index);
-
-  for (R_len_t i = 0; i < n; ++i) {
-    if (ip[i] == NA_INTEGER) {
-      namesp[i] = strings_empty;
-    }
-  }
+  repair_na_names(names, index);
 
   UNPROTECT(1);
   return names;
@@ -280,7 +315,7 @@ SEXP vec_slice_impl(SEXP x, SEXP index) {
 
   // Fallback to `[` if the class doesn't implement a proxy. This is
   // to be maximally compatible with existing classes.
-  if (OBJECT(x) && info.proxy_method == R_NilValue) {
+  if (vec_requires_fallback(x, info)) {
     if (info.type == vctrs_type_scalar) {
       Rf_errorcall(R_NilValue, "Can't slice a scalar");
     }
@@ -386,12 +421,21 @@ SEXP vec_slice(SEXP x, SEXP index) {
 
 // [[ include("vctrs.h") ]]
 SEXP vec_init(SEXP x, R_len_t n) {
+  struct vctrs_arg x_arg = new_wrapper_arg(NULL, "x");
+  vec_assert(x, &x_arg);
+
   SEXP i = PROTECT(compact_rep(NA_INTEGER, n));
 
   SEXP out = vec_slice_impl(x, i);
 
   UNPROTECT(1);
   return out;
+}
+
+// [[ register() ]]
+SEXP vctrs_init(SEXP x, SEXP n) {
+  R_len_t n_ = r_int_get(n, 0);
+  return vec_init(x, n_);
 }
 
 // Exported for testing
@@ -402,6 +446,19 @@ SEXP vec_slice_seq(SEXP x, SEXP start, SEXP size, SEXP increasing) {
   bool increasing_ = r_lgl_get(increasing, 0);
 
   SEXP index = PROTECT(compact_seq(start_, size_, increasing_));
+  SEXP out = vec_slice_impl(x, index);
+
+  UNPROTECT(1);
+  return out;
+}
+
+// Exported for testing
+// [[ register() ]]
+SEXP vec_slice_rep(SEXP x, SEXP i, SEXP n) {
+  R_len_t i_ = r_int_get(i, 0);
+  R_len_t n_ = r_int_get(n, 0);
+
+  SEXP index = PROTECT(compact_rep(i_, n_));
   SEXP out = vec_slice_impl(x, index);
 
   UNPROTECT(1);
@@ -602,6 +659,11 @@ SEXP vec_as_index(SEXP i, R_len_t n, SEXP names) {
 
 SEXP vec_as_index_opts(SEXP i, R_len_t n, SEXP names,
                        struct vec_as_index_options* opts) {
+
+  if (vec_dim_n(i) != 1) {
+    Rf_errorcall(R_NilValue, "`i` must have one dimension, not %d.", vec_dim_n(i));
+  }
+
   switch (TYPEOF(i)) {
   case NILSXP: return vctrs_shared_empty_int;
   case INTSXP: return int_as_index(i, n, opts);
@@ -656,7 +718,7 @@ static SEXP vec_get_impl(SEXP x, SEXP index) {
 
   // Fallback to `[[` if the class doesn't implement a proxy. This is
   // to be maximally compatible with existing classes.
-  if (OBJECT(x) && info.proxy_method == R_NilValue) {
+  if (vec_requires_fallback(x, info)) {
     if (info.type == vctrs_type_scalar) {
       Rf_errorcall(R_NilValue, "Can't extract from a scalar");
     }
@@ -758,248 +820,133 @@ SEXP vctrs_get(SEXP x, SEXP index) {
 
 // -----------------------------------------------------------------------------
 
-SEXP split_along_fallback_shaped(SEXP x) {
-  R_len_t size = vec_size(x);
+/*
+ * @member proxy_info The result of `vec_proxy_info(x)`.
+ * @member restore_size The restore size used in each call to `vec_restore()`.
+ *   Will always be 1 for `indices = NULL`.
+ * @member p_restore_size A pointer to update the restore size.
+ * @member index The current index value. If `indices` are provided, this is
+ *   the i-th element of indices. For the default of `indices = NULL`, this
+ *   starts at 0 and is incremented by 1 repeatedly through `p_index`.
+ * @member p_index A pointer to increment the `index` value for the default
+ *   case.
+ * @member has_indices Whether indices were provided.
+ * @member out_size The size of `out`. Will be `vec_size(x)` in the default
+ *   case, otherwise will be `vec_size(indices)`.
+ * @member out The list container for the result.
+ */
+struct vctrs_chop_info {
+  struct vctrs_proxy_info proxy_info;
+  SEXP restore_size;
+  int* p_restore_size;
+  SEXP index;
+  int* p_index;
+  bool has_indices;
+  R_len_t out_size;
+  SEXP out;
+};
 
-  SEXP index = PROTECT(r_int(0));
-  int* p_index = INTEGER(index);
+#define PROTECT_CHOP_INFO(info, n) do {       \
+  PROTECT_PROXY_INFO(&(info)->proxy_info, n); \
+  PROTECT((info)->restore_size);              \
+  PROTECT((info)->index);                     \
+  PROTECT((info)->out);                       \
+  *n += 3;                                    \
+} while (0)                                   \
 
-  PROTECT_INDEX elt_prot_idx;
-  SEXP elt = R_NilValue;
-  PROTECT_WITH_INDEX(elt, &elt_prot_idx);
+static struct vctrs_chop_info init_chop_info(SEXP x, SEXP indices) {
+  int nprot = 0;
 
-  SEXP out = PROTECT(Rf_allocVector(VECSXP, size));
+  struct vctrs_chop_info info;
 
-  for (R_len_t i = 0; i < size; ++i) {
-    ++(*p_index);
+  info.proxy_info = vec_proxy_info(x);
+  PROTECT_PROXY_INFO(&info.proxy_info, &nprot);
 
-    // `vec_slice_fallback()` will also `vec_restore()` for us
-    elt = vec_slice_fallback(x, index);
-    REPROTECT(elt, elt_prot_idx);
+  info.restore_size = PROTECT_N(r_int(1), &nprot);
+  info.p_restore_size = INTEGER(info.restore_size);
 
-    SET_VECTOR_ELT(out, i, elt);
+  info.index = PROTECT_N(r_int(0), &nprot);
+  info.p_index = INTEGER(info.index);
+
+  if (indices == R_NilValue) {
+    info.out_size = vec_size(x);
+    info.has_indices = false;
+  } else {
+    info.out_size = vec_size(indices);
+    info.has_indices = true;
   }
+
+  info.out = PROTECT_N(Rf_allocVector(VECSXP, info.out_size), &nprot);
+
+  UNPROTECT(nprot);
+  return info;
+}
+
+// -----------------------------------------------------------------------------
+
+static SEXP chop(SEXP x, SEXP indices, struct vctrs_chop_info info);
+static SEXP chop_shaped(SEXP x, SEXP indices, struct vctrs_chop_info info);
+static SEXP chop_df(SEXP x, SEXP indices, struct vctrs_chop_info info);
+static SEXP chop_fallback(SEXP x, SEXP indices, struct vctrs_chop_info info);
+static SEXP chop_fallback_shaped(SEXP x, SEXP indices, struct vctrs_chop_info info);
+
+static SEXP vec_chop_impl(SEXP x, SEXP indices);
+static SEXP vec_chop_base(SEXP x, SEXP indices, struct vctrs_chop_info info);
+
+static SEXP vec_as_indices(SEXP indices, R_len_t n, SEXP names);
+
+// [[ register() ]]
+SEXP vctrs_chop(SEXP x, SEXP indices) {
+  R_len_t n = vec_size(x);
+  SEXP names = PROTECT(vec_names(x));
+
+  indices = PROTECT(vec_as_indices(indices, n, names));
+
+  SEXP out = PROTECT(vec_chop(x, indices));
 
   UNPROTECT(3);
   return out;
 }
 
-SEXP split_along_fallback(SEXP x) {
-  R_len_t size = vec_size(x);
+// [[ include("vctrs.h") ]]
+SEXP vec_chop(SEXP x, SEXP indices) {
+  SEXP out = PROTECT(vec_chop_impl(x, indices));
+  init_list_of(out, vec_type(x));
 
-  SEXP restore_size = PROTECT(r_int(1));
-
-  SEXP index = PROTECT(r_int(0));
-  int* p_index = INTEGER(index);
-
-  PROTECT_INDEX elt_prot_idx;
-  SEXP elt = R_NilValue;
-  PROTECT_WITH_INDEX(elt, &elt_prot_idx);
-
-  SEXP out = PROTECT(Rf_allocVector(VECSXP, size));
-
-  // Construct call with symbols, not values, for performance
-  SEXP call = PROTECT(Rf_lang3(syms_bracket, syms_x, syms_i));
-
-  SEXP env = PROTECT(r_new_environment(R_GlobalEnv, 2));
-  Rf_defineVar(syms_bracket, fns_bracket, env);
-  Rf_defineVar(syms_x, x, env);
-  Rf_defineVar(syms_i, index, env);
-
-  for (R_len_t i = 0; i < size; ++i) {
-    ++(*p_index);
-
-    elt = Rf_eval(call, env);
-    REPROTECT(elt, elt_prot_idx);
-
-    // Restore attributes only if `[` fallback doesn't
-    if (ATTRIB(elt) == R_NilValue) {
-      elt = vec_restore(elt, x, restore_size);
-    }
-
-    SET_VECTOR_ELT(out, i, elt);
-  }
-
-  UNPROTECT(6);
+  UNPROTECT(1);
   return out;
 }
 
-SEXP split_along_shaped(SEXP x, struct vctrs_proxy_info info) {
-  R_len_t size = vec_size(x);
-
-  SEXP restore_size = PROTECT(r_int(1));
-
-  SEXP index = PROTECT(r_int(0));
-  int* p_index = INTEGER(index);
-
-  PROTECT_INDEX elt_prot_idx;
-  SEXP elt = R_NilValue;
-  PROTECT_WITH_INDEX(elt, &elt_prot_idx);
-
-  SEXP out = PROTECT(Rf_allocVector(VECSXP, size));
-
-  SEXP data = info.proxy;
-
-  SEXP dim_names = PROTECT(Rf_getAttrib(x, R_DimNamesSymbol));
-
-  SEXP row_names = R_NilValue;
-  if (dim_names != R_NilValue) {
-    row_names = VECTOR_ELT(dim_names, 0);
-  }
-
-  PROTECT_INDEX new_dim_names_prot_idx;
-  SEXP new_dim_names = R_NilValue;
-  PROTECT_WITH_INDEX(new_dim_names, &new_dim_names_prot_idx);
-
-  PROTECT_INDEX new_row_names_prot_idx;
-  SEXP new_row_names = R_NilValue;
-  PROTECT_WITH_INDEX(new_row_names, &new_row_names_prot_idx);
-
-  for (R_len_t i = 0; i < size; ++i) {
-    ++(*p_index);
-
-    elt = vec_slice_shaped(info.type, data, index);
-    REPROTECT(elt, elt_prot_idx);
-
-    if (dim_names != R_NilValue) {
-      if (row_names != R_NilValue) {
-        new_dim_names = Rf_shallow_duplicate(dim_names);
-        REPROTECT(new_dim_names, new_dim_names_prot_idx);
-
-        new_row_names = slice_names(row_names, index);
-        REPROTECT(new_row_names, new_row_names_prot_idx);
-
-        SET_VECTOR_ELT(new_dim_names, 0, new_row_names);
-
-        Rf_setAttrib(elt, R_DimNamesSymbol, new_dim_names);
-      } else {
-        Rf_setAttrib(elt, R_DimNamesSymbol, dim_names);
-      }
-    }
-
-    elt = vec_restore(elt, x, restore_size);
-
-    SET_VECTOR_ELT(out, i, elt);
-  }
-
-  UNPROTECT(7);
-  return out;
-}
-
-SEXP split_along(SEXP x, struct vctrs_proxy_info info) {
-  R_len_t size = vec_size(x);
-
-  SEXP restore_size = PROTECT(r_int(1));
-
-  SEXP index = PROTECT(r_int(0));
-  int* p_index = INTEGER(index);
-
-  PROTECT_INDEX elt_prot_idx;
-  SEXP elt = R_NilValue;
-  PROTECT_WITH_INDEX(elt, &elt_prot_idx);
-
-  SEXP out = PROTECT(Rf_allocVector(VECSXP, size));
-
-  SEXP data = info.proxy;
-
-  SEXP names = PROTECT(Rf_getAttrib(x, R_NamesSymbol));
-
-  PROTECT_INDEX name_prot_idx;
-  SEXP name = R_NilValue;
-  PROTECT_WITH_INDEX(name, &name_prot_idx);
-
-  for (R_len_t i = 0; i < size; ++i) {
-    ++(*p_index);
-
-    elt = vec_slice_base(info.type, data, index);
-    REPROTECT(elt, elt_prot_idx);
-
-    if (names != R_NilValue) {
-      name = slice_names(names, index);
-      REPROTECT(name, name_prot_idx);
-      r_poke_names(elt, name);
-    }
-
-    elt = vec_restore(elt, x, restore_size);
-
-    SET_VECTOR_ELT(out, i, elt);
-  }
-
-  UNPROTECT(6);
-  return out;
-}
-
-SEXP split_along_df(SEXP x, struct vctrs_proxy_info info) {
-  R_len_t size = vec_size(x);
-
-  SEXP restore_size = PROTECT(r_int(1));
-
-  SEXP index = PROTECT(r_int(0));
-  int* p_index = INTEGER(index);
-
-  PROTECT_INDEX elt_prot_idx;
-  SEXP elt = R_NilValue;
-  PROTECT_WITH_INDEX(elt, &elt_prot_idx);
-
-  SEXP out = PROTECT(Rf_allocVector(VECSXP, size));
-
-  SEXP data = info.proxy;
-
-  SEXP row_names = PROTECT(get_rownames(data));
-  bool has_row_names = TYPEOF(row_names) == STRSXP;
-
-  for (R_len_t i = 0; i < size; ++i) {
-    ++(*p_index);
-
-    elt = df_slice(data, index);
-    REPROTECT(elt, elt_prot_idx);
-
-    if (has_row_names) {
-      SEXP new_row_names = PROTECT(slice_rownames(row_names, index));
-      Rf_setAttrib(elt, R_RowNamesSymbol, new_row_names);
-      UNPROTECT(1);
-    }
-
-    elt = vec_restore(elt, x, restore_size);
-
-    SET_VECTOR_ELT(out, i, elt);
-  }
-
-  UNPROTECT(5);
-  return out;
-}
-
-// Used in `as_df_row()` to turn `x` into a list like:
-// list(vec_slice(x, 1L), vec_slice(x, 2L), ...)
-// but in a more efficient way
-// [[ include("vctrs.h"); register() ]]
-SEXP vec_split_along(SEXP x) {
+static SEXP vec_chop_impl(SEXP x, SEXP indices) {
   int nprot = 0;
 
-  struct vctrs_proxy_info info = vec_proxy_info(x);
-  PROTECT_PROXY_INFO(&info, &nprot);
+  struct vctrs_chop_info info = init_chop_info(x, indices);
+  PROTECT_CHOP_INFO(&info, &nprot);
+
+  SEXP out = PROTECT_N(vec_chop_base(x, indices, info), &nprot);
+
+  UNPROTECT(nprot);
+  return out;
+}
+
+static SEXP vec_chop_base(SEXP x, SEXP indices, struct vctrs_chop_info info) {
+  struct vctrs_proxy_info proxy_info = info.proxy_info;
 
   // Fallback to `[` if the class doesn't implement a proxy. This is
   // to be maximally compatible with existing classes.
-  if (OBJECT(x) && info.proxy_method == R_NilValue) {
-    if (info.type == vctrs_type_scalar) {
+  if (vec_requires_fallback(x, proxy_info)) {
+    if (proxy_info.type == vctrs_type_scalar) {
       Rf_errorcall(R_NilValue, "Can't slice a scalar");
     }
 
     if (has_dim(x)) {
-      UNPROTECT(nprot);
-      return split_along_fallback_shaped(x);
+      return chop_fallback_shaped(x, indices, info);
     }
 
-    UNPROTECT(nprot);
-    return split_along_fallback(x);
+    return chop_fallback(x, indices, info);
   }
 
-  switch (info.type) {
-  case vctrs_type_null: {
-    UNPROTECT(nprot);
-    return R_NilValue;
-  }
+  switch (proxy_info.type) {
   case vctrs_type_logical:
   case vctrs_type_integer:
   case vctrs_type_double:
@@ -1008,24 +955,241 @@ SEXP vec_split_along(SEXP x) {
   case vctrs_type_raw:
   case vctrs_type_list: {
     if (has_dim(x)) {
-      UNPROTECT(nprot);
-      return split_along_shaped(x, info);
+      return chop_shaped(x, indices, info);
     }
 
-    UNPROTECT(nprot);
-    return split_along(x, info);
+    return chop(x, indices, info);
   }
-
   case vctrs_type_dataframe: {
-    UNPROTECT(nprot);
-    return split_along_df(x, info);
+    return chop_df(x, indices, info);
   }
   default:
     vec_assert(x, args_empty);
-    Rf_error("Internal error: Unexpected type `%s` for vector proxy in `vec_split_along()`",
-             vec_type_as_str(info.type));
+    Rf_error(
+      "Internal error: Unexpected type `%s` for vector proxy in `vec_chop()`",
+      vec_type_as_str(proxy_info.type)
+    );
   }
 }
+
+static SEXP chop(SEXP x, SEXP indices, struct vctrs_chop_info info) {
+  SEXP elt;
+  SEXP names = PROTECT(Rf_getAttrib(x, R_NamesSymbol));
+
+  for (R_len_t i = 0; i < info.out_size; ++i) {
+    if (info.has_indices) {
+      info.index = VECTOR_ELT(indices, i);
+      *info.p_restore_size = vec_size(info.index);
+    } else {
+      ++(*info.p_index);
+    }
+
+    elt = PROTECT(vec_slice_base(info.proxy_info.type, info.proxy_info.proxy, info.index));
+
+    if (names != R_NilValue) {
+      SEXP elt_names = PROTECT(slice_names(names, info.index));
+      r_poke_names(elt, elt_names);
+      UNPROTECT(1);
+    }
+
+    elt = vec_restore(elt, x, info.restore_size);
+
+    SET_VECTOR_ELT(info.out, i, elt);
+    UNPROTECT(1);
+  }
+
+  UNPROTECT(1);
+  return info.out;
+}
+
+static SEXP chop_df(SEXP x, SEXP indices, struct vctrs_chop_info info) {
+  SEXP elt;
+
+  int n_cols = Rf_length(x);
+
+  SEXP col_names = PROTECT(Rf_getAttrib(x, R_NamesSymbol));
+  SEXP row_names = PROTECT(get_rownames(x));
+
+  bool has_row_names = TYPEOF(row_names) == STRSXP;
+
+  // Pre-load the `out` container with lists that will become data frames
+  for (R_len_t i = 0; i < info.out_size; ++i) {
+    elt = PROTECT(Rf_allocVector(VECSXP, n_cols));
+
+    Rf_setAttrib(elt, R_NamesSymbol, col_names);
+
+    if (has_row_names) {
+      if (info.has_indices) {
+        info.index = VECTOR_ELT(indices, i);
+      } else {
+        ++(*info.p_index);
+      }
+
+      Rf_setAttrib(elt, R_RowNamesSymbol, slice_rownames(row_names, info.index));
+    }
+
+    SET_VECTOR_ELT(info.out, i, elt);
+    UNPROTECT(1);
+  }
+
+  // Split each column according to the indices, and then assign the results
+  // into the appropriate data frame column in the `out` list
+  for (int i = 0; i < n_cols; ++i) {
+    SEXP col = VECTOR_ELT(info.proxy_info.proxy, i);
+    SEXP split = PROTECT(vec_chop_impl(col, indices));
+
+    for (int j = 0; j < info.out_size; ++j) {
+      elt = VECTOR_ELT(info.out, j);
+      SET_VECTOR_ELT(elt, i, VECTOR_ELT(split, j));
+    }
+
+    UNPROTECT(1);
+  }
+
+  // Restore each data frame
+  for (int i = 0; i < info.out_size; ++i) {
+    if (info.has_indices) {
+      *info.p_restore_size = vec_size(VECTOR_ELT(indices, i));
+    }
+
+    elt = VECTOR_ELT(info.out, i);
+    elt = vec_restore(elt, x, info.restore_size);
+    SET_VECTOR_ELT(info.out, i, elt);
+  }
+
+  UNPROTECT(2);
+  return info.out;
+}
+
+static SEXP chop_shaped(SEXP x, SEXP indices, struct vctrs_chop_info info) {
+  SEXP elt;
+
+  SEXP dim_names = PROTECT(Rf_getAttrib(x, R_DimNamesSymbol));
+
+  SEXP row_names = R_NilValue;
+  if (dim_names != R_NilValue) {
+    row_names = VECTOR_ELT(dim_names, 0);
+  }
+
+  for (R_len_t i = 0; i < info.out_size; ++i) {
+    if (info.has_indices) {
+      info.index = VECTOR_ELT(indices, i);
+      *info.p_restore_size = vec_size(info.index);
+    } else {
+      ++(*info.p_index);
+    }
+
+    elt = PROTECT(vec_slice_shaped(info.proxy_info.type, info.proxy_info.proxy, info.index));
+
+    if (dim_names != R_NilValue) {
+      if (row_names != R_NilValue) {
+        SEXP new_dim_names = PROTECT(Rf_shallow_duplicate(dim_names));
+        SEXP new_row_names = PROTECT(slice_names(row_names, info.index));
+
+        SET_VECTOR_ELT(new_dim_names, 0, new_row_names);
+        Rf_setAttrib(elt, R_DimNamesSymbol, new_dim_names);
+        UNPROTECT(2);
+      } else {
+        Rf_setAttrib(elt, R_DimNamesSymbol, dim_names);
+      }
+    }
+
+    elt = vec_restore(elt, x, info.restore_size);
+
+    SET_VECTOR_ELT(info.out, i, elt);
+    UNPROTECT(1);
+  }
+
+  UNPROTECT(1);
+  return info.out;
+}
+
+static SEXP chop_fallback(SEXP x, SEXP indices, struct vctrs_chop_info info) {
+  SEXP elt;
+
+  // Construct call with symbols, not values, for performance
+  SEXP call = PROTECT(Rf_lang3(syms_bracket, syms_x, syms_i));
+
+  // Evaluate in a child of the global environment to allow dispatch
+  // to custom functions. We define `[` to point to its base
+  // definition to ensure consistent look-up. This is the same logic
+  // as in `vctrs_dispatch_n()`, reimplemented here to allow repeated
+  // evaluations in a loop.
+  SEXP env = PROTECT(r_new_environment(R_GlobalEnv, 2));
+  Rf_defineVar(syms_bracket, fns_bracket, env);
+  Rf_defineVar(syms_x, x, env);
+  Rf_defineVar(syms_i, info.index, env);
+
+  for (R_len_t i = 0; i < info.out_size; ++i) {
+    if (info.has_indices) {
+      info.index = VECTOR_ELT(indices, i);
+      *info.p_restore_size = vec_size(info.index);
+
+      // Update `i` binding with the new index value
+      Rf_defineVar(syms_i, info.index, env);
+    } else {
+      ++(*info.p_index);
+    }
+
+    elt = PROTECT(Rf_eval(call, env));
+
+    // Restore attributes only if `[` fallback doesn't
+    if (ATTRIB(elt) == R_NilValue) {
+      elt = vec_restore(elt, x, info.restore_size);
+    }
+
+    SET_VECTOR_ELT(info.out, i, elt);
+    UNPROTECT(1);
+  }
+
+  UNPROTECT(2);
+  return info.out;
+}
+
+static SEXP chop_fallback_shaped(SEXP x, SEXP indices, struct vctrs_chop_info info) {
+  SEXP elt;
+
+  for (R_len_t i = 0; i < info.out_size; ++i) {
+    if (info.has_indices) {
+      info.index = VECTOR_ELT(indices, i);
+    } else {
+      ++(*info.p_index);
+    }
+
+    // `vec_slice_fallback()` will also `vec_restore()` for us
+    elt = PROTECT(vec_slice_fallback(x, info.index));
+
+    SET_VECTOR_ELT(info.out, i, elt);
+    UNPROTECT(1);
+  }
+
+  return info.out;
+}
+
+static SEXP vec_as_indices(SEXP indices, R_len_t n, SEXP names) {
+  if (indices == R_NilValue) {
+    return indices;
+  }
+
+  if (TYPEOF(indices) != VECSXP) {
+    Rf_errorcall(R_NilValue, "`indices` must be a list of index values, or `NULL`.");
+  }
+
+  SEXP index;
+  indices = PROTECT(r_maybe_duplicate(indices));
+
+  R_len_t size = vec_size(indices);
+
+  for (int i = 0; i < size; ++i) {
+    index = VECTOR_ELT(indices, i);
+    SET_VECTOR_ELT(indices, i, vec_as_index(index, n, names));
+  }
+
+  UNPROTECT(1);
+  return indices;
+}
+
+// -----------------------------------------------------------------------------
 
 void vctrs_init_slice(SEXP ns) {
   syms_vec_slice_fallback = Rf_install("vec_slice_fallback");

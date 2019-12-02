@@ -12,7 +12,7 @@ test_that("can translate a character vector of various encodings (#553)", {
 })
 
 test_that("does not perform translation when encodings are all the same", {
-  encs <- c(encodings(), list(bytes = encoding_bytes()))
+  encs <- encodings(bytes = TRUE)
 
   for (enc in encs) {
     x <- c(enc, enc)
@@ -41,6 +41,31 @@ test_that("attributes are kept on translation (#599)", {
   x <- structure(x, names = c("a", "b"), extra = 1)
 
   expect_equal(attributes(obj_maybe_translate_encoding(x)), attributes(x))
+})
+
+test_that("translation is robust against scalar types contained in lists (#633)", {
+  x <- list(a = z ~ y, b = z ~ z)
+  expect_equal(obj_maybe_translate_encoding(x), x)
+})
+
+test_that("translation can still occur even if a scalar type is in a list", {
+  encs <- encodings()
+  x <- list(a = z ~ y, b = encs$latin1)
+
+  result <- obj_maybe_translate_encoding(x)
+
+  expect_equal_encoding(result$b, encs$utf8)
+})
+
+test_that("translation occurs inside scalars contained in a list", {
+  encs <- encodings()
+
+  scalar <- structure(list(x = encs$latin1), class = "scalar_list")
+  lst <- list(scalar)
+
+  result <- obj_maybe_translate_encoding(lst)
+
+  expect_equal_encoding(result[[1]]$x, encs$utf8)
 })
 
 # ------------------------------------------------------------------------------
@@ -126,10 +151,10 @@ test_that("can find a common encoding with data frames with character columns", 
   df_utf8 <- data_frame(x = encs$utf8)
   df_unknown <- data_frame(x = encs$unknown)
 
-  c(result1, result2) %<-% obj_maybe_translate_encoding2(df_utf8, df_unknown)
+  results <- obj_maybe_translate_encoding2(df_utf8, df_unknown)
 
-  expect_equal_encoding(result1$x, df_utf8$x)
-  expect_equal_encoding(result2$x, df_utf8$x)
+  expect_equal_encoding(results[[1L]]$x, df_utf8$x)
+  expect_equal_encoding(results[[2L]]$x, df_utf8$x)
 })
 
 test_that("can find a common encoding with data frame subclasses with character columns", {
@@ -138,10 +163,10 @@ test_that("can find a common encoding with data frame subclasses with character 
   df_utf8 <- new_data_frame(list(x = encs$utf8), class = "subclass")
   df_unknown <- new_data_frame(list(x = encs$unknown), class = "subclass")
 
-  c(result1, result2) %<-% obj_maybe_translate_encoding2(df_utf8, df_unknown)
+  results <- obj_maybe_translate_encoding2(df_utf8, df_unknown)
 
-  expect_equal_encoding(result1$x, df_utf8$x)
-  expect_equal_encoding(result2$x, df_utf8$x)
+  expect_equal_encoding(results[[1L]]$x, df_utf8$x)
+  expect_equal_encoding(results[[2L]]$x, df_utf8$x)
 })
 
 test_that("only columns requiring translation are affected", {
@@ -150,10 +175,10 @@ test_that("only columns requiring translation are affected", {
   df_utf8_latin1 <- data_frame(x = encs$utf8, y = encs$latin1)
   df_unknown_latin1 <- data_frame(x = encs$unknown, y = encs$latin1)
 
-  c(result1, result2) %<-% obj_maybe_translate_encoding2(df_utf8_latin1, df_unknown_latin1)
+  results <- obj_maybe_translate_encoding2(df_utf8_latin1, df_unknown_latin1)
 
-  expect_equal_encoding(result1$y, df_utf8_latin1$y)
-  expect_equal_encoding(result2$y, df_unknown_latin1$y)
+  expect_equal_encoding(results[[1L]]$y, df_utf8_latin1$y)
+  expect_equal_encoding(results[[2L]]$y, df_unknown_latin1$y)
 })
 
 test_that("can find a common encoding with lists of data frames with string columns", {
@@ -166,7 +191,9 @@ test_that("can find a common encoding with lists of data frames with string colu
   lst_of_df_utf8 <- list(df_utf8)
   lst_of_df_unknown <- list(df_unknown_1, df_unknown_2)
 
-  c(result1, result2) %<-% obj_maybe_translate_encoding2(lst_of_df_utf8, lst_of_df_unknown)
+  results <- obj_maybe_translate_encoding2(lst_of_df_utf8, lst_of_df_unknown)
+  result1 <- results[[1L]]
+  result2 <- results[[2L]]
 
   expect_equal_encoding(result1[[1]]$x, df_utf8$x)
   expect_equal_encoding(result2[[1]]$x, df_utf8$x)
@@ -182,9 +209,17 @@ test_that("all elements are affected when any translation is required in a list"
   df_latin1 <- data_frame(x = encs$latin1)
   lst_of_unknown_df_latin1 <- list(encs$unknown, df_latin1)
 
-  c(result1, result2) %<-% obj_maybe_translate_encoding2(lst_of_utf8, lst_of_unknown_df_latin1)
+  results <- obj_maybe_translate_encoding2(lst_of_utf8, lst_of_unknown_df_latin1)
+  result1 <- results[[1L]]
+  result2 <- results[[2L]]
 
   expect_equal_encoding(result1[[1]], encs$utf8)
   expect_equal_encoding(result2[[1]], encs$utf8)
   expect_equal_encoding(result2[[2]]$x, encs$utf8)
+})
+
+test_that("translation is robust against scalar types contained in lists (#633)", {
+  x <- list(a = z ~ y, b = z ~ z)
+  y <- list(a = c ~ d, b = e ~ f)
+  expect_equal(obj_maybe_translate_encoding2(x, y), list(x, y))
 })

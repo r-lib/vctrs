@@ -1,5 +1,10 @@
 context("test-type-list-of")
 
+test_that("list_of inherits from list", {
+  x1 <- list_of(1, 1)
+  expect_s3_class(x1, "list")
+})
+
 test_that("list_of works like list", {
   x1 <- list_of(1, 1)
   expect_type(x1, "list")
@@ -180,4 +185,16 @@ test_that("validation", {
 test_that("list_of() has as.character() method (tidyverse/tidyr#654)", {
   exp <- rep(paste0("<", vec_ptype_abbr(mtcars), ">"), 2)
   expect_identical(as.character(list_of(mtcars, mtcars)), exp)
+})
+
+test_that("vec_ptype2(<list_of<>>, NA) is symmetric (#687)", {
+  lof <- list_of(1, 2, 3)
+  expect_error(
+    vec_ptype2(lof, NA),
+    class = "vctrs_error_incompatible_type"
+  )
+  expect_error(
+    vec_ptype2(NA, lof),
+    class = "vctrs_error_incompatible_type"
+  )
 })

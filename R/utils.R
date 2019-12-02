@@ -1,5 +1,9 @@
+str_dup <- function(x, times) {
+  paste0(rep(x, times = times), collapse = "")
+}
+
 indent <- function(x, n) {
-  pad <- strrep(" ", n)
+  pad <- str_dup(" ", n)
   map_chr(x, gsub, pattern = "(\n+)", replacement = paste0("\\1", pad))
 }
 
@@ -48,16 +52,6 @@ inline_list <- function(title, x, width = getOption("width"), quote = "") {
   )
   paste0(title, x)
 }
-
-#' Destructuring assignment
-#'
-#' See \code{zeallot::\link[zeallot]{\%<-\%}} for details.
-#' @importFrom zeallot %<-%
-#' @export
-#' @rdname unpack-assign
-#' @name %<-%
-#' @keywords internal
-`%<-%`
 
 has_unique_names <- function(x) {
   nms <- names(x)

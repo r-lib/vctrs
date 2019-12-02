@@ -17,6 +17,11 @@ vec_ptype2.integer <- function(x, y, ...) UseMethod("vec_ptype2.integer", y)
 #' @method vec_ptype2 double
 #' @export
 vec_ptype2.double <- function(x, y, ...) UseMethod("vec_ptype2.double", y)
+#' @rdname vec_ptype2
+#' @export vec_ptype2.complex
+#' @method vec_ptype2 complex
+#' @export
+vec_ptype2.complex <- function(x, y, ...) UseMethod("vec_ptype2.complex", y)
 
 #' @method vec_ptype2.logical logical
 #' @export
@@ -47,6 +52,23 @@ vec_ptype2.integer.double <- function(x, y, ...) shape_match(double(), x, y)
 #' @export
 #' @method vec_ptype2.double integer
 vec_ptype2.double.integer <- function(x, y, ...) shape_match(double(), x, y)
+
+#' @export
+#' @method vec_ptype2.complex complex
+vec_ptype2.complex.complex <- function(x, y, ...) shape_match(complex(), x, y)
+#' @export
+#' @method vec_ptype2.integer complex
+vec_ptype2.integer.complex <- function(x, y, ...) shape_match(complex(), x, y)
+#' @export
+#' @method vec_ptype2.complex integer
+vec_ptype2.complex.integer <- function(x, y, ...) shape_match(complex(), x, y)
+#' @export
+#' @method vec_ptype2.double complex
+vec_ptype2.double.complex <- function(x, y, ...) shape_match(complex(), x, y)
+#' @export
+#' @method vec_ptype2.complex double
+vec_ptype2.complex.double <- function(x, y, ...) shape_match(complex(), x, y)
+
 
 
 # Character
@@ -121,6 +143,11 @@ vec_ptype2.integer.default <- function(x, y, ..., x_arg = "x", y_arg = "y") {
 #' @method vec_ptype2.double default
 #' @export
 vec_ptype2.double.default <- function(x, y, ..., x_arg = "x", y_arg = "y") {
+  vec_default_ptype2(x, y, x_arg = x_arg, y_arg = y_arg)
+}
+#' @method vec_ptype2.complex default
+#' @export
+vec_ptype2.complex.default <- function(x, y, ..., x_arg = "x", y_arg = "y") {
   vec_default_ptype2(x, y, x_arg = x_arg, y_arg = y_arg)
 }
 #' @method vec_ptype2.character default
@@ -400,10 +427,30 @@ vec_cast.list.default <- function(x, to, ...) {
 }
 
 
+# compare ------------------------------------------------------------
+
+#' @export
+vec_proxy_compare.raw <- function(x, ...) {
+  # because:
+  # order(as.raw(1:3))
+  # #> Error in order(as.raw(1:3)): unimplemented type 'raw' in 'orderVector1'
+  as.integer(x)
+}
+
+
 # Helpers -----------------------------------------------------------------
 
 lossy_floor <- function(x, to, x_arg = "x", to_arg = "to") {
   x_floor <- floor(x)
   lossy <- x != x_floor
   maybe_lossy_cast(x_floor, x, to, lossy, x_arg = x_arg, to_arg = to_arg)
+}
+
+shape_match <- function(type, x, y) {
+  if (!is.object(x) && !is.object(y)) {
+    shape <- shape_common(x, y)
+    new_shape(type, shape)
+  } else {
+    type
+  }
 }
