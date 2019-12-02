@@ -52,7 +52,7 @@ name of an unnamed element is \code{""} and never \code{NA}. For instance,
 created by the tibble package have names that are, at least,
 \code{minimal}.
 \item \code{unique} names are \code{minimal}, have no duplicates, and can be used
-where a variable name is expected.  Empty names, and \code{...} or
+where a variable name is expected. Empty names, \code{...}, and
 \code{..} followed by a sequence of digits are banned.
 \itemize{
 \item All columns can be accessed by name via \code{df[["name"]]} and
@@ -88,9 +88,9 @@ Examples:\preformatted{Original names of a vector with length 3: NULL
 
 \code{unique} names are \code{minimal}, have no duplicates, and can be used
 (possibly with backticks) in contexts where a variable is
-expected. Empty names, and \code{...} or \code{..} followed by a sequence of
-digits are banned If a data frame has \code{unique} names, you can
-index it by name, and also access the columns by name.  In
+expected. Empty names, \code{...}, and \code{..} followed by a sequence of
+digits are banned. If a data frame has \code{unique} names, you can
+index it by name, and also access the columns by name. In
 particular, \code{df[["name"]]} and \code{df$`name`} and also \code{with(df, `name`)} always work.
 
 There are many ways to make names \code{unique}. We append a suffix of the form

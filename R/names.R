@@ -15,7 +15,7 @@
 #'   `minimal`.
 #'
 #' * `unique` names are `minimal`, have no duplicates, and can be used
-#'   where a variable name is expected.  Empty names, and `...` or
+#'   where a variable name is expected. Empty names, `...`, and
 #'   `..` followed by a sequence of digits are banned.
 #'
 #'   - All columns can be accessed by name via `df[["name"]]` and
@@ -77,9 +77,9 @@
 #'
 #' `unique` names are `minimal`, have no duplicates, and can be used
 #'  (possibly with backticks) in contexts where a variable is
-#'  expected. Empty names, and `...` or `..` followed by a sequence of
-#'  digits are banned If a data frame has `unique` names, you can
-#'  index it by name, and also access the columns by name.  In
+#'  expected. Empty names, `...`, and `..` followed by a sequence of
+#'  digits are banned. If a data frame has `unique` names, you can
+#'  index it by name, and also access the columns by name. In
 #'  particular, `df[["name"]]` and `` df$`name` `` and also ``with(df,
 #'  `name`)`` always work.
 #'
