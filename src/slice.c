@@ -94,6 +94,13 @@ static void stop_index_oob_names(SEXP i, SEXP names) {
   return out
 
 #define SLICE(RTYPE, CTYPE, DEREF, CONST_DEREF, NA_VALUE)          \
+  if (ALTREP(x)) {                                                 \
+    SEXP out;                                                      \
+    out = ALTVEC_EXTRACT_SUBSET(x, index, R_NilValue);             \
+    if (out != NULL) {                                             \
+      return out;                                                  \
+    }                                                              \
+  }                                                                \
   if (is_compact_rep(index)) {                                     \
     SLICE_COMPACT_REP(RTYPE, CTYPE, DEREF, CONST_DEREF, NA_VALUE); \
   } else if (is_compact_seq(index)) {                              \
