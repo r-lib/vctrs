@@ -410,5 +410,5 @@ void stop_recycle_incompatible_size(R_len_t x_size, R_len_t size)
 # define STRING_PTR_RO(x) ((const SEXP*) STRING_PTR(x))
 # define RAW_RO(x) ((const Rbyte*) RAW(x))
 # define ALTREP(x) false
-# define ALTVEC_EXTRACT_SUBSET(x, indx, call) NULL
+# define ALTVEC_EXTRACT_SUBSET_PROXY(x, indx, call) NULL
 #endif

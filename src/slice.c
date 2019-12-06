@@ -1,6 +1,7 @@
 #include "vctrs.h"
 #include "utils.h"
 #include "slice.h"
+#include "altrep.h"
 
 // Initialised at load time
 SEXP syms_vec_slice_fallback = NULL;
@@ -96,7 +97,7 @@ static void stop_index_oob_names(SEXP i, SEXP names) {
 #define SLICE(RTYPE, CTYPE, DEREF, CONST_DEREF, NA_VALUE)          \
   if (ALTREP(x)) {                                                 \
     SEXP out;                                                      \
-    out = ALTVEC_EXTRACT_SUBSET(x, index, R_NilValue);             \
+    out = ALTVEC_EXTRACT_SUBSET_PROXY(x, index, R_NilValue);       \
     if (out != NULL) {                                             \
       return out;                                                  \
     }                                                              \
