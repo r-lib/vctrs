@@ -413,7 +413,7 @@ vec_cast.list.list <- function(x, to, ...) {
 #' @export
 #' @method vec_cast.list default
 vec_cast.list.default <- function(x, to, ...) {
-  if (inherits(x, "vctrs_unspecified")) {
+  if (is_unspecified(x)) {
     return(vec_init(to, length(x)))
   }
 
