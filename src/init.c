@@ -216,6 +216,9 @@ void R_init_vctrs(DllInfo *dll)
     R_RegisterCCallable("vctrs", "short_vec_size", (DL_FUNC) &vec_size);
     R_RegisterCCallable("vctrs", "short_vec_recycle", (DL_FUNC) &vec_recycle);
     R_RegisterCCallable("vctrs", "short_vec_init", (DL_FUNC) &vec_init);
+
+    // Extremely experimental (for dplyr)
+    R_RegisterCCallable("vctrs", "vctrs_is_vector", (DL_FUNC) &vctrs_is_vector);
 }
 
 
