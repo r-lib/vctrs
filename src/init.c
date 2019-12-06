@@ -96,6 +96,9 @@ extern SEXP vec_recycle(SEXP, R_len_t);
 extern SEXP compact_seq(R_len_t, R_len_t, bool);
 extern SEXP init_compact_seq(int*, R_len_t, R_len_t, bool);
 
+// Extremely experimental (for dplyr)
+extern bool vec_is_vector(SEXP);
+
 // Defined below
 SEXP vctrs_init_library(SEXP);
 
@@ -220,7 +223,7 @@ void R_init_vctrs(DllInfo *dll)
     R_RegisterCCallable("vctrs", "short_vec_init", (DL_FUNC) &vec_init);
 
     // Extremely experimental (for dplyr)
-    R_RegisterCCallable("vctrs", "vctrs_is_vector", (DL_FUNC) &vctrs_is_vector);
+    R_RegisterCCallable("vctrs", "vec_is_vector", (DL_FUNC) &vec_is_vector);
 }
 
 
