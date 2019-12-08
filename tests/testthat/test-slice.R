@@ -764,6 +764,8 @@ test_that("can subset S3 objects using the fallback method with compact seqs", {
   expect_equal(vec_slice_seq(x, 3L, 2L, FALSE), vec_slice(x, 4:3))
 })
 
+# Position / index coercion -----------------------------------------------
+
 test_that("vec_as_position() returns a position", {
   expect_identical(vec_as_position(2, 2L), 2L)
   expect_identical(vec_as_position("foo", 2L, c("bar", "foo")), 2L)
