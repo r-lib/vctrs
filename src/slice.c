@@ -805,6 +805,16 @@ static SEXP vec_chop_base(SEXP x, SEXP indices, struct vctrs_chop_info info) {
       Rf_errorcall(R_NilValue, "Can't slice a scalar");
     }
 
+    if (info.has_indices) {
+      for (int i = 0; i < info.out_size; ++i) {
+        SEXP index = VECTOR_ELT(indices, i);
+
+        if (is_compact(index)) {
+          SET_VECTOR_ELT(indices, i, compact_materialize(index));
+        }
+      }
+    }
+
     if (has_dim(x)) {
       return chop_fallback_shaped(x, indices, info);
     }
@@ -845,7 +855,7 @@ static SEXP chop(SEXP x, SEXP indices, struct vctrs_chop_info info) {
   for (R_len_t i = 0; i < info.out_size; ++i) {
     if (info.has_indices) {
       info.index = VECTOR_ELT(indices, i);
-      *info.p_restore_size = vec_size(info.index);
+      *info.p_restore_size = vec_index_size(info.index);
     } else {
       ++(*info.p_index);
     }
@@ -915,7 +925,7 @@ static SEXP chop_df(SEXP x, SEXP indices, struct vctrs_chop_info info) {
   // Restore each data frame
   for (int i = 0; i < info.out_size; ++i) {
     if (info.has_indices) {
-      *info.p_restore_size = vec_size(VECTOR_ELT(indices, i));
+      *info.p_restore_size = vec_index_size(VECTOR_ELT(indices, i));
     }
 
     elt = VECTOR_ELT(info.out, i);
@@ -940,7 +950,7 @@ static SEXP chop_shaped(SEXP x, SEXP indices, struct vctrs_chop_info info) {
   for (R_len_t i = 0; i < info.out_size; ++i) {
     if (info.has_indices) {
       info.index = VECTOR_ELT(indices, i);
-      *info.p_restore_size = vec_size(info.index);
+      *info.p_restore_size = vec_index_size(info.index);
     } else {
       ++(*info.p_index);
     }
