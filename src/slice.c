@@ -762,6 +762,27 @@ static SEXP vec_chop_base(SEXP x, SEXP indices, struct vctrs_chop_info info);
 static SEXP vec_as_indices(SEXP indices, R_len_t n, SEXP names);
 
 // [[ register() ]]
+SEXP vctrs_chop_seq(SEXP x, SEXP starts, SEXP sizes, SEXP increasings) {
+  int* p_starts = INTEGER(starts);
+  int* p_sizes = INTEGER(sizes);
+  int* p_increasings = LOGICAL(increasings);
+
+  int n = Rf_length(starts);
+
+  SEXP indices = PROTECT(Rf_allocVector(VECSXP, n));
+
+  for (int i = 0; i < n; ++i) {
+    SEXP index = compact_seq(p_starts[i], p_sizes[i], p_increasings[i]);
+    SET_VECTOR_ELT(indices, i, index);
+  }
+
+  SEXP out = PROTECT(vec_chop(x, indices));
+
+  UNPROTECT(2);
+  return out;
+}
+
+// [[ register() ]]
 SEXP vctrs_chop(SEXP x, SEXP indices) {
   R_len_t n = vec_size(x);
   SEXP names = PROTECT(vec_names(x));

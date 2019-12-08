@@ -47,6 +47,7 @@ extern SEXP vctrs_as_index(SEXP, SEXP, SEXP, SEXP);
 extern SEXP vctrs_slice(SEXP, SEXP);
 extern SEXP vctrs_init(SEXP, SEXP);
 extern SEXP vctrs_chop(SEXP, SEXP);
+extern SEXP vctrs_chop_seq(SEXP, SEXP, SEXP, SEXP);
 extern SEXP vec_slice_seq(SEXP, SEXP, SEXP, SEXP);
 extern SEXP vec_slice_rep(SEXP, SEXP, SEXP);
 extern SEXP vec_restore(SEXP, SEXP, SEXP);
@@ -142,6 +143,7 @@ static const R_CallMethodDef CallEntries[] = {
   {"vctrs_slice",                      (DL_FUNC) &vctrs_slice, 2},
   {"vctrs_init",                       (DL_FUNC) &vctrs_init, 2},
   {"vctrs_chop",                       (DL_FUNC) &vctrs_chop, 2},
+  {"vctrs_chop_seq",                   (DL_FUNC) &vctrs_chop_seq, 4},
   {"vctrs_slice_seq",                  (DL_FUNC) &vec_slice_seq, 4},
   {"vctrs_slice_rep",                  (DL_FUNC) &vec_slice_rep, 3},
   {"vctrs_restore",                    (DL_FUNC) &vec_restore, 3},
