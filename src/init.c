@@ -91,6 +91,7 @@ extern SEXP vec_assign_impl(SEXP, SEXP, SEXP, bool);
 extern SEXP vec_slice_impl(SEXP, SEXP);
 extern SEXP vec_names(SEXP);
 extern SEXP vec_recycle(SEXP, R_len_t);
+extern SEXP vec_chop(SEXP, SEXP);
 
 // Extremely experimental
 // Exported but not directly available in the API header
@@ -212,6 +213,7 @@ void R_init_vctrs(DllInfo *dll)
     R_RegisterCCallable("vctrs", "vec_slice_impl", (DL_FUNC) &vec_slice_impl);
     R_RegisterCCallable("vctrs", "vec_names", (DL_FUNC) &vec_names);
     R_RegisterCCallable("vctrs", "vec_set_names", (DL_FUNC) &vec_set_names);
+    R_RegisterCCallable("vctrs", "vec_chop", (DL_FUNC) &vec_chop);
 
     // Extremely experimental
     // Exported but not directly available in the API header

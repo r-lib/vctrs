@@ -11,6 +11,7 @@ SEXP (*vec_assign_impl)(SEXP, SEXP, SEXP, bool);
 SEXP (*vec_slice_impl)(SEXP, SEXP);
 SEXP (*vec_names)(SEXP);
 SEXP (*vec_set_names)(SEXP, SEXP);
+SEXP (*vec_chop)(SEXP, SEXP);
 
 void vctrs_init_api();
 
