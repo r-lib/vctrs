@@ -48,6 +48,10 @@ tbl_ptype2.data.frame.tbl_df <- function(x, y, ..., x_arg = "x", y_arg = "y") {
   }
 }
 
+is_preserved <- function(x) {
+  !dplyr::group_by_drop_default(x)
+}
+
 #' Double dispatch methods for grouped data frames
 #' @inheritParams vec_ptype2
 #' @export vec_ptype2.grouped_df
@@ -115,7 +119,7 @@ vec_cast.grouped_df.data.frame <- function(x, to, ...) {
   dplyr::grouped_df(
     x,
     vars = dplyr::group_vars(to),
-    drop = dplyr::group_by_drop_default(to)
+    drop = !is_preserved(to)
   )
 }
 
@@ -159,7 +163,7 @@ grouped_df_unwrap <- function(x, to) {
   dplyr::grouped_df(
     x,
     groups_vars,
-    drop = dplyr::group_by_drop_default(to)
+    drop = !is_preserved(to)
   )
 }
 is_wrapped_group_col <- function(x) {
