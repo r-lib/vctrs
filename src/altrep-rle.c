@@ -2,6 +2,18 @@
 #include "altrep-rle.h"
 #include "altrep.h"
 
+#if (R_VERSION < R_Version(3, 5, 0))
+
+void vctrs_init_altrep_rle(DllInfo* dll) { }
+
+SEXP altrep_rle_Make(SEXP input) {
+  Rf_error("Need R 3.5+ for Altrep support.");
+
+  return R_NilValue;
+}
+
+#else
+
 SEXP altrep_rle_Make(SEXP input) {
 
   SEXP res = R_new_altrep(altrep_rle_class, input, R_NilValue);
@@ -160,3 +172,5 @@ void vctrs_init_altrep_rle(DllInfo* dll) {
   // altstring
   R_set_altstring_Elt_method(altrep_rle_class, altrep_rle_string_Elt);
 }
+
+#endif
