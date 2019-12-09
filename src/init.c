@@ -3,6 +3,7 @@
 #include <stdlib.h> // for NULL
 #include <stdbool.h> // for bool
 #include <R_ext/Rdynload.h>
+#include "altrep-rle.h"
 
 /* FIXME:
    Check these declarations against the C/Fortran source code.
@@ -104,6 +105,10 @@ extern bool vec_is_vector(SEXP);
 // Defined below
 SEXP vctrs_init_library(SEXP);
 
+// Defined in altrep-rle.h
+extern SEXP altrep_rle_Make(SEXP);
+void vctrs_init_altrep_rle(DllInfo* dll);
+
 static const R_CallMethodDef CallEntries[] = {
   {"vctrs_list_get",                   (DL_FUNC) &vctrs_list_get, 2},
   {"vctrs_list_set",                   (DL_FUNC) &vctrs_list_set, 3},
@@ -179,6 +184,7 @@ static const R_CallMethodDef CallEntries[] = {
   {"vctrs_proxy_recursive",            (DL_FUNC) &vctrs_proxy_recursive, 2},
   {"vctrs_maybe_translate_encoding",   (DL_FUNC) &vctrs_maybe_translate_encoding, 1},
   {"vctrs_maybe_translate_encoding2",  (DL_FUNC) &vctrs_maybe_translate_encoding2, 2},
+  {"vctrs_rle",                        (DL_FUNC) &altrep_rle_Make, 1},
   {NULL, NULL, 0}
 };
 
@@ -228,6 +234,9 @@ void R_init_vctrs(DllInfo *dll)
 
     // Extremely experimental (for dplyr)
     R_RegisterCCallable("vctrs", "vec_is_vector", (DL_FUNC) &vec_is_vector);
+
+    // Altrep classes
+    vctrs_init_altrep_rle(dll);
 }
 
 

@@ -1,5 +1,7 @@
-#ifndef API_PROXY_H
-#define API_PROXY_H
+#ifndef ALTREP_H
+#define ALTREP_H
+
+#include "Rversion.h"
 
 #if (R_VERSION < R_Version(3, 5, 0))
 
@@ -47,7 +49,7 @@ typedef struct { ALTVEC_METHODS; } altvec_methods_t;
 #define ALTREP_DISPATCH(fun, ...) DO_DISPATCH(ALTREP, fun, __VA_ARGS__)
 #define ALTVEC_DISPATCH(fun, ...) DO_DISPATCH(ALTVEC, fun, __VA_ARGS__)
 
-SEXP ALTVEC_EXTRACT_SUBSET_PROXY(SEXP x, SEXP indx, SEXP call) {
+static SEXP ALTVEC_EXTRACT_SUBSET_PROXY(SEXP x, SEXP indx, SEXP call) {
   return ALTVEC_DISPATCH(Extract_subset, x, indx, call);
 }
 
