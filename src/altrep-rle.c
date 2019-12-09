@@ -4,6 +4,8 @@
 
 #if (R_VERSION < R_Version(3, 5, 0))
 
+#include <R_ext/Rdynload.h>
+
 void vctrs_init_altrep_rle(DllInfo* dll) { }
 
 SEXP altrep_rle_Make(SEXP input) {
