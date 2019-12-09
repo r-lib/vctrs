@@ -762,6 +762,27 @@ static SEXP vec_chop_base(SEXP x, SEXP indices, struct vctrs_chop_info info);
 static SEXP vec_as_indices(SEXP indices, R_len_t n, SEXP names);
 
 // [[ register() ]]
+SEXP vctrs_chop_seq(SEXP x, SEXP starts, SEXP sizes, SEXP increasings) {
+  int* p_starts = INTEGER(starts);
+  int* p_sizes = INTEGER(sizes);
+  int* p_increasings = LOGICAL(increasings);
+
+  int n = Rf_length(starts);
+
+  SEXP indices = PROTECT(Rf_allocVector(VECSXP, n));
+
+  for (int i = 0; i < n; ++i) {
+    SEXP index = compact_seq(p_starts[i], p_sizes[i], p_increasings[i]);
+    SET_VECTOR_ELT(indices, i, index);
+  }
+
+  SEXP out = PROTECT(vec_chop(x, indices));
+
+  UNPROTECT(2);
+  return out;
+}
+
+// [[ register() ]]
 SEXP vctrs_chop(SEXP x, SEXP indices) {
   R_len_t n = vec_size(x);
   SEXP names = PROTECT(vec_names(x));
@@ -805,6 +826,16 @@ static SEXP vec_chop_base(SEXP x, SEXP indices, struct vctrs_chop_info info) {
       Rf_errorcall(R_NilValue, "Can't slice a scalar");
     }
 
+    if (info.has_indices) {
+      for (int i = 0; i < info.out_size; ++i) {
+        SEXP index = VECTOR_ELT(indices, i);
+
+        if (is_compact(index)) {
+          SET_VECTOR_ELT(indices, i, compact_materialize(index));
+        }
+      }
+    }
+
     if (has_dim(x)) {
       return chop_fallback_shaped(x, indices, info);
     }
@@ -845,7 +876,7 @@ static SEXP chop(SEXP x, SEXP indices, struct vctrs_chop_info info) {
   for (R_len_t i = 0; i < info.out_size; ++i) {
     if (info.has_indices) {
       info.index = VECTOR_ELT(indices, i);
-      *info.p_restore_size = vec_size(info.index);
+      *info.p_restore_size = vec_index_size(info.index);
     } else {
       ++(*info.p_index);
     }
@@ -915,7 +946,7 @@ static SEXP chop_df(SEXP x, SEXP indices, struct vctrs_chop_info info) {
   // Restore each data frame
   for (int i = 0; i < info.out_size; ++i) {
     if (info.has_indices) {
-      *info.p_restore_size = vec_size(VECTOR_ELT(indices, i));
+      *info.p_restore_size = vec_index_size(VECTOR_ELT(indices, i));
     }
 
     elt = VECTOR_ELT(info.out, i);
@@ -940,7 +971,7 @@ static SEXP chop_shaped(SEXP x, SEXP indices, struct vctrs_chop_info info) {
   for (R_len_t i = 0; i < info.out_size; ++i) {
     if (info.has_indices) {
       info.index = VECTOR_ELT(indices, i);
-      *info.p_restore_size = vec_size(info.index);
+      *info.p_restore_size = vec_index_size(info.index);
     } else {
       ++(*info.p_index);
     }
