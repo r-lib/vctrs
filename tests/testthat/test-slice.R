@@ -989,3 +989,12 @@ test_that("vec_coerce_position() handles `allow_types`", {
     vec_coerce_position(TRUE, allow_types = c("position", "name"))
   })
 })
+
+test_that("vec_splice() works with Altrep classes with custom extract methods", {
+  skip_if(getRversion() < "3.5")
+
+  x <- .Call(vctrs_rle, c(foo = 10L, bar = 5L))
+
+  idx <- c(1, 3, 15)
+  expect_equal(vec_slice(x, idx), x[idx])
+})

@@ -1,6 +1,8 @@
 
 # vctrs 0.2.0.9000
 
+* `vec_slice()` now support Altvec vectors (@jimhester, #696).
+
 * `vec_proxy_equal()` is now applied recursively across the columns of
   data frames (#641).
 
