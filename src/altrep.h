@@ -49,7 +49,7 @@ typedef struct { ALTVEC_METHODS; } altvec_methods_t;
 #define ALTREP_DISPATCH(fun, ...) DO_DISPATCH(ALTREP, fun, __VA_ARGS__)
 #define ALTVEC_DISPATCH(fun, ...) DO_DISPATCH(ALTVEC, fun, __VA_ARGS__)
 
-static SEXP ALTVEC_EXTRACT_SUBSET_PROXY(SEXP x, SEXP indx, SEXP call) {
+static inline SEXP ALTVEC_EXTRACT_SUBSET_PROXY(SEXP x, SEXP indx, SEXP call) {
   return ALTVEC_DISPATCH(Extract_subset, x, indx, call);
 }
 
