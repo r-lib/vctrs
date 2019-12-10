@@ -367,11 +367,10 @@ struct growable {
   int n;
   int capacity;
 };
-typedef struct growable growable;
 
-void growable_init(growable* g, SEXPTYPE type, int capacity);
-void growable_push_int(growable* g, int i);
-SEXP growable_values(growable* g);
+struct growable new_growable(SEXPTYPE type, int capacity);
+void growable_push_int(struct growable* g, int i);
+SEXP growable_values(struct growable* g);
 
 #define PROTECT_GROWABLE(g, n) do {             \
     PROTECT_WITH_INDEX((g)->x, &((g)->idx));    \

@@ -123,8 +123,7 @@ SEXP vctrs_unique_loc(SEXP x) {
   dict_init(&d, x);
   PROTECT_DICT(&d, &nprot);
 
-  growable g;
-  growable_init(&g, INTSXP, 256);
+  struct growable g = new_growable(INTSXP, 256);
   PROTECT_GROWABLE(&g, &nprot);
 
   for (int i = 0; i < n; ++i) {
