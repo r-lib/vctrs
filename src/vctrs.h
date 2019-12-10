@@ -363,6 +363,8 @@ SEXP obj_maybe_translate_encoding2(SEXP x, R_len_t x_size, SEXP y, R_len_t y_siz
 
 struct growable {
   SEXP x;
+  SEXPTYPE type;
+  void* array;
   PROTECT_INDEX idx;
   int n;
   int capacity;

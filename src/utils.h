@@ -185,6 +185,13 @@ static inline double r_dbl_get(SEXP x, R_len_t i) {
 }
 #define r_chr_get STRING_ELT
 
+static inline void* r_vec_unwrap(SEXPTYPE type, SEXP x) {
+  switch (type) {
+  case INTSXP: return (void*) INTEGER(x);
+  default: Rf_error("Internal error: Unimplemented type in `r_vec_unwrap()`.");
+  }
+}
+
 #define r_lgl Rf_ScalarLogical
 #define r_int Rf_ScalarInteger
 #define r_str Rf_mkChar
