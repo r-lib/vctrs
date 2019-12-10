@@ -371,8 +371,20 @@ struct growable {
 };
 
 struct growable new_growable(SEXPTYPE type, int capacity);
-void growable_push_int(struct growable* g, int i);
 SEXP growable_values(struct growable* g);
+
+static inline void growable_push_int(struct growable* g, int i) {
+  if (g->n == g->capacity) {
+    g->capacity *= 2;
+    g->x = Rf_lengthgets(g->x, g->capacity);
+    REPROTECT(g->x, g->idx);
+    g->array = INTEGER(g->x);
+  }
+
+  int* p = (int*) g->array;
+  p[g->n] = i;
+  ++(g->n);
+}
 
 #define PROTECT_GROWABLE(g, n) do {             \
     PROTECT_WITH_INDEX((g)->x, &((g)->idx));    \
