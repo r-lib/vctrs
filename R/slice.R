@@ -633,11 +633,14 @@ vec_index <- function(x, i, ...) {
     return(vec_slice(x, i))
   }
 
-  out <- unclass(vec_proxy(x))
-  vec_assert(out)
+  # Need to unclass to avoid infinite recursion through `[`
+  proxy <- unclass(vec_proxy(x))
+  vec_assert(proxy)
 
   i <- vec_as_index(i, vec_size(x), vec_names(x))
-  vec_restore(out[i, ..., drop = FALSE], x, n = length(i))
+  out <- proxy[i, ..., drop = FALSE]
+
+  vec_restore(out, x, n = length(i))
 }
 
 #' Initialize a vector
