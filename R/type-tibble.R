@@ -48,7 +48,7 @@ tbl_ptype2.data.frame.tbl_df <- function(x, y, ..., x_arg = "x", y_arg = "y") {
   }
 }
 
-is_preserved <- function(x) {
+is_static_grouped_df <- function(x) {
   !dplyr::group_by_drop_default(x)
 }
 
@@ -119,7 +119,7 @@ vec_cast.grouped_df.data.frame <- function(x, to, ...) {
   dplyr::grouped_df(
     x,
     vars = dplyr::group_vars(to),
-    drop = !is_preserved(to)
+    drop = !is_static_grouped_df(to)
   )
 }
 
@@ -163,7 +163,7 @@ grouped_df_unwrap <- function(x, to) {
   dplyr::grouped_df(
     x,
     groups_vars,
-    drop = !is_preserved(to)
+    drop = !is_static_grouped_df(to)
   )
 }
 is_wrapped_group_col <- function(x) {
