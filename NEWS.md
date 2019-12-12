@@ -1,6 +1,8 @@
 
 # vctrs 0.2.99.9000
 
+* `vec_ptype2()` methods now always get zero size inputs.
+
 * New experimental API for tabular vectors. It currently consists in
   `tbl_is()`, `tbl_assert()`, `tbl_ptype()`, `tbl_ptype2()`,
   `tbl_ptype_common()`, `tbl_cast()`, `tbl_size()`, and
