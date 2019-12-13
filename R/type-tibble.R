@@ -55,6 +55,21 @@ tbl_ptype2.data.frame.tbl_df <- function(x, y, ..., x_arg = "x", y_arg = "y") {
 
 #' Statically grouped data frames
 #'
+#' @section Proxying and restoring:
+#'
+#' The group locations are transformed to a full size vector of group
+#' identifiers and stored in the proxy as a column called
+#' `"dplyr:::grouped_df_id"`. Since they are in the proxy, they get
+#' sliced along the data. This currently requires expanding the list
+#' of locations into the full integer vector, which is slower. The
+#' goal is to eventually enable optimisations, especially with sorted
+#' data frames.
+#'
+#' The restore method turns the `id` column back to a list of
+#' locations. It needs to check for multiple .id columns, which could
+#' happen via `vec_cbind()`. In that case, the columns must be
+#' identical.
+#'
 #' @section Casting:
 #'
 #' Casting to a statically grouped data frame applies the grouping
@@ -174,7 +189,7 @@ vec_cast.grouped_df.data.frame <- function(x, to, ...) {
 #' @export
 vec_proxy.grouped_df <- function(x, ...) {
   if (is_static_grouped_df(x)) {
-    x
+    vec_proxy_grouped_df_static(x, ...)
   } else {
     vec_proxy_grouped_df_dynamic(x, ...)
   }
@@ -229,15 +244,41 @@ is_wrapped_group_col <- function(x) {
   inherits(x, "rlib__grouped_column")
 }
 
+vec_proxy_grouped_df_static <- function(x, ...) {
+  gdata <- dplyr::group_data(x)
+  groups <- vec_group_pos_as_id(gdata$.rows)
+
+  class(x) <- NULL
+  x <- c(x, list(`dplyr:::grouped_df_id` = groups))
+
+  new_data_frame(x)
+}
 vec_restore_grouped_df_static <- function(x, to, ...) {
   # Prevent recursion into `grouped_df` implementations while
   # manipulating the proxy
   class(x) <- "data.frame"
 
-  group_table <- group_table(to)
+  id_i <- which(names(x) == "dplyr:::grouped_df_id")
+  if (!length(id_i)) {
+    abort("Internal error: Can't find `.rows` column in proxy.")
+  }
 
-  rows <- vec_match_all(group_table, x[names(group_table)])
-  group_data <- c(group_table, .rows = list(rows))
+  id <- as.list(x)[id_i]
+  x <- x[-id_i]
+
+  # There might be multiple id columns, for instance following a
+  # `vec_cbind()`. Should we just assume they are equal for
+  # performance?
+  if (vec_duplicate_all(id)) {
+    id <- id[[1]]
+  } else {
+    abort("Internal error: Found incongruent `.id` columns in proxy.")
+  }
+
+  gtable_to <- group_table(to)
+  rows <- vec_group_id_as_pos(id, vec_size(gtable_to))
+
+  group_data <- c(gtable_to, .rows = list(rows))
   group_data <- new_tibble(group_data, .drop = FALSE)
 
   dplyr::new_grouped_df(x, group_data)

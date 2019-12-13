@@ -107,7 +107,7 @@ test_that("static groups are proxied and restored", {
 
   proxy <- vec_proxy(static)
   class(proxy) <- "data.frame"
-  proxy <- proxy[1:3, c("cyl", "am", "disp")]
+  proxy <- proxy[1:3, c("cyl", "am", "disp", "dplyr:::grouped_df_id")]
 
   out <- vec_restore(proxy, static)
 
@@ -118,6 +118,28 @@ test_that("static groups are proxied and restored", {
   expect_identical(
     gdata$.rows,
     vec_match_all(gtable, mtcars[1:3, c("cyl", "am")])
+  )
+})
+
+test_that("handles multiple id columns in the static gdf proxy", {
+  static <- dplyr::group_by(mtcars, cyl, am, .drop = FALSE)
+
+  proxy <- vec_proxy(static)
+  class(proxy) <- "data.frame"
+
+  proxy <- proxy[, c(2, 9, 12, 12)]
+  names(proxy) <- c("cyl", "am", "dplyr:::grouped_df_id", "dplyr:::grouped_df_id")
+
+  # Allowed because they are congruent
+  expect_identical(
+    dplyr::group_data(vec_restore(proxy, static)),
+    dplyr::group_data(static)
+  )
+
+  proxy[1, 4] <- 100L
+  expect_error(
+    vec_restore(proxy, static),
+    "incongruent"
   )
 })
 
