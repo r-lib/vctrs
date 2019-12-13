@@ -102,7 +102,26 @@ test_that("TODO: common type of two static gdfs is still unimplemented", {
   expect_error(vec_ptype_common(gdf1, gdf1), "unimplemented")
 })
 
-test_that("groups are recomputed after restoration", {
+test_that("static groups are proxied and restored", {
+  static <- dplyr::group_by(mtcars, cyl, am, .drop = FALSE)
+
+  proxy <- vec_proxy(static)
+  class(proxy) <- "data.frame"
+  proxy <- proxy[1:3, c("cyl", "am", "disp")]
+
+  out <- vec_restore(proxy, static)
+
+  gdata <- dplyr::group_data(out)
+  gtable <- gdata[-length(gdata)]
+
+  expect_identical(gtable, group_table(static))
+  expect_identical(
+    gdata$.rows,
+    vec_match_all(gtable, mtcars[1:3, c("cyl", "am")])
+  )
+})
+
+test_that("dynamic groups are recomputed after restoration", {
   gdf <- dplyr::group_by(mtcars, cyl)
   out <- vec_restore(vec_proxy(gdf), to = gdf)
   expect_identical(
@@ -112,9 +131,14 @@ test_that("groups are recomputed after restoration", {
 })
 
 test_that("drop is restored", {
-  proxy <- vec_proxy(dplyr::group_by(mtcars, cyl))
-  drop_true <- vec_restore(proxy, dplyr::group_by(mtcars, cyl, .drop = TRUE))
-  drop_false <- vec_restore(proxy, dplyr::group_by(mtcars, cyl, .drop = FALSE))
+  df_true <- dplyr::group_by(mtcars, cyl, .drop = TRUE)
+  proxy_true <- vec_proxy(df_true)
+  drop_true <- vec_restore(proxy_true, df_true)
+
+  df_false <- dplyr::group_by(mtcars, cyl, .drop = FALSE)
+  proxy_false <- vec_proxy(df_false)
+  drop_false <- vec_restore(proxy_false, df_false)
+
   expect_true(dplyr::group_by_drop_default(drop_true))
   expect_false(dplyr::group_by_drop_default(drop_false))
 })

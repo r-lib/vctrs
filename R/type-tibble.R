@@ -4,6 +4,9 @@ df_as_tibble <- function(df) {
   class(df) <- c("tbl_df", "tbl", "data.frame")
   df
 }
+new_tibble <- function(x, ...) {
+  new_data_frame(x, ..., class = c("tbl_df", "tbl"))
+}
 
 # Conditionally registered in .onLoad()
 vec_ptype2.tbl_df <- function(x, y, ...) {
@@ -62,6 +65,10 @@ tbl_ptype2.data.frame.tbl_df <- function(x, y, ..., x_arg = "x", y_arg = "y") {
 #' @noRd
 NULL
 
+group_table <- function(x) {
+  data <- dplyr::group_data(x)
+  data[-length(data)]
+}
 is_static_grouped_df <- function(x) {
   !dplyr::group_by_drop_default(x)
 }
@@ -166,15 +173,22 @@ vec_cast.grouped_df.data.frame <- function(x, to, ...) {
 
 #' @export
 vec_proxy.grouped_df <- function(x, ...) {
-  x <- grouped_df_wrap(x)
-  NextMethod()
+  if (is_static_grouped_df(x)) {
+    x
+  } else {
+    vec_proxy_grouped_df_dynamic(x, ...)
+  }
 }
 #' @export
 vec_restore.grouped_df <- function(x, to, ...) {
-  grouped_df_unwrap(NextMethod(), to)
+  if (is_static_grouped_df(to)) {
+    vec_restore_grouped_df_static(x, to, ...)
+  } else {
+    vec_restore_grouped_df_dynamic(x, to, ...)
+  }
 }
 
-grouped_df_wrap <- function(x) {
+vec_proxy_grouped_df_dynamic <- function(x, ...) {
   groups <- dplyr::group_vars(x)
 
   # Prevent recursion into `grouped_df` implementations while
@@ -184,15 +198,11 @@ grouped_df_wrap <- function(x) {
   x[groups] <- map2(groups, x[groups], wrap_group_col)
   x
 }
-wrap_group_col <- function(name, x) {
-  new_data_frame(
-    list2(!!name := x),
-    n = length(x),
-    class = "rlib__grouped_column"
-  )
-}
+vec_restore_grouped_df_dynamic <- function(x, to, ...) {
+  # Prevent recursion into `grouped_df` implementations while
+  # manipulating the proxy
+  class(x) <- "data.frame"
 
-grouped_df_unwrap <- function(x, to) {
   groups_ind <- map_lgl(x, is_wrapped_group_col)
   groups_vars <- names(x)[groups_ind]
 
@@ -207,6 +217,28 @@ grouped_df_unwrap <- function(x, to) {
     drop = !is_static_grouped_df(to)
   )
 }
+
+wrap_group_col <- function(name, x) {
+  new_data_frame(
+    list2(!!name := x),
+    n = length(x),
+    class = "rlib__grouped_column"
+  )
+}
 is_wrapped_group_col <- function(x) {
   inherits(x, "rlib__grouped_column")
+}
+
+vec_restore_grouped_df_static <- function(x, to, ...) {
+  # Prevent recursion into `grouped_df` implementations while
+  # manipulating the proxy
+  class(x) <- "data.frame"
+
+  group_table <- group_table(to)
+
+  rows <- vec_match_all(group_table, x[names(group_table)])
+  group_data <- c(group_table, .rows = list(rows))
+  group_data <- new_tibble(group_data, .drop = FALSE)
+
+  dplyr::new_grouped_df(x, group_data)
 }
