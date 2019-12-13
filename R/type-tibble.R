@@ -48,8 +48,32 @@ tbl_ptype2.data.frame.tbl_df <- function(x, y, ..., x_arg = "x", y_arg = "y") {
   }
 }
 
+# grouped_df ---------------------------------------------------------
+
+#' Statically grouped data frames
+#'
+#' @section Casting:
+#'
+#' Casting to a statically grouped data frame applies the grouping
+#' structure of `to` to `x`. While proxying and restoring preserves
+#' the group locations, casting does not. The locations must be
+#' recomputed on the new data.
+#'
+#' @noRd
+NULL
+
 is_static_grouped_df <- function(x) {
   !dplyr::group_by_drop_default(x)
+}
+
+# Reuse group-data but recompute matching rows in `x`
+group_data_cast <- function(x, to) {
+  gdata <- dplyr::group_data(to)
+
+  gdata <- gdata[-length(gdata)]
+  gdata$.rows <- vec_match_all(gdata, x[names(gdata)])
+
+  gdata
 }
 
 #' Double dispatch methods for grouped data frames
@@ -116,11 +140,11 @@ vec_cast.grouped_df.data.frame <- function(x, to, ...) {
   # `next_method2()` primitive for double dispatch generics?
   x <- vec_cast(x, as.data.frame(to))
 
-  dplyr::grouped_df(
-    x,
-    vars = dplyr::group_vars(to),
-    drop = !is_static_grouped_df(to)
-  )
+  if (is_static_grouped_df(to)) {
+    dplyr::new_grouped_df(x, group_data_cast(x, to))
+  } else {
+    dplyr::grouped_df(x, dplyr::group_vars(to), drop = TRUE)
+  }
 }
 
 #' @export

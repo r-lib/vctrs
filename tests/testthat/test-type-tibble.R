@@ -89,7 +89,7 @@ test_that("drop is restored", {
   expect_false(dplyr::group_by_drop_default(drop_false))
 })
 
-test_that("can cast data frame to grouped-df", {
+test_that("can cast df to dynamic gdf", {
   gdf <- dplyr::group_by(mtcars, cyl)
   expect_equal(
     vec_cast(mtcars[1:3], gdf),
@@ -100,10 +100,48 @@ test_that("can cast data frame to grouped-df", {
     dplyr::group_by(vec_cast(mtcars[8:10], mtcars), cyl)
   )
 
-  drop_true <- vec_cast(mtcars, dplyr::group_by(mtcars, cyl, .drop = TRUE))
-  drop_false <- vec_cast(mtcars, dplyr::group_by(mtcars, cyl, .drop = FALSE))
-  expect_true(dplyr::group_by_drop_default(drop_true))
-  expect_false(dplyr::group_by_drop_default(drop_false))
+  expect_true(dplyr::group_by_drop_default(vec_cast(mtcars, gdf)))
+})
+
+test_that("can cast df to static gdf", {
+  static <- dplyr::group_by(mtcars, cyl, .drop = FALSE)
+  out <- vec_cast(mtcars, static)
+  expect_false(dplyr::group_by_drop_default(out))
+})
+
+test_that("can cast dynamic gdf to static gdf", {
+  static <- dplyr::group_by(mtcars, cyl, .drop = FALSE)
+  dynamic <- dplyr::group_by(mtcars, vs, am, .drop = TRUE)
+
+  out <- vec_cast(dynamic, static)
+  expect_false(dplyr::group_by_drop_default(out))
+  expect_identical(dplyr::group_data(out), dplyr::group_data(static))
+})
+
+test_that("can cast static gdf to static gdf", {
+  static_x <- dplyr::group_by(mtcars, cyl, .drop = FALSE)
+  static_to <- dplyr::group_by(mtcars, vs, am, .drop = FALSE)
+
+  out <- vec_cast(static_x, static_to)
+  expect_false(dplyr::group_by_drop_default(out))
+  expect_identical(dplyr::group_data(out), dplyr::group_data(static_to))
+})
+
+test_that("can cast static gdf to static gdf with different sizes", {
+  static_x <- dplyr::group_by(mtcars[1:15, ], cyl, .drop = FALSE)
+  static_to <- dplyr::group_by(mtcars, vs, am, .drop = FALSE)
+  gdata_to <- dplyr::group_data(static_to)
+  gtable_to <- gdata_to[-length(gdata_to)]
+
+  out <- vec_cast(static_x, static_to)
+  gdata_out <- dplyr::group_data(out)
+  gtable_out <- gdata_out[-length(gdata_out)]
+
+  expect_identical(gtable_out, gtable_to)
+  expect_identical(
+    gdata_out$.rows,
+    vec_match_all(gtable_to, static_x[names(gtable_to)])
+  )
 })
 
 test_that("can rbind grouped-dfs", {
