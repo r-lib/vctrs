@@ -133,8 +133,7 @@ vec_ptype2.grouped_df.data.frame <- function(x, y, ...) {
 #' @export
 #' @method vec_ptype2.tbl_df grouped_df
 vec_ptype2.tbl_df.grouped_df <- function(x, y, ...) {
-  ptype <- vec_ptype2(x, as.data.frame(y))
-  dplyr::grouped_df(ptype, vars = dplyr::group_vars(y))
+  vec_ptype2.data.frame.grouped_df(x, y, ...)
 }
 
 #' @rdname vec_ptype2.grouped_df

@@ -74,15 +74,20 @@ test_that("common type of two dynamic gdfs takes union of groups", {
 
 test_that("common type of static gdf with df", {
   gdf <- dplyr::group_by(mtcars, cyl, am, .drop = FALSE)
+  tib <- tibble::as_tibble(mtcars)
+
+  gdata1 <- dplyr::group_data(vec_ptype_common(gdf, mtcars))
+  gdata2 <- dplyr::group_data(vec_ptype_common(gdf, tib))
+  gdata3 <- dplyr::group_data(vec_ptype_common(mtcars, gdf))
+  gdata4 <- dplyr::group_data(vec_ptype_common(tib, gdf))
 
   exp <- dplyr::group_data(gdf)
   exp$.rows <- rep(list(int()), nrow(exp))
 
-  gdata <- dplyr::group_data(vec_ptype_common(gdf, mtcars))
-  expect_identical(gdata, exp)
-
-  gdata <- dplyr::group_data(vec_ptype_common(mtcars, gdf))
-  expect_true(identical(gdata, exp))
+  expect_identical(gdata1, exp)
+  expect_identical(gdata2, exp)
+  expect_identical(gdata3, exp)
+  expect_identical(gdata4, exp)
 })
 
 test_that("TODO: common type of static and dynamic gdf is still unimplemented", {
