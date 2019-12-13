@@ -49,27 +49,52 @@ test_that("tibbles have common tabular type with data frames", {
 
 # grouped_df ---------------------------------------------------------
 
-test_that("common type of grouped-df and df is grouped-df", {
+test_that("common type of dynamic gdf and df is dynamic gdf", {
   gdf <- dplyr::group_by(mtcars, cyl)
-  expect_grouped(vec_ptype_common(gdf, mtcars[1:3]), "cyl")
-  expect_grouped(vec_ptype_common(mtcars[1:3], gdf), "cyl")
-  expect_grouped(vec_ptype_common(gdf, mtcars["drat"]), "cyl")
+  expect_dynamically_grouped(vec_ptype_common(gdf, mtcars[1:3]), "cyl")
+  expect_dynamically_grouped(vec_ptype_common(mtcars[1:3], gdf), "cyl")
+  expect_dynamically_grouped(vec_ptype_common(gdf, mtcars["drat"]), "cyl")
 })
 
-test_that("common type of grouped-df and tbl-df is grouped-df", {
+test_that("common type of dynamic gdf and tib is dynamic gdf", {
   gdf <- dplyr::group_by(mtcars, cyl)
-  tbl <- dplyr::as_tibble(mtcars)
-  expect_grouped(vec_ptype_common(gdf, tbl[1:3]), "cyl")
-  expect_grouped(vec_ptype_common(tbl[1:3], gdf), "cyl")
-  expect_grouped(vec_ptype_common(gdf, tbl["drat"]), "cyl")
+  tib <- dplyr::as_tibble(mtcars)
+  expect_dynamically_grouped(vec_ptype_common(gdf, tib[1:3]), "cyl")
+  expect_dynamically_grouped(vec_ptype_common(tib[1:3], gdf), "cyl")
+  expect_dynamically_grouped(vec_ptype_common(gdf, tib["drat"]), "cyl")
 })
 
-test_that("common type of two grouped-df takes union of groups", {
+test_that("common type of two dynamic gdfs takes union of groups", {
   gdf1 <- dplyr::group_by(mtcars, cyl)
   gdf2 <- dplyr::group_by(mtcars, vs, am)
-  expect_grouped(vec_ptype_common(gdf1, gdf1), "cyl")
-  expect_grouped(vec_ptype_common(gdf1, gdf2), c("cyl", "vs", "am"))
-  expect_grouped(vec_ptype_common(gdf2, gdf1), c("vs", "am", "cyl"))
+  expect_dynamically_grouped(vec_ptype_common(gdf1, gdf1), "cyl")
+  expect_dynamically_grouped(vec_ptype_common(gdf1, gdf2), c("cyl", "vs", "am"))
+  expect_dynamically_grouped(vec_ptype_common(gdf2, gdf1), c("vs", "am", "cyl"))
+})
+
+test_that("common type of static gdf with df", {
+  gdf <- dplyr::group_by(mtcars, cyl, am, .drop = FALSE)
+
+  exp <- dplyr::group_data(gdf)
+  exp$.rows <- rep(list(int()), nrow(exp))
+
+  gdata <- dplyr::group_data(vec_ptype_common(gdf, mtcars))
+  expect_identical(gdata, exp)
+
+  gdata <- dplyr::group_data(vec_ptype_common(mtcars, gdf))
+  expect_true(identical(gdata, exp))
+})
+
+test_that("TODO: common type of static and dynamic gdf is still unimplemented", {
+  static <- dplyr::group_by(mtcars, cyl, am, .drop = FALSE)
+  dynamic <- dplyr::group_by(mtcars, am, cyl)
+  expect_error(vec_ptype_common(static, dynamic), "unimplemented")
+})
+
+test_that("TODO: common type of two static gdfs is still unimplemented", {
+  gdf1 <- dplyr::group_by(mtcars, cyl, am, .drop = FALSE)
+  gdf2 <- dplyr::group_by(mtcars, am, cyl, .drop = FALSE)
+  expect_error(vec_ptype_common(gdf1, gdf1), "unimplemented")
 })
 
 test_that("groups are recomputed after restoration", {

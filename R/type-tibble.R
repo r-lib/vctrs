@@ -82,33 +82,51 @@ group_data_cast <- function(x, to) {
 #' @export
 #' @method vec_ptype2 grouped_df
 vec_ptype2.grouped_df <- function(x, y, ...) {
-  UseMethod("vec_ptype2.grouped_df")
+  UseMethod("vec_ptype2.grouped_df", y)
 }
 #' @export
 #' @method vec_ptype2.grouped_df default
 vec_ptype2.grouped_df.default <- function(x, y, ...) {
-  UseMethod("vec_ptype2.grouped_df")
+  vec_ptype2.tbl_df(x, y, ...)
 }
 
 #' @export
 #' @method vec_ptype2.grouped_df grouped_df
 vec_ptype2.grouped_df.grouped_df <- function(x, y, ...) {
   ptype <- vec_ptype2(as.data.frame(x), as.data.frame(y))
-  groups <- union(dplyr::group_vars(x), dplyr::group_vars(y))
-  dplyr::grouped_df(ptype, vars = groups)
+
+  x_dynamic <- !is_static_grouped_df(x)
+  y_dynamic <- !is_static_grouped_df(y)
+
+  if (x_dynamic && y_dynamic) {
+    groups_vars <- union(dplyr::group_vars(x), dplyr::group_vars(y))
+    dplyr::grouped_df(ptype, groups_vars, drop = TRUE)
+  } else {
+    abort("TODO: Combining statically grouped data frames is unimplemented.")
+  }
 }
 
 #' @export
 #' @method vec_ptype2.data.frame grouped_df
 vec_ptype2.data.frame.grouped_df <- function(x, y, ...) {
   ptype <- vec_ptype2(x, as.data.frame(y))
-  dplyr::grouped_df(ptype, vars = dplyr::group_vars(y))
+
+  if (is_static_grouped_df(y)) {
+    dplyr::new_grouped_df(ptype, groups = dplyr::group_data(y))
+  } else {
+    dplyr::grouped_df(ptype, vars = dplyr::group_vars(y), drop = TRUE)
+  }
 }
 #' @export
 #' @method vec_ptype2.grouped_df data.frame
 vec_ptype2.grouped_df.data.frame <- function(x, y, ...) {
   ptype <- vec_ptype2(as.data.frame(x), y)
-  dplyr::grouped_df(ptype, vars = dplyr::group_vars(x))
+
+  if (is_static_grouped_df(x)) {
+    dplyr::new_grouped_df(ptype, groups = dplyr::group_data(x))
+  } else {
+    dplyr::grouped_df(ptype, vars = dplyr::group_vars(x), drop = TRUE)
+  }
 }
 
 # Can this be inherited from data.frame somehow?
