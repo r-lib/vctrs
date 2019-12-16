@@ -149,7 +149,7 @@ static SEXP as_df_row_impl(SEXP x, enum name_repair_arg name_repair, bool quiet)
   }
   if (ndim == 2) {
     SEXP names = PROTECT_N(vec_unique_colnames(x, false), &nprot);
-    SEXP out = r_as_data_frame(x);
+    SEXP out = PROTECT_N(r_as_data_frame(x), &nprot);
     r_poke_names(out, names);
     UNPROTECT(nprot);
     return out;
