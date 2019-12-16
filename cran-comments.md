@@ -1,5 +1,5 @@
 
-Fixes R-devel issue.
+Fixes the R-devel, gcc10, rchk, and valgrind issues.
 
 ## Test environments
 
