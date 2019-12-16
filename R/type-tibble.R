@@ -237,11 +237,11 @@ wrap_group_col <- function(name, x) {
   new_data_frame(
     list2(!!name := x),
     n = length(x),
-    class = "rlib__grouped_column"
+    class = "dplyr:::grouped_col"
   )
 }
 is_wrapped_group_col <- function(x) {
-  inherits(x, "rlib__grouped_column")
+  inherits(x, "dplyr:::grouped_col")
 }
 
 vec_proxy_grouped_df_static <- function(x, ...) {
