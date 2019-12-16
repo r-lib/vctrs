@@ -1,4 +1,9 @@
 
+# vctrs 0.2.1
+
+Maintenance release for CRAN checks.
+
+
 # vctrs 0.2.0
 
 With the 0.2.0 release, many vctrs functions have been rewritten with
