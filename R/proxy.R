@@ -116,3 +116,25 @@ vec_restore_dispatch <- function(x, to, ..., n = NULL) {
 vec_restore.default <- function(x, to, ..., n = NULL) {
   .Call(vctrs_restore_default, x, to)
 }
+
+
+vec_proxy_push_vcols <- function(x, ...) {
+  stopifnot(is.data.frame(x))
+  size <- vec_size(x)
+
+  # Prevent S3 dispatch
+  x <- as.list(x)
+
+  vcols <- list2(...)
+  stopifnot(every(vcols, function(x) vec_size(x) == size))
+
+  n <- length(x)
+  has_vcols <- identical(names(x)[[n]], "vctrs::virtual_cols")
+  if (has_vcols) {
+    vcols <- c(x[[n]], vcols)
+    x <- x[-n]
+  }
+
+  x <- c(x, list(`vctrs::virtual_cols` = new_data_frame(vcols)))
+  new_data_frame(x)
+}

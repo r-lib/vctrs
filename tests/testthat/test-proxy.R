@@ -89,3 +89,26 @@ test_that("vec_proxy_equal() is recursive over data frames (#641)", {
   overridden <- vec_proxy_equal(x)
   expect_identical(overridden$x, c(0, 0, 0))
 })
+
+test_that("vec_proxy_push_vcols() pushes virtual columns", {
+  proxy <- data_frame(x = 1:3)
+
+  out <- vec_proxy_push_vcols(proxy, `pkg::foo` = data_frame(bar = 11:13))
+  exp <- data_frame(
+    x = 1:3,
+    `vctrs::virtual_cols` = data_frame(
+      `pkg::foo` = data_frame(bar = 11:13)
+    )
+  )
+  expect_identical(out, exp)
+
+  out <- vec_proxy_push_vcols(out, `pkg::baz` = data_frame(bam = 21:23))
+  exp <- data_frame(
+    x = 1:3,
+    `vctrs::virtual_cols` = data_frame(
+      `pkg::foo` = data_frame(bar = 11:13),
+      `pkg::baz` = data_frame(bam = 21:23)
+    )
+  )
+  expect_identical(out, exp)
+})
