@@ -58,7 +58,7 @@ SEXP vec_unique_colnames(SEXP x, bool quiet);
 // inheritance hierarchy is explored except for the default method.
 SEXP s3_find_method(const char* generic, SEXP x);
 
-struct vctrs_arg* args_empty;
+extern struct vctrs_arg* args_empty;
 
 void never_reached(const char* fn) __attribute__((noreturn));
 
@@ -92,10 +92,10 @@ SEXP colnames(SEXP x);
 
 R_len_t size_validate(SEXP size, const char* arg);
 
-bool (*rlang_is_splice_box)(SEXP);
-SEXP (*rlang_unbox)(SEXP);
-SEXP (*rlang_env_dots_values)(SEXP);
-SEXP (*rlang_env_dots_list)(SEXP);
+extern bool (*rlang_is_splice_box)(SEXP);
+extern SEXP (*rlang_unbox)(SEXP);
+extern SEXP (*rlang_env_dots_values)(SEXP);
+extern SEXP (*rlang_env_dots_list)(SEXP);
 
 void* r_vec_deref(SEXP x);
 const void* r_vec_const_deref(SEXP x);
