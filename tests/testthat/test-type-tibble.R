@@ -47,59 +47,22 @@ test_that("tibbles have common tabular type with data frames", {
 })
 
 
+
 # grouped_df ---------------------------------------------------------
 
-test_that("common type of dynamic gdf and df is dynamic gdf", {
-  gdf <- dplyr::group_by(mtcars, cyl)
-  expect_dynamically_grouped(vec_ptype_common(gdf, mtcars[1:3]), "cyl")
-  expect_dynamically_grouped(vec_ptype_common(mtcars[1:3], gdf), "cyl")
-  expect_dynamically_grouped(vec_ptype_common(gdf, mtcars["drat"]), "cyl")
-})
-
-test_that("common type of dynamic gdf and tib is dynamic gdf", {
-  gdf <- dplyr::group_by(mtcars, cyl)
+test_that("can't combine grouped data frames", {
+  expl_gdf <- dplyr::group_by(mtcars, cyl)
+  impl_gdf <- dplyr::group_by(mtcars, cyl, am, .drop = FALSE)
   tib <- dplyr::as_tibble(mtcars)
-  expect_dynamically_grouped(vec_ptype_common(gdf, tib[1:3]), "cyl")
-  expect_dynamically_grouped(vec_ptype_common(tib[1:3], gdf), "cyl")
-  expect_dynamically_grouped(vec_ptype_common(gdf, tib["drat"]), "cyl")
-})
+  df <- mtcars[1:3]
 
-test_that("common type of two dynamic gdfs takes union of groups", {
-  gdf1 <- dplyr::group_by(mtcars, cyl)
-  gdf2 <- dplyr::group_by(mtcars, vs, am)
-  expect_dynamically_grouped(vec_ptype_common(gdf1, gdf1), "cyl")
-  expect_dynamically_grouped(vec_ptype_common(gdf1, gdf2), c("cyl", "vs", "am"))
-  expect_dynamically_grouped(vec_ptype_common(gdf2, gdf1), c("vs", "am", "cyl"))
-})
-
-test_that("common type of static gdf with df", {
-  gdf <- dplyr::group_by(mtcars, cyl, am, .drop = FALSE)
-  tib <- tibble::as_tibble(mtcars)
-
-  gdata1 <- dplyr::group_data(vec_ptype_common(gdf, mtcars))
-  gdata2 <- dplyr::group_data(vec_ptype_common(gdf, tib))
-  gdata3 <- dplyr::group_data(vec_ptype_common(mtcars, gdf))
-  gdata4 <- dplyr::group_data(vec_ptype_common(tib, gdf))
-
-  exp <- dplyr::group_data(gdf)
-  exp$.rows <- rep(list(int()), nrow(exp))
-
-  expect_identical(gdata1, exp)
-  expect_identical(gdata2, exp)
-  expect_identical(gdata3, exp)
-  expect_identical(gdata4, exp)
-})
-
-test_that("TODO: common type of static and dynamic gdf is still unimplemented", {
-  static <- dplyr::group_by(mtcars, cyl, am, .drop = FALSE)
-  dynamic <- dplyr::group_by(mtcars, am, cyl)
-  expect_error(vec_ptype_common(static, dynamic), "unimplemented")
-})
-
-test_that("TODO: common type of two static gdfs is still unimplemented", {
-  gdf1 <- dplyr::group_by(mtcars, cyl, am, .drop = FALSE)
-  gdf2 <- dplyr::group_by(mtcars, am, cyl, .drop = FALSE)
-  expect_error(vec_ptype_common(gdf1, gdf1), "unimplemented")
+  for (gdf in list(expl_gdf, impl_gdf)) {
+    expect_error(vec_ptype_common(gdf, gdf), class = "vctrs_error_incompatible")
+    expect_error(vec_ptype_common(gdf, df), class = "vctrs_error_incompatible")
+    expect_error(vec_ptype_common(df, gdf), class = "vctrs_error_incompatible")
+    expect_error(vec_ptype_common(gdf, tib), class = "vctrs_error_incompatible")
+    expect_error(vec_ptype_common(tib, gdf), class = "vctrs_error_incompatible")
+  }
 })
 
 test_that("static groups are proxied and restored", {
@@ -221,6 +184,8 @@ test_that("can cast static gdf to static gdf with different sizes", {
 })
 
 test_that("can rbind grouped-dfs", {
+  skip("Can't combine grouped-dfs for now")
+
   gdf <- dplyr::group_by(mtcars, cyl)
   exp <- dplyr::group_by(vec_rbind(mtcars, mtcars), cyl)
   exp_data <- unstructure(dplyr::group_data(exp))
@@ -246,6 +211,8 @@ test_that("can rbind grouped-dfs", {
 })
 
 test_that("can cbind grouped-dfs", {
+  skip("Can't combine grouped-dfs for now")
+
   gdf <- dplyr::group_by(mtcars, cyl)
   exp <- dplyr::group_by(vec_cbind(mtcars, mtcars), cyl...2, cyl...13)
   exp_data <- unstructure(dplyr::group_data(exp))
@@ -277,6 +244,8 @@ test_that("can cbind grouped-dfs", {
 })
 
 test_that("can concatenate grouped-dfs", {
+  skip("Can't combine grouped-dfs for now")
+
   out <- vec_c(
     dplyr::group_by(mtcars, cyl),
     mtcars,
@@ -292,6 +261,7 @@ test_that("can slice grouped-dfs", {
 })
 
 test_that("grouped columns are equal to ungrouped ones", {
+  skip("Can't combine grouped-dfs for now")
   gdf <- dplyr::group_by(mtcars, cyl)
   expect_identical(vec_equal(gdf, mtcars), rep(TRUE, nrow(mtcars)))
 })
