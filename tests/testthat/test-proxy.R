@@ -154,23 +154,7 @@ test_that("vec_proxy_pop_vcols() pops multiple virtual columns", {
 })
 
 test_that("can proxy and restore virtual columns", {
-  new_virtual <- function(x, groups) {
-    structure(x, class = c("vctrs_virtual", "data.frame"), groups = groups)
-  }
-
-  local_methods(
-    vec_proxy.vctrs_virtual = function(x, ...) {
-      vec_proxy_push_vcols(x, `mypkg::groups` = attr(x, "groups"))
-    },
-    vec_restore.vctrs_virtual = function(x, ...) {
-      parts <- vec_proxy_pop_vcols(x, "mypkg::groups")
-      new_virtual(
-        parts$proxy,
-        groups = parts$vcols$`mypkg::groups`
-      )
-    }
-  )
-
-  x <- new_virtual(data_frame(x = 1:3), groups = c(1L, 1L, 2L))
+  local_vcols_methods()
+  x <- new_vcols(data_frame(x = 1:3), groups = c(1L, 1L, 2L))
   expect_identical(vec_restore(vec_proxy(x), to = x), x)
 })
