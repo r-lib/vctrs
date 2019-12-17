@@ -113,6 +113,13 @@ test_that("vec_proxy_push_vcols() pushes virtual columns", {
   expect_identical(out, exp)
 })
 
+test_that("can push virtual columns on empty data frame", {
+  proxy <- data_frame(n = 3L)
+  out <- vec_proxy_push_vcols(proxy, `pkg::foo` = 1:3)
+  exp <- data_frame(`vctrs::virtual_cols` = data_frame(`pkg::foo` = 1:3))
+  expect_identical(out, exp)
+})
+
 test_that("vec_proxy_pop_vcols() pops virtual columns", {
   vcols <- data_frame(
     foo = 11:13,

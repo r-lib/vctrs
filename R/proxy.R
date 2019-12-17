@@ -129,7 +129,7 @@ vec_proxy_push_vcols <- function(x, ...) {
   stopifnot(every(vcols, function(x) vec_size(x) == size))
 
   n <- length(x)
-  has_vcols <- identical(names(x)[[n]], "vctrs::virtual_cols")
+  has_vcols <- length(x) && identical(names(x)[[n]], "vctrs::virtual_cols")
   if (has_vcols) {
     vcols <- c(x[[n]], vcols)
     x <- x[-n]
