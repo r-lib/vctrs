@@ -256,7 +256,7 @@ vec_proxy_grouped_df_static <- function(x, ...) {
 vec_restore_grouped_df_static <- function(x, to, ...) {
   # Prevent recursion into `grouped_df` implementations while
   # manipulating the proxy
-  class(x) <- "data.frame"
+  class(x) <- NULL
 
   id_i <- which(names(x) == "dplyr:::grouped_df_id")
   if (!length(id_i)) {
@@ -281,5 +281,5 @@ vec_restore_grouped_df_static <- function(x, to, ...) {
   group_data <- c(gtable_to, .rows = list(rows))
   group_data <- new_tibble(group_data, .drop = FALSE)
 
-  dplyr::new_grouped_df(x, group_data)
+  dplyr::new_grouped_df(new_data_frame(x), group_data)
 }
