@@ -152,25 +152,26 @@ vec_proxy_pop_vcols <- function(x, names) {
     abort("Internal error: Expected virtual column in proxy.")
   }
 
-  vcols <- x[[n]]
+  # Transform to list to prevent deduplication of column names
+  vcols <- as.list(x[[n]])
 
   ind <- names(vcols) == names
   if (!any(ind)) {
     abort("Internal error: Can't find virtual column in proxy.")
   }
 
-  out <- x[[n]][ind]
+  out <- vcols[ind]
 
   # If no vcol left, pop the vcols column from the proxy. Otherwise,
   # pop the relevant vcols.
   if (all(ind)) {
     x <- x[-n]
   } else {
-    x[[n]] <- x[[n]][!ind]
+    x[[n]] <- new_data_frame(vcols[!ind])
   }
 
   data_frame(
     proxy = new_data_frame(x),
-    vcols = out
+    vcols = new_data_frame(out)
   )
 }
