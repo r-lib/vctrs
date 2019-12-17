@@ -8,20 +8,32 @@ new_tibble <- function(x, ...) {
   new_data_frame(x, ..., class = c("tbl_df", "tbl"))
 }
 
+is_bare_tibble <- function(x) {
+  inherits_only(x, c("tbl_df", "tbl", "data.frame"))
+}
+is_bare_data_frame <- function(x) {
+  inherits_only(x, "data.frame")
+}
+
 # Conditionally registered in .onLoad()
 vec_ptype2.tbl_df <- function(x, y, ...) {
-  UseMethod("vec_ptype2.tbl_df", y)
+  if (is_bare_tibble(x) && (is_bare_tibble(y) || is_bare_data_frame(y))) {
+    df_as_tibble(NextMethod())
+  } else {
+    UseMethod("vec_ptype2.tbl_df", y)
+  }
 }
 vec_ptype2.tbl_df.default <- function(x, y, ...) {
   # FIXME: Do we need some sort of `next_vec_type2()`?
   vec_ptype2.data.frame(x, y, ...)
 }
-
-vec_ptype2.tbl_df.data.frame <- function(x, y, ..., x_arg = "x", y_arg = "y") {
-  df_as_tibble(.Call(vctrs_type2_df_df, x, y, x_arg, y_arg))
-}
 vec_ptype2.data.frame.tbl_df <- function(x, y, ..., x_arg = "x", y_arg = "y") {
-  df_as_tibble(.Call(vctrs_type2_df_df, x, y, x_arg, y_arg))
+  out <- NextMethod()
+  if (is_bare_data_frame(x) && is_bare_tibble(y)) {
+    df_as_tibble(out)
+  } else {
+    out
+  }
 }
 
 
