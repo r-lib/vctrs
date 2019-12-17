@@ -124,12 +124,11 @@ test_that("Subclasses of data.frame dispatch to `vec_ptype2()` methods", {
   expect_identical(vec_ptype2(mtcars, quux), "dispatched!")
 })
 
-test_that("Subclasses of `tbl_df` have `data.frame` common type", {
-  # Formerly they would have `tbl_df` common type (#481)
+test_that("Subclasses of `tbl_df` have `tbl_df` common type (#481)", {
   quux <- tibble()
   quux <- structure(quux, class = c("quux", class(quux)))
-  expect_identical(vec_ptype2(quux, tibble()), data.frame())
-  expect_identical(vec_ptype2(tibble(), quux), data.frame())
+  expect_identical(vec_ptype2(quux, tibble()), tibble())
+  expect_identical(vec_ptype2(tibble(), quux), tibble())
 })
 
 test_that("Column name encodings are handled correctly in the common type (#553)", {

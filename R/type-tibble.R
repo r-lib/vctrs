@@ -8,32 +8,20 @@ new_tibble <- function(x, ...) {
   new_data_frame(x, ..., class = c("tbl_df", "tbl"))
 }
 
-is_bare_tibble <- function(x) {
-  inherits_only(x, c("tbl_df", "tbl", "data.frame"))
-}
-is_bare_data_frame <- function(x) {
-  inherits_only(x, "data.frame")
-}
-
 # Conditionally registered in .onLoad()
 vec_ptype2.tbl_df <- function(x, y, ...) {
-  if (is_bare_tibble(x) && (is_bare_tibble(y) || is_bare_data_frame(y))) {
-    df_as_tibble(NextMethod())
-  } else {
-    UseMethod("vec_ptype2.tbl_df", y)
-  }
+  UseMethod("vec_ptype2.tbl_df", y)
 }
 vec_ptype2.tbl_df.default <- function(x, y, ...) {
   # FIXME: Do we need some sort of `next_vec_type2()`?
   vec_ptype2.data.frame(x, y, ...)
 }
+
+vec_ptype2.tbl_df.data.frame <- function(x, y, ..., x_arg = "x", y_arg = "y") {
+  df_as_tibble(.Call(vctrs_type2_df_df, x, y, x_arg, y_arg))
+}
 vec_ptype2.data.frame.tbl_df <- function(x, y, ..., x_arg = "x", y_arg = "y") {
-  out <- NextMethod()
-  if (is_bare_data_frame(x) && is_bare_tibble(y)) {
-    df_as_tibble(out)
-  } else {
-    out
-  }
+  df_as_tibble(.Call(vctrs_type2_df_df, x, y, x_arg, y_arg))
 }
 
 
@@ -110,27 +98,67 @@ group_data_cast <- function(x, to) {
   gdata
 }
 
+#' Double dispatch methods for grouped data frames
+#' @inheritParams vec_ptype2
+#' @export vec_ptype2.grouped_df
 #' @export
 #' @method vec_ptype2 grouped_df
 vec_ptype2.grouped_df <- function(x, y, ...) {
-  stop_grouped_combine(x, y)
+  UseMethod("vec_ptype2.grouped_df", y)
 }
+#' @export
+#' @method vec_ptype2.grouped_df default
+vec_ptype2.grouped_df.default <- function(x, y, ...) {
+  vec_ptype2.tbl_df(x, y, ...)
+}
+
+#' @export
+#' @method vec_ptype2.grouped_df grouped_df
+vec_ptype2.grouped_df.grouped_df <- function(x, y, ...) {
+  ptype <- vec_ptype2(as.data.frame(x), as.data.frame(y))
+
+  x_dynamic <- !is_static_grouped_df(x)
+  y_dynamic <- !is_static_grouped_df(y)
+
+  if (x_dynamic && y_dynamic) {
+    groups_vars <- union(dplyr::group_vars(x), dplyr::group_vars(y))
+    dplyr::grouped_df(ptype, groups_vars, drop = TRUE)
+  } else {
+    abort("TODO: Combining statically grouped data frames is unimplemented.")
+  }
+}
+
 #' @export
 #' @method vec_ptype2.data.frame grouped_df
 vec_ptype2.data.frame.grouped_df <- function(x, y, ...) {
-  stop_grouped_combine(x, y)
+  ptype <- vec_ptype2(x, as.data.frame(y))
+
+  if (is_static_grouped_df(y)) {
+    dplyr::new_grouped_df(ptype, groups = dplyr::group_data(y))
+  } else {
+    dplyr::grouped_df(ptype, vars = dplyr::group_vars(y), drop = TRUE)
+  }
 }
-stop_grouped_combine <- function(x, y) {
-  stop_incompatible(x, y, message = paste_line(
-    "Can't combine grouped data frames.",
-    format_error_bullets(c(
-      i = "Please ungroup before combination and regroup afterwards.",
-      i = "This makes it less likely to end up with unexpected groups."
-    ))
-  ))
+#' @export
+#' @method vec_ptype2.grouped_df data.frame
+vec_ptype2.grouped_df.data.frame <- function(x, y, ...) {
+  ptype <- vec_ptype2(as.data.frame(x), y)
+
+  if (is_static_grouped_df(x)) {
+    dplyr::new_grouped_df(ptype, groups = dplyr::group_data(x))
+  } else {
+    dplyr::grouped_df(ptype, vars = dplyr::group_vars(x), drop = TRUE)
+  }
 }
 
-#' Double dispatch methods for grouped data frames
+# Can this be inherited from data.frame somehow?
+#' @export
+#' @method vec_ptype2.tbl_df grouped_df
+vec_ptype2.tbl_df.grouped_df <- function(x, y, ...) {
+  vec_ptype2.data.frame.grouped_df(x, y, ...)
+}
+
+#' @rdname vec_ptype2.grouped_df
 #' @inheritParams vec_cast
 #' @export vec_cast.grouped_df
 #' @export
