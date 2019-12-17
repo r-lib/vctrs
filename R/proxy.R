@@ -120,7 +120,7 @@ vec_restore.default <- function(x, to, ..., n = NULL) {
 
 vec_proxy_push_vcols <- function(x, ...) {
   stopifnot(is.data.frame(x))
-  size <- vec_size(x)
+  size <- nrow(x)
 
   # Prevent S3 dispatch
   x <- as.list(x)
