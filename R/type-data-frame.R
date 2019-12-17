@@ -49,7 +49,7 @@ new_data_frame <- function(x = list(), n = NULL, ..., class = character()) {
 # stringsAsFactors = FALSE etc. Should not be used in internal code as is
 # not a real helper as it lacks value checks.
 data_frame <- function(...) {
-  cols <- list(...)
+  cols <- list2(...)
   new_data_frame(cols)
 }
 

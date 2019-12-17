@@ -138,3 +138,39 @@ vec_proxy_push_vcols <- function(x, ...) {
   x <- c(x, list(`vctrs::virtual_cols` = new_data_frame(vcols)))
   new_data_frame(x)
 }
+
+vec_proxy_pop_vcols <- function(x, names) {
+  stopifnot(is.data.frame(x))
+
+  # Prevent S3 dispatch
+  x <- as.list(x)
+
+  n <- length(x)
+  has_vcols <- identical(names(x)[[n]], "vctrs::virtual_cols")
+
+  if (!has_vcols) {
+    abort("Internal error: Expected virtual column in proxy.")
+  }
+
+  vcols <- x[[n]]
+
+  ind <- names(vcols) == names
+  if (!any(ind)) {
+    abort("Internal error: Can't find virtual column in proxy.")
+  }
+
+  out <- x[[n]][ind]
+
+  # If no vcol left, pop the vcols column from the proxy. Otherwise,
+  # pop the relevant vcols.
+  if (all(ind)) {
+    x <- x[-n]
+  } else {
+    x[[n]] <- x[[n]][!ind]
+  }
+
+  data_frame(
+    proxy = new_data_frame(x),
+    vcols = out
+  )
+}

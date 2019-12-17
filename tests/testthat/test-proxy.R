@@ -112,3 +112,18 @@ test_that("vec_proxy_push_vcols() pushes virtual columns", {
   )
   expect_identical(out, exp)
 })
+
+test_that("vec_proxy_pop_vcols() pops virtual columns", {
+  proxy <- data_frame(
+    x = 1:3,
+    `vctrs::virtual_cols` = data_frame(foo = 11:13, bar = 21:23)
+  )
+
+  out <- vec_proxy_pop_vcols(proxy, "bar")
+  expect_identical(out$proxy$`vctrs::virtual_cols`, data_frame(foo = 11:13))
+  expect_identical(out$vcols, data_frame(bar = 21:23))
+
+  out <- vec_proxy_pop_vcols(out$proxy, "foo")
+  expect_identical(out$proxy, data_frame(x = 1:3))
+  expect_identical(out$vcols, data_frame(foo = 11:13))
+})
