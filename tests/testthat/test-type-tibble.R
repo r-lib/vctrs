@@ -64,12 +64,12 @@ test_that("common type of dynamic gdf and tib is dynamic gdf", {
   expect_dynamically_grouped(vec_ptype_common(gdf, tib["drat"]), "cyl")
 })
 
-test_that("common type of two dynamic gdfs takes union of groups", {
-  gdf1 <- dplyr::group_by(mtcars, cyl)
-  gdf2 <- dplyr::group_by(mtcars, vs, am)
-  expect_dynamically_grouped(vec_ptype_common(gdf1, gdf1), "cyl")
-  expect_dynamically_grouped(vec_ptype_common(gdf1, gdf2), c("cyl", "vs", "am"))
-  expect_dynamically_grouped(vec_ptype_common(gdf2, gdf1), c("vs", "am", "cyl"))
+test_that("common type of two gdfs is an error", {
+  dyn_gdf <- dplyr::group_by(mtcars, cyl)
+  static_gdf <- dplyr::group_by(mtcars, cyl, .drop = FALSE)
+  expect_error(vec_ptype2(dyn_gdf, dyn_gdf), error = "vctrs_error_incompatible_type")
+  expect_error(vec_ptype2(dyn_gdf, static_gdf), error = "vctrs_error_incompatible_type")
+  expect_error(vec_ptype2(static_gdf, static_gdf), error = "vctrs_error_incompatible_type")
 })
 
 test_that("common type of static gdf with df", {
@@ -88,18 +88,6 @@ test_that("common type of static gdf with df", {
   expect_identical(gdata2, exp)
   expect_identical(gdata3, exp)
   expect_identical(gdata4, exp)
-})
-
-test_that("TODO: common type of static and dynamic gdf is still unimplemented", {
-  static <- dplyr::group_by(mtcars, cyl, am, .drop = FALSE)
-  dynamic <- dplyr::group_by(mtcars, am, cyl)
-  expect_error(vec_ptype_common(static, dynamic), "unimplemented")
-})
-
-test_that("TODO: common type of two static gdfs is still unimplemented", {
-  gdf1 <- dplyr::group_by(mtcars, cyl, am, .drop = FALSE)
-  gdf2 <- dplyr::group_by(mtcars, am, cyl, .drop = FALSE)
-  expect_error(vec_ptype_common(gdf1, gdf1), "unimplemented")
 })
 
 test_that("static groups are proxied and restored", {
@@ -225,15 +213,17 @@ test_that("can rbind grouped-dfs", {
   exp <- dplyr::group_by(vec_rbind(mtcars, mtcars), cyl)
   exp_data <- unstructure(dplyr::group_data(exp))
 
-  out <- vec_rbind(gdf, gdf)
-  expect_grouped(out, "cyl")
-  expect_identical(unstructure(dplyr::group_data(out)), exp_data)
-
   out <- vec_rbind(gdf, mtcars)
   expect_grouped(out, "cyl")
   expect_identical(unstructure(dplyr::group_data(out)), exp_data)
 
   out <- vec_rbind(mtcars, gdf)
+  expect_grouped(out, "cyl")
+  expect_identical(unstructure(dplyr::group_data(out)), exp_data)
+
+  skip("Disallow gdf combination for now")
+
+  out <- vec_rbind(gdf, gdf)
   expect_grouped(out, "cyl")
   expect_identical(unstructure(dplyr::group_data(out)), exp_data)
 
@@ -254,9 +244,12 @@ test_that("can cbind grouped-dfs", {
     repaired_names <- vec_as_names(rep(names(mtcars), 2), repair = "unique")
     expect_grouped(out, groups, names = repaired_names)
   }
-  expect_cbinded(vec_cbind(gdf, gdf), groups = c("cyl...2", "cyl...13"))
   expect_cbinded(vec_cbind(gdf, mtcars), groups = c("cyl...2"))
   expect_cbinded(vec_cbind(mtcars, gdf), groups = c("cyl...13"))
+
+  skip("Disallow gdf combination for now")
+
+  expect_cbinded(vec_cbind(gdf, gdf), groups = c("cyl...2", "cyl...13"))
 
   out <- vec_cbind(
     dplyr::group_by(mtcars[1:3], cyl),
@@ -277,6 +270,8 @@ test_that("can cbind grouped-dfs", {
 })
 
 test_that("can concatenate grouped-dfs", {
+  skip("Disallow gdf combination for now")
+
   out <- vec_c(
     dplyr::group_by(mtcars, cyl),
     mtcars,

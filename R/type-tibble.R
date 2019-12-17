@@ -115,17 +115,7 @@ vec_ptype2.grouped_df.default <- function(x, y, ...) {
 #' @export
 #' @method vec_ptype2.grouped_df grouped_df
 vec_ptype2.grouped_df.grouped_df <- function(x, y, ...) {
-  ptype <- vec_ptype2(as.data.frame(x), as.data.frame(y))
-
-  x_dynamic <- !is_static_grouped_df(x)
-  y_dynamic <- !is_static_grouped_df(y)
-
-  if (x_dynamic && y_dynamic) {
-    groups_vars <- union(dplyr::group_vars(x), dplyr::group_vars(y))
-    dplyr::grouped_df(ptype, groups_vars, drop = TRUE)
-  } else {
-    abort("TODO: Combining statically grouped data frames is unimplemented.")
-  }
+  stop_grouped_combine(x, y)
 }
 
 #' @export
@@ -157,6 +147,15 @@ vec_ptype2.grouped_df.data.frame <- function(x, y, ...) {
 vec_ptype2.tbl_df.grouped_df <- function(x, y, ...) {
   vec_ptype2.data.frame.grouped_df(x, y, ...)
 }
+stop_grouped_combine <- function(x, y) {
+  stop_incompatible_type(x, y, message = paste_line(
+    "Can't combine grouped data frames.",
+    format_error_bullets(c(
+      i = "Please ungroup before combination and regroup afterwards.",
+      i = "This makes it less likely to end up with unexpected groups."
+    ))
+  ))
+ }
 
 #' @rdname vec_ptype2.grouped_df
 #' @inheritParams vec_cast
