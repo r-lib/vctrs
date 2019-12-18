@@ -1,5 +1,5 @@
 
-# vctrs 0.2.0.9000
+# vctrs 0.2.99.9000
 
 * `vec_slice()` now support Altvec vectors (@jimhester, #696).
 
@@ -23,9 +23,9 @@
   they work with the result of modeling functions like `glm()` and `mgcv::gam()`
   which store "family" objects containing expressions (#643).
 
-* `new_vctr()` gains a `inherit_base_type` argument which determines whether or 
-  not the class of the underlying type will be included in the class. This 
-  generally should be set to `TRUE`, unless your class does not behave like the 
+* `new_vctr()` gains a `inherit_base_type` argument which determines whether or
+  not the class of the underlying type will be included in the class. This
+  generally should be set to `TRUE`, unless your class does not behave like the
   underlying type; for example a `factor()` should not inherit from `integer`.
 
 * `list_of()` now inherits from "list" (#593)
@@ -47,7 +47,7 @@
 
 * New experimental `vec_group_pos()` for locating the positions of unique
   groups in a vector (#514).
-  
+
 * New `vec_chop()` for repeatedly slicing a vector. It efficiently captures
   the pattern of `map(indices, vec_slice, x = x)`.
 
@@ -70,6 +70,11 @@
 
 * Equality and ordering methods are now implemented for raw and
   complex vectors (@romainfrancois).
+
+
+# vctrs 0.2.1
+
+Maintenance release for CRAN checks.
 
 
 # vctrs 0.2.0
