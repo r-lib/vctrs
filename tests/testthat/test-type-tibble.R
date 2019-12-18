@@ -247,8 +247,7 @@ test_that("can rbind grouped-dfs", {
   expect_identical(unstructure(dplyr::group_data(out)), exp_data)
 })
 
-test_that("can cbind grouped-dfs", {
-  skip("TODO")
+test_that("can cbind dynamic grouped-dfs", {
   gdf <- dplyr::group_by(mtcars, cyl)
   exp <- dplyr::group_by(vec_cbind(mtcars, mtcars), cyl...2, cyl...13)
   exp_data <- unstructure(dplyr::group_data(exp))
@@ -277,6 +276,17 @@ test_that("can cbind grouped-dfs", {
   )
   expect_identical(dplyr::group_vars(out), c("cyl", "vs", "am"))
   expect_named(out, names(mtcars)[c(1:3, 4:6, 8:10)])
+})
+
+test_that("can cbind static gdfs", {
+  df <- mtcars[1:3]
+  static_gdf <- dplyr::group_by(df, cyl, .drop = FALSE)
+  out <- vec_cbind(static_gdf, df)
+
+  exp <- vec_cbind(df, df)
+  exp <- dplyr::new_grouped_df(exp, dplyr::group_data(static_gdf))
+
+  expect_identical(out, exp)
 })
 
 test_that("can concatenate grouped-dfs", {

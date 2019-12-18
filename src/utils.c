@@ -980,6 +980,30 @@ SEXP r_as_function(SEXP x, const char* arg) {
   }
 }
 
+SEXP r_node_reverse(SEXP node) {
+  if (node == R_NilValue) {
+    return R_NilValue;
+  }
+
+  SEXP prev = R_NilValue;
+  SEXP next = R_NilValue;
+  SEXP tail = node;
+
+  while (tail != R_NilValue) {
+    next = CDR(tail);
+
+    if (next == node) {
+      Rf_error("Internal error: cycle detected in `r_node_reverse()`.");
+    }
+
+    SETCDR(tail, prev);
+    prev = tail;
+    tail = next;
+  }
+
+  return prev;
+}
+
 
 SEXP vctrs_ns_env = NULL;
 SEXP vctrs_shared_empty_str = NULL;
@@ -1011,6 +1035,7 @@ SEXP strings_pos = NULL;
 SEXP strings_val = NULL;
 SEXP strings_group = NULL;
 SEXP strings_length = NULL;
+SEXP strings_vcols = NULL;
 
 SEXP syms_i = NULL;
 SEXP syms_n = NULL;
@@ -1051,7 +1076,7 @@ void vctrs_init_utils(SEXP ns) {
 
   // Holds the CHARSXP objects because unlike symbols they can be
   // garbage collected
-  strings = Rf_allocVector(STRSXP, 16);
+  strings = Rf_allocVector(STRSXP, 17);
   R_PreserveObject(strings);
 
   strings_dots = Rf_mkChar("...");
@@ -1101,6 +1126,9 @@ void vctrs_init_utils(SEXP ns) {
 
   strings_length = Rf_mkChar("length");
   SET_STRING_ELT(strings, 15, strings_length);
+
+  strings_vcols = Rf_mkChar("vctrs::virtual_cols");
+  SET_STRING_ELT(strings, 16, strings_vcols);
 
 
   classes_data_frame = Rf_allocVector(STRSXP, 1);

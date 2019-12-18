@@ -213,6 +213,29 @@ SEXP r_as_data_frame(SEXP x);
 static inline void r_dbg_save(SEXP x, const char* name) {
   Rf_defineVar(Rf_install(name), x, R_GlobalEnv);
 }
+static inline void r_dbg_str(SEXP x) {
+  SEXP call = PROTECT(Rf_lang2(Rf_install("str"), x));
+  Rf_eval(call, R_GlobalEnv);
+  UNPROTECT(1);
+}
+
+SEXP r_node_reverse(SEXP node);
+
+static inline void r_node_push(SEXP* node_out, SEXP elt, PROTECT_INDEX i) {
+  SEXP node = Rf_cons(elt, *node_out);
+  REPROTECT(node, i);
+  *node_out = node;
+}
+static inline SEXP r_node_pop(SEXP* node_out, PROTECT_INDEX i) {
+  SEXP node = *node_out;
+
+  SEXP out = CAR(node);
+  node = CDR(node);
+  REPROTECT(node, i);
+
+  *node_out = node;
+  return out;
+}
 
 
 extern SEXP vctrs_ns_env;
@@ -244,6 +267,7 @@ extern SEXP strings_pos;
 extern SEXP strings_val;
 extern SEXP strings_group;
 extern SEXP strings_length;
+extern SEXP strings_vcols;
 
 extern SEXP syms_i;
 extern SEXP syms_n;

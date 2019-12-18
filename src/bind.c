@@ -238,30 +238,56 @@ static SEXP vec_cbind(SEXP xs, SEXP ptype, SEXP size, enum name_repair_arg name_
   } else if (!is_data_frame(ptype)) {
     ptype = r_as_data_frame(ptype);
   }
-  UNPROTECT(2);
   PROTECT(ptype);
 
-  R_len_t nrow;
+  R_len_t n_rows;
   if (size == R_NilValue) {
-    nrow = vec_size_common(xs, 0);
+    n_rows = vec_size_common(xs, 0);
   } else {
-    nrow = size_validate(size, ".size");
+    n_rows = size_validate(size, ".size");
   }
 
-  R_len_t ncol = 0;
+  SEXP proxies = PROTECT(Rf_allocVector(VECSXP, n));
+
+  PROTECT_INDEX vcols_pi;
+  SEXP vcols = R_NilValue;
+  PROTECT_WITH_INDEX(vcols, &vcols_pi);
+
+  R_len_t n_cols = 0;
+  R_len_t n_vcols = 0;
+
+  // In the first pass we collect the number of columns of the output,
+  // the proxies, and virtual columns if any.
   for (R_len_t i = 0; i < n; ++i) {
     SEXP df = VECTOR_ELT(dfs, i);
     if (df == R_NilValue) {
       continue;
     }
 
-    ncol += Rf_length(VECTOR_ELT(dfs, i));
+    df = PROTECT(vec_recycle(df, n_rows));
+
+    SEXP proxy = PROTECT(vec_proxy(df));
+    SEXP proxy_vcols = PROTECT(vec_proxy_pop_vcols(&proxy));
+    PROTECT(proxy);
+
+    if (proxy_vcols != R_NilValue) {
+      r_node_push(&vcols, proxy_vcols, vcols_pi);
+      n_vcols += Rf_length(proxy_vcols);
+    }
+
+    SET_VECTOR_ELT(proxies, i, proxy);
+
+    n_cols += Rf_length(proxy);
+    UNPROTECT(4);
   }
 
+  if (vcols != R_NilValue) {
+    n_cols += 1;
+  }
 
   // Fill in columns
-  SEXP out = PROTECT(Rf_allocVector(VECSXP, ncol));
-  SEXP names = PROTECT(Rf_allocVector(STRSXP, ncol));
+  SEXP out = PROTECT(Rf_allocVector(VECSXP, n_cols));
+  SEXP names = PROTECT(Rf_allocVector(STRSXP, n_cols));
 
   SEXP idx = PROTECT(compact_seq(0, 0, true));
   int* idx_ptr = INTEGER(idx);
@@ -269,36 +295,60 @@ static SEXP vec_cbind(SEXP xs, SEXP ptype, SEXP size, enum name_repair_arg name_
   R_len_t counter = 0;
 
   for (R_len_t i = 0; i < n; ++i) {
-    SEXP df = VECTOR_ELT(dfs, i);
-    if (df == R_NilValue) {
+    SEXP proxy = VECTOR_ELT(proxies, i);
+    if (proxy == R_NilValue) {
       continue;
     }
 
-    df = PROTECT(vec_recycle(df, nrow));
+    R_len_t proxy_n = Rf_length(proxy);
 
-    // Copy the contents of the proxy because there might be
-    // proxy-encoded metadata. We restore at the end.
-    df = PROTECT(vec_proxy(df));
+    init_compact_seq(idx_ptr, counter, proxy_n, true);
+    list_assign(out, idx, proxy, false);
 
-    R_len_t xn = Rf_length(df);
-    init_compact_seq(idx_ptr, counter, xn, true);
-    list_assign(out, idx, df, false);
+    SEXP proxy_names = PROTECT(r_names(proxy));
+    if (proxy_names != R_NilValue) {
+      chr_assign(names, idx, proxy_names, false);
+    }
+    UNPROTECT(1);
 
-    SEXP xnms = PROTECT(r_names(df));
-    if (xnms != R_NilValue) {
-      chr_assign(names, idx, xnms, false);
+    counter += proxy_n;
+  }
+
+  if (vcols != R_NilValue) {
+    vcols = r_node_reverse(vcols);
+    REPROTECT(vcols, vcols_pi);
+
+    SEXP new_vcols = PROTECT(Rf_allocVector(VECSXP, n_vcols));
+    SEXP new_vcols_names = PROTECT(Rf_allocVector(STRSXP, n_vcols));
+    Rf_setAttrib(new_vcols, R_NamesSymbol, new_vcols_names);
+    init_data_frame(new_vcols, n_rows);
+
+    R_len_t i = 0;
+    while (vcols != R_NilValue) {
+      SEXP vcols_elt = CAR(vcols);
+      SEXP vcols_elt_names = PROTECT(r_names(vcols_elt));
+
+      R_len_t n_elt = Rf_length(vcols_elt);
+      for (R_len_t j = 0; j < n_elt; ++j) {
+        SET_VECTOR_ELT(new_vcols, i, VECTOR_ELT(vcols_elt, j));
+        SET_STRING_ELT(new_vcols_names, i, STRING_ELT(vcols_elt_names, j));
+        ++i;
+      }
+
+      UNPROTECT(1);
+      vcols = CDR(vcols);
     }
 
-    counter += xn;
-    UNPROTECT(3);
+    SET_VECTOR_ELT(out, n_cols - 1, new_vcols);
+    SET_STRING_ELT(names, n_cols - 1, strings_vcols);
+    UNPROTECT(2);
   }
 
   names = PROTECT(vec_as_names(names, name_repair, false));
   Rf_setAttrib(out, R_NamesSymbol, names);
-
   out = vec_restore(out, ptype, R_NilValue);
 
-  UNPROTECT(7);
+  UNPROTECT(11);
   return out;
 }
 

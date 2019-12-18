@@ -90,6 +90,32 @@ SEXP vec_proxy_invoke(SEXP x) {
 }
 
 
+SEXP vec_proxy_pop_vcols(SEXP* proxy_out) {
+  SEXP proxy = *proxy_out;
+
+  SEXP names = PROTECT(r_names(proxy));
+  if (names == R_NilValue) {
+    UNPROTECT(1);
+    return R_NilValue;
+  }
+
+  R_len_t n = Rf_length(proxy);
+  if (STRING_ELT(names, n - 1) != strings_vcols) {
+    UNPROTECT(1);
+    return R_NilValue;
+  }
+
+  SEXP vcols = PROTECT(VECTOR_ELT(proxy, n - 1));
+
+  SEXP shrunk = PROTECT(Rf_lengthgets(proxy, n - 1));
+  Rf_copyMostAttrib(shrunk, proxy);
+
+  UNPROTECT(3);
+  *proxy_out = shrunk;
+  return vcols;
+}
+
+
 void vctrs_init_data(SEXP ns) {
   syms_vec_proxy_dispatch = Rf_install("vec_proxy_dispatch");
   syms_vec_proxy_equal_dispatch = Rf_install("vec_proxy_equal_dispatch");
