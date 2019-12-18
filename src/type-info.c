@@ -20,7 +20,6 @@ struct vctrs_type_info vec_type_info(SEXP x) {
   info.type = vec_typeof(x);
 
   switch (info.type) {
-  case vctrs_type_dataframe:
   case vctrs_type_s3: info.proxy_method = vec_proxy_method(x); break;
   default: info.proxy_method = R_NilValue;
   }
