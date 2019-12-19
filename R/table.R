@@ -51,9 +51,10 @@ tbl_cast <- function(x, to, ..., x_arg = "x", to_arg = "to") {
   if (!missing(...)) {
     ellipsis::check_dots_empty()
   }
-  if (is_null(x) || is_null(to)) {
-    return(x)
-  }
+  return(.Call(vctrs_tbl_cast, x, to, x_arg, to_arg))
+  UseMethod("tbl_cast", to)
+}
+tbl_cast_dispatch <- function(x, to, ..., x_arg = "x", to_arg = "to") {
   UseMethod("tbl_cast", to)
 }
 #' @export

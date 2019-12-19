@@ -87,6 +87,7 @@ extern SEXP vctrs_tbl_is(SEXP);
 extern SEXP vctrs_tbl_assert(SEXP);
 extern SEXP tbl_slice(SEXP, SEXP);
 extern SEXP tbl_ptype(SEXP);
+extern SEXP vctrs_tbl_cast(SEXP, SEXP, SEXP, SEXP);
 
 // Very experimental
 // Available in the API header
@@ -193,6 +194,7 @@ static const R_CallMethodDef CallEntries[] = {
   {"vctrs_tbl_assert",                 (DL_FUNC) &vctrs_tbl_assert, 1},
   {"vctrs_tbl_slice",                  (DL_FUNC) &tbl_slice, 2},
   {"vctrs_tbl_ptype",                  (DL_FUNC) &tbl_ptype, 1},
+  {"vctrs_tbl_cast",                   (DL_FUNC) &vctrs_tbl_cast, 4},
   {NULL, NULL, 0}
 };
 
@@ -255,6 +257,7 @@ void vctrs_init_names(SEXP ns);
 void vctrs_init_proxy_restore(SEXP ns);
 void vctrs_init_slice(SEXP ns);
 void vctrs_init_slice_assign(SEXP ns);
+void vctrs_init_table(SEXP ns);
 void vctrs_init_type2(SEXP ns);
 void vctrs_init_type(SEXP ns);
 void vctrs_init_type_info(SEXP ns);
@@ -269,6 +272,7 @@ SEXP vctrs_init_library(SEXP ns) {
   vctrs_init_proxy_restore(ns);
   vctrs_init_slice(ns);
   vctrs_init_slice_assign(ns);
+  vctrs_init_table(ns);
   vctrs_init_type2(ns);
   vctrs_init_type(ns);
   vctrs_init_type_info(ns);

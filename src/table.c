@@ -2,6 +2,10 @@
 #include "slice.h"
 #include "utils.h"
 
+// Initialised at load time
+static SEXP syms_tbl_cast_dispatch = NULL;
+static SEXP fns_tbl_cast_dispatch = NULL;
+
 
 // Currently only data frames are considered tabular. Eventually
 // we should also allow arrays of dimensionality >= 2.
@@ -61,4 +65,40 @@ SEXP tbl_ptype(SEXP x) {
   out = vec_slice(out, vctrs_shared_empty_int);
   UNPROTECT(1);
   return out;
+}
+
+
+// [[ include("vctrs.h") ]]
+SEXP tbl_cast(SEXP x, SEXP to, struct vctrs_arg* x_arg, struct vctrs_arg* to_arg) {
+  if (x == R_NilValue || to == R_NilValue) {
+    return x;
+  }
+
+  SEXP out = vctrs_dispatch4(syms_tbl_cast_dispatch, fns_tbl_cast_dispatch,
+                             syms_x, x,
+                             syms_to, to,
+                             syms_x_arg, PROTECT(vctrs_arg(x_arg)),
+                             syms_to_arg, PROTECT(vctrs_arg(to_arg)));
+  UNPROTECT(2);
+  return out;
+}
+// [[ register() ]]
+SEXP vctrs_tbl_cast(SEXP x, SEXP to, SEXP x_arg_, SEXP to_arg_) {
+  if (!r_is_string(x_arg_)) {
+    Rf_errorcall(R_NilValue, "`x_arg` must be a string");
+  }
+  if (!r_is_string(to_arg_)) {
+    Rf_errorcall(R_NilValue, "`to_arg` must be a string");
+  }
+
+  struct vctrs_arg x_arg = new_wrapper_arg(NULL, r_chr_get_c_string(x_arg_, 0));
+  struct vctrs_arg to_arg = new_wrapper_arg(NULL, r_chr_get_c_string(to_arg_, 0));
+
+  return tbl_cast(x, to, &x_arg, &to_arg);
+}
+
+
+void vctrs_init_table(SEXP ns) {
+  syms_tbl_cast_dispatch = Rf_install("tbl_cast_dispatch");
+  fns_tbl_cast_dispatch = Rf_findVar(syms_tbl_cast_dispatch, ns);
 }
