@@ -29,6 +29,13 @@ test_that("tbl_slice() uses number of columns to check bounds", {
   tbl_slice(vec_slice(mtcars, 1:3), 1:4)
 })
 
+test_that("tbl_slice() repairs names", {
+  expect_identical(
+    tbl_slice(mtcars, c(1, 2, 1)),
+    set_names(mtcars[c(1, 2, 1)], c("mpg...1", "cyl", "mpg...3"))
+  )
+})
+
 test_that("tbl_size() returns number of columns", {
   expect_identical(tbl_size(mtcars), ncol(mtcars))
 })

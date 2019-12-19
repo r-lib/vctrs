@@ -57,6 +57,7 @@ SEXP tbl_slice(SEXP x, SEXP index) {
   Rf_copyMostAttrib(sliced_proxy, proxy);
 
   names = PROTECT(slice_names(names, index));
+  names = PROTECT(vec_as_names(names, name_repair_unique, false));
   Rf_setAttrib(sliced_proxy, R_NamesSymbol, names);
 
   SEXP row_names = PROTECT(get_rownames(x));
@@ -64,7 +65,7 @@ SEXP tbl_slice(SEXP x, SEXP index) {
 
   SEXP out = vec_restore(sliced_proxy, x, R_NilValue);
 
-  UNPROTECT(6);
+  UNPROTECT(7);
   return out;
 }
 
