@@ -22,6 +22,14 @@ test_that("tbl_slice() uses the proxy", {
   expect_identical(class, c("foo", "data.frame"))
 })
 
+test_that("tbl_slice() uses number of columns to check bounds", {
+  tbl_slice(vec_slice(mtcars, 1:3), 1:4)
+})
+
+test_that("tbl_size() returns number of columns", {
+  expect_identical(tbl_size(mtcars), ncol(mtcars))
+})
+
 test_that("can take the table prototype", {
   expect_identical(tbl_ptype(mtcars), mtcars[integer(), integer()])
 })

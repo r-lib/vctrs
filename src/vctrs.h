@@ -239,6 +239,7 @@ bool is_record(SEXP x);
 
 // Tabular API
 void tbl_assert(SEXP x);
+R_len_t tbl_size(SEXP x);
 SEXP tbl_slice(SEXP x, SEXP index);
 SEXP tbl_ptype(SEXP x);
 SEXP tbl_cast(SEXP x, SEXP to, struct vctrs_arg* x_arg, struct vctrs_arg* to_arg);

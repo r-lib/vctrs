@@ -31,6 +31,15 @@ SEXP vctrs_tbl_is(SEXP x) {
   return Rf_ScalarLogical(vec_is_tabular(x));
 }
 
+// [[ include("vctrs.h") ]]
+R_len_t tbl_size(SEXP x) {
+  return Rf_length(x);
+}
+// [[ register() ]]
+SEXP vctrs_tbl_size(SEXP x) {
+  tbl_assert(x);
+  return Rf_ScalarInteger(tbl_size(x));
+}
 
 // [[ include("vctrs.h"); register() ]]
 SEXP tbl_slice(SEXP x, SEXP index) {
@@ -42,7 +51,7 @@ SEXP tbl_slice(SEXP x, SEXP index) {
   }
 
   SEXP names = PROTECT(r_names(x));
-  index = PROTECT(vec_as_index(index, vec_size(x), names));
+  index = PROTECT(vec_as_index(index, tbl_size(x), names));
 
   SEXP sliced_proxy = PROTECT(list_slice(proxy, index));
   Rf_copyMostAttrib(sliced_proxy, proxy);

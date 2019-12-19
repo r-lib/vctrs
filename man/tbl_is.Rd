@@ -3,6 +3,7 @@
 \name{tbl_is}
 \alias{tbl_is}
 \alias{tbl_assert}
+\alias{tbl_size}
 \alias{tbl_slice}
 \alias{tbl_ptype}
 \alias{tbl_cast}
@@ -11,6 +12,8 @@
 tbl_is(x)
 
 tbl_assert(x)
+
+tbl_size(x)
 
 tbl_slice(x, i)
 

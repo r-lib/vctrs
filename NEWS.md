@@ -2,8 +2,8 @@
 # vctrs 0.2.99.9000
 
 * New experimental API for tabular vectors. It currently consists in
-  `tbl_is()`, `tbl_assert()`, `tbl_ptype()`, and `tbl_cast()`. Details
-  are likely to change.
+  `tbl_is()`, `tbl_assert()`, `tbl_ptype()`, `tbl_cast()`,
+  `tbl_size()`, and `tbl_slice()`. Details are likely to change.
 
 * `vec_slice()` now support Altvec vectors (@jimhester, #696).
 

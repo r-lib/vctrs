@@ -35,6 +35,12 @@ tbl_assert <- function(x) {
 }
 
 #' @rdname tbl_is
+#' @export
+tbl_size <- function(x) {
+  .Call(vctrs_tbl_size, x)
+}
+
+#' @rdname tbl_is
 #' @inheritParams vec_slice
 tbl_slice <- function(x, i) {
   .Call(vctrs_tbl_slice, x, i)

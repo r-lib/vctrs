@@ -88,6 +88,7 @@ extern SEXP vctrs_tbl_assert(SEXP);
 extern SEXP tbl_slice(SEXP, SEXP);
 extern SEXP tbl_ptype(SEXP);
 extern SEXP vctrs_tbl_cast(SEXP, SEXP, SEXP, SEXP);
+extern SEXP vctrs_tbl_size(SEXP);
 
 // Very experimental
 // Available in the API header
@@ -195,6 +196,7 @@ static const R_CallMethodDef CallEntries[] = {
   {"vctrs_tbl_slice",                  (DL_FUNC) &tbl_slice, 2},
   {"vctrs_tbl_ptype",                  (DL_FUNC) &tbl_ptype, 1},
   {"vctrs_tbl_cast",                   (DL_FUNC) &vctrs_tbl_cast, 4},
+  {"vctrs_tbl_size",                   (DL_FUNC) &vctrs_tbl_size, 1},
   {NULL, NULL, 0}
 };
 
