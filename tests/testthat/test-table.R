@@ -2,6 +2,9 @@
 test_that("can slice table", {
   expect_identical(tbl_slice(mtcars, 3), mtcars[3])
   expect_identical(tbl_slice(mtcars, 2:3), mtcars[2:3])
+  expect_identical(tbl_slice(mtcars, c("cyl", "vs")), mtcars[c("cyl", "vs")])
+  ind <- c(rep(TRUE, 5), rep(FALSE, 6))
+  expect_identical(tbl_slice(mtcars, ind), mtcars[ind])
 })
 
 test_that("tbl_slice() uses the proxy", {
