@@ -44,7 +44,7 @@ SEXP tbl_slice(SEXP x, SEXP index) {
   SEXP names = PROTECT(r_names(x));
   index = PROTECT(vec_as_index(index, vec_size(x), names));
 
-  SEXP sliced_proxy = PROTECT(list_slice(x, index));
+  SEXP sliced_proxy = PROTECT(list_slice(proxy, index));
   Rf_copyMostAttrib(sliced_proxy, proxy);
 
   names = PROTECT(slice_names(names, index));

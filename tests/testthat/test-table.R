@@ -4,6 +4,24 @@ test_that("can slice table", {
   expect_identical(tbl_slice(mtcars, 2:3), mtcars[2:3])
 })
 
+test_that("tbl_slice() uses the proxy", {
+  class <- NULL
+
+  local_methods(
+    vec_proxy.vctrs_foobar = function(x, ...) {
+      x[[1]] <- new_data_frame(list(x = x[[1]]), class = "foo")
+      x
+    },
+    vec_restore.vctrs_foobar = function(x, to, ...) {
+      class <<- class(x[[1]])
+      tbl_foobar(x)
+    }
+  )
+
+  tbl_slice(tbl_foobar(mtcars), 1:3)
+  expect_identical(class, c("foo", "data.frame"))
+})
+
 test_that("can take the table prototype", {
   expect_identical(tbl_ptype(mtcars), mtcars[integer(), integer()])
 })
