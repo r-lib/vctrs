@@ -132,6 +132,28 @@ vec_restore.data.frame <- function(x, to, ..., n = NULL) {
 }
 
 
+#' @rdname new_data_frame
+#' @export tbl_cast.data.frame
+#' @method tbl_cast data.frame
+#' @export
+tbl_cast.data.frame <- function(x, to, ..., x_arg = "x", to_arg = "to") {
+  if (inherits_only(to, "data.frame")) {
+    UseMethod("tbl_cast.data.frame")
+  } else {
+    vec_default_cast(x, to, x_arg = x_arg, to_arg = to_arg)
+  }
+}
+#' @export
+#' @method tbl_cast.data.frame data.frame
+tbl_cast.data.frame.data.frame <- function(x, to, ...) {
+  as.data.frame(x)
+}
+#' @export
+#' @method tbl_cast.data.frame default
+tbl_cast.data.frame.default <- function(x, to, ..., x_arg = "x", to_arg = "to") {
+  vec_default_cast(x, to, x_arg = x_arg, to_arg = to_arg)
+}
+
 # AsIS --------------------------------------------------------------------
 
 # Arises with base df ctor: `data.frame(x = I(list(1, 2:3)))`

@@ -5,6 +5,7 @@
 \alias{tbl_assert}
 \alias{tbl_slice}
 \alias{tbl_ptype}
+\alias{tbl_cast}
 \title{Generics for tabular vectors}
 \usage{
 tbl_is(x)
@@ -14,6 +15,8 @@ tbl_assert(x)
 tbl_slice(x, i)
 
 tbl_ptype(x)
+
+tbl_cast(x, to, ..., x_arg = "x", to_arg = "to")
 }
 \arguments{
 \item{x}{A tabular vector.}
@@ -22,6 +25,20 @@ tbl_ptype(x)
 names of the observations to get/set.
 Specify \code{TRUE} to index all elements (as in \code{x[]}), or \code{NULL}, \code{FALSE} or
 \code{integer()} to index none (as in \code{x[NULL]}).}
+
+\item{to}{Type to cast to. If \code{NULL}, \code{x} will be returned as is.}
+
+\item{...}{For \code{vec_cast_common()}, vectors to cast. For
+\code{vec_cast()} and \code{vec_restore()}, these dots are only for future
+extensions and should be empty.}
+
+\item{x_arg}{Argument names for \code{x} and \code{to}. These are used
+in error messages to inform the user about the locations of
+incompatible types (see \code{\link[=stop_incompatible_type]{stop_incompatible_type()}}).}
+
+\item{to_arg}{Argument names for \code{x} and \code{to}. These are used
+in error messages to inform the user about the locations of
+incompatible types (see \code{\link[=stop_incompatible_type]{stop_incompatible_type()}}).}
 }
 \description{
 \Sexpr[results=rd, stage=render]{vctrs:::lifecycle("experimental")}
@@ -36,7 +53,9 @@ semantics and concepts than rowwise operations:
 your tabular class to be compatible with vctrs, it needs to
 support such empty instances.
 \item The vector type of a data frame includes its columns (their names
-and their types). The tabular type of a data frame doesn't.
+and their types). The tabular type of a data frame doesn't. Hence
+\code{tbl_cast()} accepts inputs of any shape, whereas \code{vec_cast()}
+requires congruent shapes and names.
 }
 
 The details and theory of tabular operations are in development and
