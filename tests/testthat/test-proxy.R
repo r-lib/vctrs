@@ -178,3 +178,14 @@ test_that("can take the prototype with virtual columns", {
   x <- new_vcols(data_frame(x = 1:3), groups = c(1L, 1L, 2L))
   expect_identical(tbl_ptype(x), new_vcols(data.frame(), int()))
 })
+
+test_that("can cbind with virtual columns", {
+  local_vcols_ptype2_methods()
+  local_vcols_cast_methods()
+  local_vcols_memory_methods()
+  x <- new_vcols(data_frame(x = 1:3), groups = c(1L, 1L, 2L))
+  expect_identical(
+    vec_cbind(x, x),
+    new_vcols(data.frame(x...1 = 1:3, x...2 = 1:3), groups = c(1L, 1L, 2L))
+  )
+})

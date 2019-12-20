@@ -256,8 +256,8 @@ static SEXP vec_cbind(SEXP xs, SEXP ptype, SEXP size, enum name_repair_arg name_
   R_len_t n_cols = 0;
   R_len_t n_vcols = 0;
 
-  // In the first pass we collect the number of columns of the output,
-  // the proxies, and virtual columns if any.
+  // In the first pass we cast to the common tabular type and collect
+  // the number of columns of the output and the table proxies
   for (R_len_t i = 0; i < n; ++i) {
     SEXP df = VECTOR_ELT(dfs, i);
     if (df == R_NilValue) {
@@ -265,6 +265,7 @@ static SEXP vec_cbind(SEXP xs, SEXP ptype, SEXP size, enum name_repair_arg name_
     }
 
     df = PROTECT(vec_recycle(df, n_rows));
+    df = PROTECT(tbl_cast(df, ptype, args_empty, args_empty));
 
     SEXP proxy = PROTECT(vec_proxy(df));
     SEXP proxy_vcols = PROTECT(vec_proxy_pop_vcols(&proxy));
@@ -278,7 +279,7 @@ static SEXP vec_cbind(SEXP xs, SEXP ptype, SEXP size, enum name_repair_arg name_
     SET_VECTOR_ELT(proxies, i, proxy);
 
     n_cols += Rf_length(proxy);
-    UNPROTECT(4);
+    UNPROTECT(5);
   }
 
   if (vcols != R_NilValue) {
