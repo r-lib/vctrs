@@ -244,6 +244,7 @@ SEXP tbl_slice(SEXP x, SEXP index);
 SEXP tbl_ptype(SEXP x);
 SEXP tbl_ptype2(SEXP x, SEXP y, struct vctrs_arg* x_arg, struct vctrs_arg* y_arg);
 SEXP tbl_cast(SEXP x, SEXP to, struct vctrs_arg* x_arg, struct vctrs_arg* to_arg);
+SEXP tbl_ptype_common(SEXP dots, SEXP ptype);
 
 R_len_t df_size(SEXP x);
 R_len_t df_rownames_size(SEXP x);

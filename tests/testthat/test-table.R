@@ -119,3 +119,14 @@ test_that("data frames don't have common type with subclasses of data frames", {
     class = "vctrs_error_incompatible_type"
   )
 })
+
+test_that("can take the common type of multiple inputs", {
+  expect_identical(
+    tbl_ptype_common(mtcars[1:3], NULL, iris, mtcars[5]),
+    data.frame()
+  )
+  expect_error(
+    tbl_ptype_common(mtcars[1:3], NULL, iris, 1:3, mtcars[5]),
+    "`..4` must be a data frame"
+  )
+})

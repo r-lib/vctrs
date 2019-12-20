@@ -75,6 +75,13 @@ tbl_ptype2.default <- function(x, y, ..., x_arg = "x", y_arg = "y") {
   stop_incompatible_type(x, y, x_arg = x_arg, y_arg = y_arg)
 }
 
+#' @rdname tbl_is
+#' @inheritParams vec_ptype_common
+#' @export
+tbl_ptype_common <- function(..., .ptype = NULL) {
+  .External(vctrs_tbl_ptype_common, .ptype, environment())
+}
+
 
 #' @rdname tbl_is
 #' @inheritParams vec_cast

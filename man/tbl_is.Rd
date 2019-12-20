@@ -7,12 +7,13 @@
 \alias{tbl_slice}
 \alias{tbl_ptype}
 \alias{tbl_ptype2}
+\alias{tbl_ptype_common}
 \alias{tbl_cast}
 \title{Generics for tabular vectors}
 \usage{
 tbl_is(x)
 
-tbl_assert(x, arg = "x")
+tbl_assert(x, arg = as_label(substitute(x)))
 
 tbl_size(x)
 
@@ -21,6 +22,8 @@ tbl_slice(x, i)
 tbl_ptype(x)
 
 tbl_ptype2(x, y, ..., x_arg = "x", y_arg = "y")
+
+tbl_ptype_common(..., .ptype = NULL)
 
 tbl_cast(x, to, ..., x_arg = "x", to_arg = "to")
 }
@@ -47,6 +50,11 @@ incompatible types (see \code{\link[=stop_incompatible_type]{stop_incompatible_t
 \item{y_arg}{Argument names for \code{x} and \code{y}. These are used
 in error messages to inform the user about the locations of
 incompatible types (see \code{\link[=stop_incompatible_type]{stop_incompatible_type()}}).}
+
+\item{.ptype}{Prototype to compare against. If the prototype has a
+class, its \code{\link[=vec_ptype]{vec_ptype()}} is compared to that of \code{x} with
+\code{identical()}. Otherwise, its \code{\link[=typeof]{typeof()}} is compared to that of
+\code{x} with \code{==}.}
 
 \item{to}{Type to cast to. If \code{NULL}, \code{x} will be returned as is.}
 

@@ -127,6 +127,31 @@ SEXP vctrs_tbl_ptype2(SEXP x, SEXP y, SEXP x_arg, SEXP y_arg) {
   return tbl_ptype2(x, y, &x_arg_, &y_arg_);
 }
 
+static SEXP tbl_ptype2_counters(SEXP current, SEXP next, struct counters* counters) {
+  // FIXME: Should shift counters based on LHS/RHS becoming current
+  return tbl_ptype2(current, next, counters->curr_arg, counters->next_arg);
+}
+
+// [[ include("vctrs.h") ]]
+SEXP tbl_ptype_common(SEXP dots, SEXP ptype) {
+  // Start reduction with the `.ptype` argument
+  struct vctrs_arg ptype_arg = new_wrapper_arg(NULL, ".ptype");
+  return reduce(ptype, &ptype_arg, dots, &tbl_ptype2_counters);
+}
+// [[ register(external = TRUE) ]]
+SEXP vctrs_tbl_ptype_common(SEXP args) {
+  args = CDR(args);
+
+  SEXP ptype = CAR(args); args = CDR(args);
+  SEXP env = CAR(args);
+
+  SEXP types = PROTECT(rlang_env_dots_values(env));
+  SEXP out = tbl_ptype_common(types, ptype);
+
+  UNPROTECT(1);
+  return out;
+}
+
 
 // [[ include("vctrs.h") ]]
 SEXP tbl_cast(SEXP x, SEXP to, struct vctrs_arg* x_arg, struct vctrs_arg* to_arg) {
