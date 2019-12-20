@@ -26,7 +26,7 @@ test_that("tbl_slice() uses the proxy", {
 })
 
 test_that("tbl_slice() uses number of columns to check bounds", {
-  tbl_slice(vec_slice(mtcars, 1:3), 1:4)
+  expect_error_free(tbl_slice(vec_slice(mtcars, 1:3), 1:4))
 })
 
 test_that("tbl_slice() repairs names", {
