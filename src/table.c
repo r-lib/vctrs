@@ -4,7 +4,9 @@
 
 // Initialised at load time
 static SEXP syms_tbl_cast_dispatch = NULL;
+static SEXP syms_tbl_ptype2_dispatch = NULL;
 static SEXP fns_tbl_cast_dispatch = NULL;
+static SEXP fns_tbl_ptype2_dispatch = NULL;
 
 
 // Currently only data frames are considered tabular. Eventually
@@ -79,6 +81,38 @@ SEXP tbl_ptype(SEXP x) {
 
 
 // [[ include("vctrs.h") ]]
+SEXP tbl_ptype2(SEXP x, SEXP y,
+                struct vctrs_arg* x_arg,
+                struct vctrs_arg* y_arg) {
+  SEXP x_arg_chr = PROTECT(vctrs_arg(x_arg));
+  SEXP y_arg_chr = PROTECT(vctrs_arg(y_arg));
+
+  SEXP syms[5] = { syms_x, syms_y, syms_x_arg, syms_y_arg, NULL };
+  SEXP args[5] = {      x,      y,  x_arg_chr,  y_arg_chr, NULL };
+
+  SEXP out = vctrs_dispatch_n(syms_tbl_ptype2_dispatch, fns_tbl_ptype2_dispatch,
+                              syms, args);
+
+  UNPROTECT(2);
+  return out;
+}
+// [[ register() ]]
+SEXP vctrs_tbl_ptype2(SEXP x, SEXP y, SEXP x_arg, SEXP y_arg) {
+  if (!r_is_string(x_arg)) {
+    Rf_errorcall(R_NilValue, "`x_arg` must be a string");
+  }
+  if (!r_is_string(y_arg)) {
+    Rf_errorcall(R_NilValue, "`y_arg` must be a string");
+  }
+
+  struct vctrs_arg x_arg_ = new_wrapper_arg(NULL, r_chr_get_c_string(x_arg, 0));
+  struct vctrs_arg y_arg_ = new_wrapper_arg(NULL, r_chr_get_c_string(y_arg, 0));
+
+  return tbl_ptype2(x, y, &x_arg_, &y_arg_);
+}
+
+
+// [[ include("vctrs.h") ]]
 SEXP tbl_cast(SEXP x, SEXP to, struct vctrs_arg* x_arg, struct vctrs_arg* to_arg) {
   if (x == R_NilValue || to == R_NilValue) {
     return x;
@@ -110,5 +144,7 @@ SEXP vctrs_tbl_cast(SEXP x, SEXP to, SEXP x_arg_, SEXP to_arg_) {
 
 void vctrs_init_table(SEXP ns) {
   syms_tbl_cast_dispatch = Rf_install("tbl_cast_dispatch");
+  syms_tbl_ptype2_dispatch = Rf_install("tbl_ptype2_dispatch");
   fns_tbl_cast_dispatch = Rf_findVar(syms_tbl_cast_dispatch, ns);
+  fns_tbl_ptype2_dispatch = Rf_findVar(syms_tbl_ptype2_dispatch, ns);
 }

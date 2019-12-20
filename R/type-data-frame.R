@@ -105,6 +105,32 @@ vec_ptype2.data.frame.default <- function(x, y, ..., x_arg = "x", y_arg = "y") {
   vec_default_ptype2(x, y, x_arg = x_arg, y_arg = y_arg)
 }
 
+#' @rdname new_data_frame
+#' @export tbl_ptype2.data.frame
+#' @method tbl_ptype2 data.frame
+#' @export
+tbl_ptype2.data.frame <- function(x, y, ..., x_arg = "x", y_arg = "y") {
+  if (inherits_only(x, "data.frame")) {
+    UseMethod("tbl_ptype2.data.frame", y)
+  } else {
+    vec_default_ptype2(x, y, x_arg = x_arg, y_arg = y_arg)
+  }
+}
+#' @method tbl_ptype2.data.frame data.frame
+#' @export
+tbl_ptype2.data.frame.data.frame <- function(x, y, ..., x_arg = "x", y_arg = "y") {
+  if (inherits_only(y, "data.frame")) {
+    data.frame()
+  } else {
+    vec_default_ptype2(x, y, x_arg = x_arg, y_arg = y_arg)
+  }
+}
+#' @method tbl_ptype2.data.frame default
+#' @export
+tbl_ptype2.data.frame.default <- function(x, y, ..., x_arg = "x", y_arg = "y") {
+  vec_default_ptype2(x, y, x_arg = x_arg, y_arg = y_arg)
+}
+
 
 # Cast --------------------------------------------------------------------
 

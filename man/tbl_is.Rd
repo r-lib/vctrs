@@ -6,6 +6,7 @@
 \alias{tbl_size}
 \alias{tbl_slice}
 \alias{tbl_ptype}
+\alias{tbl_ptype2}
 \alias{tbl_cast}
 \title{Generics for tabular vectors}
 \usage{
@@ -19,6 +20,8 @@ tbl_slice(x, i)
 
 tbl_ptype(x)
 
+tbl_ptype2(x, y, ..., x_arg = "x", y_arg = "y")
+
 tbl_cast(x, to, ..., x_arg = "x", to_arg = "to")
 }
 \arguments{
@@ -29,15 +32,19 @@ names of the observations to get/set.
 Specify \code{TRUE} to index all elements (as in \code{x[]}), or \code{NULL}, \code{FALSE} or
 \code{integer()} to index none (as in \code{x[NULL]}).}
 
-\item{to}{Type to cast to. If \code{NULL}, \code{x} will be returned as is.}
+\item{y}{Vector types.}
 
-\item{...}{For \code{vec_cast_common()}, vectors to cast. For
-\code{vec_cast()} and \code{vec_restore()}, these dots are only for future
-extensions and should be empty.}
+\item{...}{These dots are for future extensions and must be empty.}
 
-\item{x_arg}{Argument names for \code{x} and \code{to}. These are used
+\item{x_arg}{Argument names for \code{x} and \code{y}. These are used
 in error messages to inform the user about the locations of
 incompatible types (see \code{\link[=stop_incompatible_type]{stop_incompatible_type()}}).}
+
+\item{y_arg}{Argument names for \code{x} and \code{y}. These are used
+in error messages to inform the user about the locations of
+incompatible types (see \code{\link[=stop_incompatible_type]{stop_incompatible_type()}}).}
+
+\item{to}{Type to cast to. If \code{NULL}, \code{x} will be returned as is.}
 
 \item{to_arg}{Argument names for \code{x} and \code{to}. These are used
 in error messages to inform the user about the locations of
@@ -57,8 +64,9 @@ your tabular class to be compatible with vctrs, it needs to
 support such empty instances.
 \item The vector type of a data frame includes its columns (their names
 and their types). The tabular type of a data frame doesn't. Hence
-\code{tbl_cast()} accepts inputs of any shape, whereas \code{vec_cast()}
-requires congruent shapes and names.
+\code{tbl_ptype2()} and \code{tbl_cast()} accept inputs of any shape,
+whereas \code{vec_ptype2()} and \code{vec_cast()} require congruent shapes
+and names.
 }
 
 The details and theory of tabular operations are in development and

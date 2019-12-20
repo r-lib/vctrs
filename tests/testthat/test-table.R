@@ -69,3 +69,41 @@ test_that("can cast `NULL` to tabular type", {
   expect_null(tbl_cast(NULL, mtcars))
   expect_identical(tbl_cast(mtcars, NULL), mtcars)
 })
+
+test_that("common tabular type of data frames is `data.frame()`", {
+  expect_identical(tbl_ptype2(mtcars[1:3], mtcars[4:7]), data.frame())
+  expect_identical(tbl_ptype2(mtcars[4:7], mtcars[1:3]), data.frame())
+})
+
+test_that("data frames don't have common type with vectors", {
+  expect_error(
+    tbl_ptype2(1:3, mtcars[4:6]),
+    class = "vctrs_error_incompatible_type"
+  )
+  expect_error(
+    tbl_ptype2(mtcars[4:6], 1:3),
+    class = "vctrs_error_incompatible_type"
+  )
+
+  mtx <- as.matrix(mtcars)
+  expect_error(
+    tbl_ptype2(mtx, mtcars[4:6]),
+    class = "vctrs_error_incompatible_type"
+  )
+  expect_error(
+    tbl_ptype2(mtcars[4:6], mtx),
+    class = "vctrs_error_incompatible_type"
+  )
+})
+
+test_that("data frames don't have common type with subclasses of data frames", {
+  sub_df <- structure(mtcars, class = c("df_subclass", "data.frame"))
+  expect_error(
+    tbl_ptype2(sub_df, mtcars[4:6]),
+    class = "vctrs_error_incompatible_type"
+  )
+  expect_error(
+    tbl_ptype2(mtcars[4:6], sub_df),
+    class = "vctrs_error_incompatible_type"
+  )
+})

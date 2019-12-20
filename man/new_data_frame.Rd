@@ -3,6 +3,7 @@
 \name{new_data_frame}
 \alias{new_data_frame}
 \alias{vec_ptype2.data.frame}
+\alias{tbl_ptype2.data.frame}
 \alias{vec_cast.data.frame}
 \alias{tbl_cast.data.frame}
 \title{Data frame class}
@@ -10,6 +11,8 @@
 new_data_frame(x = list(), n = NULL, ..., class = character())
 
 \method{vec_ptype2}{data.frame}(x, y, ...)
+
+\method{tbl_ptype2}{data.frame}(x, y, ..., x_arg = "x", y_arg = "y")
 
 \method{vec_cast}{data.frame}(x, to, ...)
 

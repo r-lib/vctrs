@@ -16,8 +16,9 @@
 #'
 #' - The vector type of a data frame includes its columns (their names
 #'   and their types). The tabular type of a data frame doesn't. Hence
-#'   `tbl_cast()` accepts inputs of any shape, whereas `vec_cast()`
-#'   requires congruent shapes and names.
+#'   `tbl_ptype2()` and `tbl_cast()` accept inputs of any shape,
+#'   whereas `vec_ptype2()` and `vec_cast()` require congruent shapes
+#'   and names.
 #'
 #' The details and theory of tabular operations are in development and
 #' likely to change in the future.
@@ -49,6 +50,29 @@ tbl_slice <- function(x, i) {
 tbl_ptype <- function(x) {
   .Call(vctrs_tbl_ptype, x)
 }
+
+
+#' @rdname tbl_is
+#' @inheritParams vec_ptype2
+#' @export
+tbl_ptype2 <- function(x, y, ..., x_arg = "x", y_arg = "y") {
+  if (!missing(...)) {
+    ellipsis::check_dots_empty()
+  }
+  return(.Call(vctrs_tbl_ptype2, x, y, x_arg, y_arg))
+  UseMethod("tbl_ptype2")
+}
+tbl_ptype2_dispatch <- function(x, y, ..., x_arg = "x", y_arg = "y") {
+  UseMethod("tbl_ptype2")
+}
+#' @export
+tbl_ptype2.default <- function(x, y, ..., x_arg = "x", y_arg = "y") {
+  if (has_same_type(x, y)) {
+    return(tbl_ptype(x))
+  }
+  stop_incompatible_type(x, y, x_arg = x_arg, y_arg = y_arg)
+}
+
 
 #' @rdname tbl_is
 #' @inheritParams vec_cast
