@@ -378,3 +378,10 @@ test_that("grouped columns are equal to ungrouped ones", {
   gdf <- dplyr::group_by(mtcars, cyl)
   expect_identical(vec_equal(gdf, mtcars), rep(TRUE, nrow(mtcars)))
 })
+
+test_that("can restore empty dynamic gdf", {
+  expect_identical(
+    vec_restore(data.frame(), dplyr::group_by(mtcars, cyl)),
+    empty_dynamic_gdf()
+  )
+})

@@ -350,6 +350,12 @@ vec_restore_grouped_df_dynamic <- function(x, to, ...) {
   # manipulating the proxy
   class(x) <- "data.frame"
 
+  if (!length(x)) {
+    groups <- new_group_data(drop = TRUE)
+    gdf <- dplyr::new_grouped_df(x, groups)
+    return(gdf)
+  }
+
   groups_ind <- map_lgl(x, is_wrapped_group_col)
   groups_vars <- names(x)[groups_ind]
 
