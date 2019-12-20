@@ -326,10 +326,25 @@ tbl_cast.grouped_df <- function(x, to, ..., x_arg = "x", to_arg = "to") {
 #' @method tbl_cast.grouped_df data.frame
 tbl_cast.grouped_df.data.frame <- function(x, to, ...) {
   if (is_static_grouped_df(to)) {
-    dplyr::new_grouped_df(x, dplyr::group_data(to))
+    if (is_static_grouped_df(x)) {
+      if (identical(group_table(x), group_table(to))) {
+        x
+      } else {
+        abort("Grouping structure is not compatible.")
+      }
+    } else {
+      gdata <- dplyr::group_data(to)
+      gtable <- gdata[-length(gdata)]
+      gtable_vars <- names(gtable)
+      if (!all(gtable_vars %in% names(x))) {
+        abort("Can't cast to an externally grouped data frame.")
+      }
+      gdata$.rows <- vec_match_all(gtable, x[gtable_vars])
+      dplyr::new_grouped_df(x, gdata)
+    }
   } else {
     if (is_static_grouped_df(x)) {
-      abort("Can't convert an explicitly grouped data frame as dynamically grouped.")
+      abort("Can't make an explicitly grouped data frame dynamically grouped.")
     }
     if (inherits(x, "grouped_df")) {
       x

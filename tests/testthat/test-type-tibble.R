@@ -263,14 +263,21 @@ test_that("can cast static gdf to static gdf with different sizes", {
 })
 
 test_that("can table-cast to static gdf", {
-  expect_static_cast <- function(x, to) {
-    expect_identical(tbl_cast(x, to), dplyr::new_grouped_df(x, dplyr::group_data(to)))
-  }
   static_gdf <- dplyr::group_by(mtcars, cyl, .drop = FALSE)
-  expect_static_cast(mtcars[1:3], static_gdf)
-  expect_static_cast(mtcars[10:11], static_gdf)
-  expect_static_cast(tibble::as_tibble(mtcars[10:11]), static_gdf)
-  expect_static_cast(dplyr::group_by(mtcars, vs, am, .drop = TRUE), static_gdf)
+
+  expect_static_cast <- function(x) {
+    gdata <- dplyr::group_data(static_gdf)
+    gtable <- gdata[-length(gdata)]
+    gdata$.rows <- vec_match_all(gtable, x[names(gtable)])
+    expect_identical(tbl_cast(x, static_gdf), dplyr::new_grouped_df(x, gdata))
+  }
+
+  expect_static_cast(mtcars[1:3])
+  expect_static_cast(tibble::as_tibble(mtcars[1:3]))
+  expect_static_cast(dplyr::group_by(mtcars, vs, am, .drop = TRUE))
+
+  expect_error(tbl_cast(mtcars[10:11], static_gdf), "externally grouped")
+  expect_error(tbl_cast(tibble::as_tibble(mtcars[10:11]), static_gdf), "externally grouped")
 })
 
 test_that("can table-cast to dynamic gdf", {
