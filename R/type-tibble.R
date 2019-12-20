@@ -285,6 +285,39 @@ vec_cast.grouped_df.data.frame <- function(x, to, ...) {
   }
 }
 
+#' @rdname vec_ptype2.grouped_df
+#' @export tbl_cast.grouped_df
+#' @method tbl_cast grouped_df
+#' @export
+tbl_cast.grouped_df <- function(x, to, ..., x_arg = "x", to_arg = "to") {
+  if (is_bare_grouped_df(to)) {
+    UseMethod("tbl_cast.grouped_df")
+  } else {
+    vec_default_cast(x, to, x_arg = x_arg, to_arg = to_arg)
+  }
+}
+#' @export
+#' @method tbl_cast.grouped_df data.frame
+tbl_cast.grouped_df.data.frame <- function(x, to, ...) {
+  if (is_static_grouped_df(to)) {
+    dplyr::new_grouped_df(x, dplyr::group_data(to))
+  } else {
+    if (is_static_grouped_df(x)) {
+      abort("Can't convert an explicitly grouped data frame as dynamically grouped.")
+    }
+    if (inherits(x, "grouped_df")) {
+      x
+    } else {
+      dplyr::new_grouped_df(x, new_group_data(TRUE))
+    }
+  }
+}
+#' @export
+#' @method tbl_cast.grouped_df default
+tbl_cast.grouped_df.default <- function(x, to, ..., x_arg = "x", to_arg = "to") {
+  vec_default_cast(x, to, x_arg = x_arg, to_arg = to_arg)
+}
+
 #' @export
 vec_proxy.grouped_df <- function(x, ...) {
   if (is_static_grouped_df(x)) {

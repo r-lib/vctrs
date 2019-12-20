@@ -262,6 +262,36 @@ test_that("can cast static gdf to static gdf with different sizes", {
   )
 })
 
+test_that("can table-cast to static gdf", {
+  expect_static_cast <- function(x, to) {
+    expect_identical(tbl_cast(x, to), dplyr::new_grouped_df(x, dplyr::group_data(to)))
+  }
+  static_gdf <- dplyr::group_by(mtcars, cyl, .drop = FALSE)
+  expect_static_cast(mtcars[1:3], static_gdf)
+  expect_static_cast(mtcars[10:11], static_gdf)
+  expect_static_cast(tibble::as_tibble(mtcars[10:11]), static_gdf)
+  expect_static_cast(dplyr::group_by(mtcars, vs, am, .drop = TRUE), static_gdf)
+})
+
+test_that("can table-cast to dynamic gdf", {
+  expect_dyn_cast <- function(x, to) {
+    out <- tbl_cast(x, to)
+    expect_is(out, "grouped_df")
+    expect_true(!is_static_grouped_df(out))
+    expect_identical(dplyr::group_vars(out), chr())
+  }
+  dyn_gdf <- dplyr::group_by(mtcars, cyl, .drop = TRUE)
+  expect_dyn_cast(mtcars[1:3], dyn_gdf)
+  expect_dyn_cast(mtcars[10:11], dyn_gdf)
+  expect_dyn_cast(tibble::as_tibble(mtcars[10:11]), dyn_gdf)
+
+  gdf <- dplyr::group_by(mtcars, vs, am, .drop = TRUE)
+  expect_identical(tbl_cast(gdf, dyn_gdf), gdf)
+
+  static_gdf <- dplyr::group_by(mtcars, vs, am, .drop = FALSE)
+  expect_error(tbl_cast(static_gdf, dyn_gdf), "explicitly grouped")
+})
+
 test_that("can rbind grouped-dfs", {
   gdf <- dplyr::group_by(mtcars, cyl)
   exp <- dplyr::group_by(vec_rbind(mtcars, mtcars), cyl)
