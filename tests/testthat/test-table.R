@@ -78,21 +78,21 @@ test_that("common tabular type of data frames is `data.frame()`", {
 test_that("data frames don't have common type with vectors", {
   expect_error(
     tbl_ptype2(1:3, mtcars[4:6]),
-    class = "vctrs_error_incompatible_type"
+    "must be a data frame"
   )
   expect_error(
     tbl_ptype2(mtcars[4:6], 1:3),
-    class = "vctrs_error_incompatible_type"
+    "must be a data frame"
   )
 
   mtx <- as.matrix(mtcars)
   expect_error(
     tbl_ptype2(mtx, mtcars[4:6]),
-    class = "vctrs_error_incompatible_type"
+    "must be a data frame"
   )
   expect_error(
     tbl_ptype2(mtcars[4:6], mtx),
-    class = "vctrs_error_incompatible_type"
+    "must be a data frame"
   )
 })
 

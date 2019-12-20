@@ -110,6 +110,7 @@ vec_ptype2.data.frame.default <- function(x, y, ..., x_arg = "x", y_arg = "y") {
 #' @method tbl_ptype2 data.frame
 #' @export
 tbl_ptype2.data.frame <- function(x, y, ..., x_arg = "x", y_arg = "y") {
+  tbl_assert(y)
   if (inherits_only(x, "data.frame")) {
     UseMethod("tbl_ptype2.data.frame", y)
   } else {

@@ -63,6 +63,7 @@ tbl_ptype2 <- function(x, y, ..., x_arg = "x", y_arg = "y") {
   UseMethod("tbl_ptype2")
 }
 tbl_ptype2_dispatch <- function(x, y, ..., x_arg = "x", y_arg = "y") {
+  tbl_assert(x)
   UseMethod("tbl_ptype2")
 }
 #' @export
