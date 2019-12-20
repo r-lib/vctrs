@@ -56,6 +56,11 @@ test_that("vectors are not tabular", {
   expect_error(tbl_assert(1:3), "must be a data frame")
 })
 
+test_that("tbl_assert() refers to `arg`", {
+  expect_error(tbl_assert(1:3), "`1:3` must be a data frame")
+  expect_error(tbl_assert(1:3, "foo"), "`foo` must be a data frame")
+})
+
 test_that("can cast to tabular type", {
   expect_identical(tbl_cast(mtcars, mtcars), mtcars)
   expect_identical(tbl_cast(mtcars[1:3], mtcars), mtcars[1:3])

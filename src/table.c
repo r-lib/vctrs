@@ -18,14 +18,23 @@ bool vec_is_tabular(SEXP x) {
 }
 
 // [[ include("vctrs.h") ]]
-void tbl_assert(SEXP x) {
+void tbl_assert(SEXP x, struct vctrs_arg* arg) {
   if (!vec_is_tabular(x)) {
-    Rf_error("Input must be a data frame.");
+    SEXP arg_str = PROTECT(vctrs_arg(arg));
+
+    if (arg_str == strings_empty) {
+      Rf_error("Input must be a data frame.");
+    } else {
+      Rf_error("`%s` must be a data frame.", r_chr_get_c_string(arg_str, 0));
+    }
+
+    UNPROTECT(1);
   }
 }
 // [[ register() ]]
-SEXP vctrs_tbl_assert(SEXP x) {
-  tbl_assert(x);
+SEXP vctrs_tbl_assert(SEXP x, SEXP arg_) {
+  struct vctrs_arg arg = new_wrapper_arg(NULL, r_chr_get_c_string(arg_, 0));
+  tbl_assert(x, &arg);
   return R_NilValue;
 }
 // [[ register() ]]
@@ -39,13 +48,13 @@ R_len_t tbl_size(SEXP x) {
 }
 // [[ register() ]]
 SEXP vctrs_tbl_size(SEXP x) {
-  tbl_assert(x);
+  tbl_assert(x, args_empty);
   return Rf_ScalarInteger(tbl_size(x));
 }
 
 // [[ include("vctrs.h"); register() ]]
 SEXP tbl_slice(SEXP x, SEXP index) {
-  tbl_assert(x);
+  tbl_assert(x, args_empty);
   SEXP proxy = PROTECT(vec_proxy(x));
 
   if (TYPEOF(proxy) != VECSXP) {

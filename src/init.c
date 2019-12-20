@@ -84,7 +84,7 @@ extern SEXP vctrs_proxy_recursive(SEXP, SEXP);
 extern SEXP vctrs_maybe_translate_encoding(SEXP);
 extern SEXP vctrs_maybe_translate_encoding2(SEXP, SEXP);
 extern SEXP vctrs_tbl_is(SEXP);
-extern SEXP vctrs_tbl_assert(SEXP);
+extern SEXP vctrs_tbl_assert(SEXP, SEXP);
 extern SEXP tbl_slice(SEXP, SEXP);
 extern SEXP tbl_ptype(SEXP);
 extern SEXP vctrs_tbl_ptype2(SEXP, SEXP, SEXP, SEXP);
@@ -193,7 +193,7 @@ static const R_CallMethodDef CallEntries[] = {
   {"vctrs_maybe_translate_encoding2",  (DL_FUNC) &vctrs_maybe_translate_encoding2, 2},
   {"vctrs_rle",                        (DL_FUNC) &altrep_rle_Make, 1},
   {"vctrs_tbl_is",                     (DL_FUNC) &vctrs_tbl_is, 1},
-  {"vctrs_tbl_assert",                 (DL_FUNC) &vctrs_tbl_assert, 1},
+  {"vctrs_tbl_assert",                 (DL_FUNC) &vctrs_tbl_assert, 2},
   {"vctrs_tbl_slice",                  (DL_FUNC) &tbl_slice, 2},
   {"vctrs_tbl_ptype",                  (DL_FUNC) &tbl_ptype, 1},
   {"vctrs_tbl_ptype2",                 (DL_FUNC) &vctrs_tbl_ptype2, 4},

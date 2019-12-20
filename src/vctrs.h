@@ -238,7 +238,7 @@ bool is_data_frame(SEXP x);
 bool is_record(SEXP x);
 
 // Tabular API
-void tbl_assert(SEXP x);
+void tbl_assert(SEXP x, struct vctrs_arg* arg);
 R_len_t tbl_size(SEXP x);
 SEXP tbl_slice(SEXP x, SEXP index);
 SEXP tbl_ptype(SEXP x);

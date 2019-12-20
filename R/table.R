@@ -30,9 +30,10 @@ tbl_is <- function(x) {
   .Call(vctrs_tbl_is, x)
 }
 #' @rdname tbl_is
+#' @inheritParams vec_assert
 #' @export
-tbl_assert <- function(x) {
-  .Call(vctrs_tbl_assert, x)
+tbl_assert <- function(x, arg = as_label(substitute(x))) {
+  .Call(vctrs_tbl_assert, x, arg)
 }
 
 #' @rdname tbl_is
@@ -63,7 +64,7 @@ tbl_ptype2 <- function(x, y, ..., x_arg = "x", y_arg = "y") {
   UseMethod("tbl_ptype2")
 }
 tbl_ptype2_dispatch <- function(x, y, ..., x_arg = "x", y_arg = "y") {
-  tbl_assert(x)
+  tbl_assert(x, x_arg)
   UseMethod("tbl_ptype2")
 }
 #' @export

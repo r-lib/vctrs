@@ -12,7 +12,7 @@
 \usage{
 tbl_is(x)
 
-tbl_assert(x)
+tbl_assert(x, arg = "x")
 
 tbl_size(x)
 
@@ -26,6 +26,10 @@ tbl_cast(x, to, ..., x_arg = "x", to_arg = "to")
 }
 \arguments{
 \item{x}{A tabular vector.}
+
+\item{arg}{Name of argument being checked. This is used in error
+messages. The label of the expression passed as \code{x} is taken as
+default.}
 
 \item{i}{An integer, character or logical vector specifying the positions or
 names of the observations to get/set.
