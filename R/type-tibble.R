@@ -54,6 +54,32 @@ tbl_ptype2.data.frame.tbl_df <- function(x, y, ..., x_arg = "x", y_arg = "y") {
   }
 }
 
+#' Double dispatch methods for tibbles
+#'
+#' @inheritParams tbl_cast
+#' @export tbl_cast.tbl_df
+#' @method tbl_cast tbl_df
+#' @export
+tbl_cast.tbl_df <- function(x, to, ..., x_arg = "x", to_arg = "to") {
+  if (is_bare_tibble(to)) {
+    UseMethod("tbl_cast.tbl_df")
+  } else {
+    vec_default_cast(x, to, x_arg = x_arg, to_arg = to_arg)
+  }
+}
+#' @export
+#' @method tbl_cast.tbl_df data.frame
+tbl_cast.tbl_df.data.frame <- function(x, to, ...) {
+  tibble::as_tibble(x)
+}
+#' @export
+#' @method tbl_cast.tbl_df default
+tbl_cast.tbl_df.default <- function(x, to, ..., x_arg = "x", to_arg = "to") {
+  vec_default_cast(x, to, x_arg = x_arg, to_arg = to_arg)
+}
+
+
+
 # grouped_df ---------------------------------------------------------
 
 #' Statically grouped data frames
