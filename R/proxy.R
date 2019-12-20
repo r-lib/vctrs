@@ -146,7 +146,7 @@ vec_proxy_pop_vcols <- function(x, names) {
   x <- as.list(x)
 
   n <- length(x)
-  has_vcols <- identical(names(x)[[n]], "vctrs::virtual_cols")
+  has_vcols <- n && identical(names(x)[[n]], "vctrs::virtual_cols")
 
   if (!has_vcols) {
     abort("Internal error: Expected virtual column in proxy.")

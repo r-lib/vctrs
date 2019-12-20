@@ -165,3 +165,10 @@ test_that("can proxy and restore virtual columns", {
   x <- new_vcols(data_frame(x = 1:3), groups = c(1L, 1L, 2L))
   expect_identical(vec_restore(vec_proxy(x), to = x), x)
 })
+
+test_that("can slice table with virtual columns", {
+  local_vcols_methods()
+  x <- new_vcols(data_frame(x = 1:3), groups = c(1L, 1L, 2L))
+  exp <- new_vcols(data_frame(x...1 = 1:3, x...2 = 1:3), groups = c(1L, 1L, 2L))
+  expect_identical(tbl_slice(x, c(1, 1)), exp)
+})

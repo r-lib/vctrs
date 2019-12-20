@@ -55,7 +55,10 @@ SEXP vctrs_tbl_size(SEXP x) {
 // [[ include("vctrs.h"); register() ]]
 SEXP tbl_slice(SEXP x, SEXP index) {
   tbl_assert(x, args_empty);
+
   SEXP proxy = PROTECT(vec_proxy(x));
+  SEXP proxy_vcols = PROTECT(vec_proxy_pop_vcols(&proxy));
+  PROTECT(proxy);
 
   if (TYPEOF(proxy) != VECSXP) {
     Rf_error("Internal error: Expected list in tabular proxy.");
@@ -65,13 +68,27 @@ SEXP tbl_slice(SEXP x, SEXP index) {
   index = PROTECT(vec_as_index(index, tbl_size(x), names));
 
   SEXP sliced_proxy = PROTECT(list_slice(proxy, index));
-  Rf_copyMostAttrib(sliced_proxy, proxy);
 
   if (names == R_NilValue) {
     names = PROTECT(Rf_allocVector(STRSXP, Rf_length(index)));
   } else {
     names = PROTECT(slice_names(names, index));
   }
+
+  if (proxy_vcols != R_NilValue) {
+    R_len_t n = Rf_length(index) + 1;
+
+    Rf_setAttrib(sliced_proxy, R_NamesSymbol, names);
+    sliced_proxy = PROTECT(Rf_lengthgets(sliced_proxy, n));
+    names = PROTECT(r_names(sliced_proxy));
+
+    SET_VECTOR_ELT(sliced_proxy, n - 1, proxy_vcols);
+    SET_STRING_ELT(names, n - 1, strings_vcols);
+  } else {
+    PROTECT(PROTECT(R_NilValue));
+  }
+  Rf_copyMostAttrib(sliced_proxy, proxy);
+
   names = PROTECT(vec_as_names(names, name_repair_unique, false));
   Rf_setAttrib(sliced_proxy, R_NamesSymbol, names);
 
@@ -80,7 +97,7 @@ SEXP tbl_slice(SEXP x, SEXP index) {
 
   SEXP out = vec_restore(sliced_proxy, x, R_NilValue);
 
-  UNPROTECT(7);
+  UNPROTECT(11);
   return out;
 }
 
