@@ -41,7 +41,7 @@ test_that("tbl_size() returns number of columns", {
 })
 
 test_that("can take the table prototype", {
-  expect_identical(tbl_ptype(mtcars), mtcars[integer(), integer()])
+  expect_identical(tbl_ptype(mtcars), mtcars_tbl_ptype)
 })
 
 test_that("data frames are tabular", {
@@ -73,6 +73,13 @@ test_that("can cast `NULL` to tabular type", {
 test_that("common tabular type of data frames is `data.frame()`", {
   expect_identical(tbl_ptype2(mtcars[1:3], mtcars[4:7]), data.frame())
   expect_identical(tbl_ptype2(mtcars[4:7], mtcars[1:3]), data.frame())
+})
+
+test_that("can take the common tabular type with `NULL`", {
+  expect_identical(tbl_ptype2(NULL, mtcars), mtcars_tbl_ptype)
+  expect_identical(tbl_ptype2(mtcars, NULL), mtcars_tbl_ptype)
+  expect_error(tbl_ptype2(NULL, 1:3), "must be a data frame")
+  expect_error(tbl_ptype2(1:3, NULL), "must be a data frame")
 })
 
 test_that("data frames don't have common type with vectors", {

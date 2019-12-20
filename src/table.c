@@ -84,6 +84,13 @@ SEXP tbl_ptype(SEXP x) {
 SEXP tbl_ptype2(SEXP x, SEXP y,
                 struct vctrs_arg* x_arg,
                 struct vctrs_arg* y_arg) {
+  if (x == R_NilValue) {
+    return tbl_ptype(y);
+  }
+  if (y == R_NilValue) {
+    return tbl_ptype(x);
+  }
+
   SEXP x_arg_chr = PROTECT(vctrs_arg(x_arg));
   SEXP y_arg_chr = PROTECT(vctrs_arg(y_arg));
 
