@@ -130,3 +130,8 @@ test_that("can take the common type of multiple inputs", {
     "`..4` must be a data frame"
   )
 })
+
+test_that("can take the common type of absent inputs", {
+  expect_null(tbl_ptype_common())
+  expect_null(tbl_ptype_common(NULL))
+})
