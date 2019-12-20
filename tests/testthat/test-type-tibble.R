@@ -102,6 +102,46 @@ test_that("TODO: common type of two static gdfs is still unimplemented", {
   expect_error(vec_ptype_common(gdf1, gdf1), "unimplemented")
 })
 
+test_that("common tabular type of dynamic gdfs", {
+  dyn_gdf1 <- dplyr::group_by(mtcars, cyl, am, .drop = TRUE)
+  dyn_gdf2 <- dplyr::group_by(iris, Species, .drop = TRUE)
+  expect_identical(tbl_ptype2(dyn_gdf1, dyn_gdf2), empty_dynamic_gdf())
+})
+
+test_that("common tabular type of static gdfs", {
+  static_gdf1 <- dplyr::group_by(mtcars, cyl, am, .drop = FALSE)
+  static_gdf2 <- dplyr::group_by(iris, Species, .drop = FALSE)
+  expect_error(tbl_ptype2(static_gdf1, static_gdf2), "TODO")
+})
+
+test_that("common tabular type of dynamic gdf with df and tib", {
+  dyn_gdf <- dplyr::group_by(mtcars, cyl, am, .drop = TRUE)
+  df <- iris
+  tib <- tibble::as_tibble(mtcars[10])
+
+  expect_identical(tbl_ptype2(df, dyn_gdf), empty_dynamic_gdf())
+  expect_identical(tbl_ptype2(dyn_gdf, df), empty_dynamic_gdf())
+
+  expect_identical(tbl_ptype2(tib, dyn_gdf), empty_dynamic_gdf())
+  expect_identical(tbl_ptype2(dyn_gdf, tib), empty_dynamic_gdf())
+})
+
+test_that("common tabular type of static gdf with df and tib", {
+  static_gdf <- dplyr::group_by(mtcars, cyl, am, .drop = FALSE)
+  empty_static_gdf <- dplyr::new_grouped_df(
+    data.frame(),
+    dplyr::group_data(static_gdf)
+  )
+  df <- iris
+  tib <- tibble::as_tibble(mtcars[10])
+
+  expect_identical(tbl_ptype2(df, static_gdf), empty_static_gdf)
+  expect_identical(tbl_ptype2(static_gdf, df), empty_static_gdf)
+
+  expect_identical(tbl_ptype2(tib, static_gdf), empty_static_gdf)
+  expect_identical(tbl_ptype2(static_gdf, tib), empty_static_gdf)
+})
+
 test_that("static groups are proxied and restored", {
   static <- dplyr::group_by(mtcars, cyl, am, .drop = FALSE)
 

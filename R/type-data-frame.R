@@ -53,6 +53,10 @@ data_frame <- function(..., n = NULL) {
   new_data_frame(cols, n = n)
 }
 
+is_bare_data_frame <- function(x) {
+  inherits_only(x, "data.frame")
+}
+
 #' @export
 vec_ptype_full.data.frame <- function(x, ...) {
   if (length(x) == 0) {

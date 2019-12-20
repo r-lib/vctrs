@@ -7,6 +7,9 @@ df_as_tibble <- function(df) {
 new_tibble <- function(x, ...) {
   new_data_frame(x, ..., class = c("tbl_df", "tbl"))
 }
+is_bare_tibble <- function(x) {
+  inherits_only(x, c("tbl_df", "tbl", "data.frame"))
+}
 
 # Conditionally registered in .onLoad()
 vec_ptype2.tbl_df <- function(x, y, ...) {
@@ -98,6 +101,20 @@ group_data_cast <- function(x, to) {
   gdata
 }
 
+new_group_data <- function(drop) {
+  new_data_frame(list(.rows = list()), .drop = drop)
+}
+empty_dynamic_gdf <- function() {
+  dplyr::new_grouped_df(data.frame(), new_group_data(TRUE))
+}
+empty_static_gdf <- function() {
+  dplyr::new_grouped_df(data.frame(), new_group_data(FALSE))
+}
+
+is_bare_grouped_df <- function(x) {
+  inherits_only(x, c("grouped_df", "tbl_df", "tbl", "data.frame"))
+}
+
 #' Double dispatch methods for grouped data frames
 #' @inheritParams vec_ptype2
 #' @export vec_ptype2.grouped_df
@@ -157,6 +174,88 @@ vec_ptype2.grouped_df.data.frame <- function(x, y, ...) {
 vec_ptype2.tbl_df.grouped_df <- function(x, y, ...) {
   vec_ptype2.data.frame.grouped_df(x, y, ...)
 }
+
+
+#' @export tbl_ptype2.grouped_df
+#' @rdname vec_ptype2.grouped_df
+#' @export
+#' @method tbl_ptype2 grouped_df
+tbl_ptype2.grouped_df <- function(x, y, ..., x_arg = "x", y_arg = "y") {
+  tbl_assert(y, y_arg)
+  if (is_bare_grouped_df(x)) {
+    UseMethod("tbl_ptype2.grouped_df", y)
+  } else {
+    vec_default_ptype2(x, y, x_arg = x_arg, y_arg = y_arg)
+  }
+}
+#' @method tbl_ptype2.grouped_df default
+#' @export
+tbl_ptype2.grouped_df.default <- function(x, y, ..., x_arg = "x", y_arg = "y") {
+  vec_default_ptype2(x, y, x_arg = x_arg, y_arg = y_arg)
+}
+
+#' @export
+#' @method tbl_ptype2.grouped_df grouped_df
+tbl_ptype2.grouped_df.grouped_df <- function(x, y, ..., x_arg = "x", y_arg = "y") {
+  if (!is_bare_grouped_df(y)) {
+    return(vec_default_ptype2(x, y, x_arg = x_arg, y_arg = y_arg))
+  }
+
+  x_dynamic <- !is_static_grouped_df(x)
+  y_dynamic <- !is_static_grouped_df(y)
+
+  if (x_dynamic && y_dynamic) {
+    empty_dynamic_gdf()
+  } else {
+    abort("TODO: Combining statically grouped data frames is unimplemented.")
+  }
+}
+
+#' @export
+#' @method tbl_ptype2.data.frame grouped_df
+tbl_ptype2.data.frame.grouped_df <- function(x, y, ...) {
+  tbl_ptype2_grouped_df_right(x, y, ...)
+}
+#' @export
+#' @method tbl_ptype2.grouped_df data.frame
+tbl_ptype2.grouped_df.data.frame <- function(x, y, ...) {
+  tbl_ptype2_grouped_df_left(is_bare_data_frame, x, y, ...)
+}
+
+#' @export
+#' @method tbl_ptype2.tbl_df grouped_df
+tbl_ptype2.tbl_df.grouped_df <- function(x, y, ...) {
+  tbl_ptype2_grouped_df_right(x, y, ...)
+}
+#' @export
+#' @method tbl_ptype2.grouped_df tbl_df
+tbl_ptype2.grouped_df.tbl_df <- function(x, y, ...) {
+  tbl_ptype2_grouped_df_left(is_bare_tibble, x, y, ...)
+}
+
+tbl_ptype2_grouped_df_left <- function(is_bare_input, x, y, ..., x_arg = "x", y_arg = "y") {
+  if (!is_bare_input(y)) {
+    return(vec_default_ptype2(x, y, x_arg = x_arg, y_arg = y_arg))
+  }
+
+  if (is_static_grouped_df(x)) {
+    dplyr::new_grouped_df(data.frame(), dplyr::group_data(x))
+  } else {
+    empty_dynamic_gdf()
+  }
+}
+tbl_ptype2_grouped_df_right <- function(x, y, ..., x_arg = "x", y_arg = "y") {
+  if (!is_bare_grouped_df(y)) {
+    return(vec_default_ptype2(x, y, x_arg = x_arg, y_arg = y_arg))
+  }
+
+  if (is_static_grouped_df(y)) {
+    dplyr::new_grouped_df(data.frame(), dplyr::group_data(y))
+  } else {
+    empty_dynamic_gdf()
+  }
+}
+
 
 #' @rdname vec_ptype2.grouped_df
 #' @inheritParams vec_cast

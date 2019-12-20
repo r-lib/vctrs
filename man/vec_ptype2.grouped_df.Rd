@@ -2,10 +2,13 @@
 % Please edit documentation in R/type-tibble.R
 \name{vec_ptype2.grouped_df}
 \alias{vec_ptype2.grouped_df}
+\alias{tbl_ptype2.grouped_df}
 \alias{vec_cast.grouped_df}
 \title{Double dispatch methods for grouped data frames}
 \usage{
 \method{vec_ptype2}{grouped_df}(x, y, ...)
+
+\method{tbl_ptype2}{grouped_df}(x, y, ..., x_arg = "x", y_arg = "y")
 
 \method{vec_cast}{grouped_df}(x, to, ...)
 }
@@ -15,6 +18,14 @@
 \item{y}{Vector types.}
 
 \item{...}{These dots are for future extensions and must be empty.}
+
+\item{x_arg}{Argument names for \code{x} and \code{y}. These are used
+in error messages to inform the user about the locations of
+incompatible types (see \code{\link[=stop_incompatible_type]{stop_incompatible_type()}}).}
+
+\item{y_arg}{Argument names for \code{x} and \code{y}. These are used
+in error messages to inform the user about the locations of
+incompatible types (see \code{\link[=stop_incompatible_type]{stop_incompatible_type()}}).}
 
 \item{to}{Type to cast to. If \code{NULL}, \code{x} will be returned as is.}
 }
