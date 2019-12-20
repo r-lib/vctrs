@@ -135,3 +135,13 @@ test_that("can take the common type of absent inputs", {
   expect_null(tbl_ptype_common())
   expect_null(tbl_ptype_common(NULL))
 })
+
+test_that("tabular generics handle data frames without names", {
+  df <- new_data_frame(list(1, 2, 3))
+  expect_identical(tbl_slice(df, 2:3), data.frame(...1 = 2, ...2 = 3))
+
+  expect_identical(tbl_ptype2(df, mtcars), data.frame())
+  expect_identical(tbl_ptype2(mtcars, df), data.frame())
+  expect_identical(tbl_ptype2(df, NULL), data.frame())
+  expect_identical(tbl_ptype2(NULL, df), data.frame())
+})
