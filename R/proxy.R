@@ -141,6 +141,7 @@ vec_proxy_push_vcols <- function(x, ...) {
 
 vec_proxy_pop_vcols <- function(x, names) {
   stopifnot(is.data.frame(x))
+  size = nrow(x)
 
   # Prevent S3 dispatch
   x <- as.list(x)
@@ -171,7 +172,7 @@ vec_proxy_pop_vcols <- function(x, names) {
   }
 
   data_frame(
-    proxy = new_data_frame(x),
-    vcols = new_data_frame(out)
+    proxy = new_data_frame(x, n = size),
+    vcols = new_data_frame(out, n = size)
   )
 }

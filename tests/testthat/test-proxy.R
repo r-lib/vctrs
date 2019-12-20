@@ -172,3 +172,9 @@ test_that("can slice table with virtual columns", {
   exp <- new_vcols(data_frame(x...1 = 1:3, x...2 = 1:3), groups = c(1L, 1L, 2L))
   expect_identical(tbl_slice(x, c(1, 1)), exp)
 })
+
+test_that("can take the prototype with virtual columns", {
+  local_vcols_methods()
+  x <- new_vcols(data_frame(x = 1:3), groups = c(1L, 1L, 2L))
+  expect_identical(tbl_ptype(x), new_vcols(data.frame(), int()))
+})
