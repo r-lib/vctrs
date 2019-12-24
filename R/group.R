@@ -23,7 +23,7 @@
 #'   * `vec_group_pos()`: A two column data frame with size equal to
 #'     `vec_size(vec_unique(x))`.
 #'     * A `key` column of type `vec_ptype(x)`
-#'     * A `pos` column of type `list_of<integer>`
+#'     * A `pos` column of type list, with elements of type integer.
 #'   * `vec_group_rle()`: A `vctrs_group_rle` rcrd object with two integer
 #'     vector fields: `group` and `length`.
 #'

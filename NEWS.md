@@ -6,6 +6,9 @@
 * `vec_proxy_equal()` is now applied recursively across the columns of
   data frames (#641).
 
+* `vec_split()` no longer returns the `val` column as a `list_of`. It is now
+  returned as a bare list.
+  
 * Complex numbers are coercible with the integer and
   double (#564).
 

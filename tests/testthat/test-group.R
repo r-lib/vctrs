@@ -143,7 +143,7 @@ test_that("can locate unique groups of an empty vector", {
 
   expect_s3_class(out, "data.frame")
   expect_equal(out$key, integer())
-  expect_equal(out$pos, list_of(.ptype = integer()))
+  expect_equal(out$pos, list())
 })
 
 test_that("can locate unique groups of a data frame", {
@@ -177,11 +177,11 @@ test_that("vec_group_pos takes the equality proxy", {
   local_comparable_tuple()
   x <- tuple(c(1, 2, 1), 1:3)
   expect_equal(vec_group_pos(x)$key, x[1:2])
-  expect_equal(vec_group_pos(x)$pos, list_of(c(1L, 3L), 2L))
+  expect_equal(vec_group_pos(x)$pos, list(c(1L, 3L), 2L))
 
   x <- as.POSIXlt(new_datetime(c(1, 2, 1)))
   expect_equal(vec_group_pos(x)$key, x[1:2])
-  expect_equal(vec_group_pos(x)$pos, list_of(c(1L, 3L), 2L))
+  expect_equal(vec_group_pos(x)$pos, list(c(1L, 3L), 2L))
 })
 
 test_that("vec_group_pos takes the equality proxy recursively", {
@@ -190,7 +190,7 @@ test_that("vec_group_pos takes the equality proxy recursively", {
   x <- tuple(c(1, 2, 1, 1), 1:4)
   df <- data_frame(x = x)
 
-  expect <- data_frame(key = vec_slice(df, c(1, 2)), pos = list_of(c(1L, 3L, 4L), 2L))
+  expect <- data_frame(key = vec_slice(df, c(1, 2)), pos = list(c(1L, 3L, 4L), 2L))
 
   expect_equal(vec_group_pos(df), expect)
 })
