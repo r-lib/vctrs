@@ -433,11 +433,6 @@ vec_cast.list.data.frame <- function(x, to, ...) {
   # equivalent for `vec_get()`
   row.names(x) <- NULL
   out <- vec_chop(x)
-
-  # FIXME - Remove after #660 where `vec_chop()`
-  # should return a bare list
-  attributes(out) <- NULL
-
   out
 }
 
