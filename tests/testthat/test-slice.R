@@ -771,17 +771,17 @@ test_that("can subset S3 objects using the fallback method with compact seqs", {
 test_that("can chop base vectors with compact seqs", {
   start <- 1L
   size <- 2L
-  expect_identical(vec_chop_seq(lgl(1, 0, 1), start, size), list_of(lgl(0, 1)))
-  expect_identical(vec_chop_seq(int(1, 2, 3), start, size), list_of(int(2, 3)))
-  expect_identical(vec_chop_seq(dbl(1, 2, 3), start, size), list_of(dbl(2, 3)))
-  expect_identical(vec_chop_seq(cpl(1, 2, 3), start, size), list_of(cpl(2, 3)))
-  expect_identical(vec_chop_seq(chr("1", "2", "3"), start, size), list_of(chr("2", "3")))
-  expect_identical(vec_chop_seq(bytes(1, 2, 3), start, size), list_of(bytes(2, 3)))
-  expect_identical(vec_chop_seq(list(1, 2, 3), start, size), list_of(list(2, 3)))
+  expect_identical(vec_chop_seq(lgl(1, 0, 1), start, size), list(lgl(0, 1)))
+  expect_identical(vec_chop_seq(int(1, 2, 3), start, size), list(int(2, 3)))
+  expect_identical(vec_chop_seq(dbl(1, 2, 3), start, size), list(dbl(2, 3)))
+  expect_identical(vec_chop_seq(cpl(1, 2, 3), start, size), list(cpl(2, 3)))
+  expect_identical(vec_chop_seq(chr("1", "2", "3"), start, size), list(chr("2", "3")))
+  expect_identical(vec_chop_seq(bytes(1, 2, 3), start, size), list(bytes(2, 3)))
+  expect_identical(vec_chop_seq(list(1, 2, 3), start, size), list(list(2, 3)))
 })
 
 test_that("can chop with a decreasing compact seq", {
-  expect_equal(vec_chop_seq(int(1, 2, 3), 1L, 2L, FALSE), list_of(int(2, 1)))
+  expect_equal(vec_chop_seq(int(1, 2, 3), 1L, 2L, FALSE), list(int(2, 1)))
 })
 
 test_that("can chop with multiple compact seqs", {
@@ -790,15 +790,15 @@ test_that("can chop with multiple compact seqs", {
 
   expect_equal(
     vec_chop_seq(int(1, 2, 3), start, size),
-    list_of(int(2), int(1, 2, 3))
+    list(int(2), int(1, 2, 3))
   )
 })
 
 test_that("can chop S3 objects using the fallback method with compact seqs", {
   x <- factor(c("a", "b", "c", "d"))
-  expect_equal(vec_chop_seq(x, 0L, 0L), list_of(vec_slice(x, integer())))
-  expect_equal(vec_chop_seq(x, 0L, 1L), list_of(vec_slice(x, 1L)))
-  expect_equal(vec_chop_seq(x, 2L, 2L), list_of(vec_slice(x, 3:4)))
+  expect_equal(vec_chop_seq(x, 0L, 0L), list(vec_slice(x, integer())))
+  expect_equal(vec_chop_seq(x, 0L, 1L), list(vec_slice(x, 1L)))
+  expect_equal(vec_chop_seq(x, 2L, 2L), list(vec_slice(x, 3:4)))
 })
 
 # Position / index coercion -----------------------------------------------
