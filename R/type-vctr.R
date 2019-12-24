@@ -270,7 +270,7 @@ as.list.vctrs_vctr <- function(x, ...) {
 
 #' @export
 as.Date.vctrs_vctr <- function(x, ...) {
-  vec_cast(x, date())
+  vec_cast(x, new_date())
 }
 
 #' @export
