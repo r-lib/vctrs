@@ -113,9 +113,16 @@ SEXP vctrs_is_vector(SEXP x) {
   return Rf_ScalarLogical(vec_is_vector(x));
 }
 
+bool class_is_null(SEXP x) {
+  SEXP class = PROTECT(Rf_getAttrib(x, R_ClassSymbol));
+  bool res = Rf_isNull(class);
+  UNPROTECT(1);
+  return res;
+}
+
 // [[ include("vctrs.h") ]]
 enum vctrs_type vec_typeof(SEXP x) {
-  if (!OBJECT(x)) {
+  if (!OBJECT(x) || class_is_null(x)) {
     return vec_base_typeof(x, false);
   }
 
