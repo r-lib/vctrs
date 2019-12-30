@@ -140,7 +140,7 @@ test_that("vec_proxy_compare() preserves data frames and vectors", {
 
 test_that("vec_proxy_compare() handles data frame with a POSIXlt column", {
   df <- data.frame(times = 1:5, x = 1:5)
-  df$times <- as.POSIXlt(seq.Date(Sys.Date(), length.out = 5, by = "day"))
+  df$times <- as.POSIXlt(seq.Date(as.Date("2019-12-30"), as.Date("2020-01-03"), by = "day"))
 
   df2 <- df
   df2$times <- vec_proxy_compare(df$times)
@@ -149,6 +149,11 @@ test_that("vec_proxy_compare() handles data frame with a POSIXlt column", {
     vec_proxy_compare(df),
     vec_proxy_compare(df2)
   )
+})
+
+test_that("vec_proxy_compare.POSIXlt() correctly orders (#720)", {
+  dates <- as.POSIXlt(seq.Date(as.Date("2019-12-30"), as.Date("2020-01-03"), by = "day"))
+  expect_equal(vec_order(dates), 1:5)
 })
 
 test_that("error is thrown with data frames with 0 columns", {

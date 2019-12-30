@@ -79,7 +79,7 @@ vec_proxy.POSIXlt <- function(x, ...) {
 }
 #' @export
 vec_proxy_compare.POSIXlt <- function(x, ..., relax = FALSE) {
-  new_data_frame(vec_data(x), n = length(x))
+  new_data_frame(vec_data(x)[c("year", "mon", "mday", "hour", "min", "sec")], n = length(x))
 }
 
 
