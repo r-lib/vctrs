@@ -426,6 +426,15 @@ vec_cast.list.default <- function(x, to, ...) {
   out
 }
 
+#' @export
+#' @method vec_cast.list data.frame
+vec_cast.list.data.frame <- function(x, to, ...) {
+  # FIXME - Replace with the `vec_chop()`
+  # equivalent for `vec_get()`
+  row.names(x) <- NULL
+  out <- vec_chop(x)
+  out
+}
 
 # compare ------------------------------------------------------------
 
