@@ -127,7 +127,10 @@ test_that("common tabular type of gdfs requires common size", {
 test_that("common tabular type of dynamic gdfs", {
   dyn_gdf1 <- dplyr::group_by(mtcars, cyl, am, .drop = TRUE)
   dyn_gdf2 <- dplyr::group_by(mtcars, vs, .drop = TRUE)
-  expect_identical(tbl_ptype2(dyn_gdf1, dyn_gdf2), empty_dynamic_gdf(32L))
+  expect_identical(
+    tbl_ptype2(dyn_gdf1, dyn_gdf2),
+    empty_dynamic_gdf(32L, row_names = row_names(mtcars))
+  )
 })
 
 test_that("common tabular type of static gdfs", {
@@ -141,8 +144,10 @@ test_that("common tabular type of dynamic gdf with df and tib", {
   df <- mtcars[10]
   tib <- tibble::as_tibble(mtcars[11])
 
-  expect_identical(tbl_ptype2(df, dyn_gdf), empty_dynamic_gdf(32L))
-  expect_identical(tbl_ptype2(dyn_gdf, df), empty_dynamic_gdf(32L))
+  empty_mtcars_gdf <- empty_dynamic_gdf(32L, row_names = row_names(mtcars))
+
+  expect_identical(tbl_ptype2(df, dyn_gdf), empty_mtcars_gdf)
+  expect_identical(tbl_ptype2(dyn_gdf, df), empty_mtcars_gdf)
 
   row.names(dyn_gdf) <- NULL
 
@@ -427,7 +432,15 @@ test_that("row names of dynamic gdf are preserved upon proxying and restoration"
   dyn_gdf_proxy <- vec_proxy(dyn_gdf)
 
   out <- vec_restore(dyn_gdf_proxy, dplyr::group_by(mtcars, cyl, .drop = TRUE))
-  expect_identical(out, dyn_gdf)
+  expect_identical(row_names(out), 101:132)
+
+  empty_df <- mtcars
+  row.names(empty_df) <- 101:132
+  empty_dyn_gdf <- dplyr::group_by(empty_df, cyl, .drop = TRUE)
+  empty_dyn_gdf_proxy <- vec_proxy(empty_dyn_gdf)
+
+  out <- vec_restore(empty_dyn_gdf_proxy, dplyr::group_by(mtcars, cyl, .drop = TRUE))
+  expect_identical(row_names(out), 101:132)
 })
 
 test_that("row names of static gdf are preserved upon proxying and restoration", {

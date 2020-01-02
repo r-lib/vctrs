@@ -148,12 +148,12 @@ new_grouped_df <- function(x, groups, ...) {
 new_group_data <- function(drop) {
   new_data_frame(list(.rows = list()), .drop = drop)
 }
-empty_dynamic_gdf <- function(n) {
-  out <- new_data_frame(n = n)
-  dplyr::new_grouped_df(out, new_group_data(TRUE))
+empty_dynamic_gdf <- function(n, row_names = NULL) {
+  out <- new_data_frame(n = n, row_names = row_names)
+  new_grouped_df(out, new_group_data(TRUE))
 }
-empty_static_gdf <- function(n) {
-  out <- new_data_frame(n = n)
+empty_static_gdf <- function(n, row_names = NULL) {
+  out <- new_data_frame(n = n, row_names = row_names)
   dplyr::new_grouped_df(out, new_group_data(FALSE))
 }
 
@@ -331,7 +331,7 @@ tbl_ptype2_grouped_df_left <- function(is_bare_input, x, y, ..., x_arg = "x", y_
     out <- new_data_frame(n = n, row.names = row.names(ptype))
     dplyr::new_grouped_df(out, dplyr::group_data(x))
   } else {
-    empty_dynamic_gdf(n)
+    empty_dynamic_gdf(n, row_names = row_names(ptype))
   }
 }
 tbl_ptype2_grouped_df_right <- function(x, y, ..., x_arg = "x", y_arg = "y") {
@@ -346,7 +346,7 @@ tbl_ptype2_grouped_df_right <- function(x, y, ..., x_arg = "x", y_arg = "y") {
     out <- new_data_frame(n = n, row.names = row.names(ptype))
     dplyr::new_grouped_df(out, dplyr::group_data(y))
   } else {
-    empty_dynamic_gdf(n)
+    empty_dynamic_gdf(n, row_names = row_names(ptype))
   }
 }
 
@@ -461,8 +461,7 @@ vec_restore_grouped_df_dynamic <- function(x, to, ...) {
 
   if (!length(x)) {
     groups <- new_group_data(drop = TRUE)
-    gdf <- dplyr::new_grouped_df(x, groups)
-    return(gdf)
+    return(new_grouped_df(x, groups))
   }
 
   groups_ind <- map_lgl(x, is_wrapped_group_col)
