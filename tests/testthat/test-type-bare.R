@@ -320,6 +320,16 @@ test_that("data frames are cast to list row wise (#639)", {
   expect_equal(vec_cast(x, list()), expect)
 })
 
+test_that("data frames can be cast to shaped lists", {
+  to <- array(list(), dim = c(0, 2, 1))
+  x <- data.frame(x = 1:2, y = 3:4)
+
+  expect <- list(vec_slice(x, 1), vec_slice(x, 2))
+  expect <- array(expect, dim = c(2, 2, 1))
+
+  expect_equal(vec_cast(x, to), expect)
+})
+
 test_that("Casting atomic `NA` values to list results in a `NULL`", {
   x <- c(NA, 1)
   expect <- list(NULL, 1)

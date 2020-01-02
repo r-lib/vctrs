@@ -438,6 +438,10 @@ vec_cast.list.data.frame <- function(x, to, ...) {
 
   vec_slice(out, vec_equal_na(x)) <- list(NULL)
 
+  if (!is.object(to)) {
+    out <- shape_broadcast(out, to)
+  }
+
   out
 }
 
