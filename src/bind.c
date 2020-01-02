@@ -226,11 +226,14 @@ static SEXP vec_cbind(SEXP xs, SEXP ptype, SEXP size, enum name_repair_arg name_
   SEXP xs_names = PROTECT(Rf_shallow_duplicate(r_names(xs)));
   dfs = PROTECT(map2(xs, xs_names, &as_df_col));
 
+  PROTECT_INDEX ptype_pi;
+  PROTECT_WITH_INDEX(ptype, &ptype_pi);
+
   if (ptype != R_NilValue) {
     // FIXME: is this needed?
     ptype = as_df_col(ptype, R_NilValue);
+    REPROTECT(ptype, ptype_pi);
   }
-  PROTECT(ptype);
   ptype = PROTECT(tbl_ptype_common(dfs, ptype));
 
   if (ptype == R_NilValue) {
@@ -238,7 +241,7 @@ static SEXP vec_cbind(SEXP xs, SEXP ptype, SEXP size, enum name_repair_arg name_
   } else if (!is_data_frame(ptype)) {
     ptype = r_as_data_frame(ptype);
   }
-  PROTECT(ptype);
+  REPROTECT(ptype, ptype_pi);
 
   R_len_t n_rows;
   if (size == R_NilValue) {
@@ -246,6 +249,9 @@ static SEXP vec_cbind(SEXP xs, SEXP ptype, SEXP size, enum name_repair_arg name_
   } else {
     n_rows = size_validate(size, ".size");
   }
+
+  ptype = vec_recycle(ptype, n_rows);
+  REPROTECT(ptype, ptype_pi);
 
   SEXP proxies = PROTECT(Rf_allocVector(VECSXP, n));
 
@@ -264,7 +270,6 @@ static SEXP vec_cbind(SEXP xs, SEXP ptype, SEXP size, enum name_repair_arg name_
       continue;
     }
 
-    df = PROTECT(vec_recycle(df, n_rows));
     df = PROTECT(tbl_cast(df, ptype, args_empty, args_empty));
 
     SEXP proxy = PROTECT(vec_proxy(df));
@@ -279,7 +284,7 @@ static SEXP vec_cbind(SEXP xs, SEXP ptype, SEXP size, enum name_repair_arg name_
     SET_VECTOR_ELT(proxies, i, proxy);
 
     n_cols += Rf_length(proxy);
-    UNPROTECT(5);
+    UNPROTECT(4);
   }
 
   if (vcols != R_NilValue) {
@@ -349,7 +354,7 @@ static SEXP vec_cbind(SEXP xs, SEXP ptype, SEXP size, enum name_repair_arg name_
   Rf_setAttrib(out, R_NamesSymbol, names);
   out = vec_restore(out, ptype, R_NilValue);
 
-  UNPROTECT(11);
+  UNPROTECT(10);
   return out;
 }
 
