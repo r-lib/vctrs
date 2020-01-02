@@ -166,3 +166,26 @@ test_that("can slice AsIs class", {
   df <- data.frame(x = I(1:3), y = I(list(4, 5, 6)))
   expect_identical(vec_slice(df, 2:3), unrownames(df[2:3, ]))
 })
+
+test_that("common tabular type of data frames is a data frame of the same size", {
+  df1 <- data_frame(x = 1:3)
+  df2 <- data_frame(y = 4:6)
+  expect_identical(tbl_ptype2(df1, df2), new_data_frame(n = 3L))
+  expect_identical(tbl_ptype2(df2, df1), new_data_frame(n = 3L))
+})
+
+test_that("data frames of incompatible size don't have a common tabular type", {
+  df1 <- data_frame(w = 1:3)
+  df2 <- data_frame(x = 1:4)
+  df3 <- data_frame(y = 1)
+  df4 <- data_frame(z = 4:6)
+
+  expect_error(tbl_ptype2(df1, df2), class = "vctrs_error_incompatible_size")
+  expect_error(tbl_ptype2(df2, df1), class = "vctrs_error_incompatible_size")
+
+  expect_identical(tbl_ptype2(df1, df3), df_ptype)
+  expect_identical(tbl_ptype2(df3, df1), df_ptype)
+
+  expect_identical(tbl_ptype2(df1, df4), df_ptype)
+  expect_identical(tbl_ptype2(df4, df1), df_ptype)
+})

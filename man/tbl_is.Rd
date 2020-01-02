@@ -71,9 +71,14 @@ of this API is to support colwise operations such as slicing
 columns. Operating across columns requires slightly different
 semantics and concepts than rowwise operations:
 \itemize{
-\item A tabular prototype is a zero-rows, zero-cols table. In order for
-your tabular class to be compatible with vctrs, it needs to
-support such empty instances.
+\item A tabular prototype is a zero-cols table. In order for your
+tabular class to be compatible with vctrs, it needs to support
+instances with zero columns without devolving to a base data
+frame or throwing an error.
+\item The row structure is part of tabular prototypes. For base data
+frames, this includes the number of rows and the row names. This
+is in contrast to vector prototypes which contain the column
+structure but not the row structure.
 \item The vector type of a data frame includes its columns (their names
 and their types). The tabular type of a data frame doesn't. Hence
 \code{tbl_ptype2()} and \code{tbl_cast()} accept inputs of any shape,

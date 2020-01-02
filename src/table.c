@@ -86,10 +86,7 @@ SEXP tbl_slice(SEXP x, SEXP index) {
 
 // [[ include("vctrs.h"); register() ]]
 SEXP tbl_ptype(SEXP x) {
-  SEXP out = PROTECT(tbl_slice(x, vctrs_shared_empty_int));
-  out = vec_slice(out, vctrs_shared_empty_int);
-  UNPROTECT(1);
-  return out;
+  return tbl_slice(x, vctrs_shared_empty_int);
 }
 
 

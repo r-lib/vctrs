@@ -120,16 +120,38 @@ tbl_ptype2.data.frame <- function(x, y, ..., x_arg = "x", y_arg = "y") {
 #' @method tbl_ptype2.data.frame data.frame
 #' @export
 tbl_ptype2.data.frame.data.frame <- function(x, y, ..., x_arg = "x", y_arg = "y") {
-  if (inherits_only(y, "data.frame")) {
-    data.frame()
-  } else {
+  if (!inherits_only(y, "data.frame")) {
     vec_default_ptype2(x, y, x_arg = x_arg, y_arg = y_arg)
   }
+
+  recycled <- vec_recycle_common(x = x, y = y)
+
+  rows_x <- row_names(recycled$x)
+  rows_y <- row_names(recycled$y)
+  if (!identical(rows_x, rows_y) &&
+        !identical(sort(rows_x), sort(rows_y))) {
+    abort(c(
+      "Can't find common rectangle type for these data frames.",
+      x = "The row names must be compatible."
+    ))
+  }
+
+  tbl_ptype(recycled$x)
 }
 #' @method tbl_ptype2.data.frame default
 #' @export
 tbl_ptype2.data.frame.default <- function(x, y, ..., x_arg = "x", y_arg = "y") {
   vec_default_ptype2(x, y, x_arg = x_arg, y_arg = y_arg)
+}
+
+# Like row.names() but returns NULL for numeric row names
+row_names <- function(x) {
+  rows <- attr(x, "row.names")
+  if (is_character(rows)) {
+    rows
+  } else {
+    NULL
+  }
 }
 
 

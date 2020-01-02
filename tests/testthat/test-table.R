@@ -75,11 +75,6 @@ test_that("can cast `NULL` to tabular type", {
   expect_identical(tbl_cast(mtcars, NULL), mtcars)
 })
 
-test_that("common tabular type of data frames is `data.frame()`", {
-  expect_identical(tbl_ptype2(mtcars[1:3], mtcars[4:7]), data.frame())
-  expect_identical(tbl_ptype2(mtcars[4:7], mtcars[1:3]), data.frame())
-})
-
 test_that("can take the common tabular type with `NULL`", {
   expect_identical(tbl_ptype2(NULL, mtcars), mtcars_tbl_ptype)
   expect_identical(tbl_ptype2(mtcars, NULL), mtcars_tbl_ptype)
@@ -122,12 +117,12 @@ test_that("data frames don't have common type with subclasses of data frames", {
 
 test_that("can take the common type of multiple inputs", {
   expect_identical(
-    tbl_ptype_common(mtcars[1:3], NULL, iris, mtcars[5]),
-    data.frame()
+    tbl_ptype_common(mtcars[1:3], NULL, mtcars[5]),
+    mtcars_tbl_ptype
   )
   expect_error(
-    tbl_ptype_common(mtcars[1:3], NULL, iris, 1:3, mtcars[5]),
-    "`..4` must be a data frame"
+    tbl_ptype_common(mtcars[1:3], NULL, 1:3, mtcars[5]),
+    "`..3` must be a data frame"
   )
 })
 
@@ -137,11 +132,13 @@ test_that("can take the common type of absent inputs", {
 })
 
 test_that("tabular generics handle data frames without names", {
-  df <- new_data_frame(list(1, 2, 3))
-  expect_identical(tbl_slice(df, 2:3), data.frame(...1 = 2, ...2 = 3))
+  df1 <- new_data_frame(list(1, 2, 3))
+  df2 <- new_data_frame(list(4, 5, 6))
+  df_ptype <- new_data_frame(n = 1L)
+  expect_identical(tbl_slice(df1, 2:3), data.frame(...1 = 2, ...2 = 3))
 
-  expect_identical(tbl_ptype2(df, mtcars), data.frame())
-  expect_identical(tbl_ptype2(mtcars, df), data.frame())
-  expect_identical(tbl_ptype2(df, NULL), data.frame())
-  expect_identical(tbl_ptype2(NULL, df), data.frame())
+  expect_identical(tbl_ptype2(df1, df2), df_ptype)
+  expect_identical(tbl_ptype2(df2, df1), df_ptype)
+  expect_identical(tbl_ptype2(df1, NULL), df_ptype)
+  expect_identical(tbl_ptype2(NULL, df2), df_ptype)
 })

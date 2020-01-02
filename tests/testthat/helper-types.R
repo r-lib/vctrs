@@ -84,4 +84,4 @@ c_na <- function(...) {
 
 # Somehow this is different from data.frame() because row names are
 # not represented the same way
-mtcars_tbl_ptype <- mtcars[integer(), integer()]
+mtcars_tbl_ptype <- mtcars[, integer()]
