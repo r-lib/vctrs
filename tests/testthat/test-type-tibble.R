@@ -419,3 +419,23 @@ test_that("can restore empty dynamic gdf", {
     empty_dynamic_gdf(0L)
   )
 })
+
+test_that("row names of dynamic gdf are preserved upon proxying and restoration", {
+  df <- mtcars
+  row.names(df) <- 101:132
+  dyn_gdf <- dplyr::group_by(df, cyl, .drop = TRUE)
+  dyn_gdf_proxy <- vec_proxy(dyn_gdf)
+
+  out <- vec_restore(dyn_gdf_proxy, dplyr::group_by(mtcars, cyl, .drop = TRUE))
+  expect_identical(out, dyn_gdf)
+})
+
+test_that("row names of static gdf are preserved upon proxying and restoration", {
+  df <- mtcars
+  row.names(df) <- 101:132
+  static_gdf <- dplyr::group_by(df, cyl, .drop = FALSE)
+  static_gdf_proxy <- vec_proxy(static_gdf)
+
+  out <- vec_restore(static_gdf_proxy, dplyr::group_by(mtcars, cyl, .drop = FALSE))
+  expect_identical(out, static_gdf)
+})

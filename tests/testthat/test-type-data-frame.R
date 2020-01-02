@@ -244,3 +244,12 @@ test_that("can cast to data frame tabular type", {
   expect_error(tbl_cast(df1, df2), class = "vctrs_error_recycle_incompatible_size")
   expect_identical(tbl_cast(df2, df1), vec_recycle(df2, 3L))
 })
+
+test_that("row names of base data frames are preserved upon restoration", {
+  bare_mtcars <- mtcars
+  row.names(bare_mtcars) <- 101:132
+  expect_identical(
+    vec_restore(bare_mtcars, mtcars),
+    bare_mtcars
+  )
+})

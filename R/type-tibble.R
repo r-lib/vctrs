@@ -134,6 +134,17 @@ group_data_cast <- function(x, to) {
   gdata
 }
 
+new_grouped_df <- function(x, groups, ...) {
+  out <- dplyr::new_grouped_df(x, groups, ...)
+
+  row_names <- row_names(x)
+  if (!is_null(row_names)) {
+    attr(out, "row.names") <- row_names
+  }
+
+  out
+}
+
 new_group_data <- function(drop) {
   new_data_frame(list(.rows = list()), .drop = drop)
 }
@@ -278,7 +289,9 @@ tbl_ptype2.grouped_df.grouped_df <- function(x, y, ..., x_arg = "x", y_arg = "y"
   y_dynamic <- !is_static_grouped_df(y)
 
   if (x_dynamic && y_dynamic) {
-    empty_dynamic_gdf(vec_size(ptype))
+    out <- empty_dynamic_gdf(vec_size(ptype))
+    attr(out, "row.names") <- attr(ptype, "row.names")
+    out
   } else {
     abort("TODO: Combining statically grouped data frames is unimplemented.")
   }
@@ -315,7 +328,8 @@ tbl_ptype2_grouped_df_left <- function(is_bare_input, x, y, ..., x_arg = "x", y_
   n <- vec_size(ptype)
 
   if (is_static_grouped_df(x)) {
-    dplyr::new_grouped_df(new_data_frame(n = n), dplyr::group_data(x))
+    out <- new_data_frame(n = n, row.names = row.names(ptype))
+    dplyr::new_grouped_df(out, dplyr::group_data(x))
   } else {
     empty_dynamic_gdf(n)
   }
@@ -329,7 +343,8 @@ tbl_ptype2_grouped_df_right <- function(x, y, ..., x_arg = "x", y_arg = "y") {
   n <- vec_size(ptype)
 
   if (is_static_grouped_df(y)) {
-    dplyr::new_grouped_df(new_data_frame(n = n), dplyr::group_data(y))
+    out <- new_data_frame(n = n, row.names = row.names(ptype))
+    dplyr::new_grouped_df(out, dplyr::group_data(y))
   } else {
     empty_dynamic_gdf(n)
   }
@@ -501,5 +516,5 @@ vec_restore_grouped_df_static <- function(x, to, ...) {
   group_data <- c(gtable_to, .rows = list(rows))
   group_data <- new_tibble(group_data, .drop = FALSE)
 
-  dplyr::new_grouped_df(proxy, group_data)
+  new_grouped_df(proxy, group_data)
 }
