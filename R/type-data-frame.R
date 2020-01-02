@@ -114,16 +114,26 @@ tbl_ptype2.data.frame <- function(x, y, ..., x_arg = "x", y_arg = "y") {
   if (inherits_only(x, "data.frame")) {
     UseMethod("tbl_ptype2.data.frame", y)
   } else {
-    vec_default_ptype2(x, y, x_arg = x_arg, y_arg = y_arg)
+    stop_incompatible_type(x, y, x_arg = x_arg, y_arg = y_arg)
   }
 }
 #' @method tbl_ptype2.data.frame data.frame
 #' @export
 tbl_ptype2.data.frame.data.frame <- function(x, y, ..., x_arg = "x", y_arg = "y") {
-  if (!inherits_only(y, "data.frame")) {
-    vec_default_ptype2(x, y, x_arg = x_arg, y_arg = y_arg)
+  if (inherits_only(y, "data.frame")) {
+    tbl_ptype2_base(x, y, x_arg = x_arg, y_arg = y_arg)
+  } else {
+    stop_incompatible_type(x, y, x_arg = x_arg, y_arg = y_arg)
   }
+}
+#' @method tbl_ptype2.data.frame default
+#' @export
+tbl_ptype2.data.frame.default <- function(x, y, ..., x_arg = "x", y_arg = "y") {
+  vec_default_ptype2(x, y, x_arg = x_arg, y_arg = y_arg)
+}
 
+# Works with any subclasses of data frame
+tbl_ptype2_base <- function(x, y, ..., x_arg = "x", y_arg = "y") {
   recycled <- vec_recycle_common(x = x, y = y)
 
   rows_x <- row_names(recycled$x)
@@ -137,11 +147,6 @@ tbl_ptype2.data.frame.data.frame <- function(x, y, ..., x_arg = "x", y_arg = "y"
   }
 
   tbl_ptype(recycled$x)
-}
-#' @method tbl_ptype2.data.frame default
-#' @export
-tbl_ptype2.data.frame.default <- function(x, y, ..., x_arg = "x", y_arg = "y") {
-  vec_default_ptype2(x, y, x_arg = x_arg, y_arg = y_arg)
 }
 
 # Like row.names() but returns NULL for numeric row names
