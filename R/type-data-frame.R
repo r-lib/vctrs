@@ -10,12 +10,17 @@
 #'   equal.
 #' @param n Number of rows. If `NULL`, will be computed from the length of
 #'   the first element of `x`.
+#' @param row_names Row names.
 #' @param ...,class Additional arguments for creating subclasses.
 #' @export
 #' @keywords internal
 #' @examples
 #' new_data_frame(list(x = 1:10, y = 10:1))
-new_data_frame <- function(x = list(), n = NULL, ..., class = character()) {
+new_data_frame <- function(x = list(),
+                           n = NULL,
+                           ...,
+                           class = character(),
+                           row_names = NULL) {
   if (!is.list(x)) {
     abort("`x` must be a list.")
   }
@@ -37,7 +42,7 @@ new_data_frame <- function(x = list(), n = NULL, ..., class = character()) {
     names = names(x),
     ...,
     class = c(class, "data.frame"),
-    row.names = .set_row_names(n)
+    row.names = row_names %||% .set_row_names(n)
   )
 
   attributes(x) <- new_attributes

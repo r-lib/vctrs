@@ -189,3 +189,13 @@ test_that("can cbind with virtual columns", {
     new_vcols(data.frame(x...1 = 1:3, x...2 = 1:3), groups = c(1L, 1L, 2L))
   )
 })
+
+test_that("row names are propagated after pushing and popping vcols", {
+  proxy <- new_data_frame(list(x = 1:3), row_names = letters[1:3])
+  proxy <- vec_proxy_push_vcols(proxy, foo = 4:6)
+  expect_identical(row.names(proxy), letters[1:3])
+
+  data <- vec_proxy_pop_vcols(proxy, "foo")
+  expect_identical(row.names(data$proxy), letters[1:3])
+  expect_identical(row.names(data$vcols), letters[1:3])
+})

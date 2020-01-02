@@ -8,7 +8,13 @@
 \alias{tbl_cast.data.frame}
 \title{Data frame class}
 \usage{
-new_data_frame(x = list(), n = NULL, ..., class = character())
+new_data_frame(
+  x = list(),
+  n = NULL,
+  ...,
+  class = character(),
+  row_names = NULL
+)
 
 \method{vec_ptype2}{data.frame}(x, y, ...)
 
@@ -27,6 +33,8 @@ equal.}
 the first element of \code{x}.}
 
 \item{..., class}{Additional arguments for creating subclasses.}
+
+\item{row_names}{Row names.}
 }
 \description{
 A \code{data.frame} \code{\link[=data.frame]{data.frame()}} is a list with "row.names" attribute. Each

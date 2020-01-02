@@ -121,6 +121,7 @@ vec_restore.default <- function(x, to, ..., n = NULL) {
 vec_proxy_push_vcols <- function(x, ...) {
   stopifnot(is.data.frame(x))
   size <- nrow(x)
+  row_names <- row_names(x)
 
   # Prevent S3 dispatch
   x <- as.list(x)
@@ -136,12 +137,13 @@ vec_proxy_push_vcols <- function(x, ...) {
   }
 
   x <- c(x, list(`vctrs::virtual_cols` = new_data_frame(vcols)))
-  new_data_frame(x)
+  new_data_frame(x, row_names = row_names)
 }
 
 vec_proxy_pop_vcols <- function(x, names) {
   stopifnot(is.data.frame(x))
-  size = nrow(x)
+  size <- nrow(x)
+  row_names <- row_names(x)
 
   # Prevent S3 dispatch
   x <- as.list(x)
@@ -172,7 +174,7 @@ vec_proxy_pop_vcols <- function(x, names) {
   }
 
   data_frame(
-    proxy = new_data_frame(x, n = size),
-    vcols = new_data_frame(out, n = size)
+    proxy = new_data_frame(x, n = size, row_names = row_names),
+    vcols = new_data_frame(out, n = size, row_names = row_names)
   )
 }

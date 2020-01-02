@@ -1,5 +1,14 @@
 context("test-type-data-frame")
 
+test_that("new_data_frame() handles custom row names", {
+  exp <- data.frame(x = 1:3)
+  row.names(exp) <- letters[1:3]
+
+  out <- new_data_frame(list(x = 1:3), row_names = letters[1:3])
+  expect_identical(out, exp)
+})
+
+
 # printing ----------------------------------------------------------------
 
 test_that("data frames print nicely", {
