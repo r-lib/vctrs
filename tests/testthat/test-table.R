@@ -61,15 +61,6 @@ test_that("tbl_assert() refers to `arg`", {
   expect_error(tbl_assert(1:3, "foo"), "`foo` must be a data frame")
 })
 
-test_that("can cast to tabular type", {
-  expect_identical(tbl_cast(mtcars, mtcars), mtcars)
-  expect_identical(tbl_cast(mtcars[1:3], mtcars), mtcars[1:3])
-
-  sub_df <- structure(mtcars, class = c("df_subclass", "data.frame"))
-  expect_identical(tbl_cast(sub_df, mtcars), mtcars)
-  expect_error(tbl_cast(mtcars, sub_df), class = "vctrs_error_incompatible_cast")
-})
-
 test_that("can cast `NULL` to tabular type", {
   expect_null(tbl_cast(NULL, mtcars))
   expect_identical(tbl_cast(mtcars, NULL), mtcars)

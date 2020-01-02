@@ -195,7 +195,16 @@ tbl_cast.data.frame <- function(x, to, ..., x_arg = "x", to_arg = "to") {
 #' @export
 #' @method tbl_cast.data.frame data.frame
 tbl_cast.data.frame.data.frame <- function(x, to, ...) {
-  as.data.frame(x)
+  # This is a departure from vector casting which is currently more
+  # liberal. Casting requires existence of a common type,
+  # e.g. compatible row names.
+  ptype <- tbl_ptype2(x, to)
+
+  x <- as.data.frame(x)
+  x <- vec_recycle(x, vec_size(to))
+  attr(x, "row.names") <- attr(x, "row.names")
+
+  x
 }
 #' @export
 #' @method tbl_cast.data.frame default

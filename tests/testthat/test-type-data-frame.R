@@ -209,3 +209,29 @@ test_that("data frames with incompatible row names don't have a common tabular t
   expect_error(tbl_ptype2(df1, df3), "row names must be compatible")
   expect_error(tbl_ptype2(df3, df1), "row names must be compatible")
 })
+
+test_that("can cast to tabular type", {
+  expect_identical(tbl_cast(mtcars, mtcars), mtcars)
+  expect_identical(tbl_cast(mtcars[1:3], mtcars), mtcars[1:3])
+
+  new_sub_df <- function(x) {
+    structure(x, class = c("df_subclass", "data.frame"))
+  }
+  local_methods(
+    tbl_ptype2.df_subclass = function(x, y, ...) {
+      new_sub_df(tbl_ptype2.data.frame.data.frame(x, y))
+    }
+  )
+
+  sub_df <- new_sub_df(mtcars)
+  expect_identical(tbl_cast(sub_df, mtcars), mtcars)
+  expect_error(tbl_cast(mtcars, sub_df), class = "vctrs_error_incompatible_cast")
+})
+
+test_that("can cast to data frame tabular type", {
+  df1 <- data_frame(w = 1:3, x = 4:6)
+  df2 <- data_frame(y = 7, z = 8)
+
+  expect_error(tbl_cast(df1, df2), class = "vctrs_error_recycle_incompatible_size")
+  expect_identical(tbl_cast(df2, df1), vec_recycle(df2, 3L))
+})
