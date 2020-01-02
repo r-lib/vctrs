@@ -179,6 +179,7 @@ test_that("data frames of incompatible size don't have a common tabular type", {
   df2 <- data_frame(x = 1:4)
   df3 <- data_frame(y = 1)
   df4 <- data_frame(z = 4:6)
+  df_ptype <- tbl_ptype(df1)
 
   expect_error(tbl_ptype2(df1, df2), class = "vctrs_error_incompatible_size")
   expect_error(tbl_ptype2(df2, df1), class = "vctrs_error_incompatible_size")
@@ -188,4 +189,23 @@ test_that("data frames of incompatible size don't have a common tabular type", {
 
   expect_identical(tbl_ptype2(df1, df4), df_ptype)
   expect_identical(tbl_ptype2(df4, df1), df_ptype)
+})
+
+test_that("data frames with incompatible row names don't have a common tabular type", {
+  df1 <- data_frame(x = 1:3)
+  df2 <- data_frame(y = 4:6)
+  row.names(df1) <- letters[1:3]
+  row.names(df2) <- letters[4:6]
+
+  expect_error(tbl_ptype2(df1, df2), "row names must be compatible")
+  expect_error(tbl_ptype2(df2, df1), "row names must be compatible")
+
+  row.names(df2) <- row.names(df1)
+  expect_identical(tbl_ptype2(df1, df2), tbl_ptype(df1))
+  expect_identical(tbl_ptype2(df2, df1), tbl_ptype(df1))
+
+  df3 <- data_frame(z = 1L)
+  row.names(df3) <- "a"
+  expect_error(tbl_ptype2(df1, df3), "row names must be compatible")
+  expect_error(tbl_ptype2(df3, df1), "row names must be compatible")
 })
