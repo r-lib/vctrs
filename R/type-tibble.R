@@ -137,11 +137,13 @@ group_data_cast <- function(x, to) {
 new_group_data <- function(drop) {
   new_data_frame(list(.rows = list()), .drop = drop)
 }
-empty_dynamic_gdf <- function() {
-  dplyr::new_grouped_df(data.frame(), new_group_data(TRUE))
+empty_dynamic_gdf <- function(n) {
+  out <- new_data_frame(n = n)
+  dplyr::new_grouped_df(out, new_group_data(TRUE))
 }
-empty_static_gdf <- function() {
-  dplyr::new_grouped_df(data.frame(), new_group_data(FALSE))
+empty_static_gdf <- function(n) {
+  out <- new_data_frame(n = n)
+  dplyr::new_grouped_df(out, new_group_data(FALSE))
 }
 
 is_bare_grouped_df <- function(x) {
@@ -270,11 +272,13 @@ tbl_ptype2.grouped_df.grouped_df <- function(x, y, ..., x_arg = "x", y_arg = "y"
     stop_incompatible_type(x, y, x_arg = x_arg, y_arg = y_arg)
   }
 
+  ptype <- tbl_ptype2_base(x, y)
+
   x_dynamic <- !is_static_grouped_df(x)
   y_dynamic <- !is_static_grouped_df(y)
 
   if (x_dynamic && y_dynamic) {
-    empty_dynamic_gdf()
+    empty_dynamic_gdf(vec_size(ptype))
   } else {
     abort("TODO: Combining statically grouped data frames is unimplemented.")
   }
@@ -304,24 +308,30 @@ tbl_ptype2.grouped_df.tbl_df <- function(x, y, ...) {
 
 tbl_ptype2_grouped_df_left <- function(is_bare_input, x, y, ..., x_arg = "x", y_arg = "y") {
   if (!is_bare_input(y)) {
-    return(vec_default_ptype2(x, y, x_arg = x_arg, y_arg = y_arg))
+    stop_incompatible_type(x, y, x_arg = x_arg, y_arg = y_arg)
   }
 
+  ptype <- tbl_ptype2_base(x, y)
+  n <- vec_size(ptype)
+
   if (is_static_grouped_df(x)) {
-    dplyr::new_grouped_df(data.frame(), dplyr::group_data(x))
+    dplyr::new_grouped_df(new_data_frame(n = n), dplyr::group_data(x))
   } else {
-    empty_dynamic_gdf()
+    empty_dynamic_gdf(n)
   }
 }
 tbl_ptype2_grouped_df_right <- function(x, y, ..., x_arg = "x", y_arg = "y") {
   if (!is_bare_grouped_df(y)) {
-    return(vec_default_ptype2(x, y, x_arg = x_arg, y_arg = y_arg))
+    stop_incompatible_type(x, y, x_arg = x_arg, y_arg = y_arg)
   }
 
+  ptype <- tbl_ptype2_base(x, y)
+  n <- vec_size(ptype)
+
   if (is_static_grouped_df(y)) {
-    dplyr::new_grouped_df(data.frame(), dplyr::group_data(y))
+    dplyr::new_grouped_df(new_data_frame(n = n), dplyr::group_data(y))
   } else {
-    empty_dynamic_gdf()
+    empty_dynamic_gdf(n)
   }
 }
 

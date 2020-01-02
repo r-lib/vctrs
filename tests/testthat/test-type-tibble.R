@@ -114,41 +114,56 @@ test_that("TODO: common type of two static gdfs is still unimplemented", {
   expect_error(vec_ptype_common(gdf1, gdf1), "unimplemented")
 })
 
-test_that("common tabular type of dynamic gdfs", {
+test_that("common tabular type of gdfs requires common size", {
   dyn_gdf1 <- dplyr::group_by(mtcars, cyl, am, .drop = TRUE)
   dyn_gdf2 <- dplyr::group_by(iris, Species, .drop = TRUE)
-  expect_identical(tbl_ptype2(dyn_gdf1, dyn_gdf2), empty_dynamic_gdf())
+  expect_error(tbl_ptype2(dyn_gdf1, dyn_gdf2), class = "vctrs_error_incompatible_size")
+
+  static_gdf1 <- dplyr::group_by(mtcars, cyl, am, .drop = FALSE)
+  static_gdf2 <- dplyr::group_by(mtcars[1:3, ], cyl, am, .drop = FALSE)
+  expect_error(tbl_ptype2(static_gdf1, static_gdf2), class = "vctrs_error_incompatible_size")
+})
+
+test_that("common tabular type of dynamic gdfs", {
+  dyn_gdf1 <- dplyr::group_by(mtcars, cyl, am, .drop = TRUE)
+  dyn_gdf2 <- dplyr::group_by(mtcars, vs, .drop = TRUE)
+  expect_identical(tbl_ptype2(dyn_gdf1, dyn_gdf2), empty_dynamic_gdf(32L))
 })
 
 test_that("common tabular type of static gdfs", {
   static_gdf1 <- dplyr::group_by(mtcars, cyl, am, .drop = FALSE)
-  static_gdf2 <- dplyr::group_by(iris, Species, .drop = FALSE)
+  static_gdf2 <- dplyr::group_by(mtcars, vs, .drop = FALSE)
   expect_error(tbl_ptype2(static_gdf1, static_gdf2), "TODO")
 })
 
 test_that("common tabular type of dynamic gdf with df and tib", {
   dyn_gdf <- dplyr::group_by(mtcars, cyl, am, .drop = TRUE)
-  df <- iris
-  tib <- tibble::as_tibble(mtcars[10])
+  df <- mtcars[10]
+  tib <- tibble::as_tibble(mtcars[11])
 
-  expect_identical(tbl_ptype2(df, dyn_gdf), empty_dynamic_gdf())
-  expect_identical(tbl_ptype2(dyn_gdf, df), empty_dynamic_gdf())
+  expect_identical(tbl_ptype2(df, dyn_gdf), empty_dynamic_gdf(32L))
+  expect_identical(tbl_ptype2(dyn_gdf, df), empty_dynamic_gdf(32L))
 
-  expect_identical(tbl_ptype2(tib, dyn_gdf), empty_dynamic_gdf())
-  expect_identical(tbl_ptype2(dyn_gdf, tib), empty_dynamic_gdf())
+  row.names(dyn_gdf) <- NULL
+
+  expect_identical(tbl_ptype2(tib, dyn_gdf), empty_dynamic_gdf(32L))
+  expect_identical(tbl_ptype2(dyn_gdf, tib), empty_dynamic_gdf(32L))
 })
 
 test_that("common tabular type of static gdf with df and tib", {
+
   static_gdf <- dplyr::group_by(mtcars, cyl, am, .drop = FALSE)
   empty_static_gdf <- dplyr::new_grouped_df(
-    data.frame(),
+    new_data_frame(n = 32L),
     dplyr::group_data(static_gdf)
   )
-  df <- iris
-  tib <- tibble::as_tibble(mtcars[10])
+  df <- mtcars[10]
+  tib <- tibble::as_tibble(mtcars[11])
 
   expect_identical(tbl_ptype2(df, static_gdf), empty_static_gdf)
   expect_identical(tbl_ptype2(static_gdf, df), empty_static_gdf)
+
+  row.names(static_gdf) <- NULL
 
   expect_identical(tbl_ptype2(tib, static_gdf), empty_static_gdf)
   expect_identical(tbl_ptype2(static_gdf, tib), empty_static_gdf)
@@ -401,6 +416,6 @@ test_that("grouped columns are equal to ungrouped ones", {
 test_that("can restore empty dynamic gdf", {
   expect_identical(
     vec_restore(data.frame(), dplyr::group_by(mtcars, cyl)),
-    empty_dynamic_gdf()
+    empty_dynamic_gdf(0L)
   )
 })
