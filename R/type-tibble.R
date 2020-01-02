@@ -153,18 +153,25 @@ is_bare_grouped_df <- function(x) {
 #' @export vec_ptype2.grouped_df
 #' @export
 #' @method vec_ptype2 grouped_df
-vec_ptype2.grouped_df <- function(x, y, ...) {
-  UseMethod("vec_ptype2.grouped_df", y)
+vec_ptype2.grouped_df <- function(x, y, ..., x_arg = "x", y_arg = "y") {
+  if (is_bare_grouped_df(x)) {
+    UseMethod("vec_ptype2.grouped_df", y)
+  } else {
+    vec_default_ptype2(x, y, x_arg = x_arg, y_arg = y_arg)
+  }
 }
 #' @export
 #' @method vec_ptype2.grouped_df default
-vec_ptype2.grouped_df.default <- function(x, y, ...) {
-  vec_ptype2.tbl_df(x, y, ...)
+vec_ptype2.grouped_df.default <- function(x, y, ..., x_arg = "x", y_arg = "y") {
+  vec_default_ptype2(x, y, x_arg = x_arg, y_arg = y_arg)
 }
 
 #' @export
 #' @method vec_ptype2.grouped_df grouped_df
-vec_ptype2.grouped_df.grouped_df <- function(x, y, ...) {
+vec_ptype2.grouped_df.grouped_df <- function(x, y, ..., x_arg = "x", y_arg = "y") {
+  if (!is_bare_grouped_df(y)) {
+    stop_incompatible_type(x, y, x_arg = x_arg, y_arg = y_arg)
+  }
   ptype <- vec_ptype2(as.data.frame(x), as.data.frame(y))
 
   x_dynamic <- !is_static_grouped_df(x)
@@ -180,18 +187,43 @@ vec_ptype2.grouped_df.grouped_df <- function(x, y, ...) {
 
 #' @export
 #' @method vec_ptype2.data.frame grouped_df
-vec_ptype2.data.frame.grouped_df <- function(x, y, ...) {
-  ptype <- vec_ptype2(x, as.data.frame(y))
-
-  if (is_static_grouped_df(y)) {
-    dplyr::new_grouped_df(ptype, groups = dplyr::group_data(y))
+vec_ptype2.data.frame.grouped_df <- function(x, y, ..., x_arg = "x", y_arg = "y") {
+  if (is_bare_grouped_df(y)) {
+    vec_ptype2_gdf_right(x, y, x_arg = x_arg, y_arg = y_arg)
   } else {
-    dplyr::grouped_df(ptype, vars = dplyr::group_vars(y), drop = TRUE)
+    stop_incompatible_type(x, y, x_arg = x_arg, y_arg = y_arg)
   }
 }
 #' @export
+#' @method vec_ptype2.tbl_df grouped_df
+vec_ptype2.tbl_df.grouped_df <- function(x, y, ...) {
+  if (is_bare_grouped_df(y)) {
+    vec_ptype2_gdf_right(x, y, x_arg = x_arg, y_arg = y_arg)
+  } else {
+    stop_incompatible_type(x, y, x_arg = x_arg, y_arg = y_arg)
+  }
+}
+
+#' @export
 #' @method vec_ptype2.grouped_df data.frame
-vec_ptype2.grouped_df.data.frame <- function(x, y, ...) {
+vec_ptype2.grouped_df.data.frame <- function(x, y, ..., x_arg = "x", y_arg = "y") {
+  if (inherits_only(y, "data.frame")) {
+    vec_ptype2_gdf_left(x, y, x_arg = x_arg, y_arg = y_arg)
+  } else {
+    stop_incompatible_type(x, y, x_arg = x_arg, y_arg = y_arg)
+  }
+}
+#' @export
+#' @method vec_ptype2.grouped_df tbl_df
+vec_ptype2.grouped_df.tbl_df <- function(x, y, ..., x_arg = "x", y_arg = "y") {
+  if (is_bare_tibble(y)) {
+    vec_ptype2_gdf_left(x, y, x_arg = x_arg, y_arg = y_arg)
+  } else {
+    stop_incompatible_type(x, y, x_arg = x_arg, y_arg = y_arg)
+  }
+}
+
+vec_ptype2_gdf_left <- function(x, y, ..., x_arg = "x", y_arg = "y") {
   ptype <- vec_ptype2(as.data.frame(x), y)
 
   if (is_static_grouped_df(x)) {
@@ -200,13 +232,17 @@ vec_ptype2.grouped_df.data.frame <- function(x, y, ...) {
     dplyr::grouped_df(ptype, vars = dplyr::group_vars(x), drop = TRUE)
   }
 }
+vec_ptype2_gdf_right <- function(x, y, ..., x_arg = "x", y_arg = "y") {
+  ptype <- vec_ptype2(x, as.data.frame(y))
 
-# Can this be inherited from data.frame somehow?
-#' @export
-#' @method vec_ptype2.tbl_df grouped_df
-vec_ptype2.tbl_df.grouped_df <- function(x, y, ...) {
-  vec_ptype2.data.frame.grouped_df(x, y, ...)
+  if (is_static_grouped_df(y)) {
+    dplyr::new_grouped_df(ptype, groups = dplyr::group_data(y))
+  } else {
+    dplyr::grouped_df(ptype, vars = dplyr::group_vars(y), drop = TRUE)
+  }
 }
+
+#' @export
 
 
 #' @export tbl_ptype2.grouped_df
@@ -218,20 +254,20 @@ tbl_ptype2.grouped_df <- function(x, y, ..., x_arg = "x", y_arg = "y") {
   if (is_bare_grouped_df(x)) {
     UseMethod("tbl_ptype2.grouped_df", y)
   } else {
-    vec_default_ptype2(x, y, x_arg = x_arg, y_arg = y_arg)
+    stop_incompatible_type(x, y, x_arg = x_arg, y_arg = y_arg)
   }
 }
 #' @method tbl_ptype2.grouped_df default
 #' @export
 tbl_ptype2.grouped_df.default <- function(x, y, ..., x_arg = "x", y_arg = "y") {
-  vec_default_ptype2(x, y, x_arg = x_arg, y_arg = y_arg)
+  stop_incompatible_type(x, y, x_arg = x_arg, y_arg = y_arg)
 }
 
 #' @export
 #' @method tbl_ptype2.grouped_df grouped_df
 tbl_ptype2.grouped_df.grouped_df <- function(x, y, ..., x_arg = "x", y_arg = "y") {
   if (!is_bare_grouped_df(y)) {
-    return(vec_default_ptype2(x, y, x_arg = x_arg, y_arg = y_arg))
+    stop_incompatible_type(x, y, x_arg = x_arg, y_arg = y_arg)
   }
 
   x_dynamic <- !is_static_grouped_df(x)

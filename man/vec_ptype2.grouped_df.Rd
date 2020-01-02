@@ -7,7 +7,7 @@
 \alias{tbl_cast.grouped_df}
 \title{Double dispatch methods for grouped data frames}
 \usage{
-\method{vec_ptype2}{grouped_df}(x, y, ...)
+\method{vec_ptype2}{grouped_df}(x, y, ..., x_arg = "x", y_arg = "y")
 
 \method{tbl_ptype2}{grouped_df}(x, y, ..., x_arg = "x", y_arg = "y")
 
