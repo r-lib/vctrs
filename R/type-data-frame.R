@@ -205,9 +205,8 @@ tbl_cast.data.frame.data.frame <- function(x, to, ...) {
   # e.g. compatible row names.
   ptype <- tbl_ptype2(x, to)
 
-  x <- as.data.frame(x)
+  x <- as.data.frame.data.frame(x)
   x <- vec_recycle(x, vec_size(to))
-  attr(x, "row.names") <- attr(x, "row.names")
 
   x
 }
