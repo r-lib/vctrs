@@ -149,13 +149,12 @@ tbl_ptype2_base <- function(x, y, ..., x_arg = "x", y_arg = "y") {
   tbl_ptype(recycled$x)
 }
 
-# Like row.names() but returns NULL for numeric row names
+# Like row.names() but returns NULL for unset row names
 row_names <- function(x) {
-  rows <- attr(x, "row.names")
-  if (is_character(rows)) {
-    rows
-  } else {
+  if (.row_names_info(x) < 0L) {
     NULL
+  } else {
+    attr(x, "row.names")
   }
 }
 
