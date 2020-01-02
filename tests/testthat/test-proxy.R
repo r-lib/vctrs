@@ -176,7 +176,7 @@ test_that("can slice table with virtual columns", {
 test_that("can take the prototype with virtual columns", {
   local_vcols_methods()
   x <- new_vcols(data_frame(x = 1:3), groups = c(1L, 1L, 2L))
-  expect_identical(tbl_ptype(x), new_vcols(data.frame(), int()))
+  expect_identical(tbl_ptype(x), new_vcols(new_data_frame(n = 3L), groups = c(1L, 1L, 2L)))
 })
 
 test_that("can cbind with virtual columns", {
