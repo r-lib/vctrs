@@ -419,6 +419,8 @@ vec_cast.list.default <- function(x, to, ...) {
 
   out <- lapply(seq_along(x), function(i) x[[i]])
 
+  vec_slice(out, vec_equal_na(x)) <- list(NULL)
+
   if (!is.object(to)) {
     out <- shape_broadcast(out, to)
   }
@@ -433,6 +435,9 @@ vec_cast.list.data.frame <- function(x, to, ...) {
   # equivalent for `vec_get()`
   row.names(x) <- NULL
   out <- vec_chop(x)
+
+  vec_slice(out, vec_equal_na(x)) <- list(NULL)
+
   out
 }
 

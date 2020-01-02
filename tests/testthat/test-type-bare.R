@@ -320,6 +320,18 @@ test_that("data frames are cast to list row wise (#639)", {
   expect_equal(vec_cast(x, list()), expect)
 })
 
+test_that("Casting atomic `NA` values to list results in a `NULL`", {
+  x <- c(NA, 1)
+  expect <- list(NULL, 1)
+  expect_equal(vec_cast(x, list()), expect)
+})
+
+test_that("Casting data frame `NA` rows to list results in a `NULL`", {
+  x <- data.frame(x = c(NA, NA, 1), y = c(NA, 1, 2))
+  expect <- list(NULL, vec_slice(x, 2), vec_slice(x, 3))
+  expect_equal(vec_cast(x, list()), expect)
+})
+
 # Unspecified
 
 test_that("unspecified can be cast to bare methods", {
