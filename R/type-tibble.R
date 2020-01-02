@@ -41,14 +41,18 @@ tbl_ptype2.tbl_df.default <- function(x, y, ..., x_arg = "x", y_arg = "y") {
 
 tbl_ptype2.tbl_df.data.frame <- function(x, y, ..., x_arg = "x", y_arg = "y") {
   if (inherits_only(y, "data.frame")) {
-    tibble::tibble()
+    row.names(y) <- NULL
+    common <- tbl_ptype2_base(x, y, x_arg = x_arg, y_arg = y_arg)
+    tibble::new_tibble(common, nrow = vec_size(common))
   } else {
     stop_incompatible_type(x, y, x_arg = x_arg, y_arg = y_arg)
   }
 }
 tbl_ptype2.data.frame.tbl_df <- function(x, y, ..., x_arg = "x", y_arg = "y") {
-  if (inherits_only(y, c("tbl_df", "tbl", "data.frame"))) {
-    tibble::tibble()
+  if (is_bare_tibble(y)) {
+    row.names(x) <- NULL
+    common <- tbl_ptype2_base(x, y, x_arg = x_arg, y_arg = y_arg)
+    tibble::new_tibble(common, nrow = vec_size(common))
   } else {
     stop_incompatible_type(x, y, x_arg = x_arg, y_arg = y_arg)
   }
@@ -70,6 +74,9 @@ tbl_cast.tbl_df <- function(x, to, ..., x_arg = "x", to_arg = "to") {
 #' @export
 #' @method tbl_cast.tbl_df data.frame
 tbl_cast.tbl_df.data.frame <- function(x, to, ...) {
+  row.names(x) <- NULL
+  to <- as.data.frame(to)
+  x <- tbl_cast.data.frame.data.frame(x, to)
   tibble::as_tibble(x)
 }
 #' @export

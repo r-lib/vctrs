@@ -42,8 +42,20 @@ test_that("vec_restore restores tibbles", {
 })
 
 test_that("tibbles have common tabular type with data frames", {
-  expect_identical(tbl_ptype2(tibble::tibble(x = 1), mtcars), tibble::tibble())
-  expect_identical(tbl_ptype2(mtcars, tibble::tibble(x = 1)), tibble::tibble())
+  tib1 <- tibble::as_tibble(mtcars)
+  tib_ptype <- tibble::new_tibble(list(), nrow = 32L)
+  expect_identical(tbl_ptype2(tib1, mtcars), tib_ptype)
+  expect_identical(tbl_ptype2(mtcars, tib1), tib_ptype)
+
+  tib2 <- tib1[1:3, ]
+  expect_error(tbl_ptype2(tib1, tib2), class = "vctrs_error_incompatible_type")
+  expect_error(tbl_ptype2(tib2, tib1), class = "vctrs_error_incompatible_type")
+})
+
+test_that("can cast data frame to tibble", {
+  tib <- tibble::as_tibble(mtcars)
+  expect_identical(tbl_cast(mtcars[3], tib), tibble::as_tibble(mtcars[3]))
+  expect_error(tbl_cast(mtcars[1:3, 3], tib), class = "vctrs_error_incompatible_cast")
 })
 
 
