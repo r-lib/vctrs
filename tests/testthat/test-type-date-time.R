@@ -169,6 +169,7 @@ test_that("safe casts work as expected", {
   expect_equal(vec_cast(list(datetime_c), datetime_c), datetime_c)
 
   expect_equal(vec_cast(NULL, datetime_l), NULL)
+  expect_equal(vec_cast(2678400L, datetime_l), datetime_l)
   expect_equal(vec_cast(2678400, datetime_l), datetime_l)
   expect_equal(vec_cast("1970-02-01", datetime_l), datetime_l)
   expect_equal(vec_cast(datetime_c, datetime_l), datetime_l)

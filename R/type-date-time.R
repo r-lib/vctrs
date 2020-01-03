@@ -275,6 +275,11 @@ vec_cast.POSIXlt <- function(x, to, ...) {
   UseMethod("vec_cast.POSIXlt")
 }
 #' @export
+#' @method vec_cast.POSIXlt integer
+vec_cast.POSIXlt.integer <- function(x, to, ...) {
+  as.POSIXlt(new_datetime(as.double(x), tzone = tzone(to)))
+}
+#' @export
 #' @method vec_cast.POSIXlt double
 vec_cast.POSIXlt.double <- function(x, to, ...) {
   as.POSIXlt(new_datetime(x, tzone = tzone(to)))
