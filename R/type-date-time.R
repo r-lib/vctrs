@@ -247,6 +247,11 @@ vec_cast.POSIXct.character <- function(x, to, ...) {
   as.POSIXct(x, tz = tzone(to))
 }
 #' @export
+#' @method vec_cast.character POSIXct
+vec_cast.character.POSIXct <- function(x, to, ...) {
+  format(x, tz = tzone(x), usetz = TRUE)
+}
+#' @export
 #' @method vec_cast.POSIXct Date
 vec_cast.POSIXct.Date <- function(x, to, ...) {
   as.POSIXct(as.character(x), tz = tzone(to))
