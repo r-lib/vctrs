@@ -117,6 +117,11 @@ is_same_type <- function(x, ptype) {
     )
   }
 
+  # FIXME: Remove row names for matrices and arrays, and handle empty
+  # but existing dimnames
+  x <- vec_set_names(x, NULL)
+  ptype <- vec_set_names(ptype, NULL)
+
   identical(x, ptype)
 }
 

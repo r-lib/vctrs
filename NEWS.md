@@ -1,6 +1,8 @@
 
 # vctrs 0.2.99.9000
 
+* `vec_is()` now ignores names and row names (#707).
+
 * `vec_slice()` now support Altvec vectors (@jimhester, #696).
 
 * `vec_proxy_equal()` is now applied recursively across the columns of
@@ -8,7 +10,7 @@
 
 * `vec_split()` no longer returns the `val` column as a `list_of`. It is now
   returned as a bare list (#660).
-  
+
 * Complex numbers are coercible with the integer and
   double (#564).
 

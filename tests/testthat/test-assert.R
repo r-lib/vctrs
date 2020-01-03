@@ -224,3 +224,10 @@ test_that("NULL is not a vector", {
   expect_false(vec_is_vector(NULL))
   expect_false(vec_is(NULL))
 })
+
+test_that("names and row names do not influence type identity (#707)", {
+  expect_true(vec_is(c(a = TRUE), logical()))
+  expect_true(vec_is(TRUE, c(a = TRUE)))
+  expect_true(vec_is(structure(mtcars, row.names = 1:32), mtcars))
+  expect_true(vec_is(mtcars, structure(mtcars, row.names = 1:32)))
+})
