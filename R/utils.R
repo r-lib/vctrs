@@ -122,7 +122,7 @@ new_opts <- function(x, opts, subclass = NULL, arg = NULL) {
   )
 }
 
-glue_c <- function(..., .data = NULL, .env = caller_env()) {
+glue_error_bullets <- function(..., .data = NULL, .env = caller_env()) {
   glue_data <- function(...) glue::glue_data(.data, ..., .envir = .env)
-  map_chr(chr(...), glue_data)
+  format_error_bullets(map_chr(chr(...), glue_data))
 }
