@@ -182,6 +182,11 @@ vec_cast.Date <- function(x, to, ...) {
   UseMethod("vec_cast.Date")
 }
 #' @export
+#' @method vec_cast.Date integer
+vec_cast.Date.integer <- function(x, to, ...) {
+  new_date(as.double(x))
+}
+#' @export
 #' @method vec_cast.Date double
 vec_cast.Date.double <- function(x, to, ...) {
   new_date(x)

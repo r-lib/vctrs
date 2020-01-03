@@ -124,6 +124,7 @@ test_that("safe casts work as expected", {
   date <- as.Date("2018-01-01")
 
   expect_equal(vec_cast(NULL, date), NULL)
+  expect_equal(vec_cast(17532L, date), date)
   expect_equal(vec_cast(17532, date), date)
   expect_equal(vec_cast("2018-01-01", date), date)
   expect_equal(vec_cast(date, date), date)
