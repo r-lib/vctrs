@@ -413,9 +413,9 @@ cnd_header.vctrs_error_recycle_incompatible_size <- function(cnd, ...) {
 }
 #' @export
 cnd_body.vctrs_error_recycle_incompatible_size <- function(cnd, ...) {
-  glue_error_bullets(
+  glue_data_bullets(
+    cnd,
     x = "It must be size {size} or 1, not {x_size}.",
-    .data = cnd
   )
 }
 
