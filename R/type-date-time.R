@@ -197,6 +197,11 @@ vec_cast.Date.character <- function(x, to, ...) {
   as.Date(x, format = "%Y-%m-%d")
 }
 #' @export
+#' @method vec_cast.character Date
+vec_cast.character.Date <- function(x, to, ...) {
+  format(x)
+}
+#' @export
 #' @method vec_cast.Date Date
 vec_cast.Date.Date <- function(x, to, ...) {
   as_double_date(x)

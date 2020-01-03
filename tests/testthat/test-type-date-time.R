@@ -127,6 +127,7 @@ test_that("safe casts work as expected", {
   expect_equal(vec_cast(17532L, date), date)
   expect_equal(vec_cast(17532, date), date)
   expect_equal(vec_cast("2018-01-01", date), date)
+  expect_equal(vec_cast(date, "2018-01-01"), "2018-01-01")
   expect_equal(vec_cast(date, date), date)
   expect_equal(vec_cast(as.POSIXct(date), date), date)
   expect_equal(vec_cast(list(date), date), date)
