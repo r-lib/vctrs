@@ -84,6 +84,7 @@ test_that("base coercion methods mapped to vec_cast", {
   expect_error(as.character(x), class = "vctrs_error_incompatible_cast")
   expect_error(as.Date(x), class = "vctrs_error_incompatible_cast")
   expect_error(as.POSIXct(x), class = "vctrs_error_incompatible_cast")
+  expect_error(as.POSIXlt(x), class = "vctrs_error_incompatible_cast")
 
   expect_equal(as.list(x), list(x))
 })
@@ -97,10 +98,16 @@ test_that("as.data.frame creates data frame", {
   expect_named(df, "x")
 })
 
-test_that("can cast to POSIXlt (#717)", {
-  x <- new_vctr(1)
-  expect_is(as.POSIXlt(x), "POSIXlt")
-  expect_true(vec_equal(as.POSIXct(x), as.POSIXlt(x)))
+test_that("`as.POSIXlt()` goes through `vec_cast()` (#717)", {
+  x <- new_vctr(0, class = "vctrs_date")
+
+  local_methods(
+    vec_cast.POSIXlt.vctrs_date = function(x, to, ...) {
+      abort(class = "error_vec_cast_was_called")
+    }
+  )
+
+  expect_error(as.POSIXlt(x), class = "error_vec_cast_was_called")
 })
 
 
