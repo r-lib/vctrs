@@ -409,18 +409,13 @@ stop_recycle_incompatible_size <- function(x_size, size, x_arg = "x") {
 
 #' @export
 cnd_header.vctrs_error_recycle_incompatible_size <- function(cnd, ...) {
-  x_arg <- cnd$x_arg
-  size <- cnd$size
-
-  glue::glue("`{x_arg}` can't be recycled to size {size}.")
+  glue::glue_data(cnd, "`{x_arg}` can't be recycled to size {size}.")
 }
 #' @export
 cnd_body.vctrs_error_recycle_incompatible_size <- function(cnd, ...) {
-  x_size <- cnd$x_size
-  size <- cnd$size
-
   format_error_bullets(glue_c(
-    x = "It must be size {size} or 1, not {x_size}."
+    x = "It must be size {size} or 1, not {x_size}.",
+    .data = cnd
   ))
 }
 

@@ -122,6 +122,7 @@ new_opts <- function(x, opts, subclass = NULL, arg = NULL) {
   )
 }
 
-glue_c <- function(..., env = caller_env()) {
-  map_chr(chr(...), glue::glue, .envir = env)
+glue_c <- function(..., .data = NULL, .env = caller_env()) {
+  glue_data <- function(...) glue::glue_data(.data, ..., .envir = .env)
+  map_chr(chr(...), glue_data)
 }
