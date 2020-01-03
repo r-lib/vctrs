@@ -121,3 +121,8 @@ new_opts <- function(x, opts, subclass = NULL, arg = NULL) {
     class = c(subclass, "vctrs_opts")
   )
 }
+
+glue_data_bullets <- function(.data, ..., .env = caller_env()) {
+  glue_data <- function(...) glue::glue_data(.data, ..., .envir = .env)
+  format_error_bullets(map_chr(chr(...), glue_data))
+}

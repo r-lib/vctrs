@@ -38,7 +38,7 @@ SEXP vec_assign(SEXP x, SEXP index, SEXP value) {
 
   // Recycle the proxy of `value`
   index = PROTECT(vec_as_index(index, vec_size(x), PROTECT(vec_names(x))));
-  value_proxy = PROTECT(vec_recycle(value_proxy, vec_size(index)));
+  value_proxy = PROTECT(vec_recycle(value_proxy, vec_size(index), &value_arg));
 
   struct vctrs_proxy_info info = vec_proxy_info(x);
 

@@ -242,7 +242,7 @@ static SEXP vec_cbind(SEXP xs, SEXP ptype, SEXP size, enum name_repair_arg name_
       continue;
     }
 
-    x = PROTECT(vec_recycle(x, nrow));
+    x = PROTECT(vec_recycle(x, nrow, args_empty));
 
     SEXP outer_name = has_names ? xs_names_p[i] : strings_empty;
     bool allow_packing;

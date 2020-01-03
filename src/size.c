@@ -163,7 +163,7 @@ bool has_dim(SEXP x) {
 }
 
 // [[ include("vctrs.h") ]]
-SEXP vec_recycle(SEXP x, R_len_t size) {
+SEXP vec_recycle(SEXP x, R_len_t size, struct vctrs_arg* x_arg) {
   if (x == R_NilValue) {
     return R_NilValue;
   }
@@ -182,11 +182,11 @@ SEXP vec_recycle(SEXP x, R_len_t size) {
     return out;
   }
 
-  stop_recycle_incompatible_size(n_x, size);
+  stop_recycle_incompatible_size(n_x, size, x_arg);
 }
 
 // [[ register() ]]
-SEXP vctrs_recycle(SEXP x, SEXP size_obj) {
+SEXP vctrs_recycle(SEXP x, SEXP size_obj, SEXP x_arg) {
   if (x == R_NilValue || size_obj == R_NilValue) {
     return R_NilValue;
   }
@@ -195,7 +195,9 @@ SEXP vctrs_recycle(SEXP x, SEXP size_obj) {
   R_len_t size = r_int_get(size_obj, 0);
   UNPROTECT(1);
 
-  return vec_recycle(x, size);
+  struct vctrs_arg x_arg_ = new_wrapper_arg(NULL, r_chr_get_c_string(x_arg, 0));
+
+  return vec_recycle(x, size, &x_arg_);
 }
 
 

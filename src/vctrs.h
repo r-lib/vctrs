@@ -222,7 +222,7 @@ SEXP vec_init(SEXP x, R_len_t n);
 SEXP vec_type(SEXP x);
 SEXP vec_type_finalise(SEXP x);
 bool vec_is_unspecified(SEXP x);
-SEXP vec_recycle(SEXP x, R_len_t size);
+SEXP vec_recycle(SEXP x, R_len_t size, struct vctrs_arg* x_arg);
 SEXP vec_recycle_common(SEXP xs, R_len_t size);
 SEXP vec_names(SEXP x);
 SEXP vec_group_pos(SEXP x);
@@ -409,7 +409,8 @@ void stop_incompatible_size(SEXP x, SEXP y,
                             struct vctrs_arg* x_arg,
                             struct vctrs_arg* y_arg)
   __attribute__((noreturn));
-void stop_recycle_incompatible_size(R_len_t x_size, R_len_t size)
+void stop_recycle_incompatible_size(R_len_t x_size, R_len_t size,
+                                    struct vctrs_arg* x_arg)
   __attribute__((noreturn));
 
 
