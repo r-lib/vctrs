@@ -143,3 +143,12 @@ test_that("recycling data frames with matrices respects incompatible sizes", {
     class = "vctrs_error_incompatible_size"
   )
 })
+
+test_that("incompatible recycling size has informative error", {
+  verify_output(test_path("out", "error-recycle.txt"), {
+    vec_recycle(1:2, 4)
+
+    "With `x_arg`"
+    vec_recycle(1:2, 4, x_arg = "foo")
+  })
+})

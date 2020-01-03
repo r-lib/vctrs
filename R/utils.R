@@ -121,3 +121,7 @@ new_opts <- function(x, opts, subclass = NULL, arg = NULL) {
     class = c(subclass, "vctrs_opts")
   )
 }
+
+glue_c <- function(..., env = caller_env()) {
+  map_chr(chr(...), glue::glue, .envir = env)
+}

@@ -45,16 +45,18 @@ void stop_incompatible_size(SEXP x, SEXP y,
   Rf_error("Internal error: `stop_incompatible_size()` should have jumped earlier");
 }
 
-void stop_recycle_incompatible_size(R_len_t x_size, R_len_t size)
-{
-  SEXP syms[3] = {
+void stop_recycle_incompatible_size(R_len_t x_size, R_len_t size,
+                                    struct vctrs_arg* x_arg) {
+  SEXP syms[4] = {
     r_sym("x_size"),
     r_sym("size"),
+    r_sym("x_arg"),
     NULL
   };
-  SEXP args[3] = {
+  SEXP args[4] = {
     PROTECT(r_int(x_size)),
     PROTECT(r_int(size)),
+    PROTECT(vctrs_arg(x_arg)),
     NULL
   };
 

@@ -5,14 +5,25 @@
 \alias{vec_recycle_common}
 \title{Vector recycling}
 \usage{
-vec_recycle(x, size)
+vec_recycle(x, size, ..., x_arg = "x")
 
 vec_recycle_common(..., .size = NULL)
 }
 \arguments{
-\item{x, ...}{Vectors to recycle.}
+\item{x}{A vector to recycle.}
 
 \item{size}{Desired output size.}
+
+\item{...}{\itemize{
+\item For \code{vec_recycle_common()}, vectors to recycle.
+\itemize{
+\item For \code{vec_recycle()}, these dots should be empty.
+}
+}}
+
+\item{x_arg}{Argument name for \code{x}. These are used in error
+messages to inform the user about which argument has an
+incompatible size.}
 
 \item{.size}{Desired output size. If omitted,
 will use the common size from \code{\link[=vec_size_common]{vec_size_common()}}.}

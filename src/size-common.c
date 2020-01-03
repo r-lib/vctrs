@@ -115,7 +115,7 @@ SEXP vec_recycle_common(SEXP xs, R_len_t size) {
 
   for (R_len_t i = 0; i < n; ++i) {
     elt = VECTOR_ELT(xs, i);
-    SET_VECTOR_ELT(xs, i, vec_recycle(elt, size));
+    SET_VECTOR_ELT(xs, i, vec_recycle(elt, size, args_empty));
   }
 
   UNPROTECT(1);

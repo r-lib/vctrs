@@ -326,3 +326,9 @@ test_that("can slice-assign unspecified vectors with default type2 method", {
   x[[1]] <- NA
   expect_identical(x, rational(c(NA, 2L), c(NA, 3L)))
 })
+
+test_that("unrecyclable value has informative error", {
+  verify_output(test_path("out", "error-assign-recycle.txt"), {
+    vec_assign(1:3, 1:3, 1:2)
+  })
+})

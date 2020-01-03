@@ -22,10 +22,16 @@
 #' We say that two vectors have __compatible size__ if they can be
 #' recycled to be the same length.
 #'
-#' @param x,... Vectors to recycle.
+#' @param x A vector to recycle.
+#' @param ...
+#'   * For `vec_recycle_common()`, vectors to recycle.
+#'   * For `vec_recycle()`, these dots should be empty.
 #' @param size Desired output size.
 #' @param .size Desired output size. If omitted,
 #'   will use the common size from [vec_size_common()].
+#' @param x_arg Argument name for `x`. These are used in error
+#'   messages to inform the user about which argument has an
+#'   incompatible size.
 #' @export
 #' @examples
 #' # Inputs with 1 observation are recycled
@@ -39,8 +45,11 @@
 #' vec_recycle_common(data.frame(x = 1), 1:5)
 #' vec_recycle_common(array(1:2, c(1, 2)), 1:5)
 #' vec_recycle_common(array(1:3, c(1, 3, 1)), 1:5)
-vec_recycle <- function(x, size) {
-  .Call(vctrs_recycle, x, size)
+vec_recycle <- function(x, size, ..., x_arg = "x") {
+  if (!missing(...)) {
+    ellipsis::check_dots_empty()
+  }
+  .Call(vctrs_recycle, x, size, x_arg)
 }
 
 #' @export

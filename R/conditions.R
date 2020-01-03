@@ -398,18 +398,30 @@ stop_scalar_type <- function(x, arg = NULL) {
   stop_vctrs(msg, "vctrs_error_scalar_type", actual = x)
 }
 
-stop_recycle_incompatible_size <- function(x_size, size) {
-  vec_assert(x_size, int(), 1)
-  vec_assert(size, int(), 1)
-
-  message <- glue_lines(
-    "Vector of length {x_size} cannot be recycled to length {size}. Only vectors of length one can be recycled."
-  )
-
+stop_recycle_incompatible_size <- function(x_size, size, x_arg = "x") {
   stop_vctrs(
-    message = message,
+    x_size = x_size,
+    size = size,
+    x_arg = x_arg,
     .subclass = "vctrs_error_recycle_incompatible_size"
   )
+}
+
+#' @export
+cnd_header.vctrs_error_recycle_incompatible_size <- function(cnd, ...) {
+  x_arg <- cnd$x_arg
+  size <- cnd$size
+
+  glue::glue("`{x_arg}` can't be recycled to size {size}.")
+}
+#' @export
+cnd_body.vctrs_error_recycle_incompatible_size <- function(cnd, ...) {
+  x_size <- cnd$x_size
+  size <- cnd$size
+
+  format_error_bullets(glue_c(
+    x = "It must be size {size} or 1, not {x_size}."
+  ))
 }
 
 
