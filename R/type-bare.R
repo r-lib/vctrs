@@ -413,11 +413,13 @@ vec_cast.list.list <- function(x, to, ...) {
 #' @export
 #' @method vec_cast.list default
 vec_cast.list.default <- function(x, to, ...) {
-  if (inherits(x, "vctrs_unspecified")) {
+  if (is_unspecified(x)) {
     return(vec_init(to, length(x)))
   }
 
   out <- lapply(seq_along(x), function(i) x[[i]])
+
+  vec_slice(out, vec_equal_na(x)) <- list(NULL)
 
   if (!is.object(to)) {
     out <- shape_broadcast(out, to)
@@ -433,6 +435,13 @@ vec_cast.list.data.frame <- function(x, to, ...) {
   # equivalent for `vec_get()`
   row.names(x) <- NULL
   out <- vec_chop(x)
+
+  vec_slice(out, vec_equal_na(x)) <- list(NULL)
+
+  if (!is.object(to)) {
+    out <- shape_broadcast(out, to)
+  }
+
   out
 }
 

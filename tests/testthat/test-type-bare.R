@@ -302,7 +302,7 @@ test_that("can sort raw", {
 
 test_that("safe casts work as expected", {
   expect_equal(vec_cast(NULL, list()), NULL)
-  expect_equal(vec_cast(NA, list()), list(NA))
+  expect_equal(vec_cast(NA, list()), list(NULL))
   expect_equal(vec_cast(1:2, list()), list(1L, 2L))
   expect_equal(vec_cast(list(1L, 2L), list()), list(1L, 2L))
 })
@@ -317,6 +317,28 @@ test_that("dimensionality matches to" ,{
 test_that("data frames are cast to list row wise (#639)", {
   x <- data.frame(x = 1:2, row.names = c("a", "b"))
   expect <- list(data.frame(x = 1L), data.frame(x = 2L))
+  expect_equal(vec_cast(x, list()), expect)
+})
+
+test_that("data frames can be cast to shaped lists", {
+  to <- array(list(), dim = c(0, 2, 1))
+  x <- data.frame(x = 1:2, y = 3:4)
+
+  expect <- list(vec_slice(x, 1), vec_slice(x, 2))
+  expect <- array(expect, dim = c(2, 2, 1))
+
+  expect_equal(vec_cast(x, to), expect)
+})
+
+test_that("Casting atomic `NA` values to list results in a `NULL`", {
+  x <- c(NA, 1)
+  expect <- list(NULL, 1)
+  expect_equal(vec_cast(x, list()), expect)
+})
+
+test_that("Casting data frame `NA` rows to list results in a `NULL`", {
+  x <- data.frame(x = c(NA, NA, 1), y = c(NA, 1, 2))
+  expect <- list(NULL, vec_slice(x, 2), vec_slice(x, 3))
   expect_equal(vec_cast(x, list()), expect)
 })
 
