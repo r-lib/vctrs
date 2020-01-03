@@ -1,6 +1,8 @@
 
 # vctrs 0.2.99.9000
 
+* `vctrs_vctr` class gains an `as.POSIXlt()` method (#717).
+
 * `vec_is()` now ignores names and row names (#707).
 
 * `vec_slice()` now support Altvec vectors (@jimhester, #696).

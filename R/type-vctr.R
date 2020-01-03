@@ -278,6 +278,12 @@ as.POSIXct.vctrs_vctr <- function(x, tz = "", ...) {
   vec_cast(x, new_datetime(tzone = tz))
 }
 
+#' @export
+as.POSIXlt.vctrs_vctr <- function(x, tz = "", ...) {
+  to <- as.POSIXlt(new_datetime(), tz = tz)
+  vec_cast(x, to)
+}
+
 # Work around inconsistencies in as.data.frame() for 1D arrays
 as.data.frame2 <- function(x) {
   out <- as.data.frame(x)

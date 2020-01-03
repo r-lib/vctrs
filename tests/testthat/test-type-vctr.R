@@ -97,6 +97,13 @@ test_that("as.data.frame creates data frame", {
   expect_named(df, "x")
 })
 
+test_that("can cast to POSIXlt (#717)", {
+  x <- new_vctr(1)
+  expect_is(as.POSIXlt(x), "POSIXlt")
+  expect_true(vec_equal(as.POSIXct(x), as.POSIXlt(x)))
+})
+
+
 # equality + comparison + arith + math ---------------------------------------
 
 test_that("equality functions remapped", {
