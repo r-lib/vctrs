@@ -764,7 +764,6 @@ static SEXP chop_df(SEXP x, SEXP indices, struct vctrs_chop_info info);
 static SEXP chop_fallback(SEXP x, SEXP indices, struct vctrs_chop_info info);
 static SEXP chop_fallback_shaped(SEXP x, SEXP indices, struct vctrs_chop_info info);
 
-static SEXP vec_chop_impl(SEXP x, SEXP indices);
 static SEXP vec_chop_base(SEXP x, SEXP indices, struct vctrs_chop_info info);
 
 static SEXP vec_as_indices(SEXP indices, R_len_t n, SEXP names);
