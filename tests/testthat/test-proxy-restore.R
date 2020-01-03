@@ -80,3 +80,17 @@ test_that("arguments are not inlined in the dispatch call (#300)", {
   expect_equal(call, quote(vec_restore.vctrs_foobar(x = x, to = to, n = n)))
 })
 
+test_that("restoring to non-bare data frames calls `vctrs_df_restore()` before dispatching", {
+  x <- list(x = numeric())
+  to <- new_data_frame(x, class = "tbl_foobar")
+
+  local_methods(
+    vec_restore.tbl_foobar = function(x, to, ..., n) {
+      if (is.data.frame(x)) {
+        abort(class = "error_df_restore_was_called")
+      }
+    }
+  )
+
+  expect_error(vec_restore(x, to), class = "error_df_restore_was_called")
+})
