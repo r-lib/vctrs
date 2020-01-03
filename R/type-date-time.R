@@ -182,16 +182,6 @@ vec_cast.Date <- function(x, to, ...) {
   UseMethod("vec_cast.Date")
 }
 #' @export
-#' @method vec_cast.Date integer
-vec_cast.Date.integer <- function(x, to, ...) {
-  new_date(as.double(x))
-}
-#' @export
-#' @method vec_cast.Date double
-vec_cast.Date.double <- function(x, to, ...) {
-  new_date(x)
-}
-#' @export
 #' @method vec_cast.Date character
 vec_cast.Date.character <- function(x, to, ...) {
   as.Date(x, format = "%Y-%m-%d")
@@ -230,16 +220,6 @@ vec_cast.Date.default <- function(x, to, ..., x_arg = "x", to_arg = "to") {
 #' @export
 vec_cast.POSIXct <- function(x, to, ...) {
   UseMethod("vec_cast.POSIXct")
-}
-#' @export
-#' @method vec_cast.POSIXct integer
-vec_cast.POSIXct.integer <- function(x, to, ...) {
-  new_datetime(as.double(x), tzone = tzone(to))
-}
-#' @export
-#' @method vec_cast.POSIXct double
-vec_cast.POSIXct.double <- function(x, to, ...) {
-  new_datetime(x, tzone = tzone(to))
 }
 #' @export
 #' @method vec_cast.POSIXct character
@@ -283,16 +263,6 @@ vec_cast.POSIXct.default <- function(x, to, ..., x_arg = "x", to_arg = "to") {
 #' @export
 vec_cast.POSIXlt <- function(x, to, ...) {
   UseMethod("vec_cast.POSIXlt")
-}
-#' @export
-#' @method vec_cast.POSIXlt integer
-vec_cast.POSIXlt.integer <- function(x, to, ...) {
-  as.POSIXlt(new_datetime(as.double(x), tzone = tzone(to)))
-}
-#' @export
-#' @method vec_cast.POSIXlt double
-vec_cast.POSIXlt.double <- function(x, to, ...) {
-  as.POSIXlt(new_datetime(x, tzone = tzone(to)))
 }
 #' @export
 #' @method vec_cast.POSIXlt character

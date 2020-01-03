@@ -124,8 +124,6 @@ test_that("safe casts work as expected", {
   date <- as.Date("2018-01-01")
 
   expect_equal(vec_cast(NULL, date), NULL)
-  expect_equal(vec_cast(17532L, date), date)
-  expect_equal(vec_cast(17532, date), date)
   expect_equal(vec_cast("2018-01-01", date), date)
   expect_equal(vec_cast(date, "2018-01-01"), "2018-01-01")
   expect_equal(vec_cast(date, date), date)
@@ -161,8 +159,6 @@ test_that("safe casts work as expected", {
   datetime_l <- as.POSIXlt("1970-02-01", tz = "UTC")
 
   expect_equal(vec_cast(NULL, datetime_c), NULL)
-  expect_equal(vec_cast(2678400L, datetime_c), datetime_c)
-  expect_equal(vec_cast(2678400, datetime_c), datetime_c)
   expect_equal(vec_cast("1970-02-01", datetime_c), datetime_c)
   expect_equal(vec_cast(datetime_c, "1970-02-01"), "1970-02-01 UTC")
   expect_equal(vec_cast(datetime_c, datetime_c), datetime_c)
@@ -171,8 +167,6 @@ test_that("safe casts work as expected", {
   expect_equal(vec_cast(list(datetime_c), datetime_c), datetime_c)
 
   expect_equal(vec_cast(NULL, datetime_l), NULL)
-  expect_equal(vec_cast(2678400L, datetime_l), datetime_l)
-  expect_equal(vec_cast(2678400, datetime_l), datetime_l)
   expect_equal(vec_cast("1970-02-01", datetime_l), datetime_l)
   expect_equal(vec_cast(datetime_l, "1970-02-01"), "1970-02-01 UTC")
   expect_equal(vec_cast(datetime_c, datetime_l), datetime_l)
