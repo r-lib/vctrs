@@ -7,7 +7,7 @@
   data frames (#641).
 
 * `vec_split()` no longer returns the `val` column as a `list_of`. It is now
-  returned as a bare list.
+  returned as a bare list (#660).
   
 * Complex numbers are coercible with the integer and
   double (#564).
@@ -31,7 +31,7 @@
   generally should be set to `TRUE`, unless your class does not behave like the
   underlying type; for example a `factor()` should not inherit from `integer`.
 
-* `list_of()` now inherits from "list" (#593)
+* `list_of()` now inherits from "list" (#593).
 
 * `vec_ptype()` has relaxed default behaviour for base types; now if two
   vectors both inherit from (e.g.) "character", the common type is also
