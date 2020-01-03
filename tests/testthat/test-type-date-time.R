@@ -160,6 +160,7 @@ test_that("safe casts work as expected", {
   datetime_l <- as.POSIXlt("1970-02-01", tz = "UTC")
 
   expect_equal(vec_cast(NULL, datetime_c), NULL)
+  expect_equal(vec_cast(2678400L, datetime_c), datetime_c)
   expect_equal(vec_cast(2678400, datetime_c), datetime_c)
   expect_equal(vec_cast("1970-02-01", datetime_c), datetime_c)
   expect_equal(vec_cast(datetime_c, datetime_c), datetime_c)
