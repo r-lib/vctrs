@@ -81,17 +81,17 @@ has_dim <- function(x) {
 }
 
 # Experimental
-maybe <- function(value = NULL, error = NULL) {
+result <- function(ok = NULL, err = NULL) {
   structure(
-    list(value = value, error = error),
-    class = "rlang_maybe"
+    list(ok = ok, err = err),
+    class = "rlang_result"
   )
 }
-maybe_get <- function(x) {
-  if (!is_null(x$error)) {
-    cnd_signal(x$error)
+result_get <- function(x) {
+  if (!is_null(x$err)) {
+    cnd_signal(x$err)
   }
-  x$value
+  x$ok
 }
 
 obj_type <- function(x) {

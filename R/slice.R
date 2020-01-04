@@ -212,7 +212,7 @@ vec_as_location <- function(i, n,
                             allow_values = NULL,
                             arg = "i") {
   if (!missing(...)) ellipsis::check_dots_empty()
-  maybe_get(vec_maybe_as_location(
+  result_get(vec_as_location_result(
     i,
     n = n,
     names = names,
@@ -239,7 +239,7 @@ vec_coerce_index <- function(i,
                              allow_types = c("indicator", "location", "name"),
                              arg = "i") {
   if (!missing(...)) ellipsis::check_dots_empty()
-  maybe_get(vec_maybe_coerce_index(
+  result_get(vec_coerce_index_result(
     i,
     arg = arg,
     allow_types = allow_types
@@ -252,14 +252,14 @@ vec_coerce_location <- function(i,
                                 allow_types = c("location", "name"),
                                 arg = "i") {
   if (!missing(...)) ellipsis::check_dots_empty()
-  maybe_get(vec_maybe_coerce_location(i, arg, allow_types = allow_types))
+  result_get(vec_coerce_location_result(i, arg, allow_types = allow_types))
 }
 
-vec_maybe_coerce_index <- function(i, arg, allow_types) {
+vec_coerce_index_result <- function(i, arg, allow_types) {
   allow_types <- as_opts_index_type(allow_types, arg = arg)
 
   if (!vec_is(i)) {
-    return(maybe(error = new_error_index_bad_type(
+    return(result(err = new_error_index_bad_type(
       i = i,
       .arg = arg,
       allow_types = allow_types
@@ -276,28 +276,28 @@ vec_maybe_coerce_index <- function(i, arg, allow_types) {
     } else if (vec_is_subtype(i, chr())) {
       i <- vec_cast(i, chr())
     } else {
-      return(maybe(error = new_error_index_bad_type(
+      return(result(err = new_error_index_bad_type(
         i,
         .arg = arg,
         allow_types = allow_types
       )))
     }
   } else if (is_double(i)) {
-    maybe <- tryCatch(
+    result <- tryCatch(
     {
       i <- vec_coercible_cast(i, int(), x_arg = arg, to_arg = "")
       names(i) <- nms
-      maybe(i)
+      result(i)
     },
     vctrs_error_cast_lossy = function(err) {
-      maybe(error = new_error_index_bad_type(
+      result(err = new_error_index_bad_type(
         i = i,
         parent = err,
         body = cnd_bullets_index_lossy_cast,
         allow_types = allow_types
       ))
     })
-    return(maybe)
+    return(result)
   }
 
   # Coerce unspecified vectors to integer only if logical indices
@@ -317,7 +317,7 @@ vec_maybe_coerce_index <- function(i, arg, allow_types) {
     FALSE
   )
   if (!allowed) {
-    return(maybe(error = new_error_index_bad_type(
+    return(result(err = new_error_index_bad_type(
       i = i,
       .arg = arg,
       allow_types = allow_types
@@ -327,37 +327,37 @@ vec_maybe_coerce_index <- function(i, arg, allow_types) {
   # FIXME: Work around lack of name restoration in `vec_cast()`
   names(i) <- nms
 
-  maybe(i)
+  result(i)
 }
 
-vec_maybe_coerce_location <- function(i, arg, allow_types) {
+vec_coerce_location_result <- function(i, arg, allow_types) {
   allow_types <- as_opts_scalar_location_type(allow_types, arg = arg)
-  maybe <- vec_maybe_coerce_index(i, arg, allow_types = allow_types)
+  result <- vec_coerce_index_result(i, arg, allow_types = allow_types)
 
   # Return a subclass of index error
-  if (!is_null(maybe$error)) {
-    parent <- maybe$error$parent
+  if (!is_null(result$err)) {
+    parent <- result$err$parent
     if (inherits(parent, "vctrs_error_cast_lossy")) {
       bullets <- cnd_bullets_index_lossy_cast
     } else {
       bullets <- cnd_bullets_location_bad_base_type
     }
 
-    maybe$error <- new_error_location_bad_type(
-      i = maybe$error$i,
+    result$err <- new_error_location_bad_type(
+      i = result$err$i,
       allow_types = allow_types,
       .arg = arg,
       body = bullets,
-      parent = maybe$error$parent
+      parent = result$err$parent
     )
 
-    return(maybe)
+    return(result)
   }
 
-  i <- maybe$value
+  i <- result$ok
 
   if (typeof(i) == "logical") {
-    return(maybe(error = new_error_location_bad_type(
+    return(result(err = new_error_location_bad_type(
       i = i,
       allow_types = allow_types,
       .arg = arg,
@@ -365,34 +365,34 @@ vec_maybe_coerce_location <- function(i, arg, allow_types) {
     )))
   }
 
-  maybe
+  result
 }
-vec_maybe_as_location <- function(i,
-                                  n,
-                                  names,
-                                  allow_values,
-                                  arg) {
+vec_as_location_result <- function(i,
+                                   n,
+                                   names,
+                                   allow_values,
+                                   arg) {
   allow_types <- c("location", "name")
 
   allow_values <- as_opts_location_values(allow_values, arg = arg)
   allow_missing <- allow_values[["missing"]]
   allow_negative <- allow_values[["negative"]]
 
-  maybe <- vec_maybe_coerce_location(
+  result <- vec_coerce_location_result(
     i = i,
     arg = arg,
     allow_types = allow_types
   )
 
-  if (!is_null(maybe$error)) {
-    return(maybe)
+  if (!is_null(result$err)) {
+    return(result)
   }
 
   # Locations must be size 1, can't be NA, and must be positive
-  i <- maybe$value
+  i <- result$ok
 
   if (length(i) != 1L) {
-    return(maybe(error = new_error_location_bad_type(
+    return(result(err = new_error_location_bad_type(
       i = i,
       allow_types = allow_types,
       .arg = arg,
@@ -407,20 +407,20 @@ vec_maybe_as_location <- function(i,
 
   if (is.na(i)) {
     if (!allow_missing && is.na(i)) {
-      maybe <- maybe(error = new_error_location_bad_type(
+      result <- result(err = new_error_location_bad_type(
         i = i,
         allow_types = allow_types,
         .arg = arg,
         body = cnd_bullets_location_need_present
       ))
     } else {
-      maybe <- maybe(i)
+      result <- result(i)
     }
-    return(maybe)
+    return(result)
   }
 
   if (i == 0L) {
-    return(maybe(error = new_error_location_bad_type(
+    return(result(err = new_error_location_bad_type(
       i = i,
       allow_types = allow_types,
       .arg = arg,
@@ -429,7 +429,7 @@ vec_maybe_as_location <- function(i,
   }
 
   if (!allow_negative && neg) {
-    return(maybe(error = new_error_location_bad_type(
+    return(result(err = new_error_location_bad_type(
       i = i,
       allow_types = allow_types,
       .arg = arg,
@@ -437,7 +437,7 @@ vec_maybe_as_location <- function(i,
     )))
   }
 
-  # FIXME: Use maybe approach in internal implementation?
+  # FIXME: Use result approach in internal implementation?
   err <- NULL
   i <- tryCatch(
     vec_as_index(i, n, names = names, arg = arg),
@@ -452,9 +452,9 @@ vec_maybe_as_location <- function(i,
   }
 
   if (is_null(err)) {
-    maybe(i)
+    result(i)
   } else {
-    maybe(error = new_error_location_bad_type(
+    result(err = new_error_location_bad_type(
       i = i,
       allow_types = allow_types,
       parent = err,
