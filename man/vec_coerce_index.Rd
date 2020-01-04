@@ -2,39 +2,39 @@
 % Please edit documentation in R/slice.R
 \name{vec_coerce_index}
 \alias{vec_coerce_index}
-\alias{vec_coerce_position}
-\title{Coerce to the base type of a position}
+\alias{vec_coerce_location}
+\title{Coerce to the base type of an index}
 \usage{
 vec_coerce_index(
   i,
   ...,
-  allow_types = c("indicator", "position", "name"),
+  allow_types = c("indicator", "location", "name"),
   arg = "i"
 )
 
-vec_coerce_position(i, ..., allow_types = c("position", "name"), arg = "i")
+vec_coerce_location(i, ..., allow_types = c("location", "name"), arg = "i")
 }
 \arguments{
-\item{i}{An integer, character or logical vector specifying the positions or
-names of the observations to get/set.
-Specify \code{TRUE} to index all elements (as in \code{x[]}), or \code{NULL}, \code{FALSE} or
+\item{i}{An integer, character or logical vector specifying the
+locations or names of the observations to get/set. Specify
+\code{TRUE} to index all elements (as in \code{x[]}), or \code{NULL}, \code{FALSE} or
 \code{integer()} to index none (as in \code{x[NULL]}).}
 
 \item{allow_types}{Experimental. Character vector indicating one or
-several types of position to be allowed as input: \code{"indicator"},
-\code{"position"}, or \code{"name"}. Indicators must be subtypes of
+several types of location to be allowed as input: \code{"indicator"},
+\code{"location"}, or \code{"name"}. Indicators must be subtypes of
 logical. Locations must be coercible to integers (possibly from
 a larger type like double). Names must be subtypes of character.}
 
 \item{arg}{The argument name to be displayed in error messages when
-\code{vec_as_index()} and \code{vec_as_position()} are used to check the
+\code{vec_as_index()} and \code{vec_as_location()} are used to check the
 type of a function input.}
 }
 \description{
 \Sexpr[results=rd, stage=render]{vctrs:::lifecycle("experimental")}
 
 This coerces \code{i} to the base type expected by \code{\link[=vec_as_index]{vec_as_index()}} or
-\code{\link[=vec_as_position]{vec_as_position()}}. The resulting vector is not checked in any
+\code{\link[=vec_as_location]{vec_as_location()}}. The resulting vector is not checked in any
 way (length, missingness, negative elements).
 }
 \keyword{internal}

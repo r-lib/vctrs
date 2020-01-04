@@ -1,9 +1,9 @@
-> vec_as_position(0, 2L)
+> vec_as_location(0, 2L)
 Error: Must extract with a single index.
 x `i` can't be zero.
 i This index must be a positive integer.
 
-> vec_as_position(-1, 2L)
+> vec_as_location(-1, 2L)
 Error: Must extract with a single index.
 x `i` (with value -1) has the wrong sign.
 i This index must be a positive integer.
@@ -12,7 +12,7 @@ i This index must be a positive integer.
 Custom `arg`
 ============
 
-> vec_as_position(0, 2L, arg = "foo")
+> vec_as_location(0, 2L, arg = "foo")
 Error: Must extract with a single index.
 x `foo` can't be zero.
 i This index must be a positive integer.

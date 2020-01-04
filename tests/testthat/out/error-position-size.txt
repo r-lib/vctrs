@@ -1,9 +1,9 @@
-> vec_as_position(1:2, 2L)
+> vec_as_location(1:2, 2L)
 Error: Must extract with a single index.
 x `i` has the wrong size 2.
 i This index must be size 1.
 
-> vec_as_position(mtcars, 10L)
+> vec_as_location(mtcars, 10L)
 Error: Must extract with a single index.
 x `i` has the wrong type `data.frame<
   mpg : double
@@ -18,18 +18,18 @@ x `i` has the wrong type `data.frame<
   gear: double
   carb: double
 >`.
-i This index must be a position or a name.
+i This index must be a location or a name.
 
 
 Custom `arg`
 ============
 
-> vec_as_position(1:2, 2L, arg = "foo")
+> vec_as_location(1:2, 2L, arg = "foo")
 Error: Must extract with a single index.
 x `foo` has the wrong size 2.
 i This index must be size 1.
 
-> vec_as_position(mtcars, 10L, arg = "foo")
+> vec_as_location(mtcars, 10L, arg = "foo")
 Error: Must extract with a single index.
 x `foo` has the wrong type `data.frame<
   mpg : double
@@ -44,9 +44,9 @@ x `foo` has the wrong type `data.frame<
   gear: double
   carb: double
 >`.
-i This index must be a position or a name.
+i This index must be a location or a name.
 
-> vec_as_position(1:2, 2L, arg = "foo")
+> vec_as_location(1:2, 2L, arg = "foo")
 Error: Must extract with a single index.
 x `foo` has the wrong size 2.
 i This index must be size 1.
