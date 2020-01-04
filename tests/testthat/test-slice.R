@@ -970,23 +970,23 @@ test_that("vec_as_index() optionally allows negative indices", {
   expect_error(vec_as_index(c(1, -10), 2L, convert_values = NULL), class = "vctrs_error_index_oob_positions")
 })
 
-test_that("vec_coerce_index() handles `allow_types`", {
-  expect_identical(vec_coerce_index(NA, allow_types = c("location", "name")), na_int)
-  expect_identical(vec_coerce_index(NA, allow_types = "name"), na_chr)
+test_that("vec_as_subscript() handles `allow_types`", {
+  expect_identical(vec_as_subscript(NA, allow_types = c("location", "name")), na_int)
+  expect_identical(vec_as_subscript(NA, allow_types = "name"), na_chr)
 
   verify_output(test_path("out", "test-coerce-index-allow-types.txt"), {
-    vec_coerce_index(1L, allow_types = "name")
-    vec_coerce_index("foo", allow_types = "location")
-    vec_coerce_index(TRUE, allow_types = c("location", "name"))
-    vec_coerce_index("foo", allow_types = c("indicator", "location"))
+    vec_as_subscript(1L, allow_types = "name")
+    vec_as_subscript("foo", allow_types = "location")
+    vec_as_subscript(TRUE, allow_types = c("location", "name"))
+    vec_as_subscript("foo", allow_types = c("indicator", "location"))
   })
 })
 
-test_that("vec_coerce_location() handles `allow_types`", {
+test_that("vec_as_subscript2() handles `allow_types`", {
   verify_output(test_path("out", "test-coerce-position-allow-types.txt"), {
-    vec_coerce_location(1L, allow_types = "name")
-    vec_coerce_location("foo", allow_types = "location")
-    vec_coerce_location(TRUE, allow_types = c("location", "name"))
+    vec_as_subscript2(1L, allow_types = "name")
+    vec_as_subscript2("foo", allow_types = "location")
+    vec_as_subscript2(TRUE, allow_types = c("location", "name"))
   })
 })
 

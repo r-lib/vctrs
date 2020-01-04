@@ -195,7 +195,7 @@ vec_as_index <- function(i, n,
 
   n <- vec_coercible_cast(n, integer())
   vec_assert(n, integer(), 1L)
-  i <- vec_coerce_index(i, arg = arg, allow_types = allow_types)
+  i <- vec_as_subscript(i, arg = arg, allow_types = allow_types)
 
   convert_values <- as_opts_index_convert_values(convert_values, arg = arg)
   .Call(vctrs_as_index, i, n, names, convert_values)
@@ -221,41 +221,41 @@ vec_as_location <- function(i, n,
   ))
 }
 
-#' Coerce to the base type of an index
+#' Convert to a base subscript type
 #'
 #' @description
 #'
 #' \Sexpr[results=rd, stage=render]{vctrs:::lifecycle("experimental")}
 #'
-#' This coerces `i` to the base type expected by [vec_as_index()] or
-#' [vec_as_location()]. The resulting vector is not checked in any
-#' way (length, missingness, negative elements).
+#' Convert `i` to the base type expected by [vec_as_index()] or
+#' [vec_as_location()]. The values of the subscript type are
+#' not checked in any way (length, missingness, negative elements).
 #'
 #' @inheritParams vec_as_index
 #' @keywords internal
 #' @export
-vec_coerce_index <- function(i,
+vec_as_subscript <- function(i,
                              ...,
                              allow_types = c("indicator", "location", "name"),
                              arg = "i") {
   if (!missing(...)) ellipsis::check_dots_empty()
-  result_get(vec_coerce_index_result(
+  result_get(vec_as_subscript_result(
     i,
     arg = arg,
     allow_types = allow_types
   ))
 }
-#' @rdname vec_coerce_index
+#' @rdname vec_as_subscript
 #' @export
-vec_coerce_location <- function(i,
-                                ...,
-                                allow_types = c("location", "name"),
-                                arg = "i") {
+vec_as_subscript2 <- function(i,
+                              ...,
+                              allow_types = c("location", "name"),
+                              arg = "i") {
   if (!missing(...)) ellipsis::check_dots_empty()
-  result_get(vec_coerce_location_result(i, arg, allow_types = allow_types))
+  result_get(vec_as_subscript2_result(i, arg, allow_types = allow_types))
 }
 
-vec_coerce_index_result <- function(i, arg, allow_types) {
+vec_as_subscript_result <- function(i, arg, allow_types) {
   allow_types <- as_opts_index_type(allow_types, arg = arg)
 
   if (!vec_is(i)) {
@@ -330,9 +330,9 @@ vec_coerce_index_result <- function(i, arg, allow_types) {
   result(i)
 }
 
-vec_coerce_location_result <- function(i, arg, allow_types) {
+vec_as_subscript2_result <- function(i, arg, allow_types) {
   allow_types <- as_opts_scalar_location_type(allow_types, arg = arg)
-  result <- vec_coerce_index_result(i, arg, allow_types = allow_types)
+  result <- vec_as_subscript_result(i, arg, allow_types = allow_types)
 
   # Return a subclass of index error
   if (!is_null(result$err)) {
@@ -378,7 +378,7 @@ vec_as_location_result <- function(i,
   allow_missing <- allow_values[["missing"]]
   allow_negative <- allow_values[["negative"]]
 
-  result <- vec_coerce_location_result(
+  result <- vec_as_subscript2_result(
     i = i,
     arg = arg,
     allow_types = allow_types
