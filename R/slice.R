@@ -139,7 +139,7 @@ vec_assign_fallback <- function(x, i, value) {
 #'   transformed to positive ones and logical vectors are transformed
 #'   to a vector of indices for the `TRUE` locations.
 #'
-#' * `vec_as_location()` accepts a single number or string. It returns
+#' * `vec_as_location2()` accepts a single number or string. It returns
 #'   a single location as a integer vector of size 1. This is suitable
 #'   for extracting with `[[`.
 #'
@@ -151,7 +151,7 @@ vec_assign_fallback <- function(x, i, value) {
 #'   not used. The default value of `NULL` will result in an error
 #'   if `i` is a character vector.
 #' @param arg The argument name to be displayed in error messages when
-#'   `vec_as_index()` and `vec_as_location()` are used to check the
+#'   `vec_as_index()` and `vec_as_location2()` are used to check the
 #'   type of a function input.
 #' @param convert_values Experimental. Character vector indicating
 #'   what types of values should be converted. Can currently only be
@@ -163,7 +163,7 @@ vec_assign_fallback <- function(x, i, value) {
 #'   a larger type like double). Names must be subtypes of character.
 #'
 #' @return `vec_as_index()` returns an integer vector that can be used
-#'   as an index in a subsetting operation. `vec_as_location()`
+#'   as an index in a subsetting operation. `vec_as_location2()`
 #'   returns an integer of size 1 that can be used a scalar index for
 #'   extracting an element.
 #'
@@ -206,13 +206,14 @@ vec_as_index <- function(i, n,
 #'   `"negative"` or `"missing"`. By default, locations can't be
 #'   negative or missing.
 #' @export
-vec_as_location <- function(i, n,
-                            names = NULL,
-                            ...,
-                            allow_values = NULL,
-                            arg = "i") {
+vec_as_location2 <- function(i,
+                             n,
+                             names = NULL,
+                             ...,
+                             allow_values = NULL,
+                             arg = "i") {
   if (!missing(...)) ellipsis::check_dots_empty()
-  result_get(vec_as_location_result(
+  result_get(vec_as_location2_result(
     i,
     n = n,
     names = names,
@@ -228,7 +229,7 @@ vec_as_location <- function(i, n,
 #' \Sexpr[results=rd, stage=render]{vctrs:::lifecycle("experimental")}
 #'
 #' Convert `i` to the base type expected by [vec_as_index()] or
-#' [vec_as_location()]. The values of the subscript type are
+#' [vec_as_location2()]. The values of the subscript type are
 #' not checked in any way (length, missingness, negative elements).
 #'
 #' @inheritParams vec_as_index
@@ -367,11 +368,11 @@ vec_as_subscript2_result <- function(i, arg, allow_types) {
 
   result
 }
-vec_as_location_result <- function(i,
-                                   n,
-                                   names,
-                                   allow_values,
-                                   arg) {
+vec_as_location2_result <- function(i,
+                                          n,
+                                          names,
+                                          allow_values,
+                                          arg) {
   allow_types <- c("location", "name")
 
   allow_values <- as_opts_location_values(allow_values, arg = arg)

@@ -2,7 +2,7 @@
 % Please edit documentation in R/slice.R
 \name{vec_as_index}
 \alias{vec_as_index}
-\alias{vec_as_location}
+\alias{vec_as_location2}
 \title{Create an index vector or a location}
 \usage{
 vec_as_index(
@@ -15,7 +15,7 @@ vec_as_index(
   arg = "i"
 )
 
-vec_as_location(i, n, names = NULL, ..., allow_values = NULL, arg = "i")
+vec_as_location2(i, n, names = NULL, ..., allow_values = NULL, arg = "i")
 }
 \arguments{
 \item{i}{An integer, character or logical vector specifying the
@@ -42,7 +42,7 @@ what types of values should be converted. Can currently only be
 set to \code{"negative"}.}
 
 \item{arg}{The argument name to be displayed in error messages when
-\code{vec_as_index()} and \code{vec_as_location()} are used to check the
+\code{vec_as_index()} and \code{vec_as_location2()} are used to check the
 type of a function input.}
 
 \item{allow_values}{Experimental. Character vector indicating zero,
@@ -52,7 +52,7 @@ negative or missing.}
 }
 \value{
 \code{vec_as_index()} returns an integer vector that can be used
-as an index in a subsetting operation. \code{vec_as_location()}
+as an index in a subsetting operation. \code{vec_as_location2()}
 returns an integer of size 1 that can be used a scalar index for
 extracting an element.
 }
@@ -66,7 +66,7 @@ suitable for subsetting with \code{[} or \code{\link[=vec_slice]{vec_slice()}}. 
 different size than the input because negative selections are
 transformed to positive ones and logical vectors are transformed
 to a vector of indices for the \code{TRUE} locations.
-\item \code{vec_as_location()} accepts a single number or string. It returns
+\item \code{vec_as_location2()} accepts a single number or string. It returns
 a single location as a integer vector of size 1. This is suitable
 for extracting with \code{[[}.
 }

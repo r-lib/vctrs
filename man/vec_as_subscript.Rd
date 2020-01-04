@@ -27,14 +27,14 @@ logical. Locations must be coercible to integers (possibly from
 a larger type like double). Names must be subtypes of character.}
 
 \item{arg}{The argument name to be displayed in error messages when
-\code{vec_as_index()} and \code{vec_as_location()} are used to check the
+\code{vec_as_index()} and \code{vec_as_location2()} are used to check the
 type of a function input.}
 }
 \description{
 \Sexpr[results=rd, stage=render]{vctrs:::lifecycle("experimental")}
 
 Convert \code{i} to the base type expected by \code{\link[=vec_as_index]{vec_as_index()}} or
-\code{\link[=vec_as_location]{vec_as_location()}}. The values of the subscript type are
+\code{\link[=vec_as_location2]{vec_as_location2()}}. The values of the subscript type are
 not checked in any way (length, missingness, negative elements).
 }
 \keyword{internal}
