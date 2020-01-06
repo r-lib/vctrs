@@ -113,7 +113,7 @@ SEXP vctrs_is_vector(SEXP x) {
   return Rf_ScalarLogical(vec_is_vector(x));
 }
 
-bool class_is_null(SEXP x) {
+static bool class_is_null(SEXP x) {
   SEXP class = PROTECT(Rf_getAttrib(x, R_ClassSymbol));
   bool res = Rf_isNull(class);
   UNPROTECT(1);
