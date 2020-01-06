@@ -2,25 +2,25 @@
 % Please edit documentation in R/slice.R
 \name{vec_as_index}
 \alias{vec_as_index}
-\alias{vec_as_position}
-\title{Create an index vector or a position}
+\alias{vec_as_location2}
+\title{Create an index vector or a location}
 \usage{
 vec_as_index(
   i,
   n,
   names = NULL,
   ...,
-  allow_types = c("indicator", "position", "name"),
+  allow_types = c("indicator", "location", "name"),
   convert_values = "negative",
   arg = "i"
 )
 
-vec_as_position(i, n, names = NULL, ..., allow_values = NULL, arg = "i")
+vec_as_location2(i, n, names = NULL, ..., allow_values = NULL, arg = "i")
 }
 \arguments{
-\item{i}{An integer, character or logical vector specifying the positions or
-names of the observations to get/set.
-Specify \code{TRUE} to index all elements (as in \code{x[]}), or \code{NULL}, \code{FALSE} or
+\item{i}{An integer, character or logical vector specifying the
+locations or names of the observations to get/set. Specify
+\code{TRUE} to index all elements (as in \code{x[]}), or \code{NULL}, \code{FALSE} or
 \code{integer()} to index none (as in \code{x[NULL]}).}
 
 \item{n}{A single integer representing the total size of the
@@ -32,8 +32,8 @@ not used. The default value of \code{NULL} will result in an error
 if \code{i} is a character vector.}
 
 \item{allow_types}{Experimental. Character vector indicating one or
-several types of position to be allowed as input: \code{"indicator"},
-\code{"position"}, or \code{"name"}. Indicators must be subtypes of
+several types of location to be allowed as input: \code{"indicator"},
+\code{"location"}, or \code{"name"}. Indicators must be subtypes of
 logical. Locations must be coercible to integers (possibly from
 a larger type like double). Names must be subtypes of character.}
 
@@ -42,17 +42,17 @@ what types of values should be converted. Can currently only be
 set to \code{"negative"}.}
 
 \item{arg}{The argument name to be displayed in error messages when
-\code{vec_as_index()} and \code{vec_as_position()} are used to check the
+\code{vec_as_index()} and \code{vec_as_location2()} are used to check the
 type of a function input.}
 
 \item{allow_values}{Experimental. Character vector indicating zero,
 one or several types of values to be allowed as input:
-\code{"negative"} or \code{"missing"}. By default, positions can't be
+\code{"negative"} or \code{"missing"}. By default, locations can't be
 negative or missing.}
 }
 \value{
 \code{vec_as_index()} returns an integer vector that can be used
-as an index in a subsetting operation. \code{vec_as_position()}
+as an index in a subsetting operation. \code{vec_as_location2()}
 returns an integer of size 1 that can be used a scalar index for
 extracting an element.
 }
@@ -65,9 +65,9 @@ of any size. The output is always an integer vector that is
 suitable for subsetting with \code{[} or \code{\link[=vec_slice]{vec_slice()}}. It might be a
 different size than the input because negative selections are
 transformed to positive ones and logical vectors are transformed
-to a vector of indices for the \code{TRUE} positions.
-\item \code{vec_as_position()} accepts a single number or string. It returns
-a single position as a integer vector of size 1. This is suitable
+to a vector of indices for the \code{TRUE} locations.
+\item \code{vec_as_location2()} accepts a single number or string. It returns
+a single location as a integer vector of size 1. This is suitable
 for extracting with \code{[[}.
 }
 }
