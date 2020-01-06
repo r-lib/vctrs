@@ -49,3 +49,25 @@ vec_type2 <- function(x, y, ...) {
   warn_deprecated(c("`vec_type2()` has been renamed to `vec_ptype2()`."))
   vec_ptype2(x, y, ...)
 }
+
+#' Convert to an index vector
+#'
+#' @description
+#'
+#' \Sexpr[results=rd, stage=render]{vctrs:::lifecycle("questioning")}
+#'
+#' `vec_as_index()` has been renamed to [vec_as_location()] and will
+#' be soft-deprecated in vctrs 0.3.0.
+#'
+#' @inheritParams vec_as_location
+#'
+#' @keywords internal
+#' @export
+vec_as_index <- function(i, n, names = NULL) {
+  n <- vec_coercible_cast(n, integer())
+  vec_assert(n, integer(), 1L)
+  i <- vec_as_subscript(i)
+
+  convert_values <- as_opts_location_convert_values("negative")
+  .Call(vctrs_as_location, i, n, names, convert_values)
+}

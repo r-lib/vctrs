@@ -21,24 +21,24 @@ static SEXP slice_rownames(SEXP names, SEXP subscript);
 SEXP vec_slice_impl(SEXP x, SEXP subscript);
 
 
-static void stop_index_oob_positions(SEXP i, R_len_t size) {
+static void stop_subscript_oob_location(SEXP i, R_len_t size) {
   SEXP size_obj = PROTECT(r_int(size));
-  vctrs_eval_mask2(Rf_install("stop_index_oob_positions"),
+  vctrs_eval_mask2(Rf_install("stop_subscript_oob_location"),
                    syms_i, i,
                    syms_size, size_obj,
                    vctrs_ns_env);
 
   UNPROTECT(1);
-  never_reached("stop_index_oob_positions");
+  never_reached("stop_subscript_oob_location");
 }
-static void stop_index_oob_names(SEXP i, SEXP names) {
-  vctrs_eval_mask2(Rf_install("stop_index_oob_names"),
+static void stop_subscript_oob_name(SEXP i, SEXP names) {
+  vctrs_eval_mask2(Rf_install("stop_subscript_oob_name"),
                    syms_i, i,
                    syms_names, names,
                    vctrs_ns_env);
 
   UNPROTECT(1);
-  never_reached("stop_index_oob_names");
+  never_reached("stop_subscript_oob_name");
 }
 
 #define SLICE_SUBSCRIPT(RTYPE, CTYPE, DEREF, CONST_DEREF, NA_VALUE)     \
@@ -497,7 +497,7 @@ static SEXP int_as_location(SEXP subscript, R_len_t n,
       ++n_zero;
     }
     if (abs(elt) > n) {
-      stop_index_oob_positions(subscript, n);
+      stop_subscript_oob_location(subscript, n);
     }
   }
 
@@ -536,7 +536,7 @@ static SEXP int_invert_location(SEXP subscript, R_len_t n) {
 
     j = -j;
     if (j > n) {
-      stop_index_oob_positions(subscript, n);
+      stop_subscript_oob_location(subscript, n);
     }
 
     sel_data[j - 1] = 0;
@@ -650,7 +650,7 @@ static SEXP chr_as_location(SEXP subscript, SEXP names) {
 
   for (R_len_t k = 0; k < n; ++k) {
     if (p[k] == NA_INTEGER && ip[k] != NA_STRING) {
-      stop_index_oob_names(subscript, names);
+      stop_subscript_oob_name(subscript, names);
     }
   }
 

@@ -1,15 +1,15 @@
 > vec_as_subscript2(1L, allow_types = "name")
-Error: Must extract with a single index.
+Error: Must extract with a single subscript.
 x `i` has the wrong type `integer`.
-i This index must be a name.
+i This subscript must be a name.
 
 > vec_as_subscript2("foo", allow_types = "location")
-Error: Must extract with a single index.
+Error: Must extract with a single subscript.
 x `i` has the wrong type `character`.
-i This index must be a location.
+i This subscript must be a location.
 
 > vec_as_subscript2(TRUE, allow_types = c("location", "name"))
-Error: Must extract with a single index.
+Error: Must extract with a single subscript.
 x `i` has the wrong type `logical`.
-i This index must be a location or a name.
+i This subscript must be a location or a name.
 
