@@ -114,10 +114,7 @@ SEXP vctrs_is_vector(SEXP x) {
 }
 
 static bool class_is_null(SEXP x) {
-  SEXP class = PROTECT(Rf_getAttrib(x, R_ClassSymbol));
-  bool res = Rf_isNull(class);
-  UNPROTECT(1);
-  return res;
+  return Rf_getAttrib(x, R_ClassSymbol) == R_NilValue;
 }
 
 // [[ include("vctrs.h") ]]
