@@ -460,7 +460,7 @@ stop_names_must_be_unique <- function(locations) {
 #' @description
 #'
 #' * `stop_subscript_oob_location()` throws errors of class
-#'   `vctrs_error_subscript_oob_position` containing fields `i` and
+#'   `vctrs_error_subscript_oob_location` containing fields `i` and
 #'   `size`.
 #'
 #' * `stop_subscript_oob_name()` throws errors of class
@@ -476,7 +476,7 @@ stop_names_must_be_unique <- function(locations) {
 #' @export
 stop_subscript_oob_location <- function(i, size, ..., .subclass = NULL) {
   stop_subscript_oob(
-    .subclass = c(.subclass, "vctrs_error_subscript_oob_position"),
+    .subclass = c(.subclass, "vctrs_error_subscript_oob_location"),
     i = i,
     size = size,
     ...
@@ -509,11 +509,11 @@ stop_subscript <- function(i, ..., .subclass = NULL) {
 }
 
 #' @export
-cnd_header.vctrs_error_subscript_oob_position <- function(cnd) {
+cnd_header.vctrs_error_subscript_oob_location <- function(cnd) {
   "Must index existing elements."
 }
 #' @export
-cnd_body.vctrs_error_subscript_oob_position <- function(cnd) {
+cnd_body.vctrs_error_subscript_oob_location <- function(cnd) {
   i <- cnd$i
 
   # In case of negative indexing

@@ -65,8 +65,8 @@ test_that("can subset with a recycled FALSE", {
 })
 
 test_that("can't index beyond the end of a vector", {
-  expect_error(vec_slice(1:2, 3L), class = "vctrs_error_subscript_oob_position")
-  expect_error(vec_slice(1:2, -3L), class = "vctrs_error_subscript_oob_position")
+  expect_error(vec_slice(1:2, 3L), class = "vctrs_error_subscript_oob_location")
+  expect_error(vec_slice(1:2, -3L), class = "vctrs_error_subscript_oob_location")
 })
 
 test_that("oob error messages are properly constructed", {
@@ -553,7 +553,7 @@ test_that("vec_chop() falls back to `[` for shaped objects with no proxy", {
 test_that("`indices` are validated", {
   expect_error(vec_chop(1, 1), "`indices` must be a list of index values, or `NULL`")
   expect_error(vec_chop(1, list(1.5)), class = "vctrs_error_cast_lossy")
-  expect_error(vec_chop(1, list(2)), class = "vctrs_error_subscript_oob_position")
+  expect_error(vec_chop(1, list(2)), class = "vctrs_error_subscript_oob_location")
 })
 
 test_that("size 0 `indices` list is allowed", {
@@ -876,9 +876,9 @@ test_that("vec_as_location2() and vec_as_location() require integer- or characte
 })
 
 test_that("vec_as_location2() and vec_as_location() require existing elements", {
-  expect_error(vec_as_location2(10L, 2L), class = "vctrs_error_subscript_oob_position")
+  expect_error(vec_as_location2(10L, 2L), class = "vctrs_error_subscript_oob_location")
   expect_error(vec_as_location2("foo", 1L, names = "bar"), class = "vctrs_error_subscript_oob_name")
-  expect_error(vec_as_location(10L, 2L), class = "vctrs_error_subscript_oob_position")
+  expect_error(vec_as_location(10L, 2L), class = "vctrs_error_subscript_oob_location")
   expect_error(vec_as_location("foo", 1L, names = "bar"), class = "vctrs_error_subscript_oob_name")
 })
 
@@ -960,14 +960,14 @@ test_that("vec_as_location() preserves names if possible", {
 test_that("vec_as_location2() optionally allows missing and negative positions", {
   expect_identical(vec_as_location2(NA, 2L, allow_values = "missing"), na_int)
   expect_identical(vec_as_location2(-1, 2L, allow_values = "negative"), -1L)
-  expect_error(vec_as_location2(-3, 2L, allow_values = "negative"), class = "vctrs_error_subscript_oob_position")
+  expect_error(vec_as_location2(-3, 2L, allow_values = "negative"), class = "vctrs_error_subscript_oob_location")
   expect_error(vec_as_location2(letters, 2L, allow_values = "negative"), class = "vctrs_error_location_bad_type")
   expect_error(vec_as_location2(0, 2L, allow_values = "negative"), class = "vctrs_error_location_bad_type")
 })
 
 test_that("vec_as_location() optionally allows negative indices", {
   expect_identical(vec_as_location(dbl(1, -1), 2L, convert_values = NULL), int(1L, -1L))
-  expect_error(vec_as_location(c(1, -10), 2L, convert_values = NULL), class = "vctrs_error_subscript_oob_position")
+  expect_error(vec_as_location(c(1, -10), 2L, convert_values = NULL), class = "vctrs_error_subscript_oob_location")
 })
 
 test_that("vec_as_subscript() handles `allow_types`", {

@@ -30,7 +30,7 @@ documented in \url{https://adv-r.hadley.nz/s3.html#s3-subclassing}.}
 \description{
 \itemize{
 \item \code{stop_subscript_oob_location()} throws errors of class
-\code{vctrs_error_subscript_oob_position} containing fields \code{i} and
+\code{vctrs_error_subscript_oob_location} containing fields \code{i} and
 \code{size}.
 \item \code{stop_subscript_oob_name()} throws errors of class
 \code{vctrs_error_subscript_oob_name} containing fields \code{i} and \code{names}.
