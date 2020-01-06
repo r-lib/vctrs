@@ -54,16 +54,20 @@ vec_type2 <- function(x, y, ...) {
 #'
 #' @description
 #'
-#' \Sexpr[results=rd, stage=render]{vctrs:::lifecycle("questioning")}
+#' \Sexpr[results=rd, stage=render]{vctrs:::lifecycle("soft-deprecated")}
 #'
-#' `vec_as_index()` has been renamed to [vec_as_location()] and will
-#' be soft-deprecated in vctrs 0.3.0.
+#' `vec_as_index()` has been renamed to [vec_as_location()] and is
+#' soft-deprecated as of vctrs 0.2.2.
 #'
 #' @inheritParams vec_as_location
 #'
 #' @keywords internal
 #' @export
 vec_as_index <- function(i, n, names = NULL) {
+  signal_soft_deprecated(paste_line(
+    "`vec_as_index()` is deprecated as of vctrs 0.2.2.",
+    "Please use `vec_as_location() instead.`"
+  ))
   n <- vec_coercible_cast(n, integer())
   vec_assert(n, integer(), 1L)
   i <- vec_as_subscript(i)
