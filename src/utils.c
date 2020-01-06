@@ -421,7 +421,7 @@ SEXP compact_materialize(SEXP x) {
   }
 }
 
-R_len_t vec_index_size(SEXP x) {
+R_len_t vec_subscript_size(SEXP x) {
   if (is_compact_rep(x)) {
     return r_int_get(x, 1);
   } else if (is_compact_seq(x)) {

@@ -198,7 +198,7 @@ vec_as_index <- function(i, n,
   i <- vec_as_subscript(i, arg = arg, allow_types = allow_types)
 
   convert_values <- as_opts_index_convert_values(convert_values, arg = arg)
-  .Call(vctrs_as_index, i, n, names, convert_values)
+  .Call(vctrs_as_location, i, n, names, convert_values)
 }
 #' @rdname vec_as_index
 #' @param allow_values Experimental. Character vector indicating zero,
