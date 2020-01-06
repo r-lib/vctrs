@@ -55,7 +55,7 @@ test_that("can subset with a recycled TRUE", {
   expect_identical(vec_slice(1:3, TRUE), 1:3)
   expect_identical(vec_slice(mtcars, TRUE), mtcars)
   expect_identical(vec_slice(new_vctr(1:3), TRUE), new_vctr(1:3))
-  expect_identical(vec_as_index(TRUE, 2), 1:2)
+  expect_identical(vec_as_location(TRUE, 2), 1:2)
 })
 
 test_that("can subset with a recycled FALSE", {
@@ -65,8 +65,8 @@ test_that("can subset with a recycled FALSE", {
 })
 
 test_that("can't index beyond the end of a vector", {
-  expect_error(vec_slice(1:2, 3L), class = "vctrs_error_index_oob_positions")
-  expect_error(vec_slice(1:2, -3L), class = "vctrs_error_index_oob_positions")
+  expect_error(vec_slice(1:2, 3L), class = "vctrs_error_subscript_oob_position")
+  expect_error(vec_slice(1:2, -3L), class = "vctrs_error_subscript_oob_position")
 })
 
 test_that("oob error messages are properly constructed", {
@@ -84,8 +84,8 @@ test_that("oob error messages are properly constructed", {
 })
 
 test_that("slicing non existing elements fails", {
-  expect_error(vec_as_index("foo", 1L, "f"), class = "vctrs_error_index_oob_names")
-  expect_error(vec_slice(c(f = 1), "foo"), class = "vctrs_error_index_oob_names")
+  expect_error(vec_as_location("foo", 1L, "f"), class = "vctrs_error_subscript_oob_name")
+  expect_error(vec_slice(c(f = 1), "foo"), class = "vctrs_error_subscript_oob_name")
 })
 
 test_that("can subset object of any dimensionality", {
@@ -192,16 +192,16 @@ test_that("0 is ignored in positive indices", {
 
 test_that("can slice with double indices", {
   expect_identical(vec_slice(1:3, dbl(2, 3)), 2:3)
-  err <- expect_error(vec_as_index(2^31, 3L), class = "vctrs_error_index_bad_type")
+  err <- expect_error(vec_as_location(2^31, 3L), class = "vctrs_error_subscript_bad_type")
   expect_is(err$parent, "vctrs_error_cast_lossy")
 })
 
-test_that("vec_as_index() checks type", {
-  expect_error(vec_as_index(quote(foo), 1L), class = "vctrs_error_index_bad_type")
-  expect_error(vec_as_index("foo", "bar"), class = "vctrs_error_incompatible_type")
-  expect_error(vec_as_index("foo", 1L, names = 1L), "must be a character vector")
-  expect_error(vec_as_index(Sys.Date(), 3L), class = "vctrs_error_index_bad_type")
-  expect_error(vec_as_index(matrix(TRUE, nrow = 1), 3L), "must have one dimension")
+test_that("vec_as_location() checks type", {
+  expect_error(vec_as_location(quote(foo), 1L), class = "vctrs_error_subscript_bad_type")
+  expect_error(vec_as_location("foo", "bar"), class = "vctrs_error_incompatible_type")
+  expect_error(vec_as_location("foo", 1L, names = 1L), "must be a character vector")
+  expect_error(vec_as_location(Sys.Date(), 3L), class = "vctrs_error_subscript_bad_type")
+  expect_error(vec_as_location(matrix(TRUE, nrow = 1), 3L), "must have one dimension")
 })
 
 test_that("can `vec_slice()` S3 objects without dispatch infloop", {
@@ -256,7 +256,7 @@ test_that("can slice shaped objects by name", {
   dimnames(x) <- list(c("foo", "bar"))
 
   expect_equal(vec_slice(x, "foo"), vec_slice(x, 1L))
-  expect_error(vec_slice(x, "baz"), class = "vctrs_error_index_oob_names")
+  expect_error(vec_slice(x, "baz"), class = "vctrs_error_subscript_oob_name")
 })
 
 test_that("vec_slice() unclasses input before calling `vec_restore()`", {
@@ -355,8 +355,8 @@ test_that("can use names to vec_slice() a named object", {
   expect_identical(vec_slice(x0, letters[2:1]), c(b = 2, a = 1))
   expect_identical(vec_slice(x1, letters[1]), c(a = 1))
 
-  expect_error(vec_slice(x0, letters[3:1]), class = "vctrs_error_index_oob_names")
-  expect_error(vec_slice(x1, letters[2]), class = "vctrs_error_index_oob_names")
+  expect_error(vec_slice(x0, letters[3:1]), class = "vctrs_error_subscript_oob_name")
+  expect_error(vec_slice(x1, letters[2]), class = "vctrs_error_subscript_oob_name")
 })
 
 test_that("can't use names to vec_slice() an unnamed object", {
@@ -375,14 +375,14 @@ test_that("can't use names to vec_slice() an unnamed object", {
 })
 
 test_that("can slice with missing character indices (#244)", {
-  expect_identical(vec_as_index(na_chr, 2L, c("x", "")), na_int)
+  expect_identical(vec_as_location(na_chr, 2L, c("x", "")), na_int)
   expect_identical(vec_slice(c(x = 1), na_chr), set_names(na_dbl, ""))
   expect_identical(vec_slice(c(x = "foo"), na_chr), set_names(na_chr, ""))
 })
 
 test_that("can slice with numerics (#577)", {
-  expect_identical(vec_as_index(1:2, 3), 1:2)
-  expect_error(vec_as_index(1:2, 3.5), class = "vctrs_error_cast_lossy")
+  expect_identical(vec_as_location(1:2, 3), 1:2)
+  expect_error(vec_as_location(1:2, 3.5), class = "vctrs_error_cast_lossy")
 })
 
 test_that("missing indices don't create NA names", {
@@ -553,7 +553,7 @@ test_that("vec_chop() falls back to `[` for shaped objects with no proxy", {
 test_that("`indices` are validated", {
   expect_error(vec_chop(1, 1), "`indices` must be a list of index values, or `NULL`")
   expect_error(vec_chop(1, list(1.5)), class = "vctrs_error_cast_lossy")
-  expect_error(vec_chop(1, list(2)), class = "vctrs_error_index_oob_positions")
+  expect_error(vec_chop(1, list(2)), class = "vctrs_error_subscript_oob_position")
 })
 
 test_that("size 0 `indices` list is allowed", {
@@ -828,34 +828,34 @@ test_that("vec_as_location2() requires integer or character inputs", {
   })
 })
 
-test_that("vec_as_index() requires integer, character, or logical inputs", {
-  expect_error(vec_as_index(mtcars, 10L), class = "vctrs_error_index_bad_type")
-  expect_error(vec_as_index(env(), 10L), class = "vctrs_error_index_bad_type")
-  expect_error(vec_as_index(foobar(), 10L), class = "vctrs_error_index_bad_type")
-  expect_error(vec_as_index(2.5, 10L), class = "vctrs_error_index_bad_type")
-  expect_error(vec_as_index(list(), 10L), class = "vctrs_error_index_bad_type")
-  expect_error(vec_as_index(function() NULL, 10L), class = "vctrs_error_index_bad_type")
+test_that("vec_as_location() requires integer, character, or logical inputs", {
+  expect_error(vec_as_location(mtcars, 10L), class = "vctrs_error_subscript_bad_type")
+  expect_error(vec_as_location(env(), 10L), class = "vctrs_error_subscript_bad_type")
+  expect_error(vec_as_location(foobar(), 10L), class = "vctrs_error_subscript_bad_type")
+  expect_error(vec_as_location(2.5, 10L), class = "vctrs_error_subscript_bad_type")
+  expect_error(vec_as_location(list(), 10L), class = "vctrs_error_subscript_bad_type")
+  expect_error(vec_as_location(function() NULL, 10L), class = "vctrs_error_subscript_bad_type")
 
   verify_output(test_path("out", "error-index-type.txt"), {
-    vec_as_index(mtcars, 10L)
-    vec_as_index(env(), 10L)
-    vec_as_index(foobar(), 10L)
-    vec_as_index(2.5, 3L)
-    vec_as_index(list(), 10L)
-    vec_as_index(function() NULL, 10L)
+    vec_as_location(mtcars, 10L)
+    vec_as_location(env(), 10L)
+    vec_as_location(foobar(), 10L)
+    vec_as_location(2.5, 3L)
+    vec_as_location(list(), 10L)
+    vec_as_location(function() NULL, 10L)
 
     "# Custom `arg`"
-    vec_as_index(env(), 10L, arg = "foo")
-    vec_as_index(foobar(), 10L, arg = "foo")
-    vec_as_index(2.5, 3L, arg = "foo")
+    vec_as_location(env(), 10L, arg = "foo")
+    vec_as_location(foobar(), 10L, arg = "foo")
+    vec_as_location(2.5, 3L, arg = "foo")
   })
 })
 
-test_that("vec_as_location2() and vec_as_index() require integer- or character-like OO inputs", {
+test_that("vec_as_location2() and vec_as_location() require integer- or character-like OO inputs", {
   expect_identical(vec_as_location2(factor("foo"), 2L, c("bar", "foo")), 2L)
-  expect_identical(vec_as_index(factor("foo"), 2L, c("bar", "foo")), 2L)
+  expect_identical(vec_as_location(factor("foo"), 2L, c("bar", "foo")), 2L)
   expect_error(vec_as_location2(foobar(1L), 10L), class = "vctrs_error_location_bad_type")
-  expect_error(vec_as_index(foobar(1L), 10L), class = "vctrs_error_index_bad_type")
+  expect_error(vec_as_location(foobar(1L), 10L), class = "vctrs_error_subscript_bad_type")
 
   # Define subtype of logical and integer
   local_methods(
@@ -871,15 +871,15 @@ test_that("vec_as_location2() and vec_as_index() require integer- or character-l
     vec_cast.logical.vctrs_foobar = function(x, to, ...) vec_cast(unclass(x), lgl())
   )
   expect_error(vec_as_location2(foobar(TRUE), 10L), class = "vctrs_error_location_bad_type")
-  expect_identical(vec_as_index(foobar(TRUE), 10L), 1:10)
-  expect_identical(vec_as_index(foobar(FALSE), 10L), int())
+  expect_identical(vec_as_location(foobar(TRUE), 10L), 1:10)
+  expect_identical(vec_as_location(foobar(FALSE), 10L), int())
 })
 
-test_that("vec_as_location2() and vec_as_index() require existing elements", {
-  expect_error(vec_as_location2(10L, 2L), class = "vctrs_error_index_oob_positions")
-  expect_error(vec_as_location2("foo", 1L, names = "bar"), class = "vctrs_error_index_oob_names")
-  expect_error(vec_as_index(10L, 2L), class = "vctrs_error_index_oob_positions")
-  expect_error(vec_as_index("foo", 1L, names = "bar"), class = "vctrs_error_index_oob_names")
+test_that("vec_as_location2() and vec_as_location() require existing elements", {
+  expect_error(vec_as_location2(10L, 2L), class = "vctrs_error_subscript_oob_position")
+  expect_error(vec_as_location2("foo", 1L, names = "bar"), class = "vctrs_error_subscript_oob_name")
+  expect_error(vec_as_location(10L, 2L), class = "vctrs_error_subscript_oob_position")
+  expect_error(vec_as_location("foo", 1L, names = "bar"), class = "vctrs_error_subscript_oob_name")
 })
 
 test_that("vec_as_location2() requires length 1 inputs", {
@@ -930,44 +930,44 @@ test_that("vec_as_location2() doesn't allow lossy casts", {
   expect_error(allow_lossy_cast(vec_as_location2(2^31, 3L)), class = "vctrs_error_location_bad_type")
 })
 
-test_that("all index errors inherit from `vctrs_error_index`", {
-  expect_error(vec_as_index(100, 2L), class = "vctrs_error_index")
-  expect_error(vec_as_index("foo", 2L, names = c("bar", "baz")), class = "vctrs_error_index")
-  expect_error(vec_as_index(foobar(1L), 2L), class = "vctrs_error_index")
-  expect_error(vec_as_index(1.5, 2L), class = "vctrs_error_index")
-  expect_error(vec_as_location2(TRUE, 2L), class = "vctrs_error_index")
-  expect_error(vec_as_location2(1.5, 2L), class = "vctrs_error_index")
+test_that("all index errors inherit from `vctrs_error_subscript`", {
+  expect_error(vec_as_location(100, 2L), class = "vctrs_error_subscript")
+  expect_error(vec_as_location("foo", 2L, names = c("bar", "baz")), class = "vctrs_error_subscript")
+  expect_error(vec_as_location(foobar(1L), 2L), class = "vctrs_error_subscript")
+  expect_error(vec_as_location(1.5, 2L), class = "vctrs_error_subscript")
+  expect_error(vec_as_location2(TRUE, 2L), class = "vctrs_error_subscript")
+  expect_error(vec_as_location2(1.5, 2L), class = "vctrs_error_subscript")
 })
 
-test_that("all OOB errors inherit from `vctrs_error_index_oob`", {
-  expect_error(vec_as_index(100, 2L), class = "vctrs_error_index_oob")
-  expect_error(vec_as_index("foo", 2L, names = c("bar", "baz")), class = "vctrs_error_index_oob")
+test_that("all OOB errors inherit from `vctrs_error_subscript_oob`", {
+  expect_error(vec_as_location(100, 2L), class = "vctrs_error_subscript_oob")
+  expect_error(vec_as_location("foo", 2L, names = c("bar", "baz")), class = "vctrs_error_subscript_oob")
 })
 
-test_that("vec_as_index() preserves names if possible", {
-  expect_identical(vec_as_index(c(a = 1L, b = 3L), 3L), c(a = 1L, b = 3L))
-  expect_identical(vec_as_index(c(a = 1, b = 3), 3L), c(a = 1L, b = 3L))
-  expect_identical(vec_as_index(c(a = "z", b = "y"), 26L, letters), c(a = 26L, b = 25L))
+test_that("vec_as_location() preserves names if possible", {
+  expect_identical(vec_as_location(c(a = 1L, b = 3L), 3L), c(a = 1L, b = 3L))
+  expect_identical(vec_as_location(c(a = 1, b = 3), 3L), c(a = 1L, b = 3L))
+  expect_identical(vec_as_location(c(a = "z", b = "y"), 26L, letters), c(a = 26L, b = 25L))
 
-  expect_identical(vec_as_index(c(foo = TRUE, bar = FALSE, baz = TRUE), 3L), c(foo = 1L, baz = 3L))
-  expect_identical(vec_as_index(c(foo = TRUE), 3L), c(foo = 1L, foo = 2L, foo = 3L))
-  expect_identical(vec_as_index(c(foo = NA), 3L), c(foo = na_int, foo = na_int, foo = na_int))
+  expect_identical(vec_as_location(c(foo = TRUE, bar = FALSE, baz = TRUE), 3L), c(foo = 1L, baz = 3L))
+  expect_identical(vec_as_location(c(foo = TRUE), 3L), c(foo = 1L, foo = 2L, foo = 3L))
+  expect_identical(vec_as_location(c(foo = NA), 3L), c(foo = na_int, foo = na_int, foo = na_int))
 
   # Names of negative selections are dropped
-  expect_identical(vec_as_index(c(a = -1L, b = -3L), 3L), 2L)
+  expect_identical(vec_as_location(c(a = -1L, b = -3L), 3L), 2L)
 })
 
 test_that("vec_as_location2() optionally allows missing and negative positions", {
   expect_identical(vec_as_location2(NA, 2L, allow_values = "missing"), na_int)
   expect_identical(vec_as_location2(-1, 2L, allow_values = "negative"), -1L)
-  expect_error(vec_as_location2(-3, 2L, allow_values = "negative"), class = "vctrs_error_index_oob_positions")
+  expect_error(vec_as_location2(-3, 2L, allow_values = "negative"), class = "vctrs_error_subscript_oob_position")
   expect_error(vec_as_location2(letters, 2L, allow_values = "negative"), class = "vctrs_error_location_bad_type")
   expect_error(vec_as_location2(0, 2L, allow_values = "negative"), class = "vctrs_error_location_bad_type")
 })
 
-test_that("vec_as_index() optionally allows negative indices", {
-  expect_identical(vec_as_index(dbl(1, -1), 2L, convert_values = NULL), int(1L, -1L))
-  expect_error(vec_as_index(c(1, -10), 2L, convert_values = NULL), class = "vctrs_error_index_oob_positions")
+test_that("vec_as_location() optionally allows negative indices", {
+  expect_identical(vec_as_location(dbl(1, -1), 2L, convert_values = NULL), int(1L, -1L))
+  expect_error(vec_as_location(c(1, -10), 2L, convert_values = NULL), class = "vctrs_error_subscript_oob_position")
 })
 
 test_that("vec_as_subscript() handles `allow_types`", {

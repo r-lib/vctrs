@@ -1,10 +1,10 @@
 > vec_as_location2(TRUE, 10L)
-Error: Must extract with a single index.
+Error: Must extract with a single subscript.
 x `i` has the wrong type `logical`.
-i This index must be a location or a name.
+i This subscript must be a location or a name.
 
 > vec_as_location2(mtcars, 10L)
-Error: Must extract with a single index.
+Error: Must extract with a single subscript.
 x `i` has the wrong type `data.frame<
   mpg : double
   cyl : double
@@ -18,20 +18,20 @@ x `i` has the wrong type `data.frame<
   gear: double
   carb: double
 >`.
-i This index must be a location or a name.
+i This subscript must be a location or a name.
 
 > vec_as_location2(env(), 10L)
-Error: Must extract with a single index.
+Error: Must extract with a single subscript.
 x `i` has the wrong type `environment`.
-i This index must be a location or a name.
+i This subscript must be a location or a name.
 
 > vec_as_location2(foobar(), 10L)
-Error: Must extract with a single index.
+Error: Must extract with a single subscript.
 x `i` has the wrong type `vctrs_foobar`.
-i This index must be a location or a name.
+i This subscript must be a location or a name.
 
 > vec_as_location2(2.5, 3L)
-Error: Must extract with a single index.
+Error: Must extract with a single subscript.
 x Lossy cast from `i` <double> to <integer>.
 
 
@@ -39,11 +39,11 @@ Custom `arg`
 ============
 
 > vec_as_location2(foobar(), 10L, arg = "foo")
-Error: Must extract with a single index.
+Error: Must extract with a single subscript.
 x `foo` has the wrong type `vctrs_foobar`.
-i This index must be a location or a name.
+i This subscript must be a location or a name.
 
 > vec_as_location2(2.5, 3L, arg = "foo")
-Error: Must extract with a single index.
+Error: Must extract with a single subscript.
 x Lossy cast from `foo` <double> to <integer>.
 

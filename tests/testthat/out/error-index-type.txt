@@ -1,5 +1,5 @@
-> vec_as_index(mtcars, 10L)
-Error: Must subset with an index vector.
+> vec_as_location(mtcars, 10L)
+Error: Must subset with a proper subscript vector.
 x `i` has the wrong type `data.frame<
   mpg : double
   cyl : double
@@ -15,27 +15,27 @@ x `i` has the wrong type `data.frame<
 >`.
 i These indices must be indicators, locations or names.
 
-> vec_as_index(env(), 10L)
-Error: Must subset with an index vector.
+> vec_as_location(env(), 10L)
+Error: Must subset with a proper subscript vector.
 x `i` has the wrong type `environment`.
 i These indices must be indicators, locations or names.
 
-> vec_as_index(foobar(), 10L)
-Error: Must subset with an index vector.
+> vec_as_location(foobar(), 10L)
+Error: Must subset with a proper subscript vector.
 x `i` has the wrong type `vctrs_foobar`.
 i These indices must be indicators, locations or names.
 
-> vec_as_index(2.5, 3L)
-Error: Must subset with an index vector.
+> vec_as_location(2.5, 3L)
+Error: Must subset with a proper subscript vector.
 x Lossy cast from `i` <double> to <integer>.
 
-> vec_as_index(list(), 10L)
-Error: Must subset with an index vector.
+> vec_as_location(list(), 10L)
+Error: Must subset with a proper subscript vector.
 x `i` has the wrong type `list`.
 i These indices must be indicators, locations or names.
 
-> vec_as_index(function() NULL, 10L)
-Error: Must subset with an index vector.
+> vec_as_location(function() NULL, 10L)
+Error: Must subset with a proper subscript vector.
 x `i` has the wrong type `closure`.
 i These indices must be indicators, locations or names.
 
@@ -43,17 +43,17 @@ i These indices must be indicators, locations or names.
 Custom `arg`
 ============
 
-> vec_as_index(env(), 10L, arg = "foo")
-Error: Must subset with an index vector.
+> vec_as_location(env(), 10L, arg = "foo")
+Error: Must subset with a proper subscript vector.
 x `foo` has the wrong type `environment`.
 i These indices must be indicators, locations or names.
 
-> vec_as_index(foobar(), 10L, arg = "foo")
-Error: Must subset with an index vector.
+> vec_as_location(foobar(), 10L, arg = "foo")
+Error: Must subset with a proper subscript vector.
 x `foo` has the wrong type `vctrs_foobar`.
 i These indices must be indicators, locations or names.
 
-> vec_as_index(2.5, 3L, arg = "foo")
-Error: Must subset with an index vector.
+> vec_as_location(2.5, 3L, arg = "foo")
+Error: Must subset with a proper subscript vector.
 x Lossy cast from `foo` <double> to <integer>.
 

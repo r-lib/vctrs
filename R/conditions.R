@@ -459,61 +459,61 @@ stop_names_must_be_unique <- function(locations) {
 #'
 #' @description
 #'
-#' * `stop_index_oob_positions()` throws errors of class
-#'   `vctrs_error_index_oob_positions` containing fields `i` and
+#' * `stop_subscript_oob_location()` throws errors of class
+#'   `vctrs_error_subscript_oob_position` containing fields `i` and
 #'   `size`.
 #'
-#' * `stop_index_oob_names()` throws errors of class
-#'   `vctrs_error_index_oob_names` containing fields `i` and `names`.
+#' * `stop_subscript_oob_name()` throws errors of class
+#'   `vctrs_error_subscript_oob_name` containing fields `i` and `names`.
 #'
-#' @param i For `stop_index_oob_positions()`, a numeric vector of
-#'   positions. For `stop_index_oob_names()`, a character vector of
+#' @param i For `stop_subscript_oob_location()`, a numeric vector of
+#'   positions. For `stop_subscript_oob_name()`, a character vector of
 #'   names. `i` may contain both out-of-bounds and within-bounds
 #'   elements, only the former are used to construct the error
 #'   message.
 #' @param size The length of the vector to subset from.
 #' @inheritParams rlang::abort
 #' @export
-stop_index_oob_positions <- function(i, size, ..., .subclass = NULL) {
-  stop_index_oob(
-    .subclass = c(.subclass, "vctrs_error_index_oob_positions"),
+stop_subscript_oob_location <- function(i, size, ..., .subclass = NULL) {
+  stop_subscript_oob(
+    .subclass = c(.subclass, "vctrs_error_subscript_oob_position"),
     i = i,
     size = size,
     ...
   )
 }
-#' @rdname stop_index_oob_positions
+#' @rdname stop_subscript_oob_location
 #' @param names The names of the vector to subset from.
 #' @export
-stop_index_oob_names <- function(i, names, ..., .subclass = NULL) {
-  stop_index_oob(
-    .subclass = c(.subclass, "vctrs_error_index_oob_names"),
+stop_subscript_oob_name <- function(i, names, ..., .subclass = NULL) {
+  stop_subscript_oob(
+    .subclass = c(.subclass, "vctrs_error_subscript_oob_name"),
     i = i,
     names = names,
     ...
   )
 }
-stop_index_oob <- function(i, ..., .subclass = NULL) {
-  stop_index(
-    .subclass = c(.subclass, "vctrs_error_index_oob"),
+stop_subscript_oob <- function(i, ..., .subclass = NULL) {
+  stop_subscript(
+    .subclass = c(.subclass, "vctrs_error_subscript_oob"),
     i = i,
     ...
   )
 }
-stop_index <- function(i, ..., .subclass = NULL) {
+stop_subscript <- function(i, ..., .subclass = NULL) {
   abort(
-    .subclass = c(.subclass, "vctrs_error_index"),
+    .subclass = c(.subclass, "vctrs_error_subscript"),
     i = i,
     ...
   )
 }
 
 #' @export
-cnd_header.vctrs_error_index_oob_positions <- function(cnd) {
+cnd_header.vctrs_error_subscript_oob_position <- function(cnd) {
   "Must index existing elements."
 }
 #' @export
-cnd_body.vctrs_error_index_oob_positions <- function(cnd) {
+cnd_body.vctrs_error_subscript_oob_position <- function(cnd) {
   i <- cnd$i
 
   # In case of negative indexing
@@ -532,11 +532,11 @@ cnd_body.vctrs_error_index_oob_positions <- function(cnd) {
   ))
 }
 #' @export
-cnd_header.vctrs_error_index_oob_names <- function(cnd) {
+cnd_header.vctrs_error_subscript_oob_name <- function(cnd) {
   "Must index existing elements."
 }
 #' @export
-cnd_body.vctrs_error_index_oob_names <- function(cnd) {
+cnd_body.vctrs_error_subscript_oob_name <- function(cnd) {
   oob <- cnd$i[!cnd$i %in% cnd$names]
   oob_enum <- enumerate(glue::backtick(oob))
 

@@ -125,14 +125,14 @@ vec_assign_fallback <- function(x, i, value) {
   x
 }
 
-#' Create an index vector or a location
+#' Create a vector of locations
 #'
 #' @description
 #'
 #' These helpers provide a means of standardizing common indexing
 #' methods such as integer, character or logical indexing.
 #'
-#' * `vec_as_index()` accepts integer, character, or logical vectors
+#' * `vec_as_location()` accepts integer, character, or logical vectors
 #'   of any size. The output is always an integer vector that is
 #'   suitable for subsetting with `[` or [vec_slice()]. It might be a
 #'   different size than the input because negative selections are
@@ -151,7 +151,7 @@ vec_assign_fallback <- function(x, i, value) {
 #'   not used. The default value of `NULL` will result in an error
 #'   if `i` is a character vector.
 #' @param arg The argument name to be displayed in error messages when
-#'   `vec_as_index()` and `vec_as_location2()` are used to check the
+#'   `vec_as_location()` and `vec_as_location2()` are used to check the
 #'   type of a function input.
 #' @param convert_values Experimental. Character vector indicating
 #'   what types of values should be converted. Can currently only be
@@ -162,7 +162,7 @@ vec_assign_fallback <- function(x, i, value) {
 #'   logical. Locations must be coercible to integers (possibly from
 #'   a larger type like double). Names must be subtypes of character.
 #'
-#' @return `vec_as_index()` returns an integer vector that can be used
+#' @return `vec_as_location()` returns an integer vector that can be used
 #'   as an index in a subsetting operation. `vec_as_location2()`
 #'   returns an integer of size 1 that can be used a scalar index for
 #'   extracting an element.
@@ -172,35 +172,36 @@ vec_assign_fallback <- function(x, i, value) {
 #' dimnames(x) <- list(c("r1", "r2"), c("c1", "c2", "c3"))
 #'
 #' # The most common use case validates row indices
-#' vec_as_index(1, vec_size(x))
+#' vec_as_location(1, vec_size(x))
 #'
 #' # Negative indices can be used to index from the back
-#' vec_as_index(-1, vec_size(x))
+#' vec_as_location(-1, vec_size(x))
 #'
 #' # Character vectors can be used if `names` are provided
-#' vec_as_index("r2", vec_size(x), rownames(x))
+#' vec_as_location("r2", vec_size(x), rownames(x))
 #'
 #' # You can also construct an index for dimensions other than the first
-#' vec_as_index(c("c2", "c1"), ncol(x), colnames(x))
+#' vec_as_location(c("c2", "c1"), ncol(x), colnames(x))
 #'
 #' @keywords internal
 #' @export
-vec_as_index <- function(i, n,
-                         names = NULL,
-                         ...,
-                         allow_types = c("indicator", "location", "name"),
-                         convert_values = "negative",
-                         arg = "i") {
+vec_as_location <- function(i,
+                            n,
+                            names = NULL,
+                            ...,
+                            allow_types = c("indicator", "location", "name"),
+                            convert_values = "negative",
+                            arg = "i") {
   if (!missing(...)) ellipsis::check_dots_empty()
 
   n <- vec_coercible_cast(n, integer())
   vec_assert(n, integer(), 1L)
   i <- vec_as_subscript(i, arg = arg, allow_types = allow_types)
 
-  convert_values <- as_opts_index_convert_values(convert_values, arg = arg)
-  .Call(vctrs_as_index, i, n, names, convert_values)
+  convert_values <- as_opts_location_convert_values(convert_values, arg = arg)
+  .Call(vctrs_as_location, i, n, names, convert_values)
 }
-#' @rdname vec_as_index
+#' @rdname vec_as_location
 #' @param allow_values Experimental. Character vector indicating zero,
 #'   one or several types of values to be allowed as input:
 #'   `"negative"` or `"missing"`. By default, locations can't be
@@ -228,11 +229,11 @@ vec_as_location2 <- function(i,
 #'
 #' \Sexpr[results=rd, stage=render]{vctrs:::lifecycle("experimental")}
 #'
-#' Convert `i` to the base type expected by [vec_as_index()] or
+#' Convert `i` to the base type expected by [vec_as_location()] or
 #' [vec_as_location2()]. The values of the subscript type are
 #' not checked in any way (length, missingness, negative elements).
 #'
-#' @inheritParams vec_as_index
+#' @inheritParams vec_as_location
 #' @keywords internal
 #' @export
 vec_as_subscript <- function(i,
@@ -257,10 +258,10 @@ vec_as_subscript2 <- function(i,
 }
 
 vec_as_subscript_result <- function(i, arg, allow_types) {
-  allow_types <- as_opts_index_type(allow_types, arg = arg)
+  allow_types <- as_opts_subscript_type(allow_types, arg = arg)
 
   if (!vec_is(i)) {
-    return(result(err = new_error_index_bad_type(
+    return(result(err = new_error_subscript_bad_type(
       i = i,
       .arg = arg,
       allow_types = allow_types
@@ -277,7 +278,7 @@ vec_as_subscript_result <- function(i, arg, allow_types) {
     } else if (vec_is_subtype(i, chr())) {
       i <- vec_cast(i, chr())
     } else {
-      return(result(err = new_error_index_bad_type(
+      return(result(err = new_error_subscript_bad_type(
         i,
         .arg = arg,
         allow_types = allow_types
@@ -291,10 +292,10 @@ vec_as_subscript_result <- function(i, arg, allow_types) {
       result(i)
     },
     vctrs_error_cast_lossy = function(err) {
-      result(err = new_error_index_bad_type(
+      result(err = new_error_subscript_bad_type(
         i = i,
         parent = err,
-        body = cnd_bullets_index_lossy_cast,
+        body = cnd_bullets_subscript_lossy_cast,
         allow_types = allow_types
       ))
     })
@@ -318,7 +319,7 @@ vec_as_subscript_result <- function(i, arg, allow_types) {
     FALSE
   )
   if (!allowed) {
-    return(result(err = new_error_index_bad_type(
+    return(result(err = new_error_subscript_bad_type(
       i = i,
       .arg = arg,
       allow_types = allow_types
@@ -332,14 +333,14 @@ vec_as_subscript_result <- function(i, arg, allow_types) {
 }
 
 vec_as_subscript2_result <- function(i, arg, allow_types) {
-  allow_types <- as_opts_scalar_location_type(allow_types, arg = arg)
+  allow_types <- as_opts_subscript2_type(allow_types, arg = arg)
   result <- vec_as_subscript_result(i, arg, allow_types = allow_types)
 
-  # Return a subclass of index error
+  # Return a subclass of subscript error
   if (!is_null(result$err)) {
     parent <- result$err$parent
     if (inherits(parent, "vctrs_error_cast_lossy")) {
-      bullets <- cnd_bullets_index_lossy_cast
+      bullets <- cnd_bullets_subscript_lossy_cast
     } else {
       bullets <- cnd_bullets_location_bad_base_type
     }
@@ -441,8 +442,8 @@ vec_as_location2_result <- function(i,
   # FIXME: Use result approach in internal implementation?
   err <- NULL
   i <- tryCatch(
-    vec_as_index(i, n, names = names, arg = arg),
-    vctrs_error_index_bad_type = function(err) {
+    vec_as_location(i, n, names = names, arg = arg),
+    vctrs_error_subscript_bad_type = function(err) {
       err <<- err
       i
     }
@@ -464,37 +465,37 @@ vec_as_location2_result <- function(i,
   }
 }
 
-index_type_opts <- c("indicator", "location", "name")
-index_type_opts_indefinite_singular <- c("an indicator", "a location", "a name")
-index_type_opts_indefinite_plural <- c("indicators", "locations", "names")
+subscript_type_opts <- c("indicator", "location", "name")
+subscript_type_opts_indefinite_singular <- c("an indicator", "a location", "a name")
+subscript_type_opts_indefinite_plural <- c("indicators", "locations", "names")
 
-collapse_index_type <- function(allow_types, plural = FALSE) {
+collapse_subscript_type <- function(allow_types, plural = FALSE) {
   if (plural) {
-    types <- index_type_opts_indefinite_plural
+    types <- subscript_type_opts_indefinite_plural
   } else {
-    types <- index_type_opts_indefinite_singular
+    types <- subscript_type_opts_indefinite_singular
   }
   types <- types[force(allow_types)]
   types <- glue::glue_collapse(types, sep = ", ", last = " or ")
   types
 }
 
-as_opts_index_type <- function(x, arg = NULL) {
-  if (inherits(x, "vctrs_opts_index_type")) {
+as_opts_subscript_type <- function(x, arg = NULL) {
+  if (inherits(x, "vctrs_opts_subscript_type")) {
     return(x)
   }
   new_opts(
     x,
-    index_type_opts,
-    subclass = "vctrs_opts_index_type",
+    subscript_type_opts,
+    subclass = "vctrs_opts_subscript_type",
     arg = arg
   )
 }
-as_opts_scalar_location_type <- function(x, arg = NULL) {
+as_opts_subscript2_type <- function(x, arg = NULL) {
   if ("indicator" %in% x) {
     abort("Logical indicators can't be converted to a single location.")
   }
-  as_opts_index_type(x, arg = arg)
+  as_opts_subscript_type(x, arg = arg)
 }
 
 
@@ -513,36 +514,36 @@ as_opts_location_values <- function(x, arg = NULL) {
 }
 
 
-index_convert_values_opts <- "negative"
+location_convert_values_opts <- "negative"
 
-as_opts_index_convert_values <- function(x, arg = NULL) {
-  if (inherits(x, "vctrs_opts_index_convert_values")) {
+as_opts_location_convert_values <- function(x, arg = NULL) {
+  if (inherits(x, "vctrs_opts_location_convert_values")) {
     return(x)
   }
   new_opts(
     x,
-    index_convert_values_opts,
-    subclass = "vctrs_opts_index_convert_values",
+    location_convert_values_opts,
+    subclass = "vctrs_opts_location_convert_values",
     arg = arg
   )
 }
 
 
-new_index_error <- function(.subclass = NULL, i, ..., .arg = "i") {
+new_subscript_error <- function(.subclass = NULL, i, ..., .arg = "i") {
   error_cnd(
-    .subclass = c(.subclass, "vctrs_error_index"),
+    .subclass = c(.subclass, "vctrs_error_subscript"),
     i = i,
     .arg = .arg,
     ...
   )
 }
-new_error_index_bad_type <- function(i,
-                                     allow_types,
-                                     ...,
-                                     .arg = "i",
-                                     .subclass = NULL) {
-  new_index_error(
-    .subclass = c(.subclass, "vctrs_error_index_bad_type"),
+new_error_subscript_bad_type <- function(i,
+                                         allow_types,
+                                         ...,
+                                         .arg = "i",
+                                         .subclass = NULL) {
+  new_subscript_error(
+    .subclass = c(.subclass, "vctrs_error_subscript_bad_type"),
     i = i,
     allow_types = allow_types,
     .arg = .arg,
@@ -554,7 +555,7 @@ new_error_location_bad_type <- function(i,
                                         ...,
                                         .arg = "i",
                                         .subclass = NULL) {
-  new_error_index_bad_type(
+  new_error_subscript_bad_type(
     .subclass = c(.subclass, "vctrs_error_location_bad_type"),
     i = i,
     allow_types = allow_types,
@@ -564,37 +565,37 @@ new_error_location_bad_type <- function(i,
 }
 
 #' @export
-cnd_header.vctrs_error_index_bad_type <- function(cnd) {
-  "Must subset with an index vector."
+cnd_header.vctrs_error_subscript_bad_type <- function(cnd) {
+  "Must subset with a proper subscript vector."
 }
 #' @export
-cnd_body.vctrs_error_index_bad_type <- function(cnd) {
+cnd_body.vctrs_error_subscript_bad_type <- function(cnd) {
   arg <- cnd$.arg %||% "i"
   type <- obj_type(cnd$i)
-  expected_types <- collapse_index_type(cnd$allow_types, plural = TRUE)
+  expected_types <- collapse_subscript_type(cnd$allow_types, plural = TRUE)
 
   format_error_bullets(c(
     x = glue::glue("`{arg}` has the wrong type `{type}`."),
     i = glue::glue("These indices must be {expected_types}.")
   ))
 }
-cnd_bullets_index_lossy_cast <- function(cnd, ...) {
+cnd_bullets_subscript_lossy_cast <- function(cnd, ...) {
   format_error_bullets(c(x = cnd_header(cnd$parent)))
 }
 
 #' @export
 cnd_header.vctrs_error_location_bad_type <- function(cnd) {
-  "Must extract with a single index."
+  "Must extract with a single subscript."
 }
 
 cnd_bullets_location_bad_base_type <- function(cnd, ...) {
   arg <- cnd$.arg %||% "i"
   type <- obj_type(cnd$i)
-  expected_types <- collapse_index_type(cnd$allow_types)
+  expected_types <- collapse_subscript_type(cnd$allow_types)
 
   format_error_bullets(c(
     x = glue::glue("`{arg}` has the wrong type `{type}`."),
-    i = glue::glue("This index must be {expected_types}.")
+    i = glue::glue("This subscript must be {expected_types}.")
   ))
 }
 cnd_bullets_location_need_scalar <- function(cnd, ...) {
@@ -602,28 +603,28 @@ cnd_bullets_location_need_scalar <- function(cnd, ...) {
   size <- length(cnd$i)
   format_error_bullets(c(
     x = glue::glue("`{arg}` has the wrong size {size}."),
-    i = "This index must be size 1."
+    i = "This subscript must be size 1."
   ))
 }
 cnd_bullets_location_need_present <- function(cnd, ...) {
   arg <- cnd$.arg %||% "i"
   format_error_bullets(c(
     x = glue::glue("`{arg}` can't be `NA`."),
-    i = "This index can't be missing."
+    i = "This subscript can't be missing."
   ))
 }
 cnd_bullets_location_need_non_zero <- function(cnd, ...) {
   arg <- cnd$.arg %||% "i"
   format_error_bullets(c(
     x = glue::glue("`{arg}` can't be zero."),
-    i = "This index must be a positive integer."
+    i = "This subscript must be a positive integer."
   ))
 }
 cnd_bullets_location_need_non_negative <- function(cnd, ...) {
   arg <- cnd$.arg %||% "i"
   format_error_bullets(c(
     x = glue::glue("`{arg}` (with value {cnd$i}) has the wrong sign."),
-    i = "This index must be a positive integer."
+    i = "This subscript must be a positive integer."
   ))
 }
 
@@ -638,7 +639,7 @@ vec_index <- function(x, i, ...) {
   proxy <- unclass(vec_proxy(x))
   vec_assert(proxy)
 
-  i <- vec_as_index(i, vec_size(x), vec_names(x))
+  i <- vec_as_location(i, vec_size(x), vec_names(x))
   out <- proxy[i, ..., drop = FALSE]
 
   vec_restore(out, x, n = length(i))

@@ -1,6 +1,8 @@
 
 # vctrs 0.2.99.9000
 
+* `vec_as_index()` has been renamed to `vec_as_location()`.
+
 * `vctrs_vctr` class gains an `as.POSIXlt()` method (#717).
 
 * `vec_is()` now ignores names and row names (#707).
@@ -62,12 +64,12 @@
 * New `vec_chop()` for repeatedly slicing a vector. It efficiently captures
   the pattern of `map(indices, vec_slice, x = x)`.
 
-* `vec_as_index()` now preserves names of its inputs if possible.
+* `vec_as_location()` now preserves names of its inputs if possible.
 
 * New `vec_duplicate_all()` for detecting if all values in a vector are
   equivalent.
 
-* `vec_as_index()` gains an `arg` parameter to specify the name of
+* `vec_as_location()` gains an `arg` parameter to specify the name of
   inputs. This is useful when it is used for type-checking.
 
 * Support for multiple character encodings has been added to functions that
@@ -76,7 +78,7 @@
   encountered, a translation to UTF-8 is performed before any comparisons are
   made (#600, #553).
 
-* New `stop_index_oob_positions()` and `stop_index_oob_names()`
+* New `stop_subscript_oob_location()` and `stop_subscript_oob_name()`
   functions to throw out-of-bounds errors.
 
 * Equality and ordering methods are now implemented for raw and
