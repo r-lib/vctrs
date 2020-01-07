@@ -223,27 +223,6 @@ as_opts_location_convert_values <- function(x, arg = NULL) {
 }
 
 
-new_subscript_error <- function(.subclass = NULL, i, ..., .arg = "i") {
-  error_cnd(
-    .subclass = c(.subclass, "vctrs_error_subscript"),
-    i = i,
-    .arg = .arg,
-    ...
-  )
-}
-new_error_subscript_bad_type <- function(i,
-                                         allow_types,
-                                         ...,
-                                         .arg = "i",
-                                         .subclass = NULL) {
-  new_subscript_error(
-    .subclass = c(.subclass, "vctrs_error_subscript_bad_type"),
-    i = i,
-    allow_types = allow_types,
-    .arg = .arg,
-    ...
-  )
-}
 new_error_location_bad_type <- function(i,
                                         allow_types,
                                         ...,

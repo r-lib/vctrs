@@ -8,7 +8,9 @@
 vec_as_subscript(
   i,
   ...,
-  allow_types = c("indicator", "location", "name"),
+  indicator = c("coerce", "error"),
+  location = c("coerce", "error"),
+  name = c("coerce", "error"),
   arg = "i"
 )
 
@@ -20,15 +22,21 @@ locations or names of the observations to get/set. Specify
 \code{TRUE} to index all elements (as in \code{x[]}), or \code{NULL}, \code{FALSE} or
 \code{integer()} to index none (as in \code{x[NULL]}).}
 
+\item{indicator, location, name}{How to handle indicator (logical),
+location (numeric), and name (character) subscripts. If
+\code{"coerce"}, the subscript is coerced to its base type,
+e.g. factors are coerced to character. If \code{"error"}, this
+subscript type is disallowed and causes an informative error.}
+
+\item{arg}{The argument name to be displayed in error messages when
+\code{vec_as_location()} and \code{vec_as_location2()} are used to check the
+type of a function input.}
+
 \item{allow_types}{Experimental. Character vector indicating one or
 several types of location to be allowed as input: \code{"indicator"},
 \code{"location"}, or \code{"name"}. Indicators must be subtypes of
 logical. Locations must be coercible to integers (possibly from
 a larger type like double). Names must be subtypes of character.}
-
-\item{arg}{The argument name to be displayed in error messages when
-\code{vec_as_location()} and \code{vec_as_location2()} are used to check the
-type of a function input.}
 }
 \description{
 \Sexpr[results=rd, stage=render]{vctrs:::lifecycle("experimental")}

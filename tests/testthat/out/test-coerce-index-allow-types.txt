@@ -1,19 +1,19 @@
-> vec_as_subscript(1L, allow_types = "name")
+> vec_as_subscript(1L, indicator = "error", location = "error")
 Error: Must subset with a proper subscript vector.
 x `i` has the wrong type `integer`.
 i These indices must be names.
 
-> vec_as_subscript("foo", allow_types = "location")
+> vec_as_subscript("foo", indicator = "error", name = "error")
 Error: Must subset with a proper subscript vector.
 x `i` has the wrong type `character`.
 i These indices must be locations.
 
-> vec_as_subscript(TRUE, allow_types = c("location", "name"))
+> vec_as_subscript(TRUE, indicator = "error")
 Error: Must subset with a proper subscript vector.
 x `i` has the wrong type `logical`.
 i These indices must be locations or names.
 
-> vec_as_subscript("foo", allow_types = c("indicator", "location"))
+> vec_as_subscript("foo", name = "error")
 Error: Must subset with a proper subscript vector.
 x `i` has the wrong type `character`.
 i These indices must be indicators or locations.
