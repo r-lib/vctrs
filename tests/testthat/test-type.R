@@ -139,3 +139,9 @@ test_that("class_type() detects classes", {
   expect_identical(class_type(NA), "none")
   expect_identical(class_type(foobar()), "unknown")
 })
+
+test_that("vec_ptype() handles class-less yet OBJECT gremlins", {
+  gremlin <- stats::model.frame(freeny)
+  expect_error(vec_ptype(gremlin), NA)
+  expect_error(vec_c(gremlin), NA)
+})
