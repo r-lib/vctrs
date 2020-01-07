@@ -106,7 +106,14 @@ vec_as_location2_result <- function(i,
   )
 
   if (!is_null(result$err)) {
-    return(result)
+    parent <- result$err
+    return(result(err = new_error_location2_bad_type(
+      i = i,
+      .arg = arg,
+      # FIXME: Should body fields in parents be automatically inherited?
+      body = function(...) cnd_body(parent),
+      parent = parent
+    )))
   }
 
   # Locations must be size 1, can't be NA, and must be positive

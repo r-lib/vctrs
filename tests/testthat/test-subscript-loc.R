@@ -5,11 +5,11 @@ test_that("vec_as_location2() returns a position", {
 })
 
 test_that("vec_as_location2() requires integer or character inputs", {
-  expect_error(vec_as_location2(TRUE, 10L), class = "vctrs_error_subscript2_bad_type")
-  expect_error(vec_as_location2(mtcars, 10L), class = "vctrs_error_subscript2_bad_type")
-  expect_error(vec_as_location2(env(), 10L), class = "vctrs_error_subscript2_bad_type")
-  expect_error(vec_as_location2(foobar(), 10L), class = "vctrs_error_subscript2_bad_type")
-  expect_error(vec_as_location2(2.5, 10L), class = "vctrs_error_subscript2_bad_type")
+  expect_error(vec_as_location2(TRUE, 10L), class = "vctrs_error_location2_bad_type")
+  expect_error(vec_as_location2(mtcars, 10L), class = "vctrs_error_location2_bad_type")
+  expect_error(vec_as_location2(env(), 10L), class = "vctrs_error_location2_bad_type")
+  expect_error(vec_as_location2(foobar(), 10L), class = "vctrs_error_location2_bad_type")
+  expect_error(vec_as_location2(2.5, 10L), class = "vctrs_error_location2_bad_type")
 
   verify_output(test_path("out", "error-position-type.txt"), {
     vec_as_location2(TRUE, 10L)
@@ -50,7 +50,7 @@ test_that("vec_as_location() requires integer, character, or logical inputs", {
 test_that("vec_as_location2() and vec_as_location() require integer- or character-like OO inputs", {
   expect_identical(vec_as_location2(factor("foo"), 2L, c("bar", "foo")), 2L)
   expect_identical(vec_as_location(factor("foo"), 2L, c("bar", "foo")), 2L)
-  expect_error(vec_as_location2(foobar(1L), 10L), class = "vctrs_error_subscript2_bad_type")
+  expect_error(vec_as_location2(foobar(1L), 10L), class = "vctrs_error_location2_bad_type")
   expect_error(vec_as_location(foobar(1L), 10L), class = "vctrs_error_subscript_bad_type")
 
   # Define subtype of logical and integer
@@ -66,7 +66,7 @@ test_that("vec_as_location2() and vec_as_location() require integer- or characte
     vec_cast.integer.vctrs_foobar = function(x, to, ...) vec_cast(unclass(x), int()),
     vec_cast.logical.vctrs_foobar = function(x, to, ...) vec_cast(unclass(x), lgl())
   )
-  expect_error(vec_as_location2(foobar(TRUE), 10L), class = "vctrs_error_subscript2_bad_type")
+  expect_error(vec_as_location2(foobar(TRUE), 10L), class = "vctrs_error_location2_bad_type")
   expect_identical(vec_as_location(foobar(TRUE), 10L), 1:10)
   expect_identical(vec_as_location(foobar(FALSE), 10L), int())
 })
@@ -120,10 +120,10 @@ test_that("vec_as_location2() fails with NA", {
 })
 
 test_that("vec_as_location2() doesn't allow lossy casts", {
-  expect_error(vec_as_location2(2^31, 3L), class = "vctrs_error_subscript2_bad_type")
+  expect_error(vec_as_location2(2^31, 3L), class = "vctrs_error_location2_bad_type")
 
   # Lossy casts generate missing values, which are disallowed
-  expect_error(allow_lossy_cast(vec_as_location2(2^31, 3L)), class = "vctrs_error_subscript2_bad_type")
+  expect_error(allow_lossy_cast(vec_as_location2(2^31, 3L)), class = "vctrs_error_location2_bad_type")
 })
 
 test_that("all subscript errors inherit from `vctrs_error_subscript`", {
