@@ -1,15 +1,15 @@
 > vec_as_subscript2(1L, location = "error", indicator = "error")
-Error: Must subset with a proper subscript.
+Error: Must extract with a single subscript.
 x `i` has the wrong type `integer`.
 i This subscript must be a name.
 
 > vec_as_subscript2("foo", name = "error", indicator = "error")
-Error: Must subset with a proper subscript.
+Error: Must extract with a single subscript.
 x `i` has the wrong type `character`.
 i This subscript must be a location.
 
 > vec_as_subscript2(TRUE, indicator = "error")
-Error: Must subset with a proper subscript.
+Error: Must extract with a single subscript.
 x `i` has the wrong type `logical`.
 i This subscript must be a location or a name.
 

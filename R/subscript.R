@@ -54,11 +54,11 @@ vec_as_subscript_result <- function(i, arg, indicator, location, name) {
 
   # Coerce to base types
   if (is.object(i)) {
-    if (indicator == "coerce" && vec_is_coercible(i, lgl())) {
+    if (vec_is_coercible(i, lgl())) {
       i <- vec_cast(i, lgl())
-    } else if (location == "coerce" && vec_is_coercible(i, int())) {
+    } else if (vec_is_coercible(i, int())) {
       i <- vec_cast(i, int())
-    } else if (name == "coerce" && vec_is_coercible(i, chr())) {
+    } else if (vec_is_coercible(i, chr())) {
       i <- vec_cast(i, chr())
     } else {
       return(result(err = new_error_subscript_bad_type(
@@ -69,7 +69,7 @@ vec_as_subscript_result <- function(i, arg, indicator, location, name) {
         name = name
       )))
     }
-  } else if (location == "coerce" && is_double(i)) {
+  } else if (is_double(i)) {
     result <- tryCatch(
     {
       i <- vec_coercible_cast(i, int(), x_arg = arg, to_arg = "")
@@ -139,12 +139,16 @@ vec_as_subscript2 <- function(i,
     name = name
   ))
 }
-vec_as_subscript2_result <- function(i, arg, indicator, location, name) {
+vec_as_subscript2_result <- function(i,
+                                     arg,
+                                     indicator = "coerce",
+                                     location = "coerce",
+                                     name = "coerce") {
   indicator <- arg_match(indicator, c("coerce", "error"))
   location <- arg_match(location, c("coerce", "error"))
   name <- arg_match(name, c("coerce", "error"))
 
-  result <-vec_as_subscript_result(
+  result <- vec_as_subscript_result(
     i,
     arg = arg,
     indicator = indicator,
@@ -223,9 +227,9 @@ new_subscript_error <- function(.subclass = NULL, i, ..., .arg = "i") {
   )
 }
 new_error_subscript_bad_type <- function(i,
-                                         indicator,
-                                         location,
-                                         name,
+                                         indicator = "coerce",
+                                         location = "coerce",
+                                         name = "coerce",
                                          ...,
                                          .arg = "i",
                                          .subclass = NULL) {
@@ -304,5 +308,5 @@ new_error_subscript2_bad_type <- function(i,
 }
 #' @export
 cnd_header.vctrs_error_subscript2_bad_type <- function(cnd) {
-  "Must subset with a proper subscript."
+  "Must extract with a single subscript."
 }

@@ -10,7 +10,6 @@ vec_as_location(
   n,
   names = NULL,
   ...,
-  allow_types = c("indicator", "location", "name"),
   convert_values = "negative",
   arg = "i"
 )
@@ -30,12 +29,6 @@ object that \code{i} is meant to index into.}
 vector that \code{i} will be matched against to construct the index. Otherwise,
 not used. The default value of \code{NULL} will result in an error
 if \code{i} is a character vector.}
-
-\item{allow_types}{Experimental. Character vector indicating one or
-several types of location to be allowed as input: \code{"indicator"},
-\code{"location"}, or \code{"name"}. Indicators must be subtypes of
-logical. Locations must be coercible to integers (possibly from
-a larger type like double). Names must be subtypes of character.}
 
 \item{convert_values}{Experimental. Character vector indicating
 what types of values should be converted. Can currently only be

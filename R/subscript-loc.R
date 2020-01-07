@@ -29,11 +29,6 @@
 #' @param convert_values Experimental. Character vector indicating
 #'   what types of values should be converted. Can currently only be
 #'   set to `"negative"`.
-#' @param allow_types Experimental. Character vector indicating one or
-#'   several types of location to be allowed as input: `"indicator"`,
-#'   `"location"`, or `"name"`. Indicators must be subtypes of
-#'   logical. Locations must be coercible to integers (possibly from
-#'   a larger type like double). Names must be subtypes of character.
 #'
 #' @return `vec_as_location()` returns an integer vector that can be used
 #'   as an index in a subsetting operation. `vec_as_location2()`
@@ -62,14 +57,13 @@ vec_as_location <- function(i,
                             n,
                             names = NULL,
                             ...,
-                            allow_types = c("indicator", "location", "name"),
                             convert_values = "negative",
                             arg = "i") {
   if (!missing(...)) ellipsis::check_dots_empty()
 
   n <- vec_coercible_cast(n, integer())
   vec_assert(n, integer(), 1L)
-  i <- vec_as_subscript(i, arg = arg, allow_types = allow_types)
+  i <- vec_as_subscript(i, arg = arg)
 
   convert_values <- as_opts_location_convert_values(convert_values, arg = arg)
   .Call(vctrs_as_location, i, n, names, convert_values)
@@ -101,8 +95,6 @@ vec_as_location2_result <- function(i,
                                     names,
                                     allow_values,
                                     arg) {
-  allow_types <- c("location", "name")
-
   allow_values <- as_opts_location_values(allow_values, arg = arg)
   allow_missing <- allow_values[["missing"]]
   allow_negative <- allow_values[["negative"]]
@@ -110,7 +102,7 @@ vec_as_location2_result <- function(i,
   result <- vec_as_subscript2_result(
     i = i,
     arg = arg,
-    allow_types = allow_types
+    indicator = "error"
   )
 
   if (!is_null(result$err)) {
@@ -121,9 +113,8 @@ vec_as_location2_result <- function(i,
   i <- result$ok
 
   if (length(i) != 1L) {
-    return(result(err = new_error_location_bad_type(
+    return(result(err = new_error_location2_bad_type(
       i = i,
-      allow_types = allow_types,
       .arg = arg,
       body = cnd_bullets_location_need_scalar
     )))
@@ -136,9 +127,8 @@ vec_as_location2_result <- function(i,
 
   if (is.na(i)) {
     if (!allow_missing && is.na(i)) {
-      result <- result(err = new_error_location_bad_type(
+      result <- result(err = new_error_location2_bad_type(
         i = i,
-        allow_types = allow_types,
         .arg = arg,
         body = cnd_bullets_location_need_present
       ))
@@ -149,18 +139,16 @@ vec_as_location2_result <- function(i,
   }
 
   if (i == 0L) {
-    return(result(err = new_error_location_bad_type(
+    return(result(err = new_error_location2_bad_type(
       i = i,
-      allow_types = allow_types,
       .arg = arg,
       body = cnd_bullets_location_need_non_zero
     )))
   }
 
   if (!allow_negative && neg) {
-    return(result(err = new_error_location_bad_type(
+    return(result(err = new_error_location2_bad_type(
       i = i,
-      allow_types = allow_types,
       .arg = arg,
       body = cnd_bullets_location_need_non_negative
     )))
@@ -183,9 +171,8 @@ vec_as_location2_result <- function(i,
   if (is_null(err)) {
     result(i)
   } else {
-    result(err = new_error_location_bad_type(
+    result(err = new_error_location2_bad_type(
       i = i,
-      allow_types = allow_types,
       parent = err,
       .arg = arg
     ))
@@ -223,25 +210,23 @@ as_opts_location_convert_values <- function(x, arg = NULL) {
 }
 
 
-new_error_location_bad_type <- function(i,
-                                        allow_types,
-                                        ...,
-                                        .arg = "i",
-                                        .subclass = NULL) {
-  new_error_subscript_bad_type(
-    .subclass = c(.subclass, "vctrs_error_location_bad_type"),
+new_error_location2_bad_type <- function(i,
+                                         location = "coerce",
+                                         name = "coerce",
+                                         ...,
+                                         .arg = "i",
+                                         .subclass = NULL) {
+  new_error_subscript2_bad_type(
+    .subclass = c(.subclass, "vctrs_error_location2_bad_type"),
     i = i,
-    allow_types = allow_types,
+    indicator = "error",
+    location = location,
+    name = name,
     .arg = .arg,
     ...
   )
 }
 
-
-#' @export
-cnd_header.vctrs_error_location_bad_type <- function(cnd) {
-  "Must extract with a single subscript."
-}
 
 cnd_bullets_location_need_scalar <- function(cnd, ...) {
   arg <- cnd$.arg %||% "i"
