@@ -139,13 +139,13 @@ test_that("can slice-assign using logical index", {
 
   expect_error(
     vec_slice(x, c(TRUE, FALSE, TRUE)) <- 5,
-    "has size 2 whereas the index has size 3",
+    "has size 2 whereas the subscript has size 3",
     fixed = TRUE
   )
 
   expect_error(
     vec_slice(mtcars, c(TRUE, FALSE)) <- mtcars[1, ],
-    "has size 32 whereas the index has size 2"
+    "has size 32 whereas the subscript has size 2"
   )
 })
 

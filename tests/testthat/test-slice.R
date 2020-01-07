@@ -2,7 +2,7 @@ test_that("vec_slice throws error with non-vector inputs", {
   expect_error(vec_slice(environment(), 1L), class = "vctrs_error_scalar_type")
 })
 
-test_that("vec_slice throws error with non-vector indexes", {
+test_that("vec_slice throws error with non-vector subscripts", {
   expect_error(vec_slice(1:3, Sys.Date()), class = "vctrs_error_incompatible_cast")
   expect_error(vec_slice(1:3, matrix(TRUE, nrow = 1)), "must have one dimension")
 })
@@ -102,7 +102,7 @@ test_that("can subset object of any dimensionality", {
   expect_identical(vec_slice(x4, 1L), ones(1, 3, 4, 5))
 })
 
-test_that("can subset using logical index", {
+test_that("can subset using logical subscript", {
   x0 <- c(1, 1)
 
   expect_identical(vec_slice(x0, TRUE), x0)
@@ -110,19 +110,19 @@ test_that("can subset using logical index", {
 
   expect_error(
     vec_slice(x0, c(TRUE, FALSE, TRUE)),
-    "has size 2 whereas the index has size 3",
+    "has size 2 whereas the subscript has size 3",
     fixed = TRUE
   )
 
   expect_error(
     vec_slice(x0, lgl()),
-    "has size 2 whereas the index has size 0",
+    "has size 2 whereas the subscript has size 0",
     fixed = TRUE
   )
 
   expect_error(
     vec_slice(mtcars, c(TRUE, FALSE)),
-    "has size 32 whereas the index has size 2"
+    "has size 32 whereas the subscript has size 2"
   )
 })
 
@@ -930,7 +930,7 @@ test_that("vec_as_location2() doesn't allow lossy casts", {
   expect_error(allow_lossy_cast(vec_as_location2(2^31, 3L)), class = "vctrs_error_location_bad_type")
 })
 
-test_that("all index errors inherit from `vctrs_error_subscript`", {
+test_that("all subscript errors inherit from `vctrs_error_subscript`", {
   expect_error(vec_as_location(100, 2L), class = "vctrs_error_subscript")
   expect_error(vec_as_location("foo", 2L, names = c("bar", "baz")), class = "vctrs_error_subscript")
   expect_error(vec_as_location(foobar(1L), 2L), class = "vctrs_error_subscript")

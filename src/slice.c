@@ -629,7 +629,7 @@ static SEXP lgl_as_location(SEXP subscript, R_len_t n) {
 
   Rf_errorcall(R_NilValue,
                "Logical indices must have length 1 or be as long as the indexed vector.\n"
-               "The vector has size %d whereas the index has size %d.",
+               "The vector has size %d whereas the subscript has size %d.",
                n, subscript_n);
 }
 
