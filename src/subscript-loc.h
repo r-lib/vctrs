@@ -1,5 +1,5 @@
-#ifndef VCTRS_SLICE_H
-#define VCTRS_SLICE_H
+#ifndef VCTRS_SUBSCRIPT_LOC_H
+#define VCTRS_SUBSCRIPT_LOC_H
 
 
 struct vec_as_location_options {
