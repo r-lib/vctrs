@@ -1,5 +1,7 @@
 #include "vctrs.h"
 #include "utils.h"
+#include "slice.h"
+#include "subscript-loc.h"
 
 /*
  * @member proxy_info The result of `vec_proxy_info(x)`.

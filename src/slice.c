@@ -1,15 +1,13 @@
 #include "vctrs.h"
 #include "utils.h"
-#include "subscript-loc.h"
 #include "altrep.h"
+#include "slice.h"
+#include "subscript-loc.h"
 
 // Initialised at load time
 SEXP syms_vec_slice_fallback = NULL;
 SEXP fns_vec_slice_fallback = NULL;
 
-// Defined below
-static SEXP slice_names(SEXP names, SEXP subscript);
-static SEXP slice_rownames(SEXP names, SEXP subscript);
 
 /**
  * This `vec_slice()` variant falls back to `[` with S3 objects.
@@ -207,7 +205,7 @@ static SEXP df_slice(SEXP x, SEXP subscript) {
 }
 
 
-static SEXP vec_slice_fallback(SEXP x, SEXP subscript) {
+SEXP vec_slice_fallback(SEXP x, SEXP subscript) {
   return vctrs_dispatch2(syms_vec_slice_fallback, fns_vec_slice_fallback,
                          syms_x, x,
                          syms_i, subscript);
@@ -219,7 +217,7 @@ bool vec_requires_fallback(SEXP x, struct vctrs_proxy_info info) {
     info.type != vctrs_type_dataframe;
 }
 
-static SEXP vec_slice_base(enum vctrs_type type, SEXP x, SEXP subscript) {
+SEXP vec_slice_base(enum vctrs_type type, SEXP x, SEXP subscript) {
   switch (type) {
   case vctrs_type_logical:   return lgl_slice(x, subscript);
   case vctrs_type_integer:   return int_slice(x, subscript);
@@ -273,7 +271,7 @@ static void repair_na_names(SEXP names, SEXP subscript) {
   }
 }
 
-static SEXP slice_names(SEXP names, SEXP subscript) {
+SEXP slice_names(SEXP names, SEXP subscript) {
   if (names == R_NilValue) {
     return names;
   }
@@ -285,7 +283,7 @@ static SEXP slice_names(SEXP names, SEXP subscript) {
   UNPROTECT(1);
   return names;
 }
-static SEXP slice_rownames(SEXP names, SEXP subscript) {
+SEXP slice_rownames(SEXP names, SEXP subscript) {
   if (names == R_NilValue) {
     return names;
   }
