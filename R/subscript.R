@@ -124,14 +124,31 @@ vec_as_subscript_result <- function(i, arg, indicator, location, name) {
 #' @export
 vec_as_subscript2 <- function(i,
                               ...,
-                              allow_types = c("location", "name"),
+                              indicator = c("coerce", "error"),
+                              location = c("coerce", "error"),
+                              name = c("coerce", "error"),
                               arg = "i") {
   if (!missing(...)) ellipsis::check_dots_empty()
-  result_get(vec_as_subscript2_result(i, arg, allow_types = allow_types))
+  result_get(vec_as_subscript2_result(
+    i,
+    arg,
+    indicator = indicator,
+    location = location,
+    name = name
+  ))
 }
-vec_as_subscript2_result <- function(i, arg, allow_types) {
-  allow_types <- as_opts_subscript2_type(allow_types, arg = arg)
-  result <- vec_as_subscript_result(i, arg, allow_types = allow_types)
+vec_as_subscript2_result <- function(i, arg, indicator, location, name) {
+  indicator <- arg_match(indicator, c("coerce", "error"))
+  location <- arg_match(location, c("coerce", "error"))
+  name <- arg_match(name, c("coerce", "error"))
+
+  result <-vec_as_subscript_result(
+    i,
+    arg = arg,
+    indicator = indicator,
+    location = location,
+    name = name
+  )
 
   # Return a subclass of subscript error
   if (!is_null(result$err)) {
@@ -142,9 +159,11 @@ vec_as_subscript2_result <- function(i, arg, allow_types) {
       bullets <- cnd_bullets_subscript_bad_base_type
     }
 
-    result$err <- new_error_location_bad_type(
+    result$err <- new_error_subscript2_bad_type(
       i = result$err$i,
-      allow_types = allow_types,
+      indicator = indicator,
+      location = location,
+      name = name,
       .arg = arg,
       body = bullets,
       parent = result$err$parent
@@ -156,9 +175,11 @@ vec_as_subscript2_result <- function(i, arg, allow_types) {
   i <- result$ok
 
   if (typeof(i) == "logical") {
-    return(result(err = new_error_location_bad_type(
+    return(result(err = new_error_subscript2_bad_type(
       i = i,
-      allow_types = allow_types,
+      indicator = indicator,
+      location = location,
+      name = name,
       .arg = arg,
       body = cnd_bullets_subscript_bad_base_type
     )))
@@ -220,7 +241,7 @@ new_error_subscript_bad_type <- function(i,
 cnd_bullets_subscript_bad_base_type <- function(cnd, ...) {
   arg <- cnd$.arg %||% "i"
   type <- obj_type(cnd$i)
-  expected_types <- collapse_subscript_type(cnd$allow_types)
+  expected_types <- collapse_subscript_type(cnd)
 
   format_error_bullets(c(
     x = glue::glue("`{arg}` has the wrong type `{type}`."),
@@ -259,4 +280,27 @@ collapse_subscript_type <- function(cnd, plural = FALSE) {
   types <- types[allowed]
 
   glue::glue_collapse(types, sep = ", ", last = " or ")
+}
+
+
+new_error_subscript2_bad_type <- function(i,
+                                          indicator,
+                                          location,
+                                          name,
+                                          ...,
+                                          .arg = "i",
+                                          .subclass = NULL) {
+  new_subscript_error(
+    .subclass = c(.subclass, "vctrs_error_subscript2_bad_type"),
+    i = i,
+    indicator = indicator,
+    location = location,
+    name = name,
+    .arg = .arg,
+    ...
+  )
+}
+#' @export
+cnd_header.vctrs_error_subscript2_bad_type <- function(cnd) {
+  "Must subset with a proper subscript."
 }

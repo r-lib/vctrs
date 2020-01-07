@@ -14,7 +14,14 @@ vec_as_subscript(
   arg = "i"
 )
 
-vec_as_subscript2(i, ..., allow_types = c("location", "name"), arg = "i")
+vec_as_subscript2(
+  i,
+  ...,
+  indicator = c("coerce", "error"),
+  location = c("coerce", "error"),
+  name = c("coerce", "error"),
+  arg = "i"
+)
 }
 \arguments{
 \item{i}{An integer, character or logical vector specifying the
@@ -31,12 +38,6 @@ subscript type is disallowed and causes an informative error.}
 \item{arg}{The argument name to be displayed in error messages when
 \code{vec_as_location()} and \code{vec_as_location2()} are used to check the
 type of a function input.}
-
-\item{allow_types}{Experimental. Character vector indicating one or
-several types of location to be allowed as input: \code{"indicator"},
-\code{"location"}, or \code{"name"}. Indicators must be subtypes of
-logical. Locations must be coercible to integers (possibly from
-a larger type like double). Names must be subtypes of character.}
 }
 \description{
 \Sexpr[results=rd, stage=render]{vctrs:::lifecycle("experimental")}

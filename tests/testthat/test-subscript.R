@@ -34,11 +34,10 @@ test_that("vec_as_subscript() coerces subtypes and supertypes", {
   })
 })
 
-test_that("vec_as_subscript2() handles `allow_types`", {
-  skip("FIXME")
+test_that("vec_as_subscript2() forbids subscript types", {
   verify_output(test_path("out", "test-coerce-position-allow-types.txt"), {
-    vec_as_subscript2(1L, allow_types = "name")
-    vec_as_subscript2("foo", allow_types = "location")
-    vec_as_subscript2(TRUE, allow_types = c("location", "name"))
+    vec_as_subscript2(1L, location = "error", indicator = "error")
+    vec_as_subscript2("foo", name = "error", indicator = "error")
+    vec_as_subscript2(TRUE, indicator = "error")
   })
 })
