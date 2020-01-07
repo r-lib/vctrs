@@ -61,8 +61,6 @@ vec_as_location <- function(i,
                             arg = "i") {
   if (!missing(...)) ellipsis::check_dots_empty()
 
-  n <- vec_coercible_cast(n, integer())
-  vec_assert(n, integer(), 1L)
   i <- vec_as_subscript(i, arg = arg)
 
   convert_values <- as_opts_location_convert_values(convert_values, arg = arg)

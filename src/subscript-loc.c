@@ -217,12 +217,26 @@ SEXP vec_as_location_opts(SEXP subscript, R_len_t n, SEXP names,
   }
 }
 
-SEXP vctrs_as_location(SEXP subscript, SEXP n, SEXP names, SEXP convert_negative) {
+SEXP vctrs_as_location(SEXP subscript, SEXP n_, SEXP names,
+                       SEXP convert_negative, SEXP arg_) {
   if (!r_is_bool(convert_negative)) {
     Rf_error("Internal error: `convert_negative` must be a boolean");
   }
+
+  if (OBJECT(n_) || TYPEOF(n_) != INTSXP) {
+    n_ = vec_coercible_cast(n_, vctrs_shared_empty_int, args_empty, args_empty);
+  }
+  PROTECT(n_);
+
+  if (Rf_length(n_) != 1) {
+    Rf_error("Internal error: `n` must be a scalar number");
+  }
+
+  R_len_t n = r_int_get(n_, 0);
+  UNPROTECT(1);
+
   struct vec_as_location_options opts = { .convert_negative = LOGICAL(convert_negative)[0]};
-  return vec_as_location_opts(subscript, r_int_get(n, 0), names, &opts);
+  return vec_as_location_opts(subscript, n, names, &opts);
 }
 
 
