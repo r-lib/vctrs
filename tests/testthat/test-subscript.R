@@ -23,18 +23,14 @@ test_that("vec_as_subscript() forbids subscript types", {
   })
 })
 
-test_that("vec_as_subscript() coerces subtypes", {
+test_that("vec_as_subscript() coerces subtypes and supertypes", {
   expect_identical(vec_as_subscript(factor("foo")), "foo")
 
   with_lgl_subtype({
     expect_identical(vec_as_subscript(new_lgl_subtype(TRUE)), TRUE)
   })
-
   with_lgl_supertype({
-    expect_error(
-      vec_as_subscript(new_lgl_supertype(TRUE)),
-      class = "vctrs_error_subscript_bad_type"
-    )
+    expect_identical(vec_as_subscript(new_lgl_supertype(TRUE)), TRUE)
   })
 })
 

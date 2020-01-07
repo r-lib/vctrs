@@ -52,11 +52,11 @@ vec_as_subscript_result <- function(i, arg, indicator, location, name) {
 
   # Coerce to base types
   if (is.object(i)) {
-    if (indicator == "coerce" && vec_is_subtype(i, lgl())) {
+    if (indicator == "coerce" && vec_is_coercible(i, lgl())) {
       i <- vec_cast(i, lgl())
-    } else if (location == "coerce" && vec_is_subtype(i, int())) {
+    } else if (location == "coerce" && vec_is_coercible(i, int())) {
       i <- vec_cast(i, int())
-    } else if (name == "coerce" && vec_is_subtype(i, chr())) {
+    } else if (name == "coerce" && vec_is_coercible(i, chr())) {
       i <- vec_cast(i, chr())
     } else {
       return(result(err = new_error_subscript_bad_type(
