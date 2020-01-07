@@ -243,16 +243,6 @@ cnd_header.vctrs_error_location_bad_type <- function(cnd) {
   "Must extract with a single subscript."
 }
 
-cnd_bullets_location_bad_base_type <- function(cnd, ...) {
-  arg <- cnd$.arg %||% "i"
-  type <- obj_type(cnd$i)
-  expected_types <- collapse_subscript_type(cnd$allow_types)
-
-  format_error_bullets(c(
-    x = glue::glue("`{arg}` has the wrong type `{type}`."),
-    i = glue::glue("This subscript must be {expected_types}.")
-  ))
-}
 cnd_bullets_location_need_scalar <- function(cnd, ...) {
   arg <- cnd$.arg %||% "i"
   size <- length(cnd$i)

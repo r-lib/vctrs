@@ -139,7 +139,7 @@ vec_as_subscript2_result <- function(i, arg, allow_types) {
     if (inherits(parent, "vctrs_error_cast_lossy")) {
       bullets <- cnd_bullets_subscript_lossy_cast
     } else {
-      bullets <- cnd_bullets_location_bad_base_type
+      bullets <- cnd_bullets_subscript_bad_base_type
     }
 
     result$err <- new_error_location_bad_type(
@@ -160,7 +160,7 @@ vec_as_subscript2_result <- function(i, arg, allow_types) {
       i = i,
       allow_types = allow_types,
       .arg = arg,
-      body = cnd_bullets_location_bad_base_type
+      body = cnd_bullets_subscript_bad_base_type
     )))
   }
 
@@ -215,6 +215,17 @@ new_error_subscript_bad_type <- function(i,
     .arg = .arg,
     ...
   )
+}
+
+cnd_bullets_subscript_bad_base_type <- function(cnd, ...) {
+  arg <- cnd$.arg %||% "i"
+  type <- obj_type(cnd$i)
+  expected_types <- collapse_subscript_type(cnd$allow_types)
+
+  format_error_bullets(c(
+    x = glue::glue("`{arg}` has the wrong type `{type}`."),
+    i = glue::glue("This subscript must be {expected_types}.")
+  ))
 }
 
 
