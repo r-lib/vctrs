@@ -2,15 +2,18 @@
 % Please edit documentation in R/subscript-loc.R
 \name{vec_as_location}
 \alias{vec_as_location}
+\alias{num_as_location}
 \alias{vec_as_location2}
 \title{Create a vector of locations}
 \usage{
-vec_as_location(
+vec_as_location(i, n, names = NULL, ..., arg = "i")
+
+num_as_location(
   i,
   n,
   names = NULL,
   ...,
-  convert_values = "negative",
+  negative = c("invert", "error", "ignore"),
   arg = "i"
 )
 
@@ -30,18 +33,21 @@ vector that \code{i} will be matched against to construct the index. Otherwise,
 not used. The default value of \code{NULL} will result in an error
 if \code{i} is a character vector.}
 
-\item{convert_values}{Experimental. Character vector indicating
-what types of values should be converted. Can currently only be
-set to \code{"negative"}.}
-
 \item{arg}{The argument name to be displayed in error messages when
 \code{vec_as_location()} and \code{vec_as_location2()} are used to check the
 type of a function input.}
+
+\item{negative}{Whether to \code{"invert"} negative values to positive
+locations, throw an informative \code{"error"}, or \code{"ignore"} them.}
 
 \item{allow_values}{Experimental. Character vector indicating zero,
 one or several types of values to be allowed as input:
 \code{"negative"} or \code{"missing"}. By default, locations can't be
 negative or missing.}
+
+\item{convert_values}{Experimental. Character vector indicating
+what types of values should be converted. Can currently only be
+set to \code{"negative"}.}
 }
 \value{
 \code{vec_as_location()} returns an integer vector that can be used

@@ -7,10 +7,11 @@ static SEXP int_filter_zero(SEXP subscript, R_len_t n_zero);
 
 static void stop_subscript_oob_location(SEXP i, R_len_t size);
 static void stop_subscript_oob_name(SEXP i, SEXP names);
+static void stop_location_negative(SEXP i);
 
 
 static SEXP int_as_location(SEXP subscript, R_len_t n,
-                            struct vec_as_location_options* opts) {
+                            struct vec_as_location_opts* opts) {
   const int* data = INTEGER_RO(subscript);
   R_len_t loc_n = Rf_length(subscript);
 
@@ -19,12 +20,14 @@ static SEXP int_as_location(SEXP subscript, R_len_t n,
   // positive indices need to go through and `int_filter_zero()`.
   R_len_t n_zero = 0;
 
-  bool convert_negative = opts->convert_negative;
-
   for (R_len_t i = 0; i < loc_n; ++i, ++data) {
     int elt = *data;
-    if (convert_negative && elt < 0 && elt != NA_INTEGER) {
-      return int_invert_location(subscript, n);
+    if (elt < 0 && elt != NA_INTEGER) {
+      switch (opts->negative) {
+      case LOC_NEGATIVE_INVERT: return int_invert_location(subscript, n);
+      case LOC_NEGATIVE_ERROR: stop_location_negative(subscript);
+      case LOC_NEGATIVE_IGNORE: break;
+      }
     }
     if (elt == 0) {
       ++n_zero;
@@ -100,7 +103,7 @@ static SEXP int_filter_zero(SEXP subscript, R_len_t n_zero) {
   return out;
 }
 
-static SEXP dbl_as_location(SEXP subscript, R_len_t n, struct vec_as_location_options* opts) {
+static SEXP dbl_as_location(SEXP subscript, R_len_t n, struct vec_as_location_opts* opts) {
   subscript = PROTECT(vec_cast(subscript, vctrs_shared_empty_int, args_empty, args_empty));
   subscript = int_as_location(subscript, n, opts);
 
@@ -194,12 +197,12 @@ static SEXP chr_as_location(SEXP subscript, SEXP names) {
 }
 
 SEXP vec_as_location(SEXP subscript, R_len_t n, SEXP names) {
-  struct vec_as_location_options opts = { .convert_negative = true };
+  struct vec_as_location_opts opts = { .negative = LOC_NEGATIVE_INVERT };
   return vec_as_location_opts(subscript, n, names, &opts);
 }
 
 SEXP vec_as_location_opts(SEXP subscript, R_len_t n, SEXP names,
-                          struct vec_as_location_options* opts) {
+                          struct vec_as_location_opts* opts) {
 
   if (vec_dim_n(subscript) != 1) {
     Rf_errorcall(R_NilValue, "`i` must have one dimension, not %d.", vec_dim_n(subscript));
@@ -217,12 +220,26 @@ SEXP vec_as_location_opts(SEXP subscript, R_len_t n, SEXP names,
   }
 }
 
-SEXP vctrs_as_location(SEXP subscript, SEXP n_, SEXP names,
-                       SEXP convert_negative, SEXP arg_) {
-  if (!r_is_bool(convert_negative)) {
-    Rf_error("Internal error: `convert_negative` must be a boolean");
+static void stop_bad_negative() {
+  Rf_errorcall(R_NilValue, "`negative` must be one of \"invert\", \"error\", or \"ignore\".");
+}
+static enum num_as_location_negative parse_convert_negative(SEXP x) {
+  if (TYPEOF(x) != STRSXP || Rf_length(x) == 0) {
+    stop_bad_negative();
   }
 
+  const char* str = CHAR(STRING_ELT(x, 0));
+
+  if (!strcmp(str, "invert")) return LOC_NEGATIVE_INVERT;
+  if (!strcmp(str, "error")) return LOC_NEGATIVE_ERROR;
+  if (!strcmp(str, "ignore")) return LOC_NEGATIVE_IGNORE;
+  stop_bad_negative();
+
+  never_reached("stop_bad_negative");
+}
+
+SEXP vctrs_as_location(SEXP subscript, SEXP n_, SEXP names,
+                       SEXP convert_negative) {
   if (OBJECT(n_) || TYPEOF(n_) != INTSXP) {
     n_ = vec_coercible_cast(n_, vctrs_shared_empty_int, args_empty, args_empty);
   }
@@ -235,7 +252,10 @@ SEXP vctrs_as_location(SEXP subscript, SEXP n_, SEXP names,
   R_len_t n = r_int_get(n_, 0);
   UNPROTECT(1);
 
-  struct vec_as_location_options opts = { .convert_negative = LOGICAL(convert_negative)[0]};
+  struct vec_as_location_opts opts = {
+    .negative = parse_convert_negative(convert_negative)
+  };
+
   return vec_as_location_opts(subscript, n, names, &opts);
 }
 
@@ -255,7 +275,12 @@ static void stop_subscript_oob_name(SEXP i, SEXP names) {
                    syms_i, i,
                    syms_names, names,
                    vctrs_ns_env);
-
-  UNPROTECT(1);
   never_reached("stop_subscript_oob_name");
+}
+
+static void stop_location_negative(SEXP i) {
+  vctrs_eval_mask1(Rf_install("stop_location_negative"),
+                   syms_i, i,
+                   vctrs_ns_env);
+  never_reached("stop_location_negative");
 }

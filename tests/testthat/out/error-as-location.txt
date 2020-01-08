@@ -1,0 +1,6 @@
+> # Negative forbidden
+> num_as_location(dbl(1, -1), 2L, negative = "error")
+Error: Must subset with a proper subscript vector.
+x `i` contains negative locations.
+i These subscripts must be positive integers.
+

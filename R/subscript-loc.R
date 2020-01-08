@@ -57,15 +57,30 @@ vec_as_location <- function(i,
                             n,
                             names = NULL,
                             ...,
-                            convert_values = "negative",
                             arg = "i") {
   if (!missing(...)) ellipsis::check_dots_empty()
 
   i <- vec_as_subscript(i, arg = arg)
-
-  convert_values <- as_opts_location_convert_values(convert_values, arg = arg)
-  .Call(vctrs_as_location, i, n, names, convert_values)
+  .Call(vctrs_as_location, i, n, names, "invert")
 }
+#' @rdname vec_as_location
+#' @param negative Whether to `"invert"` negative values to positive
+#'   locations, throw an informative `"error"`, or `"ignore"` them.
+#' @export
+num_as_location <- function(i,
+                            n,
+                            names = NULL,
+                            ...,
+                            negative = c("invert", "error", "ignore"),
+                            arg = "i") {
+  if (!missing(...)) ellipsis::check_dots_empty()
+
+  if (!is_integer(i) && !is_double(i)) {
+    abort("`i` must be a numeric vector.")
+  }
+  .Call(vctrs_as_location, i, n, names, negative)
+}
+
 #' @rdname vec_as_location
 #' @param allow_values Experimental. Character vector indicating zero,
 #'   one or several types of values to be allowed as input:
@@ -199,21 +214,20 @@ as_opts_location_values <- function(x, arg = NULL) {
   )
 }
 
-
-location_convert_values_opts <- "negative"
-
-as_opts_location_convert_values <- function(x, arg = NULL) {
-  if (inherits(x, "vctrs_opts_location_convert_values")) {
-    return(x)
-  }
-  new_opts(
-    x,
-    location_convert_values_opts,
-    subclass = "vctrs_opts_location_convert_values",
-    arg = arg
+new_error_location_bad_type <- function(i,
+                                        ...,
+                                        .arg = "i",
+                                        .subclass = NULL) {
+  new_error_subscript_bad_type(
+    .subclass = c(.subclass, "vctrs_error_location_bad_type"),
+    i = i,
+    indicator = "error",
+    location = "coerce",
+    name = "coerce",
+    .arg = .arg,
+    ...
   )
 }
-
 
 new_error_location2_bad_type <- function(i,
                                          ...,
@@ -254,9 +268,25 @@ cnd_bullets_location2_need_non_zero <- function(cnd, ...) {
   ))
 }
 cnd_bullets_location2_need_non_negative <- function(cnd, ...) {
-  arg <- cnd$.arg %||% "i"
+  cnd$.arg <- cnd$.arg %||% "i"
   format_error_bullets(c(
-    x = glue::glue("`{arg}` (with value {cnd$i}) has the wrong sign."),
+    x = glue::glue_data(cnd, "`{.arg}` (with value {i}) has the wrong sign."),
     i = "This subscript must be a positive integer."
+  ))
+}
+
+cnd_bullets_location_need_non_negative <- function(cnd, ...) {
+  cnd$.arg <- cnd$.arg %||% "i"
+  format_error_bullets(c(
+    x = glue::glue_data(cnd, "`{.arg}` contains negative locations."),
+    i = "These subscripts must be positive integers."
+  ))
+}
+
+stop_location_negative <- function(i, ..., .arg = "i") {
+  stop(new_error_location_bad_type(
+    i,
+    .arg = .arg,
+    body = cnd_bullets_location_need_non_negative
   ))
 }

@@ -161,7 +161,20 @@ test_that("vec_as_location2() optionally allows missing and negative positions",
   expect_error(vec_as_location2(0, 2L, allow_values = "negative"), class = "vctrs_error_location2_bad_type")
 })
 
-test_that("vec_as_location() optionally allows negative indices", {
-  expect_identical(vec_as_location(dbl(1, -1), 2L, convert_values = NULL), int(1L, -1L))
-  expect_error(vec_as_location(c(1, -10), 2L, convert_values = NULL), class = "vctrs_error_subscript_oob_location")
+test_that("num_as_location() optionally allows negative indices", {
+  expect_identical(num_as_location(dbl(1, -1), 2L, negative = "ignore"), int(1L, -1L))
+  expect_error(num_as_location(c(1, -10), 2L, negative = "ignore"), class = "vctrs_error_subscript_oob_location")
 })
+
+test_that("num_as_location() optionally forbids negative indices", {
+  expect_error(num_as_location(dbl(1, -1), 2L, negative = "error"), class = "vctrs_error_location_bad_type")
+  expect_error(num_as_location(c(1, -10), 2L, negative = "error"), class = "vctrs_error_location_bad_type")
+})
+
+test_that("conversion to locations has informative error messages", {
+  verify_output(test_path("out", "error-as-location.txt"), {
+    "Negative forbidden"
+    num_as_location(dbl(1, -1), 2L, negative = "error")
+  })
+})
+

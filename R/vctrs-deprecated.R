@@ -72,6 +72,5 @@ vec_as_index <- function(i, n, names = NULL) {
   vec_assert(n, integer(), 1L)
   i <- vec_as_subscript(i)
 
-  convert_values <- as_opts_location_convert_values("negative")
-  .Call(vctrs_as_location, i, n, names, convert_values)
+  .Call(vctrs_as_location, i, n, names, "invert")
 }
