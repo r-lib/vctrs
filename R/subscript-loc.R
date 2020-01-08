@@ -216,8 +216,6 @@ as_opts_location_convert_values <- function(x, arg = NULL) {
 
 
 new_error_location2_bad_type <- function(i,
-                                         location = "coerce",
-                                         name = "coerce",
                                          ...,
                                          .arg = "i",
                                          .subclass = NULL) {
@@ -225,8 +223,8 @@ new_error_location2_bad_type <- function(i,
     .subclass = c(.subclass, "vctrs_error_location2_bad_type"),
     i = i,
     indicator = "error",
-    location = location,
-    name = name,
+    location = "coerce",
+    name = "coerce",
     .arg = .arg,
     ...
   )
