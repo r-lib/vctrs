@@ -4,6 +4,7 @@
 \alias{vec_as_location}
 \alias{num_as_location}
 \alias{vec_as_location2}
+\alias{num_as_location2}
 \title{Create a vector of locations}
 \usage{
 vec_as_location(i, n, names = NULL, ..., arg = "i")
@@ -17,7 +18,24 @@ num_as_location(
   arg = "i"
 )
 
-vec_as_location2(i, n, names = NULL, ..., allow_values = NULL, arg = "i")
+vec_as_location2(
+  i,
+  n,
+  names = NULL,
+  ...,
+  missing = c("error", "ignore"),
+  arg = "i"
+)
+
+num_as_location2(
+  i,
+  n,
+  names = NULL,
+  ...,
+  negative = c("error", "ignore"),
+  missing = c("error", "ignore"),
+  arg = "i"
+)
 }
 \arguments{
 \item{i}{An integer, character or logical vector specifying the
@@ -37,17 +55,11 @@ if \code{i} is a character vector.}
 \code{vec_as_location()} and \code{vec_as_location2()} are used to check the
 type of a function input.}
 
-\item{negative}{Whether to \code{"invert"} negative values to positive
-locations, throw an informative \code{"error"}, or \code{"ignore"} them.}
+\item{negative}{Whether to throw an \code{"error"} when \code{i} is a
+negative location value, or \code{"ignore"} it.}
 
-\item{allow_values}{Experimental. Character vector indicating zero,
-one or several types of values to be allowed as input:
-\code{"negative"} or \code{"missing"}. By default, locations can't be
-negative or missing.}
-
-\item{convert_values}{Experimental. Character vector indicating
-what types of values should be converted. Can currently only be
-set to \code{"negative"}.}
+\item{missing}{Whether to throw an \code{"error"} when \code{i} is a missing
+value, or \code{"ignore"} it.}
 }
 \value{
 \code{vec_as_location()} returns an integer vector that can be used

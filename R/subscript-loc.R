@@ -26,9 +26,6 @@
 #' @param arg The argument name to be displayed in error messages when
 #'   `vec_as_location()` and `vec_as_location2()` are used to check the
 #'   type of a function input.
-#' @param convert_values Experimental. Character vector indicating
-#'   what types of values should be converted. Can currently only be
-#'   set to `"negative"`.
 #'
 #' @return `vec_as_location()` returns an integer vector that can be used
 #'   as an index in a subsetting operation. `vec_as_location2()`
@@ -82,23 +79,47 @@ num_as_location <- function(i,
 }
 
 #' @rdname vec_as_location
-#' @param allow_values Experimental. Character vector indicating zero,
-#'   one or several types of values to be allowed as input:
-#'   `"negative"` or `"missing"`. By default, locations can't be
-#'   negative or missing.
+#' @param missing Whether to throw an `"error"` when `i` is a missing
+#'   value, or `"ignore"` it.
 #' @export
 vec_as_location2 <- function(i,
                              n,
                              names = NULL,
                              ...,
-                             allow_values = NULL,
+                             missing = c("error", "ignore"),
                              arg = "i") {
   if (!missing(...)) ellipsis::check_dots_empty()
   result_get(vec_as_location2_result(
     i,
     n = n,
     names = names,
-    allow_values = allow_values,
+    negative = "error",
+    missing = missing,
+    arg = arg
+  ))
+}
+#' @rdname vec_as_location
+#' @param negative Whether to throw an `"error"` when `i` is a
+#'   negative location value, or `"ignore"` it.
+#' @export
+num_as_location2 <- function(i,
+                             n,
+                             names = NULL,
+                             ...,
+                             negative = c("error", "ignore"),
+                             missing = c("error", "ignore"),
+                             arg = "i") {
+  if (!missing(...)) ellipsis::check_dots_empty()
+
+  if (!is_integer(i) && !is_double(i)) {
+    abort("`i` must be a numeric vector.")
+  }
+  result_get(vec_as_location2_result(
+    i,
+    n = n,
+    names = names,
+    negative = negative,
+    missing = missing,
     arg = arg
   ))
 }
@@ -106,11 +127,11 @@ vec_as_location2 <- function(i,
 vec_as_location2_result <- function(i,
                                     n,
                                     names,
-                                    allow_values,
+                                    missing,
+                                    negative,
                                     arg) {
-  allow_values <- as_opts_location_values(allow_values, arg = arg)
-  allow_missing <- allow_values[["missing"]]
-  allow_negative <- allow_values[["negative"]]
+  allow_missing <- arg_match(missing, c("error", "ignore")) == "ignore"
+  allow_negative <- arg_match(negative, c("error", "ignore")) == "ignore"
 
   result <- vec_as_subscript2_result(
     i = i,
@@ -199,20 +220,6 @@ vec_as_location2_result <- function(i,
   }
 }
 
-
-location_values_opts <- c("missing", "negative")
-
-as_opts_location_values <- function(x, arg = NULL) {
-  if (inherits(x, "vctrs_opts_location_values")) {
-    return(x)
-  }
-  new_opts(
-    x,
-    location_values_opts,
-    subclass = "vctrs_opts_location_values",
-    arg = arg
-  )
-}
 
 new_error_location_bad_type <- function(i,
                                         ...,

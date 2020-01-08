@@ -153,12 +153,16 @@ test_that("vec_as_location() preserves names if possible", {
   expect_identical(vec_as_location(c(a = -1L, b = -3L), 3L), 2L)
 })
 
-test_that("vec_as_location2() optionally allows missing and negative positions", {
-  expect_identical(vec_as_location2(NA, 2L, allow_values = "missing"), na_int)
-  expect_identical(vec_as_location2(-1, 2L, allow_values = "negative"), -1L)
-  expect_error(vec_as_location2(-3, 2L, allow_values = "negative"), class = "vctrs_error_subscript_oob_location")
-  expect_error(vec_as_location2(letters, 2L, allow_values = "negative"), class = "vctrs_error_location2_bad_type")
-  expect_error(vec_as_location2(0, 2L, allow_values = "negative"), class = "vctrs_error_location2_bad_type")
+test_that("vec_as_location2() optionally allows missing values", {
+  expect_identical(vec_as_location2(NA, 2L, missing = "ignore"), na_int)
+  expect_error(vec_as_location2(NA, 2L, missing = "error"), class = "vctrs_error_location2_bad_type")
+})
+
+test_that("num_as_location2() optionally allows missing and negative locations", {
+  expect_identical(num_as_location2(na_dbl, 2L, missing = "ignore"), na_int)
+  expect_identical(num_as_location2(-1, 2L, negative = "ignore"), -1L)
+  expect_error(num_as_location2(-3, 2L, negative = "ignore"), class = "vctrs_error_subscript_oob_location")
+  expect_error(num_as_location2(0, 2L, negative = "ignore"), class = "vctrs_error_location2_bad_type")
 })
 
 test_that("num_as_location() optionally allows negative indices", {
