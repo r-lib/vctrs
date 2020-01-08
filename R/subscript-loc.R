@@ -121,7 +121,7 @@ vec_as_location2_result <- function(i,
     return(result(err = new_error_location2_bad_type(
       i = i,
       .arg = arg,
-      body = cnd_bullets_location_need_scalar
+      body = cnd_bullets_location2_need_scalar
     )))
   }
 
@@ -135,7 +135,7 @@ vec_as_location2_result <- function(i,
       result <- result(err = new_error_location2_bad_type(
         i = i,
         .arg = arg,
-        body = cnd_bullets_location_need_present
+        body = cnd_bullets_location2_need_present
       ))
     } else {
       result <- result(i)
@@ -147,7 +147,7 @@ vec_as_location2_result <- function(i,
     return(result(err = new_error_location2_bad_type(
       i = i,
       .arg = arg,
-      body = cnd_bullets_location_need_non_zero
+      body = cnd_bullets_location2_need_non_zero
     )))
   }
 
@@ -155,7 +155,7 @@ vec_as_location2_result <- function(i,
     return(result(err = new_error_location2_bad_type(
       i = i,
       .arg = arg,
-      body = cnd_bullets_location_need_non_negative
+      body = cnd_bullets_location2_need_non_negative
     )))
   }
 
@@ -231,7 +231,7 @@ new_error_location2_bad_type <- function(i,
 }
 
 
-cnd_bullets_location_need_scalar <- function(cnd, ...) {
+cnd_bullets_location2_need_scalar <- function(cnd, ...) {
   arg <- cnd$.arg %||% "i"
   size <- length(cnd$i)
   format_error_bullets(c(
@@ -239,21 +239,21 @@ cnd_bullets_location_need_scalar <- function(cnd, ...) {
     i = "This subscript must be size 1."
   ))
 }
-cnd_bullets_location_need_present <- function(cnd, ...) {
+cnd_bullets_location2_need_present <- function(cnd, ...) {
   arg <- cnd$.arg %||% "i"
   format_error_bullets(c(
     x = glue::glue("`{arg}` can't be `NA`."),
     i = "This subscript can't be missing."
   ))
 }
-cnd_bullets_location_need_non_zero <- function(cnd, ...) {
+cnd_bullets_location2_need_non_zero <- function(cnd, ...) {
   arg <- cnd$.arg %||% "i"
   format_error_bullets(c(
     x = glue::glue("`{arg}` can't be zero."),
     i = "This subscript must be a positive integer."
   ))
 }
-cnd_bullets_location_need_non_negative <- function(cnd, ...) {
+cnd_bullets_location2_need_non_negative <- function(cnd, ...) {
   arg <- cnd$.arg %||% "i"
   format_error_bullets(c(
     x = glue::glue("`{arg}` (with value {cnd$i}) has the wrong sign."),
