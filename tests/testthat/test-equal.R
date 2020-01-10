@@ -249,6 +249,8 @@ test_that("can detect different types of NA", {
   expect_true(vec_equal_na(NA))
   expect_true(vec_equal_na(NA_integer_))
   expect_true(vec_equal_na(NA_real_))
+  expect_true(vec_equal_na(NA_complex_))
+  expect_true(vec_equal_na(complex(real = NA, imaginary = 1)))
   expect_true(vec_equal_na(NaN))
   expect_true(vec_equal_na(NA_character_))
   expect_true(vec_equal_na(list(NULL)))

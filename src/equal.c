@@ -653,6 +653,7 @@ SEXP vctrs_duplicate_all(SEXP x) {
 static int lgl_equal_na_scalar(const int* x);
 static int int_equal_na_scalar(const int* x);
 static int dbl_equal_na_scalar(const double* x);
+static int cpl_equal_na_scalar(const Rcomplex* x);
 static int chr_equal_na_scalar(const SEXP* x);
 static int list_equal_na_scalar(SEXP x, R_len_t i);
 static int df_equal_na_scalar(SEXP x, R_len_t i);
@@ -664,6 +665,7 @@ int equal_na(SEXP x, R_len_t i) {
   case LGLSXP: return lgl_equal_na_scalar(LOGICAL(x) + i);
   case INTSXP: return int_equal_na_scalar(INTEGER(x) + i);
   case REALSXP: return dbl_equal_na_scalar(REAL(x) + i);
+  case CPLXSXP: return cpl_equal_na_scalar(COMPLEX(x) + i);
   case STRSXP: return chr_equal_na_scalar(STRING_PTR(x) + i);
   default: break;
   }
@@ -709,6 +711,7 @@ SEXP vctrs_equal_na(SEXP x) {
   case vctrs_type_logical:   EQUAL_NA(int, LOGICAL_RO, lgl_equal_na_scalar); break;
   case vctrs_type_integer:   EQUAL_NA(int, INTEGER_RO, int_equal_na_scalar); break;
   case vctrs_type_double:    EQUAL_NA(double, REAL_RO, dbl_equal_na_scalar); break;
+  case vctrs_type_complex:   EQUAL_NA(Rcomplex, COMPLEX_RO, cpl_equal_na_scalar); break;
   case vctrs_type_character: EQUAL_NA(SEXP, STRING_PTR_RO, chr_equal_na_scalar); break;
   case vctrs_type_list:      EQUAL_NA_BARRIER(list_equal_na_scalar); break;
   case vctrs_type_dataframe: EQUAL_NA_BARRIER(df_equal_na_scalar); break;
@@ -736,6 +739,10 @@ static int dbl_equal_na_scalar(const double* x) {
   // isnan() does not consistently return 1 and 0 on all platforms,
   // but R's ISNAN() does
   return ISNAN(*x);
+}
+
+static int cpl_equal_na_scalar(const Rcomplex* x) {
+  return ISNAN(x->r) || ISNAN(x->i);
 }
 
 static int chr_equal_na_scalar(const SEXP* x) {

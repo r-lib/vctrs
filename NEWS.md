@@ -1,6 +1,8 @@
 
 # vctrs 0.2.99.9000
 
+* `vec_equal_na()` now works with complex vectors.
+
 * `vec_as_index()` has been renamed to `vec_as_location()`.
 
 * `vctrs_vctr` class gains an `as.POSIXlt()` method (#717).
