@@ -11,9 +11,11 @@
 #' @inheritParams vec_as_location
 #' @param indicator,location,name How to handle indicator (logical),
 #'   location (numeric), and name (character) subscripts. If
-#'   `"coerce"`, the subscript is coerced to its base type,
-#'   e.g. factors are coerced to character. If `"error"`, this
-#'   subscript type is disallowed and causes an informative error.
+#'   `"coerce"` and the subscript is not one of the three base types
+#'   (logical, integer or character), the subscript is coerced to the
+#'   relevant base type, e.g. factors are coerced to character. If
+#'   `"error"`, this subscript type is disallowed and causes an
+#'   informative error.
 #' @keywords internal
 #' @export
 vec_as_subscript <- function(i,

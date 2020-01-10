@@ -31,9 +31,11 @@ locations or names of the observations to get/set. Specify
 
 \item{indicator, location, name}{How to handle indicator (logical),
 location (numeric), and name (character) subscripts. If
-\code{"coerce"}, the subscript is coerced to its base type,
-e.g. factors are coerced to character. If \code{"error"}, this
-subscript type is disallowed and causes an informative error.}
+\code{"coerce"} and the subscript is not one of the three base types
+(logical, integer or character), the subscript is coerced to the
+relevant base type, e.g. factors are coerced to character. If
+\code{"error"}, this subscript type is disallowed and causes an
+informative error.}
 
 \item{arg}{The argument name to be displayed in error messages when
 \code{vec_as_location()} and \code{vec_as_location2()} are used to check the
