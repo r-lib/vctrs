@@ -126,3 +126,8 @@ glue_data_bullets <- function(.data, ..., .env = caller_env()) {
   glue_data <- function(...) glue::glue_data(.data, ..., .envir = .env)
   format_error_bullets(map_chr(chr(...), glue_data))
 }
+
+unstructure <- function(x) {
+  attributes(x) <- NULL
+  x
+}
