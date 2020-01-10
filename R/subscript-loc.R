@@ -80,7 +80,7 @@ num_as_location <- function(i,
 
 #' @rdname vec_as_location
 #' @param missing Whether to throw an `"error"` when `i` is a missing
-#'   value, or `"ignore"` it.
+#'   value, or `"ignore"` it (return it as is).
 #' @export
 vec_as_location2 <- function(i,
                              n,

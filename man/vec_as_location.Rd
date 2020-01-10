@@ -59,7 +59,7 @@ type of a function input.}
 negative location value, or \code{"ignore"} it.}
 
 \item{missing}{Whether to throw an \code{"error"} when \code{i} is a missing
-value, or \code{"ignore"} it.}
+value, or \code{"ignore"} it (return it as is).}
 }
 \value{
 \code{vec_as_location()} returns an integer vector that can be used
