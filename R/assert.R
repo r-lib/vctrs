@@ -117,6 +117,9 @@ is_same_type <- function(x, ptype) {
     )
   }
 
+  x <- vec_slice(x, integer())
+  ptype <- vec_slice(ptype, integer())
+
   # FIXME: Remove row names for matrices and arrays, and handle empty
   # but existing dimnames
   x <- vec_set_names(x, NULL)

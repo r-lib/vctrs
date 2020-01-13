@@ -1,110 +1,257 @@
 # Type2 -------------------------------------------------------------------
 
-# Numeric-ish
+# Left generics -----------------------------------------------------------
 
 #' @rdname vec_ptype2
 #' @export vec_ptype2.logical
 #' @method vec_ptype2 logical
 #' @export
-vec_ptype2.logical <- function(x, y, ...) UseMethod("vec_ptype2.logical", y)
+vec_ptype2.logical <- function(x, y, ..., x_arg = "x", y_arg = "y") {
+  if (is.object(x)) {
+    vec_default_ptype2(x, y, x_arg = x_arg, y_arg = y_arg)
+  } else {
+    UseMethod("vec_ptype2.logical", y)
+  }
+}
 #' @rdname vec_ptype2
 #' @export vec_ptype2.integer
 #' @method vec_ptype2 integer
 #' @export
-vec_ptype2.integer <- function(x, y, ...) UseMethod("vec_ptype2.integer", y)
+vec_ptype2.integer <- function(x, y, ..., x_arg = "x", y_arg = "y") {
+  if (is.object(x)) {
+    vec_default_ptype2(x, y, x_arg = x_arg, y_arg = y_arg)
+  } else {
+    UseMethod("vec_ptype2.integer", y)
+  }
+}
 #' @rdname vec_ptype2
 #' @export vec_ptype2.double
 #' @method vec_ptype2 double
 #' @export
-vec_ptype2.double <- function(x, y, ...) UseMethod("vec_ptype2.double", y)
+vec_ptype2.double <- function(x, y, ..., x_arg = "x", y_arg = "y") {
+  if (is.object(x)) {
+    vec_default_ptype2(x, y, x_arg = x_arg, y_arg = y_arg)
+  } else {
+    UseMethod("vec_ptype2.double", y)
+  }
+}
 #' @rdname vec_ptype2
 #' @export vec_ptype2.complex
 #' @method vec_ptype2 complex
 #' @export
-vec_ptype2.complex <- function(x, y, ...) UseMethod("vec_ptype2.complex", y)
+vec_ptype2.complex <- function(x, y, ..., x_arg = "x", y_arg = "y") {
+  if (is.object(x)) {
+    vec_default_ptype2(x, y, x_arg = x_arg, y_arg = y_arg)
+  } else {
+    UseMethod("vec_ptype2.complex", y)
+  }
+}
+#' @rdname vec_ptype2
+#' @export vec_ptype2.character
+#' @method vec_ptype2 character
+#' @export
+vec_ptype2.character <- function(x, y, ..., x_arg = "x", y_arg = "y") {
+  if (is.object(x)) {
+    vec_default_ptype2(x, y, x_arg = x_arg, y_arg = y_arg)
+  } else {
+    UseMethod("vec_ptype2.character", y)
+  }
+}
+#' @rdname vec_ptype2
+#' @export vec_ptype2.raw
+#' @method vec_ptype2 raw
+#' @export
+vec_ptype2.raw <- function(x, y, ..., x_arg = "x", y_arg = "y") {
+  if (is.object(x)) {
+    vec_default_ptype2(x, y, x_arg = x_arg, y_arg = y_arg)
+  } else {
+    UseMethod("vec_ptype2.raw", y)
+  }
+}
+#' @rdname vec_ptype2
+#' @export vec_ptype2.list
+#' @method vec_ptype2 list
+#' @export
+vec_ptype2.list <- function(x, y, ..., x_arg = "x", y_arg = "y") {
+  if (is.object(x)) {
+    vec_default_ptype2(x, y, x_arg = x_arg, y_arg = y_arg)
+  } else {
+    UseMethod("vec_ptype2.list", y)
+  }
+}
+
+
+# Numeric-ish
 
 #' @method vec_ptype2.logical logical
 #' @export
-vec_ptype2.logical.logical <- function(x, y, ...) shape_match(logical(), x, y)
+vec_ptype2.logical.logical <- function(x, y, ..., x_arg = "x", y_arg = "y") {
+  if (is.object(y)) {
+    vec_default_ptype2(x, y, x_arg = x_arg, y_arg = y_arg)
+  } else {
+    shape_match(logical(), x, y)
+  }
+}
 
 #' @export
 #' @method vec_ptype2.integer integer
-vec_ptype2.integer.integer <- function(x, y, ...) shape_match(integer(), x, y)
+vec_ptype2.integer.integer <- function(x, y, ..., x_arg = "x", y_arg = "y") {
+  if (is.object(y)) {
+    vec_default_ptype2(x, y, x_arg = x_arg, y_arg = y_arg)
+  } else {
+    shape_match(integer(), x, y)
+  }
+}
 #' @export
 #' @method vec_ptype2.logical integer
-vec_ptype2.logical.integer <- function(x, y, ...) shape_match(integer(), x, y)
+vec_ptype2.logical.integer <- function(x, y, ..., x_arg = "x", y_arg = "y") {
+  if (is.object(y)) {
+    vec_default_ptype2(x, y, x_arg = x_arg, y_arg = y_arg)
+  } else {
+    shape_match(integer(), x, y)
+  }
+}
 #' @export
 #' @method vec_ptype2.integer logical
-vec_ptype2.integer.logical <- function(x, y, ...) shape_match(integer(), x, y)
+vec_ptype2.integer.logical <- function(x, y, ..., x_arg = "x", y_arg = "y") {
+  if (is.object(y)) {
+    vec_default_ptype2(x, y, x_arg = x_arg, y_arg = y_arg)
+  } else {
+    shape_match(integer(), x, y)
+  }
+}
 
 #' @export
 #' @method vec_ptype2.double double
-vec_ptype2.double.double <- function(x, y, ...) shape_match(double(), x, y)
+vec_ptype2.double.double <- function(x, y, ..., x_arg = "x", y_arg = "y") {
+  if (is.object(y)) {
+    vec_default_ptype2(x, y, x_arg = x_arg, y_arg = y_arg)
+  } else {
+    shape_match(double(), x, y)
+  }
+}
 #' @export
 #' @method vec_ptype2.logical double
-vec_ptype2.logical.double <- function(x, y, ...) shape_match(double(), x, y)
+vec_ptype2.logical.double <- function(x, y, ..., x_arg = "x", y_arg = "y") {
+  if (is.object(y)) {
+    vec_default_ptype2(x, y, x_arg = x_arg, y_arg = y_arg)
+  } else {
+    shape_match(double(), x, y)
+  }
+}
 #' @export
 #' @method vec_ptype2.double logical
-vec_ptype2.double.logical <- function(x, y, ...) shape_match(double(), x, y)
+vec_ptype2.double.logical <- function(x, y, ..., x_arg = "x", y_arg = "y") {
+  if (is.object(y)) {
+    vec_default_ptype2(x, y, x_arg = x_arg, y_arg = y_arg)
+  } else {
+    shape_match(double(), x, y)
+  }
+}
 #' @export
 #' @method vec_ptype2.integer double
-vec_ptype2.integer.double <- function(x, y, ...) shape_match(double(), x, y)
+vec_ptype2.integer.double <- function(x, y, ..., x_arg = "x", y_arg = "y") {
+  if (is.object(y)) {
+    vec_default_ptype2(x, y, x_arg = x_arg, y_arg = y_arg)
+  } else {
+    shape_match(double(), x, y)
+  }
+}
 #' @export
 #' @method vec_ptype2.double integer
-vec_ptype2.double.integer <- function(x, y, ...) shape_match(double(), x, y)
+vec_ptype2.double.integer <- function(x, y, ..., x_arg = "x", y_arg = "y") {
+  if (is.object(y)) {
+    vec_default_ptype2(x, y, x_arg = x_arg, y_arg = y_arg)
+  } else {
+    shape_match(double(), x, y)
+  }
+}
 
 #' @export
 #' @method vec_ptype2.complex complex
-vec_ptype2.complex.complex <- function(x, y, ...) shape_match(complex(), x, y)
+vec_ptype2.complex.complex <- function(x, y, ..., x_arg = "x", y_arg = "y") {
+  if (is.object(y)) {
+    vec_default_ptype2(x, y, x_arg = x_arg, y_arg = y_arg)
+  } else {
+    shape_match(complex(), x, y)
+  }
+}
 #' @export
 #' @method vec_ptype2.integer complex
-vec_ptype2.integer.complex <- function(x, y, ...) shape_match(complex(), x, y)
+vec_ptype2.integer.complex <- function(x, y, ..., x_arg = "x", y_arg = "y") {
+  if (is.object(y)) {
+    vec_default_ptype2(x, y, x_arg = x_arg, y_arg = y_arg)
+  } else {
+    shape_match(complex(), x, y)
+  }
+}
 #' @export
 #' @method vec_ptype2.complex integer
-vec_ptype2.complex.integer <- function(x, y, ...) shape_match(complex(), x, y)
+vec_ptype2.complex.integer <- function(x, y, ..., x_arg = "x", y_arg = "y") {
+  if (is.object(y)) {
+    vec_default_ptype2(x, y, x_arg = x_arg, y_arg = y_arg)
+  } else {
+    shape_match(complex(), x, y)
+  }
+}
 #' @export
 #' @method vec_ptype2.double complex
-vec_ptype2.double.complex <- function(x, y, ...) shape_match(complex(), x, y)
+vec_ptype2.double.complex <- function(x, y, ..., x_arg = "x", y_arg = "y") {
+  if (is.object(y)) {
+    vec_default_ptype2(x, y, x_arg = x_arg, y_arg = y_arg)
+  } else {
+    shape_match(complex(), x, y)
+  }
+}
 #' @export
 #' @method vec_ptype2.complex double
-vec_ptype2.complex.double <- function(x, y, ...) shape_match(complex(), x, y)
+vec_ptype2.complex.double <- function(x, y, ..., x_arg = "x", y_arg = "y") {
+  if (is.object(y)) {
+    vec_default_ptype2(x, y, x_arg = x_arg, y_arg = y_arg)
+  } else {
+    shape_match(complex(), x, y)
+  }
+}
 
 
 
 # Character
 
-#' @rdname vec_ptype2
-#' @export vec_ptype2.character
-#' @method vec_ptype2 character
-#' @export
-vec_ptype2.character <- function(x, y, ...) UseMethod("vec_ptype2.character", y)
 #' @method vec_ptype2.character character
 #' @export
-vec_ptype2.character.character <- function(x, y, ...) shape_match(character(), x, y)
+vec_ptype2.character.character <- function(x, y, ..., x_arg = "x", y_arg = "y") {
+  if (is.object(y)) {
+    vec_default_ptype2(x, y, x_arg = x_arg, y_arg = y_arg)
+  } else {
+    shape_match(character(), x, y)
+  }
+}
 
 
 # Raw
 
-#' @rdname vec_ptype2
-#' @export vec_ptype2.raw
-#' @method vec_ptype2 raw
-#' @export
-vec_ptype2.raw <- function(x, y, ...) UseMethod("vec_ptype2.raw", y)
 #' @export
 #' @method vec_ptype2.raw raw
-vec_ptype2.raw.raw <- function(x, y, ...) shape_match(raw(), x, y)
+vec_ptype2.raw.raw <- function(x, y, ..., x_arg = "x", y_arg = "y") {
+  if (is.object(y)) {
+    vec_default_ptype2(x, y, x_arg = x_arg, y_arg = y_arg)
+  } else {
+    shape_match(raw(), x, y)
+  }
+}
 
 
 # Lists
 
-#' @rdname vec_ptype2
-#' @export vec_ptype2.list
-#' @method vec_ptype2 list
-#' @export
-vec_ptype2.list <- function(x, y, ...) UseMethod("vec_ptype2.list", y)
 #' @method vec_ptype2.list list
 #' @export
-vec_ptype2.list.list <- function(x, y, ...) shape_match(list(), x, y)
+vec_ptype2.list.list <- function(x, y, ..., x_arg = "x", y_arg = "y") {
+  if (is.object(y)) {
+    vec_default_ptype2(x, y, x_arg = x_arg, y_arg = y_arg)
+  } else {
+    shape_match(list(), x, y)
+  }
+}
 #' @method vec_ptype2.logical list
 #' @export
 vec_ptype2.logical.list <- function(x, y, ..., x_arg = "x", y_arg = "y") {
