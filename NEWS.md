@@ -1,6 +1,20 @@
 
 # vctrs 0.2.99.9000
 
+* `vec_ptype2()` methods for base classes now prevent
+  inheritance. This makes sense because the subtyping graph created by
+  `vec_ptype2()` methods is generally not the same as the inheritance
+  relationships defined by S3 classes. For instance, subclasses are
+  often a richer type than their superclasses, and should often be
+  declared as supertypes (e.g. `vec_ptype2()` should return the
+  subclass).
+
+  We introduced this breaking change in a patch release because
+  `new_vctr()` now adds the base type to the class vector by default,
+  which caused `vec_ptype2()` to dispatch erroneously to the methods
+  for base types. We'll finish switching to this approach in vctrs
+  0.3.0 for the rest of the base S3 classes (dates, data frames, ...).
+
 * `vec_equal_na()` now works with complex vectors.
 
 * `vec_as_index()` has been renamed to `vec_as_location()`.

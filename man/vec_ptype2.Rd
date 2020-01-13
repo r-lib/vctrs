@@ -12,19 +12,19 @@
 \alias{vec_default_ptype2}
 \title{Find the common type for a pair of vector types}
 \usage{
-\method{vec_ptype2}{logical}(x, y, ...)
+\method{vec_ptype2}{logical}(x, y, ..., x_arg = "x", y_arg = "y")
 
-\method{vec_ptype2}{integer}(x, y, ...)
+\method{vec_ptype2}{integer}(x, y, ..., x_arg = "x", y_arg = "y")
 
-\method{vec_ptype2}{double}(x, y, ...)
+\method{vec_ptype2}{double}(x, y, ..., x_arg = "x", y_arg = "y")
 
-\method{vec_ptype2}{complex}(x, y, ...)
+\method{vec_ptype2}{complex}(x, y, ..., x_arg = "x", y_arg = "y")
 
-\method{vec_ptype2}{character}(x, y, ...)
+\method{vec_ptype2}{character}(x, y, ..., x_arg = "x", y_arg = "y")
 
-\method{vec_ptype2}{raw}(x, y, ...)
+\method{vec_ptype2}{raw}(x, y, ..., x_arg = "x", y_arg = "y")
 
-\method{vec_ptype2}{list}(x, y, ...)
+\method{vec_ptype2}{list}(x, y, ..., x_arg = "x", y_arg = "y")
 
 vec_ptype2(x, y, ..., x_arg = "x", y_arg = "y")
 
