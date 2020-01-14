@@ -74,7 +74,7 @@
 * New experimental `vec_group_id()` for constructing group identifiers from a
   vector.
 
-* New experimental `vec_group_pos()` for locating the positions of unique
+* New experimental `vec_group_loc()` for computing the locations of unique
   groups in a vector (#514).
 
 * New `vec_chop()` for repeatedly slicing a vector. It efficiently captures
