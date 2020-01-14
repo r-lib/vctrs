@@ -110,7 +110,14 @@ SEXP altrep_rle_Extract_subset(SEXP x, SEXP indx, SEXP call) {
   SEXP out = PROTECT(Rf_allocVector(STRSXP, index_n));
 
   for (R_len_t i = 0; i < index_n; ++i) {
-    R_xlen_t rle_idx = find_rle_index(rle_data, index_data[i], rle_n);
+    int index_elt = index_data[i];
+
+    if (index_elt == NA_INTEGER) {
+      SET_STRING_ELT(out, i, NA_STRING);
+      continue;
+    }
+
+    R_xlen_t rle_idx = find_rle_index(rle_data, index_elt, rle_n);
     SET_STRING_ELT(out, i, STRING_ELT(nms, rle_idx));
   }
 
