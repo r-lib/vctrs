@@ -18,7 +18,7 @@ stop_incompatible_type(
   details = NULL,
   ...,
   message = NULL,
-  .subclass = NULL
+  class = NULL
 )
 
 stop_incompatible_cast(
@@ -29,7 +29,7 @@ stop_incompatible_cast(
   x_arg = "",
   to_arg = "",
   message = NULL,
-  .subclass = NULL
+  class = NULL
 )
 
 stop_incompatible_op(
@@ -39,7 +39,7 @@ stop_incompatible_op(
   details = NULL,
   ...,
   message = NULL,
-  .subclass = NULL
+  class = NULL
 )
 
 stop_incompatible_size(
@@ -52,7 +52,7 @@ stop_incompatible_size(
   details = NULL,
   ...,
   message = NULL,
-  .subclass = NULL
+  class = NULL
 )
 
 maybe_lossy_cast(
@@ -66,7 +66,7 @@ maybe_lossy_cast(
   x_arg = "",
   to_arg = "",
   message = NULL,
-  .subclass = NULL,
+  class = NULL,
   .deprecation = FALSE
 )
 
@@ -77,7 +77,7 @@ allow_lossy_cast(expr, x_ptype = NULL, to_ptype = NULL)
 
 \item{details}{Any additional human readable details}
 
-\item{..., message, .subclass}{Only use these fields when creating a subclass.}
+\item{..., message, class}{Only use these fields when creating a subclass.}
 
 \item{result}{The result of a potentially lossy cast.}
 

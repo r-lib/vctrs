@@ -167,6 +167,6 @@ df_lossy_cast <- function(out, x, to) {
     lossy = length(extra) > 0,
     locations = int(),
     details = inline_list("Dropped variables: ", extra, quote = "`"),
-    .subclass = "vctrs_error_cast_lossy_dropped"
+    class = "vctrs_error_cast_lossy_dropped"
   )
 }

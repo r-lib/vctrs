@@ -224,7 +224,7 @@ vec_as_location2_result <- function(i,
 stop_location_negative_missing <- function(i) {
   cnd_signal(new_error_location_bad_type(
     i,
-    .subclass = "vctrs_error_location_negative_missing"
+    class = "vctrs_error_location_negative_missing"
   ))
 }
 #' @export
@@ -251,7 +251,7 @@ cnd_body.vctrs_error_location_negative_missing <- function(cnd, ...) {
 stop_location_negative_positive <- function(i) {
   cnd_signal(new_error_location_bad_type(
     i,
-    .subclass = "vctrs_error_location_negative_positive"
+    class = "vctrs_error_location_negative_positive"
   ))
 }
 #' @export
@@ -278,9 +278,9 @@ cnd_body.vctrs_error_location_negative_positive <- function(cnd, ...) {
 new_error_location_bad_type <- function(i,
                                         ...,
                                         .arg = "i",
-                                        .subclass = NULL) {
+                                        class = NULL) {
   new_error_subscript_bad_type(
-    .subclass = c(.subclass, "vctrs_error_location_bad_type"),
+    class = c(class, "vctrs_error_location_bad_type"),
     i = i,
     indicator = "error",
     location = "coerce",
@@ -293,9 +293,9 @@ new_error_location_bad_type <- function(i,
 new_error_location2_bad_type <- function(i,
                                          ...,
                                          .arg = "i",
-                                         .subclass = NULL) {
+                                         class = NULL) {
   new_error_subscript2_bad_type(
-    .subclass = c(.subclass, "vctrs_error_location2_bad_type"),
+    class = c(class, "vctrs_error_location2_bad_type"),
     i = i,
     indicator = "error",
     location = "coerce",
@@ -357,7 +357,7 @@ stop_indicator_size <- function(i, n, arg = "i") {
     i,
     n = n,
     .arg = arg,
-    .subclass = "vctrs_error_indicator_bad_size"
+    class = "vctrs_error_indicator_bad_size"
   ))
 }
 #' @export

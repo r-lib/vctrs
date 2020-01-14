@@ -43,7 +43,7 @@ vec_assert <- function(x, ptype = NULL, size = NULL, arg = as_label(substitute(x
       msg <- vec_assert_type_explain(x_type, ptype, arg)
       abort(
         msg,
-        .subclass = c("vctrs_error_assert_ptype", "vctrs_error_assert"),
+        class = c("vctrs_error_assert_ptype", "vctrs_error_assert"),
         required = ptype,
         actual = x_type
       )
@@ -57,7 +57,7 @@ vec_assert <- function(x, ptype = NULL, size = NULL, arg = as_label(substitute(x
       msg <- paste0("`", arg, "` must have size ", size, ", not size ", x_size, ".")
       abort(
         msg,
-        .subclass = c("vctrs_error_assert_size", "vctrs_error_assert"),
+        class = c("vctrs_error_assert_size", "vctrs_error_assert"),
         required = size,
         actual = x_size
       )

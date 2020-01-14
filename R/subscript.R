@@ -218,9 +218,9 @@ as_opts_subscript2_type <- function(x, arg = NULL) {
 }
 
 
-new_subscript_error <- function(.subclass = NULL, i, ..., .arg = "i") {
+new_subscript_error <- function(class = NULL, i, ..., .arg = "i") {
   error_cnd(
-    .subclass = c(.subclass, "vctrs_error_subscript"),
+    c(class, "vctrs_error_subscript"),
     i = i,
     .arg = .arg,
     ...
@@ -232,9 +232,9 @@ new_error_subscript_bad_type <- function(i,
                                          name = "coerce",
                                          ...,
                                          .arg = "i",
-                                         .subclass = NULL) {
+                                         class = NULL) {
   new_subscript_error(
-    .subclass = c(.subclass, "vctrs_error_subscript_bad_type"),
+    class = c(class, "vctrs_error_subscript_bad_type"),
     i = i,
     indicator = indicator,
     location = location,
@@ -295,9 +295,9 @@ new_error_subscript2_bad_type <- function(i,
                                           name,
                                           ...,
                                           .arg = "i",
-                                          .subclass = NULL) {
+                                          class = NULL) {
   new_subscript_error(
-    .subclass = c(.subclass, "vctrs_error_subscript2_bad_type"),
+    class = c(class, "vctrs_error_subscript2_bad_type"),
     i = i,
     indicator = indicator,
     location = location,
