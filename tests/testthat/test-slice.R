@@ -806,6 +806,6 @@ test_that("vec_slice() works with Altrep classes with custom extract methods", {
 
   x <- .Call(vctrs_rle, c(foo = 10L, bar = 5L))
 
-  idx <- c(1, 3, 15)
-  expect_equal(vec_slice(x, idx), x[idx])
+  idx <- c(9, 10, 11)
+  expect_equal(vec_slice(x, idx), c("foo", "foo", "bar"))
 })

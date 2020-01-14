@@ -117,6 +117,8 @@ SEXP altrep_rle_Extract_subset(SEXP x, SEXP indx, SEXP call) {
       continue;
     }
 
+    --index_elt;
+
     R_xlen_t rle_idx = find_rle_index(rle_data, index_elt, rle_n);
     SET_STRING_ELT(out, i, STRING_ELT(nms, rle_idx));
   }
