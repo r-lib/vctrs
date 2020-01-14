@@ -549,7 +549,10 @@ cnd_body.vctrs_error_subscript_oob_name <- function(cnd) {
   ))
 }
 
-enumerate <- function(x, max = 5L) {
+enumerate <- function(x, max = 5L, allow_empty = FALSE) {
+  if (!length(x) && !allow_empty) {
+    abort("Internal error: Enumeration can't be empty.")
+  }
   if (length(x) > max) {
     # Last `.` is part of the error message
     paste0(glue::glue_collapse(x[seq2(1, max)], ", "), ", ..")

@@ -221,6 +221,60 @@ vec_as_location2_result <- function(i,
 }
 
 
+stop_location_negative_missing <- function(i) {
+  cnd_signal(new_error_location_bad_type(
+    i,
+    .subclass = "vctrs_error_location_negative_missing"
+  ))
+}
+#' @export
+cnd_header.vctrs_error_location_negative_missing <- function(cnd, ...) {
+  "Negative subscripts can't have missing locations."
+}
+#' @export
+cnd_body.vctrs_error_location_negative_missing <- function(cnd, ...) {
+  missing_loc <- which(is.na(cnd$i))
+
+  if (length(missing_loc) == 1) {
+    loc <- glue::glue("The subscript has a missing value at location {missing_loc}.")
+  } else {
+    n_loc <- length(missing_loc)
+    missing_loc <- enumerate(missing_loc)
+    loc <- glue::glue(
+      "The subscript has {n_loc} missing values at locations {missing_loc}."
+    )
+  }
+  format_error_bullets(c(i = loc))
+}
+
+# Rf_errorcall(R_NilValue, "Can't subset with a mix of negative and positive indices");
+stop_location_negative_positive <- function(i) {
+  cnd_signal(new_error_location_bad_type(
+    i,
+    .subclass = "vctrs_error_location_negative_positive"
+  ))
+}
+#' @export
+cnd_header.vctrs_error_location_negative_positive <- function(cnd, ...) {
+  "Negative subscripts can't be mixed with positive locations."
+}
+#' @export
+cnd_body.vctrs_error_location_negative_positive <- function(cnd, ...) {
+  positive_loc <- which(cnd$i > 0)
+
+  if (length(positive_loc) == 1) {
+    loc <- glue::glue("The subscript has a positive value at location {positive_loc}.")
+  } else {
+    n_loc <- length(positive_loc)
+    positive_loc <- enumerate(positive_loc)
+    loc <- glue::glue(
+      "The subscript has {n_loc} missing values at locations {positive_loc}."
+    )
+  }
+  format_error_bullets(c(i = loc))
+}
+
+
 new_error_location_bad_type <- function(i,
                                         ...,
                                         .arg = "i",

@@ -173,8 +173,8 @@ test_that("can slice with negative indices", {
   expect_identical(vec_slice(1:3, -c(1L, 3L)), 2L)
   expect_identical(vec_slice(mtcars, -(1:30)), vec_slice(mtcars, 31:32))
 
-  expect_error(vec_slice(1:3, -c(1L, NA)), "mix of negative indices and missing values")
-  expect_error(vec_slice(1:3, c(-1L, 1L)), "mix of negative and positive indices")
+  expect_error(vec_slice(1:3, -c(1L, NA)), class = "vctrs_error_location_negative_missing")
+  expect_error(vec_slice(1:3, c(-1L, 1L)), class = "vctrs_error_location_negative_positive")
 })
 
 test_that("0 is ignored in negative indices", {
@@ -806,4 +806,10 @@ test_that("vec_slice() works with Altrep classes with custom extract methods", {
 
   idx <- c(1, 3, 15)
   expect_equal(vec_slice(x, idx), x[idx])
+})
+
+verify_output(test_path("error", "test-slice.txt"), {
+  "Negative subscripts are checked"
+  vec_slice(1:3, -c(1L, NA))
+  vec_slice(1:3, c(-1L, 1L))
 })
