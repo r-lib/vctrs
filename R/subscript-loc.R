@@ -295,7 +295,7 @@ new_error_location2_bad_type <- function(i,
                                          arg = "i",
                                          class = NULL) {
   new_error_subscript2_bad_type(
-    class = c(class, "vctrs_error_location2_bad_type"),
+    class = class,
     i = i,
     indicator = "error",
     location = "coerce",
