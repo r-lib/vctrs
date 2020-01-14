@@ -345,7 +345,7 @@ cnd_bullets_location_need_non_negative <- function(cnd, ...) {
 }
 
 stop_location_negative <- function(i, ..., arg = "i") {
-  stop(new_error_location_bad_type(
+  cnd_signal(new_error_location_bad_type(
     i,
     arg = arg,
     body = cnd_bullets_location_need_non_negative
