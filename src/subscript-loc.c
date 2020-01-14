@@ -174,9 +174,8 @@ static SEXP lgl_as_location(SEXP subscript, R_len_t n) {
 
 static SEXP chr_as_location(SEXP subscript, SEXP names) {
   if (names == R_NilValue) {
-    Rf_errorcall(R_NilValue, "Can't use character to index an unnamed vector.");
+    Rf_errorcall(R_NilValue, "Can't use character names to index an unnamed vector.");
   }
-
   if (TYPEOF(names) != STRSXP) {
     Rf_errorcall(R_NilValue, "`names` must be a character vector.");
   }

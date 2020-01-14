@@ -36,3 +36,11 @@ Error: Logical subscripts must match the size of the indexed vector.
 i The indexed vector has size 3.
 x The subscript has size 2.
 
+
+Names
+=====
+
+> # Unnamed vector
+> vec_as_location(letters[1], 3)
+Error: Can't use character names to index an unnamed vector.
+

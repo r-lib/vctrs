@@ -358,16 +358,14 @@ test_that("can use names to vec_slice() a named object", {
 })
 
 test_that("can't use names to vec_slice() an unnamed object", {
-  x0 <- 1:3
-
   expect_error(
-    vec_slice(x0, letters[1]),
-    "Can't use character to index an unnamed vector.",
+    vec_slice(1:3, letters[1]),
+    "Can't use character names to index an unnamed vector.",
     fixed = TRUE
   )
   expect_error(
-    vec_slice(x0, letters[25:27]),
-    "Can't use character to index an unnamed vector.",
+    vec_slice(1:3, letters[25:27]),
+    "Can't use character names to index an unnamed vector.",
     fixed = TRUE
   )
 })
@@ -809,6 +807,9 @@ test_that("vec_slice() works with Altrep classes with custom extract methods", {
 })
 
 verify_output(test_path("error", "test-slice.txt"), {
+  "Unnamed vector with character subscript"
+  vec_slice(1:3, letters[1])
+
   "Negative subscripts are checked"
   vec_slice(1:3, -c(1L, NA))
   vec_slice(1:3, c(-1L, 1L))

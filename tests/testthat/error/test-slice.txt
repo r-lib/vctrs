@@ -1,3 +1,7 @@
+> # Unnamed vector with character subscript
+> vec_slice(1:3, letters[1])
+Error: Can't use character names to index an unnamed vector.
+
 > # Negative subscripts are checked
 > vec_slice(1:3, -c(1L, NA))
 Error: Negative subscripts can't have missing locations.

@@ -195,5 +195,11 @@ test_that("conversion to locations has informative error messages", {
 
     "Logical size mismatch"
     vec_as_location(c(TRUE, FALSE), 3)
+
+
+    "# Names"
+
+    "Unnamed vector"
+    vec_as_location(letters[1], 3)
   })
 })
