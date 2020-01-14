@@ -2,18 +2,16 @@
 #include "utils.h"
 #include "subscript-loc.h"
 
-static SEXP int_invert_location(SEXP subscript, R_len_t n, SEXP arg);
+static SEXP int_invert_location(SEXP subscript, R_len_t n);
 static SEXP int_filter_zero(SEXP subscript, R_len_t n_zero);
 
 static void stop_subscript_oob_location(SEXP i, R_len_t size);
 static void stop_subscript_oob_name(SEXP i, SEXP names);
 static void stop_location_negative(SEXP i);
-static void stop_indicator_size(SEXP i, SEXP n, SEXP arg);
 
 
 static SEXP int_as_location(SEXP subscript, R_len_t n,
-                            struct vec_as_location_opts* opts,
-                            SEXP arg) {
+                            struct vec_as_location_opts* opts) {
   const int* data = INTEGER_RO(subscript);
   R_len_t loc_n = Rf_length(subscript);
 
@@ -26,7 +24,7 @@ static SEXP int_as_location(SEXP subscript, R_len_t n,
     int elt = *data;
     if (elt < 0 && elt != NA_INTEGER) {
       switch (opts->negative) {
-      case LOC_NEGATIVE_INVERT: return int_invert_location(subscript, n, arg);
+      case LOC_NEGATIVE_INVERT: return int_invert_location(subscript, n);
       case LOC_NEGATIVE_ERROR: stop_location_negative(subscript);
       case LOC_NEGATIVE_IGNORE: break;
       }
@@ -47,9 +45,9 @@ static SEXP int_as_location(SEXP subscript, R_len_t n,
 }
 
 
-static SEXP lgl_as_location(SEXP subscript, R_len_t n, SEXP arg);
+static SEXP lgl_as_location(SEXP subscript, R_len_t n);
 
-static SEXP int_invert_location(SEXP subscript, R_len_t n, SEXP arg) {
+static SEXP int_invert_location(SEXP subscript, R_len_t n) {
   const int* data = INTEGER_RO(subscript);
   R_len_t loc_n = Rf_length(subscript);
 
@@ -80,7 +78,7 @@ static SEXP int_invert_location(SEXP subscript, R_len_t n, SEXP arg) {
     sel_data[j - 1] = 0;
   }
 
-  SEXP out = lgl_as_location(sel, n, arg);
+  SEXP out = lgl_as_location(sel, n);
 
   UNPROTECT(1);
   return out;
@@ -105,17 +103,15 @@ static SEXP int_filter_zero(SEXP subscript, R_len_t n_zero) {
   return out;
 }
 
-static SEXP dbl_as_location(SEXP subscript, R_len_t n,
-                            struct vec_as_location_opts* opts,
-                            SEXP arg) {
+static SEXP dbl_as_location(SEXP subscript, R_len_t n, struct vec_as_location_opts* opts) {
   subscript = PROTECT(vec_cast(subscript, vctrs_shared_empty_int, args_empty, args_empty));
-  subscript = int_as_location(subscript, n, opts, arg);
+  subscript = int_as_location(subscript, n, opts);
 
   UNPROTECT(1);
   return subscript;
 }
 
-static SEXP lgl_as_location(SEXP subscript, R_len_t n, SEXP arg) {
+static SEXP lgl_as_location(SEXP subscript, R_len_t n) {
   R_len_t subscript_n = Rf_length(subscript);
 
   if (subscript_n == n) {

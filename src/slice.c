@@ -394,7 +394,7 @@ SEXP vec_slice_impl(SEXP x, SEXP subscript) {
 SEXP vctrs_slice(SEXP x, SEXP subscript) {
   vec_assert(x, args_empty);
 
-  subscript = PROTECT(vec_as_location(subscript, vec_size(x), PROTECT(vec_names(x)), R_NilValue));
+  subscript = PROTECT(vec_as_location(subscript, vec_size(x), PROTECT(vec_names(x))));
   SEXP out = vec_slice_impl(x, subscript);
 
   UNPROTECT(2);
