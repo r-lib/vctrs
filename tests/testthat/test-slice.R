@@ -110,19 +110,17 @@ test_that("can subset using logical subscript", {
 
   expect_error(
     vec_slice(x0, c(TRUE, FALSE, TRUE)),
-    "has size 2 whereas the subscript has size 3",
-    fixed = TRUE
+    class = "vctrs_error_indicator_bad_size"
   )
 
   expect_error(
     vec_slice(x0, lgl()),
-    "has size 2 whereas the subscript has size 0",
-    fixed = TRUE
+    class = "vctrs_error_indicator_bad_size"
   )
 
   expect_error(
     vec_slice(mtcars, c(TRUE, FALSE)),
-    "has size 32 whereas the subscript has size 2"
+    class = "vctrs_error_indicator_bad_size"
   )
 })
 

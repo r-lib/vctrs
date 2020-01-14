@@ -8,6 +8,7 @@ static SEXP int_filter_zero(SEXP subscript, R_len_t n_zero);
 static void stop_subscript_oob_location(SEXP i, R_len_t size);
 static void stop_subscript_oob_name(SEXP i, SEXP names);
 static void stop_location_negative(SEXP i);
+static void stop_indicator_size(SEXP i, SEXP n);
 
 
 static SEXP int_as_location(SEXP subscript, R_len_t n,
@@ -163,10 +164,10 @@ static SEXP lgl_as_location(SEXP subscript, R_len_t n) {
     return out;
   }
 
-  Rf_errorcall(R_NilValue,
-               "Logical indices must have length 1 or be as long as the indexed vector.\n"
-               "The vector has size %d whereas the subscript has size %d.",
-               n, subscript_n);
+  SEXP n_obj = PROTECT(Rf_ScalarInteger(n));
+  stop_indicator_size(subscript, n_obj);
+
+  never_reached("lgl_as_location");
 }
 
 static SEXP chr_as_location(SEXP subscript, SEXP names) {
@@ -283,4 +284,12 @@ static void stop_location_negative(SEXP i) {
                    syms_i, i,
                    vctrs_ns_env);
   never_reached("stop_location_negative");
+}
+
+static void stop_indicator_size(SEXP i, SEXP n) {
+  vctrs_eval_mask2(Rf_install("stop_indicator_size"),
+                   syms_i, i,
+                   syms_n, n,
+                   vctrs_ns_env);
+  never_reached("stop_indicator_size");
 }

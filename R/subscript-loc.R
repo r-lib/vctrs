@@ -297,3 +297,24 @@ stop_location_negative <- function(i, ..., .arg = "i") {
     body = cnd_bullets_location_need_non_negative
   ))
 }
+
+stop_indicator_size <- function(i, n, arg = "i") {
+  cnd_signal(new_subscript_error(
+    i,
+    n = n,
+    .arg = arg,
+    .subclass = "vctrs_error_indicator_bad_size"
+  ))
+}
+#' @export
+cnd_header.vctrs_error_indicator_bad_size <- function(cnd, ...) {
+  "Logical subscripts must match the size of the indexed vector."
+}
+#' @export
+cnd_body.vctrs_error_indicator_bad_size <- function(cnd, ...) {
+  glue_data_bullets(
+    cnd,
+    i = "The indexed vector has size {n}.",
+    x = "The subscript has size {vec_size(i)}."
+  )
+}

@@ -4,3 +4,9 @@ Error: Must subset with a proper subscript vector.
 x `i` contains negative locations.
 i These subscripts must be positive integers.
 
+> # Logical size mismatch
+> vec_as_location(c(TRUE, FALSE), 3)
+Error: Logical subscripts must match the size of the indexed vector.
+i The indexed vector has size 3.
+x The subscript has size 2.
+
