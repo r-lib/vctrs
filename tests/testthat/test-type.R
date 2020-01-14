@@ -145,3 +145,17 @@ test_that("vec_ptype() handles class-less yet OBJECT gremlins", {
   expect_error(vec_ptype(gremlin), NA)
   expect_error(vec_c(gremlin), NA)
 })
+
+test_that("explicit list subclasses are vectors", {
+  list_subclass <- function(x) {
+    structure(x, class = c("custom_subclass", "list"))
+  }
+
+  x <- list_subclass(list())
+  expect_true(vec_is(x))
+
+  df <- data.frame(x = 1:2)
+  df$z <- list_subclass(list(1, 2))
+
+  expect_identical(vec_slice(df, 1)$z, list_subclass(list(1)))
+})

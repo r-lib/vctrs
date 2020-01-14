@@ -87,7 +87,7 @@ static enum vctrs_type vec_base_typeof(SEXP x, bool proxied) {
     if (!OBJECT(x)) return vctrs_type_list;
     if (is_data_frame(x)) return vctrs_type_dataframe;
     // S3 lists are only vectors if they are proxied
-    if (proxied) return vctrs_type_list;
+    if (proxied || Rf_inherits(x, "list")) return vctrs_type_list;
     // fallthrough
   default: return vctrs_type_scalar;
   }
