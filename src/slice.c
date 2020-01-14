@@ -72,20 +72,21 @@ SEXP vec_slice_impl(SEXP x, SEXP subscript);
   UNPROTECT(1);                                                 \
   return out
 
-#define SLICE(RTYPE, CTYPE, DEREF, CONST_DEREF, NA_VALUE)               \
-  if (ALTREP(x)) {                                                      \
-    SEXP out;                                                           \
-    out = ALTVEC_EXTRACT_SUBSET_PROXY(x, subscript, R_NilValue);        \
-    if (out != NULL) {                                                  \
-      return out;                                                       \
-    }                                                                   \
-  }                                                                     \
-  if (is_compact_rep(subscript)) {                                      \
-    SLICE_COMPACT_REP(RTYPE, CTYPE, DEREF, CONST_DEREF, NA_VALUE);      \
-  } else if (is_compact_seq(subscript)) {                               \
-    SLICE_COMPACT_SEQ(RTYPE, CTYPE, DEREF, CONST_DEREF);                \
-  } else {                                                              \
-    SLICE_SUBSCRIPT(RTYPE, CTYPE, DEREF, CONST_DEREF, NA_VALUE);        \
+#define SLICE(RTYPE, CTYPE, DEREF, CONST_DEREF, NA_VALUE)                   \
+  if (ALTREP(x)) {                                                          \
+    SEXP alt_subscript = PROTECT(compact_materialize(subscript));           \
+    SEXP out = ALTVEC_EXTRACT_SUBSET_PROXY(x, alt_subscript, R_NilValue);   \
+    UNPROTECT(1);                                                           \
+    if (out != NULL) {                                                      \
+      return out;                                                           \
+    }                                                                       \
+  }                                                                         \
+  if (is_compact_rep(subscript)) {                                          \
+    SLICE_COMPACT_REP(RTYPE, CTYPE, DEREF, CONST_DEREF, NA_VALUE);          \
+  } else if (is_compact_seq(subscript)) {                                   \
+    SLICE_COMPACT_SEQ(RTYPE, CTYPE, DEREF, CONST_DEREF);                    \
+  } else {                                                                  \
+    SLICE_SUBSCRIPT(RTYPE, CTYPE, DEREF, CONST_DEREF, NA_VALUE);            \
   }
 
 static SEXP lgl_slice(SEXP x, SEXP subscript) {
