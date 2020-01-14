@@ -449,6 +449,14 @@ test_that("vec_init() asserts vectorness (#301)", {
   expect_error(vec_init(NULL, 1L), class = "vctrs_error_scalar_type")
 })
 
+test_that("vec_init() works with Altrep classes", {
+  skip_if(getRversion() < "3.5")
+
+  x <- .Call(vctrs_rle, c(foo = 1L, bar = 2L))
+
+  expect_equal(vec_init(x, 2), rep(NA_character_, 2))
+})
+
 # vec_chop ----------------------------------------------------------------
 
 test_that("vec_chop() throws error with non-vector inputs", {
@@ -643,6 +651,14 @@ test_that("names are repaired correctly with compact reps and `NA_integer_`", {
   expect_equal(vec_slice_rep(x, NA_integer_, 2L), expect)
 })
 
+test_that("vec_slice() with compact_reps work with Altrep classes", {
+  skip_if(getRversion() < "3.5")
+
+  x <- .Call(vctrs_rle, c(foo = 10L, bar = 5L))
+
+  expect_equal(vec_slice_rep(x, 10L, 3L), rep("foo", 3))
+})
+
 # vec_slice + compact_seq -------------------------------------------------
 
 # `start` is 0-based
@@ -762,6 +778,14 @@ test_that("can subset S3 objects using the fallback method with compact seqs", {
   expect_equal(vec_slice_seq(x, 0L, 1L), vec_slice(x, 1L))
   expect_equal(vec_slice_seq(x, 2L, 2L), vec_slice(x, 3:4))
   expect_equal(vec_slice_seq(x, 3L, 2L, FALSE), vec_slice(x, 4:3))
+})
+
+test_that("vec_slice() with compact_seqs work with Altrep classes", {
+  skip_if(getRversion() < "3.5")
+
+  x <- .Call(vctrs_rle, c(foo = 2L, bar = 3L))
+
+  expect_equal(vec_slice_seq(x, 1L, 3L), c("foo", "bar", "bar"))
 })
 
 # vec_chop + compact_seq --------------------------------------------------
