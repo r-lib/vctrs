@@ -41,7 +41,9 @@ local_no_stringsAsFactors <- function(frame = caller_env()) {
   local_options(.frame = frame, stringsAsFactors = FALSE)
 }
 
-tibble <- tibble::tibble
+tibble <- function(...) {
+  tibble::tibble(...)
+}
 
 local_foobar_proxy <- function(frame = caller_env()) {
   local_methods(.frame = frame, vec_proxy.vctrs_foobar = identity)
