@@ -8,8 +8,8 @@
 #'   `x` falls in, constructed in the order that they appear. The number of
 #'   groups is also returned as an attribute, `n`.
 #'
-#' * `vec_group_pos()` returns a data frame containing a `key` column with the
-#'   unique groups, and a `pos` column with the positions of each group in `x`.
+#' * `vec_group_loc()` returns a data frame containing a `key` column with the
+#'   unique groups, and a `loc` column with the locations of each group in `x`.
 #'
 #' * `vec_group_rle()` locates groups in `x` and returns them run length
 #'   encoded in the order that they appear. The return value is a rcrd object
@@ -20,14 +20,14 @@
 #' @param x A vector
 #' @return
 #'   * `vec_group_id()`: An integer vector with the same size as `x`.
-#'   * `vec_group_pos()`: A two column data frame with size equal to
+#'   * `vec_group_loc()`: A two column data frame with size equal to
 #'     `vec_size(vec_unique(x))`.
 #'     * A `key` column of type `vec_ptype(x)`
-#'     * A `pos` column of type list, with elements of type integer.
+#'     * A `loc` column of type list, with elements of type integer.
 #'   * `vec_group_rle()`: A `vctrs_group_rle` rcrd object with two integer
 #'     vector fields: `group` and `length`.
 #'
-#'   Note that when using `vec_group_pos()` for complex types, the default
+#'   Note that when using `vec_group_loc()` for complex types, the default
 #'   `data.frame` print method will be suboptimal, and you will want to coerce
 #'   into a tibble to better understand the output.
 #' @name vec_group
@@ -49,11 +49,11 @@
 #' # `vec_group_id()` is equivalent to
 #' vec_match(groups, vec_unique(groups))
 #'
-#' vec_group_pos(mtcars$vs)
-#' vec_group_pos(mtcars[c("vs", "am")])
+#' vec_group_loc(mtcars$vs)
+#' vec_group_loc(mtcars[c("vs", "am")])
 #'
 #' if (require("tibble")) {
-#'   as_tibble(vec_group_pos(mtcars[c("vs", "am")]))
+#'   as_tibble(vec_group_loc(mtcars[c("vs", "am")]))
 #' }
 NULL
 
@@ -65,8 +65,8 @@ vec_group_id <- function(x) {
 
 #' @rdname vec_group
 #' @export
-vec_group_pos <- function(x) {
-  .Call(vctrs_group_pos, x)
+vec_group_loc <- function(x) {
+  .Call(vctrs_group_loc, x)
 }
 
 #' @rdname vec_group

@@ -3,13 +3,13 @@
 \name{vec_group}
 \alias{vec_group}
 \alias{vec_group_id}
-\alias{vec_group_pos}
+\alias{vec_group_loc}
 \alias{vec_group_rle}
 \title{Identify groups}
 \usage{
 vec_group_id(x)
 
-vec_group_pos(x)
+vec_group_loc(x)
 
 vec_group_rle(x)
 }
@@ -19,17 +19,17 @@ vec_group_rle(x)
 \value{
 \itemize{
 \item \code{vec_group_id()}: An integer vector with the same size as \code{x}.
-\item \code{vec_group_pos()}: A two column data frame with size equal to
+\item \code{vec_group_loc()}: A two column data frame with size equal to
 \code{vec_size(vec_unique(x))}.
 \itemize{
 \item A \code{key} column of type \code{vec_ptype(x)}
-\item A \code{pos} column of type list, with elements of type integer.
+\item A \code{loc} column of type list, with elements of type integer.
 }
 \item \code{vec_group_rle()}: A \code{vctrs_group_rle} rcrd object with two integer
 vector fields: \code{group} and \code{length}.
 }
 
-Note that when using \code{vec_group_pos()} for complex types, the default
+Note that when using \code{vec_group_loc()} for complex types, the default
 \code{data.frame} print method will be suboptimal, and you will want to coerce
 into a tibble to better understand the output.
 }
@@ -39,8 +39,8 @@ into a tibble to better understand the output.
 \item \code{vec_group_id()} returns an identifier for the group that each element of
 \code{x} falls in, constructed in the order that they appear. The number of
 groups is also returned as an attribute, \code{n}.
-\item \code{vec_group_pos()} returns a data frame containing a \code{key} column with the
-unique groups, and a \code{pos} column with the positions of each group in \code{x}.
+\item \code{vec_group_loc()} returns a data frame containing a \code{key} column with the
+unique groups, and a \code{loc} column with the locations of each group in \code{x}.
 \item \code{vec_group_rle()} locates groups in \code{x} and returns them run length
 encoded in the order that they appear. The return value is a rcrd object
 with fields for the \code{group} identifiers and the run \code{length} of the
@@ -66,10 +66,10 @@ field(group_rle, "length")
 # `vec_group_id()` is equivalent to
 vec_match(groups, vec_unique(groups))
 
-vec_group_pos(mtcars$vs)
-vec_group_pos(mtcars[c("vs", "am")])
+vec_group_loc(mtcars$vs)
+vec_group_loc(mtcars[c("vs", "am")])
 
 if (require("tibble")) {
-  as_tibble(vec_group_pos(mtcars[c("vs", "am")]))
+  as_tibble(vec_group_loc(mtcars[c("vs", "am")]))
 }
 }

@@ -69,7 +69,7 @@ SEXP vctrs_group_rle(SEXP x) {
     return out;
   }
 
-  // Integer vector that maps `hash` values to positions in `g`
+  // Integer vector that maps `hash` values to locations in `g`
   SEXP map = PROTECT_N(Rf_allocVector(INTSXP, d.size), &nprot);
   int* p_map = INTEGER(map);
 
@@ -80,7 +80,7 @@ SEXP vctrs_group_rle(SEXP x) {
   *p_g = 1;
   *p_l = 1;
 
-  int pos = 1;
+  int loc = 1;
 
   for (int i = 1; i < n; ++i) {
     if (equal_scalar(x, i - 1, x, i, true)) {
@@ -96,17 +96,17 @@ SEXP vctrs_group_rle(SEXP x) {
 
     if (d.key[hash] == DICT_EMPTY) {
       dict_put(&d, hash, i);
-      p_map[hash] = pos;
-      p_g[pos] = d.used;
+      p_map[hash] = loc;
+      p_g[loc] = d.used;
     } else {
-      p_g[pos] = p_g[p_map[hash]];
+      p_g[loc] = p_g[p_map[hash]];
     }
 
-    ++pos;
+    ++loc;
   }
 
-  g = PROTECT_N(Rf_lengthgets(g, pos), &nprot);
-  l = PROTECT_N(Rf_lengthgets(l, pos), &nprot);
+  g = PROTECT_N(Rf_lengthgets(g, loc), &nprot);
+  l = PROTECT_N(Rf_lengthgets(l, loc), &nprot);
 
   SEXP out = new_group_rle(g, l, d.used);
 
@@ -137,7 +137,7 @@ static SEXP new_group_rle(SEXP g, SEXP l, R_len_t n) {
 // -----------------------------------------------------------------------------
 
 // [[ include("vctrs.h"); register() ]]
-SEXP vec_group_pos(SEXP x) {
+SEXP vec_group_loc(SEXP x) {
   int nprot = 0;
 
   R_len_t n = vec_size(x);
@@ -170,10 +170,10 @@ SEXP vec_group_pos(SEXP x) {
 
   int n_groups = d.used;
 
-  // Position of first occurence of each group in `x`
-  SEXP key_pos = PROTECT_N(Rf_allocVector(INTSXP, n_groups), &nprot);
-  int* p_key_pos = INTEGER(key_pos);
-  int key_pos_current = 0;
+  // Location of first occurence of each group in `x`
+  SEXP key_loc = PROTECT_N(Rf_allocVector(INTSXP, n_groups), &nprot);
+  int* p_key_loc = INTEGER(key_loc);
+  int key_loc_current = 0;
 
   // Count of the number of elements in each group
   SEXP counts = PROTECT_N(Rf_allocVector(INTSXP, n_groups), &nprot);
@@ -183,45 +183,45 @@ SEXP vec_group_pos(SEXP x) {
   for (int i = 0; i < n; ++i) {
     int group = p_groups[i];
 
-    if (group == key_pos_current) {
-      p_key_pos[key_pos_current] = i + 1;
-      key_pos_current++;
+    if (group == key_loc_current) {
+      p_key_loc[key_loc_current] = i + 1;
+      key_loc_current++;
     }
 
     p_counts[group]++;
   }
 
-  SEXP out_pos = PROTECT_N(Rf_allocVector(VECSXP, n_groups), &nprot);
+  SEXP out_loc = PROTECT_N(Rf_allocVector(VECSXP, n_groups), &nprot);
 
-  // Initialize `out_pos` to a list of integers with sizes corresponding
+  // Initialize `out_loc` to a list of integers with sizes corresponding
   // to the number of elements in that group
   for (int i = 0; i < n_groups; ++i) {
-    SET_VECTOR_ELT(out_pos, i, Rf_allocVector(INTSXP, p_counts[i]));
+    SET_VECTOR_ELT(out_loc, i, Rf_allocVector(INTSXP, p_counts[i]));
   }
 
-  // The current position we are updating, each group has its own counter
-  SEXP positions = PROTECT_N(Rf_allocVector(INTSXP, n_groups), &nprot);
-  int* p_positions = INTEGER(positions);
-  memset(p_positions, 0, n_groups * sizeof(int));
+  // The current location we are updating, each group has its own counter
+  SEXP locations = PROTECT_N(Rf_allocVector(INTSXP, n_groups), &nprot);
+  int* p_locations = INTEGER(locations);
+  memset(p_locations, 0, n_groups * sizeof(int));
 
-  // Fill in the position values for each group
+  // Fill in the location values for each group
   for (int i = 0; i < n; ++i) {
     int group = p_groups[i];
-    int position = p_positions[group];
-    INTEGER(VECTOR_ELT(out_pos, group))[position] = i + 1;
-    p_positions[group]++;
+    int location = p_locations[group];
+    INTEGER(VECTOR_ELT(out_loc, group))[location] = i + 1;
+    p_locations[group]++;
   }
 
-  SEXP out_key = PROTECT_N(vec_slice(x, key_pos), &nprot);
+  SEXP out_key = PROTECT_N(vec_slice(x, key_loc), &nprot);
 
   // Construct output data frame
   SEXP out = PROTECT_N(Rf_allocVector(VECSXP, 2), &nprot);
   SET_VECTOR_ELT(out, 0, out_key);
-  SET_VECTOR_ELT(out, 1, out_pos);
+  SET_VECTOR_ELT(out, 1, out_loc);
 
   SEXP names = PROTECT_N(Rf_allocVector(STRSXP, 2), &nprot);
   SET_STRING_ELT(names, 0, strings_key);
-  SET_STRING_ELT(names, 1, strings_pos);
+  SET_STRING_ELT(names, 1, strings_loc);
 
   Rf_setAttrib(out, R_NamesSymbol, names);
 
