@@ -353,7 +353,7 @@ stop_location_negative <- function(i, ..., arg = "i") {
 }
 
 stop_indicator_size <- function(i, n, arg = "i") {
-  cnd_signal(new_subscript_error(
+  cnd_signal(new_error_subscript(
     i,
     n = n,
     arg = arg,
