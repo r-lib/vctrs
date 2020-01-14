@@ -1,12 +1,10 @@
 #include "vctrs.h"
 #include "utils.h"
+#include "subscript-loc.h"
 
 // Initialised at load time
 SEXP syms_vec_assign_fallback = NULL;
 SEXP fns_vec_assign_fallback = NULL;
-
-// Defined in slice.c
-SEXP vec_as_location(SEXP i, R_len_t n, SEXP names);
 
 static SEXP vec_assign_fallback(SEXP x, SEXP index, SEXP value);
 SEXP vec_assign_impl(SEXP x, SEXP index, SEXP value, bool clone);
@@ -37,7 +35,7 @@ SEXP vec_assign(SEXP x, SEXP index, SEXP value) {
   SEXP value_proxy = PROTECT(vec_proxy(value));
 
   // Recycle the proxy of `value`
-  index = PROTECT(vec_as_location(index, vec_size(x), PROTECT(vec_names(x))));
+  index = PROTECT(vec_as_location(index, vec_size(x), PROTECT(vec_names(x)), R_NilValue));
   value_proxy = PROTECT(vec_recycle(value_proxy, vec_size(index), &value_arg));
 
   struct vctrs_proxy_info info = vec_proxy_info(x);

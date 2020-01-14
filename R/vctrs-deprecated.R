@@ -72,5 +72,5 @@ vec_as_index <- function(i, n, names = NULL) {
   vec_assert(n, integer(), 1L)
   i <- vec_as_subscript(i)
 
-  .Call(vctrs_as_location, i, n, names, "invert")
+  .Call(vctrs_as_location, i, n, names, "invert", "i")
 }

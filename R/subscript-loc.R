@@ -58,7 +58,7 @@ vec_as_location <- function(i,
   if (!missing(...)) ellipsis::check_dots_empty()
 
   i <- vec_as_subscript(i, arg = arg)
-  .Call(vctrs_as_location, i, n, names, "invert")
+  .Call(vctrs_as_location, i, n, names, "invert", arg)
 }
 #' @rdname vec_as_location
 #' @param negative Whether to `"invert"` negative values to positive
@@ -75,7 +75,7 @@ num_as_location <- function(i,
   if (!is_integer(i) && !is_double(i)) {
     abort("`i` must be a numeric vector.")
   }
-  .Call(vctrs_as_location, i, n, names, negative)
+  .Call(vctrs_as_location, i, n, names, negative, arg)
 }
 
 #' @rdname vec_as_location

@@ -387,7 +387,7 @@ static SEXP vec_as_indices(SEXP indices, R_len_t n, SEXP names) {
 
   for (int i = 0; i < size; ++i) {
     index = VECTOR_ELT(indices, i);
-    SET_VECTOR_ELT(indices, i, vec_as_location(index, n, names));
+    SET_VECTOR_ELT(indices, i, vec_as_location(index, n, names, R_NilValue));
   }
 
   UNPROTECT(1);
