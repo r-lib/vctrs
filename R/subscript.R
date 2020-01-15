@@ -16,7 +16,9 @@
 #'   types (logical, integer or character), the subscript is coerced
 #'   to the relevant base type, e.g. factors are coerced to
 #'   character. `NULL` is treated as an empty integer vector, and is
-#'   thus coercible depending on the setting of `location`.
+#'   thus coercible depending on the setting of `location`. Symbols
+#'   are treated as character vectors and thus coercible depending on
+#'   the setting of `name`.
 #'
 #'   If `"error"`, the subscript type is disallowed and triggers an
 #'   informative error.
@@ -45,6 +47,9 @@ vec_as_subscript_result <- function(i, arg, indicator, location, name) {
 
   if (is_null(i) && location == "coerce") {
     i <- integer()
+  }
+  if (is_symbol(i) && name == "coerce") {
+    i <- as_string(i)
   }
 
   if (!vec_is(i)) {
