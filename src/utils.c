@@ -426,7 +426,7 @@ SEXP compact_materialize(SEXP x) {
   } else if (is_compact_seq(x)) {
     return compact_seq_materialize(x);
   } else {
-    Rf_errorcall(R_NilValue, "Internal error: `x` must be a compact seq or rep.");
+    return x;
   }
 }
 
