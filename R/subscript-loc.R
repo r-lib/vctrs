@@ -229,7 +229,7 @@ stop_location_negative_missing <- function(i) {
 }
 #' @export
 cnd_header.vctrs_error_location_negative_missing <- function(cnd, ...) {
-  "Negative subscripts can't have missing locations."
+  "Negative locations can't have missing values."
 }
 #' @export
 cnd_body.vctrs_error_location_negative_missing <- function(cnd, ...) {
@@ -256,7 +256,7 @@ stop_location_negative_positive <- function(i) {
 }
 #' @export
 cnd_header.vctrs_error_location_negative_positive <- function(cnd, ...) {
-  "Negative subscripts can't be mixed with positive locations."
+  "Negative locations can't be mixed with positive locations."
 }
 #' @export
 cnd_body.vctrs_error_location_negative_positive <- function(cnd, ...) {

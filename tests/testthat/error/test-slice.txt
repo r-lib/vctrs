@@ -4,10 +4,10 @@ Error: Can't use character names to index an unnamed vector.
 
 > # Negative subscripts are checked
 > vec_slice(1:3, -c(1L, NA))
-Error: Negative subscripts can't have missing locations.
+Error: Negative locations can't have missing values.
 i The subscript has a missing value at location 2.
 
 > vec_slice(1:3, c(-1L, 1L))
-Error: Negative subscripts can't be mixed with positive locations.
+Error: Negative locations can't be mixed with positive locations.
 i The subscript has a positive value at location 2.
 
