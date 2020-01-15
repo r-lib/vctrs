@@ -25,6 +25,14 @@ test_that("vec_as_subscript() coerces subtypes and supertypes", {
   })
 })
 
+test_that("vec_as_subscript() handles NULL", {
+  expect_identical(vec_as_subscript(NULL), int())
+  expect_error(
+    vec_as_subscript(NULL, location = "error"),
+    class = "vctrs_error_subscript_bad_type"
+  )
+})
+
 test_that("subscript functions have informative error messages", {
   verify_output(test_path("error", "test-subscript.txt"), {
     "# vec_as_subscript() forbids subscript types"
@@ -32,6 +40,7 @@ test_that("subscript functions have informative error messages", {
     vec_as_subscript("foo", indicator = "error", name = "error")
     vec_as_subscript(TRUE, indicator = "error")
     vec_as_subscript("foo", name = "error")
+    vec_as_subscript(NULL, location = "error")
 
     "# vec_as_subscript2() forbids subscript types"
     vec_as_subscript2(1L, location = "error", indicator = "error")

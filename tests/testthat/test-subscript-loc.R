@@ -123,6 +123,13 @@ test_that("num_as_location() optionally forbids negative indices", {
   expect_error(num_as_location(c(1, -10), 2L, negative = "error"), class = "vctrs_error_location_bad_type")
 })
 
+test_that("vec_as_location() handles NULL", {
+  expect_identical(
+    vec_as_location(NULL, 10),
+    vec_as_location(int(), 10),
+  )
+})
+
 test_that("conversion to locations has informative error messages", {
   verify_output(test_path("error", "test-subscript-loc.txt"), {
     "# Locations"

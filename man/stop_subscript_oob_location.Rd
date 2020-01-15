@@ -11,7 +11,7 @@ stop_subscript_oob_name(i, names, ..., class = NULL)
 }
 \arguments{
 \item{i}{For \code{stop_subscript_oob_location()}, a numeric vector of
-positions. For \code{stop_subscript_oob_name()}, a character vector of
+locations. For \code{stop_subscript_oob_name()}, a character vector of
 names. \code{i} may contain both out-of-bounds and within-bounds
 elements, only the former are used to construct the error
 message.}

@@ -22,6 +22,11 @@ Error: Must subset with a proper subscript vector.
 x `i` has the wrong type `character`.
 i These indices must be indicators or locations.
 
+> vec_as_subscript(NULL, location = "error")
+Error: Must subset with a proper subscript vector.
+x `i` has the wrong type `NULL`.
+i These indices must be indicators or names.
+
 
 vec_as_subscript2() forbids subscript types
 ===========================================

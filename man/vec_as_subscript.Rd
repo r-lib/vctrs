@@ -30,11 +30,15 @@ locations or names of the observations to get/set. Specify
 \code{integer()} to index none (as in \code{x[NULL]}).}
 
 \item{indicator, location, name}{How to handle indicator (logical),
-location (numeric), and name (character) subscripts. If
-\code{"coerce"} and the subscript is not one of the three base types
-(logical, integer or character), the subscript is coerced to the
-relevant base type, e.g. factors are coerced to character. If
-\code{"error"}, this subscript type is disallowed and causes an
+location (numeric), name (character), and \code{NULL} subscripts.
+
+If \code{"coerce"} and the subscript is not one of the three base
+types (logical, integer or character), the subscript is coerced
+to the relevant base type, e.g. factors are coerced to
+character. \code{NULL} is treated as an empty integer vector, and is
+thus coercible depending on the setting of \code{location}.
+
+If \code{"error"}, the subscript type is disallowed and triggers an
 informative error.}
 
 \item{arg}{The argument name to be displayed in error messages when
