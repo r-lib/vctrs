@@ -660,6 +660,9 @@ static int vec_equal_all_within_impl(SEXP x, bool na_equal, R_len_t size) {
   return out;
 }
 
+#undef EQUAL_ALL_WITHIN
+#undef EQUAL_ALL_WITHIN_BARRIER
+
 static int df_equal_all_within(SEXP x, bool na_equal, R_len_t size) {
   int out = 1;
 
@@ -678,9 +681,6 @@ static int df_equal_all_within(SEXP x, bool na_equal, R_len_t size) {
 
   return out;
 }
-
-#undef EQUAL_ALL_WITHIN
-#undef EQUAL_ALL_WITHIN_BARRIER
 
 // -----------------------------------------------------------------------------
 
