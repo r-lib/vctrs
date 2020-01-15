@@ -7,8 +7,11 @@ static void stop_not_comparable(SEXP x, SEXP y, const char* message) {
 }
 
 // https://stackoverflow.com/questions/10996418
-static int icmp(int x, int y) {
+static inline int icmp(int x, int y) {
   return (x > y) - (x < y);
+}
+int qsort_icmp(const void* x, const void* y) {
+  return icmp(*((int*) x), *((int*) y));
 }
 
 static int dcmp(double x, double y) {

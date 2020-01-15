@@ -58,23 +58,42 @@ vec_as_location <- function(i,
   if (!missing(...)) ellipsis::check_dots_empty()
 
   i <- vec_as_subscript(i, arg = arg)
-  .Call(vctrs_as_location, i, n, names, "invert")
+  .Call(
+    vctrs_as_location,
+    i = i,
+    n = n,
+    names = names,
+    loc_negative = "invert",
+    loc_oob = "error"
+  )
 }
 #' @rdname vec_as_location
 #' @param negative Whether to `"invert"` negative values to positive
 #'   locations, throw an informative `"error"`, or `"ignore"` them.
+#' @param oob If `"error"`, throws an informative `"error"` if some
+#'   elements are out-of-bounds. If `"extend"`, out-of-bounds
+#'   locations are allowed if they are consecutive after the end. This
+#'   can be used to implement extendable vectors like `letters[1:30]`.
 #' @export
 num_as_location <- function(i,
                             n,
                             ...,
                             negative = c("invert", "error", "ignore"),
+                            oob = c("error", "extend"),
                             arg = "i") {
   if (!missing(...)) ellipsis::check_dots_empty()
 
   if (!is_integer(i) && !is_double(i)) {
     abort("`i` must be a numeric vector.")
   }
-  .Call(vctrs_as_location, i, n, NULL, negative)
+  .Call(
+    vctrs_as_location,
+    i = i,
+    n = n,
+    names = NULL,
+    loc_negative = negative,
+    loc_oob = oob
+  )
 }
 
 #' @rdname vec_as_location
@@ -368,5 +387,32 @@ cnd_body.vctrs_error_indicator_bad_size <- function(cnd, ...) {
     cnd,
     i = "The indexed vector has size {n}.",
     x = "The subscript has size {vec_size(i)}."
+  )
+}
+
+stop_location_oob_non_consecutive <- function(i, size, ..., class = NULL) {
+  stop_subscript_oob(
+    class = c(class, "vctrs_error_subscript_oob_location_non_consecutive"),
+    i = i,
+    size = size,
+    ...
+  )
+}
+#' @export
+cnd_header.vctrs_error_subscript_oob_location_non_consecutive <- function(cnd, ...) {
+  "Can't index beyond the end with non-consecutive locations."
+}
+#' @export
+cnd_body.vctrs_error_subscript_oob_location_non_consecutive <- function(cnd, ...) {
+  i <- sort(cnd$i)
+  i <- i[i > cnd$size]
+
+  non_consecutive <- i[c(TRUE, diff(i) != 1L)]
+  non_consecutive <- enumerate(non_consecutive)
+
+  glue_data_bullets(
+    cnd,
+    i = "The input has size {size}.",
+    x = "The locations {non_consecutive} are not consecutive."
   )
 }
