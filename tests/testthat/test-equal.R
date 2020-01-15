@@ -445,6 +445,56 @@ test_that("the equality proxy is taken recursively", {
   expect_equal(vec_equal_all(df2), TRUE)
 })
 
+test_that("can compare data frames with various types of columns", {
+  x1 <- data_frame(x = c(1, 1))
+  y1 <- data_frame(x = c(1, 2))
+
+  x2 <- data_frame(x = c("a", "a"))
+  y2 <- data_frame(x = c("a", "b"))
+
+  x3 <- data_frame(x = c(TRUE, TRUE))
+  y3 <- data_frame(x = c(TRUE, FALSE))
+
+  x4 <- data_frame(x = c(1L, 1L))
+  y4 <- data_frame(x = c(1L, 2L))
+
+  x5 <- data_frame(x = as.raw(c(1, 1)))
+  y5 <- data_frame(x = as.raw(c(1, 2)))
+
+  x6 <- data_frame(x = c(1, 1) + 0i)
+  y6 <- data_frame(x = c(1, 2) + 1i)
+
+  expect_true(vec_equal_all(x1))
+  expect_true(vec_equal_all(x2))
+  expect_true(vec_equal_all(x3))
+  expect_true(vec_equal_all(x4))
+  expect_true(vec_equal_all(x5))
+  expect_true(vec_equal_all(x6))
+
+  expect_false(vec_equal_all(y1))
+  expect_false(vec_equal_all(y2))
+  expect_false(vec_equal_all(y3))
+  expect_false(vec_equal_all(y4))
+  expect_false(vec_equal_all(y5))
+  expect_false(vec_equal_all(y6))
+})
+
+test_that("can compare data frames with data frame columns", {
+  df1 <- data_frame(x = data_frame(a = c(1, 1)))
+  df2 <- data_frame(x = data_frame(a = c(1, 2)))
+
+  expect_true(vec_equal_all(df1))
+  expect_false(vec_equal_all(df2))
+})
+
+test_that("can compare data frames with list columns", {
+  df1 <- data_frame(x = list(a = 1, a = 1), y = c(1, 1))
+  df2 <- data_frame(x = list(a = 1, a = 3), y = c(1, 1))
+
+  expect_equal(vec_equal_all(df1), TRUE)
+  expect_equal(vec_equal_all(df2), FALSE)
+})
+
 test_that("can detect duplicates among strings with different encodings", {
   for (x_encoding in encodings()) {
     for (y_encoding in encodings()) {
@@ -459,4 +509,127 @@ test_that("duplicate detection is known to fail when comparing bytes to other en
   for (enc in encodings()) {
     expect_error(vec_equal_all(c(encoding_bytes(), enc)), error)
   }
+})
+
+# equal all - between -----------------------------------------------------
+
+test_that("throws error for unsupported type", {
+  expect_error(vec_equal_all(expression(x), 1), class = "vctrs_error_scalar_type")
+})
+
+test_that("correct behaviour for basic vectors", {
+  expect_true(vec_equal_all(c(TRUE, TRUE), c(TRUE, TRUE)))
+  expect_true(vec_equal_all(c(2L, 2L), c(2L, 2L)))
+  expect_true(vec_equal_all(c(2, 2), c(2, 2)))
+  expect_true(vec_equal_all(c("1", "1"), c("1", "1")))
+  expect_true(vec_equal_all(list(1:3, 1:3), list(1:3, 1:3)))
+  expect_true(vec_equal_all(as.raw(c(1, 1)), as.raw(c(1, 1))))
+  expect_true(vec_equal_all(c(1, 1) + 2i, c(1, 1) + 2i))
+
+  expect_false(vec_equal_all(c(TRUE, TRUE), c(TRUE, FALSE)))
+  expect_false(vec_equal_all(c(1L, 1L), c(1L, 2L)))
+  expect_false(vec_equal_all(c(1, 1), c(1, 2)))
+  expect_false(vec_equal_all(c("1", "1"), c("1", "2")))
+  expect_false(vec_equal_all(list(1, 1), list(1, 1:3)))
+  expect_false(vec_equal_all(as.raw(c(1, 1)), as.raw(c(1, 2))))
+  expect_false(vec_equal_all(c(1, 1) + 2i, c(1, 2) + 2i))
+})
+
+test_that("correct behavior for size 0 input", {
+  expect_true(vec_equal_all(integer(), integer()))
+  expect_true(vec_equal_all(list(), list()))
+  expect_true(vec_equal_all(new_data_frame(), new_data_frame()))
+})
+
+test_that("`na_equal` works", {
+  expect_equal(vec_equal_all(c(TRUE, NA), c(TRUE, NA)), NA)
+  expect_equal(vec_equal_all(c(1L, NA_integer_), c(1L, NA_integer_)), NA)
+  expect_equal(vec_equal_all(c(1, NA_real_), c(1, NA_real_)), NA)
+  expect_equal(vec_equal_all(c("1", NA_character_), c("1", NA_character_)), NA)
+  expect_equal(vec_equal_all(list(1, NULL), list(1, NULL)), NA)
+
+  expect_true(vec_equal_all(c(TRUE, NA), c(TRUE, NA), na_equal = TRUE))
+  expect_true(vec_equal_all(c(1L, NA_integer_), c(1L, NA_integer_), na_equal = TRUE))
+  expect_true(vec_equal_all(c(1, NA_real_), c(1, NA_real_), na_equal = TRUE))
+  expect_true(vec_equal_all(c("1", NA_character_), c("1", NA_character_), na_equal = TRUE))
+  expect_true(vec_equal_all(list(1, NULL), list(1, NULL), na_equal = TRUE))
+})
+
+test_that("data frames are compared row wise", {
+  df1 <- data_frame(x = c(1, 1), y = c("a", "a"))
+  df2 <- data_frame(x = c(1, 2), y = c("a", "a"))
+
+  expect_true(vec_equal_all(df1, df1))
+  expect_false(vec_equal_all(df1, df2))
+})
+
+test_that("`na_equal` works with data frames", {
+  df1 <- data_frame(x = c(1, 1), y = c("a", NA_character_))
+
+  expect_equal(vec_equal_all(df1, df1), NA)
+  expect_true(vec_equal_all(df1, df1, na_equal = TRUE))
+})
+
+test_that("the equality proxy is taken recursively", {
+  local_comparable_tuple()
+
+  x <- tuple(c(1, 1, 2), 1:3)
+  df <- data_frame(x = x)
+
+  x2 <- tuple(c(1, 1, 1), 1:3)
+  df2 <- data_frame(x = x2)
+
+  expect_equal(vec_equal_all(df, df), TRUE)
+  expect_equal(vec_equal_all(df, df2), FALSE)
+})
+
+test_that("can compare data frames with various types of columns", {
+  x1 <- data_frame(x = 1, y = 2)
+  y1 <- data_frame(x = 2, y = 1)
+
+  x2 <- data_frame(x = "a")
+  y2 <- data_frame(x = "b")
+
+  x3 <- data_frame(x = FALSE)
+  y3 <- data_frame(x = TRUE)
+
+  x4 <- data_frame(x = 1L)
+  y4 <- data_frame(x = 2L)
+
+  x5 <- data_frame(x = as.raw(0))
+  y5 <- data_frame(x = as.raw(1))
+
+  x6 <- data_frame(x = 1+0i)
+  y6 <- data_frame(x = 1+1i)
+
+  expect_false(vec_equal_all(x1, y1))
+  expect_false(vec_equal_all(x2, y2))
+  expect_false(vec_equal_all(x3, y3))
+  expect_false(vec_equal_all(x4, y4))
+  expect_false(vec_equal_all(x5, y5))
+  expect_false(vec_equal_all(x6, y6))
+})
+
+test_that("can compare data frames with data frame columns", {
+  df1 <- data_frame(x = data_frame(a = 1))
+  df2 <- data_frame(x = data_frame(a = 2))
+
+  expect_true(vec_equal_all(df1, df1))
+  expect_false(vec_equal_all(df1, df2))
+})
+
+test_that("can compare data frames with list columns", {
+  df1 <- data_frame(x = list(a = 1, b = 2), y = c(1, 1))
+  df2 <- data_frame(x = list(a = 1, b = 3), y = c(1, 1))
+
+  expect_equal(vec_equal_all(df1, df1), TRUE)
+  expect_equal(vec_equal_all(df1, df2), FALSE)
+})
+
+test_that("can compare lists of expressions", {
+  x <- list(expression(x), expression(y))
+  y <- list(expression(x))
+
+  expect_equal(vec_equal_all(x, x), TRUE)
+  expect_equal(vec_equal_all(x, y), FALSE)
 })
