@@ -26,7 +26,7 @@ static SEXP int_as_location(SEXP subscript, R_len_t n,
   for (R_len_t i = 0; i < loc_n; ++i, ++data) {
     int elt = *data;
     if (elt < 0 && elt != NA_INTEGER) {
-      switch (opts->negative) {
+      switch (opts->loc_negative) {
       case LOC_NEGATIVE_INVERT: return int_invert_location(subscript, n);
       case LOC_NEGATIVE_ERROR: stop_location_negative(subscript);
       case LOC_NEGATIVE_IGNORE: break;
@@ -199,7 +199,10 @@ static SEXP chr_as_location(SEXP subscript, SEXP names) {
 }
 
 SEXP vec_as_location(SEXP subscript, R_len_t n, SEXP names) {
-  struct vec_as_location_opts opts = { .negative = LOC_NEGATIVE_INVERT };
+  struct vec_as_location_opts opts = {
+    .loc_negative = LOC_NEGATIVE_INVERT,
+    .loc_oob = LOC_OOB_ERROR
+  };
   return vec_as_location_opts(subscript, n, names, &opts);
 }
 
@@ -225,7 +228,10 @@ SEXP vec_as_location_opts(SEXP subscript, R_len_t n, SEXP names,
 static void stop_bad_negative() {
   Rf_errorcall(R_NilValue, "`negative` must be one of \"invert\", \"error\", or \"ignore\".");
 }
-static enum num_as_location_negative parse_convert_negative(SEXP x) {
+static void stop_bad_oob() {
+  Rf_errorcall(R_NilValue, "`negative` must be one of \"error\" or \"extend\".");
+}
+static enum num_as_location_loc_negative parse_loc_negative(SEXP x) {
   if (TYPEOF(x) != STRSXP || Rf_length(x) == 0) {
     stop_bad_negative();
   }
@@ -239,9 +245,22 @@ static enum num_as_location_negative parse_convert_negative(SEXP x) {
 
   never_reached("stop_bad_negative");
 }
+static enum num_as_location_loc_oob parse_loc_oob(SEXP x) {
+  if (TYPEOF(x) != STRSXP || Rf_length(x) == 0) {
+    stop_bad_oob();
+  }
+
+  const char* str = CHAR(STRING_ELT(x, 0));
+
+  if (!strcmp(str, "error")) return LOC_OOB_ERROR;
+  if (!strcmp(str, "extend")) return LOC_OOB_EXTEND;
+  stop_bad_oob();
+
+  never_reached("stop_bad_oob");
+}
 
 SEXP vctrs_as_location(SEXP subscript, SEXP n_, SEXP names,
-                       SEXP convert_negative) {
+                       SEXP loc_negative, SEXP loc_oob) {
   R_len_t n = 0;
 
   if (n_ == R_NilValue && TYPEOF(subscript) == STRSXP) {
@@ -261,7 +280,8 @@ SEXP vctrs_as_location(SEXP subscript, SEXP n_, SEXP names,
   }
 
   struct vec_as_location_opts opts = {
-    .negative = parse_convert_negative(convert_negative)
+    .loc_negative = parse_loc_negative(loc_negative),
+    .loc_oob = parse_loc_oob(loc_oob)
   };
 
   return vec_as_location_opts(subscript, n, names, &opts);
