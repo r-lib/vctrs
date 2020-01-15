@@ -77,7 +77,6 @@ reset_rownames <- function(x) {
 #'
 #' * `vec_duplicate_any()`: detects the presence of duplicated values,
 #'   similar to [anyDuplicated()].
-#' * `vec_duplicate_all()`: detects if all values are equivalent.
 #' * `vec_duplicate_detect()`: returns a logical vector describing if each
 #'   element of the vector is duplicated elsewhere. Unlike [duplicated()], it
 #'   reports all duplicated values, not just the second and subsequent
@@ -94,7 +93,6 @@ reset_rownames <- function(x) {
 #' @param x A vector (including a data frame).
 #' @return
 #'   * `vec_duplicate_any()`: a logical vector of length 1.
-#'   * `vec_duplicate_all()`: a logical vector of length 1.
 #'   * `vec_duplicate_detect()`: a logical vector the same length as `x`.
 #'   * `vec_duplicate_id()`: an integer vector the same length as `x`.
 #' @seealso [vec_unique()] for functions that work with the dual of duplicated
@@ -103,10 +101,6 @@ reset_rownames <- function(x) {
 #' @examples
 #' vec_duplicate_any(1:10)
 #' vec_duplicate_any(c(1, 1:10))
-#'
-#' vec_duplicate_all(c(1, 1))
-#' vec_duplicate_all(c(1, 2))
-#' vec_duplicate_all(c(NA, NA))
 #'
 #' x <- c(10, 10, 20, 30, 30, 40)
 #' vec_duplicate_detect(x)
