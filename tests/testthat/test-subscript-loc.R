@@ -73,6 +73,10 @@ test_that("vec_as_location() and variants check for OOB elements", {
   expect_error(num_as_location2(10L, 2L), class = "vctrs_error_subscript_oob_location")
 })
 
+test_that("vec_as_location() doesn't require `n` for character indexing", {
+  expect_identical(vec_as_location("b", NULL, names = letters), 2L)
+})
+
 test_that("vec_as_location2() requires length 1 inputs", {
   verify_errors({
     expect_error(vec_as_location2(1:2, 2L), class = "vctrs_error_subscript2_bad_type")

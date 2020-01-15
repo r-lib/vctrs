@@ -242,17 +242,23 @@ static enum num_as_location_negative parse_convert_negative(SEXP x) {
 
 SEXP vctrs_as_location(SEXP subscript, SEXP n_, SEXP names,
                        SEXP convert_negative) {
-  if (OBJECT(n_) || TYPEOF(n_) != INTSXP) {
-    n_ = vec_coercible_cast(n_, vctrs_shared_empty_int, args_empty, args_empty);
-  }
-  PROTECT(n_);
+  R_len_t n = 0;
 
-  if (Rf_length(n_) != 1) {
-    Rf_error("Internal error: `n` must be a scalar number");
-  }
+  if (n_ == R_NilValue && TYPEOF(subscript) == STRSXP) {
+    n = Rf_length(subscript);
+  } else {
+    if (OBJECT(n_) || TYPEOF(n_) != INTSXP) {
+      n_ = vec_coercible_cast(n_, vctrs_shared_empty_int, args_empty, args_empty);
+    }
+    PROTECT(n_);
 
-  R_len_t n = r_int_get(n_, 0);
-  UNPROTECT(1);
+    if (Rf_length(n_) != 1) {
+      Rf_error("Internal error: `n` must be a scalar number");
+    }
+
+    n = r_int_get(n_, 0);
+    UNPROTECT(1);
+  }
 
   struct vec_as_location_opts opts = {
     .negative = parse_convert_negative(convert_negative)
