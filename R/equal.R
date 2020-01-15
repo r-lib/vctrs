@@ -73,6 +73,11 @@ vec_equal_na <- function(x) {
   .Call(vctrs_equal_na, x)
 }
 
+vec_equal_all <- function(x, y = NULL, na_equal = FALSE, ptype = NULL) {
+  vec_assert(na_equal, ptype = logical(), size = 1L)
+  .Call(vctrs_equal_all, x, y, na_equal, ptype)
+}
+
 #' @export
 #' @rdname vec_duplicate
 vec_duplicate_all <- function(x) {
