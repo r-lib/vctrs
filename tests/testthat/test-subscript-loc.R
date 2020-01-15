@@ -45,11 +45,14 @@ test_that("vec_as_location2() and vec_as_location() require integer- or characte
   expect_identical(vec_as_location(foobar(FALSE), 10L), int())
 })
 
-test_that("vec_as_location2() and vec_as_location() require existing elements", {
-  expect_error(vec_as_location2(10L, 2L), class = "vctrs_error_subscript_oob_location")
-  expect_error(vec_as_location2("foo", 1L, names = "bar"), class = "vctrs_error_subscript_oob_name")
+test_that("vec_as_location() and variants check for OOB elements", {
   expect_error(vec_as_location(10L, 2L), class = "vctrs_error_subscript_oob_location")
+  expect_error(vec_as_location2(10L, 2L), class = "vctrs_error_subscript_oob_location")
+  expect_error(num_as_location(10L, 2L), class = "vctrs_error_subscript_oob_location")
+  expect_error(num_as_location2(10L, 2L), class = "vctrs_error_subscript_oob_location")
+
   expect_error(vec_as_location("foo", 1L, names = "bar"), class = "vctrs_error_subscript_oob_name")
+  expect_error(vec_as_location2("foo", 1L, names = "bar"), class = "vctrs_error_subscript_oob_name")
 })
 
 test_that("vec_as_location2() requires length 1 inputs", {
@@ -163,7 +166,6 @@ test_that("character subscripts require named vectors", {
   expect_error(vec_as_location(letters[1], 3), "unnamed vector")
 })
 
-
 test_that("conversion to locations has informative error messages", {
   verify_output(test_path("error", "test-subscript-loc.txt"), {
     "# vec_as_location() checks for mix of negative and missing locations"
@@ -224,5 +226,15 @@ test_that("conversion to locations has informative error messages", {
     vec_as_location2(na_chr, 1L, names = "foo")
     "Idem with custom `arg`"
     vec_as_location2(na_int, 2L)
+
+    "# vec_as_location() and variants check for OOB elements"
+    "Numeric subscripts"
+    vec_as_location(10L, 2L)
+    vec_as_location2(10L, 2L)
+    num_as_location(10L, 2L)
+    num_as_location2(10L, 2L)
+    "Character subscripts"
+    vec_as_location("foo", 1L, names = "bar")
+    vec_as_location2("foo", 1L, names = "bar")
   })
 })

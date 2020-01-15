@@ -248,3 +248,37 @@ Error: Must extract with a single subscript.
 x `i` can't be `NA`.
 i This subscript can't be missing.
 
+
+vec_as_location() and variants check for OOB elements
+=====================================================
+
+> # Numeric subscripts
+> vec_as_location(10L, 2L)
+Error: Must index existing elements.
+x Can't subset location 10.
+i There are only 2 elements.
+
+> vec_as_location2(10L, 2L)
+Error: Must index existing elements.
+x Can't subset location 10.
+i There are only 2 elements.
+
+> num_as_location(10L, 2L)
+Error: Must index existing elements.
+x Can't subset location 10.
+i There are only 2 elements.
+
+> num_as_location2(10L, 2L)
+Error: Must index existing elements.
+x Can't subset location 10.
+i There are only 2 elements.
+
+> # Character subscripts
+> vec_as_location("foo", 1L, names = "bar")
+Error: Must index existing elements.
+x Can't subset element with unknown name `foo`.
+
+> vec_as_location2("foo", 1L, names = "bar")
+Error: Must index existing elements.
+x Can't subset element with unknown name `foo`.
+
