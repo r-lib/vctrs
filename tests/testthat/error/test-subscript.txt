@@ -1,8 +1,7 @@
 
-Vector subscripts
-=================
+vec_as_subscript() forbids subscript types
+==========================================
 
-> # vec_as_subscript() forbids subscript types
 > vec_as_subscript(1L, indicator = "error", location = "error")
 Error: Must subset with a proper subscript vector.
 x `i` has the wrong type `integer`.
@@ -24,10 +23,9 @@ x `i` has the wrong type `character`.
 i These indices must be indicators or locations.
 
 
-Scalar subscripts
-=================
+vec_as_subscript2() forbids subscript types
+===========================================
 
-> # vec_as_subscript2() forbids subscript types
 > vec_as_subscript2(1L, location = "error", indicator = "error")
 Error: Must extract with a single subscript.
 x `i` has the wrong type `integer`.
