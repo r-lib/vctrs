@@ -519,6 +519,9 @@ cnd_body.vctrs_error_subscript_oob_location <- function(cnd) {
   # In case of negative indexing
   i <- abs(i)
 
+  # In case of missing locations
+  i <- i[!is.na(i)]
+
   oob <- i[i > cnd$size]
   oob_enum <- enumerate(oob)
 

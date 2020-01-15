@@ -29,21 +29,24 @@ static SEXP int_as_location(SEXP subscript, R_len_t n,
 
   for (R_len_t i = 0; i < loc_n; ++i, ++data) {
     int elt = *data;
-    if (elt < 0 && elt != NA_INTEGER) {
-      switch (opts->loc_negative) {
-      case LOC_NEGATIVE_INVERT: return int_invert_location(subscript, n);
-      case LOC_NEGATIVE_ERROR: stop_location_negative(subscript);
-      case LOC_NEGATIVE_IGNORE: break;
+
+    if (elt != NA_INTEGER) {
+      if (elt < 0) {
+        switch (opts->loc_negative) {
+        case LOC_NEGATIVE_INVERT: return int_invert_location(subscript, n);
+        case LOC_NEGATIVE_ERROR: stop_location_negative(subscript);
+        case LOC_NEGATIVE_IGNORE: break;
+        }
       }
-    }
-    if (elt == 0) {
-      ++n_zero;
-    }
-    if (abs(elt) > n) {
-      if (opts->loc_oob == LOC_OOB_ERROR) {
-        stop_subscript_oob_location(subscript, n);
+
+      if (elt == 0) {
+        ++n_zero;
+      } else if (abs(elt) > n) {
+        if (opts->loc_oob == LOC_OOB_ERROR) {
+          stop_subscript_oob_location(subscript, n);
+        }
+        extended = true;
       }
-      extended = true;
     }
   }
 
@@ -125,17 +128,26 @@ int qsort_icmp(const void* x, const void* y);
 static void int_check_consecutive(SEXP subscript, R_len_t n) {
   SEXP sorted = PROTECT(Rf_duplicate(subscript));
   int* p_sorted = INTEGER(sorted);
+
   R_len_t n_subscript = Rf_length(sorted);
+  R_len_t n_missing = 0;
 
   qsort(p_sorted, n_subscript, sizeof(int), &qsort_icmp);
 
   for (R_len_t i = 0; i < n_subscript; ++i) {
-    int elt = p_sorted[i] - 1;
+    int elt = p_sorted[i];
+
+    // All missing values are sorted to the beginning
+    if (elt == NA_INTEGER) {
+      ++n_missing;
+      continue;
+    }
+    --elt;
 
     if (elt < n) {
       continue;
     }
-    if (elt != i) {
+    if (elt != (i - n_missing) && elt != n) {
       stop_location_oob_non_consecutive(subscript, n);
     }
   }

@@ -217,8 +217,13 @@ test_that("can optionally extend beyond the end", {
   expect_error(num_as_location(1:5, 3), class = "vctrs_error_subscript_oob_location")
   expect_identical(num_as_location(1:5, 3, oob = "extend"), 1:5)
   expect_identical(num_as_location(c(1:5, 7, 6), 3, oob = "extend"), c(1:5, 7L, 6L))
+  expect_identical(num_as_location(c(1, NA, 3), 2, oob = "extend"), c(1L, NA, 3L))
 
   verify_errors({
+    expect_error(
+      num_as_location(c(1, 3), 1, oob = "extend"),
+      class = "vctrs_error_subscript_oob_location_non_consecutive"
+    )
     expect_error(
       num_as_location(c(1:5, 7), 3, oob = "extend"),
       class = "vctrs_error_subscript_oob_location_non_consecutive"
@@ -230,6 +235,19 @@ test_that("can optionally extend beyond the end", {
     expect_error(
       class = "vctrs_error_subscript_oob_location_non_consecutive",
       num_as_location(c(1:5, 7, 1, 10), 3, oob = "extend")
+    )
+  })
+})
+
+test_that("missing values are supported in error formatters", {
+  verify_errors({
+    expect_error(
+      num_as_location(c(1, NA, 2, 3), 1),
+      class = "vctrs_error_subscript_oob_location"
+    )
+    expect_error(
+      num_as_location(c(1, NA, 3), 1, oob = "extend"),
+      class = "vctrs_error_subscript_oob_location_non_consecutive"
     )
   })
 })
@@ -304,8 +322,13 @@ test_that("conversion to locations has informative error messages", {
     vec_as_location2("foo", 1L, names = "bar")
 
     "# can optionally extend beyond the end"
+    num_as_location(c(1, 3), 1, oob = "extend")
     num_as_location(c(1:5, 7), 3, oob = "extend")
     num_as_location(c(1:5, 7, 1), 3, oob = "extend")
     num_as_location(c(1:5, 7, 1, 10), 3, oob = "extend")
+
+    "# missing values are supported in error formatters"
+    num_as_location(c(1, NA, 2, 3), 1)
+    num_as_location(c(1, NA, 3), 1, oob = "extend")
   })
 })
