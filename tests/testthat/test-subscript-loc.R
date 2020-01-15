@@ -130,33 +130,58 @@ test_that("vec_as_location() handles NULL", {
   )
 })
 
+test_that("vec_as_location() checks for mix of negative and missing locations", {
+  expect_error(
+    vec_as_location(-c(1L, NA), 30),
+    class = "vctrs_error_location_negative_missing"
+  )
+  expect_error(
+    vec_as_location(-c(1L, rep(NA, 10)), 30),
+    class = "vctrs_error_location_negative_missing"
+  )
+})
+
+test_that("vec_as_location() checks for mix of negative and positive locations", {
+  expect_error(
+    vec_as_location(c(-1L, 1L), 30),
+    class = "vctrs_error_location_negative_positive"
+  )
+  expect_error(
+    vec_as_location(c(-1L, rep(1L, 10)), 30),
+    class = "vctrs_error_location_negative_positive"
+  )
+})
+
+test_that("logical subscripts must match size of indexed vector", {
+  expect_error(
+    vec_as_location(c(TRUE, FALSE), 3),
+    class = "vctrs_error_indicator_bad_size"
+  )
+})
+
+test_that("character subscripts require named vectors", {
+  expect_error(vec_as_location(letters[1], 3), "unnamed vector")
+})
+
+
 test_that("conversion to locations has informative error messages", {
   verify_output(test_path("error", "test-subscript-loc.txt"), {
-    "# Locations"
-
-    "Can't mix negative and missing locations"
+    "# vec_as_location() checks for mix of negative and missing locations"
     vec_as_location(-c(1L, NA), 30)
     vec_as_location(-c(1L, rep(NA, 10)), 30)
 
-    "Can't mix negative and missing locations"
+    "# vec_as_location() checks for mix of negative and positive locations"
     vec_as_location(c(-1L, 1L), 30)
     vec_as_location(c(-1L, rep(1L, 10)), 30)
 
-    "Negative forbidden"
+    "# num_as_location() optionally forbids negative indices"
     num_as_location(dbl(1, -1), 2L, negative = "error")
 
-
-    "# Indicators"
-
-    "Logical size mismatch"
+    "# logical subscripts must match size of indexed vector"
     vec_as_location(c(TRUE, FALSE), 3)
 
-
-    "# Names"
-
-    "can't use character names to index an unnamed vector"
+    "# character subscripts require named vectors"
     vec_as_location(letters[1], 3)
-
 
     "# vec_as_location() requires integer, character, or logical inputs"
     vec_as_location(mtcars, 10L)
