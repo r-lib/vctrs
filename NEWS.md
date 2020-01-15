@@ -82,8 +82,9 @@
 
 * `vec_as_location()` now preserves names of its inputs if possible.
 
-* New `vec_duplicate_all()` for detecting if all values in a vector are
-  equivalent.
+* New `vec_equal_all()` for detecting if all values between two vectors are
+  equivalent. If only one input is supplied, it checks if the values within
+  that vector are equivalent.
 
 * `vec_as_location()` gains an `arg` parameter to specify the name of
   inputs. This is useful when it is used for type-checking.
