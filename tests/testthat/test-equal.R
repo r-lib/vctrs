@@ -364,66 +364,72 @@ test_that("vec_equal() takes vec_proxy_equal() if implemented", {
   expect_identical(vec_equal(foo, bar), rep(TRUE, 3))
 })
 
-# duplicate all ----------------------------------------------------------
+# equal all - within ------------------------------------------------------
 
 test_that("throws error for unsupported type", {
-  expect_error(vec_duplicate_all(expression(x)), class = "vctrs_error_scalar_type")
+  expect_error(vec_equal_all(expression(x)), class = "vctrs_error_scalar_type")
 })
 
 test_that("correct behaviour for basic vectors", {
-  expect_true(vec_duplicate_all(c(TRUE, TRUE)))
-  expect_true(vec_duplicate_all(c(2L, 2L)))
-  expect_true(vec_duplicate_all(c(2, 2)))
-  expect_true(vec_duplicate_all(c("1", "1")))
-  expect_true(vec_duplicate_all(list(1:3, 1:3)))
-  expect_true(vec_duplicate_all(as.raw(c(1, 1))))
-  expect_true(vec_duplicate_all(c(1, 1) + 2i))
+  expect_true(vec_equal_all(c(TRUE, TRUE)))
+  expect_true(vec_equal_all(c(2L, 2L)))
+  expect_true(vec_equal_all(c(2, 2)))
+  expect_true(vec_equal_all(c("1", "1")))
+  expect_true(vec_equal_all(list(1:3, 1:3)))
+  expect_true(vec_equal_all(as.raw(c(1, 1))))
+  expect_true(vec_equal_all(c(1, 1) + 2i))
 
-  expect_false(vec_duplicate_all(c(TRUE, FALSE)))
-  expect_false(vec_duplicate_all(c(1L, 2L)))
-  expect_false(vec_duplicate_all(c(1, 2)))
-  expect_false(vec_duplicate_all(c("1", "2")))
-  expect_false(vec_duplicate_all(list(1, 1:3)))
-  expect_false(vec_duplicate_all(as.raw(c(1, 2))))
-  expect_false(vec_duplicate_all(c(1, 2) + 2i))
+  expect_false(vec_equal_all(c(TRUE, FALSE)))
+  expect_false(vec_equal_all(c(1L, 2L)))
+  expect_false(vec_equal_all(c(1, 2)))
+  expect_false(vec_equal_all(c("1", "2")))
+  expect_false(vec_equal_all(list(1, 1:3)))
+  expect_false(vec_equal_all(as.raw(c(1, 2))))
+  expect_false(vec_equal_all(c(1, 2) + 2i))
 })
 
 test_that("correct behavior for size 0 input", {
-  expect_true(vec_duplicate_all(NULL))
-  expect_true(vec_duplicate_all(integer()))
-  expect_true(vec_duplicate_all(list()))
-  expect_true(vec_duplicate_all(new_data_frame()))
+  expect_true(vec_equal_all(NULL))
+  expect_true(vec_equal_all(integer()))
+  expect_true(vec_equal_all(list()))
+  expect_true(vec_equal_all(new_data_frame()))
 })
 
 test_that("correct behavior for size 1 input", {
-  expect_true(vec_duplicate_all(1))
-  expect_true(vec_duplicate_all(list(1)))
-  expect_true(vec_duplicate_all(data_frame(x = 1)))
+  expect_true(vec_equal_all(1))
+  expect_true(vec_equal_all(list(1)))
+  expect_true(vec_equal_all(data_frame(x = 1)))
 })
 
-test_that("NAs are considered duplicates", {
-  expect_true(vec_duplicate_all(c(NA, NA)))
-  expect_true(vec_duplicate_all(c(NA_integer_, NA_integer_)))
-  expect_true(vec_duplicate_all(c(NA_real_, NA_real_)))
-  expect_true(vec_duplicate_all(c(NA_character_, NA_character_)))
-  expect_true(vec_duplicate_all(list(NULL, NULL)))
+test_that("`na_equal` works", {
+  expect_equal(vec_equal_all(c(NA, NA)), NA)
+  expect_equal(vec_equal_all(c(NA_integer_, NA_integer_)), NA)
+  expect_equal(vec_equal_all(c(NA_real_, NA_real_)), NA)
+  expect_equal(vec_equal_all(c(NA_character_, NA_character_)), NA)
+  expect_equal(vec_equal_all(list(NULL, NULL)), NA)
+
+  expect_true(vec_equal_all(c(NA, NA), na_equal = TRUE))
+  expect_true(vec_equal_all(c(NA_integer_, NA_integer_), na_equal = TRUE))
+  expect_true(vec_equal_all(c(NA_real_, NA_real_), na_equal = TRUE))
+  expect_true(vec_equal_all(c(NA_character_, NA_character_), na_equal = TRUE))
+  expect_true(vec_equal_all(list(NULL, NULL), na_equal = TRUE))
 })
 
 test_that("double special values", {
-  expect_true(vec_duplicate_all(c(NaN, NaN)))
-  expect_false(vec_duplicate_all(c(NaN, NA)))
-  expect_false(vec_duplicate_all(c(NA, NaN)))
+  expect_true(vec_equal_all(c(NaN, NaN), na_equal = TRUE))
+  expect_false(vec_equal_all(c(NaN, NA), na_equal = TRUE))
+  expect_false(vec_equal_all(c(NA, NaN), na_equal = TRUE))
 
-  expect_true(vec_duplicate_all(c(Inf, Inf)))
-  expect_true(vec_duplicate_all(c(-Inf, -Inf)))
+  expect_true(vec_equal_all(c(Inf, Inf)))
+  expect_true(vec_equal_all(c(-Inf, -Inf)))
 })
 
 test_that("data frames are compared row wise", {
   df1 <- data_frame(x = c(1, 1), y = c("a", "a"))
-  expect_true(vec_duplicate_all(df1))
+  expect_true(vec_equal_all(df1))
 
   df2 <- data_frame(x = c(1, 2), y = c("a", "a"))
-  expect_false(vec_duplicate_all(df2))
+  expect_false(vec_equal_all(df2))
 })
 
 test_that("the equality proxy is taken recursively", {
@@ -435,14 +441,14 @@ test_that("the equality proxy is taken recursively", {
   y <- tuple(c(1, 1, 1), 1:3)
   df2 <- data_frame(y = y)
 
-  expect_equal(vec_duplicate_all(df), FALSE)
-  expect_equal(vec_duplicate_all(df2), TRUE)
+  expect_equal(vec_equal_all(df), FALSE)
+  expect_equal(vec_equal_all(df2), TRUE)
 })
 
 test_that("can detect duplicates among strings with different encodings", {
   for (x_encoding in encodings()) {
     for (y_encoding in encodings()) {
-      expect_equal(vec_duplicate_all(c(x_encoding, y_encoding)), TRUE)
+      expect_equal(vec_equal_all(c(x_encoding, y_encoding)), TRUE)
     }
   }
 })
@@ -451,6 +457,6 @@ test_that("duplicate detection is known to fail when comparing bytes to other en
   error <- "translating strings with \"bytes\" encoding"
 
   for (enc in encodings()) {
-    expect_error(vec_duplicate_all(c(encoding_bytes(), enc)), error)
+    expect_error(vec_equal_all(c(encoding_bytes(), enc)), error)
   }
 })
