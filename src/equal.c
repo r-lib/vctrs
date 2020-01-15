@@ -684,50 +684,7 @@ static int df_equal_all_within(SEXP x, bool na_equal, R_len_t size) {
 
 // -----------------------------------------------------------------------------
 
-#define EQUAL_ALL_BETWEEN(CTYPE, CONST_DEREF, SCALAR_EQUAL) \
-do {                                                        \
-  SEXP out = PROTECT(Rf_allocVector(LGLSXP, 1));            \
-  int* p_out = LOGICAL(out);                                \
-  *p_out = 1;                                               \
-                                                            \
-  const CTYPE* p_x = CONST_DEREF(x);                        \
-  const CTYPE* p_y = CONST_DEREF(y);                        \
-                                                            \
-  for (R_len_t i = 0; i < size; ++i, ++p_x, ++p_y) {        \
-    int eq = SCALAR_EQUAL(p_x, p_y, na_equal);              \
-                                                            \
-    if (eq <= 0) {                                          \
-      *p_out = eq;                                          \
-      break;                                                \
-    }                                                       \
-  }                                                         \
-                                                            \
-  UNPROTECT(6);                                             \
-  return out;                                               \
-}                                                           \
-while (0)
-
-#define EQUAL_ALL_BETWEEN_BARRIER(SCALAR_EQUAL)  \
-do {                                             \
-  SEXP out = PROTECT(Rf_allocVector(LGLSXP, 1)); \
-  int* p_out = LOGICAL(out);                     \
-  *p_out = 1;                                    \
-                                                 \
-  for (R_len_t i = 0; i < size; ++i) {           \
-    int eq = SCALAR_EQUAL(x, i, y, i, na_equal); \
-                                                 \
-    if (eq <= 0) {                               \
-      *p_out = eq;                               \
-      break;                                     \
-    }                                            \
-  }                                              \
-                                                 \
-  UNPROTECT(6);                                  \
-  return out;                                    \
-}                                                \
-while (0)
-
-static SEXP df_equal_all_between(SEXP x, SEXP y, bool na_equal, R_len_t n_row);
+static int vec_equal_all_between_impl(SEXP x, SEXP y, bool na_equal, R_len_t size);
 
 static SEXP vec_equal_all_between(SEXP x, SEXP y, bool na_equal, SEXP ptype) {
   SEXP args = PROTECT(Rf_allocVector(VECSXP, 2));
@@ -752,38 +709,68 @@ static SEXP vec_equal_all_between(SEXP x, SEXP y, bool na_equal, SEXP ptype) {
   x = PROTECT(vec_proxy_equal(x));
   y = PROTECT(vec_proxy_equal(y));
 
+  int out = vec_equal_all_between_impl(x, y, na_equal, size);
+
+  UNPROTECT(5);
+  return Rf_ScalarLogical(out);
+}
+
+#define EQUAL_ALL_BETWEEN(CTYPE, CONST_DEREF, SCALAR_EQUAL) \
+do {                                                        \
+  const CTYPE* p_x = CONST_DEREF(x);                        \
+  const CTYPE* p_y = CONST_DEREF(y);                        \
+                                                            \
+  for (R_len_t i = 0; i < size; ++i, ++p_x, ++p_y) {        \
+    int eq = SCALAR_EQUAL(p_x, p_y, na_equal);              \
+                                                            \
+    if (eq <= 0) {                                          \
+      out = eq;                                             \
+      break;                                                \
+    }                                                       \
+  }                                                         \
+}                                                           \
+while (0)
+
+#define EQUAL_ALL_BETWEEN_BARRIER(SCALAR_EQUAL)  \
+do {                                             \
+  for (R_len_t i = 0; i < size; ++i) {           \
+    int eq = SCALAR_EQUAL(x, i, y, i, na_equal); \
+                                                 \
+    if (eq <= 0) {                               \
+      out = eq;                                  \
+      break;                                     \
+    }                                            \
+  }                                              \
+}                                                \
+while (0)
+
+static int df_equal_all_between(SEXP x, SEXP y, bool na_equal, R_len_t size);
+
+static int vec_equal_all_between_impl(SEXP x, SEXP y, bool na_equal, R_len_t size) {
+  int out = 1;
+
   switch (vec_proxy_typeof(x)) {
-  case vctrs_type_logical:   EQUAL_ALL_BETWEEN(int, LOGICAL_RO, lgl_equal_scalar);
-  case vctrs_type_integer:   EQUAL_ALL_BETWEEN(int, INTEGER_RO, int_equal_scalar);
-  case vctrs_type_double:    EQUAL_ALL_BETWEEN(double, REAL_RO, dbl_equal_scalar);
-  case vctrs_type_raw:       EQUAL_ALL_BETWEEN(Rbyte, RAW_RO, raw_equal_scalar);
-  case vctrs_type_complex:   EQUAL_ALL_BETWEEN(Rcomplex, COMPLEX_RO, cpl_equal_scalar);
-  case vctrs_type_character: EQUAL_ALL_BETWEEN(SEXP, STRING_PTR_RO, chr_equal_scalar);
-  case vctrs_type_list:      EQUAL_ALL_BETWEEN_BARRIER(list_equal_scalar);
-  case vctrs_type_dataframe: {
-    SEXP out = df_equal_all_between(x, y, na_equal, size);
-    UNPROTECT(5);
-    return out;
-  }
+  case vctrs_type_logical:   EQUAL_ALL_BETWEEN(int, LOGICAL_RO, lgl_equal_scalar); break;
+  case vctrs_type_integer:   EQUAL_ALL_BETWEEN(int, INTEGER_RO, int_equal_scalar); break;
+  case vctrs_type_double:    EQUAL_ALL_BETWEEN(double, REAL_RO, dbl_equal_scalar); break;
+  case vctrs_type_raw:       EQUAL_ALL_BETWEEN(Rbyte, RAW_RO, raw_equal_scalar); break;
+  case vctrs_type_complex:   EQUAL_ALL_BETWEEN(Rcomplex, COMPLEX_RO, cpl_equal_scalar); break;
+  case vctrs_type_character: EQUAL_ALL_BETWEEN(SEXP, STRING_PTR_RO, chr_equal_scalar); break;
+  case vctrs_type_list:      EQUAL_ALL_BETWEEN_BARRIER(list_equal_scalar); break;
+  case vctrs_type_dataframe: out = df_equal_all_between(x, y, na_equal, size); break;
   case vctrs_type_scalar:    Rf_errorcall(R_NilValue, "Can't detect equality in scalars with `vec_equal_all()`");
   default:                   Rf_error("Unimplemented type in `vec_equal_all()`");
   }
+
+  return out;
 }
 
 #undef EQUAL_ALL_BETWEEN
 #undef EQUAL_ALL_BETWEEN_BARRIER
 
+static int df_equal_all_between(SEXP x, SEXP y, bool na_equal, R_len_t size) {
+  int out = 1;
 
-static int df_equal_all_between_impl(SEXP x, SEXP y, bool na_equal, R_len_t n_row);
-
-static SEXP df_equal_all_between(SEXP x, SEXP y, bool na_equal, R_len_t n_row) {
-  int out = df_equal_all_between_impl(x, y, na_equal, n_row);
-  return Rf_ScalarLogical(out);
-}
-
-static int vec_equal_all_between_col(SEXP x, SEXP y, bool na_equal, R_len_t n_row);
-
-static int df_equal_all_between_impl(SEXP x, SEXP y, bool na_equal, R_len_t n_row) {
   int n_col = Rf_length(x);
 
   if (n_col != Rf_length(y)) {
@@ -794,64 +781,16 @@ static int df_equal_all_between_impl(SEXP x, SEXP y, bool na_equal, R_len_t n_ro
     SEXP x_col = VECTOR_ELT(x, i);
     SEXP y_col = VECTOR_ELT(y, i);
 
-    int eq = vec_equal_all_between_col(x_col, y_col, na_equal, n_row);
+    int eq = vec_equal_all_between_impl(x_col, y_col, na_equal, size);
 
     if (eq <= 0) {
-      return eq;
+      out = eq;
+      break;
     }
   }
 
-  return 1;
+  return out;
 }
-
-#define EQUAL_ALL_BETWEEN_COL(CTYPE, CONST_DEREF, SCALAR_EQUAL) \
-do {                                                            \
-  const CTYPE* p_x = CONST_DEREF(x);                            \
-  const CTYPE* p_y = CONST_DEREF(y);                            \
-                                                                \
-  for (R_len_t i = 0; i < n_row; ++i, ++p_x, ++p_y) {           \
-    int eq = SCALAR_EQUAL(p_x, p_y, na_equal);                  \
-                                                                \
-    if (eq <= 0) {                                              \
-      return eq;                                                \
-    }                                                           \
-  }                                                             \
-                                                                \
-  return 1;                                                     \
-}                                                               \
-while (0)
-
-#define EQUAL_ALL_BETWEEN_COL_BARRIER(SCALAR_EQUAL) \
-do {                                                \
-  for (R_len_t i = 0; i < n_row; ++i) {             \
-    int eq = SCALAR_EQUAL(x, i, y, i, na_equal);    \
-                                                    \
-    if (eq <= 0) {                                  \
-      return eq;                                    \
-    }                                               \
-  }                                                 \
-                                                    \
-  return 1;                                         \
-}                                                   \
-while (0)
-
-static int vec_equal_all_between_col(SEXP x, SEXP y, bool na_equal, R_len_t n_row) {
-  switch (vec_proxy_typeof(x)) {
-  case vctrs_type_logical:   EQUAL_ALL_BETWEEN_COL(int, LOGICAL_RO, lgl_equal_scalar);
-  case vctrs_type_integer:   EQUAL_ALL_BETWEEN_COL(int, INTEGER_RO, int_equal_scalar);
-  case vctrs_type_double:    EQUAL_ALL_BETWEEN_COL(double, REAL_RO, dbl_equal_scalar);
-  case vctrs_type_raw:       EQUAL_ALL_BETWEEN_COL(Rbyte, RAW_RO, raw_equal_scalar);
-  case vctrs_type_complex:   EQUAL_ALL_BETWEEN_COL(Rcomplex, COMPLEX_RO, cpl_equal_scalar);
-  case vctrs_type_character: EQUAL_ALL_BETWEEN_COL(SEXP, STRING_PTR_RO, chr_equal_scalar);
-  case vctrs_type_list:      EQUAL_ALL_BETWEEN_COL_BARRIER(list_equal_scalar);
-  case vctrs_type_dataframe: return df_equal_all_between_impl(x, y, na_equal, n_row);
-  case vctrs_type_scalar:    Rf_errorcall(R_NilValue, "Can't detect equality in scalars with `vec_equal_all()`");
-  default:                   Rf_error("Unimplemented type in `vec_equal_all()`");
-  }
-}
-
-#undef EQUAL_ALL_BETWEEN_COL
-#undef EQUAL_ALL_BETWEEN_COL_BARRIER
 
 // -----------------------------------------------------------------------------
 
