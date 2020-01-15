@@ -289,5 +289,5 @@ x The locations 4 and 7 are not consecutive.
 > num_as_location(c(1:5, 7, 1, 10), 3, oob = "extend")
 Error: Can't index beyond the end with non-consecutive locations.
 i The input has size 3.
-x The locations 4, 7 and 10 are not consecutive.
+x The locations 4, 7, and 10 are not consecutive.
 
