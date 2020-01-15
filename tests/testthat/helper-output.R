@@ -9,3 +9,6 @@ try_cat <- function(expr) {
   cat("\n\n\n")
   out
 }
+
+# Dummy until implemented in testthat
+verify_errors <- identity

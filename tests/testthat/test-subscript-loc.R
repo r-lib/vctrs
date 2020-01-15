@@ -5,20 +5,33 @@ test_that("vec_as_location2() returns a position", {
 })
 
 test_that("vec_as_location2() requires integer or character inputs", {
-  expect_error(vec_as_location2(TRUE, 10L), class = "vctrs_error_subscript2_bad_type")
-  expect_error(vec_as_location2(mtcars, 10L), class = "vctrs_error_subscript2_bad_type")
-  expect_error(vec_as_location2(env(), 10L), class = "vctrs_error_subscript2_bad_type")
-  expect_error(vec_as_location2(foobar(), 10L), class = "vctrs_error_subscript2_bad_type")
-  expect_error(vec_as_location2(2.5, 10L), class = "vctrs_error_subscript2_bad_type")
+  verify_errors({
+    expect_error(vec_as_location2(TRUE, 10L), class = "vctrs_error_subscript2_bad_type")
+    expect_error(vec_as_location2(mtcars, 10L), class = "vctrs_error_subscript2_bad_type")
+    expect_error(vec_as_location2(env(), 10L), class = "vctrs_error_subscript2_bad_type")
+    expect_error(vec_as_location2(foobar(), 10L), class = "vctrs_error_subscript2_bad_type")
+    expect_error(vec_as_location2(2.5, 10L), class = "vctrs_error_subscript2_bad_type")
+
+    "Idem with custom `arg`"
+    expect_error(vec_as_location2(foobar(), 10L, arg = "foo"), class = "vctrs_error_subscript2_bad_type")
+    expect_error(vec_as_location2(2.5, 3L, arg = "foo"), class = "vctrs_error_subscript2_bad_type")
+  })
 })
 
 test_that("vec_as_location() requires integer, character, or logical inputs", {
-  expect_error(vec_as_location(mtcars, 10L), class = "vctrs_error_subscript_bad_type")
-  expect_error(vec_as_location(env(), 10L), class = "vctrs_error_subscript_bad_type")
-  expect_error(vec_as_location(foobar(), 10L), class = "vctrs_error_subscript_bad_type")
-  expect_error(vec_as_location(2.5, 10L), class = "vctrs_error_subscript_bad_type")
-  expect_error(vec_as_location(list(), 10L), class = "vctrs_error_subscript_bad_type")
-  expect_error(vec_as_location(function() NULL, 10L), class = "vctrs_error_subscript_bad_type")
+  verify_errors({
+    expect_error(vec_as_location(mtcars, 10L), class = "vctrs_error_subscript_bad_type")
+    expect_error(vec_as_location(env(), 10L), class = "vctrs_error_subscript_bad_type")
+    expect_error(vec_as_location(foobar(), 10L), class = "vctrs_error_subscript_bad_type")
+    expect_error(vec_as_location(2.5, 10L), class = "vctrs_error_subscript_bad_type")
+    expect_error(vec_as_location(list(), 10L), class = "vctrs_error_subscript_bad_type")
+    expect_error(vec_as_location(function() NULL, 10L), class = "vctrs_error_subscript_bad_type")
+
+    "Idem with custom `arg`"
+    expect_error(vec_as_location(env(), 10L, arg = "foo"), class = "vctrs_error_subscript_bad_type")
+    expect_error(vec_as_location(foobar(), 10L, arg = "foo"), class = "vctrs_error_subscript_bad_type")
+    expect_error(vec_as_location(2.5, 3L, arg = "foo"), class = "vctrs_error_subscript_bad_type")
+  })
 })
 
 test_that("vec_as_location2() and vec_as_location() require integer- or character-like OO inputs", {
@@ -46,28 +59,48 @@ test_that("vec_as_location2() and vec_as_location() require integer- or characte
 })
 
 test_that("vec_as_location() and variants check for OOB elements", {
-  expect_error(vec_as_location(10L, 2L), class = "vctrs_error_subscript_oob_location")
-  expect_error(vec_as_location2(10L, 2L), class = "vctrs_error_subscript_oob_location")
+  verify_errors({
+    "Numeric indexing"
+    expect_error(vec_as_location(10L, 2L), class = "vctrs_error_subscript_oob_location")
+    expect_error(vec_as_location2(10L, 2L), class = "vctrs_error_subscript_oob_location")
+
+    "Character indexing"
+    expect_error(vec_as_location("foo", 1L, names = "bar"), class = "vctrs_error_subscript_oob_name")
+    expect_error(vec_as_location2("foo", 1L, names = "bar"), class = "vctrs_error_subscript_oob_name")
+  })
+
   expect_error(num_as_location(10L, 2L), class = "vctrs_error_subscript_oob_location")
   expect_error(num_as_location2(10L, 2L), class = "vctrs_error_subscript_oob_location")
-
-  expect_error(vec_as_location("foo", 1L, names = "bar"), class = "vctrs_error_subscript_oob_name")
-  expect_error(vec_as_location2("foo", 1L, names = "bar"), class = "vctrs_error_subscript_oob_name")
 })
 
 test_that("vec_as_location2() requires length 1 inputs", {
-  expect_error(vec_as_location2(1:2, 2L), class = "vctrs_error_subscript2_bad_type")
-  expect_error(vec_as_location2(c("foo", "bar"), 2L, c("foo", "bar")), class = "vctrs_error_subscript2_bad_type")
+  verify_errors({
+    expect_error(vec_as_location2(1:2, 2L), class = "vctrs_error_subscript2_bad_type")
+    expect_error(vec_as_location2(c("foo", "bar"), 2L, c("foo", "bar")), class = "vctrs_error_subscript2_bad_type")
+
+    "Idem with custom `arg`"
+    expect_error(vec_as_location2(1:2, 2L, arg = "foo"), class = "vctrs_error_subscript2_bad_type")
+    expect_error(vec_as_location2(mtcars, 10L, arg = "foo"), class = "vctrs_error_subscript2_bad_type")
+    expect_error(vec_as_location2(1:2, 2L, arg = "foo"), class = "vctrs_error_subscript2_bad_type")
+  })
 })
 
 test_that("vec_as_location2() requires positive integers", {
-  expect_error(vec_as_location2(0, 2L), class = "vctrs_error_subscript2_bad_type")
-  expect_error(vec_as_location2(-1, 2L), class = "vctrs_error_subscript2_bad_type")
+  verify_errors({
+    expect_error(vec_as_location2(0, 2L), class = "vctrs_error_subscript2_bad_type")
+    expect_error(vec_as_location2(-1, 2L), class = "vctrs_error_subscript2_bad_type")
+    "Idem with custom `arg`"
+    expect_error(vec_as_location2(0, 2L, arg = "foo"), class = "vctrs_error_subscript2_bad_type")
+  })
 })
 
 test_that("vec_as_location2() fails with NA", {
-  expect_error(vec_as_location2(na_int, 2L), class = "vctrs_error_subscript2_bad_type")
-  expect_error(vec_as_location2(na_chr, 1L, names = "foo"), class = "vctrs_error_subscript2_bad_type")
+  verify_errors({
+    expect_error(vec_as_location2(na_int, 2L), class = "vctrs_error_subscript2_bad_type")
+    expect_error(vec_as_location2(na_chr, 1L, names = "foo"), class = "vctrs_error_subscript2_bad_type")
+    "Idem with custom `arg`"
+    expect_error(vec_as_location2(na_int, 2L, arg = "foo"), class = "vctrs_error_subscript2_bad_type")
+  })
 })
 
 test_that("vec_as_location2() doesn't allow lossy casts", {
@@ -122,7 +155,9 @@ test_that("num_as_location() optionally allows negative indices", {
 })
 
 test_that("num_as_location() optionally forbids negative indices", {
-  expect_error(num_as_location(dbl(1, -1), 2L, negative = "error"), class = "vctrs_error_location_bad_type")
+  verify_errors({
+    expect_error(num_as_location(dbl(1, -1), 2L, negative = "error"), class = "vctrs_error_location_bad_type")
+  })
   expect_error(num_as_location(c(1, -10), 2L, negative = "error"), class = "vctrs_error_location_bad_type")
 })
 
@@ -134,36 +169,44 @@ test_that("vec_as_location() handles NULL", {
 })
 
 test_that("vec_as_location() checks for mix of negative and missing locations", {
-  expect_error(
-    vec_as_location(-c(1L, NA), 30),
-    class = "vctrs_error_location_negative_missing"
-  )
-  expect_error(
-    vec_as_location(-c(1L, rep(NA, 10)), 30),
-    class = "vctrs_error_location_negative_missing"
-  )
+  verify_errors({
+    expect_error(
+      vec_as_location(-c(1L, NA), 30),
+      class = "vctrs_error_location_negative_missing"
+    )
+    expect_error(
+      vec_as_location(-c(1L, rep(NA, 10)), 30),
+      class = "vctrs_error_location_negative_missing"
+    )
+  })
 })
 
 test_that("vec_as_location() checks for mix of negative and positive locations", {
-  expect_error(
-    vec_as_location(c(-1L, 1L), 30),
-    class = "vctrs_error_location_negative_positive"
-  )
-  expect_error(
-    vec_as_location(c(-1L, rep(1L, 10)), 30),
-    class = "vctrs_error_location_negative_positive"
-  )
+  verify_errors({
+    expect_error(
+      vec_as_location(c(-1L, 1L), 30),
+      class = "vctrs_error_location_negative_positive"
+    )
+    expect_error(
+      vec_as_location(c(-1L, rep(1L, 10)), 30),
+      class = "vctrs_error_location_negative_positive"
+    )
+  })
 })
 
 test_that("logical subscripts must match size of indexed vector", {
-  expect_error(
-    vec_as_location(c(TRUE, FALSE), 3),
-    class = "vctrs_error_indicator_bad_size"
-  )
+  verify_errors({
+    expect_error(
+      vec_as_location(c(TRUE, FALSE), 3),
+      class = "vctrs_error_indicator_bad_size"
+    )
+  })
 })
 
 test_that("character subscripts require named vectors", {
-  expect_error(vec_as_location(letters[1], 3), "unnamed vector")
+  verify_errors({
+    expect_error(vec_as_location(letters[1], 3), "unnamed vector")
+  })
 })
 
 test_that("conversion to locations has informative error messages", {
@@ -225,14 +268,12 @@ test_that("conversion to locations has informative error messages", {
     vec_as_location2(na_int, 2L)
     vec_as_location2(na_chr, 1L, names = "foo")
     "Idem with custom `arg`"
-    vec_as_location2(na_int, 2L)
+    vec_as_location2(na_int, 2L, arg = "foo")
 
     "# vec_as_location() and variants check for OOB elements"
     "Numeric subscripts"
     vec_as_location(10L, 2L)
     vec_as_location2(10L, 2L)
-    num_as_location(10L, 2L)
-    num_as_location2(10L, 2L)
     "Character subscripts"
     vec_as_location("foo", 1L, names = "bar")
     vec_as_location2("foo", 1L, names = "bar")

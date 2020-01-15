@@ -243,9 +243,9 @@ x `i` can't be `NA`.
 i This subscript can't be missing.
 
 > # Idem with custom `arg`
-> vec_as_location2(na_int, 2L)
+> vec_as_location2(na_int, 2L, arg = "foo")
 Error: Must extract with a single subscript.
-x `i` can't be `NA`.
+x `foo` can't be `NA`.
 i This subscript can't be missing.
 
 
@@ -259,16 +259,6 @@ x Can't subset location 10.
 i There are only 2 elements.
 
 > vec_as_location2(10L, 2L)
-Error: Must index existing elements.
-x Can't subset location 10.
-i There are only 2 elements.
-
-> num_as_location(10L, 2L)
-Error: Must index existing elements.
-x Can't subset location 10.
-i There are only 2 elements.
-
-> num_as_location2(10L, 2L)
 Error: Must index existing elements.
 x Can't subset location 10.
 i There are only 2 elements.
