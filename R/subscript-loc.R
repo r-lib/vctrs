@@ -143,7 +143,7 @@ vec_as_location2_result <- function(i,
     parent <- result$err
     return(result(err = new_error_location2_bad_type(
       i = i,
-      .arg = arg,
+      arg = arg,
       # FIXME: Should body fields in parents be automatically inherited?
       body = function(...) cnd_body(parent),
       parent = parent
@@ -156,7 +156,7 @@ vec_as_location2_result <- function(i,
   if (length(i) != 1L) {
     return(result(err = new_error_location2_bad_type(
       i = i,
-      .arg = arg,
+      arg = arg,
       body = cnd_bullets_location2_need_scalar
     )))
   }
@@ -170,7 +170,7 @@ vec_as_location2_result <- function(i,
     if (!allow_missing && is.na(i)) {
       result <- result(err = new_error_location2_bad_type(
         i = i,
-        .arg = arg,
+        arg = arg,
         body = cnd_bullets_location2_need_present
       ))
     } else {
@@ -182,7 +182,7 @@ vec_as_location2_result <- function(i,
   if (i == 0L) {
     return(result(err = new_error_location2_bad_type(
       i = i,
-      .arg = arg,
+      arg = arg,
       body = cnd_bullets_location2_need_non_zero
     )))
   }
@@ -190,7 +190,7 @@ vec_as_location2_result <- function(i,
   if (!allow_negative && neg) {
     return(result(err = new_error_location2_bad_type(
       i = i,
-      .arg = arg,
+      arg = arg,
       body = cnd_bullets_location2_need_non_negative
     )))
   }
@@ -215,7 +215,7 @@ vec_as_location2_result <- function(i,
     result(err = new_error_location2_bad_type(
       i = i,
       parent = err,
-      .arg = arg
+      arg = arg
     ))
   }
 }
@@ -224,7 +224,7 @@ vec_as_location2_result <- function(i,
 stop_location_negative_missing <- function(i) {
   cnd_signal(new_error_location_bad_type(
     i,
-    .subclass = "vctrs_error_location_negative_missing"
+    class = "vctrs_error_location_negative_missing"
   ))
 }
 #' @export
@@ -251,7 +251,7 @@ cnd_body.vctrs_error_location_negative_missing <- function(cnd, ...) {
 stop_location_negative_positive <- function(i) {
   cnd_signal(new_error_location_bad_type(
     i,
-    .subclass = "vctrs_error_location_negative_positive"
+    class = "vctrs_error_location_negative_positive"
   ))
 }
 #' @export
@@ -277,37 +277,37 @@ cnd_body.vctrs_error_location_negative_positive <- function(cnd, ...) {
 
 new_error_location_bad_type <- function(i,
                                         ...,
-                                        .arg = "i",
-                                        .subclass = NULL) {
+                                        arg = "i",
+                                        class = NULL) {
   new_error_subscript_bad_type(
-    .subclass = c(.subclass, "vctrs_error_location_bad_type"),
+    class = c(class, "vctrs_error_location_bad_type"),
     i = i,
     indicator = "error",
     location = "coerce",
     name = "coerce",
-    .arg = .arg,
+    arg = arg,
     ...
   )
 }
 
 new_error_location2_bad_type <- function(i,
                                          ...,
-                                         .arg = "i",
-                                         .subclass = NULL) {
+                                         arg = "i",
+                                         class = NULL) {
   new_error_subscript2_bad_type(
-    .subclass = c(.subclass, "vctrs_error_location2_bad_type"),
+    class = class,
     i = i,
     indicator = "error",
     location = "coerce",
     name = "coerce",
-    .arg = .arg,
+    arg = arg,
     ...
   )
 }
 
 
 cnd_bullets_location2_need_scalar <- function(cnd, ...) {
-  arg <- cnd$.arg %||% "i"
+  arg <- cnd$arg %||% "i"
   size <- length(cnd$i)
   format_error_bullets(c(
     x = glue::glue("`{arg}` has the wrong size {size}."),
@@ -315,49 +315,49 @@ cnd_bullets_location2_need_scalar <- function(cnd, ...) {
   ))
 }
 cnd_bullets_location2_need_present <- function(cnd, ...) {
-  arg <- cnd$.arg %||% "i"
+  arg <- cnd$arg %||% "i"
   format_error_bullets(c(
     x = glue::glue("`{arg}` can't be `NA`."),
     i = "This subscript can't be missing."
   ))
 }
 cnd_bullets_location2_need_non_zero <- function(cnd, ...) {
-  arg <- cnd$.arg %||% "i"
+  arg <- cnd$arg %||% "i"
   format_error_bullets(c(
     x = glue::glue("`{arg}` can't be zero."),
     i = "This subscript must be a positive integer."
   ))
 }
 cnd_bullets_location2_need_non_negative <- function(cnd, ...) {
-  cnd$.arg <- cnd$.arg %||% "i"
+  cnd$arg <- cnd$arg %||% "i"
   format_error_bullets(c(
-    x = glue::glue_data(cnd, "`{.arg}` (with value {i}) has the wrong sign."),
+    x = glue::glue_data(cnd, "`{arg}` (with value {i}) has the wrong sign."),
     i = "This subscript must be a positive integer."
   ))
 }
 
 cnd_bullets_location_need_non_negative <- function(cnd, ...) {
-  cnd$.arg <- cnd$.arg %||% "i"
+  cnd$arg <- cnd$arg %||% "i"
   format_error_bullets(c(
-    x = glue::glue_data(cnd, "`{.arg}` contains negative locations."),
+    x = glue::glue_data(cnd, "`{arg}` contains negative locations."),
     i = "These subscripts must be positive integers."
   ))
 }
 
-stop_location_negative <- function(i, ..., .arg = "i") {
-  stop(new_error_location_bad_type(
+stop_location_negative <- function(i, ..., arg = "i") {
+  cnd_signal(new_error_location_bad_type(
     i,
-    .arg = .arg,
+    arg = arg,
     body = cnd_bullets_location_need_non_negative
   ))
 }
 
 stop_indicator_size <- function(i, n, arg = "i") {
-  cnd_signal(new_subscript_error(
+  cnd_signal(new_error_subscript(
     i,
     n = n,
-    .arg = arg,
-    .subclass = "vctrs_error_indicator_bad_size"
+    arg = arg,
+    class = "vctrs_error_indicator_bad_size"
   ))
 }
 #' @export

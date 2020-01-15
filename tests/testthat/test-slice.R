@@ -69,20 +69,6 @@ test_that("can't index beyond the end of a vector", {
   expect_error(vec_slice(1:2, -3L), class = "vctrs_error_subscript_oob_location")
 })
 
-test_that("oob error messages are properly constructed", {
-  verify_output(test_path("out", "error-index-oob.txt"), {
-    vec_slice(1:2, 3L)
-    vec_slice(c(bar = 1), "foo")
-
-    "Multiple OOB indices"
-    vec_slice(letters, c(100, 1000))
-    vec_slice(letters, c(1, 100:103, 2, 104:110))
-
-    vec_slice(set_names(letters), c("foo", "bar"))
-    vec_slice(set_names(letters), toupper(letters))
-  })
-})
-
 test_that("slicing non existing elements fails", {
   expect_error(vec_as_location("foo", 1L, "f"), class = "vctrs_error_subscript_oob_name")
   expect_error(vec_slice(c(f = 1), "foo"), class = "vctrs_error_subscript_oob_name")
@@ -806,11 +792,22 @@ test_that("vec_slice() works with Altrep classes with custom extract methods", {
   expect_equal(vec_slice(x, idx), x[idx])
 })
 
-verify_output(test_path("error", "test-slice.txt"), {
-  "Unnamed vector with character subscript"
-  vec_slice(1:3, letters[1])
+test_that("slice has informative error messages", {
+  verify_output(test_path("error", "test-slice.txt"), {
+    "# Unnamed vector with character subscript"
+    vec_slice(1:3, letters[1])
 
-  "Negative subscripts are checked"
-  vec_slice(1:3, -c(1L, NA))
-  vec_slice(1:3, c(-1L, 1L))
+    "# Negative subscripts are checked"
+    vec_slice(1:3, -c(1L, NA))
+    vec_slice(1:3, c(-1L, 1L))
+
+    "# oob error messages are properly constructed"
+    vec_slice(1:2, 3L)
+    vec_slice(c(bar = 1), "foo")
+    "Multiple OOB indices"
+    vec_slice(letters, c(100, 1000))
+    vec_slice(letters, c(1, 100:103, 2, 104:110))
+    vec_slice(set_names(letters), c("foo", "bar"))
+    vec_slice(set_names(letters), toupper(letters))
+  })
 })

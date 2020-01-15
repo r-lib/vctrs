@@ -8,7 +8,7 @@
 #' @param x,y Vectors
 #' @param details Any additional human readable details
 #' @param subclass Use if you want to further customise the class
-#' @param ...,message,.subclass Only use these fields when creating a subclass.
+#' @param ...,message,class Only use these fields when creating a subclass.
 #'
 #' @section Lossy cast errors:
 #'
@@ -40,14 +40,14 @@
 #' @name vctrs-conditions
 NULL
 
-stop_vctrs <- function(message = NULL, .subclass = NULL, ...) {
-  abort(message, .subclass = c(.subclass, "vctrs_error"), ...)
+stop_vctrs <- function(message = NULL, class = NULL, ...) {
+  abort(message, class = c(class, "vctrs_error"), ...)
 }
 
-stop_incompatible <- function(x, y, details = NULL, ..., message = NULL, .subclass = NULL) {
+stop_incompatible <- function(x, y, details = NULL, ..., message = NULL, class = NULL) {
   stop_vctrs(
     message,
-    .subclass = c(.subclass, "vctrs_error_incompatible"),
+    class = c(class, "vctrs_error_incompatible"),
     x = x,
     y = y,
     details = details,
@@ -67,7 +67,7 @@ stop_incompatible_type <- function(x, y,
                                    details = NULL,
                                    ...,
                                    message = NULL,
-                                   .subclass = NULL) {
+                                   class = NULL) {
   vec_assert(x)
   vec_assert(y)
 
@@ -96,7 +96,7 @@ stop_incompatible_type <- function(x, y,
     details = details,
     ...,
     message = message,
-    .subclass = c(.subclass, "vctrs_error_incompatible_type")
+    class = c(class, "vctrs_error_incompatible_type")
   )
 }
 
@@ -109,7 +109,7 @@ stop_incompatible_cast <- function(x,
                                    x_arg = "",
                                    to_arg = "",
                                    message = NULL,
-                                   .subclass = NULL) {
+                                   class = NULL) {
   if (is_null(message)) {
     x_label <- format_arg_label(vec_ptype_full(x), x_arg)
     to_label <- format_arg_label(vec_ptype_full(y), to_arg)
@@ -127,13 +127,13 @@ stop_incompatible_cast <- function(x,
     x_arg = x_arg,
     y_arg = to_arg,
     message = message,
-    .subclass = c(.subclass, "vctrs_error_incompatible_cast")
+    class = c(class, "vctrs_error_incompatible_cast")
   )
 }
 
 #' @rdname vctrs-conditions
 #' @export
-stop_incompatible_op <- function(op, x, y, details = NULL, ..., message = NULL, .subclass = NULL) {
+stop_incompatible_op <- function(op, x, y, details = NULL, ..., message = NULL, class = NULL) {
 
   message <- message %||% glue_lines(
     "<{vec_ptype_full(x)}> {op} <{vec_ptype_full(y)}> is not permitted",
@@ -146,7 +146,7 @@ stop_incompatible_op <- function(op, x, y, details = NULL, ..., message = NULL, 
     details = details,
     ...,
     message = message,
-    .subclass = c(.subclass, "vctrs_error_incompatible_op")
+    class = c(class, "vctrs_error_incompatible_op")
   )
 }
 
@@ -158,7 +158,7 @@ stop_incompatible_size <- function(x, y,
                                    details = NULL,
                                    ...,
                                    message = NULL,
-                                   .subclass = NULL) {
+                                   class = NULL) {
   vec_assert(x)
   vec_assert(y)
 
@@ -192,7 +192,7 @@ stop_incompatible_size <- function(x, y,
     details = details,
     ...,
     message = message,
-    .subclass = c(.subclass, "vctrs_error_incompatible_size")
+    class = c(class, "vctrs_error_incompatible_size")
   )
 }
 
@@ -220,7 +220,7 @@ maybe_lossy_cast <- function(result, x, to,
                              x_arg = "",
                              to_arg = "",
                              message = NULL,
-                             .subclass = NULL,
+                             class = NULL,
                              .deprecation = FALSE) {
   if (!any(lossy)) {
     return(result)
@@ -244,7 +244,7 @@ maybe_lossy_cast <- function(result, x, to,
       x_arg = x_arg,
       to_arg = to_arg,
       message = message,
-      .subclass = .subclass
+      class = class
     )
   )
 }
@@ -255,7 +255,7 @@ stop_lossy_cast <- function(x, to, result,
                             x_arg = "",
                             to_arg = "",
                             message = NULL,
-                            .subclass = NULL) {
+                            class = NULL) {
   stop_vctrs(
     message,
     x = x,
@@ -267,7 +267,7 @@ stop_lossy_cast <- function(x, to, result,
     locations = locations,
     details = details,
     ...,
-    .subclass = c(.subclass, "vctrs_error_cast_lossy")
+    class = c(class, "vctrs_error_cast_lossy")
   )
 }
 
@@ -403,7 +403,7 @@ stop_recycle_incompatible_size <- function(x_size, size, x_arg = "x") {
     x_size = x_size,
     size = size,
     x_arg = x_arg,
-    .subclass = "vctrs_error_recycle_incompatible_size"
+    class = "vctrs_error_recycle_incompatible_size"
   )
 }
 
@@ -422,10 +422,10 @@ cnd_body.vctrs_error_recycle_incompatible_size <- function(cnd, ...) {
 
 # Names -------------------------------------------------------------------
 
-stop_names <- function(message, .subclass, locations, ...) {
+stop_names <- function(message, class, locations, ...) {
   stop_vctrs(
     message,
-    .subclass = c(.subclass, "vctrs_error_names"),
+    class = c(class, "vctrs_error_names"),
     locations = locations,
     ...
   )
@@ -434,7 +434,7 @@ stop_names <- function(message, .subclass, locations, ...) {
 stop_names_cannot_be_empty <- function(locations) {
   stop_names(
     "Names must not be empty.",
-    .subclass = "vctrs_error_names_cannot_be_empty",
+    class = "vctrs_error_names_cannot_be_empty",
     locations = locations
   )
 }
@@ -442,7 +442,7 @@ stop_names_cannot_be_empty <- function(locations) {
 stop_names_cannot_be_dot_dot <- function(locations) {
   stop_names(
     "Names must not be of the form `...` or `..j`.",
-    .subclass = "vctrs_error_names_cannot_be_dot_dot",
+    class = "vctrs_error_names_cannot_be_dot_dot",
     locations = locations
   )
 }
@@ -450,7 +450,7 @@ stop_names_cannot_be_dot_dot <- function(locations) {
 stop_names_must_be_unique <- function(locations) {
   stop_names(
     "Names must be unique.",
-    .subclass = "vctrs_error_names_must_be_unique",
+    class = "vctrs_error_names_must_be_unique",
     locations = locations
   )
 }
@@ -467,16 +467,16 @@ stop_names_must_be_unique <- function(locations) {
 #'   `vctrs_error_subscript_oob_name` containing fields `i` and `names`.
 #'
 #' @param i For `stop_subscript_oob_location()`, a numeric vector of
-#'   positions. For `stop_subscript_oob_name()`, a character vector of
+#'   locations. For `stop_subscript_oob_name()`, a character vector of
 #'   names. `i` may contain both out-of-bounds and within-bounds
 #'   elements, only the former are used to construct the error
 #'   message.
 #' @param size The length of the vector to subset from.
 #' @inheritParams rlang::abort
 #' @export
-stop_subscript_oob_location <- function(i, size, ..., .subclass = NULL) {
+stop_subscript_oob_location <- function(i, size, ..., class = NULL) {
   stop_subscript_oob(
-    .subclass = c(.subclass, "vctrs_error_subscript_oob_location"),
+    class = c(class, "vctrs_error_subscript_oob_location"),
     i = i,
     size = size,
     ...
@@ -485,24 +485,24 @@ stop_subscript_oob_location <- function(i, size, ..., .subclass = NULL) {
 #' @rdname stop_subscript_oob_location
 #' @param names The names of the vector to subset from.
 #' @export
-stop_subscript_oob_name <- function(i, names, ..., .subclass = NULL) {
+stop_subscript_oob_name <- function(i, names, ..., class = NULL) {
   stop_subscript_oob(
-    .subclass = c(.subclass, "vctrs_error_subscript_oob_name"),
+    class = c(class, "vctrs_error_subscript_oob_name"),
     i = i,
     names = names,
     ...
   )
 }
-stop_subscript_oob <- function(i, ..., .subclass = NULL) {
+stop_subscript_oob <- function(i, ..., class = NULL) {
   stop_subscript(
-    .subclass = c(.subclass, "vctrs_error_subscript_oob"),
+    class = c(class, "vctrs_error_subscript_oob"),
     i = i,
     ...
   )
 }
-stop_subscript <- function(i, ..., .subclass = NULL) {
+stop_subscript <- function(i, ..., class = NULL) {
   abort(
-    .subclass = c(.subclass, "vctrs_error_subscript"),
+    class = c(class, "vctrs_error_subscript"),
     i = i,
     ...
   )
@@ -525,8 +525,8 @@ cnd_body.vctrs_error_subscript_oob_location <- function(cnd) {
   format_error_bullets(c(
     x = glue::glue(ngettext(
       length(oob),
-      "Can't subset position {oob_enum}.",
-      "Can't subset positions {oob_enum}."
+      "Can't subset location {oob_enum}.",
+      "Can't subset locations {oob_enum}."
     )),
     i = glue::glue("There are only {cnd$size} elements.")
   ))

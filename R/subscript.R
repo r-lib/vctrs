@@ -42,7 +42,7 @@ vec_as_subscript_result <- function(i, arg, indicator, location, name) {
   if (!vec_is(i)) {
     return(result(err = new_error_subscript_bad_type(
       i = i,
-      .arg = arg,
+      arg = arg,
       indicator = indicator,
       location = location,
       name = name
@@ -63,7 +63,7 @@ vec_as_subscript_result <- function(i, arg, indicator, location, name) {
     } else {
       return(result(err = new_error_subscript_bad_type(
         i,
-        .arg = arg,
+        arg = arg,
         indicator = indicator,
         location = location,
         name = name
@@ -109,7 +109,7 @@ vec_as_subscript_result <- function(i, arg, indicator, location, name) {
   if (action == "error") {
     result(err = new_error_subscript_bad_type(
       i = i,
-      .arg = arg,
+      arg = arg,
       indicator = indicator,
       location = location,
       name = name
@@ -170,7 +170,7 @@ vec_as_subscript2_result <- function(i,
       indicator = indicator,
       location = location,
       name = name,
-      .arg = arg,
+      arg = arg,
       body = bullets,
       parent = result$err$parent
     )
@@ -186,7 +186,7 @@ vec_as_subscript2_result <- function(i,
       indicator = indicator,
       location = location,
       name = name,
-      .arg = arg,
+      arg = arg,
       body = cnd_bullets_subscript_bad_base_type
     )))
   }
@@ -218,11 +218,11 @@ as_opts_subscript2_type <- function(x, arg = NULL) {
 }
 
 
-new_subscript_error <- function(.subclass = NULL, i, ..., .arg = "i") {
+new_error_subscript <- function(class = NULL, i, ..., arg = "i") {
   error_cnd(
-    .subclass = c(.subclass, "vctrs_error_subscript"),
+    c(class, "vctrs_error_subscript"),
     i = i,
-    .arg = .arg,
+    arg = arg,
     ...
   )
 }
@@ -231,21 +231,21 @@ new_error_subscript_bad_type <- function(i,
                                          location = "coerce",
                                          name = "coerce",
                                          ...,
-                                         .arg = "i",
-                                         .subclass = NULL) {
-  new_subscript_error(
-    .subclass = c(.subclass, "vctrs_error_subscript_bad_type"),
+                                         arg = "i",
+                                         class = NULL) {
+  new_error_subscript(
+    class = c(class, "vctrs_error_subscript_bad_type"),
     i = i,
     indicator = indicator,
     location = location,
     name = name,
-    .arg = .arg,
+    arg = arg,
     ...
   )
 }
 
 cnd_bullets_subscript_bad_base_type <- function(cnd, ...) {
-  arg <- cnd$.arg %||% "i"
+  arg <- cnd$arg %||% "i"
   type <- obj_type(cnd$i)
   expected_types <- collapse_subscript_type(cnd)
 
@@ -262,7 +262,7 @@ cnd_header.vctrs_error_subscript_bad_type <- function(cnd) {
 }
 #' @export
 cnd_body.vctrs_error_subscript_bad_type <- function(cnd) {
-  arg <- cnd$.arg %||% "i"
+  arg <- cnd$arg %||% "i"
   type <- obj_type(cnd$i)
   expected_types <- collapse_subscript_type(cnd, plural = TRUE)
 
@@ -294,15 +294,15 @@ new_error_subscript2_bad_type <- function(i,
                                           location,
                                           name,
                                           ...,
-                                          .arg = "i",
-                                          .subclass = NULL) {
-  new_subscript_error(
-    .subclass = c(.subclass, "vctrs_error_subscript2_bad_type"),
+                                          arg = "i",
+                                          class = NULL) {
+  new_error_subscript(
+    class = c(class, "vctrs_error_subscript2_bad_type"),
     i = i,
     indicator = indicator,
     location = location,
     name = name,
-    .arg = .arg,
+    arg = arg,
     ...
   )
 }

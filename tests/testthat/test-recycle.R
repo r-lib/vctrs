@@ -144,11 +144,10 @@ test_that("recycling data frames with matrices respects incompatible sizes", {
   )
 })
 
-test_that("incompatible recycling size has informative error", {
-  verify_output(test_path("out", "error-recycle.txt"), {
+test_that("recycling has informative errors", {
+  verify_output(test_path("error", "test-recycle.txt"), {
+    "# incompatible recycling size has informative error"
     vec_recycle(1:2, 4)
-
-    "With `x_arg`"
     vec_recycle(1:2, 4, x_arg = "foo")
   })
 })

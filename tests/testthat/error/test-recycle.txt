@@ -1,8 +1,11 @@
+
+incompatible recycling size has informative error
+=================================================
+
 > vec_recycle(1:2, 4)
 Error: `x` can't be recycled to size 4.
 x It must be size 4 or 1, not 2.
 
-> # With `x_arg`
 > vec_recycle(1:2, 4, x_arg = "foo")
 Error: `foo` can't be recycled to size 4.
 x It must be size 4 or 1, not 2.

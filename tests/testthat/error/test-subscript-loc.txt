@@ -40,7 +40,208 @@ x The subscript has size 2.
 Names
 =====
 
-> # Unnamed vector
+> # can't use character names to index an unnamed vector
 > vec_as_location(letters[1], 3)
 Error: Can't use character names to index an unnamed vector.
+
+
+vec_as_location() requires integer, character, or logical inputs
+================================================================
+
+> vec_as_location(mtcars, 10L)
+Error: Must subset with a proper subscript vector.
+x `i` has the wrong type `data.frame<
+  mpg : double
+  cyl : double
+  disp: double
+  hp  : double
+  drat: double
+  wt  : double
+  qsec: double
+  vs  : double
+  am  : double
+  gear: double
+  carb: double
+>`.
+i These indices must be indicators, locations or names.
+
+> vec_as_location(env(), 10L)
+Error: Must subset with a proper subscript vector.
+x `i` has the wrong type `environment`.
+i These indices must be indicators, locations or names.
+
+> vec_as_location(foobar(), 10L)
+Error: Must subset with a proper subscript vector.
+x `i` has the wrong type `vctrs_foobar`.
+i These indices must be indicators, locations or names.
+
+> vec_as_location(2.5, 3L)
+Error: Must subset with a proper subscript vector.
+x Lossy cast from `i` <double> to <integer>.
+
+> vec_as_location(list(), 10L)
+Error: Must subset with a proper subscript vector.
+x `i` has the wrong type `list`.
+i These indices must be indicators, locations or names.
+
+> vec_as_location(function() NULL, 10L)
+Error: Must subset with a proper subscript vector.
+x `i` has the wrong type `closure`.
+i These indices must be indicators, locations or names.
+
+> # Idem with custom `arg`
+> vec_as_location(env(), 10L, arg = "foo")
+Error: Must subset with a proper subscript vector.
+x `foo` has the wrong type `environment`.
+i These indices must be indicators, locations or names.
+
+> vec_as_location(foobar(), 10L, arg = "foo")
+Error: Must subset with a proper subscript vector.
+x `foo` has the wrong type `vctrs_foobar`.
+i These indices must be indicators, locations or names.
+
+> vec_as_location(2.5, 3L, arg = "foo")
+Error: Must subset with a proper subscript vector.
+x Lossy cast from `foo` <double> to <integer>.
+
+
+vec_as_location2() requires integer or character inputs
+=======================================================
+
+> vec_as_location2(TRUE, 10L)
+Error: Must extract with a single subscript.
+x `i` has the wrong type `logical`.
+i This subscript must be a location or a name.
+
+> vec_as_location2(mtcars, 10L)
+Error: Must extract with a single subscript.
+x `i` has the wrong type `data.frame<
+  mpg : double
+  cyl : double
+  disp: double
+  hp  : double
+  drat: double
+  wt  : double
+  qsec: double
+  vs  : double
+  am  : double
+  gear: double
+  carb: double
+>`.
+i This subscript must be a location or a name.
+
+> vec_as_location2(env(), 10L)
+Error: Must extract with a single subscript.
+x `i` has the wrong type `environment`.
+i This subscript must be a location or a name.
+
+> vec_as_location2(foobar(), 10L)
+Error: Must extract with a single subscript.
+x `i` has the wrong type `vctrs_foobar`.
+i This subscript must be a location or a name.
+
+> vec_as_location2(2.5, 3L)
+Error: Must extract with a single subscript.
+x Lossy cast from `i` <double> to <integer>.
+
+> # Idem with custom `arg`
+> vec_as_location2(foobar(), 10L, arg = "foo")
+Error: Must extract with a single subscript.
+x `foo` has the wrong type `vctrs_foobar`.
+i This subscript must be a location or a name.
+
+> vec_as_location2(2.5, 3L, arg = "foo")
+Error: Must extract with a single subscript.
+x Lossy cast from `foo` <double> to <integer>.
+
+
+vec_as_location2() requires length 1 inputs
+===========================================
+
+> vec_as_location2(1:2, 2L)
+Error: Must extract with a single subscript.
+x `i` has the wrong size 2.
+i This subscript must be size 1.
+
+> vec_as_location2(mtcars, 10L)
+Error: Must extract with a single subscript.
+x `i` has the wrong type `data.frame<
+  mpg : double
+  cyl : double
+  disp: double
+  hp  : double
+  drat: double
+  wt  : double
+  qsec: double
+  vs  : double
+  am  : double
+  gear: double
+  carb: double
+>`.
+i This subscript must be a location or a name.
+
+> # Idem with custom `arg`
+> vec_as_location2(1:2, 2L, arg = "foo")
+Error: Must extract with a single subscript.
+x `foo` has the wrong size 2.
+i This subscript must be size 1.
+
+> vec_as_location2(mtcars, 10L, arg = "foo")
+Error: Must extract with a single subscript.
+x `foo` has the wrong type `data.frame<
+  mpg : double
+  cyl : double
+  disp: double
+  hp  : double
+  drat: double
+  wt  : double
+  qsec: double
+  vs  : double
+  am  : double
+  gear: double
+  carb: double
+>`.
+i This subscript must be a location or a name.
+
+> vec_as_location2(1:2, 2L, arg = "foo")
+Error: Must extract with a single subscript.
+x `foo` has the wrong size 2.
+i This subscript must be size 1.
+
+
+vec_as_location2() requires positive integers
+=============================================
+
+> vec_as_location2(0, 2L)
+Error: Must extract with a single subscript.
+x `i` can't be zero.
+i This subscript must be a positive integer.
+
+> vec_as_location2(-1, 2L)
+Error: Must extract with a single subscript.
+x `i` (with value -1) has the wrong sign.
+i This subscript must be a positive integer.
+
+> # Idem with custom `arg`
+> vec_as_location2(0, 2L, arg = "foo")
+Error: Must extract with a single subscript.
+x `foo` can't be zero.
+i This subscript must be a positive integer.
+
+> # vec_as_location2() fails with NA
+> vec_as_location2(na_int, 2L)
+Error: Must extract with a single subscript.
+x `i` can't be `NA`.
+i This subscript can't be missing.
+
+> vec_as_location2(na_chr, 1L, names = "foo")
+Error: Must extract with a single subscript.
+x `i` can't be `NA`.
+i This subscript can't be missing.
+
+> # Idem with custom `arg`
+> vec_as_location2(na_int, 2L)
+Error: Must extract with a single subscript.
+x `i` can't be `NA`.
+i This subscript can't be missing.
 

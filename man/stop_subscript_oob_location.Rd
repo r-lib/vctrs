@@ -5,9 +5,9 @@
 \alias{stop_subscript_oob_name}
 \title{Out-of-bounds errors}
 \usage{
-stop_subscript_oob_location(i, size, ..., .subclass = NULL)
+stop_subscript_oob_location(i, size, ..., class = NULL)
 
-stop_subscript_oob_name(i, names, ..., .subclass = NULL)
+stop_subscript_oob_name(i, names, ..., class = NULL)
 }
 \arguments{
 \item{i}{For \code{stop_subscript_oob_location()}, a numeric vector of
@@ -20,10 +20,8 @@ message.}
 
 \item{...}{Additional data to be stored in the condition object.}
 
-\item{.subclass}{This argument was renamed to \code{class} in rlang
-0.4.2.  It will be deprecated in the next major version. This is
-for consistency with our conventions for class constructors
-documented in \url{https://adv-r.hadley.nz/s3.html#s3-subclassing}.}
+\item{class}{Subclass of the condition. This allows your users
+to selectively handle the conditions signalled by your functions.}
 
 \item{names}{The names of the vector to subset from.}
 }
