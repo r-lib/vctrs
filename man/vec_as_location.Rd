@@ -12,7 +12,6 @@ vec_as_location(i, n, names = NULL, ..., arg = "i")
 num_as_location(
   i,
   n,
-  names = NULL,
   ...,
   negative = c("invert", "error", "ignore"),
   arg = "i"
@@ -30,7 +29,6 @@ vec_as_location2(
 num_as_location2(
   i,
   n,
-  names = NULL,
   ...,
   negative = c("error", "ignore"),
   missing = c("error", "ignore"),

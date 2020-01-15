@@ -66,7 +66,6 @@ vec_as_location <- function(i,
 #' @export
 num_as_location <- function(i,
                             n,
-                            names = NULL,
                             ...,
                             negative = c("invert", "error", "ignore"),
                             arg = "i") {
@@ -75,7 +74,7 @@ num_as_location <- function(i,
   if (!is_integer(i) && !is_double(i)) {
     abort("`i` must be a numeric vector.")
   }
-  .Call(vctrs_as_location, i, n, names, negative)
+  .Call(vctrs_as_location, i, n, NULL, negative)
 }
 
 #' @rdname vec_as_location
@@ -104,7 +103,6 @@ vec_as_location2 <- function(i,
 #' @export
 num_as_location2 <- function(i,
                              n,
-                             names = NULL,
                              ...,
                              negative = c("error", "ignore"),
                              missing = c("error", "ignore"),
@@ -117,7 +115,7 @@ num_as_location2 <- function(i,
   result_get(vec_as_location2_result(
     i,
     n = n,
-    names = names,
+    names = NULL,
     negative = negative,
     missing = missing,
     arg = arg
