@@ -110,19 +110,17 @@ test_that("can subset using logical subscript", {
 
   expect_error(
     vec_slice(x0, c(TRUE, FALSE, TRUE)),
-    "has size 2 whereas the subscript has size 3",
-    fixed = TRUE
+    class = "vctrs_error_indicator_bad_size"
   )
 
   expect_error(
     vec_slice(x0, lgl()),
-    "has size 2 whereas the subscript has size 0",
-    fixed = TRUE
+    class = "vctrs_error_indicator_bad_size"
   )
 
   expect_error(
     vec_slice(mtcars, c(TRUE, FALSE)),
-    "has size 32 whereas the subscript has size 2"
+    class = "vctrs_error_indicator_bad_size"
   )
 })
 
@@ -175,8 +173,8 @@ test_that("can slice with negative indices", {
   expect_identical(vec_slice(1:3, -c(1L, 3L)), 2L)
   expect_identical(vec_slice(mtcars, -(1:30)), vec_slice(mtcars, 31:32))
 
-  expect_error(vec_slice(1:3, -c(1L, NA)), "mix of negative indices and missing values")
-  expect_error(vec_slice(1:3, c(-1L, 1L)), "mix of negative and positive indices")
+  expect_error(vec_slice(1:3, -c(1L, NA)), class = "vctrs_error_location_negative_missing")
+  expect_error(vec_slice(1:3, c(-1L, 1L)), class = "vctrs_error_location_negative_positive")
 })
 
 test_that("0 is ignored in negative indices", {
@@ -360,16 +358,14 @@ test_that("can use names to vec_slice() a named object", {
 })
 
 test_that("can't use names to vec_slice() an unnamed object", {
-  x0 <- 1:3
-
   expect_error(
-    vec_slice(x0, letters[1]),
-    "Can't use character to index an unnamed vector.",
+    vec_slice(1:3, letters[1]),
+    "Can't use character names to index an unnamed vector.",
     fixed = TRUE
   )
   expect_error(
-    vec_slice(x0, letters[25:27]),
-    "Can't use character to index an unnamed vector.",
+    vec_slice(1:3, letters[25:27]),
+    "Can't use character names to index an unnamed vector.",
     fixed = TRUE
   )
 })
@@ -808,4 +804,13 @@ test_that("vec_slice() works with Altrep classes with custom extract methods", {
 
   idx <- c(1, 3, 15)
   expect_equal(vec_slice(x, idx), x[idx])
+})
+
+verify_output(test_path("error", "test-slice.txt"), {
+  "Unnamed vector with character subscript"
+  vec_slice(1:3, letters[1])
+
+  "Negative subscripts are checked"
+  vec_slice(1:3, -c(1L, NA))
+  vec_slice(1:3, c(-1L, 1L))
 })

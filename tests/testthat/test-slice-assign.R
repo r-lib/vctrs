@@ -138,14 +138,12 @@ test_that("can slice-assign using logical index", {
   expect_equal(x, c(4, 3))
 
   expect_error(
-    vec_slice(x, c(TRUE, FALSE, TRUE)) <- 5,
-    "has size 2 whereas the subscript has size 3",
-    fixed = TRUE
+    vec_assign(x, c(TRUE, FALSE, TRUE), 5),
+    class = "vctrs_error_indicator_bad_size"
   )
-
   expect_error(
-    vec_slice(mtcars, c(TRUE, FALSE)) <- mtcars[1, ],
-    "has size 32 whereas the subscript has size 2"
+    vec_assign(mtcars, c(TRUE, FALSE), mtcars[1, ]),
+    class = "vctrs_error_indicator_bad_size"
   )
 })
 
@@ -250,12 +248,12 @@ test_that("can use names to vec_slice<-() a named object", {
 
   expect_error(
     vec_slice(x0, letters[1]) <- 4L,
-    "Can't use character to index an unnamed vector.",
+    "Can't use character names to index an unnamed vector.",
     fixed = TRUE
   )
   expect_error(
     vec_slice(x0, letters[25:27]) <- 5L,
-    "Can't use character to index an unnamed vector.",
+    "Can't use character names to index an unnamed vector.",
     fixed = TRUE
   )
 })
@@ -327,8 +325,13 @@ test_that("can slice-assign unspecified vectors with default type2 method", {
   expect_identical(x, rational(c(NA, 2L), c(NA, 3L)))
 })
 
-test_that("unrecyclable value has informative error", {
-  verify_output(test_path("out", "error-assign-recycle.txt"), {
+test_that("slice and assign have informative errors", {
+  verify_output(test_path("error", "test-slice-assign.txt"), {
+    "Unrecyclable value"
     vec_assign(1:3, 1:3, 1:2)
+
+    "Logical subscript doesn't match size"
+    vec_assign(1:2, c(TRUE, FALSE, TRUE), 5)
+    vec_assign(mtcars, c(TRUE, FALSE), mtcars[1, ])
   })
 })

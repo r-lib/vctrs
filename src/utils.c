@@ -71,6 +71,15 @@ SEXP vctrs_eval_mask2(SEXP fn,
   SEXP args[3] = { x, y, NULL };
   return vctrs_eval_mask_n(fn, syms, args, env);
 }
+SEXP vctrs_eval_mask3(SEXP fn,
+                      SEXP x_sym, SEXP x,
+                      SEXP y_sym, SEXP y,
+                      SEXP z_sym, SEXP z,
+                      SEXP env) {
+  SEXP syms[4] = { x_sym, y_sym, z_sym, NULL };
+  SEXP args[4] = { x, y, z, NULL };
+  return vctrs_eval_mask_n(fn, syms, args, env);
+}
 
 /**
  * Dispatch in the global environment
@@ -995,6 +1004,7 @@ SEXP syms_y = NULL;
 SEXP syms_to = NULL;
 SEXP syms_dots = NULL;
 SEXP syms_bracket = NULL;
+SEXP syms_arg = NULL;
 SEXP syms_x_arg = NULL;
 SEXP syms_y_arg = NULL;
 SEXP syms_to_arg = NULL;
@@ -1174,6 +1184,7 @@ void vctrs_init_utils(SEXP ns) {
   syms_to = Rf_install("to");
   syms_dots = Rf_install("...");
   syms_bracket = Rf_install("[");
+  syms_arg = Rf_install("arg");
   syms_x_arg = Rf_install("x_arg");
   syms_y_arg = Rf_install("y_arg");
   syms_to_arg = Rf_install("to_arg");

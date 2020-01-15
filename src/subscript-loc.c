@@ -8,6 +8,9 @@ static SEXP int_filter_zero(SEXP subscript, R_len_t n_zero);
 static void stop_subscript_oob_location(SEXP i, R_len_t size);
 static void stop_subscript_oob_name(SEXP i, SEXP names);
 static void stop_location_negative(SEXP i);
+static void stop_indicator_size(SEXP i, SEXP n);
+static void stop_location_negative_missing(SEXP i);
+static void stop_location_negative_positive(SEXP i);
 
 
 static SEXP int_as_location(SEXP subscript, R_len_t n,
@@ -60,13 +63,13 @@ static SEXP int_invert_location(SEXP subscript, R_len_t n) {
     int j = *data;
 
     if (j == NA_INTEGER) {
-      Rf_errorcall(R_NilValue, "Can't subset with a mix of negative indices and missing values");
+      stop_location_negative_missing(subscript);
     }
     if (j >= 0) {
       if (j == 0) {
         continue;
       } else {
-        Rf_errorcall(R_NilValue, "Can't subset with a mix of negative and positive indices");
+        stop_location_negative_positive(subscript);
       }
     }
 
@@ -163,17 +166,16 @@ static SEXP lgl_as_location(SEXP subscript, R_len_t n) {
     return out;
   }
 
-  Rf_errorcall(R_NilValue,
-               "Logical indices must have length 1 or be as long as the indexed vector.\n"
-               "The vector has size %d whereas the subscript has size %d.",
-               n, subscript_n);
+  SEXP n_obj = PROTECT(Rf_ScalarInteger(n));
+  stop_indicator_size(subscript, n_obj);
+
+  never_reached("lgl_as_location");
 }
 
 static SEXP chr_as_location(SEXP subscript, SEXP names) {
   if (names == R_NilValue) {
-    Rf_errorcall(R_NilValue, "Can't use character to index an unnamed vector.");
+    Rf_errorcall(R_NilValue, "Can't use character names to index an unnamed vector.");
   }
-
   if (TYPEOF(names) != STRSXP) {
     Rf_errorcall(R_NilValue, "`names` must be a character vector.");
   }
@@ -259,6 +261,18 @@ SEXP vctrs_as_location(SEXP subscript, SEXP n_, SEXP names,
   return vec_as_location_opts(subscript, n, names, &opts);
 }
 
+static void stop_location_negative_missing(SEXP i) {
+  vctrs_eval_mask1(Rf_install("stop_location_negative_missing"),
+                   syms_i, i,
+                   vctrs_ns_env);
+  never_reached("stop_location_negative_missing");
+}
+static void stop_location_negative_positive(SEXP i) {
+  vctrs_eval_mask1(Rf_install("stop_location_negative_positive"),
+                   syms_i, i,
+                   vctrs_ns_env);
+  never_reached("stop_location_negative_positive");
+}
 
 static void stop_subscript_oob_location(SEXP i, R_len_t size) {
   SEXP size_obj = PROTECT(r_int(size));
@@ -283,4 +297,12 @@ static void stop_location_negative(SEXP i) {
                    syms_i, i,
                    vctrs_ns_env);
   never_reached("stop_location_negative");
+}
+
+static void stop_indicator_size(SEXP i, SEXP n) {
+  vctrs_eval_mask2(Rf_install("stop_indicator_size"),
+                   syms_i, i,
+                   syms_n, n,
+                   vctrs_ns_env);
+  never_reached("stop_indicator_size");
 }

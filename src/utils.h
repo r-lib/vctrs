@@ -35,6 +35,11 @@ SEXP vctrs_eval_mask2(SEXP fn,
                       SEXP x_sym, SEXP x,
                       SEXP y_sym, SEXP y,
                       SEXP env);
+SEXP vctrs_eval_mask3(SEXP fn,
+                      SEXP x_sym, SEXP x,
+                      SEXP y_sym, SEXP y,
+                      SEXP z_sym, SEXP z,
+                      SEXP env);
 
 SEXP vctrs_dispatch_n(SEXP fn_sym, SEXP fn,
                       SEXP* syms, SEXP* args);
@@ -249,6 +254,7 @@ extern SEXP syms_y;
 extern SEXP syms_to;
 extern SEXP syms_dots;
 extern SEXP syms_bracket;
+extern SEXP syms_arg;
 extern SEXP syms_x_arg;
 extern SEXP syms_y_arg;
 extern SEXP syms_to_arg;

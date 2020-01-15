@@ -176,9 +176,30 @@ test_that("num_as_location() optionally forbids negative indices", {
 })
 
 test_that("conversion to locations has informative error messages", {
-  verify_output(test_path("out", "error-as-location.txt"), {
+  verify_output(test_path("error", "test-subscript-loc.txt"), {
+    "# Locations"
+
+    "Can't mix negative and missing locations"
+    vec_as_location(-c(1L, NA), 30)
+    vec_as_location(-c(1L, rep(NA, 10)), 30)
+
+    "Can't mix negative and missing locations"
+    vec_as_location(c(-1L, 1L), 30)
+    vec_as_location(c(-1L, rep(1L, 10)), 30)
+
     "Negative forbidden"
     num_as_location(dbl(1, -1), 2L, negative = "error")
+
+
+    "# Indicators"
+
+    "Logical size mismatch"
+    vec_as_location(c(TRUE, FALSE), 3)
+
+
+    "# Names"
+
+    "Unnamed vector"
+    vec_as_location(letters[1], 3)
   })
 })
-
