@@ -60,7 +60,7 @@ negative location value, or \code{"ignore"} it.}
 \item{oob}{If \code{"error"}, throws an informative \code{"error"} if some
 elements are out-of-bounds. If \code{"extend"}, out-of-bounds
 locations are allowed if they are consecutive after the end. This
-can be used to implement extensible vectors like \code{letters[1:30]}.}
+can be used to implement extendable vectors like \code{letters[1:30]}.}
 
 \item{missing}{Whether to throw an \code{"error"} when \code{i} is a missing
 value, or \code{"ignore"} it (return it as is).}

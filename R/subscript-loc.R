@@ -73,7 +73,7 @@ vec_as_location <- function(i,
 #' @param oob If `"error"`, throws an informative `"error"` if some
 #'   elements are out-of-bounds. If `"extend"`, out-of-bounds
 #'   locations are allowed if they are consecutive after the end. This
-#'   can be used to implement extensible vectors like `letters[1:30]`.
+#'   can be used to implement extendable vectors like `letters[1:30]`.
 #' @export
 num_as_location <- function(i,
                             n,
