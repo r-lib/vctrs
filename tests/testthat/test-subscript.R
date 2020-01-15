@@ -14,15 +14,6 @@ test_that("vec_as_subscript() coerces unspecified vectors", {
   )
 })
 
-test_that("vec_as_subscript() forbids subscript types", {
-  verify_output(test_path("out", "test-coerce-index-allow-types.txt"), {
-    vec_as_subscript(1L, indicator = "error", location = "error")
-    vec_as_subscript("foo", indicator = "error", name = "error")
-    vec_as_subscript(TRUE, indicator = "error")
-    vec_as_subscript("foo", name = "error")
-  })
-})
-
 test_that("vec_as_subscript() coerces subtypes and supertypes", {
   expect_identical(vec_as_subscript(factor("foo")), "foo")
 
@@ -34,8 +25,20 @@ test_that("vec_as_subscript() coerces subtypes and supertypes", {
   })
 })
 
-test_that("vec_as_subscript2() forbids subscript types", {
-  verify_output(test_path("out", "test-coerce-position-allow-types.txt"), {
+test_that("subscript functions have informative error messages", {
+  verify_output(test_path("error", "test-subscript.txt"), {
+    "# Vector subscripts"
+
+    "vec_as_subscript() forbids subscript types"
+    vec_as_subscript(1L, indicator = "error", location = "error")
+    vec_as_subscript("foo", indicator = "error", name = "error")
+    vec_as_subscript(TRUE, indicator = "error")
+    vec_as_subscript("foo", name = "error")
+
+
+    "# Scalar subscripts"
+
+    "vec_as_subscript2() forbids subscript types"
     vec_as_subscript2(1L, location = "error", indicator = "error")
     vec_as_subscript2("foo", name = "error", indicator = "error")
     vec_as_subscript2(TRUE, indicator = "error")
