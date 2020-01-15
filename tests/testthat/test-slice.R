@@ -1,3 +1,4 @@
+
 test_that("vec_slice throws error with non-vector inputs", {
   expect_error(vec_slice(environment(), 1L), class = "vctrs_error_scalar_type")
 })
@@ -180,8 +181,11 @@ test_that("can slice with double indices", {
   expect_is(err$parent, "vctrs_error_cast_lossy")
 })
 
+test_that("can slice with symbols", {
+  expect_identical(vec_as_location(quote(b), 26, letters), 2L)
+})
+
 test_that("vec_as_location() checks type", {
-  expect_error(vec_as_location(quote(foo), 1L), class = "vctrs_error_subscript_bad_type")
   expect_error(vec_as_location("foo", "bar"), class = "vctrs_error_incompatible_type")
   expect_error(vec_as_location("foo", 1L, names = 1L), "must be a character vector")
   expect_error(vec_as_location(Sys.Date(), 3L), class = "vctrs_error_subscript_bad_type")

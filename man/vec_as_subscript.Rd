@@ -36,7 +36,9 @@ If \code{"coerce"} and the subscript is not one of the three base
 types (logical, integer or character), the subscript is coerced
 to the relevant base type, e.g. factors are coerced to
 character. \code{NULL} is treated as an empty integer vector, and is
-thus coercible depending on the setting of \code{location}.
+thus coercible depending on the setting of \code{location}. Symbols
+are treated as character vectors and thus coercible depending on
+the setting of \code{name}.
 
 If \code{"error"}, the subscript type is disallowed and triggers an
 informative error.}

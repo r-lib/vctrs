@@ -33,6 +33,15 @@ test_that("vec_as_subscript() handles NULL", {
   )
 })
 
+test_that("vec_as_subscript() handles symbols", {
+  expect_identical(vec_as_subscript(quote(foo)), "foo")
+  expect_identical(vec_as_subscript(quote(`<U+5E78>`)), "\u5e78")
+  expect_error(
+    vec_as_subscript(quote(foo), name = "error"),
+    class = "vctrs_error_subscript_bad_type"
+  )
+})
+
 test_that("subscript functions have informative error messages", {
   verify_output(test_path("error", "test-subscript.txt"), {
     "# vec_as_subscript() forbids subscript types"
@@ -41,6 +50,7 @@ test_that("subscript functions have informative error messages", {
     vec_as_subscript(TRUE, indicator = "error")
     vec_as_subscript("foo", name = "error")
     vec_as_subscript(NULL, location = "error")
+    vec_as_subscript(quote(foo), name = "error")
 
     "# vec_as_subscript2() forbids subscript types"
     vec_as_subscript2(1L, location = "error", indicator = "error")
