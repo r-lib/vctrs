@@ -325,12 +325,30 @@ test_that("can slice-assign unspecified vectors with default type2 method", {
   expect_identical(x, rational(c(NA, 2L), c(NA, 3L)))
 })
 
+test_that("`vec_assign()` requires recyclable value", {
+  verify_errors({
+    expect_error(
+      vec_assign(1:3, 1:3, 1:2),
+      class = "vctrs_error_recycle_incompatible_size"
+    )
+  })
+})
+
+test_that("logical subscripts must match size of indexed vector", {
+  verify_errors({
+    expect_error(
+      vec_assign(1:2, c(TRUE, FALSE, TRUE), 5),
+      class = "vctrs_error_indicator_bad_size"
+    )
+  })
+})
+
 test_that("slice and assign have informative errors", {
   verify_output(test_path("error", "test-slice-assign.txt"), {
-    "Unrecyclable value"
+    "# `vec_assign()` requires recyclable value"
     vec_assign(1:3, 1:3, 1:2)
 
-    "Logical subscript doesn't match size"
+    "# logical subscripts must match size of indexed vector"
     vec_assign(1:2, c(TRUE, FALSE, TRUE), 5)
     vec_assign(mtcars, c(TRUE, FALSE), mtcars[1, ])
   })
