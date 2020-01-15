@@ -467,7 +467,7 @@ stop_names_must_be_unique <- function(locations) {
 #'   `vctrs_error_subscript_oob_name` containing fields `i` and `names`.
 #'
 #' @param i For `stop_subscript_oob_location()`, a numeric vector of
-#'   positions. For `stop_subscript_oob_name()`, a character vector of
+#'   locations. For `stop_subscript_oob_name()`, a character vector of
 #'   names. `i` may contain both out-of-bounds and within-bounds
 #'   elements, only the former are used to construct the error
 #'   message.
@@ -525,8 +525,8 @@ cnd_body.vctrs_error_subscript_oob_location <- function(cnd) {
   format_error_bullets(c(
     x = glue::glue(ngettext(
       length(oob),
-      "Can't subset position {oob_enum}.",
-      "Can't subset positions {oob_enum}."
+      "Can't subset location {oob_enum}.",
+      "Can't subset locations {oob_enum}."
     )),
     i = glue::glue("There are only {cnd$size} elements.")
   ))
