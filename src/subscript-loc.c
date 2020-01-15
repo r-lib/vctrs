@@ -4,6 +4,7 @@
 
 static SEXP int_invert_location(SEXP subscript, R_len_t n);
 static SEXP int_filter_zero(SEXP subscript, R_len_t n_zero);
+static void int_check_consecutive(SEXP subscript, R_len_t n);
 
 static void stop_subscript_oob_location(SEXP i, R_len_t size);
 static void stop_subscript_oob_name(SEXP i, SEXP names);
@@ -11,6 +12,7 @@ static void stop_location_negative(SEXP i);
 static void stop_indicator_size(SEXP i, SEXP n);
 static void stop_location_negative_missing(SEXP i);
 static void stop_location_negative_positive(SEXP i);
+static void stop_location_oob_non_consecutive(SEXP i, R_len_t size);
 
 
 static SEXP int_as_location(SEXP subscript, R_len_t n,
@@ -22,6 +24,8 @@ static SEXP int_as_location(SEXP subscript, R_len_t n,
   // `int_invert_location()` filters them out for negative indices, but
   // positive indices need to go through and `int_filter_zero()`.
   R_len_t n_zero = 0;
+
+  bool extended = false;
 
   for (R_len_t i = 0; i < loc_n; ++i, ++data) {
     int elt = *data;
@@ -36,15 +40,24 @@ static SEXP int_as_location(SEXP subscript, R_len_t n,
       ++n_zero;
     }
     if (abs(elt) > n) {
-      stop_subscript_oob_location(subscript, n);
+      if (opts->loc_oob == LOC_OOB_ERROR) {
+        stop_subscript_oob_location(subscript, n);
+      }
+      extended = true;
     }
   }
 
   if (n_zero) {
-    return int_filter_zero(subscript, n_zero);
-  } else {
-    return subscript;
+    subscript = int_filter_zero(subscript, n_zero);
   }
+  PROTECT(subscript);
+
+  if (extended) {
+    int_check_consecutive(subscript, n);
+  }
+
+  UNPROTECT(1);
+  return subscript;
 }
 
 
@@ -104,6 +117,30 @@ static SEXP int_filter_zero(SEXP subscript, R_len_t n_zero) {
 
   UNPROTECT(1);
   return out;
+}
+
+// From compare.c
+int qsort_icmp(const void* x, const void* y);
+
+static void int_check_consecutive(SEXP subscript, R_len_t n) {
+  SEXP sorted = PROTECT(Rf_duplicate(subscript));
+  int* p_sorted = INTEGER(sorted);
+  R_len_t n_subscript = Rf_length(sorted);
+
+  qsort(p_sorted, n_subscript, sizeof(int), &qsort_icmp);
+
+  for (R_len_t i = 0; i < n_subscript; ++i) {
+    int elt = p_sorted[i] - 1;
+
+    if (elt < n) {
+      continue;
+    }
+    if (elt != i) {
+      stop_location_oob_non_consecutive(subscript, n);
+    }
+  }
+
+  UNPROTECT(1);
 }
 
 static SEXP dbl_as_location(SEXP subscript, R_len_t n, struct vec_as_location_opts* opts) {
@@ -331,4 +368,15 @@ static void stop_indicator_size(SEXP i, SEXP n) {
                    syms_n, n,
                    vctrs_ns_env);
   never_reached("stop_indicator_size");
+}
+
+static void stop_location_oob_non_consecutive(SEXP i, R_len_t size) {
+  SEXP size_obj = PROTECT(r_int(size));
+  vctrs_eval_mask2(Rf_install("stop_location_oob_non_consecutive"),
+                   syms_i, i,
+                   syms_size, size_obj,
+                   vctrs_ns_env);
+
+  UNPROTECT(1);
+  never_reached("stop_location_oob_non_consecutive");
 }
