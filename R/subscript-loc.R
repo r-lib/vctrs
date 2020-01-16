@@ -430,11 +430,10 @@ cnd_body.vctrs_error_subscript_oob_location_non_consecutive <- function(cnd, ...
 #' \Sexpr[results=rd, stage=render]{vctrs:::lifecycle("experimental")}
 #'
 #' * `stop_subscript_oob_location()` throws errors of class
-#'   `vctrs_error_subscript_oob_location` containing fields `i` and
-#'   `size`.
+#'   `vctrs_error_subscript_oob` containing fields `i` and `size`.
 #'
 #' * `stop_subscript_oob_name()` throws errors of class
-#'   `vctrs_error_subscript_oob_name` containing fields `i` and `names`.
+#'   `vctrs_error_subscript_oob` containing fields `i` and `names`.
 #'
 #' @param i For `stop_subscript_oob_location()`, a numeric vector of
 #'   locations. For `stop_subscript_oob_name()`, a character vector of
@@ -447,7 +446,8 @@ cnd_body.vctrs_error_subscript_oob_location_non_consecutive <- function(cnd, ...
 #' @export
 stop_subscript_oob_location <- function(i, size, ..., class = NULL) {
   stop_subscript_oob(
-    class = c(class, "vctrs_error_subscript_oob_location"),
+    subscript_type = "location",
+    class = class,
     i = i,
     size = size,
     ...
@@ -458,7 +458,8 @@ stop_subscript_oob_location <- function(i, size, ..., class = NULL) {
 #' @export
 stop_subscript_oob_name <- function(i, names, ..., class = NULL) {
   stop_subscript_oob(
-    class = c(class, "vctrs_error_subscript_oob_name"),
+    subscript_type = "name",
+    class = class,
     i = i,
     names = names,
     ...
@@ -495,7 +496,14 @@ cnd_header.vctrs_error_subscript_oob <- function(cnd) {
 }
 
 #' @export
-cnd_body.vctrs_error_subscript_oob_location <- function(cnd) {
+cnd_body.vctrs_error_subscript_oob <- function(cnd) {
+  switch(cnd_subscript_type(cnd),
+    location = cnd_body_vctrs_error_subscript_oob_location(cnd),
+    name = cnd_body_vctrs_error_subscript_oob_name(cnd),
+    abort("Internal error: subscript type can't be `indicator` for OOB errors.")
+  )
+}
+cnd_body_vctrs_error_subscript_oob_location <- function(cnd) {
   i <- cnd$i
   elt <- cnd_subscript_element(cnd)
   action <- cnd_subscript_action(cnd)
@@ -522,8 +530,7 @@ cnd_body.vctrs_error_subscript_oob_location <- function(cnd) {
     ))
   ))
 }
-#' @export
-cnd_body.vctrs_error_subscript_oob_name <- function(cnd) {
+cnd_body_vctrs_error_subscript_oob_name <- function(cnd) {
   elt <- cnd_subscript_element(cnd)
   action <- cnd_subscript_action(cnd)
 
@@ -565,4 +572,13 @@ cnd_subscript_action <- function(cnd) {
   }
 
   action
+}
+cnd_subscript_type <- function(cnd) {
+  type <- cnd$subscript_type
+
+  if (!is_string(type, c("indicator", "location", "name"))) {
+    abort("Internal error: `cnd$subscript_type` must be `indicator`, `location`, or `name`.")
+  }
+
+  type
 }

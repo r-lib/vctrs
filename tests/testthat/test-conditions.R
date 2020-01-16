@@ -23,21 +23,21 @@ test_that("can override arg in OOB conditions", {
         vec_slice(set_names(letters), "foo"),
         NULL
       ),
-      class = "vctrs_error_subscript_oob_name"
+      class = "vctrs_error_subscript_oob"
     )
     expect_error(
       with_subscript_data(
         vec_slice(set_names(letters), "foo"),
         quote(foo)
       ),
-      class = "vctrs_error_subscript_oob_name"
+      class = "vctrs_error_subscript_oob"
     )
     expect_error(
       with_subscript_data(
         vec_slice(set_names(letters), "foo"),
         quote(foo(bar))
       ),
-      class = "vctrs_error_subscript_oob_name"
+      class = "vctrs_error_subscript_oob"
     )
   })
 })

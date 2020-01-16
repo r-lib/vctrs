@@ -29,10 +29,9 @@ to selectively handle the conditions signalled by your functions.}
 \Sexpr[results=rd, stage=render]{vctrs:::lifecycle("experimental")}
 \itemize{
 \item \code{stop_subscript_oob_location()} throws errors of class
-\code{vctrs_error_subscript_oob_location} containing fields \code{i} and
-\code{size}.
+\code{vctrs_error_subscript_oob} containing fields \code{i} and \code{size}.
 \item \code{stop_subscript_oob_name()} throws errors of class
-\code{vctrs_error_subscript_oob_name} containing fields \code{i} and \code{names}.
+\code{vctrs_error_subscript_oob} containing fields \code{i} and \code{names}.
 }
 }
 \keyword{internal}
