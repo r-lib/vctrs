@@ -26,6 +26,7 @@ to selectively handle the conditions signalled by your functions.}
 \item{names}{The names of the vector to subset from.}
 }
 \description{
+\Sexpr[results=rd, stage=render]{vctrs:::lifecycle("experimental")}
 \itemize{
 \item \code{stop_subscript_oob_location()} throws errors of class
 \code{vctrs_error_subscript_oob_location} containing fields \code{i} and
@@ -34,3 +35,4 @@ to selectively handle the conditions signalled by your functions.}
 \code{vctrs_error_subscript_oob_name} containing fields \code{i} and \code{names}.
 }
 }
+\keyword{internal}

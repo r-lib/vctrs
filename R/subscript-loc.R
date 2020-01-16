@@ -427,6 +427,8 @@ cnd_body.vctrs_error_subscript_oob_location_non_consecutive <- function(cnd, ...
 #'
 #' @description
 #'
+#' \Sexpr[results=rd, stage=render]{vctrs:::lifecycle("experimental")}
+#'
 #' * `stop_subscript_oob_location()` throws errors of class
 #'   `vctrs_error_subscript_oob_location` containing fields `i` and
 #'   `size`.
@@ -441,6 +443,7 @@ cnd_body.vctrs_error_subscript_oob_location_non_consecutive <- function(cnd, ...
 #'   message.
 #' @param size The length of the vector to subset from.
 #' @inheritParams rlang::abort
+#' @keywords internal
 #' @export
 stop_subscript_oob_location <- function(i, size, ..., class = NULL) {
   stop_subscript_oob(
