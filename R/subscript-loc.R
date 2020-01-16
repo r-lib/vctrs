@@ -379,13 +379,13 @@ stop_indicator_size <- function(i, n, arg = "i") {
 }
 #' @export
 cnd_header.vctrs_error_indicator_bad_size <- function(cnd, ...) {
-  "Logical subscripts must match the size of the indexed vector."
+  "Logical subscripts must match the size of the indexed input."
 }
 #' @export
 cnd_body.vctrs_error_indicator_bad_size <- function(cnd, ...) {
   glue_data_bullets(
     cnd,
-    i = "The indexed vector has size {n}.",
+    i = "The input has size {n}.",
     x = "The subscript has size {vec_size(i)}."
   )
 }
