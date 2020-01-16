@@ -507,7 +507,13 @@ cnd_body.vctrs_error_subscript_oob_location <- function(cnd) {
 }
 #' @export
 cnd_header.vctrs_error_subscript_oob_name <- function(cnd) {
-  "Must index existing elements."
+  arg <- cnd$arg
+  if (is_null(arg)) {
+    "Can't find elements in input."
+  } else {
+    arg <- arg_as_string(arg)
+    glue::glue("Can't find elements in `{arg}`")
+  }
 }
 #' @export
 cnd_body.vctrs_error_subscript_oob_name <- function(cnd) {

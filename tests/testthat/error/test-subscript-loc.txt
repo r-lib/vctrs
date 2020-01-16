@@ -265,11 +265,11 @@ i There are only 2 elements.
 
 > # Character subscripts
 > vec_as_location("foo", 1L, names = "bar")
-Error: Must index existing elements.
+Error: Can't find elements in input.
 x Can't subset element with unknown name `foo`.
 
 > vec_as_location2("foo", 1L, names = "bar")
-Error: Must index existing elements.
+Error: Can't find elements in input.
 x Can't subset element with unknown name `foo`.
 
 
@@ -309,4 +309,24 @@ i There are only 1 elements.
 Error: Can't index beyond the end with non-consecutive locations.
 i The input has size 1.
 x The location 3 is not consecutive to the end.
+
+
+can override arg in OOB conditions
+==================================
+
+> with_subscript_arg(vec_slice(set_names(letters), "foo"), NULL)
+Error: Can't find elements in input.
+x Can't subset element with unknown name `foo`.
+
+> with_subscript_arg(vec_slice(set_names(letters), "foo"), "input")
+Error: Can't find elements in `input`
+x Can't subset element with unknown name `foo`.
+
+> with_subscript_arg(vec_slice(set_names(letters), "foo"), quote(input))
+Error: Can't find elements in `input`
+x Can't subset element with unknown name `foo`.
+
+> with_subscript_arg(vec_slice(set_names(letters), "foo"), quote(input[i]))
+Error: Can't find elements in `input[i]`
+x Can't subset element with unknown name `foo`.
 

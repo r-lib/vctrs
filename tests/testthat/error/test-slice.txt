@@ -27,7 +27,7 @@ x Can't subset location 3.
 i There are only 2 elements.
 
 > vec_slice(c(bar = 1), "foo")
-Error: Must index existing elements.
+Error: Can't find elements in input.
 x Can't subset element with unknown name `foo`.
 
 > # Multiple OOB indices
@@ -42,10 +42,10 @@ x Can't subset locations 100, 101, 102, 103, 104, ...
 i There are only 26 elements.
 
 > vec_slice(set_names(letters), c("foo", "bar"))
-Error: Must index existing elements.
+Error: Can't find elements in input.
 x Can't subset elements with unknown names `foo` and `bar`.
 
 > vec_slice(set_names(letters), toupper(letters))
-Error: Must index existing elements.
+Error: Can't find elements in input.
 x Can't subset elements with unknown names `A`, `B`, `C`, `D`, `E`, ...
 

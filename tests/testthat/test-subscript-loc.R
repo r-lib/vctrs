@@ -252,6 +252,32 @@ test_that("missing values are supported in error formatters", {
   })
 })
 
+test_that("can override arg in OOB conditions", {
+  verify_errors({
+    expect_error(
+      with_subscript_arg(
+        vec_slice(set_names(letters), "foo"),
+        NULL
+      ),
+      class = "vctrs_error_subscript_oob_name"
+    )
+    expect_error(
+      with_subscript_arg(
+        vec_slice(set_names(letters), "foo"),
+        quote(foo)
+      ),
+      class = "vctrs_error_subscript_oob_name"
+    )
+    expect_error(
+      with_subscript_arg(
+        vec_slice(set_names(letters), "foo"),
+        quote(foo(bar))
+      ),
+      class = "vctrs_error_subscript_oob_name"
+    )
+  })
+})
+
 test_that("conversion to locations has informative error messages", {
   verify_output(test_path("error", "test-subscript-loc.txt"), {
     "# vec_as_location() checks for mix of negative and missing locations"
@@ -330,5 +356,23 @@ test_that("conversion to locations has informative error messages", {
     "# missing values are supported in error formatters"
     num_as_location(c(1, NA, 2, 3), 1)
     num_as_location(c(1, NA, 3), 1, oob = "extend")
+
+    "# can override arg in OOB conditions"
+    with_subscript_arg(
+      vec_slice(set_names(letters), "foo"),
+      NULL
+    )
+    with_subscript_arg(
+      vec_slice(set_names(letters), "foo"),
+      "input"
+    )
+    with_subscript_arg(
+      vec_slice(set_names(letters), "foo"),
+      quote(input)
+    )
+    with_subscript_arg(
+      vec_slice(set_names(letters), "foo"),
+      quote(input[i])
+    )
   })
 })
