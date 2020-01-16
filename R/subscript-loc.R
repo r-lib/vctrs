@@ -543,8 +543,11 @@ cnd_subscript_element <- function(cnd) {
 cnd_subscript_action <- function(cnd) {
   action <- cnd$subscript_action %||% "subset"
 
-  if (!is_character(action, n = 1)) {
-    abort("Internal error: `cnd$subscript_action` must be a character vector of size 1.")
+  if (!is_string(action, c("subset", "extract", "assign", "rename", "remove"))) {
+    abort(paste0(
+      "Internal error: `cnd$subscript_action` must be one of ",
+      "`subset`, `extract`, `assign`, `rename`, or `remove`."
+    ))
   }
 
   action
