@@ -20,3 +20,19 @@ Error: Logical subscripts must match the size of the indexed input.
 i The input has size 32.
 x The subscript has size 2.
 
+
+must assign existing elements
+=============================
+
+> vec_assign(1:3, 5, 10)
+Error: Must assign existing elements.
+x Can't assign location 5.
+i There are only 3 elements.
+
+> vec_assign(1:3, "foo", 10)
+Error: Can't use character names to index an unnamed vector.
+
+> vec_assign(set_names(letters), "foo", "bar")
+Error: Must subset existing elements.
+x Can't subset element with unknown name `foo`.
+

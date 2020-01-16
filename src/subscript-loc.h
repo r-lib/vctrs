@@ -1,6 +1,8 @@
 #ifndef VCTRS_SUBSCRIPT_LOC_H
 #define VCTRS_SUBSCRIPT_LOC_H
 
+#include "utils.h"
+
 
 enum subscript_action {
   SUBSCRIPT_ACTION_DEFAULT,
