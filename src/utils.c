@@ -998,6 +998,9 @@ SEXP strings_group = NULL;
 SEXP strings_length = NULL;
 
 SEXP chrs_subset = NULL;
+SEXP chrs_extract = NULL;
+SEXP chrs_assign = NULL;
+SEXP chrs_rename = NULL;
 SEXP chrs_remove = NULL;
 SEXP chrs_negate = NULL;
 
@@ -1103,6 +1106,15 @@ void vctrs_init_utils(SEXP ns) {
 
   chrs_subset = Rf_mkString("subset");
   R_PreserveObject(chrs_subset);
+
+  chrs_extract = Rf_mkString("extract");
+  R_PreserveObject(chrs_extract);
+
+  chrs_assign = Rf_mkString("assign");
+  R_PreserveObject(chrs_assign);
+
+  chrs_rename = Rf_mkString("rename");
+  R_PreserveObject(chrs_rename);
 
   chrs_remove = Rf_mkString("remove");
   R_PreserveObject(chrs_remove);

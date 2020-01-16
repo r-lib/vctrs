@@ -248,6 +248,9 @@ extern SEXP strings_group;
 extern SEXP strings_length;
 
 extern SEXP chrs_subset;
+extern SEXP chrs_extract;
+extern SEXP chrs_assign;
+extern SEXP chrs_rename;
 extern SEXP chrs_remove;
 extern SEXP chrs_negate;
 
