@@ -319,20 +319,20 @@ Error: Must subset existing elements.
 x Can't subset element with unknown name `foo`.
 
 > with_tibble_cols(vec_slice(set_names(letters), "foo"))
-Error: Must subset existing columns in `tbl[i]`.
-x Can't subset column with unknown name `foo`.
+Error: Must rename existing columns in `tbl[i]`.
+x Can't rename column with unknown name `foo`.
 
 > with_tibble_cols(vec_slice(set_names(letters), 30))
-Error: Must subset existing columns in `tbl[i]`.
-x Can't subset location 30.
+Error: Must rename existing columns in `tbl[i]`.
+x Can't rename location 30.
 i There are only 26 columns.
 
 > with_tibble_rows(vec_slice(set_names(letters), c("foo", "bar")))
-Error: Must subset existing rows in `tbl[i]`.
-x Can't subset rows with unknown names `foo` and `bar`.
+Error: Must remove existing rows in `tbl[i]`.
+x Can't remove rows with unknown names `foo` and `bar`.
 
 > with_tibble_rows(vec_slice(set_names(letters), 1:30))
-Error: Must subset existing rows in `tbl[i]`.
-x Can't subset locations 27, 28, 29, and 30.
+Error: Must remove existing rows in `tbl[i]`.
+x Can't remove locations 27, 28, 29, and 30.
 i There are only 26 rows.
 

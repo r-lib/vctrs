@@ -484,12 +484,13 @@ cnd_header.vctrs_error_subscript_oob <- function(cnd) {
   arg <- cnd$arg
   input <- cnd_subscript_input(cnd)
   elt <- cnd_subscript_element(cnd)
+  action <- cnd_subscript_action(cnd)
 
   if (is_null(arg)) {
-    glue::glue("Must subset existing {elt[[2]]}.")
+    glue::glue("Must {action} existing {elt[[2]]}.")
   } else {
     arg <- arg_as_string(arg)
-    glue::glue("Must subset existing {elt[[2]]} in `{arg}`.")
+    glue::glue("Must {action} existing {elt[[2]]} in `{arg}`.")
   }
 }
 
@@ -497,6 +498,7 @@ cnd_header.vctrs_error_subscript_oob <- function(cnd) {
 cnd_body.vctrs_error_subscript_oob_location <- function(cnd) {
   i <- cnd$i
   elt <- cnd_subscript_element(cnd)
+  action <- cnd_subscript_action(cnd)
 
   # In case of negative indexing
   i <- abs(i)
@@ -510,8 +512,8 @@ cnd_body.vctrs_error_subscript_oob_location <- function(cnd) {
   format_error_bullets(c(
     x = glue::glue(ngettext(
       length(oob),
-      "Can't subset location {oob_enum}.",
-      "Can't subset locations {oob_enum}."
+      "Can't {action} location {oob_enum}.",
+      "Can't {action} locations {oob_enum}."
     )),
     i = glue::glue(ngettext(
       cnd$size,
@@ -523,6 +525,7 @@ cnd_body.vctrs_error_subscript_oob_location <- function(cnd) {
 #' @export
 cnd_body.vctrs_error_subscript_oob_name <- function(cnd) {
   elt <- cnd_subscript_element(cnd)
+  action <- cnd_subscript_action(cnd)
 
   oob <- cnd$i[!cnd$i %in% cnd$names]
   oob_enum <- enumerate(glue::backtick(oob))
@@ -530,8 +533,8 @@ cnd_body.vctrs_error_subscript_oob_name <- function(cnd) {
   format_error_bullets(c(
     x = glue::glue(ngettext(
       length(oob),
-      "Can't subset {elt[[1]]} with unknown name {oob_enum}.",
-      "Can't subset {elt[[2]]} with unknown names {oob_enum}."
+      "Can't {action} {elt[[1]]} with unknown name {oob_enum}.",
+      "Can't {action} {elt[[2]]} with unknown names {oob_enum}."
     ))
   ))
 }
@@ -553,4 +556,13 @@ cnd_subscript_element <- function(cnd) {
   }
 
   elt
+}
+cnd_subscript_action <- function(cnd) {
+  action <- cnd$subscript_action %||% "subset"
+
+  if (!is_character(action, n = 1)) {
+    abort("Internal error: `cnd$subscript_action` must be a character vector of size 1.")
+  }
+
+  action
 }
