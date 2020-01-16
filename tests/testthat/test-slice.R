@@ -66,8 +66,10 @@ test_that("can subset with a recycled FALSE", {
 })
 
 test_that("can't index beyond the end of a vector", {
-  expect_error(vec_slice(1:2, 3L), class = "vctrs_error_subscript_oob_location")
-  expect_error(vec_slice(1:2, -3L), class = "vctrs_error_subscript_oob_location")
+  verify_errors({
+    expect_error(vec_slice(1:2, 3L), class = "vctrs_error_subscript_oob_location")
+    expect_error(vec_slice(1:2, -3L), class = "vctrs_error_subscript_oob_location")
+  })
 })
 
 test_that("slicing non existing elements fails", {
@@ -830,12 +832,15 @@ test_that("slice has informative error messages", {
     vec_slice(1:3, c(-1L, 1L))
 
     "# oob error messages are properly constructed"
-    vec_slice(1:2, 3L)
     vec_slice(c(bar = 1), "foo")
     "Multiple OOB indices"
     vec_slice(letters, c(100, 1000))
     vec_slice(letters, c(1, 100:103, 2, 104:110))
     vec_slice(set_names(letters), c("foo", "bar"))
     vec_slice(set_names(letters), toupper(letters))
+
+    "# Can't index beyond the end of a vector"
+    vec_slice(1:2, 3L)
+    vec_slice(1:2, -3L)
   })
 })

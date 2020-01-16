@@ -62,6 +62,7 @@ test_that("vec_as_location() and variants check for OOB elements", {
   verify_errors({
     "Numeric indexing"
     expect_error(vec_as_location(10L, 2L), class = "vctrs_error_subscript_oob_location")
+    expect_error(vec_as_location(-10L, 2L), class = "vctrs_error_subscript_oob_location")
     expect_error(vec_as_location2(10L, 2L), class = "vctrs_error_subscript_oob_location")
 
     "Character indexing"
@@ -258,6 +259,8 @@ test_that("can customise OOB errors", {
       vec_slice(set_names(letters), "foo"),
       class = "vctrs_error_subscript_oob_name"
     )
+
+    "With tibble columns"
     expect_error(
       with_tibble_cols(vec_slice(set_names(letters), "foo")),
       class = "vctrs_error_subscript_oob_name"
@@ -267,11 +270,21 @@ test_that("can customise OOB errors", {
       class = "vctrs_error_subscript_oob_location"
     )
     expect_error(
+      with_tibble_cols(vec_slice(set_names(letters), -30)),
+      class = "vctrs_error_subscript_oob_location"
+    )
+
+    "With tibble rows"
+    expect_error(
       with_tibble_rows(vec_slice(set_names(letters), c("foo", "bar"))),
       class = "vctrs_error_subscript_oob_name"
     )
     expect_error(
       with_tibble_rows(vec_slice(set_names(letters), 1:30)),
+      class = "vctrs_error_subscript_oob_location"
+    )
+    expect_error(
+      with_tibble_rows(vec_slice(set_names(letters), -(1:30))),
       class = "vctrs_error_subscript_oob_location"
     )
   })
@@ -341,6 +354,7 @@ test_that("conversion to locations has informative error messages", {
     "# vec_as_location() and variants check for OOB elements"
     "Numeric subscripts"
     vec_as_location(10L, 2L)
+    vec_as_location(-10L, 2L)
     vec_as_location2(10L, 2L)
     "Character subscripts"
     vec_as_location("foo", 1L, names = "bar")
@@ -358,9 +372,13 @@ test_that("conversion to locations has informative error messages", {
 
     "# can customise OOB errors"
     vec_slice(set_names(letters), "foo")
+    "With tibble columns"
     with_tibble_cols(vec_slice(set_names(letters), "foo"))
     with_tibble_cols(vec_slice(set_names(letters), 30))
+    with_tibble_cols(vec_slice(set_names(letters), -30))
+    "With tibble columns"
     with_tibble_rows(vec_slice(set_names(letters), c("foo", "bar")))
     with_tibble_rows(vec_slice(set_names(letters), 1:30))
+    with_tibble_rows(vec_slice(set_names(letters), -(1:30)))
   })
 })
