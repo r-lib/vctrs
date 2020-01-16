@@ -13,7 +13,8 @@
 #'
 #'   The vector will have names if the individual components have names
 #'   (inner names) or if the arguments are named (outer names). If both
-#'   inner and outer names are present, they are combined with a `.`.
+#'   inner and outer names are present, an error is thrown unless a
+#'   `.name_spec` is provided.
 #' @inheritParams vec_ptype_show
 #' @inheritParams name_spec
 #' @seealso [vec_cbind()]/[vec_rbind()] for combining data frames by rows
