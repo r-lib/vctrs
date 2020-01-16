@@ -480,12 +480,23 @@ stop_subscript <- function(i, ..., class = NULL) {
 }
 
 #' @export
-cnd_header.vctrs_error_subscript_oob_location <- function(cnd) {
-  "Must index existing elements."
+cnd_header.vctrs_error_subscript_oob <- function(cnd) {
+  arg <- cnd$arg
+  input <- cnd_subscript_input(cnd)
+  elt <- cnd_subscript_element(cnd)
+
+  if (is_null(arg)) {
+    glue::glue("Must subset existing {elt[[2]]}.")
+  } else {
+    arg <- arg_as_string(arg)
+    glue::glue("Must subset existing {elt[[2]]} in `{arg}`.")
+  }
 }
+
 #' @export
 cnd_body.vctrs_error_subscript_oob_location <- function(cnd) {
   i <- cnd$i
+  elt <- cnd_subscript_element(cnd)
 
   # In case of negative indexing
   i <- abs(i)
@@ -502,29 +513,44 @@ cnd_body.vctrs_error_subscript_oob_location <- function(cnd) {
       "Can't subset location {oob_enum}.",
       "Can't subset locations {oob_enum}."
     )),
-    i = glue::glue("There are only {cnd$size} elements.")
+    i = glue::glue(ngettext(
+      cnd$size,
+      "There are only {cnd$size} {elt[[1]]}.",
+      "There are only {cnd$size} {elt[[2]]}.",
+    ))
   ))
 }
 #' @export
-cnd_header.vctrs_error_subscript_oob_name <- function(cnd) {
-  arg <- cnd$arg
-  if (is_null(arg)) {
-    "Can't find elements in input."
-  } else {
-    arg <- arg_as_string(arg)
-    glue::glue("Can't find elements in `{arg}`")
-  }
-}
-#' @export
 cnd_body.vctrs_error_subscript_oob_name <- function(cnd) {
+  elt <- cnd_subscript_element(cnd)
+
   oob <- cnd$i[!cnd$i %in% cnd$names]
   oob_enum <- enumerate(glue::backtick(oob))
 
   format_error_bullets(c(
     x = glue::glue(ngettext(
       length(oob),
-      "Can't subset element with unknown name {oob_enum}.",
-      "Can't subset elements with unknown names {oob_enum}."
+      "Can't subset {elt[[1]]} with unknown name {oob_enum}.",
+      "Can't subset {elt[[2]]} with unknown names {oob_enum}."
     ))
   ))
+}
+
+cnd_subscript_input <- function(cnd) {
+  input <- cnd$subscript_input %||% "indexed input"
+
+  if (!is_character(input, n = 1)) {
+    abort("Internal error: `cnd$subscript_input` must be a character vector of size 1.")
+  }
+
+  input
+}
+cnd_subscript_element <- function(cnd) {
+  elt <- cnd$subscript_elt %||% c("element", "elements")
+
+  if (!is_character(elt, n = 2)) {
+    abort("Internal error: `cnd$subscript_elt` must be a character vector of size 2.")
+  }
+
+  elt
 }

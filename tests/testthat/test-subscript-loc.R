@@ -252,28 +252,27 @@ test_that("missing values are supported in error formatters", {
   })
 })
 
-test_that("can override arg in OOB conditions", {
+test_that("can customise OOB errors", {
   verify_errors({
     expect_error(
-      with_subscript_arg(
-        vec_slice(set_names(letters), "foo"),
-        NULL
-      ),
+      vec_slice(set_names(letters), "foo"),
       class = "vctrs_error_subscript_oob_name"
     )
     expect_error(
-      with_subscript_arg(
-        vec_slice(set_names(letters), "foo"),
-        quote(foo)
-      ),
+      with_tibble_cols(vec_slice(set_names(letters), "foo")),
       class = "vctrs_error_subscript_oob_name"
     )
     expect_error(
-      with_subscript_arg(
-        vec_slice(set_names(letters), "foo"),
-        quote(foo(bar))
-      ),
+      with_tibble_cols(vec_slice(set_names(letters), 30)),
+      class = "vctrs_error_subscript_oob_location"
+    )
+    expect_error(
+      with_tibble_rows(vec_slice(set_names(letters), c("foo", "bar"))),
       class = "vctrs_error_subscript_oob_name"
+    )
+    expect_error(
+      with_tibble_rows(vec_slice(set_names(letters), 1:30)),
+      class = "vctrs_error_subscript_oob_location"
     )
   })
 })
@@ -357,22 +356,11 @@ test_that("conversion to locations has informative error messages", {
     num_as_location(c(1, NA, 2, 3), 1)
     num_as_location(c(1, NA, 3), 1, oob = "extend")
 
-    "# can override arg in OOB conditions"
-    with_subscript_arg(
-      vec_slice(set_names(letters), "foo"),
-      NULL
-    )
-    with_subscript_arg(
-      vec_slice(set_names(letters), "foo"),
-      "input"
-    )
-    with_subscript_arg(
-      vec_slice(set_names(letters), "foo"),
-      quote(input)
-    )
-    with_subscript_arg(
-      vec_slice(set_names(letters), "foo"),
-      quote(input[i])
-    )
+    "# can customise OOB errors"
+    vec_slice(set_names(letters), "foo")
+    with_tibble_cols(vec_slice(set_names(letters), "foo"))
+    with_tibble_cols(vec_slice(set_names(letters), 30))
+    with_tibble_rows(vec_slice(set_names(letters), c("foo", "bar")))
+    with_tibble_rows(vec_slice(set_names(letters), 1:30))
   })
 })

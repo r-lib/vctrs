@@ -1,0 +1,20 @@
+
+can override arg in OOB conditions
+==================================
+
+> with_subscript_data(vec_slice(set_names(letters), "foo"), NULL)
+Error: Must subset existing elements.
+x Can't subset element with unknown name `foo`.
+
+> with_subscript_data(vec_slice(set_names(letters), "foo"), "input")
+Error: Must subset existing element in `input`.
+x Can't subset element with unknown name `foo`.
+
+> with_subscript_data(vec_slice(set_names(letters), "foo"), quote(input))
+Error: Must subset existing element in `input`.
+x Can't subset element with unknown name `foo`.
+
+> with_subscript_data(vec_slice(set_names(letters), "foo"), quote(input[i]))
+Error: Must subset existing element in `input[i]`.
+x Can't subset element with unknown name `foo`.
+
