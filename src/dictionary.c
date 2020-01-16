@@ -141,6 +141,37 @@ SEXP vctrs_unique_loc(SEXP x) {
   return out;
 }
 
+SEXP vctrs_duplicate_loc(SEXP x) {
+  int nprot = 0;
+
+  R_len_t n = vec_size(x);
+
+  x = PROTECT_N(vec_proxy_equal(x), &nprot);
+  x = PROTECT_N(obj_maybe_translate_encoding(x, n), &nprot);
+
+  dictionary d;
+  dict_init(&d, x);
+  PROTECT_DICT(&d, &nprot);
+
+  struct growable g = new_growable(INTSXP, 256);
+  PROTECT_GROWABLE(&g, &nprot);
+
+  for (int i = 0; i < n; ++i) {
+    uint32_t hash = dict_hash_scalar(&d, i);
+
+    if (d.key[hash] == DICT_EMPTY) {
+      dict_put(&d, hash, i);
+    } else {
+      growable_push_int(&g, i + 1);
+    }
+  }
+
+  SEXP out = growable_values(&g);
+
+  UNPROTECT(nprot);
+  return out;
+}
+
 SEXP vctrs_duplicated_any(SEXP x) {
   bool out = duplicated_any(x);
   return Rf_ScalarLogical(out);

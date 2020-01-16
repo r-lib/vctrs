@@ -1,6 +1,10 @@
 
 # vctrs 0.2.99.9000
 
+* New `vec_duplicate_loc()` for computing the locations of the duplicates
+  of each value in a vector. This is similar to `duplicated()`, in that it
+  returns the locations of the second and subsequent occurrences of each value.
+
 * `vec_ptype2()` methods for base classes now prevent
   inheritance. This makes sense because the subtyping graph created by
   `vec_ptype2()` methods is generally not the same as the inheritance

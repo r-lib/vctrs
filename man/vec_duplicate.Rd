@@ -4,6 +4,7 @@
 \alias{vec_duplicate}
 \alias{vec_duplicate_any}
 \alias{vec_duplicate_detect}
+\alias{vec_duplicate_loc}
 \alias{vec_duplicate_id}
 \alias{vec_duplicate_all}
 \title{Find duplicated values}
@@ -11,6 +12,8 @@
 vec_duplicate_any(x)
 
 vec_duplicate_detect(x)
+
+vec_duplicate_loc(x)
 
 vec_duplicate_id(x)
 
@@ -24,6 +27,8 @@ vec_duplicate_all(x)
 \item \code{vec_duplicate_any()}: a logical vector of length 1.
 \item \code{vec_duplicate_all()}: a logical vector of length 1.
 \item \code{vec_duplicate_detect()}: a logical vector the same length as \code{x}.
+\item \code{vec_duplicate_loc()}: an integer vector of the locations of the
+duplicates of each value.
 \item \code{vec_duplicate_id()}: an integer vector the same length as \code{x}.
 }
 }
@@ -36,6 +41,9 @@ similar to \code{\link[=anyDuplicated]{anyDuplicated()}}.
 element of the vector is duplicated elsewhere. Unlike \code{\link[=duplicated]{duplicated()}}, it
 reports all duplicated values, not just the second and subsequent
 repetitions.
+\item \code{vec_duplicate_loc()}: returns an integer vector giving the location of
+the duplicates of each value, i.e. the second and subsequent
+occurrences of that value.
 \item \code{vec_duplicate_id()}: returns an integer vector giving the location of
 the first occurrence of the value.
 }
@@ -61,6 +69,13 @@ vec_duplicate_detect(x)
 # Note that `duplicated()` doesn't consider the first instance to
 # be a duplicate
 duplicated(x)
+
+# The behavior of `duplicated()` is more similar
+# to `vec_duplicate_loc()`
+vec_duplicate_loc(x)
+
+# Which can be considered the complement of `vec_unique_loc()`
+vec_unique_loc(x)
 
 # Identify elements of a vector by the location of the first element that
 # they're equal to:

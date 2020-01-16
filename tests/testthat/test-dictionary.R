@@ -62,6 +62,12 @@ test_that("vec_duplicate_id gives position of first found", {
   expect_equal(vec_duplicate_id(x), c(1, 2, 3, 1, 5))
 })
 
+test_that("vec_duplicate_loc is the complement of vec_unique_loc", {
+  x <- c(1, 1, 2, 3, 4, 4)
+  expect <- vec_seq_along(x)[-vec_unique_loc(x)]
+  expect_equal(vec_duplicate_loc(x), expect)
+})
+
 test_that("vec_unique matches unique", {
   x <- sample(100, 1000, replace = TRUE)
   expect_equal(vec_unique(x), unique(x))
@@ -142,6 +148,7 @@ test_that("duplicate functions take the equality proxy recursively", {
   expect_equal(vec_duplicate_any(df), TRUE)
   expect_equal(vec_duplicate_detect(df), c(TRUE, TRUE, FALSE))
   expect_equal(vec_duplicate_id(df), c(1, 1, 3))
+  expect_equal(vec_duplicate_loc(df), 2)
 })
 
 test_that("unique functions treat positive and negative 0 as equivalent (#637)", {
@@ -172,6 +179,7 @@ test_that("duplicate functions works with different encodings", {
   expect_equal(vec_duplicate_id(encs), rep(1, 3))
   expect_equal(vec_duplicate_detect(encs), rep(TRUE, 3))
   expect_equal(vec_duplicate_any(encs), TRUE)
+  expect_equal(vec_duplicate_loc(encs), c(2, 3))
 })
 
 test_that("vec_unique() returns differently encoded strings in the order they appear", {
