@@ -423,27 +423,6 @@ cnd_body.vctrs_error_subscript_oob_location_non_consecutive <- function(cnd, ...
   )
 }
 
-#' Out-of-bounds errors
-#'
-#' @description
-#'
-#' \Sexpr[results=rd, stage=render]{vctrs:::lifecycle("experimental")}
-#'
-#' * `stop_subscript_oob_location()` throws errors of class
-#'   `vctrs_error_subscript_oob` containing fields `i` and `size`.
-#'
-#' * `stop_subscript_oob_name()` throws errors of class
-#'   `vctrs_error_subscript_oob` containing fields `i` and `names`.
-#'
-#' @param i For `stop_subscript_oob_location()`, a numeric vector of
-#'   locations. For `stop_subscript_oob_name()`, a character vector of
-#'   names. `i` may contain both out-of-bounds and within-bounds
-#'   elements, only the former are used to construct the error
-#'   message.
-#' @param size The length of the vector to subset from.
-#' @inheritParams rlang::abort
-#' @keywords internal
-#' @export
 stop_subscript_oob_location <- function(i, size, ..., class = NULL) {
   stop_subscript_oob(
     subscript_type = "location",
@@ -453,9 +432,6 @@ stop_subscript_oob_location <- function(i, size, ..., class = NULL) {
     ...
   )
 }
-#' @rdname stop_subscript_oob_location
-#' @param names The names of the vector to subset from.
-#' @export
 stop_subscript_oob_name <- function(i, names, ..., class = NULL) {
   stop_subscript_oob(
     subscript_type = "name",
