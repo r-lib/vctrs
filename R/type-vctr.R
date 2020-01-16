@@ -369,7 +369,7 @@ unique.vctrs_vctr <- function(x, incomparables = FALSE, ...) {
 
 #' @export
 duplicated.vctrs_vctr <- function(x, incomparables = FALSE, ...) {
-  vec_duplicate_id(x) != seq_along(x)
+  vec_first_loc(x) != seq_along(x)
 }
 
 #' @export

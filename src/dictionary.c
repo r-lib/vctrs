@@ -230,7 +230,7 @@ SEXP vctrs_n_distinct(SEXP x) {
   return Rf_ScalarInteger(d.used);
 }
 
-SEXP vctrs_id(SEXP x) {
+SEXP vctrs_first_loc(SEXP x) {
   int nprot = 0;
 
   R_len_t n = vec_size(x);

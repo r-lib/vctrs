@@ -81,3 +81,25 @@ vec_as_index <- function(i, n, names = NULL) {
     loc_oob = "error"
   )
 }
+
+#' Locate first occurrences
+#'
+#' @description
+#'
+#' \Sexpr[results=rd, stage=render]{vctrs:::lifecycle("soft-deprecated")}
+#'
+#' `vec_duplicate_id()` has been renamed to [vec_first_loc()] and is
+#' soft-deprecated as of vctrs 0.2.2.
+#'
+#' @inheritParams vec_first_loc
+#'
+#' @keywords internal
+#' @export
+vec_duplicate_id <- function(x) {
+  signal_soft_deprecated(paste_line(
+    "`vec_duplicate_id()` is deprecated as of vctrs 0.2.2.",
+    "Please use `vec_first_loc() instead."
+  ))
+
+  vec_first_loc(x)
+}

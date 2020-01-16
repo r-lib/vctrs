@@ -85,8 +85,6 @@ reset_rownames <- function(x) {
 #' * `vec_duplicate_loc()`: returns an integer vector giving the location of
 #'   the duplicates of each value, i.e. the second and subsequent
 #'   occurrences of that value.
-#' * `vec_duplicate_id()`: returns an integer vector giving the location of
-#'   the first occurrence of the value.
 #'
 #' @section Missing values:
 #' In most cases, missing values are not considered to be equal, i.e.
@@ -101,7 +99,6 @@ reset_rownames <- function(x) {
 #'   * `vec_duplicate_detect()`: a logical vector the same length as `x`.
 #'   * `vec_duplicate_loc()`: an integer vector of the locations of the
 #'     duplicates of each value.
-#'   * `vec_duplicate_id()`: an integer vector the same length as `x`.
 #' @seealso [vec_unique()] for functions that work with the dual of duplicated
 #'   values: unique values.
 #' @name vec_duplicate
@@ -125,14 +122,6 @@ reset_rownames <- function(x) {
 #'
 #' # Which can be considered the complement of `vec_unique_loc()`
 #' vec_unique_loc(x)
-#'
-#' # Identify elements of a vector by the location of the first element that
-#' # they're equal to:
-#' vec_duplicate_id(x)
-#' # Location of the unique values:
-#' vec_unique_loc(x)
-#' # Equivalent to `duplicated()`:
-#' vec_duplicate_id(x) == seq_along(x)
 NULL
 
 #' @rdname vec_duplicate
@@ -151,12 +140,6 @@ vec_duplicate_detect <- function(x) {
 #' @export
 vec_duplicate_loc <- function(x) {
   .Call(vctrs_duplicate_loc, x)
-}
-
-#' @rdname vec_duplicate
-#' @export
-vec_duplicate_id <- function(x) {
-  .Call(vctrs_id, x)
 }
 
 # Unique values -----------------------------------------------------------
@@ -210,6 +193,27 @@ vec_unique_count <- function(x) {
   .Call(vctrs_n_distinct, x)
 }
 
+# First location ----------------------------------------------------------
+
+#' Locate first occurrences
+#'
+#' `vec_first_loc()` returns an integer vector giving the location of the
+#' first occurrence of the current element in `x`.
+#'
+#' @inherit vec_duplicate sections
+#' @param x A vector (including a data frame).
+#' @return An integer vector the same size as `x`.
+#'
+#' @export
+#' @examples
+#' x <- c(10, 10, 20, 30, 30, 40)
+#'
+#' vec_first_loc(x)
+#'
+#' vec_first_loc(c(NA, NA, NaN, NaN))
+vec_first_loc <- function(x) {
+  .Call(vctrs_first_loc, x)
+}
 
 # Matching ----------------------------------------------------------------
 

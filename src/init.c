@@ -24,7 +24,7 @@ extern SEXP vctrs_duplicated(SEXP);
 extern SEXP vctrs_unique_loc(SEXP);
 extern SEXP vctrs_duplicate_loc(SEXP);
 extern SEXP vctrs_count(SEXP);
-extern SEXP vctrs_id(SEXP);
+extern SEXP vctrs_first_loc(SEXP);
 extern SEXP vctrs_n_distinct(SEXP);
 extern SEXP vec_split(SEXP, SEXP);
 extern SEXP vctrs_group_id(SEXP);
@@ -126,7 +126,7 @@ static const R_CallMethodDef CallEntries[] = {
   {"vctrs_duplicated",                 (DL_FUNC) &vctrs_duplicated, 1},
   {"vctrs_duplicated_any",             (DL_FUNC) &vctrs_duplicated_any, 1},
   {"vctrs_count",                      (DL_FUNC) &vctrs_count, 1},
-  {"vctrs_id",                         (DL_FUNC) &vctrs_id, 1},
+  {"vctrs_first_loc",                  (DL_FUNC) &vctrs_first_loc, 1},
   {"vctrs_n_distinct",                 (DL_FUNC) &vctrs_n_distinct, 1},
   {"vctrs_split",                      (DL_FUNC) &vec_split, 2},
   {"vctrs_group_id",                   (DL_FUNC) &vctrs_group_id, 1},

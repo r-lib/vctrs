@@ -7,3 +7,8 @@ test_that("vec_as_index() still works", {
     vec_as_location("cyl", length(mtcars), names(mtcars))
   )
 })
+
+test_that("vec_duplicate_id() still works", {
+  local_lifecycle_silence()
+  expect_identical(vec_duplicate_id(c(1, 1, 3)), vec_first_loc(c(1, 1, 3)))
+})

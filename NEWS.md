@@ -1,6 +1,8 @@
 
 # vctrs 0.2.99.9000
 
+* `vec_duplicate_id()` has been renamed to `vec_first_loc()`.
+
 * New `vec_duplicate_loc()` for computing the locations of the duplicates
   of each value in a vector. This is similar to `duplicated()`, in that it
   returns the locations of the second and subsequent occurrences of each value.

@@ -5,7 +5,6 @@
 \alias{vec_duplicate_any}
 \alias{vec_duplicate_detect}
 \alias{vec_duplicate_loc}
-\alias{vec_duplicate_id}
 \alias{vec_duplicate_all}
 \title{Find duplicated values}
 \usage{
@@ -14,8 +13,6 @@ vec_duplicate_any(x)
 vec_duplicate_detect(x)
 
 vec_duplicate_loc(x)
-
-vec_duplicate_id(x)
 
 vec_duplicate_all(x)
 }
@@ -29,7 +26,6 @@ vec_duplicate_all(x)
 \item \code{vec_duplicate_detect()}: a logical vector the same length as \code{x}.
 \item \code{vec_duplicate_loc()}: an integer vector of the locations of the
 duplicates of each value.
-\item \code{vec_duplicate_id()}: an integer vector the same length as \code{x}.
 }
 }
 \description{
@@ -44,8 +40,6 @@ repetitions.
 \item \code{vec_duplicate_loc()}: returns an integer vector giving the location of
 the duplicates of each value, i.e. the second and subsequent
 occurrences of that value.
-\item \code{vec_duplicate_id()}: returns an integer vector giving the location of
-the first occurrence of the value.
 }
 }
 \section{Missing values}{
@@ -76,14 +70,6 @@ vec_duplicate_loc(x)
 
 # Which can be considered the complement of `vec_unique_loc()`
 vec_unique_loc(x)
-
-# Identify elements of a vector by the location of the first element that
-# they're equal to:
-vec_duplicate_id(x)
-# Location of the unique values:
-vec_unique_loc(x)
-# Equivalent to `duplicated()`:
-vec_duplicate_id(x) == seq_along(x)
 }
 \seealso{
 \code{\link[=vec_unique]{vec_unique()}} for functions that work with the dual of duplicated
