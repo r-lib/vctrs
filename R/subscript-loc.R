@@ -537,18 +537,23 @@ cnd_subscript_element <- function(cnd) {
     column = c("column", "columns")
   )
 }
+
+subscript_actions <- c(
+  "subset", "extract", "assign", "rename", "remove", "negate"
+)
 cnd_subscript_action <- function(cnd) {
   action <- cnd$subscript_action %||% "subset"
 
-  if (!is_string(action, c("subset", "extract", "assign", "rename", "remove"))) {
+  if (!is_string(action, subscript_actions)) {
     abort(paste0(
       "Internal error: `cnd$subscript_action` must be one of ",
-      "`subset`, `extract`, `assign`, `rename`, or `remove`."
+      "`subset`, `extract`, `assign`, `rename`, `remove`, or `negate`."
     ))
   }
 
   action
 }
+
 cnd_subscript_type <- function(cnd) {
   type <- cnd$subscript_type
 

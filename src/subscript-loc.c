@@ -6,7 +6,7 @@ static SEXP int_invert_location(SEXP subscript, R_len_t n);
 static SEXP int_filter_zero(SEXP subscript, R_len_t n_zero);
 static void int_check_consecutive(SEXP subscript, R_len_t n);
 
-static void stop_subscript_oob_location(SEXP i, R_len_t size, bool remove);
+static void stop_subscript_oob_location(SEXP i, R_len_t size, bool negate);
 static void stop_subscript_oob_name(SEXP i, SEXP names);
 static void stop_location_negative(SEXP i);
 static void stop_indicator_size(SEXP i, SEXP n);
@@ -349,9 +349,9 @@ static void stop_location_negative_positive(SEXP i) {
   never_reached("stop_location_negative_positive");
 }
 
-static void stop_subscript_oob_location(SEXP i, R_len_t size, bool remove) {
+static void stop_subscript_oob_location(SEXP i, R_len_t size, bool negate) {
   SEXP size_obj = PROTECT(r_int(size));
-  SEXP action = remove ? chrs_remove : chrs_subset;
+  SEXP action = negate ? chrs_negate : chrs_subset;
   vctrs_eval_mask3(Rf_install("stop_subscript_oob_location"),
                    syms_i, i,
                    syms_size, size_obj,

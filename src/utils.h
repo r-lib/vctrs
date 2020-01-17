@@ -249,6 +249,7 @@ extern SEXP strings_length;
 
 extern SEXP chrs_subset;
 extern SEXP chrs_remove;
+extern SEXP chrs_negate;
 
 extern SEXP syms_i;
 extern SEXP syms_n;

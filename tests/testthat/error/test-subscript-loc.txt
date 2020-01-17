@@ -259,8 +259,8 @@ x Can't subset location 10.
 i There are only 2 elements.
 
 > vec_as_location(-10L, 2L)
-Error: Must remove existing elements.
-x Can't remove location 10.
+Error: Must negate existing elements.
+x Can't negate location 10.
 i There are only 2 elements.
 
 > vec_as_location2(10L, 2L)

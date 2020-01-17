@@ -999,6 +999,7 @@ SEXP strings_length = NULL;
 
 SEXP chrs_subset = NULL;
 SEXP chrs_remove = NULL;
+SEXP chrs_negate = NULL;
 
 SEXP syms_i = NULL;
 SEXP syms_n = NULL;
@@ -1105,6 +1106,9 @@ void vctrs_init_utils(SEXP ns) {
 
   chrs_remove = Rf_mkString("remove");
   R_PreserveObject(chrs_remove);
+
+  chrs_negate = Rf_mkString("negate");
+  R_PreserveObject(chrs_negate);
 
 
   classes_tibble = Rf_allocVector(STRSXP, 3);

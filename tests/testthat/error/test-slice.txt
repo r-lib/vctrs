@@ -54,7 +54,7 @@ x Can't subset location 3.
 i There are only 2 elements.
 
 > vec_slice(1:2, -3L)
-Error: Must remove existing elements.
-x Can't remove location 3.
+Error: Must negate existing elements.
+x Can't negate location 3.
 i There are only 2 elements.
 
