@@ -382,18 +382,18 @@ cnd_body_vctrs_error_indicator_bad_size <- function(cnd, ...) {
 
 stop_location_oob_non_consecutive <- function(i, size, ..., class = NULL) {
   stop_subscript_oob(
-    class = c(class, "vctrs_error_subscript_oob_location_non_consecutive"),
+    class = c(class, "vctrs_error_subscript_oob_non_consecutive"),
     i = i,
     size = size,
     ...
   )
 }
 #' @export
-cnd_header.vctrs_error_subscript_oob_location_non_consecutive <- function(cnd, ...) {
+cnd_header.vctrs_error_subscript_oob_non_consecutive <- function(cnd, ...) {
   "Can't index beyond the end with non-consecutive locations."
 }
 #' @export
-cnd_body.vctrs_error_subscript_oob_location_non_consecutive <- function(cnd, ...) {
+cnd_body.vctrs_error_subscript_oob_non_consecutive <- function(cnd, ...) {
   i <- sort(cnd$i)
   i <- i[i > cnd$size]
 
