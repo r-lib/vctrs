@@ -161,9 +161,9 @@ test_that("num_as_location() optionally allows negative indices", {
 
 test_that("num_as_location() optionally forbids negative indices", {
   verify_errors({
-    expect_error(num_as_location(dbl(1, -1), 2L, negative = "error"), class = "vctrs_error_location_bad_type")
+    expect_error(num_as_location(dbl(1, -1), 2L, negative = "error"), class = "vctrs_error_subscript_bad_type")
   })
-  expect_error(num_as_location(c(1, -10), 2L, negative = "error"), class = "vctrs_error_location_bad_type")
+  expect_error(num_as_location(c(1, -10), 2L, negative = "error"), class = "vctrs_error_subscript_bad_type")
 })
 
 test_that("vec_as_location() handles NULL", {
@@ -177,11 +177,11 @@ test_that("vec_as_location() checks for mix of negative and missing locations", 
   verify_errors({
     expect_error(
       vec_as_location(-c(1L, NA), 30),
-      class = "vctrs_error_location_negative_missing"
+      class = "vctrs_error_subscript_bad_type"
     )
     expect_error(
       vec_as_location(-c(1L, rep(NA, 10)), 30),
-      class = "vctrs_error_location_negative_missing"
+      class = "vctrs_error_subscript_bad_type"
     )
   })
 })
@@ -190,11 +190,11 @@ test_that("vec_as_location() checks for mix of negative and positive locations",
   verify_errors({
     expect_error(
       vec_as_location(c(-1L, 1L), 30),
-      class = "vctrs_error_location_negative_positive"
+      class = "vctrs_error_subscript_bad_type"
     )
     expect_error(
       vec_as_location(c(-1L, rep(1L, 10)), 30),
-      class = "vctrs_error_location_negative_positive"
+      class = "vctrs_error_subscript_bad_type"
     )
   })
 })

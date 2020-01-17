@@ -239,17 +239,12 @@ vec_as_location2_result <- function(i,
 
 
 stop_location_negative_missing <- function(i) {
-  cnd_signal(new_error_location_bad_type(
+  cnd_signal(new_error_subscript_bad_type(
     i,
-    class = "vctrs_error_location_negative_missing"
+    body = cnd_body_vctrs_error_subscript_bad_type
   ))
 }
-#' @export
-cnd_header.vctrs_error_location_negative_missing <- function(cnd, ...) {
-  "Negative locations can't have missing values."
-}
-#' @export
-cnd_body.vctrs_error_location_negative_missing <- function(cnd, ...) {
+cnd_body_vctrs_error_subscript_bad_type <- function(cnd, ...) {
   missing_loc <- which(is.na(cnd$i))
 
   if (length(missing_loc) == 1) {
@@ -261,22 +256,19 @@ cnd_body.vctrs_error_location_negative_missing <- function(cnd, ...) {
       "The subscript has {n_loc} missing values at locations {missing_loc}."
     )
   }
-  format_error_bullets(c(i = loc))
-}
-
-# Rf_errorcall(R_NilValue, "Can't subset with a mix of negative and positive indices");
-stop_location_negative_positive <- function(i) {
-  cnd_signal(new_error_location_bad_type(
-    i,
-    class = "vctrs_error_location_negative_positive"
+  format_error_bullets(c(
+    x = "Negative locations can't have missing values.",
+    i = loc
   ))
 }
-#' @export
-cnd_header.vctrs_error_location_negative_positive <- function(cnd, ...) {
-  "Negative locations can't be mixed with positive locations."
+
+stop_location_negative_positive <- function(i) {
+  cnd_signal(new_error_subscript_bad_type(
+    i,
+    body = cnd_body_vctrs_error_location_negative_positive
+  ))
 }
-#' @export
-cnd_body.vctrs_error_location_negative_positive <- function(cnd, ...) {
+cnd_body_vctrs_error_location_negative_positive <- function(cnd, ...) {
   positive_loc <- which(cnd$i > 0)
 
   if (length(positive_loc) == 1) {
@@ -288,7 +280,10 @@ cnd_body.vctrs_error_location_negative_positive <- function(cnd, ...) {
       "The subscript has {n_loc} missing values at locations {positive_loc}."
     )
   }
-  format_error_bullets(c(i = loc))
+  format_error_bullets(c(
+    x = "Negative locations can't be mixed with positive locations.",
+    i = loc
+  ))
 }
 
 
@@ -362,7 +357,7 @@ cnd_bullets_location_need_non_negative <- function(cnd, ...) {
 }
 
 stop_location_negative <- function(i, ..., arg = "i") {
-  cnd_signal(new_error_location_bad_type(
+  cnd_signal(new_error_subscript_bad_type(
     i,
     arg = arg,
     body = cnd_bullets_location_need_non_negative

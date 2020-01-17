@@ -162,8 +162,8 @@ test_that("can slice with negative indices", {
   expect_identical(vec_slice(1:3, -c(1L, 3L)), 2L)
   expect_identical(vec_slice(mtcars, -(1:30)), vec_slice(mtcars, 31:32))
 
-  expect_error(vec_slice(1:3, -c(1L, NA)), class = "vctrs_error_location_negative_missing")
-  expect_error(vec_slice(1:3, c(-1L, 1L)), class = "vctrs_error_location_negative_positive")
+  expect_error(vec_slice(1:3, -c(1L, NA)), class = "vctrs_error_subscript_bad_type")
+  expect_error(vec_slice(1:3, c(-1L, 1L)), class = "vctrs_error_subscript_bad_type")
 })
 
 test_that("0 is ignored in negative indices", {
