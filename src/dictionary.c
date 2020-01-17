@@ -141,6 +141,8 @@ SEXP vctrs_unique_loc(SEXP x) {
   return out;
 }
 
+// Nearly identical to `vctrs_unique_loc()`. The only difference
+// is the behavior of the if statement in the for loop
 SEXP vctrs_duplicate_loc(SEXP x) {
   int nprot = 0;
 
