@@ -66,7 +66,7 @@ vec_type2 <- function(x, y, ...) {
 vec_as_index <- function(i, n, names = NULL) {
   signal_soft_deprecated(paste_line(
     "`vec_as_index()` is deprecated as of vctrs 0.2.2.",
-    "Please use `vec_as_location() instead.`"
+    "Please use `vec_as_location()` instead."
   ))
   n <- vec_coercible_cast(n, integer())
   vec_assert(n, integer(), 1L)
@@ -98,7 +98,7 @@ vec_as_index <- function(i, n, names = NULL) {
 vec_duplicate_id <- function(x) {
   signal_soft_deprecated(paste_line(
     "`vec_duplicate_id()` is deprecated as of vctrs 0.2.2.",
-    "Please use `vec_first_loc() instead."
+    "Please use `vec_first_loc()` instead."
   ))
 
   vec_first_loc(x)
