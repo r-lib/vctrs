@@ -203,7 +203,7 @@ test_that("logical subscripts must match size of indexed vector", {
   verify_errors({
     expect_error(
       vec_as_location(c(TRUE, FALSE), 3),
-      class = "vctrs_error_indicator_bad_size"
+      class = "vctrs_error_subscript_bad_size"
     )
   })
 })

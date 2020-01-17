@@ -289,6 +289,19 @@ collapse_subscript_type <- function(cnd, plural = FALSE) {
   glue::glue_collapse(types, sep = ", ", last = " or ")
 }
 
+new_error_subscript_bad_size <- function(i,
+                                         ...,
+                                         class = NULL) {
+  new_error_subscript(
+    class = c(class, "vctrs_error_subscript_bad_size"),
+    i = i,
+    ...
+  )
+}
+#' @export
+cnd_header.vctrs_error_subscript_bad_size <- function(cnd, ...) {
+  cnd_header.vctrs_error_subscript_bad_type(cnd, ...)
+}
 
 new_error_subscript2_bad_type <- function(i,
                                           indicator,

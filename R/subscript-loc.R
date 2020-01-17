@@ -365,23 +365,18 @@ stop_location_negative <- function(i, ..., arg = "i") {
 }
 
 stop_indicator_size <- function(i, n, arg = "i") {
-  cnd_signal(new_error_subscript(
+  cnd_signal(new_error_subscript_bad_size(
     i,
     n = n,
     arg = arg,
-    class = "vctrs_error_indicator_bad_size"
+    body = cnd_body_vctrs_error_indicator_bad_size
   ))
 }
-#' @export
-cnd_header.vctrs_error_indicator_bad_size <- function(cnd, ...) {
-  "Logical subscripts must match the size of the indexed input."
-}
-#' @export
-cnd_body.vctrs_error_indicator_bad_size <- function(cnd, ...) {
+cnd_body_vctrs_error_indicator_bad_size <- function(cnd, ...) {
   glue_data_bullets(
     cnd,
-    i = "The input has size {n}.",
-    x = "The subscript has size {vec_size(i)}."
+    i = "Logical subscripts must match the size of the indexed input.",
+    x = "The input has size {n} but the subscript has size {vec_size(i)}."
   )
 }
 
