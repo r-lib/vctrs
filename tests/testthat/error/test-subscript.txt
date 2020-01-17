@@ -5,32 +5,32 @@ vec_as_subscript() forbids subscript types
 > vec_as_subscript(1L, indicator = "error", location = "error")
 Error: Must subset with a proper subscript vector.
 x `i` has the wrong type `integer`.
-i These indices must be names.
+i The subscript must contain names.
 
 > vec_as_subscript("foo", indicator = "error", name = "error")
 Error: Must subset with a proper subscript vector.
 x `i` has the wrong type `character`.
-i These indices must be locations.
+i The subscript must contain locations.
 
 > vec_as_subscript(TRUE, indicator = "error")
 Error: Must subset with a proper subscript vector.
 x `i` has the wrong type `logical`.
-i These indices must be locations or names.
+i The subscript must contain locations or names.
 
 > vec_as_subscript("foo", name = "error")
 Error: Must subset with a proper subscript vector.
 x `i` has the wrong type `character`.
-i These indices must be indicators or locations.
+i The subscript must contain indicators or locations.
 
 > vec_as_subscript(NULL, location = "error")
 Error: Must subset with a proper subscript vector.
 x `i` has the wrong type `NULL`.
-i These indices must be indicators or names.
+i The subscript must contain indicators or names.
 
 > vec_as_subscript(quote(foo), name = "error")
 Error: Must subset with a proper subscript vector.
 x `i` has the wrong type `symbol`.
-i These indices must be indicators or locations.
+i The subscript must contain indicators or locations.
 
 
 vec_as_subscript2() forbids subscript types
@@ -39,15 +39,15 @@ vec_as_subscript2() forbids subscript types
 > vec_as_subscript2(1L, location = "error", indicator = "error")
 Error: Must extract with a single subscript.
 x `i` has the wrong type `integer`.
-i This subscript must be a name.
+i The subscript must contain names.
 
 > vec_as_subscript2("foo", name = "error", indicator = "error")
 Error: Must extract with a single subscript.
 x `i` has the wrong type `character`.
-i This subscript must be a location.
+i The subscript must contain locations.
 
 > vec_as_subscript2(TRUE, indicator = "error")
 Error: Must extract with a single subscript.
 x `i` has the wrong type `logical`.
-i This subscript must be a location or a name.
+i The subscript must contain locations or names.
 

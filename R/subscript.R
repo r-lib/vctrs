@@ -175,7 +175,7 @@ vec_as_subscript2_result <- function(i,
     if (inherits(parent, "vctrs_error_cast_lossy")) {
       bullets <- cnd_bullets_subscript_lossy_cast
     } else {
-      bullets <- cnd_bullets_subscript_bad_base_type
+      bullets <- cnd_body.vctrs_error_subscript_bad_type
     }
 
     result$err <- new_error_subscript2_bad_type(
@@ -200,7 +200,7 @@ vec_as_subscript2_result <- function(i,
       location = location,
       name = name,
       arg = arg,
-      body = cnd_bullets_subscript_bad_base_type
+      body = cnd_body.vctrs_error_subscript_bad_type
     )))
   }
 
@@ -257,18 +257,6 @@ new_error_subscript_bad_type <- function(i,
   )
 }
 
-cnd_bullets_subscript_bad_base_type <- function(cnd, ...) {
-  arg <- cnd$arg %||% "i"
-  type <- obj_type(cnd$i)
-  expected_types <- collapse_subscript_type(cnd)
-
-  format_error_bullets(c(
-    x = glue::glue("`{arg}` has the wrong type `{type}`."),
-    i = glue::glue("This subscript must be {expected_types}.")
-  ))
-}
-
-
 #' @export
 cnd_header.vctrs_error_subscript_bad_type <- function(cnd) {
   "Must subset with a proper subscript vector."
@@ -281,7 +269,7 @@ cnd_body.vctrs_error_subscript_bad_type <- function(cnd) {
 
   format_error_bullets(c(
     x = glue::glue("`{arg}` has the wrong type `{type}`."),
-    i = glue::glue("These indices must be {expected_types}.")
+    i = glue::glue("The subscript must contain {expected_types}.")
   ))
 }
 cnd_bullets_subscript_lossy_cast <- function(cnd, ...) {
