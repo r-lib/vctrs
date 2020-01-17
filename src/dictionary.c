@@ -141,15 +141,33 @@ SEXP vctrs_unique_loc(SEXP x) {
   return out;
 }
 
-// Nearly identical to `vctrs_unique_loc()`. The only difference
-// is the behavior of the if statement in the for loop
-SEXP vctrs_duplicate_loc(SEXP x) {
-  int nprot = 0;
+SEXP vec_duplicate_loc_impl(SEXP x, R_len_t n);
+SEXP vec_duplicate_loc_first_impl(SEXP x, R_len_t n);
 
+SEXP vec_duplicate_loc(SEXP x, bool first) {
   R_len_t n = vec_size(x);
 
-  x = PROTECT_N(vec_proxy_equal(x), &nprot);
-  x = PROTECT_N(obj_maybe_translate_encoding(x, n), &nprot);
+  x = PROTECT(vec_proxy_equal(x));
+  x = PROTECT(obj_maybe_translate_encoding(x, n));
+
+  SEXP out;
+
+  if (first) {
+    out = vec_duplicate_loc_first_impl(x, n);
+  } else {
+    out = vec_duplicate_loc_impl(x, n);
+  }
+
+  UNPROTECT(2);
+  return out;
+}
+
+SEXP vctrs_duplicate_loc(SEXP x, SEXP first) {
+  return vec_duplicate_loc(x, Rf_asLogical(first));
+}
+
+SEXP vec_duplicate_loc_impl(SEXP x, R_len_t n) {
+  int nprot = 0;
 
   dictionary d;
   dict_init(&d, x);
@@ -169,6 +187,59 @@ SEXP vctrs_duplicate_loc(SEXP x) {
   }
 
   SEXP out = growable_values(&g);
+
+  UNPROTECT(nprot);
+  return out;
+}
+
+SEXP vec_duplicate_loc_first_impl(SEXP x, R_len_t n) {
+  int nprot = 0;
+
+  dictionary d;
+  dict_init(&d, x);
+  PROTECT_DICT(&d, &nprot);
+
+  SEXP val = PROTECT_N(Rf_allocVector(INTSXP, d.size), &nprot);
+  int* p_val = INTEGER(val);
+
+  // Store hash values so we don't have to look them up twice
+  int32_t* hashes = (int32_t*) R_alloc(n, sizeof(int32_t));
+
+  R_len_t n_out = 0;
+
+  for (int i = 0; i < n; ++i) {
+    int32_t hash = dict_hash_scalar(&d, i);
+    hashes[i] = hash;
+
+    if (d.key[hash] == DICT_EMPTY) {
+      dict_put(&d, hash, i);
+      p_val[hash] = 1;
+      continue;
+    }
+
+    ++p_val[hash];
+
+    if (p_val[hash] == 2) {
+      n_out += 2;
+    } else {
+      n_out += 1;
+    }
+  }
+
+  // Create output
+  SEXP out = PROTECT_N(Rf_allocVector(INTSXP, n_out), &nprot);
+  int* p_out = INTEGER(out);
+
+  int j = 0;
+
+  for (int i = 0; i < n; ++i) {
+    int32_t hash = hashes[i];
+
+    if (p_val[hash] != 1) {
+      p_out[j] = i + 1;
+      ++j;
+    }
+  }
 
   UNPROTECT(nprot);
   return out;

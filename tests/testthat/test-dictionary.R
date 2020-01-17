@@ -53,8 +53,11 @@ test_that("vec_duplicate_any returns single TRUE/FALSE", {
 })
 
 test_that("can control if the first occurrence is considered a duplicate", {
-  expect_equal(vec_duplicate_flg(c(1, 1, 2), first = FALSE), c(FALSE, TRUE, FALSE))
-  expect_equal(vec_duplicate_flg(c(1, 1, 2), first = TRUE), c(TRUE, TRUE, FALSE))
+  expect_equal(vec_duplicate_flg(c(1, 3, 2, 1, 2), first = FALSE), c(FALSE, FALSE, FALSE, TRUE, TRUE))
+  expect_equal(vec_duplicate_flg(c(1, 3, 2, 1, 2), first = TRUE), c(TRUE, FALSE, TRUE, TRUE, TRUE))
+
+  expect_equal(vec_duplicate_loc(c(1, 3, 2, 1, 2), first = FALSE), c(4, 5))
+  expect_equal(vec_duplicate_loc(c(1, 3, 2, 1, 2), first = TRUE), c(1, 3, 4, 5))
 })
 
 test_that("vec_duplicate_loc is the complement of vec_unique_loc", {

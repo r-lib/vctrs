@@ -81,8 +81,7 @@ reset_rownames <- function(x) {
 #' * `vec_duplicate_flg()`: returns a vector of logical flags describing if each
 #'   element of the vector is a duplicate.
 #' * `vec_duplicate_loc()`: returns an integer vector giving the location of
-#'   the duplicates of each value, i.e. the second and subsequent
-#'   occurrences of that value.
+#'   the duplicates of each value.
 #'
 #' @section Missing values:
 #' In most cases, missing values are not considered to be equal, i.e.
@@ -121,11 +120,13 @@ reset_rownames <- function(x) {
 #' # considered a duplicate
 #' vec_duplicate_flg(x, first = TRUE)
 #'
-#' # The behavior of `duplicated()` is more similar
-#' # to `vec_duplicate_loc()`
+#' # `vec_duplicate_loc()` returns the locations corresponding to
+#' # the flags that `vec_duplicate_flg()` returns
 #' vec_duplicate_loc(x)
+#' which(vec_duplicate_flg(x))
 #'
-#' # Which can be considered the complement of `vec_unique_loc()`
+#' # When `first = FALSE`, it can be considered the
+#' # complement of `vec_unique_loc()`
 #' vec_unique_loc(x)
 NULL
 
@@ -144,8 +145,9 @@ vec_duplicate_flg <- function(x, first = FALSE) {
 
 #' @rdname vec_duplicate
 #' @export
-vec_duplicate_loc <- function(x) {
-  .Call(vctrs_duplicate_loc, x)
+vec_duplicate_loc <- function(x, first = FALSE) {
+  vec_assert(first, ptype = logical(), size = 1L)
+  .Call(vctrs_duplicate_loc, x, first)
 }
 
 # Unique values -----------------------------------------------------------
