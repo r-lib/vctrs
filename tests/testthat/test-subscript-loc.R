@@ -376,7 +376,7 @@ test_that("conversion to locations has informative error messages", {
     with_tibble_cols(vec_slice(set_names(letters), "foo"))
     with_tibble_cols(vec_slice(set_names(letters), 30))
     with_tibble_cols(vec_slice(set_names(letters), -30))
-    "With tibble columns"
+    "With tibble rows"
     with_tibble_rows(vec_slice(set_names(letters), c("foo", "bar")))
     with_tibble_rows(vec_slice(set_names(letters), 1:30))
     with_tibble_rows(vec_slice(set_names(letters), -(1:30)))

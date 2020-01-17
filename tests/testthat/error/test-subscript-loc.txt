@@ -338,7 +338,7 @@ Error: Must rename existing columns in `tbl[i]`.
 x Can't rename location 30.
 i There are only 26 columns.
 
-> # With tibble columns
+> # With tibble rows
 > with_tibble_rows(vec_slice(set_names(letters), c("foo", "bar")))
 Error: Must remove existing rows in `tbl[i]`.
 x Can't remove rows with unknown names `foo` and `bar`.
@@ -352,4 +352,3 @@ i There are only 26 rows.
 Error: Must remove existing rows in `tbl[i]`.
 x Can't remove locations 27, 28, 29, and 30.
 i There are only 26 rows.
-
