@@ -253,6 +253,31 @@ test_that("missing values are supported in error formatters", {
   })
 })
 
+test_that("can customise subscript type errors", {
+  verify_errors({
+    expect_error(
+      with_tibble_cols(num_as_location(-1, 2, negative = "error")),
+      class = "vctrs_error_subscript_type"
+    )
+    expect_error(
+      with_tibble_cols(num_as_location2(-1, 2, negative = "error")),
+      class = "vctrs_error_subscript_type"
+    )
+    expect_error(
+      with_tibble_cols(vec_as_location2(0, 2)),
+      class = "vctrs_error_subscript_type"
+    )
+    expect_error(
+      with_tibble_cols(vec_as_location2(na_dbl, 2)),
+      class = "vctrs_error_subscript_type"
+    )
+    expect_error(
+      with_tibble_cols(vec_as_location2(c(1, 2), 2)),
+      class = "vctrs_error_subscript_type"
+    )
+  })
+})
+
 test_that("can customise OOB errors", {
   verify_errors({
     expect_error(
@@ -369,6 +394,13 @@ test_that("conversion to locations has informative error messages", {
     "# missing values are supported in error formatters"
     num_as_location(c(1, NA, 2, 3), 1)
     num_as_location(c(1, NA, 3), 1, oob = "extend")
+
+    "# can customise subscript type errors"
+    with_tibble_cols(num_as_location(-1, 2, negative = "error"))
+    with_tibble_cols(num_as_location2(-1, 2, negative = "error"))
+    with_tibble_cols(vec_as_location2(0, 2))
+    with_tibble_cols(vec_as_location2(na_dbl, 2))
+    with_tibble_cols(vec_as_location2(c(1, 2), 2))
 
     "# can customise OOB errors"
     vec_slice(set_names(letters), "foo")

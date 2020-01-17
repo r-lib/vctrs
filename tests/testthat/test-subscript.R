@@ -42,6 +42,15 @@ test_that("vec_as_subscript() handles symbols", {
   )
 })
 
+test_that("can customise subscript errors", {
+  verify_errors({
+    expect_error(
+      with_tibble_cols(vec_as_subscript(env())),
+      class = "vctrs_error_subscript_type"
+    )
+  })
+})
+
 test_that("subscript functions have informative error messages", {
   verify_output(test_path("error", "test-subscript.txt"), {
     "# vec_as_subscript() forbids subscript types"
@@ -56,5 +65,8 @@ test_that("subscript functions have informative error messages", {
     vec_as_subscript2(1L, location = "error", indicator = "error")
     vec_as_subscript2("foo", name = "error", indicator = "error")
     vec_as_subscript2(TRUE, indicator = "error")
+
+    "# can customise subscript errors"
+    with_tibble_cols(vec_as_subscript(env()))
   })
 })

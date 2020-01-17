@@ -304,40 +304,39 @@ new_error_location2_type <- function(i,
 
 
 cnd_bullets_location2_need_scalar <- function(cnd, ...) {
-  arg <- cnd$arg %||% "i"
-  size <- length(cnd$i)
+  cnd$arg <- arg_as_string(cnd$arg %||% "i")
   format_error_bullets(c(
-    x = glue::glue("`{arg}` has the wrong size {size}."),
+    x = glue::glue_data(cnd, "`{arg}` has the wrong size {length(i)}."),
     i = "This subscript must be size 1."
   ))
 }
 cnd_bullets_location2_need_present <- function(cnd, ...) {
-  arg <- cnd$arg %||% "i"
+  cnd$arg <- arg_as_string(cnd$arg %||% "i")
   format_error_bullets(c(
-    x = glue::glue("`{arg}` can't be `NA`."),
+    x = glue::glue_data(cnd, "`{arg}` can't be `NA`."),
     i = "This subscript can't be missing."
   ))
 }
 cnd_bullets_location2_need_non_zero <- function(cnd, ...) {
-  arg <- cnd$arg %||% "i"
+  cnd$arg <- arg_as_string(cnd$arg %||% "i")
   format_error_bullets(c(
-    x = glue::glue("`{arg}` can't be zero."),
-    i = "This subscript must be a positive integer."
+    x = glue::glue_data(cnd, "`{arg}` can't be zero."),
+    i = "The subscript must be a positive location."
   ))
 }
 cnd_bullets_location2_need_non_negative <- function(cnd, ...) {
-  cnd$arg <- cnd$arg %||% "i"
+  cnd$arg <- arg_as_string(cnd$arg %||% "i")
   format_error_bullets(c(
     x = glue::glue_data(cnd, "`{arg}` (with value {i}) has the wrong sign."),
-    i = "This subscript must be a positive integer."
+    i = "The subscript must be a positive location."
   ))
 }
 
 cnd_bullets_location_need_non_negative <- function(cnd, ...) {
-  cnd$arg <- cnd$arg %||% "i"
+  cnd$arg <- arg_as_string(cnd$arg %||% "i")
   format_error_bullets(c(
     x = glue::glue_data(cnd, "`{arg}` contains negative locations."),
-    i = "These subscripts must be positive integers."
+    i = "The subscript must contain positive locations."
   ))
 }
 

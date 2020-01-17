@@ -259,15 +259,17 @@ new_error_subscript_type <- function(i,
 
 #' @export
 cnd_header.vctrs_error_subscript_type <- function(cnd) {
+  action <- cnd_subscript_action(cnd)
+  elt <- cnd_subscript_element(cnd)
   if (cnd_subscript_scalar(cnd)) {
-    "Must extract with a single subscript."
+    glue::glue("Must {action} {elt[[1]]} with a single subscript.")
   } else {
-    "Must subset with a proper subscript vector."
+    glue::glue("Must {action} {elt[[2]]} with a proper subscript vector.")
   }
 }
 #' @export
 cnd_body.vctrs_error_subscript_type <- function(cnd) {
-  arg <- cnd$arg %||% "i"
+  arg <- arg_as_string(cnd$arg %||% "i")
   type <- obj_type(cnd$i)
   expected_types <- collapse_subscript_type(cnd, plural = TRUE)
 
@@ -345,7 +347,15 @@ subscript_actions <- c(
   "subset", "extract", "assign", "rename", "remove", "negate"
 )
 cnd_subscript_action <- function(cnd) {
-  action <- cnd$subscript_action %||% "subset"
+  action <- cnd$subscript_action
+
+  if (is_null(action)) {
+    if (cnd_subscript_scalar(cnd)) {
+      action <- "extract"
+    } else {
+      action <- "subset"
+    }
+  }
 
   if (!is_string(action, subscript_actions)) {
     abort(paste0(

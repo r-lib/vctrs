@@ -11,12 +11,12 @@ logical subscripts must match size of indexed vector
 ====================================================
 
 > vec_assign(1:2, c(TRUE, FALSE, TRUE), 5)
-Error: Must subset with a proper subscript vector.
+Error: Must subset elements with a proper subscript vector.
 i Logical subscripts must match the size of the indexed input.
 x The input has size 2 but the subscript has size 3.
 
 > vec_assign(mtcars, c(TRUE, FALSE), mtcars[1, ])
-Error: Must subset with a proper subscript vector.
+Error: Must subset elements with a proper subscript vector.
 i Logical subscripts must match the size of the indexed input.
 x The input has size 32 but the subscript has size 2.
 
