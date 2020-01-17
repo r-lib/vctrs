@@ -21,6 +21,7 @@ extern SEXP vctrs_hash_object(SEXP);
 extern SEXP vctrs_equal_object(SEXP, SEXP);
 extern SEXP vctrs_in(SEXP, SEXP);
 extern SEXP vctrs_duplicated(SEXP);
+extern SEXP vctrs_duplicate_flg(SEXP, SEXP);
 extern SEXP vctrs_unique_loc(SEXP);
 extern SEXP vctrs_duplicate_loc(SEXP);
 extern SEXP vctrs_count(SEXP);
@@ -124,6 +125,7 @@ static const R_CallMethodDef CallEntries[] = {
   {"vctrs_unique_loc",                 (DL_FUNC) &vctrs_unique_loc, 1},
   {"vctrs_duplicate_loc",              (DL_FUNC) &vctrs_duplicate_loc, 1},
   {"vctrs_duplicated",                 (DL_FUNC) &vctrs_duplicated, 1},
+  {"vctrs_duplicate_flg",              (DL_FUNC) &vctrs_duplicate_flg, 2},
   {"vctrs_duplicated_any",             (DL_FUNC) &vctrs_duplicated_any, 1},
   {"vctrs_count",                      (DL_FUNC) &vctrs_count, 1},
   {"vctrs_first_loc",                  (DL_FUNC) &vctrs_first_loc, 1},

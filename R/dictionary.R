@@ -82,6 +82,8 @@ reset_rownames <- function(x) {
 #'   element of the vector is duplicated elsewhere. Unlike [duplicated()], it
 #'   reports all duplicated values, not just the second and subsequent
 #'   repetitions.
+#' * `vec_duplicate_flg()`: returns a vector of logical flags describing if each
+#'   element of the vector is a duplicate.
 #' * `vec_duplicate_loc()`: returns an integer vector giving the location of
 #'   the duplicates of each value, i.e. the second and subsequent
 #'   occurrences of that value.
@@ -93,10 +95,13 @@ reset_rownames <- function(x) {
 #' all `NaN` are also considered to be equal.)
 #'
 #' @param x A vector (including a data frame).
+#' @param first A logical indicating if the first occurrence of a value should
+#'   be considered a duplicate.
 #' @return
 #'   * `vec_duplicate_any()`: a logical vector of length 1.
 #'   * `vec_duplicate_all()`: a logical vector of length 1.
 #'   * `vec_duplicate_detect()`: a logical vector the same length as `x`.
+#'   * `vec_duplicate_flg()`: a logical vector the same size as `x`.
 #'   * `vec_duplicate_loc()`: an integer vector of the locations of the
 #'     duplicates of each value.
 #' @seealso [vec_unique()] for functions that work with the dual of duplicated
@@ -111,6 +116,16 @@ reset_rownames <- function(x) {
 #' vec_duplicate_all(c(NA, NA))
 #'
 #' x <- c(10, 10, 20, 30, 30, 40)
+#'
+#' # The default of `vec_duplicate_flg()` is similar to `duplicated()`. Both
+#' # don't consider the first occurrence to be a duplicate.
+#' vec_duplicate_flg(x)
+#' duplicated(x)
+#'
+#' # Use `first` to control whether or not the first occurrence should be
+#' # considered a duplicate
+#' vec_duplicate_flg(x, first = TRUE)
+#'
 #' vec_duplicate_detect(x)
 #' # Note that `duplicated()` doesn't consider the first instance to
 #' # be a duplicate
@@ -134,6 +149,13 @@ vec_duplicate_any <- function(x) {
 #' @export
 vec_duplicate_detect <- function(x) {
   .Call(vctrs_duplicated, x)
+}
+
+#' @rdname vec_duplicate
+#' @export
+vec_duplicate_flg <- function(x, first = FALSE) {
+  vec_assert(first, ptype = logical(), size = 1L)
+  .Call(vctrs_duplicate_flg, x, first)
 }
 
 #' @rdname vec_duplicate
