@@ -13,8 +13,8 @@ vec_first_loc(x)
 An integer vector the same size as \code{x}.
 }
 \description{
-\code{vec_first_loc()} returns an integer vector giving the location of the
-first occurrence of the current element in \code{x}.
+\code{vec_first_loc()} returns an integer vector giving, for each element of \code{x},
+the location of its first occurrence.
 }
 \section{Missing values}{
 

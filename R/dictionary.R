@@ -197,8 +197,8 @@ vec_unique_count <- function(x) {
 
 #' Locate first occurrences
 #'
-#' `vec_first_loc()` returns an integer vector giving the location of the
-#' first occurrence of the current element in `x`.
+#' `vec_first_loc()` returns an integer vector giving, for each element of `x`,
+#' the location of its first occurrence.
 #'
 #' @inherit vec_duplicate sections
 #' @param x A vector (including a data frame).
