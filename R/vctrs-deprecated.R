@@ -103,3 +103,25 @@ vec_duplicate_id <- function(x) {
 
   vec_first_loc(x)
 }
+
+#' Detect duplicate values
+#'
+#' @description
+#'
+#' \Sexpr[results=rd, stage=render]{vctrs:::lifecycle("soft-deprecated")}
+#'
+#' `vec_duplicate_detect()` has been renamed to [vec_duplicate_flg()] and is
+#' soft-deprecated as of vctrs 0.2.2.
+#'
+#' @inheritParams vec_duplicate_flg
+#'
+#' @keywords internal
+#' @export
+vec_duplicate_detect <- function(x) {
+  signal_soft_deprecated(paste_line(
+    "`vec_duplicate_detect()` is deprecated as of vctrs 0.2.2.",
+    "Please use `vec_duplicate_flg()` instead."
+  ))
+
+  vec_duplicate_flg(x, first = TRUE)
+}

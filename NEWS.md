@@ -1,6 +1,8 @@
 
 # vctrs 0.2.99.9000
 
+* `vec_duplicate_detect()` has been renamed to `vec_duplicate_flg()`.
+
 * `vec_duplicate_id()` has been renamed to `vec_first_loc()`.
 
 * New `vec_duplicate_loc()` for computing the locations of the duplicates

@@ -78,10 +78,6 @@ reset_rownames <- function(x) {
 #' * `vec_duplicate_any()`: detects the presence of duplicated values,
 #'   similar to [anyDuplicated()].
 #' * `vec_duplicate_all()`: detects if all values are equivalent.
-#' * `vec_duplicate_detect()`: returns a logical vector describing if each
-#'   element of the vector is duplicated elsewhere. Unlike [duplicated()], it
-#'   reports all duplicated values, not just the second and subsequent
-#'   repetitions.
 #' * `vec_duplicate_flg()`: returns a vector of logical flags describing if each
 #'   element of the vector is a duplicate.
 #' * `vec_duplicate_loc()`: returns an integer vector giving the location of
@@ -100,7 +96,6 @@ reset_rownames <- function(x) {
 #' @return
 #'   * `vec_duplicate_any()`: a logical vector of length 1.
 #'   * `vec_duplicate_all()`: a logical vector of length 1.
-#'   * `vec_duplicate_detect()`: a logical vector the same length as `x`.
 #'   * `vec_duplicate_flg()`: a logical vector the same size as `x`.
 #'   * `vec_duplicate_loc()`: an integer vector of the locations of the
 #'     duplicates of each value.
@@ -126,11 +121,6 @@ reset_rownames <- function(x) {
 #' # considered a duplicate
 #' vec_duplicate_flg(x, first = TRUE)
 #'
-#' vec_duplicate_detect(x)
-#' # Note that `duplicated()` doesn't consider the first instance to
-#' # be a duplicate
-#' duplicated(x)
-#'
 #' # The behavior of `duplicated()` is more similar
 #' # to `vec_duplicate_loc()`
 #' vec_duplicate_loc(x)
@@ -143,12 +133,6 @@ NULL
 #' @export
 vec_duplicate_any <- function(x) {
   .Call(vctrs_duplicated_any, x)
-}
-
-#' @rdname vec_duplicate
-#' @export
-vec_duplicate_detect <- function(x) {
-  .Call(vctrs_duplicated, x)
 }
 
 #' @rdname vec_duplicate

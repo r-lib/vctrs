@@ -415,47 +415,8 @@ SEXP vctrs_count(SEXP x) {
   return out;
 }
 
-SEXP vctrs_duplicated(SEXP x) {
-  int nprot = 0;
-
-  R_len_t n = vec_size(x);
-
-  x = PROTECT_N(vec_proxy_equal(x), &nprot);
-  x = PROTECT_N(obj_maybe_translate_encoding(x, n), &nprot);
-
-  dictionary d;
-  dict_init(&d, x);
-  PROTECT_DICT(&d, &nprot);
-
-  SEXP val = PROTECT_N(Rf_allocVector(INTSXP, d.size), &nprot);
-  int* p_val = INTEGER(val);
-
-  for (int i = 0; i < n; ++i) {
-    int32_t hash = dict_hash_scalar(&d, i);
-
-    if (d.key[hash] == DICT_EMPTY) {
-      dict_put(&d, hash, i);
-      p_val[hash] = 0;
-    }
-    p_val[hash]++;
-  }
-
-  // Create output
-  SEXP out = PROTECT_N(Rf_allocVector(LGLSXP, n), &nprot);
-  int* p_out = LOGICAL(out);
-
-  for (int i = 0; i < n; ++i) {
-    int32_t hash = dict_hash_scalar(&d, i);
-    p_out[i] = p_val[hash] != 1;
-  }
-
-  UNPROTECT(nprot);
-  return out;
-}
-
 #define UNIQUE -1
 
-// [[ include("utils.h") ]]
 SEXP vec_duplicate_flg(SEXP x, bool first) {
   int nprot = 0;
 

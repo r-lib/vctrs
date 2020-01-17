@@ -47,11 +47,6 @@ test_that("vec_count recursively takes the equality proxy", {
 
 # duplicates and uniques --------------------------------------------------
 
-test_that("vec_duplicated reports on duplicates regardless of position", {
-  x <- c(1, 1, 2, 3, 4, 4)
-  expect_equal(vec_duplicate_detect(x), c(TRUE, TRUE, FALSE, FALSE, TRUE, TRUE))
-})
-
 test_that("vec_duplicate_any returns single TRUE/FALSE", {
   expect_false(vec_duplicate_any(c(1:10)))
   expect_true(vec_duplicate_any(c(1:10, 1)))
@@ -90,7 +85,6 @@ test_that("also works for data frames", {
   rownames(df2) <- NULL
 
   expect_equal(vec_duplicate_flg(df2), vec_duplicate_flg(idx))
-  expect_equal(vec_duplicate_detect(df2), vec_duplicate_detect(idx))
   expect_equal(vec_unique(df2), vec_slice(df, vec_unique(idx)))
 
   count <- vec_count(df2, sort = "key")
@@ -148,7 +142,6 @@ test_that("duplicate functions take the equality proxy recursively", {
 
   expect_equal(vec_duplicate_any(df), TRUE)
   expect_equal(vec_duplicate_flg(df), c(FALSE, TRUE, FALSE))
-  expect_equal(vec_duplicate_detect(df), c(TRUE, TRUE, FALSE))
   expect_equal(vec_duplicate_loc(df), 2)
 })
 
@@ -178,7 +171,6 @@ test_that("duplicate functions works with different encodings", {
   encs <- encodings()
 
   expect_equal(vec_duplicate_flg(encs), c(FALSE, TRUE, TRUE))
-  expect_equal(vec_duplicate_detect(encs), rep(TRUE, 3))
   expect_equal(vec_duplicate_any(encs), TRUE)
   expect_equal(vec_duplicate_loc(encs), c(2, 3))
 })
@@ -256,8 +248,6 @@ test_that("matching functions take the equality proxy (#375)", {
 
   expect_true(vec_duplicate_any(x))
   expect_identical(vec_unique_count(x), 2L)
-
-  expect_identical(vec_duplicate_detect(x), c(TRUE, FALSE, TRUE))
 })
 
 test_that("can take the unique loc of 1d arrays (#461)", {

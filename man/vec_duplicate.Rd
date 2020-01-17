@@ -3,15 +3,12 @@
 \name{vec_duplicate}
 \alias{vec_duplicate}
 \alias{vec_duplicate_any}
-\alias{vec_duplicate_detect}
 \alias{vec_duplicate_flg}
 \alias{vec_duplicate_loc}
 \alias{vec_duplicate_all}
 \title{Find duplicated values}
 \usage{
 vec_duplicate_any(x)
-
-vec_duplicate_detect(x)
 
 vec_duplicate_flg(x, first = FALSE)
 
@@ -29,7 +26,6 @@ be considered a duplicate.}
 \itemize{
 \item \code{vec_duplicate_any()}: a logical vector of length 1.
 \item \code{vec_duplicate_all()}: a logical vector of length 1.
-\item \code{vec_duplicate_detect()}: a logical vector the same length as \code{x}.
 \item \code{vec_duplicate_flg()}: a logical vector the same size as \code{x}.
 \item \code{vec_duplicate_loc()}: an integer vector of the locations of the
 duplicates of each value.
@@ -40,10 +36,6 @@ duplicates of each value.
 \item \code{vec_duplicate_any()}: detects the presence of duplicated values,
 similar to \code{\link[=anyDuplicated]{anyDuplicated()}}.
 \item \code{vec_duplicate_all()}: detects if all values are equivalent.
-\item \code{vec_duplicate_detect()}: returns a logical vector describing if each
-element of the vector is duplicated elsewhere. Unlike \code{\link[=duplicated]{duplicated()}}, it
-reports all duplicated values, not just the second and subsequent
-repetitions.
 \item \code{vec_duplicate_flg()}: returns a vector of logical flags describing if each
 element of the vector is a duplicate.
 \item \code{vec_duplicate_loc()}: returns an integer vector giving the location of
@@ -77,11 +69,6 @@ duplicated(x)
 # Use `first` to control whether or not the first occurrence should be
 # considered a duplicate
 vec_duplicate_flg(x, first = TRUE)
-
-vec_duplicate_detect(x)
-# Note that `duplicated()` doesn't consider the first instance to
-# be a duplicate
-duplicated(x)
 
 # The behavior of `duplicated()` is more similar
 # to `vec_duplicate_loc()`
