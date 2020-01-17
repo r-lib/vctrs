@@ -38,6 +38,6 @@ x Can't negate location 100.
 i There are only 26 elements.
 
 > vec_assign(set_names(letters), "foo", "bar")
-Error: Must subset existing elements.
-x Can't subset element with unknown name `foo`.
+Error: Must assign existing elements.
+x Can't assign element with unknown name `foo`.
 

@@ -357,8 +357,6 @@ test_that("must assign existing elements", {
       vec_slice(letters, -100) <- "foo",
       class = "vctrs_error_subscript_oob"
     )
-
-    # FIXME
     expect_error(
       vec_assign(set_names(letters), "foo", "bar"),
       class = "vctrs_error_subscript_oob"
@@ -379,8 +377,6 @@ test_that("slice and assign have informative errors", {
     vec_assign(1:3, 5, 10)
     vec_assign(1:3, "foo", 10)
     vec_slice(letters, -100) <- "foo"
-
-    # FIXME
     vec_assign(set_names(letters), "foo", "bar")
   })
 })

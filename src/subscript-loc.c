@@ -377,9 +377,11 @@ static void stop_subscript_oob_location(SEXP i, R_len_t size,
 }
 static void stop_subscript_oob_name(SEXP i, SEXP names,
                                     const struct vec_as_location_opts* opts) {
-  vctrs_eval_mask2(Rf_install("stop_subscript_oob_name"),
+  SEXP action = get_opts_action(opts);
+  vctrs_eval_mask3(Rf_install("stop_subscript_oob_name"),
                    syms_i, i,
                    syms_names, names,
+                   syms_subscript_action, action,
                    vctrs_ns_env);
   never_reached("stop_subscript_oob_name");
 }
