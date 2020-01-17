@@ -5,9 +5,8 @@
 
 * `vec_duplicate_id()` has been renamed to `vec_first_loc()`.
 
-* New `vec_duplicate_loc()` for computing the locations of the duplicates
-  of each value in a vector. This is similar to `duplicated()`, in that it
-  returns the locations of the second and subsequent occurrences of each value.
+* New `vec_duplicate_loc()` for computing locations of duplicate values in
+  a vector.
 
 * `vec_ptype2()` methods for base classes now prevent
   inheritance. This makes sense because the subtyping graph created by
