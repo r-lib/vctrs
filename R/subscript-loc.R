@@ -522,13 +522,20 @@ cnd_body_vctrs_error_subscript_oob_name <- function(cnd) {
 }
 
 cnd_subscript_element <- function(cnd) {
-  elt <- cnd$subscript_elt %||% c("element", "elements")
+  elt <- cnd$subscript_elt %||% "element"
 
-  if (!is_character(elt, n = 2)) {
-    abort("Internal error: `cnd$subscript_elt` must be a character vector of size 2.")
+  if (!is_string(elt, c("element", "row", "column"))) {
+    abort(paste0(
+      "Internal error: `cnd$subscript_elt` must be one of ",
+      "`element`, `row`, or `column`."
+    ))
   }
 
-  elt
+  switch(elt,
+    element = c("element", "elements"),
+    row = c("row", "rows"),
+    column = c("column", "columns")
+  )
 }
 cnd_subscript_action <- function(cnd) {
   action <- cnd$subscript_action %||% "subset"
