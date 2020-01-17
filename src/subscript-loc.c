@@ -103,13 +103,9 @@ static SEXP int_invert_location(SEXP subscript, R_len_t n,
 
     j = -j;
     if (j > n) {
-      if (opts->action == SUBSCRIPT_ACTION_DEFAULT) {
-        struct vec_as_location_opts updated_opts = *opts;
-        updated_opts.action = SUBSCRIPT_ACTION_NEGATE;
-        stop_subscript_oob_location(subscript, n, &updated_opts);
-      } else {
-        stop_subscript_oob_location(subscript, n, opts);
-      }
+      struct vec_as_location_opts updated_opts = *opts;
+      updated_opts.action = SUBSCRIPT_ACTION_NEGATE;
+      stop_subscript_oob_location(subscript, n, &updated_opts);
     }
 
     sel_data[j - 1] = 0;
