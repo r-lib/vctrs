@@ -2,7 +2,6 @@
 with_subscript_data <- function(expr,
                                 arg,
                                 subscript_elt = NULL,
-                                subscript_input = NULL,
                                 subscript_action = NULL) {
   local_options(rlang_force_unhandled_error = TRUE)
   tryCatch(
@@ -21,7 +20,6 @@ with_tibble_cols <- function(expr) {
     expr,
     arg = quote(tbl[i]),
     subscript_elt = c("column", "columns"),
-    subscript_input = "tibble",
     subscript_action = "rename"
   )
 }
@@ -30,7 +28,6 @@ with_tibble_rows <- function(expr) {
     expr,
     arg = quote(tbl[i]),
     subscript_elt = c("row", "rows"),
-    subscript_input = "tibble",
     subscript_action = "remove"
   )
 }

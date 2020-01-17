@@ -459,7 +459,6 @@ stop_subscript <- function(i, ..., class = NULL) {
 #' @export
 cnd_header.vctrs_error_subscript_oob <- function(cnd) {
   arg <- cnd$arg
-  input <- cnd_subscript_input(cnd)
   elt <- cnd_subscript_element(cnd)
   action <- cnd_subscript_action(cnd)
 
@@ -522,15 +521,6 @@ cnd_body_vctrs_error_subscript_oob_name <- function(cnd) {
   ))
 }
 
-cnd_subscript_input <- function(cnd) {
-  input <- cnd$subscript_input %||% "indexed input"
-
-  if (!is_character(input, n = 1)) {
-    abort("Internal error: `cnd$subscript_input` must be a character vector of size 1.")
-  }
-
-  input
-}
 cnd_subscript_element <- function(cnd) {
   elt <- cnd$subscript_elt %||% c("element", "elements")
 
