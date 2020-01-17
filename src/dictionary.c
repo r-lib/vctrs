@@ -486,15 +486,61 @@ SEXP vctrs_count(SEXP x) {
   return out;
 }
 
-#define UNIQUE -1
+SEXP vec_duplicate_flg_impl(SEXP x, R_len_t n);
+SEXP vec_duplicate_flg_first_impl(SEXP x, R_len_t n);
 
 SEXP vec_duplicate_flg(SEXP x, bool first) {
   int nprot = 0;
 
   R_len_t n = vec_size(x);
 
-  x = PROTECT_N(vec_proxy_equal(x), &nprot);
-  x = PROTECT_N(obj_maybe_translate_encoding(x, n), &nprot);
+  x = PROTECT(vec_proxy_equal(x));
+  x = PROTECT(obj_maybe_translate_encoding(x, n));
+
+  SEXP out;
+
+  if (first) {
+    out = vec_duplicate_flg_first_impl(x, n);
+  } else {
+    out = vec_duplicate_flg_impl(x, n);
+  }
+
+  UNPROTECT(2);
+  return out;
+}
+
+// [[ export() ]]
+SEXP vctrs_duplicate_flg(SEXP x, SEXP first) {
+  return vec_duplicate_flg(x, Rf_asLogical(first));
+}
+
+SEXP vec_duplicate_flg_impl(SEXP x, R_len_t n) {
+  int nprot = 0;
+
+  dictionary d;
+  dict_init(&d, x);
+  PROTECT_DICT(&d, &nprot);
+
+  SEXP out = PROTECT_N(Rf_allocVector(LGLSXP, n), &nprot);
+  int* p_out = LOGICAL(out);
+  memset(p_out, 0, n * sizeof(int));
+
+  for (int i = 0; i < n; ++i) {
+    int32_t hash = dict_hash_scalar(&d, i);
+
+    if (d.key[hash] == DICT_EMPTY) {
+      dict_put(&d, hash, i);
+    } else {
+      p_out[i] = 1;
+    }
+  }
+
+  UNPROTECT(nprot);
+  return out;
+}
+
+SEXP vec_duplicate_flg_first_impl(SEXP x, R_len_t n) {
+  int nprot = 0;
 
   dictionary d;
   dict_init(&d, x);
@@ -502,6 +548,7 @@ SEXP vec_duplicate_flg(SEXP x, bool first) {
 
   SEXP val = PROTECT_N(Rf_allocVector(INTSXP, d.size), &nprot);
   int* p_val = INTEGER(val);
+  memset(p_val, 0, d.size * sizeof(int));
 
   // Store hash values so we don't have to look them up twice
   int32_t* hashes = (int32_t*) R_alloc(n, sizeof(int32_t));
@@ -512,12 +559,8 @@ SEXP vec_duplicate_flg(SEXP x, bool first) {
 
     if (d.key[hash] == DICT_EMPTY) {
       dict_put(&d, hash, i);
-      p_val[hash] = UNIQUE;
-      continue;
-    }
-
-    if (p_val[hash] == UNIQUE) {
-      p_val[hash] = i;
+    } else {
+      p_val[hash] = 1;
     }
   }
 
@@ -526,31 +569,11 @@ SEXP vec_duplicate_flg(SEXP x, bool first) {
   int* p_out = LOGICAL(out);
 
   for (int i = 0; i < n; ++i) {
-    int32_t hash = hashes[i];
-    int val = p_val[hash];
-
-    if (val == UNIQUE) {
-      p_out[i] = 0;
-      continue;
-    }
-
-    if (first) {
-      p_out[i] = 1;
-      continue;
-    }
-
-    p_out[i] = i >= val;
+    p_out[i] = p_val[hashes[i]];
   }
 
   UNPROTECT(nprot);
   return out;
-}
-
-#undef UNIQUE
-
-// [[ export() ]]
-SEXP vctrs_duplicate_flg(SEXP x, SEXP first) {
-  return vec_duplicate_flg(x, Rf_asLogical(first));
 }
 
 
