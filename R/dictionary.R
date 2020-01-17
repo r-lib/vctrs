@@ -200,6 +200,11 @@ vec_unique_count <- function(x) {
 #' `vec_first_loc()` returns an integer vector giving, for each element of `x`,
 #' the location of its first occurrence.
 #'
+#' While `vec_unique_loc()` and `vec_duplicate_loc()` return _only_ the
+#' locations of the unique and duplicate values respectively, `vec_first_loc()`
+#' returns a vector the same size as `x` with locations corresponding to the
+#' first occurrence of each value.
+#'
 #' @inherit vec_duplicate sections
 #' @param x A vector (including a data frame).
 #' @return An integer vector the same size as `x`.
@@ -209,6 +214,14 @@ vec_unique_count <- function(x) {
 #' x <- c(10, 10, 20, 30, 30, 40)
 #'
 #' vec_first_loc(x)
+#'
+#' # Compare with `vec_unique_loc()`, which returns locations
+#' # for only the unique values
+#' vec_unique_loc(x)
+#'
+#' # And `vec_duplicate_loc()`, which returns locations for only the
+#' # duplicate values
+#' vec_duplicate_loc(x)
 #'
 #' vec_first_loc(c(NA, NA, NaN, NaN))
 vec_first_loc <- function(x) {

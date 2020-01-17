@@ -16,6 +16,12 @@ An integer vector the same size as \code{x}.
 \code{vec_first_loc()} returns an integer vector giving, for each element of \code{x},
 the location of its first occurrence.
 }
+\details{
+While \code{vec_unique_loc()} and \code{vec_duplicate_loc()} return \emph{only} the
+locations of the unique and duplicate values respectively, \code{vec_first_loc()}
+returns a vector the same size as \code{x} with locations corresponding to the
+first occurrence of each value.
+}
 \section{Missing values}{
 
 In most cases, missing values are not considered to be equal, i.e.
@@ -28,6 +34,14 @@ all \code{NaN} are also considered to be equal.)
 x <- c(10, 10, 20, 30, 30, 40)
 
 vec_first_loc(x)
+
+# Compare with `vec_unique_loc()`, which returns locations
+# for only the unique values
+vec_unique_loc(x)
+
+# And `vec_duplicate_loc()`, which returns locations for only the
+# duplicate values
+vec_duplicate_loc(x)
 
 vec_first_loc(c(NA, NA, NaN, NaN))
 }
