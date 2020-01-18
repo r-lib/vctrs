@@ -29,7 +29,7 @@ test_that("vec_as_subscript() handles NULL", {
   expect_identical(vec_as_subscript(NULL), int())
   expect_error(
     vec_as_subscript(NULL, location = "error"),
-    class = "vctrs_error_subscript_bad_type"
+    class = "vctrs_error_subscript_type"
   )
 })
 
@@ -38,7 +38,7 @@ test_that("vec_as_subscript() handles symbols", {
   expect_identical(vec_as_subscript(quote(`<U+5E78>`)), "\u5e78")
   expect_error(
     vec_as_subscript(quote(foo), name = "error"),
-    class = "vctrs_error_subscript_bad_type"
+    class = "vctrs_error_subscript_type"
   )
 })
 

@@ -158,7 +158,7 @@ vec_as_location2_result <- function(i,
 
   if (!is_null(result$err)) {
     parent <- result$err
-    return(result(err = new_error_location2_bad_type(
+    return(result(err = new_error_location2_type(
       i = i,
       arg = arg,
       # FIXME: Should body fields in parents be automatically inherited?
@@ -171,7 +171,7 @@ vec_as_location2_result <- function(i,
   i <- result$ok
 
   if (length(i) != 1L) {
-    return(result(err = new_error_location2_bad_type(
+    return(result(err = new_error_location2_type(
       i = i,
       arg = arg,
       body = cnd_bullets_location2_need_scalar
@@ -185,7 +185,7 @@ vec_as_location2_result <- function(i,
 
   if (is.na(i)) {
     if (!allow_missing && is.na(i)) {
-      result <- result(err = new_error_location2_bad_type(
+      result <- result(err = new_error_location2_type(
         i = i,
         arg = arg,
         body = cnd_bullets_location2_need_present
@@ -197,7 +197,7 @@ vec_as_location2_result <- function(i,
   }
 
   if (i == 0L) {
-    return(result(err = new_error_location2_bad_type(
+    return(result(err = new_error_location2_type(
       i = i,
       arg = arg,
       body = cnd_bullets_location2_need_non_zero
@@ -205,7 +205,7 @@ vec_as_location2_result <- function(i,
   }
 
   if (!allow_negative && neg) {
-    return(result(err = new_error_location2_bad_type(
+    return(result(err = new_error_location2_type(
       i = i,
       arg = arg,
       body = cnd_bullets_location2_need_non_negative
@@ -216,7 +216,7 @@ vec_as_location2_result <- function(i,
   err <- NULL
   i <- tryCatch(
     vec_as_location(i, n, names = names, arg = arg),
-    vctrs_error_subscript_bad_type = function(err) {
+    vctrs_error_subscript_type = function(err) {
       err <<- err
       i
     }
@@ -229,7 +229,7 @@ vec_as_location2_result <- function(i,
   if (is_null(err)) {
     result(i)
   } else {
-    result(err = new_error_location2_bad_type(
+    result(err = new_error_location2_type(
       i = i,
       parent = err,
       arg = arg
@@ -239,12 +239,12 @@ vec_as_location2_result <- function(i,
 
 
 stop_location_negative_missing <- function(i) {
-  cnd_signal(new_error_subscript_bad_type(
+  cnd_signal(new_error_subscript_type(
     i,
-    body = cnd_body_vctrs_error_subscript_bad_type
+    body = cnd_body_vctrs_error_subscript_type
   ))
 }
-cnd_body_vctrs_error_subscript_bad_type <- function(cnd, ...) {
+cnd_body_vctrs_error_subscript_type <- function(cnd, ...) {
   missing_loc <- which(is.na(cnd$i))
 
   if (length(missing_loc) == 1) {
@@ -263,7 +263,7 @@ cnd_body_vctrs_error_subscript_bad_type <- function(cnd, ...) {
 }
 
 stop_location_negative_positive <- function(i) {
-  cnd_signal(new_error_subscript_bad_type(
+  cnd_signal(new_error_subscript_type(
     i,
     body = cnd_body_vctrs_error_location_negative_positive
   ))
@@ -287,26 +287,11 @@ cnd_body_vctrs_error_location_negative_positive <- function(cnd, ...) {
 }
 
 
-new_error_location_bad_type <- function(i,
-                                        ...,
-                                        arg = "i",
-                                        class = NULL) {
-  new_error_subscript_bad_type(
-    class = c(class, "vctrs_error_location_bad_type"),
-    i = i,
-    indicator = "error",
-    location = "coerce",
-    name = "coerce",
-    arg = arg,
-    ...
-  )
-}
-
-new_error_location2_bad_type <- function(i,
-                                         ...,
-                                         arg = "i",
-                                         class = NULL) {
-  new_error_subscript2_bad_type(
+new_error_location2_type <- function(i,
+                                     ...,
+                                     arg = "i",
+                                     class = NULL) {
+  new_error_subscript2_type(
     class = class,
     i = i,
     indicator = "error",
@@ -357,7 +342,7 @@ cnd_bullets_location_need_non_negative <- function(cnd, ...) {
 }
 
 stop_location_negative <- function(i, ..., arg = "i") {
-  cnd_signal(new_error_subscript_bad_type(
+  cnd_signal(new_error_subscript_type(
     i,
     arg = arg,
     body = cnd_bullets_location_need_non_negative
@@ -365,14 +350,14 @@ stop_location_negative <- function(i, ..., arg = "i") {
 }
 
 stop_indicator_size <- function(i, n, arg = "i") {
-  cnd_signal(new_error_subscript_bad_size(
+  cnd_signal(new_error_subscript_size(
     i,
     n = n,
     arg = arg,
-    body = cnd_body_vctrs_error_indicator_bad_size
+    body = cnd_body_vctrs_error_indicator_size
   ))
 }
-cnd_body_vctrs_error_indicator_bad_size <- function(cnd, ...) {
+cnd_body_vctrs_error_indicator_size <- function(cnd, ...) {
   glue_data_bullets(
     cnd,
     i = "Logical subscripts must match the size of the indexed input.",
