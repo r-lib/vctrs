@@ -259,7 +259,11 @@ new_error_subscript_bad_type <- function(i,
 
 #' @export
 cnd_header.vctrs_error_subscript_bad_type <- function(cnd) {
-  "Must subset with a proper subscript vector."
+  if (cnd_subscript_scalar(cnd)) {
+    "Must extract with a single subscript."
+  } else {
+    "Must subset with a proper subscript vector."
+  }
 }
 #' @export
 cnd_body.vctrs_error_subscript_bad_type <- function(cnd) {
@@ -308,21 +312,16 @@ new_error_subscript2_bad_type <- function(i,
                                           location,
                                           name,
                                           ...,
-                                          arg = "i",
-                                          class = NULL) {
-  new_error_subscript(
-    class = c(class, "vctrs_error_subscript2_bad_type"),
+                                          arg = "i") {
+  new_error_subscript_bad_type(
     i = i,
     indicator = indicator,
     location = location,
     name = name,
     arg = arg,
+    subscript_scalar = TRUE,
     ...
   )
-}
-#' @export
-cnd_header.vctrs_error_subscript2_bad_type <- function(cnd) {
-  "Must extract with a single subscript."
 }
 
 cnd_subscript_element <- function(cnd) {
@@ -366,4 +365,14 @@ cnd_subscript_type <- function(cnd) {
   }
 
   type
+}
+
+cnd_subscript_scalar <- function(cnd) {
+  out <- cnd$subscript_scalar %||% FALSE
+
+  if (!is_bool(out)) {
+    abort("Internal error: `cnd$subscript_scalar` must be a boolean.")
+  }
+
+  out
 }
