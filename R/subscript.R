@@ -324,3 +324,46 @@ new_error_subscript2_bad_type <- function(i,
 cnd_header.vctrs_error_subscript2_bad_type <- function(cnd) {
   "Must extract with a single subscript."
 }
+
+cnd_subscript_element <- function(cnd) {
+  elt <- cnd$subscript_elt %||% "element"
+
+  if (!is_string(elt, c("element", "row", "column"))) {
+    abort(paste0(
+      "Internal error: `cnd$subscript_elt` must be one of ",
+      "`element`, `row`, or `column`."
+    ))
+  }
+
+  switch(elt,
+    element = c("element", "elements"),
+    row = c("row", "rows"),
+    column = c("column", "columns")
+  )
+}
+
+subscript_actions <- c(
+  "subset", "extract", "assign", "rename", "remove", "negate"
+)
+cnd_subscript_action <- function(cnd) {
+  action <- cnd$subscript_action %||% "subset"
+
+  if (!is_string(action, subscript_actions)) {
+    abort(paste0(
+      "Internal error: `cnd$subscript_action` must be one of ",
+      "`subset`, `extract`, `assign`, `rename`, `remove`, or `negate`."
+    ))
+  }
+
+  action
+}
+
+cnd_subscript_type <- function(cnd) {
+  type <- cnd$subscript_type
+
+  if (!is_string(type, c("indicator", "location", "name"))) {
+    abort("Internal error: `cnd$subscript_type` must be `indicator`, `location`, or `name`.")
+  }
+
+  type
+}
