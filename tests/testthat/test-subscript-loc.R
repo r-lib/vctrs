@@ -223,18 +223,18 @@ test_that("can optionally extend beyond the end", {
   verify_errors({
     expect_error(
       num_as_location(c(1, 3), 1, oob = "extend"),
-      class = "vctrs_error_subscript_oob_non_consecutive"
+      class = "vctrs_error_subscript_oob"
     )
     expect_error(
       num_as_location(c(1:5, 7), 3, oob = "extend"),
-      class = "vctrs_error_subscript_oob_non_consecutive"
+      class = "vctrs_error_subscript_oob"
     )
     expect_error(
-      class = "vctrs_error_subscript_oob_non_consecutive",
+      class = "vctrs_error_subscript_oob",
       num_as_location(c(1:5, 7, 1), 3, oob = "extend")
     )
     expect_error(
-      class = "vctrs_error_subscript_oob_non_consecutive",
+      class = "vctrs_error_subscript_oob",
       num_as_location(c(1:5, 7, 1, 10), 3, oob = "extend")
     )
   })
@@ -248,7 +248,7 @@ test_that("missing values are supported in error formatters", {
     )
     expect_error(
       num_as_location(c(1, NA, 3), 1, oob = "extend"),
-      class = "vctrs_error_subscript_oob_non_consecutive"
+      class = "vctrs_error_subscript_oob"
     )
   })
 })

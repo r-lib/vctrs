@@ -380,39 +380,6 @@ cnd_body_vctrs_error_indicator_bad_size <- function(cnd, ...) {
   )
 }
 
-stop_location_oob_non_consecutive <- function(i, size, ..., class = NULL) {
-  stop_subscript_oob(
-    class = c(class, "vctrs_error_subscript_oob_non_consecutive"),
-    i = i,
-    size = size,
-    ...
-  )
-}
-#' @export
-cnd_header.vctrs_error_subscript_oob_non_consecutive <- function(cnd, ...) {
-  "Can't index beyond the end with non-consecutive locations."
-}
-#' @export
-cnd_body.vctrs_error_subscript_oob_non_consecutive <- function(cnd, ...) {
-  i <- sort(cnd$i)
-  i <- i[i > cnd$size]
-
-  non_consecutive <- i[c(TRUE, diff(i) != 1L)]
-
-  if (length(non_consecutive) == 1) {
-    x <- glue::glue("The location {non_consecutive} is not consecutive to the end.")
-  } else {
-    non_consecutive <- enumerate(non_consecutive)
-    x <- glue::glue("The locations {non_consecutive} are not consecutive.")
-  }
-
-  glue_data_bullets(
-    cnd,
-    i = "The input has size {size}.",
-    x = x
-  )
-}
-
 stop_subscript_oob_location <- function(i, size, ..., class = NULL) {
   stop_subscript_oob(
     subscript_type = "location",
@@ -431,10 +398,11 @@ stop_subscript_oob_name <- function(i, names, ..., class = NULL) {
     ...
   )
 }
-stop_subscript_oob <- function(i, ..., class = NULL) {
+stop_subscript_oob <- function(i, subscript_type, ..., class = NULL) {
   stop_subscript(
     class = c(class, "vctrs_error_subscript_oob"),
     i = i,
+    subscript_type = subscript_type,
     ...
   )
 }
@@ -447,7 +415,10 @@ stop_subscript <- function(i, ..., class = NULL) {
 }
 
 #' @export
-cnd_header.vctrs_error_subscript_oob <- function(cnd) {
+cnd_header.vctrs_error_subscript_oob <- function(cnd, ...) {
+  if (cnd_subscript_oob_non_consecutive(cnd)) {
+    return(cnd_header_vctrs_error_subscript_oob_non_consecutive(cnd, ...))
+  }
   arg <- cnd$arg
   elt <- cnd_subscript_element(cnd)
   action <- cnd_subscript_action(cnd)
@@ -461,14 +432,20 @@ cnd_header.vctrs_error_subscript_oob <- function(cnd) {
 }
 
 #' @export
-cnd_body.vctrs_error_subscript_oob <- function(cnd) {
+cnd_body.vctrs_error_subscript_oob <- function(cnd, ...) {
   switch(cnd_subscript_type(cnd),
-    location = cnd_body_vctrs_error_subscript_oob_location(cnd),
-    name = cnd_body_vctrs_error_subscript_oob_name(cnd),
+    location =
+      if (cnd_subscript_oob_non_consecutive(cnd)) {
+        cnd_body_vctrs_error_subscript_oob_non_consecutive(cnd, ...)
+      } else {
+        cnd_body_vctrs_error_subscript_oob_location(cnd, ...)
+      },
+    name =
+      cnd_body_vctrs_error_subscript_oob_name(cnd, ...),
     abort("Internal error: subscript type can't be `indicator` for OOB errors.")
   )
 }
-cnd_body_vctrs_error_subscript_oob_location <- function(cnd) {
+cnd_body_vctrs_error_subscript_oob_location <- function(cnd, ...) {
   i <- cnd$i
   elt <- cnd_subscript_element(cnd)
   action <- cnd_subscript_action(cnd)
@@ -495,7 +472,7 @@ cnd_body_vctrs_error_subscript_oob_location <- function(cnd) {
     ))
   ))
 }
-cnd_body_vctrs_error_subscript_oob_name <- function(cnd) {
+cnd_body_vctrs_error_subscript_oob_name <- function(cnd, ...) {
   elt <- cnd_subscript_element(cnd)
   action <- cnd_subscript_action(cnd)
 
@@ -509,4 +486,43 @@ cnd_body_vctrs_error_subscript_oob_name <- function(cnd) {
       "Can't {action} {elt[[2]]} with unknown names {oob_enum}."
     ))
   ))
+}
+
+stop_location_oob_non_consecutive <- function(i, size, ...) {
+  stop_subscript_oob(
+    i = i,
+    size = size,
+    subscript_type = "location",
+    subscript_oob_non_consecutive = TRUE,
+    ...
+  )
+}
+
+cnd_header_vctrs_error_subscript_oob_non_consecutive <- function(cnd, ...) {
+  "Can't index beyond the end with non-consecutive locations."
+}
+cnd_body_vctrs_error_subscript_oob_non_consecutive <- function(cnd, ...) {
+  i <- sort(cnd$i)
+  i <- i[i > cnd$size]
+
+  non_consecutive <- i[c(TRUE, diff(i) != 1L)]
+
+  if (length(non_consecutive) == 1) {
+    x <- glue::glue("The location {non_consecutive} is not consecutive to the end.")
+  } else {
+    non_consecutive <- enumerate(non_consecutive)
+    x <- glue::glue("The locations {non_consecutive} are not consecutive.")
+  }
+
+  glue_data_bullets(
+    cnd,
+    i = "The input has size {size}.",
+    x = x
+  )
+}
+
+cnd_subscript_oob_non_consecutive <- function(cnd) {
+  out <- cnd$subscript_oob_non_consecutive %||% FALSE
+  stopifnot(is_bool(out))
+  out
 }
