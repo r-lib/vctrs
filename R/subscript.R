@@ -231,6 +231,13 @@ as_opts_subscript2_type <- function(x, arg = NULL) {
 }
 
 
+stop_subscript <- function(i, ..., class = NULL) {
+  abort(
+    class = c(class, "vctrs_error_subscript"),
+    i = i,
+    ...
+  )
+}
 new_error_subscript <- function(class = NULL, i, ..., arg = "i") {
   error_cnd(
     c(class, "vctrs_error_subscript"),

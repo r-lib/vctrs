@@ -365,8 +365,9 @@ static void stop_subscript_oob_location(SEXP i, R_len_t size,
                                         const struct vec_as_location_opts* opts) {
   SEXP size_obj = PROTECT(r_int(size));
   SEXP action = get_opts_action(opts);
-  vctrs_eval_mask4(Rf_install("stop_subscript_oob_location"),
+  vctrs_eval_mask5(Rf_install("stop_subscript_oob"),
                    syms_i, i,
+                   syms_subscript_type, chrs_location,
                    syms_size, size_obj,
                    syms_subscript_action, action,
                    syms_arg, opts->arg,
@@ -378,8 +379,9 @@ static void stop_subscript_oob_location(SEXP i, R_len_t size,
 static void stop_subscript_oob_name(SEXP i, SEXP names,
                                     const struct vec_as_location_opts* opts) {
   SEXP action = get_opts_action(opts);
-  vctrs_eval_mask4(Rf_install("stop_subscript_oob_name"),
+  vctrs_eval_mask5(Rf_install("stop_subscript_oob"),
                    syms_i, i,
+                   syms_subscript_type, chrs_name,
                    syms_names, names,
                    syms_subscript_action, action,
                    syms_arg, opts->arg,

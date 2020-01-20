@@ -303,8 +303,6 @@ new_error_location2_type <- function(i,
     ...
   )
 }
-
-
 cnd_bullets_location2_need_scalar <- function(cnd, ...) {
   cnd$arg <- arg_as_string(cnd$arg %||% "i")
   format_error_bullets(c(
@@ -334,19 +332,18 @@ cnd_bullets_location2_need_non_negative <- function(cnd, ...) {
   ))
 }
 
-cnd_bullets_location_need_non_negative <- function(cnd, ...) {
-  cnd$arg <- arg_as_string(cnd$arg %||% "i")
-  format_error_bullets(c(
-    x = glue::glue_data(cnd, "`{arg}` contains negative locations."),
-    i = "The subscript must contain positive locations."
-  ))
-}
-
 stop_location_negative <- function(i, ..., arg = "i") {
   cnd_signal(new_error_subscript_type(
     i,
     arg = arg,
     body = cnd_bullets_location_need_non_negative
+  ))
+}
+cnd_bullets_location_need_non_negative <- function(cnd, ...) {
+  cnd$arg <- arg_as_string(cnd$arg %||% "i")
+  format_error_bullets(c(
+    x = glue::glue_data(cnd, "`{arg}` contains negative locations."),
+    i = "The subscript must contain positive locations."
   ))
 }
 
@@ -366,36 +363,11 @@ cnd_body_vctrs_error_indicator_size <- function(cnd, ...) {
   )
 }
 
-stop_subscript_oob_location <- function(i, size, ..., class = NULL) {
-  stop_subscript_oob(
-    subscript_type = "location",
-    class = class,
-    i = i,
-    size = size,
-    ...
-  )
-}
-stop_subscript_oob_name <- function(i, names, ..., class = NULL) {
-  stop_subscript_oob(
-    subscript_type = "name",
-    class = class,
-    i = i,
-    names = names,
-    ...
-  )
-}
-stop_subscript_oob <- function(i, subscript_type, ..., class = NULL) {
+stop_subscript_oob <- function(i, subscript_type, ...) {
   stop_subscript(
-    class = c(class, "vctrs_error_subscript_oob"),
+    class = "vctrs_error_subscript_oob",
     i = i,
     subscript_type = subscript_type,
-    ...
-  )
-}
-stop_subscript <- function(i, ..., class = NULL) {
-  abort(
-    class = c(class, "vctrs_error_subscript"),
-    i = i,
     ...
   )
 }

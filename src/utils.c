@@ -90,6 +90,17 @@ SEXP vctrs_eval_mask4(SEXP fn,
   SEXP args[5] = { x1, x2, x3, x4, NULL };
   return vctrs_eval_mask_n(fn, syms, args, env);
 }
+SEXP vctrs_eval_mask5(SEXP fn,
+                      SEXP x1_sym, SEXP x1,
+                      SEXP x2_sym, SEXP x2,
+                      SEXP x3_sym, SEXP x3,
+                      SEXP x4_sym, SEXP x4,
+                      SEXP x5_sym, SEXP x5,
+                      SEXP env) {
+  SEXP syms[6] = { x1_sym, x2_sym, x3_sym, x4_sym, x5_sym, NULL };
+  SEXP args[6] = { x1, x2, x3, x4, x5, NULL };
+  return vctrs_eval_mask_n(fn, syms, args, env);
+}
 
 /**
  * Dispatch in the global environment
@@ -1013,6 +1024,8 @@ SEXP chrs_assign = NULL;
 SEXP chrs_rename = NULL;
 SEXP chrs_remove = NULL;
 SEXP chrs_negate = NULL;
+SEXP chrs_location = NULL;
+SEXP chrs_name = NULL;
 
 SEXP syms_i = NULL;
 SEXP syms_n = NULL;
@@ -1037,6 +1050,7 @@ SEXP syms_ptype = NULL;
 SEXP syms_missing = NULL;
 SEXP syms_size = NULL;
 SEXP syms_subscript_action = NULL;
+SEXP syms_subscript_type = NULL;
 
 SEXP fns_bracket = NULL;
 SEXP fns_quote = NULL;
@@ -1131,6 +1145,12 @@ void vctrs_init_utils(SEXP ns) {
 
   chrs_negate = Rf_mkString("negate");
   R_PreserveObject(chrs_negate);
+
+  chrs_location = Rf_mkString("location");
+  R_PreserveObject(chrs_location);
+
+  chrs_name = Rf_mkString("name");
+  R_PreserveObject(chrs_name);
 
 
   classes_tibble = Rf_allocVector(STRSXP, 3);
@@ -1237,6 +1257,7 @@ void vctrs_init_utils(SEXP ns) {
   syms_missing = R_MissingArg;
   syms_size = Rf_install("size");
   syms_subscript_action = Rf_install("subscript_action");
+  syms_subscript_type = Rf_install("subscript_type");
 
   fns_bracket = Rf_findVar(syms_bracket, R_BaseEnv);
   fns_quote = Rf_findVar(Rf_install("quote"), R_BaseEnv);
