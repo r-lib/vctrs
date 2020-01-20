@@ -461,25 +461,18 @@ cnd_body_vctrs_error_subscript_oob_non_consecutive <- function(cnd, ...) {
 
   non_consecutive <- i[c(TRUE, diff(i) != 1L)]
 
-  if (is_null(cnd$arg)) {
-    arg_line <- NULL
-  } else {
-    arg <- append_arg("The subscript", cnd$arg)
-    arg_line <- glue::glue("{arg} contains non-consecutive locations.")
-  }
-
+  arg <- append_arg("The subscript", cnd$arg)
   if (length(non_consecutive) == 1) {
-    x <- glue::glue("The location {non_consecutive} is not consecutive to the end.")
+    x_line <- glue::glue("{arg} contains non-consecutive location {non_consecutive}.")
   } else {
     non_consecutive <- enumerate(non_consecutive)
-    x <- glue::glue("The locations {non_consecutive} are not consecutive.")
+    x_line <- glue::glue("{arg} contains non-consecutive locations {non_consecutive}.")
   }
 
   glue_data_bullets(
     cnd,
     i = "The input has size {size}.",
-    x = arg_line,
-    x = x
+    x = x_line
   )
 }
 
