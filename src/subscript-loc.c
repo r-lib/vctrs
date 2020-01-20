@@ -8,6 +8,7 @@ static SEXP int_filter_zero(SEXP subscript, R_len_t n_zero);
 static void int_check_consecutive(SEXP subscript, R_len_t n,
                                   const struct vec_as_location_opts* opts);
 
+static void stop_subscript_missing(SEXP i);
 static void stop_subscript_oob_location(SEXP i, R_len_t size,
                                         const struct vec_as_location_opts* opts);
 static void stop_subscript_oob_name(SEXP i, SEXP names,
@@ -39,7 +40,11 @@ static SEXP int_as_location(SEXP subscript, R_len_t n,
   for (R_len_t i = 0; i < loc_n; ++i, ++data) {
     int elt = *data;
 
-    if (elt != NA_INTEGER) {
+    if (elt == NA_INTEGER) {
+      if (opts->missing == SUBSCRIPT_MISSING_ERROR) {
+        stop_subscript_missing(subscript);
+      }
+    } else {
       if (elt < 0) {
         switch (opts->loc_negative) {
         case LOC_NEGATIVE_INVERT: return int_invert_location(subscript, n, opts);
@@ -290,11 +295,28 @@ SEXP vec_as_location_opts(SEXP subscript, R_len_t n, SEXP names,
   }
 }
 
+static void stop_subscript_arg_missing() {
+  Rf_errorcall(R_NilValue, "`missing` must be one of \"propagate\" or \"error\".");
+}
 static void stop_bad_negative() {
   Rf_errorcall(R_NilValue, "`negative` must be one of \"invert\", \"error\", or \"ignore\".");
 }
 static void stop_bad_oob() {
-  Rf_errorcall(R_NilValue, "`negative` must be one of \"error\" or \"extend\".");
+  Rf_errorcall(R_NilValue, "`oob` must be one of \"error\" or \"extend\".");
+}
+
+static enum subscript_missing parse_subscript_arg_missing(SEXP x) {
+  if (TYPEOF(x) != STRSXP || Rf_length(x) == 0) {
+    stop_subscript_arg_missing();
+  }
+
+  const char* str = CHAR(STRING_ELT(x, 0));
+
+  if (!strcmp(str, "ignore")) return SUBSCRIPT_MISSING_PROPAGATE;
+  if (!strcmp(str, "error")) return SUBSCRIPT_MISSING_ERROR;
+  stop_subscript_arg_missing();
+
+  never_reached("stop_subscript_arg_missing");
 }
 static enum num_as_location_loc_negative parse_loc_negative(SEXP x) {
   if (TYPEOF(x) != STRSXP || Rf_length(x) == 0) {
@@ -326,7 +348,7 @@ static enum num_as_location_loc_oob parse_loc_oob(SEXP x) {
 
 SEXP vctrs_as_location(SEXP subscript, SEXP n_, SEXP names,
                        SEXP loc_negative, SEXP loc_oob,
-                       SEXP arg) {
+                       SEXP missing, SEXP arg) {
   R_len_t n = 0;
 
   if (n_ == R_NilValue && TYPEOF(subscript) == STRSXP) {
@@ -347,12 +369,20 @@ SEXP vctrs_as_location(SEXP subscript, SEXP n_, SEXP names,
 
   struct vec_as_location_opts opts = {
     .action = SUBSCRIPT_ACTION_DEFAULT,
+    .missing = parse_subscript_arg_missing(missing),
     .loc_negative = parse_loc_negative(loc_negative),
     .loc_oob = parse_loc_oob(loc_oob),
     .subscript_arg = arg
   };
 
   return vec_as_location_opts(subscript, n, names, &opts);
+}
+
+static void stop_subscript_missing(SEXP i) {
+  vctrs_eval_mask1(Rf_install("stop_subscript_missing"),
+                   syms_i, i,
+                   vctrs_ns_env);
+  never_reached("stop_subscript_missing");
 }
 
 static void stop_location_negative_missing(SEXP i,
@@ -444,9 +474,11 @@ void vctrs_init_subscript_loc(SEXP ns) {
   vec_as_location_default_opts_obj.loc_negative = LOC_NEGATIVE_INVERT;
   vec_as_location_default_opts_obj.loc_oob = LOC_OOB_ERROR;
   vec_as_location_default_opts_obj.subscript_arg = R_NilValue;
+  vec_as_location_default_opts_obj.missing = SUBSCRIPT_MISSING_PROPAGATE;
 
   vec_as_location_default_assign_opts_obj.action = SUBSCRIPT_ACTION_ASSIGN;
   vec_as_location_default_assign_opts_obj.loc_negative = LOC_NEGATIVE_INVERT;
   vec_as_location_default_assign_opts_obj.loc_oob = LOC_OOB_ERROR;
   vec_as_location_default_assign_opts_obj.subscript_arg = R_NilValue;
+  vec_as_location_default_assign_opts_obj.missing = SUBSCRIPT_MISSING_PROPAGATE;
 }

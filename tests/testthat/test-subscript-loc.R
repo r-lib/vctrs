@@ -253,6 +253,23 @@ test_that("missing values are supported in error formatters", {
   })
 })
 
+test_that("can disallow missing values", {
+  verify_errors({
+    expect_error(
+      vec_as_location(c(1, NA), 2, missing = "error"),
+      class = "vctrs_error_subscript_type"
+    )
+    expect_error(
+      vec_as_location(c(1, NA, 2, NA), 2, missing = "error", arg = "foo"),
+      class = "vctrs_error_subscript_type"
+    )
+    expect_error(
+      with_tibble_cols(vec_as_location(c(1, NA, 2, NA), 2, missing = "error")),
+      class = "vctrs_error_subscript_type"
+    )
+  })
+})
+
 test_that("can customise subscript type errors", {
   verify_errors({
     "With custom `arg`"
@@ -495,5 +512,10 @@ test_that("conversion to locations has informative error messages", {
     with_tibble_rows(vec_slice(set_names(letters), c("foo", "bar")))
     with_tibble_rows(vec_slice(set_names(letters), 1:30))
     with_tibble_rows(vec_slice(set_names(letters), -(1:30)))
+
+    "# can disallow missing values"
+    vec_as_location(c(1, NA), 2, missing = "error")
+    vec_as_location(c(1, NA, 2, NA), 2, missing = "error", arg = "foo")
+    with_tibble_cols(vec_as_location(c(1, NA, 2, NA), 2, missing = "error"))
   })
 })

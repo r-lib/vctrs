@@ -13,6 +13,10 @@ enum subscript_action {
   SUBSCRIPT_ACTION_REMOVE,
   SUBSCRIPT_ACTION_NEGATE
 };
+enum subscript_missing {
+  SUBSCRIPT_MISSING_PROPAGATE,
+  SUBSCRIPT_MISSING_ERROR
+};
 enum num_as_location_loc_negative {
   LOC_NEGATIVE_INVERT,
   LOC_NEGATIVE_ERROR,
@@ -27,6 +31,7 @@ struct vec_as_location_opts {
   enum subscript_action action;
   enum num_as_location_loc_negative loc_negative;
   enum num_as_location_loc_oob loc_oob;
+  enum subscript_missing missing;
   SEXP subscript_arg;
 };
 
