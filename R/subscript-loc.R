@@ -240,22 +240,24 @@ vec_as_location2_result <- function(i,
 }
 
 
-stop_location_negative_missing <- function(i) {
+stop_location_negative_missing <- function(i, ...) {
   cnd_signal(new_error_subscript_type(
     i,
+    ...,
     body = cnd_body_vctrs_error_subscript_type
   ))
 }
 cnd_body_vctrs_error_subscript_type <- function(cnd, ...) {
   missing_loc <- which(is.na(cnd$i))
+  arg <- append_arg("The subscript", cnd$arg)
 
   if (length(missing_loc) == 1) {
-    loc <- glue::glue("The subscript has a missing value at location {missing_loc}.")
+    loc <- glue::glue("{arg} has a missing value at location {missing_loc}.")
   } else {
     n_loc <- length(missing_loc)
     missing_loc <- enumerate(missing_loc)
     loc <- glue::glue(
-      "The subscript has {n_loc} missing values at locations {missing_loc}."
+      "{arg} has {n_loc} missing values at locations {missing_loc}."
     )
   }
   format_error_bullets(c(

@@ -15,7 +15,8 @@ static void stop_location_negative(SEXP i,
                                    const struct vec_as_location_opts* opts);
 static void stop_indicator_size(SEXP i, SEXP n,
                                 const struct vec_as_location_opts* opts);
-static void stop_location_negative_missing(SEXP i);
+static void stop_location_negative_missing(SEXP i,
+                                           const struct vec_as_location_opts* opts);
 static void stop_location_negative_positive(SEXP i);
 static void stop_location_oob_non_consecutive(SEXP i, R_len_t size);
 
@@ -86,7 +87,7 @@ static SEXP int_invert_location(SEXP subscript, R_len_t n,
     int j = *data;
 
     if (j == NA_INTEGER) {
-      stop_location_negative_missing(subscript);
+      stop_location_negative_missing(subscript, opts);
     }
     if (j >= 0) {
       if (j == 0) {
@@ -350,9 +351,11 @@ SEXP vctrs_as_location(SEXP subscript, SEXP n_, SEXP names,
   return vec_as_location_opts(subscript, n, names, &opts);
 }
 
-static void stop_location_negative_missing(SEXP i) {
-  vctrs_eval_mask1(Rf_install("stop_location_negative_missing"),
+static void stop_location_negative_missing(SEXP i,
+                                           const struct vec_as_location_opts* opts) {
+  vctrs_eval_mask2(Rf_install("stop_location_negative_missing"),
                    syms_i, i,
+                   syms_arg, opts->arg,
                    vctrs_ns_env);
   never_reached("stop_location_negative_missing");
 }

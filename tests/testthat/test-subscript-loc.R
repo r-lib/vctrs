@@ -280,6 +280,10 @@ test_that("can customise subscript type errors", {
       vec_as_location(c(TRUE, FALSE), 3, arg = "foo"),
       class = "vctrs_error_subscript_size"
     )
+    expect_error(
+      vec_as_location(c(-1, NA), 3, arg = "foo"),
+      class = "vctrs_error_subscript_type"
+    )
 
     "With tibble columns"
     expect_error(
@@ -305,6 +309,10 @@ test_that("can customise subscript type errors", {
     expect_error(
       with_tibble_cols(vec_as_location(c(TRUE, FALSE), 3)),
       class = "vctrs_error_subscript_size"
+    )
+    expect_error(
+      with_tibble_cols(vec_as_location(c(-1, NA), 3)),
+      class = "vctrs_error_subscript_type"
     )
   })
 })
@@ -444,6 +452,7 @@ test_that("conversion to locations has informative error messages", {
     vec_as_location2(na_dbl, 2, arg = "foo")
     vec_as_location2(c(1, 2), 2, arg = "foo")
     vec_as_location(c(TRUE, FALSE), 3, arg = "foo")
+    vec_as_location(c(-1, NA), 3, arg = "foo")
     "With tibble columns"
     with_tibble_cols(num_as_location(-1, 2, negative = "error"))
     with_tibble_cols(num_as_location2(-1, 2, negative = "error"))
@@ -451,6 +460,7 @@ test_that("conversion to locations has informative error messages", {
     with_tibble_cols(vec_as_location2(na_dbl, 2))
     with_tibble_cols(vec_as_location2(c(1, 2), 2))
     with_tibble_cols(vec_as_location(c(TRUE, FALSE), 3))
+    with_tibble_cols(vec_as_location(c(-1, NA), 3))
 
     "# can customise OOB errors"
     vec_slice(set_names(letters), "foo")

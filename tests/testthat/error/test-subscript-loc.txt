@@ -354,6 +354,11 @@ Error: Must subset elements with a proper subscript vector.
 i Logical subscripts must match the size of the indexed input.
 x The input has size 3 but the subscript `foo` has size 2.
 
+> vec_as_location(c(-1, NA), 3, arg = "foo")
+Error: Must subset elements with a proper subscript vector.
+x Negative locations can't have missing values.
+i The subscript `foo` has a missing value at location 2.
+
 > # With tibble columns
 > with_tibble_cols(num_as_location(-1, 2, negative = "error"))
 Error: Must rename columns with a proper subscript vector.
@@ -384,6 +389,11 @@ i This subscript must be size 1.
 Error: Must rename columns with a proper subscript vector.
 i Logical subscripts must match the size of the indexed input.
 x The input has size 3 but the subscript `tbl[i]` has size 2.
+
+> with_tibble_cols(vec_as_location(c(-1, NA), 3))
+Error: Must rename columns with a proper subscript vector.
+x Negative locations can't have missing values.
+i The subscript `tbl[i]` has a missing value at location 2.
 
 
 can customise OOB errors
