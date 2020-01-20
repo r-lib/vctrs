@@ -32,8 +32,7 @@ num_as_location() optionally forbids negative indices
 
 > num_as_location(dbl(1, -1), 2L, negative = "error")
 Error: Must subset elements with a proper subscript vector.
-x `i` contains negative locations.
-i The subscript must contain positive locations.
+x The subscript can't contain negative locations.
 
 
 logical subscripts must match size of indexed vector
@@ -167,8 +166,7 @@ vec_as_location2() requires length 1 inputs
 
 > vec_as_location2(1:2, 2L)
 Error: Must extract element with a single subscript.
-x `i` has the wrong size 2.
-i This subscript must be size 1.
+x The subscript has size 2 but must be size 1.
 
 > vec_as_location2(mtcars, 10L)
 Error: Must extract element with a single subscript.
@@ -190,8 +188,7 @@ i The subscript must contain locations or names.
 > # Idem with custom `arg`
 > vec_as_location2(1:2, 2L, arg = "foo")
 Error: Must extract element with a single subscript.
-x `foo` has the wrong size 2.
-i This subscript must be size 1.
+x The subscript `foo` has size 2 but must be size 1.
 
 > vec_as_location2(mtcars, 10L, arg = "foo")
 Error: Must extract element with a single subscript.
@@ -212,8 +209,7 @@ i The subscript must contain locations or names.
 
 > vec_as_location2(1:2, 2L, arg = "foo")
 Error: Must extract element with a single subscript.
-x `foo` has the wrong size 2.
-i This subscript must be size 1.
+x The subscript `foo` has size 2 but must be size 1.
 
 
 vec_as_location2() requires positive integers
@@ -221,36 +217,30 @@ vec_as_location2() requires positive integers
 
 > vec_as_location2(0, 2L)
 Error: Must extract element with a single subscript.
-x `i` can't be zero.
-i The subscript must be a positive location.
+x The subscript has value 0 but must be a positive location.
 
 > vec_as_location2(-1, 2L)
 Error: Must extract element with a single subscript.
-x `i` (with value -1) has the wrong sign.
-i The subscript must be a positive location.
+x The subscript has value -1 but must be a positive location.
 
 > # Idem with custom `arg`
 > vec_as_location2(0, 2L, arg = "foo")
 Error: Must extract element with a single subscript.
-x `foo` can't be zero.
-i The subscript must be a positive location.
+x The subscript `foo` has value 0 but must be a positive location.
 
 > # vec_as_location2() fails with NA
 > vec_as_location2(na_int, 2L)
 Error: Must extract element with a single subscript.
-x `i` can't be `NA`.
-i This subscript can't be missing.
+x The subscript can't be `NA`.
 
 > vec_as_location2(na_chr, 1L, names = "foo")
 Error: Must extract element with a single subscript.
-x `i` can't be `NA`.
-i This subscript can't be missing.
+x The subscript can't be `NA`.
 
 > # Idem with custom `arg`
 > vec_as_location2(na_int, 2L, arg = "foo")
 Error: Must extract element with a single subscript.
-x `foo` can't be `NA`.
-i This subscript can't be missing.
+x The subscript `foo` can't be `NA`.
 
 
 vec_as_location() and variants check for OOB elements
@@ -326,28 +316,23 @@ can customise subscript type errors
 > # With custom `arg`
 > num_as_location(-1, 2, negative = "error", arg = "foo")
 Error: Must subset elements with a proper subscript vector.
-x `foo` contains negative locations.
-i The subscript must contain positive locations.
+x The subscript `foo` can't contain negative locations.
 
 > num_as_location2(-1, 2, negative = "error", arg = "foo")
 Error: Must extract element with a single subscript.
-x `foo` (with value -1) has the wrong sign.
-i The subscript must be a positive location.
+x The subscript `foo` has value -1 but must be a positive location.
 
 > vec_as_location2(0, 2, arg = "foo")
 Error: Must extract element with a single subscript.
-x `foo` can't be zero.
-i The subscript must be a positive location.
+x The subscript `foo` has value 0 but must be a positive location.
 
 > vec_as_location2(na_dbl, 2, arg = "foo")
 Error: Must extract element with a single subscript.
-x `foo` can't be `NA`.
-i This subscript can't be missing.
+x The subscript `foo` can't be `NA`.
 
 > vec_as_location2(c(1, 2), 2, arg = "foo")
 Error: Must extract element with a single subscript.
-x `foo` has the wrong size 2.
-i This subscript must be size 1.
+x The subscript `foo` has size 2 but must be size 1.
 
 > vec_as_location(c(TRUE, FALSE), 3, arg = "foo")
 Error: Must subset elements with a proper subscript vector.
@@ -373,28 +358,23 @@ x The location 4 is not consecutive to the end.
 > # With tibble columns
 > with_tibble_cols(num_as_location(-1, 2, negative = "error"))
 Error: Must rename columns with a proper subscript vector.
-x `tbl[i]` contains negative locations.
-i The subscript must contain positive locations.
+x The subscript `tbl[i]` can't contain negative locations.
 
 > with_tibble_cols(num_as_location2(-1, 2, negative = "error"))
 Error: Must rename column with a single subscript.
-x `tbl[i]` (with value -1) has the wrong sign.
-i The subscript must be a positive location.
+x The subscript `tbl[i]` has value -1 but must be a positive location.
 
 > with_tibble_cols(vec_as_location2(0, 2))
 Error: Must rename column with a single subscript.
-x `tbl[i]` can't be zero.
-i The subscript must be a positive location.
+x The subscript `tbl[i]` has value 0 but must be a positive location.
 
 > with_tibble_cols(vec_as_location2(na_dbl, 2))
 Error: Must rename column with a single subscript.
-x `tbl[i]` can't be `NA`.
-i This subscript can't be missing.
+x The subscript `tbl[i]` can't be `NA`.
 
 > with_tibble_cols(vec_as_location2(c(1, 2), 2))
 Error: Must rename column with a single subscript.
-x `tbl[i]` has the wrong size 2.
-i This subscript must be size 1.
+x The subscript `tbl[i]` has size 2 but must be size 1.
 
 > with_tibble_cols(vec_as_location(c(TRUE, FALSE), 3))
 Error: Must rename columns with a proper subscript vector.

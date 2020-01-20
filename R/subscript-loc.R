@@ -202,7 +202,7 @@ vec_as_location2_result <- function(i,
     return(result(err = new_error_location2_type(
       i = i,
       arg = arg,
-      body = cnd_bullets_location2_need_non_zero
+      body = cnd_bullets_location2_need_positive
     )))
   }
 
@@ -210,7 +210,7 @@ vec_as_location2_result <- function(i,
     return(result(err = new_error_location2_type(
       i = i,
       arg = arg,
-      body = cnd_bullets_location2_need_non_negative
+      body = cnd_bullets_location2_need_positive
     )))
   }
 
@@ -308,31 +308,21 @@ new_error_location2_type <- function(i,
   )
 }
 cnd_bullets_location2_need_scalar <- function(cnd, ...) {
-  cnd$arg <- arg_as_string(cnd$arg %||% "i")
+  cnd$arg <- append_arg("The subscript", cnd$arg)
   format_error_bullets(c(
-    x = glue::glue_data(cnd, "`{arg}` has the wrong size {length(i)}."),
-    i = "This subscript must be size 1."
+    x = glue::glue_data(cnd, "{arg} has size {length(i)} but must be size 1.")
   ))
 }
 cnd_bullets_location2_need_present <- function(cnd, ...) {
-  cnd$arg <- arg_as_string(cnd$arg %||% "i")
+  cnd$arg <- append_arg("The subscript", cnd$arg)
   format_error_bullets(c(
-    x = glue::glue_data(cnd, "`{arg}` can't be `NA`."),
-    i = "This subscript can't be missing."
+    x = glue::glue_data(cnd, "{arg} can't be `NA`.")
   ))
 }
-cnd_bullets_location2_need_non_zero <- function(cnd, ...) {
-  cnd$arg <- arg_as_string(cnd$arg %||% "i")
+cnd_bullets_location2_need_positive <- function(cnd, ...) {
+  cnd$arg <- append_arg("The subscript", cnd$arg)
   format_error_bullets(c(
-    x = glue::glue_data(cnd, "`{arg}` can't be zero."),
-    i = "The subscript must be a positive location."
-  ))
-}
-cnd_bullets_location2_need_non_negative <- function(cnd, ...) {
-  cnd$arg <- arg_as_string(cnd$arg %||% "i")
-  format_error_bullets(c(
-    x = glue::glue_data(cnd, "`{arg}` (with value {i}) has the wrong sign."),
-    i = "The subscript must be a positive location."
+    x = glue::glue_data(cnd, "{arg} has value {i} but must be a positive location.")
   ))
 }
 
@@ -344,10 +334,9 @@ stop_location_negative <- function(i, ...) {
   ))
 }
 cnd_bullets_location_need_non_negative <- function(cnd, ...) {
-  cnd$arg <- arg_as_string(cnd$arg %||% "i")
+  cnd$arg <- append_arg("The subscript", cnd$arg)
   format_error_bullets(c(
-    x = glue::glue_data(cnd, "`{arg}` contains negative locations."),
-    i = "The subscript must contain positive locations."
+    x = glue::glue_data(cnd, "{arg} can't contain negative locations.")
   ))
 }
 
