@@ -11,12 +11,12 @@ logical subscripts must match size of indexed vector
 ====================================================
 
 > vec_assign(1:2, c(TRUE, FALSE, TRUE), 5)
-Error: Must subset elements with a proper subscript vector.
+Error: Must assign elements with a proper subscript vector.
 i Logical subscripts must match the size of the indexed input.
 x The input has size 2 but the subscript has size 3.
 
 > vec_assign(mtcars, c(TRUE, FALSE), mtcars[1, ])
-Error: Must subset elements with a proper subscript vector.
+Error: Must assign elements with a proper subscript vector.
 i Logical subscripts must match the size of the indexed input.
 x The input has size 32 but the subscript has size 2.
 
@@ -40,4 +40,18 @@ i There are only 26 elements.
 > vec_assign(set_names(letters), "foo", "bar")
 Error: Must assign existing elements.
 x Can't assign element with unknown name `foo`.
+
+
+must assign with proper negative locations
+==========================================
+
+> vec_assign(1:3, c(-1, 1), 1:2)
+Error: Must assign elements with a proper subscript vector.
+x Negative locations can't be mixed with positive locations.
+i The subscript has a positive value at location 2.
+
+> vec_assign(1:3, c(-1, NA), 1:2)
+Error: Must assign elements with a proper subscript vector.
+x Negative locations can't have missing values.
+i The subscript has a missing value at location 2.
 

@@ -357,17 +357,19 @@ SEXP vctrs_as_location(SEXP subscript, SEXP n_, SEXP names,
 
 static void stop_location_negative_missing(SEXP i,
                                            const struct vec_as_location_opts* opts) {
-  vctrs_eval_mask2(Rf_install("stop_location_negative_missing"),
+  vctrs_eval_mask3(Rf_install("stop_location_negative_missing"),
                    syms_i, i,
                    syms_subscript_arg, opts->subscript_arg,
+                   syms_subscript_action, get_opts_action(opts),
                    vctrs_ns_env);
   never_reached("stop_location_negative_missing");
 }
 static void stop_location_negative_positive(SEXP i,
                                             const struct vec_as_location_opts* opts) {
-  vctrs_eval_mask2(Rf_install("stop_location_negative_positive"),
+  vctrs_eval_mask3(Rf_install("stop_location_negative_positive"),
                    syms_i, i,
                    syms_subscript_arg, opts->subscript_arg,
+                   syms_subscript_action, get_opts_action(opts),
                    vctrs_ns_env);
   never_reached("stop_location_negative_positive");
 }
@@ -375,12 +377,11 @@ static void stop_location_negative_positive(SEXP i,
 static void stop_subscript_oob_location(SEXP i, R_len_t size,
                                         const struct vec_as_location_opts* opts) {
   SEXP size_obj = PROTECT(r_int(size));
-  SEXP action = get_opts_action(opts);
   vctrs_eval_mask5(Rf_install("stop_subscript_oob"),
                    syms_i, i,
                    syms_subscript_type, chrs_location,
                    syms_size, size_obj,
-                   syms_subscript_action, action,
+                   syms_subscript_action, get_opts_action(opts),
                    syms_subscript_arg, opts->subscript_arg,
                    vctrs_ns_env);
 
@@ -389,12 +390,11 @@ static void stop_subscript_oob_location(SEXP i, R_len_t size,
 }
 static void stop_subscript_oob_name(SEXP i, SEXP names,
                                     const struct vec_as_location_opts* opts) {
-  SEXP action = get_opts_action(opts);
   vctrs_eval_mask5(Rf_install("stop_subscript_oob"),
                    syms_i, i,
                    syms_subscript_type, chrs_name,
                    syms_names, names,
-                   syms_subscript_action, action,
+                   syms_subscript_action, get_opts_action(opts),
                    syms_subscript_arg, opts->subscript_arg,
                    vctrs_ns_env);
   never_reached("stop_subscript_oob_name");
@@ -402,10 +402,9 @@ static void stop_subscript_oob_name(SEXP i, SEXP names,
 
 static void stop_location_negative(SEXP i,
                                    const struct vec_as_location_opts* opts) {
-  SEXP action = get_opts_action(opts);
   vctrs_eval_mask3(Rf_install("stop_location_negative"),
                    syms_i, i,
-                   syms_subscript_action, action,
+                   syms_subscript_action, get_opts_action(opts),
                    syms_subscript_arg, opts->subscript_arg,
                    vctrs_ns_env);
   never_reached("stop_location_negative");
@@ -413,9 +412,10 @@ static void stop_location_negative(SEXP i,
 
 static void stop_indicator_size(SEXP i, SEXP n,
                                 const struct vec_as_location_opts* opts) {
-  vctrs_eval_mask3(Rf_install("stop_indicator_size"),
+  vctrs_eval_mask4(Rf_install("stop_indicator_size"),
                    syms_i, i,
                    syms_n, n,
+                   syms_subscript_action, get_opts_action(opts),
                    syms_subscript_arg, opts->subscript_arg,
                    vctrs_ns_env);
   never_reached("stop_indicator_size");
@@ -424,9 +424,10 @@ static void stop_indicator_size(SEXP i, SEXP n,
 static void stop_location_oob_non_consecutive(SEXP i, R_len_t size,
                                               const struct vec_as_location_opts* opts) {
   SEXP size_obj = PROTECT(r_int(size));
-  vctrs_eval_mask3(Rf_install("stop_location_oob_non_consecutive"),
+  vctrs_eval_mask4(Rf_install("stop_location_oob_non_consecutive"),
                    syms_i, i,
                    syms_size, size_obj,
+                   syms_subscript_action, get_opts_action(opts),
                    syms_subscript_arg, opts->subscript_arg,
                    vctrs_ns_env);
 

@@ -364,6 +364,19 @@ test_that("must assign existing elements", {
   })
 })
 
+test_that("must assign with proper negative locations", {
+  verify_errors({
+    expect_error(
+      vec_assign(1:3, c(-1, 1), 1:2),
+      class = "vctrs_error_subscript_type"
+    )
+    expect_error(
+      vec_assign(1:3, c(-1, NA), 1:2),
+      class = "vctrs_error_subscript_type"
+    )
+  })
+})
+
 test_that("slice and assign have informative errors", {
   verify_output(test_path("error", "test-slice-assign.txt"), {
     "# `vec_assign()` requires recyclable value"
@@ -378,5 +391,9 @@ test_that("slice and assign have informative errors", {
     vec_assign(1:3, "foo", 10)
     vec_slice(letters, -100) <- "foo"
     vec_assign(set_names(letters), "foo", "bar")
+
+    "# must assign with proper negative locations"
+    vec_assign(1:3, c(-1, 1), 1:2)
+    vec_assign(1:3, c(-1, NA), 1:2)
   })
 })
