@@ -24,7 +24,7 @@
 #'   not used. The default value of `NULL` will result in an error
 #'   if `i` is a character vector.
 #' @param missing Whether to throw an `"error"` when `i` is a missing
-#'   value, or `"ignore"` it (return it as is). By default, vector
+#'   value, or `"propagate"` it (return it as is). By default, vector
 #'   subscripts can contain missing values and scalar subscripts can't.
 #' @param arg The argument name to be displayed in error messages when
 #'   `vec_as_location()` and `vec_as_location2()` are used to check the
@@ -57,7 +57,7 @@ vec_as_location <- function(i,
                             n,
                             names = NULL,
                             ...,
-                            missing = c("ignore", "error"),
+                            missing = c("propagate", "error"),
                             arg = NULL) {
   if (!missing(...)) ellipsis::check_dots_empty()
 
@@ -84,7 +84,7 @@ vec_as_location <- function(i,
 num_as_location <- function(i,
                             n,
                             ...,
-                            missing = c("ignore", "error"),
+                            missing = c("propagate", "error"),
                             negative = c("invert", "error", "ignore"),
                             oob = c("error", "extend"),
                             arg = NULL) {
@@ -111,7 +111,7 @@ vec_as_location2 <- function(i,
                              n,
                              names = NULL,
                              ...,
-                             missing = c("error", "ignore"),
+                             missing = c("error", "propagate"),
                              arg = NULL) {
   if (!missing(...)) ellipsis::check_dots_empty()
   result_get(vec_as_location2_result(
@@ -131,7 +131,7 @@ num_as_location2 <- function(i,
                              n,
                              ...,
                              negative = c("error", "ignore"),
-                             missing = c("error", "ignore"),
+                             missing = c("error", "propagate"),
                              arg = NULL) {
   if (!missing(...)) ellipsis::check_dots_empty()
 
@@ -154,7 +154,7 @@ vec_as_location2_result <- function(i,
                                     missing,
                                     negative,
                                     arg) {
-  allow_missing <- arg_match(missing, c("error", "ignore")) == "ignore"
+  allow_missing <- arg_match(missing, c("error", "propagate")) == "propagate"
   allow_negative <- arg_match(negative, c("error", "ignore")) == "ignore"
 
   result <- vec_as_subscript2_result(

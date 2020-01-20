@@ -7,12 +7,20 @@
 \alias{num_as_location2}
 \title{Create a vector of locations}
 \usage{
-vec_as_location(i, n, names = NULL, ..., arg = NULL)
+vec_as_location(
+  i,
+  n,
+  names = NULL,
+  ...,
+  missing = c("propagate", "error"),
+  arg = NULL
+)
 
 num_as_location(
   i,
   n,
   ...,
+  missing = c("propagate", "error"),
   negative = c("invert", "error", "ignore"),
   oob = c("error", "extend"),
   arg = NULL
@@ -23,7 +31,7 @@ vec_as_location2(
   n,
   names = NULL,
   ...,
-  missing = c("error", "ignore"),
+  missing = c("error", "propagate"),
   arg = NULL
 )
 
@@ -32,7 +40,7 @@ num_as_location2(
   n,
   ...,
   negative = c("error", "ignore"),
-  missing = c("error", "ignore"),
+  missing = c("error", "propagate"),
   arg = NULL
 )
 }
@@ -50,6 +58,10 @@ vector that \code{i} will be matched against to construct the index. Otherwise,
 not used. The default value of \code{NULL} will result in an error
 if \code{i} is a character vector.}
 
+\item{missing}{Whether to throw an \code{"error"} when \code{i} is a missing
+value, or \code{"propagate"} it (return it as is). By default, vector
+subscripts can contain missing values and scalar subscripts can't.}
+
 \item{arg}{The argument name to be displayed in error messages when
 \code{vec_as_location()} and \code{vec_as_location2()} are used to check the
 type of a function input.}
@@ -61,9 +73,6 @@ negative location value, or \code{"ignore"} it.}
 elements are out-of-bounds. If \code{"extend"}, out-of-bounds
 locations are allowed if they are consecutive after the end. This
 can be used to implement extendable vectors like \code{letters[1:30]}.}
-
-\item{missing}{Whether to throw an \code{"error"} when \code{i} is a missing
-value, or \code{"ignore"} it (return it as is).}
 }
 \value{
 \code{vec_as_location()} returns an integer vector that can be used

@@ -143,12 +143,12 @@ test_that("vec_as_location() preserves names if possible", {
 })
 
 test_that("vec_as_location2() optionally allows missing values", {
-  expect_identical(vec_as_location2(NA, 2L, missing = "ignore"), na_int)
+  expect_identical(vec_as_location2(NA, 2L, missing = "propagate"), na_int)
   expect_error(vec_as_location2(NA, 2L, missing = "error"), class = "vctrs_error_subscript_type")
 })
 
 test_that("num_as_location2() optionally allows missing and negative locations", {
-  expect_identical(num_as_location2(na_dbl, 2L, missing = "ignore"), na_int)
+  expect_identical(num_as_location2(na_dbl, 2L, missing = "propagate"), na_int)
   expect_identical(num_as_location2(-1, 2L, negative = "ignore"), -1L)
   expect_error(num_as_location2(-3, 2L, negative = "ignore"), class = "vctrs_error_subscript_oob")
   expect_error(num_as_location2(0, 2L, negative = "ignore"), class = "vctrs_error_subscript_type")

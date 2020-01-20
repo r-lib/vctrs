@@ -312,7 +312,7 @@ static enum subscript_missing parse_subscript_arg_missing(SEXP x) {
 
   const char* str = CHAR(STRING_ELT(x, 0));
 
-  if (!strcmp(str, "ignore")) return SUBSCRIPT_MISSING_PROPAGATE;
+  if (!strcmp(str, "propagate")) return SUBSCRIPT_MISSING_PROPAGATE;
   if (!strcmp(str, "error")) return SUBSCRIPT_MISSING_ERROR;
   stop_subscript_arg_missing();
 
