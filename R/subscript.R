@@ -273,13 +273,13 @@ cnd_header.vctrs_error_subscript_type <- function(cnd) {
 }
 #' @export
 cnd_body.vctrs_error_subscript_type <- function(cnd) {
-  arg <- arg_as_string(cnd$arg %||% "i")
+  arg <- append_arg("The subscript", cnd$arg)
   type <- obj_type(cnd$i)
   expected_types <- collapse_subscript_type(cnd, plural = TRUE)
 
   format_error_bullets(c(
-    x = glue::glue("`{arg}` has the wrong type `{type}`."),
-    i = glue::glue("The subscript must contain {expected_types}.")
+    x = glue::glue("{arg} has the wrong type `{type}`."),
+    i = glue::glue("It must contain {expected_types}.")
   ))
 }
 cnd_bullets_subscript_lossy_cast <- function(cnd, ...) {

@@ -4,33 +4,33 @@ vec_as_subscript() forbids subscript types
 
 > vec_as_subscript(1L, indicator = "error", location = "error")
 Error: Must subset elements with a proper subscript vector.
-x `i` has the wrong type `integer`.
-i The subscript must contain names.
+x The subscript has the wrong type `integer`.
+i It must contain names.
 
 > vec_as_subscript("foo", indicator = "error", name = "error")
 Error: Must subset elements with a proper subscript vector.
-x `i` has the wrong type `character`.
-i The subscript must contain locations.
+x The subscript has the wrong type `character`.
+i It must contain locations.
 
 > vec_as_subscript(TRUE, indicator = "error")
 Error: Must subset elements with a proper subscript vector.
-x `i` has the wrong type `logical`.
-i The subscript must contain locations or names.
+x The subscript has the wrong type `logical`.
+i It must contain locations or names.
 
 > vec_as_subscript("foo", name = "error")
 Error: Must subset elements with a proper subscript vector.
-x `i` has the wrong type `character`.
-i The subscript must contain indicators or locations.
+x The subscript has the wrong type `character`.
+i It must contain indicators or locations.
 
 > vec_as_subscript(NULL, location = "error")
 Error: Must subset elements with a proper subscript vector.
-x `i` has the wrong type `NULL`.
-i The subscript must contain indicators or names.
+x The subscript has the wrong type `NULL`.
+i It must contain indicators or names.
 
 > vec_as_subscript(quote(foo), name = "error")
 Error: Must subset elements with a proper subscript vector.
-x `i` has the wrong type `symbol`.
-i The subscript must contain indicators or locations.
+x The subscript has the wrong type `symbol`.
+i It must contain indicators or locations.
 
 
 vec_as_subscript2() forbids subscript types
@@ -38,18 +38,18 @@ vec_as_subscript2() forbids subscript types
 
 > vec_as_subscript2(1L, location = "error", indicator = "error")
 Error: Must extract element with a single subscript.
-x `i` has the wrong type `integer`.
-i The subscript must contain names.
+x The subscript has the wrong type `integer`.
+i It must contain names.
 
 > vec_as_subscript2("foo", name = "error", indicator = "error")
 Error: Must extract element with a single subscript.
-x `i` has the wrong type `character`.
-i The subscript must contain locations.
+x The subscript has the wrong type `character`.
+i It must contain locations.
 
 > vec_as_subscript2(TRUE, indicator = "error")
 Error: Must extract element with a single subscript.
-x `i` has the wrong type `logical`.
-i The subscript must contain locations or names.
+x The subscript has the wrong type `logical`.
+i It must contain locations or names.
 
 
 can customise subscript errors
@@ -57,6 +57,6 @@ can customise subscript errors
 
 > with_tibble_cols(vec_as_subscript(env()))
 Error: Must rename columns with a proper subscript vector.
-x `tbl[i]` has the wrong type `environment`.
-i The subscript must contain indicators, locations or names.
+x The subscript `tbl[i]` has the wrong type `environment`.
+i It must contain indicators, locations or names.
 
