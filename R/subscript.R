@@ -55,7 +55,7 @@ vec_as_subscript_result <- function(i, arg, indicator, location, name) {
   if (!vec_is(i)) {
     return(result(err = new_error_subscript_type(
       i = i,
-      arg = arg,
+      subscript_arg = arg,
       indicator = indicator,
       location = location,
       name = name
@@ -76,7 +76,7 @@ vec_as_subscript_result <- function(i, arg, indicator, location, name) {
     } else {
       return(result(err = new_error_subscript_type(
         i,
-        arg = arg,
+        subscript_arg = arg,
         indicator = indicator,
         location = location,
         name = name
@@ -122,7 +122,7 @@ vec_as_subscript_result <- function(i, arg, indicator, location, name) {
   if (action == "error") {
     result(err = new_error_subscript_type(
       i = i,
-      arg = arg,
+      subscript_arg = arg,
       indicator = indicator,
       location = location,
       name = name
@@ -183,7 +183,7 @@ vec_as_subscript2_result <- function(i,
       indicator = indicator,
       location = location,
       name = name,
-      arg = arg,
+      subscript_arg = arg,
       body = bullets,
       parent = result$err$parent
     )
@@ -199,7 +199,7 @@ vec_as_subscript2_result <- function(i,
       indicator = indicator,
       location = location,
       name = name,
-      arg = arg,
+      subscript_arg = arg,
       body = cnd_body.vctrs_error_subscript_type
     )))
   }
@@ -273,7 +273,7 @@ cnd_header.vctrs_error_subscript_type <- function(cnd) {
 }
 #' @export
 cnd_body.vctrs_error_subscript_type <- function(cnd) {
-  arg <- append_arg("The subscript", cnd$arg)
+  arg <- append_arg("The subscript", cnd$subscript_arg)
   type <- obj_type(cnd$i)
   expected_types <- collapse_subscript_type(cnd, plural = TRUE)
 
