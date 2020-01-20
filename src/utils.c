@@ -470,6 +470,17 @@ SEXP colnames(SEXP x) {
                          syms_x, x);
 }
 
+// [[ include("utils.h") ]]
+SEXP arg_validate(SEXP arg, const char* arg_nm) {
+  if (arg == R_NilValue) {
+    return chrs_empty;
+  } else if (r_is_string(arg)) {
+    return arg;
+  } else {
+    Rf_errorcall(R_NilValue, "`%s` tag must be a string", arg_nm);
+  }
+}
+
 
 void* r_vec_deref(SEXP x) {
   switch (TYPEOF(x)) {
@@ -1026,6 +1037,7 @@ SEXP chrs_remove = NULL;
 SEXP chrs_negate = NULL;
 SEXP chrs_location = NULL;
 SEXP chrs_name = NULL;
+SEXP chrs_empty = NULL;
 
 SEXP syms_i = NULL;
 SEXP syms_n = NULL;
@@ -1151,6 +1163,9 @@ void vctrs_init_utils(SEXP ns) {
 
   chrs_name = Rf_mkString("name");
   R_PreserveObject(chrs_name);
+
+  chrs_empty = Rf_mkString("");
+  R_PreserveObject(chrs_empty);
 
 
   classes_tibble = Rf_allocVector(STRSXP, 3);

@@ -88,6 +88,7 @@ SEXP vec_unique_colnames(SEXP x, bool quiet);
 SEXP s3_find_method(const char* generic, SEXP x);
 
 extern struct vctrs_arg* args_empty;
+SEXP arg_validate(SEXP arg, const char* arg_nm);
 
 void never_reached(const char* fn) __attribute__((noreturn));
 
@@ -268,6 +269,7 @@ extern SEXP chrs_remove;
 extern SEXP chrs_negate;
 extern SEXP chrs_location;
 extern SEXP chrs_name;
+extern SEXP chrs_empty;
 
 extern SEXP syms_i;
 extern SEXP syms_n;

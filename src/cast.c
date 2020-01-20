@@ -400,12 +400,8 @@ SEXP vec_coercible_cast(SEXP x, SEXP to, struct vctrs_arg* x_arg, struct vctrs_a
 
 // [[ register() ]]
 SEXP vctrs_coercible_cast(SEXP x, SEXP to, SEXP x_arg_, SEXP to_arg_) {
-  if (!r_is_string(x_arg_)) {
-    Rf_errorcall(R_NilValue, "`x_arg` must be a string");
-  }
-  if (!r_is_string(to_arg_)) {
-    Rf_errorcall(R_NilValue, "`to_arg` must be a string");
-  }
+  x_arg_ = arg_validate(x_arg_, "x_arg");
+  to_arg_ = arg_validate(to_arg_, "to_arg");
 
   struct vctrs_arg x_arg = new_wrapper_arg(NULL, r_chr_get_c_string(x_arg_, 0));
   struct vctrs_arg to_arg = new_wrapper_arg(NULL, r_chr_get_c_string(to_arg_, 0));

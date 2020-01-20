@@ -54,7 +54,7 @@ vec_as_location <- function(i,
                             n,
                             names = NULL,
                             ...,
-                            arg = "i") {
+                            arg = NULL) {
   if (!missing(...)) ellipsis::check_dots_empty()
 
   i <- vec_as_subscript(i, arg = arg)
@@ -81,7 +81,7 @@ num_as_location <- function(i,
                             ...,
                             negative = c("invert", "error", "ignore"),
                             oob = c("error", "extend"),
-                            arg = "i") {
+                            arg = NULL) {
   if (!missing(...)) ellipsis::check_dots_empty()
 
   if (!is_integer(i) && !is_double(i)) {
@@ -107,7 +107,7 @@ vec_as_location2 <- function(i,
                              names = NULL,
                              ...,
                              missing = c("error", "ignore"),
-                             arg = "i") {
+                             arg = NULL) {
   if (!missing(...)) ellipsis::check_dots_empty()
   result_get(vec_as_location2_result(
     i,
@@ -127,7 +127,7 @@ num_as_location2 <- function(i,
                              ...,
                              negative = c("error", "ignore"),
                              missing = c("error", "ignore"),
-                             arg = "i") {
+                             arg = NULL) {
   if (!missing(...)) ellipsis::check_dots_empty()
 
   if (!is_integer(i) && !is_double(i)) {

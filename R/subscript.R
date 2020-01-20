@@ -30,7 +30,7 @@ vec_as_subscript <- function(i,
                              indicator = c("coerce", "error"),
                              location = c("coerce", "error"),
                              name = c("coerce", "error"),
-                             arg = "i") {
+                             arg = NULL) {
   if (!missing(...)) ellipsis::check_dots_empty()
   result_get(vec_as_subscript_result(
     i,
@@ -142,7 +142,7 @@ vec_as_subscript2 <- function(i,
                               indicator = c("coerce", "error"),
                               location = c("coerce", "error"),
                               name = c("coerce", "error"),
-                              arg = "i") {
+                              arg = NULL) {
   if (!missing(...)) ellipsis::check_dots_empty()
   result_get(vec_as_subscript2_result(
     i,
@@ -238,11 +238,10 @@ stop_subscript <- function(i, ..., class = NULL) {
     ...
   )
 }
-new_error_subscript <- function(class = NULL, i, ..., arg = "i") {
+new_error_subscript <- function(class = NULL, i, ...) {
   error_cnd(
     c(class, "vctrs_error_subscript"),
     i = i,
-    arg = arg,
     ...
   )
 }
@@ -251,7 +250,6 @@ new_error_subscript_type <- function(i,
                                      location = "coerce",
                                      name = "coerce",
                                      ...,
-                                     arg = "i",
                                      class = NULL) {
   new_error_subscript(
     class = c(class, "vctrs_error_subscript_type"),
@@ -259,7 +257,6 @@ new_error_subscript_type <- function(i,
     indicator = indicator,
     location = location,
     name = name,
-    arg = arg,
     ...
   )
 }
@@ -320,14 +317,12 @@ new_error_subscript2_type <- function(i,
                                       indicator,
                                       location,
                                       name,
-                                      ...,
-                                      arg = "i") {
+                                      ...) {
   new_error_subscript_type(
     i = i,
     indicator = indicator,
     location = location,
     name = name,
-    arg = arg,
     subscript_scalar = TRUE,
     ...
   )

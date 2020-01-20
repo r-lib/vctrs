@@ -42,7 +42,7 @@ logical subscripts must match size of indexed vector
 > vec_as_location(c(TRUE, FALSE), 3)
 Error: Must subset elements with a proper subscript vector.
 i Logical subscripts must match the size of the indexed input.
-x The input has size 3 but the subscript `i` has size 2.
+x The input has size 3 but the subscript has size 2.
 
 
 character subscripts require named vectors
@@ -84,7 +84,7 @@ i The subscript must contain indicators, locations or names.
 
 > vec_as_location(2.5, 3L)
 Error: Must subset elements with a proper subscript vector.
-x Lossy cast from `i` <double> to <integer>.
+x Lossy cast from <double> to <integer>.
 
 > vec_as_location(list(), 10L)
 Error: Must subset elements with a proper subscript vector.
@@ -149,7 +149,7 @@ i The subscript must contain locations or names.
 
 > vec_as_location2(2.5, 3L)
 Error: Must extract element with a single subscript.
-x Lossy cast from `i` <double> to <integer>.
+x Lossy cast from <double> to <integer>.
 
 > # Idem with custom `arg`
 > vec_as_location2(foobar(), 10L, arg = "foo")
@@ -258,27 +258,27 @@ vec_as_location() and variants check for OOB elements
 
 > # Numeric subscripts
 > vec_as_location(10L, 2L)
-Error: Must subset existing elements in `i`.
+Error: Must subset existing elements.
 x Can't subset location 10.
 i There are only 2 elements.
 
 > vec_as_location(-10L, 2L)
-Error: Must negate existing elements in `i`.
+Error: Must negate existing elements.
 x Can't negate location 10.
 i There are only 2 elements.
 
 > vec_as_location2(10L, 2L)
-Error: Must subset existing elements in `i`.
+Error: Must subset existing elements.
 x Can't subset location 10.
 i There are only 2 elements.
 
 > # Character subscripts
 > vec_as_location("foo", 1L, names = "bar")
-Error: Must subset existing elements in `i`.
+Error: Must subset existing elements.
 x Can't subset element with unknown name `foo`.
 
 > vec_as_location2("foo", 1L, names = "bar")
-Error: Must subset existing elements in `i`.
+Error: Must subset existing elements.
 x Can't subset element with unknown name `foo`.
 
 
@@ -310,7 +310,7 @@ missing values are supported in error formatters
 ================================================
 
 > num_as_location(c(1, NA, 2, 3), 1)
-Error: Must subset existing elements in `i`.
+Error: Must subset existing elements.
 x Can't subset locations 2 and 3.
 i There are only 1 element.
 
