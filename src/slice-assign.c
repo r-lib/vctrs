@@ -20,12 +20,6 @@ static SEXP raw_assign(SEXP x, SEXP index, SEXP value, bool clone);
 SEXP list_assign(SEXP x, SEXP index, SEXP value, bool clone);
 SEXP df_assign(SEXP x, SEXP index, SEXP value, bool clone);
 
-const struct vec_as_location_opts default_assign_loc_opts = {
-  .action = SUBSCRIPT_ACTION_ASSIGN,
-  .loc_negative = LOC_NEGATIVE_INVERT,
-  .loc_oob = LOC_OOB_ERROR
-};
-
 // [[ register(); include("vctrs.h") ]]
 SEXP vec_assign(SEXP x, SEXP index, SEXP value) {
   if (x == R_NilValue) {
@@ -46,7 +40,7 @@ SEXP vec_assign(SEXP x, SEXP index, SEXP value) {
   index = PROTECT(vec_as_location_opts(index,
                                        vec_size(x),
                                        PROTECT(vec_names(x)),
-                                       &default_assign_loc_opts));
+                                       vec_as_location_default_assign_opts));
   value_proxy = PROTECT(vec_recycle(value_proxy, vec_size(index), &value_arg));
 
   struct vctrs_proxy_info info = vec_proxy_info(x);

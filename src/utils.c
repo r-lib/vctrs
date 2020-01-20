@@ -80,6 +80,16 @@ SEXP vctrs_eval_mask3(SEXP fn,
   SEXP args[4] = { x, y, z, NULL };
   return vctrs_eval_mask_n(fn, syms, args, env);
 }
+SEXP vctrs_eval_mask4(SEXP fn,
+                      SEXP x1_sym, SEXP x1,
+                      SEXP x2_sym, SEXP x2,
+                      SEXP x3_sym, SEXP x3,
+                      SEXP x4_sym, SEXP x4,
+                      SEXP env) {
+  SEXP syms[5] = { x1_sym, x2_sym, x3_sym, x4_sym, NULL };
+  SEXP args[5] = { x1, x2, x3, x4, NULL };
+  return vctrs_eval_mask_n(fn, syms, args, env);
+}
 
 /**
  * Dispatch in the global environment

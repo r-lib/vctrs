@@ -40,6 +40,12 @@ SEXP vctrs_eval_mask3(SEXP fn,
                       SEXP y_sym, SEXP y,
                       SEXP z_sym, SEXP z,
                       SEXP env);
+SEXP vctrs_eval_mask4(SEXP fn,
+                      SEXP x1_sym, SEXP x1,
+                      SEXP x2_sym, SEXP x2,
+                      SEXP x3_sym, SEXP x3,
+                      SEXP x4_sym, SEXP x4,
+                      SEXP env);
 
 SEXP vctrs_dispatch_n(SEXP fn_sym, SEXP fn,
                       SEXP* syms, SEXP* args);

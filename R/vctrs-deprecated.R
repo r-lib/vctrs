@@ -78,6 +78,7 @@ vec_as_index <- function(i, n, names = NULL) {
     n = n,
     names = names,
     loc_negative = "invert",
-    loc_oob = "error"
+    loc_oob = "error",
+    arg = NULL
   )
 }

@@ -64,7 +64,8 @@ vec_as_location <- function(i,
     n = n,
     names = names,
     loc_negative = "invert",
-    loc_oob = "error"
+    loc_oob = "error",
+    arg = arg
   )
 }
 #' @rdname vec_as_location
@@ -92,7 +93,8 @@ num_as_location <- function(i,
     n = n,
     names = NULL,
     loc_negative = negative,
-    loc_oob = oob
+    loc_oob = oob,
+    arg = arg
   )
 }
 

@@ -258,27 +258,27 @@ vec_as_location() and variants check for OOB elements
 
 > # Numeric subscripts
 > vec_as_location(10L, 2L)
-Error: Must subset existing elements.
+Error: Must subset existing elements in `i`.
 x Can't subset location 10.
 i There are only 2 elements.
 
 > vec_as_location(-10L, 2L)
-Error: Must negate existing elements.
+Error: Must negate existing elements in `i`.
 x Can't negate location 10.
 i There are only 2 elements.
 
 > vec_as_location2(10L, 2L)
-Error: Must subset existing elements.
+Error: Must subset existing elements in `i`.
 x Can't subset location 10.
 i There are only 2 elements.
 
 > # Character subscripts
 > vec_as_location("foo", 1L, names = "bar")
-Error: Must subset existing elements.
+Error: Must subset existing elements in `i`.
 x Can't subset element with unknown name `foo`.
 
 > vec_as_location2("foo", 1L, names = "bar")
-Error: Must subset existing elements.
+Error: Must subset existing elements in `i`.
 x Can't subset element with unknown name `foo`.
 
 
@@ -310,7 +310,7 @@ missing values are supported in error formatters
 ================================================
 
 > num_as_location(c(1, NA, 2, 3), 1)
-Error: Must subset existing elements.
+Error: Must subset existing elements in `i`.
 x Can't subset locations 2 and 3.
 i There are only 1 element.
 
@@ -354,6 +354,16 @@ can customise OOB errors
 
 > vec_slice(set_names(letters), "foo")
 Error: Must subset existing elements.
+x Can't subset element with unknown name `foo`.
+
+> # With custom `arg`
+> vec_as_location(30, length(letters), arg = "foo")
+Error: Must subset existing elements in `foo`.
+x Can't subset location 30.
+i There are only 26 elements.
+
+> vec_as_location("foo", NULL, letters, arg = "foo")
+Error: Must subset existing elements in `foo`.
 x Can't subset element with unknown name `foo`.
 
 > # With tibble columns
