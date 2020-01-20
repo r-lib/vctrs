@@ -266,22 +266,24 @@ cnd_body_vctrs_error_subscript_type <- function(cnd, ...) {
   ))
 }
 
-stop_location_negative_positive <- function(i) {
+stop_location_negative_positive <- function(i, ...) {
   cnd_signal(new_error_subscript_type(
     i,
+    ...,
     body = cnd_body_vctrs_error_location_negative_positive
   ))
 }
 cnd_body_vctrs_error_location_negative_positive <- function(cnd, ...) {
   positive_loc <- which(cnd$i > 0)
+  arg <- append_arg("The subscript", cnd$arg)
 
   if (length(positive_loc) == 1) {
-    loc <- glue::glue("The subscript has a positive value at location {positive_loc}.")
+    loc <- glue::glue("{arg} has a positive value at location {positive_loc}.")
   } else {
     n_loc <- length(positive_loc)
     positive_loc <- enumerate(positive_loc)
     loc <- glue::glue(
-      "The subscript has {n_loc} missing values at locations {positive_loc}."
+      "{arg} has {n_loc} missing values at locations {positive_loc}."
     )
   }
   format_error_bullets(c(
