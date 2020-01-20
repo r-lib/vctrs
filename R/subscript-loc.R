@@ -462,13 +462,22 @@ stop_location_oob_non_consecutive <- function(i, size, ...) {
 }
 
 cnd_header_vctrs_error_subscript_oob_non_consecutive <- function(cnd, ...) {
-  "Can't index beyond the end with non-consecutive locations."
+  action <- cnd_subscript_action(cnd)
+  elt <- cnd_subscript_element(cnd)
+  glue::glue("Can't {action} {elt[[2]]} beyond the end with non-consecutive locations.")
 }
 cnd_body_vctrs_error_subscript_oob_non_consecutive <- function(cnd, ...) {
   i <- sort(cnd$i)
   i <- i[i > cnd$size]
 
   non_consecutive <- i[c(TRUE, diff(i) != 1L)]
+
+  if (is_null(cnd$arg)) {
+    arg_line <- NULL
+  } else {
+    arg <- append_arg("The subscript", cnd$arg)
+    arg_line <- glue::glue("{arg} contains non-consecutive locations.")
+  }
 
   if (length(non_consecutive) == 1) {
     x <- glue::glue("The location {non_consecutive} is not consecutive to the end.")
@@ -480,6 +489,7 @@ cnd_body_vctrs_error_subscript_oob_non_consecutive <- function(cnd, ...) {
   glue_data_bullets(
     cnd,
     i = "The input has size {size}.",
+    x = arg_line,
     x = x
   )
 }
