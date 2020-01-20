@@ -323,6 +323,33 @@ x The location 3 is not consecutive to the end.
 can customise subscript type errors
 ===================================
 
+> # With custom `arg`
+> num_as_location(-1, 2, negative = "error", arg = "foo")
+Error: Must subset elements with a proper subscript vector.
+x `foo` contains negative locations.
+i The subscript must contain positive locations.
+
+> num_as_location2(-1, 2, negative = "error", arg = "foo")
+Error: Must extract element with a single subscript.
+x `foo` (with value -1) has the wrong sign.
+i The subscript must be a positive location.
+
+> vec_as_location2(0, 2, arg = "foo")
+Error: Must extract element with a single subscript.
+x `foo` can't be zero.
+i The subscript must be a positive location.
+
+> vec_as_location2(na_dbl, 2, arg = "foo")
+Error: Must extract element with a single subscript.
+x `foo` can't be `NA`.
+i This subscript can't be missing.
+
+> vec_as_location2(c(1, 2), 2, arg = "foo")
+Error: Must extract element with a single subscript.
+x `foo` has the wrong size 2.
+i This subscript must be size 1.
+
+> # With tibble columns
 > with_tibble_cols(num_as_location(-1, 2, negative = "error"))
 Error: Must rename columns with a proper subscript vector.
 x `tbl[i]` contains negative locations.

@@ -332,11 +332,11 @@ cnd_bullets_location2_need_non_negative <- function(cnd, ...) {
   ))
 }
 
-stop_location_negative <- function(i, ..., arg = "i") {
+stop_location_negative <- function(i, ...) {
   cnd_signal(new_error_subscript_type(
     i,
-    arg = arg,
-    body = cnd_bullets_location_need_non_negative
+    body = cnd_bullets_location_need_non_negative,
+    ...
   ))
 }
 cnd_bullets_location_need_non_negative <- function(cnd, ...) {

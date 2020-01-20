@@ -255,6 +255,29 @@ test_that("missing values are supported in error formatters", {
 
 test_that("can customise subscript type errors", {
   verify_errors({
+    "With custom `arg`"
+    expect_error(
+      num_as_location(-1, 2, negative = "error", arg = "foo"),
+      class = "vctrs_error_subscript_type"
+    )
+    expect_error(
+      num_as_location2(-1, 2, negative = "error", arg = "foo"),
+      class = "vctrs_error_subscript_type"
+    )
+    expect_error(
+      vec_as_location2(0, 2, arg = "foo"),
+      class = "vctrs_error_subscript_type"
+    )
+    expect_error(
+      vec_as_location2(na_dbl, 2, arg = "foo"),
+      class = "vctrs_error_subscript_type"
+    )
+    expect_error(
+      vec_as_location2(c(1, 2), 2, arg = "foo"),
+      class = "vctrs_error_subscript_type"
+    )
+
+    "With tibble columns"
     expect_error(
       with_tibble_cols(num_as_location(-1, 2, negative = "error")),
       class = "vctrs_error_subscript_type"
@@ -406,6 +429,13 @@ test_that("conversion to locations has informative error messages", {
     num_as_location(c(1, NA, 3), 1, oob = "extend")
 
     "# can customise subscript type errors"
+    "With custom `arg`"
+    num_as_location(-1, 2, negative = "error", arg = "foo")
+    num_as_location2(-1, 2, negative = "error", arg = "foo")
+    vec_as_location2(0, 2, arg = "foo")
+    vec_as_location2(na_dbl, 2, arg = "foo")
+    vec_as_location2(c(1, 2), 2, arg = "foo")
+    "With tibble columns"
     with_tibble_cols(num_as_location(-1, 2, negative = "error"))
     with_tibble_cols(num_as_location2(-1, 2, negative = "error"))
     with_tibble_cols(vec_as_location2(0, 2))
