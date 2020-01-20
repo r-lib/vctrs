@@ -347,19 +347,20 @@ cnd_bullets_location_need_non_negative <- function(cnd, ...) {
   ))
 }
 
-stop_indicator_size <- function(i, n, arg = "i") {
+stop_indicator_size <- function(i, n, ...) {
   cnd_signal(new_error_subscript_size(
     i,
     n = n,
-    arg = arg,
+    ...,
     body = cnd_body_vctrs_error_indicator_size
   ))
 }
 cnd_body_vctrs_error_indicator_size <- function(cnd, ...) {
+  cnd$arg <- append_arg("the subscript", cnd$arg)
   glue_data_bullets(
     cnd,
     i = "Logical subscripts must match the size of the indexed input.",
-    x = "The input has size {n} but the subscript has size {vec_size(i)}."
+    x = "The input has size {n} but {arg} has size {vec_size(i)}."
   )
 }
 

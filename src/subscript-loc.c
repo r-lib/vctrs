@@ -13,7 +13,8 @@ static void stop_subscript_oob_name(SEXP i, SEXP names,
                                     const struct vec_as_location_opts* opts);
 static void stop_location_negative(SEXP i,
                                    const struct vec_as_location_opts* opts);
-static void stop_indicator_size(SEXP i, SEXP n);
+static void stop_indicator_size(SEXP i, SEXP n,
+                                const struct vec_as_location_opts* opts);
 static void stop_location_negative_missing(SEXP i);
 static void stop_location_negative_positive(SEXP i);
 static void stop_location_oob_non_consecutive(SEXP i, R_len_t size);
@@ -226,7 +227,7 @@ static SEXP lgl_as_location(SEXP subscript, R_len_t n,
   }
 
   SEXP n_obj = PROTECT(Rf_ScalarInteger(n));
-  stop_indicator_size(subscript, n_obj);
+  stop_indicator_size(subscript, n_obj, opts);
 
   never_reached("lgl_as_location");
 }
@@ -401,10 +402,12 @@ static void stop_location_negative(SEXP i,
   never_reached("stop_location_negative");
 }
 
-static void stop_indicator_size(SEXP i, SEXP n) {
-  vctrs_eval_mask2(Rf_install("stop_indicator_size"),
+static void stop_indicator_size(SEXP i, SEXP n,
+                                const struct vec_as_location_opts* opts) {
+  vctrs_eval_mask3(Rf_install("stop_indicator_size"),
                    syms_i, i,
                    syms_n, n,
+                   syms_arg, opts->arg,
                    vctrs_ns_env);
   never_reached("stop_indicator_size");
 }
