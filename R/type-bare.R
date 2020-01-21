@@ -323,15 +323,23 @@ vec_ptype2.list.default <- function(x, y, ..., x_arg = "x", y_arg = "y") {
 #' @rdname vec_cast
 #' @export vec_cast.logical
 #' @method vec_cast logical
-vec_cast.logical <- function(x, to, ...) UseMethod("vec_cast.logical")
+vec_cast.logical <- function(x, to, ...) {
+  UseMethod("vec_cast.logical")
+}
 #' @export
 #' @method vec_cast.logical logical
-vec_cast.logical.logical <- function(x, to, ...) {
+vec_cast.logical.logical <- function(x, to, ..., x_arg = "x", to_arg = "to") {
+  if (is.object(x)) {
+    return(vec_default_cast(x, to, x_arg = x_arg, to_arg = to_arg))
+  }
   shape_broadcast(x, to)
 }
 #' @export
 #' @method vec_cast.logical integer
 vec_cast.logical.integer <- function(x, to, ..., x_arg = "x", to_arg = "to") {
+  if (is.object(x)) {
+    return(vec_default_cast(x, to, x_arg = x_arg, to_arg = to_arg))
+  }
   out <- vec_coerce_bare(x, "logical")
   out <- shape_broadcast(out, to)
   lossy <- !x %in% c(0L, 1L, NA_integer_)
@@ -340,6 +348,9 @@ vec_cast.logical.integer <- function(x, to, ..., x_arg = "x", to_arg = "to") {
 #' @export
 #' @method vec_cast.logical double
 vec_cast.logical.double <- function(x, to, ..., x_arg = "x", to_arg = "to") {
+  if (is.object(x)) {
+    return(vec_default_cast(x, to, x_arg = x_arg, to_arg = to_arg))
+  }
   out <- vec_coerce_bare(x, "logical")
   out <- shape_broadcast(out, to)
   lossy <- !x %in% c(0, 1, NA_real_)
@@ -348,6 +359,9 @@ vec_cast.logical.double <- function(x, to, ..., x_arg = "x", to_arg = "to") {
 #' @export
 #' @method vec_cast.logical character
 vec_cast.logical.character <- function(x, to, ..., x_arg = "x", to_arg = "to") {
+  if (is.object(x)) {
+    return(vec_default_cast(x, to, x_arg = x_arg, to_arg = to_arg))
+  }
   out <- vec_coerce_bare(x, "logical")
   out <- shape_broadcast(out, to)
   lossy <- !x %in% c("T", "F", "TRUE", "FALSE", "true", "false", NA_character_)
@@ -356,6 +370,9 @@ vec_cast.logical.character <- function(x, to, ..., x_arg = "x", to_arg = "to") {
 #' @export
 #' @method vec_cast.logical list
 vec_cast.logical.list <- function(x, to, ..., x_arg = "x", to_arg = "to") {
+  if (is.object(x)) {
+    return(vec_default_cast(x, to, x_arg = x_arg, to_arg = to_arg))
+  }
   vec_list_cast(x, to, x_arg = x_arg, to_arg = to_arg)
 }
 #' @export
@@ -373,18 +390,27 @@ vec_cast.integer <- function(x, to, ...) {
 }
 #' @export
 #' @method vec_cast.integer logical
-vec_cast.integer.logical <- function(x, to, ...) {
+vec_cast.integer.logical <- function(x, to, ..., x_arg = "x", to_arg = "to") {
+  if (is.object(x)) {
+    return(vec_default_cast(x, to, x_arg = x_arg, to_arg = to_arg))
+  }
   x <- vec_coerce_bare(x, "integer")
   shape_broadcast(x, to)
 }
 #' @export
 #' @method vec_cast.integer integer
-vec_cast.integer.integer <- function(x, to, ...) {
+vec_cast.integer.integer <- function(x, to, ..., x_arg = "x", to_arg = "to") {
+  if (is.object(x)) {
+    return(vec_default_cast(x, to, x_arg = x_arg, to_arg = to_arg))
+  }
   shape_broadcast(x, to)
 }
 #' @export
 #' @method vec_cast.integer double
 vec_cast.integer.double <- function(x, to, ..., x_arg = "x", to_arg = "to") {
+  if (is.object(x)) {
+    return(vec_default_cast(x, to, x_arg = x_arg, to_arg = to_arg))
+  }
   out <- suppressWarnings(vec_coerce_bare(x, "integer"))
   x_na <- is.na(x)
   lossy <- (out != x & !x_na) | xor(x_na, is.na(out))
@@ -397,6 +423,9 @@ vec_cast.integer.character <- vec_cast.integer.double
 #' @export
 #' @method vec_cast.integer list
 vec_cast.integer.list <- function(x, to, ..., x_arg = "x", to_arg = "to") {
+  if (is.object(x)) {
+    return(vec_default_cast(x, to, x_arg = x_arg, to_arg = to_arg))
+  }
   vec_list_cast(x, to, x_arg = x_arg, to_arg = to_arg)
 }
 #' @export
@@ -414,7 +443,10 @@ vec_cast.double <- function(x, to, ...) {
 }
 #' @export
 #' @method vec_cast.double logical
-vec_cast.double.logical <- function(x, to, ...) {
+vec_cast.double.logical <- function(x, to, ..., x_arg = "x", to_arg = "to") {
+  if (is.object(x)) {
+    return(vec_default_cast(x, to, x_arg = x_arg, to_arg = to_arg))
+  }
   x <- vec_coerce_bare(x, "double")
   shape_broadcast(x, to)
 }
@@ -424,6 +456,9 @@ vec_cast.double.integer <- vec_cast.double.logical
 #' @export
 #' @method vec_cast.double character
 vec_cast.double.character <- function(x, to, ..., x_arg = "x", to_arg = "to") {
+  if (is.object(x)) {
+    return(vec_default_cast(x, to, x_arg = x_arg, to_arg = to_arg))
+  }
   out <- suppressWarnings(vec_coerce_bare(x, "double"))
   x_na <- is.na(x)
   lossy <- (out != x & !x_na) | xor(x_na, is.na(out))
@@ -432,12 +467,18 @@ vec_cast.double.character <- function(x, to, ..., x_arg = "x", to_arg = "to") {
 }
 #' @export
 #' @method vec_cast.double double
-vec_cast.double.double <- function(x, to, ...) {
+vec_cast.double.double <- function(x, to, ..., x_arg = "x", to_arg = "to") {
+  if (is.object(x)) {
+    return(vec_default_cast(x, to, x_arg = x_arg, to_arg = to_arg))
+  }
   shape_broadcast(x, to)
 }
 #' @export
 #' @method vec_cast.double list
 vec_cast.double.list <- function(x, to, ..., x_arg = "x", to_arg = "to") {
+  if (is.object(x)) {
+    return(vec_default_cast(x, to, x_arg = x_arg, to_arg = to_arg))
+  }
   vec_list_cast(x, to, x_arg = x_arg, to_arg = to_arg)
 }
 #' @export
@@ -455,7 +496,10 @@ vec_cast.complex <- function(x, to, ...) {
 }
 #' @export
 #' @method vec_cast.complex logical
-vec_cast.complex.logical <- function(x, to, ...) {
+vec_cast.complex.logical <- function(x, to, ..., x_arg = "x", to_arg = "to") {
+  if (is.object(x)) {
+    return(vec_default_cast(x, to, x_arg = x_arg, to_arg = to_arg))
+  }
   x <- vec_coerce_bare(x, "complex")
   shape_broadcast(x, to)
 }
@@ -467,12 +511,18 @@ vec_cast.complex.integer <- vec_cast.complex.logical
 vec_cast.complex.double <- vec_cast.complex.logical
 #' @export
 #' @method vec_cast.complex complex
-vec_cast.complex.complex <- function(x, to, ...) {
+vec_cast.complex.complex <- function(x, to, ..., x_arg = "x", to_arg = "to") {
+  if (is.object(x)) {
+    return(vec_default_cast(x, to, x_arg = x_arg, to_arg = to_arg))
+  }
   shape_broadcast(x, to)
 }
 #' @export
 #' @method vec_cast.complex list
 vec_cast.complex.list <- function(x, to, ..., x_arg = "x", to_arg = "to") {
+  if (is.object(x)) {
+    return(vec_default_cast(x, to, x_arg = x_arg, to_arg = to_arg))
+  }
   vec_list_cast(x, to, x_arg = x_arg, to_arg = to_arg)
 }
 #' @export
@@ -490,12 +540,18 @@ vec_cast.raw <- function(x, to, ...) {
 }
 #' @export
 #' @method vec_cast.raw raw
-vec_cast.raw.raw <- function(x, to, ...) {
+vec_cast.raw.raw <- function(x, to, ..., x_arg = "x", to_arg = "to") {
+  if (is.object(x)) {
+    return(vec_default_cast(x, to, x_arg = x_arg, to_arg = to_arg))
+  }
   shape_broadcast(x, to)
 }
 #' @export
 #' @method vec_cast.raw list
 vec_cast.raw.list <- function(x, to, ..., x_arg = "x", to_arg = "to") {
+  if (is.object(x)) {
+    return(vec_default_cast(x, to, x_arg = x_arg, to_arg = to_arg))
+  }
   vec_list_cast(x, to, x_arg = x_arg, to_arg = to_arg)
 }
 #' @export
@@ -513,7 +569,10 @@ vec_cast.character <- function(x, to, ...) {
 }
 #' @export
 #' @method vec_cast.character logical
-vec_cast.character.logical <- function(x, to, ...) {
+vec_cast.character.logical <- function(x, to, ..., x_arg = "x", to_arg = "to") {
+  if (is.object(x)) {
+    return(vec_default_cast(x, to, x_arg = x_arg, to_arg = to_arg))
+  }
   x <- vec_coerce_bare(x, "character")
   shape_broadcast(x, to)
 }
@@ -525,18 +584,27 @@ vec_cast.character.integer <- vec_cast.character.logical
 vec_cast.character.double <- vec_cast.character.logical
 #' @export
 #' @method vec_cast.character character
-vec_cast.character.character <- function(x, to, ...) {
+vec_cast.character.character <- function(x, to, ..., x_arg = "x", to_arg = "to") {
+  if (is.object(x)) {
+    return(vec_default_cast(x, to, x_arg = x_arg, to_arg = to_arg))
+  }
   shape_broadcast(x, to)
 }
 #' @export
 #' @method vec_cast.character difftime
-vec_cast.character.difftime <- function(x, to, ...) {
+vec_cast.character.difftime <- function(x, to, ..., x_arg = "x", to_arg = "to") {
+  if (!inherits_only(x, "difftime")) {
+    return(vec_default_cast(x, to, x_arg = x_arg, to_arg = to_arg))
+  }
   x <- paste(x, units(x))
   shape_broadcast(x, to)
 }
 #' @export
 #' @method vec_cast.character list
 vec_cast.character.list <- function(x, to, ..., x_arg = "x", to_arg = "to") {
+  if (is.object(x)) {
+    return(vec_default_cast(x, to, x_arg = x_arg, to_arg = to_arg))
+  }
   vec_list_cast(x, to, x_arg = x_arg, to_arg = to_arg)
 }
 #' @export
@@ -554,16 +622,23 @@ vec_cast.list <- function(x, to, ...) {
 }
 #' @export
 #' @method vec_cast.list list
-vec_cast.list.list <- function(x, to, ...) {
+vec_cast.list.list <- function(x, to, ..., x_arg = "x", to_arg = "to") {
+  if (is.object(x)) {
+    return(vec_default_cast(x, to, x_arg = x_arg, to_arg = to_arg))
+  }
   shape_broadcast(x, to)
 }
 #' @export
 #' @method vec_cast.list default
-vec_cast.list.default <- function(x, to, ...) {
-  if (is_unspecified(x)) {
-    return(vec_init(to, length(x)))
+vec_cast.list.default <- function(x, to, ..., x_arg = "x", to_arg = "to") {
+  if (is.object(x)) {
+    return(vec_default_cast(x, to, x_arg = x_arg, to_arg = to_arg))
   }
 
+  vec_cast_list_default(x, to, x_arg = x_arg, to_arg = to_arg)
+}
+
+vec_cast_list_default <- function(x, to, ..., x_arg = x_arg, to_arg = to_arg) {
   out <- lapply(seq_along(x), function(i) x[[i]])
 
   vec_slice(out, vec_equal_na(x)) <- list(NULL)

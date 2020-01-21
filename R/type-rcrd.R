@@ -115,6 +115,15 @@ vec_cast.vctrs_rcrd.default <- function(x, to, ..., x_arg = "", to_arg = "") {
   }
 }
 
+#' @export
+#' @method vec_cast.list vctrs_rcrd
+vec_cast.list.vctrs_rcrd <- function(x, to, ...) {
+  # FIXME: Coercion to list should be disallowed. Current
+  # implementation can be achieved with `vec_chop()`.
+  vec_cast_list_default(x, to, ...)
+}
+
+
 # Subsetting --------------------------------------------------------------
 
 #' @export

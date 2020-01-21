@@ -125,6 +125,10 @@ vec_assign_fallback <- function(x, i, value) {
   x
 }
 
+vec_remove <- function(x, i) {
+  vec_slice(x, -vec_as_location(i, length(x), names(x)))
+}
+
 vec_index <- function(x, i, ...) {
   i <- maybe_missing(i, TRUE)
 

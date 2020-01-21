@@ -2,11 +2,22 @@ context("test-type-bare")
 
 
 test_that("ptype2 base methods are not inherited", {
-  for (ptype in base_empty_types[-1]) {
+  ptypes <- vec_remove(base_empty_types, "null")
+  for (ptype in ptypes) {
     x <- new_vctr(ptype, class = "foobar", inherit_base_type = TRUE)
     expect_is(vec_ptype2(x, x), "foobar")
     expect_error(vec_ptype2(x, ptype), class = "vctrs_error_incompatible_type")
     expect_error(vec_ptype2(ptype, x), class = "vctrs_error_incompatible_type")
+  }
+})
+
+test_that("cast base methods are not inherited", {
+  # FIXME: Should also disallow data frame and list methods
+  ptypes <- vec_remove(base_empty_types, c("null", "dataframe", "list"))
+  for (ptype in ptypes) {
+    x <- new_vctr(ptype, class = "foobar", inherit_base_type = TRUE)
+    expect_is(vec_cast(ptype, x), "foobar")
+    expect_error(vec_cast(x, !!ptype), class = "vctrs_error_incompatible_cast")
   }
 })
 
@@ -278,7 +289,6 @@ test_that("Shaped NA casts work as expected", {
 
 test_that("difftime gets special treatment", {
   dt1 <- as.difftime(600, units = "secs")
-
   expect_equal(vec_cast(dt1, character()), "600 secs")
 })
 

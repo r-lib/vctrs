@@ -165,6 +165,5 @@ try(vec_cast(1.5, factor("a")))
 
 # Cast to common type
 vec_cast_common(factor("a"), factor(c("a", "b")))
-vec_cast_common(factor("a"), Sys.Date(), .to = list())
 }
 \keyword{internal}

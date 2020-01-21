@@ -126,6 +126,14 @@ vec_cast.vctrs_vctr.default <- function(x, to, ...) {
 }
 
 #' @export
+#' @method vec_cast.list vctrs_vctr
+vec_cast.list.vctrs_vctr <- function(x, to, ...) {
+  # FIXME: Coercion to list should be disallowed. Current
+  # implementation can be achieved with `vec_chop()`.
+  vec_cast_list_default(x, to, ...)
+}
+
+#' @export
 c.vctrs_vctr <- function(...) {
   vec_c(...)
 }

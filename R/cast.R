@@ -119,7 +119,6 @@
 #'
 #' # Cast to common type
 #' vec_cast_common(factor("a"), factor(c("a", "b")))
-#' vec_cast_common(factor("a"), Sys.Date(), .to = list())
 vec_cast <- function(x, to, ..., x_arg = "x", to_arg = "to") {
   if (!missing(...)) {
     ellipsis::check_dots_empty()
