@@ -398,15 +398,11 @@ cnd_header.vctrs_error_subscript_oob <- function(cnd, ...) {
   if (cnd_subscript_oob_non_consecutive(cnd)) {
     return(cnd_header_vctrs_error_subscript_oob_non_consecutive(cnd, ...))
   }
+
   elt <- cnd_subscript_element(cnd)
   action <- cnd_subscript_action(cnd)
 
-  if (is_null(cnd$subscript_arg)) {
-    glue::glue("Can't {action} {elt[[2]]} that don't exist.")
-  } else {
-    arg <- arg_as_string(cnd$subscript_arg)
-    glue::glue("Can't {action} {elt[[2]]} that don't exist in `{arg}`.")
-  }
+  glue::glue("Can't {action} {elt[[2]]} that don't exist.")
 }
 
 #' @export

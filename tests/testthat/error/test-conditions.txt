@@ -7,14 +7,14 @@ Error: Can't subset elements that don't exist.
 x The element `foo` doesn't exist.
 
 > with_subscript_data(vec_slice(set_names(letters), "foo"), "input")
-Error: Can't subset elements that don't exist in `input`.
+Error: Can't subset elements that don't exist.
 x The element `foo` doesn't exist.
 
 > with_subscript_data(vec_slice(set_names(letters), "foo"), quote(input))
-Error: Can't subset elements that don't exist in `input`.
+Error: Can't subset elements that don't exist.
 x The element `foo` doesn't exist.
 
 > with_subscript_data(vec_slice(set_names(letters), "foo"), quote(input[i]))
-Error: Can't subset elements that don't exist in `input[i]`.
+Error: Can't subset elements that don't exist.
 x The element `foo` doesn't exist.
 

@@ -405,41 +405,41 @@ x The element `foo` doesn't exist.
 
 > # With custom `arg`
 > vec_as_location(30, length(letters), arg = "foo")
-Error: Can't subset elements that don't exist in `foo`.
+Error: Can't subset elements that don't exist.
 x The location 30 doesn't exist.
 i There are only 26 elements.
 
 > vec_as_location("foo", NULL, letters, arg = "foo")
-Error: Can't subset elements that don't exist in `foo`.
+Error: Can't subset elements that don't exist.
 x The element `foo` doesn't exist.
 
 > # With tibble columns
 > with_tibble_cols(vec_slice(set_names(letters), "foo"))
-Error: Can't rename columns that don't exist in `foo(bar)`.
+Error: Can't rename columns that don't exist.
 x The column `foo` doesn't exist.
 
 > with_tibble_cols(vec_slice(set_names(letters), 30))
-Error: Can't rename columns that don't exist in `foo(bar)`.
+Error: Can't rename columns that don't exist.
 x The location 30 doesn't exist.
 i There are only 26 columns.
 
 > with_tibble_cols(vec_slice(set_names(letters), -30))
-Error: Can't rename columns that don't exist in `foo(bar)`.
+Error: Can't rename columns that don't exist.
 x The location 30 doesn't exist.
 i There are only 26 columns.
 
 > # With tibble rows
 > with_tibble_rows(vec_slice(set_names(letters), c("foo", "bar")))
-Error: Can't remove rows that don't exist in `foo(bar)`.
+Error: Can't remove rows that don't exist.
 x The rows `foo` and `bar` don't exist.
 
 > with_tibble_rows(vec_slice(set_names(letters), 1:30))
-Error: Can't remove rows that don't exist in `foo(bar)`.
+Error: Can't remove rows that don't exist.
 x The locations 27, 28, 29, and 30 don't exist.
 i There are only 26 rows.
 
 > with_tibble_rows(vec_slice(set_names(letters), -(1:30)))
-Error: Can't remove rows that don't exist in `foo(bar)`.
+Error: Can't remove rows that don't exist.
 x The locations 27, 28, 29, and 30 don't exist.
 i There are only 26 rows.
 
