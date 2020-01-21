@@ -143,12 +143,12 @@ test_that("vec_as_location() preserves names if possible", {
 })
 
 test_that("vec_as_location2() optionally allows missing values", {
-  expect_identical(vec_as_location2(NA, 2L, missing = "ignore"), na_int)
+  expect_identical(vec_as_location2(NA, 2L, missing = "propagate"), na_int)
   expect_error(vec_as_location2(NA, 2L, missing = "error"), class = "vctrs_error_subscript_type")
 })
 
 test_that("num_as_location2() optionally allows missing and negative locations", {
-  expect_identical(num_as_location2(na_dbl, 2L, missing = "ignore"), na_int)
+  expect_identical(num_as_location2(na_dbl, 2L, missing = "propagate"), na_int)
   expect_identical(num_as_location2(-1, 2L, negative = "ignore"), -1L)
   expect_error(num_as_location2(-3, 2L, negative = "ignore"), class = "vctrs_error_subscript_oob")
   expect_error(num_as_location2(0, 2L, negative = "ignore"), class = "vctrs_error_subscript_type")
@@ -249,6 +249,23 @@ test_that("missing values are supported in error formatters", {
     expect_error(
       num_as_location(c(1, NA, 3), 1, oob = "extend"),
       class = "vctrs_error_subscript_oob"
+    )
+  })
+})
+
+test_that("can disallow missing values", {
+  verify_errors({
+    expect_error(
+      vec_as_location(c(1, NA), 2, missing = "error"),
+      class = "vctrs_error_subscript_type"
+    )
+    expect_error(
+      vec_as_location(c(1, NA, 2, NA), 2, missing = "error", arg = "foo"),
+      class = "vctrs_error_subscript_type"
+    )
+    expect_error(
+      with_tibble_cols(vec_as_location(c(1, NA, 2, NA), 2, missing = "error")),
+      class = "vctrs_error_subscript_type"
     )
   })
 })
@@ -495,5 +512,10 @@ test_that("conversion to locations has informative error messages", {
     with_tibble_rows(vec_slice(set_names(letters), c("foo", "bar")))
     with_tibble_rows(vec_slice(set_names(letters), 1:30))
     with_tibble_rows(vec_slice(set_names(letters), -(1:30)))
+
+    "# can disallow missing values"
+    vec_as_location(c(1, NA), 2, missing = "error")
+    vec_as_location(c(1, NA, 2, NA), 2, missing = "error", arg = "foo")
+    with_tibble_cols(vec_as_location(c(1, NA, 2, NA), 2, missing = "error"))
   })
 })

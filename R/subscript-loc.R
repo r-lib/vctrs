@@ -23,6 +23,9 @@
 #'   vector that `i` will be matched against to construct the index. Otherwise,
 #'   not used. The default value of `NULL` will result in an error
 #'   if `i` is a character vector.
+#' @param missing Whether to throw an `"error"` when `i` is a missing
+#'   value, or `"propagate"` it (return it as is). By default, vector
+#'   subscripts can contain missing values and scalar subscripts can't.
 #' @param arg The argument name to be displayed in error messages when
 #'   `vec_as_location()` and `vec_as_location2()` are used to check the
 #'   type of a function input.
@@ -54,6 +57,7 @@ vec_as_location <- function(i,
                             n,
                             names = NULL,
                             ...,
+                            missing = c("propagate", "error"),
                             arg = NULL) {
   if (!missing(...)) ellipsis::check_dots_empty()
 
@@ -65,6 +69,7 @@ vec_as_location <- function(i,
     names = names,
     loc_negative = "invert",
     loc_oob = "error",
+    missing = missing,
     arg = arg
   )
 }
@@ -79,6 +84,7 @@ vec_as_location <- function(i,
 num_as_location <- function(i,
                             n,
                             ...,
+                            missing = c("propagate", "error"),
                             negative = c("invert", "error", "ignore"),
                             oob = c("error", "extend"),
                             arg = NULL) {
@@ -94,19 +100,18 @@ num_as_location <- function(i,
     names = NULL,
     loc_negative = negative,
     loc_oob = oob,
+    missing = missing,
     arg = arg
   )
 }
 
 #' @rdname vec_as_location
-#' @param missing Whether to throw an `"error"` when `i` is a missing
-#'   value, or `"ignore"` it (return it as is).
 #' @export
 vec_as_location2 <- function(i,
                              n,
                              names = NULL,
                              ...,
-                             missing = c("error", "ignore"),
+                             missing = c("error", "propagate"),
                              arg = NULL) {
   if (!missing(...)) ellipsis::check_dots_empty()
   result_get(vec_as_location2_result(
@@ -126,7 +131,7 @@ num_as_location2 <- function(i,
                              n,
                              ...,
                              negative = c("error", "ignore"),
-                             missing = c("error", "ignore"),
+                             missing = c("error", "propagate"),
                              arg = NULL) {
   if (!missing(...)) ellipsis::check_dots_empty()
 
@@ -149,7 +154,7 @@ vec_as_location2_result <- function(i,
                                     missing,
                                     negative,
                                     arg) {
-  allow_missing <- arg_match(missing, c("error", "ignore")) == "ignore"
+  allow_missing <- arg_match(missing, c("error", "propagate")) == "propagate"
   allow_negative <- arg_match(negative, c("error", "ignore")) == "ignore"
 
   result <- vec_as_subscript2_result(
@@ -335,6 +340,30 @@ cnd_bullets_location_need_non_negative <- function(cnd, ...) {
   cnd$subscript_arg <- append_arg("The subscript", cnd$subscript_arg)
   format_error_bullets(c(
     x = glue::glue_data(cnd, "{subscript_arg} can't contain negative locations.")
+  ))
+}
+
+stop_subscript_missing <- function(i, ...) {
+  cnd_signal(new_error_subscript_type(
+    i = i,
+    body = cnd_bullets_subscript_missing,
+    ...
+  ))
+}
+cnd_bullets_subscript_missing <- function(cnd, ...) {
+  cnd$subscript_arg <- append_arg("The subscript", cnd$subscript_arg)
+
+  missing_loc <- which(is.na(cnd$i))
+  if (length(missing_loc) == 1) {
+    missing_line <- glue::glue("It has a missing value at location {missing_loc}")
+  } else {
+    missing_enum <- enumerate(missing_loc)
+    missing_line <- glue::glue("It has missing values at locations {missing_enum}")
+  }
+
+  format_error_bullets(c(
+    x = glue::glue_data(cnd, "{subscript_arg} can't contain missing values."),
+    x = missing_line
   ))
 }
 

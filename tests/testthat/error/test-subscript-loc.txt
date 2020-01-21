@@ -443,3 +443,22 @@ Error: Must remove existing rows in `tbl[i]`.
 x Can't remove locations 27, 28, 29, and 30.
 i There are only 26 rows.
 
+
+can disallow missing values
+===========================
+
+> vec_as_location(c(1, NA), 2, missing = "error")
+Error: Must subset elements with a proper subscript vector.
+x The subscript can't contain missing values.
+x It has a missing value at location 2
+
+> vec_as_location(c(1, NA, 2, NA), 2, missing = "error", arg = "foo")
+Error: Must subset elements with a proper subscript vector.
+x The subscript can't contain missing values.
+x It has missing values at locations 2 and 4
+
+> with_tibble_cols(vec_as_location(c(1, NA, 2, NA), 2, missing = "error"))
+Error: Must rename columns with a proper subscript vector.
+x The subscript `tbl[i]` can't contain missing values.
+x It has missing values at locations 2 and 4
+
