@@ -2,12 +2,15 @@
 #include "utils.h"
 #include "subscript-loc.h"
 
-static SEXP int_invert_location(SEXP subscript, R_len_t n);
+static SEXP int_invert_location(SEXP subscript, R_len_t n,
+                                const struct vec_as_location_opts* opts);
 static SEXP int_filter_zero(SEXP subscript, R_len_t n_zero);
 static void int_check_consecutive(SEXP subscript, R_len_t n);
 
-static void stop_subscript_oob_location(SEXP i, R_len_t size, bool negate);
-static void stop_subscript_oob_name(SEXP i, SEXP names);
+static void stop_subscript_oob_location(SEXP i, R_len_t size,
+                                        const struct vec_as_location_opts* opts);
+static void stop_subscript_oob_name(SEXP i, SEXP names,
+                                    const struct vec_as_location_opts* opts);
 static void stop_location_negative(SEXP i);
 static void stop_indicator_size(SEXP i, SEXP n);
 static void stop_location_negative_missing(SEXP i);
@@ -15,8 +18,15 @@ static void stop_location_negative_positive(SEXP i);
 static void stop_location_oob_non_consecutive(SEXP i, R_len_t size);
 
 
+const struct vec_as_location_opts default_opts = {
+  .action = SUBSCRIPT_ACTION_DEFAULT,
+  .loc_negative = LOC_NEGATIVE_INVERT,
+  .loc_oob = LOC_OOB_ERROR
+};
+
+
 static SEXP int_as_location(SEXP subscript, R_len_t n,
-                            struct vec_as_location_opts* opts) {
+                            const struct vec_as_location_opts* opts) {
   const int* data = INTEGER_RO(subscript);
   R_len_t loc_n = Rf_length(subscript);
 
@@ -33,7 +43,7 @@ static SEXP int_as_location(SEXP subscript, R_len_t n,
     if (elt != NA_INTEGER) {
       if (elt < 0) {
         switch (opts->loc_negative) {
-        case LOC_NEGATIVE_INVERT: return int_invert_location(subscript, n);
+        case LOC_NEGATIVE_INVERT: return int_invert_location(subscript, n, opts);
         case LOC_NEGATIVE_ERROR: stop_location_negative(subscript);
         case LOC_NEGATIVE_IGNORE: break;
         }
@@ -43,7 +53,7 @@ static SEXP int_as_location(SEXP subscript, R_len_t n,
         ++n_zero;
       } else if (abs(elt) > n) {
         if (opts->loc_oob == LOC_OOB_ERROR) {
-          stop_subscript_oob_location(subscript, n, false);
+          stop_subscript_oob_location(subscript, n, opts);
         }
         extended = true;
       }
@@ -64,9 +74,11 @@ static SEXP int_as_location(SEXP subscript, R_len_t n,
 }
 
 
-static SEXP lgl_as_location(SEXP subscript, R_len_t n);
+static SEXP lgl_as_location(SEXP subscript, R_len_t n,
+                            const struct vec_as_location_opts* opts);
 
-static SEXP int_invert_location(SEXP subscript, R_len_t n) {
+static SEXP int_invert_location(SEXP subscript, R_len_t n,
+                                const struct vec_as_location_opts* opts) {
   const int* data = INTEGER_RO(subscript);
   R_len_t loc_n = Rf_length(subscript);
 
@@ -91,13 +103,15 @@ static SEXP int_invert_location(SEXP subscript, R_len_t n) {
 
     j = -j;
     if (j > n) {
-      stop_subscript_oob_location(subscript, n, true);
+      struct vec_as_location_opts updated_opts = *opts;
+      updated_opts.action = SUBSCRIPT_ACTION_NEGATE;
+      stop_subscript_oob_location(subscript, n, &updated_opts);
     }
 
     sel_data[j - 1] = 0;
   }
 
-  SEXP out = lgl_as_location(sel, n);
+  SEXP out = lgl_as_location(sel, n, opts);
 
   UNPROTECT(1);
   return out;
@@ -155,7 +169,8 @@ static void int_check_consecutive(SEXP subscript, R_len_t n) {
   UNPROTECT(1);
 }
 
-static SEXP dbl_as_location(SEXP subscript, R_len_t n, struct vec_as_location_opts* opts) {
+static SEXP dbl_as_location(SEXP subscript, R_len_t n,
+                            const struct vec_as_location_opts* opts) {
   subscript = PROTECT(vec_cast(subscript, vctrs_shared_empty_int, args_empty, args_empty));
   subscript = int_as_location(subscript, n, opts);
 
@@ -163,7 +178,8 @@ static SEXP dbl_as_location(SEXP subscript, R_len_t n, struct vec_as_location_op
   return subscript;
 }
 
-static SEXP lgl_as_location(SEXP subscript, R_len_t n) {
+static SEXP lgl_as_location(SEXP subscript, R_len_t n,
+                            const struct vec_as_location_opts* opts) {
   R_len_t subscript_n = Rf_length(subscript);
 
   if (subscript_n == n) {
@@ -221,7 +237,8 @@ static SEXP lgl_as_location(SEXP subscript, R_len_t n) {
   never_reached("lgl_as_location");
 }
 
-static SEXP chr_as_location(SEXP subscript, SEXP names) {
+static SEXP chr_as_location(SEXP subscript, SEXP names,
+                            const struct vec_as_location_opts* opts) {
   if (names == R_NilValue) {
     Rf_errorcall(R_NilValue, "Can't use character names to index an unnamed vector.");
   }
@@ -237,7 +254,7 @@ static SEXP chr_as_location(SEXP subscript, SEXP names) {
 
   for (R_len_t k = 0; k < n; ++k) {
     if (p[k] == NA_INTEGER && ip[k] != NA_STRING) {
-      stop_subscript_oob_name(subscript, names);
+      stop_subscript_oob_name(subscript, names, opts);
     }
   }
 
@@ -248,15 +265,11 @@ static SEXP chr_as_location(SEXP subscript, SEXP names) {
 }
 
 SEXP vec_as_location(SEXP subscript, R_len_t n, SEXP names) {
-  struct vec_as_location_opts opts = {
-    .loc_negative = LOC_NEGATIVE_INVERT,
-    .loc_oob = LOC_OOB_ERROR
-  };
-  return vec_as_location_opts(subscript, n, names, &opts);
+  return vec_as_location_opts(subscript, n, names, &default_opts);
 }
 
 SEXP vec_as_location_opts(SEXP subscript, R_len_t n, SEXP names,
-                          struct vec_as_location_opts* opts) {
+                          const struct vec_as_location_opts* opts) {
 
   if (vec_dim_n(subscript) != 1) {
     Rf_errorcall(R_NilValue, "`i` must have one dimension, not %d.", vec_dim_n(subscript));
@@ -266,8 +279,8 @@ SEXP vec_as_location_opts(SEXP subscript, R_len_t n, SEXP names,
   case NILSXP: return vctrs_shared_empty_int;
   case INTSXP: return int_as_location(subscript, n, opts);
   case REALSXP: return dbl_as_location(subscript, n, opts);
-  case LGLSXP: return lgl_as_location(subscript, n);
-  case STRSXP: return chr_as_location(subscript, names);
+  case LGLSXP: return lgl_as_location(subscript, n, opts);
+  case STRSXP: return chr_as_location(subscript, names, opts);
 
   default: Rf_errorcall(R_NilValue, "`i` must be an integer, character, or logical vector, not a %s.",
                         Rf_type2char(TYPEOF(subscript)));
@@ -349,9 +362,10 @@ static void stop_location_negative_positive(SEXP i) {
   never_reached("stop_location_negative_positive");
 }
 
-static void stop_subscript_oob_location(SEXP i, R_len_t size, bool negate) {
+static void stop_subscript_oob_location(SEXP i, R_len_t size,
+                                        const struct vec_as_location_opts* opts) {
   SEXP size_obj = PROTECT(r_int(size));
-  SEXP action = negate ? chrs_negate : chrs_subset;
+  SEXP action = get_opts_action(opts);
   vctrs_eval_mask3(Rf_install("stop_subscript_oob_location"),
                    syms_i, i,
                    syms_size, size_obj,
@@ -361,10 +375,13 @@ static void stop_subscript_oob_location(SEXP i, R_len_t size, bool negate) {
   UNPROTECT(1);
   never_reached("stop_subscript_oob_location");
 }
-static void stop_subscript_oob_name(SEXP i, SEXP names) {
-  vctrs_eval_mask2(Rf_install("stop_subscript_oob_name"),
+static void stop_subscript_oob_name(SEXP i, SEXP names,
+                                    const struct vec_as_location_opts* opts) {
+  SEXP action = get_opts_action(opts);
+  vctrs_eval_mask3(Rf_install("stop_subscript_oob_name"),
                    syms_i, i,
                    syms_names, names,
+                   syms_subscript_action, action,
                    vctrs_ns_env);
   never_reached("stop_subscript_oob_name");
 }
