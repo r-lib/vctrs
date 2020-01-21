@@ -348,7 +348,7 @@ cnd_subscript_element <- function(cnd) {
 subscript_actions <- c(
   "subset", "extract", "assign", "rename", "remove", "negate"
 )
-cnd_subscript_action <- function(cnd) {
+cnd_subscript_action <- function(cnd, assign_to = TRUE) {
   action <- cnd$subscript_action
 
   if (is_null(action)) {
@@ -366,7 +366,11 @@ cnd_subscript_action <- function(cnd) {
     ))
   }
 
-  action
+  if (assign_to && action == "assign") {
+    "assign to"
+  } else {
+    action
+  }
 }
 
 cnd_subscript_type <- function(cnd) {
