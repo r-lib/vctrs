@@ -5,11 +5,11 @@ test_that("vec_as_subscript() coerces unspecified vectors", {
     NA
   )
   expect_identical(
-    vec_as_subscript(NA, indicator = "error"),
+    vec_as_subscript(NA, logical = "error"),
     na_int
   )
   expect_identical(
-    vec_as_subscript(NA, indicator = "error", location = "error"),
+    vec_as_subscript(NA, logical = "error", numeric = "error"),
     na_chr
   )
 })
@@ -28,7 +28,7 @@ test_that("vec_as_subscript() coerces subtypes and supertypes", {
 test_that("vec_as_subscript() handles NULL", {
   expect_identical(vec_as_subscript(NULL), int())
   expect_error(
-    vec_as_subscript(NULL, location = "error"),
+    vec_as_subscript(NULL, numeric = "error"),
     class = "vctrs_error_subscript_type"
   )
 })
@@ -37,7 +37,7 @@ test_that("vec_as_subscript() handles symbols", {
   expect_identical(vec_as_subscript(quote(foo)), "foo")
   expect_identical(vec_as_subscript(quote(`<U+5E78>`)), "\u5e78")
   expect_error(
-    vec_as_subscript(quote(foo), name = "error"),
+    vec_as_subscript(quote(foo), character = "error"),
     class = "vctrs_error_subscript_type"
   )
 })
@@ -54,17 +54,17 @@ test_that("can customise subscript errors", {
 test_that("subscript functions have informative error messages", {
   verify_output(test_path("error", "test-subscript.txt"), {
     "# vec_as_subscript() forbids subscript types"
-    vec_as_subscript(1L, indicator = "error", location = "error")
-    vec_as_subscript("foo", indicator = "error", name = "error")
-    vec_as_subscript(TRUE, indicator = "error")
-    vec_as_subscript("foo", name = "error")
-    vec_as_subscript(NULL, location = "error")
-    vec_as_subscript(quote(foo), name = "error")
+    vec_as_subscript(1L, logical = "error", numeric = "error")
+    vec_as_subscript("foo", logical = "error", character = "error")
+    vec_as_subscript(TRUE, logical = "error")
+    vec_as_subscript("foo", character = "error")
+    vec_as_subscript(NULL, numeric = "error")
+    vec_as_subscript(quote(foo), character = "error")
 
     "# vec_as_subscript2() forbids subscript types"
-    vec_as_subscript2(1L, location = "error", indicator = "error")
-    vec_as_subscript2("foo", name = "error", indicator = "error")
-    vec_as_subscript2(TRUE, indicator = "error")
+    vec_as_subscript2(1L, numeric = "error", logical = "error")
+    vec_as_subscript2("foo", character = "error", logical = "error")
+    vec_as_subscript2(TRUE, logical = "error")
 
     "# can customise subscript errors"
     with_tibble_cols(vec_as_subscript(env()))

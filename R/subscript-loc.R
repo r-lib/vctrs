@@ -160,7 +160,7 @@ vec_as_location2_result <- function(i,
   result <- vec_as_subscript2_result(
     i = i,
     arg = arg,
-    indicator = "error"
+    logical = "error"
   )
 
   if (!is_null(result$err)) {
@@ -304,9 +304,9 @@ new_error_location2_type <- function(i,
   new_error_subscript2_type(
     class = class,
     i = i,
-    indicator = "error",
-    location = "coerce",
-    name = "coerce",
+    logical = "error",
+    numeric = "coerce",
+    character = "coerce",
     ...
   )
 }
@@ -408,15 +408,15 @@ cnd_header.vctrs_error_subscript_oob <- function(cnd, ...) {
 #' @export
 cnd_body.vctrs_error_subscript_oob <- function(cnd, ...) {
   switch(cnd_subscript_type(cnd),
-    location =
+    numeric =
       if (cnd_subscript_oob_non_consecutive(cnd)) {
         cnd_body_vctrs_error_subscript_oob_non_consecutive(cnd, ...)
       } else {
         cnd_body_vctrs_error_subscript_oob_location(cnd, ...)
       },
-    name =
+    character =
       cnd_body_vctrs_error_subscript_oob_name(cnd, ...),
-    abort("Internal error: subscript type can't be `indicator` for OOB errors.")
+    abort("Internal error: subscript type can't be `logical` for OOB errors.")
   )
 }
 cnd_body_vctrs_error_subscript_oob_location <- function(cnd, ...) {
@@ -463,7 +463,7 @@ stop_location_oob_non_consecutive <- function(i, size, ...) {
   stop_subscript_oob(
     i = i,
     size = size,
-    subscript_type = "location",
+    subscript_type = "numeric",
     subscript_oob_non_consecutive = TRUE,
     ...
   )

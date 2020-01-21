@@ -267,8 +267,8 @@ extern SEXP chrs_assign;
 extern SEXP chrs_rename;
 extern SEXP chrs_remove;
 extern SEXP chrs_negate;
-extern SEXP chrs_location;
-extern SEXP chrs_name;
+extern SEXP chrs_numeric;
+extern SEXP chrs_character;
 extern SEXP chrs_empty;
 
 extern SEXP syms_i;
