@@ -462,8 +462,7 @@ enumerate <- function(x, max = 5L, allow_empty = FALSE) {
     abort("Internal error: Enumeration can't be empty.")
   }
   if (n > max) {
-    # Last `.` is part of the error message
-    paste0(glue::glue_collapse(x[seq2(1, max)], ", "), ", ..")
+    paste0(glue::glue_collapse(x[seq2(1, max)], ", "), ", etc.")
   } else {
     if (n == 2) {
       last <- " and "
@@ -471,6 +470,15 @@ enumerate <- function(x, max = 5L, allow_empty = FALSE) {
       last <- ", and "
     }
     glue::glue_collapse(x, ", ", last = last)
+  }
+}
+
+ensure_full_stop <- function(x) {
+  n <- nchar(x)
+  if (substr(x, n, n) == ".") {
+    x
+  } else {
+    paste0(x, ".")
   }
 }
 

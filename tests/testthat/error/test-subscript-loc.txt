@@ -10,7 +10,7 @@ i The subscript has a missing value at location 2.
 > vec_as_location(-c(1L, rep(NA, 10)), 30)
 Error: Must subset elements with a valid subscript vector.
 x Negative locations can't have missing values.
-i The subscript has 10 missing values at locations 2, 3, 4, 5, 6, ...
+i The subscript has 10 missing values at locations 2, 3, 4, 5, 6, etc.
 
 
 vec_as_location() checks for mix of negative and positive locations
@@ -24,7 +24,7 @@ i The subscript has a positive value at location 2.
 > vec_as_location(c(-1L, rep(1L, 10)), 30)
 Error: Must subset elements with a valid subscript vector.
 x Negative locations can't be mixed with positive locations.
-i The subscript has 10 missing values at locations 2, 3, 4, 5, 6, ...
+i The subscript has 10 missing values at locations 2, 3, 4, 5, 6, etc.
 
 
 num_as_location() optionally forbids negative indices
@@ -249,27 +249,27 @@ vec_as_location() and variants check for OOB elements
 > # Numeric subscripts
 > vec_as_location(10L, 2L)
 Error: Can't subset elements that don't exist.
-x Can't subset location 10.
+x The location 10 doesn't exist.
 i There are only 2 elements.
 
 > vec_as_location(-10L, 2L)
 Error: Can't negate elements that don't exist.
-x Can't negate location 10.
+x The location 10 doesn't exist.
 i There are only 2 elements.
 
 > vec_as_location2(10L, 2L)
 Error: Can't subset elements that don't exist.
-x Can't subset location 10.
+x The location 10 doesn't exist.
 i There are only 2 elements.
 
 > # Character subscripts
 > vec_as_location("foo", 1L, names = "bar")
 Error: Can't subset elements that don't exist.
-x Can't subset element with unknown name `foo`.
+x The element `foo` doesn't exist.
 
 > vec_as_location2("foo", 1L, names = "bar")
 Error: Can't subset elements that don't exist.
-x Can't subset element with unknown name `foo`.
+x The element `foo` doesn't exist.
 
 
 can optionally extend beyond the end
@@ -301,7 +301,7 @@ missing values are supported in error formatters
 
 > num_as_location(c(1, NA, 2, 3), 1)
 Error: Can't subset elements that don't exist.
-x Can't subset locations 2 and 3.
+x The locations 2 and 3 don't exist.
 i There are only 1 element.
 
 > num_as_location(c(1, NA, 3), 1, oob = "extend")
@@ -401,46 +401,46 @@ can customise OOB errors
 
 > vec_slice(set_names(letters), "foo")
 Error: Can't subset elements that don't exist.
-x Can't subset element with unknown name `foo`.
+x The element `foo` doesn't exist.
 
 > # With custom `arg`
 > vec_as_location(30, length(letters), arg = "foo")
 Error: Can't subset elements that don't exist in `foo`.
-x Can't subset location 30.
+x The location 30 doesn't exist.
 i There are only 26 elements.
 
 > vec_as_location("foo", NULL, letters, arg = "foo")
 Error: Can't subset elements that don't exist in `foo`.
-x Can't subset element with unknown name `foo`.
+x The element `foo` doesn't exist.
 
 > # With tibble columns
 > with_tibble_cols(vec_slice(set_names(letters), "foo"))
 Error: Can't rename columns that don't exist in `tbl[i]`.
-x Can't rename column with unknown name `foo`.
+x The column `foo` doesn't exist.
 
 > with_tibble_cols(vec_slice(set_names(letters), 30))
 Error: Can't rename columns that don't exist in `tbl[i]`.
-x Can't rename location 30.
+x The location 30 doesn't exist.
 i There are only 26 columns.
 
 > with_tibble_cols(vec_slice(set_names(letters), -30))
 Error: Can't rename columns that don't exist in `tbl[i]`.
-x Can't rename location 30.
+x The location 30 doesn't exist.
 i There are only 26 columns.
 
 > # With tibble rows
 > with_tibble_rows(vec_slice(set_names(letters), c("foo", "bar")))
 Error: Can't remove rows that don't exist in `tbl[i]`.
-x Can't remove rows with unknown names `foo` and `bar`.
+x The rows `foo` and `bar` don't exist.
 
 > with_tibble_rows(vec_slice(set_names(letters), 1:30))
 Error: Can't remove rows that don't exist in `tbl[i]`.
-x Can't remove locations 27, 28, 29, and 30.
+x The locations 27, 28, 29, and 30 don't exist.
 i There are only 26 rows.
 
 > with_tibble_rows(vec_slice(set_names(letters), -(1:30)))
 Error: Can't remove rows that don't exist in `tbl[i]`.
-x Can't remove locations 27, 28, 29, and 30.
+x The locations 27, 28, 29, and 30 don't exist.
 i There are only 26 rows.
 
 
@@ -450,15 +450,15 @@ can disallow missing values
 > vec_as_location(c(1, NA), 2, missing = "error")
 Error: Must subset elements with a valid subscript vector.
 x The subscript can't contain missing values.
-x It has a missing value at location 2
+x It has a missing value at location 2.
 
 > vec_as_location(c(1, NA, 2, NA), 2, missing = "error", arg = "foo")
 Error: Must subset elements with a valid subscript vector.
 x The subscript can't contain missing values.
-x It has missing values at locations 2 and 4
+x It has missing values at locations 2 and 4.
 
 > with_tibble_cols(vec_as_location(c(1, NA, 2, NA), 2, missing = "error"))
 Error: Must rename columns with a valid subscript vector.
 x The subscript `tbl[i]` can't contain missing values.
-x It has missing values at locations 2 and 4
+x It has missing values at locations 2 and 4.
 
