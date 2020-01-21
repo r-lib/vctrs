@@ -70,3 +70,4 @@ reference:
   - vec_default_ptype2
   - vec_as_names
   - vec_as_location
+  - vec_as_subscript
