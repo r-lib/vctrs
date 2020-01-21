@@ -73,3 +73,4 @@ if (require("tibble")) {
   as_tibble(vec_group_loc(mtcars[c("vs", "am")]))
 }
 }
+\keyword{internal}

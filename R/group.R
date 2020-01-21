@@ -31,6 +31,7 @@
 #'   `data.frame` print method will be suboptimal, and you will want to coerce
 #'   into a tibble to better understand the output.
 #' @name vec_group
+#' @keywords internal
 #' @examples
 #' purrr <- c("p", "u", "r", "r", "r")
 #' vec_group_id(purrr)
