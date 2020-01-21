@@ -11,6 +11,8 @@
   `num_as_location2()` variants for validating scalar subscripts and
   locations (e.g. for indexing with `[[`).
 
+* `vec_as_location()` now preserves names of its inputs if possible.
+
 * `vec_ptype2()` methods for base classes now prevent
   inheritance. This makes sense because the subtyping graph created by
   `vec_ptype2()` methods is generally not the same as the inheritance
@@ -39,8 +41,7 @@
 * `vec_split()` no longer returns the `val` column as a `list_of`. It is now
   returned as a bare list (#660).
 
-* Complex numbers are coercible with the integer and
-  double (#564).
+* Complex numbers are now coercible with integer and double (#564).
 
 * zeallot has been moved from Imports to Suggests, meaning that `%<-%` is no
   longer re-exported from vctrs.
@@ -61,7 +62,7 @@
   generally should be set to `TRUE`, unless your class does not behave like the
   underlying type; for example a `factor()` should not inherit from `integer`.
 
-* `list_of()` now inherits from "list" (#593).
+* `list_of()` now inherits explicitly from "list" (#593).
 
 * `vec_ptype()` has relaxed default behaviour for base types; now if two
   vectors both inherit from (e.g.) "character", the common type is also
@@ -77,30 +78,19 @@
 * Positive and negative 0 are now considered equivalent by all functions that
   check for equality or uniqueness (#637).
 
-* New experimental `vec_group_rle()` for returning run length encoded groups.
-
-* New experimental `vec_group_id()` for constructing group identifiers from a
-  vector.
-
-* New experimental `vec_group_loc()` for computing the locations of unique
-  groups in a vector (#514).
+* New experimental functions `vec_group_rle()` for returning run
+  length encoded groups; `vec_group_id()` for constructing group
+  identifiers from a vector; `vec_group_loc()` for computing the
+  locations of unique groups in a vector (#514).
 
 * New `vec_chop()` for repeatedly slicing a vector. It efficiently captures
   the pattern of `map(indices, vec_slice, x = x)`.
-
-* `vec_as_location()` now preserves names of its inputs if possible.
-
-* `vec_as_location()` gains an `arg` parameter to specify the name of
-  inputs. This is useful when it is used for type-checking.
 
 * Support for multiple character encodings has been added to functions that
   compare elements within a single vector, such as `vec_unique()`, and across
   multiple vectors, such as `vec_match()`. When multiple encodings are
   encountered, a translation to UTF-8 is performed before any comparisons are
   made (#600, #553).
-
-* New `stop_subscript_oob_location()` and `stop_subscript_oob_name()`
-  functions to throw out-of-bounds errors.
 
 * Equality and ordering methods are now implemented for raw and
   complex vectors (@romainfrancois).
