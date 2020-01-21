@@ -120,7 +120,7 @@ SEXP vctrs_type_common_impl(SEXP dots, SEXP ptype) {
 
 
 static SEXP vctrs_type2_common(SEXP current, SEXP next, struct counters* counters) {
-  int left;
+  int left = -1;
   current = vec_type2(current, next, counters->curr_arg, counters->next_arg, &left);
 
   // Update current if RHS is the common type. Otherwise the previous
