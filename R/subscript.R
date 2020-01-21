@@ -296,7 +296,13 @@ collapse_subscript_type <- function(cnd, plural = FALSE) {
   allowed <- cnd[c("indicator", "location", "name")] != "error"
   types <- types[allowed]
 
-  glue::glue_collapse(types, sep = ", ", last = " or ")
+  if (length(types) == 2) {
+    last <- " or "
+  } else {
+    last <- ", or "
+  }
+
+  glue::glue_collapse(types, sep = ", ", last = last)
 }
 
 new_error_subscript_size <- function(i,

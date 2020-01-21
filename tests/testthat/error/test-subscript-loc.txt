@@ -69,17 +69,17 @@ x The subscript has the wrong type `data.frame<
   gear: double
   carb: double
 >`.
-i It must contain indicators, locations or names.
+i It must contain indicators, locations, or names.
 
 > vec_as_location(env(), 10L)
 Error: Must subset elements with a valid subscript vector.
 x The subscript has the wrong type `environment`.
-i It must contain indicators, locations or names.
+i It must contain indicators, locations, or names.
 
 > vec_as_location(foobar(), 10L)
 Error: Must subset elements with a valid subscript vector.
 x The subscript has the wrong type `vctrs_foobar`.
-i It must contain indicators, locations or names.
+i It must contain indicators, locations, or names.
 
 > vec_as_location(2.5, 3L)
 Error: Must subset elements with a valid subscript vector.
@@ -88,23 +88,23 @@ x Lossy cast from <double> to <integer>.
 > vec_as_location(list(), 10L)
 Error: Must subset elements with a valid subscript vector.
 x The subscript has the wrong type `list`.
-i It must contain indicators, locations or names.
+i It must contain indicators, locations, or names.
 
 > vec_as_location(function() NULL, 10L)
 Error: Must subset elements with a valid subscript vector.
 x The subscript has the wrong type `closure`.
-i It must contain indicators, locations or names.
+i It must contain indicators, locations, or names.
 
 > # Idem with custom `arg`
 > vec_as_location(env(), 10L, arg = "foo")
 Error: Must subset elements with a valid subscript vector.
 x The subscript `foo` has the wrong type `environment`.
-i It must contain indicators, locations or names.
+i It must contain indicators, locations, or names.
 
 > vec_as_location(foobar(), 10L, arg = "foo")
 Error: Must subset elements with a valid subscript vector.
 x The subscript `foo` has the wrong type `vctrs_foobar`.
-i It must contain indicators, locations or names.
+i It must contain indicators, locations, or names.
 
 > vec_as_location(2.5, 3L, arg = "foo")
 Error: Must subset elements with a valid subscript vector.

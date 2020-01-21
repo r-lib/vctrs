@@ -58,5 +58,5 @@ can customise subscript errors
 > with_tibble_cols(vec_as_subscript(env()))
 Error: Must rename columns with a valid subscript vector.
 x The subscript `tbl[i]` has the wrong type `environment`.
-i It must contain indicators, locations or names.
+i It must contain indicators, locations, or names.
 
