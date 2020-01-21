@@ -82,9 +82,6 @@
 
 * `vec_as_location()` now preserves names of its inputs if possible.
 
-* New `vec_duplicate_all()` for detecting if all values in a vector are
-  equivalent.
-
 * `vec_as_location()` gains an `arg` parameter to specify the name of
   inputs. This is useful when it is used for type-checking.
 
