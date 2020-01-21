@@ -253,10 +253,100 @@ test_that("missing values are supported in error formatters", {
   })
 })
 
+test_that("can customise subscript type errors", {
+  verify_errors({
+    "With custom `arg`"
+    expect_error(
+      num_as_location(-1, 2, negative = "error", arg = "foo"),
+      class = "vctrs_error_subscript_type"
+    )
+    expect_error(
+      num_as_location2(-1, 2, negative = "error", arg = "foo"),
+      class = "vctrs_error_subscript_type"
+    )
+    expect_error(
+      vec_as_location2(0, 2, arg = "foo"),
+      class = "vctrs_error_subscript_type"
+    )
+    expect_error(
+      vec_as_location2(na_dbl, 2, arg = "foo"),
+      class = "vctrs_error_subscript_type"
+    )
+    expect_error(
+      vec_as_location2(c(1, 2), 2, arg = "foo"),
+      class = "vctrs_error_subscript_type"
+    )
+    expect_error(
+      vec_as_location(c(TRUE, FALSE), 3, arg = "foo"),
+      class = "vctrs_error_subscript_size"
+    )
+    expect_error(
+      vec_as_location(c(-1, NA), 3, arg = "foo"),
+      class = "vctrs_error_subscript_type"
+    )
+    expect_error(
+      vec_as_location(c(-1, 1), 3, arg = "foo"),
+      class = "vctrs_error_subscript_type"
+    )
+    expect_error(
+      num_as_location(c(1, 4), 2, oob = "extend", arg = "foo"),
+      class = "vctrs_error_subscript_oob"
+    )
+
+    "With tibble columns"
+    expect_error(
+      with_tibble_cols(num_as_location(-1, 2, negative = "error")),
+      class = "vctrs_error_subscript_type"
+    )
+    expect_error(
+      with_tibble_cols(num_as_location2(-1, 2, negative = "error")),
+      class = "vctrs_error_subscript_type"
+    )
+    expect_error(
+      with_tibble_cols(vec_as_location2(0, 2)),
+      class = "vctrs_error_subscript_type"
+    )
+    expect_error(
+      with_tibble_cols(vec_as_location2(na_dbl, 2)),
+      class = "vctrs_error_subscript_type"
+    )
+    expect_error(
+      with_tibble_cols(vec_as_location2(c(1, 2), 2)),
+      class = "vctrs_error_subscript_type"
+    )
+    expect_error(
+      with_tibble_cols(vec_as_location(c(TRUE, FALSE), 3)),
+      class = "vctrs_error_subscript_size"
+    )
+    expect_error(
+      with_tibble_cols(vec_as_location(c(-1, NA), 3)),
+      class = "vctrs_error_subscript_type"
+    )
+    expect_error(
+      with_tibble_cols(vec_as_location(c(-1, 1), 3)),
+      class = "vctrs_error_subscript_type"
+    )
+    expect_error(
+      with_tibble_cols(num_as_location(c(1, 4), 2, oob = "extend")),
+      class = "vctrs_error_subscript_oob"
+    )
+  })
+})
+
 test_that("can customise OOB errors", {
   verify_errors({
     expect_error(
       vec_slice(set_names(letters), "foo"),
+      class = "vctrs_error_subscript_oob"
+    )
+
+    "With custom `arg`"
+    expect_error(
+      vec_as_location(30, length(letters), arg = "foo"),
+      class = "vctrs_error_subscript_oob"
+    )
+    expect_error(
+      vec_as_location("foo", NULL, letters, arg = "foo"),
       class = "vctrs_error_subscript_oob"
     )
 
@@ -370,8 +460,33 @@ test_that("conversion to locations has informative error messages", {
     num_as_location(c(1, NA, 2, 3), 1)
     num_as_location(c(1, NA, 3), 1, oob = "extend")
 
+    "# can customise subscript type errors"
+    "With custom `arg`"
+    num_as_location(-1, 2, negative = "error", arg = "foo")
+    num_as_location2(-1, 2, negative = "error", arg = "foo")
+    vec_as_location2(0, 2, arg = "foo")
+    vec_as_location2(na_dbl, 2, arg = "foo")
+    vec_as_location2(c(1, 2), 2, arg = "foo")
+    vec_as_location(c(TRUE, FALSE), 3, arg = "foo")
+    vec_as_location(c(-1, NA), 3, arg = "foo")
+    vec_as_location(c(-1, 1), 3, arg = "foo")
+    num_as_location(c(1, 4), 2, oob = "extend", arg = "foo")
+    "With tibble columns"
+    with_tibble_cols(num_as_location(-1, 2, negative = "error"))
+    with_tibble_cols(num_as_location2(-1, 2, negative = "error"))
+    with_tibble_cols(vec_as_location2(0, 2))
+    with_tibble_cols(vec_as_location2(na_dbl, 2))
+    with_tibble_cols(vec_as_location2(c(1, 2), 2))
+    with_tibble_cols(vec_as_location(c(TRUE, FALSE), 3))
+    with_tibble_cols(vec_as_location(c(-1, NA), 3))
+    with_tibble_cols(vec_as_location(c(-1, 1), 3))
+    with_tibble_cols(num_as_location(c(1, 4), 2, oob = "extend"))
+
     "# can customise OOB errors"
     vec_slice(set_names(letters), "foo")
+    "With custom `arg`"
+    vec_as_location(30, length(letters), arg = "foo")
+    vec_as_location("foo", NULL, letters, arg = "foo")
     "With tibble columns"
     with_tibble_cols(vec_slice(set_names(letters), "foo"))
     with_tibble_cols(vec_slice(set_names(letters), 30))

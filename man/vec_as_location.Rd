@@ -7,7 +7,7 @@
 \alias{num_as_location2}
 \title{Create a vector of locations}
 \usage{
-vec_as_location(i, n, names = NULL, ..., arg = "i")
+vec_as_location(i, n, names = NULL, ..., arg = NULL)
 
 num_as_location(
   i,
@@ -15,7 +15,7 @@ num_as_location(
   ...,
   negative = c("invert", "error", "ignore"),
   oob = c("error", "extend"),
-  arg = "i"
+  arg = NULL
 )
 
 vec_as_location2(
@@ -24,7 +24,7 @@ vec_as_location2(
   names = NULL,
   ...,
   missing = c("error", "ignore"),
-  arg = "i"
+  arg = NULL
 )
 
 num_as_location2(
@@ -33,7 +33,7 @@ num_as_location2(
   ...,
   negative = c("error", "ignore"),
   missing = c("error", "ignore"),
-  arg = "i"
+  arg = NULL
 )
 }
 \arguments{

@@ -10,12 +10,12 @@ Negative subscripts are checked
 ===============================
 
 > vec_slice(1:3, -c(1L, NA))
-Error: Must subset with a proper subscript vector.
+Error: Must subset elements with a proper subscript vector.
 x Negative locations can't have missing values.
 i The subscript has a missing value at location 2.
 
 > vec_slice(1:3, c(-1L, 1L))
-Error: Must subset with a proper subscript vector.
+Error: Must subset elements with a proper subscript vector.
 x Negative locations can't be mixed with positive locations.
 i The subscript has a positive value at location 2.
 

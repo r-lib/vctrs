@@ -30,7 +30,7 @@ vec_as_subscript <- function(i,
                              indicator = c("coerce", "error"),
                              location = c("coerce", "error"),
                              name = c("coerce", "error"),
-                             arg = "i") {
+                             arg = NULL) {
   if (!missing(...)) ellipsis::check_dots_empty()
   result_get(vec_as_subscript_result(
     i,
@@ -55,7 +55,7 @@ vec_as_subscript_result <- function(i, arg, indicator, location, name) {
   if (!vec_is(i)) {
     return(result(err = new_error_subscript_type(
       i = i,
-      arg = arg,
+      subscript_arg = arg,
       indicator = indicator,
       location = location,
       name = name
@@ -76,7 +76,7 @@ vec_as_subscript_result <- function(i, arg, indicator, location, name) {
     } else {
       return(result(err = new_error_subscript_type(
         i,
-        arg = arg,
+        subscript_arg = arg,
         indicator = indicator,
         location = location,
         name = name
@@ -122,7 +122,7 @@ vec_as_subscript_result <- function(i, arg, indicator, location, name) {
   if (action == "error") {
     result(err = new_error_subscript_type(
       i = i,
-      arg = arg,
+      subscript_arg = arg,
       indicator = indicator,
       location = location,
       name = name
@@ -142,7 +142,7 @@ vec_as_subscript2 <- function(i,
                               indicator = c("coerce", "error"),
                               location = c("coerce", "error"),
                               name = c("coerce", "error"),
-                              arg = "i") {
+                              arg = NULL) {
   if (!missing(...)) ellipsis::check_dots_empty()
   result_get(vec_as_subscript2_result(
     i,
@@ -183,7 +183,7 @@ vec_as_subscript2_result <- function(i,
       indicator = indicator,
       location = location,
       name = name,
-      arg = arg,
+      subscript_arg = arg,
       body = bullets,
       parent = result$err$parent
     )
@@ -199,7 +199,7 @@ vec_as_subscript2_result <- function(i,
       indicator = indicator,
       location = location,
       name = name,
-      arg = arg,
+      subscript_arg = arg,
       body = cnd_body.vctrs_error_subscript_type
     )))
   }
@@ -231,11 +231,17 @@ as_opts_subscript2_type <- function(x, arg = NULL) {
 }
 
 
-new_error_subscript <- function(class = NULL, i, ..., arg = "i") {
+stop_subscript <- function(i, ..., class = NULL) {
+  abort(
+    class = c(class, "vctrs_error_subscript"),
+    i = i,
+    ...
+  )
+}
+new_error_subscript <- function(class = NULL, i, ...) {
   error_cnd(
     c(class, "vctrs_error_subscript"),
     i = i,
-    arg = arg,
     ...
   )
 }
@@ -244,7 +250,6 @@ new_error_subscript_type <- function(i,
                                      location = "coerce",
                                      name = "coerce",
                                      ...,
-                                     arg = "i",
                                      class = NULL) {
   new_error_subscript(
     class = c(class, "vctrs_error_subscript_type"),
@@ -252,28 +257,29 @@ new_error_subscript_type <- function(i,
     indicator = indicator,
     location = location,
     name = name,
-    arg = arg,
     ...
   )
 }
 
 #' @export
 cnd_header.vctrs_error_subscript_type <- function(cnd) {
+  action <- cnd_subscript_action(cnd)
+  elt <- cnd_subscript_element(cnd)
   if (cnd_subscript_scalar(cnd)) {
-    "Must extract with a single subscript."
+    glue::glue("Must {action} {elt[[1]]} with a single subscript.")
   } else {
-    "Must subset with a proper subscript vector."
+    glue::glue("Must {action} {elt[[2]]} with a proper subscript vector.")
   }
 }
 #' @export
 cnd_body.vctrs_error_subscript_type <- function(cnd) {
-  arg <- cnd$arg %||% "i"
+  arg <- append_arg("The subscript", cnd$subscript_arg)
   type <- obj_type(cnd$i)
   expected_types <- collapse_subscript_type(cnd, plural = TRUE)
 
   format_error_bullets(c(
-    x = glue::glue("`{arg}` has the wrong type `{type}`."),
-    i = glue::glue("The subscript must contain {expected_types}.")
+    x = glue::glue("{arg} has the wrong type `{type}`."),
+    i = glue::glue("It must contain {expected_types}.")
   ))
 }
 cnd_bullets_subscript_lossy_cast <- function(cnd, ...) {
@@ -311,14 +317,12 @@ new_error_subscript2_type <- function(i,
                                       indicator,
                                       location,
                                       name,
-                                      ...,
-                                      arg = "i") {
+                                      ...) {
   new_error_subscript_type(
     i = i,
     indicator = indicator,
     location = location,
     name = name,
-    arg = arg,
     subscript_scalar = TRUE,
     ...
   )
@@ -345,7 +349,15 @@ subscript_actions <- c(
   "subset", "extract", "assign", "rename", "remove", "negate"
 )
 cnd_subscript_action <- function(cnd) {
-  action <- cnd$subscript_action %||% "subset"
+  action <- cnd$subscript_action
+
+  if (is_null(action)) {
+    if (cnd_subscript_scalar(cnd)) {
+      action <- "extract"
+    } else {
+      action <- "subset"
+    }
+  }
 
   if (!is_string(action, subscript_actions)) {
     abort(paste0(

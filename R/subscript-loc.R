@@ -54,7 +54,7 @@ vec_as_location <- function(i,
                             n,
                             names = NULL,
                             ...,
-                            arg = "i") {
+                            arg = NULL) {
   if (!missing(...)) ellipsis::check_dots_empty()
 
   i <- vec_as_subscript(i, arg = arg)
@@ -64,7 +64,8 @@ vec_as_location <- function(i,
     n = n,
     names = names,
     loc_negative = "invert",
-    loc_oob = "error"
+    loc_oob = "error",
+    arg = arg
   )
 }
 #' @rdname vec_as_location
@@ -80,7 +81,7 @@ num_as_location <- function(i,
                             ...,
                             negative = c("invert", "error", "ignore"),
                             oob = c("error", "extend"),
-                            arg = "i") {
+                            arg = NULL) {
   if (!missing(...)) ellipsis::check_dots_empty()
 
   if (!is_integer(i) && !is_double(i)) {
@@ -92,7 +93,8 @@ num_as_location <- function(i,
     n = n,
     names = NULL,
     loc_negative = negative,
-    loc_oob = oob
+    loc_oob = oob,
+    arg = arg
   )
 }
 
@@ -105,7 +107,7 @@ vec_as_location2 <- function(i,
                              names = NULL,
                              ...,
                              missing = c("error", "ignore"),
-                             arg = "i") {
+                             arg = NULL) {
   if (!missing(...)) ellipsis::check_dots_empty()
   result_get(vec_as_location2_result(
     i,
@@ -125,7 +127,7 @@ num_as_location2 <- function(i,
                              ...,
                              negative = c("error", "ignore"),
                              missing = c("error", "ignore"),
-                             arg = "i") {
+                             arg = NULL) {
   if (!missing(...)) ellipsis::check_dots_empty()
 
   if (!is_integer(i) && !is_double(i)) {
@@ -160,7 +162,7 @@ vec_as_location2_result <- function(i,
     parent <- result$err
     return(result(err = new_error_location2_type(
       i = i,
-      arg = arg,
+      subscript_arg = arg,
       # FIXME: Should body fields in parents be automatically inherited?
       body = function(...) cnd_body(parent),
       parent = parent
@@ -173,7 +175,7 @@ vec_as_location2_result <- function(i,
   if (length(i) != 1L) {
     return(result(err = new_error_location2_type(
       i = i,
-      arg = arg,
+      subscript_arg = arg,
       body = cnd_bullets_location2_need_scalar
     )))
   }
@@ -187,7 +189,7 @@ vec_as_location2_result <- function(i,
     if (!allow_missing && is.na(i)) {
       result <- result(err = new_error_location2_type(
         i = i,
-        arg = arg,
+        subscript_arg = arg,
         body = cnd_bullets_location2_need_present
       ))
     } else {
@@ -199,16 +201,16 @@ vec_as_location2_result <- function(i,
   if (i == 0L) {
     return(result(err = new_error_location2_type(
       i = i,
-      arg = arg,
-      body = cnd_bullets_location2_need_non_zero
+      subscript_arg = arg,
+      body = cnd_bullets_location2_need_positive
     )))
   }
 
   if (!allow_negative && neg) {
     return(result(err = new_error_location2_type(
       i = i,
-      arg = arg,
-      body = cnd_bullets_location2_need_non_negative
+      subscript_arg = arg,
+      body = cnd_bullets_location2_need_positive
     )))
   }
 
@@ -232,28 +234,30 @@ vec_as_location2_result <- function(i,
     result(err = new_error_location2_type(
       i = i,
       parent = err,
-      arg = arg
+      subscript_arg = arg
     ))
   }
 }
 
 
-stop_location_negative_missing <- function(i) {
+stop_location_negative_missing <- function(i, ...) {
   cnd_signal(new_error_subscript_type(
     i,
+    ...,
     body = cnd_body_vctrs_error_subscript_type
   ))
 }
 cnd_body_vctrs_error_subscript_type <- function(cnd, ...) {
   missing_loc <- which(is.na(cnd$i))
+  arg <- append_arg("The subscript", cnd$subscript_arg)
 
   if (length(missing_loc) == 1) {
-    loc <- glue::glue("The subscript has a missing value at location {missing_loc}.")
+    loc <- glue::glue("{arg} has a missing value at location {missing_loc}.")
   } else {
     n_loc <- length(missing_loc)
     missing_loc <- enumerate(missing_loc)
     loc <- glue::glue(
-      "The subscript has {n_loc} missing values at locations {missing_loc}."
+      "{arg} has {n_loc} missing values at locations {missing_loc}."
     )
   }
   format_error_bullets(c(
@@ -262,22 +266,24 @@ cnd_body_vctrs_error_subscript_type <- function(cnd, ...) {
   ))
 }
 
-stop_location_negative_positive <- function(i) {
+stop_location_negative_positive <- function(i, ...) {
   cnd_signal(new_error_subscript_type(
     i,
+    ...,
     body = cnd_body_vctrs_error_location_negative_positive
   ))
 }
 cnd_body_vctrs_error_location_negative_positive <- function(cnd, ...) {
   positive_loc <- which(cnd$i > 0)
+  arg <- append_arg("The subscript", cnd$subscript_arg)
 
   if (length(positive_loc) == 1) {
-    loc <- glue::glue("The subscript has a positive value at location {positive_loc}.")
+    loc <- glue::glue("{arg} has a positive value at location {positive_loc}.")
   } else {
     n_loc <- length(positive_loc)
     positive_loc <- enumerate(positive_loc)
     loc <- glue::glue(
-      "The subscript has {n_loc} missing values at locations {positive_loc}."
+      "{arg} has {n_loc} missing values at locations {positive_loc}."
     )
   }
   format_error_bullets(c(
@@ -289,7 +295,6 @@ cnd_body_vctrs_error_location_negative_positive <- function(cnd, ...) {
 
 new_error_location2_type <- function(i,
                                      ...,
-                                     arg = "i",
                                      class = NULL) {
   new_error_subscript2_type(
     class = class,
@@ -297,104 +302,64 @@ new_error_location2_type <- function(i,
     indicator = "error",
     location = "coerce",
     name = "coerce",
-    arg = arg,
     ...
   )
 }
-
-
 cnd_bullets_location2_need_scalar <- function(cnd, ...) {
-  arg <- cnd$arg %||% "i"
-  size <- length(cnd$i)
+  cnd$subscript_arg <- append_arg("The subscript", cnd$subscript_arg)
   format_error_bullets(c(
-    x = glue::glue("`{arg}` has the wrong size {size}."),
-    i = "This subscript must be size 1."
+    x = glue::glue_data(cnd, "{subscript_arg} has size {length(i)} but must be size 1.")
   ))
 }
 cnd_bullets_location2_need_present <- function(cnd, ...) {
-  arg <- cnd$arg %||% "i"
+  cnd$subscript_arg <- append_arg("The subscript", cnd$subscript_arg)
   format_error_bullets(c(
-    x = glue::glue("`{arg}` can't be `NA`."),
-    i = "This subscript can't be missing."
+    x = glue::glue_data(cnd, "{subscript_arg} can't be `NA`.")
   ))
 }
-cnd_bullets_location2_need_non_zero <- function(cnd, ...) {
-  arg <- cnd$arg %||% "i"
+cnd_bullets_location2_need_positive <- function(cnd, ...) {
+  cnd$subscript_arg <- append_arg("The subscript", cnd$subscript_arg)
   format_error_bullets(c(
-    x = glue::glue("`{arg}` can't be zero."),
-    i = "This subscript must be a positive integer."
-  ))
-}
-cnd_bullets_location2_need_non_negative <- function(cnd, ...) {
-  cnd$arg <- cnd$arg %||% "i"
-  format_error_bullets(c(
-    x = glue::glue_data(cnd, "`{arg}` (with value {i}) has the wrong sign."),
-    i = "This subscript must be a positive integer."
+    x = glue::glue_data(cnd, "{subscript_arg} has value {i} but must be a positive location.")
   ))
 }
 
-cnd_bullets_location_need_non_negative <- function(cnd, ...) {
-  cnd$arg <- cnd$arg %||% "i"
-  format_error_bullets(c(
-    x = glue::glue_data(cnd, "`{arg}` contains negative locations."),
-    i = "These subscripts must be positive integers."
-  ))
-}
-
-stop_location_negative <- function(i, ..., arg = "i") {
+stop_location_negative <- function(i, ...) {
   cnd_signal(new_error_subscript_type(
     i,
-    arg = arg,
-    body = cnd_bullets_location_need_non_negative
+    body = cnd_bullets_location_need_non_negative,
+    ...
+  ))
+}
+cnd_bullets_location_need_non_negative <- function(cnd, ...) {
+  cnd$subscript_arg <- append_arg("The subscript", cnd$subscript_arg)
+  format_error_bullets(c(
+    x = glue::glue_data(cnd, "{subscript_arg} can't contain negative locations.")
   ))
 }
 
-stop_indicator_size <- function(i, n, arg = "i") {
+stop_indicator_size <- function(i, n, ...) {
   cnd_signal(new_error_subscript_size(
     i,
     n = n,
-    arg = arg,
+    ...,
     body = cnd_body_vctrs_error_indicator_size
   ))
 }
 cnd_body_vctrs_error_indicator_size <- function(cnd, ...) {
+  cnd$subscript_arg <- append_arg("the subscript", cnd$subscript_arg)
   glue_data_bullets(
     cnd,
     i = "Logical subscripts must match the size of the indexed input.",
-    x = "The input has size {n} but the subscript has size {vec_size(i)}."
+    x = "The input has size {n} but {subscript_arg} has size {vec_size(i)}."
   )
 }
 
-stop_subscript_oob_location <- function(i, size, ..., class = NULL) {
-  stop_subscript_oob(
-    subscript_type = "location",
-    class = class,
-    i = i,
-    size = size,
-    ...
-  )
-}
-stop_subscript_oob_name <- function(i, names, ..., class = NULL) {
-  stop_subscript_oob(
-    subscript_type = "name",
-    class = class,
-    i = i,
-    names = names,
-    ...
-  )
-}
-stop_subscript_oob <- function(i, subscript_type, ..., class = NULL) {
+stop_subscript_oob <- function(i, subscript_type, ...) {
   stop_subscript(
-    class = c(class, "vctrs_error_subscript_oob"),
+    class = "vctrs_error_subscript_oob",
     i = i,
     subscript_type = subscript_type,
-    ...
-  )
-}
-stop_subscript <- function(i, ..., class = NULL) {
-  abort(
-    class = c(class, "vctrs_error_subscript"),
-    i = i,
     ...
   )
 }
@@ -404,14 +369,13 @@ cnd_header.vctrs_error_subscript_oob <- function(cnd, ...) {
   if (cnd_subscript_oob_non_consecutive(cnd)) {
     return(cnd_header_vctrs_error_subscript_oob_non_consecutive(cnd, ...))
   }
-  arg <- cnd$arg
   elt <- cnd_subscript_element(cnd)
   action <- cnd_subscript_action(cnd)
 
-  if (is_null(arg)) {
+  if (is_null(cnd$subscript_arg)) {
     glue::glue("Must {action} existing {elt[[2]]}.")
   } else {
-    arg <- arg_as_string(arg)
+    arg <- arg_as_string(cnd$subscript_arg)
     glue::glue("Must {action} existing {elt[[2]]} in `{arg}`.")
   }
 }
@@ -484,7 +448,9 @@ stop_location_oob_non_consecutive <- function(i, size, ...) {
 }
 
 cnd_header_vctrs_error_subscript_oob_non_consecutive <- function(cnd, ...) {
-  "Can't index beyond the end with non-consecutive locations."
+  action <- cnd_subscript_action(cnd)
+  elt <- cnd_subscript_element(cnd)
+  glue::glue("Can't {action} {elt[[2]]} beyond the end with non-consecutive locations.")
 }
 cnd_body_vctrs_error_subscript_oob_non_consecutive <- function(cnd, ...) {
   i <- sort(cnd$i)
@@ -492,17 +458,18 @@ cnd_body_vctrs_error_subscript_oob_non_consecutive <- function(cnd, ...) {
 
   non_consecutive <- i[c(TRUE, diff(i) != 1L)]
 
+  arg <- append_arg("The subscript", cnd$subscript_arg)
   if (length(non_consecutive) == 1) {
-    x <- glue::glue("The location {non_consecutive} is not consecutive to the end.")
+    x_line <- glue::glue("{arg} contains non-consecutive location {non_consecutive}.")
   } else {
     non_consecutive <- enumerate(non_consecutive)
-    x <- glue::glue("The locations {non_consecutive} are not consecutive.")
+    x_line <- glue::glue("{arg} contains non-consecutive locations {non_consecutive}.")
   }
 
   glue_data_bullets(
     cnd,
     i = "The input has size {size}.",
-    x = x
+    x = x_line
   )
 }
 

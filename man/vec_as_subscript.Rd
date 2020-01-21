@@ -11,7 +11,7 @@ vec_as_subscript(
   indicator = c("coerce", "error"),
   location = c("coerce", "error"),
   name = c("coerce", "error"),
-  arg = "i"
+  arg = NULL
 )
 
 vec_as_subscript2(
@@ -20,7 +20,7 @@ vec_as_subscript2(
   indicator = c("coerce", "error"),
   location = c("coerce", "error"),
   name = c("coerce", "error"),
-  arg = "i"
+  arg = NULL
 )
 }
 \arguments{

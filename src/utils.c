@@ -80,6 +80,27 @@ SEXP vctrs_eval_mask3(SEXP fn,
   SEXP args[4] = { x, y, z, NULL };
   return vctrs_eval_mask_n(fn, syms, args, env);
 }
+SEXP vctrs_eval_mask4(SEXP fn,
+                      SEXP x1_sym, SEXP x1,
+                      SEXP x2_sym, SEXP x2,
+                      SEXP x3_sym, SEXP x3,
+                      SEXP x4_sym, SEXP x4,
+                      SEXP env) {
+  SEXP syms[5] = { x1_sym, x2_sym, x3_sym, x4_sym, NULL };
+  SEXP args[5] = { x1, x2, x3, x4, NULL };
+  return vctrs_eval_mask_n(fn, syms, args, env);
+}
+SEXP vctrs_eval_mask5(SEXP fn,
+                      SEXP x1_sym, SEXP x1,
+                      SEXP x2_sym, SEXP x2,
+                      SEXP x3_sym, SEXP x3,
+                      SEXP x4_sym, SEXP x4,
+                      SEXP x5_sym, SEXP x5,
+                      SEXP env) {
+  SEXP syms[6] = { x1_sym, x2_sym, x3_sym, x4_sym, x5_sym, NULL };
+  SEXP args[6] = { x1, x2, x3, x4, x5, NULL };
+  return vctrs_eval_mask_n(fn, syms, args, env);
+}
 
 /**
  * Dispatch in the global environment
@@ -447,6 +468,17 @@ static SEXP fns_colnames = NULL;
 SEXP colnames(SEXP x) {
   return vctrs_dispatch1(syms_colnames, fns_colnames,
                          syms_x, x);
+}
+
+// [[ include("utils.h") ]]
+SEXP arg_validate(SEXP arg, const char* arg_nm) {
+  if (arg == R_NilValue) {
+    return chrs_empty;
+  } else if (r_is_string(arg)) {
+    return arg;
+  } else {
+    Rf_errorcall(R_NilValue, "`%s` tag must be a string", arg_nm);
+  }
 }
 
 
@@ -1003,6 +1035,9 @@ SEXP chrs_assign = NULL;
 SEXP chrs_rename = NULL;
 SEXP chrs_remove = NULL;
 SEXP chrs_negate = NULL;
+SEXP chrs_location = NULL;
+SEXP chrs_name = NULL;
+SEXP chrs_empty = NULL;
 
 SEXP syms_i = NULL;
 SEXP syms_n = NULL;
@@ -1015,6 +1050,7 @@ SEXP syms_arg = NULL;
 SEXP syms_x_arg = NULL;
 SEXP syms_y_arg = NULL;
 SEXP syms_to_arg = NULL;
+SEXP syms_subscript_arg = NULL;
 SEXP syms_out = NULL;
 SEXP syms_value = NULL;
 SEXP syms_quiet = NULL;
@@ -1027,6 +1063,7 @@ SEXP syms_ptype = NULL;
 SEXP syms_missing = NULL;
 SEXP syms_size = NULL;
 SEXP syms_subscript_action = NULL;
+SEXP syms_subscript_type = NULL;
 
 SEXP fns_bracket = NULL;
 SEXP fns_quote = NULL;
@@ -1122,6 +1159,15 @@ void vctrs_init_utils(SEXP ns) {
   chrs_negate = Rf_mkString("negate");
   R_PreserveObject(chrs_negate);
 
+  chrs_location = Rf_mkString("location");
+  R_PreserveObject(chrs_location);
+
+  chrs_name = Rf_mkString("name");
+  R_PreserveObject(chrs_name);
+
+  chrs_empty = Rf_mkString("");
+  R_PreserveObject(chrs_empty);
+
 
   classes_tibble = Rf_allocVector(STRSXP, 3);
   R_PreserveObject(classes_tibble);
@@ -1215,6 +1261,7 @@ void vctrs_init_utils(SEXP ns) {
   syms_x_arg = Rf_install("x_arg");
   syms_y_arg = Rf_install("y_arg");
   syms_to_arg = Rf_install("to_arg");
+  syms_subscript_arg = Rf_install("subscript_arg");
   syms_out = Rf_install("out");
   syms_value = Rf_install("value");
   syms_quiet = Rf_install("quiet");
@@ -1227,6 +1274,7 @@ void vctrs_init_utils(SEXP ns) {
   syms_missing = R_MissingArg;
   syms_size = Rf_install("size");
   syms_subscript_action = Rf_install("subscript_action");
+  syms_subscript_type = Rf_install("subscript_type");
 
   fns_bracket = Rf_findVar(syms_bracket, R_BaseEnv);
   fns_quote = Rf_findVar(Rf_install("quote"), R_BaseEnv);
