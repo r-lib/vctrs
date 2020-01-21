@@ -8,18 +8,18 @@
 vec_as_subscript(
   i,
   ...,
-  logical = c("coerce", "error"),
-  numeric = c("coerce", "error"),
-  character = c("coerce", "error"),
+  logical = c("cast", "error"),
+  numeric = c("cast", "error"),
+  character = c("cast", "error"),
   arg = NULL
 )
 
 vec_as_subscript2(
   i,
   ...,
-  logical = c("coerce", "error"),
-  numeric = c("coerce", "error"),
-  character = c("coerce", "error"),
+  logical = c("cast", "error"),
+  numeric = c("cast", "error"),
+  character = c("cast", "error"),
   arg = NULL
 )
 }
@@ -32,13 +32,13 @@ locations or names of the observations to get/set. Specify
 \item{logical, location, character}{How to handle logical, numeric,
 and character subscripts.
 
-If \code{"coerce"} and the subscript is not one of the three base
-types (logical, integer or character), the subscript is coerced
-to the relevant base type, e.g. factors are coerced to
-character. \code{NULL} is treated as an empty integer vector, and is
-thus coercible depending on the setting of \code{location}. Symbols
-are treated as character vectors and thus coercible depending on
-the setting of \code{name}.
+If \code{"cast"} and the subscript is not one of the three base types
+(logical, integer or character), the subscript is
+\link[=vec_cast]{cast} to the relevant base type, e.g. factors are
+coerced to character. \code{NULL} is treated as an empty integer
+vector, and is thus coercible depending on the setting of
+\code{numeric}. Symbols are treated as character vectors and thus
+coercible depending on the setting of \code{character}.
 
 If \code{"error"}, the subscript type is disallowed and triggers an
 informative error.}

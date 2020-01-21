@@ -12,13 +12,13 @@
 #' @param logical,location,character How to handle logical, numeric,
 #'   and character subscripts.
 #'
-#'   If `"coerce"` and the subscript is not one of the three base
-#'   types (logical, integer or character), the subscript is coerced
-#'   to the relevant base type, e.g. factors are coerced to
-#'   character. `NULL` is treated as an empty integer vector, and is
-#'   thus coercible depending on the setting of `location`. Symbols
-#'   are treated as character vectors and thus coercible depending on
-#'   the setting of `name`.
+#'   If `"cast"` and the subscript is not one of the three base types
+#'   (logical, integer or character), the subscript is
+#'   [cast][vec_cast] to the relevant base type, e.g. factors are
+#'   coerced to character. `NULL` is treated as an empty integer
+#'   vector, and is thus coercible depending on the setting of
+#'   `numeric`. Symbols are treated as character vectors and thus
+#'   coercible depending on the setting of `character`.
 #'
 #'   If `"error"`, the subscript type is disallowed and triggers an
 #'   informative error.
@@ -26,10 +26,9 @@
 #' @export
 vec_as_subscript <- function(i,
                              ...,
-                             # FIXME: Should it be "cast" instead of "coerce"?
-                             logical = c("coerce", "error"),
-                             numeric = c("coerce", "error"),
-                             character = c("coerce", "error"),
+                             logical = c("cast", "error"),
+                             numeric = c("cast", "error"),
+                             character = c("cast", "error"),
                              arg = NULL) {
   if (!missing(...)) ellipsis::check_dots_empty()
   result_get(vec_as_subscript_result(
@@ -41,14 +40,14 @@ vec_as_subscript <- function(i,
   ))
 }
 vec_as_subscript_result <- function(i, arg, logical, numeric, character) {
-  logical <- arg_match(logical, c("coerce", "error"))
-  numeric <- arg_match(numeric, c("coerce", "error"))
-  character <- arg_match(character, c("coerce", "error"))
+  logical <- arg_match(logical, c("cast", "error"))
+  numeric <- arg_match(numeric, c("cast", "error"))
+  character <- arg_match(character, c("cast", "error"))
 
-  if (is_null(i) && numeric == "coerce") {
+  if (is_null(i) && numeric == "cast") {
     i <- integer()
   }
-  if (is_symbol(i) && character == "coerce") {
+  if (is_symbol(i) && character == "cast") {
     i <- as_string(i)
   }
 
@@ -105,7 +104,7 @@ vec_as_subscript_result <- function(i, arg, logical, numeric, character) {
   # Coerce unspecified vectors to integer only if logical indices
   # are not allowed
   if (logical == "error" && is_unspecified(i)) {
-    if (numeric == "coerce") {
+    if (numeric == "cast") {
       i <- vec_cast(i, int())
     } else {
       i <- vec_cast(i, chr())
@@ -139,9 +138,9 @@ vec_as_subscript_result <- function(i, arg, logical, numeric, character) {
 #' @export
 vec_as_subscript2 <- function(i,
                               ...,
-                              logical = c("coerce", "error"),
-                              numeric = c("coerce", "error"),
-                              character = c("coerce", "error"),
+                              logical = c("cast", "error"),
+                              numeric = c("cast", "error"),
+                              character = c("cast", "error"),
                               arg = NULL) {
   if (!missing(...)) ellipsis::check_dots_empty()
   result_get(vec_as_subscript2_result(
@@ -154,12 +153,12 @@ vec_as_subscript2 <- function(i,
 }
 vec_as_subscript2_result <- function(i,
                                      arg,
-                                     logical = "coerce",
-                                     numeric = "coerce",
-                                     character = "coerce") {
-  logical <- arg_match(logical, c("coerce", "error"))
-  numeric <- arg_match(numeric, c("coerce", "error"))
-  character <- arg_match(character, c("coerce", "error"))
+                                     logical = "cast",
+                                     numeric = "cast",
+                                     character = "cast") {
+  logical <- arg_match(logical, c("cast", "error"))
+  numeric <- arg_match(numeric, c("cast", "error"))
+  character <- arg_match(character, c("cast", "error"))
 
   result <- vec_as_subscript_result(
     i,
@@ -246,9 +245,9 @@ new_error_subscript <- function(class = NULL, i, ...) {
   )
 }
 new_error_subscript_type <- function(i,
-                                     logical = "coerce",
-                                     numeric = "coerce",
-                                     character = "coerce",
+                                     logical = "cast",
+                                     numeric = "cast",
+                                     character = "cast",
                                      ...,
                                      class = NULL) {
   new_error_subscript(

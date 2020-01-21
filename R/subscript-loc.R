@@ -305,8 +305,8 @@ new_error_location2_type <- function(i,
     class = class,
     i = i,
     logical = "error",
-    numeric = "coerce",
-    character = "coerce",
+    numeric = "cast",
+    character = "cast",
     ...
   )
 }
