@@ -1,5 +1,5 @@
 
-# vctrs 0.2.99.9000
+# vctrs 0.2.2
 
 * New `vec_as_subscript()` function to cast inputs to the base type
   of a subscript (logical, numeric, or character). `vec_as_index()`
