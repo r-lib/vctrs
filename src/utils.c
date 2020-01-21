@@ -997,6 +997,10 @@ SEXP strings_val = NULL;
 SEXP strings_group = NULL;
 SEXP strings_length = NULL;
 
+SEXP chrs_subset = NULL;
+SEXP chrs_remove = NULL;
+SEXP chrs_negate = NULL;
+
 SEXP syms_i = NULL;
 SEXP syms_n = NULL;
 SEXP syms_x = NULL;
@@ -1019,6 +1023,7 @@ SEXP syms_dot_environment = NULL;
 SEXP syms_ptype = NULL;
 SEXP syms_missing = NULL;
 SEXP syms_size = NULL;
+SEXP syms_subscript_action = NULL;
 
 SEXP fns_bracket = NULL;
 SEXP fns_quote = NULL;
@@ -1094,6 +1099,16 @@ void vctrs_init_utils(SEXP ns) {
 
   strings_data_frame = Rf_mkChar("data.frame");
   SET_STRING_ELT(classes_data_frame, 0, strings_data_frame);
+
+
+  chrs_subset = Rf_mkString("subset");
+  R_PreserveObject(chrs_subset);
+
+  chrs_remove = Rf_mkString("remove");
+  R_PreserveObject(chrs_remove);
+
+  chrs_negate = Rf_mkString("negate");
+  R_PreserveObject(chrs_negate);
 
 
   classes_tibble = Rf_allocVector(STRSXP, 3);
@@ -1199,6 +1214,7 @@ void vctrs_init_utils(SEXP ns) {
   syms_ptype = Rf_install("ptype");
   syms_missing = R_MissingArg;
   syms_size = Rf_install("size");
+  syms_subscript_action = Rf_install("subscript_action");
 
   fns_bracket = Rf_findVar(syms_bracket, R_BaseEnv);
   fns_quote = Rf_findVar(Rf_install("quote"), R_BaseEnv);

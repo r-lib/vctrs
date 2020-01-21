@@ -247,6 +247,10 @@ extern SEXP strings_val;
 extern SEXP strings_group;
 extern SEXP strings_length;
 
+extern SEXP chrs_subset;
+extern SEXP chrs_remove;
+extern SEXP chrs_negate;
+
 extern SEXP syms_i;
 extern SEXP syms_n;
 extern SEXP syms_x;
@@ -269,6 +273,7 @@ extern SEXP syms_dot_environment;
 extern SEXP syms_ptype;
 extern SEXP syms_missing;
 extern SEXP syms_size;
+extern SEXP syms_subscript_action;
 
 #define syms_names R_NamesSymbol
 

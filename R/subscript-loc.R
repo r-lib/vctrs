@@ -423,42 +423,19 @@ cnd_body.vctrs_error_subscript_oob_location_non_consecutive <- function(cnd, ...
   )
 }
 
-#' Out-of-bounds errors
-#'
-#' @description
-#'
-#' \Sexpr[results=rd, stage=render]{vctrs:::lifecycle("experimental")}
-#'
-#' * `stop_subscript_oob_location()` throws errors of class
-#'   `vctrs_error_subscript_oob_location` containing fields `i` and
-#'   `size`.
-#'
-#' * `stop_subscript_oob_name()` throws errors of class
-#'   `vctrs_error_subscript_oob_name` containing fields `i` and `names`.
-#'
-#' @param i For `stop_subscript_oob_location()`, a numeric vector of
-#'   locations. For `stop_subscript_oob_name()`, a character vector of
-#'   names. `i` may contain both out-of-bounds and within-bounds
-#'   elements, only the former are used to construct the error
-#'   message.
-#' @param size The length of the vector to subset from.
-#' @inheritParams rlang::abort
-#' @keywords internal
-#' @export
 stop_subscript_oob_location <- function(i, size, ..., class = NULL) {
   stop_subscript_oob(
-    class = c(class, "vctrs_error_subscript_oob_location"),
+    subscript_type = "location",
+    class = class,
     i = i,
     size = size,
     ...
   )
 }
-#' @rdname stop_subscript_oob_location
-#' @param names The names of the vector to subset from.
-#' @export
 stop_subscript_oob_name <- function(i, names, ..., class = NULL) {
   stop_subscript_oob(
-    class = c(class, "vctrs_error_subscript_oob_name"),
+    subscript_type = "name",
+    class = class,
     i = i,
     names = names,
     ...
@@ -480,12 +457,31 @@ stop_subscript <- function(i, ..., class = NULL) {
 }
 
 #' @export
-cnd_header.vctrs_error_subscript_oob_location <- function(cnd) {
-  "Must index existing elements."
+cnd_header.vctrs_error_subscript_oob <- function(cnd) {
+  arg <- cnd$arg
+  elt <- cnd_subscript_element(cnd)
+  action <- cnd_subscript_action(cnd)
+
+  if (is_null(arg)) {
+    glue::glue("Must {action} existing {elt[[2]]}.")
+  } else {
+    arg <- arg_as_string(arg)
+    glue::glue("Must {action} existing {elt[[2]]} in `{arg}`.")
+  }
 }
+
 #' @export
-cnd_body.vctrs_error_subscript_oob_location <- function(cnd) {
+cnd_body.vctrs_error_subscript_oob <- function(cnd) {
+  switch(cnd_subscript_type(cnd),
+    location = cnd_body_vctrs_error_subscript_oob_location(cnd),
+    name = cnd_body_vctrs_error_subscript_oob_name(cnd),
+    abort("Internal error: subscript type can't be `indicator` for OOB errors.")
+  )
+}
+cnd_body_vctrs_error_subscript_oob_location <- function(cnd) {
   i <- cnd$i
+  elt <- cnd_subscript_element(cnd)
+  action <- cnd_subscript_action(cnd)
 
   # In case of negative indexing
   i <- abs(i)
@@ -499,26 +495,71 @@ cnd_body.vctrs_error_subscript_oob_location <- function(cnd) {
   format_error_bullets(c(
     x = glue::glue(ngettext(
       length(oob),
-      "Can't subset location {oob_enum}.",
-      "Can't subset locations {oob_enum}."
+      "Can't {action} location {oob_enum}.",
+      "Can't {action} locations {oob_enum}."
     )),
-    i = glue::glue("There are only {cnd$size} elements.")
+    i = glue::glue(ngettext(
+      cnd$size,
+      "There are only {cnd$size} {elt[[1]]}.",
+      "There are only {cnd$size} {elt[[2]]}.",
+    ))
   ))
 }
-#' @export
-cnd_header.vctrs_error_subscript_oob_name <- function(cnd) {
-  "Must index existing elements."
-}
-#' @export
-cnd_body.vctrs_error_subscript_oob_name <- function(cnd) {
+cnd_body_vctrs_error_subscript_oob_name <- function(cnd) {
+  elt <- cnd_subscript_element(cnd)
+  action <- cnd_subscript_action(cnd)
+
   oob <- cnd$i[!cnd$i %in% cnd$names]
   oob_enum <- enumerate(glue::backtick(oob))
 
   format_error_bullets(c(
     x = glue::glue(ngettext(
       length(oob),
-      "Can't subset element with unknown name {oob_enum}.",
-      "Can't subset elements with unknown names {oob_enum}."
+      "Can't {action} {elt[[1]]} with unknown name {oob_enum}.",
+      "Can't {action} {elt[[2]]} with unknown names {oob_enum}."
     ))
   ))
+}
+
+cnd_subscript_element <- function(cnd) {
+  elt <- cnd$subscript_elt %||% "element"
+
+  if (!is_string(elt, c("element", "row", "column"))) {
+    abort(paste0(
+      "Internal error: `cnd$subscript_elt` must be one of ",
+      "`element`, `row`, or `column`."
+    ))
+  }
+
+  switch(elt,
+    element = c("element", "elements"),
+    row = c("row", "rows"),
+    column = c("column", "columns")
+  )
+}
+
+subscript_actions <- c(
+  "subset", "extract", "assign", "rename", "remove", "negate"
+)
+cnd_subscript_action <- function(cnd) {
+  action <- cnd$subscript_action %||% "subset"
+
+  if (!is_string(action, subscript_actions)) {
+    abort(paste0(
+      "Internal error: `cnd$subscript_action` must be one of ",
+      "`subset`, `extract`, `assign`, `rename`, `remove`, or `negate`."
+    ))
+  }
+
+  action
+}
+
+cnd_subscript_type <- function(cnd) {
+  type <- cnd$subscript_type
+
+  if (!is_string(type, c("indicator", "location", "name"))) {
+    abort("Internal error: `cnd$subscript_type` must be `indicator`, `location`, or `name`.")
+  }
+
+  type
 }

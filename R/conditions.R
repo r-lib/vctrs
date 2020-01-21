@@ -489,3 +489,11 @@ format_arg_label <- function(type, arg = "") {
     type
   }
 }
+
+arg_as_string <- function(arg) {
+  if (is_string(arg)) {
+    arg
+  } else {
+    as_label(arg)
+  }
+}

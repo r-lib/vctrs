@@ -15,3 +15,49 @@ test_that("conditions inherit from `vctrs_error`", {
   expect_error(stop_names_cannot_be_dot_dot(1), class = "vctrs_error")
   expect_error(stop_names_must_be_unique(1), class = "vctrs_error")
 })
+
+test_that("can override arg in OOB conditions", {
+  verify_errors({
+    expect_error(
+      with_subscript_data(
+        vec_slice(set_names(letters), "foo"),
+        NULL
+      ),
+      class = "vctrs_error_subscript_oob"
+    )
+    expect_error(
+      with_subscript_data(
+        vec_slice(set_names(letters), "foo"),
+        quote(foo)
+      ),
+      class = "vctrs_error_subscript_oob"
+    )
+    expect_error(
+      with_subscript_data(
+        vec_slice(set_names(letters), "foo"),
+        quote(foo(bar))
+      ),
+      class = "vctrs_error_subscript_oob"
+    )
+  })
+})
+
+verify_output(test_path("error", "test-conditions.txt"), {
+  "# can override arg in OOB conditions"
+  with_subscript_data(
+    vec_slice(set_names(letters), "foo"),
+    NULL
+  )
+  with_subscript_data(
+    vec_slice(set_names(letters), "foo"),
+    "input"
+  )
+  with_subscript_data(
+    vec_slice(set_names(letters), "foo"),
+    quote(input)
+  )
+  with_subscript_data(
+    vec_slice(set_names(letters), "foo"),
+    quote(input[i])
+  )
+})

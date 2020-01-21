@@ -254,22 +254,27 @@ vec_as_location() and variants check for OOB elements
 
 > # Numeric subscripts
 > vec_as_location(10L, 2L)
-Error: Must index existing elements.
+Error: Must subset existing elements.
 x Can't subset location 10.
 i There are only 2 elements.
 
+> vec_as_location(-10L, 2L)
+Error: Must negate existing elements.
+x Can't negate location 10.
+i There are only 2 elements.
+
 > vec_as_location2(10L, 2L)
-Error: Must index existing elements.
+Error: Must subset existing elements.
 x Can't subset location 10.
 i There are only 2 elements.
 
 > # Character subscripts
 > vec_as_location("foo", 1L, names = "bar")
-Error: Must index existing elements.
+Error: Must subset existing elements.
 x Can't subset element with unknown name `foo`.
 
 > vec_as_location2("foo", 1L, names = "bar")
-Error: Must index existing elements.
+Error: Must subset existing elements.
 x Can't subset element with unknown name `foo`.
 
 
@@ -301,12 +306,50 @@ missing values are supported in error formatters
 ================================================
 
 > num_as_location(c(1, NA, 2, 3), 1)
-Error: Must index existing elements.
+Error: Must subset existing elements.
 x Can't subset locations 2 and 3.
-i There are only 1 elements.
+i There are only 1 element.
 
 > num_as_location(c(1, NA, 3), 1, oob = "extend")
 Error: Can't index beyond the end with non-consecutive locations.
 i The input has size 1.
 x The location 3 is not consecutive to the end.
+
+
+can customise OOB errors
+========================
+
+> vec_slice(set_names(letters), "foo")
+Error: Must subset existing elements.
+x Can't subset element with unknown name `foo`.
+
+> # With tibble columns
+> with_tibble_cols(vec_slice(set_names(letters), "foo"))
+Error: Must rename existing columns in `tbl[i]`.
+x Can't rename column with unknown name `foo`.
+
+> with_tibble_cols(vec_slice(set_names(letters), 30))
+Error: Must rename existing columns in `tbl[i]`.
+x Can't rename location 30.
+i There are only 26 columns.
+
+> with_tibble_cols(vec_slice(set_names(letters), -30))
+Error: Must rename existing columns in `tbl[i]`.
+x Can't rename location 30.
+i There are only 26 columns.
+
+> # With tibble rows
+> with_tibble_rows(vec_slice(set_names(letters), c("foo", "bar")))
+Error: Must remove existing rows in `tbl[i]`.
+x Can't remove rows with unknown names `foo` and `bar`.
+
+> with_tibble_rows(vec_slice(set_names(letters), 1:30))
+Error: Must remove existing rows in `tbl[i]`.
+x Can't remove locations 27, 28, 29, and 30.
+i There are only 26 rows.
+
+> with_tibble_rows(vec_slice(set_names(letters), -(1:30)))
+Error: Must remove existing rows in `tbl[i]`.
+x Can't remove locations 27, 28, 29, and 30.
+i There are only 26 rows.
 

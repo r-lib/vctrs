@@ -61,16 +61,17 @@ test_that("vec_as_location2() and vec_as_location() require integer- or characte
 test_that("vec_as_location() and variants check for OOB elements", {
   verify_errors({
     "Numeric indexing"
-    expect_error(vec_as_location(10L, 2L), class = "vctrs_error_subscript_oob_location")
-    expect_error(vec_as_location2(10L, 2L), class = "vctrs_error_subscript_oob_location")
+    expect_error(vec_as_location(10L, 2L), class = "vctrs_error_subscript_oob")
+    expect_error(vec_as_location(-10L, 2L), class = "vctrs_error_subscript_oob")
+    expect_error(vec_as_location2(10L, 2L), class = "vctrs_error_subscript_oob")
 
     "Character indexing"
-    expect_error(vec_as_location("foo", 1L, names = "bar"), class = "vctrs_error_subscript_oob_name")
-    expect_error(vec_as_location2("foo", 1L, names = "bar"), class = "vctrs_error_subscript_oob_name")
+    expect_error(vec_as_location("foo", 1L, names = "bar"), class = "vctrs_error_subscript_oob")
+    expect_error(vec_as_location2("foo", 1L, names = "bar"), class = "vctrs_error_subscript_oob")
   })
 
-  expect_error(num_as_location(10L, 2L), class = "vctrs_error_subscript_oob_location")
-  expect_error(num_as_location2(10L, 2L), class = "vctrs_error_subscript_oob_location")
+  expect_error(num_as_location(10L, 2L), class = "vctrs_error_subscript_oob")
+  expect_error(num_as_location2(10L, 2L), class = "vctrs_error_subscript_oob")
 })
 
 test_that("vec_as_location() doesn't require `n` for character indexing", {
@@ -149,13 +150,13 @@ test_that("vec_as_location2() optionally allows missing values", {
 test_that("num_as_location2() optionally allows missing and negative locations", {
   expect_identical(num_as_location2(na_dbl, 2L, missing = "ignore"), na_int)
   expect_identical(num_as_location2(-1, 2L, negative = "ignore"), -1L)
-  expect_error(num_as_location2(-3, 2L, negative = "ignore"), class = "vctrs_error_subscript_oob_location")
+  expect_error(num_as_location2(-3, 2L, negative = "ignore"), class = "vctrs_error_subscript_oob")
   expect_error(num_as_location2(0, 2L, negative = "ignore"), class = "vctrs_error_subscript2_bad_type")
 })
 
 test_that("num_as_location() optionally allows negative indices", {
   expect_identical(num_as_location(dbl(1, -1), 2L, negative = "ignore"), int(1L, -1L))
-  expect_error(num_as_location(c(1, -10), 2L, negative = "ignore"), class = "vctrs_error_subscript_oob_location")
+  expect_error(num_as_location(c(1, -10), 2L, negative = "ignore"), class = "vctrs_error_subscript_oob")
 })
 
 test_that("num_as_location() optionally forbids negative indices", {
@@ -214,7 +215,7 @@ test_that("character subscripts require named vectors", {
 })
 
 test_that("can optionally extend beyond the end", {
-  expect_error(num_as_location(1:5, 3), class = "vctrs_error_subscript_oob_location")
+  expect_error(num_as_location(1:5, 3), class = "vctrs_error_subscript_oob")
   expect_identical(num_as_location(1:5, 3, oob = "extend"), 1:5)
   expect_identical(num_as_location(c(1:5, 7, 6), 3, oob = "extend"), c(1:5, 7L, 6L))
   expect_identical(num_as_location(c(1, NA, 3), 2, oob = "extend"), c(1L, NA, 3L))
@@ -243,11 +244,48 @@ test_that("missing values are supported in error formatters", {
   verify_errors({
     expect_error(
       num_as_location(c(1, NA, 2, 3), 1),
-      class = "vctrs_error_subscript_oob_location"
+      class = "vctrs_error_subscript_oob"
     )
     expect_error(
       num_as_location(c(1, NA, 3), 1, oob = "extend"),
       class = "vctrs_error_subscript_oob_location_non_consecutive"
+    )
+  })
+})
+
+test_that("can customise OOB errors", {
+  verify_errors({
+    expect_error(
+      vec_slice(set_names(letters), "foo"),
+      class = "vctrs_error_subscript_oob"
+    )
+
+    "With tibble columns"
+    expect_error(
+      with_tibble_cols(vec_slice(set_names(letters), "foo")),
+      class = "vctrs_error_subscript_oob"
+    )
+    expect_error(
+      with_tibble_cols(vec_slice(set_names(letters), 30)),
+      class = "vctrs_error_subscript_oob"
+    )
+    expect_error(
+      with_tibble_cols(vec_slice(set_names(letters), -30)),
+      class = "vctrs_error_subscript_oob"
+    )
+
+    "With tibble rows"
+    expect_error(
+      with_tibble_rows(vec_slice(set_names(letters), c("foo", "bar"))),
+      class = "vctrs_error_subscript_oob"
+    )
+    expect_error(
+      with_tibble_rows(vec_slice(set_names(letters), 1:30)),
+      class = "vctrs_error_subscript_oob"
+    )
+    expect_error(
+      with_tibble_rows(vec_slice(set_names(letters), -(1:30))),
+      class = "vctrs_error_subscript_oob"
     )
   })
 })
@@ -316,6 +354,7 @@ test_that("conversion to locations has informative error messages", {
     "# vec_as_location() and variants check for OOB elements"
     "Numeric subscripts"
     vec_as_location(10L, 2L)
+    vec_as_location(-10L, 2L)
     vec_as_location2(10L, 2L)
     "Character subscripts"
     vec_as_location("foo", 1L, names = "bar")
@@ -330,5 +369,16 @@ test_that("conversion to locations has informative error messages", {
     "# missing values are supported in error formatters"
     num_as_location(c(1, NA, 2, 3), 1)
     num_as_location(c(1, NA, 3), 1, oob = "extend")
+
+    "# can customise OOB errors"
+    vec_slice(set_names(letters), "foo")
+    "With tibble columns"
+    with_tibble_cols(vec_slice(set_names(letters), "foo"))
+    with_tibble_cols(vec_slice(set_names(letters), 30))
+    with_tibble_cols(vec_slice(set_names(letters), -30))
+    "With tibble rows"
+    with_tibble_rows(vec_slice(set_names(letters), c("foo", "bar")))
+    with_tibble_rows(vec_slice(set_names(letters), 1:30))
+    with_tibble_rows(vec_slice(set_names(letters), -(1:30)))
   })
 })

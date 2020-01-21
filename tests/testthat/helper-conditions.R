@@ -1,0 +1,33 @@
+
+with_subscript_data <- function(expr,
+                                arg,
+                                subscript_elt = NULL,
+                                subscript_action = NULL) {
+  local_options(rlang_force_unhandled_error = TRUE)
+  tryCatch(
+    expr,
+    vctrs_error_subscript = function(cnd) {
+      cnd$arg <- arg
+      cnd$subscript_elt <- subscript_elt
+      cnd$subscript_action <- subscript_action
+      cnd_signal(cnd)
+    }
+  )
+}
+
+with_tibble_cols <- function(expr) {
+  with_subscript_data(
+    expr,
+    arg = quote(tbl[i]),
+    subscript_elt = "column",
+    subscript_action = "rename"
+  )
+}
+with_tibble_rows <- function(expr) {
+  with_subscript_data(
+    expr,
+    arg = quote(tbl[i]),
+    subscript_elt = "row",
+    subscript_action = "remove"
+  )
+}
