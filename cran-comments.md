@@ -1,4 +1,6 @@
 
+The valgrind errors are fixed.
+
 ## Test environments
 
 * local macOS: release
@@ -10,8 +12,7 @@
 
 0 errors | 0 warnings | 0 notes
 
-There are 3 reverse dependencies, two of which are broken by this
-vctrs release (evaluator and probably).
 
-- We will send an update of {probably} shortly.
-- We have notified the maintainer of {evaluator} of the failure.
+## Revdep checks
+
+There are expected test failures in the tidyr and rray packages. We'll send updates for these packages shortly after release.
