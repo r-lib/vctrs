@@ -1035,8 +1035,8 @@ SEXP chrs_assign = NULL;
 SEXP chrs_rename = NULL;
 SEXP chrs_remove = NULL;
 SEXP chrs_negate = NULL;
-SEXP chrs_location = NULL;
-SEXP chrs_name = NULL;
+SEXP chrs_numeric = NULL;
+SEXP chrs_character = NULL;
 SEXP chrs_empty = NULL;
 
 SEXP syms_i = NULL;
@@ -1159,11 +1159,11 @@ void vctrs_init_utils(SEXP ns) {
   chrs_negate = Rf_mkString("negate");
   R_PreserveObject(chrs_negate);
 
-  chrs_location = Rf_mkString("location");
-  R_PreserveObject(chrs_location);
+  chrs_numeric = Rf_mkString("numeric");
+  R_PreserveObject(chrs_numeric);
 
-  chrs_name = Rf_mkString("name");
-  R_PreserveObject(chrs_name);
+  chrs_character = Rf_mkString("character");
+  R_PreserveObject(chrs_character);
 
   chrs_empty = Rf_mkString("");
   R_PreserveObject(chrs_empty);

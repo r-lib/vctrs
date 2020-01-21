@@ -9,8 +9,8 @@
 #' not checked in any way (length, missingness, negative elements).
 #'
 #' @inheritParams vec_as_location
-#' @param indicator,location,name How to handle indicator (logical),
-#'   location (numeric), name (character), and `NULL` subscripts.
+#' @param logical,location,character How to handle logical, numeric,
+#'   and character subscripts.
 #'
 #'   If `"coerce"` and the subscript is not one of the three base
 #'   types (logical, integer or character), the subscript is coerced
@@ -27,28 +27,28 @@
 vec_as_subscript <- function(i,
                              ...,
                              # FIXME: Should it be "cast" instead of "coerce"?
-                             indicator = c("coerce", "error"),
-                             location = c("coerce", "error"),
-                             name = c("coerce", "error"),
+                             logical = c("coerce", "error"),
+                             numeric = c("coerce", "error"),
+                             character = c("coerce", "error"),
                              arg = NULL) {
   if (!missing(...)) ellipsis::check_dots_empty()
   result_get(vec_as_subscript_result(
     i,
     arg = arg,
-    indicator = indicator,
-    location = location,
-    name = name
+    logical = logical,
+    numeric = numeric,
+    character = character
   ))
 }
-vec_as_subscript_result <- function(i, arg, indicator, location, name) {
-  indicator <- arg_match(indicator, c("coerce", "error"))
-  location <- arg_match(location, c("coerce", "error"))
-  name <- arg_match(name, c("coerce", "error"))
+vec_as_subscript_result <- function(i, arg, logical, numeric, character) {
+  logical <- arg_match(logical, c("coerce", "error"))
+  numeric <- arg_match(numeric, c("coerce", "error"))
+  character <- arg_match(character, c("coerce", "error"))
 
-  if (is_null(i) && location == "coerce") {
+  if (is_null(i) && numeric == "coerce") {
     i <- integer()
   }
-  if (is_symbol(i) && name == "coerce") {
+  if (is_symbol(i) && character == "coerce") {
     i <- as_string(i)
   }
 
@@ -56,9 +56,9 @@ vec_as_subscript_result <- function(i, arg, indicator, location, name) {
     return(result(err = new_error_subscript_type(
       i = i,
       subscript_arg = arg,
-      indicator = indicator,
-      location = location,
-      name = name
+      logical = logical,
+      numeric = numeric,
+      character = character
     )))
   }
 
@@ -77,9 +77,9 @@ vec_as_subscript_result <- function(i, arg, indicator, location, name) {
       return(result(err = new_error_subscript_type(
         i,
         subscript_arg = arg,
-        indicator = indicator,
-        location = location,
-        name = name
+        logical = logical,
+        numeric = numeric,
+        character = character
       )))
     }
   } else if (is_double(i)) {
@@ -94,9 +94,9 @@ vec_as_subscript_result <- function(i, arg, indicator, location, name) {
         i = i,
         parent = err,
         body = cnd_bullets_subscript_lossy_cast,
-        indicator = indicator,
-        location = location,
-        name = name
+        logical = logical,
+        numeric = numeric,
+        character = character
       ))
     })
     return(result)
@@ -104,8 +104,8 @@ vec_as_subscript_result <- function(i, arg, indicator, location, name) {
 
   # Coerce unspecified vectors to integer only if logical indices
   # are not allowed
-  if (indicator == "error" && is_unspecified(i)) {
-    if (location == "coerce") {
+  if (logical == "error" && is_unspecified(i)) {
+    if (numeric == "coerce") {
       i <- vec_cast(i, int())
     } else {
       i <- vec_cast(i, chr())
@@ -113,9 +113,9 @@ vec_as_subscript_result <- function(i, arg, indicator, location, name) {
   }
 
   action <- switch(typeof(i),
-    logical = indicator,
-    integer = location,
-    character = name,
+    logical = logical,
+    integer = numeric,
+    character = character,
     "error"
   )
 
@@ -123,12 +123,12 @@ vec_as_subscript_result <- function(i, arg, indicator, location, name) {
     result(err = new_error_subscript_type(
       i = i,
       subscript_arg = arg,
-      indicator = indicator,
-      location = location,
-      name = name
+      logical = logical,
+      numeric = numeric,
+      character = character
     ))
   } else {
-    # FIXME: Work around lack of name restoration in `vec_cast()`
+    # FIXME: Work around lack of character restoration in `vec_cast()`
     names(i) <- nms
     result(i)
   }
@@ -139,34 +139,34 @@ vec_as_subscript_result <- function(i, arg, indicator, location, name) {
 #' @export
 vec_as_subscript2 <- function(i,
                               ...,
-                              indicator = c("coerce", "error"),
-                              location = c("coerce", "error"),
-                              name = c("coerce", "error"),
+                              logical = c("coerce", "error"),
+                              numeric = c("coerce", "error"),
+                              character = c("coerce", "error"),
                               arg = NULL) {
   if (!missing(...)) ellipsis::check_dots_empty()
   result_get(vec_as_subscript2_result(
     i,
     arg,
-    indicator = indicator,
-    location = location,
-    name = name
+    logical = logical,
+    numeric = numeric,
+    character = character
   ))
 }
 vec_as_subscript2_result <- function(i,
                                      arg,
-                                     indicator = "coerce",
-                                     location = "coerce",
-                                     name = "coerce") {
-  indicator <- arg_match(indicator, c("coerce", "error"))
-  location <- arg_match(location, c("coerce", "error"))
-  name <- arg_match(name, c("coerce", "error"))
+                                     logical = "coerce",
+                                     numeric = "coerce",
+                                     character = "coerce") {
+  logical <- arg_match(logical, c("coerce", "error"))
+  numeric <- arg_match(numeric, c("coerce", "error"))
+  character <- arg_match(character, c("coerce", "error"))
 
   result <- vec_as_subscript_result(
     i,
     arg = arg,
-    indicator = indicator,
-    location = location,
-    name = name
+    logical = logical,
+    numeric = numeric,
+    character = character
   )
 
   # Return a subclass of subscript error
@@ -180,9 +180,9 @@ vec_as_subscript2_result <- function(i,
 
     result$err <- new_error_subscript2_type(
       i = result$err$i,
-      indicator = indicator,
-      location = location,
-      name = name,
+      logical = logical,
+      numeric = numeric,
+      character = character,
       subscript_arg = arg,
       body = bullets,
       parent = result$err$parent
@@ -196,9 +196,9 @@ vec_as_subscript2_result <- function(i,
   if (typeof(i) == "logical") {
     return(result(err = new_error_subscript2_type(
       i = i,
-      indicator = indicator,
-      location = location,
-      name = name,
+      logical = logical,
+      numeric = numeric,
+      character = character,
       subscript_arg = arg,
       body = cnd_body.vctrs_error_subscript_type
     )))
@@ -208,9 +208,9 @@ vec_as_subscript2_result <- function(i,
 }
 
 
-subscript_type_opts <- c("indicator", "location", "name")
-subscript_type_opts_indefinite_singular <- c("an indicator", "a location", "a name")
-subscript_type_opts_indefinite_plural <- c("indicators", "locations", "names")
+subscript_type_opts <- c("logical", "numeric", "character")
+subscript_type_opts_indefinite_singular <- c("a logical flag", "a location", "a name")
+subscript_type_opts_indefinite_plural <- c("logical flags", "locations", "names")
 
 as_opts_subscript_type <- function(x, arg = NULL) {
   if (inherits(x, "vctrs_opts_subscript_type")) {
@@ -224,8 +224,8 @@ as_opts_subscript_type <- function(x, arg = NULL) {
   )
 }
 as_opts_subscript2_type <- function(x, arg = NULL) {
-  if ("indicator" %in% x) {
-    abort("Logical indicators can't be converted to a single location.")
+  if ("logical" %in% x) {
+    abort("Logical subscripts can't be converted to a single location.")
   }
   as_opts_subscript_type(x, arg = arg)
 }
@@ -246,17 +246,17 @@ new_error_subscript <- function(class = NULL, i, ...) {
   )
 }
 new_error_subscript_type <- function(i,
-                                     indicator = "coerce",
-                                     location = "coerce",
-                                     name = "coerce",
+                                     logical = "coerce",
+                                     numeric = "coerce",
+                                     character = "coerce",
                                      ...,
                                      class = NULL) {
   new_error_subscript(
     class = c(class, "vctrs_error_subscript_type"),
     i = i,
-    indicator = indicator,
-    location = location,
-    name = name,
+    logical = logical,
+    numeric = numeric,
+    character = character,
     ...
   )
 }
@@ -275,25 +275,20 @@ cnd_header.vctrs_error_subscript_type <- function(cnd) {
 cnd_body.vctrs_error_subscript_type <- function(cnd) {
   arg <- append_arg("The subscript", cnd$subscript_arg)
   type <- obj_type(cnd$i)
-  expected_types <- collapse_subscript_type(cnd, plural = TRUE)
+  expected_types <- collapse_subscript_type(cnd)
 
   format_error_bullets(c(
     x = glue::glue("{arg} has the wrong type `{type}`."),
-    i = glue::glue("It must contain {expected_types}.")
+    i = glue::glue("It must be {expected_types}.")
   ))
 }
 cnd_bullets_subscript_lossy_cast <- function(cnd, ...) {
   format_error_bullets(c(x = cnd_header(cnd$parent)))
 }
 
-collapse_subscript_type <- function(cnd, plural = FALSE) {
-  if (plural) {
-    types <- subscript_type_opts_indefinite_plural
-  } else {
-    types <- subscript_type_opts_indefinite_singular
-  }
-
-  allowed <- cnd[c("indicator", "location", "name")] != "error"
+collapse_subscript_type <- function(cnd) {
+  types <- c("logical", "numeric", "character")
+  allowed <- cnd[types] != "error"
   types <- types[allowed]
 
   if (length(types) == 2) {
@@ -320,15 +315,15 @@ cnd_header.vctrs_error_subscript_size <- function(cnd, ...) {
 }
 
 new_error_subscript2_type <- function(i,
-                                      indicator,
-                                      location,
-                                      name,
+                                      logical,
+                                      numeric,
+                                      character,
                                       ...) {
   new_error_subscript_type(
     i = i,
-    indicator = indicator,
-    location = location,
-    name = name,
+    logical = logical,
+    numeric = numeric,
+    character = character,
     subscript_scalar = TRUE,
     ...
   )
@@ -382,8 +377,8 @@ cnd_subscript_action <- function(cnd, assign_to = TRUE) {
 cnd_subscript_type <- function(cnd) {
   type <- cnd$subscript_type
 
-  if (!is_string(type, c("indicator", "location", "name"))) {
-    abort("Internal error: `cnd$subscript_type` must be `indicator`, `location`, or `name`.")
+  if (!is_string(type, c("logical", "numeric", "character"))) {
+    abort("Internal error: `cnd$subscript_type` must be `logical`, `numeric`, or `character`.")
   }
 
   type

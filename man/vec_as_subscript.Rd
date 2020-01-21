@@ -8,18 +8,18 @@
 vec_as_subscript(
   i,
   ...,
-  indicator = c("coerce", "error"),
-  location = c("coerce", "error"),
-  name = c("coerce", "error"),
+  logical = c("coerce", "error"),
+  numeric = c("coerce", "error"),
+  character = c("coerce", "error"),
   arg = NULL
 )
 
 vec_as_subscript2(
   i,
   ...,
-  indicator = c("coerce", "error"),
-  location = c("coerce", "error"),
-  name = c("coerce", "error"),
+  logical = c("coerce", "error"),
+  numeric = c("coerce", "error"),
+  character = c("coerce", "error"),
   arg = NULL
 )
 }
@@ -29,8 +29,8 @@ locations or names of the observations to get/set. Specify
 \code{TRUE} to index all elements (as in \code{x[]}), or \code{NULL}, \code{FALSE} or
 \code{integer()} to index none (as in \code{x[NULL]}).}
 
-\item{indicator, location, name}{How to handle indicator (logical),
-location (numeric), name (character), and \code{NULL} subscripts.
+\item{logical, location, character}{How to handle logical, numeric,
+and character subscripts.
 
 If \code{"coerce"} and the subscript is not one of the three base
 types (logical, integer or character), the subscript is coerced
