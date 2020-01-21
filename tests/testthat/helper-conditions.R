@@ -18,7 +18,7 @@ with_subscript_data <- function(expr,
 with_tibble_cols <- function(expr) {
   with_subscript_data(
     expr,
-    subscript_arg = quote(tbl[i]),
+    subscript_arg = quote(foo(bar)),
     subscript_elt = "column",
     subscript_action = "rename"
   )
@@ -26,7 +26,7 @@ with_tibble_cols <- function(expr) {
 with_tibble_rows <- function(expr) {
   with_subscript_data(
     expr,
-    subscript_arg = quote(tbl[i]),
+    subscript_arg = quote(foo(bar)),
     subscript_elt = "row",
     subscript_action = "remove"
   )

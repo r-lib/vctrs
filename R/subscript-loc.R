@@ -260,9 +260,9 @@ cnd_body_vctrs_error_subscript_type <- function(cnd, ...) {
     loc <- glue::glue("{arg} has a missing value at location {missing_loc}.")
   } else {
     n_loc <- length(missing_loc)
-    missing_loc <- enumerate(missing_loc)
+    missing_loc <- ensure_full_stop(enumerate(missing_loc))
     loc <- glue::glue(
-      "{arg} has {n_loc} missing values at locations {missing_loc}."
+      "{arg} has {n_loc} missing values at locations {missing_loc}"
     )
   }
   format_error_bullets(c(
@@ -286,9 +286,9 @@ cnd_body_vctrs_error_location_negative_positive <- function(cnd, ...) {
     loc <- glue::glue("{arg} has a positive value at location {positive_loc}.")
   } else {
     n_loc <- length(positive_loc)
-    positive_loc <- enumerate(positive_loc)
+    positive_loc <- ensure_full_stop(enumerate(positive_loc))
     loc <- glue::glue(
-      "{arg} has {n_loc} missing values at locations {positive_loc}."
+      "{arg} has {n_loc} missing values at locations {positive_loc}"
     )
   }
   format_error_bullets(c(
@@ -355,9 +355,9 @@ cnd_bullets_subscript_missing <- function(cnd, ...) {
 
   missing_loc <- which(is.na(cnd$i))
   if (length(missing_loc) == 1) {
-    missing_line <- glue::glue("It has a missing value at location {missing_loc}")
+    missing_line <- glue::glue("It has a missing value at location {missing_loc}.")
   } else {
-    missing_enum <- enumerate(missing_loc)
+    missing_enum <- ensure_full_stop(enumerate(missing_loc))
     missing_line <- glue::glue("It has missing values at locations {missing_enum}")
   }
 
@@ -398,15 +398,11 @@ cnd_header.vctrs_error_subscript_oob <- function(cnd, ...) {
   if (cnd_subscript_oob_non_consecutive(cnd)) {
     return(cnd_header_vctrs_error_subscript_oob_non_consecutive(cnd, ...))
   }
+
   elt <- cnd_subscript_element(cnd)
   action <- cnd_subscript_action(cnd)
 
-  if (is_null(cnd$subscript_arg)) {
-    glue::glue("Must {action} existing {elt[[2]]}.")
-  } else {
-    arg <- arg_as_string(cnd$subscript_arg)
-    glue::glue("Must {action} existing {elt[[2]]} in `{arg}`.")
-  }
+  glue::glue("Can't {action} {elt[[2]]} that don't exist.")
 }
 
 #' @export
@@ -426,7 +422,6 @@ cnd_body.vctrs_error_subscript_oob <- function(cnd, ...) {
 cnd_body_vctrs_error_subscript_oob_location <- function(cnd, ...) {
   i <- cnd$i
   elt <- cnd_subscript_element(cnd)
-  action <- cnd_subscript_action(cnd)
 
   # In case of negative indexing
   i <- abs(i)
@@ -440,8 +435,8 @@ cnd_body_vctrs_error_subscript_oob_location <- function(cnd, ...) {
   format_error_bullets(c(
     x = glue::glue(ngettext(
       length(oob),
-      "Can't {action} location {oob_enum}.",
-      "Can't {action} locations {oob_enum}."
+      "The location {oob_enum} doesn't exist.",
+      "The locations {oob_enum} don't exist."
     )),
     i = glue::glue(ngettext(
       cnd$size,
@@ -452,16 +447,14 @@ cnd_body_vctrs_error_subscript_oob_location <- function(cnd, ...) {
 }
 cnd_body_vctrs_error_subscript_oob_name <- function(cnd, ...) {
   elt <- cnd_subscript_element(cnd)
-  action <- cnd_subscript_action(cnd)
-
   oob <- cnd$i[!cnd$i %in% cnd$names]
   oob_enum <- enumerate(glue::backtick(oob))
 
   format_error_bullets(c(
     x = glue::glue(ngettext(
       length(oob),
-      "Can't {action} {elt[[1]]} with unknown name {oob_enum}.",
-      "Can't {action} {elt[[2]]} with unknown names {oob_enum}."
+      "The {elt[[1]]} {oob_enum} doesn't exist.",
+      "The {elt[[2]]} {oob_enum} don't exist."
     ))
   ))
 }
@@ -491,8 +484,8 @@ cnd_body_vctrs_error_subscript_oob_non_consecutive <- function(cnd, ...) {
   if (length(non_consecutive) == 1) {
     x_line <- glue::glue("{arg} contains non-consecutive location {non_consecutive}.")
   } else {
-    non_consecutive <- enumerate(non_consecutive)
-    x_line <- glue::glue("{arg} contains non-consecutive locations {non_consecutive}.")
+    non_consecutive <- ensure_full_stop(enumerate(non_consecutive))
+    x_line <- glue::glue("{arg} contains non-consecutive locations {non_consecutive}")
   }
 
   glue_data_bullets(

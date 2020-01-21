@@ -268,7 +268,7 @@ cnd_header.vctrs_error_subscript_type <- function(cnd) {
   if (cnd_subscript_scalar(cnd)) {
     glue::glue("Must {action} {elt[[1]]} with a single subscript.")
   } else {
-    glue::glue("Must {action} {elt[[2]]} with a proper subscript vector.")
+    glue::glue("Must {action} {elt[[2]]} with a valid subscript vector.")
   }
 }
 #' @export
@@ -296,7 +296,13 @@ collapse_subscript_type <- function(cnd, plural = FALSE) {
   allowed <- cnd[c("indicator", "location", "name")] != "error"
   types <- types[allowed]
 
-  glue::glue_collapse(types, sep = ", ", last = " or ")
+  if (length(types) == 2) {
+    last <- " or "
+  } else {
+    last <- ", or "
+  }
+
+  glue::glue_collapse(types, sep = ", ", last = last)
 }
 
 new_error_subscript_size <- function(i,
@@ -348,7 +354,7 @@ cnd_subscript_element <- function(cnd) {
 subscript_actions <- c(
   "subset", "extract", "assign", "rename", "remove", "negate"
 )
-cnd_subscript_action <- function(cnd) {
+cnd_subscript_action <- function(cnd, assign_to = TRUE) {
   action <- cnd$subscript_action
 
   if (is_null(action)) {
@@ -366,7 +372,11 @@ cnd_subscript_action <- function(cnd) {
     ))
   }
 
-  action
+  if (assign_to && action == "assign") {
+    "assign to"
+  } else {
+    action
+  }
 }
 
 cnd_subscript_type <- function(cnd) {
