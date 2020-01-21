@@ -139,11 +139,11 @@ test_that("can slice-assign using logical index", {
 
   expect_error(
     vec_assign(x, c(TRUE, FALSE, TRUE), 5),
-    class = "vctrs_error_indicator_bad_size"
+    class = "vctrs_error_subscript_size"
   )
   expect_error(
     vec_assign(mtcars, c(TRUE, FALSE), mtcars[1, ]),
-    class = "vctrs_error_indicator_bad_size"
+    class = "vctrs_error_subscript_size"
   )
 })
 
@@ -338,7 +338,7 @@ test_that("logical subscripts must match size of indexed vector", {
   verify_errors({
     expect_error(
       vec_assign(1:2, c(TRUE, FALSE, TRUE), 5),
-      class = "vctrs_error_indicator_bad_size"
+      class = "vctrs_error_subscript_size"
     )
   })
 })

@@ -53,7 +53,7 @@ vec_as_subscript_result <- function(i, arg, indicator, location, name) {
   }
 
   if (!vec_is(i)) {
-    return(result(err = new_error_subscript_bad_type(
+    return(result(err = new_error_subscript_type(
       i = i,
       arg = arg,
       indicator = indicator,
@@ -74,7 +74,7 @@ vec_as_subscript_result <- function(i, arg, indicator, location, name) {
     } else if (vec_is_coercible(i, chr())) {
       i <- vec_cast(i, chr())
     } else {
-      return(result(err = new_error_subscript_bad_type(
+      return(result(err = new_error_subscript_type(
         i,
         arg = arg,
         indicator = indicator,
@@ -90,7 +90,7 @@ vec_as_subscript_result <- function(i, arg, indicator, location, name) {
       result(i)
     },
     vctrs_error_cast_lossy = function(err) {
-      result(err = new_error_subscript_bad_type(
+      result(err = new_error_subscript_type(
         i = i,
         parent = err,
         body = cnd_bullets_subscript_lossy_cast,
@@ -120,7 +120,7 @@ vec_as_subscript_result <- function(i, arg, indicator, location, name) {
   )
 
   if (action == "error") {
-    result(err = new_error_subscript_bad_type(
+    result(err = new_error_subscript_type(
       i = i,
       arg = arg,
       indicator = indicator,
@@ -175,10 +175,10 @@ vec_as_subscript2_result <- function(i,
     if (inherits(parent, "vctrs_error_cast_lossy")) {
       bullets <- cnd_bullets_subscript_lossy_cast
     } else {
-      bullets <- cnd_bullets_subscript_bad_base_type
+      bullets <- cnd_body.vctrs_error_subscript_type
     }
 
-    result$err <- new_error_subscript2_bad_type(
+    result$err <- new_error_subscript2_type(
       i = result$err$i,
       indicator = indicator,
       location = location,
@@ -194,13 +194,13 @@ vec_as_subscript2_result <- function(i,
   i <- result$ok
 
   if (typeof(i) == "logical") {
-    return(result(err = new_error_subscript2_bad_type(
+    return(result(err = new_error_subscript2_type(
       i = i,
       indicator = indicator,
       location = location,
       name = name,
       arg = arg,
-      body = cnd_bullets_subscript_bad_base_type
+      body = cnd_body.vctrs_error_subscript_type
     )))
   }
 
@@ -239,15 +239,15 @@ new_error_subscript <- function(class = NULL, i, ..., arg = "i") {
     ...
   )
 }
-new_error_subscript_bad_type <- function(i,
-                                         indicator = "coerce",
-                                         location = "coerce",
-                                         name = "coerce",
-                                         ...,
-                                         arg = "i",
-                                         class = NULL) {
+new_error_subscript_type <- function(i,
+                                     indicator = "coerce",
+                                     location = "coerce",
+                                     name = "coerce",
+                                     ...,
+                                     arg = "i",
+                                     class = NULL) {
   new_error_subscript(
-    class = c(class, "vctrs_error_subscript_bad_type"),
+    class = c(class, "vctrs_error_subscript_type"),
     i = i,
     indicator = indicator,
     location = location,
@@ -257,31 +257,23 @@ new_error_subscript_bad_type <- function(i,
   )
 }
 
-cnd_bullets_subscript_bad_base_type <- function(cnd, ...) {
-  arg <- cnd$arg %||% "i"
-  type <- obj_type(cnd$i)
-  expected_types <- collapse_subscript_type(cnd)
-
-  format_error_bullets(c(
-    x = glue::glue("`{arg}` has the wrong type `{type}`."),
-    i = glue::glue("This subscript must be {expected_types}.")
-  ))
-}
-
-
 #' @export
-cnd_header.vctrs_error_subscript_bad_type <- function(cnd) {
-  "Must subset with a proper subscript vector."
+cnd_header.vctrs_error_subscript_type <- function(cnd) {
+  if (cnd_subscript_scalar(cnd)) {
+    "Must extract with a single subscript."
+  } else {
+    "Must subset with a proper subscript vector."
+  }
 }
 #' @export
-cnd_body.vctrs_error_subscript_bad_type <- function(cnd) {
+cnd_body.vctrs_error_subscript_type <- function(cnd) {
   arg <- cnd$arg %||% "i"
   type <- obj_type(cnd$i)
   expected_types <- collapse_subscript_type(cnd, plural = TRUE)
 
   format_error_bullets(c(
     x = glue::glue("`{arg}` has the wrong type `{type}`."),
-    i = glue::glue("These indices must be {expected_types}.")
+    i = glue::glue("The subscript must contain {expected_types}.")
   ))
 }
 cnd_bullets_subscript_lossy_cast <- function(cnd, ...) {
@@ -301,25 +293,86 @@ collapse_subscript_type <- function(cnd, plural = FALSE) {
   glue::glue_collapse(types, sep = ", ", last = " or ")
 }
 
-
-new_error_subscript2_bad_type <- function(i,
-                                          indicator,
-                                          location,
-                                          name,
-                                          ...,
-                                          arg = "i",
-                                          class = NULL) {
+new_error_subscript_size <- function(i,
+                                     ...,
+                                     class = NULL) {
   new_error_subscript(
-    class = c(class, "vctrs_error_subscript2_bad_type"),
+    class = c(class, "vctrs_error_subscript_size"),
+    i = i,
+    ...
+  )
+}
+#' @export
+cnd_header.vctrs_error_subscript_size <- function(cnd, ...) {
+  cnd_header.vctrs_error_subscript_type(cnd, ...)
+}
+
+new_error_subscript2_type <- function(i,
+                                      indicator,
+                                      location,
+                                      name,
+                                      ...,
+                                      arg = "i") {
+  new_error_subscript_type(
     i = i,
     indicator = indicator,
     location = location,
     name = name,
     arg = arg,
+    subscript_scalar = TRUE,
     ...
   )
 }
-#' @export
-cnd_header.vctrs_error_subscript2_bad_type <- function(cnd) {
-  "Must extract with a single subscript."
+
+cnd_subscript_element <- function(cnd) {
+  elt <- cnd$subscript_elt %||% "element"
+
+  if (!is_string(elt, c("element", "row", "column"))) {
+    abort(paste0(
+      "Internal error: `cnd$subscript_elt` must be one of ",
+      "`element`, `row`, or `column`."
+    ))
+  }
+
+  switch(elt,
+    element = c("element", "elements"),
+    row = c("row", "rows"),
+    column = c("column", "columns")
+  )
+}
+
+subscript_actions <- c(
+  "subset", "extract", "assign", "rename", "remove", "negate"
+)
+cnd_subscript_action <- function(cnd) {
+  action <- cnd$subscript_action %||% "subset"
+
+  if (!is_string(action, subscript_actions)) {
+    abort(paste0(
+      "Internal error: `cnd$subscript_action` must be one of ",
+      "`subset`, `extract`, `assign`, `rename`, `remove`, or `negate`."
+    ))
+  }
+
+  action
+}
+
+cnd_subscript_type <- function(cnd) {
+  type <- cnd$subscript_type
+
+  if (!is_string(type, c("indicator", "location", "name"))) {
+    abort("Internal error: `cnd$subscript_type` must be `indicator`, `location`, or `name`.")
+  }
+
+  type
+}
+
+cnd_subscript_scalar <- function(cnd) {
+  out <- cnd$subscript_scalar %||% FALSE
+
+  if (!is_bool(out)) {
+    abort("Internal error: `cnd$subscript_scalar` must be a boolean.")
+  }
+
+  out
 }

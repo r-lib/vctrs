@@ -158,7 +158,7 @@ vec_as_location2_result <- function(i,
 
   if (!is_null(result$err)) {
     parent <- result$err
-    return(result(err = new_error_location2_bad_type(
+    return(result(err = new_error_location2_type(
       i = i,
       arg = arg,
       # FIXME: Should body fields in parents be automatically inherited?
@@ -171,7 +171,7 @@ vec_as_location2_result <- function(i,
   i <- result$ok
 
   if (length(i) != 1L) {
-    return(result(err = new_error_location2_bad_type(
+    return(result(err = new_error_location2_type(
       i = i,
       arg = arg,
       body = cnd_bullets_location2_need_scalar
@@ -185,7 +185,7 @@ vec_as_location2_result <- function(i,
 
   if (is.na(i)) {
     if (!allow_missing && is.na(i)) {
-      result <- result(err = new_error_location2_bad_type(
+      result <- result(err = new_error_location2_type(
         i = i,
         arg = arg,
         body = cnd_bullets_location2_need_present
@@ -197,7 +197,7 @@ vec_as_location2_result <- function(i,
   }
 
   if (i == 0L) {
-    return(result(err = new_error_location2_bad_type(
+    return(result(err = new_error_location2_type(
       i = i,
       arg = arg,
       body = cnd_bullets_location2_need_non_zero
@@ -205,7 +205,7 @@ vec_as_location2_result <- function(i,
   }
 
   if (!allow_negative && neg) {
-    return(result(err = new_error_location2_bad_type(
+    return(result(err = new_error_location2_type(
       i = i,
       arg = arg,
       body = cnd_bullets_location2_need_non_negative
@@ -216,7 +216,7 @@ vec_as_location2_result <- function(i,
   err <- NULL
   i <- tryCatch(
     vec_as_location(i, n, names = names, arg = arg),
-    vctrs_error_subscript_bad_type = function(err) {
+    vctrs_error_subscript_type = function(err) {
       err <<- err
       i
     }
@@ -229,7 +229,7 @@ vec_as_location2_result <- function(i,
   if (is_null(err)) {
     result(i)
   } else {
-    result(err = new_error_location2_bad_type(
+    result(err = new_error_location2_type(
       i = i,
       parent = err,
       arg = arg
@@ -239,17 +239,12 @@ vec_as_location2_result <- function(i,
 
 
 stop_location_negative_missing <- function(i) {
-  cnd_signal(new_error_location_bad_type(
+  cnd_signal(new_error_subscript_type(
     i,
-    class = "vctrs_error_location_negative_missing"
+    body = cnd_body_vctrs_error_subscript_type
   ))
 }
-#' @export
-cnd_header.vctrs_error_location_negative_missing <- function(cnd, ...) {
-  "Negative locations can't have missing values."
-}
-#' @export
-cnd_body.vctrs_error_location_negative_missing <- function(cnd, ...) {
+cnd_body_vctrs_error_subscript_type <- function(cnd, ...) {
   missing_loc <- which(is.na(cnd$i))
 
   if (length(missing_loc) == 1) {
@@ -261,22 +256,19 @@ cnd_body.vctrs_error_location_negative_missing <- function(cnd, ...) {
       "The subscript has {n_loc} missing values at locations {missing_loc}."
     )
   }
-  format_error_bullets(c(i = loc))
-}
-
-# Rf_errorcall(R_NilValue, "Can't subset with a mix of negative and positive indices");
-stop_location_negative_positive <- function(i) {
-  cnd_signal(new_error_location_bad_type(
-    i,
-    class = "vctrs_error_location_negative_positive"
+  format_error_bullets(c(
+    x = "Negative locations can't have missing values.",
+    i = loc
   ))
 }
-#' @export
-cnd_header.vctrs_error_location_negative_positive <- function(cnd, ...) {
-  "Negative locations can't be mixed with positive locations."
+
+stop_location_negative_positive <- function(i) {
+  cnd_signal(new_error_subscript_type(
+    i,
+    body = cnd_body_vctrs_error_location_negative_positive
+  ))
 }
-#' @export
-cnd_body.vctrs_error_location_negative_positive <- function(cnd, ...) {
+cnd_body_vctrs_error_location_negative_positive <- function(cnd, ...) {
   positive_loc <- which(cnd$i > 0)
 
   if (length(positive_loc) == 1) {
@@ -288,30 +280,18 @@ cnd_body.vctrs_error_location_negative_positive <- function(cnd, ...) {
       "The subscript has {n_loc} missing values at locations {positive_loc}."
     )
   }
-  format_error_bullets(c(i = loc))
+  format_error_bullets(c(
+    x = "Negative locations can't be mixed with positive locations.",
+    i = loc
+  ))
 }
 
 
-new_error_location_bad_type <- function(i,
-                                        ...,
-                                        arg = "i",
-                                        class = NULL) {
-  new_error_subscript_bad_type(
-    class = c(class, "vctrs_error_location_bad_type"),
-    i = i,
-    indicator = "error",
-    location = "coerce",
-    name = "coerce",
-    arg = arg,
-    ...
-  )
-}
-
-new_error_location2_bad_type <- function(i,
-                                         ...,
-                                         arg = "i",
-                                         class = NULL) {
-  new_error_subscript2_bad_type(
+new_error_location2_type <- function(i,
+                                     ...,
+                                     arg = "i",
+                                     class = NULL) {
+  new_error_subscript2_type(
     class = class,
     i = i,
     indicator = "error",
@@ -362,7 +342,7 @@ cnd_bullets_location_need_non_negative <- function(cnd, ...) {
 }
 
 stop_location_negative <- function(i, ..., arg = "i") {
-  cnd_signal(new_error_location_bad_type(
+  cnd_signal(new_error_subscript_type(
     i,
     arg = arg,
     body = cnd_bullets_location_need_non_negative
@@ -370,56 +350,18 @@ stop_location_negative <- function(i, ..., arg = "i") {
 }
 
 stop_indicator_size <- function(i, n, arg = "i") {
-  cnd_signal(new_error_subscript(
+  cnd_signal(new_error_subscript_size(
     i,
     n = n,
     arg = arg,
-    class = "vctrs_error_indicator_bad_size"
+    body = cnd_body_vctrs_error_indicator_size
   ))
 }
-#' @export
-cnd_header.vctrs_error_indicator_bad_size <- function(cnd, ...) {
-  "Logical subscripts must match the size of the indexed input."
-}
-#' @export
-cnd_body.vctrs_error_indicator_bad_size <- function(cnd, ...) {
+cnd_body_vctrs_error_indicator_size <- function(cnd, ...) {
   glue_data_bullets(
     cnd,
-    i = "The input has size {n}.",
-    x = "The subscript has size {vec_size(i)}."
-  )
-}
-
-stop_location_oob_non_consecutive <- function(i, size, ..., class = NULL) {
-  stop_subscript_oob(
-    class = c(class, "vctrs_error_subscript_oob_location_non_consecutive"),
-    i = i,
-    size = size,
-    ...
-  )
-}
-#' @export
-cnd_header.vctrs_error_subscript_oob_location_non_consecutive <- function(cnd, ...) {
-  "Can't index beyond the end with non-consecutive locations."
-}
-#' @export
-cnd_body.vctrs_error_subscript_oob_location_non_consecutive <- function(cnd, ...) {
-  i <- sort(cnd$i)
-  i <- i[i > cnd$size]
-
-  non_consecutive <- i[c(TRUE, diff(i) != 1L)]
-
-  if (length(non_consecutive) == 1) {
-    x <- glue::glue("The location {non_consecutive} is not consecutive to the end.")
-  } else {
-    non_consecutive <- enumerate(non_consecutive)
-    x <- glue::glue("The locations {non_consecutive} are not consecutive.")
-  }
-
-  glue_data_bullets(
-    cnd,
-    i = "The input has size {size}.",
-    x = x
+    i = "Logical subscripts must match the size of the indexed input.",
+    x = "The input has size {n} but the subscript has size {vec_size(i)}."
   )
 }
 
@@ -441,10 +383,11 @@ stop_subscript_oob_name <- function(i, names, ..., class = NULL) {
     ...
   )
 }
-stop_subscript_oob <- function(i, ..., class = NULL) {
+stop_subscript_oob <- function(i, subscript_type, ..., class = NULL) {
   stop_subscript(
     class = c(class, "vctrs_error_subscript_oob"),
     i = i,
+    subscript_type = subscript_type,
     ...
   )
 }
@@ -457,7 +400,10 @@ stop_subscript <- function(i, ..., class = NULL) {
 }
 
 #' @export
-cnd_header.vctrs_error_subscript_oob <- function(cnd) {
+cnd_header.vctrs_error_subscript_oob <- function(cnd, ...) {
+  if (cnd_subscript_oob_non_consecutive(cnd)) {
+    return(cnd_header_vctrs_error_subscript_oob_non_consecutive(cnd, ...))
+  }
   arg <- cnd$arg
   elt <- cnd_subscript_element(cnd)
   action <- cnd_subscript_action(cnd)
@@ -471,14 +417,20 @@ cnd_header.vctrs_error_subscript_oob <- function(cnd) {
 }
 
 #' @export
-cnd_body.vctrs_error_subscript_oob <- function(cnd) {
+cnd_body.vctrs_error_subscript_oob <- function(cnd, ...) {
   switch(cnd_subscript_type(cnd),
-    location = cnd_body_vctrs_error_subscript_oob_location(cnd),
-    name = cnd_body_vctrs_error_subscript_oob_name(cnd),
+    location =
+      if (cnd_subscript_oob_non_consecutive(cnd)) {
+        cnd_body_vctrs_error_subscript_oob_non_consecutive(cnd, ...)
+      } else {
+        cnd_body_vctrs_error_subscript_oob_location(cnd, ...)
+      },
+    name =
+      cnd_body_vctrs_error_subscript_oob_name(cnd, ...),
     abort("Internal error: subscript type can't be `indicator` for OOB errors.")
   )
 }
-cnd_body_vctrs_error_subscript_oob_location <- function(cnd) {
+cnd_body_vctrs_error_subscript_oob_location <- function(cnd, ...) {
   i <- cnd$i
   elt <- cnd_subscript_element(cnd)
   action <- cnd_subscript_action(cnd)
@@ -505,7 +457,7 @@ cnd_body_vctrs_error_subscript_oob_location <- function(cnd) {
     ))
   ))
 }
-cnd_body_vctrs_error_subscript_oob_name <- function(cnd) {
+cnd_body_vctrs_error_subscript_oob_name <- function(cnd, ...) {
   elt <- cnd_subscript_element(cnd)
   action <- cnd_subscript_action(cnd)
 
@@ -521,45 +473,41 @@ cnd_body_vctrs_error_subscript_oob_name <- function(cnd) {
   ))
 }
 
-cnd_subscript_element <- function(cnd) {
-  elt <- cnd$subscript_elt %||% "element"
-
-  if (!is_string(elt, c("element", "row", "column"))) {
-    abort(paste0(
-      "Internal error: `cnd$subscript_elt` must be one of ",
-      "`element`, `row`, or `column`."
-    ))
-  }
-
-  switch(elt,
-    element = c("element", "elements"),
-    row = c("row", "rows"),
-    column = c("column", "columns")
+stop_location_oob_non_consecutive <- function(i, size, ...) {
+  stop_subscript_oob(
+    i = i,
+    size = size,
+    subscript_type = "location",
+    subscript_oob_non_consecutive = TRUE,
+    ...
   )
 }
 
-subscript_actions <- c(
-  "subset", "extract", "assign", "rename", "remove", "negate"
-)
-cnd_subscript_action <- function(cnd) {
-  action <- cnd$subscript_action %||% "subset"
+cnd_header_vctrs_error_subscript_oob_non_consecutive <- function(cnd, ...) {
+  "Can't index beyond the end with non-consecutive locations."
+}
+cnd_body_vctrs_error_subscript_oob_non_consecutive <- function(cnd, ...) {
+  i <- sort(cnd$i)
+  i <- i[i > cnd$size]
 
-  if (!is_string(action, subscript_actions)) {
-    abort(paste0(
-      "Internal error: `cnd$subscript_action` must be one of ",
-      "`subset`, `extract`, `assign`, `rename`, `remove`, or `negate`."
-    ))
+  non_consecutive <- i[c(TRUE, diff(i) != 1L)]
+
+  if (length(non_consecutive) == 1) {
+    x <- glue::glue("The location {non_consecutive} is not consecutive to the end.")
+  } else {
+    non_consecutive <- enumerate(non_consecutive)
+    x <- glue::glue("The locations {non_consecutive} are not consecutive.")
   }
 
-  action
+  glue_data_bullets(
+    cnd,
+    i = "The input has size {size}.",
+    x = x
+  )
 }
 
-cnd_subscript_type <- function(cnd) {
-  type <- cnd$subscript_type
-
-  if (!is_string(type, c("indicator", "location", "name"))) {
-    abort("Internal error: `cnd$subscript_type` must be `indicator`, `location`, or `name`.")
-  }
-
-  type
+cnd_subscript_oob_non_consecutive <- function(cnd) {
+  out <- cnd$subscript_oob_non_consecutive %||% FALSE
+  stopifnot(is_bool(out))
+  out
 }

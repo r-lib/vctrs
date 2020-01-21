@@ -99,17 +99,17 @@ test_that("can subset using logical subscript", {
 
   expect_error(
     vec_slice(x0, c(TRUE, FALSE, TRUE)),
-    class = "vctrs_error_indicator_bad_size"
+    class = "vctrs_error_subscript_size"
   )
 
   expect_error(
     vec_slice(x0, lgl()),
-    class = "vctrs_error_indicator_bad_size"
+    class = "vctrs_error_subscript_size"
   )
 
   expect_error(
     vec_slice(mtcars, c(TRUE, FALSE)),
-    class = "vctrs_error_indicator_bad_size"
+    class = "vctrs_error_subscript_size"
   )
 })
 
@@ -162,8 +162,8 @@ test_that("can slice with negative indices", {
   expect_identical(vec_slice(1:3, -c(1L, 3L)), 2L)
   expect_identical(vec_slice(mtcars, -(1:30)), vec_slice(mtcars, 31:32))
 
-  expect_error(vec_slice(1:3, -c(1L, NA)), class = "vctrs_error_location_negative_missing")
-  expect_error(vec_slice(1:3, c(-1L, 1L)), class = "vctrs_error_location_negative_positive")
+  expect_error(vec_slice(1:3, -c(1L, NA)), class = "vctrs_error_subscript_type")
+  expect_error(vec_slice(1:3, c(-1L, 1L)), class = "vctrs_error_subscript_type")
 })
 
 test_that("0 is ignored in negative indices", {
@@ -179,7 +179,7 @@ test_that("0 is ignored in positive indices", {
 
 test_that("can slice with double indices", {
   expect_identical(vec_slice(1:3, dbl(2, 3)), 2:3)
-  err <- expect_error(vec_as_location(2^31, 3L), class = "vctrs_error_subscript_bad_type")
+  err <- expect_error(vec_as_location(2^31, 3L), class = "vctrs_error_subscript_type")
   expect_is(err$parent, "vctrs_error_cast_lossy")
 })
 
@@ -190,7 +190,7 @@ test_that("can slice with symbols", {
 test_that("vec_as_location() checks type", {
   expect_error(vec_as_location("foo", "bar"), class = "vctrs_error_incompatible_type")
   expect_error(vec_as_location("foo", 1L, names = 1L), "must be a character vector")
-  expect_error(vec_as_location(Sys.Date(), 3L), class = "vctrs_error_subscript_bad_type")
+  expect_error(vec_as_location(Sys.Date(), 3L), class = "vctrs_error_subscript_type")
   expect_error(vec_as_location(matrix(TRUE, nrow = 1), 3L), "must have one dimension")
 })
 
