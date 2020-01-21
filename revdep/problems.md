@@ -40,7 +40,7 @@ Run `revdep_details(,"arrow")` for more info
 ** package ‘arrow’ successfully unpacked and MD5 sums checked
 ** using staged installation
 Downloading apache-arrow
-Tue Jan 14 17:42:57 CET 2020: Auto-brewing apache-arrow in /var/folders/b9/1vbq6rn93_1fk71sn95dqb8r0000gn/T//build-apache-arrow...
+Tue Jan 21 20:26:56 CET 2020: Auto-brewing apache-arrow in /var/folders/b9/1vbq6rn93_1fk71sn95dqb8r0000gn/T//build-apache-arrow...
 Error: No available formula with the name "apache-arrow" 
 ==> Searching for a previously deleted formula (in the last month)...
 Error: No previously deleted formula found.
@@ -76,8 +76,9 @@ ERROR: compilation failed for package ‘arrow’
 ** package ‘arrow’ successfully unpacked and MD5 sums checked
 ** using staged installation
 Downloading apache-arrow
+rm: /var/folders/b9/1vbq6rn93_1fk71sn95dqb8r0000gn/T//build-apache-arrow/Library/Homebrew/compat/hbc/cli: Invalid argument
 rm: fts_read: No such file or directory
-Tue Jan 14 17:42:57 CET 2020: Auto-brewing apache-arrow in /var/folders/b9/1vbq6rn93_1fk71sn95dqb8r0000gn/T//build-apache-arrow...
+Tue Jan 21 20:26:55 CET 2020: Auto-brewing apache-arrow in /var/folders/b9/1vbq6rn93_1fk71sn95dqb8r0000gn/T//build-apache-arrow...
 ==> Tapping homebrew/core from https://github.com/autobrew/homebrew-core
 Tapped 2 commands and 4646 formulae (4,903 files, 12.8MB).
 double-conversion
@@ -274,18 +275,18 @@ installing to /Users/lionel/Desktop/vctrs/revdep/checks.noindex/arrow/old/arrow.
 * DONE (arrow)
 
 ```
-# blob
+# drake
 
 <details>
 
-* Version: 1.2.0
-* Source code: https://github.com/cran/blob
-* URL: https://github.com/tidyverse/blob
-* BugReports: https://github.com/tidyverse/blob/issues
-* Date/Publication: 2019-07-09 11:40:03 UTC
-* Number of recursive dependencies: 39
+* Version: 7.9.0
+* Source code: https://github.com/cran/drake
+* URL: https://github.com/ropensci/drake, https://docs.ropensci.org/drake, https://books.ropensci.org/drake/
+* BugReports: https://github.com/ropensci/drake/issues
+* Date/Publication: 2020-01-08 09:00:12 UTC
+* Number of recursive dependencies: 137
 
-Run `revdep_details(,"blob")` for more info
+Run `revdep_details(,"drake")` for more info
 
 </details>
 
@@ -296,18 +297,18 @@ Run `revdep_details(,"blob")` for more info
      ERROR
     Running the tests in ‘tests/testthat.R’ failed.
     Last 13 lines of output:
-      ── 1. Error: can combine (@test-accessors.R#60)  ───────────────────────────────
-      No common type for `..1` <blob> and `..2` <logical>.
-      Backtrace:
-        1. testthat::expect_identical(c(blob(), NA), blob(NULL))
-        9. blob:::vec_ptype2.blob.default(x = x, y = y, x_arg = x_arg, y_arg = y_arg) revdep/checks.noindex/blob/new/blob.Rcheck/00_pkg_src/blob/R/coerce.R:10:19
-       10. vctrs::stop_incompatible_type(x, y, x_arg, y_arg) revdep/checks.noindex/blob/new/blob.Rcheck/00_pkg_src/blob/R/coerce.R:14:27
-       11. vctrs:::stop_incompatible(...)
-       12. vctrs:::stop_vctrs(...)
+        7. future::makeClusterPSOCK(workers, ...)
+        8. future:::makeNode(...)
+        9. (function() {...
+       10. base::tryCatch(...)
+       11. base:::tryCatchList(expr, classes, parentenv, handlers)
+       12. base:::tryCatchOne(expr, names, parentenv, handlers[[1L]])
+       13. value[[3L]](cond)
+       14. (function() {...
       
       ══ testthat results  ═══════════════════════════════════════════════════════════
-      [ OK: 31 | SKIPPED: 3 | WARNINGS: 0 | FAILED: 1 ]
-      1. Error: can combine (@test-accessors.R#60) 
+      [ OK: 5042 | SKIPPED: 264 | WARNINGS: 1 | FAILED: 1 ]
+      1. Error: future package functionality (@test-9-future.R#87) 
       
       Error: testthat unit tests failed
       Execution halted
@@ -336,16 +337,16 @@ Run `revdep_details(,"rray")` for more info
     Running the tests in ‘tests/testthat.R’ failed.
     Last 13 lines of output:
       ══ testthat results  ═══════════════════════════════════════════════════════════
-      [ OK: 1578 | SKIPPED: 0 | WARNINGS: 12 | FAILED: 53 ]
-      1. Failure: from unknown types (@test-cast.R#139) 
-      2. Failure: container casting logical errors with unknown `to`. (@test-container-cast.R#24) 
-      3. Failure: container casting integer errors with unknown `to`. (@test-container-cast.R#24) 
-      4. Failure: container casting double errors with unknown `to`. (@test-container-cast.R#24) 
+      [ OK: 1594 | SKIPPED: 0 | WARNINGS: 12 | FAILED: 41 ]
+      1. Failure: container casting logical errors with unknown `to`. (@test-container-cast.R#24) 
+      2. Failure: container casting integer errors with unknown `to`. (@test-container-cast.R#24) 
+      3. Failure: container casting double errors with unknown `to`. (@test-container-cast.R#24) 
+      4. Failure: container casting fails with unknown `x` (@test-container-cast.R#35) 
       5. Failure: container casting fails with unknown `x` (@test-container-cast.R#35) 
       6. Failure: container casting fails with unknown `x` (@test-container-cast.R#35) 
-      7. Failure: container casting fails with unknown `x` (@test-container-cast.R#35) 
-      8. Failure: container casting rray errors with unknown `x`. (@test-container-cast.R#74) 
-      9. Failure: unknown container types are caught (@test-container-type.R#20) 
+      7. Failure: container casting rray errors with unknown `x`. (@test-container-cast.R#74) 
+      8. Failure: unknown container types are caught (@test-container-type.R#20) 
+      9. Failure: container type2 logical errors with unknown `y`. (@test-container-type2.R#24) 
       1. ...
       
       Error: testthat unit tests failed

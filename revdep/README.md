@@ -10,14 +10,15 @@
 |collate  |en_US.UTF-8                  |
 |ctype    |en_US.UTF-8                  |
 |tz       |Europe/Brussels              |
-|date     |2020-01-14                   |
+|date     |2020-01-21                   |
 
 # Dependencies
 
 |package |old   |new         |Δ  |
 |:-------|:-----|:-----------|:--|
-|vctrs   |0.2.1 |0.2.99.9002 |*  |
+|vctrs   |0.2.1 |0.2.99.9004 |*  |
 |digest  |NA    |0.6.23      |*  |
+|glue    |1.3.1 |1.3.1       |   |
 |rlang   |NA    |0.4.2       |*  |
 
 # Revdeps
@@ -32,7 +33,7 @@
 
 |package                    |version |error  |warning |note |
 |:--------------------------|:-------|:------|:-------|:----|
-|[blob](problems.md#blob)   |1.2.0   |__+1__ |        |     |
+|[drake](problems.md#drake) |7.9.0   |__+1__ |        |     |
 |[rray](problems.md#rray)   |0.1.0   |__+1__ |        |     |
 |[tidyr](problems.md#tidyr) |1.0.0   |__+1__ |        |1    |
 

@@ -40,7 +40,7 @@ Run `revdep_details(,"arrow")` for more info
 ** package ‘arrow’ successfully unpacked and MD5 sums checked
 ** using staged installation
 Downloading apache-arrow
-Tue Jan 14 17:42:57 CET 2020: Auto-brewing apache-arrow in /var/folders/b9/1vbq6rn93_1fk71sn95dqb8r0000gn/T//build-apache-arrow...
+Tue Jan 21 20:26:56 CET 2020: Auto-brewing apache-arrow in /var/folders/b9/1vbq6rn93_1fk71sn95dqb8r0000gn/T//build-apache-arrow...
 Error: No available formula with the name "apache-arrow" 
 ==> Searching for a previously deleted formula (in the last month)...
 Error: No previously deleted formula found.
@@ -76,8 +76,9 @@ ERROR: compilation failed for package ‘arrow’
 ** package ‘arrow’ successfully unpacked and MD5 sums checked
 ** using staged installation
 Downloading apache-arrow
+rm: /var/folders/b9/1vbq6rn93_1fk71sn95dqb8r0000gn/T//build-apache-arrow/Library/Homebrew/compat/hbc/cli: Invalid argument
 rm: fts_read: No such file or directory
-Tue Jan 14 17:42:57 CET 2020: Auto-brewing apache-arrow in /var/folders/b9/1vbq6rn93_1fk71sn95dqb8r0000gn/T//build-apache-arrow...
+Tue Jan 21 20:26:55 CET 2020: Auto-brewing apache-arrow in /var/folders/b9/1vbq6rn93_1fk71sn95dqb8r0000gn/T//build-apache-arrow...
 ==> Tapping homebrew/core from https://github.com/autobrew/homebrew-core
 Tapped 2 commands and 4646 formulae (4,903 files, 12.8MB).
 double-conversion
