@@ -402,10 +402,10 @@ cnd_header.vctrs_error_subscript_oob <- function(cnd, ...) {
   action <- cnd_subscript_action(cnd)
 
   if (is_null(cnd$subscript_arg)) {
-    glue::glue("Must {action} existing {elt[[2]]}.")
+    glue::glue("Can't {action} {elt[[2]]} that don't exist.")
   } else {
     arg <- arg_as_string(cnd$subscript_arg)
-    glue::glue("Must {action} existing {elt[[2]]} in `{arg}`.")
+    glue::glue("Can't {action} {elt[[2]]} that don't exist in `{arg}`.")
   }
 }
 
