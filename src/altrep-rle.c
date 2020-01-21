@@ -105,8 +105,7 @@ SEXP altrep_rle_Extract_subset(SEXP x, SEXP indx, SEXP call) {
   int* rle_data = INTEGER(data1);
   R_xlen_t rle_n = Rf_length(data1);
 
-  SEXP nms = Rf_getAttrib(data1, Rf_install("names"));
-
+  SEXP nms = PROTECT(Rf_getAttrib(data1, Rf_install("names")));
   SEXP out = PROTECT(Rf_allocVector(STRSXP, index_n));
 
   for (R_len_t i = 0; i < index_n; ++i) {
@@ -123,8 +122,7 @@ SEXP altrep_rle_Extract_subset(SEXP x, SEXP indx, SEXP call) {
     SET_STRING_ELT(out, i, STRING_ELT(nms, rle_idx));
   }
 
-  UNPROTECT(1);
-
+  UNPROTECT(2);
   return out;
 }
 

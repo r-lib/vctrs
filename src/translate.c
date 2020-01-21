@@ -442,7 +442,9 @@ SEXP vctrs_maybe_translate_encoding2(SEXP x, SEXP y) {
   x = PROTECT(vec_proxy_equal(x));
   y = PROTECT(vec_proxy_equal(y));
 
+  SEXP out = obj_maybe_translate_encoding2(x, vec_size(x), y, vec_size(y));
+
   UNPROTECT(5);
-  return obj_maybe_translate_encoding2(x, vec_size(x), y, vec_size(y));
+  return out;
 }
 

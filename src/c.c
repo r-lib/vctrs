@@ -108,7 +108,7 @@ static SEXP vec_c(SEXP xs,
     UNPROTECT(1);
   }
 
-  out = vec_restore(out, ptype, R_NilValue);
+  out = PROTECT(vec_restore(out, ptype, R_NilValue));
 
   if (has_names) {
     out_names = PROTECT(vec_as_names(out_names, name_repair, false));
@@ -117,7 +117,7 @@ static SEXP vec_c(SEXP xs,
     UNPROTECT(1);
   }
 
-  UNPROTECT(6);
+  UNPROTECT(7);
   return out;
 }
 

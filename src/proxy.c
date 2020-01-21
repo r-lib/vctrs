@@ -44,10 +44,11 @@ SEXP vec_proxy_equal_dispatch(SEXP x) {
 // [[ include("vctrs.h") ]]
 SEXP vec_proxy_recursive(SEXP x, enum vctrs_proxy_kind kind) {
   switch (kind) {
-  case vctrs_proxy_default: x = PROTECT(vec_proxy(x)); break;
-  case vctrs_proxy_equal: x = PROTECT(vec_proxy_equal_dispatch(x)); break;
+  case vctrs_proxy_default: x = vec_proxy(x); break;
+  case vctrs_proxy_equal: x = vec_proxy_equal_dispatch(x); break;
   case vctrs_proxy_compare: Rf_error("Internal error: Unimplemented proxy kind");
   }
+  PROTECT(x);
 
   if (is_data_frame(x)) {
     x = PROTECT(r_maybe_duplicate(x));
