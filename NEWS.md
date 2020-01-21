@@ -1,6 +1,16 @@
 
 # vctrs 0.2.99.9000
 
+* New `vec_as_subscript()` function to cast inputs to the base type
+  of a subscript (logical, numeric, or character). `vec_as_index()`
+  has been renamed to `vec_as_location()`. Use `num_as_location()` if
+  you need more options to control how numeric subscripts are
+  converted to a vector of locations.
+
+* New `vec_as_subscript2()`, `vec_as_location2()`, and
+  `num_as_location2()` variants for validating scalar subscripts and
+  locations (e.g. for indexing with `[[`).
+
 * `vec_ptype2()` methods for base classes now prevent
   inheritance. This makes sense because the subtyping graph created by
   `vec_ptype2()` methods is generally not the same as the inheritance
@@ -16,8 +26,6 @@
   0.3.0 for the rest of the base S3 classes (dates, data frames, ...).
 
 * `vec_equal_na()` now works with complex vectors.
-
-* `vec_as_index()` has been renamed to `vec_as_location()`.
 
 * `vctrs_vctr` class gains an `as.POSIXlt()` method (#717).
 
