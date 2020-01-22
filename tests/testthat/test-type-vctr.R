@@ -2,6 +2,9 @@ context("test-type-vctr")
 
 test_that("constructor sets attributes", {
   x <- new_vctr(1:4, class = "x", x = 1)
+  expect_equal(x, structure(1:4, class = c("x", "vctrs_vctr"), x = 1))
+
+  x <- new_vctr(1:4, class = "x", x = 1, inherit_base_type = TRUE)
   expect_equal(x, structure(1:4, class = c("x", "vctrs_vctr", "integer"), x = 1))
 })
 
@@ -84,6 +87,7 @@ test_that("base coercion methods mapped to vec_cast", {
   expect_error(as.character(x), class = "vctrs_error_incompatible_cast")
   expect_error(as.Date(x), class = "vctrs_error_incompatible_cast")
   expect_error(as.POSIXct(x), class = "vctrs_error_incompatible_cast")
+  expect_error(as.POSIXlt(x), class = "vctrs_error_incompatible_cast")
 
   expect_equal(as.list(x), list(x))
 })
@@ -95,12 +99,6 @@ test_that("as.data.frame creates data frame", {
   expect_s3_class(df, "data.frame")
   expect_equal(nrow(df), 3)
   expect_named(df, "x")
-})
-
-test_that("can cast to POSIXlt (#717)", {
-  x <- new_vctr(1)
-  expect_is(as.POSIXlt(x), "POSIXlt")
-  expect_true(vec_equal(as.POSIXct(x), as.POSIXlt(x)))
 })
 
 

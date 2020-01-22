@@ -5,7 +5,7 @@
 \alias{vctr}
 \title{vctr (vector) S3 class}
 \usage{
-new_vctr(.data, ..., class = character(), inherit_base_type = TRUE)
+new_vctr(.data, ..., class = character(), inherit_base_type = FALSE)
 }
 \arguments{
 \item{.data}{Foundation of class. Must be a vector}
