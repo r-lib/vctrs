@@ -17,7 +17,7 @@ validate_list_of(x)
 
 is_list_of(x)
 
-\method{vec_ptype2}{vctrs_list_of}(x, y, ...)
+\method{vec_ptype2}{vctrs_list_of}(x, y, ..., x_arg = "x", y_arg = "y")
 
 \method{vec_cast}{vctrs_list_of}(x, to, ...)
 }
@@ -34,6 +34,14 @@ this is a convenient way to make production code demand fixed types.}
 \item{x}{For \code{as_list_of()}, a vector to be coerced to list_of.}
 
 \item{y, to}{Arguments to \code{vec_ptype2()} and \code{vec_cast()}.}
+
+\item{x_arg}{Argument names for \code{x} and \code{y}. These are used
+in error messages to inform the user about the locations of
+incompatible types (see \code{\link[=stop_incompatible_type]{stop_incompatible_type()}}).}
+
+\item{y_arg}{Argument names for \code{x} and \code{y}. These are used
+in error messages to inform the user about the locations of
+incompatible types (see \code{\link[=stop_incompatible_type]{stop_incompatible_type()}}).}
 }
 \description{
 A \code{list_of} object is a list where each element has the same type.

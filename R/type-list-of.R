@@ -171,10 +171,17 @@ as.character.vctrs_list_of <- function(x, ...) {
 # Type system -------------------------------------------------------------
 
 #' @rdname list_of
+#' @inheritParams vec_ptype2
 #' @export vec_ptype2.vctrs_list_of
 #' @method vec_ptype2 vctrs_list_of
 #' @export
-vec_ptype2.vctrs_list_of <- function(x, y, ...) UseMethod("vec_ptype2.vctrs_list_of", y)
+vec_ptype2.vctrs_list_of <- function(x, y, ..., x_arg = "x", y_arg = "y") {
+  if (inherits_only(x, c("vctrs_list_of", "vctrs_vctr"))) {
+    UseMethod("vec_ptype2.vctrs_list_of", y)
+  } else {
+    vec_default_ptype2(x, y, x_arg = x_arg, y_arg = y_arg)
+  }
+}
 #' @method vec_ptype2.vctrs_list_of vctrs_list_of
 #' @export
 vec_ptype2.vctrs_list_of.vctrs_list_of <- function(x, y, ...) {
@@ -194,9 +201,6 @@ vec_ptype2.list.vctrs_list_of <- function(x, y, ..., x_arg = "x", y_arg = "y") {
 #' @method vec_ptype2.vctrs_list_of default
 #' @export
 vec_ptype2.vctrs_list_of.default <- function(x, y, ..., x_arg = "x", y_arg = "y") {
-  if (is_unspecified(y)) {
-    stop_incompatible_type(x, y, x_arg = x_arg, y_arg = y_arg)
-  }
   vec_default_ptype2(x, y, x_arg = x_arg, y_arg = y_arg)
 }
 
