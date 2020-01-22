@@ -40,19 +40,23 @@ Run `revdep_details(,"arrow")` for more info
 ** package ‘arrow’ successfully unpacked and MD5 sums checked
 ** using staged installation
 Downloading apache-arrow
-Tue Jan 21 20:26:56 CET 2020: Auto-brewing apache-arrow in /var/folders/b9/1vbq6rn93_1fk71sn95dqb8r0000gn/T//build-apache-arrow...
-Error: No available formula with the name "apache-arrow" 
+rm: /var/folders/b9/1vbq6rn93_1fk71sn95dqb8r0000gn/T//build-apache-arrow/Cellar/boost/1.67.0_1/include/boost/fusion/adapted/std_array/detail: Invalid argument
+rm: /var/folders/b9/1vbq6rn93_1fk71sn95dqb8r0000gn/T//build-apache-arrow: Directory not empty
+Wed Jan 22 18:19:37 CET 2020: Auto-brewing apache-arrow in /var/folders/b9/1vbq6rn93_1fk71sn95dqb8r0000gn/T//build-apache-arrow...
+Error: No available formula with the name "sphinx-doc" (dependency of apache-arrow)
+Note: homebrew/core is shallow clone. To get complete history run:
+  git -C "$(brew --repo homebrew/core)" fetch --unshallow
+
 ==> Searching for a previously deleted formula (in the last month)...
 Error: No previously deleted formula found.
 Error: No similarly named formulae found.
 ==> Searching taps on GitHub...
 ==> Searching for similarly named formulae...
 ==> Searching taps...
-These formulae were found in taps:
-homebrew/linuxbrew-core/apache-arrow
-homebrew/linuxbrew-core/apache-arrow-glib
-To install one of them, run (for example):
-  brew install homebrew/linuxbrew-core/apache-arrow
+This formula was found in a tap:
+homebrew/linuxbrew-core/sphinx-doc
+To install it, run:
+  brew install homebrew/linuxbrew-core/sphinx-doc
 cp: /var/folders/b9/1vbq6rn93_1fk71sn95dqb8r0000gn/T//build-apache-arrow/Cellar/*/*/lib/*.a: No such file or directory
 created /var/folders/b9/1vbq6rn93_1fk71sn95dqb8r0000gn/T//build-apache-arrow/lib/libbrew.a
 PKG_CFLAGS=-I/var/folders/b9/1vbq6rn93_1fk71sn95dqb8r0000gn/T//build-apache-arrow/opt/apache-arrow/include -DARROW_R_WITH_ARROW
@@ -76,9 +80,11 @@ ERROR: compilation failed for package ‘arrow’
 ** package ‘arrow’ successfully unpacked and MD5 sums checked
 ** using staged installation
 Downloading apache-arrow
-rm: /var/folders/b9/1vbq6rn93_1fk71sn95dqb8r0000gn/T//build-apache-arrow/Library/Homebrew/compat/hbc/cli: Invalid argument
+rm: /var/folders/b9/1vbq6rn93_1fk71sn95dqb8r0000gn/T//build-apache-arrow/Library/Taps/homebrew/homebrew-core/.github/support.yml: Invalid argument
+rm: /var/folders/b9/1vbq6rn93_1fk71sn95dqb8r0000gn/T//build-apache-arrow/Cellar/boost/1.67.0_1/include/boost/fusion/support/tag_of.hpp: Invalid argument
+rm: /var/folders/b9/1vbq6rn93_1fk71sn95dqb8r0000gn/T//build-apache-arrow/Cellar/boost/1.67.0_1/include/boost/spirit/home/classic/iterator/typeof.hpp: Invalid argument
 rm: fts_read: No such file or directory
-Tue Jan 21 20:26:55 CET 2020: Auto-brewing apache-arrow in /var/folders/b9/1vbq6rn93_1fk71sn95dqb8r0000gn/T//build-apache-arrow...
+Wed Jan 22 18:19:34 CET 2020: Auto-brewing apache-arrow in /var/folders/b9/1vbq6rn93_1fk71sn95dqb8r0000gn/T//build-apache-arrow...
 ==> Tapping homebrew/core from https://github.com/autobrew/homebrew-core
 Tapped 2 commands and 4646 formulae (4,903 files, 12.8MB).
 double-conversion
@@ -275,45 +281,6 @@ installing to /Users/lionel/Desktop/vctrs/revdep/checks.noindex/arrow/old/arrow.
 * DONE (arrow)
 
 ```
-# drake
-
-<details>
-
-* Version: 7.9.0
-* Source code: https://github.com/cran/drake
-* URL: https://github.com/ropensci/drake, https://docs.ropensci.org/drake, https://books.ropensci.org/drake/
-* BugReports: https://github.com/ropensci/drake/issues
-* Date/Publication: 2020-01-08 09:00:12 UTC
-* Number of recursive dependencies: 137
-
-Run `revdep_details(,"drake")` for more info
-
-</details>
-
-## Newly broken
-
-*   checking tests ...
-    ```
-     ERROR
-    Running the tests in ‘tests/testthat.R’ failed.
-    Last 13 lines of output:
-        7. future::makeClusterPSOCK(workers, ...)
-        8. future:::makeNode(...)
-        9. (function() {...
-       10. base::tryCatch(...)
-       11. base:::tryCatchList(expr, classes, parentenv, handlers)
-       12. base:::tryCatchOne(expr, names, parentenv, handlers[[1L]])
-       13. value[[3L]](cond)
-       14. (function() {...
-      
-      ══ testthat results  ═══════════════════════════════════════════════════════════
-      [ OK: 5042 | SKIPPED: 264 | WARNINGS: 1 | FAILED: 1 ]
-      1. Error: future package functionality (@test-9-future.R#87) 
-      
-      Error: testthat unit tests failed
-      Execution halted
-    ```
-
 # rray
 
 <details>
@@ -337,16 +304,16 @@ Run `revdep_details(,"rray")` for more info
     Running the tests in ‘tests/testthat.R’ failed.
     Last 13 lines of output:
       ══ testthat results  ═══════════════════════════════════════════════════════════
-      [ OK: 1594 | SKIPPED: 0 | WARNINGS: 12 | FAILED: 41 ]
-      1. Failure: container casting logical errors with unknown `to`. (@test-container-cast.R#24) 
-      2. Failure: container casting integer errors with unknown `to`. (@test-container-cast.R#24) 
-      3. Failure: container casting double errors with unknown `to`. (@test-container-cast.R#24) 
-      4. Failure: container casting fails with unknown `x` (@test-container-cast.R#35) 
-      5. Failure: container casting fails with unknown `x` (@test-container-cast.R#35) 
-      6. Failure: container casting fails with unknown `x` (@test-container-cast.R#35) 
-      7. Failure: container casting rray errors with unknown `x`. (@test-container-cast.R#74) 
-      8. Failure: unknown container types are caught (@test-container-type.R#20) 
-      9. Failure: container type2 logical errors with unknown `y`. (@test-container-type2.R#24) 
+      [ OK: 1622 | SKIPPED: 0 | WARNINGS: 12 | FAILED: 13 ]
+      1. Failure: can't index beyond vector in extract (@test-extract.R#67) 
+      2. Failure: can't index beyond vector in extract (@test-extract.R#68) 
+      3. Failure: can extract with a logical (@test-extract.R#79) 
+      4. Failure: extract with character fails gracefully (@test-extract.R#163) 
+      5. Failure: can use a negative extract (@test-extract.R#177) 
+      6. Failure: can't index beyond vector in subset (@test-subset.R#76) 
+      7. Failure: can't index beyond vector in subset (@test-subset.R#77) 
+      8. Failure: can subset with a logical (@test-subset.R#88) 
+      9. Failure: subset with character fails gracefully (@test-subset.R#172) 
       1. ...
       
       Error: testthat unit tests failed

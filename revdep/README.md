@@ -10,7 +10,7 @@
 |collate  |en_US.UTF-8                  |
 |ctype    |en_US.UTF-8                  |
 |tz       |Europe/Brussels              |
-|date     |2020-01-21                   |
+|date     |2020-01-22                   |
 
 # Dependencies
 
@@ -29,11 +29,10 @@
 |:--------------------------|:--------|:------|:-------|:----|
 |[arrow](failures.md#arrow) |0.15.1.1 |__+1__ |        |-1   |
 
-## New problems (3)
+## New problems (2)
 
 |package                    |version |error  |warning |note |
 |:--------------------------|:-------|:------|:-------|:----|
-|[drake](problems.md#drake) |7.9.0   |__+1__ |        |     |
 |[rray](problems.md#rray)   |0.1.0   |__+1__ |        |     |
 |[tidyr](problems.md#tidyr) |1.0.0   |__+1__ |        |1    |
 

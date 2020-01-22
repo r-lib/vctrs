@@ -40,19 +40,23 @@ Run `revdep_details(,"arrow")` for more info
 ** package ‘arrow’ successfully unpacked and MD5 sums checked
 ** using staged installation
 Downloading apache-arrow
-Tue Jan 21 20:26:56 CET 2020: Auto-brewing apache-arrow in /var/folders/b9/1vbq6rn93_1fk71sn95dqb8r0000gn/T//build-apache-arrow...
-Error: No available formula with the name "apache-arrow" 
+rm: /var/folders/b9/1vbq6rn93_1fk71sn95dqb8r0000gn/T//build-apache-arrow/Cellar/boost/1.67.0_1/include/boost/fusion/adapted/std_array/detail: Invalid argument
+rm: /var/folders/b9/1vbq6rn93_1fk71sn95dqb8r0000gn/T//build-apache-arrow: Directory not empty
+Wed Jan 22 18:19:37 CET 2020: Auto-brewing apache-arrow in /var/folders/b9/1vbq6rn93_1fk71sn95dqb8r0000gn/T//build-apache-arrow...
+Error: No available formula with the name "sphinx-doc" (dependency of apache-arrow)
+Note: homebrew/core is shallow clone. To get complete history run:
+  git -C "$(brew --repo homebrew/core)" fetch --unshallow
+
 ==> Searching for a previously deleted formula (in the last month)...
 Error: No previously deleted formula found.
 Error: No similarly named formulae found.
 ==> Searching taps on GitHub...
 ==> Searching for similarly named formulae...
 ==> Searching taps...
-These formulae were found in taps:
-homebrew/linuxbrew-core/apache-arrow
-homebrew/linuxbrew-core/apache-arrow-glib
-To install one of them, run (for example):
-  brew install homebrew/linuxbrew-core/apache-arrow
+This formula was found in a tap:
+homebrew/linuxbrew-core/sphinx-doc
+To install it, run:
+  brew install homebrew/linuxbrew-core/sphinx-doc
 cp: /var/folders/b9/1vbq6rn93_1fk71sn95dqb8r0000gn/T//build-apache-arrow/Cellar/*/*/lib/*.a: No such file or directory
 created /var/folders/b9/1vbq6rn93_1fk71sn95dqb8r0000gn/T//build-apache-arrow/lib/libbrew.a
 PKG_CFLAGS=-I/var/folders/b9/1vbq6rn93_1fk71sn95dqb8r0000gn/T//build-apache-arrow/opt/apache-arrow/include -DARROW_R_WITH_ARROW
@@ -76,9 +80,11 @@ ERROR: compilation failed for package ‘arrow’
 ** package ‘arrow’ successfully unpacked and MD5 sums checked
 ** using staged installation
 Downloading apache-arrow
-rm: /var/folders/b9/1vbq6rn93_1fk71sn95dqb8r0000gn/T//build-apache-arrow/Library/Homebrew/compat/hbc/cli: Invalid argument
+rm: /var/folders/b9/1vbq6rn93_1fk71sn95dqb8r0000gn/T//build-apache-arrow/Library/Taps/homebrew/homebrew-core/.github/support.yml: Invalid argument
+rm: /var/folders/b9/1vbq6rn93_1fk71sn95dqb8r0000gn/T//build-apache-arrow/Cellar/boost/1.67.0_1/include/boost/fusion/support/tag_of.hpp: Invalid argument
+rm: /var/folders/b9/1vbq6rn93_1fk71sn95dqb8r0000gn/T//build-apache-arrow/Cellar/boost/1.67.0_1/include/boost/spirit/home/classic/iterator/typeof.hpp: Invalid argument
 rm: fts_read: No such file or directory
-Tue Jan 21 20:26:55 CET 2020: Auto-brewing apache-arrow in /var/folders/b9/1vbq6rn93_1fk71sn95dqb8r0000gn/T//build-apache-arrow...
+Wed Jan 22 18:19:34 CET 2020: Auto-brewing apache-arrow in /var/folders/b9/1vbq6rn93_1fk71sn95dqb8r0000gn/T//build-apache-arrow...
 ==> Tapping homebrew/core from https://github.com/autobrew/homebrew-core
 Tapped 2 commands and 4646 formulae (4,903 files, 12.8MB).
 double-conversion
