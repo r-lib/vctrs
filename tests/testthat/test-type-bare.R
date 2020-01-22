@@ -21,6 +21,10 @@ test_that("cast base methods are not inherited", {
   }
 })
 
+test_that("default cast allows objects with the same type", {
+  x <- structure(1, class = c("foo", "double"))
+  expect_equal(vec_cast(x, x), x)
+})
 
 # shape_match -------------------------------------------------------------
 
