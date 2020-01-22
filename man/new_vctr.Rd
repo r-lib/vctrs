@@ -14,9 +14,9 @@ new_vctr(.data, ..., class = character(), inherit_base_type = FALSE)
 
 \item{class}{Name of subclass.}
 
-\item{inherit_base_type}{Does this class extend the base type of \code{.data}?
-i.e. does the resulting object extend the behaviour the underlying
-type?}
+\item{inherit_base_type}{\Sexpr[results=rd, stage=render]{vctrs:::lifecycle("experimental")}
+Does this class extend the base type of \code{.data}?  i.e. does the
+resulting object extend the behaviour the underlying type?}
 }
 \description{
 This abstract class provides a set of useful default methods that makes it

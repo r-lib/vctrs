@@ -57,10 +57,9 @@
   they work with the result of modeling functions like `glm()` and `mgcv::gam()`
   which store "family" objects containing expressions (#643).
 
-* `new_vctr()` gains a `inherit_base_type` argument which determines whether or
-  not the class of the underlying type will be included in the class. This
-  generally should be set to `TRUE`, unless your class does not behave like the
-  underlying type; for example a `factor()` should not inherit from `integer`.
+* `new_vctr()` gains an experimental `inherit_base_type` argument
+  which determines whether or not the class of the underlying type
+  will be included in the class.
 
 * `list_of()` now inherits explicitly from "list" (#593).
 

@@ -49,9 +49,9 @@
 #' @param .data Foundation of class. Must be a vector
 #' @param ... Name-value pairs defining attributes
 #' @param class Name of subclass.
-#' @param inherit_base_type Does this class extend the base type of `.data`?
-#'   i.e. does the resulting object extend the behaviour the underlying
-#'   type?
+#' @param inherit_base_type \Sexpr[results=rd, stage=render]{vctrs:::lifecycle("experimental")}
+#'   Does this class extend the base type of `.data`?  i.e. does the
+#'   resulting object extend the behaviour the underlying type?
 #' @export
 #' @keywords internal
 #' @aliases vctr
