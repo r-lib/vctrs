@@ -19,19 +19,19 @@ vec_cast_common(..., .to = NULL)
 
 vec_restore(x, to, ..., n = NULL)
 
-\method{vec_cast}{logical}(x, to, ...)
+\method{vec_cast}{logical}(x, to, ..., x_arg = "x", to_arg = "to")
 
-\method{vec_cast}{integer}(x, to, ...)
+\method{vec_cast}{integer}(x, to, ..., x_arg = "x", to_arg = "to")
 
-\method{vec_cast}{double}(x, to, ...)
+\method{vec_cast}{double}(x, to, ..., x_arg = "x", to_arg = "to")
 
-\method{vec_cast}{complex}(x, to, ...)
+\method{vec_cast}{complex}(x, to, ..., x_arg = "x", to_arg = "to")
 
-\method{vec_cast}{raw}(x, to, ...)
+\method{vec_cast}{raw}(x, to, ..., x_arg = "x", to_arg = "to")
 
-\method{vec_cast}{character}(x, to, ...)
+\method{vec_cast}{character}(x, to, ..., x_arg = "x", to_arg = "to")
 
-\method{vec_cast}{list}(x, to, ...)
+\method{vec_cast}{list}(x, to, ..., x_arg = "x", to_arg = "to")
 }
 \arguments{
 \item{x}{Vectors to cast.}

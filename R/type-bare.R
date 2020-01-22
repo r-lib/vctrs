@@ -323,7 +323,10 @@ vec_ptype2.list.default <- function(x, y, ..., x_arg = "x", y_arg = "y") {
 #' @rdname vec_cast
 #' @export vec_cast.logical
 #' @method vec_cast logical
-vec_cast.logical <- function(x, to, ...) {
+vec_cast.logical <- function(x, to, ..., x_arg = "x", to_arg = "to") {
+  if (is.object(to)) {
+    return(vec_default_cast(x, to, x_arg = x_arg, to_arg = to_arg))
+  }
   UseMethod("vec_cast.logical")
 }
 #' @export
@@ -385,7 +388,10 @@ vec_cast.logical.default <- function(x, to, ..., x_arg = "x", to_arg = "to") {
 #' @rdname vec_cast
 #' @export vec_cast.integer
 #' @method vec_cast integer
-vec_cast.integer <- function(x, to, ...) {
+vec_cast.integer <- function(x, to, ..., x_arg = "x", to_arg = "to") {
+  if (is.object(to)) {
+    return(vec_default_cast(x, to, x_arg = x_arg, to_arg = to_arg))
+  }
   UseMethod("vec_cast.integer")
 }
 #' @export
@@ -438,7 +444,10 @@ vec_cast.integer.default <- function(x, to, ..., x_arg = "x", to_arg = "to") {
 #' @rdname vec_cast
 #' @export vec_cast.double
 #' @method vec_cast double
-vec_cast.double <- function(x, to, ...) {
+vec_cast.double <- function(x, to, ..., x_arg = "x", to_arg = "to") {
+  if (is.object(to)) {
+    return(vec_default_cast(x, to, x_arg = x_arg, to_arg = to_arg))
+  }
   UseMethod("vec_cast.double")
 }
 #' @export
@@ -491,7 +500,10 @@ vec_cast.double.default <- function(x, to, ..., x_arg = "x", to_arg = "to") {
 #' @rdname vec_cast
 #' @export vec_cast.complex
 #' @method vec_cast complex
-vec_cast.complex <- function(x, to, ...) {
+vec_cast.complex <- function(x, to, ..., x_arg = "x", to_arg = "to") {
+  if (is.object(to)) {
+    return(vec_default_cast(x, to, x_arg = x_arg, to_arg = to_arg))
+  }
   UseMethod("vec_cast.complex")
 }
 #' @export
@@ -535,7 +547,10 @@ vec_cast.complex.default <- function(x, to, ..., x_arg = "x", to_arg = "to") {
 #' @rdname vec_cast
 #' @export vec_cast.raw
 #' @method vec_cast raw
-vec_cast.raw <- function(x, to, ...) {
+vec_cast.raw <- function(x, to, ..., x_arg = "x", to_arg = "to") {
+  if (is.object(to)) {
+    return(vec_default_cast(x, to, x_arg = x_arg, to_arg = to_arg))
+  }
   UseMethod("vec_cast.raw")
 }
 #' @export
@@ -564,7 +579,10 @@ vec_cast.raw.default <- function(x, to, ..., x_arg = "x", to_arg = "to") {
 #' @rdname vec_cast
 #' @export vec_cast.character
 #' @method vec_cast character
-vec_cast.character <- function(x, to, ...) {
+vec_cast.character <- function(x, to, ..., x_arg = "x", to_arg = "to") {
+  if (is.object(to)) {
+    return(vec_default_cast(x, to, x_arg = x_arg, to_arg = to_arg))
+  }
   UseMethod("vec_cast.character")
 }
 #' @export
@@ -617,7 +635,10 @@ vec_cast.character.default <- function(x, to, ..., x_arg = "x", to_arg = "to") {
 #' @export vec_cast.list
 #' @method vec_cast list
 #' @export
-vec_cast.list <- function(x, to, ...) {
+vec_cast.list <- function(x, to, ..., x_arg = "x", to_arg = "to") {
+  if (is.object(to)) {
+    return(vec_default_cast(x, to, x_arg = x_arg, to_arg = to_arg))
+  }
   UseMethod("vec_cast.list")
 }
 #' @export
