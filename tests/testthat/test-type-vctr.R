@@ -2,6 +2,9 @@ context("test-type-vctr")
 
 test_that("constructor sets attributes", {
   x <- new_vctr(1:4, class = "x", x = 1)
+  expect_equal(x, structure(1:4, class = c("x", "vctrs_vctr"), x = 1))
+
+  x <- new_vctr(1:4, class = "x", x = 1, inherit_base_type = TRUE)
   expect_equal(x, structure(1:4, class = c("x", "vctrs_vctr", "integer"), x = 1))
 })
 

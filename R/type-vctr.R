@@ -55,7 +55,10 @@
 #' @export
 #' @keywords internal
 #' @aliases vctr
-new_vctr <- function(.data, ..., class = character(), inherit_base_type = TRUE) {
+new_vctr <- function(.data,
+                     ...,
+                     class = character(),
+                     inherit_base_type = FALSE) {
   if (!is_vector(.data)) {
     abort("`.data` must be a vector type.")
   }
