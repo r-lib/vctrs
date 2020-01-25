@@ -1,4 +1,7 @@
 
+# vctrs (development version)
+
+
 # vctrs 0.2.2
 
 * New `vec_as_subscript()` function to cast inputs to the base type
