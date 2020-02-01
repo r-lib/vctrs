@@ -265,7 +265,7 @@ cnd_header.vctrs_error_subscript_type <- function(cnd) {
   action <- cnd_subscript_action(cnd)
   elt <- cnd_subscript_element(cnd)
   if (cnd_subscript_scalar(cnd)) {
-    glue::glue("Must {action} {elt[[1]]} with a single subscript.")
+    glue::glue("Must {action} {elt[[1]]} with a single valid subscript.")
   } else {
     glue::glue("Must {action} {elt[[2]]} with a valid subscript vector.")
   }

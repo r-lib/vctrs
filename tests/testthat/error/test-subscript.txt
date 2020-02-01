@@ -37,17 +37,17 @@ vec_as_subscript2() forbids subscript types
 ===========================================
 
 > vec_as_subscript2(1L, numeric = "error", logical = "error")
-Error: Must extract element with a single subscript.
+Error: Must extract element with a single valid subscript.
 x The subscript has the wrong type `integer`.
 i It must be character.
 
 > vec_as_subscript2("foo", character = "error", logical = "error")
-Error: Must extract element with a single subscript.
+Error: Must extract element with a single valid subscript.
 x The subscript has the wrong type `character`.
 i It must be numeric.
 
 > vec_as_subscript2(TRUE, logical = "error")
-Error: Must extract element with a single subscript.
+Error: Must extract element with a single valid subscript.
 x The subscript has the wrong type `logical`.
 i It must be numeric or character.
 

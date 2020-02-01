@@ -115,12 +115,12 @@ vec_as_location2() requires integer or character inputs
 =======================================================
 
 > vec_as_location2(TRUE, 10L)
-Error: Must extract element with a single subscript.
+Error: Must extract element with a single valid subscript.
 x The subscript has the wrong type `logical`.
 i It must be numeric or character.
 
 > vec_as_location2(mtcars, 10L)
-Error: Must extract element with a single subscript.
+Error: Must extract element with a single valid subscript.
 x The subscript has the wrong type `data.frame<
   mpg : double
   cyl : double
@@ -137,27 +137,27 @@ x The subscript has the wrong type `data.frame<
 i It must be numeric or character.
 
 > vec_as_location2(env(), 10L)
-Error: Must extract element with a single subscript.
+Error: Must extract element with a single valid subscript.
 x The subscript has the wrong type `environment`.
 i It must be numeric or character.
 
 > vec_as_location2(foobar(), 10L)
-Error: Must extract element with a single subscript.
+Error: Must extract element with a single valid subscript.
 x The subscript has the wrong type `vctrs_foobar`.
 i It must be numeric or character.
 
 > vec_as_location2(2.5, 3L)
-Error: Must extract element with a single subscript.
+Error: Must extract element with a single valid subscript.
 x Lossy cast from <double> to <integer>.
 
 > # Idem with custom `arg`
 > vec_as_location2(foobar(), 10L, arg = "foo")
-Error: Must extract element with a single subscript.
+Error: Must extract element with a single valid subscript.
 x The subscript `foo` has the wrong type `vctrs_foobar`.
 i It must be numeric or character.
 
 > vec_as_location2(2.5, 3L, arg = "foo")
-Error: Must extract element with a single subscript.
+Error: Must extract element with a single valid subscript.
 x Lossy cast from `foo` <double> to <integer>.
 
 
@@ -165,11 +165,11 @@ vec_as_location2() requires length 1 inputs
 ===========================================
 
 > vec_as_location2(1:2, 2L)
-Error: Must extract element with a single subscript.
+Error: Must extract element with a single valid subscript.
 x The subscript has size 2 but must be size 1.
 
 > vec_as_location2(mtcars, 10L)
-Error: Must extract element with a single subscript.
+Error: Must extract element with a single valid subscript.
 x The subscript has the wrong type `data.frame<
   mpg : double
   cyl : double
@@ -187,11 +187,11 @@ i It must be numeric or character.
 
 > # Idem with custom `arg`
 > vec_as_location2(1:2, 2L, arg = "foo")
-Error: Must extract element with a single subscript.
+Error: Must extract element with a single valid subscript.
 x The subscript `foo` has size 2 but must be size 1.
 
 > vec_as_location2(mtcars, 10L, arg = "foo")
-Error: Must extract element with a single subscript.
+Error: Must extract element with a single valid subscript.
 x The subscript `foo` has the wrong type `data.frame<
   mpg : double
   cyl : double
@@ -208,7 +208,7 @@ x The subscript `foo` has the wrong type `data.frame<
 i It must be numeric or character.
 
 > vec_as_location2(1:2, 2L, arg = "foo")
-Error: Must extract element with a single subscript.
+Error: Must extract element with a single valid subscript.
 x The subscript `foo` has size 2 but must be size 1.
 
 
@@ -216,30 +216,30 @@ vec_as_location2() requires positive integers
 =============================================
 
 > vec_as_location2(0, 2L)
-Error: Must extract element with a single subscript.
+Error: Must extract element with a single valid subscript.
 x The subscript has value 0 but must be a positive location.
 
 > vec_as_location2(-1, 2L)
-Error: Must extract element with a single subscript.
+Error: Must extract element with a single valid subscript.
 x The subscript has value -1 but must be a positive location.
 
 > # Idem with custom `arg`
 > vec_as_location2(0, 2L, arg = "foo")
-Error: Must extract element with a single subscript.
+Error: Must extract element with a single valid subscript.
 x The subscript `foo` has value 0 but must be a positive location.
 
 > # vec_as_location2() fails with NA
 > vec_as_location2(na_int, 2L)
-Error: Must extract element with a single subscript.
+Error: Must extract element with a single valid subscript.
 x The subscript can't be `NA`.
 
 > vec_as_location2(na_chr, 1L, names = "foo")
-Error: Must extract element with a single subscript.
+Error: Must extract element with a single valid subscript.
 x The subscript can't be `NA`.
 
 > # Idem with custom `arg`
 > vec_as_location2(na_int, 2L, arg = "foo")
-Error: Must extract element with a single subscript.
+Error: Must extract element with a single valid subscript.
 x The subscript `foo` can't be `NA`.
 
 
@@ -319,19 +319,19 @@ Error: Must subset elements with a valid subscript vector.
 x The subscript `foo` can't contain negative locations.
 
 > num_as_location2(-1, 2, negative = "error", arg = "foo")
-Error: Must extract element with a single subscript.
+Error: Must extract element with a single valid subscript.
 x The subscript `foo` has value -1 but must be a positive location.
 
 > vec_as_location2(0, 2, arg = "foo")
-Error: Must extract element with a single subscript.
+Error: Must extract element with a single valid subscript.
 x The subscript `foo` has value 0 but must be a positive location.
 
 > vec_as_location2(na_dbl, 2, arg = "foo")
-Error: Must extract element with a single subscript.
+Error: Must extract element with a single valid subscript.
 x The subscript `foo` can't be `NA`.
 
 > vec_as_location2(c(1, 2), 2, arg = "foo")
-Error: Must extract element with a single subscript.
+Error: Must extract element with a single valid subscript.
 x The subscript `foo` has size 2 but must be size 1.
 
 > vec_as_location(c(TRUE, FALSE), 3, arg = "foo")
@@ -360,19 +360,19 @@ Error: Must rename columns with a valid subscript vector.
 x The subscript `foo(bar)` can't contain negative locations.
 
 > with_tibble_cols(num_as_location2(-1, 2, negative = "error"))
-Error: Must rename column with a single subscript.
+Error: Must rename column with a single valid subscript.
 x The subscript `foo(bar)` has value -1 but must be a positive location.
 
 > with_tibble_cols(vec_as_location2(0, 2))
-Error: Must rename column with a single subscript.
+Error: Must rename column with a single valid subscript.
 x The subscript `foo(bar)` has value 0 but must be a positive location.
 
 > with_tibble_cols(vec_as_location2(na_dbl, 2))
-Error: Must rename column with a single subscript.
+Error: Must rename column with a single valid subscript.
 x The subscript `foo(bar)` can't be `NA`.
 
 > with_tibble_cols(vec_as_location2(c(1, 2), 2))
-Error: Must rename column with a single subscript.
+Error: Must rename column with a single valid subscript.
 x The subscript `foo(bar)` has size 2 but must be size 1.
 
 > with_tibble_cols(vec_as_location(c(TRUE, FALSE), 3))
