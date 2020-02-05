@@ -101,6 +101,7 @@ SEXP arg_validate(SEXP arg, const char* arg_nm);
 void never_reached(const char* fn) __attribute__((noreturn));
 
 enum vctrs_type2 vec_typeof2_impl(enum vctrs_type type_x, enum vctrs_type type_y, int* left);
+enum vctrs_s3_type2 vec_s3_typeof2_impl(SEXP x, SEXP y, enum vctrs_type type_x, enum vctrs_type type_y, int* left);
 
 SEXP new_list_of(SEXP x, SEXP ptype);
 void init_list_of(SEXP x, SEXP ptype);
