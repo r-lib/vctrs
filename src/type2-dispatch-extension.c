@@ -99,16 +99,16 @@ static enum vctrs_s3_type2 vec_s3_typeof2_impl2(SEXP x,
   switch(s3_class_type(x)) {
   case vctrs_s3_class_bare_factor: {
     switch(type_y) {
-    case vctrs_type_null:      *left = 1; return vctrs_s3_type2_null_bare_factor;
-    case vctrs_type_logical:   *left = 1; return vctrs_s3_type2_logical_bare_factor;
-    case vctrs_type_integer:   *left = 1; return vctrs_s3_type2_integer_bare_factor;
-    case vctrs_type_double:    *left = 1; return vctrs_s3_type2_double_bare_factor;
-    case vctrs_type_complex:   *left = 1; return vctrs_s3_type2_complex_bare_factor;
-    case vctrs_type_character: *left = 1; return vctrs_s3_type2_character_bare_factor;
-    case vctrs_type_raw:       *left = 1; return vctrs_s3_type2_raw_bare_factor;
-    case vctrs_type_list:      *left = 1; return vctrs_s3_type2_list_bare_factor;
-    case vctrs_type_dataframe: *left = 1; return vctrs_s3_type2_dataframe_bare_factor;
-    case vctrs_type_scalar:    *left = 1; return vctrs_s3_type2_scalar_bare_factor;
+    case vctrs_type_null:               *left =  1; return vctrs_s3_type2_null_bare_factor;
+    case vctrs_type_logical:            *left =  1; return vctrs_s3_type2_logical_bare_factor;
+    case vctrs_type_integer:            *left =  1; return vctrs_s3_type2_integer_bare_factor;
+    case vctrs_type_double:             *left =  1; return vctrs_s3_type2_double_bare_factor;
+    case vctrs_type_complex:            *left =  1; return vctrs_s3_type2_complex_bare_factor;
+    case vctrs_type_character:          *left =  1; return vctrs_s3_type2_character_bare_factor;
+    case vctrs_type_raw:                *left =  1; return vctrs_s3_type2_raw_bare_factor;
+    case vctrs_type_list:               *left =  1; return vctrs_s3_type2_list_bare_factor;
+    case vctrs_type_dataframe:          *left =  1; return vctrs_s3_type2_dataframe_bare_factor;
+    case vctrs_type_scalar:             *left =  1; return vctrs_s3_type2_scalar_bare_factor;
     case vctrs_type_s3: {
       switch(s3_class_type(y)) {
       case vctrs_s3_class_bare_factor:  *left = -1; return vctrs_s3_type2_bare_factor_bare_factor;
@@ -120,16 +120,16 @@ static enum vctrs_s3_type2 vec_s3_typeof2_impl2(SEXP x,
   }
   case vctrs_s3_class_bare_ordered: {
     switch(type_y) {
-    case vctrs_type_null:      *left = 1; return vctrs_s3_type2_null_bare_ordered;
-    case vctrs_type_logical:   *left = 1; return vctrs_s3_type2_logical_bare_ordered;
-    case vctrs_type_integer:   *left = 1; return vctrs_s3_type2_integer_bare_ordered;
-    case vctrs_type_double:    *left = 1; return vctrs_s3_type2_double_bare_ordered;
-    case vctrs_type_complex:   *left = 1; return vctrs_s3_type2_complex_bare_ordered;
-    case vctrs_type_character: *left = 1; return vctrs_s3_type2_character_bare_ordered;
-    case vctrs_type_raw:       *left = 1; return vctrs_s3_type2_raw_bare_ordered;
-    case vctrs_type_list:      *left = 1; return vctrs_s3_type2_list_bare_ordered;
-    case vctrs_type_dataframe: *left = 1; return vctrs_s3_type2_dataframe_bare_ordered;
-    case vctrs_type_scalar:    *left = 1; return vctrs_s3_type2_scalar_bare_ordered;
+    case vctrs_type_null:               *left =  1; return vctrs_s3_type2_null_bare_ordered;
+    case vctrs_type_logical:            *left =  1; return vctrs_s3_type2_logical_bare_ordered;
+    case vctrs_type_integer:            *left =  1; return vctrs_s3_type2_integer_bare_ordered;
+    case vctrs_type_double:             *left =  1; return vctrs_s3_type2_double_bare_ordered;
+    case vctrs_type_complex:            *left =  1; return vctrs_s3_type2_complex_bare_ordered;
+    case vctrs_type_character:          *left =  1; return vctrs_s3_type2_character_bare_ordered;
+    case vctrs_type_raw:                *left =  1; return vctrs_s3_type2_raw_bare_ordered;
+    case vctrs_type_list:               *left =  1; return vctrs_s3_type2_list_bare_ordered;
+    case vctrs_type_dataframe:          *left =  1; return vctrs_s3_type2_dataframe_bare_ordered;
+    case vctrs_type_scalar:             *left =  1; return vctrs_s3_type2_scalar_bare_ordered;
     case vctrs_type_s3: {
       switch(s3_class_type(y)) {
       case vctrs_s3_class_bare_factor:  *left =  1; return vctrs_s3_type2_bare_factor_bare_ordered;
@@ -141,16 +141,16 @@ static enum vctrs_s3_type2 vec_s3_typeof2_impl2(SEXP x,
   }
   case vctrs_s3_class_unknown: {
     switch(type_y) {
-    case vctrs_type_null:      *left = 1; return vctrs_s3_type2_null_unknown;
-    case vctrs_type_logical:   *left = 1; return vctrs_s3_type2_logical_unknown;
-    case vctrs_type_integer:   *left = 1; return vctrs_s3_type2_integer_unknown;
-    case vctrs_type_double:    *left = 1; return vctrs_s3_type2_double_unknown;
-    case vctrs_type_complex:   *left = 1; return vctrs_s3_type2_complex_unknown;
-    case vctrs_type_character: *left = 1; return vctrs_s3_type2_character_unknown;
-    case vctrs_type_raw:       *left = 1; return vctrs_s3_type2_raw_unknown;
-    case vctrs_type_list:      *left = 1; return vctrs_s3_type2_list_unknown;
-    case vctrs_type_dataframe: *left = 1; return vctrs_s3_type2_dataframe_unknown;
-    case vctrs_type_scalar:    *left = 1; return vctrs_s3_type2_scalar_unknown;
+    case vctrs_type_null:               *left =  1; return vctrs_s3_type2_null_unknown;
+    case vctrs_type_logical:            *left =  1; return vctrs_s3_type2_logical_unknown;
+    case vctrs_type_integer:            *left =  1; return vctrs_s3_type2_integer_unknown;
+    case vctrs_type_double:             *left =  1; return vctrs_s3_type2_double_unknown;
+    case vctrs_type_complex:            *left =  1; return vctrs_s3_type2_complex_unknown;
+    case vctrs_type_character:          *left =  1; return vctrs_s3_type2_character_unknown;
+    case vctrs_type_raw:                *left =  1; return vctrs_s3_type2_raw_unknown;
+    case vctrs_type_list:               *left =  1; return vctrs_s3_type2_list_unknown;
+    case vctrs_type_dataframe:          *left =  1; return vctrs_s3_type2_dataframe_unknown;
+    case vctrs_type_scalar:             *left =  1; return vctrs_s3_type2_scalar_unknown;
     case vctrs_type_s3: {
       switch(s3_class_type(y)) {
       case vctrs_s3_class_bare_factor:  *left =  1; return vctrs_s3_type2_bare_factor_unknown;
