@@ -284,6 +284,18 @@ SEXP vec_type2(SEXP x,
                struct vctrs_arg* y_arg,
                int* left);
 
+SEXP vctrs_type2_dispatch(SEXP x,
+                          SEXP y,
+                          struct vctrs_arg* x_arg,
+                          struct vctrs_arg* y_arg);
+
+SEXP vec_type2_extension(SEXP x, SEXP y,
+                         enum vctrs_type x_type,
+                         enum vctrs_type y_type,
+                         struct vctrs_arg* x_arg,
+                         struct vctrs_arg* y_arg,
+                         int* left);
+
 bool is_data_frame(SEXP x);
 bool is_record(SEXP x);
 

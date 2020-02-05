@@ -23,6 +23,8 @@ SEXP strings_vctrs_list_of = NULL;
 SEXP strings_list = NULL;
 
 SEXP classes_data_frame = NULL;
+SEXP classes_factor = NULL;
+SEXP classes_ordered = NULL;
 SEXP classes_tibble = NULL;
 SEXP classes_list_of = NULL;
 SEXP classes_vctrs_group_rle = NULL;
@@ -316,6 +318,28 @@ SEXP s3_find_method(const char* generic, SEXP x) {
 
   UNPROTECT(1);
   return R_NilValue;
+}
+
+// [[ include("utils.h") ]]
+SEXP new_empty_factor(SEXP levels) {
+  SEXP out = PROTECT(Rf_allocVector(INTSXP, 0));
+
+  Rf_setAttrib(out, R_LevelsSymbol, levels);
+  Rf_setAttrib(out, R_ClassSymbol, classes_factor);
+
+  UNPROTECT(1);
+  return out;
+}
+
+// [[ include("utils.h") ]]
+SEXP new_empty_ordered(SEXP levels) {
+  SEXP out = PROTECT(Rf_allocVector(INTSXP, 0));
+
+  Rf_setAttrib(out, R_LevelsSymbol, levels);
+  Rf_setAttrib(out, R_ClassSymbol, classes_ordered);
+
+  UNPROTECT(1);
+  return out;
 }
 
 // [[ include("vctrs.h") ]]
@@ -1147,6 +1171,15 @@ void vctrs_init_utils(SEXP ns) {
 
   strings_data_frame = Rf_mkChar("data.frame");
   SET_STRING_ELT(classes_data_frame, 0, strings_data_frame);
+
+  classes_factor = Rf_allocVector(STRSXP, 1);
+  R_PreserveObject(classes_factor);
+  SET_STRING_ELT(classes_factor, 0, strings_factor);
+
+  classes_ordered = Rf_allocVector(STRSXP, 2);
+  R_PreserveObject(classes_ordered);
+  SET_STRING_ELT(classes_ordered, 0, strings_ordered);
+  SET_STRING_ELT(classes_ordered, 1, strings_factor);
 
 
   chrs_subset = Rf_mkString("subset");
