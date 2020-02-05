@@ -11,6 +11,11 @@ base_empty_types <- list(
   dataframe = data.frame()
 )
 
+base_s3_empty_types <- list(
+  bare_factor = new_factor(),
+  bare_ordered = new_ordered()
+)
+
 proxied_empty_types <- list(
   double = new_hidden(),
   # Don't call tibble here to avoid catch-22, because tibble now uses vctrs
