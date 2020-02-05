@@ -22,6 +22,12 @@ enum vctrs_class_type {
   vctrs_class_none
 };
 
+enum vctrs_s3_class_type {
+  vctrs_s3_class_bare_factor,
+  vctrs_s3_class_bare_ordered,
+  vctrs_s3_class_unknown
+};
+
 
 bool r_is_bool(SEXP x);
 
@@ -79,6 +85,8 @@ bool is_data_frame(SEXP x);
 bool is_bare_data_frame(SEXP x);
 bool is_bare_tibble(SEXP x);
 bool is_record(SEXP x);
+
+enum vctrs_s3_class_type s3_class_type(SEXP x);
 
 SEXP vec_unique_names(SEXP x, bool quiet);
 SEXP vec_unique_colnames(SEXP x, bool quiet);
@@ -249,6 +257,8 @@ extern SEXP strings_data_frame;
 extern SEXP strings_vctrs_rcrd;
 extern SEXP strings_posixlt;
 extern SEXP strings_posixt;
+extern SEXP strings_factor;
+extern SEXP strings_ordered;
 extern SEXP strings_vctrs_vctr;
 extern SEXP strings_none;
 extern SEXP strings_minimal;

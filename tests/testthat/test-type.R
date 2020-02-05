@@ -140,6 +140,17 @@ test_that("class_type() detects classes", {
   expect_identical(class_type(foobar()), "unknown")
 })
 
+test_that("s3_class_type() detects known S3 classes", {
+  expect_identical(s3_class_type(new_factor()), "bare_factor")
+  expect_identical(s3_class_type(new_ordered()), "bare_ordered")
+
+  expect_identical(s3_class_type(data_frame()), "unknown")
+  expect_identical(s3_class_type(subclass(new_factor())), "unknown")
+  expect_identical(s3_class_type(subclass(new_ordered())), "unknown")
+
+  expect_error(s3_class_type(1), "Non-S3 type")
+})
+
 test_that("vec_ptype() handles class-less yet OBJECT gremlins", {
   gremlin <- stats::model.frame(freeny)
   expect_error(vec_ptype(gremlin), NA)

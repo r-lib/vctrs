@@ -16,6 +16,8 @@ SEXP strings_data_frame = NULL;
 SEXP strings_vctrs_rcrd = NULL;
 SEXP strings_posixt = NULL;
 SEXP strings_posixlt = NULL;
+SEXP strings_factor = NULL;
+SEXP strings_ordered = NULL;
 SEXP strings_vctrs_vctr = NULL;
 SEXP strings_vctrs_list_of = NULL;
 SEXP strings_list = NULL;
@@ -1082,7 +1084,7 @@ void vctrs_init_utils(SEXP ns) {
 
   // Holds the CHARSXP objects because unlike symbols they can be
   // garbage collected
-  strings = Rf_allocVector(STRSXP, 16);
+  strings = Rf_allocVector(STRSXP, 18);
   R_PreserveObject(strings);
 
   strings_dots = Rf_mkChar("...");
@@ -1132,6 +1134,12 @@ void vctrs_init_utils(SEXP ns) {
 
   strings_length = Rf_mkChar("length");
   SET_STRING_ELT(strings, 15, strings_length);
+
+  strings_factor = Rf_mkChar("factor");
+  SET_STRING_ELT(strings, 16, strings_factor);
+
+  strings_ordered = Rf_mkChar("ordered");
+  SET_STRING_ELT(strings, 17, strings_ordered);
 
 
   classes_data_frame = Rf_allocVector(STRSXP, 1);
