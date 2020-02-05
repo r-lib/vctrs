@@ -398,6 +398,16 @@ stop_scalar_type <- function(x, arg = NULL) {
   stop_vctrs(msg, "vctrs_error_scalar_type", actual = x)
 }
 
+stop_corrupt_factor_levels <- function(x, arg = "x") {
+  msg <- glue::glue("`{arg}` is a corrupt factor with non-character levels")
+  abort(msg)
+}
+
+stop_corrupt_ordered_levels <- function(x, arg = "x") {
+  msg <- glue::glue("`{arg}` is a corrupt ordered factor with non-character levels")
+  abort(msg)
+}
+
 stop_recycle_incompatible_size <- function(x_size, size, x_arg = "x") {
   stop_vctrs(
     x_size = x_size,

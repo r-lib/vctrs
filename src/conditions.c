@@ -65,3 +65,19 @@ void stop_recycle_incompatible_size(R_len_t x_size, R_len_t size,
 
   Rf_error("Internal error: `stop_recycle_incompatible_size()` should have jumped earlier");
 }
+
+void stop_corrupt_factor_levels(SEXP x, struct vctrs_arg* arg) {
+  SEXP call = PROTECT(Rf_lang3(Rf_install("stop_corrupt_factor_levels"),
+                               PROTECT(r_protect(x)),
+                               PROTECT(vctrs_arg(arg))));
+  Rf_eval(call, vctrs_ns_env);
+  Rf_error("Internal error: `stop_corrupt_factor_levels()` should have jumped earlier");
+}
+
+void stop_corrupt_ordered_levels(SEXP x, struct vctrs_arg* arg) {
+  SEXP call = PROTECT(Rf_lang3(Rf_install("stop_corrupt_ordered_levels"),
+                               PROTECT(r_protect(x)),
+                               PROTECT(vctrs_arg(arg))));
+  Rf_eval(call, vctrs_ns_env);
+  Rf_error("Internal error: `stop_corrupt_ordered_levels()` should have jumped earlier");
+}
