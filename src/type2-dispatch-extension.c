@@ -221,6 +221,8 @@ const char* vctrs_s3_type2_as_str(enum vctrs_s3_type2 type) {
 
   case vctrs_s3_type2_unknown_unknown:             return "vctrs_s3_type2_unknown_unknown";
   }
+
+  never_reached("vctrs_s3_type2_as_str");
 }
 
 // [[ register() ]]
