@@ -162,7 +162,7 @@ static enum vctrs_s3_type2 vec_s3_typeof2_impl2(SEXP x,
   }
   }
 
-  never_reached("vec_s3_typeof2_s3_x_impl()");
+  never_reached("vec_s3_typeof2_impl2()");
 }
 
 enum vctrs_s3_type2 vec_s3_typeof2(SEXP x, SEXP y) {
