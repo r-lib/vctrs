@@ -1,16 +1,16 @@
 #include "vctrs.h"
 #include "utils.h"
 
-static SEXP fct_type2(SEXP x, SEXP y, struct vctrs_arg* x_arg, struct vctrs_arg* y_arg);
-static SEXP ord_type2(SEXP x, SEXP y, struct vctrs_arg* x_arg, struct vctrs_arg* y_arg);
+static SEXP fct_ptype2(SEXP x, SEXP y, struct vctrs_arg* x_arg, struct vctrs_arg* y_arg);
+static SEXP ord_ptype2(SEXP x, SEXP y, struct vctrs_arg* x_arg, struct vctrs_arg* y_arg);
 
 // [[ include("vctrs.h") ]]
-SEXP vec_type2_extension(SEXP x, SEXP y,
-                         enum vctrs_type x_type,
-                         enum vctrs_type y_type,
-                         struct vctrs_arg* x_arg,
-                         struct vctrs_arg* y_arg,
-                         int* left) {
+SEXP vec_ptype2_extension(SEXP x, SEXP y,
+                          enum vctrs_type x_type,
+                          enum vctrs_type y_type,
+                          struct vctrs_arg* x_arg,
+                          struct vctrs_arg* y_arg,
+                          int* left) {
   enum vctrs_s3_type2 s3_type2 = vec_s3_typeof2_impl(x, y, x_type, y_type, left);
 
   switch(s3_type2) {
@@ -19,10 +19,10 @@ SEXP vec_type2_extension(SEXP x, SEXP y,
     return vctrs_shared_empty_chr;
 
   case vctrs_s3_type2_bare_factor_bare_factor:
-    return fct_type2(x, y, x_arg, y_arg);
+    return fct_ptype2(x, y, x_arg, y_arg);
 
   case vctrs_s3_type2_bare_ordered_bare_ordered:
-    return ord_type2(x, y, x_arg, y_arg);
+    return ord_ptype2(x, y, x_arg, y_arg);
 
   default:
     return vctrs_type2_dispatch(x, y, x_arg, y_arg);
@@ -32,7 +32,7 @@ SEXP vec_type2_extension(SEXP x, SEXP y,
 
 static SEXP chr_set_union(SEXP x, SEXP y);
 
-static SEXP fct_type2(SEXP x, SEXP y, struct vctrs_arg* x_arg, struct vctrs_arg* y_arg) {
+static SEXP fct_ptype2(SEXP x, SEXP y, struct vctrs_arg* x_arg, struct vctrs_arg* y_arg) {
   SEXP x_levels = Rf_getAttrib(x, R_LevelsSymbol);
   SEXP y_levels = Rf_getAttrib(y, R_LevelsSymbol);
 
@@ -57,7 +57,7 @@ static SEXP fct_type2(SEXP x, SEXP y, struct vctrs_arg* x_arg, struct vctrs_arg*
   return out;
 }
 
-static SEXP ord_type2(SEXP x, SEXP y, struct vctrs_arg* x_arg, struct vctrs_arg* y_arg) {
+static SEXP ord_ptype2(SEXP x, SEXP y, struct vctrs_arg* x_arg, struct vctrs_arg* y_arg) {
   SEXP x_levels = Rf_getAttrib(x, R_LevelsSymbol);
   SEXP y_levels = Rf_getAttrib(y, R_LevelsSymbol);
 
