@@ -70,7 +70,9 @@ vec_ptype_abbr.default <- function(x, ...) {
       character = "chr",
       complex = "cpl",
       list = "list",
-      expression = "expr"
+      expression = "expr",
+      raw = "raw",
+      abbreviate(typeof(x))
     )
     paste0(abbr, vec_ptype_shape(x))
   } else {
