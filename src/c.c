@@ -7,7 +7,6 @@ SEXP vctrs_type_common_impl(SEXP dots, SEXP ptype);
 // From slice-assign.c
 SEXP vec_assign_impl(SEXP proxy, SEXP index, SEXP value, bool clone);
 
-static SEXP vec_c(SEXP xs, SEXP ptype, SEXP name_spec, enum name_repair_arg name_repair);
 static bool list_has_inner_names(SEXP xs);
 
 
@@ -27,10 +26,11 @@ SEXP vctrs_c(SEXP call, SEXP op, SEXP args, SEXP env) {
   return out;
 }
 
-static SEXP vec_c(SEXP xs,
-                  SEXP ptype,
-                  SEXP name_spec,
-                  enum name_repair_arg name_repair) {
+// [[ include("vctrs.h") ]]
+SEXP vec_c(SEXP xs,
+           SEXP ptype,
+           SEXP name_spec,
+           enum name_repair_arg name_repair) {
   R_len_t n = Rf_length(xs);
 
   ptype = PROTECT(vctrs_type_common_impl(xs, ptype));

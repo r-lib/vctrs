@@ -6,10 +6,10 @@
 static SEXP fns_vec_type2_dispatch = NULL;
 static SEXP syms_vec_type2_dispatch = NULL;
 
-static SEXP vctrs_type2_dispatch(SEXP x,
-                                 SEXP y,
-                                 struct vctrs_arg* x_arg,
-                                 struct vctrs_arg* y_arg) {
+SEXP vctrs_type2_dispatch(SEXP x,
+                          SEXP y,
+                          struct vctrs_arg* x_arg,
+                          struct vctrs_arg* y_arg) {
   SEXP x_arg_chr = PROTECT(vctrs_arg(x_arg));
   SEXP y_arg_chr = PROTECT(vctrs_arg(y_arg));
 
@@ -58,6 +58,10 @@ SEXP vec_type2(SEXP x, SEXP y,
   }
   if (type_y == vctrs_type_scalar) {
     stop_scalar_type(y, y_arg);
+  }
+
+  if (type_x == vctrs_type_s3 || type_y == vctrs_type_s3) {
+    return vec_ptype2_dispatch(x, y, type_x, type_y, x_arg, y_arg, left);
   }
 
   enum vctrs_type2 type2 = vec_typeof2_impl(type_x, type_y, left);

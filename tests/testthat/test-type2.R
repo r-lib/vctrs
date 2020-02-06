@@ -42,6 +42,35 @@ test_that("vec_typeof2() returns common type", {
   }
 })
 
+test_that("vec_s3_typeof2() returns common type", {
+  all_base_empty_types <- c(base_empty_types, base_s3_empty_types)
+
+  nms_s3 <- names(base_s3_empty_types)
+  nms <- names(all_base_empty_types)
+
+  for (i in seq_along(all_base_empty_types)) {
+    this <- nms[[i]]
+
+    for (j in seq_along(all_base_empty_types)) {
+      that <- nms[[j]]
+
+      # Skip when we have two non s3 objects
+      if (!(this %in% nms_s3) & !(that %in% nms_s3)) {
+        next
+      }
+
+      if (i <= j) {
+        exp <- paste0("vctrs_s3_type2_", this, "_", that)
+      } else {
+        exp <- paste0("vctrs_s3_type2_", that, "_", this)
+      }
+      out <- vec_s3_typeof2(all_base_empty_types[[this]], all_base_empty_types[[that]])
+
+      expect_identical(out, exp)
+    }
+  }
+})
+
 test_that("vec_ptype2() dispatches when inputs have shape", {
   expect_identical(dim(vec_ptype2(int(), matrix(nrow = 3, ncol = 4))), c(0L, 4L))
   expect_identical(dim(vec_ptype2(matrix("", nrow = 3), c("", "", ""))), c(0L, 1L))

@@ -69,6 +69,21 @@ test_that("vec_ptype2(<factor>, NA) is symmetric (#687)", {
   )
 })
 
+test_that("vec_ptype2() errors with malformed factors", {
+  x <- structure(1, class = "factor")
+  y <- factor("x")
+
+  expect_error(vec_ptype2(x, y, x_arg = "z"), "`z` is a corrupt factor")
+  expect_error(vec_ptype2(y, x, y_arg = "z"), "`z` is a corrupt factor")
+})
+
+test_that("vec_ptype2() errors with malformed ordered factors", {
+  x <- structure(1, class = c("ordered", "factor"))
+  y <- as.ordered(factor("x"))
+
+  expect_error(vec_ptype2(x, y, x_arg = "z"), "`z` is a corrupt ordered factor")
+  expect_error(vec_ptype2(y, x, y_arg = "z"), "`z` is a corrupt ordered factor")
+})
 
 # Casting -----------------------------------------------------------------
 

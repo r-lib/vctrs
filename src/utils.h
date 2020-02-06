@@ -16,12 +16,13 @@ enum vctrs_class_type {
   vctrs_class_data_frame,
   vctrs_class_bare_data_frame,
   vctrs_class_bare_tibble,
+  vctrs_class_bare_factor,
+  vctrs_class_bare_ordered,
   vctrs_class_rcrd,
   vctrs_class_posixlt,
   vctrs_class_unknown,
   vctrs_class_none
 };
-
 
 bool r_is_bool(SEXP x);
 
@@ -93,6 +94,7 @@ SEXP arg_validate(SEXP arg, const char* arg_nm);
 void never_reached(const char* fn) __attribute__((noreturn));
 
 enum vctrs_type2 vec_typeof2_impl(enum vctrs_type type_x, enum vctrs_type type_y, int* left);
+enum vctrs_s3_type2 vec_s3_typeof2_impl(SEXP x, SEXP y, enum vctrs_type type_x, enum vctrs_type type_y, int* left);
 
 SEXP new_list_of(SEXP x, SEXP ptype);
 void init_list_of(SEXP x, SEXP ptype);
@@ -109,6 +111,9 @@ R_len_t compact_rownames_length(SEXP x);
 SEXP df_container_type(SEXP x);
 SEXP df_poke(SEXP x, R_len_t i, SEXP value);
 SEXP df_poke_at(SEXP x, SEXP name, SEXP value);
+
+SEXP new_empty_factor(SEXP levels);
+SEXP new_empty_ordered(SEXP levels);
 
 void init_compact_seq(int* p, R_len_t start, R_len_t size, bool increasing);
 SEXP compact_seq(R_len_t start, R_len_t size, bool increasing);
@@ -237,6 +242,8 @@ extern SEXP vctrs_shared_na_lgl;
 extern SEXP vctrs_shared_zero_int;
 
 extern SEXP classes_data_frame;
+extern SEXP classes_factor;
+extern SEXP classes_ordered;
 extern SEXP classes_tibble;
 extern SEXP classes_list_of;
 extern SEXP classes_vctrs_group_rle;
@@ -249,6 +256,8 @@ extern SEXP strings_data_frame;
 extern SEXP strings_vctrs_rcrd;
 extern SEXP strings_posixlt;
 extern SEXP strings_posixt;
+extern SEXP strings_factor;
+extern SEXP strings_ordered;
 extern SEXP strings_vctrs_vctr;
 extern SEXP strings_none;
 extern SEXP strings_minimal;

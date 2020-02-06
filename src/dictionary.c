@@ -141,6 +141,14 @@ SEXP vctrs_unique_loc(SEXP x) {
   return out;
 }
 
+// [[ include("vctrs.h") ]]
+SEXP vec_unique(SEXP x) {
+  SEXP index = PROTECT(vctrs_unique_loc(x));
+  SEXP out = vec_slice(x, index);
+  UNPROTECT(1);
+  return out;
+}
+
 SEXP vctrs_duplicated_any(SEXP x) {
   bool out = duplicated_any(x);
   return Rf_ScalarLogical(out);

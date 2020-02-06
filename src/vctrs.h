@@ -169,6 +169,57 @@ enum vctrs_type2 {
   vctrs_type2_scalar_scalar
 };
 
+enum vctrs_s3_type2 {
+  vctrs_s3_type2_null_bare_factor,
+  vctrs_s3_type2_null_bare_ordered,
+  vctrs_s3_type2_null_unknown,
+
+  vctrs_s3_type2_logical_bare_factor,
+  vctrs_s3_type2_logical_bare_ordered,
+  vctrs_s3_type2_logical_unknown,
+
+  vctrs_s3_type2_integer_bare_factor,
+  vctrs_s3_type2_integer_bare_ordered,
+  vctrs_s3_type2_integer_unknown,
+
+  vctrs_s3_type2_double_bare_factor,
+  vctrs_s3_type2_double_bare_ordered,
+  vctrs_s3_type2_double_unknown,
+
+  vctrs_s3_type2_complex_bare_factor,
+  vctrs_s3_type2_complex_bare_ordered,
+  vctrs_s3_type2_complex_unknown,
+
+  vctrs_s3_type2_character_bare_factor,
+  vctrs_s3_type2_character_bare_ordered,
+  vctrs_s3_type2_character_unknown,
+
+  vctrs_s3_type2_raw_bare_factor,
+  vctrs_s3_type2_raw_bare_ordered,
+  vctrs_s3_type2_raw_unknown,
+
+  vctrs_s3_type2_list_bare_factor,
+  vctrs_s3_type2_list_bare_ordered,
+  vctrs_s3_type2_list_unknown,
+
+  vctrs_s3_type2_dataframe_bare_factor,
+  vctrs_s3_type2_dataframe_bare_ordered,
+  vctrs_s3_type2_dataframe_unknown,
+
+  vctrs_s3_type2_scalar_bare_factor,
+  vctrs_s3_type2_scalar_bare_ordered,
+  vctrs_s3_type2_scalar_unknown,
+
+  vctrs_s3_type2_bare_factor_bare_factor,
+  vctrs_s3_type2_bare_factor_bare_ordered,
+  vctrs_s3_type2_bare_factor_unknown,
+
+  vctrs_s3_type2_bare_ordered_bare_ordered,
+  vctrs_s3_type2_bare_ordered_unknown,
+
+  vctrs_s3_type2_unknown_unknown,
+};
+
 enum vctrs_type2 vec_typeof2(SEXP x, SEXP y);
 const char* vctrs_type2_as_str(enum vctrs_type2 type);
 
@@ -193,6 +244,7 @@ bool vec_is_unspecified(SEXP x);
 // Vector methods ------------------------------------------------
 
 #include "arg.h"
+#include "names.h"
 
 enum vctrs_proxy_kind {
   vctrs_proxy_default,
@@ -227,11 +279,28 @@ SEXP vec_recycle_common(SEXP xs, R_len_t size);
 SEXP vec_names(SEXP x);
 SEXP vec_group_loc(SEXP x);
 
+SEXP vec_c(SEXP xs,
+           SEXP ptype,
+           SEXP name_spec,
+           enum name_repair_arg name_repair);
+
 SEXP vec_type2(SEXP x,
                SEXP y,
                struct vctrs_arg* x_arg,
                struct vctrs_arg* y_arg,
                int* left);
+
+SEXP vctrs_type2_dispatch(SEXP x,
+                          SEXP y,
+                          struct vctrs_arg* x_arg,
+                          struct vctrs_arg* y_arg);
+
+SEXP vec_ptype2_dispatch(SEXP x, SEXP y,
+                         enum vctrs_type x_type,
+                         enum vctrs_type y_type,
+                         struct vctrs_arg* x_arg,
+                         struct vctrs_arg* y_arg,
+                         int* left);
 
 bool is_data_frame(SEXP x);
 bool is_record(SEXP x);
@@ -266,6 +335,7 @@ int compare_scalar(SEXP x, R_len_t i, SEXP y, R_len_t j, bool na_equal);
 uint32_t hash_object(SEXP x);
 void hash_fill(uint32_t* p, R_len_t n, SEXP x);
 
+SEXP vec_unique(SEXP x);
 bool duplicated_any(SEXP names);
 
 // Rowwise operations -------------------------------------------
@@ -338,21 +408,10 @@ enum vctrs_dbl_class {
 
 enum vctrs_dbl_class dbl_classify(double x);
 
-// Names --------------------------------------------------------
+// Factor methods -----------------------------------------------
 
-enum name_repair_arg {
-  name_repair_none,
-  name_repair_minimal,
-  name_repair_unique,
-  name_repair_universal,
-  name_repair_check_unique
-};
-
-const char* name_repair_arg_as_c_string(enum name_repair_arg arg);
-enum name_repair_arg validate_name_repair(SEXP arg);
-SEXP vec_as_names(SEXP names, enum name_repair_arg type, bool quiet);
-bool is_unique_names(SEXP names);
-SEXP vec_as_unique_names(SEXP names, bool quiet);
+SEXP fct_ptype2(SEXP x, SEXP y, struct vctrs_arg* x_arg, struct vctrs_arg* y_arg);
+SEXP ord_ptype2(SEXP x, SEXP y, struct vctrs_arg* x_arg, struct vctrs_arg* y_arg);
 
 // Character translation ----------------------------------------
 
@@ -412,7 +471,8 @@ void stop_incompatible_size(SEXP x, SEXP y,
 void stop_recycle_incompatible_size(R_len_t x_size, R_len_t size,
                                     struct vctrs_arg* x_arg)
   __attribute__((noreturn));
-
+void stop_corrupt_factor_levels(SEXP x, struct vctrs_arg* arg) __attribute__((noreturn));
+void stop_corrupt_ordered_levels(SEXP x, struct vctrs_arg* arg) __attribute__((noreturn));
 
 // Compatibility ------------------------------------------------
 

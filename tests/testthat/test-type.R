@@ -131,6 +131,11 @@ test_that("class_type() detects classes", {
   expect_identical(class_type(tibble::tibble()), "bare_tibble")
   expect_identical(class_type(subclass(data.frame())), "data_frame")
 
+  expect_identical(class_type(new_factor()), "bare_factor")
+  expect_identical(class_type(new_ordered()), "bare_ordered")
+  expect_identical(class_type(subclass(new_factor())), "unknown")
+  expect_identical(class_type(subclass(new_ordered())), "unknown")
+
   expect_identical(class_type(as.POSIXlt(Sys.Date())), "posixlt")
   expect_identical(class_type(new_rcrd(list(a = 1))), "rcrd")
   expect_identical(class_type(subclass(as.POSIXlt(Sys.Date()))), "posixlt")

@@ -70,6 +70,10 @@ vec_typeof2 <- function(x, y) {
   .Call(vctrs_typeof2, x, y)
 }
 
+vec_s3_typeof2 <- function(x, y) {
+  .Call(vctrs_s3_typeof2, x, y)
+}
+
 # https://github.com/r-lib/vctrs/issues/571
 vec_is_coercible <- function(x, to, ..., x_arg = "x", to_arg = "to") {
   tryCatch(
