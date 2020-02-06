@@ -311,6 +311,11 @@ test_that("can sort raw", {
   expect_identical(x[vec_order(x)], as.raw(1:4))
 })
 
+test_that("raw has informative type summaries", {
+  expect_equal(vec_ptype_abbr(raw()), "raw")
+  expect_equal(vec_ptype_full(raw()), "raw")
+})
+
 
 # Lists
 
