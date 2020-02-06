@@ -30,7 +30,7 @@ SEXP vec_ptype2_extension(SEXP x, SEXP y,
 }
 
 
-static SEXP chr_set_union(SEXP x, SEXP y);
+static SEXP levels_union(SEXP x, SEXP y);
 
 static SEXP fct_ptype2(SEXP x, SEXP y, struct vctrs_arg* x_arg, struct vctrs_arg* y_arg) {
   SEXP x_levels = Rf_getAttrib(x, R_LevelsSymbol);
@@ -49,7 +49,7 @@ static SEXP fct_ptype2(SEXP x, SEXP y, struct vctrs_arg* x_arg, struct vctrs_arg
     return new_empty_factor(x_levels);
   }
 
-  SEXP levels = PROTECT(chr_set_union(x_levels, y_levels));
+  SEXP levels = PROTECT(levels_union(x_levels, y_levels));
 
   SEXP out = new_empty_factor(levels);
 
@@ -74,7 +74,7 @@ static SEXP ord_ptype2(SEXP x, SEXP y, struct vctrs_arg* x_arg, struct vctrs_arg
     return new_empty_ordered(x_levels);
   }
 
-  SEXP levels = PROTECT(chr_set_union(x_levels, y_levels));
+  SEXP levels = PROTECT(levels_union(x_levels, y_levels));
 
   SEXP out = new_empty_ordered(levels);
 
@@ -82,32 +82,22 @@ static SEXP ord_ptype2(SEXP x, SEXP y, struct vctrs_arg* x_arg, struct vctrs_arg
   return out;
 }
 
+static SEXP levels_union(SEXP x, SEXP y) {
+  SEXP args = PROTECT(Rf_allocVector(VECSXP, 2));
+  SET_VECTOR_ELT(args, 0, x);
+  SET_VECTOR_ELT(args, 1, y);
 
-// vec_unique(vec_c(x, y))
-static SEXP chr_set_union(SEXP x, SEXP y) {
-  R_xlen_t x_size = vec_size(x);
-  R_xlen_t y_size = vec_size(y);
-
-  R_xlen_t size = x_size + y_size;
-
-  SEXP xy = PROTECT(Rf_allocVector(STRSXP, size));
-  SEXP* p_xy = STRING_PTR(xy);
-
-  const SEXP* p_x = STRING_PTR_RO(x);
-  const SEXP* p_y = STRING_PTR_RO(y);
-
-  R_xlen_t i = 0;
-
-  for (R_xlen_t j = 0; j < x_size; ++j, ++i) {
-    p_xy[i] = p_x[j];
-  }
-
-  for (R_xlen_t j = 0; j < y_size; ++j, ++i) {
-    p_xy[i] = p_y[j];
-  }
+  // Combine with known ptype
+  // No name repair because this is just combining factor levels
+  SEXP xy = PROTECT(vec_c(
+    args,
+    vctrs_shared_empty_chr,
+    R_NilValue,
+    name_repair_none
+  ));
 
   SEXP out = vec_unique(xy);
 
-  UNPROTECT(1);
+  UNPROTECT(2);
   return out;
 }
