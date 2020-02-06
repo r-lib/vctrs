@@ -408,6 +408,11 @@ enum vctrs_dbl_class {
 
 enum vctrs_dbl_class dbl_classify(double x);
 
+// Factor methods -----------------------------------------------
+
+SEXP fct_ptype2(SEXP x, SEXP y, struct vctrs_arg* x_arg, struct vctrs_arg* y_arg);
+SEXP ord_ptype2(SEXP x, SEXP y, struct vctrs_arg* x_arg, struct vctrs_arg* y_arg);
+
 // Character translation ----------------------------------------
 
 SEXP obj_maybe_translate_encoding(SEXP x, R_len_t size);
