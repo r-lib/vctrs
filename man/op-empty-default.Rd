@@ -9,7 +9,7 @@ x \%0\% y
 \arguments{
 \item{x}{A vector}
 
-\item{y}{Value to use to \code{x} is empty. To preserve type-stability, should
+\item{y}{Value to use if \code{x} is empty. To preserve type-stability, should
 be the same type as \code{x}.}
 }
 \description{
