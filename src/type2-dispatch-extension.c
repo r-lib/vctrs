@@ -85,8 +85,7 @@ enum vctrs_s3_type2 vec_s3_typeof2_impl(SEXP x,
   }
   case vctrs_type_s3: {
     return vec_s3_typeof2_impl2(x, y, type_y, left);
-  }
-  }
+  }}
 
   never_reached("vec_s3_typeof2_impl()");
 }
@@ -115,8 +114,7 @@ static enum vctrs_s3_type2 vec_s3_typeof2_impl2(SEXP x,
       case vctrs_class_bare_ordered: *left =  0; return vctrs_s3_type2_bare_factor_bare_ordered;
       default:                       *left =  0; return vctrs_s3_type2_bare_factor_unknown;
       }
-    }
-    }
+    }}
   }
   case vctrs_class_bare_ordered: {
     switch(type_y) {
@@ -136,8 +134,7 @@ static enum vctrs_s3_type2 vec_s3_typeof2_impl2(SEXP x,
       case vctrs_class_bare_ordered: *left = -1; return vctrs_s3_type2_bare_ordered_bare_ordered;
       default:                       *left =  0; return vctrs_s3_type2_bare_ordered_unknown;
       }
-    }
-    }
+    }}
   }
   default: {
     switch(type_y) {
@@ -157,10 +154,8 @@ static enum vctrs_s3_type2 vec_s3_typeof2_impl2(SEXP x,
       case vctrs_class_bare_ordered: *left =  1; return vctrs_s3_type2_bare_ordered_unknown;
       default:                       *left = -1; return vctrs_s3_type2_unknown_unknown;
       }
-    }
-    }
-  }
-  }
+    }}
+  }}
 
   never_reached("vec_s3_typeof2_impl2()");
 }
