@@ -90,7 +90,7 @@ vec_is_empty <- function(x) {
 #' empty (as defined by [vec_is_empty()]) vectors.
 #'
 #' @param x A vector
-#' @param y Value to use to `x` is empty. To preserve type-stability, should
+#' @param y Value to use if `x` is empty. To preserve type-stability, should
 #'   be the same type as `x`.
 #' @rdname op-empty-default
 #' @export
