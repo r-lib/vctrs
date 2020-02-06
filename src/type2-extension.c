@@ -13,7 +13,7 @@ SEXP vec_ptype2_extension(SEXP x, SEXP y,
                           int* left) {
   enum vctrs_s3_type2 s3_type2 = vec_s3_typeof2_impl(x, y, x_type, y_type, left);
 
-  switch(s3_type2) {
+  switch (s3_type2) {
   case vctrs_s3_type2_character_bare_factor:
   case vctrs_s3_type2_character_bare_ordered:
     return vctrs_shared_empty_chr;
