@@ -61,7 +61,7 @@ SEXP vec_type2(SEXP x, SEXP y,
   }
 
   if (type_x == vctrs_type_s3 || type_y == vctrs_type_s3) {
-    return vec_ptype2_extension(x, y, type_x, type_y, x_arg, y_arg, left);
+    return vec_ptype2_dispatch(x, y, type_x, type_y, x_arg, y_arg, left);
   }
 
   enum vctrs_type2 type2 = vec_typeof2_impl(type_x, type_y, left);
