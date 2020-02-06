@@ -322,6 +322,10 @@ SEXP s3_find_method(const char* generic, SEXP x) {
 
 // [[ include("utils.h") ]]
 SEXP new_empty_factor(SEXP levels) {
+  if (TYPEOF(levels) != STRSXP) {
+    Rf_errorcall(R_NilValue, "Internal error: `level` must be a character vector.");
+  }
+
   SEXP out = PROTECT(Rf_allocVector(INTSXP, 0));
 
   Rf_setAttrib(out, R_LevelsSymbol, levels);
