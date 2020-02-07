@@ -189,10 +189,6 @@ static SEXP int_as_double(SEXP x, bool* lossy) {
   return out;
 }
 
-
-// From dictionary.c
-SEXP vctrs_match(SEXP needles, SEXP haystack);
-
 // Defined below
 static SEXP df_as_dataframe(SEXP x, SEXP to, struct vctrs_arg* x_arg, struct vctrs_arg* to_arg);
 
@@ -223,7 +219,7 @@ static SEXP df_as_dataframe(SEXP x, SEXP to, struct vctrs_arg* x_arg, struct vct
     Rf_error("Internal error in `df_as_dataframe()`: Data frame must have names.");
   }
 
-  SEXP to_dups_pos = PROTECT(vctrs_match(to_names, x_names));
+  SEXP to_dups_pos = PROTECT(vec_match(to_names, x_names));
   int* to_dups_pos_data = INTEGER(to_dups_pos);
 
   R_len_t to_len = Rf_length(to_dups_pos);
