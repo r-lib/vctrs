@@ -1,29 +1,6 @@
 #include "vctrs.h"
 #include "utils.h"
 
-
-// Initialised at load time
-static SEXP fns_vec_type2_dispatch = NULL;
-static SEXP syms_vec_type2_dispatch = NULL;
-
-SEXP vctrs_type2_dispatch(SEXP x,
-                          SEXP y,
-                          struct vctrs_arg* x_arg,
-                          struct vctrs_arg* y_arg) {
-  SEXP x_arg_chr = PROTECT(vctrs_arg(x_arg));
-  SEXP y_arg_chr = PROTECT(vctrs_arg(y_arg));
-
-  SEXP syms[5] = { syms_x, syms_y, syms_x_arg, syms_y_arg, NULL };
-  SEXP args[5] = {      x,      y,  x_arg_chr,  y_arg_chr, NULL };
-
-  SEXP out = vctrs_dispatch_n(syms_vec_type2_dispatch, fns_vec_type2_dispatch,
-                              syms, args);
-
-  UNPROTECT(2);
-  return out;
-}
-
-
 static SEXP df_type2(SEXP x, SEXP y, struct vctrs_arg* x_arg, struct vctrs_arg* y_arg);
 
 // [[ include("vctrs.h") ]]
@@ -47,7 +24,7 @@ SEXP vec_type2(SEXP x, SEXP y,
   }
 
   if (has_dim(x) || has_dim(y)) {
-    return vctrs_type2_dispatch(x, y, x_arg, y_arg);
+    return vec_ptype2_dispatch_s3(x, y, x_arg, y_arg);
   }
 
   enum vctrs_type type_x = vec_typeof(x);
@@ -95,7 +72,7 @@ SEXP vec_type2(SEXP x, SEXP y,
     return df_type2(x, y, x_arg, y_arg);
 
   default:
-    return vctrs_type2_dispatch(x, y, x_arg, y_arg);
+    return vec_ptype2_dispatch_s3(x, y, x_arg, y_arg);
   }
 }
 
@@ -201,10 +178,4 @@ SEXP vctrs_type2_df_df(SEXP x, SEXP y, SEXP x_arg, SEXP y_arg) {
   struct vctrs_arg y_arg_ = new_wrapper_arg(NULL, r_chr_get_c_string(y_arg, 0));
 
   return df_type2(x, y, &x_arg_, &y_arg_);
-}
-
-
-void vctrs_init_type2(SEXP ns) {
-  syms_vec_type2_dispatch = Rf_install("vec_type2_dispatch");
-  fns_vec_type2_dispatch = Rf_findVar(syms_vec_type2_dispatch, ns);
 }

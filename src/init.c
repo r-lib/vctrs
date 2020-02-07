@@ -42,7 +42,7 @@ extern SEXP vctrs_typeof(SEXP, SEXP);
 extern SEXP vctrs_is_vector(SEXP);
 extern SEXP vctrs_type2(SEXP, SEXP, SEXP, SEXP);
 extern SEXP vctrs_typeof2(SEXP, SEXP);
-extern SEXP vctrs_s3_typeof2(SEXP, SEXP);
+extern SEXP vctrs_typeof2_s3(SEXP, SEXP);
 extern SEXP vctrs_cast(SEXP, SEXP, SEXP, SEXP);
 extern SEXP vctrs_as_location(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
 extern SEXP vctrs_slice(SEXP, SEXP);
@@ -143,7 +143,7 @@ static const R_CallMethodDef CallEntries[] = {
   {"vctrs_is_vector",                  (DL_FUNC) &vctrs_is_vector, 1},
   {"vctrs_type2",                      (DL_FUNC) &vctrs_type2, 4},
   {"vctrs_typeof2",                    (DL_FUNC) &vctrs_typeof2, 2},
-  {"vctrs_s3_typeof2",                 (DL_FUNC) &vctrs_s3_typeof2, 2},
+  {"vctrs_typeof2_s3",                 (DL_FUNC) &vctrs_typeof2_s3, 2},
   {"vctrs_cast",                       (DL_FUNC) &vctrs_cast, 4},
   {"vctrs_as_location",                (DL_FUNC) &vctrs_as_location, 7},
   {"vctrs_slice",                      (DL_FUNC) &vctrs_slice, 2},
@@ -248,7 +248,7 @@ void vctrs_init_proxy_restore(SEXP ns);
 void vctrs_init_slice(SEXP ns);
 void vctrs_init_slice_assign(SEXP ns);
 void vctrs_init_subscript_loc(SEXP ns);
-void vctrs_init_type2(SEXP ns);
+void vctrs_init_ptype2_dispatch(SEXP ns);
 void vctrs_init_type(SEXP ns);
 void vctrs_init_type_info(SEXP ns);
 void vctrs_init_unspecified(SEXP ns);
@@ -263,7 +263,7 @@ SEXP vctrs_init_library(SEXP ns) {
   vctrs_init_slice(ns);
   vctrs_init_slice_assign(ns);
   vctrs_init_subscript_loc(ns);
-  vctrs_init_type2(ns);
+  vctrs_init_ptype2_dispatch(ns);
   vctrs_init_type(ns);
   vctrs_init_type_info(ns);
   vctrs_init_unspecified(ns);
