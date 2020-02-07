@@ -70,8 +70,8 @@ vec_typeof2 <- function(x, y) {
   .Call(vctrs_typeof2, x, y)
 }
 
-vec_s3_typeof2 <- function(x, y) {
-  .Call(vctrs_s3_typeof2, x, y)
+vec_typeof2_s3 <- function(x, y) {
+  .Call(vctrs_typeof2_s3, x, y)
 }
 
 # https://github.com/r-lib/vctrs/issues/571

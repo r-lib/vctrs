@@ -169,55 +169,55 @@ enum vctrs_type2 {
   vctrs_type2_scalar_scalar
 };
 
-enum vctrs_s3_type2 {
-  vctrs_s3_type2_null_bare_factor,
-  vctrs_s3_type2_null_bare_ordered,
-  vctrs_s3_type2_null_unknown,
+enum vctrs_type2_s3 {
+  vctrs_type2_s3_null_bare_factor,
+  vctrs_type2_s3_null_bare_ordered,
+  vctrs_type2_s3_null_unknown,
 
-  vctrs_s3_type2_logical_bare_factor,
-  vctrs_s3_type2_logical_bare_ordered,
-  vctrs_s3_type2_logical_unknown,
+  vctrs_type2_s3_logical_bare_factor,
+  vctrs_type2_s3_logical_bare_ordered,
+  vctrs_type2_s3_logical_unknown,
 
-  vctrs_s3_type2_integer_bare_factor,
-  vctrs_s3_type2_integer_bare_ordered,
-  vctrs_s3_type2_integer_unknown,
+  vctrs_type2_s3_integer_bare_factor,
+  vctrs_type2_s3_integer_bare_ordered,
+  vctrs_type2_s3_integer_unknown,
 
-  vctrs_s3_type2_double_bare_factor,
-  vctrs_s3_type2_double_bare_ordered,
-  vctrs_s3_type2_double_unknown,
+  vctrs_type2_s3_double_bare_factor,
+  vctrs_type2_s3_double_bare_ordered,
+  vctrs_type2_s3_double_unknown,
 
-  vctrs_s3_type2_complex_bare_factor,
-  vctrs_s3_type2_complex_bare_ordered,
-  vctrs_s3_type2_complex_unknown,
+  vctrs_type2_s3_complex_bare_factor,
+  vctrs_type2_s3_complex_bare_ordered,
+  vctrs_type2_s3_complex_unknown,
 
-  vctrs_s3_type2_character_bare_factor,
-  vctrs_s3_type2_character_bare_ordered,
-  vctrs_s3_type2_character_unknown,
+  vctrs_type2_s3_character_bare_factor,
+  vctrs_type2_s3_character_bare_ordered,
+  vctrs_type2_s3_character_unknown,
 
-  vctrs_s3_type2_raw_bare_factor,
-  vctrs_s3_type2_raw_bare_ordered,
-  vctrs_s3_type2_raw_unknown,
+  vctrs_type2_s3_raw_bare_factor,
+  vctrs_type2_s3_raw_bare_ordered,
+  vctrs_type2_s3_raw_unknown,
 
-  vctrs_s3_type2_list_bare_factor,
-  vctrs_s3_type2_list_bare_ordered,
-  vctrs_s3_type2_list_unknown,
+  vctrs_type2_s3_list_bare_factor,
+  vctrs_type2_s3_list_bare_ordered,
+  vctrs_type2_s3_list_unknown,
 
-  vctrs_s3_type2_dataframe_bare_factor,
-  vctrs_s3_type2_dataframe_bare_ordered,
-  vctrs_s3_type2_dataframe_unknown,
+  vctrs_type2_s3_dataframe_bare_factor,
+  vctrs_type2_s3_dataframe_bare_ordered,
+  vctrs_type2_s3_dataframe_unknown,
 
-  vctrs_s3_type2_scalar_bare_factor,
-  vctrs_s3_type2_scalar_bare_ordered,
-  vctrs_s3_type2_scalar_unknown,
+  vctrs_type2_s3_scalar_bare_factor,
+  vctrs_type2_s3_scalar_bare_ordered,
+  vctrs_type2_s3_scalar_unknown,
 
-  vctrs_s3_type2_bare_factor_bare_factor,
-  vctrs_s3_type2_bare_factor_bare_ordered,
-  vctrs_s3_type2_bare_factor_unknown,
+  vctrs_type2_s3_bare_factor_bare_factor,
+  vctrs_type2_s3_bare_factor_bare_ordered,
+  vctrs_type2_s3_bare_factor_unknown,
 
-  vctrs_s3_type2_bare_ordered_bare_ordered,
-  vctrs_s3_type2_bare_ordered_unknown,
+  vctrs_type2_s3_bare_ordered_bare_ordered,
+  vctrs_type2_s3_bare_ordered_unknown,
 
-  vctrs_s3_type2_unknown_unknown,
+  vctrs_type2_s3_unknown_unknown
 };
 
 enum vctrs_type2 vec_typeof2(SEXP x, SEXP y);

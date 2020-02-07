@@ -8,17 +8,17 @@ SEXP vec_ptype2_dispatch(SEXP x, SEXP y,
                          struct vctrs_arg* x_arg,
                          struct vctrs_arg* y_arg,
                          int* left) {
-  enum vctrs_s3_type2 s3_type2 = vec_s3_typeof2_impl(x, y, x_type, y_type, left);
+  enum vctrs_type2_s3 type2_s3 = vec_typeof2_s3_impl(x, y, x_type, y_type, left);
 
-  switch (s3_type2) {
-  case vctrs_s3_type2_character_bare_factor:
-  case vctrs_s3_type2_character_bare_ordered:
+  switch (type2_s3) {
+  case vctrs_type2_s3_character_bare_factor:
+  case vctrs_type2_s3_character_bare_ordered:
     return vctrs_shared_empty_chr;
 
-  case vctrs_s3_type2_bare_factor_bare_factor:
+  case vctrs_type2_s3_bare_factor_bare_factor:
     return fct_ptype2(x, y, x_arg, y_arg);
 
-  case vctrs_s3_type2_bare_ordered_bare_ordered:
+  case vctrs_type2_s3_bare_ordered_bare_ordered:
     return ord_ptype2(x, y, x_arg, y_arg);
 
   default:
