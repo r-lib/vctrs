@@ -74,3 +74,289 @@ static SEXP levels_union(SEXP x, SEXP y) {
   UNPROTECT(2);
   return out;
 }
+
+// -----------------------------------------------------------------------------
+
+static void new_factor(SEXP x, SEXP levels);
+static void new_ordered(SEXP x, SEXP levels);
+
+
+// [[ include("vctrs.h") ]]
+SEXP fct_as_character(SEXP x, struct vctrs_arg* x_arg) {
+  SEXP levels = Rf_getAttrib(x, R_LevelsSymbol);
+
+  if (TYPEOF(levels) != STRSXP) {
+    stop_corrupt_factor_levels(x, x_arg);
+  }
+
+  return Rf_asCharacterFactor(x);
+}
+
+// [[ include("vctrs.h") ]]
+SEXP ord_as_character(SEXP x, struct vctrs_arg* x_arg) {
+  return fct_as_character(x, x_arg);
+}
+
+
+static SEXP chr_as_factor_from_self(SEXP x, bool ordered);
+static SEXP chr_as_factor_impl(SEXP x, SEXP levels, bool* lossy, bool ordered);
+
+// [[ include("vctrs.h") ]]
+SEXP chr_as_factor(SEXP x, SEXP to, bool* lossy, struct vctrs_arg* to_arg) {
+  SEXP levels = Rf_getAttrib(to, R_LevelsSymbol);
+
+  if (TYPEOF(levels) != STRSXP) {
+    stop_corrupt_factor_levels(to, to_arg);
+  }
+
+  // When `to` has no levels, it is treated as a template and the
+  // levels come from `x`
+  if (vec_size(levels) == 0) {
+    return chr_as_factor_from_self(x, false);
+  }
+
+  return chr_as_factor_impl(x, levels, lossy, false);
+}
+
+// [[ include("vctrs.h") ]]
+SEXP chr_as_ordered(SEXP x, SEXP to, bool* lossy, struct vctrs_arg* to_arg) {
+  SEXP levels = Rf_getAttrib(to, R_LevelsSymbol);
+
+  if (TYPEOF(levels) != STRSXP) {
+    stop_corrupt_ordered_levels(to, to_arg);
+  }
+
+  // When `to` has no levels, it is treated as a template and the
+  // levels come from `x`
+  if (vec_size(levels) == 0) {
+    return chr_as_factor_from_self(x, true);
+  }
+
+  return chr_as_factor_impl(x, levels, lossy, true);
+}
+
+static SEXP chr_as_factor_impl(SEXP x, SEXP levels, bool* lossy, bool ordered) {
+  SEXP out = PROTECT(vec_match(x, levels));
+  const int* p_out = INTEGER(out);
+
+  R_len_t size = vec_size(x);
+  const SEXP* p_x = STRING_PTR_RO(x);
+
+  // Detect lossy no-matches, but allow `NA` values from `x`
+  for (R_len_t i = 0; i < size; ++i) {
+    if (p_out[i] != NA_INTEGER) {
+      continue;
+    }
+
+    if (p_x[i] == NA_STRING) {
+      continue;
+    }
+
+    *lossy = true;
+    UNPROTECT(1);
+    return R_NilValue;
+  }
+
+  if (ordered) {
+    new_ordered(out, levels);
+  } else {
+    new_factor(out, levels);
+  }
+
+  UNPROTECT(1);
+  return out;
+}
+
+static SEXP remove_na_levels(SEXP levels);
+
+// Factor levels are added in order of appearance
+// `NA` values in `x` are not considered factor levels
+static SEXP chr_as_factor_from_self(SEXP x, bool ordered) {
+  SEXP levels = PROTECT(vec_unique(x));
+  levels = PROTECT(remove_na_levels(levels));
+
+  // `NA` values in `x` correctly become `NA` values in the result
+  SEXP out = PROTECT(vec_match(x, levels));
+
+  if (ordered) {
+    new_ordered(out, levels);
+  } else {
+    new_factor(out, levels);
+  }
+
+  UNPROTECT(3);
+  return out;
+}
+
+static SEXP remove_na_levels(SEXP levels) {
+  int n_prot = 0;
+
+  R_len_t size = vec_size(levels);
+  const SEXP* p_levels = STRING_PTR_RO(levels);
+
+  bool any_na = false;
+  SEXP is_not_na = PROTECT_N(Rf_allocVector(LGLSXP, size), &n_prot);
+  int* p_is_not_na = LOGICAL(is_not_na);
+
+  for (R_len_t i = 0; i < size; ++i) {
+    if (p_levels[i] == NA_STRING) {
+      any_na = true;
+      p_is_not_na[i] = 0;
+    } else {
+      p_is_not_na[i] = 1;
+    }
+  }
+
+  // Remove `NA` levels if required
+  if (any_na) {
+    levels = PROTECT_N(vec_slice(levels, is_not_na), &n_prot);
+  }
+
+  UNPROTECT(n_prot);
+  return levels;
+}
+
+
+static SEXP fct_as_factor_impl(SEXP x, SEXP x_levels, SEXP to_levels, bool* lossy, bool ordered);
+
+// [[ include("vctrs.h") ]]
+SEXP fct_as_factor(SEXP x,
+                   SEXP to,
+                   bool* lossy,
+                   struct vctrs_arg* x_arg,
+                   struct vctrs_arg* to_arg) {
+
+  SEXP x_levels = Rf_getAttrib(x, R_LevelsSymbol);
+  SEXP to_levels = Rf_getAttrib(to, R_LevelsSymbol);
+
+  if (TYPEOF(x_levels) != STRSXP) {
+    stop_corrupt_factor_levels(x, x_arg);
+  }
+
+  if (TYPEOF(to_levels) != STRSXP) {
+    stop_corrupt_factor_levels(to, to_arg);
+  }
+
+  return fct_as_factor_impl(x, x_levels, to_levels, lossy, false);
+}
+
+// [[ include("vctrs.h") ]]
+SEXP ord_as_ordered(SEXP x,
+                    SEXP to,
+                    bool* lossy,
+                    struct vctrs_arg* x_arg,
+                    struct vctrs_arg* to_arg) {
+
+  SEXP x_levels = Rf_getAttrib(x, R_LevelsSymbol);
+  SEXP to_levels = Rf_getAttrib(to, R_LevelsSymbol);
+
+  if (TYPEOF(x_levels) != STRSXP) {
+    stop_corrupt_ordered_levels(x, x_arg);
+  }
+
+  if (TYPEOF(to_levels) != STRSXP) {
+    stop_corrupt_ordered_levels(to, to_arg);
+  }
+
+  return fct_as_factor_impl(x, x_levels, to_levels, lossy, true);
+}
+
+static SEXP fct_as_factor_impl(SEXP x, SEXP x_levels, SEXP to_levels, bool* lossy, bool ordered) {
+  // Early exit if levels are identical
+  if (x_levels == to_levels) {
+    return x;
+  }
+
+  R_len_t x_levels_size = vec_size(x_levels);
+  R_len_t to_levels_size = vec_size(to_levels);
+
+  // Early exit if `to` has no levels. In this case it is being used as
+  // a template
+  if (to_levels_size == 0) {
+    return x;
+  }
+
+  // Always lossy if there are more levels in `x` than in `to`
+  if (x_levels_size > to_levels_size) {
+    *lossy = true;
+    return R_NilValue;
+  }
+
+  R_len_t x_size = vec_size(x);
+
+  const SEXP* p_x_levels = STRING_PTR_RO(x_levels);
+  const SEXP* p_to_levels = STRING_PTR_RO(to_levels);
+
+  bool is_contiguous_subset = true;
+
+  for (R_len_t i = 0; i < x_levels_size; ++i) {
+    if (p_x_levels[i] != p_to_levels[i]) {
+      is_contiguous_subset = false;
+      break;
+    }
+  }
+
+  const int* p_x = INTEGER_RO(x);
+
+  SEXP out = PROTECT(Rf_allocVector(INTSXP, x_size));
+  int* p_out = INTEGER(out);
+
+  if (ordered) {
+    new_ordered(out, to_levels);
+  } else {
+    new_factor(out, to_levels);
+  }
+
+  // No recode required
+  if (is_contiguous_subset) {
+    memcpy(p_out, p_x, x_size * sizeof(int));
+    UNPROTECT(1);
+    return out;
+  }
+
+  SEXP recode = PROTECT(vec_match(x_levels, to_levels));
+  const int* p_recode = INTEGER_RO(recode);
+
+  // Detect if there are any levels in `x` that aren't in `to`
+  for (R_len_t i = 0; i < x_levels_size; ++i) {
+    if (p_recode[i] == NA_INTEGER) {
+      *lossy = true;
+      UNPROTECT(2);
+      return R_NilValue;
+    }
+  }
+
+  // Recode `x` int values into `to` level ordering
+  for (R_len_t i = 0; i < x_size; ++i) {
+    const int elt = p_x[i];
+
+    if (elt == NA_INTEGER) {
+      p_out[i] = NA_INTEGER;
+      continue;
+    }
+
+    p_out[i] = p_recode[elt - 1];
+  }
+
+  UNPROTECT(2);
+  return out;
+}
+
+
+static void new_factor(SEXP x, SEXP levels) {
+  if (TYPEOF(x) != INTSXP) {
+    Rf_errorcall(R_NilValue, "Internal error: Only integers can be made into factors");
+  }
+
+  Rf_setAttrib(x, R_LevelsSymbol, levels);
+  Rf_setAttrib(x, R_ClassSymbol, classes_factor);
+}
+
+static void new_ordered(SEXP x, SEXP levels) {
+  if (TYPEOF(x) != INTSXP) {
+    Rf_errorcall(R_NilValue, "Internal error: Only integers can be made into ordered factors");
+  }
+
+  Rf_setAttrib(x, R_LevelsSymbol, levels);
+  Rf_setAttrib(x, R_ClassSymbol, classes_ordered);
+}
