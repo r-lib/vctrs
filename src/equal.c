@@ -617,8 +617,8 @@ int equal_na(SEXP x, R_len_t i) {
   }                                                       \
   while (0)
 
-// [[ register() ]]
-SEXP vctrs_equal_na(SEXP x) {
+// [[ register(); include("vctrs.h") ]]
+SEXP vec_equal_na(SEXP x) {
   R_len_t n = vec_size(x);
   SEXP out = PROTECT(Rf_allocVector(LGLSXP, n));
   int32_t* p = LOGICAL(out);
@@ -635,8 +635,8 @@ SEXP vctrs_equal_na(SEXP x) {
   case vctrs_type_character: EQUAL_NA(SEXP, STRING_PTR_RO, chr_equal_na_scalar); break;
   case vctrs_type_list:      EQUAL_NA_BARRIER(list_equal_na_scalar); break;
   case vctrs_type_dataframe: EQUAL_NA_BARRIER(df_equal_na_scalar); break;
-  case vctrs_type_scalar:    Rf_errorcall(R_NilValue, "Can't detect `NA` values in scalars with `vctrs_equal_na()`.");
-  default:                   Rf_error("Unimplemented type in `vctrs_equal_na()`.");
+  case vctrs_type_scalar:    Rf_errorcall(R_NilValue, "Can't detect `NA` values in scalars with `vec_equal_na()`.");
+  default:                   Rf_error("Unimplemented type in `vec_equal_na()`.");
   }
 
   UNPROTECT(2);
