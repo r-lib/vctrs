@@ -122,10 +122,17 @@ vec_cast.factor <- function(x, to, ...) {
 #' @method vec_cast.factor factor
 vec_cast.factor.factor <- function(x, to, ..., x_arg = "", to_arg = "") {
   if (length(levels(to)) == 0L) {
-    factor(as.character(x), levels = unique(x), ordered = is.ordered(to))
+    levels <- levels(x)
+    if (is.null(levels)) {
+      exclude <- NA
+      levels <- unique(x)
+    } else {
+      exclude <- NULL
+    }
+    factor(as.character(x), levels = levels, ordered = is.ordered(to), exclude = exclude)
   } else {
     lossy <- !(x %in% levels(to) | is.na(x))
-    out <- factor(x, levels = levels(to), ordered = is.ordered(to))
+    out <- factor(x, levels = levels(to), ordered = is.ordered(to), exclude = NULL)
     maybe_lossy_cast(out, x, to, lossy, x_arg = x_arg, to_arg = to_arg)
   }
 }
