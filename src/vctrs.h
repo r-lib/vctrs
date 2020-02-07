@@ -290,10 +290,10 @@ SEXP vec_type2(SEXP x,
                struct vctrs_arg* y_arg,
                int* left);
 
-SEXP vctrs_type2_dispatch(SEXP x,
-                          SEXP y,
-                          struct vctrs_arg* x_arg,
-                          struct vctrs_arg* y_arg);
+SEXP vec_ptype2_dispatch_s3(SEXP x,
+                            SEXP y,
+                            struct vctrs_arg* x_arg,
+                            struct vctrs_arg* y_arg);
 
 SEXP vec_ptype2_dispatch(SEXP x, SEXP y,
                          enum vctrs_type x_type,

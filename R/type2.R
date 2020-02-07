@@ -42,7 +42,7 @@ vec_ptype2 <- function(x, y, ..., x_arg = "x", y_arg = "y") {
   return(.Call(vctrs_type2, x, y, x_arg, y_arg))
   UseMethod("vec_ptype2")
 }
-vec_type2_dispatch <- function(x, y, ..., x_arg = "x", y_arg = "y") {
+vec_ptype2_dispatch_s3 <- function(x, y, ..., x_arg = "x", y_arg = "y") {
   UseMethod("vec_ptype2")
 }
 #' @export

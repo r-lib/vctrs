@@ -248,7 +248,7 @@ void vctrs_init_proxy_restore(SEXP ns);
 void vctrs_init_slice(SEXP ns);
 void vctrs_init_slice_assign(SEXP ns);
 void vctrs_init_subscript_loc(SEXP ns);
-void vctrs_init_type2(SEXP ns);
+void vctrs_init_ptype2_dispatch(SEXP ns);
 void vctrs_init_type(SEXP ns);
 void vctrs_init_type_info(SEXP ns);
 void vctrs_init_unspecified(SEXP ns);
@@ -263,7 +263,7 @@ SEXP vctrs_init_library(SEXP ns) {
   vctrs_init_slice(ns);
   vctrs_init_slice_assign(ns);
   vctrs_init_subscript_loc(ns);
-  vctrs_init_type2(ns);
+  vctrs_init_ptype2_dispatch(ns);
   vctrs_init_type(ns);
   vctrs_init_type_info(ns);
   vctrs_init_unspecified(ns);

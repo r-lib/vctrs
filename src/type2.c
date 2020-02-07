@@ -24,7 +24,7 @@ SEXP vec_type2(SEXP x, SEXP y,
   }
 
   if (has_dim(x) || has_dim(y)) {
-    return vctrs_type2_dispatch(x, y, x_arg, y_arg);
+    return vec_ptype2_dispatch_s3(x, y, x_arg, y_arg);
   }
 
   enum vctrs_type type_x = vec_typeof(x);
@@ -72,7 +72,7 @@ SEXP vec_type2(SEXP x, SEXP y,
     return df_type2(x, y, x_arg, y_arg);
 
   default:
-    return vctrs_type2_dispatch(x, y, x_arg, y_arg);
+    return vec_ptype2_dispatch_s3(x, y, x_arg, y_arg);
   }
 }
 
