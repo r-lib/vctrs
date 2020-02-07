@@ -30,6 +30,7 @@ SEXP vec_ptype2_dispatch(SEXP x, SEXP y,
 static SEXP fns_vec_type2_dispatch = NULL;
 static SEXP syms_vec_type2_dispatch = NULL;
 
+// [[ include("vctrs.h") ]]
 SEXP vctrs_type2_dispatch(SEXP x,
                           SEXP y,
                           struct vctrs_arg* x_arg,
