@@ -189,31 +189,29 @@ static SEXP chr_as_factor_from_self(SEXP x, bool ordered) {
 }
 
 static SEXP remove_na_levels(SEXP levels) {
-  int n_prot = 0;
-
   R_len_t size = vec_size(levels);
   const SEXP* p_levels = STRING_PTR_RO(levels);
 
+  // There would only ever be 1 `NA` level
+  int na_loc;
   bool any_na = false;
-  SEXP is_not_na = PROTECT_N(Rf_allocVector(LGLSXP, size), &n_prot);
-  int* p_is_not_na = LOGICAL(is_not_na);
 
   for (R_len_t i = 0; i < size; ++i) {
-    if (p_levels[i] == NA_STRING) {
-      any_na = true;
-      p_is_not_na[i] = 0;
-    } else {
-      p_is_not_na[i] = 1;
+    if (p_levels[i] != NA_STRING) {
+      continue;
     }
+
+    any_na = true;
+    na_loc = (i + 1) * -1;
+    break;
   }
 
-  // Remove `NA` levels if required
+  // Remove `NA` level if required
   if (any_na) {
-    levels = PROTECT_N(vec_slice(levels, is_not_na), &n_prot);
+    return vec_slice(levels, r_int(na_loc));
+  } else {
+    return levels;
   }
-
-  UNPROTECT(n_prot);
-  return levels;
 }
 
 
