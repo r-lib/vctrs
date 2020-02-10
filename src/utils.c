@@ -338,7 +338,7 @@ bool list_is_s3_homogeneous(SEXP xs) {
 
   SEXP first_class = PROTECT(r_class(VECTOR_ELT(xs, 0)));
 
-  for (R_len_t i = 2; i < n; ++i) {
+  for (R_len_t i = 1; i < n; ++i) {
     SEXP this_class = PROTECT(r_class(VECTOR_ELT(xs, i)));
 
     if (!equal_object(first_class, this_class)) {

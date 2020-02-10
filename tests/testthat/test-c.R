@@ -144,6 +144,11 @@ test_that("vec_c() falls back to c() for foreign classes", {
     c(1, 2)
   )
 
+  expect_error(
+    vec_c(foobar(1), "", foobar(2)),
+    class = "vctrs_error_incompatible_type"
+  )
+
   # Fallback has better behaviour when the class implements `c()`
   local_methods(
     c.vctrs_foobar = function(...) rep_along(list(...), "dispatched")
