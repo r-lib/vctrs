@@ -152,6 +152,12 @@ test_that("vec_c() falls back to c() for foreign classes", {
     vec_c(foobar(1), foobar(2)),
     c("dispatched", "dispatched")
   )
+
+  # Don't fallback for S3 lists which are treated as scalars by default
+  expect_error(
+    vec_c(foobar(list(1)), foobar(list(2))),
+    class = "vctrs_error_scalar_type"
+  )
 })
 
 test_that("vec_c() fallback doesn't support `name_spec`", {

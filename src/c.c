@@ -157,9 +157,17 @@ static bool list_has_inner_names(SEXP xs) {
 
 
 static inline bool needs_vec_c_fallback(SEXP xs) {
+  if (!Rf_length(xs)) {
+    return false;
+  }
+
+  SEXP x = VECTOR_ELT(xs, 0);
+  if (!vec_is_vector(x)) {
+    return false;
+  }
+
   return
-    Rf_length(xs) &&
-    !vec_implements_ptype2(VECTOR_ELT(xs, 0)) &&
+    !vec_implements_ptype2(x) &&
     list_is_s3_homogeneous(xs);
 }
 
