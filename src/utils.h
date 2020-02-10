@@ -176,8 +176,19 @@ SEXP r_maybe_duplicate(SEXP x);
 SEXP r_pairlist(SEXP* tags, SEXP* cars);
 SEXP r_call(SEXP fn, SEXP* tags, SEXP* cars);
 
-SEXP r_names(SEXP x);
-SEXP r_poke_names(SEXP x, SEXP names);
+static inline SEXP r_names(SEXP x) {
+  return Rf_getAttrib(x, R_NamesSymbol);
+}
+static inline SEXP r_poke_names(SEXP x, SEXP names) {
+  return Rf_setAttrib(x, R_NamesSymbol, names);
+}
+static inline SEXP r_class(SEXP x) {
+  return Rf_getAttrib(x, R_ClassSymbol);
+}
+static inline SEXP r_poke_class(SEXP x, SEXP names) {
+  return Rf_setAttrib(x, R_ClassSymbol, names);
+}
+
 bool r_has_name_at(SEXP names, R_len_t i);
 bool r_is_names(SEXP names);
 bool r_is_minimal_names(SEXP x);
