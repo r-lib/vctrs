@@ -87,6 +87,9 @@ SEXP vec_unique_colnames(SEXP x, bool quiet);
 // Returns S3 method for `generic` suitable for the class of `x`. The
 // inheritance hierarchy is explored except for the default method.
 SEXP s3_find_method(const char* generic, SEXP x);
+bool vec_implements_ptype2(SEXP x);
+
+bool list_is_s3_homogeneous(SEXP xs);
 
 extern struct vctrs_arg* args_empty;
 SEXP arg_validate(SEXP arg, const char* arg_nm);

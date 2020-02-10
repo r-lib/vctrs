@@ -26,12 +26,32 @@ SEXP vctrs_c(SEXP call, SEXP op, SEXP args, SEXP env) {
   return out;
 }
 
+static inline bool needs_vec_c_fallback(SEXP xs);
+static SEXP vec_c_fallback(SEXP xs);
+
 // [[ include("vctrs.h") ]]
 SEXP vec_c(SEXP xs,
            SEXP ptype,
            SEXP name_spec,
            enum name_repair_arg name_repair) {
   R_len_t n = Rf_length(xs);
+
+  if (needs_vec_c_fallback(xs)) {
+    if (name_spec != R_NilValue) {
+      // TESTME
+      SEXP common_class = PROTECT(r_class(VECTOR_ELT(xs, 0)));
+      const char* str = r_chr_get_c_string(common_class, 0);
+      Rf_errorcall(R_NilValue,
+                   "Can't use `name_spec` with non-vctrs types.\n"
+                   "vctrs methods must be implemented for class `%s`.\n"
+                   "See <https://vctrs.r-lib.org/articles/s3-vector.html>.",
+                   str);
+      UNPROTECT(1);
+    }
+
+    SEXP out = vec_c_fallback(xs);
+    return out;
+  }
 
   ptype = PROTECT(vctrs_type_common_impl(xs, ptype));
 
@@ -133,4 +153,24 @@ static bool list_has_inner_names(SEXP xs) {
   }
 
   return false;
+}
+
+
+static inline bool needs_vec_c_fallback(SEXP xs) {
+  return
+    Rf_length(xs) &&
+    !vec_implements_ptype2(VECTOR_ELT(xs, 0)) &&
+    list_is_s3_homogeneous(xs);
+}
+
+static SEXP vec_c_fallback(SEXP xs) {
+  xs = PROTECT(Rf_coerceVector(xs, LISTSXP));
+
+  SEXP call = PROTECT(Rf_lcons(Rf_install("c"), xs));
+
+  // Dispatch in the base namespace which inherits from the global env
+  SEXP out = Rf_eval(call, R_BaseNamespace);
+
+  UNPROTECT(2);
+  return out;
 }

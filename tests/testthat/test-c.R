@@ -136,3 +136,44 @@ test_that("vec_c() outer names work with proxied objects", {
   expect_error(vec_c(outer = xs), "Please supply")
   expect_equal(vec_c(outer = xs, .name_spec = "{outer}_{inner}"), exp)
 })
+
+test_that("vec_c() falls back to c() for foreign classes", {
+  # We used to preserve the class
+  expect_identical(
+    vec_c(foobar(1), foobar(2)),
+    c(1, 2)
+  )
+
+  # Fallback has better behaviour when the class implements `c()`
+  local_methods(
+    c.vctrs_foobar = function(...) rep_along(list(...), "dispatched")
+  )
+  expect_identical(
+    vec_c(foobar(1), foobar(2)),
+    c("dispatched", "dispatched")
+  )
+})
+
+test_that("vec_c() fallback doesn't support `name_spec`", {
+  verify_errors({
+    local_methods(
+      c.vctrs_foobar = function(...) rep_along(list(...), "dispatched")
+    )
+    expect_error(
+      vec_c(foobar(1), foobar(2), .name_spec = "{outer}_{inner}"),
+      "name_spec"
+    )
+  })
+})
+
+test_that("vec_c() has informative error messages", {
+  verify_output(test_path("error", "test-c.txt"), {
+    "# vec_c() fallback doesn't support `name_spec`"
+    local({
+      local_methods(
+        c.vctrs_foobar = function(...) rep_along(list(...), "dispatched")
+      )
+      vec_c(foobar(1), foobar(2), .name_spec = "{outer}_{inner}")
+    })
+  })
+})
