@@ -165,14 +165,15 @@ test_that("vec_c() falls back to c() for foreign classes", {
   )
 })
 
-test_that("vec_c() fallback doesn't support `name_spec`", {
+test_that("vec_c() fallback doesn't support `name_spec` or `ptype`", {
   verify_errors({
-    local_methods(
-      c.vctrs_foobar = function(...) rep_along(list(...), "dispatched")
-    )
     expect_error(
       vec_c(foobar(1), foobar(2), .name_spec = "{outer}_{inner}"),
-      "name_spec"
+      "name specification"
+    )
+    expect_error(
+      vec_c(foobar(1), foobar(2), .ptype = ""),
+      "prototype"
     )
   })
 })
@@ -180,11 +181,9 @@ test_that("vec_c() fallback doesn't support `name_spec`", {
 test_that("vec_c() has informative error messages", {
   verify_output(test_path("error", "test-c.txt"), {
     "# vec_c() fallback doesn't support `name_spec`"
-    local({
-      local_methods(
-        c.vctrs_foobar = function(...) rep_along(list(...), "dispatched")
-      )
-      vec_c(foobar(1), foobar(2), .name_spec = "{outer}_{inner}")
-    })
+    vec_c(foobar(1), foobar(2), .name_spec = "{outer}_{inner}")
+
+    "# vec_c() fallback doesn't support `name_spec` or `ptype`"
+    vec_c(foobar(1), foobar(2), .ptype = "")
   })
 })

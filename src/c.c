@@ -28,6 +28,7 @@ SEXP vctrs_c(SEXP call, SEXP op, SEXP args, SEXP env) {
 
 static inline bool needs_vec_c_fallback(SEXP xs);
 static SEXP vec_c_fallback(SEXP xs);
+static void stop_vec_c_fallback(SEXP xs, SEXP name_spec, SEXP ptype);
 
 // [[ include("vctrs.h") ]]
 SEXP vec_c(SEXP xs,
@@ -37,16 +38,8 @@ SEXP vec_c(SEXP xs,
   R_len_t n = Rf_length(xs);
 
   if (needs_vec_c_fallback(xs)) {
-    if (name_spec != R_NilValue) {
-      // TESTME
-      SEXP common_class = PROTECT(r_class(VECTOR_ELT(xs, 0)));
-      const char* str = r_chr_get_c_string(common_class, 0);
-      Rf_errorcall(R_NilValue,
-                   "Can't use `name_spec` with non-vctrs types.\n"
-                   "vctrs methods must be implemented for class `%s`.\n"
-                   "See <https://vctrs.r-lib.org/articles/s3-vector.html>.",
-                   str);
-      UNPROTECT(1);
+    if (name_spec != R_NilValue || ptype != R_NilValue) {
+      stop_vec_c_fallback(xs, name_spec, ptype);
     }
 
     SEXP out = vec_c_fallback(xs);
@@ -181,4 +174,23 @@ static SEXP vec_c_fallback(SEXP xs) {
 
   UNPROTECT(2);
   return out;
+}
+
+static void stop_vec_c_fallback(SEXP xs, SEXP name_spec, SEXP ptype) {
+  SEXP common_class = PROTECT(r_class(VECTOR_ELT(xs, 0)));
+  const char* class_str = r_chr_get_c_string(common_class, 0);
+
+  const char* msg = NULL;
+  if (name_spec != R_NilValue) {
+    msg = "Can't use a name specification with non-vctrs types.";
+  } else {
+    msg = "Can't specify a prototype with non-vctrs types.";
+  }
+
+  Rf_errorcall(R_NilValue,
+               "%s\n"
+               "vctrs methods must be implemented for class `%s`.\n"
+               "See <https://vctrs.r-lib.org/articles/s3-vector.html>.",
+               msg,
+               class_str);
 }

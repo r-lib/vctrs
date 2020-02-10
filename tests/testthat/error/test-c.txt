@@ -2,12 +2,17 @@
 vec_c() fallback doesn't support `name_spec`
 ============================================
 
-> local({
-+   local_methods(c.vctrs_foobar = function(...) rep_along(list(...),
-+   "dispatched"))
-+   vec_c(foobar(1), foobar(2), .name_spec = "{outer}_{inner}")
-+ })
-Error: Can't use `name_spec` with non-vctrs types.
+> vec_c(foobar(1), foobar(2), .name_spec = "{outer}_{inner}")
+Error: Can't use a name specification with non-vctrs types.
+vctrs methods must be implemented for class `vctrs_foobar`.
+See <https://vctrs.r-lib.org/articles/s3-vector.html>.
+
+
+vec_c() fallback doesn't support `name_spec` or `ptype`
+=======================================================
+
+> vec_c(foobar(1), foobar(2), .ptype = "")
+Error: Can't specify a prototype with non-vctrs types.
 vctrs methods must be implemented for class `vctrs_foobar`.
 See <https://vctrs.r-lib.org/articles/s3-vector.html>.
 
