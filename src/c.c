@@ -32,6 +32,7 @@ static inline bool needs_vec_c_fallback(SEXP xs);
 static SEXP vec_c_fallback(SEXP xs);
 static inline int vec_c_fallback_validate_args(SEXP ptype, SEXP name_spec);
 static void stop_vec_c_fallback(SEXP xs, int err_type);
+static bool vec_implements_base_c(SEXP x);
 
 // [[ include("vctrs.h") ]]
 SEXP vec_c(SEXP xs,
@@ -153,6 +154,12 @@ static bool list_has_inner_names(SEXP xs) {
 }
 
 
+static bool vec_implements_base_c(SEXP x) {
+  return
+    OBJECT(x) &&
+    s3_find_method("c", x, base_method_table) != R_NilValue;
+}
+
 static inline bool needs_vec_c_fallback(SEXP xs) {
   if (!Rf_length(xs)) {
     return false;
@@ -169,9 +176,13 @@ static inline bool needs_vec_c_fallback(SEXP xs) {
 }
 
 static SEXP vec_c_fallback(SEXP xs) {
-  xs = PROTECT(Rf_coerceVector(xs, LISTSXP));
+  SEXP args = PROTECT(Rf_coerceVector(xs, LISTSXP));
 
-  SEXP call = PROTECT(Rf_lcons(Rf_install("c"), xs));
+  if (!vec_implements_base_c(CAR(args))) {
+    stop_vec_c_fallback(xs, 3);
+  }
+
+  SEXP call = PROTECT(Rf_lcons(Rf_install("c"), args));
 
   // Dispatch in the base namespace which inherits from the global env
   SEXP out = Rf_eval(call, R_BaseNamespace);
@@ -198,6 +209,7 @@ static void stop_vec_c_fallback(SEXP xs, int err_type) {
   switch (err_type) {
   case 1: msg = "Can't specify a prototype with non-vctrs types."; break;
   case 2: msg = "Can't use a name specification with non-vctrs types."; break;
+  case 3: msg = "Can't find vctrs or base methods for concatenation."; break;
   default: msg = "Internal error: Unexpected error type."; break;
   }
 

@@ -140,23 +140,36 @@ test_that("vec_c() outer names work with proxied objects", {
 })
 
 test_that("vec_c() falls back to c() for foreign classes", {
-  # We used to preserve the class
-  expect_identical(
-    vec_c(foobar(1), foobar(2)),
-    c(1, 2)
-  )
+  verify_errors({
+    expect_error(
+      vec_c(foobar(1), foobar(2)),
+      "concatenation"
+    )
+  })
 
+  # Check off-by-one error
   expect_error(
     vec_c(foobar(1), "", foobar(2)),
     class = "vctrs_error_incompatible_type"
   )
 
-  # Fallback has better behaviour when the class implements `c()`
+  # Fallback when the class implements `c()`
+  method <- function(...) rep_along(list(...), "dispatched")
   local_methods(
-    c.vctrs_foobar = function(...) rep_along(list(...), "dispatched")
+    c.vctrs_foobar = method
   )
   expect_identical(
     vec_c(foobar(1), foobar(2)),
+    c("dispatched", "dispatched")
+  )
+
+  # Registered fallback
+  s3_register("base::c", "vctrs_c_fallback", method)
+  expect_identical(
+    vec_c(
+      structure(1, class = "vctrs_c_fallback"),
+      structure(2, class = "vctrs_c_fallback")
+    ),
     c("dispatched", "dispatched")
   )
 
@@ -182,10 +195,11 @@ test_that("vec_c() fallback doesn't support `name_spec` or `ptype`", {
 
 test_that("vec_c() has informative error messages", {
   verify_output(test_path("error", "test-c.txt"), {
-    "# vec_c() fallback doesn't support `name_spec`"
-    vec_c(foobar(1), foobar(2), .name_spec = "{outer}_{inner}")
+    "# vec_c() falls back to c() for foreign classes"
+    vec_c(foobar(1), foobar(2))
 
     "# vec_c() fallback doesn't support `name_spec` or `ptype`"
+    vec_c(foobar(1), foobar(2), .name_spec = "{outer}_{inner}")
     vec_c(foobar(1), foobar(2), .ptype = "")
   })
 })

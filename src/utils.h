@@ -329,6 +329,7 @@ extern SEXP fns_names;
 
 
 extern SEXP vctrs_method_table;
+extern SEXP base_method_table;
 
 
 #endif

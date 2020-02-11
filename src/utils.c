@@ -9,6 +9,7 @@ SEXP (*rlang_unbox)(SEXP) = NULL;
 SEXP (*rlang_env_dots_values)(SEXP) = NULL;
 SEXP (*rlang_env_dots_list)(SEXP) = NULL;
 SEXP vctrs_method_table = NULL;
+SEXP base_method_table = NULL;
 
 SEXP strings_tbl = NULL;
 SEXP strings_tbl_df = NULL;
@@ -1130,6 +1131,8 @@ struct vctrs_arg* args_empty = NULL;
 void vctrs_init_utils(SEXP ns) {
   vctrs_ns_env = ns;
   vctrs_method_table = r_env_get(ns, Rf_install(".__S3MethodsTable__."));
+
+  base_method_table = r_env_get(R_BaseNamespace, Rf_install(".__S3MethodsTable__."));
 
   vctrs_shared_empty_str = Rf_mkString("");
   R_PreserveObject(vctrs_shared_empty_str);
