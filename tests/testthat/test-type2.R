@@ -98,7 +98,7 @@ test_that("stop_incompatible_type() checks for scalars", {
 })
 
 test_that("vec_ptype2() methods forward args to stop_incompatible_type()", {
-  expect_args(new_hidden(), NA, x_arg = "foo", y_arg = "bar")
+  expect_args(new_hidden(), lgl(), x_arg = "foo", y_arg = "bar")
   expect_args(lgl(), new_hidden(), x_arg = "foo", y_arg = "bar")
   expect_args(int(), new_hidden(), x_arg = "foo", y_arg = "bar")
   expect_args(dbl(), new_hidden(), x_arg = "foo", y_arg = "bar")

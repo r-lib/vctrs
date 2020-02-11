@@ -321,6 +321,39 @@ SEXP s3_find_method(const char* generic, SEXP x) {
 }
 
 // [[ include("utils.h") ]]
+bool vec_implements_ptype2(SEXP x) {
+  if (vec_typeof(x) == vctrs_type_s3) {
+    return s3_find_method("vec_ptype2", x) != R_NilValue;
+  } else {
+    return true;
+  }
+}
+
+// [[ include("utils.h") ]]
+bool list_is_s3_homogeneous(SEXP xs) {
+  R_len_t n = Rf_length(xs);
+  if (n == 0 || n == 1) {
+    return true;
+  }
+
+  SEXP first_class = PROTECT(r_class(VECTOR_ELT(xs, 0)));
+
+  for (R_len_t i = 1; i < n; ++i) {
+    SEXP this_class = PROTECT(r_class(VECTOR_ELT(xs, i)));
+
+    if (!equal_object(first_class, this_class)) {
+      UNPROTECT(2);
+      return false;
+    }
+
+    UNPROTECT(1);
+  }
+
+  UNPROTECT(1);
+  return true;
+}
+
+// [[ include("utils.h") ]]
 SEXP new_empty_factor(SEXP levels) {
   if (TYPEOF(levels) != STRSXP) {
     Rf_errorcall(R_NilValue, "Internal error: `level` must be a character vector.");

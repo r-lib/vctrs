@@ -136,3 +136,54 @@ test_that("vec_c() outer names work with proxied objects", {
   expect_error(vec_c(outer = xs), "Please supply")
   expect_equal(vec_c(outer = xs, .name_spec = "{outer}_{inner}"), exp)
 })
+
+test_that("vec_c() falls back to c() for foreign classes", {
+  # We used to preserve the class
+  expect_identical(
+    vec_c(foobar(1), foobar(2)),
+    c(1, 2)
+  )
+
+  expect_error(
+    vec_c(foobar(1), "", foobar(2)),
+    class = "vctrs_error_incompatible_type"
+  )
+
+  # Fallback has better behaviour when the class implements `c()`
+  local_methods(
+    c.vctrs_foobar = function(...) rep_along(list(...), "dispatched")
+  )
+  expect_identical(
+    vec_c(foobar(1), foobar(2)),
+    c("dispatched", "dispatched")
+  )
+
+  # Don't fallback for S3 lists which are treated as scalars by default
+  expect_error(
+    vec_c(foobar(list(1)), foobar(list(2))),
+    class = "vctrs_error_scalar_type"
+  )
+})
+
+test_that("vec_c() fallback doesn't support `name_spec` or `ptype`", {
+  verify_errors({
+    expect_error(
+      vec_c(foobar(1), foobar(2), .name_spec = "{outer}_{inner}"),
+      "name specification"
+    )
+    expect_error(
+      vec_c(foobar(1), foobar(2), .ptype = ""),
+      "prototype"
+    )
+  })
+})
+
+test_that("vec_c() has informative error messages", {
+  verify_output(test_path("error", "test-c.txt"), {
+    "# vec_c() fallback doesn't support `name_spec`"
+    vec_c(foobar(1), foobar(2), .name_spec = "{outer}_{inner}")
+
+    "# vec_c() fallback doesn't support `name_spec` or `ptype`"
+    vec_c(foobar(1), foobar(2), .ptype = "")
+  })
+})
