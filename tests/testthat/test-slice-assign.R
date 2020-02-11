@@ -274,7 +274,7 @@ test_that("can use names to vec_slice<-() a named object", {
 
 test_that("slice-assign falls back to `[<-` when proxy is not implemented", {
   obj <- foobar(c("foo", "bar", "baz"))
-  expect_error(vec_slice(obj, 1:2) <- NA, class = "vctrs_error_incompatible_cast")
+  expect_error(vec_slice(obj, 1:2) <- TRUE, class = "vctrs_error_incompatible_type")
 
   vec_slice(obj, 1:2) <- foobar("quux")
 
@@ -294,8 +294,14 @@ test_that("slice-assign falls back to `[<-` when proxy is not implemented", {
   )
 
   obj <- foobar(c("foo", "bar", "baz"))
-  vec_slice(obj, 1:2) <- NA
+  vec_slice(obj, 1:2) <- TRUE
   expect_identical(obj, c("dispatched", "dispatched", "baz"))
+})
+
+test_that("slice-assign can assign unspecified values into foreign vector types", {
+  obj <- foobar(c("foo", "bar", "baz"))
+  expect_identical(vec_assign(obj, 1:2, NA), foobar(c(NA, NA, "baz")))
+  expect_identical(vec_assign(obj, 1:2, unspecified(1)), foobar(c(NA, NA, "baz")))
 })
 
 test_that("slice-assign restores value before falling back to `[<-` (#443)", {
