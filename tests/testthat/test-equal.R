@@ -339,6 +339,16 @@ test_that("NA do not propagate from function bodies or formals", {
   expect_false(vec_equal(list(fn), list(other)))
 })
 
+test_that("can check equality of unspecified objects", {
+  expect_equal(vec_equal(NA, NA), NA)
+  expect_true(vec_equal(NA, NA, na_equal = TRUE))
+
+  expect_equal(vec_equal(unspecified(1), unspecified(1)), NA)
+  expect_true(vec_equal(unspecified(1), unspecified(1), na_equal = TRUE))
+
+  expect_equal(vec_equal(NA, unspecified(1)), NA)
+  expect_true(vec_equal(NA, unspecified(1), na_equal = TRUE))
+})
 
 # proxy -------------------------------------------------------------------
 

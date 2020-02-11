@@ -49,6 +49,12 @@ test_that("`NULL` has size zero", {
   expect_identical(vec_size(NULL), 0L)
 })
 
+test_that("can take the size of unspecified objects", {
+  expect_size(NA, 1)
+  expect_size(c(NA, NA), 2)
+  expect_size(unspecified(2), 2)
+})
+
 # vec_size_common ---------------------------------------------------------
 
 test_that("vec_size_common with no input is 0L unless `.absent` is provided", {

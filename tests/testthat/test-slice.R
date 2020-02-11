@@ -391,6 +391,15 @@ test_that("vec_slice() asserts vectorness (#301)", {
   expect_error(vec_slice(NULL, 1), class = "vctrs_error_scalar_type")
 })
 
+test_that("slicing an unspecified logical vector returns a logical vector", {
+  expect_identical(vec_slice(NA, integer()), logical())
+  expect_identical(vec_slice(NA, c(1, 1)), c(NA, NA))
+})
+
+test_that("slicing an unspecified() object returns an unspecified()", {
+  expect_identical(vec_slice(unspecified(1), integer()), unspecified())
+  expect_identical(vec_slice(unspecified(1), c(1, 1)), unspecified(2))
+})
 
 # vec_init ----------------------------------------------------------------
 
