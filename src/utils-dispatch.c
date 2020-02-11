@@ -45,7 +45,8 @@ bool is_record(SEXP x) {
   enum vctrs_class_type type = class_type(x);
   return
     type == vctrs_class_rcrd ||
-    type == vctrs_class_posixlt;
+    type == vctrs_class_posixlt ||
+    type == vctrs_class_bare_posixlt;
 }
 
 
@@ -75,14 +76,27 @@ static enum vctrs_class_type class_type_impl(SEXP class) {
       return vctrs_class_bare_data_frame;
     } else if (p0 == strings_factor) {
       return vctrs_class_bare_factor;
+    } else if (p0 == strings_date) {
+      return vctrs_class_bare_date;
     }
 
     break;
   }
   case 2: {
-    if (p[0] == strings_ordered &&
-        p[1] == strings_factor) {
+    SEXP p0 = p[0];
+    SEXP p1 = p[1];
+
+    if (p0 == strings_ordered &&
+        p1 == strings_factor) {
       return vctrs_class_bare_ordered;
+    }
+
+    if (p1 == strings_posixt) {
+      if (p0 == strings_posixct) {
+        return vctrs_class_bare_posixct;
+      } else if (p0 == strings_posixlt) {
+        return vctrs_class_bare_posixlt;
+      }
     }
 
     break;
@@ -121,6 +135,9 @@ static const char* class_type_as_str(enum vctrs_class_type type) {
   case vctrs_class_bare_factor: return "bare_factor";
   case vctrs_class_bare_ordered: return "bare_ordered";
   case vctrs_class_rcrd: return "rcrd";
+  case vctrs_class_bare_date: return "bare_date";
+  case vctrs_class_bare_posixct: return "bare_posixct";
+  case vctrs_class_bare_posixlt: return "bare_posixlt";
   case vctrs_class_posixlt: return "posixlt";
   case vctrs_class_unknown: return "unknown";
   case vctrs_class_none: return "none";
