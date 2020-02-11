@@ -19,7 +19,7 @@ SEXP vctrs_c(SEXP call, SEXP op, SEXP args, SEXP env) {
   SEXP name_spec = PROTECT(Rf_eval(CAR(args), env)); args = CDR(args);
   SEXP name_repair = PROTECT(Rf_eval(CAR(args), env));
 
-  struct name_repair_opts name_repair_opts = validate_name_repair(name_repair);
+  struct name_repair_opts name_repair_opts = validate_name_repair(name_repair, false);
   PROTECT_NAME_REPAIR_OPTS(&name_repair_opts);
 
   SEXP out = vec_c(xs, ptype, name_spec, &name_repair_opts);
@@ -126,7 +126,7 @@ SEXP vec_c(SEXP xs,
   out = PROTECT(vec_restore(out, ptype, R_NilValue));
 
   if (has_names) {
-    out_names = PROTECT(vec_as_names(out_names, name_repair, false));
+    out_names = PROTECT(vec_as_names(out_names, name_repair));
     out = vec_set_names(out, out_names);
     REPROTECT(out, out_pi);
     UNPROTECT(1);

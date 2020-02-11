@@ -3,8 +3,8 @@
 
 
 static SEXP vec_rbind(SEXP xs, SEXP ptype, SEXP id, struct name_repair_opts* name_repair);
-static SEXP as_df_row(SEXP x, struct name_repair_opts* name_repair, bool quiet);
-static SEXP as_df_row_impl(SEXP x, struct name_repair_opts* name_repair, bool quiet);
+static SEXP as_df_row(SEXP x, struct name_repair_opts* name_repair);
+static SEXP as_df_row_impl(SEXP x, struct name_repair_opts* name_repair);
 struct name_repair_opts validate_bind_name_repair(SEXP name_repair, bool allow_minimal);
 
 // [[ register(external = TRUE) ]]
@@ -41,7 +41,7 @@ static SEXP vec_rbind(SEXP xs, SEXP ptype, SEXP names_to, struct name_repair_opt
   R_len_t n = Rf_length(xs);
 
   for (R_len_t i = 0; i < n; ++i) {
-    SET_VECTOR_ELT(xs, i, as_df_row(VECTOR_ELT(xs, i), name_repair, false));
+    SET_VECTOR_ELT(xs, i, as_df_row(VECTOR_ELT(xs, i), name_repair));
   }
 
   // The common type holds information about common column names,
@@ -54,7 +54,7 @@ static SEXP vec_rbind(SEXP xs, SEXP ptype, SEXP names_to, struct name_repair_opt
     return new_data_frame(vctrs_shared_empty_list, 0);
   }
   if (TYPEOF(ptype) == LGLSXP && !Rf_length(ptype)) {
-    ptype = as_df_row_impl(vctrs_shared_na_lgl, name_repair, false);
+    ptype = as_df_row_impl(vctrs_shared_na_lgl, name_repair);
     PROTECT_N(ptype, &nprot);
   }
   if (!is_data_frame(ptype)) {
@@ -127,15 +127,15 @@ static SEXP vec_rbind(SEXP xs, SEXP ptype, SEXP names_to, struct name_repair_opt
   return out;
 }
 
-static SEXP as_df_row(SEXP x, struct name_repair_opts* name_repair, bool quiet) {
+static SEXP as_df_row(SEXP x, struct name_repair_opts* name_repair) {
   if (vec_is_unspecified(x) && r_names(x) == R_NilValue) {
     return x;
   } else {
-    return as_df_row_impl(x, name_repair, quiet);
+    return as_df_row_impl(x, name_repair);
   }
 }
 
-static SEXP as_df_row_impl(SEXP x, struct name_repair_opts* name_repair, bool quiet) {
+static SEXP as_df_row_impl(SEXP x, struct name_repair_opts* name_repair) {
   if (x == R_NilValue) {
     return x;
   }
@@ -150,7 +150,7 @@ static SEXP as_df_row_impl(SEXP x, struct name_repair_opts* name_repair, bool qu
     Rf_errorcall(R_NilValue, "Can't bind arrays.");
   }
   if (ndim == 2) {
-    SEXP names = PROTECT_N(vec_unique_colnames(x, false), &nprot);
+    SEXP names = PROTECT_N(vec_unique_colnames(x, name_repair->quiet), &nprot);
     SEXP out = PROTECT_N(r_as_data_frame(x), &nprot);
     r_poke_names(out, names);
     UNPROTECT(nprot);
@@ -166,9 +166,9 @@ static SEXP as_df_row_impl(SEXP x, struct name_repair_opts* name_repair, bool qu
   }
 
   if (nms == R_NilValue) {
-    nms = PROTECT_N(vec_unique_names(x, quiet), &nprot);
+    nms = PROTECT_N(vec_unique_names(x, name_repair->quiet), &nprot);
   } else {
-    nms = PROTECT_N(vec_as_names(nms, name_repair, quiet), &nprot);
+    nms = PROTECT_N(vec_as_names(nms, name_repair), &nprot);
   }
 
   x = PROTECT_N(vec_chop(x, R_NilValue), &nprot);
@@ -185,9 +185,10 @@ static SEXP as_df_row_impl(SEXP x, struct name_repair_opts* name_repair, bool qu
 SEXP vctrs_as_df_row(SEXP x, SEXP quiet) {
   struct name_repair_opts name_repair_opts = {
     .type = name_repair_unique,
-    .fn = R_NilValue
+    .fn = R_NilValue,
+    .quiet = LOGICAL(quiet)[0]
   };
-  return as_df_row(x, &name_repair_opts, LOGICAL(quiet)[0]);
+  return as_df_row(x, &name_repair_opts);
 }
 
 static SEXP as_df_col(SEXP x, SEXP outer, bool* allow_pack);
@@ -307,7 +308,7 @@ static SEXP vec_cbind(SEXP xs, SEXP ptype, SEXP size, struct name_repair_opts* n
     UNPROTECT(1);
   }
 
-  names = PROTECT(vec_as_names(names, name_repair, false));
+  names = PROTECT(vec_as_names(names, name_repair));
   Rf_setAttrib(out, R_NamesSymbol, names);
 
   out = vec_restore(out, type, R_NilValue);
@@ -388,7 +389,7 @@ static SEXP vec_as_df_col(SEXP x, SEXP outer) {
 }
 
 struct name_repair_opts validate_bind_name_repair(SEXP name_repair, bool allow_minimal) {
-  struct name_repair_opts opts = validate_name_repair(name_repair);
+  struct name_repair_opts opts = validate_name_repair(name_repair, false);
 
   switch (opts.type) {
   case name_repair_unique: break;

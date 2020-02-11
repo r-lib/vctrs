@@ -22,13 +22,13 @@ SEXP vec_as_universal_names(SEXP names, bool quiet);
 SEXP vec_validate_unique_names(SEXP names);
 
 
-// [[ include("vctrs.h") ]]
-SEXP vec_as_names(SEXP names, const struct name_repair_opts* opts, bool quiet) {
+// [[ include("names.h") ]]
+SEXP vec_as_names(SEXP names, const struct name_repair_opts* opts) {
   switch (opts->type) {
   case name_repair_none: return names;
   case name_repair_minimal: return vctrs_as_minimal_names(names);
-  case name_repair_unique: return vec_as_unique_names(names, quiet);
-  case name_repair_universal: return vec_as_universal_names(names, quiet);
+  case name_repair_unique: return vec_as_unique_names(names, opts->quiet);
+  case name_repair_universal: return vec_as_universal_names(names, opts->quiet);
   case name_repair_check_unique: return vec_validate_unique_names(names);
   case name_repair_custom:
     Rf_error("TODO: unimplemented");
@@ -694,7 +694,7 @@ SEXP vec_set_names(SEXP x, SEXP names) {
 }
 
 SEXP vctrs_validate_name_repair_arg(SEXP arg) {
-  struct name_repair_opts opts = validate_name_repair(arg);
+  struct name_repair_opts opts = validate_name_repair(arg, true);
   if (opts.type == name_repair_custom) {
     return opts.fn;
   } else if (Rf_length(arg) != 1) {
@@ -708,10 +708,11 @@ void stop_name_repair() {
   Rf_errorcall(R_NilValue, "`.name_repair` must be a string or a function. See `?vctrs::vec_as_names`.");
 }
 
-struct name_repair_opts validate_name_repair(SEXP name_repair) {
+struct name_repair_opts validate_name_repair(SEXP name_repair, bool quiet) {
   struct name_repair_opts opts = {
     .type = 0,
-    .fn = R_NilValue
+    .fn = R_NilValue,
+    .quiet = quiet
   };
 
   switch (TYPEOF(name_repair)) {
