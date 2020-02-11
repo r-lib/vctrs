@@ -818,19 +818,16 @@ SEXP r_new_environment(SEXP parent, R_len_t size) {
 static SEXP new_function_call = NULL;
 static SEXP new_function__formals_node = NULL;
 static SEXP new_function__body_node = NULL;
-static SEXP new_function__env_node = NULL;
 
 SEXP r_new_function(SEXP formals, SEXP body, SEXP env) {
   SETCAR(new_function__formals_node, formals);
   SETCAR(new_function__body_node, body);
-  SETCAR(new_function__env_node, env);
 
-  SEXP fn = Rf_eval(new_function_call, R_BaseEnv);
+  SEXP fn = Rf_eval(new_function_call, env);
 
   // Free for gc
   SETCAR(new_function__formals_node, R_NilValue);
   SETCAR(new_function__body_node, R_NilValue);
-  SETCAR(new_function__env_node, R_NilValue);
 
   return fn;
 }
@@ -1357,12 +1354,11 @@ void vctrs_init_utils(SEXP ns) {
   new_env__parent_node = CDDR(new_env_call);
   new_env__size_node = CDR(new_env__parent_node);
 
-  new_function_call = r_parse_eval("as.call(list(`function`, NULL, NULL, NULL))", R_BaseEnv);
+  new_function_call = r_parse_eval("as.call(list(`function`, NULL, NULL))", R_BaseEnv);
   R_PreserveObject(new_function_call);
 
   new_function__formals_node = CDR(new_function_call);
   new_function__body_node = CDR(new_function__formals_node);
-  new_function__env_node = CDR(new_function__body_node);
 
   const char* formals_code = "pairlist2(... = , .x = quote(..1), .y = quote(..2), . = quote(..1))";
   rlang_formula_formals = r_parse_eval(formals_code, ns);

@@ -155,7 +155,7 @@ vec_as_names <- function(names,
   if (!missing(...)) {
     ellipsis::check_dots_empty()
   }
-  repair <- validate_repair(repair)
+  repair <- validate_name_repair_arg(repair)
 
   if (is_function(repair)) {
     names <- as_minimal_names(names)
@@ -176,16 +176,8 @@ vec_as_names <- function(names,
   )
 }
 
-validate_repair <- function(repair = c("minimal", "unique", "universal", "check_unique")) {
-  if (is_formula(repair, scoped = TRUE, lhs = FALSE)) {
-    repair <- as_function(repair)
-  }
-
-  if (is_function(repair)) {
-    repair
-  } else {
-    arg_match(repair)
-  }
+validate_name_repair_arg <- function(repair) {
+  .Call(vctrs_validate_name_repair_arg, repair)
 }
 validate_minimal <- function(names, n = NULL) {
   if (is.null(names)) {
@@ -241,7 +233,7 @@ vec_names2 <- function(x,
   if (!missing(...)) {
     ellipsis::check_dots_empty()
   }
-  repair <- validate_repair(repair)
+  repair <- validate_name_repair_arg(repair)
 
   if (is_function(repair)) {
     names <- minimal_names(x)

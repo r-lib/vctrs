@@ -19,10 +19,12 @@ SEXP vctrs_c(SEXP call, SEXP op, SEXP args, SEXP env) {
   SEXP name_spec = PROTECT(Rf_eval(CAR(args), env)); args = CDR(args);
   SEXP name_repair = PROTECT(Rf_eval(CAR(args), env));
 
-  enum name_repair_arg repair_arg = validate_name_repair(name_repair);
-  SEXP out = vec_c(xs, ptype, name_spec, repair_arg);
+  struct name_repair_opts name_repair_opts = validate_name_repair(name_repair);
+  PROTECT_NAME_REPAIR_OPTS(&name_repair_opts);
 
-  UNPROTECT(4);
+  SEXP out = vec_c(xs, ptype, name_spec, &name_repair_opts);
+
+  UNPROTECT(5);
   return out;
 }
 
@@ -34,7 +36,7 @@ static void stop_vec_c_fallback(SEXP xs, SEXP name_spec, SEXP ptype);
 SEXP vec_c(SEXP xs,
            SEXP ptype,
            SEXP name_spec,
-           enum name_repair_arg name_repair) {
+           const struct name_repair_opts* name_repair) {
   R_len_t n = Rf_length(xs);
 
   if (needs_vec_c_fallback(xs)) {

@@ -23,13 +23,15 @@ SEXP vec_validate_unique_names(SEXP names);
 
 
 // [[ include("vctrs.h") ]]
-SEXP vec_as_names(SEXP names, enum name_repair_arg type, bool quiet) {
-  switch (type) {
+SEXP vec_as_names(SEXP names, const struct name_repair_opts* opts, bool quiet) {
+  switch (opts->type) {
   case name_repair_none: return names;
   case name_repair_minimal: return vctrs_as_minimal_names(names);
   case name_repair_unique: return vec_as_unique_names(names, quiet);
   case name_repair_universal: return vec_as_universal_names(names, quiet);
   case name_repair_check_unique: return vec_validate_unique_names(names);
+  case name_repair_custom:
+    Rf_error("TODO: unimplemented");
   }
   never_reached("vec_as_names");
 }
@@ -691,41 +693,78 @@ SEXP vec_set_names(SEXP x, SEXP names) {
   return x;
 }
 
+SEXP vctrs_validate_name_repair_arg(SEXP arg) {
+  struct name_repair_opts opts = validate_name_repair(arg);
+  if (opts.type == name_repair_custom) {
+    return opts.fn;
+  } else if (Rf_length(arg) != 1) {
+    return r_str_as_character(r_str(name_repair_arg_as_c_string(opts.type)));
+  } else {
+    return arg;
+  }
+}
 
-enum name_repair_arg validate_name_repair(SEXP arg) {
-  if (!Rf_length(arg)) {
-    Rf_errorcall(R_NilValue, "`.name_repair` must be a string. See `?vctrs::vec_as_names`.");
+void stop_name_repair() {
+  Rf_errorcall(R_NilValue, "`.name_repair` must be a string or a function. See `?vctrs::vec_as_names`.");
+}
+
+struct name_repair_opts validate_name_repair(SEXP name_repair) {
+  struct name_repair_opts opts = {
+    .type = 0,
+    .fn = R_NilValue
+  };
+
+  switch (TYPEOF(name_repair)) {
+  case STRSXP: {
+    if (!Rf_length(name_repair)) {
+      stop_name_repair();
+    }
+
+    SEXP c = r_chr_get(name_repair, 0);
+
+    if (c == strings_none) {
+      opts.type = name_repair_none;
+    } else if (c == strings_minimal) {
+      opts.type = name_repair_minimal;
+    } else if (c == strings_unique) {
+      opts.type = name_repair_unique;
+    } else if (c == strings_universal) {
+      opts.type = name_repair_universal;
+    } else if (c == strings_check_unique) {
+      opts.type = name_repair_check_unique;
+    } else {
+      Rf_errorcall(R_NilValue, "`.name_repair` can't be \"%s\". See `?vctrs::vec_as_names`.", CHAR(name_repair));
+    }
+
+    return opts;
   }
 
-  arg = r_chr_get(arg, 0);
+  case LANGSXP:
+    opts.fn = r_as_function(name_repair, ".name_repair");
+    opts.type = name_repair_custom;
+    return opts;
 
-  if (arg == strings_none) {
-    return name_repair_none;
-  }
-  if (arg == strings_minimal) {
-    return name_repair_minimal;
-  }
-  if (arg == strings_unique) {
-    return name_repair_unique;
-  }
-  if (arg == strings_universal) {
-    return name_repair_universal;
-  }
-  if (arg == strings_check_unique) {
-    return name_repair_check_unique;
+  case CLOSXP:
+    opts.fn = name_repair;
+    opts.type = name_repair_custom;
+    return opts;
+
+  default:
+    stop_name_repair();
   }
 
-  Rf_errorcall(R_NilValue, "`.name_repair` can't be \"%s\". See `?vctrs::vec_as_names`.", CHAR(arg));
+  never_reached("validate_name_repair");
 }
 
 // [[ include("vctrs.h") ]]
-const char* name_repair_arg_as_c_string(enum name_repair_arg arg) {
-  switch (arg) {
+const char* name_repair_arg_as_c_string(enum name_repair_type type) {
+  switch (type) {
   case name_repair_none: return "none";
   case name_repair_minimal: return "minimal";
   case name_repair_unique: return "unique";
   case name_repair_universal: return "universal";
   case name_repair_check_unique: return "check_unique";
+  case name_repair_custom: return "custom";
   }
   never_reached("name_repair_arg_as_c_string");
 }

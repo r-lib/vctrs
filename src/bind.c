@@ -2,10 +2,10 @@
 #include "utils.h"
 
 
-static SEXP vec_rbind(SEXP xs, SEXP ptype, SEXP id, enum name_repair_arg name_repair);
-static SEXP as_df_row(SEXP x, enum name_repair_arg name_repair, bool quiet);
-static SEXP as_df_row_impl(SEXP x, enum name_repair_arg name_repair, bool quiet);
-enum name_repair_arg validate_bind_name_repair(SEXP name_repair, bool allow_minimal);
+static SEXP vec_rbind(SEXP xs, SEXP ptype, SEXP id, struct name_repair_opts* name_repair);
+static SEXP as_df_row(SEXP x, struct name_repair_opts* name_repair, bool quiet);
+static SEXP as_df_row_impl(SEXP x, struct name_repair_opts* name_repair, bool quiet);
+struct name_repair_opts validate_bind_name_repair(SEXP name_repair, bool allow_minimal);
 
 // [[ register(external = TRUE) ]]
 SEXP vctrs_rbind(SEXP call, SEXP op, SEXP args, SEXP env) {
@@ -23,10 +23,12 @@ SEXP vctrs_rbind(SEXP call, SEXP op, SEXP args, SEXP env) {
     names_to = r_chr_get(names_to, 0);
   }
 
-  enum name_repair_arg repair_arg = validate_bind_name_repair(name_repair, false);
-  SEXP out = vec_rbind(xs, ptype, names_to, repair_arg);
+  struct name_repair_opts name_repair_opts = validate_bind_name_repair(name_repair, false);
+  PROTECT_NAME_REPAIR_OPTS(&name_repair_opts);
 
-  UNPROTECT(4);
+  SEXP out = vec_rbind(xs, ptype, names_to, &name_repair_opts);
+
+  UNPROTECT(5);
   return out;
 }
 
@@ -34,7 +36,7 @@ SEXP vctrs_rbind(SEXP call, SEXP op, SEXP args, SEXP env) {
 // From type.c
 SEXP vctrs_type_common_impl(SEXP dots, SEXP ptype);
 
-static SEXP vec_rbind(SEXP xs, SEXP ptype, SEXP names_to, enum name_repair_arg name_repair) {
+static SEXP vec_rbind(SEXP xs, SEXP ptype, SEXP names_to, struct name_repair_opts* name_repair) {
   int nprot = 0;
   R_len_t n = Rf_length(xs);
 
@@ -125,7 +127,7 @@ static SEXP vec_rbind(SEXP xs, SEXP ptype, SEXP names_to, enum name_repair_arg n
   return out;
 }
 
-static SEXP as_df_row(SEXP x, enum name_repair_arg name_repair, bool quiet) {
+static SEXP as_df_row(SEXP x, struct name_repair_opts* name_repair, bool quiet) {
   if (vec_is_unspecified(x) && r_names(x) == R_NilValue) {
     return x;
   } else {
@@ -133,7 +135,7 @@ static SEXP as_df_row(SEXP x, enum name_repair_arg name_repair, bool quiet) {
   }
 }
 
-static SEXP as_df_row_impl(SEXP x, enum name_repair_arg name_repair, bool quiet) {
+static SEXP as_df_row_impl(SEXP x, struct name_repair_opts* name_repair, bool quiet) {
   if (x == R_NilValue) {
     return x;
   }
@@ -181,11 +183,15 @@ static SEXP as_df_row_impl(SEXP x, enum name_repair_arg name_repair, bool quiet)
 
 // [[ register() ]]
 SEXP vctrs_as_df_row(SEXP x, SEXP quiet) {
-  return as_df_row(x, name_repair_unique, LOGICAL(quiet)[0]);
+  struct name_repair_opts name_repair_opts = {
+    .type = name_repair_unique,
+    .fn = R_NilValue
+  };
+  return as_df_row(x, &name_repair_opts, LOGICAL(quiet)[0]);
 }
 
 static SEXP as_df_col(SEXP x, SEXP outer, bool* allow_pack);
-static SEXP vec_cbind(SEXP xs, SEXP ptype, SEXP size, enum name_repair_arg name_repair);
+static SEXP vec_cbind(SEXP xs, SEXP ptype, SEXP size, struct name_repair_opts* name_repair);
 static SEXP cbind_container_type(SEXP x);
 
 // [[ register(external = TRUE) ]]
@@ -197,14 +203,16 @@ SEXP vctrs_cbind(SEXP call, SEXP op, SEXP args, SEXP env) {
   SEXP size = PROTECT(Rf_eval(CAR(args), env)); args = CDR(args);
   SEXP name_repair = PROTECT(Rf_eval(CAR(args), env));
 
-  enum name_repair_arg repair_arg = validate_bind_name_repair(name_repair, true);
-  SEXP out = vec_cbind(xs, ptype, size, repair_arg);
+  struct name_repair_opts name_repair_opts = validate_bind_name_repair(name_repair, true);
+  PROTECT_NAME_REPAIR_OPTS(&name_repair_opts);
 
-  UNPROTECT(4);
+  SEXP out = vec_cbind(xs, ptype, size, &name_repair_opts);
+
+  UNPROTECT(5);
   return out;
 }
 
-static SEXP vec_cbind(SEXP xs, SEXP ptype, SEXP size, enum name_repair_arg name_repair) {
+static SEXP vec_cbind(SEXP xs, SEXP ptype, SEXP size, struct name_repair_opts* name_repair) {
   R_len_t n = Rf_length(xs);
 
   // Find the common container type of inputs
@@ -379,10 +387,10 @@ static SEXP vec_as_df_col(SEXP x, SEXP outer) {
   return out;
 }
 
-enum name_repair_arg validate_bind_name_repair(SEXP name_repair, bool allow_minimal) {
-  enum name_repair_arg arg = validate_name_repair(name_repair);
+struct name_repair_opts validate_bind_name_repair(SEXP name_repair, bool allow_minimal) {
+  struct name_repair_opts opts = validate_name_repair(name_repair);
 
-  switch (arg) {
+  switch (opts.type) {
   case name_repair_unique: break;
   case name_repair_universal: break;
   case name_repair_check_unique: break;
@@ -392,14 +400,14 @@ enum name_repair_arg validate_bind_name_repair(SEXP name_repair, bool allow_mini
       Rf_errorcall(R_NilValue,
                    "`.name_repair` can't be `\"%s\"`.\n"
                    "It must be one of `\"unique\"`, `\"universal\"`, `\"check_unique\"`, or `\"minimal\"`.",
-                   name_repair_arg_as_c_string(arg));
+                   name_repair_arg_as_c_string(opts.type));
     } else {
       Rf_errorcall(R_NilValue,
                    "`.name_repair` can't be `\"%s\"`.\n"
                    "It must be one of `\"unique\"`, `\"universal\"`, or `\"check_unique\"`.",
-                   name_repair_arg_as_c_string(arg));
+                   name_repair_arg_as_c_string(opts.type));
     }
   }
 
-  return arg;
+  return opts;
 }

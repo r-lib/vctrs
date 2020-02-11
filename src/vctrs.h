@@ -283,7 +283,7 @@ SEXP vec_match(SEXP needles, SEXP haystack);
 SEXP vec_c(SEXP xs,
            SEXP ptype,
            SEXP name_spec,
-           enum name_repair_arg name_repair);
+           const struct name_repair_opts* name_repair);
 
 SEXP vec_type2(SEXP x,
                SEXP y,
