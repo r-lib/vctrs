@@ -155,17 +155,11 @@ static SEXP chr_as_factor_impl(SEXP x, SEXP levels, bool* lossy, bool ordered) {
 
   // Detect lossy no-matches, but allow `NA` values from `x`
   for (R_len_t i = 0; i < size; ++i) {
-    if (p_out[i] != NA_INTEGER) {
-      continue;
+    if (p_out[i] == NA_INTEGER && p_x[i] != NA_STRING) {
+      *lossy = true;
+      UNPROTECT(1);
+      return R_NilValue;
     }
-
-    if (p_x[i] == NA_STRING) {
-      continue;
-    }
-
-    *lossy = true;
-    UNPROTECT(1);
-    return R_NilValue;
   }
 
   if (ordered) {
