@@ -295,6 +295,23 @@ static SEXP fct_as_factor_impl(SEXP x, SEXP x_levels, SEXP to_levels, bool* loss
     }
   }
 
+  // No recoding required if contiguous subset.
+  // Duplicate, strip non-factor attributes, and re-initialize with new levels.
+  // Using `r_maybe_duplicate()` avoids an immediate copy using ALTREP wrappers.
+  if (is_contiguous_subset) {
+    SEXP out = PROTECT(r_maybe_duplicate(x));
+    SET_ATTRIB(out, R_NilValue);
+
+    if (ordered) {
+      init_ordered(out, to_levels);
+    } else {
+      init_factor(out, to_levels);
+    }
+
+    UNPROTECT(1);
+    return out;
+  }
+
   const int* p_x = INTEGER_RO(x);
 
   SEXP out = PROTECT(Rf_allocVector(INTSXP, x_size));
@@ -304,13 +321,6 @@ static SEXP fct_as_factor_impl(SEXP x, SEXP x_levels, SEXP to_levels, bool* loss
     init_ordered(out, to_levels);
   } else {
     init_factor(out, to_levels);
-  }
-
-  // No recode required
-  if (is_contiguous_subset) {
-    memcpy(p_out, p_x, x_size * sizeof(int));
-    UNPROTECT(1);
-    return out;
   }
 
   SEXP recode = PROTECT(vec_match(x_levels, to_levels));
