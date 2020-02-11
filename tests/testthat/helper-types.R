@@ -13,7 +13,10 @@ base_empty_types <- list(
 
 base_s3_empty_types <- list(
   bare_factor = new_factor(),
-  bare_ordered = new_ordered()
+  bare_ordered = new_ordered(),
+  bare_date = new_date(),
+  bare_posixct = new_datetime(tzone = "UTC"),
+  bare_posixlt = as.POSIXlt(new_datetime(tzone = "UTC"))
 )
 
 proxied_empty_types <- list(
