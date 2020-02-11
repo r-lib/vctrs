@@ -28,6 +28,8 @@ SEXP strings_list = NULL;
 SEXP classes_data_frame = NULL;
 SEXP classes_factor = NULL;
 SEXP classes_ordered = NULL;
+SEXP classes_date = NULL;
+SEXP classes_posixct = NULL;
 SEXP classes_tibble = NULL;
 SEXP classes_list_of = NULL;
 SEXP classes_vctrs_group_rle = NULL;
@@ -1109,6 +1111,7 @@ SEXP vctrs_shared_empty_cpl = NULL;
 SEXP vctrs_shared_empty_chr = NULL;
 SEXP vctrs_shared_empty_raw = NULL;
 SEXP vctrs_shared_empty_list = NULL;
+SEXP vctrs_shared_empty_date = NULL;
 SEXP vctrs_shared_true = NULL;
 SEXP vctrs_shared_false = NULL;
 Rcomplex vctrs_shared_na_cpl;
@@ -1166,6 +1169,7 @@ SEXP syms_size = NULL;
 SEXP syms_subscript_action = NULL;
 SEXP syms_subscript_type = NULL;
 SEXP syms_repair = NULL;
+SEXP syms_tzone = NULL;
 
 SEXP fns_bracket = NULL;
 SEXP fns_quote = NULL;
@@ -1265,6 +1269,15 @@ void vctrs_init_utils(SEXP ns) {
   SET_STRING_ELT(classes_ordered, 0, strings_ordered);
   SET_STRING_ELT(classes_ordered, 1, strings_factor);
 
+  classes_date = Rf_allocVector(STRSXP, 1);
+  R_PreserveObject(classes_date);
+  SET_STRING_ELT(classes_date, 0, strings_date);
+
+  classes_posixct = Rf_allocVector(STRSXP, 2);
+  R_PreserveObject(classes_posixct);
+  SET_STRING_ELT(classes_posixct, 0, strings_posixct);
+  SET_STRING_ELT(classes_posixct, 1, strings_posixt);
+
 
   chrs_subset = Rf_mkString("subset");
   R_PreserveObject(chrs_subset);
@@ -1351,6 +1364,11 @@ void vctrs_init_utils(SEXP ns) {
   R_PreserveObject(vctrs_shared_empty_list);
   MARK_NOT_MUTABLE(vctrs_shared_empty_list);
 
+  vctrs_shared_empty_date = Rf_allocVector(REALSXP, 0);
+  R_PreserveObject(vctrs_shared_empty_date);
+  Rf_setAttrib(vctrs_shared_empty_date, R_ClassSymbol, classes_date);
+  MARK_NOT_MUTABLE(vctrs_shared_empty_date);
+
   vctrs_shared_true = Rf_allocVector(LGLSXP, 1);
   R_PreserveObject(vctrs_shared_true);
   MARK_NOT_MUTABLE(vctrs_shared_true);
@@ -1401,6 +1419,7 @@ void vctrs_init_utils(SEXP ns) {
   syms_subscript_action = Rf_install("subscript_action");
   syms_subscript_type = Rf_install("subscript_type");
   syms_repair = Rf_install("repair");
+  syms_tzone = Rf_install("tzone");
 
   fns_bracket = Rf_findVar(syms_bracket, R_BaseEnv);
   fns_quote = Rf_findVar(Rf_install("quote"), R_BaseEnv);

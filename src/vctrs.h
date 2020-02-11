@@ -278,6 +278,7 @@ extern SEXP vctrs_shared_empty_cpl;
 extern SEXP vctrs_shared_empty_chr;
 extern SEXP vctrs_shared_empty_raw;
 extern SEXP vctrs_shared_empty_list;
+extern SEXP vctrs_shared_empty_date;
 extern SEXP vctrs_shared_empty_uns;
 
 extern SEXP vctrs_shared_true;
@@ -478,6 +479,11 @@ SEXP fct_as_factor(SEXP x, SEXP to, bool* lossy, struct vctrs_arg* x_arg, struct
 
 SEXP chr_as_ordered(SEXP x, SEXP to, bool* lossy, struct vctrs_arg* to_arg);
 SEXP ord_as_ordered(SEXP x, SEXP to, bool* lossy, struct vctrs_arg* x_arg, struct vctrs_arg* to_arg);
+
+// Datetime methods ---------------------------------------------
+
+SEXP date_datetime_ptype2(SEXP x, SEXP y);
+SEXP datetime_datetime_ptype2(SEXP x, SEXP y);
 
 // Character translation ----------------------------------------
 

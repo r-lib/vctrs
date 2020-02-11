@@ -265,6 +265,8 @@ extern SEXP vctrs_shared_zero_int;
 extern SEXP classes_data_frame;
 extern SEXP classes_factor;
 extern SEXP classes_ordered;
+extern SEXP classes_date;
+extern SEXP classes_posixct;
 extern SEXP classes_tibble;
 extern SEXP classes_list_of;
 extern SEXP classes_vctrs_group_rle;
@@ -329,6 +331,7 @@ extern SEXP syms_size;
 extern SEXP syms_subscript_action;
 extern SEXP syms_subscript_type;
 extern SEXP syms_repair;
+extern SEXP syms_tzone;
 
 #define syms_names R_NamesSymbol
 
