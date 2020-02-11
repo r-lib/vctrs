@@ -189,10 +189,6 @@ static SEXP int_as_double(SEXP x, bool* lossy) {
   return out;
 }
 
-
-// From dictionary.c
-SEXP vctrs_match(SEXP needles, SEXP haystack);
-
 // Defined below
 static SEXP df_as_dataframe(SEXP x, SEXP to, struct vctrs_arg* x_arg, struct vctrs_arg* to_arg);
 
@@ -223,7 +219,7 @@ static SEXP df_as_dataframe(SEXP x, SEXP to, struct vctrs_arg* x_arg, struct vct
     Rf_error("Internal error in `df_as_dataframe()`: Data frame must have names.");
   }
 
-  SEXP to_dups_pos = PROTECT(vctrs_match(to_names, x_names));
+  SEXP to_dups_pos = PROTECT(vec_match(to_names, x_names));
   int* to_dups_pos_data = INTEGER(to_dups_pos);
 
   R_len_t to_len = Rf_length(to_dups_pos);
@@ -271,9 +267,16 @@ static SEXP df_as_dataframe(SEXP x, SEXP to, struct vctrs_arg* x_arg, struct vct
 }
 
 static SEXP vec_cast_switch(SEXP x, SEXP to, bool* lossy, struct vctrs_arg* x_arg, struct vctrs_arg* to_arg) {
-  switch (vec_typeof(to)) {
+  enum vctrs_type to_type = vec_typeof(to);
+  enum vctrs_type x_type = vec_typeof(x);
+
+  if (to_type == vctrs_type_s3 || x_type == vctrs_type_s3) {
+    return vec_cast_dispatch(x, to, x_type, to_type, lossy, x_arg, to_arg);
+  }
+
+  switch (to_type) {
   case vctrs_type_logical:
-    switch (vec_typeof(x)) {
+    switch (x_type) {
     case vctrs_type_logical:
       return x;
     case vctrs_type_integer:
@@ -288,7 +291,7 @@ static SEXP vec_cast_switch(SEXP x, SEXP to, bool* lossy, struct vctrs_arg* x_ar
     break;
 
   case vctrs_type_integer:
-    switch (vec_typeof(x)) {
+    switch (x_type) {
     case vctrs_type_logical:
       return lgl_as_integer(x, lossy);
     case vctrs_type_integer:
@@ -304,7 +307,7 @@ static SEXP vec_cast_switch(SEXP x, SEXP to, bool* lossy, struct vctrs_arg* x_ar
     break;
 
   case vctrs_type_double:
-    switch (vec_typeof(x)) {
+    switch (x_type) {
     case vctrs_type_logical:
       return lgl_as_double(x, lossy);
     case vctrs_type_integer:
@@ -320,7 +323,7 @@ static SEXP vec_cast_switch(SEXP x, SEXP to, bool* lossy, struct vctrs_arg* x_ar
     break;
 
   case vctrs_type_character:
-    switch (vec_typeof(x)) {
+    switch (x_type) {
     case vctrs_type_logical:
     case vctrs_type_integer:
     case vctrs_type_double:
@@ -333,7 +336,7 @@ static SEXP vec_cast_switch(SEXP x, SEXP to, bool* lossy, struct vctrs_arg* x_ar
     break;
 
   case vctrs_type_dataframe:
-    switch (vec_typeof(x)) {
+    switch (x_type) {
     case vctrs_type_dataframe:
       return df_as_dataframe(x, to, x_arg, to_arg);
     default:

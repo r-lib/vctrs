@@ -144,6 +144,12 @@ test_that("NA are not considered lossy in factor cast (#109)", {
   expect_warning(vec_cast(f, f[1]), NA)
 })
 
+test_that("Casting to a factor with explicit NA levels retains them", {
+  f <- factor(c("x", NA), exclude = NULL)
+  expect_identical(vec_cast(f, f), f)
+  expect_identical(vec_cast(f, factor()), f)
+})
+
 # Arithmetic and factor ---------------------------------------------------
 
 test_that("factors don't support math or arthimetic", {

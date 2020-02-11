@@ -236,7 +236,7 @@ SEXP vctrs_id(SEXP x) {
 }
 
 // [[ register() ]]
-SEXP vctrs_match(SEXP needles, SEXP haystack) {
+SEXP vec_match(SEXP needles, SEXP haystack) {
   int nprot = 0;
   int _;
   SEXP type = PROTECT_N(vec_type2(needles, haystack, &args_needles, &args_haystack, &_), &nprot);

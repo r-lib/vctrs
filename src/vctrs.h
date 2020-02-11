@@ -278,6 +278,7 @@ SEXP vec_recycle(SEXP x, R_len_t size, struct vctrs_arg* x_arg);
 SEXP vec_recycle_common(SEXP xs, R_len_t size);
 SEXP vec_names(SEXP x);
 SEXP vec_group_loc(SEXP x);
+SEXP vec_match(SEXP needles, SEXP haystack);
 
 SEXP vec_c(SEXP xs,
            SEXP ptype,
@@ -301,6 +302,14 @@ SEXP vec_ptype2_dispatch_s3(SEXP x,
                             SEXP y,
                             struct vctrs_arg* x_arg,
                             struct vctrs_arg* y_arg);
+
+SEXP vec_cast_dispatch(SEXP x,
+                       SEXP to,
+                       enum vctrs_type x_type,
+                       enum vctrs_type to_type,
+                       bool* lossy,
+                       struct vctrs_arg* x_arg,
+                       struct vctrs_arg* to_arg);
 
 bool is_data_frame(SEXP x);
 bool is_record(SEXP x);
@@ -412,6 +421,15 @@ enum vctrs_dbl_class dbl_classify(double x);
 
 SEXP fct_ptype2(SEXP x, SEXP y, struct vctrs_arg* x_arg, struct vctrs_arg* y_arg);
 SEXP ord_ptype2(SEXP x, SEXP y, struct vctrs_arg* x_arg, struct vctrs_arg* y_arg);
+
+SEXP fct_as_character(SEXP x, struct vctrs_arg* x_arg);
+SEXP ord_as_character(SEXP x, struct vctrs_arg* x_arg);
+
+SEXP chr_as_factor(SEXP x, SEXP to, bool* lossy, struct vctrs_arg* to_arg);
+SEXP fct_as_factor(SEXP x, SEXP to, bool* lossy, struct vctrs_arg* x_arg, struct vctrs_arg* to_arg);
+
+SEXP chr_as_ordered(SEXP x, SEXP to, bool* lossy, struct vctrs_arg* to_arg);
+SEXP ord_as_ordered(SEXP x, SEXP to, bool* lossy, struct vctrs_arg* x_arg, struct vctrs_arg* to_arg);
 
 // Character translation ----------------------------------------
 

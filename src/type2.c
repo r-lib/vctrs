@@ -76,16 +76,12 @@ SEXP vec_type2(SEXP x, SEXP y,
   }
 }
 
-
-// From dictionary.c
-SEXP vctrs_match(SEXP needles, SEXP haystack);
-
 SEXP df_type2(SEXP x, SEXP y, struct vctrs_arg* x_arg, struct vctrs_arg* y_arg) {
   SEXP x_names = PROTECT(r_names(x));
   SEXP y_names = PROTECT(r_names(y));
 
-  SEXP x_dups_pos = PROTECT(vctrs_match(x_names, y_names));
-  SEXP y_dups_pos = PROTECT(vctrs_match(y_names, x_names));
+  SEXP x_dups_pos = PROTECT(vec_match(x_names, y_names));
+  SEXP y_dups_pos = PROTECT(vec_match(y_names, x_names));
 
   int* x_dups_pos_data = INTEGER(x_dups_pos);
   int* y_dups_pos_data = INTEGER(y_dups_pos);
