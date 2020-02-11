@@ -197,26 +197,16 @@ static SEXP remove_na_levels(SEXP levels) {
   R_len_t size = vec_size(levels);
   const SEXP* p_levels = STRING_PTR_RO(levels);
 
-  // There would only ever be 1 `NA` level
-  int na_loc;
-  bool any_na = false;
-
+  // There might only ever be 1 `NA` level.
+  // Remove it if it exists.
   for (R_len_t i = 0; i < size; ++i) {
-    if (p_levels[i] != NA_STRING) {
-      continue;
+    if (p_levels[i] == NA_STRING) {
+      int na_loc = (i + 1) * -1;
+      return vec_slice(levels, r_int(na_loc));
     }
-
-    any_na = true;
-    na_loc = (i + 1) * -1;
-    break;
   }
 
-  // Remove `NA` level if required
-  if (any_na) {
-    return vec_slice(levels, r_int(na_loc));
-  } else {
-    return levels;
-  }
+  return levels;
 }
 
 
