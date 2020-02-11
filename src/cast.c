@@ -271,6 +271,10 @@ static SEXP vec_cast_switch(SEXP x, SEXP to, bool* lossy, struct vctrs_arg* x_ar
   enum vctrs_type to_type = vec_typeof(to);
   enum vctrs_type x_type = vec_typeof(x);
 
+  if (x_type == vctrs_type_unspecified) {
+    return vec_init(to, vec_size(x));
+  }
+
   if (to_type == vctrs_type_s3 || x_type == vctrs_type_s3) {
     return vec_cast_dispatch(x, to, x_type, to_type, lossy, x_arg, to_arg);
   }
