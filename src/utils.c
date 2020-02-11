@@ -283,7 +283,7 @@ static SEXP s3_method_sym(const char* generic, const char* class) {
 }
 
 // First check in global env, then in method table
-static SEXP s3_get_method(const char* generic, const char* class) {
+static SEXP s3_get_method(const char* generic, const char* class, SEXP table) {
   SEXP sym = s3_method_sym(generic, class);
 
   SEXP method = r_env_get(R_GlobalEnv, sym);
@@ -291,7 +291,7 @@ static SEXP s3_get_method(const char* generic, const char* class) {
     return method;
   }
 
-  method = r_env_get(vctrs_method_table, sym);
+  method = r_env_get(table, sym);
   if (r_is_function(method)) {
     return method;
   }
@@ -299,7 +299,7 @@ static SEXP s3_get_method(const char* generic, const char* class) {
   return R_NilValue;
 }
 
-SEXP s3_find_method(const char* generic, SEXP x) {
+SEXP s3_find_method(const char* generic, SEXP x, SEXP table) {
   if (!OBJECT(x)) {
     return R_NilValue;
   }
@@ -309,7 +309,7 @@ SEXP s3_find_method(const char* generic, SEXP x) {
   int n_class = Rf_length(class);
 
   for (int i = 0; i < n_class; ++i, ++class_ptr) {
-    SEXP method = s3_get_method(generic, CHAR(*class_ptr));
+    SEXP method = s3_get_method(generic, CHAR(*class_ptr), table);
     if (method != R_NilValue) {
       UNPROTECT(1);
       return method;
@@ -323,7 +323,8 @@ SEXP s3_find_method(const char* generic, SEXP x) {
 // [[ include("utils.h") ]]
 bool vec_implements_ptype2(SEXP x) {
   if (vec_typeof(x) == vctrs_type_s3) {
-    return s3_find_method("vec_ptype2", x) != R_NilValue;
+    SEXP met = s3_find_method("vec_ptype2", x, vctrs_method_table);
+    return met != R_NilValue;
   } else {
     return true;
   }
