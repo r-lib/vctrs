@@ -150,7 +150,13 @@ vec_cast.list.vctrs_vctr <- function(x, to, ...) {
 }
 
 #' @export
-c.vctrs_vctr <- function(...) {
+c.vctrs_vctr <- function(..., recursive = FALSE, use.names = TRUE) {
+  if (!is_false(recursive)) {
+    abort("`recursive` must be `FALSE` when concatenating vctrs classes.")
+  }
+  if (!is_true(use.names)) {
+    abort("`use.names` must be `TRUE` when concatenating vctrs classes.")
+  }
   vec_c(...)
 }
 

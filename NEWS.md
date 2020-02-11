@@ -1,6 +1,9 @@
 
 # vctrs (development version)
 
+* The `c()` method for `vctrs_vctr` now throws an error when
+  `recursive` or `use.names` is supplied (#791).
+
 * `vec_c()` now falls back to `base::c()` if the vector doesn't
   implement `vec_ptype2()`. This should improve the compatibility of
   vctrs-based functions with foreign classes (#801).

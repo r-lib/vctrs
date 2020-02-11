@@ -42,6 +42,12 @@ test_that("can strip all attributes without adding new ones", {
   expect_equal(vec_set_attributes(structure(1, a = 1), NULL), 1)
 })
 
+test_that("`c.vctrs_vctr()` checks for default method arguments (#791)", {
+  expect_error(c(new_vctr(1), recursive = TRUE), "`recursive` must be")
+  expect_error(c(new_vctr(1), use.names = FALSE), "`use.names` must be")
+})
+
+
 # Cast/restore ------------------------------------------------------------
 
 test_that("cast to NULL returns x", {
