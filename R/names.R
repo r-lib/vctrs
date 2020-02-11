@@ -155,25 +155,7 @@ vec_as_names <- function(names,
   if (!missing(...)) {
     ellipsis::check_dots_empty()
   }
-  repair <- validate_name_repair_arg(repair)
-
-  if (is_function(repair)) {
-    names <- as_minimal_names(names)
-    new_names <- validate_minimal_names(repair(names), n = length(names))
-
-    if (!quiet) {
-      describe_repair(names, new_names)
-    }
-
-    return(new_names)
-  }
-
-  switch(repair,
-    minimal = as_minimal_names(names),
-    unique = as_unique_names(names, quiet = quiet),
-    universal = as_universal_names(as_minimal_names(names), quiet = quiet),
-    check_unique = validate_unique(names)
-  )
+  .Call(vctrs_as_names, names, repair, quiet)
 }
 
 validate_name_repair_arg <- function(repair) {

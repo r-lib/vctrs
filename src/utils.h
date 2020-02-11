@@ -319,6 +319,7 @@ extern SEXP syms_missing;
 extern SEXP syms_size;
 extern SEXP syms_subscript_action;
 extern SEXP syms_subscript_type;
+extern SEXP syms_repair;
 
 #define syms_names R_NamesSymbol
 

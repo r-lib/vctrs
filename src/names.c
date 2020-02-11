@@ -20,6 +20,8 @@ SEXP fns_validate_unique_names = NULL;
 SEXP vctrs_as_minimal_names(SEXP names);
 SEXP vec_as_universal_names(SEXP names, bool quiet);
 SEXP vec_validate_unique_names(SEXP names);
+SEXP vec_as_custom_names(SEXP names, const struct name_repair_opts* opts);
+static void vec_validate_minimal_names(SEXP names, R_len_t n);
 
 
 // [[ include("names.h") ]]
@@ -30,10 +32,24 @@ SEXP vec_as_names(SEXP names, const struct name_repair_opts* opts) {
   case name_repair_unique: return vec_as_unique_names(names, opts->quiet);
   case name_repair_universal: return vec_as_universal_names(names, opts->quiet);
   case name_repair_check_unique: return vec_validate_unique_names(names);
-  case name_repair_custom:
-    Rf_error("TODO: unimplemented");
+  case name_repair_custom: return vec_as_custom_names(names, opts);
   }
   never_reached("vec_as_names");
+}
+
+// [[ register() ]]
+SEXP vctrs_as_names(SEXP names, SEXP repair, SEXP quiet) {
+  if (!r_is_bool(quiet)) {
+    Rf_errorcall(R_NilValue, "`quiet` must a boolean value.");
+  }
+
+  struct name_repair_opts repair_opts = new_name_repair_opts(repair, quiet);
+  PROTECT_NAME_REPAIR_OPTS(&repair_opts);
+
+  SEXP out = vec_as_names(names, &repair_opts);
+
+  UNPROTECT(1);
+  return out;
 }
 
 SEXP vec_as_universal_names(SEXP names, bool quiet) {
@@ -52,6 +68,26 @@ SEXP vec_validate_unique_names(SEXP names) {
   Rf_eval(R_NilValue, R_EmptyEnv);
 
   UNPROTECT(1);
+  return out;
+}
+
+SEXP vec_as_custom_names(SEXP names, const struct name_repair_opts* opts) {
+  names = PROTECT(vctrs_as_minimal_names(names));
+
+  // Don't use vctrs dispatch utils because we match argument positionally
+  SEXP call = PROTECT(Rf_lang2(syms_repair, syms_names));
+  SEXP mask = PROTECT(r_new_environment(R_GlobalEnv, 2));
+  Rf_defineVar(syms_repair, opts->fn, mask);
+  Rf_defineVar(syms_names, names, mask);
+  SEXP out = PROTECT(Rf_eval(call, mask));
+
+  vec_validate_minimal_names(out, Rf_length(names));
+
+  if (!opts->quiet) {
+    describe_repair(names, out);
+  }
+
+  UNPROTECT(4);
   return out;
 }
 

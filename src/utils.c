@@ -1117,6 +1117,7 @@ SEXP syms_missing = NULL;
 SEXP syms_size = NULL;
 SEXP syms_subscript_action = NULL;
 SEXP syms_subscript_type = NULL;
+SEXP syms_repair = NULL;
 
 SEXP fns_bracket = NULL;
 SEXP fns_quote = NULL;
@@ -1343,6 +1344,7 @@ void vctrs_init_utils(SEXP ns) {
   syms_size = Rf_install("size");
   syms_subscript_action = Rf_install("subscript_action");
   syms_subscript_type = Rf_install("subscript_type");
+  syms_repair = Rf_install("repair");
 
   fns_bracket = Rf_findVar(syms_bracket, R_BaseEnv);
   fns_quote = Rf_findVar(Rf_install("quote"), R_BaseEnv);
