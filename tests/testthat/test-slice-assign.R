@@ -83,11 +83,25 @@ test_that("can assign lists", {
 
 test_that("atomics can't be assigned in lists", {
   x <- list(NULL)
-  expect_error(vec_slice(x, 1) <- NA, class = "vctrs_error_incompatible_type")
-  expect_error(vec_assign(x, 1, NA), class = "vctrs_error_incompatible_type")
+  expect_error(vec_slice(x, 1) <- 1, class = "vctrs_error_incompatible_type")
+  expect_error(vec_assign(x, 1, 2), class = "vctrs_error_incompatible_type")
 
   expect_error(vec_slice(x, 1) <- "foo", class = "vctrs_error_incompatible_type")
   expect_error(vec_assign(x, 1, "foo"), class = "vctrs_error_incompatible_type")
+})
+
+test_that("unspecified can be assigned in lists", {
+  x <- list(1, 2)
+  expect_error(vec_slice(x, 1) <- NA, NA)
+  expect_equal(x, list(NULL, 2))
+
+  x <- list(1, 2)
+  expect_error(vec_slice(x, 1:2) <- NA, NA)
+  expect_equal(x, list(NULL, NULL))
+
+  x <- list(1, 2)
+  expect_error(vec_slice(x, 1) <- unspecified(1), NA)
+  expect_equal(x, list(NULL, 2))
 })
 
 test_that("can assign and slice-assign data frames", {
