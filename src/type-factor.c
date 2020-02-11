@@ -83,12 +83,13 @@ static void new_ordered(SEXP x, SEXP levels);
 
 // [[ include("vctrs.h") ]]
 SEXP fct_as_character(SEXP x, struct vctrs_arg* x_arg) {
-  SEXP levels = Rf_getAttrib(x, R_LevelsSymbol);
+  SEXP levels = PROTECT(Rf_getAttrib(x, R_LevelsSymbol));
 
   if (TYPEOF(levels) != STRSXP) {
     stop_corrupt_factor_levels(x, x_arg);
   }
 
+  UNPROTECT(1);
   return Rf_asCharacterFactor(x);
 }
 
@@ -103,36 +104,46 @@ static SEXP chr_as_factor_impl(SEXP x, SEXP levels, bool* lossy, bool ordered);
 
 // [[ include("vctrs.h") ]]
 SEXP chr_as_factor(SEXP x, SEXP to, bool* lossy, struct vctrs_arg* to_arg) {
-  SEXP levels = Rf_getAttrib(to, R_LevelsSymbol);
+  SEXP levels = PROTECT(Rf_getAttrib(to, R_LevelsSymbol));
 
   if (TYPEOF(levels) != STRSXP) {
     stop_corrupt_factor_levels(to, to_arg);
   }
 
+  SEXP out;
+
   // When `to` has no levels, it is treated as a template and the
   // levels come from `x`
   if (vec_size(levels) == 0) {
-    return chr_as_factor_from_self(x, false);
+    out = chr_as_factor_from_self(x, false);
+  } else {
+    out = chr_as_factor_impl(x, levels, lossy, false);
   }
 
-  return chr_as_factor_impl(x, levels, lossy, false);
+  UNPROTECT(1);
+  return out;
 }
 
 // [[ include("vctrs.h") ]]
 SEXP chr_as_ordered(SEXP x, SEXP to, bool* lossy, struct vctrs_arg* to_arg) {
-  SEXP levels = Rf_getAttrib(to, R_LevelsSymbol);
+  SEXP levels = PROTECT(Rf_getAttrib(to, R_LevelsSymbol));
 
   if (TYPEOF(levels) != STRSXP) {
     stop_corrupt_ordered_levels(to, to_arg);
   }
 
+  SEXP out;
+
   // When `to` has no levels, it is treated as a template and the
   // levels come from `x`
   if (vec_size(levels) == 0) {
-    return chr_as_factor_from_self(x, true);
+    out = chr_as_factor_from_self(x, true);
+  } else {
+    out = chr_as_factor_impl(x, levels, lossy, true);
   }
 
-  return chr_as_factor_impl(x, levels, lossy, true);
+  UNPROTECT(1);
+  return out;
 }
 
 static SEXP chr_as_factor_impl(SEXP x, SEXP levels, bool* lossy, bool ordered) {
@@ -224,8 +235,8 @@ SEXP fct_as_factor(SEXP x,
                    struct vctrs_arg* x_arg,
                    struct vctrs_arg* to_arg) {
 
-  SEXP x_levels = Rf_getAttrib(x, R_LevelsSymbol);
-  SEXP to_levels = Rf_getAttrib(to, R_LevelsSymbol);
+  SEXP x_levels = PROTECT(Rf_getAttrib(x, R_LevelsSymbol));
+  SEXP to_levels = PROTECT(Rf_getAttrib(to, R_LevelsSymbol));
 
   if (TYPEOF(x_levels) != STRSXP) {
     stop_corrupt_factor_levels(x, x_arg);
@@ -235,7 +246,10 @@ SEXP fct_as_factor(SEXP x,
     stop_corrupt_factor_levels(to, to_arg);
   }
 
-  return fct_as_factor_impl(x, x_levels, to_levels, lossy, false);
+  SEXP out = fct_as_factor_impl(x, x_levels, to_levels, lossy, false);
+
+  UNPROTECT(2);
+  return out;
 }
 
 // [[ include("vctrs.h") ]]
@@ -245,8 +259,8 @@ SEXP ord_as_ordered(SEXP x,
                     struct vctrs_arg* x_arg,
                     struct vctrs_arg* to_arg) {
 
-  SEXP x_levels = Rf_getAttrib(x, R_LevelsSymbol);
-  SEXP to_levels = Rf_getAttrib(to, R_LevelsSymbol);
+  SEXP x_levels = PROTECT(Rf_getAttrib(x, R_LevelsSymbol));
+  SEXP to_levels = PROTECT(Rf_getAttrib(to, R_LevelsSymbol));
 
   if (TYPEOF(x_levels) != STRSXP) {
     stop_corrupt_ordered_levels(x, x_arg);
@@ -256,7 +270,10 @@ SEXP ord_as_ordered(SEXP x,
     stop_corrupt_ordered_levels(to, to_arg);
   }
 
-  return fct_as_factor_impl(x, x_levels, to_levels, lossy, true);
+  SEXP out = fct_as_factor_impl(x, x_levels, to_levels, lossy, true);
+
+  UNPROTECT(2);
+  return out;
 }
 
 static SEXP fct_as_factor_impl(SEXP x, SEXP x_levels, SEXP to_levels, bool* lossy, bool ordered) {
