@@ -392,10 +392,13 @@ struct name_repair_opts validate_bind_name_repair(SEXP name_repair, bool allow_m
   struct name_repair_opts opts = new_name_repair_opts(name_repair, false);
 
   switch (opts.type) {
-  case name_repair_unique: break;
-  case name_repair_universal: break;
-  case name_repair_check_unique: break;
-  case name_repair_minimal: if (allow_minimal) break;
+  case name_repair_custom:
+  case name_repair_unique:
+  case name_repair_universal:
+  case name_repair_check_unique:
+    break;
+  case name_repair_minimal:
+    if (allow_minimal) break; // else fallthrough
   default:
     if (allow_minimal) {
       Rf_errorcall(R_NilValue,
