@@ -770,6 +770,39 @@ const char* name_repair_arg_as_c_string(enum name_repair_type type) {
   never_reached("name_repair_arg_as_c_string");
 }
 
+static void vec_validate_minimal_names(SEXP names, R_len_t n) {
+  if (names == R_NilValue) {
+    Rf_errorcall(R_NilValue, "Names repair functions can't return `NULL`.");
+  }
+
+  if (TYPEOF(names) != STRSXP) {
+    Rf_errorcall(R_NilValue, "Names repair functions must return a character vector.");
+  }
+
+  if (n >= 0 && Rf_length(names) != n) {
+    Rf_errorcall(R_NilValue,
+                 "Repaired names have length %d instead of length %d.",
+                 Rf_length(names),
+                 n);
+  }
+
+  if (r_chr_has_string(names, NA_STRING)) {
+    Rf_errorcall(R_NilValue, "Names repair functions can't return `NA` values.");
+  }
+}
+SEXP vctrs_validate_minimal_names(SEXP names, SEXP n_) {
+  R_len_t n = -1;
+
+  if (TYPEOF(n_) == INTSXP) {
+    if (Rf_length(n_) != 1) {
+      Rf_error("Internal error (minimal names validation): `n` must be a single number.");
+    }
+    n = INTEGER(n_)[0];
+  }
+
+  vec_validate_minimal_names(names, n);
+  return names;
+}
 
 void vctrs_init_names(SEXP ns) {
   syms_set_rownames_fallback = Rf_install("set_rownames_fallback");

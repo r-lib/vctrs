@@ -113,10 +113,10 @@ test_that("vec_as_names() repairs names before invoking repair function", {
   expect_identical(vec_as_names(chr(NA, NA), repair = identity), c("", ""))
 })
 
-test_that("validate_minimal() checks names", {
-  expect_error(validate_minimal(1), "must return a character vector")
-  expect_error(validate_minimal(NULL), "can't return `NULL`")
-  expect_error(validate_minimal(chr(NA)), "can't return `NA` values")
+test_that("validate_minimal_names() checks names", {
+  expect_error(validate_minimal_names(1), "must return a character vector")
+  expect_error(validate_minimal_names(NULL), "can't return `NULL`")
+  expect_error(validate_minimal_names(chr(NA)), "can't return `NA` values")
 })
 
 test_that("validate_unique() checks unique names", {

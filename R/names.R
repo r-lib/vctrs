@@ -159,7 +159,7 @@ vec_as_names <- function(names,
 
   if (is_function(repair)) {
     names <- as_minimal_names(names)
-    new_names <- validate_minimal(repair(names), n = length(names))
+    new_names <- validate_minimal_names(repair(names), n = length(names))
 
     if (!quiet) {
       describe_repair(names, new_names)
@@ -179,26 +179,11 @@ vec_as_names <- function(names,
 validate_name_repair_arg <- function(repair) {
   .Call(vctrs_validate_name_repair_arg, repair)
 }
-validate_minimal <- function(names, n = NULL) {
-  if (is.null(names)) {
-    abort("Names repair functions can't return `NULL`.")
-  }
-  if (!is_character(names)) {
-    abort("Names repair functions must return a character vector.")
-  }
-  if (!is_null(n) && length(names) != n) {
-    abort(sprintf(
-      "Repaired names have length %d instead of length %d.",
-      length(names), n
-    ))
-  }
-  if (anyNA(names)) {
-    abort("Names repair functions can't return `NA` values.")
-  }
-  names
+validate_minimal_names <- function(names, n = NULL) {
+  .Call(vctrs_validate_minimal_names, names, n)
 }
 validate_unique <- function(names, n = NULL) {
-  validate_minimal(names, n)
+  validate_minimal_names(names, n)
 
   empty_names <- which(names == "")
   if (has_length(empty_names)) {
@@ -237,7 +222,7 @@ vec_names2 <- function(x,
 
   if (is_function(repair)) {
     names <- minimal_names(x)
-    new_names <- validate_minimal(repair(names), n = length(names))
+    new_names <- validate_minimal_names(repair(names), n = length(names))
 
     if (!quiet) {
       describe_repair(names, new_names)
