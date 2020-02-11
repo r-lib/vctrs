@@ -30,7 +30,8 @@ SEXP vctrs_c(SEXP call, SEXP op, SEXP args, SEXP env) {
 
 static inline bool needs_vec_c_fallback(SEXP xs);
 static SEXP vec_c_fallback(SEXP xs);
-static void stop_vec_c_fallback(SEXP xs, SEXP name_spec, SEXP ptype);
+static inline int vec_c_fallback_validate_args(SEXP ptype, SEXP name_spec);
+static void stop_vec_c_fallback(SEXP xs, int err_type);
 
 // [[ include("vctrs.h") ]]
 SEXP vec_c(SEXP xs,
@@ -40,8 +41,9 @@ SEXP vec_c(SEXP xs,
   R_len_t n = Rf_length(xs);
 
   if (needs_vec_c_fallback(xs)) {
-    if (name_spec != R_NilValue || ptype != R_NilValue) {
-      stop_vec_c_fallback(xs, name_spec, ptype);
+    int err_type = vec_c_fallback_validate_args(ptype, name_spec);
+    if (err_type) {
+      stop_vec_c_fallback(xs, err_type);
     }
 
     SEXP out = vec_c_fallback(xs);
@@ -178,15 +180,25 @@ static SEXP vec_c_fallback(SEXP xs) {
   return out;
 }
 
-static void stop_vec_c_fallback(SEXP xs, SEXP name_spec, SEXP ptype) {
+static inline int vec_c_fallback_validate_args(SEXP ptype, SEXP name_spec) {
+  if (ptype != R_NilValue) {
+    return 1;
+  }
+  if (name_spec != R_NilValue) {
+    return 2;
+  }
+  return 0;
+}
+
+static void stop_vec_c_fallback(SEXP xs, int err_type) {
   SEXP common_class = PROTECT(r_class(VECTOR_ELT(xs, 0)));
   const char* class_str = r_chr_get_c_string(common_class, 0);
 
   const char* msg = NULL;
-  if (name_spec != R_NilValue) {
-    msg = "Can't use a name specification with non-vctrs types.";
-  } else {
-    msg = "Can't specify a prototype with non-vctrs types.";
+  switch (err_type) {
+  case 1: msg = "Can't specify a prototype with non-vctrs types."; break;
+  case 2: msg = "Can't use a name specification with non-vctrs types."; break;
+  default: msg = "Internal error: Unexpected error type."; break;
   }
 
   Rf_errorcall(R_NilValue,
