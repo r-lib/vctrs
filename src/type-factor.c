@@ -77,8 +77,8 @@ static SEXP levels_union(SEXP x, SEXP y) {
 
 // -----------------------------------------------------------------------------
 
-static void new_factor(SEXP x, SEXP levels);
-static void new_ordered(SEXP x, SEXP levels);
+static void init_factor(SEXP x, SEXP levels);
+static void init_ordered(SEXP x, SEXP levels);
 
 
 // [[ include("vctrs.h") ]]
@@ -163,9 +163,9 @@ static SEXP chr_as_factor_impl(SEXP x, SEXP levels, bool* lossy, bool ordered) {
   }
 
   if (ordered) {
-    new_ordered(out, levels);
+    init_ordered(out, levels);
   } else {
-    new_factor(out, levels);
+    init_factor(out, levels);
   }
 
   UNPROTECT(1);
@@ -184,9 +184,9 @@ static SEXP chr_as_factor_from_self(SEXP x, bool ordered) {
   SEXP out = PROTECT(vec_match(x, levels));
 
   if (ordered) {
-    new_ordered(out, levels);
+    init_ordered(out, levels);
   } else {
-    new_factor(out, levels);
+    init_factor(out, levels);
   }
 
   UNPROTECT(3);
@@ -301,9 +301,9 @@ static SEXP fct_as_factor_impl(SEXP x, SEXP x_levels, SEXP to_levels, bool* loss
   int* p_out = INTEGER(out);
 
   if (ordered) {
-    new_ordered(out, to_levels);
+    init_ordered(out, to_levels);
   } else {
-    new_factor(out, to_levels);
+    init_factor(out, to_levels);
   }
 
   // No recode required
@@ -342,7 +342,7 @@ static SEXP fct_as_factor_impl(SEXP x, SEXP x_levels, SEXP to_levels, bool* loss
 }
 
 
-static void new_factor(SEXP x, SEXP levels) {
+static void init_factor(SEXP x, SEXP levels) {
   if (TYPEOF(x) != INTSXP) {
     Rf_errorcall(R_NilValue, "Internal error: Only integers can be made into factors");
   }
@@ -351,7 +351,7 @@ static void new_factor(SEXP x, SEXP levels) {
   Rf_setAttrib(x, R_ClassSymbol, classes_factor);
 }
 
-static void new_ordered(SEXP x, SEXP levels) {
+static void init_ordered(SEXP x, SEXP levels) {
   if (TYPEOF(x) != INTSXP) {
     Rf_errorcall(R_NilValue, "Internal error: Only integers can be made into ordered factors");
   }
