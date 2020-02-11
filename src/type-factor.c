@@ -174,8 +174,8 @@ static SEXP chr_as_factor_impl(SEXP x, SEXP levels, bool* lossy, bool ordered) {
 
 static SEXP remove_na_levels(SEXP levels);
 
-// Factor levels are added in order of appearance
-// `NA` values in `x` are not considered factor levels
+// Factor levels are added in order of appearance.
+// `NA` values in `x` are not considered factor levels.
 static SEXP chr_as_factor_from_self(SEXP x, bool ordered) {
   SEXP levels = PROTECT(vec_unique(x));
   levels = PROTECT(remove_na_levels(levels));
