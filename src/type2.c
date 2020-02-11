@@ -38,6 +38,13 @@ SEXP vec_type2(SEXP x, SEXP y,
     stop_scalar_type(y, y_arg);
   }
 
+  if (type_x == vctrs_type_unspecified) {
+    return vec_type(y);
+  }
+  if (type_y == vctrs_type_unspecified) {
+    return vec_type(x);
+  }
+
   if (type_x == vctrs_type_s3 || type_y == vctrs_type_s3) {
     return vec_ptype2_dispatch(x, y, type_x, type_y, x_arg, y_arg, left);
   }
