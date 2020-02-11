@@ -21,7 +21,7 @@ static inline void PROTECT_NAME_REPAIR_OPTS(const struct name_repair_opts* opts)
 }
 
 SEXP vec_as_names(SEXP names, const struct name_repair_opts* opts);
-struct name_repair_opts validate_name_repair(SEXP name_repair, bool quiet);
+struct name_repair_opts new_name_repair_opts(SEXP name_repair, bool quiet);
 const char* name_repair_arg_as_c_string(enum name_repair_type type);
 bool is_unique_names(SEXP names);
 SEXP vec_as_unique_names(SEXP names, bool quiet);

@@ -694,7 +694,7 @@ SEXP vec_set_names(SEXP x, SEXP names) {
 }
 
 SEXP vctrs_validate_name_repair_arg(SEXP arg) {
-  struct name_repair_opts opts = validate_name_repair(arg, true);
+  struct name_repair_opts opts = new_name_repair_opts(arg, true);
   if (opts.type == name_repair_custom) {
     return opts.fn;
   } else if (Rf_length(arg) != 1) {
@@ -708,7 +708,7 @@ void stop_name_repair() {
   Rf_errorcall(R_NilValue, "`.name_repair` must be a string or a function. See `?vctrs::vec_as_names`.");
 }
 
-struct name_repair_opts validate_name_repair(SEXP name_repair, bool quiet) {
+struct name_repair_opts new_name_repair_opts(SEXP name_repair, bool quiet) {
   struct name_repair_opts opts = {
     .type = 0,
     .fn = R_NilValue,
@@ -754,7 +754,7 @@ struct name_repair_opts validate_name_repair(SEXP name_repair, bool quiet) {
     stop_name_repair();
   }
 
-  never_reached("validate_name_repair");
+  never_reached("new_name_repair_opts");
 }
 
 // [[ include("vctrs.h") ]]
