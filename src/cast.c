@@ -380,6 +380,8 @@ static SEXP vec_cast_dispatch_unspecified(SEXP x, SEXP to, enum vctrs_type to_ty
   case vctrs_type_null:
     Rf_errorcall(R_NilValue, "Internal error: NULL inputs should have been handled earlier.");
   }
+
+  never_reached("vec_cast_dispatch_unspecified");
 }
 
 // [[ register() ]]

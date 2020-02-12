@@ -117,4 +117,6 @@ static SEXP vec_cast_dispatch_unspecified_s3(SEXP x, SEXP to) {
   case vctrs_class_none:
     Rf_errorcall(R_NilValue, "Internal error: The non-unspecified object should be S3");
   }
+
+  never_reached("vec_cast_dispatch_unspecified_s3");
 }

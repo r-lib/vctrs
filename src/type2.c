@@ -131,6 +131,8 @@ static SEXP vec_ptype2_dispatch_unspecified(SEXP x,
   case vctrs_type_scalar:
     Rf_errorcall(R_NilValue, "Internal error: scalar inputs should have been handled earlier.");
   }
+
+  never_reached("vec_ptype2_dispatch_unspecified");
 }
 
 // TODO - Revisit if this behavior is appropriate. For now,

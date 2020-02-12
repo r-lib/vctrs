@@ -79,6 +79,8 @@ static SEXP vec_ptype2_dispatch_unspecified_s3(SEXP x,
   case vctrs_class_none:
     Rf_errorcall(R_NilValue, "Internal error: The non-unspecified object should be S3");
   }
+
+  never_reached("vec_ptype2_dispatch_unspecified_s3");
 }
 
 // Initialised at load time
