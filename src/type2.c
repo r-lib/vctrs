@@ -2,6 +2,13 @@
 #include "type-data-frame.h"
 #include "utils.h"
 
+static SEXP vec_ptype2_dispatch_unspecified(SEXP x,
+                                            SEXP y,
+                                            struct vctrs_arg* x_arg,
+                                            struct vctrs_arg* y_arg,
+                                            enum vctrs_type type,
+                                            bool left_unspecified);
+
 static SEXP df_type2(SEXP x, SEXP y, struct vctrs_arg* x_arg, struct vctrs_arg* y_arg);
 
 // [[ include("vctrs.h") ]]
@@ -38,15 +45,15 @@ SEXP vec_type2(SEXP x, SEXP y,
     stop_scalar_type(y, y_arg);
   }
 
-  if (type_x == vctrs_type_unspecified) {
-    return vec_type(y);
-  }
-  if (type_y == vctrs_type_unspecified) {
-    return vec_type(x);
-  }
-
   if (type_x == vctrs_type_s3 || type_y == vctrs_type_s3) {
     return vec_ptype2_dispatch(x, y, type_x, type_y, x_arg, y_arg, left);
+  }
+
+  if (type_x == vctrs_type_unspecified) {
+    return vec_ptype2_dispatch_unspecified(x, y, x_arg, y_arg, type_y, true);
+  }
+  if (type_y == vctrs_type_unspecified) {
+    return vec_ptype2_dispatch_unspecified(x, y, x_arg, y_arg, type_x, false);
   }
 
   enum vctrs_type2 type2 = vec_typeof2_impl(type_x, type_y, left);
@@ -83,6 +90,69 @@ SEXP vec_type2(SEXP x, SEXP y,
     return vec_ptype2_dispatch_s3(x, y, x_arg, y_arg);
   }
 }
+
+
+static SEXP vec_ptype2_dispatch_unspecified_list(SEXP x,
+                                                 SEXP y,
+                                                 struct vctrs_arg* x_arg,
+                                                 struct vctrs_arg* y_arg,
+                                                 bool left_unspecified);
+
+static SEXP vec_ptype2_dispatch_unspecified(SEXP x,
+                                            SEXP y,
+                                            struct vctrs_arg* x_arg,
+                                            struct vctrs_arg* y_arg,
+                                            enum vctrs_type type,
+                                            bool left_unspecified) {
+  switch(type) {
+  case vctrs_type_null:
+  case vctrs_type_logical:
+  case vctrs_type_integer:
+  case vctrs_type_double:
+  case vctrs_type_character:
+  case vctrs_type_complex:
+  case vctrs_type_raw:
+  case vctrs_type_dataframe:
+    return left_unspecified ? vec_type(y) : vec_type(x);
+
+  case vctrs_type_unspecified:
+    return vctrs_shared_empty_uns;
+
+  case vctrs_type_list:
+    return vec_ptype2_dispatch_unspecified_list(x, y, x_arg, y_arg, left_unspecified);
+
+  case vctrs_type_s3: {
+    Rf_errorcall(R_NilValue, "Internal error: s3 inputs should have been handled earlier.");
+  }
+
+  case vctrs_type_scalar:
+    Rf_errorcall(R_NilValue, "Internal error: scalar inputs should have been handled earlier.");
+  }
+}
+
+// TODO - Revisit if this behavior is appropriate. For now,
+// following behavior in `vec_ptype2.logical.list()` to prevent `NA` and
+// `list()` from having a common type. We know that one of the inputs is
+// unspecified, so we can easily check if it is `NA` vs `unspecified()` by
+// checking the object bit.
+static SEXP vec_ptype2_dispatch_unspecified_list(SEXP x,
+                                                 SEXP y,
+                                                 struct vctrs_arg* x_arg,
+                                                 struct vctrs_arg* y_arg,
+                                                 bool left_unspecified) {
+  if (left_unspecified) {
+    if (OBJECT(x)) {
+      return vec_type(y);
+    }
+    stop_incompatible_type(x, y, x_arg, y_arg);
+  }
+
+  if (OBJECT(y)) {
+    return vec_type(x);
+  }
+  stop_incompatible_type(x, y, x_arg, y_arg);
+}
+
 
 SEXP df_type2(SEXP x, SEXP y, struct vctrs_arg* x_arg, struct vctrs_arg* y_arg) {
   SEXP x_names = PROTECT(r_names(x));
