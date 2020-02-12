@@ -161,6 +161,7 @@ void vctrs_stop_unsupported_type(enum vctrs_type type, const char* fn) {
 const char* vec_type_as_str(enum vctrs_type type) {
   switch (type) {
   case vctrs_type_null:         return "null";
+  case vctrs_type_unspecified:  return "unspecified";
   case vctrs_type_logical:      return "logical";
   case vctrs_type_integer:      return "integer";
   case vctrs_type_double:       return "double";
@@ -170,7 +171,6 @@ const char* vec_type_as_str(enum vctrs_type type) {
   case vctrs_type_list:         return "list";
   case vctrs_type_dataframe:    return "dataframe";
   case vctrs_type_s3:           return "s3";
-  case vctrs_type_unspecified:  return "unspecified";
   case vctrs_type_scalar:       return "scalar";
   }
   never_reached("vec_type_as_str");

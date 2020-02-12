@@ -15,6 +15,7 @@ typedef R_xlen_t r_ssize_t;
 
 enum vctrs_type {
   vctrs_type_null = 0,
+  vctrs_type_unspecified,
   vctrs_type_logical,
   vctrs_type_integer,
   vctrs_type_double,
@@ -24,7 +25,6 @@ enum vctrs_type {
   vctrs_type_list,
   vctrs_type_dataframe,
   vctrs_type_scalar,
-  vctrs_type_unspecified,
   vctrs_type_s3 = 255
 };
 
@@ -93,6 +93,7 @@ bool vec_is_partial(SEXP x);
 // in `vec_typeof2()`
 enum vctrs_type2 {
   vctrs_type2_null_null,
+  vctrs_type2_null_unspecified,
   vctrs_type2_null_logical,
   vctrs_type2_null_integer,
   vctrs_type2_null_double,
@@ -102,8 +103,19 @@ enum vctrs_type2 {
   vctrs_type2_null_list,
   vctrs_type2_null_dataframe,
   vctrs_type2_null_s3,
-  vctrs_type2_null_unspecified,
   vctrs_type2_null_scalar,
+
+  vctrs_type2_unspecified_unspecified,
+  vctrs_type2_unspecified_logical,
+  vctrs_type2_unspecified_integer,
+  vctrs_type2_unspecified_double,
+  vctrs_type2_unspecified_complex,
+  vctrs_type2_unspecified_character,
+  vctrs_type2_unspecified_raw,
+  vctrs_type2_unspecified_list,
+  vctrs_type2_unspecified_dataframe,
+  vctrs_type2_unspecified_s3,
+  vctrs_type2_unspecified_scalar,
 
   vctrs_type2_logical_logical,
   vctrs_type2_logical_integer,
@@ -114,7 +126,6 @@ enum vctrs_type2 {
   vctrs_type2_logical_list,
   vctrs_type2_logical_dataframe,
   vctrs_type2_logical_s3,
-  vctrs_type2_logical_unspecified,
   vctrs_type2_logical_scalar,
 
   vctrs_type2_integer_integer,
@@ -125,7 +136,6 @@ enum vctrs_type2 {
   vctrs_type2_integer_list,
   vctrs_type2_integer_dataframe,
   vctrs_type2_integer_s3,
-  vctrs_type2_integer_unspecified,
   vctrs_type2_integer_scalar,
 
   vctrs_type2_double_double,
@@ -135,7 +145,6 @@ enum vctrs_type2 {
   vctrs_type2_double_list,
   vctrs_type2_double_dataframe,
   vctrs_type2_double_s3,
-  vctrs_type2_double_unspecified,
   vctrs_type2_double_scalar,
 
   vctrs_type2_complex_complex,
@@ -144,7 +153,6 @@ enum vctrs_type2 {
   vctrs_type2_complex_list,
   vctrs_type2_complex_dataframe,
   vctrs_type2_complex_s3,
-  vctrs_type2_complex_unspecified,
   vctrs_type2_complex_scalar,
 
   vctrs_type2_character_character,
@@ -152,33 +160,25 @@ enum vctrs_type2 {
   vctrs_type2_character_list,
   vctrs_type2_character_dataframe,
   vctrs_type2_character_s3,
-  vctrs_type2_character_unspecified,
   vctrs_type2_character_scalar,
 
   vctrs_type2_raw_raw,
   vctrs_type2_raw_list,
   vctrs_type2_raw_dataframe,
   vctrs_type2_raw_s3,
-  vctrs_type2_raw_unspecified,
   vctrs_type2_raw_scalar,
 
   vctrs_type2_list_list,
   vctrs_type2_list_dataframe,
   vctrs_type2_list_s3,
-  vctrs_type2_list_unspecified,
   vctrs_type2_list_scalar,
 
   vctrs_type2_dataframe_dataframe,
   vctrs_type2_dataframe_s3,
-  vctrs_type2_dataframe_unspecified,
   vctrs_type2_dataframe_scalar,
 
   vctrs_type2_s3_s3,
-  vctrs_type2_s3_unspecified,
   vctrs_type2_s3_scalar,
-
-  vctrs_type2_unspecified_unspecified,
-  vctrs_type2_unspecified_scalar,
 
   vctrs_type2_scalar_scalar
 };
@@ -190,6 +190,13 @@ enum vctrs_type2_s3 {
   vctrs_type2_s3_null_bare_posixct,
   vctrs_type2_s3_null_bare_posixlt,
   vctrs_type2_s3_null_unknown,
+
+  vctrs_type2_s3_unspecified_bare_factor,
+  vctrs_type2_s3_unspecified_bare_ordered,
+  vctrs_type2_s3_unspecified_bare_date,
+  vctrs_type2_s3_unspecified_bare_posixct,
+  vctrs_type2_s3_unspecified_bare_posixlt,
+  vctrs_type2_s3_unspecified_unknown,
 
   vctrs_type2_s3_logical_bare_factor,
   vctrs_type2_s3_logical_bare_ordered,
@@ -246,13 +253,6 @@ enum vctrs_type2_s3 {
   vctrs_type2_s3_dataframe_bare_posixct,
   vctrs_type2_s3_dataframe_bare_posixlt,
   vctrs_type2_s3_dataframe_unknown,
-
-  vctrs_type2_s3_unspecified_bare_factor,
-  vctrs_type2_s3_unspecified_bare_ordered,
-  vctrs_type2_s3_unspecified_bare_date,
-  vctrs_type2_s3_unspecified_bare_posixct,
-  vctrs_type2_s3_unspecified_bare_posixlt,
-  vctrs_type2_s3_unspecified_unknown,
 
   vctrs_type2_s3_scalar_bare_factor,
   vctrs_type2_s3_scalar_bare_ordered,

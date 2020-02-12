@@ -77,9 +77,10 @@ SEXP vec_assign_impl(SEXP proxy, SEXP index, SEXP value, bool clone) {
   case vctrs_type_raw:         return raw_assign(proxy, index, value, clone);
   case vctrs_type_list:        return list_assign(proxy, index, value, clone);
   case vctrs_type_dataframe:   return df_assign(proxy, index, value, clone);
-  case vctrs_type_s3:
+  case vctrs_type_null:
   case vctrs_type_unspecified:
-  case vctrs_type_null:        Rf_error("Internal error in `vec_assign_impl()`: Unexpected type %s.",
+  case vctrs_type_s3:
+                               Rf_error("Internal error in `vec_assign_impl()`: Unexpected type %s.",
                                         vec_type_as_str(vec_typeof(proxy)));
   case vctrs_type_scalar:      stop_scalar_type(proxy, args_empty);
   }

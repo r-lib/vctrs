@@ -26,6 +26,7 @@ enum vctrs_type2 vec_typeof2_impl(enum vctrs_type type_x,
   case vctrs_type_null: {
     switch (type_y) {
     case vctrs_type_null:        *left = -1; return vctrs_type2_null_null;
+    case vctrs_type_unspecified: *left =  0; return vctrs_type2_null_unspecified;
     case vctrs_type_logical:     *left =  0; return vctrs_type2_null_logical;
     case vctrs_type_integer:     *left =  0; return vctrs_type2_null_integer;
     case vctrs_type_double:      *left =  0; return vctrs_type2_null_double;
@@ -35,13 +36,29 @@ enum vctrs_type2 vec_typeof2_impl(enum vctrs_type type_x,
     case vctrs_type_list:        *left =  0; return vctrs_type2_null_list;
     case vctrs_type_dataframe:   *left =  0; return vctrs_type2_null_dataframe;
     case vctrs_type_s3:          *left =  0; return vctrs_type2_null_s3;
-    case vctrs_type_unspecified: *left =  0; return vctrs_type2_null_unspecified;
     case vctrs_type_scalar:      *left =  0; return vctrs_type2_null_scalar;
+    }
+  }
+  case vctrs_type_unspecified: {
+    switch (type_y) {
+    case vctrs_type_null:        *left =  1; return vctrs_type2_null_unspecified;
+    case vctrs_type_unspecified: *left = -1; return vctrs_type2_unspecified_unspecified;
+    case vctrs_type_logical:     *left =  0; return vctrs_type2_unspecified_logical;
+    case vctrs_type_integer:     *left =  0; return vctrs_type2_unspecified_integer;
+    case vctrs_type_double:      *left =  0; return vctrs_type2_unspecified_double;
+    case vctrs_type_complex:     *left =  0; return vctrs_type2_unspecified_complex;
+    case vctrs_type_character:   *left =  0; return vctrs_type2_unspecified_character;
+    case vctrs_type_raw:         *left =  0; return vctrs_type2_unspecified_raw;
+    case vctrs_type_list:        *left =  0; return vctrs_type2_unspecified_list;
+    case vctrs_type_dataframe:   *left =  0; return vctrs_type2_unspecified_dataframe;
+    case vctrs_type_s3:          *left =  0; return vctrs_type2_unspecified_s3;
+    case vctrs_type_scalar:      *left =  0; return vctrs_type2_unspecified_scalar;
     }
   }
   case vctrs_type_logical: {
     switch (type_y) {
     case vctrs_type_null:        *left =  1; return vctrs_type2_null_logical;
+    case vctrs_type_unspecified: *left =  1; return vctrs_type2_unspecified_logical;
     case vctrs_type_logical:     *left = -1; return vctrs_type2_logical_logical;
     case vctrs_type_integer:     *left =  0; return vctrs_type2_logical_integer;
     case vctrs_type_double:      *left =  0; return vctrs_type2_logical_double;
@@ -51,13 +68,13 @@ enum vctrs_type2 vec_typeof2_impl(enum vctrs_type type_x,
     case vctrs_type_list:        *left =  0; return vctrs_type2_logical_list;
     case vctrs_type_dataframe:   *left =  0; return vctrs_type2_logical_dataframe;
     case vctrs_type_s3:          *left =  0; return vctrs_type2_logical_s3;
-    case vctrs_type_unspecified: *left =  0; return vctrs_type2_logical_unspecified;
     case vctrs_type_scalar:      *left =  0; return vctrs_type2_logical_scalar;
     }
   }
   case vctrs_type_integer: {
     switch (type_y) {
     case vctrs_type_null:        *left =  1; return vctrs_type2_null_integer;
+    case vctrs_type_unspecified: *left =  1; return vctrs_type2_unspecified_integer;
     case vctrs_type_logical:     *left =  1; return vctrs_type2_logical_integer;
     case vctrs_type_integer:     *left = -1; return vctrs_type2_integer_integer;
     case vctrs_type_double:      *left =  0; return vctrs_type2_integer_double;
@@ -67,13 +84,13 @@ enum vctrs_type2 vec_typeof2_impl(enum vctrs_type type_x,
     case vctrs_type_list:        *left =  0; return vctrs_type2_integer_list;
     case vctrs_type_dataframe:   *left =  0; return vctrs_type2_integer_dataframe;
     case vctrs_type_s3:          *left =  0; return vctrs_type2_integer_s3;
-    case vctrs_type_unspecified: *left =  0; return vctrs_type2_integer_unspecified;
     case vctrs_type_scalar:      *left =  0; return vctrs_type2_integer_scalar;
     }
   }
   case vctrs_type_double: {
     switch (type_y) {
     case vctrs_type_null:        *left =  1; return vctrs_type2_null_double;
+    case vctrs_type_unspecified: *left =  1; return vctrs_type2_unspecified_double;
     case vctrs_type_logical:     *left =  1; return vctrs_type2_logical_double;
     case vctrs_type_integer:     *left =  1; return vctrs_type2_integer_double;
     case vctrs_type_double:      *left = -1; return vctrs_type2_double_double;
@@ -83,13 +100,13 @@ enum vctrs_type2 vec_typeof2_impl(enum vctrs_type type_x,
     case vctrs_type_list:        *left =  0; return vctrs_type2_double_list;
     case vctrs_type_dataframe:   *left =  0; return vctrs_type2_double_dataframe;
     case vctrs_type_s3:          *left =  0; return vctrs_type2_double_s3;
-    case vctrs_type_unspecified: *left =  0; return vctrs_type2_double_unspecified;
     case vctrs_type_scalar:      *left =  0; return vctrs_type2_double_scalar;
     }
   }
   case vctrs_type_complex: {
     switch (type_y) {
     case vctrs_type_null:        *left =  1; return vctrs_type2_null_complex;
+    case vctrs_type_unspecified: *left =  1; return vctrs_type2_unspecified_complex;
     case vctrs_type_logical:     *left =  1; return vctrs_type2_logical_complex;
     case vctrs_type_integer:     *left =  1; return vctrs_type2_integer_complex;
     case vctrs_type_double:      *left =  1; return vctrs_type2_double_complex;
@@ -99,13 +116,13 @@ enum vctrs_type2 vec_typeof2_impl(enum vctrs_type type_x,
     case vctrs_type_list:        *left =  0; return vctrs_type2_complex_list;
     case vctrs_type_dataframe:   *left =  0; return vctrs_type2_complex_dataframe;
     case vctrs_type_s3:          *left =  0; return vctrs_type2_complex_s3;
-    case vctrs_type_unspecified: *left =  0; return vctrs_type2_complex_unspecified;
     case vctrs_type_scalar:      *left =  0; return vctrs_type2_complex_scalar;
     }
   }
   case vctrs_type_character: {
     switch (type_y) {
     case vctrs_type_null:        *left =  1; return vctrs_type2_null_character;
+    case vctrs_type_unspecified: *left =  1; return vctrs_type2_unspecified_character;
     case vctrs_type_logical:     *left =  1; return vctrs_type2_logical_character;
     case vctrs_type_integer:     *left =  1; return vctrs_type2_integer_character;
     case vctrs_type_double:      *left =  1; return vctrs_type2_double_character;
@@ -115,13 +132,13 @@ enum vctrs_type2 vec_typeof2_impl(enum vctrs_type type_x,
     case vctrs_type_list:        *left =  0; return vctrs_type2_character_list;
     case vctrs_type_dataframe:   *left =  0; return vctrs_type2_character_dataframe;
     case vctrs_type_s3:          *left =  0; return vctrs_type2_character_s3;
-    case vctrs_type_unspecified: *left =  0; return vctrs_type2_character_unspecified;
     case vctrs_type_scalar:      *left =  0; return vctrs_type2_character_scalar;
     }
   }
   case vctrs_type_raw: {
     switch (type_y) {
     case vctrs_type_null:        *left =  1; return vctrs_type2_null_raw;
+    case vctrs_type_unspecified: *left =  1; return vctrs_type2_unspecified_raw;
     case vctrs_type_logical:     *left =  1; return vctrs_type2_logical_raw;
     case vctrs_type_integer:     *left =  1; return vctrs_type2_integer_raw;
     case vctrs_type_double:      *left =  1; return vctrs_type2_double_raw;
@@ -131,13 +148,13 @@ enum vctrs_type2 vec_typeof2_impl(enum vctrs_type type_x,
     case vctrs_type_list:        *left =  0; return vctrs_type2_raw_list;
     case vctrs_type_dataframe:   *left =  0; return vctrs_type2_raw_dataframe;
     case vctrs_type_s3:          *left =  0; return vctrs_type2_raw_s3;
-    case vctrs_type_unspecified: *left =  0; return vctrs_type2_raw_unspecified;
     case vctrs_type_scalar:      *left =  0; return vctrs_type2_raw_scalar;
     }
   }
   case vctrs_type_list: {
     switch (type_y) {
     case vctrs_type_null:        *left =  1; return vctrs_type2_null_list;
+    case vctrs_type_unspecified: *left =  1; return vctrs_type2_unspecified_list;
     case vctrs_type_logical:     *left =  1; return vctrs_type2_logical_list;
     case vctrs_type_integer:     *left =  1; return vctrs_type2_integer_list;
     case vctrs_type_double:      *left =  1; return vctrs_type2_double_list;
@@ -147,13 +164,13 @@ enum vctrs_type2 vec_typeof2_impl(enum vctrs_type type_x,
     case vctrs_type_list:        *left = -1; return vctrs_type2_list_list;
     case vctrs_type_dataframe:   *left =  0; return vctrs_type2_list_dataframe;
     case vctrs_type_s3:          *left =  0; return vctrs_type2_list_s3;
-    case vctrs_type_unspecified: *left =  0; return vctrs_type2_list_unspecified;
     case vctrs_type_scalar:      *left =  0; return vctrs_type2_list_scalar;
     }
   }
   case vctrs_type_dataframe: {
     switch (type_y) {
     case vctrs_type_null:        *left =  1; return vctrs_type2_null_dataframe;
+    case vctrs_type_unspecified: *left =  1; return vctrs_type2_unspecified_dataframe;
     case vctrs_type_logical:     *left =  1; return vctrs_type2_logical_dataframe;
     case vctrs_type_integer:     *left =  1; return vctrs_type2_integer_dataframe;
     case vctrs_type_double:      *left =  1; return vctrs_type2_double_dataframe;
@@ -163,13 +180,13 @@ enum vctrs_type2 vec_typeof2_impl(enum vctrs_type type_x,
     case vctrs_type_list:        *left =  1; return vctrs_type2_list_dataframe;
     case vctrs_type_dataframe:   *left = -1; return vctrs_type2_dataframe_dataframe;
     case vctrs_type_s3:          *left =  0; return vctrs_type2_dataframe_s3;
-    case vctrs_type_unspecified: *left =  0; return vctrs_type2_dataframe_unspecified;
     case vctrs_type_scalar:      *left =  0; return vctrs_type2_dataframe_scalar;
     }
   }
   case vctrs_type_s3: {
     switch (type_y) {
     case vctrs_type_null:        *left =  1; return vctrs_type2_null_s3;
+    case vctrs_type_unspecified: *left =  1; return vctrs_type2_unspecified_s3;
     case vctrs_type_logical:     *left =  1; return vctrs_type2_logical_s3;
     case vctrs_type_integer:     *left =  1; return vctrs_type2_integer_s3;
     case vctrs_type_double:      *left =  1; return vctrs_type2_double_s3;
@@ -179,29 +196,13 @@ enum vctrs_type2 vec_typeof2_impl(enum vctrs_type type_x,
     case vctrs_type_list:        *left =  1; return vctrs_type2_list_s3;
     case vctrs_type_dataframe:   *left =  1; return vctrs_type2_dataframe_s3;
     case vctrs_type_s3:          *left = -1; return vctrs_type2_s3_s3;
-    case vctrs_type_unspecified: *left =  0; return vctrs_type2_s3_unspecified;
     case vctrs_type_scalar:      *left =  0; return vctrs_type2_s3_scalar;
-    }
-  }
-  case vctrs_type_unspecified: {
-    switch (type_y) {
-    case vctrs_type_null:        *left =  1; return vctrs_type2_null_unspecified;
-    case vctrs_type_logical:     *left =  1; return vctrs_type2_logical_unspecified;
-    case vctrs_type_integer:     *left =  1; return vctrs_type2_integer_unspecified;
-    case vctrs_type_double:      *left =  1; return vctrs_type2_double_unspecified;
-    case vctrs_type_complex:     *left =  1; return vctrs_type2_complex_unspecified;
-    case vctrs_type_character:   *left =  1; return vctrs_type2_character_unspecified;
-    case vctrs_type_raw:         *left =  1; return vctrs_type2_raw_unspecified;
-    case vctrs_type_list:        *left =  1; return vctrs_type2_list_unspecified;
-    case vctrs_type_dataframe:   *left =  1; return vctrs_type2_dataframe_unspecified;
-    case vctrs_type_s3:          *left =  1; return vctrs_type2_s3_unspecified;
-    case vctrs_type_unspecified: *left = -1; return vctrs_type2_unspecified_unspecified;
-    case vctrs_type_scalar:      *left =  0; return vctrs_type2_unspecified_scalar;
     }
   }
   case vctrs_type_scalar: {
     switch (type_y) {
     case vctrs_type_null:        *left =  1; return vctrs_type2_null_scalar;
+    case vctrs_type_unspecified: *left =  1; return vctrs_type2_unspecified_scalar;
     case vctrs_type_logical:     *left =  1; return vctrs_type2_logical_scalar;
     case vctrs_type_integer:     *left =  1; return vctrs_type2_integer_scalar;
     case vctrs_type_double:      *left =  1; return vctrs_type2_double_scalar;
@@ -211,7 +212,6 @@ enum vctrs_type2 vec_typeof2_impl(enum vctrs_type type_x,
     case vctrs_type_list:        *left =  1; return vctrs_type2_list_scalar;
     case vctrs_type_dataframe:   *left =  1; return vctrs_type2_dataframe_scalar;
     case vctrs_type_s3:          *left =  1; return vctrs_type2_s3_scalar;
-    case vctrs_type_unspecified: *left =  1; return vctrs_type2_unspecified_scalar;
     case vctrs_type_scalar:      *left = -1; return vctrs_type2_scalar_scalar;
     }
   }}
@@ -240,6 +240,18 @@ const char* vctrs_type2_as_str(enum vctrs_type2 type) {
   case vctrs_type2_null_unspecified:        return "vctrs_type2_null_unspecified";
   case vctrs_type2_null_scalar:             return "vctrs_type2_null_scalar";
 
+  case vctrs_type2_unspecified_logical:     return "vctrs_type2_unspecified_logical";
+  case vctrs_type2_unspecified_integer:     return "vctrs_type2_unspecified_integer";
+  case vctrs_type2_unspecified_double:      return "vctrs_type2_unspecified_double";
+  case vctrs_type2_unspecified_complex:     return "vctrs_type2_unspecified_complex";
+  case vctrs_type2_unspecified_character:   return "vctrs_type2_unspecified_character";
+  case vctrs_type2_unspecified_raw:         return "vctrs_type2_unspecified_raw";
+  case vctrs_type2_unspecified_list:        return "vctrs_type2_unspecified_list";
+  case vctrs_type2_unspecified_dataframe:   return "vctrs_type2_unspecified_dataframe";
+  case vctrs_type2_unspecified_s3:          return "vctrs_type2_unspecified_s3";
+  case vctrs_type2_unspecified_unspecified: return "vctrs_type2_unspecified_unspecified";
+  case vctrs_type2_unspecified_scalar:      return "vctrs_type2_unspecified_scalar";
+
   case vctrs_type2_logical_logical:         return "vctrs_type2_logical_logical";
   case vctrs_type2_logical_integer:         return "vctrs_type2_logical_integer";
   case vctrs_type2_logical_double:          return "vctrs_type2_logical_double";
@@ -249,7 +261,6 @@ const char* vctrs_type2_as_str(enum vctrs_type2 type) {
   case vctrs_type2_logical_list:            return "vctrs_type2_logical_list";
   case vctrs_type2_logical_dataframe:       return "vctrs_type2_logical_dataframe";
   case vctrs_type2_logical_s3:              return "vctrs_type2_logical_s3";
-  case vctrs_type2_logical_unspecified:     return "vctrs_type2_logical_unspecified";
   case vctrs_type2_logical_scalar:          return "vctrs_type2_logical_scalar";
 
   case vctrs_type2_integer_integer:         return "vctrs_type2_integer_integer";
@@ -260,7 +271,6 @@ const char* vctrs_type2_as_str(enum vctrs_type2 type) {
   case vctrs_type2_integer_list:            return "vctrs_type2_integer_list";
   case vctrs_type2_integer_dataframe:       return "vctrs_type2_integer_dataframe";
   case vctrs_type2_integer_s3:              return "vctrs_type2_integer_s3";
-  case vctrs_type2_integer_unspecified:     return "vctrs_type2_integer_unspecified";
   case vctrs_type2_integer_scalar:          return "vctrs_type2_integer_scalar";
 
   case vctrs_type2_double_double:           return "vctrs_type2_double_double";
@@ -270,7 +280,6 @@ const char* vctrs_type2_as_str(enum vctrs_type2 type) {
   case vctrs_type2_double_list:             return "vctrs_type2_double_list";
   case vctrs_type2_double_dataframe:        return "vctrs_type2_double_dataframe";
   case vctrs_type2_double_s3:               return "vctrs_type2_double_s3";
-  case vctrs_type2_double_unspecified:      return "vctrs_type2_double_unspecified";
   case vctrs_type2_double_scalar:           return "vctrs_type2_double_scalar";
 
   case vctrs_type2_complex_complex:         return "vctrs_type2_complex_complex";
@@ -279,7 +288,6 @@ const char* vctrs_type2_as_str(enum vctrs_type2 type) {
   case vctrs_type2_complex_list:            return "vctrs_type2_complex_list";
   case vctrs_type2_complex_dataframe:       return "vctrs_type2_complex_dataframe";
   case vctrs_type2_complex_s3:              return "vctrs_type2_complex_s3";
-  case vctrs_type2_complex_unspecified:     return "vctrs_type2_complex_unspecified";
   case vctrs_type2_complex_scalar:          return "vctrs_type2_complex_scalar";
 
   case vctrs_type2_character_character:     return "vctrs_type2_character_character";
@@ -287,33 +295,25 @@ const char* vctrs_type2_as_str(enum vctrs_type2 type) {
   case vctrs_type2_character_list:          return "vctrs_type2_character_list";
   case vctrs_type2_character_dataframe:     return "vctrs_type2_character_dataframe";
   case vctrs_type2_character_s3:            return "vctrs_type2_character_s3";
-  case vctrs_type2_character_unspecified:   return "vctrs_type2_character_unspecified";
   case vctrs_type2_character_scalar:        return "vctrs_type2_character_scalar";
 
   case vctrs_type2_raw_raw:                 return "vctrs_type2_raw_raw";
   case vctrs_type2_raw_list:                return "vctrs_type2_raw_list";
   case vctrs_type2_raw_dataframe:           return "vctrs_type2_raw_dataframe";
   case vctrs_type2_raw_s3:                  return "vctrs_type2_raw_s3";
-  case vctrs_type2_raw_unspecified:         return "vctrs_type2_raw_unspecified";
   case vctrs_type2_raw_scalar:              return "vctrs_type2_raw_scalar";
 
   case vctrs_type2_list_list:               return "vctrs_type2_list_list";
   case vctrs_type2_list_dataframe:          return "vctrs_type2_list_dataframe";
   case vctrs_type2_list_s3:                 return "vctrs_type2_list_s3";
-  case vctrs_type2_list_unspecified:        return "vctrs_type2_list_unspecified";
   case vctrs_type2_list_scalar:             return "vctrs_type2_list_scalar";
 
   case vctrs_type2_dataframe_dataframe:     return "vctrs_type2_dataframe_dataframe";
   case vctrs_type2_dataframe_s3:            return "vctrs_type2_dataframe_s3";
-  case vctrs_type2_dataframe_unspecified:   return "vctrs_type2_dataframe_unspecified";
   case vctrs_type2_dataframe_scalar:        return "vctrs_type2_dataframe_scalar";
 
   case vctrs_type2_s3_s3:                   return "vctrs_type2_s3_s3";
-  case vctrs_type2_s3_unspecified:          return "vctrs_type2_s3_unspecified";
   case vctrs_type2_s3_scalar:               return "vctrs_type2_s3_scalar";
-
-  case vctrs_type2_unspecified_unspecified: return "vctrs_type2_unspecified_unspecified";
-  case vctrs_type2_unspecified_scalar:      return "vctrs_type2_unspecified_scalar";
 
   case vctrs_type2_scalar_scalar:           return "vctrs_type2_scalar_scalar";
   }

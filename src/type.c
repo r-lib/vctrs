@@ -15,6 +15,7 @@ SEXP vec_type(SEXP x) {
   switch (vec_typeof(x)) {
   case vctrs_type_scalar:      return x;
   case vctrs_type_null:        return R_NilValue;
+  case vctrs_type_unspecified: return vctrs_shared_empty_uns;
   case vctrs_type_logical:     return vec_type_slice(x, vctrs_shared_empty_lgl);
   case vctrs_type_integer:     return vec_type_slice(x, vctrs_shared_empty_int);
   case vctrs_type_double:      return vec_type_slice(x, vctrs_shared_empty_dbl);
@@ -24,7 +25,6 @@ SEXP vec_type(SEXP x) {
   case vctrs_type_list:        return vec_type_slice(x, vctrs_shared_empty_list);
   case vctrs_type_dataframe:   return df_map(x, &vec_type);
   case vctrs_type_s3:          return s3_type(x);
-  case vctrs_type_unspecified: return vctrs_shared_empty_uns;
   }
   never_reached("vec_type_impl");
 }
