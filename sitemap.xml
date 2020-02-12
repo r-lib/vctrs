@@ -52,9 +52,6 @@
     <loc>https://vctrs.r-lib.org/reference/s3_register.html</loc>
   </url>
   <url>
-    <loc>https://vctrs.r-lib.org/reference/stop_index_oob_positions.html</loc>
-  </url>
-  <url>
     <loc>https://vctrs.r-lib.org/reference/unspecified.html</loc>
   </url>
   <url>
@@ -70,10 +67,16 @@
     <loc>https://vctrs.r-lib.org/reference/vec_as_index.html</loc>
   </url>
   <url>
+    <loc>https://vctrs.r-lib.org/reference/vec_as_location.html</loc>
+  </url>
+  <url>
     <loc>https://vctrs.r-lib.org/reference/vec_as_names.html</loc>
   </url>
   <url>
     <loc>https://vctrs.r-lib.org/reference/vec_as_names_legacy.html</loc>
+  </url>
+  <url>
+    <loc>https://vctrs.r-lib.org/reference/vec_as_subscript.html</loc>
   </url>
   <url>
     <loc>https://vctrs.r-lib.org/reference/vec_assert.html</loc>
@@ -89,9 +92,6 @@
   </url>
   <url>
     <loc>https://vctrs.r-lib.org/reference/vec_chop.html</loc>
-  </url>
-  <url>
-    <loc>https://vctrs.r-lib.org/reference/vec_coerce_index.html</loc>
   </url>
   <url>
     <loc>https://vctrs.r-lib.org/reference/vec_compare.html</loc>

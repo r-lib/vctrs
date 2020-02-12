@@ -59,6 +59,16 @@
 <![endif]-->
 
 
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-115082821-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-115082821-1');
+</script>
+
 
   </head>
 
@@ -76,7 +86,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">vctrs</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.0.9007</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.99.9005</span>
       </span>
     </div>
 
@@ -137,36 +147,58 @@
       <small>Source: <a href='https://github.com/r-lib/vctrs/blob/master/NEWS.md'><code>NEWS.md</code></a></small>
     </div>
 
-    <div id="vctrs-0-2-0-9000" class="section level1">
+    <div id="vctrs-development-version" class="section level1">
 <h1 class="page-header">
-<a href="#vctrs-0-2-0-9000" class="anchor"></a>vctrs 0.2.0.9000<small> Unreleased </small>
+<a href="#vctrs-development-version" class="anchor"></a>vctrs (development version)<small> Unreleased </small>
 </h1>
 <ul>
+<li><p>The <code><a href="https://rdrr.io/r/base/c.html">c()</a></code> method for <code>vctrs_vctr</code> now throws an error when <code>recursive</code> or <code>use.names</code> is supplied (<a href='https://github.com/r-lib/vctrs/issues/791'>#791</a>).</p></li>
+<li><p><code><a href="../reference/vec_c.html">vec_c()</a></code> now falls back to <code><a href="https://rdrr.io/r/base/c.html">base::c()</a></code> if the vector doesn’t implement <code><a href="../reference/vec_ptype2.html">vec_ptype2()</a></code> but implements <code><a href="https://rdrr.io/r/base/c.html">c()</a></code>. This should improve the compatibility of vctrs-based functions with foreign classes (<a href='https://github.com/r-lib/vctrs/issues/801'>#801</a>).</p></li>
+</ul>
+</div>
+    <div id="vctrs-022" class="section level1">
+<h1 class="page-header">
+<a href="#vctrs-022" class="anchor"></a>vctrs 0.2.2<small> 2020-01-24 </small>
+</h1>
+<ul>
+<li><p>New <code><a href="../reference/vec_as_subscript.html">vec_as_subscript()</a></code> function to cast inputs to the base type of a subscript (logical, numeric, or character). <code><a href="../reference/vec_as_index.html">vec_as_index()</a></code> has been renamed to <code><a href="../reference/vec_as_location.html">vec_as_location()</a></code>. Use <code><a href="../reference/vec_as_location.html">num_as_location()</a></code> if you need more options to control how numeric subscripts are converted to a vector of locations.</p></li>
+<li><p>New <code><a href="../reference/vec_as_subscript.html">vec_as_subscript2()</a></code>, <code><a href="../reference/vec_as_location.html">vec_as_location2()</a></code>, and <code><a href="../reference/vec_as_location.html">num_as_location2()</a></code> variants for validating scalar subscripts and locations (e.g. for indexing with <code><a href="https://rdrr.io/r/base/Extract.html">[[</a></code>).</p></li>
+<li><p><code><a href="../reference/vec_as_location.html">vec_as_location()</a></code> now preserves names of its inputs if possible.</p></li>
+<li>
+<p><code><a href="../reference/vec_ptype2.html">vec_ptype2()</a></code> methods for base classes now prevent inheritance. This makes sense because the subtyping graph created by <code><a href="../reference/vec_ptype2.html">vec_ptype2()</a></code> methods is generally not the same as the inheritance relationships defined by S3 classes. For instance, subclasses are often a richer type than their superclasses, and should often be declared as supertypes (e.g. <code><a href="../reference/vec_ptype2.html">vec_ptype2()</a></code> should return the subclass).</p>
+<p>We introduced this breaking change in a patch release because <code><a href="../reference/new_vctr.html">new_vctr()</a></code> now adds the base type to the class vector by default, which caused <code><a href="../reference/vec_ptype2.html">vec_ptype2()</a></code> to dispatch erroneously to the methods for base types. We’ll finish switching to this approach in vctrs 0.3.0 for the rest of the base S3 classes (dates, data frames, …).</p>
+</li>
+<li><p><code><a href="../reference/vec_equal.html">vec_equal_na()</a></code> now works with complex vectors.</p></li>
+<li><p><code>vctrs_vctr</code> class gains an <code><a href="https://rdrr.io/r/base/as.POSIXlt.html">as.POSIXlt()</a></code> method (<a href='https://github.com/r-lib/vctrs/issues/717'>#717</a>).</p></li>
+<li><p><code><a href="../reference/vec_assert.html">vec_is()</a></code> now ignores names and row names (<a href='https://github.com/r-lib/vctrs/issues/707'>#707</a>).</p></li>
+<li><p><code><a href="../reference/vec_slice.html">vec_slice()</a></code> now support Altvec vectors (<a href='https://github.com/jimhester'>@jimhester</a>, <a href='https://github.com/r-lib/vctrs/issues/696'>#696</a>).</p></li>
 <li><p><code><a href="../reference/vec_proxy_equal.html">vec_proxy_equal()</a></code> is now applied recursively across the columns of data frames (<a href='https://github.com/r-lib/vctrs/issues/641'>#641</a>).</p></li>
-<li><p>Complex numbers are coercible with the integer and double (<a href='https://github.com/r-lib/vctrs/issues/564'>#564</a>).</p></li>
+<li><p><code><a href="../reference/vec_split.html">vec_split()</a></code> no longer returns the <code>val</code> column as a <code>list_of</code>. It is now returned as a bare list (<a href='https://github.com/r-lib/vctrs/issues/660'>#660</a>).</p></li>
+<li><p>Complex numbers are now coercible with integer and double (<a href='https://github.com/r-lib/vctrs/issues/564'>#564</a>).</p></li>
 <li><p>zeallot has been moved from Imports to Suggests, meaning that <code>%&lt;-%</code> is no longer re-exported from vctrs.</p></li>
 <li><p><code><a href="../reference/vec_equal.html">vec_equal()</a></code> no longer propagates missing values when comparing list elements. This means that <code><a href="../reference/vec_equal.html">vec_equal(list(NULL), list(NULL))</a></code> will continue to return <code>NA</code> because <code>NULL</code> is the missing element for a list, but now <code><a href="../reference/vec_equal.html">vec_equal(list(NA), list(NA))</a></code> returns <code>TRUE</code> because the <code>NA</code> values are compared directly without checking for missingness.</p></li>
 <li><p>Lists of expressions are now supported in <code><a href="../reference/vec_equal.html">vec_equal()</a></code> and functions that compare elements, such as <code><a href="../reference/vec_unique.html">vec_unique()</a></code> and <code><a href="../reference/vec_match.html">vec_match()</a></code>. This ensures that they work with the result of modeling functions like <code><a href="https://rdrr.io/r/stats/glm.html">glm()</a></code> and <code><a href="https://rdrr.io/pkg/mgcv/man/gam.html">mgcv::gam()</a></code> which store “family” objects containing expressions (<a href='https://github.com/r-lib/vctrs/issues/643'>#643</a>).</p></li>
-<li><p><code><a href="../reference/new_vctr.html">new_vctr()</a></code> gains a <code>inherit_base_type</code> argument which determines whether or not the class of the underlying type will be included in the class. This generally should be set to <code>TRUE</code>, unless your class does not behave like the underlying type; for example a <code><a href="https://rdrr.io/r/base/factor.html">factor()</a></code> should not inherit from <code>integer</code>.</p></li>
-<li><p><code><a href="../reference/list_of.html">list_of()</a></code> now inherits from “list” (<a href='https://github.com/r-lib/vctrs/issues/593'>#593</a>)</p></li>
+<li><p><code><a href="../reference/new_vctr.html">new_vctr()</a></code> gains an experimental <code>inherit_base_type</code> argument which determines whether or not the class of the underlying type will be included in the class.</p></li>
+<li><p><code><a href="../reference/list_of.html">list_of()</a></code> now inherits explicitly from “list” (<a href='https://github.com/r-lib/vctrs/issues/593'>#593</a>).</p></li>
 <li><p><code><a href="../reference/vec_ptype.html">vec_ptype()</a></code> has relaxed default behaviour for base types; now if two vectors both inherit from (e.g.) “character”, the common type is also “character” (<a href='https://github.com/r-lib/vctrs/issues/497'>#497</a>).</p></li>
 <li><p><code><a href="../reference/vec_equal.html">vec_equal()</a></code> now correctly treats <code>NULL</code> as the missing value element for lists (<a href='https://github.com/r-lib/vctrs/issues/653'>#653</a>).</p></li>
+<li><p><code><a href="../reference/vec_cast.html">vec_cast()</a></code> now casts data frames to lists rowwise, i.e. to a list of data frames of size 1. This preserves the invariant of <code>vec_size(vec_cast(x, to)) == vec_size(x)</code> (<a href='https://github.com/r-lib/vctrs/issues/639'>#639</a>).</p></li>
 <li><p>Positive and negative 0 are now considered equivalent by all functions that check for equality or uniqueness (<a href='https://github.com/r-lib/vctrs/issues/637'>#637</a>).</p></li>
-<li><p>New experimental <code><a href="../reference/vec_group.html">vec_group_rle()</a></code> for returning run length encoded groups.</p></li>
-<li><p>New experimental <code><a href="../reference/vec_group.html">vec_group_id()</a></code> for constructing group identifiers from a vector.</p></li>
-<li><p>New experimental <code><a href="../reference/vec_group.html">vec_group_pos()</a></code> for locating the positions of unique groups in a vector (<a href='https://github.com/r-lib/vctrs/issues/514'>#514</a>).</p></li>
+<li><p>New experimental functions <code><a href="../reference/vec_group.html">vec_group_rle()</a></code> for returning run length encoded groups; <code><a href="../reference/vec_group.html">vec_group_id()</a></code> for constructing group identifiers from a vector; <code><a href="../reference/vec_group.html">vec_group_loc()</a></code> for computing the locations of unique groups in a vector (<a href='https://github.com/r-lib/vctrs/issues/514'>#514</a>).</p></li>
 <li><p>New <code><a href="../reference/vec_chop.html">vec_chop()</a></code> for repeatedly slicing a vector. It efficiently captures the pattern of <code>map(indices, vec_slice, x = x)</code>.</p></li>
-<li><p><code><a href="../reference/vec_as_index.html">vec_as_index()</a></code> now preserves names of its inputs if possible.</p></li>
-<li><p>New <code><a href="../reference/vec_duplicate.html">vec_duplicate_all()</a></code> for detecting if all values in a vector are equivalent.</p></li>
-<li><p><code><a href="../reference/vec_as_index.html">vec_as_index()</a></code> gains an <code>arg</code> parameter to specify the name of inputs. This is useful when it is used for type-checking.</p></li>
 <li><p>Support for multiple character encodings has been added to functions that compare elements within a single vector, such as <code><a href="../reference/vec_unique.html">vec_unique()</a></code>, and across multiple vectors, such as <code><a href="../reference/vec_match.html">vec_match()</a></code>. When multiple encodings are encountered, a translation to UTF-8 is performed before any comparisons are made (<a href='https://github.com/r-lib/vctrs/issues/600'>#600</a>, <a href='https://github.com/r-lib/vctrs/issues/553'>#553</a>).</p></li>
-<li><p>New <code><a href="../reference/stop_index_oob_positions.html">stop_index_oob_positions()</a></code> and <code><a href="../reference/stop_index_oob_positions.html">stop_index_oob_names()</a></code> functions to throw out-of-bounds errors.</p></li>
 <li><p>Equality and ordering methods are now implemented for raw and complex vectors (<a href='https://github.com/romainfrancois'>@romainfrancois</a>).</p></li>
 </ul>
 </div>
-    <div id="vctrs-0-2-0" class="section level1">
+    <div id="vctrs-021" class="section level1">
 <h1 class="page-header">
-<a href="#vctrs-0-2-0" class="anchor"></a>vctrs 0.2.0<small> 2019-07-05 </small>
+<a href="#vctrs-021" class="anchor"></a>vctrs 0.2.1<small> 2019-12-17 </small>
+</h1>
+<p>Maintenance release for CRAN checks.</p>
+</div>
+    <div id="vctrs-020" class="section level1">
+<h1 class="page-header">
+<a href="#vctrs-020" class="anchor"></a>vctrs 0.2.0<small> 2019-07-05 </small>
 </h1>
 <p>With the 0.2.0 release, many vctrs functions have been rewritten with native C code to improve performance. Functions like <code><a href="../reference/vec_c.html">vec_c()</a></code> and <code><a href="../reference/vec_bind.html">vec_rbind()</a></code> should now be fast enough to be used in packages. This is an ongoing effort, for instance the handling of factors and dates has not been rewritten yet. These classes still slow down vctrs primitives.</p>
 <p>The API in 0.2.0 has been updated, please see a list of breaking changes below. vctrs has now graduated from experimental to a maturing package (see the <a href="https://www.tidyverse.org/lifecycle/">lifecycle of tidyverse packages</a>). Please note that API changes are still planned for future releases, for instance <code><a href="../reference/vec_ptype2.html">vec_ptype2()</a></code> and <code><a href="../reference/vec_cast.html">vec_cast()</a></code> might need to return a sentinel instead of failing with an error when there is no common type or possible cast.</p>
@@ -237,23 +269,23 @@ vec_rbind(df1, df2)
 </li>
 <li>
 <p><code><a href="../reference/vec_bind.html">vec_cbind()</a></code> now turns named data frames to packed columns.</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" data-line-number="1">data &lt;-<span class="st"> </span>tibble<span class="op">::</span><span class="kw"><a href="https://tibble.tidyverse.org/reference/tibble.html">tibble</a></span>(<span class="dt">x =</span> <span class="dv">1</span><span class="op">:</span><span class="dv">3</span>, <span class="dt">y =</span> letters[<span class="dv">1</span><span class="op">:</span><span class="dv">3</span>])</a>
-<a class="sourceLine" id="cb5-2" data-line-number="2">data &lt;-<span class="st"> </span><span class="kw"><a href="../reference/vec_bind.html">vec_cbind</a></span>(data, <span class="dt">packed =</span> data)</a>
-<a class="sourceLine" id="cb5-3" data-line-number="3">data</a>
-<a class="sourceLine" id="cb5-4" data-line-number="4"><span class="co"># A tibble: 3 x 3</span></a>
-<a class="sourceLine" id="cb5-5" data-line-number="5">      x y     packed<span class="op">$</span>x <span class="op">$</span>y</a>
-<a class="sourceLine" id="cb5-6" data-line-number="6">  <span class="op">&lt;</span>int<span class="op">&gt;</span><span class="st"> </span><span class="er">&lt;</span>chr<span class="op">&gt;</span><span class="st">    </span><span class="er">&lt;</span>int<span class="op">&gt;</span><span class="st"> </span><span class="er">&lt;</span>chr<span class="op">&gt;</span></a>
-<a class="sourceLine" id="cb5-7" data-line-number="7"><span class="dv">1</span>     <span class="dv">1</span> a            <span class="dv">1</span> a</a>
-<a class="sourceLine" id="cb5-8" data-line-number="8"><span class="dv">2</span>     <span class="dv">2</span> b            <span class="dv">2</span> b</a>
-<a class="sourceLine" id="cb5-9" data-line-number="9"><span class="dv">3</span>     <span class="dv">3</span> c            <span class="dv">3</span> c</a></code></pre></div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1"></a>data &lt;-<span class="st"> </span>tibble<span class="op">::</span><span class="kw"><a href="https://tibble.tidyverse.org/reference/tibble.html">tibble</a></span>(<span class="dt">x =</span> <span class="dv">1</span><span class="op">:</span><span class="dv">3</span>, <span class="dt">y =</span> letters[<span class="dv">1</span><span class="op">:</span><span class="dv">3</span>])</span>
+<span id="cb5-2"><a href="#cb5-2"></a>data &lt;-<span class="st"> </span><span class="kw"><a href="../reference/vec_bind.html">vec_cbind</a></span>(data, <span class="dt">packed =</span> data)</span>
+<span id="cb5-3"><a href="#cb5-3"></a>data</span>
+<span id="cb5-4"><a href="#cb5-4"></a><span class="co"># A tibble: 3 x 3</span></span>
+<span id="cb5-5"><a href="#cb5-5"></a>      x y     packed<span class="op">$</span>x <span class="op">$</span>y</span>
+<span id="cb5-6"><a href="#cb5-6"></a>  <span class="op">&lt;</span>int<span class="op">&gt;</span><span class="st"> </span><span class="er">&lt;</span>chr<span class="op">&gt;</span><span class="st">    </span><span class="er">&lt;</span>int<span class="op">&gt;</span><span class="st"> </span><span class="er">&lt;</span>chr<span class="op">&gt;</span></span>
+<span id="cb5-7"><a href="#cb5-7"></a><span class="dv">1</span>     <span class="dv">1</span> a            <span class="dv">1</span> a</span>
+<span id="cb5-8"><a href="#cb5-8"></a><span class="dv">2</span>     <span class="dv">2</span> b            <span class="dv">2</span> b</span>
+<span id="cb5-9"><a href="#cb5-9"></a><span class="dv">3</span>     <span class="dv">3</span> c            <span class="dv">3</span> c</span></code></pre></div>
 <p>Packed data frames are nested in a single column. This makes it possible to access it through a single name:</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" data-line-number="1">data<span class="op">$</span>packed</a>
-<a class="sourceLine" id="cb6-2" data-line-number="2"><span class="co"># A tibble: 3 x 2</span></a>
-<a class="sourceLine" id="cb6-3" data-line-number="3">      x y</a>
-<a class="sourceLine" id="cb6-4" data-line-number="4">  <span class="op">&lt;</span>int<span class="op">&gt;</span><span class="st"> </span><span class="er">&lt;</span>chr<span class="op">&gt;</span></a>
-<a class="sourceLine" id="cb6-5" data-line-number="5"><span class="dv">1</span>     <span class="dv">1</span> a</a>
-<a class="sourceLine" id="cb6-6" data-line-number="6"><span class="dv">2</span>     <span class="dv">2</span> b</a>
-<a class="sourceLine" id="cb6-7" data-line-number="7"><span class="dv">3</span>     <span class="dv">3</span> c</a></code></pre></div>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1"></a>data<span class="op">$</span>packed</span>
+<span id="cb6-2"><a href="#cb6-2"></a><span class="co"># A tibble: 3 x 2</span></span>
+<span id="cb6-3"><a href="#cb6-3"></a>      x y</span>
+<span id="cb6-4"><a href="#cb6-4"></a>  <span class="op">&lt;</span>int<span class="op">&gt;</span><span class="st"> </span><span class="er">&lt;</span>chr<span class="op">&gt;</span></span>
+<span id="cb6-5"><a href="#cb6-5"></a><span class="dv">1</span>     <span class="dv">1</span> a</span>
+<span id="cb6-6"><a href="#cb6-6"></a><span class="dv">2</span>     <span class="dv">2</span> b</span>
+<span id="cb6-7"><a href="#cb6-7"></a><span class="dv">3</span>     <span class="dv">3</span> c</span></code></pre></div>
 <p>We are planning to use this syntax more widely in the tidyverse.</p>
 </li>
 <li>
@@ -299,8 +331,10 @@ vec_rbind(df1, df2)
     <div id="tocnav">
       <h2>Contents</h2>
       <ul class="nav nav-pills nav-stacked">
-        <li><a href="#vctrs-0-2-0-9000">0.2.0.9000</a></li>
-        <li><a href="#vctrs-0-2-0">0.2.0</a></li>
+        <li><a href="#vctrs-development-version">development version</a></li>
+        <li><a href="#vctrs-022">0.2.2</a></li>
+        <li><a href="#vctrs-021">0.2.1</a></li>
+        <li><a href="#vctrs-020">0.2.0</a></li>
       </ul>
     </div>
   </div>
@@ -314,7 +348,7 @@ vec_rbind(df1, df2)
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.4.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.4.1.9000.</p>
 </div>
 
       </footer>

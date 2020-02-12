@@ -53,7 +53,7 @@ vec_as_names() always returns minimal names and data frames
 created by the tibble package have names that are, at least,
 minimal.
 unique names are minimal, have no duplicates, and can be used
-where a variable name is expected.  Empty names, and ... or
+where a variable name is expected. Empty names, ..., and
 .. followed by a sequence of digits are banned.
 All columns can be accessed by name via df[[&quot;name&quot;]] and
 df$`name`  and with(df, `name`).
@@ -83,6 +83,16 @@ levels are nested." />
 <![endif]-->
 
 
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-115082821-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-115082821-1');
+</script>
+
 
   </head>
 
@@ -100,7 +110,7 @@ levels are nested." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">vctrs</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.0.9007</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.99.9005</span>
       </span>
     </div>
 
@@ -173,7 +183,7 @@ name of an unnamed element is <code>""</code> and never <code>NA</code>. For ins
 created by the tibble package have names that are, at least,
 <code>minimal</code>.</p></li>
 <li><p><code>unique</code> names are <code>minimal</code>, have no duplicates, and can be used
-where a variable name is expected.  Empty names, and <code>...</code> or
+where a variable name is expected. Empty names, <code>...</code>, and
 <code>..</code> followed by a sequence of digits are banned.</p><ul>
 <li><p>All columns can be accessed by name via <code>df[["name"]]</code> and
 <code>df$`name` </code> and <code><a href='https://rdrr.io/r/base/with.html'>with(df, `name`)</a></code>.</p></li>
@@ -256,9 +266,9 @@ name of an unnamed element is <code>""</code> and never <code>NA</code>.</p>
 
 <p><code>unique</code> names are <code>minimal</code>, have no duplicates, and can be used
 (possibly with backticks) in contexts where a variable is
-expected. Empty names, and <code>...</code> or <code>..</code> followed by a sequence of
-digits are banned If a data frame has <code>unique</code> names, you can
-index it by name, and also access the columns by name.  In
+expected. Empty names, <code>...</code>, and <code>..</code> followed by a sequence of
+digits are banned. If a data frame has <code>unique</code> names, you can
+index it by name, and also access the columns by name. In
 particular, <code>df[["name"]]</code> and <code>df$`name`</code> and also <code><a href='https://rdrr.io/r/base/with.html'>with(df, `name`)</a></code> always work.</p>
 <p>There are many ways to make names <code>unique</code>. We append a suffix of the form
 <code>...j</code> to any name that is <code>""</code> or a duplicate, where <code>j</code> is the position.
@@ -312,13 +322,9 @@ section in the "tidyverse package development principles".</p></div>
     <pre class="examples"><div class='input'><span class='co'># By default, `vec_as_names()` returns minimal names:</span>
 <span class='fu'>vec_as_names</span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>NA</span>, <span class='fl'>NA</span>, <span class='st'>"foo"</span>))</div><div class='output co'>#&gt; [1] ""    ""    "foo"</div><div class='input'>
 <span class='co'># You can make them unique:</span>
-<span class='fu'>vec_as_names</span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>NA</span>, <span class='fl'>NA</span>, <span class='st'>"foo"</span>), <span class='kw'>repair</span> <span class='kw'>=</span> <span class='st'>"unique"</span>)</div><div class='output co'>#&gt; <span class='message'>New names:</span>
-#&gt; <span class='message'>* NA -&gt; ...1</span>
-#&gt; <span class='message'>* NA -&gt; ...2</span></div><div class='output co'>#&gt; [1] "...1" "...2" "foo" </div><div class='input'>
+<span class='fu'>vec_as_names</span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>NA</span>, <span class='fl'>NA</span>, <span class='st'>"foo"</span>), <span class='kw'>repair</span> <span class='kw'>=</span> <span class='st'>"unique"</span>)</div><div class='output co'>#&gt; [1] "...1" "...2" "foo" </div><div class='input'>
 <span class='co'># Universal repairing fixes any non-syntactic name:</span>
-<span class='fu'>vec_as_names</span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"_foo"</span>, <span class='st'>"+"</span>), <span class='kw'>repair</span> <span class='kw'>=</span> <span class='st'>"universal"</span>)</div><div class='output co'>#&gt; <span class='message'>New names:</span>
-#&gt; <span class='message'>* `_foo` -&gt; ._foo</span>
-#&gt; <span class='message'>* `+` -&gt; .</span></div><div class='output co'>#&gt; [1] "._foo" "."    </div></pre>
+<span class='fu'>vec_as_names</span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"_foo"</span>, <span class='st'>"+"</span>), <span class='kw'>repair</span> <span class='kw'>=</span> <span class='st'>"universal"</span>)</div><div class='output co'>#&gt; [1] "._foo" "."    </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
@@ -341,7 +347,7 @@ section in the "tidyverse package development principles".</p></div>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.4.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.4.1.9000.</p>
 </div>
 
       </footer>
