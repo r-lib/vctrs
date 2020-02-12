@@ -294,6 +294,18 @@ test_that("slice-assign falls back to `[<-` when proxy is not implemented", {
   expect_identical(obj, c("dispatched", "dispatched", "baz"))
 })
 
+test_that("vec_assign() cannot assign unspecified values into foreign vector types", {
+  obj <- foobar(c("foo", "bar", "baz"))
+
+  # These are correctly incompatible cast errors, not type errors.
+  # There is a common type, it is `vec_ptype(obj)`, but you can't cast
+  # an unspecified vector to foreign types without implementing a method for it.
+  # (Just calling `vec_init(to, vec_size(x))` for all classes wouldn't work,
+  # since classes like integer64 might not support `NA_integer_` subsetting)
+  expect_error(vec_assign(obj, 1, NA), class = "vctrs_error_incompatible_cast")
+  expect_error(vec_assign(obj, 1, unspecified(1)), class = "vctrs_error_incompatible_cast")
+})
+
 test_that("slice-assign can assign unspecified values into foreign vector types", {
   obj <- foobar(c("foo", "bar", "baz"))
   expect_identical(vec_assign(obj, 1:2, NA), foobar(c(NA, NA, "baz")))
