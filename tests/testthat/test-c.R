@@ -146,6 +146,10 @@ test_that("vec_c() falls back to c() for foreign classes", {
       "concatenation"
     )
   })
+  expect_error(
+    vec_c(NULL, foobar(1), foobar(2)),
+    "concatenation"
+  )
 
   # Check off-by-one error
   expect_error(
@@ -160,6 +164,10 @@ test_that("vec_c() falls back to c() for foreign classes", {
   )
   expect_identical(
     vec_c(foobar(1), foobar(2)),
+    c("dispatched", "dispatched")
+  )
+  expect_identical(
+    vec_c(NULL, foobar(1), NULL, foobar(2)),
     c("dispatched", "dispatched")
   )
 
