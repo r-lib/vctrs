@@ -77,3 +77,19 @@ test_that("unspecified() validates input", {
 test_that("tibble::type_sum() knows about unspecified", {
   expect_identical(tibble::type_sum(unspecified(3)), "???")
 })
+
+test_that("casting to a scalar type errors", {
+  expect_error(vec_cast(NA, quote(x)), "Not a vector")
+  expect_error(vec_cast(unspecified(1), quote(x)), "Not a vector")
+})
+
+test_that("can cast to unspecified from unspecified", {
+  expect_identical(vec_cast(NA, unspecified()), unspecified(1))
+  expect_identical(vec_cast(unspecified(1), unspecified()), unspecified(1))
+})
+
+test_that("casting unspecified input to NA unspecified results in NA vector", {
+  expect_identical(vec_cast(unspecified(1), NA), NA)
+  expect_identical(vec_cast(NA, NA), NA)
+})
+
