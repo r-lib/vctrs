@@ -119,8 +119,8 @@ static bool class_is_null(SEXP x) {
 
 // [[ include("vctrs.h") ]]
 enum vctrs_type vec_typeof(SEXP x) {
-  // Check for unspecified objects created with `unspecified()`, which
-  // are objects, meaning they don't go through `vec_base_typeof()`
+  // Important to place this check before `vec_base_typeof()`, which
+  // allows vectors of `NA` to pass through as `vctrs_type_logical`
   if (vec_is_unspecified(x)) {
     return vctrs_type_unspecified;
   }
