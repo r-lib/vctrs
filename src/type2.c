@@ -105,7 +105,6 @@ static SEXP vec_ptype2_dispatch_unspecified(SEXP x,
                                             enum vctrs_type type,
                                             bool left_unspecified) {
   switch(type) {
-  case vctrs_type_null:
   case vctrs_type_logical:
   case vctrs_type_integer:
   case vctrs_type_double:
@@ -120,6 +119,10 @@ static SEXP vec_ptype2_dispatch_unspecified(SEXP x,
 
   case vctrs_type_list:
     return vec_ptype2_dispatch_unspecified_list(x, y, x_arg, y_arg, left_unspecified);
+
+  case vctrs_type_null: {
+    Rf_errorcall(R_NilValue, "Internal error: NULL inputs should have been handled earlier.");
+  }
 
   case vctrs_type_s3: {
     Rf_errorcall(R_NilValue, "Internal error: s3 inputs should have been handled earlier.");
