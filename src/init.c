@@ -83,6 +83,9 @@ extern SEXP vctrs_apply_name_spec(SEXP, SEXP, SEXP, SEXP);
 extern SEXP vctrs_proxy_recursive(SEXP, SEXP);
 extern SEXP vctrs_maybe_translate_encoding(SEXP);
 extern SEXP vctrs_maybe_translate_encoding2(SEXP, SEXP);
+extern SEXP vctrs_validate_name_repair_arg(SEXP);
+extern SEXP vctrs_validate_minimal_names(SEXP, SEXP);
+extern SEXP vctrs_as_names(SEXP, SEXP, SEXP);
 
 // Very experimental
 // Available in the API header
@@ -185,6 +188,9 @@ static const R_CallMethodDef CallEntries[] = {
   {"vctrs_maybe_translate_encoding",   (DL_FUNC) &vctrs_maybe_translate_encoding, 1},
   {"vctrs_maybe_translate_encoding2",  (DL_FUNC) &vctrs_maybe_translate_encoding2, 2},
   {"vctrs_rle",                        (DL_FUNC) &altrep_rle_Make, 1},
+  {"vctrs_validate_name_repair_arg",   (DL_FUNC) &vctrs_validate_name_repair_arg, 1},
+  {"vctrs_validate_minimal_names",     (DL_FUNC) &vctrs_validate_minimal_names, 2},
+  {"vctrs_as_names",                   (DL_FUNC) &vctrs_as_names, 3},
   {NULL, NULL, 0}
 };
 

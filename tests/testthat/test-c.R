@@ -104,6 +104,8 @@ test_that("vec_c() repairs names", {
   expect_error(vec_c(a = 1, a = 2, `_` = 3, .name_repair = "check_unique"), class = "vctrs_error_names_must_be_unique")
 
   expect_named(vec_c(a = 1, a = 2, `_` = 3, .name_repair = "universal"), c("a...1", "a...2", "._"))
+
+  expect_named(vec_c(a = 1, a = 2, .name_repair = ~ toupper(.)), c("A", "A"))
 })
 
 test_that("vec_c() doesn't use outer names for data frames (#524)", {

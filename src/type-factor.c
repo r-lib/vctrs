@@ -60,13 +60,18 @@ static SEXP levels_union(SEXP x, SEXP y) {
   SET_VECTOR_ELT(args, 0, x);
   SET_VECTOR_ELT(args, 1, y);
 
+  const struct name_repair_opts name_repair_opts = {
+    .type = name_repair_none,
+    .fn = R_NilValue
+  };
+
   // Combine with known ptype
   // No name repair because this is just combining factor levels
   SEXP xy = PROTECT(vec_c(
     args,
     vctrs_shared_empty_chr,
     R_NilValue,
-    name_repair_none
+    &name_repair_opts
   ));
 
   SEXP out = vec_unique(xy);

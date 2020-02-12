@@ -818,19 +818,16 @@ SEXP r_new_environment(SEXP parent, R_len_t size) {
 static SEXP new_function_call = NULL;
 static SEXP new_function__formals_node = NULL;
 static SEXP new_function__body_node = NULL;
-static SEXP new_function__env_node = NULL;
 
 SEXP r_new_function(SEXP formals, SEXP body, SEXP env) {
   SETCAR(new_function__formals_node, formals);
   SETCAR(new_function__body_node, body);
-  SETCAR(new_function__env_node, env);
 
-  SEXP fn = Rf_eval(new_function_call, R_BaseEnv);
+  SEXP fn = Rf_eval(new_function_call, env);
 
   // Free for gc
   SETCAR(new_function__formals_node, R_NilValue);
   SETCAR(new_function__body_node, R_NilValue);
-  SETCAR(new_function__env_node, R_NilValue);
 
   return fn;
 }
@@ -1120,6 +1117,7 @@ SEXP syms_missing = NULL;
 SEXP syms_size = NULL;
 SEXP syms_subscript_action = NULL;
 SEXP syms_subscript_type = NULL;
+SEXP syms_repair = NULL;
 
 SEXP fns_bracket = NULL;
 SEXP fns_quote = NULL;
@@ -1346,6 +1344,7 @@ void vctrs_init_utils(SEXP ns) {
   syms_size = Rf_install("size");
   syms_subscript_action = Rf_install("subscript_action");
   syms_subscript_type = Rf_install("subscript_type");
+  syms_repair = Rf_install("repair");
 
   fns_bracket = Rf_findVar(syms_bracket, R_BaseEnv);
   fns_quote = Rf_findVar(Rf_install("quote"), R_BaseEnv);
@@ -1357,12 +1356,11 @@ void vctrs_init_utils(SEXP ns) {
   new_env__parent_node = CDDR(new_env_call);
   new_env__size_node = CDR(new_env__parent_node);
 
-  new_function_call = r_parse_eval("as.call(list(`function`, NULL, NULL, NULL))", R_BaseEnv);
+  new_function_call = r_parse_eval("as.call(list(`function`, NULL, NULL))", R_BaseEnv);
   R_PreserveObject(new_function_call);
 
   new_function__formals_node = CDR(new_function_call);
   new_function__body_node = CDR(new_function__formals_node);
-  new_function__env_node = CDR(new_function__body_node);
 
   const char* formals_code = "pairlist2(... = , .x = quote(..1), .y = quote(..2), . = quote(..1))";
   rlang_formula_formals = r_parse_eval(formals_code, ns);

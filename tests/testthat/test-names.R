@@ -1,13 +1,5 @@
 context("test-names")
 
-
-# API -----------------------------------------------------------------
-
-test_that("Consistent values for repair argument", {
-  expect_identical(formals(validate_repair)$repair, formals(vec_as_names)$repair)
-  expect_identical(formals(validate_repair)$repair, formals(vec_names2)$repair)
-})
-
 # vec_names() ---------------------------------------------------------
 
 test_that("vec_names() retrieves names", {
@@ -109,7 +101,11 @@ test_that("vec_as_names() keeps the names of a named vector", {
 })
 
 test_that("vec_as_names() accepts and checks repair function", {
-  expect_identical(vec_as_names(c("", ""), repair = ~ rep_along(.x, "foo")), c("foo", "foo"))
+  f <- local({
+    local_obj <- "foo"
+    ~ rep_along(.x, local_obj)
+  })
+  expect_identical(vec_as_names(c("", ""), repair = f), c("foo", "foo"))
   expect_error(vec_as_names(c("", ""), repair = function(nms) "foo"), "length 1 instead of length 2")
 })
 
@@ -117,10 +113,10 @@ test_that("vec_as_names() repairs names before invoking repair function", {
   expect_identical(vec_as_names(chr(NA, NA), repair = identity), c("", ""))
 })
 
-test_that("validate_minimal() checks names", {
-  expect_error(validate_minimal(1), "must return a character vector")
-  expect_error(validate_minimal(NULL), "can't return `NULL`")
-  expect_error(validate_minimal(chr(NA)), "can't return `NA` values")
+test_that("validate_minimal_names() checks names", {
+  expect_error(validate_minimal_names(1), "must return a character vector")
+  expect_error(validate_minimal_names(NULL), "can't return `NULL`")
+  expect_error(validate_minimal_names(chr(NA)), "can't return `NA` values")
 })
 
 test_that("validate_unique() checks unique names", {
@@ -129,6 +125,17 @@ test_that("validate_unique() checks unique names", {
   expect_error(validate_unique(chr("a", "a")), class = "vctrs_error_names_must_be_unique")
   expect_error(validate_unique(chr("..1")), class = "vctrs_error_names_cannot_be_dot_dot")
   expect_error(validate_unique(chr("...")), class = "vctrs_error_names_cannot_be_dot_dot")
+})
+
+test_that("vec_as_names_validate() validates repair arguments", {
+  expect_identical(
+    validate_name_repair_arg(c("unique", "check_unique")),
+    "unique"
+  )
+  expect_identical(
+    validate_name_repair_arg(~ toupper(.))(letters),
+    LETTERS
+  )
 })
 
 
