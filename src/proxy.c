@@ -83,7 +83,7 @@ SEXP vctrs_proxy_recursive(SEXP x, SEXP kind_) {
 }
 
 SEXP vec_proxy_method(SEXP x) {
-  return s3_find_method("vec_proxy", x);
+  return s3_find_method("vec_proxy", x, vctrs_method_table);
 }
 
 // This should be faster than normal dispatch but also means that

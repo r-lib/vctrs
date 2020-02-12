@@ -5,8 +5,9 @@
   `recursive` or `use.names` is supplied (#791).
 
 * `vec_c()` now falls back to `base::c()` if the vector doesn't
-  implement `vec_ptype2()`. This should improve the compatibility of
-  vctrs-based functions with foreign classes (#801).
+  implement `vec_ptype2()` but implements `c()`. This should improve
+  the compatibility of vctrs-based functions with foreign classes
+  (#801).
 
 
 # vctrs 0.2.2
