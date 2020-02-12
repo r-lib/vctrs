@@ -359,3 +359,24 @@ test_that("vec_cbind() fails with arrays of dimensionality > 3", {
   expect_error(vec_cbind(a), "Can't bind arrays")
   expect_error(vec_cbind(x = a), "Can't bind arrays")
 })
+
+test_that("rbind() and cbind() have informative outputs when repairing names", {
+  verify_output(test_path("output", "bind-name-repair.txt"), {
+    "# vec_rbind()"
+
+    "Suboptimal"
+    vec_rbind(1, 2)
+
+    "Suboptimal"
+    vec_rbind(1, 2, ...10 = 3)
+
+    vec_rbind(a = 1, b = 2)
+    vec_rbind(c(a = 1), c(b = 2))
+
+    "# vec_cbind()"
+    vec_cbind(1, 2)
+    vec_cbind(1, 2, ...10 = 3)
+    vec_cbind(a = 1, b = 2)
+    vec_cbind(c(a = 1), c(b = 2))
+  })
+})
