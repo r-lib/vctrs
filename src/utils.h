@@ -19,6 +19,9 @@ enum vctrs_class_type {
   vctrs_class_bare_factor,
   vctrs_class_bare_ordered,
   vctrs_class_rcrd,
+  vctrs_class_bare_date,
+  vctrs_class_bare_posixct,
+  vctrs_class_bare_posixlt,
   vctrs_class_posixlt,
   vctrs_class_unknown,
   vctrs_class_none
@@ -262,6 +265,8 @@ extern SEXP vctrs_shared_zero_int;
 extern SEXP classes_data_frame;
 extern SEXP classes_factor;
 extern SEXP classes_ordered;
+extern SEXP classes_date;
+extern SEXP classes_posixct;
 extern SEXP classes_tibble;
 extern SEXP classes_list_of;
 extern SEXP classes_vctrs_group_rle;
@@ -272,6 +277,8 @@ extern SEXP strings_tbl;
 extern SEXP strings_tbl_df;
 extern SEXP strings_data_frame;
 extern SEXP strings_vctrs_rcrd;
+extern SEXP strings_date;
+extern SEXP strings_posixct;
 extern SEXP strings_posixlt;
 extern SEXP strings_posixt;
 extern SEXP strings_factor;
@@ -324,6 +331,7 @@ extern SEXP syms_size;
 extern SEXP syms_subscript_action;
 extern SEXP syms_subscript_type;
 extern SEXP syms_repair;
+extern SEXP syms_tzone;
 
 #define syms_names R_NamesSymbol
 

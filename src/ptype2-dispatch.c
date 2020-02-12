@@ -21,6 +21,18 @@ SEXP vec_ptype2_dispatch(SEXP x, SEXP y,
   case vctrs_type2_s3_bare_ordered_bare_ordered:
     return ord_ptype2(x, y, x_arg, y_arg);
 
+  case vctrs_type2_s3_bare_date_bare_date:
+    return vctrs_shared_empty_date;
+
+  case vctrs_type2_s3_bare_date_bare_posixct:
+  case vctrs_type2_s3_bare_date_bare_posixlt:
+    return date_datetime_ptype2(x, y);
+
+  case vctrs_type2_s3_bare_posixct_bare_posixct:
+  case vctrs_type2_s3_bare_posixct_bare_posixlt:
+  case vctrs_type2_s3_bare_posixlt_bare_posixlt:
+    return datetime_datetime_ptype2(x, y);
+
   default:
     return vec_ptype2_dispatch_s3(x, y, x_arg, y_arg);
   }

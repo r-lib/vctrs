@@ -93,6 +93,13 @@ test_that("POSIXlt always steered towards POSIXct", {
   expect_equal(vec_ptype2(dtl, dtl), dtc[0])
 })
 
+test_that("vec_ptype2() on a POSIXlt with multiple time zones returns the first", {
+  x <- as.POSIXlt(new_datetime(), tz = "Pacific/Auckland")
+
+  expect_identical(attr(x, "tzone"), c("Pacific/Auckland", "NZST", "NZDT"))
+  expect_identical(attr(vec_ptype2(x, new_date()), "tzone"), "Pacific/Auckland")
+})
+
 test_that("vec_ptype2(<Date>, NA) is symmetric (#687)", {
   date <- new_date()
   expect_identical(

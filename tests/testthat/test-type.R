@@ -136,9 +136,15 @@ test_that("class_type() detects classes", {
   expect_identical(class_type(subclass(new_factor())), "unknown")
   expect_identical(class_type(subclass(new_ordered())), "unknown")
 
-  expect_identical(class_type(as.POSIXlt(Sys.Date())), "posixlt")
+
+  expect_identical(class_type(new_date()), "bare_date")
+  expect_identical(class_type(new_datetime()), "bare_posixct")
+  expect_identical(class_type(as.POSIXlt(new_date())), "bare_posixlt")
+  expect_identical(class_type(subclass(new_date())), "unknown")
+  expect_identical(class_type(subclass(new_datetime())), "unknown")
+  expect_identical(class_type(subclass(as.POSIXlt(new_date()))), "posixlt")
+
   expect_identical(class_type(new_rcrd(list(a = 1))), "rcrd")
-  expect_identical(class_type(subclass(as.POSIXlt(Sys.Date()))), "posixlt")
   expect_identical(class_type(subclass(new_rcrd(list(a = 1)))), "rcrd")
 
   expect_identical(class_type(NA), "none")
