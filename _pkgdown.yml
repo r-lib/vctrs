@@ -75,3 +75,7 @@ reference:
   - vec_as_names
   - vec_as_location
   - vec_as_subscript
+
+- title: Internal FAQ
+  contents:
+  - starts_with("internal-faq")
