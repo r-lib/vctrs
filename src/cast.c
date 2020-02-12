@@ -267,10 +267,7 @@ static SEXP df_as_dataframe(SEXP x, SEXP to, struct vctrs_arg* x_arg, struct vct
   return out;
 }
 
-static SEXP vec_cast_dispatch_unspecified(SEXP x,
-                                          SEXP to,
-                                          struct vctrs_arg* to_arg,
-                                          enum vctrs_type to_type);
+static SEXP vec_cast_dispatch_unspecified(SEXP x, SEXP to, enum vctrs_type to_type);
 
 static SEXP vec_cast_switch(SEXP x, SEXP to, bool* lossy, struct vctrs_arg* x_arg, struct vctrs_arg* to_arg) {
   enum vctrs_type to_type = vec_typeof(to);
@@ -281,7 +278,7 @@ static SEXP vec_cast_switch(SEXP x, SEXP to, bool* lossy, struct vctrs_arg* x_ar
   }
 
   if (x_type == vctrs_type_unspecified) {
-    return vec_cast_dispatch_unspecified(x, to, to_arg, to_type);
+    return vec_cast_dispatch_unspecified(x, to, to_type);
   }
 
   switch (to_type) {
@@ -360,10 +357,7 @@ static SEXP vec_cast_switch(SEXP x, SEXP to, bool* lossy, struct vctrs_arg* x_ar
   return R_NilValue;
 }
 
-static SEXP vec_cast_dispatch_unspecified(SEXP x,
-                                          SEXP to,
-                                          struct vctrs_arg* to_arg,
-                                          enum vctrs_type to_type) {
+static SEXP vec_cast_dispatch_unspecified(SEXP x, SEXP to, enum vctrs_type to_type) {
   switch(to_type) {
   case vctrs_type_logical:
   case vctrs_type_integer:
