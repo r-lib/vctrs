@@ -360,6 +360,46 @@ test_that("vec_cbind() fails with arrays of dimensionality > 3", {
   expect_error(vec_cbind(x = a), "Can't bind arrays")
 })
 
+test_that("vec_rbind() consistently handles unnamed outputs", {
+  # These are a little weird but unclear we can do better
+  expect_identical(
+    vec_rbind(1, 2),
+    data.frame(...1 = c(1, 2))
+  )
+  expect_identical(
+    vec_rbind(1, 2, ...10 = 3),
+    data.frame(...1 = c(1, 2, 3))
+  )
+
+  expect_identical(
+    vec_rbind(a = 1, b = 2),
+    data.frame(a = c(1, NA), b = c(NA, 2))
+  )
+  expect_identical(
+    vec_rbind(c(a = 1), c(b = 2)),
+    data.frame(a = c(1, NA), b = c(NA, 2))
+  )
+})
+
+test_that("vec_cbind() consistently handles unnamed outputs", {
+  expect_identical(
+    vec_cbind(1, 2),
+    data.frame(...1 = 1, ...2 = 2)
+  )
+  expect_identical(
+    vec_cbind(1, 2, ...10 = 3),
+    data.frame(...1 = 1, ...2 = 2, ...3 = 3)
+  )
+  expect_identical(
+    vec_cbind(a = 1, b = 2),
+    data.frame(a = 1, b = 2)
+  )
+  expect_identical(
+    vec_cbind(c(a = 1), c(b = 2)),
+    new_data_frame(list(...1 = c(a = 1), ...2 = c(b = 2)))
+  )
+})
+
 test_that("rbind() and cbind() have informative outputs when repairing names", {
   verify_output(test_path("output", "bind-name-repair.txt"), {
     "# vec_rbind()"

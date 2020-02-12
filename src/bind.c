@@ -41,8 +41,22 @@ static SEXP vec_rbind(SEXP xs, SEXP ptype, SEXP names_to, struct name_repair_opt
   int nprot = 0;
   R_len_t n = Rf_length(xs);
 
+  SEXP nms = PROTECT_N(r_names(xs), &nprot);
+
   for (R_len_t i = 0; i < n; ++i) {
-    SET_VECTOR_ELT(xs, i, as_df_row(VECTOR_ELT(xs, i), name_repair));
+    SEXP x = VECTOR_ELT(xs, i);
+
+    if (!is_data_frame(x)) {
+      if (nms != R_NilValue && r_names(x) == R_NilValue && vec_size(x) == 1) {
+        x = PROTECT(Rf_shallow_duplicate(x));
+        SEXP x_nms = PROTECT(r_str_as_character(STRING_ELT(nms, i)));
+        r_poke_names(x, x_nms);
+        UNPROTECT(2);
+      }
+      PROTECT(x);
+      SET_VECTOR_ELT(xs, i, as_df_row(x, name_repair));
+      UNPROTECT(1);
+    }
   }
 
   // The common type holds information about common column names,
@@ -138,9 +152,6 @@ static SEXP as_df_row(SEXP x, struct name_repair_opts* name_repair) {
 
 static SEXP as_df_row_impl(SEXP x, struct name_repair_opts* name_repair) {
   if (x == R_NilValue) {
-    return x;
-  }
-  if (is_data_frame(x)) {
     return x;
   }
 
