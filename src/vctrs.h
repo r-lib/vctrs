@@ -249,6 +249,9 @@ enum vctrs_type2_s3 {
 
   vctrs_type2_s3_unspecified_bare_factor,
   vctrs_type2_s3_unspecified_bare_ordered,
+  vctrs_type2_s3_unspecified_bare_date,
+  vctrs_type2_s3_unspecified_bare_posixct,
+  vctrs_type2_s3_unspecified_bare_posixlt,
   vctrs_type2_s3_unspecified_unknown,
 
   vctrs_type2_s3_scalar_bare_factor,
