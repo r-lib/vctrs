@@ -165,7 +165,7 @@ static inline bool needs_vec_c_fallback(SEXP xs) {
     return false;
   }
 
-  SEXP x = VECTOR_ELT(xs, 0);
+  SEXP x = list_first_non_null(xs, NULL);
   if (!vec_is_vector(x)) {
     return false;
   }
@@ -177,6 +177,7 @@ static inline bool needs_vec_c_fallback(SEXP xs) {
 
 static SEXP vec_c_fallback(SEXP xs) {
   SEXP args = PROTECT(Rf_coerceVector(xs, LISTSXP));
+  args = PROTECT(node_compact_d(args));
 
   if (!vec_implements_base_c(CAR(args))) {
     stop_vec_c_fallback(xs, 3);
@@ -187,7 +188,7 @@ static SEXP vec_c_fallback(SEXP xs) {
   // Dispatch in the base namespace which inherits from the global env
   SEXP out = Rf_eval(call, R_BaseNamespace);
 
-  UNPROTECT(2);
+  UNPROTECT(3);
   return out;
 }
 
@@ -202,7 +203,7 @@ static inline int vec_c_fallback_validate_args(SEXP ptype, SEXP name_spec) {
 }
 
 static void stop_vec_c_fallback(SEXP xs, int err_type) {
-  SEXP common_class = PROTECT(r_class(VECTOR_ELT(xs, 0)));
+  SEXP common_class = PROTECT(r_class(list_first_non_null(xs, NULL)));
   const char* class_str = r_chr_get_c_string(common_class, 0);
 
   const char* msg = NULL;

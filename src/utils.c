@@ -332,16 +332,41 @@ bool vec_implements_ptype2(SEXP x) {
 }
 
 // [[ include("utils.h") ]]
+SEXP list_first_non_null(SEXP xs, R_len_t* non_null_i) {
+  SEXP x = R_NilValue;
+  R_len_t n = Rf_length(xs);
+
+  R_len_t i = 0;
+  for (; i < n; ++i) {
+    x = VECTOR_ELT(xs, i);
+    if (x != R_NilValue) {
+      break;
+    }
+  }
+
+  if (non_null_i) {
+    *non_null_i = i;
+  }
+  return x;
+}
+
+// [[ include("utils.h") ]]
 bool list_is_s3_homogeneous(SEXP xs) {
   R_len_t n = Rf_length(xs);
   if (n == 0 || n == 1) {
     return true;
   }
 
-  SEXP first_class = PROTECT(r_class(VECTOR_ELT(xs, 0)));
+  R_len_t i = -1;
+  SEXP first = list_first_non_null(xs, &i);
+  SEXP first_class = PROTECT(r_class(first));
 
-  for (R_len_t i = 1; i < n; ++i) {
-    SEXP this_class = PROTECT(r_class(VECTOR_ELT(xs, i)));
+  for (; i < n; ++i) {
+    SEXP this = VECTOR_ELT(xs, i);
+    if (this == R_NilValue) {
+      continue;
+    }
+    SEXP this_class = PROTECT(r_class(this));
 
     if (!equal_object(first_class, this_class)) {
       UNPROTECT(2);
@@ -354,6 +379,25 @@ bool list_is_s3_homogeneous(SEXP xs) {
   UNPROTECT(1);
   return true;
 }
+
+// [[ include("utils.h") ]]
+SEXP node_compact_d(SEXP node) {
+  SEXP handle = PROTECT(Rf_cons(R_NilValue, node));
+
+  SEXP prev = handle;
+  while (node != R_NilValue) {
+    if (CAR(node) == R_NilValue) {
+      SETCDR(prev, CDR(node));
+    } else {
+      prev = node;
+    }
+    node = CDR(node);
+  }
+
+  UNPROTECT(1);
+  return CDR(handle);
+}
+
 
 // [[ include("utils.h") ]]
 SEXP new_empty_factor(SEXP levels) {
