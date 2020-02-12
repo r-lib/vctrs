@@ -306,12 +306,6 @@ test_that("vec_assign() cannot assign unspecified values into foreign vector typ
   expect_error(vec_assign(obj, 1, unspecified(1)), class = "vctrs_error_incompatible_cast")
 })
 
-test_that("slice-assign can assign unspecified values into foreign vector types", {
-  obj <- foobar(c("foo", "bar", "baz"))
-  expect_identical(vec_assign(obj, 1:2, NA), foobar(c(NA, NA, "baz")))
-  expect_identical(vec_assign(obj, 1:2, unspecified(1)), foobar(c(NA, NA, "baz")))
-})
-
 test_that("slice-assign restores value before falling back to `[<-` (#443)", {
   called <- FALSE
 
