@@ -40,9 +40,22 @@ SEXP new_data_frame(SEXP x, R_len_t n) {
 }
 
 // [[ include("type-data-frame.h") ]]
-bool is_compact_rownames(SEXP x) {
-  return Rf_length(x) == 2 && INTEGER(x)[0] == NA_INTEGER;
+enum rownames_type rownames_type(SEXP x) {
+  switch (TYPEOF(x)) {
+  case STRSXP:
+    return ROWNAMES_IDENTIFIERS;
+  case INTSXP:
+    if (Rf_length(x) == 2 && INTEGER(x)[0] == NA_INTEGER) {
+      return ROWNAMES_AUTOMATIC_COMPACT;
+    } else {
+      return ROWNAMES_AUTOMATIC;
+    }
+  default:
+    Rf_error("Corrupt data in `rownames_type()`: Unexpected type `%s`.",
+             Rf_type2char(TYPEOF(x)));
+  }
 }
+
 // [[ include("type-data-frame.h") ]]
 R_len_t compact_rownames_length(SEXP x) {
   return abs(INTEGER(x)[1]);

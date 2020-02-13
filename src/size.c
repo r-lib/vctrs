@@ -102,17 +102,12 @@ R_len_t df_rownames_size(SEXP x) {
     SEXP rn = CAR(attr);
     R_len_t n = Rf_length(rn);
 
-    switch(TYPEOF(rn)) {
-    case INTSXP:
-      if (is_compact_rownames(rn)) {
-        return compact_rownames_length(rn);
-      } else {
-        return n;
-      }
-    case STRSXP:
+    switch (rownames_type(rn)) {
+    case ROWNAMES_IDENTIFIERS:
+    case ROWNAMES_AUTOMATIC:
       return n;
-    default:
-      Rf_errorcall(R_NilValue, "Corrupt data frame: row.names are invalid type");
+    case ROWNAMES_AUTOMATIC_COMPACT:
+      return compact_rownames_length(rn);
     }
   }
 
