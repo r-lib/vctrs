@@ -1,12 +1,6 @@
 #include "vctrs.h"
 #include "utils.h"
 
-static SEXP vec_ptype2_dispatch_unspecified_s3(SEXP x,
-                                               SEXP y,
-                                               struct vctrs_arg* x_arg,
-                                               struct vctrs_arg* y_arg,
-                                               bool left_unspecified);
-
 // [[ include("vctrs.h") ]]
 SEXP vec_ptype2_dispatch(SEXP x, SEXP y,
                          enum vctrs_type x_type,
@@ -14,13 +8,6 @@ SEXP vec_ptype2_dispatch(SEXP x, SEXP y,
                          struct vctrs_arg* x_arg,
                          struct vctrs_arg* y_arg,
                          int* left) {
-  if (x_type == vctrs_type_unspecified) {
-    return vec_ptype2_dispatch_unspecified_s3(x, y, x_arg, y_arg, true);
-  }
-  if (y_type == vctrs_type_unspecified) {
-    return vec_ptype2_dispatch_unspecified_s3(x, y, x_arg, y_arg, false);
-  }
-
   enum vctrs_type2_s3 type2_s3 = vec_typeof2_s3_impl(x, y, x_type, y_type, left);
 
   switch (type2_s3) {
@@ -49,38 +36,6 @@ SEXP vec_ptype2_dispatch(SEXP x, SEXP y,
   default:
     return vec_ptype2_dispatch_s3(x, y, x_arg, y_arg);
   }
-}
-
-// Be explicit about allowing known bare classes to directly call `vec_type()`.
-// Unknown classes must go through R level dispatch.
-static SEXP vec_ptype2_dispatch_unspecified_s3(SEXP x,
-                                               SEXP y,
-                                               struct vctrs_arg* x_arg,
-                                               struct vctrs_arg* y_arg,
-                                               bool left_unspecified) {
-  enum vctrs_class_type type = left_unspecified ? class_type(y) : class_type(x);
-
-  switch(type) {
-  case vctrs_class_bare_data_frame:
-  case vctrs_class_bare_tibble:
-  case vctrs_class_bare_factor:
-  case vctrs_class_bare_ordered:
-  case vctrs_class_bare_date:
-  case vctrs_class_bare_posixct:
-  case vctrs_class_bare_posixlt:
-    return left_unspecified ? vec_type(y) : vec_type(x);
-
-  case vctrs_class_rcrd:
-  case vctrs_class_data_frame:
-  case vctrs_class_posixlt:
-  case vctrs_class_unknown:
-    return vec_ptype2_dispatch_s3(x, y, x_arg, y_arg);
-
-  case vctrs_class_none:
-    Rf_errorcall(R_NilValue, "Internal error: The non-unspecified object should be S3");
-  }
-
-  never_reached("vec_ptype2_dispatch_unspecified_s3");
 }
 
 // Initialised at load time
