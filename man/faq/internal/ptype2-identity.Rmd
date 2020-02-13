@@ -6,7 +6,7 @@
 
 Promotions (i.e. automatic coercions) should always transform inputs to their richer type to avoid losing values of precision. `vec_ptype2()` returns the _richer_ type of two vectors, or throws an incompatible type error if none of the two vector types include the other. For example, the richer type of integer and double is the latter because double covers a larger range of values than integer.
 
-`vec_ptype2()` is a [monoid](https://en.wikipedia.org/wiki/Monoid) over vectors, which in practical terms means that it is a well behaved operation for [reduction](https://purrr.tidyverse.org/reference/reduce.html). As such it needs an identity element, i.e. a value that doesn't change the result of the reduction. vctrs has two such identity values, `NULL` and __unspecified__ vectors.
+`vec_ptype2()` is a [monoid](https://en.wikipedia.org/wiki/Monoid) over vectors, which in practical terms means that it is a well behaved operation for [reduction](https://purrr.tidyverse.org/reference/reduce.html). Reduction is an important operation for promotions because that is how the richer type of multiple elements is computed. As a monoid, `vec_ptype2()` needs an identity element, i.e. a value that doesn't change the result of the reduction. vctrs has two identity values, `NULL` and __unspecified__ vectors.
 
 
 ## The `NULL` identity
