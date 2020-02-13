@@ -30,4 +30,8 @@ const char* name_repair_arg_as_c_string(enum name_repair_type type);
 bool is_unique_names(SEXP names);
 SEXP vec_as_unique_names(SEXP names, bool quiet);
 
+SEXP r_seq_chr(const char* prefix, R_len_t n);
+SEXP r_chr_paste_prefix(SEXP names, const char* prefix, const char* sep);
+
+
 #endif

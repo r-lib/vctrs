@@ -455,9 +455,6 @@ static void describe_repair(SEXP old_names, SEXP new_names) {
 }
 
 
-static SEXP outer_names_cat(const char* outer, SEXP names);
-static SEXP outer_names_seq(const char* outer, R_len_t n);
-
 // [[ register() ]]
 SEXP vctrs_outer_names(SEXP names, SEXP outer, SEXP n) {
   if (names != R_NilValue && TYPEOF(names) != STRSXP) {
@@ -491,10 +488,10 @@ SEXP outer_names(SEXP names, SEXP outer, R_len_t n) {
     if (n == 1) {
       return r_str_as_character(outer);
     } else {
-      return outer_names_seq(CHAR(outer), n);
+      return r_seq_chr(CHAR(outer), n);
     }
   } else {
-    return outer_names_cat(CHAR(outer), names);
+    return r_chr_paste_prefix(names, CHAR(outer), "..");
   }
 }
 
@@ -577,23 +574,27 @@ static SEXP glue_as_name_spec(SEXP spec) {
 }
 
 
-static SEXP outer_names_cat(const char* outer, SEXP names) {
+// [[ include("names.h") ]]
+SEXP r_chr_paste_prefix(SEXP names, const char* prefix, const char* sep) {
   names = PROTECT(Rf_shallow_duplicate(names));
   R_len_t n = Rf_length(names);
 
-  int outer_len = strlen(outer);
+  int outer_len = strlen(prefix);
   int names_len = r_chr_max_len(names);
 
-  int total_len = outer_len + names_len + strlen("..") + 1;
+  int sep_len = strlen(sep);
+  int total_len = outer_len + names_len + sep_len + 1;
 
   R_CheckStack2(total_len);
   char buf[total_len];
   buf[total_len - 1] = '\0';
   char* bufp = buf;
 
-  memcpy(bufp, outer, outer_len); bufp += outer_len;
-  *bufp = '.'; bufp += 1;
-  *bufp = '.'; bufp += 1;
+  memcpy(bufp, prefix, outer_len); bufp += outer_len;
+
+  for (int i = 0; i < sep_len; ++i) {
+    *bufp++ = sep[i];
+  }
 
   SEXP* p = STRING_PTR(names);
 
@@ -611,13 +612,14 @@ static SEXP outer_names_cat(const char* outer, SEXP names) {
   return names;
 }
 
-static SEXP outer_names_seq(const char* outer, R_len_t n) {
-  int total_len = 24 + strlen(outer) + 1;
+// [[ include("names.h") ]]
+SEXP r_seq_chr(const char* prefix, R_len_t n) {
+  int total_len = 24 + strlen(prefix) + 1;
 
   R_CheckStack2(total_len);
   char buf[total_len];
 
-  return r_chr_iota(n, buf, total_len, outer);
+  return r_chr_iota(n, buf, total_len, prefix);
 }
 
 
