@@ -267,18 +267,16 @@ static SEXP df_as_dataframe(SEXP x, SEXP to, struct vctrs_arg* x_arg, struct vct
   return out;
 }
 
-static SEXP vec_cast_dispatch_unspecified(SEXP x, SEXP to, enum vctrs_type to_type);
-
 static SEXP vec_cast_switch(SEXP x, SEXP to, bool* lossy, struct vctrs_arg* x_arg, struct vctrs_arg* to_arg) {
-  enum vctrs_type to_type = vec_typeof(to);
   enum vctrs_type x_type = vec_typeof(x);
+  enum vctrs_type to_type = vec_typeof(to);
+
+  if (x_type == vctrs_type_unspecified) {
+    return vec_init(to, vec_size(x));
+  }
 
   if (to_type == vctrs_type_s3 || x_type == vctrs_type_s3) {
     return vec_cast_dispatch(x, to, x_type, to_type, lossy, x_arg, to_arg);
-  }
-
-  if (x_type == vctrs_type_unspecified) {
-    return vec_cast_dispatch_unspecified(x, to, to_type);
   }
 
   switch (to_type) {
@@ -355,33 +353,6 @@ static SEXP vec_cast_switch(SEXP x, SEXP to, bool* lossy, struct vctrs_arg* x_ar
   }
 
   return R_NilValue;
-}
-
-static SEXP vec_cast_dispatch_unspecified(SEXP x, SEXP to, enum vctrs_type to_type) {
-  switch(to_type) {
-  case vctrs_type_logical:
-  case vctrs_type_integer:
-  case vctrs_type_double:
-  case vctrs_type_character:
-  case vctrs_type_complex:
-  case vctrs_type_raw:
-  case vctrs_type_list:
-  case vctrs_type_dataframe:
-  case vctrs_type_unspecified:
-    return vec_init(to, vec_size(x));
-
-  // Allow R level error handling to take over
-  case vctrs_type_scalar:
-    return R_NilValue;
-
-  case vctrs_type_s3:
-    Rf_errorcall(R_NilValue, "Internal error: s3 inputs should have been handled earlier.");
-
-  case vctrs_type_null:
-    Rf_errorcall(R_NilValue, "Internal error: NULL inputs should have been handled earlier.");
-  }
-
-  never_reached("vec_cast_dispatch_unspecified");
 }
 
 // [[ register() ]]
