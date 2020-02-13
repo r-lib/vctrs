@@ -106,3 +106,35 @@ test_that("can init integer64 objects", {
   dim(x) <- c(2, 2, 2)
   expect_identical(vec_init(x, 2), vec_slice(x, idx))
 })
+
+test_that("can chop integer64 objects with `NA_integer_` indices", {
+  idx <- list(NA_integer_, 1)
+
+  x <- bit64::as.integer64(1:8)
+  expect <- list(
+    bit64::as.integer64(NA),
+    bit64::as.integer64(1)
+  )
+
+  expect_identical(vec_chop(x, idx), expect)
+
+  dim(x) <- c(4, 2)
+  expect <- list(
+    bit64::as.integer64(c(NA, NA)),
+    bit64::as.integer64(c(1, 5))
+  )
+  dim(expect[[1]]) <- c(1, 2)
+  dim(expect[[2]]) <- c(1, 2)
+
+  expect_identical(vec_chop(x, idx), expect)
+
+  dim(x) <- c(2, 2, 2)
+  expect <- list(
+    bit64::as.integer64(c(NA, NA, NA, NA)),
+    bit64::as.integer64(c(1, 3, 5, 7))
+  )
+  dim(expect[[1]]) <- c(1, 2, 2)
+  dim(expect[[2]]) <- c(1, 2, 2)
+
+  expect_identical(vec_chop(x, idx), expect)
+})
