@@ -1,0 +1,86 @@
+
+vec_rbind()
+===========
+
+> # Suboptimal
+> vec_rbind(1, 2)
+Message: New names:
+* `` -> ...1
+
+Message: New names:
+* `` -> ...1
+
+  ...1
+1    1
+2    2
+
+> # Suboptimal
+> vec_rbind(1, 2, ...10 = 3)
+Message: New names:
+* `` -> ...1
+
+Message: New names:
+* `` -> ...1
+
+Message: New names:
+* `` -> ...1
+
+Message: New names:
+* `` -> ...1
+* `` -> ...2
+* ...10 -> ...3
+
+     ...1
+...1    1
+...2    2
+...3    3
+
+> vec_rbind(a = 1, b = 2)
+Message: New names:
+* `` -> ...1
+
+Message: New names:
+* `` -> ...1
+
+  ...1
+a    1
+b    2
+
+> vec_rbind(c(a = 1), c(b = 2))
+   a  b
+1  1 NA
+2 NA  2
+
+
+vec_cbind()
+===========
+
+> vec_cbind(1, 2)
+Message: New names:
+* `` -> ...1
+* `` -> ...2
+
+  ...1 ...2
+1    1    2
+
+> vec_cbind(1, 2, ...10 = 3)
+Message: New names:
+* `` -> ...1
+* `` -> ...2
+* ...10 -> ...3
+
+  ...1 ...2 ...3
+1    1    2    3
+
+> vec_cbind(a = 1, b = 2)
+  a b
+1 1 2
+
+> vec_cbind(c(a = 1), c(b = 2))
+Message: New names:
+* `` -> ...1
+* `` -> ...2
+
+  ...1 ...2
+1    1    2
+

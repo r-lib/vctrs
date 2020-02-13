@@ -6,18 +6,22 @@
 \description{
 \subsection{Promotion monoid}{
 
-\code{vec_ptype2()} returns the \emph{promotion} type of two vectors, if any. This
-is typically the richer type of the two so that automatic coercions are
-never lossy. For example, the promotion type of integer and double is
-the latter because double covers a larger range of values than integer.
+Promotions (i.e. automatic coercions) should always transform inputs to
+their richer type to avoid losing values of precision. \code{vec_ptype2()}
+returns the \emph{richer} type of two vectors, or throws an incompatible type
+error if none of the two vector types include the other. For example,
+the richer type of integer and double is the latter because double
+covers a larger range of values than integer.
 
 \code{vec_ptype2()} is a \href{https://en.wikipedia.org/wiki/Monoid}{monoid} over
 vectors, which in practical terms means that it is a well behaved
 operation for
-\href{https://purrr.tidyverse.org/reference/reduce.html}{reduction}. As such
-it needs an identity element, i.e. a value that doesn’t change the
-result of the reduction. vctrs has two such identity values, \code{NULL} and
-\strong{unspecified} vectors.
+\href{https://purrr.tidyverse.org/reference/reduce.html}{reduction}.
+Reduction is an important operation for promotions because that is how
+the richer type of multiple elements is computed. As a monoid,
+\code{vec_ptype2()} needs an identity element, i.e. a value that doesn’t
+change the result of the reduction. vctrs has two identity values,
+\code{NULL} and \strong{unspecified} vectors.
 }
 
 \subsection{The \code{NULL} identity}{

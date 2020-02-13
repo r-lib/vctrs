@@ -31,9 +31,12 @@
 #' * `vec_ptype(vec_cbind(x, y)) == vec_cbind(vec_ptype(x), vec_ptype(x))`
 #' @param ... Data frames or vectors.
 #'
-#'   `vec_rbind()` ignores names unless `.names_to` is supplied.
-#'   `vec_cbind()` creates packed data frame columns with named
-#'   inputs.
+#'   When the inputs are named:
+#'   * `vec_rbind()` assigns names to row names unless `.names_to` is
+#'     supplied. In that case the names are assigned in the column
+#'     defined by `.names_to`.
+#'   * `vec_cbind()` creates packed data frame columns with named
+#'      inputs.
 #'
 #'   `NULL` inputs are silently ignored. Empty (e.g. zero row) inputs
 #'   will not appear in the output, but will affect the derived `.ptype`.

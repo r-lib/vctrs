@@ -23,9 +23,14 @@ vec_cbind(
 \arguments{
 \item{...}{Data frames or vectors.
 
-\code{vec_rbind()} ignores names unless \code{.names_to} is supplied.
-\code{vec_cbind()} creates packed data frame columns with named
+When the inputs are named:
+\itemize{
+\item \code{vec_rbind()} assigns names to row names unless \code{.names_to} is
+supplied. In that case the names are assigned in the column
+defined by \code{.names_to}.
+\item \code{vec_cbind()} creates packed data frame columns with named
 inputs.
+}
 
 \code{NULL} inputs are silently ignored. Empty (e.g. zero row) inputs
 will not appear in the output, but will affect the derived \code{.ptype}.}
