@@ -14,33 +14,6 @@ SEXP vctrs_class_type(SEXP x) {
 }
 
 // [[ include("utils.h") ]]
-bool is_data_frame(SEXP x) {
-  enum vctrs_class_type type = class_type(x);
-  return
-    type == vctrs_class_bare_data_frame ||
-    type == vctrs_class_bare_tibble ||
-    type == vctrs_class_data_frame;
-}
-
-// [[ include("utils.h") ]]
-bool is_native_df(SEXP x) {
-  enum vctrs_class_type type = class_type(x);
-  return
-    type == vctrs_class_bare_data_frame ||
-    type == vctrs_class_bare_tibble;
-}
-
-// [[ include("utils.h") ]]
-bool is_bare_data_frame(SEXP x) {
-  return class_type(x) == vctrs_class_bare_data_frame;
-}
-
-// [[ include("utils.h") ]]
-bool is_bare_tibble(SEXP x) {
-  return class_type(x) == vctrs_class_bare_tibble;
-}
-
-// [[ include("utils.h") ]]
 bool is_record(SEXP x) {
   enum vctrs_class_type type = class_type(x);
   return
@@ -50,6 +23,7 @@ bool is_record(SEXP x) {
 }
 
 
+// [[ include("utils.h") ]]
 enum vctrs_class_type class_type(SEXP x) {
   if (!OBJECT(x)) {
     return vctrs_class_none;

@@ -1,4 +1,5 @@
 #include "vctrs.h"
+#include "type-data-frame.h"
 #include "utils.h"
 
 R_len_t rcrd_size(SEXP x);

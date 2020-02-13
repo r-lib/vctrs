@@ -1,4 +1,5 @@
 #include "vctrs.h"
+#include "type-data-frame.h"
 #include "utils.h"
 
 static SEXP df_type2(SEXP x, SEXP y, struct vctrs_arg* x_arg, struct vctrs_arg* y_arg);

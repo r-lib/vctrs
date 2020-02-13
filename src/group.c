@@ -1,6 +1,7 @@
 #include "vctrs.h"
-#include "utils.h"
 #include "dictionary.h"
+#include "type-data-frame.h"
+#include "utils.h"
 
 // [[ register() ]]
 SEXP vctrs_group_id(SEXP x) {

@@ -106,21 +106,10 @@ void never_reached(const char* fn) __attribute__((noreturn));
 enum vctrs_type2 vec_typeof2_impl(enum vctrs_type type_x, enum vctrs_type type_y, int* left);
 enum vctrs_type2_s3 vec_typeof2_s3_impl(SEXP x, SEXP y, enum vctrs_type type_x, enum vctrs_type type_y, int* left);
 
+enum vctrs_class_type class_type(SEXP x);
+
 SEXP new_list_of(SEXP x, SEXP ptype);
 void init_list_of(SEXP x, SEXP ptype);
-
-SEXP new_data_frame(SEXP x, R_len_t n);
-void init_data_frame(SEXP x, R_len_t n);
-void init_tibble(SEXP x, R_len_t n);
-void init_compact_rownames(SEXP x, R_len_t n);
-SEXP df_rownames(SEXP x);
-
-bool is_native_df(SEXP x);
-bool is_compact_rownames(SEXP x);
-R_len_t compact_rownames_length(SEXP x);
-SEXP df_container_type(SEXP x);
-SEXP df_poke(SEXP x, R_len_t i, SEXP value);
-SEXP df_poke_at(SEXP x, SEXP name, SEXP value);
 
 SEXP new_empty_factor(SEXP levels);
 SEXP new_empty_ordered(SEXP levels);
