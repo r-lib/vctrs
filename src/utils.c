@@ -594,6 +594,11 @@ SEXP arg_validate(SEXP arg, const char* arg_nm) {
   }
 }
 
+// [[ include("utils.h") ]]
+bool is_integer64(SEXP x) {
+  return TYPEOF(x) == REALSXP && Rf_inherits(x, "integer64");
+}
+
 
 void* r_vec_deref(SEXP x) {
   switch (TYPEOF(x)) {

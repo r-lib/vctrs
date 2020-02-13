@@ -59,3 +59,82 @@ test_that("can sort integer64", {
   expect_identical(vec_order(x), int(2, 3, 1, 4))
   expect_identical(x[vec_order(x)], bit64::as.integer64(c(-3, -2, -1, 1)))
 })
+
+test_that("can slice integer64 objects of all dimensions", {
+  x <- bit64::as.integer64(1:8)
+  expect <- bit64::as.integer64(c(1, 3))
+  expect_identical(vec_slice(x, c(1, 3)), expect)
+
+  dim(x) <- c(4, 2)
+  expect <- bit64::as.integer64(c(1, 3, 5, 7))
+  dim(expect) <- c(2, 2)
+  expect_identical(vec_slice(x, c(1, 3)), expect)
+
+  dim(x) <- c(2, 2, 2)
+  expect <- bit64::as.integer64(c(2, 4, 6, 8))
+  dim(expect) <- c(1, 2, 2)
+  expect_identical(vec_slice(x, 2), expect)
+})
+
+test_that("can slice integer64 objects with `NA_integer_`", {
+  idx <- c(NA_integer_, 1)
+
+  x <- bit64::as.integer64(1:8)
+  expect <- bit64::as.integer64(c(NA, 1))
+  expect_identical(vec_slice(x, idx), expect)
+
+  dim(x) <- c(4, 2)
+  expect <- bit64::as.integer64(c(NA, 1, NA, 5))
+  dim(expect) <- c(2, 2)
+  expect_identical(vec_slice(x, idx), expect)
+
+  dim(x) <- c(2, 2, 2)
+  expect <- bit64::as.integer64(c(NA, 1, NA, 3, NA, 5, NA, 7))
+  dim(expect) <- c(2, 2, 2)
+  expect_identical(vec_slice(x, idx), expect)
+})
+
+test_that("can init integer64 objects", {
+  idx <- c(NA_integer_, NA_integer_)
+
+  x <- bit64::as.integer64(1:8)
+  expect_identical(vec_init(x, 2), vec_slice(x, idx))
+
+  dim(x) <- c(4, 2)
+  expect_identical(vec_init(x, 2), vec_slice(x, idx))
+
+  dim(x) <- c(2, 2, 2)
+  expect_identical(vec_init(x, 2), vec_slice(x, idx))
+})
+
+test_that("can chop integer64 objects with `NA_integer_` indices", {
+  idx <- list(NA_integer_, 1)
+
+  x <- bit64::as.integer64(1:8)
+  expect <- list(
+    bit64::as.integer64(NA),
+    bit64::as.integer64(1)
+  )
+
+  expect_identical(vec_chop(x, idx), expect)
+
+  dim(x) <- c(4, 2)
+  expect <- list(
+    bit64::as.integer64(c(NA, NA)),
+    bit64::as.integer64(c(1, 5))
+  )
+  dim(expect[[1]]) <- c(1, 2)
+  dim(expect[[2]]) <- c(1, 2)
+
+  expect_identical(vec_chop(x, idx), expect)
+
+  dim(x) <- c(2, 2, 2)
+  expect <- list(
+    bit64::as.integer64(c(NA, NA, NA, NA)),
+    bit64::as.integer64(c(1, 3, 5, 7))
+  )
+  dim(expect[[1]]) <- c(1, 2, 2)
+  dim(expect[[2]]) <- c(1, 2, 2)
+
+  expect_identical(vec_chop(x, idx), expect)
+})

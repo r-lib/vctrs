@@ -1,6 +1,10 @@
 
 # vctrs (development version)
 
+* `vec_slice()` and `vec_chop()` now work correctly with `bit64::integer64()`
+  objects when an `NA` subscript is supplied. By extension, this means that
+  `vec_init()` now works with these objects as well (#813).
+  
 * `vec_rbind()` now binds row names. When named inputs are supplied
   and `names_to` is `NULL`, the names define row names. If `names_to`
   is supplied, they are assigned in the column name as before.
