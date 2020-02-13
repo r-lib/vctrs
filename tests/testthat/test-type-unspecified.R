@@ -87,8 +87,8 @@ test_that("tibble::type_sum() knows about unspecified", {
 })
 
 test_that("casting to a scalar type errors", {
-  expect_error(vec_cast(NA, quote(x)), "Not a vector")
-  expect_error(vec_cast(unspecified(1), quote(x)), "Not a vector")
+  expect_error(vec_cast(NA, quote(x)), class = "vctrs_error_scalar_type")
+  expect_error(vec_cast(unspecified(1), quote(x)), class = "vctrs_error_scalar_type")
 })
 
 test_that("can cast to unspecified from unspecified", {

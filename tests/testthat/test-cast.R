@@ -8,6 +8,17 @@ test_that("new classes are uncoercible by default", {
   expect_error(vec_cast(x, 1), class = "vctrs_error_incompatible_cast")
 })
 
+# TODO - Uncomment the NULL tests after #814 is fixed
+test_that("casting requires vectors", {
+  #expect_error(vec_cast(NULL, quote(name)), class = "vctrs_error_scalar_type")
+  expect_error(vec_cast(NA, quote(name)), class = "vctrs_error_scalar_type")
+  expect_error(vec_cast(list(), quote(name)), class = "vctrs_error_scalar_type")
+  #expect_error(vec_cast(quote(name), NULL), class = "vctrs_error_scalar_type")
+  expect_error(vec_cast(quote(name), NA), class = "vctrs_error_scalar_type")
+  expect_error(vec_cast(quote(name), list()), class = "vctrs_error_scalar_type")
+  expect_error(vec_cast(quote(name), quote(name)), class = "vctrs_error_scalar_type")
+})
+
 test_that("dimensionality matches output" ,{
   x1 <- matrix(TRUE, nrow = 1, ncol = 1)
   x2 <- matrix(1, nrow = 0, ncol = 2)
