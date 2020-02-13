@@ -213,7 +213,7 @@ static SEXP chop_df(SEXP x, SEXP indices, struct vctrs_chop_info info) {
   int n_cols = Rf_length(x);
 
   SEXP col_names = PROTECT(Rf_getAttrib(x, R_NamesSymbol));
-  SEXP row_names = PROTECT(get_rownames(x));
+  SEXP row_names = PROTECT(df_rownames(x));
 
   bool has_row_names = TYPEOF(row_names) == STRSXP;
 

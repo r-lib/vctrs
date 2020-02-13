@@ -62,7 +62,7 @@ static SEXP new_compact_rownames(R_len_t n) {
 }
 
 // [[ include("utils.h") ]]
-SEXP get_rownames(SEXP x) {
+SEXP df_rownames(SEXP x) {
   // Required, because getAttrib() already does the transformation to a vector,
   // and getAttrib0() is hidden
   SEXP node = ATTRIB(x);

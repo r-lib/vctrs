@@ -65,7 +65,7 @@ SEXP vec_restore_default(SEXP x, SEXP to) {
 
   if (dim == R_NilValue) {
     SEXP nms = PROTECT(Rf_getAttrib(x, R_NamesSymbol));
-    SEXP rownms = PROTECT(get_rownames(x));
+    SEXP rownms = PROTECT(df_rownames(x));
 
     SET_ATTRIB(x, attrib);
 
@@ -108,7 +108,7 @@ SEXP df_restore_impl(SEXP x, SEXP to, R_len_t size) {
     Rf_setAttrib(x, R_NamesSymbol, vctrs_shared_empty_chr);
   }
 
-  SEXP rownames = PROTECT(get_rownames(x));
+  SEXP rownames = PROTECT(df_rownames(x));
   if (rownames == R_NilValue) {
     init_compact_rownames(x, size);
   }

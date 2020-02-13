@@ -113,7 +113,7 @@ SEXP new_data_frame(SEXP x, R_len_t n);
 void init_data_frame(SEXP x, R_len_t n);
 void init_tibble(SEXP x, R_len_t n);
 void init_compact_rownames(SEXP x, R_len_t n);
-SEXP get_rownames(SEXP x);
+SEXP df_rownames(SEXP x);
 
 bool is_native_df(SEXP x);
 bool is_compact_rownames(SEXP x);
