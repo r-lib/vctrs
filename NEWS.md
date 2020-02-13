@@ -1,6 +1,8 @@
 
 # vctrs (development version)
 
+* `vec_rbind()` now binds row names.
+
 * The `c()` method for `vctrs_vctr` now throws an error when
   `recursive` or `use.names` is supplied (#791).
 

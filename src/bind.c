@@ -64,6 +64,7 @@ static SEXP vec_rbind(SEXP xs, SEXP ptype, SEXP names_to, struct name_repair_opt
 
   // Find individual input sizes and total size of output
   R_len_t nrow = 0;
+  bool has_rownames = false;
 
   SEXP ns_placeholder = PROTECT_N(Rf_allocVector(INTSXP, n), &nprot);
   int* ns = INTEGER(ns_placeholder);
@@ -73,11 +74,20 @@ static SEXP vec_rbind(SEXP xs, SEXP ptype, SEXP names_to, struct name_repair_opt
     R_len_t size = (elt == R_NilValue) ? 0 : vec_size(elt);
     nrow += size;
     ns[i] = size;
+
+    if (!has_rownames && is_data_frame(elt)) {
+      has_rownames = rownames_type(df_rownames(elt)) == ROWNAMES_IDENTIFIERS;
+    }
   }
 
   SEXP out = PROTECT_N(vec_init(ptype, nrow), &nprot);
   SEXP idx = PROTECT_N(compact_seq(0, 0, true), &nprot);
   int* idx_ptr = INTEGER(idx);
+
+  SEXP rownames = R_NilValue;
+  if (has_rownames) {
+    rownames = PROTECT_N(Rf_allocVector(STRSXP, nrow), &nprot);
+  }
 
   SEXP names_to_col = R_NilValue;
   SEXPTYPE names_to_type = 99;
@@ -105,10 +115,18 @@ static SEXP vec_rbind(SEXP xs, SEXP ptype, SEXP names_to, struct name_repair_opt
     if (!size) {
       continue;
     }
+    SEXP x = VECTOR_ELT(xs, i);
 
-    SEXP tbl = PROTECT(vec_cast(VECTOR_ELT(xs, i), ptype, args_empty, args_empty));
+    SEXP tbl = PROTECT(vec_cast(x, ptype, args_empty, args_empty));
     init_compact_seq(idx_ptr, counter, size, true);
     df_assign(out, idx, tbl, false);
+
+    if (has_rownames) {
+      SEXP rn = df_rownames(x);
+      if (rownames_type(rn) == ROWNAMES_IDENTIFIERS) {
+        chr_assign(rownames, idx, rn, false);
+      }
+    }
 
     // Assign current name to group vector, if supplied
     if (names_to != R_NilValue) {
@@ -120,6 +138,11 @@ static SEXP vec_rbind(SEXP xs, SEXP ptype, SEXP names_to, struct name_repair_opt
     UNPROTECT(1);
   }
 
+  if (has_rownames) {
+    rownames = PROTECT(vec_as_names(rownames, default_unique_repair_opts));
+    Rf_setAttrib(out, R_RowNamesSymbol, rownames);
+    UNPROTECT(1);
+  }
   if (names_to != R_NilValue) {
     out = df_poke_at(out, names_to, names_to_col);
   }

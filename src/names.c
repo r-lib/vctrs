@@ -840,6 +840,9 @@ SEXP vctrs_validate_minimal_names(SEXP names, SEXP n_) {
   return names;
 }
 
+
+struct name_repair_opts default_unique_repair_opts_obj;
+
 void vctrs_init_names(SEXP ns) {
   syms_set_rownames_fallback = Rf_install("set_rownames_fallback");
   syms_set_names_fallback = Rf_install("set_names_fallback");
@@ -854,4 +857,8 @@ void vctrs_init_names(SEXP ns) {
   syms_glue_as_name_spec = Rf_install("glue_as_name_spec");
   fns_glue_as_name_spec = r_env_get(ns, syms_glue_as_name_spec);
   syms_internal_spec = Rf_install("_spec");
+
+  default_unique_repair_opts_obj.type = name_repair_unique;
+  default_unique_repair_opts_obj.fn = R_NilValue;
+  default_unique_repair_opts_obj.quiet = false;
 }

@@ -189,6 +189,18 @@ test_that("vec_rbind() fails with arrays of dimensionality > 3", {
   expect_error(vec_rbind(array(NA, c(1, 1, 1))), "Can't bind arrays")
 })
 
+test_that("row names are preserved by vec_rbind()", {
+  df1 <- mtcars[1:3, ]
+  df2 <- mtcars[4:5, ]
+  expect_identical(vec_rbind(df1, df2), mtcars[1:5, ])
+
+  row.names(df2) <- NULL
+  out <- mtcars[1:5, ]
+  row.names(out) <- c(row.names(df1), "...4", "...5")
+  expect_identical(vec_rbind(df1, df2), out)
+})
+
+
 # cols --------------------------------------------------------------------
 
 test_that("empty inputs give data frame", {
