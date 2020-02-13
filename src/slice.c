@@ -213,6 +213,8 @@ static SEXP df_slice(SEXP x, SEXP subscript) {
 
 
 SEXP vec_slice_fallback(SEXP x, SEXP subscript) {
+  // TODO - Remove once bit64 is updated on CRAN. Special casing integer64
+  // objects to ensure correct slicing with `NA_integer_`.
   if (is_integer64(x)) {
     return vctrs_dispatch2(syms_vec_slice_fallback_integer64, fns_vec_slice_fallback_integer64,
                            syms_x, x,
@@ -225,6 +227,8 @@ SEXP vec_slice_fallback(SEXP x, SEXP subscript) {
 }
 
 static SEXP vec_slice_dispatch(SEXP x, SEXP subscript) {
+  // TODO - Remove once bit64 is updated on CRAN. Special casing integer64
+  // objects to ensure correct slicing with `NA_integer_`.
   if (is_integer64(x)) {
     return vctrs_dispatch2(syms_vec_slice_dispatch_integer64, fns_vec_slice_dispatch_integer64,
                            syms_x, x,
