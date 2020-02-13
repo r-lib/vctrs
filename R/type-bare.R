@@ -86,11 +86,11 @@ vec_ptype2.list <- function(x, y, ..., x_arg = "x", y_arg = "y") {
 #' @method vec_ptype2.logical logical
 #' @export
 vec_ptype2.logical.logical <- function(x, y, ..., x_arg = "x", y_arg = "y") {
-  # Special case `vec_ptype2(NA, NA)` to ensure that
-  # `unspecified()` is returned
   if (is.object(y)) {
     vec_default_ptype2(x, y, x_arg = x_arg, y_arg = y_arg)
   } else if (is_unspecified(x) && is_unspecified(y)) {
+    # Special case `vec_ptype2(NA, NA)` to ensure that
+    # `unspecified()` is returned
     unspecified()
   } else {
     shape_match(logical(), x, y)
