@@ -33,7 +33,7 @@ obj_print_data.vctrs_partial <- function(x, ...) {
 #' @rdname new_partial
 #' @export
 is_partial <- function(x) {
-  is.null(x) || inherits(x, "vctrs_partial")
+  .Call(vctrs_is_partial, x)
 }
 
 #' @rdname new_partial

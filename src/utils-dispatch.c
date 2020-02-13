@@ -124,3 +124,8 @@ static const char* class_type_as_str(enum vctrs_class_type type) {
 bool vec_is_partial(SEXP x) {
   return x == R_NilValue || (TYPEOF(x) == VECSXP && Rf_inherits(x, "vctrs_partial"));
 }
+
+// [[ register() ]]
+SEXP vctrs_is_partial(SEXP x) {
+  return Rf_ScalarLogical(vec_is_partial(x));
+}
