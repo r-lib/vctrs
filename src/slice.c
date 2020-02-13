@@ -9,6 +9,11 @@
 SEXP syms_vec_slice_fallback = NULL;
 SEXP fns_vec_slice_fallback = NULL;
 
+SEXP syms_vec_slice_fallback_integer64 = NULL;
+SEXP fns_vec_slice_fallback_integer64 = NULL;
+SEXP syms_vec_slice_dispatch_integer64 = NULL;
+SEXP fns_vec_slice_dispatch_integer64 = NULL;
+
 
 /**
  * This `vec_slice()` variant falls back to `[` with S3 objects.
@@ -208,7 +213,25 @@ static SEXP df_slice(SEXP x, SEXP subscript) {
 
 
 SEXP vec_slice_fallback(SEXP x, SEXP subscript) {
+  if (Rf_inherits(x, "integer64")) {
+    return vctrs_dispatch2(syms_vec_slice_fallback_integer64, fns_vec_slice_fallback_integer64,
+                           syms_x, x,
+                           syms_i, subscript);
+  }
+
   return vctrs_dispatch2(syms_vec_slice_fallback, fns_vec_slice_fallback,
+                         syms_x, x,
+                         syms_i, subscript);
+}
+
+static SEXP vec_slice_dispatch(SEXP x, SEXP subscript) {
+  if (Rf_inherits(x, "integer64")) {
+    return vctrs_dispatch2(syms_vec_slice_dispatch_integer64, fns_vec_slice_dispatch_integer64,
+                           syms_x, x,
+                           syms_i, subscript);
+  }
+
+  return vctrs_dispatch2(syms_bracket, fns_bracket,
                          syms_x, x,
                          syms_i, subscript);
 }
@@ -325,10 +348,7 @@ SEXP vec_slice_impl(SEXP x, SEXP subscript) {
     if (has_dim(x)) {
       out = PROTECT_N(vec_slice_fallback(x, subscript), &nprot);
     } else {
-      out = PROTECT_N(
-        vctrs_dispatch2(syms_bracket, fns_bracket, syms_x, x, syms_i, subscript),
-        &nprot
-      );
+      out = PROTECT_N(vec_slice_dispatch(x, subscript), &nprot);
     }
 
     // Take over attribute restoration only if the `[` method did not
@@ -456,5 +476,10 @@ SEXP vec_slice_rep(SEXP x, SEXP i, SEXP n) {
 
 void vctrs_init_slice(SEXP ns) {
   syms_vec_slice_fallback = Rf_install("vec_slice_fallback");
+  syms_vec_slice_fallback_integer64 = Rf_install("vec_slice_fallback_integer64");
+  syms_vec_slice_dispatch_integer64 = Rf_install("vec_slice_dispatch_integer64");
+
   fns_vec_slice_fallback = Rf_findVar(syms_vec_slice_fallback, ns);
+  fns_vec_slice_fallback_integer64 = Rf_findVar(syms_vec_slice_fallback_integer64, ns);
+  fns_vec_slice_dispatch_integer64 = Rf_findVar(syms_vec_slice_dispatch_integer64, ns);
 }
