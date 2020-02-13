@@ -213,7 +213,7 @@ static SEXP df_slice(SEXP x, SEXP subscript) {
 
 
 SEXP vec_slice_fallback(SEXP x, SEXP subscript) {
-  if (Rf_inherits(x, "integer64")) {
+  if (is_integer64(x)) {
     return vctrs_dispatch2(syms_vec_slice_fallback_integer64, fns_vec_slice_fallback_integer64,
                            syms_x, x,
                            syms_i, subscript);
@@ -225,7 +225,7 @@ SEXP vec_slice_fallback(SEXP x, SEXP subscript) {
 }
 
 static SEXP vec_slice_dispatch(SEXP x, SEXP subscript) {
-  if (Rf_inherits(x, "integer64")) {
+  if (is_integer64(x)) {
     return vctrs_dispatch2(syms_vec_slice_dispatch_integer64, fns_vec_slice_dispatch_integer64,
                            syms_x, x,
                            syms_i, subscript);

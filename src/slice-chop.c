@@ -324,7 +324,7 @@ static SEXP chop_fallback(SEXP x, SEXP indices, struct vctrs_chop_info info) {
 
   // Construct call with symbols, not values, for performance
   SEXP call;
-  if (Rf_inherits(x, "integer64")) {
+  if (is_integer64(x)) {
     call = PROTECT(Rf_lang3(syms_vec_slice_dispatch_integer64, syms_x, syms_i));
     Rf_defineVar(syms_vec_slice_dispatch_integer64, fns_vec_slice_dispatch_integer64, env);
   } else {
