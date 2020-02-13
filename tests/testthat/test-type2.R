@@ -86,6 +86,11 @@ test_that("vec_ptype2() requires vectors", {
   expect_error(vec_ptype2(quote(name), quote(name)), class = "vctrs_error_scalar_type")
 })
 
+test_that("vec_ptype2() with unspecified requires vectors", {
+  expect_error(vec_ptype2(unspecified(), quote(name)), class = "vctrs_error_scalar_type")
+  expect_error(vec_ptype2(quote(name), unspecified()), class = "vctrs_error_scalar_type")
+})
+
 test_that("vec_ptype2() forwards argument tag", {
   expect_error(vec_ptype2(quote(name), list(), x_arg = "foo"), "`foo`", class = "vctrs_error_scalar_type")
   expect_error(vec_ptype2(list(), quote(name), y_arg = "foo"), "`foo`", class = "vctrs_error_scalar_type")
