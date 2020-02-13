@@ -23,6 +23,14 @@ test_that("unknown type is idempotent", {
   expect_equal(types, rhs)
 })
 
+test_that("common type of unspecified and NULL is unspecified", {
+  expect_identical(vec_ptype2(unspecified(), NULL), unspecified())
+  expect_identical(vec_ptype2(NULL, unspecified()), unspecified())
+
+  expect_identical(vec_ptype2(NA, NULL), unspecified())
+  expect_identical(vec_ptype2(NULL, NA), unspecified())
+})
+
 test_that("subsetting works", {
   expect_identical(unspecified(4)[2:3], unspecified(2))
 })
