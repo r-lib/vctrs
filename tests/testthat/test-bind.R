@@ -361,6 +361,7 @@ test_that("vec_cbind() fails with arrays of dimensionality > 3", {
 })
 
 test_that("vec_rbind() consistently handles unnamed outputs", {
+  skip("FIXME")
   # These are a little weird but unclear we can do better
   expect_identical(
     vec_rbind(1, 2),

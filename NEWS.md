@@ -1,14 +1,6 @@
 
 # vctrs (development version)
 
-* `vec_rbind()` now consistently handles inputs of size 1 with
-  external names. These cases are now identical:
-
-  ```
-  vec_rbind(a = 1)
-  vec_rbind(c(a = 1))
-  ```
-
 * The `c()` method for `vctrs_vctr` now throws an error when
   `recursive` or `use.names` is supplied (#791).
 
