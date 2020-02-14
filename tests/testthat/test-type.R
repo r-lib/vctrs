@@ -182,6 +182,13 @@ test_that("vec_ptype_finalise() works recursively over bare data frames", {
   expect_identical(vec_ptype_finalise(df), expect)
 })
 
+test_that("vec_ptype_finalise() works recursively over classed data frames", {
+  df <- subclass(data_frame(x = numeric(), y = unspecified(), z = partial_factor()))
+  expect <- subclass(data_frame(x = numeric(), y = logical(), z = factor()))
+
+  expect_identical(vec_ptype_finalise(df), expect)
+})
+
 test_that("vec_ptype_finalise() can handle data frame columns", {
   df <- data_frame(x = numeric(), y = data_frame(z = unspecified()))
   expect <- data_frame(x = numeric(), y = data_frame(z = logical()))

@@ -87,10 +87,19 @@ SEXP vec_type_finalise(SEXP x) {
 
   vec_assert(x, args_empty);
 
-  switch (vec_typeof(x)) {
-  case vctrs_type_dataframe: return bare_df_map(x, &vec_type_finalise);
-  case vctrs_type_s3:        return vec_type_finalise_dispatch(x);
-  default:                   return x;
+  switch(class_type(x)) {
+  case vctrs_class_bare_tibble:
+  case vctrs_class_bare_data_frame:
+    return bare_df_map(x, &vec_type_finalise);
+
+  case vctrs_class_data_frame:
+    return df_map(x, &vec_type_finalise);
+
+  case vctrs_class_none:
+    Rf_errorcall(R_NilValue, "Internal error: Non-S3 classes should have returned by now");
+
+  default:
+    return vec_type_finalise_dispatch(x);
   }
 }
 
