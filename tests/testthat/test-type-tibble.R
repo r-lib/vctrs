@@ -49,3 +49,12 @@ test_that("vec_restore restores tibbles", {
 
   expect_s3_class(df2, "tbl_df")
 })
+
+test_that("the type of a tibble with an unspecified column retains unspecifiedness", {
+  df1 <- tibble::tibble(x = 1, y = NA)
+  df2 <- tibble::tibble(x = 1, y = unspecified(1))
+  expect <- tibble::tibble(x = numeric(), y = unspecified())
+
+  expect_identical(vec_ptype(df1), expect)
+  expect_identical(vec_ptype(df2), expect)
+})

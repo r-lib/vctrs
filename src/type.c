@@ -38,6 +38,23 @@ static SEXP vec_type_slice(SEXP x, SEXP empty) {
   }
 }
 static SEXP s3_type(SEXP x) {
+  switch(class_type(x)) {
+  case vctrs_class_bare_tibble:
+    return bare_df_map(x, &vec_type);
+
+  case vctrs_class_data_frame:
+    return df_map(x, &vec_type);
+
+  case vctrs_class_bare_data_frame:
+    Rf_errorcall(R_NilValue, "Internal error: Bare data frames should be handled by `vec_type()`");
+
+  case vctrs_class_none:
+    Rf_errorcall(R_NilValue, "Internal error: Non-S3 classes should be handled by `vec_type()`");
+
+  default:
+    break;
+  }
+
   if (vec_is_vector(x)) {
     return vec_slice(x, R_NilValue);
   } else {
