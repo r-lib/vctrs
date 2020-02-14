@@ -91,12 +91,12 @@ test_that("casting to a scalar type errors", {
   expect_error(vec_cast(unspecified(1), quote(x)), class = "vctrs_error_scalar_type")
 })
 
-test_that("can cast to unspecified from unspecified", {
+test_that("monitoring test - can cast to unspecified from unspecified", {
   expect_identical(vec_cast(NA, unspecified()), unspecified(1))
   expect_identical(vec_cast(unspecified(1), unspecified()), unspecified(1))
 })
 
-test_that("casting unspecified input to NA unspecified results in NA vector", {
+test_that("monitoring test - casting unspecified input to NA unspecified results in NA vector", {
   expect_identical(vec_cast(unspecified(1), NA), NA)
   expect_identical(vec_cast(NA, NA), NA)
 })

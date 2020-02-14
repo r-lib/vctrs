@@ -93,9 +93,13 @@ test_that("atomics can't be assigned in lists", {
 # TODO - Revisit this behavior, as it seems inconsistent from our emerging
 # treatment of `NA` as `list(NULL)` and makes internal handling more
 # complicated
-test_that("unspecified() can be assigned in lists, but NA unspecified cannot", {
+test_that("NA vector of unspecified cannot be assigned into lists", {
   x <- list(1, 2)
   expect_error(vec_slice(x, 1) <- NA, class = "vctrs_error_incompatible_type")
+})
+
+test_that("monitoring test - unspecified() can be assigned in lists", {
+  x <- list(1, 2)
   expect_error(vec_slice(x, 1) <- unspecified(1), NA)
   expect_equal(x, list(NULL, 2))
 })
