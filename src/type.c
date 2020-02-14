@@ -63,6 +63,7 @@ static SEXP s3_type(SEXP x) {
   }
 }
 
+static SEXP vec_type_finalise_dispatch(SEXP x);
 
 // [[ include("vctrs.h"); register() ]]
 SEXP vec_type_finalise(SEXP x) {
@@ -86,10 +87,16 @@ SEXP vec_type_finalise(SEXP x) {
 
   switch (vec_typeof(x)) {
   case vctrs_type_dataframe: return bare_df_map(x, &vec_type_finalise);
-  case vctrs_type_s3:        return vctrs_dispatch1(syms_vec_type_finalise_dispatch, fns_vec_type_finalise_dispatch,
-                                                    syms_x, x);
+  case vctrs_type_s3:        return vec_type_finalise_dispatch(x);
   default:                   return x;
   }
+}
+
+static SEXP vec_type_finalise_dispatch(SEXP x) {
+  return vctrs_dispatch1(
+    syms_vec_type_finalise_dispatch, fns_vec_type_finalise_dispatch,
+    syms_x, x
+  );
 }
 
 
