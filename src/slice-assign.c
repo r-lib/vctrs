@@ -69,18 +69,20 @@ SEXP vec_assign(SEXP x, SEXP index, SEXP value) {
  */
 SEXP vec_assign_impl(SEXP proxy, SEXP index, SEXP value, bool clone) {
   switch (vec_proxy_typeof(proxy)) {
-  case vctrs_type_logical:   return lgl_assign(proxy, index, value, clone);
-  case vctrs_type_integer:   return int_assign(proxy, index, value, clone);
-  case vctrs_type_double:    return dbl_assign(proxy, index, value, clone);
-  case vctrs_type_complex:   return cpl_assign(proxy, index, value, clone);
-  case vctrs_type_character: return chr_assign(proxy, index, value, clone);
-  case vctrs_type_raw:       return raw_assign(proxy, index, value, clone);
-  case vctrs_type_list:      return list_assign(proxy, index, value, clone);
-  case vctrs_type_dataframe: return df_assign(proxy, index, value, clone);
+  case vctrs_type_logical:     return lgl_assign(proxy, index, value, clone);
+  case vctrs_type_integer:     return int_assign(proxy, index, value, clone);
+  case vctrs_type_double:      return dbl_assign(proxy, index, value, clone);
+  case vctrs_type_complex:     return cpl_assign(proxy, index, value, clone);
+  case vctrs_type_character:   return chr_assign(proxy, index, value, clone);
+  case vctrs_type_raw:         return raw_assign(proxy, index, value, clone);
+  case vctrs_type_list:        return list_assign(proxy, index, value, clone);
+  case vctrs_type_dataframe:   return df_assign(proxy, index, value, clone);
+  case vctrs_type_null:
+  case vctrs_type_unspecified:
   case vctrs_type_s3:
-  case vctrs_type_null:      Rf_error("Internal error in `vec_assign_impl()`: Unexpected type %s.",
-                                      vec_type_as_str(vec_typeof(proxy)));
-  case vctrs_type_scalar:    stop_scalar_type(proxy, args_empty);
+                               Rf_error("Internal error in `vec_assign_impl()`: Unexpected type %s.",
+                                        vec_type_as_str(vec_typeof(proxy)));
+  case vctrs_type_scalar:      stop_scalar_type(proxy, args_empty);
   }
   never_reached("vec_assign_impl");
 }

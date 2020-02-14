@@ -15,6 +15,7 @@ typedef R_xlen_t r_ssize_t;
 
 enum vctrs_type {
   vctrs_type_null = 0,
+  vctrs_type_unspecified,
   vctrs_type_logical,
   vctrs_type_integer,
   vctrs_type_double,
@@ -92,6 +93,7 @@ bool vec_is_partial(SEXP x);
 // in `vec_typeof2()`
 enum vctrs_type2 {
   vctrs_type2_null_null,
+  vctrs_type2_null_unspecified,
   vctrs_type2_null_logical,
   vctrs_type2_null_integer,
   vctrs_type2_null_double,
@@ -102,6 +104,18 @@ enum vctrs_type2 {
   vctrs_type2_null_dataframe,
   vctrs_type2_null_s3,
   vctrs_type2_null_scalar,
+
+  vctrs_type2_unspecified_unspecified,
+  vctrs_type2_unspecified_logical,
+  vctrs_type2_unspecified_integer,
+  vctrs_type2_unspecified_double,
+  vctrs_type2_unspecified_complex,
+  vctrs_type2_unspecified_character,
+  vctrs_type2_unspecified_raw,
+  vctrs_type2_unspecified_list,
+  vctrs_type2_unspecified_dataframe,
+  vctrs_type2_unspecified_s3,
+  vctrs_type2_unspecified_scalar,
 
   vctrs_type2_logical_logical,
   vctrs_type2_logical_integer,
@@ -176,6 +190,13 @@ enum vctrs_type2_s3 {
   vctrs_type2_s3_null_bare_posixct,
   vctrs_type2_s3_null_bare_posixlt,
   vctrs_type2_s3_null_unknown,
+
+  vctrs_type2_s3_unspecified_bare_factor,
+  vctrs_type2_s3_unspecified_bare_ordered,
+  vctrs_type2_s3_unspecified_bare_date,
+  vctrs_type2_s3_unspecified_bare_posixct,
+  vctrs_type2_s3_unspecified_bare_posixlt,
+  vctrs_type2_s3_unspecified_unknown,
 
   vctrs_type2_s3_logical_bare_factor,
   vctrs_type2_s3_logical_bare_ordered,
@@ -542,6 +563,11 @@ void stop_incompatible_size(SEXP x, SEXP y,
   __attribute__((noreturn));
 void stop_recycle_incompatible_size(R_len_t x_size, R_len_t size,
                                     struct vctrs_arg* x_arg)
+  __attribute__((noreturn));
+void stop_incompatible_type(SEXP x,
+                            SEXP y,
+                            struct vctrs_arg* x_arg,
+                            struct vctrs_arg* y_arg)
   __attribute__((noreturn));
 void stop_corrupt_factor_levels(SEXP x, struct vctrs_arg* arg) __attribute__((noreturn));
 void stop_corrupt_ordered_levels(SEXP x, struct vctrs_arg* arg) __attribute__((noreturn));

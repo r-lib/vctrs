@@ -23,6 +23,14 @@ test_that("unknown type is idempotent", {
   expect_equal(types, rhs)
 })
 
+test_that("common type of unspecified and NULL is unspecified", {
+  expect_identical(vec_ptype2(unspecified(), NULL), unspecified())
+  expect_identical(vec_ptype2(NULL, unspecified()), unspecified())
+
+  expect_identical(vec_ptype2(NA, NULL), unspecified())
+  expect_identical(vec_ptype2(NULL, NA), unspecified())
+})
+
 test_that("subsetting works", {
   expect_identical(unspecified(4)[2:3], unspecified(2))
 })
@@ -77,3 +85,19 @@ test_that("unspecified() validates input", {
 test_that("tibble::type_sum() knows about unspecified", {
   expect_identical(tibble::type_sum(unspecified(3)), "???")
 })
+
+test_that("casting to a scalar type errors", {
+  expect_error(vec_cast(NA, quote(x)), class = "vctrs_error_scalar_type")
+  expect_error(vec_cast(unspecified(1), quote(x)), class = "vctrs_error_scalar_type")
+})
+
+test_that("monitoring test - can cast to unspecified from unspecified", {
+  expect_identical(vec_cast(NA, unspecified()), unspecified(1))
+  expect_identical(vec_cast(unspecified(1), unspecified()), unspecified(1))
+})
+
+test_that("monitoring test - casting unspecified input to NA unspecified results in NA vector", {
+  expect_identical(vec_cast(unspecified(1), NA), NA)
+  expect_identical(vec_cast(NA, NA), NA)
+})
+

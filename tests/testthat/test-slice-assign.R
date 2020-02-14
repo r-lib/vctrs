@@ -83,11 +83,25 @@ test_that("can assign lists", {
 
 test_that("atomics can't be assigned in lists", {
   x <- list(NULL)
-  expect_error(vec_slice(x, 1) <- NA, class = "vctrs_error_incompatible_type")
-  expect_error(vec_assign(x, 1, NA), class = "vctrs_error_incompatible_type")
+  expect_error(vec_slice(x, 1) <- 1, class = "vctrs_error_incompatible_type")
+  expect_error(vec_assign(x, 1, 2), class = "vctrs_error_incompatible_type")
 
   expect_error(vec_slice(x, 1) <- "foo", class = "vctrs_error_incompatible_type")
   expect_error(vec_assign(x, 1, "foo"), class = "vctrs_error_incompatible_type")
+})
+
+# TODO - Revisit this behavior, as it seems inconsistent from our emerging
+# treatment of `NA` as `list(NULL)` and makes internal handling more
+# complicated
+test_that("NA vector of unspecified cannot be assigned into lists", {
+  x <- list(1, 2)
+  expect_error(vec_slice(x, 1) <- NA, class = "vctrs_error_incompatible_type")
+})
+
+test_that("monitoring test - unspecified() can be assigned in lists", {
+  x <- list(1, 2)
+  expect_error(vec_slice(x, 1) <- unspecified(1), NA)
+  expect_equal(x, list(NULL, 2))
 })
 
 test_that("can assign and slice-assign data frames", {
@@ -260,7 +274,7 @@ test_that("can use names to vec_slice<-() a named object", {
 
 test_that("slice-assign falls back to `[<-` when proxy is not implemented", {
   obj <- foobar(c("foo", "bar", "baz"))
-  expect_error(vec_slice(obj, 1:2) <- NA, class = "vctrs_error_incompatible_cast")
+  expect_error(vec_slice(obj, 1:2) <- TRUE, class = "vctrs_error_incompatible_type")
 
   vec_slice(obj, 1:2) <- foobar("quux")
 
@@ -280,8 +294,16 @@ test_that("slice-assign falls back to `[<-` when proxy is not implemented", {
   )
 
   obj <- foobar(c("foo", "bar", "baz"))
-  vec_slice(obj, 1:2) <- NA
+  vec_slice(obj, 1:2) <- TRUE
   expect_identical(obj, c("dispatched", "dispatched", "baz"))
+})
+
+test_that("vec_assign() can always assign unspecified values into foreign vector types", {
+  obj <- foobar(c("foo", "bar", "baz"))
+  expect <- foobar(c(NA, "bar", "baz"))
+
+  expect_identical(vec_assign(obj, 1, NA), expect)
+  expect_identical(vec_assign(obj, 1, unspecified(1)), expect)
 })
 
 test_that("slice-assign restores value before falling back to `[<-` (#443)", {

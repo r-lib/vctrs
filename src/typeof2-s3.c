@@ -23,6 +23,16 @@ enum vctrs_type2_s3 vec_typeof2_s3_impl(SEXP x,
     default:                       *left = 0; return vctrs_type2_s3_null_unknown;
     }
   }
+  case vctrs_type_unspecified: {
+    switch (class_type(y)) {
+    case vctrs_class_bare_factor:  *left = 0; return vctrs_type2_s3_unspecified_bare_factor;
+    case vctrs_class_bare_ordered: *left = 0; return vctrs_type2_s3_unspecified_bare_ordered;
+    case vctrs_class_bare_date:    *left = 0; return vctrs_type2_s3_unspecified_bare_date;
+    case vctrs_class_bare_posixct: *left = 0; return vctrs_type2_s3_unspecified_bare_posixct;
+    case vctrs_class_bare_posixlt: *left = 0; return vctrs_type2_s3_unspecified_bare_posixlt;
+    default:                       *left = 0; return vctrs_type2_s3_unspecified_unknown;
+    }
+  }
   case vctrs_type_logical: {
     switch (class_type(y)) {
     case vctrs_class_bare_factor:  *left = 0; return vctrs_type2_s3_logical_bare_factor;
@@ -129,6 +139,7 @@ static enum vctrs_type2_s3 vec_typeof2_s3_impl2(SEXP x,
   case vctrs_class_bare_factor: {
     switch (type_y) {
     case vctrs_type_null:            *left =  1; return vctrs_type2_s3_null_bare_factor;
+    case vctrs_type_unspecified:     *left =  1; return vctrs_type2_s3_unspecified_bare_factor;
     case vctrs_type_logical:         *left =  1; return vctrs_type2_s3_logical_bare_factor;
     case vctrs_type_integer:         *left =  1; return vctrs_type2_s3_integer_bare_factor;
     case vctrs_type_double:          *left =  1; return vctrs_type2_s3_double_bare_factor;
@@ -152,6 +163,7 @@ static enum vctrs_type2_s3 vec_typeof2_s3_impl2(SEXP x,
   case vctrs_class_bare_ordered: {
     switch (type_y) {
     case vctrs_type_null:            *left =  1; return vctrs_type2_s3_null_bare_ordered;
+    case vctrs_type_unspecified:     *left =  1; return vctrs_type2_s3_unspecified_bare_ordered;
     case vctrs_type_logical:         *left =  1; return vctrs_type2_s3_logical_bare_ordered;
     case vctrs_type_integer:         *left =  1; return vctrs_type2_s3_integer_bare_ordered;
     case vctrs_type_double:          *left =  1; return vctrs_type2_s3_double_bare_ordered;
@@ -175,6 +187,7 @@ static enum vctrs_type2_s3 vec_typeof2_s3_impl2(SEXP x,
   case vctrs_class_bare_date: {
     switch (type_y) {
     case vctrs_type_null:            *left =  1; return vctrs_type2_s3_null_bare_date;
+    case vctrs_type_unspecified:     *left =  1; return vctrs_type2_s3_unspecified_bare_date;
     case vctrs_type_logical:         *left =  1; return vctrs_type2_s3_logical_bare_date;
     case vctrs_type_integer:         *left =  1; return vctrs_type2_s3_integer_bare_date;
     case vctrs_type_double:          *left =  1; return vctrs_type2_s3_double_bare_date;
@@ -198,6 +211,7 @@ static enum vctrs_type2_s3 vec_typeof2_s3_impl2(SEXP x,
   case vctrs_class_bare_posixct: {
     switch (type_y) {
     case vctrs_type_null:            *left =  1; return vctrs_type2_s3_null_bare_posixct;
+    case vctrs_type_unspecified:     *left =  1; return vctrs_type2_s3_unspecified_bare_posixct;
     case vctrs_type_logical:         *left =  1; return vctrs_type2_s3_logical_bare_posixct;
     case vctrs_type_integer:         *left =  1; return vctrs_type2_s3_integer_bare_posixct;
     case vctrs_type_double:          *left =  1; return vctrs_type2_s3_double_bare_posixct;
@@ -221,6 +235,7 @@ static enum vctrs_type2_s3 vec_typeof2_s3_impl2(SEXP x,
   case vctrs_class_bare_posixlt: {
     switch (type_y) {
     case vctrs_type_null:            *left =  1; return vctrs_type2_s3_null_bare_posixlt;
+    case vctrs_type_unspecified:     *left =  1; return vctrs_type2_s3_unspecified_bare_posixlt;
     case vctrs_type_logical:         *left =  1; return vctrs_type2_s3_logical_bare_posixlt;
     case vctrs_type_integer:         *left =  1; return vctrs_type2_s3_integer_bare_posixlt;
     case vctrs_type_double:          *left =  1; return vctrs_type2_s3_double_bare_posixlt;
@@ -244,6 +259,7 @@ static enum vctrs_type2_s3 vec_typeof2_s3_impl2(SEXP x,
   default: {
     switch (type_y) {
     case vctrs_type_null:            *left =  1; return vctrs_type2_s3_null_unknown;
+    case vctrs_type_unspecified:     *left =  1; return vctrs_type2_s3_unspecified_unknown;
     case vctrs_type_logical:         *left =  1; return vctrs_type2_s3_logical_unknown;
     case vctrs_type_integer:         *left =  1; return vctrs_type2_s3_integer_unknown;
     case vctrs_type_double:          *left =  1; return vctrs_type2_s3_double_unknown;
@@ -281,6 +297,13 @@ const char* vctrs_type2_s3_as_str(enum vctrs_type2_s3 type) {
   case vctrs_type2_s3_null_bare_posixct:           return "vctrs_type2_s3_null_bare_posixct";
   case vctrs_type2_s3_null_bare_posixlt:           return "vctrs_type2_s3_null_bare_posixlt";
   case vctrs_type2_s3_null_unknown:                return "vctrs_type2_s3_null_unknown";
+
+  case vctrs_type2_s3_unspecified_bare_factor:     return "vctrs_type2_s3_unspecified_bare_factor";
+  case vctrs_type2_s3_unspecified_bare_ordered:    return "vctrs_type2_s3_unspecified_bare_ordered";
+  case vctrs_type2_s3_unspecified_bare_date:       return "vctrs_type2_s3_unspecified_bare_date";
+  case vctrs_type2_s3_unspecified_bare_posixct:    return "vctrs_type2_s3_unspecified_bare_posixct";
+  case vctrs_type2_s3_unspecified_bare_posixlt:    return "vctrs_type2_s3_unspecified_bare_posixlt";
+  case vctrs_type2_s3_unspecified_unknown:         return "vctrs_type2_s3_unspecified_unknown";
 
   case vctrs_type2_s3_logical_bare_factor:         return "vctrs_type2_s3_logical_bare_factor";
   case vctrs_type2_s3_logical_bare_ordered:        return "vctrs_type2_s3_logical_bare_ordered";

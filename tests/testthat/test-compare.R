@@ -209,6 +209,12 @@ test_that("equality is known to fail when comparing bytes to other encodings", {
   }
 })
 
+test_that("can compare unspecified", {
+  expect_equal(vec_compare(NA, NA), NA_integer_)
+  expect_equal(vec_compare(NA, NA, na_equal = TRUE), 0)
+  expect_equal(vec_compare(c(NA, NA), unspecified(2)), c(NA_integer_, NA_integer_))
+})
+
 # order/sort --------------------------------------------------------------
 
 test_that("can request NAs sorted first", {
