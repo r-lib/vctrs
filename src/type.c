@@ -23,7 +23,7 @@ SEXP vec_type(SEXP x) {
   case vctrs_type_character:   return vec_type_slice(x, vctrs_shared_empty_chr);
   case vctrs_type_raw:         return vec_type_slice(x, vctrs_shared_empty_raw);
   case vctrs_type_list:        return vec_type_slice(x, vctrs_shared_empty_list);
-  case vctrs_type_dataframe:   return df_map(x, &vec_type);
+  case vctrs_type_dataframe:   return bare_df_map(x, &vec_type);
   case vctrs_type_s3:          return s3_type(x);
   }
   never_reached("vec_type_impl");
@@ -68,7 +68,7 @@ SEXP vec_type_finalise(SEXP x) {
   }
 
   switch (vec_typeof(x)) {
-  case vctrs_type_dataframe: return df_map(x, &vec_type_finalise);
+  case vctrs_type_dataframe: return bare_df_map(x, &vec_type_finalise);
   case vctrs_type_s3:        return vctrs_dispatch1(syms_vec_type_finalise_dispatch, fns_vec_type_finalise_dispatch,
                                                     syms_x, x);
   default:                   return x;

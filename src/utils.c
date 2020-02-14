@@ -254,7 +254,7 @@ SEXP map(SEXP x, SEXP (*fn)(SEXP)) {
   return out;
 }
 
-SEXP df_map(SEXP df, SEXP (*fn)(SEXP)) {
+SEXP bare_df_map(SEXP df, SEXP (*fn)(SEXP)) {
   SEXP out = PROTECT(map(df, fn));
   out = vec_bare_df_restore(out, df, vctrs_shared_zero_int);
 
