@@ -264,6 +264,15 @@ SEXP bare_df_map(SEXP df, SEXP (*fn)(SEXP)) {
   return out;
 }
 
+// [[ include("utils.h") ]]
+SEXP df_map(SEXP df, SEXP (*fn)(SEXP)) {
+  SEXP out = PROTECT(map(df, fn));
+  out = vec_df_restore(out, df, vctrs_shared_zero_int);
+
+  UNPROTECT(1);
+  return out;
+}
+
 inline void never_reached(const char* fn) {
   Rf_error("Internal error in `%s()`: Reached the unreachable.", fn);
 }

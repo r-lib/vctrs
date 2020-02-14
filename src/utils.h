@@ -77,6 +77,7 @@ SEXP vctrs_dispatch4(SEXP fn_sym, SEXP fn,
 
 SEXP map(SEXP x, SEXP (*fn)(SEXP));
 SEXP bare_df_map(SEXP df, SEXP (*fn)(SEXP));
+SEXP df_map(SEXP df, SEXP (*fn)(SEXP));
 
 enum vctrs_class_type class_type(SEXP x);
 bool is_data_frame(SEXP x);
