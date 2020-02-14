@@ -93,7 +93,7 @@ SEXP vec_restore_default(SEXP x, SEXP to) {
 
 static SEXP bare_df_restore_impl(SEXP x, SEXP to, R_len_t size);
 
-SEXP vctrs_bare_df_restore(SEXP x, SEXP to, SEXP n) {
+SEXP vec_bare_df_restore(SEXP x, SEXP to, SEXP n) {
   if (TYPEOF(x) != VECSXP) {
     Rf_errorcall(R_NilValue, "Internal error: Attempt to restore data frame from a %s.",
                  Rf_type2char(TYPEOF(x)));
@@ -128,12 +128,12 @@ SEXP vec_restore(SEXP x, SEXP to, SEXP n) {
   default: return vec_restore_dispatch(x, to, n);
   case vctrs_class_none: return vec_restore_default(x, to);
   case vctrs_class_bare_data_frame:
-  case vctrs_class_bare_tibble: return vctrs_bare_df_restore(x, to, n);
+  case vctrs_class_bare_tibble: return vec_bare_df_restore(x, to, n);
   case vctrs_class_data_frame: {
     // Restore methods are passed the original atomic type back, so we
     // first restore data frames as such before calling the restore
     // method, if any
-    SEXP out = PROTECT(vctrs_bare_df_restore(x, to, n));
+    SEXP out = PROTECT(vec_bare_df_restore(x, to, n));
     out = vec_restore_dispatch(out, to, n);
     UNPROTECT(1);
     return out;

@@ -70,7 +70,7 @@ extern SEXP vctrs_type2_df_df(SEXP, SEXP, SEXP, SEXP);
 extern SEXP vctrs_type_info(SEXP);
 extern SEXP vctrs_proxy_info(SEXP);
 extern SEXP vctrs_class_type(SEXP);
-extern SEXP vctrs_bare_df_restore(SEXP, SEXP, SEXP);
+extern SEXP vec_bare_df_restore(SEXP, SEXP, SEXP);
 extern SEXP vctrs_recycle(SEXP, SEXP, SEXP);
 extern SEXP vctrs_coercible_cast(SEXP, SEXP, SEXP, SEXP);
 extern SEXP vec_assign(SEXP, SEXP, SEXP);
@@ -176,7 +176,7 @@ static const R_CallMethodDef CallEntries[] = {
   {"vctrs_type_info",                  (DL_FUNC) &vctrs_type_info, 1},
   {"vctrs_proxy_info",                 (DL_FUNC) &vctrs_proxy_info, 1},
   {"vctrs_class_type",                 (DL_FUNC) &vctrs_class_type, 1},
-  {"vctrs_bare_df_restore",            (DL_FUNC) &vctrs_bare_df_restore, 3},
+  {"vctrs_bare_df_restore",            (DL_FUNC) &vec_bare_df_restore, 3},
   {"vctrs_recycle",                    (DL_FUNC) &vctrs_recycle, 3},
   {"vctrs_coercible_cast",             (DL_FUNC) &vctrs_coercible_cast, 4},
   {"vctrs_assign",                     (DL_FUNC) &vec_assign, 3},
