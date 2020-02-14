@@ -170,3 +170,21 @@ test_that("explicit list subclasses are vectors", {
 
   expect_identical(vec_slice(df, 1)$z, list_subclass(list(1)))
 })
+
+test_that("vec_ptype_finalise() works with NULL", {
+  expect_identical(vec_ptype_finalise(NULL), NULL)
+})
+
+test_that("vec_ptype_finalise() works recursively over bare data frames", {
+  df <- data_frame(x = numeric(), y = unspecified(), z = partial_factor())
+  expect <- data_frame(x = numeric(), y = logical(), z = factor())
+
+  expect_identical(vec_ptype_finalise(df), expect)
+})
+
+test_that("vec_ptype_finalise() can handle data frame columns", {
+  df <- data_frame(x = numeric(), y = data_frame(z = unspecified()))
+  expect <- data_frame(x = numeric(), y = data_frame(z = logical()))
+
+  expect_identical(vec_ptype_finalise(df), expect)
+})
