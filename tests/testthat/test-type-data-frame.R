@@ -216,6 +216,10 @@ test_that("can construct a data frame without column names", {
   expect_named(new_data_frame(list(1, 2)), NULL)
 })
 
+test_that("the names on an empty data frame are an empty character vector", {
+  expect_identical(names(new_data_frame()), character())
+})
+
 test_that("attributes with special names are ignored", {
   expect_identical(
     names(new_data_frame(list(), 0L, names = "name")),
