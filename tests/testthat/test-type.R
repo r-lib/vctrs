@@ -1,10 +1,18 @@
 context("test-type")
 
 
-test_that("vec_ptype() is a no-op for non-vectors", {
+test_that("vec_ptype() is a no-op for NULL", {
   expect_null(vec_ptype(NULL))
-  expect_identical(vec_ptype(quote(name)), quote(name))
+})
+
+test_that("vec_ptype() is a no-op for partial types", {
+  expect_identical(vec_ptype(partial_factor("x")), partial_factor("x"))
   expect_identical(vec_ptype(partial_frame(x = 1)), partial_frame(x = 1))
+})
+
+test_that("vec_ptype() errors on scalars", {
+  expect_error(vec_ptype(quote(name)), class = "vctrs_error_scalar_type")
+  expect_error(vec_ptype(quote(fn())), class = "vctrs_error_scalar_type")
 })
 
 test_that(".ptype argument overrides others", {
