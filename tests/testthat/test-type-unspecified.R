@@ -31,6 +31,11 @@ test_that("common type of unspecified and NULL is unspecified", {
   expect_identical(vec_ptype2(NULL, NA), unspecified())
 })
 
+test_that("cannot take the common type of unspecified and a scalar list", {
+  expect_error(vec_ptype2(unspecified(), foobar()), class = "vctrs_error_scalar_type")
+  expect_error(vec_ptype2(foobar(), unspecified()), class = "vctrs_error_scalar_type")
+})
+
 test_that("subsetting works", {
   expect_identical(unspecified(4)[2:3], unspecified(2))
 })
