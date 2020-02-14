@@ -230,11 +230,6 @@ test_that("attributes with special names are ignored", {
     attr(new_data_frame(list(), 0L, row.names = "rowname"), "row.names"),
     integer()
   )
-
-  # This is overkill, but splice to avoid matching on `class` argument
-  attrib <- list(class = "foo")
-  x <- new_data_frame(list(), 0L, !!! attrib)
-  expect_identical(class(x), "data.frame")
 })
 
 test_that("`x` must be a list", {

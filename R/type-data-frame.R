@@ -16,7 +16,7 @@
 #' @examples
 #' new_data_frame(list(x = 1:10, y = 10:1))
 new_data_frame <- function(x = list(), n = NULL, ..., class = character()) {
-  .Call(vctrs_new_data_frame, x, n, pairlist2(...), class)
+  .Call(vctrs_new_data_frame, x, n, pairlist(...), class)
 }
 
 # Light weight constructor used for tests - avoids having to repeatedly do
