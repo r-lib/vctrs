@@ -379,7 +379,16 @@ SEXP vctrs_cast(SEXP x, SEXP to, SEXP x_arg_, SEXP to_arg_) {
 
 // [[ include("vctrs.h") ]]
 SEXP vec_cast(SEXP x, SEXP to, struct vctrs_arg* x_arg, struct vctrs_arg* to_arg) {
-  if (x == R_NilValue || to == R_NilValue) {
+  if (x == R_NilValue) {
+    if (!vec_is_partial(to)) {
+      vec_assert(to, to_arg);
+    }
+    return x;
+  }
+  if (to == R_NilValue) {
+    if (!vec_is_partial(x)) {
+      vec_assert(x, x_arg);
+    }
     return x;
   }
 
