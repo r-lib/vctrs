@@ -171,6 +171,15 @@ test_that("explicit list subclasses are vectors", {
   expect_identical(vec_slice(df, 1)$z, list_subclass(list(1)))
 })
 
+test_that("the type of a classed data frame with an unspecified column retains unspecifiedness", {
+  df1 <- subclass(data_frame(x = 1, y = NA))
+  df2 <- subclass(data_frame(x = 1, y = unspecified(1)))
+  expect <- subclass(data_frame(x = numeric(), y = unspecified()))
+
+  expect_identical(vec_ptype(df1), expect)
+  expect_identical(vec_ptype(df2), expect)
+})
+
 test_that("vec_ptype_finalise() works with NULL", {
   expect_identical(vec_ptype_finalise(NULL), NULL)
 })
