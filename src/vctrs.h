@@ -400,6 +400,8 @@ SEXP vec_cast_dispatch(SEXP x,
                        struct vctrs_arg* x_arg,
                        struct vctrs_arg* to_arg);
 
+SEXP df_type2(SEXP x, SEXP y, struct vctrs_arg* x_arg, struct vctrs_arg* y_arg);
+
 bool is_data_frame(SEXP x);
 bool is_record(SEXP x);
 
@@ -525,6 +527,10 @@ SEXP ord_as_ordered(SEXP x, SEXP to, bool* lossy, struct vctrs_arg* x_arg, struc
 
 SEXP date_datetime_ptype2(SEXP x, SEXP y);
 SEXP datetime_datetime_ptype2(SEXP x, SEXP y);
+
+// Tibble methods ----------------------------------------------
+
+SEXP tibble_ptype2(SEXP x, SEXP y, struct vctrs_arg* x_arg, struct vctrs_arg* y_arg);
 
 // Character translation ----------------------------------------
 

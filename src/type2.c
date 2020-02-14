@@ -8,8 +8,6 @@ static SEXP vec_ptype2_dispatch_unspecified_list(SEXP x,
                                                  struct vctrs_arg* y_arg,
                                                  bool left_unspecified);
 
-static SEXP df_type2(SEXP x, SEXP y, struct vctrs_arg* x_arg, struct vctrs_arg* y_arg);
-
 // [[ include("vctrs.h") ]]
 SEXP vec_type2(SEXP x, SEXP y,
                struct vctrs_arg* x_arg,
@@ -121,7 +119,7 @@ static SEXP vec_ptype2_dispatch_unspecified_list(SEXP x,
   stop_incompatible_type(x, y, x_arg, y_arg);
 }
 
-
+// [[ include("vctrs.h") ]]
 SEXP df_type2(SEXP x, SEXP y, struct vctrs_arg* x_arg, struct vctrs_arg* y_arg) {
   SEXP x_names = PROTECT(r_names(x));
   SEXP y_names = PROTECT(r_names(y));
