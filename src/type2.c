@@ -89,7 +89,7 @@ SEXP vec_type2(SEXP x, SEXP y,
     return vctrs_shared_empty_list;
 
   case vctrs_type2_dataframe_dataframe:
-    return df_type2(x, y, x_arg, y_arg);
+    return df_ptype2(x, y, x_arg, y_arg);
 
   default:
     return vec_ptype2_dispatch_s3(x, y, x_arg, y_arg);
@@ -120,7 +120,7 @@ static SEXP vec_ptype2_dispatch_unspecified_list(SEXP x,
 }
 
 // [[ include("vctrs.h") ]]
-SEXP df_type2(SEXP x, SEXP y, struct vctrs_arg* x_arg, struct vctrs_arg* y_arg) {
+SEXP df_ptype2(SEXP x, SEXP y, struct vctrs_arg* x_arg, struct vctrs_arg* y_arg) {
   SEXP x_names = PROTECT(r_names(x));
   SEXP y_names = PROTECT(r_names(y));
 
@@ -217,5 +217,5 @@ SEXP vctrs_type2_df_df(SEXP x, SEXP y, SEXP x_arg, SEXP y_arg) {
   struct vctrs_arg x_arg_ = new_wrapper_arg(NULL, r_chr_get_c_string(x_arg, 0));
   struct vctrs_arg y_arg_ = new_wrapper_arg(NULL, r_chr_get_c_string(y_arg, 0));
 
-  return df_type2(x, y, &x_arg_, &y_arg_);
+  return df_ptype2(x, y, &x_arg_, &y_arg_);
 }
