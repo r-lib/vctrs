@@ -67,7 +67,7 @@ static SEXP vec_ptype_finalise_unspecified(SEXP x);
 static SEXP vec_ptype_finalise_dispatch(SEXP x);
 
 // [[ include("vctrs.h"); register() ]]
-SEXP vec_type_finalise(SEXP x) {
+SEXP vec_ptype_finalise(SEXP x) {
   if (x == R_NilValue) {
     return x;
   }
@@ -90,10 +90,10 @@ SEXP vec_type_finalise(SEXP x) {
   switch(class_type(x)) {
   case vctrs_class_bare_tibble:
   case vctrs_class_bare_data_frame:
-    return bare_df_map(x, &vec_type_finalise);
+    return bare_df_map(x, &vec_ptype_finalise);
 
   case vctrs_class_data_frame:
-    return df_map(x, &vec_type_finalise);
+    return df_map(x, &vec_ptype_finalise);
 
   case vctrs_class_none:
     Rf_errorcall(R_NilValue, "Internal error: Non-S3 classes should have returned by now");
@@ -154,7 +154,7 @@ SEXP vctrs_type_common_impl(SEXP dots, SEXP ptype) {
   struct vctrs_arg ptype_arg = new_wrapper_arg(NULL, ".ptype");
 
   SEXP type = PROTECT(reduce(ptype, &ptype_arg, dots, &vctrs_type2_common));
-  type = vec_type_finalise(type);
+  type = vec_ptype_finalise(type);
 
   UNPROTECT(1);
   return type;
