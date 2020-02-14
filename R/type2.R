@@ -56,8 +56,6 @@ vec_ptype2.default <- function(x, y, ..., x_arg = "x", y_arg = "y") {
 #' @export
 vec_default_ptype2 <- function(x, y, ..., x_arg = "x", y_arg = "y") {
   if (is_unspecified(y)) {
-    # FIXME: Should `vec_ptype()` make that check?
-    vec_assert(x)
     return(vec_ptype(x))
   }
   if (is_same_type(x, y)) {
