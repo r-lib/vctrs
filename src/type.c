@@ -67,23 +67,23 @@ static SEXP vec_type_finalise_dispatch(SEXP x);
 
 // [[ include("vctrs.h"); register() ]]
 SEXP vec_type_finalise(SEXP x) {
-  if (x == R_NilValue) {
+  if (!OBJECT(x)) {
     return x;
   }
 
-  if (OBJECT(x)) {
-    if (vec_is_unspecified(x)) {
-      R_len_t n = Rf_length(x);
-      SEXP out = PROTECT(Rf_allocVector(LGLSXP, n));
-      r_lgl_fill(out, NA_LOGICAL, n);
-      UNPROTECT(1);
-      return out;
-    }
+  if (vec_is_unspecified(x)) {
+    R_len_t n = Rf_length(x);
+    SEXP out = PROTECT(Rf_allocVector(LGLSXP, n));
+    r_lgl_fill(out, NA_LOGICAL, n);
+    UNPROTECT(1);
+    return out;
   }
 
-  if (!vec_is_partial(x)) {
-    vec_assert(x, args_empty);
+  if (vec_is_partial(x)) {
+    return vec_type_finalise_dispatch(x);
   }
+
+  vec_assert(x, args_empty);
 
   switch (vec_typeof(x)) {
   case vctrs_type_dataframe: return bare_df_map(x, &vec_type_finalise);
