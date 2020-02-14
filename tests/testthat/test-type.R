@@ -188,3 +188,8 @@ test_that("vec_ptype_finalise() can handle data frame columns", {
 
   expect_identical(vec_ptype_finalise(df), expect)
 })
+
+test_that("vec_ptype_finalise() requires vector types", {
+  expect_error(vec_ptype_finalise(quote(name)), class = "vctrs_error_scalar_type")
+  expect_error(vec_ptype_finalise(foobar()), class = "vctrs_error_scalar_type")
+})

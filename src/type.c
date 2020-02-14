@@ -68,7 +68,12 @@ static SEXP vec_type_finalise_dispatch(SEXP x);
 
 // [[ include("vctrs.h"); register() ]]
 SEXP vec_type_finalise(SEXP x) {
+  if (x == R_NilValue) {
+    return x;
+  }
+
   if (!OBJECT(x)) {
+    vec_assert(x, args_empty);
     return x;
   }
 
