@@ -77,7 +77,7 @@ vctrs has an internal vector type of class \code{vctrs_unspecified}. Users
 normally don’t see such vectors in the wild, but they do come up when
 taking the common type of an unspecified vector with another identity
 value:\if{html}{\out{<div class="r">}}\preformatted{vec_ptype2(NA, NA)
-#> logical(0)
+#> <unspecified> [0]
 vec_ptype2(NA, NULL)
 #> <unspecified> [0]
 vec_ptype2(NULL, NA)
