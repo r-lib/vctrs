@@ -389,6 +389,7 @@ R_len_t df_rownames_size(SEXP x);
 R_len_t df_raw_size(SEXP x);
 R_len_t df_raw_size_from_list(SEXP x);
 SEXP vec_bare_df_restore(SEXP x, SEXP to, SEXP n);
+SEXP vec_df_restore(SEXP x, SEXP to, SEXP n);
 
 SEXP chr_assign(SEXP out, SEXP index, SEXP value, bool clone);
 SEXP list_assign(SEXP out, SEXP index, SEXP value, bool clone);
