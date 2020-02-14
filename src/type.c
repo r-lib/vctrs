@@ -3,8 +3,8 @@
 #include "arg-counter.h"
 
 // Initialised at load time
-static SEXP syms_vec_type_finalise_dispatch = NULL;
-static SEXP fns_vec_type_finalise_dispatch = NULL;
+static SEXP syms_vec_ptype_finalise_dispatch = NULL;
+static SEXP fns_vec_ptype_finalise_dispatch = NULL;
 
 
 static SEXP vec_type_slice(SEXP x, SEXP empty);
@@ -63,8 +63,8 @@ static SEXP s3_type(SEXP x) {
   }
 }
 
-static SEXP vec_type_finalise_unspecified(SEXP x);
-static SEXP vec_type_finalise_dispatch(SEXP x);
+static SEXP vec_ptype_finalise_unspecified(SEXP x);
+static SEXP vec_ptype_finalise_dispatch(SEXP x);
 
 // [[ include("vctrs.h"); register() ]]
 SEXP vec_type_finalise(SEXP x) {
@@ -78,11 +78,11 @@ SEXP vec_type_finalise(SEXP x) {
   }
 
   if (vec_is_unspecified(x)) {
-    return vec_type_finalise_unspecified(x);
+    return vec_ptype_finalise_unspecified(x);
   }
 
   if (vec_is_partial(x)) {
-    return vec_type_finalise_dispatch(x);
+    return vec_ptype_finalise_dispatch(x);
   }
 
   vec_assert(x, args_empty);
@@ -99,11 +99,11 @@ SEXP vec_type_finalise(SEXP x) {
     Rf_errorcall(R_NilValue, "Internal error: Non-S3 classes should have returned by now");
 
   default:
-    return vec_type_finalise_dispatch(x);
+    return vec_ptype_finalise_dispatch(x);
   }
 }
 
-static SEXP vec_type_finalise_unspecified(SEXP x) {
+static SEXP vec_ptype_finalise_unspecified(SEXP x) {
   R_len_t size = Rf_length(x);
 
   if (size == 0) {
@@ -117,9 +117,9 @@ static SEXP vec_type_finalise_unspecified(SEXP x) {
   return out;
 }
 
-static SEXP vec_type_finalise_dispatch(SEXP x) {
+static SEXP vec_ptype_finalise_dispatch(SEXP x) {
   return vctrs_dispatch1(
-    syms_vec_type_finalise_dispatch, fns_vec_type_finalise_dispatch,
+    syms_vec_ptype_finalise_dispatch, fns_vec_ptype_finalise_dispatch,
     syms_x, x
   );
 }
@@ -176,6 +176,6 @@ static SEXP vctrs_type2_common(SEXP current, SEXP next, struct counters* counter
 
 
 void vctrs_init_type(SEXP ns) {
-  syms_vec_type_finalise_dispatch = Rf_install("vec_ptype_finalise_dispatch");
-  fns_vec_type_finalise_dispatch = Rf_findVar(syms_vec_type_finalise_dispatch, ns);
+  syms_vec_ptype_finalise_dispatch = Rf_install("vec_ptype_finalise_dispatch");
+  fns_vec_ptype_finalise_dispatch = Rf_findVar(syms_vec_ptype_finalise_dispatch, ns);
 }
