@@ -107,7 +107,7 @@ vec_cast.data.frame.default <- function(x, to, ..., x_arg = "x", to_arg = "to") 
 
 #' @export
 vec_restore.data.frame <- function(x, to, ..., n = NULL) {
-  .Call(vctrs_df_restore, x, to, n)
+  .Call(vctrs_bare_df_restore, x, to, n)
 }
 
 
