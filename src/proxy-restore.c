@@ -93,6 +93,7 @@ SEXP vec_restore_default(SEXP x, SEXP to) {
 
 static SEXP bare_df_restore_impl(SEXP x, SEXP to, R_len_t size);
 
+// [[ include("vctrs.h"); register() ]]
 SEXP vec_bare_df_restore(SEXP x, SEXP to, SEXP n) {
   if (TYPEOF(x) != VECSXP) {
     Rf_errorcall(R_NilValue, "Internal error: Attempt to restore data frame from a %s.",
