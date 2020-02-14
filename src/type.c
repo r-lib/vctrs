@@ -63,6 +63,7 @@ static SEXP s3_type(SEXP x) {
   }
 }
 
+static SEXP vec_type_finalise_unspecified(SEXP x);
 static SEXP vec_type_finalise_dispatch(SEXP x);
 
 // [[ include("vctrs.h"); register() ]]
@@ -72,11 +73,7 @@ SEXP vec_type_finalise(SEXP x) {
   }
 
   if (vec_is_unspecified(x)) {
-    R_len_t n = Rf_length(x);
-    SEXP out = PROTECT(Rf_allocVector(LGLSXP, n));
-    r_lgl_fill(out, NA_LOGICAL, n);
-    UNPROTECT(1);
-    return out;
+    return vec_type_finalise_unspecified(x);
   }
 
   if (vec_is_partial(x)) {
@@ -90,6 +87,20 @@ SEXP vec_type_finalise(SEXP x) {
   case vctrs_type_s3:        return vec_type_finalise_dispatch(x);
   default:                   return x;
   }
+}
+
+static SEXP vec_type_finalise_unspecified(SEXP x) {
+  R_len_t size = Rf_length(x);
+
+  if (size == 0) {
+    return vctrs_shared_empty_lgl;
+  }
+
+  SEXP out = PROTECT(Rf_allocVector(LGLSXP, size));
+  r_lgl_fill(out, NA_LOGICAL, size);
+
+  UNPROTECT(1);
+  return out;
 }
 
 static SEXP vec_type_finalise_dispatch(SEXP x) {
