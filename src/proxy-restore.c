@@ -91,6 +91,8 @@ SEXP vec_restore_default(SEXP x, SEXP to) {
   return x;
 }
 
+static SEXP df_restore_impl(SEXP x, SEXP to, R_len_t size);
+
 SEXP vctrs_df_restore(SEXP x, SEXP to, SEXP n) {
   if (TYPEOF(x) != VECSXP) {
     Rf_errorcall(R_NilValue, "Internal error: Attempt to restore data frame from a %s.",
@@ -101,7 +103,7 @@ SEXP vctrs_df_restore(SEXP x, SEXP to, SEXP n) {
   return df_restore_impl(x, to, size);
 }
 
-SEXP df_restore_impl(SEXP x, SEXP to, R_len_t size) {
+static SEXP df_restore_impl(SEXP x, SEXP to, R_len_t size) {
   x = PROTECT(r_maybe_duplicate(x));
   x = PROTECT(vec_restore_default(x, to));
 
