@@ -104,9 +104,10 @@ test_that("proxied types are have s3 bare type", {
 
 test_that("vec_ptype() preserves attributes of unproxied structures", {
   expect_identical(vec_ptype(foobar(dbl(1))), foobar(dbl()))
+})
 
-  # Here `foobar()` is treated as a scalar so is returned as is
-  expect_identical(vec_ptype(foobar(list(1))), foobar(list(1)))
+test_that("vec_ptype() errors on scalar lists", {
+  expect_error(vec_ptype(foobar(list())), class = "vctrs_error_scalar_type")
 })
 
 test_that("can retrieve type info", {

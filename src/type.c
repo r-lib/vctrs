@@ -55,12 +55,12 @@ static SEXP s3_type(SEXP x) {
     break;
   }
 
-  if (vec_is_vector(x)) {
-    return vec_slice(x, R_NilValue);
-  } else {
-    // FIXME: Only used for partial frames
+  if (vec_is_partial(x)) {
     return x;
   }
+
+  vec_assert(x, args_empty);
+  return vec_slice(x, R_NilValue);
 }
 
 static SEXP vec_ptype_finalise_unspecified(SEXP x);
