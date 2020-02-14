@@ -27,35 +27,41 @@ this is a convenient way to make production code demand fixed types.}
 (a size-0 vector)
 }
 \description{
-\code{vec_ptype()} finds the prototype of a single vector.
+\code{vec_ptype()} returns the unfinalised prototype of a single vector.
 \code{vec_ptype_common()} finds the common type of multiple vectors.
 \code{vec_ptype_show()} nicely prints the common type of any number of
 inputs, and is designed for interactive exploration.
 }
-\details{
+\section{\code{vec_ptype()}}{
+
+\code{vec_ptype()} returns \link[=vec_size]{size} 0 vectors potentially
+containing attributes but no data. Generally, this is just
+\code{vec_slice(x, 0L)}, but some inputs require special
+handling.
+\itemize{
+\item While you can't slice \code{NULL}, the prototype of \code{NULL} is
+itself. This is because we treat \code{NULL} as an identity value in
+the \code{vec_ptype2()} monoid.
+\item The prototype of logical vectors that only contain missing values
+is the special \link{unspecified} type, which can be coerced to any
+other 1d type. This allows bare \code{NA}s to represent missing values
+for any 1d vector type.
+}
+
+See \link{internal-faq-ptype2-identity} for more information about
+identity values.
+
+Because it may contain unspecified vectors, the prototype returned
+by \code{vec_ptype()} is said to be \strong{unfinalised}. Call
+\code{\link[=vec_ptype_finalise]{vec_ptype_finalise()}} to finalise it. Commonly you will need the
+finalised prototype as returned by \code{vec_slice(x, 0L)}.
+}
+
+\section{\code{vec_ptype_common()}}{
+
 \code{vec_ptype_common()} first finds the prototype of each input, then
-successively calls \code{\link[=vec_ptype2]{vec_ptype2()}} to find a common type.
-}
-\section{Prototype}{
-
-A prototype is \link[=vec_size]{size} 0 vector containing attributes, but no
-data. Generally, this is just \code{vec_slice(x, 0L)}, but some inputs
-require special handling.
-
-For example, the prototype of logical vectors that only contain missing
-values is the special \link{unspecified} type, which can be coerced to any
-other 1d type. This allows bare \code{NA}s to represent missing values for
-any 1d vector type.
-}
-
-\section{The prototype of \code{NULL}}{
-
-
-In general we treat \code{NULL} as an absence of argument (which is
-often an error). In the case of \code{vec_ptype()} and
-\code{vec_ptype_common()}, we have chosen \code{NULL} as the identity of the
-common type monoid: the common type of \code{foo} and \code{NULL} is always
-\code{foo}. For this reason, the prototype of \code{NULL} is \code{NULL}.
+successively calls \code{\link[=vec_ptype2]{vec_ptype2()}} to find a common type. It returns
+a \link[=vec_ptype_finalise]{finalised} prototype.
 }
 
 \examples{

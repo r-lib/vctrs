@@ -1,22 +1,9 @@
 #' Find the prototype of a set of vectors
 #'
-#' `vec_ptype()` finds the prototype of a single vector.
+#' `vec_ptype()` returns the unfinalised prototype of a single vector.
 #' `vec_ptype_common()` finds the common type of multiple vectors.
 #' `vec_ptype_show()` nicely prints the common type of any number of
 #' inputs, and is designed for interactive exploration.
-#'
-#' `vec_ptype_common()` first finds the prototype of each input, then
-#' successively calls [vec_ptype2()] to find a common type.
-#'
-#' @section Prototype:
-#' A prototype is [size][vec_size] 0 vector containing attributes, but no
-#' data. Generally, this is just `vec_slice(x, 0L)`, but some inputs
-#' require special handling.
-#'
-#' For example, the prototype of logical vectors that only contain missing
-#' values is the special [unspecified] type, which can be coerced to any
-#' other 1d type. This allows bare `NA`s to represent missing values for
-#' any 1d vector type.
 #'
 #' @param ...,x Vectors inputs
 #' @param .ptype If `NULL`, the default, the output type is determined by
@@ -28,13 +15,33 @@
 #' @return `vec_ptype()` and `vec_ptype_common()` return a prototype
 #'   (a size-0 vector)
 #'
-#' @section The prototype of `NULL`:
+#' @section `vec_ptype()`:
+#' `vec_ptype()` returns [size][vec_size] 0 vectors potentially
+#' containing attributes but no data. Generally, this is just
+#' `vec_slice(x, 0L)`, but some inputs require special
+#' handling.
 #'
-#' In general we treat `NULL` as an absence of argument (which is
-#' often an error). In the case of `vec_ptype()` and
-#' `vec_ptype_common()`, we have chosen `NULL` as the identity of the
-#' common type monoid: the common type of `foo` and `NULL` is always
-#' `foo`. For this reason, the prototype of `NULL` is `NULL`.
+#' * While you can't slice `NULL`, the prototype of `NULL` is
+#'   itself. This is because we treat `NULL` as an identity value in
+#'   the `vec_ptype2()` monoid.
+#'
+#' * The prototype of logical vectors that only contain missing values
+#'   is the special [unspecified] type, which can be coerced to any
+#'   other 1d type. This allows bare `NA`s to represent missing values
+#'   for any 1d vector type.
+#'
+#' See [internal-faq-ptype2-identity] for more information about
+#' identity values.
+#'
+#' Because it may contain unspecified vectors, the prototype returned
+#' by `vec_ptype()` is said to be __unfinalised__. Call
+#' [vec_ptype_finalise()] to finalise it. Commonly you will need the
+#' finalised prototype as returned by `vec_slice(x, 0L)`.
+#'
+#' @section `vec_ptype_common()`:
+#' `vec_ptype_common()` first finds the prototype of each input, then
+#' successively calls [vec_ptype2()] to find a common type. It returns
+#' a [finalised][vec_ptype_finalise] prototype.
 #'
 #' @export
 #' @examples
