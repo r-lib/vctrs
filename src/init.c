@@ -97,6 +97,7 @@ extern SEXP vec_assign_impl(SEXP, SEXP, SEXP, bool);
 extern SEXP vec_slice_impl(SEXP, SEXP);
 extern SEXP vec_names(SEXP);
 extern SEXP vec_recycle(SEXP, R_len_t);
+extern SEXP vec_recycle_common(SEXP, R_len_t);
 extern SEXP vec_chop(SEXP, SEXP);
 
 // Extremely experimental
@@ -240,6 +241,7 @@ void R_init_vctrs(DllInfo *dll)
     // Extremely experimental as eventually these might support R_xlen_t
     R_RegisterCCallable("vctrs", "short_vec_size", (DL_FUNC) &vec_size);
     R_RegisterCCallable("vctrs", "short_vec_recycle", (DL_FUNC) &vec_recycle);
+    R_RegisterCCallable("vctrs", "short_vec_recycle_common", (DL_FUNC) &vec_recycle_common);
     R_RegisterCCallable("vctrs", "short_vec_init", (DL_FUNC) &vec_init);
 
     // Extremely experimental (for dplyr)
