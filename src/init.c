@@ -92,6 +92,7 @@ extern SEXP vctrs_new_data_frame(SEXP, SEXP, SEXP, SEXP);
 // Very experimental
 // Available in the API header
 extern R_len_t vec_size(SEXP);
+extern R_len_t vec_size_common(SEXP, R_len_t);
 extern SEXP vec_init(SEXP, R_len_t);
 extern SEXP vec_assign_impl(SEXP, SEXP, SEXP, bool);
 extern SEXP vec_slice_impl(SEXP, SEXP);
@@ -240,6 +241,7 @@ void R_init_vctrs(DllInfo *dll)
 
     // Extremely experimental as eventually these might support R_xlen_t
     R_RegisterCCallable("vctrs", "short_vec_size", (DL_FUNC) &vec_size);
+    R_RegisterCCallable("vctrs", "short_vec_size_common", (DL_FUNC) &vec_size_common);
     R_RegisterCCallable("vctrs", "short_vec_recycle", (DL_FUNC) &vec_recycle);
     R_RegisterCCallable("vctrs", "short_vec_recycle_common", (DL_FUNC) &vec_recycle_common);
     R_RegisterCCallable("vctrs", "short_vec_init", (DL_FUNC) &vec_init);
