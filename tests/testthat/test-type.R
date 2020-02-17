@@ -170,3 +170,42 @@ test_that("explicit list subclasses are vectors", {
 
   expect_identical(vec_slice(df, 1)$z, list_subclass(list(1)))
 })
+
+test_that("the type of a classed data frame with an unspecified column retains unspecifiedness", {
+  df1 <- subclass(data_frame(x = 1, y = NA))
+  df2 <- subclass(data_frame(x = 1, y = unspecified(1)))
+  expect <- subclass(data_frame(x = numeric(), y = unspecified()))
+
+  expect_identical(vec_ptype(df1), expect)
+  expect_identical(vec_ptype(df2), expect)
+})
+
+test_that("vec_ptype_finalise() works with NULL", {
+  expect_identical(vec_ptype_finalise(NULL), NULL)
+})
+
+test_that("vec_ptype_finalise() works recursively over bare data frames", {
+  df <- data_frame(x = numeric(), y = unspecified(), z = partial_factor())
+  expect <- data_frame(x = numeric(), y = logical(), z = factor())
+
+  expect_identical(vec_ptype_finalise(df), expect)
+})
+
+test_that("vec_ptype_finalise() works recursively over classed data frames", {
+  df <- subclass(data_frame(x = numeric(), y = unspecified(), z = partial_factor()))
+  expect <- subclass(data_frame(x = numeric(), y = logical(), z = factor()))
+
+  expect_identical(vec_ptype_finalise(df), expect)
+})
+
+test_that("vec_ptype_finalise() can handle data frame columns", {
+  df <- data_frame(x = numeric(), y = data_frame(z = unspecified()))
+  expect <- data_frame(x = numeric(), y = data_frame(z = logical()))
+
+  expect_identical(vec_ptype_finalise(df), expect)
+})
+
+test_that("vec_ptype_finalise() requires vector types", {
+  expect_error(vec_ptype_finalise(quote(name)), class = "vctrs_error_scalar_type")
+  expect_error(vec_ptype_finalise(foobar()), class = "vctrs_error_scalar_type")
+})

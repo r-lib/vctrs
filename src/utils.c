@@ -239,6 +239,7 @@ SEXP vctrs_set_attributes(SEXP x, SEXP attrib) {
   return x;
 }
 
+// [[ include("utils.h") ]]
 SEXP map(SEXP x, SEXP (*fn)(SEXP)) {
   R_len_t n = Rf_length(x);
   SEXP out = PROTECT(Rf_allocVector(VECSXP, n));
@@ -254,9 +255,19 @@ SEXP map(SEXP x, SEXP (*fn)(SEXP)) {
   return out;
 }
 
+// [[ include("utils.h") ]]
+SEXP bare_df_map(SEXP df, SEXP (*fn)(SEXP)) {
+  SEXP out = PROTECT(map(df, fn));
+  out = vec_bare_df_restore(out, df, vctrs_shared_zero_int);
+
+  UNPROTECT(1);
+  return out;
+}
+
+// [[ include("utils.h") ]]
 SEXP df_map(SEXP df, SEXP (*fn)(SEXP)) {
   SEXP out = PROTECT(map(df, fn));
-  out = vctrs_df_restore(out, df, vctrs_shared_zero_int);
+  out = vec_df_restore(out, df, vctrs_shared_zero_int);
 
   UNPROTECT(1);
   return out;

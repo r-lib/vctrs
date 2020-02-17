@@ -1,6 +1,12 @@
 
 # vctrs (development version)
 
+* `vec_ptype_finalise()` is now recursive over all data frame types, ensuring
+  that unspecified columns are correctly finalised to logical (#800).
+
+* `vec_ptype()` now correctly handles unspecified columns in data frames, and
+  will always return an unspecified column type (#800).
+
 * `vec_slice()` and `vec_chop()` now work correctly with `bit64::integer64()`
   objects when an `NA` subscript is supplied. By extension, this means that
   `vec_init()` now works with these objects as well (#813).

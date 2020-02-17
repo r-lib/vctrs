@@ -43,7 +43,7 @@ vec_ptype_finalise <- function(x, ...) {
   if (!missing(...)) {
     ellipsis::check_dots_empty()
   }
-  return(.Call(vctrs_type_finalise, x))
+  return(.Call(vctrs_ptype_finalise, x))
   UseMethod("vec_ptype_finalise")
 }
 vec_ptype_finalise_dispatch <- function(x, ...) {

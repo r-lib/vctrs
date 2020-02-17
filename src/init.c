@@ -57,7 +57,7 @@ extern SEXP vec_proxy(SEXP);
 extern SEXP vec_proxy_equal(SEXP);
 extern SEXP vctrs_unspecified(SEXP);
 extern SEXP vec_type(SEXP);
-extern SEXP vec_type_finalise(SEXP);
+extern SEXP vec_ptype_finalise(SEXP);
 extern SEXP vctrs_minimal_names(SEXP);
 extern SEXP vctrs_unique_names(SEXP, SEXP);
 extern SEXP vctrs_as_minimal_names(SEXP);
@@ -70,7 +70,7 @@ extern SEXP vctrs_type2_df_df(SEXP, SEXP, SEXP, SEXP);
 extern SEXP vctrs_type_info(SEXP);
 extern SEXP vctrs_proxy_info(SEXP);
 extern SEXP vctrs_class_type(SEXP);
-extern SEXP vctrs_df_restore(SEXP, SEXP, SEXP);
+extern SEXP vec_bare_df_restore(SEXP, SEXP, SEXP);
 extern SEXP vctrs_recycle(SEXP, SEXP, SEXP);
 extern SEXP vctrs_coercible_cast(SEXP, SEXP, SEXP, SEXP);
 extern SEXP vec_assign(SEXP, SEXP, SEXP);
@@ -163,7 +163,7 @@ static const R_CallMethodDef CallEntries[] = {
   {"vctrs_proxy_equal",                (DL_FUNC) &vec_proxy_equal, 1},
   {"vctrs_unspecified",                (DL_FUNC) &vctrs_unspecified, 1},
   {"vctrs_type",                       (DL_FUNC) &vec_type, 1},
-  {"vctrs_type_finalise",              (DL_FUNC) &vec_type_finalise, 1},
+  {"vctrs_ptype_finalise",             (DL_FUNC) &vec_ptype_finalise, 1},
   {"vctrs_minimal_names",              (DL_FUNC) &vctrs_minimal_names, 1},
   {"vctrs_unique_names",               (DL_FUNC) &vctrs_unique_names, 2},
   {"vctrs_as_minimal_names",           (DL_FUNC) &vctrs_as_minimal_names, 1},
@@ -176,7 +176,7 @@ static const R_CallMethodDef CallEntries[] = {
   {"vctrs_type_info",                  (DL_FUNC) &vctrs_type_info, 1},
   {"vctrs_proxy_info",                 (DL_FUNC) &vctrs_proxy_info, 1},
   {"vctrs_class_type",                 (DL_FUNC) &vctrs_class_type, 1},
-  {"vctrs_df_restore",                 (DL_FUNC) &vctrs_df_restore, 3},
+  {"vctrs_bare_df_restore",            (DL_FUNC) &vec_bare_df_restore, 3},
   {"vctrs_recycle",                    (DL_FUNC) &vctrs_recycle, 3},
   {"vctrs_coercible_cast",             (DL_FUNC) &vctrs_coercible_cast, 4},
   {"vctrs_assign",                     (DL_FUNC) &vec_assign, 3},

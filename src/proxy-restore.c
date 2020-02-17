@@ -91,17 +91,14 @@ SEXP vec_restore_default(SEXP x, SEXP to) {
   return x;
 }
 
-SEXP vctrs_df_restore(SEXP x, SEXP to, SEXP n) {
-  if (TYPEOF(x) != VECSXP) {
-    Rf_errorcall(R_NilValue, "Internal error: Attempt to restore data frame from a %s.",
-                 Rf_type2char(TYPEOF(x)));
-  }
-
-  R_len_t size = (n == R_NilValue) ? df_raw_size(x) : r_int_get(n, 0);
-  return df_restore_impl(x, to, size);
+static SEXP vec_restore_dispatch(SEXP x, SEXP to, SEXP n) {
+  return vctrs_dispatch3(syms_vec_restore_dispatch, fns_vec_restore_dispatch,
+                         syms_x, x,
+                         syms_to, to,
+                         syms_n, n);
 }
 
-SEXP df_restore_impl(SEXP x, SEXP to, R_len_t size) {
+static SEXP bare_df_restore_impl(SEXP x, SEXP to, R_len_t size) {
   x = PROTECT(r_maybe_duplicate(x));
   x = PROTECT(vec_restore_default(x, to));
 
@@ -118,31 +115,36 @@ SEXP df_restore_impl(SEXP x, SEXP to, R_len_t size) {
   return x;
 }
 
+// [[ include("vctrs.h"); register() ]]
+SEXP vec_bare_df_restore(SEXP x, SEXP to, SEXP n) {
+  if (TYPEOF(x) != VECSXP) {
+    Rf_errorcall(R_NilValue, "Internal error: Attempt to restore data frame from a %s.",
+                 Rf_type2char(TYPEOF(x)));
+  }
 
-static SEXP vec_restore_dispatch(SEXP x, SEXP to, SEXP n);
+  R_len_t size = (n == R_NilValue) ? df_raw_size(x) : r_int_get(n, 0);
+  return bare_df_restore_impl(x, to, size);
+}
+
+// Restore methods are passed the original atomic type back, so we
+// first restore data frames as such before calling the restore
+// method, if any
+// [[ include("vctrs.h") ]]
+SEXP vec_df_restore(SEXP x, SEXP to, SEXP n) {
+  SEXP out = PROTECT(vec_bare_df_restore(x, to, n));
+  out = vec_restore_dispatch(out, to, n);
+  UNPROTECT(1);
+  return out;
+}
 
 SEXP vec_restore(SEXP x, SEXP to, SEXP n) {
   switch (class_type(to)) {
   default: return vec_restore_dispatch(x, to, n);
   case vctrs_class_none: return vec_restore_default(x, to);
   case vctrs_class_bare_data_frame:
-  case vctrs_class_bare_tibble: return vctrs_df_restore(x, to, n);
-  case vctrs_class_data_frame: {
-    // Restore methods are passed the original atomic type back, so we
-    // first restore data frames as such before calling the restore
-    // method, if any
-    SEXP out = PROTECT(vctrs_df_restore(x, to, n));
-    out = vec_restore_dispatch(out, to, n);
-    UNPROTECT(1);
-    return out;
-  }}
-}
-
-static SEXP vec_restore_dispatch(SEXP x, SEXP to, SEXP n) {
-  return vctrs_dispatch3(syms_vec_restore_dispatch, fns_vec_restore_dispatch,
-                         syms_x, x,
-                         syms_to, to,
-                         syms_n, n);
+  case vctrs_class_bare_tibble: return vec_bare_df_restore(x, to, n);
+  case vctrs_class_data_frame: return vec_df_restore(x, to, n);
+  }
 }
 
 
