@@ -1,10 +1,18 @@
 context("test-type")
 
 
-test_that("vec_ptype() is a no-op for non-vectors", {
+test_that("vec_ptype() is a no-op for NULL", {
   expect_null(vec_ptype(NULL))
-  expect_identical(vec_ptype(quote(name)), quote(name))
+})
+
+test_that("vec_ptype() is a no-op for partial types", {
+  expect_identical(vec_ptype(partial_factor("x")), partial_factor("x"))
   expect_identical(vec_ptype(partial_frame(x = 1)), partial_frame(x = 1))
+})
+
+test_that("vec_ptype() errors on scalars", {
+  expect_error(vec_ptype(quote(name)), class = "vctrs_error_scalar_type")
+  expect_error(vec_ptype(quote(fn())), class = "vctrs_error_scalar_type")
 })
 
 test_that(".ptype argument overrides others", {
@@ -96,9 +104,10 @@ test_that("proxied types are have s3 bare type", {
 
 test_that("vec_ptype() preserves attributes of unproxied structures", {
   expect_identical(vec_ptype(foobar(dbl(1))), foobar(dbl()))
+})
 
-  # Here `foobar()` is treated as a scalar so is returned as is
-  expect_identical(vec_ptype(foobar(list(1))), foobar(list(1)))
+test_that("vec_ptype() errors on scalar lists", {
+  expect_error(vec_ptype(foobar(list())), class = "vctrs_error_scalar_type")
 })
 
 test_that("can retrieve type info", {

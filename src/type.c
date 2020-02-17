@@ -13,7 +13,6 @@ static SEXP s3_type(SEXP x);
 // [[ include("vctrs.h"); register() ]]
 SEXP vec_type(SEXP x) {
   switch (vec_typeof(x)) {
-  case vctrs_type_scalar:      return x;
   case vctrs_type_null:        return R_NilValue;
   case vctrs_type_unspecified: return vctrs_shared_empty_uns;
   case vctrs_type_logical:     return vec_type_slice(x, vctrs_shared_empty_lgl);
@@ -25,6 +24,7 @@ SEXP vec_type(SEXP x) {
   case vctrs_type_list:        return vec_type_slice(x, vctrs_shared_empty_list);
   case vctrs_type_dataframe:   return bare_df_map(x, &vec_type);
   case vctrs_type_s3:          return s3_type(x);
+  case vctrs_type_scalar:      stop_scalar_type(x, args_empty);
   }
   never_reached("vec_type_impl");
 }
@@ -55,12 +55,12 @@ static SEXP s3_type(SEXP x) {
     break;
   }
 
-  if (vec_is_vector(x)) {
-    return vec_slice(x, R_NilValue);
-  } else {
-    // FIXME: Only used for partial frames
+  if (vec_is_partial(x)) {
     return x;
   }
+
+  vec_assert(x, args_empty);
+  return vec_slice(x, R_NilValue);
 }
 
 static SEXP vec_ptype_finalise_unspecified(SEXP x);

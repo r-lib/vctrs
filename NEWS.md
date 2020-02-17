@@ -1,6 +1,8 @@
 
 # vctrs (development version)
 
+* `vec_ptype()` now errors on scalar inputs (#807).
+
 * `vec_ptype_finalise()` is now recursive over all data frame types, ensuring
   that unspecified columns are correctly finalised to logical (#800).
 
