@@ -179,9 +179,14 @@ across all arguments.</p>
     <tr>
       <th>...</th>
       <td><p>Data frames or vectors.</p>
-<p><code>vec_rbind()</code> ignores names unless <code>.names_to</code> is supplied.
-<code>vec_cbind()</code> creates packed data frame columns with named
-inputs.</p>
+<p>When the inputs are named:</p><ul>
+<li><p><code>vec_rbind()</code> assigns names to row names unless <code>.names_to</code> is
+supplied. In that case the names are assigned in the column
+defined by <code>.names_to</code>.</p></li>
+<li><p><code>vec_cbind()</code> creates packed data frame columns with named
+inputs.</p></li>
+</ul>
+
 <p><code>NULL</code> inputs are silently ignored. Empty (e.g. zero row) inputs
 will not appear in the output, but will affect the derived <code>.ptype</code>.</p></td>
     </tr>

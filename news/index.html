@@ -152,6 +152,8 @@
 <a href="#vctrs-development-version" class="anchor"></a>vctrs (development version)<small> Unreleased </small>
 </h1>
 <ul>
+<li><p><code><a href="../reference/vec_slice.html">vec_slice()</a></code> and <code><a href="../reference/vec_chop.html">vec_chop()</a></code> now work correctly with <code><a href="https://rdrr.io/pkg/bit64/man/bit64-package.html">bit64::integer64()</a></code> objects when an <code>NA</code> subscript is supplied. By extension, this means that <code><a href="../reference/vec_init.html">vec_init()</a></code> now works with these objects as well (<a href='https://github.com/r-lib/vctrs/issues/813'>#813</a>).</p></li>
+<li><p><code><a href="../reference/vec_bind.html">vec_rbind()</a></code> now binds row names. When named inputs are supplied and <code>names_to</code> is <code>NULL</code>, the names define row names. If <code>names_to</code> is supplied, they are assigned in the column name as before.</p></li>
 <li><p>The <code><a href="https://rdrr.io/r/base/c.html">c()</a></code> method for <code>vctrs_vctr</code> now throws an error when <code>recursive</code> or <code>use.names</code> is supplied (<a href='https://github.com/r-lib/vctrs/issues/791'>#791</a>).</p></li>
 <li><p><code><a href="../reference/vec_c.html">vec_c()</a></code> now falls back to <code><a href="https://rdrr.io/r/base/c.html">base::c()</a></code> if the vector doesn’t implement <code><a href="../reference/vec_ptype2.html">vec_ptype2()</a></code> but implements <code><a href="https://rdrr.io/r/base/c.html">c()</a></code>. This should improve the compatibility of vctrs-based functions with foreign classes (<a href='https://github.com/r-lib/vctrs/issues/801'>#801</a>).</p></li>
 </ul>
