@@ -256,21 +256,6 @@ vec_ptype2.list.list <- function(x, y, ..., x_arg = "x", y_arg = "y") {
     shape_match(list(), x, y)
   }
 }
-#' @method vec_ptype2.logical list
-#' @export
-vec_ptype2.logical.list <- function(x, y, ..., x_arg = "x", y_arg = "y") {
-  # Prevent `NA` from being a common type of lists. This way:
-  #
-  # ```
-  # vec_slice(x, 1) <- NA        # Fails
-  # vec_slice(x, 1) <- list(NA)  # Succeeds
-  # ```
-  if (is_unspecified(x)) {
-    stop_incompatible_type(x, y, x_arg = x_arg, y_arg = y_arg)
-  } else {
-    vec_default_ptype2(x, y, x_arg = x_arg, y_arg = y_arg)
-  }
-}
 
 
 # Default

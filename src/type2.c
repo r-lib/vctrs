@@ -2,12 +2,6 @@
 #include "type-data-frame.h"
 #include "utils.h"
 
-static SEXP vec_ptype2_dispatch_unspecified_list(SEXP x,
-                                                 SEXP y,
-                                                 struct vctrs_arg* x_arg,
-                                                 struct vctrs_arg* y_arg,
-                                                 bool left_unspecified);
-
 // [[ include("vctrs.h") ]]
 SEXP vec_type2(SEXP x, SEXP y,
                struct vctrs_arg* x_arg,
@@ -43,18 +37,10 @@ SEXP vec_type2(SEXP x, SEXP y,
   }
 
   if (type_x == vctrs_type_unspecified) {
-    if (type_y == vctrs_type_list) {
-      return vec_ptype2_dispatch_unspecified_list(x, y, x_arg, y_arg, true);
-    } else {
-      return vec_type(y);
-    }
+    return vec_type(y);
   }
   if (type_y == vctrs_type_unspecified) {
-    if (type_x == vctrs_type_list) {
-      return vec_ptype2_dispatch_unspecified_list(x, y, x_arg, y_arg, false);
-    } else {
-      return vec_type(x);
-    }
+    return vec_type(x);
   }
 
   if (type_x == vctrs_type_s3 || type_y == vctrs_type_s3) {
@@ -94,29 +80,6 @@ SEXP vec_type2(SEXP x, SEXP y,
   default:
     return vec_ptype2_dispatch_s3(x, y, x_arg, y_arg);
   }
-}
-
-// TODO - Revisit if this behavior is appropriate. For now,
-// following behavior in `vec_ptype2.logical.list()` to prevent `NA` and
-// `list()` from having a common type. We know that one of the inputs is
-// unspecified, so we can easily check if it is `NA` vs `unspecified()` by
-// checking the object bit.
-static SEXP vec_ptype2_dispatch_unspecified_list(SEXP x,
-                                                 SEXP y,
-                                                 struct vctrs_arg* x_arg,
-                                                 struct vctrs_arg* y_arg,
-                                                 bool left_unspecified) {
-  if (left_unspecified) {
-    if (OBJECT(x)) {
-      return vec_type(y);
-    }
-    stop_incompatible_type(x, y, x_arg, y_arg);
-  }
-
-  if (OBJECT(y)) {
-    return vec_type(x);
-  }
-  stop_incompatible_type(x, y, x_arg, y_arg);
 }
 
 // [[ include("vctrs.h") ]]
