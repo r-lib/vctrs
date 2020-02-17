@@ -33,7 +33,7 @@ SEXP vec_cast_dispatch(SEXP x,
   case vctrs_type_dataframe:
     switch(class_type(x)) {
     case vctrs_class_bare_data_frame:
-      Rf_errorcall(R_NilValue, "`x` should have been classified as a `vctrs_type_dataframe`");
+      Rf_errorcall(R_NilValue, "Internal error: `x` should have been classified as a `vctrs_type_dataframe`");
 
     case vctrs_class_bare_tibble:
       return df_as_dataframe(x, to, x_arg, to_arg);
@@ -106,7 +106,7 @@ static SEXP vec_cast_dispatch2(SEXP x, SEXP to,
     case vctrs_type_s3:
       switch (class_type(x)) {
       case vctrs_class_bare_data_frame:
-        Rf_errorcall(R_NilValue, "`x` should have been classified as a `vctrs_type_dataframe`");
+        Rf_errorcall(R_NilValue, "Internal error: `x` should have been classified as a `vctrs_type_dataframe`");
 
       case vctrs_class_bare_tibble:
         return df_as_dataframe(x, to, x_arg, to_arg);
@@ -121,7 +121,7 @@ static SEXP vec_cast_dispatch2(SEXP x, SEXP to,
     break;
 
   case vctrs_class_bare_data_frame:
-    Rf_errorcall(R_NilValue, "`to` should have been classified as a `vctrs_type_dataframe`");
+    Rf_errorcall(R_NilValue, "Internal error: `to` should have been classified as a `vctrs_type_dataframe`");
 
   default:
     break;
