@@ -39,7 +39,7 @@ SEXP new_data_frame(SEXP x, R_len_t n) {
   return x;
 }
 
-static R_len_t pull_data_frame_size(SEXP x, SEXP n);
+static R_len_t df_size_from_list(SEXP x, SEXP n);
 static void set_data_frame_class(SEXP x, SEXP cls);
 
 // [[ register() ]]
@@ -48,7 +48,7 @@ SEXP vctrs_new_data_frame(SEXP x, SEXP n, SEXP attributes, SEXP cls) {
     Rf_errorcall(R_NilValue, "`x` must be a list");
   }
 
-  R_len_t size = pull_data_frame_size(x, n);
+  R_len_t size = df_size_from_list(x, n);
 
   SEXP out = PROTECT(new_data_frame(x, size));
 
@@ -75,7 +75,7 @@ SEXP vctrs_new_data_frame(SEXP x, SEXP n, SEXP attributes, SEXP cls) {
   return out;
 }
 
-static R_len_t pull_data_frame_size(SEXP x, SEXP n) {
+static R_len_t df_size_from_list(SEXP x, SEXP n) {
   if (n == R_NilValue) {
     return df_raw_size_from_list(x);
   }
