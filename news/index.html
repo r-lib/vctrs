@@ -152,6 +152,8 @@
 <a href="#vctrs-development-version" class="anchor"></a>vctrs (development version)<small> Unreleased </small>
 </h1>
 <ul>
+<li><p><code><a href="../reference/new_partial.html">vec_ptype_finalise()</a></code> is now recursive over all data frame types, ensuring that unspecified columns are correctly finalised to logical (<a href='https://github.com/r-lib/vctrs/issues/800'>#800</a>).</p></li>
+<li><p><code><a href="../reference/vec_ptype.html">vec_ptype()</a></code> now correctly handles unspecified columns in data frames, and will always return an unspecified column type (<a href='https://github.com/r-lib/vctrs/issues/800'>#800</a>).</p></li>
 <li><p><code><a href="../reference/vec_slice.html">vec_slice()</a></code> and <code><a href="../reference/vec_chop.html">vec_chop()</a></code> now work correctly with <code><a href="https://rdrr.io/pkg/bit64/man/bit64-package.html">bit64::integer64()</a></code> objects when an <code>NA</code> subscript is supplied. By extension, this means that <code><a href="../reference/vec_init.html">vec_init()</a></code> now works with these objects as well (<a href='https://github.com/r-lib/vctrs/issues/813'>#813</a>).</p></li>
 <li><p><code><a href="../reference/vec_bind.html">vec_rbind()</a></code> now binds row names. When named inputs are supplied and <code>names_to</code> is <code>NULL</code>, the names define row names. If <code>names_to</code> is supplied, they are assigned in the column name as before.</p></li>
 <li><p>The <code><a href="https://rdrr.io/r/base/c.html">c()</a></code> method for <code>vctrs_vctr</code> now throws an error when <code>recursive</code> or <code>use.names</code> is supplied (<a href='https://github.com/r-lib/vctrs/issues/791'>#791</a>).</p></li>
