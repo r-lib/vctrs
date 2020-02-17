@@ -247,7 +247,7 @@ SEXP vctrs_as_df_row(SEXP x, SEXP quiet) {
 
 static SEXP as_df_col(SEXP x, SEXP outer, bool* allow_pack);
 static SEXP vec_cbind(SEXP xs, SEXP ptype, SEXP size, struct name_repair_opts* name_repair);
-static SEXP cbind_container_type(SEXP x);
+static SEXP cbind_container_type(SEXP x, void* data);
 
 // [[ register(external = TRUE) ]]
 SEXP vctrs_cbind(SEXP call, SEXP op, SEXP args, SEXP env) {
@@ -271,8 +271,9 @@ static SEXP vec_cbind(SEXP xs, SEXP ptype, SEXP size, struct name_repair_opts* n
   R_len_t n = Rf_length(xs);
 
   // Find the common container type of inputs
-  SEXP containers = PROTECT(map(xs, &cbind_container_type));
-  ptype = PROTECT(cbind_container_type(ptype));
+  SEXP rownames = R_NilValue;
+  SEXP containers = PROTECT(map_with_data(xs, &cbind_container_type, &rownames));
+  ptype = PROTECT(cbind_container_type(ptype, &rownames));
 
   SEXP type = PROTECT(vctrs_type_common_impl(containers, ptype));
   if (type == R_NilValue) {
@@ -291,6 +292,12 @@ static SEXP vec_cbind(SEXP xs, SEXP ptype, SEXP size, struct name_repair_opts* n
     nrow = size_validate(size, ".size");
   }
 
+  if (rownames != R_NilValue && Rf_length(rownames) != nrow) {
+    rownames = PROTECT(vec_recycle(rownames, nrow, args_empty));
+    rownames = vec_as_unique_names(rownames, false);
+    UNPROTECT(1);
+  }
+  PROTECT(rownames);
 
   // Convert inputs to data frames, validate, and collect total number of columns
   SEXP xs_names = PROTECT(r_names(xs));
@@ -365,14 +372,31 @@ static SEXP vec_cbind(SEXP xs, SEXP ptype, SEXP size, struct name_repair_opts* n
   names = PROTECT(vec_as_names(names, name_repair));
   Rf_setAttrib(out, R_NamesSymbol, names);
 
+  if (rownames != R_NilValue) {
+    Rf_setAttrib(out, R_RowNamesSymbol, rownames);
+  }
+
   out = vec_restore(out, type, R_NilValue);
 
-  UNPROTECT(8);
+  UNPROTECT(9);
   return out;
 }
 
-static SEXP cbind_container_type(SEXP x) {
+static SEXP cbind_container_type(SEXP x, void* data) {
   if (is_data_frame(x)) {
+    SEXP rn = df_rownames(x);
+
+    if (rownames_type(rn) == ROWNAMES_IDENTIFIERS) {
+      SEXP* learned_rn_p = (SEXP*) data;
+      SEXP learned_rn = *learned_rn_p;
+
+      if (learned_rn == R_NilValue) {
+        *learned_rn_p = rn;
+      } else if (!equal_object(rn, learned_rn)) {
+        Rf_errorcall(R_NilValue, "Can't column-bind data frames with different row names.");
+      }
+    }
+
     return df_container_type(x);
   } else {
     return R_NilValue;
