@@ -39,6 +39,84 @@ SEXP new_data_frame(SEXP x, R_len_t n) {
   return x;
 }
 
+static R_len_t df_size_from_list(SEXP x, SEXP n);
+static void set_data_frame_class(SEXP x, SEXP cls);
+
+// [[ register() ]]
+SEXP vctrs_new_data_frame(SEXP x, SEXP n, SEXP attributes, SEXP cls) {
+  if (TYPEOF(x) != VECSXP) {
+    Rf_errorcall(R_NilValue, "`x` must be a list");
+  }
+
+  R_len_t size = df_size_from_list(x, n);
+
+  SEXP out = PROTECT(new_data_frame(x, size));
+
+  // Set extra attributes
+  while(attributes != R_NilValue) {
+    SEXP tag = TAG(attributes);
+
+    if (tag == R_NilValue) {
+      Rf_errorcall(R_NilValue, "Attributes supplied in `...` must be named");
+    }
+
+    if (tag != R_NamesSymbol &&
+        tag != R_RowNamesSymbol &&
+        tag != R_ClassSymbol) {
+      Rf_setAttrib(out, tag, CAR(attributes));
+    }
+
+    attributes = CDR(attributes);
+  }
+
+  set_data_frame_class(out, cls);
+
+  UNPROTECT(1);
+  return out;
+}
+
+static R_len_t df_size_from_list(SEXP x, SEXP n) {
+  if (n == R_NilValue) {
+    return df_raw_size_from_list(x);
+  }
+
+  if (TYPEOF(n) != INTSXP || Rf_length(n) != 1) {
+    Rf_errorcall(R_NilValue, "`n` must be an integer of size 1");
+  }
+
+  return r_int_get(n, 0);
+}
+
+static void set_data_frame_class(SEXP x, SEXP cls) {
+  if (TYPEOF(cls) != STRSXP) {
+    Rf_errorcall(R_NilValue, "`class` must be a character vector");
+  }
+
+  if (Rf_length(cls) == 0) {
+    return;
+  }
+
+  SEXP args = PROTECT(Rf_allocVector(VECSXP, 2));
+  SET_VECTOR_ELT(args, 0, cls);
+  SET_VECTOR_ELT(args, 1, classes_data_frame);
+
+  const struct name_repair_opts name_repair_opts = {
+    .type = name_repair_none,
+    .fn = R_NilValue
+  };
+
+  cls = PROTECT(vec_c(
+    args,
+    vctrs_shared_empty_chr,
+    R_NilValue,
+    &name_repair_opts
+  ));
+
+  Rf_setAttrib(x, R_ClassSymbol, cls);
+
+  UNPROTECT(2);
+}
+
 // [[ include("type-data-frame.h") ]]
 enum rownames_type rownames_type(SEXP x) {
   switch (TYPEOF(x)) {

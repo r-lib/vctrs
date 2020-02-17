@@ -387,6 +387,7 @@ bool is_record(SEXP x);
 R_len_t df_size(SEXP x);
 R_len_t df_rownames_size(SEXP x);
 R_len_t df_raw_size(SEXP x);
+R_len_t df_raw_size_from_list(SEXP x);
 SEXP vctrs_df_restore(SEXP x, SEXP to, SEXP n);
 SEXP df_restore_impl(SEXP x, SEXP to, R_len_t size);
 

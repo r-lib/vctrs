@@ -176,3 +176,76 @@ test_that("can slice AsIs class", {
   df <- data.frame(x = I(1:3), y = I(list(4, 5, 6)))
   expect_identical(vec_slice(df, 2:3), unrownames(df[2:3, ]))
 })
+
+# new_data_frame ----------------------------------------------------------
+
+test_that("can construct an empty data frame", {
+  expect_identical(new_data_frame(), data.frame())
+})
+
+test_that("can validly set the number of rows when there are no columns", {
+  expect <- structure(
+    list(),
+    class = "data.frame",
+    row.names = .set_row_names(2L),
+    names = character()
+  )
+
+  expect_identical(new_data_frame(n = 2L), expect)
+})
+
+test_that("can add additional classes", {
+  expect_s3_class(new_data_frame(class = "foobar"), "foobar")
+  expect_s3_class(new_data_frame(class = c("foo", "bar")), c("foo", "bar"))
+})
+
+test_that("can add additional attributes", {
+  expect <- data.frame()
+  attr(expect, "foo") <- "bar"
+  attr(expect, "a") <- "b"
+
+  expect_identical(new_data_frame(foo = "bar", a = "b"), expect)
+})
+
+test_that("size is pulled from first column if not supplied", {
+  x <- new_data_frame(list(x = 1:5, y = 1:6))
+  expect_identical(.row_names_info(x, type = 1), -5L)
+})
+
+test_that("can construct a data frame without column names", {
+  expect_named(new_data_frame(list(1, 2)), NULL)
+})
+
+test_that("the names on an empty data frame are an empty character vector", {
+  expect_identical(names(new_data_frame()), character())
+})
+
+test_that("attributes with special names are ignored", {
+  expect_identical(
+    names(new_data_frame(list(), 0L, names = "name")),
+    character()
+  )
+
+  expect_identical(
+    attr(new_data_frame(list(), 0L, row.names = "rowname"), "row.names"),
+    integer()
+  )
+})
+
+test_that("`x` must be a list", {
+  expect_error(new_data_frame(1), "`x` must be a list")
+})
+
+test_that("if supplied, `n` must be an integer of size 1", {
+  expect_error(new_data_frame(n = c(1L, 2L)), "must be an integer of size 1")
+  expect_error(new_data_frame(n = "x"), "must be an integer of size 1")
+})
+
+test_that("`class` must be a character vector", {
+  expect_error(new_data_frame(class = 1), "must be a character vector")
+})
+
+test_that("attributes must be named", {
+  expect_error(new_data_frame(list(), n = 0L, 1), "supplied in `...` must be named")
+})
+

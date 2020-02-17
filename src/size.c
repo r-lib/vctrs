@@ -132,6 +132,11 @@ R_len_t df_raw_size(SEXP x) {
     return n;
   }
 
+  return df_raw_size_from_list(x);
+}
+
+// [[ include("vctrs.h") ]]
+R_len_t df_raw_size_from_list(SEXP x) {
   if (Rf_length(x) >= 1) {
     return vec_size(VECTOR_ELT(x, 0));
   } else {
