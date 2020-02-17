@@ -190,9 +190,6 @@ static SEXP int_as_double(SEXP x, bool* lossy) {
   return out;
 }
 
-// Defined below
-static SEXP df_as_dataframe(SEXP x, SEXP to, struct vctrs_arg* x_arg, struct vctrs_arg* to_arg);
-
 // [[ register() ]]
 SEXP vctrs_df_as_dataframe(SEXP x, SEXP to, SEXP x_arg_, SEXP to_arg_) {
   if (!r_is_string(x_arg_)) {
@@ -212,7 +209,8 @@ SEXP vctrs_df_as_dataframe(SEXP x, SEXP to, SEXP x_arg_, SEXP to_arg_) {
 // cast to their types in `to`. Extra `x` columns are dropped and
 // cause a lossy cast. Extra `to` columns are filled with missing
 // values.
-static SEXP df_as_dataframe(SEXP x, SEXP to, struct vctrs_arg* x_arg, struct vctrs_arg* to_arg) {
+// [[ include("vctrs.h") ]]
+SEXP df_as_dataframe(SEXP x, SEXP to, struct vctrs_arg* x_arg, struct vctrs_arg* to_arg) {
   SEXP x_names = PROTECT(r_names(x));
   SEXP to_names = PROTECT(r_names(to));
 

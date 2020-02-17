@@ -189,6 +189,7 @@ enum vctrs_type2_s3 {
   vctrs_type2_s3_null_bare_date,
   vctrs_type2_s3_null_bare_posixct,
   vctrs_type2_s3_null_bare_posixlt,
+  vctrs_type2_s3_null_bare_tibble,
   vctrs_type2_s3_null_unknown,
 
   vctrs_type2_s3_unspecified_bare_factor,
@@ -196,6 +197,7 @@ enum vctrs_type2_s3 {
   vctrs_type2_s3_unspecified_bare_date,
   vctrs_type2_s3_unspecified_bare_posixct,
   vctrs_type2_s3_unspecified_bare_posixlt,
+  vctrs_type2_s3_unspecified_bare_tibble,
   vctrs_type2_s3_unspecified_unknown,
 
   vctrs_type2_s3_logical_bare_factor,
@@ -203,6 +205,7 @@ enum vctrs_type2_s3 {
   vctrs_type2_s3_logical_bare_date,
   vctrs_type2_s3_logical_bare_posixct,
   vctrs_type2_s3_logical_bare_posixlt,
+  vctrs_type2_s3_logical_bare_tibble,
   vctrs_type2_s3_logical_unknown,
 
   vctrs_type2_s3_integer_bare_factor,
@@ -210,6 +213,7 @@ enum vctrs_type2_s3 {
   vctrs_type2_s3_integer_bare_date,
   vctrs_type2_s3_integer_bare_posixct,
   vctrs_type2_s3_integer_bare_posixlt,
+  vctrs_type2_s3_integer_bare_tibble,
   vctrs_type2_s3_integer_unknown,
 
   vctrs_type2_s3_double_bare_factor,
@@ -217,6 +221,7 @@ enum vctrs_type2_s3 {
   vctrs_type2_s3_double_bare_date,
   vctrs_type2_s3_double_bare_posixct,
   vctrs_type2_s3_double_bare_posixlt,
+  vctrs_type2_s3_double_bare_tibble,
   vctrs_type2_s3_double_unknown,
 
   vctrs_type2_s3_complex_bare_factor,
@@ -224,6 +229,7 @@ enum vctrs_type2_s3 {
   vctrs_type2_s3_complex_bare_date,
   vctrs_type2_s3_complex_bare_posixct,
   vctrs_type2_s3_complex_bare_posixlt,
+  vctrs_type2_s3_complex_bare_tibble,
   vctrs_type2_s3_complex_unknown,
 
   vctrs_type2_s3_character_bare_factor,
@@ -231,6 +237,7 @@ enum vctrs_type2_s3 {
   vctrs_type2_s3_character_bare_date,
   vctrs_type2_s3_character_bare_posixct,
   vctrs_type2_s3_character_bare_posixlt,
+  vctrs_type2_s3_character_bare_tibble,
   vctrs_type2_s3_character_unknown,
 
   vctrs_type2_s3_raw_bare_factor,
@@ -238,6 +245,7 @@ enum vctrs_type2_s3 {
   vctrs_type2_s3_raw_bare_date,
   vctrs_type2_s3_raw_bare_posixct,
   vctrs_type2_s3_raw_bare_posixlt,
+  vctrs_type2_s3_raw_bare_tibble,
   vctrs_type2_s3_raw_unknown,
 
   vctrs_type2_s3_list_bare_factor,
@@ -245,6 +253,7 @@ enum vctrs_type2_s3 {
   vctrs_type2_s3_list_bare_date,
   vctrs_type2_s3_list_bare_posixct,
   vctrs_type2_s3_list_bare_posixlt,
+  vctrs_type2_s3_list_bare_tibble,
   vctrs_type2_s3_list_unknown,
 
   vctrs_type2_s3_dataframe_bare_factor,
@@ -252,6 +261,7 @@ enum vctrs_type2_s3 {
   vctrs_type2_s3_dataframe_bare_date,
   vctrs_type2_s3_dataframe_bare_posixct,
   vctrs_type2_s3_dataframe_bare_posixlt,
+  vctrs_type2_s3_dataframe_bare_tibble,
   vctrs_type2_s3_dataframe_unknown,
 
   vctrs_type2_s3_scalar_bare_factor,
@@ -259,6 +269,7 @@ enum vctrs_type2_s3 {
   vctrs_type2_s3_scalar_bare_date,
   vctrs_type2_s3_scalar_bare_posixct,
   vctrs_type2_s3_scalar_bare_posixlt,
+  vctrs_type2_s3_scalar_bare_tibble,
   vctrs_type2_s3_scalar_unknown,
 
   vctrs_type2_s3_bare_factor_bare_factor,
@@ -266,25 +277,33 @@ enum vctrs_type2_s3 {
   vctrs_type2_s3_bare_factor_bare_date,
   vctrs_type2_s3_bare_factor_bare_posixct,
   vctrs_type2_s3_bare_factor_bare_posixlt,
+  vctrs_type2_s3_bare_factor_bare_tibble,
   vctrs_type2_s3_bare_factor_unknown,
 
   vctrs_type2_s3_bare_ordered_bare_ordered,
   vctrs_type2_s3_bare_ordered_bare_date,
   vctrs_type2_s3_bare_ordered_bare_posixct,
   vctrs_type2_s3_bare_ordered_bare_posixlt,
+  vctrs_type2_s3_bare_ordered_bare_tibble,
   vctrs_type2_s3_bare_ordered_unknown,
 
   vctrs_type2_s3_bare_date_bare_date,
   vctrs_type2_s3_bare_date_bare_posixct,
   vctrs_type2_s3_bare_date_bare_posixlt,
+  vctrs_type2_s3_bare_date_bare_tibble,
   vctrs_type2_s3_bare_date_unknown,
 
   vctrs_type2_s3_bare_posixct_bare_posixct,
   vctrs_type2_s3_bare_posixct_bare_posixlt,
+  vctrs_type2_s3_bare_posixct_bare_tibble,
   vctrs_type2_s3_bare_posixct_unknown,
 
   vctrs_type2_s3_bare_posixlt_bare_posixlt,
+  vctrs_type2_s3_bare_posixlt_bare_tibble,
   vctrs_type2_s3_bare_posixlt_unknown,
+
+  vctrs_type2_s3_bare_tibble_bare_tibble,
+  vctrs_type2_s3_bare_tibble_unknown,
 
   vctrs_type2_s3_unknown_unknown
 };
@@ -380,6 +399,9 @@ SEXP vec_cast_dispatch(SEXP x,
                        bool* lossy,
                        struct vctrs_arg* x_arg,
                        struct vctrs_arg* to_arg);
+
+SEXP df_ptype2(SEXP x, SEXP y, struct vctrs_arg* x_arg, struct vctrs_arg* y_arg);
+SEXP df_as_dataframe(SEXP x, SEXP to, struct vctrs_arg* x_arg, struct vctrs_arg* to_arg);
 
 bool is_data_frame(SEXP x);
 bool is_record(SEXP x);
@@ -506,6 +528,10 @@ SEXP ord_as_ordered(SEXP x, SEXP to, bool* lossy, struct vctrs_arg* x_arg, struc
 
 SEXP date_datetime_ptype2(SEXP x, SEXP y);
 SEXP datetime_datetime_ptype2(SEXP x, SEXP y);
+
+// Tibble methods ----------------------------------------------
+
+SEXP tibble_ptype2(SEXP x, SEXP y, struct vctrs_arg* x_arg, struct vctrs_arg* y_arg);
 
 // Character translation ----------------------------------------
 
