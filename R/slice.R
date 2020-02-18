@@ -227,6 +227,14 @@ vec_chop <- function(x, indices = NULL) {
   .Call(vctrs_chop, x, indices)
 }
 
+#' @export
+vec_unchop <- function(x,
+                       indices = NULL,
+                       ptype = NULL,
+                       name_repair = c("minimal", "unique", "check_unique", "universal")) {
+  .Call(vctrs_unchop, x, indices, ptype, name_repair)
+}
+
 # Exposed for testing  (`starts` is 0-based)
 vec_chop_seq <- function(x, starts, sizes, increasings = TRUE) {
   args <- vec_recycle_common(starts, sizes, increasings)
