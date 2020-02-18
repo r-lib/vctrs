@@ -20,6 +20,14 @@ new_data_frame <- function(x = list(), n = NULL, ..., class = character()) {
 }
 new_data_frame <- fn_inline_formals(new_data_frame, c("x", "n", "class"))
 
+#' @rdname new_data_frame
+#' @export
+new_bare_data_frame <- function(x = list(), n = NULL) {
+  .Call(vctrs_new_bare_data_frame, x, n)
+}
+new_bare_data_frame <- fn_inline_formals(new_bare_data_frame, c("x", "n"))
+
+
 # Light weight constructor used for tests - avoids having to repeatedly do
 # stringsAsFactors = FALSE etc. Should not be used in internal code as is
 # not a real helper as it lacks value checks.

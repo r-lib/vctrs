@@ -44,6 +44,17 @@ static void set_data_frame_attributes(SEXP x, SEXP attributes);
 static void set_data_frame_class(SEXP x, SEXP cls);
 
 // [[ register() ]]
+SEXP vctrs_new_bare_data_frame(SEXP x, SEXP n) {
+  if (TYPEOF(x) != VECSXP) {
+    Rf_errorcall(R_NilValue, "`x` must be a list");
+  }
+
+  R_len_t size = df_size_from_list(x, n);
+
+  return new_data_frame(x, size);
+}
+
+// [[ register() ]]
 SEXP vctrs_new_data_frame(SEXP x, SEXP n, SEXP attributes, SEXP cls) {
   if (TYPEOF(x) != VECSXP) {
     Rf_errorcall(R_NilValue, "`x` must be a list");
