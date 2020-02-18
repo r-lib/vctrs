@@ -1,6 +1,8 @@
 
 # vctrs (development version)
 
+* New `vec_is_list()` for detecting if a vector is a list in the vctrs sense.
+
 * Unspecified vectors of `NA` can now be assigned into a list (#819).
 
   ```
