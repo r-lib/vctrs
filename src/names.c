@@ -26,6 +26,9 @@ static void vec_validate_minimal_names(SEXP names, R_len_t n);
 
 // [[ include("names.h") ]]
 SEXP vec_as_names(SEXP names, const struct name_repair_opts* opts) {
+  if (!opts) {
+    return names;
+  }
   switch (opts->type) {
   case name_repair_none: return names;
   case name_repair_minimal: return vctrs_as_minimal_names(names);
