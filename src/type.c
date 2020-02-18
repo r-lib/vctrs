@@ -38,7 +38,7 @@ static SEXP vec_type_slice(SEXP x, SEXP empty) {
   }
 }
 static SEXP s3_type(SEXP x) {
-  switch(class_type(x)) {
+  switch (class_type(x)) {
   case vctrs_class_bare_tibble:
     return bare_df_map(x, &vec_type);
 
@@ -87,7 +87,7 @@ SEXP vec_ptype_finalise(SEXP x) {
 
   vec_assert(x, args_empty);
 
-  switch(class_type(x)) {
+  switch (class_type(x)) {
   case vctrs_class_bare_tibble:
   case vctrs_class_bare_data_frame:
     return bare_df_map(x, &vec_ptype_finalise);

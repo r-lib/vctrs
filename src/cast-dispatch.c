@@ -31,7 +31,7 @@ SEXP vec_cast_dispatch(SEXP x,
     break;
 
   case vctrs_type_dataframe:
-    switch(class_type(x)) {
+    switch (class_type(x)) {
     case vctrs_class_bare_data_frame:
       Rf_errorcall(R_NilValue, "Internal error: `x` should have been classified as a `vctrs_type_dataframe`");
 

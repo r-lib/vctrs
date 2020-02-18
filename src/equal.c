@@ -281,7 +281,7 @@ bool equal_object(SEXP x, SEXP y) {
     return true;
   }
 
-  switch(type) {
+  switch (type) {
   // Handled below
   case LGLSXP:
   case INTSXP:
