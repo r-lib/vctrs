@@ -2,14 +2,11 @@
 % Please edit documentation in R/type-data-frame.R
 \name{new_data_frame}
 \alias{new_data_frame}
-\alias{new_bare_data_frame}
 \alias{vec_ptype2.data.frame}
 \alias{vec_cast.data.frame}
 \title{Data frame class}
 \usage{
-new_data_frame(x = list(), n = NULL, ..., class = character(0))
-
-new_bare_data_frame(x = list(), n = NULL)
+new_data_frame(x = list(), n = NULL, ..., class = NULL)
 
 \method{vec_ptype2}{data.frame}(x, y, ...)
 

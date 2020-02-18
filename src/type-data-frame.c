@@ -40,34 +40,36 @@ SEXP new_data_frame(SEXP x, R_len_t n) {
 }
 
 static R_len_t df_size_from_list(SEXP x, SEXP n);
-static void set_data_frame_attributes(SEXP x, SEXP attributes);
-static void set_data_frame_class(SEXP x, SEXP cls);
+static void poke_data_frame_class(SEXP x, SEXP cls);
 
 // [[ register() ]]
-SEXP vctrs_new_bare_data_frame(SEXP x, SEXP n) {
+SEXP vctrs_new_data_frame(SEXP args) {
+  args = CDR(args);
+
+  SEXP x = CAR(args); args = CDR(args);
+  SEXP n = CAR(args); args = CDR(args);
+  SEXP cls = CAR(args); args = CDR(args);
+  SEXP attrib = args;
+
   if (TYPEOF(x) != VECSXP) {
     Rf_errorcall(R_NilValue, "`x` must be a list");
   }
 
   R_len_t size = df_size_from_list(x, n);
 
-  return new_data_frame(x, size);
-}
-
-// [[ register() ]]
-SEXP vctrs_new_data_frame(SEXP x, SEXP n, SEXP attributes, SEXP cls) {
-  if (TYPEOF(x) != VECSXP) {
-    Rf_errorcall(R_NilValue, "`x` must be a list");
+  if (attrib != R_NilValue) {
+    x = r_maybe_duplicate(x);
+    SET_ATTRIB(x, attrib);
   }
-
-  R_len_t size = df_size_from_list(x, n);
+  PROTECT(x);
 
   SEXP out = PROTECT(new_data_frame(x, size));
 
-  set_data_frame_attributes(out, attributes);
-  set_data_frame_class(out, cls);
+  if (cls != R_NilValue) {
+    poke_data_frame_class(out, cls);
+  }
 
-  UNPROTECT(1);
+  UNPROTECT(2);
   return out;
 }
 
@@ -83,49 +85,13 @@ static R_len_t df_size_from_list(SEXP x, SEXP n) {
   return r_int_get(n, 0);
 }
 
-static void set_data_frame_attributes(SEXP x, SEXP attributes) {
-  R_len_t n_attributes = Rf_length(attributes);
-
-  if (n_attributes == 0) {
+static void poke_data_frame_class(SEXP x, SEXP cls) {
+  if (cls == R_NilValue) {
     return;
   }
-
-  SEXP names = PROTECT(Rf_getAttrib(attributes, R_NamesSymbol));
-
-  if (names == R_NilValue) {
-    Rf_errorcall(R_NilValue, "Attributes supplied in `...` must be named");
-  }
-
-  const SEXP* p_names = STRING_PTR_RO(names);
-
-  // Set extra attributes
-  for (R_len_t i = 0; i < n_attributes; ++i) {
-    SEXP attribute = VECTOR_ELT(attributes, i);
-    SEXP name = p_names[i];
-
-    if (name == strings_empty || name == NA_STRING) {
-      Rf_errorcall(R_NilValue, "Attributes supplied in `...` must be named");
-    }
-
-    SEXP tag = PROTECT(Rf_installChar(name));
-
-    if (tag != R_NamesSymbol &&
-        tag != R_RowNamesSymbol &&
-        tag != R_ClassSymbol) {
-      Rf_setAttrib(x, tag, attribute);
-    }
-
-    UNPROTECT(1);
-  }
-
-  UNPROTECT(1);
-}
-
-static void set_data_frame_class(SEXP x, SEXP cls) {
   if (TYPEOF(cls) != STRSXP) {
-    Rf_errorcall(R_NilValue, "`class` must be a character vector");
+    Rf_errorcall(R_NilValue, "`class` must be NULL or a character vector");
   }
-
   if (Rf_length(cls) == 0) {
     return;
   }
@@ -134,16 +100,11 @@ static void set_data_frame_class(SEXP x, SEXP cls) {
   SET_VECTOR_ELT(args, 0, cls);
   SET_VECTOR_ELT(args, 1, classes_data_frame);
 
-  const struct name_repair_opts name_repair_opts = {
-    .type = name_repair_none,
-    .fn = R_NilValue
-  };
-
   cls = PROTECT(vec_c(
     args,
     vctrs_shared_empty_chr,
     R_NilValue,
-    &name_repair_opts
+    NULL
   ));
 
   Rf_setAttrib(x, R_ClassSymbol, cls);
