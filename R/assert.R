@@ -108,6 +108,33 @@ vec_is_vector <- function(x) {
   .Call(vctrs_is_vector, x)
 }
 
+#' Is the object a list?
+#'
+#' @description
+#' `vec_is_list()` tests if `x` is considered a list in the vctrs sense. It
+#' returns `TRUE` if:
+#'
+#' * `x` is a bare list with no class.
+#' * `x` is a list explicitly inheriting from `"list"` or `"vctrs_list_of"`.
+#' * `x` is an S3 list that [vec_is()] returns `TRUE` for. For this to return
+#'   `TRUE`, the class must implement a [vec_proxy()] method.
+#'
+#' @param x An object.
+#'
+#' @details
+#' Notably, data frames and S3 record style classes like POSIXlt are not
+#' considered lists.
+#'
+#' @export
+#' @examples
+#' vec_is_list(list())
+#' vec_is_list(list_of(1))
+#'
+#' vec_is_list(data.frame())
+vec_is_list <- function(x) {
+  .Call(vctrs_is_list, x)
+}
+
 is_same_type <- function(x, ptype) {
   if (is_partial(ptype)) {
     env <- environment()

@@ -231,3 +231,45 @@ test_that("names and row names do not influence type identity (#707)", {
   expect_true(vec_is(structure(mtcars, row.names = 1:32), mtcars))
   expect_true(vec_is(mtcars, structure(mtcars, row.names = 1:32)))
 })
+
+# vec_is_list -----------------------------------------------------------
+
+test_that("bare lists are lists", {
+  expect_true(vec_is_list(list()))
+})
+
+test_that("Vectors with a non-VECSXP type are not lists", {
+  expect_false(vec_is_list(1))
+  expect_false(vec_is_list("a"))
+  expect_false(vec_is_list(quote(name)))
+})
+
+test_that("explicitly classed lists are lists", {
+  x <- structure(list(), class = "list")
+
+  expect_true(vec_is_list(x))
+  expect_true(vec_is_list(subclass(x)))
+})
+
+test_that("POSIXlt are not considered a list", {
+  expect_false(vec_is_list(as.POSIXlt(new_datetime())))
+})
+
+test_that("rcrd types are not lists", {
+  expect_false(vec_is_list(new_rcrd(list(x = 1))))
+})
+
+test_that("scalars are not lists", {
+  expect_false(vec_is_list(foobar()))
+})
+
+test_that("non-explicitly classed lists that implement a proxy are lists", {
+  local_foobar_proxy()
+  expect_true(vec_is_list(foobar()))
+})
+
+test_that("data frames of all types are not lists", {
+  expect_false(vec_is_list(data.frame()))
+  expect_false(vec_is_list(subclass(data.frame())))
+  expect_false(vec_is_list(tibble::tibble()))
+})
