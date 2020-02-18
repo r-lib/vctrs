@@ -134,16 +134,11 @@ static void poke_data_frame_class(SEXP x, SEXP cls) {
   SET_VECTOR_ELT(args, 0, cls);
   SET_VECTOR_ELT(args, 1, classes_data_frame);
 
-  const struct name_repair_opts name_repair_opts = {
-    .type = name_repair_none,
-    .fn = R_NilValue
-  };
-
   cls = PROTECT(vec_c(
     args,
     vctrs_shared_empty_chr,
     R_NilValue,
-    &name_repair_opts
+    NULL
   ));
 
   Rf_setAttrib(x, R_ClassSymbol, cls);
