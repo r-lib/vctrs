@@ -20,7 +20,7 @@ void* altrep_rle_Dataptr(SEXP vec, Rboolean writeable);
 const void* altrep_rle_Dataptr_or_null(SEXP vec);
 void vctrs_init_altrep_rle(DllInfo* dll);
 
-static R_altrep_class_t altrep_rle_class;
+R_altrep_class_t altrep_rle_class;
 
 #endif
 
