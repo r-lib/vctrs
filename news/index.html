@@ -152,6 +152,17 @@
 <a href="#vctrs-development-version" class="anchor"></a>vctrs (development version)<small> Unreleased </small>
 </h1>
 <ul>
+<li>
+<p>Unspecified vectors of <code>NA</code> can now be assigned into a list (<a href='https://github.com/r-lib/vctrs/issues/819'>#819</a>).</p>
+<pre><code>x &lt;- list(1, 2)
+vec_slice(x, 1) &lt;- NA
+x
+#&gt; [[1]]
+#&gt; NULL
+#&gt; 
+#&gt; [[2]]
+#&gt; 2</code></pre>
+</li>
 <li><p>New <code><a href="../reference/new_data_frame.html">new_bare_data_frame()</a></code> is an extremely fast data frame constructor.</p></li>
 <li><p><code><a href="../reference/vec_ptype.html">vec_ptype()</a></code> now errors on scalar inputs (<a href='https://github.com/r-lib/vctrs/issues/807'>#807</a>).</p></li>
 <li><p><code><a href="../reference/new_partial.html">vec_ptype_finalise()</a></code> is now recursive over all data frame types, ensuring that unspecified columns are correctly finalised to logical (<a href='https://github.com/r-lib/vctrs/issues/800'>#800</a>).</p></li>
@@ -275,23 +286,23 @@ vec_rbind(df1, df2)
 </li>
 <li>
 <p><code><a href="../reference/vec_bind.html">vec_cbind()</a></code> now turns named data frames to packed columns.</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1"></a>data &lt;-<span class="st"> </span>tibble<span class="op">::</span><span class="kw"><a href="https://tibble.tidyverse.org/reference/tibble.html">tibble</a></span>(<span class="dt">x =</span> <span class="dv">1</span><span class="op">:</span><span class="dv">3</span>, <span class="dt">y =</span> letters[<span class="dv">1</span><span class="op">:</span><span class="dv">3</span>])</span>
-<span id="cb5-2"><a href="#cb5-2"></a>data &lt;-<span class="st"> </span><span class="kw"><a href="../reference/vec_bind.html">vec_cbind</a></span>(data, <span class="dt">packed =</span> data)</span>
-<span id="cb5-3"><a href="#cb5-3"></a>data</span>
-<span id="cb5-4"><a href="#cb5-4"></a><span class="co"># A tibble: 3 x 3</span></span>
-<span id="cb5-5"><a href="#cb5-5"></a>      x y     packed<span class="op">$</span>x <span class="op">$</span>y</span>
-<span id="cb5-6"><a href="#cb5-6"></a>  <span class="op">&lt;</span>int<span class="op">&gt;</span><span class="st"> </span><span class="er">&lt;</span>chr<span class="op">&gt;</span><span class="st">    </span><span class="er">&lt;</span>int<span class="op">&gt;</span><span class="st"> </span><span class="er">&lt;</span>chr<span class="op">&gt;</span></span>
-<span id="cb5-7"><a href="#cb5-7"></a><span class="dv">1</span>     <span class="dv">1</span> a            <span class="dv">1</span> a</span>
-<span id="cb5-8"><a href="#cb5-8"></a><span class="dv">2</span>     <span class="dv">2</span> b            <span class="dv">2</span> b</span>
-<span id="cb5-9"><a href="#cb5-9"></a><span class="dv">3</span>     <span class="dv">3</span> c            <span class="dv">3</span> c</span></code></pre></div>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1"></a>data &lt;-<span class="st"> </span>tibble<span class="op">::</span><span class="kw"><a href="https://tibble.tidyverse.org/reference/tibble.html">tibble</a></span>(<span class="dt">x =</span> <span class="dv">1</span><span class="op">:</span><span class="dv">3</span>, <span class="dt">y =</span> letters[<span class="dv">1</span><span class="op">:</span><span class="dv">3</span>])</span>
+<span id="cb6-2"><a href="#cb6-2"></a>data &lt;-<span class="st"> </span><span class="kw"><a href="../reference/vec_bind.html">vec_cbind</a></span>(data, <span class="dt">packed =</span> data)</span>
+<span id="cb6-3"><a href="#cb6-3"></a>data</span>
+<span id="cb6-4"><a href="#cb6-4"></a><span class="co"># A tibble: 3 x 3</span></span>
+<span id="cb6-5"><a href="#cb6-5"></a>      x y     packed<span class="op">$</span>x <span class="op">$</span>y</span>
+<span id="cb6-6"><a href="#cb6-6"></a>  <span class="op">&lt;</span>int<span class="op">&gt;</span><span class="st"> </span><span class="er">&lt;</span>chr<span class="op">&gt;</span><span class="st">    </span><span class="er">&lt;</span>int<span class="op">&gt;</span><span class="st"> </span><span class="er">&lt;</span>chr<span class="op">&gt;</span></span>
+<span id="cb6-7"><a href="#cb6-7"></a><span class="dv">1</span>     <span class="dv">1</span> a            <span class="dv">1</span> a</span>
+<span id="cb6-8"><a href="#cb6-8"></a><span class="dv">2</span>     <span class="dv">2</span> b            <span class="dv">2</span> b</span>
+<span id="cb6-9"><a href="#cb6-9"></a><span class="dv">3</span>     <span class="dv">3</span> c            <span class="dv">3</span> c</span></code></pre></div>
 <p>Packed data frames are nested in a single column. This makes it possible to access it through a single name:</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1"></a>data<span class="op">$</span>packed</span>
-<span id="cb6-2"><a href="#cb6-2"></a><span class="co"># A tibble: 3 x 2</span></span>
-<span id="cb6-3"><a href="#cb6-3"></a>      x y</span>
-<span id="cb6-4"><a href="#cb6-4"></a>  <span class="op">&lt;</span>int<span class="op">&gt;</span><span class="st"> </span><span class="er">&lt;</span>chr<span class="op">&gt;</span></span>
-<span id="cb6-5"><a href="#cb6-5"></a><span class="dv">1</span>     <span class="dv">1</span> a</span>
-<span id="cb6-6"><a href="#cb6-6"></a><span class="dv">2</span>     <span class="dv">2</span> b</span>
-<span id="cb6-7"><a href="#cb6-7"></a><span class="dv">3</span>     <span class="dv">3</span> c</span></code></pre></div>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1"></a>data<span class="op">$</span>packed</span>
+<span id="cb7-2"><a href="#cb7-2"></a><span class="co"># A tibble: 3 x 2</span></span>
+<span id="cb7-3"><a href="#cb7-3"></a>      x y</span>
+<span id="cb7-4"><a href="#cb7-4"></a>  <span class="op">&lt;</span>int<span class="op">&gt;</span><span class="st"> </span><span class="er">&lt;</span>chr<span class="op">&gt;</span></span>
+<span id="cb7-5"><a href="#cb7-5"></a><span class="dv">1</span>     <span class="dv">1</span> a</span>
+<span id="cb7-6"><a href="#cb7-6"></a><span class="dv">2</span>     <span class="dv">2</span> b</span>
+<span id="cb7-7"><a href="#cb7-7"></a><span class="dv">3</span>     <span class="dv">3</span> c</span></code></pre></div>
 <p>We are planning to use this syntax more widely in the tidyverse.</p>
 </li>
 <li>
