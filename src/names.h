@@ -17,7 +17,7 @@ struct name_repair_opts {
 };
 
 extern struct name_repair_opts default_unique_repair_opts_obj;
-static const struct name_repair_opts* default_unique_repair_opts =
+static const struct name_repair_opts* const default_unique_repair_opts =
   &default_unique_repair_opts_obj;
 
 static inline void PROTECT_NAME_REPAIR_OPTS(const struct name_repair_opts* opts) {
