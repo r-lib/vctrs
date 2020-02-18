@@ -94,8 +94,12 @@ static enum vctrs_class_type class_type_impl(SEXP class) {
     if (last == strings_posixt) return vctrs_class_posixlt;
   } else if (butlast == strings_vctrs_rcrd) {
     if (last == strings_vctrs_vctr) return vctrs_class_rcrd;
+  } else if (butlast == strings_vctrs_list_of) {
+    if (last == strings_vctrs_vctr) return vctrs_class_list_of;
   } else if (last == strings_data_frame) {
     return vctrs_class_data_frame;
+  } else if (last == strings_list) {
+    return vctrs_class_list;
   }
 
   return vctrs_class_unknown;
@@ -103,6 +107,8 @@ static enum vctrs_class_type class_type_impl(SEXP class) {
 
 static const char* class_type_as_str(enum vctrs_class_type type) {
   switch (type) {
+  case vctrs_class_list: return "list";
+  case vctrs_class_list_of: return "list_of";
   case vctrs_class_data_frame: return "data_frame";
   case vctrs_class_bare_data_frame: return "bare_data_frame";
   case vctrs_class_bare_tibble: return "bare_tibble";

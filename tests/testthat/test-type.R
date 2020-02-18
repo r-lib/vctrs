@@ -136,6 +136,13 @@ test_that("can retrieve proxy info", {
 })
 
 test_that("class_type() detects classes", {
+  expect_identical(class_type(list()), "none")
+  expect_identical(class_type(foobar(list())), "unknown")
+  expect_identical(class_type(structure(list(), class = "list")), "list")
+  expect_identical(class_type(subclass(structure(list(), class = "list"))), "list")
+  expect_identical(class_type(new_list_of()), "list_of")
+  expect_identical(class_type(subclass(new_list_of())), "list_of")
+
   expect_identical(class_type(data.frame()), "bare_data_frame")
   expect_identical(class_type(tibble::tibble()), "bare_tibble")
   expect_identical(class_type(subclass(data.frame())), "data_frame")

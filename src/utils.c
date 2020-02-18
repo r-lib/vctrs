@@ -1221,7 +1221,7 @@ void vctrs_init_utils(SEXP ns) {
 
   // Holds the CHARSXP objects because unlike symbols they can be
   // garbage collected
-  strings = Rf_allocVector(STRSXP, 20);
+  strings = Rf_allocVector(STRSXP, 21);
   R_PreserveObject(strings);
 
   strings_dots = Rf_mkChar("...");
@@ -1283,6 +1283,9 @@ void vctrs_init_utils(SEXP ns) {
 
   strings_ordered = Rf_mkChar("ordered");
   SET_STRING_ELT(strings, 19, strings_ordered);
+
+  strings_list = Rf_mkChar("list");
+  SET_STRING_ELT(strings, 20, strings_list);
 
 
   classes_data_frame = Rf_allocVector(STRSXP, 1);
