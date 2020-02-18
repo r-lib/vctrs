@@ -460,3 +460,29 @@ test_that("rbind() and cbind() have informative outputs when repairing names", {
     vec_cbind(c(a = 1), c(b = 2))
   })
 })
+
+test_that("cbind() deals with row names", {
+  expect_identical(
+    vec_cbind(mtcars[1:3], foo = 1),
+    cbind(mtcars[1:3], foo = 1)
+  )
+  expect_identical(
+    vec_cbind(mtcars[1:3], mtcars[4]),
+    cbind(mtcars[1:3], mtcars[4])
+  )
+
+  out <- vec_cbind(
+    mtcars[1, 1, drop = FALSE],
+    unrownames(mtcars[1:3, 2, drop = FALSE])
+  )
+  exp <- mtcars[1:3, c(1, 2)]
+  exp[[1]] <- exp[[1, 1]]
+  row.names(exp) <- paste0(c("Mazda RX4..."), 1:3)
+  expect_identical(out, exp)
+
+  # Should work once we have frame prototyping
+  expect_error(
+    vec_cbind(mtcars[1:3], vec_slice(mtcars[4], nrow(mtcars):1)),
+    "different row names"
+  )
+})

@@ -254,6 +254,21 @@ SEXP map(SEXP x, SEXP (*fn)(SEXP)) {
   UNPROTECT(2);
   return out;
 }
+// [[ include("utils.h") ]]
+SEXP map_with_data(SEXP x, SEXP (*fn)(SEXP, void*), void* data) {
+  R_len_t n = Rf_length(x);
+  SEXP out = PROTECT(Rf_allocVector(VECSXP, n));
+
+  for (R_len_t i = 0; i < n; ++i) {
+    SET_VECTOR_ELT(out, i, fn(VECTOR_ELT(x, i), data));
+  }
+
+  SEXP nms = PROTECT(Rf_getAttrib(x, R_NamesSymbol));
+  Rf_setAttrib(out, R_NamesSymbol, nms);
+
+  UNPROTECT(2);
+  return out;
+}
 
 // [[ include("utils.h") ]]
 SEXP bare_df_map(SEXP df, SEXP (*fn)(SEXP)) {
