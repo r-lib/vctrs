@@ -18,14 +18,14 @@
 new_data_frame <- function(x = list(), n = NULL, ..., class = character(0)) {
   .Call(vctrs_new_data_frame, x, n, list(...), class)
 }
-new_data_frame <- fn_inline_formals(new_data_frame, c("x", "n", "class"))
+new_data_frame <- fn_inline_formals(new_data_frame, c("x", "class"))
 
 #' @rdname new_data_frame
 #' @export
 new_bare_data_frame <- function(x = list(), n = NULL) {
   .Call(vctrs_new_bare_data_frame, x, n)
 }
-new_bare_data_frame <- fn_inline_formals(new_bare_data_frame, c("x", "n"))
+new_bare_data_frame <- fn_inline_formals(new_bare_data_frame, "x")
 
 
 # Light weight constructor used for tests - avoids having to repeatedly do
