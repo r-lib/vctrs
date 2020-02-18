@@ -18,6 +18,7 @@
 new_data_frame <- function(x = list(), n = NULL, ..., class = character()) {
   .Call(vctrs_new_data_frame, x, n, list(...), class)
 }
+new_data_frame <- fn_inline_formals(new_data_frame, c("x", "n", "class"))
 
 # Light weight constructor used for tests - avoids having to repeatedly do
 # stringsAsFactors = FALSE etc. Should not be used in internal code as is
