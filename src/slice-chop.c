@@ -447,7 +447,7 @@ static SEXP vec_unchop(SEXP x, SEXP indices, SEXP ptype, const struct name_repai
   REPROTECT(out, out_pi);
 
   bool is_shaped = has_dim(ptype);
-  bool has_inner_names = list_has_inner_names(x, x_size);
+  bool has_inner_names = !is_data_frame(ptype) && list_has_inner_names(x, x_size);
 
   SEXP out_names = vctrs_shared_empty_chr;
   if (has_inner_names) {
