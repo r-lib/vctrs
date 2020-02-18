@@ -1,6 +1,19 @@
 
 # vctrs (development version)
 
+* Unspecified vectors of `NA` can now be assigned into a list (#819).
+
+  ```
+  x <- list(1, 2)
+  vec_slice(x, 1) <- NA
+  x
+  #> [[1]]
+  #> NULL
+  #> 
+  #> [[2]]
+  #> 2
+  ```
+
 * New `new_bare_data_frame()` is an extremely fast data frame constructor.
 
 * `vec_ptype()` now errors on scalar inputs (#807).
