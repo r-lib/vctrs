@@ -227,6 +227,15 @@ vec_chop <- function(x, indices = NULL) {
   .Call(vctrs_chop, x, indices)
 }
 
+#' Combine a list of vectors
+#'
+#' `vec_unchop()` combines `x`, a list of vectors, into a single vector, placing
+#' elements in the output according to the locations specified by `indices`. It
+#' is similar to [vec_c()], but gives greater control over how the elements
+#' are combined, and does not respect outer names on the list.
+#'
+#' @inheritParams vec_chop
+#' @inheritParams vec_c
 #' @export
 vec_unchop <- function(x,
                        indices = NULL,
