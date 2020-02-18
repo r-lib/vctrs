@@ -455,6 +455,18 @@ SEXP new_empty_ordered(SEXP levels) {
   return out;
 }
 
+// [[ include("utils.h") ]]
+bool list_has_inner_names(SEXP x, R_len_t size) {
+  for (R_len_t i = 0; i < size; ++i) {
+    SEXP elt = VECTOR_ELT(x, i);
+    if (vec_names(elt) != R_NilValue) {
+      return true;
+    }
+  }
+
+  return false;
+}
+
 // [[ include("vctrs.h") ]]
 enum vctrs_dbl_class dbl_classify(double x) {
   if (!isnan(x)) {

@@ -7,8 +7,6 @@ SEXP vctrs_type_common_impl(SEXP dots, SEXP ptype);
 // From slice-assign.c
 SEXP vec_assign_impl(SEXP proxy, SEXP index, SEXP value);
 
-static bool list_has_inner_names(SEXP xs);
-
 
 // [[ register(external = TRUE) ]]
 SEXP vctrs_c(SEXP call, SEXP op, SEXP args, SEXP env) {
@@ -81,7 +79,7 @@ SEXP vec_c(SEXP xs,
   int* idx_ptr = INTEGER(idx);
 
   SEXP xs_names = PROTECT(r_names(xs));
-  bool has_names = xs_names != R_NilValue || list_has_inner_names(xs);
+  bool has_names = xs_names != R_NilValue || list_has_inner_names(xs, n);
   has_names = has_names && !is_data_frame(ptype);
 
   PROTECT_INDEX out_names_pi;
@@ -141,20 +139,6 @@ SEXP vec_c(SEXP xs,
 
   UNPROTECT(7);
   return out;
-}
-
-
-static bool list_has_inner_names(SEXP xs) {
-  R_len_t n = Rf_length(xs);
-
-  for (R_len_t i = 0; i < n; ++i) {
-    SEXP elt = VECTOR_ELT(xs, i);
-    if (vec_names(elt) != R_NilValue) {
-      return true;
-    }
-  }
-
-  return false;
 }
 
 
