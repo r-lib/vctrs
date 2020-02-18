@@ -40,8 +40,8 @@ SEXP new_data_frame(SEXP x, R_len_t n) {
 }
 
 static R_len_t df_size_from_list(SEXP x, SEXP n);
-static void set_data_frame_attributes(SEXP x, SEXP attributes);
-static void set_data_frame_class(SEXP x, SEXP cls);
+static void poke_data_frame_attributes(SEXP x, SEXP attributes);
+static void poke_data_frame_class(SEXP x, SEXP cls);
 
 // [[ register() ]]
 SEXP vctrs_new_bare_data_frame(SEXP x, SEXP n) {
@@ -55,7 +55,7 @@ SEXP vctrs_new_bare_data_frame(SEXP x, SEXP n) {
 }
 
 // [[ register() ]]
-SEXP vctrs_new_data_frame(SEXP x, SEXP n, SEXP attributes, SEXP cls) {
+SEXP vctrs_new_data_frame(SEXP x, SEXP n, SEXP attrib, SEXP cls) {
   if (TYPEOF(x) != VECSXP) {
     Rf_errorcall(R_NilValue, "`x` must be a list");
   }
@@ -64,8 +64,8 @@ SEXP vctrs_new_data_frame(SEXP x, SEXP n, SEXP attributes, SEXP cls) {
 
   SEXP out = PROTECT(new_data_frame(x, size));
 
-  set_data_frame_attributes(out, attributes);
-  set_data_frame_class(out, cls);
+  poke_data_frame_attributes(out, attrib);
+  poke_data_frame_class(out, cls);
 
   UNPROTECT(1);
   return out;
@@ -83,14 +83,14 @@ static R_len_t df_size_from_list(SEXP x, SEXP n) {
   return r_int_get(n, 0);
 }
 
-static void set_data_frame_attributes(SEXP x, SEXP attributes) {
-  R_len_t n_attributes = Rf_length(attributes);
+static void poke_data_frame_attributes(SEXP x, SEXP attrib) {
+  R_len_t n_attributes = Rf_length(attrib);
 
   if (n_attributes == 0) {
     return;
   }
 
-  SEXP names = PROTECT(Rf_getAttrib(attributes, R_NamesSymbol));
+  SEXP names = PROTECT(Rf_getAttrib(attrib, R_NamesSymbol));
 
   if (names == R_NilValue) {
     Rf_errorcall(R_NilValue, "Attributes supplied in `...` must be named");
@@ -98,9 +98,9 @@ static void set_data_frame_attributes(SEXP x, SEXP attributes) {
 
   const SEXP* p_names = STRING_PTR_RO(names);
 
-  // Set extra attributes
+  // Set extra attrib
   for (R_len_t i = 0; i < n_attributes; ++i) {
-    SEXP attribute = VECTOR_ELT(attributes, i);
+    SEXP attribute = VECTOR_ELT(attrib, i);
     SEXP name = p_names[i];
 
     if (name == strings_empty || name == NA_STRING) {
@@ -121,7 +121,7 @@ static void set_data_frame_attributes(SEXP x, SEXP attributes) {
   UNPROTECT(1);
 }
 
-static void set_data_frame_class(SEXP x, SEXP cls) {
+static void poke_data_frame_class(SEXP x, SEXP cls) {
   if (TYPEOF(cls) != STRSXP) {
     Rf_errorcall(R_NilValue, "`class` must be a character vector");
   }
