@@ -55,7 +55,14 @@ SEXP vctrs_new_bare_data_frame(SEXP x, SEXP n) {
 }
 
 // [[ register() ]]
-SEXP vctrs_new_data_frame(SEXP x, SEXP n, SEXP attrib, SEXP cls) {
+SEXP vctrs_new_data_frame(SEXP args) {
+  args = CDR(args);
+
+  SEXP x = CAR(args); args = CDR(args);
+  SEXP n = CAR(args); args = CDR(args);
+  SEXP cls = CAR(args); args = CDR(args);
+  SEXP attrib = args;
+
   if (TYPEOF(x) != VECSXP) {
     Rf_errorcall(R_NilValue, "`x` must be a list");
   }
@@ -64,8 +71,12 @@ SEXP vctrs_new_data_frame(SEXP x, SEXP n, SEXP attrib, SEXP cls) {
 
   SEXP out = PROTECT(new_data_frame(x, size));
 
-  poke_data_frame_attributes(out, attrib);
-  poke_data_frame_class(out, cls);
+  if (attrib != R_NilValue) {
+    poke_data_frame_attributes(out, attrib);
+  }
+  if (cls != R_NilValue) {
+    poke_data_frame_class(out, cls);
+  }
 
   UNPROTECT(1);
   return out;
@@ -84,9 +95,15 @@ static R_len_t df_size_from_list(SEXP x, SEXP n) {
 }
 
 static void poke_data_frame_attributes(SEXP x, SEXP attrib) {
+  if (TYPEOF(attrib) != VECSXP) {
+    attrib = Rf_coerceVector(attrib, VECSXP);
+  }
+  PROTECT(attrib);
+
   R_len_t n_attributes = Rf_length(attrib);
 
   if (n_attributes == 0) {
+    UNPROTECT(1);
     return;
   }
 
@@ -118,14 +135,16 @@ static void poke_data_frame_attributes(SEXP x, SEXP attrib) {
     UNPROTECT(1);
   }
 
-  UNPROTECT(1);
+  UNPROTECT(2);
 }
 
 static void poke_data_frame_class(SEXP x, SEXP cls) {
-  if (TYPEOF(cls) != STRSXP) {
-    Rf_errorcall(R_NilValue, "`class` must be a character vector");
+  if (cls == R_NilValue) {
+    return;
   }
-
+  if (TYPEOF(cls) != STRSXP) {
+    Rf_errorcall(R_NilValue, "`class` must be NULL or a character vector");
+  }
   if (Rf_length(cls) == 0) {
     return;
   }

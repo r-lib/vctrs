@@ -242,7 +242,7 @@ test_that("if supplied, `n` must be an integer of size 1", {
 })
 
 test_that("`class` must be a character vector", {
-  expect_error(new_data_frame(class = 1), "must be a character vector")
+  expect_error(new_data_frame(class = 1), "must be NULL or a character vector")
 })
 
 test_that("attributes must be named", {

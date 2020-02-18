@@ -87,7 +87,6 @@ extern SEXP vctrs_validate_name_repair_arg(SEXP);
 extern SEXP vctrs_validate_minimal_names(SEXP, SEXP);
 extern SEXP vctrs_as_names(SEXP, SEXP, SEXP);
 extern SEXP vctrs_is_partial(SEXP);
-extern SEXP vctrs_new_data_frame(SEXP, SEXP, SEXP, SEXP);
 extern SEXP vctrs_new_bare_data_frame(SEXP, SEXP);
 
 // Very experimental
@@ -195,7 +194,6 @@ static const R_CallMethodDef CallEntries[] = {
   {"vctrs_validate_minimal_names",     (DL_FUNC) &vctrs_validate_minimal_names, 2},
   {"vctrs_as_names",                   (DL_FUNC) &vctrs_as_names, 3},
   {"vctrs_is_partial",                 (DL_FUNC) &vctrs_is_partial, 1},
-  {"vctrs_new_data_frame",             (DL_FUNC) &vctrs_new_data_frame, 4},
   {"vctrs_new_bare_data_frame",        (DL_FUNC) &vctrs_new_bare_data_frame, 2},
   {NULL, NULL, 0}
 };
@@ -207,6 +205,7 @@ extern SEXP vctrs_cast_common(SEXP, SEXP, SEXP, SEXP);
 extern SEXP vctrs_rbind(SEXP, SEXP, SEXP, SEXP);
 extern SEXP vctrs_cbind(SEXP, SEXP, SEXP, SEXP);
 extern SEXP vctrs_c(SEXP, SEXP, SEXP, SEXP);
+extern SEXP vctrs_new_data_frame(SEXP);
 
 static const R_ExternalMethodDef ExtEntries[] = {
   {"vctrs_type_common",                (DL_FUNC) &vctrs_type_common, 1},
@@ -216,6 +215,7 @@ static const R_ExternalMethodDef ExtEntries[] = {
   {"vctrs_rbind",                      (DL_FUNC) &vctrs_rbind, 3},
   {"vctrs_cbind",                      (DL_FUNC) &vctrs_cbind, 3},
   {"vctrs_c",                          (DL_FUNC) &vctrs_c, 3},
+  {"vctrs_new_data_frame",             (DL_FUNC) &vctrs_new_data_frame, -1},
   {NULL, NULL, 0}
 };
 
