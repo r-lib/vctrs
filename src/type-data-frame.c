@@ -40,6 +40,7 @@ SEXP new_data_frame(SEXP x, R_len_t n) {
 }
 
 static R_len_t df_size_from_list(SEXP x, SEXP n);
+static void set_data_frame_attributes(SEXP x, SEXP attributes);
 static void set_data_frame_class(SEXP x, SEXP cls);
 
 // [[ register() ]]
@@ -52,23 +53,7 @@ SEXP vctrs_new_data_frame(SEXP x, SEXP n, SEXP attributes, SEXP cls) {
 
   SEXP out = PROTECT(new_data_frame(x, size));
 
-  // Set extra attributes
-  while(attributes != R_NilValue) {
-    SEXP tag = TAG(attributes);
-
-    if (tag == R_NilValue) {
-      Rf_errorcall(R_NilValue, "Attributes supplied in `...` must be named");
-    }
-
-    if (tag != R_NamesSymbol &&
-        tag != R_RowNamesSymbol &&
-        tag != R_ClassSymbol) {
-      Rf_setAttrib(out, tag, CAR(attributes));
-    }
-
-    attributes = CDR(attributes);
-  }
-
+  set_data_frame_attributes(out, attributes);
   set_data_frame_class(out, cls);
 
   UNPROTECT(1);
@@ -85,6 +70,44 @@ static R_len_t df_size_from_list(SEXP x, SEXP n) {
   }
 
   return r_int_get(n, 0);
+}
+
+static void set_data_frame_attributes(SEXP x, SEXP attributes) {
+  R_len_t n_attributes = Rf_length(attributes);
+
+  if (n_attributes == 0) {
+    return;
+  }
+
+  SEXP names = PROTECT(Rf_getAttrib(attributes, R_NamesSymbol));
+
+  if (names == R_NilValue) {
+    Rf_errorcall(R_NilValue, "Attributes supplied in `...` must be named");
+  }
+
+  const SEXP* p_names = STRING_PTR_RO(names);
+
+  // Set extra attributes
+  for (R_len_t i = 0; i < n_attributes; ++i) {
+    SEXP attribute = VECTOR_ELT(attributes, i);
+    SEXP name = p_names[i];
+
+    if (name == strings_empty || name == NA_STRING) {
+      Rf_errorcall(R_NilValue, "Attributes supplied in `...` must be named");
+    }
+
+    SEXP tag = PROTECT(Rf_installChar(name));
+
+    if (tag != R_NamesSymbol &&
+        tag != R_RowNamesSymbol &&
+        tag != R_ClassSymbol) {
+      Rf_setAttrib(x, tag, attribute);
+    }
+
+    UNPROTECT(1);
+  }
+
+  UNPROTECT(1);
 }
 
 static void set_data_frame_class(SEXP x, SEXP cls) {
