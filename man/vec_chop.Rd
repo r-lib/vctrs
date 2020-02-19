@@ -2,29 +2,73 @@
 % Please edit documentation in R/slice-chop.R
 \name{vec_chop}
 \alias{vec_chop}
-\title{Repeatedly slice a vector}
+\alias{vec_unchop}
+\title{Chopping}
 \usage{
 vec_chop(x, indices = NULL)
+
+vec_unchop(
+  x,
+  indices = NULL,
+  ptype = NULL,
+  name_repair = c("minimal", "unique", "check_unique", "universal")
+)
 }
 \arguments{
 \item{x}{A vector}
 
-\item{indices}{A list of index values to slice \code{x} with, or \code{NULL}. Each
-element of the list must be an integer, character or logical vector that
-would be valid as an index in \code{\link[=vec_slice]{vec_slice()}}. If \code{NULL}, \code{x} is split into
-its individual elements, equivalent to using an \code{indices} of
-\code{as.list(vec_seq_along(x))}.}
+\item{indices}{For \code{vec_chop()}, a list of index values to slice \code{x} with,
+or \code{NULL}. Each element of the list must be an integer, character or
+logical vector that would be valid as an index in \code{\link[=vec_slice]{vec_slice()}}. If \code{NULL},
+\code{x} is split into its individual elements, equivalent to using an
+\code{indices} of \code{as.list(vec_seq_along(x))}.
+
+For \code{vec_unchop()}, a list of integer vectors specifying the locations to
+place elements of \code{x} in. Each element of \code{x} is recycled to the size
+of the corresponding index vector. The size of \code{indices} must match the
+size of \code{x}. If \code{NULL}, \code{x} is combined in the order it is provided in.}
+
+\item{ptype}{If \code{NULL}, the default, the output type is determined by
+computing the common type across all elements of \code{x}.
+
+Alternatively, you can supply \code{ptype} to give the output known type.
+If \code{getOption("vctrs.no_guessing")} is \code{TRUE} you must supply this value:
+this is a convenient way to make production code demand fixed types.}
+
+\item{name_repair}{How to repair names, see \code{repair} options in \code{\link[=vec_as_names]{vec_as_names()}}.}
 }
 \value{
-A list of size \code{vec_size(indices)} or, if \code{indices == NULL},
+\itemize{
+\item \code{vec_chop()}: A list of size \code{vec_size(indices)} or, if \code{indices == NULL},
 \code{vec_size(x)}.
+\item \code{vec_unchop()}: A vector of type \code{vec_ptype_common(!!!x)}, or \code{ptype}, if
+specified. The size is computed as \code{vec_size_common(!!!indices)} unless
+the indices are \code{NULL}, in which case the size is \code{vec_size_common(!!!x)}.
+}
 }
 \description{
-\code{vec_chop()} provides an efficient method to repeatedly slice a vector. It
+\itemize{
+\item \code{vec_chop()} provides an efficient method to repeatedly slice a vector. It
 captures the pattern of \code{map(indices, vec_slice, x = x)}.
+\item \code{vec_unchop()} combines a list of vectors into a single vector, placing
+elements in the output according to the locations specified by \code{indices}. It
+is similar to \code{\link[=vec_c]{vec_c()}}, but gives greater control over how the elements
+are combined, and does not respect outer names on the list.
+}
 }
 \examples{
 vec_chop(1:5)
 vec_chop(1:5, list(1, 1:2))
 vec_chop(mtcars, list(1:3, 4:6))
+
+# If `indices` uses the full sequence along `x` (in any order),
+# then `vec_unchop()` inverts `vec_chop()`.
+x <- c("a", "b", "c", "d")
+indices <- list(2, c(3, 1), 4)
+vec_chop(x, indices)
+vec_unchop(vec_chop(x, indices), indices)
+
+# When unchopping, size 1 elements of `x` are recycled
+# to the size of the corresponding index
+vec_unchop(list(1, 2:3), list(c(1, 3, 5), c(2, 4)))
 }
