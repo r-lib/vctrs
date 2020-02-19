@@ -425,20 +425,43 @@ static SEXP vec_unchop(SEXP x, SEXP indices, SEXP ptype, const struct name_repai
 
   R_len_t x_size = vec_size(x);
 
+  ptype = PROTECT(vctrs_type_common_impl(x, ptype));
+  x = PROTECT(vec_cast_common(x, ptype));
+
+  // Should have a fresh copy from `vec_cast_common()`, but this is to be safe
+  x = PROTECT(r_maybe_duplicate(x));
+
+  bool null_indices = (indices == R_NilValue);
+
+  if (!null_indices) {
+    if (x_size != vec_size(indices)) {
+      Rf_errorcall(R_NilValue, "`x` and `indices` must be lists of the same size");
+    }
+    if (TYPEOF(indices) != VECSXP) {
+      Rf_errorcall(R_NilValue, "`indices` must be a list of integers, or `NULL`");
+    }
+  }
+
   R_len_t out_size = 0;
-  for (R_len_t i = 0; i < x_size; ++i) {
-    out_size += vec_size(VECTOR_ELT(x, i));
+
+  // `out_size` comes from `indices` unless they are NULL.
+  // All elements of `x` are recycled to their corresponding index size
+  if (null_indices) {
+    for (R_len_t i = 0; i < x_size; ++i) {
+      out_size += vec_size(VECTOR_ELT(x, i));
+    }
+  } else {
+    for (R_len_t i = 0; i < x_size; ++i) {
+      R_len_t index_size = vec_size(VECTOR_ELT(indices, i));
+      out_size += index_size;
+
+      SEXP elt = VECTOR_ELT(x, i);
+      elt = vec_recycle(elt, index_size, args_empty);
+      SET_VECTOR_ELT(x, i, elt);
+    }
   }
 
   indices = PROTECT(vec_as_indices(indices, out_size, R_NilValue));
-  bool null_indices = (indices == R_NilValue);
-
-  if (!null_indices && x_size != vec_size(indices)) {
-    Rf_errorcall(R_NilValue, "`x` and `indices` must be lists of the same size");
-  }
-
-  ptype = PROTECT(vctrs_type_common_impl(x, ptype));
-  x = PROTECT(vec_cast_common(x, ptype));
 
   PROTECT_INDEX out_pi;
   SEXP out = vec_init(ptype, out_size);
@@ -472,7 +495,7 @@ static SEXP vec_unchop(SEXP x, SEXP indices, SEXP ptype, const struct name_repai
     UNPROTECT(1);
   }
 
-  UNPROTECT(5);
+  UNPROTECT(6);
   return out;
 }
 
