@@ -115,6 +115,9 @@ SEXP vctrs_unique_loc(SEXP x) {
   int nprot = 0;
 
   R_len_t n = vec_size(x);
+  if (Rf_inherits(x, "data.frame") && XLENGTH(x) == 1) {
+    x = VECTOR_ELT(x, 0);
+  }
 
   x = PROTECT_N(vec_proxy_equal(x), &nprot);
   x = PROTECT_N(obj_maybe_translate_encoding(x, n), &nprot);
