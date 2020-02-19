@@ -24,7 +24,7 @@ SEXP vctrs_new_altrep_vctrs_compact_intrep(SEXP value, SEXP size) {
 // For DllInfo on R < 3.4
 #include <R_ext/Rdynload.h>
 
-void vctrs_init_altrep_rep(DllInfo* dll) { }
+void vctrs_init_altrep_vctrs_compact_rep(DllInfo* dll) { }
 
 #else
 // -----------------------------------------------------------------------------
