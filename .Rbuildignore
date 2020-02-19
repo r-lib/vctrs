@@ -11,4 +11,5 @@
 ^\.Rproj\.user$
 ^TAGS$
 ^revdep$
+^revdep-all$
 ^\.github$
