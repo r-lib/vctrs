@@ -184,7 +184,7 @@ SEXP vec_recycle(SEXP x, R_len_t size, struct vctrs_arg* x_arg) {
 static SEXP vec_recycle_one(SEXP x, R_len_t size) {
 #if (R_VERSION >= R_Version(3, 5, 0))
   if (TYPEOF(x) == INTSXP && !OBJECT(x) && ATTRIB(x) == R_NilValue) {
-    return new_altrep_vctrs_compact_intrep(INTEGER(x)[0], size);
+    return new_altrep_vctrs_compact_rep_int(INTEGER(x)[0], size);
   }
 #endif
 

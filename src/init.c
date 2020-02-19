@@ -99,7 +99,7 @@ extern SEXP vctrs_df_flat_width(SEXP);
 extern SEXP df_flatten(SEXP);
 extern SEXP vctrs_equal_scalar(SEXP, SEXP, SEXP, SEXP, SEXP);
 extern SEXP vctrs_linked_version();
-extern SEXP vctrs_new_altrep_vctrs_compact_intrep(SEXP, SEXP);
+extern SEXP vctrs_new_altrep_vctrs_compact_rep_int(SEXP, SEXP);
 
 
 
@@ -223,7 +223,7 @@ static const R_CallMethodDef CallEntries[] = {
   {"vctrs_df_flatten",                        (DL_FUNC) &df_flatten, 1},
   {"vctrs_equal_scalar",                      (DL_FUNC) &vctrs_equal_scalar, 5},
   {"vctrs_linked_version",                    (DL_FUNC) &vctrs_linked_version, 0},
-  {"vctrs_new_altrep_vctrs_compact_intrep",   (DL_FUNC) &vctrs_new_altrep_vctrs_compact_intrep, 2},
+  {"vctrs_new_altrep_vctrs_compact_rep_int",  (DL_FUNC) &vctrs_new_altrep_vctrs_compact_rep_int, 2},
   {NULL, NULL, 0}
 };
 
