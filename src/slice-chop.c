@@ -419,7 +419,7 @@ static SEXP vec_unchop_sequentially(SEXP out,
                                     bool has_inner_names);
 
 static SEXP vec_unchop(SEXP x, SEXP indices, SEXP ptype, const struct name_repair_opts* name_repair) {
-  if (TYPEOF(x) != VECSXP) {
+  if (!vec_is_list(x)) {
     Rf_errorcall(R_NilValue, "`x` must be a list");
   }
 
@@ -431,7 +431,7 @@ static SEXP vec_unchop(SEXP x, SEXP indices, SEXP ptype, const struct name_repai
     if (x_size != vec_size(indices)) {
       Rf_errorcall(R_NilValue, "`x` and `indices` must be lists of the same size");
     }
-    if (TYPEOF(indices) != VECSXP) {
+    if (!vec_is_list(indices)) {
       Rf_errorcall(R_NilValue, "`indices` must be a list of integers, or `NULL`");
     }
   }
