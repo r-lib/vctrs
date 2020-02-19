@@ -241,3 +241,23 @@ SEXP df_poke_at(SEXP x, SEXP name, SEXP value) {
   UNPROTECT(1);
   return x;
 }
+
+// [[ include("type-data-frame.h") ]]
+R_len_t df_flat_width(SEXP x) {
+  R_len_t n = Rf_length(x);
+  R_len_t out = n;
+
+  for (R_len_t i = 0; i < n; ++i) {
+    SEXP col = VECTOR_ELT(x, i);
+    if (is_data_frame(col)) {
+      out = out + df_flat_width(col) - 1;
+    }
+  }
+
+  return out;
+}
+
+// [[ register() ]]
+SEXP vctrs_df_flat_width(SEXP x) {
+  return r_int(df_flat_width(x));
+}
