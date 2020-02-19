@@ -1,7 +1,6 @@
 
-The valgrind errors are fixed.
+The CRAN results failures should all be fixed.
 
-This is a resubmission that fixes a broken link in the README.
 
 ## Test environments
 
@@ -18,4 +17,4 @@ This is a resubmission that fixes a broken link in the README.
 
 ## Revdep checks
 
-There are expected test failures in the tidyr and rray packages. We'll send updates for these packages shortly after release.
+We checked the reverse dependencies of vctrs and tidyr. No problems were found
