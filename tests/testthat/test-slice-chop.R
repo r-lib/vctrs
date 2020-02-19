@@ -377,6 +377,13 @@ test_that("inner names are kept", {
   expect_named(vec_unchop(x, list(2, 1)), c("b", "a"))
 })
 
+test_that("not all inputs have to be named", {
+  x <- list(c(a = 1), 2, c(c = 3))
+  indices <- list(2, 1, 3)
+
+  expect_named(vec_unchop(x, indices), c("", "a", "c"))
+})
+
 test_that("data frame row names are never kept", {
   df1 <- data.frame(x = 1:2, row.names = c("r1", "r2"))
   df2 <- data.frame(x = 3:4, row.names = c("r3", "r4"))
@@ -404,4 +411,12 @@ test_that("index values are validated", {
   expect_error(vec_unchop(x, indices2), class = "vctrs_error_subscript_oob")
 
   expect_identical(vec_unchop(x, indices3), c(1, 2, 1, 1))
+})
+
+test_that("name repair is respected and happens after ordering according to `indices`", {
+  x <- list(c(a = 1), c(a = 2))
+  indices <- list(2, 1)
+
+  expect_named(vec_unchop(x, indices), c("a", "a"))
+  expect_named(vec_unchop(x, indices, name_repair = "unique"), c("a...1", "a...2"))
 })
