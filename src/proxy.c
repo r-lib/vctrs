@@ -30,25 +30,21 @@ SEXP vec_proxy(SEXP x) {
 
 // [[ register(); include("vctrs.h") ]]
 SEXP vec_proxy_equal(SEXP x) {
-  return vec_proxy_recursive(x, vctrs_proxy_equal);
+  return vec_proxy_unwrap(vec_proxy_recursive(x, vctrs_proxy_equal));
 }
-SEXP vec_proxy_equal_dispatch(SEXP x) {
-  switch (vec_typeof(x)){
-  case vctrs_type_s3:
-  {
-    SEXP proxy = PROTECT(vctrs_dispatch1(syms_vec_proxy_equal_dispatch, fns_vec_proxy_equal_dispatch,
-      syms_x, x));
-    if (is_data_frame(proxy) && XLENGTH(proxy) == 1) {
-      proxy = vec_proxy_equal_dispatch(VECTOR_ELT(proxy, 0));
-    }
-    UNPROTECT(1);
-    return proxy;
+SEXP vec_proxy_unwrap(SEXP x) {
+  if (is_data_frame(x) && XLENGTH(x) == 1) {
+    x = vec_proxy_unwrap(VECTOR_ELT(x, 0));
   }
-  case vctrs_type_dataframe:
-    if (XLENGTH(x) == 1) {
-      return vec_proxy_equal_dispatch(VECTOR_ELT(x, 0));
-    }
-  default: return x;
+  return x;
+}
+
+SEXP vec_proxy_equal_dispatch(SEXP x) {
+  if (vec_typeof(x) == vctrs_type_s3) {
+    return vctrs_dispatch1(syms_vec_proxy_equal_dispatch, fns_vec_proxy_equal_dispatch,
+                           syms_x, x);
+  } else {
+    return x;
   }
 }
 
