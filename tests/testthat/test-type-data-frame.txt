@@ -1,4 +1,4 @@
-mtcars:
+> vec_ptype_show(mtcars)
 Prototype: data.frame<
   mpg : double
   cyl : double
@@ -13,7 +13,7 @@ Prototype: data.frame<
   carb: double
 >
 
-iris:
+> vec_ptype_show(iris)
 Prototype: data.frame<
   Sepal.Length: double
   Sepal.Width : double
@@ -21,3 +21,4 @@ Prototype: data.frame<
   Petal.Width : double
   Species     : factor<12d60>
 >
+

@@ -1,3 +1,4 @@
+> vec_ptype_show(df)
 Prototype: data.frame<
   x: integer
   a: 
@@ -14,3 +15,4 @@ Prototype: data.frame<
       >
     >
 >
+

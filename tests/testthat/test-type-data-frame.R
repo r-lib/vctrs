@@ -5,16 +5,10 @@ context("test-type-data-frame")
 test_that("data frames print nicely", {
   expect_equal(vec_ptype_abbr(mtcars), "df[,11]")
 
-  expect_known_output(
-    file = test_path("test-type-data-frame.txt"),
-    {
-      cat("mtcars:\n")
-      vec_ptype_show(mtcars)
-      cat("\n")
-      cat("iris:\n")
-      vec_ptype_show(iris)
-    }
-  )
+  verify_output(test_path("test-type-data-frame.txt"), {
+    vec_ptype_show(mtcars)
+    vec_ptype_show(iris)
+  })
 })
 
 test_that("embedded data frames print nicely", {
@@ -23,12 +17,9 @@ test_that("embedded data frames print nicely", {
   df$b <- list_of(1, 2, 3)
   df$c <- as_list_of(split(data.frame(x = 1:3, y = letters[1:3]), 1:3))
 
-  expect_known_output(
-    file = test_path("test-type-data-frame-embedded.txt"),
-    {
-      vec_ptype_show(df)
-    }
-  )
+  verify_output(test_path("test-type-data-frame-embedded.txt"), {
+    vec_ptype_show(df)
+  })
 })
 
 # coercing ----------------------------------------------------------------
