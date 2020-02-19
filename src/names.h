@@ -20,9 +20,7 @@ extern struct name_repair_opts default_unique_repair_opts_obj;
 static const struct name_repair_opts* const default_unique_repair_opts =
   &default_unique_repair_opts_obj;
 
-static inline void PROTECT_NAME_REPAIR_OPTS(const struct name_repair_opts* opts) {
-  PROTECT(opts->fn);
-}
+#define PROTECT_NAME_REPAIR_OPTS(opts) PROTECT((opts)->fn)
 
 SEXP vec_as_names(SEXP names, const struct name_repair_opts* opts);
 struct name_repair_opts new_name_repair_opts(SEXP name_repair, bool quiet);
