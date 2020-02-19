@@ -414,9 +414,9 @@ R_len_t df_raw_size_from_list(SEXP x);
 SEXP vec_bare_df_restore(SEXP x, SEXP to, SEXP n);
 SEXP vec_df_restore(SEXP x, SEXP to, SEXP n);
 
-SEXP chr_assign(SEXP out, SEXP index, SEXP value, bool clone);
-SEXP list_assign(SEXP out, SEXP index, SEXP value, bool clone);
-SEXP df_assign(SEXP out, SEXP index, SEXP value, bool clone);
+SEXP chr_assign(SEXP out, SEXP index, SEXP value);
+SEXP list_assign(SEXP out, SEXP index, SEXP value);
+SEXP df_assign(SEXP out, SEXP index, SEXP value);
 
 // equal_object() never propagates missingness, so
 // it can return a `bool`
