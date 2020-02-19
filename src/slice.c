@@ -515,11 +515,11 @@ static SEXP vec_slice_maybe_altrep_vctrs_compact_rep(SEXP x, SEXP subscript, SEX
 
   switch (type) {
   case INTSXP: {
-    int value = (loc == NA_INTEGER) ? NA_INTEGER : INTEGER(x)[loc];
+    int value = (loc == NA_INTEGER) ? NA_INTEGER : INTEGER(x)[loc - 1];
     return new_altrep_vctrs_compact_rep_int(value, size);
   }
   case REALSXP: {
-    double value = (loc == NA_INTEGER) ? NA_REAL : REAL(x)[loc];
+    double value = (loc == NA_INTEGER) ? NA_REAL : REAL(x)[loc - 1];
     return new_altrep_vctrs_compact_rep_dbl(value, size);
   }
   default:
