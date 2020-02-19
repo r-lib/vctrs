@@ -72,24 +72,26 @@ SEXP fns_vec_slice_dispatch_integer64 = NULL;
 static SEXP vec_slice_maybe_altrep_vctrs_compact_rep(SEXP x, SEXP subscript, SEXPTYPE type);
 static SEXP vec_slice_maybe_altrep(SEXP x, SEXP subscript);
 
-#define SLICE(RTYPE, CTYPE, DEREF, CONST_DEREF, NA_VALUE)                        \
-  if (ALTREP(x)) {                                                               \
-    SEXP altout = vec_slice_maybe_altrep(x, subscript);                          \
-    if (altout != NULL) {                                                        \
-      return altout;                                                             \
-    }                                                                            \
-  }                                                                              \
-                                                                                 \
-  if (is_compact_rep(subscript)) {                                               \
-    SEXP altout = vec_slice_maybe_altrep_vctrs_compact_rep(x, subscript, RTYPE); \
-    if (altout != R_NilValue) {                                                  \
-      return altout;                                                             \
-    }                                                                            \
-    SLICE_COMPACT_REP(RTYPE, CTYPE, DEREF, CONST_DEREF, NA_VALUE);               \
-  } else if (is_compact_seq(subscript)) {                                        \
-    SLICE_COMPACT_SEQ(RTYPE, CTYPE, DEREF, CONST_DEREF);                         \
-  } else {                                                                       \
-    SLICE_SUBSCRIPT(RTYPE, CTYPE, DEREF, CONST_DEREF, NA_VALUE);                 \
+#define SLICE(RTYPE, CTYPE, DEREF, CONST_DEREF, NA_VALUE)                       \
+  if (ALTREP(x)) {                                                              \
+    SEXP out = vec_slice_maybe_altrep(x, subscript);                            \
+    if (out != NULL) {                                                          \
+      return out;                                                               \
+    }                                                                           \
+  }                                                                             \
+                                                                                \
+  if (is_compact_rep(subscript)) {                                              \
+    if (HAS_ALTREP) {                                                           \
+      SEXP out = vec_slice_maybe_altrep_vctrs_compact_rep(x, subscript, RTYPE); \
+      if (out != R_NilValue) {                                                  \
+        return out;                                                             \
+      }                                                                         \
+    }                                                                           \
+    SLICE_COMPACT_REP(RTYPE, CTYPE, DEREF, CONST_DEREF, NA_VALUE);              \
+  } else if (is_compact_seq(subscript)) {                                       \
+    SLICE_COMPACT_SEQ(RTYPE, CTYPE, DEREF, CONST_DEREF);                        \
+  } else {                                                                      \
+    SLICE_SUBSCRIPT(RTYPE, CTYPE, DEREF, CONST_DEREF, NA_VALUE);                \
   }
 
 static SEXP lgl_slice(SEXP x, SEXP subscript) {
