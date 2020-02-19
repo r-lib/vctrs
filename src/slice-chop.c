@@ -451,8 +451,8 @@ static SEXP vec_unchop(SEXP x, SEXP indices, SEXP ptype, const struct name_repai
 
   R_len_t out_size = 0;
 
-  // `out_size` comes from `indices` unless they are NULL.
-  // All elements of `x` are recycled to their corresponding index size
+  // `out_size` is computed from `indices` unless it is `NULL`.
+  // Each element of `x` is recycled to its corresponding index's size.
   if (null_indices) {
     for (R_len_t i = 0; i < x_size; ++i) {
       out_size += vec_size(VECTOR_ELT(x, i));
