@@ -152,6 +152,8 @@
 <a href="#vctrs-development-version" class="anchor"></a>vctrs (development version)<small> Unreleased </small>
 </h1>
 <ul>
+<li><p>The main feature of this release is considerable performance improvements with factors and dates.</p></li>
+<li><p><code><a href="../reference/vec_c.html">vec_c()</a></code> now falls back to <code><a href="https://rdrr.io/r/base/c.html">base::c()</a></code> if the vector doesn’t implement <code><a href="../reference/vec_ptype2.html">vec_ptype2()</a></code> but implements <code><a href="https://rdrr.io/r/base/c.html">c()</a></code>. This should improve the compatibility of vctrs-based functions with foreign classes (<a href='https://github.com/r-lib/vctrs/issues/801'>#801</a>).</p></li>
 <li><p>New <code><a href="../reference/vec_is_list.html">vec_is_list()</a></code> for detecting if a vector is a list in the vctrs sense. For instance, objects of class <code>lm</code> are not lists. In general, classes need to explicitly inherit from <code>"list"</code> to be considered as lists by vctrs.</p></li>
 <li>
 <p>Unspecified vectors of <code>NA</code> can now be assigned into a list (<a href='https://github.com/r-lib/vctrs/issues/819'>#819</a>).</p>
@@ -160,7 +162,7 @@ vec_slice(x, 1) &lt;- NA
 x
 #&gt; [[1]]
 #&gt; NULL
-#&gt; 
+#&gt;
 #&gt; [[2]]
 #&gt; 2</code></pre>
 </li>
@@ -171,7 +173,6 @@ x
 <li><p><code><a href="../reference/vec_bind.html">vec_rbind()</a></code> now binds row names. When named inputs are supplied and <code>names_to</code> is <code>NULL</code>, the names define row names. If <code>names_to</code> is supplied, they are assigned in the column name as before.</p></li>
 <li><p><code><a href="../reference/vec_bind.html">vec_cbind()</a></code> now binds row names if they are congruent across inputs. If the row names are not identical that’s an error.</p></li>
 <li><p>The <code><a href="https://rdrr.io/r/base/c.html">c()</a></code> method for <code>vctrs_vctr</code> now throws an error when <code>recursive</code> or <code>use.names</code> is supplied (<a href='https://github.com/r-lib/vctrs/issues/791'>#791</a>).</p></li>
-<li><p><code><a href="../reference/vec_c.html">vec_c()</a></code> now falls back to <code><a href="https://rdrr.io/r/base/c.html">base::c()</a></code> if the vector doesn’t implement <code><a href="../reference/vec_ptype2.html">vec_ptype2()</a></code> but implements <code><a href="https://rdrr.io/r/base/c.html">c()</a></code>. This should improve the compatibility of vctrs-based functions with foreign classes (<a href='https://github.com/r-lib/vctrs/issues/801'>#801</a>).</p></li>
 </ul>
 </div>
     <div id="vctrs-022" class="section level1">
