@@ -425,12 +425,6 @@ static SEXP vec_unchop(SEXP x, SEXP indices, SEXP ptype, const struct name_repai
 
   R_len_t x_size = vec_size(x);
 
-  ptype = PROTECT(vctrs_type_common_impl(x, ptype));
-  x = PROTECT(vec_cast_common(x, ptype));
-
-  // Should have a fresh copy from `vec_cast_common()`, but this is to be safe
-  x = PROTECT(r_maybe_duplicate(x));
-
   bool null_indices = (indices == R_NilValue);
 
   if (!null_indices) {
@@ -442,6 +436,19 @@ static SEXP vec_unchop(SEXP x, SEXP indices, SEXP ptype, const struct name_repai
     }
   }
 
+  ptype = PROTECT(vctrs_type_common_impl(x, ptype));
+
+  // Apply size/type checking to indices first before potentially exiting early
+  if (ptype == R_NilValue) {
+    UNPROTECT(1);
+    return R_NilValue;
+  }
+
+  x = PROTECT(vec_cast_common(x, ptype));
+
+  // Should have a fresh copy from `vec_cast_common()`, but this is to be safe
+  x = PROTECT(r_maybe_duplicate(x));
+
   R_len_t out_size = 0;
 
   // `out_size` comes from `indices` unless they are NULL.
@@ -452,10 +459,15 @@ static SEXP vec_unchop(SEXP x, SEXP indices, SEXP ptype, const struct name_repai
     }
   } else {
     for (R_len_t i = 0; i < x_size; ++i) {
+      SEXP elt = VECTOR_ELT(x, i);
+
+      if (elt == R_NilValue) {
+        continue;
+      }
+
       R_len_t index_size = vec_size(VECTOR_ELT(indices, i));
       out_size += index_size;
 
-      SEXP elt = VECTOR_ELT(x, i);
       elt = vec_recycle(elt, index_size, args_empty);
       SET_VECTOR_ELT(x, i, elt);
     }
@@ -512,6 +524,11 @@ static SEXP vec_unchop_indices(SEXP out,
 
   for (R_len_t i = 0; i < x_size; ++i) {
     SEXP elt = VECTOR_ELT(x, i);
+
+    if (elt == R_NilValue) {
+      continue;
+    }
+
     SEXP index = VECTOR_ELT(indices, i);
 
     if (is_shaped) {
