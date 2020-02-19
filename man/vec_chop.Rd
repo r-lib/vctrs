@@ -62,7 +62,7 @@ vec_chop(1:5, list(1, 1:2))
 vec_chop(mtcars, list(1:3, 4:6))
 
 # If `indices` uses the full sequence along `x` (in any order),
-# then `vec_unchop()` inverts `vec_chop()`.
+# then `vec_unchop()` inverts `vec_chop()`
 x <- c("a", "b", "c", "d")
 indices <- list(2, c(3, 1), 4)
 vec_chop(x, indices)
@@ -71,4 +71,22 @@ vec_unchop(vec_chop(x, indices), indices)
 # When unchopping, size 1 elements of `x` are recycled
 # to the size of the corresponding index
 vec_unchop(list(1, 2:3), list(c(1, 3, 5), c(2, 4)))
+
+# An alternative implementation of `ave()` can be constructed using
+# `vec_chop()` and `vec_unchop()` in combination with `vec_group_loc()`
+attach(warpbreaks)
+
+ave2 <- function(.x, .by, .f, ...) {
+  indices <- vec_group_loc(.by)$loc
+  chopped <- vec_chop(.x, indices)
+  out <- lapply(chopped, .f, ...)
+  vec_unchop(out, indices)
+}
+
+ave2(breaks, wool, mean)
+
+identical(
+  ave2(breaks, wool, mean),
+  ave(breaks, wool, FUN = mean)
+)
 }
