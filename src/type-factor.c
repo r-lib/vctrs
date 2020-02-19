@@ -207,7 +207,12 @@ static SEXP remove_na_levels(SEXP levels) {
   for (R_len_t i = 0; i < size; ++i) {
     if (p_levels[i] == NA_STRING) {
       int na_loc = (i + 1) * -1;
-      return vec_slice(levels, r_int(na_loc));
+
+      SEXP na_loc_obj = PROTECT(r_int(na_loc));
+      SEXP out = vec_slice(levels, na_loc_obj);
+
+      UNPROTECT(1);
+      return out;
     }
   }
 
