@@ -48,9 +48,8 @@ bool vec_is_altrep_vctrs_compact_rep(SEXP x) {
 // -----------------------------------------------------------------------------
 // Compact ALTINT rep
 
-// `info` is stored in a double vector to allow for long vectors
-#define VCTRS_COMPACT_REP_INT_VALUE(info) ((int) REAL0(info)[0])
-#define VCTRS_COMPACT_REP_INT_SIZE(info) ((R_xlen_t) REAL0(info)[1])
+#define VCTRS_COMPACT_REP_INT_VALUE(info) INTEGER0(VECTOR_ELT(info, 0))[0]
+#define VCTRS_COMPACT_REP_INT_SIZE(info) ((R_xlen_t) REAL0(VECTOR_ELT(info, 1))[0])
 
 // Materialize the full integer vector
 static SEXP vctrs_compact_rep_int_materialize(SEXP x) {
@@ -191,11 +190,11 @@ static R_xlen_t vctrs_compact_rep_int_Get_region(SEXP x, R_xlen_t i, R_xlen_t n,
 
 // [[ include("altrep-rep.h") ]]
 SEXP new_altrep_vctrs_compact_rep_int(int value, R_xlen_t size) {
-  SEXP info = PROTECT(Rf_allocVector(REALSXP, 2));
-  double* p_info = REAL(info);
+  double size_ = (double) size;
 
-  p_info[0] = (double) value;
-  p_info[1] = (double) size;
+  SEXP info = PROTECT(Rf_allocVector(VECSXP, 2));
+  SET_VECTOR_ELT(info, 0, Rf_ScalarInteger(value));
+  SET_VECTOR_ELT(info, 1, Rf_ScalarReal(size_));
 
   SEXP out = R_new_altrep(altrep_vctrs_compact_rep_int_class, info, R_NilValue);
 
