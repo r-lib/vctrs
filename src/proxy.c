@@ -36,7 +36,7 @@ SEXP vec_proxy_equal(SEXP x) {
   return res;
 }
 SEXP vec_proxy_unwrap(SEXP x) {
-  if (is_data_frame(x) && XLENGTH(x) == 1) {
+  if (TYPEOF(x) == VECSXP && XLENGTH(x) == 1 && is_data_frame(x)) {
     x = vec_proxy_unwrap(VECTOR_ELT(x, 0));
   }
   return x;
