@@ -181,15 +181,42 @@ SEXP vec_recycle(SEXP x, R_len_t size, struct vctrs_arg* x_arg) {
   stop_recycle_incompatible_size(n_x, size, x_arg);
 }
 
-static SEXP vec_recycle_one(SEXP x, R_len_t size) {
 #if (R_VERSION >= R_Version(3, 5, 0))
-  if (TYPEOF(x) == INTSXP && !OBJECT(x) && ATTRIB(x) == R_NilValue) {
+static SEXP vec_recycle_one_maybe_altrep_compact_rep(SEXP x, R_len_t size) {
+  if (OBJECT(x)) {
+    return R_NilValue;
+  }
+
+  if (ATTRIB(x) != R_NilValue) {
+    return R_NilValue;
+  }
+
+  switch (TYPEOF(x)) {
+  case INTSXP:
     return new_altrep_vctrs_compact_rep_int(INTEGER(x)[0], size);
+  case REALSXP:
+    return new_altrep_vctrs_compact_rep_dbl(REAL(x)[0], size);
+  default:
+    return R_NilValue;
+  }
+
+  never_reached("vec_recycle_one_maybe_altrep_compact_rep");
+}
+#endif
+
+static SEXP vec_recycle_one(SEXP x, R_len_t size) {
+  SEXP out;
+
+#if (R_VERSION >= R_Version(3, 5, 0))
+  out = vec_recycle_one_maybe_altrep_compact_rep(x, size);
+
+  if (out != R_NilValue) {
+    return out;
   }
 #endif
 
   SEXP i = PROTECT(compact_rep(1, size));
-  SEXP out = vec_slice_impl(x, i);
+  out = vec_slice_impl(x, i);
 
   UNPROTECT(1);
   return out;
