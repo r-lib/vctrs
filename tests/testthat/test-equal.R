@@ -97,6 +97,14 @@ test_that("data frames must have same size and columns", {
     data.frame(x = 1),
     data.frame(x = 1, y = 2),
     TRUE
+  ),
+    "must have same types and lengths"
+  )
+
+  expect_error(.Call(vctrs_equal,
+    data.frame(x = 1, y = 2, z = 2),
+    data.frame(x = 1, y = 2),
+    TRUE
     ),
     "must have the same number of columns"
   )
