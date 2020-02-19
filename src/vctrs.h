@@ -443,6 +443,10 @@ bool equal_names(SEXP x, SEXP y);
  * The behaviour is undefined if these conditions are not true.
  */
 int equal_scalar(SEXP x, R_len_t i, SEXP y, R_len_t j, bool na_equal);
+int equal_scalar_p(SEXPTYPE type,
+                   SEXP x, const void* x_p, R_len_t i,
+                   SEXP y, const void* y_p, R_len_t j,
+                   bool na_equal);
 int compare_scalar(SEXP x, R_len_t i, SEXP y, R_len_t j, bool na_equal);
 
 uint32_t hash_object(SEXP x);
