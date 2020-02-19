@@ -2,6 +2,7 @@
 #include "type-data-frame.h"
 #include "utils.h"
 #include "slice.h"
+#include "altrep-rep.h"
 
 R_len_t rcrd_size(SEXP x);
 
@@ -159,6 +160,8 @@ bool has_dim(SEXP x) {
   return ATTRIB(x) != R_NilValue && Rf_getAttrib(x, R_DimSymbol) != R_NilValue;
 }
 
+static SEXP vec_recycle_one(SEXP x, R_len_t size);
+
 // [[ include("vctrs.h") ]]
 SEXP vec_recycle(SEXP x, R_len_t size, struct vctrs_arg* x_arg) {
   if (x == R_NilValue) {
@@ -172,14 +175,22 @@ SEXP vec_recycle(SEXP x, R_len_t size, struct vctrs_arg* x_arg) {
   }
 
   if (n_x == 1L) {
-    SEXP i = PROTECT(compact_rep(1, size));
-    SEXP out = vec_slice_impl(x, i);
-
-    UNPROTECT(1);
-    return out;
+    return vec_recycle_one(x, size);
   }
 
   stop_recycle_incompatible_size(n_x, size, x_arg);
+}
+
+static SEXP vec_recycle_one(SEXP x, R_len_t size) {
+  if (TYPEOF(x) == INTSXP && !OBJECT(x) && ATTRIB(x) == R_NilValue) {
+    return new_altrep_vctrs_compact_intrep(INTEGER(x)[0], size);
+  }
+
+  SEXP i = PROTECT(compact_rep(1, size));
+  SEXP out = vec_slice_impl(x, i);
+
+  UNPROTECT(1);
+  return out;
 }
 
 // [[ register() ]]
