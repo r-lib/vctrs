@@ -69,9 +69,6 @@ SEXP fns_vec_slice_dispatch_integer64 = NULL;
   UNPROTECT(1);                                                 \
   return out
 
-// -----------------------------------------------------------------------------
-#if (R_VERSION >= R_Version(3, 5, 0))
-
 static SEXP vec_slice_maybe_altrep_vctrs_compact_rep(SEXP x, SEXP subscript, SEXPTYPE type);
 static SEXP vec_slice_maybe_altrep(SEXP x, SEXP subscript);
 
@@ -94,20 +91,6 @@ static SEXP vec_slice_maybe_altrep(SEXP x, SEXP subscript);
   } else {                                                                       \
     SLICE_SUBSCRIPT(RTYPE, CTYPE, DEREF, CONST_DEREF, NA_VALUE);                 \
   }
-
-#else
-
-#define SLICE(RTYPE, CTYPE, DEREF, CONST_DEREF, NA_VALUE)          \
-  if (is_compact_rep(subscript)) {                                 \
-    SLICE_COMPACT_REP(RTYPE, CTYPE, DEREF, CONST_DEREF, NA_VALUE); \
-  } else if (is_compact_seq(subscript)) {                          \
-    SLICE_COMPACT_SEQ(RTYPE, CTYPE, DEREF, CONST_DEREF);           \
-  } else {                                                         \
-    SLICE_SUBSCRIPT(RTYPE, CTYPE, DEREF, CONST_DEREF, NA_VALUE);   \
-  }
-
-#endif
-// -----------------------------------------------------------------------------
 
 static SEXP lgl_slice(SEXP x, SEXP subscript) {
   SLICE(LGLSXP, int, LOGICAL, LOGICAL_RO, NA_LOGICAL);
@@ -494,10 +477,6 @@ SEXP vec_slice_rep(SEXP x, SEXP i, SEXP n) {
   return out;
 }
 
-// -----------------------------------------------------------------------------
-// ALTREP slicing
-#if (R_VERSION >= R_Version(3, 5, 0))
-
 static SEXP vec_slice_maybe_altrep_vctrs_compact_rep(SEXP x, SEXP subscript, SEXPTYPE type) {
   if (OBJECT(x)) {
     return R_NilValue;
@@ -537,9 +516,6 @@ static SEXP vec_slice_maybe_altrep(SEXP x, SEXP subscript) {
   UNPROTECT(1);
   return out;
 }
-
-#endif
-// -----------------------------------------------------------------------------
 
 void vctrs_init_slice(SEXP ns) {
   syms_vec_slice_fallback = Rf_install("vec_slice_fallback");
