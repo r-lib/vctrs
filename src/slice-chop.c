@@ -495,7 +495,9 @@ static SEXP vec_unchop(SEXP x, SEXP indices, SEXP ptype, const struct name_repai
   }
   REPROTECT(out, out_pi);
 
-  out = vec_restore(out, ptype, r_int(out_size));
+  SEXP out_size_sexp = PROTECT(r_int(out_size));
+
+  out = vec_restore(out, ptype, out_size_sexp);
   REPROTECT(out, out_pi);
 
   if (has_inner_names) {
@@ -505,7 +507,7 @@ static SEXP vec_unchop(SEXP x, SEXP indices, SEXP ptype, const struct name_repai
     UNPROTECT(1);
   }
 
-  UNPROTECT(5);
+  UNPROTECT(6);
   return out;
 }
 
