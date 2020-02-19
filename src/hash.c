@@ -130,7 +130,7 @@ SEXP vctrs_hash_object(SEXP x) {
 
 
 static uint32_t sexp_hash(SEXP x) {
-  switch(TYPEOF(x)) {
+  switch (TYPEOF(x)) {
   case NILSXP: return 0;
   case LGLSXP: return lgl_hash(x);
   case INTSXP: return int_hash(x);

@@ -103,7 +103,7 @@ bool vec_is_list(SEXP x) {
     return false;
   }
 
-  switch(class_type(x)) {
+  switch (class_type(x)) {
   // Bare list
   case vctrs_class_none:
     return true;
