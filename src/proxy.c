@@ -33,11 +33,15 @@ SEXP vec_proxy_equal(SEXP x) {
   return vec_proxy_recursive(x, vctrs_proxy_equal);
 }
 SEXP vec_proxy_equal_dispatch(SEXP x) {
-  if (vec_typeof(x) == vctrs_type_s3) {
+  switch (vec_typeof(x)){
+  case vctrs_type_s3:
     return vctrs_dispatch1(syms_vec_proxy_equal_dispatch, fns_vec_proxy_equal_dispatch,
-                           syms_x, x);
-  } else {
-    return x;
+      syms_x, x);
+  case vctrs_type_dataframe:
+    if (XLENGTH(x) == 1) {
+      return vec_proxy_equal_dispatch(VECTOR_ELT(x, 0));
+    }
+  default: return x;
   }
 }
 
