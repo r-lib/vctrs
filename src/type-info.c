@@ -98,6 +98,7 @@ enum vctrs_type vec_proxy_typeof(SEXP x) {
   return vec_base_typeof(x, true);
 }
 
+// [[ include("vctrs.h") ]]
 bool vec_is_list(SEXP x) {
   if (TYPEOF(x) != VECSXP) {
     return false;

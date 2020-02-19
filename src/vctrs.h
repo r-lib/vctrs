@@ -86,6 +86,7 @@ struct vctrs_proxy_info vec_proxy_info(SEXP x);
 enum vctrs_type vec_typeof(SEXP x);
 enum vctrs_type vec_proxy_typeof(SEXP x);
 const char* vec_type_as_str(enum vctrs_type type);
+bool vec_is_list(SEXP x);
 bool vec_is_vector(SEXP x);
 bool vec_is_partial(SEXP x);
 
