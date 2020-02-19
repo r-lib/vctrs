@@ -261,3 +261,44 @@ R_len_t df_flat_width(SEXP x) {
 SEXP vctrs_df_flat_width(SEXP x) {
   return r_int(df_flat_width(x));
 }
+
+
+static R_len_t df_flatten_loop(SEXP x, SEXP out, SEXP out_names, R_len_t counter);
+
+// Might return duplicate names. Currently only used for equality
+// proxy so this doesn't matter. A less bare bone version would repair
+// names.
+//
+// [[ register(); include("type-data-frame.h") ]]
+SEXP df_flatten(SEXP x) {
+  R_len_t width = df_flat_width(x);
+  SEXP out = PROTECT(Rf_allocVector(VECSXP, width));
+  SEXP out_names = PROTECT(Rf_allocVector(STRSXP, width));
+  r_poke_names(out, out_names);
+
+  df_flatten_loop(x, out, out_names, 0);
+  init_data_frame(out, df_size(x));
+
+  UNPROTECT(2);
+  return out;
+}
+
+static R_len_t df_flatten_loop(SEXP x, SEXP out, SEXP out_names, R_len_t counter) {
+  R_len_t n = Rf_length(x);
+  SEXP x_names = PROTECT(r_names(x));
+
+  for (R_len_t i = 0; i < n; ++i) {
+    SEXP col = VECTOR_ELT(x, i);
+
+    if (is_data_frame(col)) {
+      counter = df_flatten_loop(col, out, out_names, counter);
+    } else {
+      SET_VECTOR_ELT(out, counter, col);
+      SET_STRING_ELT(out_names, counter, STRING_ELT(x_names, i));
+      ++counter;
+    }
+  }
+
+  UNPROTECT(1);
+  return counter;
+}

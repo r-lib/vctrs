@@ -245,3 +245,13 @@ test_that("flat width is computed", {
   df <- tibble(x = 1, y = tibble(x = 2, y = tibble(x = 3), z = 4), z = 5)
   expect_identical(df_flat_width(df), 5L)
 })
+
+test_that("can flatten data frames", {
+  df_flatten <- function(x) {
+    .Call(vctrs_df_flatten, x)
+  }
+  expect_identical(df_flatten(mtcars), as.data.frame(as.list(mtcars)))
+
+  df <- tibble(x = 1, y = tibble(x = 2, y = tibble(x = 3), z = 4), z = 5)
+  expect_identical(df_flatten(df), new_data_frame(list(x = 1, x = 2, x = 3, z = 4, z = 5)))
+})

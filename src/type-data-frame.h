@@ -14,6 +14,7 @@ SEXP df_container_type(SEXP x);
 SEXP df_poke(SEXP x, R_len_t i, SEXP value);
 SEXP df_poke_at(SEXP x, SEXP name, SEXP value);
 R_len_t df_flat_width(SEXP x);
+SEXP df_flatten(SEXP x);
 
 enum rownames_type {
   ROWNAMES_AUTOMATIC,

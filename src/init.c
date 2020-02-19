@@ -95,6 +95,7 @@ extern SEXP vctrs_is_coercible(SEXP, SEXP, SEXP, SEXP);
 extern SEXP vctrs_as_subscript(SEXP, SEXP, SEXP, SEXP, SEXP);
 extern SEXP vctrs_as_subscript_result(SEXP, SEXP, SEXP, SEXP, SEXP);
 extern SEXP vctrs_df_flat_width(SEXP);
+extern SEXP df_flatten(SEXP);
 
 // Very experimental
 // Available in the API header
@@ -208,6 +209,7 @@ static const R_CallMethodDef CallEntries[] = {
   {"vctrs_as_subscript",               (DL_FUNC) &vctrs_as_subscript, 5},
   {"vctrs_as_subscript_result",        (DL_FUNC) &vctrs_as_subscript_result, 5},
   {"vctrs_df_flat_width",              (DL_FUNC) &vctrs_df_flat_width, 1},
+  {"vctrs_df_flatten",                 (DL_FUNC) &df_flatten, 1},
   {NULL, NULL, 0}
 };
 
