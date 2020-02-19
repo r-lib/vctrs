@@ -35,8 +35,15 @@ SEXP vec_proxy_equal(SEXP x) {
 SEXP vec_proxy_equal_dispatch(SEXP x) {
   switch (vec_typeof(x)){
   case vctrs_type_s3:
-    return vctrs_dispatch1(syms_vec_proxy_equal_dispatch, fns_vec_proxy_equal_dispatch,
-      syms_x, x);
+  {
+    SEXP proxy = PROTECT(vctrs_dispatch1(syms_vec_proxy_equal_dispatch, fns_vec_proxy_equal_dispatch,
+      syms_x, x));
+    if (is_data_frame(proxy) && XLENGTH(proxy) == 1) {
+      proxy = vec_proxy_equal_dispatch(VECTOR_ELT(proxy, 0));
+    }
+    UNPROTECT(1);
+    return proxy;
+  }
   case vctrs_type_dataframe:
     if (XLENGTH(x) == 1) {
       return vec_proxy_equal_dispatch(VECTOR_ELT(x, 0));
