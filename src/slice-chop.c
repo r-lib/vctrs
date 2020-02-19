@@ -446,9 +446,6 @@ static SEXP vec_unchop(SEXP x, SEXP indices, SEXP ptype, const struct name_repai
 
   x = PROTECT(vec_cast_common(x, ptype));
 
-  // Should have a fresh copy from `vec_cast_common()`, but this is to be safe
-  x = PROTECT(r_maybe_duplicate(x));
-
   R_len_t out_size = 0;
 
   // `out_size` is computed from `indices` unless it is `NULL`.
@@ -507,7 +504,7 @@ static SEXP vec_unchop(SEXP x, SEXP indices, SEXP ptype, const struct name_repai
     UNPROTECT(1);
   }
 
-  UNPROTECT(6);
+  UNPROTECT(5);
   return out;
 }
 
