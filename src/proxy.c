@@ -30,7 +30,10 @@ SEXP vec_proxy(SEXP x) {
 
 // [[ register(); include("vctrs.h") ]]
 SEXP vec_proxy_equal(SEXP x) {
-  return vec_proxy_unwrap(vec_proxy_recursive(x, vctrs_proxy_equal));
+  SEXP proxy = PROTECT(vec_proxy_recursive(x, vctrs_proxy_equal));
+  SEXP res = vec_proxy_unwrap(proxy);
+  UNPROTECT(1);
+  return res;
 }
 SEXP vec_proxy_unwrap(SEXP x) {
   if (is_data_frame(x) && XLENGTH(x) == 1) {
