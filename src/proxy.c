@@ -1,4 +1,5 @@
 #include "vctrs.h"
+#include "type-data-frame.h"
 #include "utils.h"
 
 // Initialised at load time
@@ -32,9 +33,21 @@ SEXP vec_proxy(SEXP x) {
 // [[ register(); include("vctrs.h") ]]
 SEXP vec_proxy_equal(SEXP x) {
   SEXP proxy = PROTECT(vec_proxy_recursive(x, vctrs_proxy_equal));
-  SEXP res = vec_proxy_unwrap(proxy);
+
+  if (is_data_frame(proxy)) {
+    // Flatten df-cols so we don't have to recurse to work with data
+    // frame proxies
+    proxy = PROTECT(df_flatten(proxy));
+
+    // Unwrap data frames of size 1 since the data frame wrapper
+    // doesn't impact rowwise equality or identity
+    proxy = vec_proxy_unwrap(proxy);
+
+    UNPROTECT(1);
+  }
+
   UNPROTECT(1);
-  return res;
+  return proxy;
 }
 static SEXP vec_proxy_unwrap(SEXP x) {
   if (TYPEOF(x) == VECSXP && XLENGTH(x) == 1 && is_data_frame(x)) {

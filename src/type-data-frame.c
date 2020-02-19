@@ -5,6 +5,10 @@
 
 // [[ include("type-data-frame.h") ]]
 bool is_data_frame(SEXP x) {
+  if (TYPEOF(x) != VECSXP) {
+    return false;
+  }
+
   enum vctrs_class_type type = class_type(x);
   return
     type == vctrs_class_bare_data_frame ||
