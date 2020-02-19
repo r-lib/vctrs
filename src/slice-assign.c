@@ -100,28 +100,28 @@ SEXP vec_proxy_assign(SEXP proxy, SEXP index, SEXP value) {
   return vec_assign_switch(proxy, index, info.proxy);
 }
 
-#define ASSIGN_INDEX_ALTREP(CTYPE, DEREF, ELT)                 \
-  R_len_t n = Rf_length(index);                                \
-  int* index_data = INTEGER(index);                            \
-                                                               \
-  SEXP out = PROTECT(r_maybe_duplicate(x));                    \
-  CTYPE* out_data = DEREF(out);                                \
-                                                               \
-  CTYPE elt;                                                   \
-  if (n > 0) {                                                 \
-    elt = ELT(value, 0);                                       \
-  }                                                            \
-                                                               \
-  for (R_len_t i = 0; i < n; ++i) {                            \
-    int j = index_data[i];                                     \
-                                                               \
-    if (j != NA_INTEGER) {                                     \
-      out_data[j - 1] = elt;                                   \
-    }                                                          \
-  }                                                            \
-                                                               \
-  UNPROTECT(2);                                                \
-  return out;                                                  \
+#define ASSIGN_ALTREP_VCTRS_COMPACT_REP(CTYPE, DEREF, ELT)  \
+  R_len_t n = Rf_length(index);                             \
+  int* index_data = INTEGER(index);                         \
+                                                            \
+  SEXP out = PROTECT(r_maybe_duplicate(x));                 \
+  CTYPE* out_data = DEREF(out);                             \
+                                                            \
+  CTYPE elt;                                                \
+  if (n > 0) {                                              \
+    elt = ELT(value, 0);                                    \
+  }                                                         \
+                                                            \
+  for (R_len_t i = 0; i < n; ++i) {                         \
+    int j = index_data[i];                                  \
+                                                            \
+    if (j != NA_INTEGER) {                                  \
+      out_data[j - 1] = elt;                                \
+    }                                                       \
+  }                                                         \
+                                                            \
+  UNPROTECT(2);                                             \
+  return out;                                               \
 
 #define ASSIGN_INDEX(CTYPE, DEREF, CONST_DEREF)                 \
   R_len_t n = Rf_length(index);                                 \
@@ -171,7 +171,7 @@ SEXP vec_proxy_assign(SEXP proxy, SEXP index, SEXP value) {
 #define ASSIGN(CTYPE, DEREF, CONST_DEREF, ELT)                     \
   if (ALTREP(value) && vec_is_altrep_vctrs_compact_rep(value)) {   \
     index = PROTECT(compact_materialize(index));                   \
-    ASSIGN_INDEX_ALTREP(CTYPE, DEREF, ELT);                        \
+    ASSIGN_ALTREP_VCTRS_COMPACT_REP(CTYPE, DEREF, ELT);            \
   } else if (is_compact_seq(index)) {                              \
     ASSIGN_COMPACT(CTYPE, DEREF, CONST_DEREF);                     \
   } else {                                                         \
@@ -199,6 +199,7 @@ static SEXP raw_assign(SEXP x, SEXP index, SEXP value) {
 
 #undef ASSIGN
 #undef ASSIGN_INDEX
+#undef ASSIGN_ALTREP_VCTRS_COMPACT_REP
 #undef ASSIGN_COMPACT
 
 
