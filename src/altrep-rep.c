@@ -15,6 +15,12 @@ SEXP new_altrep_vctrs_compact_intrep(int value, R_xlen_t size) {
   return R_NilValue;
 }
 
+// [[ register() ]]
+SEXP vctrs_new_altrep_vctrs_compact_intrep(SEXP value, SEXP size) {
+  Rf_errorcall(R_NilValue, "Need R 3.5+ for ALTREP support");
+  return R_NilValue;
+}
+
 // For DllInfo on R < 3.4
 #include <R_ext/Rdynload.h>
 
