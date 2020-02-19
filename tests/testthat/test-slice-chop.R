@@ -218,3 +218,190 @@ test_that("can chop S3 objects using the fallback method with compact seqs", {
   expect_equal(vec_chop_seq(x, 2L, 2L), list(vec_slice(x, 3:4)))
 })
 
+# vec_unchop --------------------------------------------------------------
+
+test_that("`x` must be a list", {
+  expect_error(vec_unchop(1, list(1)), "`x` must be a list")
+  expect_error(vec_unchop(data.frame(x=1), list(1)), "`x` must be a list")
+})
+
+test_that("`indices` must be a list", {
+  expect_error(vec_unchop(list(1), 1), "`indices` must be a list of integers, or `NULL`")
+  expect_error(vec_unchop(list(1), data.frame(x=1)), "`indices` must be a list of integers, or `NULL`")
+})
+
+test_that("`indices` must be a list of integers", {
+  expect_error(vec_unchop(list(1), list("x")), "Can't use character names")
+  expect_error(vec_unchop(list(1), list(quote(name))), class = "vctrs_error_scalar_type")
+})
+
+test_that("`x` and `indices` must be lists of the same size", {
+  expect_error(vec_unchop(list(1, 2), list(1)), "`x` and `indices` must be lists of the same size")
+})
+
+test_that("can unchop empty vectors", {
+  expect_null(vec_unchop(list()))
+  expect_null(vec_unchop(list(), list()))
+  expect_identical(vec_unchop(list(), list(), ptype = numeric()), numeric())
+})
+
+test_that("can unchop a list of NULL", {
+  expect_null(vec_unchop(list(NULL), list(integer())))
+  expect_identical(vec_unchop(list(NULL), list(integer()), ptype = numeric()), numeric())
+  expect_identical(vec_unchop(list(NULL, NULL), list(integer(), integer()), ptype = numeric()), numeric())
+})
+
+test_that("NULLs are ignored when unchopped with other vectors", {
+  expect_identical(vec_unchop(list("a", NULL, "b"), list(2, integer(), 1)), c("b", "a"))
+})
+
+test_that("can unchop atomic vectors", {
+  expect_identical(vec_unchop(list(1, 2), list(2, 1)), c(2, 1))
+  expect_identical(vec_unchop(list("a", "b"), list(2, 1)), c("b", "a"))
+})
+
+test_that("can unchop lists", {
+  x <- list(list("a", "b"), list("c"))
+  indices <- list(c(2, 3), 1)
+
+  expect_identical(vec_unchop(x, indices), list("c", "a", "b"))
+})
+
+test_that("can unchop data frames", {
+  df1 <- data_frame(x = 1:2)
+  df2 <- data_frame(x = 3:4)
+
+  x <- list(df1, df2)
+  indices <- list(c(3, 1), c(2, 4))
+
+  expect <- vec_slice(vec_c(df1, df2), vec_order(vec_c(!!! indices)))
+
+  expect_identical(vec_unchop(x, indices), expect)
+})
+
+test_that("can unchop factors", {
+  fctr1 <- factor("z")
+  fctr2 <- factor(c("x", "y"))
+
+  x <- list(fctr1, fctr2)
+  indices <- list(2, c(3, 1))
+
+  # levels are in the order they are seen!
+  expect <- factor(c("y", "z", "x"), levels = c("z", "x", "y"))
+
+  expect_identical(vec_unchop(x, indices), expect)
+})
+
+test_that("can fallback when unchopping matrices", {
+  mat1 <- matrix(1:4, nrow = 2, ncol = 2)
+  mat2 <- matrix(5:10, nrow = 3, ncol = 2)
+
+  x <- list(mat1, mat2)
+  indices <- list(c(4, 1), c(2, 3, 5))
+
+  expect <- vec_slice(vec_c(mat1, mat2), vec_order(vec_c(!!! indices)))
+
+  expect_identical(vec_unchop(x, indices), expect)
+  expect_identical(vec_unchop(x), vec_c(mat1, mat2))
+})
+
+test_that("can fallback when unchopping arrays of >2D", {
+  arr1 <- array(1:8, c(2, 2, 2))
+  arr2 <- matrix(9:10, c(1, 2))
+
+  x <- list(arr1, arr2)
+  indices <- list(c(3, 1), 2)
+
+  expect <- vec_slice(vec_c(arr1, arr2), vec_order(vec_c(!!! indices)))
+
+  expect_identical(vec_unchop(x, indices), expect)
+  expect_identical(vec_unchop(x), vec_c(arr1, arr2))
+})
+
+test_that("can unchop with all size 0 elements and get the right ptype", {
+  x <- list(integer(), integer())
+  indices <- list(integer(), integer())
+  expect_identical(vec_unchop(x, indices), integer())
+})
+
+test_that("can unchop with some size 0 elements", {
+  x <- list(integer(), 1:2, integer())
+  indices <- list(integer(), 2:1, integer())
+  expect_identical(vec_unchop(x, indices), 2:1)
+})
+
+test_that("NULL is a valid index if we can recycle to size 0", {
+  expect_identical(vec_unchop(list(1, 2), list(NULL, 1)), 2)
+  expect_error(vec_unchop(list(1:2, 2), list(NULL, 1)), class = "vctrs_error_recycle_incompatible_size")
+})
+
+test_that("unchopping recycles elements of x to the size of the index", {
+  x <- list(1, 2)
+  indices <- list(c(3, 4, 5), c(2, 1))
+
+  expect_identical(vec_unchop(x, indices), c(2, 2, 1, 1, 1))
+})
+
+test_that("unchopping takes the common type", {
+  x <- list(1, "a")
+  indices <- list(1, 2)
+
+  expect_error(vec_unchop(x, indices), class = "vctrs_error_incompatible_type")
+
+  x <- list(1, 2L)
+
+  expect_is(vec_unchop(x, indices), "numeric")
+})
+
+test_that("can specify a ptype to override common type", {
+  x <- list(1, 2L)
+  indices <- list(1, 2)
+
+  expect_identical(vec_unchop(x, indices, ptype = integer()), c(1L, 2L))
+})
+
+test_that("leaving `indices = NULL` unchops sequentially", {
+  x <- list(1:2, 3:5, 6L)
+  expect_identical(vec_unchop(x), 1:6)
+})
+
+test_that("outer names on x are not kept", {
+  x <- list(x = 1, y = 2)
+  expect_named(vec_unchop(x), NULL)
+  expect_named(vec_unchop(x, list(2, 1)), NULL)
+})
+
+test_that("inner names are kept", {
+  x <- list(x = c(a = 1), y = c(b = 2))
+  expect_named(vec_unchop(x), c("a", "b"))
+  expect_named(vec_unchop(x, list(2, 1)), c("b", "a"))
+})
+
+test_that("data frame row names are never kept", {
+  df1 <- data.frame(x = 1:2, row.names = c("r1", "r2"))
+  df2 <- data.frame(x = 3:4, row.names = c("r3", "r4"))
+
+  x <- list(df1, df2)
+  indices <- list(c(3, 1), c(2, 4))
+
+  expect_identical(.row_names_info(vec_unchop(x, indices)), -4L)
+})
+
+test_that("monitoring - can technically assign to the same location twice", {
+  x <- list(1:2, 3L)
+  indices <- list(1:2, 1L)
+
+  expect_identical(vec_unchop(x, indices), c(3L, 2L, NA))
+})
+
+test_that("index values are validated", {
+  x <- list(1, 2)
+  indices1 <- list(4, 1)
+  indices2 <- list(c(1, 4), 2)
+  indices3 <- list(c(1, 3, 4), 2)
+
+  expect_error(vec_unchop(x, indices1), class = "vctrs_error_subscript_oob")
+  expect_error(vec_unchop(x, indices2), class = "vctrs_error_subscript_oob")
+
+  expect_identical(vec_unchop(x, indices3), c(1, 2, 1, 1))
+})
