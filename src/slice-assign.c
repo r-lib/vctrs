@@ -100,6 +100,10 @@ SEXP vec_proxy_assign(SEXP proxy, SEXP index, SEXP value) {
   return vec_assign_switch(proxy, index, info.proxy);
 }
 
+// -----------------------------------------------------------------------------
+// ALTREP vctrs compact rep assignment
+#if (R_VERSION >= R_Version(3, 5, 0))
+
 #define ASSIGN_ALTREP_VCTRS_COMPACT_REP(CTYPE, DEREF, ELT)  \
   R_len_t n = Rf_length(index);                             \
   int* index_data = INTEGER(index);                         \
@@ -121,7 +125,10 @@ SEXP vec_proxy_assign(SEXP proxy, SEXP index, SEXP value) {
   }                                                         \
                                                             \
   UNPROTECT(2);                                             \
-  return out;                                               \
+  return out;
+
+#endif
+// -----------------------------------------------------------------------------
 
 #define ASSIGN_INDEX(CTYPE, DEREF, CONST_DEREF)                 \
   R_len_t n = Rf_length(index);                                 \
@@ -168,6 +175,9 @@ SEXP vec_proxy_assign(SEXP proxy, SEXP index, SEXP value) {
   UNPROTECT(1);                                                 \
   return out
 
+// -----------------------------------------------------------------------------
+#if (R_VERSION >= R_Version(3, 5, 0))
+
 #define ASSIGN(CTYPE, DEREF, CONST_DEREF, ELT)                     \
   if (ALTREP(value) && vec_is_altrep_vctrs_compact_rep(value)) {   \
     index = PROTECT(compact_materialize(index));                   \
@@ -177,6 +187,18 @@ SEXP vec_proxy_assign(SEXP proxy, SEXP index, SEXP value) {
   } else {                                                         \
     ASSIGN_INDEX(CTYPE, DEREF, CONST_DEREF);                       \
   }
+
+#else
+
+#define ASSIGN(CTYPE, DEREF, CONST_DEREF, ELT) \
+  if (is_compact_seq(index)) {                 \
+    ASSIGN_COMPACT(CTYPE, DEREF, CONST_DEREF); \
+  } else {                                     \
+    ASSIGN_INDEX(CTYPE, DEREF, CONST_DEREF);   \
+  }
+
+#endif
+// -----------------------------------------------------------------------------
 
 static SEXP lgl_assign(SEXP x, SEXP index, SEXP value) {
   ASSIGN(int, LOGICAL, LOGICAL_RO, LOGICAL_ELT);
@@ -199,8 +221,11 @@ static SEXP raw_assign(SEXP x, SEXP index, SEXP value) {
 
 #undef ASSIGN
 #undef ASSIGN_INDEX
-#undef ASSIGN_ALTREP_VCTRS_COMPACT_REP
 #undef ASSIGN_COMPACT
+
+#if (R_VERSION >= R_Version(3, 5, 0))
+#undef ASSIGN_ALTREP_VCTRS_COMPACT_REP
+#endif
 
 
 #define ASSIGN_BARRIER_INDEX(GET, SET)                          \
