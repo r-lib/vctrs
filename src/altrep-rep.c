@@ -6,6 +6,7 @@
 // -----------------------------------------------------------------------------
 // Non-ALTREP support
 
+// [[ include("altrep-rep.h") ]]
 bool vec_is_altrep_vctrs_compact_rep(SEXP x) { return false; }
 
 // [[ include("altrep-rep.h") ]]
@@ -28,6 +29,7 @@ void vctrs_init_altrep_rep(DllInfo* dll) { }
 
 SEXP altrep_vctrs_compact_intrep_class_sexp = NULL;
 
+// [[ include("altrep-rep.h") ]]
 bool vec_is_altrep_vctrs_compact_rep(SEXP x) {
   SEXP cls = ALTREP_CLASS(x);
 
