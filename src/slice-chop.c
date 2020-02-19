@@ -569,6 +569,11 @@ static SEXP vec_unchop_sequentially(SEXP out,
 
   for (R_len_t i = 0; i < x_size; ++i) {
     SEXP elt = VECTOR_ELT(x, i);
+
+    if (elt == R_NilValue) {
+      continue;
+    }
+
     R_len_t elt_size = vec_size(elt);
 
     init_compact_seq(p_index, counter, elt_size, true);

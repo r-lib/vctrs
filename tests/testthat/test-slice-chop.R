@@ -252,6 +252,7 @@ test_that("can unchop a list of NULL", {
 })
 
 test_that("NULLs are ignored when unchopped with other vectors", {
+  expect_identical(vec_unchop(list("a", NULL, "b")), c("a", "b"))
   expect_identical(vec_unchop(list("a", NULL, "b"), list(2, integer(), 1)), c("b", "a"))
 })
 
