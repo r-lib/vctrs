@@ -182,9 +182,11 @@ SEXP vec_recycle(SEXP x, R_len_t size, struct vctrs_arg* x_arg) {
 }
 
 static SEXP vec_recycle_one(SEXP x, R_len_t size) {
+#if (R_VERSION >= R_Version(3, 5, 0))
   if (TYPEOF(x) == INTSXP && !OBJECT(x) && ATTRIB(x) == R_NilValue) {
     return new_altrep_vctrs_compact_intrep(INTEGER(x)[0], size);
   }
+#endif
 
   SEXP i = PROTECT(compact_rep(1, size));
   SEXP out = vec_slice_impl(x, i);
