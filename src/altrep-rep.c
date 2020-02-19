@@ -6,7 +6,7 @@
 // -----------------------------------------------------------------------------
 // Non-ALTREP support
 
-bool vec_inherits_vctrs_compact_intrep(SEXP x) { return false; }
+bool vec_is_altrep_vctrs_compact_rep(SEXP x) { return false; }
 
 // [[ include("altrep-rep.h") ]]
 SEXP new_altrep_vctrs_compact_intrep(int value, R_xlen_t size) {
