@@ -46,7 +46,7 @@ bool vec_is_altrep_vctrs_compact_rep(SEXP x) {
 }
 
 // -----------------------------------------------------------------------------
-// Compact ALTINT rep
+// Compact rep int
 
 #define VCTRS_COMPACT_REP_INT_VALUE(info) INTEGER0(VECTOR_ELT(info, 0))[0]
 #define VCTRS_COMPACT_REP_INT_SIZE(info) ((R_xlen_t) REAL0(VECTOR_ELT(info, 1))[0])
