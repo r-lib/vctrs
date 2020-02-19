@@ -1,6 +1,16 @@
 
 # vctrs (development version)
 
+* The main feature of this release is considerable performance
+  improvements with factors and dates.
+
+* `vec_c()` now falls back to `base::c()` if the vector doesn't
+  implement `vec_ptype2()` but implements `c()`. This should improve
+  the compatibility of vctrs-based functions with foreign classes
+  (#801).
+
+* `new_data_frame()` is now faster.
+
 * New `vec_is_list()` for detecting if a vector is a list in the vctrs sense.
   For instance, objects of class `lm` are not lists. In general, classes need
   to explicitly inherit from `"list"` to be considered as lists by vctrs.
@@ -13,7 +23,7 @@
   x
   #> [[1]]
   #> NULL
-  #> 
+  #>
   #> [[2]]
   #> 2
   ```
@@ -39,11 +49,6 @@
 
 * The `c()` method for `vctrs_vctr` now throws an error when
   `recursive` or `use.names` is supplied (#791).
-
-* `vec_c()` now falls back to `base::c()` if the vector doesn't
-  implement `vec_ptype2()` but implements `c()`. This should improve
-  the compatibility of vctrs-based functions with foreign classes
-  (#801).
 
 
 # vctrs 0.2.2
