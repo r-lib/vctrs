@@ -9,6 +9,7 @@ SEXP fns_vec_proxy_equal_dispatch = NULL;
 // Defined below
 SEXP vec_proxy_method(SEXP x);
 SEXP vec_proxy_invoke(SEXP x, SEXP method);
+static SEXP vec_proxy_unwrap(SEXP x);
 
 
 // [[ register(); include("vctrs.h") ]]
@@ -35,7 +36,7 @@ SEXP vec_proxy_equal(SEXP x) {
   UNPROTECT(1);
   return res;
 }
-SEXP vec_proxy_unwrap(SEXP x) {
+static SEXP vec_proxy_unwrap(SEXP x) {
   if (TYPEOF(x) == VECSXP && XLENGTH(x) == 1 && is_data_frame(x)) {
     x = vec_proxy_unwrap(VECTOR_ELT(x, 0));
   }
