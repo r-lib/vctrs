@@ -6,13 +6,15 @@
 // -----------------------------------------------------------------------------
 // Non-ALTREP support
 
-void vctrs_init_altrep_rep(DllInfo* dll) { }
+bool vec_inherits_vctrs_compact_intrep(SEXP x) { return false; }
 
 // [[ include("altrep-rep.h") ]]
 SEXP new_altrep_vctrs_compact_intrep(int value, R_xlen_t size) {
   Rf_errorcall(R_NilValue, "Need R 3.5+ for ALTREP support");
   return R_NilValue;
 }
+
+void vctrs_init_altrep_rep(DllInfo* dll) { }
 
 #else
 // -----------------------------------------------------------------------------
@@ -23,6 +25,14 @@ SEXP new_altrep_vctrs_compact_intrep(int value, R_xlen_t size) {
 #define VCTRS_COMPACT_REP_DATA(x) R_altrep_data2(x)
 #define VCTRS_COMPACT_REP_IS_COMPACT(x) (VCTRS_COMPACT_REP_DATA(x) == R_NilValue)
 #define VCTRS_COMPACT_REP_SET_DATA(x, data) R_set_altrep_data2(x, data)
+
+SEXP altrep_vctrs_compact_intrep_class_sexp = NULL;
+
+bool vec_is_altrep_vctrs_compact_rep(SEXP x) {
+  SEXP cls = ALTREP_CLASS(x);
+
+  return cls == altrep_vctrs_compact_intrep_class_sexp;
+}
 
 // -----------------------------------------------------------------------------
 // Compact ALTINT rep
@@ -195,6 +205,9 @@ SEXP vctrs_new_altrep_vctrs_compact_intrep(SEXP value, SEXP size) {
 
 static void vctrs_init_altrep_vctrs_compact_intrep(DllInfo* dll) {
   altrep_vctrs_compact_intrep_class = R_make_altinteger_class("vctrs_compact_intrep", "vctrs", dll);
+
+  altrep_vctrs_compact_intrep_class_sexp = R_SEXP(altrep_vctrs_compact_intrep_class);
+  R_PreserveObject(altrep_vctrs_compact_intrep_class_sexp);
 
   // ALTREP methods
   R_set_altrep_Serialized_state_method(altrep_vctrs_compact_intrep_class, vctrs_compact_intrep_Serialized_state);

@@ -1,6 +1,7 @@
 #include "vctrs.h"
 #include "subscript-loc.h"
 #include "utils.h"
+#include "altrep-rep.h"
 
 // Initialised at load time
 SEXP syms_vec_assign_fallback = NULL;
@@ -106,11 +107,16 @@ SEXP vec_proxy_assign(SEXP proxy, SEXP index, SEXP value) {
   SEXP out = PROTECT(r_maybe_duplicate(x));                    \
   CTYPE* out_data = DEREF(out);                                \
                                                                \
+  CTYPE elt;                                                   \
+  if (n > 0) {                                                 \
+    elt = ELT(value, 0);                                       \
+  }                                                            \
+                                                               \
   for (R_len_t i = 0; i < n; ++i) {                            \
     int j = index_data[i];                                     \
                                                                \
     if (j != NA_INTEGER) {                                     \
-      out_data[j - 1] = ELT(value, i);                         \
+      out_data[j - 1] = elt;                                   \
     }                                                          \
   }                                                            \
                                                                \
@@ -162,14 +168,14 @@ SEXP vec_proxy_assign(SEXP proxy, SEXP index, SEXP value) {
   UNPROTECT(1);                                                 \
   return out
 
-#define ASSIGN(CTYPE, DEREF, CONST_DEREF, ELT)       \
-  if (ALTREP(value)) {                               \
-    index = PROTECT(compact_materialize(index));     \
-    ASSIGN_INDEX_ALTREP(CTYPE, DEREF, ELT);          \
-  } else if (is_compact_seq(index)) {                \
-    ASSIGN_COMPACT(CTYPE, DEREF, CONST_DEREF);       \
-  } else {                                           \
-    ASSIGN_INDEX(CTYPE, DEREF, CONST_DEREF);         \
+#define ASSIGN(CTYPE, DEREF, CONST_DEREF, ELT)                     \
+  if (ALTREP(value) && vec_is_altrep_vctrs_compact_rep(value)) {   \
+    index = PROTECT(compact_materialize(index));                   \
+    ASSIGN_INDEX_ALTREP(CTYPE, DEREF, ELT);                        \
+  } else if (is_compact_seq(index)) {                              \
+    ASSIGN_COMPACT(CTYPE, DEREF, CONST_DEREF);                     \
+  } else {                                                         \
+    ASSIGN_INDEX(CTYPE, DEREF, CONST_DEREF);                       \
   }
 
 static SEXP lgl_assign(SEXP x, SEXP index, SEXP value) {

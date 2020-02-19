@@ -3,6 +3,8 @@
 
 #include "altrep.h"
 
+bool vec_is_altrep_vctrs_compact_rep(SEXP x);
+
 SEXP new_altrep_vctrs_compact_intrep(int value, R_xlen_t size);
 
 #if (R_VERSION >= R_Version(3, 5, 0))
