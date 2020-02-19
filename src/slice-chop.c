@@ -406,9 +406,9 @@ static SEXP vec_unchop_indices(SEXP out,
                                PROTECT_INDEX out_pi,
                                SEXP x,
                                R_len_t x_size,
+                               SEXP indices,
                                bool is_shaped,
-                               bool has_inner_names,
-                               SEXP indices);
+                               bool has_inner_names);
 
 static SEXP vec_unchop_sequentially(SEXP out,
                                     SEXP* p_out_names,
@@ -502,7 +502,7 @@ static SEXP vec_unchop(SEXP x, SEXP indices, SEXP ptype, const struct name_repai
   if (null_indices) {
     out = vec_unchop_sequentially(out, &out_names, out_pi, x, x_size, x_sizes, is_shaped, has_inner_names);
   } else {
-    out = vec_unchop_indices(out, &out_names, out_pi, x, x_size, is_shaped, has_inner_names, indices);
+    out = vec_unchop_indices(out, &out_names, out_pi, x, x_size, indices, is_shaped, has_inner_names);
   }
   REPROTECT(out, out_pi);
 
@@ -527,9 +527,9 @@ static SEXP vec_unchop_indices(SEXP out,
                                PROTECT_INDEX out_pi,
                                SEXP x,
                                R_len_t x_size,
+                               SEXP indices,
                                bool is_shaped,
-                               bool has_inner_names,
-                               SEXP indices) {
+                               bool has_inner_names) {
   // Modified in place
   SEXP out_names = *p_out_names;
 
