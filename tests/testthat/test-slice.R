@@ -401,6 +401,39 @@ test_that("slicing an unspecified() object returns an unspecified()", {
   expect_identical(vec_slice(unspecified(1), c(1, 1)), unspecified(2))
 })
 
+
+test_that("vec_slice() works with Altrep classes with custom extract methods", {
+  skip_if(getRversion() < "3.5")
+
+  x <- .Call(vctrs_rle, c(foo = 10L, bar = 5L))
+
+  idx <- c(9, 10, 11)
+  expect_equal(vec_slice(x, idx), c("foo", "foo", "bar"))
+})
+
+test_that("slice has informative error messages", {
+  verify_output(test_path("error", "test-slice.txt"), {
+    "# Unnamed vector with character subscript"
+    vec_slice(1:3, letters[1])
+
+    "# Negative subscripts are checked"
+    vec_slice(1:3, -c(1L, NA))
+    vec_slice(1:3, c(-1L, 1L))
+
+    "# oob error messages are properly constructed"
+    vec_slice(c(bar = 1), "foo")
+    "Multiple OOB indices"
+    vec_slice(letters, c(100, 1000))
+    vec_slice(letters, c(1, 100:103, 2, 104:110))
+    vec_slice(set_names(letters), c("foo", "bar"))
+    vec_slice(set_names(letters), toupper(letters))
+
+    "# Can't index beyond the end of a vector"
+    vec_slice(1:2, 3L)
+    vec_slice(1:2, -3L)
+  })
+})
+
 # vec_init ----------------------------------------------------------------
 
 test_that("na of atomic vectors is as expected", {
@@ -602,34 +635,3 @@ test_that("vec_slice() with compact_seqs work with Altrep classes", {
   expect_equal(vec_slice_seq(x, 1L, 3L), c("foo", "bar", "bar"))
 })
 
-test_that("vec_slice() works with Altrep classes with custom extract methods", {
-  skip_if(getRversion() < "3.5")
-
-  x <- .Call(vctrs_rle, c(foo = 10L, bar = 5L))
-
-  idx <- c(9, 10, 11)
-  expect_equal(vec_slice(x, idx), c("foo", "foo", "bar"))
-})
-
-test_that("slice has informative error messages", {
-  verify_output(test_path("error", "test-slice.txt"), {
-    "# Unnamed vector with character subscript"
-    vec_slice(1:3, letters[1])
-
-    "# Negative subscripts are checked"
-    vec_slice(1:3, -c(1L, NA))
-    vec_slice(1:3, c(-1L, 1L))
-
-    "# oob error messages are properly constructed"
-    vec_slice(c(bar = 1), "foo")
-    "Multiple OOB indices"
-    vec_slice(letters, c(100, 1000))
-    vec_slice(letters, c(1, 100:103, 2, 104:110))
-    vec_slice(set_names(letters), c("foo", "bar"))
-    vec_slice(set_names(letters), toupper(letters))
-
-    "# Can't index beyond the end of a vector"
-    vec_slice(1:2, 3L)
-    vec_slice(1:2, -3L)
-  })
-})
