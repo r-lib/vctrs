@@ -427,6 +427,8 @@ static SEXP vec_unchop(SEXP x, SEXP indices, SEXP ptype, const struct name_repai
 
   bool null_indices = (indices == R_NilValue);
 
+  // Apply size/type checking to `indices` before possibly exiting early from
+  // having a `NULL` common type
   if (!null_indices) {
     if (x_size != vec_size(indices)) {
       Rf_errorcall(R_NilValue, "`x` and `indices` must be lists of the same size");
@@ -438,7 +440,6 @@ static SEXP vec_unchop(SEXP x, SEXP indices, SEXP ptype, const struct name_repai
 
   ptype = PROTECT(vctrs_type_common_impl(x, ptype));
 
-  // Apply size/type checking to indices first before potentially exiting early
   if (ptype == R_NilValue) {
     UNPROTECT(1);
     return R_NilValue;
