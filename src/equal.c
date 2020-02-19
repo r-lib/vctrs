@@ -1,14 +1,6 @@
 #include <math.h>
+#include "equal.h"
 #include "vctrs.h"
-
-static int lgl_equal_scalar(const int* x, const int* y, bool na_equal);
-static int int_equal_scalar(const int* x, const int* y, bool na_equal);
-static int dbl_equal_scalar(const double* x, const double* y, bool na_equal);
-static int raw_equal_scalar(const Rbyte* x, const Rbyte* y, bool na_equal);
-static int cpl_equal_scalar(const Rcomplex* x, const Rcomplex* y, bool na_equal);
-static int chr_equal_scalar(const SEXP* x, const SEXP* y, bool na_equal);
-static int list_equal_scalar(SEXP x, R_len_t i, SEXP y, R_len_t j, bool na_equal);
-static int df_equal_scalar(SEXP x, R_len_t i, SEXP y, R_len_t j, bool na_equal, int n_col);
 
 
 // If `x` is a data frame, it must have been recursively proxied
@@ -24,9 +16,10 @@ int equal_scalar(SEXP x, R_len_t i, SEXP y, R_len_t j, bool na_equal) {
   case vctrs_type_logical:   x_p = LOGICAL_RO(x);    y_p = LOGICAL_RO(y);    break;
   case vctrs_type_integer:   x_p = INTEGER_RO(x);    y_p = INTEGER_RO(y);    break;
   case vctrs_type_double:    x_p = REAL_RO(x);       y_p = REAL_RO(y);       break;
+  case vctrs_type_complex:   x_p = COMPLEX_RO(x);    y_p = COMPLEX_RO(y);    break;
   case vctrs_type_character: x_p = STRING_PTR_RO(x); y_p = STRING_PTR_RO(y); break;
   case vctrs_type_raw:       x_p = RAW_RO(x);        y_p = RAW_RO(y);        break;
-  case vctrs_type_complex:   x_p = COMPLEX_RO(x);    y_p = COMPLEX_RO(y);;   break;
+  case vctrs_type_list:      x_p = x;                y_p = y;                break;
   default: break;
   }
 
@@ -38,20 +31,22 @@ int equal_scalar_p(enum vctrs_type proxy_type,
                    SEXP x, const void* x_p, R_len_t i,
                    SEXP y, const void* y_p, R_len_t j,
                    bool na_equal) {
+  // Rprintf("i: %d\n", i);
+  // Rprintf("j: %d\n", j);
   if (x_p) {
     switch (proxy_type) {
     case vctrs_type_logical: return lgl_equal_scalar(((const int*) x_p) + i, ((const int*) y_p) + j, na_equal);
     case vctrs_type_integer: return int_equal_scalar(((const int*) x_p) + i, ((const int*) y_p) + j, na_equal);
     case vctrs_type_double: return dbl_equal_scalar(((const double*) x_p) + i, ((const double*) y_p) + j, na_equal);
+    case vctrs_type_complex: return cpl_equal_scalar(((const Rcomplex*) x_p) + i, ((const Rcomplex*) y_p) + j, na_equal);
     case vctrs_type_character: return chr_equal_scalar(((const SEXP*) x_p) + i, ((const SEXP*) y_p) + j, na_equal);
     case vctrs_type_raw: return raw_equal_scalar(((const Rbyte*) x_p) + i, ((const Rbyte*) y_p) + j, na_equal);
-    case vctrs_type_complex: return cpl_equal_scalar(((const Rcomplex*) x_p) + i, ((const Rcomplex*) y_p) + j, na_equal);
+    case vctrs_type_list: return list_equal_scalar(((const SEXP) x_p), i, ((const SEXP) y_p), j, na_equal);
     default: break;
     }
   }
 
   switch (proxy_type) {
-  case vctrs_type_list: return list_equal_scalar(x, i, y, j, na_equal);
   case vctrs_type_dataframe: {
     int n_col = Rf_length(x);
 
@@ -136,116 +131,6 @@ SEXP vctrs_equal(SEXP x, SEXP y, SEXP na_equal_) {
 
 #undef EQUAL
 #undef EQUAL_BARRIER
-
-// -----------------------------------------------------------------------------
-
-// Storing pointed values on the stack helps performance for the
-// `!na_equal` cases
-static inline int lgl_equal_scalar(const int* x, const int* y, bool na_equal) {
-  const int xi = *x;
-  const int yj = *y;
-  if (na_equal) {
-    return xi == yj;
-  } else {
-    return (xi == NA_LOGICAL || yj == NA_LOGICAL) ? NA_LOGICAL : xi == yj;
-  }
-}
-static inline int int_equal_scalar(const int* x, const int* y, bool na_equal) {
-  const int xi = *x;
-  const int yj = *y;
-  if (na_equal) {
-    return xi == yj;
-  } else {
-    return (xi == NA_INTEGER || yj == NA_INTEGER) ? NA_LOGICAL : xi == yj;
-  }
-}
-static int raw_equal_scalar(const Rbyte* x, const Rbyte* y, bool na_equal) {
-  // Raw vectors have no notion of missing value
-  return *x == *y;
-}
-static int dbl_equal_scalar(const double* x, const double* y, bool na_equal) {
-  const double xi = *x;
-  const double yj = *y;
-
-  if (na_equal) {
-    switch (dbl_classify(xi)) {
-    case vctrs_dbl_number: break;
-    case vctrs_dbl_missing: return dbl_classify(yj) == vctrs_dbl_missing;
-    case vctrs_dbl_nan: return dbl_classify(yj) == vctrs_dbl_nan;
-    }
-
-    if (isnan(yj)) {
-      return false;
-    }
-  } else {
-    if (isnan(xi) || isnan(yj)) return NA_LOGICAL;
-  }
-  return xi == yj;
-}
-static int cpl_equal_scalar(const Rcomplex* x, const Rcomplex* y, bool na_equal) {
-  int real_equal = dbl_equal_scalar(&x->r, &y->r, na_equal);
-  int imag_equal = dbl_equal_scalar(&x->i, &y->i, na_equal);
-  if (real_equal == NA_LOGICAL || imag_equal == NA_LOGICAL) {
-    return NA_LOGICAL;
-  } else {
-    return real_equal && imag_equal;
-  }
-}
-
-// UTF-8 translation is successful in these cases:
-// - (utf8 + latin1), (unknown + utf8), (unknown + latin1)
-// UTF-8 translation fails purposefully in these cases:
-// - (bytes + utf8), (bytes + latin1), (bytes + unknown)
-// UTF-8 translation is not attempted in these cases:
-// - (utf8 + utf8), (latin1 + latin1), (unknown + unknown), (bytes + bytes)
-
-static int chr_equal_scalar_impl(const SEXP x, const SEXP y) {
-  if (x == y) {
-    return 1;
-  }
-
-  if (Rf_getCharCE(x) != Rf_getCharCE(y)) {
-    const void *vmax = vmaxget();
-    int out = !strcmp(Rf_translateCharUTF8(x), Rf_translateCharUTF8(y));
-    vmaxset(vmax);
-    return out;
-  }
-
-  return 0;
-}
-
-static int chr_equal_scalar(const SEXP* x, const SEXP* y, bool na_equal) {
-  const SEXP xi = *x;
-  const SEXP yj = *y;
-  if (na_equal) {
-    return chr_equal_scalar_impl(xi, yj);
-  } else {
-    return (xi == NA_STRING || yj == NA_STRING) ? NA_LOGICAL : chr_equal_scalar_impl(xi, yj);
-  }
-}
-
-static int list_equal_scalar(SEXP x, R_len_t i, SEXP y, R_len_t j, bool na_equal) {
-  const SEXP xi = VECTOR_ELT(x, i);
-  const SEXP yj = VECTOR_ELT(y, j);
-
-  if (na_equal) {
-    return equal_object(xi, yj);
-  } else {
-    return (xi == R_NilValue || yj == R_NilValue) ? NA_LOGICAL : equal_object(xi, yj);
-  }
-}
-
-static int df_equal_scalar(SEXP x, R_len_t i, SEXP y, R_len_t j, bool na_equal, int n_col) {
-  for (int k = 0; k < n_col; ++k) {
-    int eq = equal_scalar(VECTOR_ELT(x, k), i, VECTOR_ELT(y, k), j, na_equal);
-
-    if (eq <= 0) {
-      return eq;
-    }
-  }
-
-  return true;
-}
 
 // -----------------------------------------------------------------------------
 

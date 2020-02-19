@@ -65,6 +65,7 @@ test_that("vec_duplicate_id gives position of first found", {
 test_that("vec_unique matches unique", {
   x <- sample(100, 1000, replace = TRUE)
   expect_equal(vec_unique(x), unique(x))
+  expect_equal(vec_unique(c("x", "x")), "x")
 })
 
 test_that("vec_unique matches unique for matrices", {
@@ -194,13 +195,21 @@ test_that("vec_unique() works with glm objects (#643)", {
   expect_equal(vec_unique(list(model, model)), list(model))
 })
 
+test_that("can take the unique locations of dfs with list-cols", {
+  df <- tibble(x = list(1, 2, 1, 3), y = list(1, 2, 1, 3))
+  expect_identical(vec_unique_loc(df), c(1L, 2L, 4L))
+})
+
+
 # matching ----------------------------------------------------------------
 
 test_that("vec_match() matches match()", {
   n <- c(1:3, NA)
   h <- c(4, 2, 1, NA)
-
   expect_equal(vec_match(n, h), match(n, h))
+
+  expect_equal(vec_match(1.5, c(2, 1.5, NA)), match(1.5, c(2, 1.5, NA)))
+  expect_equal(vec_match("x", "x"), match("x", "x"))
 })
 
 test_that("vec_in() matches %in%", {
