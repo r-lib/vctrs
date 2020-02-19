@@ -81,7 +81,7 @@ test_that("vec_data() is proxied", {
 })
 
 test_that("vec_proxy_equal() is recursive over data frames (#641)", {
-  x <- new_data_frame(list(x = foobar(1:3)))
+  x <- new_data_frame(list(x = foobar(1:3), y = 41:43))
   default <- vec_proxy_equal(x)
   expect_is(default$x, "vctrs_foobar")
 

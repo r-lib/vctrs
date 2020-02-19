@@ -148,8 +148,8 @@ test_that("can find a common encoding between lists of characters with different
 test_that("can find a common encoding with data frames with character columns", {
   encs <- encodings()
 
-  df_utf8 <- data_frame(x = encs$utf8)
-  df_unknown <- data_frame(x = encs$unknown)
+  df_utf8 <- data_frame(x = encs$utf8, y = 1)
+  df_unknown <- data_frame(x = encs$unknown, y = 1)
 
   results <- obj_maybe_translate_encoding2(df_utf8, df_unknown)
 
@@ -160,8 +160,8 @@ test_that("can find a common encoding with data frames with character columns", 
 test_that("can find a common encoding with data frame subclasses with character columns", {
   encs <- encodings()
 
-  df_utf8 <- new_data_frame(list(x = encs$utf8), class = "subclass")
-  df_unknown <- new_data_frame(list(x = encs$unknown), class = "subclass")
+  df_utf8 <- new_data_frame(list(x = encs$utf8, y = 1), class = "subclass")
+  df_unknown <- new_data_frame(list(x = encs$unknown, y = 1), class = "subclass")
 
   results <- obj_maybe_translate_encoding2(df_utf8, df_unknown)
 
