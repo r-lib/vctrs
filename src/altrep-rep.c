@@ -66,7 +66,7 @@ bool vec_is_altrep_vctrs_compact_rep(SEXP x) {
 #define VCTRS_COMPACT_REP_INT_VALUE(info) INTEGER0(VECTOR_ELT(info, 0))[0]
 #define VCTRS_COMPACT_REP_INT_SIZE(info) ((R_xlen_t) REAL0(VECTOR_ELT(info, 1))[0])
 
-// Materialize the full integer vector
+// Materialize the full vector
 static SEXP vctrs_compact_rep_int_materialize(SEXP x) {
   SEXP info = VCTRS_COMPACT_REP_INFO(x);
   int value = VCTRS_COMPACT_REP_INT_VALUE(info);
@@ -165,7 +165,7 @@ static SEXP vctrs_compact_rep_int_Extract_subset(SEXP x, SEXP indx, SEXP call) {
       continue;
     }
 
-    // Mimic normal R integer vector. OOB = NA.
+    // Mimic normal R vector. OOB = NA.
     if (loc > size) {
       p_out[i] = NA_INTEGER;
       continue;
@@ -178,7 +178,7 @@ static SEXP vctrs_compact_rep_int_Extract_subset(SEXP x, SEXP indx, SEXP call) {
   return out;
 }
 
-// I believe we should expect that INTEGER_ELT() will never contain
+// I believe we should expect that *_ELT() methods will never contain
 // an `NA` index. I assumed this from how ExtractSubset() works and from
 // how compact_intseq_Elt() is implemented
 static int vctrs_compact_rep_int_Elt(SEXP x, R_xlen_t i) {
@@ -258,7 +258,7 @@ static void vctrs_init_altrep_vctrs_compact_rep_int(DllInfo* dll) {
 #define VCTRS_COMPACT_REP_DBL_VALUE(info) REAL0(VECTOR_ELT(info, 0))[0]
 #define VCTRS_COMPACT_REP_DBL_SIZE(info) ((R_xlen_t) REAL0(VECTOR_ELT(info, 1))[0])
 
-// Materialize the full double vector
+// Materialize the full vector
 static SEXP vctrs_compact_rep_dbl_materialize(SEXP x) {
   SEXP info = VCTRS_COMPACT_REP_INFO(x);
   double value = VCTRS_COMPACT_REP_DBL_VALUE(info);
