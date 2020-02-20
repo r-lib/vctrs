@@ -1,4 +1,3 @@
-# vec_chop ----------------------------------------------------------------
 
 test_that("vec_chop() throws error with non-vector inputs", {
   expect_error(vec_chop(NULL), class = "vctrs_error_scalar_type")
