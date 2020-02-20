@@ -498,7 +498,7 @@ static SEXP vec_unchop_indices(SEXP x,
                                R_len_t out_size,
                                const struct name_repair_opts* name_repair) {
   bool is_shaped = has_dim(ptype);
-  bool has_inner_names = !is_data_frame(ptype) && list_has_inner_names(x, x_size);
+  bool has_inner_names = !is_data_frame(ptype) && list_has_inner_vec_names(x, x_size);
 
   PROTECT_INDEX proxy_pi;
   SEXP proxy = vec_proxy(ptype);
@@ -562,7 +562,7 @@ static SEXP vec_unchop_sequentially(SEXP x,
                                     R_len_t out_size,
                                     const struct name_repair_opts* name_repair) {
   bool is_shaped = has_dim(ptype);
-  bool has_inner_names = !is_data_frame(ptype) && list_has_inner_names(x, x_size);
+  bool has_inner_names = !is_data_frame(ptype) && list_has_inner_vec_names(x, x_size);
 
   PROTECT_INDEX proxy_pi;
   SEXP proxy = vec_proxy(ptype);

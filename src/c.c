@@ -79,7 +79,7 @@ SEXP vec_c(SEXP xs,
   int* idx_ptr = INTEGER(idx);
 
   SEXP xs_names = PROTECT(r_names(xs));
-  bool has_names = xs_names != R_NilValue || list_has_inner_names(xs, n);
+  bool has_names = xs_names != R_NilValue || list_has_inner_vec_names(xs, n);
   has_names = has_names && !is_data_frame(ptype);
 
   PROTECT_INDEX out_names_pi;
