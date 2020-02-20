@@ -58,11 +58,17 @@ static void dict_init_impl(dictionary* d, SEXP x, bool partial) {
   }
 
   R_len_t n = vec_size(x);
-  d->hash = (uint32_t*) R_alloc(n, sizeof(uint32_t));
+  if (n) {
+    d->hash = (uint32_t*) R_alloc(n, sizeof(uint32_t));
 
-  if (d->hash) {
+    if (!(d->hash)) {
+      Rf_errorcall(R_NilValue, "Can't allocate hash lookup table. Please free memory.");
+    }
+
     memset(d->hash, 0, n * sizeof(R_len_t));
     hash_fill(d->hash, n, x);
+  } else {
+    d->hash = NULL;
   }
 }
 
