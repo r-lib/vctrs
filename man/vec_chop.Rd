@@ -11,6 +11,7 @@ vec_unchop(
   x,
   indices = NULL,
   ptype = NULL,
+  name_spec = NULL,
   name_repair = c("minimal", "unique", "check_unique", "universal")
 )
 }
@@ -32,6 +33,22 @@ size of \code{x}. If \code{NULL}, \code{x} is combined in the order it is provid
 computing the common type across all elements of \code{x}. Alternatively, you
 can supply \code{ptype} to give the output a known type.}
 
+\item{name_spec}{A name specification for combining
+inner and outer names. This is relevant for inputs passed with a
+name, when these inputs are themselves named, like \code{outer = c(inner = 1)}, or when they have length greater than 1: \code{outer = 1:2}. By default, these cases trigger an error. You can resolve
+the error by providing a specification that describes how to
+combine the names or the indices of the inner vector with the
+name of the input. This specification can be:
+\itemize{
+\item A function of two arguments. The outer name is passed as a
+string to the first argument, and the inner names or positions
+are passed as second argument.
+\item An anonymous function as a purrr-style formula.
+\item A glue specification of the form \code{"{outer}_{inner}"}.
+}
+
+See the \link[=name_spec]{name specification topic}.}
+
 \item{name_repair}{How to repair names, see \code{repair} options in \code{\link[=vec_as_names]{vec_as_names()}}.}
 }
 \value{
@@ -51,9 +68,8 @@ are supplied, it is generally equivalent to \code{\link[=as.list]{as.list()}}.
 \item \code{vec_unchop()} combines a list of vectors into a single vector, placing
 elements in the output according to the locations specified by \code{indices}.
 It is similar to \code{\link[=vec_c]{vec_c()}}, but gives greater control over how the elements
-are combined, and does not respect outer names on the list. When no indices
-are supplied, it combines the elements of \code{x} in the order they are
-provided.
+are combined. When no indices are supplied, it combines the elements of
+\code{x} in the order they are provided.
 }
 
 If \code{indices} selects every value in \code{x} exactly once, in any order, then
@@ -76,6 +92,11 @@ vec_unchop(vec_chop(x, indices), indices)
 # When unchopping, size 1 elements of `x` are recycled
 # to the size of the corresponding index
 vec_unchop(list(1, 2:3), list(c(1, 3, 5), c(2, 4)))
+
+# Names are retained, and outer names can be combined with inner
+# names through the use of a `name_spec`
+lst <- list(x = c(a = 1, b = 2), y = 1)
+vec_unchop(lst, list(c(3, 2), c(1, 4)), name_spec = "{outer}_{inner}")
 
 # An alternative implementation of `ave()` can be constructed using
 # `vec_chop()` and `vec_unchop()` in combination with `vec_group_loc()`

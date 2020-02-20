@@ -8,9 +8,8 @@
 #' - `vec_unchop()` combines a list of vectors into a single vector, placing
 #'   elements in the output according to the locations specified by `indices`.
 #'   It is similar to [vec_c()], but gives greater control over how the elements
-#'   are combined, and does not respect outer names on the list. When no indices
-#'   are supplied, it combines the elements of `x` in the order they are
-#'   provided.
+#'   are combined. When no indices are supplied, it combines the elements of
+#'   `x` in the order they are provided.
 #'
 #' If `indices` selects every value in `x` exactly once, in any order, then
 #' `vec_unchop()` is the inverse of `vec_chop()` and the following invariant
@@ -59,6 +58,11 @@
 #' # to the size of the corresponding index
 #' vec_unchop(list(1, 2:3), list(c(1, 3, 5), c(2, 4)))
 #'
+#' # Names are retained, and outer names can be combined with inner
+#' # names through the use of a `name_spec`
+#' lst <- list(x = c(a = 1, b = 2), y = 1)
+#' vec_unchop(lst, list(c(3, 2), c(1, 4)), name_spec = "{outer}_{inner}")
+#'
 #' # An alternative implementation of `ave()` can be constructed using
 #' # `vec_chop()` and `vec_unchop()` in combination with `vec_group_loc()`
 #' ave2 <- function(.x, .by, .f, ...) {
@@ -86,8 +90,9 @@ vec_chop <- function(x, indices = NULL) {
 vec_unchop <- function(x,
                        indices = NULL,
                        ptype = NULL,
+                       name_spec = NULL,
                        name_repair = c("minimal", "unique", "check_unique", "universal")) {
-  .Call(vctrs_unchop, x, indices, ptype, name_repair)
+  .Call(vctrs_unchop, x, indices, ptype, name_spec, name_repair)
 }
 
 # Exposed for testing  (`starts` is 0-based)

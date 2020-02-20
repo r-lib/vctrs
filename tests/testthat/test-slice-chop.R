@@ -365,16 +365,24 @@ test_that("leaving `indices = NULL` unchops sequentially", {
   expect_identical(vec_unchop(x), 1:6)
 })
 
-test_that("outer names on x are not kept", {
+test_that("outer names are kept", {
   x <- list(x = 1, y = 2)
-  expect_named(vec_unchop(x), NULL)
-  expect_named(vec_unchop(x, list(2, 1)), NULL)
+  expect_named(vec_unchop(x), c("x", "y"))
+  expect_named(vec_unchop(x, list(2, 1)), c("y", "x"))
 })
 
-test_that("inner names are kept", {
+test_that("outer names are recycled in the right order", {
+  x <- list(x = 1, y = 2)
+  expect_error(vec_unchop(x, list(c(1, 2), 3)), "Can't merge")
+  expect_named(vec_unchop(x, list(c(1, 3), 2), name_spec = "{outer}_{inner}"), c("x_1", "y", "x_2"))
+  expect_named(vec_unchop(x, list(c(3, 1), 2), name_spec = "{outer}_{inner}"), c("x_2", "y", "x_1"))
+})
+
+test_that("outer names can be merged with inner names", {
   x <- list(x = c(a = 1), y = c(b = 2))
-  expect_named(vec_unchop(x), c("a", "b"))
-  expect_named(vec_unchop(x, list(2, 1)), c("b", "a"))
+  expect_error(vec_unchop(x), "Can't merge")
+  expect_named(vec_unchop(x, name_spec = "{outer}_{inner}"), c("x_a", "y_b"))
+  expect_named(vec_unchop(x, list(2, 1), name_spec = "{outer}_{inner}"), c("y_b", "x_a"))
 })
 
 test_that("not all inputs have to be named", {
