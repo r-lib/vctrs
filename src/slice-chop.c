@@ -485,9 +485,9 @@ static SEXP vec_unchop(SEXP x, SEXP indices, SEXP ptype, const struct name_repai
   indices = PROTECT(vec_as_indices(indices, out_size, R_NilValue));
 
   PROTECT_INDEX out_pi;
-  SEXP out = vec_init(ptype, out_size);
+  SEXP out = vec_proxy(ptype);
   PROTECT_WITH_INDEX(out, &out_pi);
-  out = vec_proxy(out);
+  out = vec_init(out, out_size);
   REPROTECT(out, out_pi);
 
   bool is_shaped = has_dim(ptype);
