@@ -401,18 +401,18 @@ SEXP vctrs_unchop(SEXP x, SEXP indices, SEXP ptype, SEXP name_repair) {
   return out;
 }
 
-static SEXP vec_unchop_indices(SEXP out,
-                               SEXP* p_out_names,
-                               PROTECT_INDEX out_pi,
+static SEXP vec_unchop_indices(SEXP proxy,
+                               SEXP* p_proxy_names,
+                               PROTECT_INDEX proxy_pi,
                                SEXP x,
                                R_len_t x_size,
                                SEXP indices,
                                bool is_shaped,
                                bool has_inner_names);
 
-static SEXP vec_unchop_sequentially(SEXP out,
-                                    SEXP* p_out_names,
-                                    PROTECT_INDEX out_pi,
+static SEXP vec_unchop_sequentially(SEXP proxy,
+                                    SEXP* p_proxy_names,
+                                    PROTECT_INDEX proxy_pi,
                                     SEXP x,
                                     R_len_t x_size,
                                     SEXP x_sizes,
@@ -484,54 +484,53 @@ static SEXP vec_unchop(SEXP x, SEXP indices, SEXP ptype, const struct name_repai
 
   indices = PROTECT(vec_as_indices(indices, out_size, R_NilValue));
 
-  PROTECT_INDEX out_pi;
-  SEXP out = vec_proxy(ptype);
-  PROTECT_WITH_INDEX(out, &out_pi);
-  out = vec_init(out, out_size);
-  REPROTECT(out, out_pi);
+  PROTECT_INDEX proxy_pi;
+  SEXP proxy = vec_proxy(ptype);
+  PROTECT_WITH_INDEX(proxy, &proxy_pi);
+  proxy = vec_init(proxy, out_size);
+  REPROTECT(proxy, proxy_pi);
 
   bool is_shaped = has_dim(ptype);
   bool has_inner_names = !is_data_frame(ptype) && list_has_inner_names(x, x_size);
 
-  SEXP out_names = vctrs_shared_empty_chr;
+  SEXP proxy_names = vctrs_shared_empty_chr;
   if (has_inner_names) {
-    out_names = Rf_allocVector(STRSXP, out_size);
+    proxy_names = Rf_allocVector(STRSXP, out_size);
   }
-  PROTECT(out_names);
+  PROTECT(proxy_names);
 
   if (has_indices) {
-    out = vec_unchop_indices(out, &out_names, out_pi, x, x_size, indices, is_shaped, has_inner_names);
+    proxy = vec_unchop_indices(proxy, &proxy_names, proxy_pi, x, x_size, indices, is_shaped, has_inner_names);
   } else {
-    out = vec_unchop_sequentially(out, &out_names, out_pi, x, x_size, x_sizes, is_shaped, has_inner_names);
+    proxy = vec_unchop_sequentially(proxy, &proxy_names, proxy_pi, x, x_size, x_sizes, is_shaped, has_inner_names);
   }
-  REPROTECT(out, out_pi);
-
-  SEXP out_size_sexp = PROTECT(r_int(out_size));
-
-  out = vec_restore(out, ptype, out_size_sexp);
-  REPROTECT(out, out_pi);
+  REPROTECT(proxy, proxy_pi);
 
   if (has_inner_names) {
-    out_names = PROTECT(vec_as_names(out_names, name_repair));
-    out = vec_set_names(out, out_names);
-    REPROTECT(out, out_pi);
+    proxy_names = PROTECT(vec_as_names(proxy_names, name_repair));
+    proxy = vec_set_names(proxy, proxy_names);
+    REPROTECT(proxy, proxy_pi);
     UNPROTECT(1);
   }
 
-  UNPROTECT(7);
+  SEXP out_size_sexp = PROTECT(r_int(out_size));
+
+  SEXP out = PROTECT(vec_restore(proxy, ptype, out_size_sexp));
+
+  UNPROTECT(8);
   return out;
 }
 
-static SEXP vec_unchop_indices(SEXP out,
-                               SEXP* p_out_names,
-                               PROTECT_INDEX out_pi,
+static SEXP vec_unchop_indices(SEXP proxy,
+                               SEXP* p_proxy_names,
+                               PROTECT_INDEX proxy_pi,
                                SEXP x,
                                R_len_t x_size,
                                SEXP indices,
                                bool is_shaped,
                                bool has_inner_names) {
   // Modified in place
-  SEXP out_names = *p_out_names;
+  SEXP proxy_names = *p_proxy_names;
 
   for (R_len_t i = 0; i < x_size; ++i) {
     SEXP elt = VECTOR_ELT(x, i);
@@ -543,35 +542,35 @@ static SEXP vec_unchop_indices(SEXP out,
     SEXP index = VECTOR_ELT(indices, i);
 
     if (is_shaped) {
-      out = vec_assign(out, index, elt);
-      REPROTECT(out, out_pi);
+      proxy = vec_assign(proxy, index, elt);
+      REPROTECT(proxy, proxy_pi);
     } else {
-      vec_assign_impl(out, index, elt, false);
+      vec_assign_impl(proxy, index, elt, false);
     }
 
     if (has_inner_names) {
       SEXP elt_names = PROTECT(vec_names(elt));
       if (elt_names != R_NilValue) {
-        vec_assign_impl(out_names, index, elt_names, false);
+        vec_assign_impl(proxy_names, index, elt_names, false);
       }
       UNPROTECT(1);
     }
   }
 
-  return out;
+  return proxy;
 }
 
 
-static SEXP vec_unchop_sequentially(SEXP out,
-                                    SEXP* p_out_names,
-                                    PROTECT_INDEX out_pi,
+static SEXP vec_unchop_sequentially(SEXP proxy,
+                                    SEXP* p_proxy_names,
+                                    PROTECT_INDEX proxy_pi,
                                     SEXP x,
                                     R_len_t x_size,
                                     SEXP x_sizes,
                                     bool is_shaped,
                                     bool has_inner_names) {
   // Modified in place
-  SEXP out_names = *p_out_names;
+  SEXP proxy_names = *p_proxy_names;
 
   // Compact sequences use 0-based counters
   R_len_t counter = 0;
@@ -594,17 +593,17 @@ static SEXP vec_unchop_sequentially(SEXP out,
 
     if (is_shaped) {
       SEXP index2 = PROTECT(compact_materialize(index));
-      out = vec_assign(out, index2, elt);
-      REPROTECT(out, out_pi);
+      proxy = vec_assign(proxy, index2, elt);
+      REPROTECT(proxy, proxy_pi);
       UNPROTECT(1);
     } else {
-      vec_assign_impl(out, index, elt, false);
+      vec_assign_impl(proxy, index, elt, false);
     }
 
     if (has_inner_names) {
       SEXP elt_names = PROTECT(vec_names(elt));
       if (elt_names != R_NilValue) {
-        vec_assign_impl(out_names, index, elt_names, false);
+        vec_assign_impl(proxy_names, index, elt_names, false);
       }
       UNPROTECT(1);
     }
@@ -613,7 +612,7 @@ static SEXP vec_unchop_sequentially(SEXP out,
   }
 
   UNPROTECT(1);
-  return out;
+  return proxy;
 }
 
 // -----------------------------------------------------------------------------
