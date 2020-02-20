@@ -281,17 +281,20 @@ static void repair_na_names(SEXP names, SEXP subscript) {
   }
 
   SEXP* p_names = STRING_PTR(names);
+  const int* p_subscript = INTEGER_RO(subscript);
 
   // Special handling for a compact_rep object with repeated `NA`
   if (is_compact_rep(subscript)) {
+    if (p_subscript[0] != NA_INTEGER) {
+      return;
+    }
+
     for (R_len_t i = 0; i < n; ++i) {
       p_names[i] = strings_empty;
     }
 
     return;
   }
-
-  const int* p_subscript = INTEGER_RO(subscript);
 
   for (R_len_t i = 0; i < n; ++i) {
     if (p_subscript[i] == NA_INTEGER) {
