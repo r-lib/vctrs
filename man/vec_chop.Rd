@@ -29,11 +29,8 @@ of the corresponding index vector. The size of \code{indices} must match the
 size of \code{x}. If \code{NULL}, \code{x} is combined in the order it is provided in.}
 
 \item{ptype}{If \code{NULL}, the default, the output type is determined by
-computing the common type across all elements of \code{x}.
-
-Alternatively, you can supply \code{ptype} to give the output known type.
-If \code{getOption("vctrs.no_guessing")} is \code{TRUE} you must supply this value:
-this is a convenient way to make production code demand fixed types.}
+computing the common type across all elements of \code{x}. Alternatively, you
+can supply \code{ptype} to give the output a known type.}
 
 \item{name_repair}{How to repair names, see \code{repair} options in \code{\link[=vec_as_names]{vec_as_names()}}.}
 }

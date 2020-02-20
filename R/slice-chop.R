@@ -29,11 +29,8 @@
 #'   of the corresponding index vector. The size of `indices` must match the
 #'   size of `x`. If `NULL`, `x` is combined in the order it is provided in.
 #' @param ptype If `NULL`, the default, the output type is determined by
-#'   computing the common type across all elements of `x`.
-#'
-#'   Alternatively, you can supply `ptype` to give the output known type.
-#'   If `getOption("vctrs.no_guessing")` is `TRUE` you must supply this value:
-#'   this is a convenient way to make production code demand fixed types.
+#'   computing the common type across all elements of `x`. Alternatively, you
+#'   can supply `ptype` to give the output a known type.
 #' @return
 #' - `vec_chop()`: A list of size `vec_size(indices)` or, if `indices == NULL`,
 #'   `vec_size(x)`.
