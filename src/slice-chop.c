@@ -426,11 +426,11 @@ static SEXP vec_unchop(SEXP x, SEXP indices, SEXP ptype, const struct name_repai
 
   R_len_t x_size = vec_size(x);
 
-  bool null_indices = (indices == R_NilValue);
+  const bool has_indices = (indices != R_NilValue);
 
   // Apply size/type checking to `indices` before possibly exiting early from
   // having a `NULL` common type
-  if (!null_indices) {
+  if (has_indices) {
     if (x_size != vec_size(indices)) {
       Rf_errorcall(R_NilValue, "`x` and `indices` must be lists of the same size");
     }
@@ -451,21 +451,14 @@ static SEXP vec_unchop(SEXP x, SEXP indices, SEXP ptype, const struct name_repai
   R_len_t out_size = 0;
 
   SEXP x_sizes = vctrs_shared_empty_int;
-  if (null_indices) {
+  if (!has_indices) {
     x_sizes = Rf_allocVector(INTSXP, x_size);
   }
   PROTECT(x_sizes);
   int* p_x_sizes = INTEGER(x_sizes);
 
   // `out_size` is computed from `indices` unless it is `NULL`
-  if (null_indices) {
-    for (R_len_t i = 0; i < x_size; ++i) {
-      R_len_t x_elt_size = vec_size(VECTOR_ELT(x, i));
-
-      out_size += x_elt_size;
-      p_x_sizes[i] = x_elt_size;
-    }
-  } else {
+  if (has_indices) {
     for (R_len_t i = 0; i < x_size; ++i) {
       SEXP elt = VECTOR_ELT(x, i);
 
@@ -479,6 +472,13 @@ static SEXP vec_unchop(SEXP x, SEXP indices, SEXP ptype, const struct name_repai
       // Each element of `x` is recycled to its corresponding index's size
       elt = vec_recycle(elt, index_size, args_empty);
       SET_VECTOR_ELT(x, i, elt);
+    }
+  } else {
+    for (R_len_t i = 0; i < x_size; ++i) {
+      R_len_t x_elt_size = vec_size(VECTOR_ELT(x, i));
+
+      out_size += x_elt_size;
+      p_x_sizes[i] = x_elt_size;
     }
   }
 
@@ -499,10 +499,10 @@ static SEXP vec_unchop(SEXP x, SEXP indices, SEXP ptype, const struct name_repai
   }
   PROTECT(out_names);
 
-  if (null_indices) {
-    out = vec_unchop_sequentially(out, &out_names, out_pi, x, x_size, x_sizes, is_shaped, has_inner_names);
-  } else {
+  if (has_indices) {
     out = vec_unchop_indices(out, &out_names, out_pi, x, x_size, indices, is_shaped, has_inner_names);
+  } else {
+    out = vec_unchop_sequentially(out, &out_names, out_pi, x, x_size, x_sizes, is_shaped, has_inner_names);
   }
   REPROTECT(out, out_pi);
 
