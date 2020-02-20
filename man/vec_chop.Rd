@@ -46,15 +46,19 @@ the indices are \code{NULL}, in which case the size is \code{vec_size_common(!!!
 \description{
 \itemize{
 \item \code{vec_chop()} provides an efficient method to repeatedly slice a vector. It
-captures the pattern of \code{map(indices, vec_slice, x = x)}.
+captures the pattern of \code{map(indices, vec_slice, x = x)}. When no indices
+are supplied, it is generally equivalent to \code{\link[=as.list]{as.list()}}.
 \item \code{vec_unchop()} combines a list of vectors into a single vector, placing
 elements in the output according to the locations specified by \code{indices}.
 It is similar to \code{\link[=vec_c]{vec_c()}}, but gives greater control over how the elements
-are combined, and does not respect outer names on the list.
+are combined, and does not respect outer names on the list. When no indices
+are supplied, it combines the elements of \code{x} in the order they are
+provided.
 }
 
 If \code{indices} selects every value in \code{x} exactly once, in any order, then
-\code{vec_unchop()} is the inverse of \code{vec_chop()} and following invariant holds:\preformatted{vec_unchop(vec_chop(x, indices), indices) == x
+\code{vec_unchop()} is the inverse of \code{vec_chop()} and the following invariant
+holds:\preformatted{vec_unchop(vec_chop(x, indices), indices) == x
 }
 }
 \examples{

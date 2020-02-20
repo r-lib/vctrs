@@ -2,15 +2,19 @@
 #'
 #' @description
 #' - `vec_chop()` provides an efficient method to repeatedly slice a vector. It
-#'   captures the pattern of `map(indices, vec_slice, x = x)`.
+#'   captures the pattern of `map(indices, vec_slice, x = x)`. When no indices
+#'   are supplied, it is generally equivalent to [as.list()].
 #'
 #' - `vec_unchop()` combines a list of vectors into a single vector, placing
 #'   elements in the output according to the locations specified by `indices`.
 #'   It is similar to [vec_c()], but gives greater control over how the elements
-#'   are combined, and does not respect outer names on the list.
+#'   are combined, and does not respect outer names on the list. When no indices
+#'   are supplied, it combines the elements of `x` in the order they are
+#'   provided.
 #'
 #' If `indices` selects every value in `x` exactly once, in any order, then
-#' `vec_unchop()` is the inverse of `vec_chop()` and following invariant holds:
+#' `vec_unchop()` is the inverse of `vec_chop()` and the following invariant
+#' holds:
 #'
 #' ```
 #' vec_unchop(vec_chop(x, indices), indices) == x
