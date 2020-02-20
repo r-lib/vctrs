@@ -9,6 +9,13 @@
 #' is similar to [vec_c()], but gives greater control over how the elements
 #' are combined, and does not respect outer names on the list.
 #'
+#' If `indices` selects every value in `x` exactly once, in any order, then
+#' `vec_unchop()` is the inverse of `vec_chop()` and following invariant holds:
+#'
+#' ```
+#' vec_unchop(vec_chop(x, indices), indices) == x
+#' ```
+#'
 #' @inheritParams vec_c
 #' @param x A vector
 #' @param indices For `vec_chop()`, a list of index values to slice `x` with,
@@ -40,8 +47,8 @@
 #' vec_chop(1:5, list(1, 1:2))
 #' vec_chop(mtcars, list(1:3, 4:6))
 #'
-#' # If `indices` uses the full sequence along `x` (in any order),
-#' # then `vec_unchop()` inverts `vec_chop()`
+#' # If `indices` selects every value in `x` exactly once,
+#' # in any order, then `vec_unchop()` inverts `vec_chop()`
 #' x <- c("a", "b", "c", "d")
 #' indices <- list(2, c(3, 1), 4)
 #' vec_chop(x, indices)

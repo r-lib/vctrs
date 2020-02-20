@@ -55,14 +55,18 @@ elements in the output according to the locations specified by \code{indices}. I
 is similar to \code{\link[=vec_c]{vec_c()}}, but gives greater control over how the elements
 are combined, and does not respect outer names on the list.
 }
+
+If \code{indices} selects every value in \code{x} exactly once, in any order, then
+\code{vec_unchop()} is the inverse of \code{vec_chop()} and following invariant holds:\preformatted{vec_unchop(vec_chop(x, indices), indices) == x
+}
 }
 \examples{
 vec_chop(1:5)
 vec_chop(1:5, list(1, 1:2))
 vec_chop(mtcars, list(1:3, 4:6))
 
-# If `indices` uses the full sequence along `x` (in any order),
-# then `vec_unchop()` inverts `vec_chop()`
+# If `indices` selects every value in `x` exactly once,
+# in any order, then `vec_unchop()` inverts `vec_chop()`
 x <- c("a", "b", "c", "d")
 indices <- list(2, c(3, 1), 4)
 vec_chop(x, indices)
