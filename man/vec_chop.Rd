@@ -48,8 +48,8 @@ the indices are \code{NULL}, in which case the size is \code{vec_size_common(!!!
 \item \code{vec_chop()} provides an efficient method to repeatedly slice a vector. It
 captures the pattern of \code{map(indices, vec_slice, x = x)}.
 \item \code{vec_unchop()} combines a list of vectors into a single vector, placing
-elements in the output according to the locations specified by \code{indices}. It
-is similar to \code{\link[=vec_c]{vec_c()}}, but gives greater control over how the elements
+elements in the output according to the locations specified by \code{indices}.
+It is similar to \code{\link[=vec_c]{vec_c()}}, but gives greater control over how the elements
 are combined, and does not respect outer names on the list.
 }
 
