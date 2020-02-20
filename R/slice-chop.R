@@ -57,14 +57,15 @@
 #'
 #' # An alternative implementation of `ave()` can be constructed using
 #' # `vec_chop()` and `vec_unchop()` in combination with `vec_group_loc()`
-#' attach(warpbreaks)
-#'
 #' ave2 <- function(.x, .by, .f, ...) {
 #'   indices <- vec_group_loc(.by)$loc
 #'   chopped <- vec_chop(.x, indices)
 #'   out <- lapply(chopped, .f, ...)
 #'   vec_unchop(out, indices)
 #' }
+#'
+#' breaks <- warpbreaks$breaks
+#' wool <- warpbreaks$wool
 #'
 #' ave2(breaks, wool, mean)
 #'
