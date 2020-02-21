@@ -428,3 +428,133 @@ test_that("name repair is respected and happens after ordering according to `ind
   expect_named(vec_unchop(x, indices), c("a", "a"))
   expect_named(vec_unchop(x, indices, name_repair = "unique"), c("a...1", "a...2"))
 })
+
+test_that("errors on OOB zero values", {
+  skip("until we can error on 0 values in vec_as_location()")
+  expect_error(
+    vec_unchop(list(1, 2), list(c(1, 2), 0))
+  )
+})
+
+test_that("vec_unchop() falls back to c() for foreign classes", {
+  verify_errors({
+    expect_error(
+      vec_unchop(list(foobar(1), foobar(2)), list(2, 1)),
+      "concatenation"
+    )
+  })
+  expect_error(
+    vec_unchop(list(NULL, foobar(1), foobar(2)), list(integer(), 1, 2)),
+    "concatenation"
+  )
+
+  # Check off-by-one error
+  expect_error(
+    vec_unchop(list(foobar(1), "", foobar(2)), list(1, 2, 3)),
+    class = "vctrs_error_incompatible_type"
+  )
+
+  # Fallback when the class implements `c()`
+  method_foobar <- function(...) {
+    xs <- list(...)
+    xs <- map(xs, unclass)
+    res <- exec("c", !!!xs)
+    foobar(res)
+  }
+
+  local_methods(
+    c.vctrs_foobar = method_foobar
+  )
+  expect_identical(
+    vec_unchop(list(foobar(1), foobar(2))),
+    foobar(c(1, 2))
+  )
+  expect_identical(
+    vec_unchop(list(foobar(1), foobar(2)), list(1, 2)),
+    foobar(c(1, 2))
+  )
+  expect_identical(
+    vec_unchop(list(foobar(1), foobar(2)), list(2, 1)),
+    foobar(c(2, 1))
+  )
+  expect_identical(
+    vec_unchop(list(NULL, foobar(1), NULL, foobar(2))),
+    foobar(c(1, 2))
+  )
+
+  # OOB error is respected
+  expect_error(
+    vec_unchop(list(foobar(1), foobar(2)), list(1, 3)),
+    class = "vctrs_error_subscript_oob"
+  )
+
+  # Names are kept
+  expect_identical(
+    vec_unchop(list(foobar(c(x = 1, y = 2)), foobar(c(x = 1))), list(c(2, 1), 3)),
+    foobar(c(y = 2, x = 1, x = 1))
+  )
+
+  # Recycles to the size of index
+  expect_identical(
+    vec_unchop(list(foobar(1), foobar(2)), list(c(1, 3), 2)),
+    foobar(c(1, 2, 1))
+  )
+  expect_identical(
+    vec_unchop(list(foobar(1), foobar(2)), list(c(1, 2), integer())),
+    foobar(c(1, 1))
+  )
+  expect_error(
+    vec_unchop(list(foobar(1), foobar(2)), list(c(1, 3), integer())),
+    class = "vctrs_error_subscript_oob"
+  )
+
+  method_vctrs_c_fallback <- function(...) {
+    xs <- list(...)
+    xs <- map(xs, unclass)
+    res <- exec("c", !!!xs)
+    structure(res, class = "vctrs_c_fallback")
+  }
+
+  # Registered fallback
+  s3_register("base::c", "vctrs_c_fallback", method_vctrs_c_fallback)
+  expect_identical(
+    vec_unchop(
+      list(
+        structure(1, class = "vctrs_c_fallback"),
+        structure(2, class = "vctrs_c_fallback")
+      ),
+      list(2, 1)
+    ),
+    structure(c(2, 1), class = "vctrs_c_fallback")
+  )
+
+  # Don't fallback for S3 lists which are treated as scalars by default
+  expect_error(
+    vec_unchop(list(foobar(list(1)), foobar(list(2)))),
+    class = "vctrs_error_scalar_type"
+  )
+})
+
+test_that("vec_unchop() fallback doesn't support `name_spec` or `ptype`", {
+  verify_errors({
+    expect_error(
+      vec_unchop(list(foobar(1)), name_spec = "{outer}_{inner}"),
+      "name specification"
+    )
+    expect_error(
+      vec_unchop(list(foobar(1)), ptype = ""),
+      "prototype"
+    )
+  })
+})
+
+test_that("vec_unchop() has informative error messages", {
+  verify_output(test_path("error", "test-unchop.txt"), {
+    "# vec_unchop() falls back to c() for foreign classes"
+    vec_unchop(list(foobar(1), foobar(2)))
+
+    "# vec_unchop() fallback doesn't support `name_spec` or `ptype`"
+    vec_unchop(list(foobar(1)), name_spec = "{outer}_{inner}")
+    vec_unchop(list(foobar(1)), ptype = "")
+  })
+})

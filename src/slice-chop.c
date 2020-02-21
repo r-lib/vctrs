@@ -405,6 +405,9 @@ SEXP vctrs_unchop(SEXP x, SEXP indices, SEXP ptype, SEXP name_spec, SEXP name_re
   return out;
 }
 
+static inline bool needs_vec_unchop_fallback(SEXP x);
+static SEXP vec_unchop_fallback(SEXP x, SEXP indices, SEXP ptype, SEXP name_spec);
+
 static SEXP vec_unchop_indices(SEXP x,
                                SEXP indices,
                                SEXP ptype,
@@ -444,6 +447,10 @@ static SEXP vec_unchop(SEXP x,
     if (!vec_is_list(indices)) {
       Rf_errorcall(R_NilValue, "`indices` must be a list of integers, or `NULL`");
     }
+  }
+
+  if (needs_vec_unchop_fallback(x)) {
+    return vec_unchop_fallback(x, indices, ptype, name_spec);
   }
 
   ptype = PROTECT(vctrs_type_common_impl(x, ptype));
@@ -655,6 +662,64 @@ static SEXP vec_unchop_sequentially(SEXP x,
   }
 
   UNPROTECT(6);
+  return out;
+}
+
+// Unchopping is a just version of `vec_c()` that controls the ordering,
+// so they both fallback to `c()` in the same situations
+static inline bool needs_vec_unchop_fallback(SEXP x) {
+  return needs_vec_c_fallback(x);
+}
+
+// This is essentially:
+// vec_slice_fallback(vec_c_fallback(!!!x), order(vec_c(!!!indices)))
+// with recycling of each element of `x` to the corresponding index size
+static SEXP vec_unchop_fallback(SEXP x, SEXP indices, SEXP ptype, SEXP name_spec) {
+  if (indices == R_NilValue) {
+    return vec_c_fallback(x, ptype, name_spec);
+  }
+
+  R_len_t x_size = vec_size(x);
+  x = PROTECT(r_maybe_duplicate(x));
+
+  R_len_t out_size = 0;
+
+  // Recycle `x` elements to the size of their corresponding index
+  for (R_len_t i = 0; i < x_size; ++i) {
+    SEXP elt = VECTOR_ELT(x, i);
+
+    R_len_t index_size = vec_size(VECTOR_ELT(indices, i));
+    out_size += index_size;
+
+    SET_VECTOR_ELT(x, i, vec_recycle_fallback(elt, index_size, args_empty));
+  }
+
+  indices = PROTECT(vec_as_indices(indices, out_size, R_NilValue));
+
+  SEXP out = PROTECT(vec_c_fallback(x, ptype, name_spec));
+
+  const struct name_repair_opts name_repair_opts = {
+    .type = name_repair_none,
+    .fn = R_NilValue
+  };
+
+  SEXP locations = PROTECT(vec_c(
+    indices,
+    vctrs_shared_empty_int,
+    R_NilValue,
+    &name_repair_opts
+  ));
+
+  SEXP args = PROTECT(Rf_allocVector(LISTSXP, 1));
+  SETCAR(args, locations);
+
+  SEXP call = PROTECT(Rf_lcons(Rf_install("order"), args));
+
+  locations = PROTECT(Rf_eval(call, R_BaseNamespace));
+
+  out = PROTECT(vec_slice_fallback(out, locations));
+
+  UNPROTECT(8);
   return out;
 }
 
