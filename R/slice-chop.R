@@ -8,8 +8,7 @@
 #' - `vec_unchop()` combines a list of vectors into a single vector, placing
 #'   elements in the output according to the locations specified by `indices`.
 #'   It is similar to [vec_c()], but gives greater control over how the elements
-#'   are combined. When no indices are supplied, it combines the elements of
-#'   `x` in the order they are provided.
+#'   are combined. When no indices are supplied, it is identical to `vec_c()`.
 #'
 #' If `indices` selects every value in `x` exactly once, in any order, then
 #' `vec_unchop()` is the inverse of `vec_chop()` and the following invariant
@@ -30,7 +29,8 @@
 #'   For `vec_unchop()`, a list of integer vectors specifying the locations to
 #'   place elements of `x` in. Each element of `x` is recycled to the size
 #'   of the corresponding index vector. The size of `indices` must match the
-#'   size of `x`. If `NULL`, `x` is combined in the order it is provided in.
+#'   size of `x`. If `NULL`, `x` is combined in the order it is provided in,
+#'   which is equivalent to using [vec_c()].
 #' @param ptype If `NULL`, the default, the output type is determined by
 #'   computing the common type across all elements of `x`. Alternatively, you
 #'   can supply `ptype` to give the output a known type.

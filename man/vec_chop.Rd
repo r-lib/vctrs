@@ -27,7 +27,8 @@ logical vector that would be valid as an index in \code{\link[=vec_slice]{vec_sl
 For \code{vec_unchop()}, a list of integer vectors specifying the locations to
 place elements of \code{x} in. Each element of \code{x} is recycled to the size
 of the corresponding index vector. The size of \code{indices} must match the
-size of \code{x}. If \code{NULL}, \code{x} is combined in the order it is provided in.}
+size of \code{x}. If \code{NULL}, \code{x} is combined in the order it is provided in,
+which is equivalent to using \code{\link[=vec_c]{vec_c()}}.}
 
 \item{ptype}{If \code{NULL}, the default, the output type is determined by
 computing the common type across all elements of \code{x}. Alternatively, you
@@ -68,8 +69,7 @@ are supplied, it is generally equivalent to \code{\link[=as.list]{as.list()}}.
 \item \code{vec_unchop()} combines a list of vectors into a single vector, placing
 elements in the output according to the locations specified by \code{indices}.
 It is similar to \code{\link[=vec_c]{vec_c()}}, but gives greater control over how the elements
-are combined. When no indices are supplied, it combines the elements of
-\code{x} in the order they are provided.
+are combined. When no indices are supplied, it is identical to \code{vec_c()}.
 }
 
 If \code{indices} selects every value in \code{x} exactly once, in any order, then
