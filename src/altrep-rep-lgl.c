@@ -8,7 +8,7 @@
 // Non-ALTREP 3.6 support
 
 // [[ include("altrep-rep.h") ]]
-bool vec_is_altrep_compact_rep_lgl(SEXP x) {
+bool vec_is_altrep_vctrs_compact_rep_lgl(SEXP x) {
   return false;
 }
 
@@ -29,7 +29,7 @@ SEXP vctrs_new_altrep_vctrs_compact_rep_lgl(SEXP value, SEXP size) {
 // ALTREP implementation
 
 // [[ include("altrep-rep.h") ]]
-bool vec_is_altrep_compact_rep_lgl(SEXP x) {
+bool vec_is_altrep_vctrs_compact_rep_lgl(SEXP x) {
   if (!ALTREP(x)) {
     return false;
   }
