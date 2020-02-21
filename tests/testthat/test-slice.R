@@ -498,6 +498,10 @@ test_that("names are repaired correctly with compact reps and `NA_integer_`", {
   expect_equal(vec_slice_rep(x, NA_integer_, 2L), expect)
 })
 
+test_that("names are recycled correctly with compact reps", {
+  expect_named(vec_slice_rep(c(x = 1L), 1L, 3L), c("x", "x", "x"))
+})
+
 test_that("vec_slice() with compact_reps work with Altrep classes", {
   skip_if(getRversion() < "3.5")
 
