@@ -174,7 +174,7 @@ SEXP vec_c_fallback(SEXP xs, SEXP ptype, SEXP name_spec) {
 
 static inline bool vec_implements_base_c(SEXP x) {
   return
-  OBJECT(x) &&
+    OBJECT(x) &&
     s3_find_method("c", x, base_method_table) != R_NilValue;
 }
 
