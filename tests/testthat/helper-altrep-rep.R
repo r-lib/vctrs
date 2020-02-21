@@ -22,6 +22,10 @@ new_altrep_vctrs_compact_rep_chr <- function(value, size) {
   .Call(vctrs_new_altrep_vctrs_compact_rep_chr, value, size)
 }
 
+is_altrep_vctrs_compact_rep_compact <- function(x) {
+  .Call(vctrs_is_altrep_vctrs_compact_rep_compact, x)
+}
+
 missing_altrep <- function() {
   getRversion() < "3.5.0"
 }
