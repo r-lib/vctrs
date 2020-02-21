@@ -15,7 +15,6 @@ struct dictionary {
   uint32_t size;
   uint32_t used;
 };
-typedef struct dictionary dictionary;
 
 /**
  * Initialise a dictionary
@@ -27,8 +26,8 @@ typedef struct dictionary dictionary;
  *   as well, but does not allocate an array of keys. This is useful
  *   for finding a key in another dictionary with `dict_hash_with()`.
  */
-void dict_init(dictionary* d, SEXP x);
-void dict_init_partial(dictionary* d, SEXP x);
+void dict_init(struct dictionary* d, SEXP x);
+void dict_init_partial(struct dictionary* d, SEXP x);
 
 #define PROTECT_DICT(d, n) do {                 \
     PROTECT((d)->vec);                          \
@@ -44,7 +43,7 @@ void dict_init_partial(dictionary* d, SEXP x);
  * - `dict_hash_with()` finds the hash for indexing into `d` with
  *   element `i` of `x`.
  */
-uint32_t dict_hash_scalar(dictionary* d, R_len_t i);
-uint32_t dict_hash_with(dictionary* d, dictionary* x, R_len_t i);
+uint32_t dict_hash_scalar(struct dictionary* d, R_len_t i);
+uint32_t dict_hash_with(struct dictionary* d, struct dictionary* x, R_len_t i);
 
-void dict_put(dictionary* d, uint32_t k, R_len_t i);
+void dict_put(struct dictionary* d, uint32_t k, R_len_t i);

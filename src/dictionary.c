@@ -25,18 +25,18 @@ int32_t ceil2(int32_t x) {
 // - `dict_init_impl()` uses `hash_fill()`
 // - `dict_hash_with()` uses `equal_scalar()`
 
-static void dict_init_impl(dictionary* d, SEXP x, bool partial);
+static void dict_init_impl(struct dictionary* d, SEXP x, bool partial);
 
 // Dictionaries must be protected and unprotected in consistent stack
 // order with `PROTECT_DICT()` and `UNPROTECT_DICT()`.
-void dict_init(dictionary* d, SEXP x) {
+void dict_init(struct dictionary* d, SEXP x) {
   dict_init_impl(d, x, false);
 }
-void dict_init_partial(dictionary* d, SEXP x) {
+void dict_init_partial(struct dictionary* d, SEXP x) {
   dict_init_impl(d, x, true);
 }
 
-static void dict_init_impl(dictionary* d, SEXP x, bool partial) {
+static void dict_init_impl(struct dictionary* d, SEXP x, bool partial) {
   d->vec = x;
   d->used = 0;
 
@@ -72,7 +72,7 @@ static void dict_init_impl(dictionary* d, SEXP x, bool partial) {
   }
 }
 
-uint32_t dict_hash_with(dictionary* d, dictionary* x, R_len_t i) {
+uint32_t dict_hash_with(struct dictionary* d, struct dictionary* x, R_len_t i) {
   uint32_t hash = x->hash[i];
 
   // Quadratic probing: will try every slot if d->size is power of 2
@@ -103,12 +103,12 @@ uint32_t dict_hash_with(dictionary* d, dictionary* x, R_len_t i) {
   Rf_errorcall(R_NilValue, "Internal error: Dictionary is full!");
 }
 
-uint32_t dict_hash_scalar(dictionary* d, R_len_t i) {
+uint32_t dict_hash_scalar(struct dictionary* d, R_len_t i) {
   return dict_hash_with(d, d, i);
 }
 
 
-void dict_put(dictionary* d, uint32_t hash, R_len_t i) {
+void dict_put(struct dictionary* d, uint32_t hash, R_len_t i) {
   d->key[hash] = i;
   d->used++;
 }
@@ -125,7 +125,7 @@ SEXP vctrs_unique_loc(SEXP x) {
   x = PROTECT_N(vec_proxy_equal(x), &nprot);
   x = PROTECT_N(obj_maybe_translate_encoding(x, n), &nprot);
 
-  dictionary d;
+  struct dictionary d;
   dict_init(&d, x);
   PROTECT_DICT(&d, &nprot);
 
@@ -169,7 +169,7 @@ bool duplicated_any(SEXP x) {
   x = PROTECT_N(vec_proxy_equal(x), &nprot);
   x = PROTECT_N(obj_maybe_translate_encoding(x, n), &nprot);
 
-  dictionary d;
+  struct dictionary d;
   dict_init(&d, x);
   PROTECT_DICT(&d, &nprot);
 
@@ -198,7 +198,7 @@ SEXP vctrs_n_distinct(SEXP x) {
   x = PROTECT_N(vec_proxy_equal(x), &nprot);
   x = PROTECT_N(obj_maybe_translate_encoding(x, n), &nprot);
 
-  dictionary d;
+  struct dictionary d;
   dict_init(&d, x);
   PROTECT_DICT(&d, &nprot);
 
@@ -221,7 +221,7 @@ SEXP vctrs_id(SEXP x) {
   x = PROTECT_N(vec_proxy_equal(x), &nprot);
   x = PROTECT_N(obj_maybe_translate_encoding(x, n), &nprot);
 
-  dictionary d;
+  struct dictionary d;
   dict_init(&d, x);
   PROTECT_DICT(&d, &nprot);
 
@@ -260,7 +260,7 @@ SEXP vec_match(SEXP needles, SEXP haystack) {
   needles = VECTOR_ELT(translated, 0);
   haystack = VECTOR_ELT(translated, 1);
 
-  dictionary d;
+  struct dictionary d;
   dict_init(&d, haystack);
   PROTECT_DICT(&d, &nprot);
 
@@ -273,7 +273,7 @@ SEXP vec_match(SEXP needles, SEXP haystack) {
     }
   }
 
-  dictionary d_needles;
+  struct dictionary d_needles;
   dict_init_partial(&d_needles, needles);
 
   // Locate needles
@@ -313,7 +313,7 @@ SEXP vctrs_in(SEXP needles, SEXP haystack) {
   needles = VECTOR_ELT(translated, 0);
   haystack = VECTOR_ELT(translated, 1);
 
-  dictionary d;
+  struct dictionary d;
   dict_init(&d, haystack);
   PROTECT_DICT(&d, &nprot);
 
@@ -326,7 +326,7 @@ SEXP vctrs_in(SEXP needles, SEXP haystack) {
     }
   }
 
-  dictionary d_needles;
+  struct dictionary d_needles;
   dict_init_partial(&d_needles, needles);
   PROTECT_DICT(&d_needles, &nprot);
 
@@ -351,7 +351,7 @@ SEXP vctrs_count(SEXP x) {
   x = PROTECT_N(vec_proxy_equal(x), &nprot);
   x = PROTECT_N(obj_maybe_translate_encoding(x, n), &nprot);
 
-  dictionary d;
+  struct dictionary d;
   dict_init(&d, x);
   PROTECT_DICT(&d, &nprot);
 
@@ -404,7 +404,7 @@ SEXP vctrs_duplicated(SEXP x) {
   x = PROTECT_N(vec_proxy_equal(x), &nprot);
   x = PROTECT_N(obj_maybe_translate_encoding(x, n), &nprot);
 
-  dictionary d;
+  struct dictionary d;
   dict_init(&d, x);
   PROTECT_DICT(&d, &nprot);
 

@@ -12,7 +12,7 @@ SEXP vctrs_group_id(SEXP x) {
   x = PROTECT_N(vec_proxy_equal(x), &nprot);
   x = PROTECT_N(obj_maybe_translate_encoding(x, n), &nprot);
 
-  dictionary d;
+  struct dictionary d;
   dict_init(&d, x);
   PROTECT_DICT(&d, &nprot);
 
@@ -54,7 +54,7 @@ SEXP vctrs_group_rle(SEXP x) {
   x = PROTECT_N(vec_proxy_equal(x), &nprot);
   x = PROTECT_N(obj_maybe_translate_encoding(x, n), &nprot);
 
-  dictionary d;
+  struct dictionary d;
   dict_init(&d, x);
   PROTECT_DICT(&d, &nprot);
 
@@ -146,7 +146,7 @@ SEXP vec_group_loc(SEXP x) {
   SEXP proxy = PROTECT_N(vec_proxy_equal(x), &nprot);
   proxy = PROTECT_N(obj_maybe_translate_encoding(proxy, n), &nprot);
 
-  dictionary d;
+  struct dictionary d;
   dict_init(&d, proxy);
   PROTECT_DICT(&d, &nprot);
 
