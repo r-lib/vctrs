@@ -1,6 +1,7 @@
 #include "vctrs.h"
 #include "type-data-frame.h"
 #include "utils.h"
+#include "slice.h"
 
 R_len_t rcrd_size(SEXP x);
 
@@ -40,6 +41,24 @@ R_len_t vec_bare_dim_n(SEXP x) {
   return Rf_length(vec_bare_dim(x));
 }
 
+static inline R_len_t vec_raw_size(SEXP x) {
+  SEXP dims = PROTECT(Rf_getAttrib(x, R_DimSymbol));
+
+  if (dims == R_NilValue || Rf_length(dims) == 0) {
+    UNPROTECT(1);
+    return Rf_length(x);
+  }
+
+  if (TYPEOF(dims) != INTSXP) {
+    Rf_errorcall(R_NilValue, "Corrupt vector: dims is not integer vector");
+  }
+
+  R_len_t size = INTEGER(dims)[0];
+
+  UNPROTECT(1);
+  return size;
+}
+
 
 // [[ include("vctrs.h") ]]
 R_len_t vec_size(SEXP x) {
@@ -61,20 +80,9 @@ R_len_t vec_size(SEXP x) {
   case vctrs_type_complex:
   case vctrs_type_character:
   case vctrs_type_raw:
-  case vctrs_type_list: {
-    SEXP dims = Rf_getAttrib(data, R_DimSymbol);
-    if (dims == R_NilValue || Rf_length(dims) == 0) {
-      size = Rf_length(data);
-      break;
-    }
-
-    if (TYPEOF(dims) != INTSXP) {
-      Rf_errorcall(R_NilValue, "Corrupt vector: dims is not integer vector");
-    }
-
-    size = INTEGER(dims)[0];
+  case vctrs_type_list:
+    size = vec_raw_size(data);
     break;
-  }
 
   case vctrs_type_dataframe:
     size = df_size(data);
@@ -199,6 +207,31 @@ SEXP vctrs_recycle(SEXP x, SEXP size_obj, SEXP x_arg) {
   struct vctrs_arg x_arg_ = new_wrapper_arg(NULL, r_chr_get_c_string(x_arg, 0));
 
   return vec_recycle(x, size, &x_arg_);
+}
+
+// [[ include("vctrs.h") ]]
+SEXP vec_recycle_fallback(SEXP x, R_len_t size, struct vctrs_arg* x_arg) {
+  if (x == R_NilValue) {
+    return R_NilValue;
+  }
+
+  R_len_t x_size = vec_size(x);
+
+  if (x_size == size) {
+    return x;
+  }
+
+  if (x_size == 1) {
+    SEXP subscript = PROTECT(Rf_allocVector(INTSXP, size));
+    r_int_fill(subscript, 1, size);
+
+    SEXP out = vec_slice_fallback(x, subscript);
+
+    UNPROTECT(1);
+    return out;
+  }
+
+  stop_recycle_incompatible_size(x_size, size, x_arg);
 }
 
 

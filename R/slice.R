@@ -205,34 +205,6 @@ vec_init <- function(x, n = 1L) {
   .Call(vctrs_init, x, n)
 }
 
-#' Repeatedly slice a vector
-#'
-#' `vec_chop()` provides an efficient method to repeatedly slice a vector. It
-#' captures the pattern of `map(indices, vec_slice, x = x)`.
-#'
-#' @param x A vector
-#' @param indices A list of index values to slice `x` with, or `NULL`. Each
-#'   element of the list must be an integer, character or logical vector that
-#'   would be valid as an index in [vec_slice()]. If `NULL`, `x` is split into
-#'   its individual elements, equivalent to using an `indices` of
-#'   `as.list(vec_seq_along(x))`.
-#' @return A list of size `vec_size(indices)` or, if `indices == NULL`,
-#'   `vec_size(x)`.
-#' @export
-#' @examples
-#' vec_chop(1:5)
-#' vec_chop(1:5, list(1, 1:2))
-#' vec_chop(mtcars, list(1:3, 4:6))
-vec_chop <- function(x, indices = NULL) {
-  .Call(vctrs_chop, x, indices)
-}
-
-# Exposed for testing  (`starts` is 0-based)
-vec_chop_seq <- function(x, starts, sizes, increasings = TRUE) {
-  args <- vec_recycle_common(starts, sizes, increasings)
-  .Call(vctrs_chop_seq, x, args[[1]], args[[2]], args[[3]])
-}
-
 # Exposed for testing (`start` is 0-based)
 vec_slice_seq <- function(x, start, size, increasing = TRUE) {
   .Call(vctrs_slice_seq, x, start, size, increasing)

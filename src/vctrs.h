@@ -86,6 +86,7 @@ struct vctrs_proxy_info vec_proxy_info(SEXP x);
 enum vctrs_type vec_typeof(SEXP x);
 enum vctrs_type vec_proxy_typeof(SEXP x);
 const char* vec_type_as_str(enum vctrs_type type);
+bool vec_is_list(SEXP x);
 bool vec_is_vector(SEXP x);
 bool vec_is_partial(SEXP x);
 
@@ -365,6 +366,7 @@ SEXP vec_type(SEXP x);
 SEXP vec_ptype_finalise(SEXP x);
 bool vec_is_unspecified(SEXP x);
 SEXP vec_recycle(SEXP x, R_len_t size, struct vctrs_arg* x_arg);
+SEXP vec_recycle_fallback(SEXP x, R_len_t size, struct vctrs_arg* x_arg);
 SEXP vec_recycle_common(SEXP xs, R_len_t size);
 SEXP vec_names(SEXP x);
 SEXP vec_group_loc(SEXP x);
@@ -374,6 +376,9 @@ SEXP vec_c(SEXP xs,
            SEXP ptype,
            SEXP name_spec,
            const struct name_repair_opts* name_repair);
+
+SEXP vec_c_fallback(SEXP xs, SEXP ptype, SEXP name_spec);
+bool needs_vec_c_fallback(SEXP xs);
 
 SEXP vec_type2(SEXP x,
                SEXP y,

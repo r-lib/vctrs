@@ -7,8 +7,6 @@ SEXP vctrs_type_common_impl(SEXP dots, SEXP ptype);
 // From slice-assign.c
 SEXP vec_assign_impl(SEXP proxy, SEXP index, SEXP value);
 
-static bool list_has_inner_names(SEXP xs);
-
 
 // [[ register(external = TRUE) ]]
 SEXP vctrs_c(SEXP call, SEXP op, SEXP args, SEXP env) {
@@ -28,12 +26,6 @@ SEXP vctrs_c(SEXP call, SEXP op, SEXP args, SEXP env) {
   return out;
 }
 
-static inline bool needs_vec_c_fallback(SEXP xs);
-static SEXP vec_c_fallback(SEXP xs);
-static inline int vec_c_fallback_validate_args(SEXP ptype, SEXP name_spec);
-static void stop_vec_c_fallback(SEXP xs, int err_type);
-static bool vec_implements_base_c(SEXP x);
-
 // [[ include("vctrs.h") ]]
 SEXP vec_c(SEXP xs,
            SEXP ptype,
@@ -42,13 +34,7 @@ SEXP vec_c(SEXP xs,
   R_len_t n = Rf_length(xs);
 
   if (needs_vec_c_fallback(xs)) {
-    int err_type = vec_c_fallback_validate_args(ptype, name_spec);
-    if (err_type) {
-      stop_vec_c_fallback(xs, err_type);
-    }
-
-    SEXP out = vec_c_fallback(xs);
-    return out;
+    return vec_c_fallback(xs, ptype, name_spec);
   }
 
   ptype = PROTECT(vctrs_type_common_impl(xs, ptype));
@@ -81,7 +67,7 @@ SEXP vec_c(SEXP xs,
   int* idx_ptr = INTEGER(idx);
 
   SEXP xs_names = PROTECT(r_names(xs));
-  bool has_names = xs_names != R_NilValue || list_has_inner_names(xs);
+  bool has_names = xs_names != R_NilValue || list_has_inner_vec_names(xs, n);
   has_names = has_names && !is_data_frame(ptype);
 
   PROTECT_INDEX out_names_pi;
@@ -143,28 +129,8 @@ SEXP vec_c(SEXP xs,
   return out;
 }
 
-
-static bool list_has_inner_names(SEXP xs) {
-  R_len_t n = Rf_length(xs);
-
-  for (R_len_t i = 0; i < n; ++i) {
-    SEXP elt = VECTOR_ELT(xs, i);
-    if (vec_names(elt) != R_NilValue) {
-      return true;
-    }
-  }
-
-  return false;
-}
-
-
-static bool vec_implements_base_c(SEXP x) {
-  return
-    OBJECT(x) &&
-    s3_find_method("c", x, base_method_table) != R_NilValue;
-}
-
-static inline bool needs_vec_c_fallback(SEXP xs) {
+// [[ include("vctrs.h") ]]
+bool needs_vec_c_fallback(SEXP xs) {
   if (!Rf_length(xs)) {
     return false;
   }
@@ -179,7 +145,17 @@ static inline bool needs_vec_c_fallback(SEXP xs) {
     list_is_s3_homogeneous(xs);
 }
 
-static SEXP vec_c_fallback(SEXP xs) {
+static inline bool vec_implements_base_c(SEXP x);
+static inline int vec_c_fallback_validate_args(SEXP ptype, SEXP name_spec);
+static inline void stop_vec_c_fallback(SEXP xs, int err_type);
+
+// [[ include("vctrs.h") ]]
+SEXP vec_c_fallback(SEXP xs, SEXP ptype, SEXP name_spec) {
+  int err_type = vec_c_fallback_validate_args(ptype, name_spec);
+  if (err_type) {
+    stop_vec_c_fallback(xs, err_type);
+  }
+
   SEXP args = PROTECT(Rf_coerceVector(xs, LISTSXP));
   args = PROTECT(node_compact_d(args));
 
@@ -194,6 +170,12 @@ static SEXP vec_c_fallback(SEXP xs) {
 
   UNPROTECT(3);
   return out;
+}
+
+static inline bool vec_implements_base_c(SEXP x) {
+  return
+    OBJECT(x) &&
+    s3_find_method("c", x, base_method_table) != R_NilValue;
 }
 
 static inline int vec_c_fallback_validate_args(SEXP ptype, SEXP name_spec) {

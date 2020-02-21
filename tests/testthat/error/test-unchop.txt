@@ -1,0 +1,23 @@
+
+vec_unchop() falls back to c() for foreign classes
+==================================================
+
+> vec_unchop(list(foobar(1), foobar(2)))
+Error: Can't find vctrs or base methods for concatenation.
+vctrs methods must be implemented for class `vctrs_foobar`.
+See <https://vctrs.r-lib.org/articles/s3-vector.html>.
+
+
+vec_unchop() fallback doesn't support `name_spec` or `ptype`
+============================================================
+
+> vec_unchop(list(foobar(1)), name_spec = "{outer}_{inner}")
+Error: Can't use a name specification with non-vctrs types.
+vctrs methods must be implemented for class `vctrs_foobar`.
+See <https://vctrs.r-lib.org/articles/s3-vector.html>.
+
+> vec_unchop(list(foobar(1)), ptype = "")
+Error: Can't specify a prototype with non-vctrs types.
+vctrs methods must be implemented for class `vctrs_foobar`.
+See <https://vctrs.r-lib.org/articles/s3-vector.html>.
+
