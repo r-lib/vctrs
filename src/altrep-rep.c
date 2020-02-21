@@ -8,6 +8,10 @@
 
 // [[ include("altrep-rep.h") ]]
 bool vec_is_altrep_vctrs_compact_rep(SEXP x) {
+  if (!ALTREP(x)) {
+    return false;
+  }
+
   SEXP cls = ALTREP_CLASS(x);
 
   bool out =
