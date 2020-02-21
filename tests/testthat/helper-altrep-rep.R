@@ -21,3 +21,11 @@ new_altrep_vctrs_compact_rep_chr <- function(value, size) {
   size <- vec_cast(vec_cast(size, integer()), double())
   .Call(vctrs_new_altrep_vctrs_compact_rep_chr, value, size)
 }
+
+missing_altrep <- function() {
+  getRversion() < "3.5.0"
+}
+
+missing_altrep_3_6 <- function() {
+  getRversion() < "3.6.0"
+}

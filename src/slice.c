@@ -260,24 +260,23 @@ SEXP vec_slice_base(enum vctrs_type type, SEXP x, SEXP subscript) {
 }
 
 // Replace any `NA` name caused by `NA` subscript with the empty
-// string. It's ok mutate the names vector since it is freshly
-// created, but we make an additional check for that anyways
-// (and the empty string is persistently protected anyway).
-static void repair_na_names(SEXP names, SEXP subscript) {
-  if (!NO_REFERENCES(names)) {
-    Rf_errorcall(R_NilValue, "Internal error: `names` must not be referenced.");
-  }
-
+// string. `names` is freshly created by `chr_slice()`, but this
+// might generate a `vctrs_altrep_compact_rep_chr` if `subscript`
+// is a compact_rep object. Because of that, we call `r_maybe_duplicate()`
+// to ensure we get a fresh expanded vector we can modify.
+static SEXP repair_na_names(SEXP names, SEXP subscript) {
   // No possible way to have `NA_integer_` in a compact seq
   if (is_compact_seq(subscript)) {
-    return;
+    return names;
   }
 
   R_len_t n = Rf_length(names);
 
   if (n == 0) {
-    return;
+    return names;
   }
+
+  names = PROTECT(r_maybe_duplicate(names));
 
   SEXP* p_names = STRING_PTR(names);
   const int* p_subscript = INTEGER_RO(subscript);
@@ -292,7 +291,8 @@ static void repair_na_names(SEXP names, SEXP subscript) {
       p_names[i] = strings_empty;
     }
 
-    return;
+    UNPROTECT(1);
+    return names;
   }
 
   for (R_len_t i = 0; i < n; ++i) {
@@ -300,6 +300,9 @@ static void repair_na_names(SEXP names, SEXP subscript) {
       p_names[i] = strings_empty;
     }
   }
+
+  UNPROTECT(1);
+  return names;
 }
 
 SEXP slice_names(SEXP names, SEXP subscript) {
@@ -308,8 +311,7 @@ SEXP slice_names(SEXP names, SEXP subscript) {
   }
 
   names = PROTECT(chr_slice(names, subscript));
-
-  repair_na_names(names, subscript);
+  names = repair_na_names(names, subscript);
 
   UNPROTECT(1);
   return names;
