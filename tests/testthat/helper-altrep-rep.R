@@ -15,3 +15,9 @@ new_altrep_vctrs_compact_rep_dbl <- function(value, size) {
   size <- vec_cast(vec_cast(size, integer()), double())
   .Call(vctrs_new_altrep_vctrs_compact_rep_dbl, value, size)
 }
+
+new_altrep_vctrs_compact_rep_chr <- function(value, size) {
+  value <- vec_cast(value, character())
+  size <- vec_cast(vec_cast(size, integer()), double())
+  .Call(vctrs_new_altrep_vctrs_compact_rep_chr, value, size)
+}

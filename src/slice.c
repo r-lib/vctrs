@@ -503,6 +503,10 @@ static SEXP vec_slice_maybe_altrep_vctrs_compact_rep(SEXP x, SEXP subscript, SEX
     double value = (loc == NA_INTEGER) ? NA_REAL : REAL(x)[loc - 1];
     return new_altrep_vctrs_compact_rep_dbl(value, size);
   }
+  case STRSXP: {
+    SEXP value = (loc == NA_INTEGER) ? NA_STRING : STRING_PTR(x)[loc - 1];
+    return new_altrep_vctrs_compact_rep_chr(value, size);
+  }
 #if HAS_ALTREP_3_6
   case LGLSXP: {
     int value = (loc == NA_INTEGER) ? NA_LOGICAL : LOGICAL(x)[loc - 1];

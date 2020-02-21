@@ -12,12 +12,15 @@
 
 extern SEXP altrep_vctrs_compact_rep_int_class_sexp;
 extern SEXP altrep_vctrs_compact_rep_dbl_class_sexp;
+extern SEXP altrep_vctrs_compact_rep_chr_class_sexp;
 
 R_altrep_class_t altrep_vctrs_compact_rep_int_class;
 R_altrep_class_t altrep_vctrs_compact_rep_dbl_class;
+R_altrep_class_t altrep_vctrs_compact_rep_chr_class;
 
 void vctrs_init_altrep_vctrs_compact_rep_int(DllInfo* dll);
 void vctrs_init_altrep_vctrs_compact_rep_dbl(DllInfo* dll);
+void vctrs_init_altrep_vctrs_compact_rep_chr(DllInfo* dll);
 
 #endif
 

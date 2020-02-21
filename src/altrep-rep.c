@@ -12,7 +12,8 @@ bool vec_is_altrep_vctrs_compact_rep(SEXP x) {
 
   bool out =
     cls == altrep_vctrs_compact_rep_int_class_sexp ||
-    cls == altrep_vctrs_compact_rep_dbl_class_sexp;
+    cls == altrep_vctrs_compact_rep_dbl_class_sexp ||
+    cls == altrep_vctrs_compact_rep_chr_class_sexp;
 
 #if HAS_ALTREP_3_6
   out = out ||
@@ -26,6 +27,7 @@ bool vec_is_altrep_vctrs_compact_rep(SEXP x) {
 void vctrs_init_altrep_vctrs_compact_rep(DllInfo* dll) {
   vctrs_init_altrep_vctrs_compact_rep_int(dll);
   vctrs_init_altrep_vctrs_compact_rep_dbl(dll);
+  vctrs_init_altrep_vctrs_compact_rep_chr(dll);
 
 #if HAS_ALTREP_3_6
   vctrs_init_altrep_vctrs_compact_rep_lgl(dll);
