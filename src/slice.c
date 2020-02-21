@@ -495,6 +495,10 @@ static SEXP vec_slice_maybe_altrep_vctrs_compact_rep(SEXP x, SEXP subscript, SEX
   int size = p_subscript[1];
 
   switch (type) {
+  case LGLSXP: {
+    int value = (loc == NA_INTEGER) ? NA_LOGICAL : LOGICAL(x)[loc - 1];
+    return new_altrep_vctrs_compact_rep_lgl(value, size);
+  }
   case INTSXP: {
     int value = (loc == NA_INTEGER) ? NA_INTEGER : INTEGER(x)[loc - 1];
     return new_altrep_vctrs_compact_rep_int(value, size);
