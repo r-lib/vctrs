@@ -215,8 +215,7 @@ SEXP vec_recycle_fallback(SEXP x, R_len_t size, struct vctrs_arg* x_arg) {
     return R_NilValue;
   }
 
-  // Can't use `vec_size()` here, as `x` might not be a vector
-  R_len_t x_size = vec_raw_size(x);
+  R_len_t x_size = vec_size(x);
 
   if (x_size == size) {
     return x;
