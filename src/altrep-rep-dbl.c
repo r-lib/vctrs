@@ -173,6 +173,11 @@ static double vctrs_compact_rep_dbl_Elt(SEXP x, R_xlen_t i) {
   return VCTRS_COMPACT_REP_DBL_VALUE(info);
 }
 
+static int vctrs_compact_rep_dbl_No_NA(SEXP x) {
+  SEXP info = VCTRS_COMPACT_REP_INFO(x);
+  return VCTRS_COMPACT_REP_DBL_VALUE(info) != NA_REAL;
+}
+
 static R_xlen_t vctrs_compact_rep_dbl_Get_region(SEXP x, R_xlen_t i, R_xlen_t n, double* buf) {
   SEXP info = VCTRS_COMPACT_REP_INFO(x);
   double value = VCTRS_COMPACT_REP_DBL_VALUE(info);
@@ -215,6 +220,7 @@ void vctrs_init_altrep_vctrs_compact_rep_dbl(DllInfo* dll) {
 
   // ALTREAL methods
   R_set_altreal_Elt_method(altrep_vctrs_compact_rep_dbl_class, vctrs_compact_rep_dbl_Elt);
+  R_set_altreal_No_NA_method(altrep_vctrs_compact_rep_dbl_class, vctrs_compact_rep_dbl_No_NA);
   R_set_altreal_Get_region_method(altrep_vctrs_compact_rep_dbl_class, vctrs_compact_rep_dbl_Get_region);
 }
 

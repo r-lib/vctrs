@@ -179,6 +179,11 @@ static SEXP vctrs_compact_rep_chr_Elt(SEXP x, R_xlen_t i) {
   return VCTRS_COMPACT_REP_CHR_VALUE(info);
 }
 
+static int vctrs_compact_rep_chr_No_NA(SEXP x) {
+  SEXP info = VCTRS_COMPACT_REP_INFO(x);
+  return VCTRS_COMPACT_REP_CHR_VALUE(info) != NA_STRING;
+}
+
 // No altstring_Get_region method as of R 3.6.0
 // static R_xlen_t vctrs_compact_rep_chr_Get_region(SEXP x, R_xlen_t i, R_xlen_t n, SEXP* buf) {
 //   SEXP info = VCTRS_COMPACT_REP_INFO(x);
@@ -222,6 +227,7 @@ void vctrs_init_altrep_vctrs_compact_rep_chr(DllInfo* dll) {
 
   // ALTSTRING methods
   R_set_altstring_Elt_method(altrep_vctrs_compact_rep_chr_class, vctrs_compact_rep_chr_Elt);
+  R_set_altstring_No_NA_method(altrep_vctrs_compact_rep_chr_class, vctrs_compact_rep_chr_No_NA);
   // No altstring_Get_region method as of R 3.6.0
   // R_set_altstring_Get_region_method(altrep_vctrs_compact_rep_chr_class, vctrs_compact_rep_chr_Get_region);
 }

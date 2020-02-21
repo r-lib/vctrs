@@ -173,6 +173,11 @@ static int vctrs_compact_rep_lgl_Elt(SEXP x, R_xlen_t i) {
   return VCTRS_COMPACT_REP_LGL_VALUE(info);
 }
 
+static int vctrs_compact_rep_lgl_No_NA(SEXP x) {
+  SEXP info = VCTRS_COMPACT_REP_INFO(x);
+  return VCTRS_COMPACT_REP_LGL_VALUE(info) != NA_LOGICAL;
+}
+
 static R_xlen_t vctrs_compact_rep_lgl_Get_region(SEXP x, R_xlen_t i, R_xlen_t n, int* buf) {
   SEXP info = VCTRS_COMPACT_REP_INFO(x);
   int value = VCTRS_COMPACT_REP_LGL_VALUE(info);
@@ -215,6 +220,7 @@ void vctrs_init_altrep_vctrs_compact_rep_lgl(DllInfo* dll) {
 
   // ALTLOGICAL methods
   R_set_altlogical_Elt_method(altrep_vctrs_compact_rep_lgl_class, vctrs_compact_rep_lgl_Elt);
+  R_set_altlogical_No_NA_method(altrep_vctrs_compact_rep_lgl_class, vctrs_compact_rep_lgl_No_NA);
   R_set_altlogical_Get_region_method(altrep_vctrs_compact_rep_lgl_class, vctrs_compact_rep_lgl_Get_region);
 }
 
