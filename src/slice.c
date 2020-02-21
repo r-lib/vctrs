@@ -284,7 +284,8 @@ static SEXP repair_na_names(SEXP names, SEXP subscript) {
   // Special handling for a compact_rep object with repeated `NA`
   if (is_compact_rep(subscript)) {
     if (p_subscript[0] != NA_INTEGER) {
-      return;
+      UNPROTECT(1);
+      return names;
     }
 
     for (R_len_t i = 0; i < n; ++i) {
