@@ -8,6 +8,11 @@
 // Non-ALTREP 3.6 support
 
 // [[ include("altrep-rep.h") ]]
+bool vec_is_altrep_compact_rep_lgl(SEXP x) {
+  return false;
+}
+
+// [[ include("altrep-rep.h") ]]
 SEXP new_altrep_vctrs_compact_rep_lgl(int value, R_xlen_t size) {
   Rf_errorcall(R_NilValue, "Need R 3.6+ for ALTLOGICAL support");
   return R_NilValue;
@@ -22,6 +27,15 @@ SEXP vctrs_new_altrep_vctrs_compact_rep_lgl(SEXP value, SEXP size) {
 #else
 // -----------------------------------------------------------------------------
 // ALTREP implementation
+
+// [[ include("altrep-rep.h") ]]
+bool vec_is_altrep_compact_rep_lgl(SEXP x) {
+  if (!ALTREP(x)) {
+    return false;
+  }
+
+  return ALTREP_CLASS(x) == altrep_vctrs_compact_rep_lgl_class_sexp;
+}
 
 // [[ include("altrep-rep.h") ]]
 SEXP new_altrep_vctrs_compact_rep_lgl(int value, R_xlen_t size) {
