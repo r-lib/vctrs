@@ -12,3 +12,14 @@ test_that("No_NA method keeps compact vectors from being expanded", {
   expect_true(is_altrep_vctrs_compact_rep_compact(x))
   expect_true(is_altrep_vctrs_compact_rep_compact(y))
 })
+
+test_that("`is_unspecified()` does not expand ALTREP compact rep lgls", {
+  x <- new_altrep_vctrs_compact_rep_lgl(TRUE, 2)
+  y <- new_altrep_vctrs_compact_rep_lgl(NA_integer_, 2)
+
+  expect_identical(is_unspecified(x), FALSE)
+  expect_identical(is_unspecified(y), TRUE)
+
+  expect_true(is_altrep_vctrs_compact_rep_compact(x))
+  expect_true(is_altrep_vctrs_compact_rep_compact(y))
+})

@@ -658,4 +658,8 @@ void stop_corrupt_ordered_levels(SEXP x, struct vctrs_arg* arg) __attribute__((n
 #endif
 
 
+#if (R_VERSION < R_Version(3, 6, 0))
+# define LOGICAL_NO_NA(x) Rf_errorcall(R_NilValue, "Internal error: `LOGICAL_NO_NA()` called on R < 3.6.0")
+#endif
+
 #endif
