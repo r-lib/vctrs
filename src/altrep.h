@@ -4,14 +4,22 @@
 #include "Rversion.h"
 
 #if (R_VERSION < R_Version(3, 5, 0))
+#define HAS_ALTREP false
+#define HAS_ALTREP_3_6 false
+#elif (R_VERSION < R_Version(3, 6, 0))
+#define HAS_ALTREP true
+#define HAS_ALTREP_3_6 false
+#else
+#define HAS_ALTREP true
+#define HAS_ALTREP_3_6 true
+#endif
 
-# define HAS_ALTREP false
+#if !HAS_ALTREP
+
 # define ALTREP(x) false
 # define ALTVEC_EXTRACT_SUBSET_PROXY(x, indx, call) NULL
 
 #else
-
-# define HAS_ALTREP true
 
 #include "R_ext/Altrep.h"
 

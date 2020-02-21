@@ -3,19 +3,19 @@
 #include "altrep-rep.h"
 #include "altrep-rep-internal.h"
 
-#if !HAS_ALTREP
+#if !HAS_ALTREP_3_6
 // -----------------------------------------------------------------------------
-// Non-ALTREP support
+// Non-ALTREP 3.6 support
 
 // [[ include("altrep-rep.h") ]]
 SEXP new_altrep_vctrs_compact_rep_lgl(int value, R_xlen_t size) {
-  Rf_errorcall(R_NilValue, "Need R 3.5+ for ALTREP support");
+  Rf_errorcall(R_NilValue, "Need R 3.6+ for ALTLOGICAL support");
   return R_NilValue;
 }
 
 // [[ register() ]]
 SEXP vctrs_new_altrep_vctrs_compact_rep_lgl(SEXP value, SEXP size) {
-  Rf_errorcall(R_NilValue, "Need R 3.5+ for ALTREP support");
+  Rf_errorcall(R_NilValue, "Need R 3.6+ for ALTLOGICAL support");
   return R_NilValue;
 }
 
