@@ -3,7 +3,7 @@
 #include "altrep-rep.h"
 #include "altrep-rep-internal.h"
 
-#if (R_VERSION < R_Version(3, 5, 0))
+#if !HAS_ALTREP
 // -----------------------------------------------------------------------------
 // Non-ALTREP support
 

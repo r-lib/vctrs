@@ -1,7 +1,7 @@
 #ifndef VCTRS_ALTREP_REP_INTERNAL_H
 #define VCTRS_ALTREP_REP_INTERNAL_H
 
-#if (R_VERSION >= R_Version(3, 5, 0))
+#if HAS_ALTREP
 
 // Used with all compact rep types
 #define VCTRS_COMPACT_REP_INFO(x) R_altrep_data1(x)
