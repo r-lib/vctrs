@@ -2,6 +2,7 @@
 #include "subscript-loc.h"
 #include "utils.h"
 #include "altrep-rep.h"
+#include "altrep.h"
 
 // Initialised at load time
 SEXP syms_vec_assign_fallback = NULL;
