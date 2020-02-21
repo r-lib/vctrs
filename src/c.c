@@ -5,7 +5,7 @@
 SEXP vctrs_type_common_impl(SEXP dots, SEXP ptype);
 
 // From slice-assign.c
-SEXP vec_assign_impl(SEXP proxy, SEXP index, SEXP value, bool clone);
+SEXP vec_assign_impl(SEXP proxy, SEXP index, SEXP value);
 
 static bool list_has_inner_names(SEXP xs);
 
@@ -83,8 +83,10 @@ SEXP vec_c(SEXP xs,
   SEXP xs_names = PROTECT(r_names(xs));
   bool has_names = xs_names != R_NilValue || list_has_inner_names(xs);
   has_names = has_names && !is_data_frame(ptype);
+
+  PROTECT_INDEX out_names_pi;
   SEXP out_names = has_names ? Rf_allocVector(STRSXP, out_size) : R_NilValue;
-  PROTECT(out_names);
+  PROTECT_WITH_INDEX(out_names, &out_names_pi);
 
   bool is_shaped = has_dim(ptype);
 
@@ -109,7 +111,8 @@ SEXP vec_c(SEXP xs,
       REPROTECT(out, out_pi);
       UNPROTECT(1);
     } else {
-      vec_assign_impl(out, idx, elt, false);
+      out = vec_assign_impl(out, idx, elt);
+      REPROTECT(out, out_pi);
     }
 
     if (has_names) {
@@ -117,7 +120,8 @@ SEXP vec_c(SEXP xs,
       SEXP inner = PROTECT(vec_names(x));
       SEXP x_nms = PROTECT(apply_name_spec(name_spec, outer, inner, size));
       if (x_nms != R_NilValue) {
-        vec_assign_impl(out_names, idx, x_nms, false);
+        out_names = vec_assign_impl(out_names, idx, x_nms);
+        REPROTECT(out_names, out_names_pi);
       }
       UNPROTECT(2);
     }

@@ -94,7 +94,7 @@ extern SEXP vctrs_is_list(SEXP);
 // Available in the API header
 extern R_len_t vec_size(SEXP);
 extern SEXP vec_init(SEXP, R_len_t);
-extern SEXP vec_assign_impl(SEXP, SEXP, SEXP, bool);
+extern SEXP vec_assign_impl(SEXP, SEXP, SEXP);
 extern SEXP vec_slice_impl(SEXP, SEXP);
 extern SEXP vec_names(SEXP);
 extern SEXP vec_recycle(SEXP, R_len_t, struct vctrs_arg*);

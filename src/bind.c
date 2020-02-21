@@ -135,7 +135,7 @@ static SEXP vec_rbind(SEXP xs, SEXP ptype, SEXP names_to, struct name_repair_opt
 
     SEXP tbl = PROTECT(vec_cast(x, ptype, args_empty, args_empty));
     init_compact_seq(idx_ptr, counter, size, true);
-    df_assign(out, idx, tbl, false);
+    out = PROTECT(df_assign(out, idx, tbl));
 
     if (has_rownames) {
       SEXP rn = df_rownames(x);
@@ -152,11 +152,12 @@ static SEXP vec_rbind(SEXP xs, SEXP ptype, SEXP names_to, struct name_repair_opt
       PROTECT(rn);
 
       if (rownames_type(rn) == ROWNAMES_IDENTIFIERS) {
-        chr_assign(rownames, idx, rn, false);
+        rownames = chr_assign(rownames, idx, rn);
       }
 
       UNPROTECT(1);
     }
+    PROTECT(rownames);
 
     // Assign current name to group vector, if supplied
     if (has_names_to) {
@@ -165,7 +166,7 @@ static SEXP vec_rbind(SEXP xs, SEXP ptype, SEXP names_to, struct name_repair_opt
     }
 
     counter += size;
-    UNPROTECT(1);
+    UNPROTECT(3);
   }
 
   if (has_rownames) {
@@ -358,15 +359,16 @@ static SEXP vec_cbind(SEXP xs, SEXP ptype, SEXP size, struct name_repair_opts* n
 
     R_len_t xn = Rf_length(x);
     init_compact_seq(idx_ptr, counter, xn, true);
-    list_assign(out, idx, x, false);
+    out = PROTECT(list_assign(out, idx, x));
 
     SEXP xnms = PROTECT(r_names(x));
     if (xnms != R_NilValue) {
-      chr_assign(names, idx, xnms, false);
+      names = chr_assign(names, idx, xnms);
     }
+    PROTECT(names);
 
     counter += xn;
-    UNPROTECT(1);
+    UNPROTECT(3);
   }
 
   names = PROTECT(vec_as_names(names, name_repair));
