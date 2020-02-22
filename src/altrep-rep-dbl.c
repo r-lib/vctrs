@@ -175,7 +175,7 @@ static double vctrs_compact_rep_dbl_Elt(SEXP x, R_xlen_t i) {
 
 static int vctrs_compact_rep_dbl_No_NA(SEXP x) {
   SEXP info = VCTRS_COMPACT_REP_INFO(x);
-  return VCTRS_COMPACT_REP_DBL_VALUE(info) != NA_REAL;
+  return !ISNAN(VCTRS_COMPACT_REP_DBL_VALUE(info));
 }
 
 static R_xlen_t vctrs_compact_rep_dbl_Get_region(SEXP x, R_xlen_t i, R_xlen_t n, double* buf) {
