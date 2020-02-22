@@ -146,33 +146,26 @@ static const void* vctrs_compact_rep_lgl_Dataptr_or_null(SEXP x) {
 }
 
 static SEXP vctrs_compact_rep_lgl_Extract_subset(SEXP x, SEXP indx, SEXP call) {
-  SEXP info = VCTRS_COMPACT_REP_INFO(x);
-  int value = VCTRS_COMPACT_REP_LGL_VALUE(info);
-  R_xlen_t size = VCTRS_COMPACT_REP_LGL_SIZE(info);
+  const SEXP info = VCTRS_COMPACT_REP_INFO(x);
+  const int value = VCTRS_COMPACT_REP_LGL_VALUE(info);
+  const R_xlen_t size = VCTRS_COMPACT_REP_LGL_SIZE(info);
 
-  R_xlen_t out_size = Rf_xlength(indx);
+  const R_xlen_t out_size = Rf_xlength(indx);
 
   SEXP out = PROTECT(Rf_allocVector(LGLSXP, out_size));
   int* p_out = LOGICAL(out);
 
   // indx is 1-based
-  int* p_indx = INTEGER(indx);
+  const int* p_indx = INTEGER(indx);
 
   for (R_xlen_t i = 0; i < out_size; ++i) {
-    int loc = p_indx[i];
+    const int loc = p_indx[i];
 
-    if (loc == NA_INTEGER) {
+    if (0 < loc && loc <= size) {
+      p_out[i] = value;
+    } else {
       p_out[i] = NA_LOGICAL;
-      continue;
     }
-
-    // Mimic normal R vector. OOB = NA.
-    if (loc > size) {
-      p_out[i] = NA_LOGICAL;
-      continue;
-    }
-
-    p_out[i] = value;
   }
 
   UNPROTECT(1);
