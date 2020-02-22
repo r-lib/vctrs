@@ -1,6 +1,9 @@
 
 # vctrs (development version)
 
+
+# vctrs 0.2.3
+
 * The main feature of this release is considerable performance
   improvements with factors and dates.
 
