@@ -19,7 +19,7 @@ test_that("No_NA method keeps compact vectors from being expanded", {
     }
   }
 
-  xs <- list(1L, 1, "1")
+  xs <- list(1L, 1, 1, "1")
   nas <- list(NA_integer_, NA_real_, NaN, NA_character_)
 
   fns <- list(
@@ -205,7 +205,7 @@ test_that("`is_unspecified()` does not expand ALTREP compact rep lgls", {
   skip_if_no_altrep_3_6()
 
   x <- new_altrep_vctrs_compact_rep_lgl(TRUE, 2)
-  y <- new_altrep_vctrs_compact_rep_lgl(NA_integer_, 2)
+  y <- new_altrep_vctrs_compact_rep_lgl(NA, 2)
 
   expect_identical(is_unspecified(x), FALSE)
   expect_identical(is_unspecified(y), TRUE)
