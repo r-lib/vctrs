@@ -26,10 +26,10 @@ is_altrep_vctrs_compact_rep_compact <- function(x) {
   .Call(vctrs_is_altrep_vctrs_compact_rep_compact, x)
 }
 
-missing_altrep <- function() {
-  getRversion() < "3.5.0"
+skip_if_no_altrep <- function() {
+  skip_if(getRversion() < "3.5.0", "Testing these ALTREP features requires R 3.5+")
 }
 
-missing_altrep_3_6 <- function() {
-  getRversion() < "3.6.0"
+skip_if_no_altrep_3_6 <- function() {
+  skip_if(getRversion() < "3.6.0", "Testing these ALTREP features requires R 3.6+")
 }
