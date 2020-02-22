@@ -26,7 +26,7 @@ vec_is_altrep_vctrs_compact_rep <- function(x) {
   .Call(vctrs_is_altrep_vctrs_compact_rep, x)
 }
 
-is_altrep_vctrs_compact_rep_compact <- function(x) {
+vec_is_altrep_vctrs_compact_rep_compact <- function(x) {
   .Call(vctrs_is_altrep_vctrs_compact_rep_compact, x)
 }
 
