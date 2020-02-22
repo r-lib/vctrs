@@ -103,6 +103,7 @@ extern SEXP vctrs_new_altrep_vctrs_compact_rep_lgl(SEXP, SEXP);
 extern SEXP vctrs_new_altrep_vctrs_compact_rep_int(SEXP, SEXP);
 extern SEXP vctrs_new_altrep_vctrs_compact_rep_dbl(SEXP, SEXP);
 extern SEXP vctrs_new_altrep_vctrs_compact_rep_chr(SEXP, SEXP);
+extern SEXP vctrs_is_altrep_vctrs_compact_rep(SEXP);
 extern SEXP vctrs_is_altrep_vctrs_compact_rep_compact(SEXP);
 
 
@@ -231,6 +232,7 @@ static const R_CallMethodDef CallEntries[] = {
   {"vctrs_new_altrep_vctrs_compact_rep_int",    (DL_FUNC) &vctrs_new_altrep_vctrs_compact_rep_int, 2},
   {"vctrs_new_altrep_vctrs_compact_rep_dbl",    (DL_FUNC) &vctrs_new_altrep_vctrs_compact_rep_dbl, 2},
   {"vctrs_new_altrep_vctrs_compact_rep_chr",    (DL_FUNC) &vctrs_new_altrep_vctrs_compact_rep_chr, 2},
+  {"vctrs_is_altrep_vctrs_compact_rep",         (DL_FUNC) &vctrs_is_altrep_vctrs_compact_rep, 1},
   {"vctrs_is_altrep_vctrs_compact_rep_compact", (DL_FUNC) &vctrs_is_altrep_vctrs_compact_rep_compact, 1},
   {NULL, NULL, 0}
 };

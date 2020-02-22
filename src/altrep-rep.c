@@ -27,6 +27,11 @@ bool vec_is_altrep_vctrs_compact_rep(SEXP x) {
   return out;
 }
 
+// [[ register() ]]
+SEXP vctrs_is_altrep_vctrs_compact_rep(SEXP x) {
+  return Rf_ScalarLogical(vec_is_altrep_vctrs_compact_rep(x));
+}
+
 // [[ init() ]]
 void vctrs_init_altrep_vctrs_compact_rep(DllInfo* dll) {
   vctrs_init_altrep_vctrs_compact_rep_int(dll);
@@ -43,6 +48,12 @@ void vctrs_init_altrep_vctrs_compact_rep(DllInfo* dll) {
 
 // [[ include("altrep-rep.h") ]]
 bool vec_is_altrep_vctrs_compact_rep(SEXP x) { return false; }
+
+// [[ register() ]]
+SEXP vctrs_is_altrep_vctrs_compact_rep(SEXP x) {
+  Rf_errorcall(R_NilValue, "Need R 3.5+ for ALTREP support");
+  return R_NilValue;
+}
 
 // For DllInfo on R < 3.4
 #include <R_ext/Rdynload.h>
