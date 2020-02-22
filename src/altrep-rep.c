@@ -7,7 +7,7 @@
 #if HAS_ALTREP
 
 // [[ include("altrep-rep.h") ]]
-bool vec_is_altrep_vctrs_compact_rep(SEXP x) {
+bool vec_is_vctrs_compact_rep(SEXP x) {
   if (!ALTREP(x)) {
     return false;
   }
@@ -15,31 +15,31 @@ bool vec_is_altrep_vctrs_compact_rep(SEXP x) {
   SEXP cls = ALTREP_CLASS(x);
 
   bool out =
-    cls == altrep_vctrs_compact_rep_int_class_sexp ||
-    cls == altrep_vctrs_compact_rep_dbl_class_sexp ||
-    cls == altrep_vctrs_compact_rep_chr_class_sexp;
+    cls == vctrs_compact_rep_int_class_sexp ||
+    cls == vctrs_compact_rep_dbl_class_sexp ||
+    cls == vctrs_compact_rep_chr_class_sexp;
 
 #if HAS_ALTREP_3_6
   out = out ||
-    cls == altrep_vctrs_compact_rep_lgl_class_sexp;
+    cls == vctrs_compact_rep_lgl_class_sexp;
 #endif
 
   return out;
 }
 
 // [[ register() ]]
-SEXP vctrs_is_altrep_vctrs_compact_rep(SEXP x) {
-  return Rf_ScalarLogical(vec_is_altrep_vctrs_compact_rep(x));
+SEXP vctrs_is_vctrs_compact_rep(SEXP x) {
+  return Rf_ScalarLogical(vec_is_vctrs_compact_rep(x));
 }
 
 // [[ init() ]]
-void vctrs_init_altrep_vctrs_compact_rep(DllInfo* dll) {
-  vctrs_init_altrep_vctrs_compact_rep_int(dll);
-  vctrs_init_altrep_vctrs_compact_rep_dbl(dll);
-  vctrs_init_altrep_vctrs_compact_rep_chr(dll);
+void vctrs_init_vctrs_compact_rep(DllInfo* dll) {
+  vctrs_init_vctrs_compact_rep_int(dll);
+  vctrs_init_vctrs_compact_rep_dbl(dll);
+  vctrs_init_vctrs_compact_rep_chr(dll);
 
 #if HAS_ALTREP_3_6
-  vctrs_init_altrep_vctrs_compact_rep_lgl(dll);
+  vctrs_init_vctrs_compact_rep_lgl(dll);
 #endif
 }
 
@@ -47,10 +47,10 @@ void vctrs_init_altrep_vctrs_compact_rep(DllInfo* dll) {
 #else
 
 // [[ include("altrep-rep.h") ]]
-bool vec_is_altrep_vctrs_compact_rep(SEXP x) { return false; }
+bool vec_is_vctrs_compact_rep(SEXP x) { return false; }
 
 // [[ register() ]]
-SEXP vctrs_is_altrep_vctrs_compact_rep(SEXP x) {
+SEXP vctrs_is_vctrs_compact_rep(SEXP x) {
   Rf_errorcall(R_NilValue, "Need R 3.5+ for ALTREP support");
   return R_NilValue;
 }
@@ -59,6 +59,6 @@ SEXP vctrs_is_altrep_vctrs_compact_rep(SEXP x) {
 #include <R_ext/Rdynload.h>
 
 // [[ init() ]]
-void vctrs_init_altrep_vctrs_compact_rep(DllInfo* dll) { }
+void vctrs_init_vctrs_compact_rep(DllInfo* dll) { }
 
 #endif

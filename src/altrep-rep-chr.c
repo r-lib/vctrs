@@ -8,13 +8,13 @@
 // Non-ALTREP support
 
 // [[ include("altrep-rep.h") ]]
-SEXP new_altrep_vctrs_compact_rep_chr(SEXP value, R_xlen_t size) {
+SEXP new_vctrs_compact_rep_chr(SEXP value, R_xlen_t size) {
   Rf_errorcall(R_NilValue, "Need R 3.5+ for ALTREP support");
   return R_NilValue;
 }
 
 // [[ register() ]]
-SEXP vctrs_new_altrep_vctrs_compact_rep_chr(SEXP value, SEXP size) {
+SEXP vctrs_new_vctrs_compact_rep_chr(SEXP value, SEXP size) {
   Rf_errorcall(R_NilValue, "Need R 3.5+ for ALTREP support");
   return R_NilValue;
 }
@@ -24,7 +24,7 @@ SEXP vctrs_new_altrep_vctrs_compact_rep_chr(SEXP value, SEXP size) {
 // ALTREP implementation
 
 // [[ include("altrep-rep.h") ]]
-SEXP new_altrep_vctrs_compact_rep_chr(SEXP value, R_xlen_t size) {
+SEXP new_vctrs_compact_rep_chr(SEXP value, R_xlen_t size) {
   double size_ = (double) size;
 
   if (TYPEOF(value) != CHARSXP) {
@@ -35,7 +35,7 @@ SEXP new_altrep_vctrs_compact_rep_chr(SEXP value, R_xlen_t size) {
   SET_VECTOR_ELT(info, 0, value);
   SET_VECTOR_ELT(info, 1, Rf_ScalarReal(size_));
 
-  SEXP out = R_new_altrep(altrep_vctrs_compact_rep_chr_class, info, R_NilValue);
+  SEXP out = R_new_altrep(vctrs_compact_rep_chr_class, info, R_NilValue);
 
   // Force duplicate on modify
   MARK_NOT_MUTABLE(out);
@@ -45,11 +45,11 @@ SEXP new_altrep_vctrs_compact_rep_chr(SEXP value, R_xlen_t size) {
 }
 
 // [[ register() ]]
-SEXP vctrs_new_altrep_vctrs_compact_rep_chr(SEXP value, SEXP size) {
+SEXP vctrs_new_vctrs_compact_rep_chr(SEXP value, SEXP size) {
   SEXP value_ = STRING_PTR(value)[0];
   R_xlen_t size_ = REAL(size)[0];
 
-  return new_altrep_vctrs_compact_rep_chr(value_, size_);
+  return new_vctrs_compact_rep_chr(value_, size_);
 }
 
 // -----------------------------------------------------------------------------
@@ -83,7 +83,7 @@ static SEXP vctrs_compact_rep_chr_Unserialize(SEXP cls, SEXP state) {
   SEXP value = VCTRS_COMPACT_REP_CHR_VALUE(info);
   R_xlen_t size = VCTRS_COMPACT_REP_CHR_SIZE(info);
 
-  return new_altrep_vctrs_compact_rep_chr(value, size);
+  return new_vctrs_compact_rep_chr(value, size);
 }
 
 // TODO: What if `deep = false`? vroom dttm duplicates the altrep object
@@ -197,32 +197,32 @@ static int vctrs_compact_rep_chr_No_NA(SEXP x) {
 
 // -----------------------------------------------------------------------------
 
-SEXP altrep_vctrs_compact_rep_chr_class_sexp = NULL;
+SEXP vctrs_compact_rep_chr_class_sexp = NULL;
 
-void vctrs_init_altrep_vctrs_compact_rep_chr(DllInfo* dll) {
-  altrep_vctrs_compact_rep_chr_class = R_make_altstring_class("vctrs_compact_rep_chr", "vctrs", dll);
+void vctrs_init_vctrs_compact_rep_chr(DllInfo* dll) {
+  vctrs_compact_rep_chr_class = R_make_altstring_class("vctrs_compact_rep_chr", "vctrs", dll);
 
-  altrep_vctrs_compact_rep_chr_class_sexp = R_SEXP(altrep_vctrs_compact_rep_chr_class);
-  R_PreserveObject(altrep_vctrs_compact_rep_chr_class_sexp);
+  vctrs_compact_rep_chr_class_sexp = R_SEXP(vctrs_compact_rep_chr_class);
+  R_PreserveObject(vctrs_compact_rep_chr_class_sexp);
 
   // ALTREP methods
-  R_set_altrep_Serialized_state_method(altrep_vctrs_compact_rep_chr_class, vctrs_compact_rep_chr_Serialized_state);
-  R_set_altrep_Unserialize_method(altrep_vctrs_compact_rep_chr_class, vctrs_compact_rep_chr_Unserialize);
-  R_set_altrep_Duplicate_method(altrep_vctrs_compact_rep_chr_class, vctrs_compact_rep_chr_Duplicate);
-  R_set_altrep_Coerce_method(altrep_vctrs_compact_rep_chr_class, vctrs_compact_rep_chr_Coerce);
-  R_set_altrep_Inspect_method(altrep_vctrs_compact_rep_chr_class, vctrs_compact_rep_chr_Inspect);
-  R_set_altrep_Length_method(altrep_vctrs_compact_rep_chr_class, vctrs_compact_rep_chr_Length);
+  R_set_altrep_Serialized_state_method(vctrs_compact_rep_chr_class, vctrs_compact_rep_chr_Serialized_state);
+  R_set_altrep_Unserialize_method(vctrs_compact_rep_chr_class, vctrs_compact_rep_chr_Unserialize);
+  R_set_altrep_Duplicate_method(vctrs_compact_rep_chr_class, vctrs_compact_rep_chr_Duplicate);
+  R_set_altrep_Coerce_method(vctrs_compact_rep_chr_class, vctrs_compact_rep_chr_Coerce);
+  R_set_altrep_Inspect_method(vctrs_compact_rep_chr_class, vctrs_compact_rep_chr_Inspect);
+  R_set_altrep_Length_method(vctrs_compact_rep_chr_class, vctrs_compact_rep_chr_Length);
 
   // ALTVEC methods
-  R_set_altvec_Dataptr_method(altrep_vctrs_compact_rep_chr_class, vctrs_compact_rep_chr_Dataptr);
-  R_set_altvec_Dataptr_or_null_method(altrep_vctrs_compact_rep_chr_class, vctrs_compact_rep_chr_Dataptr_or_null);
-  R_set_altvec_Extract_subset_method(altrep_vctrs_compact_rep_chr_class, vctrs_compact_rep_chr_Extract_subset);
+  R_set_altvec_Dataptr_method(vctrs_compact_rep_chr_class, vctrs_compact_rep_chr_Dataptr);
+  R_set_altvec_Dataptr_or_null_method(vctrs_compact_rep_chr_class, vctrs_compact_rep_chr_Dataptr_or_null);
+  R_set_altvec_Extract_subset_method(vctrs_compact_rep_chr_class, vctrs_compact_rep_chr_Extract_subset);
 
   // ALTSTRING methods
-  R_set_altstring_Elt_method(altrep_vctrs_compact_rep_chr_class, vctrs_compact_rep_chr_Elt);
-  R_set_altstring_No_NA_method(altrep_vctrs_compact_rep_chr_class, vctrs_compact_rep_chr_No_NA);
+  R_set_altstring_Elt_method(vctrs_compact_rep_chr_class, vctrs_compact_rep_chr_Elt);
+  R_set_altstring_No_NA_method(vctrs_compact_rep_chr_class, vctrs_compact_rep_chr_No_NA);
   // No altstring_Get_region method as of R 3.6.0
-  // R_set_altstring_Get_region_method(altrep_vctrs_compact_rep_chr_class, vctrs_compact_rep_chr_Get_region);
+  // R_set_altstring_Get_region_method(vctrs_compact_rep_chr_class, vctrs_compact_rep_chr_Get_region);
 }
 
 #endif

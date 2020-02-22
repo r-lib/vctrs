@@ -201,7 +201,7 @@ SEXP vec_proxy_assign(SEXP proxy, SEXP index, SEXP value) {
   return out
 
 #define ASSIGN(CTYPE, DEREF, CONST_DEREF, ELT)                     \
-  if (vec_is_altrep_vctrs_compact_rep(value)) {                    \
+  if (vec_is_vctrs_compact_rep(value)) {                           \
     if (is_compact_seq(index)) {                                   \
       ASSIGN_ALTREP_VCTRS_COMPACT_REP_COMPACT(CTYPE, DEREF, ELT);  \
     } else {                                                       \

@@ -6,8 +6,8 @@
 // -----------------------------------------------------------------------------
 #if HAS_ALTREP
 
-SEXP vctrs_is_altrep_vctrs_compact_rep_compact(SEXP x) {
-  if (!vec_is_altrep_vctrs_compact_rep(x)) {
+SEXP vctrs_is_vctrs_compact_rep_compact(SEXP x) {
+  if (!vec_is_vctrs_compact_rep(x)) {
     Rf_errorcall(R_NilValue, "Internal error: `x` is not an ALTREP compact rep");
   }
 
@@ -19,7 +19,7 @@ SEXP vctrs_is_altrep_vctrs_compact_rep_compact(SEXP x) {
 // -----------------------------------------------------------------------------
 #else
 
-SEXP vctrs_is_altrep_vctrs_compact_rep_compact(SEXP x) {
+SEXP vctrs_is_vctrs_compact_rep_compact(SEXP x) {
   Rf_errorcall(R_NilValue, "Need R 3.5+ for ALTREP support");
   return R_NilValue;
 }

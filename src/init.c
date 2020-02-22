@@ -99,12 +99,12 @@ extern SEXP vctrs_df_flat_width(SEXP);
 extern SEXP df_flatten(SEXP);
 extern SEXP vctrs_equal_scalar(SEXP, SEXP, SEXP, SEXP, SEXP);
 extern SEXP vctrs_linked_version();
-extern SEXP vctrs_new_altrep_vctrs_compact_rep_lgl(SEXP, SEXP);
-extern SEXP vctrs_new_altrep_vctrs_compact_rep_int(SEXP, SEXP);
-extern SEXP vctrs_new_altrep_vctrs_compact_rep_dbl(SEXP, SEXP);
-extern SEXP vctrs_new_altrep_vctrs_compact_rep_chr(SEXP, SEXP);
-extern SEXP vctrs_is_altrep_vctrs_compact_rep(SEXP);
-extern SEXP vctrs_is_altrep_vctrs_compact_rep_compact(SEXP);
+extern SEXP vctrs_new_vctrs_compact_rep_lgl(SEXP, SEXP);
+extern SEXP vctrs_new_vctrs_compact_rep_int(SEXP, SEXP);
+extern SEXP vctrs_new_vctrs_compact_rep_dbl(SEXP, SEXP);
+extern SEXP vctrs_new_vctrs_compact_rep_chr(SEXP, SEXP);
+extern SEXP vctrs_is_vctrs_compact_rep(SEXP);
+extern SEXP vctrs_is_vctrs_compact_rep_compact(SEXP);
 
 
 
@@ -135,7 +135,7 @@ SEXP vctrs_init_library(SEXP);
 extern SEXP altrep_rle_Make(SEXP);
 void vctrs_init_altrep_rle(DllInfo* dll);
 
-extern void vctrs_init_altrep_vctrs_compact_rep(DllInfo* dll);
+extern void vctrs_init_vctrs_compact_rep(DllInfo* dll);
 
 static const R_CallMethodDef CallEntries[] = {
   {"vctrs_list_get",                            (DL_FUNC) &vctrs_list_get, 2},
@@ -228,12 +228,12 @@ static const R_CallMethodDef CallEntries[] = {
   {"vctrs_df_flatten",                          (DL_FUNC) &df_flatten, 1},
   {"vctrs_equal_scalar",                        (DL_FUNC) &vctrs_equal_scalar, 5},
   {"vctrs_linked_version",                      (DL_FUNC) &vctrs_linked_version, 0},
-  {"vctrs_new_altrep_vctrs_compact_rep_lgl",    (DL_FUNC) &vctrs_new_altrep_vctrs_compact_rep_lgl, 2},
-  {"vctrs_new_altrep_vctrs_compact_rep_int",    (DL_FUNC) &vctrs_new_altrep_vctrs_compact_rep_int, 2},
-  {"vctrs_new_altrep_vctrs_compact_rep_dbl",    (DL_FUNC) &vctrs_new_altrep_vctrs_compact_rep_dbl, 2},
-  {"vctrs_new_altrep_vctrs_compact_rep_chr",    (DL_FUNC) &vctrs_new_altrep_vctrs_compact_rep_chr, 2},
-  {"vctrs_is_altrep_vctrs_compact_rep",         (DL_FUNC) &vctrs_is_altrep_vctrs_compact_rep, 1},
-  {"vctrs_is_altrep_vctrs_compact_rep_compact", (DL_FUNC) &vctrs_is_altrep_vctrs_compact_rep_compact, 1},
+  {"vctrs_new_vctrs_compact_rep_lgl",           (DL_FUNC) &vctrs_new_vctrs_compact_rep_lgl, 2},
+  {"vctrs_new_vctrs_compact_rep_int",           (DL_FUNC) &vctrs_new_vctrs_compact_rep_int, 2},
+  {"vctrs_new_vctrs_compact_rep_dbl",           (DL_FUNC) &vctrs_new_vctrs_compact_rep_dbl, 2},
+  {"vctrs_new_vctrs_compact_rep_chr",           (DL_FUNC) &vctrs_new_vctrs_compact_rep_chr, 2},
+  {"vctrs_is_vctrs_compact_rep",                (DL_FUNC) &vctrs_is_vctrs_compact_rep, 1},
+  {"vctrs_is_vctrs_compact_rep_compact",        (DL_FUNC) &vctrs_is_vctrs_compact_rep_compact, 1},
   {NULL, NULL, 0}
 };
 
@@ -285,7 +285,7 @@ export void R_init_vctrs(DllInfo *dll)
 
     // Altrep classes
     vctrs_init_altrep_rle(dll);
-    vctrs_init_altrep_vctrs_compact_rep(dll);
+    vctrs_init_vctrs_compact_rep(dll);
 }
 
 

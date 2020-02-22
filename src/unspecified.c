@@ -63,7 +63,7 @@ bool vec_is_unspecified(SEXP x) {
   }
 
   // Avoid compact_rep expansion from calling LOGICAL()
-  if (vec_is_altrep_vctrs_compact_rep_lgl(x)) {
+  if (vec_is_vctrs_compact_rep_lgl(x)) {
     return !LOGICAL_NO_NA(x);
   }
 

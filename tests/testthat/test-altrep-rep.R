@@ -14,8 +14,8 @@ test_that("No_NA method keeps compact vectors from being expanded", {
       expect_identical(anyNA(x), FALSE)
       expect_identical(anyNA(na), TRUE)
 
-      expect_true(vec_is_altrep_vctrs_compact_rep_compact(x))
-      expect_true(vec_is_altrep_vctrs_compact_rep_compact(na))
+      expect_true(vec_is_vctrs_compact_rep_compact(x))
+      expect_true(vec_is_vctrs_compact_rep_compact(na))
     }
   }
 
@@ -23,10 +23,10 @@ test_that("No_NA method keeps compact vectors from being expanded", {
   nas <- list(NA_integer_, NA_real_, NaN, NA_character_)
 
   fns <- list(
-    new_altrep_vctrs_compact_rep_int,
-    new_altrep_vctrs_compact_rep_dbl,
-    new_altrep_vctrs_compact_rep_dbl,
-    new_altrep_vctrs_compact_rep_chr
+    new_vctrs_compact_rep_int,
+    new_vctrs_compact_rep_dbl,
+    new_vctrs_compact_rep_dbl,
+    new_vctrs_compact_rep_chr
   )
 
   test(xs, nas, fns)
@@ -37,7 +37,7 @@ test_that("No_NA method keeps compact vectors from being expanded", {
   nas <- list(NA)
 
   fns <- list(
-    new_altrep_vctrs_compact_rep_lgl
+    new_vctrs_compact_rep_lgl
   )
 
   test(xs, nas, fns)
@@ -53,16 +53,16 @@ test_that("vec_ptype2 doesn't expand compact reps", {
 
       vec_ptype2(x, x)
 
-      expect_true(vec_is_altrep_vctrs_compact_rep_compact(x))
+      expect_true(vec_is_vctrs_compact_rep_compact(x))
     }
   }
 
   xs <- list(1L, 1, "1")
 
   fns <- list(
-    new_altrep_vctrs_compact_rep_int,
-    new_altrep_vctrs_compact_rep_dbl,
-    new_altrep_vctrs_compact_rep_chr
+    new_vctrs_compact_rep_int,
+    new_vctrs_compact_rep_dbl,
+    new_vctrs_compact_rep_chr
   )
 
   test(xs, fns)
@@ -72,7 +72,7 @@ test_that("vec_ptype2 doesn't expand compact reps", {
   xs <- list(TRUE)
 
   fns <- list(
-    new_altrep_vctrs_compact_rep_lgl
+    new_vctrs_compact_rep_lgl
   )
 
   test(xs, fns)
@@ -88,16 +88,16 @@ test_that("vec_cast-ing to the same type doesn't expand compact reps", {
 
       vec_cast(x, x)
 
-      expect_true(vec_is_altrep_vctrs_compact_rep_compact(x))
+      expect_true(vec_is_vctrs_compact_rep_compact(x))
     }
   }
 
   xs <- list(1L, 1, "1")
 
   fns <- list(
-    new_altrep_vctrs_compact_rep_int,
-    new_altrep_vctrs_compact_rep_dbl,
-    new_altrep_vctrs_compact_rep_chr
+    new_vctrs_compact_rep_int,
+    new_vctrs_compact_rep_dbl,
+    new_vctrs_compact_rep_chr
   )
 
   test(xs, fns)
@@ -107,7 +107,7 @@ test_that("vec_cast-ing to the same type doesn't expand compact reps", {
   xs <- list(TRUE)
 
   fns <- list(
-    new_altrep_vctrs_compact_rep_lgl
+    new_vctrs_compact_rep_lgl
   )
 
   test(xs, fns)
@@ -120,7 +120,7 @@ test_that("vec_recycle() generates compact rep objects", {
 
       x <- vec_recycle(x, 2)
 
-      expect_true(vec_is_altrep_vctrs_compact_rep_compact(x))
+      expect_true(vec_is_vctrs_compact_rep_compact(x))
     }
   }
 
@@ -142,7 +142,7 @@ test_that("vec_init() generates compact rep objects", {
 
       x <- vec_init(x, 2)
 
-      expect_true(vec_is_altrep_vctrs_compact_rep_compact(x))
+      expect_true(vec_is_vctrs_compact_rep_compact(x))
     }
   }
 
@@ -165,8 +165,8 @@ test_that("recycling or initializing classed objects or objects with attributes 
       x_recycle <- vec_recycle(x, 2)
       x_init <- vec_init(x, 2)
 
-      expect_false(vec_is_altrep_vctrs_compact_rep(x_recycle))
-      expect_false(vec_is_altrep_vctrs_compact_rep(x_init))
+      expect_false(vec_is_vctrs_compact_rep(x_recycle))
+      expect_false(vec_is_vctrs_compact_rep(x_init))
     }
   }
 
@@ -204,14 +204,14 @@ context("test-altrep-rep-lgl")
 test_that("`is_unspecified()` does not expand ALTREP compact rep lgls", {
   skip_if_no_altrep_3_6()
 
-  x <- new_altrep_vctrs_compact_rep_lgl(TRUE, 2)
-  y <- new_altrep_vctrs_compact_rep_lgl(NA, 2)
+  x <- new_vctrs_compact_rep_lgl(TRUE, 2)
+  y <- new_vctrs_compact_rep_lgl(NA, 2)
 
   expect_identical(is_unspecified(x), FALSE)
   expect_identical(is_unspecified(y), TRUE)
 
-  expect_true(vec_is_altrep_vctrs_compact_rep_compact(x))
-  expect_true(vec_is_altrep_vctrs_compact_rep_compact(y))
+  expect_true(vec_is_vctrs_compact_rep_compact(x))
+  expect_true(vec_is_vctrs_compact_rep_compact(y))
 })
 
 # ------------------------------------------------------------------------------
