@@ -11,8 +11,8 @@ test_that("No_NA method keeps compact vectors from being expanded", {
       x <- fn(x, 2)
       na <- fn(na, 2)
 
-      expect_identical(is.na(x), c(FALSE, FALSE))
-      expect_identical(is.na(na), c(TRUE, TRUE))
+      expect_identical(anyNA(x), FALSE)
+      expect_identical(anyNA(na), TRUE)
 
       expect_true(vec_is_altrep_vctrs_compact_rep_compact(x))
       expect_true(vec_is_altrep_vctrs_compact_rep_compact(na))
@@ -20,10 +20,11 @@ test_that("No_NA method keeps compact vectors from being expanded", {
   }
 
   xs <- list(1L, 1, "1")
-  nas <- list(NA_integer_, NA_real_, NA_character_)
+  nas <- list(NA_integer_, NA_real_, NaN, NA_character_)
 
   fns <- list(
     new_altrep_vctrs_compact_rep_int,
+    new_altrep_vctrs_compact_rep_dbl,
     new_altrep_vctrs_compact_rep_dbl,
     new_altrep_vctrs_compact_rep_chr
   )
