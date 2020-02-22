@@ -113,6 +113,16 @@ test_that("vec_as_names() repairs names before invoking repair function", {
   expect_identical(vec_as_names(chr(NA, NA), repair = identity), c("", ""))
 })
 
+test_that("vec_as_names() is noisy by default", {
+  verify_output(test_path("output", "test-vec-as-names.txt"), {
+    # Noisy name repair
+    vec_as_names(c("x", "x"), repair = "unique")
+
+    # Quiet name repair
+    vec_as_names(c("x", "x"), repair = "unique", quiet = TRUE)
+  })
+})
+
 test_that("validate_minimal_names() checks names", {
   expect_error(validate_minimal_names(1), "must return a character vector")
   expect_error(validate_minimal_names(NULL), "can't return `NULL`")

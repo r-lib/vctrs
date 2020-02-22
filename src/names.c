@@ -45,8 +45,9 @@ SEXP vctrs_as_names(SEXP names, SEXP repair, SEXP quiet) {
   if (!r_is_bool(quiet)) {
     Rf_errorcall(R_NilValue, "`quiet` must a boolean value.");
   }
+  bool quiet_ = LOGICAL(quiet)[0];
 
-  struct name_repair_opts repair_opts = new_name_repair_opts(repair, quiet);
+  struct name_repair_opts repair_opts = new_name_repair_opts(repair, quiet_);
   PROTECT_NAME_REPAIR_OPTS(&repair_opts);
 
   SEXP out = vec_as_names(names, &repair_opts);
