@@ -148,7 +148,7 @@ static SEXP vctrs_compact_rep_chr_Extract_subset(SEXP x, SEXP indx, SEXP call) {
   SEXP* p_out = STRING_PTR(out);
 
   // indx is 1-based
-  const int* p_indx = INTEGER(indx);
+  const int* p_indx = INTEGER_RO(indx);
 
   for (R_xlen_t i = 0; i < out_size; ++i) {
     const int loc = p_indx[i];

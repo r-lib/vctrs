@@ -156,7 +156,7 @@ static SEXP vctrs_compact_rep_lgl_Extract_subset(SEXP x, SEXP indx, SEXP call) {
   int* p_out = LOGICAL(out);
 
   // indx is 1-based
-  const int* p_indx = INTEGER(indx);
+  const int* p_indx = INTEGER_RO(indx);
 
   for (R_xlen_t i = 0; i < out_size; ++i) {
     const int loc = p_indx[i];
