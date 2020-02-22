@@ -234,13 +234,13 @@ It is size-unstable for the same reasons as <code><a href="https://rdrr.io/r/bas
 <p>As far as I can tell, <code><a href="https://rdrr.io/r/base/c.html">c()</a></code> never throws an error. No matter how bizarre the inputs, it always returns something:</p>
 <div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1"></a><span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/Sys.time.html">Sys.Date</a></span>(), <span class="kw"><a href="https://rdrr.io/r/base/factor.html">factor</a></span>(<span class="st">"x"</span>), <span class="st">"x"</span>)</span>
 <span id="cb10-2"><a href="#cb10-2"></a><span class="co">#&gt; Warning in as.POSIXlt.Date(x): NAs introduced by coercion</span></span>
-<span id="cb10-3"><a href="#cb10-3"></a><span class="co">#&gt; [1] "2020-02-21" "1970-01-02" NA</span></span></code></pre></div>
+<span id="cb10-3"><a href="#cb10-3"></a><span class="co">#&gt; [1] "2020-02-22" "1970-01-02" NA</span></span></code></pre></div>
 <p>If the inputs aren’t vectors, <code><a href="https://rdrr.io/r/base/c.html">c()</a></code> automatically puts them in a list:</p>
 <div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1"></a><span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(mean, <span class="kw"><a href="https://rdrr.io/r/base/environment.html">globalenv</a></span>())</span>
 <span id="cb11-2"><a href="#cb11-2"></a><span class="co">#&gt; [[1]]</span></span>
 <span id="cb11-3"><a href="#cb11-3"></a><span class="co">#&gt; function (x, ...) </span></span>
 <span id="cb11-4"><a href="#cb11-4"></a><span class="co">#&gt; UseMethod("mean")</span></span>
-<span id="cb11-5"><a href="#cb11-5"></a><span class="co">#&gt; &lt;bytecode: 0x7fb74753a2e8&gt;</span></span>
+<span id="cb11-5"><a href="#cb11-5"></a><span class="co">#&gt; &lt;bytecode: 0x7fd895b758e8&gt;</span></span>
 <span id="cb11-6"><a href="#cb11-6"></a><span class="co">#&gt; &lt;environment: namespace:base&gt;</span></span>
 <span id="cb11-7"><a href="#cb11-7"></a><span class="co">#&gt; </span></span>
 <span id="cb11-8"><a href="#cb11-8"></a><span class="co">#&gt; [[2]]</span></span>
@@ -429,7 +429,7 @@ It is size-unstable for the same reasons as <code><a href="https://rdrr.io/r/bas
 <span id="cb27-17"><a href="#cb27-17"></a><span class="co">#&gt; [1] &lt;NA&gt;  big   big   small small</span></span>
 <span id="cb27-18"><a href="#cb27-18"></a><span class="co">#&gt; Levels: small big</span></span>
 <span id="cb27-19"><a href="#cb27-19"></a><span class="kw">if_else</span>(x <span class="op">&gt;</span><span class="st"> </span><span class="dv">2</span>, <span class="kw"><a href="https://rdrr.io/r/base/Sys.time.html">Sys.Date</a></span>(), <span class="kw"><a href="https://rdrr.io/r/base/Sys.time.html">Sys.Date</a></span>() <span class="op">+</span><span class="st"> </span><span class="dv">7</span>)</span>
-<span id="cb27-20"><a href="#cb27-20"></a><span class="co">#&gt; [1] NA           "2020-02-28" "2020-02-28" "2020-02-21" "2020-02-21"</span></span></code></pre></div>
+<span id="cb27-20"><a href="#cb27-20"></a><span class="co">#&gt; [1] NA           "2020-02-29" "2020-02-29" "2020-02-22" "2020-02-22"</span></span></code></pre></div>
 <p>By using <code><a href="../reference/vec_size.html">vec_size()</a></code> and <code><a href="../reference/vec_slice.html">vec_slice()</a></code>, this definition of <code>if_else()</code> automatically works with data.frames and matrices:</p>
 <div class="sourceCode" id="cb28"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1"></a><span class="kw">if_else</span>(x <span class="op">&gt;</span><span class="st"> </span><span class="dv">2</span>, <span class="kw"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span>(<span class="dt">x =</span> <span class="dv">1</span>), <span class="kw"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span>(<span class="dt">y =</span> <span class="dv">2</span>))</span>
 <span id="cb28-2"><a href="#cb28-2"></a><span class="co">#&gt;    x  y</span></span>
