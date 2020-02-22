@@ -69,13 +69,115 @@ test_that("vec_ptype2 doesn't expand compact reps", {
   skip_if_no_altrep_3_6()
 
   xs <- list(TRUE)
-  nas <- list(NA)
 
   fns <- list(
     new_altrep_vctrs_compact_rep_lgl
   )
 
   test(xs, fns)
+})
+
+test_that("vec_cast-ing to the same type doesn't expand compact reps", {
+  test <- function(xs, fns) {
+    for (i in seq_along(xs)) {
+      x <- xs[[i]]
+      fn <- fns[[i]]
+
+      x <- fn(x, 1)
+
+      vec_cast(x, x)
+
+      expect_true(is_altrep_vctrs_compact_rep_compact(x))
+    }
+  }
+
+  xs <- list(1L, 1, "1")
+
+  fns <- list(
+    new_altrep_vctrs_compact_rep_int,
+    new_altrep_vctrs_compact_rep_dbl,
+    new_altrep_vctrs_compact_rep_chr
+  )
+
+  test(xs, fns)
+
+  skip_if_no_altrep_3_6()
+
+  xs <- list(TRUE)
+
+  fns <- list(
+    new_altrep_vctrs_compact_rep_lgl
+  )
+
+  test(xs, fns)
+})
+
+test_that("vec_recycle() generates compact rep objects", {
+  test <- function(xs) {
+    for (i in seq_along(xs)) {
+      x <- xs[[i]]
+
+      x <- vec_recycle(x, 2)
+
+      expect_true(is_altrep_vctrs_compact_rep_compact(x))
+    }
+  }
+
+  xs <- list(1L, 1, "1")
+
+  test(xs)
+
+  skip_if_no_altrep_3_6()
+
+  xs <- list(TRUE)
+
+  test(xs)
+})
+
+test_that("vec_init() generates compact rep objects", {
+  test <- function(xs) {
+    for (i in seq_along(xs)) {
+      x <- xs[[i]]
+
+      x <- vec_init(x, 2)
+
+      expect_true(is_altrep_vctrs_compact_rep_compact(x))
+    }
+  }
+
+  xs <- list(1L, 1, "1")
+
+  test(xs)
+
+  skip_if_no_altrep_3_6()
+
+  xs <- list(TRUE)
+
+  test(xs)
+})
+
+test_that("recycling or initializing classed objects does not create compact reps", {
+  test <- function(xs) {
+    for (i in seq_along(xs)) {
+      x <- xs[[i]]
+
+      x_recycle <- vec_recycle(x, 2)
+      x_init <- vec_init(x, 2)
+
+      expect_false(vec_is_altrep_vctrs_compact_rep(x_recycle))
+      expect_false(vec_is_altrep_vctrs_compact_rep(x_init))
+    }
+  }
+
+  xs <- list(foobar(1L), foobar(1), foobar("1"))
+
+  test(xs)
+
+  skip_if_no_altrep_3_6()
+
+  xs <- list(foobar(TRUE))
+
+  test(xs)
 })
 
 # ------------------------------------------------------------------------------
