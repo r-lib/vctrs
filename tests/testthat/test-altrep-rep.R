@@ -157,7 +157,7 @@ test_that("vec_init() generates compact rep objects", {
   test(xs)
 })
 
-test_that("recycling or initializing classed objects does not create compact reps", {
+test_that("recycling or initializing classed objects or objects with attributes does not create compact reps", {
   test <- function(xs) {
     for (i in seq_along(xs)) {
       x <- xs[[i]]
@@ -170,13 +170,23 @@ test_that("recycling or initializing classed objects does not create compact rep
     }
   }
 
-  xs <- list(foobar(1L), foobar(1), foobar("1"))
+  xs <- list(
+    foobar(1L),
+    foobar(1),
+    foobar("1"),
+    structure(1L, foo = "bar"),
+    structure(1, foo = "bar"),
+    structure("1", foo = "bar")
+  )
 
   test(xs)
 
   skip_if_no_altrep_3_6()
 
-  xs <- list(foobar(TRUE))
+  xs <- list(
+    foobar(TRUE),
+    structure(TRUE, foo = "bar")
+  )
 
   test(xs)
 })
