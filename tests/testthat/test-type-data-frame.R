@@ -12,10 +12,10 @@ test_that("data frames print nicely", {
 })
 
 test_that("embedded data frames print nicely", {
-  df <- data.frame(x = 1:3)
-  df$a <- data.frame(a = 1:3, b = letters[1:3])
+  df <- data_frame(x = 1:3)
+  df$a <- data_frame(a = 1:3, b = letters[1:3])
   df$b <- list_of(1, 2, 3)
-  df$c <- as_list_of(split(data.frame(x = 1:3, y = letters[1:3]), 1:3))
+  df$c <- as_list_of(split(data_frame(x = 1:3, y = letters[1:3]), 1:3))
 
   verify_output(test_path("test-type-data-frame-embedded.txt"), {
     vec_ptype_show(df)
@@ -25,26 +25,26 @@ test_that("embedded data frames print nicely", {
 # coercing ----------------------------------------------------------------
 
 test_that("data frame only combines with other data frames or NULL", {
-  dt <- data.frame(x = 1)
+  dt <- data_frame(x = 1)
   expect_equal(vec_ptype_common(dt, NULL), vec_ptype(dt))
   expect_error(vec_ptype_common(dt, 1:10), class = "vctrs_error_incompatible_type")
 })
 
 test_that("data frame takes max of individual variables", {
-  dt1 <- data.frame(x = FALSE, y = 1L)
-  dt2 <- data.frame(x = 1.5, y = 1.5)
+  dt1 <- data_frame(x = FALSE, y = 1L)
+  dt2 <- data_frame(x = 1.5, y = 1.5)
 
   expect_equal(vec_ptype_common(dt1, dt2), vec_ptype_common(dt2))
 })
 
 test_that("data frame combines variables", {
-  dt1 <- data.frame(x = 1)
-  dt2 <- data.frame(y = 1)
+  dt1 <- data_frame(x = 1)
+  dt2 <- data_frame(y = 1)
 
   dt3 <- max(dt1, dt2)
   expect_equal(
     vec_ptype_common(dt1, dt2),
-    vec_ptype_common(data.frame(x = double(), y = double()))
+    vec_ptype_common(data_frame(x = double(), y = double()))
   )
 })
 
@@ -58,20 +58,20 @@ test_that("empty data frame still has names", {
 # casting -----------------------------------------------------------------
 
 test_that("safe casts work as expected", {
-  df <- data.frame(x = 1, y = 0)
+  df <- data_frame(x = 1, y = 0)
 
   expect_equal(vec_cast(NULL, df), NULL)
   expect_equal(vec_cast(df, df), df)
 
-  expect_equal(vec_cast(data.frame(x = TRUE, y = FALSE), df), df)
+  expect_equal(vec_cast(data_frame(x = TRUE, y = FALSE), df), df)
 })
 
 test_that("warn about lossy coercions", {
-  df1 <- data.frame(x = 1, y = 1)
-  df2 <- data.frame(x = c("a", 1), stringsAsFactors = FALSE)
+  df1 <- data_frame(x = 1, y = 1)
+  df2 <- data_frame(x = c("a", 1))
 
   expect_lossy(vec_cast(df1, df1[1]), df1[1], x = df1, to = df1[1])
-  expect_lossy(vec_cast(df2, df1), data.frame(x = dbl(NA, 1), y = dbl(NA, NA)), x = chr(), to = dbl())
+  expect_lossy(vec_cast(df2, df1), data_frame(x = dbl(NA, 1), y = dbl(NA, NA)), x = chr(), to = dbl())
 
   out <-
     allow_lossy_cast(
@@ -82,23 +82,23 @@ test_that("warn about lossy coercions", {
       df2, df1
     )
 
-  expect_identical(out, data.frame(x = dbl(NA, 1), y = dbl(NA, NA)))
+  expect_identical(out, data_frame(x = dbl(NA, 1), y = dbl(NA, NA)))
 })
 
 test_that("invalid cast generates error", {
-  expect_error(vec_cast(1L, data.frame()), class = "vctrs_error_incompatible_cast")
+  expect_error(vec_cast(1L, data_frame()), class = "vctrs_error_incompatible_cast")
 })
 
 test_that("column order matches type", {
-  df1 <- data.frame(x = 1, y = "a")
-  df2 <- data.frame(x = TRUE, z = 3)
+  df1 <- data_frame(x = 1, y = "a")
+  df2 <- data_frame(x = TRUE, z = 3)
 
   df3 <- vec_cast(df2, vec_ptype_common(df1, df2))
   expect_named(df3, c("x", "y", "z"))
 })
 
 test_that("casts preserve outer class", {
-  df <- data.frame(x = 1)
+  df <- data_frame(x = 1)
   dt <- tibble::tibble(x = 1)
 
   expect_s3_class(vec_cast(df, dt), "tbl_df")
@@ -106,8 +106,8 @@ test_that("casts preserve outer class", {
 })
 
 test_that("restore generates correct row/col names", {
-  df1 <- data.frame(x = NA, y = 1:4, z = 1:4)
-  df1$x <- data.frame(a = 1:4, b = 1:4)
+  df1 <- data_frame(x = rep(NA, 4), y = 1:4, z = 1:4)
+  df1$x <- data_frame(a = 1:4, b = 1:4)
 
   df2 <- vec_restore(lapply(df1[1:3], vec_slice, 1:2), df1)
 
@@ -116,8 +116,8 @@ test_that("restore generates correct row/col names", {
 })
 
 test_that("restore keeps automatic row/col names", {
-  df1 <- data.frame(x = NA, y = 1:4, z = 1:4)
-  df1$x <- data.frame(a = 1:4, b = 1:4)
+  df1 <- data_frame(x = rep(NA, 4), y = 1:4, z = 1:4)
+  df1$x <- data_frame(a = 1:4, b = 1:4)
 
   df2 <- vec_restore(df1, df1)
 
@@ -131,30 +131,30 @@ test_that("cast to empty data frame preserves number of rows", {
 })
 
 test_that("can cast unspecified to data frame", {
-  df <- data.frame(x = 1, y = 2L)
+  df <- data_frame(x = 1, y = 2L)
   expect_identical(vec_cast(unspecified(3), df), vec_init(df, 3))
 })
 
 test_that("can cast list of data frames to data frame", {
-  df <- data.frame(x = 1, y = 2L)
+  df <- data_frame(x = 1, y = 2L)
   expect_equal(vec_cast(list(df, df), df), vec_slice(df, c(1, 1)))
 })
 
 test_that("can only cast list of data frames to data frame if they are all size 1", {
-  df <- data.frame(x = 1:2)
+  df <- data_frame(x = 1:2)
   expect_error(vec_cast(list(df), df), class = "vctrs_error_cast_lossy")
 })
 
 test_that("can restore lists with empty names", {
-  expect_identical(vec_restore(list(), data.frame()), data.frame())
+  expect_identical(vec_restore(list(), data_frame()), data_frame())
 })
 
 test_that("can restore subclasses of data frames", {
-  expect_identical(vec_restore(list(), subclass(data.frame())), subclass(data.frame()))
+  expect_identical(vec_restore(list(), subclass(data_frame())), subclass(data_frame()))
   local_methods(
     vec_restore.vctrs_foobar = function(x, to, ..., i) "dispatched"
   )
-  expect_identical(vec_restore(list(), subclass(data.frame())), "dispatched")
+  expect_identical(vec_restore(list(), subclass(data_frame())), "dispatched")
 })
 
 test_that("df_as_dataframe() checks for names", {
@@ -191,7 +191,7 @@ test_that("can add additional classes", {
 })
 
 test_that("can add additional attributes", {
-  expect <- data.frame()
+  expect <- data_frame()
   attr(expect, "foo") <- "bar"
   attr(expect, "a") <- "b"
 

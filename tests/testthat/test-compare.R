@@ -47,7 +47,7 @@ test_that("NAs equal when requested", {
 })
 
 test_that("data frames are compared column by column", {
-  df1 <- data.frame(x = c(1, 1, 1), y = c(-1, 0, 1))
+  df1 <- data_frame(x = c(1, 1, 1), y = c(-1, 0, 1))
 
   expect_equal(vec_compare(df1, df1[2, ]), c(-1, 0, 1))
   expect_equal(vec_compare(df1[1], df1[2, 1, drop = FALSE]), c(0, 0, 0))
@@ -92,7 +92,7 @@ test_that("can compare data frames with list columns because of `vec_proxy_compa
 })
 
 test_that("C code doesn't crash with bad inputs", {
-  df <- data.frame(x = c(1, 1, 1), y = c(-1, 0, 1))
+  df <- data_frame(x = c(1, 1, 1), y = c(-1, 0, 1))
 
   expect_error(.Call(vctrs_compare, df, df[1], TRUE), "not comparable")
 
@@ -107,7 +107,7 @@ test_that("C code doesn't crash with bad inputs", {
 })
 
 test_that("xtfrm.vctrs_vctr works for variety of base classes", {
-  df <- data.frame(x = c(NA, 1, 1), y = c(1, 2, 1))
+  df <- data_frame(x = c(NA, 1, 1), y = c(1, 2, 1))
   expect_equal(xtfrm.vctrs_vctr(df), c(3, 2, 1))
 
   x <- c(2, 3, 1)
@@ -139,7 +139,7 @@ test_that("vec_proxy_compare() preserves data frames and vectors", {
 })
 
 test_that("vec_proxy_compare() handles data frame with a POSIXlt column", {
-  df <- data.frame(times = 1:5, x = 1:5)
+  df <- data_frame(times = 1:5, x = 1:5)
   df$times <- as.POSIXlt(seq.Date(as.Date("2019-12-30"), as.Date("2020-01-03"), by = "day"))
 
   df2 <- df
@@ -226,20 +226,20 @@ test_that("can request NAs sorted first", {
 })
 
 test_that("can sort data frames", {
-  df <- data.frame(x = c(1, 2, 1), y = c(1, 2, 2))
+  df <- data_frame(x = c(1, 2, 1), y = c(1, 2, 2))
 
   out1 <- vec_sort(df)
-  expect_equal(out1, data.frame(x = c(1, 1, 2), y = c(1, 2, 2)))
+  expect_equal(out1, data_frame(x = c(1, 1, 2), y = c(1, 2, 2)))
 
   out2 <- vec_sort(df, "desc")
-  expect_equal(out2, data.frame(x = c(2, 1, 1), y = c(2, 2, 1)))
+  expect_equal(out2, data_frame(x = c(2, 1, 1), y = c(2, 2, 1)))
 })
 
 test_that("can sort empty data frames (#356)", {
-  df1 <- data.frame()
+  df1 <- data_frame()
   expect_equal(vec_sort(df1), df1)
 
-  df2 <- data.frame(x = numeric(), y = integer())
+  df2 <- data_frame(x = numeric(), y = integer())
   expect_equal(vec_sort(df2), df2)
 })
 
@@ -258,10 +258,10 @@ test_that("can order matrices and arrays (#306)", {
 })
 
 test_that("can order empty data frames (#356)", {
-  df1 <- data.frame()
+  df1 <- data_frame()
   expect_equal(vec_order(df1), integer())
 
-  df2 <- data.frame(x = numeric(), y = integer())
+  df2 <- data_frame(x = numeric(), y = integer())
   expect_equal(vec_order(df2), integer())
 })
 

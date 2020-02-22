@@ -47,7 +47,7 @@ test_that("I() wraps contents", {
 })
 
 test_that("AsIs class stripped from I()", {
-  df <- data.frame(x = 1, y = 1:2)
+  df <- data_frame(x = 1, y = 1:2)
   class(df) <- c("myclass", "data.frame")
 
   expect_equal(vec_ptype_full(I(df)), "I<myclass<\n  x: double\n  y: integer\n>>")

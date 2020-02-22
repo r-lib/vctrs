@@ -49,7 +49,7 @@ test_that("has useful print method", {
 })
 
 test_that("can finalise data frame containing unspecified columns", {
-  df <- data.frame(y = NA, x = c(1, 2, NA))
+  df <- data_frame(y = NA, x = c(1, 2, NA))
 
   ptype <- vec_ptype(df)
   expect_identical(ptype$y, unspecified())
@@ -62,7 +62,7 @@ test_that("can finalise data frame containing unspecified columns", {
 })
 
 test_that("can cast to common type data frame containing unspecified columns", {
-  df <- data.frame(y = NA, x = c(1, 2, NA))
+  df <- data_frame(y = NA, x = c(1, 2, NA))
   expect_identical(vec_cast_common(df, df), list(df, df))
 })
 

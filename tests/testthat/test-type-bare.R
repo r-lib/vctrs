@@ -341,13 +341,13 @@ test_that("dimensionality matches to" ,{
 
 test_that("data frames are cast to list row wise (#639)", {
   x <- data.frame(x = 1:2, row.names = c("a", "b"))
-  expect <- list(data.frame(x = 1L), data.frame(x = 2L))
+  expect <- list(data_frame(x = 1L), data_frame(x = 2L))
   expect_equal(vec_cast(x, list()), expect)
 })
 
 test_that("data frames can be cast to shaped lists", {
   to <- array(list(), dim = c(0, 2, 1))
-  x <- data.frame(x = 1:2, y = 3:4)
+  x <- data_frame(x = 1:2, y = 3:4)
 
   expect <- list(vec_slice(x, 1), vec_slice(x, 2))
   expect <- array(expect, dim = c(2, 2, 1))
@@ -362,7 +362,7 @@ test_that("Casting atomic `NA` values to list results in a `NULL`", {
 })
 
 test_that("Casting data frame `NA` rows to list results in a `NULL`", {
-  x <- data.frame(x = c(NA, NA, 1), y = c(NA, 1, 2))
+  x <- data_frame(x = c(NA, NA, 1), y = c(NA, 1, 2))
   expect <- list(NULL, vec_slice(x, 2), vec_slice(x, 3))
   expect_equal(vec_cast(x, list()), expect)
 })

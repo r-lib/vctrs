@@ -5,7 +5,7 @@ context("test-dictionary")
 
 test_that("vec_count counts number observations", {
   x <- vec_count(rep(1:3, 1:3), sort = "key")
-  expect_equal(x, data.frame(key = 1:3, count = 1:3))
+  expect_equal(x, data_frame(key = 1:3, count = 1:3))
 })
 
 test_that("vec_count works with matrices", {
@@ -20,14 +20,14 @@ test_that("vec_count works with matrices", {
 
 test_that("vec_count works with arrays", {
   x <- array(c(rep(1, 3), rep(2, 3)), dim = c(3, 2, 1))
-  expect <- data.frame(key = NA, count = 3)
+  expect <- data_frame(key = NA, count = 3)
   expect$key <- vec_slice(x, 1L)
   expect_equal(vec_count(x), expect)
 })
 
 test_that("vec_count works for zero-length input", {
   x <- vec_count(integer(), sort = "none")
-  expect_equal(x, data.frame(key = integer(), count = integer()))
+  expect_equal(x, data_frame(key = integer(), count = integer()))
 })
 
 test_that("vec_count works with different encodings", {
@@ -78,7 +78,7 @@ test_that("vec_unique_count matches length + unique", {
 })
 
 test_that("also works for data frames", {
-  df <- data.frame(x = 1:3, y = letters[3:1], stringsAsFactors = FALSE)
+  df <- data_frame(x = 1:3, y = letters[3:1])
   idx <- c(1L, 1L, 1L, 2L, 2L, 3L)
   df2 <- df[idx, , drop = FALSE]
   rownames(df2) <- NULL

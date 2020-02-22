@@ -1,5 +1,5 @@
 # Don't call tibble::tibble() to avoid catch-22, because tibble now uses vctrs
-bare_tibble <- structure(data.frame(), class = c("tbl_df", "tbl", "data.frame"))
+bare_tibble <- structure(data_frame(), class = c("tbl_df", "tbl", "data.frame"))
 
 base_empty_types <- list(
   null = NULL,
@@ -10,7 +10,7 @@ base_empty_types <- list(
   character = chr(),
   raw = bytes(),
   list = list(),
-  dataframe = data.frame()
+  dataframe = data_frame()
 )
 
 base_s3_empty_types <- list(
@@ -25,7 +25,7 @@ base_s3_empty_types <- list(
 proxied_empty_types <- list(
   double = new_hidden(),
   dataframe = bare_tibble,
-  dataframe = structure(data.frame(), class = c("vctrs_foobar", "data.frame"))
+  dataframe = structure(data_frame(), class = c("vctrs_foobar", "data.frame"))
 )
 
 empty_types <- c(
@@ -39,7 +39,7 @@ empty_types <- c(
 atomics <- list(TRUE, 1L, 1.0, 1i, "foo", bytes(1))
 vectors <- c(atomics, list(list()))
 records <- list(
-  df = data.frame(x = 1),
+  df = data_frame(x = 1),
   rcrd = new_rcrd(list(x = 1)),
   posixlt = as.POSIXlt("2020-01-01")
 )

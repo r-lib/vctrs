@@ -110,7 +110,7 @@ test_that("vec_ptype2() methods forward args to stop_incompatible_type()", {
   expect_args(chr(), new_hidden(), x_arg = "foo", y_arg = "bar")
   expect_args(list(), new_hidden(), x_arg = "foo", y_arg = "bar")
   expect_args(new_rcrd(list(x = NA)), new_hidden(), x_arg = "foo", y_arg = "bar")
-  expect_args(data.frame(), new_hidden(), x_arg = "foo", y_arg = "bar")
+  expect_args(data_frame(), new_hidden(), x_arg = "foo", y_arg = "bar")
   expect_args(Sys.Date(), new_hidden(), x_arg = "foo", y_arg = "bar")
   expect_args(as.difftime(1, units = "hours"), new_hidden(), x_arg = "foo", y_arg = "bar")
   expect_args(factor(), new_hidden(), x_arg = "foo", y_arg = "bar")
@@ -147,12 +147,12 @@ test_that("Subclasses of data.frame dispatch to `vec_ptype2()` methods", {
     vec_ptype2.data.frame.quuxframe = function(x, y, ...) "dispatched!"
   )
 
-  quux <- structure(data.frame(), class = c("quuxframe", "data.frame"))
+  quux <- structure(data_frame(), class = c("quuxframe", "data.frame"))
 
   expect_identical(vec_ptype2(quux, mtcars), "dispatched!")
   expect_identical(vec_ptype2(mtcars, quux), "dispatched!")
 
-  quux <- structure(data.frame(), class = c("quuxframe", "tbl_df", "data.frame"))
+  quux <- structure(data_frame(), class = c("quuxframe", "tbl_df", "data.frame"))
 
   expect_identical(vec_ptype2(quux, mtcars), "dispatched!")
   expect_identical(vec_ptype2(mtcars, quux), "dispatched!")

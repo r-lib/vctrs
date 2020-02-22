@@ -98,7 +98,7 @@ test_that("recycling matrices respects incompatible sizes", {
 })
 
 test_that("can vec_recycle_common data frames", {
-  x <- data.frame(a = rep(1, 3), b = rep(2, 3))
+  x <- data_frame(a = rep(1, 3), b = rep(2, 3))
   x1 <- vec_slice(x, 1L)
 
   expect_equal(vec_recycle_common(x, x), list(x, x))
@@ -106,7 +106,7 @@ test_that("can vec_recycle_common data frames", {
 })
 
 test_that("recycling data frames respects incompatible sizes", {
-  x <- data.frame(a = rep(1, 3), b = rep(2, 3))
+  x <- data_frame(a = rep(1, 3), b = rep(2, 3))
   x2 <- vec_slice(x, 1:2)
   x0 <- vec_slice(x, integer())
 
@@ -116,7 +116,7 @@ test_that("recycling data frames respects incompatible sizes", {
 
 test_that("can vec_recycle_common matrix and data frame", {
   mt <- matrix(nrow = 2, ncol = 2)
-  df <- data.frame(x = c(1, 1), y = c(2, 2))
+  df <- data_frame(x = c(1, 1), y = c(2, 2))
 
   expect_equal(
     vec_recycle_common(vec_slice(mt, 1L), df),
@@ -131,7 +131,7 @@ test_that("can vec_recycle_common matrix and data frame", {
 
 test_that("recycling data frames with matrices respects incompatible sizes", {
   mt <- matrix(nrow = 2, ncol = 2)
-  df <- data.frame(x = c(1, 1), y = c(2, 2))
+  df <- data_frame(x = c(1, 1), y = c(2, 2))
 
   expect_error(
     vec_recycle_common(vec_slice(mt, integer()), df),

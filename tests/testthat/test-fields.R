@@ -79,7 +79,7 @@ test_that("field<- checks inputs", {
 
 test_that("field<- respects size, not length (#450)", {
   r1 <- new_rcrd(list(df = new_data_frame(n = 2L)))
-  new_df <- data.frame(x = 1:2)
+  new_df <- data_frame(x = 1:2)
 
   field(r1, 'df') <- new_df
   expect_equal(field(r1, "df"), new_df)

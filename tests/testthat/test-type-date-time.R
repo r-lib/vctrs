@@ -33,7 +33,7 @@ test_that("vec_c() converts POSIXct with int representation to double representa
 
 test_that("vec_c() and vec_rbind() convert Dates with int representation to double representation (#396)", {
   x <- structure(0L, class = "Date")
-  df <- data.frame(x = x)
+  df <- data_frame(x = x)
 
   expect_true(is.double(vec_c(x)))
   expect_true(is.double(vec_c(x, x)))

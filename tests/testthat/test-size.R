@@ -23,7 +23,7 @@ test_that("length of record is number of rows, not fields", {
 })
 
 test_that("handles three types of data frame rownames", {
-  df1 <- df2 <- df3 <- data.frame(x = 1:3)
+  df1 <- df2 <- df3 <- data_frame(x = 1:3)
   rownames(df1) <- NULL
   rownames(df2) <- 3:1
   rownames(df3) <- letters[1:3]
@@ -102,7 +102,7 @@ test_that("provided size is cast to an integer", {
 
 test_that("vec_seq_along returns size-0 output for size-0 input", {
   expect_equal(vec_seq_along(character()), integer())
-  expect_equal(vec_seq_along(data.frame()), integer())
+  expect_equal(vec_seq_along(data_frame()), integer())
 })
 
 test_that("vec_init_along can be called with single argument", {

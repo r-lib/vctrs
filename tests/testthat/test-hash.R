@@ -41,7 +41,7 @@ test_that("list hashes to values of individual values", {
 })
 
 test_that("hash of data frame works down rows", {
-  df <- data.frame(x = 1:3, y = 1:3)
+  df <- data_frame(x = 1:3, y = 1:3)
   x <- vec_hash(df)
   expect_length(x, 4 * vec_size(df))
   expect_identical(x[1:4], vec_hash(df[1, ]))

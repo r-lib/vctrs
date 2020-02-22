@@ -46,7 +46,7 @@ test_that("`list(NULL)` is considered a missing value (#653)", {
 })
 
 test_that("can compare data frames", {
-  df <- data.frame(x = 1:2, y = letters[2:1], stringsAsFactors = FALSE)
+  df <- data_frame(x = 1:2, y = letters[2:1])
   expect_equal(vec_equal(df, df[1, ]), c(TRUE, FALSE))
 })
 
@@ -94,16 +94,16 @@ test_that("can compare data frames with list columns", {
 
 test_that("data frames must have same size and columns", {
   expect_error(.Call(vctrs_equal,
-    data.frame(x = 1),
-    data.frame(x = 1, y = 2),
+    data_frame(x = 1),
+    data_frame(x = 1, y = 2),
     TRUE
   ),
     "must have same types and lengths"
   )
 
   expect_error(.Call(vctrs_equal,
-    data.frame(x = 1, y = 2, z = 2),
-    data.frame(x = 1, y = 2),
+    data_frame(x = 1, y = 2, z = 2),
+    data_frame(x = 1, y = 2),
     TRUE
     ),
     "must have the same number of columns"
@@ -113,27 +113,27 @@ test_that("data frames must have same size and columns", {
   # So if `vec_cast_common()` is not called, or is improperly specified, then
   # this could result in false equality.
   expect_true(.Call(vctrs_equal,
-    data.frame(x = 1),
-    data.frame(y = 1),
+    data_frame(x = 1),
+    data_frame(y = 1),
     TRUE
   ))
 
   expect_error(.Call(vctrs_equal,
-    data.frame(x = 1:2, y = 3:4),
-    data.frame(x = 1, y = 2),
+    data_frame(x = 1:2, y = 3:4),
+    data_frame(x = 1, y = 2),
     TRUE
     ),
     "must have same types and lengths"
   )
 
   expect_false(.Call(vctrs_equal,
-    data.frame(x = 1),
-    data.frame(x = 2),
+    data_frame(x = 1),
+    data_frame(x = 2),
     TRUE
   ))
 
   expect_false(.Call(vctrs_equal,
-    list(data.frame(x = 1)),
+    list(data_frame(x = 1)),
     list(10),
     TRUE
   ))
@@ -153,7 +153,7 @@ test_that("can compare lists of scalars (#643)", {
   lst <- list(new_sclr(y = NA))
   expect_true(vec_equal(lst, lst))
 
-  df <- data.frame(x = c(1, 4, 3), y = c(2, 8, 9))
+  df <- data_frame(x = c(1, 4, 3), y = c(2, 8, 9))
   model <- lm(y ~ x, df)
   lst <- list(model)
   expect_true(vec_equal(lst, lst))
@@ -265,13 +265,13 @@ test_that("can detect different types of NA", {
 })
 
 test_that("vectorised over rows of a data frame", {
-  df <- data.frame(x = c(1, 1, NA, NA), y = c(1, NA, 1, NA))
+  df <- data_frame(x = c(1, 1, NA, NA), y = c(1, NA, 1, NA))
   expect_equal(vec_equal_na(df), c(FALSE, FALSE, FALSE, TRUE))
 })
 
 test_that("works recursively with data frame columns", {
-  df <- data.frame(x = c(1, 1, NA, NA))
-  df$df <- data.frame(y = c(NA, 1, 1, NA), z = c(1, NA, 1, NA))
+  df <- data_frame(x = c(1, 1, NA, NA))
+  df$df <- data_frame(y = c(NA, 1, 1, NA), z = c(1, NA, 1, NA))
   expect_equal(vec_equal_na(df), c(FALSE, FALSE, FALSE, TRUE))
 })
 
@@ -290,8 +290,8 @@ test_that("NA propagate symmetrically (#204)", {
 })
 
 test_that("NA propagate from data frames columns", {
-  x <- data.frame(x = 1:3)
-  y <- data.frame(x = c(1L, NA, 2L))
+  x <- data_frame(x = 1:3)
+  y <- data_frame(x = c(1L, NA, 2L))
 
   expect_identical(vec_equal(x, y), c(TRUE, NA, FALSE))
   expect_identical(vec_equal(y, x), c(TRUE, NA, FALSE))
@@ -299,8 +299,8 @@ test_that("NA propagate from data frames columns", {
   expect_identical(vec_equal(x, y, na_equal = TRUE), c(TRUE, FALSE, FALSE))
   expect_identical(vec_equal(y, x, na_equal = TRUE), c(TRUE, FALSE, FALSE))
 
-  x <- data.frame(x = 1:3, y = 1:3)
-  y <- data.frame(x = c(1L, NA, 2L), y = c(NA, 2L, 3L))
+  x <- data_frame(x = 1:3, y = 1:3)
+  y <- data_frame(x = c(1L, NA, 2L), y = c(NA, 2L, 3L))
 
   expect_identical(vec_equal(x, y), c(NA, NA, FALSE))
   expect_identical(vec_equal(y, x), c(NA, NA, FALSE))

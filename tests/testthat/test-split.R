@@ -9,14 +9,14 @@ test_that("can split empty vector", {
 })
 
 test_that("split data frame with data frame", {
-  df <- data.frame(x = c(1, 1, 2), y = c(1, 1, 1))
+  df <- data_frame(x = c(1, 1, 2), y = c(1, 1, 1))
   out <- vec_split(df, df)
 
   expect_s3_class(out, "data.frame")
-  expect_equal(out$key, data.frame(x = c(1, 2), y = c(1, 1)))
+  expect_equal(out$key, data_frame(x = c(1, 2), y = c(1, 1)))
   expect_equal(out$val, list(
-    data.frame(x = c(1, 1), y = c(1, 1)),
-    data.frame(x = 2, y = 1)
+    data_frame(x = c(1, 1), y = c(1, 1)),
+    data_frame(x = 2, y = 1)
   ))
 })
 

@@ -45,8 +45,8 @@ test_that("vec_ptype2 for integer64 works", {
   expect_error(vec_ptype2(x, ""))
   expect_error(vec_ptype2("", x))
 
-  expect_error(vec_ptype2(data.frame(), x))
-  expect_error(vec_ptype2(x, data.frame()))
+  expect_error(vec_ptype2(data_frame(), x))
+  expect_error(vec_ptype2(x, data_frame()))
 })
 
 test_that("vec_ptype_abbr.integer64", {

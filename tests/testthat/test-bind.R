@@ -64,37 +64,37 @@ test_that("names are supplied if needed", {
 
 test_that("matrix becomes data frame and has names properly repaired", {
   x <- matrix(1:4, nrow = 2)
-  expect_equal(vec_rbind(x), data.frame(...1 = 1:2, ...2 = 3:4))
+  expect_equal(vec_rbind(x), data_frame(...1 = 1:2, ...2 = 3:4))
 })
 
 test_that("can bind data.frame columns", {
-  df <- data.frame(x = NA, y = 1:2)
-  df$x <- data.frame(a = 1:2)
+  df <- data_frame(x = c(NA, NA), y = 1:2)
+  df$x <- data_frame(a = 1:2)
 
-  expected <- data.frame(x = NA, y = c(1:2, 1:2))
-  expected$x <- data.frame(a = c(1:2, 1:2))
+  expected <- data_frame(x = rep(NA, 4), y = c(1:2, 1:2))
+  expected$x <- data_frame(a = c(1:2, 1:2))
 
   expect_equal(vec_rbind(df, df), expected)
 })
 
 test_that("can rbind unspecified vectors", {
-  df <- data.frame(x = 1)
-  expect_identical(vec_rbind(NA, df), data.frame(x = c(NA, 1)))
-  expect_identical(vec_rbind(df, NA), data.frame(x = c(1, NA)))
-  expect_identical(vec_rbind(NA, df, NA), data.frame(x = c(NA, 1, NA)))
-  expect_identical(vec_rbind(c(x = NA), data.frame(x = 1)), data.frame(x = c(NA, 1)))
-  expect_identical(vec_rbind(c(y = NA), df), data.frame(y = c(NA, NA), x = c(NA, 1)))
+  df <- data_frame(x = 1)
+  expect_identical(vec_rbind(NA, df), data_frame(x = c(NA, 1)))
+  expect_identical(vec_rbind(df, NA), data_frame(x = c(1, NA)))
+  expect_identical(vec_rbind(NA, df, NA), data_frame(x = c(NA, 1, NA)))
+  expect_identical(vec_rbind(c(x = NA), data_frame(x = 1)), data_frame(x = c(NA, 1)))
+  expect_identical(vec_rbind(c(y = NA), df), data_frame(y = c(NA, NA), x = c(NA, 1)))
 
   out <- suppressMessages(vec_rbind(c(x = NA, x = NA), df))
-  exp <- data.frame(x...1 = c(NA, NA), x...2 = c(NA, NA), x = c(NA, 1))
+  exp <- data_frame(x...1 = c(NA, NA), x...2 = c(NA, NA), x = c(NA, 1))
   expect_identical(out, exp)
 })
 
 test_that("as_df_row() tidies the names of unspecified vectors", {
   expect_identical(as_df_row(c(NA, NA)), c(NA, NA))
   expect_identical(as_df_row(unspecified(2)), unspecified(2))
-  expect_identical(as_df_row(c(a = NA, a = NA), quiet = TRUE), data.frame(a...1 = NA, a...2 = NA))
-  expect_identical(as_df_row(c(a = TRUE, a = TRUE), quiet = TRUE), data.frame(a...1 = TRUE, a...2 = TRUE))
+  expect_identical(as_df_row(c(a = NA, a = NA), quiet = TRUE), data_frame(a...1 = NA, a...2 = NA))
+  expect_identical(as_df_row(c(a = TRUE, a = TRUE), quiet = TRUE), data_frame(a...1 = TRUE, a...2 = TRUE))
 })
 
 test_that("can rbind spliced lists", {
@@ -175,7 +175,7 @@ test_that("can repair names in `vec_rbind()` (#229)", {
 })
 
 test_that("can construct an id column", {
-  df <- data.frame(x = 1)
+  df <- data_frame(x = 1)
 
   expect_named(vec_rbind(df, df, .names_to = "id"), c("x", "id"))
   expect_equal(vec_rbind(df, df, .names_to = "id")$id, c(1L, 2L))
@@ -234,7 +234,7 @@ test_that("can assign row names in vec_rbind()", {
 test_that("empty inputs give data frame", {
   expect_equal(vec_cbind(), data_frame())
   expect_equal(vec_cbind(NULL), data_frame())
-  expect_equal(vec_cbind(data.frame(a = 1), NULL), data_frame(a = 1))
+  expect_equal(vec_cbind(data_frame(a = 1), NULL), data_frame(a = 1))
 })
 
 test_that("NULL is idempotent", {
@@ -244,7 +244,7 @@ test_that("NULL is idempotent", {
 
 test_that("outer names are respected", {
   expect_named(vec_cbind(x = 1, y = 4), c("x", "y"))
-  expect_named(vec_cbind(a = data.frame(x = 1)), "a")
+  expect_named(vec_cbind(a = data_frame(x = 1)), "a")
 })
 
 test_that("inner names are respected", {
@@ -257,7 +257,7 @@ test_that("nameless vectors get tidy defaults", {
 
 test_that("matrix becomes data frame", {
   x <- matrix(1:4, nrow = 2)
-  expect_equal(vec_cbind(x), data.frame(...1 = 1:2, ...2 = 3:4))
+  expect_equal(vec_cbind(x), data_frame(...1 = 1:2, ...2 = 3:4))
 
   # Packed if named
   expect_equal(vec_cbind(x = x), data_frame(x = x))
@@ -269,20 +269,20 @@ test_that("duplicate names are de-deduplicated", {
     "x -> x...1",
     fixed = TRUE
   )
-  expect_named(vec_cbind(data.frame(x = 1), data.frame(x = 1)), c("x...1", "x...2"))
+  expect_named(vec_cbind(data_frame(x = 1), data_frame(x = 1)), c("x...1", "x...2"))
 })
 
 test_that("rows recycled to longest", {
-  df <- data.frame(x = 1:3)
+  df <- data_frame(x = 1:3)
 
   expect_dim(vec_cbind(df), c(3, 1))
   expect_dim(vec_cbind(df, NULL), c(3, 1))
   expect_dim(vec_cbind(df, y = 1), c(3, 2))
-  expect_dim(vec_cbind(data.frame(x = 1), y = 1:3), c(3, 2))
+  expect_dim(vec_cbind(data_frame(x = 1), y = 1:3), c(3, 2))
 
   expect_dim(
     vec_cbind(
-      data.frame(a = 1, b = 2),
+      data_frame(a = 1, b = 2),
       y = 1:3
     ),
     c(3, 3)
@@ -290,7 +290,7 @@ test_that("rows recycled to longest", {
 })
 
 test_that("output is tibble if any input is tibble", {
-  df <- data.frame(x = 1)
+  df <- data_frame(x = 1)
   dt <- tibble::tibble(y = 2)
 
   expect_s3_class(vec_cbind(dt), "tbl_df")
@@ -404,7 +404,7 @@ test_that("vec_rbind() consistently handles unnamed outputs", {
   # Name repair of columns is a little weird but unclear we can do better
   expect_identical(
     vec_rbind(1, 2),
-    data.frame(...1 = c(1, 2))
+    data_frame(...1 = c(1, 2))
   )
   expect_identical(
     vec_rbind(1, 2, ...10 = 3),
@@ -417,22 +417,22 @@ test_that("vec_rbind() consistently handles unnamed outputs", {
   )
   expect_identical(
     vec_rbind(c(a = 1), c(b = 2)),
-    data.frame(a = c(1, NA), b = c(NA, 2))
+    data_frame(a = c(1, NA), b = c(NA, 2))
   )
 })
 
 test_that("vec_cbind() consistently handles unnamed outputs", {
   expect_identical(
     vec_cbind(1, 2),
-    data.frame(...1 = 1, ...2 = 2)
+    data_frame(...1 = 1, ...2 = 2)
   )
   expect_identical(
     vec_cbind(1, 2, ...10 = 3),
-    data.frame(...1 = 1, ...2 = 2, ...3 = 3)
+    data_frame(...1 = 1, ...2 = 2, ...3 = 3)
   )
   expect_identical(
     vec_cbind(a = 1, b = 2),
-    data.frame(a = 1, b = 2)
+    data_frame(a = 1, b = 2)
   )
   expect_identical(
     vec_cbind(c(a = 1), c(b = 2)),

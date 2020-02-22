@@ -103,16 +103,16 @@ test_that("monitoring test - unspecified() can be assigned in lists", {
 })
 
 test_that("can assign and slice-assign data frames", {
-  df <- data.frame(x = 1:2)
-  df$y <- data.frame(a = 2:1)
+  df <- data_frame(x = 1:2)
+  df$y <- data_frame(a = 2:1)
 
   orig <- duplicate(df, shallow = FALSE)
 
-  other <- data.frame(x = 3)
-  other$y <- data.frame(a = 3)
+  other <- data_frame(x = 3)
+  other$y <- data_frame(a = 3)
 
-  exp <- data.frame(x = int(3, 2))
-  exp$y <- data.frame(a = int(3, 1))
+  exp <- data_frame(x = int(3, 2))
+  exp$y <- data_frame(a = int(3, 1))
 
   expect_identical(vec_assign(df, 1, other), exp)
   expect_identical(df, orig)

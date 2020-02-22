@@ -114,8 +114,8 @@ test_that("can subset using logical subscript", {
 })
 
 test_that("can subset data frame columns", {
-  df <- data.frame(x = 1:2)
-  df$y <- data.frame(a = 2:1)
+  df <- data_frame(x = 1:2)
+  df$y <- data_frame(a = 2:1)
 
   expect_equal(vec_slice(df, 1L)$y, vec_slice(df$y, 1L))
 })

@@ -148,7 +148,7 @@ test_that("vec_repair_names() repairs names", {
 })
 
 test_that("vec_repair_names() handles data frames and arrays", {
-  df <- data.frame(x = 1:2)
+  df <- data_frame(x = 1:2)
   expect_identical(vec_repair_names(df), df)
   expect_identical(row.names(vec_repair_names(as.matrix(df))), c("", ""))
   expect_identical(row.names(vec_repair_names(as.matrix(df), "unique")), c("...1", "...2"))
@@ -177,7 +177,7 @@ test_that("vec_set_names() sets matrix/array names", {
 })
 
 test_that("vec_set_names() does not set row names on data frames", {
-  x <- data.frame(a = 1, b = 2)
+  x <- data_frame(a = 1, b = 2)
   expect_equal(vec_set_names(x, "r1"), x)
 })
 

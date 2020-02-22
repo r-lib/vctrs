@@ -111,7 +111,7 @@ test_that("size 0 `indices` list is allowed", {
 test_that("individual index values of size 0 are allowed", {
   expect_equal(vec_chop(1, list(integer())), list(numeric()))
 
-  df <- data.frame(a = 1, b = "1")
+  df <- data_frame(a = 1, b = "1")
   expect_equal(vec_chop(df, list(integer())), list(vec_ptype(df)))
 })
 
@@ -129,7 +129,7 @@ test_that("vec_chop(<atomic>, indices =) can be equivalent to the default", {
 })
 
 test_that("vec_chop(<data.frame>, indices =) can be equivalent to the default", {
-  x <- data.frame(x = 1:5)
+  x <- data_frame(x = 1:5)
   indices <- as.list(vec_seq_along(x))
   expect_equal(vec_chop(x, indices), vec_chop(x))
 })
@@ -221,12 +221,12 @@ test_that("can chop S3 objects using the fallback method with compact seqs", {
 
 test_that("`x` must be a list", {
   expect_error(vec_unchop(1, list(1)), "`x` must be a list")
-  expect_error(vec_unchop(data.frame(x=1), list(1)), "`x` must be a list")
+  expect_error(vec_unchop(data_frame(x=1), list(1)), "`x` must be a list")
 })
 
 test_that("`indices` must be a list", {
   expect_error(vec_unchop(list(1), 1), "`indices` must be a list of integers, or `NULL`")
-  expect_error(vec_unchop(list(1), data.frame(x=1)), "`indices` must be a list of integers, or `NULL`")
+  expect_error(vec_unchop(list(1), data_frame(x=1)), "`indices` must be a list of integers, or `NULL`")
 })
 
 test_that("`indices` must be a list of integers", {

@@ -46,11 +46,11 @@ test_that("combines outer an inner names", {
 })
 
 test_that("can bind data.frame columns", {
-  df <- data.frame(x = NA, y = 1:2)
-  df$x <- data.frame(a = 1:2)
+  df <- data_frame(x = c(NA, NA), y = 1:2)
+  df$x <- data_frame(a = 1:2)
 
-  expected <- data.frame(x = NA, y = c(1:2, 1:2))
-  expected$x <- data.frame(a = c(1:2, 1:2))
+  expected <- data_frame(x = rep(NA, 4), y = c(1:2, 1:2))
+  expected$x <- data_frame(a = c(1:2, 1:2))
 
   expect_equal(vec_c(df, df), expected)
 })
@@ -86,7 +86,7 @@ test_that("vec_c() handles record classes", {
 
   expect_true(vec_is(out, rational(1, 2)))
   expect_size(out, 3)
-  expect_identical(vec_proxy(out), data.frame(n = c(1L, 1L, NA), d = c(2L, 1L, NA)))
+  expect_identical(vec_proxy(out), data_frame(n = c(1L, 1L, NA), d = c(2L, 1L, NA)))
 })
 
 test_that("can mix named and unnamed vectors (#271)", {
@@ -109,12 +109,12 @@ test_that("vec_c() repairs names", {
 })
 
 test_that("vec_c() doesn't use outer names for data frames (#524)", {
-  x <- data.frame(inner = 1)
+  x <- data_frame(inner = 1)
   expect_equal(vec_c(outer = x), x)
 
-  a <- data.frame(x = 1L)
-  b <- data.frame(x = 2L)
-  expect_equal(vec_c(foo = a, bar = b), data.frame(x = 1:2))
+  a <- data_frame(x = 1L)
+  b <- data_frame(x = 2L)
+  expect_equal(vec_c(foo = a, bar = b), data_frame(x = 1:2))
 })
 
 test_that("vec_c() drops data frame row names", {

@@ -40,7 +40,7 @@ test_that("finalised prototypes created from under specified inputs", {
 })
 
 test_that("finalised prototypes created from under specified data frame cols", {
-  df <- data.frame(x = NA)
+  df <- data_frame(x = NA)
   expect_equal(vec_ptype_common(df)$x, logical())
 })
 
@@ -143,9 +143,9 @@ test_that("class_type() detects classes", {
   expect_identical(class_type(new_list_of()), "list_of")
   expect_identical(class_type(subclass(new_list_of())), "list_of")
 
-  expect_identical(class_type(data.frame()), "bare_data_frame")
+  expect_identical(class_type(data_frame()), "bare_data_frame")
   expect_identical(class_type(tibble::tibble()), "bare_tibble")
-  expect_identical(class_type(subclass(data.frame())), "data_frame")
+  expect_identical(class_type(subclass(data_frame())), "data_frame")
 
   expect_identical(class_type(new_factor()), "bare_factor")
   expect_identical(class_type(new_ordered()), "bare_ordered")
@@ -181,7 +181,7 @@ test_that("explicit list subclasses are vectors", {
   x <- list_subclass(list())
   expect_true(vec_is(x))
 
-  df <- data.frame(x = 1:2)
+  df <- data_frame(x = 1:2)
   df$z <- list_subclass(list(1, 2))
 
   expect_identical(vec_slice(df, 1)$z, list_subclass(list(1)))

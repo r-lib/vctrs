@@ -25,7 +25,7 @@ test_that("vec_group_id works on base S3 objects", {
 })
 
 test_that("vec_group_id works row wise on data frames", {
-  df <- data.frame(x = c(1, 2, 1, 1), y = c(2, 3, 2, 3))
+  df <- data_frame(x = c(1, 2, 1, 1), y = c(2, 3, 2, 3))
   expect <- structure(c(1L, 2L, 1L, 3L), n = 3L)
   expect_equal(vec_group_id(df), expect)
 })
@@ -103,7 +103,7 @@ test_that("vec_group_rle takes the equality proxy", {
 })
 
 test_that("vec_group_rle works row wise on data frames", {
-  df <- data.frame(x = c(1, 1, 2, 1), y = c(2, 2, 3, 2))
+  df <- data_frame(x = c(1, 1, 2, 1), y = c(2, 2, 3, 2))
   expect <- new_group_rle(c(1L, 2L, 1L), c(2L, 1L, 1L), 2L)
   expect_equal(vec_group_rle(df), expect)
 })

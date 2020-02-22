@@ -25,7 +25,7 @@ vec_proxy_equal.vctrs_rational <- function(x) {
   n <- field(x, "n")
   d <- field(x, "d")
   gcd <- gcd(n, d)
-  data.frame(n = n / gcd, d = d / gcd)
+  data_frame(n = n / gcd, d = d / gcd)
 }
 gcd <- function(x, y) {
   r <- x %% y

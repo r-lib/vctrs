@@ -185,10 +185,10 @@ test_that("attributes of unclassed vectors are asserted", {
 
 test_that("unspecified is finalised before assertion", {
   expect_true(vec_is(NA, TRUE))
-  expect_true(vec_is(data.frame(x = NA), data.frame(x = lgl())))
+  expect_true(vec_is(data_frame(x = NA), data_frame(x = lgl())))
 
   expect_error(regexp = NA, vec_assert(NA, TRUE))
-  expect_error(regexp = NA, vec_assert(data.frame(x = NA), data.frame(x = lgl())))
+  expect_error(regexp = NA, vec_assert(data_frame(x = NA), data_frame(x = lgl())))
 })
 
 test_that("assertion failures are explained", {
@@ -204,19 +204,19 @@ test_that("assertion failures are explained", {
     try_cat(vec_assert(factor(levels = "bar"), factor(levels = "foo")))
     try_cat(vec_assert(factor(), chr()))
 
-    try_cat(vec_assert(lgl(), data.frame()))
-    try_cat(vec_assert(lgl(), data.frame(x = 1)))
-    try_cat(vec_assert(lgl(), data.frame(x = 1, y = 2)))
+    try_cat(vec_assert(lgl(), data_frame()))
+    try_cat(vec_assert(lgl(), data_frame(x = 1)))
+    try_cat(vec_assert(lgl(), data_frame(x = 1, y = 2)))
 
-    try_cat(vec_assert(data.frame(), chr()))
+    try_cat(vec_assert(data_frame(), chr()))
 
-    try_cat(vec_assert(data.frame(x = 1), chr()))
-    try_cat(vec_assert(data.frame(x = 1), data.frame(x = "foo")))
-    try_cat(vec_assert(data.frame(x = 1), data.frame(x = "foo", y = 2)))
+    try_cat(vec_assert(data_frame(x = 1), chr()))
+    try_cat(vec_assert(data_frame(x = 1), data_frame(x = "foo")))
+    try_cat(vec_assert(data_frame(x = 1), data_frame(x = "foo", y = 2)))
 
-    try_cat(vec_assert(data.frame(x = 1, y = 2), chr()))
-    try_cat(vec_assert(data.frame(x = 1, y = 2), data.frame(x = "foo")))
-    try_cat(vec_assert(data.frame(x = 1, y = 2), data.frame(x = "foo", y = 2)))
+    try_cat(vec_assert(data_frame(x = 1, y = 2), chr()))
+    try_cat(vec_assert(data_frame(x = 1, y = 2), data_frame(x = "foo")))
+    try_cat(vec_assert(data_frame(x = 1, y = 2), data_frame(x = "foo", y = 2)))
   })
 })
 
@@ -269,7 +269,7 @@ test_that("non-explicitly classed lists that implement a proxy are lists", {
 })
 
 test_that("data frames of all types are not lists", {
-  expect_false(vec_is_list(data.frame()))
-  expect_false(vec_is_list(subclass(data.frame())))
+  expect_false(vec_is_list(data_frame()))
+  expect_false(vec_is_list(subclass(data_frame())))
   expect_false(vec_is_list(tibble::tibble()))
 })
