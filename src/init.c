@@ -45,7 +45,7 @@ extern SEXP vctrs_type2(SEXP, SEXP, SEXP, SEXP);
 extern SEXP vctrs_typeof2(SEXP, SEXP);
 extern SEXP vctrs_typeof2_s3(SEXP, SEXP);
 extern SEXP vctrs_cast(SEXP, SEXP, SEXP, SEXP);
-extern SEXP vctrs_as_location(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
+extern SEXP vctrs_as_location(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
 extern SEXP vctrs_slice(SEXP, SEXP);
 extern SEXP vctrs_init(SEXP, SEXP);
 extern SEXP vctrs_chop(SEXP, SEXP);
@@ -152,7 +152,7 @@ static const R_CallMethodDef CallEntries[] = {
   {"vctrs_typeof2",                    (DL_FUNC) &vctrs_typeof2, 2},
   {"vctrs_typeof2_s3",                 (DL_FUNC) &vctrs_typeof2_s3, 2},
   {"vctrs_cast",                       (DL_FUNC) &vctrs_cast, 4},
-  {"vctrs_as_location",                (DL_FUNC) &vctrs_as_location, 7},
+  {"vctrs_as_location",                (DL_FUNC) &vctrs_as_location, 8},
   {"vctrs_slice",                      (DL_FUNC) &vctrs_slice, 2},
   {"vctrs_init",                       (DL_FUNC) &vctrs_init, 2},
   {"vctrs_chop",                       (DL_FUNC) &vctrs_chop, 2},

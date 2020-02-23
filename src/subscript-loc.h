@@ -26,11 +26,17 @@ enum num_as_location_loc_oob {
   LOC_OOB_EXTEND,
   LOC_OOB_ERROR
 };
+enum num_as_location_loc_zero {
+  LOC_ZERO_REMOVE,
+  LOC_ZERO_ERROR,
+  LOC_ZERO_IGNORE
+};
 
 struct vec_as_location_opts {
   enum subscript_action action;
   enum num_as_location_loc_negative loc_negative;
   enum num_as_location_loc_oob loc_oob;
+  enum num_as_location_loc_zero loc_zero;
   enum subscript_missing missing;
   SEXP subscript_arg;
 };

@@ -23,6 +23,7 @@ num_as_location(
   missing = c("propagate", "error"),
   negative = c("invert", "error", "ignore"),
   oob = c("error", "extend"),
+  zero = c("remove", "error", "ignore"),
   arg = NULL
 )
 
@@ -73,6 +74,9 @@ negative location value, or \code{"ignore"} it.}
 elements are out-of-bounds. If \code{"extend"}, out-of-bounds
 locations are allowed if they are consecutive after the end. This
 can be used to implement extendable vectors like \code{letters[1:30]}.}
+
+\item{zero}{Whether to \code{"remove"} zero values, throw an informative
+\code{"error"}, or \code{"ignore"} them.}
 }
 \value{
 \code{vec_as_location()} returns an integer vector that can be used

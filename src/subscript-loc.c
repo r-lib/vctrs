@@ -15,6 +15,8 @@ static void stop_subscript_oob_name(SEXP i, SEXP names,
                                     const struct vec_as_location_opts* opts);
 static void stop_location_negative(SEXP i,
                                    const struct vec_as_location_opts* opts);
+static void stop_location_zero(SEXP i,
+                               const struct vec_as_location_opts* opts);
 static void stop_indicator_size(SEXP i, SEXP n,
                                 const struct vec_as_location_opts* opts);
 static void stop_location_negative_missing(SEXP i,
@@ -54,7 +56,11 @@ static SEXP int_as_location(SEXP subscript, R_len_t n,
       }
 
       if (elt == 0) {
-        ++n_zero;
+        switch (opts->loc_zero) {
+        case LOC_ZERO_REMOVE: ++n_zero; break;
+        case LOC_ZERO_ERROR: stop_location_zero(subscript, opts);
+        case LOC_ZERO_IGNORE: break;
+        }
       } else if (abs(elt) > n) {
         if (opts->loc_oob == LOC_OOB_ERROR) {
           stop_subscript_oob_location(subscript, n, opts);
@@ -304,6 +310,9 @@ static void stop_bad_negative() {
 static void stop_bad_oob() {
   Rf_errorcall(R_NilValue, "`oob` must be one of \"error\" or \"extend\".");
 }
+static void stop_bad_zero() {
+  Rf_errorcall(R_NilValue, "`zero` must be one of \"remove\", \"error\", or \"ignore\".");
+}
 
 static enum subscript_missing parse_subscript_arg_missing(SEXP x) {
   if (TYPEOF(x) != STRSXP || Rf_length(x) == 0) {
@@ -345,9 +354,23 @@ static enum num_as_location_loc_oob parse_loc_oob(SEXP x) {
 
   never_reached("stop_bad_oob");
 }
+static enum num_as_location_loc_zero parse_loc_zero(SEXP x) {
+  if (TYPEOF(x) != STRSXP || Rf_length(x) == 0) {
+    stop_bad_zero();
+  }
+
+  const char* str = CHAR(STRING_ELT(x, 0));
+
+  if (!strcmp(str, "remove")) return LOC_ZERO_REMOVE;
+  if (!strcmp(str, "error")) return LOC_ZERO_ERROR;
+  if (!strcmp(str, "ignore")) return LOC_ZERO_IGNORE;
+  stop_bad_zero();
+
+  never_reached("parse_loc_zero");
+}
 
 SEXP vctrs_as_location(SEXP subscript, SEXP n_, SEXP names,
-                       SEXP loc_negative, SEXP loc_oob,
+                       SEXP loc_negative, SEXP loc_oob, SEXP loc_zero,
                        SEXP missing, SEXP arg) {
   R_len_t n = 0;
 
@@ -372,6 +395,7 @@ SEXP vctrs_as_location(SEXP subscript, SEXP n_, SEXP names,
     .missing = parse_subscript_arg_missing(missing),
     .loc_negative = parse_loc_negative(loc_negative),
     .loc_oob = parse_loc_oob(loc_oob),
+    .loc_zero = parse_loc_zero(loc_zero),
     .subscript_arg = arg
   };
 
@@ -440,6 +464,16 @@ static void stop_location_negative(SEXP i,
   never_reached("stop_location_negative");
 }
 
+static void stop_location_zero(SEXP i,
+                               const struct vec_as_location_opts* opts) {
+  vctrs_eval_mask3(Rf_install("stop_location_zero"),
+                   syms_i, i,
+                   syms_subscript_action, get_opts_action(opts),
+                   syms_subscript_arg, opts->subscript_arg,
+                   vctrs_ns_env);
+  never_reached("stop_location_zero");
+}
+
 static void stop_indicator_size(SEXP i, SEXP n,
                                 const struct vec_as_location_opts* opts) {
   vctrs_eval_mask4(Rf_install("stop_indicator_size"),
@@ -473,12 +507,14 @@ void vctrs_init_subscript_loc(SEXP ns) {
   vec_as_location_default_opts_obj.action = SUBSCRIPT_ACTION_DEFAULT;
   vec_as_location_default_opts_obj.loc_negative = LOC_NEGATIVE_INVERT;
   vec_as_location_default_opts_obj.loc_oob = LOC_OOB_ERROR;
+  vec_as_location_default_opts_obj.loc_zero = LOC_ZERO_REMOVE;
   vec_as_location_default_opts_obj.subscript_arg = R_NilValue;
   vec_as_location_default_opts_obj.missing = SUBSCRIPT_MISSING_PROPAGATE;
 
   vec_as_location_default_assign_opts_obj.action = SUBSCRIPT_ACTION_ASSIGN;
   vec_as_location_default_assign_opts_obj.loc_negative = LOC_NEGATIVE_INVERT;
   vec_as_location_default_assign_opts_obj.loc_oob = LOC_OOB_ERROR;
+  vec_as_location_default_assign_opts_obj.loc_zero = LOC_ZERO_REMOVE;
   vec_as_location_default_assign_opts_obj.subscript_arg = R_NilValue;
   vec_as_location_default_assign_opts_obj.missing = SUBSCRIPT_MISSING_PROPAGATE;
 }
