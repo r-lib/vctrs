@@ -361,7 +361,7 @@ cnd_bullets_location_need_non_zero <- function(cnd, ...) {
   arg <- append_arg("The subscript", cnd$subscript_arg)
 
   if (zero_loc_size == 1) {
-    loc <- glue::glue("It had a `0` value at location {zero_loc}.")
+    loc <- glue::glue("It has a `0` value at location {zero_loc}.")
   } else {
     zero_loc <- ensure_full_stop(enumerate(zero_loc))
     loc <- glue::glue(
