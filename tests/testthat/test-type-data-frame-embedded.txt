@@ -4,14 +4,14 @@ Prototype: data.frame<
   a: 
     data.frame<
       a: integer
-      b: factor<38ce1>
+      b: character
     >
   b: list_of<double>
   c: 
     list_of<
       data.frame<
         x: integer
-        y: factor<38ce1>
+        y: character
       >
     >
 >

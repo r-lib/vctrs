@@ -91,3 +91,13 @@ c_na <- function(...) {
   names(x)[names(x) == ""] <- NA_character_
   x
 }
+
+# We almost never want `stringsAsFactors = TRUE`, and `FALSE` became
+# the default in R 4.0.0. This wrapper ensures that our tests are compliant
+# with versions of R before and after this change.
+if (getRversion() < "4.0.0") {
+  data.frame <- function(..., stringsAsFactors = NULL) {
+    stringsAsFactors <- stringsAsFactors %||% FALSE
+    base::data.frame(..., stringsAsFactors = stringsAsFactors)
+  }
+}
