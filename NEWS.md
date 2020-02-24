@@ -1,6 +1,8 @@
 
 # vctrs (development version)
 
+* `num_as_location()` gains a new argument, `zero`, for controlling whether
+  to `"remove"`, `"ignore"`, or `"error"` on zero values (#852).
 
 # vctrs 0.2.3
 
