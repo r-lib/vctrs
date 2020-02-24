@@ -193,6 +193,7 @@ for extracting with <code>[[</code>.</p></li>
   <span class='kw'>missing</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"propagate"</span>, <span class='st'>"error"</span>),
   <span class='kw'>negative</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"invert"</span>, <span class='st'>"error"</span>, <span class='st'>"ignore"</span>),
   <span class='kw'>oob</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"error"</span>, <span class='st'>"extend"</span>),
+  <span class='kw'>zero</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"remove"</span>, <span class='st'>"error"</span>, <span class='st'>"ignore"</span>),
   <span class='kw'>arg</span> <span class='kw'>=</span> <span class='kw'>NULL</span>
 )
 
@@ -259,6 +260,11 @@ negative location value, or <code>"ignore"</code> it.</p></td>
 elements are out-of-bounds. If <code>"extend"</code>, out-of-bounds
 locations are allowed if they are consecutive after the end. This
 can be used to implement extendable vectors like <code>letters[1:30]</code>.</p></td>
+    </tr>
+    <tr>
+      <th>zero</th>
+      <td><p>Whether to <code>"remove"</code> zero values, throw an informative
+<code>"error"</code>, or <code>"ignore"</code> them.</p></td>
     </tr>
     </table>
 
