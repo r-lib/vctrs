@@ -605,9 +605,28 @@ static SEXP vec_as_indices(SEXP indices, R_len_t n, SEXP names) {
 
   R_len_t size = vec_size(indices);
 
+  // Restrict index values to positive integer locations
+  struct vec_as_location_opts opts = {
+    .action = SUBSCRIPT_ACTION_DEFAULT,
+    .missing = SUBSCRIPT_MISSING_PROPAGATE,
+    .loc_negative = LOC_NEGATIVE_ERROR,
+    .loc_oob = LOC_OOB_ERROR,
+    .loc_zero = LOC_ZERO_ERROR,
+    .subscript_arg = R_NilValue
+  };
+
   for (int i = 0; i < size; ++i) {
     index = VECTOR_ELT(indices, i);
-    SET_VECTOR_ELT(indices, i, vec_as_location(index, n, names));
+
+    // Restrict the type to only numeric values.
+    // `vec_as_location_opts()` does not do this.
+    switch (TYPEOF(index)) {
+    case INTSXP: break;
+    case REALSXP: break;
+    default: Rf_errorcall(R_NilValue, "All elements of `indices` must be numeric vectors.");
+    }
+
+    SET_VECTOR_ELT(indices, i, vec_as_location_opts(index, n, names, &opts));
   }
 
   UNPROTECT(1);

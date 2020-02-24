@@ -18,17 +18,15 @@ vec_unchop(
 \arguments{
 \item{x}{A vector}
 
-\item{indices}{For \code{vec_chop()}, a list of index values to slice \code{x} with,
-or \code{NULL}. Each element of the list must be an integer, character or
-logical vector that would be valid as an index in \code{\link[=vec_slice]{vec_slice()}}. If \code{NULL},
-\code{x} is split into its individual elements, equivalent to using an
-\code{indices} of \code{as.list(vec_seq_along(x))}.
+\item{indices}{For \code{vec_chop()}, a list of positive integer vectors to
+slice \code{x} with, or \code{NULL}. If \code{NULL}, \code{x} is split into its individual
+elements, equivalent to using an \code{indices} of \code{as.list(vec_seq_along(x))}.
 
-For \code{vec_unchop()}, a list of integer vectors specifying the locations to
-place elements of \code{x} in. Each element of \code{x} is recycled to the size
-of the corresponding index vector. The size of \code{indices} must match the
-size of \code{x}. If \code{NULL}, \code{x} is combined in the order it is provided in,
-which is equivalent to using \code{\link[=vec_c]{vec_c()}}.}
+For \code{vec_unchop()}, a list of positive integer vectors specifying the
+locations to place elements of \code{x} in. Each element of \code{x} is recycled to
+the size of the corresponding index vector. The size of \code{indices} must
+match the size of \code{x}. If \code{NULL}, \code{x} is combined in the order it is
+provided in, which is equivalent to using \code{\link[=vec_c]{vec_c()}}.}
 
 \item{ptype}{If \code{NULL}, the default, the output type is determined by
 computing the common type across all elements of \code{x}. Alternatively, you
