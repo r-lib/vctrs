@@ -166,13 +166,21 @@ test_that("num_as_location() optionally forbids negative indices", {
   expect_error(num_as_location(c(1, -10), 2L, negative = "error"), class = "vctrs_error_subscript_type")
 })
 
-test_that("num_as_location() optionally ignores zero values", {
+test_that("num_as_location() optionally ignores zero indices", {
   expect_identical(num_as_location(c(1, 0), 2L, zero = "ignore"), c(1L, 0L))
 })
 
-test_that("num_as_location() optionally forbids zero values", {
-  expect_error(num_as_location(c(1, 0), 2L, zero = "error"), class = "vctrs_error_subscript_type")
-  expect_error(num_as_location(c(0, 0, 0, 0, 0, 0), 1, zero = "error"), class = "vctrs_error_subscript_type")
+test_that("num_as_location() optionally forbids zero indices", {
+  verify_errors({
+    expect_error(
+      num_as_location(0L, 1L, zero = "error"),
+      class = "vctrs_error_subscript_type"
+    )
+    expect_error(
+      num_as_location(c(0, 0, 0, 0, 0, 0), 1, zero = "error"),
+      class = "vctrs_error_subscript_type"
+    )
+  })
 })
 
 test_that("vec_as_location() handles NULL", {
