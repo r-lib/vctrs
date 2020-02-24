@@ -41,12 +41,12 @@ num_as_location() optionally forbids zero indices
 > num_as_location(0L, 1L, zero = "error")
 Error: Must subset elements with a valid subscript vector.
 x The subscript can't contain `0` values.
-i It had a zero value at location 1.
+i It had a `0` value at location 1.
 
 > num_as_location(c(0, 0, 0, 0, 0, 0), 1, zero = "error")
 Error: Must subset elements with a valid subscript vector.
 x The subscript can't contain `0` values.
-i It has 6 zero values at locations 1, 2, 3, 4, 5, etc.
+i It has 6 `0` values at locations 1, 2, 3, 4, 5, etc.
 
 
 logical subscripts must match size of indexed vector
@@ -371,7 +371,7 @@ x The subscript `foo` contains non-consecutive location 4.
 > num_as_location(0, 1, zero = "error", arg = "foo")
 Error: Must subset elements with a valid subscript vector.
 x The subscript `foo` can't contain `0` values.
-i It had a zero value at location 1.
+i It had a `0` value at location 1.
 
 > # With tibble columns
 > with_tibble_cols(num_as_location(-1, 2, negative = "error"))
@@ -417,7 +417,7 @@ x The subscript `foo(bar)` contains non-consecutive location 4.
 > with_tibble_cols(num_as_location(0, 1, zero = "error"))
 Error: Must rename columns with a valid subscript vector.
 x The subscript `foo(bar)` can't contain `0` values.
-i It had a zero value at location 1.
+i It had a `0` value at location 1.
 
 
 can customise OOB errors
