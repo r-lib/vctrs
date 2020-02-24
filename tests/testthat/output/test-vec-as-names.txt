@@ -1,0 +1,10 @@
+> vec_as_names(c("x", "x"), repair = "unique")
+Message: New names:
+* x -> x...1
+* x -> x...2
+
+[1] "x...1" "x...2"
+
+> vec_as_names(c("x", "x"), repair = "unique", quiet = TRUE)
+[1] "x...1" "x...2"
+
