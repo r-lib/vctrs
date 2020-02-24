@@ -1,6 +1,11 @@
 
 # vctrs (development version)
 
+* `vec_chop()`'s `indices` argument has been restricted to positive integer
+  vectors. Character and logical subscripts haven't proven useful, and this
+  aligns `vec_chop()` with `vec_unchop()`, for which only positive integer
+  vectors make sense.
+
 * New `vec_unchop()` for combining a list of vectors into a single vector. It
   is similar to `vec_c()`, but gives greater control over how the elements
   are placed in the output through the use of a secondary `indices` argument.
