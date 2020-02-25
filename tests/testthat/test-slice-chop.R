@@ -417,18 +417,17 @@ test_that("name repair is respected and happens after ordering according to `ind
   expect_named(vec_unchop(x, indices, name_repair = "unique"), c("a...1", "a...2"))
 })
 
-test_that("errors on `0` locations", {
-  expect_error(
-    vec_unchop(list(1, 2), list(c(1, 2), 0)),
-    class = "vctrs_error_subscript_type"
-  )
-})
-
-test_that("errors on negative locations", {
-  expect_error(
-    vec_unchop(list(1), list(-1)),
-    class = "vctrs_error_subscript_type"
-  )
+test_that("vec_unchop() errors on unsupported location values", {
+  verify_errors({
+    expect_error(
+      vec_unchop(list(1, 2), list(c(1, 2), 0)),
+      class = "vctrs_error_subscript_type"
+    )
+    expect_error(
+      vec_unchop(list(1), list(-1)),
+      class = "vctrs_error_subscript_type"
+    )
+  })
 })
 
 test_that("missing values propagate", {
@@ -576,6 +575,10 @@ test_that("vec_unchop() does not support non-numeric S3 indices", {
 
 test_that("vec_unchop() has informative error messages", {
   verify_output(test_path("error", "test-unchop.txt"), {
+    "# vec_unchop() errors on unsupported location values"
+    vec_unchop(list(1, 2), list(c(1, 2), 0))
+    vec_unchop(list(1), list(-1))
+
     "# vec_unchop() falls back to c() for foreign classes"
     vec_unchop(list(foobar(1), foobar(2)))
 
