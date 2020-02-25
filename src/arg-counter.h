@@ -50,9 +50,9 @@ struct counters {
  */
 void counters_shift(struct counters* counters);
 
-SEXP reduce(SEXP current, struct vctrs_arg* current_arg,
-            SEXP rest,
-            SEXP (*impl)(SEXP current, SEXP next, struct counters* counters));
+SEXP vctrs_reduce(SEXP current, struct vctrs_arg* current_arg,
+                  SEXP rest,
+                  SEXP (*impl)(SEXP current, SEXP next, struct counters* counters));
 
 
 #endif
