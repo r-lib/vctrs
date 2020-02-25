@@ -1291,6 +1291,7 @@ SEXP syms_subscript_type = NULL;
 SEXP syms_repair = NULL;
 SEXP syms_tzone = NULL;
 SEXP syms_data = NULL;
+SEXP syms_vctrs_error_incompatible_type = NULL;
 
 SEXP fns_bracket = NULL;
 SEXP fns_quote = NULL;
@@ -1547,6 +1548,7 @@ void vctrs_init_utils(SEXP ns) {
   syms_data = Rf_install("data");
   syms_try_catch_impl = Rf_install("try_catch_impl");
   syms_try_catch_hnd = Rf_install("try_catch_hnd");
+  syms_vctrs_error_incompatible_type = Rf_install("vctrs_error_incompatible_type");
 
   fns_bracket = Rf_findVar(syms_bracket, R_BaseEnv);
   fns_quote = Rf_findVar(Rf_install("quote"), R_BaseEnv);

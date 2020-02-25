@@ -338,6 +338,7 @@ extern SEXP syms_subscript_type;
 extern SEXP syms_repair;
 extern SEXP syms_tzone;
 extern SEXP syms_data;
+extern SEXP syms_vctrs_error_incompatible_type;
 
 #define syms_names R_NamesSymbol
 
