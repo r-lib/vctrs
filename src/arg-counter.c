@@ -85,9 +85,9 @@ SEXP reduce_splice_box(SEXP current, SEXP rest, struct counters* counters,
                        SEXP (*impl)(SEXP current, SEXP next, struct counters* counters));
 
 // [[ include("arg-counter.h") ]]
-SEXP reduce(SEXP current, struct vctrs_arg* current_arg,
-            SEXP rest,
-            SEXP (*impl)(SEXP current, SEXP next, struct counters* counters)) {
+SEXP vctrs_reduce(SEXP current, struct vctrs_arg* current_arg,
+                  SEXP rest,
+                  SEXP (*impl)(SEXP current, SEXP next, struct counters* counters)) {
   // Store the box counters here as they might outlive their frame
   struct counters next_box_counters;
   struct counters prev_box_counters;
