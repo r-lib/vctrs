@@ -31,43 +31,27 @@ SEXP vec_assign(SEXP x, SEXP index, SEXP value) {
   vec_assert(x, &x_arg);
   vec_assert(value, &value_arg);
 
-  // Take the proxy of the RHS before coercing and recycling
-  SEXP value_orig = value;
-  value = PROTECT(vec_coercible_cast(value, x, &value_arg, &x_arg));
-  SEXP value_proxy = PROTECT(vec_proxy(value));
-
-  // Recycle the proxy of `value`
   index = PROTECT(vec_as_location_opts(index,
                                        vec_size(x),
                                        PROTECT(vec_names(x)),
                                        vec_as_location_default_assign_opts,
                                        NULL));
-  value_proxy = PROTECT(vec_recycle(value_proxy, vec_size(index), &value_arg));
 
-  struct vctrs_proxy_info info = vec_proxy_info(x);
+  // Cast and recycle `value`
+  value = PROTECT(vec_coercible_cast(value, x, &value_arg, &x_arg));
+  value = PROTECT(vec_recycle(value, vec_size(index), &value_arg));
 
-  SEXP out;
-  if (vec_requires_fallback(x, info) || has_dim(x)) {
-    // Restore the value before falling back to `[<-`
-    value = PROTECT(vec_restore(value_proxy, value_orig, R_NilValue));
-    out = vec_assign_fallback(x, index, value);
-    UNPROTECT(1);
-  } else {
-    out = PROTECT(vec_assign_impl(info.proxy, index, value_proxy));
-    out = vec_restore(out, x, R_NilValue);
-    UNPROTECT(1);
-  }
+  SEXP proxy = PROTECT(vec_proxy(x));
 
-  UNPROTECT(5);
+  proxy = PROTECT(vec_assign_impl(proxy, index, value));
+
+  SEXP out = vec_restore(proxy, x, R_NilValue);
+
+  UNPROTECT(6);
   return out;
 }
 
-// `vec_assign_impl()` will duplicate the `proxy` if it is referenced or
-// marked as not mutable. Otherwise, `vec_assign_impl()` will assign
-// directly into the `proxy`. Even though it can directly assign, the safe
-// way to call `vec_assign_impl()` is to catch and protect its output rather
-// than relying on it to assign directly.
-SEXP vec_assign_impl(SEXP proxy, SEXP index, SEXP value) {
+SEXP vec_assign_switch(SEXP proxy, SEXP index, SEXP value) {
   switch (vec_proxy_typeof(proxy)) {
   case vctrs_type_logical:     return lgl_assign(proxy, index, value);
   case vctrs_type_integer:     return int_assign(proxy, index, value);
@@ -80,11 +64,40 @@ SEXP vec_assign_impl(SEXP proxy, SEXP index, SEXP value) {
   case vctrs_type_null:
   case vctrs_type_unspecified:
   case vctrs_type_s3:
-                               Rf_error("Internal error in `vec_assign_impl()`: Unexpected type %s.",
+                               Rf_error("Internal error in `vec_assign_switch()`: Unexpected type %s.",
                                         vec_type_as_str(vec_typeof(proxy)));
   case vctrs_type_scalar:      stop_scalar_type(proxy, args_empty);
   }
-  never_reached("vec_assign_impl");
+  never_reached("vec_assign_switch");
+}
+
+// `vec_assign_impl()` will duplicate the `proxy` if it is referenced or
+// marked as not mutable. Otherwise, `vec_assign_impl()` will assign
+// directly into the `proxy`. Even though it can directly assign, the safe
+// way to call `vec_assign_impl()` is to catch and protect its output rather
+// than relying on it to assign directly.
+
+/*
+ * @param proxy The proxy of the output container
+ * @param index The locations to assign `value` to
+ * @param value The value to assign into the proxy. Must already be
+ *   cast to the type of the true output container, and have been
+ *   recycled to the correct size. Should not be proxied, in case
+ *   we have to fallback.
+ */
+SEXP vec_assign_impl(SEXP proxy, SEXP index, SEXP value) {
+  struct vctrs_proxy_info info = vec_proxy_info(value);
+
+  // If a fallback is required, the `proxy` is identical to the output container
+  // because no proxy method was called
+  if (vec_requires_fallback(value, info) || has_dim(proxy)) {
+    index = PROTECT(compact_materialize(index));
+    SEXP out = vec_assign_fallback(proxy, index, value);
+    UNPROTECT(1);
+    return out;
+  }
+
+  return vec_assign_switch(proxy, index, info.proxy);
 }
 
 #define ASSIGN_INDEX(CTYPE, DEREF, CONST_DEREF)                 \
@@ -237,15 +250,14 @@ SEXP df_assign(SEXP x, SEXP index, SEXP value) {
     // No need to cast or recycle because those operations are
     // recursive and have already been performed. However, proxy and
     // restore are not recursive so need to be done for each element
-    // we recurse into.
+    // we recurse into. `vec_assign_impl()` will proxy the `value_elt`.
     SEXP proxy_elt = PROTECT(vec_proxy(out_elt));
-    value_elt = PROTECT(vec_proxy(value_elt));
 
     SEXP assigned = PROTECT(vec_assign_impl(proxy_elt, index, value_elt));
     assigned = vec_restore(assigned, out_elt, R_NilValue);
 
     SET_VECTOR_ELT(out, i, assigned);
-    UNPROTECT(3);
+    UNPROTECT(2);
   }
 
   UNPROTECT(1);

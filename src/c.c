@@ -74,8 +74,6 @@ SEXP vec_c(SEXP xs,
   SEXP out_names = has_names ? Rf_allocVector(STRSXP, out_size) : R_NilValue;
   PROTECT_WITH_INDEX(out_names, &out_names_pi);
 
-  bool is_shaped = has_dim(ptype);
-
   // Compact sequences use 0-based counters
   R_len_t counter = 0;
 
@@ -91,15 +89,8 @@ SEXP vec_c(SEXP xs,
 
     init_compact_seq(idx_ptr, counter, size, true);
 
-    if (is_shaped) {
-      SEXP idx = PROTECT(r_seq(counter + 1, counter + size + 1));
-      out = vec_assign(out, idx, elt);
-      REPROTECT(out, out_pi);
-      UNPROTECT(1);
-    } else {
-      out = vec_assign_impl(out, idx, elt);
-      REPROTECT(out, out_pi);
-    }
+    out = vec_assign_impl(out, idx, elt);
+    REPROTECT(out, out_pi);
 
     if (has_names) {
       SEXP outer = xs_names == R_NilValue ? R_NilValue : STRING_ELT(xs_names, i);

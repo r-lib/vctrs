@@ -483,8 +483,6 @@ static SEXP vec_unchop(SEXP x,
 
   indices = PROTECT(vec_as_indices(indices, out_size, R_NilValue));
 
-  const bool is_shaped = has_dim(ptype);
-
   PROTECT_INDEX proxy_pi;
   SEXP proxy = vec_proxy(ptype);
   PROTECT_WITH_INDEX(proxy, &proxy_pi);
@@ -507,13 +505,8 @@ static SEXP vec_unchop(SEXP x,
 
     SEXP index = VECTOR_ELT(indices, i);
 
-    if (is_shaped) {
-      proxy = vec_assign(proxy, index, elt);
-      REPROTECT(proxy, proxy_pi);
-    } else {
-      proxy = vec_assign_impl(proxy, index, elt);
-      REPROTECT(proxy, proxy_pi);
-    }
+    proxy = vec_assign_impl(proxy, index, elt);
+    REPROTECT(proxy, proxy_pi);
 
     if (has_names) {
       R_len_t size = p_sizes[i];

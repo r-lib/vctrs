@@ -288,12 +288,12 @@ test_that("slice-assign falls back to `[<-` when proxy is not implemented", {
     },
     vec_ptype2.logical.vctrs_foobar = function(...) foobar(""),
     vec_ptype2.vctrs_foobar = function(...) foobar(""),
-    vec_cast.vctrs_foobar = function(x, to, ...) x
+    vec_cast.vctrs_foobar = function(x, to, ...) foobar(rep("", length(x)))
   )
 
   obj <- foobar(c("foo", "bar", "baz"))
   vec_slice(obj, 1:2) <- TRUE
-  expect_identical(obj, c("dispatched", "dispatched", "baz"))
+  expect_identical(obj, foobar(c("dispatched", "dispatched", "baz")))
 })
 
 test_that("vec_assign() can always assign unspecified values into foreign vector types", {
@@ -304,17 +304,16 @@ test_that("vec_assign() can always assign unspecified values into foreign vector
   expect_identical(vec_assign(obj, 1, unspecified(1)), expect)
 })
 
-test_that("slice-assign restores value before falling back to `[<-` (#443)", {
+test_that("slice-assign casts to `to` before falling back to `[<-` (#443)", {
   called <- FALSE
 
   local_methods(
     vec_proxy.vctrs_proxy = proxy_deref,
-    vec_restore.vctrs_proxy = function(x, to, ...) new_proxy(x),
     vec_ptype2.vctrs_proxy = function(...) new_proxy(NA),
-    vec_cast.vctrs_foobar = function(x, ...) proxy_deref(x),
+    vec_cast.vctrs_foobar = function(x, ...) foobar(proxy_deref(x)),
     `[<-.vctrs_foobar` = function(x, i, value) {
       called <<- TRUE
-      expect_is(value, "vctrs_proxy")
+      expect_identical(value, foobar(10))
     }
   )
 
