@@ -94,7 +94,7 @@ num_as_location <- function(i,
                             arg = NULL) {
   if (!missing(...)) ellipsis::check_dots_empty()
 
-  if (!is_integer(i) && !is_double(i)) {
+  if (is.object(i) || !(is_integer(i) || is_double(i))) {
     abort("`i` must be a numeric vector.")
   }
   .Call(

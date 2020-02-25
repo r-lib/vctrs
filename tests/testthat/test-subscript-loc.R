@@ -422,6 +422,10 @@ test_that("can customise OOB errors", {
   })
 })
 
+test_that("num_as_location() requires non-S3 inputs", {
+  expect_error(num_as_location(factor("foo"), 2), "must be a numeric vector")
+})
+
 test_that("conversion to locations has informative error messages", {
   verify_output(test_path("error", "test-subscript-loc.txt"), {
     "# vec_as_location() checks for mix of negative and missing locations"
