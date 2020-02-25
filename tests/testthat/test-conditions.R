@@ -42,6 +42,19 @@ test_that("can override arg in OOB conditions", {
   })
 })
 
+test_that("scalar type errors are informative", {
+  verify_errors({
+    expect_error(
+      vec_slice(foobar(list(1)), 1),
+      class = "vctrs_error_scalar_type"
+    )
+    expect_error(
+      stop_scalar_type(foobar(list(1)), arg = "foo"),
+      class = "vctrs_error_scalar_type"
+    )
+  })
+})
+
 verify_output(test_path("error", "test-conditions.txt"), {
   "# can override arg in OOB conditions"
   with_subscript_data(
@@ -60,4 +73,8 @@ verify_output(test_path("error", "test-conditions.txt"), {
     vec_slice(set_names(letters), "foo"),
     quote(input[i])
   )
+
+  "# scalar type errors are informative"
+  vec_slice(foobar(list(1)), 1)
+  stop_scalar_type(foobar(list(1)), arg = "foo")
 })

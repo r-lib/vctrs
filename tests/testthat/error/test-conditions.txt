@@ -18,3 +18,13 @@ x The element `foo` doesn't exist.
 Error: Can't subset elements that don't exist.
 x The element `foo` doesn't exist.
 
+
+scalar type errors are informative
+==================================
+
+> vec_slice(foobar(list(1)), 1)
+Error: Input must be a vector, not a `vctrs_foobar` object.
+
+> stop_scalar_type(foobar(list(1)), arg = "foo")
+Error: `foo` must be a vector, not a `vctrs_foobar` object.
+

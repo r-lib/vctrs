@@ -391,10 +391,11 @@ stop_unimplemented <- function(x, method) {
 
 stop_scalar_type <- function(x, arg = NULL) {
   if (is_null(arg) || !nzchar(arg)) {
-    msg <- glue::glue("Expected a vector, not { friendly_type_of(x) }")
+    arg <- "Input"
   } else {
-    msg <- glue::glue("`{ arg }` must be a vector, not { friendly_type_of(x) }")
+    arg <- glue::backtick(arg)
   }
+  msg <- glue::glue("{arg} must be a vector, not {friendly_type_of(x)}.")
   stop_vctrs(msg, "vctrs_error_scalar_type", actual = x)
 }
 
