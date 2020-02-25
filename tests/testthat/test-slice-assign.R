@@ -337,6 +337,17 @@ test_that("can assign to data frame", {
   expect_identical(vec_assign(x, 2, y), data_frame(x = int(1, 20, 3)))
 })
 
+test_that("assigning to a factor doesn't produce corrupt levels (#853)", {
+  x <- factor(c("a", NA), levels = c("a", "b"))
+  value <- factor("b", levels = "b")
+
+  res <- vec_assign(x, 2, value)
+  expect_identical(res, factor(c("a", "b")))
+
+  res <- vec_assign(x, 1:2, value)
+  expect_identical(res, factor(c("b", "b"), levels = c("a", "b")))
+})
+
 test_that("can slice-assign unspecified vectors with default type2 method", {
   local_rational_class()
   x <- rational(1:2, 2:3)
