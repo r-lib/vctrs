@@ -337,6 +337,11 @@ test_that("can assign to data frame", {
   expect_identical(vec_assign(x, 2, y), data_frame(x = int(1, 20, 3)))
 })
 
+test_that("can assign to a data frame with matrix columns (#625)", {
+  df <- tibble(x = 1:2, y = matrix(1:4, nrow = 2))
+  expect_identical(vec_assign(df, 2L, df[1,]), vec_slice(df, c(1, 1)))
+})
+
 test_that("assigning to a factor doesn't produce corrupt levels (#853)", {
   x <- factor(c("a", NA), levels = c("a", "b"))
   value <- factor("b", levels = "b")
