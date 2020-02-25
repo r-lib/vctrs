@@ -14,18 +14,14 @@ void vctrs_init_altrep_rle(DllInfo* dll) { }
 
 SEXP altrep_rle_Make(SEXP input) {
   Rf_error("Need R 3.5+ for Altrep support.");
-
   return R_NilValue;
 }
 
 #else
 
 SEXP altrep_rle_Make(SEXP input) {
-
   SEXP res = R_new_altrep(altrep_rle_class, input, R_NilValue);
-
   MARK_NOT_MUTABLE(res);
-
   return res;
 }
 
@@ -36,6 +32,7 @@ inline R_xlen_t altrep_rle_Length(SEXP vec) {
   if (data2 != R_NilValue) {
     return Rf_xlength(data2);
   }
+
   R_xlen_t sz = 0;
   SEXP rle = R_altrep_data1(vec);
   int* rle_p = INTEGER(rle);
@@ -48,16 +45,14 @@ inline R_xlen_t altrep_rle_Length(SEXP vec) {
 }
 
 // What gets printed when .Internal(inspect()) is used
-Rboolean altrep_rle_Inspect(
-    SEXP x,
-    int pre,
-    int deep,
-    int pvec,
-    void (*inspect_subtree)(SEXP, int, int, int)) {
-  Rprintf(
-      "vroom_rle (len=%d, materialized=%s)\n",
-      altrep_rle_Length(x),
-      R_altrep_data2(x) != R_NilValue ? "T" : "F");
+Rboolean altrep_rle_Inspect(SEXP x,
+                            int pre,
+                            int deep,
+                            int pvec,
+                            void (*inspect_subtree)(SEXP, int, int, int)) {
+  Rprintf("vctrs_rle (len=%d, materialized=%s)\n",
+          altrep_rle_Length(x),
+          R_altrep_data2(x) != R_NilValue ? "T" : "F");
   return TRUE;
 }
 
@@ -169,7 +164,7 @@ const void* altrep_rle_Dataptr_or_null(SEXP vec) {
   return STDVEC_DATAPTR(data2);
 }
 
-// -------- initialize the altrep class with the methods above
+
 void vctrs_init_altrep_rle(DllInfo* dll) {
   altrep_rle_class = R_make_altstring_class("altrep_rle", "vctrs", dll);
 
@@ -186,4 +181,4 @@ void vctrs_init_altrep_rle(DllInfo* dll) {
   R_set_altstring_Elt_method(altrep_rle_class, altrep_rle_string_Elt);
 }
 
-#endif
+#endif // R version >= 3.5.0
