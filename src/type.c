@@ -153,7 +153,7 @@ SEXP vctrs_type_common_impl(SEXP dots, SEXP ptype) {
   // Start reduction with the `.ptype` argument
   struct vctrs_arg ptype_arg = new_wrapper_arg(NULL, ".ptype");
 
-  SEXP type = PROTECT(reduce(ptype, &ptype_arg, dots, &vctrs_type2_common));
+  SEXP type = PROTECT(vctrs_reduce(ptype, &ptype_arg, dots, &vctrs_type2_common));
   type = vec_ptype_finalise(type);
 
   UNPROTECT(1);
