@@ -40,7 +40,7 @@ static SEXP vctrs_size2_common(SEXP x, SEXP y, struct counters* counters);
 
 // [[ include("vctrs.h") ]]
 R_len_t vec_size_common(SEXP xs, R_len_t absent) {
-  SEXP common = PROTECT(reduce(R_NilValue, args_empty, xs, &vctrs_size2_common));
+  SEXP common = PROTECT(vctrs_reduce(R_NilValue, args_empty, xs, &vctrs_size2_common));
   R_len_t out;
 
   if (common == R_NilValue) {
