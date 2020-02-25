@@ -171,6 +171,8 @@ test_that("vec_ptype() handles class-less yet OBJECT gremlins", {
   gremlin <- stats::model.frame(freeny)
   expect_error(vec_ptype(gremlin), NA)
   expect_error(vec_c(gremlin), NA)
+  expect_error(vec_init(gremlin), NA)
+  expect_error(vec_slice(gremlin, 1), NA)
 })
 
 test_that("explicit list subclasses are vectors", {

@@ -30,6 +30,13 @@ enum vctrs_class_type class_type(SEXP x) {
   }
 
   SEXP class = PROTECT(Rf_getAttrib(x, R_ClassSymbol));
+
+  // Avoid corrupt objects where `x` is an OBJECT(), but the class is NULL
+  if (class == R_NilValue) {
+    UNPROTECT(1);
+    return vctrs_class_none;
+  }
+
   enum vctrs_class_type type = class_type_impl(class);
 
   UNPROTECT(1);
