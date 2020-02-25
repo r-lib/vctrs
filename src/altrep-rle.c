@@ -16,6 +16,8 @@ SEXP altrep_rle_Make(SEXP input) {
 
 #else
 
+static R_altrep_class_t altrep_rle_class;
+
 SEXP altrep_rle_Make(SEXP input) {
 
   SEXP res = R_new_altrep(altrep_rle_class, input, R_NilValue);
