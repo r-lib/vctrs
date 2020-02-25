@@ -591,6 +591,8 @@ static SEXP vec_unchop_fallback(SEXP x, SEXP indices, SEXP ptype, SEXP name_spec
 
 // -----------------------------------------------------------------------------
 
+static SEXP vec_as_chop_subscript(SEXP i);
+
 static SEXP vec_as_indices(SEXP indices, R_len_t n, SEXP names) {
   if (indices == R_NilValue) {
     return indices;
@@ -618,17 +620,38 @@ static SEXP vec_as_indices(SEXP indices, R_len_t n, SEXP names) {
   for (int i = 0; i < size; ++i) {
     index = VECTOR_ELT(indices, i);
 
-    // Restrict the type to only numeric values.
-    // `vec_as_location_opts()` does not do this.
     switch (TYPEOF(index)) {
     case INTSXP: break;
     case REALSXP: break;
     default: Rf_errorcall(R_NilValue, "All elements of `indices` must be numeric vectors.");
     }
 
+    if (OBJECT(index)) {
+      index = vec_as_chop_subscript(index);
+    }
+    PROTECT(index);
+
     SET_VECTOR_ELT(indices, i, vec_as_location_opts(index, n, names, &opts));
+    UNPROTECT(1);
   }
 
   UNPROTECT(1);
   return indices;
+}
+
+static SEXP syms_vec_as_chop_subscript = NULL;
+static SEXP fns_vec_as_chop_subscript = NULL;
+
+static SEXP vec_as_chop_subscript(SEXP i) {
+  return vctrs_dispatch1(
+    syms_vec_as_chop_subscript, fns_vec_as_chop_subscript,
+    syms_i, i
+  );
+}
+
+// -----------------------------------------------------------------------------
+
+void vctrs_init_slice_chop(SEXP ns) {
+  syms_vec_as_chop_subscript = Rf_install("vec_as_chop_subscript");
+  fns_vec_as_chop_subscript = Rf_findVar(syms_vec_as_chop_subscript, ns);
 }

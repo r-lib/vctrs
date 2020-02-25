@@ -550,6 +550,30 @@ test_that("vec_unchop() fallback doesn't support `name_spec` or `ptype`", {
   })
 })
 
+test_that("vec_unchop() supports numeric S3 indices", {
+  local_methods(
+    vec_ptype2.vctrs_foobar = function(x, y, ...) UseMethod("vec_ptype2.vctrs_foobar", y),
+    vec_ptype2.vctrs_foobar.default = function(x, y, ...) vec_default_ptype2(x, y),
+    vec_ptype2.vctrs_foobar.integer = function(x, y, ...) foobar(integer()),
+    vec_cast.integer.vctrs_foobar = function(x, to, ...) vec_data(x)
+  )
+
+  expect_identical(vec_unchop(list(1), list(foobar(1L))), 1)
+})
+
+test_that("vec_unchop() does not support non-numeric S3 indices", {
+  verify_errors({
+    expect_error(
+      vec_unchop(list(1), list(factor("x"))),
+      class = "vctrs_error_subscript_type"
+    )
+    expect_error(
+      vec_unchop(list(1), list(foobar(1L))),
+      class = "vctrs_error_subscript_type"
+    )
+  })
+})
+
 test_that("vec_unchop() has informative error messages", {
   verify_output(test_path("error", "test-unchop.txt"), {
     "# vec_unchop() falls back to c() for foreign classes"
@@ -558,5 +582,9 @@ test_that("vec_unchop() has informative error messages", {
     "# vec_unchop() fallback doesn't support `name_spec` or `ptype`"
     vec_unchop(list(foobar(1)), name_spec = "{outer}_{inner}")
     vec_unchop(list(foobar(1)), ptype = "")
+
+    "# vec_unchop() does not support non-numeric S3 indices"
+    vec_unchop(list(1), list(factor("x")))
+    vec_unchop(list(1), list(foobar(1L)))
   })
 })
