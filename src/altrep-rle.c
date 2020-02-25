@@ -2,10 +2,6 @@
 #include "altrep-rle.h"
 #include "altrep.h"
 
-// Initialised at load time
-R_altrep_class_t altrep_rle_class;
-
-
 #if (R_VERSION < R_Version(3, 5, 0))
 
 #include <R_ext/Rdynload.h>
@@ -18,6 +14,11 @@ SEXP altrep_rle_Make(SEXP input) {
 }
 
 #else
+
+
+// Initialised at load time
+R_altrep_class_t altrep_rle_class;
+
 
 SEXP altrep_rle_Make(SEXP input) {
   SEXP res = R_new_altrep(altrep_rle_class, input, R_NilValue);
