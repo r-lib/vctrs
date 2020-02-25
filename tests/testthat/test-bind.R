@@ -500,3 +500,8 @@ test_that("cbind() deals with row names", {
     "different row names"
   )
 })
+
+test_that("can rbind data frames with matrix columns (#625)", {
+  df <- tibble(x = 1:2, y = matrix(1:4, nrow = 2))
+  expect_identical(vec_rbind(df, df), vec_slice(df, c(1, 2, 1, 2)))
+})
