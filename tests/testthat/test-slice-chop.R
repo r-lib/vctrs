@@ -441,7 +441,7 @@ test_that("missing values propagate", {
 test_that("vec_unchop() falls back to c() for foreign classes", {
   verify_errors({
     expect_error(
-      vec_unchop(list(foobar(1), foobar(2)), list(2, 1)),
+      vec_unchop(list(foobar(1), foobar(2))),
       "concatenation"
     )
   })
