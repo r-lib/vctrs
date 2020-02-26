@@ -247,6 +247,10 @@ static inline SEXP r_list(SEXP x) {
 
 #define r_str_as_character Rf_ScalarString
 
+static inline SEXP r_sym_as_character(SEXP x) {
+  return r_str_as_character(PRINTNAME(x));
+}
+
 SEXP r_as_data_frame(SEXP x);
 
 static inline void r_dbg_save(SEXP x, const char* name) {
@@ -299,6 +303,25 @@ static inline SEXP r_result_get(SEXP x, ERR err) {
   return x;
 }
 
+static inline struct vctrs_arg vec_as_arg(SEXP x) {
+  if (x == R_NilValue) {
+    return *args_empty;
+  } else {
+    return new_wrapper_arg(NULL, r_chr_get_c_string(x, 0));
+  }
+}
+
+extern SEXP fns_quote;
+static inline SEXP expr_protect(SEXP x) {
+  switch (TYPEOF(x)) {
+  case SYMSXP:
+  case LANGSXP:
+    return Rf_lang2(fns_quote, x);
+  default:
+    return x;
+  }
+}
+
 
 extern SEXP vctrs_ns_env;
 extern SEXP vctrs_shared_empty_str;
@@ -349,6 +372,8 @@ extern SEXP chrs_negate;
 extern SEXP chrs_numeric;
 extern SEXP chrs_character;
 extern SEXP chrs_empty;
+extern SEXP chrs_cast;
+extern SEXP chrs_error;
 
 extern SEXP syms_i;
 extern SEXP syms_n;
@@ -380,6 +405,11 @@ extern SEXP syms_tzone;
 extern SEXP syms_data;
 extern SEXP syms_vctrs_error_incompatible_type;
 extern SEXP syms_cnd_signal;
+extern SEXP syms_logical;
+extern SEXP syms_numeric;
+extern SEXP syms_character;
+extern SEXP syms_body;
+extern SEXP syms_parent;
 
 #define syms_names R_NamesSymbol
 

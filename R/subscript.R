@@ -31,106 +31,25 @@ vec_as_subscript <- function(i,
                              character = c("cast", "error"),
                              arg = NULL) {
   if (!missing(...)) ellipsis::check_dots_empty()
-  result_get(vec_as_subscript_result(
-    i,
-    arg = arg,
+
+  .Call(
+    vctrs_as_subscript,
+    i = i,
     logical = logical,
     numeric = numeric,
-    character = character
-  ))
+    character = character,
+    arg = arg
+  )
 }
 vec_as_subscript_result <- function(i, arg, logical, numeric, character) {
-  logical <- arg_match(logical, c("cast", "error"))
-  numeric <- arg_match(numeric, c("cast", "error"))
-  character <- arg_match(character, c("cast", "error"))
-
-  if (is_null(i) && numeric == "cast") {
-    i <- integer()
-  }
-  if (is_symbol(i) && character == "cast") {
-    i <- as_string(i)
-  }
-
-  if (!vec_is(i)) {
-    return(result(err = new_error_subscript_type(
-      i = i,
-      subscript_arg = arg,
-      logical = logical,
-      numeric = numeric,
-      character = character
-    )))
-  }
-
-  nms <- names(i)
-  orig <- i
-
-  # Coerce to base types
-  if (is.object(i)) {
-    if (vec_is_coercible(i, lgl())) {
-      i <- vec_cast(i, lgl())
-    } else if (vec_is_coercible(i, int())) {
-      i <- vec_cast(i, int())
-    } else if (vec_is_coercible(i, chr())) {
-      i <- vec_cast(i, chr())
-    } else {
-      return(result(err = new_error_subscript_type(
-        i,
-        subscript_arg = arg,
-        logical = logical,
-        numeric = numeric,
-        character = character
-      )))
-    }
-  } else if (is_double(i)) {
-    result <- tryCatch(
-    {
-      i <- vec_coercible_cast(i, int(), x_arg = arg, to_arg = "")
-      names(i) <- nms
-      result(i)
-    },
-    vctrs_error_cast_lossy = function(err) {
-      result(err = new_error_subscript_type(
-        i = i,
-        parent = err,
-        body = cnd_bullets_subscript_lossy_cast,
-        logical = logical,
-        numeric = numeric,
-        character = character
-      ))
-    })
-    return(result)
-  }
-
-  # Coerce unspecified vectors to integer only if logical indices
-  # are not allowed
-  if (logical == "error" && is_unspecified(i)) {
-    if (numeric == "cast") {
-      i <- vec_cast(i, int())
-    } else {
-      i <- vec_cast(i, chr())
-    }
-  }
-
-  action <- switch(typeof(i),
+  .Call(
+    vctrs_as_subscript_result,
+    i = i,
     logical = logical,
-    integer = numeric,
+    numeric = numeric,
     character = character,
-    "error"
+    arg = arg
   )
-
-  if (action == "error") {
-    result(err = new_error_subscript_type(
-      i = i,
-      subscript_arg = arg,
-      logical = logical,
-      numeric = numeric,
-      character = character
-    ))
-  } else {
-    # FIXME: Work around lack of character restoration in `vec_cast()`
-    names(i) <- nms
-    result(i)
-  }
 }
 
 

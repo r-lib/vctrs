@@ -1261,6 +1261,8 @@ SEXP chrs_negate = NULL;
 SEXP chrs_numeric = NULL;
 SEXP chrs_character = NULL;
 SEXP chrs_empty = NULL;
+SEXP chrs_cast = NULL;
+SEXP chrs_error = NULL;
 
 SEXP syms_i = NULL;
 SEXP syms_n = NULL;
@@ -1292,6 +1294,11 @@ SEXP syms_tzone = NULL;
 SEXP syms_data = NULL;
 SEXP syms_vctrs_error_incompatible_type = NULL;
 SEXP syms_cnd_signal = NULL;
+SEXP syms_logical = NULL;
+SEXP syms_numeric = NULL;
+SEXP syms_character = NULL;
+SEXP syms_body = NULL;
+SEXP syms_parent = NULL;
 
 SEXP fns_bracket = NULL;
 SEXP fns_quote = NULL;
@@ -1433,6 +1440,12 @@ void vctrs_init_utils(SEXP ns) {
   chrs_empty = Rf_mkString("");
   R_PreserveObject(chrs_empty);
 
+  chrs_cast = Rf_mkString("cast");
+  R_PreserveObject(chrs_cast);
+
+  chrs_error = Rf_mkString("error");
+  R_PreserveObject(chrs_error);
+
 
   classes_tibble = Rf_allocVector(STRSXP, 3);
   R_PreserveObject(classes_tibble);
@@ -1552,6 +1565,11 @@ void vctrs_init_utils(SEXP ns) {
   syms_try_catch_hnd = Rf_install("try_catch_hnd");
   syms_vctrs_error_incompatible_type = Rf_install("vctrs_error_incompatible_type");
   syms_cnd_signal = Rf_install("cnd_signal");
+  syms_logical = Rf_install("logical");
+  syms_numeric = Rf_install("numeric");
+  syms_character = Rf_install("character");
+  syms_body = Rf_install("body");
+  syms_parent = Rf_install("parent");
 
   fns_bracket = Rf_findVar(syms_bracket, R_BaseEnv);
   fns_quote = Rf_findVar(Rf_install("quote"), R_BaseEnv);

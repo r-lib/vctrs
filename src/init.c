@@ -92,6 +92,8 @@ extern SEXP vctrs_is_partial(SEXP);
 extern SEXP vctrs_is_list(SEXP);
 extern SEXP vctrs_try_catch_callback(SEXP, SEXP);
 extern SEXP vctrs_is_coercible(SEXP, SEXP, SEXP, SEXP);
+extern SEXP vctrs_as_subscript(SEXP, SEXP, SEXP, SEXP, SEXP);
+extern SEXP vctrs_as_subscript_result(SEXP, SEXP, SEXP, SEXP, SEXP);
 
 // Very experimental
 // Available in the API header
@@ -202,6 +204,8 @@ static const R_CallMethodDef CallEntries[] = {
   {"vctrs_is_list",                    (DL_FUNC) &vctrs_is_list, 1},
   {"vctrs_try_catch_callback",         (DL_FUNC) &vctrs_try_catch_callback, 2},
   {"vctrs_is_coercible",               (DL_FUNC) &vctrs_is_coercible, 4},
+  {"vctrs_as_subscript",               (DL_FUNC) &vctrs_as_subscript, 5},
+  {"vctrs_as_subscript_result",        (DL_FUNC) &vctrs_as_subscript_result, 5},
   {NULL, NULL, 0}
 };
 
@@ -266,6 +270,7 @@ void vctrs_init_names(SEXP ns);
 void vctrs_init_proxy_restore(SEXP ns);
 void vctrs_init_slice(SEXP ns);
 void vctrs_init_slice_assign(SEXP ns);
+void vctrs_init_subscript(SEXP ns);
 void vctrs_init_subscript_loc(SEXP ns);
 void vctrs_init_ptype2_dispatch(SEXP ns);
 void vctrs_init_type(SEXP ns);
@@ -281,6 +286,7 @@ SEXP vctrs_init_library(SEXP ns) {
   vctrs_init_proxy_restore(ns);
   vctrs_init_slice(ns);
   vctrs_init_slice_assign(ns);
+  vctrs_init_subscript(ns);
   vctrs_init_subscript_loc(ns);
   vctrs_init_ptype2_dispatch(ns);
   vctrs_init_type(ns);
