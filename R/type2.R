@@ -73,14 +73,11 @@ vec_typeof2_s3 <- function(x, y) {
 }
 
 # https://github.com/r-lib/vctrs/issues/571
-vec_is_coercible <- function(x, to, ..., x_arg = "x", to_arg = "to") {
-  tryCatch(
-    vctrs_error_incompatible_type = function(...) FALSE,
-    {
-      vctrs::vec_ptype2(x, to, ..., x_arg = x_arg, y_arg = to_arg)
-      TRUE
-    }
-  )
+vec_is_coercible <- function(x, y, ..., x_arg = "x", y_arg = "y") {
+  if (!missing(...)) {
+    ellipsis::check_dots_empty()
+  }
+  .Call(vctrs_is_coercible, x, y, x_arg, y_arg)
 }
 
 vec_is_subtype <- function(x, super, ..., x_arg = "x", super_arg = "super") {

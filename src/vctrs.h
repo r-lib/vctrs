@@ -10,6 +10,10 @@ typedef R_xlen_t r_ssize_t;
 
 #define VCTRS_ASSERT(condition) ((void)sizeof(char[1 - 2*!(condition)]))
 
+// An ERR indicates either a C NULL in case of no error, or a
+// condition object otherwise
+#define ERR SEXP
+
 
 // Vector types -------------------------------------------------
 
@@ -356,6 +360,7 @@ R_len_t vec_bare_dim_n(SEXP x);
 SEXP vec_cast(SEXP x, SEXP to, struct vctrs_arg* x_arg, struct vctrs_arg* to_arg);
 SEXP vec_cast_common(SEXP xs, SEXP to);
 SEXP vec_coercible_cast(SEXP x, SEXP to, struct vctrs_arg* x_arg, struct vctrs_arg* to_arg);
+bool vec_is_coercible(SEXP x, SEXP to, struct vctrs_arg* x_arg, struct vctrs_arg* to_arg, int* dir);
 SEXP vec_slice(SEXP x, SEXP index);
 SEXP vec_chop(SEXP x, SEXP indices);
 SEXP vec_slice_shaped(enum vctrs_type type, SEXP x, SEXP index);

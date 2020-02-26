@@ -1143,6 +1143,82 @@ SEXP r_as_function(SEXP x, const char* arg) {
   }
 }
 
+static SEXP syms_try_catch_hnd = NULL;
+static inline SEXP try_catch_hnd(SEXP ptr) {
+  SEXP call = PROTECT(Rf_lang2(syms_try_catch_hnd, ptr));
+  SEXP out = Rf_eval(call, vctrs_ns_env);
+  UNPROTECT(1);
+  return out;
+}
+
+struct r_try_catch_data {
+  void (*fn)(void*);
+  void* fn_data;
+
+  SEXP cnd_sym;
+
+  void (*hnd)(void*);
+  void* hnd_data;
+
+  ERR err;
+};
+
+// [[ register() ]]
+SEXP vctrs_try_catch_callback(SEXP ptr, SEXP cnd) {
+  struct r_try_catch_data* data = (struct r_try_catch_data*) R_ExternalPtrAddr(ptr);
+
+  if (cnd == R_NilValue) {
+    if (data->fn) {
+      data->fn(data->fn_data);
+    }
+  } else {
+    data->err = cnd;
+    if (data->hnd) {
+      data->hnd(data->hnd_data);
+    }
+  }
+
+  return R_NilValue;
+}
+
+static SEXP syms_try_catch_impl = NULL;
+
+// [[ include("utils.h") ]]
+ERR r_try_catch(void (*fn)(void*),
+                void* fn_data,
+                SEXP cnd_sym,
+                void (*hnd)(void*),
+                void* hnd_data) {
+
+  struct r_try_catch_data data = {
+    .fn = fn,
+    .fn_data = fn_data,
+    .cnd_sym = cnd_sym,
+    .hnd = hnd,
+    .hnd_data = hnd_data,
+    .err = NULL
+  };
+  SEXP xptr = PROTECT(R_MakeExternalPtr(&data, R_NilValue, R_NilValue));
+  SEXP hnd_fn = PROTECT(try_catch_hnd(xptr));
+
+  SEXP syms[3] = {
+    syms_data,
+    cnd_sym,
+    NULL
+  };
+  SEXP args[3] = {
+    xptr,
+    hnd_fn,
+    NULL
+  };
+
+  SEXP call = PROTECT(r_call(syms_try_catch_impl, syms, args));
+  Rf_eval(call, vctrs_ns_env);
+
+  UNPROTECT(3);
+  return data.err;
+}
+
 
 SEXP vctrs_ns_env = NULL;
 SEXP vctrs_shared_empty_str = NULL;
@@ -1213,6 +1289,8 @@ SEXP syms_subscript_action = NULL;
 SEXP syms_subscript_type = NULL;
 SEXP syms_repair = NULL;
 SEXP syms_tzone = NULL;
+SEXP syms_data = NULL;
+SEXP syms_vctrs_error_incompatible_type = NULL;
 
 SEXP fns_bracket = NULL;
 SEXP fns_quote = NULL;
@@ -1466,6 +1544,10 @@ void vctrs_init_utils(SEXP ns) {
   syms_subscript_type = Rf_install("subscript_type");
   syms_repair = Rf_install("repair");
   syms_tzone = Rf_install("tzone");
+  syms_data = Rf_install("data");
+  syms_try_catch_impl = Rf_install("try_catch_impl");
+  syms_try_catch_hnd = Rf_install("try_catch_hnd");
+  syms_vctrs_error_incompatible_type = Rf_install("vctrs_error_incompatible_type");
 
   fns_bracket = Rf_findVar(syms_bracket, R_BaseEnv);
   fns_quote = Rf_findVar(Rf_install("quote"), R_BaseEnv);

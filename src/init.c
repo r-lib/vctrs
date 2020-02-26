@@ -90,6 +90,8 @@ extern SEXP vctrs_validate_minimal_names(SEXP, SEXP);
 extern SEXP vctrs_as_names(SEXP, SEXP, SEXP);
 extern SEXP vctrs_is_partial(SEXP);
 extern SEXP vctrs_is_list(SEXP);
+extern SEXP vctrs_try_catch_callback(SEXP, SEXP);
+extern SEXP vctrs_is_coercible(SEXP, SEXP, SEXP, SEXP);
 
 // Very experimental
 // Available in the API header
@@ -198,6 +200,8 @@ static const R_CallMethodDef CallEntries[] = {
   {"vctrs_as_names",                   (DL_FUNC) &vctrs_as_names, 3},
   {"vctrs_is_partial",                 (DL_FUNC) &vctrs_is_partial, 1},
   {"vctrs_is_list",                    (DL_FUNC) &vctrs_is_list, 1},
+  {"vctrs_try_catch_callback",         (DL_FUNC) &vctrs_try_catch_callback, 2},
+  {"vctrs_is_coercible",               (DL_FUNC) &vctrs_is_coercible, 4},
   {NULL, NULL, 0}
 };
 

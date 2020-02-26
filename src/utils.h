@@ -253,6 +253,12 @@ static inline void r_dbg_save(SEXP x, const char* name) {
   Rf_defineVar(Rf_install(name), x, R_GlobalEnv);
 }
 
+ERR r_try_catch(void (*fn)(void*),
+                void* fn_data,
+                SEXP cnd_sym,
+                void (*hnd)(void*),
+                void* hnd_data);
+
 
 extern SEXP vctrs_ns_env;
 extern SEXP vctrs_shared_empty_str;
@@ -331,6 +337,8 @@ extern SEXP syms_subscript_action;
 extern SEXP syms_subscript_type;
 extern SEXP syms_repair;
 extern SEXP syms_tzone;
+extern SEXP syms_data;
+extern SEXP syms_vctrs_error_incompatible_type;
 
 #define syms_names R_NamesSymbol
 
