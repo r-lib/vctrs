@@ -10,6 +10,10 @@ typedef R_xlen_t r_ssize_t;
 
 #define VCTRS_ASSERT(condition) ((void)sizeof(char[1 - 2*!(condition)]))
 
+// An ERR indicates either a C NULL in case of no error, or a
+// condition object otherwise
+#define ERR SEXP
+
 
 // Vector types -------------------------------------------------
 

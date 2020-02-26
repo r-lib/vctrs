@@ -253,11 +253,11 @@ static inline void r_dbg_save(SEXP x, const char* name) {
   Rf_defineVar(Rf_install(name), x, R_GlobalEnv);
 }
 
-bool r_try_catch(void (*fn)(void*),
-                 void* fn_data,
-                 SEXP cnd_sym,
-                 void (*hnd)(void*),
-                 void* hnd_data);
+ERR r_try_catch(void (*fn)(void*),
+                void* fn_data,
+                SEXP cnd_sym,
+                void (*hnd)(void*),
+                void* hnd_data);
 
 
 extern SEXP vctrs_ns_env;

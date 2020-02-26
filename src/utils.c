@@ -1160,7 +1160,7 @@ struct r_try_catch_data {
   void (*hnd)(void*);
   void* hnd_data;
 
-  bool err;
+  ERR err;
 };
 
 // [[ register() ]]
@@ -1168,12 +1168,11 @@ SEXP vctrs_try_catch_callback(SEXP ptr, SEXP cnd) {
   struct r_try_catch_data* data = (struct r_try_catch_data*) R_ExternalPtrAddr(ptr);
 
   if (cnd == R_NilValue) {
-    data->err = false;
     if (data->fn) {
       data->fn(data->fn_data);
     }
   } else {
-    data->err = true;
+    data->err = cnd;
     if (data->hnd) {
       data->hnd(data->hnd_data);
     }
@@ -1185,11 +1184,11 @@ SEXP vctrs_try_catch_callback(SEXP ptr, SEXP cnd) {
 static SEXP syms_try_catch_impl = NULL;
 
 // [[ include("utils.h") ]]
-bool r_try_catch(void (*fn)(void*),
-                 void* fn_data,
-                 SEXP cnd_sym,
-                 void (*hnd)(void*),
-                 void* hnd_data) {
+ERR r_try_catch(void (*fn)(void*),
+                void* fn_data,
+                SEXP cnd_sym,
+                void (*hnd)(void*),
+                void* hnd_data) {
 
   struct r_try_catch_data data = {
     .fn = fn,
@@ -1197,7 +1196,7 @@ bool r_try_catch(void (*fn)(void*),
     .cnd_sym = cnd_sym,
     .hnd = hnd,
     .hnd_data = hnd_data,
-    .err = false
+    .err = NULL
   };
   SEXP xptr = PROTECT(R_MakeExternalPtr(&data, R_NilValue, R_NilValue));
   SEXP hnd_fn = PROTECT(try_catch_hnd(xptr));
