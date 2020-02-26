@@ -19,6 +19,10 @@ static int fill_arg_buffer(struct vctrs_arg* arg,
  * vector of size 1 containing the materialised argument tag.
  */
 SEXP vctrs_arg(struct vctrs_arg* arg) {
+  if (!arg) {
+    return chrs_empty;
+  }
+
   r_ssize_t next_size = DEFAULT_ARG_BUF_SIZE;
   r_ssize_t size;
 
