@@ -156,8 +156,12 @@ SEXP vctrs_as_subscript_result(SEXP subscript,
 
   ERR err = NULL;
   SEXP out = vec_as_subscript_opts(subscript, &opts, &err);
+  PROTECT2(out, err);
 
-  return r_result(out, err);
+  out = r_result(out, err);
+
+  UNPROTECT(2);
+  return out;
 }
 
 // [[ register() ]]
@@ -177,8 +181,12 @@ SEXP vctrs_as_subscript(SEXP subscript,
 
   ERR err = NULL;
   SEXP out = vec_as_subscript_opts(subscript, &opts, &err);
+  PROTECT2(out, err);
 
-  return r_result_get(out, err);
+  out = r_result_get(out, err);
+
+  UNPROTECT(2);
+  return out;
 }
 
 

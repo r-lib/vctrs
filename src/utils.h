@@ -11,6 +11,7 @@
   } while (0)
 
 #define PROTECT_N(x, n) (++*n, PROTECT(x))
+#define PROTECT2(x, y) (PROTECT(x), PROTECT(y))
 
 enum vctrs_class_type {
   vctrs_class_list,
@@ -275,13 +276,10 @@ static inline void r_cnd_signal(SEXP cnd) {
 
 extern SEXP result_attrib;
 
-// Inputs are protected so this can be used as return value
 static inline SEXP r_result(SEXP x, ERR err) {
-  PROTECT(x);
   if (!err) {
     err = R_NilValue;
   }
-  PROTECT(err);
 
   SEXP result = PROTECT(Rf_allocVector(VECSXP, 2));
   SET_VECTOR_ELT(result, 0, x);
@@ -290,16 +288,13 @@ static inline SEXP r_result(SEXP x, ERR err) {
   SET_ATTRIB(result, result_attrib);
   SET_OBJECT(result, 1);
 
-  UNPROTECT(3);
+  UNPROTECT(1);
   return result;
 }
 
-// Inputs are protected so this can be used as return value
 static inline SEXP r_result_get(SEXP x, ERR err) {
   if (err) {
-    PROTECT(err);
     r_cnd_signal(err);
-    UNPROTECT(1);
   }
 
   return x;
