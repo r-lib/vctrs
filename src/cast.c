@@ -489,6 +489,7 @@ static void vec_coercible_cast_e_cb(void* data_) {
   data->out = vec_cast(data->x, data->to, data->x_arg, data->to_arg);
 }
 
+// [[ include("vctrs.h") ]]
 SEXP vec_coercible_cast_e(SEXP x,
                           SEXP to,
                           struct vctrs_arg* x_arg,
@@ -510,7 +511,7 @@ SEXP vec_coercible_cast_e(SEXP x,
 
   *err = r_try_catch(&vec_coercible_cast_e_cb,
                      &data,
-                     Rf_install("vctrs_error_cast_lossy"),
+                     syms_vctrs_error_cast_lossy,
                      NULL,
                      NULL);
   return data.out;

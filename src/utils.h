@@ -406,6 +406,7 @@ extern SEXP syms_repair;
 extern SEXP syms_tzone;
 extern SEXP syms_data;
 extern SEXP syms_vctrs_error_incompatible_type;
+extern SEXP syms_vctrs_error_cast_lossy;
 extern SEXP syms_cnd_signal;
 extern SEXP syms_logical;
 extern SEXP syms_numeric;

@@ -135,11 +135,7 @@ static SEXP dbl_cast_subscript(SEXP subscript,
     return R_NilValue;
   }
 
-  // FIXME: Handle names in cast methods
-  SEXP nms = PROTECT(r_names(subscript));
-  r_poke_names(out, nms);
-
-  UNPROTECT(2);
+  UNPROTECT(1);
   return out;
 }
 
@@ -208,7 +204,7 @@ static enum subscript_type_action parse_subscript_arg_type(SEXP x, const char* k
 
 // Conditions ------------------------------------------------------------------
 
-static SEXP new_error_subscript_type_sym = NULL;
+static SEXP syms_new_error_subscript_type = NULL;
 
 static SEXP new_error_subscript_type(SEXP subscript, struct vec_as_subscript_opts* opts,
                                      SEXP body, SEXP parent) {
@@ -240,7 +236,7 @@ static SEXP new_error_subscript_type(SEXP subscript, struct vec_as_subscript_opt
     NULL
   };
 
-  SEXP call = PROTECT(r_call(new_error_subscript_type_sym, syms, args));
+  SEXP call = PROTECT(r_call(syms_new_error_subscript_type, syms, args));
   SEXP out = Rf_eval(call, vctrs_ns_env);
 
   UNPROTECT(3);
@@ -249,6 +245,6 @@ static SEXP new_error_subscript_type(SEXP subscript, struct vec_as_subscript_opt
 
 
 void vctrs_init_subscript(SEXP ns) {
-  new_error_subscript_type_sym = Rf_install("new_error_subscript_type");
+  syms_new_error_subscript_type = Rf_install("new_error_subscript_type");
   dbl_cast_subscript_body = r_env_get(ns, Rf_install("cnd_bullets_subscript_lossy_cast"));
 }

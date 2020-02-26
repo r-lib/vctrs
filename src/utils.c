@@ -1295,6 +1295,7 @@ SEXP syms_repair = NULL;
 SEXP syms_tzone = NULL;
 SEXP syms_data = NULL;
 SEXP syms_vctrs_error_incompatible_type = NULL;
+SEXP syms_vctrs_error_cast_lossy = NULL;
 SEXP syms_cnd_signal = NULL;
 SEXP syms_logical = NULL;
 SEXP syms_numeric = NULL;
@@ -1566,6 +1567,7 @@ void vctrs_init_utils(SEXP ns) {
   syms_try_catch_impl = Rf_install("try_catch_impl");
   syms_try_catch_hnd = Rf_install("try_catch_hnd");
   syms_vctrs_error_incompatible_type = Rf_install("vctrs_error_incompatible_type");
+  syms_vctrs_error_cast_lossy = Rf_install("vctrs_error_cast_lossy");
   syms_cnd_signal = Rf_install("cnd_signal");
   syms_logical = Rf_install("logical");
   syms_numeric = Rf_install("numeric");
