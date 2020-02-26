@@ -1219,6 +1219,8 @@ ERR r_try_catch(void (*fn)(void*),
   return data.err;
 }
 
+SEXP (*rlang_sym_as_character)(SEXP x);
+
 
 SEXP vctrs_ns_env = NULL;
 SEXP vctrs_shared_empty_str = NULL;
@@ -1598,6 +1600,7 @@ void vctrs_init_utils(SEXP ns) {
   rlang_unbox = (SEXP (*)(SEXP)) R_GetCCallable("rlang", "rlang_unbox");
   rlang_env_dots_values = (SEXP (*)(SEXP)) R_GetCCallable("rlang", "rlang_env_dots_values");
   rlang_env_dots_list = (SEXP (*)(SEXP)) R_GetCCallable("rlang", "rlang_env_dots_list");
+  rlang_sym_as_character = (SEXP (*)(SEXP)) R_GetCCallable("rlang", "rlang_sym_as_character");
 
   syms_as_data_frame2 = Rf_install("as.data.frame2");
   syms_colnames = Rf_install("colnames");

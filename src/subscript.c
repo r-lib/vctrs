@@ -30,7 +30,7 @@ SEXP vec_as_subscript_opts(SEXP subscript,
     break;
   case SYMSXP:
     if (opts->character == SUBSCRIPT_TYPE_ACTION_CAST) {
-      subscript = r_sym_as_character(subscript);
+      subscript = rlang_sym_as_character(subscript);
     }
     break;
   default:

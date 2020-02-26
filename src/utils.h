@@ -250,6 +250,8 @@ static inline SEXP r_list(SEXP x) {
 static inline SEXP r_sym_as_character(SEXP x) {
   return r_str_as_character(PRINTNAME(x));
 }
+// This unserialises ASCII Unicode tags of the form `<U+xxxx>`
+extern SEXP (*rlang_sym_as_character)(SEXP x);
 
 SEXP r_as_data_frame(SEXP x);
 
