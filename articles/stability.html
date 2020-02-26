@@ -182,7 +182,7 @@ It is size-unstable for the same reasons as <code><a href="https://rdrr.io/r/bas
 <span id="cb6-3"><a href="#cb6-3"></a><span class="kw"><a href="../reference/vec_ptype.html">vec_ptype_show</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span>(<span class="ot">FALSE</span>, 1L, 1L))</span>
 <span id="cb6-4"><a href="#cb6-4"></a><span class="co">#&gt; Prototype: integer</span></span></code></pre></div>
 </li>
-<li><p><code><a href="https://rdrr.io/r/utils/read.table.html">read.csv(file)</a></code> is type-unstable and size-unstable because, while you know it will return a data frame, you don’t know what columns it will return or how many rows it will have. Similarly, <code>df[[i]]</code> is not type-stable because the result depends on the <em>value</em> of <code>i</code>. There are very many important functions that can not be made type-stable or size-stable!</p></li>
+<li><p><code><a href="https://rdrr.io/r/utils/read.table.html">read.csv(file)</a></code> is type-unstable and size-unstable because, while you know it will return a data frame, you don’t know what columns it will return or how many rows it will have. Similarly, <code>df[[i]]</code> is not type-stable because the result depends on the <em>value</em> of <code>i</code>. There are many important functions that can not be made type-stable or size-stable!</p></li>
 </ol>
 <p>With this understanding of type- and size-stability in hand, we’ll use them to analyse some base R functions in greater depth and then propose alternatives with better properties.</p>
 </div>
@@ -240,7 +240,7 @@ It is size-unstable for the same reasons as <code><a href="https://rdrr.io/r/bas
 <span id="cb11-2"><a href="#cb11-2"></a><span class="co">#&gt; [[1]]</span></span>
 <span id="cb11-3"><a href="#cb11-3"></a><span class="co">#&gt; function (x, ...) </span></span>
 <span id="cb11-4"><a href="#cb11-4"></a><span class="co">#&gt; UseMethod("mean")</span></span>
-<span id="cb11-5"><a href="#cb11-5"></a><span class="co">#&gt; &lt;bytecode: 0x7ff76179f6e8&gt;</span></span>
+<span id="cb11-5"><a href="#cb11-5"></a><span class="co">#&gt; &lt;bytecode: 0x7fa3b7883ce8&gt;</span></span>
 <span id="cb11-6"><a href="#cb11-6"></a><span class="co">#&gt; &lt;environment: namespace:base&gt;</span></span>
 <span id="cb11-7"><a href="#cb11-7"></a><span class="co">#&gt; </span></span>
 <span id="cb11-8"><a href="#cb11-8"></a><span class="co">#&gt; [[2]]</span></span>
@@ -401,9 +401,9 @@ It is size-unstable for the same reasons as <code><a href="https://rdrr.io/r/bas
 <h2 class="hasAnchor">
 <a href="#ifelse" class="anchor"></a><code>ifelse()</code>
 </h2>
-<p>One of the functions that motivate the development of vctrs is <code>ifelse</code>. It has the surprising property that the result value is “A vector of the same length and attributes (including dimensions and class) as <code>test</code>”. To me, it seems more reasonable for the type of the output to be controlled by the type of the <code>yes</code> and <code>no</code> arguments.</p>
+<p>One of the functions that motivate the development of vctrs is <code><a href="https://rdrr.io/r/base/ifelse.html">ifelse()</a></code>. It has the surprising property that the result value is “A vector of the same length and attributes (including dimensions and class) as <code>test</code>”. To me, it seems more reasonable for the type of the output to be controlled by the type of the <code>yes</code> and <code>no</code> arguments.</p>
 <p>In <code>dplyr::if_else()</code> I swung too far towards strictness: it throws an error if <code>yes</code> and <code>no</code> are not the same type. This is annoying in practice because it requires typed missing values (<code>NA_character_</code> etc), and because the checks are only on the class (not the full prototype), it’s easy to create invalid output.</p>
-<p>I found it much easier understand what <code><a href="https://rdrr.io/r/base/ifelse.html">ifelse()</a></code> <em>should</em> do once I internalised the ideas of type- and size-stability:</p>
+<p>I found it much easier to understand what <code><a href="https://rdrr.io/r/base/ifelse.html">ifelse()</a></code> <em>should</em> do once I internalised the ideas of type- and size-stability:</p>
 <ul>
 <li><p>The first argument must be logical.</p></li>
 <li><p><code><a href="../reference/vec_ptype.html">vec_ptype(if_else(test, yes, no))</a></code> equals <code><a href="../reference/vec_ptype.html">vec_ptype_common(yes, no)</a></code>. Unlike <code><a href="https://rdrr.io/r/base/ifelse.html">ifelse()</a></code> this implies that <code>if_else()</code> must always evaluate both <code>yes</code> and <code>no</code> in order to figure out the correct type. I think this is consistent with <code>&amp;&amp;</code> (scalar operation, short circuits) and <code><a href="https://rdrr.io/r/base/Logic.html">&amp;</a></code> (vectorised, evaluates both sides).</p></li>
