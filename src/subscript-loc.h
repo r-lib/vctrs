@@ -38,7 +38,7 @@ struct vec_as_location_opts {
   enum num_as_location_loc_oob loc_oob;
   enum num_as_location_loc_zero loc_zero;
   enum subscript_missing missing;
-  SEXP subscript_arg;
+  struct vctrs_arg* subscript_arg;
 };
 
 extern struct vec_as_location_opts vec_as_location_default_opts_obj;
