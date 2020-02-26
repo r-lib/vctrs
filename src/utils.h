@@ -259,6 +259,46 @@ ERR r_try_catch(void (*fn)(void*),
                 void (*hnd)(void*),
                 void* hnd_data);
 
+extern SEXP vctrs_ns_env;
+extern SEXP syms_cnd_signal;
+static inline void r_cnd_signal(SEXP cnd) {
+  SEXP call = PROTECT(Rf_lang2(syms_cnd_signal, cnd));
+  Rf_eval(call, vctrs_ns_env);
+  UNPROTECT(1);
+}
+
+extern SEXP result_attrib;
+
+// Inputs are protected so this can be used as return value
+static inline SEXP r_result(SEXP x, ERR err) {
+  PROTECT(x);
+  if (!err) {
+    err = R_NilValue;
+  }
+  PROTECT(err);
+
+  SEXP result = PROTECT(Rf_allocVector(VECSXP, 2));
+  SET_VECTOR_ELT(result, 0, x);
+  SET_VECTOR_ELT(result, 1, err);
+
+  SET_ATTRIB(result, result_attrib);
+  SET_OBJECT(result, 1);
+
+  UNPROTECT(3);
+  return result;
+}
+
+// Inputs are protected so this can be used as return value
+static inline SEXP r_result_get(SEXP x, ERR err) {
+  if (err) {
+    PROTECT(err);
+    r_cnd_signal(err);
+    UNPROTECT(1);
+  }
+
+  return x;
+}
+
 
 extern SEXP vctrs_ns_env;
 extern SEXP vctrs_shared_empty_str;
@@ -339,6 +379,7 @@ extern SEXP syms_repair;
 extern SEXP syms_tzone;
 extern SEXP syms_data;
 extern SEXP syms_vctrs_error_incompatible_type;
+extern SEXP syms_cnd_signal;
 
 #define syms_names R_NamesSymbol
 

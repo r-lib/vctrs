@@ -1291,10 +1291,13 @@ SEXP syms_repair = NULL;
 SEXP syms_tzone = NULL;
 SEXP syms_data = NULL;
 SEXP syms_vctrs_error_incompatible_type = NULL;
+SEXP syms_cnd_signal = NULL;
 
 SEXP fns_bracket = NULL;
 SEXP fns_quote = NULL;
 SEXP fns_names = NULL;
+
+SEXP result_attrib = NULL;
 
 struct vctrs_arg args_empty_;
 struct vctrs_arg* args_empty = NULL;
@@ -1548,6 +1551,7 @@ void vctrs_init_utils(SEXP ns) {
   syms_try_catch_impl = Rf_install("try_catch_impl");
   syms_try_catch_hnd = Rf_install("try_catch_hnd");
   syms_vctrs_error_incompatible_type = Rf_install("vctrs_error_incompatible_type");
+  syms_cnd_signal = Rf_install("cnd_signal");
 
   fns_bracket = Rf_findVar(syms_bracket, R_BaseEnv);
   fns_quote = Rf_findVar(Rf_install("quote"), R_BaseEnv);
@@ -1590,6 +1594,25 @@ void vctrs_init_utils(SEXP ns) {
   compact_rep_attrib = Rf_cons(R_NilValue, R_NilValue);
   R_PreserveObject(compact_rep_attrib);
   SET_TAG(compact_rep_attrib, Rf_install("vctrs_compact_rep"));
+
+  {
+    SEXP result_names = PROTECT(Rf_allocVector(STRSXP, 2));
+    SET_STRING_ELT(result_names, 0, Rf_mkChar("ok"));
+    SET_STRING_ELT(result_names, 1, Rf_mkChar("err"));
+
+    result_attrib = PROTECT(Rf_cons(result_names, R_NilValue));
+    SET_TAG(result_attrib, R_NamesSymbol);
+
+    SEXP result_class = PROTECT(Rf_allocVector(STRSXP, 1));
+    SET_STRING_ELT(result_class, 0, Rf_mkChar("rlang_result"));
+
+    result_attrib = PROTECT(Rf_cons(result_class, result_attrib));
+    SET_TAG(result_attrib, R_ClassSymbol);
+
+    R_PreserveObject(result_attrib);
+    MARK_NOT_MUTABLE(result_attrib);
+    UNPROTECT(4);
+  }
 
   // We assume the following in `union vctrs_dbl_indicator`
   VCTRS_ASSERT(sizeof(double) == sizeof(int64_t));
