@@ -19,7 +19,7 @@ vec_ptype_finalise(x, ...)
 }
 \description{
 Use \code{new_partial()} when constructing a new partial type subclass;
-and use \code{is_partial()} to test if an type is partial. All subclasses
+and use \code{is_partial()} to test if a type is partial. All subclasses
 need to provide a \code{vec_ptype_finalise()} method.
 }
 \details{

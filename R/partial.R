@@ -1,7 +1,7 @@
 #' Partial type
 #'
 #' Use `new_partial()` when constructing a new partial type subclass;
-#' and use `is_partial()` to test if an type is partial. All subclasses
+#' and use `is_partial()` to test if a type is partial. All subclasses
 #' need to provide a `vec_ptype_finalise()` method.
 #'
 #' As the name suggests, a partial type _partially_ specifies a type, and
