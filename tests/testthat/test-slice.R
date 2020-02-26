@@ -4,7 +4,7 @@ test_that("vec_slice throws error with non-vector inputs", {
 })
 
 test_that("vec_slice throws error with non-vector subscripts", {
-  expect_error(vec_slice(1:3, Sys.Date()), class = "vctrs_error_incompatible_cast")
+  expect_error(vec_slice(1:3, Sys.Date()), class = "vctrs_error_subscript_type")
   expect_error(vec_slice(1:3, matrix(TRUE, nrow = 1)), "must have one dimension")
 })
 
@@ -639,3 +639,8 @@ test_that("vec_slice() with compact_seqs work with Altrep classes", {
   expect_equal(vec_slice_seq(x, 1L, 3L), c("foo", "bar", "bar"))
 })
 
+test_that("vec_slice() handles symbols and OO objects", {
+  expect_identical(vec_slice(c(a = 1, b = 2), quote(b)), c(b = 2))
+  expect_identical(vec_slice(c(a = 1, b = 2), factor("b")), c(b = 2))
+  expect_error(vec_slice(c(a = 1, b = 2), foobar("b")), class = "vctrs_error_subscript_type")
+})

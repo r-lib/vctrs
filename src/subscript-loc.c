@@ -1,5 +1,6 @@
 #include "vctrs.h"
 #include "utils.h"
+#include "subscript.h"
 #include "subscript-loc.h"
 
 static SEXP int_invert_location(SEXP subscript, R_len_t n,
@@ -289,16 +290,37 @@ SEXP vec_as_location_opts(SEXP subscript, R_len_t n, SEXP names,
     Rf_errorcall(R_NilValue, "`i` must have one dimension, not %d.", vec_dim_n(subscript));
   }
 
-  switch (TYPEOF(subscript)) {
-  case NILSXP: return vctrs_shared_empty_int;
-  case INTSXP: return int_as_location(subscript, n, opts);
-  case REALSXP: return dbl_as_location(subscript, n, opts);
-  case LGLSXP: return lgl_as_location(subscript, n, opts);
-  case STRSXP: return chr_as_location(subscript, names, opts);
+  struct vctrs_arg arg = vec_as_arg(opts->subscript_arg);
 
+  struct vec_as_subscript_opts subscript_opts = {
+    .logical = SUBSCRIPT_TYPE_ACTION_CAST,
+    .numeric = SUBSCRIPT_TYPE_ACTION_CAST,
+    .character = SUBSCRIPT_TYPE_ACTION_CAST,
+    .subscript_arg = &arg
+  };
+
+  ERR err = NULL;
+  subscript = vec_as_subscript_opts(subscript, &subscript_opts, &err);
+  PROTECT2(subscript, err);
+
+  if (err) {
+    r_cnd_signal(err);
+    never_reached("vec_as_location_opts");
+  }
+
+  SEXP out = R_NilValue;
+  switch (TYPEOF(subscript)) {
+  case NILSXP: out = vctrs_shared_empty_int; break;
+  case INTSXP: out = int_as_location(subscript, n, opts); break;
+  case REALSXP: out = dbl_as_location(subscript, n, opts); break;
+  case LGLSXP: out = lgl_as_location(subscript, n, opts); break;
+  case STRSXP: out = chr_as_location(subscript, names, opts); break;
   default: Rf_errorcall(R_NilValue, "`i` must be an integer, character, or logical vector, not a %s.",
                         Rf_type2char(TYPEOF(subscript)));
   }
+
+  UNPROTECT(2);
+  return out;
 }
 
 static void stop_subscript_arg_missing() {

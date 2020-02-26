@@ -16,6 +16,10 @@ struct vec_as_subscript_opts {
   struct vctrs_arg* subscript_arg;
 };
 
+SEXP vec_as_subscript_opts(SEXP subscript,
+                           struct vec_as_subscript_opts* opts,
+                           ERR* err);
+
 static inline SEXP subscript_type_action_chr(enum subscript_type_action action) {
   switch (action) {
   case SUBSCRIPT_TYPE_ACTION_CAST: return chrs_cast;
