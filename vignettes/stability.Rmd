@@ -117,7 +117,7 @@ To make these ideas concrete, let's apply them to a few base functions:
 1.  `read.csv(file)` is type-unstable and size-unstable because, while you know 
     it will return a data frame, you don't know what columns it will return or
     how many rows it will have. Similarly, `df[[i]]` is not type-stable because 
-    the result depends on the _value_ of `i`. There are very many important 
+    the result depends on the _value_ of `i`. There are many important 
     functions that can not be made type-stable or size-stable!
 
 With this understanding of type- and size-stability in hand, we'll use them to analyse some base R functions in greater depth and then propose alternatives with better properties.
