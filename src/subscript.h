@@ -21,6 +21,7 @@ static inline SEXP subscript_type_action_chr(enum subscript_type_action action) 
   case SUBSCRIPT_TYPE_ACTION_CAST: return chrs_cast;
   case SUBSCRIPT_TYPE_ACTION_ERROR: return chrs_error;
   }
+  never_reached("subscript_type_action_chr");
 }
 
 #endif
