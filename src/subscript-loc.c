@@ -369,6 +369,7 @@ static enum num_as_location_loc_zero parse_loc_zero(SEXP x) {
   never_reached("parse_loc_zero");
 }
 
+// [[ register() ]]
 SEXP vctrs_as_location(SEXP subscript, SEXP n_, SEXP names,
                        SEXP loc_negative, SEXP loc_oob, SEXP loc_zero,
                        SEXP missing, SEXP arg) {

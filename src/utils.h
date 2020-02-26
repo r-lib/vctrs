@@ -11,6 +11,7 @@
   } while (0)
 
 #define PROTECT_N(x, n) (++*n, PROTECT(x))
+#define PROTECT2(x, y) (PROTECT(x), PROTECT(y))
 
 enum vctrs_class_type {
   vctrs_class_list,
@@ -247,6 +248,12 @@ static inline SEXP r_list(SEXP x) {
 
 #define r_str_as_character Rf_ScalarString
 
+static inline SEXP r_sym_as_character(SEXP x) {
+  return r_str_as_character(PRINTNAME(x));
+}
+// This unserialises ASCII Unicode tags of the form `<U+xxxx>`
+extern SEXP (*rlang_sym_as_character)(SEXP x);
+
 SEXP r_as_data_frame(SEXP x);
 
 static inline void r_dbg_save(SEXP x, const char* name) {
@@ -258,6 +265,59 @@ ERR r_try_catch(void (*fn)(void*),
                 SEXP cnd_sym,
                 void (*hnd)(void*),
                 void* hnd_data);
+
+extern SEXP vctrs_ns_env;
+extern SEXP syms_cnd_signal;
+static inline void r_cnd_signal(SEXP cnd) {
+  SEXP call = PROTECT(Rf_lang2(syms_cnd_signal, cnd));
+  Rf_eval(call, vctrs_ns_env);
+  UNPROTECT(1);
+}
+
+extern SEXP result_attrib;
+
+static inline SEXP r_result(SEXP x, ERR err) {
+  if (!err) {
+    err = R_NilValue;
+  }
+
+  SEXP result = PROTECT(Rf_allocVector(VECSXP, 2));
+  SET_VECTOR_ELT(result, 0, x);
+  SET_VECTOR_ELT(result, 1, err);
+
+  SET_ATTRIB(result, result_attrib);
+  SET_OBJECT(result, 1);
+
+  UNPROTECT(1);
+  return result;
+}
+
+static inline SEXP r_result_get(SEXP x, ERR err) {
+  if (err) {
+    r_cnd_signal(err);
+  }
+
+  return x;
+}
+
+static inline struct vctrs_arg vec_as_arg(SEXP x) {
+  if (x == R_NilValue) {
+    return *args_empty;
+  } else {
+    return new_wrapper_arg(NULL, r_chr_get_c_string(x, 0));
+  }
+}
+
+extern SEXP fns_quote;
+static inline SEXP expr_protect(SEXP x) {
+  switch (TYPEOF(x)) {
+  case SYMSXP:
+  case LANGSXP:
+    return Rf_lang2(fns_quote, x);
+  default:
+    return x;
+  }
+}
 
 
 extern SEXP vctrs_ns_env;
@@ -309,6 +369,8 @@ extern SEXP chrs_negate;
 extern SEXP chrs_numeric;
 extern SEXP chrs_character;
 extern SEXP chrs_empty;
+extern SEXP chrs_cast;
+extern SEXP chrs_error;
 
 extern SEXP syms_i;
 extern SEXP syms_n;
@@ -339,6 +401,13 @@ extern SEXP syms_repair;
 extern SEXP syms_tzone;
 extern SEXP syms_data;
 extern SEXP syms_vctrs_error_incompatible_type;
+extern SEXP syms_vctrs_error_cast_lossy;
+extern SEXP syms_cnd_signal;
+extern SEXP syms_logical;
+extern SEXP syms_numeric;
+extern SEXP syms_character;
+extern SEXP syms_body;
+extern SEXP syms_parent;
 
 #define syms_names R_NamesSymbol
 

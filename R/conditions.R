@@ -518,9 +518,13 @@ arg_as_string <- function(arg) {
 }
 append_arg <- function(x, arg) {
   if (is_null(arg)) {
-    x
-  } else {
-    arg <- arg_as_string(arg)
+    return(x)
+  }
+
+  arg <- arg_as_string(arg)
+  if (nzchar(arg)) {
     glue::glue("{x} `{arg}`")
+  } else {
+    x
   }
 }
