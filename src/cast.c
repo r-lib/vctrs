@@ -423,8 +423,12 @@ static void vec_is_coercible_cb(void* data_) {
   vec_type2(data->x, data->y, data->x_arg, data->y_arg, data->dir);
 }
 
-// [[ include("vctrs.h") ]]
-bool vec_is_coercible(SEXP x, SEXP y, struct vctrs_arg* x_arg, struct vctrs_arg* y_arg, int* dir) {
+static void vec_is_coercible_e(SEXP x,
+                               SEXP y,
+                               struct vctrs_arg* x_arg,
+                               struct vctrs_arg* y_arg,
+                               int* dir,
+                               ERR* err) {
   struct vec_is_coercible_data data = {
     .x = x,
     .y = y,
@@ -433,11 +437,22 @@ bool vec_is_coercible(SEXP x, SEXP y, struct vctrs_arg* x_arg, struct vctrs_arg*
     .dir = dir
   };
 
-  return !r_try_catch(&vec_is_coercible_cb,
-                      &data,
-                      syms_vctrs_error_incompatible_type,
-                      NULL,
-                      NULL);
+  *err = r_try_catch(&vec_is_coercible_cb,
+                     &data,
+                     syms_vctrs_error_incompatible_type,
+                     NULL,
+                     NULL);
+}
+
+// [[ include("vctrs.h") ]]
+bool vec_is_coercible(SEXP x,
+                      SEXP y,
+                      struct vctrs_arg* x_arg,
+                      struct vctrs_arg* y_arg,
+                      int* dir) {
+  ERR err = NULL;
+  vec_is_coercible_e(x, y, x_arg, y_arg, dir, &err);
+  return !err;
 }
 
 // [[ register() ]]
@@ -460,6 +475,45 @@ SEXP vec_coercible_cast(SEXP x, SEXP to, struct vctrs_arg* x_arg, struct vctrs_a
   vec_type2(x, to, x_arg, to_arg, &_left);
 
   return vec_cast(x, to, x_arg, to_arg);
+}
+
+struct vec_coercible_cast_e_data {
+  SEXP x;
+  SEXP to;
+  struct vctrs_arg* x_arg;
+  struct vctrs_arg* to_arg;
+  SEXP out;
+};
+static void vec_coercible_cast_e_cb(void* data_) {
+  struct vec_coercible_cast_e_data* data = (struct vec_coercible_cast_e_data*) data_;
+  data->out = vec_cast(data->x, data->to, data->x_arg, data->to_arg);
+}
+
+SEXP vec_coercible_cast_e(SEXP x,
+                          SEXP to,
+                          struct vctrs_arg* x_arg,
+                          struct vctrs_arg* to_arg,
+                          ERR* err) {
+  int dir;
+  vec_is_coercible_e(x, to, x_arg, to_arg, &dir, err);
+  if (*err) {
+    return R_NilValue;
+  }
+
+  struct vec_coercible_cast_e_data data = {
+    .x = x,
+    .to = to,
+    .x_arg = x_arg,
+    .to_arg = to_arg,
+    .out = R_NilValue
+  };
+
+  *err = r_try_catch(&vec_coercible_cast_e_cb,
+                     &data,
+                     Rf_install("vctrs_error_cast_lossy"),
+                     NULL,
+                     NULL);
+  return data.out;
 }
 
 // [[ register() ]]
