@@ -13,6 +13,7 @@ SEXP new_list_of(SEXP x, SEXP ptype) {
 
   x = PROTECT(r_maybe_duplicate(x));
 
+  SET_ATTRIB(x, R_NilValue);
   init_list_of(x, ptype);
 
   UNPROTECT(1);
