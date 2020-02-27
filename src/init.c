@@ -6,113 +6,118 @@
 #include "altrep-rle.h"
 #include "vctrs.h"
 
-extern SEXP vctrs_list_get(SEXP, SEXP);
-extern SEXP vctrs_list_set(SEXP, SEXP, SEXP);
-extern SEXP vctrs_field_get(SEXP, SEXP);
-extern SEXP vctrs_field_set(SEXP, SEXP, SEXP);
-extern SEXP vctrs_fields(SEXP);
-extern SEXP vctrs_n_fields(SEXP);
-extern SEXP vctrs_hash(SEXP);
-extern SEXP vctrs_hash_object(SEXP);
-extern SEXP vctrs_equal_object(SEXP, SEXP);
-extern SEXP vctrs_in(SEXP, SEXP);
-extern SEXP vctrs_duplicated(SEXP);
-extern SEXP vctrs_unique_loc(SEXP);
-extern SEXP vctrs_count(SEXP);
-extern SEXP vctrs_id(SEXP);
-extern SEXP vctrs_n_distinct(SEXP);
-extern SEXP vec_split(SEXP, SEXP);
-extern SEXP vctrs_group_id(SEXP);
-extern SEXP vctrs_group_rle(SEXP);
-extern SEXP vec_group_loc(SEXP);
-extern SEXP vctrs_equal(SEXP, SEXP, SEXP);
-extern SEXP vctrs_equal_na(SEXP);
-extern SEXP vctrs_compare(SEXP, SEXP, SEXP);
-extern SEXP vec_match(SEXP, SEXP);
-extern SEXP vctrs_duplicated_any(SEXP);
-extern SEXP vctrs_size(SEXP);
-extern SEXP vec_dim(SEXP);
-extern SEXP vctrs_dim_n(SEXP);
-extern SEXP vctrs_is_unspecified(SEXP);
-extern SEXP vctrs_typeof(SEXP, SEXP);
-extern SEXP vctrs_is_vector(SEXP);
-extern SEXP vctrs_type2(SEXP, SEXP, SEXP, SEXP);
-extern SEXP vctrs_typeof2(SEXP, SEXP);
-extern SEXP vctrs_typeof2_s3(SEXP, SEXP);
-extern SEXP vctrs_cast(SEXP, SEXP, SEXP, SEXP);
-extern SEXP vctrs_as_location(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
-extern SEXP vctrs_slice(SEXP, SEXP);
-extern SEXP vctrs_init(SEXP, SEXP);
-extern SEXP vctrs_chop(SEXP, SEXP);
-extern SEXP vctrs_unchop(SEXP, SEXP, SEXP, SEXP, SEXP);
-extern SEXP vctrs_chop_seq(SEXP, SEXP, SEXP, SEXP);
-extern SEXP vec_slice_seq(SEXP, SEXP, SEXP, SEXP);
-extern SEXP vec_slice_rep(SEXP, SEXP, SEXP);
-extern SEXP vec_restore(SEXP, SEXP, SEXP);
-extern SEXP vec_restore_default(SEXP, SEXP);
-extern SEXP vec_proxy(SEXP);
-extern SEXP vec_proxy_equal(SEXP);
-extern SEXP vctrs_unspecified(SEXP);
-extern SEXP vec_type(SEXP);
-extern SEXP vec_ptype_finalise(SEXP);
-extern SEXP vctrs_minimal_names(SEXP);
-extern SEXP vctrs_unique_names(SEXP, SEXP);
-extern SEXP vctrs_as_minimal_names(SEXP);
-extern SEXP vec_names(SEXP);
-extern SEXP vctrs_is_unique_names(SEXP);
-extern SEXP vctrs_as_unique_names(SEXP, SEXP);
-extern SEXP vec_set_names(SEXP, SEXP);
-extern SEXP vctrs_df_as_dataframe(SEXP, SEXP, SEXP, SEXP);
-extern SEXP vctrs_type2_df_df(SEXP, SEXP, SEXP, SEXP);
-extern SEXP vctrs_type_info(SEXP);
-extern SEXP vctrs_proxy_info(SEXP);
-extern SEXP vctrs_class_type(SEXP);
-extern SEXP vec_bare_df_restore(SEXP, SEXP, SEXP);
-extern SEXP vctrs_recycle(SEXP, SEXP, SEXP);
-extern SEXP vctrs_coercible_cast(SEXP, SEXP, SEXP, SEXP);
-extern SEXP vec_assign(SEXP, SEXP, SEXP);
-extern SEXP vctrs_set_attributes(SEXP, SEXP);
-extern SEXP vctrs_as_df_row(SEXP, SEXP);
-extern SEXP vctrs_outer_names(SEXP, SEXP, SEXP);
-extern SEXP vctrs_df_size(SEXP);
-extern SEXP vctrs_as_df_col(SEXP, SEXP);
-extern SEXP vctrs_apply_name_spec(SEXP, SEXP, SEXP, SEXP);
-extern SEXP vctrs_proxy_recursive(SEXP, SEXP);
-extern SEXP vctrs_maybe_translate_encoding(SEXP);
-extern SEXP vctrs_maybe_translate_encoding2(SEXP, SEXP);
-extern SEXP vctrs_validate_name_repair_arg(SEXP);
-extern SEXP vctrs_validate_minimal_names(SEXP, SEXP);
-extern SEXP vctrs_as_names(SEXP, SEXP, SEXP);
-extern SEXP vctrs_is_partial(SEXP);
-extern SEXP vctrs_is_list(SEXP);
-extern SEXP vctrs_try_catch_callback(SEXP, SEXP);
-extern SEXP vctrs_is_coercible(SEXP, SEXP, SEXP, SEXP);
-extern SEXP vctrs_as_subscript(SEXP, SEXP, SEXP, SEXP, SEXP);
-extern SEXP vctrs_as_subscript_result(SEXP, SEXP, SEXP, SEXP, SEXP);
+// Compile with `-fvisibility=hidden -DHAVE_VISIBILITY_ATTRIBUTE` if you link to this library
+#include <R_ext/Visibility.h>
+#define export attribute_visible extern
+
+
+export SEXP vctrs_list_get(SEXP, SEXP);
+export SEXP vctrs_list_set(SEXP, SEXP, SEXP);
+export SEXP vctrs_field_get(SEXP, SEXP);
+export SEXP vctrs_field_set(SEXP, SEXP, SEXP);
+export SEXP vctrs_fields(SEXP);
+export SEXP vctrs_n_fields(SEXP);
+export SEXP vctrs_hash(SEXP);
+export SEXP vctrs_hash_object(SEXP);
+export SEXP vctrs_equal_object(SEXP, SEXP);
+export SEXP vctrs_in(SEXP, SEXP);
+export SEXP vctrs_duplicated(SEXP);
+export SEXP vctrs_unique_loc(SEXP);
+export SEXP vctrs_count(SEXP);
+export SEXP vctrs_id(SEXP);
+export SEXP vctrs_n_distinct(SEXP);
+export SEXP vec_split(SEXP, SEXP);
+export SEXP vctrs_group_id(SEXP);
+export SEXP vctrs_group_rle(SEXP);
+export SEXP vec_group_loc(SEXP);
+export SEXP vctrs_equal(SEXP, SEXP, SEXP);
+export SEXP vctrs_equal_na(SEXP);
+export SEXP vctrs_compare(SEXP, SEXP, SEXP);
+export SEXP vec_match(SEXP, SEXP);
+export SEXP vctrs_duplicated_any(SEXP);
+export SEXP vctrs_size(SEXP);
+export SEXP vec_dim(SEXP);
+export SEXP vctrs_dim_n(SEXP);
+export SEXP vctrs_is_unspecified(SEXP);
+export SEXP vctrs_typeof(SEXP, SEXP);
+export SEXP vctrs_is_vector(SEXP);
+export SEXP vctrs_type2(SEXP, SEXP, SEXP, SEXP);
+export SEXP vctrs_typeof2(SEXP, SEXP);
+export SEXP vctrs_typeof2_s3(SEXP, SEXP);
+export SEXP vctrs_cast(SEXP, SEXP, SEXP, SEXP);
+export SEXP vctrs_as_location(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
+export SEXP vctrs_slice(SEXP, SEXP);
+export SEXP vctrs_init(SEXP, SEXP);
+export SEXP vctrs_chop(SEXP, SEXP);
+export SEXP vctrs_unchop(SEXP, SEXP, SEXP, SEXP, SEXP);
+export SEXP vctrs_chop_seq(SEXP, SEXP, SEXP, SEXP);
+export SEXP vec_slice_seq(SEXP, SEXP, SEXP, SEXP);
+export SEXP vec_slice_rep(SEXP, SEXP, SEXP);
+export SEXP vec_restore(SEXP, SEXP, SEXP);
+export SEXP vec_restore_default(SEXP, SEXP);
+export SEXP vec_proxy(SEXP);
+export SEXP vec_proxy_equal(SEXP);
+export SEXP vctrs_unspecified(SEXP);
+export SEXP vec_type(SEXP);
+export SEXP vec_ptype_finalise(SEXP);
+export SEXP vctrs_minimal_names(SEXP);
+export SEXP vctrs_unique_names(SEXP, SEXP);
+export SEXP vctrs_as_minimal_names(SEXP);
+export SEXP vec_names(SEXP);
+export SEXP vctrs_is_unique_names(SEXP);
+export SEXP vctrs_as_unique_names(SEXP, SEXP);
+export SEXP vec_set_names(SEXP, SEXP);
+export SEXP vctrs_df_as_dataframe(SEXP, SEXP, SEXP, SEXP);
+export SEXP vctrs_type2_df_df(SEXP, SEXP, SEXP, SEXP);
+export SEXP vctrs_type_info(SEXP);
+export SEXP vctrs_proxy_info(SEXP);
+export SEXP vctrs_class_type(SEXP);
+export SEXP vec_bare_df_restore(SEXP, SEXP, SEXP);
+export SEXP vctrs_recycle(SEXP, SEXP, SEXP);
+export SEXP vctrs_coercible_cast(SEXP, SEXP, SEXP, SEXP);
+export SEXP vec_assign(SEXP, SEXP, SEXP);
+export SEXP vctrs_set_attributes(SEXP, SEXP);
+export SEXP vctrs_as_df_row(SEXP, SEXP);
+export SEXP vctrs_outer_names(SEXP, SEXP, SEXP);
+export SEXP vctrs_df_size(SEXP);
+export SEXP vctrs_as_df_col(SEXP, SEXP);
+export SEXP vctrs_apply_name_spec(SEXP, SEXP, SEXP, SEXP);
+export SEXP vctrs_proxy_recursive(SEXP, SEXP);
+export SEXP vctrs_maybe_translate_encoding(SEXP);
+export SEXP vctrs_maybe_translate_encoding2(SEXP, SEXP);
+export SEXP vctrs_validate_name_repair_arg(SEXP);
+export SEXP vctrs_validate_minimal_names(SEXP, SEXP);
+export SEXP vctrs_as_names(SEXP, SEXP, SEXP);
+export SEXP vctrs_is_partial(SEXP);
+export SEXP vctrs_is_list(SEXP);
+export SEXP vctrs_try_catch_callback(SEXP, SEXP);
+export SEXP vctrs_is_coercible(SEXP, SEXP, SEXP, SEXP);
+export SEXP vctrs_as_subscript(SEXP, SEXP, SEXP, SEXP, SEXP);
+export SEXP vctrs_as_subscript_result(SEXP, SEXP, SEXP, SEXP, SEXP);
 
 // Very experimental
 // Available in the API header
-extern R_len_t vec_size(SEXP);
-extern SEXP vec_init(SEXP, R_len_t);
-extern SEXP vec_assign_impl(SEXP, SEXP, SEXP);
-extern SEXP vec_slice_impl(SEXP, SEXP);
-extern SEXP vec_names(SEXP);
-extern SEXP vec_recycle(SEXP, R_len_t, struct vctrs_arg*);
-extern SEXP vec_chop(SEXP, SEXP);
+export R_len_t vec_size(SEXP);
+export SEXP vec_init(SEXP, R_len_t);
+export SEXP vec_assign_impl(SEXP, SEXP, SEXP);
+export SEXP vec_slice_impl(SEXP, SEXP);
+export SEXP vec_names(SEXP);
+export SEXP vec_recycle(SEXP, R_len_t, struct vctrs_arg*);
+export SEXP vec_chop(SEXP, SEXP);
 
 // Extremely experimental
 // Exported but not directly available in the API header
-extern SEXP compact_seq(R_len_t, R_len_t, bool);
-extern SEXP init_compact_seq(int*, R_len_t, R_len_t, bool);
+export SEXP compact_seq(R_len_t, R_len_t, bool);
+export SEXP init_compact_seq(int*, R_len_t, R_len_t, bool);
 
 // Extremely experimental (for dplyr)
-extern bool vec_is_vector(SEXP);
+export bool vec_is_vector(SEXP);
 
 // Defined below
-SEXP vctrs_init_library(SEXP);
+export SEXP vctrs_init_library(SEXP);
 
 // Defined in altrep-rle.h
-extern SEXP altrep_rle_Make(SEXP);
+export SEXP altrep_rle_Make(SEXP);
 void vctrs_init_altrep_rle(DllInfo* dll);
 
 static const R_CallMethodDef CallEntries[] = {
@@ -204,14 +209,14 @@ static const R_CallMethodDef CallEntries[] = {
   {NULL, NULL, 0}
 };
 
-extern SEXP vctrs_type_common(SEXP, SEXP, SEXP, SEXP);
-extern SEXP vctrs_size_common(SEXP, SEXP, SEXP, SEXP);
-extern SEXP vctrs_recycle_common(SEXP, SEXP, SEXP, SEXP);
-extern SEXP vctrs_cast_common(SEXP, SEXP, SEXP, SEXP);
-extern SEXP vctrs_rbind(SEXP, SEXP, SEXP, SEXP);
-extern SEXP vctrs_cbind(SEXP, SEXP, SEXP, SEXP);
-extern SEXP vctrs_c(SEXP, SEXP, SEXP, SEXP);
-extern SEXP vctrs_new_data_frame(SEXP);
+export SEXP vctrs_type_common(SEXP, SEXP, SEXP, SEXP);
+export SEXP vctrs_size_common(SEXP, SEXP, SEXP, SEXP);
+export SEXP vctrs_recycle_common(SEXP, SEXP, SEXP, SEXP);
+export SEXP vctrs_cast_common(SEXP, SEXP, SEXP, SEXP);
+export SEXP vctrs_rbind(SEXP, SEXP, SEXP, SEXP);
+export SEXP vctrs_cbind(SEXP, SEXP, SEXP, SEXP);
+export SEXP vctrs_c(SEXP, SEXP, SEXP, SEXP);
+export SEXP vctrs_new_data_frame(SEXP);
 
 static const R_ExternalMethodDef ExtEntries[] = {
   {"vctrs_type_common",                (DL_FUNC) &vctrs_type_common, 1},
@@ -225,7 +230,7 @@ static const R_ExternalMethodDef ExtEntries[] = {
   {NULL, NULL, 0}
 };
 
-void R_init_vctrs(DllInfo *dll)
+export void R_init_vctrs(DllInfo *dll)
 {
     R_registerRoutines(dll, NULL, CallEntries, NULL, ExtEntries);
     R_useDynamicSymbols(dll, FALSE);
