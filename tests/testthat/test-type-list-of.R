@@ -75,6 +75,15 @@ test_that("str method is reasonably correct", {
   )
 })
 
+test_that("constructor requires list input", {
+  expect_error(new_list_of(1), "must be a list")
+  expect_error(new_list_of(mtcars), "must be a list")
+})
+
+test_that("constructor requires size 0 ptype", {
+  expect_error(new_list_of(ptype = 1), "must have size 0")
+})
+
 # Subsetting --------------------------------------------------------------
 
 test_that("[ preserves type", {
