@@ -177,7 +177,7 @@ test_that("can repair names in `vec_rbind()` (#229)", {
 test_that("can construct an id column", {
   df <- data.frame(x = 1)
 
-  expect_named(vec_rbind(df, df, .names_to = "id"), c("x", "id"))
+  expect_named(vec_rbind(df, df, .names_to = "id"), c("id", "x"))
   expect_equal(vec_rbind(df, df, .names_to = "id")$id, c(1L, 2L))
 
   expect_equal(vec_rbind(a = df, b = df, .names_to = "id")$id, c("a", "b"))
@@ -212,7 +212,7 @@ test_that("can assign row names in vec_rbind()", {
 
   out <- vec_rbind(foo = df1, df2, .names_to = "id")
   exp <- mtcars[1:5, ]
-  exp$id <- c(rep("foo", 3), rep("", 2))
+  exp <- vec_cbind(id = c(rep("foo", 3), rep("", 2)), exp)
   expect_identical(out, exp)
 
   # Sequence
@@ -223,7 +223,7 @@ test_that("can assign row names in vec_rbind()", {
 
   out <- vec_rbind(foo = unrownames(df1), df2, bar = unrownames(mtcars[6, ]), .names_to = "id")
   exp <- mtcars[1:6, ]
-  exp$id <- c(rep("foo", 3), rep("", 2), "bar")
+  exp <- vec_cbind(id = c(rep("foo", 3), rep("", 2), "bar"), exp)
   row.names(exp) <- c(paste0("...", 1:3), row.names(df2), "...6")
   expect_identical(out, exp)
 })
@@ -323,7 +323,7 @@ test_that("can supply `.names_to` to `vec_rbind()` (#229)", {
 
   expect_identical(
     vec_rbind(a = x, b = y, .names_to = "quux"),
-    data_frame(foo = c(1L, 2L, 5L), bar = c(3L, 4L, 6L), quux = c("a", "a", "b"))
+    data_frame(quux = c("a", "a", "b"), foo = c(1L, 2L, 5L), bar = c(3L, 4L, 6L))
   )
   expect_identical(
     vec_rbind(a = x, b = y, .names_to = "foo"),
@@ -333,7 +333,7 @@ test_that("can supply `.names_to` to `vec_rbind()` (#229)", {
   # No names
   expect_identical(
     vec_rbind(x, y, .names_to = "quux"),
-    data_frame(foo = c(1L, 2L, 5L), bar = c(3L, 4L, 6L), quux = c(1L, 1L, 2L))
+    data_frame(quux = c(1L, 1L, 2L), foo = c(1L, 2L, 5L), bar = c(3L, 4L, 6L))
   )
   expect_identical(
     vec_rbind(x, y, .names_to = "foo"),
