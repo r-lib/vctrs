@@ -60,11 +60,11 @@ as_list_of.list <- function(x, ..., .ptype = NULL) {
 #' @export
 new_list_of <- function(x = list(), ptype = logical(), ..., class = character()) {
   if (!vec_is_list(x)) {
-    abort("`x` must be a list")
+    abort("`x` must be a list.")
   }
 
   if (vec_size(ptype) != 0L) {
-    abort("`ptype` must have size 0")
+    abort("`ptype` must have size 0.")
   }
 
   new_vctr(x, ..., ptype = ptype, class = c(class, "vctrs_list_of"))
@@ -74,12 +74,12 @@ new_list_of <- function(x = list(), ptype = logical(), ..., class = character())
 #' @rdname list_of
 validate_list_of <- function(x) {
   if (!vec_is_list(x)) {
-    abort("`x` must be a list")
+    abort("`x` must be a list.")
   }
 
   ptype <- attr(x, "ptype")
   if (vec_size(ptype) != 0L) {
-    abort("`ptype` must have size 0")
+    abort("`ptype` must have size 0.")
   }
 
   walk(x, vec_cast, to = ptype)
