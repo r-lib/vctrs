@@ -344,6 +344,20 @@ test_that("can supply `.names_to` to `vec_rbind()` (#229)", {
   expect_identical(vec_rbind(x, b = y, .names_to = "quux")$quux, c("", "", "b"))
 })
 
+test_that("can supply existing `.names_to`", {
+  x <- data.frame(a = 1, id = TRUE)
+  expect_identical(
+    vec_rbind(foo = x, bar = c(a = 2), .names_to = "id"),
+    data_frame(a = c(1, 2), id = c("foo", "bar"))
+  )
+
+  y <- data.frame(id = TRUE, a = 1)
+  expect_identical(
+    vec_rbind(foo = y, bar = c(a = 2), .names_to = "id"),
+    data_frame(id = c("foo", "bar"), a = c(1, 2))
+  )
+})
+
 test_that("vec_cbind() returns visibly (#452)", {
   # Shouldn't be needed once `check_unique` is implemented in C
   expect_visible(vctrs::vec_cbind(x = 1, .name_repair = "check_unique"))

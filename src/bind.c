@@ -67,10 +67,15 @@ static SEXP vec_rbind(SEXP xs, SEXP ptype, SEXP names_to, struct name_repair_opt
   SEXP nms = PROTECT_N(r_names(xs), &nprot);
   bool has_names = nms != R_NilValue;
   bool has_names_to = names_to != R_NilValue;
+  R_len_t names_to_loc = 0;
 
   SEXP ptype_nms = PROTECT_N(r_names(ptype), &nprot);
-  if (has_names_to && r_chr_find(ptype_nms, names_to) < 0) {
-    ptype = PROTECT_N(cbind_names_to(has_names, names_to, ptype), &nprot);
+  if (has_names_to) {
+    names_to_loc = r_chr_find(ptype_nms, names_to);
+    if (names_to_loc < 0) {
+      ptype = PROTECT_N(cbind_names_to(has_names, names_to, ptype), &nprot);
+      names_to_loc = 0;
+    }
   }
 
   // Find individual input sizes and total size of output
@@ -182,7 +187,7 @@ static SEXP vec_rbind(SEXP xs, SEXP ptype, SEXP names_to, struct name_repair_opt
     UNPROTECT(1);
   }
   if (has_names_to) {
-    out = df_poke_at(out, names_to, names_to_col);
+    out = df_poke(out, names_to_loc, names_to_col);
   }
 
   UNPROTECT(nprot);
