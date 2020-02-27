@@ -1,16 +1,11 @@
 #include <R.h>
 #include <Rinternals.h>
 #include <stdlib.h> // for NULL
-#include <stdbool.h> // for bool
+#include <stdbool.h>
 #include <R_ext/Rdynload.h>
 #include "altrep-rle.h"
 #include "vctrs.h"
 
-/* FIXME:
-   Check these declarations against the C/Fortran source code.
-*/
-
-/* .Call calls */
 extern SEXP vctrs_list_get(SEXP, SEXP);
 extern SEXP vctrs_list_set(SEXP, SEXP, SEXP);
 extern SEXP vctrs_field_get(SEXP, SEXP);
