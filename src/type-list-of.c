@@ -3,7 +3,7 @@
 
 // [[ include("utils.h") ]]
 SEXP new_list_of(SEXP x, SEXP ptype) {
-  if (TYPEOF(x) != VECSXP) {
+  if (!vec_is_list(x)) {
     Rf_errorcall(R_NilValue, "Internal error: `x` must be a list.");
   }
 
