@@ -61,7 +61,6 @@ vec_as_location <- function(i,
                             arg = NULL) {
   if (!missing(...)) ellipsis::check_dots_empty()
 
-  i <- vec_as_subscript(i, arg = arg)
   .Call(
     vctrs_as_location,
     i = i,

@@ -2,20 +2,22 @@
 #include "subscript.h"
 #include "utils.h"
 
-static SEXP new_error_subscript_type(SEXP subscript, struct vec_as_subscript_opts* opts,
-                                     SEXP body, SEXP parent);
+static SEXP new_error_subscript_type(SEXP subscript,
+                                     const struct vec_as_subscript_opts* opts,
+                                     SEXP body,
+                                     SEXP parent);
 static enum subscript_type_action parse_subscript_arg_type(SEXP x, const char* kind);
 
 static SEXP obj_cast_subscript(SEXP subscript,
-                               struct vec_as_subscript_opts* opts,
+                               const struct vec_as_subscript_opts* opts,
                                ERR* err);
 static SEXP dbl_cast_subscript(SEXP subscript,
-                               struct vec_as_subscript_opts* opts,
+                               const struct vec_as_subscript_opts* opts,
                                ERR* err);
 
 
 SEXP vec_as_subscript_opts(SEXP subscript,
-                           struct vec_as_subscript_opts* opts,
+                           const struct vec_as_subscript_opts* opts,
                            ERR* err) {
   PROTECT_INDEX subscript_pi;
   PROTECT_WITH_INDEX(subscript, &subscript_pi);
@@ -92,7 +94,7 @@ SEXP vec_as_subscript_opts(SEXP subscript,
 }
 
 static SEXP obj_cast_subscript(SEXP subscript,
-                               struct vec_as_subscript_opts* opts,
+                               const struct vec_as_subscript_opts* opts,
                                ERR* err) {
   int dir = 0;
   struct vctrs_arg* arg = opts->subscript_arg;
@@ -118,7 +120,7 @@ static SEXP obj_cast_subscript(SEXP subscript,
 
 static SEXP dbl_cast_subscript_body = NULL;
 static SEXP dbl_cast_subscript(SEXP subscript,
-                               struct vec_as_subscript_opts* opts,
+                               const struct vec_as_subscript_opts* opts,
                                ERR* err) {
   SEXP out = PROTECT(vec_coercible_cast_e(subscript,
                                           vctrs_shared_empty_int,
@@ -214,8 +216,10 @@ static enum subscript_type_action parse_subscript_arg_type(SEXP x, const char* k
 
 static SEXP syms_new_error_subscript_type = NULL;
 
-static SEXP new_error_subscript_type(SEXP subscript, struct vec_as_subscript_opts* opts,
-                                     SEXP body, SEXP parent) {
+static SEXP new_error_subscript_type(SEXP subscript,
+                                     const struct vec_as_subscript_opts* opts,
+                                     SEXP body,
+                                     SEXP parent) {
   SEXP logical = subscript_type_action_chr(opts->logical);
   SEXP numeric = subscript_type_action_chr(opts->numeric);
   SEXP character = subscript_type_action_chr(opts->character);

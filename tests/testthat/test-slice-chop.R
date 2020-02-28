@@ -100,7 +100,7 @@ test_that("vec_chop() falls back to `[` for shaped objects with no proxy", {
 
 test_that("`indices` are validated", {
   expect_error(vec_chop(1, 1), "`indices` must be a list of index values, or `NULL`")
-  expect_error(vec_chop(1, list(1.5)), class = "vctrs_error_cast_lossy")
+  expect_error(vec_chop(1, list(1.5)), class = "vctrs_error_subscript_type")
   expect_error(vec_chop(1, list(2)), class = "vctrs_error_subscript_oob")
 })
 

@@ -8,6 +8,11 @@
 * `numeric_version` and `package_version` lists are now treated as
   vectors (#723).
 
+* `vec_slice()` now properly handles symbols and S3 subscripts.
+
+* `vec_as_location()` and `vec_as_subscript()` are now fully
+  implemented in C for efficiency.
+
 * `num_as_location()` gains a new argument, `zero`, for controlling whether
   to `"remove"`, `"ignore"`, or `"error"` on zero values (#852).
 
