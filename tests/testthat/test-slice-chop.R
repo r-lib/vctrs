@@ -142,13 +142,13 @@ test_that("vec_chop(<array>, indices =) can be equivalent to the default", {
 
 test_that("`indices` cannot use names", {
   x <- set_names(1:3, c("a", "b", "c"))
-  expect_error(vec_chop(x, list("a", c("b", "c"))), "must be numeric vectors")
+  expect_error(vec_chop(x, list("a", c("b", "c"))), class = "vctrs_error_subscript_type")
 
   x <- array(1:4, c(2, 2), dimnames = list(c("r1", "r2")))
-  expect_error(vec_chop(x, list("r1")), "must be numeric vectors")
+  expect_error(vec_chop(x, list("r1")), class = "vctrs_error_subscript_type")
 
   x <- data.frame(x = 1, row.names = "r1")
-  expect_error(vec_chop(x, list("r1")), "must be numeric vectors")
+  expect_error(vec_chop(x, list("r1")), class = "vctrs_error_subscript_type")
 })
 
 test_that("fallback method with `indices` works", {
@@ -218,8 +218,8 @@ test_that("`indices` must be a list", {
 })
 
 test_that("`indices` must be a list of integers", {
-  expect_error(vec_unchop(list(1), list("x")), "must be numeric vectors")
-  expect_error(vec_unchop(list(1), list(TRUE)), "must be numeric vectors")
+  expect_error(vec_unchop(list(1), list("x")), class = "vctrs_error_subscript_type")
+  expect_error(vec_unchop(list(1), list(TRUE)), class = "vctrs_error_subscript_type")
   expect_error(vec_unchop(list(1), list(quote(name))), class = "vctrs_error_scalar_type")
 })
 
@@ -319,8 +319,9 @@ test_that("can unchop with some size 0 elements", {
   expect_identical(vec_unchop(x, indices), 2:1)
 })
 
-test_that("NULL is not a valid index", {
-  expect_error(vec_unchop(list(1, 2), list(NULL, 1)), "must be numeric vectors")
+test_that("NULL is a valid index", {
+  expect_equal(vec_unchop(list(1, 2), list(NULL, 1)), 2)
+  expect_error(vec_unchop(list(1, 2), list(NULL, 2)), class = "vctrs_error_subscript_oob")
 })
 
 test_that("unchopping recycles elements of x to the size of the index", {

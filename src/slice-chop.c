@@ -624,15 +624,7 @@ static SEXP vec_as_indices(SEXP indices, R_len_t n, SEXP names) {
 
   for (int i = 0; i < size; ++i) {
     index = VECTOR_ELT(indices, i);
-
-    switch (TYPEOF(index)) {
-    case INTSXP: break;
-    case REALSXP: break;
-    default: Rf_errorcall(R_NilValue, "All elements of `indices` must be numeric vectors.");
-    }
-
     index = vec_as_location_opts(index, n, names, &opts, &subscript_opts);
-
     SET_VECTOR_ELT(indices, i, index);
   }
 
