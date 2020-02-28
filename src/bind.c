@@ -7,6 +7,8 @@ static SEXP vec_rbind(SEXP xs, SEXP ptype, SEXP id, struct name_repair_opts* nam
 static SEXP as_df_row(SEXP x, struct name_repair_opts* name_repair);
 static SEXP as_df_row_impl(SEXP x, struct name_repair_opts* name_repair);
 struct name_repair_opts validate_bind_name_repair(SEXP name_repair, bool allow_minimal);
+static SEXP vec_cbind(SEXP xs, SEXP ptype, SEXP size, struct name_repair_opts* name_repair);
+static SEXP cbind_names_to(bool has_names, SEXP names_to, SEXP ptype);
 
 // [[ register(external = TRUE) ]]
 SEXP vctrs_rbind(SEXP call, SEXP op, SEXP args, SEXP env) {
@@ -62,11 +64,27 @@ static SEXP vec_rbind(SEXP xs, SEXP ptype, SEXP names_to, struct name_repair_opt
     Rf_errorcall(R_NilValue, "Can't bind objects that are not coercible to a data frame.");
   }
 
+  SEXP nms = PROTECT_N(r_names(xs), &nprot);
+  bool has_names = nms != R_NilValue;
+  bool has_names_to = names_to != R_NilValue;
+  R_len_t names_to_loc = 0;
+
+  if (has_names_to) {
+    SEXP ptype_nms = PROTECT(r_names(ptype));
+    names_to_loc = r_chr_find(ptype_nms, names_to);
+    UNPROTECT(1);
+
+    if (names_to_loc < 0) {
+      ptype = PROTECT_N(cbind_names_to(has_names, names_to, ptype), &nprot);
+      names_to_loc = 0;
+    }
+  }
+
   // Find individual input sizes and total size of output
   R_len_t nrow = 0;
 
   bool has_rownames = false;
-  if (names_to == R_NilValue && r_names(xs) != R_NilValue) {
+  if (!has_names_to && r_names(xs) != R_NilValue) {
     // Names of inputs become row names when `names_to` isn't supplied
     has_rownames = true;
   }
@@ -93,10 +111,6 @@ static SEXP vec_rbind(SEXP xs, SEXP ptype, SEXP names_to, struct name_repair_opt
   if (has_rownames) {
     rownames = PROTECT_N(Rf_allocVector(STRSXP, nrow), &nprot);
   }
-
-  SEXP nms = PROTECT_N(r_names(xs), &nprot);
-  bool has_names = nms != R_NilValue;
-  bool has_names_to = names_to != R_NilValue;
 
   const SEXP* nms_p = NULL;
   if (has_names) {
@@ -175,7 +189,7 @@ static SEXP vec_rbind(SEXP xs, SEXP ptype, SEXP names_to, struct name_repair_opt
     UNPROTECT(1);
   }
   if (has_names_to) {
-    out = df_poke_at(out, names_to, names_to_col);
+    out = df_poke(out, names_to_loc, names_to_col);
   }
 
   UNPROTECT(nprot);
@@ -246,8 +260,27 @@ SEXP vctrs_as_df_row(SEXP x, SEXP quiet) {
   return as_df_row(x, &name_repair_opts);
 }
 
+static SEXP cbind_names_to(bool has_names, SEXP names_to, SEXP ptype) {
+  SEXP index_ptype = has_names ? vctrs_shared_empty_chr : vctrs_shared_empty_int;
+
+  SEXP tmp = PROTECT(Rf_allocVector(VECSXP, 2));
+  SET_VECTOR_ELT(tmp, 0, index_ptype);
+  SET_VECTOR_ELT(tmp, 1, ptype);
+
+  SEXP tmp_nms = PROTECT(Rf_allocVector(STRSXP, 2));
+  SET_STRING_ELT(tmp_nms, 0, names_to);
+  SET_STRING_ELT(tmp_nms, 1, strings_empty);
+
+  r_poke_names(tmp, tmp_nms);
+
+  SEXP out = vec_cbind(tmp, R_NilValue, R_NilValue, NULL);
+
+  UNPROTECT(2);
+  return out;
+}
+
+
 static SEXP as_df_col(SEXP x, SEXP outer, bool* allow_pack);
-static SEXP vec_cbind(SEXP xs, SEXP ptype, SEXP size, struct name_repair_opts* name_repair);
 static SEXP cbind_container_type(SEXP x, void* data);
 
 // [[ register(external = TRUE) ]]

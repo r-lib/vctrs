@@ -1,8 +1,13 @@
 
 # vctrs (development version)
 
+* Breaking change: When `.id` is supplied, `vec_rbind()` now creates
+  the identifier column at the start of the data frame rather than at
+  the end.
+
 * `num_as_location()` gains a new argument, `zero`, for controlling whether
   to `"remove"`, `"ignore"`, or `"error"` on zero values (#852).
+
 
 # vctrs 0.2.3
 
