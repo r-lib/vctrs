@@ -243,24 +243,24 @@ export void R_init_vctrs(DllInfo *dll)
     R_useDynamicSymbols(dll, FALSE);
 
     // Very experimental
-    R_RegisterCCallable("vctrs", "vec_proxy", (DL_FUNC) &vec_proxy);
-    R_RegisterCCallable("vctrs", "vec_restore", (DL_FUNC) &vec_restore);
-    R_RegisterCCallable("vctrs", "vec_proxy_assign", (DL_FUNC) &vec_proxy_assign);
-    R_RegisterCCallable("vctrs", "vec_slice_impl", (DL_FUNC) &vec_slice_impl);
-    R_RegisterCCallable("vctrs", "vec_names", (DL_FUNC) &vec_names);
-    R_RegisterCCallable("vctrs", "vec_set_names", (DL_FUNC) &vec_set_names);
-    R_RegisterCCallable("vctrs", "vec_chop", (DL_FUNC) &vec_chop);
+    R_RegisterCCallable("vctrs", "vec_proxy",         (DL_FUNC) &vec_proxy);
+    R_RegisterCCallable("vctrs", "vec_restore",       (DL_FUNC) &vec_restore);
+    R_RegisterCCallable("vctrs", "vec_proxy_assign",  (DL_FUNC) &vec_proxy_assign);
+    R_RegisterCCallable("vctrs", "vec_slice_impl",    (DL_FUNC) &vec_slice_impl);
+    R_RegisterCCallable("vctrs", "vec_names",         (DL_FUNC) &vec_names);
+    R_RegisterCCallable("vctrs", "vec_set_names",     (DL_FUNC) &vec_set_names);
+    R_RegisterCCallable("vctrs", "vec_chop",          (DL_FUNC) &vec_chop);
 
     // Extremely experimental
     // Exported but not directly available in the API header
     // Some of these may eventually support R_xlen_t
-    R_RegisterCCallable("vctrs", "exp_vec_cast", (DL_FUNC) &exp_vec_cast);
-    R_RegisterCCallable("vctrs", "exp_vec_is_vector", (DL_FUNC) &exp_vec_is_vector);
-    R_RegisterCCallable("vctrs", "exp_short_vec_size", (DL_FUNC) &exp_short_vec_size);
-    R_RegisterCCallable("vctrs", "exp_short_vec_recycle", (DL_FUNC) &exp_short_vec_recycle);
-    R_RegisterCCallable("vctrs", "exp_short_vec_init", (DL_FUNC) &exp_short_vec_init);
-    R_RegisterCCallable("vctrs", "exp_short_compact_seq", (DL_FUNC) &exp_short_compact_seq);
-    R_RegisterCCallable("vctrs", "exp_short_init_compact_seq", (DL_FUNC) &exp_short_init_compact_seq);
+    R_RegisterCCallable("vctrs", "exp_vec_cast",                (DL_FUNC) &exp_vec_cast);
+    R_RegisterCCallable("vctrs", "exp_vec_is_vector",           (DL_FUNC) &exp_vec_is_vector);
+    R_RegisterCCallable("vctrs", "exp_short_vec_size",          (DL_FUNC) &exp_short_vec_size);
+    R_RegisterCCallable("vctrs", "exp_short_vec_recycle",       (DL_FUNC) &exp_short_vec_recycle);
+    R_RegisterCCallable("vctrs", "exp_short_vec_init",          (DL_FUNC) &exp_short_vec_init);
+    R_RegisterCCallable("vctrs", "exp_short_compact_seq",       (DL_FUNC) &exp_short_compact_seq);
+    R_RegisterCCallable("vctrs", "exp_short_init_compact_seq",  (DL_FUNC) &exp_short_init_compact_seq);
 
     // Altrep classes
     vctrs_init_altrep_rle(dll);
