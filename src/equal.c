@@ -1,6 +1,7 @@
 #include <math.h>
 #include "equal.h"
 #include "vctrs.h"
+#include "utils.h"
 
 
 // If `x` is a data frame, it must have been recursively proxied
@@ -33,6 +34,14 @@ int equal_scalar(SEXP x, R_len_t i, SEXP y, R_len_t j, bool na_equal) {
   }
 
   return equal_scalar_p(proxy_type, x, x_p, i, y, y_p, j, na_equal);
+}
+
+// [[ register() ]]
+SEXP vctrs_equal_scalar(SEXP x, SEXP i_, SEXP y, SEXP j_, SEXP na_equal_) {
+  R_len_t i = Rf_asInteger(i_);
+  R_len_t j = Rf_asInteger(j_);
+  bool na_equal = Rf_asLogical(na_equal_);
+  return r_lgl(equal_scalar(x, i, y, j, na_equal));
 }
 
 // [[ include("vctrs.h") ]]
