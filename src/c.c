@@ -5,7 +5,7 @@
 SEXP vctrs_type_common_impl(SEXP dots, SEXP ptype);
 
 // From slice-assign.c
-SEXP vec_assign_impl(SEXP proxy, SEXP index, SEXP value);
+SEXP vec_proxy_assign(SEXP proxy, SEXP index, SEXP value);
 
 
 // [[ register(external = TRUE) ]]
@@ -74,8 +74,6 @@ SEXP vec_c(SEXP xs,
   SEXP out_names = has_names ? Rf_allocVector(STRSXP, out_size) : R_NilValue;
   PROTECT_WITH_INDEX(out_names, &out_names_pi);
 
-  bool is_shaped = has_dim(ptype);
-
   // Compact sequences use 0-based counters
   R_len_t counter = 0;
 
@@ -91,22 +89,15 @@ SEXP vec_c(SEXP xs,
 
     init_compact_seq(idx_ptr, counter, size, true);
 
-    if (is_shaped) {
-      SEXP idx = PROTECT(r_seq(counter + 1, counter + size + 1));
-      out = vec_assign(out, idx, elt);
-      REPROTECT(out, out_pi);
-      UNPROTECT(1);
-    } else {
-      out = vec_assign_impl(out, idx, elt);
-      REPROTECT(out, out_pi);
-    }
+    out = vec_proxy_assign(out, idx, elt);
+    REPROTECT(out, out_pi);
 
     if (has_names) {
       SEXP outer = xs_names == R_NilValue ? R_NilValue : STRING_ELT(xs_names, i);
       SEXP inner = PROTECT(vec_names(x));
       SEXP x_nms = PROTECT(apply_name_spec(name_spec, outer, inner, size));
       if (x_nms != R_NilValue) {
-        out_names = vec_assign_impl(out_names, idx, x_nms);
+        out_names = chr_assign(out_names, idx, x_nms);
         REPROTECT(out_names, out_names_pi);
       }
       UNPROTECT(2);

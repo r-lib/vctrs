@@ -336,6 +336,13 @@ SEXP s3_find_method(const char* generic, SEXP x, SEXP table) {
   }
 
   SEXP class = PROTECT(Rf_getAttrib(x, R_ClassSymbol));
+
+  // Avoid corrupt objects where `x` is an OBJECT(), but the class is NULL
+  if (class == R_NilValue) {
+    UNPROTECT(1);
+    return R_NilValue;
+  }
+
   SEXP* class_ptr = STRING_PTR(class);
   int n_class = Rf_length(class);
 

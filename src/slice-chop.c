@@ -386,7 +386,7 @@ static SEXP chop_fallback_shaped(SEXP x, SEXP indices, struct vctrs_chop_info in
 SEXP vctrs_type_common_impl(SEXP dots, SEXP ptype);
 
 // From slice-assign.c
-SEXP vec_assign_impl(SEXP proxy, SEXP index, SEXP value);
+SEXP vec_proxy_assign(SEXP proxy, SEXP index, SEXP value);
 
 static SEXP vec_unchop(SEXP x,
                        SEXP indices,
@@ -483,8 +483,6 @@ static SEXP vec_unchop(SEXP x,
 
   indices = PROTECT(vec_as_indices(indices, out_size, R_NilValue));
 
-  const bool is_shaped = has_dim(ptype);
-
   PROTECT_INDEX proxy_pi;
   SEXP proxy = vec_proxy(ptype);
   PROTECT_WITH_INDEX(proxy, &proxy_pi);
@@ -507,13 +505,8 @@ static SEXP vec_unchop(SEXP x,
 
     SEXP index = VECTOR_ELT(indices, i);
 
-    if (is_shaped) {
-      proxy = vec_assign(proxy, index, elt);
-      REPROTECT(proxy, proxy_pi);
-    } else {
-      proxy = vec_assign_impl(proxy, index, elt);
-      REPROTECT(proxy, proxy_pi);
-    }
+    proxy = vec_proxy_assign(proxy, index, elt);
+    REPROTECT(proxy, proxy_pi);
 
     if (has_names) {
       R_len_t size = p_sizes[i];
@@ -521,7 +514,7 @@ static SEXP vec_unchop(SEXP x,
       SEXP inner = PROTECT(vec_names(elt));
       SEXP elt_names = PROTECT(apply_name_spec(name_spec, outer, inner, size));
       if (elt_names != R_NilValue) {
-        out_names = vec_assign_impl(out_names, index, elt_names);
+        out_names = chr_assign(out_names, index, elt_names);
         REPROTECT(out_names, out_names_pi);
       }
       UNPROTECT(2);
