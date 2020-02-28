@@ -243,6 +243,7 @@ export void R_init_vctrs(DllInfo *dll)
     R_useDynamicSymbols(dll, FALSE);
 
     // Very experimental
+    // Available in the API header
     R_RegisterCCallable("vctrs", "vec_proxy",         (DL_FUNC) &vec_proxy);
     R_RegisterCCallable("vctrs", "vec_restore",       (DL_FUNC) &vec_restore);
     R_RegisterCCallable("vctrs", "vec_proxy_assign",  (DL_FUNC) &vec_proxy_assign);
