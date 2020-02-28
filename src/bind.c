@@ -69,9 +69,11 @@ static SEXP vec_rbind(SEXP xs, SEXP ptype, SEXP names_to, struct name_repair_opt
   bool has_names_to = names_to != R_NilValue;
   R_len_t names_to_loc = 0;
 
-  SEXP ptype_nms = PROTECT_N(r_names(ptype), &nprot);
   if (has_names_to) {
+    SEXP ptype_nms = PROTECT(r_names(ptype));
     names_to_loc = r_chr_find(ptype_nms, names_to);
+    UNPROTECT(1);
+
     if (names_to_loc < 0) {
       ptype = PROTECT_N(cbind_names_to(has_names, names_to, ptype), &nprot);
       names_to_loc = 0;
