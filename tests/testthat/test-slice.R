@@ -644,3 +644,14 @@ test_that("vec_slice() handles symbols and OO objects", {
   expect_identical(vec_slice(c(a = 1, b = 2), factor("b")), c(b = 2))
   expect_error(vec_slice(c(a = 1, b = 2), foobar("b")), class = "vctrs_error_subscript_type")
 })
+
+test_that("vec_init() handles names in columns", {
+  expect_identical(
+    vec_init(data_frame(x = c(a = 1, b = 2)))$x,
+    named(na_dbl)
+  )
+  expect_identical(
+    vec_init(data_frame(x = c(1, 2)))$x,
+    na_dbl
+  )
+})
