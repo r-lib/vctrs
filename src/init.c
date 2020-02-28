@@ -101,18 +101,20 @@ extern SEXP vctrs_equal_scalar(SEXP, SEXP, SEXP, SEXP, SEXP);
 
 // Very experimental
 // Available in the API header
-extern R_len_t vec_size(SEXP);
-extern SEXP vec_init(SEXP, R_len_t);
 extern SEXP vec_proxy_assign(SEXP, SEXP, SEXP);
 extern SEXP vec_slice_impl(SEXP, SEXP);
 extern SEXP vec_names(SEXP);
-extern SEXP vec_recycle(SEXP, R_len_t, struct vctrs_arg*);
 extern SEXP vec_chop(SEXP, SEXP);
 
 // Extremely experimental
 // Exported but not directly available in the API header
 extern SEXP compact_seq(R_len_t, R_len_t, bool);
 extern SEXP init_compact_seq(int*, R_len_t, R_len_t, bool);
+
+// Extremely experimental as eventually these might support R_xlen_t
+extern R_len_t vec_size(SEXP);
+extern SEXP vec_recycle(SEXP, R_len_t, struct vctrs_arg*);
+extern SEXP vec_init(SEXP, R_len_t);
 
 // Extremely experimental (for dplyr)
 extern bool vec_is_vector(SEXP);
