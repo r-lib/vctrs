@@ -600,7 +600,6 @@ static SEXP vec_as_indices(SEXP indices, R_len_t n, SEXP names) {
     Rf_errorcall(R_NilValue, "`indices` must be a list of index values, or `NULL`.");
   }
 
-  SEXP index;
   indices = PROTECT(r_maybe_duplicate(indices));
 
   R_len_t size = vec_size(indices);
@@ -623,7 +622,7 @@ static SEXP vec_as_indices(SEXP indices, R_len_t n, SEXP names) {
   };
 
   for (int i = 0; i < size; ++i) {
-    index = VECTOR_ELT(indices, i);
+    SEXP index = VECTOR_ELT(indices, i);
     index = vec_as_location_opts(index, n, names, &opts, &subscript_opts);
     SET_VECTOR_ELT(indices, i, index);
   }
