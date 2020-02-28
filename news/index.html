@@ -154,6 +154,8 @@
 <ul>
 <li><p>Breaking change: When <code>.id</code> is supplied, <code><a href="../reference/vec_bind.html">vec_rbind()</a></code> now creates the identifier column at the start of the data frame rather than at the end.</p></li>
 <li><p><code>numeric_version</code> and <code>package_version</code> lists are now treated as vectors (<a href='https://github.com/r-lib/vctrs/issues/723'>#723</a>).</p></li>
+<li><p><code><a href="../reference/vec_slice.html">vec_slice()</a></code> now properly handles symbols and S3 subscripts.</p></li>
+<li><p><code><a href="../reference/vec_as_location.html">vec_as_location()</a></code> and <code><a href="../reference/vec_as_subscript.html">vec_as_subscript()</a></code> are now fully implemented in C for efficiency.</p></li>
 <li><p><code><a href="../reference/vec_as_location.html">num_as_location()</a></code> gains a new argument, <code>zero</code>, for controlling whether to <code>"remove"</code>, <code>"ignore"</code>, or <code>"error"</code> on zero values (<a href='https://github.com/r-lib/vctrs/issues/852'>#852</a>).</p></li>
 </ul>
 </div>
