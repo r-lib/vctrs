@@ -5,6 +5,9 @@
   the identifier column at the start of the data frame rather than at
   the end.
 
+* `numeric_version` and `package_version` lists are now treated as
+  vectors (#723).
+
 * `num_as_location()` gains a new argument, `zero`, for controlling whether
   to `"remove"`, `"ignore"`, or `"error"` on zero values (#852).
 
