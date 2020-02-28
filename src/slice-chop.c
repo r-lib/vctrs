@@ -386,7 +386,7 @@ static SEXP chop_fallback_shaped(SEXP x, SEXP indices, struct vctrs_chop_info in
 SEXP vctrs_type_common_impl(SEXP dots, SEXP ptype);
 
 // From slice-assign.c
-SEXP vec_assign_impl(SEXP proxy, SEXP index, SEXP value);
+SEXP vec_proxy_assign(SEXP proxy, SEXP index, SEXP value);
 
 static SEXP vec_unchop(SEXP x,
                        SEXP indices,
@@ -505,7 +505,7 @@ static SEXP vec_unchop(SEXP x,
 
     SEXP index = VECTOR_ELT(indices, i);
 
-    proxy = vec_assign_impl(proxy, index, elt);
+    proxy = vec_proxy_assign(proxy, index, elt);
     REPROTECT(proxy, proxy_pi);
 
     if (has_names) {

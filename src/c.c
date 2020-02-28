@@ -5,7 +5,7 @@
 SEXP vctrs_type_common_impl(SEXP dots, SEXP ptype);
 
 // From slice-assign.c
-SEXP vec_assign_impl(SEXP proxy, SEXP index, SEXP value);
+SEXP vec_proxy_assign(SEXP proxy, SEXP index, SEXP value);
 
 
 // [[ register(external = TRUE) ]]
@@ -89,7 +89,7 @@ SEXP vec_c(SEXP xs,
 
     init_compact_seq(idx_ptr, counter, size, true);
 
-    out = vec_assign_impl(out, idx, elt);
+    out = vec_proxy_assign(out, idx, elt);
     REPROTECT(out, out_pi);
 
     if (has_names) {

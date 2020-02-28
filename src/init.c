@@ -103,7 +103,7 @@ extern SEXP vctrs_equal_scalar(SEXP, SEXP, SEXP, SEXP, SEXP);
 // Available in the API header
 extern R_len_t vec_size(SEXP);
 extern SEXP vec_init(SEXP, R_len_t);
-extern SEXP vec_assign_impl(SEXP, SEXP, SEXP);
+extern SEXP vec_proxy_assign(SEXP, SEXP, SEXP);
 extern SEXP vec_slice_impl(SEXP, SEXP);
 extern SEXP vec_names(SEXP);
 extern SEXP vec_recycle(SEXP, R_len_t, struct vctrs_arg*);
@@ -245,7 +245,7 @@ export void R_init_vctrs(DllInfo *dll)
     // Very experimental
     R_RegisterCCallable("vctrs", "vec_proxy", (DL_FUNC) &vec_proxy);
     R_RegisterCCallable("vctrs", "vec_restore", (DL_FUNC) &vec_restore);
-    R_RegisterCCallable("vctrs", "vec_assign_impl", (DL_FUNC) &vec_assign_impl);
+    R_RegisterCCallable("vctrs", "vec_proxy_assign", (DL_FUNC) &vec_proxy_assign);
     R_RegisterCCallable("vctrs", "vec_slice_impl", (DL_FUNC) &vec_slice_impl);
     R_RegisterCCallable("vctrs", "vec_names", (DL_FUNC) &vec_names);
     R_RegisterCCallable("vctrs", "vec_set_names", (DL_FUNC) &vec_set_names);
