@@ -40,7 +40,8 @@ SEXP vec_assign(SEXP x, SEXP index, SEXP value) {
   index = PROTECT(vec_as_location_opts(index,
                                        vec_size(x),
                                        PROTECT(vec_names(x)),
-                                       vec_as_location_default_assign_opts));
+                                       vec_as_location_default_assign_opts,
+                                       NULL));
   value_proxy = PROTECT(vec_recycle(value_proxy, vec_size(index), &value_arg));
 
   struct vctrs_proxy_info info = vec_proxy_info(x);

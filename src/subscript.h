@@ -17,7 +17,7 @@ struct vec_as_subscript_opts {
 };
 
 SEXP vec_as_subscript_opts(SEXP subscript,
-                           struct vec_as_subscript_opts* opts,
+                           const struct vec_as_subscript_opts* opts,
                            ERR* err);
 
 static inline SEXP subscript_type_action_chr(enum subscript_type_action action) {

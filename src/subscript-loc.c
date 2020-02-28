@@ -280,25 +280,30 @@ SEXP vec_as_location(SEXP subscript, R_len_t n, SEXP names) {
   return vec_as_location_opts(subscript,
                               n,
                               names,
-                              vec_as_location_default_opts);
+                              vec_as_location_default_opts,
+                              NULL);
 }
 
 SEXP vec_as_location_opts(SEXP subscript, R_len_t n, SEXP names,
-                          const struct vec_as_location_opts* opts) {
+                          const struct vec_as_location_opts* location_opts,
+                          const struct vec_as_subscript_opts* subscript_opts) {
 
   if (vec_dim_n(subscript) != 1) {
     Rf_errorcall(R_NilValue, "`i` must have one dimension, not %d.", vec_dim_n(subscript));
   }
 
-  struct vec_as_subscript_opts subscript_opts = {
-    .logical = SUBSCRIPT_TYPE_ACTION_CAST,
-    .numeric = SUBSCRIPT_TYPE_ACTION_CAST,
-    .character = SUBSCRIPT_TYPE_ACTION_CAST,
-    .subscript_arg = opts->subscript_arg
-  };
-
   ERR err = NULL;
-  subscript = vec_as_subscript_opts(subscript, &subscript_opts, &err);
+  if (subscript_opts) {
+    subscript = vec_as_subscript_opts(subscript, subscript_opts, &err);
+  } else {
+    struct vec_as_subscript_opts default_subscript_opts = {
+      .logical = SUBSCRIPT_TYPE_ACTION_CAST,
+      .numeric = SUBSCRIPT_TYPE_ACTION_CAST,
+      .character = SUBSCRIPT_TYPE_ACTION_CAST,
+      .subscript_arg = location_opts->subscript_arg
+    };
+    subscript = vec_as_subscript_opts(subscript, &default_subscript_opts, &err);
+  }
   PROTECT2(subscript, err);
 
   if (err) {
@@ -309,10 +314,10 @@ SEXP vec_as_location_opts(SEXP subscript, R_len_t n, SEXP names,
   SEXP out = R_NilValue;
   switch (TYPEOF(subscript)) {
   case NILSXP: out = vctrs_shared_empty_int; break;
-  case INTSXP: out = int_as_location(subscript, n, opts); break;
-  case REALSXP: out = dbl_as_location(subscript, n, opts); break;
-  case LGLSXP: out = lgl_as_location(subscript, n, opts); break;
-  case STRSXP: out = chr_as_location(subscript, names, opts); break;
+  case INTSXP: out = int_as_location(subscript, n, location_opts); break;
+  case REALSXP: out = dbl_as_location(subscript, n, location_opts); break;
+  case LGLSXP: out = lgl_as_location(subscript, n, location_opts); break;
+  case STRSXP: out = chr_as_location(subscript, names, location_opts); break;
   default: Rf_errorcall(R_NilValue, "`i` must be an integer, character, or logical vector, not a %s.",
                         Rf_type2char(TYPEOF(subscript)));
   }
@@ -421,7 +426,7 @@ SEXP vctrs_as_location(SEXP subscript, SEXP n_, SEXP names,
     .subscript_arg = &arg
   };
 
-  return vec_as_location_opts(subscript, n, names, &opts);
+  return vec_as_location_opts(subscript, n, names, &opts, NULL);
 }
 
 static void stop_subscript_missing(SEXP i) {
