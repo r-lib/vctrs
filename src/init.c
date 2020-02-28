@@ -108,15 +108,12 @@ extern SEXP vec_chop(SEXP, SEXP);
 
 // Extremely experimental
 // Exported but not directly available in the API header
+// Some of these may eventually support R_xlen_t
 extern SEXP compact_seq(R_len_t, R_len_t, bool);
 extern SEXP init_compact_seq(int*, R_len_t, R_len_t, bool);
-
-// Extremely experimental as eventually these might support R_xlen_t
 extern R_len_t vec_size(SEXP);
 extern SEXP vec_recycle(SEXP, R_len_t, struct vctrs_arg*);
 extern SEXP vec_init(SEXP, R_len_t);
-
-// Extremely experimental (for dplyr)
 extern bool vec_is_vector(SEXP);
 
 // Defined below
@@ -255,16 +252,13 @@ export void R_init_vctrs(DllInfo *dll)
 
     // Extremely experimental
     // Exported but not directly available in the API header
+    // Some of these may eventually support R_xlen_t
     R_RegisterCCallable("vctrs", "vctrs_cast", (DL_FUNC) &vctrs_cast);
     R_RegisterCCallable("vctrs", "compact_seq", (DL_FUNC) &compact_seq);
     R_RegisterCCallable("vctrs", "init_compact_seq", (DL_FUNC) &init_compact_seq);
-
-    // Extremely experimental as eventually these might support R_xlen_t
     R_RegisterCCallable("vctrs", "short_vec_size", (DL_FUNC) &vec_size);
     R_RegisterCCallable("vctrs", "short_vec_recycle", (DL_FUNC) &vec_recycle);
     R_RegisterCCallable("vctrs", "short_vec_init", (DL_FUNC) &vec_init);
-
-    // Extremely experimental (for dplyr)
     R_RegisterCCallable("vctrs", "vec_is_vector", (DL_FUNC) &vec_is_vector);
 
     // Altrep classes
