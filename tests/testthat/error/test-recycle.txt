@@ -10,3 +10,11 @@ x It must be size 4 or 1, not 2.
 Error: `foo` can't be recycled to size 4.
 x It must be size 4 or 1, not 2.
 
+
+recycling to size 1 has informative error
+=========================================
+
+> vec_recycle(1:2, 1)
+Error: `x` can't be recycled to size 1.
+x It must be size 1, not 2.
+
