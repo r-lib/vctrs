@@ -235,3 +235,23 @@ test_that("if supplied, `n` must be an integer of size 1", {
 test_that("`class` must be a character vector", {
   expect_error(new_data_frame(class = 1), "must be NULL or a character vector")
 })
+
+test_that("flat width is computed", {
+  df_flat_width <- function(x) {
+    .Call(vctrs_df_flat_width, x)
+  }
+  expect_identical(df_flat_width(mtcars), ncol(mtcars))
+
+  df <- tibble(x = 1, y = tibble(x = 2, y = tibble(x = 3), z = 4), z = 5)
+  expect_identical(df_flat_width(df), 5L)
+})
+
+test_that("can flatten data frames", {
+  df_flatten <- function(x) {
+    .Call(vctrs_df_flatten, x)
+  }
+  expect_identical(df_flatten(mtcars), as.data.frame(as.list(mtcars)))
+
+  df <- tibble(x = 1, y = tibble(x = 2, y = tibble(x = 3), z = 4), z = 5)
+  expect_identical(df_flatten(df), new_data_frame(list(x = 1, x = 2, x = 3, z = 4, z = 5)))
+})
