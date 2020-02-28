@@ -98,8 +98,3 @@ vec_chop_seq <- function(x, starts, sizes, increasings = TRUE) {
   args <- vec_recycle_common(starts, sizes, increasings)
   .Call(vctrs_chop_seq, x, args[[1]], args[[2]], args[[3]])
 }
-
-# Callable from C level `vec_as_indices()` if the index is S3
-vec_as_chop_subscript <- function(index) {
-  vec_as_subscript(index, logical = "error", numeric = "cast", character = "error")
-}

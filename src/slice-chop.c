@@ -591,8 +591,6 @@ static SEXP vec_unchop_fallback(SEXP x, SEXP indices, SEXP ptype, SEXP name_spec
 
 // -----------------------------------------------------------------------------
 
-static SEXP vec_as_chop_subscript(SEXP i);
-
 static SEXP vec_as_indices(SEXP indices, R_len_t n, SEXP names) {
   if (indices == R_NilValue) {
     return indices;
@@ -608,13 +606,20 @@ static SEXP vec_as_indices(SEXP indices, R_len_t n, SEXP names) {
   R_len_t size = vec_size(indices);
 
   // Restrict index values to positive integer locations
-  struct vec_as_location_opts opts = {
+  const struct vec_as_location_opts opts = {
     .action = SUBSCRIPT_ACTION_DEFAULT,
     .missing = SUBSCRIPT_MISSING_PROPAGATE,
     .loc_negative = LOC_NEGATIVE_ERROR,
     .loc_oob = LOC_OOB_ERROR,
     .loc_zero = LOC_ZERO_ERROR,
-    .subscript_arg = R_NilValue
+    .subscript_arg = NULL
+  };
+
+  const struct vec_as_subscript_opts subscript_opts = {
+    .logical = SUBSCRIPT_TYPE_ACTION_ERROR,
+    .numeric = SUBSCRIPT_TYPE_ACTION_CAST,
+    .character = SUBSCRIPT_TYPE_ACTION_ERROR,
+    .subscript_arg = NULL
   };
 
   for (int i = 0; i < size; ++i) {
@@ -626,32 +631,11 @@ static SEXP vec_as_indices(SEXP indices, R_len_t n, SEXP names) {
     default: Rf_errorcall(R_NilValue, "All elements of `indices` must be numeric vectors.");
     }
 
-    if (OBJECT(index)) {
-      index = vec_as_chop_subscript(index);
-    }
-    PROTECT(index);
+    index = vec_as_location_opts(index, n, names, &opts, &subscript_opts);
 
-    SET_VECTOR_ELT(indices, i, vec_as_location_opts(index, n, names, &opts));
-    UNPROTECT(1);
+    SET_VECTOR_ELT(indices, i, index);
   }
 
   UNPROTECT(1);
   return indices;
-}
-
-static SEXP syms_vec_as_chop_subscript = NULL;
-static SEXP fns_vec_as_chop_subscript = NULL;
-
-static SEXP vec_as_chop_subscript(SEXP i) {
-  return vctrs_dispatch1(
-    syms_vec_as_chop_subscript, fns_vec_as_chop_subscript,
-    syms_i, i
-  );
-}
-
-// -----------------------------------------------------------------------------
-
-void vctrs_init_slice_chop(SEXP ns) {
-  syms_vec_as_chop_subscript = Rf_install("vec_as_chop_subscript");
-  fns_vec_as_chop_subscript = Rf_findVar(syms_vec_as_chop_subscript, ns);
 }
