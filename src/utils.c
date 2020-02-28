@@ -640,11 +640,16 @@ bool is_integer64(SEXP x) {
 
 void* r_vec_deref(SEXP x) {
   switch (TYPEOF(x)) {
+  case LGLSXP: return LOGICAL(x);
   case INTSXP: return INTEGER(x);
+  case REALSXP: return REAL(x);
+  case CPLXSXP: return COMPLEX(x);
   case STRSXP: return STRING_PTR(x);
+  case RAWSXP: return RAW(x);
   default: Rf_error("Unimplemented type in `r_vec_deref()`.");
   }
 }
+
 const void* r_vec_const_deref(SEXP x) {
   switch (TYPEOF(x)) {
   case INTSXP: return INTEGER_RO(x);

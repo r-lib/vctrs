@@ -9,9 +9,17 @@
 // at the R-level).
 
 struct dictionary {
+  SEXP protect;
+
   SEXP vec;
-  R_len_t* key;
+  enum vctrs_type type;
+
+  int (*equal)(const void*, R_len_t i, const void*, R_len_t j);
+  const void* vec_p;
+
   uint32_t* hash;
+  R_len_t* key;
+
   uint32_t size;
   uint32_t used;
 };
@@ -19,21 +27,22 @@ struct dictionary {
 /**
  * Initialise a dictionary
  *
- * - `dict_init()` creates a dictionary and precaches the hashes for
+ * - `new_dictionary()` creates a dictionary and precaches the hashes for
  *   each element of `x`.
  *
- * - `dict_init_partial()` creates a dictionary with precached hashes
+ * - `new_dictionary_partial()` creates a dictionary with precached hashes
  *   as well, but does not allocate an array of keys. This is useful
  *   for finding a key in another dictionary with `dict_hash_with()`.
  */
-void dict_init(struct dictionary* d, SEXP x);
-void dict_init_partial(struct dictionary* d, SEXP x);
+struct dictionary* new_dictionary(SEXP x);
+struct dictionary* new_dictionary_partial(SEXP x);
 
 #define PROTECT_DICT(d, n) do {                 \
-    PROTECT((d)->vec);                          \
-    *(n) += 1;                                  \
+    struct dictionary* d_ = (d);                \
+    PROTECT(d_->vec);                           \
+    PROTECT(d_->protect);                       \
+    *(n) += 2;                                  \
   } while(0)
-
 
 /**
  * Find key hash for a vector element

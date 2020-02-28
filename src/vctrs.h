@@ -1,3 +1,7 @@
+#ifndef VCTRS_H
+#define VCTRS_H
+
+
 #define R_NO_REMAP
 #include <R.h>
 #include <Rinternals.h>
@@ -443,6 +447,10 @@ bool equal_names(SEXP x, SEXP y);
  * The behaviour is undefined if these conditions are not true.
  */
 int equal_scalar(SEXP x, R_len_t i, SEXP y, R_len_t j, bool na_equal);
+int equal_scalar_p(SEXPTYPE type,
+                   SEXP x, const void* x_p, R_len_t i,
+                   SEXP y, const void* y_p, R_len_t j,
+                   bool na_equal);
 int compare_scalar(SEXP x, R_len_t i, SEXP y, R_len_t j, bool na_equal);
 
 uint32_t hash_object(SEXP x);
@@ -614,4 +622,7 @@ void stop_corrupt_ordered_levels(SEXP x, struct vctrs_arg* arg) __attribute__((n
 # define COMPLEX_RO(x) ((const Rcomplex*) COMPLEX(x))
 # define STRING_PTR_RO(x) ((const SEXP*) STRING_PTR(x))
 # define RAW_RO(x) ((const Rbyte*) RAW(x))
+#endif
+
+
 #endif

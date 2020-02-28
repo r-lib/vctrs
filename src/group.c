@@ -12,9 +12,8 @@ SEXP vctrs_group_id(SEXP x) {
   x = PROTECT_N(vec_proxy_equal(x), &nprot);
   x = PROTECT_N(obj_maybe_translate_encoding(x, n), &nprot);
 
-  struct dictionary d;
-  dict_init(&d, x);
-  PROTECT_DICT(&d, &nprot);
+  struct dictionary* d = new_dictionary(x);
+  PROTECT_DICT(d, &nprot);
 
   SEXP out = PROTECT_N(Rf_allocVector(INTSXP, n), &nprot);
   int* p_out = INTEGER(out);
@@ -22,11 +21,11 @@ SEXP vctrs_group_id(SEXP x) {
   R_len_t g = 1;
 
   for (int i = 0; i < n; ++i) {
-    int32_t hash = dict_hash_scalar(&d, i);
-    R_len_t key = d.key[hash];
+    int32_t hash = dict_hash_scalar(d, i);
+    R_len_t key = d->key[hash];
 
     if (key == DICT_EMPTY) {
-      dict_put(&d, hash, i);
+      dict_put(d, hash, i);
       p_out[i] = g;
       ++g;
     } else {
@@ -34,7 +33,7 @@ SEXP vctrs_group_id(SEXP x) {
     }
   }
 
-  SEXP n_groups = PROTECT_N(Rf_ScalarInteger(d.used), &nprot);
+  SEXP n_groups = PROTECT_N(Rf_ScalarInteger(d->used), &nprot);
   Rf_setAttrib(out, syms_n, n_groups);
 
   UNPROTECT(nprot);
@@ -54,9 +53,8 @@ SEXP vctrs_group_rle(SEXP x) {
   x = PROTECT_N(vec_proxy_equal(x), &nprot);
   x = PROTECT_N(obj_maybe_translate_encoding(x, n), &nprot);
 
-  struct dictionary d;
-  dict_init(&d, x);
-  PROTECT_DICT(&d, &nprot);
+  struct dictionary* d = new_dictionary(x);
+  PROTECT_DICT(d, &nprot);
 
   SEXP g = PROTECT_N(Rf_allocVector(INTSXP, n), &nprot);
   int* p_g = INTEGER(g);
@@ -71,12 +69,12 @@ SEXP vctrs_group_rle(SEXP x) {
   }
 
   // Integer vector that maps `hash` values to locations in `g`
-  SEXP map = PROTECT_N(Rf_allocVector(INTSXP, d.size), &nprot);
+  SEXP map = PROTECT_N(Rf_allocVector(INTSXP, d->size), &nprot);
   int* p_map = INTEGER(map);
 
   // Initialize first value
-  int32_t hash = dict_hash_scalar(&d, 0);
-  dict_put(&d, hash, 0);
+  int32_t hash = dict_hash_scalar(d, 0);
+  dict_put(d, hash, 0);
   p_map[hash] = 0;
   *p_g = 1;
   *p_l = 1;
@@ -84,7 +82,7 @@ SEXP vctrs_group_rle(SEXP x) {
   int loc = 1;
 
   for (int i = 1; i < n; ++i) {
-    if (equal_scalar(x, i - 1, x, i, true)) {
+    if (d->equal(d->vec_p, i - 1, d->vec_p, i)) {
       ++(*p_l);
       continue;
     }
@@ -93,12 +91,12 @@ SEXP vctrs_group_rle(SEXP x) {
     *p_l = 1;
 
     // Check if we have seen this value before
-    int32_t hash = dict_hash_scalar(&d, i);
+    int32_t hash = dict_hash_scalar(d, i);
 
-    if (d.key[hash] == DICT_EMPTY) {
-      dict_put(&d, hash, i);
+    if (d->key[hash] == DICT_EMPTY) {
+      dict_put(d, hash, i);
       p_map[hash] = loc;
-      p_g[loc] = d.used;
+      p_g[loc] = d->used;
     } else {
       p_g[loc] = p_g[p_map[hash]];
     }
@@ -109,7 +107,7 @@ SEXP vctrs_group_rle(SEXP x) {
   g = PROTECT_N(Rf_lengthgets(g, loc), &nprot);
   l = PROTECT_N(Rf_lengthgets(l, loc), &nprot);
 
-  SEXP out = new_group_rle(g, l, d.used);
+  SEXP out = new_group_rle(g, l, d->used);
 
   UNPROTECT(nprot);
   return out;
@@ -146,9 +144,8 @@ SEXP vec_group_loc(SEXP x) {
   SEXP proxy = PROTECT_N(vec_proxy_equal(x), &nprot);
   proxy = PROTECT_N(obj_maybe_translate_encoding(proxy, n), &nprot);
 
-  struct dictionary d;
-  dict_init(&d, proxy);
-  PROTECT_DICT(&d, &nprot);
+  struct dictionary* d = new_dictionary(proxy);
+  PROTECT_DICT(d, &nprot);
 
   SEXP groups = PROTECT_N(Rf_allocVector(INTSXP, n), &nprot);
   int* p_groups = INTEGER(groups);
@@ -157,11 +154,11 @@ SEXP vec_group_loc(SEXP x) {
 
   // Identify groups, this is essentially `vec_group_id()`
   for (int i = 0; i < n; ++i) {
-    int32_t hash = dict_hash_scalar(&d, i);
-    R_len_t key = d.key[hash];
+    int32_t hash = dict_hash_scalar(d, i);
+    R_len_t key = d->key[hash];
 
     if (key == DICT_EMPTY) {
-      dict_put(&d, hash, i);
+      dict_put(d, hash, i);
       p_groups[i] = g;
       ++g;
     } else {
@@ -169,7 +166,7 @@ SEXP vec_group_loc(SEXP x) {
     }
   }
 
-  int n_groups = d.used;
+  int n_groups = d->used;
 
   // Location of first occurence of each group in `x`
   SEXP key_loc = PROTECT_N(Rf_allocVector(INTSXP, n_groups), &nprot);
