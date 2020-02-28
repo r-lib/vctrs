@@ -13,6 +13,14 @@ int equal_scalar(SEXP x, R_len_t i, SEXP y, R_len_t j, bool na_equal) {
   const void* y_p = NULL;
 
   switch (proxy_type) {
+  case vctrs_type_dataframe: {
+    int n_col = Rf_length(x);
+    if (n_col != Rf_length(y)) {
+      Rf_errorcall(R_NilValue, "`x` and `y` must have the same number of columns");
+    }
+    return df_equal_scalar(x, i, y, j, na_equal, n_col);
+  }
+
   case vctrs_type_logical:   x_p = LOGICAL_RO(x);    y_p = LOGICAL_RO(y);    break;
   case vctrs_type_integer:   x_p = INTEGER_RO(x);    y_p = INTEGER_RO(y);    break;
   case vctrs_type_double:    x_p = REAL_RO(x);       y_p = REAL_RO(y);       break;
@@ -20,7 +28,8 @@ int equal_scalar(SEXP x, R_len_t i, SEXP y, R_len_t j, bool na_equal) {
   case vctrs_type_character: x_p = STRING_PTR_RO(x); y_p = STRING_PTR_RO(y); break;
   case vctrs_type_raw:       x_p = RAW_RO(x);        y_p = RAW_RO(y);        break;
   case vctrs_type_list:      x_p = x;                y_p = y;                break;
-  default: break;
+
+  default: vctrs_stop_unsupported_type(vec_typeof(x), "equal_scalar()");
   }
 
   return equal_scalar_p(proxy_type, x, x_p, i, y, y_p, j, na_equal);
@@ -31,35 +40,16 @@ int equal_scalar_p(enum vctrs_type proxy_type,
                    SEXP x, const void* x_p, R_len_t i,
                    SEXP y, const void* y_p, R_len_t j,
                    bool na_equal) {
-  // Rprintf("i: %d\n", i);
-  // Rprintf("j: %d\n", j);
-  if (x_p) {
-    switch (proxy_type) {
-    case vctrs_type_logical: return lgl_equal_scalar(((const int*) x_p) + i, ((const int*) y_p) + j, na_equal);
-    case vctrs_type_integer: return int_equal_scalar(((const int*) x_p) + i, ((const int*) y_p) + j, na_equal);
-    case vctrs_type_double: return dbl_equal_scalar(((const double*) x_p) + i, ((const double*) y_p) + j, na_equal);
-    case vctrs_type_complex: return cpl_equal_scalar(((const Rcomplex*) x_p) + i, ((const Rcomplex*) y_p) + j, na_equal);
-    case vctrs_type_character: return chr_equal_scalar(((const SEXP*) x_p) + i, ((const SEXP*) y_p) + j, na_equal);
-    case vctrs_type_raw: return raw_equal_scalar(((const Rbyte*) x_p) + i, ((const Rbyte*) y_p) + j, na_equal);
-    case vctrs_type_list: return list_equal_scalar(((const SEXP) x_p), i, ((const SEXP) y_p), j, na_equal);
-    default: break;
-    }
-  }
-
   switch (proxy_type) {
-  case vctrs_type_dataframe: {
-    int n_col = Rf_length(x);
-
-    if (n_col != Rf_length(y)) {
-      Rf_errorcall(R_NilValue, "`x` and `y` must have the same number of columns");
-    }
-
-    return df_equal_scalar(x, i, y, j, na_equal, n_col);
+  case vctrs_type_logical: return lgl_equal_scalar(((const int*) x_p) + i, ((const int*) y_p) + j, na_equal);
+  case vctrs_type_integer: return int_equal_scalar(((const int*) x_p) + i, ((const int*) y_p) + j, na_equal);
+  case vctrs_type_double: return dbl_equal_scalar(((const double*) x_p) + i, ((const double*) y_p) + j, na_equal);
+  case vctrs_type_complex: return cpl_equal_scalar(((const Rcomplex*) x_p) + i, ((const Rcomplex*) y_p) + j, na_equal);
+  case vctrs_type_character: return chr_equal_scalar(((const SEXP*) x_p) + i, ((const SEXP*) y_p) + j, na_equal);
+  case vctrs_type_raw: return raw_equal_scalar(((const Rbyte*) x_p) + i, ((const Rbyte*) y_p) + j, na_equal);
+  case vctrs_type_list: return list_equal_scalar(((const SEXP) x_p), i, ((const SEXP) y_p), j, na_equal);
+  default: vctrs_stop_unsupported_type(vec_typeof(x), "equal_scalar_p()");
   }
-  default: break;
-  }
-
-  vctrs_stop_unsupported_type(vec_typeof(x), "equal_scalar()");
 }
 
 // -----------------------------------------------------------------------------
