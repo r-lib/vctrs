@@ -140,27 +140,15 @@ test_that("vec_chop(<array>, indices =) can be equivalent to the default", {
   expect_equal(vec_chop(x, indices), vec_chop(x))
 })
 
-test_that("`indices` can use names", {
+test_that("`indices` cannot use names", {
   x <- set_names(1:3, c("a", "b", "c"))
+  expect_error(vec_chop(x, list("a", c("b", "c"))), class = "vctrs_error_subscript_type")
 
-  expect_equal(
-    vec_chop(x, list(1, 2:3)),
-    vec_chop(x, list("a", c("b", "c")))
-  )
-})
-
-test_that("`indices` can use array row names", {
   x <- array(1:4, c(2, 2), dimnames = list(c("r1", "r2")))
+  expect_error(vec_chop(x, list("r1")), class = "vctrs_error_subscript_type")
 
-  expect_equal(
-    vec_chop(x, list("r1")),
-    vec_chop(x, list(1))
-  )
-})
-
-test_that("`indices` cannot use data frame row names", {
-  df <- data.frame(x = 1, row.names = "r1")
-  expect_error(vec_chop(df, list("r1")), "Can't use character")
+  x <- data.frame(x = 1, row.names = "r1")
+  expect_error(vec_chop(x, list("r1")), class = "vctrs_error_subscript_type")
 })
 
 test_that("fallback method with `indices` works", {
@@ -230,7 +218,8 @@ test_that("`indices` must be a list", {
 })
 
 test_that("`indices` must be a list of integers", {
-  expect_error(vec_unchop(list(1), list("x")), "Can't use character names")
+  expect_error(vec_unchop(list(1), list("x")), class = "vctrs_error_subscript_type")
+  expect_error(vec_unchop(list(1), list(TRUE)), class = "vctrs_error_subscript_type")
   expect_error(vec_unchop(list(1), list(quote(name))), class = "vctrs_error_scalar_type")
 })
 
@@ -330,9 +319,9 @@ test_that("can unchop with some size 0 elements", {
   expect_identical(vec_unchop(x, indices), 2:1)
 })
 
-test_that("NULL is a valid index if we can recycle to size 0", {
-  expect_identical(vec_unchop(list(1, 2), list(NULL, 1)), 2)
-  expect_error(vec_unchop(list(1:2, 2), list(NULL, 1)), class = "vctrs_error_recycle_incompatible_size")
+test_that("NULL is a valid index", {
+  expect_equal(vec_unchop(list(1, 2), list(NULL, 1)), 2)
+  expect_error(vec_unchop(list(1, 2), list(NULL, 2)), class = "vctrs_error_subscript_oob")
 })
 
 test_that("unchopping recycles elements of x to the size of the index", {
@@ -429,17 +418,30 @@ test_that("name repair is respected and happens after ordering according to `ind
   expect_named(vec_unchop(x, indices, name_repair = "unique"), c("a...1", "a...2"))
 })
 
-test_that("errors on OOB zero values", {
-  skip("until we can error on 0 values in vec_as_location()")
-  expect_error(
-    vec_unchop(list(1, 2), list(c(1, 2), 0))
+test_that("vec_unchop() errors on unsupported location values", {
+  verify_errors({
+    expect_error(
+      vec_unchop(list(1, 2), list(c(1, 2), 0)),
+      class = "vctrs_error_subscript_type"
+    )
+    expect_error(
+      vec_unchop(list(1), list(-1)),
+      class = "vctrs_error_subscript_type"
+    )
+  })
+})
+
+test_that("missing values propagate", {
+  expect_identical(
+    vec_unchop(list(1, 2), list(c(NA_integer_, NA_integer_), c(NA_integer_, 3))),
+    c(NA, NA, 2, NA)
   )
 })
 
 test_that("vec_unchop() falls back to c() for foreign classes", {
   verify_errors({
     expect_error(
-      vec_unchop(list(foobar(1), foobar(2)), list(2, 1)),
+      vec_unchop(list(foobar(1), foobar(2))),
       "concatenation"
     )
   })
@@ -548,13 +550,45 @@ test_that("vec_unchop() fallback doesn't support `name_spec` or `ptype`", {
   })
 })
 
+test_that("vec_unchop() supports numeric S3 indices", {
+  local_methods(
+    vec_ptype2.vctrs_foobar = function(x, y, ...) UseMethod("vec_ptype2.vctrs_foobar", y),
+    vec_ptype2.vctrs_foobar.default = function(x, y, ...) vec_default_ptype2(x, y),
+    vec_ptype2.vctrs_foobar.integer = function(x, y, ...) foobar(integer()),
+    vec_cast.integer.vctrs_foobar = function(x, to, ...) vec_data(x)
+  )
+
+  expect_identical(vec_unchop(list(1), list(foobar(1L))), 1)
+})
+
+test_that("vec_unchop() does not support non-numeric S3 indices", {
+  verify_errors({
+    expect_error(
+      vec_unchop(list(1), list(factor("x"))),
+      class = "vctrs_error_subscript_type"
+    )
+    expect_error(
+      vec_unchop(list(1), list(foobar(1L))),
+      class = "vctrs_error_subscript_type"
+    )
+  })
+})
+
 test_that("vec_unchop() has informative error messages", {
   verify_output(test_path("error", "test-unchop.txt"), {
+    "# vec_unchop() errors on unsupported location values"
+    vec_unchop(list(1, 2), list(c(1, 2), 0))
+    vec_unchop(list(1), list(-1))
+
     "# vec_unchop() falls back to c() for foreign classes"
     vec_unchop(list(foobar(1), foobar(2)))
 
     "# vec_unchop() fallback doesn't support `name_spec` or `ptype`"
     vec_unchop(list(foobar(1)), name_spec = "{outer}_{inner}")
     vec_unchop(list(foobar(1)), ptype = "")
+
+    "# vec_unchop() does not support non-numeric S3 indices"
+    vec_unchop(list(1), list(factor("x")))
+    vec_unchop(list(1), list(foobar(1L)))
   })
 })

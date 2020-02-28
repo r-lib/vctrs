@@ -20,17 +20,15 @@
 #'
 #' @inheritParams vec_c
 #' @param x A vector
-#' @param indices For `vec_chop()`, a list of index values to slice `x` with,
-#'   or `NULL`. Each element of the list must be an integer, character or
-#'   logical vector that would be valid as an index in [vec_slice()]. If `NULL`,
-#'   `x` is split into its individual elements, equivalent to using an
-#'   `indices` of `as.list(vec_seq_along(x))`.
+#' @param indices For `vec_chop()`, a list of positive integer vectors to
+#'   slice `x` with, or `NULL`. If `NULL`, `x` is split into its individual
+#'   elements, equivalent to using an `indices` of `as.list(vec_seq_along(x))`.
 #'
-#'   For `vec_unchop()`, a list of integer vectors specifying the locations to
-#'   place elements of `x` in. Each element of `x` is recycled to the size
-#'   of the corresponding index vector. The size of `indices` must match the
-#'   size of `x`. If `NULL`, `x` is combined in the order it is provided in,
-#'   which is equivalent to using [vec_c()].
+#'   For `vec_unchop()`, a list of positive integer vectors specifying the
+#'   locations to place elements of `x` in. Each element of `x` is recycled to
+#'   the size of the corresponding index vector. The size of `indices` must
+#'   match the size of `x`. If `NULL`, `x` is combined in the order it is
+#'   provided in, which is equivalent to using [vec_c()].
 #' @param ptype If `NULL`, the default, the output type is determined by
 #'   computing the common type across all elements of `x`. Alternatively, you
 #'   can supply `ptype` to give the output a known type.
@@ -100,4 +98,3 @@ vec_chop_seq <- function(x, starts, sizes, increasings = TRUE) {
   args <- vec_recycle_common(starts, sizes, increasings)
   .Call(vctrs_chop_seq, x, args[[1]], args[[2]], args[[3]])
 }
-
