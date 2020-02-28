@@ -1,7 +1,7 @@
 
 test_that("`numeric_version` is a vector (#723)", {
-  x <- utils::packageVersion("rlang")
-  y <- utils::packageVersion("vctrs")
+  x <- numeric_version("0.1.0")
+  y <- numeric_version("0.2.0")
   z <- c(x, y)
 
   expect_true(vec_is(x))
