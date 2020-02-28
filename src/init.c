@@ -109,12 +109,13 @@ extern SEXP vec_chop(SEXP, SEXP);
 // Extremely experimental
 // Exported but not directly available in the API header
 // Some of these may eventually support R_xlen_t
-extern SEXP compact_seq(R_len_t, R_len_t, bool);
-extern SEXP init_compact_seq(int*, R_len_t, R_len_t, bool);
-extern R_len_t vec_size(SEXP);
-extern SEXP vec_recycle(SEXP, R_len_t, struct vctrs_arg*);
-extern SEXP vec_init(SEXP, R_len_t);
-extern bool vec_is_vector(SEXP);
+extern SEXP exp_vec_cast(SEXP, SEXP);
+extern bool exp_vec_is_vector(SEXP);
+extern R_len_t exp_short_vec_size(SEXP);
+extern SEXP exp_short_vec_recycle(SEXP, R_len_t);
+extern SEXP exp_short_vec_init(SEXP, R_len_t);
+extern SEXP exp_short_compact_seq(R_len_t, R_len_t, bool);
+extern SEXP exp_short_init_compact_seq(int*, R_len_t, R_len_t, bool);
 
 // Defined below
 SEXP vctrs_init_library(SEXP);
@@ -253,13 +254,13 @@ export void R_init_vctrs(DllInfo *dll)
     // Extremely experimental
     // Exported but not directly available in the API header
     // Some of these may eventually support R_xlen_t
-    R_RegisterCCallable("vctrs", "vctrs_cast", (DL_FUNC) &vctrs_cast);
-    R_RegisterCCallable("vctrs", "compact_seq", (DL_FUNC) &compact_seq);
-    R_RegisterCCallable("vctrs", "init_compact_seq", (DL_FUNC) &init_compact_seq);
-    R_RegisterCCallable("vctrs", "short_vec_size", (DL_FUNC) &vec_size);
-    R_RegisterCCallable("vctrs", "short_vec_recycle", (DL_FUNC) &vec_recycle);
-    R_RegisterCCallable("vctrs", "short_vec_init", (DL_FUNC) &vec_init);
-    R_RegisterCCallable("vctrs", "vec_is_vector", (DL_FUNC) &vec_is_vector);
+    R_RegisterCCallable("vctrs", "exp_vec_cast", (DL_FUNC) &exp_vec_cast);
+    R_RegisterCCallable("vctrs", "exp_vec_is_vector", (DL_FUNC) &exp_vec_is_vector);
+    R_RegisterCCallable("vctrs", "exp_short_vec_size", (DL_FUNC) &exp_short_vec_size);
+    R_RegisterCCallable("vctrs", "exp_short_vec_recycle", (DL_FUNC) &exp_short_vec_recycle);
+    R_RegisterCCallable("vctrs", "exp_short_vec_init", (DL_FUNC) &exp_short_vec_init);
+    R_RegisterCCallable("vctrs", "exp_short_compact_seq", (DL_FUNC) &exp_short_compact_seq);
+    R_RegisterCCallable("vctrs", "exp_short_init_compact_seq", (DL_FUNC) &exp_short_init_compact_seq);
 
     // Altrep classes
     vctrs_init_altrep_rle(dll);
