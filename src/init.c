@@ -6,6 +6,11 @@
 #include "altrep-rle.h"
 #include "vctrs.h"
 
+// Compile with `-fvisibility=hidden -DHAVE_VISIBILITY_ATTRIBUTE` if you link to this library
+#include <R_ext/Visibility.h>
+#define export attribute_visible extern
+
+
 extern SEXP vctrs_list_get(SEXP, SEXP);
 extern SEXP vctrs_list_set(SEXP, SEXP, SEXP);
 extern SEXP vctrs_field_get(SEXP, SEXP);
@@ -225,7 +230,7 @@ static const R_ExternalMethodDef ExtEntries[] = {
   {NULL, NULL, 0}
 };
 
-void R_init_vctrs(DllInfo *dll)
+export void R_init_vctrs(DllInfo *dll)
 {
     R_registerRoutines(dll, NULL, CallEntries, NULL, ExtEntries);
     R_useDynamicSymbols(dll, FALSE);
