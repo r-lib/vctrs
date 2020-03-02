@@ -217,8 +217,9 @@ vec_unique_count <- function(x) {
 #'
 #' # Only the first index of duplicates is returned
 #' vec_match(c("a", "b"), c("a", "b", "a", "b"))
-vec_match <- function(needles, haystack) {
-  .Call(vctrs_match, needles, haystack)
+vec_match <- function(needles, haystack, ..., na_equal = TRUE) {
+  if (!missing(...)) ellipsis::check_dots_empty()
+  .Call(vctrs_match, needles, haystack, na_equal)
 }
 
 #' @export
