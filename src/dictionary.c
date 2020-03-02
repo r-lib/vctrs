@@ -430,6 +430,7 @@ SEXP vec_match(SEXP needles, SEXP haystack) {
   }
 
   struct dictionary* d_needles = new_dictionary_partial(needles);
+  PROTECT_DICT(d_needles, &nprot);
 
   // Locate needles
   SEXP out = PROTECT_N(Rf_allocVector(INTSXP, n_needle), &nprot);
