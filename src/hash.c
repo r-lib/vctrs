@@ -2,13 +2,13 @@
 #include "utils.h"
 
 // boost::hash_combine from https://stackoverflow.com/questions/35985960
-static uint32_t hash_combine(uint32_t x, uint32_t y) {
+static inline uint32_t hash_combine(uint32_t x, uint32_t y) {
   return x ^ (y + 0x9e3779b9 + (x << 6) + (x >> 2));
 }
 
 // 32-bit mixer from murmurhash
 // https://github.com/aappleby/smhasher/blob/master/src/MurmurHash3.cpp#L68
-static uint32_t hash_int32(uint32_t x) {
+static inline uint32_t hash_int32(uint32_t x) {
   x ^= x >> 16;
   x *= 0x85ebca6b;
   x ^= x >> 13;
@@ -20,7 +20,7 @@ static uint32_t hash_int32(uint32_t x) {
 
 // 64-bit mixer from murmurhash
 // https://github.com/aappleby/smhasher/blob/master/src/MurmurHash3.cpp#L81
-static uint32_t hash_int64(int64_t x) {
+static inline uint32_t hash_int64(int64_t x) {
   x ^= x >> 33;
   x *= UINT64_C(0xff51afd7ed558ccd);
   x ^= x >> 33;
@@ -31,7 +31,7 @@ static uint32_t hash_int64(int64_t x) {
 
 // Seems like something designed specificaly for doubles should work better
 // but I haven't been able to find anything
-static uint32_t hash_double(double x) {
+static inline uint32_t hash_double(double x) {
   // Treat positive/negative 0 as equivalent
   if (x == 0.0) {
     x = 0.0;
@@ -46,28 +46,28 @@ static uint32_t hash_double(double x) {
   return hash_int64(value.i);
 }
 
-static uint32_t hash_char(SEXP x) {
+static inline uint32_t hash_char(SEXP x) {
   return hash_int64((intptr_t) x);
 }
 
 // Hashing scalars -----------------------------------------------------
 
-static uint32_t lgl_hash_scalar(const int* x);
-static uint32_t int_hash_scalar(const int* x);
-static uint32_t dbl_hash_scalar(const double* x);
-static uint32_t cpl_hash_scalar(const Rcomplex* x);
-static uint32_t chr_hash_scalar(const SEXP* x);
-static uint32_t raw_hash_scalar(const Rbyte* x);
-static uint32_t list_hash_scalar(SEXP x, R_len_t i);
+static inline uint32_t lgl_hash_scalar(const int* x);
+static inline uint32_t int_hash_scalar(const int* x);
+static inline uint32_t dbl_hash_scalar(const double* x);
+static inline uint32_t cpl_hash_scalar(const Rcomplex* x);
+static inline uint32_t chr_hash_scalar(const SEXP* x);
+static inline uint32_t raw_hash_scalar(const Rbyte* x);
+static inline uint32_t list_hash_scalar(SEXP x, R_len_t i);
 
 
-static uint32_t lgl_hash_scalar(const int* x) {
+static inline uint32_t lgl_hash_scalar(const int* x) {
   return hash_int32(*x);
 }
-static uint32_t int_hash_scalar(const int* x) {
+static inline uint32_t int_hash_scalar(const int* x) {
   return hash_int32(*x);
 }
-static uint32_t dbl_hash_scalar(const double* x) {
+static inline uint32_t dbl_hash_scalar(const double* x) {
   double val = *x;
 
   // Hash all NAs and NaNs to same value (i.e. ignoring significand)
@@ -79,20 +79,20 @@ static uint32_t dbl_hash_scalar(const double* x) {
 
   return hash_double(val);
 }
-static uint32_t cpl_hash_scalar(const Rcomplex* x) {
+static inline uint32_t cpl_hash_scalar(const Rcomplex* x) {
   uint32_t hash = 0;
   hash = hash_combine(hash, dbl_hash_scalar(&x->r));
   hash = hash_combine(hash, dbl_hash_scalar(&x->i));
   return hash;
 }
-static uint32_t chr_hash_scalar(const SEXP* x) {
+static inline uint32_t chr_hash_scalar(const SEXP* x) {
   return hash_char(*x);
 }
-static uint32_t raw_hash_scalar(const Rbyte* x) {
+static inline uint32_t raw_hash_scalar(const Rbyte* x) {
   return hash_int32(*x);
 }
 
-static uint32_t list_hash_scalar(SEXP x, R_len_t i) {
+static inline uint32_t list_hash_scalar(SEXP x, R_len_t i) {
   return hash_object(VECTOR_ELT(x, i));
 }
 
@@ -214,14 +214,14 @@ static uint32_t fn_hash(SEXP x) {
 
 // Fill hash array -----------------------------------------------------
 
-static void lgl_hash_fill(uint32_t* p, R_len_t size, SEXP x);
-static void int_hash_fill(uint32_t* p, R_len_t size, SEXP x);
-static void dbl_hash_fill(uint32_t* p, R_len_t size, SEXP x);
-static void cpl_hash_fill(uint32_t* p, R_len_t size, SEXP x);
-static void chr_hash_fill(uint32_t* p, R_len_t size, SEXP x);
-static void raw_hash_fill(uint32_t* p, R_len_t size, SEXP x);
-static void list_hash_fill(uint32_t* p, R_len_t size, SEXP x);
-static void df_hash_fill(uint32_t* p, R_len_t size, SEXP x);
+static inline void lgl_hash_fill(uint32_t* p, R_len_t size, SEXP x);
+static inline void int_hash_fill(uint32_t* p, R_len_t size, SEXP x);
+static inline void dbl_hash_fill(uint32_t* p, R_len_t size, SEXP x);
+static inline void cpl_hash_fill(uint32_t* p, R_len_t size, SEXP x);
+static inline void chr_hash_fill(uint32_t* p, R_len_t size, SEXP x);
+static inline void raw_hash_fill(uint32_t* p, R_len_t size, SEXP x);
+static inline void list_hash_fill(uint32_t* p, R_len_t size, SEXP x);
+static inline void df_hash_fill(uint32_t* p, R_len_t size, SEXP x);
 
 // Not compatible with hash_scalar
 // [[ include("vctrs.h") ]]
@@ -261,22 +261,22 @@ void hash_fill(uint32_t* p, R_len_t size, SEXP x) {
     p[i] = hash_combine(p[i], HASHER(xp));      \
   }
 
-static void lgl_hash_fill(uint32_t* p, R_len_t size, SEXP x) {
+static inline void lgl_hash_fill(uint32_t* p, R_len_t size, SEXP x) {
   HASH_FILL(int, LOGICAL_RO, lgl_hash_scalar);
 }
-static void int_hash_fill(uint32_t* p, R_len_t size, SEXP x) {
+static inline void int_hash_fill(uint32_t* p, R_len_t size, SEXP x) {
   HASH_FILL(int, INTEGER_RO, int_hash_scalar);
 }
-static void dbl_hash_fill(uint32_t* p, R_len_t size, SEXP x) {
+static inline void dbl_hash_fill(uint32_t* p, R_len_t size, SEXP x) {
   HASH_FILL(double, REAL_RO, dbl_hash_scalar);
 }
-static void cpl_hash_fill(uint32_t* p, R_len_t size, SEXP x) {
+static inline void cpl_hash_fill(uint32_t* p, R_len_t size, SEXP x) {
   HASH_FILL(Rcomplex, COMPLEX_RO, cpl_hash_scalar);
 }
-static void chr_hash_fill(uint32_t* p, R_len_t size, SEXP x) {
+static inline void chr_hash_fill(uint32_t* p, R_len_t size, SEXP x) {
   HASH_FILL(SEXP, STRING_PTR_RO, chr_hash_scalar);
 }
-static void raw_hash_fill(uint32_t* p, R_len_t size, SEXP x) {
+static inline void raw_hash_fill(uint32_t* p, R_len_t size, SEXP x) {
   HASH_FILL(Rbyte, RAW_RO, raw_hash_scalar);
 }
 
