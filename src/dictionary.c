@@ -29,25 +29,25 @@ static int nil_equal(const void* x, R_len_t i, const void* y, R_len_t j) {
   Rf_error("Internal error: Shouldn't compare NULL in dictionary.");
 }
 static int lgl_equal(const void* x, R_len_t i, const void* y, R_len_t j) {
-  return lgl_equal_scalar(((const int*) x) + i, ((const int*) y) + j, true);
+  return lgl_equal_scalar_na_equal(((const int*) x) + i, ((const int*) y) + j);
 }
 static int int_equal(const void* x, R_len_t i, const void* y, R_len_t j) {
-  return int_equal_scalar(((const int*) x) + i, ((const int*) y) + j, true);
+  return int_equal_scalar_na_equal(((const int*) x) + i, ((const int*) y) + j);
 }
 static int dbl_equal(const void* x, R_len_t i, const void* y, R_len_t j) {
-  return dbl_equal_scalar(((const double*) x) + i, ((const double*) y) + j, true);
+  return dbl_equal_scalar_na_equal(((const double*) x) + i, ((const double*) y) + j);
 }
 static int cpl_equal(const void* x, R_len_t i, const void* y, R_len_t j) {
-  return cpl_equal_scalar(((const Rcomplex*) x) + i, ((const Rcomplex*) y) + j, true);
+  return cpl_equal_scalar_na_equal(((const Rcomplex*) x) + i, ((const Rcomplex*) y) + j);
 }
 static int chr_equal(const void* x, R_len_t i, const void* y, R_len_t j) {
-  return chr_equal_scalar(((const SEXP*) x) + i, ((const SEXP*) y) + j, true);
+  return chr_equal_scalar_na_equal(((const SEXP*) x) + i, ((const SEXP*) y) + j);
 }
 static int raw_equal(const void* x, R_len_t i, const void* y, R_len_t j) {
   return raw_equal_scalar(((const Rbyte*) x) + i, ((const Rbyte*) y) + j, true);
 }
 static int list_equal(const void* x, R_len_t i, const void* y, R_len_t j) {
-  return list_equal_scalar(((const SEXP) x), i, ((const SEXP) y), j, true);
+  return list_equal_scalar_na_equal(((const SEXP) x), i, ((const SEXP) y), j);
 }
 
 
