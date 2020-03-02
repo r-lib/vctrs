@@ -34,6 +34,11 @@ struct dictionary {
  *   as well, but does not allocate an array of keys. This is useful
  *   for finding a key in another dictionary with `dict_hash_with()`.
  */
+
+struct dictionary_opts {
+  bool partial;
+};
+
 struct dictionary* new_dictionary(SEXP x);
 struct dictionary* new_dictionary_partial(SEXP x);
 

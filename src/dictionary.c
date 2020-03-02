@@ -22,7 +22,7 @@ int32_t ceil2(int32_t x) {
 
 // Dictonary object ------------------------------------------------------------
 
-static struct dictionary* new_dictionary_impl(SEXP x, bool partial);
+static struct dictionary* new_dictionary_opts(SEXP x, struct dictionary_opts* opts);
 
 
 static int nil_equal(const void* x, R_len_t i, const void* y, R_len_t j) {
@@ -163,13 +163,19 @@ static void init_dictionary_df(struct dictionary* d) {
 // Dictionaries must be protected in consistent stack order with
 // `PROTECT_DICT()`
 struct dictionary* new_dictionary(SEXP x) {
-  return new_dictionary_impl(x, false);
+  struct dictionary_opts opts = {
+    .partial = false
+  };
+  return new_dictionary_opts(x, &opts);
 }
 struct dictionary* new_dictionary_partial(SEXP x) {
-  return new_dictionary_impl(x, true);
+  struct dictionary_opts opts = {
+    .partial = true
+  };
+  return new_dictionary_opts(x, &opts);
 }
 
-static struct dictionary* new_dictionary_impl(SEXP x, bool partial) {
+static struct dictionary* new_dictionary_opts(SEXP x, struct dictionary_opts* opts) {
   SEXP out = PROTECT(Rf_allocVector(RAWSXP, sizeof(struct dictionary)));
   struct dictionary* d = (struct dictionary*) RAW(out);
 
@@ -192,7 +198,7 @@ static struct dictionary* new_dictionary_impl(SEXP x, bool partial) {
 
   d->used = 0;
 
-  if (partial) {
+  if (opts->partial) {
     d->key = NULL;
     d->size = 0;
   } else {
