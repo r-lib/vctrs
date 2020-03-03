@@ -122,6 +122,7 @@ Add a call to `setOldClass()` for compatibility with the S4 system:
 methods::setOldClass(c("vctrs_percent", "vctrs_vctr"))
 ```
 
+Remember to add the methods package to `Imports`, if you are working in a package context.
 
 For the convenience of your users, consider implementing an `is_percent()` function:
 
