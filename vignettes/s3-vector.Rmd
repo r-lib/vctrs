@@ -119,7 +119,6 @@ percent()
 Add a call to `setOldClass()` for compatibility with the S4 system:
 
 ```{r}
-#' @importFrom methods setOldClass
 methods::setOldClass(c("vctrs_percent", "vctrs_vctr"))
 ```
 
@@ -325,7 +324,7 @@ as_percent <- function(x) {
 
 Now that you've seen the basics with a very simple S3 class, we'll gradually explore more complicated scenarios. This section creates a `decimal` class that prints with the specified number of decimal places. This is very similar to `percent` but now the class needs an attribute: the number of decimal places to display (an integer vector of length 1).
 
-We start of as before, defining a low-level constructor, a user-friendly constructor, a `format()` method, and a `vec_ptype_abbr()`. Note that additional object attributes are simply passed along to `new_vctr()`:
+We start off as before, defining a low-level constructor, a user-friendly constructor, a `format()` method, and a `vec_ptype_abbr()`. Note that additional object attributes are simply passed along to `new_vctr()`:
 
 ```{r}
 new_decimal <- function(x = double(), digits = 2L) {
@@ -349,7 +348,7 @@ format.vctrs_decimal <- function(x, ...) {
 }
 
 vec_ptype_abbr.vctrs_decimal <- function(x, ...) {
-  paste0("dec")
+  "dec"
 }
 
 x <- decimal(runif(10), 1L)
@@ -670,7 +669,7 @@ vec_proxy_equal.vctrs_rational <- function(x, ...) {
   
   data.frame(n = n / gcd, d = d / gcd)
 }
-vec_proxy(x)
+vec_proxy_equal(x)
 
 x == rational(1, 1)
 ```
