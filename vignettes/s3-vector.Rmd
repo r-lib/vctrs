@@ -950,7 +950,7 @@ Remember to call `devtools::document()` regularly, as you develop, to regenerate
 
 Next we make a place to dump some internal documentation that's needed to avoid `R CMD check` complaints. We don't expect any human to ever read this documentation. This, and all subsequent code, presumably lives in `R/percent.R`:
 
-```{r}
+```{r eval = FALSE}
 #' Internal vctrs methods
 #'
 #' @keywords internal
