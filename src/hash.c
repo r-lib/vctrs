@@ -293,13 +293,14 @@ void hash_fill(uint32_t* p, R_len_t size, SEXP x, bool na_equal) {
   const CTYPE* xp = CONST_DEREF(x);                                     \
                                                                         \
   for (R_len_t i = 0; i < size; ++i, ++xp) {                            \
-    if (p[i] == HASH_MISSING) {                                         \
+    uint32_t h = p[i];                                                  \
+    if (h == HASH_MISSING) {                                            \
       continue;                                                         \
     }                                                                   \
     if (*xp == NA_VALUE) {                                              \
       p[i] = HASH_MISSING;                                              \
     } else {                                                            \
-      p[i] = hash_combine(p[i], HASHER(xp));                            \
+      p[i] = hash_combine(h, HASHER(xp));                               \
     }                                                                   \
   }
 
@@ -307,13 +308,14 @@ void hash_fill(uint32_t* p, R_len_t size, SEXP x, bool na_equal) {
   const CTYPE* xp = CONST_DEREF(x);                                     \
                                                                         \
   for (R_len_t i = 0; i < size; ++i, ++xp) {                            \
-    if (p[i] == HASH_MISSING) {                                         \
+    uint32_t h = p[i];                                                  \
+    if (h == HASH_MISSING) {                                            \
       continue;                                                         \
     }                                                                   \
     if (NA_CMP(*xp)) {                                                  \
       p[i] = HASH_MISSING;                                              \
     } else {                                                            \
-      p[i] = hash_combine(p[i], HASHER(xp));                            \
+      p[i] = hash_combine(h, HASHER(xp));                               \
     }                                                                   \
   }
 
@@ -371,14 +373,15 @@ static inline void raw_hash_fill_na_propagate(uint32_t* p, R_len_t size, SEXP x)
 
 #define HASH_FILL_BARRIER_NA_PROPAGATE(HASHER)  \
   for (R_len_t i = 0; i < size; ++i) {          \
-    if (p[i] == HASH_MISSING) {                 \
+    uint32_t h = p[i];                          \
+    if (h == HASH_MISSING) {                    \
       continue;                                 \
     }                                           \
-    uint32_t hash = HASHER(x, i);               \
-    if (hash == HASH_MISSING) {                 \
+    uint32_t elt_hash = HASHER(x, i);           \
+    if (elt_hash == HASH_MISSING) {             \
       p[i] = HASH_MISSING;                      \
     } else {                                    \
-      p[i] = hash_combine(p[i], HASHER(x, i));  \
+      p[i] = hash_combine(p[i], elt_hash);      \
     }                                           \
   }
 

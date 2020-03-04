@@ -58,7 +58,7 @@ int equal_scalar_na_equal_p(enum vctrs_type proxy_type,
   case vctrs_type_double: return dbl_equal_scalar_na_equal(((const double*) x_p) + i, ((const double*) y_p) + j);
   case vctrs_type_complex: return cpl_equal_scalar_na_equal(((const Rcomplex*) x_p) + i, ((const Rcomplex*) y_p) + j);
   case vctrs_type_character: return chr_equal_scalar_na_equal(((const SEXP*) x_p) + i, ((const SEXP*) y_p) + j);
-  case vctrs_type_raw: return raw_equal_scalar(((const Rbyte*) x_p) + i, ((const Rbyte*) y_p) + j, true);
+  case vctrs_type_raw: return raw_equal_scalar_na_equal(((const Rbyte*) x_p) + i, ((const Rbyte*) y_p) + j);
   case vctrs_type_list: return list_equal_scalar_na_equal(((const SEXP) x_p), i, ((const SEXP) y_p), j);
   default: vctrs_stop_unsupported_type(vec_typeof(x), "equal_scalar_na_equal_p()");
   }
@@ -73,7 +73,7 @@ int equal_scalar_na_propagate_p(enum vctrs_type proxy_type,
   case vctrs_type_double: return dbl_equal_scalar_na_propagate(((const double*) x_p) + i, ((const double*) y_p) + j);
   case vctrs_type_complex: return cpl_equal_scalar_na_propagate(((const Rcomplex*) x_p) + i, ((const Rcomplex*) y_p) + j);
   case vctrs_type_character: return chr_equal_scalar_na_propagate(((const SEXP*) x_p) + i, ((const SEXP*) y_p) + j);
-  case vctrs_type_raw: return raw_equal_scalar(((const Rbyte*) x_p) + i, ((const Rbyte*) y_p) + j, true);
+  case vctrs_type_raw: return raw_equal_scalar_na_propagate(((const Rbyte*) x_p) + i, ((const Rbyte*) y_p) + j);
   case vctrs_type_list: return list_equal_scalar_na_propagate(((const SEXP) x_p), i, ((const SEXP) y_p), j);
   default: vctrs_stop_unsupported_type(vec_typeof(x), "equal_scalar_na_propagate_p()");
   }

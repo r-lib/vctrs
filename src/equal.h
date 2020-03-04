@@ -164,8 +164,14 @@ static inline int list_equal_scalar(SEXP x, R_len_t i, SEXP y, R_len_t j, bool n
   }
 }
 
+// Raw vectors have no notion of missing value
 static inline int raw_equal_scalar(const Rbyte* x, const Rbyte* y, bool na_equal) {
-  // Raw vectors have no notion of missing value
+  return *x == *y;
+}
+static inline int raw_equal_scalar_na_equal(const Rbyte* x, const Rbyte* y) {
+  return *x == *y;
+}
+static inline int raw_equal_scalar_na_propagate(const Rbyte* x, const Rbyte* y) {
   return *x == *y;
 }
 

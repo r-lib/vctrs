@@ -33,7 +33,7 @@ static int nil_p_equal_missing(const void* x, R_len_t i) {
   Rf_error("Internal error: Shouldn't compare NULL in dictionary.");
 }
 
-static int lgl_p_equal_na_equal(const void* x, R_len_t i, const void* y, R_len_t j) {
+static int lgl_p_equal(const void* x, R_len_t i, const void* y, R_len_t j) {
   return lgl_equal_scalar_na_equal(((const int*) x) + i, ((const int*) y) + j);
 }
 static int lgl_p_equal_missing(const void* x, R_len_t i) {
@@ -69,7 +69,7 @@ static int chr_p_equal_missing(const void* x, R_len_t i) {
 }
 
 static int raw_p_equal(const void* x, R_len_t i, const void* y, R_len_t j) {
-  return raw_equal_scalar(((const Rbyte*) x) + i, ((const Rbyte*) y) + j, true);
+  return raw_equal_scalar_na_equal(((const Rbyte*) x) + i, ((const Rbyte*) y) + j);
 }
 static int raw_p_equal_missing(const void* x, R_len_t i) {
   return false;
@@ -90,7 +90,7 @@ static void init_dictionary_nil(struct dictionary* d) {
 }
 static void init_dictionary_lgl(struct dictionary* d) {
   d->vec_p = (const void*) LOGICAL_RO(d->vec);
-  d->equal = &lgl_p_equal_na_equal;
+  d->equal = &lgl_p_equal;
   d->equal_missing = &lgl_p_equal_missing;
 }
 static void init_dictionary_int(struct dictionary* d) {
