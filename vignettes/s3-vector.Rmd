@@ -92,7 +92,7 @@ new_percent <- function(x = double()) {
   new_vctr(x, class = "vctrs_percent")
 }
 
-x <- new_percent(c(seq(0, 1, length = 4), NA))
+x <- new_percent(c(seq(0, 1, length.out = 4), NA))
 x
 
 str(x)
@@ -116,14 +116,6 @@ new_percent()
 percent()
 ```
 
-Add a call to `setOldClass()` for compatibility with the S4 system:
-
-```{r}
-#' @importFrom methods setOldClass
-methods::setOldClass(c("vctrs_percent", "vctrs_vctr"))
-```
-
-
 For the convenience of your users, consider implementing an `is_percent()` function:
 
 ```{r}
@@ -131,7 +123,6 @@ is_percent <- function(x) {
   inherits(x, "vctrs_percent")
 }
 ```
-
 
 ### `format()` method
 
@@ -242,7 +233,7 @@ vec_ptype2.vctrs_percent.vctrs_percent <- function(x, y, ...) new_percent()
 
 Next we define methods that say that combining a `percent` and double should yield a `double`. We avoid returning a `percent` here because errors in the scale (1 vs. 0.01) are more obvious with raw numbers.
 
-Because double dispatch is a bit of a hack, we need to provide two methods. It's your responsibility to ensure that each pair return the same result: if they don't you will get weird and unpredictable behaviour.
+Because double dispatch is a bit of a hack, we need to provide two methods. It's your responsibility to ensure that each member of the pair returns the same result: if they don't you will get weird and unpredictable behaviour.
 
 ```{r}
 vec_ptype2.vctrs_percent.double <- function(x, y, ...) double()
@@ -285,7 +276,7 @@ vec_cast(0.5, percent())
 vec_cast(percent(0.5), double())
 ```
 
-Once you've implemented `vec_ptype2()` and `vec_cast()` you get `vec_c()`, `[<-`, and `[[<-` implementations for free.
+Once you've implemented `vec_ptype2()` and `vec_cast()`, you get `vec_c()`, `[<-`, and `[[<-` implementations for free.
 
 ```{r, error = TRUE}
 vec_c(percent(0.5), 1)
@@ -325,7 +316,7 @@ as_percent <- function(x) {
 
 Now that you've seen the basics with a very simple S3 class, we'll gradually explore more complicated scenarios. This section creates a `decimal` class that prints with the specified number of decimal places. This is very similar to `percent` but now the class needs an attribute: the number of decimal places to display (an integer vector of length 1).
 
-We start of as before, defining a low-level constructor, a user-friendly constructor, a `format()` method, and a `vec_ptype_abbr()`. Note that additional object attributes are simply passed along to `new_vctr()`:
+We start off as before, defining a low-level constructor, a user-friendly constructor, a `format()` method, and a `vec_ptype_abbr()`. Note that additional object attributes are simply passed along to `new_vctr()`:
 
 ```{r}
 new_decimal <- function(x = double(), digits = 2L) {
@@ -349,7 +340,7 @@ format.vctrs_decimal <- function(x, ...) {
 }
 
 vec_ptype_abbr.vctrs_decimal <- function(x, ...) {
-  paste0("dec")
+  "dec"
 }
 
 x <- decimal(runif(10), 1L)
@@ -670,7 +661,7 @@ vec_proxy_equal.vctrs_rational <- function(x, ...) {
   
   data.frame(n = n / gcd, d = d / gcd)
 }
-vec_proxy(x)
+vec_proxy_equal(x)
 
 x == rational(1, 1)
 ```
@@ -940,27 +931,223 @@ vec_arith.vctrs_meter.MISSING <- function(op, x, y, ...) {
 +meter(1) 
 ```
 
-## Appendix: `NAMESPACE` declarations
+## Implementing a vctrs S3 class in a package
 
-Defining S3 methods interactively is fine for iteration and exploration, but if your vector lives in a package, you also need to register the S3 methods by listing them in the `NAMESPACE` file. The namespace declarations are a little tricky because (e.g.) `vec_cast.vctrs_percent()` is both a generic function (which must be exported with `export()`) and an S3 method (which must be registered with `S3method()`). 
+Defining S3 methods interactively is fine for iteration and exploration, but if your class lives in a package, you need to do a few more things:
 
-This problem wasn't considered in the design of roxygen2, so you have to be quite explicit:
+* Register the S3 methods by listing them in the `NAMESPACE` file.
+
+* Create documentation around your methods, for the sake of your user and to
+  satisfy `R CMD check`.
+
+Let's assume that the `percent` class is implemented in the pizza package in the file `R/percent.R`. Here we walk through the major sections of this hypothetical file. You've seen all of this code before, but now it's augmented by the roxygen2 directives that produce the correct `NAMESPACE` entries and help topics.
+
+### Getting started
+
+First, the pizza package needs to include vctrs in the `Imports` section of its `DESCRIPTION` (perhaps by calling`usethis::use_package("vctrs")`. Then we make all vctrs functions available within the pizza package by including the directive `#' @import vctrs` somewhere. You can use `usethis::use_package_doc()` to create package-level documentation in `R/pizza-doc.R`, in which case that is also the logical place to put `#' @import vctrs`. Usually, it's not good practice to `@import` the entire namespace of a package, but vctrs is deliberately designed with this use case in mind.
+
+Remember to call `devtools::document()` regularly, as you develop, to regenerate `NAMESPACE` and the `.Rd` files.
+
+Next we make a place to dump some internal documentation that's needed to avoid `R CMD check` complaints. We don't expect any human to ever read this documentation. This, and all subsequent code, presumably lives in `R/percent.R`:
 
 ```{r}
-#' @method vec_cast vctrs_percent
-#' @export
-#' @export vec_cast.vctrs_percent
-vec_cast.vctrs_percent <- function(x, to, ...) {
-} 
+#' Internal vctrs methods
+#'
+#' @keywords internal
+#' @name pizza-vctrs
+NULL
 ```
 
-You also need to register the individual double-dispatch methods. Again, this is harder than it should be because roxygen's heuristics aren't quite right. That means you need to describe the `@method` explicitly:
+### Low-level and user-friendly constructors
+
+Next we add our constructor:
 
 ```{r}
-#' @method vec_cast.binned double
-#' @export
-vec_cast.binned.double <- function(x, y, ...) {
+new_percent <- function(x = double()) {
+  vec_assert(x, double())
+  new_vctr(x, class = "pizza_percent")
 }
 ```
 
-Hopefully future versions of roxygen will make these exports less painful.
+Note that the name of the package must be included in the class name (`pizza_percent`), but it does not need to be included in the constructor name. You do not need to export the constructor, unless you want people to extend your class.
+
+We can also add a call to `setOldClass()` for compatibility with S4:
+
+```{r}
+# for compatibility with the S4 system
+methods::setOldClass(c("pizza_percent", "vctrs_vctr"))
+```
+
+Because we've used a function from the methods package, you'll also need to add methods to `Imports`, with (e.g.) `usethis::use_package("methods")`. This is a "free" dependency because methods is bundled with every R install.
+
+Next we implement, export, and document a user-friendly helper: `percent()`.
+
+```{r}
+#' `percent` vector
+#'
+#' This creates a double vector that represents percentages so when it is
+#' printed, it is multiplied by 100 and suffixed with `%`.
+#'
+#' @param x A numeric vector
+#' @return An S3 vector of class `pizza_percent`.
+#' @export
+#' @examples
+#' percent(c(0.25, 0.5, 0.75))
+percent <- function(x = double()) {
+  x <- vec_cast(x, double())
+  new_percent(x)
+}
+```
+
+(Again note that the package name will appear in the class, but does not need to occur in the function, because we can already do `pizza::percent()`; it would be redundant to have `pizza::pizza_percent()`.)
+
+### Other helpers
+
+It's a good idea to provide a function that tests if an object is of this class. If you do so, it makes sense to document it with the user-friendly constructor `percent()`:
+
+```{r}
+#' @export
+#' @rdname percent
+is_percent <- function(x) {
+  inherits(x, "pizza_percent")
+}
+```
+
+You'll also need to update the `percent()` documentation to reflect that `x` now means two different things:
+
+```{r}
+#' @param x 
+#'  * For `percent()`: A numeric vector
+#'  * For `is_percent()`: An object to test.
+```
+
+Next we provide the key methods to make printing work. These are S3 methods, so they don't need to be documented, but they do need to be exported.
+
+```{r eval = FALSE}
+#' @export
+format.pizza_percent <- function(x, ...) {
+  out <- formatC(signif(vec_data(x) * 100, 3))
+  out[is.na(x)] <- NA
+  out[!is.na(x)] <- paste0(out[!is.na(x)], "%")
+  out
+}
+
+#' @export
+vec_ptype_abbr.pizza_percent <- function(x, ...) {
+  "prcnt"
+}
+```
+
+### Double dispatch methods for coercion and casting
+
+Next we implement methods for `vec_ptype2()` and `vec_cast()`, along with all the roxygen2 boilerplate needed to make them work. `vec_ptype2()` and `vec_cast()` have exactly the same structure, so we'll explain everything via `vec_ptype2()` and just show the result for `vec_cast()`.
+
+The greatest boilerplate is needed for `vec_ptype2.pizza_percent()` because it is both a method and a generic (thanks to the double-dispatch trick):
+
+* As an S3 method, it implements `vctrs::vec_ptype2()` for the `vctrs_percent`
+  class.
+
+* As a generic, `vec_ptype2.vctrs_percent()` has `default`, `vctrs_percent`, 
+  and `double` methods (see below).
+
+```{r eval = FALSE}
+#' @method vec_ptype2 pizza_percent   # tell roxygen2 its a method
+#' @export                            # export as method
+#' @export vec_ptype2.pizza_percent   # export as generic
+#' @rdname pizza-vctrs                # document (internally)
+vec_ptype2.pizza_percent <- function(x, y, ...) {
+  UseMethod("vec_ptype2.pizza_percent", y) 
+}
+```
+
+(The marginal comments are just for exposition and can be omitted in your own packages.)
+
+This creative take on the S3 system wasn't considered in the design of roxygen2, so we have to spell all of this out explicitly. Since `vec_ptype2.pizza_percent()` is a generic, `R CMD check` will complain if it is not documented, although this documentation is not relevant for users. This is the purpose of the dummy internal help topic defined earlier.
+
+Remember to run `devtools::document()` to re-generate the `NAMESPACE`, and then take a quick look to familiarise yourself with what is generated. You should see this function appearing in two places (if you've never looked at `NAMESPACE` before note that roxygen2 puts it in alphabetical order):
+
+```{r, eval = FALSE}
+S3method(vec_ptype2,pizza_percent)
+...
+export(vec_ptype2.pizza_percent)
+```
+
+Now we finish the work around `vec_ptype2()` by providing all needed methods. Each method has both a `@method` and an `@export` directive. These are purely methods so they don't need to be documented in an `.Rd` file.
+
+```{r}
+#' @method vec_ptype2.vctrs_percent default
+#' @export                                 
+vec_ptype2.vctrs_percent.default <- function(x, y,
+                                             ...,
+                                             x_arg = "x", y_arg = "y") {
+  vec_default_ptype2(x, y, x_arg = x_arg, y_arg = y_arg)
+}
+
+#' @method vec_ptype2.vctrs_percent vctrs_percent
+#' @export                                       
+vec_ptype2.vctrs_percent.vctrs_percent <- function(x, y, ...) new_percent()
+
+#' @method vec_ptype2.vctrs_percent double       
+#' @export                                       
+vec_ptype2.vctrs_percent.double <- function(x, y, ...) double()
+
+#' @method vec_ptype2.double vctrs_percent
+#' @export
+vec_ptype2.double.vctrs_percent <- function(x, y, ...) double()
+```
+
+The exact same treatment applies to `vec_cast()`, which yields:
+
+```{r eval = FALSE}
+#' @method vec_cast pizza_percent
+#' @export vec_cast.pizza_percent
+#' @export                         
+#' @rdname pizza-vctrs             
+vec_cast.pizza_percent <- function(x, to, ...) {
+  UseMethod("vec_cast.pizza_percent")
+}
+#' @method vec_cast.pizza_percent default
+#' @export 
+vec_cast.pizza_percent.default <- function(x, to, ...) vec_default_cast(x, to)
+#' @method vec_cast.pizza_percent pizza_percent
+#' @export 
+vec_cast.pizza_percent.pizza_percent <- function(x, to, ...) x
+#' @method vec_cast.pizza_percent double
+#' @export
+vec_cast.pizza_percent.double <- function(x, to, ...) percent(x)
+#' @method vec_cast.double pizza_percent
+#' @export
+vec_cast.double.pizza_percent <- function(x, to, ...) vec_data(x)
+```
+
+For simple casting and coercion functions, this is the recommended formatting. If everything fits on one line, there's no need to use `{}` or add blank lines between method definitions. This compact formatting reinforces the common purpose of these methods and their documentation.
+
+### Testing
+
+It's good practice to test your new class. Specific recommendations:
+
+* `R/percent.R` is the type of file where you really do want 100% test coverage.
+  You can use `devtools::test_file_coverage()` to check this.
+
+* Make sure to test behaviour with zero-length inputs and missing values.
+
+* Use `testthat::verify_output()` to add some 
+  [golden tests](https://ro-che.info/articles/2017-12-04-golden-tests) for 
+  your format method. Customised printing is often a primary motivation for
+  creating your own S3 class in the first place, so it makes sense to actively
+  monitor this.
+
+* Check for method symmetry; use `expect_s3_class()` to 
+  ensure that `vec_c(x, y)` and `vec_c(y, x)` return the same type of output for
+  the important `x`s and `y`s in your domain.
+  
+* Use `expect_error()` to check that inputs that can't be combined fail with an
+  error. Here, you should be generally checking the class of the error, not its
+  message. Relevant classes include `vctrs_error_assert_ptype`, 
+  `vctrs_error_assert_size`, and `vctrs_error_incompatible_type`.
+  
+    ```{r, eval = FALSE}
+    expect_error(vec_c(1, "a"), class = "vctrs_error_incompatible_type")
+    ```
+
+If your tests pass when run by `devtools::test()`, but fail when run in `R CMD check`, it is very likely to reflect a problem with S3 method registration. Carefully check your roxygen2 comments and the generated `NAMESPACE`.
