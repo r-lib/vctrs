@@ -1138,9 +1138,9 @@ It's good practice to test your new class. Specific recommendations:
   ensure that `vec_c(x, y)` and `vec_c(y, x)` return the same type of output for
   the important `x`s and `y`s in your domain.
   
-* Use `expect_error()` to check that inputs that can't be combined fail with an
-  error. Here, you should be generally checking the class of the error, not its
-  message. Relevant classes include `vctrs_error_assert_ptype`, 
+* Use `testthat::expect_error()` to check that inputs that can't be combined
+  fail with an error. Here, you should be generally checking the class of the
+  error, not its message. Relevant classes include `vctrs_error_assert_ptype`,
   `vctrs_error_assert_size`, and `vctrs_error_incompatible_type`.
   
     ```{r, eval = FALSE}
