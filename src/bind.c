@@ -209,7 +209,7 @@ static SEXP as_df_row_impl(SEXP x, struct name_repair_opts* name_repair) {
     return x;
   }
   if (is_data_frame(x)) {
-    return x;
+    return df_repair_names(x, name_repair);
   }
 
   int nprot = 0;

@@ -306,3 +306,20 @@ static R_len_t df_flatten_loop(SEXP x, SEXP out, SEXP out_names, R_len_t counter
   UNPROTECT(1);
   return counter;
 }
+
+SEXP df_repair_names(SEXP x, struct name_repair_opts* name_repair) {
+  SEXP nms = PROTECT(r_names(x));
+  SEXP repaired = PROTECT(vec_as_names(nms, name_repair));
+
+  // Should this go through proxy and restore so that classes can
+  // update metadata and check invariants when special columns are
+  // renamed?
+  if (nms != repaired) {
+    x = PROTECT(r_maybe_duplicate(x));
+    r_poke_names(x, repaired);
+    UNPROTECT(1);
+  }
+
+  UNPROTECT(2);
+  return x;
+}

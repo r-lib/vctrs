@@ -505,3 +505,15 @@ test_that("can rbind data frames with matrix columns (#625)", {
   df <- tibble(x = 1:2, y = matrix(1:4, nrow = 2))
   expect_identical(vec_rbind(df, df), vec_slice(df, c(1, 2, 1, 2)))
 })
+
+test_that("rbind repairs names of data frames (#704)", {
+  df <- data_frame(x = 1, x = 2)
+  df_repaired <- data_frame(x...1 = 1, x...2 = 2)
+  expect_identical(vec_rbind(df), df_repaired)
+  expect_identical(vec_rbind(df, df), vec_rbind(df_repaired, df_repaired))
+
+  expect_error(
+    vec_rbind(df, df, .name_repair = "check_unique"),
+    class = "vctrs_error_names_must_be_unique"
+  )
+})
