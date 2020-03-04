@@ -29,7 +29,7 @@ Imports:
     ellipsis (>= 0.2.0),
     digest,
     glue,
-    rlang (>= 0.4.4.9001)
+    rlang (>= 0.4.5)
 Suggests: 
     bit64,
     covr,
@@ -43,8 +43,6 @@ Suggests:
     tibble,
     xml2,
     zeallot
-Remotes:
-    r-lib/rlang
 VignetteBuilder: 
     knitr
 Encoding: UTF-8
