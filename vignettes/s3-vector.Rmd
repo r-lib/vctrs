@@ -1124,7 +1124,7 @@ For simple casting and coercion functions, this is the recommended formatting. I
 It's good practice to test your new class. Specific recommendations:
 
 * `R/percent.R` is the type of file where you really do want 100% test coverage.
-  You can use `devtools::test_file_coverage()` to check this.
+  You can use `devtools::test_coverage_file()` to check this.
 
 * Make sure to test behaviour with zero-length inputs and missing values.
 
