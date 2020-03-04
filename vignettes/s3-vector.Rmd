@@ -92,7 +92,7 @@ new_percent <- function(x = double()) {
   new_vctr(x, class = "vctrs_percent")
 }
 
-x <- new_percent(c(seq(0, 1, length = 4), NA))
+x <- new_percent(c(seq(0, 1, length.out = 4), NA))
 x
 
 str(x)
