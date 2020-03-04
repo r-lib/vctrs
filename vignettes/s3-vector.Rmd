@@ -1082,15 +1082,12 @@ vec_ptype2.vctrs_percent.default <- function(x, y,
                                              x_arg = "x", y_arg = "y") {
   vec_default_ptype2(x, y, x_arg = x_arg, y_arg = y_arg)
 }
-
 #' @method vec_ptype2.vctrs_percent vctrs_percent
 #' @export                                       
 vec_ptype2.vctrs_percent.vctrs_percent <- function(x, y, ...) new_percent()
-
 #' @method vec_ptype2.vctrs_percent double       
 #' @export                                       
 vec_ptype2.vctrs_percent.double <- function(x, y, ...) double()
-
 #' @method vec_ptype2.double vctrs_percent
 #' @export
 vec_ptype2.double.vctrs_percent <- function(x, y, ...) double()
