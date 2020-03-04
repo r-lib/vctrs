@@ -488,6 +488,15 @@ SEXP vctrs_match(SEXP needles, SEXP haystack, SEXP na_equal) {
   return vec_match_params(needles, haystack, r_bool_as_int(na_equal));
 }
 
+static inline void vec_match_loop(int* p_out,
+                                  struct dictionary* d,
+                                  struct dictionary* d_needles,
+                                  R_len_t n_needle);
+static inline void vec_match_loop_propagate(int* p_out,
+                                            struct dictionary* d,
+                                            struct dictionary* d_needles,
+                                            R_len_t n_needle);
+
 SEXP vec_match_params(SEXP needles, SEXP haystack, bool na_equal) {
   int nprot = 0;
   int _;
@@ -525,15 +534,23 @@ SEXP vec_match_params(SEXP needles, SEXP haystack, bool na_equal) {
   SEXP out = PROTECT_N(Rf_allocVector(INTSXP, n_needle), &nprot);
   int* p_out = INTEGER(out);
 
-  bool propagate = !na_equal;
+  if (na_equal) {
+    vec_match_loop(p_out, d, d_needles, n_needle);
+  } else {
+    vec_match_loop_propagate(p_out, d, d_needles, n_needle);
+  }
 
-  for (int i = 0; i < n_needle; ++i) {
-    if (propagate && dict_is_missing(d_needles, i)) {
-      p_out[i] = NA_INTEGER;
-      continue;
-    }
+  UNPROTECT(nprot);
+  return out;
+}
 
+static inline void vec_match_loop(int* p_out,
+                                  struct dictionary* d,
+                                  struct dictionary* d_needles,
+                                  R_len_t n_needle) {
+  for (R_len_t i = 0; i < n_needle; ++i) {
     uint32_t hash = dict_hash_with(d, d_needles, i);
+
     if (d->key[hash] == DICT_EMPTY) {
       // TODO: Return `no_match` instead
       p_out[i] = NA_INTEGER;
@@ -541,9 +558,26 @@ SEXP vec_match_params(SEXP needles, SEXP haystack, bool na_equal) {
       p_out[i] = d->key[hash] + 1;
     }
   }
+}
+static inline void vec_match_loop_propagate(int* p_out,
+                                            struct dictionary* d,
+                                            struct dictionary* d_needles,
+                                            R_len_t n_needle) {
+  for (R_len_t i = 0; i < n_needle; ++i) {
+    if (dict_is_missing(d_needles, i)) {
+      p_out[i] = NA_INTEGER;
+      continue;
+    }
 
-  UNPROTECT(nprot);
-  return out;
+    uint32_t hash = dict_hash_with(d, d_needles, i);
+
+    if (d->key[hash] == DICT_EMPTY) {
+      // TODO: Return `no_match` instead
+      p_out[i] = NA_INTEGER;
+    } else {
+      p_out[i] = d->key[hash] + 1;
+    }
+  }
 }
 
 // [[ register() ]]
