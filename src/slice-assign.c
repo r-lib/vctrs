@@ -10,7 +10,6 @@ SEXP fns_vec_assign_fallback = NULL;
 SEXP vec_as_location(SEXP i, R_len_t n, SEXP names);
 
 static SEXP vec_assign_fallback(SEXP x, SEXP index, SEXP value);
-SEXP vec_proxy_assign(SEXP x, SEXP index, SEXP value);
 static SEXP lgl_assign(SEXP x, SEXP index, SEXP value);
 static SEXP int_assign(SEXP x, SEXP index, SEXP value);
 static SEXP dbl_assign(SEXP x, SEXP index, SEXP value);

@@ -385,9 +385,6 @@ static SEXP chop_fallback_shaped(SEXP x, SEXP indices, struct vctrs_chop_info in
 // From type.c
 SEXP vctrs_type_common_impl(SEXP dots, SEXP ptype);
 
-// From slice-assign.c
-SEXP vec_proxy_assign(SEXP proxy, SEXP index, SEXP value);
-
 static SEXP vec_unchop(SEXP x,
                        SEXP indices,
                        SEXP ptype,

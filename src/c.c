@@ -4,9 +4,6 @@
 // From type.c
 SEXP vctrs_type_common_impl(SEXP dots, SEXP ptype);
 
-// From slice-assign.c
-SEXP vec_proxy_assign(SEXP proxy, SEXP index, SEXP value);
-
 
 // [[ register(external = TRUE) ]]
 SEXP vctrs_c(SEXP call, SEXP op, SEXP args, SEXP env) {
