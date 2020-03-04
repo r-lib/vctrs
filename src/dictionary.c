@@ -78,8 +78,7 @@ static int list_equal(const void* x, R_len_t i, const void* y, R_len_t j) {
   return list_equal_scalar_na_equal(((const SEXP) x), i, ((const SEXP) y), j);
 }
 static int list_equal_missing(const void* x, R_len_t i) {
-  Rf_error("TODO");
-  return list_equal_scalar_na_equal(((const SEXP) x), i, R_NilValue, 0);
+  return list_equal_scalar_na_equal(((const SEXP) x), i, vctrs_shared_na_list, 0);
 }
 
 

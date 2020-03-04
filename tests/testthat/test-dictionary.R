@@ -278,6 +278,7 @@ test_that("can propagate missing values while matching", {
   expect_identical(vec_match(dbl(NA, 1, NA, 2), dbl(2, NA, 1), na_equal = FALSE), exp)
   expect_identical(vec_match(cpl(NA, 1, NA, 2), cpl(2, NA, 1), na_equal = FALSE), exp)
   expect_identical(vec_match(chr(NA, "1", NA, "2"), chr("2", NA, "1"), na_equal = FALSE), exp)
+  expect_identical(vec_match(list(NULL, 1, NULL, 2), list(2, NULL, 1), na_equal = FALSE), exp)
 
   # No missing values for raw vectors
   expect_identical(vec_match(bytes(0, 1, 0, 2), bytes(2, 0, 1), na_equal = FALSE), c(2L, 3L, 2L, 1L))

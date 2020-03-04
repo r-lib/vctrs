@@ -334,6 +334,8 @@ extern SEXP vctrs_shared_true;
 extern SEXP vctrs_shared_false;
 
 extern Rcomplex vctrs_shared_na_cpl;
+extern SEXP vctrs_shared_na_lgl;
+extern SEXP vctrs_shared_na_list;
 
 SEXP vec_unspecified(R_len_t n);
 bool vec_is_unspecified(SEXP x);

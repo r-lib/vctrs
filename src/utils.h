@@ -323,7 +323,6 @@ static inline SEXP expr_protect(SEXP x) {
 
 extern SEXP vctrs_ns_env;
 extern SEXP vctrs_shared_empty_str;
-extern SEXP vctrs_shared_na_lgl;
 extern SEXP vctrs_shared_zero_int;
 
 extern SEXP classes_data_frame;

@@ -58,7 +58,6 @@ static inline uint32_t dbl_hash_scalar(const double* x);
 static inline uint32_t cpl_hash_scalar(const Rcomplex* x);
 static inline uint32_t chr_hash_scalar(const SEXP* x);
 static inline uint32_t raw_hash_scalar(const Rbyte* x);
-static inline uint32_t list_hash_scalar(SEXP x, R_len_t i);
 
 
 static inline uint32_t lgl_hash_scalar(const int* x) {
@@ -92,8 +91,16 @@ static inline uint32_t raw_hash_scalar(const Rbyte* x) {
   return hash_int32(*x);
 }
 
-static inline uint32_t list_hash_scalar(SEXP x, R_len_t i) {
+static inline uint32_t list_hash_scalar_na_equal(SEXP x, R_len_t i) {
   return hash_object(VECTOR_ELT(x, i));
+}
+static inline uint32_t list_hash_scalar_na_propagate(SEXP x, R_len_t i) {
+  SEXP elt = VECTOR_ELT(x, i);
+  if (elt == R_NilValue) {
+    return 1;
+  } else {
+    return hash_object(elt);
+  }
 }
 
 // Hashing objects -----------------------------------------------------
@@ -226,7 +233,8 @@ static inline void chr_hash_fill_na_equal(uint32_t* p, R_len_t size, SEXP x);
 static inline void chr_hash_fill_na_propagate(uint32_t* p, R_len_t size, SEXP x);
 static inline void raw_hash_fill_na_equal(uint32_t* p, R_len_t size, SEXP x);
 static inline void raw_hash_fill_na_propagate(uint32_t* p, R_len_t size, SEXP x);
-static inline void list_hash_fill(uint32_t* p, R_len_t size, SEXP x);
+static inline void list_hash_fill_na_equal(uint32_t* p, R_len_t size, SEXP x);
+static inline void list_hash_fill_na_propagate(uint32_t* p, R_len_t size, SEXP x);
 static inline void df_hash_fill(uint32_t* p, R_len_t size, SEXP x, bool na_equal);
 
 // Not compatible with hash_scalar. When `@na_equal` is false, missing
@@ -244,33 +252,27 @@ void hash_fill(uint32_t* p, R_len_t size, SEXP x, bool na_equal) {
   }
 
   if (na_equal) {
-    switch (TYPEOF(x)) {
-    case LGLSXP: lgl_hash_fill_na_equal(p, size, x); return;
-    case INTSXP: int_hash_fill_na_equal(p, size, x); return;
-    case REALSXP: dbl_hash_fill_na_equal(p, size, x); return;
-    case CPLXSXP: cpl_hash_fill_na_equal(p, size, x); return;
-    case STRSXP: chr_hash_fill_na_equal(p, size, x); return;
-    case RAWSXP: raw_hash_fill_na_equal(p, size, x); return;
-    case VECSXP:
-      if (is_data_frame(x)) {
-        df_hash_fill(p, size, x, na_equal);
-      } else {
-        list_hash_fill(p, size, x);
-      }
-      return;
-    default:
-      break;
+    switch (vec_proxy_typeof(x)) {
+    case vctrs_type_logical: lgl_hash_fill_na_equal(p, size, x); return;
+    case vctrs_type_integer: int_hash_fill_na_equal(p, size, x); return;
+    case vctrs_type_double: dbl_hash_fill_na_equal(p, size, x); return;
+    case vctrs_type_complex: cpl_hash_fill_na_equal(p, size, x); return;
+    case vctrs_type_character: chr_hash_fill_na_equal(p, size, x); return;
+    case vctrs_type_raw: raw_hash_fill_na_equal(p, size, x); return;
+    case vctrs_type_list: list_hash_fill_na_equal(p, size, x); return;
+    case vctrs_type_dataframe: df_hash_fill(p, size, x, na_equal); return;
+    default: break;
     }
   } else {
-    switch (TYPEOF(x)) {
-    case LGLSXP: lgl_hash_fill_na_propagate(p, size, x); return;
-    case INTSXP: int_hash_fill_na_propagate(p, size, x); return;
-    case REALSXP: dbl_hash_fill_na_propagate(p, size, x); return;
-    case CPLXSXP: cpl_hash_fill_na_propagate(p, size, x); return;
-    case STRSXP: chr_hash_fill_na_propagate(p, size, x); return;
-    case RAWSXP: raw_hash_fill_na_propagate(p, size, x); return;
-    default:
-      break;
+    switch (vec_proxy_typeof(x)) {
+    case vctrs_type_logical: lgl_hash_fill_na_propagate(p, size, x); return;
+    case vctrs_type_integer: int_hash_fill_na_propagate(p, size, x); return;
+    case vctrs_type_double: dbl_hash_fill_na_propagate(p, size, x); return;
+    case vctrs_type_complex: cpl_hash_fill_na_propagate(p, size, x); return;
+    case vctrs_type_character: chr_hash_fill_na_propagate(p, size, x); return;
+    case vctrs_type_raw: raw_hash_fill_na_propagate(p, size, x); return;
+    case vctrs_type_list: list_hash_fill_na_propagate(p, size, x); return;
+    default: break;
     }
   }
 
@@ -361,8 +363,11 @@ static inline void raw_hash_fill_na_propagate(uint32_t* p, R_len_t size, SEXP x)
     p[i] = hash_combine(p[i], HASHER(x, i));    \
   }
 
-static void list_hash_fill(uint32_t* p, R_len_t size, SEXP x) {
-  HASH_FILL_BARRIER(list_hash_scalar);
+static void list_hash_fill_na_equal(uint32_t* p, R_len_t size, SEXP x) {
+  HASH_FILL_BARRIER(list_hash_scalar_na_equal);
+}
+static void list_hash_fill_na_propagate(uint32_t* p, R_len_t size, SEXP x) {
+  HASH_FILL_BARRIER(list_hash_scalar_na_propagate);
 }
 
 #undef HASH_FILL_BARRIER
