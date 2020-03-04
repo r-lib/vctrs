@@ -953,6 +953,14 @@ bool r_is_true(SEXP x) {
   return r_is_bool(x) && LOGICAL(x)[0] == 1;
 }
 
+// [[ include("utils.h") ]]
+int r_bool_as_int(SEXP x) {
+  if (!r_is_bool(x)) {
+    Rf_errorcall(R_NilValue, "Input must be a single `TRUE` or `FALSE`.");
+  }
+  return LOGICAL(x)[0];
+}
+
 bool r_is_string(SEXP x) {
   return TYPEOF(x) == STRSXP &&
     Rf_length(x) == 1 &&

@@ -215,6 +215,10 @@ test_that("can compare unspecified", {
   expect_equal(vec_compare(c(NA, NA), unspecified(2)), c(NA_integer_, NA_integer_))
 })
 
+test_that("can't supply NA as `na_equal`", {
+  expect_error(vec_compare(NA, NA, na_equal = NA), "single `TRUE` or `FALSE`")
+})
+
 # order/sort --------------------------------------------------------------
 
 test_that("can request NAs sorted first", {

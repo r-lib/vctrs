@@ -44,7 +44,7 @@ int equal_scalar(SEXP x, R_len_t i, SEXP y, R_len_t j, bool na_equal) {
 SEXP vctrs_equal_scalar(SEXP x, SEXP i_, SEXP y, SEXP j_, SEXP na_equal_) {
   R_len_t i = Rf_asInteger(i_);
   R_len_t j = Rf_asInteger(j_);
-  bool na_equal = Rf_asLogical(na_equal_);
+  bool na_equal = r_bool_as_int(na_equal_);
   return r_lgl(equal_scalar(x, i, y, j, na_equal));
 }
 
@@ -126,7 +126,7 @@ SEXP vctrs_equal(SEXP x, SEXP y, SEXP na_equal_) {
     Rf_errorcall(R_NilValue, "`x` and `y` must have same types and lengths");
   }
 
-  bool na_equal = Rf_asLogical(na_equal_);
+  bool na_equal = r_bool_as_int(na_equal_);
 
   switch (type) {
   case vctrs_type_logical:   EQUAL(int, LOGICAL_RO, lgl_equal_scalar);

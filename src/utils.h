@@ -31,6 +31,7 @@ enum vctrs_class_type {
 };
 
 bool r_is_bool(SEXP x);
+int r_bool_as_int(SEXP x);
 
 SEXP vctrs_eval_mask_n(SEXP fn,
                        SEXP* syms, SEXP* args,

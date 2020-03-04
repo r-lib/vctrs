@@ -291,3 +291,7 @@ test_that("missing values are propagated across columns", {
     expect_identical(vec_match(df, df, na_equal = FALSE), na_int)
   }
 })
+
+test_that("can't supply NA as `na_equal`", {
+  expect_error(vec_match(NA, NA, na_equal = NA), "single `TRUE` or `FALSE`")
+})

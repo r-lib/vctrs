@@ -485,7 +485,7 @@ SEXP vctrs_id(SEXP x) {
 
 // [[ register() ]]
 SEXP vctrs_match(SEXP needles, SEXP haystack, SEXP na_equal) {
-  return vec_match_params(needles, haystack, Rf_asLogical(na_equal));
+  return vec_match_params(needles, haystack, r_bool_as_int(na_equal));
 }
 
 SEXP vec_match_params(SEXP needles, SEXP haystack, bool na_equal) {

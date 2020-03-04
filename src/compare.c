@@ -197,7 +197,7 @@ while (0)
 
 // [[ register() ]]
 SEXP vctrs_compare(SEXP x, SEXP y, SEXP na_equal_) {
-  bool na_equal = Rf_asLogical(na_equal_);
+  bool na_equal = r_bool_as_int(na_equal_);
 
   R_len_t size = vec_size(x);
 
