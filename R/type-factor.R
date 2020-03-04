@@ -34,6 +34,16 @@ new_ordered <- function(x = integer(), levels = character()) {
   new_factor(x = x, levels = levels, class = "ordered")
 }
 
+#' @export
+vec_proxy.factor <- function(x, ...) {
+  x
+}
+
+#' @export
+vec_proxy.ordered <- function(x, ...) {
+  x
+}
+
 # Print -------------------------------------------------------------------
 
 #' @export
