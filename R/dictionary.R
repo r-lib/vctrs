@@ -204,6 +204,11 @@ vec_unique_count <- function(x) {
 #'
 #'   `needles` and `haystack` are coerced to the same type prior to
 #'   comparison.
+#' @inheritParams ellipsis::dots_empty
+#' @param na_equal If `TRUE`, missing values in `needles` can be
+#'   matched to missing values in `haystack`. If `FALSE`, they
+#'   propagate, missing values in `needles` are represented as `NA` in
+#'   the return value.
 #' @return A vector the same length as `needles`. `vec_in()` returns a
 #'   logical vector; `vec_match()` returns an integer vector.
 #' @export

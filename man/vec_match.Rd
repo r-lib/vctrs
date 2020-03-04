@@ -5,7 +5,7 @@
 \alias{vec_in}
 \title{Find matching observations across vectors}
 \usage{
-vec_match(needles, haystack)
+vec_match(needles, haystack, ..., na_equal = TRUE)
 
 vec_in(needles, haystack)
 }
@@ -16,6 +16,13 @@ return the location of the first match.
 
 \code{needles} and \code{haystack} are coerced to the same type prior to
 comparison.}
+
+\item{...}{These dots are for future extensions and must be empty.}
+
+\item{na_equal}{If \code{TRUE}, missing values in \code{needles} can be
+matched to missing values in \code{haystack}. If \code{FALSE}, they
+propagate, missing values in \code{needles} are represented as \code{NA} in
+the return value.}
 }
 \value{
 A vector the same length as \code{needles}. \code{vec_in()} returns a

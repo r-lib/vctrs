@@ -1,6 +1,8 @@
 
 # vctrs (development version)
 
+* `vec_match()` gains an `na_equal` argument (#718).
+
 * `vec_chop()`'s `indices` argument has been restricted to positive integer
   vectors. Character and logical subscripts haven't proven useful, and this
   aligns `vec_chop()` with `vec_unchop()`, for which only positive integer
