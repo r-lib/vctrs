@@ -116,14 +116,6 @@ new_percent()
 percent()
 ```
 
-Add a call to `setOldClass()` for compatibility with the S4 system:
-
-```{r}
-methods::setOldClass(c("vctrs_percent", "vctrs_vctr"))
-```
-
-Remember to add the methods package to `Imports`, if you are working in a package context.
-
 For the convenience of your users, consider implementing an `is_percent()` function:
 
 ```{r}
@@ -131,7 +123,6 @@ is_percent <- function(x) {
   inherits(x, "vctrs_percent")
 }
 ```
-
 
 ### `format()` method
 
@@ -940,27 +931,149 @@ vec_arith.vctrs_meter.MISSING <- function(op, x, y, ...) {
 +meter(1) 
 ```
 
-## Appendix: `NAMESPACE` declarations
+## Appendix: Implementing a vctrs S3 class in a package
 
-Defining S3 methods interactively is fine for iteration and exploration, but if your vector lives in a package, you also need to register the S3 methods by listing them in the `NAMESPACE` file. The namespace declarations are a little tricky because (e.g.) `vec_cast.vctrs_percent()` is both a generic function (which must be exported with `export()`) and an S3 method (which must be registered with `S3method()`). 
+Defining S3 methods interactively is fine for iteration and exploration, but if your vector lives in a package, you need to do a few more things:
 
-This problem wasn't considered in the design of roxygen2, so you have to be quite explicit:
+  * Register the S3 methods by listing them in the `NAMESPACE` file.
+  * Create documentation around your methods, for the sake of your user and to
+    satisfy `R CMD check`.
 
-```{r}
-#' @method vec_cast vctrs_percent
-#' @export
-#' @export vec_cast.vctrs_percent
-vec_cast.vctrs_percent <- function(x, to, ...) {
-} 
+Let's assume that the `percent` class is implemented in the file `R/percent.R` within a package. Here we walk through the major sections of this hypothetical file. You've seen all of this code before, but now it's augmented by the roxygen2 directives that produce the correct `NAMESPACE` entries and help topics.
+
+### Setup
+
+  * dummy help topic
+  * non-exported low-level constructor
+  * S4 thing. Remember to add the methods package to `Imports`.
+
+```{r eval = FALSE}
+#' Internal vctrs methods for percent
+#' @keywords internal
+#' @name percent-vctrs
+NULL
+
+new_percent <- function(x = double()) {
+  vec_assert(x, double())
+  new_vctr(x, class = "vctrs_percent")
+}
+
+# for compatibility with the S4 system
+methods::setOldClass(c("vctrs_percent", "vctrs_vctr"))
 ```
 
-You also need to register the individual double-dispatch methods. Again, this is harder than it should be because roxygen's heuristics aren't quite right. That means you need to describe the `@method` explicitly:
+### User-friendly constructor and friends
 
-```{r}
-#' @method vec_cast.binned double
+Do we refer to it as `percent` or `vctrs_percent`?
+
+Flesh out the roxygen comments. Mine code above for more examples.
+
+Export & rdname the "friends".
+
+Add vec_ptype_full?
+
+```{r eval = FALSE}
+#' `percent` class
+#'
+#' blah blah
+#'
+#' @param x Double
+#'
+#' @return An S3 vector of class `vctrs_percent`.
 #' @export
-vec_cast.binned.double <- function(x, y, ...) {
+#' @examples
+#' percent()
+percent <- function(x = double()) {
+  x <- vec_cast(x, double())
+  new_percent(x)
+}
+
+as_percent <- function(x) {
+  vec_cast(x, new_percent())
+}
+
+is_percent <- function(x) {
+  inherits(x, "vctrs_percent")
+}
+
+format.vctrs_percent <- function(x, ...) {
+  out <- formatC(signif(vec_data(x) * 100, 3))
+  out[is.na(x)] <- NA
+  out[!is.na(x)] <- paste0(out[!is.na(x)], "%")
+  out
+}
+
+#' @export
+vec_ptype_abbr.vctrs_percent <- function(x, ...) {
+  "prcnt"
 }
 ```
 
-Hopefully future versions of roxygen will make these exports less painful.
+### Double dispatch methods for coercion and casting
+
+TO ADD: some specifics about what this does in NAMESPACE. So at least one specific mention of e.g. `S3method(vec_ptype2,vctrs_percent)`.
+
+Here is the first bit of boilerplate necessary to express which implicit coercions are OK for `percent`, which is controlled by `vctrs::vec_ptype2()`.
+
+```{r eval = FALSE}
+#' @method vec_ptype2 vctrs_percent               # register as method
+#' @export vec_ptype2.vctrs_percent               # export as generic
+#' @export                                        # export as method
+#' @rdname percent-vctrs                          # document (internally)
+vec_ptype2.vctrs_percent <- function(x, y, ...) {
+  UseMethod("vec_ptype2.vctrs_percent", y) 
+}
+```
+
+The namespace declarations are a little tricky because `vec_ptype2.vctrs_percent()` is simultaneously two things:
+
+  * An S3 method: it implements `vctrs::vec_ptype2()` for the `vctrs_percent`
+    class.
+  * A generic: thanks to the double-dispatch trick, `vec_ptype2.vctrs_percent()`
+    is a generic with `default`, `vctrs_percent`, and `double` methods (see
+    below).
+
+This creative take on the S3 system wasn't considered in the design of roxygen2, so we have to spell all of this out explicitly. Because `vec_ptype2.vctrs_percent()` presents as an exported generic, `R CMD check` will complain if it is not documented, although this documentation is not relevant for users. This is where we use the dummy internal help topic defined earlier.
+
+Now we finish the work around `vec_ptype2()`. Each method has both a `@method` and an `@export` directive.
+
+```{r}
+#' @method vec_ptype2.vctrs_percent default
+#' @export                                 
+vec_ptype2.vctrs_percent.default <- function(x, y,
+                                             ...,
+                                             x_arg = "x", y_arg = "y") {
+  vec_default_ptype2(x, y, x_arg = x_arg, y_arg = y_arg)
+}
+
+#' @method vec_ptype2.vctrs_percent vctrs_percent
+#' @export                                       
+vec_ptype2.vctrs_percent.vctrs_percent <- function(x, y, ...) new_percent()
+
+#' @method vec_ptype2.vctrs_percent double       
+#' @export                                       
+vec_ptype2.vctrs_percent.double <- function(x, y, ...) double()
+
+#' @method vec_ptype2.double vctrs_percent
+#' @export
+vec_ptype2.double.vctrs_percent <- function(x, y, ...) double()
+```
+
+The exact same treatment applies to `vec_cast()`. Leave out because it's redundant? Or include to be complete?
+
+```{r eval = FALSE}
+vec_cast.vctrs_percent <- function(x, to, ...) {
+  UseMethod("vec_cast.vctrs_percent")
+}
+vec_cast.vctrs_percent.default <- function(x, to, ...) vec_default_cast(x, to)
+vec_cast.vctrs_percent.vctrs_percent <- function(x, to, ...) x
+vec_cast.vctrs_percent.double <- function(x, to, ...) percent(x)
+vec_cast.double.vctrs_percent <- function(x, to, ...) vec_data(x)
+}
+```
+
+Say something about tests?
+
+https://github.com/tidyverse/googlesheets4/blob/CellData-and-formulas/tests/testthat/test-formula.R
+
+https://github.com/tidyverse/glue/blob/master/tests/testthat/test-vctrs.R
