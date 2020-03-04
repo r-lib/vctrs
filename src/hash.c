@@ -260,7 +260,7 @@ void hash_fill(uint32_t* p, R_len_t size, SEXP x, bool na_equal) {
     case vctrs_type_character: chr_hash_fill_na_equal(p, size, x); return;
     case vctrs_type_raw: raw_hash_fill_na_equal(p, size, x); return;
     case vctrs_type_list: list_hash_fill_na_equal(p, size, x); return;
-    case vctrs_type_dataframe: df_hash_fill(p, size, x, na_equal); return;
+    case vctrs_type_dataframe: df_hash_fill(p, size, x, true); return;
     default: break;
     }
   } else {
@@ -272,6 +272,7 @@ void hash_fill(uint32_t* p, R_len_t size, SEXP x, bool na_equal) {
     case vctrs_type_character: chr_hash_fill_na_propagate(p, size, x); return;
     case vctrs_type_raw: raw_hash_fill_na_propagate(p, size, x); return;
     case vctrs_type_list: list_hash_fill_na_propagate(p, size, x); return;
+    case vctrs_type_dataframe: df_hash_fill(p, size, x, false); return;
     default: break;
     }
   }

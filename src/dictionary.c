@@ -155,8 +155,31 @@ static int df_equal(const void* x, R_len_t i, const void* y, R_len_t j) {
 
   return true;
 }
+
 static int df_equal_missing(const void* x, R_len_t i) {
-  Rf_error("TODO");
+  struct dictionary_df_data* x_data = (struct dictionary_df_data*) x;
+
+  enum vctrs_type* types = x_data->col_types;
+  void** x_ptrs = x_data->col_ptrs;
+  R_len_t n_col = x_data->n_col;
+
+  for (R_len_t col = 0; col < n_col; ++col) {
+    enum vctrs_type type = types[col];
+
+    // Raw doesn't have missing values
+    if (type == vctrs_type_raw) {
+      continue;
+    }
+
+    if (equal_scalar_p(type,
+                       R_NilValue, x_ptrs[col], i,
+                       R_NilValue, vec_type_missing_value(type), 0,
+                       true)) {
+      return true;
+    }
+  }
+
+  return false;
 }
 
 static void init_dictionary_df(struct dictionary* d) {
