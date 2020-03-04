@@ -931,7 +931,7 @@ vec_arith.vctrs_meter.MISSING <- function(op, x, y, ...) {
 +meter(1) 
 ```
 
-## Appendix: Implementing a vctrs S3 class in a package
+## Implementing a vctrs S3 class in a package
 
 Defining S3 methods interactively is fine for iteration and exploration, but if your class lives in a package, you need to do a few more things:
 
