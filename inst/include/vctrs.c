@@ -1,19 +1,11 @@
 #include "vctrs.h"
 
-SEXP (*vec_proxy)(SEXP) = NULL;
-SEXP (*vec_restore)(SEXP, SEXP, SEXP) = NULL;
-SEXP (*vec_proxy_assign)(SEXP, SEXP, SEXP) = NULL;
-SEXP (*vec_slice_impl)(SEXP, SEXP) = NULL;
-SEXP (*vec_names)(SEXP) = NULL;
-SEXP (*vec_set_names)(SEXP, SEXP) = NULL;
-SEXP (*vec_chop)(SEXP, SEXP) = NULL;
+bool (*vec_is_vector)(SEXP) = NULL;
+R_len_t (*short_vec_size)(SEXP) = NULL;
+SEXP (*short_vec_recycle)(SEXP, R_len_t) = NULL;
 
 void vctrs_init_api() {
-  vec_proxy = (SEXP (*)(SEXP)) R_GetCCallable("vctrs", "vec_proxy");
-  vec_restore = (SEXP (*)(SEXP, SEXP, SEXP)) R_GetCCallable("vctrs", "vec_restore");
-  vec_proxy_assign = (SEXP (*)(SEXP, SEXP, SEXP)) R_GetCCallable("vctrs", "vec_proxy_assign");
-  vec_slice_impl = (SEXP (*)(SEXP, SEXP)) R_GetCCallable("vctrs", "vec_slice_impl");
-  vec_names = (SEXP (*)(SEXP)) R_GetCCallable("vctrs", "vec_names");
-  vec_set_names = (SEXP (*)(SEXP, SEXP)) R_GetCCallable("vctrs", "vec_set_names");
-  vec_chop = (SEXP (*)(SEXP, SEXP)) R_GetCCallable("vctrs", "vec_chop");
+  vec_is_vector = (bool (*)(SEXP)) R_GetCCallable("vctrs", "vec_is_vector");
+  short_vec_size = (R_len_t (*)(SEXP)) R_GetCCallable("vctrs", "short_vec_size");
+  short_vec_recycle = (SEXP (*)(SEXP, R_len_t)) R_GetCCallable("vctrs", "short_vec_recycle");
 }

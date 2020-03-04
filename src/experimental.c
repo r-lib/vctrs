@@ -1,20 +1,50 @@
 #include "vctrs.h"
 #include "utils.h"
 
+// -----------------------------------------------------------------------------
+// Maturing
+
+R_len_t short_vec_size(SEXP x) {
+  return vec_size(x);
+}
+
+SEXP short_vec_recycle(SEXP x, R_len_t size) {
+  return vec_recycle(x, size, args_empty);
+}
+
+// -----------------------------------------------------------------------------
+// Experimental
+
 SEXP exp_vec_cast(SEXP x, SEXP to) {
   return vec_cast(x, to, args_empty, args_empty);
 }
 
-bool exp_vec_is_vector(SEXP x) {
-  return vec_is_vector(x);
+SEXP exp_vec_restore(SEXP x, SEXP to) {
+  return vec_restore(x, to, R_NilValue);
 }
 
-R_len_t exp_short_vec_size(SEXP x) {
-  return vec_size(x);
+SEXP exp_vec_proxy(SEXP x) {
+  return vec_proxy(x);
 }
 
-SEXP exp_short_vec_recycle(SEXP x, R_len_t size) {
-  return vec_recycle(x, size, args_empty);
+SEXP exp_vec_chop(SEXP x, SEXP indices) {
+  return vec_chop(x, indices);
+}
+
+SEXP exp_vec_proxy_assign(SEXP proxy, SEXP index, SEXP value) {
+  return vec_proxy_assign(proxy, index, value);
+}
+
+SEXP exp_vec_slice_impl(SEXP x, SEXP subscript) {
+  return vec_slice_impl(x, subscript);
+}
+
+SEXP exp_vec_names(SEXP x) {
+  return vec_names(x);
+}
+
+SEXP exp_vec_set_names(SEXP x, SEXP names) {
+  return vec_set_names(x, names);
 }
 
 SEXP exp_short_vec_init(SEXP x, R_len_t size) {
