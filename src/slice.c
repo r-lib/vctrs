@@ -15,16 +15,6 @@ SEXP syms_vec_slice_dispatch_integer64 = NULL;
 SEXP fns_vec_slice_dispatch_integer64 = NULL;
 
 
-/**
- * This `vec_slice()` variant falls back to `[` with S3 objects.
- *
- * @param to The type to restore to.
- * @param dispatch When `true`, dispatches to `[` for compatibility
- *   with base R. When `false`, uses native implementations.
- */
-SEXP vec_slice_impl(SEXP x, SEXP subscript);
-
-
 #define SLICE_SUBSCRIPT(RTYPE, CTYPE, DEREF, CONST_DEREF, NA_VALUE)     \
   const CTYPE* data = CONST_DEREF(x);                                   \
   R_len_t n = Rf_length(subscript);                                     \
