@@ -25,102 +25,102 @@ int32_t ceil2(int32_t x) {
 static struct dictionary* new_dictionary_opts(SEXP x, struct dictionary_opts* opts);
 
 
-static int nil_equal(const void* x, R_len_t i, const void* y, R_len_t j) {
+static int nil_p_equal(const void* x, R_len_t i, const void* y, R_len_t j) {
   Rf_error("Internal error: Shouldn't compare NULL in dictionary.");
 }
-static int nil_equal_missing(const void* x, R_len_t i) {
+static int nil_p_equal_missing(const void* x, R_len_t i) {
   Rf_error("Internal error: Shouldn't compare NULL in dictionary.");
 }
 
-static int lgl_equal_na_equal(const void* x, R_len_t i, const void* y, R_len_t j) {
+static int lgl_p_equal_na_equal(const void* x, R_len_t i, const void* y, R_len_t j) {
   return lgl_equal_scalar_na_equal(((const int*) x) + i, ((const int*) y) + j);
 }
-static int lgl_equal_missing(const void* x, R_len_t i) {
+static int lgl_p_equal_missing(const void* x, R_len_t i) {
   return lgl_equal_scalar_na_equal(((const int*) x) + i, &NA_LOGICAL);
 }
 
-static int int_equal(const void* x, R_len_t i, const void* y, R_len_t j) {
+static int int_p_equal(const void* x, R_len_t i, const void* y, R_len_t j) {
   return int_equal_scalar_na_equal(((const int*) x) + i, ((const int*) y) + j);
 }
-static int int_equal_missing(const void* x, R_len_t i) {
+static int int_p_equal_missing(const void* x, R_len_t i) {
   return int_equal_scalar_na_equal(((const int*) x) + i, &NA_INTEGER);
 }
 
-static int dbl_equal(const void* x, R_len_t i, const void* y, R_len_t j) {
+static int dbl_p_equal(const void* x, R_len_t i, const void* y, R_len_t j) {
   return dbl_equal_scalar_na_equal(((const double*) x) + i, ((const double*) y) + j);
 }
-static int dbl_equal_missing(const void* x, R_len_t i) {
+static int dbl_p_equal_missing(const void* x, R_len_t i) {
   return dbl_equal_scalar_na_equal(((const double*) x) + i, &NA_REAL);
 }
 
-static int cpl_equal(const void* x, R_len_t i, const void* y, R_len_t j) {
+static int cpl_p_equal(const void* x, R_len_t i, const void* y, R_len_t j) {
   return cpl_equal_scalar_na_equal(((const Rcomplex*) x) + i, ((const Rcomplex*) y) + j);
 }
-static int cpl_equal_missing(const void* x, R_len_t i) {
+static int cpl_p_equal_missing(const void* x, R_len_t i) {
   return cpl_equal_scalar_na_equal(((const Rcomplex*) x) + i, &vctrs_shared_na_cpl);
 }
 
-static int chr_equal(const void* x, R_len_t i, const void* y, R_len_t j) {
+static int chr_p_equal(const void* x, R_len_t i, const void* y, R_len_t j) {
   return chr_equal_scalar_na_equal(((const SEXP*) x) + i, ((const SEXP*) y) + j);
 }
-static int chr_equal_missing(const void* x, R_len_t i) {
+static int chr_p_equal_missing(const void* x, R_len_t i) {
   return chr_equal_scalar_na_equal(((const SEXP*) x) + i, &NA_STRING);
 }
 
-static int raw_equal(const void* x, R_len_t i, const void* y, R_len_t j) {
+static int raw_p_equal(const void* x, R_len_t i, const void* y, R_len_t j) {
   return raw_equal_scalar(((const Rbyte*) x) + i, ((const Rbyte*) y) + j, true);
 }
-static int raw_equal_missing(const void* x, R_len_t i) {
+static int raw_p_equal_missing(const void* x, R_len_t i) {
   return false;
 }
 
-static int list_equal(const void* x, R_len_t i, const void* y, R_len_t j) {
+static int list_p_equal(const void* x, R_len_t i, const void* y, R_len_t j) {
   return list_equal_scalar_na_equal(((const SEXP) x), i, ((const SEXP) y), j);
 }
-static int list_equal_missing(const void* x, R_len_t i) {
+static int list_p_equal_missing(const void* x, R_len_t i) {
   return list_equal_scalar_na_equal(((const SEXP) x), i, vctrs_shared_na_list, 0);
 }
 
 
 static void init_dictionary_nil(struct dictionary* d) {
   d->vec_p = NULL;
-  d->equal = &nil_equal;
-  d->equal_missing = &nil_equal_missing;
+  d->equal = &nil_p_equal;
+  d->equal_missing = &nil_p_equal_missing;
 }
 static void init_dictionary_lgl(struct dictionary* d) {
   d->vec_p = (const void*) LOGICAL_RO(d->vec);
-  d->equal = &lgl_equal_na_equal;
-  d->equal_missing = &lgl_equal_missing;
+  d->equal = &lgl_p_equal_na_equal;
+  d->equal_missing = &lgl_p_equal_missing;
 }
 static void init_dictionary_int(struct dictionary* d) {
   d->vec_p = (const void*) INTEGER_RO(d->vec);
-  d->equal = &int_equal;
-  d->equal_missing = &int_equal_missing;
+  d->equal = &int_p_equal;
+  d->equal_missing = &int_p_equal_missing;
 }
 static void init_dictionary_dbl(struct dictionary* d) {
   d->vec_p = (const void*) REAL_RO(d->vec);
-  d->equal = dbl_equal;
-  d->equal_missing = &dbl_equal_missing;
+  d->equal = dbl_p_equal;
+  d->equal_missing = &dbl_p_equal_missing;
 }
 static void init_dictionary_cpl(struct dictionary* d) {
   d->vec_p = (const void*) COMPLEX_RO(d->vec);
-  d->equal = &cpl_equal;
-  d->equal_missing = &cpl_equal_missing;
+  d->equal = &cpl_p_equal;
+  d->equal_missing = &cpl_p_equal_missing;
 }
 static void init_dictionary_chr(struct dictionary* d) {
   d->vec_p = (const void*) STRING_PTR_RO(d->vec);
-  d->equal = &chr_equal;
-  d->equal_missing = &chr_equal_missing;
+  d->equal = &chr_p_equal;
+  d->equal_missing = &chr_p_equal_missing;
 }
 static void init_dictionary_raw(struct dictionary* d) {
   d->vec_p = (const void*) RAW_RO(d->vec);
-  d->equal = &raw_equal;
-  d->equal_missing = &raw_equal_missing;
+  d->equal = &raw_p_equal;
+  d->equal_missing = &raw_p_equal_missing;
 }
 static void init_dictionary_list(struct dictionary* d) {
   d->vec_p = (const void*) d->vec;
-  d->equal = &list_equal;
-  d->equal_missing = &list_equal_missing;
+  d->equal = &list_p_equal;
+  d->equal_missing = &list_p_equal_missing;
 }
 
 struct dictionary_df_data {
