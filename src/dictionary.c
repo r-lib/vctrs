@@ -145,10 +145,9 @@ static int df_equal(const void* x, R_len_t i, const void* y, R_len_t j) {
   // `vec_proxy_equal()` flattens data frames so we don't need to
   // worry about df-cols
   for (R_len_t col = 0; col < n_col; ++col) {
-    if (!equal_scalar_p(types[col],
-                        R_NilValue, x_ptrs[col], i,
-                        R_NilValue, y_ptrs[col], j,
-                        true)) {
+    if (!equal_scalar_na_equal_p(types[col],
+                                 R_NilValue, x_ptrs[col], i,
+                                 R_NilValue, y_ptrs[col], j)) {
       return false;
     }
   }
@@ -171,10 +170,9 @@ static int df_equal_missing(const void* x, R_len_t i) {
       continue;
     }
 
-    if (equal_scalar_p(type,
-                       R_NilValue, x_ptrs[col], i,
-                       R_NilValue, vec_type_missing_value(type), 0,
-                       true)) {
+    if (equal_scalar_na_equal_p(type,
+                                R_NilValue, x_ptrs[col], i,
+                                R_NilValue, vec_type_missing_value(type), 0)) {
       return true;
     }
   }
