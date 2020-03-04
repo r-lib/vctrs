@@ -1,6 +1,7 @@
 #include "vctrs.h"
 #include "dictionary.h"
 #include "equal.h"
+#include "hash.h"
 #include "utils.h"
 
 // Initialised at load time
@@ -347,6 +348,10 @@ uint32_t dict_hash_scalar(struct dictionary* d, R_len_t i) {
   return dict_hash_with(d, d, i);
 }
 
+bool dict_is_missing(struct dictionary* d, R_len_t i) {
+  return d->hash[i] == HASH_MISSING && d->equal_missing(d->vec_p, i);
+}
+
 
 void dict_put(struct dictionary* d, uint32_t hash, R_len_t i) {
   d->key[hash] = i;
@@ -523,10 +528,13 @@ SEXP vec_match_params(SEXP needles, SEXP haystack, bool na_equal) {
   bool propagate = !na_equal;
 
   for (int i = 0; i < n_needle; ++i) {
-    uint32_t hash = dict_hash_with(d, d_needles, i);
-    if (propagate && d_needles->equal_missing(d_needles->vec_p, i)) {
+    if (propagate && dict_is_missing(d_needles, i)) {
       p_out[i] = NA_INTEGER;
-    } else if (d->key[hash] == DICT_EMPTY) {
+      continue;
+    }
+
+    uint32_t hash = dict_hash_with(d, d_needles, i);
+    if (d->key[hash] == DICT_EMPTY) {
       // TODO: Return `no_match` instead
       p_out[i] = NA_INTEGER;
     } else {

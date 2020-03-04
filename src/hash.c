@@ -1,4 +1,6 @@
 #include "vctrs.h"
+#include "equal.h"
+#include "hash.h"
 #include "utils.h"
 
 // boost::hash_combine from https://stackoverflow.com/questions/35985960
@@ -97,7 +99,7 @@ static inline uint32_t list_hash_scalar_na_equal(SEXP x, R_len_t i) {
 static inline uint32_t list_hash_scalar_na_propagate(SEXP x, R_len_t i) {
   SEXP elt = VECTOR_ELT(x, i);
   if (elt == R_NilValue) {
-    return 1;
+    return HASH_MISSING;
   } else {
     return hash_object(elt);
   }
@@ -291,9 +293,12 @@ void hash_fill(uint32_t* p, R_len_t size, SEXP x, bool na_equal) {
   const CTYPE* xp = CONST_DEREF(x);                                     \
                                                                         \
   for (R_len_t i = 0; i < size; ++i, ++xp) {                            \
+    if (p[i] == HASH_MISSING) {                                         \
+      continue;                                                         \
+    }                                                                   \
     if (*xp == NA_VALUE) {                                              \
-      p[i] = 1;                                                         \
-    } else if (p[i] != 1) {                                             \
+      p[i] = HASH_MISSING;                                              \
+    } else {                                                            \
       p[i] = hash_combine(p[i], HASHER(xp));                            \
     }                                                                   \
   }
@@ -302,9 +307,12 @@ void hash_fill(uint32_t* p, R_len_t size, SEXP x, bool na_equal) {
   const CTYPE* xp = CONST_DEREF(x);                                     \
                                                                         \
   for (R_len_t i = 0; i < size; ++i, ++xp) {                            \
+    if (p[i] == HASH_MISSING) {                                         \
+      continue;                                                         \
+    }                                                                   \
     if (NA_CMP(*xp)) {                                                  \
-      p[i] = 1;                                                         \
-    } else if (p[i] != 1) {                                             \
+      p[i] = HASH_MISSING;                                              \
+    } else {                                                            \
       p[i] = hash_combine(p[i], HASHER(xp));                            \
     }                                                                   \
   }
@@ -327,12 +335,9 @@ static inline void dbl_hash_fill_na_equal(uint32_t* p, R_len_t size, SEXP x) {
   HASH_FILL(double, REAL_RO, dbl_hash_scalar);
 }
 static inline void dbl_hash_fill_na_propagate(uint32_t* p, R_len_t size, SEXP x) {
-  HASH_FILL_NA_PROPAGATE(double, REAL_RO, dbl_hash_scalar, NA_REAL);
+  HASH_FILL_NA_PROPAGATE_CMP(double, REAL_RO, dbl_hash_scalar, dbl_equal_missing);
 }
 
-static inline bool cpl_equal_missing(Rcomplex x) {
-  return x.r == NA_REAL || x.i == NA_REAL;
-}
 static inline void cpl_hash_fill_na_equal(uint32_t* p, R_len_t size, SEXP x) {
   HASH_FILL(Rcomplex, COMPLEX_RO, cpl_hash_scalar);
 }
@@ -364,13 +369,27 @@ static inline void raw_hash_fill_na_propagate(uint32_t* p, R_len_t size, SEXP x)
     p[i] = hash_combine(p[i], HASHER(x, i));    \
   }
 
+#define HASH_FILL_BARRIER_NA_PROPAGATE(HASHER)  \
+  for (R_len_t i = 0; i < size; ++i) {          \
+    if (p[i] == HASH_MISSING) {                 \
+      continue;                                 \
+    }                                           \
+    uint32_t hash = HASHER(x, i);               \
+    if (hash == HASH_MISSING) {                 \
+      p[i] = HASH_MISSING;                      \
+    } else {                                    \
+      p[i] = hash_combine(p[i], HASHER(x, i));  \
+    }                                           \
+  }
+
 static void list_hash_fill_na_equal(uint32_t* p, R_len_t size, SEXP x) {
   HASH_FILL_BARRIER(list_hash_scalar_na_equal);
 }
 static void list_hash_fill_na_propagate(uint32_t* p, R_len_t size, SEXP x) {
-  HASH_FILL_BARRIER(list_hash_scalar_na_propagate);
+  HASH_FILL_BARRIER_NA_PROPAGATE(list_hash_scalar_na_propagate);
 }
 
+#undef HASH_FILL_BARRIER_NA_PROPAGATE
 #undef HASH_FILL_BARRIER
 
 

@@ -62,4 +62,6 @@ struct dictionary* new_dictionary_partial(SEXP x);
 uint32_t dict_hash_scalar(struct dictionary* d, R_len_t i);
 uint32_t dict_hash_with(struct dictionary* d, struct dictionary* x, R_len_t i);
 
+bool dict_is_missing(struct dictionary* d, R_len_t i);
+
 void dict_put(struct dictionary* d, uint32_t k, R_len_t i);
