@@ -285,7 +285,7 @@ vec_cast(0.5, percent())
 vec_cast(percent(0.5), double())
 ```
 
-Once you've implemented `vec_ptype2()` and `vec_cast()` you get `vec_c()`, `[<-`, and `[[<-` implementations for free.
+Once you've implemented `vec_ptype2()` and `vec_cast()`, you get `vec_c()`, `[<-`, and `[[<-` implementations for free.
 
 ```{r, error = TRUE}
 vec_c(percent(0.5), 1)
