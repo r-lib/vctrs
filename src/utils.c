@@ -1324,6 +1324,20 @@ SEXP result_attrib = NULL;
 struct vctrs_arg args_empty_;
 struct vctrs_arg* args_empty = NULL;
 
+
+SEXP r_new_shared_vector(SEXPTYPE type, R_len_t n) {
+  SEXP out = Rf_allocVector(type, n);
+  R_PreserveObject(out);
+  MARK_NOT_MUTABLE(out);
+  return out;
+}
+SEXP r_new_shared_character(const char* name) {
+  SEXP out = Rf_mkString(name);
+  R_PreserveObject(out);
+  MARK_NOT_MUTABLE(out);
+  return out;
+}
+
 void vctrs_init_utils(SEXP ns) {
   vctrs_ns_env = ns;
   vctrs_method_table = r_env_get(ns, Rf_install(".__S3MethodsTable__."));
@@ -1336,8 +1350,7 @@ void vctrs_init_utils(SEXP ns) {
 
   // Holds the CHARSXP objects because unlike symbols they can be
   // garbage collected
-  strings = Rf_allocVector(STRSXP, 21);
-  R_PreserveObject(strings);
+  strings = r_new_shared_vector(STRSXP, 21);
 
   strings_dots = Rf_mkChar("...");
   SET_STRING_ELT(strings, 0, strings_dots);
@@ -1403,150 +1416,83 @@ void vctrs_init_utils(SEXP ns) {
   SET_STRING_ELT(strings, 20, strings_list);
 
 
-  classes_data_frame = Rf_allocVector(STRSXP, 1);
-  R_PreserveObject(classes_data_frame);
-
+  classes_data_frame = r_new_shared_vector(STRSXP, 1);
   strings_data_frame = Rf_mkChar("data.frame");
   SET_STRING_ELT(classes_data_frame, 0, strings_data_frame);
 
-  classes_factor = Rf_allocVector(STRSXP, 1);
-  R_PreserveObject(classes_factor);
+  classes_factor = r_new_shared_vector(STRSXP, 1);
   SET_STRING_ELT(classes_factor, 0, strings_factor);
 
-  classes_ordered = Rf_allocVector(STRSXP, 2);
-  R_PreserveObject(classes_ordered);
+  classes_ordered = r_new_shared_vector(STRSXP, 2);
   SET_STRING_ELT(classes_ordered, 0, strings_ordered);
   SET_STRING_ELT(classes_ordered, 1, strings_factor);
 
-  classes_date = Rf_allocVector(STRSXP, 1);
-  R_PreserveObject(classes_date);
+  classes_date = r_new_shared_vector(STRSXP, 1);
   SET_STRING_ELT(classes_date, 0, strings_date);
 
-  classes_posixct = Rf_allocVector(STRSXP, 2);
-  R_PreserveObject(classes_posixct);
+  classes_posixct = r_new_shared_vector(STRSXP, 2);
   SET_STRING_ELT(classes_posixct, 0, strings_posixct);
   SET_STRING_ELT(classes_posixct, 1, strings_posixt);
 
+  chrs_subset = r_new_shared_character("subset");
+  chrs_extract = r_new_shared_character("extract");
+  chrs_assign = r_new_shared_character("assign");
+  chrs_rename = r_new_shared_character("rename");
+  chrs_remove = r_new_shared_character("remove");
+  chrs_negate = r_new_shared_character("negate");
+  chrs_numeric = r_new_shared_character("numeric");
+  chrs_character = r_new_shared_character("character");
+  chrs_empty = r_new_shared_character("");
+  chrs_cast = r_new_shared_character("cast");
+  chrs_error = r_new_shared_character("error");
 
-  chrs_subset = Rf_mkString("subset");
-  R_PreserveObject(chrs_subset);
-
-  chrs_extract = Rf_mkString("extract");
-  R_PreserveObject(chrs_extract);
-
-  chrs_assign = Rf_mkString("assign");
-  R_PreserveObject(chrs_assign);
-
-  chrs_rename = Rf_mkString("rename");
-  R_PreserveObject(chrs_rename);
-
-  chrs_remove = Rf_mkString("remove");
-  R_PreserveObject(chrs_remove);
-
-  chrs_negate = Rf_mkString("negate");
-  R_PreserveObject(chrs_negate);
-
-  chrs_numeric = Rf_mkString("numeric");
-  R_PreserveObject(chrs_numeric);
-
-  chrs_character = Rf_mkString("character");
-  R_PreserveObject(chrs_character);
-
-  chrs_empty = Rf_mkString("");
-  R_PreserveObject(chrs_empty);
-
-  chrs_cast = Rf_mkString("cast");
-  R_PreserveObject(chrs_cast);
-
-  chrs_error = Rf_mkString("error");
-  R_PreserveObject(chrs_error);
-
-
-  classes_tibble = Rf_allocVector(STRSXP, 3);
-  R_PreserveObject(classes_tibble);
+  classes_tibble = r_new_shared_vector(STRSXP, 3);
 
   strings_tbl_df = Rf_mkChar("tbl_df");
   SET_STRING_ELT(classes_tibble, 0, strings_tbl_df);
 
   strings_tbl = Rf_mkChar("tbl");
   SET_STRING_ELT(classes_tibble, 1, strings_tbl);
-
   SET_STRING_ELT(classes_tibble, 2, strings_data_frame);
 
 
-  classes_list_of = Rf_allocVector(STRSXP, 3);
-  R_PreserveObject(classes_list_of);
-
+  classes_list_of = r_new_shared_vector(STRSXP, 3);
   strings_vctrs_list_of = Rf_mkChar("vctrs_list_of");
   SET_STRING_ELT(classes_list_of, 0, strings_vctrs_list_of);
   SET_STRING_ELT(classes_list_of, 1, strings_vctrs_vctr);
   SET_STRING_ELT(classes_list_of, 2, Rf_mkChar("list"));
 
 
-  classes_vctrs_group_rle = Rf_allocVector(STRSXP, 3);
-  R_PreserveObject(classes_vctrs_group_rle);
-
+  classes_vctrs_group_rle = r_new_shared_vector(STRSXP, 3);
   SET_STRING_ELT(classes_vctrs_group_rle, 0, Rf_mkChar("vctrs_group_rle"));
   SET_STRING_ELT(classes_vctrs_group_rle, 1, strings_vctrs_rcrd);
   SET_STRING_ELT(classes_vctrs_group_rle, 2, strings_vctrs_vctr);
 
 
-  vctrs_shared_empty_lgl = Rf_allocVector(LGLSXP, 0);
-  R_PreserveObject(vctrs_shared_empty_lgl);
-  MARK_NOT_MUTABLE(vctrs_shared_empty_lgl);
-
-  vctrs_shared_empty_int = Rf_allocVector(INTSXP, 0);
-  R_PreserveObject(vctrs_shared_empty_int);
-  MARK_NOT_MUTABLE(vctrs_shared_empty_int);
-
-  vctrs_shared_empty_dbl = Rf_allocVector(REALSXP, 0);
-  R_PreserveObject(vctrs_shared_empty_dbl);
-  MARK_NOT_MUTABLE(vctrs_shared_empty_dbl);
-
-  vctrs_shared_empty_cpl = Rf_allocVector(CPLXSXP, 0);
-  R_PreserveObject(vctrs_shared_empty_cpl);
-  MARK_NOT_MUTABLE(vctrs_shared_empty_cpl);
-
-  vctrs_shared_empty_chr = Rf_allocVector(STRSXP, 0);
-  R_PreserveObject(vctrs_shared_empty_chr);
-  MARK_NOT_MUTABLE(vctrs_shared_empty_chr);
-
-  vctrs_shared_empty_raw = Rf_allocVector(RAWSXP, 0);
-  R_PreserveObject(vctrs_shared_empty_raw);
-  MARK_NOT_MUTABLE(vctrs_shared_empty_raw);
-
-  vctrs_shared_empty_list = Rf_allocVector(VECSXP, 0);
-  R_PreserveObject(vctrs_shared_empty_list);
-  MARK_NOT_MUTABLE(vctrs_shared_empty_list);
-
-  vctrs_shared_empty_date = Rf_allocVector(REALSXP, 0);
-  R_PreserveObject(vctrs_shared_empty_date);
+  vctrs_shared_empty_lgl = r_new_shared_vector(LGLSXP, 0);
+  vctrs_shared_empty_int = r_new_shared_vector(INTSXP, 0);
+  vctrs_shared_empty_dbl = r_new_shared_vector(REALSXP, 0);
+  vctrs_shared_empty_cpl = r_new_shared_vector(CPLXSXP, 0);
+  vctrs_shared_empty_chr = r_new_shared_vector(STRSXP, 0);
+  vctrs_shared_empty_raw = r_new_shared_vector(RAWSXP, 0);
+  vctrs_shared_empty_list = r_new_shared_vector(VECSXP, 0);
+  vctrs_shared_empty_date = r_new_shared_vector(REALSXP, 0);
   Rf_setAttrib(vctrs_shared_empty_date, R_ClassSymbol, classes_date);
-  MARK_NOT_MUTABLE(vctrs_shared_empty_date);
 
-  vctrs_shared_true = Rf_allocVector(LGLSXP, 1);
-  R_PreserveObject(vctrs_shared_true);
-  MARK_NOT_MUTABLE(vctrs_shared_true);
+  vctrs_shared_true = r_new_shared_vector(LGLSXP, 1);
   LOGICAL(vctrs_shared_true)[0] = 1;
 
-  vctrs_shared_false = Rf_allocVector(LGLSXP, 1);
-  R_PreserveObject(vctrs_shared_false);
-  MARK_NOT_MUTABLE(vctrs_shared_false);
+  vctrs_shared_false = r_new_shared_vector(LGLSXP, 1);
   LOGICAL(vctrs_shared_false)[0] = 0;
 
   vctrs_shared_na_cpl.i = NA_REAL;
   vctrs_shared_na_cpl.r = NA_REAL;
 
+  vctrs_shared_na_lgl = r_new_shared_vector(LGLSXP, 1);
+  LOGICAL(vctrs_shared_na_lgl)[0] = NA_LOGICAL;
 
-  vctrs_shared_na_lgl = r_lgl(NA_LOGICAL);
-  R_PreserveObject(vctrs_shared_na_lgl);
-  MARK_NOT_MUTABLE(vctrs_shared_na_lgl);
-
-  vctrs_shared_zero_int = Rf_allocVector(INTSXP, 1);
+  vctrs_shared_zero_int = r_new_shared_vector(INTSXP, 1);
   INTEGER(vctrs_shared_zero_int)[0] = 0;
-  R_PreserveObject(vctrs_shared_zero_int);
-  MARK_NOT_MUTABLE(vctrs_shared_zero_int);
-
 
   syms_i = Rf_install("i");
   syms_n = Rf_install("n");
