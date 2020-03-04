@@ -44,6 +44,16 @@ vec_proxy.ordered <- function(x, ...) {
   x
 }
 
+#' @export
+vec_restore.factor <- function(x, to, ...) {
+  .Call(vctrs_restore_bare_factor, x, to)
+}
+
+#' @export
+vec_restore.ordered <- function(x, to, ...) {
+  .Call(vctrs_restore_bare_ordered, x, to)
+}
+
 # Print -------------------------------------------------------------------
 
 #' @export

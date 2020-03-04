@@ -356,6 +356,7 @@ SEXP vec_proxy(SEXP x);
 SEXP vec_proxy_equal(SEXP x);
 SEXP vec_proxy_recursive(SEXP x, enum vctrs_proxy_kind kind);
 SEXP vec_restore(SEXP x, SEXP to, SEXP i);
+SEXP vec_restore_default(SEXP x, SEXP to);
 R_len_t vec_size(SEXP x);
 R_len_t vec_size_common(SEXP xs, R_len_t absent);
 SEXP vec_dim(SEXP x);
@@ -541,6 +542,9 @@ enum vctrs_dbl_class {
 enum vctrs_dbl_class dbl_classify(double x);
 
 // Factor methods -----------------------------------------------
+
+SEXP vec_restore_bare_factor(SEXP x, SEXP to);
+SEXP vec_restore_bare_ordered(SEXP x, SEXP to);
 
 SEXP fct_ptype2(SEXP x, SEXP y, struct vctrs_arg* x_arg, struct vctrs_arg* y_arg);
 SEXP ord_ptype2(SEXP x, SEXP y, struct vctrs_arg* x_arg, struct vctrs_arg* y_arg);

@@ -1,6 +1,88 @@
 #include "vctrs.h"
 #include "utils.h"
 
+static SEXP vec_restore_bare_factor_impl(SEXP x, SEXP to, SEXP to_levels) {
+  const int to_max = vec_size(to_levels);
+
+  const R_len_t size = vec_size(x);
+  const int* p_x = INTEGER(x);
+
+  // Levels are stored contiguously, so the maximum value is equal to the
+  // number of levels. `NA` values are allowed to exist separate from
+  // the number of levels, so they are ignored.
+  int x_max = 0;
+  for (R_len_t i = 0; i < size; ++i) {
+    const int elt = p_x[i];
+
+    if (elt == NA_INTEGER) {
+      continue;
+    }
+
+    if (elt > x_max) {
+      x_max = elt;
+    }
+  }
+
+  if (x_max > to_max) {
+    Rf_errorcall(
+      R_NilValue,
+      "`x` implies %i levels, but `to` only has %i levels.",
+      x_max,
+      to_max
+    );
+  }
+
+  return vec_restore_default(x, to);
+}
+
+// [[ include("vctrs.h") ]]
+SEXP vec_restore_bare_factor(SEXP x, SEXP to) {
+  if (TYPEOF(x) != INTSXP) {
+    Rf_errorcall(R_NilValue, "`x` must be an integer to be restored to a factor.");
+  }
+
+  SEXP to_levels = PROTECT(Rf_getAttrib(to, R_LevelsSymbol));
+
+  if (TYPEOF(to_levels) != STRSXP) {
+    stop_corrupt_factor_levels(x, args_empty);
+  }
+
+  SEXP out = vec_restore_bare_factor_impl(x, to, to_levels);
+
+  UNPROTECT(1);
+  return out;
+}
+
+// [[ include("vctrs.h") ]]
+SEXP vec_restore_bare_ordered(SEXP x, SEXP to) {
+  if (TYPEOF(x) != INTSXP) {
+    Rf_errorcall(R_NilValue, "`x` must be an integer to be restored to an ordered factor.");
+  }
+
+  SEXP to_levels = PROTECT(Rf_getAttrib(to, R_LevelsSymbol));
+
+  if (TYPEOF(to_levels) != STRSXP) {
+    stop_corrupt_ordered_levels(x, args_empty);
+  }
+
+  SEXP out = vec_restore_bare_factor_impl(x, to, to_levels);
+
+  UNPROTECT(1);
+  return out;
+}
+
+// [[ register() ]]
+SEXP vctrs_restore_bare_factor(SEXP x, SEXP to) {
+  return vec_restore_bare_factor(x, to);
+}
+
+// [[ register() ]]
+SEXP vctrs_restore_bare_ordered(SEXP x, SEXP to) {
+  return vec_restore_bare_ordered(x, to);
+}
+
+// -----------------------------------------------------------------------------
+
 static SEXP levels_union(SEXP x, SEXP y);
 
 // [[ include("vctrs.h") ]]
