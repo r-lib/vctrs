@@ -367,7 +367,7 @@ SEXP vec_cast_common(SEXP xs, SEXP to);
 SEXP vec_coercible_cast(SEXP x, SEXP to, struct vctrs_arg* x_arg, struct vctrs_arg* to_arg);
 SEXP vec_coercible_cast_e(SEXP x, SEXP to, struct vctrs_arg* x_arg, struct vctrs_arg* to_arg, ERR* err);
 bool vec_is_coercible(SEXP x, SEXP to, struct vctrs_arg* x_arg, struct vctrs_arg* to_arg, int* dir);
-SEXP vec_slice(SEXP x, SEXP index);
+SEXP vec_slice(SEXP x, SEXP subscript);
 SEXP vec_chop(SEXP x, SEXP indices);
 SEXP vec_slice_shaped(enum vctrs_type type, SEXP x, SEXP index);
 SEXP vec_assign(SEXP x, SEXP index, SEXP value);
