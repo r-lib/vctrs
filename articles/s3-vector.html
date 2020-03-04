@@ -895,8 +895,7 @@
 <span id="cb63-2"><a href="#cb63-2"></a><span class="co">#'</span></span>
 <span id="cb63-3"><a href="#cb63-3"></a><span class="co">#' @keywords internal</span></span>
 <span id="cb63-4"><a href="#cb63-4"></a><span class="co">#' @name pizza-vctrs</span></span>
-<span id="cb63-5"><a href="#cb63-5"></a><span class="ot">NULL</span></span>
-<span id="cb63-6"><a href="#cb63-6"></a><span class="co">#&gt; NULL</span></span></code></pre></div>
+<span id="cb63-5"><a href="#cb63-5"></a><span class="ot">NULL</span></span></code></pre></div>
 </div>
 <div id="low-level-and-user-friendly-constructors" class="section level3">
 <h3 class="hasAnchor">
@@ -985,18 +984,15 @@
 <span id="cb72-5"><a href="#cb72-5"></a>                                             <span class="dt">x_arg =</span> <span class="st">"x"</span>, <span class="dt">y_arg =</span> <span class="st">"y"</span>) {</span>
 <span id="cb72-6"><a href="#cb72-6"></a>  <span class="kw"><a href="../reference/vec_ptype2.html">vec_default_ptype2</a></span>(x, y, <span class="dt">x_arg =</span> x_arg, <span class="dt">y_arg =</span> y_arg)</span>
 <span id="cb72-7"><a href="#cb72-7"></a>}</span>
-<span id="cb72-8"><a href="#cb72-8"></a></span>
-<span id="cb72-9"><a href="#cb72-9"></a><span class="co">#' @method vec_ptype2.vctrs_percent vctrs_percent</span></span>
-<span id="cb72-10"><a href="#cb72-10"></a><span class="co">#' @export                                       </span></span>
-<span id="cb72-11"><a href="#cb72-11"></a>vec_ptype2.vctrs_percent.vctrs_percent &lt;-<span class="st"> </span><span class="cf">function</span>(x, y, ...) <span class="kw">new_percent</span>()</span>
-<span id="cb72-12"><a href="#cb72-12"></a></span>
-<span id="cb72-13"><a href="#cb72-13"></a><span class="co">#' @method vec_ptype2.vctrs_percent double       </span></span>
-<span id="cb72-14"><a href="#cb72-14"></a><span class="co">#' @export                                       </span></span>
-<span id="cb72-15"><a href="#cb72-15"></a>vec_ptype2.vctrs_percent.double &lt;-<span class="st"> </span><span class="cf">function</span>(x, y, ...) <span class="kw"><a href="https://rdrr.io/r/base/double.html">double</a></span>()</span>
-<span id="cb72-16"><a href="#cb72-16"></a></span>
-<span id="cb72-17"><a href="#cb72-17"></a><span class="co">#' @method vec_ptype2.double vctrs_percent</span></span>
-<span id="cb72-18"><a href="#cb72-18"></a><span class="co">#' @export</span></span>
-<span id="cb72-19"><a href="#cb72-19"></a>vec_ptype2.double.vctrs_percent &lt;-<span class="st"> </span><span class="cf">function</span>(x, y, ...) <span class="kw"><a href="https://rdrr.io/r/base/double.html">double</a></span>()</span></code></pre></div>
+<span id="cb72-8"><a href="#cb72-8"></a><span class="co">#' @method vec_ptype2.vctrs_percent vctrs_percent</span></span>
+<span id="cb72-9"><a href="#cb72-9"></a><span class="co">#' @export                                       </span></span>
+<span id="cb72-10"><a href="#cb72-10"></a>vec_ptype2.vctrs_percent.vctrs_percent &lt;-<span class="st"> </span><span class="cf">function</span>(x, y, ...) <span class="kw">new_percent</span>()</span>
+<span id="cb72-11"><a href="#cb72-11"></a><span class="co">#' @method vec_ptype2.vctrs_percent double       </span></span>
+<span id="cb72-12"><a href="#cb72-12"></a><span class="co">#' @export                                       </span></span>
+<span id="cb72-13"><a href="#cb72-13"></a>vec_ptype2.vctrs_percent.double &lt;-<span class="st"> </span><span class="cf">function</span>(x, y, ...) <span class="kw"><a href="https://rdrr.io/r/base/double.html">double</a></span>()</span>
+<span id="cb72-14"><a href="#cb72-14"></a><span class="co">#' @method vec_ptype2.double vctrs_percent</span></span>
+<span id="cb72-15"><a href="#cb72-15"></a><span class="co">#' @export</span></span>
+<span id="cb72-16"><a href="#cb72-16"></a>vec_ptype2.double.vctrs_percent &lt;-<span class="st"> </span><span class="cf">function</span>(x, y, ...) <span class="kw"><a href="https://rdrr.io/r/base/double.html">double</a></span>()</span></code></pre></div>
 <p>The exact same treatment applies to <code><a href="../reference/vec_cast.html">vec_cast()</a></code>, which yields:</p>
 <div class="sourceCode" id="cb73"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb73-1"><a href="#cb73-1"></a><span class="co">#' @method vec_cast pizza_percent</span></span>
 <span id="cb73-2"><a href="#cb73-2"></a><span class="co">#' @export vec_cast.pizza_percent</span></span>
@@ -1024,12 +1020,12 @@
 <a href="#testing" class="anchor"></a>Testing</h3>
 <p>It’s good practice to test your new class. Specific recommendations:</p>
 <ul>
-<li><p><code>R/percent.R</code> is the type of file where you really do want 100% test coverage. You can use <code>devtools::test_file_coverage()</code> to check this.</p></li>
+<li><p><code>R/percent.R</code> is the type of file where you really do want 100% test coverage. You can use <code>devtools::test_coverage_file()</code> to check this.</p></li>
 <li><p>Make sure to test behaviour with zero-length inputs and missing values.</p></li>
 <li><p>Use <code><a href="https://rdrr.io/pkg/testthat/man/verify_output.html">testthat::verify_output()</a></code> to add some <a href="https://ro-che.info/articles/2017-12-04-golden-tests">golden tests</a> for your format method. Customised printing is often a primary motivation for creating your own S3 class in the first place, so it makes sense to actively monitor this.</p></li>
 <li><p>Check for method symmetry; use <code>expect_s3_class()</code> to ensure that <code><a href="../reference/vec_c.html">vec_c(x, y)</a></code> and <code><a href="../reference/vec_c.html">vec_c(y, x)</a></code> return the same type of output for the important <code>x</code>s and <code>y</code>s in your domain.</p></li>
 <li>
-<p>Use <code>expect_error()</code> to check that inputs that can’t be combined fail with an error. Here, you should be generally checking the class of the error, not its message. Relevant classes include <code>vctrs_error_assert_ptype</code>, <code>vctrs_error_assert_size</code>, and <code>vctrs_error_incompatible_type</code>.</p>
+<p>Use <code><a href="https://rdrr.io/pkg/testthat/man/expect_error.html">testthat::expect_error()</a></code> to check that inputs that can’t be combined fail with an error. Here, you should be generally checking the class of the error, not its message. Relevant classes include <code>vctrs_error_assert_ptype</code>, <code>vctrs_error_assert_size</code>, and <code>vctrs_error_incompatible_type</code>.</p>
 <div class="sourceCode" id="cb74"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb74-1"><a href="#cb74-1"></a><span class="kw">expect_error</span>(<span class="kw"><a href="../reference/vec_c.html">vec_c</a></span>(<span class="dv">1</span>, <span class="st">"a"</span>), <span class="dt">class =</span> <span class="st">"vctrs_error_incompatible_type"</span>)</span></code></pre></div>
 </li>
 </ul>
