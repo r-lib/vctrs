@@ -89,7 +89,7 @@ needle in haystack, or NA if it's not found." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">vctrs</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.99.9008</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.99.9009</span>
       </span>
     </div>
 
@@ -159,7 +159,7 @@ haystack. <code>vec_match()</code> returns an integer vector giving location of
 
     <pre class="usage"><span class='fu'>vec_match</span>(<span class='no'>needles</span>, <span class='no'>haystack</span>, <span class='no'>...</span>, <span class='kw'>na_equal</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)
 
-<span class='fu'>vec_in</span>(<span class='no'>needles</span>, <span class='no'>haystack</span>)</pre>
+<span class='fu'>vec_in</span>(<span class='no'>needles</span>, <span class='no'>haystack</span>, <span class='kw'>na_equal</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -196,10 +196,12 @@ logical vector; <code>vec_match()</code> returns an integer vector.</p>
 
     
 
-<p>In most cases, missing values are not considered to be equal, i.e.
-<code>NA == NA</code> is not <code>TRUE</code>. This behaviour would be unappealing here,
-so these functions consider all <code>NAs</code> to be equal. (Similarly,
-all <code>NaN</code> are also considered to be equal.)</p>
+<p>In most cases places in R, missing values are not considered to be equal,
+i.e. <code>NA == NA</code> is not <code>TRUE</code>. The exception is in matching functions
+like <code><a href='https://rdrr.io/r/base/match.html'>match()</a></code> and <code><a href='https://rdrr.io/r/base/merge.html'>merge()</a></code>, where an <code>NA</code> will match another <code>NA</code>.
+By <code>vec_match()</code> and <code>vec_in()</code> will match <code>NA</code>s; but you can control
+this behaviour with the `match R's matching behaviour by default, but
+you ca</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='no'>hadley</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/strsplit.html'>strsplit</a></span>(<span class='st'>"hadley"</span>, <span class='st'>""</span>)<span class='kw'>[[</span><span class='fl'>1</span>]]
