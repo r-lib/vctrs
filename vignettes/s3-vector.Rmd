@@ -944,19 +944,43 @@ Let's assume that the `percent` class is implemented in the pizza package in the
 
 ### Getting started
 
-First, the pizza package needs to include vctrs in the `Imports` section of its `DESCRIPTION` (perhaps by calling`usethis::use_package("vctrs")`. Then we make all vctrs functions available within the pizza package by including the directive `#' @import vctrs` somewhere. You can use `usethis::use_package_doc()` to create package-level documentation in `R/pizza-doc.R`, in which case that is also the logical place to put `#' @import vctrs`. Usually, it's not good practice to `@import` the entire namespace of a package, but vctrs is deliberately designed with this use case in mind.
+First, the pizza package needs to include vctrs in the `Imports` section of its `DESCRIPTION` (perhaps by calling`usethis::use_package("vctrs")`. While vctrs is under very active development, it probably makes sense to state a minimum version.
 
-Remember to call `devtools::document()` regularly, as you develop, to regenerate `NAMESPACE` and the `.Rd` files.
+```
+Imports: 
+    a_package,
+    another_package,
+    ...
+    vctrs (>= x.y.z),
+    ...
+```
 
-Next we make a place to dump some internal documentation that's needed to avoid `R CMD check` complaints. We don't expect any human to ever read this documentation. This, and all subsequent code, presumably lives in `R/percent.R`:
+Then we make all vctrs functions available within the pizza package by including the directive `#' @import vctrs` somewhere. Usually, it's not good practice to `@import` the entire namespace of a package, but vctrs is deliberately designed with this use case in mind.
+
+Where should we put `#' @import vctrs`? There are two natural locations:
+
+* With package-level docs in `R/pizza-doc.R`. You can use
+  `usethis::use_package_doc()` to initiate this package-level documentation.
+  
+* In `R/percent.R`. This makes the most sense when the vctrs S3 class is a
+  modest and self-contained part of the overall package.
+  
+We also must use one of these locations to dump some internal documentation that's needed to avoid `R CMD check` complaints. We don't expect any human to ever read this documentation. Here's how this dummy documentation should look, combined with the `#' @import vctrs` directive described above.
 
 ```{r eval = FALSE}
 #' Internal vctrs methods
 #'
+#' @import vctrs
 #' @keywords internal
 #' @name pizza-vctrs
 NULL
 ```
+
+This should appear in `R/pizza-doc.R` (package-level docs) or in `R/percent.R` (class-focused file).
+
+Remember to call `devtools::document()` regularly, as you develop, to regenerate `NAMESPACE` and the `.Rd` files.
+
+From this point on, the code shown is expected to appear in `R/percent.R`.
 
 ### Low-level and user-friendly constructors
 
