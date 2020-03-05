@@ -972,7 +972,7 @@
 <div id="double-dispatch-methods-for-coercion-and-casting" class="section level3">
 <h3 class="hasAnchor">
 <a href="#double-dispatch-methods-for-coercion-and-casting" class="anchor"></a>Double dispatch methods for coercion and casting</h3>
-<p>Next we implement methods for <code><a href="../reference/vec_ptype2.html">vec_ptype2()</a></code> and <code><a href="../reference/vec_cast.html">vec_cast()</a></code>, along with all the roxygen2 boilerplate needed to make them work. <code><a href="../reference/vec_ptype2.html">vec_ptype2()</a></code> and <code><a href="../reference/vec_cast.html">vec_cast()</a></code> have exactly the same structure, so we’ll explain everything via <code><a href="../reference/vec_ptype2.html">vec_ptype2()</a></code> and just show the result for <code><a href="../reference/vec_cast.html">vec_cast()</a></code>.</p>
+<p>Next we implement methods for <code><a href="../reference/vec_ptype2.html">vec_ptype2()</a></code> and <code><a href="../reference/vec_cast.html">vec_cast()</a></code>, along with all the roxygen2 boilerplate needed to make them work. <code><a href="../reference/vec_ptype2.html">vec_ptype2()</a></code> and <code><a href="../reference/vec_cast.html">vec_cast()</a></code> have exactly the same roxygen2 considerations, so we’ll explain everything via <code><a href="../reference/vec_ptype2.html">vec_ptype2()</a></code> and just show the result for <code><a href="../reference/vec_cast.html">vec_cast()</a></code>.</p>
 <p>The greatest boilerplate is needed for <code>vec_ptype2.pizza_percent()</code> because it is both a method and a generic (thanks to the double-dispatch trick):</p>
 <ul>
 <li><p>As an S3 method, it implements <code><a href="../reference/vec_ptype2.html">vctrs::vec_ptype2()</a></code> for the <code>vctrs_percent</code> class.</p></li>
@@ -1008,7 +1008,7 @@
 <span id="cb73-14"><a href="#cb73-14"></a><span class="co">#' @method vec_ptype2.double vctrs_percent</span></span>
 <span id="cb73-15"><a href="#cb73-15"></a><span class="co">#' @export</span></span>
 <span id="cb73-16"><a href="#cb73-16"></a>vec_ptype2.double.vctrs_percent &lt;-<span class="st"> </span><span class="cf">function</span>(x, y, ...) <span class="kw"><a href="https://rdrr.io/r/base/double.html">double</a></span>()</span></code></pre></div>
-<p>The exact same treatment applies to <code><a href="../reference/vec_cast.html">vec_cast()</a></code>, which yields:</p>
+<p>The exact same roxygen2 treatment is needed for <code><a href="../reference/vec_cast.html">vec_cast()</a></code>, which yields:</p>
 <div class="sourceCode" id="cb74"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb74-1"><a href="#cb74-1"></a><span class="co">#' @method vec_cast pizza_percent</span></span>
 <span id="cb74-2"><a href="#cb74-2"></a><span class="co">#' @export vec_cast.pizza_percent</span></span>
 <span id="cb74-3"><a href="#cb74-3"></a><span class="co">#' @export                         </span></span>
