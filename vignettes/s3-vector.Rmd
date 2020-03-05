@@ -944,7 +944,7 @@ Let's assume that the `percent` class is implemented in the pizza package in the
 
 ### Getting started
 
-First, the pizza package needs to include vctrs in the `Imports` section of its `DESCRIPTION` (perhaps by calling`usethis::use_package("vctrs")`. While vctrs is under very active development, it probably makes sense to state a minimum version.
+First, the pizza package needs to include vctrs in the `Imports` section of its `DESCRIPTION` (perhaps by calling `usethis::use_package("vctrs")`. While vctrs is under very active development, it probably makes sense to state a minimum version.
 
 ```
 Imports: 
@@ -1158,9 +1158,9 @@ It's good practice to test your new class. Specific recommendations:
   creating your own S3 class in the first place, so it makes sense to actively
   monitor this.
 
-* Check for method symmetry; use `expect_s3_class()` to 
-  ensure that `vec_c(x, y)` and `vec_c(y, x)` return the same type of output for
-  the important `x`s and `y`s in your domain.
+* Check for method symmetry; use `expect_s3_class()`, probably with 
+  `exact = TRUE`, to ensure that `vec_c(x, y)` and `vec_c(y, x)` return the same
+  type of output for the important `x`s and `y`s in your domain.
   
 * Use `testthat::expect_error()` to check that inputs that can't be combined
   fail with an error. Here, you should be generally checking the class of the
