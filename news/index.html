@@ -152,6 +152,7 @@
 <a href="#vctrs-development-version" class="anchor"></a>vctrs (development version)<small> Unreleased </small>
 </h1>
 <ul>
+<li><p><code><a href="../reference/vec_match.html">vec_match()</a></code> gains an <code>na_equal</code> argument (<a href='https://github.com/r-lib/vctrs/issues/718'>#718</a>).</p></li>
 <li><p><code><a href="../reference/vec_chop.html">vec_chop()</a></code>’s <code>indices</code> argument has been restricted to positive integer vectors. Character and logical subscripts haven’t proven useful, and this aligns <code><a href="../reference/vec_chop.html">vec_chop()</a></code> with <code><a href="../reference/vec_chop.html">vec_unchop()</a></code>, for which only positive integer vectors make sense.</p></li>
 <li><p>New <code><a href="../reference/vec_chop.html">vec_unchop()</a></code> for combining a list of vectors into a single vector. It is similar to <code><a href="../reference/vec_c.html">vec_c()</a></code>, but gives greater control over how the elements are placed in the output through the use of a secondary <code>indices</code> argument.</p></li>
 <li><p>Breaking change: When <code>.id</code> is supplied, <code><a href="../reference/vec_bind.html">vec_rbind()</a></code> now creates the identifier column at the start of the data frame rather than at the end.</p></li>

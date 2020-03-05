@@ -157,7 +157,7 @@ haystack. <code>vec_match()</code> returns an integer vector giving location of
 <code>needle</code> in <code>haystack</code>, or <code>NA</code> if it's not found.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>vec_match</span>(<span class='no'>needles</span>, <span class='no'>haystack</span>)
+    <pre class="usage"><span class='fu'>vec_match</span>(<span class='no'>needles</span>, <span class='no'>haystack</span>, <span class='no'>...</span>, <span class='kw'>na_equal</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)
 
 <span class='fu'>vec_in</span>(<span class='no'>needles</span>, <span class='no'>haystack</span>)</pre>
 
@@ -171,6 +171,17 @@ haystack. <code>vec_match()</code> returns an integer vector giving location of
 return the location of the first match.</p>
 <p><code>needles</code> and <code>haystack</code> are coerced to the same type prior to
 comparison.</p></td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td><p>These dots are for future extensions and must be empty.</p></td>
+    </tr>
+    <tr>
+      <th>na_equal</th>
+      <td><p>If <code>TRUE</code>, missing values in <code>needles</code> can be
+matched to missing values in <code>haystack</code>. If <code>FALSE</code>, they
+propagate, missing values in <code>needles</code> are represented as <code>NA</code> in
+the return value.</p></td>
     </tr>
     </table>
 
