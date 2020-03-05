@@ -1064,7 +1064,7 @@ vec_ptype_abbr.pizza_percent <- function(x, ...) {
 
 ### Double dispatch methods for coercion and casting
 
-Next we implement methods for `vec_ptype2()` and `vec_cast()`, along with all the roxygen2 boilerplate needed to make them work. `vec_ptype2()` and `vec_cast()` have exactly the same structure, so we'll explain everything via `vec_ptype2()` and just show the result for `vec_cast()`.
+Next we implement methods for `vec_ptype2()` and `vec_cast()`, along with all the roxygen2 boilerplate needed to make them work. `vec_ptype2()` and `vec_cast()` have exactly the same roxygen2 considerations, so we'll explain everything via `vec_ptype2()` and just show the result for `vec_cast()`.
 
 The greatest boilerplate is needed for `vec_ptype2.pizza_percent()` because it is both a method and a generic (thanks to the double-dispatch trick):
 
@@ -1117,7 +1117,7 @@ vec_ptype2.vctrs_percent.double <- function(x, y, ...) double()
 vec_ptype2.double.vctrs_percent <- function(x, y, ...) double()
 ```
 
-The exact same treatment applies to `vec_cast()`, which yields:
+The exact same roxygen2 treatment is needed for `vec_cast()`, which yields:
 
 ```{r eval = FALSE}
 #' @method vec_cast pizza_percent
