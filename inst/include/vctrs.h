@@ -5,13 +5,9 @@
 #include <R_ext/Rdynload.h>
 #include <stdbool.h>
 
-extern SEXP (*vec_proxy)(SEXP);
-extern SEXP (*vec_restore)(SEXP, SEXP, SEXP);
-extern SEXP (*vec_proxy_assign)(SEXP, SEXP, SEXP);
-extern SEXP (*vec_slice_impl)(SEXP, SEXP);
-extern SEXP (*vec_names)(SEXP);
-extern SEXP (*vec_set_names)(SEXP, SEXP);
-extern SEXP (*vec_chop)(SEXP, SEXP);
+extern bool (*vec_is_vector)(SEXP);
+extern R_len_t (*short_vec_size)(SEXP);
+extern SEXP (*short_vec_recycle)(SEXP, R_len_t);
 
 void vctrs_init_api();
 

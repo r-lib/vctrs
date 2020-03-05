@@ -5,9 +5,6 @@
 
 R_len_t rcrd_size(SEXP x);
 
-// From slice.c
-SEXP vec_slice_impl(SEXP x, SEXP index);
-
 // [[ register(); include("vctrs.h") ]]
 SEXP vec_dim(SEXP x) {
   SEXP dim = PROTECT(vec_bare_dim(x));
