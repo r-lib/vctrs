@@ -162,31 +162,6 @@ test_that("Casting to a factor with explicit NA levels retains them", {
   expect_identical(vec_cast(f, factor()), f)
 })
 
-# Restoration -------------------------------------------------------------
-
-test_that("can restore an integer to a factor", {
-  expect_identical(vec_restore(integer(), new_factor()), new_factor())
-  expect_identical(vec_restore(1L, factor("x")), factor("x"))
-
-  expect_identical(vec_restore(integer(), new_ordered()), new_ordered())
-  expect_identical(vec_restore(1L, ordered("x")), ordered("x"))
-})
-
-test_that("can restore vectors involving NA to factors", {
-  expect_identical(vec_restore(NA_integer_, factor()), factor(NA_integer_))
-  expect_identical(vec_restore(NA_integer_, factor("x")), factor(NA_integer_, "x"))
-  expect_identical(vec_restore(c(NA_integer_, 1L), factor("x")), factor(c(NA_integer_, "x")))
-})
-
-test_that("can only restore integers to factors", {
-  expect_error(vec_restore(1, factor("x")), "must be an integer to be restored to a factor")
-  expect_error(vec_restore(1, ordered("x")), "must be an integer to be restored to an ordered factor")
-})
-
-test_that("restore method checks for novel levels", {
-  expect_error(vec_restore(2L, factor("x")), "`x` implies 2 levels, but `to` only has 1")
-})
-
 # Arithmetic and factor ---------------------------------------------------
 
 test_that("factors don't support math or arthimetic", {

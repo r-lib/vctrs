@@ -140,9 +140,9 @@ SEXP vec_df_restore(SEXP x, SEXP to, SEXP n) {
 SEXP vec_restore(SEXP x, SEXP to, SEXP n) {
   switch (class_type(to)) {
   default: return vec_restore_dispatch(x, to, n);
+  case vctrs_class_bare_factor:
+  case vctrs_class_bare_ordered:
   case vctrs_class_none: return vec_restore_default(x, to);
-  case vctrs_class_bare_factor: return vec_restore_bare_factor(x, to);
-  case vctrs_class_bare_ordered: return vec_restore_bare_ordered(x, to);
   case vctrs_class_bare_data_frame:
   case vctrs_class_bare_tibble: return vec_bare_df_restore(x, to, n);
   case vctrs_class_data_frame: return vec_df_restore(x, to, n);

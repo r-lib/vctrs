@@ -97,8 +97,6 @@ extern SEXP vctrs_as_subscript_result(SEXP, SEXP, SEXP, SEXP, SEXP);
 extern SEXP vctrs_df_flat_width(SEXP);
 extern SEXP df_flatten(SEXP);
 extern SEXP vctrs_equal_scalar(SEXP, SEXP, SEXP, SEXP, SEXP);
-extern SEXP vctrs_restore_bare_factor(SEXP, SEXP);
-extern SEXP vctrs_restore_bare_ordered(SEXP, SEXP);
 
 
 // Maturing
@@ -217,8 +215,6 @@ static const R_CallMethodDef CallEntries[] = {
   {"vctrs_df_flat_width",              (DL_FUNC) &vctrs_df_flat_width, 1},
   {"vctrs_df_flatten",                 (DL_FUNC) &df_flatten, 1},
   {"vctrs_equal_scalar",               (DL_FUNC) &vctrs_equal_scalar, 5},
-  {"vctrs_restore_bare_factor",        (DL_FUNC) &vctrs_restore_bare_factor, 2},
-  {"vctrs_restore_bare_ordered",       (DL_FUNC) &vctrs_restore_bare_ordered, 2},
   {NULL, NULL, 0}
 };
 
