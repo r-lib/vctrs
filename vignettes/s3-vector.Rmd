@@ -944,19 +944,43 @@ Let's assume that the `percent` class is implemented in the pizza package in the
 
 ### Getting started
 
-First, the pizza package needs to include vctrs in the `Imports` section of its `DESCRIPTION` (perhaps by calling`usethis::use_package("vctrs")`. Then we make all vctrs functions available within the pizza package by including the directive `#' @import vctrs` somewhere. You can use `usethis::use_package_doc()` to create package-level documentation in `R/pizza-doc.R`, in which case that is also the logical place to put `#' @import vctrs`. Usually, it's not good practice to `@import` the entire namespace of a package, but vctrs is deliberately designed with this use case in mind.
+First, the pizza package needs to include vctrs in the `Imports` section of its `DESCRIPTION` (perhaps by calling `usethis::use_package("vctrs")`. While vctrs is under very active development, it probably makes sense to state a minimum version.
 
-Remember to call `devtools::document()` regularly, as you develop, to regenerate `NAMESPACE` and the `.Rd` files.
+```
+Imports: 
+    a_package,
+    another_package,
+    ...
+    vctrs (>= x.y.z),
+    ...
+```
 
-Next we make a place to dump some internal documentation that's needed to avoid `R CMD check` complaints. We don't expect any human to ever read this documentation. This, and all subsequent code, presumably lives in `R/percent.R`:
+Then we make all vctrs functions available within the pizza package by including the directive `#' @import vctrs` somewhere. Usually, it's not good practice to `@import` the entire namespace of a package, but vctrs is deliberately designed with this use case in mind.
+
+Where should we put `#' @import vctrs`? There are two natural locations:
+
+* With package-level docs in `R/pizza-doc.R`. You can use
+  `usethis::use_package_doc()` to initiate this package-level documentation.
+  
+* In `R/percent.R`. This makes the most sense when the vctrs S3 class is a
+  modest and self-contained part of the overall package.
+  
+We also must use one of these locations to dump some internal documentation that's needed to avoid `R CMD check` complaints. We don't expect any human to ever read this documentation. Here's how this dummy documentation should look, combined with the `#' @import vctrs` directive described above.
 
 ```{r eval = FALSE}
 #' Internal vctrs methods
 #'
+#' @import vctrs
 #' @keywords internal
 #' @name pizza-vctrs
 NULL
 ```
+
+This should appear in `R/pizza-doc.R` (package-level docs) or in `R/percent.R` (class-focused file).
+
+Remember to call `devtools::document()` regularly, as you develop, to regenerate `NAMESPACE` and the `.Rd` files.
+
+From this point on, the code shown is expected to appear in `R/percent.R`.
 
 ### Low-level and user-friendly constructors
 
@@ -1128,15 +1152,17 @@ It's good practice to test your new class. Specific recommendations:
 
 * Make sure to test behaviour with zero-length inputs and missing values.
 
-* Use `testthat::verify_output()` to add some 
-  [golden tests](https://ro-che.info/articles/2017-12-04-golden-tests) for 
-  your format method. Customised printing is often a primary motivation for
-  creating your own S3 class in the first place, so it makes sense to actively
-  monitor this.
+* Use `testthat::verify_output()` to test your format method.
+  Customised printing is often a primary motivation for creating your own S3
+  class in the first place, so this will alert you to unexpected changes in your
+  printed output. Read more about `verify_output()` in the
+  [testthat v2.3.0 blog post](https://www.tidyverse.org/blog/2019/11/testthat-2-3-0/); it's an
+  example of a so-called
+  [golden test](https://ro-che.info/articles/2017-12-04-golden-tests). 
 
-* Check for method symmetry; use `expect_s3_class()` to 
-  ensure that `vec_c(x, y)` and `vec_c(y, x)` return the same type of output for
-  the important `x`s and `y`s in your domain.
+* Check for method symmetry; use `expect_s3_class()`, probably with 
+  `exact = TRUE`, to ensure that `vec_c(x, y)` and `vec_c(y, x)` return the same
+  type of output for the important `x`s and `y`s in your domain.
   
 * Use `testthat::expect_error()` to check that inputs that can't be combined
   fail with an error. Here, you should be generally checking the class of the
