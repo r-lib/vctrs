@@ -187,7 +187,7 @@ SEXP vctrs_typeof(SEXP x, SEXP dispatch) {
 
 void vctrs_stop_unsupported_type(enum vctrs_type type, const char* fn) {
   Rf_errorcall(R_NilValue,
-               "Unsupported vctrs type `%s` in `%s`",
+               "Internal error: Unsupported vctrs type `%s` in `%s`",
                vec_type_as_str(type),
                fn);
 }

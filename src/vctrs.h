@@ -334,6 +334,8 @@ extern SEXP vctrs_shared_true;
 extern SEXP vctrs_shared_false;
 
 extern Rcomplex vctrs_shared_na_cpl;
+extern SEXP vctrs_shared_na_lgl;
+extern SEXP vctrs_shared_na_list;
 
 SEXP vec_unspecified(R_len_t n);
 bool vec_is_unspecified(SEXP x);
@@ -379,7 +381,12 @@ SEXP vec_recycle_fallback(SEXP x, R_len_t size, struct vctrs_arg* x_arg);
 SEXP vec_recycle_common(SEXP xs, R_len_t size);
 SEXP vec_names(SEXP x);
 SEXP vec_group_loc(SEXP x);
-SEXP vec_match(SEXP needles, SEXP haystack);
+SEXP vec_match_params(SEXP needles, SEXP haystack, bool na_equal);
+
+static inline SEXP vec_match(SEXP needles, SEXP haystack) {
+  return vec_match_params(needles, haystack, true);
+}
+
 
 SEXP vec_c(SEXP xs,
            SEXP ptype,
@@ -447,14 +454,16 @@ bool equal_names(SEXP x, SEXP y);
  * The behaviour is undefined if these conditions are not true.
  */
 int equal_scalar(SEXP x, R_len_t i, SEXP y, R_len_t j, bool na_equal);
-int equal_scalar_p(SEXPTYPE type,
-                   SEXP x, const void* x_p, R_len_t i,
-                   SEXP y, const void* y_p, R_len_t j,
-                   bool na_equal);
+int equal_scalar_na_equal_p(enum vctrs_type proxy_type,
+                            SEXP x, const void* x_p, R_len_t i,
+                            SEXP y, const void* y_p, R_len_t j);
+int equal_scalar_na_propagate_p(enum vctrs_type proxy_type,
+                                SEXP x, const void* x_p, R_len_t i,
+                                SEXP y, const void* y_p, R_len_t j);
 int compare_scalar(SEXP x, R_len_t i, SEXP y, R_len_t j, bool na_equal);
 
 uint32_t hash_object(SEXP x);
-void hash_fill(uint32_t* p, R_len_t n, SEXP x);
+void hash_fill(uint32_t* p, R_len_t n, SEXP x, bool na_equal);
 
 SEXP vec_unique(SEXP x);
 bool duplicated_any(SEXP names);

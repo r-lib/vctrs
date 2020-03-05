@@ -15,6 +15,7 @@ struct dictionary {
   enum vctrs_type type;
 
   int (*equal)(const void*, R_len_t i, const void*, R_len_t j);
+  int (*equal_missing)(const void*, R_len_t i);
   const void* vec_p;
 
   uint32_t* hash;
@@ -34,6 +35,12 @@ struct dictionary {
  *   as well, but does not allocate an array of keys. This is useful
  *   for finding a key in another dictionary with `dict_hash_with()`.
  */
+
+struct dictionary_opts {
+  bool partial;
+  bool na_equal;
+};
+
 struct dictionary* new_dictionary(SEXP x);
 struct dictionary* new_dictionary_partial(SEXP x);
 
@@ -54,5 +61,7 @@ struct dictionary* new_dictionary_partial(SEXP x);
  */
 uint32_t dict_hash_scalar(struct dictionary* d, R_len_t i);
 uint32_t dict_hash_with(struct dictionary* d, struct dictionary* x, R_len_t i);
+
+bool dict_is_missing(struct dictionary* d, R_len_t i);
 
 void dict_put(struct dictionary* d, uint32_t k, R_len_t i);

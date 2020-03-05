@@ -31,6 +31,7 @@ enum vctrs_class_type {
 };
 
 bool r_is_bool(SEXP x);
+int r_bool_as_int(SEXP x);
 
 SEXP vctrs_eval_mask_n(SEXP fn,
                        SEXP* syms, SEXP* args,
@@ -320,10 +321,21 @@ static inline SEXP expr_protect(SEXP x) {
   }
 }
 
+static inline const void* vec_type_missing_value(enum vctrs_type type) {
+  switch (type) {
+  case vctrs_type_logical: return &NA_LOGICAL;
+  case vctrs_type_integer: return &NA_INTEGER;
+  case vctrs_type_double: return &NA_REAL;
+  case vctrs_type_complex: return &vctrs_shared_na_cpl;
+  case vctrs_type_character: return &NA_STRING;
+  case vctrs_type_list: return vctrs_shared_na_list;
+  default: vctrs_stop_unsupported_type(type, "vec_type_missing_value");
+  }
+}
+
 
 extern SEXP vctrs_ns_env;
 extern SEXP vctrs_shared_empty_str;
-extern SEXP vctrs_shared_na_lgl;
 extern SEXP vctrs_shared_zero_int;
 
 extern SEXP classes_data_frame;

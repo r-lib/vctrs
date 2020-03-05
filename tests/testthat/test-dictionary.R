@@ -270,3 +270,28 @@ test_that("matching functions take the equality proxy recursively", {
   expect_equal(vec_match(df, df2), c(NA, 1))
   expect_equal(vec_in(df, df2), c(FALSE, TRUE))
 })
+
+test_that("can propagate missing values while matching", {
+  exp <- c(NA, 3L, NA, 1L)
+  expect_identical(vec_match(lgl(NA, TRUE, NA, FALSE), lgl(FALSE, NA, TRUE), na_equal = FALSE), exp)
+  expect_identical(vec_match(int(NA, 1L, NA, 2L), int(2L, NA, 1L), na_equal = FALSE), exp)
+  expect_identical(vec_match(dbl(NA, 1, NA, 2), dbl(2, NA, 1), na_equal = FALSE), exp)
+  expect_identical(vec_match(cpl(NA, 1, NA, 2), cpl(2, NA, 1), na_equal = FALSE), exp)
+  expect_identical(vec_match(chr(NA, "1", NA, "2"), chr("2", NA, "1"), na_equal = FALSE), exp)
+  expect_identical(vec_match(list(NULL, 1, NULL, 2), list(2, NULL, 1), na_equal = FALSE), exp)
+
+  # No missing values for raw vectors
+  expect_identical(vec_match(bytes(0, 1, 0, 2), bytes(2, 0, 1), na_equal = FALSE), c(2L, 3L, 2L, 1L))
+})
+
+test_that("missing values are propagated across columns", {
+  for (na_value in list(NA, na_int, na_dbl, na_cpl, na_chr, list(NULL))) {
+    df <- data_frame(x = 1, y = data_frame(foo = 2, bar = na_value), z = 3)
+    expect_identical(vec_match(df, df), 1L)
+    expect_identical(vec_match(df, df, na_equal = FALSE), na_int)
+  }
+})
+
+test_that("can't supply NA as `na_equal`", {
+  expect_error(vec_match(NA, NA, na_equal = NA), "single `TRUE` or `FALSE`")
+})

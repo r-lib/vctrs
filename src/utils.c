@@ -953,6 +953,14 @@ bool r_is_true(SEXP x) {
   return r_is_bool(x) && LOGICAL(x)[0] == 1;
 }
 
+// [[ include("utils.h") ]]
+int r_bool_as_int(SEXP x) {
+  if (!r_is_bool(x)) {
+    Rf_errorcall(R_NilValue, "Input must be a single `TRUE` or `FALSE`.");
+  }
+  return LOGICAL(x)[0];
+}
+
 bool r_is_string(SEXP x) {
   return TYPEOF(x) == STRSXP &&
     Rf_length(x) == 1 &&
@@ -1247,10 +1255,12 @@ SEXP vctrs_shared_empty_list = NULL;
 SEXP vctrs_shared_empty_date = NULL;
 SEXP vctrs_shared_true = NULL;
 SEXP vctrs_shared_false = NULL;
+
 Rcomplex vctrs_shared_na_cpl;
+SEXP vctrs_shared_na_lgl = NULL;
+SEXP vctrs_shared_na_list = NULL;
 
 SEXP vctrs_shared_zero_int = NULL;
-SEXP vctrs_shared_na_lgl = NULL;
 
 SEXP strings = NULL;
 SEXP strings_empty = NULL;
@@ -1490,6 +1500,9 @@ void vctrs_init_utils(SEXP ns) {
 
   vctrs_shared_na_lgl = r_new_shared_vector(LGLSXP, 1);
   LOGICAL(vctrs_shared_na_lgl)[0] = NA_LOGICAL;
+
+  vctrs_shared_na_list = r_new_shared_vector(VECSXP, 1);
+  SET_VECTOR_ELT(vctrs_shared_na_list, 0, R_NilValue);
 
   vctrs_shared_zero_int = r_new_shared_vector(INTSXP, 1);
   INTEGER(vctrs_shared_zero_int)[0] = 0;

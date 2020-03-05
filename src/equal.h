@@ -37,6 +37,9 @@ static inline int int_equal_scalar(const int* x, const int* y, bool na_equal) {
   }
 }
 
+static inline bool dbl_equal_missing(double x) {
+  return isnan(x);
+}
 static inline int dbl_equal_scalar_na_equal(const double* x, const double* y) {
   const double xi = *x;
   const double yj = *y;
@@ -56,7 +59,7 @@ static inline int dbl_equal_scalar_na_equal(const double* x, const double* y) {
 static inline int dbl_equal_scalar_na_propagate(const double* x, const double* y) {
   const double xi = *x;
   const double yj = *y;
-  if (isnan(xi) || isnan(yj)) {
+  if (dbl_equal_missing(xi) || dbl_equal_missing(yj)) {
     return NA_LOGICAL;
   } else {
     return xi == yj;
@@ -70,6 +73,9 @@ static inline int dbl_equal_scalar(const double* x, const double* y, bool na_equ
   }
 }
 
+static inline bool cpl_equal_missing(Rcomplex x) {
+  return dbl_equal_missing(x.r) || dbl_equal_missing(x.i);
+}
 static inline int cpl_equal_scalar_na_equal(const Rcomplex* x, const Rcomplex* y) {
   Rcomplex xi = *x;
   Rcomplex yj = *y;
@@ -158,8 +164,14 @@ static inline int list_equal_scalar(SEXP x, R_len_t i, SEXP y, R_len_t j, bool n
   }
 }
 
+// Raw vectors have no notion of missing value
 static inline int raw_equal_scalar(const Rbyte* x, const Rbyte* y, bool na_equal) {
-  // Raw vectors have no notion of missing value
+  return *x == *y;
+}
+static inline int raw_equal_scalar_na_equal(const Rbyte* x, const Rbyte* y) {
+  return *x == *y;
+}
+static inline int raw_equal_scalar_na_propagate(const Rbyte* x, const Rbyte* y) {
   return *x == *y;
 }
 

@@ -382,6 +382,11 @@ test_that("can check equality of unspecified objects", {
   expect_true(vec_equal(NA, unspecified(1), na_equal = TRUE))
 })
 
+test_that("can't supply NA as `na_equal`", {
+  expect_error(vec_equal(NA, NA, na_equal = NA), "single `TRUE` or `FALSE`")
+})
+
+
 # proxy -------------------------------------------------------------------
 
 test_that("vec_equal() takes vec_proxy() by default", {
