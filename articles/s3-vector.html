@@ -888,71 +888,86 @@
 <div id="getting-started" class="section level3">
 <h3 class="hasAnchor">
 <a href="#getting-started" class="anchor"></a>Getting started</h3>
-<p>First, the pizza package needs to include vctrs in the <code>Imports</code> section of its <code>DESCRIPTION</code> (perhaps by calling<code>usethis::use_package("vctrs")</code>. Then we make all vctrs functions available within the pizza package by including the directive <code>#' @import vctrs</code> somewhere. You can use <code>usethis::use_package_doc()</code> to create package-level documentation in <code>R/pizza-doc.R</code>, in which case that is also the logical place to put <code>#' @import vctrs</code>. Usually, it’s not good practice to <code>@import</code> the entire namespace of a package, but vctrs is deliberately designed with this use case in mind.</p>
+<p>First, the pizza package needs to include vctrs in the <code>Imports</code> section of its <code>DESCRIPTION</code> (perhaps by calling <code>usethis::use_package("vctrs")</code>. While vctrs is under very active development, it probably makes sense to state a minimum version.</p>
+<pre><code>Imports: 
+    a_package,
+    another_package,
+    ...
+    vctrs (&gt;= x.y.z),
+    ...</code></pre>
+<p>Then we make all vctrs functions available within the pizza package by including the directive <code>#' @import vctrs</code> somewhere. Usually, it’s not good practice to <code>@import</code> the entire namespace of a package, but vctrs is deliberately designed with this use case in mind.</p>
+<p>Where should we put <code>#' @import vctrs</code>? There are two natural locations:</p>
+<ul>
+<li><p>With package-level docs in <code>R/pizza-doc.R</code>. You can use <code>usethis::use_package_doc()</code> to initiate this package-level documentation.</p></li>
+<li><p>In <code>R/percent.R</code>. This makes the most sense when the vctrs S3 class is a modest and self-contained part of the overall package.</p></li>
+</ul>
+<p>We also must use one of these locations to dump some internal documentation that’s needed to avoid <code>R CMD check</code> complaints. We don’t expect any human to ever read this documentation. Here’s how this dummy documentation should look, combined with the <code>#' @import vctrs</code> directive described above.</p>
+<div class="sourceCode" id="cb64"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb64-1"><a href="#cb64-1"></a><span class="co">#' Internal vctrs methods</span></span>
+<span id="cb64-2"><a href="#cb64-2"></a><span class="co">#'</span></span>
+<span id="cb64-3"><a href="#cb64-3"></a><span class="co">#' @import vctrs</span></span>
+<span id="cb64-4"><a href="#cb64-4"></a><span class="co">#' @keywords internal</span></span>
+<span id="cb64-5"><a href="#cb64-5"></a><span class="co">#' @name pizza-vctrs</span></span>
+<span id="cb64-6"><a href="#cb64-6"></a><span class="ot">NULL</span></span></code></pre></div>
+<p>This should appear in <code>R/pizza-doc.R</code> (package-level docs) or in <code>R/percent.R</code> (class-focused file).</p>
 <p>Remember to call <code>devtools::document()</code> regularly, as you develop, to regenerate <code>NAMESPACE</code> and the <code>.Rd</code> files.</p>
-<p>Next we make a place to dump some internal documentation that’s needed to avoid <code>R CMD check</code> complaints. We don’t expect any human to ever read this documentation. This, and all subsequent code, presumably lives in <code>R/percent.R</code>:</p>
-<div class="sourceCode" id="cb63"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb63-1"><a href="#cb63-1"></a><span class="co">#' Internal vctrs methods</span></span>
-<span id="cb63-2"><a href="#cb63-2"></a><span class="co">#'</span></span>
-<span id="cb63-3"><a href="#cb63-3"></a><span class="co">#' @keywords internal</span></span>
-<span id="cb63-4"><a href="#cb63-4"></a><span class="co">#' @name pizza-vctrs</span></span>
-<span id="cb63-5"><a href="#cb63-5"></a><span class="ot">NULL</span></span></code></pre></div>
+<p>From this point on, the code shown is expected to appear in <code>R/percent.R</code>.</p>
 </div>
 <div id="low-level-and-user-friendly-constructors" class="section level3">
 <h3 class="hasAnchor">
 <a href="#low-level-and-user-friendly-constructors" class="anchor"></a>Low-level and user-friendly constructors</h3>
 <p>Next we add our constructor:</p>
-<div class="sourceCode" id="cb64"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb64-1"><a href="#cb64-1"></a>new_percent &lt;-<span class="st"> </span><span class="cf">function</span>(<span class="dt">x =</span> <span class="kw"><a href="https://rdrr.io/r/base/double.html">double</a></span>()) {</span>
-<span id="cb64-2"><a href="#cb64-2"></a>  <span class="kw"><a href="../reference/vec_assert.html">vec_assert</a></span>(x, <span class="kw"><a href="https://rdrr.io/r/base/double.html">double</a></span>())</span>
-<span id="cb64-3"><a href="#cb64-3"></a>  <span class="kw"><a href="../reference/new_vctr.html">new_vctr</a></span>(x, <span class="dt">class =</span> <span class="st">"pizza_percent"</span>)</span>
-<span id="cb64-4"><a href="#cb64-4"></a>}</span></code></pre></div>
+<div class="sourceCode" id="cb65"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb65-1"><a href="#cb65-1"></a>new_percent &lt;-<span class="st"> </span><span class="cf">function</span>(<span class="dt">x =</span> <span class="kw"><a href="https://rdrr.io/r/base/double.html">double</a></span>()) {</span>
+<span id="cb65-2"><a href="#cb65-2"></a>  <span class="kw"><a href="../reference/vec_assert.html">vec_assert</a></span>(x, <span class="kw"><a href="https://rdrr.io/r/base/double.html">double</a></span>())</span>
+<span id="cb65-3"><a href="#cb65-3"></a>  <span class="kw"><a href="../reference/new_vctr.html">new_vctr</a></span>(x, <span class="dt">class =</span> <span class="st">"pizza_percent"</span>)</span>
+<span id="cb65-4"><a href="#cb65-4"></a>}</span></code></pre></div>
 <p>Note that the name of the package must be included in the class name (<code>pizza_percent</code>), but it does not need to be included in the constructor name. You do not need to export the constructor, unless you want people to extend your class.</p>
 <p>We can also add a call to <code>setOldClass()</code> for compatibility with S4:</p>
-<div class="sourceCode" id="cb65"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb65-1"><a href="#cb65-1"></a><span class="co"># for compatibility with the S4 system</span></span>
-<span id="cb65-2"><a href="#cb65-2"></a>methods<span class="op">::</span><span class="kw"><a href="https://rdrr.io/r/methods/setOldClass.html">setOldClass</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"pizza_percent"</span>, <span class="st">"vctrs_vctr"</span>))</span></code></pre></div>
+<div class="sourceCode" id="cb66"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb66-1"><a href="#cb66-1"></a><span class="co"># for compatibility with the S4 system</span></span>
+<span id="cb66-2"><a href="#cb66-2"></a>methods<span class="op">::</span><span class="kw"><a href="https://rdrr.io/r/methods/setOldClass.html">setOldClass</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"pizza_percent"</span>, <span class="st">"vctrs_vctr"</span>))</span></code></pre></div>
 <p>Because we’ve used a function from the methods package, you’ll also need to add methods to <code>Imports</code>, with (e.g.) <code>usethis::use_package("methods")</code>. This is a “free” dependency because methods is bundled with every R install.</p>
 <p>Next we implement, export, and document a user-friendly helper: <code>percent()</code>.</p>
-<div class="sourceCode" id="cb66"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb66-1"><a href="#cb66-1"></a><span class="co">#' `percent` vector</span></span>
-<span id="cb66-2"><a href="#cb66-2"></a><span class="co">#'</span></span>
-<span id="cb66-3"><a href="#cb66-3"></a><span class="co">#' This creates a double vector that represents percentages so when it is</span></span>
-<span id="cb66-4"><a href="#cb66-4"></a><span class="co">#' printed, it is multiplied by 100 and suffixed with `%`.</span></span>
-<span id="cb66-5"><a href="#cb66-5"></a><span class="co">#'</span></span>
-<span id="cb66-6"><a href="#cb66-6"></a><span class="co">#' @param x A numeric vector</span></span>
-<span id="cb66-7"><a href="#cb66-7"></a><span class="co">#' @return An S3 vector of class `pizza_percent`.</span></span>
-<span id="cb66-8"><a href="#cb66-8"></a><span class="co">#' @export</span></span>
-<span id="cb66-9"><a href="#cb66-9"></a><span class="co">#' @examples</span></span>
-<span id="cb66-10"><a href="#cb66-10"></a><span class="co">#' percent(c(0.25, 0.5, 0.75))</span></span>
-<span id="cb66-11"><a href="#cb66-11"></a>percent &lt;-<span class="st"> </span><span class="cf">function</span>(<span class="dt">x =</span> <span class="kw"><a href="https://rdrr.io/r/base/double.html">double</a></span>()) {</span>
-<span id="cb66-12"><a href="#cb66-12"></a>  x &lt;-<span class="st"> </span><span class="kw"><a href="../reference/vec_cast.html">vec_cast</a></span>(x, <span class="kw"><a href="https://rdrr.io/r/base/double.html">double</a></span>())</span>
-<span id="cb66-13"><a href="#cb66-13"></a>  <span class="kw">new_percent</span>(x)</span>
-<span id="cb66-14"><a href="#cb66-14"></a>}</span></code></pre></div>
+<div class="sourceCode" id="cb67"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb67-1"><a href="#cb67-1"></a><span class="co">#' `percent` vector</span></span>
+<span id="cb67-2"><a href="#cb67-2"></a><span class="co">#'</span></span>
+<span id="cb67-3"><a href="#cb67-3"></a><span class="co">#' This creates a double vector that represents percentages so when it is</span></span>
+<span id="cb67-4"><a href="#cb67-4"></a><span class="co">#' printed, it is multiplied by 100 and suffixed with `%`.</span></span>
+<span id="cb67-5"><a href="#cb67-5"></a><span class="co">#'</span></span>
+<span id="cb67-6"><a href="#cb67-6"></a><span class="co">#' @param x A numeric vector</span></span>
+<span id="cb67-7"><a href="#cb67-7"></a><span class="co">#' @return An S3 vector of class `pizza_percent`.</span></span>
+<span id="cb67-8"><a href="#cb67-8"></a><span class="co">#' @export</span></span>
+<span id="cb67-9"><a href="#cb67-9"></a><span class="co">#' @examples</span></span>
+<span id="cb67-10"><a href="#cb67-10"></a><span class="co">#' percent(c(0.25, 0.5, 0.75))</span></span>
+<span id="cb67-11"><a href="#cb67-11"></a>percent &lt;-<span class="st"> </span><span class="cf">function</span>(<span class="dt">x =</span> <span class="kw"><a href="https://rdrr.io/r/base/double.html">double</a></span>()) {</span>
+<span id="cb67-12"><a href="#cb67-12"></a>  x &lt;-<span class="st"> </span><span class="kw"><a href="../reference/vec_cast.html">vec_cast</a></span>(x, <span class="kw"><a href="https://rdrr.io/r/base/double.html">double</a></span>())</span>
+<span id="cb67-13"><a href="#cb67-13"></a>  <span class="kw">new_percent</span>(x)</span>
+<span id="cb67-14"><a href="#cb67-14"></a>}</span></code></pre></div>
 <p>(Again note that the package name will appear in the class, but does not need to occur in the function, because we can already do <code>pizza::percent()</code>; it would be redundant to have <code>pizza::pizza_percent()</code>.)</p>
 </div>
 <div id="other-helpers" class="section level3">
 <h3 class="hasAnchor">
 <a href="#other-helpers" class="anchor"></a>Other helpers</h3>
 <p>It’s a good idea to provide a function that tests if an object is of this class. If you do so, it makes sense to document it with the user-friendly constructor <code>percent()</code>:</p>
-<div class="sourceCode" id="cb67"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb67-1"><a href="#cb67-1"></a><span class="co">#' @export</span></span>
-<span id="cb67-2"><a href="#cb67-2"></a><span class="co">#' @rdname percent</span></span>
-<span id="cb67-3"><a href="#cb67-3"></a>is_percent &lt;-<span class="st"> </span><span class="cf">function</span>(x) {</span>
-<span id="cb67-4"><a href="#cb67-4"></a>  <span class="kw"><a href="https://rdrr.io/r/base/class.html">inherits</a></span>(x, <span class="st">"pizza_percent"</span>)</span>
-<span id="cb67-5"><a href="#cb67-5"></a>}</span></code></pre></div>
+<div class="sourceCode" id="cb68"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb68-1"><a href="#cb68-1"></a><span class="co">#' @export</span></span>
+<span id="cb68-2"><a href="#cb68-2"></a><span class="co">#' @rdname percent</span></span>
+<span id="cb68-3"><a href="#cb68-3"></a>is_percent &lt;-<span class="st"> </span><span class="cf">function</span>(x) {</span>
+<span id="cb68-4"><a href="#cb68-4"></a>  <span class="kw"><a href="https://rdrr.io/r/base/class.html">inherits</a></span>(x, <span class="st">"pizza_percent"</span>)</span>
+<span id="cb68-5"><a href="#cb68-5"></a>}</span></code></pre></div>
 <p>You’ll also need to update the <code>percent()</code> documentation to reflect that <code>x</code> now means two different things:</p>
-<div class="sourceCode" id="cb68"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb68-1"><a href="#cb68-1"></a><span class="co">#' @param x </span></span>
-<span id="cb68-2"><a href="#cb68-2"></a><span class="co">#'  * For `percent()`: A numeric vector</span></span>
-<span id="cb68-3"><a href="#cb68-3"></a><span class="co">#'  * For `is_percent()`: An object to test.</span></span></code></pre></div>
+<div class="sourceCode" id="cb69"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb69-1"><a href="#cb69-1"></a><span class="co">#' @param x </span></span>
+<span id="cb69-2"><a href="#cb69-2"></a><span class="co">#'  * For `percent()`: A numeric vector</span></span>
+<span id="cb69-3"><a href="#cb69-3"></a><span class="co">#'  * For `is_percent()`: An object to test.</span></span></code></pre></div>
 <p>Next we provide the key methods to make printing work. These are S3 methods, so they don’t need to be documented, but they do need to be exported.</p>
-<div class="sourceCode" id="cb69"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb69-1"><a href="#cb69-1"></a><span class="co">#' @export</span></span>
-<span id="cb69-2"><a href="#cb69-2"></a>format.pizza_percent &lt;-<span class="st"> </span><span class="cf">function</span>(x, ...) {</span>
-<span id="cb69-3"><a href="#cb69-3"></a>  out &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/formatc.html">formatC</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/Round.html">signif</a></span>(<span class="kw"><a href="../reference/vec_data.html">vec_data</a></span>(x) <span class="op">*</span><span class="st"> </span><span class="dv">100</span>, <span class="dv">3</span>))</span>
-<span id="cb69-4"><a href="#cb69-4"></a>  out[<span class="kw"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span>(x)] &lt;-<span class="st"> </span><span class="ot">NA</span></span>
-<span id="cb69-5"><a href="#cb69-5"></a>  out[<span class="op">!</span><span class="kw"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span>(x)] &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span>(out[<span class="op">!</span><span class="kw"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span>(x)], <span class="st">"%"</span>)</span>
-<span id="cb69-6"><a href="#cb69-6"></a>  out</span>
-<span id="cb69-7"><a href="#cb69-7"></a>}</span>
-<span id="cb69-8"><a href="#cb69-8"></a></span>
-<span id="cb69-9"><a href="#cb69-9"></a><span class="co">#' @export</span></span>
-<span id="cb69-10"><a href="#cb69-10"></a>vec_ptype_abbr.pizza_percent &lt;-<span class="st"> </span><span class="cf">function</span>(x, ...) {</span>
-<span id="cb69-11"><a href="#cb69-11"></a>  <span class="st">"prcnt"</span></span>
-<span id="cb69-12"><a href="#cb69-12"></a>}</span></code></pre></div>
+<div class="sourceCode" id="cb70"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb70-1"><a href="#cb70-1"></a><span class="co">#' @export</span></span>
+<span id="cb70-2"><a href="#cb70-2"></a>format.pizza_percent &lt;-<span class="st"> </span><span class="cf">function</span>(x, ...) {</span>
+<span id="cb70-3"><a href="#cb70-3"></a>  out &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/formatc.html">formatC</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/Round.html">signif</a></span>(<span class="kw"><a href="../reference/vec_data.html">vec_data</a></span>(x) <span class="op">*</span><span class="st"> </span><span class="dv">100</span>, <span class="dv">3</span>))</span>
+<span id="cb70-4"><a href="#cb70-4"></a>  out[<span class="kw"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span>(x)] &lt;-<span class="st"> </span><span class="ot">NA</span></span>
+<span id="cb70-5"><a href="#cb70-5"></a>  out[<span class="op">!</span><span class="kw"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span>(x)] &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span>(out[<span class="op">!</span><span class="kw"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span>(x)], <span class="st">"%"</span>)</span>
+<span id="cb70-6"><a href="#cb70-6"></a>  out</span>
+<span id="cb70-7"><a href="#cb70-7"></a>}</span>
+<span id="cb70-8"><a href="#cb70-8"></a></span>
+<span id="cb70-9"><a href="#cb70-9"></a><span class="co">#' @export</span></span>
+<span id="cb70-10"><a href="#cb70-10"></a>vec_ptype_abbr.pizza_percent &lt;-<span class="st"> </span><span class="cf">function</span>(x, ...) {</span>
+<span id="cb70-11"><a href="#cb70-11"></a>  <span class="st">"prcnt"</span></span>
+<span id="cb70-12"><a href="#cb70-12"></a>}</span></code></pre></div>
 </div>
 <div id="double-dispatch-methods-for-coercion-and-casting" class="section level3">
 <h3 class="hasAnchor">
@@ -963,56 +978,56 @@
 <li><p>As an S3 method, it implements <code><a href="../reference/vec_ptype2.html">vctrs::vec_ptype2()</a></code> for the <code>vctrs_percent</code> class.</p></li>
 <li><p>As a generic, <code>vec_ptype2.vctrs_percent()</code> has <code>default</code>, <code>vctrs_percent</code>, and <code>double</code> methods (see below).</p></li>
 </ul>
-<div class="sourceCode" id="cb70"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb70-1"><a href="#cb70-1"></a><span class="co">#' @method vec_ptype2 pizza_percent   # tell roxygen2 its a method</span></span>
-<span id="cb70-2"><a href="#cb70-2"></a><span class="co">#' @export                            # export as method</span></span>
-<span id="cb70-3"><a href="#cb70-3"></a><span class="co">#' @export vec_ptype2.pizza_percent   # export as generic</span></span>
-<span id="cb70-4"><a href="#cb70-4"></a><span class="co">#' @rdname pizza-vctrs                # document (internally)</span></span>
-<span id="cb70-5"><a href="#cb70-5"></a>vec_ptype2.pizza_percent &lt;-<span class="st"> </span><span class="cf">function</span>(x, y, ...) {</span>
-<span id="cb70-6"><a href="#cb70-6"></a>  <span class="kw"><a href="https://rdrr.io/r/base/UseMethod.html">UseMethod</a></span>(<span class="st">"vec_ptype2.pizza_percent"</span>, y) </span>
-<span id="cb70-7"><a href="#cb70-7"></a>}</span></code></pre></div>
+<div class="sourceCode" id="cb71"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb71-1"><a href="#cb71-1"></a><span class="co">#' @method vec_ptype2 pizza_percent   # tell roxygen2 its a method</span></span>
+<span id="cb71-2"><a href="#cb71-2"></a><span class="co">#' @export                            # export as method</span></span>
+<span id="cb71-3"><a href="#cb71-3"></a><span class="co">#' @export vec_ptype2.pizza_percent   # export as generic</span></span>
+<span id="cb71-4"><a href="#cb71-4"></a><span class="co">#' @rdname pizza-vctrs                # document (internally)</span></span>
+<span id="cb71-5"><a href="#cb71-5"></a>vec_ptype2.pizza_percent &lt;-<span class="st"> </span><span class="cf">function</span>(x, y, ...) {</span>
+<span id="cb71-6"><a href="#cb71-6"></a>  <span class="kw"><a href="https://rdrr.io/r/base/UseMethod.html">UseMethod</a></span>(<span class="st">"vec_ptype2.pizza_percent"</span>, y) </span>
+<span id="cb71-7"><a href="#cb71-7"></a>}</span></code></pre></div>
 <p>(The marginal comments are just for exposition and can be omitted in your own packages.)</p>
 <p>This creative take on the S3 system wasn’t considered in the design of roxygen2, so we have to spell all of this out explicitly. Since <code>vec_ptype2.pizza_percent()</code> is a generic, <code>R CMD check</code> will complain if it is not documented, although this documentation is not relevant for users. This is the purpose of the dummy internal help topic defined earlier.</p>
 <p>Remember to run <code>devtools::document()</code> to re-generate the <code>NAMESPACE</code>, and then take a quick look to familiarise yourself with what is generated. You should see this function appearing in two places (if you’ve never looked at <code>NAMESPACE</code> before note that roxygen2 puts it in alphabetical order):</p>
-<div class="sourceCode" id="cb71"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb71-1"><a href="#cb71-1"></a><span class="kw">S3method</span>(vec_ptype2,pizza_percent)</span>
-<span id="cb71-2"><a href="#cb71-2"></a>...</span>
-<span id="cb71-3"><a href="#cb71-3"></a><span class="kw">export</span>(vec_ptype2.pizza_percent)</span></code></pre></div>
+<div class="sourceCode" id="cb72"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb72-1"><a href="#cb72-1"></a><span class="kw">S3method</span>(vec_ptype2,pizza_percent)</span>
+<span id="cb72-2"><a href="#cb72-2"></a>...</span>
+<span id="cb72-3"><a href="#cb72-3"></a><span class="kw">export</span>(vec_ptype2.pizza_percent)</span></code></pre></div>
 <p>Now we finish the work around <code><a href="../reference/vec_ptype2.html">vec_ptype2()</a></code> by providing all needed methods. Each method has both a <code>@method</code> and an <code>@export</code> directive. These are purely methods so they don’t need to be documented in an <code>.Rd</code> file.</p>
-<div class="sourceCode" id="cb72"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb72-1"><a href="#cb72-1"></a><span class="co">#' @method vec_ptype2.vctrs_percent default</span></span>
-<span id="cb72-2"><a href="#cb72-2"></a><span class="co">#' @export                                 </span></span>
-<span id="cb72-3"><a href="#cb72-3"></a>vec_ptype2.vctrs_percent.default &lt;-<span class="st"> </span><span class="cf">function</span>(x, y,</span>
-<span id="cb72-4"><a href="#cb72-4"></a>                                             ...,</span>
-<span id="cb72-5"><a href="#cb72-5"></a>                                             <span class="dt">x_arg =</span> <span class="st">"x"</span>, <span class="dt">y_arg =</span> <span class="st">"y"</span>) {</span>
-<span id="cb72-6"><a href="#cb72-6"></a>  <span class="kw"><a href="../reference/vec_ptype2.html">vec_default_ptype2</a></span>(x, y, <span class="dt">x_arg =</span> x_arg, <span class="dt">y_arg =</span> y_arg)</span>
-<span id="cb72-7"><a href="#cb72-7"></a>}</span>
-<span id="cb72-8"><a href="#cb72-8"></a><span class="co">#' @method vec_ptype2.vctrs_percent vctrs_percent</span></span>
-<span id="cb72-9"><a href="#cb72-9"></a><span class="co">#' @export                                       </span></span>
-<span id="cb72-10"><a href="#cb72-10"></a>vec_ptype2.vctrs_percent.vctrs_percent &lt;-<span class="st"> </span><span class="cf">function</span>(x, y, ...) <span class="kw">new_percent</span>()</span>
-<span id="cb72-11"><a href="#cb72-11"></a><span class="co">#' @method vec_ptype2.vctrs_percent double       </span></span>
-<span id="cb72-12"><a href="#cb72-12"></a><span class="co">#' @export                                       </span></span>
-<span id="cb72-13"><a href="#cb72-13"></a>vec_ptype2.vctrs_percent.double &lt;-<span class="st"> </span><span class="cf">function</span>(x, y, ...) <span class="kw"><a href="https://rdrr.io/r/base/double.html">double</a></span>()</span>
-<span id="cb72-14"><a href="#cb72-14"></a><span class="co">#' @method vec_ptype2.double vctrs_percent</span></span>
-<span id="cb72-15"><a href="#cb72-15"></a><span class="co">#' @export</span></span>
-<span id="cb72-16"><a href="#cb72-16"></a>vec_ptype2.double.vctrs_percent &lt;-<span class="st"> </span><span class="cf">function</span>(x, y, ...) <span class="kw"><a href="https://rdrr.io/r/base/double.html">double</a></span>()</span></code></pre></div>
-<p>The exact same treatment applies to <code><a href="../reference/vec_cast.html">vec_cast()</a></code>, which yields:</p>
-<div class="sourceCode" id="cb73"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb73-1"><a href="#cb73-1"></a><span class="co">#' @method vec_cast pizza_percent</span></span>
-<span id="cb73-2"><a href="#cb73-2"></a><span class="co">#' @export vec_cast.pizza_percent</span></span>
-<span id="cb73-3"><a href="#cb73-3"></a><span class="co">#' @export                         </span></span>
-<span id="cb73-4"><a href="#cb73-4"></a><span class="co">#' @rdname pizza-vctrs             </span></span>
-<span id="cb73-5"><a href="#cb73-5"></a>vec_cast.pizza_percent &lt;-<span class="st"> </span><span class="cf">function</span>(x, to, ...) {</span>
-<span id="cb73-6"><a href="#cb73-6"></a>  <span class="kw"><a href="https://rdrr.io/r/base/UseMethod.html">UseMethod</a></span>(<span class="st">"vec_cast.pizza_percent"</span>)</span>
+<div class="sourceCode" id="cb73"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb73-1"><a href="#cb73-1"></a><span class="co">#' @method vec_ptype2.vctrs_percent default</span></span>
+<span id="cb73-2"><a href="#cb73-2"></a><span class="co">#' @export                                 </span></span>
+<span id="cb73-3"><a href="#cb73-3"></a>vec_ptype2.vctrs_percent.default &lt;-<span class="st"> </span><span class="cf">function</span>(x, y,</span>
+<span id="cb73-4"><a href="#cb73-4"></a>                                             ...,</span>
+<span id="cb73-5"><a href="#cb73-5"></a>                                             <span class="dt">x_arg =</span> <span class="st">"x"</span>, <span class="dt">y_arg =</span> <span class="st">"y"</span>) {</span>
+<span id="cb73-6"><a href="#cb73-6"></a>  <span class="kw"><a href="../reference/vec_ptype2.html">vec_default_ptype2</a></span>(x, y, <span class="dt">x_arg =</span> x_arg, <span class="dt">y_arg =</span> y_arg)</span>
 <span id="cb73-7"><a href="#cb73-7"></a>}</span>
-<span id="cb73-8"><a href="#cb73-8"></a><span class="co">#' @method vec_cast.pizza_percent default</span></span>
-<span id="cb73-9"><a href="#cb73-9"></a><span class="co">#' @export </span></span>
-<span id="cb73-10"><a href="#cb73-10"></a>vec_cast.pizza_percent.default &lt;-<span class="st"> </span><span class="cf">function</span>(x, to, ...) <span class="kw"><a href="../reference/vec_default_cast.html">vec_default_cast</a></span>(x, to)</span>
-<span id="cb73-11"><a href="#cb73-11"></a><span class="co">#' @method vec_cast.pizza_percent pizza_percent</span></span>
-<span id="cb73-12"><a href="#cb73-12"></a><span class="co">#' @export </span></span>
-<span id="cb73-13"><a href="#cb73-13"></a>vec_cast.pizza_percent.pizza_percent &lt;-<span class="st"> </span><span class="cf">function</span>(x, to, ...) x</span>
-<span id="cb73-14"><a href="#cb73-14"></a><span class="co">#' @method vec_cast.pizza_percent double</span></span>
+<span id="cb73-8"><a href="#cb73-8"></a><span class="co">#' @method vec_ptype2.vctrs_percent vctrs_percent</span></span>
+<span id="cb73-9"><a href="#cb73-9"></a><span class="co">#' @export                                       </span></span>
+<span id="cb73-10"><a href="#cb73-10"></a>vec_ptype2.vctrs_percent.vctrs_percent &lt;-<span class="st"> </span><span class="cf">function</span>(x, y, ...) <span class="kw">new_percent</span>()</span>
+<span id="cb73-11"><a href="#cb73-11"></a><span class="co">#' @method vec_ptype2.vctrs_percent double       </span></span>
+<span id="cb73-12"><a href="#cb73-12"></a><span class="co">#' @export                                       </span></span>
+<span id="cb73-13"><a href="#cb73-13"></a>vec_ptype2.vctrs_percent.double &lt;-<span class="st"> </span><span class="cf">function</span>(x, y, ...) <span class="kw"><a href="https://rdrr.io/r/base/double.html">double</a></span>()</span>
+<span id="cb73-14"><a href="#cb73-14"></a><span class="co">#' @method vec_ptype2.double vctrs_percent</span></span>
 <span id="cb73-15"><a href="#cb73-15"></a><span class="co">#' @export</span></span>
-<span id="cb73-16"><a href="#cb73-16"></a>vec_cast.pizza_percent.double &lt;-<span class="st"> </span><span class="cf">function</span>(x, to, ...) <span class="kw">percent</span>(x)</span>
-<span id="cb73-17"><a href="#cb73-17"></a><span class="co">#' @method vec_cast.double pizza_percent</span></span>
-<span id="cb73-18"><a href="#cb73-18"></a><span class="co">#' @export</span></span>
-<span id="cb73-19"><a href="#cb73-19"></a>vec_cast.double.pizza_percent &lt;-<span class="st"> </span><span class="cf">function</span>(x, to, ...) <span class="kw"><a href="../reference/vec_data.html">vec_data</a></span>(x)</span></code></pre></div>
+<span id="cb73-16"><a href="#cb73-16"></a>vec_ptype2.double.vctrs_percent &lt;-<span class="st"> </span><span class="cf">function</span>(x, y, ...) <span class="kw"><a href="https://rdrr.io/r/base/double.html">double</a></span>()</span></code></pre></div>
+<p>The exact same treatment applies to <code><a href="../reference/vec_cast.html">vec_cast()</a></code>, which yields:</p>
+<div class="sourceCode" id="cb74"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb74-1"><a href="#cb74-1"></a><span class="co">#' @method vec_cast pizza_percent</span></span>
+<span id="cb74-2"><a href="#cb74-2"></a><span class="co">#' @export vec_cast.pizza_percent</span></span>
+<span id="cb74-3"><a href="#cb74-3"></a><span class="co">#' @export                         </span></span>
+<span id="cb74-4"><a href="#cb74-4"></a><span class="co">#' @rdname pizza-vctrs             </span></span>
+<span id="cb74-5"><a href="#cb74-5"></a>vec_cast.pizza_percent &lt;-<span class="st"> </span><span class="cf">function</span>(x, to, ...) {</span>
+<span id="cb74-6"><a href="#cb74-6"></a>  <span class="kw"><a href="https://rdrr.io/r/base/UseMethod.html">UseMethod</a></span>(<span class="st">"vec_cast.pizza_percent"</span>)</span>
+<span id="cb74-7"><a href="#cb74-7"></a>}</span>
+<span id="cb74-8"><a href="#cb74-8"></a><span class="co">#' @method vec_cast.pizza_percent default</span></span>
+<span id="cb74-9"><a href="#cb74-9"></a><span class="co">#' @export </span></span>
+<span id="cb74-10"><a href="#cb74-10"></a>vec_cast.pizza_percent.default &lt;-<span class="st"> </span><span class="cf">function</span>(x, to, ...) <span class="kw"><a href="../reference/vec_default_cast.html">vec_default_cast</a></span>(x, to)</span>
+<span id="cb74-11"><a href="#cb74-11"></a><span class="co">#' @method vec_cast.pizza_percent pizza_percent</span></span>
+<span id="cb74-12"><a href="#cb74-12"></a><span class="co">#' @export </span></span>
+<span id="cb74-13"><a href="#cb74-13"></a>vec_cast.pizza_percent.pizza_percent &lt;-<span class="st"> </span><span class="cf">function</span>(x, to, ...) x</span>
+<span id="cb74-14"><a href="#cb74-14"></a><span class="co">#' @method vec_cast.pizza_percent double</span></span>
+<span id="cb74-15"><a href="#cb74-15"></a><span class="co">#' @export</span></span>
+<span id="cb74-16"><a href="#cb74-16"></a>vec_cast.pizza_percent.double &lt;-<span class="st"> </span><span class="cf">function</span>(x, to, ...) <span class="kw">percent</span>(x)</span>
+<span id="cb74-17"><a href="#cb74-17"></a><span class="co">#' @method vec_cast.double pizza_percent</span></span>
+<span id="cb74-18"><a href="#cb74-18"></a><span class="co">#' @export</span></span>
+<span id="cb74-19"><a href="#cb74-19"></a>vec_cast.double.pizza_percent &lt;-<span class="st"> </span><span class="cf">function</span>(x, to, ...) <span class="kw"><a href="../reference/vec_data.html">vec_data</a></span>(x)</span></code></pre></div>
 <p>For simple casting and coercion functions, this is the recommended formatting. If everything fits on one line, there’s no need to use <code>{}</code> or add blank lines between method definitions. This compact formatting reinforces the common purpose of these methods and their documentation.</p>
 </div>
 <div id="testing" class="section level3">
@@ -1022,11 +1037,11 @@
 <ul>
 <li><p><code>R/percent.R</code> is the type of file where you really do want 100% test coverage. You can use <code>devtools::test_coverage_file()</code> to check this.</p></li>
 <li><p>Make sure to test behaviour with zero-length inputs and missing values.</p></li>
-<li><p>Use <code><a href="https://rdrr.io/pkg/testthat/man/verify_output.html">testthat::verify_output()</a></code> to add some <a href="https://ro-che.info/articles/2017-12-04-golden-tests">golden tests</a> for your format method. Customised printing is often a primary motivation for creating your own S3 class in the first place, so it makes sense to actively monitor this.</p></li>
-<li><p>Check for method symmetry; use <code>expect_s3_class()</code> to ensure that <code><a href="../reference/vec_c.html">vec_c(x, y)</a></code> and <code><a href="../reference/vec_c.html">vec_c(y, x)</a></code> return the same type of output for the important <code>x</code>s and <code>y</code>s in your domain.</p></li>
+<li><p>Use <code><a href="https://rdrr.io/pkg/testthat/man/verify_output.html">testthat::verify_output()</a></code> to test your format method. Customised printing is often a primary motivation for creating your own S3 class in the first place, so this will alert you to unexpected changes in your printed output. Read more about <code>verify_output()</code> in the <a href="https://www.tidyverse.org/blog/2019/11/testthat-2-3-0/">testthat v2.3.0 blog post</a>; it’s an example of a so-called <a href="https://ro-che.info/articles/2017-12-04-golden-tests">golden test</a>.</p></li>
+<li><p>Check for method symmetry; use <code>expect_s3_class()</code>, probably with <code>exact = TRUE</code>, to ensure that <code><a href="../reference/vec_c.html">vec_c(x, y)</a></code> and <code><a href="../reference/vec_c.html">vec_c(y, x)</a></code> return the same type of output for the important <code>x</code>s and <code>y</code>s in your domain.</p></li>
 <li>
 <p>Use <code><a href="https://rdrr.io/pkg/testthat/man/expect_error.html">testthat::expect_error()</a></code> to check that inputs that can’t be combined fail with an error. Here, you should be generally checking the class of the error, not its message. Relevant classes include <code>vctrs_error_assert_ptype</code>, <code>vctrs_error_assert_size</code>, and <code>vctrs_error_incompatible_type</code>.</p>
-<div class="sourceCode" id="cb74"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb74-1"><a href="#cb74-1"></a><span class="kw">expect_error</span>(<span class="kw"><a href="../reference/vec_c.html">vec_c</a></span>(<span class="dv">1</span>, <span class="st">"a"</span>), <span class="dt">class =</span> <span class="st">"vctrs_error_incompatible_type"</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb75"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb75-1"><a href="#cb75-1"></a><span class="kw">expect_error</span>(<span class="kw"><a href="../reference/vec_c.html">vec_c</a></span>(<span class="dv">1</span>, <span class="st">"a"</span>), <span class="dt">class =</span> <span class="st">"vctrs_error_incompatible_type"</span>)</span></code></pre></div>
 </li>
 </ul>
 <p>If your tests pass when run by <code>devtools::test()</code>, but fail when run in <code>R CMD check</code>, it is very likely to reflect a problem with S3 method registration. Carefully check your roxygen2 comments and the generated <code>NAMESPACE</code>.</p>
