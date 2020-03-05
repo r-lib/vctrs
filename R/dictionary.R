@@ -197,7 +197,13 @@ vec_unique_count <- function(x) {
 #'
 #' `vec_in()` is equivalent to [%in%]; `vec_match()` is equivalent to `match()`.
 #'
-#' @inherit vec_duplicate sections
+#' @section Missing values:
+#' In most cases places in R, missing values are not considered to be equal,
+#' i.e. `NA == NA` is not `TRUE`. The exception is in matching functions
+#' like [match()] and [merge()], where an `NA` will match another `NA`.
+#' By `vec_match()` and `vec_in()` will match `NA`s; but you can control
+#' this behaviour with the `na_equal` argument.
+#'
 #' @param needles,haystack Vector of `needles` to search for in vector haystack.
 #'   `haystack` should usually be unique; if not `vec_match()` will only
 #'   return the location of the first match.
@@ -229,6 +235,6 @@ vec_match <- function(needles, haystack, ..., na_equal = TRUE) {
 
 #' @export
 #' @rdname vec_match
-vec_in <- function(needles, haystack) {
-  .Call(vctrs_in, needles, haystack)
+vec_in <- function(needles, haystack, na_equal = TRUE) {
+  .Call(vctrs_in, needles, haystack, na_equal)
 }

@@ -581,7 +581,7 @@ static inline void vec_match_loop_propagate(int* p_out,
 }
 
 // [[ register() ]]
-SEXP vctrs_in(SEXP needles, SEXP haystack) {
+SEXP vctrs_in(SEXP needles, SEXP haystack, SEXP na_equal) {
   int nprot = 0;
 
   int _;
@@ -600,7 +600,7 @@ SEXP vctrs_in(SEXP needles, SEXP haystack) {
   needles = VECTOR_ELT(translated, 0);
   haystack = VECTOR_ELT(translated, 1);
 
-  struct dictionary* d = new_dictionary(haystack);
+  struct dictionary* d = new_dictionary_params(haystack, false, r_bool_as_int(na_equal));
   PROTECT_DICT(d, &nprot);
 
   // Load dictionary with haystack

@@ -219,6 +219,13 @@ test_that("vec_in() matches %in%", {
   expect_equal(vec_in(n, h), n %in% h)
 })
 
+test_that("can opt out of NA matching", {
+  n <- c(1, NA)
+  h <- c(1:3, NA)
+
+  expect_equal(vec_in(n, h, na_equal = FALSE), c(TRUE, FALSE))
+})
+
 test_that("vec_match works with empty data frame", {
   out <- vec_match(
     new_data_frame(n = 3L),
