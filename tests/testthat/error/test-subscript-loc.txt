@@ -83,17 +83,17 @@ x The subscript has the wrong type `data.frame<
   gear: double
   carb: double
 >`.
-i It must be logical, numeric, or character.
+i It must be `logical`, `numeric`, or `character`.
 
 > vec_as_location(env(), 10L)
 Error: Must subset elements with a valid subscript vector.
 x The subscript has the wrong type `environment`.
-i It must be logical, numeric, or character.
+i It must be `logical`, `numeric`, or `character`.
 
 > vec_as_location(foobar(), 10L)
 Error: Must subset elements with a valid subscript vector.
 x The subscript has the wrong type `vctrs_foobar`.
-i It must be logical, numeric, or character.
+i It must be `logical`, `numeric`, or `character`.
 
 > vec_as_location(2.5, 3L)
 Error: Must subset elements with a valid subscript vector.
@@ -102,23 +102,23 @@ x Lossy cast from <double> to <integer>.
 > vec_as_location(list(), 10L)
 Error: Must subset elements with a valid subscript vector.
 x The subscript has the wrong type `list`.
-i It must be logical, numeric, or character.
+i It must be `logical`, `numeric`, or `character`.
 
 > vec_as_location(function() NULL, 10L)
 Error: Must subset elements with a valid subscript vector.
 x The subscript has the wrong type `closure`.
-i It must be logical, numeric, or character.
+i It must be `logical`, `numeric`, or `character`.
 
 > # Idem with custom `arg`
 > vec_as_location(env(), 10L, arg = "foo")
 Error: Must subset elements with a valid subscript vector.
 x The subscript `foo` has the wrong type `environment`.
-i It must be logical, numeric, or character.
+i It must be `logical`, `numeric`, or `character`.
 
 > vec_as_location(foobar(), 10L, arg = "foo")
 Error: Must subset elements with a valid subscript vector.
 x The subscript `foo` has the wrong type `vctrs_foobar`.
-i It must be logical, numeric, or character.
+i It must be `logical`, `numeric`, or `character`.
 
 > vec_as_location(2.5, 3L, arg = "foo")
 Error: Must subset elements with a valid subscript vector.
@@ -131,7 +131,7 @@ vec_as_location2() requires integer or character inputs
 > vec_as_location2(TRUE, 10L)
 Error: Must extract element with a single valid subscript.
 x The subscript has the wrong type `logical`.
-i It must be numeric or character.
+i It must be `numeric` or `character`.
 
 > vec_as_location2(mtcars, 10L)
 Error: Must extract element with a single valid subscript.
@@ -148,17 +148,17 @@ x The subscript has the wrong type `data.frame<
   gear: double
   carb: double
 >`.
-i It must be numeric or character.
+i It must be `numeric` or `character`.
 
 > vec_as_location2(env(), 10L)
 Error: Must extract element with a single valid subscript.
 x The subscript has the wrong type `environment`.
-i It must be numeric or character.
+i It must be `numeric` or `character`.
 
 > vec_as_location2(foobar(), 10L)
 Error: Must extract element with a single valid subscript.
 x The subscript has the wrong type `vctrs_foobar`.
-i It must be numeric or character.
+i It must be `numeric` or `character`.
 
 > vec_as_location2(2.5, 3L)
 Error: Must extract element with a single valid subscript.
@@ -168,7 +168,7 @@ x Lossy cast from <double> to <integer>.
 > vec_as_location2(foobar(), 10L, arg = "foo")
 Error: Must extract element with a single valid subscript.
 x The subscript `foo` has the wrong type `vctrs_foobar`.
-i It must be numeric or character.
+i It must be `numeric` or `character`.
 
 > vec_as_location2(2.5, 3L, arg = "foo")
 Error: Must extract element with a single valid subscript.
@@ -197,7 +197,7 @@ x The subscript has the wrong type `data.frame<
   gear: double
   carb: double
 >`.
-i It must be numeric or character.
+i It must be `numeric` or `character`.
 
 > # Idem with custom `arg`
 > vec_as_location2(1:2, 2L, arg = "foo")
@@ -219,7 +219,7 @@ x The subscript `foo` has the wrong type `data.frame<
   gear: double
   carb: double
 >`.
-i It must be numeric or character.
+i It must be `numeric` or `character`.
 
 > vec_as_location2(1:2, 2L, arg = "foo")
 Error: Must extract element with a single valid subscript.

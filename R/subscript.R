@@ -215,7 +215,7 @@ collapse_subscript_type <- function(cnd) {
     last <- ", or "
   }
 
-  glue::glue_collapse(types, sep = ", ", last = last)
+  glue::glue_collapse(tick(types), sep = ", ", last = last)
 }
 
 new_error_subscript_size <- function(i,

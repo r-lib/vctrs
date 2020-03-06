@@ -41,10 +41,10 @@ vec_unchop() does not support non-numeric S3 indices
 > vec_unchop(list(1), list(factor("x")))
 Error: Must subset elements with a valid subscript vector.
 x The subscript has the wrong type `character`.
-i It must be numeric.
+i It must be `numeric`.
 
 > vec_unchop(list(1), list(foobar(1L)))
 Error: Must subset elements with a valid subscript vector.
 x The subscript has the wrong type `vctrs_foobar`.
-i It must be numeric.
+i It must be `numeric`.
 

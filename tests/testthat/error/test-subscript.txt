@@ -5,32 +5,32 @@ vec_as_subscript() forbids subscript types
 > vec_as_subscript(1L, logical = "error", numeric = "error")
 Error: Must subset elements with a valid subscript vector.
 x The subscript has the wrong type `integer`.
-i It must be character.
+i It must be `character`.
 
 > vec_as_subscript("foo", logical = "error", character = "error")
 Error: Must subset elements with a valid subscript vector.
 x The subscript has the wrong type `character`.
-i It must be numeric.
+i It must be `numeric`.
 
 > vec_as_subscript(TRUE, logical = "error")
 Error: Must subset elements with a valid subscript vector.
 x The subscript has the wrong type `logical`.
-i It must be numeric or character.
+i It must be `numeric` or `character`.
 
 > vec_as_subscript("foo", character = "error")
 Error: Must subset elements with a valid subscript vector.
 x The subscript has the wrong type `character`.
-i It must be logical or numeric.
+i It must be `logical` or `numeric`.
 
 > vec_as_subscript(NULL, numeric = "error")
 Error: Must subset elements with a valid subscript vector.
 x The subscript has the wrong type `NULL`.
-i It must be logical or character.
+i It must be `logical` or `character`.
 
 > vec_as_subscript(quote(foo), character = "error")
 Error: Must subset elements with a valid subscript vector.
 x The subscript has the wrong type `symbol`.
-i It must be logical or numeric.
+i It must be `logical` or `numeric`.
 
 
 vec_as_subscript2() forbids subscript types
@@ -39,17 +39,17 @@ vec_as_subscript2() forbids subscript types
 > vec_as_subscript2(1L, numeric = "error", logical = "error")
 Error: Must extract element with a single valid subscript.
 x The subscript has the wrong type `integer`.
-i It must be character.
+i It must be `character`.
 
 > vec_as_subscript2("foo", character = "error", logical = "error")
 Error: Must extract element with a single valid subscript.
 x The subscript has the wrong type `character`.
-i It must be numeric.
+i It must be `numeric`.
 
 > vec_as_subscript2(TRUE, logical = "error")
 Error: Must extract element with a single valid subscript.
 x The subscript has the wrong type `logical`.
-i It must be numeric or character.
+i It must be `numeric` or `character`.
 
 
 can customise subscript errors
@@ -58,5 +58,5 @@ can customise subscript errors
 > with_tibble_cols(vec_as_subscript(env()))
 Error: Must rename columns with a valid subscript vector.
 x The subscript `foo(bar)` has the wrong type `environment`.
-i It must be logical, numeric, or character.
+i It must be `logical`, `numeric`, or `character`.
 
