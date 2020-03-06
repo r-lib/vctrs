@@ -14,7 +14,7 @@
 #'   The `"names"` and `"row.names"` attributes are treated specially:
 #'
 #'   - `"names"` is used if provided, overriding existing names in `x`
-#'   - `"row.names"` is used only if `n` is given
+#'   - `"row.names"` is used only if `n` is omitted
 #'
 #' @export
 #' @keywords internal

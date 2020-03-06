@@ -24,7 +24,7 @@ the first element of \code{x}.}
 The \code{"names"} and \code{"row.names"} attributes are treated specially:
 \itemize{
 \item \code{"names"} is used if provided, overriding existing names in \code{x}
-\item \code{"row.names"} is used only if \code{n} is given
+\item \code{"row.names"} is used only if \code{n} is omitted
 }}
 }
 \description{
