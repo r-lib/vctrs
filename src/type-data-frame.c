@@ -2,6 +2,8 @@
 #include "type-data-frame.h"
 #include "utils.h"
 
+static SEXP new_compact_rownames(R_len_t n);
+
 
 // [[ include("type-data-frame.h") ]]
 bool is_data_frame(SEXP x) {
@@ -56,6 +58,9 @@ SEXP vctrs_new_data_frame(SEXP args) {
   SEXP cls = CAR(args); args = CDR(args);
   SEXP attrib = args;
 
+  PROTECT_INDEX pi;
+  PROTECT_WITH_INDEX(attrib, &pi);
+
   if (TYPEOF(x) != VECSXP) {
     Rf_errorcall(R_NilValue, "`x` must be a list");
   }
@@ -94,20 +99,25 @@ SEXP vctrs_new_data_frame(SEXP args) {
     PROTECT(nms);
 
     if (nms != R_NilValue) {
-      attrib = PROTECT(Rf_cons(nms, attrib));
+      attrib = Rf_cons(nms, attrib);
       SET_TAG(attrib, R_NamesSymbol);
-      UNPROTECT(1);
+      REPROTECT(attrib, pi);
     }
 
     UNPROTECT(1);
   }
 
+  if (!has_rownames) {
+    SEXP rn = PROTECT(new_compact_rownames(size));
+    attrib = Rf_cons(rn, attrib);
+    SET_TAG(attrib, R_RowNamesSymbol);
+
+    UNPROTECT(1);
+    REPROTECT(attrib, pi);
+  }
+
   SET_ATTRIB(out, attrib);
 
-
-  if (!has_rownames) {
-    init_compact_rownames(out, size);
-  }
 
   if (cls == R_NilValue) {
     Rf_setAttrib(out, R_ClassSymbol, classes_data_frame);
@@ -115,7 +125,7 @@ SEXP vctrs_new_data_frame(SEXP args) {
     poke_data_frame_class(out, cls);
   }
 
-  UNPROTECT(1);
+  UNPROTECT(2);
   return out;
 }
 
@@ -196,7 +206,6 @@ R_len_t rownames_size(SEXP rn) {
 }
 
 static void init_bare_data_frame(SEXP x, R_len_t n);
-static SEXP new_compact_rownames(R_len_t n);
 
 // [[ include("type-data-frame.h") ]]
 void init_data_frame(SEXP x, R_len_t n) {
