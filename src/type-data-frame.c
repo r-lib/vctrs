@@ -70,7 +70,7 @@ SEXP vctrs_new_data_frame(SEXP args) {
     SEXP tag = TAG(attr_in);
 
     if (tag == R_NamesSymbol) {
-      // names are ignored if the input is named
+      // Names are ignored if the input is named
       if (has_names) continue;
     } else if (tag == R_RowNamesSymbol) {
       // row.names is ignored if n is provided
