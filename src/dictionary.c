@@ -581,8 +581,9 @@ static inline void vec_match_loop_propagate(int* p_out,
 }
 
 // [[ register() ]]
-SEXP vctrs_in(SEXP needles, SEXP haystack, SEXP na_equal) {
+SEXP vctrs_in(SEXP needles, SEXP haystack, SEXP na_equal_) {
   int nprot = 0;
+  bool na_equal = r_bool_as_int(na_equal_);
 
   int _;
   SEXP type = PROTECT_N(vec_type2(needles, haystack, &args_needles, &args_haystack, &_), &nprot);
@@ -600,7 +601,7 @@ SEXP vctrs_in(SEXP needles, SEXP haystack, SEXP na_equal) {
   needles = VECTOR_ELT(translated, 0);
   haystack = VECTOR_ELT(translated, 1);
 
-  struct dictionary* d = new_dictionary_params(haystack, false, r_bool_as_int(na_equal));
+  struct dictionary* d = new_dictionary_params(haystack, false, na_equal);
   PROTECT_DICT(d, &nprot);
 
   // Load dictionary with haystack
@@ -612,16 +613,22 @@ SEXP vctrs_in(SEXP needles, SEXP haystack, SEXP na_equal) {
     }
   }
 
-  struct dictionary* d_needles = new_dictionary_partial(needles);
+  struct dictionary* d_needles = new_dictionary_params(needles, true, na_equal);
   PROTECT_DICT(d_needles, &nprot);
 
   // Locate needles
   SEXP out = PROTECT_N(Rf_allocVector(LGLSXP, n_needle), &nprot);
   int* p_out = LOGICAL(out);
 
+  bool propagate = !na_equal;
+
   for (int i = 0; i < n_needle; ++i) {
-    uint32_t hash = dict_hash_with(d, d_needles, i);
-    p_out[i] = (d->key[hash] != DICT_EMPTY);
+    if (propagate && dict_is_missing(d_needles, i)) {
+      p_out[i] = NA_LOGICAL;
+    } else {
+      uint32_t hash = dict_hash_with(d, d_needles, i);
+      p_out[i] = (d->key[hash] != DICT_EMPTY);
+    }
   }
 
   UNPROTECT(nprot);
