@@ -59,7 +59,7 @@ SEXP vctrs_new_data_frame(SEXP args) {
     Rf_errorcall(R_NilValue, "`x` must be a list");
   }
 
-  R_len_t size = -1;
+  bool has_rownames = false;
 
   SEXP out = PROTECT(r_maybe_duplicate(x));
 
@@ -76,14 +76,14 @@ SEXP vctrs_new_data_frame(SEXP args) {
       if (n != R_NilValue) {
         continue;
       }
-      size = rownames_size(CAR(attr_in));
+      has_rownames = true;
     }
 
     Rf_setAttrib(out, tag, CAR(attr_in));
   }
 
-  if (size < 0) {
-    size = df_size_from_list(x, n);
+  if (!has_rownames) {
+    R_len_t size = df_size_from_list(x, n);
     init_compact_rownames(out, size);
   }
 
