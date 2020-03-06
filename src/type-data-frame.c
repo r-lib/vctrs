@@ -77,7 +77,7 @@ SEXP vctrs_new_data_frame(SEXP args) {
       if (n == R_NilValue) {
         size = rn_size;
       } else if (size != rn_size) {
-        Rf_errorcall(R_NilValue, "`n` and `row.names` must be consistent");
+        Rf_errorcall(R_NilValue, "`n` and `row.names` must be consistent.");
       }
 
       // "row.names" used only if character
