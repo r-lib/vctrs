@@ -182,7 +182,7 @@ R_len_t rownames_size(SEXP rn) {
     return compact_rownames_length(rn);
   }
 
-  never_reached("rownames_size")
+  never_reached("rownames_size");
 }
 
 static void init_bare_data_frame(SEXP x, R_len_t n);
