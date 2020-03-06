@@ -59,8 +59,8 @@ SEXP vctrs_new_data_frame(SEXP args) {
     Rf_errorcall(R_NilValue, "`x` must be a list");
   }
 
-  bool has_n = !Rf_isNull(n);
-  bool has_names = !Rf_isNull(r_names(x));
+  bool has_n = (n != R_NilValue);
+  bool has_names = (r_names(x) != R_NilValue);
 
   R_len_t size = -1;
 
