@@ -20,7 +20,12 @@ equal.}
 \item{n}{Number of rows. If \code{NULL}, will be computed from the length of
 the first element of \code{x}.}
 
-\item{..., class}{Additional arguments for creating subclasses.}
+\item{..., class}{Additional arguments for creating subclasses.
+The \code{"names"} and \code{"row.names"} attributes are treated specially:
+\itemize{
+\item \code{"names"} is used only if \code{x} is unnamed
+\item \code{"row.names"} is used only if \code{n} is given
+}}
 }
 \description{
 A \code{data.frame} \code{\link[=data.frame]{data.frame()}} is a list with "row.names" attribute. Each

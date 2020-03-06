@@ -11,6 +11,11 @@
 #' @param n Number of rows. If `NULL`, will be computed from the length of
 #'   the first element of `x`.
 #' @param ...,class Additional arguments for creating subclasses.
+#'   The `"names"` and `"row.names"` attributes are treated specially:
+#'
+#'   - `"names"` is used only if `x` is unnamed
+#'   - `"row.names"` is used only if `n` is given
+#'
 #' @export
 #' @keywords internal
 #' @examples
