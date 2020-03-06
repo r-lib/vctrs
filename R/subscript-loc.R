@@ -292,7 +292,7 @@ cnd_body_vctrs_error_location_negative_positive <- function(cnd, ...) {
     n_loc <- length(positive_loc)
     positive_loc <- ensure_full_stop(enumerate(positive_loc))
     loc <- glue::glue(
-      "{arg} has {n_loc} missing values at locations {positive_loc}"
+      "{arg} has {n_loc} positive values at locations {positive_loc}"
     )
   }
   format_error_bullets(c(

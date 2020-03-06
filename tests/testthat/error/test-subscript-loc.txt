@@ -24,7 +24,7 @@ i The subscript has a positive value at location 2.
 > vec_as_location(c(-1L, rep(1L, 10)), 30)
 Error: Must subset elements with a valid subscript vector.
 x Negative locations can't be mixed with positive locations.
-i The subscript has 10 missing values at locations 2, 3, 4, 5, 6, etc.
+i The subscript has 10 positive values at locations 2, 3, 4, 5, 6, etc.
 
 
 num_as_location() optionally forbids negative indices
