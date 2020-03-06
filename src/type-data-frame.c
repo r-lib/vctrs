@@ -131,12 +131,12 @@ static void poke_data_frame_class(SEXP x, SEXP cls) {
   SET_VECTOR_ELT(args, 0, cls);
   SET_VECTOR_ELT(args, 1, classes_data_frame);
 
-  cls = PROTECT(vec_c(
+  cls = PROTECT(vec_unique(vec_c(
     args,
     vctrs_shared_empty_chr,
     R_NilValue,
     NULL
-  ));
+  )));
 
   Rf_setAttrib(x, R_ClassSymbol, cls);
 
