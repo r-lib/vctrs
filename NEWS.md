@@ -1,6 +1,9 @@
 
 # vctrs (development version)
 
+* `new_data_frame()` now correctly updates attributes and supports merging
+  of the `"names"` and `"row.names"` arguments (#883).
+
 * `vec_match()` gains an `na_equal` argument (#718).
 
 * `vec_chop()`'s `indices` argument has been restricted to positive integer
