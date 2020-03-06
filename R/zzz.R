@@ -10,6 +10,8 @@ on_package_load <- function(pkg, expr) {
 }
 
 .onLoad <- function(libname, pkgname) {
+  check_linked_version(pkgname)
+
   s3_register("generics::as.factor", "vctrs_vctr")
   s3_register("generics::as.ordered", "vctrs_vctr")
   s3_register("generics::as.difftime", "vctrs_vctr")
