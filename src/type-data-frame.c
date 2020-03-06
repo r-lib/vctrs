@@ -59,9 +59,6 @@ SEXP vctrs_new_data_frame(SEXP args) {
     Rf_errorcall(R_NilValue, "`x` must be a list");
   }
 
-  bool has_n = (n != R_NilValue);
-  bool has_names = (r_names(x) != R_NilValue);
-
   R_len_t size = -1;
 
   SEXP out = PROTECT(r_maybe_duplicate(x));
@@ -71,12 +68,12 @@ SEXP vctrs_new_data_frame(SEXP args) {
 
     if (tag == R_NamesSymbol) {
       // Names are ignored if the input is named
-      if (has_names) {
+      if (r_names(x) != R_NilValue) {
         continue;
       }
     } else if (tag == R_RowNamesSymbol) {
       // "row.names" is ignored if n is provided
-      if (has_n) {
+      if (n != R_NilValue) {
         continue;
       }
       size = rownames_size(CAR(attr_in));
