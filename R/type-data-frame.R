@@ -16,7 +16,7 @@
 #'
 #'   - `"names"` is used if provided, overriding existing names in `x`
 #'   - `"row.names"` is used if provided, if `n` is provided it must be
-#'     consistent
+#'     consistent.
 #'
 #' @export
 #' @keywords internal
