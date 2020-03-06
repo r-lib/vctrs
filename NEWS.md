@@ -1,5 +1,5 @@
 
-# vctrs (development version)
+# vctrs 0.2.4
 
 * `new_data_frame()` now correctly updates attributes and supports merging
   of the `"names"` and `"row.names"` arguments (#883).
@@ -14,7 +14,7 @@
 * New `vec_unchop()` for combining a list of vectors into a single vector. It
   is similar to `vec_c()`, but gives greater control over how the elements
   are placed in the output through the use of a secondary `indices` argument.
-  
+
 * Breaking change: When `.id` is supplied, `vec_rbind()` now creates
   the identifier column at the start of the data frame rather than at
   the end.
