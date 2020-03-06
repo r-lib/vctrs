@@ -251,8 +251,23 @@ test_that("attributes with special names are merged", {
   )
 
   expect_identical(
-    attr(new_data_frame(list(a = 1), n = 1L, row.names = "rowname"), "row.names"),
+    attr(new_data_frame(list(a = 1), n = 1L), "row.names"),
     1L
+  )
+
+  expect_identical(
+    attr(new_data_frame(list(a = 1), n = 1L, row.names = 1L), "row.names"),
+    1L
+  )
+
+  expect_identical(
+    attr(new_data_frame(list(a = 1), n = 1L, row.names = c(NA, -1L)), "row.names"),
+    1L
+  )
+
+  expect_identical(
+    attr(new_data_frame(list(a = 1), n = 1L, row.names = "rowname"), "row.names"),
+    "rowname"
   )
 
   expect_identical(

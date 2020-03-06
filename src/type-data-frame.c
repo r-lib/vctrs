@@ -44,6 +44,7 @@ SEXP new_data_frame(SEXP x, R_len_t n) {
 }
 
 static R_len_t df_size_from_list(SEXP x, SEXP n);
+static R_len_t df_size_from_n(SEXP n);
 static void poke_data_frame_class(SEXP x, SEXP cls);
 
 // [[ register() ]]
@@ -67,9 +68,20 @@ SEXP vctrs_new_data_frame(SEXP args) {
     SEXP tag = TAG(attr_in);
 
     if (tag == R_RowNamesSymbol) {
-      // "row.names" is ignored if n is provided
+      // "row.names" is checked for consistency with n,
+      // used only if character
       if (n != R_NilValue) {
-        continue;
+        R_len_t n_size = df_size_from_n(n);
+        SEXP rn = CAR(attr_in);
+        R_len_t rn_size = rownames_size(rn);
+
+        if (n_size != rn_size) {
+          Rf_errorcall(R_NilValue, "`n` and `row.names` must be consistent");
+        }
+
+        if (TYPEOF(rn) != STRSXP) {
+          continue;
+        }
       }
       has_rownames = true;
     }
@@ -100,7 +112,10 @@ static R_len_t df_size_from_list(SEXP x, SEXP n) {
   if (n == R_NilValue) {
     return df_raw_size_from_list(x);
   }
+  return df_size_from_n(n);
+}
 
+static R_len_t df_size_from_n(SEXP n) {
   if (TYPEOF(n) != INTSXP || Rf_length(n) != 1) {
     Rf_errorcall(R_NilValue, "`n` must be an integer of size 1");
   }
