@@ -87,7 +87,11 @@ SEXP vctrs_new_data_frame(SEXP args) {
 
   // Take names from `x` if `attrib` doesn't have any
   if (!has_names) {
-    SEXP nms = PROTECT(r_names(out));
+    SEXP nms = vctrs_shared_empty_chr;
+    if (Rf_length(out)) {
+      nms = r_names(out);
+    }
+    PROTECT(nms);
 
     if (nms != R_NilValue) {
       attrib = PROTECT(Rf_cons(nms, attrib));
@@ -109,10 +113,6 @@ SEXP vctrs_new_data_frame(SEXP args) {
     Rf_setAttrib(out, R_ClassSymbol, classes_data_frame);
   } else {
     poke_data_frame_class(out, cls);
-  }
-
-  if (Rf_length(out) == 0) {
-    Rf_setAttrib(out, R_NamesSymbol, vctrs_shared_empty_chr);
   }
 
   UNPROTECT(1);
