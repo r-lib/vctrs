@@ -323,3 +323,15 @@ test_that("can flatten data frames", {
   df <- tibble(x = 1, y = tibble(x = 2, y = tibble(x = 3), z = 4), z = 5)
   expect_identical(df_flatten(df), new_data_frame(list(x = 1, x = 2, x = 3, z = 4, z = 5)))
 })
+
+test_that("new_data_frame() zaps existing attributes", {
+  struct <- structure(list(), foo = 1)
+  expect_identical(
+    attributes(new_data_frame(struct)),
+    attributes(new_data_frame(list())),
+  )
+  expect_identical(
+    attributes(new_data_frame(struct, bar = 2)),
+    attributes(new_data_frame(list(), bar = 2)),
+  )
+})
