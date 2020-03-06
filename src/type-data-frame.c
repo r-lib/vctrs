@@ -76,21 +76,12 @@ SEXP vctrs_new_data_frame(SEXP args) {
 
     if (tag == R_RowNamesSymbol) {
       // "row.names" is checked for consistency with n (if provided)
-      SEXP rn = CAR(node);
-      R_len_t rn_size = rownames_size(rn);
-
-      if (n == R_NilValue) {
-        size = rn_size;
-      } else if (size != rn_size) {
+      if (size != rownames_size(CAR(node))) {
         Rf_errorcall(R_NilValue, "`n` and `row.names` must be consistent.");
       }
 
-      // "row.names" used only if character
-      if (TYPEOF(rn) != STRSXP) {
-        continue;
-      }
-
       has_rownames = true;
+      continue;
     }
   }
 

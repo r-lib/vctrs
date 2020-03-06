@@ -228,8 +228,12 @@ test_that("class attribute", {
     class(new_data_frame(list(a = 1), class = "foo_frame")),
     c("foo_frame", "data.frame")
   )
-  expect_identical(
+  expect_error(
     class(exec(new_data_frame, list(a = 1), !!!attributes(new_data_frame(list(), class = "tbl_df")))),
+    "`n` and `row.names` must be consistent"
+  )
+  expect_identical(
+    class(exec(new_data_frame, list(a = 1), !!!attributes(new_data_frame(list(b = 1), class = "tbl_df")))),
     c("tbl_df", "data.frame")
   )
 })
@@ -256,11 +260,6 @@ test_that("attributes with special names are merged", {
   )
 
   expect_identical(
-    .row_names_info(new_data_frame(list(), row.names = 1:3)),
-    -3L
-  )
-
-  expect_identical(
     .row_names_info(new_data_frame(list(), n = 3L)),
     -3L
   )
@@ -269,7 +268,7 @@ test_that("attributes with special names are merged", {
 
   expect_identical(
     .row_names_info(new_data_frame(list(), n = 3L, row.names = 1:3)),
-    -3L
+    3L
   )
 
   expect_identical(
@@ -282,9 +281,13 @@ test_that("attributes with special names are merged", {
     "rowname"
   )
 
+  expect_error(
+    new_data_frame(list(), row.names = "rowname"),
+    "must be consistent"
+  )
   expect_identical(
-    attr(new_data_frame(list(), row.names = "rowname"), "row.names"),
-    "rowname"
+    row.names(new_data_frame(list(), row.names = chr())),
+    chr()
   )
 })
 
