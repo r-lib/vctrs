@@ -74,6 +74,11 @@ SEXP vctrs_new_data_frame(SEXP args) {
   for (SEXP node = attrib; node != R_NilValue; node = CDR(node)) {
     SEXP tag = TAG(node);
 
+    // We might add dynamic dots later on
+    if (tag == R_ClassSymbol) {
+      Rf_error("Internal error in `new_data_frame()`: Can't supply `class` in `...`.");
+    }
+
     if (tag == R_NamesSymbol) {
       has_names = true;
       continue;
