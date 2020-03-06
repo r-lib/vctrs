@@ -59,21 +59,48 @@ SEXP vctrs_new_data_frame(SEXP args) {
     Rf_errorcall(R_NilValue, "`x` must be a list");
   }
 
-  R_len_t size = df_size_from_list(x, n);
+  bool has_n = !Rf_isNull(n);
+  bool has_names = !Rf_isNull(r_names(x));
 
-  if (attrib != R_NilValue) {
-    x = r_maybe_duplicate(x);
-    SET_ATTRIB(x, attrib);
+  R_len_t size = -1;
+
+  SEXP out = PROTECT(r_maybe_duplicate(x));
+
+  for (SEXP attr_in = attrib; attr_in != R_NilValue; attr_in = CDR(attr_in)) {
+    SEXP tag = TAG(attr_in);
+
+    if (tag == R_NamesSymbol) {
+      // names are ignored if the input is named
+      if (has_names) continue;
+    } else if (tag == R_RowNamesSymbol) {
+      // row.names is ignored if n is provided
+      if (has_n) continue;
+      size = rownames_size(CAR(attr_in));
+    } else if (tag == R_ClassSymbol) {
+      // class in ... overrides class from argument, to support splicing
+      cls = CAR(attr_in);
+      continue;
+    }
+
+    Rf_setAttrib(out, tag, CAR(attr_in));
   }
-  PROTECT(x);
 
-  SEXP out = PROTECT(new_data_frame(x, size));
+  if (size < 0) {
+    size = df_size_from_list(x, n);
+    init_compact_rownames(out, size);
+  }
 
-  if (cls != R_NilValue) {
+  if (cls == R_NilValue) {
+    Rf_setAttrib(out, R_ClassSymbol, classes_data_frame);
+  } else {
     poke_data_frame_class(out, cls);
   }
 
-  UNPROTECT(2);
+  if (Rf_length(out) == 0) {
+    Rf_setAttrib(out, R_NamesSymbol, vctrs_shared_empty_chr);
+  }
+
+  UNPROTECT(1);
   return out;
 }
 
@@ -133,9 +160,21 @@ enum rownames_type rownames_type(SEXP x) {
   }
 }
 
-// [[ include("type-data-frame.h") ]]
-R_len_t compact_rownames_length(SEXP x) {
+static R_len_t compact_rownames_length(SEXP x) {
   return abs(INTEGER(x)[1]);
+}
+
+// [[ include("type-data-frame.h") ]]
+R_len_t rownames_size(SEXP rn) {
+  switch (rownames_type(rn)) {
+  case ROWNAMES_IDENTIFIERS:
+  case ROWNAMES_AUTOMATIC:
+    return Rf_length(rn);
+  case ROWNAMES_AUTOMATIC_COMPACT:
+    return compact_rownames_length(rn);
+  }
+
+  return -1;
 }
 
 static void init_bare_data_frame(SEXP x, R_len_t n);

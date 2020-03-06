@@ -104,16 +104,7 @@ R_len_t df_rownames_size(SEXP x) {
       continue;
     }
 
-    SEXP rn = CAR(attr);
-    R_len_t n = Rf_length(rn);
-
-    switch (rownames_type(rn)) {
-    case ROWNAMES_IDENTIFIERS:
-    case ROWNAMES_AUTOMATIC:
-      return n;
-    case ROWNAMES_AUTOMATIC_COMPACT:
-      return compact_rownames_length(rn);
-    }
+    return rownames_size(CAR(attr));
   }
 
   return -1;

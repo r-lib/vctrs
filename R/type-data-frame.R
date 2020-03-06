@@ -26,7 +26,7 @@ new_data_frame <- fn_inline_formals(new_data_frame, "x")
 # not a real helper as it lacks value checks.
 data_frame <- function(...) {
   cols <- list(...)
-  new_data_frame(cols)
+  new_data_frame(cols, names = character())
 }
 
 #' @export
