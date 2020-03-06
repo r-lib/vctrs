@@ -80,10 +80,6 @@ SEXP vctrs_new_data_frame(SEXP args) {
         continue;
       }
       size = rownames_size(CAR(attr_in));
-    } else if (tag == R_ClassSymbol) {
-      // "class" in ... overrides "class" from argument, to support splicing
-      cls = CAR(attr_in);
-      continue;
     }
 
     Rf_setAttrib(out, tag, CAR(attr_in));
