@@ -211,15 +211,25 @@ test_that("the names on an empty data frame are an empty character vector", {
   expect_identical(names(new_data_frame()), character())
 })
 
-test_that("attributes with special names are ignored", {
+test_that("attributes with special names are merged", {
   expect_identical(
-    names(new_data_frame(list(), 0L, names = "name")),
-    character()
+    names(new_data_frame(list(a = 1), names = "name")),
+    "a"
   )
 
   expect_identical(
-    attr(new_data_frame(list(), 0L, row.names = "rowname"), "row.names"),
-    integer()
+    names(new_data_frame(list(1), names = "name")),
+    "name"
+  )
+
+  expect_identical(
+    attr(new_data_frame(list(a = 1), n = 1L, row.names = "rowname"), "row.names"),
+    1L
+  )
+
+  expect_identical(
+    attr(new_data_frame(list(a = 1), row.names = "rowname"), "row.names"),
+    "rowname"
   )
 })
 
