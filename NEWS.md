@@ -1,4 +1,6 @@
 
+# vctrs (development version)
+
 # vctrs 0.2.4
 
 * `new_data_frame()` now correctly updates attributes and supports merging
