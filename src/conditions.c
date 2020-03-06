@@ -7,7 +7,7 @@ void stop_scalar_type(SEXP x, struct vctrs_arg* arg) {
                                PROTECT(r_protect(x)),
                                PROTECT(vctrs_arg(arg))));
   Rf_eval(call, vctrs_ns_env);
-  Rf_error("Internal error: `stop_scalar_type()` should have jumped earlier");
+  never_reached("stop_scalar_type");
 }
 
 void vec_assert(SEXP x, struct vctrs_arg* arg) {
@@ -42,7 +42,7 @@ void stop_incompatible_size(SEXP x, SEXP y,
   SEXP call = PROTECT(r_call(r_sym("stop_incompatible_size"), syms, args));
   Rf_eval(call, vctrs_ns_env);
 
-  Rf_error("Internal error: `stop_incompatible_size()` should have jumped earlier");
+  never_reached("stop_incompatible_size");
 }
 
 void stop_recycle_incompatible_size(R_len_t x_size, R_len_t size,
@@ -63,7 +63,7 @@ void stop_recycle_incompatible_size(R_len_t x_size, R_len_t size,
   SEXP call = PROTECT(r_call(r_sym("stop_recycle_incompatible_size"), syms, args));
   Rf_eval(call, vctrs_ns_env);
 
-  Rf_error("Internal error: `stop_recycle_incompatible_size()` should have jumped earlier");
+  never_reached("stop_recycle_incompatible_size");
 }
 
 void stop_corrupt_factor_levels(SEXP x, struct vctrs_arg* arg) {
@@ -71,7 +71,7 @@ void stop_corrupt_factor_levels(SEXP x, struct vctrs_arg* arg) {
                                PROTECT(r_protect(x)),
                                PROTECT(vctrs_arg(arg))));
   Rf_eval(call, vctrs_ns_env);
-  Rf_error("Internal error: `stop_corrupt_factor_levels()` should have jumped earlier");
+  never_reached("stop_corrupt_factor_levels");
 }
 
 void stop_corrupt_ordered_levels(SEXP x, struct vctrs_arg* arg) {
@@ -79,5 +79,5 @@ void stop_corrupt_ordered_levels(SEXP x, struct vctrs_arg* arg) {
                                PROTECT(r_protect(x)),
                                PROTECT(vctrs_arg(arg))));
   Rf_eval(call, vctrs_ns_env);
-  Rf_error("Internal error: `stop_corrupt_ordered_levels()` should have jumped earlier");
+  never_reached("stop_corrupt_ordered_levels");
 }

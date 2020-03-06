@@ -7,7 +7,7 @@
 \usage{
 vec_match(needles, haystack, ..., na_equal = TRUE)
 
-vec_in(needles, haystack, na_equal = TRUE)
+vec_in(needles, haystack, ..., na_equal = TRUE)
 }
 \arguments{
 \item{needles, haystack}{Vector of \code{needles} to search for in vector haystack.
@@ -42,8 +42,7 @@ In most cases places in R, missing values are not considered to be equal,
 i.e. \code{NA == NA} is not \code{TRUE}. The exception is in matching functions
 like \code{\link[=match]{match()}} and \code{\link[=merge]{merge()}}, where an \code{NA} will match another \code{NA}.
 By \code{vec_match()} and \code{vec_in()} will match \code{NA}s; but you can control
-this behaviour with the `match R's matching behaviour by default, but
-you ca
+this behaviour with the \code{na_equal} argument.
 }
 
 \examples{

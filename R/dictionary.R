@@ -235,6 +235,7 @@ vec_match <- function(needles, haystack, ..., na_equal = TRUE) {
 
 #' @export
 #' @rdname vec_match
-vec_in <- function(needles, haystack, na_equal = TRUE) {
+vec_in <- function(needles, haystack, ..., na_equal = TRUE) {
+  if (!missing(...)) ellipsis::check_dots_empty()
   .Call(vctrs_in, needles, haystack, na_equal)
 }
