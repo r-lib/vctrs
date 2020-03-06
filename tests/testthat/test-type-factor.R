@@ -11,6 +11,18 @@ test_that("ptype methods are descriptive", {
   expect_equal(vec_ptype_full(o), "ordered<>")
 })
 
+test_that("slicing factors uses a proxy to not go through `[.factor`", {
+  x <- factor("x")
+  y <- ordered("y")
+
+  local_methods(
+    `[.factor` = function(x, ...) abort("should not be called")
+  )
+
+  expect_identical(vec_slice(x, 1), x)
+  expect_identical(vec_slice(y, 1), y)
+})
+
 # Coercion ----------------------------------------------------------------
 
 test_that("factor/character coercions are symmetric and unchanging", {
