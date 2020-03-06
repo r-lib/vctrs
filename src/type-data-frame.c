@@ -64,25 +64,27 @@ SEXP vctrs_new_data_frame(SEXP args) {
 
   SEXP out = PROTECT(r_maybe_duplicate(x));
 
+  R_len_t size = df_size_from_list(x, n);
+
   for (SEXP attr_in = attrib; attr_in != R_NilValue; attr_in = CDR(attr_in)) {
     SEXP tag = TAG(attr_in);
 
     if (tag == R_RowNamesSymbol) {
-      // "row.names" is checked for consistency with n,
-      // used only if character
-      if (n != R_NilValue) {
-        R_len_t n_size = df_size_from_n(n);
-        SEXP rn = CAR(attr_in);
-        R_len_t rn_size = rownames_size(rn);
+      // "row.names" is checked for consistency with n (if provided)
+      SEXP rn = CAR(attr_in);
+      R_len_t rn_size = rownames_size(rn);
 
-        if (n_size != rn_size) {
-          Rf_errorcall(R_NilValue, "`n` and `row.names` must be consistent");
-        }
-
-        if (TYPEOF(rn) != STRSXP) {
-          continue;
-        }
+      if (n == R_NilValue) {
+        size = rn_size;
+      } else if (size != rn_size) {
+        Rf_errorcall(R_NilValue, "`n` and `row.names` must be consistent");
       }
+
+      // "row.names" used only if character
+      if (TYPEOF(rn) != STRSXP) {
+        continue;
+      }
+
       has_rownames = true;
     }
 
@@ -90,7 +92,6 @@ SEXP vctrs_new_data_frame(SEXP args) {
   }
 
   if (!has_rownames) {
-    R_len_t size = df_size_from_list(x, n);
     init_compact_rownames(out, size);
   }
 

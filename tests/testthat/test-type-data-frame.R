@@ -251,27 +251,39 @@ test_that("attributes with special names are merged", {
   )
 
   expect_identical(
-    attr(new_data_frame(list(a = 1), n = 1L), "row.names"),
-    1L
+    attr(new_data_frame(list()), "row.names"),
+    integer()
   )
 
   expect_identical(
-    attr(new_data_frame(list(a = 1), n = 1L, row.names = 1L), "row.names"),
-    1L
+    .row_names_info(new_data_frame(list(), row.names = 1:3)),
+    -3L
   )
 
   expect_identical(
-    attr(new_data_frame(list(a = 1), n = 1L, row.names = c(NA, -1L)), "row.names"),
-    1L
+    .row_names_info(new_data_frame(list(), n = 3L)),
+    -3L
+  )
+
+  expect_error(new_data_frame(list(), n = 1L, row.names = 1:3), ".")
+
+  expect_identical(
+    .row_names_info(new_data_frame(list(), n = 3L, row.names = 1:3)),
+    -3L
   )
 
   expect_identical(
-    attr(new_data_frame(list(a = 1), n = 1L, row.names = "rowname"), "row.names"),
+    .row_names_info(new_data_frame(list(), n = 3L, row.names = c(NA, -3L))),
+    -3L
+  )
+
+  expect_identical(
+    attr(new_data_frame(list(), n = 1L, row.names = "rowname"), "row.names"),
     "rowname"
   )
 
   expect_identical(
-    attr(new_data_frame(list(a = 1), row.names = "rowname"), "row.names"),
+    attr(new_data_frame(list(), row.names = "rowname"), "row.names"),
     "rowname"
   )
 })
