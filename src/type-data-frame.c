@@ -75,13 +75,13 @@ SEXP vctrs_new_data_frame(SEXP args) {
         continue;
       }
     } else if (tag == R_RowNamesSymbol) {
-      // row.names is ignored if n is provided
+      // "row.names" is ignored if n is provided
       if (has_n) {
         continue;
       }
       size = rownames_size(CAR(attr_in));
     } else if (tag == R_ClassSymbol) {
-      // class in ... overrides class from argument, to support splicing
+      // "class" in ... overrides "class" from argument, to support splicing
       cls = CAR(attr_in);
       continue;
     }
