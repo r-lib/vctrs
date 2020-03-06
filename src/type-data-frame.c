@@ -47,7 +47,7 @@ SEXP new_data_frame(SEXP x, R_len_t n) {
 
 static R_len_t df_size_from_list(SEXP x, SEXP n);
 static R_len_t df_size_from_n(SEXP n);
-static void poke_data_frame_class(SEXP x, SEXP cls);
+static SEXP c_data_frame_class(SEXP cls);
 
 // [[ register() ]]
 SEXP vctrs_new_data_frame(SEXP args) {
@@ -116,14 +116,22 @@ SEXP vctrs_new_data_frame(SEXP args) {
     REPROTECT(attrib, pi);
   }
 
-  SET_ATTRIB(out, attrib);
-
-
   if (cls == R_NilValue) {
-    Rf_setAttrib(out, R_ClassSymbol, classes_data_frame);
+    cls = classes_data_frame;
   } else {
-    poke_data_frame_class(out, cls);
+    cls = c_data_frame_class(cls);
   }
+  PROTECT(cls);
+
+  attrib = Rf_cons(cls, attrib);
+  SET_TAG(attrib, R_ClassSymbol);
+
+  UNPROTECT(1);
+  REPROTECT(attrib, pi);
+
+
+  SET_ATTRIB(out, attrib);
+  SET_OBJECT(out, 1);
 
   UNPROTECT(2);
   return out;
@@ -144,31 +152,27 @@ static R_len_t df_size_from_n(SEXP n) {
   return r_int_get(n, 0);
 }
 
-static void poke_data_frame_class(SEXP x, SEXP cls) {
-  if (cls == R_NilValue) {
-    return;
-  }
+static SEXP c_data_frame_class(SEXP cls) {
   if (TYPEOF(cls) != STRSXP) {
     Rf_errorcall(R_NilValue, "`class` must be NULL or a character vector");
   }
   if (Rf_length(cls) == 0) {
-    return;
+    return classes_data_frame;
   }
 
   SEXP args = PROTECT(Rf_allocVector(VECSXP, 2));
   SET_VECTOR_ELT(args, 0, cls);
   SET_VECTOR_ELT(args, 1, classes_data_frame);
 
-  cls = PROTECT(vec_unique(vec_c(
+  SEXP out = vec_unique(vec_c(
     args,
     vctrs_shared_empty_chr,
     R_NilValue,
     NULL
-  )));
+  ));
 
-  Rf_setAttrib(x, R_ClassSymbol, cls);
-
-  UNPROTECT(2);
+  UNPROTECT(1);
+  return out;
 }
 
 // [[ include("type-data-frame.h") ]]
