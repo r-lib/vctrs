@@ -66,12 +66,7 @@ SEXP vctrs_new_data_frame(SEXP args) {
   for (SEXP attr_in = attrib; attr_in != R_NilValue; attr_in = CDR(attr_in)) {
     SEXP tag = TAG(attr_in);
 
-    if (tag == R_NamesSymbol) {
-      // Names are ignored if the input is named
-      if (r_names(x) != R_NilValue) {
-        continue;
-      }
-    } else if (tag == R_RowNamesSymbol) {
+    if (tag == R_RowNamesSymbol) {
       // "row.names" is ignored if n is provided
       if (n != R_NilValue) {
         continue;

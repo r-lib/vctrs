@@ -236,8 +236,13 @@ test_that("class attribute", {
 
 test_that("attributes with special names are merged", {
   expect_identical(
-    names(new_data_frame(list(a = 1), names = "name")),
+    names(new_data_frame(list(a = 1))),
     "a"
+  )
+
+  expect_identical(
+    names(new_data_frame(list(a = 1), names = "name")),
+    "name"
   )
 
   expect_identical(

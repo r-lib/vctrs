@@ -13,7 +13,7 @@
 #' @param ...,class Additional arguments for creating subclasses.
 #'   The `"names"` and `"row.names"` attributes are treated specially:
 #'
-#'   - `"names"` is used only if `x` is unnamed
+#'   - `"names"` is used if provided, overriding existing names in `x`
 #'   - `"row.names"` is used only if `n` is given
 #'
 #' @export
