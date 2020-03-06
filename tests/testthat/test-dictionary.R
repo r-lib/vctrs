@@ -223,7 +223,7 @@ test_that("can opt out of NA matching", {
   n <- c(1, NA)
   h <- c(1:3, NA)
 
-  expect_equal(vec_in(n, h, na_equal = FALSE), c(TRUE, FALSE))
+  expect_equal(vec_in(n, h, na_equal = FALSE), c(TRUE, NA))
 })
 
 test_that("vec_match works with empty data frame", {
