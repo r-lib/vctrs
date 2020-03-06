@@ -60,18 +60,23 @@ SEXP vctrs_new_data_frame(SEXP args) {
     Rf_errorcall(R_NilValue, "`x` must be a list");
   }
 
+  bool has_names = false;
   bool has_rownames = false;
+  R_len_t size = df_size_from_list(x, n);
 
   SEXP out = PROTECT(r_maybe_duplicate(x));
 
-  R_len_t size = df_size_from_list(x, n);
+  for (SEXP node = attrib; node != R_NilValue; node = CDR(node)) {
+    SEXP tag = TAG(node);
 
-  for (SEXP attr_in = attrib; attr_in != R_NilValue; attr_in = CDR(attr_in)) {
-    SEXP tag = TAG(attr_in);
+    if (tag == R_NamesSymbol) {
+      has_names = true;
+      continue;
+    }
 
     if (tag == R_RowNamesSymbol) {
       // "row.names" is checked for consistency with n (if provided)
-      SEXP rn = CAR(attr_in);
+      SEXP rn = CAR(node);
       R_len_t rn_size = rownames_size(rn);
 
       if (n == R_NilValue) {
@@ -87,9 +92,23 @@ SEXP vctrs_new_data_frame(SEXP args) {
 
       has_rownames = true;
     }
-
-    Rf_setAttrib(out, tag, CAR(attr_in));
   }
+
+  // Take names from `x` if `attrib` doesn't have any
+  if (!has_names) {
+    SEXP nms = PROTECT(r_names(out));
+
+    if (nms != R_NilValue) {
+      attrib = PROTECT(Rf_cons(nms, attrib));
+      SET_TAG(attrib, R_NamesSymbol);
+      UNPROTECT(1);
+    }
+
+    UNPROTECT(1);
+  }
+
+  SET_ATTRIB(out, attrib);
+
 
   if (!has_rownames) {
     init_compact_rownames(out, size);
