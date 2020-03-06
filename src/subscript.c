@@ -118,10 +118,43 @@ static SEXP obj_cast_subscript(SEXP subscript,
   return R_NilValue;
 }
 
+static SEXP dbl_cast_subscript_fallback(SEXP subscript,
+                                        const struct vec_as_subscript_opts* opts,
+                                        ERR* err);
 static SEXP dbl_cast_subscript_body = NULL;
+
 static SEXP dbl_cast_subscript(SEXP subscript,
                                const struct vec_as_subscript_opts* opts,
                                ERR* err) {
+  double* p = REAL(subscript);
+  R_len_t n = Rf_length(subscript);
+
+  SEXP out = PROTECT(Rf_allocVector(INTSXP, n));
+  int* out_p = INTEGER(out);
+
+  for (R_len_t i = 0; i < n; ++i) {
+    double elt = p[i];
+    int out_elt = (int) elt;
+
+    // Detect out-of-bounds and fractional numbers
+    if (elt > INT_MAX || out_elt != elt) {
+      // Once we throw lazy errors from the cast method, we should
+      // throw the error here as well
+      UNPROTECT(1);
+      return dbl_cast_subscript_fallback(subscript, opts, err);
+    }
+
+    out_p[i] = out_elt;
+  }
+
+  UNPROTECT(1);
+  return out;
+}
+
+static SEXP dbl_cast_subscript_fallback(SEXP subscript,
+                                        const struct vec_as_subscript_opts* opts,
+                                        ERR* err) {
+
   SEXP out = PROTECT(vec_coercible_cast_e(subscript,
                                           vctrs_shared_empty_int,
                                           opts->subscript_arg,
