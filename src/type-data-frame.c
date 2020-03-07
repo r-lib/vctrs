@@ -58,9 +58,6 @@ SEXP vctrs_new_data_frame(SEXP args) {
   SEXP cls = CAR(args); args = CDR(args);
   SEXP attrib = args;
 
-  PROTECT_INDEX pi;
-  PROTECT_WITH_INDEX(attrib, &pi);
-
   if (TYPEOF(x) != VECSXP) {
     Rf_errorcall(R_NilValue, "`x` must be a list");
   }
@@ -68,8 +65,6 @@ SEXP vctrs_new_data_frame(SEXP args) {
   bool has_names = false;
   bool has_rownames = false;
   R_len_t size = df_size_from_list(x, n);
-
-  SEXP out = PROTECT(r_maybe_duplicate(x));
 
   for (SEXP node = attrib; node != R_NilValue; node = CDR(node)) {
     SEXP tag = TAG(node);
@@ -94,6 +89,11 @@ SEXP vctrs_new_data_frame(SEXP args) {
       continue;
     }
   }
+
+  PROTECT_INDEX pi;
+  PROTECT_WITH_INDEX(attrib, &pi);
+
+  SEXP out = PROTECT(r_maybe_duplicate(x));
 
   // Take names from `x` if `attrib` doesn't have any
   if (!has_names) {
