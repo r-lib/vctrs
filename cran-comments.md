@@ -1,7 +1,5 @@
 
-The valgrind errors are fixed.
-
-This is a resubmission that fixes a broken link in the README.
+All CRAN checks should now be fixed.
 
 ## Test environments
 
@@ -18,4 +16,4 @@ This is a resubmission that fixes a broken link in the README.
 
 ## Revdep checks
 
-There are expected test failures in the tidyr and rray packages. We'll send updates for these packages shortly after release.
+We ran revdep checks for vctrs and tidyr. No problems were found, except for slider. We'll send a patch release shortly.
