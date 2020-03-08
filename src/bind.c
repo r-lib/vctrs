@@ -367,8 +367,13 @@ static SEXP vec_cbind(SEXP xs, SEXP ptype, SEXP size, struct name_repair_opts* n
 
 
   // Fill in columns
-  SEXP out = PROTECT(Rf_allocVector(VECSXP, ncol));
-  SEXP names = PROTECT(Rf_allocVector(STRSXP, ncol));
+  PROTECT_INDEX out_pi;
+  SEXP out = Rf_allocVector(VECSXP, ncol);
+  PROTECT_WITH_INDEX(out, &out_pi);
+
+  PROTECT_INDEX names_pi;
+  SEXP names = Rf_allocVector(STRSXP, ncol);
+  PROTECT_WITH_INDEX(names, &names_pi);
 
   SEXP idx = PROTECT(compact_seq(0, 0, true));
   int* idx_ptr = INTEGER(idx);
@@ -392,16 +397,17 @@ static SEXP vec_cbind(SEXP xs, SEXP ptype, SEXP size, struct name_repair_opts* n
 
     R_len_t xn = Rf_length(x);
     init_compact_seq(idx_ptr, counter, xn, true);
-    out = PROTECT(list_assign(out, idx, x));
+    out = list_assign(out, idx, x);
+    REPROTECT(out, out_pi);
 
     SEXP xnms = PROTECT(r_names(x));
     if (xnms != R_NilValue) {
       names = chr_assign(names, idx, xnms);
+      REPROTECT(names, names_pi);
     }
-    PROTECT(names);
+    UNPROTECT(1);
 
     counter += xn;
-    UNPROTECT(3);
   }
 
   names = PROTECT(vec_as_names(names, name_repair));
