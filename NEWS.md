@@ -1,6 +1,8 @@
 
 # vctrs 0.2.4
 
+* Factors and dates methods are now implemented in C for efficiency.
+
 * `new_data_frame()` now correctly updates attributes and supports merging
   of the `"names"` and `"row.names"` arguments (#883).
 
