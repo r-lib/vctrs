@@ -610,3 +610,180 @@ static int df_equal_na_scalar(SEXP x, R_len_t i) {
 
   return true;
 }
+
+// -----------------------------------------------------------------------------
+
+#define COMPLETE_CASES(CTYPE, CONST_DEREF, SCALAR_EQUAL_NA) \
+  do {                                                      \
+    SEXP out = PROTECT(Rf_allocVector(LGLSXP, size));       \
+    int* p_out = LOGICAL(out);                              \
+                                                            \
+    const CTYPE* p_x = CONST_DEREF(x);                      \
+                                                            \
+    for (R_len_t i = 0; i < size; ++i, ++p_x) {             \
+      p_out[i] = SCALAR_EQUAL_NA(p_x) ? 0 : 1;              \
+    }                                                       \
+                                                            \
+    UNPROTECT(2);                                           \
+    return out;                                             \
+  }                                                         \
+while (0)
+
+#define COMPLETE_CASES_BARRIER(SCALAR_EQUAL_NA)             \
+  do {                                                      \
+    SEXP out = PROTECT(Rf_allocVector(LGLSXP, size));       \
+    int* p_out = LOGICAL(out);                              \
+                                                            \
+    for (R_len_t i = 0; i < size; ++i) {                    \
+      p_out[i] = SCALAR_EQUAL_NA(x, i) ? 0 : 1;             \
+    }                                                       \
+                                                            \
+    UNPROTECT(2);                                           \
+    return out;                                             \
+  }                                                         \
+while (0)
+
+static SEXP df_complete_cases(SEXP x, R_len_t n_row);
+
+SEXP vec_complete_cases(SEXP x) {
+  R_len_t size = vec_size(x);
+
+  x = PROTECT(vec_proxy_equal(x));
+
+  enum vctrs_type type = vec_proxy_typeof(x);
+
+  switch (type) {
+  case vctrs_type_logical:   COMPLETE_CASES(int, LOGICAL_RO, lgl_equal_na_scalar);
+  case vctrs_type_integer:   COMPLETE_CASES(int, INTEGER_RO, int_equal_na_scalar);
+  case vctrs_type_double:    COMPLETE_CASES(double, REAL_RO, dbl_equal_na_scalar);
+  case vctrs_type_complex:   COMPLETE_CASES(Rcomplex, COMPLEX_RO, cpl_equal_na_scalar);
+  //case vctrs_type_raw:       COMPLETE_CASES(Rbyte, RAW_RO, raw_equal_na_scalar);
+  case vctrs_type_character: COMPLETE_CASES(SEXP, STRING_PTR_RO, chr_equal_na_scalar);
+  case vctrs_type_list:      COMPLETE_CASES_BARRIER(list_equal_na_scalar);
+  case vctrs_type_dataframe: {
+    SEXP out = df_complete_cases(x, size);
+    UNPROTECT(1);
+    return out;
+  }
+  case vctrs_type_scalar:    Rf_errorcall(R_NilValue, "Can't detect `NA` values in scalars with `vec_complete_cases()`.");
+  default:                   Rf_error("Unimplemented type in `vec_complete_cases()`.");
+  }
+}
+
+#undef COMPLETE_CASES
+#undef COMPLETE_CASES_BARRIER
+
+// [[ register() ]]
+SEXP vctrs_complete_cases(SEXP x) {
+  return vec_complete_cases(x);
+}
+
+// -----------------------------------------------------------------------------
+
+static struct vctrs_df_rowwise_info vec_complete_cases_col(SEXP x,
+                                                           struct vctrs_df_rowwise_info info,
+                                                           R_len_t n_row);
+
+static struct vctrs_df_rowwise_info df_complete_cases_impl(SEXP x,
+                                                           struct vctrs_df_rowwise_info info,
+                                                           R_len_t n_row) {
+  int n_col = Rf_length(x);
+
+  for (R_len_t i = 0; i < n_col; ++i) {
+    SEXP col = VECTOR_ELT(x, i);
+
+    info = vec_complete_cases_col(col, info, n_row);
+
+    // If we know every row is not a complete case, break
+    if (info.remaining == 0) {
+      break;
+    }
+  }
+
+  return info;
+}
+
+static SEXP df_complete_cases(SEXP x, R_len_t n_row) {
+  int nprot = 0;
+
+  // Same rowwise info as `df_equal()`
+  struct vctrs_df_rowwise_info info = init_rowwise_equal_info(n_row);
+  PROTECT_DF_ROWWISE_INFO(&info, &nprot);
+
+  info = df_complete_cases_impl(x, info, n_row);
+
+  UNPROTECT(nprot);
+  return info.out;
+}
+
+// -----------------------------------------------------------------------------
+
+#define COMPLETE_CASES_COL(CTYPE, CONST_DEREF, SCALAR_EQUAL_NA) \
+do {                                                            \
+  int* p_out = LOGICAL(info.out);                               \
+                                                                \
+  const CTYPE* p_x = CONST_DEREF(x);                            \
+                                                                \
+  for (R_len_t i = 0; i < n_row; ++i, ++p_x) {                  \
+    if (info.p_row_known[i]) {                                  \
+      continue;                                                 \
+    }                                                           \
+                                                                \
+    if (SCALAR_EQUAL_NA(p_x)) {                                 \
+      p_out[i] = 0;                                             \
+      info.p_row_known[i] = true;                               \
+      --info.remaining;                                         \
+                                                                \
+      if (info.remaining == 0) {                                \
+        break;                                                  \
+      }                                                         \
+    }                                                           \
+  }                                                             \
+                                                                \
+  return info;                                                  \
+}                                                               \
+while (0)
+
+#define COMPLETE_CASES_COL_BARRIER(SCALAR_EQUAL_NA) \
+do {                                                \
+  int* p_out = LOGICAL(info.out);                   \
+                                                    \
+  for (R_len_t i = 0; i < n_row; ++i) {             \
+    if (info.p_row_known[i]) {                      \
+      continue;                                     \
+    }                                               \
+                                                    \
+    if (SCALAR_EQUAL_NA(x, i)) {                    \
+      p_out[i] = 0;                                 \
+      info.p_row_known[i] = true;                   \
+      --info.remaining;                             \
+                                                    \
+      if (info.remaining == 0) {                    \
+        break;                                      \
+      }                                             \
+    }                                               \
+  }                                                 \
+                                                    \
+  return info;                                      \
+}                                                   \
+while (0)
+
+static struct vctrs_df_rowwise_info vec_complete_cases_col(SEXP x,
+                                                           struct vctrs_df_rowwise_info info,
+                                                           R_len_t n_row) {
+  switch (vec_proxy_typeof(x)) {
+  case vctrs_type_logical:   COMPLETE_CASES_COL(int, LOGICAL_RO, lgl_equal_na_scalar);
+  case vctrs_type_integer:   COMPLETE_CASES_COL(int, INTEGER_RO, int_equal_na_scalar);
+  case vctrs_type_double:    COMPLETE_CASES_COL(double, REAL_RO, dbl_equal_na_scalar);
+  case vctrs_type_complex:   COMPLETE_CASES_COL(Rcomplex, COMPLEX_RO, cpl_equal_na_scalar);
+  // case vctrs_type_raw:       COMPLETE_CASES_COL(Rbyte, RAW_RO, raw_equal_na_scalar);
+  case vctrs_type_character: COMPLETE_CASES_COL(SEXP, STRING_PTR_RO, chr_equal_na_scalar);
+  case vctrs_type_list:      COMPLETE_CASES_COL_BARRIER(list_equal_na_scalar);
+  case vctrs_type_dataframe: return df_complete_cases_impl(x, info, n_row);
+  case vctrs_type_scalar:    Rf_errorcall(R_NilValue, "Can't compare scalars with `vec_complete_cases()`");
+  default:                   Rf_error("Unimplemented type in `vec_complete_cases()`");
+  }
+}
+
+#undef COMPLETE_CASES_COL
+#undef COMPLETE_CASES_COL_BARRIER

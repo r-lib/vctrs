@@ -386,6 +386,59 @@ test_that("can't supply NA as `na_equal`", {
   expect_error(vec_equal(NA, NA, na_equal = NA), "single `TRUE` or `FALSE`")
 })
 
+# complete -----------------------------------------------------------------
+
+test_that("can detect completeness of various vector types", {
+  expect_false(vec_complete_cases(NA))
+  expect_false(vec_complete_cases(NA_integer_))
+  expect_false(vec_complete_cases(NA_real_))
+  expect_false(vec_complete_cases(NA_complex_))
+  expect_false(vec_complete_cases(complex(real = NA, imaginary = 1)))
+  expect_false(vec_complete_cases(NaN))
+  expect_false(vec_complete_cases(NA_character_))
+  expect_false(vec_complete_cases(list(NULL)))
+
+  expect_true(vec_complete_cases(TRUE))
+  expect_true(vec_complete_cases(1L))
+  expect_true(vec_complete_cases(1))
+  expect_true(vec_complete_cases(complex(real = 1)))
+  expect_true(vec_complete_cases("1"))
+  expect_true(vec_complete_cases(list(1)))
+})
+
+test_that("can detect completeness in data frames", {
+  # using multiple columns to prevent proxy unwrapping
+  expect_false(vec_complete_cases(data.frame(x = NA, y = NA)))
+  expect_false(vec_complete_cases(data.frame(x = NA_integer_, y = NA_integer_)))
+  expect_false(vec_complete_cases(data.frame(x = NA_real_, y = NaN)))
+  expect_false(vec_complete_cases(data.frame(x = NA_complex_, y = NA_complex_)))
+  expect_false(vec_complete_cases(data.frame(x = complex(real = NA, imaginary = 1), y = complex(real = 1, imaginary = NA))))
+  expect_false(vec_complete_cases(data.frame(x = NA_character_, y = NA_character_)))
+  expect_false(vec_complete_cases(new_data_frame(list(x = list(NULL), y = list(NULL)))))
+})
+
+# TODO: After 897
+# test_that("raw vectors are always complete", {
+#   expect_true(vec_complete_cases(raw(1)))
+#   expect_true(vec_complete_cases(data.frame(x = raw(1), y = raw(1))))
+# })
+
+test_that("a single NA renders the entire row incomplete", {
+  df <- data.frame(x = c(1, 1, NA, NA), y = c(1, NA, 1, NA))
+  expect_equal(vec_complete_cases(df), c(TRUE, FALSE, FALSE, FALSE))
+})
+
+test_that("works recursively with data frame columns", {
+  df <- data.frame(x = c(1, 1, NA, NA))
+  df$df <- data.frame(y = c(1, NA, 1, NA))
+  expect_equal(vec_complete_cases(df), c(TRUE, FALSE, FALSE, FALSE))
+})
+
+test_that("vec_complete_cases() takes the equality proxy", {
+  local_env_proxy()
+  x <- new_proxy(c(TRUE, NA, FALSE))
+  expect_identical(vec_complete_cases(x), lgl(TRUE, FALSE, TRUE))
+})
 
 # proxy -------------------------------------------------------------------
 

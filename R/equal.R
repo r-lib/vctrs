@@ -80,3 +80,9 @@ obj_equal <- function(x, y) {
 test_equal_scalar <- function(x, i, y, j, na_equal = FALSE) {
   .Call(vctrs_equal_scalar, x, i, y, j, na_equal)
 }
+
+#' @export
+#' @rdname vec_equal
+vec_complete_cases <- function(x) {
+  .Call(vctrs_complete_cases, x)
+}
