@@ -452,7 +452,7 @@ stop_names_cannot_be_empty <- function(names) {
   if (length(locations) == 1) {
     message <- glue::glue(message, "Empty name found at location {locations}.")
   } else {
-    message <- glue::glue(message, "Empty names found at locations: {ensure_full_stop(enumerate(locations))}")
+    message <- glue::glue(message, "Empty names found at locations {ensure_full_stop(enumerate(locations))}")
   }
 
   stop_names(
