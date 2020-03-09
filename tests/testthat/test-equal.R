@@ -288,6 +288,11 @@ test_that("can detect different types of NA", {
   expect_true(vec_equal_na(list(NULL)))
 })
 
+test_that("raw vectors can never be NA", {
+  expect_false(vec_equal_na(raw(1)))
+  expect_false(vec_equal_na(data.frame(x = raw(1))))
+})
+
 test_that("vectorised over rows of a data frame", {
   df <- data.frame(x = c(1, 1, NA, NA), y = c(1, NA, 1, NA))
   expect_equal(vec_equal_na(df), c(FALSE, FALSE, FALSE, TRUE))

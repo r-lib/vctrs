@@ -500,6 +500,7 @@ static int lgl_equal_na_scalar(const int* x);
 static int int_equal_na_scalar(const int* x);
 static int dbl_equal_na_scalar(const double* x);
 static int cpl_equal_na_scalar(const Rcomplex* x);
+static int raw_equal_na_scalar(const Rbyte* x);
 static int chr_equal_na_scalar(const SEXP* x);
 static int list_equal_na_scalar(SEXP x, R_len_t i);
 static int df_equal_na_scalar(SEXP x, R_len_t i);
@@ -512,6 +513,7 @@ int equal_na(SEXP x, R_len_t i) {
   case INTSXP: return int_equal_na_scalar(INTEGER(x) + i);
   case REALSXP: return dbl_equal_na_scalar(REAL(x) + i);
   case CPLXSXP: return cpl_equal_na_scalar(COMPLEX(x) + i);
+  case RAWSXP: return raw_equal_na_scalar(RAW(x) + i);
   case STRSXP: return chr_equal_na_scalar(STRING_PTR(x) + i);
   default: break;
   }
@@ -570,6 +572,7 @@ SEXP vctrs_equal_na(SEXP x) {
   case vctrs_type_integer:   EQUAL_NA(int, INTEGER_RO, int_equal_na_scalar);
   case vctrs_type_double:    EQUAL_NA(double, REAL_RO, dbl_equal_na_scalar);
   case vctrs_type_complex:   EQUAL_NA(Rcomplex, COMPLEX_RO, cpl_equal_na_scalar);
+  case vctrs_type_raw:       EQUAL_NA(Rbyte, RAW_RO, raw_equal_na_scalar);
   case vctrs_type_character: EQUAL_NA(SEXP, STRING_PTR_RO, chr_equal_na_scalar);
   case vctrs_type_list:      EQUAL_NA_BARRIER(list_equal_na_scalar);
   case vctrs_type_dataframe: {
@@ -602,6 +605,11 @@ static int dbl_equal_na_scalar(const double* x) {
 
 static int cpl_equal_na_scalar(const Rcomplex* x) {
   return ISNAN(x->r) || ISNAN(x->i);
+}
+
+// Raw vectors can never be `NA`
+static int raw_equal_na_scalar(const Rbyte* x) {
+  return false;
 }
 
 static int chr_equal_na_scalar(const SEXP* x) {
@@ -722,6 +730,7 @@ static struct vctrs_df_rowwise_info vec_equal_na_col(SEXP x,
   case vctrs_type_integer:   EQUAL_NA_COL(int, INTEGER_RO, int_equal_na_scalar);
   case vctrs_type_double:    EQUAL_NA_COL(double, REAL_RO, dbl_equal_na_scalar);
   case vctrs_type_complex:   EQUAL_NA_COL(Rcomplex, COMPLEX_RO, cpl_equal_na_scalar);
+  case vctrs_type_raw:       EQUAL_NA_COL(Rbyte, RAW_RO, raw_equal_na_scalar);
   case vctrs_type_character: EQUAL_NA_COL(SEXP, STRING_PTR_RO, chr_equal_na_scalar);
   case vctrs_type_list:      EQUAL_NA_COL_BARRIER(list_equal_na_scalar);
   case vctrs_type_dataframe: return df_equal_na_impl(x, info, n_row);
