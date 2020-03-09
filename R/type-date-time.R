@@ -78,8 +78,12 @@ vec_proxy.POSIXlt <- function(x, ...) {
   new_data_frame(unclass(x))
 }
 #' @export
-vec_proxy_compare.POSIXlt <- function(x, ..., relax = FALSE) {
-  new_data_frame(vec_data(x)[c("year", "mon", "mday", "hour", "min", "sec")], n = length(x))
+vec_proxy_equal.POSIXlt <- function(x, ...) {
+  vec_data(as.POSIXct(x, tzone(x)))
+}
+#' @export
+vec_proxy_compare.POSIXlt <- function(x, ...) {
+  vec_data(as.POSIXct(x, tzone(x)))
 }
 
 
