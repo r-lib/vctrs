@@ -26,7 +26,7 @@ respectively:
 \itemize{
 \item \code{"names"} is used if provided, overriding existing names in \code{x}
 \item \code{"row.names"} is used if provided, if \code{n} is provided it must be
-consistent
+consistent.
 }}
 }
 \description{
