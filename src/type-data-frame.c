@@ -86,7 +86,7 @@ SEXP vctrs_new_data_frame(SEXP args) {
 
     if (tag == R_RowNamesSymbol) {
       // "row.names" is checked for consistency with n (if provided)
-      if (size != rownames_size(CAR(node))) {
+      if (size != rownames_size(CAR(node)) && n != R_NilValue) {
         Rf_errorcall(R_NilValue, "`n` and `row.names` must be consistent.");
       }
 

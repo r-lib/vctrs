@@ -228,9 +228,9 @@ test_that("class attribute", {
     class(new_data_frame(list(a = 1), class = "foo_frame")),
     c("foo_frame", "data.frame")
   )
-  expect_error(
+  expect_identical(
     class(exec(new_data_frame, list(a = 1), !!!attributes(new_data_frame(list(), class = "tbl_df")))),
-    "`n` and `row.names` must be consistent"
+    c("tbl_df", "data.frame", "data.frame")
   )
   expect_identical(
     class(exec(new_data_frame, list(a = 1), !!!attributes(new_data_frame(list(b = 1), class = "tbl_df")))),
@@ -280,10 +280,17 @@ test_that("attributes with special names are merged", {
     attr(new_data_frame(list(), n = 1L, row.names = "rowname"), "row.names"),
     "rowname"
   )
+})
 
-  expect_error(
-    new_data_frame(list(), row.names = "rowname"),
-    "must be consistent"
+test_that("n and row.names (#894)", {
+  # Can omit n if row.names attribute is given
+  expect_identical(
+    row.names(new_data_frame(list(), row.names = "rowname")),
+    "rowname"
+  )
+  expect_identical(
+    attr(new_data_frame(list(), row.names = 2L), "row.names"),
+    2L
   )
   expect_identical(
     row.names(new_data_frame(list(), row.names = chr())),
