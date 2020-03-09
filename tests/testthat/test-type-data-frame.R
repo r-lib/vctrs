@@ -280,11 +280,17 @@ test_that("attributes with special names are merged", {
     attr(new_data_frame(list(), n = 1L, row.names = "rowname"), "row.names"),
     "rowname"
   )
+})
 
+test_that("n and row.names (#894)", {
   # Can omit n if row.names attribute is given
   expect_identical(
-    new_data_frame(list(), row.names = "rowname"),
-    new_data_frame(list(), n = 1L, row.names = "rowname")
+    row.names(new_data_frame(list(), row.names = "rowname")),
+    "rowname"
+  )
+  expect_identical(
+    attr(new_data_frame(list(), row.names = 2L), "row.names"),
+    2L
   )
   expect_identical(
     row.names(new_data_frame(list(), row.names = chr())),
