@@ -13,7 +13,7 @@ test_that("conditions inherit from `vctrs_error`", {
   expect_error(stop_names("", NULL, 1), class = "vctrs_error")
   expect_error(stop_names_cannot_be_empty(1), class = "vctrs_error")
   expect_error(stop_names_cannot_be_dot_dot(1), class = "vctrs_error")
-  expect_error(stop_names_must_be_unique(1), class = "vctrs_error")
+  expect_error(stop_names_must_be_unique("x"), class = "vctrs_error")
 })
 
 test_that("can override arg in OOB conditions", {
@@ -55,6 +55,19 @@ test_that("scalar type errors are informative", {
   })
 })
 
+test_that("unique names errors are informative", {
+  verify_errors({
+    expect_error(
+      vec_as_names(c("x", "x", "x", "y", "y", "z"), repair = "check_unique"),
+      class = "vctrs_error_names_must_be_unique"
+    )
+    expect_error(
+      vec_as_names(c(rep("x", 20), rep(c("a", "b", "c", "d", "e"), 2)), repair = "check_unique"),
+      class = "vctrs_error_names_must_be_unique"
+    )
+  })
+})
+
 verify_output(test_path("error", "test-conditions.txt"), {
   "# can override arg in OOB conditions"
   with_subscript_data(
@@ -77,4 +90,8 @@ verify_output(test_path("error", "test-conditions.txt"), {
   "# scalar type errors are informative"
   vec_slice(foobar(list(1)), 1)
   stop_scalar_type(foobar(list(1)), arg = "foo")
+
+  "# unique names errors are informative"
+  vec_as_names(c("x", "x", "x", "y", "y", "z"), repair = "check_unique")
+  vec_as_names(c(rep("x", 20), rep(c("a", "b", "c", "d", "e"), 2)), repair = "check_unique")
 })

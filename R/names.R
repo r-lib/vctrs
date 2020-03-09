@@ -178,7 +178,7 @@ validate_unique <- function(names, n = NULL) {
   }
 
   if (anyDuplicated(names)) {
-    stop_names_must_be_unique(which(duplicated(names)))
+    stop_names_must_be_unique(names)
   }
 
   invisible(names)

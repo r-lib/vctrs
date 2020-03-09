@@ -460,12 +460,25 @@ stop_names_cannot_be_dot_dot <- function(locations) {
   )
 }
 
-stop_names_must_be_unique <- function(locations) {
+stop_names_must_be_unique <- function(names) {
+  dups <- vec_group_loc(names)
+  dup_indicator <- map_lgl(dups$loc, function(x) length(x) != 1L)
+  dups <- vec_slice(dups, dup_indicator)
+
+  locations <- sort(vec_unchop(dups$loc, ptype = integer()))
+
+  info <- map2_chr(dups$key, dups$loc, make_names_loc_bullet)
+  message <- bullets("Names must be unique. Repeated names:", info)
+
   stop_names(
-    "Names must be unique.",
+    message,
     class = "vctrs_error_names_must_be_unique",
     locations = locations
   )
+}
+
+make_names_loc_bullet <- function(x, loc) {
+  glue::glue("{glue::double_quote(x)} ({enumerate(loc)})")
 }
 
 enumerate <- function(x, max = 5L, allow_empty = FALSE) {

@@ -28,3 +28,21 @@ Error: Input must be a vector, not a `vctrs_foobar` object.
 > stop_scalar_type(foobar(list(1)), arg = "foo")
 Error: `foo` must be a vector, not a `vctrs_foobar` object.
 
+
+unique names errors are informative
+===================================
+
+> vec_as_names(c("x", "x", "x", "y", "y", "z"), repair = "check_unique")
+Error: Names must be unique. Repeated names:
+* "x" (1, 2, and 3)
+* "y" (4 and 5)
+
+> vec_as_names(c(rep("x", 20), rep(c("a", "b", "c", "d", "e"), 2)), repair = "check_unique")
+Error: Names must be unique. Repeated names:
+* "x" (1, 2, 3, 4, 5, etc.)
+* "a" (21 and 26)
+* "b" (22 and 27)
+* "c" (23 and 28)
+* "d" (24 and 29)
+* ...
+

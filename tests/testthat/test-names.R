@@ -709,7 +709,7 @@ test_that("names cannot be dot dot", {
 
 test_that("names must be unique", {
   expect_error_cnd(
-    stop_names_must_be_unique(1:3),
+    stop_names_must_be_unique(c("x", "x", "x")),
     class = c("vctrs_error_names_must_be_unique", "vctrs_error_names", "vctrs_error"),
     message = "Names must be unique.",
     locations = 1:3
