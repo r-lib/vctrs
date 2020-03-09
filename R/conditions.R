@@ -452,9 +452,17 @@ stop_names_cannot_be_empty <- function(locations) {
   )
 }
 
-stop_names_cannot_be_dot_dot <- function(locations) {
+stop_names_cannot_be_dot_dot <- function(names) {
+  locations <- detect_dot_dot(names)
+  names <- names[locations]
+
+  split <- vec_group_loc(names)
+
+  info <- map2_chr(split$key, split$loc, make_names_loc_bullet)
+  message <- bullets("Names must not be of the form `...` or `..j`.", info)
+
   stop_names(
-    "Names must not be of the form `...` or `..j`.",
+    message,
     class = "vctrs_error_names_cannot_be_dot_dot",
     locations = locations
   )

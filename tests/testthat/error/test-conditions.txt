@@ -29,6 +29,25 @@ Error: Input must be a vector, not a `vctrs_foobar` object.
 Error: `foo` must be a vector, not a `vctrs_foobar` object.
 
 
+dot dot names errors are informative
+====================================
+
+> vec_as_names(c("..1", "..1", "..1", "...", "...", "z"), repair = "check_unique")
+Error: Names must not be of the form `...` or `..j`.
+* "..1" (1, 2, and 3)
+* "..." (4 and 5)
+
+> vec_as_names(c(rep("..1", 20), rep(c("..2", "..3", "..4", "...", "..5"), 2)),
++ repair = "check_unique")
+Error: Names must not be of the form `...` or `..j`.
+* "..1" (1, 2, 3, 4, 5, etc.)
+* "..2" (21 and 26)
+* "..3" (22 and 27)
+* "..4" (23 and 28)
+* "..." (24 and 29)
+* ...
+
+
 unique names errors are informative
 ===================================
 

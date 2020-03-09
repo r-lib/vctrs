@@ -172,9 +172,9 @@ validate_unique <- function(names, n = NULL) {
     stop_names_cannot_be_empty(empty_names)
   }
 
-  dot_dot_name <- grep("^[.][.](?:[.]|[1-9][0-9]*)$", names)
+  dot_dot_name <- detect_dot_dot(names)
   if (has_length(dot_dot_name)) {
-    stop_names_cannot_be_dot_dot(dot_dot_name)
+    stop_names_cannot_be_dot_dot(names)
   }
 
   if (anyDuplicated(names)) {
@@ -182,6 +182,9 @@ validate_unique <- function(names, n = NULL) {
   }
 
   invisible(names)
+}
+detect_dot_dot <- function(names) {
+  grep("^[.][.](?:[.]|[1-9][0-9]*)$", names)
 }
 
 #' Extract repaired names from a vector
