@@ -33,13 +33,16 @@ empty names errors are informative
 ==================================
 
 > vec_as_names(c("x", "", "y"), repair = "check_unique")
-Error: Names must not be empty. Empty name found at location 2.
+Error: Names must not be empty.
+Empty name found at location 2.
 
 > vec_as_names(c("x", "", "y", ""), repair = "check_unique")
-Error: Names must not be empty. Empty names found at locations: 2 and 4.
+Error: Names must not be empty.
+Empty names found at locations: 2 and 4.
 
 > vec_as_names(rep("", 10), repair = "check_unique")
-Error: Names must not be empty. Empty names found at locations: 1, 2, 3, 4, 5, etc.
+Error: Names must not be empty.
+Empty names found at locations: 1, 2, 3, 4, 5, etc.
 
 
 dot dot names errors are informative

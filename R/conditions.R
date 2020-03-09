@@ -447,7 +447,7 @@ stop_names <- function(message, class, locations, ...) {
 stop_names_cannot_be_empty <- function(names) {
   locations <- detect_empty_names(names)
 
-  message <- "Names must not be empty. "
+  message <- "Names must not be empty.\n"
 
   if (length(locations) == 1) {
     message <- glue::glue(message, "Empty name found at location {locations}.")
