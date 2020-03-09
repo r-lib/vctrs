@@ -11,7 +11,7 @@ test_that("conditions inherit from `vctrs_error`", {
   expect_error(stop_unimplemented("", ""), class = "vctrs_error")
   expect_error(stop_scalar_type(NULL), class = "vctrs_error")
   expect_error(stop_names("", NULL, 1), class = "vctrs_error")
-  expect_error(stop_names_cannot_be_empty(1), class = "vctrs_error")
+  expect_error(stop_names_cannot_be_empty(""), class = "vctrs_error")
   expect_error(stop_names_cannot_be_dot_dot("..1"), class = "vctrs_error")
   expect_error(stop_names_must_be_unique("x"), class = "vctrs_error")
 })
@@ -51,6 +51,23 @@ test_that("scalar type errors are informative", {
     expect_error(
       stop_scalar_type(foobar(list(1)), arg = "foo"),
       class = "vctrs_error_scalar_type"
+    )
+  })
+})
+
+test_that("empty names errors are informative", {
+  verify_errors({
+    expect_error(
+      vec_as_names(c("x", "", "y"), repair = "check_unique"),
+      class = "vctrs_error_names_cannot_be_empty"
+    )
+    expect_error(
+      vec_as_names(c("x", "", "y", ""), repair = "check_unique"),
+      class = "vctrs_error_names_cannot_be_empty"
+    )
+    expect_error(
+      vec_as_names(rep("", 10), repair = "check_unique"),
+      class = "vctrs_error_names_cannot_be_empty"
     )
   })
 })
@@ -103,6 +120,11 @@ verify_output(test_path("error", "test-conditions.txt"), {
   "# scalar type errors are informative"
   vec_slice(foobar(list(1)), 1)
   stop_scalar_type(foobar(list(1)), arg = "foo")
+
+  "# empty names errors are informative"
+  vec_as_names(c("x", "", "y"), repair = "check_unique")
+  vec_as_names(c("x", "", "y", ""), repair = "check_unique")
+  vec_as_names(rep("", 10), repair = "check_unique")
 
   "# dot dot names errors are informative"
   vec_as_names(c("..1", "..1", "..1", "...", "...", "z"), repair = "check_unique")

@@ -691,7 +691,7 @@ test_that("Name repair works with non-UTF-8 names", {
 
 test_that("names cannot be empty", {
   expect_error_cnd(
-    stop_names_cannot_be_empty(1:3),
+    stop_names_cannot_be_empty(c("", "", "")),
     class = c("vctrs_error_names_cannot_be_empty", "vctrs_error_names", "vctrs_error"),
     message = "Names must not be empty.",
     locations = 1:3

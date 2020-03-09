@@ -29,6 +29,19 @@ Error: Input must be a vector, not a `vctrs_foobar` object.
 Error: `foo` must be a vector, not a `vctrs_foobar` object.
 
 
+empty names errors are informative
+==================================
+
+> vec_as_names(c("x", "", "y"), repair = "check_unique")
+Error: Names must not be empty. Empty name found at location: 2.
+
+> vec_as_names(c("x", "", "y", ""), repair = "check_unique")
+Error: Names must not be empty. Empty names found at locations: 2 and 4.
+
+> vec_as_names(rep("", 10), repair = "check_unique")
+Error: Names must not be empty. Empty names found at locations: 1, 2, 3, 4, 5, etc.
+
+
 dot dot names errors are informative
 ====================================
 

@@ -167,9 +167,9 @@ validate_minimal_names <- function(names, n = NULL) {
 validate_unique <- function(names, n = NULL) {
   validate_minimal_names(names, n)
 
-  empty_names <- which(names == "")
+  empty_names <- detect_empty_names(names)
   if (has_length(empty_names)) {
-    stop_names_cannot_be_empty(empty_names)
+    stop_names_cannot_be_empty(names)
   }
 
   dot_dot_name <- detect_dot_dot(names)
@@ -182,6 +182,9 @@ validate_unique <- function(names, n = NULL) {
   }
 
   invisible(names)
+}
+detect_empty_names <- function(names) {
+  which(names == "")
 }
 detect_dot_dot <- function(names) {
   grep("^[.][.](?:[.]|[1-9][0-9]*)$", names)

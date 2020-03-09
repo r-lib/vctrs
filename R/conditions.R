@@ -444,9 +444,19 @@ stop_names <- function(message, class, locations, ...) {
   )
 }
 
-stop_names_cannot_be_empty <- function(locations) {
+stop_names_cannot_be_empty <- function(names) {
+  locations <- detect_empty_names(names)
+
+  message <- "Names must not be empty. "
+
+  if (length(locations) == 1) {
+    message <- glue::glue(message, "Empty name found at location: {locations}.")
+  } else {
+    message <- glue::glue(message, "Empty names found at locations: {ensure_full_stop(enumerate(locations))}")
+  }
+
   stop_names(
-    "Names must not be empty.",
+    message,
     class = "vctrs_error_names_cannot_be_empty",
     locations = locations
   )
