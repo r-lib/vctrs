@@ -354,7 +354,7 @@ static struct vctrs_df_rowwise_info df_equal_impl(SEXP x,
                                                   struct vctrs_df_rowwise_info info,
                                                   R_len_t n_row);
 
-static struct vctrs_df_rowwise_info init_rowwise_equal_info(R_len_t n_row) {
+static struct vctrs_df_rowwise_info new_rowwise_equal_info(R_len_t n_row) {
   struct vctrs_df_rowwise_info info;
 
   // Initialize to "equality" value
@@ -380,7 +380,7 @@ static struct vctrs_df_rowwise_info init_rowwise_equal_info(R_len_t n_row) {
 static SEXP df_equal(SEXP x, SEXP y, bool na_equal, R_len_t n_row) {
   int nprot = 0;
 
-  struct vctrs_df_rowwise_info info = init_rowwise_equal_info(n_row);
+  struct vctrs_df_rowwise_info info = new_rowwise_equal_info(n_row);
   PROTECT_DF_ROWWISE_INFO(&info, &nprot);
 
   info = df_equal_impl(x, y, na_equal, info, n_row);
@@ -653,7 +653,7 @@ static SEXP df_equal_na(SEXP x, R_len_t n_row) {
   int nprot = 0;
 
   // Same rowwise info as `df_equal()`
-  struct vctrs_df_rowwise_info info = init_rowwise_equal_info(n_row);
+  struct vctrs_df_rowwise_info info = new_rowwise_equal_info(n_row);
   PROTECT_DF_ROWWISE_INFO(&info, &nprot);
 
   info = df_equal_na_impl(x, info, n_row);
