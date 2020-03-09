@@ -156,6 +156,16 @@ test_that("vec_proxy_compare.POSIXlt() correctly orders (#720)", {
   expect_equal(vec_order(dates), 1:5)
 })
 
+test_that("vec_proxy_compare.POSIXlt() correctly orders around DST", {
+  # 1am in EDT
+  x <- as.POSIXlt("2020-11-01 01:00:00", tz = "America/New_York")
+
+  # "falls back" to 1am again, but in EST
+  y <- as.POSIXlt(x + 3600)
+
+  expect_equal(vec_order(c(y, x)), c(2, 1))
+})
+
 test_that("error is thrown with data frames with 0 columns", {
   x <- new_data_frame(n = 1L)
   expect_error(vec_compare(x, x), "data frame with zero columns")
