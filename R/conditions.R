@@ -502,7 +502,7 @@ stop_names_must_be_unique <- function(names) {
 
 #' @export
 cnd_header.vctrs_error_names_must_be_unique <- function(cnd, ...) {
-  "Names must be unique. Repeated names:"
+  "Names must be unique."
 }
 
 #' @export
@@ -513,8 +513,16 @@ cnd_body.vctrs_error_names_must_be_unique <- function(cnd, ...) {
   dup_indicator <- map_lgl(dups$loc, function(x) length(x) != 1L)
   dups <- vec_slice(dups, dup_indicator)
 
+  header <- "These names are duplicated:"
+  header <- c(x = header)
+  header <- format_error_bullets(header)
+
   info <- map2_chr(dups$key, dups$loc, make_names_loc_bullet)
-  bullets(info)
+
+  message <- bullets(info, header = header)
+  message <- indent(message, 2)
+
+  message
 }
 
 
