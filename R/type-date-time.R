@@ -79,11 +79,13 @@ vec_proxy.POSIXlt <- function(x, ...) {
 }
 #' @export
 vec_proxy_equal.POSIXlt <- function(x, ...) {
-  vec_data(as.POSIXct(x, tzone(x)))
+  x <- as.POSIXct(x, tzone(x))
+  vec_proxy_equal(x, ...)
 }
 #' @export
 vec_proxy_compare.POSIXlt <- function(x, ...) {
-  vec_data(as.POSIXct(x, tzone(x)))
+  x <- as.POSIXct(x, tzone(x))
+  vec_proxy_compare(x, ...)
 }
 
 
