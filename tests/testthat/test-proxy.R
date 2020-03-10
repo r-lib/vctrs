@@ -89,3 +89,8 @@ test_that("vec_proxy_equal() is recursive over data frames (#641)", {
   overridden <- vec_proxy_equal(x)
   expect_identical(overridden$x, c(0, 0, 0))
 })
+
+test_that("vec_proxy_equal() returns a POSIXct for POSIXlt objects (#901)", {
+  x <- as.POSIXlt(new_date(0), tz = "UTC")
+  expect_s3_class(vec_proxy_equal(x), "POSIXct")
+})
