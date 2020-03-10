@@ -342,17 +342,17 @@ bool equal_names(SEXP x, SEXP y) {
 
 // -----------------------------------------------------------------------------
 
-static struct vctrs_df_rowwise_info vec_equal_col(int* p_out,
+static struct df_short_circuit_info vec_equal_col(int* p_out,
                                                   SEXP x,
                                                   SEXP y,
                                                   bool na_equal,
-                                                  struct vctrs_df_rowwise_info info);
+                                                  struct df_short_circuit_info info);
 
-static struct vctrs_df_rowwise_info df_equal_impl(int* p_out,
+static struct df_short_circuit_info df_equal_impl(int* p_out,
                                                   SEXP x,
                                                   SEXP y,
                                                   bool na_equal,
-                                                  struct vctrs_df_rowwise_info info);
+                                                  struct df_short_circuit_info info);
 
 static SEXP df_equal(SEXP x, SEXP y, bool na_equal, R_len_t size) {
   int nprot = 0;
@@ -366,8 +366,8 @@ static SEXP df_equal(SEXP x, SEXP y, bool na_equal, R_len_t size) {
     p_out[i] = 1;
   }
 
-  struct vctrs_df_rowwise_info info = new_rowwise_info(size);
-  PROTECT_DF_ROWWISE_INFO(&info, &nprot);
+  struct df_short_circuit_info info = new_df_short_circuit_info(size);
+  PROTECT_DF_SHORT_CIRCUIT_INFO(&info, &nprot);
 
   info = df_equal_impl(p_out, x, y, na_equal, info);
 
@@ -375,11 +375,11 @@ static SEXP df_equal(SEXP x, SEXP y, bool na_equal, R_len_t size) {
   return out;
 }
 
-static struct vctrs_df_rowwise_info df_equal_impl(int* p_out,
+static struct df_short_circuit_info df_equal_impl(int* p_out,
                                                   SEXP x,
                                                   SEXP y,
                                                   bool na_equal,
-                                                  struct vctrs_df_rowwise_info info) {
+                                                  struct df_short_circuit_info info) {
   int n_col = Rf_length(x);
 
   if (n_col != Rf_length(y)) {
@@ -454,11 +454,11 @@ do {                                                   \
 }                                                      \
 while (0)
 
-static struct vctrs_df_rowwise_info vec_equal_col(int* p_out,
+static struct df_short_circuit_info vec_equal_col(int* p_out,
                                                   SEXP x,
                                                   SEXP y,
                                                   bool na_equal,
-                                                  struct vctrs_df_rowwise_info info) {
+                                                  struct df_short_circuit_info info) {
   switch (vec_proxy_typeof(x)) {
   case vctrs_type_logical:   EQUAL_COL(int, LOGICAL_RO, lgl_equal_scalar);
   case vctrs_type_integer:   EQUAL_COL(int, INTEGER_RO, int_equal_scalar);
@@ -616,13 +616,13 @@ static inline int df_equal_na_scalar(SEXP x, R_len_t i) {
 
 // -----------------------------------------------------------------------------
 
-static struct vctrs_df_rowwise_info vec_equal_na_col(int* p_out,
+static struct df_short_circuit_info vec_equal_na_col(int* p_out,
                                                      SEXP x,
-                                                     struct vctrs_df_rowwise_info info);
+                                                     struct df_short_circuit_info info);
 
-static struct vctrs_df_rowwise_info df_equal_na_impl(int* p_out,
+static struct df_short_circuit_info df_equal_na_impl(int* p_out,
                                                      SEXP x,
-                                                     struct vctrs_df_rowwise_info info) {
+                                                     struct df_short_circuit_info info) {
   int n_col = Rf_length(x);
 
   for (R_len_t i = 0; i < n_col; ++i) {
@@ -651,8 +651,8 @@ static SEXP df_equal_na(SEXP x, R_len_t size) {
     p_out[i] = 1;
   }
 
-  struct vctrs_df_rowwise_info info = new_rowwise_info(size);
-  PROTECT_DF_ROWWISE_INFO(&info, &nprot);
+  struct df_short_circuit_info info = new_df_short_circuit_info(size);
+  PROTECT_DF_SHORT_CIRCUIT_INFO(&info, &nprot);
 
   info = df_equal_na_impl(p_out, x, info);
 
@@ -708,9 +708,9 @@ do {                                          \
 }                                             \
 while (0)
 
-static struct vctrs_df_rowwise_info vec_equal_na_col(int* p_out,
+static struct df_short_circuit_info vec_equal_na_col(int* p_out,
                                                      SEXP x,
-                                                     struct vctrs_df_rowwise_info info) {
+                                                     struct df_short_circuit_info info) {
   switch (vec_proxy_typeof(x)) {
   case vctrs_type_logical:   EQUAL_NA_COL(int, LOGICAL_RO, lgl_equal_na_scalar);
   case vctrs_type_integer:   EQUAL_NA_COL(int, INTEGER_RO, int_equal_na_scalar);

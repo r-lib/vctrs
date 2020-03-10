@@ -222,17 +222,17 @@ SEXP vctrs_compare(SEXP x, SEXP y, SEXP na_equal_) {
 
 // -----------------------------------------------------------------------------
 
-static struct vctrs_df_rowwise_info vec_compare_col(int* p_out,
+static struct df_short_circuit_info vec_compare_col(int* p_out,
                                                     SEXP x,
                                                     SEXP y,
                                                     bool na_equal,
-                                                    struct vctrs_df_rowwise_info info);
+                                                    struct df_short_circuit_info info);
 
-static struct vctrs_df_rowwise_info df_compare_impl(int* p_out,
+static struct df_short_circuit_info df_compare_impl(int* p_out,
                                                     SEXP x,
                                                     SEXP y,
                                                     bool na_equal,
-                                                    struct vctrs_df_rowwise_info info);
+                                                    struct df_short_circuit_info info);
 
 static SEXP df_compare(SEXP x, SEXP y, bool na_equal, R_len_t size) {
   int nprot = 0;
@@ -244,8 +244,8 @@ static SEXP df_compare(SEXP x, SEXP y, bool na_equal, R_len_t size) {
   // and only change if we learn that it differs
   memset(p_out, 0, size * sizeof(int));
 
-  struct vctrs_df_rowwise_info info = new_rowwise_info(size);
-  PROTECT_DF_ROWWISE_INFO(&info, &nprot);
+  struct df_short_circuit_info info = new_df_short_circuit_info(size);
+  PROTECT_DF_SHORT_CIRCUIT_INFO(&info, &nprot);
 
   df_compare_impl(p_out, x, y, na_equal, info);
 
@@ -253,11 +253,11 @@ static SEXP df_compare(SEXP x, SEXP y, bool na_equal, R_len_t size) {
   return out;
 }
 
-static struct vctrs_df_rowwise_info df_compare_impl(int* p_out,
+static struct df_short_circuit_info df_compare_impl(int* p_out,
                                                     SEXP x,
                                                     SEXP y,
                                                     bool na_equal,
-                                                    struct vctrs_df_rowwise_info info) {
+                                                    struct df_short_circuit_info info) {
   int n_col = Rf_length(x);
 
   if (n_col == 0) {
@@ -312,11 +312,11 @@ do {                                                                 \
 }                                                                    \
 while (0)
 
-static struct vctrs_df_rowwise_info vec_compare_col(int* p_out,
+static struct df_short_circuit_info vec_compare_col(int* p_out,
                                                     SEXP x,
                                                     SEXP y,
                                                     bool na_equal,
-                                                    struct vctrs_df_rowwise_info info) {
+                                                    struct df_short_circuit_info info) {
   switch (vec_proxy_typeof(x)) {
   case vctrs_type_logical:   COMPARE_COL(int, LOGICAL_RO, lgl_compare_scalar);
   case vctrs_type_integer:   COMPARE_COL(int, INTEGER_RO, int_compare_scalar);
