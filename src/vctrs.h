@@ -493,6 +493,7 @@ struct vctrs_df_rowwise_info {
   SEXP row_known;
   bool* p_row_known;
   R_len_t remaining;
+  R_len_t size;
 };
 
 #define PROTECT_DF_ROWWISE_INFO(info, n) do {  \
