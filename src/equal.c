@@ -352,33 +352,6 @@ static struct df_short_circuit_info df_equal_impl(int* p_out,
                                                   SEXP x,
                                                   SEXP y,
                                                   bool na_equal,
-                                                  struct df_short_circuit_info info);
-
-static SEXP df_equal(SEXP x, SEXP y, bool na_equal, R_len_t size) {
-  int nprot = 0;
-
-  SEXP out = PROTECT_N(Rf_allocVector(LGLSXP, size), &nprot);
-  int* p_out = LOGICAL(out);
-
-  // Initialize to "equality" value
-  // and only change if we learn that it differs
-  for (R_len_t i = 0; i < size; ++i) {
-    p_out[i] = 1;
-  }
-
-  struct df_short_circuit_info info = new_df_short_circuit_info(size);
-  PROTECT_DF_SHORT_CIRCUIT_INFO(&info, &nprot);
-
-  info = df_equal_impl(p_out, x, y, na_equal, info);
-
-  UNPROTECT(nprot);
-  return out;
-}
-
-static struct df_short_circuit_info df_equal_impl(int* p_out,
-                                                  SEXP x,
-                                                  SEXP y,
-                                                  bool na_equal,
                                                   struct df_short_circuit_info info) {
   int n_col = Rf_length(x);
 
@@ -399,6 +372,27 @@ static struct df_short_circuit_info df_equal_impl(int* p_out,
   }
 
   return info;
+}
+
+static SEXP df_equal(SEXP x, SEXP y, bool na_equal, R_len_t size) {
+  int nprot = 0;
+
+  SEXP out = PROTECT_N(Rf_allocVector(LGLSXP, size), &nprot);
+  int* p_out = LOGICAL(out);
+
+  // Initialize to "equality" value
+  // and only change if we learn that it differs
+  for (R_len_t i = 0; i < size; ++i) {
+    p_out[i] = 1;
+  }
+
+  struct df_short_circuit_info info = new_df_short_circuit_info(size);
+  PROTECT_DF_SHORT_CIRCUIT_INFO(&info, &nprot);
+
+  info = df_equal_impl(p_out, x, y, na_equal, info);
+
+  UNPROTECT(nprot);
+  return out;
 }
 
 // -----------------------------------------------------------------------------
