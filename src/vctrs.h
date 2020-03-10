@@ -501,6 +501,24 @@ struct vctrs_df_rowwise_info {
   *n += 1;                                     \
 } while (0)
 
+static inline struct vctrs_df_rowwise_info new_rowwise_info(R_len_t size) {
+  SEXP row_known = PROTECT(Rf_allocVector(RAWSXP, size * sizeof(bool)));
+  bool* p_row_known = (bool*) RAW(row_known);
+
+  // To begin with, no rows have a known comparison value
+  memset(p_row_known, false, size * sizeof(bool));
+
+  struct vctrs_df_rowwise_info info = {
+    .row_known = row_known,
+    .p_row_known = p_row_known,
+    .remaining = size,
+    .size = size
+  };
+
+  UNPROTECT(1);
+  return info;
+}
+
 // Missing values -----------------------------------------------
 
 // Annex F of C99 specifies that `double` should conform to the IEEE 754

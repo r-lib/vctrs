@@ -354,24 +354,6 @@ static struct vctrs_df_rowwise_info df_equal_impl(int* p_out,
                                                   bool na_equal,
                                                   struct vctrs_df_rowwise_info info);
 
-static struct vctrs_df_rowwise_info new_rowwise_equal_info(R_len_t size) {
-  SEXP row_known = PROTECT(Rf_allocVector(RAWSXP, size * sizeof(bool)));
-  bool* p_row_known = (bool*) RAW(row_known);
-
-  // To begin with, no rows have a known comparison value
-  memset(p_row_known, false, size * sizeof(bool));
-
-  struct vctrs_df_rowwise_info info = {
-    .row_known = row_known,
-    .p_row_known = p_row_known,
-    .remaining = size,
-    .size = size
-  };
-
-  UNPROTECT(1);
-  return info;
-}
-
 static SEXP df_equal(SEXP x, SEXP y, bool na_equal, R_len_t size) {
   int nprot = 0;
 
@@ -384,7 +366,7 @@ static SEXP df_equal(SEXP x, SEXP y, bool na_equal, R_len_t size) {
     p_out[i] = 1;
   }
 
-  struct vctrs_df_rowwise_info info = new_rowwise_equal_info(size);
+  struct vctrs_df_rowwise_info info = new_rowwise_info(size);
   PROTECT_DF_ROWWISE_INFO(&info, &nprot);
 
   info = df_equal_impl(p_out, x, y, na_equal, info);
@@ -669,8 +651,7 @@ static SEXP df_equal_na(SEXP x, R_len_t size) {
     p_out[i] = 1;
   }
 
-  // Same rowwise info as `df_equal()`
-  struct vctrs_df_rowwise_info info = new_rowwise_equal_info(size);
+  struct vctrs_df_rowwise_info info = new_rowwise_info(size);
   PROTECT_DF_ROWWISE_INFO(&info, &nprot);
 
   info = df_equal_na_impl(p_out, x, info);
