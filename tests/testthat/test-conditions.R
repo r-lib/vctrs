@@ -75,7 +75,7 @@ test_that("empty names errors are informative", {
 test_that("dot dot names errors are informative", {
   verify_errors({
     expect_error(
-      vec_as_names(c("..1", "..1", "..1", "...", "...", "z"), repair = "check_unique"),
+      vec_as_names(c("..1", "..1", "..1", "...", "z"), repair = "check_unique"),
       class = "vctrs_error_names_cannot_be_dot_dot"
     )
     expect_error(
@@ -127,7 +127,7 @@ verify_output(test_path("error", "test-conditions.txt"), {
   vec_as_names(rep("", 10), repair = "check_unique")
 
   "# dot dot names errors are informative"
-  vec_as_names(c("..1", "..1", "..1", "...", "...", "z"), repair = "check_unique")
+  vec_as_names(c("..1", "..1", "..1", "...", "z"), repair = "check_unique")
   vec_as_names(c(rep("..1", 20), rep(c("..2", "..3", "..4", "...", "..5"), 2)), repair = "check_unique")
 
   "# unique names errors are informative"

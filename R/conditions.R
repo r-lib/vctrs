@@ -527,7 +527,11 @@ cnd_body.vctrs_error_names_must_be_unique <- function(cnd, ...) {
 
 
 make_names_loc_bullet <- function(x, loc) {
-  glue::glue("{glue::double_quote(x)} ({enumerate(loc)})")
+  if (length(loc) == 1) {
+    glue::glue("{glue::double_quote(x)} at location {loc}.")
+  } else {
+    glue::glue("{glue::double_quote(x)} at locations {ensure_full_stop(enumerate(loc))}")
+  }
 }
 
 enumerate <- function(x, max = 5L, allow_empty = FALSE) {
