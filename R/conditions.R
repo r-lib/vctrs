@@ -447,7 +447,7 @@ stop_names <- function(message, class, locations, ...) {
 stop_names_cannot_be_empty <- function(names) {
   locations <- detect_empty_names(names)
 
-  message <- "Names must not be empty.\n"
+  message <- "Names can't be empty.\n"
 
   if (length(locations) == 1) {
     message <- glue::glue(message, "Empty name found at location {locations}.")
@@ -469,7 +469,7 @@ stop_names_cannot_be_dot_dot <- function(names) {
   split <- vec_group_loc(names)
 
   info <- map2_chr(split$key, split$loc, make_names_loc_bullet)
-  message <- bullets("Names must not be of the form `...` or `..j`.", info)
+  message <- bullets("Names can't be of the form `...` or `..j`.", info)
 
   stop_names(
     message,

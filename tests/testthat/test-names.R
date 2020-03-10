@@ -693,7 +693,7 @@ test_that("names cannot be empty", {
   expect_error_cnd(
     stop_names_cannot_be_empty(c("", "", "")),
     class = c("vctrs_error_names_cannot_be_empty", "vctrs_error_names", "vctrs_error"),
-    message = "Names must not be empty.",
+    message = "Names can't be empty.",
     locations = 1:3
   )
 })
@@ -702,7 +702,7 @@ test_that("names cannot be dot dot", {
   expect_error_cnd(
     stop_names_cannot_be_dot_dot(c("..1", "..2", "..3")),
     class = c("vctrs_error_names_cannot_be_dot_dot", "vctrs_error_names", "vctrs_error"),
-    message = "Names must not be of the form `...` or `..j`.",
+    message = "Names can't be of the form `...` or `..j`.",
     locations = 1:3
   )
 })

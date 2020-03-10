@@ -33,15 +33,15 @@ empty names errors are informative
 ==================================
 
 > vec_as_names(c("x", "", "y"), repair = "check_unique")
-Error: Names must not be empty.
+Error: Names can't be empty.
 Empty name found at location 2.
 
 > vec_as_names(c("x", "", "y", ""), repair = "check_unique")
-Error: Names must not be empty.
+Error: Names can't be empty.
 Empty names found at locations 2 and 4.
 
 > vec_as_names(rep("", 10), repair = "check_unique")
-Error: Names must not be empty.
+Error: Names can't be empty.
 Empty names found at locations 1, 2, 3, 4, 5, etc.
 
 
@@ -49,13 +49,13 @@ dot dot names errors are informative
 ====================================
 
 > vec_as_names(c("..1", "..1", "..1", "...", "...", "z"), repair = "check_unique")
-Error: Names must not be of the form `...` or `..j`.
+Error: Names can't be of the form `...` or `..j`.
 * "..1" (1, 2, and 3)
 * "..." (4 and 5)
 
 > vec_as_names(c(rep("..1", 20), rep(c("..2", "..3", "..4", "...", "..5"), 2)),
 + repair = "check_unique")
-Error: Names must not be of the form `...` or `..j`.
+Error: Names can't be of the form `...` or `..j`.
 * "..1" (1, 2, 3, 4, 5, etc.)
 * "..2" (21 and 26)
 * "..3" (22 and 27)
