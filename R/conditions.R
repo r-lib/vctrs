@@ -447,13 +447,16 @@ stop_names <- function(message, class, locations, ...) {
 stop_names_cannot_be_empty <- function(names) {
   locations <- detect_empty_names(names)
 
-  message <- "Names can't be empty.\n"
-
   if (length(locations) == 1) {
-    message <- glue::glue(message, "Empty name found at location {locations}.")
+    bullet <- glue::glue("Empty name found at location {locations}.")
   } else {
-    message <- glue::glue(message, "Empty names found at locations {ensure_full_stop(enumerate(locations))}")
+    bullet <- glue::glue("Empty names found at locations {ensure_full_stop(enumerate(locations))}")
   }
+
+  bullet <- c(x = bullet)
+  bullet <- format_error_bullets(bullet)
+
+  message <- glue_lines("Names can't be empty.", bullet)
 
   stop_names(
     message,
