@@ -234,7 +234,7 @@ static struct vctrs_df_rowwise_info df_compare_impl(SEXP x,
                                                     struct vctrs_df_rowwise_info info,
                                                     R_len_t n_row);
 
-static struct vctrs_df_rowwise_info init_rowwise_compare_info(R_len_t n_row) {
+static struct vctrs_df_rowwise_info new_rowwise_compare_info(R_len_t n_row) {
   struct vctrs_df_rowwise_info info;
 
   // Initialize to "equality" value
@@ -257,7 +257,7 @@ static struct vctrs_df_rowwise_info init_rowwise_compare_info(R_len_t n_row) {
 static SEXP df_compare(SEXP x, SEXP y, bool na_equal, R_len_t n_row) {
   int nprot = 0;
 
-  struct vctrs_df_rowwise_info info = init_rowwise_compare_info(n_row);
+  struct vctrs_df_rowwise_info info = new_rowwise_compare_info(n_row);
   PROTECT_DF_ROWWISE_INFO(&info, &nprot);
 
   info = df_compare_impl(x, y, na_equal, info, n_row);
