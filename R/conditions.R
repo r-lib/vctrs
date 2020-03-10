@@ -44,10 +44,6 @@ stop_vctrs <- function(message = NULL, class = NULL, ...) {
   abort(message, class = c(class, "vctrs_error"), ...)
 }
 
-new_error_vctrs <- function(class = NULL, ...) {
-  error_cnd(c(class, "vctrs_error"), ...)
-}
-
 stop_incompatible <- function(x, y, details = NULL, ..., message = NULL, class = NULL) {
   stop_vctrs(
     message,
@@ -439,18 +435,18 @@ cnd_body.vctrs_error_recycle_incompatible_size <- function(cnd, ...) {
 
 # Names -------------------------------------------------------------------
 
-new_error_names <- function(class = NULL, names) {
-  new_error_vctrs(
-    c(class, "vctrs_error_names"),
-    names = names
+stop_names <- function(class = NULL, ...) {
+  stop_vctrs(
+    class = c(class, "vctrs_error_names"),
+    ...
   )
 }
 
 stop_names_cannot_be_empty <- function(names) {
-  cnd_signal(new_error_names(
+  stop_names(
     class = "vctrs_error_names_cannot_be_empty",
     names = names
-  ))
+  )
 }
 
 #' @export
@@ -473,10 +469,10 @@ cnd_body.vctrs_error_names_cannot_be_empty <- function(cnd, ...) {
 }
 
 stop_names_cannot_be_dot_dot <- function(names) {
-  cnd_signal(new_error_names(
+  stop_names(
     class = "vctrs_error_names_cannot_be_dot_dot",
     names = names
-  ))
+  )
 }
 
 #' @export
@@ -498,10 +494,10 @@ cnd_body.vctrs_error_names_cannot_be_dot_dot <- function(cnd, ...) {
 }
 
 stop_names_must_be_unique <- function(names) {
-  cnd_signal(new_error_names(
+  stop_names(
     class = "vctrs_error_names_must_be_unique",
     names = names
-  ))
+  )
 }
 
 #' @export
