@@ -488,6 +488,7 @@ bool duplicated_any(SEXP names);
  * @member remaining The number of `row_known` values that are still `false`.
  *   If this hits `0` before we traverse the entire data frame, we can exit
  *   immediately because all `out` values are already known.
+ * @member size The number of rows in the data frame.
  */
 struct df_short_circuit_info {
   SEXP row_known;
