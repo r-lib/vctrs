@@ -648,7 +648,7 @@ static struct vctrs_df_rowwise_info df_equal_na_impl(SEXP x,
 
     info = vec_equal_na_col(col, info, n_row);
 
-    // If we know all comparison values, break
+    // If all rows have at least one non-missing value, break
     if (info.remaining == 0) {
       break;
     }
