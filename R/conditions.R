@@ -44,6 +44,10 @@ stop_vctrs <- function(message = NULL, class = NULL, ...) {
   abort(message, class = c(class, "vctrs_error"), ...)
 }
 
+new_error_vctrs <- function(class = NULL, ...) {
+  error_cnd(c(class, "vctrs_error"), ...)
+}
+
 stop_incompatible <- function(x, y, details = NULL, ..., message = NULL, class = NULL) {
   stop_vctrs(
     message,
@@ -435,17 +439,28 @@ cnd_body.vctrs_error_recycle_incompatible_size <- function(cnd, ...) {
 
 # Names -------------------------------------------------------------------
 
-stop_names <- function(message, class, locations, ...) {
-  stop_vctrs(
-    message,
-    class = c(class, "vctrs_error_names"),
-    locations = locations,
-    ...
+new_error_names <- function(class = NULL, names) {
+  new_error_vctrs(
+    c(class, "vctrs_error_names"),
+    names = names
   )
 }
 
 stop_names_cannot_be_empty <- function(names) {
-  locations <- detect_empty_names(names)
+  cnd_signal(new_error_names(
+    class = "vctrs_error_names_cannot_be_empty",
+    names = names
+  ))
+}
+
+#' @export
+cnd_header.vctrs_error_names_cannot_be_empty <- function(cnd, ...) {
+  "Names can't be empty."
+}
+
+#' @export
+cnd_body.vctrs_error_names_cannot_be_empty <- function(cnd, ...) {
+  locations <- detect_empty_names(cnd$names)
 
   if (length(locations) == 1) {
     bullet <- glue::glue("Empty name found at location {locations}.")
@@ -454,49 +469,58 @@ stop_names_cannot_be_empty <- function(names) {
   }
 
   bullet <- c(x = bullet)
-  bullet <- format_error_bullets(bullet)
-
-  message <- glue_lines("Names can't be empty.", bullet)
-
-  stop_names(
-    message,
-    class = "vctrs_error_names_cannot_be_empty",
-    locations = locations
-  )
+  format_error_bullets(bullet)
 }
 
 stop_names_cannot_be_dot_dot <- function(names) {
+  cnd_signal(new_error_names(
+    class = "vctrs_error_names_cannot_be_dot_dot",
+    names = names
+  ))
+}
+
+#' @export
+cnd_header.vctrs_error_names_cannot_be_dot_dot <- function(cnd, ...) {
+  "Names can't be of the form `...` or `..j`."
+}
+
+#' @export
+cnd_body.vctrs_error_names_cannot_be_dot_dot <- function(cnd, ...) {
+  names <- cnd$names
+
   locations <- detect_dot_dot(names)
   names <- names[locations]
 
   split <- vec_group_loc(names)
 
   info <- map2_chr(split$key, split$loc, make_names_loc_bullet)
-  message <- bullets("Names can't be of the form `...` or `..j`.", info)
-
-  stop_names(
-    message,
-    class = "vctrs_error_names_cannot_be_dot_dot",
-    locations = locations
-  )
+  bullets(info)
 }
 
 stop_names_must_be_unique <- function(names) {
+  cnd_signal(new_error_names(
+    class = "vctrs_error_names_must_be_unique",
+    names = names
+  ))
+}
+
+#' @export
+cnd_header.vctrs_error_names_must_be_unique <- function(cnd, ...) {
+  "Names must be unique. Repeated names:"
+}
+
+#' @export
+cnd_body.vctrs_error_names_must_be_unique <- function(cnd, ...) {
+  names <- cnd$names
+
   dups <- vec_group_loc(names)
   dup_indicator <- map_lgl(dups$loc, function(x) length(x) != 1L)
   dups <- vec_slice(dups, dup_indicator)
 
-  locations <- sort(vec_unchop(dups$loc, ptype = integer()))
-
   info <- map2_chr(dups$key, dups$loc, make_names_loc_bullet)
-  message <- bullets("Names must be unique. Repeated names:", info)
-
-  stop_names(
-    message,
-    class = "vctrs_error_names_must_be_unique",
-    locations = locations
-  )
+  bullets(info)
 }
+
 
 make_names_loc_bullet <- function(x, loc) {
   glue::glue("{glue::double_quote(x)} ({enumerate(loc)})")

@@ -380,19 +380,18 @@ describe_repair <- function(orig_names, names) {
   new_names <- names != as_minimal_names(orig_names)
   if (any(new_names)) {
     msg <- bullets(
-      "New names:",
+      header = "New names:",
       paste0(
         tick_if_needed(orig_names[new_names]),
         " -> ",
-        tick_if_needed(names[new_names]),
-        .problem = ""
+        tick_if_needed(names[new_names])
       )
     )
     message(msg)
   }
 }
 
-bullets <- function(header, ..., .problem) {
+bullets <- function(..., header = NULL) {
   problems <- c(...)
   MAX_BULLETS <- 6L
   if (length(problems) >= MAX_BULLETS) {
@@ -401,10 +400,13 @@ bullets <- function(header, ..., .problem) {
     length(problems) <- MAX_BULLETS
   }
 
-  paste0(
-    header, "\n",
-    paste0("* ", problems, collapse = "\n")
-  )
+  info <- paste0("* ", problems, collapse = "\n")
+
+  if (!is.null(header)) {
+    info <- paste0(header, "\n", info)
+  }
+
+  info
 }
 
 tick <- function(x) {
