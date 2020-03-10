@@ -477,8 +477,6 @@ bool duplicated_any(SEXP names);
 // `vec_compare()`.
 
 /**
- * @member out A vector of size `n_row` containing the output of the
- *   row wise data frame operation.
  * @member row_known A boolean array of size `n_row`. Allocated on the R heap.
  *   Initially, all values are initialized to `false`. As we iterate along the
  *   columns, we flip the corresponding row's `row_known` value to `true` if we
@@ -492,16 +490,14 @@ bool duplicated_any(SEXP names);
  *   immediately because all `out` values are already known.
  */
 struct vctrs_df_rowwise_info {
-  SEXP out;
   SEXP row_known;
   bool* p_row_known;
   R_len_t remaining;
 };
 
 #define PROTECT_DF_ROWWISE_INFO(info, n) do {  \
-  PROTECT((info)->out);                        \
   PROTECT((info)->row_known);                  \
-  *n += 2;                                     \
+  *n += 1;                                     \
 } while (0)
 
 // Missing values -----------------------------------------------
