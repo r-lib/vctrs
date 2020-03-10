@@ -490,7 +490,15 @@ cnd_body.vctrs_error_names_cannot_be_dot_dot <- function(cnd, ...) {
   split <- vec_group_loc(names)
 
   info <- map2_chr(split$key, split$loc, make_names_loc_bullet)
-  bullets(info)
+
+  header <- "These names are invalid:"
+  header <- c(x = header)
+  header <- format_error_bullets(header)
+
+  message <- bullets(info, header = header)
+  message <- indent(message, 2)
+
+  message
 }
 
 stop_names_must_be_unique <- function(names) {

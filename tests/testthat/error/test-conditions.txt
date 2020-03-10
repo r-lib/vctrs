@@ -50,18 +50,20 @@ dot dot names errors are informative
 
 > vec_as_names(c("..1", "..1", "..1", "...", "z"), repair = "check_unique")
 Error: Names can't be of the form `...` or `..j`.
-* "..1" at locations 1, 2, and 3.
-* "..." at location 4.
+x These names are invalid:
+  * "..1" at locations 1, 2, and 3.
+  * "..." at location 4.
 
 > vec_as_names(c(rep("..1", 20), rep(c("..2", "..3", "..4", "...", "..5"), 2)),
 + repair = "check_unique")
 Error: Names can't be of the form `...` or `..j`.
-* "..1" at locations 1, 2, 3, 4, 5, etc.
-* "..2" at locations 21 and 26.
-* "..3" at locations 22 and 27.
-* "..4" at locations 23 and 28.
-* "..." at locations 24 and 29.
-* ...
+x These names are invalid:
+  * "..1" at locations 1, 2, 3, 4, 5, etc.
+  * "..2" at locations 21 and 26.
+  * "..3" at locations 22 and 27.
+  * "..4" at locations 23 and 28.
+  * "..." at locations 24 and 29.
+  * ...
 
 
 unique names errors are informative
