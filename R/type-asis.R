@@ -98,5 +98,11 @@ asis_strip <- function(x) {
 }
 
 asis_restore <- function(x) {
-  I(x)
+  if (is.object(x)) {
+    class(x) <- c("AsIs", class(x))
+  } else {
+    class(x) <- "AsIs"
+  }
+
+  x
 }
