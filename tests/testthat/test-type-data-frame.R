@@ -163,11 +163,6 @@ test_that("df_as_dataframe() checks for names", {
   expect_error(vec_cast_common(x, y), "must have names")
 })
 
-test_that("can slice AsIs class", {
-  df <- data.frame(x = I(1:3), y = I(list(4, 5, 6)))
-  expect_identical(vec_slice(df, 2:3), unrownames(df[2:3, ]))
-})
-
 # new_data_frame ----------------------------------------------------------
 
 test_that("can construct an empty data frame", {
