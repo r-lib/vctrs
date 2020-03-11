@@ -11,7 +11,7 @@ static SEXP fns_vec_restore_dispatch = NULL;
 SEXP vec_restore_default(SEXP x, SEXP to) {
   SEXP attrib = ATTRIB(to);
 
-  if (attrib == R_NilValue) {
+  if (attrib == R_NilValue && !IS_S4_OBJECT(to)) {
     return x;
   }
 
@@ -85,6 +85,10 @@ SEXP vec_restore_default(SEXP x, SEXP to) {
 
   if (class != R_NilValue) {
     Rf_setAttrib(x, R_ClassSymbol, class);
+  }
+
+  if (IS_S4_OBJECT(to)) {
+    SET_S4_OBJECT(x);
   }
 
   UNPROTECT(n_protect);
