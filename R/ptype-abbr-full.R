@@ -80,20 +80,6 @@ vec_ptype_abbr.default <- function(x, ...) {
   }
 }
 
-# AsIs --------------------------------------------------------------------
-
-#' @export
-vec_ptype_full.AsIs <- function(x, ...) {
-  class(x) <- setdiff(class(x), "AsIs")
-  paste0("I<", vec_ptype_full(x), ">")
-}
-
-#' @export
-vec_ptype_abbr.AsIs <- function(x, ...) {
-  class(x) <- setdiff(class(x), "AsIs")
-  paste0("I<", vec_ptype_abbr(x), ">")
-}
-
 # Helpers -----------------------------------------------------------------
 
 vec_ptype_shape <- function(x) {
