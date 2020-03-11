@@ -56,6 +56,12 @@ static SEXP vec_proxy_unwrap(SEXP x) {
   return x;
 }
 
+// [[ register() ]]
+SEXP vctrs_unset_s4(SEXP x) {
+  UNSET_S4_OBJECT(x);
+  return(x);
+}
+
 SEXP vec_proxy_equal_dispatch(SEXP x) {
   if (vec_typeof(x) == vctrs_type_s3) {
     return vctrs_dispatch1(syms_vec_proxy_equal_dispatch, fns_vec_proxy_equal_dispatch,

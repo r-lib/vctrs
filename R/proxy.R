@@ -76,8 +76,12 @@ vec_data <- function(x) {
     x <- vec_set_attributes(x, list(names = names(x)))
   }
 
-  x
+  unset_s4(x)
 }
+unset_s4 <- function(x) {
+  .Call(vctrs_unset_s4, x)
+}
+
 #' @rdname vec_data
 #' @inheritParams ellipsis::dots_empty
 #' @export
