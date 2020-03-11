@@ -102,15 +102,19 @@ test_that("can cast to an identically shaped table", {
 })
 
 test_that("can broadcast table shapes", {
+  # We test only the dim here and not the class because on R 3.2
+  # the `[.table` method did not exist and `shape_broadcast()`
+  # gives back a matrix, not a table.
+
   x <- new_table(dim = c(0L, 1L))
   y <- new_table(dim = c(0L, 2L))
 
-  expect_identical(vec_cast(x, y), new_table(dim = c(0L, 2L)))
+  expect_identical(dim(vec_cast(x, y)), c(0L, 2L))
 
   x <- new_table(dim = c(0L, 1L, 1L))
   y <- new_table(dim = c(0L, 2L, 3L))
 
-  expect_identical(vec_cast(x, y), new_table(dim = c(0L, 2L, 3L)))
+  expect_identical(dim(vec_cast(x, y)), c(0L, 2L, 3L))
 })
 
 test_that("cannot decrease axis length", {
