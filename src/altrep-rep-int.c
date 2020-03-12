@@ -46,19 +46,7 @@ SEXP vctrs_new_vctrs_compact_rep_int(SEXP value, SEXP size) {
 
 // Materialize the full vector
 static SEXP vctrs_compact_rep_int_materialize(SEXP x) {
-  SEXP info = VCTRS_COMPACT_REP_INFO(x);
-  int value = VCTRS_COMPACT_REP_INT_VALUE(info);
-  R_xlen_t size = VCTRS_COMPACT_REP_INT_SIZE(info);
-
-  SEXP out = PROTECT(Rf_allocVector(INTSXP, size));
-  int* p_out = INTEGER(out);
-
-  for (R_xlen_t i = 0; i < size; ++i) {
-    p_out[i] = value;
-  }
-
-  UNPROTECT(1);
-  return out;
+  VCTRS_COMPACT_REP_MATERIALIZE(x, int, INTEGER, INTSXP, INT);
 }
 
 static SEXP vctrs_compact_rep_int_serialized_state(SEXP x) {

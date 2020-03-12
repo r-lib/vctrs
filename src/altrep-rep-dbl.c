@@ -46,19 +46,7 @@ SEXP vctrs_new_vctrs_compact_rep_dbl(SEXP value, SEXP size) {
 
 // Materialize the full vector
 static SEXP vctrs_compact_rep_dbl_materialize(SEXP x) {
-  SEXP info = VCTRS_COMPACT_REP_INFO(x);
-  double value = VCTRS_COMPACT_REP_DBL_VALUE(info);
-  R_xlen_t size = VCTRS_COMPACT_REP_DBL_SIZE(info);
-
-  SEXP out = PROTECT(Rf_allocVector(REALSXP, size));
-  double* p_out = REAL(out);
-
-  for (R_xlen_t i = 0; i < size; ++i) {
-    p_out[i] = value;
-  }
-
-  UNPROTECT(1);
-  return out;
+  VCTRS_COMPACT_REP_MATERIALIZE(x, double, REAL, REALSXP, DBL);
 }
 
 static SEXP vctrs_compact_rep_dbl_serialized_state(SEXP x) {

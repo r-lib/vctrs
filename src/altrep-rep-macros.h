@@ -36,6 +36,25 @@
 #define VCTRS_COMPACT_REP_SIZE(INFO, VEC) (((struct vctrs_compact_rep_##VEC##_info*) RAW0(INFO))->size)
 
 // -----------------------------------------------------------------------------
+// `vctrs_compact_rep_*_materialize()`
+
+#define VCTRS_COMPACT_REP_MATERIALIZE(X, CTYPE, DEREF, SEXPTYPE, VEC) { \
+  const SEXP info = VCTRS_COMPACT_REP_INFO(X);                          \
+  const CTYPE value = VCTRS_COMPACT_REP_##VEC##_VALUE(info);            \
+  const R_xlen_t size = VCTRS_COMPACT_REP_##VEC##_SIZE(info);           \
+                                                                        \
+  SEXP out = PROTECT(Rf_allocVector(SEXPTYPE, size));                   \
+  CTYPE* p_out = DEREF(out);                                            \
+                                                                        \
+  for (R_xlen_t i = 0; i < size; ++i) {                                 \
+    p_out[i] = value;                                                   \
+  }                                                                     \
+                                                                        \
+  UNPROTECT(1);                                                         \
+  return out;                                                           \
+}
+
+// -----------------------------------------------------------------------------
 
 #endif
 
