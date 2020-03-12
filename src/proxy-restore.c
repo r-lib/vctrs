@@ -11,7 +11,9 @@ static SEXP fns_vec_restore_dispatch = NULL;
 SEXP vec_restore_default(SEXP x, SEXP to) {
   SEXP attrib = ATTRIB(to);
 
-  if (attrib == R_NilValue && !IS_S4_OBJECT(to)) {
+  const bool is_s4 = IS_S4_OBJECT(to);
+
+  if (attrib == R_NilValue && !is_s4) {
     return x;
   }
 
@@ -87,7 +89,7 @@ SEXP vec_restore_default(SEXP x, SEXP to) {
     Rf_setAttrib(x, R_ClassSymbol, class);
   }
 
-  if (IS_S4_OBJECT(to)) {
+  if (is_s4) {
     r_mark_s4(x);
   }
 
