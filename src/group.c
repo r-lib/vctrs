@@ -154,8 +154,8 @@ SEXP vec_group_loc(SEXP x) {
 
   // Identify groups, this is essentially `vec_group_id()`
   for (int i = 0; i < n; ++i) {
-    int32_t hash = dict_hash_scalar(d, i);
-    R_len_t key = d->key[hash];
+    const int32_t hash = dict_hash_scalar(d, i);
+    const R_len_t key = d->key[hash];
 
     if (key == DICT_EMPTY) {
       dict_put(d, hash, i);
@@ -166,7 +166,7 @@ SEXP vec_group_loc(SEXP x) {
     }
   }
 
-  int n_groups = d->used;
+  const int n_groups = d->used;
 
   // Location of first occurence of each group in `x`
   SEXP key_loc = PROTECT_N(Rf_allocVector(INTSXP, n_groups), &nprot);
@@ -179,14 +179,14 @@ SEXP vec_group_loc(SEXP x) {
   memset(p_counts, 0, n_groups * sizeof(int));
 
   for (int i = 0; i < n; ++i) {
-    int group = p_groups[i];
+    const int group = p_groups[i];
 
     if (group == key_loc_current) {
       p_key_loc[key_loc_current] = i + 1;
-      key_loc_current++;
+      ++key_loc_current;
     }
 
-    p_counts[group]++;
+    ++p_counts[group];
   }
 
   SEXP out_loc = PROTECT_N(Rf_allocVector(VECSXP, n_groups), &nprot);
@@ -209,10 +209,10 @@ SEXP vec_group_loc(SEXP x) {
 
   // Fill in the location values for each group
   for (int i = 0; i < n; ++i) {
-    int group = p_groups[i];
-    int location = p_locations[group];
+    const int group = p_groups[i];
+    const int location = p_locations[group];
     p_elt_loc[group][location] = i + 1;
-    p_locations[group]++;
+    ++p_locations[group];
   }
 
   SEXP out_key = PROTECT_N(vec_slice(x, key_loc), &nprot);
