@@ -119,21 +119,6 @@ vec_restore.data.frame <- function(x, to, ..., n = NULL) {
   .Call(vctrs_bare_df_restore, x, to, n)
 }
 
-
-# AsIS --------------------------------------------------------------------
-
-# Arises with base df ctor: `data.frame(x = I(list(1, 2:3)))`
-
-#' @export
-vec_proxy.AsIs <- function(x, ...) {
-  class(x) <- setdiff(class(x), "AsIs")
-  vec_proxy(x)
-}
-#' @export
-vec_restore.AsIs <- function(x, to, ...) {
-  I(x)
-}
-
 # Helpers -----------------------------------------------------------------
 
 df_size <- function(x) {

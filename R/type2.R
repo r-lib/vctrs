@@ -58,6 +58,10 @@ vec_default_ptype2 <- function(x, y, ..., x_arg = "x", y_arg = "y") {
   if (is_unspecified(y)) {
     return(vec_ptype(x))
   }
+  if (is_asis(y)) {
+    y <- asis_strip(y)
+    return(vec_ptype2_asis(x, y, ..., x_arg = x_arg, y_arg = y_arg))
+  }
   if (is_same_type(x, y)) {
     return(vec_ptype(x))
   }

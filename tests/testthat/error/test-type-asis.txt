@@ -1,0 +1,14 @@
+
+AsIs objects throw ptype2 errors with their underlying types
+============================================================
+
+> vec_ptype2(I(1), I("x"))
+Error: No common type for `x` <double> and `y` <character>.
+
+
+AsIs objects throw cast errors with their underlying types
+==========================================================
+
+> vec_cast(I(1), I(factor("x")))
+Error: Can't cast `x` <double> to `to` <factor<5a425>>.
+

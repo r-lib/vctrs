@@ -39,22 +39,6 @@ test_that("complex and factor as expected (#323)", {
   expect_equal(vec_ptype_abbr(factor()), "fct")
 })
 
-test_that("I() wraps contents", {
-  f <- factor()
-
-  expect_equal(vec_ptype_abbr(I(f)), "I<fct>")
-  expect_equal(vec_ptype_full(I(f)), "I<factor<>>")
-})
-
-test_that("AsIs class stripped from I()", {
-  df <- data.frame(x = 1, y = 1:2)
-  class(df) <- c("myclass", "data.frame")
-
-  expect_equal(vec_ptype_full(I(df)), "I<myclass<\n  x: double\n  y: integer\n>>")
-  expect_equal(vec_ptype_full(I(df[1])), "I<myclass<x:double>>")
-  expect_equal(vec_ptype_full(I(df[0])), "I<myclass<>>")
-})
-
 test_that("named lists are tagged (#322)", {
   expect_identical(vec_ptype_abbr(list(x = 1, y = 2)), "named list")
 })

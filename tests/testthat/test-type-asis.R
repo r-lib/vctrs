@@ -1,0 +1,92 @@
+# ------------------------------------------------------------------------------
+# Printing
+
+test_that("I() wraps contents", {
+  f <- factor()
+
+  expect_equal(vec_ptype_abbr(I(f)), "I<fct>")
+  expect_equal(vec_ptype_full(I(f)), "I<factor<>>")
+})
+
+test_that("AsIs class stripped from I()", {
+  df <- data.frame(x = 1, y = 1:2)
+  class(df) <- c("myclass", "data.frame")
+
+  expect_equal(vec_ptype_full(I(df)), "I<myclass<\n  x: double\n  y: integer\n>>")
+  expect_equal(vec_ptype_full(I(df[1])), "I<myclass<x:double>>")
+  expect_equal(vec_ptype_full(I(df[0])), "I<myclass<>>")
+})
+
+# ------------------------------------------------------------------------------
+# Proxy / restore
+
+test_that("can slice AsIs class", {
+  df <- data.frame(x = I(1:3), y = I(list(4, 5, 6)))
+  expect_identical(vec_slice(df, 2:3), unrownames(df[2:3, ]))
+})
+
+# ------------------------------------------------------------------------------
+# Coercion
+
+test_that("can take the common type of identical AsIs objects", {
+  expect_identical(vec_ptype2(I(1), I(1)), I(numeric()))
+})
+
+test_that("AsIs objects throw ptype2 errors with their underlying types", {
+  verify_errors({
+    expect_error(vec_ptype2(I(1), I("x")), class = "vctrs_error_incompatible_type")
+  })
+})
+
+test_that("AsIs always wraps the common type", {
+  expect_identical(vec_ptype2(I(1L), 1), I(numeric()))
+  expect_identical(vec_ptype2(1, I(1L)), I(numeric()))
+})
+
+# ------------------------------------------------------------------------------
+# Casting
+
+test_that("can cast one AsIs to another AsIs", {
+  expect_identical(vec_cast(I(1), I(1)), I(1))
+  expect_identical(vec_cast(I(1), I(1L)), I(1L))
+})
+
+test_that("AsIs objects throw cast errors with their underlying types", {
+  verify_errors({
+    expect_error(vec_cast(I(1), I(factor("x"))), class = "vctrs_error_incompatible_cast")
+  })
+})
+
+test_that("casting from an AsIs drops the AsIs class", {
+  expect_identical(vec_cast(I(1), 1), 1)
+})
+
+test_that("casting to an AsIs adds the AsIs class", {
+  expect_identical(vec_cast(1, I(1)), I(1))
+})
+
+# ------------------------------------------------------------------------------
+# Misc
+
+test_that("can `vec_c()` with only AsIs objects", {
+  expect_identical(vec_c(I(1), I(2)), I(c(1, 2)))
+  expect_identical(vec_c(I(1), I(2L)), I(c(1, 2)))
+})
+
+test_that("can `vec_c()` with AsIs objects mixed with other types", {
+  expect_identical(vec_c(I(1L), 1), I(c(1, 1)))
+})
+
+# ------------------------------------------------------------------------------
+# Errors
+
+test_that("AsIs handling has meaningful errors", {
+  verify_output(test_path("error/test-type-asis.txt"), {
+    "# AsIs objects throw ptype2 errors with their underlying types"
+    vec_ptype2(I(1), I("x"))
+
+    "# AsIs objects throw cast errors with their underlying types"
+    vec_cast(I(1), I(factor("x")))
+  })
+})
+
