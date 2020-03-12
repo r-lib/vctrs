@@ -82,17 +82,13 @@ static enum vctrs_type vec_base_typeof(SEXP x, bool proxied) {
   case CPLXSXP: return vctrs_type_complex;
   case STRSXP: return vctrs_type_character;
   case RAWSXP: return vctrs_type_raw;
-  case S4SXP:
-    // S4 objects are only vectors if they are proxied
-    if (proxied) return vctrs_type_list;
-    return vctrs_type_scalar;
   case VECSXP:
     // Bare lists and data frames are vectors
     if (!OBJECT(x)) return vctrs_type_list;
     if (is_data_frame(x)) return vctrs_type_dataframe;
     // S3 lists are only vectors if they are proxied
     if (proxied || Rf_inherits(x, "list")) return vctrs_type_list;
-    return vctrs_type_scalar;
+    // fallthrough
   default: return vctrs_type_scalar;
   }
 }
