@@ -295,6 +295,41 @@ test_that("subsetting with `[` extends OOB indices with `NA`", {
   test(xs, fns)
 })
 
+test_that("subsetting with `[` and long vectors is allowed", {
+  test <- function(xs, fns) {
+    for (i in seq_along(xs)) {
+      x <- xs[[i]]
+      fn <- fns[[i]]
+
+      size <- .Machine$integer.max + 1
+
+      rep <- fn(x, size)
+
+      expect_identical(rep[c(size, size + 1)], c(x, NA))
+    }
+  }
+
+  xs <- list(1L, 1, "1")
+
+  fns <- list(
+    new_vctrs_compact_rep_int,
+    new_vctrs_compact_rep_dbl,
+    new_vctrs_compact_rep_chr
+  )
+
+  test(xs, fns)
+
+  skip_if_no_altrep_3_6()
+
+  xs <- list(TRUE)
+
+  fns <- list(
+    new_vctrs_compact_rep_lgl
+  )
+
+  test(xs, fns)
+})
+
 # ------------------------------------------------------------------------------
 context("test-altrep-rep-chr")
 
