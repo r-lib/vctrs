@@ -191,10 +191,15 @@ SEXP vec_group_loc(SEXP x) {
 
   SEXP out_loc = PROTECT_N(Rf_allocVector(VECSXP, n_groups), &nprot);
 
+  // Direct pointer to the location vectors we store in `out_loc`
+  int** p_elt_loc = (int**) R_alloc(n_groups, sizeof(int*));
+
   // Initialize `out_loc` to a list of integers with sizes corresponding
   // to the number of elements in that group
   for (int i = 0; i < n_groups; ++i) {
-    SET_VECTOR_ELT(out_loc, i, Rf_allocVector(INTSXP, p_counts[i]));
+    SEXP elt_loc = Rf_allocVector(INTSXP, p_counts[i]);
+    p_elt_loc[i] = INTEGER(elt_loc);
+    SET_VECTOR_ELT(out_loc, i, elt_loc);
   }
 
   // The current location we are updating, each group has its own counter
@@ -206,7 +211,7 @@ SEXP vec_group_loc(SEXP x) {
   for (int i = 0; i < n; ++i) {
     int group = p_groups[i];
     int location = p_locations[group];
-    INTEGER(VECTOR_ELT(out_loc, group))[location] = i + 1;
+    p_elt_loc[group][location] = i + 1;
     p_locations[group]++;
   }
 
