@@ -103,11 +103,8 @@ asis_strip <- function(x) {
 }
 
 asis_restore <- function(x) {
-  if (is.object(x)) {
-    class(x) <- c("AsIs", class(x))
-  } else {
-    class(x) <- "AsIs"
-  }
-
+  # Using `oldClass()` here to return `NULL` for atomics
+  # so that their implicit class isn't added
+  class(x) <- c("AsIs", oldClass(x))
   x
 }
