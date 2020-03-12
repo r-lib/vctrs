@@ -111,7 +111,7 @@ static Rboolean vctrs_compact_rep_chr_Inspect(SEXP x,
 
   const char* value_data = CHAR(value);
 
-  Rprintf("vctrs_compact_rep_chr (value: %s, size: %i, state: %s)", value_data, size, state);
+  Rprintf("vctrs_compact_rep_chr (value: %s, size: %td, state: %s)", value_data, size, state);
   Rprintf("\n");
 
   return TRUE;

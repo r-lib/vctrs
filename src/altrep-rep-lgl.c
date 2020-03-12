@@ -123,7 +123,7 @@ static Rboolean vctrs_compact_rep_lgl_Inspect(SEXP x,
   R_xlen_t size = VCTRS_COMPACT_REP_LGL_SIZE(info);
   const char* state = VCTRS_COMPACT_REP_IS_COMPACT(x) ? "compact" : "expanded";
 
-  Rprintf("vctrs_compact_rep_lgl (value: %i, size: %i, state: %s)", value, size, state);
+  Rprintf("vctrs_compact_rep_lgl (value: %i, size: %td, state: %s)", value, size, state);
   Rprintf("\n");
 
   return TRUE;
