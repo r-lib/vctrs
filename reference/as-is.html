@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>A 1d vector of unspecified type — unspecified • vctrs</title>
+<title>AsIs S3 class — as-is • vctrs</title>
 
 <!-- favicons -->
 <link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
@@ -42,10 +42,9 @@
 
 
 
-<meta property="og:title" content="A 1d vector of unspecified type — unspecified" />
-<meta property="og:description" content="This is a partial type used to represent logical vectors
-that only contain NA. These require special handling because we want to
-allow NA to specify missingness without requiring a type." />
+<meta property="og:title" content="AsIs S3 class — as-is" />
+<meta property="og:description" content="These functions help the base AsIs class fit into the vctrs type system
+by providing coercion and casting functions." />
 <meta property="og:image" content="https://vctrs.r-lib.org/logo.png" />
 <meta name="twitter:card" content="summary" />
 
@@ -146,50 +145,28 @@ allow NA to specify missingness without requiring a type." />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>A 1d vector of unspecified type</h1>
-    <small class="dont-index">Source: <a href='https://github.com/r-lib/vctrs/blob/master/R/type-unspecified.R'><code>R/type-unspecified.R</code></a></small>
-    <div class="hidden name"><code>unspecified.Rd</code></div>
+    <h1>AsIs S3 class</h1>
+    <small class="dont-index">Source: <a href='https://github.com/r-lib/vctrs/blob/master/R/type-asis.R'><code>R/type-asis.R</code></a></small>
+    <div class="hidden name"><code>as-is.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>This is a <a href='new_partial.html'>partial type</a> used to represent logical vectors
-that only contain <code>NA</code>. These require special handling because we want to
-allow <code>NA</code> to specify missingness without requiring a type.</p>
+    <p>These functions help the base AsIs class fit into the vctrs type system
+by providing coercion and casting functions.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>unspecified</span>(<span class='kw'>n</span> <span class='kw'>=</span> <span class='fl'>0</span>)
+    <pre class="usage"><span class='co'># S3 method for AsIs</span>
+<span class='fu'><a href='vec_ptype2.html'>vec_ptype2</a></span>(<span class='no'>x</span>, <span class='no'>y</span>, <span class='no'>...</span>, <span class='kw'>x_arg</span> <span class='kw'>=</span> <span class='st'>"x"</span>, <span class='kw'>y_arg</span> <span class='kw'>=</span> <span class='st'>"y"</span>)
 
-<span class='co'># S3 method for vctrs_unspecified</span>
-<span class='fu'><a href='vec_ptype2.html'>vec_ptype2</a></span>(<span class='no'>x</span>, <span class='no'>y</span>, <span class='no'>...</span>)</pre>
-
-    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
-    <table class="ref-arguments">
-    <colgroup><col class="name" /><col class="desc" /></colgroup>
-    <tr>
-      <th>n</th>
-      <td><p>Length of vector</p></td>
-    </tr>
-    </table>
+<span class='co'># S3 method for AsIs</span>
+<span class='fu'><a href='vec_cast.html'>vec_cast</a></span>(<span class='no'>x</span>, <span class='no'>to</span>, <span class='no'>...</span>)</pre>
 
 
-    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'><a href='vec_ptype.html'>vec_ptype_show</a></span>()</div><div class='output co'>#&gt; Prototype: NULL</div><div class='input'><span class='fu'><a href='vec_ptype.html'>vec_ptype_show</a></span>(<span class='fl'>NA</span>)</div><div class='output co'>#&gt; Prototype: logical</div><div class='input'>
-<span class='fu'><a href='vec_c.html'>vec_c</a></span>(<span class='fl'>NA</span>, <span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span>(<span class='st'>"x"</span>))</div><div class='output co'>#&gt; [1] &lt;NA&gt; x   
-#&gt; Levels: x</div><div class='input'><span class='fu'><a href='vec_c.html'>vec_c</a></span>(<span class='fl'>NA</span>, <span class='fu'><a href='https://rdrr.io/r/base/Sys.time.html'>Sys.Date</a></span>())</div><div class='output co'>#&gt; [1] NA           "2020-03-12"</div><div class='input'><span class='fu'><a href='vec_c.html'>vec_c</a></span>(<span class='fl'>NA</span>, <span class='fu'><a href='https://rdrr.io/r/base/Sys.time.html'>Sys.time</a></span>())</div><div class='output co'>#&gt; [1] NA                        "2020-03-12 15:24:23 UTC"</div><div class='input'><span class='fu'><a href='vec_c.html'>vec_c</a></span>(<span class='fl'>NA</span>, <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(<span class='fl'>1</span>:<span class='fl'>3</span>, <span class='fl'>4</span>:<span class='fl'>5</span>))</div><div class='output co'>#&gt; [[1]]
-#&gt; NULL
-#&gt; 
-#&gt; [[2]]
-#&gt; [1] 1 2 3
-#&gt; 
-#&gt; [[3]]
-#&gt; [1] 4 5
-#&gt; </div></pre>
+
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
-      <li><a href="#arguments">Arguments</a></li>
-      <li><a href="#examples">Examples</a></li>
     </ul>
 
   </div>
