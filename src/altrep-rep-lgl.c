@@ -2,6 +2,7 @@
 #include "altrep.h"
 #include "altrep-rep.h"
 #include "altrep-rep-internal.h"
+#include "altrep-rep-macros.h"
 
 #if !HAS_ALTREP_3_6
 // -----------------------------------------------------------------------------
@@ -44,19 +45,7 @@ struct vctrs_compact_rep_lgl_info {
 
 // [[ include("altrep-rep.h") ]]
 SEXP new_vctrs_compact_rep_lgl(int value, R_xlen_t size) {
-  SEXP info = PROTECT(Rf_allocVector(RAWSXP, sizeof(struct vctrs_compact_rep_lgl_info)));
-  struct vctrs_compact_rep_lgl_info* p_info = (struct vctrs_compact_rep_lgl_info*) RAW0(info);
-
-  p_info->value = value;
-  p_info->size = size;
-
-  SEXP out = R_new_altrep(vctrs_compact_rep_lgl_class, info, R_NilValue);
-
-  // Force duplicate on modify
-  MARK_NOT_MUTABLE(out);
-
-  UNPROTECT(1);
-  return out;
+  NEW_VCTRS_COMPACT_REP(value, size, lgl);
 }
 
 // [[ register() ]]
