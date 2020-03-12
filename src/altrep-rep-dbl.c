@@ -75,11 +75,11 @@ static SEXP vctrs_compact_rep_dbl_materialize(SEXP x) {
   return out;
 }
 
-static SEXP vctrs_compact_rep_dbl_Serialized_state(SEXP x) {
+static SEXP vctrs_compact_rep_dbl_serialized_state(SEXP x) {
   return VCTRS_COMPACT_REP_INFO(x);
 }
 
-static SEXP vctrs_compact_rep_dbl_Unserialize(SEXP cls, SEXP state) {
+static SEXP vctrs_compact_rep_dbl_unserialize(SEXP cls, SEXP state) {
   SEXP info = state;
   double value = VCTRS_COMPACT_REP_DBL_VALUE(info);
   R_xlen_t size = VCTRS_COMPACT_REP_DBL_SIZE(info);
@@ -89,17 +89,17 @@ static SEXP vctrs_compact_rep_dbl_Unserialize(SEXP cls, SEXP state) {
 
 // TODO: What if `deep = false`? vroom dttm duplicates the altrep object
 // but compact_intseq objects always materialize
-static SEXP vctrs_compact_rep_dbl_Duplicate(SEXP x, Rboolean deep) {
+static SEXP vctrs_compact_rep_dbl_duplicate(SEXP x, Rboolean deep) {
   return vctrs_compact_rep_dbl_materialize(x);
 }
 
 // Drop through to standard coercion methods for now.
 // We could coerce from one compact rep type to another.
-static SEXP vctrs_compact_rep_dbl_Coerce(SEXP x, int type) {
+static SEXP vctrs_compact_rep_dbl_coerce(SEXP x, int type) {
   return NULL;
 }
 
-static Rboolean vctrs_compact_rep_dbl_Inspect(SEXP x,
+static Rboolean vctrs_compact_rep_dbl_inspect(SEXP x,
                                               int pre,
                                               int deep,
                                               int pvec,
@@ -115,12 +115,12 @@ static Rboolean vctrs_compact_rep_dbl_Inspect(SEXP x,
   return TRUE;
 }
 
-static R_xlen_t vctrs_compact_rep_dbl_Length(SEXP x) {
+static R_xlen_t vctrs_compact_rep_dbl_length(SEXP x) {
   SEXP info = VCTRS_COMPACT_REP_INFO(x);
   return VCTRS_COMPACT_REP_DBL_SIZE(info);
 }
 
-static void* vctrs_compact_rep_dbl_Dataptr(SEXP x, Rboolean writeable) {
+static void* vctrs_compact_rep_dbl_dataptr(SEXP x, Rboolean writeable) {
   if (VCTRS_COMPACT_REP_IS_COMPACT(x)) {
     VCTRS_COMPACT_REP_SET_DATA(x, vctrs_compact_rep_dbl_materialize(x));
   }
@@ -128,11 +128,11 @@ static void* vctrs_compact_rep_dbl_Dataptr(SEXP x, Rboolean writeable) {
   return DATAPTR(VCTRS_COMPACT_REP_DATA(x));
 }
 
-static const void* vctrs_compact_rep_dbl_Dataptr_or_null(SEXP x) {
+static const void* vctrs_compact_rep_dbl_dataptr_or_null(SEXP x) {
   if (VCTRS_COMPACT_REP_IS_COMPACT(x)) {
     return NULL;
   } else {
-    return vctrs_compact_rep_dbl_Dataptr(x, FALSE);
+    return vctrs_compact_rep_dbl_dataptr(x, FALSE);
   }
 }
 
@@ -150,7 +150,7 @@ static const void* vctrs_compact_rep_dbl_Dataptr_or_null(SEXP x) {
   }                                                                                 \
 } while(0)
 
-static SEXP vctrs_compact_rep_dbl_Extract_subset(SEXP x, SEXP indx, SEXP call) {
+static SEXP vctrs_compact_rep_dbl_extract_subset(SEXP x, SEXP indx, SEXP call) {
   const SEXP info = VCTRS_COMPACT_REP_INFO(x);
   const double value = VCTRS_COMPACT_REP_DBL_VALUE(info);
   const R_xlen_t size = VCTRS_COMPACT_REP_DBL_SIZE(info);
@@ -174,17 +174,17 @@ static SEXP vctrs_compact_rep_dbl_Extract_subset(SEXP x, SEXP indx, SEXP call) {
 // I believe we should expect that *_ELT() methods will never contain
 // an `NA` index. I assumed this from how ExtractSubset() works and from
 // how compact_intseq_Elt() is implemented
-static double vctrs_compact_rep_dbl_Elt(SEXP x, R_xlen_t i) {
+static double vctrs_compact_rep_dbl_elt(SEXP x, R_xlen_t i) {
   SEXP info = VCTRS_COMPACT_REP_INFO(x);
   return VCTRS_COMPACT_REP_DBL_VALUE(info);
 }
 
-static int vctrs_compact_rep_dbl_No_NA(SEXP x) {
+static int vctrs_compact_rep_dbl_no_na(SEXP x) {
   SEXP info = VCTRS_COMPACT_REP_INFO(x);
   return !ISNAN(VCTRS_COMPACT_REP_DBL_VALUE(info));
 }
 
-static R_xlen_t vctrs_compact_rep_dbl_Get_region(SEXP x, R_xlen_t i, R_xlen_t n, double* buf) {
+static R_xlen_t vctrs_compact_rep_dbl_get_region(SEXP x, R_xlen_t i, R_xlen_t n, double* buf) {
   SEXP info = VCTRS_COMPACT_REP_INFO(x);
   double value = VCTRS_COMPACT_REP_DBL_VALUE(info);
   R_xlen_t size = VCTRS_COMPACT_REP_DBL_SIZE(info);
@@ -213,22 +213,22 @@ void vctrs_init_vctrs_compact_rep_dbl(DllInfo* dll) {
   R_PreserveObject(vctrs_compact_rep_dbl_class_sexp);
 
   // ALTREP methods
-  R_set_altrep_Serialized_state_method(vctrs_compact_rep_dbl_class, vctrs_compact_rep_dbl_Serialized_state);
-  R_set_altrep_Unserialize_method(vctrs_compact_rep_dbl_class, vctrs_compact_rep_dbl_Unserialize);
-  R_set_altrep_Duplicate_method(vctrs_compact_rep_dbl_class, vctrs_compact_rep_dbl_Duplicate);
-  R_set_altrep_Coerce_method(vctrs_compact_rep_dbl_class, vctrs_compact_rep_dbl_Coerce);
-  R_set_altrep_Inspect_method(vctrs_compact_rep_dbl_class, vctrs_compact_rep_dbl_Inspect);
-  R_set_altrep_Length_method(vctrs_compact_rep_dbl_class, vctrs_compact_rep_dbl_Length);
+  R_set_altrep_Serialized_state_method(vctrs_compact_rep_dbl_class, vctrs_compact_rep_dbl_serialized_state);
+  R_set_altrep_Unserialize_method(vctrs_compact_rep_dbl_class, vctrs_compact_rep_dbl_unserialize);
+  R_set_altrep_Duplicate_method(vctrs_compact_rep_dbl_class, vctrs_compact_rep_dbl_duplicate);
+  R_set_altrep_Coerce_method(vctrs_compact_rep_dbl_class, vctrs_compact_rep_dbl_coerce);
+  R_set_altrep_Inspect_method(vctrs_compact_rep_dbl_class, vctrs_compact_rep_dbl_inspect);
+  R_set_altrep_Length_method(vctrs_compact_rep_dbl_class, vctrs_compact_rep_dbl_length);
 
   // ALTVEC methods
-  R_set_altvec_Dataptr_method(vctrs_compact_rep_dbl_class, vctrs_compact_rep_dbl_Dataptr);
-  R_set_altvec_Dataptr_or_null_method(vctrs_compact_rep_dbl_class, vctrs_compact_rep_dbl_Dataptr_or_null);
-  R_set_altvec_Extract_subset_method(vctrs_compact_rep_dbl_class, vctrs_compact_rep_dbl_Extract_subset);
+  R_set_altvec_Dataptr_method(vctrs_compact_rep_dbl_class, vctrs_compact_rep_dbl_dataptr);
+  R_set_altvec_Dataptr_or_null_method(vctrs_compact_rep_dbl_class, vctrs_compact_rep_dbl_dataptr_or_null);
+  R_set_altvec_Extract_subset_method(vctrs_compact_rep_dbl_class, vctrs_compact_rep_dbl_extract_subset);
 
   // ALTREAL methods
-  R_set_altreal_Elt_method(vctrs_compact_rep_dbl_class, vctrs_compact_rep_dbl_Elt);
-  R_set_altreal_No_NA_method(vctrs_compact_rep_dbl_class, vctrs_compact_rep_dbl_No_NA);
-  R_set_altreal_Get_region_method(vctrs_compact_rep_dbl_class, vctrs_compact_rep_dbl_Get_region);
+  R_set_altreal_Elt_method(vctrs_compact_rep_dbl_class, vctrs_compact_rep_dbl_elt);
+  R_set_altreal_No_NA_method(vctrs_compact_rep_dbl_class, vctrs_compact_rep_dbl_no_na);
+  R_set_altreal_Get_region_method(vctrs_compact_rep_dbl_class, vctrs_compact_rep_dbl_get_region);
 }
 
 #endif
