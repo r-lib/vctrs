@@ -37,13 +37,18 @@ bool vec_is_vctrs_compact_rep_lgl(SEXP x) {
   return ALTREP_CLASS(x) == vctrs_compact_rep_lgl_class_sexp;
 }
 
+struct vctrs_compact_rep_lgl_info {
+  int value;
+  R_xlen_t size;
+};
+
 // [[ include("altrep-rep.h") ]]
 SEXP new_vctrs_compact_rep_lgl(int value, R_xlen_t size) {
-  double size_ = (double) size;
+  SEXP info = PROTECT(Rf_allocVector(RAWSXP, sizeof(struct vctrs_compact_rep_lgl_info)));
+  struct vctrs_compact_rep_lgl_info* p_info = (struct vctrs_compact_rep_lgl_info*) RAW0(info);
 
-  SEXP info = PROTECT(Rf_allocVector(VECSXP, 2));
-  SET_VECTOR_ELT(info, 0, Rf_ScalarLogical(value));
-  SET_VECTOR_ELT(info, 1, Rf_ScalarReal(size_));
+  p_info->value = value;
+  p_info->size = size;
 
   SEXP out = R_new_altrep(vctrs_compact_rep_lgl_class, info, R_NilValue);
 
@@ -64,8 +69,8 @@ SEXP vctrs_new_vctrs_compact_rep_lgl(SEXP value, SEXP size) {
 
 // -----------------------------------------------------------------------------
 
-#define VCTRS_COMPACT_REP_LGL_VALUE(info) LOGICAL0(VECTOR_ELT(info, 0))[0]
-#define VCTRS_COMPACT_REP_LGL_SIZE(info) ((R_xlen_t) REAL0(VECTOR_ELT(info, 1))[0])
+#define VCTRS_COMPACT_REP_LGL_VALUE(info) (((struct vctrs_compact_rep_lgl_info*) RAW0(info))->value)
+#define VCTRS_COMPACT_REP_LGL_SIZE(info) (((struct vctrs_compact_rep_lgl_info*) RAW0(info))->size)
 
 // Materialize the full vector
 static SEXP vctrs_compact_rep_lgl_materialize(SEXP x) {
