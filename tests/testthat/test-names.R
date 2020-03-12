@@ -691,19 +691,23 @@ test_that("Name repair works with non-UTF-8 names", {
 
 test_that("names cannot be empty", {
   expect_error_cnd(
-    stop_names_cannot_be_empty(c("", "")),
+    stop_names_cannot_be_empty(c("", ""), 1:2),
     class = c("vctrs_error_names_cannot_be_empty", "vctrs_error_names", "vctrs_error"),
     message = "Names can't be empty.",
-    names = c("", "")
+    names = c("", ""),
+    # for tibble
+    locations = 1:2
   )
 })
 
 test_that("names cannot be dot dot", {
   expect_error_cnd(
-    stop_names_cannot_be_dot_dot(c("..1", "..2")),
+    stop_names_cannot_be_dot_dot(c("..1", "..2"), 1:2),
     class = c("vctrs_error_names_cannot_be_dot_dot", "vctrs_error_names", "vctrs_error"),
     message = "Names can't be of the form `...` or `..j`.",
-    names = c("..1", "..2")
+    names = c("..1", "..2"),
+    # for tibble
+    locations = 1:2
   )
 })
 

@@ -169,12 +169,12 @@ validate_unique <- function(names, n = NULL) {
 
   empty_names <- detect_empty_names(names)
   if (has_length(empty_names)) {
-    stop_names_cannot_be_empty(names)
+    stop_names_cannot_be_empty(names, locations = empty_names)
   }
 
   dot_dot_name <- detect_dot_dot(names)
   if (has_length(dot_dot_name)) {
-    stop_names_cannot_be_dot_dot(names)
+    stop_names_cannot_be_dot_dot(names, locations = dot_dot_name)
   }
 
   if (anyDuplicated(names)) {

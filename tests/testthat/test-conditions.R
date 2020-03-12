@@ -11,8 +11,8 @@ test_that("conditions inherit from `vctrs_error`", {
   expect_error(stop_unimplemented("", ""), class = "vctrs_error")
   expect_error(stop_scalar_type(NULL), class = "vctrs_error")
   expect_error(stop_names(), class = "vctrs_error")
-  expect_error(stop_names_cannot_be_empty(""), class = "vctrs_error")
-  expect_error(stop_names_cannot_be_dot_dot("..1"), class = "vctrs_error")
+  expect_error(stop_names_cannot_be_empty("", 1L), class = "vctrs_error")
+  expect_error(stop_names_cannot_be_dot_dot("..1", 1L), class = "vctrs_error")
   expect_error(stop_names_must_be_unique("x"), class = "vctrs_error")
 })
 

@@ -442,10 +442,11 @@ stop_names <- function(class = NULL, ...) {
   )
 }
 
-stop_names_cannot_be_empty <- function(names) {
+stop_names_cannot_be_empty <- function(names, locations) {
   stop_names(
     class = "vctrs_error_names_cannot_be_empty",
-    names = names
+    names = names,
+    locations = locations
   )
 }
 
@@ -468,10 +469,11 @@ cnd_body.vctrs_error_names_cannot_be_empty <- function(cnd, ...) {
   format_error_bullets(bullet)
 }
 
-stop_names_cannot_be_dot_dot <- function(names) {
+stop_names_cannot_be_dot_dot <- function(names, locations) {
   stop_names(
     class = "vctrs_error_names_cannot_be_dot_dot",
-    names = names
+    names = names,
+    locations = locations
   )
 }
 
