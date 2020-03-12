@@ -1,17 +1,3 @@
-.rando <- setClass("rando", contains = "numeric", slots = list(.Data = "numeric"))
-rando <- function(n = 0) {
-  withr::with_seed(20200311, .rando(.Data = runif(n)))
-}
-
-as_rando <- function(x) {
-  rando(length(x))
-}
-
-setMethod("[", "rando", function(x, i, j, ..., drop = TRUE) {
-  new_n <- length(vec_as_location(i, length(x@.Data), names(x@.Data)))
-  rando(new_n)
-})
-
 test_that("basics", {
   x <- rando(10)
 
