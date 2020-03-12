@@ -134,6 +134,12 @@ static SEXP dbl_cast_subscript(SEXP subscript,
 
   for (R_len_t i = 0; i < n; ++i) {
     double elt = p[i];
+
+    if (isnan(elt)) {
+      out_p[i] = NA_INTEGER;
+      continue;
+    }
+
     int out_elt = (int) elt;
 
     // Detect out-of-bounds and fractional numbers
