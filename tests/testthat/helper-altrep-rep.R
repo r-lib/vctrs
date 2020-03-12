@@ -37,3 +37,17 @@ skip_if_no_altrep <- function() {
 skip_if_no_altrep_3_6 <- function() {
   skip_if(getRversion() < "3.6.0", "Testing these ALTREP features requires R 3.6+")
 }
+
+vctrs_compact_rep_test_info <- function() {
+  list(
+    list(x = 1L,  na = NA_integer_,   ctor = new_vctrs_compact_rep_int),
+    list(x = 1,   na = NA_real_,      ctor = new_vctrs_compact_rep_dbl),
+    list(x = "1", na = NA_character_, ctor = new_vctrs_compact_rep_chr)
+  )
+}
+
+vctrs_compact_rep_test_info_3_6 <- function() {
+  list(
+    list(x = TRUE, na = NA, ctor = new_vctrs_compact_rep_lgl)
+  )
+}

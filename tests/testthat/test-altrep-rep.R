@@ -2,14 +2,14 @@ context("test-altrep-rep")
 skip_if_no_altrep()
 
 test_that("No_NA method keeps compact vectors from being expanded", {
-  test <- function(xs, nas, fns) {
-    for (i in seq_along(xs)) {
-      x <- xs[[i]]
-      na <- nas[[i]]
-      fn <- fns[[i]]
+  test <- function(test_info) {
+    for (info in test_info) {
+      x <- info$x
+      na <- info$na
+      ctor <- info$ctor
 
-      x <- fn(x, 2)
-      na <- fn(na, 2)
+      x <- ctor(x, 2)
+      na <- ctor(na, 2)
 
       expect_identical(anyNA(x), FALSE)
       expect_identical(anyNA(na), TRUE)
@@ -19,37 +19,19 @@ test_that("No_NA method keeps compact vectors from being expanded", {
     }
   }
 
-  xs <- list(1L, 1, 1, "1")
-  nas <- list(NA_integer_, NA_real_, NaN, NA_character_)
-
-  fns <- list(
-    new_vctrs_compact_rep_int,
-    new_vctrs_compact_rep_dbl,
-    new_vctrs_compact_rep_dbl,
-    new_vctrs_compact_rep_chr
-  )
-
-  test(xs, nas, fns)
+  test(vctrs_compact_rep_test_info())
 
   skip_if_no_altrep_3_6()
-
-  xs <- list(TRUE)
-  nas <- list(NA)
-
-  fns <- list(
-    new_vctrs_compact_rep_lgl
-  )
-
-  test(xs, nas, fns)
+  test(vctrs_compact_rep_test_info_3_6())
 })
 
 test_that("vec_ptype2 doesn't expand compact reps", {
-  test <- function(xs, fns) {
-    for (i in seq_along(xs)) {
-      x <- xs[[i]]
-      fn <- fns[[i]]
+  test <- function(test_info) {
+    for (info in test_info) {
+      x <- info$x
+      ctor <- info$ctor
 
-      x <- fn(x, 1)
+      x <- ctor(x, 1)
 
       vec_ptype2(x, x)
 
@@ -57,34 +39,19 @@ test_that("vec_ptype2 doesn't expand compact reps", {
     }
   }
 
-  xs <- list(1L, 1, "1")
-
-  fns <- list(
-    new_vctrs_compact_rep_int,
-    new_vctrs_compact_rep_dbl,
-    new_vctrs_compact_rep_chr
-  )
-
-  test(xs, fns)
+  test(vctrs_compact_rep_test_info())
 
   skip_if_no_altrep_3_6()
-
-  xs <- list(TRUE)
-
-  fns <- list(
-    new_vctrs_compact_rep_lgl
-  )
-
-  test(xs, fns)
+  test(vctrs_compact_rep_test_info_3_6())
 })
 
 test_that("vec_cast-ing to the same type doesn't expand compact reps", {
-  test <- function(xs, fns) {
-    for (i in seq_along(xs)) {
-      x <- xs[[i]]
-      fn <- fns[[i]]
+  test <- function(test_info) {
+    for (info in test_info) {
+      x <- info$x
+      ctor <- info$ctor
 
-      x <- fn(x, 1)
+      x <- ctor(x, 1)
 
       vec_cast(x, x)
 
@@ -92,31 +59,16 @@ test_that("vec_cast-ing to the same type doesn't expand compact reps", {
     }
   }
 
-  xs <- list(1L, 1, "1")
-
-  fns <- list(
-    new_vctrs_compact_rep_int,
-    new_vctrs_compact_rep_dbl,
-    new_vctrs_compact_rep_chr
-  )
-
-  test(xs, fns)
+  test(vctrs_compact_rep_test_info())
 
   skip_if_no_altrep_3_6()
-
-  xs <- list(TRUE)
-
-  fns <- list(
-    new_vctrs_compact_rep_lgl
-  )
-
-  test(xs, fns)
+  test(vctrs_compact_rep_test_info_3_6())
 })
 
 test_that("vec_recycle() generates compact rep objects", {
-  test <- function(xs) {
-    for (i in seq_along(xs)) {
-      x <- xs[[i]]
+  test <- function(test_info) {
+    for (info in test_info) {
+      x <- info$x
 
       x <- vec_recycle(x, 2)
 
@@ -124,21 +76,16 @@ test_that("vec_recycle() generates compact rep objects", {
     }
   }
 
-  xs <- list(1L, 1, "1")
-
-  test(xs)
+  test(vctrs_compact_rep_test_info())
 
   skip_if_no_altrep_3_6()
-
-  xs <- list(TRUE)
-
-  test(xs)
+  test(vctrs_compact_rep_test_info_3_6())
 })
 
 test_that("vec_init() generates compact rep objects", {
-  test <- function(xs) {
-    for (i in seq_along(xs)) {
-      x <- xs[[i]]
+  test <- function(test_info) {
+    for (info in test_info) {
+      x <- info$x
 
       x <- vec_init(x, 2)
 
@@ -146,58 +93,47 @@ test_that("vec_init() generates compact rep objects", {
     }
   }
 
-  xs <- list(1L, 1, "1")
-
-  test(xs)
+  test(vctrs_compact_rep_test_info())
 
   skip_if_no_altrep_3_6()
-
-  xs <- list(TRUE)
-
-  test(xs)
+  test(vctrs_compact_rep_test_info_3_6())
 })
 
 test_that("recycling or initializing classed objects or objects with attributes does not create compact reps", {
-  test <- function(xs) {
-    for (i in seq_along(xs)) {
-      x <- xs[[i]]
+  test <- function(test_info) {
+    for (info in test_info) {
+      x <- info$x
 
-      x_recycle <- vec_recycle(x, 2)
-      x_init <- vec_init(x, 2)
+      x_classed <- foobar(x)
+      x_attrs <- structure(x, foo = "bar")
 
-      expect_false(vec_is_vctrs_compact_rep(x_recycle))
-      expect_false(vec_is_vctrs_compact_rep(x_init))
+      x_classed_recycle <- vec_recycle(x_classed, 2)
+      x_attrs_recycle <- vec_recycle(x_attrs, 2)
+
+      expect_false(vec_is_vctrs_compact_rep(x_classed_recycle))
+      expect_false(vec_is_vctrs_compact_rep(x_attrs_recycle))
+
+      x_classed_init <- vec_init(x_classed, 2)
+      x_attrs_init <- vec_init(x_attrs, 2)
+
+      expect_false(vec_is_vctrs_compact_rep(x_classed_init))
+      expect_false(vec_is_vctrs_compact_rep(x_attrs_init))
     }
   }
 
-  xs <- list(
-    foobar(1L),
-    foobar(1),
-    foobar("1"),
-    structure(1L, foo = "bar"),
-    structure(1, foo = "bar"),
-    structure("1", foo = "bar")
-  )
-
-  test(xs)
+  test(vctrs_compact_rep_test_info())
 
   skip_if_no_altrep_3_6()
-
-  xs <- list(
-    foobar(TRUE),
-    structure(TRUE, foo = "bar")
-  )
-
-  test(xs)
+  test(vctrs_compact_rep_test_info_3_6())
 })
 
 test_that("subsetting with `[` works with integers and doubles (through Extract_Subset)", {
-  test <- function(xs, fns) {
-    for (i in seq_along(xs)) {
-      x <- xs[[i]]
-      fn <- fns[[i]]
+  test <- function(test_info) {
+    for (info in test_info) {
+      x <- info$x
+      ctor <- info$ctor
 
-      rep <- fn(x, 2)
+      rep <- ctor(x, 2)
 
       expect_identical(rep[1L], x)
       expect_identical(rep[1:2], c(x, x))
@@ -207,127 +143,67 @@ test_that("subsetting with `[` works with integers and doubles (through Extract_
     }
   }
 
-  xs <- list(1L, 1, "1")
-
-  fns <- list(
-    new_vctrs_compact_rep_int,
-    new_vctrs_compact_rep_dbl,
-    new_vctrs_compact_rep_chr
-  )
-
-  test(xs, fns)
+  test(vctrs_compact_rep_test_info())
 
   skip_if_no_altrep_3_6()
-
-  xs <- list(TRUE)
-
-  fns <- list(
-    new_vctrs_compact_rep_lgl
-  )
-
-  test(xs, fns)
+  test(vctrs_compact_rep_test_info_3_6())
 })
 
 test_that("subsetting with `[` is lenient with fractional doubles", {
-  test <- function(xs, fns) {
-    for (i in seq_along(xs)) {
-      x <- xs[[i]]
-      fn <- fns[[i]]
+  test <- function(test_info) {
+    for (info in test_info) {
+      x <- info$x
+      ctor <- info$ctor
 
-      rep <- fn(x, 2)
+      rep <- ctor(x, 2)
 
       expect_identical(rep[1.5], x)
       expect_identical(rep[c(1.9, 2.1)], c(x, x))
     }
   }
 
-  xs <- list(1L, 1, "1")
-
-  fns <- list(
-    new_vctrs_compact_rep_int,
-    new_vctrs_compact_rep_dbl,
-    new_vctrs_compact_rep_chr
-  )
-
-  test(xs, fns)
+  test(vctrs_compact_rep_test_info())
 
   skip_if_no_altrep_3_6()
-
-  xs <- list(TRUE)
-
-  fns <- list(
-    new_vctrs_compact_rep_lgl
-  )
-
-  test(xs, fns)
+  test(vctrs_compact_rep_test_info_3_6())
 })
 
 test_that("subsetting with `[` extends OOB indices with `NA`", {
-  test <- function(xs, fns) {
-    for (i in seq_along(xs)) {
-      x <- xs[[i]]
-      fn <- fns[[i]]
+  test <- function(test_info) {
+    for (info in test_info) {
+      x <- info$x
+      ctor <- info$ctor
 
-      rep <- fn(x, 2)
+      rep <- ctor(x, 2)
 
       expect_identical(rep[c(3, 1, 4)], c(NA, x, NA))
     }
   }
 
-  xs <- list(1L, 1, "1")
-
-  fns <- list(
-    new_vctrs_compact_rep_int,
-    new_vctrs_compact_rep_dbl,
-    new_vctrs_compact_rep_chr
-  )
-
-  test(xs, fns)
+  test(vctrs_compact_rep_test_info())
 
   skip_if_no_altrep_3_6()
-
-  xs <- list(TRUE)
-
-  fns <- list(
-    new_vctrs_compact_rep_lgl
-  )
-
-  test(xs, fns)
+  test(vctrs_compact_rep_test_info_3_6())
 })
 
 test_that("subsetting with `[` and long vectors is allowed", {
-  test <- function(xs, fns) {
-    for (i in seq_along(xs)) {
-      x <- xs[[i]]
-      fn <- fns[[i]]
+  test <- function(test_info) {
+    for (info in test_info) {
+      x <- info$x
+      ctor <- info$ctor
 
       size <- .Machine$integer.max + 1
 
-      rep <- fn(x, size)
+      rep <- ctor(x, size)
 
       expect_identical(rep[c(size, size + 1)], c(x, NA))
     }
   }
 
-  xs <- list(1L, 1, "1")
-
-  fns <- list(
-    new_vctrs_compact_rep_int,
-    new_vctrs_compact_rep_dbl,
-    new_vctrs_compact_rep_chr
-  )
-
-  test(xs, fns)
+  test(vctrs_compact_rep_test_info())
 
   skip_if_no_altrep_3_6()
-
-  xs <- list(TRUE)
-
-  fns <- list(
-    new_vctrs_compact_rep_lgl
-  )
-
-  test(xs, fns)
+  test(vctrs_compact_rep_test_info_3_6())
 })
 
 # ------------------------------------------------------------------------------
@@ -355,6 +231,12 @@ test_that("`is_unspecified()` does not expand ALTREP compact rep lgls", {
 
 # ------------------------------------------------------------------------------
 context("test-altrep-rep-dbl")
+
+test_that("No_NA method works with NaN", {
+  x <- new_vctrs_compact_rep_dbl(NaN, 2)
+  expect_true(anyNA(x))
+  expect_true(vec_is_vctrs_compact_rep_compact(x))
+})
 
 # ------------------------------------------------------------------------------
 context("test-altrep-rep-int")
