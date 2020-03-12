@@ -198,6 +198,7 @@ static int vctrs_compact_rep_chr_No_NA(SEXP x) {
 // -----------------------------------------------------------------------------
 
 SEXP vctrs_compact_rep_chr_class_sexp = NULL;
+R_altrep_class_t vctrs_compact_rep_chr_class;
 
 void vctrs_init_vctrs_compact_rep_chr(DllInfo* dll) {
   vctrs_compact_rep_chr_class = R_make_altstring_class("vctrs_compact_rep_chr", "vctrs", dll);

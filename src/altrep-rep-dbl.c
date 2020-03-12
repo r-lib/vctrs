@@ -191,6 +191,7 @@ static R_xlen_t vctrs_compact_rep_dbl_Get_region(SEXP x, R_xlen_t i, R_xlen_t n,
 // -----------------------------------------------------------------------------
 
 SEXP vctrs_compact_rep_dbl_class_sexp = NULL;
+R_altrep_class_t vctrs_compact_rep_dbl_class;
 
 void vctrs_init_vctrs_compact_rep_dbl(DllInfo* dll) {
   vctrs_compact_rep_dbl_class = R_make_altreal_class("vctrs_compact_rep_dbl", "vctrs", dll);

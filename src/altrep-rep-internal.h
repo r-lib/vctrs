@@ -14,9 +14,9 @@ extern SEXP vctrs_compact_rep_int_class_sexp;
 extern SEXP vctrs_compact_rep_dbl_class_sexp;
 extern SEXP vctrs_compact_rep_chr_class_sexp;
 
-R_altrep_class_t vctrs_compact_rep_int_class;
-R_altrep_class_t vctrs_compact_rep_dbl_class;
-R_altrep_class_t vctrs_compact_rep_chr_class;
+extern R_altrep_class_t vctrs_compact_rep_int_class;
+extern R_altrep_class_t vctrs_compact_rep_dbl_class;
+extern R_altrep_class_t vctrs_compact_rep_chr_class;
 
 void vctrs_init_vctrs_compact_rep_int(DllInfo* dll);
 void vctrs_init_vctrs_compact_rep_dbl(DllInfo* dll);
@@ -29,7 +29,7 @@ void vctrs_init_vctrs_compact_rep_chr(DllInfo* dll);
 
 extern SEXP vctrs_compact_rep_lgl_class_sexp;
 
-R_altrep_class_t vctrs_compact_rep_lgl_class;
+extern R_altrep_class_t vctrs_compact_rep_lgl_class;
 
 void vctrs_init_vctrs_compact_rep_lgl(DllInfo* dll);
 
