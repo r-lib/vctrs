@@ -22,6 +22,13 @@
   return out;                                                                                          \
 }
 
+#define VCTRS_NEW_VCTRS_COMPACT_REP(VALUE, SIZE, CTYPE, CONST_DEREF, VEC) { \
+  const CTYPE value_ = CONST_DEREF(VALUE)[0];                               \
+  R_xlen_t size_ = (R_xlen_t) REAL_RO(SIZE)[0];                             \
+                                                                            \
+  return new_vctrs_compact_rep_##VEC(value_, size_);                        \
+}
+
 // -----------------------------------------------------------------------------
 
 #endif

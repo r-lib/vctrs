@@ -36,10 +36,7 @@ SEXP new_vctrs_compact_rep_int(int value, R_xlen_t size) {
 
 // [[ register() ]]
 SEXP vctrs_new_vctrs_compact_rep_int(SEXP value, SEXP size) {
-  int value_ = INTEGER(value)[0];
-  R_xlen_t size_ = (R_xlen_t) REAL(size)[0];
-
-  return new_vctrs_compact_rep_int(value_, size_);
+  VCTRS_NEW_VCTRS_COMPACT_REP(value, size, int, INTEGER_RO, int);
 }
 
 // -----------------------------------------------------------------------------
