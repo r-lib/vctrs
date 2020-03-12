@@ -42,50 +42,6 @@ test_that("vec_ptype_abbr.rando", {
   expect_equal(vec_ptype_full(as_rando(1:10)), "rando")
 })
 
-test_that("can sort rando", {
-  x <- as_rando(c(-1, -3, -2, 1))
-  expect_silent(vec_order(x))
-})
-
-test_that("can slice rando objects of all dimensions", {
-  x <- as_rando(1:8)
-  expect <- as_rando(c(1, 3))
-  expect_identical(vec_slice(x, c(1, 3)), expect)
-})
-
-test_that("can slice rando objects with `NA_integer_`", {
-  idx <- c(NA_integer_, 1)
-
-  x <- as_rando(1:8)
-  expect <- as_rando(c(NA, 1))
-  expect_identical(vec_slice(x, idx), expect)
-})
-
-test_that("can init rando objects", {
-  idx <- c(NA_integer_, NA_integer_)
-
-  x <- as_rando(1:8)
-  expect_identical(vec_init(x, 2), vec_slice(x, idx))
-
-  dim(x) <- c(4, 2)
-  expect_identical(vec_init(x, 2), vec_slice(x, idx))
-
-  dim(x) <- c(2, 2, 2)
-  expect_identical(vec_init(x, 2), vec_slice(x, idx))
-})
-
-test_that("can chop rando objects with `NA_integer_` indices", {
-  idx <- list(NA_integer_, 1)
-
-  x <- as_rando(1:8)
-  expect <- list(
-    as_rando(NA),
-    as_rando(1)
-  )
-
-  expect_identical(vec_chop(x, idx), expect)
-})
-
 test_that("proxy and data", {
   x <- rando(10)
 
