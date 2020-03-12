@@ -39,14 +39,14 @@ test_that("vec_ptype2 for integer64 works", {
   expect_equal(vec_ptype2(unspecified(), x), bit64::integer64())
   expect_equal(vec_ptype2(x, unspecified()), bit64::integer64())
 
-  expect_error(vec_ptype2(x, 1))
-  expect_error(vec_ptype2(1, x))
+  expect_error(vec_ptype2(x, 1), class = "vctrs_error_incompatible_type")
+  expect_error(vec_ptype2(1, x), class = "vctrs_error_incompatible_type")
 
-  expect_error(vec_ptype2(x, ""))
-  expect_error(vec_ptype2("", x))
+  expect_error(vec_ptype2(x, ""), class = "vctrs_error_incompatible_type")
+  expect_error(vec_ptype2("", x), class = "vctrs_error_incompatible_type")
 
-  expect_error(vec_ptype2(data.frame(), x))
-  expect_error(vec_ptype2(x, data.frame()))
+  expect_error(vec_ptype2(data.frame(), x), class = "vctrs_error_incompatible_type")
+  expect_error(vec_ptype2(x, data.frame()), class = "vctrs_error_incompatible_type")
 })
 
 test_that("vec_ptype_abbr.integer64", {

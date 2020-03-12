@@ -27,14 +27,14 @@ test_that("vec_ptype2 for rando works", {
   expect_equal(vec_ptype2(unspecified(), x), rando())
   expect_equal(vec_ptype2(x, unspecified()), rando())
 
-  expect_error(vec_ptype2(x, 1))
-  expect_error(vec_ptype2(1, x))
+  expect_error(vec_ptype2(x, 1), class = "vctrs_error_incompatible_type")
+  expect_error(vec_ptype2(1, x), class = "vctrs_error_incompatible_type")
 
-  expect_error(vec_ptype2(x, ""))
-  expect_error(vec_ptype2("", x))
+  expect_error(vec_ptype2(x, ""), class = "vctrs_error_incompatible_type")
+  expect_error(vec_ptype2("", x), class = "vctrs_error_incompatible_type")
 
-  expect_error(vec_ptype2(data.frame(), x))
-  expect_error(vec_ptype2(x, data.frame()))
+  expect_error(vec_ptype2(data.frame(), x), class = "vctrs_error_incompatible_type")
+  expect_error(vec_ptype2(x, data.frame()), class = "vctrs_error_incompatible_type")
 })
 
 test_that("vec_ptype_abbr.rando", {
