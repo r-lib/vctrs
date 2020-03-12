@@ -89,7 +89,7 @@ vec_cast.table.table <- function(x, to, ..., x_arg = "x", to_arg = "to") {
 
 new_table <- function(x = integer(), dim = 0L) {
   # `table()` doesn't support long vectors, even though `tabulate()` does
-  if (!is.integer(x)) {
+  if (!is_integer(x)) {
     abort("`x` must be an integer vector.")
   }
 
