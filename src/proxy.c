@@ -58,8 +58,9 @@ static SEXP vec_proxy_unwrap(SEXP x) {
 
 // [[ register() ]]
 SEXP vctrs_unset_s4(SEXP x) {
-  UNSET_S4_OBJECT(x);
-  return(x);
+  x = r_maybe_duplicate(x);
+  r_unmark_s4(x);
+  return x;
 }
 
 SEXP vec_proxy_equal_dispatch(SEXP x) {

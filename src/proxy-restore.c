@@ -88,7 +88,7 @@ SEXP vec_restore_default(SEXP x, SEXP to) {
   }
 
   if (IS_S4_OBJECT(to)) {
-    SET_S4_OBJECT(x);
+    r_mark_s4(x);
   }
 
   UNPROTECT(n_protect);
