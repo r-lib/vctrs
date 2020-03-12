@@ -187,6 +187,8 @@ test_that("subsetting with `[` extends OOB indices with `NA`", {
 })
 
 test_that("subsetting with `[` and long vectors is allowed", {
+  skip_on_32_bit()
+
   test <- function(test_info) {
     for (info in test_info) {
       x <- info$x

@@ -38,6 +38,14 @@ skip_if_no_altrep_3_6 <- function() {
   skip_if(getRversion() < "3.6.0", "Testing these ALTREP features requires R 3.6+")
 }
 
+skip_on_32_bit <- function() {
+  if (.Machine$sizeof.pointer == 4L) {
+    skip("On 32-bit arch")
+  } else {
+    invisible(TRUE)
+  }
+}
+
 vctrs_compact_rep_test_info <- function() {
   list(
     list(x = 1L,  na = NA_integer_,   ctor = new_vctrs_compact_rep_int),
