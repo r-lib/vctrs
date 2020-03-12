@@ -47,7 +47,7 @@ SEXP new_vctrs_compact_rep_chr(SEXP value, R_xlen_t size) {
 // [[ register() ]]
 SEXP vctrs_new_vctrs_compact_rep_chr(SEXP value, SEXP size) {
   SEXP value_ = STRING_PTR(value)[0];
-  R_xlen_t size_ = REAL(size)[0];
+  R_xlen_t size_ = (R_xlen_t) REAL(size)[0];
 
   return new_vctrs_compact_rep_chr(value_, size_);
 }

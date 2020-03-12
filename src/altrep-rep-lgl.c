@@ -57,7 +57,7 @@ SEXP new_vctrs_compact_rep_lgl(int value, R_xlen_t size) {
 // [[ register() ]]
 SEXP vctrs_new_vctrs_compact_rep_lgl(SEXP value, SEXP size) {
   int value_ = LOGICAL(value)[0];
-  R_xlen_t size_ = REAL(size)[0];
+  R_xlen_t size_ = (R_xlen_t) REAL(size)[0];
 
   return new_vctrs_compact_rep_lgl(value_, size_);
 }
