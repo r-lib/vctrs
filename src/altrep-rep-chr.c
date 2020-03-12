@@ -138,6 +138,20 @@ static const void* vctrs_compact_rep_chr_Dataptr_or_null(SEXP x) {
   }
 }
 
+#define COMPACT_REP_CHR_EXTRACT_SUBSET_LOOP(CTYPE, CONST_DEREF, LOC_IS_FINITE) do { \
+  const CTYPE* p_indx = CONST_DEREF(indx);                                          \
+                                                                                    \
+  for (R_xlen_t i = 0; i < out_size; ++i) {                                         \
+    const CTYPE loc = p_indx[i];                                                    \
+                                                                                    \
+    if (LOC_IS_FINITE && 0 < loc && loc <= size) {                                  \
+      p_out[i] = value;                                                             \
+    } else {                                                                        \
+      p_out[i] = NA_STRING;                                                         \
+    }                                                                               \
+  }                                                                                 \
+} while(0)
+
 static SEXP vctrs_compact_rep_chr_Extract_subset(SEXP x, SEXP indx, SEXP call) {
   const SEXP info = VCTRS_COMPACT_REP_INFO(x);
   const SEXP value = VCTRS_COMPACT_REP_CHR_VALUE(info);
@@ -148,22 +162,16 @@ static SEXP vctrs_compact_rep_chr_Extract_subset(SEXP x, SEXP indx, SEXP call) {
   SEXP out = PROTECT(Rf_allocVector(STRSXP, out_size));
   SEXP* p_out = STRING_PTR(out);
 
-  // indx is 1-based
-  const int* p_indx = INTEGER_RO(indx);
-
-  for (R_xlen_t i = 0; i < out_size; ++i) {
-    const int loc = p_indx[i];
-
-    if (0 < loc && loc <= size) {
-      p_out[i] = value;
-    } else {
-      p_out[i] = NA_STRING;
-    }
+  switch (TYPEOF(indx)) {
+  case INTSXP: COMPACT_REP_CHR_EXTRACT_SUBSET_LOOP(int, INTEGER_RO, true); break;
+  case REALSXP: COMPACT_REP_CHR_EXTRACT_SUBSET_LOOP(double, REAL_RO, R_FINITE(loc)); break;
   }
 
   UNPROTECT(1);
   return out;
 }
+
+#undef COMPACT_REP_CHR_EXTRACT_SUBSET_LOOP
 
 // I believe we should expect that *_ELT() methods will never contain
 // an `NA` index. I assumed this from how ExtractSubset() works and from

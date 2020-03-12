@@ -191,6 +191,110 @@ test_that("recycling or initializing classed objects or objects with attributes 
   test(xs)
 })
 
+test_that("subsetting with `[` works with integers and doubles (through Extract_Subset)", {
+  test <- function(xs, fns) {
+    for (i in seq_along(xs)) {
+      x <- xs[[i]]
+      fn <- fns[[i]]
+
+      rep <- fn(x, 2)
+
+      expect_identical(rep[1L], x)
+      expect_identical(rep[1:2], c(x, x))
+
+      expect_identical(rep[1], x)
+      expect_identical(rep[c(1, 2)], c(x, x))
+    }
+  }
+
+  xs <- list(1L, 1, "1")
+
+  fns <- list(
+    new_vctrs_compact_rep_int,
+    new_vctrs_compact_rep_dbl,
+    new_vctrs_compact_rep_chr
+  )
+
+  test(xs, fns)
+
+  skip_if_no_altrep_3_6()
+
+  xs <- list(TRUE)
+
+  fns <- list(
+    new_vctrs_compact_rep_lgl
+  )
+
+  test(xs, fns)
+})
+
+test_that("subsetting with `[` is lenient with fractional doubles", {
+  test <- function(xs, fns) {
+    for (i in seq_along(xs)) {
+      x <- xs[[i]]
+      fn <- fns[[i]]
+
+      rep <- fn(x, 2)
+
+      expect_identical(rep[1.5], x)
+      expect_identical(rep[c(1.9, 2.1)], c(x, x))
+    }
+  }
+
+  xs <- list(1L, 1, "1")
+
+  fns <- list(
+    new_vctrs_compact_rep_int,
+    new_vctrs_compact_rep_dbl,
+    new_vctrs_compact_rep_chr
+  )
+
+  test(xs, fns)
+
+  skip_if_no_altrep_3_6()
+
+  xs <- list(TRUE)
+
+  fns <- list(
+    new_vctrs_compact_rep_lgl
+  )
+
+  test(xs, fns)
+})
+
+test_that("subsetting with `[` extends OOB indices with `NA`", {
+  test <- function(xs, fns) {
+    for (i in seq_along(xs)) {
+      x <- xs[[i]]
+      fn <- fns[[i]]
+
+      rep <- fn(x, 2)
+
+      expect_identical(rep[c(3, 1, 4)], c(NA, x, NA))
+    }
+  }
+
+  xs <- list(1L, 1, "1")
+
+  fns <- list(
+    new_vctrs_compact_rep_int,
+    new_vctrs_compact_rep_dbl,
+    new_vctrs_compact_rep_chr
+  )
+
+  test(xs, fns)
+
+  skip_if_no_altrep_3_6()
+
+  xs <- list(TRUE)
+
+  fns <- list(
+    new_vctrs_compact_rep_lgl
+  )
+
+  test(xs, fns)
+})
+
 # ------------------------------------------------------------------------------
 context("test-altrep-rep-chr")
 
