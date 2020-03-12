@@ -435,37 +435,111 @@ cnd_body.vctrs_error_recycle_incompatible_size <- function(cnd, ...) {
 
 # Names -------------------------------------------------------------------
 
-stop_names <- function(message, class, locations, ...) {
+stop_names <- function(class = NULL, ...) {
   stop_vctrs(
-    message,
     class = c(class, "vctrs_error_names"),
-    locations = locations,
     ...
   )
 }
 
-stop_names_cannot_be_empty <- function(locations) {
+stop_names_cannot_be_empty <- function(names) {
   stop_names(
-    "Names must not be empty.",
     class = "vctrs_error_names_cannot_be_empty",
-    locations = locations
+    names = names
   )
 }
 
-stop_names_cannot_be_dot_dot <- function(locations) {
+#' @export
+cnd_header.vctrs_error_names_cannot_be_empty <- function(cnd, ...) {
+  "Names can't be empty."
+}
+
+#' @export
+cnd_body.vctrs_error_names_cannot_be_empty <- function(cnd, ...) {
+  locations <- detect_empty_names(cnd$names)
+
+  if (length(locations) == 1) {
+    bullet <- glue::glue("Empty name found at location {locations}.")
+  } else {
+    bullet <- glue::glue("Empty names found at locations {ensure_full_stop(enumerate(locations))}")
+  }
+
+  bullet <- c(x = bullet)
+  format_error_bullets(bullet)
+}
+
+stop_names_cannot_be_dot_dot <- function(names) {
   stop_names(
-    "Names must not be of the form `...` or `..j`.",
     class = "vctrs_error_names_cannot_be_dot_dot",
-    locations = locations
+    names = names
   )
 }
 
-stop_names_must_be_unique <- function(locations) {
+#' @export
+cnd_header.vctrs_error_names_cannot_be_dot_dot <- function(cnd, ...) {
+  "Names can't be of the form `...` or `..j`."
+}
+
+#' @export
+cnd_body.vctrs_error_names_cannot_be_dot_dot <- function(cnd, ...) {
+  names <- cnd$names
+
+  locations <- detect_dot_dot(names)
+  names <- names[locations]
+
+  split <- vec_group_loc(names)
+
+  info <- map2_chr(split$key, split$loc, make_names_loc_bullet)
+
+  header <- "These names are invalid:"
+  header <- c(x = header)
+  header <- format_error_bullets(header)
+
+  message <- bullets(info, header = header)
+  message <- indent(message, 2)
+
+  message
+}
+
+stop_names_must_be_unique <- function(names) {
   stop_names(
-    "Names must be unique.",
     class = "vctrs_error_names_must_be_unique",
-    locations = locations
+    names = names
   )
+}
+
+#' @export
+cnd_header.vctrs_error_names_must_be_unique <- function(cnd, ...) {
+  "Names must be unique."
+}
+
+#' @export
+cnd_body.vctrs_error_names_must_be_unique <- function(cnd, ...) {
+  names <- cnd$names
+
+  dups <- vec_group_loc(names)
+  dup_indicator <- map_lgl(dups$loc, function(x) length(x) != 1L)
+  dups <- vec_slice(dups, dup_indicator)
+
+  header <- "These names are duplicated:"
+  header <- c(x = header)
+  header <- format_error_bullets(header)
+
+  info <- map2_chr(dups$key, dups$loc, make_names_loc_bullet)
+
+  message <- bullets(info, header = header)
+  message <- indent(message, 2)
+
+  message
+}
+
+
+make_names_loc_bullet <- function(x, loc) {
+  if (length(loc) == 1) {
+    glue::glue("{glue::double_quote(x)} at location {loc}.")
+  } else {
+    glue::glue("{glue::double_quote(x)} at locations {ensure_full_stop(enumerate(loc))}")
+  }
 }
 
 enumerate <- function(x, max = 5L, allow_empty = FALSE) {

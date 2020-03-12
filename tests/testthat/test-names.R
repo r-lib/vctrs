@@ -691,28 +691,28 @@ test_that("Name repair works with non-UTF-8 names", {
 
 test_that("names cannot be empty", {
   expect_error_cnd(
-    stop_names_cannot_be_empty(1:3),
+    stop_names_cannot_be_empty(c("", "")),
     class = c("vctrs_error_names_cannot_be_empty", "vctrs_error_names", "vctrs_error"),
-    message = "Names must not be empty.",
-    locations = 1:3
+    message = "Names can't be empty.",
+    names = c("", "")
   )
 })
 
 test_that("names cannot be dot dot", {
   expect_error_cnd(
-    stop_names_cannot_be_dot_dot(1:3),
+    stop_names_cannot_be_dot_dot(c("..1", "..2")),
     class = c("vctrs_error_names_cannot_be_dot_dot", "vctrs_error_names", "vctrs_error"),
-    message = "Names must not be of the form `...` or `..j`.",
-    locations = 1:3
+    message = "Names can't be of the form `...` or `..j`.",
+    names = c("..1", "..2")
   )
 })
 
 test_that("names must be unique", {
   expect_error_cnd(
-    stop_names_must_be_unique(1:3),
+    stop_names_must_be_unique(c("x", "y", "y", "x")),
     class = c("vctrs_error_names_must_be_unique", "vctrs_error_names", "vctrs_error"),
     message = "Names must be unique.",
-    locations = 1:3
+    names = c("x", "y", "y", "x")
   )
 })
 
