@@ -55,8 +55,8 @@ SEXP vctrs_new_vctrs_compact_rep_lgl(SEXP value, SEXP size) {
 
 // -----------------------------------------------------------------------------
 
-#define VCTRS_COMPACT_REP_LGL_VALUE(info) (((struct vctrs_compact_rep_lgl_info*) RAW0(info))->value)
-#define VCTRS_COMPACT_REP_LGL_SIZE(info) (((struct vctrs_compact_rep_lgl_info*) RAW0(info))->size)
+#define VCTRS_COMPACT_REP_LGL_VALUE(info) VCTRS_COMPACT_REP_VALUE(info, lgl)
+#define VCTRS_COMPACT_REP_LGL_SIZE(info) VCTRS_COMPACT_REP_SIZE(info, lgl)
 
 // Materialize the full vector
 static SEXP vctrs_compact_rep_lgl_materialize(SEXP x) {

@@ -30,6 +30,12 @@
 }
 
 // -----------------------------------------------------------------------------
+// value / size accessors
+
+#define VCTRS_COMPACT_REP_VALUE(INFO, VEC) (((struct vctrs_compact_rep_##VEC##_info*) RAW0(INFO))->value)
+#define VCTRS_COMPACT_REP_SIZE(INFO, VEC) (((struct vctrs_compact_rep_##VEC##_info*) RAW0(INFO))->size)
+
+// -----------------------------------------------------------------------------
 
 #endif
 

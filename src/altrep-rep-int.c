@@ -41,8 +41,8 @@ SEXP vctrs_new_vctrs_compact_rep_int(SEXP value, SEXP size) {
 
 // -----------------------------------------------------------------------------
 
-#define VCTRS_COMPACT_REP_INT_VALUE(info) (((struct vctrs_compact_rep_int_info*) RAW0(info))->value)
-#define VCTRS_COMPACT_REP_INT_SIZE(info) (((struct vctrs_compact_rep_int_info*) RAW0(info))->size)
+#define VCTRS_COMPACT_REP_INT_VALUE(info) VCTRS_COMPACT_REP_VALUE(info, int)
+#define VCTRS_COMPACT_REP_INT_SIZE(info) VCTRS_COMPACT_REP_SIZE(info, int)
 
 // Materialize the full vector
 static SEXP vctrs_compact_rep_int_materialize(SEXP x) {
