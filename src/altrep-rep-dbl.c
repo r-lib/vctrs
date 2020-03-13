@@ -155,6 +155,7 @@ static R_xlen_t vctrs_compact_rep_dbl_get_region(SEXP x, R_xlen_t i, R_xlen_t n,
 }
 
 #undef VCTRS_COMPACT_REP_DBL_VALUE
+#undef VCTRS_COMPACT_REP_DBL_VALUE_DATA
 #undef VCTRS_COMPACT_REP_DBL_SIZE
 
 // -----------------------------------------------------------------------------

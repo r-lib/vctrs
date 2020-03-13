@@ -155,6 +155,7 @@ static R_xlen_t vctrs_compact_rep_int_get_region(SEXP x, R_xlen_t i, R_xlen_t n,
 }
 
 #undef VCTRS_COMPACT_REP_INT_VALUE
+#undef VCTRS_COMPACT_REP_INT_VALUE_DATA
 #undef VCTRS_COMPACT_REP_INT_SIZE
 
 // -----------------------------------------------------------------------------

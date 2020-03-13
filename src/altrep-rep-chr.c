@@ -156,6 +156,7 @@ static int vctrs_compact_rep_chr_no_na(SEXP x) {
 // }
 
 #undef VCTRS_COMPACT_REP_CHR_VALUE
+#undef VCTRS_COMPACT_REP_CHR_VALUE_DATA
 #undef VCTRS_COMPACT_REP_CHR_SIZE
 
 // -----------------------------------------------------------------------------
