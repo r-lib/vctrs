@@ -60,7 +60,7 @@ static SEXP vctrs_compact_rep_chr_unserialize(SEXP cls, SEXP state) {
 // TODO: What if `deep = false`? vroom dttm duplicates the altrep object
 // but compact_intseq objects always materialize
 static SEXP vctrs_compact_rep_chr_duplicate(SEXP x, Rboolean deep) {
-  return vctrs_compact_rep_chr_materialize(x);
+  VCTRS_COMPACT_REP_DUPLICATE(x, deep, chr);
 }
 
 // Drop through to standard coercion methods for now.

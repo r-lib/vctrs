@@ -73,6 +73,13 @@
 }
 
 // -----------------------------------------------------------------------------
+// `vctrs_compact_rep_*_duplicate()`
+
+#define VCTRS_COMPACT_REP_DUPLICATE(X, DEEP, VEC) { \
+  return vctrs_compact_rep_##VEC##_materialize(X);  \
+}
+
+// -----------------------------------------------------------------------------
 
 #endif
 

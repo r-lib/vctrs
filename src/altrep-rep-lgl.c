@@ -74,7 +74,7 @@ static SEXP vctrs_compact_rep_lgl_unserialize(SEXP cls, SEXP state) {
 // TODO: What if `deep = false`? vroom dttm duplicates the altrep object
 // but compact_intseq objects always materialize
 static SEXP vctrs_compact_rep_lgl_duplicate(SEXP x, Rboolean deep) {
-  return vctrs_compact_rep_lgl_materialize(x);
+  VCTRS_COMPACT_REP_DUPLICATE(x, deep, lgl);
 }
 
 // Drop through to standard coercion methods for now.
