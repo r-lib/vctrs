@@ -135,6 +135,9 @@ static SEXP dbl_cast_subscript(SEXP subscript,
   for (R_len_t i = 0; i < n; ++i) {
     double elt = p[i];
 
+    // Generally `(int) nan` results in the correct `NA_INTEGER` value,
+    // but this is not guaranteed, so we have to explicitly check for it.
+    // https://stackoverflow.com/questions/10366485/problems-casting-nan-floats-to-int
     if (isnan(elt)) {
       out_p[i] = NA_INTEGER;
       continue;
