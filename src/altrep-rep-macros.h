@@ -118,6 +118,14 @@
 }
 
 // -----------------------------------------------------------------------------
+// `vctrs_compact_rep_*_length()`
+
+#define VCTRS_COMPACT_REP_LENGTH(X, VEC) {     \
+  const SEXP info = VCTRS_COMPACT_REP_INFO(X); \
+  return VCTRS_COMPACT_REP_##VEC##_SIZE(info); \
+}
+
+// -----------------------------------------------------------------------------
 
 #endif
 

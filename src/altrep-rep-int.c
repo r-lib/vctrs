@@ -77,8 +77,7 @@ static Rboolean vctrs_compact_rep_int_inspect(SEXP x,
 }
 
 static R_xlen_t vctrs_compact_rep_int_length(SEXP x) {
-  SEXP info = VCTRS_COMPACT_REP_INFO(x);
-  return VCTRS_COMPACT_REP_INT_SIZE(info);
+  VCTRS_COMPACT_REP_LENGTH(x, INT);
 }
 
 static void* vctrs_compact_rep_int_dataptr(SEXP x, Rboolean writeable) {

@@ -248,6 +248,47 @@ test_that("can construct size 0 compact reps", {
   test(vctrs_compact_rep_test_info_3_6())
 })
 
+test_that("can get the length of compact reps", {
+  test <- function(test_info) {
+    for (info in test_info) {
+      x <- info$x
+      ctor <- info$ctor
+
+      rep <- ctor(x, 5L)
+
+      expect_identical(length(rep), 5L)
+      expect_true(vec_is_vctrs_compact_rep_compact(rep))
+    }
+  }
+
+  test(vctrs_compact_rep_test_info())
+
+  skip_if_no_altrep_3_6()
+  test(vctrs_compact_rep_test_info_3_6())
+})
+
+test_that("can get the length of a long vector compact rep", {
+  skip_on_32_bit()
+
+  test <- function(test_info) {
+    for (info in test_info) {
+      x <- info$x
+      ctor <- info$ctor
+
+      rep <- ctor(x, .Machine$integer.max + 1)
+
+      # Length is a double here!
+      expect_identical(length(rep), .Machine$integer.max + 1)
+      expect_true(vec_is_vctrs_compact_rep_compact(rep))
+    }
+  }
+
+  test(vctrs_compact_rep_test_info())
+
+  skip_if_no_altrep_3_6()
+  test(vctrs_compact_rep_test_info_3_6())
+})
+
 # ------------------------------------------------------------------------------
 context("test-altrep-rep-chr")
 

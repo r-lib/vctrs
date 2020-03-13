@@ -91,8 +91,7 @@ static Rboolean vctrs_compact_rep_lgl_inspect(SEXP x,
 }
 
 static R_xlen_t vctrs_compact_rep_lgl_length(SEXP x) {
-  SEXP info = VCTRS_COMPACT_REP_INFO(x);
-  return VCTRS_COMPACT_REP_LGL_SIZE(info);
+  VCTRS_COMPACT_REP_LENGTH(x, LGL);
 }
 
 static void* vctrs_compact_rep_lgl_dataptr(SEXP x, Rboolean writeable) {
