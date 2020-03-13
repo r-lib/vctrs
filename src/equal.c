@@ -342,17 +342,17 @@ bool equal_names(SEXP x, SEXP y) {
 
 // -----------------------------------------------------------------------------
 
-static struct df_short_circuit_info* vec_equal_col(int* p_out,
-                                                   SEXP x,
-                                                   SEXP y,
-                                                   bool na_equal,
-                                                   struct df_short_circuit_info* p_info);
+static void vec_equal_col(int* p_out,
+                          SEXP x,
+                          SEXP y,
+                          bool na_equal,
+                          struct df_short_circuit_info* p_info);
 
-static struct df_short_circuit_info* df_equal_impl(int* p_out,
-                                                   SEXP x,
-                                                   SEXP y,
-                                                   bool na_equal,
-                                                   struct df_short_circuit_info* p_info) {
+static void df_equal_impl(int* p_out,
+                          SEXP x,
+                          SEXP y,
+                          bool na_equal,
+                          struct df_short_circuit_info* p_info) {
   int n_col = Rf_length(x);
 
   if (n_col != Rf_length(y)) {
@@ -363,15 +363,13 @@ static struct df_short_circuit_info* df_equal_impl(int* p_out,
     SEXP x_col = VECTOR_ELT(x, i);
     SEXP y_col = VECTOR_ELT(y, i);
 
-    p_info = vec_equal_col(p_out, x_col, y_col, na_equal, p_info);
+    vec_equal_col(p_out, x_col, y_col, na_equal, p_info);
 
     // If we know all comparison values, break
     if (p_info->remaining == 0) {
       break;
     }
   }
-
-  return p_info;
 }
 
 static SEXP df_equal(SEXP x, SEXP y, bool na_equal, R_len_t size) {
@@ -390,7 +388,7 @@ static SEXP df_equal(SEXP x, SEXP y, bool na_equal, R_len_t size) {
   struct df_short_circuit_info* p_info = &info;
   PROTECT_DF_SHORT_CIRCUIT_INFO(p_info, &nprot);
 
-  p_info = df_equal_impl(p_out, x, y, na_equal, p_info);
+  df_equal_impl(p_out, x, y, na_equal, p_info);
 
   UNPROTECT(nprot);
   return out;
@@ -420,8 +418,6 @@ do {                                                                 \
       }                                                              \
     }                                                                \
   }                                                                  \
-                                                                     \
-  return p_info;                                                     \
 }                                                                    \
 while (0)
 
@@ -444,25 +440,23 @@ do {                                                   \
       }                                                \
     }                                                  \
   }                                                    \
-                                                       \
-  return p_info;                                       \
 }                                                      \
 while (0)
 
-static struct df_short_circuit_info* vec_equal_col(int* p_out,
-                                                   SEXP x,
-                                                   SEXP y,
-                                                   bool na_equal,
-                                                   struct df_short_circuit_info* p_info) {
+static void vec_equal_col(int* p_out,
+                          SEXP x,
+                          SEXP y,
+                          bool na_equal,
+                          struct df_short_circuit_info* p_info) {
   switch (vec_proxy_typeof(x)) {
-  case vctrs_type_logical:   EQUAL_COL(int, LOGICAL_RO, lgl_equal_scalar);
-  case vctrs_type_integer:   EQUAL_COL(int, INTEGER_RO, int_equal_scalar);
-  case vctrs_type_double:    EQUAL_COL(double, REAL_RO, dbl_equal_scalar);
-  case vctrs_type_raw:       EQUAL_COL(Rbyte, RAW_RO, raw_equal_scalar);
-  case vctrs_type_complex:   EQUAL_COL(Rcomplex, COMPLEX_RO, cpl_equal_scalar);
-  case vctrs_type_character: EQUAL_COL(SEXP, STRING_PTR_RO, chr_equal_scalar);
-  case vctrs_type_list:      EQUAL_COL_BARRIER(list_equal_scalar);
-  case vctrs_type_dataframe: return df_equal_impl(p_out, x, y, na_equal, p_info);
+  case vctrs_type_logical:   EQUAL_COL(int, LOGICAL_RO, lgl_equal_scalar); break;
+  case vctrs_type_integer:   EQUAL_COL(int, INTEGER_RO, int_equal_scalar); break;
+  case vctrs_type_double:    EQUAL_COL(double, REAL_RO, dbl_equal_scalar); break;
+  case vctrs_type_raw:       EQUAL_COL(Rbyte, RAW_RO, raw_equal_scalar); break;
+  case vctrs_type_complex:   EQUAL_COL(Rcomplex, COMPLEX_RO, cpl_equal_scalar); break;
+  case vctrs_type_character: EQUAL_COL(SEXP, STRING_PTR_RO, chr_equal_scalar); break;
+  case vctrs_type_list:      EQUAL_COL_BARRIER(list_equal_scalar); break;
+  case vctrs_type_dataframe: df_equal_impl(p_out, x, y, na_equal, p_info); break;
   case vctrs_type_scalar:    Rf_errorcall(R_NilValue, "Can't compare scalars with `vctrs_equal()`");
   default:                   Rf_error("Unimplemented type in `vctrs_equal()`");
   }
@@ -611,27 +605,25 @@ static inline int df_equal_na_scalar(SEXP x, R_len_t i) {
 
 // -----------------------------------------------------------------------------
 
-static struct df_short_circuit_info* vec_equal_na_col(int* p_out,
-                                                      SEXP x,
-                                                      struct df_short_circuit_info* p_info);
+static void vec_equal_na_col(int* p_out,
+                             SEXP x,
+                             struct df_short_circuit_info* p_info);
 
-static struct df_short_circuit_info* df_equal_na_impl(int* p_out,
-                                                      SEXP x,
-                                                      struct df_short_circuit_info* p_info) {
+static void df_equal_na_impl(int* p_out,
+                             SEXP x,
+                             struct df_short_circuit_info* p_info) {
   int n_col = Rf_length(x);
 
   for (R_len_t i = 0; i < n_col; ++i) {
     SEXP col = VECTOR_ELT(x, i);
 
-    p_info = vec_equal_na_col(p_out, col, p_info);
+    vec_equal_na_col(p_out, col, p_info);
 
     // If all rows have at least one non-missing value, break
     if (p_info->remaining == 0) {
       break;
     }
   }
-
-  return p_info;
 }
 
 static SEXP df_equal_na(SEXP x, R_len_t size) {
@@ -650,7 +642,7 @@ static SEXP df_equal_na(SEXP x, R_len_t size) {
   struct df_short_circuit_info* p_info = &info;
   PROTECT_DF_SHORT_CIRCUIT_INFO(p_info, &nprot);
 
-  p_info = df_equal_na_impl(p_out, x, p_info);
+  df_equal_na_impl(p_out, x, p_info);
 
   UNPROTECT(nprot);
   return out;
@@ -677,8 +669,6 @@ do {                                                      \
       }                                                   \
     }                                                     \
   }                                                       \
-                                                          \
-  return p_info;                                          \
 }                                                         \
 while (0)
 
@@ -699,23 +689,21 @@ do {                                           \
       }                                        \
     }                                          \
   }                                            \
-                                               \
-  return p_info;                               \
 }                                              \
 while (0)
 
-static struct df_short_circuit_info* vec_equal_na_col(int* p_out,
-                                                      SEXP x,
-                                                      struct df_short_circuit_info* p_info) {
+static void vec_equal_na_col(int* p_out,
+                             SEXP x,
+                             struct df_short_circuit_info* p_info) {
   switch (vec_proxy_typeof(x)) {
-  case vctrs_type_logical:   EQUAL_NA_COL(int, LOGICAL_RO, lgl_equal_na_scalar);
-  case vctrs_type_integer:   EQUAL_NA_COL(int, INTEGER_RO, int_equal_na_scalar);
-  case vctrs_type_double:    EQUAL_NA_COL(double, REAL_RO, dbl_equal_na_scalar);
-  case vctrs_type_complex:   EQUAL_NA_COL(Rcomplex, COMPLEX_RO, cpl_equal_na_scalar);
-  case vctrs_type_raw:       EQUAL_NA_COL(Rbyte, RAW_RO, raw_equal_na_scalar);
-  case vctrs_type_character: EQUAL_NA_COL(SEXP, STRING_PTR_RO, chr_equal_na_scalar);
-  case vctrs_type_list:      EQUAL_NA_COL_BARRIER(list_equal_na_scalar);
-  case vctrs_type_dataframe: return df_equal_na_impl(p_out, x, p_info);
+  case vctrs_type_logical:   EQUAL_NA_COL(int, LOGICAL_RO, lgl_equal_na_scalar); break;
+  case vctrs_type_integer:   EQUAL_NA_COL(int, INTEGER_RO, int_equal_na_scalar); break;
+  case vctrs_type_double:    EQUAL_NA_COL(double, REAL_RO, dbl_equal_na_scalar); break;
+  case vctrs_type_complex:   EQUAL_NA_COL(Rcomplex, COMPLEX_RO, cpl_equal_na_scalar); break;
+  case vctrs_type_raw:       EQUAL_NA_COL(Rbyte, RAW_RO, raw_equal_na_scalar); break;
+  case vctrs_type_character: EQUAL_NA_COL(SEXP, STRING_PTR_RO, chr_equal_na_scalar); break;
+  case vctrs_type_list:      EQUAL_NA_COL_BARRIER(list_equal_na_scalar); break;
+  case vctrs_type_dataframe: df_equal_na_impl(p_out, x, p_info); break;
   case vctrs_type_scalar:    Rf_errorcall(R_NilValue, "Can't compare scalars with `vec_equal_na()`");
   default:                   Rf_error("Unimplemented type in `vec_equal_na()`");
   }
