@@ -138,6 +138,17 @@
 }
 
 // -----------------------------------------------------------------------------
+// `vctrs_compact_rep_*_dataptr_or_null()`
+
+#define VCTRS_COMPACT_REP_DATAPTR_OR_NULL(X, VEC) {     \
+  if (VCTRS_COMPACT_REP_IS_COMPACT(X)) {                \
+    return NULL;                                        \
+  } else {                                              \
+    return vctrs_compact_rep_##VEC##_dataptr(X, FALSE); \
+  }                                                     \
+}
+
+// -----------------------------------------------------------------------------
 
 #endif
 

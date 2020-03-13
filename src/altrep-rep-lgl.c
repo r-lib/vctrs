@@ -99,11 +99,7 @@ static void* vctrs_compact_rep_lgl_dataptr(SEXP x, Rboolean writeable) {
 }
 
 static const void* vctrs_compact_rep_lgl_dataptr_or_null(SEXP x) {
-  if (VCTRS_COMPACT_REP_IS_COMPACT(x)) {
-    return NULL;
-  } else {
-    return vctrs_compact_rep_lgl_dataptr(x, FALSE);
-  }
+  VCTRS_COMPACT_REP_DATAPTR_OR_NULL(x, lgl);
 }
 
 #define COMPACT_REP_LGL_EXTRACT_SUBSET_LOOP(CTYPE, CONST_DEREF, LOC_IS_FINITE) do { \

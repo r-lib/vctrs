@@ -85,11 +85,7 @@ static void* vctrs_compact_rep_int_dataptr(SEXP x, Rboolean writeable) {
 }
 
 static const void* vctrs_compact_rep_int_dataptr_or_null(SEXP x) {
-  if (VCTRS_COMPACT_REP_IS_COMPACT(x)) {
-    return NULL;
-  } else {
-    return vctrs_compact_rep_int_dataptr(x, FALSE);
-  }
+  VCTRS_COMPACT_REP_DATAPTR_OR_NULL(x, int);
 }
 
 #define COMPACT_REP_INT_EXTRACT_SUBSET_LOOP(CTYPE, CONST_DEREF, LOC_IS_FINITE) do { \
