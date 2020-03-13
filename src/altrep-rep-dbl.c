@@ -42,8 +42,8 @@ SEXP vctrs_new_vctrs_compact_rep_dbl(SEXP value, SEXP size) {
 // -----------------------------------------------------------------------------
 
 #define VCTRS_COMPACT_REP_DBL_VALUE(info) VCTRS_COMPACT_REP_VALUE(info, dbl)
-#define VCTRS_COMPACT_REP_DBL_SIZE(info) VCTRS_COMPACT_REP_SIZE(info, dbl)
 #define VCTRS_COMPACT_REP_DBL_VALUE_DATA(info) VCTRS_COMPACT_REP_DBL_VALUE(info)
+#define VCTRS_COMPACT_REP_DBL_SIZE(info) VCTRS_COMPACT_REP_SIZE(info, dbl)
 
 static SEXP vctrs_compact_rep_dbl_materialize(SEXP x) {
   VCTRS_COMPACT_REP_MATERIALIZE(x, double, REAL, REALSXP, DBL);
