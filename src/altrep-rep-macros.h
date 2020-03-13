@@ -126,6 +126,18 @@
 }
 
 // -----------------------------------------------------------------------------
+// `vctrs_compact_rep_*_dataptr()`
+
+#define VCTRS_COMPACT_REP_DATAPTR(X, WRITEABLE, VEC) {    \
+  if (VCTRS_COMPACT_REP_IS_COMPACT(X)) {                  \
+    SEXP data = vctrs_compact_rep_##VEC##_materialize(X); \
+    VCTRS_COMPACT_REP_SET_DATA(X, data);                  \
+  }                                                       \
+                                                          \
+  return DATAPTR(VCTRS_COMPACT_REP_DATA(X));              \
+}
+
+// -----------------------------------------------------------------------------
 
 #endif
 

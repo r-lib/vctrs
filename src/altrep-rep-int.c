@@ -81,11 +81,7 @@ static R_xlen_t vctrs_compact_rep_int_length(SEXP x) {
 }
 
 static void* vctrs_compact_rep_int_dataptr(SEXP x, Rboolean writeable) {
-  if (VCTRS_COMPACT_REP_IS_COMPACT(x)) {
-    VCTRS_COMPACT_REP_SET_DATA(x, vctrs_compact_rep_int_materialize(x));
-  }
-
-  return DATAPTR(VCTRS_COMPACT_REP_DATA(x));
+  VCTRS_COMPACT_REP_DATAPTR(x, writeable, int);
 }
 
 static const void* vctrs_compact_rep_int_dataptr_or_null(SEXP x) {
