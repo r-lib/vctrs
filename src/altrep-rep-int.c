@@ -43,6 +43,7 @@ SEXP vctrs_new_vctrs_compact_rep_int(SEXP value, SEXP size) {
 
 #define VCTRS_COMPACT_REP_INT_VALUE(info) VCTRS_COMPACT_REP_VALUE(info, int)
 #define VCTRS_COMPACT_REP_INT_SIZE(info) VCTRS_COMPACT_REP_SIZE(info, int)
+#define VCTRS_COMPACT_REP_INT_VALUE_DATA(info) VCTRS_COMPACT_REP_INT_VALUE(info)
 
 static SEXP vctrs_compact_rep_int_materialize(SEXP x) {
   VCTRS_COMPACT_REP_MATERIALIZE(x, int, INTEGER, INTSXP, INT);

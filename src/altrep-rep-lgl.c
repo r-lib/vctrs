@@ -57,6 +57,7 @@ SEXP vctrs_new_vctrs_compact_rep_lgl(SEXP value, SEXP size) {
 
 #define VCTRS_COMPACT_REP_LGL_VALUE(info) VCTRS_COMPACT_REP_VALUE(info, lgl)
 #define VCTRS_COMPACT_REP_LGL_SIZE(info) VCTRS_COMPACT_REP_SIZE(info, lgl)
+#define VCTRS_COMPACT_REP_LGL_VALUE_DATA(info) VCTRS_COMPACT_REP_LGL_VALUE(info)
 
 static SEXP vctrs_compact_rep_lgl_materialize(SEXP x) {
   VCTRS_COMPACT_REP_MATERIALIZE(x, int, LOGICAL, LGLSXP, LGL);
