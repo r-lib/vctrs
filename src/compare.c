@@ -222,17 +222,17 @@ SEXP vctrs_compare(SEXP x, SEXP y, SEXP na_equal_) {
 
 // -----------------------------------------------------------------------------
 
-static struct df_short_circuit_info vec_compare_col(int* p_out,
-                                                    SEXP x,
-                                                    SEXP y,
-                                                    bool na_equal,
-                                                    struct df_short_circuit_info info);
+static struct df_short_circuit_info* vec_compare_col(int* p_out,
+                                                     SEXP x,
+                                                     SEXP y,
+                                                     bool na_equal,
+                                                     struct df_short_circuit_info* p_info);
 
-static struct df_short_circuit_info df_compare_impl(int* p_out,
-                                                    SEXP x,
-                                                    SEXP y,
-                                                    bool na_equal,
-                                                    struct df_short_circuit_info info);
+static struct df_short_circuit_info* df_compare_impl(int* p_out,
+                                                     SEXP x,
+                                                     SEXP y,
+                                                     bool na_equal,
+                                                     struct df_short_circuit_info* p_info);
 
 static SEXP df_compare(SEXP x, SEXP y, bool na_equal, R_len_t size) {
   int nprot = 0;
@@ -245,19 +245,20 @@ static SEXP df_compare(SEXP x, SEXP y, bool na_equal, R_len_t size) {
   memset(p_out, 0, size * sizeof(int));
 
   struct df_short_circuit_info info = new_df_short_circuit_info(size);
-  PROTECT_DF_SHORT_CIRCUIT_INFO(&info, &nprot);
+  struct df_short_circuit_info* p_info = &info;
+  PROTECT_DF_SHORT_CIRCUIT_INFO(p_info, &nprot);
 
-  df_compare_impl(p_out, x, y, na_equal, info);
+  p_info = df_compare_impl(p_out, x, y, na_equal, p_info);
 
   UNPROTECT(nprot);
   return out;
 }
 
-static struct df_short_circuit_info df_compare_impl(int* p_out,
-                                                    SEXP x,
-                                                    SEXP y,
-                                                    bool na_equal,
-                                                    struct df_short_circuit_info info) {
+static struct df_short_circuit_info* df_compare_impl(int* p_out,
+                                                     SEXP x,
+                                                     SEXP y,
+                                                     bool na_equal,
+                                                     struct df_short_circuit_info* p_info) {
   int n_col = Rf_length(x);
 
   if (n_col == 0) {
@@ -272,15 +273,15 @@ static struct df_short_circuit_info df_compare_impl(int* p_out,
     SEXP x_col = VECTOR_ELT(x, i);
     SEXP y_col = VECTOR_ELT(y, i);
 
-    info = vec_compare_col(p_out, x_col, y_col, na_equal, info);
+    p_info = vec_compare_col(p_out, x_col, y_col, na_equal, p_info);
 
     // If we know all comparison values, break
-    if (info.remaining == 0) {
+    if (p_info->remaining == 0) {
       break;
     }
   }
 
-  return info;
+  return p_info;
 }
 
 // -----------------------------------------------------------------------------
@@ -290,8 +291,8 @@ do {                                                                 \
   const CTYPE* p_x = CONST_DEREF(x);                                 \
   const CTYPE* p_y = CONST_DEREF(y);                                 \
                                                                      \
-  for (R_len_t i = 0; i < info.size; ++i, ++p_x, ++p_y) {            \
-    if (info.p_row_known[i]) {                                       \
+  for (R_len_t i = 0; i < p_info->size; ++i, ++p_x, ++p_y) {         \
+    if (p_info->p_row_known[i]) {                                    \
       continue;                                                      \
     }                                                                \
                                                                      \
@@ -299,30 +300,30 @@ do {                                                                 \
                                                                      \
     if (cmp != 0) {                                                  \
       p_out[i] = cmp;                                                \
-      info.p_row_known[i] = true;                                    \
-      --info.remaining;                                              \
+      p_info->p_row_known[i] = true;                                 \
+      --p_info->remaining;                                           \
                                                                      \
-      if (info.remaining == 0) {                                     \
+      if (p_info->remaining == 0) {                                  \
         break;                                                       \
       }                                                              \
     }                                                                \
   }                                                                  \
                                                                      \
-  return info;                                                       \
+  return p_info;                                                     \
 }                                                                    \
 while (0)
 
-static struct df_short_circuit_info vec_compare_col(int* p_out,
-                                                    SEXP x,
-                                                    SEXP y,
-                                                    bool na_equal,
-                                                    struct df_short_circuit_info info) {
+static struct df_short_circuit_info* vec_compare_col(int* p_out,
+                                                     SEXP x,
+                                                     SEXP y,
+                                                     bool na_equal,
+                                                     struct df_short_circuit_info* p_info) {
   switch (vec_proxy_typeof(x)) {
   case vctrs_type_logical:   COMPARE_COL(int, LOGICAL_RO, lgl_compare_scalar);
   case vctrs_type_integer:   COMPARE_COL(int, INTEGER_RO, int_compare_scalar);
   case vctrs_type_double:    COMPARE_COL(double, REAL_RO, dbl_compare_scalar);
   case vctrs_type_character: COMPARE_COL(SEXP, STRING_PTR_RO, chr_compare_scalar);
-  case vctrs_type_dataframe: return df_compare_impl(p_out, x, y, na_equal, info);
+  case vctrs_type_dataframe: return df_compare_impl(p_out, x, y, na_equal, p_info);
   case vctrs_type_scalar:    Rf_errorcall(R_NilValue, "Can't compare scalars with `vctrs_compare()`");
   case vctrs_type_list:      Rf_errorcall(R_NilValue, "Can't compare lists with `vctrs_compare()`");
   default:                   Rf_error("Unimplemented type in `vctrs_compare()`");
