@@ -223,16 +223,16 @@ SEXP vctrs_compare(SEXP x, SEXP y, SEXP na_equal_) {
 // -----------------------------------------------------------------------------
 
 static void vec_compare_col(int* p_out,
+                            struct df_short_circuit_info* p_info,
                             SEXP x,
                             SEXP y,
-                            bool na_equal,
-                            struct df_short_circuit_info* p_info);
+                            bool na_equal);
 
 static void df_compare_impl(int* p_out,
+                            struct df_short_circuit_info* p_info,
                             SEXP x,
                             SEXP y,
-                            bool na_equal,
-                            struct df_short_circuit_info* p_info);
+                            bool na_equal);
 
 static SEXP df_compare(SEXP x, SEXP y, bool na_equal, R_len_t size) {
   int nprot = 0;
@@ -248,17 +248,17 @@ static SEXP df_compare(SEXP x, SEXP y, bool na_equal, R_len_t size) {
   struct df_short_circuit_info* p_info = &info;
   PROTECT_DF_SHORT_CIRCUIT_INFO(p_info, &nprot);
 
-  df_compare_impl(p_out, x, y, na_equal, p_info);
+  df_compare_impl(p_out, p_info, x, y, na_equal);
 
   UNPROTECT(nprot);
   return out;
 }
 
 static void df_compare_impl(int* p_out,
+                            struct df_short_circuit_info* p_info,
                             SEXP x,
                             SEXP y,
-                            bool na_equal,
-                            struct df_short_circuit_info* p_info) {
+                            bool na_equal) {
   int n_col = Rf_length(x);
 
   if (n_col == 0) {
@@ -273,7 +273,7 @@ static void df_compare_impl(int* p_out,
     SEXP x_col = VECTOR_ELT(x, i);
     SEXP y_col = VECTOR_ELT(y, i);
 
-    vec_compare_col(p_out, x_col, y_col, na_equal, p_info);
+    vec_compare_col(p_out, p_info, x_col, y_col, na_equal);
 
     // If we know all comparison values, break
     if (p_info->remaining == 0) {
@@ -310,16 +310,16 @@ do {                                                                 \
 while (0)
 
 static void vec_compare_col(int* p_out,
+                            struct df_short_circuit_info* p_info,
                             SEXP x,
                             SEXP y,
-                            bool na_equal,
-                            struct df_short_circuit_info* p_info) {
+                            bool na_equal) {
   switch (vec_proxy_typeof(x)) {
   case vctrs_type_logical:   COMPARE_COL(int, LOGICAL_RO, lgl_compare_scalar); break;
   case vctrs_type_integer:   COMPARE_COL(int, INTEGER_RO, int_compare_scalar); break;
   case vctrs_type_double:    COMPARE_COL(double, REAL_RO, dbl_compare_scalar); break;
   case vctrs_type_character: COMPARE_COL(SEXP, STRING_PTR_RO, chr_compare_scalar); break;
-  case vctrs_type_dataframe: df_compare_impl(p_out, x, y, na_equal, p_info); break;
+  case vctrs_type_dataframe: df_compare_impl(p_out, p_info, x, y, na_equal); break;
   case vctrs_type_scalar:    Rf_errorcall(R_NilValue, "Can't compare scalars with `vctrs_compare()`");
   case vctrs_type_list:      Rf_errorcall(R_NilValue, "Can't compare lists with `vctrs_compare()`");
   default:                   Rf_error("Unimplemented type in `vctrs_compare()`");
