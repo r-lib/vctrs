@@ -58,7 +58,6 @@ SEXP vctrs_new_vctrs_compact_rep_lgl(SEXP value, SEXP size) {
 #define VCTRS_COMPACT_REP_LGL_VALUE(info) VCTRS_COMPACT_REP_VALUE(info, lgl)
 #define VCTRS_COMPACT_REP_LGL_SIZE(info) VCTRS_COMPACT_REP_SIZE(info, lgl)
 
-// Materialize the full vector
 static SEXP vctrs_compact_rep_lgl_materialize(SEXP x) {
   VCTRS_COMPACT_REP_MATERIALIZE(x, int, LOGICAL, LGLSXP, LGL);
 }
@@ -71,8 +70,6 @@ static SEXP vctrs_compact_rep_lgl_unserialize(SEXP cls, SEXP state) {
   VCTRS_COMPACT_REP_UNSERIALIZE(cls, state, int, LGL, lgl);
 }
 
-// TODO: What if `deep = false`? vroom dttm duplicates the altrep object
-// but compact_intseq objects always materialize
 static SEXP vctrs_compact_rep_lgl_duplicate(SEXP x, Rboolean deep) {
   VCTRS_COMPACT_REP_DUPLICATE(x, deep, lgl);
 }

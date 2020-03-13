@@ -38,6 +38,8 @@
 // -----------------------------------------------------------------------------
 // `vctrs_compact_rep_*_materialize()`
 
+// Materialize the full vector
+
 #define VCTRS_COMPACT_REP_MATERIALIZE(X, CTYPE, DEREF, SEXPTYPE, VEC) { \
   const SEXP info = VCTRS_COMPACT_REP_INFO(X);                          \
   const CTYPE value = VCTRS_COMPACT_REP_##VEC##_VALUE(info);            \
@@ -74,6 +76,9 @@
 
 // -----------------------------------------------------------------------------
 // `vctrs_compact_rep_*_duplicate()`
+
+// TODO: What if `deep = false`? vroom dttm duplicates the altrep object
+// but compact_intseq objects always materialize
 
 #define VCTRS_COMPACT_REP_DUPLICATE(X, DEEP, VEC) { \
   return vctrs_compact_rep_##VEC##_materialize(X);  \
