@@ -95,6 +95,29 @@
 }
 
 // -----------------------------------------------------------------------------
+// `vctrs_compact_rep_*_inspect()`
+
+// Many of the arguments are not currently used, but may be one day.
+// Passing them through like this should make it easier to use them later on,
+// if required.
+
+#define VCTRS_COMPACT_REP_INSPECT(X, PRE, DEEP, PVEC, INSPECT_SUBTREE, CTYPE, SPECIFIER, VEC_LOWER, VEC_UPPER) { \
+  const SEXP info = VCTRS_COMPACT_REP_INFO(X);                                                                   \
+  const CTYPE value_data = VCTRS_COMPACT_REP_##VEC_UPPER##_VALUE_DATA(info);                                     \
+  const R_xlen_t size = VCTRS_COMPACT_REP_##VEC_UPPER##_SIZE(info);                                              \
+  const char* state = VCTRS_COMPACT_REP_IS_COMPACT(x) ? "compact" : "expanded";                                  \
+                                                                                                                 \
+  Rprintf(                                                                                                       \
+    "vctrs_compact_rep_" VEC_LOWER "(value: %" SPECIFIER ", size: %td, state: %s)\n",                            \
+    value_data,                                                                                                  \
+    size,                                                                                                        \
+    state                                                                                                        \
+  );                                                                                                             \
+                                                                                                                 \
+  return TRUE;                                                                                                   \
+}
+
+// -----------------------------------------------------------------------------
 
 #endif
 

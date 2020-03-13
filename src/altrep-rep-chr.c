@@ -70,17 +70,10 @@ static Rboolean vctrs_compact_rep_chr_inspect(SEXP x,
                                               int deep,
                                               int pvec,
                                               void (*inspect_subtree)(SEXP, int, int, int)) {
-  SEXP info = VCTRS_COMPACT_REP_INFO(x);
-  SEXP value = VCTRS_COMPACT_REP_CHR_VALUE(info);
-  R_xlen_t size = VCTRS_COMPACT_REP_CHR_SIZE(info);
-  const char* state = VCTRS_COMPACT_REP_IS_COMPACT(x) ? "compact" : "expanded";
-
-  const char* value_data = CHAR(value);
-
-  Rprintf("vctrs_compact_rep_chr (value: %s, size: %td, state: %s)", value_data, size, state);
-  Rprintf("\n");
-
-  return TRUE;
+  VCTRS_COMPACT_REP_INSPECT(
+    x, pre, deep, pvec, inspect_subtree,
+    char*, "s", "chr", CHR
+  );
 }
 
 static R_xlen_t vctrs_compact_rep_chr_length(SEXP x) {
