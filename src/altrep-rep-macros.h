@@ -64,12 +64,12 @@
 // -----------------------------------------------------------------------------
 // `vctrs_compact_rep_*_unserialize()`
 
-#define VCTRS_COMPACT_REP_UNSERIALIZE(STATE, CTYPE, VEC_UPPER, VEC_LOWER) { \
-  const SEXP info = STATE;                                                  \
-  const CTYPE value = VCTRS_COMPACT_REP_##VEC_UPPER##_VALUE(info);          \
-  const R_xlen_t size = VCTRS_COMPACT_REP_##VEC_UPPER##_SIZE(info);         \
-                                                                            \
-  return new_vctrs_compact_rep_##VEC_LOWER(value, size);                    \
+#define VCTRS_COMPACT_REP_UNSERIALIZE(CLS, STATE, CTYPE, VEC_UPPER, VEC_LOWER) { \
+  const SEXP info = STATE;                                                       \
+  const CTYPE value = VCTRS_COMPACT_REP_##VEC_UPPER##_VALUE(info);               \
+  const R_xlen_t size = VCTRS_COMPACT_REP_##VEC_UPPER##_SIZE(info);              \
+                                                                                 \
+  return new_vctrs_compact_rep_##VEC_LOWER(value, size);                         \
 }
 
 // -----------------------------------------------------------------------------

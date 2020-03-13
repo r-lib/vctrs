@@ -68,7 +68,7 @@ static SEXP vctrs_compact_rep_lgl_serialized_state(SEXP x) {
 }
 
 static SEXP vctrs_compact_rep_lgl_unserialize(SEXP cls, SEXP state) {
-  VCTRS_COMPACT_REP_UNSERIALIZE(state, int, LGL, lgl);
+  VCTRS_COMPACT_REP_UNSERIALIZE(cls, state, int, LGL, lgl);
 }
 
 // TODO: What if `deep = false`? vroom dttm duplicates the altrep object
