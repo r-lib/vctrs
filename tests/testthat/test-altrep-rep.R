@@ -229,6 +229,25 @@ test_that("can serialize compact reps and retain compactness", {
   test(vctrs_compact_rep_test_info_3_6())
 })
 
+test_that("can construct size 0 compact reps", {
+  test <- function(test_info) {
+    for (info in test_info) {
+      x <- info$x
+      ctor <- info$ctor
+
+      rep <- ctor(x, 0L)
+
+      expect_length(rep, 0L)
+      expect_identical(rep, x[0])
+    }
+  }
+
+  test(vctrs_compact_rep_test_info())
+
+  skip_if_no_altrep_3_6()
+  test(vctrs_compact_rep_test_info_3_6())
+})
+
 # ------------------------------------------------------------------------------
 context("test-altrep-rep-chr")
 
