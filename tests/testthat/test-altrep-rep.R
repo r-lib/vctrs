@@ -208,6 +208,27 @@ test_that("subsetting with `[` and long vectors is allowed", {
   test(vctrs_compact_rep_test_info_3_6())
 })
 
+test_that("can serialize compact reps and retain compactness", {
+  test <- function(test_info) {
+    for (info in test_info) {
+      x <- info$x
+      ctor <- info$ctor
+
+      rep <- ctor(x, 2L)
+
+      serialized <- serialize(rep, NULL)
+      rep <- unserialize(serialized)
+
+      expect_true(vec_is_vctrs_compact_rep_compact(rep))
+    }
+  }
+
+  test(vctrs_compact_rep_test_info())
+
+  skip_if_no_altrep_3_6()
+  test(vctrs_compact_rep_test_info_3_6())
+})
+
 # ------------------------------------------------------------------------------
 context("test-altrep-rep-chr")
 
