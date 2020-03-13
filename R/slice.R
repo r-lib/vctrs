@@ -12,6 +12,10 @@
 #' @param value Replacement values. `value` is cast to the type of
 #'   `x`, but only if they have a common type. See below for examples
 #'   of this rule.
+#' @param x_arg,value_arg Argument names for `x` and `value`. These are used
+#'   in error messages to inform the user about the locations of
+#'   incompatible types and sizes (see [stop_incompatible_type()] and
+#'   [stop_incompatible_size()]).
 #' @return A vector of the same type as `x`.
 #'
 #' @section Genericity:
@@ -149,12 +153,12 @@ vec_slice_dispatch_integer64 <- function(x, i) {
 #' @rdname vec_slice
 #' @export
 `vec_slice<-` <- function(x, i, value) {
-  .Call(vctrs_assign, x, i, value)
+  .Call(vctrs_assign, x, i, value, "x", "value")
 }
 #' @rdname vec_slice
 #' @export
-vec_assign <- function(x, i, value) {
-  .Call(vctrs_assign, x, i, value)
+vec_assign <- function(x, i, value, x_arg = "x", value_arg = "value") {
+  .Call(vctrs_assign, x, i, value, x_arg, value_arg)
 }
 vec_assign_fallback <- function(x, i, value) {
   # Work around bug in base `[<-`

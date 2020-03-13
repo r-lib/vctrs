@@ -360,6 +360,18 @@ test_that("can slice-assign unspecified vectors with default type2 method", {
   expect_identical(x, rational(c(NA, 2L), c(NA, 3L)))
 })
 
+test_that("`vec_assign()` validates `x_arg`", {
+  expect_error(vec_assign(1, 1, 1, x_arg = 1), "`x_arg` must be a string")
+  expect_error(vec_assign(1, 1, 1, x_arg = c("x", "y")), "`x_arg` must be a string")
+  expect_error(vec_assign(1, 1, 1, x_arg = NA_character_), "`x_arg` must be a string")
+})
+
+test_that("`vec_assign()` validates `value_arg`", {
+  expect_error(vec_assign(1, 1, 1, value_arg = 1), "`value_arg` must be a string")
+  expect_error(vec_assign(1, 1, 1, value_arg = c("x", "y")), "`value_arg` must be a string")
+  expect_error(vec_assign(1, 1, 1, value_arg = NA_character_), "`value_arg` must be a string")
+})
+
 test_that("`vec_assign()` requires recyclable value", {
   verify_errors({
     expect_error(
@@ -412,6 +424,19 @@ test_that("must assign with proper negative locations", {
   })
 })
 
+test_that("`vec_assign()` error args can be overridden", {
+  verify_errors({
+    expect_error(
+      vec_assign(1:2, 1L, "x", x_arg = "foo", value_arg = "bar"),
+      class = "vctrs_error_incompatible_type"
+    )
+    expect_error(
+      vec_assign(1:2, 1L, 1:2, value_arg = "bar"),
+      class = "vctrs_error_recycle_incompatible_size"
+    )
+  })
+})
+
 test_that("slice and assign have informative errors", {
   verify_output(test_path("error", "test-slice-assign.txt"), {
     "# `vec_assign()` requires recyclable value"
@@ -430,5 +455,9 @@ test_that("slice and assign have informative errors", {
     "# must assign with proper negative locations"
     vec_assign(1:3, c(-1, 1), 1:2)
     vec_assign(1:3, c(-1, NA), 1:2)
+
+    "# `vec_assign()` error args can be overridden"
+    vec_assign(1:2, 1L, "x", x_arg = "foo", value_arg = "bar")
+    vec_assign(1:2, 1L, 1:2, value_arg = "bar")
   })
 })
