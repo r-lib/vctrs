@@ -60,10 +60,8 @@ static SEXP vctrs_compact_rep_dbl_duplicate(SEXP x, Rboolean deep) {
   VCTRS_COMPACT_REP_DUPLICATE(x, deep, dbl);
 }
 
-// Drop through to standard coercion methods for now.
-// We could coerce from one compact rep type to another.
 static SEXP vctrs_compact_rep_dbl_coerce(SEXP x, int type) {
-  return NULL;
+  VCTRS_COMPACT_REP_COERCE(x, type);
 }
 
 static Rboolean vctrs_compact_rep_dbl_inspect(SEXP x,

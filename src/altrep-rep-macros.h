@@ -85,6 +85,16 @@
 }
 
 // -----------------------------------------------------------------------------
+// `vctrs_compact_rep_*_coerce()`
+
+// Drop through to standard coercion methods for now.
+// We could coerce from one compact rep type to another.
+
+#define VCTRS_COMPACT_REP_COERCE(X, TYPE) { \
+  return NULL;                              \
+}
+
+// -----------------------------------------------------------------------------
 
 #endif
 
