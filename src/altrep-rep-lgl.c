@@ -64,7 +64,7 @@ static SEXP vctrs_compact_rep_lgl_materialize(SEXP x) {
 }
 
 static SEXP vctrs_compact_rep_lgl_serialized_state(SEXP x) {
-  return VCTRS_COMPACT_REP_INFO(x);
+  VCTRS_COMPACT_REP_SERIALIZED_STATE(x);
 }
 
 static SEXP vctrs_compact_rep_lgl_unserialize(SEXP cls, SEXP state) {

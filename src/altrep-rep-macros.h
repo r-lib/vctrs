@@ -55,6 +55,13 @@
 }
 
 // -----------------------------------------------------------------------------
+// `vctrs_compact_rep_*_serialized_state()`
+
+#define VCTRS_COMPACT_REP_SERIALIZED_STATE(X) { \
+  return VCTRS_COMPACT_REP_INFO(X);             \
+}
+
+// -----------------------------------------------------------------------------
 
 #endif
 
