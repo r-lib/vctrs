@@ -29,6 +29,8 @@ locations or names of the observations to get/set. Specify
 \code{TRUE} to index all elements (as in \code{x[]}), or \code{NULL}, \code{FALSE} or
 \code{integer()} to index none (as in \code{x[NULL]}).}
 
+\item{...}{These dots are for future extensions and must be empty.}
+
 \item{logical, location, character}{How to handle logical, numeric,
 and character subscripts.
 

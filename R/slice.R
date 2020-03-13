@@ -16,6 +16,7 @@
 #'   in error messages to inform the user about the locations of
 #'   incompatible types and sizes (see [stop_incompatible_type()] and
 #'   [stop_incompatible_size()]).
+#' @param ... These dots are for future extensions and must be empty.
 #' @return A vector of the same type as `x`.
 #'
 #' @section Genericity:
@@ -157,7 +158,10 @@ vec_slice_dispatch_integer64 <- function(x, i) {
 }
 #' @rdname vec_slice
 #' @export
-vec_assign <- function(x, i, value, x_arg = "x", value_arg = "value") {
+vec_assign <- function(x, i, value, ..., x_arg = "x", value_arg = "value") {
+  if (!missing(...)) {
+    ellipsis::check_dots_empty()
+  }
   .Call(vctrs_assign, x, i, value, x_arg, value_arg)
 }
 vec_assign_fallback <- function(x, i, value) {
