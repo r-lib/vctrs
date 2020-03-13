@@ -470,15 +470,13 @@ void hash_fill(uint32_t* p, R_len_t n, SEXP x, bool na_equal);
 SEXP vec_unique(SEXP x);
 bool duplicated_any(SEXP names);
 
-// Rowwise operations -------------------------------------------
+// Data frame column iteration ----------------------------------
 
 // Used in functions that treat data frames as vectors of rows, but
-// iterate over them column wise. Examples are `vec_equal()` and
+// iterate over columns. Examples are `vec_equal()` and
 // `vec_compare()`.
 
 /**
- * @member out A vector of size `n_row` containing the output of the
- *   row wise data frame operation.
  * @member row_known A boolean array of size `n_row`. Allocated on the R heap.
  *   Initially, all values are initialized to `false`. As we iterate along the
  *   columns, we flip the corresponding row's `row_known` value to `true` if we
@@ -490,19 +488,37 @@ bool duplicated_any(SEXP names);
  * @member remaining The number of `row_known` values that are still `false`.
  *   If this hits `0` before we traverse the entire data frame, we can exit
  *   immediately because all `out` values are already known.
+ * @member size The number of rows in the data frame.
  */
-struct vctrs_df_rowwise_info {
-  SEXP out;
+struct df_short_circuit_info {
   SEXP row_known;
   bool* p_row_known;
   R_len_t remaining;
+  R_len_t size;
 };
 
-#define PROTECT_DF_ROWWISE_INFO(info, n) do {  \
-  PROTECT((info)->out);                        \
-  PROTECT((info)->row_known);                  \
-  *n += 2;                                     \
+#define PROTECT_DF_SHORT_CIRCUIT_INFO(info, n) do {  \
+  PROTECT((info)->row_known);                        \
+  *n += 1;                                           \
 } while (0)
+
+static inline struct df_short_circuit_info new_df_short_circuit_info(R_len_t size) {
+  SEXP row_known = PROTECT(Rf_allocVector(RAWSXP, size * sizeof(bool)));
+  bool* p_row_known = (bool*) RAW(row_known);
+
+  // To begin with, no rows have a known comparison value
+  memset(p_row_known, false, size * sizeof(bool));
+
+  struct df_short_circuit_info info = {
+    .row_known = row_known,
+    .p_row_known = p_row_known,
+    .remaining = size,
+    .size = size
+  };
+
+  UNPROTECT(1);
+  return info;
+}
 
 // Missing values -----------------------------------------------
 

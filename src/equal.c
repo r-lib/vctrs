@@ -81,7 +81,7 @@ int equal_scalar_na_propagate_p(enum vctrs_type proxy_type,
 
 // -----------------------------------------------------------------------------
 
-static SEXP df_equal(SEXP x, SEXP y, bool na_equal, R_len_t n_row);
+static SEXP df_equal(SEXP x, SEXP y, bool na_equal, R_len_t size);
 
 #define EQUAL(CTYPE, CONST_DEREF, SCALAR_EQUAL)         \
   do {                                                  \
@@ -342,58 +342,17 @@ bool equal_names(SEXP x, SEXP y) {
 
 // -----------------------------------------------------------------------------
 
-static struct vctrs_df_rowwise_info vec_equal_col(SEXP x,
-                                                  SEXP y,
-                                                  bool na_equal,
-                                                  struct vctrs_df_rowwise_info info,
-                                                  R_len_t n_row);
+static void vec_equal_col(int* p_out,
+                          struct df_short_circuit_info* p_info,
+                          SEXP x,
+                          SEXP y,
+                          bool na_equal);
 
-static struct vctrs_df_rowwise_info df_equal_impl(SEXP x,
-                                                  SEXP y,
-                                                  bool na_equal,
-                                                  struct vctrs_df_rowwise_info info,
-                                                  R_len_t n_row);
-
-static struct vctrs_df_rowwise_info new_rowwise_equal_info(R_len_t n_row) {
-  struct vctrs_df_rowwise_info info;
-
-  // Initialize to "equality" value
-  // and only change if we learn that it differs
-  info.out = PROTECT(Rf_allocVector(LGLSXP, n_row));
-  int* p_out = LOGICAL(info.out);
-
-  for (R_len_t i = 0; i < n_row; ++i) {
-    p_out[i] = 1;
-  }
-
-  // To begin with, no rows have a known comparison value
-  info.row_known = PROTECT(Rf_allocVector(RAWSXP, n_row * sizeof(bool)));
-  info.p_row_known = (bool*) RAW(info.row_known);
-  memset(info.p_row_known, false, n_row * sizeof(bool));
-
-  info.remaining = n_row;
-
-  UNPROTECT(2);
-  return info;
-}
-
-static SEXP df_equal(SEXP x, SEXP y, bool na_equal, R_len_t n_row) {
-  int nprot = 0;
-
-  struct vctrs_df_rowwise_info info = new_rowwise_equal_info(n_row);
-  PROTECT_DF_ROWWISE_INFO(&info, &nprot);
-
-  info = df_equal_impl(x, y, na_equal, info, n_row);
-
-  UNPROTECT(nprot);
-  return info.out;
-}
-
-static struct vctrs_df_rowwise_info df_equal_impl(SEXP x,
-                                                  SEXP y,
-                                                  bool na_equal,
-                                                  struct vctrs_df_rowwise_info info,
-                                                  R_len_t n_row) {
+static void df_equal_impl(int* p_out,
+                          struct df_short_circuit_info* p_info,
+                          SEXP x,
+                          SEXP y,
+                          bool na_equal) {
   int n_col = Rf_length(x);
 
   if (n_col != Rf_length(y)) {
@@ -404,28 +363,46 @@ static struct vctrs_df_rowwise_info df_equal_impl(SEXP x,
     SEXP x_col = VECTOR_ELT(x, i);
     SEXP y_col = VECTOR_ELT(y, i);
 
-    info = vec_equal_col(x_col, y_col, na_equal, info, n_row);
+    vec_equal_col(p_out, p_info, x_col, y_col, na_equal);
 
     // If we know all comparison values, break
-    if (info.remaining == 0) {
+    if (p_info->remaining == 0) {
       break;
     }
   }
+}
 
-  return info;
+static SEXP df_equal(SEXP x, SEXP y, bool na_equal, R_len_t size) {
+  int nprot = 0;
+
+  SEXP out = PROTECT_N(Rf_allocVector(LGLSXP, size), &nprot);
+  int* p_out = LOGICAL(out);
+
+  // Initialize to "equality" value
+  // and only change if we learn that it differs
+  for (R_len_t i = 0; i < size; ++i) {
+    p_out[i] = 1;
+  }
+
+  struct df_short_circuit_info info = new_df_short_circuit_info(size);
+  struct df_short_circuit_info* p_info = &info;
+  PROTECT_DF_SHORT_CIRCUIT_INFO(p_info, &nprot);
+
+  df_equal_impl(p_out, p_info, x, y, na_equal);
+
+  UNPROTECT(nprot);
+  return out;
 }
 
 // -----------------------------------------------------------------------------
 
 #define EQUAL_COL(CTYPE, CONST_DEREF, SCALAR_EQUAL)                  \
 do {                                                                 \
-  int* p_out = LOGICAL(info.out);                                    \
-                                                                     \
   const CTYPE* p_x = CONST_DEREF(x);                                 \
   const CTYPE* p_y = CONST_DEREF(y);                                 \
                                                                      \
-  for (R_len_t i = 0; i < n_row; ++i, ++p_x, ++p_y) {                \
-    if (info.p_row_known[i]) {                                       \
+  for (R_len_t i = 0; i < p_info->size; ++i, ++p_x, ++p_y) {         \
+    if (p_info->p_row_known[i]) {                                    \
       continue;                                                      \
     }                                                                \
                                                                      \
@@ -433,25 +410,21 @@ do {                                                                 \
                                                                      \
     if (eq <= 0) {                                                   \
       p_out[i] = eq;                                                 \
-      info.p_row_known[i] = true;                                    \
-      --info.remaining;                                              \
+      p_info->p_row_known[i] = true;                                 \
+      --p_info->remaining;                                           \
                                                                      \
-      if (info.remaining == 0) {                                     \
+      if (p_info->remaining == 0) {                                  \
         break;                                                       \
       }                                                              \
     }                                                                \
   }                                                                  \
-                                                                     \
-  return info;                                                       \
 }                                                                    \
 while (0)
 
 #define EQUAL_COL_BARRIER(SCALAR_EQUAL)                \
 do {                                                   \
-  int* p_out = LOGICAL(info.out);                      \
-                                                       \
-  for (R_len_t i = 0; i < n_row; ++i) {                \
-    if (info.p_row_known[i]) {                         \
+  for (R_len_t i = 0; i < p_info->size; ++i) {         \
+    if (p_info->p_row_known[i]) {                      \
       continue;                                        \
     }                                                  \
                                                        \
@@ -459,33 +432,31 @@ do {                                                   \
                                                        \
     if (eq <= 0) {                                     \
       p_out[i] = eq;                                   \
-      info.p_row_known[i] = true;                      \
-      --info.remaining;                                \
+      p_info->p_row_known[i] = true;                   \
+      --p_info->remaining;                             \
                                                        \
-      if (info.remaining == 0) {                       \
+      if (p_info->remaining == 0) {                    \
         break;                                         \
       }                                                \
     }                                                  \
   }                                                    \
-                                                       \
-  return info;                                         \
 }                                                      \
 while (0)
 
-static struct vctrs_df_rowwise_info vec_equal_col(SEXP x,
-                                                  SEXP y,
-                                                  bool na_equal,
-                                                  struct vctrs_df_rowwise_info info,
-                                                  R_len_t n_row) {
+static void vec_equal_col(int* p_out,
+                          struct df_short_circuit_info* p_info,
+                          SEXP x,
+                          SEXP y,
+                          bool na_equal) {
   switch (vec_proxy_typeof(x)) {
-  case vctrs_type_logical:   EQUAL_COL(int, LOGICAL_RO, lgl_equal_scalar);
-  case vctrs_type_integer:   EQUAL_COL(int, INTEGER_RO, int_equal_scalar);
-  case vctrs_type_double:    EQUAL_COL(double, REAL_RO, dbl_equal_scalar);
-  case vctrs_type_raw:       EQUAL_COL(Rbyte, RAW_RO, raw_equal_scalar);
-  case vctrs_type_complex:   EQUAL_COL(Rcomplex, COMPLEX_RO, cpl_equal_scalar);
-  case vctrs_type_character: EQUAL_COL(SEXP, STRING_PTR_RO, chr_equal_scalar);
-  case vctrs_type_list:      EQUAL_COL_BARRIER(list_equal_scalar);
-  case vctrs_type_dataframe: return df_equal_impl(x, y, na_equal, info, n_row);
+  case vctrs_type_logical:   EQUAL_COL(int, LOGICAL_RO, lgl_equal_scalar); break;
+  case vctrs_type_integer:   EQUAL_COL(int, INTEGER_RO, int_equal_scalar); break;
+  case vctrs_type_double:    EQUAL_COL(double, REAL_RO, dbl_equal_scalar); break;
+  case vctrs_type_raw:       EQUAL_COL(Rbyte, RAW_RO, raw_equal_scalar); break;
+  case vctrs_type_complex:   EQUAL_COL(Rcomplex, COMPLEX_RO, cpl_equal_scalar); break;
+  case vctrs_type_character: EQUAL_COL(SEXP, STRING_PTR_RO, chr_equal_scalar); break;
+  case vctrs_type_list:      EQUAL_COL_BARRIER(list_equal_scalar); break;
+  case vctrs_type_dataframe: df_equal_impl(p_out, p_info, x, y, na_equal); break;
   case vctrs_type_scalar:    Rf_errorcall(R_NilValue, "Can't compare scalars with `vctrs_equal()`");
   default:                   Rf_error("Unimplemented type in `vctrs_equal()`");
   }
@@ -557,7 +528,7 @@ int equal_na(SEXP x, R_len_t i) {
   }                                                       \
   while (0)
 
-static SEXP df_equal_na(SEXP x, R_len_t n_row);
+static SEXP df_equal_na(SEXP x, R_len_t size);
 
 // [[ register() ]]
 SEXP vctrs_equal_na(SEXP x) {
@@ -634,106 +605,105 @@ static inline int df_equal_na_scalar(SEXP x, R_len_t i) {
 
 // -----------------------------------------------------------------------------
 
-static struct vctrs_df_rowwise_info vec_equal_na_col(SEXP x,
-                                                     struct vctrs_df_rowwise_info info,
-                                                     R_len_t n_row);
+static void vec_equal_na_col(int* p_out,
+                             struct df_short_circuit_info* p_info,
+                             SEXP x);
 
-static struct vctrs_df_rowwise_info df_equal_na_impl(SEXP x,
-                                                     struct vctrs_df_rowwise_info info,
-                                                     R_len_t n_row) {
+static void df_equal_na_impl(int* p_out,
+                             struct df_short_circuit_info* p_info,
+                             SEXP x) {
   int n_col = Rf_length(x);
 
   for (R_len_t i = 0; i < n_col; ++i) {
     SEXP col = VECTOR_ELT(x, i);
 
-    info = vec_equal_na_col(col, info, n_row);
+    vec_equal_na_col(p_out, p_info, col);
 
     // If all rows have at least one non-missing value, break
-    if (info.remaining == 0) {
+    if (p_info->remaining == 0) {
       break;
     }
   }
-
-  return info;
 }
 
-static SEXP df_equal_na(SEXP x, R_len_t n_row) {
+static SEXP df_equal_na(SEXP x, R_len_t size) {
   int nprot = 0;
 
-  // Same rowwise info as `df_equal()`
-  struct vctrs_df_rowwise_info info = new_rowwise_equal_info(n_row);
-  PROTECT_DF_ROWWISE_INFO(&info, &nprot);
+  SEXP out = PROTECT_N(Rf_allocVector(LGLSXP, size), &nprot);
+  int* p_out = LOGICAL(out);
 
-  info = df_equal_na_impl(x, info, n_row);
+  // Initialize to "equality" value
+  // and only change if we learn that it differs
+  for (R_len_t i = 0; i < size; ++i) {
+    p_out[i] = 1;
+  }
+
+  struct df_short_circuit_info info = new_df_short_circuit_info(size);
+  struct df_short_circuit_info* p_info = &info;
+  PROTECT_DF_SHORT_CIRCUIT_INFO(p_info, &nprot);
+
+  df_equal_na_impl(p_out, p_info, x);
 
   UNPROTECT(nprot);
-  return info.out;
+  return out;
 }
 
 // -----------------------------------------------------------------------------
 
 #define EQUAL_NA_COL(CTYPE, CONST_DEREF, SCALAR_EQUAL_NA) \
 do {                                                      \
-  int* p_out = LOGICAL(info.out);                         \
-                                                          \
   const CTYPE* p_x = CONST_DEREF(x);                      \
                                                           \
-  for (R_len_t i = 0; i < n_row; ++i, ++p_x) {            \
-    if (info.p_row_known[i]) {                            \
+  for (R_len_t i = 0; i < p_info->size; ++i, ++p_x) {     \
+    if (p_info->p_row_known[i]) {                         \
       continue;                                           \
     }                                                     \
                                                           \
     if (!SCALAR_EQUAL_NA(p_x)) {                          \
       p_out[i] = 0;                                       \
-      info.p_row_known[i] = true;                         \
-      --info.remaining;                                   \
+      p_info->p_row_known[i] = true;                      \
+      --p_info->remaining;                                \
                                                           \
-      if (info.remaining == 0) {                          \
+      if (p_info->remaining == 0) {                       \
         break;                                            \
       }                                                   \
     }                                                     \
   }                                                       \
-                                                          \
-  return info;                                            \
 }                                                         \
 while (0)
 
-#define EQUAL_NA_COL_BARRIER(SCALAR_EQUAL_NA) \
-do {                                          \
-  int* p_out = LOGICAL(info.out);             \
-                                              \
-  for (R_len_t i = 0; i < n_row; ++i) {       \
-    if (info.p_row_known[i]) {                \
-      continue;                               \
-    }                                         \
-                                              \
-    if (!SCALAR_EQUAL_NA(x, i)) {             \
-      p_out[i] = 0;                           \
-      info.p_row_known[i] = true;             \
-      --info.remaining;                       \
-                                              \
-      if (info.remaining == 0) {              \
-        break;                                \
-      }                                       \
-    }                                         \
-  }                                           \
-                                              \
-  return info;                                \
-}                                             \
+#define EQUAL_NA_COL_BARRIER(SCALAR_EQUAL_NA)  \
+do {                                           \
+  for (R_len_t i = 0; i < p_info->size; ++i) { \
+    if (p_info->p_row_known[i]) {              \
+      continue;                                \
+    }                                          \
+                                               \
+    if (!SCALAR_EQUAL_NA(x, i)) {              \
+      p_out[i] = 0;                            \
+      p_info->p_row_known[i] = true;           \
+      --p_info->remaining;                     \
+                                               \
+      if (p_info->remaining == 0) {            \
+        break;                                 \
+      }                                        \
+    }                                          \
+  }                                            \
+}                                              \
 while (0)
 
-static struct vctrs_df_rowwise_info vec_equal_na_col(SEXP x,
-                                                     struct vctrs_df_rowwise_info info,
-                                                     R_len_t n_row) {
+static void vec_equal_na_col(int* p_out,
+                             struct df_short_circuit_info* p_info,
+                             SEXP x) {
   switch (vec_proxy_typeof(x)) {
-  case vctrs_type_logical:   EQUAL_NA_COL(int, LOGICAL_RO, lgl_equal_na_scalar);
-  case vctrs_type_integer:   EQUAL_NA_COL(int, INTEGER_RO, int_equal_na_scalar);
-  case vctrs_type_double:    EQUAL_NA_COL(double, REAL_RO, dbl_equal_na_scalar);
-  case vctrs_type_complex:   EQUAL_NA_COL(Rcomplex, COMPLEX_RO, cpl_equal_na_scalar);
-  case vctrs_type_raw:       EQUAL_NA_COL(Rbyte, RAW_RO, raw_equal_na_scalar);
-  case vctrs_type_character: EQUAL_NA_COL(SEXP, STRING_PTR_RO, chr_equal_na_scalar);
-  case vctrs_type_list:      EQUAL_NA_COL_BARRIER(list_equal_na_scalar);
-  case vctrs_type_dataframe: return df_equal_na_impl(x, info, n_row);
+  case vctrs_type_logical:   EQUAL_NA_COL(int, LOGICAL_RO, lgl_equal_na_scalar); break;
+  case vctrs_type_integer:   EQUAL_NA_COL(int, INTEGER_RO, int_equal_na_scalar); break;
+  case vctrs_type_double:    EQUAL_NA_COL(double, REAL_RO, dbl_equal_na_scalar); break;
+  case vctrs_type_complex:   EQUAL_NA_COL(Rcomplex, COMPLEX_RO, cpl_equal_na_scalar); break;
+  case vctrs_type_raw:       EQUAL_NA_COL(Rbyte, RAW_RO, raw_equal_na_scalar); break;
+  case vctrs_type_character: EQUAL_NA_COL(SEXP, STRING_PTR_RO, chr_equal_na_scalar); break;
+  case vctrs_type_list:      EQUAL_NA_COL_BARRIER(list_equal_na_scalar); break;
+  case vctrs_type_dataframe: df_equal_na_impl(p_out, p_info, x); break;
   case vctrs_type_scalar:    Rf_errorcall(R_NilValue, "Can't compare scalars with `vec_equal_na()`");
   default:                   Rf_error("Unimplemented type in `vec_equal_na()`");
   }
