@@ -216,7 +216,7 @@ test_that("can serialize compact reps and retain compactness", {
 
       rep <- ctor(x, 2L)
 
-      serialized <- serialize(rep, NULL)
+      serialized <- serialize(rep, NULL, version = 3)
       rep <- unserialize(serialized)
 
       expect_true(vec_is_vctrs_compact_rep_compact(rep))
