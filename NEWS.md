@@ -1,6 +1,29 @@
 
 # vctrs (development version)
 
+* `vec_assign()` gains `x_arg` and `value_arg` parameters (#918).
+
+* `vec_group_loc()`, which powers `dplyr::group_by()`, now has more
+  efficient vector access (#911).
+
+* `vec_as_names()` now has more informative error messages when names
+  are not unique (#882).
+
+* Improved support for vector-like S4 objects (#550, #551).
+
+* The base classes `AsIs` and `table` have vctrs methods (#904, #906).
+
+* `POSIXlt` and `POSIXct` vectors are handled more consistently (#901).
+
+* `new_data_frame()` infers size from row names when `n = NULL` (#894).
+
+
+## CRAN results
+
+* Fixed clang-UBSAN error "nan is outside the range of representable
+  values of type 'int'" (#902).
+
+
 # vctrs 0.2.4
 
 * Factors and dates methods are now implemented in C for efficiency.
