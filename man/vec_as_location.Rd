@@ -59,6 +59,8 @@ vector that \code{i} will be matched against to construct the index. Otherwise,
 not used. The default value of \code{NULL} will result in an error
 if \code{i} is a character vector.}
 
+\item{...}{These dots are for future extensions and must be empty.}
+
 \item{missing}{Whether to throw an \code{"error"} when \code{i} is a missing
 value, or \code{"propagate"} it (return it as is). By default, vector
 subscripts can contain missing values and scalar subscripts can't.}

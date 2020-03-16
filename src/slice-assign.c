@@ -19,16 +19,31 @@ static SEXP raw_assign(SEXP x, SEXP index, SEXP value);
 SEXP list_assign(SEXP x, SEXP index, SEXP value);
 SEXP df_assign(SEXP x, SEXP index, SEXP value);
 
-// [[ register(); include("vctrs.h") ]]
-SEXP vec_assign(SEXP x, SEXP index, SEXP value) {
+// [[ register() ]]
+SEXP vctrs_assign(SEXP x, SEXP index, SEXP value, SEXP x_arg_, SEXP value_arg_) {
+  if (!r_is_string(x_arg_)) {
+    Rf_errorcall(R_NilValue, "`x_arg` must be a string");
+  }
+  if (!r_is_string(value_arg_)) {
+    Rf_errorcall(R_NilValue, "`value_arg` must be a string");
+  }
+
+  struct vctrs_arg x_arg = new_wrapper_arg(NULL, r_chr_get_c_string(x_arg_, 0));
+  struct vctrs_arg value_arg = new_wrapper_arg(NULL, r_chr_get_c_string(value_arg_, 0));
+
+  return vec_assign(x, index, value, &x_arg, &value_arg);
+}
+
+// [[ include("vctrs.h") ]]
+SEXP vec_assign(SEXP x, SEXP index, SEXP value,
+                struct vctrs_arg* x_arg,
+                struct vctrs_arg* value_arg) {
   if (x == R_NilValue) {
     return R_NilValue;
   }
 
-  struct vctrs_arg x_arg = new_wrapper_arg(NULL, "x");
-  struct vctrs_arg value_arg = new_wrapper_arg(NULL, "value");
-  vec_assert(x, &x_arg);
-  vec_assert(value, &value_arg);
+  vec_assert(x, x_arg);
+  vec_assert(value, value_arg);
 
   index = PROTECT(vec_as_location_opts(index,
                                        vec_size(x),
@@ -37,8 +52,8 @@ SEXP vec_assign(SEXP x, SEXP index, SEXP value) {
                                        NULL));
 
   // Cast and recycle `value`
-  value = PROTECT(vec_coercible_cast(value, x, &value_arg, &x_arg));
-  value = PROTECT(vec_recycle(value, vec_size(index), &value_arg));
+  value = PROTECT(vec_coercible_cast(value, x, value_arg, x_arg));
+  value = PROTECT(vec_recycle(value, vec_size(index), value_arg));
 
   SEXP proxy = PROTECT(vec_proxy(x));
 

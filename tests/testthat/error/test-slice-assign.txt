@@ -55,3 +55,14 @@ Error: Must assign to elements with a valid subscript vector.
 x Negative locations can't have missing values.
 i The subscript has a missing value at location 2.
 
+
+`vec_assign()` error args can be overridden
+===========================================
+
+> vec_assign(1:2, 1L, "x", x_arg = "foo", value_arg = "bar")
+Error: No common type for `bar` <character> and `foo` <integer>.
+
+> vec_assign(1:2, 1L, 1:2, value_arg = "bar")
+Error: `bar` can't be recycled to size 1.
+x It must be size 1, not 2.
+

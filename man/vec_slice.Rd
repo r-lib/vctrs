@@ -10,7 +10,7 @@ vec_slice(x, i)
 
 vec_slice(x, i) <- value
 
-vec_assign(x, i, value)
+vec_assign(x, i, value, ..., x_arg = "x", value_arg = "value")
 }
 \arguments{
 \item{x}{A vector}
@@ -23,6 +23,13 @@ locations or names of the observations to get/set. Specify
 \item{value}{Replacement values. \code{value} is cast to the type of
 \code{x}, but only if they have a common type. See below for examples
 of this rule.}
+
+\item{...}{These dots are for future extensions and must be empty.}
+
+\item{x_arg, value_arg}{Argument names for \code{x} and \code{value}. These are used
+in error messages to inform the user about the locations of
+incompatible types and sizes (see \code{\link[=stop_incompatible_type]{stop_incompatible_type()}} and
+\code{\link[=stop_incompatible_size]{stop_incompatible_size()}}).}
 }
 \value{
 A vector of the same type as \code{x}.
