@@ -151,6 +151,22 @@
 <h1 class="page-header">
 <a href="#vctrs-development-version" class="anchor"></a>vctrs (development version)<small> Unreleased </small>
 </h1>
+<ul>
+<li><p><code><a href="../reference/vec_slice.html">vec_assign()</a></code> gains <code>x_arg</code> and <code>value_arg</code> parameters (<a href='https://github.com/r-lib/vctrs/issues/918'>#918</a>).</p></li>
+<li><p><code><a href="../reference/vec_group.html">vec_group_loc()</a></code>, which powers <code>dplyr::group_by()</code>, now has more efficient vector access (<a href='https://github.com/r-lib/vctrs/issues/911'>#911</a>).</p></li>
+<li><p><code><a href="../reference/vec_as_names.html">vec_as_names()</a></code> now has more informative error messages when names are not unique (<a href='https://github.com/r-lib/vctrs/issues/882'>#882</a>).</p></li>
+<li><p>Improved support for vector-like S4 objects (<a href='https://github.com/r-lib/vctrs/issues/550'>#550</a>, <a href='https://github.com/r-lib/vctrs/issues/551'>#551</a>).</p></li>
+<li><p>The base classes <code>AsIs</code> and <code>table</code> have vctrs methods (<a href='https://github.com/r-lib/vctrs/issues/904'>#904</a>, <a href='https://github.com/r-lib/vctrs/issues/906'>#906</a>).</p></li>
+<li><p><code>POSIXlt</code> and <code>POSIXct</code> vectors are handled more consistently (<a href='https://github.com/r-lib/vctrs/issues/901'>#901</a>).</p></li>
+<li><p><code><a href="../reference/new_data_frame.html">new_data_frame()</a></code> infers size from row names when <code>n = NULL</code> (<a href='https://github.com/r-lib/vctrs/issues/894'>#894</a>).</p></li>
+</ul>
+<div id="cran-results" class="section level2">
+<h2 class="hasAnchor">
+<a href="#cran-results" class="anchor"></a>CRAN results</h2>
+<ul>
+<li>Fixed clang-UBSAN error “nan is outside the range of representable values of type ‘int’” (<a href='https://github.com/r-lib/vctrs/issues/902'>#902</a>).</li>
+</ul>
+</div>
 </div>
     <div id="vctrs-024" class="section level1">
 <h1 class="page-header">
