@@ -1,6 +1,8 @@
 
 # vctrs (development version)
 
+* `vec_cast()` with data frames no longer uses inheritance (#710).
+
 * The internal function `vec_names()` now returns row names if the
   input is a data frame. This is part of a general effort at
   making row names the vector names of data frames in vctrs.

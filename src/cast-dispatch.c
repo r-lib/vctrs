@@ -1,13 +1,6 @@
 #include "vctrs.h"
 #include "utils.h"
 
-static SEXP vec_cast_dispatch2(SEXP x,
-                               SEXP to,
-                               enum vctrs_type x_type,
-                               bool* lossy,
-                               struct vctrs_arg* x_arg,
-                               struct vctrs_arg* to_arg);
-
 // [[ include("vctrs.h") ]]
 SEXP vec_cast_dispatch(SEXP x,
                        SEXP to,
@@ -16,116 +9,40 @@ SEXP vec_cast_dispatch(SEXP x,
                        bool* lossy,
                        struct vctrs_arg* x_arg,
                        struct vctrs_arg* to_arg) {
-  switch (to_type) {
-  case vctrs_type_character:
-    switch (class_type(x)) {
-    case vctrs_class_bare_factor:
-      return fct_as_character(x, x_arg);
+  int dir = 0;
+  enum vctrs_type2_s3 type2_s3 = vec_typeof2_s3_impl(x, to, x_type, to_type, &dir);
 
-    case vctrs_class_bare_ordered:
-      return ord_as_character(x, x_arg);
+  switch (type2_s3) {
 
-    default:
-      break;
-    }
-    break;
-
-  case vctrs_type_dataframe:
-    switch (class_type(x)) {
-    case vctrs_class_bare_data_frame:
-      Rf_errorcall(R_NilValue, "Internal error: `x` should have been classified as a `vctrs_type_dataframe`");
-
-    case vctrs_class_bare_tibble:
-      return df_cast(x, to, x_arg, to_arg);
-
-    default:
-      break;
-    }
-    break;
-
-  case vctrs_type_s3:
-    return vec_cast_dispatch2(x, to, x_type, lossy, x_arg, to_arg);
-
-  default:
-    break;
-  }
-
-  return R_NilValue;
-}
-
-
-static SEXP vec_cast_dispatch2(SEXP x, SEXP to,
-                               enum vctrs_type x_type,
-                               bool* lossy,
-                               struct vctrs_arg* x_arg,
-                               struct vctrs_arg* to_arg) {
-  switch (class_type(to)) {
-  case vctrs_class_bare_factor:
-    switch (x_type) {
-    case vctrs_type_character:
+  case vctrs_type2_s3_character_bare_factor:
+    if (dir == 0) {
       return chr_as_factor(x, to, lossy, to_arg);
-
-    case vctrs_type_s3:
-      switch (class_type(x)) {
-      case vctrs_class_bare_factor:
-        return fct_as_factor(x, to, lossy, x_arg, to_arg);
-
-      default:
-        break;
-      }
-
-    default:
-      break;
+    } else {
+      return fct_as_character(x, x_arg);
     }
-    break;
 
-  case vctrs_class_bare_ordered:
-    switch (x_type) {
-    case vctrs_type_character:
+  case vctrs_type2_s3_character_bare_ordered:
+    if (dir == 0) {
       return chr_as_ordered(x, to, lossy, to_arg);
-
-    case vctrs_type_s3:
-      switch (class_type(x)) {
-      case vctrs_class_bare_ordered:
-        return ord_as_ordered(x, to, lossy, x_arg, to_arg);
-
-      default:
-        break;
-      }
-
-    default:
-      break;
+    } else {
+      return ord_as_character(x, x_arg);
     }
-    break;
 
-  case vctrs_class_bare_tibble:
-    switch (x_type) {
-    case vctrs_type_dataframe:
+  case vctrs_type2_s3_bare_factor_bare_factor:
+    return fct_as_factor(x, to, lossy, x_arg, to_arg);
+
+  case vctrs_type2_s3_bare_ordered_bare_ordered:
+    return ord_as_ordered(x, to, lossy, x_arg, to_arg);
+
+  case vctrs_type2_s3_dataframe_bare_tibble:
+    if (dir == 0) {
+      // FIXME: Should have own method
       return df_cast(x, to, x_arg, to_arg);
-
-    case vctrs_type_s3:
-      switch (class_type(x)) {
-      case vctrs_class_bare_data_frame:
-        Rf_errorcall(R_NilValue, "Internal error: `x` should have been classified as a `vctrs_type_dataframe`");
-
-      case vctrs_class_bare_tibble:
-        return df_cast(x, to, x_arg, to_arg);
-
-      default:
-        break;
-      }
-
-    default:
-      break;
+    } else {
+      return df_cast(x, to, x_arg, to_arg);
     }
-    break;
-
-  case vctrs_class_bare_data_frame:
-    Rf_errorcall(R_NilValue, "Internal error: `to` should have been classified as a `vctrs_type_dataframe`");
 
   default:
-    break;
+    return R_NilValue;
   }
-
-  return R_NilValue;
 }
