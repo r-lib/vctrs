@@ -438,8 +438,6 @@ SEXP df_cast(SEXP x, SEXP to, struct vctrs_arg* x_arg, struct vctrs_arg* to_arg)
   // `to` might not have any columns to compute the original size.
   init_data_frame(out, size);
 
-  out = PROTECT(vec_restore(out, to, R_NilValue));
-
   R_len_t extra_len = Rf_length(x) - common_len;
   if (extra_len) {
     out = vctrs_dispatch3(syms_df_lossy_cast, fns_df_lossy_cast,
@@ -448,7 +446,7 @@ SEXP df_cast(SEXP x, SEXP to, struct vctrs_arg* x_arg, struct vctrs_arg* to_arg)
                           syms_to, to);
   }
 
-  UNPROTECT(5);
+  UNPROTECT(4);
   return out;
 }
 

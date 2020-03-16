@@ -97,14 +97,6 @@ test_that("column order matches type", {
   expect_named(df3, c("x", "y", "z"))
 })
 
-test_that("casts preserve outer class", {
-  df <- data.frame(x = 1)
-  dt <- tibble::tibble(x = 1)
-
-  expect_s3_class(vec_cast(df, dt), "tbl_df")
-  expect_s3_class(vec_cast(dt, df), "data.frame")
-})
-
 test_that("restore generates correct row/col names", {
   df1 <- data.frame(x = NA, y = 1:4, z = 1:4)
   df1$x <- data.frame(a = 1:4, b = 1:4)

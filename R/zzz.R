@@ -16,13 +16,20 @@ on_package_load <- function(pkg, expr) {
   s3_register("generics::as.ordered", "vctrs_vctr")
   s3_register("generics::as.difftime", "vctrs_vctr")
 
+  # Remove once tibble has implemented the methods
   on_package_load("tibble", {
-    # Remove once tibble has implemented the methods
     if (!env_has(ns_env("tibble"), "vec_ptype2.tbl_df")) {
       s3_register("vctrs::vec_ptype2", "tbl_df")
       s3_register("vctrs::vec_ptype2.tbl_df", "default")
       s3_register("vctrs::vec_ptype2.tbl_df", "data.frame")
       s3_register("vctrs::vec_ptype2.data.frame", "tbl_df")
+    }
+
+    if (!env_has(ns_env("tibble"), "vec_cast.tbl_df")) {
+      s3_register("vctrs::vec_cast", "tbl_df")
+      s3_register("vctrs::vec_cast.tbl_df", "default")
+      s3_register("vctrs::vec_cast.tbl_df", "data.frame")
+      s3_register("vctrs::vec_cast.data.frame", "tbl_df")
     }
   })
 

@@ -12,8 +12,8 @@ test_that("can cast tibble to df and vice versa", {
   df <- new_data_frame()
   dt <- tibble::tibble()
 
-  expect_equal(vec_cast(df, dt), dt)
-  expect_equal(vec_cast(dt, df), df)
+  expect_identical(vec_cast(df, dt), dt)
+  expect_identical(vec_cast(dt, df), df)
 })
 
 test_that("can't cast vector to tibble", {
@@ -31,16 +31,6 @@ test_that("no common type between list and tibble", {
 
   expect_error(vec_ptype2(l, dt), class = "vctrs_error_incompatible_type")
   expect_error(vec_ptype2(dt, l), class = "vctrs_error_incompatible_type")
-})
-
-test_that("can cast a list of 1 or 0 row tibbles to a tibble", {
-  dt1 <- tibble::tibble(x = numeric())
-  dt2 <- tibble::tibble(x = 1)
-  lst <- list(dt1, dt2)
-
-  expect <- tibble::tibble(x = c(NA, 1))
-
-  expect_equal(vec_cast(lst, dt1), expect)
 })
 
 test_that("vec_restore restores tibbles", {

@@ -36,8 +36,7 @@ SEXP vec_cast_dispatch(SEXP x,
 
   case vctrs_type2_s3_dataframe_bare_tibble:
     if (dir == 0) {
-      // FIXME: Should have own method
-      return df_cast(x, to, x_arg, to_arg);
+      return tib_cast(x, to, x_arg, to_arg);
     } else {
       return df_cast(x, to, x_arg, to_arg);
     }
