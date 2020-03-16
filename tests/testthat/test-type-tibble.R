@@ -25,6 +25,14 @@ test_that("can't cast vector to tibble", {
   expect_error(vec_cast(v, dt), class = "vctrs_error_incompatible_cast")
 })
 
+test_that("casting to and from tibble preserves row names", {
+  out <- vec_cast(mtcars, tibble::as_tibble(mtcars))
+  expect_identical(row.names(out), row.names(mtcars))
+
+  out <- vec_cast(out, unrownames(mtcars))
+  expect_identical(row.names(out), row.names(mtcars))
+})
+
 test_that("no common type between list and tibble", {
   dt <- tibble::tibble()
   l <- list()

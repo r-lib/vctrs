@@ -155,6 +155,15 @@ test_that("df_cast() checks for names", {
   expect_error(vec_cast_common(x, y), "must have names")
 })
 
+test_that("casting to and from data frame preserves row names", {
+  out <- vec_cast(mtcars, unrownames(mtcars))
+  expect_identical(row.names(out), row.names(mtcars))
+
+  out <- vec_cast(out, unrownames(mtcars))
+  expect_identical(row.names(out), row.names(mtcars))
+})
+
+
 # new_data_frame ----------------------------------------------------------
 
 test_that("can construct an empty data frame", {

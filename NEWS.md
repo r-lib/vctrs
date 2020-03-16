@@ -1,6 +1,9 @@
 
 # vctrs (development version)
 
+* `vec_cast()` to and from data frames preserves the row names of
+  inputs.
+
 * `vec_cast()` with data frames no longer uses inheritance (#710).
 
 * The internal function `vec_names()` now returns row names if the
