@@ -161,7 +161,7 @@ that matches <code><a href='vec_size.html'>vec_size()</a></code> instead of <cod
 
 <span class='fu'>vec_slice</span>(<span class='no'>x</span>, <span class='no'>i</span>) <span class='kw'>&lt;-</span> <span class='no'>value</span>
 
-<span class='fu'>vec_assign</span>(<span class='no'>x</span>, <span class='no'>i</span>, <span class='no'>value</span>)</pre>
+<span class='fu'>vec_assign</span>(<span class='no'>x</span>, <span class='no'>i</span>, <span class='no'>value</span>, <span class='no'>...</span>, <span class='kw'>x_arg</span> <span class='kw'>=</span> <span class='st'>"x"</span>, <span class='kw'>value_arg</span> <span class='kw'>=</span> <span class='st'>"value"</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -182,6 +182,17 @@ locations or names of the observations to get/set. Specify
       <td><p>Replacement values. <code>value</code> is cast to the type of
 <code>x</code>, but only if they have a common type. See below for examples
 of this rule.</p></td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td><p>These dots are for future extensions and must be empty.</p></td>
+    </tr>
+    <tr>
+      <th>x_arg, value_arg</th>
+      <td><p>Argument names for <code>x</code> and <code>value</code>. These are used
+in error messages to inform the user about the locations of
+incompatible types and sizes (see <code><a href='vctrs-conditions.html'>stop_incompatible_type()</a></code> and
+<code><a href='vctrs-conditions.html'>stop_incompatible_size()</a></code>).</p></td>
     </tr>
     </table>
 
