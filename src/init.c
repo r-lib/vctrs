@@ -99,7 +99,7 @@ extern SEXP vctrs_df_flat_width(SEXP);
 extern SEXP df_flatten(SEXP);
 extern SEXP vctrs_equal_scalar(SEXP, SEXP, SEXP, SEXP, SEXP);
 extern SEXP vctrs_linked_version();
-extern SEXP vctrs_tibble_ptype2(SEXP x, SEXP y, SEXP x_arg_, SEXP y_arg_);
+extern SEXP vctrs_tib_ptype2(SEXP x, SEXP y, SEXP x_arg_, SEXP y_arg_);
 
 
 
@@ -221,7 +221,7 @@ static const R_CallMethodDef CallEntries[] = {
   {"vctrs_df_flatten",                 (DL_FUNC) &df_flatten, 1},
   {"vctrs_equal_scalar",               (DL_FUNC) &vctrs_equal_scalar, 5},
   {"vctrs_linked_version",             (DL_FUNC) &vctrs_linked_version, 0},
-  {"vctrs_tibble_ptype2",              (DL_FUNC) &vctrs_tibble_ptype2, 4},
+  {"vctrs_tib_ptype2",                 (DL_FUNC) &vctrs_tib_ptype2, 4},
   {NULL, NULL, 0}
 };
 

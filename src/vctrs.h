@@ -577,7 +577,7 @@ SEXP datetime_datetime_ptype2(SEXP x, SEXP y);
 
 // Tibble methods ----------------------------------------------
 
-SEXP tibble_ptype2(SEXP x, SEXP y, struct vctrs_arg* x_arg, struct vctrs_arg* y_arg);
+SEXP tib_ptype2(SEXP x, SEXP y, struct vctrs_arg* x_arg, struct vctrs_arg* y_arg);
 
 // Character translation ----------------------------------------
 

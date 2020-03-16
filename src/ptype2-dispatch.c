@@ -35,7 +35,7 @@ SEXP vec_ptype2_dispatch(SEXP x, SEXP y,
 
   case vctrs_type2_s3_dataframe_bare_tibble:
   case vctrs_type2_s3_bare_tibble_bare_tibble:
-    return tibble_ptype2(x, y, x_arg, y_arg);
+    return tib_ptype2(x, y, x_arg, y_arg);
 
   default:
     return vec_ptype2_dispatch_s3(x, y, x_arg, y_arg);

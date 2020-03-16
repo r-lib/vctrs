@@ -16,7 +16,7 @@ vec_ptype2.tbl_df.default <- function(x, y, ...) {
 
 vec_ptype2.tbl_df.data.frame <- function(x, y, ..., x_arg = "x", y_arg = "y") {
   .Call(
-    vctrs_tibble_ptype2,
+    vctrs_tib_ptype2,
     x = x,
     y = y,
     x_arg = x_arg,
@@ -25,7 +25,7 @@ vec_ptype2.tbl_df.data.frame <- function(x, y, ..., x_arg = "x", y_arg = "y") {
 }
 vec_ptype2.data.frame.tbl_df <- function(x, y, ..., x_arg = "x", y_arg = "y") {
   .Call(
-    vctrs_tibble_ptype2,
+    vctrs_tib_ptype2,
     x = x,
     y = y,
     x_arg = x_arg,
