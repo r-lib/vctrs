@@ -2,6 +2,9 @@
 #include "type-data-frame.h"
 #include "utils.h"
 
+static SEXP syms_df_lossy_cast = NULL;
+static SEXP fns_df_lossy_cast = NULL;
+
 static SEXP new_compact_rownames(R_len_t n);
 
 
@@ -286,6 +289,86 @@ SEXP df_container_type(SEXP x) {
   return type;
 }
 
+
+// vctrs type methods ------------------------------------------------
+
+// [[ register() ]]
+SEXP vctrs_df_as_dataframe(SEXP x, SEXP to, SEXP x_arg_, SEXP to_arg_) {
+  if (!r_is_string(x_arg_)) {
+    Rf_errorcall(R_NilValue, "`x_arg` must be a string");
+  }
+  if (!r_is_string(to_arg_)) {
+    Rf_errorcall(R_NilValue, "`to_arg` must be a string");
+  }
+
+  struct vctrs_arg x_arg = new_wrapper_arg(NULL, r_chr_get_c_string(x_arg_, 0));
+  struct vctrs_arg to_arg = new_wrapper_arg(NULL, r_chr_get_c_string(to_arg_, 0));
+
+  return df_as_dataframe(x, to, &x_arg, &to_arg);
+}
+
+// Take all columns of `to` and preserve the order. Common columns are
+// cast to their types in `to`. Extra `x` columns are dropped and
+// cause a lossy cast. Extra `to` columns are filled with missing
+// values.
+// [[ include("vctrs.h") ]]
+SEXP df_as_dataframe(SEXP x, SEXP to, struct vctrs_arg* x_arg, struct vctrs_arg* to_arg) {
+  SEXP x_names = PROTECT(r_names(x));
+  SEXP to_names = PROTECT(r_names(to));
+
+  if (x_names == R_NilValue || to_names == R_NilValue) {
+    Rf_error("Internal error in `df_as_dataframe()`: Data frame must have names.");
+  }
+
+  SEXP to_dups_pos = PROTECT(vec_match(to_names, x_names));
+  int* to_dups_pos_data = INTEGER(to_dups_pos);
+
+  R_len_t to_len = Rf_length(to_dups_pos);
+  SEXP out = PROTECT(Rf_allocVector(VECSXP, to_len));
+  Rf_setAttrib(out, R_NamesSymbol, to_names);
+
+  R_len_t size = df_size(x);
+  R_len_t common_len = 0;
+
+  for (R_len_t i = 0; i < to_len; ++i) {
+    R_len_t pos = to_dups_pos_data[i];
+
+    SEXP col;
+    if (pos == NA_INTEGER) {
+      col = vec_init(VECTOR_ELT(to, i), size);
+    } else {
+      --pos; // 1-based index
+      struct arg_data_index x_arg_data = new_index_arg_data(r_chr_get_c_string(x_names, pos), x_arg);
+      struct arg_data_index to_arg_data = new_index_arg_data(r_chr_get_c_string(to_names, i), to_arg);
+      struct vctrs_arg named_x_arg = new_index_arg(x_arg, &x_arg_data);
+      struct vctrs_arg named_to_arg = new_index_arg(to_arg, &to_arg_data);
+      ++common_len;
+      col = vec_cast(VECTOR_ELT(x, pos), VECTOR_ELT(to, i), &named_x_arg, &named_to_arg);
+    }
+
+    SET_VECTOR_ELT(out, i, col);
+  }
+
+  // Restore data frame size before calling `vec_restore()`. `x` and
+  // `to` might not have any columns to compute the original size.
+  init_data_frame(out, size);
+
+  out = PROTECT(vec_restore(out, to, R_NilValue));
+
+  R_len_t extra_len = Rf_length(x) - common_len;
+  if (extra_len) {
+    out = vctrs_dispatch3(syms_df_lossy_cast, fns_df_lossy_cast,
+                          syms_out, out,
+                          syms_x, x,
+                          syms_to, to);
+  }
+
+  UNPROTECT(5);
+  return out;
+}
+
+
+
 // If negative index, value is appended
 SEXP df_poke(SEXP x, R_len_t i, SEXP value) {
   if (i >= 0) {
@@ -397,4 +480,10 @@ SEXP df_repair_names(SEXP x, struct name_repair_opts* name_repair) {
 
   UNPROTECT(2);
   return x;
+}
+
+
+void vctrs_init_type_data_frame(SEXP ns) {
+  syms_df_lossy_cast = Rf_install("df_lossy_cast");
+  fns_df_lossy_cast = Rf_findVar(syms_df_lossy_cast, ns);
 }
