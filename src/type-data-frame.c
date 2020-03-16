@@ -378,7 +378,7 @@ SEXP df_ptype2(SEXP x, SEXP y, struct vctrs_arg* x_arg, struct vctrs_arg* y_arg)
 }
 
 // [[ register() ]]
-SEXP vctrs_df_as_dataframe(SEXP x, SEXP to, SEXP x_arg_, SEXP to_arg_) {
+SEXP vctrs_df_cast(SEXP x, SEXP to, SEXP x_arg_, SEXP to_arg_) {
   if (!r_is_string(x_arg_)) {
     Rf_errorcall(R_NilValue, "`x_arg` must be a string");
   }
@@ -389,7 +389,7 @@ SEXP vctrs_df_as_dataframe(SEXP x, SEXP to, SEXP x_arg_, SEXP to_arg_) {
   struct vctrs_arg x_arg = new_wrapper_arg(NULL, r_chr_get_c_string(x_arg_, 0));
   struct vctrs_arg to_arg = new_wrapper_arg(NULL, r_chr_get_c_string(to_arg_, 0));
 
-  return df_as_dataframe(x, to, &x_arg, &to_arg);
+  return df_cast(x, to, &x_arg, &to_arg);
 }
 
 // Take all columns of `to` and preserve the order. Common columns are
@@ -397,12 +397,12 @@ SEXP vctrs_df_as_dataframe(SEXP x, SEXP to, SEXP x_arg_, SEXP to_arg_) {
 // cause a lossy cast. Extra `to` columns are filled with missing
 // values.
 // [[ include("vctrs.h") ]]
-SEXP df_as_dataframe(SEXP x, SEXP to, struct vctrs_arg* x_arg, struct vctrs_arg* to_arg) {
+SEXP df_cast(SEXP x, SEXP to, struct vctrs_arg* x_arg, struct vctrs_arg* to_arg) {
   SEXP x_names = PROTECT(r_names(x));
   SEXP to_names = PROTECT(r_names(to));
 
   if (x_names == R_NilValue || to_names == R_NilValue) {
-    Rf_error("Internal error in `df_as_dataframe()`: Data frame must have names.");
+    Rf_error("Internal error in `df_cast()`: Data frame must have names.");
   }
 
   SEXP to_dups_pos = PROTECT(vec_match(to_names, x_names));

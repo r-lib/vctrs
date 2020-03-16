@@ -271,7 +271,7 @@ static SEXP vec_cast_switch(SEXP x, SEXP to, bool* lossy, struct vctrs_arg* x_ar
   case vctrs_type_dataframe:
     switch (x_type) {
     case vctrs_type_dataframe:
-      return df_as_dataframe(x, to, x_arg, to_arg);
+      return df_cast(x, to, x_arg, to_arg);
     default:
       break;
     }

@@ -103,7 +103,7 @@ vec_cast.data.frame <- function(x, to, ...) {
 #' @export
 #' @method vec_cast.data.frame data.frame
 vec_cast.data.frame.data.frame <- function(x, to, ..., x_arg = "x", to_arg = "to") {
-  .Call(vctrs_df_as_dataframe, x, to, x_arg, to_arg)
+  .Call(vctrs_df_cast, x, to, x_arg, to_arg)
 }
 #' @export
 #' @method vec_cast.data.frame list
