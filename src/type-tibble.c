@@ -10,3 +10,10 @@ SEXP tibble_ptype2(SEXP x, SEXP y, struct vctrs_arg* x_arg, struct vctrs_arg* y_
   UNPROTECT(1);
   return out;
 }
+
+// [[ register() ]]
+SEXP vctrs_tibble_ptype2(SEXP x, SEXP y, SEXP x_arg_, SEXP y_arg_) {
+  struct vctrs_arg x_arg = new_wrapper_arg(NULL, r_chr_get_c_string(x_arg_, 0));
+  struct vctrs_arg y_arg = new_wrapper_arg(NULL, r_chr_get_c_string(y_arg_, 0));
+  return tibble_ptype2(x, y, &x_arg, &y_arg);
+}
