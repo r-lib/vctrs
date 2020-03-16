@@ -76,11 +76,13 @@ vec_proxy_compare.data.frame <- function(x, ..., relax = FALSE) {
 #' @export vec_ptype2.data.frame
 #' @method vec_ptype2 data.frame
 #' @export
-vec_ptype2.data.frame <- function(x, y, ...) UseMethod("vec_ptype2.data.frame", y)
+vec_ptype2.data.frame <- function(x, y, ...) {
+  UseMethod("vec_ptype2.data.frame", y)
+}
 #' @method vec_ptype2.data.frame data.frame
 #' @export
 vec_ptype2.data.frame.data.frame <- function(x, y, ..., x_arg = "x", y_arg = "y") {
-  .Call(vctrs_type2_df_df, x, y, x_arg, y_arg)
+  .Call(vctrs_df_ptype2, x, y, x_arg, y_arg)
 }
 #' @method vec_ptype2.data.frame default
 #' @export

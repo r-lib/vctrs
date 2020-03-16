@@ -293,7 +293,7 @@ SEXP df_container_type(SEXP x) {
 // vctrs type methods ------------------------------------------------
 
 // [[ register() ]]
-SEXP vctrs_type2_df_df(SEXP x, SEXP y, SEXP x_arg, SEXP y_arg) {
+SEXP vctrs_df_ptype2(SEXP x, SEXP y, SEXP x_arg, SEXP y_arg) {
   if (!r_is_string(x_arg)) {
     Rf_errorcall(R_NilValue, "`x_arg` must be a string");
   }
