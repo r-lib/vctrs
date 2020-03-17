@@ -105,7 +105,8 @@ bool list_is_homogeneously_classed(SEXP xs);
 // Destructive compacting
 SEXP node_compact_d(SEXP xs);
 
-extern struct vctrs_arg* args_empty;
+extern struct vctrs_arg args_empty_;
+static struct vctrs_arg* const args_empty = &args_empty_;
 SEXP arg_validate(SEXP arg, const char* arg_nm);
 
 void never_reached(const char* fn) __attribute__((noreturn));
