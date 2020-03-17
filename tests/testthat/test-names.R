@@ -195,14 +195,16 @@ test_that("vec_set_names() sets matrix/array names", {
   expect_equal(vec_set_names(y, names), exp)
 })
 
-test_that("vec_set_names() does not set row names on data frames", {
-  x <- data.frame(a = 1, b = 2)
-  expect_equal(vec_set_names(x, "r1"), x)
-})
+test_that("vec_set_names() sets row names on data frames", {
+  expect_identical(
+    vec_set_names(data_frame(x = 1), "foo"),
+    new_data_frame(list(x = 1), row.names = "foo")
+  )
 
-test_that("vec_set_names() leaves existing data frame row names intact", {
-  x <- data.frame(a = 1, b = 2, row.names = "original")
-  expect_equal(rownames(vec_set_names(x, "new")), "original")
+  expect_identical(
+    vec_set_names(data_frame(x = 1:2), c("foo", "foo")),
+    new_data_frame(list(x = 1:2), row.names = c("foo...1", "foo...2"))
+  )
 })
 
 test_that("vec_set_names() correctly sets names on POSIXlt objects", {

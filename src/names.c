@@ -708,16 +708,31 @@ SEXP vec_set_rownames(SEXP x, SEXP names) {
   return x;
 }
 
+SEXP vec_set_df_rownames(SEXP x, SEXP names) {
+  x = PROTECT(r_maybe_duplicate(x));
+
+  if (names == R_NilValue) {
+    init_compact_rownames(x, vec_size(x));
+  } else {
+    // Repair row names verbosely
+    names = PROTECT(vec_as_names(names, default_unique_repair_opts));
+    Rf_setAttrib(x, R_RowNamesSymbol, names);
+    UNPROTECT(1);
+  }
+
+  UNPROTECT(1);
+  return x;
+}
+
 // FIXME: Do we need to get the vec_proxy() and only fall back if it doesn't
 // exist? See #526 and #531 for discussion and the related issue.
 // [[ include("utils.h"); register() ]]
 SEXP vec_set_names(SEXP x, SEXP names) {
-  // Never on a data frame
-  if (is_data_frame(x)) {
-    return x;
-  }
-
   check_names(x, names);
+
+  if (is_data_frame(x)) {
+    return vec_set_df_rownames(x, names);
+  }
 
   if (has_dim(x)) {
     return vec_set_rownames(x, names);
@@ -733,7 +748,6 @@ SEXP vec_set_names(SEXP x, SEXP names) {
   }
 
   x = PROTECT(r_maybe_duplicate(x));
-
   Rf_setAttrib(x, R_NamesSymbol, names);
 
   UNPROTECT(1);
