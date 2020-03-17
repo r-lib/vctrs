@@ -11,3 +11,6 @@ setMethod("[", "rando", function(x, i, j, ..., drop = TRUE) {
   new_n <- length(vec_as_location(i, length(x@.Data), names(x@.Data)))
   rando(new_n)
 })
+
+
+.Counts <- methods::setClass("Counts", contains = "integer", slots = c(name = "character"))

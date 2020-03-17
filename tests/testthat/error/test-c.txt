@@ -1,11 +1,30 @@
 
-vec_c() falls back to c() for foreign classes
-=============================================
+vec_c() falls back to c() for foreign S3 classes
+================================================
 
 > vec_c(foobar(1), foobar(2))
 Error: Can't find vctrs or base methods for concatenation.
 vctrs methods must be implemented for class `vctrs_foobar`.
 See <https://vctrs.r-lib.org/articles/s3-vector.html>.
+
+
+vec_c() falls back to c() for S4 classes with a registered c() method
+=====================================================================
+
+> joe1 <- .Counts(c(1L, 2L), name = "Joe")
+> joe2 <- .Counts(3L, name = "Joe")
+> vec_c(joe1, joe2)
+Error: Can't find vctrs or base methods for concatenation.
+vctrs methods must be implemented for class `Counts`.
+See <https://vctrs.r-lib.org/articles/s3-vector.html>.
+
+> vec_c(NULL, joe1, joe2)
+Error: Can't find vctrs or base methods for concatenation.
+vctrs methods must be implemented for class `Counts`.
+See <https://vctrs.r-lib.org/articles/s3-vector.html>.
+
+> vec_c(joe1, 1, joe2)
+Error: No common type for `..1` <Counts> and `..2` <double>.
 
 
 vec_c() fallback doesn't support `name_spec` or `ptype`

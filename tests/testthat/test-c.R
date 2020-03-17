@@ -139,7 +139,7 @@ test_that("vec_c() outer names work with proxied objects", {
   expect_equal(vec_c(outer = xs, .name_spec = "{outer}_{inner}"), exp)
 })
 
-test_that("vec_c() falls back to c() for foreign classes", {
+test_that("vec_c() falls back to c() for foreign S3 classes", {
   verify_errors({
     expect_error(
       vec_c(foobar(1), foobar(2)),
@@ -188,6 +188,48 @@ test_that("vec_c() falls back to c() for foreign classes", {
   )
 })
 
+test_that("vec_c() falls back to c() for S4 classes with a registered c() method", {
+  joe1 <- .Counts(c(1L, 2L), name = "Joe")
+  joe2 <- .Counts(3L, name = "Joe")
+
+  verify_errors({
+    expect_error(
+      vec_c(joe1, joe2),
+      "concatenation"
+    )
+    expect_error(
+      vec_c(NULL, joe1, joe2),
+      "concatenation"
+    )
+    expect_error(
+      vec_c(joe1, 1, joe2),
+      class = "vctrs_error_incompatible_type"
+    )
+  })
+
+  c_counts <- function(x, ...) {
+    xs <- list(x, ...)
+
+    xs_data <- lapply(xs, function(x) x@.Data)
+    new_data <- do.call(c, xs_data)
+
+    .Counts(new_data, name = x@name)
+  }
+
+  methods::setMethod("c", methods::signature(x = "Counts"), c_counts)
+  on.exit(methods::removeMethod("c", methods::signature(x = "Counts")), add = TRUE)
+
+  expect_identical(
+    vec_c(joe1, joe2),
+    .Counts(c(1L, 2L, 3L), name = "Joe")
+  )
+
+  expect_identical(
+    vec_c(NULL, joe1, joe2),
+    .Counts(c(1L, 2L, 3L), name = "Joe")
+  )
+})
+
 test_that("vec_c() fallback doesn't support `name_spec` or `ptype`", {
   verify_errors({
     expect_error(
@@ -203,8 +245,15 @@ test_that("vec_c() fallback doesn't support `name_spec` or `ptype`", {
 
 test_that("vec_c() has informative error messages", {
   verify_output(test_path("error", "test-c.txt"), {
-    "# vec_c() falls back to c() for foreign classes"
+    "# vec_c() falls back to c() for foreign S3 classes"
     vec_c(foobar(1), foobar(2))
+
+    "# vec_c() falls back to c() for S4 classes with a registered c() method"
+    joe1 <- .Counts(c(1L, 2L), name = "Joe")
+    joe2 <- .Counts(3L, name = "Joe")
+    vec_c(joe1, joe2)
+    vec_c(NULL, joe1, joe2)
+    vec_c(joe1, 1, joe2)
 
     "# vec_c() fallback doesn't support `name_spec` or `ptype`"
     vec_c(foobar(1), foobar(2), .name_spec = "{outer}_{inner}")
