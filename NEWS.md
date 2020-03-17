@@ -1,6 +1,10 @@
 
 # vctrs (development version)
 
+* The internal function `vec_names()` now returns row names if the
+  input is a data frame. This is part of a general effort at
+  making row names the vector names of data frames in vctrs.
+
 * `vec_assign()` gains `x_arg` and `value_arg` parameters (#918).
 
 * `vec_group_loc()`, which powers `dplyr::group_by()`, now has more

@@ -1,9 +1,7 @@
 #include <ctype.h>
-
 #include "vctrs.h"
+#include "type-data-frame.h"
 #include "utils.h"
-
-#include <ctype.h>
 
 static void describe_repair(SEXP old_names, SEXP new_names);
 
@@ -99,7 +97,14 @@ SEXP vec_as_custom_names(SEXP names, const struct name_repair_opts* opts) {
 // [[ register(); include("vctrs.h") ]]
 SEXP vec_names(SEXP x) {
   if (OBJECT(x) && Rf_inherits(x, "data.frame")) {
-    return R_NilValue;
+    // Only return row names if they are character. Data frames with
+    // automatic row names are treated as unnamed.
+    SEXP rn = df_rownames(x);
+    if (rownames_type(rn) == ROWNAMES_IDENTIFIERS) {
+      return rn;
+    } else {
+      return R_NilValue;
+    }
   }
 
   if (vec_dim_n(x) == 1) {

@@ -5,8 +5,12 @@ context("test-names")
 test_that("vec_names() retrieves names", {
   expect_null(vec_names(letters))
   expect_identical(vec_names(set_names(letters)), letters)
-  expect_null(vec_names(mtcars))
+
+  expect_identical(vec_names(mtcars), row.names(mtcars))
+  expect_null(vec_names(unrownames(mtcars)))
+
   expect_identical(vec_names(Titanic), dimnames(Titanic)[[1]])
+
   x <- matrix(1L, dimnames = list("row", "col"))
   expect_identical(vec_names(x), dimnames(x)[[1]])
 })
@@ -45,8 +49,13 @@ test_that("vec_names2() repairs names", {
 })
 
 test_that("vec_names2() treats data frames and arrays as vectors", {
-  expect_identical(vec_names2(mtcars), rep_len("", nrow(mtcars)))
+  expect_identical(vec_names2(mtcars), row.names(mtcars))
   expect_identical(vec_names2(as.matrix(mtcars)), row.names(mtcars))
+
+  df <- unrownames(mtcars)
+  exp <- rep_len("", nrow(mtcars))
+  expect_identical(vec_names2(df), exp)
+  expect_identical(vec_names2(as.matrix(df)), exp)
 })
 
 test_that("vec_names2() accepts and checks repair function", {
@@ -272,8 +281,13 @@ test_that("as_minimal_names() is idempotent", {
 })
 
 test_that("minimal_names() treats data frames and arrays as vectors", {
-  expect_identical(minimal_names(mtcars), rep_len("", nrow(mtcars)))
+  expect_identical(minimal_names(mtcars), row.names(mtcars))
   expect_identical(minimal_names(as.matrix(mtcars)), row.names(mtcars))
+
+  df <- unrownames(mtcars)
+  exp <- rep_len("", nrow(mtcars))
+  expect_identical(minimal_names(df), exp)
+  expect_identical(minimal_names(as.matrix(df)), exp)
 })
 
 test_that("as_minimal_names() copies on write", {
