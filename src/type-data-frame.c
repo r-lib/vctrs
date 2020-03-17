@@ -437,8 +437,7 @@ SEXP df_cast(SEXP x, SEXP to, struct vctrs_arg* x_arg, struct vctrs_arg* to_arg)
   // Restore data frame size before calling `vec_restore()`. `x` and
   // `to` might not have any columns to compute the original size.
   init_data_frame(out, size);
-
-  out = PROTECT(vec_restore(out, to, R_NilValue));
+  Rf_setAttrib(out, R_RowNamesSymbol, df_rownames(x));
 
   R_len_t extra_len = Rf_length(x) - common_len;
   if (extra_len) {
@@ -448,7 +447,7 @@ SEXP df_cast(SEXP x, SEXP to, struct vctrs_arg* x_arg, struct vctrs_arg* to_arg)
                           syms_to, to);
   }
 
-  UNPROTECT(5);
+  UNPROTECT(4);
   return out;
 }
 

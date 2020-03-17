@@ -97,14 +97,6 @@ test_that("column order matches type", {
   expect_named(df3, c("x", "y", "z"))
 })
 
-test_that("casts preserve outer class", {
-  df <- data.frame(x = 1)
-  dt <- tibble::tibble(x = 1)
-
-  expect_s3_class(vec_cast(df, dt), "tbl_df")
-  expect_s3_class(vec_cast(dt, df), "data.frame")
-})
-
 test_that("restore generates correct row/col names", {
   df1 <- data.frame(x = NA, y = 1:4, z = 1:4)
   df1$x <- data.frame(a = 1:4, b = 1:4)
@@ -162,6 +154,15 @@ test_that("df_cast() checks for names", {
   y <- data_frame(2)
   expect_error(vec_cast_common(x, y), "must have names")
 })
+
+test_that("casting to and from data frame preserves row names", {
+  out <- vec_cast(mtcars, unrownames(mtcars))
+  expect_identical(row.names(out), row.names(mtcars))
+
+  out <- vec_cast(out, unrownames(mtcars))
+  expect_identical(row.names(out), row.names(mtcars))
+})
+
 
 # new_data_frame ----------------------------------------------------------
 

@@ -575,11 +575,12 @@ SEXP ord_as_ordered(SEXP x, SEXP to, bool* lossy, struct vctrs_arg* x_arg, struc
 SEXP date_datetime_ptype2(SEXP x, SEXP y);
 SEXP datetime_datetime_ptype2(SEXP x, SEXP y);
 
-// Tibble methods ----------------------------------------------
+// Tibble methods ----------------------------------------------------
 
 SEXP tib_ptype2(SEXP x, SEXP y, struct vctrs_arg* x_arg, struct vctrs_arg* y_arg);
+SEXP tib_cast(SEXP x, SEXP y, struct vctrs_arg* x_arg, struct vctrs_arg* y_arg);
 
-// Character translation ----------------------------------------
+// Character translation ---------------------------------------------
 
 SEXP obj_maybe_translate_encoding(SEXP x, R_len_t size);
 SEXP obj_maybe_translate_encoding2(SEXP x, R_len_t x_size, SEXP y, R_len_t y_size);
