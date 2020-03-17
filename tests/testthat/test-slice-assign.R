@@ -487,12 +487,9 @@ test_that("names are not assigned by default", {
     mat_out
   )
 
-  nested_x <- data_frame(df = df_x, mat = mat_x)
-  nested_y <- data_frame(df = df_y, mat = mat_y)
-  nested_out <- data_frame(
-    df = df_out,
-    mat = mat_out
-  )
+  nested_x <- new_data_frame(list(df = df_x, mat = mat_x, vec = vec_x), row.names = c("foo", "bar", "baz"))
+  nested_y <- new_data_frame(list(df = df_y, mat = mat_y, vec = vec_y), row.names = c("quux"))
+  nested_out <- new_data_frame(list(df = df_out, mat = mat_out, vec = vec_out), row.names = c("foo", "bar", "baz"))
   expect_identical(
     vec_assign(nested_x, 2, nested_y),
     nested_out
@@ -524,12 +521,10 @@ test_that("can optionally assign names", {
     mat_out
   )
 
-  nested_x <- data_frame(df = df_x, mat = mat_x)
-  nested_y <- data_frame(df = df_y, mat = mat_y)
-  nested_out <- data_frame(
-    df = df_out,
-    mat = mat_out
-  )
+  nested_x <- new_data_frame(list(df = df_x, mat = mat_x, vec = vec_x), row.names = c("foo", "bar", "baz"))
+  nested_y <- new_data_frame(list(df = df_y, mat = mat_y, vec = vec_y), row.names = c("quux"))
+  nested_out <- new_data_frame(list(df = df_out, mat = mat_out, vec = vec_out), row.names = c("foo", "quux", "baz"))
+
   expect_identical(
     vec_assign_params(nested_x, 2, nested_y, assign_names = TRUE),
     nested_out

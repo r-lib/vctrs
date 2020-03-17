@@ -117,10 +117,26 @@ test_that("vec_c() doesn't use outer names for data frames (#524)", {
   expect_equal(vec_c(foo = a, bar = b), data.frame(x = 1:2))
 })
 
-test_that("vec_c() drops data frame row names", {
+test_that("vec_c() preserves row names and inner names", {
   x <- data.frame(a = 1, row.names = "r1")
   y <- data.frame(a = 2, row.names = "r2")
-  expect_equal(rownames(vec_c(x, y)), c("1", "2"))
+  expect_equal(rownames(vec_c(x, y)), c("r1", "r2"))
+  expect_equal(rownames(vec_c(x, x)), c("r1...1", "r1...2"))
+
+  vec_x <- set_names(1:3, letters[1:3])
+  vec_y <- c(FOO = 4L)
+  df_x <- new_data_frame(list(x = 1:3), row.names = letters[1:3])
+  df_y <- new_data_frame(list(x = 4L), row.names = "d")
+  mat_x <- matrix(1:3, 3, dimnames = list(letters[1:3]))
+  mat_y <- matrix(4L, 1, dimnames = list("d"))
+  nested_x <- new_data_frame(list(df = df_x, mat = mat_x, vec = vec_x), row.names = c("foo", "bar", "baz"))
+  nested_y <- new_data_frame(list(df = df_y, mat = mat_y, vec = vec_y), row.names = c("quux"))
+
+  nested_out <- vec_c(nested_x, nested_y)
+  expect_identical(row.names(nested_out), c("foo", "bar", "baz", "quux"))
+  expect_identical(row.names(nested_out$df), c("a", "b", "c", "d"))
+  expect_identical(row.names(nested_out$mat), c("a", "b", "c", "d"))
+  expect_identical(names(nested_out$vec), c("a", "b", "c", "FOO"))
 })
 
 test_that("vec_c() outer names work with proxied objects", {
