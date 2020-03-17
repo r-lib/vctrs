@@ -10,6 +10,7 @@ SEXP (*rlang_env_dots_values)(SEXP) = NULL;
 SEXP (*rlang_env_dots_list)(SEXP) = NULL;
 SEXP vctrs_method_table = NULL;
 SEXP base_method_table = NULL;
+SEXP s4_c_method_table = NULL;
 
 SEXP strings_tbl = NULL;
 SEXP strings_tbl_df = NULL;
@@ -348,6 +349,46 @@ SEXP s3_find_method(const char* generic, SEXP x, SEXP table) {
 
   for (int i = 0; i < n_class; ++i, ++class_ptr) {
     SEXP method = s3_get_method(generic, CHAR(*class_ptr), table);
+    if (method != R_NilValue) {
+      UNPROTECT(1);
+      return method;
+    }
+  }
+
+  UNPROTECT(1);
+  return R_NilValue;
+}
+
+static SEXP s4_get_method(const char* class, SEXP table) {
+  SEXP sym = Rf_install(class);
+
+  SEXP method = r_env_get(table, sym);
+  if (r_is_function(method)) {
+    return method;
+  }
+
+  return R_NilValue;
+}
+
+// For S4 objects, the `table` is specific to the generic
+SEXP s4_find_method(SEXP x, SEXP table) {
+  if (!IS_S4_OBJECT(x)) {
+    return R_NilValue;
+  }
+
+  SEXP class = PROTECT(Rf_getAttrib(x, R_ClassSymbol));
+
+  // Avoid corrupt objects where `x` is an OBJECT(), but the class is NULL
+  if (class == R_NilValue) {
+    UNPROTECT(1);
+    return R_NilValue;
+  }
+
+  SEXP* p_class = STRING_PTR(class);
+  int n_class = Rf_length(class);
+
+  for (int i = 0; i < n_class; ++i) {
+    SEXP method = s4_get_method(CHAR(p_class[i]), table);
     if (method != R_NilValue) {
       UNPROTECT(1);
       return method;
@@ -1353,6 +1394,9 @@ void vctrs_init_utils(SEXP ns) {
   vctrs_method_table = r_env_get(ns, Rf_install(".__S3MethodsTable__."));
 
   base_method_table = r_env_get(R_BaseNamespace, Rf_install(".__S3MethodsTable__."));
+
+  s4_c_method_table = r_parse_eval("environment(methods::getGeneric('c'))$.MTable", R_GlobalEnv);
+  R_PreserveObject(s4_c_method_table);
 
   vctrs_shared_empty_str = Rf_mkString("");
   R_PreserveObject(vctrs_shared_empty_str);
