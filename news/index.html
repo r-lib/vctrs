@@ -152,6 +152,7 @@
 <a href="#vctrs-development-version" class="anchor"></a>vctrs (development version)<small> Unreleased </small>
 </h1>
 <ul>
+<li><p>The internal function <code>vec_names()</code> now returns row names if the input is a data frame. This is part of a general effort at making row names the vector names of data frames in vctrs.</p></li>
 <li><p><code><a href="../reference/vec_slice.html">vec_assign()</a></code> gains <code>x_arg</code> and <code>value_arg</code> parameters (<a href='https://github.com/r-lib/vctrs/issues/918'>#918</a>).</p></li>
 <li><p><code><a href="../reference/vec_group.html">vec_group_loc()</a></code>, which powers <code>dplyr::group_by()</code>, now has more efficient vector access (<a href='https://github.com/r-lib/vctrs/issues/911'>#911</a>).</p></li>
 <li><p><code><a href="../reference/vec_as_names.html">vec_as_names()</a></code> now has more informative error messages when names are not unique (<a href='https://github.com/r-lib/vctrs/issues/882'>#882</a>).</p></li>
