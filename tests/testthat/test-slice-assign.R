@@ -461,3 +461,77 @@ test_that("slice and assign have informative errors", {
     vec_assign(1:2, 1L, 1:2, value_arg = "bar")
   })
 })
+
+test_that("names are not assigned by default", {
+  vec_x <- set_names(1:3, letters[1:3])
+  vec_y <- c(FOO = 4L)
+  vec_out <- c(a = 1L, b = 4L, c = 3L)
+  expect_identical(
+    vec_assign(vec_x, 2, vec_y),
+    vec_out
+  )
+
+  df_x <- new_data_frame(list(x = 1:3), row.names = letters[1:3])
+  df_y <- new_data_frame(list(x = 4L), row.names = "FOO")
+  df_out <- new_data_frame(list(x = c(1L, 4L, 3L)), row.names = letters[1:3])
+  expect_identical(
+    vec_assign(df_x, 2, df_y),
+    df_out
+  )
+
+  mat_x <- matrix(1:3, 3, dimnames = list(letters[1:3]))
+  mat_y <- matrix(4L, 1, dimnames = list("FOO"))
+  mat_out <- matrix(c(1L, 4L, 3L), dimnames = list(letters[1:3]))
+  expect_identical(
+    vec_assign(mat_x, 2, mat_y),
+    mat_out
+  )
+
+  nested_x <- data_frame(df = df_x, mat = mat_x)
+  nested_y <- data_frame(df = df_y, mat = mat_y)
+  nested_out <- data_frame(
+    df = df_out,
+    mat = mat_out
+  )
+  expect_identical(
+    vec_assign(nested_x, 2, nested_y),
+    nested_out
+  )
+})
+
+test_that("can optionally assign names", {
+  vec_x <- set_names(1:3, letters[1:3])
+  vec_y <- c(FOO = 4L)
+  vec_out <- c(a = 1L, FOO = 4L, c = 3L)
+  expect_identical(
+    vec_assign_params(vec_x, 2, vec_y, assign_names = TRUE),
+    vec_out
+  )
+
+  df_x <- new_data_frame(list(x = 1:3), row.names = letters[1:3])
+  df_y <- new_data_frame(list(x = 4L), row.names = "FOO")
+  df_out <- new_data_frame(list(x = c(1L, 4L, 3L)), row.names = c("a", "FOO", "c"))
+  expect_identical(
+    vec_assign_params(df_x, 2, df_y, assign_names = TRUE),
+    df_out
+  )
+
+  mat_x <- matrix(1:3, 3, dimnames = list(letters[1:3]))
+  mat_y <- matrix(4L, 1, dimnames = list("FOO"))
+  mat_out <- matrix(c(1L, 4L, 3L), dimnames = list(c("a", "FOO", "c")))
+  expect_identical(
+    vec_assign_params(mat_x, 2, mat_y, assign_names = TRUE),
+    mat_out
+  )
+
+  nested_x <- data_frame(df = df_x, mat = mat_x)
+  nested_y <- data_frame(df = df_y, mat = mat_y)
+  nested_out <- data_frame(
+    df = df_out,
+    mat = mat_out
+  )
+  expect_identical(
+    vec_assign_params(nested_x, 2, nested_y, assign_names = TRUE),
+    nested_out
+  )
+})

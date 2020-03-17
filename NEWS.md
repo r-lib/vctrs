@@ -1,6 +1,10 @@
 
 # vctrs (development version)
 
+* The internal version of `vec_assign()` now has support for assigning
+  names and inner names. For data frames, the names are assigned
+  recursively.
+
 * `vec_restore()` no longer restores row names if the target is not a
   data frame. This fixes an issue where `POSIXlt` objects would carry
   a `row.names` attribute after a proxy/restore roundtrip.
