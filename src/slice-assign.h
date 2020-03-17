@@ -23,6 +23,8 @@ SEXP vec_assign_opts(SEXP x, SEXP index, SEXP value,
 SEXP vec_proxy_assign_opts(SEXP proxy, SEXP index, SEXP value,
                            const struct vec_assign_opts* opts);
 
+SEXP chr_assign(SEXP out, SEXP index, SEXP value);
+SEXP list_assign(SEXP out, SEXP index, SEXP value);
 SEXP df_assign(SEXP x, SEXP index, SEXP value,
                const struct vec_assign_opts* opts);
 
