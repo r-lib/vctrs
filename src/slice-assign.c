@@ -32,12 +32,9 @@ SEXP vctrs_assign(SEXP x, SEXP index, SEXP value, SEXP x_arg_, SEXP value_arg_) 
   struct vctrs_arg x_arg = new_wrapper_arg(NULL, r_chr_get_c_string(x_arg_, 0));
   struct vctrs_arg value_arg = new_wrapper_arg(NULL, r_chr_get_c_string(value_arg_, 0));
 
-  const struct vec_assign_opts opts = {
-    .assign_names = false,
-    .x_arg = &x_arg,
-    .value_arg = &value_arg
-  };
-
+  const struct vec_assign_opts opts = new_vec_assign_opts(false,
+                                                          &x_arg,
+                                                          &value_arg);
   return vec_assign_opts(x, index, value, &opts);
 }
 
@@ -77,11 +74,9 @@ SEXP vec_assign_opts(SEXP x, SEXP index, SEXP value,
 // [[ register() ]]
 SEXP vctrs_assign_params(SEXP x, SEXP index, SEXP value,
                          SEXP assign_names) {
-  struct vec_assign_opts opts = {
-    .assign_names = r_bool_as_int(assign_names),
-    .x_arg = args_empty,
-    .value_arg = args_empty
-  };
+  const struct vec_assign_opts opts = new_vec_assign_opts(r_bool_as_int(assign_names),
+                                                          args_empty,
+                                                          args_empty);
   return vec_assign_opts(x, index, value, &opts);
 }
 
