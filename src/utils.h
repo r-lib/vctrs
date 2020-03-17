@@ -99,7 +99,7 @@ SEXP s3_find_method(const char* generic, SEXP x, SEXP table);
 bool vec_implements_ptype2(SEXP x);
 
 SEXP list_first_non_null(SEXP xs, R_len_t* non_null_i);
-bool list_is_s3_homogeneous(SEXP xs);
+bool list_is_homogeneously_classed(SEXP xs);
 
 // Destructive compacting
 SEXP node_compact_d(SEXP xs);

@@ -388,7 +388,7 @@ SEXP list_first_non_null(SEXP xs, R_len_t* non_null_i) {
 }
 
 // [[ include("utils.h") ]]
-bool list_is_s3_homogeneous(SEXP xs) {
+bool list_is_homogeneously_classed(SEXP xs) {
   R_len_t n = Rf_length(xs);
   if (n == 0 || n == 1) {
     return true;

@@ -130,7 +130,7 @@ bool needs_vec_c_fallback(SEXP xs) {
 
   return
     !vec_implements_ptype2(x) &&
-    list_is_s3_homogeneous(xs);
+    list_is_homogeneously_classed(xs);
 }
 
 static inline bool vec_implements_base_c(SEXP x);
