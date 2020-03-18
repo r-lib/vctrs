@@ -1,0 +1,18 @@
+
+vec_rbind() fails with complex foreign S3 classes
+=================================================
+
+> x <- structure(foobar(1), attr_foo = "foo")
+> y <- structure(foobar(2), attr_bar = "bar")
+> vec_rbind(set_names(x, "x"), set_names(y, "x"))
+Error: No common type for `..1$x` <vctrs_foobar> and `..2$x` <vctrs_foobar>.
+
+
+vec_rbind() fails with complex foreign S4 classes
+=================================================
+
+> joe <- .Counts(1L, name = "Joe")
+> jane <- .Counts(2L, name = "Jane")
+> vec_rbind(set_names(joe, "x"), set_names(jane, "x"))
+Error: No common type for `..1$x` <vctrs_Counts> and `..2$x` <vctrs_Counts>.
+

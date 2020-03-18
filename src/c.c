@@ -117,6 +117,8 @@ SEXP vec_c(SEXP xs,
   return out;
 }
 
+static inline bool vec_implements_base_c(SEXP x);
+
 // [[ include("vctrs.h") ]]
 bool needs_vec_c_fallback(SEXP xs) {
   if (!Rf_length(xs)) {
@@ -130,10 +132,21 @@ bool needs_vec_c_fallback(SEXP xs) {
 
   return
     !vec_implements_ptype2(x) &&
-    list_is_homogeneously_classed(xs);
+    list_is_homogeneously_classed(xs) &&
+    vec_implements_base_c(x);
+}
+static inline bool vec_implements_base_c(SEXP x) {
+  if (!OBJECT(x)) {
+    return false;
+  }
+
+  if (IS_S4_OBJECT(x)) {
+    return s4_find_method(x, s4_c_method_table) != R_NilValue;
+  } else {
+    return s3_find_method("c", x, base_method_table) != R_NilValue;
+  }
 }
 
-static inline bool vec_implements_base_c(SEXP x);
 static inline int vec_c_fallback_validate_args(SEXP ptype, SEXP name_spec);
 static inline void stop_vec_c_fallback(SEXP xs, int err_type);
 
@@ -147,10 +160,6 @@ SEXP vec_c_fallback(SEXP xs, SEXP ptype, SEXP name_spec) {
   SEXP args = PROTECT(Rf_coerceVector(xs, LISTSXP));
   args = PROTECT(node_compact_d(args));
 
-  if (!vec_implements_base_c(CAR(args))) {
-    stop_vec_c_fallback(xs, 3);
-  }
-
   SEXP call = PROTECT(Rf_lcons(Rf_install("c"), args));
 
   // Dispatch in the base namespace which inherits from the global env
@@ -158,18 +167,6 @@ SEXP vec_c_fallback(SEXP xs, SEXP ptype, SEXP name_spec) {
 
   UNPROTECT(3);
   return out;
-}
-
-static inline bool vec_implements_base_c(SEXP x) {
-  if (!OBJECT(x)) {
-    return false;
-  }
-
-  if (IS_S4_OBJECT(x)) {
-    return s4_find_method(x, s4_c_method_table) != R_NilValue;
-  } else {
-    return s3_find_method("c", x, base_method_table) != R_NilValue;
-  }
 }
 
 static inline int vec_c_fallback_validate_args(SEXP ptype, SEXP name_spec) {

@@ -138,10 +138,7 @@ vec_cast_common <- function(..., .to = NULL) {
 
 #' @export
 vec_cast.default <- function(x, to, ..., x_arg = "x", to_arg = "to") {
-  if (has_same_type(x, to)) {
-    return(x)
-  }
-  stop_incompatible_cast(x, to, x_arg = x_arg, to_arg = to_arg)
+  vec_default_cast(x, to, x_arg = x_arg, to_arg = to_arg)
 }
 
 # Cast `x` to `to` but only if they are coercible
@@ -169,10 +166,13 @@ vec_coercible_cast <- function(x, to, ..., x_arg = "x", to_arg = "to") {
 #' @export
 vec_default_cast <- function(x, to, x_arg = "x", to_arg = "to") {
   if (is_unspecified(x)) {
-    vec_init(to, length(x))
-  } else if (is_asis(x)) {
-    vec_cast_from_asis(x, to, x_arg = x_arg, to_arg = to_arg)
-  } else {
-    stop_incompatible_cast(x, to, x_arg = x_arg, to_arg = to_arg)
+    return(vec_init(to, length(x)))
   }
+  if (is_asis(x)) {
+    return(vec_cast_from_asis(x, to, x_arg = x_arg, to_arg = to_arg))
+  }
+  if (is_same_type(x, to)) {
+    return(x)
+  }
+  stop_incompatible_cast(x, to, x_arg = x_arg, to_arg = to_arg)
 }

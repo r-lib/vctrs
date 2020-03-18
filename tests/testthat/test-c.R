@@ -139,18 +139,34 @@ test_that("vec_c() outer names work with proxied objects", {
   expect_equal(vec_c(outer = xs, .name_spec = "{outer}_{inner}"), exp)
 })
 
-test_that("vec_c() falls back to c() for foreign S3 classes", {
-  verify_errors({
-    expect_error(
-      vec_c(foobar(1), foobar(2)),
-      "concatenation"
-    )
-  })
-  expect_error(
-    vec_c(NULL, foobar(1), foobar(2)),
-    "concatenation"
-  )
+test_that("vec_c() works with simple homogeneous foreign S3 classes", {
+  expect_identical(vec_c(foobar(1), foobar(2)), vec_c(foobar(c(1, 2))))
+  expect_identical(vec_c(NULL, foobar(1), foobar(2)), vec_c(foobar(c(1, 2))))
+})
 
+test_that("vec_c() works with simple homogeneous foreign S4 classes", {
+  joe1 <- .Counts(c(1L, 2L), name = "Joe")
+  joe2 <- .Counts(3L, name = "Joe")
+  expect_identical(vec_c(joe1, joe2), .Counts(1:3, name = "Joe"))
+})
+
+test_that("vec_c() fails with complex foreign S3 classes", {
+  verify_errors({
+    x <- structure(foobar(1), attr_foo = "foo")
+    y <- structure(foobar(2), attr_bar = "bar")
+    expect_error(vec_c(x, y), class = "vctrs_error_incompatible_type")
+  })
+})
+
+test_that("vec_c() fails with complex foreign S4 classes", {
+  verify_errors({
+    joe <- .Counts(c(1L, 2L), name = "Joe")
+    jane <- .Counts(3L, name = "Jane")
+    expect_error(vec_c(joe, jane), class = "vctrs_error_incompatible_type")
+  })
+})
+
+test_that("vec_c() falls back to c() if S3 method is available", {
   # Check off-by-one error
   expect_error(
     vec_c(foobar(1), "", foobar(2)),
@@ -188,24 +204,9 @@ test_that("vec_c() falls back to c() for foreign S3 classes", {
   )
 })
 
-test_that("vec_c() falls back to c() for S4 classes with a registered c() method", {
+test_that("vec_c() falls back to c() if S4 method is available", {
   joe1 <- .Counts(c(1L, 2L), name = "Joe")
   joe2 <- .Counts(3L, name = "Joe")
-
-  verify_errors({
-    expect_error(
-      vec_c(joe1, joe2),
-      "concatenation"
-    )
-    expect_error(
-      vec_c(NULL, joe1, joe2),
-      "concatenation"
-    )
-    expect_error(
-      vec_c(joe1, 1, joe2),
-      class = "vctrs_error_incompatible_type"
-    )
-  })
 
   c_counts <- function(x, ...) {
     xs <- list(x, ...)
@@ -232,11 +233,11 @@ test_that("vec_c() falls back to c() for S4 classes with a registered c() method
 test_that("vec_c() fallback doesn't support `name_spec` or `ptype`", {
   verify_errors({
     expect_error(
-      vec_c(foobar(1), foobar(2), .name_spec = "{outer}_{inner}"),
+      with_c_foobar(vec_c(foobar(1), foobar(2), .name_spec = "{outer}_{inner}")),
       "name specification"
     )
     expect_error(
-      vec_c(foobar(1), foobar(2), .ptype = ""),
+      with_c_foobar(vec_c(foobar(1), foobar(2), .ptype = "")),
       "prototype"
     )
   })
@@ -244,18 +245,18 @@ test_that("vec_c() fallback doesn't support `name_spec` or `ptype`", {
 
 test_that("vec_c() has informative error messages", {
   verify_output(test_path("error", "test-c.txt"), {
-    "# vec_c() falls back to c() for foreign S3 classes"
-    vec_c(foobar(1), foobar(2))
+    "# vec_c() fails with complex foreign S3 classes"
+    x <- structure(foobar(1), attr_foo = "foo")
+    y <- structure(foobar(2), attr_bar = "bar")
+    vec_c(x, y)
 
-    "# vec_c() falls back to c() for S4 classes with a registered c() method"
-    joe1 <- .Counts(c(1L, 2L), name = "Joe")
-    joe2 <- .Counts(3L, name = "Joe")
-    vec_c(joe1, joe2)
-    vec_c(NULL, joe1, joe2)
-    vec_c(joe1, 1, joe2)
+    "# vec_c() fails with complex foreign S4 classes"
+    joe <- .Counts(c(1L, 2L), name = "Joe")
+    jane <- .Counts(3L, name = "Jane")
+    vec_c(joe, jane)
 
     "# vec_c() fallback doesn't support `name_spec` or `ptype`"
-    vec_c(foobar(1), foobar(2), .name_spec = "{outer}_{inner}")
-    vec_c(foobar(1), foobar(2), .ptype = "")
+    with_c_foobar(vec_c(foobar(1), foobar(2), .name_spec = "{outer}_{inner}"))
+    with_c_foobar(vec_c(foobar(1), foobar(2), .ptype = ""))
   })
 })

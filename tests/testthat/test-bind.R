@@ -517,3 +517,60 @@ test_that("rbind repairs names of data frames (#704)", {
     class = "vctrs_error_names_must_be_unique"
   )
 })
+
+test_that("vec_rbind() works with simple homogeneous foreign S3 classes", {
+  expect_identical(
+    vec_rbind(set_names(foobar(1), "x"), set_names(foobar(2), "x")),
+    data_frame(x = foobar(c(1, 2)))
+  )
+})
+
+test_that("vec_rbind() works with simple homogeneous foreign S4 classes", {
+  joe1 <- .Counts(1L, name = "Joe")
+  joe2 <- .Counts(2L, name = "Joe")
+  expect_identical(
+    vec_rbind(set_names(joe1, "x"), set_names(joe2, "x")),
+    data_frame(x = .Counts(1:2, name = "Joe"))
+  )
+})
+
+test_that("vec_rbind() fails with complex foreign S3 classes", {
+  verify_errors({
+    x <- structure(foobar(1), attr_foo = "foo")
+    y <- structure(foobar(2), attr_bar = "bar")
+    expect_error(
+      vec_rbind(set_names(x, "x"), set_names(y, "x")),
+      class = "vctrs_error_incompatible_type"
+    )
+  })
+})
+
+test_that("vec_rbind() fails with complex foreign S4 classes", {
+  verify_errors({
+    joe <- .Counts(1L, name = "Joe")
+    jane <- .Counts(2L, name = "Jane")
+    expect_error(vec_rbind(joe, jane), class = "vctrs_error_incompatible_type")
+  })
+})
+
+test_that("vec_rbind() falls back to c() if S3 method is available", {
+  skip("TODO")
+})
+
+test_that("vec_rbind() falls back to c() if S4 method is available", {
+  skip("TODO")
+})
+
+test_that("vec_cbind() and vec_rbind() have informative error messages", {
+  verify_output(test_path("error", "test-bind.txt"), {
+    "# vec_rbind() fails with complex foreign S3 classes"
+    x <- structure(foobar(1), attr_foo = "foo")
+    y <- structure(foobar(2), attr_bar = "bar")
+    vec_rbind(set_names(x, "x"), set_names(y, "x"))
+
+    "# vec_rbind() fails with complex foreign S4 classes"
+    joe <- .Counts(1L, name = "Joe")
+    jane <- .Counts(2L, name = "Jane")
+    vec_rbind(set_names(joe, "x"), set_names(jane, "x"))
+  })
+})

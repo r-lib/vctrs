@@ -1,6 +1,13 @@
 
 foobar <- function(x = list()) structure(x, class = "vctrs_foobar")
 
+with_c_foobar <- function(expr) {
+  with_methods(
+    expr,
+    c.vctrs_foobar = function(...) foobar(NextMethod())
+  )
+}
+
 unrownames <- function(x) {
   row.names(x) <- NULL
   x
@@ -9,6 +16,11 @@ unrownames <- function(x) {
 local_methods <- function(..., .frame = caller_env()) {
   local_bindings(..., .env = global_env(), .frame = .frame)
 }
+with_methods <- function(.expr, ...) {
+  local_methods(...)
+  .expr
+}
+
 local_proxy <- function(frame = caller_env()) {
   local_methods(.frame = frame,
     vec_proxy.vctrs_proxy = function(x, ...) proxy_deref(x),
@@ -23,7 +35,6 @@ local_proxy <- function(frame = caller_env()) {
   )
 }
 
-
 new_proxy <- function(x) {
   structure(list(env(x = x)), class = "vctrs_proxy")
 }
@@ -33,7 +44,9 @@ proxy_deref <- function(x) {
 local_env_proxy <- function(frame = caller_env()) {
   local_methods(.frame = frame,
     vec_proxy.vctrs_proxy = proxy_deref,
-    vec_restore.vctrs_proxy = function(x, ...) new_proxy(x)
+    vec_restore.vctrs_proxy = function(x, ...) new_proxy(x),
+    vec_cast.vctrs_proxy = function(x, to, ...) UseMethod("vec_cast.vctrs_proxy"),
+    vec_cast.vctrs_proxy.vctrs_proxy = function(x, to, ...) x
   )
 }
 

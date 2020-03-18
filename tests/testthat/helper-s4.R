@@ -23,6 +23,25 @@ setMethod("[", "vctrs_rando", function(x, i, j, ..., drop = TRUE) {
   slots = c(name = "character")
 )
 
+local_c_counts <- function(frame = caller_env()) {
+  c_counts <- function(x, ...) {
+    xs <- list(x, ...)
+
+    xs_data <- lapply(xs, function(x) x@.Data)
+    new_data <- do.call(c, xs_data)
+
+    .Counts(new_data, name = "Dispatched")
+  }
+
+  local_s4_method(
+    frame = frame,
+    "c",
+    methods::signature(x = "vctrs_Counts"),
+    c_counts
+  )
+}
+
+
 local_s4_method <- function(generic, signature, method, frame = caller_env()) {
   methods::setMethod(generic, signature, method)
   exit_expr <- call2(methods::removeMethod, generic, signature, where = topenv(frame))
