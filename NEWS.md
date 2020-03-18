@@ -1,6 +1,10 @@
 
 # vctrs (development version)
 
+* `vec_c()` and `vec_unchop()` now fall back to `base::c()` for S4 objects if
+  the object doesn't implement `vec_ptype2()` but sets an S4 `c()`
+  method (#919).
+
 * `vec_as_location2()` properly picks up `subscript_arg`
   (tidyverse/tibble#735).
 
