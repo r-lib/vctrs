@@ -537,6 +537,44 @@ test_that("vec_unchop() falls back to c() for foreign classes", {
   )
 })
 
+test_that("vec_unchop() falls back for S4 classes with a registered c() method", {
+  joe1 <- .Counts(c(1L, 2L), name = "Joe")
+  joe2 <- .Counts(3L, name = "Joe")
+
+  verify_errors({
+    expect_error(
+      vec_unchop(list(joe1, joe2), list(c(1, 3), 2)),
+      "concatenation"
+    )
+    expect_error(
+      vec_unchop(list(joe1, 1, joe2), list(c(1, 2), 3, 4)),
+      class = "vctrs_error_incompatible_type"
+    )
+  })
+
+  c_counts <- function(x, ...) {
+    xs <- list(x, ...)
+
+    xs_data <- lapply(xs, function(x) x@.Data)
+    new_data <- do.call(c, xs_data)
+
+    .Counts(new_data, name = x@name)
+  }
+
+  methods::setMethod("c", methods::signature(x = "Counts"), c_counts)
+  on.exit(methods::removeMethod("c", methods::signature(x = "Counts")), add = TRUE)
+
+  expect_identical(
+    vec_unchop(list(joe1, joe2), list(c(1, 3), 2)),
+    .Counts(c(1L, 3L, 2L), name = "Joe")
+  )
+
+  expect_identical(
+    vec_unchop(list(NULL, joe1, joe2), list(integer(), c(1, 3), 2)),
+    .Counts(c(1L, 3L, 2L), name = "Joe")
+  )
+})
+
 test_that("vec_unchop() fallback doesn't support `name_spec` or `ptype`", {
   verify_errors({
     expect_error(
@@ -582,6 +620,12 @@ test_that("vec_unchop() has informative error messages", {
 
     "# vec_unchop() falls back to c() for foreign classes"
     vec_unchop(list(foobar(1), foobar(2)))
+
+    "# vec_unchop() falls back for S4 classes with a registered c() method"
+    joe1 <- .Counts(c(1L, 2L), name = "Joe")
+    joe2 <- .Counts(3L, name = "Joe")
+    vec_unchop(list(joe1, joe2), list(c(1, 3), 2))
+    vec_unchop(list(joe1, 1, joe2), list(c(1, 2), 3, 4))
 
     "# vec_unchop() fallback doesn't support `name_spec` or `ptype`"
     vec_unchop(list(foobar(1)), name_spec = "{outer}_{inner}")

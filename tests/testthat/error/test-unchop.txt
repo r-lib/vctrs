@@ -21,6 +21,20 @@ vctrs methods must be implemented for class `vctrs_foobar`.
 See <https://vctrs.r-lib.org/articles/s3-vector.html>.
 
 
+vec_unchop() falls back for S4 classes with a registered c() method
+===================================================================
+
+> joe1 <- .Counts(c(1L, 2L), name = "Joe")
+> joe2 <- .Counts(3L, name = "Joe")
+> vec_unchop(list(joe1, joe2), list(c(1, 3), 2))
+Error: Can't find vctrs or base methods for concatenation.
+vctrs methods must be implemented for class `Counts`.
+See <https://vctrs.r-lib.org/articles/s3-vector.html>.
+
+> vec_unchop(list(joe1, 1, joe2), list(c(1, 2), 3, 4))
+Error: No common type for `..1` <Counts> and `..2` <double>.
+
+
 vec_unchop() fallback doesn't support `name_spec` or `ptype`
 ============================================================
 
