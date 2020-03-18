@@ -12,8 +12,11 @@
 #' frame (even data frame and matrix columns) have the same size.
 #' `vec_size_common(...)` returns the common size of multiple vectors.
 #'
-#' `vec_sizes()` returns a vector of sizes of elements in a list, `vec_sizes()` is
-#' to `vec_size()` what [lengths()] is to [length()].
+#' `list_sizes()` returns an integer vector containing the size of each element
+#' of a list. It is nearly equivalent to, but faster than,
+#' `map_int(x, vec_size)`, with the exception that `list_sizes()` will
+#' error on non-list inputs, as defined by [vec_is_list()]. `list_sizes()` is
+#' to `vec_size()` as [lengths()] is to [length()].
 #'
 #' @seealso [vec_slice()] for a variation of `[` compatible with `vec_size()`,
 #'   and [vec_recycle()] to recycle vectors to common length.
@@ -71,6 +74,8 @@
 #' vec_size_common(1:10, 1:10)
 #' vec_size_common(1:10, 1)
 #' vec_size_common(integer(), 1)
+#'
+#' list_sizes(list("a", 1:5, letters))
 vec_size <- function(x) {
   .Call(vctrs_size, x)
 }
@@ -83,8 +88,8 @@ vec_size_common <- function(..., .size = NULL, .absent = 0L) {
 
 #' @rdname vec_size
 #' @export
-vec_sizes <- function(x) {
-  .Call(vctrs_sizes, x)
+list_sizes <- function(x) {
+  .Call(vctrs_list_sizes, x)
 }
 
 #' @rdname vec_size

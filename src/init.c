@@ -36,7 +36,7 @@ extern SEXP vctrs_compare(SEXP, SEXP, SEXP);
 extern SEXP vctrs_match(SEXP, SEXP, SEXP);
 extern SEXP vctrs_duplicated_any(SEXP);
 extern SEXP vctrs_size(SEXP);
-extern SEXP vctrs_sizes(SEXP);
+extern SEXP vctrs_list_sizes(SEXP);
 extern SEXP vec_dim(SEXP);
 extern SEXP vctrs_dim_n(SEXP);
 extern SEXP vctrs_is_unspecified(SEXP);
@@ -154,7 +154,7 @@ static const R_CallMethodDef CallEntries[] = {
   {"vctrs_group_rle",                  (DL_FUNC) &vctrs_group_rle, 1},
   {"vctrs_group_loc",                  (DL_FUNC) &vec_group_loc, 1},
   {"vctrs_size",                       (DL_FUNC) &vctrs_size, 1},
-  {"vctrs_sizes",                      (DL_FUNC) &vctrs_sizes, 1},
+  {"vctrs_list_sizes",                 (DL_FUNC) &vctrs_list_sizes, 1},
   {"vctrs_dim",                        (DL_FUNC) &vec_dim, 1},
   {"vctrs_dim_n",                      (DL_FUNC) &vctrs_dim_n, 1},
   {"vctrs_is_unspecified",             (DL_FUNC) &vctrs_is_unspecified, 1},

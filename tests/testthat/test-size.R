@@ -98,6 +98,17 @@ test_that("provided size is cast to an integer", {
   expect_identical(vec_size_common(.size = 1), 1L)
 })
 
+# list_sizes --------------------------------------------------------------
+
+test_that("only lists are allowed", {
+  expect_error(list_sizes(mtcars), "must be a list")
+  expect_error(list_sizes(1), "must be a list")
+})
+
+test_that("computes element sizes", {
+  expect_identical(list_sizes(list(1, 1:3, c("a", "b"))), c(1L, 3L, 2L))
+})
+
 # sequences ---------------------------------------------------------------
 
 test_that("vec_seq_along returns size-0 output for size-0 input", {

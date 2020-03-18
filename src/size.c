@@ -98,19 +98,28 @@ SEXP vctrs_size(SEXP x) {
   return Rf_ScalarInteger(vec_size(x));
 }
 
-// [[ register() ]]
-SEXP vctrs_sizes(SEXP x) {
-  if (TYPEOF(x) != VECSXP) {
-    Rf_errorcall(R_NilValue, "vec_sizes() only applies to lists");
+SEXP list_sizes(SEXP x) {
+  if (!vec_is_list(x)) {
+    Rf_errorcall(R_NilValue, "`x` must be a list.");
   }
-  R_len_t n = Rf_length(x);
-  SEXP sizes = PROTECT(Rf_allocVector(INTSXP, n));
-  int* p_sizes = INTEGER(sizes);
-  for (R_len_t i = 0; i < n; i++) {
-    p_sizes[i] = vec_size(VECTOR_ELT(x, i));
+
+  R_len_t size = vec_size(x);
+
+  SEXP out = PROTECT(Rf_allocVector(INTSXP, size));
+  int* p_out = INTEGER(out);
+
+  for (R_len_t i = 0; i < size; ++i) {
+    SEXP elt = VECTOR_ELT(x, i);
+    p_out[i] = vec_size(elt);
   }
+
   UNPROTECT(1);
-  return sizes;
+  return out;
+}
+
+// [[ register() ]]
+SEXP vctrs_list_sizes(SEXP x) {
+  return list_sizes(x);
 }
 
 R_len_t df_rownames_size(SEXP x) {
