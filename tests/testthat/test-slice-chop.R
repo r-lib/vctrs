@@ -438,18 +438,27 @@ test_that("missing values propagate", {
   )
 })
 
-test_that("vec_unchop() falls back to c() for foreign classes", {
-  verify_errors({
-    expect_error(
-      vec_unchop(list(foobar(1), foobar(2))),
-      "concatenation"
-    )
-  })
-  expect_error(
-    vec_unchop(list(NULL, foobar(1), foobar(2)), list(integer(), 1, 2)),
-    "concatenation"
-  )
+test_that("vec_unchop() works with simple homogeneous foreign S3 classes", {
+  expect_identical(vec_unchop(list(foobar(1), foobar(2))), vec_c(foobar(c(1, 2))))
+})
 
+test_that("vec_unchop() fails with complex foreign S3 classes", {
+  verify_errors({
+    x <- structure(foobar(1), attr_foo = "foo")
+    y <- structure(foobar(2), attr_bar = "bar")
+    expect_error(vec_unchop(list(x, y)), class = "vctrs_error_incompatible_type")
+  })
+})
+
+test_that("vec_unchop() fails with complex foreign S4 classes", {
+  verify_errors({
+    joe <- .Counts(c(1L, 2L), name = "Joe")
+    jane <- .Counts(3L, name = "Jane")
+    expect_error(vec_unchop(list(joe, jane)), class = "vctrs_error_incompatible_type")
+  })
+})
+
+test_that("vec_unchop() falls back to c() if S3 method is available", {
   # Check off-by-one error
   expect_error(
     vec_unchop(list(foobar(1), "", foobar(2)), list(1, 2, 3)),
@@ -549,39 +558,26 @@ test_that("vec_unchop() falls back to c() for foreign classes", {
 })
 
 test_that("vec_unchop() falls back for S4 classes with a registered c() method", {
-  joe1 <- .Counts(c(1L, 2L), name = "Joe")
-  joe2 <- .Counts(3L, name = "Joe")
+  joe <- .Counts(c(1L, 2L), name = "Joe")
+  jane <- .Counts(3L, name = "Jane")
 
   verify_errors({
     expect_error(
-      vec_unchop(list(joe1, joe2), list(c(1, 3), 2)),
-      "concatenation"
-    )
-    expect_error(
-      vec_unchop(list(joe1, 1, joe2), list(c(1, 2), 3, 4)),
+      vec_unchop(list(joe, 1, jane), list(c(1, 2), 3, 4)),
       class = "vctrs_error_incompatible_type"
     )
   })
 
-  c_counts <- function(x, ...) {
-    xs <- list(x, ...)
-
-    xs_data <- lapply(xs, function(x) x@.Data)
-    new_data <- do.call(c, xs_data)
-
-    .Counts(new_data, name = x@name)
-  }
-
-  local_s4_method("c", methods::signature(x = "vctrs_Counts"), c_counts)
+  local_c_counts()
 
   expect_identical(
-    vec_unchop(list(joe1, joe2), list(c(1, 3), 2)),
-    .Counts(c(1L, 3L, 2L), name = "Joe")
+    vec_unchop(list(joe, jane), list(c(1, 3), 2)),
+    .Counts(c(1L, 3L, 2L), name = "Dispatched")
   )
 
   expect_identical(
-    vec_unchop(list(NULL, joe1, joe2), list(integer(), c(1, 3), 2)),
-    .Counts(c(1L, 3L, 2L), name = "Joe")
+    vec_unchop(list(NULL, joe, jane), list(integer(), c(1, 3), 2)),
+    .Counts(c(1L, 3L, 2L), name = "Dispatched")
   )
 
   # Unassigned locations results in missing values.
@@ -598,12 +594,14 @@ test_that("vec_unchop() falls back for S4 classes with a registered c() method",
 
 test_that("vec_unchop() fallback doesn't support `name_spec` or `ptype`", {
   verify_errors({
+    foo <- structure(foobar(1), foo = "foo")
+    bar <- structure(foobar(2), bar = "bar")
     expect_error(
-      vec_unchop(list(foobar(1)), name_spec = "{outer}_{inner}"),
+      with_c_foobar(vec_unchop(list(foo, bar), name_spec = "{outer}_{inner}")),
       "name specification"
     )
     expect_error(
-      vec_unchop(list(foobar(1)), ptype = ""),
+      with_c_foobar(vec_unchop(list(foobar(1)), ptype = "")),
       "prototype"
     )
   })
@@ -639,18 +637,26 @@ test_that("vec_unchop() has informative error messages", {
     vec_unchop(list(1, 2), list(c(1, 2), 0))
     vec_unchop(list(1), list(-1))
 
-    "# vec_unchop() falls back to c() for foreign classes"
-    vec_unchop(list(foobar(1), foobar(2)))
+    "# vec_unchop() fails with complex foreign S3 classes"
+    x <- structure(foobar(1), attr_foo = "foo")
+    y <- structure(foobar(2), attr_bar = "bar")
+    vec_unchop(list(x, y))
+
+    "# vec_unchop() fails with complex foreign S4 classes"
+    joe <- .Counts(c(1L, 2L), name = "Joe")
+    jane <- .Counts(3L, name = "Jane")
+    vec_unchop(list(joe, jane))
 
     "# vec_unchop() falls back for S4 classes with a registered c() method"
     joe1 <- .Counts(c(1L, 2L), name = "Joe")
     joe2 <- .Counts(3L, name = "Joe")
-    vec_unchop(list(joe1, joe2), list(c(1, 3), 2))
     vec_unchop(list(joe1, 1, joe2), list(c(1, 2), 3, 4))
 
     "# vec_unchop() fallback doesn't support `name_spec` or `ptype`"
-    vec_unchop(list(foobar(1)), name_spec = "{outer}_{inner}")
-    vec_unchop(list(foobar(1)), ptype = "")
+    foo <- structure(foobar(1), foo = "foo")
+    bar <- structure(foobar(2), bar = "bar")
+    with_c_foobar(vec_unchop(list(foo, bar), name_spec = "{outer}_{inner}"))
+    with_c_foobar(vec_unchop(list(foobar(1)), ptype = ""))
 
     "# vec_unchop() does not support non-numeric S3 indices"
     vec_unchop(list(1), list(factor("x")))

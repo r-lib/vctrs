@@ -6,6 +6,22 @@
   that it only supports lists. Atomic vectors and data frames result in an
   error.
 
+* Improved support for foreign classes in the combining operations
+  `vec_c()`, `vec_rbind()`, and `vec_unchop()`. A foreign class is a
+  class that doesn't implement `vec_ptype2()`. When all the objects to
+  combine have the same foreign class, one of these fallbacks is invoked:
+
+  -  If the class implements a `base::c()` method, the method is used
+    for the combination. (FIXME: `vec_rbind()` currently doesn't use
+    this fallback.)
+
+  - Otherwise if the objects have identical attributes and the same
+    base type, we consider them to be compatible. The vectors are
+    concatenated and the attributes are restored (#776).
+
+  These fallbacks do not make your class completely compatible with
+  vctrs-powered packages, but they should help in many simple cases.
+
 * `vec_c()` and `vec_unchop()` now fall back to `base::c()` for S4 objects if
   the object doesn't implement `vec_ptype2()` but sets an S4 `c()`
   method (#919).
