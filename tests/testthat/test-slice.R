@@ -387,10 +387,6 @@ test_that("missing indices don't create NA names", {
   expect_identical(vec_slice(x, 1:2), x)
 })
 
-test_that("vec_slice throws error with non-vector inputs", {
-  expect_error(vec_slice(environment(), 1L), class = "vctrs_error_scalar_type")
-})
-
 test_that("vec_slice() asserts vectorness (#301)", {
   expect_error(vec_slice(NULL, 1), class = "vctrs_error_scalar_type")
 })
@@ -438,9 +434,13 @@ test_that("slice has informative error messages", {
     vec_slice(1:2, -3L)
 
     "# vec_slice throws error with non-vector subscripts"
+    vec_slice(1:3, Sys.Date())
     vec_slice(1:3, matrix(TRUE, ncol = 1))
 
     "# vec_as_location() checks type"
+    vec_as_location("foo", "bar")
+    vec_as_location("foo", 1L, names = 1L)
+    vec_as_location(Sys.Date(), 3L)
     vec_as_location(matrix(TRUE, nrow = 1), 3L)
   })
 })

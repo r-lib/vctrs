@@ -64,12 +64,28 @@ i There are only 2 elements.
 vec_slice throws error with non-vector subscripts
 =================================================
 
+> vec_slice(1:3, Sys.Date())
+Error: Must subset elements with a valid subscript vector.
+x The subscript has the wrong type `date`.
+i It must be logical, numeric, or character.
+
 > vec_slice(1:3, matrix(TRUE, ncol = 1))
 Error: `i` must be a one-dimensional vector but has 2 dimensions.
 
 
 vec_as_location() checks type
 =============================
+
+> vec_as_location("foo", "bar")
+Error: No common type for <character> and <integer>.
+
+> vec_as_location("foo", 1L, names = 1L)
+Error: `names` must be a character vector.
+
+> vec_as_location(Sys.Date(), 3L)
+Error: Must subset elements with a valid subscript vector.
+x The subscript has the wrong type `date`.
+i It must be logical, numeric, or character.
 
 > vec_as_location(matrix(TRUE, nrow = 1), 3L)
 Error: `i` must be a one-dimensional vector but has 2 dimensions.
