@@ -87,7 +87,8 @@ vec_as_subscript2_result <- function(i,
     character = character
   )
 
-  # Return a subclass of subscript error
+  # Return a child of subscript error. The child error messages refer
+  # to single subscripts instead of subscript vectors.
   if (!is_null(result$err)) {
     parent <- result$err$parent
     if (inherits(parent, "vctrs_error_cast_lossy")) {
