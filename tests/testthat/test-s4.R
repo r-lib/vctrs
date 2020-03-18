@@ -38,8 +38,8 @@ test_that("vec_ptype2 for rando works", {
 })
 
 test_that("vec_ptype_abbr.rando", {
-  expect_equal(vec_ptype_abbr(as_rando(1:10)), "rando")
-  expect_equal(vec_ptype_full(as_rando(1:10)), "rando")
+  expect_equal(vec_ptype_abbr(as_rando(1:10)), "vctrs_rn")
+  expect_equal(vec_ptype_full(as_rando(1:10)), "vctrs_rando")
 })
 
 test_that("proxy and data", {
@@ -50,7 +50,7 @@ test_that("proxy and data", {
 
   expect_false(isS4(vec_data(x)))
 
-  expect_s4_class(vec_restore(vec_data(x), x), "rando")
+  expect_s4_class(vec_restore(vec_data(x), x), "vctrs_rando")
   expect_true(isS4(vec_restore(vec_data(x), x)))
 })
 

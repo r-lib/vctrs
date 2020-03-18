@@ -561,8 +561,8 @@ test_that("vec_unchop() falls back for S4 classes with a registered c() method",
     .Counts(new_data, name = x@name)
   }
 
-  methods::setMethod("c", methods::signature(x = "Counts"), c_counts)
-  on.exit(methods::removeMethod("c", methods::signature(x = "Counts")), add = TRUE)
+  methods::setMethod("c", methods::signature(x = "vctrs_Counts"), c_counts)
+  on.exit(methods::removeMethod("c", methods::signature(x = "vctrs_Counts")), add = TRUE)
 
   expect_identical(
     vec_unchop(list(joe1, joe2), list(c(1, 3), 2)),

@@ -216,8 +216,8 @@ test_that("vec_c() falls back to c() for S4 classes with a registered c() method
     .Counts(new_data, name = x@name)
   }
 
-  methods::setMethod("c", methods::signature(x = "Counts"), c_counts)
-  on.exit(methods::removeMethod("c", methods::signature(x = "Counts")), add = TRUE)
+  methods::setMethod("c", methods::signature(x = "vctrs_Counts"), c_counts)
+  on.exit(methods::removeMethod("c", methods::signature(x = "vctrs_Counts")), add = TRUE)
 
   expect_identical(
     vec_c(joe1, joe2),
