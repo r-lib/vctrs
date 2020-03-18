@@ -92,7 +92,7 @@ vec_as_subscript2_result <- function(i,
   if (!is_null(result$err)) {
     parent <- result$err$parent
     if (inherits(parent, "vctrs_error_cast_lossy")) {
-      bullets <- cnd_bullets_subscript_lossy_cast
+      bullets <- new_cnd_bullets_subscript_lossy_cast(parent)
     } else {
       bullets <- cnd_body.vctrs_error_subscript_type
     }
@@ -201,8 +201,10 @@ cnd_body.vctrs_error_subscript_type <- function(cnd) {
     i = glue::glue("It must be {expected_types}.")
   ))
 }
-cnd_bullets_subscript_lossy_cast <- function(cnd, ...) {
-  format_error_bullets(c(x = cnd_header(cnd$parent)))
+new_cnd_bullets_subscript_lossy_cast <- function(lossy_err) {
+  function(cnd, ...) {
+    format_error_bullets(c(x = cnd_header(lossy_err)))
+  }
 }
 
 collapse_subscript_type <- function(cnd) {

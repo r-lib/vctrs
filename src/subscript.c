@@ -123,7 +123,8 @@ static SEXP obj_cast_subscript(SEXP subscript,
 static SEXP dbl_cast_subscript_fallback(SEXP subscript,
                                         const struct vec_as_subscript_opts* opts,
                                         ERR* err);
-static SEXP dbl_cast_subscript_body = NULL;
+static SEXP syms_new_dbl_cast_subscript_body = NULL;
+static SEXP syms_lossy_err = NULL;
 
 static SEXP dbl_cast_subscript(SEXP subscript,
                                const struct vec_as_subscript_opts* opts,
@@ -173,11 +174,16 @@ static SEXP dbl_cast_subscript_fallback(SEXP subscript,
                                           err));
   if (*err) {
     SEXP err_obj = PROTECT(*err);
+
+    SEXP body = PROTECT(vctrs_eval_mask1(syms_new_dbl_cast_subscript_body,
+                                         syms_lossy_err, err_obj,
+                                         vctrs_ns_env));
+
     *err = new_error_subscript_type(subscript,
                                     opts,
-                                    dbl_cast_subscript_body,
+                                    body,
                                     err_obj);
-    UNPROTECT(2);
+    UNPROTECT(3);
     return R_NilValue;
   }
 
@@ -302,5 +308,6 @@ static SEXP new_error_subscript_type(SEXP subscript,
 
 void vctrs_init_subscript(SEXP ns) {
   syms_new_error_subscript_type = Rf_install("new_error_subscript_type");
-  dbl_cast_subscript_body = r_env_get(ns, Rf_install("cnd_bullets_subscript_lossy_cast"));
+  syms_new_dbl_cast_subscript_body = Rf_install("new_cnd_bullets_subscript_lossy_cast");
+  syms_lossy_err = Rf_install("lossy_err");
 }

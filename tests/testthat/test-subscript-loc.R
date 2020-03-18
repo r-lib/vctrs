@@ -15,6 +15,7 @@ test_that("vec_as_location2() requires integer or character inputs", {
     "Idem with custom `arg`"
     expect_error(vec_as_location2(foobar(), 10L, arg = "foo"), class = "vctrs_error_subscript_type")
     expect_error(vec_as_location2(2.5, 3L, arg = "foo"), class = "vctrs_error_subscript_type")
+    expect_error(with_tibble_rows(vec_as_location2(TRUE)), class = "vctrs_error_subscript_type")
   })
 })
 
@@ -470,6 +471,7 @@ test_that("conversion to locations has informative error messages", {
     "Idem with custom `arg`"
     vec_as_location2(foobar(), 10L, arg = "foo")
     vec_as_location2(2.5, 3L, arg = "foo")
+    with_tibble_rows(vec_as_location2(TRUE))
 
     "# vec_as_location2() requires length 1 inputs"
     vec_as_location2(1:2, 2L)
