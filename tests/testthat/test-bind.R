@@ -526,8 +526,11 @@ test_that("vec_rbind() works with simple homogeneous foreign S3 classes", {
 })
 
 test_that("vec_rbind() works with simple homogeneous foreign S4 classes", {
+  skip_if_cant_set_names_on_s4()
+
   joe1 <- .Counts(1L, name = "Joe")
   joe2 <- .Counts(2L, name = "Joe")
+
   expect_identical(
     vec_rbind(set_names(joe1, "x"), set_names(joe2, "x")),
     data_frame(x = .Counts(1:2, name = "Joe"))
@@ -562,6 +565,8 @@ test_that("vec_rbind() falls back to c() if S4 method is available", {
 })
 
 test_that("vec_cbind() and vec_rbind() have informative error messages", {
+  skip_if_cant_set_names_on_s4()
+
   verify_output(test_path("error", "test-bind.txt"), {
     "# vec_rbind() fails with complex foreign S3 classes"
     x <- structure(foobar(1), attr_foo = "foo")
