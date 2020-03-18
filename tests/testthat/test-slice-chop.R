@@ -490,6 +490,17 @@ test_that("vec_unchop() falls back to c() for foreign classes", {
     class = "vctrs_error_subscript_oob"
   )
 
+  # Unassigned locations results in missing values.
+  # Repeated assignment uses the last assigned value.
+  expect_identical(
+    vec_unchop(list(foobar(c(1, 2)), foobar(3)), list(c(1, 3), 1)),
+    foobar(c(3, NA, 2))
+  )
+  expect_identical(
+    vec_unchop(list(foobar(c(1, 2)), foobar(3)), list(c(2, NA), NA)),
+    foobar(c(NA, 1, NA))
+  )
+
   # Names are kept
   expect_identical(
     vec_unchop(list(foobar(c(x = 1, y = 2)), foobar(c(x = 1))), list(c(2, 1), 3)),
@@ -571,6 +582,17 @@ test_that("vec_unchop() falls back for S4 classes with a registered c() method",
   expect_identical(
     vec_unchop(list(NULL, joe1, joe2), list(integer(), c(1, 3), 2)),
     .Counts(c(1L, 3L, 2L), name = "Joe")
+  )
+
+  # Unassigned locations results in missing values.
+  # Repeated assignment uses the last assigned value.
+  expect_identical(
+    vec_unchop(list(joe1, joe2), list(c(1, 3), 1)),
+    .Counts(c(3L, NA, 2L), name = "Joe")
+  )
+  expect_identical(
+    vec_unchop(list(joe1, joe2), list(c(2, NA), NA)),
+    .Counts(c(NA, 1L, NA), name = "Joe")
   )
 })
 
