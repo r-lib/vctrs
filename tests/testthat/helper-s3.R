@@ -33,7 +33,9 @@ proxy_deref <- function(x) {
 local_env_proxy <- function(frame = caller_env()) {
   local_methods(.frame = frame,
     vec_proxy.vctrs_proxy = proxy_deref,
-    vec_restore.vctrs_proxy = function(x, ...) new_proxy(x)
+    vec_restore.vctrs_proxy = function(x, ...) new_proxy(x),
+    vec_cast.vctrs_proxy = function(x, to, ...) UseMethod("vec_cast.vctrs_proxy"),
+    vec_cast.vctrs_proxy.vctrs_proxy = function(x, to, ...) x
   )
 }
 
