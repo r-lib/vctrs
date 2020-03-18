@@ -566,23 +566,36 @@ static SEXP vec_unchop_fallback(SEXP x, SEXP indices, SEXP ptype, SEXP name_spec
     .fn = R_NilValue
   };
 
-  SEXP locations = PROTECT(vec_c(
+  indices = PROTECT(vec_c(
     indices,
     vctrs_shared_empty_int,
     R_NilValue,
     &name_repair_opts
   ));
 
-  SEXP args = PROTECT(Rf_allocVector(LISTSXP, 1));
-  SETCAR(args, locations);
+  const int* p_indices = INTEGER(indices);
 
-  SEXP call = PROTECT(Rf_lcons(Rf_install("order"), args));
+  SEXP locations = PROTECT(Rf_allocVector(INTSXP, out_size));
+  int* p_locations = INTEGER(locations);
 
-  locations = PROTECT(Rf_eval(call, R_BaseNamespace));
+  // Initialize with missing to handle locations that are never selected
+  for (R_len_t i = 0; i < out_size; ++i) {
+    p_locations[i] = NA_INTEGER;
+  }
+
+  for (R_len_t i = 0; i < out_size; ++i) {
+    const int index = p_indices[i];
+
+    if (index == NA_INTEGER) {
+      continue;
+    }
+
+    p_locations[index - 1] = i + 1;
+  }
 
   out = PROTECT(vec_slice_fallback(out, locations));
 
-  UNPROTECT(8);
+  UNPROTECT(6);
   return out;
 }
 
