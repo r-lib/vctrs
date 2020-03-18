@@ -50,7 +50,12 @@ generalises to the &quot;number of observations&quot; for 2d structures,
 i.e. it's the number of rows in matrix or a data frame.  This
 definition has the important property that every column of a data
 frame (even data frame and matrix columns) have the same size.
-vec_size_common(...) returns the common size of multiple vectors." />
+vec_size_common(...) returns the common size of multiple vectors.
+list_sizes() returns an integer vector containing the size of each element
+of a list. It is nearly equivalent to, but faster than,
+map_int(x, vec_size), with the exception that list_sizes() will
+error on non-list inputs, as defined by vec_is_list(). list_sizes() is
+to vec_size() as lengths() is to length()." />
 <meta property="og:image" content="https://vctrs.r-lib.org/logo.png" />
 <meta name="twitter:card" content="summary" />
 
@@ -165,11 +170,18 @@ i.e. it's the number of rows in matrix or a data frame.  This
 definition has the important property that every column of a data
 frame (even data frame and matrix columns) have the same size.
 <code>vec_size_common(...)</code> returns the common size of multiple vectors.</p>
+<p><code>list_sizes()</code> returns an integer vector containing the size of each element
+of a list. It is nearly equivalent to, but faster than,
+<code>map_int(x, vec_size)</code>, with the exception that <code>list_sizes()</code> will
+error on non-list inputs, as defined by <code><a href='vec_is_list.html'>vec_is_list()</a></code>. <code>list_sizes()</code> is
+to <code>vec_size()</code> as <code><a href='https://rdrr.io/r/base/lengths.html'>lengths()</a></code> is to <code><a href='https://rdrr.io/r/base/length.html'>length()</a></code>.</p>
     </div>
 
     <pre class="usage"><span class='fu'>vec_size</span>(<span class='no'>x</span>)
 
 <span class='fu'>vec_size_common</span>(<span class='no'>...</span>, <span class='kw'>.size</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>.absent</span> <span class='kw'>=</span> <span class='fl'>0L</span>)
+
+<span class='fu'>list_sizes</span>(<span class='no'>x</span>)
 
 <span class='fu'>vec_is_empty</span>(<span class='no'>x</span>)</pre>
 
@@ -239,7 +251,8 @@ and <code><a href='vec_recycle.html'>vec_recycle()</a></code> to recycle vectors
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='fu'>vec_size</span>(<span class='fl'>1</span>:<span class='fl'>100</span>)</div><div class='output co'>#&gt; [1] 100</div><div class='input'><span class='fu'>vec_size</span>(<span class='no'>mtcars</span>)</div><div class='output co'>#&gt; [1] 32</div><div class='input'><span class='fu'>vec_size</span>(<span class='fu'><a href='https://rdrr.io/r/base/array.html'>array</a></span>(<span class='kw'>dim</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>3</span>, <span class='fl'>5</span>, <span class='fl'>10</span>)))</div><div class='output co'>#&gt; [1] 3</div><div class='input'>
-<span class='fu'>vec_size_common</span>(<span class='fl'>1</span>:<span class='fl'>10</span>, <span class='fl'>1</span>:<span class='fl'>10</span>)</div><div class='output co'>#&gt; [1] 10</div><div class='input'><span class='fu'>vec_size_common</span>(<span class='fl'>1</span>:<span class='fl'>10</span>, <span class='fl'>1</span>)</div><div class='output co'>#&gt; [1] 10</div><div class='input'><span class='fu'>vec_size_common</span>(<span class='fu'><a href='https://rdrr.io/r/base/integer.html'>integer</a></span>(), <span class='fl'>1</span>)</div><div class='output co'>#&gt; [1] 0</div></pre>
+<span class='fu'>vec_size_common</span>(<span class='fl'>1</span>:<span class='fl'>10</span>, <span class='fl'>1</span>:<span class='fl'>10</span>)</div><div class='output co'>#&gt; [1] 10</div><div class='input'><span class='fu'>vec_size_common</span>(<span class='fl'>1</span>:<span class='fl'>10</span>, <span class='fl'>1</span>)</div><div class='output co'>#&gt; [1] 10</div><div class='input'><span class='fu'>vec_size_common</span>(<span class='fu'><a href='https://rdrr.io/r/base/integer.html'>integer</a></span>(), <span class='fl'>1</span>)</div><div class='output co'>#&gt; [1] 0</div><div class='input'>
+<span class='fu'>list_sizes</span>(<span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(<span class='st'>"a"</span>, <span class='fl'>1</span>:<span class='fl'>5</span>, <span class='no'>letters</span>))</div><div class='output co'>#&gt; [1]  1  5 26</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
