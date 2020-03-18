@@ -5,7 +5,7 @@ test_that("vec_slice throws error with non-vector inputs", {
 
 test_that("vec_slice throws error with non-vector subscripts", {
   expect_error(vec_slice(1:3, Sys.Date()), class = "vctrs_error_subscript_type")
-  expect_error(vec_slice(1:3, matrix(TRUE, nrow = 1)), "must have one dimension")
+  expect_error(vec_slice(1:3, matrix(TRUE, nrow = 1)), "must be a one-dimensional")
 })
 
 test_that("can subset base vectors", {
@@ -191,7 +191,7 @@ test_that("vec_as_location() checks type", {
   expect_error(vec_as_location("foo", "bar"), class = "vctrs_error_incompatible_type")
   expect_error(vec_as_location("foo", 1L, names = 1L), "must be a character vector")
   expect_error(vec_as_location(Sys.Date(), 3L), class = "vctrs_error_subscript_type")
-  expect_error(vec_as_location(matrix(TRUE, nrow = 1), 3L), "must have one dimension")
+  expect_error(vec_as_location(matrix(TRUE, nrow = 1), 3L), "must be a one-dimensional")
 })
 
 test_that("can `vec_slice()` S3 objects without dispatch infloop", {

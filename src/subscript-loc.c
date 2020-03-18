@@ -289,7 +289,7 @@ SEXP vec_as_location_opts(SEXP subscript, R_len_t n, SEXP names,
                           const struct vec_as_subscript_opts* subscript_opts) {
 
   if (vec_dim_n(subscript) != 1) {
-    Rf_errorcall(R_NilValue, "`i` must have one dimension, not %d.", vec_dim_n(subscript));
+    Rf_errorcall(R_NilValue, "`i` must be a one-dimensional vector but has %d dimensions.", vec_dim_n(subscript));
   }
 
   ERR err = NULL;

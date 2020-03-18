@@ -296,7 +296,7 @@ cnd_body_vctrs_error_location_negative_positive <- function(cnd, ...) {
     )
   }
   format_error_bullets(c(
-    x = "Negative locations can't be mixed with positive locations.",
+    x = "Negative and positive locations can't be mixed.",
     i = loc
   ))
 }
