@@ -99,6 +99,8 @@ obj_type <- function(x) {
     vec_ptype_full(x)
   } else if (is.object(x)) {
     paste(class(x), collapse = "/")
+  } else if (is_function(x)) {
+    "function"
   } else {
     typeof(x)
   }
