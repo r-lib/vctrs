@@ -583,12 +583,12 @@ test_that("vec_unchop() falls back for S4 classes with a registered c() method",
   # Unassigned locations results in missing values.
   # Repeated assignment uses the last assigned value.
   expect_identical(
-    vec_unchop(list(joe1, joe2), list(c(1, 3), 1)),
-    .Counts(c(3L, NA, 2L), name = "Joe")
+    vec_unchop(list(joe, jane), list(c(1, 3), 1)),
+    .Counts(c(3L, NA, 2L), name = "Dispatched")
   )
   expect_identical(
-    vec_unchop(list(joe1, joe2), list(c(2, NA), NA)),
-    .Counts(c(NA, 1L, NA), name = "Joe")
+    vec_unchop(list(joe, jane), list(c(2, NA), NA)),
+    .Counts(c(NA, 1L, NA), name = "Dispatched")
   )
 })
 
