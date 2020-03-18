@@ -172,8 +172,8 @@ vec_as_location2_result <- function(i,
     return(result(err = new_error_location2_type(
       i = i,
       subscript_arg = arg,
-      # FIXME: Should body fields in parents be automatically inherited?
-      body = function(...) cnd_body(parent),
+      # Should body fields in parents be automatically inherited?
+      body = parent$body,
       parent = parent
     )))
   }

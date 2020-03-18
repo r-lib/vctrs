@@ -1,6 +1,9 @@
 
 # vctrs (development version)
 
+* `vec_as_location2()` properly picks up `subscript_arg`
+  (tidyverse/tibble#735).
+
 * `vec_cast()` to and from data frames preserves the row names of
   inputs.
 
