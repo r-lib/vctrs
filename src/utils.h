@@ -93,13 +93,14 @@ bool is_record(SEXP x);
 SEXP vec_unique_names(SEXP x, bool quiet);
 SEXP vec_unique_colnames(SEXP x, bool quiet);
 
-// Returns S3 method for `generic` suitable for the class of `x`. The
+// Returns S3 / S4 method for `generic` suitable for the class of `x`. The
 // inheritance hierarchy is explored except for the default method.
 SEXP s3_find_method(const char* generic, SEXP x, SEXP table);
+SEXP s4_find_method(SEXP x, SEXP table);
 bool vec_implements_ptype2(SEXP x);
 
 SEXP list_first_non_null(SEXP xs, R_len_t* non_null_i);
-bool list_is_s3_homogeneous(SEXP xs);
+bool list_is_homogeneously_classed(SEXP xs);
 
 // Destructive compacting
 SEXP node_compact_d(SEXP xs);
@@ -439,6 +440,7 @@ extern SEXP fns_names;
 
 extern SEXP vctrs_method_table;
 extern SEXP base_method_table;
+extern SEXP s4_c_method_table;
 
 
 #endif

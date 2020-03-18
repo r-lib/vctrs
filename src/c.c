@@ -130,7 +130,7 @@ bool needs_vec_c_fallback(SEXP xs) {
 
   return
     !vec_implements_ptype2(x) &&
-    list_is_s3_homogeneous(xs);
+    list_is_homogeneously_classed(xs);
 }
 
 static inline bool vec_implements_base_c(SEXP x);
@@ -161,9 +161,15 @@ SEXP vec_c_fallback(SEXP xs, SEXP ptype, SEXP name_spec) {
 }
 
 static inline bool vec_implements_base_c(SEXP x) {
-  return
-    OBJECT(x) &&
-    s3_find_method("c", x, base_method_table) != R_NilValue;
+  if (!OBJECT(x)) {
+    return false;
+  }
+
+  if (IS_S4_OBJECT(x)) {
+    return s4_find_method(x, s4_c_method_table) != R_NilValue;
+  } else {
+    return s3_find_method("c", x, base_method_table) != R_NilValue;
+  }
 }
 
 static inline int vec_c_fallback_validate_args(SEXP ptype, SEXP name_spec) {
