@@ -98,6 +98,30 @@ SEXP vctrs_size(SEXP x) {
   return Rf_ScalarInteger(vec_size(x));
 }
 
+SEXP list_sizes(SEXP x) {
+  if (!vec_is_list(x)) {
+    Rf_errorcall(R_NilValue, "`x` must be a list.");
+  }
+
+  R_len_t size = vec_size(x);
+
+  SEXP out = PROTECT(Rf_allocVector(INTSXP, size));
+  int* p_out = INTEGER(out);
+
+  for (R_len_t i = 0; i < size; ++i) {
+    SEXP elt = VECTOR_ELT(x, i);
+    p_out[i] = vec_size(elt);
+  }
+
+  UNPROTECT(1);
+  return out;
+}
+
+// [[ register() ]]
+SEXP vctrs_list_sizes(SEXP x) {
+  return list_sizes(x);
+}
+
 R_len_t df_rownames_size(SEXP x) {
   for (SEXP attr = ATTRIB(x); attr != R_NilValue; attr = CDR(attr)) {
     if (TAG(attr) != R_RowNamesSymbol) {

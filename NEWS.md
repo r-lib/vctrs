@@ -1,6 +1,11 @@
 
 # vctrs (development version)
 
+* New `list_sizes()` for computing the size of every element in a list.
+  `list_sizes()` is to `vec_size()` as `lengths()` is to `length()`, except
+  that it only supports lists. Atomic vectors and data frames result in an
+  error.
+
 * `vec_c()` and `vec_unchop()` now fall back to `base::c()` for S4 objects if
   the object doesn't implement `vec_ptype2()` but sets an S4 `c()`
   method (#919).
