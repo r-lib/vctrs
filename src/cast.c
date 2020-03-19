@@ -188,7 +188,11 @@ static SEXP int_as_double(SEXP x, bool* lossy) {
   return out;
 }
 
-static SEXP vec_cast_switch(SEXP x, SEXP to, bool* lossy, struct vctrs_arg* x_arg, struct vctrs_arg* to_arg) {
+static SEXP vec_cast_switch(SEXP x,
+                            SEXP to,
+                            bool* lossy,
+                            struct vctrs_arg* x_arg,
+                            struct vctrs_arg* to_arg) {
   enum vctrs_type x_type = vec_typeof(x);
   enum vctrs_type to_type = vec_typeof(to);
 
@@ -207,74 +211,56 @@ static SEXP vec_cast_switch(SEXP x, SEXP to, bool* lossy, struct vctrs_arg* x_ar
     return vec_cast_dispatch(x, to, x_type, to_type, lossy, x_arg, to_arg);
   }
 
-  switch (to_type) {
-  case vctrs_type_logical:
-    switch (x_type) {
-    case vctrs_type_logical:
-      return x;
-    case vctrs_type_integer:
-      return int_as_logical(x, lossy);
-    case vctrs_type_double:
-      return dbl_as_logical(x, lossy);
-    case vctrs_type_character:
-      return chr_as_logical(x, lossy);
-    default:
-      break;
-    }
-    break;
+  int dir = 0;
+  enum vctrs_type2 type2 = vec_typeof2_impl(x_type, to_type, &dir);
 
-  case vctrs_type_integer:
-    switch (x_type) {
-    case vctrs_type_logical:
+  switch (type2) {
+
+  case vctrs_type2_logical_logical:
+  case vctrs_type2_double_double:
+  case vctrs_type2_character_character:
+  case vctrs_type2_integer_integer:
+    return x;
+
+  case vctrs_type2_logical_integer:
+    if (dir == 0) {
       return lgl_as_integer(x, lossy);
-    case vctrs_type_integer:
-      return x;
-    case vctrs_type_double:
-      return dbl_as_integer(x, lossy);
-    case vctrs_type_character:
-      // TODO: Implement with `R_strtod()` from R_ext/utils.h
-      break;
-    default:
-      break;
+    } else {
+      return int_as_logical(x, lossy);
     }
-    break;
 
-  case vctrs_type_double:
-    switch (x_type) {
-    case vctrs_type_logical:
+  case vctrs_type2_logical_double:
+    if (dir == 0) {
       return lgl_as_double(x, lossy);
-    case vctrs_type_integer:
+    } else {
+      return dbl_as_logical(x, lossy);
+    }
+
+  case vctrs_type2_integer_double:
+    if (dir == 0) {
       return int_as_double(x, lossy);
-    case vctrs_type_double:
-      return x;
-    case vctrs_type_character:
-      // TODO: Implement with `R_strtod()` from R_ext/utils.h
-      break;
-    default:
-      break;
+    } else {
+      return dbl_as_integer(x, lossy);
     }
-    break;
 
-  case vctrs_type_character:
-    switch (x_type) {
-    case vctrs_type_logical:
-    case vctrs_type_integer:
-    case vctrs_type_double:
+  case vctrs_type2_logical_character:
+    if (dir == 0) {
       return Rf_coerceVector(x, STRSXP);
-    case vctrs_type_character:
-      return x;
-    default:
-      break;
+    } else {
+      return chr_as_logical(x, lossy);
     }
-    break;
 
-  case vctrs_type_dataframe:
-    switch (x_type) {
-    case vctrs_type_dataframe:
-      return df_cast(x, to, x_arg, to_arg);
-    default:
+  case vctrs_type2_integer_character:
+  case vctrs_type2_double_character:
+    if (dir == 0) {
+      return Rf_coerceVector(x, STRSXP);
+    } else {
+      // TODO: Implement with `R_strtod()` from R_ext/utils.h?
       break;
     }
+
+  case vctrs_type2_dataframe_dataframe:
+    return df_cast(x, to, x_arg, to_arg);
 
   default:
     break;
