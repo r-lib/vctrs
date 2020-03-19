@@ -6,9 +6,9 @@ SEXP vec_cast_dispatch(SEXP x,
                        SEXP to,
                        enum vctrs_type x_type,
                        enum vctrs_type to_type,
-                       bool* lossy,
                        struct vctrs_arg* x_arg,
-                       struct vctrs_arg* to_arg);
+                       struct vctrs_arg* to_arg,
+                       bool* lossy);
 
 // Defined in type-data-frame.c
 SEXP df_cast(SEXP x, SEXP to, struct vctrs_arg* x_arg, struct vctrs_arg* to_arg);

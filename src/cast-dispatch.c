@@ -7,9 +7,9 @@ SEXP vec_cast_dispatch(SEXP x,
                        SEXP to,
                        enum vctrs_type x_type,
                        enum vctrs_type to_type,
-                       bool* lossy,
                        struct vctrs_arg* x_arg,
-                       struct vctrs_arg* to_arg) {
+                       struct vctrs_arg* to_arg,
+                       bool* lossy) {
   int dir = 0;
   enum vctrs_type2_s3 type2_s3 = vec_typeof2_s3_impl(x, to, x_type, to_type, &dir);
 
