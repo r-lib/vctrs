@@ -500,7 +500,7 @@ static inline void vec_match_loop_propagate(int* p_out,
 SEXP vec_match_params(SEXP needles, SEXP haystack, bool na_equal) {
   int nprot = 0;
   int _;
-  SEXP type = PROTECT_N(vec_type2(needles, haystack, &args_needles, &args_haystack, &_), &nprot);
+  SEXP type = PROTECT_N(vec_ptype2(needles, haystack, &args_needles, &args_haystack, &_), &nprot);
 
   needles = PROTECT_N(vec_cast(needles, type, args_empty, args_empty), &nprot);
   haystack = PROTECT_N(vec_cast(haystack, type, args_empty, args_empty), &nprot);
@@ -586,7 +586,7 @@ SEXP vctrs_in(SEXP needles, SEXP haystack, SEXP na_equal_) {
   bool na_equal = r_bool_as_int(na_equal_);
 
   int _;
-  SEXP type = PROTECT_N(vec_type2(needles, haystack, &args_needles, &args_haystack, &_), &nprot);
+  SEXP type = PROTECT_N(vec_ptype2(needles, haystack, &args_needles, &args_haystack, &_), &nprot);
 
   needles = PROTECT_N(vec_cast(needles, type, args_empty, args_empty), &nprot);
   haystack = PROTECT_N(vec_cast(haystack, type, args_empty, args_empty), &nprot);

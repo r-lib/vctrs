@@ -398,7 +398,7 @@ SEXP vec_c(SEXP xs,
 SEXP vec_c_fallback(SEXP xs, SEXP ptype, SEXP name_spec);
 bool needs_vec_c_fallback(SEXP xs);
 
-SEXP vec_type2(SEXP x,
+SEXP vec_ptype2(SEXP x,
                SEXP y,
                struct vctrs_arg* x_arg,
                struct vctrs_arg* y_arg,

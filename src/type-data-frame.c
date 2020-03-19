@@ -350,7 +350,7 @@ SEXP df_ptype2(SEXP x, SEXP y, struct vctrs_arg* x_arg, struct vctrs_arg* y_arg)
       struct vctrs_arg named_x_arg = new_index_arg(x_arg, &x_arg_data);
       struct vctrs_arg named_y_arg = new_index_arg(y_arg, &y_arg_data);
       int _left;
-      type = vec_type2(VECTOR_ELT(x, i),
+      type = vec_ptype2(VECTOR_ELT(x, i),
                        VECTOR_ELT(y, dup),
                        &named_x_arg,
                        &named_y_arg,

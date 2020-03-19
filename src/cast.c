@@ -173,7 +173,7 @@ struct vec_is_coercible_data {
 
 static void vec_is_coercible_cb(void* data_) {
   struct vec_is_coercible_data* data = (struct vec_is_coercible_data*) data_;
-  vec_type2(data->x, data->y, data->x_arg, data->y_arg, data->dir);
+  vec_ptype2(data->x, data->y, data->x_arg, data->y_arg, data->dir);
 }
 
 static void vec_is_coercible_e(SEXP x,
@@ -225,7 +225,7 @@ SEXP vec_coercible_cast(SEXP x, SEXP to, struct vctrs_arg* x_arg, struct vctrs_a
   // Called for the side effect of generating an error if there is no
   // common type
   int _left;
-  vec_type2(x, to, x_arg, to_arg, &_left);
+  vec_ptype2(x, to, x_arg, to_arg, &_left);
 
   return vec_cast(x, to, x_arg, to_arg);
 }
