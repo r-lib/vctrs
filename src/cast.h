@@ -2,6 +2,17 @@
 #define VCTRS_CAST_H
 
 
+SEXP vec_cast_dispatch(SEXP x,
+                       SEXP to,
+                       enum vctrs_type x_type,
+                       enum vctrs_type to_type,
+                       bool* lossy,
+                       struct vctrs_arg* x_arg,
+                       struct vctrs_arg* to_arg);
+
+// Defined in type-data-frame.c
+SEXP df_cast(SEXP x, SEXP to, struct vctrs_arg* x_arg, struct vctrs_arg* to_arg);
+
 // Defined in cast-bare.c
 SEXP int_as_double(SEXP x, bool* lossy);
 SEXP lgl_as_double(SEXP x, bool* lossy);

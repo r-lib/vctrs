@@ -1,7 +1,8 @@
 #include "vctrs.h"
+#include "cast.h"
 #include "utils.h"
 
-// [[ include("vctrs.h") ]]
+// [[ include("cast.h") ]]
 SEXP vec_cast_dispatch(SEXP x,
                        SEXP to,
                        enum vctrs_type x_type,
