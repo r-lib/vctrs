@@ -1,4 +1,5 @@
 #include "vctrs.h"
+#include "cast.h"
 #include "type-data-frame.h"
 #include "utils.h"
 
@@ -6,185 +7,60 @@
 static SEXP syms_vec_cast_dispatch = NULL;
 static SEXP fns_vec_cast_dispatch = NULL;
 
+static SEXP vec_cast_switch(SEXP x,
+                            SEXP to,
+                            bool* lossy,
+                            struct vctrs_arg* x_arg,
+                            struct vctrs_arg* to_arg);
 
-static SEXP int_as_logical(SEXP x, bool* lossy) {
-  int* data = INTEGER(x);
-  R_len_t n = Rf_length(x);
 
-  SEXP out = PROTECT(Rf_allocVector(LGLSXP, n));
-  int* out_data = LOGICAL(out);
-
-  for (R_len_t i = 0; i < n; ++i, ++data, ++out_data) {
-    int elt = *data;
-
-    if (elt == NA_INTEGER) {
-      *out_data = NA_LOGICAL;
-      continue;
-    }
-
-    if (elt != 0 && elt != 1) {
-      *lossy = true;
-      UNPROTECT(1);
-      return R_NilValue;
-    }
-
-    *out_data = elt;
+// [[ register() ]]
+SEXP vctrs_cast(SEXP x, SEXP to, SEXP x_arg_, SEXP to_arg_) {
+  if (!r_is_string(x_arg_)) {
+    Rf_errorcall(R_NilValue, "`x_arg` must be a string");
+  }
+  if (!r_is_string(to_arg_)) {
+    Rf_errorcall(R_NilValue, "`to_arg` must be a string");
   }
 
-  UNPROTECT(1);
-  return out;
+  struct vctrs_arg x_arg = new_wrapper_arg(NULL, r_chr_get_c_string(x_arg_, 0));
+  struct vctrs_arg to_arg = new_wrapper_arg(NULL, r_chr_get_c_string(to_arg_, 0));
+
+  return vec_cast(x, to, &x_arg, &to_arg);
 }
 
-static SEXP dbl_as_logical(SEXP x, bool* lossy) {
-  double* data = REAL(x);
-  R_len_t n = Rf_length(x);
-
-  SEXP out = PROTECT(Rf_allocVector(LGLSXP, n));
-  int* out_data = LOGICAL(out);
-
-  for (R_len_t i = 0; i < n; ++i, ++data, ++out_data) {
-    double elt = *data;
-
-    if (isnan(elt)) {
-      *out_data = NA_LOGICAL;
-      continue;
+// [[ include("vctrs.h") ]]
+SEXP vec_cast(SEXP x, SEXP to, struct vctrs_arg* x_arg, struct vctrs_arg* to_arg) {
+  if (x == R_NilValue) {
+    if (!vec_is_partial(to)) {
+      vec_assert(to, to_arg);
     }
-
-    if (elt != 0 && elt != 1) {
-      *lossy = true;
-      UNPROTECT(1);
-      return R_NilValue;
+    return x;
+  }
+  if (to == R_NilValue) {
+    if (!vec_is_partial(x)) {
+      vec_assert(x, x_arg);
     }
-
-    *out_data = (int) elt;
+    return x;
   }
 
-  UNPROTECT(1);
-  return out;
-}
+  bool lossy = false;
+  SEXP out = R_NilValue;
 
-static SEXP chr_as_logical(SEXP x, bool* lossy) {
-  SEXP* data = STRING_PTR(x);
-  R_len_t n = Rf_length(x);
-
-  SEXP out = PROTECT(Rf_allocVector(LGLSXP, n));
-  int* out_data = LOGICAL(out);
-
-  for (R_len_t i = 0; i < n; ++i, ++data, ++out_data) {
-    SEXP str = *data;
-    if (str == NA_STRING) {
-      *out_data = NA_LOGICAL;
-      continue;
-    }
-
-    const char* elt = CHAR(str);
-    switch (elt[0]) {
-    case 'T':
-      if (elt[1] == '\0' || strcmp(elt, "TRUE") == 0) {
-        *out_data = 1;
-        continue;
-      }
-      break;
-    case 'F':
-      if (elt[1] == '\0' || strcmp(elt, "FALSE") == 0) {
-        *out_data = 0;
-        continue;
-      }
-      break;
-    case 't':
-      if (strcmp(elt, "true") == 0) {
-        *out_data = 1;
-        continue;
-      }
-      break;
-    case 'f':
-      if (strcmp(elt, "false") == 0) {
-        *out_data = 0;
-        continue;
-      }
-      break;
-    default:
-      break;
-    }
-
-    *lossy = true;
-    UNPROTECT(1);
-    return R_NilValue;
+  if (!has_dim(x) && !has_dim(to)) {
+    out = vec_cast_switch(x, to, &lossy, x_arg, to_arg);
   }
 
-  UNPROTECT(1);
-  return out;
-}
-
-static SEXP lgl_as_integer(SEXP x, bool* lossy) {
-  return Rf_coerceVector(x, INTSXP);
-}
-
-static SEXP dbl_as_integer(SEXP x, bool* lossy) {
-  double* data = REAL(x);
-  R_len_t n = Rf_length(x);
-
-  SEXP out = PROTECT(Rf_allocVector(INTSXP, n));
-  int* out_data = INTEGER(out);
-
-  for (R_len_t i = 0; i < n; ++i, ++data, ++out_data) {
-    double elt = *data;
-
-    if (elt <= INT_MIN || elt >= INT_MAX + 1.0) {
-      *lossy = true;
-      UNPROTECT(1);
-      return R_NilValue;
-    }
-
-    if (isnan(elt)) {
-      *out_data = NA_INTEGER;
-      continue;
-    }
-
-    int value = (int) elt;
-
-    if (value != elt) {
-      *lossy = true;
-      UNPROTECT(1);
-      return R_NilValue;
-    }
-
-    *out_data = value;
+  if (!lossy && out != R_NilValue) {
+    return out;
   }
 
-  UNPROTECT(1);
-  return out;
-}
-
-static SEXP lgl_as_double(SEXP x, bool* lossy) {
-  int* data = LOGICAL(x);
-  R_len_t n = Rf_length(x);
-
-  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
-  double* out_data = REAL(out);
-
-  for (R_len_t i = 0; i < n; ++i, ++data, ++out_data) {
-    int elt = *data;
-    *out_data = (elt == NA_LOGICAL) ? NA_REAL : elt;
-  }
-
-  UNPROTECT(1);
-  return out;
-}
-
-static SEXP int_as_double(SEXP x, bool* lossy) {
-  int* data = INTEGER(x);
-  R_len_t n = Rf_length(x);
-
-  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
-  double* out_data = REAL(out);
-
-  for (R_len_t i = 0; i < n; ++i, ++data, ++out_data) {
-    int elt = *data;
-    *out_data = (elt == NA_INTEGER) ? NA_REAL : elt;
-  }
-
-  UNPROTECT(1);
+  out = vctrs_dispatch4(syms_vec_cast_dispatch, fns_vec_cast_dispatch,
+                        syms_x, x,
+                        syms_to, to,
+                        syms_x_arg, PROTECT(vctrs_arg(x_arg)),
+                        syms_to_arg, PROTECT(vctrs_arg(to_arg)));
+  UNPROTECT(2);
   return out;
 }
 
@@ -269,55 +145,6 @@ static SEXP vec_cast_switch(SEXP x,
   return R_NilValue;
 }
 
-// [[ register() ]]
-SEXP vctrs_cast(SEXP x, SEXP to, SEXP x_arg_, SEXP to_arg_) {
-  if (!r_is_string(x_arg_)) {
-    Rf_errorcall(R_NilValue, "`x_arg` must be a string");
-  }
-  if (!r_is_string(to_arg_)) {
-    Rf_errorcall(R_NilValue, "`to_arg` must be a string");
-  }
-
-  struct vctrs_arg x_arg = new_wrapper_arg(NULL, r_chr_get_c_string(x_arg_, 0));
-  struct vctrs_arg to_arg = new_wrapper_arg(NULL, r_chr_get_c_string(to_arg_, 0));
-
-  return vec_cast(x, to, &x_arg, &to_arg);
-}
-
-// [[ include("vctrs.h") ]]
-SEXP vec_cast(SEXP x, SEXP to, struct vctrs_arg* x_arg, struct vctrs_arg* to_arg) {
-  if (x == R_NilValue) {
-    if (!vec_is_partial(to)) {
-      vec_assert(to, to_arg);
-    }
-    return x;
-  }
-  if (to == R_NilValue) {
-    if (!vec_is_partial(x)) {
-      vec_assert(x, x_arg);
-    }
-    return x;
-  }
-
-  bool lossy = false;
-  SEXP out = R_NilValue;
-
-  if (!has_dim(x) && !has_dim(to)) {
-    out = vec_cast_switch(x, to, &lossy, x_arg, to_arg);
-  }
-
-  if (!lossy && out != R_NilValue) {
-    return out;
-  }
-
-  out = vctrs_dispatch4(syms_vec_cast_dispatch, fns_vec_cast_dispatch,
-                        syms_x, x,
-                        syms_to, to,
-                        syms_x_arg, PROTECT(vctrs_arg(x_arg)),
-                        syms_to_arg, PROTECT(vctrs_arg(to_arg)));
-  UNPROTECT(2);
-  return out;
-}
 
 struct vec_is_coercible_data {
   SEXP x;
@@ -449,7 +276,6 @@ SEXP vec_cast_common(SEXP xs, SEXP to) {
 
   for (R_len_t i = 0; i < n; ++i) {
     SEXP elt = VECTOR_ELT(xs, i);
-    // TODO
     SET_VECTOR_ELT(out, i, vec_cast(elt, type, args_empty, args_empty));
   }
 
