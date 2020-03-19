@@ -50,12 +50,12 @@ SEXP vec_cast(SEXP x, SEXP to, struct vctrs_arg* x_arg, struct vctrs_arg* to_arg
     return x;
   }
 
-  if (has_dim(x) || has_dim(to)) {
-    return vec_cast_dispatch_s3(x, to, x_arg, to_arg);
-  }
-
   enum vctrs_type x_type = vec_typeof(x);
   enum vctrs_type to_type = vec_typeof(to);
+
+  if (x_type == vctrs_type_unspecified) {
+    return vec_init(to, vec_size(x));
+  }
 
   if (x_type == vctrs_type_scalar) {
     stop_scalar_type(x, x_arg);
@@ -64,8 +64,8 @@ SEXP vec_cast(SEXP x, SEXP to, struct vctrs_arg* x_arg, struct vctrs_arg* to_arg
     stop_scalar_type(to, to_arg);
   }
 
-  if (x_type == vctrs_type_unspecified) {
-    return vec_init(to, vec_size(x));
+  if (has_dim(x) || has_dim(to)) {
+    return vec_cast_dispatch_s3(x, to, x_arg, to_arg);
   }
 
   SEXP out = R_NilValue;
