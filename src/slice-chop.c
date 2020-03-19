@@ -179,8 +179,8 @@ static SEXP vec_chop_base(SEXP x, SEXP indices, struct vctrs_chop_info info) {
 }
 
 static SEXP chop(SEXP x, SEXP indices, struct vctrs_chop_info info) {
-  SEXP elt;
-  SEXP names = PROTECT(Rf_getAttrib(x, R_NamesSymbol));
+  SEXP proxy = info.proxy_info.proxy;
+  SEXP names = PROTECT(Rf_getAttrib(proxy, R_NamesSymbol));
 
   for (R_len_t i = 0; i < info.out_size; ++i) {
     if (info.has_indices) {
@@ -190,7 +190,7 @@ static SEXP chop(SEXP x, SEXP indices, struct vctrs_chop_info info) {
       ++(*info.p_index);
     }
 
-    elt = PROTECT(vec_slice_base(info.proxy_info.type, info.proxy_info.proxy, info.index));
+    SEXP elt = PROTECT(vec_slice_base(info.proxy_info.type, proxy, info.index));
 
     if (names != R_NilValue) {
       SEXP elt_names = PROTECT(slice_names(names, info.index));
@@ -209,18 +209,18 @@ static SEXP chop(SEXP x, SEXP indices, struct vctrs_chop_info info) {
 }
 
 static SEXP chop_df(SEXP x, SEXP indices, struct vctrs_chop_info info) {
-  SEXP elt;
+  SEXP proxy = info.proxy_info.proxy;
 
-  int n_cols = Rf_length(x);
+  int n_cols = Rf_length(proxy);
 
-  SEXP col_names = PROTECT(Rf_getAttrib(x, R_NamesSymbol));
-  SEXP row_names = PROTECT(df_rownames(x));
+  SEXP col_names = PROTECT(Rf_getAttrib(proxy, R_NamesSymbol));
+  SEXP row_names = PROTECT(df_rownames(proxy));
 
   bool has_row_names = TYPEOF(row_names) == STRSXP;
 
   // Pre-load the `out` container with lists that will become data frames
   for (R_len_t i = 0; i < info.out_size; ++i) {
-    elt = PROTECT(Rf_allocVector(VECSXP, n_cols));
+    SEXP elt = PROTECT(Rf_allocVector(VECSXP, n_cols));
 
     Rf_setAttrib(elt, R_NamesSymbol, col_names);
 
@@ -241,11 +241,11 @@ static SEXP chop_df(SEXP x, SEXP indices, struct vctrs_chop_info info) {
   // Split each column according to the indices, and then assign the results
   // into the appropriate data frame column in the `out` list
   for (int i = 0; i < n_cols; ++i) {
-    SEXP col = VECTOR_ELT(info.proxy_info.proxy, i);
+    SEXP col = VECTOR_ELT(proxy, i);
     SEXP split = PROTECT(vec_chop(col, indices));
 
     for (int j = 0; j < info.out_size; ++j) {
-      elt = VECTOR_ELT(info.out, j);
+      SEXP elt = VECTOR_ELT(info.out, j);
       SET_VECTOR_ELT(elt, i, VECTOR_ELT(split, j));
     }
 
@@ -258,7 +258,7 @@ static SEXP chop_df(SEXP x, SEXP indices, struct vctrs_chop_info info) {
       *info.p_restore_size = vec_subscript_size(VECTOR_ELT(indices, i));
     }
 
-    elt = VECTOR_ELT(info.out, i);
+    SEXP elt = VECTOR_ELT(info.out, i);
     elt = vec_restore(elt, x, info.restore_size);
     SET_VECTOR_ELT(info.out, i, elt);
   }
@@ -268,9 +268,8 @@ static SEXP chop_df(SEXP x, SEXP indices, struct vctrs_chop_info info) {
 }
 
 static SEXP chop_shaped(SEXP x, SEXP indices, struct vctrs_chop_info info) {
-  SEXP elt;
-
-  SEXP dim_names = PROTECT(Rf_getAttrib(x, R_DimNamesSymbol));
+  SEXP proxy = info.proxy_info.proxy;
+  SEXP dim_names = PROTECT(Rf_getAttrib(proxy, R_DimNamesSymbol));
 
   SEXP row_names = R_NilValue;
   if (dim_names != R_NilValue) {
@@ -285,7 +284,7 @@ static SEXP chop_shaped(SEXP x, SEXP indices, struct vctrs_chop_info info) {
       ++(*info.p_index);
     }
 
-    elt = PROTECT(vec_slice_shaped(info.proxy_info.type, info.proxy_info.proxy, info.index));
+    SEXP elt = PROTECT(vec_slice_shaped(info.proxy_info.type, proxy, info.index));
 
     if (dim_names != R_NilValue) {
       if (row_names != R_NilValue) {
@@ -311,8 +310,6 @@ static SEXP chop_shaped(SEXP x, SEXP indices, struct vctrs_chop_info info) {
 }
 
 static SEXP chop_fallback(SEXP x, SEXP indices, struct vctrs_chop_info info) {
-  SEXP elt;
-
   // Evaluate in a child of the global environment to allow dispatch
   // to custom functions. We define `[` to point to its base
   // definition to ensure consistent look-up. This is the same logic
@@ -345,7 +342,7 @@ static SEXP chop_fallback(SEXP x, SEXP indices, struct vctrs_chop_info info) {
       ++(*info.p_index);
     }
 
-    elt = PROTECT(Rf_eval(call, env));
+    SEXP elt = PROTECT(Rf_eval(call, env));
 
     // Restore attributes only if `[` fallback doesn't
     if (ATTRIB(elt) == R_NilValue) {
@@ -361,8 +358,6 @@ static SEXP chop_fallback(SEXP x, SEXP indices, struct vctrs_chop_info info) {
 }
 
 static SEXP chop_fallback_shaped(SEXP x, SEXP indices, struct vctrs_chop_info info) {
-  SEXP elt;
-
   for (R_len_t i = 0; i < info.out_size; ++i) {
     if (info.has_indices) {
       info.index = VECTOR_ELT(indices, i);
@@ -371,7 +366,7 @@ static SEXP chop_fallback_shaped(SEXP x, SEXP indices, struct vctrs_chop_info in
     }
 
     // `vec_slice_fallback()` will also `vec_restore()` for us
-    elt = PROTECT(vec_slice_fallback(x, info.index));
+    SEXP elt = PROTECT(vec_slice_fallback(x, info.index));
 
     SET_VECTOR_ELT(info.out, i, elt);
     UNPROTECT(1);
