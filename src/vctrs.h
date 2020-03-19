@@ -398,7 +398,7 @@ SEXP vec_c(SEXP xs,
 SEXP vec_c_fallback(SEXP xs, SEXP ptype, SEXP name_spec);
 bool needs_vec_c_fallback(SEXP xs);
 
-SEXP vec_type2(SEXP x,
+SEXP vec_ptype2(SEXP x,
                SEXP y,
                struct vctrs_arg* x_arg,
                struct vctrs_arg* y_arg,
@@ -416,16 +416,7 @@ SEXP vec_ptype2_dispatch_s3(SEXP x,
                             struct vctrs_arg* x_arg,
                             struct vctrs_arg* y_arg);
 
-SEXP vec_cast_dispatch(SEXP x,
-                       SEXP to,
-                       enum vctrs_type x_type,
-                       enum vctrs_type to_type,
-                       bool* lossy,
-                       struct vctrs_arg* x_arg,
-                       struct vctrs_arg* to_arg);
-
 SEXP df_ptype2(SEXP x, SEXP y, struct vctrs_arg* x_arg, struct vctrs_arg* y_arg);
-SEXP df_cast(SEXP x, SEXP to, struct vctrs_arg* x_arg, struct vctrs_arg* to_arg);
 
 bool is_data_frame(SEXP x);
 bool is_record(SEXP x);

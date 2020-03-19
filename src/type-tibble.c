@@ -1,4 +1,5 @@
 #include "vctrs.h"
+#include "cast.h"
 #include "utils.h"
 
 // [[ include("vctrs.h") ]]

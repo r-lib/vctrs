@@ -350,7 +350,7 @@ SEXP df_ptype2(SEXP x, SEXP y, struct vctrs_arg* x_arg, struct vctrs_arg* y_arg)
       struct vctrs_arg named_x_arg = new_index_arg(x_arg, &x_arg_data);
       struct vctrs_arg named_y_arg = new_index_arg(y_arg, &y_arg_data);
       int _left;
-      type = vec_type2(VECTOR_ELT(x, i),
+      type = vec_ptype2(VECTOR_ELT(x, i),
                        VECTOR_ELT(y, dup),
                        &named_x_arg,
                        &named_y_arg,
@@ -396,7 +396,7 @@ SEXP vctrs_df_cast(SEXP x, SEXP to, SEXP x_arg_, SEXP to_arg_) {
 // cast to their types in `to`. Extra `x` columns are dropped and
 // cause a lossy cast. Extra `to` columns are filled with missing
 // values.
-// [[ include("vctrs.h") ]]
+// [[ include(c("type-data-frame.h", "cast.h")) ]]
 SEXP df_cast(SEXP x, SEXP to, struct vctrs_arg* x_arg, struct vctrs_arg* to_arg) {
   SEXP x_names = PROTECT(r_names(x));
   SEXP to_names = PROTECT(r_names(to));

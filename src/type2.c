@@ -2,8 +2,16 @@
 #include "type-data-frame.h"
 #include "utils.h"
 
+static SEXP vec_ptype2_switch_native(SEXP x,
+                                     SEXP y,
+                                     enum vctrs_type x_type,
+                                     enum vctrs_type y_type,
+                                     struct vctrs_arg* x_arg,
+                                     struct vctrs_arg* y_arg,
+                                     int* left);
+
 // [[ include("vctrs.h") ]]
-SEXP vec_type2(SEXP x, SEXP y,
+SEXP vec_ptype2(SEXP x, SEXP y,
                struct vctrs_arg* x_arg,
                struct vctrs_arg* y_arg,
                int* left) {
@@ -45,9 +53,19 @@ SEXP vec_type2(SEXP x, SEXP y,
 
   if (type_x == vctrs_type_s3 || type_y == vctrs_type_s3) {
     return vec_ptype2_dispatch(x, y, type_x, type_y, x_arg, y_arg, left);
+  } else {
+    return vec_ptype2_switch_native(x, y, type_x, type_y, x_arg, y_arg, left);
   }
+}
 
-  enum vctrs_type2 type2 = vec_typeof2_impl(type_x, type_y, left);
+static SEXP vec_ptype2_switch_native(SEXP x,
+                                     SEXP y,
+                                     enum vctrs_type x_type,
+                                     enum vctrs_type y_type,
+                                     struct vctrs_arg* x_arg,
+                                     struct vctrs_arg* y_arg,
+                                     int* left) {
+  enum vctrs_type2 type2 = vec_typeof2_impl(x_type, y_type, left);
 
   switch (type2) {
   case vctrs_type2_null_null:
@@ -83,7 +101,7 @@ SEXP vec_type2(SEXP x, SEXP y,
 }
 
 // [[ register() ]]
-SEXP vctrs_type2(SEXP x, SEXP y, SEXP x_arg, SEXP y_arg) {
+SEXP vctrs_ptype2(SEXP x, SEXP y, SEXP x_arg, SEXP y_arg) {
   if (!r_is_string(x_arg)) {
     Rf_errorcall(R_NilValue, "`x_arg` must be a string");
   }
@@ -95,5 +113,5 @@ SEXP vctrs_type2(SEXP x, SEXP y, SEXP x_arg, SEXP y_arg) {
   struct vctrs_arg y_arg_ = new_wrapper_arg(NULL, r_chr_get_c_string(y_arg, 0));
 
   int _left;
-  return vec_type2(x, y, &x_arg_, &y_arg_, &_left);
+  return vec_ptype2(x, y, &x_arg_, &y_arg_, &_left);
 }

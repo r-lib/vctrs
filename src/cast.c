@@ -1,4 +1,5 @@
 #include "vctrs.h"
+#include "cast.h"
 #include "type-data-frame.h"
 #include "utils.h"
 
@@ -6,282 +7,18 @@
 static SEXP syms_vec_cast_dispatch = NULL;
 static SEXP fns_vec_cast_dispatch = NULL;
 
+static SEXP vec_cast_switch_native(SEXP x,
+                                   SEXP to,
+                                   enum vctrs_type x_type,
+                                   enum vctrs_type to_type,
+                                   struct vctrs_arg* x_arg,
+                                   struct vctrs_arg* to_arg,
+                                   bool* lossy);
 
-static SEXP int_as_logical(SEXP x, bool* lossy) {
-  int* data = INTEGER(x);
-  R_len_t n = Rf_length(x);
-
-  SEXP out = PROTECT(Rf_allocVector(LGLSXP, n));
-  int* out_data = LOGICAL(out);
-
-  for (R_len_t i = 0; i < n; ++i, ++data, ++out_data) {
-    int elt = *data;
-
-    if (elt == NA_INTEGER) {
-      *out_data = NA_LOGICAL;
-      continue;
-    }
-
-    if (elt != 0 && elt != 1) {
-      *lossy = true;
-      UNPROTECT(1);
-      return R_NilValue;
-    }
-
-    *out_data = elt;
-  }
-
-  UNPROTECT(1);
-  return out;
-}
-
-static SEXP dbl_as_logical(SEXP x, bool* lossy) {
-  double* data = REAL(x);
-  R_len_t n = Rf_length(x);
-
-  SEXP out = PROTECT(Rf_allocVector(LGLSXP, n));
-  int* out_data = LOGICAL(out);
-
-  for (R_len_t i = 0; i < n; ++i, ++data, ++out_data) {
-    double elt = *data;
-
-    if (isnan(elt)) {
-      *out_data = NA_LOGICAL;
-      continue;
-    }
-
-    if (elt != 0 && elt != 1) {
-      *lossy = true;
-      UNPROTECT(1);
-      return R_NilValue;
-    }
-
-    *out_data = (int) elt;
-  }
-
-  UNPROTECT(1);
-  return out;
-}
-
-static SEXP chr_as_logical(SEXP x, bool* lossy) {
-  SEXP* data = STRING_PTR(x);
-  R_len_t n = Rf_length(x);
-
-  SEXP out = PROTECT(Rf_allocVector(LGLSXP, n));
-  int* out_data = LOGICAL(out);
-
-  for (R_len_t i = 0; i < n; ++i, ++data, ++out_data) {
-    SEXP str = *data;
-    if (str == NA_STRING) {
-      *out_data = NA_LOGICAL;
-      continue;
-    }
-
-    const char* elt = CHAR(str);
-    switch (elt[0]) {
-    case 'T':
-      if (elt[1] == '\0' || strcmp(elt, "TRUE") == 0) {
-        *out_data = 1;
-        continue;
-      }
-      break;
-    case 'F':
-      if (elt[1] == '\0' || strcmp(elt, "FALSE") == 0) {
-        *out_data = 0;
-        continue;
-      }
-      break;
-    case 't':
-      if (strcmp(elt, "true") == 0) {
-        *out_data = 1;
-        continue;
-      }
-      break;
-    case 'f':
-      if (strcmp(elt, "false") == 0) {
-        *out_data = 0;
-        continue;
-      }
-      break;
-    default:
-      break;
-    }
-
-    *lossy = true;
-    UNPROTECT(1);
-    return R_NilValue;
-  }
-
-  UNPROTECT(1);
-  return out;
-}
-
-static SEXP lgl_as_integer(SEXP x, bool* lossy) {
-  return Rf_coerceVector(x, INTSXP);
-}
-
-static SEXP dbl_as_integer(SEXP x, bool* lossy) {
-  double* data = REAL(x);
-  R_len_t n = Rf_length(x);
-
-  SEXP out = PROTECT(Rf_allocVector(INTSXP, n));
-  int* out_data = INTEGER(out);
-
-  for (R_len_t i = 0; i < n; ++i, ++data, ++out_data) {
-    double elt = *data;
-
-    if (elt <= INT_MIN || elt >= INT_MAX + 1.0) {
-      *lossy = true;
-      UNPROTECT(1);
-      return R_NilValue;
-    }
-
-    if (isnan(elt)) {
-      *out_data = NA_INTEGER;
-      continue;
-    }
-
-    int value = (int) elt;
-
-    if (value != elt) {
-      *lossy = true;
-      UNPROTECT(1);
-      return R_NilValue;
-    }
-
-    *out_data = value;
-  }
-
-  UNPROTECT(1);
-  return out;
-}
-
-static SEXP lgl_as_double(SEXP x, bool* lossy) {
-  int* data = LOGICAL(x);
-  R_len_t n = Rf_length(x);
-
-  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
-  double* out_data = REAL(out);
-
-  for (R_len_t i = 0; i < n; ++i, ++data, ++out_data) {
-    int elt = *data;
-    *out_data = (elt == NA_LOGICAL) ? NA_REAL : elt;
-  }
-
-  UNPROTECT(1);
-  return out;
-}
-
-static SEXP int_as_double(SEXP x, bool* lossy) {
-  int* data = INTEGER(x);
-  R_len_t n = Rf_length(x);
-
-  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
-  double* out_data = REAL(out);
-
-  for (R_len_t i = 0; i < n; ++i, ++data, ++out_data) {
-    int elt = *data;
-    *out_data = (elt == NA_INTEGER) ? NA_REAL : elt;
-  }
-
-  UNPROTECT(1);
-  return out;
-}
-
-static SEXP vec_cast_switch(SEXP x, SEXP to, bool* lossy, struct vctrs_arg* x_arg, struct vctrs_arg* to_arg) {
-  enum vctrs_type x_type = vec_typeof(x);
-  enum vctrs_type to_type = vec_typeof(to);
-
-  if (x_type == vctrs_type_scalar) {
-    stop_scalar_type(x, x_arg);
-  }
-  if (to_type == vctrs_type_scalar) {
-    stop_scalar_type(to, to_arg);
-  }
-
-  if (x_type == vctrs_type_unspecified) {
-    return vec_init(to, vec_size(x));
-  }
-
-  if (to_type == vctrs_type_s3 || x_type == vctrs_type_s3) {
-    return vec_cast_dispatch(x, to, x_type, to_type, lossy, x_arg, to_arg);
-  }
-
-  switch (to_type) {
-  case vctrs_type_logical:
-    switch (x_type) {
-    case vctrs_type_logical:
-      return x;
-    case vctrs_type_integer:
-      return int_as_logical(x, lossy);
-    case vctrs_type_double:
-      return dbl_as_logical(x, lossy);
-    case vctrs_type_character:
-      return chr_as_logical(x, lossy);
-    default:
-      break;
-    }
-    break;
-
-  case vctrs_type_integer:
-    switch (x_type) {
-    case vctrs_type_logical:
-      return lgl_as_integer(x, lossy);
-    case vctrs_type_integer:
-      return x;
-    case vctrs_type_double:
-      return dbl_as_integer(x, lossy);
-    case vctrs_type_character:
-      // TODO: Implement with `R_strtod()` from R_ext/utils.h
-      break;
-    default:
-      break;
-    }
-    break;
-
-  case vctrs_type_double:
-    switch (x_type) {
-    case vctrs_type_logical:
-      return lgl_as_double(x, lossy);
-    case vctrs_type_integer:
-      return int_as_double(x, lossy);
-    case vctrs_type_double:
-      return x;
-    case vctrs_type_character:
-      // TODO: Implement with `R_strtod()` from R_ext/utils.h
-      break;
-    default:
-      break;
-    }
-    break;
-
-  case vctrs_type_character:
-    switch (x_type) {
-    case vctrs_type_logical:
-    case vctrs_type_integer:
-    case vctrs_type_double:
-      return Rf_coerceVector(x, STRSXP);
-    case vctrs_type_character:
-      return x;
-    default:
-      break;
-    }
-    break;
-
-  case vctrs_type_dataframe:
-    switch (x_type) {
-    case vctrs_type_dataframe:
-      return df_cast(x, to, x_arg, to_arg);
-    default:
-      break;
-    }
-
-  default:
-    break;
-  }
-
-  return R_NilValue;
-}
+static SEXP vec_cast_dispatch_s3(SEXP x,
+                                 SEXP to,
+                                 struct vctrs_arg* x_arg,
+                                 struct vctrs_arg* to_arg);
 
 // [[ register() ]]
 SEXP vctrs_cast(SEXP x, SEXP to, SEXP x_arg_, SEXP to_arg_) {
@@ -313,25 +50,118 @@ SEXP vec_cast(SEXP x, SEXP to, struct vctrs_arg* x_arg, struct vctrs_arg* to_arg
     return x;
   }
 
-  bool lossy = false;
-  SEXP out = R_NilValue;
+  enum vctrs_type x_type = vec_typeof(x);
+  enum vctrs_type to_type = vec_typeof(to);
 
-  if (!has_dim(x) && !has_dim(to)) {
-    out = vec_cast_switch(x, to, &lossy, x_arg, to_arg);
+  if (x_type == vctrs_type_unspecified) {
+    return vec_init(to, vec_size(x));
   }
 
-  if (!lossy && out != R_NilValue) {
+  if (x_type == vctrs_type_scalar) {
+    stop_scalar_type(x, x_arg);
+  }
+  if (to_type == vctrs_type_scalar) {
+    stop_scalar_type(to, to_arg);
+  }
+
+  if (has_dim(x) || has_dim(to)) {
+    return vec_cast_dispatch_s3(x, to, x_arg, to_arg);
+  }
+
+  SEXP out = R_NilValue;
+  bool lossy = false;
+
+  if (to_type == vctrs_type_s3 || x_type == vctrs_type_s3) {
+    out = vec_cast_dispatch(x, to, x_type, to_type, x_arg, to_arg, &lossy);
+  } else {
+    out = vec_cast_switch_native(x, to, x_type, to_type, x_arg, to_arg, &lossy);
+  }
+
+  if (lossy || out == R_NilValue) {
+    return vec_cast_dispatch_s3(x, to, x_arg, to_arg);
+  } else {
     return out;
   }
+}
 
-  out = vctrs_dispatch4(syms_vec_cast_dispatch, fns_vec_cast_dispatch,
-                        syms_x, x,
-                        syms_to, to,
-                        syms_x_arg, PROTECT(vctrs_arg(x_arg)),
-                        syms_to_arg, PROTECT(vctrs_arg(to_arg)));
+static SEXP vec_cast_dispatch_s3(SEXP x,
+                                 SEXP to,
+                                 struct vctrs_arg* x_arg,
+                                 struct vctrs_arg* to_arg) {
+  SEXP out = vctrs_dispatch4(syms_vec_cast_dispatch, fns_vec_cast_dispatch,
+                             syms_x, x,
+                             syms_to, to,
+                             syms_x_arg, PROTECT(vctrs_arg(x_arg)),
+                             syms_to_arg, PROTECT(vctrs_arg(to_arg)));
   UNPROTECT(2);
   return out;
 }
+
+static SEXP vec_cast_switch_native(SEXP x,
+                                   SEXP to,
+                                   enum vctrs_type x_type,
+                                   enum vctrs_type to_type,
+                                   struct vctrs_arg* x_arg,
+                                   struct vctrs_arg* to_arg,
+                                   bool* lossy) {
+  int dir = 0;
+  enum vctrs_type2 type2 = vec_typeof2_impl(x_type, to_type, &dir);
+
+  switch (type2) {
+
+  case vctrs_type2_logical_logical:
+  case vctrs_type2_double_double:
+  case vctrs_type2_character_character:
+  case vctrs_type2_integer_integer:
+    return x;
+
+  case vctrs_type2_logical_integer:
+    if (dir == 0) {
+      return lgl_as_integer(x, lossy);
+    } else {
+      return int_as_logical(x, lossy);
+    }
+
+  case vctrs_type2_logical_double:
+    if (dir == 0) {
+      return lgl_as_double(x, lossy);
+    } else {
+      return dbl_as_logical(x, lossy);
+    }
+
+  case vctrs_type2_integer_double:
+    if (dir == 0) {
+      return int_as_double(x, lossy);
+    } else {
+      return dbl_as_integer(x, lossy);
+    }
+
+  case vctrs_type2_logical_character:
+    if (dir == 0) {
+      return Rf_coerceVector(x, STRSXP);
+    } else {
+      return chr_as_logical(x, lossy);
+    }
+
+  case vctrs_type2_integer_character:
+  case vctrs_type2_double_character:
+    if (dir == 0) {
+      return Rf_coerceVector(x, STRSXP);
+    } else {
+      // TODO: Implement with `R_strtod()` from R_ext/utils.h?
+      break;
+    }
+
+  case vctrs_type2_dataframe_dataframe:
+    return df_cast(x, to, x_arg, to_arg);
+
+  default:
+    break;
+  }
+
+  return R_NilValue;
+}
+
 
 struct vec_is_coercible_data {
   SEXP x;
@@ -343,7 +173,7 @@ struct vec_is_coercible_data {
 
 static void vec_is_coercible_cb(void* data_) {
   struct vec_is_coercible_data* data = (struct vec_is_coercible_data*) data_;
-  vec_type2(data->x, data->y, data->x_arg, data->y_arg, data->dir);
+  vec_ptype2(data->x, data->y, data->x_arg, data->y_arg, data->dir);
 }
 
 static void vec_is_coercible_e(SEXP x,
@@ -395,7 +225,7 @@ SEXP vec_coercible_cast(SEXP x, SEXP to, struct vctrs_arg* x_arg, struct vctrs_a
   // Called for the side effect of generating an error if there is no
   // common type
   int _left;
-  vec_type2(x, to, x_arg, to_arg, &_left);
+  vec_ptype2(x, to, x_arg, to_arg, &_left);
 
   return vec_cast(x, to, x_arg, to_arg);
 }
@@ -463,7 +293,6 @@ SEXP vec_cast_common(SEXP xs, SEXP to) {
 
   for (R_len_t i = 0; i < n; ++i) {
     SEXP elt = VECTOR_ELT(xs, i);
-    // TODO
     SET_VECTOR_ELT(out, i, vec_cast(elt, type, args_empty, args_empty));
   }
 

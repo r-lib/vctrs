@@ -77,6 +77,20 @@ test_that("cast errors create helpful messages (#57, #225)", {
   })
 })
 
+test_that("unspecified can be cast to shaped vectors", {
+  x <- matrix(letters[1:4], 2)
+  expect_identical(vec_cast(NA, x), matrix(chr(NA, NA), 1))
+
+  x <- foobar(c(1:4))
+  dim(x) <- c(2, 2)
+  out <- vec_cast(NA, x)
+
+  exp <- foobar(int(c(NA, NA)))
+  dim(exp) <- c(1, 2)
+  expect_identical(out, exp)
+})
+
+
 # Conditions --------------------------------------------------------------
 
 test_that("can suppress cast errors selectively", {

@@ -432,7 +432,7 @@ SEXP vctrs_maybe_translate_encoding2(SEXP x, SEXP y) {
 
   int _;
 
-  SEXP type = PROTECT(vec_type2(x, y, &args_x, &args_y, &_));
+  SEXP type = PROTECT(vec_ptype2(x, y, &args_x, &args_y, &_));
 
   x = PROTECT(vec_cast(x, type, args_empty, args_empty));
   y = PROTECT(vec_cast(y, type, args_empty, args_empty));
