@@ -7,12 +7,18 @@
 static SEXP syms_vec_cast_dispatch = NULL;
 static SEXP fns_vec_cast_dispatch = NULL;
 
-static SEXP vec_cast_switch(SEXP x,
-                            SEXP to,
-                            bool* lossy,
-                            struct vctrs_arg* x_arg,
-                            struct vctrs_arg* to_arg);
+static SEXP vec_cast_switch_native(SEXP x,
+                                   SEXP to,
+                                   enum vctrs_type x_type,
+                                   enum vctrs_type to_type,
+                                   bool* lossy,
+                                   struct vctrs_arg* x_arg,
+                                   struct vctrs_arg* to_arg);
 
+static SEXP vec_cast_dispatch_s3(SEXP x,
+                                 SEXP to,
+                                 struct vctrs_arg* x_arg,
+                                 struct vctrs_arg* to_arg);
 
 // [[ register() ]]
 SEXP vctrs_cast(SEXP x, SEXP to, SEXP x_arg_, SEXP to_arg_) {
@@ -44,31 +50,10 @@ SEXP vec_cast(SEXP x, SEXP to, struct vctrs_arg* x_arg, struct vctrs_arg* to_arg
     return x;
   }
 
-  bool lossy = false;
-  SEXP out = R_NilValue;
-
-  if (!has_dim(x) && !has_dim(to)) {
-    out = vec_cast_switch(x, to, &lossy, x_arg, to_arg);
+  if (has_dim(x) || has_dim(to)) {
+    return vec_cast_dispatch_s3(x, to, x_arg, to_arg);
   }
 
-  if (!lossy && out != R_NilValue) {
-    return out;
-  }
-
-  out = vctrs_dispatch4(syms_vec_cast_dispatch, fns_vec_cast_dispatch,
-                        syms_x, x,
-                        syms_to, to,
-                        syms_x_arg, PROTECT(vctrs_arg(x_arg)),
-                        syms_to_arg, PROTECT(vctrs_arg(to_arg)));
-  UNPROTECT(2);
-  return out;
-}
-
-static SEXP vec_cast_switch(SEXP x,
-                            SEXP to,
-                            bool* lossy,
-                            struct vctrs_arg* x_arg,
-                            struct vctrs_arg* to_arg) {
   enum vctrs_type x_type = vec_typeof(x);
   enum vctrs_type to_type = vec_typeof(to);
 
@@ -83,10 +68,42 @@ static SEXP vec_cast_switch(SEXP x,
     return vec_init(to, vec_size(x));
   }
 
+  bool lossy = false;
+  SEXP out = R_NilValue;
+
   if (to_type == vctrs_type_s3 || x_type == vctrs_type_s3) {
-    return vec_cast_dispatch(x, to, x_type, to_type, lossy, x_arg, to_arg);
+    out = vec_cast_dispatch(x, to, x_type, to_type, &lossy, x_arg, to_arg);
+  } else {
+    out = vec_cast_switch_native(x, to, x_type, to_type, &lossy, x_arg, to_arg);
   }
 
+  if (lossy || out == R_NilValue) {
+    return vec_cast_dispatch_s3(x, to, x_arg, to_arg);
+  } else {
+    return out;
+  }
+}
+
+static SEXP vec_cast_dispatch_s3(SEXP x,
+                                 SEXP to,
+                                 struct vctrs_arg* x_arg,
+                                 struct vctrs_arg* to_arg) {
+  SEXP out = vctrs_dispatch4(syms_vec_cast_dispatch, fns_vec_cast_dispatch,
+                             syms_x, x,
+                             syms_to, to,
+                             syms_x_arg, PROTECT(vctrs_arg(x_arg)),
+                             syms_to_arg, PROTECT(vctrs_arg(to_arg)));
+  UNPROTECT(2);
+  return out;
+}
+
+static SEXP vec_cast_switch_native(SEXP x,
+                                   SEXP to,
+                                   enum vctrs_type x_type,
+                                   enum vctrs_type to_type,
+                                   bool* lossy,
+                                   struct vctrs_arg* x_arg,
+                                   struct vctrs_arg* to_arg) {
   int dir = 0;
   enum vctrs_type2 type2 = vec_typeof2_impl(x_type, to_type, &dir);
 
