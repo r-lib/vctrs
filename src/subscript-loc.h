@@ -9,16 +9,16 @@ enum subscript_missing {
   SUBSCRIPT_MISSING_PROPAGATE,
   SUBSCRIPT_MISSING_ERROR
 };
-enum num_as_location_loc_negative {
+enum num_loc_negative {
   LOC_NEGATIVE_INVERT,
   LOC_NEGATIVE_ERROR,
   LOC_NEGATIVE_IGNORE
 };
-enum num_as_location_loc_oob {
+enum num_loc_oob {
   LOC_OOB_EXTEND,
   LOC_OOB_ERROR
 };
-enum num_as_location_loc_zero {
+enum num_loc_zero {
   LOC_ZERO_REMOVE,
   LOC_ZERO_ERROR,
   LOC_ZERO_IGNORE
@@ -26,9 +26,9 @@ enum num_as_location_loc_zero {
 
 struct location_opts {
   const struct subscript_opts* subscript_opts;
-  enum num_as_location_loc_negative loc_negative;
-  enum num_as_location_loc_oob loc_oob;
-  enum num_as_location_loc_zero loc_zero;
+  enum num_loc_negative loc_negative;
+  enum num_loc_oob loc_oob;
+  enum num_loc_zero loc_zero;
   enum subscript_missing missing;
 };
 

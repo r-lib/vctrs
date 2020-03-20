@@ -338,7 +338,7 @@ static enum subscript_missing parse_subscript_arg_missing(SEXP x) {
 
   never_reached("stop_subscript_arg_missing");
 }
-static enum num_as_location_loc_negative parse_loc_negative(SEXP x) {
+static enum num_loc_negative parse_loc_negative(SEXP x) {
   if (TYPEOF(x) != STRSXP || Rf_length(x) == 0) {
     stop_bad_negative();
   }
@@ -352,7 +352,7 @@ static enum num_as_location_loc_negative parse_loc_negative(SEXP x) {
 
   never_reached("stop_bad_negative");
 }
-static enum num_as_location_loc_oob parse_loc_oob(SEXP x) {
+static enum num_loc_oob parse_loc_oob(SEXP x) {
   if (TYPEOF(x) != STRSXP || Rf_length(x) == 0) {
     stop_bad_oob();
   }
@@ -365,7 +365,7 @@ static enum num_as_location_loc_oob parse_loc_oob(SEXP x) {
 
   never_reached("stop_bad_oob");
 }
-static enum num_as_location_loc_zero parse_loc_zero(SEXP x) {
+static enum num_loc_zero parse_loc_zero(SEXP x) {
   if (TYPEOF(x) != STRSXP || Rf_length(x) == 0) {
     stop_bad_zero();
   }
