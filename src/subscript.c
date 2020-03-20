@@ -5,21 +5,21 @@
 static SEXP fns_cnd_body_subscript_dim = NULL;
 
 static SEXP new_error_subscript_type(SEXP subscript,
-                                     const struct vec_as_subscript_opts* opts,
+                                     const struct subscript_opts* opts,
                                      SEXP body,
                                      SEXP parent);
 static enum subscript_type_action parse_subscript_arg_type(SEXP x, const char* kind);
 
 static SEXP obj_cast_subscript(SEXP subscript,
-                               const struct vec_as_subscript_opts* opts,
+                               const struct subscript_opts* opts,
                                ERR* err);
 static SEXP dbl_cast_subscript(SEXP subscript,
-                               const struct vec_as_subscript_opts* opts,
+                               const struct subscript_opts* opts,
                                ERR* err);
 
 
 SEXP vec_as_subscript_opts(SEXP subscript,
-                           const struct vec_as_subscript_opts* opts,
+                           const struct subscript_opts* opts,
                            ERR* err) {
   if (vec_dim_n(subscript) != 1) {
     *err = new_error_subscript_type(subscript, opts, fns_cnd_body_subscript_dim, R_NilValue);
@@ -103,7 +103,7 @@ SEXP vec_as_subscript_opts(SEXP subscript,
 }
 
 static SEXP obj_cast_subscript(SEXP subscript,
-                               const struct vec_as_subscript_opts* opts,
+                               const struct subscript_opts* opts,
                                ERR* err) {
   int dir = 0;
   struct vctrs_arg* arg = opts->subscript_arg;
@@ -128,13 +128,13 @@ static SEXP obj_cast_subscript(SEXP subscript,
 }
 
 static SEXP dbl_cast_subscript_fallback(SEXP subscript,
-                                        const struct vec_as_subscript_opts* opts,
+                                        const struct subscript_opts* opts,
                                         ERR* err);
 static SEXP syms_new_dbl_cast_subscript_body = NULL;
 static SEXP syms_lossy_err = NULL;
 
 static SEXP dbl_cast_subscript(SEXP subscript,
-                               const struct vec_as_subscript_opts* opts,
+                               const struct subscript_opts* opts,
                                ERR* err) {
   double* p = REAL(subscript);
   R_len_t n = Rf_length(subscript);
@@ -171,7 +171,7 @@ static SEXP dbl_cast_subscript(SEXP subscript,
 }
 
 static SEXP dbl_cast_subscript_fallback(SEXP subscript,
-                                        const struct vec_as_subscript_opts* opts,
+                                        const struct subscript_opts* opts,
                                         ERR* err) {
 
   SEXP out = PROTECT(vec_coercible_cast_e(subscript,
@@ -206,7 +206,7 @@ SEXP vctrs_as_subscript_result(SEXP subscript,
                                SEXP arg_) {
   struct vctrs_arg arg = vec_as_arg(arg_);
 
-  struct vec_as_subscript_opts opts = {
+  struct subscript_opts opts = {
     .logical = parse_subscript_arg_type(logical, "logical"),
     .numeric = parse_subscript_arg_type(numeric, "numeric"),
     .character = parse_subscript_arg_type(character, "character"),
@@ -231,7 +231,7 @@ SEXP vctrs_as_subscript(SEXP subscript,
                         SEXP arg_) {
   struct vctrs_arg arg = vec_as_arg(arg_);
 
-  struct vec_as_subscript_opts opts = {
+  struct subscript_opts opts = {
     .logical = parse_subscript_arg_type(logical, "logical"),
     .numeric = parse_subscript_arg_type(numeric, "numeric"),
     .character = parse_subscript_arg_type(character, "character"),
@@ -274,7 +274,7 @@ static enum subscript_type_action parse_subscript_arg_type(SEXP x, const char* k
 static SEXP syms_new_error_subscript_type = NULL;
 
 static SEXP new_error_subscript_type(SEXP subscript,
-                                     const struct vec_as_subscript_opts* opts,
+                                     const struct subscript_opts* opts,
                                      SEXP body,
                                      SEXP parent) {
   SEXP logical = subscript_type_action_chr(opts->logical);

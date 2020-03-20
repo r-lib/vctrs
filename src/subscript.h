@@ -18,7 +18,7 @@ enum subscript_type_action {
   SUBSCRIPT_TYPE_ACTION_ERROR
 };
 
-struct vec_as_subscript_opts {
+struct subscript_opts {
   enum subscript_action action;
   enum subscript_type_action logical;
   enum subscript_type_action numeric;
@@ -26,14 +26,14 @@ struct vec_as_subscript_opts {
   struct vctrs_arg* subscript_arg;
 };
 
-static const struct vec_as_subscript_opts vec_as_subscript_default_opts = {
+static const struct subscript_opts subscript_default_opts = {
   .action = SUBSCRIPT_ACTION_DEFAULT,
   .logical = SUBSCRIPT_TYPE_ACTION_CAST,
   .numeric = SUBSCRIPT_TYPE_ACTION_CAST,
   .character = SUBSCRIPT_TYPE_ACTION_CAST,
   .subscript_arg = NULL
 };
-static const struct vec_as_subscript_opts vec_as_subscript_default_assign_opts = {
+static const struct subscript_opts subscript_default_assign_opts = {
   .action = SUBSCRIPT_ACTION_ASSIGN,
   .logical = SUBSCRIPT_TYPE_ACTION_CAST,
   .numeric = SUBSCRIPT_TYPE_ACTION_CAST,
@@ -42,7 +42,7 @@ static const struct vec_as_subscript_opts vec_as_subscript_default_assign_opts =
 };
 
 SEXP vec_as_subscript_opts(SEXP subscript,
-                           const struct vec_as_subscript_opts* opts,
+                           const struct subscript_opts* opts,
                            ERR* err);
 
 static inline SEXP subscript_type_action_chr(enum subscript_type_action action) {
@@ -53,7 +53,7 @@ static inline SEXP subscript_type_action_chr(enum subscript_type_action action) 
   never_reached("subscript_type_action_chr");
 }
 
-static inline SEXP get_opts_action(const struct vec_as_subscript_opts* opts) {
+static inline SEXP get_opts_action(const struct subscript_opts* opts) {
   switch (opts->action) {
   case SUBSCRIPT_ACTION_DEFAULT: return R_NilValue;
   case SUBSCRIPT_ACTION_SUBSET: return chrs_subset;

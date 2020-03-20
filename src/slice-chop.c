@@ -614,7 +614,7 @@ static SEXP vec_as_indices(SEXP indices, R_len_t n, SEXP names) {
 
   R_len_t size = vec_size(indices);
 
-  const struct vec_as_subscript_opts subscript_opts = {
+  const struct subscript_opts subscript_opts = {
     .action = SUBSCRIPT_ACTION_DEFAULT,
     .logical = SUBSCRIPT_TYPE_ACTION_ERROR,
     .numeric = SUBSCRIPT_TYPE_ACTION_CAST,

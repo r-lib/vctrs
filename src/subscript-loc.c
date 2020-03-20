@@ -115,7 +115,7 @@ static SEXP int_invert_location(SEXP subscript, R_len_t n,
     j = -j;
     if (j > n) {
       struct location_opts updated_opts = *opts;
-      struct vec_as_subscript_opts updated_subscript_opts = *updated_opts.subscript_opts;
+      struct subscript_opts updated_subscript_opts = *updated_opts.subscript_opts;
       updated_subscript_opts.action = SUBSCRIPT_ACTION_NEGATE;
       updated_opts.subscript_opts = &updated_subscript_opts;
       stop_subscript_oob_location(subscript, n, &updated_opts);
@@ -404,7 +404,7 @@ SEXP vctrs_as_location(SEXP subscript, SEXP n_, SEXP names,
 
   struct vctrs_arg arg = vec_as_arg(arg_);
 
-  struct vec_as_subscript_opts subscript_opts = {
+  struct subscript_opts subscript_opts = {
     .subscript_arg  = &arg
   };
   struct location_opts opts = {
@@ -527,12 +527,12 @@ struct location_opts location_default_opts_obj;
 struct location_opts location_default_assign_opts_obj;
 
 void vctrs_init_subscript_loc(SEXP ns) {
-  location_default_opts_obj.subscript_opts = &vec_as_subscript_default_opts;
+  location_default_opts_obj.subscript_opts = &subscript_default_opts;
   location_default_opts_obj.loc_negative = LOC_NEGATIVE_INVERT;
   location_default_opts_obj.loc_oob = LOC_OOB_ERROR;
   location_default_opts_obj.loc_zero = LOC_ZERO_REMOVE;
   location_default_opts_obj.missing = SUBSCRIPT_MISSING_PROPAGATE;
 
   location_default_assign_opts_obj = location_default_opts_obj;
-  location_default_assign_opts_obj.subscript_opts = &vec_as_subscript_default_assign_opts;
+  location_default_assign_opts_obj.subscript_opts = &subscript_default_assign_opts;
 }
