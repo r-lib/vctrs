@@ -253,10 +253,10 @@ stop_location_negative_missing <- function(i, ...) {
   cnd_signal(new_error_subscript_type(
     i,
     ...,
-    body = cnd_body_vctrs_error_subscript_type
+    body = cnd_body_vctrs_error_location_negative_missing
   ))
 }
-cnd_body_vctrs_error_subscript_type <- function(cnd, ...) {
+cnd_body_vctrs_error_location_negative_missing <- function(cnd, ...) {
   missing_loc <- which(is.na(cnd$i))
   arg <- append_arg("The subscript", cnd$subscript_arg)
 
