@@ -1,6 +1,9 @@
 
 # vctrs (development version)
 
+* Improved error messages in `vec_as_location()` when subscript is a
+  matrix or array (#936).
+
 * New `list_sizes()` for computing the size of every element in a list.
   `list_sizes()` is to `vec_size()` as `lengths()` is to `length()`, except
   that it only supports lists. Atomic vectors and data frames result in an

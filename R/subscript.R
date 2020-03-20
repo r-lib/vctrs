@@ -250,6 +250,32 @@ new_error_subscript2_type <- function(i,
   )
 }
 
+stop_subscript_dim <- function(i, ...) {
+  cnd_signal(new_error_subscript_type(
+    i,
+    body = cnd_body_subcript_dim,
+    ...
+  ))
+}
+
+cnd_body_subcript_dim <- function(cnd, ...) {
+  arg <- append_arg("The subscript", cnd$subscript_arg)
+
+  dim <- length(dim(cnd$i))
+  if (dim < 2) {
+    abort("Internal error: Unexpected dimensionality in `cnd_body_subcript_dim()`.")
+  }
+  if (dim == 2) {
+    shape <- "a matrix"
+  } else {
+    shape <- "an array"
+  }
+
+  format_error_bullets(c(
+    x = glue::glue("{arg} must be a simple vector, not {shape}.")
+  ))
+}
+
 cnd_subscript_element <- function(cnd) {
   elt <- cnd$subscript_elt %||% "element"
 
