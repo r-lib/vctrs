@@ -258,49 +258,6 @@ vec_ptype2.list.list <- function(x, y, ..., x_arg = "", y_arg = "") {
 }
 
 
-# Default
-
-#' @method vec_ptype2.logical default
-#' @export
-vec_ptype2.logical.default <- function(x, y, ..., x_arg = "", y_arg = "") {
-  if (is_unspecified(x)) {
-    vec_ptype(y)
-  } else {
-    vec_default_ptype2(x, y, x_arg = x_arg, y_arg = y_arg)
-  }
-}
-#' @method vec_ptype2.integer default
-#' @export
-vec_ptype2.integer.default <- function(x, y, ..., x_arg = "", y_arg = "") {
-  vec_default_ptype2(x, y, x_arg = x_arg, y_arg = y_arg)
-}
-#' @method vec_ptype2.double default
-#' @export
-vec_ptype2.double.default <- function(x, y, ..., x_arg = "", y_arg = "") {
-  vec_default_ptype2(x, y, x_arg = x_arg, y_arg = y_arg)
-}
-#' @method vec_ptype2.complex default
-#' @export
-vec_ptype2.complex.default <- function(x, y, ..., x_arg = "", y_arg = "") {
-  vec_default_ptype2(x, y, x_arg = x_arg, y_arg = y_arg)
-}
-#' @method vec_ptype2.character default
-#' @export
-vec_ptype2.character.default <- function(x, y, ..., x_arg = "", y_arg = "") {
-  vec_default_ptype2(x, y, x_arg = x_arg, y_arg = y_arg)
-}
-#' @method vec_ptype2.raw default
-#' @export
-vec_ptype2.raw.default <- function(x, y, ..., x_arg = "", y_arg = "") {
-  vec_default_ptype2(x, y, x_arg = x_arg, y_arg = y_arg)
-}
-#' @method vec_ptype2.list default
-#' @export
-vec_ptype2.list.default <- function(x, y, ..., x_arg = "", y_arg = "") {
-  stop_incompatible_type(x, y, x_arg = x_arg, y_arg = y_arg)
-}
-
-
 # Cast --------------------------------------------------------------------
 
 # These methods for base types are handled at the C level unless

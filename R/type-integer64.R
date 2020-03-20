@@ -37,11 +37,6 @@ vec_ptype_abbr.integer64 <- function(x, ...) {
 vec_ptype2.integer64 <- function(x, y, ...) {
   UseMethod("vec_ptype2.integer64", y)
 }
-#' @method vec_ptype2.integer64 default
-#' @export
-vec_ptype2.integer64.default <- function(x, y, ..., x_arg = "", y_arg = "") {
-  vec_default_ptype2(x, y, x_arg = x_arg, y_arg = y_arg)
-}
 
 #' @method vec_ptype2.integer64 vctrs_unspecified
 #' @export

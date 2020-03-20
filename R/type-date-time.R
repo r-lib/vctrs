@@ -135,11 +135,6 @@ vec_ptype_abbr.difftime <- function(x, ...) {
 #' @method vec_ptype2 Date
 #' @export
 vec_ptype2.Date <- function(x, y, ...) UseMethod("vec_ptype2.Date", y)
-#' @method vec_ptype2.Date default
-#' @export
-vec_ptype2.Date.default <- function(x, y, ..., x_arg = "", y_arg = "") {
-  vec_default_ptype2(x, y, x_arg = x_arg, y_arg = y_arg)
-}
 #' @method vec_ptype2.Date Date
 #' @export
 vec_ptype2.Date.Date <- function(x, y, ...) new_date()
@@ -149,11 +144,6 @@ vec_ptype2.Date.Date <- function(x, y, ...) new_date()
 #' @method vec_ptype2 POSIXt
 #' @export
 vec_ptype2.POSIXt <- function(x, y, ...) UseMethod("vec_ptype2.POSIXt", y)
-#' @method vec_ptype2.POSIXt default
-#' @export
-vec_ptype2.POSIXt.default <- function(x, y, ..., x_arg = "", y_arg = "") {
-  vec_default_ptype2(x, y, x_arg = x_arg, y_arg = y_arg)
-}
 #' @method vec_ptype2.POSIXt Date
 #' @export
 vec_ptype2.POSIXt.Date <- function(x, y, ...) new_datetime(tzone = tzone(x))
@@ -169,11 +159,6 @@ vec_ptype2.POSIXt.POSIXt <- function(x, y, ...) new_datetime(tzone = tzone_union
 #' @method vec_ptype2 difftime
 #' @export
 vec_ptype2.difftime <- function(x, y, ...) UseMethod("vec_ptype2.difftime", y)
-#' @method vec_ptype2.difftime default
-#' @export
-vec_ptype2.difftime.default <- function(x, y, ..., x_arg = "", y_arg = "") {
-  vec_default_ptype2(x, y, x_arg = x_arg, y_arg = y_arg)
-}
 #' @method vec_ptype2.difftime difftime
 #' @export
 vec_ptype2.difftime.difftime <- function(x, y, ...) new_duration(units = units_union(x, y))

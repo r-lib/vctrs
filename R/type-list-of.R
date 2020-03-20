@@ -207,11 +207,6 @@ vec_ptype2.vctrs_list_of.list <- function(x, y, ..., x_arg = "", y_arg = "") {
 vec_ptype2.list.vctrs_list_of <- function(x, y, ..., x_arg = "", y_arg = "") {
   stop_incompatible_type(x, y, x_arg = x_arg, y_arg = y_arg)
 }
-#' @method vec_ptype2.vctrs_list_of default
-#' @export
-vec_ptype2.vctrs_list_of.default <- function(x, y, ..., x_arg = "", y_arg = "") {
-  vec_default_ptype2(x, y, x_arg = x_arg, y_arg = y_arg)
-}
 
 #' @rdname list_of
 #' @export vec_cast.vctrs_list_of

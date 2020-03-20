@@ -45,10 +45,6 @@ vec_ptype2 <- function(x, y, ..., x_arg = "", y_arg = "") {
 vec_ptype2_dispatch_s3 <- function(x, y, ..., x_arg = "", y_arg = "") {
   UseMethod("vec_ptype2")
 }
-#' @export
-vec_ptype2.default <- function(x, y, ...) {
-  vec_default_ptype2(x, y, ...)
-}
 #' @rdname vec_ptype2
 #' @export
 vec_default_ptype2 <- function(x, y, ..., x_arg = "", y_arg = "") {

@@ -35,12 +35,6 @@ vec_ptype2.table <- function(x, y, ..., x_arg = "", y_arg = "") {
   }
 }
 
-#' @method vec_ptype2.table default
-#' @export
-vec_ptype2.table.default <- function(x, y, ..., x_arg = "", y_arg = "") {
-  vec_default_ptype2(x, y, x_arg = x_arg, y_arg = y_arg)
-}
-
 #' @method vec_ptype2.table table
 #' @export
 vec_ptype2.table.table <- function(x, y, ..., x_arg = "", y_arg = "") {
