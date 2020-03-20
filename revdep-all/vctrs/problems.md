@@ -1,3 +1,42 @@
+# blob
+
+<details>
+
+* Version: 1.2.1
+* Source code: https://github.com/cran/blob
+* URL: https://github.com/tidyverse/blob
+* BugReports: https://github.com/tidyverse/blob/issues
+* Date/Publication: 2020-01-20 22:50:02 UTC
+* Number of recursive dependencies: 38
+
+Run `revdep_details(,"blob")` for more info
+
+</details>
+
+## Newly broken
+
+*   checking tests ...
+    ```
+     ERROR
+    Running the tests in ‘tests/testthat.R’ failed.
+    Last 13 lines of output:
+      Message:        Internal error: Unsupported vctrs type `raw` in `base_dispatch_class_str`
+      Backtrace:
+        1. testthat::expect_error(...)
+        7. vctrs:::`[<-.vctrs_list_of`(`*tmp*`, 1, value = 1)
+        8. vctrs:::map(...)
+        9. base::lapply(.x, .f, ...)
+       10. vctrs:::FUN(X[[i]], ...)
+      
+      ══ testthat results  ═══════════════════════════════════════════════════════════
+      [ OK: 32 | SKIPPED: 3 | WARNINGS: 0 | FAILED: 2 ]
+      1. Failure: can't insert objects of incorrect type (@test-accessors.R#27) 
+      2. Failure: can't insert objects of incorrect type (@test-accessors.R#28) 
+      
+      Error: testthat unit tests failed
+      Execution halted
+    ```
+
 # dm
 
 <details>

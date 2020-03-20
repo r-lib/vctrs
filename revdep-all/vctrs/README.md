@@ -36,6 +36,7 @@
 
 |package                              |version |error  |warning |note |
 |:------------------------------------|:-------|:------|:-------|:----|
+|[blob](problems.md#blob)             |1.2.1   |__+1__ |        |     |
 |[dm](problems.md#dm)                 |0.1.1   |__+1__ |        |1    |
 |[slider](problems.md#slider)         |0.1.2   |__+2__ |        |     |
 |[tibbletime](problems.md#tibbletime) |0.1.3   |__+1__ |        |     |
