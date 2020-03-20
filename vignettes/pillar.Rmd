@@ -88,6 +88,7 @@ latlon(32.7102978, -117.1704058)
 ```
 
 By using `vctrs_rcrd()`, we already get the infrastructure to make this class fully compatible with data frames for free.
+See `vignette("s3-vector", package = "vctrs")` for details on the record data type.
 
 
 ## Using in a tibble
