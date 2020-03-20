@@ -60,7 +60,8 @@ usethis::use_package("pillar")
 ```
 
 This short vignette assumes a package that implements a `"latlon"` vector and uses `roxygen2` to create documentation and the `NAMESPACE` file.
-To make the required methods available, we attach pillar.
+To make the required methods available in this vignette, we attach pillar. 
+You don't need to do this in your package.
 
 ```{r attach}
 library(pillar)
