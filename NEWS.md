@@ -1,6 +1,9 @@
 
 # vctrs (development version)
 
+* `vec_as_subscript()` now fails when the subscript is a matrix or an
+  array, consistently with `vec_as_location()`.
+
 * Improved error messages in `vec_as_location()` when subscript is a
   matrix or array (#936).
 

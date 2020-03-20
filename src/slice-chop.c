@@ -614,26 +614,26 @@ static SEXP vec_as_indices(SEXP indices, R_len_t n, SEXP names) {
 
   R_len_t size = vec_size(indices);
 
-  // Restrict index values to positive integer locations
-  const struct vec_as_location_opts opts = {
-    .action = SUBSCRIPT_ACTION_DEFAULT,
-    .missing = SUBSCRIPT_MISSING_PROPAGATE,
-    .loc_negative = LOC_NEGATIVE_ERROR,
-    .loc_oob = LOC_OOB_ERROR,
-    .loc_zero = LOC_ZERO_ERROR,
-    .subscript_arg = NULL
-  };
-
   const struct vec_as_subscript_opts subscript_opts = {
+    .action = SUBSCRIPT_ACTION_DEFAULT,
     .logical = SUBSCRIPT_TYPE_ACTION_ERROR,
     .numeric = SUBSCRIPT_TYPE_ACTION_CAST,
     .character = SUBSCRIPT_TYPE_ACTION_ERROR,
     .subscript_arg = NULL
   };
 
+  // Restrict index values to positive integer locations
+  const struct vec_as_location_opts opts = {
+    .subscript_opts = &subscript_opts,
+    .missing = SUBSCRIPT_MISSING_PROPAGATE,
+    .loc_negative = LOC_NEGATIVE_ERROR,
+    .loc_oob = LOC_OOB_ERROR,
+    .loc_zero = LOC_ZERO_ERROR
+  };
+
   for (int i = 0; i < size; ++i) {
     SEXP index = VECTOR_ELT(indices, i);
-    index = vec_as_location_opts(index, n, names, &opts, &subscript_opts);
+    index = vec_as_location_opts(index, n, names, &opts);
     SET_VECTOR_ELT(indices, i, index);
   }
 

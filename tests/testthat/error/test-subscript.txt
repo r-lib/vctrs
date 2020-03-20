@@ -60,3 +60,19 @@ Error: Must rename columns with a valid subscript vector.
 x The subscript `foo(bar)` has the wrong type `environment`.
 i It must be logical, numeric, or character.
 
+
+vec_as_subscript() checks dimensionality
+========================================
+
+> vec_as_subscript(matrix(TRUE, nrow = 1))
+Error: Must subset elements with a valid subscript vector.
+x The subscript must be a simple vector, not a matrix.
+
+> vec_as_subscript(array(TRUE, dim = c(1, 1, 1)))
+Error: Must subset elements with a valid subscript vector.
+x The subscript must be a simple vector, not an array.
+
+> with_tibble_rows(vec_as_subscript(matrix(TRUE, nrow = 1)))
+Error: Must remove rows with a valid subscript vector.
+x The subscript `foo(bar)` must be a simple vector, not a matrix.
+

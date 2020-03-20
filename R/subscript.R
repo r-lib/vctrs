@@ -250,15 +250,7 @@ new_error_subscript2_type <- function(i,
   )
 }
 
-stop_subscript_dim <- function(i, ...) {
-  cnd_signal(new_error_subscript_type(
-    i,
-    body = cnd_body_subcript_dim,
-    ...
-  ))
-}
-
-cnd_body_subcript_dim <- function(cnd, ...) {
+cnd_body_subscript_dim <- function(cnd, ...) {
   arg <- append_arg("The subscript", cnd$subscript_arg)
 
   dim <- length(dim(cnd$i))

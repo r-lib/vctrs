@@ -51,6 +51,19 @@ test_that("can customise subscript errors", {
   })
 })
 
+test_that("vec_as_subscript() checks dimensionality", {
+  verify_errors({
+    expect_error(vec_as_subscript(matrix(TRUE, nrow = 1)), class = "vctrs_error_subscript_type")
+    expect_error(vec_as_subscript(array(TRUE, dim = c(1, 1, 1))), class = "vctrs_error_subscript_type")
+    expect_error(with_tibble_rows(vec_as_subscript(matrix(TRUE, nrow = 1))), class = "vctrs_error_subscript_type")
+  })
+})
+
+test_that("vec_as_subscript() works with vectors of dimensionality 1", {
+  arr <- array(TRUE, dim = 1)
+  expect_identical(vec_as_subscript(arr), arr)
+})
+
 test_that("subscript functions have informative error messages", {
   verify_output(test_path("error", "test-subscript.txt"), {
     "# vec_as_subscript() forbids subscript types"
@@ -68,5 +81,10 @@ test_that("subscript functions have informative error messages", {
 
     "# can customise subscript errors"
     with_tibble_cols(vec_as_subscript(env()))
+
+    "# vec_as_subscript() checks dimensionality"
+    vec_as_subscript(matrix(TRUE, nrow = 1))
+    vec_as_subscript(array(TRUE, dim = c(1, 1, 1)))
+    with_tibble_rows(vec_as_subscript(matrix(TRUE, nrow = 1)))
   })
 })
