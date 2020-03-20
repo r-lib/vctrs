@@ -36,13 +36,15 @@ Suggests:
     crayon,
     generics,
     knitr,
-    pillar (>= 1.4.1),
+    pillar (>= 1.4.3.9001),
     pkgdown,
     rmarkdown,
     testthat (>= 2.3.0),
     tibble,
     xml2,
     zeallot
+Remotes: 
+    r-lib/pillar
 VignetteBuilder: 
     knitr
 Encoding: UTF-8
