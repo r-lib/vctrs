@@ -111,11 +111,7 @@ vec_ptype2.vctrs_vctr <- function(x, y, ..., x_arg = "x", y_arg = "y") {
   # This method is redundant with `vec_ptype2.default()` but it
   # instructs `vec_c()` that it isn't a foreign type. This avoids
   # infinite recursion through `c.vctrs_vctr()`.
-  if (has_same_type(x, y)) {
-    vec_ptype(x)
-  } else {
-    vec_default_ptype2(x, y, ..., x_arg = x_arg, y_arg = y_arg)
-  }
+  vec_default_ptype2(x, y, ..., x_arg = x_arg, y_arg = y_arg)
 }
 
 #' @method vec_cast vctrs_vctr

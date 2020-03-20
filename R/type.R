@@ -138,10 +138,6 @@ vec_ptype_show <- function(...) {
   invisible()
 }
 
-has_same_type <- function(x, y) {
-  typeof(x) == typeof(y) && identical(attributes(x), attributes(y))
-}
-
 vec_typeof <- function(x) {
   .Call(vctrs_typeof, x, TRUE)
 }
