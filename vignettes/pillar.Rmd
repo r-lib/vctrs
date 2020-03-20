@@ -57,7 +57,7 @@ format.latlon <- function(x, ..., formatter = deg_min) {
   lat <- field(x, "lat")[x_valid]
   lon <- field(x, "lon")[x_valid]
 
-  ret <- rep("<NA>", vec_size(x))
+  ret <- rep(NA_character_, vec_size(x))
   ret[x_valid] <- paste(
     formatter(lat, c("N", "S")),
     formatter(lon, c("E", "W"))
@@ -88,17 +88,23 @@ Columns on this class can be used in a tibble right away, but the output will be
 
 ```{r}
 library(tibble)
+
+loc <- latlon(
+  c(28.3411783, 32.7102978, 30.2622356, 37.7859102, 28.5, NA),
+  c(-81.5480348, -117.1704058, -97.7403327, -122.4131357, -81.4, NA)
+)
+
 data <- tibble(
   venue = "rstudio::conf",
-  year  = 2017:2019,
-  loc   = latlon(
-    c(28.3411783, 32.7102978, NA),
-    c(-81.5480348, -117.1704058, NA)
-  ),
+  year  = 2017:2022,
+  loc   = loc,
   paths = list(
     loc[1],
     c(loc[1], loc[2]),
-    loc[2]
+    c(loc[2], loc[3]),
+    c(loc[3], loc[4]),
+    c(loc[4], loc[5]),
+    loc[4]
   )
 )
 
