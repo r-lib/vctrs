@@ -9,39 +9,7 @@ vignette: >
 ---
 
 ```{r setup, include = FALSE}
-options(crayon.enabled = TRUE)
-options(pillar.bold = TRUE)
-
 knitr::opts_chunk$set(collapse = TRUE, comment = pillar::style_subtle("#>"))
-
-colourise_chunk <- function(type) {
-  function(x, options) {
-    # lines <- strsplit(x, "\\n")[[1]]
-    lines <- x
-    if (type != "output") {
-      lines <- crayon::red(lines)
-    }
-    paste0(
-      '<div class="sourceCode"><pre class="sourceCode"><code class="sourceCode">',
-      paste0(
-        sgr_to_html(htmltools::htmlEscape(lines)),
-        collapse = "\n"
-      ),
-      "</code></pre></div>"
-    )
-  }
-}
-
-knitr::knit_hooks$set(
-  output = colourise_chunk("output"),
-  message = colourise_chunk("message"),
-  warning = colourise_chunk("warning"),
-  error = colourise_chunk("error")
-)
-
-# Fallback if fansi is missing
-sgr_to_html <- identity
-sgr_to_html <- fansi::sgr_to_html
 ```
 
 To ensure that a vector prints nicely in a tibble, you need to understand how printing works.
@@ -52,19 +20,19 @@ The presentation of a column in a tibble is powered by four S3 generics:
 * `is_vector_s3()` and `obj_sum()` are used when rendering list columns.
 
 If you have created a vector class that can be used as a column, you can override these generics to make sure your data prints well in a tibble.
-To start, you must import the `pillar` package that powers the printing of tibbles.
-Either add `pillar` to the `Imports:` section of your `DESCRIPTION`, or call:
-
-```{r, eval = FALSE}
-usethis::use_package("pillar")
-```
-
 This short vignette assumes a package that implements a `"latlon"` vector and uses `roxygen2` to create documentation and the `NAMESPACE` file.
 To make the required methods available in this vignette, we attach pillar. 
 You don't need to do this in your package.
 
 ```{r attach}
 library(pillar)
+```
+
+In a package, you must import the pillar package that powers the printing of tibbles.
+Either add `pillar` to the `Imports:` section of your `DESCRIPTION`, or call:
+
+```{r, eval = FALSE}
+usethis::use_package("pillar")
 ```
 
 
@@ -156,10 +124,6 @@ This method should return a string that can be used in a column header.
 For your own classes, strive for an evocative abbreviation that's under 6 characters.
 
 
-```{r include=FALSE}
-import::from(pillar, type_sum)
-```
-
 ```{r}
 #' @importFrom pillar type_sum
 #' @export
@@ -169,7 +133,6 @@ type_sum.latlon <- function(x) {
 ```
 
 Because the value shown there doesn't depend on the data, we just return a constant.
-(For date-times, the column info will eventually contain information about the timezone, see [#53](https://github.com/r-lib/pillar/pull/53).)
 
 ```{r}
 data
@@ -346,9 +309,10 @@ This may change in the future.
 ## Testing
 
 If you want to test the output of your code, you can compare it with a known state recorded in a text file.
-For this, pillar offers the `expect_known_display()` expectation which requires and works best with the testthat package.
-Make sure that the output is generated only by your package to avoid inconsistencies when external code is updated.
-Here, this means that you test only the shaft portion of the pillar, and not the entire pillar or even a tibble that contains a column with your data type!
+The `testthat::verify_output()` function offers an easy way to test output-generating functions.
+It takes care about details such as Unicode, ANSI escapes, and output width.
+Furthermore it won't make the tests fail on CRAN.
+This is important because your output may rely on details out of your control, which should be fixed eventually but should not lead to your package being removed from CRAN.
 
 The tests work best with the testthat package:
 
@@ -362,98 +326,28 @@ unlink("latlon-bw.txt")
 ```
 
 The code below will compare the output of `pillar_shaft(data$loc)` with known output stored in the `latlon.txt` file.
+There is no need to put it in a `test_that()` block.
+
 The first run warns because the file doesn't exist yet.
 
 
 ```{r error = TRUE, warning = TRUE}
-test_that("latlon pillar matches known output", {
-  pillar::expect_known_display(
-    pillar_shaft(data$loc),
-    file = "latlon.txt"
-  )
+verify_output("latlon.txt", {
+  pillar_shaft(data$loc)
 })
 ```
 
 From the second run on, the printing will be compared with the file:
 
 ```{r}
-test_that("latlon pillar matches known output", {
-  pillar::expect_known_display(
-    pillar_shaft(data$loc),
-    file = "latlon.txt"
-  )
+verify_output("latlon.txt", {
+  pillar_shaft(data$loc)
 })
 ```
 
-However, if we look at the file we'll notice strange characters: The output contains ANSI escapes!
+By default, the file does not contain ANSI escapes.
+See `?verify_output` for more options.
 
 ```{r}
-readLines("latlon.txt")
-```
-
-We can turn them off by passing `crayon = FALSE` to the expectation, but we need to run twice again:
-
-```{r error = TRUE, warning = TRUE}
-library(testthat)
-test_that("latlon pillar matches known output", {
-  pillar::expect_known_display(
-    pillar_shaft(data$loc),
-    file = "latlon.txt",
-    crayon = FALSE
-  )
-})
-```
-
-```{r}
-test_that("latlon pillar matches known output", {
-  pillar::expect_known_display(
-    pillar_shaft(data$loc),
-    file = "latlon.txt",
-    crayon = FALSE
-  )
-})
-
-readLines("latlon.txt")
-```
-
-You may want to create a series of output files for different scenarios:
-
-- Colored vs. plain (to simplify viewing differences)
-- With or without special Unicode characters (if your output uses them)
-- Different widths
-
-For this it is helpful to create your own expectation function.
-Use the tidy evaluation framework to make sure that construction and printing happens at the right time:
-
-```{r}
-expect_known_latlon_display <- function(x, file_base) {
-  quo <- rlang::quo(pillar::pillar_shaft(x))
-  pillar::expect_known_display(
-    !! quo,
-    file = paste0(file_base, ".txt")
-  )
-  pillar::expect_known_display(
-    !! quo,
-    file = paste0(file_base, "-bw.txt"),
-    crayon = FALSE
-  )
-}
-```
-
-```{r error = TRUE, warning = TRUE}
-test_that("latlon pillar matches known output", {
-  expect_known_latlon_display(data$loc, file_base = "latlon")
-})
-```
-
-```{r}
-readLines("latlon.txt")
-readLines("latlon-bw.txt")
-```
-
-Learn more about the tidyeval framework in the [dplyr vignette](http://dplyr.tidyverse.org/articles/programming.html).
-
-```{r include = FALSE}
-unlink("latlon.txt")
-unlink("latlon-bw.txt")
+cat(readLines("latlon.txt"), sep = "\n")
 ```
