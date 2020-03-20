@@ -318,7 +318,7 @@ SEXP vec_as_location_opts(SEXP subscript, R_len_t n, SEXP names,
   case REALSXP: out = dbl_as_location(subscript, n, location_opts); break;
   case LGLSXP: out = lgl_as_location(subscript, n, location_opts); break;
   case STRSXP: out = chr_as_location(subscript, names, location_opts); break;
-  default: Rf_errorcall(R_NilValue, "`i` must be an integer, character, or logical vector, not a %s.",
+  default: Rf_errorcall(R_NilValue, "Internal error: Wrong subscript type `%s` in `vec_as_location_opts()`.",
                         Rf_type2char(TYPEOF(subscript)));
   }
 
