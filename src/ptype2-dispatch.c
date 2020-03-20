@@ -156,18 +156,28 @@ SEXP vec_ptype2_dispatch_s3(SEXP x,
     return out;
   }
 
+  const char* x_method_str = CHAR(PRINTNAME(x_method_sym));
   SEXP x_table = s3_get_table(CLOENV(x_method));
+
   SEXP y_method_sym = R_NilValue;
-  SEXP y_method = PROTECT(get_ptype2_method(y,
-                                            CHAR(PRINTNAME(x_method_sym)),
-                                            x_table,
-                                            &y_method_sym));
+  SEXP y_method = get_ptype2_method(y,
+                                    x_method_str,
+                                    x_table,
+                                    &y_method_sym);
+
+  // FIXME: The `AsIs` class relies on a default ptype2 method
+  if (y_method == R_NilValue) {
+    y_method_sym = s3_paste_method_sym(x_method_str, "default");
+    y_method = s3_sym_get_method(y_method_sym, x_table);
+  }
 
   if (y_method == R_NilValue) {
     SEXP out = vec_ptype2_default(x, y, x_arg_obj, y_arg_obj);
-    UNPROTECT(4);
+    UNPROTECT(3);
     return out;
   }
+
+  PROTECT(y_method);
 
   SEXP out = vctrs_dispatch4(y_method_sym, y_method,
                              syms_x, x,
