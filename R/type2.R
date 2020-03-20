@@ -46,11 +46,8 @@ vec_ptype2_dispatch_s3 <- function(x, y, ..., x_arg = "x", y_arg = "y") {
   UseMethod("vec_ptype2")
 }
 #' @export
-vec_ptype2.default <- function(x, y, ..., x_arg = "x", y_arg = "y") {
-  if (has_same_type(x, y)) {
-    return(x)
-  }
-  stop_incompatible_type(x, y, x_arg = x_arg, y_arg = y_arg)
+vec_ptype2.default <- function(x, y, ...) {
+  vec_default_ptype2(x, y, ...)
 }
 #' @rdname vec_ptype2
 #' @export
