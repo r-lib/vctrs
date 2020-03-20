@@ -169,30 +169,25 @@ test_that("vec_chop() falls back to `[` for shaped objects with no proxy when in
 })
 
 test_that("vec_chop() with data frame proxies always uses the proxy's length info", {
-  .Rcrd <- methods::setClass(
-    "vctrs_Rcrd",
-    contains = "integer",
-    slots = c(y = "integer")
-  )
-
   local_methods(
-    vec_proxy.vctrs_Rcrd = function(x) {
-      new_data_frame(list(x = x@.Data, y = x@y))
+    vec_proxy.vctrs_proxy = function(x) {
+      x <- proxy_deref(x)
+      new_data_frame(list(x = x$x, y = x$y))
     },
-    vec_restore.vctrs_Rcrd = function(x, to, ...) {
-      .Rcrd(x$x, y = x$y)
+    vec_restore.vctrs_proxy = function(x, to, ...) {
+      new_proxy(list(x = x$x, y = x$y))
     }
   )
 
-  x <- .Rcrd(1:3, y = 4:6)
+  x <- new_proxy(list(x = 1:3, y = 4:6))
 
   expect <- list(
-    .Rcrd(1L, y = 4L),
-    .Rcrd(2L, y = 5L),
-    .Rcrd(3L, y = 6L)
+    new_proxy(list(x = 1L, y = 4L)),
+    new_proxy(list(x = 2L, y = 5L)),
+    new_proxy(list(x = 3L, y = 6L))
   )
 
-  expect_identical(vec_chop(x), expect)
+  expect_equal(vec_chop(x), expect)
 })
 
 # vec_chop + compact_seq --------------------------------------------------
