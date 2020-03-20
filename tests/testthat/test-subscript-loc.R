@@ -430,8 +430,14 @@ test_that("num_as_location() requires non-S3 inputs", {
 
 test_that("vec_as_location() checks dimensionality", {
   verify_errors({
-    expect_error(vec_as_location(matrix(TRUE, nrow = 1), 3L), "must be a one-dimensional")
+    expect_error(vec_as_location(matrix(TRUE, nrow = 1), 3L), class = "vctrs_error_subscript_type")
+    expect_error(vec_as_location(array(TRUE, dim = c(1, 1, 1)), 3L), class = "vctrs_error_subscript_type")
+    expect_error(with_tibble_rows(vec_as_location(matrix(TRUE, nrow = 1), 3L)), class = "vctrs_error_subscript_type")
   })
+})
+
+test_that("vec_as_location() works with vectors of dimensionality 1", {
+  expect_identical(vec_as_location(array(TRUE, dim = 1), 3L), 1:3)
 })
 
 test_that("conversion to locations has informative error messages", {
@@ -565,5 +571,7 @@ test_that("conversion to locations has informative error messages", {
 
     "# vec_as_location() checks dimensionality"
     vec_as_location(matrix(TRUE, nrow = 1), 3L)
+    vec_as_location(array(TRUE, dim = c(1, 1, 1)), 3L)
+    with_tibble_rows(vec_as_location(matrix(TRUE, nrow = 1), 3L))
   })
 })

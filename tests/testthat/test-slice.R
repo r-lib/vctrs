@@ -6,7 +6,7 @@ test_that("vec_slice throws error with non-vector inputs", {
 test_that("vec_slice throws error with non-vector subscripts", {
   verify_errors({
     expect_error(vec_slice(1:3, Sys.Date()), class = "vctrs_error_subscript_type")
-    expect_error(vec_slice(1:3, matrix(TRUE, nrow = 1)), "must be a one-dimensional")
+    expect_error(vec_slice(1:3, matrix(TRUE, nrow = 1)), class = "vctrs_error_subscript_type")
   })
 })
 

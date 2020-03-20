@@ -26,6 +26,9 @@ static void stop_location_negative_positive(SEXP i,
                                             const struct vec_as_location_opts* opts);
 static void stop_location_oob_non_consecutive(SEXP i, R_len_t size,
                                               const struct vec_as_location_opts* opts);
+static void stop_subscript_dim(SEXP i,
+                               const struct vec_as_location_opts* opts);
+
 
 
 static SEXP int_as_location(SEXP subscript, R_len_t n,
@@ -289,7 +292,7 @@ SEXP vec_as_location_opts(SEXP subscript, R_len_t n, SEXP names,
                           const struct vec_as_subscript_opts* subscript_opts) {
 
   if (vec_dim_n(subscript) != 1) {
-    Rf_errorcall(R_NilValue, "`i` must be a one-dimensional vector but has %d dimensions.", vec_dim_n(subscript));
+    stop_subscript_dim(subscript, location_opts);
   }
 
   ERR err = NULL;
@@ -318,7 +321,7 @@ SEXP vec_as_location_opts(SEXP subscript, R_len_t n, SEXP names,
   case REALSXP: out = dbl_as_location(subscript, n, location_opts); break;
   case LGLSXP: out = lgl_as_location(subscript, n, location_opts); break;
   case STRSXP: out = chr_as_location(subscript, names, location_opts); break;
-  default: Rf_errorcall(R_NilValue, "`i` must be an integer, character, or logical vector, not a %s.",
+  default: Rf_errorcall(R_NilValue, "Internal error: Wrong subscript type `%s` in `vec_as_location_opts()`.",
                         Rf_type2char(TYPEOF(subscript)));
   }
 
@@ -534,6 +537,18 @@ static void stop_location_oob_non_consecutive(SEXP i, R_len_t size,
   never_reached("stop_location_oob_non_consecutive");
 }
 
+static void stop_subscript_dim(SEXP i,
+                               const struct vec_as_location_opts* opts) {
+  SEXP arg = PROTECT(vctrs_arg(opts->subscript_arg));
+  vctrs_eval_mask3(Rf_install("stop_subscript_dim"),
+                   syms_i, i,
+                   syms_subscript_action, get_opts_action(opts),
+                   syms_subscript_arg, arg,
+                   vctrs_ns_env);
+
+  UNPROTECT(1);
+  never_reached("stop_subscript_dim");
+}
 
 struct vec_as_location_opts vec_as_location_default_opts_obj;
 struct vec_as_location_opts vec_as_location_default_assign_opts_obj;
