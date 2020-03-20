@@ -277,9 +277,10 @@ static SEXP new_error_subscript_type(SEXP subscript,
   subscript = PROTECT(expr_protect(subscript));
   SEXP subscript_arg = PROTECT(vctrs_arg(opts->subscript_arg));
 
-  SEXP syms[8] = {
+  SEXP syms[9] = {
     syms_i,
     syms_subscript_arg,
+    syms_subscript_action,
     syms_logical,
     syms_numeric,
     syms_character,
@@ -287,9 +288,10 @@ static SEXP new_error_subscript_type(SEXP subscript,
     syms_parent,
     NULL
   };
-  SEXP args[8] = {
+  SEXP args[9] = {
     subscript,
     subscript_arg,
+    get_opts_action(opts),
     logical,
     numeric,
     character,
