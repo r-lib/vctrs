@@ -2,6 +2,8 @@
 #include "subscript.h"
 #include "utils.h"
 
+static SEXP fns_cnd_body_subscript_dim = NULL;
+
 static SEXP new_error_subscript_type(SEXP subscript,
                                      const struct vec_as_subscript_opts* opts,
                                      SEXP body,
@@ -19,6 +21,11 @@ static SEXP dbl_cast_subscript(SEXP subscript,
 SEXP vec_as_subscript_opts(SEXP subscript,
                            const struct vec_as_subscript_opts* opts,
                            ERR* err) {
+  if (vec_dim_n(subscript) != 1) {
+    *err = new_error_subscript_type(subscript, opts, fns_cnd_body_subscript_dim, R_NilValue);
+    return R_NilValue;
+  }
+
   PROTECT_INDEX subscript_pi;
   PROTECT_WITH_INDEX(subscript, &subscript_pi);
 
@@ -312,4 +319,6 @@ void vctrs_init_subscript(SEXP ns) {
   syms_new_error_subscript_type = Rf_install("new_error_subscript_type");
   syms_new_dbl_cast_subscript_body = Rf_install("new_cnd_bullets_subscript_lossy_cast");
   syms_lossy_err = Rf_install("lossy_err");
+
+  fns_cnd_body_subscript_dim = Rf_eval(Rf_install("cnd_body_subscript_dim"), ns);
 }

@@ -26,9 +26,6 @@ static void stop_location_negative_positive(SEXP i,
                                             const struct vec_as_location_opts* opts);
 static void stop_location_oob_non_consecutive(SEXP i, R_len_t size,
                                               const struct vec_as_location_opts* opts);
-static void stop_subscript_dim(SEXP i,
-                               const struct vec_as_location_opts* opts);
-
 
 
 static SEXP int_as_location(SEXP subscript, R_len_t n,
@@ -291,10 +288,6 @@ SEXP vec_as_location(SEXP subscript, R_len_t n, SEXP names) {
 SEXP vec_as_location_opts(SEXP subscript, R_len_t n, SEXP names,
                           const struct vec_as_location_opts* opts) {
 
-  if (vec_dim_n(subscript) != 1) {
-    stop_subscript_dim(subscript, opts);
-  }
-
   ERR err = NULL;
   subscript = vec_as_subscript_opts(subscript, opts->subscript_opts, &err);
   PROTECT2(subscript, err);
@@ -528,19 +521,6 @@ static void stop_location_oob_non_consecutive(SEXP i, R_len_t size,
 
   UNPROTECT(1);
   never_reached("stop_location_oob_non_consecutive");
-}
-
-static void stop_subscript_dim(SEXP i,
-                               const struct vec_as_location_opts* opts) {
-  SEXP arg = PROTECT(vctrs_arg(opts->subscript_opts->subscript_arg));
-  vctrs_eval_mask3(Rf_install("stop_subscript_dim"),
-                   syms_i, i,
-                   syms_subscript_action, get_opts_action(opts->subscript_opts),
-                   syms_subscript_arg, arg,
-                   vctrs_ns_env);
-
-  UNPROTECT(1);
-  never_reached("stop_subscript_dim");
 }
 
 struct vec_as_location_opts vec_as_location_default_opts_obj;
