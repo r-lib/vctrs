@@ -13,7 +13,7 @@ knitr::opts_chunk$set(collapse = TRUE, comment = pillar::style_subtle("#>"))
 ```
 
 You can get basic control over how a vector is printed in a tibble by providing a `format()` method.
-But if you want greater control, you need to understand how printing works.
+If you want greater control, you need to understand how printing works.
 The presentation of a column in a tibble is controlled by two S3 generics:
 
 * `vctrs::vec_ptype_abbr()` determines what goes into the column header.
@@ -87,7 +87,7 @@ latlon(c(32.71, 2.95), c(-117.17, 1.67))
 
 ## Using in a tibble
 
-Columns on this class can be used in a tibble right away because we've made a class using the vctrs infrastructure and have provided a format method:
+Columns of this class can be used in a tibble right away because we've made a class using the vctrs infrastructure and have provided a `format()` method:
 
 ```{r}
 library(tibble)
@@ -110,7 +110,7 @@ This output is ok, but we could improve it by:
 
 1. Providing a narrower view when horizontal space is at a premium.
 
-The following sections show how to fix these problems.
+The following sections show how to enhance the rendering.
 
 ## Fixing the data type
 
@@ -132,8 +132,8 @@ data
 
 The `format()` method is used by default for rendering.
 For custom formatting you need to implement the `pillar_shaft()` method.
-This function should always return a pillar shaft object, created `new_pillar_shaft_simple()` or similar.
-`new_pillar_shaft_simple()` accepts ANSI escape codes for colouring, and includes some built in styles like `style_subtle()`.
+This function should always return a pillar shaft object, created by `new_pillar_shaft_simple()` or similar.
+`new_pillar_shaft_simple()` accepts ANSI escape codes for colouring, and pillar includes some built in styles like `style_subtle()`.
 We can use subtle style for the degree and minute separators to make the data more obvious.
 
 First we define a degree formatter that makes use of `style_subtle()`:
@@ -159,7 +159,7 @@ deg_min_color <- function(x, direction) {
 }
 ```
 
-And then we pass that to our format method:
+And then we pass that to our `format()` method:
 
 ```{r}
 #' @importFrom pillar pillar_shaft
@@ -237,7 +237,7 @@ pillar_shaft.earth_latlon <- function(x, ...) {
 
 Now the `pillar_shaft()` method returns an object of class `"pillar_shaft_latlon"` created by `new_pillar_shaft()`.
 This object contains the necessary information to render the values, and also minimum and maximum width values.
-For simplicity, both format are pre-rendered, and the minimum and maximum widths are computed from there.
+For simplicity, both formats are pre-rendered, and the minimum and maximum widths are computed from there.
 (`get_max_extent()` is a helper that computes the maximum display width occupied by the values in a character vector.)
 
 All that's left to do is to implement a `format()` method for our new `"pillar_shaft_latlon"` class.
@@ -253,7 +253,7 @@ format.pillar_shaft_latlon <- function(x, width, ...) {
     ornament <- x$deg
   }
 
-  pillar::new_ornament(ornament, align = "left")
+  pillar::new_ornament(ornament, align = "right")
 }
 
 data
