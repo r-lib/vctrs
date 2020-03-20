@@ -167,7 +167,7 @@ tibble::tibble(x)
 str(x)
 ```
 
-If you need more control over printing in tibbles, implement a method for  `pillar::pillar_shaft()`. See <https://tibble.tidyverse.org/articles/extending.html> for details.
+If you need more control over printing in tibbles, implement a method for  `pillar::pillar_shaft()`. See `vignette("pillar", package = "vctrs")` for details.
 
 ## Casting and coercion
 
