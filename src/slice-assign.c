@@ -48,7 +48,7 @@ SEXP vec_assign(SEXP x, SEXP index, SEXP value,
   index = PROTECT(vec_as_location_opts(index,
                                        vec_size(x),
                                        PROTECT(vec_names(x)),
-                                       vec_as_location_default_assign_opts));
+                                       location_default_assign_opts));
 
   // Cast and recycle `value`
   value = PROTECT(vec_coercible_cast(value, x, value_arg, x_arg));

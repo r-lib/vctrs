@@ -24,7 +24,7 @@ enum num_as_location_loc_zero {
   LOC_ZERO_IGNORE
 };
 
-struct vec_as_location_opts {
+struct location_opts {
   const struct vec_as_subscript_opts* subscript_opts;
   enum num_as_location_loc_negative loc_negative;
   enum num_as_location_loc_oob loc_oob;
@@ -32,16 +32,16 @@ struct vec_as_location_opts {
   enum subscript_missing missing;
 };
 
-extern struct vec_as_location_opts vec_as_location_default_opts_obj;
-extern struct vec_as_location_opts vec_as_location_default_assign_opts_obj;
+extern struct location_opts location_default_opts_obj;
+extern struct location_opts location_default_assign_opts_obj;
 
-static const struct vec_as_location_opts* const vec_as_location_default_opts = &vec_as_location_default_opts_obj;
-static const struct vec_as_location_opts* const vec_as_location_default_assign_opts = &vec_as_location_default_assign_opts_obj;
+static const struct location_opts* const location_default_opts = &location_default_opts_obj;
+static const struct location_opts* const location_default_assign_opts = &location_default_assign_opts_obj;
 
 
 SEXP vec_as_location(SEXP i, R_len_t n, SEXP names);
 SEXP vec_as_location_opts(SEXP subscript, R_len_t n, SEXP names,
-                          const struct vec_as_location_opts* location_opts);
+                          const struct location_opts* location_opts);
 
 
 #endif
