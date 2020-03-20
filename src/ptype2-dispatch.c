@@ -63,6 +63,77 @@ static SEXP vec_ptype2_dispatch_old(SEXP x,
   return out;
 }
 
+static inline SEXP vec_ptype2_default(SEXP x,
+                                      SEXP y,
+                                      SEXP x_arg,
+                                      SEXP y_arg) {
+  return vctrs_eval_mask4(Rf_install("vec_default_ptype2"),
+                          syms_x, x,
+                          syms_y, y,
+                          syms_x_arg, x_arg,
+                          syms_y_arg, y_arg,
+                          vctrs_ns_env);
+}
+
+const char* base_dispatch_class_str(SEXP x) {
+  switch (TYPEOF(x)) {
+  case CLOSXP:
+  case SPECIALSXP:
+  case BUILTINSXP:
+    return "function";
+  case INTSXP:
+    return "integer";
+  case REALSXP:
+    return "double";
+  case LGLSXP:
+    return "logical";
+  case CPLXSXP:
+    return "complex";
+  case STRSXP:
+    return "character";
+  case VECSXP:
+    return "list";
+  default: vctrs_stop_unsupported_type(vec_typeof(x), "base_dispatch_class_str");
+  }
+}
+SEXP base_dispatch_class(SEXP x) {
+  return r_chr(base_dispatch_class_str(x));
+}
+
+static SEXP get_ptype2_method(SEXP x,
+                              const char* generic,
+                              SEXP table,
+                              SEXP* method_sym_out) {
+  SEXP class = R_NilValue;
+  if (OBJECT(x)) {
+    class = Rf_getAttrib(x, R_ClassSymbol);
+  }
+
+  // Support corrupt objects where `x` is an OBJECT(), but the class is NULL
+  if (class == R_NilValue) {
+    class = base_dispatch_class(x);
+  }
+  PROTECT(class);
+
+  SEXP* class_ptr = STRING_PTR(class);
+  int n_class = Rf_length(class);
+
+  // FIXME: Disable inheritance
+  for (int i = 0; i < n_class; ++i, ++class_ptr) {
+    SEXP method_sym = s3_paste_method_sym(generic, CHAR(*class_ptr));
+    SEXP method = s3_sym_get_method(method_sym, table);
+    if (method != R_NilValue) {
+      UNPROTECT(1);
+      *method_sym_out = method_sym;
+      return method;
+    }
+  }
+
+  UNPROTECT(1);
+  *method_sym_out = R_NilValue;
+  return R_NilValue;
+}
+
 // [[ include("vctrs.h") ]]
 SEXP vec_ptype2_dispatch_s3(SEXP x,
                             SEXP y,
@@ -70,8 +141,46 @@ SEXP vec_ptype2_dispatch_s3(SEXP x,
                             enum vctrs_type y_type,
                             struct vctrs_arg* x_arg,
                             struct vctrs_arg* y_arg) {
+  SEXP x_arg_obj = PROTECT(vctrs_arg(x_arg));
+  SEXP y_arg_obj = PROTECT(vctrs_arg(y_arg));
+
+  SEXP x_method_sym = R_NilValue;
+  SEXP x_method = PROTECT(get_ptype2_method(x,
+                                            "vec_ptype2",
+                                            vctrs_method_table,
+                                            &x_method_sym));
+
+  if (x_method == R_NilValue) {
+    SEXP out = vec_ptype2_default(x, y, x_arg_obj, y_arg_obj);
+    UNPROTECT(3);
+    return out;
+  }
+
+  SEXP x_table = s3_get_table(CLOENV(x_method));
+  SEXP y_method_sym = R_NilValue;
+  SEXP y_method = PROTECT(get_ptype2_method(y,
+                                            CHAR(PRINTNAME(x_method_sym)),
+                                            x_table,
+                                            &y_method_sym));
+
+  if (y_method == R_NilValue) {
+    SEXP out = vec_ptype2_default(x, y, x_arg_obj, y_arg_obj);
+    UNPROTECT(4);
+    return out;
+  }
+
+  SEXP out = vctrs_dispatch4(y_method_sym, y_method,
+                             syms_x, x,
+                             syms_y, y,
+                             syms_x_arg, x_arg_obj,
+                             syms_y_arg, y_arg_obj);
+
+  UNPROTECT(4);
+  return out;
+
   return vec_ptype2_dispatch_old(x, y, x_arg, y_arg);
 }
+
 
 void vctrs_init_ptype2_dispatch(SEXP ns) {
   syms_vec_ptype2_dispatch_s3 = Rf_install("vec_ptype2_dispatch_s3");

@@ -33,6 +33,13 @@ SEXP vec_ptype2(SEXP x, SEXP y,
   enum vctrs_type type_x = vec_typeof(x);
   enum vctrs_type type_y = vec_typeof(y);
 
+  if (type_x == vctrs_type_unspecified) {
+    return vec_type(y);
+  }
+  if (type_y == vctrs_type_unspecified) {
+    return vec_type(x);
+  }
+
   if (has_dim(x) || has_dim(y)) {
     return vec_ptype2_dispatch_s3(x, y, type_x, type_y, x_arg, y_arg);
   }
@@ -42,13 +49,6 @@ SEXP vec_ptype2(SEXP x, SEXP y,
   }
   if (type_y == vctrs_type_scalar) {
     stop_scalar_type(y, y_arg);
-  }
-
-  if (type_x == vctrs_type_unspecified) {
-    return vec_type(y);
-  }
-  if (type_y == vctrs_type_unspecified) {
-    return vec_type(x);
   }
 
   if (type_x == vctrs_type_s3 || type_y == vctrs_type_s3) {

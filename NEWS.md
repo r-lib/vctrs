@@ -1,6 +1,12 @@
 
 # vctrs (development version)
 
+* Double-dispatch methods for `vec_ptype2()` are now easier to
+  implement. vctrs takes care of implementing the default and
+  unspecified methods. Methods no longer have to worry about order of
+  dispatch, for instance it is no longer needed to supply a second
+  argument as in `UseMethod("vec_ptype2.mytype", y)`.
+
 * New `vec_rep()` and `vec_rep_each()` for repeating an entire vector
   and elements of a vector, respectively. These two functions provide
   a clearer interface for the functionality of `vec_repeat()`, which

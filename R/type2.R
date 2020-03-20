@@ -52,9 +52,6 @@ vec_ptype2.default <- function(x, y, ...) {
 #' @rdname vec_ptype2
 #' @export
 vec_default_ptype2 <- function(x, y, ..., x_arg = "", y_arg = "") {
-  if (is_unspecified(y)) {
-    return(vec_ptype(x))
-  }
   if (is_asis(y)) {
     y <- asis_strip(y)
     return(vec_ptype2_asis(x, y, ..., x_arg = x_arg, y_arg = y_arg))

@@ -296,7 +296,7 @@ inline void never_reached(const char* fn) {
 
 static char s3_buf[200];
 
-static SEXP s3_method_sym(const char* generic, const char* class) {
+SEXP s3_paste_method_sym(const char* generic, const char* class) {
   int gen_len = strlen(generic);
   int class_len = strlen(class);
   int dot_len = 1;
@@ -315,9 +315,11 @@ static SEXP s3_method_sym(const char* generic, const char* class) {
 }
 
 // First check in global env, then in method table
-static SEXP s3_get_method(const char* generic, const char* class, SEXP table) {
-  SEXP sym = s3_method_sym(generic, class);
-
+SEXP s3_get_method(const char* generic, const char* class, SEXP table) {
+  SEXP sym = s3_paste_method_sym(generic, class);
+  return s3_sym_get_method(sym, table);
+}
+SEXP s3_sym_get_method(SEXP sym, SEXP table) {
   SEXP method = r_env_get(R_GlobalEnv, sym);
   if (r_is_function(method)) {
     return method;
@@ -1355,6 +1357,7 @@ SEXP syms_numeric = NULL;
 SEXP syms_character = NULL;
 SEXP syms_body = NULL;
 SEXP syms_parent = NULL;
+SEXP syms_s3_methods_table = NULL;
 
 SEXP fns_bracket = NULL;
 SEXP fns_quote = NULL;
@@ -1579,6 +1582,7 @@ void vctrs_init_utils(SEXP ns) {
   syms_character = Rf_install("character");
   syms_body = Rf_install("body");
   syms_parent = Rf_install("parent");
+  syms_s3_methods_table = Rf_install(".__S3MethodsTable__.");
 
   fns_bracket = Rf_findVar(syms_bracket, R_BaseEnv);
   fns_quote = Rf_findVar(Rf_install("quote"), R_BaseEnv);

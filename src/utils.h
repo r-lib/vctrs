@@ -95,9 +95,20 @@ SEXP vec_unique_colnames(SEXP x, bool quiet);
 
 // Returns S3 / S4 method for `generic` suitable for the class of `x`. The
 // inheritance hierarchy is explored except for the default method.
+SEXP s3_get_method(const char* generic, const char* cls, SEXP table);
+SEXP s3_sym_get_method(SEXP sym, SEXP table);
 SEXP s3_find_method(const char* generic, SEXP x, SEXP table);
+SEXP s3_paste_method_sym(const char* generic, const char* cls);
 SEXP s4_find_method(SEXP x, SEXP table);
 bool vec_implements_ptype2(SEXP x);
+
+SEXP r_env_get(SEXP env, SEXP sym);
+
+extern SEXP syms_s3_methods_table;
+static inline SEXP s3_get_table(SEXP env) {
+  return r_env_get(env, syms_s3_methods_table);
+}
+
 
 SEXP list_first_non_null(SEXP xs, R_len_t* non_null_i);
 bool list_is_homogeneously_classed(SEXP xs);
@@ -212,7 +223,6 @@ bool r_has_name_at(SEXP names, R_len_t i);
 bool r_is_names(SEXP names);
 bool r_is_minimal_names(SEXP x);
 bool r_is_empty_names(SEXP x);
-SEXP r_env_get(SEXP env, SEXP sym);
 bool r_is_function(SEXP x);
 bool r_chr_has_string(SEXP x, SEXP str);
 
@@ -249,6 +259,7 @@ static inline void* r_vec_unwrap(SEXPTYPE type, SEXP x) {
 #define r_lgl Rf_ScalarLogical
 #define r_int Rf_ScalarInteger
 #define r_str Rf_mkChar
+#define r_chr Rf_mkString
 #define r_sym Rf_install
 
 static inline SEXP r_list(SEXP x) {
