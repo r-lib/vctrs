@@ -27,6 +27,7 @@ test_that("vec_as_location() requires integer, character, or logical inputs", {
     expect_error(vec_as_location(2.5, 10L), class = "vctrs_error_subscript_type")
     expect_error(vec_as_location(list(), 10L), class = "vctrs_error_subscript_type")
     expect_error(vec_as_location(function() NULL, 10L), class = "vctrs_error_subscript_type")
+    expect_error(vec_as_location(Sys.Date(), 3L), class = "vctrs_error_subscript_type")
 
     "Idem with custom `arg`"
     expect_error(vec_as_location(env(), 10L, arg = "foo"), class = "vctrs_error_subscript_type")
@@ -427,6 +428,12 @@ test_that("num_as_location() requires non-S3 inputs", {
   expect_error(num_as_location(factor("foo"), 2), "must be a numeric vector")
 })
 
+test_that("vec_as_location() checks dimensionality", {
+  verify_errors({
+    expect_error(vec_as_location(matrix(TRUE, nrow = 1), 3L), "must be a one-dimensional")
+  })
+})
+
 test_that("conversion to locations has informative error messages", {
   verify_output(test_path("error", "test-subscript-loc.txt"), {
     "# vec_as_location() checks for mix of negative and missing locations"
@@ -457,6 +464,7 @@ test_that("conversion to locations has informative error messages", {
     vec_as_location(2.5, 3L)
     vec_as_location(list(), 10L)
     vec_as_location(function() NULL, 10L)
+    vec_as_location(Sys.Date(), 3L)
     "Idem with custom `arg`"
     vec_as_location(env(), 10L, arg = "foo")
     vec_as_location(foobar(), 10L, arg = "foo")
@@ -554,5 +562,8 @@ test_that("conversion to locations has informative error messages", {
     vec_as_location(c(1, NA), 2, missing = "error")
     vec_as_location(c(1, NA, 2, NA), 2, missing = "error", arg = "foo")
     with_tibble_cols(vec_as_location(c(1, NA, 2, NA), 2, missing = "error"))
+
+    "# vec_as_location() checks dimensionality"
+    vec_as_location(matrix(TRUE, nrow = 1), 3L)
   })
 })

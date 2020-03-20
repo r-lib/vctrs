@@ -189,15 +189,6 @@ test_that("can slice with symbols", {
   expect_identical(vec_as_location(quote(b), 26, letters), 2L)
 })
 
-test_that("vec_as_location() checks type", {
-  verify_errors({
-    expect_error(vec_as_location("foo", "bar"), class = "vctrs_error_incompatible_type")
-    expect_error(vec_as_location("foo", 1L, names = 1L), "must be a character vector")
-    expect_error(vec_as_location(Sys.Date(), 3L), class = "vctrs_error_subscript_type")
-    expect_error(vec_as_location(matrix(TRUE, nrow = 1), 3L), "must be a one-dimensional")
-  })
-})
-
 test_that("can `vec_slice()` S3 objects without dispatch infloop", {
   expect_identical(new_vctr(1:3)[1], new_vctr(1L))
   expect_identical(new_vctr(as.list(1:3))[1], new_vctr(list(1L)))
@@ -436,12 +427,6 @@ test_that("slice has informative error messages", {
     "# vec_slice throws error with non-vector subscripts"
     vec_slice(1:3, Sys.Date())
     vec_slice(1:3, matrix(TRUE, ncol = 1))
-
-    "# vec_as_location() checks type"
-    vec_as_location("foo", "bar")
-    vec_as_location("foo", 1L, names = 1L)
-    vec_as_location(Sys.Date(), 3L)
-    vec_as_location(matrix(TRUE, nrow = 1), 3L)
   })
 })
 

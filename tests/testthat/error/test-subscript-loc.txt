@@ -109,6 +109,11 @@ Error: Must subset elements with a valid subscript vector.
 x The subscript has the wrong type `function`.
 i It must be logical, numeric, or character.
 
+> vec_as_location(Sys.Date(), 3L)
+Error: Must subset elements with a valid subscript vector.
+x The subscript has the wrong type `date`.
+i It must be logical, numeric, or character.
+
 > # Idem with custom `arg`
 > vec_as_location(env(), 10L, arg = "foo")
 Error: Must subset elements with a valid subscript vector.
@@ -490,4 +495,11 @@ x It has missing values at locations 2 and 4.
 Error: Must rename columns with a valid subscript vector.
 x The subscript `foo(bar)` can't contain missing values.
 x It has missing values at locations 2 and 4.
+
+
+vec_as_location() checks dimensionality
+=======================================
+
+> vec_as_location(matrix(TRUE, nrow = 1), 3L)
+Error: `i` must be a one-dimensional vector but has 2 dimensions.
 
