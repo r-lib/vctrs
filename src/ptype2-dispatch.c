@@ -58,31 +58,6 @@ static inline SEXP vec_ptype2_default(SEXP x,
                           vctrs_ns_env);
 }
 
-const char* base_dispatch_class_str(SEXP x) {
-  switch (TYPEOF(x)) {
-  case CLOSXP:
-  case SPECIALSXP:
-  case BUILTINSXP:
-    return "function";
-  case INTSXP:
-    return "integer";
-  case REALSXP:
-    return "double";
-  case LGLSXP:
-    return "logical";
-  case CPLXSXP:
-    return "complex";
-  case STRSXP:
-    return "character";
-  case VECSXP:
-    return "list";
-  default: vctrs_stop_unsupported_type(vec_typeof(x), "base_dispatch_class_str");
-  }
-}
-SEXP base_dispatch_class(SEXP x) {
-  return r_chr(base_dispatch_class_str(x));
-}
-
 static SEXP get_ptype2_method(SEXP x,
                               const char* generic,
                               SEXP table,
@@ -92,9 +67,10 @@ static SEXP get_ptype2_method(SEXP x,
     class = Rf_getAttrib(x, R_ClassSymbol);
   }
 
-  // Support corrupt objects where `x` is an OBJECT(), but the class is NULL
+  // This also handles gremlins objects where `x` is an OBJECT(), but
+  // the class is NULL
   if (class == R_NilValue) {
-    class = base_dispatch_class(x);
+    class = s3_dispatch_class(x);
   }
   PROTECT(class);
 

@@ -361,6 +361,22 @@ SEXP s3_find_method(const char* generic, SEXP x, SEXP table) {
   return R_NilValue;
 }
 
+// [[ include("utils.h") ]]
+SEXP s3_dispatch_class(SEXP x) {
+  switch (TYPEOF(x)) {
+  case LGLSXP: return chrs_logical;
+  case INTSXP: return chrs_integer;
+  case REALSXP: return chrs_double;
+  case CPLXSXP: return chrs_complex;
+  case STRSXP: return chrs_character;
+  case VECSXP: return chrs_list;
+  case CLOSXP:
+  case SPECIALSXP:
+  case BUILTINSXP: return chrs_function;
+  default: vctrs_stop_unsupported_type(vec_typeof(x), "base_dispatch_class_str");
+  }
+}
+
 static SEXP s4_get_method(const char* class, SEXP table) {
   SEXP sym = Rf_install(class);
 
@@ -1314,8 +1330,14 @@ SEXP chrs_assign = NULL;
 SEXP chrs_rename = NULL;
 SEXP chrs_remove = NULL;
 SEXP chrs_negate = NULL;
-SEXP chrs_numeric = NULL;
+SEXP chrs_logical = NULL;
+SEXP chrs_integer = NULL;
+SEXP chrs_double = NULL;
+SEXP chrs_complex = NULL;
 SEXP chrs_character = NULL;
+SEXP chrs_list = NULL;
+SEXP chrs_numeric = NULL;
+SEXP chrs_function = NULL;
 SEXP chrs_empty = NULL;
 SEXP chrs_cast = NULL;
 SEXP chrs_error = NULL;
@@ -1486,8 +1508,14 @@ void vctrs_init_utils(SEXP ns) {
   chrs_rename = r_new_shared_character("rename");
   chrs_remove = r_new_shared_character("remove");
   chrs_negate = r_new_shared_character("negate");
-  chrs_numeric = r_new_shared_character("numeric");
+  chrs_logical = r_new_shared_character("logical");
+  chrs_integer = r_new_shared_character("integer");
+  chrs_double = r_new_shared_character("double");
+  chrs_complex = r_new_shared_character("complex");
   chrs_character = r_new_shared_character("character");
+  chrs_list = r_new_shared_character("list");
+  chrs_numeric = r_new_shared_character("numeric");
+  chrs_function = r_new_shared_character("function");
   chrs_empty = r_new_shared_character("");
   chrs_cast = r_new_shared_character("cast");
   chrs_error = r_new_shared_character("error");
