@@ -325,6 +325,16 @@ test_that("raw has informative type summaries", {
   expect_equal(vec_ptype_full(raw()), "raw")
 })
 
+test_that("can provide common type with raw", {
+  local_methods(
+    vec_ptype2.raw.vctrs_foobar = function(...) "dispatched-left",
+    vec_ptype2.vctrs_foobar = function(...) NULL,
+    vec_ptype2.vctrs_foobar.raw = function(...) "dispatched-right"
+  )
+  expect_identical(vec_ptype2(raw(), foobar("")), "dispatched-left")
+  expect_identical(vec_ptype2(foobar(""), raw()), "dispatched-right")
+})
+
 
 # Lists
 

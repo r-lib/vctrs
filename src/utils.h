@@ -408,6 +408,7 @@ extern SEXP chrs_integer;
 extern SEXP chrs_double;
 extern SEXP chrs_complex;
 extern SEXP chrs_character;
+extern SEXP chrs_raw;
 extern SEXP chrs_list;
 extern SEXP chrs_numeric;
 extern SEXP chrs_function;

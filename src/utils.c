@@ -369,6 +369,7 @@ SEXP s3_dispatch_class(SEXP x) {
   case REALSXP: return chrs_double;
   case CPLXSXP: return chrs_complex;
   case STRSXP: return chrs_character;
+  case RAWSXP: return chrs_raw;
   case VECSXP: return chrs_list;
   case CLOSXP:
   case SPECIALSXP:
@@ -1335,6 +1336,7 @@ SEXP chrs_integer = NULL;
 SEXP chrs_double = NULL;
 SEXP chrs_complex = NULL;
 SEXP chrs_character = NULL;
+SEXP chrs_raw = NULL;
 SEXP chrs_list = NULL;
 SEXP chrs_numeric = NULL;
 SEXP chrs_function = NULL;
@@ -1513,6 +1515,7 @@ void vctrs_init_utils(SEXP ns) {
   chrs_double = r_new_shared_character("double");
   chrs_complex = r_new_shared_character("complex");
   chrs_character = r_new_shared_character("character");
+  chrs_raw = r_new_shared_character("raw");
   chrs_list = r_new_shared_character("list");
   chrs_numeric = r_new_shared_character("numeric");
   chrs_function = r_new_shared_character("function");
