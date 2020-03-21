@@ -38,30 +38,13 @@ SEXP vec_ptype2_dispatch(SEXP x, SEXP y,
     return tib_ptype2(x, y, x_arg, y_arg);
 
   default:
-    return vec_ptype2_dispatch_s3(x, y, x_type, y_type, x_arg, y_arg);
+    return vec_ptype2_dispatch_s3(x, y, x_arg, y_arg);
   }
 }
 
 // Initialised at load time
 static SEXP fns_vec_ptype2_dispatch_s3 = NULL;
 static SEXP syms_vec_ptype2_dispatch_s3 = NULL;
-
-static SEXP vec_ptype2_dispatch_old(SEXP x,
-                                    SEXP y,
-                                    struct vctrs_arg* x_arg,
-                                    struct vctrs_arg* y_arg) {
-  SEXP x_arg_chr = PROTECT(vctrs_arg(x_arg));
-  SEXP y_arg_chr = PROTECT(vctrs_arg(y_arg));
-
-  SEXP syms[5] = { syms_x, syms_y, syms_x_arg, syms_y_arg, NULL };
-  SEXP args[5] = {      x,      y,  x_arg_chr,  y_arg_chr, NULL };
-
-  SEXP out = vctrs_dispatch_n(syms_vec_ptype2_dispatch_s3, fns_vec_ptype2_dispatch_s3,
-                              syms, args);
-
-  UNPROTECT(2);
-  return out;
-}
 
 static inline SEXP vec_ptype2_default(SEXP x,
                                       SEXP y,
@@ -137,8 +120,6 @@ static SEXP get_ptype2_method(SEXP x,
 // [[ include("vctrs.h") ]]
 SEXP vec_ptype2_dispatch_s3(SEXP x,
                             SEXP y,
-                            enum vctrs_type x_type,
-                            enum vctrs_type y_type,
                             struct vctrs_arg* x_arg,
                             struct vctrs_arg* y_arg) {
   SEXP x_arg_obj = PROTECT(vctrs_arg(x_arg));
@@ -187,8 +168,6 @@ SEXP vec_ptype2_dispatch_s3(SEXP x,
 
   UNPROTECT(4);
   return out;
-
-  return vec_ptype2_dispatch_old(x, y, x_arg, y_arg);
 }
 
 

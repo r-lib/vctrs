@@ -41,7 +41,7 @@ SEXP vec_ptype2(SEXP x, SEXP y,
   }
 
   if (has_dim(x) || has_dim(y)) {
-    return vec_ptype2_dispatch_s3(x, y, type_x, type_y, x_arg, y_arg);
+    return vec_ptype2_dispatch_s3(x, y, x_arg, y_arg);
   }
 
   if (type_x == vctrs_type_scalar) {
@@ -96,7 +96,7 @@ static SEXP vec_ptype2_switch_native(SEXP x,
     return df_ptype2(x, y, x_arg, y_arg);
 
   default:
-    return vec_ptype2_dispatch_s3(x, y, x_type, y_type, x_arg, y_arg);
+    return vec_ptype2_dispatch_s3(x, y, x_arg, y_arg);
   }
 }
 

@@ -119,10 +119,8 @@ test_that("dimensionality matches output" ,{
 
 test_that("the common type of two `NA` vectors is unspecified", {
   expect_equal(vec_ptype2(NA, NA), unspecified())
-
-  # Ensure the R level dispatch is consistent
-  expect_equal(vec_default_ptype2(NA, NA), unspecified())
 })
+
 
 # Integer
 

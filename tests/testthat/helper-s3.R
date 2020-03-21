@@ -78,13 +78,11 @@ new_lgl_subtype <- function(x) {
 local_lgl_subtype <- function(frame = caller_env()) {
   local_methods(.frame = frame,
     vec_ptype2.vctrs_lgl_subtype = function(x, y, ...) UseMethod("vec_ptype2.vctrs_lgl_subtype", y),
-    vec_ptype2.vctrs_lgl_subtype.default = function(x, y, ...) vec_default_ptype2(x, y),
     vec_ptype2.vctrs_lgl_subtype.vctrs_lgl_subtype = function(x, y, ...) x,
     vec_ptype2.vctrs_lgl_subtype.logical = function(x, y, ...) y,
     vec_ptype2.logical.vctrs_lgl_subtype = function(x, y, ...) x,
 
     vec_cast.vctrs_lgl_subtype = function(x, to, ...) UseMethod("vec_cast.vctrs_lgl_subtype"),
-    vec_cast.vctrs_lgl_subtype.default = function(x, to, ...) stop_incompatible_cast(x, to),
     vec_cast.vctrs_lgl_subtype.vctrs_lgl_subtype = function(x, to, ...) x,
     vec_cast.vctrs_lgl_subtype.logical = function(x, to, ...) new_lgl_subtype(x),
     vec_cast.logical.vctrs_lgl_subtype = function(x, to, ...) unstructure(x)
