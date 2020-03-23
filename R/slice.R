@@ -176,6 +176,10 @@ vec_assign_fallback <- function(x, i, value) {
   x
 }
 
+vec_assign_params <- function(x, i, value, assign_names = FALSE) {
+  .Call(vctrs_assign_params, x, i, value, assign_names)
+}
+
 vec_remove <- function(x, i) {
   vec_slice(x, -vec_as_location(i, length(x), names(x)))
 }

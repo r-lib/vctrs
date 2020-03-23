@@ -1373,7 +1373,6 @@ SEXP fns_names = NULL;
 SEXP result_attrib = NULL;
 
 struct vctrs_arg args_empty_;
-struct vctrs_arg* args_empty = NULL;
 
 
 SEXP r_new_shared_vector(SEXPTYPE type, R_len_t n) {
@@ -1611,7 +1610,6 @@ void vctrs_init_utils(SEXP ns) {
   R_PreserveObject(rlang_formula_formals);
 
   args_empty_ = new_wrapper_arg(NULL, "");
-  args_empty = &args_empty_;
 
   rlang_is_splice_box = (bool (*)(SEXP)) R_GetCCallable("rlang", "rlang_is_splice_box");
   rlang_unbox = (SEXP (*)(SEXP)) R_GetCCallable("rlang", "rlang_unbox");

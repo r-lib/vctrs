@@ -579,3 +579,36 @@ test_that("vec_cbind() and vec_rbind() have informative error messages", {
     vec_rbind(set_names(joe, "x"), set_names(jane, "x"))
   })
 })
+
+test_that("rbind supports names and inner names (#689)", {
+  out <- vec_rbind(
+    data_frame(x = list(a = 1, b = 2)),
+    data_frame(x = list(3)),
+    data_frame(x = list(d = 4))
+  )
+  expect_identical(out$x, list(a = 1, b = 2, 3, d = 4))
+
+  vec_x <- set_names(1:3, letters[1:3])
+  vec_y <- c(FOO = 4L)
+  oo_x <- set_names(as.POSIXlt(c("2020-01-01", "2020-01-02", "2020-01-03")), letters[1:3])
+  oo_y <- c(FOO = as.POSIXlt(c("2020-01-04")))
+  df_x <- new_data_frame(list(x = 1:3), row.names = letters[1:3])
+  df_y <- new_data_frame(list(x = 4L), row.names = "d")
+  mat_x <- matrix(1:3, 3, dimnames = list(letters[1:3]))
+  mat_y <- matrix(4L, 1, dimnames = list("d"))
+  nested_x <- new_data_frame(
+    list(df = df_x, mat = mat_x, vec = vec_x, oo = oo_x),
+    row.names = c("foo", "bar", "baz")
+  )
+  nested_y <- new_data_frame(
+    list(df = df_y, mat = mat_y, vec = vec_y, oo = oo_y),
+    row.names = c("quux")
+  )
+
+  nested_out <- vec_rbind(nested_x, nested_y)
+  expect_identical(row.names(nested_out), c("foo", "bar", "baz", "quux"))
+  expect_identical(row.names(nested_out$df), c("a", "b", "c", "d"))
+  expect_identical(row.names(nested_out$mat), c("a", "b", "c", "d"))
+  expect_identical(names(nested_out$vec), c("a", "b", "c", "FOO"))
+  expect_identical(names(nested_out$oo), c("a", "b", "c", "FOO"))
+})

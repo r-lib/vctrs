@@ -1,6 +1,14 @@
 
 # vctrs (development version)
 
+* `vec_rbind()` and `vec_c()` with data frame inputs now consistently
+  preserve the names of list-columns, df-columns, and matrix-columns
+  (#689).
+
+* The internal version of `vec_assign()` now has support for assigning
+  names and inner names. For data frames, the names are assigned
+  recursively.
+
 * `vec_restore()` no longer restores row names if the target is not a
   data frame. This fixes an issue where `POSIXlt` objects would carry
   a `row.names` attribute after a proxy/restore roundtrip.

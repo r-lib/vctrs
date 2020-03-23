@@ -1,5 +1,6 @@
 #include "vctrs.h"
 #include "slice.h"
+#include "slice-assign.h"
 #include "subscript-loc.h"
 #include "type-data-frame.h"
 #include "utils.h"

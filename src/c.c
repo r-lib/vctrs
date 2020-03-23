@@ -1,4 +1,5 @@
 #include "vctrs.h"
+#include "slice-assign.h"
 #include "utils.h"
 
 // From type.c
@@ -74,6 +75,9 @@ SEXP vec_c(SEXP xs,
   // Compact sequences use 0-based counters
   R_len_t counter = 0;
 
+  const struct vec_assign_opts c_assign_opts =
+    new_vec_assign_opts(true, args_empty, args_empty);
+
   for (R_len_t i = 0; i < n; ++i) {
     R_len_t size = ns[i];
     if (!size) {
@@ -86,17 +90,19 @@ SEXP vec_c(SEXP xs,
 
     init_compact_seq(idx_ptr, counter, size, true);
 
-    out = vec_proxy_assign(out, idx, elt);
+    out = vec_proxy_assign_opts(out, idx, elt, &c_assign_opts);
     REPROTECT(out, out_pi);
 
     if (has_names) {
       SEXP outer = xs_names == R_NilValue ? R_NilValue : STRING_ELT(xs_names, i);
       SEXP inner = PROTECT(vec_names(x));
       SEXP x_nms = PROTECT(apply_name_spec(name_spec, outer, inner, size));
+
       if (x_nms != R_NilValue) {
         out_names = chr_assign(out_names, idx, x_nms);
         REPROTECT(out_names, out_names_pi);
       }
+
       UNPROTECT(2);
     }
 
