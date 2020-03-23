@@ -1,6 +1,10 @@
 
 # vctrs (development version)
 
+* `vec_restore()` no longer restores row names if the target is not a
+  data frame. This fixes an issue where `POSIXlt` objects would carry
+  a `row.names` attribute after a proxy/restore roundtrip.
+
 * `vec_as_subscript()` now fails when the subscript is a matrix or an
   array, consistently with `vec_as_location()`.
 

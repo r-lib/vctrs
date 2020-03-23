@@ -73,7 +73,11 @@ SEXP vec_restore_default(SEXP x, SEXP to) {
     SET_ATTRIB(x, attrib);
 
     Rf_setAttrib(x, R_NamesSymbol, nms);
-    Rf_setAttrib(x, R_RowNamesSymbol, rownms);
+
+    // Don't restore row names if `to` isn't a data frame
+    if (rownms != R_NilValue && is_data_frame(to)) {
+      Rf_setAttrib(x, R_RowNamesSymbol, rownms);
+    }
     UNPROTECT(2);
   } else {
     SEXP dimnames = PROTECT(Rf_getAttrib(x, R_DimNamesSymbol));
