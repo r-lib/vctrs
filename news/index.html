@@ -155,6 +155,7 @@
 <a href="#vctrs-development-version" class="anchor"></a>vctrs (development version)<small> Unreleased </small>
 </h1>
 <ul>
+<li><p><code><a href="../reference/vec_cast.html">vec_restore()</a></code> no longer restores row names if the target is not a data frame. This fixes an issue where <code>POSIXlt</code> objects would carry a <code>row.names</code> attribute after a proxy/restore roundtrip.</p></li>
 <li><p><code><a href="../reference/vec_as_subscript.html">vec_as_subscript()</a></code> now fails when the subscript is a matrix or an array, consistently with <code><a href="../reference/vec_as_location.html">vec_as_location()</a></code>.</p></li>
 <li><p>Improved error messages in <code><a href="../reference/vec_as_location.html">vec_as_location()</a></code> when subscript is a matrix or array (<a href='https://github.com/r-lib/vctrs/issues/936'>#936</a>).</p></li>
 <li><p>New <code><a href="../reference/vec_size.html">list_sizes()</a></code> for computing the size of every element in a list. <code><a href="../reference/vec_size.html">list_sizes()</a></code> is to <code><a href="../reference/vec_size.html">vec_size()</a></code> as <code><a href="https://rdrr.io/r/base/lengths.html">lengths()</a></code> is to <code><a href="https://rdrr.io/r/base/length.html">length()</a></code>, except that it only supports lists. Atomic vectors and data frames result in an error.</p></li>
