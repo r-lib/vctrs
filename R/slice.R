@@ -79,15 +79,17 @@
 #'
 #'
 #' # Note that the types must be coercible for the cast to happen.
-#' # For instance, you can cast a character vector to an integer:
-#' vec_cast("1", integer())
+#' # For instance, you can cast a double vector of whole numbers to an
+#' # integer vector:
+#' vec_cast(1, integer())
 #'
-#' # But these types are not coercible:
-#' try(vec_ptype2("1", integer()))
+#' # But not fractional doubles:
+#' try(vec_cast(1.5, integer()))
 #'
-#' # Hence you cannot assign character values to an integer or double
+#' # For this reason you can't assign fractional values in an integer
 #' # vector:
-#' try(vec_slice(x, 2) <- "20")
+#' x <- 1:3
+#' try(vec_slice(x, 2) <- 1.5)
 vec_slice <- function(x, i) {
   .Call(vctrs_slice, x, i)
 }

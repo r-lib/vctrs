@@ -173,16 +173,6 @@ vec_cast.Date <- function(x, to, ...) {
   UseMethod("vec_cast.Date")
 }
 #' @export
-#' @method vec_cast.Date double
-vec_cast.Date.double <- function(x, to, ...) {
-  new_date(x)
-}
-#' @export
-#' @method vec_cast.Date character
-vec_cast.Date.character <- function(x, to, ...) {
-  as.Date(x, format = "%Y-%m-%d")
-}
-#' @export
 #' @method vec_cast.Date Date
 vec_cast.Date.Date <- function(x, to, ...) {
   as_double_date(x)
@@ -202,11 +192,6 @@ date_cast <- function(x, to, ..., x_arg = "", to_arg = "") {
   lossy <- abs(x - as.POSIXct(out)) > 1e-9
   maybe_lossy_cast(out, x, to, lossy, x_arg = x_arg, to_arg = to_arg)
 }
-#' @export
-#' @method vec_cast.Date list
-vec_cast.Date.list <- function(x, to, ..., x_arg = "", to_arg = "") {
-  vec_list_cast(x, to, x_arg = x_arg, to_arg = to_arg)
-}
 
 #' @rdname new_date
 #' @export vec_cast.POSIXct
@@ -214,16 +199,6 @@ vec_cast.Date.list <- function(x, to, ..., x_arg = "", to_arg = "") {
 #' @export
 vec_cast.POSIXct <- function(x, to, ...) {
   UseMethod("vec_cast.POSIXct")
-}
-#' @export
-#' @method vec_cast.POSIXct double
-vec_cast.POSIXct.double <- function(x, to, ...) {
-  new_datetime(x, tzone = tzone(to))
-}
-#' @export
-#' @method vec_cast.POSIXct character
-vec_cast.POSIXct.character <- function(x, to, ...) {
-  as.POSIXct(x, tz = tzone(to))
 }
 #' @export
 #' @method vec_cast.POSIXct Date
@@ -240,11 +215,6 @@ vec_cast.POSIXct.POSIXlt <- function(x, to, ...) {
 vec_cast.POSIXct.POSIXct <- function(x, to, ...) {
   new_datetime(vec_data(x), tzone = tzone(to))
 }
-#' @export
-#' @method vec_cast.POSIXct list
-vec_cast.POSIXct.list <- function(x, to, ..., x_arg = "", to_arg = "") {
-  vec_list_cast(x, to, x_arg = x_arg, to_arg = to_arg)
-}
 
 #' @rdname new_date
 #' @export vec_cast.POSIXlt
@@ -252,16 +222,6 @@ vec_cast.POSIXct.list <- function(x, to, ..., x_arg = "", to_arg = "") {
 #' @export
 vec_cast.POSIXlt <- function(x, to, ...) {
   UseMethod("vec_cast.POSIXlt")
-}
-#' @export
-#' @method vec_cast.POSIXlt double
-vec_cast.POSIXlt.double <- function(x, to, ...) {
-  as.POSIXlt(new_datetime(x, tzone = tzone(to)))
-}
-#' @export
-#' @method vec_cast.POSIXlt character
-vec_cast.POSIXlt.character <- function(x, to, ...) {
-  as.POSIXlt(x, tz = tzone(to))
 }
 #' @export
 #' @method vec_cast.POSIXlt Date
@@ -278,11 +238,6 @@ vec_cast.POSIXlt.POSIXlt <- function(x, to, ...) {
 vec_cast.POSIXlt.POSIXct <- function(x, to, ...) {
   as.POSIXlt(x, tz = tzone(to))
 }
-#' @export
-#' @method vec_cast.POSIXlt list
-vec_cast.POSIXlt.list <- function(x, to, ..., x_arg = "", to_arg = "") {
-  vec_list_cast(x, to, x_arg = x_arg, to_arg = to_arg)
-}
 
 
 #' @rdname new_date
@@ -291,11 +246,6 @@ vec_cast.POSIXlt.list <- function(x, to, ..., x_arg = "", to_arg = "") {
 #' @export
 vec_cast.difftime <- function(x, to, ...) {
   UseMethod("vec_cast.difftime")
-}
-#' @export
-#' @method vec_cast.difftime double
-vec_cast.difftime.double <- function(x, to, ...) {
-  new_duration(vec_data(x), units = units(to))
 }
 #' @export
 #' @method vec_cast.difftime difftime
@@ -307,11 +257,6 @@ vec_cast.difftime.difftime <- function(x, to, ...) {
     origin <- as.POSIXct(0, origin = "1970-01-01")
     difftime(origin, origin - x, units = units(to))
   }
-}
-#' @export
-#' @method vec_cast.difftime list
-vec_cast.difftime.list <- function(x, to, ..., x_arg = "", to_arg = "") {
-  vec_list_cast(x, to, x_arg = x_arg, to_arg = to_arg)
 }
 
 

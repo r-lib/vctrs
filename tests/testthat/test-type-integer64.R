@@ -10,9 +10,6 @@ test_that("casting of integer64 works", {
   expect_equal(vec_cast(x, double()), as.double(x))
   expect_equal(vec_cast(as.numeric(1:10), bit64::integer64()), x)
 
-  expect_equal(vec_cast(x, character()), as.character(x))
-  expect_equal(vec_cast(as.character(1:10), bit64::integer64()), x)
-
   expect_equal(vec_cast(x, logical()), rep(TRUE, 10L))
   expect_equal(vec_cast(c(TRUE, FALSE), bit64::integer64()), bit64::as.integer64(c(1, 0)))
 
@@ -21,6 +18,10 @@ test_that("casting of integer64 works", {
 
   expect_error(vec_cast(x, factor()), class = "vctrs_error_incompatible_cast")
   expect_error(vec_cast(factor(), x), class = "vctrs_error_incompatible_cast")
+
+  # These used to be allowed
+  expect_error(vec_cast(x, character()), class = "vctrs_error_incompatible_cast")
+  expect_error(vec_cast(as.character(1:10), bit64::integer64()), class = "vctrs_error_incompatible_cast")
 })
 
 test_that("vec_ptype2 for integer64 works", {

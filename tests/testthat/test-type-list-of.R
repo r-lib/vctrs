@@ -164,12 +164,14 @@ test_that("max<list_of<a>, list_of<b>> is list_of<max<a, b>>", {
 test_that("safe casts work as expected", {
   x <- list_of(1)
   expect_equal(vec_cast(NULL, x), NULL)
-  expect_equal(vec_cast(1L, x), x)
-  expect_equal(vec_cast(1, x), x)
   expect_equal(vec_cast(list(1), x), x)
   expect_equal(vec_cast(list(TRUE), x), x)
   expect_equal(vec_cast(NA, x), list_of(NULL, .ptype = double()))
   expect_identical(vec_cast(x, list()), list(1))
+
+  # These used to be allowed
+  expect_error(vec_cast(1L, x), class = "vctrs_error_incompatible_cast")
+  expect_error(vec_cast(1, x), class = "vctrs_error_incompatible_cast")
 })
 
 test_that("lossy casts generate warning", {
@@ -187,7 +189,7 @@ test_that("invalid casts generate error", {
 test_that("validation", {
   expect_error(validate_list_of(list_of(1, 2, 3)), NA)
   expect_error(
-    validate_list_of(new_list_of(list(1, "a", 3), dbl())),
+    validate_list_of(new_list_of(list(factor("foo")), vec_ptype(factor("bar")))),
     class = "vctrs_error_cast_lossy"
   )
 })

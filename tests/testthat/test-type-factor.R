@@ -112,7 +112,8 @@ test_that("safe casts work as expected", {
   expect_equal(vec_cast("a", factor()), fa)
   expect_equal(vec_cast(fa, factor()), fa)
 
-  expect_equal(vec_cast(list("a", "b"), fab), fab)
+  # This used to be allowed
+  expect_error(vec_cast(list("a", "b"), fab), class = "vctrs_error_incompatible_cast")
 })
 
 test_that("can cast to character", {

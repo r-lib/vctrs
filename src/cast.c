@@ -112,22 +112,6 @@ static SEXP vec_cast_switch_native(SEXP x,
       return dbl_as_integer(x, lossy);
     }
 
-  case vctrs_type2_logical_character:
-    if (dir == 0) {
-      return Rf_coerceVector(x, STRSXP);
-    } else {
-      return chr_as_logical(x, lossy);
-    }
-
-  case vctrs_type2_integer_character:
-  case vctrs_type2_double_character:
-    if (dir == 0) {
-      return Rf_coerceVector(x, STRSXP);
-    } else {
-      // TODO: Implement with `R_strtod()` from R_ext/utils.h?
-      break;
-    }
-
   case vctrs_type2_dataframe_dataframe:
     return df_cast(x, to, x_arg, to_arg);
 
