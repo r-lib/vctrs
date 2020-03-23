@@ -709,18 +709,25 @@ SEXP vec_set_rownames(SEXP x, SEXP names) {
 }
 
 SEXP vec_set_df_rownames(SEXP x, SEXP names) {
-  x = PROTECT(r_maybe_duplicate(x));
-
   if (names == R_NilValue) {
+    if (rownames_type(df_rownames(x)) != ROWNAMES_IDENTIFIERS) {
+      return(x);
+    }
+
+    x = PROTECT(r_maybe_duplicate(x));
     init_compact_rownames(x, vec_size(x));
-  } else {
-    // Repair row names verbosely
-    names = PROTECT(vec_as_names(names, default_unique_repair_opts));
-    Rf_setAttrib(x, R_RowNamesSymbol, names);
+
     UNPROTECT(1);
+    return x;
   }
 
-  UNPROTECT(1);
+  // Repair row names verbosely
+  names = PROTECT(vec_as_names(names, default_unique_repair_opts));
+
+  x = PROTECT(r_maybe_duplicate(x));
+  Rf_setAttrib(x, R_RowNamesSymbol, names);
+
+  UNPROTECT(2);
   return x;
 }
 
