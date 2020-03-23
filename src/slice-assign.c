@@ -316,12 +316,13 @@ SEXP df_assign(SEXP x, SEXP index, SEXP value,
     // restore are not recursive so need to be done for each element
     // we recurse into. `vec_proxy_assign()` will proxy the `value_elt`.
     SEXP proxy_elt = PROTECT(vec_proxy(out_elt));
+    proxy_elt = PROTECT(Rf_shallow_duplicate(proxy_elt));
 
     SEXP assigned = PROTECT(vec_proxy_assign_opts(proxy_elt, index, value_elt, opts));
     assigned = vec_restore(assigned, out_elt, R_NilValue);
 
     SET_VECTOR_ELT(out, i, assigned);
-    UNPROTECT(2);
+    UNPROTECT(3);
   }
 
   UNPROTECT(1);
