@@ -171,7 +171,10 @@
 <li><p><code><a href="../reference/vec_as_location.html">vec_as_location2()</a></code> properly picks up <code>subscript_arg</code> (tidyverse/tibble<a href='https://github.com/r-lib/vctrs/issues/735'>#735</a>).</p></li>
 <li><p><code><a href="../reference/vec_cast.html">vec_cast()</a></code> to and from data frames preserves the row names of inputs.</p></li>
 <li><p><code><a href="../reference/vec_cast.html">vec_cast()</a></code> with data frames no longer uses inheritance (<a href='https://github.com/r-lib/vctrs/issues/710'>#710</a>).</p></li>
-<li><p>The internal function <code>vec_names()</code> now returns row names if the input is a data frame. This is part of a general effort at making row names the vector names of data frames in vctrs.</p></li>
+<li>
+<p>The internal function <code>vec_names()</code> now returns row names if the input is a data frame. Similarly, <code>vec_set_names()</code> sets row names on data frames. This is part of a general effort at making row names the vector names of data frames in vctrs.</p>
+<p>If necessary, the row names are repaired verbosely but without error to make them unique. This should be a mostly harmless change for users, but it could break unit tests in packages if they make assumptions about the row names.</p>
+</li>
 <li><p><code><a href="../reference/vec_slice.html">vec_assign()</a></code> gains <code>x_arg</code> and <code>value_arg</code> parameters (<a href='https://github.com/r-lib/vctrs/issues/918'>#918</a>).</p></li>
 <li><p><code><a href="../reference/vec_group.html">vec_group_loc()</a></code>, which powers <code>dplyr::group_by()</code>, now has more efficient vector access (<a href='https://github.com/r-lib/vctrs/issues/911'>#911</a>).</p></li>
 <li><p><code><a href="../reference/vec_as_names.html">vec_as_names()</a></code> now has more informative error messages when names are not unique (<a href='https://github.com/r-lib/vctrs/issues/882'>#882</a>).</p></li>
