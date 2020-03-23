@@ -45,8 +45,14 @@
 * `vec_cast()` with data frames no longer uses inheritance (#710).
 
 * The internal function `vec_names()` now returns row names if the
-  input is a data frame. This is part of a general effort at
-  making row names the vector names of data frames in vctrs.
+  input is a data frame. Similarly, `vec_set_names()` sets row names
+  on data frames. This is part of a general effort at making row names
+  the vector names of data frames in vctrs.
+
+  If necessary, the row names are repaired verbosely but without error
+  to make them unique. This should be a mostly harmless change for
+  users, but it could break unit tests in packages if they make
+  assumptions about the row names.
 
 * `vec_assign()` gains `x_arg` and `value_arg` parameters (#918).
 
