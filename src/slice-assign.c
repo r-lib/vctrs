@@ -141,22 +141,22 @@ SEXP vec_proxy_assign(SEXP proxy, SEXP index, SEXP value) {
 }
 SEXP vec_proxy_assign_opts(SEXP proxy, SEXP index, SEXP value,
                            const struct vec_assign_opts* opts) {
-  struct vctrs_proxy_info info = vec_proxy_info(value);
+  struct vctrs_proxy_info value_info = vec_proxy_info(value);
 
   // If a fallback is required, the `proxy` is identical to the output container
   // because no proxy method was called
   SEXP out = R_NilValue;
 
-  if (vec_requires_fallback(value, info) || has_dim(proxy)) {
+  if (vec_requires_fallback(value, value_info) || has_dim(proxy)) {
     index = PROTECT(compact_materialize(index));
     out = PROTECT(vec_assign_fallback(proxy, index, value));
   } else {
     PROTECT(index);
-    out = PROTECT(vec_assign_switch(proxy, index, info.proxy, opts));
+    out = PROTECT(vec_assign_switch(proxy, index, value_info.proxy, opts));
   }
 
   if (opts->assign_names) {
-    out = vec_proxy_assign_names(out, index, value);
+    out = vec_proxy_assign_names(out, index, value_info.proxy);
   }
 
   UNPROTECT(2);
