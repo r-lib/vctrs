@@ -115,7 +115,7 @@ SEXP vec_proxy_assign_names(SEXP proxy, SEXP index, SEXP value) {
   proxy_nms = PROTECT(chr_assign(proxy_nms, index, value_nms));
 
   proxy = PROTECT(r_maybe_duplicate(proxy));
-  vec_set_names(proxy, proxy_nms);
+  proxy = vec_set_names(proxy, proxy_nms);
 
   UNPROTECT(4);
   return proxy;

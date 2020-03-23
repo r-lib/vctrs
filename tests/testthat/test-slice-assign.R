@@ -505,6 +505,14 @@ test_that("can optionally assign names", {
     vec_out
   )
 
+  oo_x <- set_names(as.POSIXlt(c("2020-01-01", "2020-01-02", "2020-01-03")), letters[1:3])
+  oo_y <- as.POSIXlt(c(FOO = "2020-01-04"))
+  oo_out <- as.POSIXlt(c(a = "2020-01-01", FOO = "2020-01-04", c = "2020-01-03"))
+  expect_identical(
+    vec_assign_params(oo_x, 2, oo_y, assign_names = TRUE),
+    oo_out
+  )
+
   df_x <- new_data_frame(list(x = 1:3), row.names = letters[1:3])
   df_y <- new_data_frame(list(x = 4L), row.names = "FOO")
   df_out <- new_data_frame(list(x = c(1L, 4L, 3L)), row.names = c("a", "FOO", "c"))
@@ -521,9 +529,9 @@ test_that("can optionally assign names", {
     mat_out
   )
 
-  nested_x <- new_data_frame(list(df = df_x, mat = mat_x, vec = vec_x), row.names = c("foo", "bar", "baz"))
-  nested_y <- new_data_frame(list(df = df_y, mat = mat_y, vec = vec_y), row.names = c("quux"))
-  nested_out <- new_data_frame(list(df = df_out, mat = mat_out, vec = vec_out), row.names = c("foo", "quux", "baz"))
+  nested_x <- new_data_frame(list(df = df_x, mat = mat_x, vec = vec_x, oo = oo_x), row.names = c("foo", "bar", "baz"))
+  nested_y <- new_data_frame(list(df = df_y, mat = mat_y, vec = vec_y, oo = oo_y), row.names = c("quux"))
+  nested_out <- new_data_frame(list(df = df_out, mat = mat_out, vec = vec_out, oo = oo_out), row.names = c("foo", "quux", "baz"))
 
   expect_identical(
     vec_assign_params(nested_x, 2, nested_y, assign_names = TRUE),
