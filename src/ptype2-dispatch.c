@@ -122,8 +122,9 @@ SEXP vec_ptype2_dispatch_s3(SEXP x,
                                     x_table,
                                     &y_method_sym);
 
-  // FIXME: The `AsIs` class relies on a default ptype2 method
-  if (y_method == R_NilValue) {
+  // FIXME: The `AsIs` class relies on a default ptype2 method. Should
+  // be changed with a general mechanism for wrapper types.
+  if (y_method == R_NilValue && Rf_inherits(x, "AsIs")) {
     y_method_sym = s3_paste_method_sym(x_method_str, "default");
     y_method = s3_sym_get_method(y_method_sym, x_table);
   }
