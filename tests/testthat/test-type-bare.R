@@ -2,7 +2,6 @@ context("test-type-bare")
 
 
 test_that("ptype2 base methods are not inherited", {
-  skip("FIXME inheritance")
   ptypes <- vec_remove(base_empty_types, "null")
   for (ptype in ptypes) {
     x <- new_vctr(ptype, class = "foobar", inherit_base_type = TRUE)

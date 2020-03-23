@@ -74,23 +74,22 @@ static SEXP get_ptype2_method(SEXP x,
   }
   PROTECT(class);
 
-  SEXP* class_ptr = STRING_PTR(class);
-  int n_class = Rf_length(class);
+  if (!Rf_length(class)) {
+    Rf_error("Internal error in `get_ptype2_method()`: Class must have length.");
+  }
+  class = STRING_ELT(class, 0);
 
-  // FIXME: Disable inheritance
-  for (int i = 0; i < n_class; ++i, ++class_ptr) {
-    SEXP method_sym = s3_paste_method_sym(generic, CHAR(*class_ptr));
-    SEXP method = s3_sym_get_method(method_sym, table);
-    if (method != R_NilValue) {
-      UNPROTECT(1);
-      *method_sym_out = method_sym;
-      return method;
-    }
+  SEXP method_sym = s3_paste_method_sym(generic, CHAR(class));
+  SEXP method = s3_sym_get_method(method_sym, table);
+
+  if (method == R_NilValue) {
+    *method_sym_out = R_NilValue;
+  } else {
+    *method_sym_out = method_sym;
   }
 
   UNPROTECT(1);
-  *method_sym_out = R_NilValue;
-  return R_NilValue;
+  return method;
 }
 
 // [[ include("vctrs.h") ]]
