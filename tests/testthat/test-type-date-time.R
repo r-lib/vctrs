@@ -47,6 +47,13 @@ test_that("vec_proxy() returns a double for Dates with int representation", {
   expect_true(is.double(vec_proxy(x)))
 })
 
+test_that("POSIXlt roundtrips through proxy and restore", {
+  x <- as.POSIXlt("2020-01-03")
+  out <- vec_restore(vec_proxy(x), x)
+  expect_identical(out, x)
+})
+
+
 # coerce ------------------------------------------------------------------
 
 test_that("datetime coercions are symmetric and unchanging", {
