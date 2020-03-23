@@ -42,6 +42,9 @@ SEXP vec_cast_dispatch(SEXP x,
       return df_cast(x, to, x_arg, to_arg);
     }
 
+  case vctrs_type2_s3_bare_tibble_bare_tibble:
+    return tib_cast(x, to, x_arg, to_arg);
+
   default:
     return R_NilValue;
   }

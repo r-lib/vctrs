@@ -10,10 +10,11 @@ test_that("tibble beats data frame", {
 
 test_that("can cast tibble to df and vice versa", {
   df <- new_data_frame()
-  dt <- tibble::tibble()
+  tib <- tibble::tibble()
 
-  expect_identical(vec_cast(df, dt), dt)
-  expect_identical(vec_cast(dt, df), df)
+  expect_identical(vec_cast(df, tib), tib)
+  expect_identical(vec_cast(tib, df), df)
+  expect_identical(vec_cast(tib, tib), tib)
 })
 
 test_that("can't cast vector to tibble", {

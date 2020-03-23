@@ -32,12 +32,11 @@
 |ipaddress |0.1.2    |1     |        |     |
 |sf        |0.8-1    |1     |        |     |
 
-## New problems (4)
+## New problems (3)
 
 |package                              |version |error  |warning |note |
 |:------------------------------------|:-------|:------|:-------|:----|
 |[dm](problems.md#dm)                 |0.1.1   |__+1__ |        |1    |
-|[hardhat](problems.md#hardhat)       |0.1.2   |__+1__ |        |     |
 |[slider](problems.md#slider)         |0.1.2   |__+2__ |        |     |
 |[tibbletime](problems.md#tibbletime) |0.1.3   |__+1__ |        |     |
 
