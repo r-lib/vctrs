@@ -121,3 +121,7 @@ vec_restore_dispatch <- function(x, to, ..., n = NULL) {
 vec_restore.default <- function(x, to, ..., n = NULL) {
   .Call(vctrs_restore_default, x, to)
 }
+
+vec_restore_default <- function(x, to, ...) {
+  .Call(vctrs_restore_default, x, to)
+}

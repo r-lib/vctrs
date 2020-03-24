@@ -101,3 +101,16 @@ test_that("row names are not restored if target is not a data frame", {
   exp <- list(names = "x", class = "vctrs_foobar")
   expect_identical(attributes(out), exp)
 })
+
+test_that("attributes are properly restored when they contain special attributes", {
+  exp <- list(foo = TRUE, bar = TRUE)
+
+  x <- structure(list(), foo = TRUE, names = chr(), bar = TRUE)
+  out <- vec_restore_default(list(), x)
+  expect_identical(attributes(out), exp)
+
+  # Was broken by #943
+  x <- structure(list(), foo = TRUE, names = chr(), row.names = int(), bar = TRUE)
+  out <- vec_restore_default(list(), x)
+  expect_identical(attributes(out), exp)
+})

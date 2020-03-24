@@ -47,13 +47,15 @@ SEXP vec_restore_default(SEXP x, SEXP to) {
         if (tag == R_ClassSymbol) {
           class = CAR(node);
         }
+
         if (prev == R_NilValue) {
           attrib = CDR(attrib);
-          node = CDR(node);
-          continue;
+        } else {
+          SETCDR(prev, CDR(node));
         }
 
-        SETCDR(prev, CDR(node));
+        node = CDR(node);
+        continue;
       }
 
       prev = node;
