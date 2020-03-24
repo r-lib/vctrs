@@ -1,6 +1,8 @@
 
 # vctrs (development version)
 
+* dplyr methods are now implemented for `vec_restore()`.
+
 * Double-dispatch methods for `vec_ptype2()` are no longer inherited
   (#710). Class implementers must implement one set of methods for
   each compatible class.

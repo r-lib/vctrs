@@ -34,6 +34,7 @@ Suggests:
     bit64,
     covr,
     crayon,
+    dplyr (>= 0.8.5),
     generics,
     knitr,
     pillar (>= 1.4.3.9001),

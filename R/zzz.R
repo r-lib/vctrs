@@ -33,6 +33,12 @@ on_package_load <- function(pkg, expr) {
     }
   })
 
+  on_package_load("dplyr", {
+    if (!env_has(ns_env("dplyr"), "vec_restore.grouped_df")) {
+      s3_register("vctrs::vec_restore", "grouped_df")
+    }
+  })
+
   utils::globalVariables("vec_set_attributes")
 
   # Prevent two copies from being made by `attributes(x) <- attrib` on R < 3.6.0
