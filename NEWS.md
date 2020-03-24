@@ -1,7 +1,11 @@
 
 # vctrs (development version)
 
-* dplyr methods are now implemented for `vec_restore()`.
+* dplyr methods are now implemented for `vec_restore()` and
+  `vec_ptype2()`. The user-visible consequence (and breaking change)
+  is that combining a grouped data frame and a data frame or tibble
+  now returns a grouped data frame. It would previously return a
+  tibble.
 
 * Double-dispatch methods for `vec_ptype2()` are no longer inherited
   (#710). Class implementers must implement one set of methods for

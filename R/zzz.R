@@ -37,6 +37,15 @@ on_package_load <- function(pkg, expr) {
     if (!env_has(ns_env("dplyr"), "vec_restore.grouped_df")) {
       s3_register("vctrs::vec_restore", "grouped_df")
     }
+
+    if (!env_has(ns_env("dplyr"), "vec_ptype2.grouped_df")) {
+      s3_register("vctrs::vec_ptype2", "grouped_df")
+      s3_register("vctrs::vec_ptype2.grouped_df", "grouped_df")
+      s3_register("vctrs::vec_ptype2.grouped_df", "data.frame")
+      s3_register("vctrs::vec_ptype2.grouped_df", "tbl_df")
+      s3_register("vctrs::vec_ptype2.data.frame", "grouped_df")
+      s3_register("vctrs::vec_ptype2.tbl_df", "grouped_df")
+    }
   })
 
   utils::globalVariables("vec_set_attributes")
