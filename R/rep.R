@@ -21,7 +21,7 @@
 #' For `vec_rep()`, a vector the same type as `x` with size
 #' `vec_size(x) * times`.
 #'
-#' For `vec_rep()`, a vector the same type as `x` with size
+#' For `vec_rep_each()`, a vector the same type as `x` with size
 #' `sum(vec_recycle(times, vec_size(x)))`.
 #'
 #' @name vec-rep

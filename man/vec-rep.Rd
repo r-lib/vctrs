@@ -23,7 +23,7 @@ each element of \code{x}. \code{times} will be recycled to the size of \code{x}.
 For \code{vec_rep()}, a vector the same type as \code{x} with size
 \code{vec_size(x) * times}.
 
-For \code{vec_rep()}, a vector the same type as \code{x} with size
+For \code{vec_rep_each()}, a vector the same type as \code{x} with size
 \code{sum(vec_recycle(times, vec_size(x)))}.
 }
 \description{
