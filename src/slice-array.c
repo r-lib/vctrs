@@ -138,22 +138,22 @@
     SLICE_SHAPED_INDEX(RTYPE, CTYPE, DEREF, CONST_DEREF, NA_VALUE);       \
   }
 
-static SEXP lgl_slice_shaped(SEXP x, SEXP index, struct vec_slice_shaped_info info) {
+static SEXP lgl_slice_shaped(SEXP x, SEXP index, struct strides_info info) {
   SLICE_SHAPED(LGLSXP, int, LOGICAL, LOGICAL_RO, NA_LOGICAL);
 }
-static SEXP int_slice_shaped(SEXP x, SEXP index, struct vec_slice_shaped_info info) {
+static SEXP int_slice_shaped(SEXP x, SEXP index, struct strides_info info) {
   SLICE_SHAPED(INTSXP, int, INTEGER, INTEGER_RO, NA_INTEGER);
 }
-static SEXP dbl_slice_shaped(SEXP x, SEXP index, struct vec_slice_shaped_info info) {
+static SEXP dbl_slice_shaped(SEXP x, SEXP index, struct strides_info info) {
   SLICE_SHAPED(REALSXP, double, REAL, REAL_RO, NA_REAL);
 }
-static SEXP cpl_slice_shaped(SEXP x, SEXP index, struct vec_slice_shaped_info info) {
+static SEXP cpl_slice_shaped(SEXP x, SEXP index, struct strides_info info) {
   SLICE_SHAPED(CPLXSXP, Rcomplex, COMPLEX, COMPLEX_RO, vctrs_shared_na_cpl);
 }
-static SEXP chr_slice_shaped(SEXP x, SEXP index, struct vec_slice_shaped_info info) {
+static SEXP chr_slice_shaped(SEXP x, SEXP index, struct strides_info info) {
   SLICE_SHAPED(STRSXP, SEXP, STRING_PTR, STRING_PTR_RO, NA_STRING);
 }
-static SEXP raw_slice_shaped(SEXP x, SEXP index, struct vec_slice_shaped_info info) {
+static SEXP raw_slice_shaped(SEXP x, SEXP index, struct strides_info info) {
   SLICE_SHAPED(RAWSXP, Rbyte, RAW, RAW_RO, 0);
 }
 
@@ -299,7 +299,7 @@ static SEXP raw_slice_shaped(SEXP x, SEXP index, struct vec_slice_shaped_info in
     SLICE_BARRIER_SHAPED_INDEX(RTYPE, GET, SET, NA_VALUE);       \
   }
 
-static SEXP list_slice_shaped(SEXP x, SEXP index, struct vec_slice_shaped_info info) {
+static SEXP list_slice_shaped(SEXP x, SEXP index, struct strides_info info) {
   SLICE_BARRIER_SHAPED(VECSXP, VECTOR_ELT, SET_VECTOR_ELT, R_NilValue);
 }
 
@@ -311,7 +311,7 @@ static SEXP list_slice_shaped(SEXP x, SEXP index, struct vec_slice_shaped_info i
 SEXP vec_slice_shaped_base(enum vctrs_type type,
                            SEXP x,
                            SEXP index,
-                           struct vec_slice_shaped_info info) {
+                           struct strides_info info) {
   switch (type) {
   case vctrs_type_logical:   return lgl_slice_shaped(x, index, info);
   case vctrs_type_integer:   return int_slice_shaped(x, index, info);
@@ -328,8 +328,8 @@ SEXP vec_slice_shaped_base(enum vctrs_type type,
 SEXP vec_slice_shaped(enum vctrs_type type, SEXP x, SEXP index) {
   int n_protect = 0;
 
-  struct vec_slice_shaped_info info = new_vec_slice_shaped_info(x, index);
-  PROTECT_SLICE_SHAPED_INFO(&info, &n_protect);
+  struct strides_info info = new_strides_info(x, index);
+  PROTECT_STRIDES_INFO(&info, &n_protect);
 
   SEXP out = vec_slice_shaped_base(type, x, index, info);
 

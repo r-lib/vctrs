@@ -51,7 +51,7 @@
  *            |- size_index
  */
 
-struct vec_slice_shaped_info {
+struct strides_info {
   SEXP dim;
   const int* p_dim;
 
@@ -70,12 +70,12 @@ struct vec_slice_shaped_info {
   R_len_t shape_elem_n;
 };
 
-#define PROTECT_SLICE_SHAPED_INFO(info, n) do { \
-  PROTECT((info)->dim);                         \
-  PROTECT((info)->strides);                     \
-  PROTECT((info)->index);                       \
-  PROTECT((info)->shape_index);                 \
-  *(n) += 4;                                    \
+#define PROTECT_STRIDES_INFO(info, n) do { \
+  PROTECT((info)->dim);                    \
+  PROTECT((info)->strides);                \
+  PROTECT((info)->index);                  \
+  PROTECT((info)->shape_index);            \
+  *(n) += 4;                               \
 } while(0)
 
 static inline SEXP vec_strides(const int* p_dim, const R_len_t shape_n) {
@@ -105,7 +105,7 @@ static inline int vec_strided_loc(const int size_index,
   return loc;
 }
 
-static inline struct vec_slice_shaped_info new_vec_slice_shaped_info(SEXP x, SEXP index) {
+static inline struct strides_info new_strides_info(SEXP x, SEXP index) {
   SEXP dim = PROTECT(vec_dim(x));
   const int* p_dim = INTEGER_RO(dim);
 
@@ -130,7 +130,7 @@ static inline struct vec_slice_shaped_info new_vec_slice_shaped_info(SEXP x, SEX
     shape_elem_n *= p_dim[i];
   }
 
-  struct vec_slice_shaped_info info = {
+  struct strides_info info = {
     .dim = dim,
     .p_dim = p_dim,
     .strides = strides,
