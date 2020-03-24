@@ -17,6 +17,13 @@
 #'   For `vec_rep_each()`, an integer vector of the number of times to repeat
 #'   each element of `x`. `times` will be recycled to the size of `x`.
 #'
+#' @return
+#' For `vec_rep()`, a vector the same type as `x` with size
+#' `vec_size(x) * times`.
+#'
+#' For `vec_rep()`, a vector the same type as `x` with size
+#' `sum(vec_recycle(times, vec_size(x)))`.
+#'
 #' @name vec-rep
 #'
 #' @examples
