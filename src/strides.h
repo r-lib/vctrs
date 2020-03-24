@@ -2,6 +2,7 @@
 #define VCTRS_STRIDES_H
 
 #include "vctrs.h"
+#include "utils.h"
 
 /*
  * Array slicing works by treating the array as a 1D structure, and transforming
@@ -50,6 +51,33 @@
  *            |- size_index
  */
 
+struct vec_slice_shaped_info {
+  SEXP dim;
+  const int* p_dim;
+
+  SEXP strides;
+  const int* p_strides;
+
+  SEXP index;
+  const int* p_index;
+
+  SEXP shape_index;
+  int* p_shape_index;
+
+  R_len_t dim_n;
+  R_len_t shape_n;
+  R_len_t index_n;
+  R_len_t shape_elem_n;
+};
+
+#define PROTECT_SLICE_SHAPED_INFO(info, n) do { \
+  PROTECT((info)->dim);                         \
+  PROTECT((info)->strides);                     \
+  PROTECT((info)->index);                       \
+  PROTECT((info)->shape_index);                 \
+  *(n) += 4;                                    \
+} while(0)
+
 static inline SEXP vec_strides(const int* p_dim, const R_len_t shape_n) {
   SEXP strides = PROTECT(Rf_allocVector(INTSXP, shape_n));
   int* p_strides = INTEGER(strides);
@@ -77,16 +105,48 @@ static inline int vec_strided_loc(const int size_index,
   return loc;
 }
 
-struct vec_slice_shaped_info {
-  const int* p_dim;
-  const int* p_strides;
-  const int* p_index;
-  int* p_shape_index;
-  R_len_t dim_n;
-  R_len_t shape_n;
-  R_len_t index_n;
-  R_len_t shape_elem_n;
-  SEXP out_dim;
-};
+static inline struct vec_slice_shaped_info new_vec_slice_shaped_info(SEXP x, SEXP index) {
+  SEXP dim = PROTECT(vec_dim(x));
+  const int* p_dim = INTEGER_RO(dim);
+
+  R_len_t dim_n = Rf_length(dim);
+  R_len_t shape_n = dim_n - 1;
+  R_len_t index_n = vec_subscript_size(index);
+
+  SEXP strides = PROTECT(vec_strides(p_dim, shape_n));
+  const int* p_strides = INTEGER_RO(strides);
+
+  const int* p_index = INTEGER_RO(index);
+
+  // Initialize `shape_index` to the first element
+  SEXP shape_index = PROTECT(Rf_allocVector(INTSXP, shape_n));
+  int* p_shape_index = INTEGER(shape_index);
+  for (int i = 0; i < shape_n; ++i) {
+    p_shape_index[i] = 0;
+  }
+
+  R_len_t shape_elem_n = 1;
+  for (int i = 1; i < dim_n; ++i) {
+    shape_elem_n *= p_dim[i];
+  }
+
+  struct vec_slice_shaped_info info = {
+    .dim = dim,
+    .p_dim = p_dim,
+    .strides = strides,
+    .p_strides = p_strides,
+    .index = index,
+    .p_index = p_index,
+    .shape_index = shape_index,
+    .p_shape_index = p_shape_index,
+    .dim_n = dim_n,
+    .shape_n = shape_n,
+    .index_n = index_n,
+    .shape_elem_n = shape_elem_n
+  };
+
+  UNPROTECT(3);
+  return info;
+}
 
 #endif

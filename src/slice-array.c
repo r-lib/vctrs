@@ -3,7 +3,10 @@
 #include "strides.h"
 
 #define SLICE_SHAPED_INDEX(RTYPE, CTYPE, DEREF, CONST_DEREF, NA_VALUE) \
-  SEXP out = PROTECT(Rf_allocArray(RTYPE, info.out_dim));              \
+  SEXP out_dim = PROTECT(Rf_shallow_duplicate(info.dim));              \
+  INTEGER(out_dim)[0] = info.index_n;                                  \
+                                                                       \
+  SEXP out = PROTECT(Rf_allocArray(RTYPE, out_dim));                   \
   CTYPE* out_data = DEREF(out);                                        \
   const CTYPE* x_data = CONST_DEREF(x);                                \
                                                                        \
@@ -36,11 +39,14 @@
     }                                                                  \
   }                                                                    \
                                                                        \
-  UNPROTECT(1);                                                        \
+  UNPROTECT(2);                                                        \
   return out
 
 #define SLICE_SHAPED_COMPACT_REP(RTYPE, CTYPE, DEREF, CONST_DEREF, NA_VALUE)   \
-  SEXP out = PROTECT(Rf_allocArray(RTYPE, info.out_dim));                      \
+  SEXP out_dim = PROTECT(Rf_shallow_duplicate(info.dim));                      \
+  INTEGER(out_dim)[0] = info.index_n;                                          \
+                                                                               \
+  SEXP out = PROTECT(Rf_allocArray(RTYPE, out_dim));                           \
   CTYPE* out_data = DEREF(out);                                                \
                                                                                \
   int size_index = info.p_index[0];                                            \
@@ -49,7 +55,7 @@
     for (int i = 0; i < out_n; ++i, ++out_data) {                              \
       *out_data = NA_VALUE;                                                    \
     }                                                                          \
-    UNPROTECT(1);                                                              \
+    UNPROTECT(2);                                                              \
     return(out);                                                               \
   }                                                                            \
                                                                                \
@@ -81,11 +87,14 @@
     }                                                                          \
   }                                                                            \
                                                                                \
-  UNPROTECT(1);                                                                \
+  UNPROTECT(2);                                                                \
   return out
 
 #define SLICE_SHAPED_COMPACT_SEQ(RTYPE, CTYPE, DEREF, CONST_DEREF)                    \
-  SEXP out = PROTECT(Rf_allocArray(RTYPE, info.out_dim));                             \
+  SEXP out_dim = PROTECT(Rf_shallow_duplicate(info.dim));                             \
+  INTEGER(out_dim)[0] = info.index_n;                                                 \
+                                                                                      \
+  SEXP out = PROTECT(Rf_allocArray(RTYPE, out_dim));                                  \
   CTYPE* out_data = DEREF(out);                                                       \
                                                                                       \
   R_len_t start = info.p_index[0];                                                    \
@@ -117,7 +126,7 @@
     }                                                                                 \
   }                                                                                   \
                                                                                       \
-  UNPROTECT(1);                                                                       \
+  UNPROTECT(2);                                                                       \
   return out
 
 #define SLICE_SHAPED(RTYPE, CTYPE, DEREF, CONST_DEREF, NA_VALUE)          \
@@ -154,7 +163,10 @@ static SEXP raw_slice_shaped(SEXP x, SEXP index, struct vec_slice_shaped_info in
 #undef SLICE_SHAPED_INDEX
 
 #define SLICE_BARRIER_SHAPED_INDEX(RTYPE, GET, SET, NA_VALUE)  \
-  SEXP out = PROTECT(Rf_allocArray(RTYPE, info.out_dim));      \
+  SEXP out_dim = PROTECT(Rf_shallow_duplicate(info.dim));      \
+  INTEGER(out_dim)[0] = info.index_n;                          \
+                                                               \
+  SEXP out = PROTECT(Rf_allocArray(RTYPE, out_dim));           \
                                                                \
   int out_loc = 0;                                             \
                                                                \
@@ -188,11 +200,14 @@ static SEXP raw_slice_shaped(SEXP x, SEXP index, struct vec_slice_shaped_info in
     }                                                          \
   }                                                            \
                                                                \
-  UNPROTECT(1);                                                \
+  UNPROTECT(2);                                                \
   return out
 
 #define SLICE_BARRIER_SHAPED_COMPACT_REP(RTYPE, GET, SET, NA_VALUE)   \
-  SEXP out = PROTECT(Rf_allocArray(RTYPE, info.out_dim));             \
+  SEXP out_dim = PROTECT(Rf_shallow_duplicate(info.dim));             \
+  INTEGER(out_dim)[0] = info.index_n;                                 \
+                                                                      \
+  SEXP out = PROTECT(Rf_allocArray(RTYPE, out_dim));                  \
                                                                       \
   int size_index = info.p_index[0];                                   \
   if (size_index == NA_INTEGER) {                                     \
@@ -200,7 +215,7 @@ static SEXP raw_slice_shaped(SEXP x, SEXP index, struct vec_slice_shaped_info in
     for (int i = 0; i < out_n; ++i) {                                 \
       SET(out, i, NA_VALUE);                                          \
     }                                                                 \
-    UNPROTECT(1);                                                     \
+    UNPROTECT(2);                                                     \
     return(out);                                                      \
   }                                                                   \
                                                                       \
@@ -233,11 +248,14 @@ static SEXP raw_slice_shaped(SEXP x, SEXP index, struct vec_slice_shaped_info in
     }                                                                 \
   }                                                                   \
                                                                       \
-  UNPROTECT(1);                                                       \
+  UNPROTECT(2);                                                       \
   return out
 
 #define SLICE_BARRIER_SHAPED_COMPACT_SEQ(RTYPE, GET, SET)                            \
-  SEXP out = PROTECT(Rf_allocArray(RTYPE, info.out_dim));                            \
+  SEXP out_dim = PROTECT(Rf_shallow_duplicate(info.dim));                            \
+  INTEGER(out_dim)[0] = info.index_n;                                                \
+                                                                                     \
+  SEXP out = PROTECT(Rf_allocArray(RTYPE, out_dim));                                 \
                                                                                      \
   R_len_t start = info.p_index[0];                                                   \
   R_len_t n = info.p_index[1];                                                       \
@@ -269,7 +287,7 @@ static SEXP raw_slice_shaped(SEXP x, SEXP index, struct vec_slice_shaped_info in
     }                                                                                \
   }                                                                                  \
                                                                                      \
-  UNPROTECT(1);                                                                      \
+  UNPROTECT(2);                                                                      \
   return out
 
 #define SLICE_BARRIER_SHAPED(RTYPE, GET, SET, NA_VALUE)          \
@@ -308,38 +326,13 @@ SEXP vec_slice_shaped_base(enum vctrs_type type,
 }
 
 SEXP vec_slice_shaped(enum vctrs_type type, SEXP x, SEXP index) {
+  int n_protect = 0;
 
-  SEXP dim = PROTECT(vec_dim(x));
-
-  struct vec_slice_shaped_info info;
-  info.p_dim = INTEGER_RO(dim);
-  info.p_index = INTEGER_RO(index);
-  info.dim_n = Rf_length(dim);
-  info.shape_n = info.dim_n - 1;
-  info.index_n = vec_subscript_size(index);
-
-  SEXP strides = PROTECT(vec_strides(info.p_dim, info.shape_n));
-  info.p_strides = INTEGER_RO(strides);
-
-  // `out_dim` has the same shape as `x`, with an altered size
-  // corresponding to the length of the `index`
-  info.out_dim = PROTECT(Rf_shallow_duplicate(dim));
-  INTEGER(info.out_dim)[0] = info.index_n;
-
-  // Initialize `shape_index` to 0
-  SEXP shape_index = PROTECT(Rf_allocVector(INTSXP, info.shape_n));
-  info.p_shape_index = INTEGER(shape_index);
-  for (int i = 0; i < info.shape_n; ++i) {
-    info.p_shape_index[i] = 0;
-  }
-
-  info.shape_elem_n = 1;
-  for (int i = 1; i < info.dim_n; ++i) {
-    info.shape_elem_n *= info.p_dim[i];
-  }
+  struct vec_slice_shaped_info info = new_vec_slice_shaped_info(x, index);
+  PROTECT_SLICE_SHAPED_INFO(&info, &n_protect);
 
   SEXP out = vec_slice_shaped_base(type, x, index, info);
 
-  UNPROTECT(4);
+  UNPROTECT(n_protect);
   return out;
 }
