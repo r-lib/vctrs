@@ -87,25 +87,18 @@ vec_as_index <- function(i, n, names = NULL) {
 
 #' Expand the length of a vector
 #'
-#' This is a special case of [rep()] for the special case of integer `times`
-#' and `each` values, and works along size, rather than length.
+#' @description
+#' \Sexpr[results=rd, stage=render]{vctrs:::lifecycle("soft-deprecated")}
+#'
+#' `vec_repeat()` has been replaced with [vec_rep()] and [vec_rep_each()] and is
+#' soft-deprecated as of vctrs 0.3.0.
 #'
 #' @param x A vector.
 #' @param each Number of times to repeat each element of `x`.
 #' @param times Number of times to repeat the whole vector of `x`.
 #' @return A vector the same type as `x` with size `vec_size(x) * times * each`.
+#' @keywords internal
 #' @export
-#' @examples
-#' # each repeats within
-#' vec_repeat(1:3, each = 2)
-#' # times repeats whole thing
-#' vec_repeat(1:3, times = 2)
-#'
-#' df <- data.frame(x = 1:2, y = 1:2)
-#' # rep() repeats columns of data frame, and returns list:
-#' rep(df, each = 2)
-#' # vec_repeat() repeats rows, and returns same data.frame
-#' vec_repeat(df, 2)
 vec_repeat <- function(x, each = 1L, times = 1L) {
   vec_assert(each, size = 1L)
   vec_assert(times, size = 1L)
