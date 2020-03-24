@@ -1,0 +1,37 @@
+
+`vec_rep()` validates `times`
+=============================
+
+> vec_rep(1, "x")
+Error: Lossy cast from `times` <character> to <integer>.
+* Locations: 1
+
+> vec_rep(1, c(1, 2))
+Error: `times` must be a single number.
+
+> vec_rep(1, -1)
+Error: `times` must be a positive number.
+
+> vec_rep(1, NA_integer_)
+Error: `times` can't be missing.
+
+
+`vec_rep_each()` validates `times`
+==================================
+
+> vec_rep_each(1, "x")
+Error: Lossy cast from `times` <character> to <integer>.
+* Locations: 1
+
+> vec_rep_each(1, -1)
+Error: `times` must be a vector of positive numbers. Location 1 is negative.
+
+> vec_rep_each(c(1, 2), c(1, -1))
+Error: `times` must be a vector of positive numbers. Location 2 is negative.
+
+> vec_rep_each(1, NA_integer_)
+Error: `times` can't be missing. Location 1 is missing.
+
+> vec_rep_each(c(1, 2), c(1, NA_integer_))
+Error: `times` can't be missing. Location 2 is missing.
+
