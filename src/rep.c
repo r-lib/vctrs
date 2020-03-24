@@ -7,7 +7,7 @@ static struct vctrs_arg args_x_;
 static struct vctrs_arg* const args_times = &args_times_;
 static struct vctrs_arg* const args_x = &args_x_;
 
-static inline void stop_rep_size_oob(R_xlen_t size);
+static inline void stop_rep_size_oob(long long size);
 static inline void stop_rep_times_size();
 static inline void stop_rep_times_negative();
 static inline void stop_rep_times_missing();
@@ -27,7 +27,7 @@ static SEXP vec_rep(SEXP x, R_len_t times) {
 
   const R_len_t x_size = vec_size(x);
 
-  const R_xlen_t temp_size = (R_xlen_t) x_size * times;
+  const long long temp_size = (long long) x_size * times;
   if (temp_size > INT_MAX) {
     stop_rep_size_oob(temp_size);
   }
@@ -80,7 +80,7 @@ static SEXP vec_rep_each_uniform(SEXP x, R_len_t times) {
 
   const R_len_t x_size = vec_size(x);
 
-  const R_xlen_t temp_size = (R_xlen_t) x_size * times;
+  const long long temp_size = (long long) x_size * times;
   if (temp_size > INT_MAX) {
     stop_rep_size_oob(temp_size);
   }
@@ -113,7 +113,7 @@ static SEXP vec_rep_each_impl(SEXP x, SEXP times, const R_len_t times_size) {
 
   const int* p_times = INTEGER_RO(times);
 
-  R_xlen_t temp_size = 0;
+  long long temp_size = 0;
   for (R_len_t i = 0; i < times_size; ++i) {
     const int elt_times = p_times[i];
 
@@ -178,8 +178,8 @@ SEXP vctrs_rep_each(SEXP x, SEXP times) {
 
 // -----------------------------------------------------------------------------
 
-static inline void stop_rep_size_oob(R_xlen_t size) {
-  Rf_errorcall(R_NilValue, "Requested output size must be less than %i, not %td.", INT_MAX, size);
+static inline void stop_rep_size_oob(long long size) {
+  Rf_errorcall(R_NilValue, "Requested output size must be less than %i, not %lli.", INT_MAX, size);
 }
 
 static inline void stop_rep_times_size() {
