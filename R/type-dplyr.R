@@ -49,3 +49,36 @@ gdf_ptype2 <- function(x, y, ...) {
 
   dplyr::grouped_df(common, vars, drop = TRUE)
 }
+
+
+# `vec_cast()` -------------------------------------------------------
+
+vec_cast.grouped_df <- function(x, to, ...) {
+  UseMethod("vec_cast.grouped_df")
+}
+
+vec_cast.grouped_df.grouped_df <- function(x, to, ...) {
+  gdf_cast(x, to, ...)
+}
+
+vec_cast.grouped_df.data.frame <- function(x, to, ...) {
+  gdf_cast(x, to, ...)
+}
+vec_cast.data.frame.grouped_df <- function(x, to, ...) {
+  df_cast(x, to, ...)
+}
+
+vec_cast.grouped_df.tbl_df <- function(x, to, ...) {
+  gdf_cast(x, to, ...)
+}
+vec_cast.tbl_df.grouped_df <- function(x, to, ...) {
+  tib_cast(x, to, ...)
+}
+
+gdf_cast <- function(x, to, ...) {
+  check_drop(to)
+
+  df <- df_cast(x, to, ...)
+  vars <- dplyr::group_vars(to)
+  dplyr::grouped_df(df, vars, drop = TRUE)
+}

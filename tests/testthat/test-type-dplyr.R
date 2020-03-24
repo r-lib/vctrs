@@ -29,3 +29,40 @@ test_that("the common type of grouped tibbles includes the union of grouping var
     vec_ptype(dplyr::group_by(mtcars, cyl, am, vs))
   )
 })
+
+test_that("can cast to and from `grouped_df`", {
+  gdf <- dplyr::group_by(mtcars, cyl)
+  input <- mtcars[10]
+  cast_gdf <- dplyr::group_by(vec_cast(mtcars[10], mtcars), cyl)
+
+  expect_error(
+    vec_cast(input, dplyr::group_by(mtcars["cyl"], cyl)),
+    class = "vctrs_error_cast_lossy"
+  )
+
+  expect_identical(
+    vec_cast(input, gdf),
+    cast_gdf
+  )
+  expect_identical(
+    vec_cast(gdf, mtcars),
+    unrownames(mtcars)
+  )
+
+  expect_identical(
+    vec_cast(tibble::as_tibble(input), gdf),
+    unrownames(cast_gdf)
+  )
+  tib <- tibble::as_tibble(mtcars)
+  expect_identical(
+    unrownames(vec_cast(gdf, tib)),
+    tib
+  )
+})
+
+test_that("casting to `grouped_df` doesn't require grouping variables", {
+  expect_identical(
+    vec_cast(mtcars[10], dplyr::group_by(mtcars, cyl)),
+    dplyr::group_by(vec_cast(mtcars[10], mtcars), cyl)
+  )
+})
