@@ -10,16 +10,15 @@ vec_ptype2.tbl_df <- function(x, y, ...) {
   UseMethod("vec_ptype2.tbl_df")
 }
 
-vec_ptype2.tbl_df.data.frame <- function(x, y, ..., x_arg = "", y_arg = "") {
-  .Call(
-    vctrs_tib_ptype2,
-    x = x,
-    y = y,
-    x_arg = x_arg,
-    y_arg = y_arg
-  )
+vec_ptype2.tbl_df.data.frame <- function(x, y, ...) {
+  tib_ptype2(x, y, ...)
 }
-vec_ptype2.data.frame.tbl_df <- function(x, y, ..., x_arg = "", y_arg = "") {
+vec_ptype2.data.frame.tbl_df <- function(x, y, ...) {
+  tib_ptype2(x, y, ...)
+}
+
+# Returns a `tbl_df` no matter the input classes
+tib_ptype2 <- function(x, y, ..., x_arg = "", y_arg = "") {
   .Call(
     vctrs_tib_ptype2,
     x = x,
