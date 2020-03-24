@@ -61,6 +61,10 @@ test_that("`vec_rep_each()` validates `times`", {
   expect_error(vec_rep_each(c(1, 2), c(1, NA_integer_)))
 })
 
+test_that("`vec_rep_each()` uses recyclying errors", {
+  expect_error(vec_rep_each(1:2, 1:3), class = "vctrs_error_recycle_incompatible_size")
+})
+
 # ------------------------------------------------------------------------------
 
 test_that("rep functions generate informative error messages", {
@@ -77,5 +81,8 @@ test_that("rep functions generate informative error messages", {
     vec_rep_each(c(1, 2), c(1, -1))
     vec_rep_each(1, NA_integer_)
     vec_rep_each(c(1, 2), c(1, NA_integer_))
+
+    "# `vec_rep_each()` uses recyclying errors"
+    vec_rep_each(1:2, 1:3)
   })
 })
