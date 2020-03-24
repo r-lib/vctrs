@@ -29,14 +29,7 @@
       }                                                                \
     }                                                                  \
                                                                        \
-    /* Update shape_index */                                           \
-    for (int j = 0; j < p_info->shape_n; ++j) {                        \
-      p_info->p_shape_index[j]++;                                      \
-      if (p_info->p_shape_index[j] < p_info->p_dim[j + 1]) {           \
-        break;                                                         \
-      }                                                                \
-      p_info->p_shape_index[j] = 0;                                    \
-    }                                                                  \
+    vec_shape_index_increment(p_info);                                 \
   }                                                                    \
                                                                        \
   UNPROTECT(2);                                                        \
@@ -77,14 +70,7 @@
       *out_data = x_data[loc];                                                 \
     }                                                                          \
                                                                                \
-    /* Update shape_index */                                                   \
-    for (int j = 0; j < p_info->shape_n; ++j) {                                \
-      p_info->p_shape_index[j]++;                                              \
-      if (p_info->p_shape_index[j] < p_info->p_dim[j + 1]) {                   \
-        break;                                                                 \
-      }                                                                        \
-      p_info->p_shape_index[j] = 0;                                            \
-    }                                                                          \
+    vec_shape_index_increment(p_info);                                         \
   }                                                                            \
                                                                                \
   UNPROTECT(2);                                                                \
@@ -116,14 +102,7 @@
       *out_data = x_data[loc];                                                        \
     }                                                                                 \
                                                                                       \
-    /* Update shape_index */                                                          \
-    for (int j = 0; j < p_info->shape_n; ++j) {                                       \
-      p_info->p_shape_index[j]++;                                                     \
-      if (p_info->p_shape_index[j] < p_info->p_dim[j + 1]) {                          \
-        break;                                                                        \
-      }                                                                               \
-      p_info->p_shape_index[j] = 0;                                                   \
-    }                                                                                 \
+    vec_shape_index_increment(p_info);                                                \
   }                                                                                   \
                                                                                       \
   UNPROTECT(2);                                                                       \
@@ -190,14 +169,7 @@ static SEXP raw_slice_shaped(SEXP x, SEXP index, struct strides_info* p_info) {
       }                                                        \
     }                                                          \
                                                                \
-    /* Update shape_index */                                   \
-    for (int j = 0; j < p_info->shape_n; ++j) {                \
-      p_info->p_shape_index[j]++;                              \
-      if (p_info->p_shape_index[j] < p_info->p_dim[j + 1]) {   \
-        break;                                                 \
-      }                                                        \
-      p_info->p_shape_index[j] = 0;                            \
-    }                                                          \
+    vec_shape_index_increment(p_info);                         \
   }                                                            \
                                                                \
   UNPROTECT(2);                                                \
@@ -238,14 +210,7 @@ static SEXP raw_slice_shaped(SEXP x, SEXP index, struct strides_info* p_info) {
       SET(out, out_loc, elt);                                         \
     }                                                                 \
                                                                       \
-    /* Update shape_index */                                          \
-    for (int j = 0; j < p_info->shape_n; ++j) {                       \
-      p_info->p_shape_index[j]++;                                     \
-      if (p_info->p_shape_index[j] < p_info->p_dim[j + 1]) {          \
-        break;                                                        \
-      }                                                               \
-      p_info->p_shape_index[j] = 0;                                   \
-    }                                                                 \
+    vec_shape_index_increment(p_info);                                \
   }                                                                   \
                                                                       \
   UNPROTECT(2);                                                       \
@@ -277,14 +242,7 @@ static SEXP raw_slice_shaped(SEXP x, SEXP index, struct strides_info* p_info) {
       SET(out, out_loc, elt);                                                        \
     }                                                                                \
                                                                                      \
-    /* Update shape_index */                                                         \
-    for (int j = 0; j < p_info->shape_n; ++j) {                                      \
-      p_info->p_shape_index[j]++;                                                    \
-      if (p_info->p_shape_index[j] < p_info->p_dim[j + 1]) {                         \
-        break;                                                                       \
-      }                                                                              \
-      p_info->p_shape_index[j] = 0;                                                  \
-    }                                                                                \
+    vec_shape_index_increment(p_info);                                               \
   }                                                                                  \
                                                                                      \
   UNPROTECT(2);                                                                      \

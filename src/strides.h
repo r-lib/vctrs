@@ -105,6 +105,22 @@ static inline int vec_strided_loc(const int size_index,
   return loc;
 }
 
+// Increment the `shape_index` value. This iterates through the array like:
+// [size, 0, 0]
+// [size, 1, 0]
+// [size, 0, 1]
+// [size, 1, 1]
+// ...
+static inline void vec_shape_index_increment(struct strides_info* p_info) {
+  for (int j = 0; j < p_info->shape_n; ++j) {
+    p_info->p_shape_index[j]++;
+    if (p_info->p_shape_index[j] < p_info->p_dim[j + 1]) {
+      break;
+    }
+    p_info->p_shape_index[j] = 0;
+  }
+}
+
 static inline struct strides_info new_strides_info(SEXP x, SEXP index) {
   SEXP dim = PROTECT(vec_dim(x));
   const int* p_dim = INTEGER_RO(dim);
