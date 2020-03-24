@@ -125,7 +125,7 @@ static SEXP vec_rep_each_impl(SEXP x, SEXP times, const R_len_t times_size) {
       }
     }
 
-    temp_size += p_times[i];
+    temp_size += elt_times;
   }
 
   if (temp_size > INT_MAX) {
