@@ -100,6 +100,11 @@ vec_as_index <- function(i, n, names = NULL) {
 #' @keywords internal
 #' @export
 vec_repeat <- function(x, each = 1L, times = 1L) {
+  signal_soft_deprecated(paste_line(
+    "`vec_repeat()` is deprecated as of vctrs 0.3.0.",
+    "Please use either `vec_rep()` or `vec_rep_each()` instead."
+  ))
+
   vec_assert(each, size = 1L)
   vec_assert(times, size = 1L)
 
