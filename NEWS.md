@@ -1,6 +1,9 @@
 
 # vctrs (development version)
 
+* The `is.na<-()` method for `vctrs_vctr` now supports numeric and
+  character subscripts to indicate where to insert missing values (#947). 
+
 * `vec_rbind()` and `vec_c()` with data frame inputs now consistently
   preserve the names of list-columns, df-columns, and matrix-columns
   (#689).

@@ -125,12 +125,25 @@ test_that("equality functions remapped", {
 
 test_that("is.na<-() supported", {
   x <- new_vctr(1:4)
-
   is.na(x) <- c(FALSE, FALSE, TRUE, NA)
   expect_identical(x, new_vctr(c(1:2, NA, 4L)))
 
+  x <- new_vctr(1:4)
   is.na(x) <- TRUE
   expect_identical(x, new_vctr(rep(NA_integer_, 4)))
+
+  x <- new_vctr(1:4)
+  is.na(x) <- c(2, 3)
+  expect_identical(x, new_vctr(c(1L, NA, NA, 4L)))
+
+  names <- c("a", "b", "c", "d")
+  x <- set_names(new_vctr(1:4), names)
+  is.na(x) <- c("d", "b", "b")
+  expect_identical(x, set_names(new_vctr(c(1L, NA, 3L, NA)), names))
+
+  x <- new_vctr(1:4)
+  expect_error(is.na(x) <- "x", "character names to index an unnamed vector")
+  expect_error(is.na(x) <- 5, class = "vctrs_error_subscript_oob")
 })
 
 test_that("comparison functions remapped", {
