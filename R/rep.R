@@ -7,7 +7,8 @@
 #'
 #' @details
 #' `vec_rep()` and `vec_rep_each()` work along the size of `x`, rather than
-#' its length.
+#' its length. For data frames, this means that rows are repeated rather
+#' than columns.
 #'
 #' @param x A vector.
 #' @param times

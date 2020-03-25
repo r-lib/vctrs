@@ -34,7 +34,8 @@ For \code{vec_rep_each()}, a vector the same type as \code{x} with size
 }
 \details{
 \code{vec_rep()} and \code{vec_rep_each()} work along the size of \code{x}, rather than
-its length.
+its length. For data frames, this means that rows are repeated rather
+than columns.
 }
 \examples{
 # Repeat the entire vector
