@@ -1,10 +1,11 @@
 
 # vctrs (development version)
 
-* Double-dispatch methods for `vec_ptype2()` are no longer inherited.
-  Class implementers must implement one set of methods for each
-  compatible class. This requires a bit more work but is safer and
-  removes ambiguities in the dispatch.
+* Double-dispatch methods for `vec_ptype2()` are no longer inherited
+  (#710). Class implementers must implement one set of methods for
+  each compatible class. This requires a bit more work but is
+  safer. See the S3 dispatch section of `?vec_ptype2` for more
+  information.
 
 * Double-dispatch methods for `vec_ptype2()` are now easier to
   implement. vctrs takes care of implementing the default and
