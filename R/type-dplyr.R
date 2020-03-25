@@ -3,7 +3,9 @@
 
 vec_restore.grouped_df <- function(x, to, ...) {
   check_drop(to)
-  dplyr::grouped_df(x, dplyr::group_vars(to), drop = TRUE)
+
+  vars <- intersect(names(x), dplyr::group_vars(to))
+  dplyr::grouped_df(x, vars, drop = TRUE)
 }
 
 check_drop <- function(x) {
