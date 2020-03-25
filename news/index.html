@@ -155,6 +155,7 @@
 <a href="#vctrs-development-version" class="anchor"></a>vctrs (development version)<small> Unreleased </small>
 </h1>
 <ul>
+<li><p>The <code>is.na&lt;-()</code> method for <code>vctrs_vctr</code> now supports numeric and character subscripts to indicate where to insert missing values (<a href='https://github.com/r-lib/vctrs/issues/947'>#947</a>).</p></li>
 <li><p><code><a href="../reference/vec_bind.html">vec_rbind()</a></code> and <code><a href="../reference/vec_c.html">vec_c()</a></code> with data frame inputs now consistently preserve the names of list-columns, df-columns, and matrix-columns (<a href='https://github.com/r-lib/vctrs/issues/689'>#689</a>).</p></li>
 <li><p>The internal version of <code><a href="../reference/vec_slice.html">vec_assign()</a></code> now has support for assigning names and inner names. For data frames, the names are assigned recursively.</p></li>
 <li><p><code><a href="../reference/vec_cast.html">vec_restore()</a></code> no longer restores row names if the target is not a data frame. This fixes an issue where <code>POSIXlt</code> objects would carry a <code>row.names</code> attribute after a proxy/restore roundtrip.</p></li>
