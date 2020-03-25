@@ -191,11 +191,7 @@ One of the main goals of vctrs is to put coercion and casting on a robust theore
 Both generics use __[double dispatch](https://en.wikipedia.org/wiki/Double_dispatch)__ which means that the implementation is selected based on the class of two arguments, not just one. S3 does not natively support double dispatch, but we can implement with a trick: doing single dispatch twice. In practice, this means you end up with method names with two classes, like `vec_ptype2.foo.bar()`, and you need a little boilerplate to get started. The key idea that makes double dispatch work without any modifications to S3 is that a function (like `vec_ptype2.foo()`) can be both an S3 generic and an S3 method.
 
 ```{r}
-vec_ptype2.MYCLASS <- function(x, y, ...) UseMethod("vec_ptype2.MYCLASS", y)
-vec_ptype2.MYCLASS.default <- function(x, y, ..., x_arg = "", y_arg = "") {
-  vec_default_ptype2(x, y, x_arg = x_arg, y_arg = y_arg)
-}
-
+vec_ptype2.MYCLASS <- function(x, y, ...) UseMethod("vec_ptype2.MYCLASS")
 vec_cast.MYCLASS <- function(x, to, ...) UseMethod("vec_cast.MYCLASS")
 vec_cast.MYCLASS.default <- function(x, to, ...) vec_default_cast(x, to)
 ```
@@ -207,10 +203,7 @@ We'll discuss what this boilerplate does in the upcoming sections; just remember
 We'll make our percent class coercible back and forth with double vectors. I'll start with the boilerplate for `vec_ptype2()`:
 
 ```{r}
-vec_ptype2.vctrs_percent <- function(x, y, ...) UseMethod("vec_ptype2.vctrs_percent", y)
-vec_ptype2.vctrs_percent.default <- function(x, y, ..., x_arg = "", y_arg = "") {
-  vec_default_ptype2(x, y, x_arg = x_arg, y_arg = y_arg)
-}
+vec_ptype2.vctrs_percent <- function(x, y, ...) UseMethod("vec_ptype2.vctrs_percent")
 ```
 
 ```{r, include = FALSE}
@@ -369,10 +362,7 @@ x
 Now consider `vec_cast()` and `vec_ptype2()`. I start with the standard recipes:
 
 ```{r}
-vec_ptype2.vctrs_decimal <- function(x, y, ...) UseMethod("vec_ptype2.vctrs_decimal", y)
-vec_ptype2.vctrs_decimal.default <- function(x, y, ..., x_arg = "", y_arg = "") {
-  vec_default_ptype2(x, y, x_arg = x_arg, y_arg = y_arg)
-}
+vec_ptype2.vctrs_decimal <- function(x, y, ...) UseMethod("vec_ptype2.vctrs_decimal")
 
 vec_cast.vctrs_decimal <- function(x, to, ...) UseMethod("vec_cast.vctrs_decimal")
 vec_cast.vctrs_decimal.default <- function(x, to, ...) vec_default_cast(x, to)
@@ -564,10 +554,7 @@ str(x)
 For `rational`, `vec_ptype2()` and `vec_cast()` follow the same pattern as  `percent()`. I allow coercion from integer and to doubles.
 
 ```{r}
-vec_ptype2.vctrs_rational <- function(x, y, ...) UseMethod("vec_ptype2.vctrs_rational", y)
-vec_ptype2.vctrs_rational.default <- function(x, y, ..., x_arg = "", y_arg = "") {
-  vec_default_ptype2(x, y, x_arg = x_arg, y_arg = y_arg)
-}
+vec_ptype2.vctrs_rational <- function(x, y, ...) UseMethod("vec_ptype2.vctrs_rational")
 vec_ptype2.vctrs_rational.vctrs_rational <- function(x, y, ...) new_rational()
 vec_ptype2.vctrs_rational.integer <- function(x, y, ...) new_rational()
 vec_ptype2.integer.vctrs_rational <- function(x, y, ...) new_rational()
@@ -1080,7 +1067,7 @@ The greatest boilerplate is needed for `vec_ptype2.pizza_percent()` because it i
 #' @export vec_ptype2.pizza_percent   # export as generic
 #' @rdname pizza-vctrs                # document (internally)
 vec_ptype2.pizza_percent <- function(x, y, ...) {
-  UseMethod("vec_ptype2.pizza_percent", y) 
+  UseMethod("vec_ptype2.pizza_percent")
 }
 ```
 
@@ -1099,13 +1086,6 @@ export(vec_ptype2.pizza_percent)
 Now we finish the work around `vec_ptype2()` by providing all needed methods. Each method has both a `@method` and an `@export` directive. These are purely methods so they don't need to be documented in an `.Rd` file.
 
 ```{r}
-#' @method vec_ptype2.vctrs_percent default
-#' @export                                 
-vec_ptype2.vctrs_percent.default <- function(x, y,
-                                             ...,
-                                             x_arg = "", y_arg = "") {
-  vec_default_ptype2(x, y, x_arg = x_arg, y_arg = y_arg)
-}
 #' @method vec_ptype2.vctrs_percent vctrs_percent
 #' @export                                       
 vec_ptype2.vctrs_percent.vctrs_percent <- function(x, y, ...) new_percent()
