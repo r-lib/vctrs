@@ -17,6 +17,24 @@ static inline void stop_rep_each_times_missing(R_len_t i);
 
 // -----------------------------------------------------------------------------
 
+static SEXP vec_rep(SEXP x, R_len_t times);
+
+// [[ register() ]]
+SEXP vctrs_rep(SEXP x, SEXP times) {
+  times = PROTECT(vec_cast(times, vctrs_shared_empty_int, args_times, args_empty));
+
+  if (vec_size(times) != 1) {
+    stop_rep_times_size();
+  }
+
+  const R_len_t times_ = r_int_get(times, 0);
+
+  SEXP out = vec_rep(x, times_);
+
+  UNPROTECT(1);
+  return out;
+}
+
 static SEXP vec_rep(SEXP x, R_len_t times) {
   if (times < 0) {
     if (times == NA_INTEGER) {
@@ -53,23 +71,35 @@ static SEXP vec_rep(SEXP x, R_len_t times) {
   return out;
 }
 
+// -----------------------------------------------------------------------------
+
+static SEXP vec_rep_each(SEXP x, SEXP times);
+
 // [[ register() ]]
-SEXP vctrs_rep(SEXP x, SEXP times) {
+SEXP vctrs_rep_each(SEXP x, SEXP times) {
+  return vec_rep_each(x, times);
+}
+
+static SEXP vec_rep_each_uniform(SEXP x, R_len_t times);
+static SEXP vec_rep_each_impl(SEXP x, SEXP times, const R_len_t times_size);
+
+static SEXP vec_rep_each(SEXP x, SEXP times) {
   times = PROTECT(vec_cast(times, vctrs_shared_empty_int, args_times, args_empty));
 
-  if (vec_size(times) != 1) {
-    stop_rep_times_size();
+  const R_len_t times_size = vec_size(times);
+
+  SEXP out;
+
+  if (times_size == 1) {
+    const R_len_t times_ = r_int_get(times, 0);
+    out = vec_rep_each_uniform(x, times_);
+  } else {
+    out = vec_rep_each_impl(x, times, times_size);
   }
-
-  const R_len_t times_ = r_int_get(times, 0);
-
-  SEXP out = vec_rep(x, times_);
 
   UNPROTECT(1);
   return out;
 }
-
-// -----------------------------------------------------------------------------
 
 static SEXP vec_rep_each_uniform(SEXP x, R_len_t times) {
   if (times < 0) {
@@ -155,29 +185,6 @@ static SEXP vec_rep_each_impl(SEXP x, SEXP times, const R_len_t times_size) {
 
   UNPROTECT(1);
   return out;
-}
-
-static SEXP vec_rep_each(SEXP x, SEXP times) {
-  times = PROTECT(vec_cast(times, vctrs_shared_empty_int, args_times, args_empty));
-
-  const R_len_t times_size = vec_size(times);
-
-  SEXP out;
-
-  if (times_size == 1) {
-    const R_len_t times_ = r_int_get(times, 0);
-    out = vec_rep_each_uniform(x, times_);
-  } else {
-    out = vec_rep_each_impl(x, times, times_size);
-  }
-
-  UNPROTECT(1);
-  return out;
-}
-
-// [[ register() ]]
-SEXP vctrs_rep_each(SEXP x, SEXP times) {
-  return vec_rep_each(x, times);
 }
 
 // -----------------------------------------------------------------------------
