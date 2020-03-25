@@ -7,6 +7,10 @@
   dispatch, for instance it is no longer needed to supply a second
   argument as in `UseMethod("vec_ptype2.mytype", y)`.
 
+  One consequence is that `NextMethod()` is now completely
+  unsupported. This is for the best as it never worked correctly in a
+  double-dispatch setting. Parent methods must now be called manually.
+
 * New `vec_rep()` and `vec_rep_each()` for repeating an entire vector
   and elements of a vector, respectively. These two functions provide
   a clearer interface for the functionality of `vec_repeat()`, which

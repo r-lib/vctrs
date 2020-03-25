@@ -67,8 +67,8 @@ static SEXP get_ptype2_method(SEXP x,
     class = Rf_getAttrib(x, R_ClassSymbol);
   }
 
-  // This also handles gremlins objects where `x` is an OBJECT(), but
-  // the class is NULL
+  // This handles unclassed objects as well as gremlins objects where
+  // `x` is an OBJECT(), but the class is NULL
   if (class == R_NilValue) {
     class = s3_bare_class(x);
   }

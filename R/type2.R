@@ -20,12 +20,11 @@
 #' `vec_ptype2()` dispatches on both arguments. This is implemented by having
 #' methods of `vec_ptype2()`, e.g. `vec_ptype2.integer()` also be S3 generics,
 #' which call e.g. `vec_ptype2.integer.double()`. `vec_ptype2.x.y()` must
-#' return the same value as `vec_ptype2.y.x()`; this is currently not enforced,
-#' but should be tested.
+#' return the same value as `vec_ptype2.y.x()`; this is not enforced
+#' for reasons of efficiency, but should be tested.
 #'
-#' Whenever you implement a `vec_ptype2.new_class()` generic/method,
-#' make sure to always provide `vec_ptype2.new_class.default()`. It
-#' should normally call `vec_default_ptype2()`.
+#' Because of the way double dispatch is implemented, `NextMethod()`
+#' does not work inside `vec_ptype2()` methods.
 #'
 #' See `vignette("s3-vector")` for full details.
 #' @keywords internal
