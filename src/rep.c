@@ -1,6 +1,5 @@
 #include "vctrs.h"
 #include "utils.h"
-#include <inttypes.h> // For PRId64
 
 // Initialised at load time
 static struct vctrs_arg args_times_;
