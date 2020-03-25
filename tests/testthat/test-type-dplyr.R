@@ -1,4 +1,6 @@
 
+# `grouped_df` -------------------------------------------------------
+
 test_that("grouped-df is proxied and restored", {
   gdf <- dplyr::group_by(mtcars, cyl)
 
@@ -88,5 +90,55 @@ test_that("can cbind grouped data frames", {
   expect_identical(
     vec_cbind(gdf, df),
     tibble::as_tibble(mtcars)[c(1:9, 11, 10)]
+  )
+})
+
+
+# `rowwise` ----------------------------------------------------------
+
+test_that("rowwise can be proxied and restored", {
+  rww <- dplyr::rowwise(mtcars)
+
+  expect_identical(vec_proxy(rww), rww)
+  expect_identical(vec_restore(unrownames(mtcars), rww), rww)
+
+  expect_identical(vec_ptype(rww), rww[0, ])
+})
+
+test_that("can take the common type of rowwise tibbles and tibbles", {
+  rww <- dplyr::rowwise(mtcars)
+  expect_identical(vec_ptype2(rww, data.frame()), vec_ptype(rww))
+  expect_identical(vec_ptype2(data.frame(), rww), vec_ptype(rww))
+  expect_identical(vec_ptype2(rww, tibble()), vec_ptype(rww))
+  expect_identical(vec_ptype2(tibble(), rww), vec_ptype(rww))
+})
+
+test_that("can cast to and from `rowwise_df`", {
+  rww <- dplyr::rowwise(mtcars)
+  input <- mtcars[10]
+  cast_rww <- dplyr::rowwise(vec_cast(mtcars[10], mtcars))
+
+  expect_error(
+    vec_cast(input, dplyr::rowwise(mtcars["cyl"])),
+    class = "vctrs_error_cast_lossy"
+  )
+
+  expect_identical(
+    vec_cast(input, rww),
+    cast_rww
+  )
+  expect_identical(
+    vec_cast(rww, mtcars),
+    unrownames(mtcars)
+  )
+
+  expect_identical(
+    vec_cast(tibble::as_tibble(input), rww),
+    unrownames(cast_rww)
+  )
+  tib <- tibble::as_tibble(mtcars)
+  expect_identical(
+    unrownames(vec_cast(rww, tib)),
+    tib
   )
 })

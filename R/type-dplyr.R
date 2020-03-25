@@ -1,6 +1,9 @@
 
 # All methods in this file are conditionally registered in .onLoad()
 
+
+### `grouped_df` -----------------------------------------------------
+
 vec_restore.grouped_df <- function(x, to, ...) {
   vars <- intersect(names(x), dplyr::group_vars(to))
   drop <- dplyr::group_by_drop_default(to)
@@ -76,4 +79,69 @@ gdf_cast <- function(x, to, ...) {
   drop <- dplyr::group_by_drop_default(to)
 
   dplyr::grouped_df(df, vars, drop = drop)
+}
+
+
+### `rowwise` --------------------------------------------------------
+
+vec_restore.rowwise_df <- function(x, to, ...) {
+  dplyr::rowwise(x)
+}
+
+
+# `vec_ptype2()` -----------------------------------------------------
+
+vec_ptype2.rowwise_df <- function(x, y, ...) {
+  UseMethod("vec_ptype2.rowwise_df", y)
+}
+
+vec_ptype2.rowwise_df.rowwise_df <- function(x, y, ...) {
+  rww_ptype2(x, y, ...)
+}
+
+vec_ptype2.rowwise_df.data.frame <- function(x, y, ...) {
+  rww_ptype2(x, y, ...)
+}
+vec_ptype2.data.frame.rowwise_df <- function(x, y, ...) {
+  rww_ptype2(x, y, ...)
+}
+
+vec_ptype2.rowwise_df.tbl_df <- function(x, y, ...) {
+  rww_ptype2(x, y, ...)
+}
+vec_ptype2.tbl_df.rowwise_df <- function(x, y, ...) {
+  rww_ptype2(x, y, ...)
+}
+
+rww_ptype2 <- function(x, y, ...) {
+  dplyr::rowwise(df_ptype2(x, y, ...))
+}
+
+
+# `vec_cast()` -------------------------------------------------------
+
+vec_cast.rowwise_df <- function(x, to, ...) {
+  UseMethod("vec_cast.rowwise_df")
+}
+
+vec_cast.rowwise_df.rowwise_df <- function(x, to, ...) {
+  rww_cast(x, to, ...)
+}
+
+vec_cast.rowwise_df.data.frame <- function(x, to, ...) {
+  rww_cast(x, to, ...)
+}
+vec_cast.data.frame.rowwise_df <- function(x, to, ...) {
+  df_cast(x, to, ...)
+}
+
+vec_cast.rowwise_df.tbl_df <- function(x, to, ...) {
+  rww_cast(x, to, ...)
+}
+vec_cast.tbl_df.rowwise_df <- function(x, to, ...) {
+  tib_cast(x, to, ...)
+}
+
+rww_cast <- function(x, to, ...) {
+  dplyr::rowwise(df_cast(x, to, ...))
 }
