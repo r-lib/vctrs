@@ -36,3 +36,11 @@ test_that("can't supply unknown option", {
     "`foo` must be one of \"a\", \"b\", \"c\" or \"d\""
   )
 })
+
+# has_dim ------------------------------------------------------------------
+
+test_that("`has_dim()` doesn't partial match on the `dim` attribute (#948)", {
+  x <- structure(1, dimB = 1)
+  expect_false(has_dim(x))
+})
+

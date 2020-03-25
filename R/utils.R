@@ -77,7 +77,7 @@ paste_line <- function (...) {
 }
 
 has_dim <- function(x) {
-  !is.null(attr(x, "dim"))
+  .Call(vctrs_has_dim, x)
 }
 
 # Experimental

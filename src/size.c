@@ -179,6 +179,12 @@ R_len_t rcrd_size(SEXP x) {
   }
 }
 
+// [[ register() ]]
+SEXP vctrs_has_dim(SEXP x) {
+  return Rf_ScalarLogical(has_dim(x));
+}
+
+// [[ include("vctrs.h") ]]
 bool has_dim(SEXP x) {
   return ATTRIB(x) != R_NilValue && Rf_getAttrib(x, R_DimSymbol) != R_NilValue;
 }
