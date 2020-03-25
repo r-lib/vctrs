@@ -70,7 +70,7 @@ static SEXP get_ptype2_method(SEXP x,
   // This also handles gremlins objects where `x` is an OBJECT(), but
   // the class is NULL
   if (class == R_NilValue) {
-    class = s3_dispatch_class(x);
+    class = s3_bare_class(x);
   }
   PROTECT(class);
 

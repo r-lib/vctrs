@@ -362,7 +362,7 @@ SEXP s3_find_method(const char* generic, SEXP x, SEXP table) {
 }
 
 // [[ include("utils.h") ]]
-SEXP s3_dispatch_class(SEXP x) {
+SEXP s3_bare_class(SEXP x) {
   switch (TYPEOF(x)) {
   case LGLSXP: return chrs_logical;
   case INTSXP: return chrs_integer;
