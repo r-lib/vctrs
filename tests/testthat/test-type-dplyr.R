@@ -11,10 +11,8 @@ test_that("grouped-df is proxied and restored", {
   gdf <- dplyr::group_by(mtcars, cyl, am, vs)
   expect_identical(gdf[0, ], vec_ptype(gdf))
 
-  expect_error(
-    vec_ptype(dplyr::group_by(mtcars, cyl, .drop = FALSE)),
-    "unsupported in vctrs"
-  )
+  out <- vec_ptype(dplyr::group_by(mtcars, cyl, .drop = FALSE))
+  expect_drop(out, FALSE)
 })
 
 test_that("can take the common type of grouped tibbles and tibbles", {
@@ -23,6 +21,12 @@ test_that("can take the common type of grouped tibbles and tibbles", {
   expect_identical(vec_ptype2(data.frame(), gdf), vec_ptype(gdf))
   expect_identical(vec_ptype2(gdf, tibble()), vec_ptype(gdf))
   expect_identical(vec_ptype2(tibble(), gdf), vec_ptype(gdf))
+
+  gdf_nodrop <- dplyr::group_by(mtcars, cyl, .drop = FALSE)
+  expect_drop(vec_ptype2(gdf, gdf_nodrop), FALSE)
+  expect_drop(vec_ptype2(gdf_nodrop, gdf), FALSE)
+  expect_drop(vec_ptype2(gdf_nodrop, mtcars), FALSE)
+  expect_drop(vec_ptype2(mtcars, gdf_nodrop), FALSE)
 })
 
 test_that("the common type of grouped tibbles includes the union of grouping variables", {
@@ -70,6 +74,11 @@ test_that("casting to `grouped_df` doesn't require grouping variables", {
     vec_cast(mtcars[10], dplyr::group_by(mtcars, cyl)),
     dplyr::group_by(vec_cast(mtcars[10], mtcars), cyl)
   )
+})
+
+test_that("casting to `grouped_df` handles `drop`", {
+  gdf_nodrop <- dplyr::group_by(mtcars, cyl, .drop = FALSE)
+  expect_identical(vec_cast(mtcars, gdf_nodrop), gdf_nodrop)
 })
 
 test_that("can cbind grouped data frames", {
