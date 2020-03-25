@@ -639,12 +639,7 @@ levels.vctrs_vctr <- function(x) {
 
 #' @export
 `is.na<-.vctrs_vctr` <- function(x, value) {
-  # No support for other arguments than logical for now,
-  # even if base R is more lenient here.
-  vec_assert(value, logical())
-
-  vec_slice(x, value) <- vec_init(x)
-  x
+  vec_assign(x, value, vec_init(x))
 }
 
 # Helpers -----------------------------------------------------------------
