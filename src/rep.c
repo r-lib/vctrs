@@ -28,6 +28,7 @@ static SEXP vec_rep(SEXP x, R_len_t times) {
 
   const R_len_t x_size = vec_size(x);
 
+  // TODO: Use more robust overflow check if we add support for long vectors
   const int64_t temp_size = (int64_t) x_size * times;
   if (temp_size > INT_MAX) {
     stop_rep_size_oob(temp_size);
@@ -81,6 +82,7 @@ static SEXP vec_rep_each_uniform(SEXP x, R_len_t times) {
 
   const R_len_t x_size = vec_size(x);
 
+  // TODO: Use more robust overflow check if we add support for long vectors
   const int64_t temp_size = (int64_t) x_size * times;
   if (temp_size > INT_MAX) {
     stop_rep_size_oob(temp_size);
@@ -114,6 +116,7 @@ static SEXP vec_rep_each_impl(SEXP x, SEXP times, const R_len_t times_size) {
 
   const int* p_times = INTEGER_RO(times);
 
+  // TODO: Use more robust overflow check if we add support for long vectors
   int64_t temp_size = 0;
   for (R_len_t i = 0; i < times_size; ++i) {
     const int elt_times = p_times[i];
