@@ -31,10 +31,19 @@ Run `revdep_details(,"arrow")` for more info
 ** using staged installation
 Downloading apache-arrow
 rm: /var/folders/b9/1vbq6rn93_1fk71sn95dqb8r0000gn/T//build-apache-arrow: Directory not empty
-Mon Mar 23 18:10:36 CET 2020: Auto-brewing apache-arrow in /var/folders/b9/1vbq6rn93_1fk71sn95dqb8r0000gn/T//build-apache-arrow...
-Error: Another active Homebrew vendor-install-ruby process is already in progress.
-Please wait for it to finish or terminate it to continue.
-Error: Failed to install vendor Ruby.
+Mon Mar 23 18:58:05 CET 2020: Auto-brewing apache-arrow in /var/folders/b9/1vbq6rn93_1fk71sn95dqb8r0000gn/T//build-apache-arrow...
+Error: No available formula with the name "apache-arrow" 
+==> Searching for a previously deleted formula (in the last month)...
+Error: No previously deleted formula found.
+Error: No similarly named formulae found.
+==> Searching taps on GitHub...
+==> Searching for similarly named formulae...
+==> Searching taps...
+These formulae were found in taps:
+homebrew/linuxbrew-core/apache-arrow
+homebrew/linuxbrew-core/apache-arrow-glib
+To install one of them, run (for example):
+  brew install homebrew/linuxbrew-core/apache-arrow
 cp: /var/folders/b9/1vbq6rn93_1fk71sn95dqb8r0000gn/T//build-apache-arrow/Cellar/*/*/lib/*.a: No such file or directory
 created /var/folders/b9/1vbq6rn93_1fk71sn95dqb8r0000gn/T//build-apache-arrow/lib/libbrew.a
 PKG_CFLAGS=-I/var/folders/b9/1vbq6rn93_1fk71sn95dqb8r0000gn/T//build-apache-arrow/opt/apache-arrow/include -DARROW_R_WITH_ARROW
@@ -58,9 +67,8 @@ ERROR: compilation failed for package ‘arrow’
 ** package ‘arrow’ successfully unpacked and MD5 sums checked
 ** using staged installation
 Downloading apache-arrow
-rm: /var/folders/b9/1vbq6rn93_1fk71sn95dqb8r0000gn/T//build-apache-arrow/Library/Homebrew/cmd/tap-unpin.rb: Invalid argument
 rm: fts_read: No such file or directory
-Mon Mar 23 18:10:32 CET 2020: Auto-brewing apache-arrow in /var/folders/b9/1vbq6rn93_1fk71sn95dqb8r0000gn/T//build-apache-arrow...
+Mon Mar 23 18:58:00 CET 2020: Auto-brewing apache-arrow in /var/folders/b9/1vbq6rn93_1fk71sn95dqb8r0000gn/T//build-apache-arrow...
 ==> Tapping autobrew/core from https://github.com/autobrew/homebrew-core
 Tapped 2 commands and 4640 formulae (4,888 files, 12.7MB).
 boost
@@ -69,14 +77,17 @@ openssl
 thrift
 snappy
 ==> Downloading https://homebrew.bintray.com/bottles/boost-1.67.0_1.mojave.bottle.tar.gz
+Already downloaded: /var/folders/b9/1vbq6rn93_1fk71sn95dqb8r0000gn/T/downloads/59772cb56898dc19d2447347a969e6ba30e7b421cebe71cfc285f794caddb074--boost-1.67.0_1.mojave.bottle.tar.gz
 ==> Pouring boost-1.67.0_1.mojave.bottle.tar.gz
 ==> Skipping post_install step for autobrew...
 🍺  /private/var/folders/b9/1vbq6rn93_1fk71sn95dqb8r0000gn/T/build-apache-arrow/Cellar/boost/1.67.0_1: 13,506 files, 456.4MB
 ==> Downloading https://homebrew.bintray.com/bottles/lz4-1.8.3.mojave.bottle.tar.gz
+Already downloaded: /var/folders/b9/1vbq6rn93_1fk71sn95dqb8r0000gn/T/downloads/b4158ef68d619dbf78935df6a42a70b8339a65bc8876cbb4446355ccd40fa5de--lz4-1.8.3.mojave.bottle.tar.gz
 ==> Pouring lz4-1.8.3.mojave.bottle.tar.gz
 ==> Skipping post_install step for autobrew...
 🍺  /private/var/folders/b9/1vbq6rn93_1fk71sn95dqb8r0000gn/T/build-apache-arrow/Cellar/lz4/1.8.3: 22 files, 512.7KB
 ==> Downloading https://homebrew.bintray.com/bottles/openssl-1.0.2p.mojave.bottle.tar.gz
+Already downloaded: /var/folders/b9/1vbq6rn93_1fk71sn95dqb8r0000gn/T/downloads/fbb493745981c8b26c0fab115c76c2a70142bfde9e776c450277e9dfbbba0bb2--openssl-1.0.2p.mojave.bottle.tar.gz
 ==> Pouring openssl-1.0.2p.mojave.bottle.tar.gz
 ==> Skipping post_install step for autobrew...
 ==> Caveats
@@ -96,6 +107,7 @@ For pkg-config to find openssl you may need to set:
 ==> Summary
 🍺  /private/var/folders/b9/1vbq6rn93_1fk71sn95dqb8r0000gn/T/build-apache-arrow/Cellar/openssl/1.0.2p: 1,793 files, 12MB
 ==> Downloading https://homebrew.bintray.com/bottles/thrift-0.11.0.mojave.bottle.tar.gz
+Already downloaded: /var/folders/b9/1vbq6rn93_1fk71sn95dqb8r0000gn/T/downloads/7e05ea11a9f7f924dd7f8f36252ec73a24958b7f214f71e3752a355e75e589bd--thrift-0.11.0.mojave.bottle.tar.gz
 ==> Pouring thrift-0.11.0.mojave.bottle.tar.gz
 ==> Skipping post_install step for autobrew...
 ==> Caveats
@@ -104,10 +116,12 @@ To install Ruby binding:
 ==> Summary
 🍺  /private/var/folders/b9/1vbq6rn93_1fk71sn95dqb8r0000gn/T/build-apache-arrow/Cellar/thrift/0.11.0: 102 files, 7MB
 ==> Downloading https://homebrew.bintray.com/bottles/snappy-1.1.7_1.mojave.bottle.tar.gz
+Already downloaded: /var/folders/b9/1vbq6rn93_1fk71sn95dqb8r0000gn/T/downloads/1f09938804055499d1dd951b13b26d80c56eae359aa051284bf4f51d109a9f73--snappy-1.1.7_1.mojave.bottle.tar.gz
 ==> Pouring snappy-1.1.7_1.mojave.bottle.tar.gz
 ==> Skipping post_install step for autobrew...
 🍺  /private/var/folders/b9/1vbq6rn93_1fk71sn95dqb8r0000gn/T/build-apache-arrow/Cellar/snappy/1.1.7_1: 18 files, 115.8KB
 ==> Downloading https://autobrew.github.io/bottles/apache-arrow-0.16.0.el_capitan.bottle.tar.gz
+Already downloaded: /var/folders/b9/1vbq6rn93_1fk71sn95dqb8r0000gn/T/downloads/84b298c507e079bc9bba652c3f20150245bda2762daee668a563a20d785a4909--apache-arrow-0.16.0.el_capitan.bottle.tar.gz
 ==> Pouring apache-arrow-0.16.0.el_capitan.bottle.tar.gz
 ==> Skipping post_install step for autobrew...
 🍺  /private/var/folders/b9/1vbq6rn93_1fk71sn95dqb8r0000gn/T/build-apache-arrow/Cellar/apache-arrow/0.16.0: 278 files, 46.8MB

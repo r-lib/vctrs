@@ -7,11 +7,7 @@ df_as_tibble <- function(df) {
 
 # Conditionally registered in .onLoad()
 vec_ptype2.tbl_df <- function(x, y, ...) {
-  UseMethod("vec_ptype2.tbl_df", y)
-}
-vec_ptype2.tbl_df.default <- function(x, y, ...) {
-  # FIXME: Prevent inheritance
-  vec_ptype2.data.frame(x, y, ...)
+  UseMethod("vec_ptype2.tbl_df")
 }
 
 vec_ptype2.tbl_df.data.frame <- function(x, y, ..., x_arg = "", y_arg = "") {

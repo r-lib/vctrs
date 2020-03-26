@@ -309,7 +309,8 @@ test_that("slice-assign casts to `to` before falling back to `[<-` (#443)", {
 
   local_methods(
     vec_proxy.vctrs_proxy = proxy_deref,
-    vec_ptype2.vctrs_proxy = function(...) new_proxy(NA),
+    vec_ptype2.vctrs_proxy = function(...) NULL,
+    vec_ptype2.vctrs_proxy.vctrs_foobar = function(...) new_proxy(NA),
     vec_cast.vctrs_foobar = function(x, ...) foobar(proxy_deref(x)),
     `[<-.vctrs_foobar` = function(x, i, value) {
       called <<- TRUE

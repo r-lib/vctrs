@@ -108,9 +108,8 @@ vec_restore.vctrs_vctr <- function(x, to, ..., i = NULL) {
 #' @method vec_ptype2 vctrs_vctr
 #' @export
 vec_ptype2.vctrs_vctr <- function(x, y, ..., x_arg = "", y_arg = "") {
-  # This method is redundant with `vec_ptype2.default()` but it
-  # instructs `vec_c()` that it isn't a foreign type. This avoids
-  # infinite recursion through `c.vctrs_vctr()`.
+  # This method instructs `vec_c()` that it isn't a foreign type. This
+  # avoids infinite recursion through `c.vctrs_vctr()`.
   vec_default_ptype2(x, y, ..., x_arg = x_arg, y_arg = y_arg)
 }
 
@@ -655,8 +654,7 @@ format.hidden <- function(x, ...) rep("xxx", length(x))
 
 local_hidden <- function(frame = caller_env()) {
   local_bindings(.env = global_env(), .frame = frame,
-    vec_ptype2.hidden         = function(x, y, ...) UseMethod("vec_ptype2.hidden", y),
-    vec_ptype2.hidden.default = function(x, y, ...) stop_incompatible_type(x, y, ...),
+    vec_ptype2.hidden         = function(x, y, ...) UseMethod("vec_ptype2.hidden"),
     vec_ptype2.hidden.hidden  = function(x, y, ...) new_hidden(),
     vec_ptype2.hidden.double  = function(x, y, ...) new_hidden(),
     vec_ptype2.double.hidden  = function(x, y, ...) new_hidden(),

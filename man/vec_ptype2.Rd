@@ -63,12 +63,11 @@ The poset of the most important base vectors is shown below:
 \code{vec_ptype2()} dispatches on both arguments. This is implemented by having
 methods of \code{vec_ptype2()}, e.g. \code{vec_ptype2.integer()} also be S3 generics,
 which call e.g. \code{vec_ptype2.integer.double()}. \code{vec_ptype2.x.y()} must
-return the same value as \code{vec_ptype2.y.x()}; this is currently not enforced,
-but should be tested.
+return the same value as \code{vec_ptype2.y.x()}; this is not enforced
+for reasons of efficiency, but should be tested.
 
-Whenever you implement a \code{vec_ptype2.new_class()} generic/method,
-make sure to always provide \code{vec_ptype2.new_class.default()}. It
-should normally call \code{vec_default_ptype2()}.
+Because of the way double dispatch is implemented, \code{NextMethod()}
+does not work inside \code{vec_ptype2()} methods.
 
 See \code{vignette("s3-vector")} for full details.
 }

@@ -40,8 +40,7 @@ rational_methods <- list(
   vec_ptype_abbr.vctrs_rational = function(x, ...) "rtnl",
   vec_ptype_full.vctrs_rational = function(x, ...) "rational",
 
-  vec_ptype2.vctrs_rational = function(x, y, ...) UseMethod("vec_ptype2.vctrs_rational", y),
-  vec_ptype2.vctrs_rational.default = function(x, y, ...) vec_default_ptype2(x, y, ...),
+  vec_ptype2.vctrs_rational = function(x, y, ...) UseMethod("vec_ptype2.vctrs_rational"),
   vec_ptype2.vctrs_rational.vctrs_rational = function(x, y, ...) new_rational(),
   vec_ptype2.vctrs_rational.integer = function(x, y, ...) new_rational(),
   vec_ptype2.integer.vctrs_rational = function(x, y, ...) new_rational(),

@@ -46,7 +46,7 @@ vec_restore.AsIs <- function(x, to, ...) {
 #' @method vec_ptype2 AsIs
 #' @export
 vec_ptype2.AsIs <- function(x, y, ..., x_arg = "", y_arg = "") {
-  UseMethod("vec_ptype2.AsIs", y)
+  UseMethod("vec_ptype2.AsIs")
 }
 
 #' @method vec_ptype2.AsIs default

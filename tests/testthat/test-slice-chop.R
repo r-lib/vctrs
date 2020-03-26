@@ -631,8 +631,7 @@ test_that("vec_unchop() fallback doesn't support `name_spec` or `ptype`", {
 
 test_that("vec_unchop() supports numeric S3 indices", {
   local_methods(
-    vec_ptype2.vctrs_foobar = function(x, y, ...) UseMethod("vec_ptype2.vctrs_foobar", y),
-    vec_ptype2.vctrs_foobar.default = function(x, y, ...) vec_default_ptype2(x, y),
+    vec_ptype2.vctrs_foobar = function(x, y, ...) UseMethod("vec_ptype2.vctrs_foobar"),
     vec_ptype2.vctrs_foobar.integer = function(x, y, ...) foobar(integer()),
     vec_cast.integer.vctrs_foobar = function(x, to, ...) vec_data(x)
   )

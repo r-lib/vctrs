@@ -296,7 +296,7 @@ inline void never_reached(const char* fn) {
 
 static char s3_buf[200];
 
-static SEXP s3_method_sym(const char* generic, const char* class) {
+SEXP s3_paste_method_sym(const char* generic, const char* class) {
   int gen_len = strlen(generic);
   int class_len = strlen(class);
   int dot_len = 1;
@@ -315,9 +315,11 @@ static SEXP s3_method_sym(const char* generic, const char* class) {
 }
 
 // First check in global env, then in method table
-static SEXP s3_get_method(const char* generic, const char* class, SEXP table) {
-  SEXP sym = s3_method_sym(generic, class);
-
+SEXP s3_get_method(const char* generic, const char* class, SEXP table) {
+  SEXP sym = s3_paste_method_sym(generic, class);
+  return s3_sym_get_method(sym, table);
+}
+SEXP s3_sym_get_method(SEXP sym, SEXP table) {
   SEXP method = r_env_get(R_GlobalEnv, sym);
   if (r_is_function(method)) {
     return method;
@@ -357,6 +359,23 @@ SEXP s3_find_method(const char* generic, SEXP x, SEXP table) {
 
   UNPROTECT(1);
   return R_NilValue;
+}
+
+// [[ include("utils.h") ]]
+SEXP s3_bare_class(SEXP x) {
+  switch (TYPEOF(x)) {
+  case LGLSXP: return chrs_logical;
+  case INTSXP: return chrs_integer;
+  case REALSXP: return chrs_double;
+  case CPLXSXP: return chrs_complex;
+  case STRSXP: return chrs_character;
+  case RAWSXP: return chrs_raw;
+  case VECSXP: return chrs_list;
+  case CLOSXP:
+  case SPECIALSXP:
+  case BUILTINSXP: return chrs_function;
+  default: vctrs_stop_unsupported_type(vec_typeof(x), "base_dispatch_class_str");
+  }
 }
 
 static SEXP s4_get_method(const char* class, SEXP table) {
@@ -1312,8 +1331,15 @@ SEXP chrs_assign = NULL;
 SEXP chrs_rename = NULL;
 SEXP chrs_remove = NULL;
 SEXP chrs_negate = NULL;
-SEXP chrs_numeric = NULL;
+SEXP chrs_logical = NULL;
+SEXP chrs_integer = NULL;
+SEXP chrs_double = NULL;
+SEXP chrs_complex = NULL;
 SEXP chrs_character = NULL;
+SEXP chrs_raw = NULL;
+SEXP chrs_list = NULL;
+SEXP chrs_numeric = NULL;
+SEXP chrs_function = NULL;
 SEXP chrs_empty = NULL;
 SEXP chrs_cast = NULL;
 SEXP chrs_error = NULL;
@@ -1355,6 +1381,7 @@ SEXP syms_numeric = NULL;
 SEXP syms_character = NULL;
 SEXP syms_body = NULL;
 SEXP syms_parent = NULL;
+SEXP syms_s3_methods_table = NULL;
 
 SEXP fns_bracket = NULL;
 SEXP fns_quote = NULL;
@@ -1483,8 +1510,15 @@ void vctrs_init_utils(SEXP ns) {
   chrs_rename = r_new_shared_character("rename");
   chrs_remove = r_new_shared_character("remove");
   chrs_negate = r_new_shared_character("negate");
-  chrs_numeric = r_new_shared_character("numeric");
+  chrs_logical = r_new_shared_character("logical");
+  chrs_integer = r_new_shared_character("integer");
+  chrs_double = r_new_shared_character("double");
+  chrs_complex = r_new_shared_character("complex");
   chrs_character = r_new_shared_character("character");
+  chrs_raw = r_new_shared_character("raw");
+  chrs_list = r_new_shared_character("list");
+  chrs_numeric = r_new_shared_character("numeric");
+  chrs_function = r_new_shared_character("function");
   chrs_empty = r_new_shared_character("");
   chrs_cast = r_new_shared_character("cast");
   chrs_error = r_new_shared_character("error");
@@ -1579,6 +1613,7 @@ void vctrs_init_utils(SEXP ns) {
   syms_character = Rf_install("character");
   syms_body = Rf_install("body");
   syms_parent = Rf_install("parent");
+  syms_s3_methods_table = Rf_install(".__S3MethodsTable__.");
 
   fns_bracket = Rf_findVar(syms_bracket, R_BaseEnv);
   fns_quote = Rf_findVar(Rf_install("quote"), R_BaseEnv);

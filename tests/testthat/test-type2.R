@@ -184,7 +184,7 @@ test_that("vec_is_subtype() determines subtyping relationship", {
   expect_false(vec_is_subtype(chr(), lgl()))
 
   local_methods(
-    vec_ptype2.vctrs_foobar = function(x, y, ...) UseMethod("vec_ptype2.vctrs_foobar", y),
+    vec_ptype2.vctrs_foobar = function(x, y, ...) UseMethod("vec_ptype2.vctrs_foobar"),
     vec_ptype2.vctrs_foobar.logical = function(x, y, ...) logical(),
     vec_ptype2.logical.vctrs_foobar = function(x, y, ...) logical()
   )
