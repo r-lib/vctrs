@@ -294,15 +294,8 @@ SEXP df_container_type(SEXP x) {
 
 // [[ register() ]]
 SEXP vctrs_df_ptype2(SEXP x, SEXP y, SEXP x_arg, SEXP y_arg) {
-  if (!r_is_string(x_arg)) {
-    Rf_errorcall(R_NilValue, "`x_arg` must be a string");
-  }
-  if (!r_is_string(y_arg)) {
-    Rf_errorcall(R_NilValue, "`y_arg` must be a string");
-  }
-
-  struct vctrs_arg x_arg_ = new_wrapper_arg(NULL, r_chr_get_c_string(x_arg, 0));
-  struct vctrs_arg y_arg_ = new_wrapper_arg(NULL, r_chr_get_c_string(y_arg, 0));
+  struct vctrs_arg x_arg_ = vec_as_arg(x_arg);
+  struct vctrs_arg y_arg_ = vec_as_arg(y_arg);;
 
   return df_ptype2(x, y, &x_arg_, &y_arg_);
 }
@@ -379,15 +372,8 @@ SEXP df_ptype2(SEXP x, SEXP y, struct vctrs_arg* x_arg, struct vctrs_arg* y_arg)
 
 // [[ register() ]]
 SEXP vctrs_df_cast(SEXP x, SEXP to, SEXP x_arg_, SEXP to_arg_) {
-  if (!r_is_string(x_arg_)) {
-    Rf_errorcall(R_NilValue, "`x_arg` must be a string");
-  }
-  if (!r_is_string(to_arg_)) {
-    Rf_errorcall(R_NilValue, "`to_arg` must be a string");
-  }
-
-  struct vctrs_arg x_arg = new_wrapper_arg(NULL, r_chr_get_c_string(x_arg_, 0));
-  struct vctrs_arg to_arg = new_wrapper_arg(NULL, r_chr_get_c_string(to_arg_, 0));
+  struct vctrs_arg x_arg = vec_as_arg(x_arg_);
+  struct vctrs_arg to_arg = vec_as_arg(to_arg_);;
 
   return df_cast(x, to, &x_arg, &to_arg);
 }
