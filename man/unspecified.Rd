@@ -2,12 +2,9 @@
 % Please edit documentation in R/type-unspecified.R
 \name{unspecified}
 \alias{unspecified}
-\alias{vec_ptype2.vctrs_unspecified}
 \title{A 1d vector of unspecified type}
 \usage{
 unspecified(n = 0)
-
-\method{vec_ptype2}{vctrs_unspecified}(x, y, ...)
 }
 \arguments{
 \item{n}{Length of vector}
