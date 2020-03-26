@@ -484,8 +484,16 @@ SEXP vctrs_id(SEXP x) {
 }
 
 // [[ register() ]]
-SEXP vctrs_match(SEXP needles, SEXP haystack, SEXP na_equal) {
-  return vec_match_params(needles, haystack, r_bool_as_int(na_equal));
+SEXP vctrs_match(SEXP needles, SEXP haystack, SEXP na_equal,
+                 SEXP needles_arg_, SEXP haystack_arg_) {
+  struct vctrs_arg needles_arg = vec_as_arg(needles_arg_);
+  struct vctrs_arg haystack_arg = vec_as_arg(haystack_arg_);
+
+  return vec_match_params(needles,
+                          haystack,
+                          r_bool_as_int(na_equal),
+                          &needles_arg,
+                          &haystack_arg);
 }
 
 static inline void vec_match_loop(int* p_out,
@@ -497,13 +505,17 @@ static inline void vec_match_loop_propagate(int* p_out,
                                             struct dictionary* d_needles,
                                             R_len_t n_needle);
 
-SEXP vec_match_params(SEXP needles, SEXP haystack, bool na_equal) {
+SEXP vec_match_params(SEXP needles,
+                      SEXP haystack,
+                      bool na_equal,
+                      struct vctrs_arg* needles_arg,
+                      struct vctrs_arg* haystack_arg) {
   int nprot = 0;
   int _;
-  SEXP type = PROTECT_N(vec_ptype2(needles, haystack, &args_needles, &args_haystack, &_), &nprot);
+  SEXP type = PROTECT_N(vec_ptype2(needles, haystack, needles_arg, haystack_arg, &_), &nprot);
 
-  needles = PROTECT_N(vec_cast(needles, type, args_empty, args_empty), &nprot);
-  haystack = PROTECT_N(vec_cast(haystack, type, args_empty, args_empty), &nprot);
+  needles = PROTECT_N(vec_cast(needles, type, needles_arg, args_empty), &nprot);
+  haystack = PROTECT_N(vec_cast(haystack, type, haystack_arg, args_empty), &nprot);
 
   needles = PROTECT_N(vec_proxy_equal(needles), &nprot);
   haystack = PROTECT_N(vec_proxy_equal(haystack), &nprot);
@@ -581,12 +593,15 @@ static inline void vec_match_loop_propagate(int* p_out,
 }
 
 // [[ register() ]]
-SEXP vctrs_in(SEXP needles, SEXP haystack, SEXP na_equal_) {
+SEXP vctrs_in(SEXP needles, SEXP haystack, SEXP na_equal_,
+              SEXP needles_arg_, SEXP haystack_arg_) {
   int nprot = 0;
   bool na_equal = r_bool_as_int(na_equal_);
 
   int _;
-  SEXP type = PROTECT_N(vec_ptype2(needles, haystack, &args_needles, &args_haystack, &_), &nprot);
+  struct vctrs_arg needles_arg = vec_as_arg(needles_arg_);
+  struct vctrs_arg haystack_arg = vec_as_arg(haystack_arg_);
+  SEXP type = PROTECT_N(vec_ptype2(needles, haystack, &needles_arg, &haystack_arg, &_), &nprot);
 
   needles = PROTECT_N(vec_cast(needles, type, args_empty, args_empty), &nprot);
   haystack = PROTECT_N(vec_cast(haystack, type, args_empty, args_empty), &nprot);

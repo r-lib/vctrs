@@ -215,6 +215,8 @@ vec_unique_count <- function(x) {
 #'   matched to missing values in `haystack`. If `FALSE`, they
 #'   propagate, missing values in `needles` are represented as `NA` in
 #'   the return value.
+#' @param needles_arg,haystack_arg Argument tags for `needles` and
+#'   `haystack` used in error messages.
 #' @return A vector the same length as `needles`. `vec_in()` returns a
 #'   logical vector; `vec_match()` returns an integer vector.
 #' @export
@@ -228,14 +230,24 @@ vec_unique_count <- function(x) {
 #'
 #' # Only the first index of duplicates is returned
 #' vec_match(c("a", "b"), c("a", "b", "a", "b"))
-vec_match <- function(needles, haystack, ..., na_equal = TRUE) {
+vec_match <- function(needles,
+                      haystack,
+                      ...,
+                      na_equal = TRUE,
+                      needles_arg = "",
+                      haystack_arg = "") {
   if (!missing(...)) ellipsis::check_dots_empty()
-  .Call(vctrs_match, needles, haystack, na_equal)
+  .Call(vctrs_match, needles, haystack, na_equal, needles_arg, haystack_arg)
 }
 
 #' @export
 #' @rdname vec_match
-vec_in <- function(needles, haystack, ..., na_equal = TRUE) {
+vec_in <- function(needles,
+                   haystack,
+                   ...,
+                   na_equal = TRUE,
+                   needles_arg = "",
+                   haystack_arg = "") {
   if (!missing(...)) ellipsis::check_dots_empty()
-  .Call(vctrs_in, needles, haystack, na_equal)
+  .Call(vctrs_in, needles, haystack, na_equal, needles_arg, haystack_arg)
 }

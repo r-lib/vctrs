@@ -1,6 +1,8 @@
 
 # vctrs (development version)
 
+* `vec_match()` and `vec_in()` gain parameters for argument tags (#944).
+
 * The `is.na<-()` method for `vctrs_vctr` now supports numeric and
   character subscripts to indicate where to insert missing values (#947). 
 

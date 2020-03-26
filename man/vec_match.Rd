@@ -5,9 +5,23 @@
 \alias{vec_in}
 \title{Find matching observations across vectors}
 \usage{
-vec_match(needles, haystack, ..., na_equal = TRUE)
+vec_match(
+  needles,
+  haystack,
+  ...,
+  na_equal = TRUE,
+  needles_arg = "",
+  haystack_arg = ""
+)
 
-vec_in(needles, haystack, ..., na_equal = TRUE)
+vec_in(
+  needles,
+  haystack,
+  ...,
+  na_equal = TRUE,
+  needles_arg = "",
+  haystack_arg = ""
+)
 }
 \arguments{
 \item{needles, haystack}{Vector of \code{needles} to search for in vector haystack.
@@ -23,6 +37,9 @@ comparison.}
 matched to missing values in \code{haystack}. If \code{FALSE}, they
 propagate, missing values in \code{needles} are represented as \code{NA} in
 the return value.}
+
+\item{needles_arg, haystack_arg}{Argument tags for \code{needles} and
+\code{haystack} used in error messages.}
 }
 \value{
 A vector the same length as \code{needles}. \code{vec_in()} returns a
