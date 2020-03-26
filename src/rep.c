@@ -210,10 +210,11 @@ static inline void stop_rep_times_missing() {
   Rf_errorcall(R_NilValue, "`times` can't be missing.");
 }
 
+// Not currently thrown since `R_len_t == int`, but might be once
+// long vectors are supported
 static inline void stop_rep_times_oob(int times) {
   Rf_errorcall(
     R_NilValue,
-    "Long vectors are not yet supported. "
     "`times` must be less than %i, not %i.",
     R_LEN_T_MAX,
     times
@@ -246,10 +247,11 @@ static inline void stop_rep_each_times_missing(R_len_t i) {
   Rf_errorcall(R_NilValue, "`times` can't be missing. Location %i is missing.", i);
 }
 
+// Not currently thrown since `R_len_t == int`, but might be once
+// long vectors are supported
 static inline void stop_rep_each_times_oob(int times, R_len_t i) {
   Rf_errorcall(
     R_NilValue,
-    "Long vectors are not yet supported. "
     "`times` must be less than %i, not %i. ",
     "Location %i is too large.",
     R_LEN_T_MAX,
