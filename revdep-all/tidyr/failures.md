@@ -229,11 +229,6 @@ Run `revdep_details(,"")` for more info
 
 ```
 
-  There is a binary version available but the source version is later:
-        binary source needs_compilation
-igraph 1.2.4.2  1.2.5              TRUE
-
-  Binaries will be installed
 
 
 installing the source package ‘reactome.db’
@@ -245,11 +240,6 @@ installing the source package ‘reactome.db’
 
 ```
 
-  There is a binary version available but the source version is later:
-        binary source needs_compilation
-igraph 1.2.4.2  1.2.5              TRUE
-
-  Binaries will be installed
 
 
 installing the source package ‘reactome.db’
@@ -729,79 +719,6 @@ Run `revdep_details(,"ENCODExplorer")` for more info
       href server status ui value Value
     ```
 
-# GEOquery
-
-<details>
-
-* Version: 2.54.1
-* Source code: https://github.com/cran/GEOquery
-* URL: https://github.com/seandavi/GEOquery
-* BugReports: https://github.com/seandavi/GEOquery/issues/new
-* Date/Publication: 2019-11-18
-* Number of recursive dependencies: 65
-
-Run `revdep_details(,"GEOquery")` for more info
-
-</details>
-
-## In both
-
-*   R CMD check timed out
-    
-
-*   checking installed package size ... NOTE
-    ```
-      installed size is 13.9Mb
-      sub-directories of 1Mb or more:
-        extdata  12.8Mb
-    ```
-
-*   checking whether the namespace can be loaded with stated dependencies ... NOTE
-    ```
-    Warning: no function found corresponding to methods exports from ‘GEOquery’ for: ‘show’
-    
-    A namespace must be able to be loaded with just the base namespace loaded:
-    otherwise if the namespace gets loaded by a saved object, the session will be
-    unable to start.
-    
-    Probably some imports need to be declared in the NAMESPACE file.
-    ```
-
-*   checking dependencies in R code ... NOTE
-    ```
-    Namespace in Imports field not imported from: ‘httr’
-      All declared Imports should be used.
-    Package in Depends field not imported from: ‘methods’
-      These packages need to be imported from (in the NAMESPACE file)
-      for when this namespace is loaded but not attached.
-    ```
-
-*   checking R code for possible problems ... NOTE
-    ```
-    ...
-      (/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/checks.noindex/GEOquery/new/GEOquery.Rcheck/00_pkg_src/GEOquery/R/parseGEO.R:557-565)
-    parseGSEMatrix: no visible binding for global variable ‘accession’
-      (/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/checks.noindex/GEOquery/new/GEOquery.Rcheck/00_pkg_src/GEOquery/R/parseGEO.R:557-565)
-    parseGSEMatrix: no visible binding for global variable ‘accession’
-      (/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/checks.noindex/GEOquery/new/GEOquery.Rcheck/00_pkg_src/GEOquery/R/parseGEO.R:567-568)
-    parseGSEMatrix: no visible global function definition for ‘new’
-      (/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/checks.noindex/GEOquery/new/GEOquery.Rcheck/00_pkg_src/GEOquery/R/parseGEO.R:599)
-    parseGSEMatrix: no visible global function definition for ‘new’
-      (/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/checks.noindex/GEOquery/new/GEOquery.Rcheck/00_pkg_src/GEOquery/R/parseGEO.R:621)
-    parseGSEMatrix: no visible global function definition for ‘new’
-      (/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/checks.noindex/GEOquery/new/GEOquery.Rcheck/00_pkg_src/GEOquery/R/parseGEO.R:637-642)
-    parseGSEMatrix: no visible global function definition for ‘as’
-      (/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/checks.noindex/GEOquery/new/GEOquery.Rcheck/00_pkg_src/GEOquery/R/parseGEO.R:637-642)
-    Undefined global functions or variables:
-      . accession as characteristics k kvpair MA new read.delim read.table
-      v
-    Consider adding
-      importFrom("methods", "as", "new")
-      importFrom("utils", "read.delim", "read.table")
-    to your NAMESPACE file (and ensure that your DESCRIPTION Imports field contains
-    'methods').
-    ```
-
 # GillespieSSA2
 
 <details>
@@ -1097,8 +1014,8 @@ Run `revdep_details(,"")` for more info
 ```
 
   There is a binary version available but the source version is later:
-        binary source needs_compilation
-igraph 1.2.4.2  1.2.5              TRUE
+      binary source needs_compilation
+Hmisc  4.3-1  4.4-0              TRUE
 
   Binaries will be installed
 
@@ -1113,8 +1030,8 @@ installing the source packages ‘hugene10sttranscriptcluster.db’, ‘pd.hugen
 ```
 
   There is a binary version available but the source version is later:
-        binary source needs_compilation
-igraph 1.2.4.2  1.2.5              TRUE
+      binary source needs_compilation
+Hmisc  4.3-1  4.4-0              TRUE
 
   Binaries will be installed
 
@@ -1614,17 +1531,6 @@ Run `revdep_details(,"sismonr")` for more info
 
 </details>
 
-## Newly fixed
-
-*   checking replacement functions ... WARNING
-    ```
-    ┌ Warning: `BioSimulator` not in project, ignoring
-    └ @ Pkg.Operations /Users/osx/buildbot/slave/package_osx64/build/usr/share/julia/stdlib/v1.1/Pkg/src/Operations.jl:1131
-    [ Info: No changes
-    The argument of a replacement function which corresponds to the right hand side
-    must be named ‘value’.
-    ```
-
 ## In both
 
 *   R CMD check timed out
@@ -1652,10 +1558,10 @@ Run `revdep_details(,"TCGAbiolinks")` for more info
 
 *   checking installed package size ... NOTE
     ```
-      installed size is 104.3Mb
+      installed size is 105.3Mb
       sub-directories of 1Mb or more:
         data   4.3Mb
-        doc   97.0Mb
+        doc   98.0Mb
         R      2.8Mb
     ```
 
