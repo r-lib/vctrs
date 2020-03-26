@@ -81,7 +81,7 @@ vec_is_coercible <- function(x, y, ..., x_arg = "", y_arg = "") {
   .Call(vctrs_is_coercible, x, y, x_arg, y_arg)
 }
 
-vec_is_subtype <- function(x, super, ..., x_arg = "", super_arg = "super") {
+vec_is_subtype <- function(x, super, ..., x_arg = "", super_arg = "") {
   tryCatch(
     vctrs_error_incompatible_type = function(...) FALSE,
     {

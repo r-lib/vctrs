@@ -427,12 +427,9 @@ SEXP vctrs_maybe_translate_encoding(SEXP x) {
 
 // [[ register() ]]
 SEXP vctrs_maybe_translate_encoding2(SEXP x, SEXP y) {
-  struct vctrs_arg args_x = new_wrapper_arg(NULL, "x");
-  struct vctrs_arg args_y = new_wrapper_arg(NULL, "y");
-
   int _;
 
-  SEXP type = PROTECT(vec_ptype2(x, y, &args_x, &args_y, &_));
+  SEXP type = PROTECT(vec_ptype2(x, y, args_empty, args_empty, &_));
 
   x = PROTECT(vec_cast(x, type, args_empty, args_empty));
   y = PROTECT(vec_cast(y, type, args_empty, args_empty));
