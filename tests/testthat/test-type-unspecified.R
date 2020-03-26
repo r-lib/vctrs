@@ -13,14 +13,22 @@ test_that("unknown type is idempotent", {
     new_ordered(),
     new_date(),
     new_datetime(),
-    new_duration()
+    new_duration(),
+    vec_ptype(matrix(1:4, 2)),
+    vec_ptype(array(1:5, c(1, 5)))
   )
 
   lhs <- map(types, vec_ptype2, x = unspecified())
-  expect_equal(types, lhs)
+  expect_identical(types, lhs)
+
+  lhs <- map(types, vec_ptype2, x = NA)
+  expect_identical(types, lhs)
 
   rhs <- map(types, vec_ptype2, y = unspecified())
-  expect_equal(types, rhs)
+  expect_identical(types, rhs)
+
+  rhs <- map(types, vec_ptype2, y = NA)
+  expect_identical(types, rhs)
 })
 
 test_that("common type of unspecified and NULL is unspecified", {
