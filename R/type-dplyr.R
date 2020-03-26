@@ -4,8 +4,12 @@
 
 ### `grouped_df` -----------------------------------------------------
 
+group_intersect <- function(x, new) {
+  intersect(dplyr::group_vars(x), names(new))
+}
+
 vec_restore.grouped_df <- function(x, to, ...) {
-  vars <- intersect(names(x), dplyr::group_vars(to))
+  vars <- group_intersect(to, x)
   drop <- dplyr::group_by_drop_default(to)
   dplyr::grouped_df(x, vars, drop = drop)
 }
