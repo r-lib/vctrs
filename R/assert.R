@@ -2,12 +2,40 @@
 #'
 #' @description
 #'
-#' * `vec_is()` is a predicate that checks if its input conforms to a
-#'   prototype and/or a size.
+#' * `vec_is()` is a predicate that checks if its input is a vector that
+#'   conforms to a prototype and/or a size.
 #'
-#' * `vec_assert()` throws an error when the input doesn't conform.
+#' * `vec_assert()` throws an error when the input is not a vector or
+#'   doesn't conform.
+#'
+#' @section Scalars and vectors:
+# From vec_base_typeof():
+#' An object is a vector if one of the following conditions hold:
+#'
+#' - [typeof()] is atomic: `"logical"`, `"integer"`, `"double"`,
+#'   `"complex"`, `"character"`, `"raw"`
+#' - `typeof()` is `"list"`, and one of:
+#'     - the object is a bare `"list"` without a `"class"` attribute,
+#'       see [is_bare_list()]
+#'     - the object is a [data.frame]
+#'     - the `"class"` attribute contains `"list"`, i.e., `inherits(x, "list")`
+#'       is `TRUE`
+#'     - the class implements a [vec_proxy()] method
+#'
+#' Otherwise an object is inherently *scalar* and cannot be used as a vector.
+#' `NULL` is not a vector.
+#' Objects of mode [expression] have vector-like behavior but are currently
+#' treated as scalars.
+#' Support for S4 vectors is currently limited to objects that inherit from
+#' an atomic type.
 #'
 #' @section Error types:
+#'
+#' `vec_is()` never throws.
+#' `vec_assert()` throws the following errors:
+#'
+#' * If the input is not a vector, an error of class
+#'   `"vctrs_error_scalar_type"` is raised.
 #'
 #' * If the prototype doesn't match, an error of class
 #'   `"vctrs_error_assert_ptype"` is raised.

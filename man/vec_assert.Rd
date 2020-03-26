@@ -30,14 +30,45 @@ invisibly.
 }
 \description{
 \itemize{
-\item \code{vec_is()} is a predicate that checks if its input conforms to a
-prototype and/or a size.
-\item \code{vec_assert()} throws an error when the input doesn't conform.
+\item \code{vec_is()} is a predicate that checks if its input is a vector that
+conforms to a prototype and/or a size.
+\item \code{vec_assert()} throws an error when the input is not a vector or
+doesn't conform.
 }
 }
+\section{Scalars and vectors}{
+
+An object is a vector if one of the following conditions hold:
+\itemize{
+\item \code{\link[=typeof]{typeof()}} is atomic: \code{"logical"}, \code{"integer"}, \code{"double"},
+\code{"complex"}, \code{"character"}, \code{"raw"}
+\item \code{typeof()} is \code{"list"}, and one of:
+\itemize{
+\item the object is a bare \code{"list"} without a \code{"class"} attribute,
+see \code{\link[=is_bare_list]{is_bare_list()}}
+\item the object is a \link{data.frame}
+\item the \code{"class"} attribute contains \code{"list"}, i.e., \code{inherits(x, "list")}
+is \code{TRUE}
+\item the class implements a \code{\link[=vec_proxy]{vec_proxy()}} method
+}
+}
+
+Otherwise an object is inherently \emph{scalar} and cannot be used as a vector.
+\code{NULL} is not a vector.
+Objects of mode \link{expression} have vector-like behavior but are currently
+treated as scalars.
+Support for S4 vectors is currently limited to objects that inherit from
+an atomic type.
+}
+
 \section{Error types}{
 
+
+\code{vec_is()} never throws.
+\code{vec_assert()} throws the following errors:
 \itemize{
+\item If the input is not a vector, an error of class
+\code{"vctrs_error_scalar_type"} is raised.
 \item If the prototype doesn't match, an error of class
 \code{"vctrs_error_assert_ptype"} is raised.
 \item If the size doesn't match, an error of class
