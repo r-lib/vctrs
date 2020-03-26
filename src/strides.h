@@ -61,6 +61,9 @@ struct strides_info {
   SEXP index;
   const int* p_index;
 
+  SEXP steps;
+  const int* p_steps;
+
   SEXP shape_index;
   int* p_shape_index;
 
@@ -74,8 +77,9 @@ struct strides_info {
   PROTECT((info)->dim);                    \
   PROTECT((info)->strides);                \
   PROTECT((info)->index);                  \
+  PROTECT((info)->steps);                  \
   PROTECT((info)->shape_index);            \
-  *(n) += 4;                               \
+  *(n) += 5;                               \
 } while(0)
 
 static inline SEXP vec_strides(const int* p_dim, const R_len_t shape_n) {
@@ -90,6 +94,29 @@ static inline SEXP vec_strides(const int* p_dim, const R_len_t shape_n) {
 
   UNPROTECT(1);
   return strides;
+}
+
+static inline SEXP vec_steps(const int* p_index, const R_len_t index_n) {
+  SEXP steps = PROTECT(Rf_allocVector(INTSXP, index_n));
+  int* p_steps = INTEGER(steps);
+
+  // Indices come in 1-based
+  int index_previous = 1;
+
+  for (R_len_t i = 0; i < index_n; ++i) {
+    const int index_current = p_index[i];
+
+    if (index_current == NA_INTEGER) {
+      p_steps[i] = NA_INTEGER;
+      continue;
+    }
+
+    p_steps[i] = index_current - index_previous;
+    index_previous = index_current;
+  }
+
+  UNPROTECT(1);
+  return steps;
 }
 
 static inline int vec_strided_loc(const int size_index,
@@ -134,6 +161,17 @@ static inline struct strides_info new_strides_info(SEXP x, SEXP index) {
 
   const int* p_index = INTEGER_RO(index);
 
+  // If using a compact rep/seq, the `steps` won't be used, but we still
+  // need to put something in the struct
+  SEXP steps;
+  if (is_compact(index)) {
+    steps = vctrs_shared_empty_int;
+  } else {
+    steps = vec_steps(p_index, index_n);
+  }
+  PROTECT(steps);
+  const int* p_steps = INTEGER_RO(steps);
+
   // Initialize `shape_index` to the first element
   SEXP shape_index = PROTECT(Rf_allocVector(INTSXP, shape_n));
   int* p_shape_index = INTEGER(shape_index);
@@ -153,6 +191,8 @@ static inline struct strides_info new_strides_info(SEXP x, SEXP index) {
     .p_strides = p_strides,
     .index = index,
     .p_index = p_index,
+    .steps = steps,
+    .p_steps = p_steps,
     .shape_index = shape_index,
     .p_shape_index = p_shape_index,
     .dim_n = dim_n,
@@ -161,7 +201,7 @@ static inline struct strides_info new_strides_info(SEXP x, SEXP index) {
     .shape_elem_n = shape_elem_n
   };
 
-  UNPROTECT(3);
+  UNPROTECT(4);
   return info;
 }
 
