@@ -43,10 +43,20 @@ SEXP vctrs_assign_seq(SEXP x, SEXP value, SEXP start, SEXP size, SEXP increasing
   R_len_t size_ = r_int_get(size, 0);
   bool increasing_ = r_lgl_get(increasing, 0);
 
-  SEXP subscript = PROTECT(compact_seq(start_, size_, increasing_));
-  SEXP out = vec_proxy_assign_opts(x, subscript, value, &vec_assign_default_opts);
+  SEXP index = PROTECT(compact_seq(start_, size_, increasing_));
 
-  UNPROTECT(1);
+  const struct vec_assign_opts* opts = &vec_assign_default_opts;
+
+  // Cast and recycle `value`
+  value = PROTECT(vec_coercible_cast(value, x, opts->value_arg, opts->x_arg));
+  value = PROTECT(vec_recycle(value, vec_subscript_size(index), opts->value_arg));
+
+  SEXP proxy = PROTECT(vec_proxy(x));
+  proxy = PROTECT(vec_proxy_assign_opts(proxy, index, value, opts));
+
+  SEXP out = vec_restore(proxy, x, R_NilValue);
+
+  UNPROTECT(5);
   return out;
 }
 
