@@ -43,14 +43,12 @@ SEXP vec_ptype2_dispatch(SEXP x, SEXP y,
 }
 
 // Initialised at load time
-static SEXP fns_vec_ptype2_dispatch_s3 = NULL;
-static SEXP syms_vec_ptype2_dispatch_s3 = NULL;
-
+static SEXP syms_vec_ptype2_default = NULL;
 static inline SEXP vec_ptype2_default(SEXP x,
                                       SEXP y,
                                       SEXP x_arg,
                                       SEXP y_arg) {
-  return vctrs_eval_mask4(Rf_install("vec_default_ptype2"),
+  return vctrs_eval_mask4(syms_vec_ptype2_default,
                           syms_x, x,
                           syms_y, y,
                           syms_x_arg, x_arg,
@@ -105,6 +103,5 @@ SEXP vec_ptype2_dispatch_s3(SEXP x,
 
 
 void vctrs_init_ptype2_dispatch(SEXP ns) {
-  syms_vec_ptype2_dispatch_s3 = Rf_install("vec_ptype2_dispatch_s3");
-  fns_vec_ptype2_dispatch_s3 = Rf_findVar(syms_vec_ptype2_dispatch_s3, ns);
+  syms_vec_ptype2_default = Rf_install("vec_default_ptype2");
 }
