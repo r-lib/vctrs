@@ -161,3 +161,10 @@ test_that("can cbind rowwise data frames", {
   # Suboptimal
   expect_identical(vec_cbind(rww, gdf), exp)
 })
+
+test_that("no common type between rowwise and grouped data frames", {
+  expect_error(
+    vec_ptype2(dplyr::rowwise(mtcars), dplyr::group_by(mtcars, cyl)),
+    class = "vctrs_error_incompatible_type"
+  )
+})
