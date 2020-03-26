@@ -164,11 +164,16 @@ SEXP vec_proxy_assign_opts(SEXP proxy, SEXP index, SEXP value,
   // because no proxy method was called
   SEXP out = R_NilValue;
 
-  if (vec_requires_fallback(value, value_info) || has_dim(proxy)) {
-    index = PROTECT(compact_materialize(index));
+  PROTECT_INDEX index_pi;
+  PROTECT_WITH_INDEX(index, &index_pi);
+
+  if (vec_requires_fallback(value, value_info)) {
+    index = compact_materialize(index);
+    REPROTECT(index, index_pi);
     out = PROTECT(vec_assign_fallback(proxy, index, value));
+  } else if (has_dim(proxy)) {
+    out = PROTECT(vec_assign_shaped(proxy, index, value_info.proxy));
   } else {
-    PROTECT(index);
     out = PROTECT(vec_assign_switch(proxy, index, value_info.proxy, opts));
   }
 
