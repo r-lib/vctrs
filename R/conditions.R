@@ -288,7 +288,7 @@ conditionMessage.vctrs_error_cast_lossy <- function(c) {
 cnd_header.vctrs_error_cast_lossy <- function(cnd, ...) {
   x_label <- format_arg_label(vec_ptype_full(cnd$x), cnd$x_arg)
   to_label <- format_arg_label(vec_ptype_full(cnd$to), cnd$to_arg)
-  glue::glue("Lossy cast from {x_label} to {to_label}.")
+  glue::glue("Can't convert from {x_label} to {to_label} because this loses precision.")
 }
 #' @export
 cnd_body.vctrs_error_cast_lossy <- function(cnd, ...) {
