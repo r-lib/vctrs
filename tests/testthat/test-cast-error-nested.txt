@@ -1,24 +1,24 @@
 
 vec_cast("foo", 10):
 
-Lossy cast from <character> to <double>.
+Can't convert from <character> to <double> due to loss of precision.
 * Locations: 1 
 
 
 vec_cast(factor("foo"), 10):
 
-Can't cast <factor<bd40e>> to <double>. 
+Can't convert from <factor<bd40e>> to <double>. 
 
 
 vec_cast(x, y):
 
-Lossy cast from `a$b` <character> to `a$b` <double>.
+Can't convert from `a$b` <character> to `a$b` <double> due to loss of precision.
 * Locations: 1 
 
 
 vec_cast(x, y):
 
-Can't cast `a$b` <factor<bd40e>> to `a$b` <double>. 
+Can't convert from `a$b` <factor<bd40e>> to `a$b` <double>. 
 
 
 vec_cast_common(x, y):
