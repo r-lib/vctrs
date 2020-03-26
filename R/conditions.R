@@ -115,7 +115,7 @@ stop_incompatible_cast <- function(x,
     to_label <- format_arg_label(vec_ptype_full(y), to_arg)
 
     message <- glue_lines(
-      "Can't cast {x_label} to {to_label}.",
+      "Can't convert from {x_label} to {to_label}.",
       details
     )
   }
