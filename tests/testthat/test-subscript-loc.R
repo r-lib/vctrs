@@ -44,7 +44,7 @@ test_that("vec_as_location2() and vec_as_location() require integer- or characte
 
   # Define subtype of logical and integer
   local_methods(
-    vec_ptype2.vctrs_foobar = function(x, y, ...) UseMethod("vec_ptype2.vctrs_foobar", y),
+    vec_ptype2.vctrs_foobar = function(x, y, ...) UseMethod("vec_ptype2.vctrs_foobar"),
     vec_ptype2.vctrs_foobar.default = function(x, y, ...) vec_default_ptype2(x, y, ...),
     vec_ptype2.vctrs_foobar.logical = function(x, y, ...) logical(),
     vec_ptype2.vctrs_foobar.integer = function(x, y, ...) integer(),

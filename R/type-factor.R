@@ -82,7 +82,7 @@ vec_ptype_abbr.ordered <- function(x, ...) {
 #' @export vec_ptype2.factor
 #' @method vec_ptype2 factor
 #' @export
-vec_ptype2.factor <- function(x, y, ...) UseMethod("vec_ptype2.factor", y)
+vec_ptype2.factor <- function(x, y, ...) UseMethod("vec_ptype2.factor")
 #' @method vec_ptype2.character factor
 #' @export
 vec_ptype2.character.factor <- function(x, y, ...) character()
@@ -97,7 +97,7 @@ vec_ptype2.factor.factor <- function(x, y, ...) new_factor(levels = levels_union
 #' @export vec_ptype2.ordered
 #' @method vec_ptype2 ordered
 #' @export
-vec_ptype2.ordered <- function(x, y, ...) UseMethod("vec_ptype2.ordered", y)
+vec_ptype2.ordered <- function(x, y, ...) UseMethod("vec_ptype2.ordered")
 #' @method vec_ptype2.ordered character
 #' @export
 vec_ptype2.ordered.character <- function(x, y, ...) character()

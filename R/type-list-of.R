@@ -186,7 +186,7 @@ as.character.vctrs_list_of <- function(x, ...) {
 #' @export
 vec_ptype2.vctrs_list_of <- function(x, y, ..., x_arg = "", y_arg = "") {
   if (inherits_only(x, c("vctrs_list_of", "vctrs_vctr"))) {
-    UseMethod("vec_ptype2.vctrs_list_of", y)
+    UseMethod("vec_ptype2.vctrs_list_of")
   } else {
     vec_default_ptype2(x, y, x_arg = x_arg, y_arg = y_arg)
   }

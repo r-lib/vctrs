@@ -29,7 +29,7 @@ vec_ptype_abbr.table <- function(x, ...) {
 #' @export
 vec_ptype2.table <- function(x, y, ..., x_arg = "", y_arg = "") {
   if (is_bare_table(x)) {
-    UseMethod("vec_ptype2.table", y)
+    UseMethod("vec_ptype2.table")
   } else {
     vec_default_ptype2(x, y, x_arg = x_arg, y_arg = y_arg)
   }

@@ -654,7 +654,7 @@ format.hidden <- function(x, ...) rep("xxx", length(x))
 
 local_hidden <- function(frame = caller_env()) {
   local_bindings(.env = global_env(), .frame = frame,
-    vec_ptype2.hidden         = function(x, y, ...) UseMethod("vec_ptype2.hidden", y),
+    vec_ptype2.hidden         = function(x, y, ...) UseMethod("vec_ptype2.hidden"),
     vec_ptype2.hidden.hidden  = function(x, y, ...) new_hidden(),
     vec_ptype2.hidden.double  = function(x, y, ...) new_hidden(),
     vec_ptype2.double.hidden  = function(x, y, ...) new_hidden(),

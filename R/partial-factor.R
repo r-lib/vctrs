@@ -78,7 +78,7 @@ vec_ptype_abbr.vctrs_partial_factor <- function(x, ...) {
 #' @method vec_ptype2 vctrs_partial_factor
 #' @export
 vec_ptype2.vctrs_partial_factor <- function(x, y, ...) {
-  UseMethod("vec_ptype2.vctrs_partial_factor", y)
+  UseMethod("vec_ptype2.vctrs_partial_factor")
 }
 
 #' @method vec_ptype2.vctrs_partial_factor vctrs_partial_factor

@@ -77,7 +77,7 @@ vec_proxy_compare.data.frame <- function(x, ..., relax = FALSE) {
 #' @method vec_ptype2 data.frame
 #' @export
 vec_ptype2.data.frame <- function(x, y, ...) {
-  UseMethod("vec_ptype2.data.frame", y)
+  UseMethod("vec_ptype2.data.frame")
 }
 #' @method vec_ptype2.data.frame data.frame
 #' @export

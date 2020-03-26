@@ -10,7 +10,7 @@ vec_ptype2.logical <- function(x, y, ..., x_arg = "", y_arg = "") {
   if (is.object(x)) {
     vec_default_ptype2(x, y, x_arg = x_arg, y_arg = y_arg)
   } else {
-    UseMethod("vec_ptype2.logical", y)
+    UseMethod("vec_ptype2.logical")
   }
 }
 #' @rdname vec_ptype2
@@ -21,7 +21,7 @@ vec_ptype2.integer <- function(x, y, ..., x_arg = "", y_arg = "") {
   if (is.object(x)) {
     vec_default_ptype2(x, y, x_arg = x_arg, y_arg = y_arg)
   } else {
-    UseMethod("vec_ptype2.integer", y)
+    UseMethod("vec_ptype2.integer")
   }
 }
 #' @rdname vec_ptype2
@@ -32,7 +32,7 @@ vec_ptype2.double <- function(x, y, ..., x_arg = "", y_arg = "") {
   if (is.object(x)) {
     vec_default_ptype2(x, y, x_arg = x_arg, y_arg = y_arg)
   } else {
-    UseMethod("vec_ptype2.double", y)
+    UseMethod("vec_ptype2.double")
   }
 }
 #' @rdname vec_ptype2
@@ -43,7 +43,7 @@ vec_ptype2.complex <- function(x, y, ..., x_arg = "", y_arg = "") {
   if (is.object(x)) {
     vec_default_ptype2(x, y, x_arg = x_arg, y_arg = y_arg)
   } else {
-    UseMethod("vec_ptype2.complex", y)
+    UseMethod("vec_ptype2.complex")
   }
 }
 #' @rdname vec_ptype2
@@ -54,7 +54,7 @@ vec_ptype2.character <- function(x, y, ..., x_arg = "", y_arg = "") {
   if (is.object(x)) {
     vec_default_ptype2(x, y, x_arg = x_arg, y_arg = y_arg)
   } else {
-    UseMethod("vec_ptype2.character", y)
+    UseMethod("vec_ptype2.character")
   }
 }
 #' @rdname vec_ptype2
@@ -65,7 +65,7 @@ vec_ptype2.raw <- function(x, y, ..., x_arg = "", y_arg = "") {
   if (is.object(x)) {
     vec_default_ptype2(x, y, x_arg = x_arg, y_arg = y_arg)
   } else {
-    UseMethod("vec_ptype2.raw", y)
+    UseMethod("vec_ptype2.raw")
   }
 }
 #' @rdname vec_ptype2
@@ -76,7 +76,7 @@ vec_ptype2.list <- function(x, y, ..., x_arg = "", y_arg = "") {
   if (is.object(x)) {
     vec_default_ptype2(x, y, x_arg = x_arg, y_arg = y_arg)
   } else {
-    UseMethod("vec_ptype2.list", y)
+    UseMethod("vec_ptype2.list")
   }
 }
 

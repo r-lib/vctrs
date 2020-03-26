@@ -64,7 +64,7 @@ vec_ptype_abbr.vctrs_partial_frame <- function(x, ...) {
 #' @method vec_ptype2 vctrs_partial_frame
 #' @export
 vec_ptype2.vctrs_partial_frame <- function(x, y, ...) {
-  UseMethod("vec_ptype2.vctrs_partial_frame", y)
+  UseMethod("vec_ptype2.vctrs_partial_frame")
 }
 
 #' @method vec_ptype2.vctrs_partial_frame vctrs_partial_frame
