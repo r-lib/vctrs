@@ -84,3 +84,30 @@ vec_as_index <- function(i, n, names = NULL) {
     arg = NULL
   )
 }
+
+#' Expand the length of a vector
+#'
+#' @description
+#' \Sexpr[results=rd, stage=render]{vctrs:::lifecycle("soft-deprecated")}
+#'
+#' `vec_repeat()` has been replaced with [vec_rep()] and [vec_rep_each()] and is
+#' soft-deprecated as of vctrs 0.3.0.
+#'
+#' @param x A vector.
+#' @param each Number of times to repeat each element of `x`.
+#' @param times Number of times to repeat the whole vector of `x`.
+#' @return A vector the same type as `x` with size `vec_size(x) * times * each`.
+#' @keywords internal
+#' @export
+vec_repeat <- function(x, each = 1L, times = 1L) {
+  signal_soft_deprecated(paste_line(
+    "`vec_repeat()` is deprecated as of vctrs 0.3.0.",
+    "Please use either `vec_rep()` or `vec_rep_each()` instead."
+  ))
+
+  vec_assert(each, size = 1L)
+  vec_assert(times, size = 1L)
+
+  idx <- rep(vec_seq_along(x), times = times, each = each)
+  vec_slice(x, idx)
+}

@@ -104,6 +104,8 @@ extern SEXP vctrs_tib_ptype2(SEXP x, SEXP y, SEXP x_arg_, SEXP y_arg_);
 extern SEXP vctrs_tib_cast(SEXP x, SEXP y, SEXP x_arg_, SEXP y_arg_);
 extern SEXP vctrs_assign_params(SEXP, SEXP, SEXP, SEXP);
 extern SEXP vctrs_has_dim(SEXP);
+extern SEXP vctrs_rep(SEXP, SEXP);
+extern SEXP vctrs_rep_each(SEXP, SEXP);
 
 // Maturing
 // In the public header
@@ -228,6 +230,8 @@ static const R_CallMethodDef CallEntries[] = {
   {"vctrs_tib_cast",                   (DL_FUNC) &vctrs_tib_cast, 4},
   {"vctrs_assign_params",              (DL_FUNC) &vctrs_assign_params, 4},
   {"vctrs_has_dim",                    (DL_FUNC) &vctrs_has_dim, 1},
+  {"vctrs_rep",                        (DL_FUNC) &vctrs_rep, 2},
+  {"vctrs_rep_each",                   (DL_FUNC) &vctrs_rep_each, 2},
   {NULL, NULL, 0}
 };
 
@@ -292,6 +296,7 @@ void vctrs_init_slice_assign(SEXP ns);
 void vctrs_init_subscript(SEXP ns);
 void vctrs_init_subscript_loc(SEXP ns);
 void vctrs_init_ptype2_dispatch(SEXP ns);
+void vctrs_init_rep(SEXP ns);
 void vctrs_init_type(SEXP ns);
 void vctrs_init_type_data_frame(SEXP ns);
 void vctrs_init_type_info(SEXP ns);
@@ -309,6 +314,7 @@ SEXP vctrs_init_library(SEXP ns) {
   vctrs_init_subscript(ns);
   vctrs_init_subscript_loc(ns);
   vctrs_init_ptype2_dispatch(ns);
+  vctrs_init_rep(ns);
   vctrs_init_type(ns);
   vctrs_init_type_data_frame(ns);
   vctrs_init_type_info(ns);

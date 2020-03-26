@@ -1,6 +1,11 @@
 
 # vctrs (development version)
 
+* New `vec_rep()` and `vec_rep_each()` for repeating an entire vector
+  and elements of a vector, respectively. These two functions provide
+  a clearer interface for the functionality of `vec_repeat()`, which
+  is now deprecated.
+  
 * `vec_match()` and `vec_in()` gain parameters for argument tags (#944).
 
 * The `is.na<-()` method for `vctrs_vctr` now supports numeric and

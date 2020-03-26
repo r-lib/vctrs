@@ -408,6 +408,7 @@ extern SEXP syms_arg;
 extern SEXP syms_x_arg;
 extern SEXP syms_y_arg;
 extern SEXP syms_to_arg;
+extern SEXP syms_times_arg;
 extern SEXP syms_subscript_arg;
 extern SEXP syms_out;
 extern SEXP syms_value;

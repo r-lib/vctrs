@@ -1329,6 +1329,7 @@ SEXP syms_arg = NULL;
 SEXP syms_x_arg = NULL;
 SEXP syms_y_arg = NULL;
 SEXP syms_to_arg = NULL;
+SEXP syms_times_arg = NULL;
 SEXP syms_subscript_arg = NULL;
 SEXP syms_out = NULL;
 SEXP syms_value = NULL;
@@ -1550,6 +1551,7 @@ void vctrs_init_utils(SEXP ns) {
   syms_x_arg = Rf_install("x_arg");
   syms_y_arg = Rf_install("y_arg");
   syms_to_arg = Rf_install("to_arg");
+  syms_times_arg = Rf_install("times_arg");
   syms_subscript_arg = Rf_install("subscript_arg");
   syms_out = Rf_install("out");
   syms_value = Rf_install("value");
