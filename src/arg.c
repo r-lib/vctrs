@@ -200,6 +200,9 @@ static r_ssize_t index_arg_fill(void* data_, char* buf, r_ssize_t remaining) {
 }
 
 static bool is_empty_arg(struct vctrs_arg* arg) {
+  if (!arg) {
+    return true;
+  }
   char tmp[1];
   return arg->fill(arg->data, tmp, 1) != 0;;
 }
