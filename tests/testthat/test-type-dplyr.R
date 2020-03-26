@@ -9,9 +9,8 @@ test_that("grouped-df is proxied and restored", {
 
   expect_identical(vec_ptype(gdf), gdf[0, ])
 
-  # Taking the prototype with `[` because of tidyverse/dplyr#5040
   gdf <- dplyr::group_by(mtcars, cyl, am, vs)
-  # expect_identical(gdf[0, ], vec_ptype(gdf))
+  expect_identical(gdf[0, ], vec_ptype(gdf))
 
   out <- vec_ptype(dplyr::group_by(mtcars, cyl, .drop = FALSE))
   expect_drop(out, FALSE)
@@ -35,8 +34,7 @@ test_that("the common type of grouped tibbles includes the union of grouping var
   gdf1 <- dplyr::group_by(mtcars, cyl)
   gdf2 <- dplyr::group_by(mtcars, am, vs)
   expect_identical(
-    # Taking the prototype again because of tidyverse/dplyr#5040
-    vec_ptype(vec_ptype2(gdf1, gdf2)),
+    vec_ptype2(gdf1, gdf2),
     vec_ptype(dplyr::group_by(mtcars, cyl, am, vs))
   )
 })
