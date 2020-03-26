@@ -97,7 +97,7 @@ i It must be logical, numeric, or character.
 
 > vec_as_location(2.5, 3L)
 Error: Must subset elements with a valid subscript vector.
-x Can't convert from <double> to <integer> because this loses precision.
+x Can't convert from <double> to <integer> due to loss of precision.
 
 > vec_as_location(list(), 10L)
 Error: Must subset elements with a valid subscript vector.
@@ -127,7 +127,7 @@ i It must be logical, numeric, or character.
 
 > vec_as_location(2.5, 3L, arg = "foo")
 Error: Must subset elements with a valid subscript vector.
-x Can't convert from `foo` <double> to <integer> because this loses precision.
+x Can't convert from `foo` <double> to <integer> due to loss of precision.
 
 
 vec_as_location2() requires integer or character inputs
@@ -167,7 +167,7 @@ i It must be numeric or character.
 
 > vec_as_location2(2.5, 3L)
 Error: Must extract element with a single valid subscript.
-x Can't convert from <double> to <integer> because this loses precision.
+x Can't convert from <double> to <integer> due to loss of precision.
 
 > # Idem with custom `arg`
 > vec_as_location2(foobar(), 10L, arg = "foo")
@@ -177,7 +177,7 @@ i It must be numeric or character.
 
 > vec_as_location2(2.5, 3L, arg = "foo")
 Error: Must extract element with a single valid subscript.
-x Can't convert from `foo` <double> to <integer> because this loses precision.
+x Can't convert from `foo` <double> to <integer> due to loss of precision.
 
 > with_tibble_rows(vec_as_location2(TRUE))
 Error: Must remove row with a single valid subscript.
