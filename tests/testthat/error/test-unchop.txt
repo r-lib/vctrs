@@ -4,12 +4,12 @@ vec_unchop() errors on unsupported location values
 
 > vec_unchop(list(1, 2), list(c(1, 2), 0))
 Error: Must subset elements with a valid subscript vector.
-x The subscript can't contain `0` values.
+x Subscript can't contain `0` values.
 i It has a `0` value at location 1.
 
 > vec_unchop(list(1), list(-1))
 Error: Must subset elements with a valid subscript vector.
-x The subscript can't contain negative locations.
+x Subscript can't contain negative locations.
 
 
 vec_unchop() fails with complex foreign S3 classes
@@ -60,11 +60,11 @@ vec_unchop() does not support non-numeric S3 indices
 
 > vec_unchop(list(1), list(factor("x")))
 Error: Must subset elements with a valid subscript vector.
-x The subscript has the wrong type `character`.
+x Subscript has the wrong type `character`.
 i It must be numeric.
 
 > vec_unchop(list(1), list(foobar(1L)))
 Error: Must subset elements with a valid subscript vector.
-x The subscript has the wrong type `vctrs_foobar`.
+x Subscript has the wrong type `vctrs_foobar`.
 i It must be numeric.
 
