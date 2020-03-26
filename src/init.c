@@ -77,6 +77,8 @@ extern SEXP vec_bare_df_restore(SEXP, SEXP, SEXP);
 extern SEXP vctrs_recycle(SEXP, SEXP, SEXP);
 extern SEXP vctrs_coercible_cast(SEXP, SEXP, SEXP, SEXP);
 extern SEXP vctrs_assign(SEXP, SEXP, SEXP, SEXP, SEXP);
+extern SEXP vctrs_assign_seq(SEXP, SEXP, SEXP, SEXP, SEXP);
+extern SEXP vctrs_assign_rep(SEXP, SEXP, SEXP, SEXP);
 extern SEXP vctrs_set_attributes(SEXP, SEXP);
 extern SEXP vctrs_as_df_row(SEXP, SEXP);
 extern SEXP vctrs_outer_names(SEXP, SEXP, SEXP);
@@ -202,6 +204,8 @@ static const R_CallMethodDef CallEntries[] = {
   {"vctrs_recycle",                    (DL_FUNC) &vctrs_recycle, 3},
   {"vctrs_coercible_cast",             (DL_FUNC) &vctrs_coercible_cast, 4},
   {"vctrs_assign",                     (DL_FUNC) &vctrs_assign, 5},
+  {"vctrs_assign_seq",                 (DL_FUNC) &vctrs_assign_seq, 5},
+  {"vctrs_assign_rep",                 (DL_FUNC) &vctrs_assign_rep, 4},
   {"vctrs_set_attributes",             (DL_FUNC) &vctrs_set_attributes, 2},
   {"vctrs_as_df_row",                  (DL_FUNC) &vctrs_as_df_row, 2},
   {"vctrs_outer_names",                (DL_FUNC) &vctrs_outer_names, 3},

@@ -176,6 +176,16 @@ vec_assign_fallback <- function(x, i, value) {
   x
 }
 
+# `start` is 0-based
+vec_assign_seq <- function(x, value, start, size, increasing = TRUE) {
+  .Call(vctrs_assign_seq, x, value, start, size, increasing)
+}
+
+# `i` is 1-based
+vec_assign_rep <- function(x, value, i, n) {
+  .Call(vctrs_slice_rep, x, value, i, n)
+}
+
 vec_assign_params <- function(x, i, value, assign_names = FALSE) {
   .Call(vctrs_assign_params, x, i, value, assign_names)
 }
