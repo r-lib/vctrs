@@ -53,7 +53,7 @@ static SEXP vec_rep(SEXP x, int times) {
 
   R_len_t k = 0;
 
-  for (R_len_t i = 0; i < times; ++i) {
+  for (R_len_t i = 0; i < times_; ++i) {
     for (R_len_t j = 1; j <= x_size; ++j, ++k) {
       p_subscript[k] = j;
     }
@@ -113,7 +113,7 @@ static SEXP vec_rep_each_uniform(SEXP x, int times) {
   R_len_t k = 0;
 
   for (R_len_t i = 1; i <= x_size; ++i) {
-    for (R_len_t j = 0; j < times; ++j, ++k) {
+    for (R_len_t j = 0; j < times_; ++j, ++k) {
       p_subscript[k] = i;
     }
   }
@@ -154,7 +154,7 @@ static SEXP vec_rep_each_impl(SEXP x, SEXP times, const R_len_t times_size) {
   R_len_t k = 0;
 
   for (R_len_t i = 1; i <= x_size; ++i) {
-    const int elt_times = p_times[i - 1];
+    const R_len_t elt_times = (R_len_t) p_times[i - 1];
 
     for (R_len_t j = 0; j < elt_times; ++j, ++k) {
       p_subscript[k] = i;
