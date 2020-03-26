@@ -91,6 +91,13 @@ test_that("can cbind grouped data frames", {
     unrownames(vec_cbind(gdf, df)),
     tibble::as_tibble(mtcars)[c(1:9, 11, 10)]
   )
+
+  gdf1 <- dplyr::group_by(mtcars[2], cyl)
+  gdf2 <- dplyr::group_by(mtcars[8:9], vs, am)
+  expect_identical(
+    unrownames(vec_cbind(gdf1, gdf2)),
+    tibble::as_tibble(mtcars)[c(2, 8, 9)]
+  )
 })
 
 
@@ -141,4 +148,16 @@ test_that("can cast to and from `rowwise_df`", {
     unrownames(vec_cast(rww, tib)),
     tib
   )
+})
+
+test_that("can cbind rowwise data frames", {
+  df <- unrownames(mtcars)
+  rww <- dplyr::rowwise(df[-2])
+  gdf <- dplyr::group_by(df[2], cyl)
+
+  exp <- dplyr::rowwise(df[c(1, 3:11, 2)])
+  expect_identical(vec_cbind(rww, df[2]), exp)
+
+  # Suboptimal
+  expect_identical(vec_cbind(rww, gdf), exp)
 })
