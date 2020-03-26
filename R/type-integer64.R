@@ -38,10 +38,6 @@ vec_ptype2.integer64 <- function(x, y, ...) {
   UseMethod("vec_ptype2.integer64")
 }
 
-#' @method vec_ptype2.integer64 vctrs_unspecified
-#' @export
-vec_ptype2.integer64.vctrs_unspecified <- function(x, y, ...) bit64::integer64()
-
 #' @method vec_ptype2.integer64 integer64
 #' @export
 vec_ptype2.integer64.integer64 <- function(x, y, ...) bit64::integer64()
