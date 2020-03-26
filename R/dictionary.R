@@ -234,8 +234,8 @@ vec_match <- function(needles,
                       haystack,
                       ...,
                       na_equal = TRUE,
-                      needles_arg = "needles",
-                      haystack_arg = "haystack") {
+                      needles_arg = "",
+                      haystack_arg = "") {
   if (!missing(...)) ellipsis::check_dots_empty()
   .Call(vctrs_match, needles, haystack, na_equal, needles_arg, haystack_arg)
 }
@@ -246,8 +246,8 @@ vec_in <- function(needles,
                    haystack,
                    ...,
                    na_equal = TRUE,
-                   needles_arg = "needles",
-                   haystack_arg = "haystack") {
+                   needles_arg = "",
+                   haystack_arg = "") {
   if (!missing(...)) ellipsis::check_dots_empty()
   .Call(vctrs_in, needles, haystack, na_equal, needles_arg, haystack_arg)
 }

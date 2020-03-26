@@ -10,8 +10,8 @@ vec_match(
   haystack,
   ...,
   na_equal = TRUE,
-  needles_arg = "needles",
-  haystack_arg = "haystack"
+  needles_arg = "",
+  haystack_arg = ""
 )
 
 vec_in(
@@ -19,8 +19,8 @@ vec_in(
   haystack,
   ...,
   na_equal = TRUE,
-  needles_arg = "needles",
-  haystack_arg = "haystack"
+  needles_arg = "",
+  haystack_arg = ""
 )
 }
 \arguments{
