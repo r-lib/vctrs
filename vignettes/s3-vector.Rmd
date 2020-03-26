@@ -192,7 +192,7 @@ Both generics use __[double dispatch](https://en.wikipedia.org/wiki/Double_dispa
 
 ```{r}
 vec_ptype2.MYCLASS <- function(x, y, ...) UseMethod("vec_ptype2.MYCLASS", y)
-vec_ptype2.MYCLASS.default <- function(x, y, ..., x_arg = "x", y_arg = "y") {
+vec_ptype2.MYCLASS.default <- function(x, y, ..., x_arg = "", y_arg = "") {
   vec_default_ptype2(x, y, x_arg = x_arg, y_arg = y_arg)
 }
 
@@ -208,7 +208,7 @@ We'll make our percent class coercible back and forth with double vectors. I'll 
 
 ```{r}
 vec_ptype2.vctrs_percent <- function(x, y, ...) UseMethod("vec_ptype2.vctrs_percent", y)
-vec_ptype2.vctrs_percent.default <- function(x, y, ..., x_arg = "x", y_arg = "y") {
+vec_ptype2.vctrs_percent.default <- function(x, y, ..., x_arg = "", y_arg = "") {
   vec_default_ptype2(x, y, x_arg = x_arg, y_arg = y_arg)
 }
 ```
@@ -370,7 +370,7 @@ Now consider `vec_cast()` and `vec_ptype2()`. I start with the standard recipes:
 
 ```{r}
 vec_ptype2.vctrs_decimal <- function(x, y, ...) UseMethod("vec_ptype2.vctrs_decimal", y)
-vec_ptype2.vctrs_decimal.default <- function(x, y, ..., x_arg = "x", y_arg = "y") {
+vec_ptype2.vctrs_decimal.default <- function(x, y, ..., x_arg = "", y_arg = "") {
   vec_default_ptype2(x, y, x_arg = x_arg, y_arg = y_arg)
 }
 
@@ -565,7 +565,7 @@ For `rational`, `vec_ptype2()` and `vec_cast()` follow the same pattern as  `per
 
 ```{r}
 vec_ptype2.vctrs_rational <- function(x, y, ...) UseMethod("vec_ptype2.vctrs_rational", y)
-vec_ptype2.vctrs_rational.default <- function(x, y, ..., x_arg = "x", y_arg = "y") {
+vec_ptype2.vctrs_rational.default <- function(x, y, ..., x_arg = "", y_arg = "") {
   vec_default_ptype2(x, y, x_arg = x_arg, y_arg = y_arg)
 }
 vec_ptype2.vctrs_rational.vctrs_rational <- function(x, y, ...) new_rational()
@@ -1103,7 +1103,7 @@ Now we finish the work around `vec_ptype2()` by providing all needed methods. Ea
 #' @export                                 
 vec_ptype2.vctrs_percent.default <- function(x, y,
                                              ...,
-                                             x_arg = "x", y_arg = "y") {
+                                             x_arg = "", y_arg = "") {
   vec_default_ptype2(x, y, x_arg = x_arg, y_arg = y_arg)
 }
 #' @method vec_ptype2.vctrs_percent vctrs_percent

@@ -3,7 +3,7 @@
 ========================================
 
 > vec_assign(1:3, 1:3, 1:2)
-Error: `value` can't be recycled to size 3.
+Error: Input `value` can't be recycled to size 3.
 x It must be size 3 or 1, not 2.
 
 
@@ -63,6 +63,6 @@ i The subscript has a missing value at location 2.
 Error: No common type for `bar` <character> and `foo` <integer>.
 
 > vec_assign(1:2, 1L, 1:2, value_arg = "bar")
-Error: `bar` can't be recycled to size 1.
+Error: Input `bar` can't be recycled to size 1.
 x It must be size 1, not 2.
 

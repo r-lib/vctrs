@@ -158,7 +158,7 @@ vec_slice_dispatch_integer64 <- function(x, i) {
 }
 #' @rdname vec_slice
 #' @export
-vec_assign <- function(x, i, value, ..., x_arg = "x", value_arg = "value") {
+vec_assign <- function(x, i, value, ..., x_arg = "", value_arg = "value") {
   if (!missing(...)) {
     ellipsis::check_dots_empty()
   }

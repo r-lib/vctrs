@@ -45,20 +45,20 @@ vec_restore.AsIs <- function(x, to, ...) {
 #' @export vec_ptype2.AsIs
 #' @method vec_ptype2 AsIs
 #' @export
-vec_ptype2.AsIs <- function(x, y, ..., x_arg = "x", y_arg = "y") {
+vec_ptype2.AsIs <- function(x, y, ..., x_arg = "", y_arg = "") {
   UseMethod("vec_ptype2.AsIs", y)
 }
 
 #' @method vec_ptype2.AsIs default
 #' @export
-vec_ptype2.AsIs.default <- function(x, y, ..., x_arg = "x", y_arg = "y") {
+vec_ptype2.AsIs.default <- function(x, y, ..., x_arg = "", y_arg = "") {
   x <- asis_strip(x)
   vec_ptype2_asis(x, y, ..., x_arg = x_arg, y_arg = y_arg)
 }
 
 #' @method vec_ptype2.AsIs AsIs
 #' @export
-vec_ptype2.AsIs.AsIs <- function(x, y, ..., x_arg = "x", y_arg = "y") {
+vec_ptype2.AsIs.AsIs <- function(x, y, ..., x_arg = "", y_arg = "") {
   x <- asis_strip(x)
   y <- asis_strip(y)
   vec_ptype2_asis(x, y, ..., x_arg = x_arg, y_arg = y_arg)

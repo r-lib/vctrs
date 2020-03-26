@@ -10,7 +10,7 @@ vec_slice(x, i)
 
 vec_slice(x, i) <- value
 
-vec_assign(x, i, value, ..., x_arg = "x", value_arg = "value")
+vec_assign(x, i, value, ..., x_arg = "", value_arg = "value")
 }
 \arguments{
 \item{x}{A vector}

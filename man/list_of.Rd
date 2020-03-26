@@ -17,7 +17,7 @@ validate_list_of(x)
 
 is_list_of(x)
 
-\method{vec_ptype2}{vctrs_list_of}(x, y, ..., x_arg = "x", y_arg = "y")
+\method{vec_ptype2}{vctrs_list_of}(x, y, ..., x_arg = "", y_arg = "")
 
 \method{vec_cast}{vctrs_list_of}(x, to, ...)
 }
