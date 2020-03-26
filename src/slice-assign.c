@@ -50,19 +50,6 @@ SEXP vctrs_assign_seq(SEXP x, SEXP value, SEXP start, SEXP size, SEXP increasing
   return out;
 }
 
-// Exported for testing
-// [[ register() ]]
-SEXP vctrs_assign_rep(SEXP x, SEXP value, SEXP i, SEXP n) {
-  R_len_t i_ = r_int_get(i, 0);
-  R_len_t n_ = r_int_get(n, 0);
-
-  SEXP subscript = PROTECT(compact_rep(i_, n_));
-  SEXP out = vec_proxy_assign_opts(x, subscript, value, &vec_assign_default_opts);
-
-  UNPROTECT(1);
-  return out;
-}
-
 // [[ include("slice-assign.h") ]]
 SEXP vec_assign_opts(SEXP x, SEXP index, SEXP value,
                      const struct vec_assign_opts* opts) {
