@@ -7,14 +7,14 @@ static struct vctrs_arg args_x_;
 static struct vctrs_arg* const args_times = &args_times_;
 static struct vctrs_arg* const args_x = &args_x_;
 
-static inline void stop_rep_size_oob(double size);
 static inline void stop_rep_times_size();
-static inline void stop_rep_times_negative();
-static inline void stop_rep_times_missing();
-static inline void stop_rep_each_times_negative(R_len_t i);
-static inline void stop_rep_each_times_missing(R_len_t i);
 
-static inline bool size_is_oob(double x);
+static inline void check_rep_times(int times);
+static inline void check_rep_each_times(int times, R_len_t i);
+
+static inline bool multiply_would_overflow(R_len_t x, R_len_t y);
+static inline bool size_is_oob(double size);
+static inline void stop_rep_size_oob();
 
 // -----------------------------------------------------------------------------
 
@@ -37,22 +37,16 @@ SEXP vctrs_rep(SEXP x, SEXP times) {
 }
 
 static SEXP vec_rep(SEXP x, int times) {
-  if (times < 0) {
-    if (times == NA_INTEGER) {
-      stop_rep_times_missing();
-    } else {
-      stop_rep_times_negative();
-    }
-  }
+  check_rep_times(times);
 
+  const R_len_t times_ = (R_len_t) times;
   const R_len_t x_size = vec_size(x);
 
-  const double temp_size = (double) x_size * times;
-  if (size_is_oob(temp_size)) {
-    stop_rep_size_oob(temp_size);
-  }
+  if (multiply_would_overflow(x_size, times_)) {
+    stop_rep_size_oob();
+  };
 
-  const R_len_t size = (R_len_t) temp_size;
+  const R_len_t size = x_size * times_;
 
   SEXP subscript = PROTECT(Rf_allocVector(INTSXP, size));
   int* p_subscript = INTEGER(subscript);
@@ -102,22 +96,16 @@ static SEXP vec_rep_each(SEXP x, SEXP times) {
 }
 
 static SEXP vec_rep_each_uniform(SEXP x, int times) {
-  if (times < 0) {
-    if (times == NA_INTEGER) {
-      stop_rep_each_times_missing(1);
-    } else {
-      stop_rep_each_times_negative(1);
-    }
-  }
+  check_rep_each_times(times, 1);
 
+  const R_len_t times_ = (R_len_t) times;
   const R_len_t x_size = vec_size(x);
 
-  const double temp_size = (double) x_size * times;
-  if (size_is_oob(temp_size)) {
-    stop_rep_size_oob(temp_size);
-  }
+  if (multiply_would_overflow(x_size, times_)) {
+    stop_rep_size_oob();
+  };
 
-  const R_len_t size = (R_len_t) temp_size;
+  const R_len_t size = x_size * times_;
 
   SEXP subscript = PROTECT(Rf_allocVector(INTSXP, size));
   int* p_subscript = INTEGER(subscript);
@@ -149,19 +137,13 @@ static SEXP vec_rep_each_impl(SEXP x, SEXP times, const R_len_t times_size) {
   for (R_len_t i = 0; i < times_size; ++i) {
     const int elt_times = p_times[i];
 
-    if (elt_times < 0) {
-      if (elt_times == NA_INTEGER) {
-        stop_rep_each_times_missing(i + 1);
-      } else {
-        stop_rep_each_times_negative(i + 1);
-      }
-    }
+    check_rep_each_times(elt_times, i + 1);
 
-    temp_size += (double) elt_times;
+    temp_size += (double) (R_len_t) elt_times;
   }
 
   if (size_is_oob(temp_size)) {
-    stop_rep_size_oob(temp_size);
+    stop_rep_size_oob();
   }
 
   const R_len_t size = (R_len_t) temp_size;
@@ -187,18 +169,37 @@ static SEXP vec_rep_each_impl(SEXP x, SEXP times, const R_len_t times_size) {
 
 // -----------------------------------------------------------------------------
 
-static inline void stop_rep_size_oob(double size) {
-  Rf_errorcall(
-    R_NilValue,
-    "Long vectors are not yet supported. "
-    "Requested output size must be less than %i, not %f.",
-    R_LEN_T_MAX,
-    size
-  );
+// TODO: Modify for long vectors with `R_XLEN_T_MAX` and `R_xlen_t`.
+
+static inline bool times_is_oob(int times) {
+  return times > R_LEN_T_MAX;
 }
 
-static inline void stop_rep_times_size() {
-  Rf_errorcall(R_NilValue, "`times` must be a single number.");
+// Only useful for positive or zero inputs
+static inline bool multiply_would_overflow(R_len_t x, R_len_t y) {
+  return (double) x * y > R_LEN_T_MAX;
+}
+
+static inline bool size_is_oob(double size) {
+  return size > R_LEN_T_MAX;
+}
+
+// -----------------------------------------------------------------------------
+
+static inline void stop_rep_times_negative();
+static inline void stop_rep_times_missing();
+static inline void stop_rep_times_oob(int times);
+
+static inline void check_rep_times(int times) {
+  if (times < 0) {
+    if (times == NA_INTEGER) {
+      stop_rep_times_missing();
+    } else {
+      stop_rep_times_negative();
+    }
+  } else if (times_is_oob(times)) {
+    stop_rep_times_oob(times);
+  }
 }
 
 static inline void stop_rep_times_negative() {
@@ -209,6 +210,34 @@ static inline void stop_rep_times_missing() {
   Rf_errorcall(R_NilValue, "`times` can't be missing.");
 }
 
+static inline void stop_rep_times_oob(int times) {
+  Rf_errorcall(
+    R_NilValue,
+    "Long vectors are not yet supported. "
+    "`times` must be less than %i, not %i.",
+    R_LEN_T_MAX,
+    times
+  );
+}
+
+// -----------------------------------------------------------------------------
+
+static inline void stop_rep_each_times_negative(R_len_t i);
+static inline void stop_rep_each_times_missing(R_len_t i);
+static inline void stop_rep_each_times_oob(int times, R_len_t i);
+
+static inline void check_rep_each_times(int times, R_len_t i) {
+  if (times < 0) {
+    if (times == NA_INTEGER) {
+      stop_rep_each_times_missing(i);
+    } else {
+      stop_rep_each_times_negative(i);
+    }
+  } else if (times_is_oob(times)) {
+    stop_rep_each_times_oob(times, i);
+  }
+}
+
 static inline void stop_rep_each_times_negative(R_len_t i) {
   Rf_errorcall(R_NilValue, "`times` must be a vector of positive numbers. Location %i is negative.", i);
 }
@@ -217,13 +246,31 @@ static inline void stop_rep_each_times_missing(R_len_t i) {
   Rf_errorcall(R_NilValue, "`times` can't be missing. Location %i is missing.", i);
 }
 
+static inline void stop_rep_each_times_oob(int times, R_len_t i) {
+  Rf_errorcall(
+    R_NilValue,
+    "Long vectors are not yet supported. "
+    "`times` must be less than %i, not %i. ",
+    "Location %i is too large.",
+    R_LEN_T_MAX,
+    times,
+    i
+  );
+}
+
 // -----------------------------------------------------------------------------
 
-// Detect if a double size can be used as a vector size.
-// TODO: Modify for long vectors with `R_XLEN_T_MAX`.
+static inline void stop_rep_size_oob() {
+  Rf_errorcall(
+    R_NilValue,
+    "Long vectors are not yet supported. "
+    "Requested output size must be less than %i.",
+    R_LEN_T_MAX
+  );
+}
 
-static inline bool size_is_oob(double x) {
-  return x > R_LEN_T_MAX;
+static inline void stop_rep_times_size() {
+  Rf_errorcall(R_NilValue, "`times` must be a single number.");
 }
 
 // -----------------------------------------------------------------------------
