@@ -1,0 +1,12 @@
+
+vec_match() and vec_in() check types
+====================================
+
+> df1 <- data_frame(x = data_frame(foo = 1))
+> df2 <- data_frame(x = data_frame(foo = ""))
+> vec_match(df1, df2)
+Error: No common type for `needles$x$foo` <double> and `haystack$x$foo` <character>.
+
+> vec_in(df1, df2)
+Error: No common type for `needles$x$foo` <double> and `haystack$x$foo` <character>.
+

@@ -212,6 +212,15 @@ test_that("vec_match() matches match()", {
   expect_equal(vec_match("x", "x"), match("x", "x"))
 })
 
+test_that("vec_match() and vec_in() check types", {
+  verify_errors({
+    df1 <- data_frame(x = data_frame(foo = 1))
+    df2 <- data_frame(x = data_frame(foo = ""))
+    expect_error(vec_match(df1, df2), class = "vctrs_error_incompatible_type")
+    expect_error(vec_in(df1, df2), class = "vctrs_error_incompatible_type")
+  })
+})
+
 test_that("vec_in() matches %in%", {
   n <- c(1:3, NA)
   h <- c(4, 2, 1, NA)
@@ -301,4 +310,14 @@ test_that("missing values are propagated across columns", {
 
 test_that("can't supply NA as `na_equal`", {
   expect_error(vec_match(NA, NA, na_equal = NA), "single `TRUE` or `FALSE`")
+})
+
+test_that("dictionary tools have informative errors", {
+  verify_output(test_path("error", "test-dictionary.txt"), {
+    "# vec_match() and vec_in() check types"
+    df1 <- data_frame(x = data_frame(foo = 1))
+    df2 <- data_frame(x = data_frame(foo = ""))
+    vec_match(df1, df2)
+    vec_in(df1, df2)
+  })
 })
