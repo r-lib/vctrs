@@ -420,7 +420,8 @@ stop_recycle_incompatible_size <- function(x_size, size, x_arg = "x") {
 
 #' @export
 cnd_header.vctrs_error_recycle_incompatible_size <- function(cnd, ...) {
-  glue::glue_data(cnd, "`{x_arg}` can't be recycled to size {size}.")
+  arg <- append_arg("Input", cnd$x_arg)
+  glue::glue("{arg} can't be recycled to size {cnd$size}.")
 }
 #' @export
 cnd_body.vctrs_error_recycle_incompatible_size <- function(cnd, ...) {
