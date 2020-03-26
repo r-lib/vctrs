@@ -276,13 +276,6 @@ SEXP df_rownames(SEXP x) {
   return R_NilValue;
 }
 
-SEXP df_container_type(SEXP x) {
-  SEXP out = PROTECT(Rf_allocVector(VECSXP, 0));
-  out = vec_restore(out, x, R_NilValue);
-  UNPROTECT(1);
-  return out;
-}
-
 
 // vctrs type methods ------------------------------------------------
 

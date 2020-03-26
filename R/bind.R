@@ -167,3 +167,26 @@ as_df_row <- function(x, quiet = FALSE) {
 as_df_col <- function(x, outer_name) {
   .Call(vctrs_as_df_col, x, outer_name)
 }
+
+#' Frame prototype
+#'
+#' @description
+#'
+#' \Sexpr[results=rd, stage=render]{mypkg:::lifecycle("experimental")}
+#'
+#' This is an experimental generic that returns zero-columns variants
+#' of a data frame. It is needed for [vec_cbind()], to work around the
+#' lack of colwise primitives in vctrs. Expect changes.
+#'
+#' @param x A data frame.
+#' @inheritParams ellipsis::dots_empty
+#'
+#' @keywords internal
+#' @export
+vec_cbind_frame_ptype <- function(x, ...) {
+  UseMethod("vec_cbind_frame_ptype")
+}
+#' @export
+vec_cbind_frame_ptype.default <- function(x, ...) {
+  x[0]
+}

@@ -435,6 +435,16 @@ static SEXP vec_cbind(SEXP xs, SEXP ptype, SEXP size, struct name_repair_opts* n
   return out;
 }
 
+SEXP syms_vec_cbind_frame_ptype = NULL;
+SEXP fns_vec_cbind_frame_ptype = NULL;
+
+SEXP vec_cbind_frame_ptype(SEXP x) {
+  return vctrs_dispatch1(syms_vec_cbind_frame_ptype,
+                         fns_vec_cbind_frame_ptype,
+                         syms_x,
+                         x);
+}
+
 static SEXP cbind_container_type(SEXP x, void* data) {
   if (is_data_frame(x)) {
     SEXP rn = df_rownames(x);
@@ -450,7 +460,7 @@ static SEXP cbind_container_type(SEXP x, void* data) {
       }
     }
 
-    return df_container_type(x);
+    return vec_cbind_frame_ptype(x);
   } else {
     return R_NilValue;
   }
@@ -545,4 +555,9 @@ struct name_repair_opts validate_bind_name_repair(SEXP name_repair, bool allow_m
   }
 
   return opts;
+}
+
+void vctrs_init_bind(SEXP ns) {
+  syms_vec_cbind_frame_ptype = Rf_install("vec_cbind_frame_ptype");
+  fns_vec_cbind_frame_ptype = r_env_get(ns, syms_vec_cbind_frame_ptype);
 }
