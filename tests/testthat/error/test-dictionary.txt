@@ -7,6 +7,12 @@ vec_match() and vec_in() check types
 > vec_match(df1, df2)
 Error: No common type for `needles$x$foo` <double> and `haystack$x$foo` <character>.
 
+> vec_match(df1, df2, needles_arg = "n", haystack_arg = "h")
+Error: No common type for `n$x$foo` <double> and `h$x$foo` <character>.
+
 > vec_in(df1, df2)
 Error: No common type for `needles$x$foo` <double> and `haystack$x$foo` <character>.
+
+> vec_in(df1, df2, needles_arg = "n", haystack_arg = "h")
+Error: No common type for `n$x$foo` <double> and `h$x$foo` <character>.
 

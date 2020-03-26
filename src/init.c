@@ -20,7 +20,6 @@ extern SEXP vctrs_n_fields(SEXP);
 extern SEXP vctrs_hash(SEXP);
 extern SEXP vctrs_hash_object(SEXP);
 extern SEXP vctrs_equal_object(SEXP, SEXP);
-extern SEXP vctrs_in(SEXP, SEXP, SEXP);
 extern SEXP vctrs_duplicated(SEXP);
 extern SEXP vctrs_unique_loc(SEXP);
 extern SEXP vctrs_count(SEXP);
@@ -33,7 +32,8 @@ extern SEXP vec_group_loc(SEXP);
 extern SEXP vctrs_equal(SEXP, SEXP, SEXP);
 extern SEXP vctrs_equal_na(SEXP);
 extern SEXP vctrs_compare(SEXP, SEXP, SEXP);
-extern SEXP vctrs_match(SEXP, SEXP, SEXP);
+extern SEXP vctrs_match(SEXP, SEXP, SEXP, SEXP, SEXP);
+extern SEXP vctrs_in(SEXP, SEXP, SEXP, SEXP, SEXP);
 extern SEXP vctrs_duplicated_any(SEXP);
 extern SEXP vctrs_size(SEXP);
 extern SEXP vctrs_list_sizes(SEXP);
@@ -142,7 +142,6 @@ static const R_CallMethodDef CallEntries[] = {
   {"vctrs_hash",                       (DL_FUNC) &vctrs_hash, 1},
   {"vctrs_hash_object",                (DL_FUNC) &vctrs_hash_object, 1},
   {"vctrs_equal_object",               (DL_FUNC) &vctrs_equal_object, 2},
-  {"vctrs_in",                         (DL_FUNC) &vctrs_in, 3},
   {"vctrs_unique_loc",                 (DL_FUNC) &vctrs_unique_loc, 1},
   {"vctrs_duplicated",                 (DL_FUNC) &vctrs_duplicated, 1},
   {"vctrs_duplicated_any",             (DL_FUNC) &vctrs_duplicated_any, 1},
@@ -161,7 +160,8 @@ static const R_CallMethodDef CallEntries[] = {
   {"vctrs_equal",                      (DL_FUNC) &vctrs_equal, 3},
   {"vctrs_equal_na",                   (DL_FUNC) &vctrs_equal_na, 1},
   {"vctrs_compare",                    (DL_FUNC) &vctrs_compare, 3},
-  {"vctrs_match",                      (DL_FUNC) &vctrs_match, 3},
+  {"vctrs_match",                      (DL_FUNC) &vctrs_match, 5},
+  {"vctrs_in",                         (DL_FUNC) &vctrs_in, 5},
   {"vctrs_typeof",                     (DL_FUNC) &vctrs_typeof, 2},
   {"vctrs_init_library",               (DL_FUNC) &vctrs_init_library, 1},
   {"vctrs_is_vector",                  (DL_FUNC) &vctrs_is_vector, 1},
