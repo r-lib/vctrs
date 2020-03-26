@@ -58,40 +58,6 @@ static inline SEXP vec_ptype2_default(SEXP x,
                           vctrs_ns_env);
 }
 
-static SEXP get_ptype2_method(SEXP x,
-                              const char* generic,
-                              SEXP table,
-                              SEXP* method_sym_out) {
-  SEXP class = R_NilValue;
-  if (OBJECT(x)) {
-    class = Rf_getAttrib(x, R_ClassSymbol);
-  }
-
-  // This handles unclassed objects as well as gremlins objects where
-  // `x` is an OBJECT(), but the class is NULL
-  if (class == R_NilValue) {
-    class = s3_bare_class(x);
-  }
-  PROTECT(class);
-
-  if (!Rf_length(class)) {
-    Rf_error("Internal error in `get_ptype2_method()`: Class must have length.");
-  }
-  class = STRING_ELT(class, 0);
-
-  SEXP method_sym = s3_paste_method_sym(generic, CHAR(class));
-  SEXP method = s3_sym_get_method(method_sym, table);
-
-  if (method == R_NilValue) {
-    *method_sym_out = R_NilValue;
-  } else {
-    *method_sym_out = method_sym;
-  }
-
-  UNPROTECT(1);
-  return method;
-}
-
 // [[ include("vctrs.h") ]]
 SEXP vec_ptype2_dispatch_s3(SEXP x,
                             SEXP y,
@@ -101,10 +67,10 @@ SEXP vec_ptype2_dispatch_s3(SEXP x,
   SEXP y_arg_obj = PROTECT(vctrs_arg(y_arg));
 
   SEXP x_method_sym = R_NilValue;
-  SEXP x_method = PROTECT(get_ptype2_method(x,
-                                            "vec_ptype2",
-                                            vctrs_method_table,
-                                            &x_method_sym));
+  SEXP x_method = PROTECT(s3_find_method2("vec_ptype2",
+                                          x,
+                                          vctrs_method_table,
+                                          &x_method_sym));
 
   if (x_method == R_NilValue) {
     SEXP out = vec_ptype2_default(x, y, x_arg_obj, y_arg_obj);
@@ -116,10 +82,10 @@ SEXP vec_ptype2_dispatch_s3(SEXP x,
   SEXP x_table = s3_get_table(CLOENV(x_method));
 
   SEXP y_method_sym = R_NilValue;
-  SEXP y_method = PROTECT(get_ptype2_method(y,
-                                            x_method_str,
-                                            x_table,
-                                            &y_method_sym));
+  SEXP y_method = PROTECT(s3_find_method2(x_method_str,
+                                          y,
+                                          x_table,
+                                          &y_method_sym));
 
   if (y_method == R_NilValue) {
     SEXP out = vec_ptype2_default(x, y, x_arg_obj, y_arg_obj);

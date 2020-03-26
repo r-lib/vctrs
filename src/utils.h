@@ -98,6 +98,10 @@ SEXP vec_unique_colnames(SEXP x, bool quiet);
 SEXP s3_get_method(const char* generic, const char* cls, SEXP table);
 SEXP s3_sym_get_method(SEXP sym, SEXP table);
 SEXP s3_find_method(const char* generic, SEXP x, SEXP table);
+SEXP s3_find_method2(const char* generic,
+                     SEXP x,
+                     SEXP table,
+                     SEXP* method_sym_out);
 SEXP s3_paste_method_sym(const char* generic, const char* cls);
 SEXP s3_bare_class(SEXP x);
 SEXP s4_find_method(SEXP x, SEXP table);
