@@ -5,7 +5,7 @@
 \alias{vec_recycle_common}
 \title{Vector recycling}
 \usage{
-vec_recycle(x, size, ..., x_arg = "x")
+vec_recycle(x, size, ..., x_arg = "")
 
 vec_recycle_common(..., .size = NULL)
 }

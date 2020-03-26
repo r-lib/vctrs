@@ -81,12 +81,12 @@ vec_ptype2.data.frame <- function(x, y, ...) {
 }
 #' @method vec_ptype2.data.frame data.frame
 #' @export
-vec_ptype2.data.frame.data.frame <- function(x, y, ..., x_arg = "x", y_arg = "y") {
+vec_ptype2.data.frame.data.frame <- function(x, y, ..., x_arg = "", y_arg = "") {
   .Call(vctrs_df_ptype2, x, y, x_arg, y_arg)
 }
 #' @method vec_ptype2.data.frame default
 #' @export
-vec_ptype2.data.frame.default <- function(x, y, ..., x_arg = "x", y_arg = "y") {
+vec_ptype2.data.frame.default <- function(x, y, ..., x_arg = "", y_arg = "") {
   vec_default_ptype2(x, y, x_arg = x_arg, y_arg = y_arg)
 }
 
@@ -102,20 +102,20 @@ vec_cast.data.frame <- function(x, to, ...) {
 }
 #' @export
 #' @method vec_cast.data.frame data.frame
-vec_cast.data.frame.data.frame <- function(x, to, ..., x_arg = "x", to_arg = "to") {
+vec_cast.data.frame.data.frame <- function(x, to, ..., x_arg = "", to_arg = "") {
   df_cast(x, to, x_arg = x_arg, to_arg = to_arg)
 }
 #' @export
 #' @method vec_cast.data.frame list
-vec_cast.data.frame.list <- function(x, to, ..., x_arg = "x", to_arg = "to") {
+vec_cast.data.frame.list <- function(x, to, ..., x_arg = "", to_arg = "") {
   vec_list_cast(x, to, x_arg = x_arg, to_arg = to_arg)
 }
 #' @export
 #' @method vec_cast.data.frame default
-vec_cast.data.frame.default <- function(x, to, ..., x_arg = "x", to_arg = "to") {
+vec_cast.data.frame.default <- function(x, to, ..., x_arg = "", to_arg = "") {
   vec_default_cast(x, to, x_arg = x_arg, to_arg = to_arg)
 }
-df_cast <- function(x, to, ..., x_arg = "x", to_arg = "to") {
+df_cast <- function(x, to, ..., x_arg = "", to_arg = "") {
   .Call(vctrs_df_cast, x, to, x_arg, to_arg)
 }
 

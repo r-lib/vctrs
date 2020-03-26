@@ -107,7 +107,7 @@ vec_restore.vctrs_vctr <- function(x, to, ..., i = NULL) {
 
 #' @method vec_ptype2 vctrs_vctr
 #' @export
-vec_ptype2.vctrs_vctr <- function(x, y, ..., x_arg = "x", y_arg = "y") {
+vec_ptype2.vctrs_vctr <- function(x, y, ..., x_arg = "", y_arg = "") {
   # This method is redundant with `vec_ptype2.default()` but it
   # instructs `vec_c()` that it isn't a foreign type. This avoids
   # infinite recursion through `c.vctrs_vctr()`.
@@ -236,7 +236,7 @@ diff.vctrs_vctr <- function(x, lag = 1L, differences = 1L, ...) {
 #' @export
 `[[<-.vctrs_vctr` <- function(x, ..., value) {
   if (!is.list(x)) {
-    value <- vec_coercible_cast(value, x, x_arg = "x", to_arg = "value")
+    value <- vec_coercible_cast(value, x, x_arg = "", to_arg = "value")
   }
   NextMethod()
 }
@@ -253,7 +253,7 @@ diff.vctrs_vctr <- function(x, lag = 1L, differences = 1L, ...) {
 
 #' @export
 `[<-.vctrs_vctr` <- function(x, i, value) {
-  value <- vec_coercible_cast(value, x, x_arg = "x", to_arg = "value")
+  value <- vec_coercible_cast(value, x, x_arg = "", to_arg = "value")
   NextMethod()
 }
 

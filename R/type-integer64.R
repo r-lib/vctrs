@@ -39,7 +39,7 @@ vec_ptype2.integer64 <- function(x, y, ...) {
 }
 #' @method vec_ptype2.integer64 default
 #' @export
-vec_ptype2.integer64.default <- function(x, y, ..., x_arg = "x", y_arg = "y") {
+vec_ptype2.integer64.default <- function(x, y, ..., x_arg = "", y_arg = "") {
   vec_default_ptype2(x, y, x_arg = x_arg, y_arg = y_arg)
 }
 
@@ -76,7 +76,7 @@ vec_cast.integer64 <- function(x, to, ...) UseMethod("vec_cast.integer64")
 
 #' @export
 #' @method vec_cast.integer64 default
-vec_cast.integer64.default <- function(x, to, ..., x_arg = "x", to_arg = "to") {
+vec_cast.integer64.default <- function(x, to, ..., x_arg = "", to_arg = "") {
   # Don't use `vec_default_cast()` because integer64 is not compatible
   # with `vec_init()`
   if (is_unspecified(x)) {

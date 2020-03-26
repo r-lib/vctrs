@@ -35,14 +35,14 @@
 #'   in error messages to inform the user about the locations of
 #'   incompatible types (see [stop_incompatible_type()]).
 #' @export
-vec_ptype2 <- function(x, y, ..., x_arg = "x", y_arg = "y") {
+vec_ptype2 <- function(x, y, ..., x_arg = "", y_arg = "") {
   if (!missing(...)) {
     ellipsis::check_dots_empty()
   }
   return(.Call(vctrs_ptype2, x, y, x_arg, y_arg))
   UseMethod("vec_ptype2")
 }
-vec_ptype2_dispatch_s3 <- function(x, y, ..., x_arg = "x", y_arg = "y") {
+vec_ptype2_dispatch_s3 <- function(x, y, ..., x_arg = "", y_arg = "") {
   UseMethod("vec_ptype2")
 }
 #' @export
@@ -51,7 +51,7 @@ vec_ptype2.default <- function(x, y, ...) {
 }
 #' @rdname vec_ptype2
 #' @export
-vec_default_ptype2 <- function(x, y, ..., x_arg = "x", y_arg = "y") {
+vec_default_ptype2 <- function(x, y, ..., x_arg = "", y_arg = "") {
   if (is_unspecified(y)) {
     return(vec_ptype(x))
   }
@@ -74,14 +74,14 @@ vec_typeof2_s3 <- function(x, y) {
 }
 
 # https://github.com/r-lib/vctrs/issues/571
-vec_is_coercible <- function(x, y, ..., x_arg = "x", y_arg = "y") {
+vec_is_coercible <- function(x, y, ..., x_arg = "", y_arg = "") {
   if (!missing(...)) {
     ellipsis::check_dots_empty()
   }
   .Call(vctrs_is_coercible, x, y, x_arg, y_arg)
 }
 
-vec_is_subtype <- function(x, super, ..., x_arg = "x", super_arg = "super") {
+vec_is_subtype <- function(x, super, ..., x_arg = "", super_arg = "super") {
   tryCatch(
     vctrs_error_incompatible_type = function(...) FALSE,
     {

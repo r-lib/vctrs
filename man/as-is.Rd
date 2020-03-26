@@ -6,7 +6,7 @@
 \alias{vec_cast.AsIs}
 \title{AsIs S3 class}
 \usage{
-\method{vec_ptype2}{AsIs}(x, y, ..., x_arg = "x", y_arg = "y")
+\method{vec_ptype2}{AsIs}(x, y, ..., x_arg = "", y_arg = "")
 
 \method{vec_cast}{AsIs}(x, to, ...)
 }

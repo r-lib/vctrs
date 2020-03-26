@@ -85,7 +85,7 @@ vec_ptype_abbr.ordered <- function(x, ...) {
 vec_ptype2.factor <- function(x, y, ...) UseMethod("vec_ptype2.factor", y)
 #' @method vec_ptype2.factor default
 #' @export
-vec_ptype2.factor.default <- function(x, y, ..., x_arg = "x", y_arg = "y") {
+vec_ptype2.factor.default <- function(x, y, ..., x_arg = "", y_arg = "") {
   vec_default_ptype2(x, y, x_arg = x_arg, y_arg = y_arg)
 }
 #' @method vec_ptype2.character factor
@@ -105,7 +105,7 @@ vec_ptype2.factor.factor <- function(x, y, ...) new_factor(levels = levels_union
 vec_ptype2.ordered <- function(x, y, ...) UseMethod("vec_ptype2.ordered", y)
 #' @method vec_ptype2.ordered default
 #' @export
-vec_ptype2.ordered.default <- function(x, y, ..., x_arg = "x", y_arg = "y") {
+vec_ptype2.ordered.default <- function(x, y, ..., x_arg = "", y_arg = "") {
   vec_default_ptype2(x, y, x_arg = x_arg, y_arg = y_arg)
 }
 #' @method vec_ptype2.ordered character
@@ -116,12 +116,12 @@ vec_ptype2.ordered.character <- function(x, y, ...) character()
 vec_ptype2.character.ordered <- function(x, y, ...) character()
 #' @method vec_ptype2.ordered factor
 #' @export
-vec_ptype2.ordered.factor <- function(x, y, ..., x_arg = "x", y_arg = "y") {
+vec_ptype2.ordered.factor <- function(x, y, ..., x_arg = "", y_arg = "") {
   stop_incompatible_type(x, y, x_arg = x_arg, y_arg = y_arg)
 }
 #' @method vec_ptype2.factor ordered
 #' @export
-vec_ptype2.factor.ordered <- function(x, y, ..., x_arg = "x", y_arg = "y") {
+vec_ptype2.factor.ordered <- function(x, y, ..., x_arg = "", y_arg = "") {
   stop_incompatible_type(x, y, x_arg = x_arg, y_arg = y_arg)
 }
 #' @method vec_ptype2.ordered ordered

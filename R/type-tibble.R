@@ -14,7 +14,7 @@ vec_ptype2.tbl_df.default <- function(x, y, ...) {
   vec_ptype2.data.frame(x, y, ...)
 }
 
-vec_ptype2.tbl_df.data.frame <- function(x, y, ..., x_arg = "x", y_arg = "y") {
+vec_ptype2.tbl_df.data.frame <- function(x, y, ..., x_arg = "", y_arg = "") {
   .Call(
     vctrs_tib_ptype2,
     x = x,
@@ -23,7 +23,7 @@ vec_ptype2.tbl_df.data.frame <- function(x, y, ..., x_arg = "x", y_arg = "y") {
     y_arg = y_arg
   )
 }
-vec_ptype2.data.frame.tbl_df <- function(x, y, ..., x_arg = "x", y_arg = "y") {
+vec_ptype2.data.frame.tbl_df <- function(x, y, ..., x_arg = "", y_arg = "") {
   .Call(
     vctrs_tib_ptype2,
     x = x,
@@ -35,24 +35,24 @@ vec_ptype2.data.frame.tbl_df <- function(x, y, ..., x_arg = "x", y_arg = "y") {
 
 
 # Conditionally registered in .onLoad()
-vec_cast.tbl_df <- function(x, to, ..., x_arg = "x", to_arg = "to") {
+vec_cast.tbl_df <- function(x, to, ..., x_arg = "", to_arg = "") {
   UseMethod("vec_cast.tbl_df")
 }
-vec_cast.tbl_df.default <- function(x, to, ..., x_arg = "x", to_arg = "to") {
+vec_cast.tbl_df.default <- function(x, to, ..., x_arg = "", to_arg = "") {
   vec_default_cast(x, to, x_arg = x_arg, to_arg = to_arg)
 }
-vec_cast.tbl_df.tbl_df <- function(x, to, ..., x_arg = "x", to_arg = "to") {
+vec_cast.tbl_df.tbl_df <- function(x, to, ..., x_arg = "", to_arg = "") {
   tib_cast(x, to, x_arg = x_arg, to_arg = to_arg)
 }
 
-vec_cast.data.frame.tbl_df <- function(x, to, ..., x_arg = "x", to_arg = "to") {
+vec_cast.data.frame.tbl_df <- function(x, to, ..., x_arg = "", to_arg = "") {
   tib_cast(x, to, x_arg = x_arg, to_arg = to_arg)
 }
-vec_cast.tbl_df.data.frame <- function(x, to, ..., x_arg = "x", to_arg = "to") {
+vec_cast.tbl_df.data.frame <- function(x, to, ..., x_arg = "", to_arg = "") {
   df_cast(x, to, x_arg = x_arg, to_arg = to_arg)
 }
 
-tib_cast <- function(x, to, ..., x_arg = "x", to_arg = "to") {
+tib_cast <- function(x, to, ..., x_arg = "", to_arg = "") {
   .Call(
     vctrs_tib_cast,
     x = x,
