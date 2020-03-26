@@ -102,15 +102,8 @@ static SEXP vec_ptype2_switch_native(SEXP x,
 
 // [[ register() ]]
 SEXP vctrs_ptype2(SEXP x, SEXP y, SEXP x_arg, SEXP y_arg) {
-  if (!r_is_string(x_arg)) {
-    Rf_errorcall(R_NilValue, "`x_arg` must be a string");
-  }
-  if (!r_is_string(y_arg)) {
-    Rf_errorcall(R_NilValue, "`y_arg` must be a string");
-  }
-
-  struct vctrs_arg x_arg_ = new_wrapper_arg(NULL, r_chr_get_c_string(x_arg, 0));
-  struct vctrs_arg y_arg_ = new_wrapper_arg(NULL, r_chr_get_c_string(y_arg, 0));
+  struct vctrs_arg x_arg_ = vec_as_arg(x_arg);
+  struct vctrs_arg y_arg_ = vec_as_arg(y_arg);
 
   int _left;
   return vec_ptype2(x, y, &x_arg_, &y_arg_, &_left);

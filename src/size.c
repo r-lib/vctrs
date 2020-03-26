@@ -222,7 +222,7 @@ SEXP vctrs_recycle(SEXP x, SEXP size_obj, SEXP x_arg) {
   R_len_t size = r_int_get(size_obj, 0);
   UNPROTECT(1);
 
-  struct vctrs_arg x_arg_ = new_wrapper_arg(NULL, r_chr_get_c_string(x_arg, 0));
+  struct vctrs_arg x_arg_ = vec_as_arg(x_arg);
 
   return vec_recycle(x, size, &x_arg_);
 }

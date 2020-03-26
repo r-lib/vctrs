@@ -22,15 +22,8 @@ SEXP list_assign(SEXP x, SEXP index, SEXP value);
 
 // [[ register() ]]
 SEXP vctrs_assign(SEXP x, SEXP index, SEXP value, SEXP x_arg_, SEXP value_arg_) {
-  if (!r_is_string(x_arg_)) {
-    Rf_errorcall(R_NilValue, "`x_arg` must be a string");
-  }
-  if (!r_is_string(value_arg_)) {
-    Rf_errorcall(R_NilValue, "`value_arg` must be a string");
-  }
-
-  struct vctrs_arg x_arg = new_wrapper_arg(NULL, r_chr_get_c_string(x_arg_, 0));
-  struct vctrs_arg value_arg = new_wrapper_arg(NULL, r_chr_get_c_string(value_arg_, 0));
+  struct vctrs_arg x_arg = vec_as_arg(x_arg_);
+  struct vctrs_arg value_arg = vec_as_arg(value_arg_);
 
   const struct vec_assign_opts opts = new_vec_assign_opts(false,
                                                           &x_arg,

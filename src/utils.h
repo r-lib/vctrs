@@ -107,7 +107,6 @@ SEXP node_compact_d(SEXP xs);
 
 extern struct vctrs_arg args_empty_;
 static struct vctrs_arg* const args_empty = &args_empty_;
-SEXP arg_validate(SEXP arg, const char* arg_nm);
 
 void never_reached(const char* fn) __attribute__((noreturn));
 
@@ -315,9 +314,12 @@ static inline SEXP r_result_get(SEXP x, ERR err) {
 static inline struct vctrs_arg vec_as_arg(SEXP x) {
   if (x == R_NilValue) {
     return *args_empty;
-  } else {
-    return new_wrapper_arg(NULL, r_chr_get_c_string(x, 0));
   }
+
+  if (!r_is_string(x)) {
+    Rf_errorcall(R_NilValue, "Argument tag must be a string.");
+  }
+  return new_wrapper_arg(NULL, r_chr_get_c_string(x, 0));
 }
 
 extern SEXP fns_quote;

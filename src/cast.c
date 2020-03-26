@@ -22,15 +22,8 @@ static SEXP vec_cast_dispatch_s3(SEXP x,
 
 // [[ register() ]]
 SEXP vctrs_cast(SEXP x, SEXP to, SEXP x_arg_, SEXP to_arg_) {
-  if (!r_is_string(x_arg_)) {
-    Rf_errorcall(R_NilValue, "`x_arg` must be a string");
-  }
-  if (!r_is_string(to_arg_)) {
-    Rf_errorcall(R_NilValue, "`to_arg` must be a string");
-  }
-
-  struct vctrs_arg x_arg = new_wrapper_arg(NULL, r_chr_get_c_string(x_arg_, 0));
-  struct vctrs_arg to_arg = new_wrapper_arg(NULL, r_chr_get_c_string(to_arg_, 0));
+  struct vctrs_arg x_arg = vec_as_arg(x_arg_);
+  struct vctrs_arg to_arg = vec_as_arg(to_arg_);
 
   return vec_cast(x, to, &x_arg, &to_arg);
 }
@@ -210,11 +203,8 @@ bool vec_is_coercible(SEXP x,
 
 // [[ register() ]]
 SEXP vctrs_is_coercible(SEXP x, SEXP y, SEXP x_arg_, SEXP y_arg_) {
-  x_arg_ = arg_validate(x_arg_, "x_arg");
-  y_arg_ = arg_validate(y_arg_, "y_arg");
-
-  struct vctrs_arg x_arg = new_wrapper_arg(NULL, r_chr_get_c_string(x_arg_, 0));
-  struct vctrs_arg y_arg = new_wrapper_arg(NULL, r_chr_get_c_string(y_arg_, 0));
+  struct vctrs_arg x_arg = vec_as_arg(x_arg_);
+  struct vctrs_arg y_arg = vec_as_arg(y_arg_);;
 
   int dir = 0;
   return r_lgl(vec_is_coercible(x, y, &x_arg, &y_arg, &dir));
@@ -272,11 +262,8 @@ SEXP vec_coercible_cast_e(SEXP x,
 
 // [[ register() ]]
 SEXP vctrs_coercible_cast(SEXP x, SEXP to, SEXP x_arg_, SEXP to_arg_) {
-  x_arg_ = arg_validate(x_arg_, "x_arg");
-  to_arg_ = arg_validate(to_arg_, "to_arg");
-
-  struct vctrs_arg x_arg = new_wrapper_arg(NULL, r_chr_get_c_string(x_arg_, 0));
-  struct vctrs_arg to_arg = new_wrapper_arg(NULL, r_chr_get_c_string(to_arg_, 0));
+  struct vctrs_arg x_arg = vec_as_arg(x_arg_);
+  struct vctrs_arg to_arg = vec_as_arg(to_arg_);
 
   return vec_coercible_cast(x, to, &x_arg, &to_arg);
 }

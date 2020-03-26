@@ -670,17 +670,6 @@ SEXP colnames(SEXP x) {
 }
 
 // [[ include("utils.h") ]]
-SEXP arg_validate(SEXP arg, const char* arg_nm) {
-  if (arg == R_NilValue) {
-    return chrs_empty;
-  } else if (r_is_string(arg)) {
-    return arg;
-  } else {
-    Rf_errorcall(R_NilValue, "`%s` tag must be a string", arg_nm);
-  }
-}
-
-// [[ include("utils.h") ]]
 bool is_integer64(SEXP x) {
   return TYPEOF(x) == REALSXP && Rf_inherits(x, "integer64");
 }
