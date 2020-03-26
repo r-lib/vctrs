@@ -192,7 +192,7 @@ cnd_header.vctrs_error_subscript_type <- function(cnd) {
 }
 #' @export
 cnd_body.vctrs_error_subscript_type <- function(cnd) {
-  arg <- append_arg("The subscript", cnd$subscript_arg)
+  arg <- append_arg("Subscript", cnd$subscript_arg)
   type <- obj_type(cnd$i)
   expected_types <- collapse_subscript_type(cnd)
 
@@ -251,7 +251,7 @@ new_error_subscript2_type <- function(i,
 }
 
 cnd_body_subscript_dim <- function(cnd, ...) {
-  arg <- append_arg("The subscript", cnd$subscript_arg)
+  arg <- append_arg("Subscript", cnd$subscript_arg)
 
   dim <- length(dim(cnd$i))
   if (dim < 2) {
@@ -268,7 +268,7 @@ cnd_body_subscript_dim <- function(cnd, ...) {
   ))
 }
 
-cnd_subscript_element <- function(cnd) {
+cnd_subscript_element <- function(cnd, capital = FALSE) {
   elt <- cnd$subscript_elt %||% "element"
 
   if (!is_string(elt, c("element", "row", "column"))) {
@@ -278,11 +278,19 @@ cnd_subscript_element <- function(cnd) {
     ))
   }
 
-  switch(elt,
-    element = c("element", "elements"),
-    row = c("row", "rows"),
-    column = c("column", "columns")
-  )
+  if (capital) {
+    switch(elt,
+      element = c("Element", "Elements"),
+      row = c("Row", "Rows"),
+      column = c("Column", "Columns")
+    )
+  } else {
+    switch(elt,
+      element = c("element", "elements"),
+      row = c("row", "rows"),
+      column = c("column", "columns")
+    )
+  }
 }
 
 subscript_actions <- c(

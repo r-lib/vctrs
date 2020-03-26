@@ -258,7 +258,7 @@ stop_location_negative_missing <- function(i, ...) {
 }
 cnd_body_vctrs_error_location_negative_missing <- function(cnd, ...) {
   missing_loc <- which(is.na(cnd$i))
-  arg <- append_arg("The subscript", cnd$subscript_arg)
+  arg <- append_arg("Subscript", cnd$subscript_arg)
 
   if (length(missing_loc) == 1) {
     loc <- glue::glue("{arg} has a missing value at location {missing_loc}.")
@@ -284,7 +284,7 @@ stop_location_negative_positive <- function(i, ...) {
 }
 cnd_body_vctrs_error_location_negative_positive <- function(cnd, ...) {
   positive_loc <- which(cnd$i > 0)
-  arg <- append_arg("The subscript", cnd$subscript_arg)
+  arg <- append_arg("Subscript", cnd$subscript_arg)
 
   if (length(positive_loc) == 1) {
     loc <- glue::glue("{arg} has a positive value at location {positive_loc}.")
@@ -315,19 +315,19 @@ new_error_location2_type <- function(i,
   )
 }
 cnd_bullets_location2_need_scalar <- function(cnd, ...) {
-  cnd$subscript_arg <- append_arg("The subscript", cnd$subscript_arg)
+  cnd$subscript_arg <- append_arg("Subscript", cnd$subscript_arg)
   format_error_bullets(c(
     x = glue::glue_data(cnd, "{subscript_arg} has size {length(i)} but must be size 1.")
   ))
 }
 cnd_bullets_location2_need_present <- function(cnd, ...) {
-  cnd$subscript_arg <- append_arg("The subscript", cnd$subscript_arg)
+  cnd$subscript_arg <- append_arg("Subscript", cnd$subscript_arg)
   format_error_bullets(c(
     x = glue::glue_data(cnd, "{subscript_arg} can't be `NA`.")
   ))
 }
 cnd_bullets_location2_need_positive <- function(cnd, ...) {
-  cnd$subscript_arg <- append_arg("The subscript", cnd$subscript_arg)
+  cnd$subscript_arg <- append_arg("Subscript", cnd$subscript_arg)
   format_error_bullets(c(
     x = glue::glue_data(cnd, "{subscript_arg} has value {i} but must be a positive location.")
   ))
@@ -341,7 +341,7 @@ stop_location_negative <- function(i, ...) {
   ))
 }
 cnd_bullets_location_need_non_negative <- function(cnd, ...) {
-  cnd$subscript_arg <- append_arg("The subscript", cnd$subscript_arg)
+  cnd$subscript_arg <- append_arg("Subscript", cnd$subscript_arg)
   format_error_bullets(c(
     x = glue::glue_data(cnd, "{subscript_arg} can't contain negative locations.")
   ))
@@ -357,7 +357,7 @@ stop_location_zero <- function(i, ...) {
 cnd_bullets_location_need_non_zero <- function(cnd, ...) {
   zero_loc <- which(cnd$i == 0)
   zero_loc_size <- length(zero_loc)
-  arg <- append_arg("The subscript", cnd$subscript_arg)
+  arg <- append_arg("Subscript", cnd$subscript_arg)
 
   if (zero_loc_size == 1) {
     loc <- glue::glue("It has a `0` value at location {zero_loc}.")
@@ -381,7 +381,7 @@ stop_subscript_missing <- function(i, ...) {
   ))
 }
 cnd_bullets_subscript_missing <- function(cnd, ...) {
-  cnd$subscript_arg <- append_arg("The subscript", cnd$subscript_arg)
+  cnd$subscript_arg <- append_arg("Subscript", cnd$subscript_arg)
 
   missing_loc <- which(is.na(cnd$i))
   if (length(missing_loc) == 1) {
@@ -406,11 +406,11 @@ stop_indicator_size <- function(i, n, ...) {
   ))
 }
 cnd_body_vctrs_error_indicator_size <- function(cnd, ...) {
-  cnd$subscript_arg <- append_arg("the subscript", cnd$subscript_arg)
+  cnd$subscript_arg <- append_arg("subscript", cnd$subscript_arg)
   glue_data_bullets(
     cnd,
     i = "Logical subscripts must match the size of the indexed input.",
-    x = "The input has size {n} but {subscript_arg} has size {vec_size(i)}."
+    x = "Input has size {n} but {subscript_arg} has size {vec_size(i)}."
   )
 }
 
@@ -465,8 +465,8 @@ cnd_body_vctrs_error_subscript_oob_location <- function(cnd, ...) {
   format_error_bullets(c(
     x = glue::glue(ngettext(
       length(oob),
-      "The location {oob_enum} doesn't exist.",
-      "The locations {oob_enum} don't exist."
+      "Location {oob_enum} doesn't exist.",
+      "Locations {oob_enum} don't exist."
     )),
     i = glue::glue(ngettext(
       cnd$size,
@@ -476,15 +476,15 @@ cnd_body_vctrs_error_subscript_oob_location <- function(cnd, ...) {
   ))
 }
 cnd_body_vctrs_error_subscript_oob_name <- function(cnd, ...) {
-  elt <- cnd_subscript_element(cnd)
+  elt <- cnd_subscript_element(cnd, capital = TRUE)
   oob <- cnd$i[!cnd$i %in% cnd$names]
   oob_enum <- enumerate(glue::backtick(oob))
 
   format_error_bullets(c(
     x = glue::glue(ngettext(
       length(oob),
-      "The {elt[[1]]} {oob_enum} doesn't exist.",
-      "The {elt[[2]]} {oob_enum} don't exist."
+      "{elt[[1]]} {oob_enum} doesn't exist.",
+      "{elt[[2]]} {oob_enum} don't exist."
     ))
   ))
 }
@@ -510,7 +510,7 @@ cnd_body_vctrs_error_subscript_oob_non_consecutive <- function(cnd, ...) {
 
   non_consecutive <- i[c(TRUE, diff(i) != 1L)]
 
-  arg <- append_arg("The subscript", cnd$subscript_arg)
+  arg <- append_arg("Subscript", cnd$subscript_arg)
   if (length(non_consecutive) == 1) {
     x_line <- glue::glue("{arg} contains non-consecutive location {non_consecutive}.")
   } else {
@@ -520,7 +520,7 @@ cnd_body_vctrs_error_subscript_oob_non_consecutive <- function(cnd, ...) {
 
   glue_data_bullets(
     cnd,
-    i = "The input has size {size}.",
+    i = "Input has size {size}.",
     x = x_line
   )
 }
