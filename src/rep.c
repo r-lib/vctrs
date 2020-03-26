@@ -13,7 +13,7 @@ static inline void check_rep_times(int times);
 static inline void check_rep_each_times(int times, R_len_t i);
 
 static inline bool multiply_would_overflow(R_len_t x, R_len_t y);
-static inline bool size_is_oob(double size);
+static inline bool plus_would_overflow(R_len_t x, R_len_t y);
 static inline void stop_rep_size_oob();
 
 // -----------------------------------------------------------------------------
@@ -133,20 +133,20 @@ static SEXP vec_rep_each_impl(SEXP x, SEXP times, const R_len_t times_size) {
 
   const int* p_times = INTEGER_RO(times);
 
-  double temp_size = 0;
+  R_len_t size = 0;
   for (R_len_t i = 0; i < times_size; ++i) {
     const int elt_times = p_times[i];
 
     check_rep_each_times(elt_times, i + 1);
 
-    temp_size += (double) (R_len_t) elt_times;
-  }
+    const R_len_t elt_times_ = (R_len_t) elt_times;
 
-  if (size_is_oob(temp_size)) {
-    stop_rep_size_oob();
-  }
+    if (plus_would_overflow(size, elt_times_)) {
+      stop_rep_size_oob();
+    }
 
-  const R_len_t size = (R_len_t) temp_size;
+    size += elt_times_;
+  }
 
   SEXP subscript = PROTECT(Rf_allocVector(INTSXP, size));
   int* p_subscript = INTEGER(subscript);
@@ -180,8 +180,9 @@ static inline bool multiply_would_overflow(R_len_t x, R_len_t y) {
   return (double) x * y > R_LEN_T_MAX;
 }
 
-static inline bool size_is_oob(double size) {
-  return size > R_LEN_T_MAX;
+// Only useful for positive or zero inputs
+static inline bool plus_would_overflow(R_len_t x, R_len_t y) {
+  return x > R_LEN_T_MAX - y;
 }
 
 // -----------------------------------------------------------------------------
