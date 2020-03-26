@@ -3,7 +3,7 @@
 =============================
 
 > vec_rep(1, "x")
-Error: Lossy cast from `times` <character> to <integer>.
+Error: Can't convert from `times` <character> to <integer> due to loss of precision.
 * Locations: 1
 
 > vec_rep(1, c(1, 2))
@@ -20,7 +20,7 @@ Error: `times` can't be missing.
 ==================================
 
 > vec_rep_each(1, "x")
-Error: Lossy cast from `times` <character> to <integer>.
+Error: Can't convert from `times` <character> to <integer> due to loss of precision.
 * Locations: 1
 
 > vec_rep_each(1, -1)
@@ -40,6 +40,6 @@ Error: `times` can't be missing. Location 2 is missing.
 =======================================
 
 > vec_rep_each(1:2, 1:3)
-Error: `times` can't be recycled to size 2.
+Error: Input `times` can't be recycled to size 2.
 x It must be size 2 or 1, not 3.
 
