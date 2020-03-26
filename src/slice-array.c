@@ -12,7 +12,6 @@
                                                                        \
   for (int i = 0; i < p_info->shape_elem_n; ++i) {                     \
     int loc = vec_strided_loc(                                         \
-      0,                                                               \
       p_info->p_shape_index,                                           \
       p_info->p_strides,                                               \
       p_info->shape_n                                                  \
@@ -60,7 +59,6 @@
                                                                                \
   for (int i = 0; i < p_info->shape_elem_n; ++i) {                             \
     int loc = vec_strided_loc(                                                 \
-      0,                                                                       \
       p_info->p_shape_index,                                                   \
       p_info->p_strides,                                                       \
       p_info->shape_n                                                          \
@@ -94,7 +92,6 @@
                                                                    \
   for (int i = 0; i < p_info->shape_elem_n; ++i) {                 \
     int loc = vec_strided_loc(                                     \
-      0,                                                           \
       p_info->p_shape_index,                                       \
       p_info->p_strides,                                           \
       p_info->shape_n                                              \
@@ -155,7 +152,6 @@ static SEXP raw_slice_shaped(SEXP x, SEXP index, struct strides_info* p_info) {
                                                                \
   for (int i = 0; i < p_info->shape_elem_n; ++i) {             \
     int loc = vec_strided_loc(                                 \
-      0,                                                       \
       p_info->p_shape_index,                                   \
       p_info->p_strides,                                       \
       p_info->shape_n                                          \
@@ -203,7 +199,6 @@ static SEXP raw_slice_shaped(SEXP x, SEXP index, struct strides_info* p_info) {
                                                                       \
   for (int i = 0; i < p_info->shape_elem_n; ++i) {                    \
     int loc = vec_strided_loc(                                        \
-      0,                                                              \
       p_info->p_shape_index,                                          \
       p_info->p_strides,                                              \
       p_info->shape_n                                                 \
@@ -236,7 +231,6 @@ static SEXP raw_slice_shaped(SEXP x, SEXP index, struct strides_info* p_info) {
                                                              \
   for (int i = 0; i < p_info->shape_elem_n; ++i) {           \
     int loc = vec_strided_loc(                               \
-      0,                                                     \
       p_info->p_shape_index,                                 \
       p_info->p_strides,                                     \
       p_info->shape_n                                        \
