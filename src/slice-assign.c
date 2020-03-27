@@ -36,6 +36,30 @@ SEXP vec_assign(SEXP x, SEXP index, SEXP value) {
   return vec_assign_opts(x, index, value, &vec_assign_default_opts);
 }
 
+// Exported for testing
+// [[ register() ]]
+SEXP vctrs_assign_seq(SEXP x, SEXP value, SEXP start, SEXP size, SEXP increasing) {
+  R_len_t start_ = r_int_get(start, 0);
+  R_len_t size_ = r_int_get(size, 0);
+  bool increasing_ = r_lgl_get(increasing, 0);
+
+  SEXP index = PROTECT(compact_seq(start_, size_, increasing_));
+
+  const struct vec_assign_opts* opts = &vec_assign_default_opts;
+
+  // Cast and recycle `value`
+  value = PROTECT(vec_coercible_cast(value, x, opts->value_arg, opts->x_arg));
+  value = PROTECT(vec_recycle(value, vec_subscript_size(index), opts->value_arg));
+
+  SEXP proxy = PROTECT(vec_proxy(x));
+  proxy = PROTECT(vec_proxy_assign_opts(proxy, index, value, opts));
+
+  SEXP out = vec_restore(proxy, x, R_NilValue);
+
+  UNPROTECT(5);
+  return out;
+}
+
 // [[ include("slice-assign.h") ]]
 SEXP vec_assign_opts(SEXP x, SEXP index, SEXP value,
                      const struct vec_assign_opts* opts) {
@@ -140,11 +164,16 @@ SEXP vec_proxy_assign_opts(SEXP proxy, SEXP index, SEXP value,
   // because no proxy method was called
   SEXP out = R_NilValue;
 
-  if (vec_requires_fallback(value, value_info) || has_dim(proxy)) {
-    index = PROTECT(compact_materialize(index));
+  PROTECT_INDEX index_pi;
+  PROTECT_WITH_INDEX(index, &index_pi);
+
+  if (vec_requires_fallback(value, value_info)) {
+    index = compact_materialize(index);
+    REPROTECT(index, index_pi);
     out = PROTECT(vec_assign_fallback(proxy, index, value));
+  } else if (has_dim(proxy)) {
+    out = PROTECT(vec_assign_shaped(proxy, index, value_info.proxy));
   } else {
-    PROTECT(index);
     out = PROTECT(vec_assign_switch(proxy, index, value_info.proxy, opts));
   }
 
