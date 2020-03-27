@@ -570,6 +570,15 @@ ensure_full_stop <- function(x) {
   }
 }
 
+
+stop_native_implementation <- function(fn) {
+  abort(paste_line(
+    glue::glue("`{fn}()` is implemented at C level."),
+    "This R function is purely indicative and should never be called."
+  ))
+}
+
+
 # Helpers -----------------------------------------------------------------
 
 glue_lines <- function(..., env = parent.frame()) {

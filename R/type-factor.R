@@ -164,7 +164,12 @@ vec_cast.factor.character <-function(x, to, ...) {
 #' @export
 #' @method vec_cast.character factor
 vec_cast.character.factor <- function(x, to, ...) {
-  as.character(x)
+  stop_native_implementation("vec_cast.character.factor")
+}
+#' @export
+#' @method vec_cast.character factor
+vec_cast.character.ordered <- function(x, to, ...) {
+  stop_native_implementation("vec_cast.character.ordered")
 }
 #' @export
 #' @method vec_cast.factor list
