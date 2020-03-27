@@ -190,3 +190,8 @@ vec_cbind_frame_ptype <- function(x, ...) {
 vec_cbind_frame_ptype.default <- function(x, ...) {
   x[0]
 }
+
+#' @export
+vec_cbind_frame_ptype.sf <- function(x, ...) {
+  data.frame()
+}
