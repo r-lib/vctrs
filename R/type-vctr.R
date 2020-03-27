@@ -288,11 +288,13 @@ as.character.vctrs_vctr <- function(x, ...) {
 
 #' @export
 as.list.vctrs_vctr <- function(x, ...) {
+  out <- vec_chop(x)
+
   if (vec_is_list(x)) {
-    x
-  } else {
-    vec_chop(x)
+    out <- lapply(out, `[[`, 1)
   }
+
+  out
 }
 
 #' @export

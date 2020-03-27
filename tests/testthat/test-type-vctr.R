@@ -114,7 +114,7 @@ test_that("as.list() chops vectors", {
   )
 
   x <- new_vctr(as.list(1:3))
-  expect_identical(as.list(x), x)
+  expect_identical(as.list(x), as.list(1:3))
 })
 
 
