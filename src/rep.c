@@ -3,9 +3,7 @@
 
 // Initialised at load time
 static struct vctrs_arg args_times_;
-static struct vctrs_arg args_x_;
 static struct vctrs_arg* const args_times = &args_times_;
-static struct vctrs_arg* const args_x = &args_x_;
 
 static inline void stop_rep_times_size();
 
@@ -280,5 +278,4 @@ static inline void stop_rep_times_size() {
 
 void vctrs_init_rep(SEXP ns) {
   args_times_ = new_wrapper_arg(NULL, "times");
-  args_x_ = new_wrapper_arg(NULL, "x");
 }
