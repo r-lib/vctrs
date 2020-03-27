@@ -156,6 +156,11 @@
 </h1>
 <ul>
 <li>
+<p>Double-dispatch methods for <code><a href="../reference/vec_ptype2.html">vec_ptype2()</a></code> are no longer inherited (<a href='https://github.com/r-lib/vctrs/issues/710'>#710</a>). Class implementers must implement one set of methods for each compatible class.</p>
+<p>For example, a tibble subclass no longer inherits from the <code><a href="../reference/vec_ptype2.html">vec_ptype2()</a></code> methods between <code>tbl_df</code> and <code>data.frame</code>. This means that you explicitly need to implement <code><a href="../reference/vec_ptype2.html">vec_ptype2()</a></code> methods with <code>tbl_df</code> and <code>data.frame</code>.</p>
+<p>This change requires a bit more work from class maintainers but is safer because the coercion hyerarchies are generally different from class hierarchies. See the S3 dispatch section of <code><a href="../reference/vec_ptype2.html">?vec_ptype2</a></code> for more information.</p>
+</li>
+<li>
 <p>Double-dispatch methods for <code><a href="../reference/vec_ptype2.html">vec_ptype2()</a></code> are now easier to implement. vctrs takes care of implementing the default and unspecified methods. Methods no longer have to worry about order of dispatch, for instance it is no longer needed to supply a second argument as in <code><a href="https://rdrr.io/r/base/UseMethod.html">UseMethod("vec_ptype2.mytype", y)</a></code>.</p>
 <p>One consequence is that <code><a href="https://rdrr.io/r/base/UseMethod.html">NextMethod()</a></code> is now completely unsupported. This is for the best as it never worked correctly in a double-dispatch setting. Parent methods must now be called manually.</p>
 </li>
