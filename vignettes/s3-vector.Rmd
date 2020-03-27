@@ -198,6 +198,15 @@ vec_cast.MYCLASS.default <- function(x, to, ...) vec_default_cast(x, to)
 
 We'll discuss what this boilerplate does in the upcoming sections; just remember you'll always need to copy and paste it when creating a new S3 class.
 
+Note that double dispatch is implemented using a special mechanism. In practice, this means:
+
+- You don't need to implement default methods (they would never be called if you do).
+
+- You can't call `NextMethod()`.
+
+- The left methods of the form `vec_ptype2.leftclass()` (also called generic-methods) are purely indicative. They are never called. Only the right methods of the form `vec_ptype2.leftclass.rightclass()` are called.
+
+
 ### Percent class {#percent}
 
 We'll make our percent class coercible back and forth with double vectors. I'll start with the boilerplate for `vec_ptype2()`:
