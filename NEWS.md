@@ -3,9 +3,17 @@
 
 * Double-dispatch methods for `vec_ptype2()` are no longer inherited
   (#710). Class implementers must implement one set of methods for
-  each compatible class. This requires a bit more work but is
-  safer. See the S3 dispatch section of `?vec_ptype2` for more
-  information.
+  each compatible class.
+
+  For example, a tibble subclass no longer inherits from the
+  `vec_ptype2()` methods between `tbl_df` and `data.frame`. This means
+  that you explicitly need to implement `vec_ptype2()` methods with
+  `tbl_df` and `data.frame`.
+
+  This change requires a bit more work from class maintainers but is
+  safer because the coercion hyerarchies are generally different from
+  class hierarchies. See the S3 dispatch section of `?vec_ptype2` for
+  more information.
 
 * Double-dispatch methods for `vec_ptype2()` are now easier to
   implement. vctrs takes care of implementing the default and
