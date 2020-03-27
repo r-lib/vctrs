@@ -155,6 +155,12 @@
 <a href="#vctrs-development-version" class="anchor"></a>vctrs (development version)<small> Unreleased </small>
 </h1>
 <ul>
+<li>
+<p>Double-dispatch methods for <code><a href="../reference/vec_ptype2.html">vec_ptype2()</a></code> are now easier to implement. vctrs takes care of implementing the default and unspecified methods. Methods no longer have to worry about order of dispatch, for instance it is no longer needed to supply a second argument as in <code><a href="https://rdrr.io/r/base/UseMethod.html">UseMethod("vec_ptype2.mytype", y)</a></code>.</p>
+<p>One consequence is that <code><a href="https://rdrr.io/r/base/UseMethod.html">NextMethod()</a></code> is now completely unsupported. This is for the best as it never worked correctly in a double-dispatch setting. Parent methods must now be called manually.</p>
+</li>
+<li><p>New <code><a href="../reference/vec-rep.html">vec_rep()</a></code> and <code><a href="../reference/vec-rep.html">vec_rep_each()</a></code> for repeating an entire vector and elements of a vector, respectively. These two functions provide a clearer interface for the functionality of <code><a href="../reference/vec_repeat.html">vec_repeat()</a></code>, which is now deprecated.</p></li>
+<li><p><code><a href="../reference/vec_match.html">vec_match()</a></code> and <code><a href="../reference/vec_match.html">vec_in()</a></code> gain parameters for argument tags (<a href='https://github.com/r-lib/vctrs/issues/944'>#944</a>).</p></li>
 <li><p>The <code>is.na&lt;-()</code> method for <code>vctrs_vctr</code> now supports numeric and character subscripts to indicate where to insert missing values (<a href='https://github.com/r-lib/vctrs/issues/947'>#947</a>).</p></li>
 <li><p><code><a href="../reference/vec_bind.html">vec_rbind()</a></code> and <code><a href="../reference/vec_c.html">vec_c()</a></code> with data frame inputs now consistently preserve the names of list-columns, df-columns, and matrix-columns (<a href='https://github.com/r-lib/vctrs/issues/689'>#689</a>).</p></li>
 <li><p>The internal version of <code><a href="../reference/vec_slice.html">vec_assign()</a></code> now has support for assigning names and inner names. For data frames, the names are assigned recursively.</p></li>

@@ -160,9 +160,23 @@ haystack. <code>vec_match()</code> returns an integer vector giving location of
 <code>needle</code> in <code>haystack</code>, or <code>NA</code> if it's not found.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>vec_match</span>(<span class='no'>needles</span>, <span class='no'>haystack</span>, <span class='no'>...</span>, <span class='kw'>na_equal</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)
+    <pre class="usage"><span class='fu'>vec_match</span>(
+  <span class='no'>needles</span>,
+  <span class='no'>haystack</span>,
+  <span class='no'>...</span>,
+  <span class='kw'>na_equal</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
+  <span class='kw'>needles_arg</span> <span class='kw'>=</span> <span class='st'>""</span>,
+  <span class='kw'>haystack_arg</span> <span class='kw'>=</span> <span class='st'>""</span>
+)
 
-<span class='fu'>vec_in</span>(<span class='no'>needles</span>, <span class='no'>haystack</span>, <span class='no'>...</span>, <span class='kw'>na_equal</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</pre>
+<span class='fu'>vec_in</span>(
+  <span class='no'>needles</span>,
+  <span class='no'>haystack</span>,
+  <span class='no'>...</span>,
+  <span class='kw'>na_equal</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
+  <span class='kw'>needles_arg</span> <span class='kw'>=</span> <span class='st'>""</span>,
+  <span class='kw'>haystack_arg</span> <span class='kw'>=</span> <span class='st'>""</span>
+)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -185,6 +199,11 @@ comparison.</p></td>
 matched to missing values in <code>haystack</code>. If <code>FALSE</code>, they
 propagate, missing values in <code>needles</code> are represented as <code>NA</code> in
 the return value.</p></td>
+    </tr>
+    <tr>
+      <th>needles_arg, haystack_arg</th>
+      <td><p>Argument tags for <code>needles</code> and
+<code>haystack</code> used in error messages.</p></td>
     </tr>
     </table>
 

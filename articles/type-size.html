@@ -220,7 +220,7 @@
 <span id="cb9-5"><a href="#cb9-5"></a><span class="co">#&gt; 2. ( &lt;integer&gt; , &lt;double&gt;  ) = &lt;double&gt;</span></span>
 <span id="cb9-6"><a href="#cb9-6"></a></span>
 <span id="cb9-7"><a href="#cb9-7"></a><span class="kw"><a href="../reference/vec_ptype.html">vec_ptype_show</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/logical.html">logical</a></span>(), <span class="kw"><a href="https://rdrr.io/r/base/character.html">character</a></span>())</span>
-<span id="cb9-8"><a href="#cb9-8"></a><span class="co">#&gt; Error: No common type for `x` &lt;logical&gt; and `y` &lt;character&gt;.</span></span></code></pre></div>
+<span id="cb9-8"><a href="#cb9-8"></a><span class="co">#&gt; Error: No common type for &lt;logical&gt; and &lt;character&gt;.</span></span></code></pre></div>
 </li>
 <li>
 <p>Matrices and arrays are automatically broadcast to higher dimensions:</p>
@@ -356,10 +356,10 @@
 <span id="cb19-4"><a href="#cb19-4"></a></span>
 <span id="cb19-5"><a href="#cb19-5"></a><span class="co"># Cast fails</span></span>
 <span id="cb19-6"><a href="#cb19-6"></a><span class="kw"><a href="../reference/vec_cast.html">vec_cast</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">1.5</span>, <span class="fl">2.5</span>), <span class="kw"><a href="https://rdrr.io/r/base/factor.html">factor</a></span>(<span class="st">"a"</span>))</span>
-<span id="cb19-7"><a href="#cb19-7"></a><span class="co">#&gt; Error: Can't cast `x` &lt;double&gt; to `to` &lt;factor&lt;127a2&gt;&gt;.</span></span></code></pre></div>
+<span id="cb19-7"><a href="#cb19-7"></a><span class="co">#&gt; Error: Can't convert from &lt;double&gt; to &lt;factor&lt;127a2&gt;&gt;.</span></span></code></pre></div>
 <p>If a cast is possible in general (i.e., double -&gt; integer), but information is lost for a specific input (e.g. 1.5 -&gt; 1), it will generate an error.</p>
 <div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1"></a><span class="kw"><a href="../reference/vec_cast.html">vec_cast</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">1.5</span>, <span class="dv">2</span>), <span class="kw"><a href="https://rdrr.io/r/base/integer.html">integer</a></span>())</span>
-<span id="cb20-2"><a href="#cb20-2"></a><span class="co">#&gt; Error: Lossy cast from `x` &lt;double&gt; to `to` &lt;integer&gt;.</span></span>
+<span id="cb20-2"><a href="#cb20-2"></a><span class="co">#&gt; Error: Can't convert from &lt;double&gt; to &lt;integer&gt; due to loss of precision.</span></span>
 <span id="cb20-3"><a href="#cb20-3"></a><span class="co">#&gt; * Locations: 1</span></span></code></pre></div>
 <p>You can suppress the lossy cast errors with <code><a href="../reference/vctrs-conditions.html">allow_lossy_cast()</a></code>:</p>
 <div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1"></a><span class="kw"><a href="../reference/vctrs-conditions.html">allow_lossy_cast</a></span>(</span>
@@ -411,11 +411,11 @@
 <span id="cb23-2"><a href="#cb23-2"></a>df &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span>(<span class="dt">x =</span> x)</span>
 <span id="cb23-3"><a href="#cb23-3"></a></span>
 <span id="cb23-4"><a href="#cb23-4"></a><span class="kw"><a href="../reference/vec_slice.html">vec_slice</a></span>(x, <span class="dv">5</span><span class="op">:</span><span class="dv">6</span>)</span>
-<span id="cb23-5"><a href="#cb23-5"></a><span class="co">#&gt; [1] 7 9</span></span>
+<span id="cb23-5"><a href="#cb23-5"></a><span class="co">#&gt; [1] 9 2</span></span>
 <span id="cb23-6"><a href="#cb23-6"></a><span class="kw"><a href="../reference/vec_slice.html">vec_slice</a></span>(df, <span class="dv">5</span><span class="op">:</span><span class="dv">6</span>)</span>
 <span id="cb23-7"><a href="#cb23-7"></a><span class="co">#&gt;   x</span></span>
-<span id="cb23-8"><a href="#cb23-8"></a><span class="co">#&gt; 1 7</span></span>
-<span id="cb23-9"><a href="#cb23-9"></a><span class="co">#&gt; 2 9</span></span></code></pre></div>
+<span id="cb23-8"><a href="#cb23-8"></a><span class="co">#&gt; 1 9</span></span>
+<span id="cb23-9"><a href="#cb23-9"></a><span class="co">#&gt; 2 2</span></span></code></pre></div>
 <p><code><a href="../reference/vec_slice.html">vec_slice(data.frame(x), i)</a></code> equals <code><a href="https://rdrr.io/r/base/data.frame.html">data.frame(vec_slice(x, i))</a></code> (modulo variable and row names).</p>
 <p>Prototypes are generated with <code><a href="../reference/vec_slice.html">vec_slice(x, 0L)</a></code>; given a prototype, you can initialize a vector of given size (filled with <code>NA</code>s) with <code><a href="../reference/vec_init.html">vec_init()</a></code>.</p>
 </div>

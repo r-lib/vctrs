@@ -164,7 +164,7 @@ that matches <code><a href='vec_size.html'>vec_size()</a></code> instead of <cod
 
 <span class='fu'>vec_slice</span>(<span class='no'>x</span>, <span class='no'>i</span>) <span class='kw'>&lt;-</span> <span class='no'>value</span>
 
-<span class='fu'>vec_assign</span>(<span class='no'>x</span>, <span class='no'>i</span>, <span class='no'>value</span>, <span class='no'>...</span>, <span class='kw'>x_arg</span> <span class='kw'>=</span> <span class='st'>"x"</span>, <span class='kw'>value_arg</span> <span class='kw'>=</span> <span class='st'>"value"</span>)</pre>
+<span class='fu'>vec_assign</span>(<span class='no'>x</span>, <span class='no'>i</span>, <span class='no'>value</span>, <span class='no'>...</span>, <span class='kw'>x_arg</span> <span class='kw'>=</span> <span class='st'>""</span>, <span class='kw'>value_arg</span> <span class='kw'>=</span> <span class='st'>""</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -262,10 +262,10 @@ as the LHS.</p></li>
 <span class='co'># For instance, you can cast a character vector to an integer:</span>
 <span class='fu'><a href='vec_cast.html'>vec_cast</a></span>(<span class='st'>"1"</span>, <span class='fu'><a href='https://rdrr.io/r/base/integer.html'>integer</a></span>())</div><div class='output co'>#&gt; [1] 1</div><div class='input'>
 <span class='co'># But these types are not coercible:</span>
-<span class='fu'><a href='https://rdrr.io/r/base/try.html'>try</a></span>(<span class='fu'><a href='vec_ptype2.html'>vec_ptype2</a></span>(<span class='st'>"1"</span>, <span class='fu'><a href='https://rdrr.io/r/base/integer.html'>integer</a></span>()))</div><div class='output co'>#&gt; Error : No common type for `x` &lt;character&gt; and `y` &lt;integer&gt;.</div><div class='input'>
+<span class='fu'><a href='https://rdrr.io/r/base/try.html'>try</a></span>(<span class='fu'><a href='vec_ptype2.html'>vec_ptype2</a></span>(<span class='st'>"1"</span>, <span class='fu'><a href='https://rdrr.io/r/base/integer.html'>integer</a></span>()))</div><div class='output co'>#&gt; Error : No common type for &lt;character&gt; and &lt;integer&gt;.</div><div class='input'>
 <span class='co'># Hence you cannot assign character values to an integer or double</span>
 <span class='co'># vector:</span>
-<span class='fu'><a href='https://rdrr.io/r/base/try.html'>try</a></span>(<span class='fu'>vec_slice</span>(<span class='no'>x</span>, <span class='fl'>2</span>) <span class='kw'>&lt;-</span> <span class='st'>"20"</span>)</div><div class='output co'>#&gt; Error : No common type for `value` &lt;character&gt; and `x` &lt;double&gt;.</div></pre>
+<span class='fu'><a href='https://rdrr.io/r/base/try.html'>try</a></span>(<span class='fu'>vec_slice</span>(<span class='no'>x</span>, <span class='fl'>2</span>) <span class='kw'>&lt;-</span> <span class='st'>"20"</span>)</div><div class='output co'>#&gt; Error : No common type for &lt;character&gt; and &lt;double&gt;.</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
