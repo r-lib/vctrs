@@ -10,7 +10,7 @@
 |collate  |en_US.UTF-8                  |
 |ctype    |en_US.UTF-8                  |
 |tz       |Europe/Brussels              |
-|date     |2020-03-21                   |
+|date     |2020-03-26                   |
 
 # Dependencies
 
@@ -24,7 +24,7 @@
 
 # Revdeps
 
-## Failed to check (33)
+## Failed to check (32)
 
 |package         |version |error |warning |note |
 |:---------------|:-------|:-----|:-------|:----|
@@ -41,7 +41,6 @@
 |dynfrail        |0.5.2   |1     |        |     |
 |ELMER           |2.10.0  |1     |1       |2    |
 |ENCODExplorer   |2.12.1  |1     |        |1    |
-|GEOquery        |2.54.1  |1     |        |4    |
 |GillespieSSA2   |0.2.6.1 |1     |        |     |
 |heuristicsmineR |0.2.3   |1     |        |     |
 |maEndToEnd      |?       |      |        |     |
@@ -50,7 +49,7 @@
 |processmapR     |0.3.4   |1     |        |     |
 |psychonetrics   |0.6     |1     |        |     |
 |rubias          |0.3.0   |1     |        |     |
-|sismonr         |2.1.0   |1     |-1      |     |
+|sismonr         |2.1.0   |1     |        |     |
 |TCGAbiolinks    |2.14.1  |1     |        |2    |
 |teachingApps    |1.0.4   |1     |        |     |
 |textreuse       |0.1.4   |1     |        |     |
@@ -62,11 +61,17 @@
 |vlad            |0.2.0   |1     |        |     |
 |vroom           |1.2.0   |1     |        |     |
 
-## New problems (3)
+## New problems (9)
 
-|package                            |version |error  |warning |note |
-|:----------------------------------|:-------|:------|:-------|:----|
-|[anomalize](problems.md#anomalize) |0.2.0   |__+2__ |        |     |
-|[RxODE](problems.md#rxode)         |0.9.2-0 |__+1__ |        |2    |
-|[whatr](problems.md#whatr)         |1.0.0   |__+1__ |        |1    |
+|package                                    |version |error  |warning |note     |
+|:------------------------------------------|:-------|:------|:-------|:--------|
+|[amt](problems.md#amt)                     |0.0.8   |__+1__ |        |1        |
+|[anomalize](problems.md#anomalize)         |0.2.0   |__+2__ |        |         |
+|[comperes](problems.md#comperes)           |0.2.3   |__+2__ |        |         |
+|[cutpointr](problems.md#cutpointr)         |1.0.1   |__+2__ |        |         |
+|[fable](problems.md#fable)                 |0.1.2   |__+1__ |        |         |
+|[predictrace](problems.md#predictrace)     |1.0.0   |       |        |1 __+1__ |
+|[tidyfast](problems.md#tidyfast)           |0.2.1   |__+1__ |        |         |
+|[tidygapminder](problems.md#tidygapminder) |0.1.1   |__+2__ |        |1        |
+|[tidyjson](problems.md#tidyjson)           |0.2.4   |__+1__ |        |         |
 

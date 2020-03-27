@@ -33,6 +33,52 @@ on_package_load <- function(pkg, expr) {
     }
   })
 
+  on_package_load("dplyr", {
+    if (!env_has(ns_env("dplyr"), "vec_restore.grouped_df")) {
+      s3_register("vctrs::vec_restore", "grouped_df")
+    }
+
+    if (!env_has(ns_env("dplyr"), "vec_ptype2.grouped_df")) {
+      s3_register("vctrs::vec_ptype2", "grouped_df")
+      s3_register("vctrs::vec_ptype2.grouped_df", "grouped_df")
+      s3_register("vctrs::vec_ptype2.grouped_df", "data.frame")
+      s3_register("vctrs::vec_ptype2.grouped_df", "tbl_df")
+      s3_register("vctrs::vec_ptype2.data.frame", "grouped_df")
+      s3_register("vctrs::vec_ptype2.tbl_df", "grouped_df")
+    }
+
+    if (!env_has(ns_env("dplyr"), "vec_cast.grouped_df")) {
+      s3_register("vctrs::vec_cast", "grouped_df")
+      s3_register("vctrs::vec_cast.grouped_df", "grouped_df")
+      s3_register("vctrs::vec_cast.grouped_df", "data.frame")
+      s3_register("vctrs::vec_cast.grouped_df", "tbl_df")
+      s3_register("vctrs::vec_cast.data.frame", "grouped_df")
+      s3_register("vctrs::vec_cast.tbl_df", "grouped_df")
+    }
+
+    if (!env_has(ns_env("dplyr"), "vec_restore.rowwise_df")) {
+      s3_register("vctrs::vec_restore", "rowwise_df")
+    }
+
+    if (!env_has(ns_env("dplyr"), "vec_ptype2.rowwise_df")) {
+      s3_register("vctrs::vec_ptype2", "rowwise_df")
+      s3_register("vctrs::vec_ptype2.rowwise_df", "rowwise_df")
+      s3_register("vctrs::vec_ptype2.rowwise_df", "data.frame")
+      s3_register("vctrs::vec_ptype2.rowwise_df", "tbl_df")
+      s3_register("vctrs::vec_ptype2.data.frame", "rowwise_df")
+      s3_register("vctrs::vec_ptype2.tbl_df", "rowwise_df")
+    }
+
+    if (!env_has(ns_env("dplyr"), "vec_cast.rowwise_df")) {
+      s3_register("vctrs::vec_cast", "rowwise_df")
+      s3_register("vctrs::vec_cast.rowwise_df", "rowwise_df")
+      s3_register("vctrs::vec_cast.rowwise_df", "data.frame")
+      s3_register("vctrs::vec_cast.rowwise_df", "tbl_df")
+      s3_register("vctrs::vec_cast.data.frame", "rowwise_df")
+      s3_register("vctrs::vec_cast.tbl_df", "rowwise_df")
+    }
+  })
+
   utils::globalVariables("vec_set_attributes")
 
   # Prevent two copies from being made by `attributes(x) <- attrib` on R < 3.6.0

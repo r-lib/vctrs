@@ -81,7 +81,11 @@ vec_ptype2.data.frame <- function(x, y, ...) {
 }
 #' @method vec_ptype2.data.frame data.frame
 #' @export
-vec_ptype2.data.frame.data.frame <- function(x, y, ..., x_arg = "", y_arg = "") {
+vec_ptype2.data.frame.data.frame <- function(x, y, ...) {
+  df_ptype2(x, y, ...)
+}
+# Returns a `data.frame` no matter the input classes
+df_ptype2 <- function(x, y, ..., x_arg = "", y_arg = "") {
   .Call(vctrs_df_ptype2, x, y, x_arg, y_arg)
 }
 
