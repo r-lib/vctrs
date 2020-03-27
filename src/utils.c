@@ -362,6 +362,42 @@ SEXP s3_find_method(const char* generic, SEXP x, SEXP table) {
 }
 
 // [[ include("utils.h") ]]
+SEXP s3_find_method2(const char* generic,
+                     SEXP x,
+                     SEXP table,
+                     SEXP* method_sym_out) {
+  SEXP class = R_NilValue;
+  if (OBJECT(x)) {
+    class = Rf_getAttrib(x, R_ClassSymbol);
+  }
+
+  // This handles unclassed objects as well as gremlins objects where
+  // `x` is an OBJECT(), but the class is NULL
+  if (class == R_NilValue) {
+    class = s3_bare_class(x);
+  }
+  PROTECT(class);
+
+  if (!Rf_length(class)) {
+    Rf_error("Internal error in `s3_find_method2()`: Class must have length.");
+  }
+  class = STRING_ELT(class, 0);
+
+  SEXP method_sym = s3_paste_method_sym(generic, CHAR(class));
+  SEXP method = s3_sym_get_method(method_sym, table);
+
+  if (method == R_NilValue) {
+    *method_sym_out = R_NilValue;
+  } else {
+    *method_sym_out = method_sym;
+  }
+
+  UNPROTECT(1);
+  return method;
+}
+
+
+// [[ include("utils.h") ]]
 SEXP s3_bare_class(SEXP x) {
   switch (TYPEOF(x)) {
   case LGLSXP: return chrs_logical;

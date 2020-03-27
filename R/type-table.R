@@ -48,27 +48,12 @@ vec_ptype2.table.table <- function(x, y, ..., x_arg = "", y_arg = "") {
 #' @method vec_cast table
 #' @export
 vec_cast.table <- function(x, to, ..., x_arg = "", to_arg = "") {
-  if (is_bare_table(to)) {
-    UseMethod("vec_cast.table")
-  } else {
-    vec_default_cast(x, to, ..., x_arg = x_arg, to_arg = to_arg)
-  }
+  UseMethod("vec_cast.table")
 }
-
-#' @method vec_cast.table default
-#' @export
-vec_cast.table.default <- function(x, to, ..., x_arg = "", to_arg = "") {
-  vec_default_cast(x, to, ..., x_arg = x_arg, to_arg = to_arg)
-}
-
 #' @method vec_cast.table table
 #' @export
 vec_cast.table.table <- function(x, to, ..., x_arg = "", to_arg = "") {
-  if (is_bare_table(x)) {
-    shape_broadcast(x, to)
-  } else {
-    vec_default_cast(x, to, ..., x_arg = x_arg, to_arg = to_arg)
-  }
+  shape_broadcast(x, to)
 }
 
 # ------------------------------------------------------------------------------

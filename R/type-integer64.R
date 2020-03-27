@@ -63,23 +63,15 @@ vec_ptype2.logical.integer64 <- function(x, y, ...) bit64::integer64()
 #' @rdname int64
 #' @export vec_cast.integer64
 #' @method vec_cast integer64
-vec_cast.integer64 <- function(x, to, ...) UseMethod("vec_cast.integer64")
-
-#' @export
-#' @method vec_cast.integer64 default
-vec_cast.integer64.default <- function(x, to, ..., x_arg = "", to_arg = "") {
-  # Don't use `vec_default_cast()` because integer64 is not compatible
-  # with `vec_init()`
-  if (is_unspecified(x)) {
-    bit64::as.integer64(unclass(x))
-  } else {
-    stop_incompatible_cast(x, to, x_arg = x_arg, to_arg = to_arg)
-  }
+vec_cast.integer64 <- function(x, to, ...) {
+  UseMethod("vec_cast.integer64")
 }
 
 #' @export
 #' @method vec_cast.integer64 integer64
-vec_cast.integer64.integer64 <- function(x, to, ...) x
+vec_cast.integer64.integer64 <- function(x, to, ...) {
+  x
+}
 
 #' @export
 #' @method vec_cast.integer64 integer

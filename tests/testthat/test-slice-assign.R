@@ -336,7 +336,8 @@ test_that("slice-assign falls back to `[<-` when proxy is not implemented", {
     },
     vec_ptype2.logical.vctrs_foobar = function(...) foobar(""),
     vec_ptype2.vctrs_foobar = function(...) foobar(""),
-    vec_cast.vctrs_foobar = function(x, to, ...) foobar(rep("", length(x)))
+    vec_cast.vctrs_foobar = function(...) NULL,
+    vec_cast.vctrs_foobar.logical = function(x, to, ...) foobar(rep("", length(x)))
   )
 
   obj <- foobar(c("foo", "bar", "baz"))
@@ -359,7 +360,8 @@ test_that("slice-assign casts to `to` before falling back to `[<-` (#443)", {
     vec_proxy.vctrs_proxy = proxy_deref,
     vec_ptype2.vctrs_proxy = function(...) NULL,
     vec_ptype2.vctrs_proxy.vctrs_foobar = function(...) new_proxy(NA),
-    vec_cast.vctrs_foobar = function(x, ...) foobar(proxy_deref(x)),
+    vec_cast.vctrs_foobar = function(...) NULL,
+    vec_cast.vctrs_foobar.vctrs_proxy = function(x, ...) foobar(proxy_deref(x)),
     `[<-.vctrs_foobar` = function(x, i, value) {
       called <<- TRUE
       expect_identical(value, foobar(10))

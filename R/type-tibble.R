@@ -33,9 +33,6 @@ tib_ptype2 <- function(x, y, ..., x_arg = "", y_arg = "") {
 vec_cast.tbl_df <- function(x, to, ..., x_arg = "", to_arg = "") {
   UseMethod("vec_cast.tbl_df")
 }
-vec_cast.tbl_df.default <- function(x, to, ..., x_arg = "", to_arg = "") {
-  vec_default_cast(x, to, x_arg = x_arg, to_arg = to_arg)
-}
 vec_cast.tbl_df.tbl_df <- function(x, to, ..., x_arg = "", to_arg = "") {
   tib_cast(x, to, x_arg = x_arg, to_arg = to_arg)
 }

@@ -128,9 +128,7 @@ vec_cast.factor <- function(x, to, ...) {
   UseMethod("vec_cast.factor")
 }
 
-#' @export
-#' @method vec_cast.factor factor
-vec_cast.factor.factor <- function(x, to, ..., x_arg = "", to_arg = "") {
+fct_cast <- function(x, to, ..., x_arg = "", to_arg = "") {
   if (length(levels(to)) == 0L) {
     levels <- levels(x)
     if (is.null(levels)) {
@@ -146,21 +144,50 @@ vec_cast.factor.factor <- function(x, to, ..., x_arg = "", to_arg = "") {
     maybe_lossy_cast(out, x, to, lossy, x_arg = x_arg, to_arg = to_arg)
   }
 }
+
+#' @export
+#' @method vec_cast.factor factor
+vec_cast.factor.factor <- function(x, to, ...) {
+  fct_cast(x, to, ...)
+}
+#' @export
+#' @method vec_cast.factor ordered
+vec_cast.factor.ordered <- function(x, to, ...) {
+  fct_cast(x, to, ...)
+}
 #' @export
 #' @method vec_cast.factor character
-vec_cast.factor.character <- vec_cast.factor.factor
+vec_cast.factor.character <-function(x, to, ...) {
+  fct_cast(x, to, ...)
+}
+
 #' @export
 #' @method vec_cast.character factor
-vec_cast.character.factor <- function(x, to, ...) as.character(x)
+vec_cast.character.factor <- function(x, to, ...) {
+  stop_native_implementation("vec_cast.character.factor")
+}
+#' @export
+#' @method vec_cast.character factor
+vec_cast.character.ordered <- function(x, to, ...) {
+  stop_native_implementation("vec_cast.character.ordered")
+}
 #' @export
 #' @method vec_cast.factor list
 vec_cast.factor.list <- function(x, to, ..., x_arg = "", to_arg = "") {
   vec_list_cast(x, to, x_arg = x_arg, to_arg = to_arg)
 }
+
+#' @rdname new_factor
+#' @export vec_cast.ordered
+#' @method vec_cast ordered
 #' @export
-#' @method vec_cast.factor default
-vec_cast.factor.default <- function(x, to, ..., x_arg = "", to_arg = "") {
-  vec_default_cast(x, to, x_arg = x_arg, to_arg = to_arg)
+vec_cast.ordered <- function(x, to, ...) {
+  UseMethod("vec_cast.ordered")
+}
+#' @export
+#' @method vec_cast.ordered factor
+vec_cast.ordered.factor <- function(x, to, ...) {
+  fct_cast(x, to, ...)
 }
 
 # Math and arithmetic -----------------------------------------------------

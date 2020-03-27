@@ -72,14 +72,6 @@ vec_ptype2_asis <- function(x, y, ...) {
 # ------------------------------------------------------------------------------
 # Casting
 
-#' @rdname as-is
-#' @export vec_cast.AsIs
-#' @method vec_cast AsIs
-#' @export
-vec_cast.AsIs <- function(x, to, ...) {
-  vec_cast_to_asis(x, to, ...)
-}
-
 vec_cast_from_asis <- function(x, to, ...) {
   x <- asis_strip(x)
   vec_cast(x, to, ...)

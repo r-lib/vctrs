@@ -115,25 +115,23 @@ vec_ptype2.vctrs_vctr <- function(x, y, ..., x_arg = "", y_arg = "") {
 
 #' @method vec_cast vctrs_vctr
 #' @export
-vec_cast.vctrs_vctr <- function(x, to, ...) UseMethod("vec_cast.vctrs_vctr")
+vec_cast.vctrs_vctr <- function(x, to, ...) {
+  UseMethod("vec_cast.vctrs_vctr")
+}
 
-#' @method vec_cast.vctrs_vctr default
-#' @export
-vec_cast.vctrs_vctr.default <- function(x, to, ...) {
+vctr_cast <- function(x, to, ..., x_arg = "", to_arg = "") {
   # These are not strictly necessary, but make bootstrapping a new class
   # a bit simpler
   if (is.object(x)) {
-    attr_x <- utils::modifyList(attributes(x), list(names = NULL))
-    attr_y <- utils::modifyList(attributes(to), list(names = NULL))
-
-    if (identical(attr_x, attr_y)) {
-      return(x)
+    if (is_same_type(x, to)) {
+      x
     } else {
-      stop_incompatible_cast(x, to)
+      stop_incompatible_cast(x, to, x_arg = x_arg, to_arg = to_arg)
     }
+  } else {
+    # FIXME: `vec_restore()` should only be called on proxies
+    vec_restore(x, to)
   }
-
-  vec_restore(x, to)
 }
 
 #' @export
@@ -290,7 +288,13 @@ as.character.vctrs_vctr <- function(x, ...) {
 
 #' @export
 as.list.vctrs_vctr <- function(x, ...) {
-  vec_cast(x, list())
+  out <- vec_chop(x)
+
+  if (vec_is_list(x)) {
+    out <- lapply(out, `[[`, 1)
+  }
+
+  out
 }
 
 #' @export
@@ -662,7 +666,6 @@ local_hidden <- function(frame = caller_env()) {
     vec_ptype2.logical.hidden = function(x, y, ...) new_hidden(),
 
     vec_cast.hidden          = function(x, to, ...) UseMethod("vec_cast.hidden"),
-    vec_cast.hidden.default  = function(x, to, ...) stop_incompatible_cast(x, to, ...),
     vec_cast.hidden.hidden   = function(x, to, ...) x,
     vec_cast.hidden.double   = function(x, to, ...) new_hidden(vec_data(x)),
     vec_cast.double.hidden   = function(x, to, ...) vec_data(x),

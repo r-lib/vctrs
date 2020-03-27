@@ -3,12 +3,9 @@
 \name{as-is}
 \alias{as-is}
 \alias{vec_ptype2.AsIs}
-\alias{vec_cast.AsIs}
 \title{AsIs S3 class}
 \usage{
 \method{vec_ptype2}{AsIs}(x, y, ..., x_arg = "", y_arg = "")
-
-\method{vec_cast}{AsIs}(x, to, ...)
 }
 \description{
 These functions help the base AsIs class fit into the vctrs type system

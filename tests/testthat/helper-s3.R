@@ -30,7 +30,6 @@ local_proxy <- function(frame = caller_env()) {
     vec_ptype2.vctrs_proxy.vctrs_proxy = function(x, y, ...) new_proxy(vec_ptype(proxy_deref(x))),
 
     vec_cast.vctrs_proxy = function(x, to, ...) UseMethod("vec_cast.vctrs_proxy"),
-    vec_cast.vctrs_proxy.default = function(x, to, ...) stop_incompatible_cast(x, to),
     vec_cast.vctrs_proxy.vctrs_proxy = function(x, to, ...) x
   )
 }
@@ -106,7 +105,6 @@ local_lgl_supertype <- function(frame = caller_env()) {
     vec_ptype2.logical.vctrs_lgl_supertype = function(x, y, ...) y,
 
     vec_cast.vctrs_lgl_supertype = function(x, to, ...) UseMethod("vec_cast.vctrs_lgl_supertype"),
-    vec_cast.vctrs_lgl_supertype.default = function(x, to, ...) stop_incompatible_cast(x, to),
     vec_cast.vctrs_lgl_supertype.vctrs_lgl_supertype = function(x, to, ...) x,
     vec_cast.vctrs_lgl_supertype.logical = function(x, to, ...) new_lgl_subtype(x),
     vec_cast.logical.vctrs_lgl_supertype = function(x, to, ...) unstructure(x)

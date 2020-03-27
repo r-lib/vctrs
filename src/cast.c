@@ -3,10 +3,6 @@
 #include "type-data-frame.h"
 #include "utils.h"
 
-// Initialised at load time
-static SEXP syms_vec_cast_dispatch = NULL;
-static SEXP fns_vec_cast_dispatch = NULL;
-
 static SEXP vec_cast_switch_native(SEXP x,
                                    SEXP to,
                                    enum vctrs_type x_type,
@@ -77,19 +73,6 @@ SEXP vec_cast(SEXP x, SEXP to, struct vctrs_arg* x_arg, struct vctrs_arg* to_arg
   }
 }
 
-static SEXP vec_cast_dispatch_s3(SEXP x,
-                                 SEXP to,
-                                 struct vctrs_arg* x_arg,
-                                 struct vctrs_arg* to_arg) {
-  SEXP out = vctrs_dispatch4(syms_vec_cast_dispatch, fns_vec_cast_dispatch,
-                             syms_x, x,
-                             syms_to, to,
-                             syms_x_arg, PROTECT(vctrs_arg(x_arg)),
-                             syms_to_arg, PROTECT(vctrs_arg(to_arg)));
-  UNPROTECT(2);
-  return out;
-}
-
 static SEXP vec_cast_switch_native(SEXP x,
                                    SEXP to,
                                    enum vctrs_type x_type,
@@ -153,6 +136,65 @@ static SEXP vec_cast_switch_native(SEXP x,
   }
 
   return R_NilValue;
+}
+
+
+static SEXP syms_vec_cast_default = NULL;
+
+static inline SEXP vec_cast_default(SEXP x,
+                                    SEXP y,
+                                    SEXP x_arg,
+                                    SEXP to_arg) {
+  return vctrs_eval_mask4(syms_vec_cast_default,
+                          syms_x, x,
+                          syms_to, y,
+                          syms_x_arg, x_arg,
+                          syms_to_arg, to_arg,
+                          vctrs_ns_env);
+}
+
+static SEXP vec_cast_dispatch_s3(SEXP x,
+                                 SEXP to,
+                                 struct vctrs_arg* x_arg,
+                                 struct vctrs_arg* to_arg) {
+  SEXP x_arg_obj = PROTECT(vctrs_arg(x_arg));
+  SEXP to_arg_obj = PROTECT(vctrs_arg(to_arg));
+
+  SEXP to_method_sym = R_NilValue;
+  SEXP to_method = PROTECT(s3_find_method2("vec_cast",
+                                           to,
+                                           vctrs_method_table,
+                                           &to_method_sym));
+
+  if (to_method == R_NilValue) {
+    SEXP out = vec_cast_default(x, to, x_arg_obj, to_arg_obj);
+    UNPROTECT(3);
+    return out;
+  }
+
+  const char* to_method_str = CHAR(PRINTNAME(to_method_sym));
+  SEXP to_table = s3_get_table(CLOENV(to_method));
+
+  SEXP x_method_sym = R_NilValue;
+  SEXP x_method = PROTECT(s3_find_method2(to_method_str,
+                                          x,
+                                          to_table,
+                                          &x_method_sym));
+
+  if (x_method == R_NilValue) {
+    SEXP out = vec_cast_default(x, to, x_arg_obj, to_arg_obj);
+    UNPROTECT(4);
+    return out;
+  }
+
+  SEXP out = vctrs_dispatch4(x_method_sym, x_method,
+                             syms_x, x,
+                             syms_to, to,
+                             syms_x_arg, x_arg_obj,
+                             syms_to_arg, to_arg_obj);
+
+  UNPROTECT(4);
+  return out;
 }
 
 
@@ -305,6 +347,5 @@ SEXP vctrs_cast_common(SEXP call, SEXP op, SEXP args, SEXP env) {
 
 
 void vctrs_init_cast(SEXP ns) {
-  syms_vec_cast_dispatch = Rf_install("vec_cast_dispatch");
-  fns_vec_cast_dispatch = Rf_findVar(syms_vec_cast_dispatch, ns);
+  syms_vec_cast_default = Rf_install("vec_default_cast");
 }

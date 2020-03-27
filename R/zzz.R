@@ -26,7 +26,6 @@ on_package_load <- function(pkg, expr) {
 
     if (!env_has(ns_env("tibble"), "vec_cast.tbl_df")) {
       s3_register("vctrs::vec_cast", "tbl_df")
-      s3_register("vctrs::vec_cast.tbl_df", "default")
       s3_register("vctrs::vec_cast.tbl_df", "data.frame")
       s3_register("vctrs::vec_cast.tbl_df", "tbl_df")
       s3_register("vctrs::vec_cast.data.frame", "tbl_df")

@@ -109,11 +109,6 @@ vec_cast.data.frame.data.frame <- function(x, to, ..., x_arg = "", to_arg = "") 
 vec_cast.data.frame.list <- function(x, to, ..., x_arg = "", to_arg = "") {
   vec_list_cast(x, to, x_arg = x_arg, to_arg = to_arg)
 }
-#' @export
-#' @method vec_cast.data.frame default
-vec_cast.data.frame.default <- function(x, to, ..., x_arg = "", to_arg = "") {
-  vec_default_cast(x, to, x_arg = x_arg, to_arg = to_arg)
-}
 df_cast <- function(x, to, ..., x_arg = "", to_arg = "") {
   .Call(vctrs_df_cast, x, to, x_arg, to_arg)
 }

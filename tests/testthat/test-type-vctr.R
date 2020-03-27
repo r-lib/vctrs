@@ -107,6 +107,16 @@ test_that("as.data.frame creates data frame", {
   expect_named(df, "x")
 })
 
+test_that("as.list() chops vectors", {
+  expect_identical(
+    as.list(new_vctr(1:3)),
+    list(new_vctr(1L), new_vctr(2L), new_vctr(3L))
+  )
+
+  x <- new_vctr(as.list(1:3))
+  expect_identical(as.list(x), as.list(1:3))
+})
+
 
 # equality + comparison + arith + math ---------------------------------------
 
@@ -229,7 +239,7 @@ test_that("can not provide invalid names", {
 
 test_that("can use [ and [[ with names", {
   local_methods(
-    vec_ptype2.vctrs_vctr = function(...) dbl(),
+    vec_ptype2.vctrs_vctr.double = function(...) dbl(),
     vec_ptype2.double.vctrs_vctr = function(...) dbl()
   )
   x <- new_vctr(c(a = 1, b = 2))

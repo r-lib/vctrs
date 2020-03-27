@@ -6,6 +6,7 @@
 \alias{vec_ptype2.factor}
 \alias{vec_ptype2.ordered}
 \alias{vec_cast.factor}
+\alias{vec_cast.ordered}
 \title{Factor/ordered factor S3 class}
 \usage{
 new_factor(x = integer(), levels = character(), ..., class = character())
@@ -17,6 +18,8 @@ new_ordered(x = integer(), levels = character())
 \method{vec_ptype2}{ordered}(x, y, ...)
 
 \method{vec_cast}{factor}(x, to, ...)
+
+\method{vec_cast}{ordered}(x, to, ...)
 }
 \arguments{
 \item{x}{Integer values which index in to \code{levels}.}
