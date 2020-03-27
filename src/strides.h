@@ -119,10 +119,10 @@ static inline SEXP vec_steps(const int* p_index, const R_len_t index_n) {
   return steps;
 }
 
-static inline int vec_strided_loc(const int* p_shape_index,
-                                  const int* p_strides,
-                                  const R_len_t shape_n) {
-  int loc = 0;
+static inline R_len_t vec_strided_loc(const int* p_shape_index,
+                                      const int* p_strides,
+                                      const R_len_t shape_n) {
+  R_len_t loc = 0;
 
   for (R_len_t i = 0; i < shape_n; ++i) {
     loc += p_strides[i] * p_shape_index[i];

@@ -10,14 +10,14 @@
   CTYPE* out_data = DEREF(out);                                        \
   const CTYPE* x_data = CONST_DEREF(x);                                \
                                                                        \
-  for (int i = 0; i < p_info->shape_elem_n; ++i) {                     \
-    int loc = vec_strided_loc(                                         \
+  for (R_len_t i = 0; i < p_info->shape_elem_n; ++i) {                 \
+    R_len_t loc = vec_strided_loc(                                     \
       p_info->p_shape_index,                                           \
       p_info->p_strides,                                               \
       p_info->shape_n                                                  \
     );                                                                 \
                                                                        \
-    for (int j = 0; j < p_info->index_n; ++j, ++out_data) {            \
+    for (R_len_t j = 0; j < p_info->index_n; ++j, ++out_data) {        \
       const int step = p_info->p_steps[j];                             \
                                                                        \
       if (step == NA_INTEGER) {                                        \
@@ -45,7 +45,7 @@
   int size_index = p_info->p_index[0];                                         \
   if (size_index == NA_INTEGER) {                                              \
     R_len_t out_n = p_info->shape_elem_n * p_info->index_n;                    \
-    for (int i = 0; i < out_n; ++i, ++out_data) {                              \
+    for (R_len_t i = 0; i < out_n; ++i, ++out_data) {                          \
       *out_data = NA_VALUE;                                                    \
     }                                                                          \
     UNPROTECT(2);                                                              \
@@ -57,8 +57,8 @@
   /* Convert to C index */                                                     \
   size_index = size_index - 1;                                                 \
                                                                                \
-  for (int i = 0; i < p_info->shape_elem_n; ++i) {                             \
-    int loc = vec_strided_loc(                                                 \
+  for (R_len_t i = 0; i < p_info->shape_elem_n; ++i) {                         \
+    R_len_t loc = vec_strided_loc(                                             \
       p_info->p_shape_index,                                                   \
       p_info->p_strides,                                                       \
       p_info->shape_n                                                          \
@@ -67,7 +67,7 @@
     loc += size_index;                                                         \
     const CTYPE elt_x_data = x_data[loc];                                      \
                                                                                \
-    for (int j = 0; j < p_info->index_n; ++j, ++out_data) {                    \
+    for (R_len_t j = 0; j < p_info->index_n; ++j, ++out_data) {                \
       *out_data = elt_x_data;                                                  \
     }                                                                          \
                                                                                \
@@ -90,8 +90,8 @@
                                                                    \
   const CTYPE* x_data = CONST_DEREF(x);                            \
                                                                    \
-  for (int i = 0; i < p_info->shape_elem_n; ++i) {                 \
-    int loc = vec_strided_loc(                                     \
+  for (R_len_t i = 0; i < p_info->shape_elem_n; ++i) {             \
+    R_len_t loc = vec_strided_loc(                                 \
       p_info->p_shape_index,                                       \
       p_info->p_strides,                                           \
       p_info->shape_n                                              \
@@ -99,7 +99,7 @@
                                                                    \
     loc += start;                                                  \
                                                                    \
-    for (int j = 0; j < n; ++j, ++out_data, loc += step) {         \
+    for (R_len_t j = 0; j < n; ++j, ++out_data, loc += step) {     \
       *out_data = x_data[loc];                                     \
     }                                                              \
                                                                    \
@@ -148,16 +148,16 @@ static SEXP raw_slice_shaped(SEXP x, SEXP index, struct strides_info* p_info) {
                                                                \
   SEXP out = PROTECT(Rf_allocArray(RTYPE, out_dim));           \
                                                                \
-  int out_loc = 0;                                             \
+  R_len_t out_loc = 0;                                         \
                                                                \
-  for (int i = 0; i < p_info->shape_elem_n; ++i) {             \
-    int loc = vec_strided_loc(                                 \
+  for (R_len_t i = 0; i < p_info->shape_elem_n; ++i) {         \
+    R_len_t loc = vec_strided_loc(                             \
       p_info->p_shape_index,                                   \
       p_info->p_strides,                                       \
       p_info->shape_n                                          \
     );                                                         \
                                                                \
-    for (int j = 0; j < p_info->index_n; ++j, ++out_loc) {     \
+    for (R_len_t j = 0; j < p_info->index_n; ++j, ++out_loc) { \
       const int step = p_info->p_steps[j];                     \
                                                                \
       if (step == NA_INTEGER) {                                \
@@ -185,20 +185,20 @@ static SEXP raw_slice_shaped(SEXP x, SEXP index, struct strides_info* p_info) {
   int size_index = p_info->p_index[0];                                \
   if (size_index == NA_INTEGER) {                                     \
     R_len_t out_n = p_info->shape_elem_n * p_info->index_n;           \
-    for (int i = 0; i < out_n; ++i) {                                 \
+    for (R_len_t i = 0; i < out_n; ++i) {                             \
       SET(out, i, NA_VALUE);                                          \
     }                                                                 \
     UNPROTECT(2);                                                     \
     return(out);                                                      \
   }                                                                   \
                                                                       \
-  int out_loc = 0;                                                    \
+  R_len_t out_loc = 0;                                                \
                                                                       \
   /* Convert to C index */                                            \
   size_index = size_index - 1;                                        \
                                                                       \
-  for (int i = 0; i < p_info->shape_elem_n; ++i) {                    \
-    int loc = vec_strided_loc(                                        \
+  for (R_len_t i = 0; i < p_info->shape_elem_n; ++i) {                \
+    R_len_t loc = vec_strided_loc(                                    \
       p_info->p_shape_index,                                          \
       p_info->p_strides,                                              \
       p_info->shape_n                                                 \
@@ -207,7 +207,7 @@ static SEXP raw_slice_shaped(SEXP x, SEXP index, struct strides_info* p_info) {
     loc += size_index;                                                \
     const SEXP elt_x_data = GET(x, loc);                              \
                                                                       \
-    for (int j = 0; j < p_info->index_n; ++j, ++out_loc) {            \
+    for (R_len_t j = 0; j < p_info->index_n; ++j, ++out_loc) {        \
       SET(out, out_loc, elt_x_data);                                  \
     }                                                                 \
                                                                       \
@@ -217,36 +217,36 @@ static SEXP raw_slice_shaped(SEXP x, SEXP index, struct strides_info* p_info) {
   UNPROTECT(2);                                                       \
   return out
 
-#define SLICE_BARRIER_SHAPED_COMPACT_SEQ(RTYPE, GET, SET)    \
-  SEXP out_dim = PROTECT(Rf_shallow_duplicate(p_info->dim)); \
-  INTEGER(out_dim)[0] = p_info->index_n;                     \
-                                                             \
-  SEXP out = PROTECT(Rf_allocArray(RTYPE, out_dim));         \
-                                                             \
-  R_len_t start = p_info->p_index[0];                        \
-  R_len_t n = p_info->p_index[1];                            \
-  R_len_t step = p_info->p_index[2];                         \
-                                                             \
-  int out_loc = 0;                                           \
-                                                             \
-  for (int i = 0; i < p_info->shape_elem_n; ++i) {           \
-    int loc = vec_strided_loc(                               \
-      p_info->p_shape_index,                                 \
-      p_info->p_strides,                                     \
-      p_info->shape_n                                        \
-    );                                                       \
-                                                             \
-    loc += start;                                            \
-                                                             \
-    for (int j = 0; j < n; ++j, ++out_loc, loc += step) {    \
-      SEXP elt = GET(x, loc);                                \
-      SET(out, out_loc, elt);                                \
-    }                                                        \
-                                                             \
-    vec_shape_index_increment(p_info);                       \
-  }                                                          \
-                                                             \
-  UNPROTECT(2);                                              \
+#define SLICE_BARRIER_SHAPED_COMPACT_SEQ(RTYPE, GET, SET)     \
+  SEXP out_dim = PROTECT(Rf_shallow_duplicate(p_info->dim));  \
+  INTEGER(out_dim)[0] = p_info->index_n;                      \
+                                                              \
+  SEXP out = PROTECT(Rf_allocArray(RTYPE, out_dim));          \
+                                                              \
+  R_len_t start = p_info->p_index[0];                         \
+  R_len_t n = p_info->p_index[1];                             \
+  R_len_t step = p_info->p_index[2];                          \
+                                                              \
+  R_len_t out_loc = 0;                                        \
+                                                              \
+  for (R_len_t i = 0; i < p_info->shape_elem_n; ++i) {        \
+    R_len_t loc = vec_strided_loc(                            \
+      p_info->p_shape_index,                                  \
+      p_info->p_strides,                                      \
+      p_info->shape_n                                         \
+    );                                                        \
+                                                              \
+    loc += start;                                             \
+                                                              \
+    for (R_len_t j = 0; j < n; ++j, ++out_loc, loc += step) { \
+      SEXP elt = GET(x, loc);                                 \
+      SET(out, out_loc, elt);                                 \
+    }                                                         \
+                                                              \
+    vec_shape_index_increment(p_info);                        \
+  }                                                           \
+                                                              \
+  UNPROTECT(2);                                               \
   return out
 
 #define SLICE_BARRIER_SHAPED(RTYPE, GET, SET, NA_VALUE)          \
