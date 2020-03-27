@@ -231,10 +231,8 @@ vec_cast.list.vctrs_list_of <- function(x, to, ...) {
 #' @method vec_cast.vctrs_list_of vctrs_list_of
 vec_cast.vctrs_list_of.vctrs_list_of <- vec_cast.vctrs_list_of.list
 
-#' @export
-#' @method vec_cast.vctrs_list_of default
-vec_cast.vctrs_list_of.default <- function(x, to, ...) {
-  x <- vec_cast(x, attr(to, "ptype"))
+vec_cast_to_list_of <- function(x, to, ..., x_arg = "", to_arg = "") {
+  x <- vec_cast(x, attr(to, "ptype"), x_arg = x_arg, to_arg = to_arg)
   out <- lapply(seq_along(x), function(i) x[[i]])
 
   miss <- is.na(x)
