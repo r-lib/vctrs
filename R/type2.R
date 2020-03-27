@@ -68,13 +68,17 @@ vec_ptype2_dispatch_s3 <- function(x, y, ..., x_arg = "", y_arg = "") {
 #' @rdname vec_ptype2
 #' @export
 vec_default_ptype2 <- function(x, y, ..., x_arg = "", y_arg = "") {
-  if (is_asis(y)) {
-    y <- asis_strip(y)
-    return(vec_ptype2_asis(x, y, ..., x_arg = x_arg, y_arg = y_arg))
+  if (is_asis(x)) {
+    return(vec_ptype2_asis_left(x, y, x_arg = x_arg, y_arg = y_arg))
   }
+  if (is_asis(y)) {
+    return(vec_ptype2_asis_right(x, y, x_arg = x_arg, y_arg = y_arg))
+  }
+
   if (is_same_type(x, y)) {
     return(vec_ptype(x))
   }
+
   stop_incompatible_type(x, y, x_arg = x_arg, y_arg = y_arg)
 }
 
