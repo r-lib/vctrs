@@ -271,6 +271,16 @@ test_that("can call `vec_slice()` from `[` methods with shaped objects without i
   expect_identical(x[1], exp)
 })
 
+test_that("vec_slice() restores attributes on shaped S3 objects correctly", {
+  x <- factor(c("a", "b", "c", "d", "e", "f"))
+  dim(x) <- c(3, 2)
+
+  expect <- factor(c("a", "c", "d", "f"), levels = levels(x))
+  dim(expect) <- c(2, 2)
+
+  expect_identical(vec_slice(x, c(1, 3)), expect)
+})
+
 test_that("vec_slice() falls back to `[` with S3 objects", {
   local_methods(
     `[.vctrs_foobar` = function(x, i, ...) "dispatched"
