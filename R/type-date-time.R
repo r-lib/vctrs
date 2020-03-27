@@ -188,8 +188,16 @@ vec_cast.Date.Date <- function(x, to, ...) {
   as_double_date(x)
 }
 #' @export
-#' @method vec_cast.Date POSIXt
-vec_cast.Date.POSIXt <- function(x, to, ..., x_arg = "", to_arg = "") {
+#' @method vec_cast.Date POSIXct
+vec_cast.Date.POSIXct <- function(x, to, ...) {
+  date_cast(x, to, ...)
+}
+#' @export
+#' @method vec_cast.Date POSIXlt
+vec_cast.Date.POSIXlt <- function(x, to, ...) {
+  date_cast(x, to, ...)
+}
+date_cast <- function(x, to, ..., x_arg = "", to_arg = "") {
   out <- as.Date(x)
   lossy <- abs(x - as.POSIXct(out)) > 1e-9
   maybe_lossy_cast(out, x, to, lossy, x_arg = x_arg, to_arg = to_arg)
