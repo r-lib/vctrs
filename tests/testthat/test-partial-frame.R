@@ -82,12 +82,12 @@ test_that("can take the common type with partial frames", {
 
 test_that("can rbind with a partial frame prototype", {
   out <- vec_rbind(
-    tibble::tibble(x = 1L, y = "a"),
-    tibble::tibble(x = FALSE, z = 10),
+    data.frame(x = 1L, y = "a"),
+    data.frame(x = FALSE, z = 10),
     .ptype = partial_frame(x = double(), a = character())
   )
 
-  exp <- tibble::tibble(
+  exp <- data.frame(
     x = dbl(1, 0),
     y = chr("a", NA),
     z = dbl(NA, 10),

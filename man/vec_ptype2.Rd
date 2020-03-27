@@ -66,6 +66,27 @@ which call e.g. \code{vec_ptype2.integer.double()}. \code{vec_ptype2.x.y()} must
 return the same value as \code{vec_ptype2.y.x()}; this is not enforced
 for reasons of efficiency, but should be tested.
 
+\code{vec_ptype2()} are not inherited, classes must explicitly implement
+the methods. There are two reasons for this:
+\itemize{
+\item The coercion hierarchy is often different from a class hierarchy.
+For instance the richer type between a tibble and a data frame is
+a tibble. Grouped data frames inherit from tibble, and so would by
+default inherit from tibble's \code{vec_ptype2()} method if inheritance
+was allowed. The method would then indicate that the richer type
+between a grouped data frame and a data frame is a tibble, which
+is wrong.
+\item \code{vec_ptype2()} should be symmetric, i.e. it should return the same
+type no matter the order of the inputs. With inheritance, this
+isn't the case when two classes have a common parent class. For
+instance the richer type between a tsibble and a tibble is
+tsibble. Similarly, grouped data frames are a richer type than
+tibble. Both of these classess have tibble as common parent
+class. With inheritance, \code{vec_ptype2(tsibble, gdf)} would return a
+tsibble via the tsibble-tibble method. \code{vec_ptype2(gdf, tsibble)}
+would return a grouped data frame via the gdf-tibble method.
+}
+
 Because of the way double dispatch is implemented, \code{NextMethod()}
 does not work inside \code{vec_ptype2()} methods.
 

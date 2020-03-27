@@ -23,6 +23,27 @@
 #' return the same value as `vec_ptype2.y.x()`; this is not enforced
 #' for reasons of efficiency, but should be tested.
 #'
+#' `vec_ptype2()` are not inherited, classes must explicitly implement
+#' the methods. There are two reasons for this:
+#'
+#' - The coercion hierarchy is often different from a class hierarchy.
+#'   For instance the richer type between a tibble and a data frame is
+#'   a tibble. Grouped data frames inherit from tibble, and so would by
+#'   default inherit from tibble's `vec_ptype2()` method if inheritance
+#'   was allowed. The method would then indicate that the richer type
+#'   between a grouped data frame and a data frame is a tibble, which
+#'   is wrong.
+#'
+#' - `vec_ptype2()` should be symmetric, i.e. it should return the same
+#'   type no matter the order of the inputs. With inheritance, this
+#'   isn't the case when two classes have a common parent class. For
+#'   instance the richer type between a tsibble and a tibble is
+#'   tsibble. Similarly, grouped data frames are a richer type than
+#'   tibble. Both of these classess have tibble as common parent
+#'   class. With inheritance, `vec_ptype2(tsibble, gdf)` would return a
+#'   tsibble via the tsibble-tibble method. `vec_ptype2(gdf, tsibble)`
+#'   would return a grouped data frame via the gdf-tibble method.
+#'
 #' Because of the way double dispatch is implemented, `NextMethod()`
 #' does not work inside `vec_ptype2()` methods.
 #'
@@ -47,13 +68,17 @@ vec_ptype2_dispatch_s3 <- function(x, y, ..., x_arg = "", y_arg = "") {
 #' @rdname vec_ptype2
 #' @export
 vec_default_ptype2 <- function(x, y, ..., x_arg = "", y_arg = "") {
-  if (is_asis(y)) {
-    y <- asis_strip(y)
-    return(vec_ptype2_asis(x, y, ..., x_arg = x_arg, y_arg = y_arg))
+  if (is_asis(x)) {
+    return(vec_ptype2_asis_left(x, y, x_arg = x_arg, y_arg = y_arg))
   }
+  if (is_asis(y)) {
+    return(vec_ptype2_asis_right(x, y, x_arg = x_arg, y_arg = y_arg))
+  }
+
   if (is_same_type(x, y)) {
     return(vec_ptype(x))
   }
+
   stop_incompatible_type(x, y, x_arg = x_arg, y_arg = y_arg)
 }
 

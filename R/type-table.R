@@ -28,24 +28,16 @@ vec_ptype_abbr.table <- function(x, ...) {
 #' @method vec_ptype2 table
 #' @export
 vec_ptype2.table <- function(x, y, ..., x_arg = "", y_arg = "") {
-  if (is_bare_table(x)) {
-    UseMethod("vec_ptype2.table")
-  } else {
-    vec_default_ptype2(x, y, x_arg = x_arg, y_arg = y_arg)
-  }
+  UseMethod("vec_ptype2.table")
 }
 
 #' @method vec_ptype2.table table
 #' @export
 vec_ptype2.table.table <- function(x, y, ..., x_arg = "", y_arg = "") {
-  if (is_bare_table(y)) {
-    # TODO can shape_match() be relaxed now that the object checks are
-    # in the ptype2 methods? This could be `shape_match(new_table(), x, y)`.
-    shape <- shape_common(x, y)
-    new_shape(new_table(), shape)
-  } else {
-    vec_default_ptype2(x, y, x_arg = x_arg, y_arg = y_arg)
-  }
+  # TODO can shape_match() be relaxed now that the object checks are
+  # in the ptype2 methods? This could be `shape_match(new_table(), x, y)`.
+  shape <- shape_common(x, y)
+  new_shape(new_table(), shape)
 }
 
 # ------------------------------------------------------------------------------
