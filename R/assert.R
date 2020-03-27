@@ -9,25 +9,29 @@
 #'   doesn't conform.
 #'
 #' @section Scalars and vectors:
-# From vec_base_typeof():
+#'
+#' Informally, a vector is a collection that makes sense to use as column
+#' in a data frame.
 #' An object is a vector if one of the following conditions hold:
 #'
 #' - [typeof()] is atomic: `"logical"`, `"integer"`, `"double"`,
 #'   `"complex"`, `"character"`, `"raw"`
+#' - the object is a [data.frame]
 #' - `typeof()` is `"list"`, and one of:
 #'     - the object is a bare `"list"` without a `"class"` attribute,
 #'       see [is_bare_list()]
-#'     - the object is a [data.frame]
 #'     - the `"class"` attribute contains `"list"`, i.e., `inherits(x, "list")`
 #'       is `TRUE`
-#'     - the class implements a [vec_proxy()] method
+#' - the object's class implements a [vec_proxy()] method
 #'
 #' Otherwise an object is inherently *scalar* and cannot be used as a vector.
-#' `NULL` is not a vector.
-#' Objects of mode [expression] have vector-like behavior but are currently
-#' treated as scalars.
-#' Support for S4 vectors is currently limited to objects that inherit from
-#' an atomic type.
+#' In particular,
+#'
+#' - `NULL` is not a vector.
+#' - Objects of mode [expression] have vector-like behavior but are currently
+#'   treated as scalars.
+#' - Support for S4 vectors is currently limited to objects that inherit from
+#'   an atomic type.
 #'
 #' @section Error types:
 #'

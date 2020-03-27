@@ -38,27 +38,33 @@ doesn't conform.
 }
 \section{Scalars and vectors}{
 
+
+Informally, a vector is a collection that makes sense to use as column
+in a data frame.
 An object is a vector if one of the following conditions hold:
 \itemize{
 \item \code{\link[=typeof]{typeof()}} is atomic: \code{"logical"}, \code{"integer"}, \code{"double"},
 \code{"complex"}, \code{"character"}, \code{"raw"}
+\item the object is a \link{data.frame}
 \item \code{typeof()} is \code{"list"}, and one of:
 \itemize{
 \item the object is a bare \code{"list"} without a \code{"class"} attribute,
 see \code{\link[=is_bare_list]{is_bare_list()}}
-\item the object is a \link{data.frame}
 \item the \code{"class"} attribute contains \code{"list"}, i.e., \code{inherits(x, "list")}
 is \code{TRUE}
-\item the class implements a \code{\link[=vec_proxy]{vec_proxy()}} method
 }
+\item the object's class implements a \code{\link[=vec_proxy]{vec_proxy()}} method
 }
 
 Otherwise an object is inherently \emph{scalar} and cannot be used as a vector.
-\code{NULL} is not a vector.
-Objects of mode \link{expression} have vector-like behavior but are currently
+In particular,
+\itemize{
+\item \code{NULL} is not a vector.
+\item Objects of mode \link{expression} have vector-like behavior but are currently
 treated as scalars.
-Support for S4 vectors is currently limited to objects that inherit from
+\item Support for S4 vectors is currently limited to objects that inherit from
 an atomic type.
+}
 }
 
 \section{Error types}{
