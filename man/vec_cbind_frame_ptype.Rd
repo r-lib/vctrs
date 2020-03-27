@@ -12,7 +12,7 @@ vec_cbind_frame_ptype(x, ...)
 \item{...}{These dots are for future extensions and must be empty.}
 }
 \description{
-\Sexpr[results=rd, stage=render]{mypkg:::lifecycle("experimental")}
+\Sexpr[results=rd, stage=render]{vctrs:::lifecycle("experimental")}
 
 This is an experimental generic that returns zero-columns variants
 of a data frame. It is needed for \code{\link[=vec_cbind]{vec_cbind()}}, to work around the
