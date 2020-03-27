@@ -62,8 +62,9 @@ tuple_methods <- list(
   vec_ptype2.tuple.tuple = function(x, y, ...) tuple(),
 
   vec_cast.tuple = function(x, to, ...) UseMethod("vec_cast.tuple"),
-  vec_cast.tuple.list = function(x, to, ...) vec_list_cast (x, to),
-  vec_cast.tuple.tuple = function(x, to, ...) x
+  vec_cast.tuple.list = function(x, to, ...) vec_list_cast(x, to, ...),
+  vec_cast.tuple.tuple = function(x, to, ...) x,
+  vec_cast.list.tuple = function(x, to, ...) vec_cast_list_default(x, to, ...)
 )
 
 local_tuple_methods <- function(frame = caller_env()) {
