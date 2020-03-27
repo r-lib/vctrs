@@ -33,9 +33,12 @@
 
 * Double-dispatch methods for `vec_ptype2()` and `vec_cast()` are now
   easier to implement. vctrs takes care of implementing the default
-  and unspecified methods. Methods no longer have to worry about order
-  of dispatch, for instance it is no longer needed to supply a second
-  argument as in `UseMethod("vec_ptype2.mytype", y)`.
+  and unspecified methods. If you have implemented these methods, they
+  can now be removed.
+
+  Also methods no longer have to worry about order of dispatch, for
+  instance it is no longer needed to supply a second argument as in
+  `UseMethod("vec_ptype2.mytype", y)`.
 
   One consequence is that `NextMethod()` is now completely
   unsupported. This is for the best as it never worked correctly in a
