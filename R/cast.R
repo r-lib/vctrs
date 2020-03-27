@@ -136,11 +136,6 @@ vec_cast_common <- function(..., .to = NULL) {
   .External2(vctrs_cast_common, .to)
 }
 
-#' @export
-vec_cast.default <- function(x, to, ..., x_arg = "", to_arg = "") {
-  vec_default_cast(x, to, x_arg = x_arg, to_arg = to_arg)
-}
-
 # Cast `x` to `to` but only if they are coercible
 vec_coercible_cast <- function(x, to, ..., x_arg = "", to_arg = "") {
   if (!missing(...)) {
@@ -165,6 +160,10 @@ vec_coercible_cast <- function(x, to, ..., x_arg = "", to_arg = "") {
 #' @inheritParams vec_cast
 #' @export
 vec_default_cast <- function(x, to, x_arg = "", to_arg = "") {
+  if (is_bare_list(to)) {
+    return(vec_cast_list_default(x, to, x_arg = x_arg, to_arg = to_arg))
+  }
+
   if (is_asis(x)) {
     return(vec_cast_from_asis(x, to, x_arg = x_arg, to_arg = to_arg))
   }

@@ -185,12 +185,6 @@ vec_cast.ordered.factor <- function(x, to, ...) {
   fct_cast(x, to, ...)
 }
 
-#' @export
-#' @method vec_cast.factor default
-vec_cast.factor.default <- function(x, to, ..., x_arg = "", to_arg = "") {
-  vec_default_cast(x, to, x_arg = x_arg, to_arg = to_arg)
-}
-
 # Math and arithmetic -----------------------------------------------------
 
 #' @export

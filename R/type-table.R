@@ -54,13 +54,6 @@ vec_cast.table <- function(x, to, ..., x_arg = "", to_arg = "") {
     vec_default_cast(x, to, ..., x_arg = x_arg, to_arg = to_arg)
   }
 }
-
-#' @method vec_cast.table default
-#' @export
-vec_cast.table.default <- function(x, to, ..., x_arg = "", to_arg = "") {
-  vec_default_cast(x, to, ..., x_arg = x_arg, to_arg = to_arg)
-}
-
 #' @method vec_cast.table table
 #' @export
 vec_cast.table.table <- function(x, to, ..., x_arg = "", to_arg = "") {

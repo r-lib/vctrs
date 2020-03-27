@@ -219,11 +219,6 @@ vec_cast.logical.list <- function(x, to, ..., x_arg = "", to_arg = "") {
   }
   vec_list_cast(x, to, x_arg = x_arg, to_arg = to_arg)
 }
-#' @export
-#' @method vec_cast.logical default
-vec_cast.logical.default <- function(x, to, ..., x_arg = "", to_arg = "") {
-  vec_default_cast(x, to, x_arg = x_arg, to_arg = to_arg)
-}
 
 #' @export
 #' @rdname vec_cast
@@ -271,11 +266,6 @@ vec_cast.integer.list <- function(x, to, ..., x_arg = "", to_arg = "") {
     return(vec_default_cast(x, to, x_arg = x_arg, to_arg = to_arg))
   }
   vec_list_cast(x, to, x_arg = x_arg, to_arg = to_arg)
-}
-#' @export
-#' @method vec_cast.integer default
-vec_cast.integer.default <- function(x, to, ..., x_arg = "", to_arg = "") {
-  vec_default_cast(x, to, x_arg = x_arg, to_arg = to_arg)
 }
 
 #' @export
@@ -325,11 +315,6 @@ vec_cast.double.list <- function(x, to, ..., x_arg = "", to_arg = "") {
   }
   vec_list_cast(x, to, x_arg = x_arg, to_arg = to_arg)
 }
-#' @export
-#' @method vec_cast.double default
-vec_cast.double.default <- function(x, to, ..., x_arg = "", to_arg = "") {
-  vec_default_cast(x, to, x_arg = x_arg, to_arg = to_arg)
-}
 
 #' @export
 #' @rdname vec_cast
@@ -369,11 +354,6 @@ vec_cast.complex.list <- function(x, to, ..., x_arg = "", to_arg = "") {
   }
   vec_list_cast(x, to, x_arg = x_arg, to_arg = to_arg)
 }
-#' @export
-#' @method vec_cast.complex default
-vec_cast.complex.default <- function(x, to, ..., x_arg = "", to_arg = "") {
-  vec_default_cast(x, to, x_arg = x_arg, to_arg = to_arg)
-}
 
 #' @export
 #' @rdname vec_cast
@@ -397,11 +377,6 @@ vec_cast.raw.list <- function(x, to, ..., x_arg = "", to_arg = "") {
     return(vec_default_cast(x, to, x_arg = x_arg, to_arg = to_arg))
   }
   vec_list_cast(x, to, x_arg = x_arg, to_arg = to_arg)
-}
-#' @export
-#' @method vec_cast.raw default
-vec_cast.raw.default <- function(x, to, ..., x_arg = "", to_arg = "") {
-  vec_default_cast(x, to, x_arg = x_arg, to_arg = to_arg)
 }
 
 #' @export
@@ -451,11 +426,6 @@ vec_cast.character.list <- function(x, to, ..., x_arg = "", to_arg = "") {
   }
   vec_list_cast(x, to, x_arg = x_arg, to_arg = to_arg)
 }
-#' @export
-#' @method vec_cast.character default
-vec_cast.character.default <- function(x, to, ..., x_arg = "", to_arg = "") {
-  vec_default_cast(x, to, x_arg = x_arg, to_arg = to_arg)
-}
 
 #' @rdname vec_cast
 #' @export vec_cast.list
@@ -471,15 +441,6 @@ vec_cast.list.list <- function(x, to, ..., x_arg = "", to_arg = "") {
     return(vec_default_cast(x, to, x_arg = x_arg, to_arg = to_arg))
   }
   shape_broadcast(x, to)
-}
-#' @export
-#' @method vec_cast.list default
-vec_cast.list.default <- function(x, to, ..., x_arg = "", to_arg = "") {
-  if (is.object(x)) {
-    return(vec_default_cast(x, to, x_arg = x_arg, to_arg = to_arg))
-  }
-
-  vec_cast_list_default(x, to, x_arg = x_arg, to_arg = to_arg)
 }
 
 vec_cast_list_default <- function(x, to, ..., x_arg = x_arg, to_arg = to_arg) {

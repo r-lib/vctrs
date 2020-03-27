@@ -207,11 +207,6 @@ date_cast <- function(x, to, ..., x_arg = "", to_arg = "") {
 vec_cast.Date.list <- function(x, to, ..., x_arg = "", to_arg = "") {
   vec_list_cast(x, to, x_arg = x_arg, to_arg = to_arg)
 }
-#' @export
-#' @method vec_cast.Date default
-vec_cast.Date.default <- function(x, to, ..., x_arg = "", to_arg = "") {
-  vec_default_cast(x, to, x_arg = x_arg, to_arg = to_arg)
-}
 
 #' @rdname new_date
 #' @export vec_cast.POSIXct
@@ -249,11 +244,6 @@ vec_cast.POSIXct.POSIXct <- function(x, to, ...) {
 #' @method vec_cast.POSIXct list
 vec_cast.POSIXct.list <- function(x, to, ..., x_arg = "", to_arg = "") {
   vec_list_cast(x, to, x_arg = x_arg, to_arg = to_arg)
-}
-#' @export
-#' @method vec_cast.POSIXct default
-vec_cast.POSIXct.default <- function(x, to, ..., x_arg = "", to_arg = "") {
-  vec_default_cast(x, to, x_arg = x_arg, to_arg = to_arg)
 }
 
 #' @rdname new_date
@@ -293,11 +283,6 @@ vec_cast.POSIXlt.POSIXct <- function(x, to, ...) {
 vec_cast.POSIXlt.list <- function(x, to, ..., x_arg = "", to_arg = "") {
   vec_list_cast(x, to, x_arg = x_arg, to_arg = to_arg)
 }
-#' @export
-#' @method vec_cast.POSIXlt default
-vec_cast.POSIXlt.default <- function(x, to, ..., x_arg = "", to_arg = "") {
-  vec_default_cast(x, to, x_arg = x_arg, to_arg = to_arg)
-}
 
 
 #' @rdname new_date
@@ -327,11 +312,6 @@ vec_cast.difftime.difftime <- function(x, to, ...) {
 #' @method vec_cast.difftime list
 vec_cast.difftime.list <- function(x, to, ..., x_arg = "", to_arg = "") {
   vec_list_cast(x, to, x_arg = x_arg, to_arg = to_arg)
-}
-#' @export
-#' @method vec_cast.difftime default
-vec_cast.difftime.default <- function(x, to, ..., x_arg = "", to_arg = "") {
-  vec_default_cast(x, to, x_arg = x_arg, to_arg = to_arg)
 }
 
 
