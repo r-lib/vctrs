@@ -193,7 +193,6 @@ Both generics use __[double dispatch](https://en.wikipedia.org/wiki/Double_dispa
 ```{r}
 vec_ptype2.MYCLASS <- function(x, y, ...) UseMethod("vec_ptype2.MYCLASS")
 vec_cast.MYCLASS <- function(x, to, ...) UseMethod("vec_cast.MYCLASS")
-vec_cast.MYCLASS.default <- function(x, to, ...) vec_default_cast(x, to)
 ```
 
 We'll discuss what this boilerplate does in the upcoming sections; just remember you'll always need to copy and paste it when creating a new S3 class.
@@ -252,7 +251,6 @@ Next we implement explicit casting, again starting with the boilerplate:
 
 ```{r}
 vec_cast.vctrs_percent <- function(x, to, ...) UseMethod("vec_cast.vctrs_percent")
-vec_cast.vctrs_percent.default <- function(x, to, ...) vec_default_cast(x, to)
 ```
 ```{r, include = FALSE}
 s3_register("vctrs::vec_cast", "vctrs_percent")
@@ -372,9 +370,7 @@ Now consider `vec_cast()` and `vec_ptype2()`. I start with the standard recipes:
 
 ```{r}
 vec_ptype2.vctrs_decimal <- function(x, y, ...) UseMethod("vec_ptype2.vctrs_decimal")
-
 vec_cast.vctrs_decimal <- function(x, to, ...) UseMethod("vec_cast.vctrs_decimal")
-vec_cast.vctrs_decimal.default <- function(x, to, ...) vec_default_cast(x, to)
 ```
 
 Casting and coercing from one decimal to another requires a little thought as the values of the `digits` attribute might be different, and we need some way to reconcile them. Here I've decided to chose the maximum of the two; other reasonable options are to take the value from the left-hand side or throw an error.
@@ -569,7 +565,6 @@ vec_ptype2.vctrs_rational.integer <- function(x, y, ...) new_rational()
 vec_ptype2.integer.vctrs_rational <- function(x, y, ...) new_rational()
 
 vec_cast.vctrs_rational <- function(x, to, ...) UseMethod("vec_cast.vctrs_rational")
-vec_cast.vctrs_rational.default <- function(x, to, ...) vec_default_cast(x, to)
 vec_cast.vctrs_rational.vctrs_rational <- function(x, to, ...) x
 vec_cast.double.vctrs_rational <- function(x, to, ...) field(x, "n") / field(x, "d")
 vec_cast.vctrs_rational.integer <- function(x, to, ...) rational(x, 1)
@@ -1116,9 +1111,6 @@ The exact same roxygen2 treatment is needed for `vec_cast()`, which yields:
 vec_cast.pizza_percent <- function(x, to, ...) {
   UseMethod("vec_cast.pizza_percent")
 }
-#' @method vec_cast.pizza_percent default
-#' @export 
-vec_cast.pizza_percent.default <- function(x, to, ...) vec_default_cast(x, to)
 #' @method vec_cast.pizza_percent pizza_percent
 #' @export 
 vec_cast.pizza_percent.pizza_percent <- function(x, to, ...) x

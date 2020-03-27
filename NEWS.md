@@ -17,9 +17,9 @@
   frame or tibble now returns a grouped data frame. It would
   previously return a tibble.
 
-* Double-dispatch methods for `vec_ptype2()` are no longer inherited
-  (#710). Class implementers must implement one set of methods for
-  each compatible class.
+* Double-dispatch methods for `vec_ptype2()` and `vec_cast()` are no
+  longer inherited (#710). Class implementers must implement one set
+  of methods for each compatible class.
 
   For example, a tibble subclass no longer inherits from the
   `vec_ptype2()` methods between `tbl_df` and `data.frame`. This means
@@ -31,10 +31,10 @@
   class hierarchies. See the S3 dispatch section of `?vec_ptype2` for
   more information.
 
-* Double-dispatch methods for `vec_ptype2()` are now easier to
-  implement. vctrs takes care of implementing the default and
-  unspecified methods. Methods no longer have to worry about order of
-  dispatch, for instance it is no longer needed to supply a second
+* Double-dispatch methods for `vec_ptype2()` and `vec_cast()` are now
+  easier to implement. vctrs takes care of implementing the default
+  and unspecified methods. Methods no longer have to worry about order
+  of dispatch, for instance it is no longer needed to supply a second
   argument as in `UseMethod("vec_ptype2.mytype", y)`.
 
   One consequence is that `NextMethod()` is now completely
