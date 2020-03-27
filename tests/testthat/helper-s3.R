@@ -101,7 +101,6 @@ new_lgl_supertype <- function(x) {
 local_lgl_supertype <- function(frame = caller_env()) {
   local_methods(.frame = frame,
     vec_ptype2.vctrs_lgl_supertype = function(x, y, ...) UseMethod("vec_ptype2.vctrs_lgl_supertype"),
-    vec_ptype2.vctrs_lgl_supertype.default = function(x, y, ...) vec_default_ptype2(x, y),
     vec_ptype2.vctrs_lgl_supertype.vctrs_lgl_supertype = function(x, y, ...) x,
     vec_ptype2.vctrs_lgl_supertype.logical = function(x, y, ...) x,
     vec_ptype2.logical.vctrs_lgl_supertype = function(x, y, ...) y,

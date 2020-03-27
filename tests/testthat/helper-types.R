@@ -60,9 +60,6 @@ tuple_methods <- list(
   vec_ptype2.tuple = function(x, y, ...)  UseMethod("vec_ptype2.tuple"),
   vec_ptype2.tuple.vctrs_unspecified = function(x, y, ...) tuple(),
   vec_ptype2.tuple.tuple = function(x, y, ...) tuple(),
-  vec_ptype2.tuple.default = function(x, y, ..., x_arg = "", y_arg = "") {
-    stop_incompatible_type(x, y, x_arg = x_arg, y_arg = y_arg)
-  },
 
   vec_cast.tuple = function(x, to, ...) UseMethod("vec_cast.tuple"),
   vec_cast.tuple.list = function(x, to, ...) vec_list_cast (x, to),
