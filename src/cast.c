@@ -182,6 +182,14 @@ static SEXP vec_cast_dispatch_s3(SEXP x,
                                           to_table,
                                           &x_method_sym));
 
+  // FIXME: Temporary fix to special-case lists. Should be removed
+  // once we restrict `vec_cast()` to common types.
+  if (x_method == R_NilValue && !OBJECT(to) && TYPEOF(to) == VECSXP) {
+    UNPROTECT(1);
+    x_method_sym = s3_paste_method_sym(to_method_str, "default");
+    x_method = PROTECT(s3_sym_get_method(x_method_sym, vctrs_method_table));
+  }
+
   if (x_method == R_NilValue) {
     SEXP out = vec_cast_default(x, to, x_arg_obj, to_arg_obj);
     UNPROTECT(4);
