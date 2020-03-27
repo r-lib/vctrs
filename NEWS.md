@@ -2,7 +2,7 @@
 # vctrs (development version)
 
 * `vec_cbind()` now calls `vec_restore()` on inputs emptied of their
-  columns. This happens before taking the common type. This has
+  columns before computing the common type. This has
   consequences for data frame classes with special columns that
   devolve into simpler classes when the columns are subsetted
   out. These classes are now always simplified by `vec_cbind()`.
@@ -13,7 +13,7 @@
 
 * dplyr methods are now implemented for `vec_restore()`,
   `vec_ptype2()`, and `vec_cast()`. The user-visible consequence (and
-  breaking change) is that combining a grouped data frame and a data
+  breaking change) is that row-binding a grouped data frame and a data
   frame or tibble now returns a grouped data frame. It would
   previously return a tibble.
 
