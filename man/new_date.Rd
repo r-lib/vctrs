@@ -5,7 +5,8 @@
 \alias{new_datetime}
 \alias{new_duration}
 \alias{vec_ptype2.Date}
-\alias{vec_ptype2.POSIXt}
+\alias{vec_ptype2.POSIXct}
+\alias{vec_ptype2.POSIXlt}
 \alias{vec_ptype2.difftime}
 \alias{vec_cast.Date}
 \alias{vec_cast.POSIXct}
@@ -24,7 +25,9 @@ new_duration(x = double(), units = c("secs", "mins", "hours", "days", "weeks"))
 
 \method{vec_ptype2}{Date}(x, y, ...)
 
-\method{vec_ptype2}{POSIXt}(x, y, ...)
+\method{vec_ptype2}{POSIXct}(x, y, ...)
+
+\method{vec_ptype2}{POSIXlt}(x, y, ...)
 
 \method{vec_ptype2}{difftime}(x, y, ...)
 

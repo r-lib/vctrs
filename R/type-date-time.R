@@ -138,21 +138,42 @@ vec_ptype2.Date <- function(x, y, ...) UseMethod("vec_ptype2.Date")
 #' @method vec_ptype2.Date Date
 #' @export
 vec_ptype2.Date.Date <- function(x, y, ...) new_date()
+#' @method vec_ptype2.Date POSIXct
+#' @export
+vec_ptype2.Date.POSIXct <- function(x, y, ...) new_datetime(tzone = tzone(y))
+#' @method vec_ptype2.Date POSIXlt
+#' @export
+vec_ptype2.Date.POSIXlt <- function(x, y, ...) new_datetime(tzone = tzone(y))
 
 #' @rdname new_date
-#' @export vec_ptype2.POSIXt
-#' @method vec_ptype2 POSIXt
+#' @export vec_ptype2.POSIXct
+#' @method vec_ptype2 POSIXct
 #' @export
-vec_ptype2.POSIXt <- function(x, y, ...) UseMethod("vec_ptype2.POSIXt")
-#' @method vec_ptype2.POSIXt Date
+vec_ptype2.POSIXct <- function(x, y, ...) UseMethod("vec_ptype2.POSIXct")
+#' @method vec_ptype2.POSIXct POSIXct
 #' @export
-vec_ptype2.POSIXt.Date <- function(x, y, ...) new_datetime(tzone = tzone(x))
-#' @method vec_ptype2.Date POSIXt
+vec_ptype2.POSIXct.POSIXct <- function(x, y, ...) new_datetime(tzone = tzone_union(x, y))
+#' @method vec_ptype2.POSIXct Date
 #' @export
-vec_ptype2.Date.POSIXt <- function(x, y, ...) new_datetime(tzone = tzone(y))
-#' @method vec_ptype2.POSIXt POSIXt
+vec_ptype2.POSIXct.Date <- function(x, y, ...) new_datetime(tzone = tzone(x))
+#' @method vec_ptype2.POSIXct POSIXlt
 #' @export
-vec_ptype2.POSIXt.POSIXt <- function(x, y, ...) new_datetime(tzone = tzone_union(x, y))
+vec_ptype2.POSIXct.POSIXlt <- function(x, y, ...) new_datetime(tzone = tzone_union(x, y))
+
+#' @rdname new_date
+#' @export vec_ptype2.POSIXlt
+#' @method vec_ptype2 POSIXlt
+#' @export
+vec_ptype2.POSIXlt <- function(x, y, ...) UseMethod("vec_ptype2.POSIXlt")
+#' @method vec_ptype2.POSIXlt POSIXlt
+#' @export
+vec_ptype2.POSIXlt.POSIXlt <- function(x, y, ...) new_datetime(tzone = tzone_union(x, y))
+#' @method vec_ptype2.POSIXlt Date
+#' @export
+vec_ptype2.POSIXlt.Date <- function(x, y, ...) new_datetime(tzone = tzone(x))
+#' @method vec_ptype2.POSIXlt POSIXct
+#' @export
+vec_ptype2.POSIXlt.POSIXct <- function(x, y, ...) new_datetime(tzone = tzone_union(x, y))
 
 #' @rdname new_date
 #' @export vec_ptype2.difftime
