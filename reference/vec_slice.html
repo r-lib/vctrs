@@ -259,13 +259,17 @@ as the LHS.</p></li>
 <span class='fu'><a href='vec_ptype.html'>vec_ptype</a></span>(<span class='no'>x</span>)</div><div class='output co'>#&gt; numeric(0)</div><div class='input'>
 
 <span class='co'># Note that the types must be coercible for the cast to happen.</span>
-<span class='co'># For instance, you can cast a character vector to an integer:</span>
-<span class='fu'><a href='vec_cast.html'>vec_cast</a></span>(<span class='st'>"1"</span>, <span class='fu'><a href='https://rdrr.io/r/base/integer.html'>integer</a></span>())</div><div class='output co'>#&gt; [1] 1</div><div class='input'>
-<span class='co'># But these types are not coercible:</span>
-<span class='fu'><a href='https://rdrr.io/r/base/try.html'>try</a></span>(<span class='fu'><a href='vec_ptype2.html'>vec_ptype2</a></span>(<span class='st'>"1"</span>, <span class='fu'><a href='https://rdrr.io/r/base/integer.html'>integer</a></span>()))</div><div class='output co'>#&gt; Error : No common type for &lt;character&gt; and &lt;integer&gt;.</div><div class='input'>
-<span class='co'># Hence you cannot assign character values to an integer or double</span>
+<span class='co'># For instance, you can cast a double vector of whole numbers to an</span>
+<span class='co'># integer vector:</span>
+<span class='fu'><a href='vec_cast.html'>vec_cast</a></span>(<span class='fl'>1</span>, <span class='fu'><a href='https://rdrr.io/r/base/integer.html'>integer</a></span>())</div><div class='output co'>#&gt; [1] 1</div><div class='input'>
+<span class='co'># But not fractional doubles:</span>
+<span class='fu'><a href='https://rdrr.io/r/base/try.html'>try</a></span>(<span class='fu'><a href='vec_cast.html'>vec_cast</a></span>(<span class='fl'>1.5</span>, <span class='fu'><a href='https://rdrr.io/r/base/integer.html'>integer</a></span>()))</div><div class='output co'>#&gt; Error : Can't convert from &lt;double&gt; to &lt;integer&gt; due to loss of precision.
+#&gt; * Locations: 1</div><div class='input'>
+<span class='co'># For this reason you can't assign fractional values in an integer</span>
 <span class='co'># vector:</span>
-<span class='fu'><a href='https://rdrr.io/r/base/try.html'>try</a></span>(<span class='fu'>vec_slice</span>(<span class='no'>x</span>, <span class='fl'>2</span>) <span class='kw'>&lt;-</span> <span class='st'>"20"</span>)</div><div class='output co'>#&gt; Error : No common type for &lt;character&gt; and &lt;double&gt;.</div></pre>
+<span class='no'>x</span> <span class='kw'>&lt;-</span> <span class='fl'>1</span>:<span class='fl'>3</span>
+<span class='fu'><a href='https://rdrr.io/r/base/try.html'>try</a></span>(<span class='fu'>vec_slice</span>(<span class='no'>x</span>, <span class='fl'>2</span>) <span class='kw'>&lt;-</span> <span class='fl'>1.5</span>)</div><div class='output co'>#&gt; Error : Can't convert from &lt;double&gt; to &lt;integer&gt; due to loss of precision.
+#&gt; * Locations: 1</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
