@@ -1,6 +1,24 @@
 
 # vctrs (development version)
 
+* `vec_cast()` is now restricted to the same conversions as
+  `vec_ptype2()` methods (#606, #741). This change is motivated by
+  safety and performance:
+
+  - It is generally sloppy to generically convert arbitrary inputs to
+    one type. Restricted coercions are more predictable and allow your
+    code to fail earlier when there is a type issue.
+
+  - When unrestricted conversions are useful, this is generally
+    towards a known type. For example, `glue::glue()` needs to convert
+    arbitrary inputs to the known character type. In this case, using
+    double dispatch instead of a single dispatch generic like
+   `as.character()` is wasteful.
+
+  - To implement the useful semantics of coercible casts (already used
+    in `vec_assign()`), two double dispatch were needed. Now it can be
+    done with one double dispatch by calling `vec_cast()` directly.
+
 * `vec_cbind()` now calls `vec_restore()` on inputs emptied of their
   columns before computing the common type. This has
   consequences for data frame classes with special columns that

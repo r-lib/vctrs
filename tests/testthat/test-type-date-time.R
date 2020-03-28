@@ -138,11 +138,13 @@ test_that("safe casts work as expected", {
   date <- as.Date("2018-01-01")
 
   expect_equal(vec_cast(NULL, date), NULL)
-  expect_equal(vec_cast(17532, date), date)
-  expect_equal(vec_cast("2018-01-01", date), date)
   expect_equal(vec_cast(date, date), date)
   expect_equal(vec_cast(as.POSIXct(date), date), date)
-  expect_equal(vec_cast(list(date), date), date)
+
+  # These used to be allowed
+  expect_error(vec_cast(17532, date), class = "vctrs_error_incompatible_cast")
+  expect_error(vec_cast("2018-01-01", date), class = "vctrs_error_incompatible_cast")
+  expect_error(vec_cast(list(date), date), class = "vctrs_error_incompatible_cast")
 })
 
 test_that("lossy casts generate error", {
@@ -173,21 +175,24 @@ test_that("safe casts work as expected", {
   datetime_l <- as.POSIXlt("1970-02-01", tz = "UTC")
 
   expect_equal(vec_cast(NULL, datetime_c), NULL)
-  expect_equal(vec_cast(2678400, datetime_c), datetime_c)
-  expect_equal(vec_cast("1970-02-01", datetime_c), datetime_c)
   expect_equal(vec_cast(datetime_c, datetime_c), datetime_c)
   expect_equal(vec_cast(datetime_l, datetime_c), datetime_c)
   expect_equal(vec_cast(as.Date(datetime_c), datetime_c), datetime_c)
-  expect_equal(vec_cast(list(datetime_c), datetime_c), datetime_c)
 
   expect_equal(vec_cast(NULL, datetime_l), NULL)
-  expect_equal(vec_cast(2678400, datetime_l), datetime_l)
-  expect_equal(vec_cast("1970-02-01", datetime_l), datetime_l)
   expect_equal(vec_cast(datetime_c, datetime_l), datetime_l)
   expect_equal(vec_cast(datetime_l, datetime_l), datetime_l)
   expect_equal(vec_cast(as.Date(datetime_l), datetime_l), datetime_l)
-  expect_equal(vec_cast(list(datetime_l), datetime_l), datetime_l)
   expect_error(vec_cast(raw(), datetime_l), class = "vctrs_error_incompatible_cast")
+
+  # These used to be allowed
+  expect_error(vec_cast(2678400, datetime_c), class = "vctrs_error_incompatible_cast")
+  expect_error(vec_cast("1970-02-01", datetime_c), class = "vctrs_error_incompatible_cast")
+  expect_error(vec_cast(list(datetime_c), datetime_c), class = "vctrs_error_incompatible_cast")
+
+  expect_error(vec_cast(2678400, datetime_l), class = "vctrs_error_incompatible_cast")
+  expect_error(vec_cast("1970-02-01", datetime_l), class = "vctrs_error_incompatible_cast")
+  expect_error(vec_cast(list(datetime_l), datetime_l), class = "vctrs_error_incompatible_cast")
 })
 
 test_that("invalid casts generate error", {
@@ -226,10 +231,12 @@ test_that("safe casts work as expected", {
   dt2 <- as.difftime(10, units = "mins")
 
   expect_equal(vec_cast(NULL, dt1), NULL)
-  expect_equal(vec_cast(600, dt1), dt1)
   expect_equal(vec_cast(dt1, dt1), dt1)
   expect_equal(vec_cast(dt1, dt2), dt2)
-  expect_equal(vec_cast(list(dt1), dt1), dt1)
+
+  # These used to be allowed
+  expect_error(vec_cast(600, dt1), class = "vctrs_error_incompatible_cast")
+  expect_error(vec_cast(list(dt1), dt1), class = "vctrs_error_incompatible_cast")
 })
 
 test_that("invalid casts generate error", {

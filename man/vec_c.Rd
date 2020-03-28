@@ -61,7 +61,6 @@ Combine all arguments into a new vector of common type.
 
 \examples{
 vec_c(FALSE, 1L, 1.5)
-vec_c(FALSE, 1L, "x", .ptype = character())
 
 # Date/times --------------------------
 c(Sys.Date(), Sys.time())

@@ -98,18 +98,6 @@ vec_cast.logical.integer64 <- function(x, to, ...) {
 }
 
 #' @export
-#' @method vec_cast.integer64 character
-vec_cast.integer64.character <- function(x, to, ...) {
-  bit64::as.integer64(x)
-}
-
-#' @export
-#' @method vec_cast.character integer64
-vec_cast.character.integer64 <- function(x, to, ...) {
-  as.character(x)
-}
-
-#' @export
 #' @method vec_cast.integer64 double
 vec_cast.integer64.double <- function(x, to, ...) {
   bit64::as.integer64(x)

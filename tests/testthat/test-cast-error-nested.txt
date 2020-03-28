@@ -1,8 +1,7 @@
 
 vec_cast("foo", 10):
 
-Can't convert from <character> to <double> due to loss of precision.
-* Locations: 1 
+Can't convert from <character> to <double>. 
 
 
 vec_cast(factor("foo"), 10):
@@ -12,8 +11,7 @@ Can't convert from <factor<bd40e>> to <double>.
 
 vec_cast(x, y):
 
-Can't convert from `a$b` <character> to `a$b` <double> due to loss of precision.
-* Locations: 1 
+Can't convert from `a$b` <character> to `a$b` <double>. 
 
 
 vec_cast(x, y):

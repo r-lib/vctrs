@@ -31,15 +31,14 @@ test_that("vec_proxy() transforms records to data frames", {
 
 # coercion ----------------------------------------------------------------
 
-test_that("can cast list to rcrd", {
+test_that("can't cast list to rcrd", {
   l <- list(
     new_rcrd(list(a = "1", b = 3L)),
     new_rcrd(list(b = "4", a = 2))
   )
-
-  expect_equal(
+  expect_error(
     vec_cast(l, new_rcrd(list(a = 1L, b = 2L))),
-    new_rcrd(list(a = 1:2, b = 3:4))
+    class = "vctrs_error_incompatible_cast"
   )
 })
 
@@ -52,21 +51,10 @@ test_that("can recast rcrd from list", {
   )
 })
 
-test_that("can cast rcrd to list", {
+test_that("can't cast rcrd to list", {
   r <- new_rcrd(list(x = 1:2, y = 2:3))
-
-  expect_identical(
-    vec_cast(r, list()),
-    list(
-      new_rcrd(list(x = 1L, y = 2L)),
-      new_rcrd(list(x = 2L, y = 3L))
-    )
-  )
-
-  expect_identical(
-    vec_cast(r, list()),
-    as.list(r)
-  )
+  expect_error(vec_cast(r, list()), class = "vctrs_error_incompatible_cast")
+  expect_error(vec_cast(r, list()), class = "vctrs_error_incompatible_cast")
 })
 
 test_that("default casts are implemented correctly", {
@@ -91,13 +79,12 @@ test_that("can't cast incompatible rcrd", {
     ),
     class = "vctrs_error_incompatible_cast"
   )
-  expect_lossy(
+  expect_error(
     vec_cast(
       new_rcrd(list(a = "a", b = 3L)),
       new_rcrd(list(a = 1, b = 3L))
     ),
-    new_rcrd(list(a = na_dbl, b = 3L)),
-    chr(), dbl()
+    class = "vctrs_error_incompatible_cast"
   )
 })
 

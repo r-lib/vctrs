@@ -171,11 +171,6 @@ vec_cast.character.factor <- function(x, to, ...) {
 vec_cast.character.ordered <- function(x, to, ...) {
   stop_native_implementation("vec_cast.character.ordered")
 }
-#' @export
-#' @method vec_cast.factor list
-vec_cast.factor.list <- function(x, to, ..., x_arg = "", to_arg = "") {
-  vec_list_cast(x, to, x_arg = x_arg, to_arg = to_arg)
-}
 
 #' @rdname new_factor
 #' @export vec_cast.ordered
