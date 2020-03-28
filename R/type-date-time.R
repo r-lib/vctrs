@@ -134,46 +134,70 @@ vec_ptype_abbr.difftime <- function(x, ...) {
 #' @export vec_ptype2.Date
 #' @method vec_ptype2 Date
 #' @export
-vec_ptype2.Date <- function(x, y, ...) UseMethod("vec_ptype2.Date")
+vec_ptype2.Date <- function(x, y, ...) {
+  UseMethod("vec_ptype2.Date")
+}
 #' @method vec_ptype2.Date Date
 #' @export
-vec_ptype2.Date.Date <- function(x, y, ...) new_date()
+vec_ptype2.Date.Date <- function(x, y, ...) {
+  stop_native_implementation("vec_ptype2.Date.Date")
+}
 #' @method vec_ptype2.Date POSIXct
 #' @export
-vec_ptype2.Date.POSIXct <- function(x, y, ...) new_datetime(tzone = tzone(y))
+vec_ptype2.Date.POSIXct <- function(x, y, ...) {
+  stop_native_implementation("vec_ptype2.Date.POSIXct")
+}
 #' @method vec_ptype2.Date POSIXlt
 #' @export
-vec_ptype2.Date.POSIXlt <- function(x, y, ...) new_datetime(tzone = tzone(y))
+vec_ptype2.Date.POSIXlt <- function(x, y, ...) {
+  stop_native_implementation("vec_ptype2.Date.POSIXlt")
+}
 
 #' @rdname new_date
 #' @export vec_ptype2.POSIXct
 #' @method vec_ptype2 POSIXct
 #' @export
-vec_ptype2.POSIXct <- function(x, y, ...) UseMethod("vec_ptype2.POSIXct")
+vec_ptype2.POSIXct <- function(x, y, ...) {
+  UseMethod("vec_ptype2.POSIXct")
+}
 #' @method vec_ptype2.POSIXct POSIXct
 #' @export
-vec_ptype2.POSIXct.POSIXct <- function(x, y, ...) new_datetime(tzone = tzone_union(x, y))
+vec_ptype2.POSIXct.POSIXct <- function(x, y, ...) {
+  stop_native_implementation("vec_ptype2.POSIXct.POSIXct")
+}
 #' @method vec_ptype2.POSIXct Date
 #' @export
-vec_ptype2.POSIXct.Date <- function(x, y, ...) new_datetime(tzone = tzone(x))
+vec_ptype2.POSIXct.Date <- function(x, y, ...) {
+  stop_native_implementation("vec_ptype2.POSIXct.Date")
+}
 #' @method vec_ptype2.POSIXct POSIXlt
 #' @export
-vec_ptype2.POSIXct.POSIXlt <- function(x, y, ...) new_datetime(tzone = tzone_union(x, y))
+vec_ptype2.POSIXct.POSIXlt <- function(x, y, ...) {
+  stop_native_implementation("vec_ptype2.POSIXct.POSIXlt")
+}
 
 #' @rdname new_date
 #' @export vec_ptype2.POSIXlt
 #' @method vec_ptype2 POSIXlt
 #' @export
-vec_ptype2.POSIXlt <- function(x, y, ...) UseMethod("vec_ptype2.POSIXlt")
+vec_ptype2.POSIXlt <- function(x, y, ...) {
+  UseMethod("vec_ptype2.POSIXlt")
+}
 #' @method vec_ptype2.POSIXlt POSIXlt
 #' @export
-vec_ptype2.POSIXlt.POSIXlt <- function(x, y, ...) new_datetime(tzone = tzone_union(x, y))
+vec_ptype2.POSIXlt.POSIXlt <- function(x, y, ...) {
+  stop_native_implementation("vec_ptype2.POSIXlt.POSIXlt")
+}
 #' @method vec_ptype2.POSIXlt Date
 #' @export
-vec_ptype2.POSIXlt.Date <- function(x, y, ...) new_datetime(tzone = tzone(x))
+vec_ptype2.POSIXlt.Date <- function(x, y, ...) {
+  stop_native_implementation("vec_ptype2.POSIXlt.Date")
+}
 #' @method vec_ptype2.POSIXlt POSIXct
 #' @export
-vec_ptype2.POSIXlt.POSIXct <- function(x, y, ...) new_datetime(tzone = tzone_union(x, y))
+vec_ptype2.POSIXlt.POSIXct <- function(x, y, ...) {
+  stop_native_implementation("vec_ptype2.POSIXlt.POSIXct")
+}
 
 #' @rdname new_date
 #' @export vec_ptype2.difftime
