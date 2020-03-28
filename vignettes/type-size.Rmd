@@ -267,11 +267,8 @@ allow_lossy_cast(
 )
 ```
 
-The set of casts is more permissive than the set of coercions and is summarised in the diagram below. Coercions are shown by arrows; possible casts are shown with circles.
+The set of casts should not be more permissive than the set of coercions. This is not enforced but it is expected from classes to follow the rule and keep the coercion ecosystem sound.
 
-```{r, echo = FALSE, fig.cap="Summary of vctrs casting rules"}
-knitr::include_graphics("../man/figures/combined.png", dpi = 300)
-```
 
 ## Size
 
