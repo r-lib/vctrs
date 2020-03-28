@@ -324,7 +324,7 @@ test_that("Shaped NA casts work as expected", {
   expect_error(vec_cast(mat(list(NA)), to_mat), class = "vctrs_error_incompatible_cast")
 })
 
-test_that("difftime gets special treatment", {
+test_that("difftime does not get special treatment", {
   dt1 <- as.difftime(600, units = "secs")
   # This used to be allowed
   expect_error(vec_cast(dt1, character()), class = "vctrs_error_incompatible_cast")
