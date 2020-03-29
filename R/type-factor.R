@@ -156,8 +156,18 @@ vec_cast.ordered <- function(x, to, ...) {
   UseMethod("vec_cast.ordered")
 }
 #' @export
+#' @method vec_cast.ordered ordered
+vec_cast.ordered.ordered <- function(x, to, ...) {
+  fct_cast(x, to, ...)
+}
+#' @export
 #' @method vec_cast.ordered factor
 vec_cast.ordered.factor <- function(x, to, ...) {
+  fct_cast(x, to, ...)
+}
+#' @export
+#' @method vec_cast.ordered character
+vec_cast.ordered.character <-function(x, to, ...) {
   fct_cast(x, to, ...)
 }
 #' @export
