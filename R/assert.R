@@ -16,7 +16,8 @@
 #'
 #' - [typeof()] is atomic: `"logical"`, `"integer"`, `"double"`,
 #'   `"complex"`, `"character"`, `"raw"`
-#' - the object is a [data.frame]
+#' - the object is a [data.frame], the `"class"` attribute must contain
+#'   `"data.frame"` as the *last* element
 #' - `typeof()` is `"list"`, and one of:
 #'     - the object is a bare `"list"` without a `"class"` attribute,
 #'       see [is_bare_list()]
@@ -32,6 +33,9 @@
 #'   treated as scalars.
 #' - Support for S4 vectors is currently limited to objects that inherit from
 #'   an atomic type.
+#' - Subclasses of [data.frame] that *append* their class to the `"class"`
+#'   attribute are not treated as vectors. If you inherit from an S3 class,
+#'   always prepend your class to the `"class"` attribute for correct dispatch.
 #'
 #' @section Error types:
 #'

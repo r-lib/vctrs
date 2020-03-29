@@ -45,7 +45,8 @@ An object is a vector if one of the following conditions hold:
 \itemize{
 \item \code{\link[=typeof]{typeof()}} is atomic: \code{"logical"}, \code{"integer"}, \code{"double"},
 \code{"complex"}, \code{"character"}, \code{"raw"}
-\item the object is a \link{data.frame}
+\item the object is a \link{data.frame}, the \code{"class"} attribute must contain
+\code{"data.frame"} as the \emph{last} element
 \item \code{typeof()} is \code{"list"}, and one of:
 \itemize{
 \item the object is a bare \code{"list"} without a \code{"class"} attribute,
@@ -64,6 +65,9 @@ In particular,
 treated as scalars.
 \item Support for S4 vectors is currently limited to objects that inherit from
 an atomic type.
+\item Subclasses of \link{data.frame} that \emph{append} their class to the \code{"class"}
+attribute are not treated as vectors. If you inherit from an S3 class,
+always prepend your class to the \code{"class"} attribute for correct dispatch.
 }
 }
 
