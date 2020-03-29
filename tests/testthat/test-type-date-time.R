@@ -141,8 +141,11 @@ test_that("safe casts work as expected", {
   expect_equal(vec_cast(date, date), date)
   expect_equal(vec_cast(as.POSIXct(date), date), date)
 
-  expect_equal(vec_cast(new_date(NA_real_), new_date()), new_date(NA_real_))
-  expect_equal(vec_cast(new_datetime(NA_real_), new_date()), new_date(NA_real_))
+  missing_date <- new_date(NA_real_)
+
+  expect_equal(vec_cast(missing_date, missing_date), missing_date)
+  expect_equal(vec_cast(as.POSIXct(missing_date), missing_date), missing_date)
+  expect_equal(vec_cast(as.POSIXlt(missing_date), missing_date), missing_date)
 
   # These used to be allowed
   expect_error(vec_cast(17532, date), class = "vctrs_error_incompatible_cast")
@@ -188,8 +191,16 @@ test_that("safe casts work as expected", {
   expect_equal(vec_cast(as.Date(datetime_l), datetime_l), datetime_l)
   expect_error(vec_cast(raw(), datetime_l), class = "vctrs_error_incompatible_cast")
 
-  expect_equal(vec_cast(new_datetime(NA_real_), new_datetime()), new_datetime(NA_real_))
-  expect_equal(vec_cast(new_date(NA_real_), new_datetime()), new_datetime(NA_real_))
+  missing_c <- new_datetime(NA_real_, tzone = "UTC")
+  missing_l <- as.POSIXlt(missing_c)
+
+  expect_equal(vec_cast(missing_c, missing_c), missing_c)
+  expect_equal(vec_cast(missing_l, missing_c), missing_c)
+  expect_equal(vec_cast(as.Date(missing_c), missing_c), missing_c)
+
+  expect_equal(vec_cast(missing_l, missing_l), missing_l)
+  expect_equal(vec_cast(missing_c, missing_l), missing_l)
+  expect_equal(vec_cast(as.Date(missing_l), missing_l), missing_l)
 
   # These used to be allowed
   expect_error(vec_cast(2678400, datetime_c), class = "vctrs_error_incompatible_cast")
