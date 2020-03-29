@@ -127,6 +127,44 @@ vec_ptype2.ordered.ordered <- function(x, y, ...) new_ordered(levels = levels_un
 vec_cast.factor <- function(x, to, ...) {
   UseMethod("vec_cast.factor")
 }
+#' @export
+#' @method vec_cast.factor factor
+vec_cast.factor.factor <- function(x, to, ...) {
+  fct_cast(x, to, ...)
+}
+#' @export
+#' @method vec_cast.factor ordered
+vec_cast.factor.ordered <- function(x, to, ...) {
+  fct_cast(x, to, ...)
+}
+#' @export
+#' @method vec_cast.factor character
+vec_cast.factor.character <-function(x, to, ...) {
+  fct_cast(x, to, ...)
+}
+#' @export
+#' @method vec_cast.character factor
+vec_cast.character.factor <- function(x, to, ...) {
+  stop_native_implementation("vec_cast.character.factor")
+}
+
+#' @rdname new_factor
+#' @export vec_cast.ordered
+#' @method vec_cast ordered
+#' @export
+vec_cast.ordered <- function(x, to, ...) {
+  UseMethod("vec_cast.ordered")
+}
+#' @export
+#' @method vec_cast.ordered factor
+vec_cast.ordered.factor <- function(x, to, ...) {
+  fct_cast(x, to, ...)
+}
+#' @export
+#' @method vec_cast.character factor
+vec_cast.character.ordered <- function(x, to, ...) {
+  stop_native_implementation("vec_cast.character.ordered")
+}
 
 fct_cast <- function(x, to, ..., x_arg = "", to_arg = "") {
   if (length(levels(to)) == 0L) {
@@ -143,46 +181,6 @@ fct_cast <- function(x, to, ..., x_arg = "", to_arg = "") {
     out <- factor(x, levels = levels(to), ordered = is.ordered(to), exclude = NULL)
     maybe_lossy_cast(out, x, to, lossy, x_arg = x_arg, to_arg = to_arg)
   }
-}
-
-#' @export
-#' @method vec_cast.factor factor
-vec_cast.factor.factor <- function(x, to, ...) {
-  fct_cast(x, to, ...)
-}
-#' @export
-#' @method vec_cast.factor ordered
-vec_cast.factor.ordered <- function(x, to, ...) {
-  fct_cast(x, to, ...)
-}
-#' @export
-#' @method vec_cast.factor character
-vec_cast.factor.character <-function(x, to, ...) {
-  fct_cast(x, to, ...)
-}
-
-#' @export
-#' @method vec_cast.character factor
-vec_cast.character.factor <- function(x, to, ...) {
-  stop_native_implementation("vec_cast.character.factor")
-}
-#' @export
-#' @method vec_cast.character factor
-vec_cast.character.ordered <- function(x, to, ...) {
-  stop_native_implementation("vec_cast.character.ordered")
-}
-
-#' @rdname new_factor
-#' @export vec_cast.ordered
-#' @method vec_cast ordered
-#' @export
-vec_cast.ordered <- function(x, to, ...) {
-  UseMethod("vec_cast.ordered")
-}
-#' @export
-#' @method vec_cast.ordered factor
-vec_cast.ordered.factor <- function(x, to, ...) {
-  fct_cast(x, to, ...)
 }
 
 # Math and arithmetic -----------------------------------------------------
