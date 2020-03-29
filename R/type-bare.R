@@ -306,18 +306,6 @@ vec_cast.list.list <- function(x, to, ..., x_arg = "", to_arg = "") {
   shape_broadcast(x, to)
 }
 
-vec_cast_list_default <- function(x, to, ..., x_arg = x_arg, to_arg = to_arg) {
-  out <- lapply(seq_along(x), function(i) x[[i]])
-
-  vec_slice(out, vec_equal_na(x)) <- list(NULL)
-
-  if (!is.object(to)) {
-    out <- shape_broadcast(out, to)
-  }
-
-  out
-}
-
 
 # compare ------------------------------------------------------------
 
