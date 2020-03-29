@@ -141,6 +141,9 @@ test_that("safe casts work as expected", {
   expect_equal(vec_cast(date, date), date)
   expect_equal(vec_cast(as.POSIXct(date), date), date)
 
+  expect_equal(vec_cast(new_date(NA_real_), new_date()), new_date(NA_real_))
+  expect_equal(vec_cast(new_datetime(NA_real_), new_date()), new_date(NA_real_))
+
   # These used to be allowed
   expect_error(vec_cast(17532, date), class = "vctrs_error_incompatible_cast")
   expect_error(vec_cast("2018-01-01", date), class = "vctrs_error_incompatible_cast")
@@ -184,6 +187,9 @@ test_that("safe casts work as expected", {
   expect_equal(vec_cast(datetime_l, datetime_l), datetime_l)
   expect_equal(vec_cast(as.Date(datetime_l), datetime_l), datetime_l)
   expect_error(vec_cast(raw(), datetime_l), class = "vctrs_error_incompatible_cast")
+
+  expect_equal(vec_cast(new_datetime(NA_real_), new_datetime()), new_datetime(NA_real_))
+  expect_equal(vec_cast(new_date(NA_real_), new_datetime()), new_datetime(NA_real_))
 
   # These used to be allowed
   expect_error(vec_cast(2678400, datetime_c), class = "vctrs_error_incompatible_cast")
