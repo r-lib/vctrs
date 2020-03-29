@@ -171,7 +171,7 @@ vec_cast.ordered.character <-function(x, to, ...) {
   fct_cast(x, to, ...)
 }
 #' @export
-#' @method vec_cast.character factor
+#' @method vec_cast.character ordered
 vec_cast.character.ordered <- function(x, to, ...) {
   stop_native_implementation("vec_cast.character.ordered")
 }
