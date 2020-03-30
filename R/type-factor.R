@@ -127,6 +127,28 @@ vec_ptype2.ordered.ordered <- function(x, y, ...) new_ordered(levels = levels_un
 vec_cast.factor <- function(x, to, ...) {
   UseMethod("vec_cast.factor")
 }
+
+fct_cast <- function(x, to, ..., x_arg = "", to_arg = "") {
+  fct_cast_impl(x, to, ..., x_arg = x_arg, to_arg = to_arg, ordered = FALSE)
+}
+
+fct_cast_impl <- function(x, to, ..., x_arg = "", to_arg = "", ordered = FALSE) {
+  if (length(levels(to)) == 0L) {
+    levels <- levels(x)
+    if (is.null(levels)) {
+      exclude <- NA
+      levels <- unique(x)
+    } else {
+      exclude <- NULL
+    }
+    factor(as.character(x), levels = levels, ordered = ordered, exclude = exclude)
+  } else {
+    lossy <- !(x %in% levels(to) | is.na(x))
+    out <- factor(x, levels = levels(to), ordered = ordered, exclude = NULL)
+    maybe_lossy_cast(out, x, to, lossy, x_arg = x_arg, to_arg = to_arg)
+  }
+}
+
 #' @export
 #' @method vec_cast.factor factor
 vec_cast.factor.factor <- function(x, to, ...) {
@@ -155,42 +177,30 @@ vec_cast.character.factor <- function(x, to, ...) {
 vec_cast.ordered <- function(x, to, ...) {
   UseMethod("vec_cast.ordered")
 }
+
+ord_cast <- function(x, to, ..., x_arg = "", to_arg = "") {
+  fct_cast_impl(x, to, ..., x_arg = x_arg, to_arg = to_arg, ordered = TRUE)
+}
+
 #' @export
 #' @method vec_cast.ordered ordered
 vec_cast.ordered.ordered <- function(x, to, ...) {
-  fct_cast(x, to, ...)
+  ord_cast(x, to, ...)
 }
 #' @export
 #' @method vec_cast.ordered factor
 vec_cast.ordered.factor <- function(x, to, ...) {
-  fct_cast(x, to, ...)
+  ord_cast(x, to, ...)
 }
 #' @export
 #' @method vec_cast.ordered character
 vec_cast.ordered.character <-function(x, to, ...) {
-  fct_cast(x, to, ...)
+  ord_cast(x, to, ...)
 }
 #' @export
 #' @method vec_cast.character ordered
 vec_cast.character.ordered <- function(x, to, ...) {
   stop_native_implementation("vec_cast.character.ordered")
-}
-
-fct_cast <- function(x, to, ..., x_arg = "", to_arg = "") {
-  if (length(levels(to)) == 0L) {
-    levels <- levels(x)
-    if (is.null(levels)) {
-      exclude <- NA
-      levels <- unique(x)
-    } else {
-      exclude <- NULL
-    }
-    factor(as.character(x), levels = levels, ordered = is.ordered(to), exclude = exclude)
-  } else {
-    lossy <- !(x %in% levels(to) | is.na(x))
-    out <- factor(x, levels = levels(to), ordered = is.ordered(to), exclude = NULL)
-    maybe_lossy_cast(out, x, to, lossy, x_arg = x_arg, to_arg = to_arg)
-  }
 }
 
 # Math and arithmetic -----------------------------------------------------
