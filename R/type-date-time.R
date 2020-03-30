@@ -234,7 +234,7 @@ vec_cast.Date.POSIXlt <- function(x, to, ...) {
 }
 date_cast <- function(x, to, ..., x_arg = "", to_arg = "") {
   out <- as.Date(x)
-  lossy <- abs(x - as.POSIXct(out)) > 1e-9
+  lossy <- abs(x - as.POSIXct(out)) > 1e-9 & !is.na(x)
   maybe_lossy_cast(out, x, to, lossy, x_arg = x_arg, to_arg = to_arg)
 }
 
