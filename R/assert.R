@@ -2,12 +2,51 @@
 #'
 #' @description
 #'
-#' * `vec_is()` is a predicate that checks if its input conforms to a
-#'   prototype and/or a size.
+#' * `vec_is()` is a predicate that checks if its input is a vector that
+#'   conforms to a prototype and/or a size.
 #'
-#' * `vec_assert()` throws an error when the input doesn't conform.
+#' * `vec_assert()` throws an error when the input is not a vector or
+#'   doesn't conform.
+#'
+#' @section Scalars and vectors:
+#'
+#' Informally, a vector is a collection that makes sense to use as
+#' column in a data frame. An object is a vector if one of the
+#' following conditions hold:
+#'
+#' - A [vec_proxy()] method is implemented for the class of the
+#'   object.
+#'
+#' - The [base type][typeof] of the object is atomic: `"logical"`,
+#'   `"integer"`, `"double"`, `"complex"`, `"character"`, `"raw"`
+#'
+#' - The object is a [data.frame].
+#'
+#' - The base type is `"list"`, and one of:
+#'     - The object is a bare `"list"` without a `"class"` attribute.
+#'     - The object explicitly inherits from `"list"`. That is, the
+#'       `"class"` attribute contains `"list"` and `inherits(x,
+#'       "list")` is `TRUE`.
+#'
+#' Otherwise an object is treated as scalar and cannot be used as a
+#' vector. In particular:
+#'
+#' - `NULL` is not a vector.
+#' - S3 lists like `lm` objects are treated as scalars by default.
+#' - Objects of type [expression] are not treated as vectors.
+#' - Support for S4 vectors is currently limited to objects that
+#'   inherit from an atomic type.
+#' - Subclasses of [data.frame] that *append* their class to the `"class"`
+#'   attribute are not treated as vectors. If you inherit from an S3 class,
+#'   always prepend your class to the `"class"` attribute for correct dispatch.
 #'
 #' @section Error types:
+#'
+#' `vec_is()` never throws.
+#' `vec_assert()` throws the following errors:
+#'
+#' * If the input is not a vector, an error of class
+#'   `"vctrs_error_scalar_type"` is raised.
 #'
 #' * If the prototype doesn't match, an error of class
 #'   `"vctrs_error_assert_ptype"` is raised.
