@@ -39,32 +39,31 @@ doesn't conform.
 \section{Scalars and vectors}{
 
 
-Informally, a vector is a collection that makes sense to use as column
-in a data frame.
-An object is a vector if one of the following conditions hold:
+Informally, a vector is a collection that makes sense to use as
+column in a data frame. An object is a vector if one of the
+following conditions hold:
 \itemize{
-\item \code{\link[=typeof]{typeof()}} is atomic: \code{"logical"}, \code{"integer"}, \code{"double"},
-\code{"complex"}, \code{"character"}, \code{"raw"}
-\item the object is a \link{data.frame}, the \code{"class"} attribute must contain
-\code{"data.frame"} as the \emph{last} element
-\item \code{typeof()} is \code{"list"}, and one of:
+\item A \code{\link[=vec_proxy]{vec_proxy()}} method is implemented for the class of the
+object.
+\item The \link[=typeof]{base type} of the object is atomic: \code{"logical"},
+\code{"integer"}, \code{"double"}, \code{"complex"}, \code{"character"}, \code{"raw"}
+\item The object is a \link{data.frame}.
+\item The base type is \code{"list"}, and one of:
 \itemize{
-\item the object is a bare \code{"list"} without a \code{"class"} attribute,
-see \code{\link[=is_bare_list]{is_bare_list()}}
-\item the \code{"class"} attribute contains \code{"list"}, i.e., \code{inherits(x, "list")}
-is \code{TRUE}
+\item The object is a bare \code{"list"} without a \code{"class"} attribute.
+\item The object explicitly inherits from \code{"list"}. That is, the
+\code{"class"} attribute contains \code{"list"} and \code{inherits(x, "list")} is \code{TRUE}.
 }
-\item the object's class implements a \code{\link[=vec_proxy]{vec_proxy()}} method
 }
 
-Otherwise an object is inherently \emph{scalar} and cannot be used as a vector.
-In particular,
+Otherwise an object is treated as scalar and cannot be used as a
+vector. In particular:
 \itemize{
 \item \code{NULL} is not a vector.
-\item Objects of mode \link{expression} have vector-like behavior but are currently
-treated as scalars.
-\item Support for S4 vectors is currently limited to objects that inherit from
-an atomic type.
+\item S3 lists like \code{lm} objects are treated as scalars by default.
+\item Objects of type \link{expression} are not treated as vectors.
+\item Support for S4 vectors is currently limited to objects that
+inherit from an atomic type.
 \item Subclasses of \link{data.frame} that \emph{append} their class to the \code{"class"}
 attribute are not treated as vectors. If you inherit from an S3 class,
 always prepend your class to the \code{"class"} attribute for correct dispatch.

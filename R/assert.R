@@ -10,29 +10,32 @@
 #'
 #' @section Scalars and vectors:
 #'
-#' Informally, a vector is a collection that makes sense to use as column
-#' in a data frame.
-#' An object is a vector if one of the following conditions hold:
+#' Informally, a vector is a collection that makes sense to use as
+#' column in a data frame. An object is a vector if one of the
+#' following conditions hold:
 #'
-#' - [typeof()] is atomic: `"logical"`, `"integer"`, `"double"`,
-#'   `"complex"`, `"character"`, `"raw"`
-#' - the object is a [data.frame], the `"class"` attribute must contain
-#'   `"data.frame"` as the *last* element
-#' - `typeof()` is `"list"`, and one of:
-#'     - the object is a bare `"list"` without a `"class"` attribute,
-#'       see [is_bare_list()]
-#'     - the `"class"` attribute contains `"list"`, i.e., `inherits(x, "list")`
-#'       is `TRUE`
-#' - the object's class implements a [vec_proxy()] method
+#' - A [vec_proxy()] method is implemented for the class of the
+#'   object.
 #'
-#' Otherwise an object is inherently *scalar* and cannot be used as a vector.
-#' In particular,
+#' - The [base type][typeof] of the object is atomic: `"logical"`,
+#'   `"integer"`, `"double"`, `"complex"`, `"character"`, `"raw"`
+#'
+#' - The object is a [data.frame].
+#'
+#' - The base type is `"list"`, and one of:
+#'     - The object is a bare `"list"` without a `"class"` attribute.
+#'     - The object explicitly inherits from `"list"`. That is, the
+#'       `"class"` attribute contains `"list"` and `inherits(x,
+#'       "list")` is `TRUE`.
+#'
+#' Otherwise an object is treated as scalar and cannot be used as a
+#' vector. In particular:
 #'
 #' - `NULL` is not a vector.
-#' - Objects of mode [expression] have vector-like behavior but are currently
-#'   treated as scalars.
-#' - Support for S4 vectors is currently limited to objects that inherit from
-#'   an atomic type.
+#' - S3 lists like `lm` objects are treated as scalars by default.
+#' - Objects of type [expression] are not treated as vectors.
+#' - Support for S4 vectors is currently limited to objects that
+#'   inherit from an atomic type.
 #' - Subclasses of [data.frame] that *append* their class to the `"class"`
 #'   attribute are not treated as vectors. If you inherit from an S3 class,
 #'   always prepend your class to the `"class"` attribute for correct dispatch.
