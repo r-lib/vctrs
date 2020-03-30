@@ -187,11 +187,12 @@ test_that("can use dictionary methods on a rcrd", {
   expect_equal(anyDuplicated(x), TRUE)
 })
 
-test_that("can round trip through list", {
+test_that("cannot round trip through list", {
   local_tuple_methods()
   t <- tuple(1:2, 3:4)
-  l <- expect_equal(vec_cast(t, list()), list(tuple(1, 3), tuple(2, 4)))
-  expect_equal(vec_cast(l, t), t)
+
+  # Used to be allowed
+  expect_error(vec_cast(t, list()), class = "vctrs_error_incompatible_cast")
 })
 
 test_that("dangerous methods marked as unimplemented", {

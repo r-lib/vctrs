@@ -135,14 +135,6 @@ vctr_cast <- function(x, to, ..., x_arg = "", to_arg = "") {
 }
 
 #' @export
-#' @method vec_cast.list vctrs_vctr
-vec_cast.list.vctrs_vctr <- function(x, to, ...) {
-  # FIXME: Coercion to list should be disallowed. Current
-  # implementation can be achieved with `vec_chop()`.
-  vec_cast_list_default(x, to, ...)
-}
-
-#' @export
 c.vctrs_vctr <- function(..., recursive = FALSE, use.names = TRUE) {
   if (!is_false(recursive)) {
     abort("`recursive` must be `FALSE` when concatenating vctrs classes.")
