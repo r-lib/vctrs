@@ -247,7 +247,7 @@ SEXP fct_as_factor(SEXP x,
 }
 
 // [[ include("vctrs.h") ]]
-SEXP ord_as_ordered(SEXP x,
+SEXP fct_as_ordered(SEXP x,
                     SEXP to,
                     bool* lossy,
                     struct vctrs_arg* x_arg,
@@ -268,6 +268,24 @@ SEXP ord_as_ordered(SEXP x,
 
   UNPROTECT(2);
   return out;
+}
+
+// [[ include("vctrs.h") ]]
+SEXP ord_as_factor(SEXP x,
+                   SEXP to,
+                   bool* lossy,
+                   struct vctrs_arg* x_arg,
+                   struct vctrs_arg* to_arg) {
+  return fct_as_factor(x, to, lossy, x_arg, to_arg);
+}
+
+// [[ include("vctrs.h") ]]
+SEXP ord_as_ordered(SEXP x,
+                    SEXP to,
+                    bool* lossy,
+                    struct vctrs_arg* x_arg,
+                    struct vctrs_arg* to_arg) {
+  return fct_as_ordered(x, to, lossy, x_arg, to_arg);
 }
 
 static SEXP fct_as_factor_impl(SEXP x, SEXP x_levels, SEXP to_levels, bool* lossy, bool ordered) {
