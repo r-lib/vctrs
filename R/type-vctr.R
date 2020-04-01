@@ -100,7 +100,7 @@ vec_proxy.vctrs_vctr <- function(x, ...) {
 #' @export
 vec_restore.vctrs_vctr <- function(x, to, ..., i = NULL) {
   if (typeof(x) != typeof(to)) {
-    stop_incompatible_type(x, to)
+    stop_incompatible_type(x, to, action = "convert")
   }
   NextMethod()
 }
@@ -126,7 +126,7 @@ vctr_cast <- function(x, to, ..., x_arg = "", to_arg = "") {
     if (is_same_type(x, to)) {
       x
     } else {
-      stop_incompatible_type(x, to, x_arg = x_arg, y_arg = to_arg)
+      stop_incompatible_type(x, to, x_arg = x_arg, y_arg = to_arg, action = "convert")
     }
   } else {
     # FIXME: `vec_restore()` should only be called on proxies

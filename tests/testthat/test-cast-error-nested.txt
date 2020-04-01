@@ -1,25 +1,25 @@
 
 vec_cast("foo", 10):
 
-No common type for <character> and <double>. 
+Can't convert <character> to <double>. 
 
 
 vec_cast(factor("foo"), 10):
 
-No common type for <factor<bd40e>> and <double>. 
+Can't convert <factor<bd40e>> to <double>. 
 
 
 vec_cast(x, y):
 
-No common type for `a$b` <character> and `a$b` <double>. 
+Can't convert `a$b` <character> to `a$b` <double>. 
 
 
 vec_cast(x, y):
 
-No common type for `a$b` <factor<bd40e>> and `a$b` <double>. 
+Can't convert `a$b` <factor<bd40e>> to `a$b` <double>. 
 
 
 vec_cast_common(x, y):
 
-No common type for `..1$a$b` <factor<bd40e>> and `..2$a$b` <double>. 
+Can't combine `..1$a$b` <factor<bd40e>> and `..2$a$b` <double>. 
 

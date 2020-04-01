@@ -5,7 +5,7 @@ vec_c() fails with complex foreign S3 classes
 > x <- structure(foobar(1), attr_foo = "foo")
 > y <- structure(foobar(2), attr_bar = "bar")
 > vec_c(x, y)
-Error: No common type for `..1` <vctrs_foobar> and `..2` <vctrs_foobar>.
+Error: Can't combine `..1` <vctrs_foobar> and `..2` <vctrs_foobar>.
 
 
 vec_c() fails with complex foreign S4 classes
@@ -14,7 +14,7 @@ vec_c() fails with complex foreign S4 classes
 > joe <- .Counts(c(1L, 2L), name = "Joe")
 > jane <- .Counts(3L, name = "Jane")
 > vec_c(joe, jane)
-Error: No common type for `..1` <vctrs_Counts> and `..2` <vctrs_Counts>.
+Error: Can't combine `..1` <vctrs_Counts> and `..2` <vctrs_Counts>.
 
 
 vec_c() fallback doesn't support `name_spec` or `ptype`

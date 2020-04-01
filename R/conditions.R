@@ -65,29 +65,14 @@ stop_incompatible_type <- function(x, y,
                                    x_arg = "",
                                    y_arg = "",
                                    details = NULL,
+                                   action = "combine",
                                    ...,
                                    message = NULL,
                                    class = NULL) {
   vec_assert(x)
   vec_assert(y)
 
-  if (is_null(message)) {
-    if (nzchar(x_arg)) {
-      x_name <- paste0(" `", x_arg, "` ")
-    } else {
-      x_name <- " "
-    }
-    if (nzchar(y_arg)) {
-      y_name <- paste0(" `", y_arg, "` ")
-    } else {
-      y_name <- " "
-    }
-
-    message <- glue_lines(
-      "No common type for{x_name}<{vec_ptype_full(x)}> and{y_name}<{vec_ptype_full(y)}>.",
-      details
-    )
-  }
+  message <- cnd_type_message(x, y, x_arg, y_arg, details, action, message)
 
   stop_incompatible(
     x, y,
@@ -99,6 +84,58 @@ stop_incompatible_type <- function(x, y,
     class = c(class, "vctrs_error_incompatible_type")
   )
 }
+
+type_actions <- c(
+  "combine", "convert"
+)
+
+cnd_type_action <- function(action) {
+  if (!is_string(action, type_actions)) {
+    abort(paste0(
+      "Internal error: `action` must be either ",
+      "`combine` or `convert`."
+    ))
+  }
+
+  action
+}
+
+cnd_type_separator <- function(action) {
+  if (action == "combine") {
+    "and"
+  } else if (action == "convert") {
+    "to"
+  } else {
+    abort("Internal error: Unknown `action`.")
+  }
+}
+
+cnd_type_message <- function(x, y, x_arg, y_arg, details, action, message) {
+  if (!is_null(message)) {
+    return(message)
+  }
+
+  if (nzchar(x_arg)) {
+    x_name <- paste0(" `", x_arg, "` ")
+  } else {
+    x_name <- " "
+  }
+
+  if (nzchar(y_arg)) {
+    y_name <- paste0(" `", y_arg, "` ")
+  } else {
+    y_name <- " "
+  }
+
+  action <- cnd_type_action(action)
+  separator <- cnd_type_separator(action)
+
+  glue_lines(
+    "Can't {action}{x_name}<{vec_ptype_full(x)}> {separator}{y_name}<{vec_ptype_full(y)}>.",
+    details
+  )
+}
+
 
 #' @rdname vctrs-conditions
 #' @export
