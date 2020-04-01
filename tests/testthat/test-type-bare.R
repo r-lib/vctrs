@@ -121,7 +121,7 @@ test_that("dimensionality matches output" ,{
   expect_dim(vec_cast(TRUE, x2), c(1, 2))
 
   x <- matrix(1, nrow = 2, ncol = 2)
-  expect_error(vec_cast(x, logical()), class = "vctrs_error_incompatible_cast")
+  expect_error(vec_cast(x, logical()), class = "vctrs_error_incompatible_type")
 })
 
 test_that("the common type of two `NA` vectors is unspecified", {

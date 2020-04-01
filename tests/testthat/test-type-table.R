@@ -121,14 +121,14 @@ test_that("cannot decrease axis length", {
   x <- new_table(dim = c(0L, 3L))
   y <- new_table(dim = c(0L, 1L))
 
-  expect_error(vec_cast(x, y), "Non-recyclable", class = "vctrs_error_incompatible_cast")
+  expect_error(vec_cast(x, y), "Non-recyclable", class = "vctrs_error_incompatible_type")
 })
 
 test_that("cannot decrease dimensionality", {
   x <- new_table(dim = c(0L, 1L, 1L))
   y <- new_table(dim = c(0L, 1L))
 
-  expect_error(vec_cast(x, y), "decrease dimensions", class = "vctrs_error_incompatible_cast")
+  expect_error(vec_cast(x, y), "decrease dimensions", class = "vctrs_error_incompatible_type")
 })
 
 test_that("errors on non-tables", {
