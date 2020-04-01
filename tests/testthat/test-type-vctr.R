@@ -80,7 +80,7 @@ test_that("restoring to atomic vector of same type preserves attributes", {
 test_that("restoring to atomic vector of different type throws error", {
   x1 <- new_vctr(1, class = "x")
 
-  expect_error(vec_restore("x", x1), class = "vctrs_error_incompatible_cast")
+  expect_error(vec_restore("x", x1), class = "vctrs_error_incompatible_type")
 })
 
 test_that("base coercion methods mapped to vec_cast", {
