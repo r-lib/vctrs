@@ -92,7 +92,7 @@ test_that("warn about lossy coercions", {
 })
 
 test_that("invalid cast generates error", {
-  expect_error(vec_cast(1L, data.frame()), class = "vctrs_error_incompatible_cast")
+  expect_error(vec_cast(1L, data.frame()), class = "vctrs_error_incompatible_type")
 })
 
 test_that("column order matches type", {
@@ -135,7 +135,7 @@ test_that("can cast unspecified to data frame", {
 
 test_that("cannot cast list to data frame", {
   df <- data.frame(x = 1, y = 2L)
-  expect_error(vec_cast(list(df, df), df), class = "vctrs_error_incompatible_cast")
+  expect_error(vec_cast(list(df, df), df), class = "vctrs_error_incompatible_type")
 })
 
 test_that("can restore lists with empty names", {

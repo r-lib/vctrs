@@ -23,7 +23,7 @@ test_that("can't cast vector to tibble", {
 
   expect_error(vec_ptype2(v, dt), class = "vctrs_error_incompatible_type")
   expect_error(vec_ptype2(dt, v), class = "vctrs_error_incompatible_type")
-  expect_error(vec_cast(v, dt), class = "vctrs_error_incompatible_cast")
+  expect_error(vec_cast(v, dt), class = "vctrs_error_incompatible_type")
 })
 
 test_that("casting to and from tibble preserves row names", {

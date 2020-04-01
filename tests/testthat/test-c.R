@@ -36,7 +36,7 @@ test_that("different types are coerced to common", {
 test_that("specified .ptypes do not allow more casts", {
   expect_error(
     vec_c(TRUE, .ptype = character()),
-    class = "vctrs_error_incompatible_cast"
+    class = "vctrs_error_incompatible_type"
   )
 })
 

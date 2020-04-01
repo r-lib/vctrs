@@ -113,7 +113,7 @@ test_that("safe casts work as expected", {
   expect_equal(vec_cast(fa, factor()), fa)
 
   # This used to be allowed
-  expect_error(vec_cast(list("a", "b"), fab), class = "vctrs_error_incompatible_cast")
+  expect_error(vec_cast(list("a", "b"), fab), class = "vctrs_error_incompatible_type")
 })
 
 test_that("can cast to character", {
@@ -137,11 +137,11 @@ test_that("lossy factor casts fail", {
 })
 
 test_that("invalid casts generate error", {
-  expect_error(vec_cast(double(), factor("a")), class = "vctrs_error_incompatible_cast")
-  expect_error(vec_cast(factor("a"), logical()), class = "vctrs_error_incompatible_cast")
-  expect_error(vec_cast(ordered("a"), logical()), class = "vctrs_error_incompatible_cast")
-  expect_error(vec_cast(logical(), factor("a")), class = "vctrs_error_incompatible_cast")
-  expect_error(vec_cast(logical(), ordered("a")), class = "vctrs_error_incompatible_cast")
+  expect_error(vec_cast(double(), factor("a")), class = "vctrs_error_incompatible_type")
+  expect_error(vec_cast(factor("a"), logical()), class = "vctrs_error_incompatible_type")
+  expect_error(vec_cast(ordered("a"), logical()), class = "vctrs_error_incompatible_type")
+  expect_error(vec_cast(logical(), factor("a")), class = "vctrs_error_incompatible_type")
+  expect_error(vec_cast(logical(), ordered("a")), class = "vctrs_error_incompatible_type")
 })
 
 test_that("orderedness of factor is preserved", {

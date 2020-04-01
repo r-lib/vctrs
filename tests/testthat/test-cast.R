@@ -4,8 +4,8 @@ context("test-cast")
 
 test_that("new classes are uncoercible by default", {
   x <- structure(1:10, class = "vctrs_nonexistant")
-  expect_error(vec_cast(1, x), class = "vctrs_error_incompatible_cast")
-  expect_error(vec_cast(x, 1), class = "vctrs_error_incompatible_cast")
+  expect_error(vec_cast(1, x), class = "vctrs_error_incompatible_type")
+  expect_error(vec_cast(x, 1), class = "vctrs_error_incompatible_type")
 })
 
 test_that("casting requires vectors", {
