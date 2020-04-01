@@ -26,6 +26,6 @@ It does two things:
 \itemize{
 \item If \code{x} is an \link{unspecified} vector, it automatically casts it to
 \code{to} using \code{\link[=vec_init]{vec_init()}}.
-\item Otherwise, an error is thrown with \code{\link[=stop_incompatible_cast]{stop_incompatible_cast()}}.
+\item Otherwise, an error is thrown with \code{\link[=stop_incompatible_type]{stop_incompatible_type()}}.
 }
 }
