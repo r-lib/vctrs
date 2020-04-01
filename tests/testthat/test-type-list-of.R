@@ -183,7 +183,7 @@ test_that("lossy casts generate warning", {
 })
 
 test_that("invalid casts generate error", {
-  expect_error(vec_cast(factor("a"), list_of(1)), class = "vctrs_error_incompatible_cast")
+  expect_error(vec_cast(factor("a"), list_of(1)), class = "vctrs_error_incompatible_type")
 })
 
 test_that("validation", {

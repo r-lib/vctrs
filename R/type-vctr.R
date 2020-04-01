@@ -126,7 +126,7 @@ vctr_cast <- function(x, to, ..., x_arg = "", to_arg = "") {
     if (is_same_type(x, to)) {
       x
     } else {
-      stop_incompatible_cast(x, to, x_arg = x_arg, to_arg = to_arg)
+      stop_incompatible_type(x, to, x_arg = x_arg, y_arg = to_arg)
     }
   } else {
     # FIXME: `vec_restore()` should only be called on proxies

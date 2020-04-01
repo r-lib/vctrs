@@ -67,7 +67,7 @@ test_that("and fails if attributes are different", {
   x1 <- new_vctr(1, class = "x", a = 1, b = 2)
   x2 <- new_vctr(2, class = "x", a = 2, b = 2)
 
-  expect_error(vec_cast(x1, x2), class = "vctrs_error_incompatible_cast")
+  expect_error(vec_cast(x1, x2), class = "vctrs_error_incompatible_type")
 })
 
 test_that("restoring to atomic vector of same type preserves attributes", {
