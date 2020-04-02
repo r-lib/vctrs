@@ -322,6 +322,21 @@ SEXP list_assign(SEXP x, SEXP index, SEXP value) {
  * - `out` and `value` must be rectangular lists.
  * - `value` must have the same size as `index`.
  *
+ * Performance and safety notes:
+ * If `x` is a fresh data frame (which would be the case in `vec_c()` and
+ * `vec_rbind()`) then `r_maybe_duplicate()` will return it untouched. Each
+ * column will also be fresh, so if `vec_proxy()` just returns its input then
+ * `vec_proxy_assign_opts()` will directly assign to that column in `x`. This
+ * makes it extremely fast to assign to a data frame.
+ *
+ * If `x` is referenced already, then `r_maybe_duplicate()` will call
+ * `Rf_shallow_duplicate()`. For lists, this loops over the list and marks
+ * each list element with max namedness. This is helpful for us, because
+ * it is possible to have a data frame that is itself referenced, with columns
+ * that are not (mtcars is an example). If each list element wasn't marked, then
+ * `vec_proxy_assign_opts()` would see an unreferenced column and modify it
+ * directly, resulting in improper mutable semantics. See #986 for full details.
+ *
  * [[ include("vctrs.h") ]]
  */
 SEXP df_assign(SEXP x, SEXP index, SEXP value,
