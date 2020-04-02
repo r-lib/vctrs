@@ -180,16 +180,11 @@ static SEXP vctrs_eval_mask_n_impl(SEXP fn, SEXP* syms, SEXP* args, SEXP mask) {
 }
 
 // [[ register() ]]
-SEXP vctrs_maybe_referenced(SEXP x) {
-  bool out = MAYBE_REFERENCED(x);
-  return Rf_ScalarLogical(out);
-}
-
-// [[ register() ]]
 SEXP vctrs_maybe_referenced_col(SEXP x, SEXP i) {
   int i_ = r_int_get(i, 0) - 1;
   SEXP col = VECTOR_ELT(x, i_);
-  return vctrs_maybe_referenced(col);
+  bool out = MAYBE_REFERENCED(col);
+  return Rf_ScalarLogical(out);
 }
 
 // [[ register() ]]

@@ -595,12 +595,10 @@ test_that("assignment to a data frame with unreferenced columns doesn't overwrit
   value <- new_data_frame(list(x = 2))
   expect <- new_data_frame(list(x = 1L))
 
-  expect_true(maybe_referenced(x))
   expect_false(maybe_referenced_col(x, 1L))
 
   new <- vec_assign(x, 1, value)
 
-  expect_true(maybe_referenced(x))
   expect_true(maybe_referenced_col(x, 1L))
 
   # Expect no changes to `x`!
