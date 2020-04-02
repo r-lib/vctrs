@@ -9,10 +9,6 @@ static SEXP fns_vec_restore_dispatch = NULL;
 
 // Copy attributes except names and dim. This duplicates `x` if needed.
 SEXP vec_restore_default(SEXP x, SEXP to) {
-  if (x == to) {
-    return x;
-  }
-
   SEXP attrib = ATTRIB(to);
 
   const bool is_s4 = IS_S4_OBJECT(to);
@@ -74,14 +70,18 @@ SEXP vec_restore_default(SEXP x, SEXP to) {
 
   if (dim == R_NilValue) {
     SEXP nms = PROTECT(Rf_getAttrib(x, R_NamesSymbol));
+
+    // Check if `to` is a data frame early. If `x` and `to` point
+    // to the same reference, then `SET_ATTRIB()` would alter `to`.
     SEXP rownms = PROTECT(df_rownames(x));
+    const bool restore_rownms = rownms != R_NilValue && is_data_frame(to);
 
     SET_ATTRIB(x, attrib);
 
     Rf_setAttrib(x, R_NamesSymbol, nms);
 
     // Don't restore row names if `to` isn't a data frame
-    if (rownms != R_NilValue && is_data_frame(to)) {
+    if (restore_rownms) {
       Rf_setAttrib(x, R_RowNamesSymbol, rownms);
     }
     UNPROTECT(2);
