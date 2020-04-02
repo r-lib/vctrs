@@ -9,6 +9,10 @@ static SEXP fns_vec_restore_dispatch = NULL;
 
 // Copy attributes except names and dim. This duplicates `x` if needed.
 SEXP vec_restore_default(SEXP x, SEXP to) {
+  if (x == to) {
+    return x;
+  }
+
   SEXP attrib = ATTRIB(to);
 
   const bool is_s4 = IS_S4_OBJECT(to);
