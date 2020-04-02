@@ -590,6 +590,21 @@ test_that("can optionally assign names", {
   )
 })
 
+test_that("assignment to a data frame with unreferenced columns doesn't overwrite (#986)", {
+  x <- new_df_unreferenced_col()
+  value <- new_data_frame(list(x = 2))
+  expect <- new_data_frame(list(x = 1L))
+
+  expect_false(maybe_referenced_col(x, 1L))
+
+  new <- vec_assign(x, 1, value)
+
+  expect_true(maybe_referenced_col(x, 1L))
+
+  # Expect no changes to `x`!
+  expect_identical(x, expect)
+})
+
 # vec_assign + compact_seq -------------------------------------------------
 
 # `start` is 0-based

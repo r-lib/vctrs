@@ -1,5 +1,6 @@
 #include "vctrs.h"
 #include "utils.h"
+#include "type-data-frame.h"
 
 #include <R_ext/Rdynload.h>
 
@@ -175,6 +176,33 @@ static SEXP vctrs_eval_mask_n_impl(SEXP fn, SEXP* syms, SEXP* args, SEXP mask) {
   SEXP out = Rf_eval(call, mask);
 
   UNPROTECT(1);
+  return out;
+}
+
+// [[ register() ]]
+SEXP vctrs_maybe_referenced_col(SEXP x, SEXP i) {
+  int i_ = r_int_get(i, 0) - 1;
+  SEXP col = VECTOR_ELT(x, i_);
+  bool out = MAYBE_REFERENCED(col);
+  return Rf_ScalarLogical(out);
+}
+
+// [[ register() ]]
+SEXP vctrs_new_df_unreferenced_col() {
+  SEXP col = PROTECT(Rf_allocVector(INTSXP, 1));
+  INTEGER(col)[0] = 1;
+
+  SEXP out = PROTECT(Rf_allocVector(VECSXP, 1));
+  SET_VECTOR_ELT(out, 0, col);
+
+  SEXP names = PROTECT(Rf_allocVector(STRSXP, 1));
+  SET_STRING_ELT(names, 0, Rf_mkChar("x"));
+
+  Rf_setAttrib(out, R_NamesSymbol, names);
+
+  init_data_frame(out, 1);
+
+  UNPROTECT(3);
   return out;
 }
 

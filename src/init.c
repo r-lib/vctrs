@@ -107,6 +107,8 @@ extern SEXP vctrs_assign_params(SEXP, SEXP, SEXP, SEXP);
 extern SEXP vctrs_has_dim(SEXP);
 extern SEXP vctrs_rep(SEXP, SEXP);
 extern SEXP vctrs_rep_each(SEXP, SEXP);
+extern SEXP vctrs_maybe_referenced_col(SEXP, SEXP);
+extern SEXP vctrs_new_df_unreferenced_col();
 
 // Maturing
 // In the public header
@@ -234,6 +236,8 @@ static const R_CallMethodDef CallEntries[] = {
   {"vctrs_has_dim",                    (DL_FUNC) &vctrs_has_dim, 1},
   {"vctrs_rep",                        (DL_FUNC) &vctrs_rep, 2},
   {"vctrs_rep_each",                   (DL_FUNC) &vctrs_rep_each, 2},
+  {"vctrs_maybe_referenced_col",       (DL_FUNC) &vctrs_maybe_referenced_col, 2},
+  {"vctrs_new_df_unreferenced_col",    (DL_FUNC) &vctrs_new_df_unreferenced_col, 0},
   {NULL, NULL, 0}
 };
 
