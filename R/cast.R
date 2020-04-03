@@ -155,7 +155,7 @@ vec_coercible_cast <- function(x, to, ..., x_arg = "", to_arg = "") {
 #' * If `x` is an [unspecified] vector, it automatically casts it to
 #'   `to` using [vec_init()].
 #'
-#' * Otherwise, an error is thrown with [stop_incompatible_type()].
+#' * Otherwise, an error is thrown with [stop_incompatible_cast()].
 #'
 #' @inheritParams vec_cast
 #' @export
