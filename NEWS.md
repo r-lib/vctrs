@@ -1,6 +1,12 @@
 
 # vctrs (development version)
 
+* `stop_incompatible_cast()` now throws an error of class
+  `vctrs_error_incompatible_type` rather than `vctrs_error_incompatible_cast`.
+  This means that `vec_cast()` also throws errors of this class, which better
+  aligns it with `vec_ptype2()` now that they are restricted to the same
+  conversions.
+
 * `vec_cast()` is now restricted to the same conversions as
   `vec_ptype2()` methods (#606, #741). This change is motivated by
   safety and performance:
