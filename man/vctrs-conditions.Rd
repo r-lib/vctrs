@@ -16,7 +16,6 @@ stop_incompatible_type(
   x_arg = "",
   y_arg = "",
   details = NULL,
-  action = "combine",
   ...,
   message = NULL,
   class = NULL

@@ -93,7 +93,7 @@ vec_cast.vctrs_rcrd.vctrs_rcrd <- function(x, to, ...) {
   # This assumes that we don't have duplicate field names,
   # which is verified even in the constructor.
   if (!setequal(fields(x), fields(to))) {
-    stop_incompatible_type(x, to, action = "convert")
+    stop_incompatible_cast(x, to)
   }
 
   new_data <- map2(

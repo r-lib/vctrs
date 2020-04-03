@@ -175,5 +175,5 @@ vec_default_cast <- function(x, to, x_arg = "", to_arg = "") {
     return(x)
   }
 
-  stop_incompatible_type(x, to, x_arg = x_arg, y_arg = to_arg, action = "convert")
+  stop_incompatible_cast(x, to, x_arg = x_arg, to_arg = to_arg)
 }

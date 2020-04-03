@@ -61,14 +61,99 @@ stop_incompatible <- function(x, y, details = NULL, ..., message = NULL, class =
 #'
 #' @rdname vctrs-conditions
 #' @export
-stop_incompatible_type <- function(x, y,
+stop_incompatible_type <- function(x,
+                                   y,
                                    x_arg = "",
                                    y_arg = "",
                                    details = NULL,
-                                   action = "combine",
                                    ...,
                                    message = NULL,
                                    class = NULL) {
+  stop_incompatible_type_combine(
+    x = x,
+    y = y,
+    x_arg = x_arg,
+    y_arg = y_arg,
+    details = details,
+    ...,
+    message = message,
+    class = class
+  )
+}
+
+#' @rdname vctrs-conditions
+#' @export
+stop_incompatible_cast <- function(x,
+                                   y,
+                                   details = NULL,
+                                   ...,
+                                   x_arg = "",
+                                   to_arg = "",
+                                   message = NULL,
+                                   class = NULL) {
+  stop_incompatible_type_convert(
+    x = x,
+    y = y,
+    x_arg = x_arg,
+    y_arg = to_arg,
+    details = details,
+    ...,
+    message = message,
+    class = class
+  )
+}
+
+stop_incompatible_type_convert <- function(x,
+                                           y,
+                                           x_arg = "",
+                                           y_arg = "",
+                                           details = NULL,
+                                           ...,
+                                           message = NULL,
+                                           class = NULL) {
+  stop_incompatible_type_impl(
+    x = x,
+    y = y,
+    x_arg = x_arg,
+    y_arg = y_arg,
+    details = details,
+    action = "convert",
+    ...,
+    message = message,
+    class = class
+  )
+}
+
+stop_incompatible_type_combine <- function(x,
+                                           y,
+                                           x_arg = "",
+                                           y_arg = "",
+                                           details = NULL,
+                                           ...,
+                                           message = NULL,
+                                           class = NULL) {
+  stop_incompatible_type_impl(
+    x = x,
+    y = y,
+    x_arg = x_arg,
+    y_arg = y_arg,
+    details = details,
+    action = "combine",
+    ...,
+    message = message,
+    class = class
+  )
+}
+
+stop_incompatible_type_impl <- function(x,
+                                        y,
+                                        x_arg,
+                                        y_arg,
+                                        details,
+                                        action,
+                                        ...,
+                                        message,
+                                        class) {
   vec_assert(x)
   vec_assert(y)
 
@@ -136,37 +221,6 @@ cnd_type_message <- function(x, y, x_arg, y_arg, details, action, message) {
   )
 }
 
-
-#' @rdname vctrs-conditions
-#' @export
-stop_incompatible_cast <- function(x,
-                                   y,
-                                   details = NULL,
-                                   ...,
-                                   x_arg = "",
-                                   to_arg = "",
-                                   message = NULL,
-                                   class = NULL) {
-  if (is_null(message)) {
-    x_label <- format_arg_label(vec_ptype_full(x), x_arg)
-    to_label <- format_arg_label(vec_ptype_full(y), to_arg)
-
-    message <- glue_lines(
-      "Can't convert from {x_label} to {to_label}.",
-      details
-    )
-  }
-
-  stop_incompatible(
-    x, y,
-    details = details,
-    ...,
-    x_arg = x_arg,
-    y_arg = to_arg,
-    message = message,
-    class = c(class, "vctrs_error_incompatible_cast")
-  )
-}
 
 #' @rdname vctrs-conditions
 #' @export

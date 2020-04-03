@@ -42,14 +42,14 @@ shape_broadcast <- function(x, to) {
   }
 
   if (length(dim_x) > length(dim_to)) {
-    stop_incompatible_type(x, to, details = "Can not decrease dimensions", action = "convert")
+    stop_incompatible_cast(x, to, details = "Can not decrease dimensions")
   }
 
   dim_x <- n_dim2(dim_x, dim_to)$x
   dim_to[[1]] <- dim_x[[1]] # don't change number of observations
   ok <- dim_x == dim_to | dim_x == 1
   if (any(!ok)) {
-    stop_incompatible_type(x, to, details = "Non-recyclable dimensions", action = "convert")
+    stop_incompatible_cast(x, to, details = "Non-recyclable dimensions")
   }
 
   # Increase dimensionality if required
