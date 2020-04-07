@@ -286,14 +286,6 @@ SEXP vec_coercible_cast_e(SEXP x,
   return data.out;
 }
 
-// [[ register() ]]
-SEXP vctrs_coercible_cast(SEXP x, SEXP to, SEXP x_arg_, SEXP to_arg_) {
-  struct vctrs_arg x_arg = vec_as_arg(x_arg_);
-  struct vctrs_arg to_arg = vec_as_arg(to_arg_);
-
-  return vec_coercible_cast(x, to, &x_arg, &to_arg);
-}
-
 
 SEXP vctrs_type_common_impl(SEXP dots, SEXP ptype);
 
