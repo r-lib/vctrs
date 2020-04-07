@@ -167,7 +167,7 @@ as.character.vctrs_list_of <- function(x, ...) {
     return(x)
   }
 
-  value <- vec_coercible_cast(value, attr(x, "ptype"), x_arg = "", to_arg = "")
+  value <- vec_cast(value, attr(x, "ptype"))
   NextMethod()
 }
 
