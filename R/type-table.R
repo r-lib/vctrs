@@ -34,10 +34,7 @@ vec_ptype2.table <- function(x, y, ..., x_arg = "", y_arg = "") {
 #' @method vec_ptype2.table table
 #' @export
 vec_ptype2.table.table <- function(x, y, ..., x_arg = "", y_arg = "") {
-  # TODO can shape_match() be relaxed now that the object checks are
-  # in the ptype2 methods? This could be `shape_match(new_table(), x, y)`.
-  shape <- shape_common(x, y)
-  new_shape(new_table(), shape)
+  vec_shaped_ptype(new_table(), x, y)
 }
 
 # ------------------------------------------------------------------------------

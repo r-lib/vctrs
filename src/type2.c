@@ -1,6 +1,7 @@
 #include "vctrs.h"
 #include "type-data-frame.h"
 #include "utils.h"
+#include "shape.h"
 
 static SEXP vec_ptype2_switch_native(SEXP x,
                                      SEXP y,
@@ -34,10 +35,6 @@ SEXP vec_ptype2(SEXP x, SEXP y,
     return vec_ptype(x, x_arg);
   }
 
-  if (has_dim(x) || has_dim(y)) {
-    return vec_ptype2_dispatch_s3(x, y, x_arg, y_arg);
-  }
-
   if (type_x == vctrs_type_scalar) {
     stop_scalar_type(x, x_arg);
   }
@@ -66,25 +63,30 @@ static SEXP vec_ptype2_switch_native(SEXP x,
     return R_NilValue;
 
   case vctrs_type2_logical_logical:
-    return vctrs_shared_empty_lgl;
+    return vec_shaped_ptype(vctrs_shared_empty_lgl, x, y);
 
   case vctrs_type2_logical_integer:
   case vctrs_type2_integer_integer:
-    return vctrs_shared_empty_int;
+    return vec_shaped_ptype(vctrs_shared_empty_int, x, y);
 
   case vctrs_type2_logical_double:
   case vctrs_type2_integer_double:
   case vctrs_type2_double_double:
-    return vctrs_shared_empty_dbl;
+    return vec_shaped_ptype(vctrs_shared_empty_dbl, x, y);
+
+  case vctrs_type2_integer_complex:
+  case vctrs_type2_double_complex:
+  case vctrs_type2_complex_complex:
+    return vec_shaped_ptype(vctrs_shared_empty_cpl, x, y);
 
   case vctrs_type2_character_character:
-    return vctrs_shared_empty_chr;
+    return vec_shaped_ptype(vctrs_shared_empty_chr, x, y);
 
   case vctrs_type2_raw_raw:
-    return vctrs_shared_empty_raw;
+    return vec_shaped_ptype(vctrs_shared_empty_raw, x, y);
 
   case vctrs_type2_list_list:
-    return vctrs_shared_empty_list;
+    return vec_shaped_ptype(vctrs_shared_empty_list, x, y);
 
   case vctrs_type2_dataframe_dataframe:
     return df_ptype2(x, y, x_arg, y_arg);

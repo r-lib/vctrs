@@ -58,75 +58,75 @@ vec_ptype2.list <- function(x, y, ..., x_arg = "", y_arg = "") {
 #' @method vec_ptype2.logical logical
 #' @export
 vec_ptype2.logical.logical <- function(x, y, ..., x_arg = "", y_arg = "") {
-  shape_match(logical(), x, y)
+  stop_native_implementation("vec_ptype2.logical.logical")
 }
 
 #' @export
 #' @method vec_ptype2.integer integer
 vec_ptype2.integer.integer <- function(x, y, ..., x_arg = "", y_arg = "") {
-  shape_match(integer(), x, y)
+  stop_native_implementation("vec_ptype2.integer.integer")
 }
 #' @export
 #' @method vec_ptype2.logical integer
 vec_ptype2.logical.integer <- function(x, y, ..., x_arg = "", y_arg = "") {
-  shape_match(integer(), x, y)
+  stop_native_implementation("vec_ptype2.logical.integer")
 }
 #' @export
 #' @method vec_ptype2.integer logical
 vec_ptype2.integer.logical <- function(x, y, ..., x_arg = "", y_arg = "") {
-  shape_match(integer(), x, y)
+  stop_native_implementation("vec_ptype2.integer.logical")
 }
 
 #' @export
 #' @method vec_ptype2.double double
 vec_ptype2.double.double <- function(x, y, ..., x_arg = "", y_arg = "") {
-  shape_match(double(), x, y)
+  stop_native_implementation("vec_ptype2.double.double")
 }
 #' @export
 #' @method vec_ptype2.logical double
 vec_ptype2.logical.double <- function(x, y, ..., x_arg = "", y_arg = "") {
-  shape_match(double(), x, y)
+  stop_native_implementation("vec_ptype2.logical.double")
 }
 #' @export
 #' @method vec_ptype2.double logical
 vec_ptype2.double.logical <- function(x, y, ..., x_arg = "", y_arg = "") {
-  shape_match(double(), x, y)
+  stop_native_implementation("vec_ptype2.double.logical")
 }
 #' @export
 #' @method vec_ptype2.integer double
 vec_ptype2.integer.double <- function(x, y, ..., x_arg = "", y_arg = "") {
-  shape_match(double(), x, y)
+  stop_native_implementation("vec_ptype2.integer.double")
 }
 #' @export
 #' @method vec_ptype2.double integer
 vec_ptype2.double.integer <- function(x, y, ..., x_arg = "", y_arg = "") {
-  shape_match(double(), x, y)
+  stop_native_implementation("vec_ptype2.double.integer")
 }
 
 #' @export
 #' @method vec_ptype2.complex complex
 vec_ptype2.complex.complex <- function(x, y, ..., x_arg = "", y_arg = "") {
-  shape_match(complex(), x, y)
+  stop_native_implementation("vec_ptype2.complex.complex")
 }
 #' @export
 #' @method vec_ptype2.integer complex
 vec_ptype2.integer.complex <- function(x, y, ..., x_arg = "", y_arg = "") {
-  shape_match(complex(), x, y)
+  stop_native_implementation("vec_ptype2.integer.complex")
 }
 #' @export
 #' @method vec_ptype2.complex integer
 vec_ptype2.complex.integer <- function(x, y, ..., x_arg = "", y_arg = "") {
-  shape_match(complex(), x, y)
+  stop_native_implementation("vec_ptype2.complex.integer")
 }
 #' @export
 #' @method vec_ptype2.double complex
 vec_ptype2.double.complex <- function(x, y, ..., x_arg = "", y_arg = "") {
-  shape_match(complex(), x, y)
+  stop_native_implementation("vec_ptype2.double.complex")
 }
 #' @export
 #' @method vec_ptype2.complex double
 vec_ptype2.complex.double <- function(x, y, ..., x_arg = "", y_arg = "") {
-  shape_match(complex(), x, y)
+  stop_native_implementation("vec_ptype2.complex.double")
 }
 
 
@@ -136,7 +136,7 @@ vec_ptype2.complex.double <- function(x, y, ..., x_arg = "", y_arg = "") {
 #' @method vec_ptype2.character character
 #' @export
 vec_ptype2.character.character <- function(x, y, ..., x_arg = "", y_arg = "") {
-  shape_match(character(), x, y)
+  stop_native_implementation("vec_ptype2.character.character")
 }
 
 
@@ -145,7 +145,7 @@ vec_ptype2.character.character <- function(x, y, ..., x_arg = "", y_arg = "") {
 #' @export
 #' @method vec_ptype2.raw raw
 vec_ptype2.raw.raw <- function(x, y, ..., x_arg = "", y_arg = "") {
-  shape_match(raw(), x, y)
+  stop_native_implementation("vec_ptype2.raw.raw")
 }
 
 
@@ -154,7 +154,7 @@ vec_ptype2.raw.raw <- function(x, y, ..., x_arg = "", y_arg = "") {
 #' @method vec_ptype2.list list
 #' @export
 vec_ptype2.list.list <- function(x, y, ..., x_arg = "", y_arg = "") {
-  shape_match(list(), x, y)
+  stop_native_implementation("vec_ptype2.list.list")
 }
 
 
@@ -324,13 +324,4 @@ lossy_floor <- function(x, to, x_arg = "", to_arg = "") {
   x_floor <- floor(x)
   lossy <- x != x_floor
   maybe_lossy_cast(x_floor, x, to, lossy, x_arg = x_arg, to_arg = to_arg)
-}
-
-shape_match <- function(type, x, y) {
-  if (!is.object(x) && !is.object(y)) {
-    shape <- shape_common(x, y)
-    new_shape(type, shape)
-  } else {
-    type
-  }
 }

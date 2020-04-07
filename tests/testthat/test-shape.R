@@ -6,27 +6,19 @@ int <- function(...) {
 
 # common shape ------------------------------------------------------------
 
-test_that("length is ignored", {
-  expect_equal(shape_common(int(5), int(10)), integer())
-  expect_equal(shape_common(int(5, 1), int(10, 1)), 1L)
-  expect_equal(shape_common(int(5, 1, 2), int(10, 1, 2)), c(1L, 2L))
-  expect_equal(shape_common(int(10, 1, 2), int(5, 1, 2)), c(1L, 2L))
-  expect_equal(shape_common(int(0, 1, 5), int(1, 5, 1)), c(5L, 5L))
-})
-
 test_that("recycling rules applied", {
-  expect_equal(shape_common(int(1, 5, 5), int(1)), c(5L, 5L))
-  expect_equal(shape_common(int(1), int(1, 5, 5)), c(5L, 5L))
-  expect_equal(shape_common(int(1, 1), int(1, 5, 5)), c(5L, 5L))
-  expect_equal(shape_common(int(1, 1, 1), int(1, 5, 5)), c(5L, 5L))
+  expect_equal(vec_shape2(vec_dim(int(1, 5, 5)), vec_dim(int(1))), c(0L, 5L, 5L))
+  expect_equal(vec_shape2(vec_dim(int(1)),       vec_dim(int(1, 5, 5))), c(0L, 5L, 5L))
+  expect_equal(vec_shape2(vec_dim(int(1, 1)),    vec_dim(int(1, 5, 5))), c(0L, 5L, 5L))
+  expect_equal(vec_shape2(vec_dim(int(1, 1, 1)), vec_dim(int(1, 5, 5))), c(0L, 5L, 5L))
 
-  expect_equal(shape_common(int(1, 1, 5), int(1, 5, 1)), c(5L, 5L))
-  expect_equal(shape_common(int(1, 5, 1), int(1, 1, 5)), c(5L, 5L))
-  expect_equal(shape_common(int(1, 1, 1), int(1, 5, 5)), c(5L, 5L))
+  expect_equal(vec_shape2(vec_dim(int(1, 1, 5)), vec_dim(int(1, 5, 1))), c(0L, 5L, 5L))
+  expect_equal(vec_shape2(vec_dim(int(1, 5, 1)), vec_dim(int(1, 1, 5))), c(0L, 5L, 5L))
+  expect_equal(vec_shape2(vec_dim(int(1, 1, 1)), vec_dim(int(1, 5, 5))), c(0L, 5L, 5L))
 
-  expect_equal(shape_common(int(1, 0, 5), int(1, 1, 1)), c(0L, 5L))
-  expect_error(shape_common(int(1, 0, 5), int(1, 5, 1)), "0, 5")
-  expect_error(shape_common(int(1, 5, 0), int(1, 1, 5)), "0, 5")
+  expect_equal(vec_shape2(vec_dim(int(1, 0, 5)), vec_dim(int(1, 1, 1))), c(0L, 0L, 5L))
+  expect_error(vec_shape2(vec_dim(int(1, 0, 5)), vec_dim(int(1, 5, 1))), "axis 2: 0, 5")
+  expect_error(vec_shape2(vec_dim(int(1, 5, 0)), vec_dim(int(1, 1, 5))), "axis 3: 0, 5")
 })
 
 # broadcasting -------------------------------------------------------------

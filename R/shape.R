@@ -3,29 +3,16 @@
 # * all other dimensions = the shape parameter of the type
 # These helpers work with the shape parameter
 
-new_shape <- function(type, shape = NULL) {
-  if (length(shape) == 0L) {
-    type
-  } else {
-    structure(type, dim = c(0L, shape))
-  }
+new_shape <- function(type, shape = integer()) {
+  structure(type, dim = c(0L, shape))
 }
 
-shape_common <- function(x, y) {
-  shape <- n_dim2(shape(x), shape(y))
-  map2_int(shape$x, shape$y, axis2)
+vec_shaped_ptype  <- function(ptype, x, y) {
+  .Call(vctrs_shaped_ptype, ptype, x, y)
 }
 
-axis2 <- function(nx, ny) {
-  if (nx == ny) {
-    nx
-  } else if (nx == 1L) {
-    ny
-  } else if (ny == 1L) {
-    nx
-  } else {
-    abort(paste0("Incompatible lengths: ", nx, ", ", ny, "."))
-  }
+vec_shape2 <- function(x_dimensions, y_dimensions) {
+  .Call(vctrs_shape2, x_dimensions, y_dimensions)
 }
 
 shape_broadcast <- function(x, to) {
@@ -71,10 +58,6 @@ shape_broadcast <- function(x, to) {
 }
 
 # Helpers -----------------------------------------------------------------
-
-shape <- function(x) {
-  vec_dim(x)[-1]
-}
 
 n_dim2 <- function(x, y) {
   nx <- length(x)
