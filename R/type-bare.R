@@ -316,12 +316,3 @@ vec_proxy_compare.raw <- function(x, ...) {
   # #> Error in order(as.raw(1:3)): unimplemented type 'raw' in 'orderVector1'
   as.integer(x)
 }
-
-
-# Helpers -----------------------------------------------------------------
-
-lossy_floor <- function(x, to, x_arg = "", to_arg = "") {
-  x_floor <- floor(x)
-  lossy <- x != x_floor
-  maybe_lossy_cast(x_floor, x, to, lossy, x_arg = x_arg, to_arg = to_arg)
-}
