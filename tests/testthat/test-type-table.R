@@ -121,24 +121,24 @@ test_that("cannot decrease axis length", {
   x <- new_table(dim = c(0L, 3L))
   y <- new_table(dim = c(0L, 1L))
 
-  expect_error(vec_cast(x, y), "Non-recyclable", class = "vctrs_error_incompatible_cast")
+  expect_error(vec_cast(x, y), "Non-recyclable", class = "vctrs_error_incompatible_type")
 })
 
 test_that("cannot decrease dimensionality", {
   x <- new_table(dim = c(0L, 1L, 1L))
   y <- new_table(dim = c(0L, 1L))
 
-  expect_error(vec_cast(x, y), "decrease dimensions", class = "vctrs_error_incompatible_cast")
+  expect_error(vec_cast(x, y), "decrease dimensions", class = "vctrs_error_incompatible_type")
 })
 
 test_that("errors on non-tables", {
-  expect_error(vec_cast(new_table(), 1), class = "vctrs_error_incompatible_cast")
-  expect_error(vec_cast(new_table(), 1L), class = "vctrs_error_incompatible_cast")
-  expect_error(vec_cast(new_table(), "1"), class = "vctrs_error_incompatible_cast")
+  expect_error(vec_cast(new_table(), 1), class = "vctrs_error_incompatible_type")
+  expect_error(vec_cast(new_table(), 1L), class = "vctrs_error_incompatible_type")
+  expect_error(vec_cast(new_table(), "1"), class = "vctrs_error_incompatible_type")
 
-  expect_error(vec_cast(1, new_table()), class = "vctrs_error_incompatible_cast")
-  expect_error(vec_cast(1L, new_table()), class = "vctrs_error_incompatible_cast")
-  expect_error(vec_cast("1", new_table()), class = "vctrs_error_incompatible_cast")
+  expect_error(vec_cast(1, new_table()), class = "vctrs_error_incompatible_type")
+  expect_error(vec_cast(1L, new_table()), class = "vctrs_error_incompatible_type")
+  expect_error(vec_cast("1", new_table()), class = "vctrs_error_incompatible_type")
 })
 
 test_that("inheritance is not allowed", {
@@ -147,19 +147,19 @@ test_that("inheritance is not allowed", {
   y <- x
   class(y) <- c("footable", class(x))
 
-  expect_error(vec_cast(x, y), class = "vctrs_error_incompatible_cast")
-  expect_error(vec_cast(y, x), class = "vctrs_error_incompatible_cast")
+  expect_error(vec_cast(x, y), class = "vctrs_error_incompatible_type")
+  expect_error(vec_cast(y, x), class = "vctrs_error_incompatible_type")
 })
 
 test_that("can cast from, but not to, unspecified", {
   x <- new_table()
 
-  expect_error(vec_cast(x, NA), class = "vctrs_error_incompatible_cast")
+  expect_error(vec_cast(x, NA), class = "vctrs_error_incompatible_type")
   expect_identical(vec_cast(NA, x), new_table(NA_integer_, dim = 1L))
 
   x <- new_table(dim = c(0L, 2L))
 
-  expect_error(vec_cast(x, NA), class = "vctrs_error_incompatible_cast")
+  expect_error(vec_cast(x, NA), class = "vctrs_error_incompatible_type")
   expect_identical(vec_cast(NA, x), new_table(c(NA_integer_, NA_integer_), dim = c(1L, 2L)))
 })
 

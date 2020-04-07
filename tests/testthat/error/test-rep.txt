@@ -3,7 +3,7 @@
 =============================
 
 > vec_rep(1, "x")
-Error: Can't convert from `times` <character> to <integer>.
+Error: Can't convert `times` <character> to <integer>.
 
 > vec_rep(1, c(1, 2))
 Error: `times` must be a single number.
@@ -19,7 +19,7 @@ Error: `times` can't be missing.
 ==================================
 
 > vec_rep_each(1, "x")
-Error: Can't convert from `times` <character> to <integer>.
+Error: Can't convert `times` <character> to <integer>.
 
 > vec_rep_each(1, -1)
 Error: `times` must be a vector of positive numbers. Location 1 is negative.

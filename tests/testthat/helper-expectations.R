@@ -15,7 +15,7 @@ expect_args <- function(x, y, x_arg, y_arg) {
   err <- catch_cnd(vec_ptype2(x, y, x_arg = x_arg, y_arg = y_arg), classes = "vctrs_error_incompatible_type")
   expect_true(!is_null(err))
 
-  expect_true(grepl(paste0("for `", x_arg, "`"), err$message, fixed = TRUE))
+  expect_true(grepl(paste0("combine `", x_arg, "`"), err$message, fixed = TRUE))
   expect_true(grepl(paste0("and `", y_arg, "`"), err$message, fixed = TRUE))
 
   expect_identical(list(err$x_arg, err$y_arg), list(x_arg, y_arg))

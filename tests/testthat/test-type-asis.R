@@ -53,7 +53,7 @@ test_that("can cast one AsIs to another AsIs", {
 
 test_that("AsIs objects throw cast errors with their underlying types", {
   verify_errors({
-    expect_error(vec_cast(I(1), I(factor("x"))), class = "vctrs_error_incompatible_cast")
+    expect_error(vec_cast(I(1), I(factor("x"))), class = "vctrs_error_incompatible_type")
   })
 })
 

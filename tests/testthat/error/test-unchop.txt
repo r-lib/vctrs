@@ -18,7 +18,7 @@ vec_unchop() fails with complex foreign S3 classes
 > x <- structure(foobar(1), attr_foo = "foo")
 > y <- structure(foobar(2), attr_bar = "bar")
 > vec_unchop(list(x, y))
-Error: No common type for `..1` <vctrs_foobar> and `..2` <vctrs_foobar>.
+Error: Can't combine `..1` <vctrs_foobar> and `..2` <vctrs_foobar>.
 
 
 vec_unchop() fails with complex foreign S4 classes
@@ -27,7 +27,7 @@ vec_unchop() fails with complex foreign S4 classes
 > joe <- .Counts(c(1L, 2L), name = "Joe")
 > jane <- .Counts(3L, name = "Jane")
 > vec_unchop(list(joe, jane))
-Error: No common type for `..1` <vctrs_Counts> and `..2` <vctrs_Counts>.
+Error: Can't combine `..1` <vctrs_Counts> and `..2` <vctrs_Counts>.
 
 
 vec_unchop() falls back for S4 classes with a registered c() method
@@ -36,7 +36,7 @@ vec_unchop() falls back for S4 classes with a registered c() method
 > joe1 <- .Counts(c(1L, 2L), name = "Joe")
 > joe2 <- .Counts(3L, name = "Joe")
 > vec_unchop(list(joe1, 1, joe2), list(c(1, 2), 3, 4))
-Error: No common type for `..1` <vctrs_Counts> and `..2` <double>.
+Error: Can't combine `..1` <vctrs_Counts> and `..2` <double>.
 
 
 vec_unchop() fallback doesn't support `name_spec` or `ptype`

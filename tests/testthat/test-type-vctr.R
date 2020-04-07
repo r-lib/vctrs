@@ -67,7 +67,7 @@ test_that("and fails if attributes are different", {
   x1 <- new_vctr(1, class = "x", a = 1, b = 2)
   x2 <- new_vctr(2, class = "x", a = 2, b = 2)
 
-  expect_error(vec_cast(x1, x2), class = "vctrs_error_incompatible_cast")
+  expect_error(vec_cast(x1, x2), class = "vctrs_error_incompatible_type")
 })
 
 test_that("restoring to atomic vector of same type preserves attributes", {
@@ -80,20 +80,20 @@ test_that("restoring to atomic vector of same type preserves attributes", {
 test_that("restoring to atomic vector of different type throws error", {
   x1 <- new_vctr(1, class = "x")
 
-  expect_error(vec_restore("x", x1), class = "vctrs_error_incompatible_cast")
+  expect_error(vec_restore("x", x1), class = "vctrs_error_incompatible_type")
 })
 
 test_that("base coercion methods mapped to vec_cast", {
   x <- new_vctr(1, inherit_base_type = FALSE)
 
-  expect_error(as.logical(x), class = "vctrs_error_incompatible_cast")
-  expect_error(as.integer(x), class = "vctrs_error_incompatible_cast")
-  expect_error(as.logical(x), class = "vctrs_error_incompatible_cast")
-  expect_error(as.double(x), class = "vctrs_error_incompatible_cast")
-  expect_error(as.character(x), class = "vctrs_error_incompatible_cast")
-  expect_error(as.Date(x), class = "vctrs_error_incompatible_cast")
-  expect_error(as.POSIXct(x), class = "vctrs_error_incompatible_cast")
-  expect_error(as.POSIXlt(x), class = "vctrs_error_incompatible_cast")
+  expect_error(as.logical(x), class = "vctrs_error_incompatible_type")
+  expect_error(as.integer(x), class = "vctrs_error_incompatible_type")
+  expect_error(as.logical(x), class = "vctrs_error_incompatible_type")
+  expect_error(as.double(x), class = "vctrs_error_incompatible_type")
+  expect_error(as.character(x), class = "vctrs_error_incompatible_type")
+  expect_error(as.Date(x), class = "vctrs_error_incompatible_type")
+  expect_error(as.POSIXct(x), class = "vctrs_error_incompatible_type")
+  expect_error(as.POSIXlt(x), class = "vctrs_error_incompatible_type")
 
   expect_equal(as.list(x), list(x))
 })
@@ -401,11 +401,11 @@ test_that("can put in data frame", {
 test_that("base coercions default to vec_cast", {
   local_hidden()
   h <- new_hidden(1)
-  expect_error(as.character(h), class = "vctrs_error_incompatible_cast")
-  expect_error(as.integer(h), class = "vctrs_error_incompatible_cast")
-  expect_error(generics::as.factor(h), class = "vctrs_error_incompatible_cast")
-  expect_error(generics::as.ordered(h), class = "vctrs_error_incompatible_cast")
-  expect_error(generics::as.difftime(h), class = "vctrs_error_incompatible_cast")
+  expect_error(as.character(h), class = "vctrs_error_incompatible_type")
+  expect_error(as.integer(h), class = "vctrs_error_incompatible_type")
+  expect_error(generics::as.factor(h), class = "vctrs_error_incompatible_type")
+  expect_error(generics::as.ordered(h), class = "vctrs_error_incompatible_type")
+  expect_error(generics::as.difftime(h), class = "vctrs_error_incompatible_type")
   expect_equal(as.logical(h), TRUE)
   expect_equal(as.double(h), 1)
 })

@@ -16,6 +16,10 @@ test_that("conditions inherit from `vctrs_error`", {
   expect_error(stop_names_must_be_unique("x"), class = "vctrs_error")
 })
 
+test_that("incompatible cast throws an incompatible type error", {
+  expect_error(stop_incompatible_cast(1, 1), class = "vctrs_error_incompatible_type")
+})
+
 test_that("can override arg in OOB conditions", {
   verify_errors({
     expect_error(

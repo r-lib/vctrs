@@ -13,8 +13,8 @@ test_that("casting of rando works", {
   expect_equal(vec_cast(NA, rando()), as_rando(NA))
   expect_equal(vec_cast(unspecified(2), rando()), as_rando(c(NA, NA)))
 
-  expect_error(vec_cast(x, factor()), class = "vctrs_error_incompatible_cast")
-  expect_error(vec_cast(factor(), x), class = "vctrs_error_incompatible_cast")
+  expect_error(vec_cast(x, factor()), class = "vctrs_error_incompatible_type")
+  expect_error(vec_cast(factor(), x), class = "vctrs_error_incompatible_type")
 })
 
 test_that("vec_ptype2 for rando works", {

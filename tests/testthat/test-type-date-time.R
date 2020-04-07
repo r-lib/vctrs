@@ -148,9 +148,9 @@ test_that("safe casts work as expected", {
   expect_equal(vec_cast(as.POSIXlt(missing_date), missing_date), missing_date)
 
   # These used to be allowed
-  expect_error(vec_cast(17532, date), class = "vctrs_error_incompatible_cast")
-  expect_error(vec_cast("2018-01-01", date), class = "vctrs_error_incompatible_cast")
-  expect_error(vec_cast(list(date), date), class = "vctrs_error_incompatible_cast")
+  expect_error(vec_cast(17532, date), class = "vctrs_error_incompatible_type")
+  expect_error(vec_cast("2018-01-01", date), class = "vctrs_error_incompatible_type")
+  expect_error(vec_cast(list(date), date), class = "vctrs_error_incompatible_type")
 })
 
 test_that("lossy casts generate error", {
@@ -161,7 +161,7 @@ test_that("lossy casts generate error", {
 
 test_that("invalid casts generate error", {
   date <- as.Date("2018-01-01")
-  expect_error(vec_cast(integer(), date), class = "vctrs_error_incompatible_cast")
+  expect_error(vec_cast(integer(), date), class = "vctrs_error_incompatible_type")
 })
 
 test_that("can cast NA and unspecified to Date", {
@@ -189,7 +189,7 @@ test_that("safe casts work as expected", {
   expect_equal(vec_cast(datetime_c, datetime_l), datetime_l)
   expect_equal(vec_cast(datetime_l, datetime_l), datetime_l)
   expect_equal(vec_cast(as.Date(datetime_l), datetime_l), datetime_l)
-  expect_error(vec_cast(raw(), datetime_l), class = "vctrs_error_incompatible_cast")
+  expect_error(vec_cast(raw(), datetime_l), class = "vctrs_error_incompatible_type")
 
   missing_c <- new_datetime(NA_real_, tzone = "UTC")
   missing_l <- as.POSIXlt(missing_c)
@@ -203,18 +203,18 @@ test_that("safe casts work as expected", {
   expect_equal(vec_cast(as.Date(missing_l), missing_l), missing_l)
 
   # These used to be allowed
-  expect_error(vec_cast(2678400, datetime_c), class = "vctrs_error_incompatible_cast")
-  expect_error(vec_cast("1970-02-01", datetime_c), class = "vctrs_error_incompatible_cast")
-  expect_error(vec_cast(list(datetime_c), datetime_c), class = "vctrs_error_incompatible_cast")
+  expect_error(vec_cast(2678400, datetime_c), class = "vctrs_error_incompatible_type")
+  expect_error(vec_cast("1970-02-01", datetime_c), class = "vctrs_error_incompatible_type")
+  expect_error(vec_cast(list(datetime_c), datetime_c), class = "vctrs_error_incompatible_type")
 
-  expect_error(vec_cast(2678400, datetime_l), class = "vctrs_error_incompatible_cast")
-  expect_error(vec_cast("1970-02-01", datetime_l), class = "vctrs_error_incompatible_cast")
-  expect_error(vec_cast(list(datetime_l), datetime_l), class = "vctrs_error_incompatible_cast")
+  expect_error(vec_cast(2678400, datetime_l), class = "vctrs_error_incompatible_type")
+  expect_error(vec_cast("1970-02-01", datetime_l), class = "vctrs_error_incompatible_type")
+  expect_error(vec_cast(list(datetime_l), datetime_l), class = "vctrs_error_incompatible_type")
 })
 
 test_that("invalid casts generate error", {
   datetime <- as.POSIXct("1970-02-01", tz = "UTC")
-  expect_error(vec_cast(integer(), datetime), class = "vctrs_error_incompatible_cast")
+  expect_error(vec_cast(integer(), datetime), class = "vctrs_error_incompatible_type")
 })
 
 test_that("dates become midnight in date-time tzone", {
@@ -252,13 +252,13 @@ test_that("safe casts work as expected", {
   expect_equal(vec_cast(dt1, dt2), dt2)
 
   # These used to be allowed
-  expect_error(vec_cast(600, dt1), class = "vctrs_error_incompatible_cast")
-  expect_error(vec_cast(list(dt1), dt1), class = "vctrs_error_incompatible_cast")
+  expect_error(vec_cast(600, dt1), class = "vctrs_error_incompatible_type")
+  expect_error(vec_cast(list(dt1), dt1), class = "vctrs_error_incompatible_type")
 })
 
 test_that("invalid casts generate error", {
   dt <- as.difftime(600, units = "secs")
-  expect_error(vec_cast(integer(), dt), class = "vctrs_error_incompatible_cast")
+  expect_error(vec_cast(integer(), dt), class = "vctrs_error_incompatible_type")
 })
 
 test_that("can cast NA and unspecified to duration", {

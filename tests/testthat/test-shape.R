@@ -41,11 +41,11 @@ test_that("can broadcast to higher dimension, but not lower", {
   )
   expect_error(
     shape_broadcast(int(1, 1, 1), int(4, 4)),
-    class = "vctrs_error_incompatible_cast"
+    class = "vctrs_error_incompatible_type"
   )
   expect_error(
     shape_broadcast(int(3, 2), int(3, 3)),
-    class = "vctrs_error_incompatible_cast"
+    class = "vctrs_error_incompatible_type"
   )
 })
 
@@ -68,12 +68,12 @@ test_that("recycling rules applied", {
   expect_error(
     shape_broadcast(array(1L, c(1, 2)), int(1, 0)),
     "Non-recyclable dimensions",
-    class = "vctrs_error_incompatible_cast"
+    class = "vctrs_error_incompatible_type"
   )
 
   expect_error(
     shape_broadcast(array(1L, c(1, 0)), int(1, 1)),
     "Non-recyclable dimensions",
-    class = "vctrs_error_incompatible_cast"
+    class = "vctrs_error_incompatible_type"
   )
 })

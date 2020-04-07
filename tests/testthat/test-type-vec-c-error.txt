@@ -1,15 +1,15 @@
 
 vec_c(df1, df2):
 
-No common type for `..1$x$y$z` <double> and `..2$x$y$z` <character>. 
+Can't combine `..1$x$y$z` <double> and `..2$x$y$z` <character>. 
 
 
 vec_c(df1, df1, df2):
 
-No common type for `..1$x$y$z` <double> and `..3$x$y$z` <character>. 
+Can't combine `..1$x$y$z` <double> and `..3$x$y$z` <character>. 
 
 
 vec_c(foo = df1, bar = df2):
 
-No common type for `foo$x$y$z` <double> and `bar$x$y$z` <character>. 
+Can't combine `foo$x$y$z` <double> and `bar$x$y$z` <character>. 
 

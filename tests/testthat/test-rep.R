@@ -21,7 +21,7 @@ test_that("`vec_rep()` errors on long vector output", {
 })
 
 test_that("`vec_rep()` validates `times`", {
-  expect_error(vec_rep(1, "x"), class = "vctrs_error_incompatible_cast")
+  expect_error(vec_rep(1, "x"), class = "vctrs_error_incompatible_type")
   expect_error(vec_rep(1, c(1, 2)))
   expect_error(vec_rep(1, -1))
   expect_error(vec_rep(1, NA_integer_))
@@ -54,7 +54,7 @@ test_that("`vec_rep_each()` errors on long vector output", {
 })
 
 test_that("`vec_rep_each()` validates `times`", {
-  expect_error(vec_rep_each(1, "x"), class = "vctrs_error_incompatible_cast")
+  expect_error(vec_rep_each(1, "x"), class = "vctrs_error_incompatible_type")
   expect_error(vec_rep_each(1, -1))
   expect_error(vec_rep_each(c(1, 2), c(1, -1)))
   expect_error(vec_rep_each(1, NA_integer_))
