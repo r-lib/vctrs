@@ -191,3 +191,26 @@ test_that("vec_is_subtype() determines subtyping relationship", {
   expect_true(vec_is_subtype(foobar(TRUE), lgl()))
   expect_false(vec_is_subtype(lgl(), foobar(TRUE)))
 })
+
+test_that("can override scalar vector error message for base scalar types", {
+  expect_error(vec_ptype2(NULL, quote(x), y_arg = "foo"), class = "vctrs_error_scalar_type")
+  expect_error(vec_ptype2(quote(x), NULL, x_arg = "foo"), class = "vctrs_error_scalar_type")
+})
+
+test_that("can override scalar vector error message for S3 types", {
+  expect_error(vec_ptype2(NULL, foobar(), y_arg = "foo"), class = "vctrs_error_scalar_type")
+  expect_error(vec_ptype2(foobar(), NULL, x_arg = "foo"), class = "vctrs_error_scalar_type")
+})
+
+test_that("vec_ptype2() errors have informative output", {
+  verify_output(test_path("error", "test-type2.txt"), {
+    "# can override scalar vector error message for base scalar types"
+    vec_ptype2(NULL, quote(x), y_arg = "foo")
+    vec_ptype2(quote(x), NULL, x_arg = "foo")
+
+    "# can override scalar vector error message for S3 types"
+    vec_ptype2(NULL, foobar(), y_arg = "foo")
+    vec_ptype2(foobar(), NULL, x_arg = "foo")
+  })
+})
+

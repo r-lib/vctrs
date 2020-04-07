@@ -1,6 +1,8 @@
 
 # vctrs (development version)
 
+* `vec_ptype()` gained an `x_arg` argument.
+
 * `stop_incompatible_cast()` now throws an error of class
   `vctrs_error_incompatible_type` rather than `vctrs_error_incompatible_cast`.
   This means that `vec_cast()` also throws errors of this class, which better

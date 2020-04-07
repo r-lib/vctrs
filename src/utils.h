@@ -124,6 +124,9 @@ SEXP node_compact_d(SEXP xs);
 extern struct vctrs_arg args_empty_;
 static struct vctrs_arg* const args_empty = &args_empty_;
 
+extern struct vctrs_arg args_dot_ptype_;
+static struct vctrs_arg* const args_dot_ptype = &args_dot_ptype_;
+
 void never_reached(const char* fn) __attribute__((noreturn));
 
 enum vctrs_type2 vec_typeof2_impl(enum vctrs_type type_x, enum vctrs_type type_y, int* left);

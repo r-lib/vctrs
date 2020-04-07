@@ -5,7 +5,13 @@
 #' `vec_ptype_show()` nicely prints the common type of any number of
 #' inputs, and is designed for interactive exploration.
 #'
-#' @param ...,x Vectors inputs
+#' @param x A vector
+#' @param ... For `vec_ptype()`, these dots are for future extensions and must
+#'   be empty.
+#'
+#'   For `vec_ptype_common()` and `vec_ptype_show()`, vector inputs.
+#' @param x_arg Argument name for `x`. This is used in error messages to inform
+#'   the user about the locations of incompatible types.
 #' @param .ptype If `NULL`, the default, the output type is determined by
 #'   computing the common type across all elements of `...`.
 #'
@@ -77,8 +83,11 @@
 #'   data.frame(y = 2),
 #'   data.frame(z = "a")
 #' )
-vec_ptype <- function(x) {
-  .Call(vctrs_ptype, x)
+vec_ptype <- function(x, ..., x_arg = "") {
+  if (!missing(...)) {
+    ellipsis::check_dots_empty()
+  }
+  .Call(vctrs_ptype, x, x_arg)
 }
 
 #' @export

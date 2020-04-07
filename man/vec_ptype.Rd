@@ -6,14 +6,22 @@
 \alias{vec_ptype_show}
 \title{Find the prototype of a set of vectors}
 \usage{
-vec_ptype(x)
+vec_ptype(x, ..., x_arg = "")
 
 vec_ptype_common(..., .ptype = NULL)
 
 vec_ptype_show(...)
 }
 \arguments{
-\item{..., x}{Vectors inputs}
+\item{x}{A vector}
+
+\item{...}{For \code{vec_ptype()}, these dots are for future extensions and must
+be empty.
+
+For \code{vec_ptype_common()} and \code{vec_ptype_show()}, vector inputs.}
+
+\item{x_arg}{Argument name for \code{x}. This is used in error messages to inform
+the user about the locations of incompatible types.}
 
 \item{.ptype}{If \code{NULL}, the default, the output type is determined by
 computing the common type across all elements of \code{...}.
