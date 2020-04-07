@@ -173,7 +173,7 @@ as.character.vctrs_list_of <- function(x, ...) {
 
 #' @export
 `$<-.vctrs_list_of` <- function(x, i, value) {
-  value <- vec_coercible_cast(value, attr(x, "ptype"), x_arg = "", to_arg = "")
+  value <- vec_cast(value, attr(x, "ptype"))
   NextMethod()
 }
 
