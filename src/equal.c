@@ -160,7 +160,7 @@ SEXP vctrs_equal(SEXP x, SEXP y, SEXP na_equal_) {
     const CTYPE* p_y = CONST_DEREF(y);                    \
                                                           \
     for (R_len_t i = 0; i < n; ++i, ++p_x, ++p_y) {       \
-      if (!SCALAR_EQUAL(p_x, p_y, true)) {                \
+      if (!SCALAR_EQUAL(p_x, p_y)) {                      \
         return false;                                     \
       }                                                   \
     }                                                     \
@@ -171,7 +171,7 @@ SEXP vctrs_equal(SEXP x, SEXP y, SEXP na_equal_) {
 #define EQUAL_ALL_BARRIER(SCALAR_EQUAL)                   \
   do {                                                    \
     for (R_len_t i = 0; i < n; ++i) {                     \
-      if (!SCALAR_EQUAL(x, i, y, i, true)) {              \
+      if (!SCALAR_EQUAL(x, i, y, i)) {                    \
         return false;                                     \
       }                                                   \
     }                                                     \
@@ -279,14 +279,14 @@ bool equal_object(SEXP x, SEXP y) {
   }
 
   switch (type) {
-  case LGLSXP:  EQUAL_ALL(int, LOGICAL_RO, lgl_equal_scalar);
-  case INTSXP:  EQUAL_ALL(int, INTEGER_RO, int_equal_scalar);
-  case REALSXP: EQUAL_ALL(double, REAL_RO, dbl_equal_scalar);
-  case STRSXP:  EQUAL_ALL(SEXP, STRING_PTR_RO, chr_equal_scalar);
-  case RAWSXP:  EQUAL_ALL(Rbyte, RAW_RO, raw_equal_scalar);
-  case CPLXSXP: EQUAL_ALL(Rcomplex, COMPLEX_RO, cpl_equal_scalar);
+  case LGLSXP:  EQUAL_ALL(int, LOGICAL_RO, lgl_equal_scalar_na_equal);
+  case INTSXP:  EQUAL_ALL(int, INTEGER_RO, int_equal_scalar_na_equal);
+  case REALSXP: EQUAL_ALL(double, REAL_RO, dbl_equal_scalar_na_equal);
+  case STRSXP:  EQUAL_ALL(SEXP, STRING_PTR_RO, chr_equal_scalar_na_equal);
+  case RAWSXP:  EQUAL_ALL(Rbyte, RAW_RO, raw_equal_scalar_na_equal);
+  case CPLXSXP: EQUAL_ALL(Rcomplex, COMPLEX_RO, cpl_equal_scalar_na_equal);
   case EXPRSXP:
-  case VECSXP:  EQUAL_ALL_BARRIER(list_equal_scalar);
+  case VECSXP:  EQUAL_ALL_BARRIER(list_equal_scalar_na_equal);
   default:      Rf_errorcall(R_NilValue, "Internal error: Unexpected type in `equal_object()`");
   }
 }
