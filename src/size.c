@@ -2,24 +2,8 @@
 #include "type-data-frame.h"
 #include "utils.h"
 #include "slice.h"
-#include "size.h"
 
 R_len_t rcrd_size(SEXP x);
-
-// [[ register() ]]
-SEXP vctrs_dim(SEXP x) {
-  return vec_dim(x);
-}
-
-// [[ register() ]]
-SEXP vctrs_dim_n(SEXP x) {
-  return r_int(vec_dim_n(x));
-}
-
-// [[ register() ]]
-SEXP vctrs_has_dim(SEXP x) {
-  return r_lgl(has_dim(x));
-}
 
 static inline R_len_t vec_raw_size(SEXP x) {
   SEXP dims = PROTECT(Rf_getAttrib(x, R_DimSymbol));
