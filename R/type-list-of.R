@@ -154,7 +154,7 @@ as.character.vctrs_list_of <- function(x, ...) {
 #' @export
 `[<-.vctrs_list_of` <- function(x, i, value) {
   wrapped_type <- attr(x, "ptype")
-  value <- map(value, vec_coercible_cast, to = wrapped_type, x_arg = "", to_arg = "")
+  value <- map(value, vec_cast, to = wrapped_type)
   value <- new_list_of(value, ptype = attr(x, "ptype"))
   NextMethod()
 }
