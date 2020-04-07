@@ -59,7 +59,7 @@ extern SEXP vec_restore_default(SEXP, SEXP);
 extern SEXP vec_proxy(SEXP);
 extern SEXP vec_proxy_equal(SEXP);
 extern SEXP vctrs_unspecified(SEXP);
-extern SEXP vec_type(SEXP);
+extern SEXP vec_ptype(SEXP);
 extern SEXP vec_ptype_finalise(SEXP);
 extern SEXP vctrs_minimal_names(SEXP);
 extern SEXP vctrs_unique_names(SEXP, SEXP);
@@ -187,7 +187,7 @@ static const R_CallMethodDef CallEntries[] = {
   {"vctrs_proxy",                      (DL_FUNC) &vec_proxy, 1},
   {"vctrs_proxy_equal",                (DL_FUNC) &vec_proxy_equal, 1},
   {"vctrs_unspecified",                (DL_FUNC) &vctrs_unspecified, 1},
-  {"vctrs_type",                       (DL_FUNC) &vec_type, 1},
+  {"vctrs_ptype",                      (DL_FUNC) &vec_ptype, 1},
   {"vctrs_ptype_finalise",             (DL_FUNC) &vec_ptype_finalise, 1},
   {"vctrs_minimal_names",              (DL_FUNC) &vctrs_minimal_names, 1},
   {"vctrs_unique_names",               (DL_FUNC) &vctrs_unique_names, 2},

@@ -11,7 +11,7 @@ static SEXP vec_type_slice(SEXP x, SEXP empty);
 static SEXP s3_type(SEXP x);
 
 // [[ include("vctrs.h"); register() ]]
-SEXP vec_type(SEXP x) {
+SEXP vec_ptype(SEXP x) {
   switch (vec_typeof(x)) {
   case vctrs_type_null:        return R_NilValue;
   case vctrs_type_unspecified: return vctrs_shared_empty_uns;
@@ -22,7 +22,7 @@ SEXP vec_type(SEXP x) {
   case vctrs_type_character:   return vec_type_slice(x, vctrs_shared_empty_chr);
   case vctrs_type_raw:         return vec_type_slice(x, vctrs_shared_empty_raw);
   case vctrs_type_list:        return vec_type_slice(x, vctrs_shared_empty_list);
-  case vctrs_type_dataframe:   return bare_df_map(x, &vec_type);
+  case vctrs_type_dataframe:   return bare_df_map(x, &vec_ptype);
   case vctrs_type_s3:          return s3_type(x);
   case vctrs_type_scalar:      stop_scalar_type(x, args_empty);
   }
@@ -40,16 +40,16 @@ static SEXP vec_type_slice(SEXP x, SEXP empty) {
 static SEXP s3_type(SEXP x) {
   switch (class_type(x)) {
   case vctrs_class_bare_tibble:
-    return bare_df_map(x, &vec_type);
+    return bare_df_map(x, &vec_ptype);
 
   case vctrs_class_data_frame:
-    return df_map(x, &vec_type);
+    return df_map(x, &vec_ptype);
 
   case vctrs_class_bare_data_frame:
-    Rf_errorcall(R_NilValue, "Internal error: Bare data frames should be handled by `vec_type()`");
+    Rf_errorcall(R_NilValue, "Internal error: Bare data frames should be handled by `vec_ptype()`");
 
   case vctrs_class_none:
-    Rf_errorcall(R_NilValue, "Internal error: Non-S3 classes should be handled by `vec_type()`");
+    Rf_errorcall(R_NilValue, "Internal error: Non-S3 classes should be handled by `vec_ptype()`");
 
   default:
     break;
@@ -143,7 +143,7 @@ SEXP vctrs_type_common(SEXP call, SEXP op, SEXP args, SEXP env) {
 
 SEXP vctrs_type_common_impl(SEXP dots, SEXP ptype) {
   if (!vec_is_partial(ptype)) {
-    return vec_type(ptype);
+    return vec_ptype(ptype);
   }
 
   if (r_is_true(r_peek_option("vctrs.no_guessing"))) {

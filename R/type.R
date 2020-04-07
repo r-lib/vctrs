@@ -78,7 +78,7 @@
 #'   data.frame(z = "a")
 #' )
 vec_ptype <- function(x) {
-  .Call(vctrs_type, x)
+  .Call(vctrs_ptype, x)
 }
 
 #' @export

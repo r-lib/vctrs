@@ -342,7 +342,7 @@ SEXP df_ptype2_impl(SEXP x, SEXP y, SEXP x_names, SEXP y_names,
 
     SEXP type;
     if (dup == NA_INTEGER) {
-      type = vec_type(VECTOR_ELT(x, i));
+      type = vec_ptype(VECTOR_ELT(x, i));
     } else {
       --dup; // 1-based index
       struct arg_data_index x_arg_data = new_index_arg_data(r_chr_get_c_string(x_names, i), x_arg);
@@ -365,7 +365,7 @@ SEXP df_ptype2_impl(SEXP x, SEXP y, SEXP x_names, SEXP y_names,
   for (R_len_t j = 0; i < out_len; ++j) {
     R_len_t dup = y_dups_pos_data[j];
     if (dup == NA_INTEGER) {
-      SET_VECTOR_ELT(out, i, vec_type(VECTOR_ELT(y, j)));
+      SET_VECTOR_ELT(out, i, vec_ptype(VECTOR_ELT(y, j)));
       SET_STRING_ELT(nms, i, STRING_ELT(y_names, j));
       ++i;
     }
