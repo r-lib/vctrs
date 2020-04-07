@@ -15,13 +15,12 @@ static inline R_len_t vec_bare_dim_n(SEXP x) {
 
 
 static inline SEXP vec_dim(SEXP x) {
-  SEXP dim = PROTECT(vec_bare_dim(x));
+  SEXP dim = vec_bare_dim(x);
 
   if (dim == R_NilValue) {
     dim = r_int(Rf_length(x));
   }
 
-  UNPROTECT(1);
   return dim;
 }
 
