@@ -7,7 +7,7 @@
 // These versions return NULL and 0 for bare vectors.
 // This is useful to distinguish them from 1D arrays.
 static inline SEXP vec_bare_dim(SEXP x) {
-  return Rf_getAttrib(x, R_DimSymbol);
+  return r_dim(x);
 }
 static inline R_len_t vec_bare_dim_n(SEXP x) {
   return Rf_length(vec_bare_dim(x));
