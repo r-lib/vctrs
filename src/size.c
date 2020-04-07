@@ -6,20 +6,18 @@
 R_len_t rcrd_size(SEXP x);
 
 static inline R_len_t vec_raw_size(SEXP x) {
-  SEXP dims = PROTECT(Rf_getAttrib(x, R_DimSymbol));
+  SEXP dimensions = r_dim(x);
 
-  if (dims == R_NilValue || Rf_length(dims) == 0) {
-    UNPROTECT(1);
+  if (dimensions == R_NilValue || Rf_length(dimensions) == 0) {
     return Rf_length(x);
   }
 
-  if (TYPEOF(dims) != INTSXP) {
-    Rf_errorcall(R_NilValue, "Corrupt vector: dims is not integer vector");
+  if (TYPEOF(dimensions) != INTSXP) {
+    Rf_errorcall(R_NilValue, "Corrupt vector, `dim` attribute is not an integer vector.");
   }
 
-  R_len_t size = INTEGER(dims)[0];
+  R_len_t size = INTEGER(dimensions)[0];
 
-  UNPROTECT(1);
   return size;
 }
 
