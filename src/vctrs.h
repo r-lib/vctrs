@@ -605,12 +605,6 @@ static inline void growable_push_int(struct growable* g, int i) {
 
 #define UNPROTECT_GROWABLE(g) do { UNPROTECT(1);} while(0)
 
-
-// Shape --------------------------------------------------------
-
-bool has_dim(SEXP x);
-
-
 // Conditions ---------------------------------------------------
 
 void vctrs_stop_unsupported_type(enum vctrs_type, const char* fn) __attribute__((noreturn));

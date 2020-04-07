@@ -34,4 +34,9 @@ static inline R_len_t vec_dim_n(SEXP x) {
   return Rf_length(dim);
 }
 
+
+static inline bool has_dim(SEXP x) {
+  return ATTRIB(x) != R_NilValue && r_dim(x) != R_NilValue;
+}
+
 #endif

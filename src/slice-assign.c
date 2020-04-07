@@ -2,6 +2,7 @@
 #include "slice-assign.h"
 #include "subscript-loc.h"
 #include "utils.h"
+#include "size.h"
 
 // Initialised at load time
 SEXP syms_vec_assign_fallback = NULL;

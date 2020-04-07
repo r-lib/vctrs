@@ -2,6 +2,7 @@
 #include "equal.h"
 #include "hash.h"
 #include "utils.h"
+#include "size.h"
 
 // boost::hash_combine from https://stackoverflow.com/questions/35985960
 static inline uint32_t hash_combine(uint32_t x, uint32_t y) {

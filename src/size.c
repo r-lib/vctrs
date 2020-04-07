@@ -16,6 +16,11 @@ SEXP vctrs_dim_n(SEXP x) {
   return r_int(vec_dim_n(x));
 }
 
+// [[ register() ]]
+SEXP vctrs_has_dim(SEXP x) {
+  return r_lgl(has_dim(x));
+}
+
 static inline R_len_t vec_raw_size(SEXP x) {
   SEXP dims = PROTECT(Rf_getAttrib(x, R_DimSymbol));
 
@@ -154,16 +159,6 @@ R_len_t rcrd_size(SEXP x) {
   } else {
     return Rf_length(VECTOR_ELT(x, 0));
   }
-}
-
-// [[ register() ]]
-SEXP vctrs_has_dim(SEXP x) {
-  return Rf_ScalarLogical(has_dim(x));
-}
-
-// [[ include("vctrs.h") ]]
-bool has_dim(SEXP x) {
-  return ATTRIB(x) != R_NilValue && Rf_getAttrib(x, R_DimSymbol) != R_NilValue;
 }
 
 // [[ include("vctrs.h") ]]
