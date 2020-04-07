@@ -236,16 +236,6 @@ SEXP vctrs_is_coercible(SEXP x, SEXP y, SEXP x_arg_, SEXP y_arg_) {
   return r_lgl(vec_is_coercible(x, y, &x_arg, &y_arg, &dir));
 }
 
-// [[ include("vctrs.h") ]]
-SEXP vec_coercible_cast(SEXP x, SEXP to, struct vctrs_arg* x_arg, struct vctrs_arg* to_arg) {
-  // Called for the side effect of generating an error if there is no
-  // common type
-  int _left;
-  vec_ptype2(x, to, x_arg, to_arg, &_left);
-
-  return vec_cast(x, to, x_arg, to_arg);
-}
-
 struct vec_coercible_cast_e_data {
   SEXP x;
   SEXP to;
