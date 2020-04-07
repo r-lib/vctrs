@@ -1,5 +1,5 @@
-#ifndef VCTRS_SIZE_H
-#define VCTRS_SIZE_H
+#ifndef VCTRS_DIM_H
+#define VCTRS_DIM_H
 
 #include "vctrs.h"
 #include "utils.h"

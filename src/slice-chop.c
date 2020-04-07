@@ -4,7 +4,7 @@
 #include "subscript-loc.h"
 #include "type-data-frame.h"
 #include "utils.h"
-#include "size.h"
+#include "dim.h"
 
 /*
  * @member proxy_info The result of `vec_proxy_info(x)`.

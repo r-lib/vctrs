@@ -1,5 +1,5 @@
 #include "vctrs.h"
-#include "size.h"
+#include "dim.h"
 
 // [[ register() ]]
 SEXP vctrs_dim(SEXP x) {

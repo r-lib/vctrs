@@ -1,5 +1,5 @@
 #include "shape.h"
-#include "size.h"
+#include "dim.h"
 
 // [[ register() ]]
 SEXP vctrs_shaped_ptype(SEXP ptype, SEXP x, SEXP y) {

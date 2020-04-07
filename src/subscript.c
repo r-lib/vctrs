@@ -1,7 +1,7 @@
 #include "vctrs.h"
 #include "subscript.h"
 #include "utils.h"
-#include "size.h"
+#include "dim.h"
 
 static SEXP fns_cnd_body_subscript_dim = NULL;
 
