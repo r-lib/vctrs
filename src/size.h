@@ -25,7 +25,13 @@ static inline SEXP vec_dim(SEXP x) {
 }
 
 static inline R_len_t vec_dim_n(SEXP x) {
-  return Rf_length(vec_dim(x));
+  SEXP dim = vec_bare_dim(x);
+
+  if (dim == R_NilValue) {
+    return 1;
+  }
+
+  return Rf_length(dim);
 }
 
 #endif
