@@ -287,19 +287,39 @@ SEXP vctrs_df_ptype2(SEXP x, SEXP y, SEXP x_arg, SEXP y_arg) {
   return df_ptype2(x, y, &x_arg_, &y_arg_);
 }
 
+static SEXP df_ptype2_impl(SEXP x, SEXP y, SEXP x_names, SEXP y_names,
+                           struct vctrs_arg* x_arg, struct vctrs_arg* y_arg);
+
+static SEXP df_ptype2_sequential(SEXP x, SEXP y, SEXP names,
+                                 struct vctrs_arg* x_arg, struct vctrs_arg* y_arg);
+
 // [[ include("vctrs.h") ]]
 SEXP df_ptype2(SEXP x, SEXP y, struct vctrs_arg* x_arg, struct vctrs_arg* y_arg) {
   SEXP x_names = PROTECT(r_names(x));
   SEXP y_names = PROTECT(r_names(y));
 
+  SEXP out;
+
+  if (equal_object(x_names, y_names)) {
+    out = df_ptype2_sequential(x, y, x_names, x_arg, y_arg);
+  } else {
+    out = df_ptype2_impl(x, y, x_names, y_names, x_arg, y_arg);
+  }
+
+  UNPROTECT(2);
+  return out;
+}
+
+SEXP df_ptype2_impl(SEXP x, SEXP y, SEXP x_names, SEXP y_names,
+                    struct vctrs_arg* x_arg, struct vctrs_arg* y_arg) {
   SEXP x_dups_pos = PROTECT(vec_match(x_names, y_names));
   SEXP y_dups_pos = PROTECT(vec_match(y_names, x_names));
 
   int* x_dups_pos_data = INTEGER(x_dups_pos);
   int* y_dups_pos_data = INTEGER(y_dups_pos);
 
-  R_len_t x_len = Rf_length(x_dups_pos);
-  R_len_t y_len = Rf_length(y_dups_pos);
+  R_len_t x_len = Rf_length(x_names);
+  R_len_t y_len = Rf_length(y_names);
 
   // Count columns that are only in `y`
   R_len_t rest_len = 0;
@@ -331,10 +351,10 @@ SEXP df_ptype2(SEXP x, SEXP y, struct vctrs_arg* x_arg, struct vctrs_arg* y_arg)
       struct vctrs_arg named_y_arg = new_index_arg(y_arg, &y_arg_data);
       int _left;
       type = vec_ptype2(VECTOR_ELT(x, i),
-                       VECTOR_ELT(y, dup),
-                       &named_x_arg,
-                       &named_y_arg,
-                       &_left);
+                        VECTOR_ELT(y, dup),
+                        &named_x_arg,
+                        &named_y_arg,
+                        &_left);
     }
 
     SET_VECTOR_ELT(out, i, type);
@@ -353,7 +373,39 @@ SEXP df_ptype2(SEXP x, SEXP y, struct vctrs_arg* x_arg, struct vctrs_arg* y_arg)
 
   init_data_frame(out, 0);
 
-  UNPROTECT(6);
+  UNPROTECT(4);
+  return out;
+}
+
+SEXP df_ptype2_sequential(SEXP x, SEXP y, SEXP names,
+                          struct vctrs_arg* x_arg, struct vctrs_arg* y_arg) {
+  R_len_t len = Rf_length(names);
+
+  SEXP out = PROTECT(Rf_allocVector(VECSXP, len));
+  Rf_setAttrib(out, R_NamesSymbol, names);
+
+  for (R_len_t i = 0; i < len; ++i) {
+    const char* name = r_chr_get_c_string(names, i);
+
+    struct arg_data_index x_arg_data = new_index_arg_data(name, x_arg);
+    struct arg_data_index y_arg_data = new_index_arg_data(name, y_arg);
+    struct vctrs_arg named_x_arg = new_index_arg(x_arg, &x_arg_data);
+    struct vctrs_arg named_y_arg = new_index_arg(y_arg, &y_arg_data);
+
+    int _left;
+
+    SEXP type = vec_ptype2(VECTOR_ELT(x, i),
+                           VECTOR_ELT(y, i),
+                           &named_x_arg,
+                           &named_y_arg,
+                           &_left);
+
+    SET_VECTOR_ELT(out, i, type);
+  }
+
+  init_data_frame(out, 0);
+
+  UNPROTECT(1);
   return out;
 }
 
