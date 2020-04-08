@@ -76,7 +76,7 @@ vec_default_ptype2 <- function(x, y, ..., x_arg = "", y_arg = "") {
   }
 
   if (is_same_type(x, y)) {
-    return(vec_ptype(x))
+    return(vec_ptype(x, x_arg = x_arg))
   }
 
   stop_incompatible_type(x, y, x_arg = x_arg, y_arg = y_arg)
