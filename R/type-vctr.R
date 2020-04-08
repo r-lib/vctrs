@@ -305,8 +305,13 @@ as.POSIXlt.vctrs_vctr <- function(x, tz = "", ...) {
   vec_cast(x, to)
 }
 
-# Work around inconsistencies in as.data.frame() for 1D arrays
+# Work around inconsistencies in as.data.frame()
 as.data.frame2 <- function(x) {
+  # Unclass to avoid dispatching on `as.data.frame()` methods that break size
+  # invariants, like `as.data.frame.table()` (#913). This also prevents infinite
+  # recursion with shaped vctrs in `as.data.frame.vctrs_vctr()`.
+  x <- unclass(x)
+
   out <- as.data.frame(x)
 
   if (vec_dim_n(x) == 1) {
@@ -329,7 +334,7 @@ as.data.frame.vctrs_vctr <- function(x,
   force(nm)
 
   if (has_dim(x)) {
-    return(as.data.frame2(vec_data(x)))
+    return(as.data.frame2(x))
   }
 
   cols <- list(x)

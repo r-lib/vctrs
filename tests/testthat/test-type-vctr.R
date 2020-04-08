@@ -107,6 +107,21 @@ test_that("as.data.frame creates data frame", {
   expect_named(df, "x")
 })
 
+test_that("as.data.frame on shaped vctrs doesn't bring along extra attributes", {
+  x <- new_vctr(1:3, foo = "bar", dim = c(3L, 1L))
+  df <- as.data.frame(x)
+  expect_null(attr(df, "foo", exact = TRUE))
+})
+
+test_that("as.data.frame2() unclasses input to avoid dispatch on as.data.frame()", {
+  x <- structure(1:2, dim = c(1L, 2L), dimnames = list("r1", c("c1", "c2")), class = "foo")
+  expect <- data.frame(c1 = 1L, c2 = 2L, row.names = "r1")
+
+  local_methods(as.data.frame.foo = function(x, ...) "dispatched!")
+
+  expect_identical(as.data.frame2(x), expect)
+})
+
 test_that("as.list() chops vectors", {
   expect_identical(
     as.list(new_vctr(1:3)),

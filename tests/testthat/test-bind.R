@@ -142,6 +142,21 @@ test_that("can rbind POSIXlt objects into POSIXct objects", {
   expect_named(vec_rbind(datetime_named, datetime_named), "col")
 })
 
+test_that("can rbind table objects (#913)", {
+  x <- new_table(1:4, c(2L, 2L))
+  y <- x
+
+  colnames <- c("c1", "c2")
+  rownames <- c("r1", "r2", "r3", "r4")
+
+  dimnames(x) <- list(rownames[1:2], colnames)
+  dimnames(y) <- list(rownames[3:4], colnames)
+
+  expect <- data.frame(c1 = c(1:2, 1:2), c2 = c(3:4, 3:4), row.names = rownames)
+
+  expect_identical(vec_rbind(x, y), expect)
+})
+
 test_that("can rbind missing vectors", {
   expect_identical(vec_rbind(na_int), data_frame(...1 = na_int))
   expect_identical(vec_rbind(na_int, na_int), data_frame(...1 = int(na_int, na_int)))
