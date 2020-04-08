@@ -236,41 +236,26 @@ SEXP vctrs_is_coercible(SEXP x, SEXP y, SEXP x_arg_, SEXP y_arg_) {
   return r_lgl(vec_is_coercible(x, y, &x_arg, &y_arg, &dir));
 }
 
-// [[ include("vctrs.h") ]]
-SEXP vec_coercible_cast(SEXP x, SEXP to, struct vctrs_arg* x_arg, struct vctrs_arg* to_arg) {
-  // Called for the side effect of generating an error if there is no
-  // common type
-  int _left;
-  vec_ptype2(x, to, x_arg, to_arg, &_left);
-
-  return vec_cast(x, to, x_arg, to_arg);
-}
-
-struct vec_coercible_cast_e_data {
+struct vec_cast_e_data {
   SEXP x;
   SEXP to;
   struct vctrs_arg* x_arg;
   struct vctrs_arg* to_arg;
   SEXP out;
 };
-static void vec_coercible_cast_e_cb(void* data_) {
-  struct vec_coercible_cast_e_data* data = (struct vec_coercible_cast_e_data*) data_;
+
+static void vec_cast_e_cb(void* data_) {
+  struct vec_cast_e_data* data = (struct vec_cast_e_data*) data_;
   data->out = vec_cast(data->x, data->to, data->x_arg, data->to_arg);
 }
 
 // [[ include("vctrs.h") ]]
-SEXP vec_coercible_cast_e(SEXP x,
-                          SEXP to,
-                          struct vctrs_arg* x_arg,
-                          struct vctrs_arg* to_arg,
-                          ERR* err) {
-  int dir;
-  vec_is_coercible_e(x, to, x_arg, to_arg, &dir, err);
-  if (*err) {
-    return R_NilValue;
-  }
-
-  struct vec_coercible_cast_e_data data = {
+SEXP vec_cast_e(SEXP x,
+                SEXP to,
+                struct vctrs_arg* x_arg,
+                struct vctrs_arg* to_arg,
+                ERR* err) {
+  struct vec_cast_e_data data = {
     .x = x,
     .to = to,
     .x_arg = x_arg,
@@ -278,20 +263,12 @@ SEXP vec_coercible_cast_e(SEXP x,
     .out = R_NilValue
   };
 
-  *err = r_try_catch(&vec_coercible_cast_e_cb,
+  *err = r_try_catch(&vec_cast_e_cb,
                      &data,
                      syms_vctrs_error_cast_lossy,
                      NULL,
                      NULL);
   return data.out;
-}
-
-// [[ register() ]]
-SEXP vctrs_coercible_cast(SEXP x, SEXP to, SEXP x_arg_, SEXP to_arg_) {
-  struct vctrs_arg x_arg = vec_as_arg(x_arg_);
-  struct vctrs_arg to_arg = vec_as_arg(to_arg_);
-
-  return vec_coercible_cast(x, to, &x_arg, &to_arg);
 }
 
 

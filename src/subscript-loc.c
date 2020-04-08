@@ -390,7 +390,7 @@ SEXP vctrs_as_location(SEXP subscript, SEXP n_, SEXP names,
     n = Rf_length(subscript);
   } else {
     if (OBJECT(n_) || TYPEOF(n_) != INTSXP) {
-      n_ = vec_coercible_cast(n_, vctrs_shared_empty_int, args_empty, args_empty);
+      n_ = vec_cast(n_, vctrs_shared_empty_int, args_empty, args_empty);
     }
     PROTECT(n_);
 

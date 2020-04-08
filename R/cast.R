@@ -136,14 +136,6 @@ vec_cast_common <- function(..., .to = NULL) {
   .External2(vctrs_cast_common, .to)
 }
 
-# Cast `x` to `to` but only if they are coercible
-vec_coercible_cast <- function(x, to, ..., x_arg = "", to_arg = "") {
-  if (!missing(...)) {
-    ellipsis::check_dots_empty()
-  }
-  .Call(vctrs_coercible_cast, x, to, x_arg, to_arg)
-}
-
 #' Default cast method
 #'
 #' @description

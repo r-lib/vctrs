@@ -174,11 +174,11 @@ static SEXP dbl_cast_subscript_fallback(SEXP subscript,
                                         const struct subscript_opts* opts,
                                         ERR* err) {
 
-  SEXP out = PROTECT(vec_coercible_cast_e(subscript,
-                                          vctrs_shared_empty_int,
-                                          opts->subscript_arg,
-                                          NULL,
-                                          err));
+  SEXP out = PROTECT(vec_cast_e(subscript,
+                                vctrs_shared_empty_int,
+                                opts->subscript_arg,
+                                NULL,
+                                err));
   if (*err) {
     SEXP err_obj = PROTECT(*err);
 

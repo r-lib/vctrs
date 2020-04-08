@@ -68,7 +68,7 @@ vec_as_index <- function(i, n, names = NULL) {
     "`vec_as_index()` is deprecated as of vctrs 0.2.2.",
     "Please use `vec_as_location() instead.`"
   ))
-  n <- vec_coercible_cast(n, integer())
+  n <- vec_cast(n, integer())
   vec_assert(n, integer(), 1L)
   i <- vec_as_subscript(i)
 
