@@ -618,6 +618,10 @@ void stop_incompatible_size(SEXP x, SEXP y,
 void stop_recycle_incompatible_size(R_len_t x_size, R_len_t size,
                                     struct vctrs_arg* x_arg)
   __attribute__((noreturn));
+void stop_incompatible_shape(SEXP x, SEXP y,
+                             R_len_t x_size, R_len_t y_size, int axis,
+                             struct vctrs_arg* p_x_arg, struct vctrs_arg* p_y_arg)
+  __attribute__((noreturn));
 void stop_corrupt_factor_levels(SEXP x, struct vctrs_arg* arg) __attribute__((noreturn));
 void stop_corrupt_ordered_levels(SEXP x, struct vctrs_arg* arg) __attribute__((noreturn));
 

@@ -7,18 +7,32 @@ int <- function(...) {
 # common shape ------------------------------------------------------------
 
 test_that("recycling rules applied", {
-  expect_equal(vec_shape2(vec_dim(int(1, 5, 5)), vec_dim(int(1))), c(0L, 5L, 5L))
-  expect_equal(vec_shape2(vec_dim(int(1)),       vec_dim(int(1, 5, 5))), c(0L, 5L, 5L))
-  expect_equal(vec_shape2(vec_dim(int(1, 1)),    vec_dim(int(1, 5, 5))), c(0L, 5L, 5L))
-  expect_equal(vec_shape2(vec_dim(int(1, 1, 1)), vec_dim(int(1, 5, 5))), c(0L, 5L, 5L))
+  expect_equal(vec_shape2(int(1, 5, 5), int(1)),       c(0L, 5L, 5L))
+  expect_equal(vec_shape2(int(1),       int(1, 5, 5)), c(0L, 5L, 5L))
+  expect_equal(vec_shape2(int(1, 1),    int(1, 5, 5)), c(0L, 5L, 5L))
+  expect_equal(vec_shape2(int(1, 1, 1), int(1, 5, 5)), c(0L, 5L, 5L))
 
-  expect_equal(vec_shape2(vec_dim(int(1, 1, 5)), vec_dim(int(1, 5, 1))), c(0L, 5L, 5L))
-  expect_equal(vec_shape2(vec_dim(int(1, 5, 1)), vec_dim(int(1, 1, 5))), c(0L, 5L, 5L))
-  expect_equal(vec_shape2(vec_dim(int(1, 1, 1)), vec_dim(int(1, 5, 5))), c(0L, 5L, 5L))
+  expect_equal(vec_shape2(int(1, 1, 5), int(1, 5, 1)), c(0L, 5L, 5L))
+  expect_equal(vec_shape2(int(1, 5, 1), int(1, 1, 5)), c(0L, 5L, 5L))
+  expect_equal(vec_shape2(int(1, 1, 1), int(1, 5, 5)), c(0L, 5L, 5L))
 
-  expect_equal(vec_shape2(vec_dim(int(1, 0, 5)), vec_dim(int(1, 1, 1))), c(0L, 0L, 5L))
-  expect_error(vec_shape2(vec_dim(int(1, 0, 5)), vec_dim(int(1, 5, 1))), "axis 2: 0, 5")
-  expect_error(vec_shape2(vec_dim(int(1, 5, 0)), vec_dim(int(1, 1, 5))), "axis 3: 0, 5")
+  expect_equal(vec_shape2(int(1, 0, 5), int(1, 1, 1)), c(0L, 0L, 5L))
+})
+
+test_that("incompatible shapes throw errors", {
+  verify_errors({
+    expect_error(vec_shape2(int(1, 0, 5), int(1, 5, 1)), class = "vctrs_error_incompatible_type")
+    expect_error(vec_shape2(int(1, 5, 0), int(1, 1, 5)), class = "vctrs_error_incompatible_type")
+  })
+})
+
+test_that("can override error args", {
+  verify_errors({
+    expect_error(
+      vec_shape2(int(1, 0, 5), int(1, 5, 1), x_arg = "foo", y_arg = "bar"),
+      class = "vctrs_error_incompatible_type"
+    )
+  })
 })
 
 # broadcasting -------------------------------------------------------------
@@ -68,4 +82,17 @@ test_that("recycling rules applied", {
     "Non-recyclable dimensions",
     class = "vctrs_error_incompatible_type"
   )
+})
+
+# --------------------------------------------------------------------------
+
+test_that("shape errors have informative output", {
+  verify_output(test_path("error", "test-shape.txt"), {
+    "# incompatible shapes throw errors"
+    vec_shape2(int(1, 0, 5), int(1, 5, 1))
+    vec_shape2(int(1, 5, 0), int(1, 1, 5))
+
+    "# can override error args"
+    vec_shape2(int(1, 0, 5), int(1, 5, 1), x_arg = "foo", y_arg = "bar")
+  })
 })

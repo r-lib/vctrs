@@ -7,12 +7,18 @@ new_shape <- function(type, shape = integer()) {
   structure(type, dim = c(0L, shape))
 }
 
-vec_shaped_ptype  <- function(ptype, x, y) {
-  .Call(vctrs_shaped_ptype, ptype, x, y)
+vec_shaped_ptype  <- function(ptype, x, y, ..., x_arg = "", y_arg = "") {
+  if (!missing(...)) {
+    ellipsis::check_dots_empty()
+  }
+  .Call(vctrs_shaped_ptype, ptype, x, y, x_arg, y_arg)
 }
 
-vec_shape2 <- function(x_dimensions, y_dimensions) {
-  .Call(vctrs_shape2, x_dimensions, y_dimensions)
+vec_shape2 <- function(x, y, ..., x_arg = "", y_arg = "") {
+  if (!missing(...)) {
+    ellipsis::check_dots_empty()
+  }
+  .Call(vctrs_shape2, x, y, x_arg, y_arg)
 }
 
 shape_broadcast <- function(x, to) {

@@ -2,24 +2,26 @@
 #include "dim.h"
 
 // [[ register() ]]
-SEXP vctrs_shaped_ptype(SEXP ptype, SEXP x, SEXP y) {
-  return vec_shaped_ptype(ptype, x, y);
+SEXP vctrs_shaped_ptype(SEXP ptype, SEXP x, SEXP y, SEXP x_arg, SEXP y_arg) {
+  struct vctrs_arg x_arg_ = vec_as_arg(x_arg);
+  struct vctrs_arg y_arg_ = vec_as_arg(y_arg);
+
+  return vec_shaped_ptype(ptype, x, y, &x_arg_, &y_arg_);
 }
 
-static SEXP vec_shape2(SEXP x_dimensions, SEXP y_dimensions);
+static SEXP vec_shape2(SEXP x, SEXP y, struct vctrs_arg* p_x_arg, struct vctrs_arg* p_y_arg);
 
 // Computes the common shape of `x` and `y` and attaches it as the
 // dimensions of `ptype`. If `x` and `y` are both atomic with `NULL` dimensions,
 // then no dimensions are attached and `ptype` is returned unmodified.
 // [[ include("shape.h") ]]
-SEXP vec_shaped_ptype(SEXP ptype, SEXP x, SEXP y) {
-  SEXP x_dimensions = PROTECT(r_dim(x));
-  SEXP y_dimensions = PROTECT(r_dim(y));
-
-  SEXP ptype_dimensions = PROTECT(vec_shape2(x_dimensions, y_dimensions));
+SEXP vec_shaped_ptype(SEXP ptype,
+                      SEXP x, SEXP y,
+                      struct vctrs_arg* p_x_arg, struct vctrs_arg* p_y_arg) {
+  SEXP ptype_dimensions = PROTECT(vec_shape2(x, y, p_x_arg, p_y_arg));
 
   if (ptype_dimensions == R_NilValue) {
-    UNPROTECT(3);
+    UNPROTECT(1);
     return ptype;
   }
 
@@ -27,28 +29,48 @@ SEXP vec_shaped_ptype(SEXP ptype, SEXP x, SEXP y) {
 
   r_poke_dim(ptype, ptype_dimensions);
 
-  UNPROTECT(4);
+  UNPROTECT(2);
   return ptype;
 }
 
 // -----------------------------------------------------------------------------
 
-static SEXP vec_shape2(SEXP x_dimensions, SEXP y_dimensions);
-
 // [[ register() ]]
-SEXP vctrs_shape2(SEXP x_dimensions, SEXP y_dimensions) {
-  return vec_shape2(x_dimensions, y_dimensions);
+SEXP vctrs_shape2(SEXP x, SEXP y, SEXP x_arg, SEXP y_arg) {
+  struct vctrs_arg x_arg_ = vec_as_arg(x_arg);
+  struct vctrs_arg y_arg_ = vec_as_arg(y_arg);
+
+  return vec_shape2(x, y, &x_arg_, &y_arg_);
+}
+
+static SEXP vec_shape2_impl(SEXP x_dimensions, SEXP y_dimensions,
+                            SEXP x, SEXP y,
+                            struct vctrs_arg* p_x_arg, struct vctrs_arg* p_y_arg);
+
+static SEXP vec_shape2(SEXP x, SEXP y, struct vctrs_arg* p_x_arg, struct vctrs_arg* p_y_arg) {
+  SEXP x_dimensions = PROTECT(r_dim(x));
+  SEXP y_dimensions = PROTECT(r_dim(y));
+
+  SEXP out = vec_shape2_impl(x_dimensions, y_dimensions, x, y, p_x_arg, p_y_arg);
+
+  UNPROTECT(2);
+  return out;
 }
 
 static SEXP vec_shape(SEXP dimensions);
-static inline int vec_dimension2(int axis, int x_dimension, int y_dimension);
+static inline int vec_dimension2(int x_dimension, int y_dimension,
+                                 int axis,
+                                 SEXP x, SEXP y,
+                                 struct vctrs_arg* p_x_arg, struct vctrs_arg* p_y_arg);
 
 /*
  * Returns `NULL` if `x` and `y` are atomic.
  * Otherwise returns a dimensions vector where the first dimension length
  * is forcibly set to 0, and the rest are the common shape of `x` and `y`.
  */
-static SEXP vec_shape2(SEXP x_dimensions, SEXP y_dimensions) {
+static SEXP vec_shape2_impl(SEXP x_dimensions, SEXP y_dimensions,
+                            SEXP x, SEXP y,
+                            struct vctrs_arg* p_x_arg, struct vctrs_arg* p_y_arg) {
   if (x_dimensions == R_NilValue) {
     return vec_shape(y_dimensions);
   }
@@ -92,7 +114,11 @@ static SEXP vec_shape2(SEXP x_dimensions, SEXP y_dimensions) {
   R_len_t i = 1;
 
   for (; i < min_dimensionality; ++i) {
-    p_out[i] = vec_dimension2(i + 1, p_x_dimensions[i], p_y_dimensions[i]);
+    const int axis = i + 1;
+    const int x_dimension = p_x_dimensions[i];
+    const int y_dimension = p_y_dimensions[i];
+
+    p_out[i] = vec_dimension2(x_dimension, y_dimension, axis, x, y, p_x_arg, p_y_arg);
   }
 
   for (; i < max_dimensionality; ++i) {
@@ -127,7 +153,10 @@ static SEXP vec_shape(SEXP dimensions) {
   return dimensions;
 }
 
-static inline int vec_dimension2(int axis, int x_dimension, int y_dimension) {
+static inline int vec_dimension2(int x_dimension, int y_dimension,
+                                 int axis,
+                                 SEXP x, SEXP y,
+                                 struct vctrs_arg* p_x_arg, struct vctrs_arg* p_y_arg) {
   if (x_dimension == y_dimension) {
     return x_dimension;
   } else if (x_dimension == 1) {
@@ -135,6 +164,6 @@ static inline int vec_dimension2(int axis, int x_dimension, int y_dimension) {
   } else if (y_dimension == 1) {
     return x_dimension;
   } else {
-    Rf_errorcall(R_NilValue, "Incompatible lengths along axis %i: %i, %i.", axis, x_dimension, y_dimension);
+    stop_incompatible_shape(x, y, x_dimension, y_dimension, axis, p_x_arg, p_y_arg);
   }
 }

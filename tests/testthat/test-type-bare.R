@@ -35,7 +35,7 @@ test_that("array dimensions are preserved", {
 
   expect_equal(vec_ptype2(mat1, mat1), matrix(lgl(), nrow = 0, ncol = 1))
   expect_equal(vec_ptype2(mat1, mat2), matrix(lgl(), nrow = 0, ncol = 2))
-  expect_error(vec_ptype2(mat2, mat3), "Incompatible")
+  expect_error(vec_ptype2(mat2, mat3), class = "vctrs_error_incompatible_type")
 })
 
 test_that("vec_shaped_ptype()", {

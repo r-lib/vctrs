@@ -63,30 +63,30 @@ static SEXP vec_ptype2_switch_native(SEXP x,
     return R_NilValue;
 
   case vctrs_type2_logical_logical:
-    return vec_shaped_ptype(vctrs_shared_empty_lgl, x, y);
+    return vec_shaped_ptype(vctrs_shared_empty_lgl, x, y, x_arg, y_arg);
 
   case vctrs_type2_logical_integer:
   case vctrs_type2_integer_integer:
-    return vec_shaped_ptype(vctrs_shared_empty_int, x, y);
+    return vec_shaped_ptype(vctrs_shared_empty_int, x, y, x_arg, y_arg);
 
   case vctrs_type2_logical_double:
   case vctrs_type2_integer_double:
   case vctrs_type2_double_double:
-    return vec_shaped_ptype(vctrs_shared_empty_dbl, x, y);
+    return vec_shaped_ptype(vctrs_shared_empty_dbl, x, y, x_arg, y_arg);
 
   case vctrs_type2_integer_complex:
   case vctrs_type2_double_complex:
   case vctrs_type2_complex_complex:
-    return vec_shaped_ptype(vctrs_shared_empty_cpl, x, y);
+    return vec_shaped_ptype(vctrs_shared_empty_cpl, x, y, x_arg, y_arg);
 
   case vctrs_type2_character_character:
-    return vec_shaped_ptype(vctrs_shared_empty_chr, x, y);
+    return vec_shaped_ptype(vctrs_shared_empty_chr, x, y, x_arg, y_arg);
 
   case vctrs_type2_raw_raw:
-    return vec_shaped_ptype(vctrs_shared_empty_raw, x, y);
+    return vec_shaped_ptype(vctrs_shared_empty_raw, x, y, x_arg, y_arg);
 
   case vctrs_type2_list_list:
-    return vec_shaped_ptype(vctrs_shared_empty_list, x, y);
+    return vec_shaped_ptype(vctrs_shared_empty_list, x, y, x_arg, y_arg);
 
   case vctrs_type2_dataframe_dataframe:
     return df_ptype2(x, y, x_arg, y_arg);

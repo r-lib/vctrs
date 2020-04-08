@@ -55,7 +55,7 @@ test_that("errors on non-broadcastable dimensions", {
   x <- new_table(dim = c(0L, 2L))
   y <- new_table(dim = c(0L, 3L))
 
-  expect_error(vec_ptype2(x, y), "2, 3")
+  expect_error(vec_ptype2(x, y), class = "vctrs_error_incompatible_type")
 })
 
 test_that("errors on non-tables", {
