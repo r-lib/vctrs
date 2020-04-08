@@ -40,7 +40,7 @@ SEXP vctrs_shape2(SEXP x_dimensions, SEXP y_dimensions) {
   return vec_shape2(x_dimensions, y_dimensions);
 }
 
-static inline SEXP vec_shape(SEXP dimensions);
+static SEXP vec_shape(SEXP dimensions);
 static inline int vec_dimension2(int axis, int x_dimension, int y_dimension);
 
 /*
@@ -106,7 +106,7 @@ static SEXP vec_shape2(SEXP x_dimensions, SEXP y_dimensions) {
 // -----------------------------------------------------------------------------
 
 // Sets the first axis to zero
-static inline SEXP vec_shape(SEXP dimensions) {
+static SEXP vec_shape(SEXP dimensions) {
   if (dimensions == R_NilValue) {
     return R_NilValue;
   }
