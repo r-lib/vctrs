@@ -155,6 +155,7 @@
 <a href="#vctrs-development-version" class="anchor"></a>vctrs (development version)<small> Unreleased </small>
 </h1>
 <ul>
+<li><p><code><a href="../reference/vec_ptype.html">vec_ptype()</a></code> gained an <code>x_arg</code> argument.</p></li>
 <li><p><code><a href="../reference/vctrs-conditions.html">stop_incompatible_cast()</a></code> now throws an error of class <code>vctrs_error_incompatible_type</code> rather than <code>vctrs_error_incompatible_cast</code>. This means that <code><a href="../reference/vec_cast.html">vec_cast()</a></code> also throws errors of this class, which better aligns it with <code><a href="../reference/vec_ptype2.html">vec_ptype2()</a></code> now that they are restricted to the same conversions.</p></li>
 <li>
 <p><code><a href="../reference/vec_cast.html">vec_cast()</a></code> is now restricted to the same conversions as <code><a href="../reference/vec_ptype2.html">vec_ptype2()</a></code> methods (<a href='https://github.com/r-lib/vctrs/issues/606'>#606</a>, <a href='https://github.com/r-lib/vctrs/issues/741'>#741</a>). This change is motivated by safety and performance:</p>

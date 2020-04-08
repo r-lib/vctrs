@@ -162,7 +162,7 @@ inputs, and is designed for interactive exploration." />
 inputs, and is designed for interactive exploration.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>vec_ptype</span>(<span class='no'>x</span>)
+    <pre class="usage"><span class='fu'>vec_ptype</span>(<span class='no'>x</span>, <span class='no'>...</span>, <span class='kw'>x_arg</span> <span class='kw'>=</span> <span class='st'>""</span>)
 
 <span class='fu'>vec_ptype_common</span>(<span class='no'>...</span>, <span class='kw'>.ptype</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)
 
@@ -172,8 +172,19 @@ inputs, and is designed for interactive exploration.</p>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>..., x</th>
-      <td><p>Vectors inputs</p></td>
+      <th>x</th>
+      <td><p>A vector</p></td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td><p>For <code>vec_ptype()</code>, these dots are for future extensions and must
+be empty.</p>
+<p>For <code>vec_ptype_common()</code> and <code>vec_ptype_show()</code>, vector inputs.</p></td>
+    </tr>
+    <tr>
+      <th>x_arg</th>
+      <td><p>Argument name for <code>x</code>. This is used in error messages to inform
+the user about the locations of incompatible types.</p></td>
     </tr>
     <tr>
       <th>.ptype</th>
