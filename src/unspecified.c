@@ -1,5 +1,6 @@
 #include "vctrs.h"
 #include "utils.h"
+#include "dim.h"
 
 // Initialised at load time
 static SEXP unspecified_attrib = NULL;

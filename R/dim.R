@@ -32,6 +32,9 @@ vec_dim <- function(x) {
 vec_dim_n <- function(x) {
   .Call(vctrs_dim_n, x)
 }
+has_dim <- function(x) {
+  .Call(vctrs_has_dim, x)
+}
 
 #' Perceived vector dimensions
 #'

@@ -501,6 +501,12 @@ as_double_date <- function(x) {
   }
 }
 
+lossy_floor <- function(x, to, x_arg = "", to_arg = "") {
+  x_floor <- floor(x)
+  lossy <- x != x_floor
+  maybe_lossy_cast(x_floor, x, to, lossy, x_arg = x_arg, to_arg = to_arg)
+}
+
 # Math --------------------------------------------------------------------
 
 #' @export

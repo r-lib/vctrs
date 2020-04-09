@@ -4,6 +4,7 @@
 #include "subscript-loc.h"
 #include "type-data-frame.h"
 #include "utils.h"
+#include "dim.h"
 
 // Initialised at load time
 SEXP syms_vec_slice_fallback = NULL;

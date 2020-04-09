@@ -3,6 +3,7 @@
 
 #include "vctrs.h"
 #include "utils.h"
+#include "dim.h"
 
 /*
  * Array slicing works by treating the array as a 1D structure, and transforming

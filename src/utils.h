@@ -218,6 +218,12 @@ static inline SEXP r_class(SEXP x) {
 static inline SEXP r_poke_class(SEXP x, SEXP names) {
   return Rf_setAttrib(x, R_ClassSymbol, names);
 }
+static inline SEXP r_dim(SEXP x) {
+  return Rf_getAttrib(x, R_DimSymbol);
+}
+static inline SEXP r_poke_dim(SEXP x, SEXP dim) {
+  return Rf_setAttrib(x, R_DimSymbol, dim);
+}
 static inline SEXP r_mark_s4(SEXP x) {
   SET_S4_OBJECT(x);
   return(x);

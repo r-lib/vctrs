@@ -358,10 +358,6 @@ SEXP vec_proxy_recursive(SEXP x, enum vctrs_proxy_kind kind);
 SEXP vec_restore(SEXP x, SEXP to, SEXP i);
 R_len_t vec_size(SEXP x);
 R_len_t vec_size_common(SEXP xs, R_len_t absent);
-SEXP vec_dim(SEXP x);
-R_len_t vec_dim_n(SEXP x);
-SEXP vec_bare_dim(SEXP x);
-R_len_t vec_bare_dim_n(SEXP x);
 SEXP vec_cast(SEXP x, SEXP to, struct vctrs_arg* x_arg, struct vctrs_arg* to_arg);
 SEXP vec_cast_common(SEXP xs, SEXP to);
 SEXP vec_cast_e(SEXP x, SEXP to, struct vctrs_arg* x_arg, struct vctrs_arg* to_arg, ERR* err);
@@ -609,12 +605,6 @@ static inline void growable_push_int(struct growable* g, int i) {
 
 #define UNPROTECT_GROWABLE(g) do { UNPROTECT(1);} while(0)
 
-
-// Shape --------------------------------------------------------
-
-bool has_dim(SEXP x);
-
-
 // Conditions ---------------------------------------------------
 
 void vctrs_stop_unsupported_type(enum vctrs_type, const char* fn) __attribute__((noreturn));
@@ -627,6 +617,10 @@ void stop_incompatible_size(SEXP x, SEXP y,
   __attribute__((noreturn));
 void stop_recycle_incompatible_size(R_len_t x_size, R_len_t size,
                                     struct vctrs_arg* x_arg)
+  __attribute__((noreturn));
+void stop_incompatible_shape(SEXP x, SEXP y,
+                             R_len_t x_size, R_len_t y_size, int axis,
+                             struct vctrs_arg* p_x_arg, struct vctrs_arg* p_y_arg)
   __attribute__((noreturn));
 void stop_corrupt_factor_levels(SEXP x, struct vctrs_arg* arg) __attribute__((noreturn));
 void stop_corrupt_ordered_levels(SEXP x, struct vctrs_arg* arg) __attribute__((noreturn));

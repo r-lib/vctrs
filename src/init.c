@@ -37,7 +37,7 @@ extern SEXP vctrs_in(SEXP, SEXP, SEXP, SEXP, SEXP);
 extern SEXP vctrs_duplicated_any(SEXP);
 extern SEXP vctrs_size(SEXP);
 extern SEXP vctrs_list_sizes(SEXP);
-extern SEXP vec_dim(SEXP);
+extern SEXP vctrs_dim(SEXP);
 extern SEXP vctrs_dim_n(SEXP);
 extern SEXP vctrs_is_unspecified(SEXP);
 extern SEXP vctrs_typeof(SEXP, SEXP);
@@ -108,6 +108,8 @@ extern SEXP vctrs_rep(SEXP, SEXP);
 extern SEXP vctrs_rep_each(SEXP, SEXP);
 extern SEXP vctrs_maybe_referenced_col(SEXP, SEXP);
 extern SEXP vctrs_new_df_unreferenced_col();
+extern SEXP vctrs_shaped_ptype(SEXP, SEXP, SEXP, SEXP, SEXP);
+extern SEXP vctrs_shape2(SEXP, SEXP, SEXP, SEXP);
 
 // Maturing
 // In the public header
@@ -158,7 +160,7 @@ static const R_CallMethodDef CallEntries[] = {
   {"vctrs_group_loc",                  (DL_FUNC) &vec_group_loc, 1},
   {"vctrs_size",                       (DL_FUNC) &vctrs_size, 1},
   {"vctrs_list_sizes",                 (DL_FUNC) &vctrs_list_sizes, 1},
-  {"vctrs_dim",                        (DL_FUNC) &vec_dim, 1},
+  {"vctrs_dim",                        (DL_FUNC) &vctrs_dim, 1},
   {"vctrs_dim_n",                      (DL_FUNC) &vctrs_dim_n, 1},
   {"vctrs_is_unspecified",             (DL_FUNC) &vctrs_is_unspecified, 1},
   {"vctrs_equal",                      (DL_FUNC) &vctrs_equal, 3},
@@ -236,6 +238,8 @@ static const R_CallMethodDef CallEntries[] = {
   {"vctrs_rep_each",                   (DL_FUNC) &vctrs_rep_each, 2},
   {"vctrs_maybe_referenced_col",       (DL_FUNC) &vctrs_maybe_referenced_col, 2},
   {"vctrs_new_df_unreferenced_col",    (DL_FUNC) &vctrs_new_df_unreferenced_col, 0},
+  {"vctrs_shaped_ptype",               (DL_FUNC) &vctrs_shaped_ptype, 5},
+  {"vctrs_shape2",                     (DL_FUNC) &vctrs_shape2, 4},
   {NULL, NULL, 0}
 };
 

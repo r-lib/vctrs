@@ -2,6 +2,7 @@
 #include "cast.h"
 #include "type-data-frame.h"
 #include "utils.h"
+#include "dim.h"
 
 static SEXP vec_cast_switch_native(SEXP x,
                                    SEXP to,

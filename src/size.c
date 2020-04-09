@@ -5,54 +5,19 @@
 
 R_len_t rcrd_size(SEXP x);
 
-// [[ register(); include("vctrs.h") ]]
-SEXP vec_dim(SEXP x) {
-  SEXP dim = PROTECT(vec_bare_dim(x));
-
-  if (dim == R_NilValue) {
-    dim = r_int(Rf_length(x));
-  }
-
-  UNPROTECT(1);
-  return dim;
-}
-
-// [[ include("vctrs.h") ]]
-R_len_t vec_dim_n(SEXP x) {
-  return Rf_length(vec_dim(x));
-}
-// [[ register() ]]
-SEXP vctrs_dim_n(SEXP x) {
-  return r_int(vec_dim_n(x));
-}
-
-// These versions return NULL and 0 for bare vectors. This is useful
-// to distinguish them from 1D arrays.
-
-// [[ include("vctrs.h") ]]
-SEXP vec_bare_dim(SEXP x) {
-  return Rf_getAttrib(x, R_DimSymbol);
-}
-// [[ include("vctrs.h") ]]
-R_len_t vec_bare_dim_n(SEXP x) {
-  return Rf_length(vec_bare_dim(x));
-}
-
 static inline R_len_t vec_raw_size(SEXP x) {
-  SEXP dims = PROTECT(Rf_getAttrib(x, R_DimSymbol));
+  SEXP dimensions = r_dim(x);
 
-  if (dims == R_NilValue || Rf_length(dims) == 0) {
-    UNPROTECT(1);
+  if (dimensions == R_NilValue || Rf_length(dimensions) == 0) {
     return Rf_length(x);
   }
 
-  if (TYPEOF(dims) != INTSXP) {
-    Rf_errorcall(R_NilValue, "Corrupt vector: dims is not integer vector");
+  if (TYPEOF(dimensions) != INTSXP) {
+    Rf_errorcall(R_NilValue, "Corrupt vector, `dim` attribute is not an integer vector.");
   }
 
-  R_len_t size = INTEGER(dims)[0];
+  R_len_t size = INTEGER(dimensions)[0];
 
-  UNPROTECT(1);
   return size;
 }
 
@@ -176,16 +141,6 @@ R_len_t rcrd_size(SEXP x) {
   } else {
     return Rf_length(VECTOR_ELT(x, 0));
   }
-}
-
-// [[ register() ]]
-SEXP vctrs_has_dim(SEXP x) {
-  return Rf_ScalarLogical(has_dim(x));
-}
-
-// [[ include("vctrs.h") ]]
-bool has_dim(SEXP x) {
-  return ATTRIB(x) != R_NilValue && Rf_getAttrib(x, R_DimSymbol) != R_NilValue;
 }
 
 // [[ include("vctrs.h") ]]

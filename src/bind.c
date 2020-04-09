@@ -2,6 +2,7 @@
 #include "slice-assign.h"
 #include "type-data-frame.h"
 #include "utils.h"
+#include "dim.h"
 
 
 static SEXP vec_rbind(SEXP xs, SEXP ptype, SEXP id, struct name_repair_opts* name_repair);

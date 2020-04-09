@@ -66,6 +66,36 @@ void stop_recycle_incompatible_size(R_len_t x_size, R_len_t size,
   never_reached("stop_recycle_incompatible_size");
 }
 
+void stop_incompatible_shape(SEXP x, SEXP y,
+                             R_len_t x_size, R_len_t y_size, int axis,
+                             struct vctrs_arg* p_x_arg, struct vctrs_arg* p_y_arg) {
+  SEXP syms[8] = {
+    r_sym("x"),
+    r_sym("y"),
+    r_sym("x_size"),
+    r_sym("y_size"),
+    r_sym("axis"),
+    r_sym("x_arg"),
+    r_sym("y_arg"),
+    NULL
+  };
+  SEXP args[8] = {
+    PROTECT(r_protect(x)),
+    PROTECT(r_protect(y)),
+    PROTECT(r_int(x_size)),
+    PROTECT(r_int(y_size)),
+    PROTECT(r_int(axis)),
+    PROTECT(vctrs_arg(p_x_arg)),
+    PROTECT(vctrs_arg(p_y_arg)),
+    NULL
+  };
+
+  SEXP call = PROTECT(r_call(r_sym("stop_incompatible_shape"), syms, args));
+  Rf_eval(call, vctrs_ns_env);
+
+  never_reached("stop_incompatible_shape");
+}
+
 void stop_corrupt_factor_levels(SEXP x, struct vctrs_arg* arg) {
   SEXP call = PROTECT(Rf_lang3(Rf_install("stop_corrupt_factor_levels"),
                                PROTECT(r_protect(x)),

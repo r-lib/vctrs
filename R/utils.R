@@ -76,10 +76,6 @@ paste_line <- function (...) {
   paste(chr(...), collapse = "\n")
 }
 
-has_dim <- function(x) {
-  .Call(vctrs_has_dim, x)
-}
-
 # Experimental
 result <- function(ok = NULL, err = NULL) {
   structure(

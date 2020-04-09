@@ -103,6 +103,13 @@ stop_incompatible_cast <- function(x,
   )
 }
 
+stop_incompatible_shape <- function(x, y, x_size, y_size, axis, x_arg, y_arg) {
+  details <- format_error_bullets(c(
+    x = glue::glue("Incompatible sizes {x_size} and {y_size} along axis {axis}.")
+  ))
+  stop_incompatible_type(x, y, x_arg, y_arg, details = details)
+}
+
 stop_incompatible_type_convert <- function(x,
                                            y,
                                            x_arg = "",
