@@ -378,7 +378,6 @@ extern SEXP classes_ordered;
 extern SEXP classes_date;
 extern SEXP classes_posixct;
 extern SEXP classes_tibble;
-extern SEXP classes_list_of;
 extern SEXP classes_vctrs_group_rle;
 
 extern SEXP strings_dots;

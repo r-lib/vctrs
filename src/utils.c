@@ -33,7 +33,6 @@ SEXP classes_ordered = NULL;
 SEXP classes_date = NULL;
 SEXP classes_posixct = NULL;
 SEXP classes_tibble = NULL;
-SEXP classes_list_of = NULL;
 SEXP classes_vctrs_group_rle = NULL;
 
 static SEXP syms_as_data_frame2 = NULL;
@@ -1597,12 +1596,7 @@ void vctrs_init_utils(SEXP ns) {
   SET_STRING_ELT(classes_tibble, 1, strings_tbl);
   SET_STRING_ELT(classes_tibble, 2, strings_data_frame);
 
-
-  classes_list_of = r_new_shared_vector(STRSXP, 3);
   strings_vctrs_list_of = Rf_mkChar("vctrs_list_of");
-  SET_STRING_ELT(classes_list_of, 0, strings_vctrs_list_of);
-  SET_STRING_ELT(classes_list_of, 1, strings_vctrs_vctr);
-  SET_STRING_ELT(classes_list_of, 2, Rf_mkChar("list"));
 
 
   classes_vctrs_group_rle = r_new_shared_vector(STRSXP, 3);
