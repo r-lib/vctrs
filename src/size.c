@@ -3,8 +3,6 @@
 #include "utils.h"
 #include "slice.h"
 
-R_len_t rcrd_size(SEXP x);
-
 static inline R_len_t vec_raw_size(SEXP x) {
   SEXP dimensions = r_dim(x);
 
@@ -133,15 +131,6 @@ SEXP vctrs_df_size(SEXP x) {
   return r_int(df_raw_size(x));
 }
 
-
-R_len_t rcrd_size(SEXP x) {
-  int n = Rf_length(x);
-  if (n == 0) {
-    return 0;
-  } else {
-    return Rf_length(VECTOR_ELT(x, 0));
-  }
-}
 
 // [[ include("vctrs.h") ]]
 SEXP vec_recycle(SEXP x, R_len_t size, struct vctrs_arg* x_arg) {
