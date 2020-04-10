@@ -87,7 +87,6 @@ enum vctrs_class_type class_type(SEXP x);
 bool is_data_frame(SEXP x);
 bool is_bare_data_frame(SEXP x);
 bool is_bare_tibble(SEXP x);
-bool is_record(SEXP x);
 
 SEXP vec_unique_names(SEXP x, bool quiet);
 SEXP vec_unique_colnames(SEXP x, bool quiet);

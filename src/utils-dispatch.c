@@ -13,15 +13,6 @@ SEXP vctrs_class_type(SEXP x) {
   return Rf_mkString(class_type_as_str(class_type(x)));
 }
 
-// [[ include("utils.h") ]]
-bool is_record(SEXP x) {
-  enum vctrs_class_type type = class_type(x);
-  return
-    type == vctrs_class_rcrd ||
-    type == vctrs_class_posixlt ||
-    type == vctrs_class_bare_posixlt;
-}
-
 
 // [[ include("utils.h") ]]
 enum vctrs_class_type class_type(SEXP x) {

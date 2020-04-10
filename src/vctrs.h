@@ -417,7 +417,6 @@ SEXP vec_ptype2_dispatch_s3(SEXP x,
 SEXP df_ptype2(SEXP x, SEXP y, struct vctrs_arg* x_arg, struct vctrs_arg* y_arg);
 
 bool is_data_frame(SEXP x);
-bool is_record(SEXP x);
 
 R_len_t df_size(SEXP x);
 R_len_t df_rownames_size(SEXP x);
