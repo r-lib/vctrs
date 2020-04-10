@@ -23,7 +23,6 @@ enum vctrs_class_type {
   vctrs_class_bare_date,
   vctrs_class_bare_posixct,
   vctrs_class_bare_posixlt,
-  vctrs_class_posixlt,
   vctrs_class_unknown,
   vctrs_class_none
 };
