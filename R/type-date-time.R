@@ -30,19 +30,7 @@ new_date <- function(x = double()) {
 #' @export
 #' @rdname new_date
 new_datetime <- function(x = double(), tzone = "") {
-  tzone <- tzone %||% ""
-
-  if (is.integer(x)) {
-    x <- as.double(x)
-  }
-  stopifnot(is.double(x))
-  stopifnot(is.character(tzone))
-
-  structure(
-    x,
-    tzone = tzone,
-    class = c("POSIXct", "POSIXt")
-  )
+  .Call(vctrs_new_datetime, x, tzone)
 }
 
 #' @export
@@ -65,7 +53,7 @@ vec_proxy.Date <- function(x, ...) {
 
 #' @export
 vec_proxy.POSIXct <- function(x, ...) {
-  new_datetime(x, attr(x, "tzone"))
+  datetime_validate(x)
 }
 
 #' @export
@@ -248,12 +236,25 @@ vec_cast.POSIXct.Date <- function(x, to, ...) {
 #' @export
 #' @method vec_cast.POSIXct POSIXlt
 vec_cast.POSIXct.POSIXlt <- function(x, to, ...) {
-  new_datetime(as.POSIXct(x), tzone = tzone(to))
+  to_tzone <- tzone(to)
+  out <- as.POSIXct(x)
+
+  if (identical(tzone(out), to_tzone)) {
+    datetime_validate(out)
+  } else {
+    new_datetime(out, tzone = to_tzone)
+  }
 }
 #' @export
 #' @method vec_cast.POSIXct POSIXct
 vec_cast.POSIXct.POSIXct <- function(x, to, ...) {
-  new_datetime(vec_data(x), tzone = tzone(to))
+  to_tzone <- tzone(to)
+
+  if (identical(tzone(x), to_tzone)) {
+    datetime_validate(x)
+  } else {
+    new_datetime(x, tzone = to_tzone)
+  }
 }
 
 #' @rdname new_date
@@ -490,6 +491,10 @@ units_union <- function(x, y) {
 
 date_verify_double <- function(x) {
   .Call(vctrs_date_verify_double, x)
+}
+
+datetime_validate <- function(x) {
+  .Call(vctrs_datetime_validate, x)
 }
 
 lossy_floor <- function(x, to, x_arg = "", to_arg = "") {

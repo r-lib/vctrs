@@ -73,6 +73,32 @@ test_that("only allows doubles", {
   expect_error(new_date("x"), "must be a double vector")
 })
 
+test_that("can create a datetime", {
+  expect_identical(new_datetime(), structure(double(), class = c("POSIXct", "POSIXt"), tzone = ""))
+  expect_identical(new_datetime(0), structure(0, class = c("POSIXct", "POSIXt"), tzone = ""))
+})
+
+test_that("retains input names", {
+  expect_named(new_datetime(c(x = 0)), "x")
+})
+
+test_that("drops attributes except names", {
+  expect_identical(new_datetime(structure(1, foo = "bar")), new_datetime(1))
+})
+
+test_that("only allows doubles", {
+  expect_error(new_datetime(1L), "must be a double vector")
+  expect_error(new_datetime("x"), "must be a double vector")
+})
+
+test_that("tzone is allowed to be `NULL`", {
+  expect_identical(new_datetime(tzone = NULL), new_datetime(tzone = ""))
+})
+
+test_that("tzone must be character or `NULL`", {
+  expect_error(new_datetime(tzone = 1), "character vector or `NULL`")
+})
+
 # coerce ------------------------------------------------------------------
 
 test_that("datetime coercions are symmetric and unchanging", {
