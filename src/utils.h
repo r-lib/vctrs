@@ -134,7 +134,6 @@ enum vctrs_type2_s3 vec_typeof2_s3_impl(SEXP x, SEXP y, enum vctrs_type type_x, 
 
 enum vctrs_class_type class_type(SEXP x);
 
-SEXP new_list_of(SEXP x, SEXP ptype);
 void init_list_of(SEXP x, SEXP ptype);
 
 SEXP new_empty_factor(SEXP levels);
