@@ -111,6 +111,7 @@ extern SEXP vctrs_new_df_unreferenced_col();
 extern SEXP vctrs_shaped_ptype(SEXP, SEXP, SEXP, SEXP, SEXP);
 extern SEXP vctrs_shape2(SEXP, SEXP, SEXP, SEXP);
 extern SEXP vctrs_new_date(SEXP);
+extern SEXP vctrs_date_verify_double(SEXP);
 
 // Maturing
 // In the public header
@@ -242,6 +243,7 @@ static const R_CallMethodDef CallEntries[] = {
   {"vctrs_shaped_ptype",               (DL_FUNC) &vctrs_shaped_ptype, 5},
   {"vctrs_shape2",                     (DL_FUNC) &vctrs_shape2, 4},
   {"vctrs_new_date",                   (DL_FUNC) &vctrs_new_date, 1},
+  {"vctrs_date_verify_double",         (DL_FUNC) &vctrs_date_verify_double, 1},
   {NULL, NULL, 0}
 };
 

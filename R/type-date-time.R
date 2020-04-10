@@ -60,7 +60,7 @@ new_duration <- function(x = double(), units = c("secs", "mins", "hours", "days"
 
 #' @export
 vec_proxy.Date <- function(x, ...) {
-  as_double_date(x)
+  date_verify_double(x)
 }
 
 #' @export
@@ -215,7 +215,7 @@ vec_cast.Date <- function(x, to, ...) {
 #' @export
 #' @method vec_cast.Date Date
 vec_cast.Date.Date <- function(x, to, ...) {
-  as_double_date(x)
+  date_verify_double(x)
 }
 #' @export
 #' @method vec_cast.Date POSIXct
@@ -488,12 +488,8 @@ units_union <- function(x, y) {
   }
 }
 
-as_double_date <- function(x) {
-  if (is.integer(x)) {
-    new_date(as.double(x))
-  } else {
-    x
-  }
+date_verify_double <- function(x) {
+  .Call(vctrs_date_verify_double, x)
 }
 
 lossy_floor <- function(x, to, x_arg = "", to_arg = "") {
