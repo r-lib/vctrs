@@ -48,7 +48,7 @@ new_duration <- function(x = double(), units = c("secs", "mins", "hours", "days"
 
 #' @export
 vec_proxy.Date <- function(x, ...) {
-  date_verify_double(x)
+  date_validate(x)
 }
 
 #' @export
@@ -203,7 +203,7 @@ vec_cast.Date <- function(x, to, ...) {
 #' @export
 #' @method vec_cast.Date Date
 vec_cast.Date.Date <- function(x, to, ...) {
-  date_verify_double(x)
+  date_validate(x)
 }
 #' @export
 #' @method vec_cast.Date POSIXct
@@ -489,8 +489,8 @@ units_union <- function(x, y) {
   }
 }
 
-date_verify_double <- function(x) {
-  .Call(vctrs_date_verify_double, x)
+date_validate <- function(x) {
+  .Call(vctrs_date_validate, x)
 }
 
 datetime_validate <- function(x) {

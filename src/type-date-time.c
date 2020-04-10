@@ -27,15 +27,15 @@ static SEXP new_date(SEXP x) {
 }
 
 
-static SEXP date_verify_double(SEXP x);
+static SEXP date_validate(SEXP x);
 
 // [[ register() ]]
-SEXP vctrs_date_verify_double(SEXP x) {
-  return date_verify_double(x);
+SEXP vctrs_date_validate(SEXP x) {
+  return date_validate(x);
 }
 
 // Ensure that a `Date` is internally stored as a double vector
-static SEXP date_verify_double(SEXP x) {
+static SEXP date_validate(SEXP x) {
   switch (TYPEOF(x)) {
   case REALSXP:
     return x;
