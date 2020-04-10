@@ -98,31 +98,33 @@ enum vctrs_type vec_proxy_typeof(SEXP x) {
   return vec_base_typeof(x, true);
 }
 
+static bool vec_is_list_impl(SEXP proxy);
+
 // [[ include("vctrs.h") ]]
 bool vec_is_list(SEXP x) {
-  if (TYPEOF(x) != VECSXP) {
+  SEXP proxy = PROTECT(vec_proxy(x));
+
+  bool out = vec_is_list_impl(proxy);
+
+  UNPROTECT(1);
+  return out;
+}
+
+static bool vec_is_list_impl(SEXP proxy) {
+  // Guarantee that the `proxy` is internally a list
+  if (TYPEOF(proxy) != VECSXP) {
     return false;
   }
 
-  switch (class_type(x)) {
-  // Bare list
-  case vctrs_class_none:
+  if (OBJECT(proxy)) {
+    // Explicit list
+    return class_type(proxy) == vctrs_class_list;
+  } else {
+    // Implicit list
     return true;
-
-  // Explicit list
-  case vctrs_class_list:
-    return true;
-
-  // Non-explicit S3 lists
-  case vctrs_class_unknown:
-    return vec_is_vector(x);
-
-  // List-like classes known by `class_type()`.
-  // All data frame classes, posixlt.
-  default:
-    return false;
   }
 }
+
 // [[ register() ]]
 SEXP vctrs_is_list(SEXP x) {
   return Rf_ScalarLogical(vec_is_list(x));

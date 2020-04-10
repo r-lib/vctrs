@@ -60,7 +60,7 @@ tibble <- function(...) {
 }
 
 local_foobar_proxy <- function(frame = caller_env()) {
-  local_methods(.frame = frame, vec_proxy.vctrs_foobar = identity)
+  local_methods(.frame = frame, vec_proxy.vctrs_foobar = unclass)
 }
 
 subclass <- function(x) {

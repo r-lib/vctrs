@@ -155,8 +155,8 @@ vec_is_vector <- function(x) {
 #'
 #' * `x` is a bare list with no class.
 #' * `x` is a list explicitly inheriting from `"list"`.
-#' * `x` is an S3 list that [vec_is()] returns `TRUE` for. For this to return
-#'   `TRUE`, the class must implement a [vec_proxy()] method.
+#' * `x` is an S3 object with a [vec_proxy()] method that returns a list that
+#'   passes one of the above conditions.
 #'
 #' @param x An object.
 #'
