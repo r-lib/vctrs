@@ -90,8 +90,6 @@ static enum vctrs_class_type class_type_impl(SEXP class) {
 
   if (butlast == strings_posixlt) {
     if (last == strings_posixt) return vctrs_class_posixlt;
-  } else if (butlast == strings_vctrs_rcrd) {
-    if (last == strings_vctrs_vctr) return vctrs_class_rcrd;
   } else if (last == strings_data_frame) {
     return vctrs_class_data_frame;
   } else if (last == strings_list) {
@@ -109,7 +107,6 @@ static const char* class_type_as_str(enum vctrs_class_type type) {
   case vctrs_class_bare_tibble: return "bare_tibble";
   case vctrs_class_bare_factor: return "bare_factor";
   case vctrs_class_bare_ordered: return "bare_ordered";
-  case vctrs_class_rcrd: return "rcrd";
   case vctrs_class_bare_date: return "bare_date";
   case vctrs_class_bare_posixct: return "bare_posixct";
   case vctrs_class_bare_posixlt: return "bare_posixlt";

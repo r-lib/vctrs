@@ -158,9 +158,6 @@ test_that("class_type() detects classes", {
   expect_identical(class_type(subclass(new_datetime())), "unknown")
   expect_identical(class_type(subclass(as.POSIXlt(new_date()))), "posixlt")
 
-  expect_identical(class_type(new_rcrd(list(a = 1))), "rcrd")
-  expect_identical(class_type(subclass(new_rcrd(list(a = 1)))), "rcrd")
-
   expect_identical(class_type(NA), "none")
   expect_identical(class_type(foobar()), "unknown")
 })
