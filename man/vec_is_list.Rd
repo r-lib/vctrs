@@ -14,7 +14,7 @@ vec_is_list(x)
 returns \code{TRUE} if:
 \itemize{
 \item \code{x} is a bare list with no class.
-\item \code{x} is a list explicitly inheriting from \code{"list"} or \code{"vctrs_list_of"}.
+\item \code{x} is a list explicitly inheriting from \code{"list"}.
 \item \code{x} is an S3 list that \code{\link[=vec_is]{vec_is()}} returns \code{TRUE} for. For this to return
 \code{TRUE}, the class must implement a \code{\link[=vec_proxy]{vec_proxy()}} method.
 }

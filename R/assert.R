@@ -154,7 +154,7 @@ vec_is_vector <- function(x) {
 #' returns `TRUE` if:
 #'
 #' * `x` is a bare list with no class.
-#' * `x` is a list explicitly inheriting from `"list"` or `"vctrs_list_of"`.
+#' * `x` is a list explicitly inheriting from `"list"`.
 #' * `x` is an S3 list that [vec_is()] returns `TRUE` for. For this to return
 #'   `TRUE`, the class must implement a [vec_proxy()] method.
 #'
