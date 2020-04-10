@@ -109,9 +109,8 @@ bool vec_is_list(SEXP x) {
   case vctrs_class_none:
     return true;
 
-  // Explicit lists
+  // Explicit list
   case vctrs_class_list:
-  case vctrs_class_list_of:
     return true;
 
   // Non-explicit S3 lists

@@ -15,7 +15,6 @@
 
 enum vctrs_class_type {
   vctrs_class_list,
-  vctrs_class_list_of,
   vctrs_class_data_frame,
   vctrs_class_bare_data_frame,
   vctrs_class_bare_tibble,
