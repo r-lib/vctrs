@@ -388,7 +388,6 @@ extern SEXP strings_posixlt;
 extern SEXP strings_posixt;
 extern SEXP strings_factor;
 extern SEXP strings_ordered;
-extern SEXP strings_vctrs_vctr;
 extern SEXP strings_list;
 extern SEXP strings_none;
 extern SEXP strings_minimal;
