@@ -238,6 +238,10 @@ test_that("bare lists are lists", {
   expect_true(vec_is_list(list()))
 })
 
+test_that("list_of are lists", {
+  expect_true(vec_is_list(new_list_of()))
+})
+
 test_that("Vectors with a non-VECSXP type are not lists", {
   expect_false(vec_is_list(1))
   expect_false(vec_is_list("a"))
