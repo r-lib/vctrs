@@ -236,25 +236,15 @@ vec_cast.POSIXct.Date <- function(x, to, ...) {
 #' @export
 #' @method vec_cast.POSIXct POSIXlt
 vec_cast.POSIXct.POSIXlt <- function(x, to, ...) {
-  to_tzone <- tzone(to)
   out <- as.POSIXct(x)
-
-  if (identical(tzone(out), to_tzone)) {
-    datetime_validate(out)
-  } else {
-    new_datetime(out, tzone = to_tzone)
-  }
+  out <- datetime_validate(out)
+  datetime_rezone(out, tzone(to))
 }
 #' @export
 #' @method vec_cast.POSIXct POSIXct
 vec_cast.POSIXct.POSIXct <- function(x, to, ...) {
-  to_tzone <- tzone(to)
-
-  if (identical(tzone(x), to_tzone)) {
-    datetime_validate(x)
-  } else {
-    new_datetime(x, tzone = to_tzone)
-  }
+  out <- datetime_validate(x)
+  datetime_rezone(out, tzone(to))
 }
 
 #' @rdname new_date
@@ -495,6 +485,10 @@ date_validate <- function(x) {
 
 datetime_validate <- function(x) {
   .Call(vctrs_datetime_validate, x)
+}
+
+datetime_rezone <- function(x, tzone) {
+  .Call(vctrs_datetime_rezone, x, tzone)
 }
 
 lossy_floor <- function(x, to, x_arg = "", to_arg = "") {

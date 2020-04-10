@@ -140,6 +140,32 @@ static SEXP datetime_validate_type(SEXP x) {
   never_reached("datetime_validate_type");
 }
 
+
+static SEXP datetime_rezone(SEXP x, SEXP tzone);
+
+// [[ register() ]]
+SEXP vctrs_datetime_rezone(SEXP x, SEXP tzone) {
+  return datetime_rezone(x, tzone);
+}
+
+// Same underlying numeric representation, different `tzone`
+static SEXP datetime_rezone(SEXP x, SEXP tzone) {
+  SEXP x_tzone = PROTECT(Rf_getAttrib(x, syms_tzone));
+
+  if (x_tzone == tzone) {
+    UNPROTECT(1);
+    return x;
+  }
+
+  SEXP out = PROTECT(r_maybe_duplicate(x));
+
+  Rf_setAttrib(out, syms_tzone, tzone);
+
+  UNPROTECT(2);
+  return out;
+}
+
+
 static SEXP new_empty_datetime(SEXP tzone);
 static SEXP get_tzone(SEXP x);
 

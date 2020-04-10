@@ -22,6 +22,12 @@ test_that("dates and times are vectors", {
   expect_true(vec_is(as.POSIXlt("2020-01-01")))
 })
 
+test_that("vec_cast() converts POSIXct with int representation to double when converting zones", {
+  x <- structure(integer(), class = c("POSIXct", "POSIXt"), tzone = "UTC")
+  y <- structure(numeric(), class = c("POSIXct", "POSIXt"), tzone = "America/Los_Angeles")
+  expect_true(is.double(vec_cast(x, y)))
+})
+
 test_that("vec_c() converts POSIXct with int representation to double representation (#540)", {
   time1 <- seq(as.POSIXct("2015-12-01", tz = "UTC"), length.out = 2, by = "days")
   time2 <- vec_c(time1)
