@@ -382,7 +382,6 @@ extern SEXP strings_empty;
 extern SEXP strings_tbl;
 extern SEXP strings_tbl_df;
 extern SEXP strings_data_frame;
-extern SEXP strings_vctrs_rcrd;
 extern SEXP strings_date;
 extern SEXP strings_posixct;
 extern SEXP strings_posixlt;

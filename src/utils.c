@@ -16,7 +16,6 @@ SEXP s4_c_method_table = NULL;
 SEXP strings_tbl = NULL;
 SEXP strings_tbl_df = NULL;
 SEXP strings_data_frame = NULL;
-SEXP strings_vctrs_rcrd = NULL;
 SEXP strings_date = NULL;
 SEXP strings_posixct = NULL;
 SEXP strings_posixlt = NULL;
@@ -1491,9 +1490,6 @@ void vctrs_init_utils(SEXP ns) {
   strings_empty = Rf_mkChar("");
   SET_STRING_ELT(strings, 1, strings_empty);
 
-  strings_vctrs_rcrd = Rf_mkChar("vctrs_rcrd");
-  SET_STRING_ELT(strings, 2, strings_vctrs_rcrd);
-
   strings_date = Rf_mkChar("Date");
   SET_STRING_ELT(strings, 3, strings_date);
 
@@ -1598,7 +1594,7 @@ void vctrs_init_utils(SEXP ns) {
 
   classes_vctrs_group_rle = r_new_shared_vector(STRSXP, 3);
   SET_STRING_ELT(classes_vctrs_group_rle, 0, Rf_mkChar("vctrs_group_rle"));
-  SET_STRING_ELT(classes_vctrs_group_rle, 1, strings_vctrs_rcrd);
+  SET_STRING_ELT(classes_vctrs_group_rle, 1, Rf_mkChar("vctrs_rcrd"));
   SET_STRING_ELT(classes_vctrs_group_rle, 2, strings_vctrs_vctr);
 
 
