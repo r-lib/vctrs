@@ -24,7 +24,6 @@ SEXP strings_posixt = NULL;
 SEXP strings_factor = NULL;
 SEXP strings_ordered = NULL;
 SEXP strings_vctrs_vctr = NULL;
-SEXP strings_vctrs_list_of = NULL;
 SEXP strings_list = NULL;
 
 SEXP classes_data_frame = NULL;
@@ -1595,8 +1594,6 @@ void vctrs_init_utils(SEXP ns) {
   strings_tbl = Rf_mkChar("tbl");
   SET_STRING_ELT(classes_tibble, 1, strings_tbl);
   SET_STRING_ELT(classes_tibble, 2, strings_data_frame);
-
-  strings_vctrs_list_of = Rf_mkChar("vctrs_list_of");
 
 
   classes_vctrs_group_rle = r_new_shared_vector(STRSXP, 3);
