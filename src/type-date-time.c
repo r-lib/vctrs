@@ -1,6 +1,33 @@
 #include "vctrs.h"
 #include "utils.h"
 
+static SEXP new_date(SEXP x);
+
+// [[ register() ]]
+SEXP vctrs_new_date(SEXP x) {
+  return new_date(x);
+}
+
+static SEXP new_date(SEXP x) {
+  if (TYPEOF(x) != REALSXP) {
+    Rf_errorcall(R_NilValue, "`x` must be a double vector.");
+  }
+
+  SEXP names = PROTECT(r_names(x));
+
+  SEXP out = PROTECT(r_maybe_duplicate(x));
+
+  SET_ATTRIB(out, R_NilValue);
+
+  r_poke_names(out, names);
+  r_poke_class(out, classes_date);
+
+  UNPROTECT(2);
+  return out;
+}
+
+// -----------------------------------------------------------------------------
+
 static SEXP new_empty_datetime(SEXP tzone);
 static SEXP get_tzone(SEXP x);
 

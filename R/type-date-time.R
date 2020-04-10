@@ -24,12 +24,7 @@
 #' new_datetime(0, tzone = "UTC")
 #' new_duration(1, "hour")
 new_date <- function(x = double()) {
-  stopifnot(is.double(x))
-
-  structure(
-    x,
-    class = "Date"
-  )
+  .Call(vctrs_new_date, x)
 }
 
 #' @export

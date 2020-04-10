@@ -53,6 +53,25 @@ test_that("POSIXlt roundtrips through proxy and restore", {
   expect_identical(out, x)
 })
 
+# constructor -------------------------------------------------------------
+
+test_that("can create a date", {
+  expect_identical(new_date(), structure(double(), class = "Date"))
+  expect_identical(new_date(0), structure(0, class = "Date"))
+})
+
+test_that("retains input names", {
+  expect_named(new_date(c(x = 0)), "x")
+})
+
+test_that("drops attributes except names", {
+  expect_identical(new_date(structure(1, foo = "bar")), new_date(1))
+})
+
+test_that("only allows doubles", {
+  expect_error(new_date(1L), "must be a double vector")
+  expect_error(new_date("x"), "must be a double vector")
+})
 
 # coerce ------------------------------------------------------------------
 
