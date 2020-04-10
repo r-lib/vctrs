@@ -117,10 +117,6 @@ bool vec_is_list(SEXP x) {
   case vctrs_class_unknown:
     return vec_is_vector(x);
 
-  // TODO: Can this ever be considered a list?
-  case vctrs_class_rcrd:
-    return false;
-
   // List-like classes known by `class_type()`.
   // All data frame classes, posixlt.
   default:
