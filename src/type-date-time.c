@@ -346,11 +346,6 @@ static SEXP datetime_validate_type(SEXP x) {
 
 // -----------------------------------------------------------------------------
 
-// [[ register() ]]
-SEXP vctrs_datetime_rezone(SEXP x, SEXP tzone) {
-  return datetime_rezone(x, tzone);
-}
-
 // Same underlying numeric representation, different `tzone`
 static SEXP datetime_rezone(SEXP x, SEXP tzone) {
   SEXP x_tzone = PROTECT(tzone_get(x));

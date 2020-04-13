@@ -492,10 +492,6 @@ datetime_validate <- function(x) {
   .Call(vctrs_datetime_validate, x)
 }
 
-datetime_rezone <- function(x, tzone) {
-  .Call(vctrs_datetime_rezone, x, tzone)
-}
-
 lossy_floor <- function(x, to, x_arg = "", to_arg = "") {
   x_floor <- floor(x)
   lossy <- x != x_floor

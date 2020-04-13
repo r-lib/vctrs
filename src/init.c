@@ -114,7 +114,6 @@ extern SEXP vctrs_new_date(SEXP);
 extern SEXP vctrs_date_validate(SEXP);
 extern SEXP vctrs_new_datetime(SEXP, SEXP);
 extern SEXP vctrs_datetime_validate(SEXP);
-extern SEXP vctrs_datetime_rezone(SEXP, SEXP);
 
 // Maturing
 // In the public header
@@ -249,7 +248,6 @@ static const R_CallMethodDef CallEntries[] = {
   {"vctrs_date_validate",              (DL_FUNC) &vctrs_date_validate, 1},
   {"vctrs_new_datetime",               (DL_FUNC) &vctrs_new_datetime, 2},
   {"vctrs_datetime_validate",          (DL_FUNC) &vctrs_datetime_validate, 1},
-  {"vctrs_datetime_rezone",            (DL_FUNC) &vctrs_datetime_rezone, 2},
   {NULL, NULL, 0}
 };
 
