@@ -2,59 +2,53 @@
 #include "utils.h"
 
 
+static SEXP new_date(SEXP x);
+static SEXP new_datetime(SEXP x, SEXP tzone);
+static SEXP new_empty_datetime(SEXP tzone);
+
+static SEXP date_validate(SEXP x);
+static SEXP datetime_validate(SEXP x);
+
+static SEXP datetime_rezone(SEXP x, SEXP tzone);
+
 static SEXP tzone_get(SEXP x);
+static SEXP tzone_union(SEXP x_tzone, SEXP y_tzone);
 static bool tzone_equal(SEXP x_tzone, SEXP y_tzone);
 
+// -----------------------------------------------------------------------------
+// ptype2
 
-static SEXP new_date(SEXP x);
+// [[ include("vctrs.h") ]]
+SEXP date_datetime_ptype2(SEXP x, SEXP y) {
+  SEXP x_class = PROTECT(Rf_getAttrib(x, R_ClassSymbol));
+  SEXP x_first_class = STRING_ELT(x_class, 0);
 
-// [[ register() ]]
-SEXP vctrs_new_date(SEXP x) {
-  return new_date(x);
-}
+  SEXP tzone = (x_first_class == strings_date) ? tzone_get(y) : tzone_get(x);
+  PROTECT(tzone);
 
-static SEXP new_date(SEXP x) {
-  if (TYPEOF(x) != REALSXP) {
-    Rf_errorcall(R_NilValue, "`x` must be a double vector.");
-  }
-
-  SEXP names = PROTECT(r_names(x));
-
-  SEXP out = PROTECT(r_maybe_duplicate(x));
-
-  SET_ATTRIB(out, R_NilValue);
-
-  r_poke_names(out, names);
-  r_poke_class(out, classes_date);
+  SEXP out = new_empty_datetime(tzone);
 
   UNPROTECT(2);
   return out;
 }
 
 
-static SEXP date_validate(SEXP x);
+// [[ include("vctrs.h") ]]
+SEXP datetime_datetime_ptype2(SEXP x, SEXP y) {
+  SEXP x_tzone = PROTECT(tzone_get(x));
+  SEXP y_tzone = PROTECT(tzone_get(y));
 
-// [[ register() ]]
-SEXP vctrs_date_validate(SEXP x) {
-  return date_validate(x);
+  // Never allocates
+  SEXP tzone = tzone_union(x_tzone, y_tzone);
+
+  SEXP out = new_empty_datetime(tzone);
+
+  UNPROTECT(2);
+  return out;
 }
 
-// Ensure that a `Date` is internally stored as a double vector
-static SEXP date_validate(SEXP x) {
-  switch (TYPEOF(x)) {
-  case REALSXP:
-    return x;
-  case INTSXP:
-    // Keeps attributes
-    return Rf_coerceVector(x, REALSXP);
-  default:
-    Rf_errorcall(
-      R_NilValue,
-      "Internal error: Corrupt `Date` with unknown type %s.", Rf_type2char(TYPEOF(x))
-    );
-  }
-}
-
+// -----------------------------------------------------------------------------
+// cast
 
 // [[ include("vctrs.h") ]]
 SEXP date_as_date(SEXP x) {
@@ -75,6 +69,7 @@ SEXP date_as_posixct(SEXP x, SEXP to) {
   return out;
 }
 
+
 // [[ include("vctrs.h") ]]
 SEXP date_as_posixlt(SEXP x, SEXP to) {
   SEXP tzone = PROTECT(tzone_get(to));
@@ -85,159 +80,6 @@ SEXP date_as_posixlt(SEXP x, SEXP to) {
   out = PROTECT(r_as_posixlt(out, tzone));
 
   UNPROTECT(3);
-  return out;
-}
-
-// -----------------------------------------------------------------------------
-
-static SEXP new_datetime(SEXP x, SEXP tzone);
-
-// [[ register() ]]
-SEXP vctrs_new_datetime(SEXP x, SEXP tzone) {
-  return new_datetime(x, tzone);
-}
-
-static SEXP new_datetime(SEXP x, SEXP tzone) {
-  if (TYPEOF(x) != REALSXP) {
-    Rf_errorcall(R_NilValue, "`x` must be a double vector.");
-  }
-
-  // Convenience special case where we allow a
-  // null `tzone` to represent local time
-  if (tzone == R_NilValue) {
-    tzone = chrs_empty;
-  }
-
-  if (TYPEOF(tzone) != STRSXP) {
-    Rf_errorcall(R_NilValue, "`tzone` must be a character vector or `NULL`.");
-  }
-
-  SEXP names = PROTECT(r_names(x));
-
-  SEXP out = PROTECT(r_maybe_duplicate(x));
-
-  SET_ATTRIB(out, R_NilValue);
-
-  r_poke_names(out, names);
-  r_poke_class(out, classes_posixct);
-  Rf_setAttrib(out, syms_tzone, tzone);
-
-  UNPROTECT(2);
-  return out;
-}
-
-
-static SEXP new_empty_datetime(SEXP tzone) {
-  return new_datetime(vctrs_shared_empty_dbl, tzone);
-}
-
-
-static SEXP datetime_validate(SEXP x);
-
-// [[ register() ]]
-SEXP vctrs_datetime_validate(SEXP x) {
-  return datetime_validate(x);
-}
-
-static SEXP datetime_validate_tzone(SEXP x);
-static SEXP datetime_validate_type(SEXP x);
-
-// Ensure that a `POSIXct` is internally stored as a double vector.
-// Also checks that the `tzone` attribute is non-NULL.
-static SEXP datetime_validate(SEXP x) {
-  x = PROTECT(datetime_validate_tzone(x));
-  x = PROTECT(datetime_validate_type(x));
-  UNPROTECT(2);
-  return x;
-}
-
-static SEXP datetime_validate_tzone(SEXP x) {
-  SEXP tzone = Rf_getAttrib(x, syms_tzone);
-
-  if (tzone != R_NilValue) {
-    return x;
-  }
-
-  x = PROTECT(r_maybe_duplicate(x));
-
-  Rf_setAttrib(x, syms_tzone, chrs_empty);
-
-  UNPROTECT(1);
-  return x;
-}
-
-static SEXP datetime_validate_type(SEXP x) {
-  switch (TYPEOF(x)) {
-  case REALSXP:
-    return x;
-  case INTSXP:
-    // Keeps attributes
-    return Rf_coerceVector(x, REALSXP);
-  default:
-    Rf_errorcall(
-      R_NilValue,
-      "Internal error: Corrupt `POSIXct` with unknown type %s.", Rf_type2char(TYPEOF(x))
-    );
-  }
-
-  never_reached("datetime_validate_type");
-}
-
-
-static SEXP datetime_rezone(SEXP x, SEXP tzone);
-
-// [[ register() ]]
-SEXP vctrs_datetime_rezone(SEXP x, SEXP tzone) {
-  return datetime_rezone(x, tzone);
-}
-
-// Same underlying numeric representation, different `tzone`
-static SEXP datetime_rezone(SEXP x, SEXP tzone) {
-  SEXP x_tzone = PROTECT(tzone_get(x));
-
-  if (tzone_equal(x_tzone, tzone)) {
-    UNPROTECT(1);
-    return x;
-  }
-
-  SEXP out = PROTECT(r_maybe_duplicate(x));
-
-  Rf_setAttrib(out, syms_tzone, tzone);
-
-  UNPROTECT(2);
-  return out;
-}
-
-
-static SEXP new_empty_datetime(SEXP tzone);
-
-// [[ include("vctrs.h") ]]
-SEXP date_datetime_ptype2(SEXP x, SEXP y) {
-  SEXP x_class = PROTECT(Rf_getAttrib(x, R_ClassSymbol));
-  SEXP x_first_class = STRING_ELT(x_class, 0);
-
-  SEXP tzone = (x_first_class == strings_date) ? tzone_get(y) : tzone_get(x);
-  PROTECT(tzone);
-
-  SEXP out = new_empty_datetime(tzone);
-
-  UNPROTECT(2);
-  return out;
-}
-
-static SEXP tzone_union(SEXP x_tzone, SEXP y_tzone);
-
-// [[ include("vctrs.h") ]]
-SEXP datetime_datetime_ptype2(SEXP x, SEXP y) {
-  SEXP x_tzone = PROTECT(tzone_get(x));
-  SEXP y_tzone = PROTECT(tzone_get(y));
-
-  // Never allocates
-  SEXP tzone = tzone_union(x_tzone, y_tzone);
-
-  SEXP out = new_empty_datetime(tzone);
-
-  UNPROTECT(2);
   return out;
 }
 
@@ -361,6 +203,168 @@ SEXP posixlt_as_posixlt(SEXP x, SEXP to) {
   out = PROTECT(posixct_as_posixlt_impl(out, to_tzone));
 
   UNPROTECT(5);
+  return out;
+}
+
+// -----------------------------------------------------------------------------
+
+// [[ register() ]]
+SEXP vctrs_new_date(SEXP x) {
+  return new_date(x);
+}
+
+static SEXP new_date(SEXP x) {
+  if (TYPEOF(x) != REALSXP) {
+    Rf_errorcall(R_NilValue, "`x` must be a double vector.");
+  }
+
+  SEXP names = PROTECT(r_names(x));
+
+  SEXP out = PROTECT(r_maybe_duplicate(x));
+
+  SET_ATTRIB(out, R_NilValue);
+
+  r_poke_names(out, names);
+  r_poke_class(out, classes_date);
+
+  UNPROTECT(2);
+  return out;
+}
+
+
+// [[ register() ]]
+SEXP vctrs_new_datetime(SEXP x, SEXP tzone) {
+  return new_datetime(x, tzone);
+}
+
+static SEXP new_datetime(SEXP x, SEXP tzone) {
+  if (TYPEOF(x) != REALSXP) {
+    Rf_errorcall(R_NilValue, "`x` must be a double vector.");
+  }
+
+  // Convenience special case where we allow a
+  // null `tzone` to represent local time
+  if (tzone == R_NilValue) {
+    tzone = chrs_empty;
+  }
+
+  if (TYPEOF(tzone) != STRSXP) {
+    Rf_errorcall(R_NilValue, "`tzone` must be a character vector or `NULL`.");
+  }
+
+  SEXP names = PROTECT(r_names(x));
+
+  SEXP out = PROTECT(r_maybe_duplicate(x));
+
+  SET_ATTRIB(out, R_NilValue);
+
+  r_poke_names(out, names);
+  r_poke_class(out, classes_posixct);
+  Rf_setAttrib(out, syms_tzone, tzone);
+
+  UNPROTECT(2);
+  return out;
+}
+
+
+static SEXP new_empty_datetime(SEXP tzone) {
+  return new_datetime(vctrs_shared_empty_dbl, tzone);
+}
+
+// -----------------------------------------------------------------------------
+
+// [[ register() ]]
+SEXP vctrs_date_validate(SEXP x) {
+  return date_validate(x);
+}
+
+// Ensure that a `Date` is internally stored as a double vector
+static SEXP date_validate(SEXP x) {
+  switch (TYPEOF(x)) {
+  case REALSXP:
+    return x;
+  case INTSXP:
+    // Keeps attributes
+    return Rf_coerceVector(x, REALSXP);
+  default:
+    Rf_errorcall(
+      R_NilValue,
+      "Internal error: Corrupt `Date` with unknown type %s.", Rf_type2char(TYPEOF(x))
+    );
+  }
+}
+
+
+// [[ register() ]]
+SEXP vctrs_datetime_validate(SEXP x) {
+  return datetime_validate(x);
+}
+
+static SEXP datetime_validate_tzone(SEXP x);
+static SEXP datetime_validate_type(SEXP x);
+
+// Ensure that a `POSIXct` is internally stored as a double vector.
+// Also checks that the `tzone` attribute is non-NULL.
+static SEXP datetime_validate(SEXP x) {
+  x = PROTECT(datetime_validate_tzone(x));
+  x = PROTECT(datetime_validate_type(x));
+  UNPROTECT(2);
+  return x;
+}
+
+static SEXP datetime_validate_tzone(SEXP x) {
+  SEXP tzone = Rf_getAttrib(x, syms_tzone);
+
+  if (tzone != R_NilValue) {
+    return x;
+  }
+
+  x = PROTECT(r_maybe_duplicate(x));
+
+  Rf_setAttrib(x, syms_tzone, chrs_empty);
+
+  UNPROTECT(1);
+  return x;
+}
+
+static SEXP datetime_validate_type(SEXP x) {
+  switch (TYPEOF(x)) {
+  case REALSXP:
+    return x;
+  case INTSXP:
+    // Keeps attributes
+    return Rf_coerceVector(x, REALSXP);
+  default:
+    Rf_errorcall(
+      R_NilValue,
+      "Internal error: Corrupt `POSIXct` with unknown type %s.", Rf_type2char(TYPEOF(x))
+    );
+  }
+
+  never_reached("datetime_validate_type");
+}
+
+// -----------------------------------------------------------------------------
+
+// [[ register() ]]
+SEXP vctrs_datetime_rezone(SEXP x, SEXP tzone) {
+  return datetime_rezone(x, tzone);
+}
+
+// Same underlying numeric representation, different `tzone`
+static SEXP datetime_rezone(SEXP x, SEXP tzone) {
+  SEXP x_tzone = PROTECT(tzone_get(x));
+
+  if (tzone_equal(x_tzone, tzone)) {
+    UNPROTECT(1);
+    return x;
+  }
+
+  SEXP out = PROTECT(r_maybe_duplicate(x));
+
+  Rf_setAttrib(out, syms_tzone, tzone);
+
+  UNPROTECT(2);
   return out;
 }
 
