@@ -239,7 +239,7 @@ vec_cast.POSIXct <- function(x, to, ...) {
 #' @export
 #' @method vec_cast.POSIXct Date
 vec_cast.POSIXct.Date <- function(x, to, ...) {
-  as.POSIXct(as.character(x), tz = tzone(to))
+  stop_native_implementation("vec_cast.POSIXct.Date")
 }
 #' @export
 #' @method vec_cast.POSIXct POSIXlt
@@ -265,7 +265,7 @@ vec_cast.POSIXlt <- function(x, to, ...) {
 #' @export
 #' @method vec_cast.POSIXlt Date
 vec_cast.POSIXlt.Date <- function(x, to, ...) {
-  as.POSIXlt(as.character(x), tz = tzone(to))
+  stop_native_implementation("vec_cast.POSIXlt.Date")
 }
 #' @export
 #' @method vec_cast.POSIXlt POSIXlt

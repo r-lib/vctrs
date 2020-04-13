@@ -1,6 +1,8 @@
 #include "vctrs.h"
 #include "utils.h"
 
+static SEXP get_tzone(SEXP x);
+
 static SEXP new_date(SEXP x);
 
 // [[ register() ]]
@@ -54,6 +56,32 @@ static SEXP date_validate(SEXP x) {
 // [[ include("vctrs.h") ]]
 SEXP date_as_date(SEXP x) {
   return date_validate(x);
+}
+
+// [[ include("vctrs.h") ]]
+SEXP date_as_posixct(SEXP x, SEXP to) {
+  SEXP tzone = PROTECT(get_tzone(to));
+
+  // Date -> character -> POSIXct
+  // This is the only way to retain the same clock time
+  SEXP out = PROTECT(r_as_character(x));
+  out = PROTECT(r_as_posixct(out, tzone));
+
+  UNPROTECT(3);
+  return out;
+}
+
+// [[ include("vctrs.h") ]]
+SEXP date_as_posixlt(SEXP x, SEXP to) {
+  SEXP tzone = PROTECT(get_tzone(to));
+
+  // Date -> character -> POSIXlt
+  // This is the only way to retain the same clock time
+  SEXP out = PROTECT(r_as_character(x));
+  out = PROTECT(r_as_posixlt(out, tzone));
+
+  UNPROTECT(3);
+  return out;
 }
 
 // -----------------------------------------------------------------------------
@@ -173,7 +201,6 @@ static SEXP datetime_rezone(SEXP x, SEXP tzone) {
 
 
 static SEXP new_empty_datetime(SEXP tzone);
-static SEXP get_tzone(SEXP x);
 
 // [[ include("vctrs.h") ]]
 SEXP date_datetime_ptype2(SEXP x, SEXP y) {
@@ -216,10 +243,7 @@ SEXP datetime_as_date(SEXP x, bool* lossy) {
   x_ct = PROTECT(datetime_validate(x_ct));
   const double* p_x_ct = REAL(x_ct);
 
-  // Date -> character -> POSIXct
-  // This is the only way to retain the same clock time
-  SEXP out_chr = PROTECT(r_as_character(out));
-  SEXP out_ct = PROTECT(r_as_posixct(out_chr, x_tzone));
+  SEXP out_ct = PROTECT(date_as_posixct(out, x_ct));
   const double* p_out_ct = REAL(out_ct);
 
   const R_len_t size = Rf_length(out);
@@ -236,12 +260,12 @@ SEXP datetime_as_date(SEXP x, bool* lossy) {
 
     if (x_ct_elt != out_ct_elt) {
       *lossy = true;
-      UNPROTECT(6);
+      UNPROTECT(5);
       return R_NilValue;
     }
   }
 
-  UNPROTECT(6);
+  UNPROTECT(5);
   return out;
 }
 
