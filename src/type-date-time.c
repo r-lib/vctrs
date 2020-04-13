@@ -50,6 +50,7 @@ static SEXP date_validate(SEXP x) {
   }
 }
 
+
 // [[ include("vctrs.h") ]]
 SEXP date_as_date(SEXP x) {
   return date_validate(x);
@@ -204,6 +205,7 @@ SEXP datetime_datetime_ptype2(SEXP x, SEXP y) {
   return out;
 }
 
+
 // [[ include("vctrs.h") ]]
 SEXP datetime_as_date(SEXP x, bool* lossy) {
   SEXP out = PROTECT(r_as_date(x));
@@ -243,6 +245,8 @@ SEXP datetime_as_date(SEXP x, bool* lossy) {
   return out;
 }
 
+// -----------------------------------------------------------------------------
+// Utilities
 
 static SEXP new_empty_datetime(SEXP tzone) {
   return new_datetime(vctrs_shared_empty_dbl, tzone);
