@@ -308,6 +308,22 @@ test_that("can cast NA and unspecified to POSIXct and POSIXlt", {
   expect_identical(vec_cast(unspecified(2), dtl), vec_init(dtl, 2))
 })
 
+test_that("changing time zones retains the underlying moment in time", {
+  x_ct <- as.POSIXct("2019-01-01", tz = "America/New_York")
+  x_lt <- as.POSIXlt(x_ct)
+
+  to_ct <- new_datetime(tzone = "America/Los_Angeles")
+  to_lt <- as.POSIXlt(to_ct)
+
+  expect_ct <- x_ct
+  attr(expect_ct, "tzone") <- "America/Los_Angeles"
+  expect_lt <- as.POSIXlt(expect_ct)
+
+  expect_identical(vec_cast(x_ct, to_ct), expect_ct)
+  expect_identical(vec_cast(x_ct, to_lt), expect_lt)
+  expect_identical(vec_cast(x_lt, to_ct), expect_ct)
+  expect_identical(vec_cast(x_lt, to_lt), expect_lt)
+})
 
 # cast: durations ------------------------------------------------------------
 

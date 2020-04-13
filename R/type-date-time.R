@@ -244,15 +244,12 @@ vec_cast.POSIXct.Date <- function(x, to, ...) {
 #' @export
 #' @method vec_cast.POSIXct POSIXlt
 vec_cast.POSIXct.POSIXlt <- function(x, to, ...) {
-  out <- as.POSIXct(x)
-  out <- datetime_validate(out)
-  datetime_rezone(out, tzone(to))
+  stop_native_implementation("vec_cast.POSIXct.POSIXlt")
 }
 #' @export
 #' @method vec_cast.POSIXct POSIXct
 vec_cast.POSIXct.POSIXct <- function(x, to, ...) {
-  out <- datetime_validate(x)
-  datetime_rezone(out, tzone(to))
+  stop_native_implementation("vec_cast.POSIXct.POSIXct")
 }
 
 #' @rdname new_date
@@ -270,12 +267,12 @@ vec_cast.POSIXlt.Date <- function(x, to, ...) {
 #' @export
 #' @method vec_cast.POSIXlt POSIXlt
 vec_cast.POSIXlt.POSIXlt <- function(x, to, ...) {
-  as.POSIXlt(x, tz = tzone(to))
+  stop_native_implementation("vec_cast.POSIXlt.POSIXlt")
 }
 #' @export
 #' @method vec_cast.POSIXlt POSIXct
 vec_cast.POSIXlt.POSIXct <- function(x, to, ...) {
-  as.POSIXlt(x, tz = tzone(to))
+  stop_native_implementation("vec_cast.POSIXlt.POSIXct")
 }
 
 

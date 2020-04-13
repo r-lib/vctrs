@@ -562,6 +562,10 @@ SEXP date_as_date(SEXP x);
 SEXP date_as_posixct(SEXP x, SEXP to);
 SEXP date_as_posixlt(SEXP x, SEXP to);
 SEXP datetime_as_date(SEXP x, bool* lossy);
+SEXP posixct_as_posixct(SEXP x, SEXP to);
+SEXP posixlt_as_posixct(SEXP x, SEXP to);
+SEXP posixct_as_posixlt(SEXP x, SEXP to);
+SEXP posixlt_as_posixlt(SEXP x, SEXP to);
 
 SEXP date_datetime_ptype2(SEXP x, SEXP y);
 SEXP datetime_datetime_ptype2(SEXP x, SEXP y);

@@ -56,8 +56,21 @@ SEXP vec_cast_dispatch(SEXP x,
       return datetime_as_date(x, lossy);
     }
 
+  case vctrs_type2_s3_bare_posixct_bare_posixlt:
+    if (dir == 0) {
+      return posixct_as_posixlt(x, to);
+    } else {
+      return posixlt_as_posixct(x, to);
+    }
+
   case vctrs_type2_s3_bare_date_bare_date:
     return date_as_date(x);
+
+  case vctrs_type2_s3_bare_posixct_bare_posixct:
+    return posixct_as_posixct(x, to);
+
+  case vctrs_type2_s3_bare_posixlt_bare_posixlt:
+    return posixlt_as_posixlt(x, to);
 
   case vctrs_type2_s3_dataframe_bare_tibble:
     if (dir == 0) {

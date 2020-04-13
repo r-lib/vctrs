@@ -2,6 +2,7 @@
 #include "utils.h"
 
 static SEXP get_tzone(SEXP x);
+static bool tzone_equal(SEXP x_tzone, SEXP y_tzone);
 
 static SEXP new_date(SEXP x);
 
@@ -184,9 +185,9 @@ SEXP vctrs_datetime_rezone(SEXP x, SEXP tzone) {
 
 // Same underlying numeric representation, different `tzone`
 static SEXP datetime_rezone(SEXP x, SEXP tzone) {
-  SEXP x_tzone = PROTECT(Rf_getAttrib(x, syms_tzone));
+  SEXP x_tzone = PROTECT(get_tzone(x));
 
-  if (x_tzone == tzone) {
+  if (tzone_equal(x_tzone, tzone)) {
     UNPROTECT(1);
     return x;
   }
@@ -269,6 +270,83 @@ SEXP datetime_as_date(SEXP x, bool* lossy) {
   return out;
 }
 
+
+static SEXP posixct_as_posixct_impl(SEXP x, SEXP tzone);
+
+// [[ include("vctrs.h") ]]
+SEXP posixct_as_posixct(SEXP x, SEXP to) {
+  SEXP tzone = PROTECT(get_tzone(to));
+  SEXP out = posixct_as_posixct_impl(x, tzone);
+  UNPROTECT(1);
+  return out;
+}
+
+static SEXP posixct_as_posixct_impl(SEXP x, SEXP tzone) {
+  x = PROTECT(datetime_validate(x));
+  SEXP out = datetime_rezone(x, tzone);
+  UNPROTECT(1);
+  return out;
+}
+
+
+static SEXP posixlt_as_posixct_impl(SEXP x, SEXP tzone);
+
+// [[ include("vctrs.h") ]]
+SEXP posixlt_as_posixct(SEXP x, SEXP to) {
+  SEXP tzone = PROTECT(get_tzone(to));
+  SEXP out = posixlt_as_posixct_impl(x, tzone);
+  UNPROTECT(1);
+  return out;
+}
+
+static SEXP posixlt_as_posixct_impl(SEXP x, SEXP tzone) {
+  SEXP x_tzone = PROTECT(get_tzone(x));
+  x = PROTECT(r_as_posixct(x, x_tzone));
+
+  SEXP out = posixct_as_posixct_impl(x, tzone);
+
+  UNPROTECT(2);
+  return out;
+}
+
+
+static SEXP posixct_as_posixlt_impl(SEXP x, SEXP tzone);
+
+// [[ include("vctrs.h") ]]
+SEXP posixct_as_posixlt(SEXP x, SEXP to) {
+  SEXP tzone = PROTECT(get_tzone(to));
+  SEXP out = posixct_as_posixlt_impl(x, tzone);
+  UNPROTECT(1);
+  return out;
+}
+
+static SEXP posixct_as_posixlt_impl(SEXP x, SEXP tzone) {
+  return r_as_posixlt(x, tzone);
+}
+
+
+// [[ include("vctrs.h") ]]
+SEXP posixlt_as_posixlt(SEXP x, SEXP to) {
+  SEXP x_tzone = PROTECT(get_tzone(x));
+  SEXP to_tzone = PROTECT(get_tzone(to));
+
+  if (tzone_equal(x_tzone, to_tzone)) {
+    UNPROTECT(2);
+    return x;
+  }
+
+  SEXP out = x;
+
+  // `as.POSIXlt.default()` doesn't respect `tz` so we have to do:
+  // POSIXlt<x-tzone> -> POSIXct<x-tzone> -> POSIXct<to-tzone> -> POSIXlt<to-tzone>
+  out = PROTECT(posixlt_as_posixct_impl(out, x_tzone));
+  out = PROTECT(posixct_as_posixct_impl(out, to_tzone));
+  out = PROTECT(posixct_as_posixlt_impl(out, to_tzone));
+
+  UNPROTECT(5);
+  return out;
+}
+
 // -----------------------------------------------------------------------------
 // Utilities
 
@@ -314,4 +392,26 @@ static SEXP tzone_union(SEXP x_tzone, SEXP y_tzone) {
   } else {
     return x_tzone;
   }
+}
+
+// `get_tzone()` is guaranteed to return 1 element
+static bool tzone_equal(SEXP x_tzone, SEXP y_tzone) {
+  // Equal objects?
+  if (x_tzone == y_tzone) {
+    return true;
+  }
+
+  // Equal CHARSXPs?
+  SEXP x_string = STRING_ELT(x_tzone, 0);
+  SEXP y_string = STRING_ELT(y_tzone, 0);
+
+  if (x_string == y_string) {
+    return true;
+  }
+
+  // Equal C char?
+  const char* x_tzone_char = CHAR(x_string);
+  const char* y_tzone_char = CHAR(y_string);
+
+  return !strcmp(x_tzone_char, y_tzone_char);
 }
