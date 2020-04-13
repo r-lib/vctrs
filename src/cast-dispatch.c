@@ -46,14 +46,14 @@ SEXP vec_cast_dispatch(SEXP x,
     if (dir == 0) {
       return date_as_posixct(x, to);
     } else {
-      return datetime_as_date(x, lossy);
+      return posixct_as_date(x, lossy);
     }
 
   case vctrs_type2_s3_bare_date_bare_posixlt:
     if (dir == 0) {
       return date_as_posixlt(x, to);
     } else {
-      return datetime_as_date(x, lossy);
+      return posixlt_as_date(x, lossy);
     }
 
   case vctrs_type2_s3_bare_posixct_bare_posixlt:

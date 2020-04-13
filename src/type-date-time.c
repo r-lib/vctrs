@@ -1,8 +1,10 @@
 #include "vctrs.h"
 #include "utils.h"
 
+
 static SEXP tzone_get(SEXP x);
 static bool tzone_equal(SEXP x_tzone, SEXP y_tzone);
+
 
 static SEXP new_date(SEXP x);
 
@@ -58,6 +60,7 @@ static SEXP date_validate(SEXP x) {
 SEXP date_as_date(SEXP x) {
   return date_validate(x);
 }
+
 
 // [[ include("vctrs.h") ]]
 SEXP date_as_posixct(SEXP x, SEXP to) {
@@ -240,38 +243,47 @@ SEXP datetime_datetime_ptype2(SEXP x, SEXP y) {
 
 
 // [[ include("vctrs.h") ]]
-SEXP datetime_as_date(SEXP x, bool* lossy) {
+SEXP posixct_as_date(SEXP x, bool* lossy) {
   SEXP out = PROTECT(r_as_date(x));
 
-  // Convert potential POSIXlt to POSIXct
-  SEXP x_tzone = PROTECT(tzone_get(x));
-  SEXP x_ct = PROTECT(r_as_posixct(x, x_tzone));
-  x_ct = PROTECT(datetime_validate(x_ct));
-  const double* p_x_ct = REAL(x_ct);
+  x = PROTECT(datetime_validate(x));
+  const double* p_x = REAL(x);
 
-  SEXP out_ct = PROTECT(date_as_posixct(out, x_ct));
-  const double* p_out_ct = REAL(out_ct);
+  SEXP roundtrip = PROTECT(date_as_posixct(out, x));
+  const double* p_roundtrip = REAL(roundtrip);
 
   const R_len_t size = Rf_length(out);
 
   for (R_len_t i = 0; i < size; ++i) {
-    const double x_ct_elt = p_x_ct[i];
+    const double x_elt = p_x[i];
 
     // `NaN` and `NA` always convert without issue
-    if (isnan(x_ct_elt)) {
+    if (isnan(x_elt)) {
       continue;
     }
 
-    const double out_ct_elt = p_out_ct[i];
+    const double roundtrip_elt = p_roundtrip[i];
 
-    if (x_ct_elt != out_ct_elt) {
+    if (x_elt != roundtrip_elt) {
       *lossy = true;
-      UNPROTECT(5);
+      UNPROTECT(3);
       return R_NilValue;
     }
   }
 
-  UNPROTECT(5);
+  UNPROTECT(3);
+  return out;
+}
+
+
+// [[ include("vctrs.h") ]]
+SEXP posixlt_as_date(SEXP x, bool* lossy) {
+  SEXP tzone = PROTECT(tzone_get(x));
+  x = PROTECT(r_as_posixct(x, tzone));
+
+  SEXP out = posixct_as_date(x, lossy);
+
+  UNPROTECT(2);
   return out;
 }
 

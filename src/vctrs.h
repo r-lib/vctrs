@@ -561,7 +561,8 @@ SEXP ord_as_ordered(SEXP x, SEXP to, bool* lossy, struct vctrs_arg* x_arg, struc
 SEXP date_as_date(SEXP x);
 SEXP date_as_posixct(SEXP x, SEXP to);
 SEXP date_as_posixlt(SEXP x, SEXP to);
-SEXP datetime_as_date(SEXP x, bool* lossy);
+SEXP posixct_as_date(SEXP x, bool* lossy);
+SEXP posixlt_as_date(SEXP x, bool* lossy);
 SEXP posixct_as_posixct(SEXP x, SEXP to);
 SEXP posixlt_as_posixct(SEXP x, SEXP to);
 SEXP posixct_as_posixlt(SEXP x, SEXP to);
