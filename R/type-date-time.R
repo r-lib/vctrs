@@ -492,6 +492,24 @@ datetime_validate <- function(x) {
   .Call(vctrs_datetime_validate, x)
 }
 
+# as.character.Date() calls format() which tries to guess a simplified format.
+# Supplying a known format is faster and much more memory efficient.
+date_as_character <- function(x) {
+  format(x, format = "%Y-%m-%d")
+}
+
+# `as.POSIXlt.character()` tries multiple formats. Supplying
+# a known format is much faster and more memory efficient.
+chr_date_as_posixlt <- function(x, tzone) {
+  as.POSIXlt.character(x, tz = tzone, format = "%Y-%m-%d")
+}
+
+# `as.POSIXct.default()` for characters goes through `as.POSIXlt.character()`
+chr_date_as_posixct <- function(x, tzone) {
+  out <- chr_date_as_posixlt(x, tzone)
+  as.POSIXct.POSIXlt(out, tzone)
+}
+
 lossy_floor <- function(x, to, x_arg = "", to_arg = "") {
   x_floor <- floor(x)
   lossy <- x != x_floor

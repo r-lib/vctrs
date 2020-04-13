@@ -62,8 +62,8 @@ SEXP date_as_posixct(SEXP x, SEXP to) {
 
   // Date -> character -> POSIXct
   // This is the only way to retain the same clock time
-  SEXP out = PROTECT(r_as_character(x));
-  out = PROTECT(r_as_posixct(out, tzone));
+  SEXP out = PROTECT(r_date_as_character(x));
+  out = PROTECT(r_chr_date_as_posixct(out, tzone));
 
   UNPROTECT(3);
   return out;
@@ -76,8 +76,8 @@ SEXP date_as_posixlt(SEXP x, SEXP to) {
 
   // Date -> character -> POSIXlt
   // This is the only way to retain the same clock time
-  SEXP out = PROTECT(r_as_character(x));
-  out = PROTECT(r_as_posixlt(out, tzone));
+  SEXP out = PROTECT(r_date_as_character(x));
+  out = PROTECT(r_chr_date_as_posixlt(out, tzone));
 
   UNPROTECT(3);
   return out;
