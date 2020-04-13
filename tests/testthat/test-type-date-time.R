@@ -187,10 +187,13 @@ test_that("vec_ptype2(<difftime>, NA) is symmetric (#687)", {
 
 test_that("safe casts work as expected", {
   date <- as.Date("2018-01-01")
+  datetime_ct <- as.POSIXct(as.character(date))
+  datetime_lt <- as.POSIXlt(datetime_ct)
 
   expect_equal(vec_cast(NULL, date), NULL)
   expect_equal(vec_cast(date, date), date)
-  expect_equal(vec_cast(as.POSIXct(date), date), date)
+  expect_equal(vec_cast(datetime_ct, date), date)
+  expect_equal(vec_cast(datetime_lt, date), date)
 
   missing_date <- new_date(NA_real_)
 
@@ -202,6 +205,14 @@ test_that("safe casts work as expected", {
   expect_error(vec_cast(17532, date), class = "vctrs_error_incompatible_type")
   expect_error(vec_cast("2018-01-01", date), class = "vctrs_error_incompatible_type")
   expect_error(vec_cast(list(date), date), class = "vctrs_error_incompatible_type")
+})
+
+test_that("date - datetime cast can be roundtripped", {
+  date <- as.Date("2018-01-01")
+  datetime <- as.POSIXct("2018-01-01", tz = "America/New_York")
+
+  expect_identical(vec_cast(vec_cast(date, datetime), date), date)
+  expect_identical(vec_cast(vec_cast(datetime, date), datetime), datetime)
 })
 
 test_that("lossy casts generate error", {
