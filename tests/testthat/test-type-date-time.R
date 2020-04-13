@@ -236,6 +236,12 @@ test_that("casting an integer date to another date returns a double date", {
   expect_true(is.double(vec_cast(x, x)))
 })
 
+test_that("casting an integer POSIXct to a Date returns a double Date", {
+  x <- .POSIXct(18000L, tz = "America/New_York")
+  expect <- new_date(0)
+  expect_identical(vec_cast(x, new_date()), expect)
+})
+
 # cast: datetimes -----------------------------------------------------------
 
 test_that("safe casts work as expected", {

@@ -50,6 +50,11 @@ static SEXP date_validate(SEXP x) {
   }
 }
 
+// [[ include("vctrs.h") ]]
+SEXP date_as_date(SEXP x) {
+  return date_validate(x);
+}
+
 // -----------------------------------------------------------------------------
 
 static SEXP new_datetime(SEXP x, SEXP tzone);
@@ -196,6 +201,45 @@ SEXP datetime_datetime_ptype2(SEXP x, SEXP y) {
   SEXP out = new_empty_datetime(tzone);
 
   UNPROTECT(2);
+  return out;
+}
+
+// [[ include("vctrs.h") ]]
+SEXP datetime_as_date(SEXP x, bool* lossy) {
+  SEXP out = PROTECT(r_as_date(x));
+
+  // Convert potential POSIXlt to POSIXct
+  SEXP x_tzone = PROTECT(get_tzone(x));
+  SEXP x_ct = PROTECT(r_as_posixct(x, x_tzone));
+  x_ct = PROTECT(datetime_validate(x_ct));
+  const double* p_x_ct = REAL(x_ct);
+
+  // Date -> character -> POSIXct
+  // This is the only way to retain the same clock time
+  SEXP out_chr = PROTECT(r_as_character(out));
+  SEXP out_ct = PROTECT(r_as_posixct(out_chr, x_tzone));
+  const double* p_out_ct = REAL(out_ct);
+
+  const R_len_t size = Rf_length(out);
+
+  for (R_len_t i = 0; i < size; ++i) {
+    const double x_ct_elt = p_x_ct[i];
+
+    // `NaN` and `NA` always convert without issue
+    if (isnan(x_ct_elt)) {
+      continue;
+    }
+
+    const double out_ct_elt = p_out_ct[i];
+
+    if (x_ct_elt != out_ct_elt) {
+      *lossy = true;
+      UNPROTECT(6);
+      return R_NilValue;
+    }
+  }
+
+  UNPROTECT(6);
   return out;
 }
 

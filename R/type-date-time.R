@@ -203,18 +203,22 @@ vec_cast.Date <- function(x, to, ...) {
 #' @export
 #' @method vec_cast.Date Date
 vec_cast.Date.Date <- function(x, to, ...) {
-  date_validate(x)
+  stop_native_implementation("vec_cast.Date.Date")
 }
 #' @export
 #' @method vec_cast.Date POSIXct
 vec_cast.Date.POSIXct <- function(x, to, ...) {
+  # TODO: Mark with `stop_native_implementation()` when we use lazy errors
   date_cast(x, to, ...)
 }
 #' @export
 #' @method vec_cast.Date POSIXlt
 vec_cast.Date.POSIXlt <- function(x, to, ...) {
+  # TODO: Mark with `stop_native_implementation()` when we use lazy errors
   date_cast(x, to, ...)
 }
+
+# TODO: Remove when we have lazy errors
 date_cast <- function(x, to, ..., x_arg = "", to_arg = "") {
   out <- as.Date(x)
 

@@ -558,6 +558,9 @@ SEXP ord_as_ordered(SEXP x, SEXP to, bool* lossy, struct vctrs_arg* x_arg, struc
 
 // Datetime methods ---------------------------------------------
 
+SEXP date_as_date(SEXP x);
+SEXP datetime_as_date(SEXP x, bool* lossy);
+
 SEXP date_datetime_ptype2(SEXP x, SEXP y);
 SEXP datetime_datetime_ptype2(SEXP x, SEXP y);
 
