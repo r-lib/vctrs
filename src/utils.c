@@ -1264,6 +1264,13 @@ SEXP r_as_posixlt(SEXP x, SEXP tz) {
   return vctrs_dispatch2(syms_as_posixlt, fns_as_posixlt, syms_x, x, syms_tz, tz);
 }
 
+static SEXP syms_as_character = NULL;
+static SEXP fns_as_character = NULL;
+
+SEXP r_as_character(SEXP x) {
+  return vctrs_dispatch1(syms_as_character, fns_as_character, syms_x, x);
+}
+
 SEXP r_as_data_frame(SEXP x) {
   if (is_bare_data_frame(x)) {
     return x;
@@ -1735,12 +1742,14 @@ void vctrs_init_utils(SEXP ns) {
   syms_as_date = Rf_install("as.Date");
   syms_as_posixct = Rf_install("as.POSIXct");
   syms_as_posixlt = Rf_install("as.POSIXlt");
+  syms_as_character = Rf_install("as.character");
   syms_as_data_frame2 = Rf_install("as.data.frame2");
   syms_colnames = Rf_install("colnames");
 
   fns_as_date = r_env_get(R_BaseEnv, syms_as_date);
   fns_as_posixct = r_env_get(R_BaseEnv, syms_as_posixct);
   fns_as_posixlt = r_env_get(R_BaseEnv, syms_as_posixlt);
+  fns_as_character = r_env_get(R_BaseEnv, syms_as_character);
   fns_as_data_frame2 = r_env_get(ns, syms_as_data_frame2);
   fns_colnames = r_env_get(R_BaseEnv, syms_colnames);
 
