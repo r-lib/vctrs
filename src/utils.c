@@ -1242,6 +1242,28 @@ bool r_chr_has_string(SEXP x, SEXP str) {
   return false;
 }
 
+static SEXP syms_as_date = NULL;
+static SEXP fns_as_date = NULL;
+
+SEXP r_as_date(SEXP x) {
+  return vctrs_dispatch1(syms_as_date, fns_as_date, syms_x, x);
+}
+
+SEXP syms_tz = NULL;
+static SEXP syms_as_posixct = NULL;
+static SEXP fns_as_posixct = NULL;
+
+SEXP r_as_posixct(SEXP x, SEXP tz) {
+  return vctrs_dispatch2(syms_as_posixct, fns_as_posixct, syms_x, x, syms_tz, tz);
+}
+
+static SEXP syms_as_posixlt = NULL;
+static SEXP fns_as_posixlt = NULL;
+
+SEXP r_as_posixlt(SEXP x, SEXP tz) {
+  return vctrs_dispatch2(syms_as_posixlt, fns_as_posixlt, syms_x, x, syms_tz, tz);
+}
+
 SEXP r_as_data_frame(SEXP x) {
   if (is_bare_data_frame(x)) {
     return x;
@@ -1667,6 +1689,7 @@ void vctrs_init_utils(SEXP ns) {
   syms_subscript_type = Rf_install("subscript_type");
   syms_repair = Rf_install("repair");
   syms_tzone = Rf_install("tzone");
+  syms_tz = Rf_install("tz");
   syms_data = Rf_install("data");
   syms_try_catch_impl = Rf_install("try_catch_impl");
   syms_try_catch_hnd = Rf_install("try_catch_hnd");
@@ -1709,9 +1732,15 @@ void vctrs_init_utils(SEXP ns) {
   rlang_env_dots_list = (SEXP (*)(SEXP)) R_GetCCallable("rlang", "rlang_env_dots_list");
   rlang_sym_as_character = (SEXP (*)(SEXP)) R_GetCCallable("rlang", "rlang_sym_as_character");
 
+  syms_as_date = Rf_install("as.Date");
+  syms_as_posixct = Rf_install("as.POSIXct");
+  syms_as_posixlt = Rf_install("as.POSIXlt");
   syms_as_data_frame2 = Rf_install("as.data.frame2");
   syms_colnames = Rf_install("colnames");
 
+  fns_as_date = r_env_get(R_BaseEnv, syms_as_date);
+  fns_as_posixct = r_env_get(R_BaseEnv, syms_as_posixct);
+  fns_as_posixlt = r_env_get(R_BaseEnv, syms_as_posixlt);
   fns_as_data_frame2 = r_env_get(ns, syms_as_data_frame2);
   fns_colnames = r_env_get(R_BaseEnv, syms_colnames);
 

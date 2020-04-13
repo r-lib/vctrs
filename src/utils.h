@@ -290,6 +290,9 @@ static inline SEXP r_sym_as_character(SEXP x) {
 // This unserialises ASCII Unicode tags of the form `<U+xxxx>`
 extern SEXP (*rlang_sym_as_character)(SEXP x);
 
+SEXP r_as_date(SEXP x);
+SEXP r_as_posixct(SEXP x, SEXP tz);
+SEXP r_as_posixlt(SEXP x, SEXP tz);
 SEXP r_as_data_frame(SEXP x);
 
 static inline void r_dbg_save(SEXP x, const char* name) {
