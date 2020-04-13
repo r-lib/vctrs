@@ -124,6 +124,11 @@ static SEXP new_datetime(SEXP x, SEXP tzone) {
 }
 
 
+static SEXP new_empty_datetime(SEXP tzone) {
+  return new_datetime(vctrs_shared_empty_dbl, tzone);
+}
+
+
 static SEXP datetime_validate(SEXP x);
 
 // [[ register() ]]
@@ -348,11 +353,7 @@ SEXP posixlt_as_posixlt(SEXP x, SEXP to) {
 }
 
 // -----------------------------------------------------------------------------
-// Utilities
-
-static SEXP new_empty_datetime(SEXP tzone) {
-  return new_datetime(vctrs_shared_empty_dbl, tzone);
-}
+// Time zone utilities
 
 static SEXP tzone_get(SEXP x) {
   SEXP tzone = PROTECT(Rf_getAttrib(x, syms_tzone));
