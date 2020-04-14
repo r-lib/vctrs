@@ -325,6 +325,11 @@ test_that("changing time zones retains the underlying moment in time", {
   expect_identical(vec_cast(x_lt, to_lt), expect_lt)
 })
 
+test_that("casting to date always retains the zoned year-month-day value", {
+  x <- as.POSIXct("2019-01-01", tz = "Asia/Shanghai")
+  expect_identical(vec_cast(x, new_date()), as.Date("2019-01-01"))
+})
+
 # cast: durations ------------------------------------------------------------
 
 test_that("safe casts work as expected", {

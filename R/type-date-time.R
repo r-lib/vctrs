@@ -492,6 +492,13 @@ datetime_validate <- function(x) {
   .Call(vctrs_datetime_validate, x)
 }
 
+# `as.Date.POSIXct()` tries to use UTC by default. Must specify
+# the time zone of the input for expected behavior of retaining the
+# year-month-day value of the input, no matter the clock time.
+posixct_as_date <- function(x) {
+  as.Date.POSIXct(x, tz = tzone(x))
+}
+
 # as.character.Date() calls format() which tries to guess a simplified format.
 # Supplying a known format is faster and much more memory efficient.
 date_as_character <- function(x) {

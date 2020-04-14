@@ -89,7 +89,7 @@ SEXP posixct_as_date(SEXP x, bool* lossy) {
   x = PROTECT(datetime_validate(x));
   const double* p_x = REAL(x);
 
-  SEXP out = PROTECT(r_as_date(x));
+  SEXP out = PROTECT(r_posixct_as_date(x));
 
   SEXP roundtrip = PROTECT(date_as_posixct(out, x));
   const double* p_roundtrip = REAL(roundtrip);
