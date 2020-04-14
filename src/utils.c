@@ -1242,7 +1242,6 @@ bool r_chr_has_string(SEXP x, SEXP str) {
   return false;
 }
 
-
 SEXP r_as_data_frame(SEXP x) {
   if (is_bare_data_frame(x)) {
     return x;
