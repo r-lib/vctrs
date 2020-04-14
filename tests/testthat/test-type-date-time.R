@@ -375,10 +375,19 @@ test_that("restoring to a POSIXct with no time zone standardizes to an empty str
 })
 
 test_that("restoring to a POSIXlt with no time zone standardizes to an empty string", {
-  x <- as.POSIXlt("1970-01-01", tz = "")
-
-  # Even if you specify local time, the `tzone` attribute isn't added
-  expect_null(attr(x, "tzone"), NULL)
+  # Manually create a POSIXlt without a `tzone` attribute.
+  # This is just:
+  # `x <- as.POSIXlt("1970-01-01")`
+  # which usually won't add a `tzone` attribute, but platforms where the local
+  # time is UTC attach a `tzone` attribute automatically.
+  x <- structure(
+    list(
+      sec = 0, min = 0L, hour = 0L, mday = 1L,
+      mon = 0L, year = 70L, wday = 4L, yday = 0L,
+      isdst = 0L, zone = "EST", gmtoff = NA_integer_
+    ),
+    class = c("POSIXlt", "POSIXt")
+  )
 
   proxy <- vec_proxy(x)
 
