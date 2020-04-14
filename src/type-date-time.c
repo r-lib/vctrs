@@ -16,8 +16,8 @@ static SEXP tzone_union(SEXP x_tzone, SEXP y_tzone);
 static bool tzone_equal(SEXP x_tzone, SEXP y_tzone);
 
 static SEXP r_as_date(SEXP x);
-static SEXP r_as_posixct(SEXP x, SEXP tz);
-static SEXP r_as_posixlt(SEXP x, SEXP tz);
+static SEXP r_as_posixct(SEXP x, SEXP tzone);
+static SEXP r_as_posixlt(SEXP x, SEXP tzone);
 static SEXP r_date_as_character(SEXP x);
 static SEXP r_chr_date_as_posixct(SEXP x, SEXP tzone);
 static SEXP r_chr_date_as_posixlt(SEXP x, SEXP tzone);
@@ -456,6 +456,8 @@ static bool tzone_equal(SEXP x_tzone, SEXP y_tzone) {
 
 // -----------------------------------------------------------------------------
 
+static SEXP syms_tz = NULL;
+
 static SEXP syms_as_date = NULL;
 static SEXP fns_as_date = NULL;
 
@@ -463,19 +465,18 @@ static SEXP r_as_date(SEXP x) {
   return vctrs_dispatch1(syms_as_date, fns_as_date, syms_x, x);
 }
 
-static SEXP syms_tz = NULL;
 static SEXP syms_as_posixct = NULL;
 static SEXP fns_as_posixct = NULL;
 
-static SEXP r_as_posixct(SEXP x, SEXP tz) {
-  return vctrs_dispatch2(syms_as_posixct, fns_as_posixct, syms_x, x, syms_tz, tz);
+static SEXP r_as_posixct(SEXP x, SEXP tzone) {
+  return vctrs_dispatch2(syms_as_posixct, fns_as_posixct, syms_x, x, syms_tz, tzone);
 }
 
 static SEXP syms_as_posixlt = NULL;
 static SEXP fns_as_posixlt = NULL;
 
-static SEXP r_as_posixlt(SEXP x, SEXP tz) {
-  return vctrs_dispatch2(syms_as_posixlt, fns_as_posixlt, syms_x, x, syms_tz, tz);
+static SEXP r_as_posixlt(SEXP x, SEXP tzone) {
+  return vctrs_dispatch2(syms_as_posixlt, fns_as_posixlt, syms_x, x, syms_tz, tzone);
 }
 
 static SEXP syms_date_as_character = NULL;
