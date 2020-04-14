@@ -15,6 +15,9 @@ static SEXP tzone_get(SEXP x);
 static SEXP tzone_union(SEXP x_tzone, SEXP y_tzone);
 static bool tzone_equal(SEXP x_tzone, SEXP y_tzone);
 
+static SEXP posixlt_as_posixct_impl(SEXP x, SEXP tzone);
+static SEXP posixct_as_posixlt_impl(SEXP x, SEXP tzone);
+
 // -----------------------------------------------------------------------------
 // ptype2
 
@@ -84,29 +87,61 @@ SEXP date_as_posixlt(SEXP x, SEXP to) {
 }
 
 
+static SEXP posixt_as_date(SEXP ct, SEXP lt, bool* lossy);
+
 // [[ include("vctrs.h") ]]
 SEXP posixct_as_date(SEXP x, bool* lossy) {
-  x = PROTECT(datetime_validate(x));
-  const double* p_x = REAL(x);
+  SEXP ct = PROTECT(datetime_validate(x));
 
-  SEXP out = PROTECT(r_posixct_as_date(x));
+  SEXP tzone = PROTECT(tzone_get(ct));
+  SEXP lt = PROTECT(posixct_as_posixlt_impl(ct, tzone));
 
-  SEXP roundtrip = PROTECT(date_as_posixct(out, x));
+  SEXP out = posixt_as_date(ct, lt, lossy);
+
+  UNPROTECT(3);
+  return out;
+}
+
+
+// [[ include("vctrs.h") ]]
+SEXP posixlt_as_date(SEXP x, bool* lossy) {
+  SEXP lt = x;
+
+  SEXP tzone = PROTECT(tzone_get(lt));
+  SEXP ct = PROTECT(posixlt_as_posixct_impl(lt, tzone));
+
+  SEXP out = posixt_as_date(ct, lt, lossy);
+
+  UNPROTECT(2);
+  return out;
+}
+
+// POSIXct is required for lossy checking.
+// POSIXlt is required for converting to Date.
+// `as.Date.POSIXct()` must go through `as.POSIXlt()`, so the POSIXct
+// time alone is not enough.
+static SEXP posixt_as_date(SEXP ct, SEXP lt, bool* lossy) {
+  ct = PROTECT(datetime_validate(ct));
+  const double* p_ct = REAL(ct);
+
+  SEXP out = PROTECT(r_as_date(lt));
+
+  SEXP roundtrip = PROTECT(date_as_posixct(out, ct));
   const double* p_roundtrip = REAL(roundtrip);
 
   const R_len_t size = Rf_length(out);
 
   for (R_len_t i = 0; i < size; ++i) {
-    const double x_elt = p_x[i];
+    const double ct_elt = p_ct[i];
 
     // `NaN` and `NA` always convert without issue
-    if (isnan(x_elt)) {
+    if (isnan(ct_elt)) {
       continue;
     }
 
     const double roundtrip_elt = p_roundtrip[i];
 
-    if (x_elt != roundtrip_elt) {
+    if (ct_elt != roundtrip_elt) {
       *lossy = true;
       UNPROTECT(3);
       return R_NilValue;
@@ -116,19 +151,6 @@ SEXP posixct_as_date(SEXP x, bool* lossy) {
   UNPROTECT(3);
   return out;
 }
-
-
-// [[ include("vctrs.h") ]]
-SEXP posixlt_as_date(SEXP x, bool* lossy) {
-  SEXP tzone = PROTECT(tzone_get(x));
-  x = PROTECT(r_as_posixct(x, tzone));
-
-  SEXP out = posixct_as_date(x, lossy);
-
-  UNPROTECT(2);
-  return out;
-}
-
 
 static SEXP posixct_as_posixct_impl(SEXP x, SEXP tzone);
 
@@ -148,8 +170,6 @@ static SEXP posixct_as_posixct_impl(SEXP x, SEXP tzone) {
 }
 
 
-static SEXP posixlt_as_posixct_impl(SEXP x, SEXP tzone);
-
 // [[ include("vctrs.h") ]]
 SEXP posixlt_as_posixct(SEXP x, SEXP to) {
   SEXP tzone = PROTECT(tzone_get(to));
@@ -168,8 +188,6 @@ static SEXP posixlt_as_posixct_impl(SEXP x, SEXP tzone) {
   return out;
 }
 
-
-static SEXP posixct_as_posixlt_impl(SEXP x, SEXP tzone);
 
 // [[ include("vctrs.h") ]]
 SEXP posixct_as_posixlt(SEXP x, SEXP to) {
