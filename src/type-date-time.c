@@ -15,6 +15,13 @@ static SEXP tzone_get(SEXP x);
 static SEXP tzone_union(SEXP x_tzone, SEXP y_tzone);
 static bool tzone_equal(SEXP x_tzone, SEXP y_tzone);
 
+static SEXP r_as_date(SEXP x);
+static SEXP r_as_posixct(SEXP x, SEXP tz);
+static SEXP r_as_posixlt(SEXP x, SEXP tz);
+static SEXP r_date_as_character(SEXP x);
+static SEXP r_chr_date_as_posixct(SEXP x, SEXP tzone);
+static SEXP r_chr_date_as_posixlt(SEXP x, SEXP tzone);
+
 static SEXP posixlt_as_posixct_impl(SEXP x, SEXP tzone);
 static SEXP posixct_as_posixlt_impl(SEXP x, SEXP tzone);
 
@@ -151,6 +158,7 @@ static SEXP posixt_as_date(SEXP ct, SEXP lt, bool* lossy) {
   UNPROTECT(3);
   return out;
 }
+
 
 static SEXP posixct_as_posixct_impl(SEXP x, SEXP tzone);
 
@@ -444,4 +452,69 @@ static bool tzone_equal(SEXP x_tzone, SEXP y_tzone) {
   const char* y_tzone_char = CHAR(y_string);
 
   return !strcmp(x_tzone_char, y_tzone_char);
+}
+
+// -----------------------------------------------------------------------------
+
+static SEXP syms_as_date = NULL;
+static SEXP fns_as_date = NULL;
+
+static SEXP r_as_date(SEXP x) {
+  return vctrs_dispatch1(syms_as_date, fns_as_date, syms_x, x);
+}
+
+static SEXP syms_tz = NULL;
+static SEXP syms_as_posixct = NULL;
+static SEXP fns_as_posixct = NULL;
+
+static SEXP r_as_posixct(SEXP x, SEXP tz) {
+  return vctrs_dispatch2(syms_as_posixct, fns_as_posixct, syms_x, x, syms_tz, tz);
+}
+
+static SEXP syms_as_posixlt = NULL;
+static SEXP fns_as_posixlt = NULL;
+
+static SEXP r_as_posixlt(SEXP x, SEXP tz) {
+  return vctrs_dispatch2(syms_as_posixlt, fns_as_posixlt, syms_x, x, syms_tz, tz);
+}
+
+static SEXP syms_date_as_character = NULL;
+static SEXP fns_date_as_character = NULL;
+
+static SEXP r_date_as_character(SEXP x) {
+  return vctrs_dispatch1(syms_date_as_character, fns_date_as_character, syms_x, x);
+}
+
+static SEXP syms_chr_date_as_posixct = NULL;
+static SEXP fns_chr_date_as_posixct = NULL;
+
+static SEXP r_chr_date_as_posixct(SEXP x, SEXP tzone) {
+  return vctrs_dispatch2(syms_chr_date_as_posixct, fns_chr_date_as_posixct, syms_x, x, syms_tzone, tzone);
+}
+
+static SEXP syms_chr_date_as_posixlt = NULL;
+static SEXP fns_chr_date_as_posixlt = NULL;
+
+static SEXP r_chr_date_as_posixlt(SEXP x, SEXP tzone) {
+  return vctrs_dispatch2(syms_chr_date_as_posixlt, fns_chr_date_as_posixlt, syms_x, x, syms_tzone, tzone);
+}
+
+// -----------------------------------------------------------------------------
+
+void vctrs_init_type_date_time(SEXP ns) {
+  syms_tz = Rf_install("tz");
+
+  syms_as_date = Rf_install("as.Date");
+  syms_as_posixct = Rf_install("as.POSIXct");
+  syms_as_posixlt = Rf_install("as.POSIXlt");
+  syms_date_as_character = Rf_install("date_as_character");
+  syms_chr_date_as_posixct = Rf_install("chr_date_as_posixct");
+  syms_chr_date_as_posixlt = Rf_install("chr_date_as_posixlt");
+
+  fns_as_date = r_env_get(R_BaseEnv, syms_as_date);
+  fns_as_posixct = r_env_get(R_BaseEnv, syms_as_posixct);
+  fns_as_posixlt = r_env_get(R_BaseEnv, syms_as_posixlt);
+  fns_date_as_character = r_env_get(ns, syms_date_as_character);
+  fns_chr_date_as_posixct = r_env_get(ns, syms_chr_date_as_posixct);
+  fns_chr_date_as_posixlt = r_env_get(ns, syms_chr_date_as_posixlt);
 }

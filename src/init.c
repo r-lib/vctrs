@@ -316,6 +316,7 @@ void vctrs_init_ptype2_dispatch(SEXP ns);
 void vctrs_init_rep(SEXP ns);
 void vctrs_init_type(SEXP ns);
 void vctrs_init_type_data_frame(SEXP ns);
+void vctrs_init_type_date_time(SEXP ns);
 void vctrs_init_type_info(SEXP ns);
 void vctrs_init_unspecified(SEXP ns);
 void vctrs_init_utils(SEXP ns);
@@ -335,6 +336,7 @@ SEXP vctrs_init_library(SEXP ns) {
   vctrs_init_rep(ns);
   vctrs_init_type(ns);
   vctrs_init_type_data_frame(ns);
+  vctrs_init_type_date_time(ns);
   vctrs_init_type_info(ns);
   vctrs_init_unspecified(ns);
   vctrs_init_utils(ns);
