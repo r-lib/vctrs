@@ -67,7 +67,7 @@ new_list_of <- function(x = list(), ptype = logical(), ..., class = character())
     abort("`ptype` must have size 0.")
   }
 
-  new_vctr(x, ..., ptype = ptype, class = c(class, "vctrs_list_of"))
+  new_vctr(x, ..., ptype = ptype, class = c(class, "vctrs_list_of"), inherit_base_type = TRUE)
 }
 
 #' @export

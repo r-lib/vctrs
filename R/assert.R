@@ -155,8 +155,6 @@ vec_is_vector <- function(x) {
 #'
 #' * `x` is a bare list with no class.
 #' * `x` is a list explicitly inheriting from `"list"`.
-#' * `x` is an S3 object with a [vec_proxy()] method that returns a list that
-#'   passes one of the above conditions.
 #'
 #' @param x An object.
 #'
@@ -164,6 +162,8 @@ vec_is_vector <- function(x) {
 #' Notably, data frames and S3 record style classes like POSIXlt are not
 #' considered lists.
 #'
+#' If `x` inherits explicitly from `"list"`, it is also required that the
+#' proxy returned by [vec_proxy()] is a list. If it is not, an error is thrown.
 #' @export
 #' @examples
 #' vec_is_list(list())

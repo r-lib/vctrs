@@ -1,0 +1,9 @@
+
+proxy of S3 lists must be a list
+================================
+
+> x <- structure(list(), class = c("foobar", "list"))
+> local_methods(vec_proxy.foobar = function(x) 1)
+> vec_is_list(x)
+Error: `x` inherits explicitly from "list", but the proxy returned by `vec_proxy()` is not a list.
+

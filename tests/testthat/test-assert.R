@@ -255,6 +255,11 @@ test_that("explicitly classed lists are lists", {
   expect_true(vec_is_list(subclass(x)))
 })
 
+test_that("explicit inheritance must be in the base class", {
+  x <- structure(1:2, class = c("list", "foobar"))
+  expect_false(vec_is_list(x))
+})
+
 test_that("POSIXlt are not considered a list", {
   expect_false(vec_is_list(as.POSIXlt(new_datetime())))
 })
@@ -267,21 +272,6 @@ test_that("scalars are not lists", {
   expect_false(vec_is_list(foobar()))
 })
 
-test_that("S3 lists that implement a proxy that is a bare list are lists", {
-  local_foobar_proxy()
-  expect_true(vec_is_list(foobar()))
-})
-
-test_that("Any S3 type with a list proxy can be a list", {
-  x <- structure(1:2, class = "foobar")
-
-  local_methods(
-    vec_proxy.foobar = function(x, ...) vec_chop(unclass(x))
-  )
-
-  expect_true(vec_is_list(x))
-})
-
 test_that("S3 types can't lie about their internal representation", {
   x <- structure(1:2, class = c("foobar", "list"))
   expect_false(vec_is_list(x))
@@ -291,4 +281,23 @@ test_that("data frames of all types are not lists", {
   expect_false(vec_is_list(data.frame()))
   expect_false(vec_is_list(subclass(data.frame())))
   expect_false(vec_is_list(tibble::tibble()))
+})
+
+test_that("proxy of S3 lists must be a list", {
+  verify_errors({
+    x <- structure(list(), class = c("foobar", "list"))
+    local_methods(vec_proxy.foobar = function(x) 1)
+    expect_error(vec_is_list(x))
+  })
+})
+
+# -----------------------------------------------------------------------
+
+test_that("assert functions give informative errors", {
+  verify_output(test_path("error", "test-assert.txt"), {
+    "# proxy of S3 lists must be a list"
+    x <- structure(list(), class = c("foobar", "list"))
+    local_methods(vec_proxy.foobar = function(x) 1)
+    vec_is_list(x)
+  })
 })

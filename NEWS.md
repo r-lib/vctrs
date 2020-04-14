@@ -1,6 +1,13 @@
 
 # vctrs (development version)
 
+* `new_list_of()` now returns an object with a base class of `"list"` to be
+  compatible with changes to `vec_is_list()`.
+
+* `vec_is_list()` no longer allows S3 lists that implement a `vec_proxy()`
+  method to automatically be considered lists. A S3 list must explicitly
+  inherit from `"list"` in the base class to be considered a list.
+
 * `vec_rbind()` gains option to treat input names as row names. This
   is disabled by default (#966).
 

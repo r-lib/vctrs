@@ -128,7 +128,7 @@ test_that("as.list() chops vectors", {
     list(new_vctr(1L), new_vctr(2L), new_vctr(3L))
   )
 
-  x <- new_vctr(as.list(1:3))
+  x <- new_vctr(as.list(1:3), inherit_base_type = TRUE)
   expect_identical(as.list(x), as.list(1:3))
 })
 
