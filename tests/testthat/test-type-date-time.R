@@ -217,7 +217,7 @@ test_that("date - datetime cast can be roundtripped", {
 
 test_that("lossy casts generate error", {
   date <- as.Date("2018-01-01")
-  datetime <- as.POSIXct(date) + c(0, 3600)
+  datetime <- as.POSIXct(as.character(date)) + c(0, 3600)
   expect_lossy(vec_cast(datetime, date), vec_c(date, date), x = datetime, to = date)
 })
 

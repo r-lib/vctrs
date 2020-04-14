@@ -220,7 +220,7 @@ vec_cast.Date.POSIXlt <- function(x, to, ...) {
 
 # TODO: Remove when we have lazy errors
 date_cast <- function(x, to, ..., x_arg = "", to_arg = "") {
-  out <- as.Date(x)
+  out <- as.Date(x, tz = tzone(x))
 
   x_ct <- as.POSIXct(x)
   out_ct <- as.POSIXct(as.character(out), tz = tzone(x))
