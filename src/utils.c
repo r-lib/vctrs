@@ -1264,13 +1264,6 @@ SEXP r_as_posixlt(SEXP x, SEXP tz) {
   return vctrs_dispatch2(syms_as_posixlt, fns_as_posixlt, syms_x, x, syms_tz, tz);
 }
 
-static SEXP syms_as_character = NULL;
-static SEXP fns_as_character = NULL;
-
-SEXP r_as_character(SEXP x) {
-  return vctrs_dispatch1(syms_as_character, fns_as_character, syms_x, x);
-}
-
 static SEXP syms_date_as_character = NULL;
 static SEXP fns_date_as_character = NULL;
 
@@ -1290,13 +1283,6 @@ static SEXP fns_chr_date_as_posixlt = NULL;
 
 SEXP r_chr_date_as_posixlt(SEXP x, SEXP tzone) {
   return vctrs_dispatch2(syms_chr_date_as_posixlt, fns_chr_date_as_posixlt, syms_x, x, syms_tzone, tzone);
-}
-
-static SEXP syms_posixct_as_date = NULL;
-static SEXP fns_posixct_as_date = NULL;
-
-SEXP r_posixct_as_date(SEXP x) {
-  return vctrs_dispatch1(syms_posixct_as_date, fns_posixct_as_date, syms_x, x);
 }
 
 SEXP r_as_data_frame(SEXP x) {
@@ -1770,22 +1756,18 @@ void vctrs_init_utils(SEXP ns) {
   syms_as_date = Rf_install("as.Date");
   syms_as_posixct = Rf_install("as.POSIXct");
   syms_as_posixlt = Rf_install("as.POSIXlt");
-  syms_as_character = Rf_install("as.character");
   syms_date_as_character = Rf_install("date_as_character");
   syms_chr_date_as_posixct = Rf_install("chr_date_as_posixct");
   syms_chr_date_as_posixlt = Rf_install("chr_date_as_posixlt");
-  syms_posixct_as_date = Rf_install("posixct_as_date");
   syms_as_data_frame2 = Rf_install("as.data.frame2");
   syms_colnames = Rf_install("colnames");
 
   fns_as_date = r_env_get(R_BaseEnv, syms_as_date);
   fns_as_posixct = r_env_get(R_BaseEnv, syms_as_posixct);
   fns_as_posixlt = r_env_get(R_BaseEnv, syms_as_posixlt);
-  fns_as_character = r_env_get(R_BaseEnv, syms_as_character);
   fns_date_as_character = r_env_get(ns, syms_date_as_character);
   fns_chr_date_as_posixct = r_env_get(ns, syms_chr_date_as_posixct);
   fns_chr_date_as_posixlt = r_env_get(ns, syms_chr_date_as_posixlt);
-  fns_posixct_as_date = r_env_get(ns, syms_posixct_as_date);
   fns_as_data_frame2 = r_env_get(ns, syms_as_data_frame2);
   fns_colnames = r_env_get(R_BaseEnv, syms_colnames);
 
