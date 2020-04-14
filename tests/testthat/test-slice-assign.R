@@ -556,9 +556,9 @@ test_that("can optionally assign names", {
     vec_out
   )
 
-  oo_x <- set_names(as.POSIXlt(c("2020-01-01", "2020-01-02", "2020-01-03")), letters[1:3])
-  oo_y <- as.POSIXlt(c(FOO = "2020-01-04"))
-  oo_out <- as.POSIXlt(c(a = "2020-01-01", FOO = "2020-01-04", c = "2020-01-03"))
+  oo_x <- set_names(as_posixlt(c("2020-01-01", "2020-01-02", "2020-01-03")), letters[1:3])
+  oo_y <- as_posixlt(c(FOO = "2020-01-04"))
+  oo_out <- as_posixlt(c(a = "2020-01-01", FOO = "2020-01-04", c = "2020-01-03"))
   expect_identical(
     vec_assign_params(oo_x, 2, oo_y, assign_names = TRUE),
     oo_out

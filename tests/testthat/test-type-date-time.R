@@ -48,15 +48,10 @@ test_that("vec_c() and vec_rbind() convert Dates with int representation to doub
   expect_true(is.double(vec_rbind(df, df)$x))
 })
 
-test_that("vec_proxy() returns a double for Dates with int representation", {
-  x <- structure(0L, class = "Date")
-  expect_true(is.double(vec_proxy(x)))
-})
-
-test_that("POSIXlt roundtrips through proxy and restore", {
-  x <- as.POSIXlt("2020-01-03")
-  out <- vec_restore(vec_proxy(x), x)
-  expect_identical(out, x)
+test_that("vec_c() and vec_ptype() standardize missing `tzone` attributes (#561)", {
+  x <- structure(0L, class = c("POSIXct", "POSIXt"))
+  expect_identical(attr(vec_ptype(x), "tzone"), "")
+  expect_identical(attr(vec_c(x, x), "tzone"), "")
 })
 
 # constructor -------------------------------------------------------------
@@ -355,6 +350,56 @@ test_that("can cast NA and unspecified to duration", {
   expect_identical(vec_cast(unspecified(2), new_duration()), new_duration(dbl(NA, NA)))
 })
 
+# proxy/restore: dates ---------------------------------------------------
+
+test_that("restoring an integer to an integer Date converts to double", {
+  x <- structure(0L, class = "Date")
+  expect_true(is.double(vec_restore(x, x)))
+})
+
+test_that("vec_proxy() returns a double for Dates with int representation", {
+  x <- structure(0L, class = "Date")
+  expect_true(is.double(vec_proxy(x)))
+})
+
+# proxy/restore: datetimes ------------------------------------------------
+
+test_that("restoring an integer to an integer POSIXct converts to double", {
+  x <- structure(0L, class = c("POSIXct", "POSIXt"))
+  expect_true(is.double(vec_restore(x, x)))
+})
+
+test_that("restoring to a POSIXct with no time zone standardizes to an empty string (#561)", {
+  x <- structure(0L, class = c("POSIXct", "POSIXt"))
+  expect_identical(attr(vec_restore(x, x), "tzone"), "")
+})
+
+test_that("restoring to a POSIXlt with no time zone standardizes to an empty string", {
+  x <- as.POSIXlt("1970-01-01", tz = "")
+
+  # Even if you specify local time, the `tzone` attribute isn't added
+  expect_null(attr(x, "tzone"), NULL)
+
+  proxy <- vec_proxy(x)
+
+  expect_identical(attr(vec_restore(proxy, x), "tzone"), "")
+})
+
+test_that("proxying a POSIXct with no time zone standardizes to an empty string", {
+  x <- structure(0L, class = c("POSIXct", "POSIXt"))
+  expect_identical(attr(vec_proxy(x), "tzone"), "")
+})
+
+test_that("vec_proxy() returns a double for POSIXct with int representation", {
+  x <- structure(0L, class = c("POSIXct", "POSIXt"))
+  expect_true(is.double(vec_proxy(x)))
+})
+
+test_that("POSIXlt roundtrips through proxy and restore", {
+  x <- as_posixlt("2020-01-03")
+  out <- vec_restore(vec_proxy(x), x)
+  expect_identical(out, x)
+})
 
 # arithmetic --------------------------------------------------------------
 

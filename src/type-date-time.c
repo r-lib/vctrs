@@ -8,6 +8,8 @@ static SEXP new_empty_datetime(SEXP tzone);
 
 static SEXP date_validate(SEXP x);
 static SEXP datetime_validate(SEXP x);
+static SEXP datetime_validate_tzone(SEXP x);
+static SEXP datetime_validate_type(SEXP x);
 
 static SEXP datetime_rezone(SEXP x, SEXP tzone);
 
@@ -233,6 +235,33 @@ SEXP posixlt_as_posixlt(SEXP x, SEXP to) {
 }
 
 // -----------------------------------------------------------------------------
+// restore
+
+// [[ include("vctrs.h") ]]
+SEXP vec_date_restore(SEXP x, SEXP to) {
+  SEXP out = PROTECT(vec_restore_default(x, to));
+  out = date_validate(out);
+  UNPROTECT(1);
+  return out;
+}
+
+// [[ include("vctrs.h") ]]
+SEXP vec_posixct_restore(SEXP x, SEXP to) {
+  SEXP out = PROTECT(vec_restore_default(x, to));
+  out = datetime_validate(out);
+  UNPROTECT(1);
+  return out;
+}
+
+// [[ include("vctrs.h") ]]
+SEXP vec_posixlt_restore(SEXP x, SEXP to) {
+  SEXP out = PROTECT(vec_restore_default(x, to));
+  out = datetime_validate_tzone(out);
+  UNPROTECT(1);
+  return out;
+}
+
+// -----------------------------------------------------------------------------
 
 // [[ register() ]]
 SEXP vctrs_new_date(SEXP x) {
@@ -325,9 +354,6 @@ static SEXP date_validate(SEXP x) {
 SEXP vctrs_datetime_validate(SEXP x) {
   return datetime_validate(x);
 }
-
-static SEXP datetime_validate_tzone(SEXP x);
-static SEXP datetime_validate_type(SEXP x);
 
 // Ensure that a `POSIXct` is internally stored as a double vector.
 // Also checks that the `tzone` attribute is non-NULL.

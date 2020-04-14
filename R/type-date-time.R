@@ -71,6 +71,20 @@ vec_proxy_compare.POSIXlt <- function(x, ...) {
   vec_proxy_compare(x, ...)
 }
 
+#' @export
+vec_restore.Date <- function(x, to, ...) {
+  stop_native_implementation("vec_restore.Date")
+}
+
+#' @export
+vec_restore.POSIXct <- function(x, to, ...) {
+  stop_native_implementation("vec_restore.POSIXct")
+}
+
+#' @export
+vec_restore.POSIXlt <- function(x, to, ...) {
+  stop_native_implementation("vec_restore.POSIXlt")
+}
 
 # Print ------------------------------------------------------------------
 
@@ -514,6 +528,13 @@ lossy_floor <- function(x, to, x_arg = "", to_arg = "") {
   x_floor <- floor(x)
   lossy <- x != x_floor
   maybe_lossy_cast(x_floor, x, to, lossy, x_arg = x_arg, to_arg = to_arg)
+}
+
+# Guarantees the presence of a `tzone` attribute
+# by going through `as.POSIXlt.POSIXct()`.
+# Useful for testing, since we always try to restore a `tzone`.
+as_posixlt <- function(x, tz = "") {
+  as.POSIXlt(as.POSIXct(x, tz))
 }
 
 # Math --------------------------------------------------------------------
