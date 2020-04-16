@@ -1,6 +1,9 @@
 
 # vctrs (development version)
 
+* `vec_rbind()` gains option to treat input names as row names. This
+  is disabled by default (#966).
+
 * `vec_ptype()` gained an `x_arg` argument.
 
 * `stop_incompatible_cast()` now throws an error of class

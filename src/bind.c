@@ -22,10 +22,14 @@ SEXP vctrs_rbind(SEXP call, SEXP op, SEXP args, SEXP env) {
   SEXP name_repair = PROTECT(Rf_eval(CAR(args), env));
 
   if (names_to != R_NilValue) {
-    if (!r_is_string(names_to)) {
-      Rf_errorcall(R_NilValue, "`.names_to` must be `NULL` or a string.");
+    if (Rf_inherits(names_to, "rlang_zap")) {
+      r_poke_names(xs, R_NilValue);
+      names_to = R_NilValue;
+    } else if (r_is_string(names_to)) {
+      names_to = r_chr_get(names_to, 0);
+    } else {
+      Rf_errorcall(R_NilValue, "`.names_to` must be `NULL`, a string, or an `rlang::zap()` object.");
     }
-    names_to = r_chr_get(names_to, 0);
   }
 
   struct name_repair_opts name_repair_opts = validate_bind_name_repair(name_repair, false);
