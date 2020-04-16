@@ -24,30 +24,13 @@
 #' new_datetime(0, tzone = "UTC")
 #' new_duration(1, "hour")
 new_date <- function(x = double()) {
-  stopifnot(is.double(x))
-
-  structure(
-    x,
-    class = "Date"
-  )
+  .Call(vctrs_new_date, x)
 }
 
 #' @export
 #' @rdname new_date
 new_datetime <- function(x = double(), tzone = "") {
-  tzone <- tzone %||% ""
-
-  if (is.integer(x)) {
-    x <- as.double(x)
-  }
-  stopifnot(is.double(x))
-  stopifnot(is.character(tzone))
-
-  structure(
-    x,
-    tzone = tzone,
-    class = c("POSIXct", "POSIXt")
-  )
+  .Call(vctrs_new_datetime, x, tzone)
 }
 
 #' @export
@@ -65,12 +48,12 @@ new_duration <- function(x = double(), units = c("secs", "mins", "hours", "days"
 
 #' @export
 vec_proxy.Date <- function(x, ...) {
-  as_double_date(x)
+  date_validate(x)
 }
 
 #' @export
 vec_proxy.POSIXct <- function(x, ...) {
-  new_datetime(x, attr(x, "tzone"))
+  datetime_validate(x)
 }
 
 #' @export
@@ -79,15 +62,29 @@ vec_proxy.POSIXlt <- function(x, ...) {
 }
 #' @export
 vec_proxy_equal.POSIXlt <- function(x, ...) {
-  x <- as.POSIXct(x, tzone(x))
+  x <- vec_cast(x, new_datetime(tzone = tzone(x)))
   vec_proxy_equal(x, ...)
 }
 #' @export
 vec_proxy_compare.POSIXlt <- function(x, ...) {
-  x <- as.POSIXct(x, tzone(x))
+  x <- vec_cast(x, new_datetime(tzone = tzone(x)))
   vec_proxy_compare(x, ...)
 }
 
+#' @export
+vec_restore.Date <- function(x, to, ...) {
+  stop_native_implementation("vec_restore.Date")
+}
+
+#' @export
+vec_restore.POSIXct <- function(x, to, ...) {
+  stop_native_implementation("vec_restore.POSIXct")
+}
+
+#' @export
+vec_restore.POSIXlt <- function(x, to, ...) {
+  stop_native_implementation("vec_restore.POSIXlt")
+}
 
 # Print ------------------------------------------------------------------
 
@@ -220,21 +217,29 @@ vec_cast.Date <- function(x, to, ...) {
 #' @export
 #' @method vec_cast.Date Date
 vec_cast.Date.Date <- function(x, to, ...) {
-  as_double_date(x)
+  stop_native_implementation("vec_cast.Date.Date")
 }
 #' @export
 #' @method vec_cast.Date POSIXct
 vec_cast.Date.POSIXct <- function(x, to, ...) {
+  # TODO: Mark with `stop_native_implementation()` when we use lazy errors
   date_cast(x, to, ...)
 }
 #' @export
 #' @method vec_cast.Date POSIXlt
 vec_cast.Date.POSIXlt <- function(x, to, ...) {
+  # TODO: Mark with `stop_native_implementation()` when we use lazy errors
   date_cast(x, to, ...)
 }
+
+# TODO: Remove when we have lazy errors
 date_cast <- function(x, to, ..., x_arg = "", to_arg = "") {
-  out <- as.Date(x)
-  lossy <- abs(x - as.POSIXct(out)) > 1e-9 & !is.na(x)
+  out <- as.Date(x, tz = tzone(x))
+
+  x_ct <- as.POSIXct(x)
+  out_ct <- as.POSIXct(as.character(out), tz = tzone(x))
+  lossy <- abs(x_ct - out_ct) > 1e-9 & !is.na(x)
+
   maybe_lossy_cast(out, x, to, lossy, x_arg = x_arg, to_arg = to_arg)
 }
 
@@ -248,17 +253,17 @@ vec_cast.POSIXct <- function(x, to, ...) {
 #' @export
 #' @method vec_cast.POSIXct Date
 vec_cast.POSIXct.Date <- function(x, to, ...) {
-  as.POSIXct(as.character(x), tz = tzone(to))
+  stop_native_implementation("vec_cast.POSIXct.Date")
 }
 #' @export
 #' @method vec_cast.POSIXct POSIXlt
 vec_cast.POSIXct.POSIXlt <- function(x, to, ...) {
-  new_datetime(as.POSIXct(x), tzone = tzone(to))
+  stop_native_implementation("vec_cast.POSIXct.POSIXlt")
 }
 #' @export
 #' @method vec_cast.POSIXct POSIXct
 vec_cast.POSIXct.POSIXct <- function(x, to, ...) {
-  new_datetime(vec_data(x), tzone = tzone(to))
+  stop_native_implementation("vec_cast.POSIXct.POSIXct")
 }
 
 #' @rdname new_date
@@ -271,17 +276,17 @@ vec_cast.POSIXlt <- function(x, to, ...) {
 #' @export
 #' @method vec_cast.POSIXlt Date
 vec_cast.POSIXlt.Date <- function(x, to, ...) {
-  as.POSIXlt(as.character(x), tz = tzone(to))
+  stop_native_implementation("vec_cast.POSIXlt.Date")
 }
 #' @export
 #' @method vec_cast.POSIXlt POSIXlt
 vec_cast.POSIXlt.POSIXlt <- function(x, to, ...) {
-  as.POSIXlt(x, tz = tzone(to))
+  stop_native_implementation("vec_cast.POSIXlt.POSIXlt")
 }
 #' @export
 #' @method vec_cast.POSIXlt POSIXct
 vec_cast.POSIXlt.POSIXct <- function(x, to, ...) {
-  as.POSIXlt(x, tz = tzone(to))
+  stop_native_implementation("vec_cast.POSIXlt.POSIXct")
 }
 
 
@@ -493,18 +498,43 @@ units_union <- function(x, y) {
   }
 }
 
-as_double_date <- function(x) {
-  if (is.integer(x)) {
-    new_date(as.double(x))
-  } else {
-    x
-  }
+date_validate <- function(x) {
+  .Call(vctrs_date_validate, x)
+}
+
+datetime_validate <- function(x) {
+  .Call(vctrs_datetime_validate, x)
+}
+
+# as.character.Date() calls format() which tries to guess a simplified format.
+# Supplying a known format is faster and much more memory efficient.
+date_as_character <- function(x) {
+  format(x, format = "%Y-%m-%d")
+}
+
+# `as.POSIXlt.character()` tries multiple formats. Supplying
+# a known format is much faster and more memory efficient.
+chr_date_as_posixlt <- function(x, tzone) {
+  as.POSIXlt.character(x, tz = tzone, format = "%Y-%m-%d")
+}
+
+# `as.POSIXct.default()` for characters goes through `as.POSIXlt.character()`
+chr_date_as_posixct <- function(x, tzone) {
+  out <- chr_date_as_posixlt(x, tzone)
+  as.POSIXct.POSIXlt(out, tzone)
 }
 
 lossy_floor <- function(x, to, x_arg = "", to_arg = "") {
   x_floor <- floor(x)
   lossy <- x != x_floor
   maybe_lossy_cast(x_floor, x, to, lossy, x_arg = x_arg, to_arg = to_arg)
+}
+
+# Guarantees the presence of a `tzone` attribute
+# by going through `as.POSIXlt.POSIXct()`.
+# Useful for testing, since we always try to restore a `tzone`.
+as_posixlt <- function(x, tz = "") {
+  as.POSIXlt(as.POSIXct(x, tz))
 }
 
 # Math --------------------------------------------------------------------

@@ -22,6 +22,12 @@ test_that("dates and times are vectors", {
   expect_true(vec_is(as.POSIXlt("2020-01-01")))
 })
 
+test_that("vec_cast() converts POSIXct with int representation to double when converting zones", {
+  x <- structure(integer(), class = c("POSIXct", "POSIXt"), tzone = "UTC")
+  y <- structure(numeric(), class = c("POSIXct", "POSIXt"), tzone = "America/Los_Angeles")
+  expect_true(is.double(vec_cast(x, y)))
+})
+
 test_that("vec_c() converts POSIXct with int representation to double representation (#540)", {
   time1 <- seq(as.POSIXct("2015-12-01", tz = "UTC"), length.out = 2, by = "days")
   time2 <- vec_c(time1)
@@ -42,17 +48,57 @@ test_that("vec_c() and vec_rbind() convert Dates with int representation to doub
   expect_true(is.double(vec_rbind(df, df)$x))
 })
 
-test_that("vec_proxy() returns a double for Dates with int representation", {
-  x <- structure(0L, class = "Date")
-  expect_true(is.double(vec_proxy(x)))
+test_that("vec_c() and vec_ptype() standardize missing `tzone` attributes (#561)", {
+  x <- structure(0L, class = c("POSIXct", "POSIXt"))
+  expect_identical(attr(vec_ptype(x), "tzone"), "")
+  expect_identical(attr(vec_c(x, x), "tzone"), "")
 })
 
-test_that("POSIXlt roundtrips through proxy and restore", {
-  x <- as.POSIXlt("2020-01-03")
-  out <- vec_restore(vec_proxy(x), x)
-  expect_identical(out, x)
+# constructor -------------------------------------------------------------
+
+test_that("can create a date", {
+  expect_identical(new_date(), structure(double(), class = "Date"))
+  expect_identical(new_date(0), structure(0, class = "Date"))
 })
 
+test_that("retains input names", {
+  expect_named(new_date(c(x = 0)), "x")
+})
+
+test_that("drops attributes except names", {
+  expect_identical(new_date(structure(1, foo = "bar")), new_date(1))
+})
+
+test_that("only allows doubles", {
+  expect_error(new_date(1L), "must be a double vector")
+  expect_error(new_date("x"), "must be a double vector")
+})
+
+test_that("can create a datetime", {
+  expect_identical(new_datetime(), structure(double(), class = c("POSIXct", "POSIXt"), tzone = ""))
+  expect_identical(new_datetime(0), structure(0, class = c("POSIXct", "POSIXt"), tzone = ""))
+})
+
+test_that("retains input names", {
+  expect_named(new_datetime(c(x = 0)), "x")
+})
+
+test_that("drops attributes except names", {
+  expect_identical(new_datetime(structure(1, foo = "bar")), new_datetime(1))
+})
+
+test_that("only allows doubles", {
+  expect_error(new_datetime(1L), "must be a double vector")
+  expect_error(new_datetime("x"), "must be a double vector")
+})
+
+test_that("tzone is allowed to be `NULL`", {
+  expect_identical(new_datetime(tzone = NULL), new_datetime(tzone = ""))
+})
+
+test_that("tzone must be character or `NULL`", {
+  expect_error(new_datetime(tzone = 1), "character vector or `NULL`")
+})
 
 # coerce ------------------------------------------------------------------
 
@@ -136,10 +182,13 @@ test_that("vec_ptype2(<difftime>, NA) is symmetric (#687)", {
 
 test_that("safe casts work as expected", {
   date <- as.Date("2018-01-01")
+  datetime_ct <- as.POSIXct(as.character(date))
+  datetime_lt <- as.POSIXlt(datetime_ct)
 
   expect_equal(vec_cast(NULL, date), NULL)
   expect_equal(vec_cast(date, date), date)
-  expect_equal(vec_cast(as.POSIXct(date), date), date)
+  expect_equal(vec_cast(datetime_ct, date), date)
+  expect_equal(vec_cast(datetime_lt, date), date)
 
   missing_date <- new_date(NA_real_)
 
@@ -153,9 +202,17 @@ test_that("safe casts work as expected", {
   expect_error(vec_cast(list(date), date), class = "vctrs_error_incompatible_type")
 })
 
+test_that("date - datetime cast can be roundtripped", {
+  date <- as.Date("2018-01-01")
+  datetime <- as.POSIXct("2018-01-01", tz = "America/New_York")
+
+  expect_identical(vec_cast(vec_cast(date, datetime), date), date)
+  expect_identical(vec_cast(vec_cast(datetime, date), datetime), datetime)
+})
+
 test_that("lossy casts generate error", {
   date <- as.Date("2018-01-01")
-  datetime <- as.POSIXct(date) + c(0, 3600)
+  datetime <- as.POSIXct(as.character(date)) + c(0, 3600)
   expect_lossy(vec_cast(datetime, date), vec_c(date, date), x = datetime, to = date)
 })
 
@@ -172,6 +229,12 @@ test_that("can cast NA and unspecified to Date", {
 test_that("casting an integer date to another date returns a double date", {
   x <- structure(0L, class = "Date")
   expect_true(is.double(vec_cast(x, x)))
+})
+
+test_that("casting an integer POSIXct to a Date returns a double Date", {
+  x <- .POSIXct(18000L, tz = "America/New_York")
+  expect <- new_date(0)
+  expect_identical(vec_cast(x, new_date()), expect)
 })
 
 # cast: datetimes -----------------------------------------------------------
@@ -240,6 +303,27 @@ test_that("can cast NA and unspecified to POSIXct and POSIXlt", {
   expect_identical(vec_cast(unspecified(2), dtl), vec_init(dtl, 2))
 })
 
+test_that("changing time zones retains the underlying moment in time", {
+  x_ct <- as.POSIXct("2019-01-01", tz = "America/New_York")
+  x_lt <- as.POSIXlt(x_ct)
+
+  to_ct <- new_datetime(tzone = "America/Los_Angeles")
+  to_lt <- as.POSIXlt(to_ct)
+
+  expect_ct <- x_ct
+  attr(expect_ct, "tzone") <- "America/Los_Angeles"
+  expect_lt <- as.POSIXlt(expect_ct)
+
+  expect_identical(vec_cast(x_ct, to_ct), expect_ct)
+  expect_identical(vec_cast(x_ct, to_lt), expect_lt)
+  expect_identical(vec_cast(x_lt, to_ct), expect_ct)
+  expect_identical(vec_cast(x_lt, to_lt), expect_lt)
+})
+
+test_that("casting to date always retains the zoned year-month-day value", {
+  x <- as.POSIXct("2019-01-01", tz = "Asia/Shanghai")
+  expect_identical(vec_cast(x, new_date()), as.Date("2019-01-01"))
+})
 
 # cast: durations ------------------------------------------------------------
 
@@ -266,6 +350,65 @@ test_that("can cast NA and unspecified to duration", {
   expect_identical(vec_cast(unspecified(2), new_duration()), new_duration(dbl(NA, NA)))
 })
 
+# proxy/restore: dates ---------------------------------------------------
+
+test_that("restoring an integer to an integer Date converts to double", {
+  x <- structure(0L, class = "Date")
+  expect_true(is.double(vec_restore(x, x)))
+})
+
+test_that("vec_proxy() returns a double for Dates with int representation", {
+  x <- structure(0L, class = "Date")
+  expect_true(is.double(vec_proxy(x)))
+})
+
+# proxy/restore: datetimes ------------------------------------------------
+
+test_that("restoring an integer to an integer POSIXct converts to double", {
+  x <- structure(0L, class = c("POSIXct", "POSIXt"))
+  expect_true(is.double(vec_restore(x, x)))
+})
+
+test_that("restoring to a POSIXct with no time zone standardizes to an empty string (#561)", {
+  x <- structure(0L, class = c("POSIXct", "POSIXt"))
+  expect_identical(attr(vec_restore(x, x), "tzone"), "")
+})
+
+test_that("restoring to a POSIXlt with no time zone standardizes to an empty string", {
+  # Manually create a POSIXlt without a `tzone` attribute.
+  # This is just:
+  # `x <- as.POSIXlt("1970-01-01")`
+  # which usually won't add a `tzone` attribute, but platforms where the local
+  # time is UTC attach a `tzone` attribute automatically.
+  x <- structure(
+    list(
+      sec = 0, min = 0L, hour = 0L, mday = 1L,
+      mon = 0L, year = 70L, wday = 4L, yday = 0L,
+      isdst = 0L, zone = "EST", gmtoff = NA_integer_
+    ),
+    class = c("POSIXlt", "POSIXt")
+  )
+
+  proxy <- vec_proxy(x)
+
+  expect_identical(attr(vec_restore(proxy, x), "tzone"), "")
+})
+
+test_that("proxying a POSIXct with no time zone standardizes to an empty string", {
+  x <- structure(0L, class = c("POSIXct", "POSIXt"))
+  expect_identical(attr(vec_proxy(x), "tzone"), "")
+})
+
+test_that("vec_proxy() returns a double for POSIXct with int representation", {
+  x <- structure(0L, class = c("POSIXct", "POSIXt"))
+  expect_true(is.double(vec_proxy(x)))
+})
+
+test_that("POSIXlt roundtrips through proxy and restore", {
+  x <- as_posixlt("2020-01-03")
+  out <- vec_restore(vec_proxy(x), x)
+  expect_identical(out, x)
+})
 
 # arithmetic --------------------------------------------------------------
 

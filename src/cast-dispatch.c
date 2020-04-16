@@ -42,6 +42,36 @@ SEXP vec_cast_dispatch(SEXP x,
   case vctrs_type2_s3_bare_ordered_bare_ordered:
     return ord_as_ordered(x, to, lossy, x_arg, to_arg);
 
+  case vctrs_type2_s3_bare_date_bare_posixct:
+    if (dir == 0) {
+      return date_as_posixct(x, to);
+    } else {
+      return posixct_as_date(x, lossy);
+    }
+
+  case vctrs_type2_s3_bare_date_bare_posixlt:
+    if (dir == 0) {
+      return date_as_posixlt(x, to);
+    } else {
+      return posixlt_as_date(x, lossy);
+    }
+
+  case vctrs_type2_s3_bare_posixct_bare_posixlt:
+    if (dir == 0) {
+      return posixct_as_posixlt(x, to);
+    } else {
+      return posixlt_as_posixct(x, to);
+    }
+
+  case vctrs_type2_s3_bare_date_bare_date:
+    return date_as_date(x);
+
+  case vctrs_type2_s3_bare_posixct_bare_posixct:
+    return posixct_as_posixct(x, to);
+
+  case vctrs_type2_s3_bare_posixlt_bare_posixlt:
+    return posixlt_as_posixlt(x, to);
+
   case vctrs_type2_s3_dataframe_bare_tibble:
     if (dir == 0) {
       return tib_cast(x, to, x_arg, to_arg);

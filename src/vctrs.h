@@ -356,6 +356,7 @@ SEXP vec_proxy(SEXP x);
 SEXP vec_proxy_equal(SEXP x);
 SEXP vec_proxy_recursive(SEXP x, enum vctrs_proxy_kind kind);
 SEXP vec_restore(SEXP x, SEXP to, SEXP i);
+SEXP vec_restore_default(SEXP x, SEXP to);
 R_len_t vec_size(SEXP x);
 R_len_t vec_size_common(SEXP xs, R_len_t absent);
 SEXP vec_cast(SEXP x, SEXP to, struct vctrs_arg* x_arg, struct vctrs_arg* to_arg);
@@ -557,6 +558,20 @@ SEXP fct_as_ordered(SEXP x, SEXP to, bool* lossy, struct vctrs_arg* x_arg, struc
 SEXP ord_as_ordered(SEXP x, SEXP to, bool* lossy, struct vctrs_arg* x_arg, struct vctrs_arg* to_arg);
 
 // Datetime methods ---------------------------------------------
+
+SEXP date_as_date(SEXP x);
+SEXP date_as_posixct(SEXP x, SEXP to);
+SEXP date_as_posixlt(SEXP x, SEXP to);
+SEXP posixct_as_date(SEXP x, bool* lossy);
+SEXP posixlt_as_date(SEXP x, bool* lossy);
+SEXP posixct_as_posixct(SEXP x, SEXP to);
+SEXP posixlt_as_posixct(SEXP x, SEXP to);
+SEXP posixct_as_posixlt(SEXP x, SEXP to);
+SEXP posixlt_as_posixlt(SEXP x, SEXP to);
+
+SEXP vec_date_restore(SEXP x, SEXP to);
+SEXP vec_posixct_restore(SEXP x, SEXP to);
+SEXP vec_posixlt_restore(SEXP x, SEXP to);
 
 SEXP date_datetime_ptype2(SEXP x, SEXP y);
 SEXP datetime_datetime_ptype2(SEXP x, SEXP y);
