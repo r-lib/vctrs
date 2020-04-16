@@ -284,20 +284,7 @@ test_that("data frames of all types are not lists", {
 })
 
 test_that("proxy of S3 lists must be a list", {
-  verify_errors({
-    x <- structure(list(), class = c("foobar", "list"))
-    local_methods(vec_proxy.foobar = function(x) 1)
-    expect_error(vec_is_list(x))
-  })
-})
-
-# -----------------------------------------------------------------------
-
-test_that("assert functions give informative errors", {
-  verify_output(test_path("error", "test-assert.txt"), {
-    "# proxy of S3 lists must be a list"
-    x <- structure(list(), class = c("foobar", "list"))
-    local_methods(vec_proxy.foobar = function(x) 1)
-    vec_is_list(x)
-  })
+  x <- structure(list(), class = c("foobar", "list"))
+  local_methods(vec_proxy.foobar = function(x) 1)
+  expect_error(vec_is_list(x), "`x` inherits")
 })
