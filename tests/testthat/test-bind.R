@@ -220,7 +220,11 @@ test_that("can assign row names in vec_rbind()", {
   df2 <- mtcars[4:5, ]
 
   # Combination
-  out <- vec_rbind(foo = df1, df2)
+  out <- vec_rbind(
+    foo = df1,
+    df2,
+    .names_to = NULL
+  )
   exp <- mtcars[1:5, ]
   row.names(exp) <- c(paste0("foo...", row.names(df1)), row.names(df2))
   expect_identical(out, exp)
@@ -231,12 +235,22 @@ test_that("can assign row names in vec_rbind()", {
   expect_identical(out, exp)
 
   # Sequence
-  out <- vec_rbind(foo = unrownames(df1), df2, bar = unrownames(mtcars[6, ]))
+  out <- vec_rbind(
+    foo = unrownames(df1),
+    df2,
+    bar = unrownames(mtcars[6, ]),
+    .names_to = NULL
+  )
   exp <- mtcars[1:6, ]
   row.names(exp) <- c(paste0("foo", 1:3), row.names(df2), "bar")
   expect_identical(out, exp)
 
-  out <- vec_rbind(foo = unrownames(df1), df2, bar = unrownames(mtcars[6, ]), .names_to = "id")
+  out <- vec_rbind(
+    foo = unrownames(df1),
+    df2,
+    bar = unrownames(mtcars[6, ]),
+    .names_to = "id"
+  )
   exp <- mtcars[1:6, ]
   exp <- vec_cbind(id = c(rep("foo", 3), rep("", 2), "bar"), exp)
   row.names(exp) <- c(paste0("...", 1:3), row.names(df2), "...6")
@@ -432,21 +446,32 @@ test_that("vec_cbind() fails with arrays of dimensionality > 3", {
 test_that("vec_rbind() consistently handles unnamed outputs", {
   # Name repair of columns is a little weird but unclear we can do better
   expect_identical(
-    vec_rbind(1, 2),
+    vec_rbind(1, 2, .names_to = NULL),
     data.frame(...1 = c(1, 2))
   )
   expect_identical(
-    vec_rbind(1, 2, ...10 = 3),
+    vec_rbind(1, 2, ...10 = 3, .names_to = NULL),
     data.frame(...1 = c(1, 2, 3), row.names = c("...1", "...2", "...3"))
   )
 
   expect_identical(
-    vec_rbind(a = 1, b = 2),
+    vec_rbind(a = 1, b = 2, .names_to = NULL),
     data.frame(...1 = c(1, 2), row.names = c("a", "b"))
   )
   expect_identical(
-    vec_rbind(c(a = 1), c(b = 2)),
+    vec_rbind(c(a = 1), c(b = 2), .names_to = NULL),
     data.frame(a = c(1, NA), b = c(NA, 2))
+  )
+})
+
+test_that("vec_rbind() ignores named inputs by default (#966)", {
+  expect_identical(
+    vec_rbind(foo = c(a = 1)),
+    data.frame(a = 1)
+  )
+  expect_identical(
+    vec_rbind(foo = c(a = 1), .names_to = NULL),
+    data.frame(a = 1, row.names = "foo")
   )
 })
 
@@ -472,15 +497,17 @@ test_that("vec_cbind() consistently handles unnamed outputs", {
 test_that("rbind() and cbind() have informative outputs when repairing names", {
   verify_output(test_path("output", "bind-name-repair.txt"), {
     "# vec_rbind()"
-
-    "Suboptimal"
     vec_rbind(1, 2)
+    vec_rbind(1, 2, .names_to = NULL)
 
-    "Suboptimal"
     vec_rbind(1, 2, ...10 = 3)
+    vec_rbind(1, 2, ...10 = 3, .names_to = NULL)
 
     vec_rbind(a = 1, b = 2)
+    vec_rbind(a = 1, b = 2, .names_to = NULL)
+
     vec_rbind(c(a = 1), c(b = 2))
+    vec_rbind(c(a = 1), c(b = 2), .names_to = NULL)
 
     "# vec_cbind()"
     vec_cbind(1, 2)

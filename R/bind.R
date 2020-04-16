@@ -40,10 +40,15 @@
 #'
 #'   `NULL` inputs are silently ignored. Empty (e.g. zero row) inputs
 #'   will not appear in the output, but will affect the derived `.ptype`.
-#' @param .names_to Optionally, the name of a column where the names
-#'   of `...` arguments are copied. These names are useful to identify
-#'   which row comes from which input. If supplied and `...` is not named,
-#'   an integer column is used to identify the rows.
+#' @param .names_to
+#'   * By default, input names are [zapped][rlang::zap].
+#'
+#'   * If a string, specifies a column where the input names will be
+#'     copied. These names are often useful to identify rows with
+#'     their original input. If a column name is supplied and `...` is
+#'     not named, an integer column is used instead.
+#'
+#'   * If `NULL`, the input names are used as row names.
 #' @param .name_repair One of `"unique"`, `"universal"`, or
 #'   `"check_unique"`. See [vec_as_names()] for the meaning of these
 #'   options.
@@ -140,7 +145,7 @@ NULL
 #' @rdname vec_bind
 vec_rbind <- function(...,
                       .ptype = NULL,
-                      .names_to = NULL,
+                      .names_to = rlang::zap(),
                       .name_repair = c("unique", "universal", "check_unique")) {
   .External2(vctrs_rbind, .ptype, .names_to, .name_repair)
 }
