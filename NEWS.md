@@ -80,10 +80,6 @@
 * The `is.na<-()` method for `vctrs_vctr` now supports numeric and
   character subscripts to indicate where to insert missing values (#947).
 
-* `vec_rbind()` and `vec_c()` with data frame inputs now consistently
-  preserve the names of list-columns, df-columns, and matrix-columns
-  (#689).
-
 * The internal version of `vec_assign()` now has support for assigning
   names and inner names. For data frames, the names are assigned
   recursively.
@@ -156,6 +152,14 @@
 * `POSIXlt` and `POSIXct` vectors are handled more consistently (#901).
 
 * `new_data_frame()` infers size from row names when `n = NULL` (#894).
+
+
+## Breaking changes
+
+* `vec_rbind()` and `vec_c()` with data frame inputs now consistently
+  preserve the names of list-columns, df-columns, and matrix-columns
+  (#689). This can cause some false positives in unit tests, if they
+  are sensitive to internal names (#1007).
 
 
 ## CRAN results
