@@ -354,20 +354,20 @@
 <div id="testing" class="section level2">
 <h2 class="hasAnchor">
 <a href="#testing" class="anchor"></a>Testing</h2>
-<p>If you want to test the output of your code, you can compare it with a known state recorded in a text file. The <code><a href="https://rdrr.io/pkg/testthat/man/verify_output.html">testthat::verify_output()</a></code> function offers an easy way to test output-generating functions. It takes care about details such as Unicode, ANSI escapes, and output width. Furthermore it won’t make the tests fail on CRAN. This is important because your output may rely on details out of your control, which should be fixed eventually but should not lead to your package being removed from CRAN.</p>
+<p>If you want to test the output of your code, you can compare it with a known state recorded in a text file. The <code><a href="https://testthat.r-lib.org/reference/verify_output.html">testthat::verify_output()</a></code> function offers an easy way to test output-generating functions. It takes care about details such as Unicode, ANSI escapes, and output width. Furthermore it won’t make the tests fail on CRAN. This is important because your output may rely on details out of your control, which should be fixed eventually but should not lead to your package being removed from CRAN.</p>
 <p>The tests work best with the testthat package:</p>
 <div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1"></a><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(testthat)</span></code></pre></div>
-<p>The code below will compare the output of <code><a href="https://rdrr.io/pkg/pillar/man/pillar_shaft.html">pillar_shaft(data$loc)</a></code> with known output stored in the <code>latlon.txt</code> file. There is no need to put it in a <code><a href="https://rdrr.io/pkg/testthat/man/test_that.html">test_that()</a></code> block.</p>
+<p>The code below will compare the output of <code><a href="https://rdrr.io/pkg/pillar/man/pillar_shaft.html">pillar_shaft(data$loc)</a></code> with known output stored in the <code>latlon.txt</code> file. There is no need to put it in a <code><a href="https://testthat.r-lib.org/reference/test_that.html">test_that()</a></code> block.</p>
 <p>The first run warns because the file doesn’t exist yet.</p>
-<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1"></a><span class="kw"><a href="https://rdrr.io/pkg/testthat/man/verify_output.html">verify_output</a></span>(<span class="st">"latlon.txt"</span>, {</span>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1"></a><span class="kw"><a href="https://testthat.r-lib.org/reference/verify_output.html">verify_output</a></span>(<span class="st">"latlon.txt"</span>, {</span>
 <span id="cb15-2"><a href="#cb15-2"></a>  <span class="kw"><a href="https://rdrr.io/pkg/pillar/man/pillar_shaft.html">pillar_shaft</a></span>(data<span class="op">$</span>loc)</span>
 <span id="cb15-3"><a href="#cb15-3"></a>})</span>
 <span id="cb15-4"><a href="#cb15-4"></a><span class="co">#&gt; Warning: Creating reference output</span></span></code></pre></div>
 <p>From the second run on, the printing will be compared with the file:</p>
-<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1"></a><span class="kw"><a href="https://rdrr.io/pkg/testthat/man/verify_output.html">verify_output</a></span>(<span class="st">"latlon.txt"</span>, {</span>
+<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1"></a><span class="kw"><a href="https://testthat.r-lib.org/reference/verify_output.html">verify_output</a></span>(<span class="st">"latlon.txt"</span>, {</span>
 <span id="cb16-2"><a href="#cb16-2"></a>  <span class="kw"><a href="https://rdrr.io/pkg/pillar/man/pillar_shaft.html">pillar_shaft</a></span>(data<span class="op">$</span>loc)</span>
 <span id="cb16-3"><a href="#cb16-3"></a>})</span></code></pre></div>
-<p>By default, the file does not contain ANSI escapes. See <code><a href="https://rdrr.io/pkg/testthat/man/verify_output.html">?verify_output</a></code> for more options.</p>
+<p>By default, the file does not contain ANSI escapes. See <code><a href="https://testthat.r-lib.org/reference/verify_output.html">?verify_output</a></code> for more options.</p>
 <div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1"></a><span class="kw"><a href="https://rdrr.io/r/base/cat.html">cat</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/readLines.html">readLines</a></span>(<span class="st">"latlon.txt"</span>), <span class="dt">sep =</span> <span class="st">"</span><span class="ch">\n</span><span class="st">"</span>)</span>
 <span id="cb17-2"><a href="#cb17-2"></a><span class="co">#&gt; &gt; pillar_shaft(data$loc)</span></span>
 <span id="cb17-3"><a href="#cb17-3"></a><span class="co">#&gt; 28°20'N  81°33'W</span></span>
@@ -377,7 +377,7 @@
 <span id="cb17-7"><a href="#cb17-7"></a><span class="co">#&gt; 28°30'N  81°24'W</span></span>
 <span id="cb17-8"><a href="#cb17-8"></a><span class="co">#&gt;               NA</span></span></code></pre></div>
 <p>Changing the code or the format method will give an error on the next run and update the reference file. Inspect the changes carefully before committing the new test and the updated reference file to version control.</p>
-<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1"></a><span class="kw"><a href="https://rdrr.io/pkg/testthat/man/verify_output.html">verify_output</a></span>(<span class="st">"latlon.txt"</span>, {</span>
+<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1"></a><span class="kw"><a href="https://testthat.r-lib.org/reference/verify_output.html">verify_output</a></span>(<span class="st">"latlon.txt"</span>, {</span>
 <span id="cb18-2"><a href="#cb18-2"></a>  <span class="kw"><a href="https://rdrr.io/pkg/pillar/man/pillar_shaft.html">pillar_shaft</a></span>(data<span class="op">$</span>loc)</span>
 <span id="cb18-3"><a href="#cb18-3"></a>  <span class="kw"><a href="https://rdrr.io/r/base/print.html">print</a></span>(<span class="kw"><a href="https://rdrr.io/pkg/pillar/man/pillar_shaft.html">pillar_shaft</a></span>(data<span class="op">$</span>loc), <span class="dt">width =</span> <span class="dv">12</span>)</span>
 <span id="cb18-4"><a href="#cb18-4"></a>})</span>
@@ -400,7 +400,7 @@
 <span id="cb19-15"><a href="#cb19-15"></a><span class="co">#&gt; 28°N  81°W</span></span>
 <span id="cb19-16"><a href="#cb19-16"></a><span class="co">#&gt;         NA</span></span></code></pre></div>
 <p>From the second run on, no errors are shown again.</p>
-<div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1"></a><span class="kw"><a href="https://rdrr.io/pkg/testthat/man/verify_output.html">verify_output</a></span>(<span class="st">"latlon.txt"</span>, {</span>
+<div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1"></a><span class="kw"><a href="https://testthat.r-lib.org/reference/verify_output.html">verify_output</a></span>(<span class="st">"latlon.txt"</span>, {</span>
 <span id="cb20-2"><a href="#cb20-2"></a>  <span class="kw"><a href="https://rdrr.io/pkg/pillar/man/pillar_shaft.html">pillar_shaft</a></span>(data<span class="op">$</span>loc)</span>
 <span id="cb20-3"><a href="#cb20-3"></a>  <span class="kw"><a href="https://rdrr.io/r/base/print.html">print</a></span>(<span class="kw"><a href="https://rdrr.io/pkg/pillar/man/pillar_shaft.html">pillar_shaft</a></span>(data<span class="op">$</span>loc), <span class="dt">width =</span> <span class="dv">12</span>)</span>
 <span id="cb20-4"><a href="#cb20-4"></a>})</span></code></pre></div>

@@ -178,7 +178,6 @@
 <li><p>New <code><a href="../reference/vec-rep.html">vec_rep()</a></code> and <code><a href="../reference/vec-rep.html">vec_rep_each()</a></code> for repeating an entire vector and elements of a vector, respectively. These two functions provide a clearer interface for the functionality of <code><a href="../reference/vec_repeat.html">vec_repeat()</a></code>, which is now deprecated.</p></li>
 <li><p><code><a href="../reference/vec_match.html">vec_match()</a></code> and <code><a href="../reference/vec_match.html">vec_in()</a></code> gain parameters for argument tags (#944).</p></li>
 <li><p>The <code>is.na&lt;-()</code> method for <code>vctrs_vctr</code> now supports numeric and character subscripts to indicate where to insert missing values (#947).</p></li>
-<li><p><code><a href="../reference/vec_bind.html">vec_rbind()</a></code> and <code><a href="../reference/vec_c.html">vec_c()</a></code> with data frame inputs now consistently preserve the names of list-columns, df-columns, and matrix-columns (#689).</p></li>
 <li><p>The internal version of <code><a href="../reference/vec_slice.html">vec_assign()</a></code> now has support for assigning names and inner names. For data frames, the names are assigned recursively.</p></li>
 <li><p><code><a href="../reference/vec_cast.html">vec_restore()</a></code> no longer restores row names if the target is not a data frame. This fixes an issue where <code>POSIXlt</code> objects would carry a <code>row.names</code> attribute after a proxy/restore roundtrip.</p></li>
 <li><p><code><a href="../reference/vec_as_subscript.html">vec_as_subscript()</a></code> now fails when the subscript is a matrix or an array, consistently with <code><a href="../reference/vec_as_location.html">vec_as_location()</a></code>.</p></li>
@@ -208,6 +207,14 @@
 <li><p><code>POSIXlt</code> and <code>POSIXct</code> vectors are handled more consistently (#901).</p></li>
 <li><p><code><a href="../reference/new_data_frame.html">new_data_frame()</a></code> infers size from row names when <code>n = NULL</code> (#894).</p></li>
 </ul>
+<div id="breaking-changes" class="section level2">
+<h2 class="hasAnchor">
+<a href="#breaking-changes" class="anchor"></a>Breaking changes</h2>
+<ul>
+<li>
+<code><a href="../reference/vec_bind.html">vec_rbind()</a></code> and <code><a href="../reference/vec_c.html">vec_c()</a></code> with data frame inputs now consistently preserve the names of list-columns, df-columns, and matrix-columns (#689). This can cause some false positives in unit tests, if they are sensitive to internal names (#1007).</li>
+</ul>
+</div>
 <div id="cran-results" class="section level2">
 <h2 class="hasAnchor">
 <a href="#cran-results" class="anchor"></a>CRAN results</h2>
@@ -308,9 +315,9 @@ x
 </h1>
 <p>With the 0.2.0 release, many vctrs functions have been rewritten with native C code to improve performance. Functions like <code><a href="../reference/vec_c.html">vec_c()</a></code> and <code><a href="../reference/vec_bind.html">vec_rbind()</a></code> should now be fast enough to be used in packages. This is an ongoing effort, for instance the handling of factors and dates has not been rewritten yet. These classes still slow down vctrs primitives.</p>
 <p>The API in 0.2.0 has been updated, please see a list of breaking changes below. vctrs has now graduated from experimental to a maturing package (see the <a href="https://www.tidyverse.org/lifecycle/">lifecycle of tidyverse packages</a>). Please note that API changes are still planned for future releases, for instance <code><a href="../reference/vec_ptype2.html">vec_ptype2()</a></code> and <code><a href="../reference/vec_cast.html">vec_cast()</a></code> might need to return a sentinel instead of failing with an error when there is no common type or possible cast.</p>
-<div id="breaking-changes" class="section level2">
+<div id="breaking-changes-1" class="section level2">
 <h2 class="hasAnchor">
-<a href="#breaking-changes" class="anchor"></a>Breaking changes</h2>
+<a href="#breaking-changes-1" class="anchor"></a>Breaking changes</h2>
 <ul>
 <li><p>Lossy casts now throw errors of type <code>vctrs_error_cast_lossy</code>. Previously these were warnings. You can suppress these errors selectively with <code><a href="../reference/vctrs-conditions.html">allow_lossy_cast()</a></code> to get the partial cast results. To implement your own lossy cast operation, call the new exported function <code><a href="../reference/vctrs-conditions.html">maybe_lossy_cast()</a></code>.</p></li>
 <li>
