@@ -225,3 +225,12 @@ test_that("vec_ptype2() errors have informative output", {
   })
 })
 
+test_that("common type doesn't have names", {
+  # For reference, vec_ptype() currently keeps names
+  expect_identical(vec_ptype(c(foo = 1)), named(dbl()))
+
+  expect_identical(vec_ptype2(c(foo = 1), c(bar = 2)), dbl())
+  expect_identical(vec_ptype_common(c(foo = 1)), dbl())
+  expect_identical(vec_ptype_common(c(foo = 1), c(bar = 2)), dbl())
+  expect_identical(vec_ptype_common(c(foo = 1), .ptype = c(bar = 2)), dbl())
+})

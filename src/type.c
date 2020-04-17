@@ -37,6 +37,14 @@ SEXP vec_ptype(SEXP x, struct vctrs_arg* x_arg) {
   never_reached("vec_ptype");
 }
 
+// [[ include("vctrs.h") ]]
+SEXP vec_ptype_unnamed(SEXP x, struct vctrs_arg* x_arg) {
+  SEXP out = PROTECT(vec_ptype(x, x_arg));
+  out = vec_set_names(out, R_NilValue);
+  UNPROTECT(1);
+  return out;
+}
+
 static SEXP col_ptype(SEXP x) {
   return vec_ptype(x, args_empty);
 }
@@ -161,9 +169,11 @@ SEXP vctrs_type_common(SEXP call, SEXP op, SEXP args, SEXP env) {
   return out;
 }
 
+
+
 SEXP vctrs_type_common_impl(SEXP dots, SEXP ptype) {
   if (!vec_is_partial(ptype)) {
-    return vec_ptype(ptype, args_dot_ptype);
+    return vec_ptype_unnamed(ptype, args_dot_ptype);
   }
 
   if (r_is_true(r_peek_option("vctrs.no_guessing"))) {

@@ -1,6 +1,9 @@
 
 # vctrs (development version)
 
+* `vec_ptype2()` and `vec_ptype_common()` now consistently return
+  unnamed prototypes.
+
 * `new_vctr()` now always appends a base `"list"` class to list `.data` to
   be compatible with changes to `vec_is_list()`. This affects `new_list_of()`,
   which now returns an object with a base class of `"list"`.
