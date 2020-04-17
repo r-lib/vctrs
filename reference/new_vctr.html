@@ -157,7 +157,7 @@ considerably easier to get started with a new S3 vector class. See
 vector classes.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>new_vctr</span>(<span class='no'>.data</span>, <span class='no'>...</span>, <span class='kw'>class</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/character.html'>character</a></span>(), <span class='kw'>inherit_base_type</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)</pre>
+    <pre class="usage"><span class='fu'>new_vctr</span>(<span class='no'>.data</span>, <span class='no'>...</span>, <span class='kw'>class</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/character.html'>character</a></span>(), <span class='kw'>inherit_base_type</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -178,11 +178,19 @@ vector classes.</p>
       <th>inherit_base_type</th>
       <td><p><a href='https://www.tidyverse.org/lifecycle/#experimental'><img src='figures/lifecycle-experimental.svg' alt='Experimental lifecycle'></a>
 
-Does this class extend the base type of <code>.data</code>?  i.e. does the
-resulting object extend the behaviour the underlying type?</p></td>
+A single logical, or <code>NULL</code>. Does this class extend the base type of
+<code>.data</code>? i.e. does the resulting object extend the behaviour of the
+underlying type? Defaults to <code>FALSE</code> for all types except lists, which
+are required to inherit from the base type.</p></td>
     </tr>
     </table>
 
+    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
+
+    <p>List vctrs are special cases. When created through <code>new_vctr()</code>, the
+resulting list vctr should always be recognized as a list by
+<code><a href='vec_is_list.html'>vec_is_list()</a></code>. Because of this, if <code>inherit_base_type</code> is <code>FALSE</code>
+an error is thrown.</p>
     <h2 class="hasAnchor" id="base-methods"><a class="anchor" href="#base-methods"></a>Base methods</h2>
 
     
@@ -225,6 +233,7 @@ use <code><a href='vec_math.html'>vec_math()</a></code>.</p></li>
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
       <li><a href="#arguments">Arguments</a></li>
+      <li><a href="#details">Details</a></li>
       <li><a href="#base-methods">Base methods</a></li>
     </ul>
 
