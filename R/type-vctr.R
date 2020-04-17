@@ -1,9 +1,16 @@
 #' vctr (vector) S3 class
 #'
+#' @description
 #' This abstract class provides a set of useful default methods that makes it
 #' considerably easier to get started with a new S3 vector class. See
 #' `vignette("s3-vector")` to learn how to use it to create your own S3
 #' vector classes.
+#'
+#' @details
+#' List vctrs are special cases. When created through `new_vctr()`, the
+#' resulting list vctr should always be recognized as a list by
+#' `vec_is_list()`. Because of this, the `inherit_base_type` argument is
+#' ignored for lists, and is always set to `TRUE`.
 #'
 #' @section Base methods:
 #' The vctr class provides methods for many base generics using a smaller
@@ -51,7 +58,8 @@
 #' @param class Name of subclass.
 #' @param inherit_base_type \Sexpr[results=rd, stage=render]{vctrs:::lifecycle("experimental")}
 #'   Does this class extend the base type of `.data`?  i.e. does the
-#'   resulting object extend the behaviour the underlying type?
+#'   resulting object extend the behaviour of the underlying type? For list
+#'   `.data`, this argument is ignored and is always set to `TRUE`.
 #' @export
 #' @keywords internal
 #' @aliases vctr
@@ -65,7 +73,15 @@ new_vctr <- function(.data,
 
   nms <- validate_names(.data)
 
-  class <- c(class, "vctrs_vctr", if (inherit_base_type) typeof(.data))
+  if (is_list(.data)) {
+    if (is.data.frame(.data)) {
+      abort("`.data` must not be a data frame.")
+    }
+    class <- c(class, "vctrs_vctr", "list")
+  } else {
+    class <- c(class, "vctrs_vctr", if (inherit_base_type) typeof(.data))
+  }
+
   attrib <- list(names = nms, ..., class = class)
 
   vec_set_attributes(.data, attrib)

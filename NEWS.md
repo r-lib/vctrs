@@ -1,8 +1,9 @@
 
 # vctrs (development version)
 
-* `new_list_of()` now returns an object with a base class of `"list"` to be
-  compatible with changes to `vec_is_list()`.
+* `new_vctr()` now always appends a base `"list"` class to list `.data` to
+  be compatible with changes to `vec_is_list()`. This affects `new_list_of()`,
+  which now returns an object with a base class of `"list"`.
 
 * `vec_is_list()` no longer allows S3 lists that implement a `vec_proxy()`
   method to automatically be considered lists. A S3 list must explicitly

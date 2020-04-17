@@ -2,7 +2,7 @@ context("test-type-bare")
 
 
 test_that("ptype2 base methods are not inherited", {
-  ptypes <- vec_remove(base_empty_types, "null")
+  ptypes <- vec_remove(base_empty_types, c("null", "dataframe"))
   for (ptype in ptypes) {
     x <- new_vctr(ptype, class = "foobar", inherit_base_type = TRUE)
     expect_is(vec_ptype2(x, x), "foobar")
@@ -12,12 +12,11 @@ test_that("ptype2 base methods are not inherited", {
 })
 
 test_that("cast base methods are not inherited", {
-  # FIXME: Should also disallow data frame and list methods
-  ptypes <- vec_remove(base_empty_types, c("null", "dataframe", "list"))
+  ptypes <- vec_remove(base_empty_types, c("null", "dataframe"))
   for (ptype in ptypes) {
     x <- new_vctr(ptype, class = "foobar", inherit_base_type = TRUE)
     expect_is(vec_cast(ptype, x), "foobar")
-    expect_error(vec_cast(x, !!ptype), class = "vctrs_error_incompatible_type")
+    expect_error(vec_cast(x, ptype), class = "vctrs_error_incompatible_type")
   }
 })
 

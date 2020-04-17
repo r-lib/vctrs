@@ -33,6 +33,14 @@ test_that("Can opt out of base type", {
   expect_s3_class(x, c("x", "vctrs_vctr"), exact = TRUE)
 })
 
+test_that("base type is always set for lists", {
+  expect_s3_class(new_vctr(list(), inherit_base_type = FALSE), "list")
+})
+
+test_that("data frames are not allowed", {
+  expect_error(new_vctr(mtcars), "must not be a data frame")
+})
+
 test_that("attributes must be named", {
   expect_error(vec_set_attributes(1, list(1)), "must be named")
   expect_error(vec_set_attributes(1, list(y = 1, 2)), "2 does not")
@@ -128,7 +136,7 @@ test_that("as.list() chops vectors", {
     list(new_vctr(1L), new_vctr(2L), new_vctr(3L))
   )
 
-  x <- new_vctr(as.list(1:3), inherit_base_type = TRUE)
+  x <- new_vctr(as.list(1:3))
   expect_identical(as.list(x), as.list(1:3))
 })
 

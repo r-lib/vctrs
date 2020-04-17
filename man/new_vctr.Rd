@@ -16,13 +16,20 @@ new_vctr(.data, ..., class = character(), inherit_base_type = FALSE)
 
 \item{inherit_base_type}{\Sexpr[results=rd, stage=render]{vctrs:::lifecycle("experimental")}
 Does this class extend the base type of \code{.data}?  i.e. does the
-resulting object extend the behaviour the underlying type?}
+resulting object extend the behaviour of the underlying type? For list
+\code{.data}, this argument is ignored and is always set to \code{TRUE}.}
 }
 \description{
 This abstract class provides a set of useful default methods that makes it
 considerably easier to get started with a new S3 vector class. See
 \code{vignette("s3-vector")} to learn how to use it to create your own S3
 vector classes.
+}
+\details{
+List vctrs are special cases. When created through \code{new_vctr()}, the
+resulting list vctr should always be recognized as a list by
+\code{vec_is_list()}. Because of this, the \code{inherit_base_type} argument is
+ignored for lists, and is always set to \code{TRUE}.
 }
 \section{Base methods}{
 
