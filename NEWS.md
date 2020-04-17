@@ -30,6 +30,12 @@
     in `vec_assign()`), two double dispatch were needed. Now it can be
     done with one double dispatch by calling `vec_cast()` directly.
 
+* `vec_ptype2()` is now more permissive with subclasses of data frames
+  and falls back to a bare data frame when the classes do not have a
+  common type (#981). This is for convenience, users should normalise
+  their inputs to a common data frame class manually to avoid the
+  warning (if applicable, the classes could also implement a common type).
+
 * `vec_cbind()` now calls `vec_restore()` on inputs emptied of their
   columns before computing the common type. This has
   consequences for data frame classes with special columns that

@@ -161,8 +161,15 @@ test_that("Subclasses of data.frame dispatch to `vec_ptype2()` methods", {
 test_that("Subclasses of `tbl_df` do not have `tbl_df` common type (#481)", {
   quux <- tibble()
   quux <- structure(quux, class = c("quux", class(quux)))
-  expect_error(vec_ptype2(quux, tibble()), class = "vctrs_error_incompatible_type")
-  expect_error(vec_ptype2(tibble(), quux), class = "vctrs_error_incompatible_type")
+
+  expect_df_fallback(expect_identical(
+    vec_ptype_common(quux, tibble()),
+    data.frame()
+  ))
+  expect_df_fallback(expect_identical(
+    vec_ptype_common(tibble(), quux),
+    data.frame()
+  ))
 })
 
 test_that("Column name encodings are handled correctly in the common type (#553)", {

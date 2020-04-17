@@ -202,7 +202,14 @@ cnd_type_separator <- function(action) {
   }
 }
 
-cnd_type_message <- function(x, y, x_arg, y_arg, details, action, message) {
+cnd_type_message <- function(x,
+                             y,
+                             x_arg,
+                             y_arg,
+                             details,
+                             action,
+                             message,
+                             types = NULL) {
   if (!is_null(message)) {
     return(message)
   }
@@ -222,8 +229,17 @@ cnd_type_message <- function(x, y, x_arg, y_arg, details, action, message) {
   action <- cnd_type_action(action)
   separator <- cnd_type_separator(action)
 
+  if (is_null(types)) {
+    x_type <- vec_ptype_full(x)
+    y_type <- vec_ptype_full(y)
+  } else {
+    stopifnot(is_character(types, n = 2))
+    x_type <- types[[1]]
+    y_type <- types[[2]]
+  }
+
   glue_lines(
-    "Can't {action}{x_name}<{vec_ptype_full(x)}> {separator}{y_name}<{vec_ptype_full(y)}>.",
+    "Can't {action}{x_name}<{x_type}> {separator}{y_name}<{y_type}>.",
     details
   )
 }

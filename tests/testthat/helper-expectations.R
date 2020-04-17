@@ -88,3 +88,7 @@ expect_error_cnd <- function(object, class, message = NULL, ..., .fixed = TRUE) 
   expect_true(is_empty(setdiff(!!names(exp_fields), names(cnd))))
   expect_equal(cnd[names(exp_fields)], exp_fields)
 }
+
+expect_df_fallback <- function(expr) {
+  expect_warning({{ expr }}, "Falling back")
+}
