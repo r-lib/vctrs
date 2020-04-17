@@ -23,6 +23,14 @@ test_that("slicing factors uses a proxy to not go through `[.factor`", {
   expect_identical(vec_slice(y, 1), y)
 })
 
+test_that("`vec_c()` throws the right error with subclassed factors (#1015)", {
+  a <- subclass(factor("a"))
+  b <- subclass(factor("b"))
+
+  expect_identical(vec_c(a, a), subclass(factor(c("a", "a"))))
+  expect_error(vec_c(a, b), class = "vctrs_error_incompatible_type")
+})
+
 # Coercion ----------------------------------------------------------------
 
 test_that("factor/character coercions are symmetric and unchanging", {
@@ -161,6 +169,18 @@ test_that("Casting to a factor with explicit NA levels retains them", {
   f <- factor(c("x", NA), exclude = NULL)
   expect_identical(vec_cast(f, f), f)
   expect_identical(vec_cast(f, factor()), f)
+})
+
+# Proxy / restore ---------------------------------------------------------
+
+test_that("subclassed factors / ordered factors can be restored (#1015)", {
+  x <- subclass(factor("a"))
+  proxy <- vec_proxy(x)
+  expect_identical(vec_restore(proxy, x), x)
+
+  y <- subclass(ordered("a"))
+  proxy <- vec_proxy(y)
+  expect_identical(vec_restore(proxy, y), y)
 })
 
 # Arithmetic and factor ---------------------------------------------------

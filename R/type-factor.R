@@ -46,12 +46,12 @@ vec_proxy.ordered <- function(x, ...) {
 
 #' @export
 vec_restore.factor <- function(x, to, ...) {
-  stop_native_implementation("vec_restore.factor")
+  NextMethod()
 }
 
 #' @export
 vec_restore.ordered <- function(x, to, ...) {
-  stop_native_implementation("vec_restore.ordered")
+  NextMethod()
 }
 
 # Print -------------------------------------------------------------------

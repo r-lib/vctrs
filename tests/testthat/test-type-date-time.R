@@ -410,6 +410,20 @@ test_that("POSIXlt roundtrips through proxy and restore", {
   expect_identical(out, x)
 })
 
+test_that("subclassed Dates / POSIXct / POSIXlt can be restored (#1015)", {
+  x <- subclass(new_date(0))
+  proxy <- vec_proxy(x)
+  expect_identical(vec_restore(proxy, x), x)
+
+  y <- subclass(new_datetime(0))
+  proxy <- vec_proxy(y)
+  expect_identical(vec_restore(proxy, y), y)
+
+  z <- subclass(as.POSIXlt(new_datetime(0)))
+  proxy <- vec_proxy(z)
+  expect_identical(vec_restore(proxy, z), z)
+})
+
 # arithmetic --------------------------------------------------------------
 
 test_that("default is error", {
