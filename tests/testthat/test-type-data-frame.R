@@ -55,6 +55,54 @@ test_that("empty data frame still has names", {
   expect_equal(names(out), character())
 })
 
+test_that("combining data frames with foreign classes uses fallback", {
+  new_foo <- function(x) structure(x, class = c("foo", "data.frame"))
+
+  foo <- new_foo(data.frame())
+  df <- data.frame()
+
+  # Same type fallback
+  expect_identical(vec_ptype_common(foo, foo, foo), foo)
+
+  expect_identical(expect_df_fallback(vec_ptype2(foo, df)), new_fallback_df(df))
+  expect_identical(expect_df_fallback(vec_ptype2(df, foo)), new_fallback_df(df))
+  expect_identical(expect_df_fallback(vec_ptype_common(foo, df)), df)
+  expect_identical(expect_df_fallback(vec_ptype_common(df, foo)), df)
+
+  cnds <- list()
+  withCallingHandlers(
+    warning = function(cnd) {
+      cnds <<- append(cnds, list(cnd))
+      invokeRestart("muffleWarning")
+    },
+    expect_identical(
+      vec_ptype_common(foo, df, foo, foo),
+      df
+    )
+  )
+
+  # There should be only one warning even if many fallbacks
+  expect_length(cnds, 1)
+  expect_is(cnds[[1]], "warning")
+  expect_match(cnds[[1]]$message, "Falling back")
+
+  expect_identical(
+    expect_df_fallback(vec_rbind(foo, data.frame(), foo)),
+    df
+  )
+  expect_identical(
+    expect_df_fallback(vec_cbind(new_foo(data.frame(x = 1)), data.frame(y = 2))),
+    data.frame(x = 1, y = 2)
+  )
+
+  verify_errors({
+    foo <- structure(mtcars[1:3], class = c("foo", "data.frame"))
+    bar <- structure(mtcars[9:11], class = c("bar", "data.frame"))
+    expect_warning(vec_ptype_common(foo, bar), "Falling back")
+  })
+})
+
+
 # casting -----------------------------------------------------------------
 
 test_that("safe casts work as expected", {
@@ -338,4 +386,13 @@ test_that("new_data_frame() zaps existing attributes", {
     attributes(new_data_frame(struct, bar = 2)),
     attributes(new_data_frame(list(), bar = 2)),
   )
+})
+
+test_that("data frame output is informative", {
+  verify_output(test_path("error", "test-type-data-frame.txt"), {
+    "# combining data frames with foreign classes uses fallback"
+    foo <- structure(mtcars[1:3], class = c("foo", "data.frame"))
+    bar <- structure(mtcars[9:11], class = c("bar", "data.frame"))
+    vec_ptype_common(foo, bar)
+  })
 })

@@ -89,6 +89,37 @@ df_ptype2 <- function(x, y, ..., x_arg = "", y_arg = "") {
   .Call(vctrs_df_ptype2, x, y, x_arg, y_arg)
 }
 
+# Fallback for data frame subclasses (#981)
+vec_ptype2_df_fallback <- function(x, y, x_arg = "", y_arg = "") {
+  ptype <- vec_ptype2(
+    new_data_frame(x),
+    new_data_frame(y)
+  )
+
+  if (!is_df_fallback(x) && !is_df_fallback(y)) {
+    msg <- cnd_type_message(x, y, x_arg, y_arg, NULL, "combine", NULL)
+    warn(c(
+      msg,
+      i = "vctrs coercion methods should be implemented for these classes.",
+      i = "Falling back to <data.frame>."
+    ))
+  }
+
+  # Return a fallback class so we don't warn multiple times. This
+  # fallback class is stripped in `vec_ptype_finalise()`.
+  new_fallback_df(ptype)
+}
+
+is_df_subclass <- function(x) {
+  inherits(x, "data.frame") && !identical(class(x), "data.frame")
+}
+is_df_fallback <- function(x) {
+  inherits(x, "vctrs:::df_fallback")
+}
+new_fallback_df <- function(x, n = nrow(x)) {
+  new_data_frame(x, n = n, class = "vctrs:::df_fallback")
+}
+
 
 # Cast --------------------------------------------------------------------
 

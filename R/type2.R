@@ -79,6 +79,13 @@ vec_default_ptype2 <- function(x, y, ..., x_arg = "", y_arg = "") {
     return(vec_ptype(x, x_arg = x_arg))
   }
 
+  if (is_df_subclass(x) && is.data.frame(y)) {
+    return(vec_ptype2_df_fallback(x, y))
+  }
+  if (is_df_subclass(y) && is.data.frame(x)) {
+    return(vec_ptype2_df_fallback(x, y))
+  }
+
   stop_incompatible_type(x, y, x_arg = x_arg, y_arg = y_arg)
 }
 

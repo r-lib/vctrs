@@ -1,0 +1,22 @@
+
+combining data frames with foreign classes uses fallback
+========================================================
+
+> foo <- structure(mtcars[1:3], class = c("foo", "data.frame"))
+> bar <- structure(mtcars[9:11], class = c("bar", "data.frame"))
+> vec_ptype_common(foo, bar)
+Warning: Can't combine <foo<
+  mpg : double
+  cyl : double
+  disp: double
+>> and <bar<
+  am  : double
+  gear: double
+  carb: double
+>>.
+i vctrs coercion methods should be implemented for these classes.
+i Falling back to <data.frame>.
+
+[1] mpg  cyl  disp am   gear carb
+<0 rows> (or 0-length row.names)
+

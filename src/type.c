@@ -105,7 +105,14 @@ SEXP vec_ptype_finalise(SEXP x) {
     return bare_df_map(x, &vec_ptype_finalise);
 
   case vctrs_class_data_frame:
-    return df_map(x, &vec_ptype_finalise);
+    x = PROTECT(df_map(x, &vec_ptype_finalise));
+
+    if (Rf_inherits(x, "vctrs:::df_fallback")) {
+      r_poke_class(x, classes_data_frame);
+    }
+
+    UNPROTECT(1);
+    return x;
 
   case vctrs_class_none:
     Rf_errorcall(R_NilValue, "Internal error: Non-S3 classes should have returned by now");
