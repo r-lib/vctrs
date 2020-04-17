@@ -38,7 +38,7 @@ test_that("base type is always set for lists", {
 })
 
 test_that("data frames are not allowed", {
-  expect_error(new_vctr(mtcars), "must not be a data frame")
+  expect_error(new_vctr(mtcars), "can't be a data frame")
 })
 
 test_that("attributes must be named", {

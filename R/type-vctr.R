@@ -75,7 +75,7 @@ new_vctr <- function(.data,
 
   if (is_list(.data)) {
     if (is.data.frame(.data)) {
-      abort("`.data` must not be a data frame.")
+      abort("`.data` can't be a data frame.")
     }
     class <- c(class, "vctrs_vctr", "list")
   } else {
