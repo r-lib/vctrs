@@ -73,17 +73,17 @@ vec_proxy_compare.POSIXlt <- function(x, ...) {
 
 #' @export
 vec_restore.Date <- function(x, to, ...) {
-  stop_native_implementation("vec_restore.Date")
+  NextMethod()
 }
 
 #' @export
 vec_restore.POSIXct <- function(x, to, ...) {
-  stop_native_implementation("vec_restore.POSIXct")
+  NextMethod()
 }
 
 #' @export
 vec_restore.POSIXlt <- function(x, to, ...) {
-  stop_native_implementation("vec_restore.POSIXlt")
+  NextMethod()
 }
 
 # Print ------------------------------------------------------------------
