@@ -5,7 +5,7 @@
 \alias{vctr}
 \title{vctr (vector) S3 class}
 \usage{
-new_vctr(.data, ..., class = character(), inherit_base_type = FALSE)
+new_vctr(.data, ..., class = character(), inherit_base_type = NULL)
 }
 \arguments{
 \item{.data}{Foundation of class. Must be a vector}
@@ -15,14 +15,22 @@ new_vctr(.data, ..., class = character(), inherit_base_type = FALSE)
 \item{class}{Name of subclass.}
 
 \item{inherit_base_type}{\Sexpr[results=rd, stage=render]{vctrs:::lifecycle("experimental")}
-Does this class extend the base type of \code{.data}?  i.e. does the
-resulting object extend the behaviour the underlying type?}
+A single logical, or \code{NULL}. Does this class extend the base type of
+\code{.data}? i.e. does the resulting object extend the behaviour of the
+underlying type? Defaults to \code{FALSE} for all types except lists, which
+are required to inherit from the base type.}
 }
 \description{
 This abstract class provides a set of useful default methods that makes it
 considerably easier to get started with a new S3 vector class. See
 \code{vignette("s3-vector")} to learn how to use it to create your own S3
 vector classes.
+}
+\details{
+List vctrs are special cases. When created through \code{new_vctr()}, the
+resulting list vctr should always be recognized as a list by
+\code{vec_is_list()}. Because of this, if \code{inherit_base_type} is \code{FALSE}
+an error is thrown.
 }
 \section{Base methods}{
 

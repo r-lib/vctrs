@@ -1,9 +1,16 @@
 #' vctr (vector) S3 class
 #'
+#' @description
 #' This abstract class provides a set of useful default methods that makes it
 #' considerably easier to get started with a new S3 vector class. See
 #' `vignette("s3-vector")` to learn how to use it to create your own S3
 #' vector classes.
+#'
+#' @details
+#' List vctrs are special cases. When created through `new_vctr()`, the
+#' resulting list vctr should always be recognized as a list by
+#' `vec_is_list()`. Because of this, if `inherit_base_type` is `FALSE`
+#' an error is thrown.
 #'
 #' @section Base methods:
 #' The vctr class provides methods for many base generics using a smaller
@@ -50,20 +57,39 @@
 #' @param ... Name-value pairs defining attributes
 #' @param class Name of subclass.
 #' @param inherit_base_type \Sexpr[results=rd, stage=render]{vctrs:::lifecycle("experimental")}
-#'   Does this class extend the base type of `.data`?  i.e. does the
-#'   resulting object extend the behaviour the underlying type?
+#'   A single logical, or `NULL`. Does this class extend the base type of
+#'   `.data`? i.e. does the resulting object extend the behaviour of the
+#'   underlying type? Defaults to `FALSE` for all types except lists, which
+#'   are required to inherit from the base type.
 #' @export
 #' @keywords internal
 #' @aliases vctr
 new_vctr <- function(.data,
                      ...,
                      class = character(),
-                     inherit_base_type = FALSE) {
+                     inherit_base_type = NULL) {
   if (!is_vector(.data)) {
     abort("`.data` must be a vector type.")
   }
 
   nms <- validate_names(.data)
+
+  if (is_list(.data)) {
+    if (is.data.frame(.data)) {
+      abort("`.data` can't be a data frame.")
+    }
+
+    if (is.null(inherit_base_type)) {
+      inherit_base_type <- TRUE
+    } else if (is_false(inherit_base_type)) {
+      abort("List `.data` must inherit from the base type.")
+    }
+  }
+
+  # Default to `FALSE` in all cases except lists
+  if (is.null(inherit_base_type)) {
+    inherit_base_type <- FALSE
+  }
 
   class <- c(class, "vctrs_vctr", if (inherit_base_type) typeof(.data))
   attrib <- list(names = nms, ..., class = class)

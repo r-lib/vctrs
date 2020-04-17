@@ -15,17 +15,14 @@
 
 enum vctrs_class_type {
   vctrs_class_list,
-  vctrs_class_list_of,
   vctrs_class_data_frame,
   vctrs_class_bare_data_frame,
   vctrs_class_bare_tibble,
   vctrs_class_bare_factor,
   vctrs_class_bare_ordered,
-  vctrs_class_rcrd,
   vctrs_class_bare_date,
   vctrs_class_bare_posixct,
   vctrs_class_bare_posixlt,
-  vctrs_class_posixlt,
   vctrs_class_unknown,
   vctrs_class_none
 };
@@ -88,7 +85,6 @@ enum vctrs_class_type class_type(SEXP x);
 bool is_data_frame(SEXP x);
 bool is_bare_data_frame(SEXP x);
 bool is_bare_tibble(SEXP x);
-bool is_record(SEXP x);
 
 SEXP vec_unique_names(SEXP x, bool quiet);
 SEXP vec_unique_colnames(SEXP x, bool quiet);
@@ -133,9 +129,6 @@ enum vctrs_type2 vec_typeof2_impl(enum vctrs_type type_x, enum vctrs_type type_y
 enum vctrs_type2_s3 vec_typeof2_s3_impl(SEXP x, SEXP y, enum vctrs_type type_x, enum vctrs_type type_y, int* left);
 
 enum vctrs_class_type class_type(SEXP x);
-
-SEXP new_list_of(SEXP x, SEXP ptype);
-void init_list_of(SEXP x, SEXP ptype);
 
 SEXP new_empty_factor(SEXP levels);
 SEXP new_empty_ordered(SEXP levels);
@@ -381,7 +374,6 @@ extern SEXP classes_ordered;
 extern SEXP classes_date;
 extern SEXP classes_posixct;
 extern SEXP classes_tibble;
-extern SEXP classes_list_of;
 extern SEXP classes_vctrs_group_rle;
 
 extern SEXP strings_dots;
@@ -389,15 +381,12 @@ extern SEXP strings_empty;
 extern SEXP strings_tbl;
 extern SEXP strings_tbl_df;
 extern SEXP strings_data_frame;
-extern SEXP strings_vctrs_rcrd;
 extern SEXP strings_date;
 extern SEXP strings_posixct;
 extern SEXP strings_posixlt;
 extern SEXP strings_posixt;
 extern SEXP strings_factor;
 extern SEXP strings_ordered;
-extern SEXP strings_vctrs_vctr;
-extern SEXP strings_vctrs_list_of;
 extern SEXP strings_list;
 extern SEXP strings_none;
 extern SEXP strings_minimal;

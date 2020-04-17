@@ -98,40 +98,67 @@ enum vctrs_type vec_proxy_typeof(SEXP x) {
   return vec_base_typeof(x, true);
 }
 
-// [[ include("vctrs.h") ]]
-bool vec_is_list(SEXP x) {
-  if (TYPEOF(x) != VECSXP) {
-    return false;
-  }
 
-  switch (class_type(x)) {
-  // Bare list
-  case vctrs_class_none:
-    return true;
 
-  // Explicit lists
-  case vctrs_class_list:
-  case vctrs_class_list_of:
-    return true;
-
-  // Non-explicit S3 lists
-  case vctrs_class_unknown:
-    return vec_is_vector(x);
-
-  // TODO: Can this ever be considered a list?
-  case vctrs_class_rcrd:
-    return false;
-
-  // List-like classes known by `class_type()`.
-  // All data frame classes, posixlt.
-  default:
-    return false;
-  }
-}
 // [[ register() ]]
 SEXP vctrs_is_list(SEXP x) {
   return Rf_ScalarLogical(vec_is_list(x));
 }
+
+static bool vec_proxy_is_list(SEXP x);
+
+// [[ include("vctrs.h") ]]
+bool vec_is_list(SEXP x) {
+  // Require `x` to be a list internally
+  if (TYPEOF(x) != VECSXP) {
+    return false;
+  }
+
+  // Unclassed VECSXP are lists
+  if (!OBJECT(x)) {
+    return true;
+  }
+
+  // Classed VECSXP are only lists if the last class is explicitly `"list"`
+  if (class_type(x) != vctrs_class_list) {
+    return false;
+  }
+
+  // If `x` is an explicit list, also require that the proxy is a list
+  if (vec_proxy_is_list(x)) {
+    return true;
+  }
+
+  Rf_errorcall(
+    R_NilValue,
+    "`x` inherits explicitly from \"list\", "
+    "but the proxy returned by `vec_proxy()` is not a list."
+  );
+}
+
+static bool vec_proxy_is_list(SEXP x) {
+  SEXP proxy = PROTECT(vec_proxy(x));
+
+  // Require `proxy` to be a list internally
+  if (TYPEOF(proxy) != VECSXP) {
+    UNPROTECT(1);
+    return false;
+  }
+
+  // Unclassed VECSXP are lists
+  if (!OBJECT(proxy)) {
+    UNPROTECT(1);
+    return true;
+  }
+
+  // If the `proxy` has a class, only require
+  // that it is not a data frame
+  bool out = class_type(proxy) != vctrs_class_data_frame;
+
+  UNPROTECT(1);
+  return out;
+}
+
 
 // [[ include("vctrs.h") ]]
 bool vec_is_vector(SEXP x) {
