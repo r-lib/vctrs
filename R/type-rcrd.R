@@ -62,6 +62,17 @@ vec_restore.vctrs_rcrd <- function(x, to, ...) {
 }
 
 #' @export
+`names<-.vctrs_rcrd` <- function(x, value) {
+  # Allow setting names to `NULL` for compatibility with `vec_ptype2()`.
+  # Eventually we should add full names support via a special rcrd
+  # field.
+  if (!is_null(value)) {
+    abort("Setting the names of record vectors is currently unimplemented.")
+  }
+  x
+}
+
+#' @export
 length.vctrs_rcrd <- function(x) {
   .Call(vctrs_size, x)
 }

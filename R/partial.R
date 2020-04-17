@@ -18,6 +18,18 @@ new_partial <- function(..., class = character()) {
   new_sclr(..., class = c(class, "vctrs_partial"))
 }
 
+## Needed because partial classes inherit from `vctrs_sclr` which
+## can't be renamed. And `vec_ptype2()` etc zap the names.
+#' @export
+`names<-.vctrs_partial` <- function(x, value) {
+  # Allow setting names to `NULL` for compatibility with `vec_ptype2()`
+  if (!is_null(value)) {
+    abort("Can't set names of partial vectors.")
+  }
+  x
+}
+
+
 #' @export
 obj_print_header.vctrs_partial <- function(x, ...) {
   NULL
