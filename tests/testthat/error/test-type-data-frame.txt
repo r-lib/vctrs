@@ -3,12 +3,29 @@ combining data frames with foreign classes uses fallback
 ========================================================
 
 > foo <- structure(mtcars[1:3], class = c("foo", "data.frame"))
-> bar <- structure(mtcars[9:11], class = c("bar", "data.frame"))
-> vec_ptype_common(foo, bar)
+> bar <- structure(mtcars[4:6], class = c("bar", "data.frame"))
+> baz <- structure(mtcars[7:9], class = c("baz", "data.frame"))
+> vec_ptype_common(foo, bar, baz)
 Warning: Can't combine <foo> and <bar>.
-i vctrs coercion methods should be implemented for these classes.
+i Convert all inputs to the same class to avoid this warning.
 i Falling back to <data.frame>.
 
-[1] mpg  cyl  disp am   gear carb
+Warning: Can't combine <df> and <baz>.
+i Convert all inputs to the same class to avoid this warning.
+i Falling back to <data.frame>.
+
+[1] mpg  cyl  disp hp   drat wt   qsec vs   am  
+<0 rows> (or 0-length row.names)
+
+> vec_ptype_common(foo, baz, bar, baz, foo, bar)
+Warning: Can't combine <foo> and <baz>.
+i Convert all inputs to the same class to avoid this warning.
+i Falling back to <data.frame>.
+
+Warning: Can't combine <df> and <bar>.
+i Convert all inputs to the same class to avoid this warning.
+i Falling back to <data.frame>.
+
+[1] mpg  cyl  disp qsec vs   am   hp   drat wt  
 <0 rows> (or 0-length row.names)
 

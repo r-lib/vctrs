@@ -64,8 +64,8 @@ test_that("combining data frames with foreign classes uses fallback", {
   # Same type fallback
   expect_identical(vec_ptype_common(foo, foo, foo), foo)
 
-  expect_identical(expect_df_fallback(vec_ptype2(foo, df)), new_fallback_df(df))
-  expect_identical(expect_df_fallback(vec_ptype2(df, foo)), new_fallback_df(df))
+  expect_identical(expect_df_fallback(vec_ptype2(foo, df)), new_fallback_df(df, c("foo", "data.frame")))
+  expect_identical(expect_df_fallback(vec_ptype2(df, foo)), new_fallback_df(df, c("data.frame", "foo")))
   expect_identical(expect_df_fallback(vec_ptype_common(foo, df)), df)
   expect_identical(expect_df_fallback(vec_ptype_common(df, foo)), df)
 
@@ -97,8 +97,10 @@ test_that("combining data frames with foreign classes uses fallback", {
 
   verify_errors({
     foo <- structure(mtcars[1:3], class = c("foo", "data.frame"))
-    bar <- structure(mtcars[9:11], class = c("bar", "data.frame"))
-    expect_warning(vec_ptype_common(foo, bar), "Falling back")
+    bar <- structure(mtcars[4:6], class = c("bar", "data.frame"))
+    baz <- structure(mtcars[7:9], class = c("baz", "data.frame"))
+    expect_warning(vec_ptype_common(foo, bar, baz))
+    expect_warning(vec_ptype_common(foo, baz, bar, baz, foo, bar))
   })
 })
 
@@ -392,7 +394,9 @@ test_that("data frame output is informative", {
   verify_output(test_path("error", "test-type-data-frame.txt"), {
     "# combining data frames with foreign classes uses fallback"
     foo <- structure(mtcars[1:3], class = c("foo", "data.frame"))
-    bar <- structure(mtcars[9:11], class = c("bar", "data.frame"))
-    vec_ptype_common(foo, bar)
+    bar <- structure(mtcars[4:6], class = c("bar", "data.frame"))
+    baz <- structure(mtcars[7:9], class = c("baz", "data.frame"))
+    vec_ptype_common(foo, bar, baz)
+    vec_ptype_common(foo, baz, bar, baz, foo, bar)
   })
 })

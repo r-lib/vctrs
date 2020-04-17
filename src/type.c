@@ -109,6 +109,7 @@ SEXP vec_ptype_finalise(SEXP x) {
 
     if (Rf_inherits(x, "vctrs:::df_fallback")) {
       r_poke_class(x, classes_data_frame);
+      Rf_setAttrib(x, Rf_install("known_classes"), R_NilValue);
     }
 
     UNPROTECT(1);

@@ -96,19 +96,39 @@ vec_ptype2_df_fallback <- function(x, y, x_arg = "", y_arg = "") {
     new_data_frame(y)
   )
 
-  if (!is_df_fallback(x) && !is_df_fallback(y)) {
-    types <- c(class(x)[[1]], class(y)[[1]])
-    msg <- cnd_type_message(x, y, x_arg, y_arg, NULL, "combine", NULL, types = types)
+  classes <- NULL
+  if (is_df_fallback(x)) {
+    classes <- c(classes, known_classes(x))
+    x_class <- "data.frame"
+    x_abbr <- "df"
+  } else {
+    x_class <- class(x)[[1]]
+    x_abbr <- class(x)[[1]]
+  }
+  if (is_df_fallback(y)) {
+    classes <- c(classes, known_classes(y))
+    y_class <- "data.frame"
+    y_abbr <- "df"
+  } else {
+    y_class <- class(y)[[1]]
+    y_abbr <- class(y)[[1]]
+  }
+
+  if (!all(c(x_class, y_class) %in% classes)) {
+    msg <- cnd_type_message(x, y, x_arg, y_arg, NULL, "combine", NULL, types = c(x_abbr, y_abbr))
     warn(c(
       msg,
-      i = "vctrs coercion methods should be implemented for these classes.",
+      i = "Convert all inputs to the same class to avoid this warning.",
       i = "Falling back to <data.frame>."
     ))
   }
 
   # Return a fallback class so we don't warn multiple times. This
   # fallback class is stripped in `vec_ptype_finalise()`.
-  new_fallback_df(ptype)
+  new_fallback_df(
+    ptype,
+    known_classes = unique(c(classes, x_class, y_class))
+  )
 }
 
 is_df_subclass <- function(x) {
@@ -117,8 +137,19 @@ is_df_subclass <- function(x) {
 is_df_fallback <- function(x) {
   inherits(x, "vctrs:::df_fallback")
 }
-new_fallback_df <- function(x, n = nrow(x)) {
-  new_data_frame(x, n = n, class = "vctrs:::df_fallback")
+new_fallback_df <- function(x, known_classes, n = nrow(x)) {
+  new_data_frame(
+    x,
+    n = n,
+    known_classes = known_classes,
+    class = "vctrs:::df_fallback"
+  )
+}
+
+known_classes <- function(x) {
+  if (is_df_fallback(x)) {
+    attr(x, "known_classes")
+  }
 }
 
 
