@@ -42,11 +42,17 @@ SEXP vec_ptype2(SEXP x, SEXP y,
     stop_scalar_type(y, y_arg);
   }
 
+  SEXP ptype = R_NilValue;
   if (type_x == vctrs_type_s3 || type_y == vctrs_type_s3) {
-    return vec_ptype2_dispatch(x, y, type_x, type_y, x_arg, y_arg, left);
+    ptype = PROTECT(vec_ptype2_dispatch(x, y, type_x, type_y, x_arg, y_arg, left));
   } else {
-    return vec_ptype2_switch_native(x, y, type_x, type_y, x_arg, y_arg, left);
+    ptype = PROTECT(vec_ptype2_switch_native(x, y, type_x, type_y, x_arg, y_arg, left));
   }
+
+  ptype = vec_set_names(ptype, R_NilValue);
+
+  UNPROTECT(1);
+  return ptype;
 }
 
 static SEXP vec_ptype2_switch_native(SEXP x,

@@ -226,25 +226,44 @@ test_that("vec_ptype2() errors have informative output", {
 })
 
 test_that("common type doesn't have names", {
-  vec1 <- c(foo = 1)
-  vec2 <- c(bar = 2)
+  expect_unnamed <- function(vec1, vec2) {
+    exp <- vec_slice(vec1, 0)
 
-  expect_identical(vec_ptype2(vec1, vec2), dbl())
-  expect_identical(vec_ptype_common(vec1), dbl())
-  expect_identical(vec_ptype_common(vec1, vec2), dbl())
-  expect_identical(vec_ptype_common(vec1, .ptype = vec2), dbl())
+    if (is.data.frame(exp)) {
+      exp <- unrownames(exp)
+    } else {
+      exp <- unname(exp)
+    }
 
-  df1 <- mtcars[1:2, ]
-  df2 <- mtcars[3:4, ]
-  exp <- unrownames(mtcars[0, ])
-  expect_identical(vec_ptype2(df1, df2), exp)
-  expect_identical(vec_ptype_common(df1), exp)
-  expect_identical(vec_ptype_common(df1, df2), exp)
-  expect_identical(vec_ptype_common(df1, .ptype = df2), exp)
+    expect_identical(vec_ptype2(vec1, vec2), exp)
+    expect_identical(vec_ptype_common(vec1), exp)
+    expect_identical(vec_ptype_common(vec1, vec2), exp)
+    expect_identical(vec_ptype_common(vec1, .ptype = vec2), exp)
+  }
+
+  expect_unnamed(c(foo = 1), c(bar = 2))
+  expect_unnamed(foobar(c(foo = 1)), foobar(c(bar = 2)))
+
+  # Unlike the `vctrs_foobar` test above, this doesn't hit the is-same-type fallback
+  with_methods(
+    vec_ptype2.vctrs_foobar = function(x, y, ...) NULL,
+    vec_ptype2.vctrs_foobar.vctrs_foobar = function(x, y, ...) vec_slice(x, 0),
+    expect_unnamed(foobar(c(foo = 1)), foobar(c(bar = 2)))
+  )
+
+  expect_unnamed(mtcars[1:2, ], mtcars[3:4, ])
+  expect_unnamed(
+    foobar(mtcars[1:2, ]),
+    foobar(mtcars[3:4, ])
+  )
 
   # Note: Zero-rows matrices can't be named so they are not tested here
 
   # For reference, vec_ptype() currently keeps names
-  expect_identical(vec_ptype(vec1), named(dbl()))
-  expect_identical(vec_ptype(df1), mtcars[0, ])
+  expect_identical(vec_ptype(c(foo = 1)), named(dbl()))
+  expect_identical(vec_ptype(mtcars), mtcars[0, ])
+  expect_identical(vec_ptype(foobar(mtcars)), foobar(mtcars[0, ]))
+
+  skip("FIXME: vec_slice() doesn't restore foreign classes?")
+  expect_identical(vec_ptype(foobar(c(foo = 1))), foobar(named(dbl())))
 })

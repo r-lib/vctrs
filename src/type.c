@@ -10,7 +10,7 @@ static SEXP fns_vec_ptype_finalise_dispatch = NULL;
 
 static inline SEXP vec_ptype_slice(SEXP x, SEXP empty);
 static SEXP s3_type(SEXP x, struct vctrs_arg* x_arg);
-static SEXP df_ptype(SEXP x);
+static SEXP df_ptype(SEXP x, bool bare);
 
 // [[ register() ]]
 SEXP vctrs_ptype(SEXP x, SEXP x_arg) {
@@ -32,7 +32,7 @@ SEXP vec_ptype(SEXP x, struct vctrs_arg* x_arg) {
   case vctrs_type_character:   return vec_ptype_slice(x, vctrs_shared_empty_chr);
   case vctrs_type_raw:         return vec_ptype_slice(x, vctrs_shared_empty_raw);
   case vctrs_type_list:        return vec_ptype_slice(x, vctrs_shared_empty_list);
-  case vctrs_type_dataframe:   return df_ptype(x);
+  case vctrs_type_dataframe:   return df_ptype(x, true);
   case vctrs_type_s3:          return s3_type(x, x_arg);
   case vctrs_type_scalar:      stop_scalar_type(x, x_arg);
   }
@@ -62,10 +62,10 @@ static inline SEXP vec_ptype_slice(SEXP x, SEXP empty) {
 static SEXP s3_type(SEXP x, struct vctrs_arg* x_arg) {
   switch (class_type(x)) {
   case vctrs_class_bare_tibble:
-    return bare_df_map(x, &col_ptype);
+    return df_ptype(x, true);
 
   case vctrs_class_data_frame:
-    return df_map(x, &col_ptype);
+    return df_ptype(x, false);
 
   case vctrs_class_bare_data_frame:
     Rf_errorcall(R_NilValue, "Internal error: Bare data frames should be handled by `vec_ptype()`");
@@ -85,9 +85,15 @@ static SEXP s3_type(SEXP x, struct vctrs_arg* x_arg) {
   return vec_slice(x, R_NilValue);
 }
 
-SEXP df_ptype(SEXP x) {
+SEXP df_ptype(SEXP x, bool bare) {
   SEXP row_nms = PROTECT(df_rownames(x));
-  SEXP ptype = PROTECT(bare_df_map(x, &col_ptype));
+
+  SEXP ptype = R_NilValue;
+  if (bare) {
+    ptype = PROTECT(bare_df_map(x, &col_ptype));
+  } else {
+    ptype = PROTECT(df_map(x, &col_ptype));
+  }
 
   if (TYPEOF(row_nms) == STRSXP) {
     Rf_setAttrib(ptype, R_RowNamesSymbol, vctrs_shared_empty_chr);
