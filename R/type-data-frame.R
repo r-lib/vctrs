@@ -97,7 +97,8 @@ vec_ptype2_df_fallback <- function(x, y, x_arg = "", y_arg = "") {
   )
 
   if (!is_df_fallback(x) && !is_df_fallback(y)) {
-    msg <- cnd_type_message(x, y, x_arg, y_arg, NULL, "combine", NULL)
+    types <- c(class(x)[[1]], class(y)[[1]])
+    msg <- cnd_type_message(x, y, x_arg, y_arg, NULL, "combine", NULL, types = types)
     warn(c(
       msg,
       i = "vctrs coercion methods should be implemented for these classes.",
