@@ -1,6 +1,10 @@
 
 # vctrs (development version)
 
+* `vec_ptype2()` and `vec_ptype_common()` now always return empty
+  vectors. This simplifies the implementation of ptype2 methods, which
+  no longer need to worry about returning an empty vector.
+
 * `vec_ptype2()` and `vec_ptype_common()` now consistently return
   unnamed prototypes.
 

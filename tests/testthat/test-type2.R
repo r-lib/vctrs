@@ -143,19 +143,29 @@ test_that("vec_ptype2() returns empty prototype when other input is NULL", {
 test_that("Subclasses of data.frame dispatch to `vec_ptype2()` methods", {
   local_methods(
     vec_ptype2.quuxframe = function(x, y, ...) UseMethod("vec_ptype2.quuxframe"),
-    vec_ptype2.quuxframe.data.frame = function(x, y, ...) "dispatched!",
-    vec_ptype2.data.frame.quuxframe = function(x, y, ...) "dispatched!"
+    vec_ptype2.quuxframe.data.frame = function(x, y, ...) lhs_dispatched <<- TRUE,
+    vec_ptype2.data.frame.quuxframe = function(x, y, ...) rhs_dispatched <<- TRUE
   )
 
   quux <- structure(data.frame(), class = c("quuxframe", "data.frame"))
 
-  expect_identical(vec_ptype2(quux, mtcars), "dispatched!")
-  expect_identical(vec_ptype2(mtcars, quux), "dispatched!")
+  lhs_dispatched <- FALSE
+  rhs_dispatched <- FALSE
+
+  vec_ptype2(quux, mtcars)
+  vec_ptype2(mtcars, quux)
+  expect_true(lhs_dispatched)
+  expect_true(rhs_dispatched)
+
+  lhs_dispatched <- FALSE
+  rhs_dispatched <- FALSE
 
   quux <- structure(data.frame(), class = c("quuxframe", "tbl_df", "data.frame"))
 
-  expect_identical(vec_ptype2(quux, mtcars), "dispatched!")
-  expect_identical(vec_ptype2(mtcars, quux), "dispatched!")
+  vec_ptype2(quux, mtcars)
+  vec_ptype2(mtcars, quux)
+  expect_true(lhs_dispatched)
+  expect_true(rhs_dispatched)
 })
 
 test_that("Subclasses of `tbl_df` do not have `tbl_df` common type (#481)", {
@@ -247,7 +257,7 @@ test_that("common type doesn't have names", {
   # Unlike the `vctrs_foobar` test above, this doesn't hit the is-same-type fallback
   with_methods(
     vec_ptype2.vctrs_foobar = function(x, y, ...) NULL,
-    vec_ptype2.vctrs_foobar.vctrs_foobar = function(x, y, ...) vec_slice(x, 0),
+    vec_ptype2.vctrs_foobar.vctrs_foobar = function(x, y, ...) x,
     expect_unnamed(foobar(c(foo = 1)), foobar(c(bar = 2)))
   )
 

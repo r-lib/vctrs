@@ -49,7 +49,7 @@ SEXP vec_ptype2(SEXP x, SEXP y,
     ptype = PROTECT(vec_ptype2_switch_native(x, y, type_x, type_y, x_arg, y_arg, left));
   }
 
-  ptype = vec_set_names(ptype, R_NilValue);
+  ptype = vec_ptype_unnamed(ptype, NULL);
 
   UNPROTECT(1);
   return ptype;
