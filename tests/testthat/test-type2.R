@@ -226,11 +226,25 @@ test_that("vec_ptype2() errors have informative output", {
 })
 
 test_that("common type doesn't have names", {
-  # For reference, vec_ptype() currently keeps names
-  expect_identical(vec_ptype(c(foo = 1)), named(dbl()))
+  vec1 <- c(foo = 1)
+  vec2 <- c(bar = 2)
 
-  expect_identical(vec_ptype2(c(foo = 1), c(bar = 2)), dbl())
-  expect_identical(vec_ptype_common(c(foo = 1)), dbl())
-  expect_identical(vec_ptype_common(c(foo = 1), c(bar = 2)), dbl())
-  expect_identical(vec_ptype_common(c(foo = 1), .ptype = c(bar = 2)), dbl())
+  expect_identical(vec_ptype2(vec1, vec2), dbl())
+  expect_identical(vec_ptype_common(vec1), dbl())
+  expect_identical(vec_ptype_common(vec1, vec2), dbl())
+  expect_identical(vec_ptype_common(vec1, .ptype = vec2), dbl())
+
+  df1 <- mtcars[1:2, ]
+  df2 <- mtcars[3:4, ]
+  exp <- unrownames(mtcars[0, ])
+  expect_identical(vec_ptype2(df1, df2), exp)
+  expect_identical(vec_ptype_common(df1), exp)
+  expect_identical(vec_ptype_common(df1, df2), exp)
+  expect_identical(vec_ptype_common(df1, .ptype = df2), exp)
+
+  # Note: Zero-rows matrices can't be named so they are not tested here
+
+  # For reference, vec_ptype() currently keeps names
+  expect_identical(vec_ptype(vec1), named(dbl()))
+  expect_identical(vec_ptype(df1), mtcars[0, ])
 })
