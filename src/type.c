@@ -7,7 +7,7 @@ static SEXP syms_vec_ptype_finalise_dispatch = NULL;
 static SEXP fns_vec_ptype_finalise_dispatch = NULL;
 
 
-static SEXP vec_type_slice(SEXP x, SEXP empty);
+static inline SEXP vec_ptype_slice(SEXP x, SEXP empty);
 static SEXP s3_type(SEXP x, struct vctrs_arg* x_arg);
 
 // [[ register() ]]
@@ -23,13 +23,13 @@ SEXP vec_ptype(SEXP x, struct vctrs_arg* x_arg) {
   switch (vec_typeof(x)) {
   case vctrs_type_null:        return R_NilValue;
   case vctrs_type_unspecified: return vctrs_shared_empty_uns;
-  case vctrs_type_logical:     return vec_type_slice(x, vctrs_shared_empty_lgl);
-  case vctrs_type_integer:     return vec_type_slice(x, vctrs_shared_empty_int);
-  case vctrs_type_double:      return vec_type_slice(x, vctrs_shared_empty_dbl);
-  case vctrs_type_complex:     return vec_type_slice(x, vctrs_shared_empty_cpl);
-  case vctrs_type_character:   return vec_type_slice(x, vctrs_shared_empty_chr);
-  case vctrs_type_raw:         return vec_type_slice(x, vctrs_shared_empty_raw);
-  case vctrs_type_list:        return vec_type_slice(x, vctrs_shared_empty_list);
+  case vctrs_type_logical:     return vec_ptype_slice(x, vctrs_shared_empty_lgl);
+  case vctrs_type_integer:     return vec_ptype_slice(x, vctrs_shared_empty_int);
+  case vctrs_type_double:      return vec_ptype_slice(x, vctrs_shared_empty_dbl);
+  case vctrs_type_complex:     return vec_ptype_slice(x, vctrs_shared_empty_cpl);
+  case vctrs_type_character:   return vec_ptype_slice(x, vctrs_shared_empty_chr);
+  case vctrs_type_raw:         return vec_ptype_slice(x, vctrs_shared_empty_raw);
+  case vctrs_type_list:        return vec_ptype_slice(x, vctrs_shared_empty_list);
   case vctrs_type_dataframe:   return bare_df_map(x, &col_ptype);
   case vctrs_type_s3:          return s3_type(x, x_arg);
   case vctrs_type_scalar:      stop_scalar_type(x, x_arg);
@@ -41,7 +41,7 @@ static SEXP col_ptype(SEXP x) {
   return vec_ptype(x, args_empty);
 }
 
-static SEXP vec_type_slice(SEXP x, SEXP empty) {
+static inline SEXP vec_ptype_slice(SEXP x, SEXP empty) {
   if (ATTRIB(x) == R_NilValue) {
     return empty;
   } else {
