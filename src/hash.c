@@ -50,7 +50,7 @@ static inline uint32_t hash_double(double x) {
 }
 
 static inline uint32_t hash_char(SEXP x) {
-  return hash_int64((intptr_t) x);
+  return hash_int64((uintptr_t) x);
 }
 
 // Hashing scalars -----------------------------------------------------
@@ -157,7 +157,7 @@ static uint32_t sexp_hash(SEXP x) {
   case SPECIALSXP:
   case BUILTINSXP:
   case ENVSXP:
-  case EXTPTRSXP: return hash_int64((intptr_t) x);
+  case EXTPTRSXP: return hash_int64((uintptr_t) x);
   default: Rf_errorcall(R_NilValue, "Unsupported type %s", Rf_type2char(TYPEOF(x)));
   }
 }
