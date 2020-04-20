@@ -1,5 +1,11 @@
 
-foobar <- function(x = list()) structure(x, class = "vctrs_foobar")
+foobar <- function(x = list()) {
+  if (is.data.frame(x)) {
+    structure(x, class = c("vctrs_foobar", "data.frame"))
+  } else {
+    structure(x, class = "vctrs_foobar")
+  }
+}
 
 with_c_foobar <- function(expr) {
   with_methods(

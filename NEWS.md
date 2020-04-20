@@ -1,6 +1,13 @@
 
 # vctrs (development version)
 
+* `vec_ptype2()` and `vec_ptype_common()` now always return empty
+  vectors. This simplifies the implementation of ptype2 methods, which
+  no longer need to worry about returning an empty vector.
+
+* `vec_ptype2()` and `vec_ptype_common()` now consistently return
+  unnamed prototypes.
+
 * `new_vctr()` now always appends a base `"list"` class to list `.data` to
   be compatible with changes to `vec_is_list()`. This affects `new_list_of()`,
   which now returns an object with a base class of `"list"`.

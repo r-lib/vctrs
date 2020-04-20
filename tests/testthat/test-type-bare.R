@@ -356,13 +356,20 @@ test_that("raw has informative type summaries", {
 })
 
 test_that("can provide common type with raw", {
+  lhs_dispatched <- FALSE
+  rhs_dispatched <- FALSE
+
   local_methods(
-    vec_ptype2.raw.vctrs_foobar = function(...) "dispatched-left",
+    vec_ptype2.raw.vctrs_foobar = function(...) rhs_dispatched <<- TRUE,
     vec_ptype2.vctrs_foobar = function(...) NULL,
-    vec_ptype2.vctrs_foobar.raw = function(...) "dispatched-right"
+    vec_ptype2.vctrs_foobar.raw = function(...) lhs_dispatched <<- TRUE
   )
-  expect_identical(vec_ptype2(raw(), foobar("")), "dispatched-left")
-  expect_identical(vec_ptype2(foobar(""), raw()), "dispatched-right")
+
+  vec_ptype2(raw(), foobar(""))
+  vec_ptype2(foobar(""), raw())
+
+  expect_true(lhs_dispatched)
+  expect_true(rhs_dispatched)
 })
 
 

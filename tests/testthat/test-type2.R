@@ -143,19 +143,29 @@ test_that("vec_ptype2() returns empty prototype when other input is NULL", {
 test_that("Subclasses of data.frame dispatch to `vec_ptype2()` methods", {
   local_methods(
     vec_ptype2.quuxframe = function(x, y, ...) UseMethod("vec_ptype2.quuxframe"),
-    vec_ptype2.quuxframe.data.frame = function(x, y, ...) "dispatched!",
-    vec_ptype2.data.frame.quuxframe = function(x, y, ...) "dispatched!"
+    vec_ptype2.quuxframe.data.frame = function(x, y, ...) lhs_dispatched <<- TRUE,
+    vec_ptype2.data.frame.quuxframe = function(x, y, ...) rhs_dispatched <<- TRUE
   )
 
   quux <- structure(data.frame(), class = c("quuxframe", "data.frame"))
 
-  expect_identical(vec_ptype2(quux, mtcars), "dispatched!")
-  expect_identical(vec_ptype2(mtcars, quux), "dispatched!")
+  lhs_dispatched <- FALSE
+  rhs_dispatched <- FALSE
+
+  vec_ptype2(quux, mtcars)
+  vec_ptype2(mtcars, quux)
+  expect_true(lhs_dispatched)
+  expect_true(rhs_dispatched)
+
+  lhs_dispatched <- FALSE
+  rhs_dispatched <- FALSE
 
   quux <- structure(data.frame(), class = c("quuxframe", "tbl_df", "data.frame"))
 
-  expect_identical(vec_ptype2(quux, mtcars), "dispatched!")
-  expect_identical(vec_ptype2(mtcars, quux), "dispatched!")
+  vec_ptype2(quux, mtcars)
+  vec_ptype2(mtcars, quux)
+  expect_true(lhs_dispatched)
+  expect_true(rhs_dispatched)
 })
 
 test_that("Subclasses of `tbl_df` do not have `tbl_df` common type (#481)", {
@@ -225,3 +235,45 @@ test_that("vec_ptype2() errors have informative output", {
   })
 })
 
+test_that("common type doesn't have names", {
+  expect_unnamed <- function(vec1, vec2) {
+    exp <- vec_slice(vec1, 0)
+
+    if (is.data.frame(exp)) {
+      exp <- unrownames(exp)
+    } else {
+      exp <- unname(exp)
+    }
+
+    expect_identical(vec_ptype2(vec1, vec2), exp)
+    expect_identical(vec_ptype_common(vec1), exp)
+    expect_identical(vec_ptype_common(vec1, vec2), exp)
+    expect_identical(vec_ptype_common(vec1, .ptype = vec2), exp)
+  }
+
+  expect_unnamed(c(foo = 1), c(bar = 2))
+  expect_unnamed(foobar(c(foo = 1)), foobar(c(bar = 2)))
+
+  # Unlike the `vctrs_foobar` test above, this doesn't hit the is-same-type fallback
+  with_methods(
+    vec_ptype2.vctrs_foobar = function(x, y, ...) NULL,
+    vec_ptype2.vctrs_foobar.vctrs_foobar = function(x, y, ...) x,
+    expect_unnamed(foobar(c(foo = 1)), foobar(c(bar = 2)))
+  )
+
+  expect_unnamed(mtcars[1:2, ], mtcars[3:4, ])
+  expect_unnamed(
+    foobar(mtcars[1:2, ]),
+    foobar(mtcars[3:4, ])
+  )
+
+  # Note: Zero-rows matrices can't be named so they are not tested here
+
+  # For reference, vec_ptype() currently keeps names
+  expect_identical(vec_ptype(c(foo = 1)), named(dbl()))
+  expect_identical(vec_ptype(mtcars), mtcars[0, ])
+  expect_identical(vec_ptype(foobar(mtcars)), foobar(mtcars[0, ]))
+
+  skip("FIXME: vec_slice() doesn't restore foreign classes?")
+  expect_identical(vec_ptype(foobar(c(foo = 1))), foobar(named(dbl())))
+})

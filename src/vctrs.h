@@ -373,6 +373,7 @@ SEXP vec_assign_shaped(SEXP proxy, SEXP index, SEXP value);
 bool vec_requires_fallback(SEXP x, struct vctrs_proxy_info info);
 SEXP vec_init(SEXP x, R_len_t n);
 SEXP vec_ptype(SEXP x, struct vctrs_arg* x_arg);
+SEXP vec_ptype_unnamed(SEXP x, struct vctrs_arg* x_arg);
 SEXP vec_ptype_finalise(SEXP x);
 bool vec_is_unspecified(SEXP x);
 SEXP vec_recycle(SEXP x, R_len_t size, struct vctrs_arg* x_arg);

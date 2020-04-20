@@ -18,21 +18,21 @@ SEXP vec_ptype2(SEXP x, SEXP y,
                int* left) {
   if (x == R_NilValue) {
     *left = y == R_NilValue;
-    return vec_ptype(y, y_arg);
+    return vec_ptype_unnamed(y, y_arg);
   }
   if (y == R_NilValue) {
     *left = x == R_NilValue;
-    return vec_ptype(x, x_arg);
+    return vec_ptype_unnamed(x, x_arg);
   }
 
   enum vctrs_type type_x = vec_typeof(x);
   enum vctrs_type type_y = vec_typeof(y);
 
   if (type_x == vctrs_type_unspecified) {
-    return vec_ptype(y, y_arg);
+    return vec_ptype_unnamed(y, y_arg);
   }
   if (type_y == vctrs_type_unspecified) {
-    return vec_ptype(x, x_arg);
+    return vec_ptype_unnamed(x, x_arg);
   }
 
   if (type_x == vctrs_type_scalar) {
@@ -42,11 +42,17 @@ SEXP vec_ptype2(SEXP x, SEXP y,
     stop_scalar_type(y, y_arg);
   }
 
+  SEXP ptype = R_NilValue;
   if (type_x == vctrs_type_s3 || type_y == vctrs_type_s3) {
-    return vec_ptype2_dispatch(x, y, type_x, type_y, x_arg, y_arg, left);
+    ptype = PROTECT(vec_ptype2_dispatch(x, y, type_x, type_y, x_arg, y_arg, left));
   } else {
-    return vec_ptype2_switch_native(x, y, type_x, type_y, x_arg, y_arg, left);
+    ptype = PROTECT(vec_ptype2_switch_native(x, y, type_x, type_y, x_arg, y_arg, left));
   }
+
+  ptype = vec_ptype_unnamed(ptype, NULL);
+
+  UNPROTECT(1);
+  return ptype;
 }
 
 static SEXP vec_ptype2_switch_native(SEXP x,
