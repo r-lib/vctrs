@@ -163,6 +163,11 @@ vec_default_cast <- function(x, to, x_arg = "", to_arg = "") {
     return(vctr_cast(x, to, x_arg = x_arg, to_arg = to_arg))
   }
 
+  # Compatibility for sfc lists (#989)
+  if (inherits(x, "sfc") || inherits(to, "sfc")) {
+    return(UseMethod("vec_cast", to))
+  }
+
   if (is_same_type(x, to)) {
     return(x)
   }
