@@ -213,6 +213,19 @@ test_that("can override scalar vector error message for S3 types", {
   })
 })
 
+test_that("ptype2 and cast errors when same class fallback is impossible are informative", {
+  verify_errors({
+    expect_error(
+      vec_cast(foobar(1, bar = TRUE), foobar(2, baz = TRUE)),
+      class = "vctrs_error_incompatible_type"
+    )
+    expect_error(
+      vec_ptype2(foobar(1, bar = TRUE), foobar(2, baz = TRUE)),
+      class = "vctrs_error_incompatible_type"
+    )
+  })
+})
+
 test_that("vec_ptype2() errors have informative output", {
   verify_output(test_path("error", "test-type2.txt"), {
     "# can override scalar vector error message for base scalar types"
@@ -222,6 +235,9 @@ test_that("vec_ptype2() errors have informative output", {
     "# can override scalar vector error message for S3 types"
     vec_ptype2(NULL, foobar(), y_arg = "foo")
     vec_ptype2(foobar(), NULL, x_arg = "foo")
+
+    "# ptype2 and cast errors when same class fallback is impossible are informative"
+    vec_cast(foobar(1, bar = TRUE), foobar(2, baz = TRUE))
+    vec_ptype2(foobar(1, bar = TRUE), foobar(2, baz = TRUE))
   })
 })
-
