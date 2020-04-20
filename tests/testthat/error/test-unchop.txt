@@ -19,6 +19,9 @@ vec_unchop() fails with complex foreign S3 classes
 > y <- structure(foobar(2), attr_bar = "bar")
 > vec_unchop(list(x, y))
 Error: Can't combine `..1` <vctrs_foobar> and `..2` <vctrs_foobar>.
+x Some attributes are incompatible.
+i The author of the class should implement vctrs methods.
+i See <https://vctrs.r-lib.org/reference/faq-error-incompatible-attributes.html>.
 
 
 vec_unchop() fails with complex foreign S4 classes
@@ -28,6 +31,9 @@ vec_unchop() fails with complex foreign S4 classes
 > jane <- .Counts(3L, name = "Jane")
 > vec_unchop(list(joe, jane))
 Error: Can't combine `..1` <vctrs_Counts> and `..2` <vctrs_Counts>.
+x Some attributes are incompatible.
+i The author of the class should implement vctrs methods.
+i See <https://vctrs.r-lib.org/reference/faq-error-incompatible-attributes.html>.
 
 
 vec_unchop() falls back for S4 classes with a registered c() method

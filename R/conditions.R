@@ -232,6 +232,15 @@ cnd_type_message <- function(x,
   if (is_null(types)) {
     x_type <- vec_ptype_full(x)
     y_type <- vec_ptype_full(y)
+
+    if (identical(x_type, y_type)) {
+      details <- format_error_bullets(c(
+        x = "Some attributes are incompatible.",
+        i = "The author of the class should implement vctrs methods.",
+        i = "See <https://vctrs.r-lib.org/reference/faq-error-incompatible-attributes.html>.",
+        details
+      ))
+    }
   } else {
     stopifnot(is_character(types, n = 2))
     x_type <- types[[1]]
