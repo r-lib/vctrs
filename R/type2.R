@@ -75,6 +75,11 @@ vec_default_ptype2 <- function(x, y, ..., x_arg = "", y_arg = "") {
     return(vec_ptype2_asis_right(x, y, x_arg = x_arg, y_arg = y_arg))
   }
 
+  # Compatibility for sfc lists (#989)
+  if (inherits(x, "sfc") || inherits(y, "sfc")) {
+    return(UseMethod("vec_ptype2"))
+  }
+
   if (is_same_type(x, y)) {
     return(vec_ptype(x, x_arg = x_arg))
   }
