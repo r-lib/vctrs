@@ -240,8 +240,18 @@ cnd_type_message <- function(x,
   separator <- cnd_type_separator(action)
 
   if (is_null(types)) {
-    x_type <- vec_ptype_full(x)
-    y_type <- vec_ptype_full(y)
+    if (is.data.frame(x) && is.data.frame(y)) {
+      if (vec_is_coercible(new_data_frame(x), new_data_frame(y))) {
+        x_type <- vec_ptype_abbr(x)
+        y_type <- vec_ptype_abbr(y)
+      } else {
+        x_type <- vec_ptype_full(x)
+        y_type <- vec_ptype_full(y)
+      }
+    } else {
+      x_type <- cnd_type_message_type_label(x)
+      y_type <- cnd_type_message_type_label(y)
+    }
 
     # If we are here directly from dispatch, this means there is no
     # ptype2 method implemented and the is-same-class fallback has
@@ -266,6 +276,14 @@ cnd_type_message <- function(x,
     "Can't {action}{x_name}<{x_type}> {separator}{y_name}<{y_type}>.",
     details
   )
+}
+
+cnd_type_message_type_label <- function(x) {
+  if (is.data.frame(x)) {
+    vec_ptype_abbr(x)
+  } else {
+    vec_ptype_full(x)
+  }
 }
 
 

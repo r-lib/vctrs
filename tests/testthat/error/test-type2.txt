@@ -51,3 +51,13 @@ Error: Can't convert <vctrs_foobar> to <vctrs_foobar>.
 > with_foobar_ptype2(vec_ptype2(foobar(1, bar = TRUE), foobar(2, baz = TRUE)))
 Error: Can't combine <vctrs_foobar> and <vctrs_foobar>.
 
+
+common type errors don't mention columns if they are compatible
+===============================================================
+
+> df <- data.frame(x = 1, y = "")
+> foo <- structure(df, class = c("vctrs_foo", "data.frame"))
+> bar <- structure(df, class = c("vctrs_bar", "data.frame"))
+> vec_cast(foo, bar)
+Error: Can't convert <vctrs_foo[,2]> to <vctrs_bar[,2]>.
+
