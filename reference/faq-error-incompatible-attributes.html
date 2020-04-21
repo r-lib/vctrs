@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Default cast method — vec_default_cast • vctrs</title>
+<title>FAQ - Error: Some attributes are incompatible — faq-error-incompatible-attributes • vctrs</title>
 
 <!-- favicons -->
 <link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
@@ -42,15 +42,10 @@
 
 
 
-<meta property="og:title" content="Default cast method — vec_default_cast" />
-<meta property="og:description" content="This function should typically be called from the default
-vec_cast() method for your class, e.g. vec_cast.myclass.default().
-It does two things:
-If x is an unspecified vector, it automatically casts it to
-to using vec_init().
-Otherwise, an error is thrown with stop_incompatible_cast().
-
-" />
+<meta property="og:title" content="FAQ - Error: Some attributes are incompatible — faq-error-incompatible-attributes" />
+<meta property="og:description" content="TODO. Tracked in r-lib/vctrs#1016
+This error occurs when vec_ptype2() or vec_cast() are supplied
+vectors of the same classes with different attributes." />
 <meta property="og:image" content="https://vctrs.r-lib.org/logo.png" />
 <meta name="twitter:card" content="summary" />
 
@@ -149,61 +144,24 @@ Otherwise, an error is thrown with stop_incompatible_cast().
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Default cast method</h1>
+    <h1>FAQ - Error: Some attributes are incompatible</h1>
     
-    <div class="hidden name"><code>vec_default_cast.Rd</code></div>
+    <div class="hidden name"><code>faq-error-incompatible-attributes.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>This function should typically be called from the default
-<code><a href='vec_cast.html'>vec_cast()</a></code> method for your class, e.g. <code>vec_cast.myclass.default()</code>.
-It does two things:</p><ul>
-<li><p>If <code>x</code> is an <a href='unspecified.html'>unspecified</a> vector, it automatically casts it to
-<code>to</code> using <code><a href='vec_init.html'>vec_init()</a></code>.</p></li>
-<li><p>Otherwise, an error is thrown with <code><a href='vctrs-conditions.html'>stop_incompatible_cast()</a></code>.</p></li>
-</ul>
-
+    <p>TODO. Tracked in r-lib/vctrs#1016</p>
+<p>This error occurs when <code><a href='vec_ptype2.html'>vec_ptype2()</a></code> or <code><a href='vec_cast.html'>vec_cast()</a></code> are supplied
+vectors of the same classes with different attributes.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>vec_default_cast</span>(<span class='no'>x</span>, <span class='no'>to</span>, <span class='no'>...</span>, <span class='kw'>x_arg</span> <span class='kw'>=</span> <span class='st'>""</span>, <span class='kw'>to_arg</span> <span class='kw'>=</span> <span class='st'>""</span>)</pre>
 
-    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
-    <table class="ref-arguments">
-    <colgroup><col class="name" /><col class="desc" /></colgroup>
-    <tr>
-      <th>x</th>
-      <td><p>Vectors to cast.</p></td>
-    </tr>
-    <tr>
-      <th>to</th>
-      <td><p>Type to cast to. If <code>NULL</code>, <code>x</code> will be returned as is.</p></td>
-    </tr>
-    <tr>
-      <th>...</th>
-      <td><p>For <code><a href='vec_cast.html'>vec_cast_common()</a></code>, vectors to cast. For
-<code><a href='vec_cast.html'>vec_cast()</a></code>, <code>vec_cast_default()</code>, and <code><a href='vec_cast.html'>vec_restore()</a></code>, these
-dots are only for future extensions and should be empty.</p></td>
-    </tr>
-    <tr>
-      <th>x_arg</th>
-      <td><p>Argument names for <code>x</code> and <code>to</code>. These are used
-in error messages to inform the user about the locations of
-incompatible types (see <code><a href='vctrs-conditions.html'>stop_incompatible_type()</a></code>).</p></td>
-    </tr>
-    <tr>
-      <th>to_arg</th>
-      <td><p>Argument names for <code>x</code> and <code>to</code>. These are used
-in error messages to inform the user about the locations of
-incompatible types (see <code><a href='vctrs-conditions.html'>stop_incompatible_type()</a></code>).</p></td>
-    </tr>
-    </table>
 
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
-      <li><a href="#arguments">Arguments</a></li>
     </ul>
 
   </div>
