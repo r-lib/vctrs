@@ -6,11 +6,11 @@ combining data frames with foreign classes uses fallback
 > bar <- structure(mtcars[4:6], class = c("bar", "data.frame"))
 > baz <- structure(mtcars[7:9], class = c("baz", "data.frame"))
 > vec_ptype_common(foo, bar, baz)
-Warning: Can't combine <foo[,3]> and <bar[,3]>.
+Warning: Can't combine <foo> and <bar>.
 i Convert all inputs to the same class to avoid this warning.
 i Falling back to <data.frame>.
 
-Warning: Can't combine <df[,6]> and <baz[,3]>.
+Warning: Can't combine <data.frame> and <baz>.
 i Convert all inputs to the same class to avoid this warning.
 i Falling back to <data.frame>.
 
@@ -18,11 +18,11 @@ i Falling back to <data.frame>.
 <0 rows> (or 0-length row.names)
 
 > vec_ptype_common(foo, baz, bar, baz, foo, bar)
-Warning: Can't combine <foo[,3]> and <baz[,3]>.
+Warning: Can't combine <foo> and <baz>.
 i Convert all inputs to the same class to avoid this warning.
 i Falling back to <data.frame>.
 
-Warning: Can't combine <df[,6]> and <bar[,3]>.
+Warning: Can't combine <data.frame> and <bar>.
 i Convert all inputs to the same class to avoid this warning.
 i Falling back to <data.frame>.
 

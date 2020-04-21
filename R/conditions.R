@@ -240,8 +240,8 @@ cnd_type_message <- function(x,
 
   if (is.data.frame(x) && is.data.frame(y)) {
     if (vec_is_coercible(new_data_frame(x), new_data_frame(y))) {
-      x_type <- vec_ptype_abbr(x)
-      y_type <- vec_ptype_abbr(y)
+      x_type <- class(x)[[1]]
+      y_type <- class(y)[[1]]
     } else {
       x_type <- vec_ptype_full(x)
       y_type <- vec_ptype_full(y)
@@ -273,7 +273,7 @@ cnd_type_message <- function(x,
 
 cnd_type_message_type_label <- function(x) {
   if (is.data.frame(x)) {
-    vec_ptype_abbr(x)
+    class(x)[[1]]
   } else {
     vec_ptype_full(x)
   }
