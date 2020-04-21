@@ -6,6 +6,13 @@ foobar <- function(x = list(), ...) {
     structure(x, class = "vctrs_foobar", ...)
   }
 }
+foobaz <- function(x = list(), ...) {
+  if (is.data.frame(x)) {
+    structure(x, class = c("vctrs_foobaz", "data.frame"), ...)
+  } else {
+    structure(x, class = "vctrs_foobaz", ...)
+  }
+}
 
 with_c_foobar <- function(expr) {
   with_methods(

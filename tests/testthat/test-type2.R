@@ -266,9 +266,7 @@ test_that("common type warnings for data frames take attributes into account", {
     expect_df_fallback(vec_ptype2(foobar_bud, foobar_boo))
 
     "For reference, warning for incompatible classes"
-    foobar <- foobar(mtcars)
-    baz <- structure(mtcars, class = c("vctrs_baz", "data.frame"))
-    expect_df_fallback(vec_ptype2(foobar, baz))
+    expect_df_fallback(vec_ptype2(foobar(mtcars), foobaz(mtcars)))
   })
 })
 
@@ -316,8 +314,6 @@ test_that("vec_ptype2() errors have informative output", {
     vec_ptype2(foobar_bud, foobar_boo)
 
     "For reference, warning for incompatible classes"
-    foobar <- foobar(mtcars)
-    baz <- structure(mtcars, class = c("vctrs_baz", "data.frame"))
-    vec_ptype2(foobar, baz)
+    vec_ptype2(foobar(mtcars), foobaz(mtcars))
   })
 })

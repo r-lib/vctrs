@@ -78,10 +78,8 @@ i Falling back to <data.frame>.
 <0 rows> (or 0-length row.names)
 
 > # For reference, warning for incompatible classes
-> foobar <- foobar(mtcars)
-> baz <- structure(mtcars, class = c("vctrs_baz", "data.frame"))
-> vec_ptype2(foobar, baz)
-Warning: Can't combine <vctrs_foobar> and <vctrs_baz>.
+> vec_ptype2(foobar(mtcars), foobaz(mtcars))
+Warning: Can't combine <vctrs_foobar> and <vctrs_foobaz>.
 i Convert all inputs to the same class to avoid this warning.
 i See <https://vctrs.r-lib.org/reference/faq-warning-convert-inputs.html>.
 i Falling back to <data.frame>.
