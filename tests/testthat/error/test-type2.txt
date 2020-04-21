@@ -61,3 +61,30 @@ common type errors don't mention columns if they are compatible
 > vec_cast(foo, bar)
 Error: Can't convert <vctrs_foo> to <vctrs_bar>.
 
+
+common type warnings for data frames take attributes into account
+=================================================================
+
+> foobar_bud <- foobar(mtcars, bud = TRUE)
+> foobar_boo <- foobar(mtcars, boo = TRUE)
+> vec_ptype2(foobar_bud, foobar_boo)
+Warning: Can't combine <vctrs_foobar> and <vctrs_foobar>.
+x Some attributes are incompatible.
+i The author of the class should implement vctrs methods.
+i See <https://vctrs.r-lib.org/reference/faq-error-incompatible-attributes.html>.
+i Falling back to <data.frame>.
+
+ [1] mpg  cyl  disp hp   drat wt   qsec vs   am   gear carb
+<0 rows> (or 0-length row.names)
+
+> # For reference, warning for incompatible classes
+> foobar <- foobar(mtcars)
+> baz <- structure(mtcars, class = c("vctrs_baz", "data.frame"))
+> vec_ptype2(foobar, baz)
+Warning: Can't combine <vctrs_foobar> and <vctrs_baz>.
+i Convert all inputs to the same class to avoid this warning.
+i Falling back to <data.frame>.
+
+ [1] mpg  cyl  disp hp   drat wt   qsec vs   am   gear carb
+<0 rows> (or 0-length row.names)
+

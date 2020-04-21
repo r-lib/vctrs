@@ -257,12 +257,8 @@ cnd_type_message <- function(x,
   # should implement a ptype2 method as documented in the FAQ
   # indicated below.
   if (from_dispatch && identical(class(x)[[1]], class(y)[[1]])) {
-    details <- format_error_bullets(c(
-      x = "Some attributes are incompatible.",
-      i = "The author of the class should implement vctrs methods.",
-      i = "See <https://vctrs.r-lib.org/reference/faq-error-incompatible-attributes.html>.",
-      details
-    ))
+    details <- c(incompatible_attrib_bullets(), details)
+    details <- format_error_bullets(details)
   }
 
   glue_lines(
@@ -277,6 +273,13 @@ cnd_type_message_type_label <- function(x) {
   } else {
     vec_ptype_full(x)
   }
+}
+incompatible_attrib_bullets <- function() {
+  c(
+    x = "Some attributes are incompatible.",
+    i = "The author of the class should implement vctrs methods.",
+    i = "See <https://vctrs.r-lib.org/reference/faq-error-incompatible-attributes.html>."
+  )
 }
 
 

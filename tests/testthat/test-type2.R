@@ -259,6 +259,19 @@ test_that("common type errors don't mention columns if they are compatible", {
   })
 })
 
+test_that("common type warnings for data frames take attributes into account", {
+  verify_errors({
+    foobar_bud <- foobar(mtcars, bud = TRUE)
+    foobar_boo <- foobar(mtcars, boo = TRUE)
+    expect_df_fallback(vec_ptype2(foobar_bud, foobar_boo))
+
+    "For reference, warning for incompatible classes"
+    foobar <- foobar(mtcars)
+    baz <- structure(mtcars, class = c("vctrs_baz", "data.frame"))
+    expect_df_fallback(vec_ptype2(foobar, baz))
+  })
+})
+
 test_that("vec_ptype2() errors have informative output", {
   verify_output(test_path("error", "test-type2.txt"), {
     "# can override scalar vector error message for base scalar types"
@@ -296,5 +309,15 @@ test_that("vec_ptype2() errors have informative output", {
     foo <- structure(df, class = c("vctrs_foo", "data.frame"))
     bar <- structure(df, class = c("vctrs_bar", "data.frame"))
     vec_cast(foo, bar)
+
+    "# common type warnings for data frames take attributes into account"
+    foobar_bud <- foobar(mtcars, bud = TRUE)
+    foobar_boo <- foobar(mtcars, boo = TRUE)
+    vec_ptype2(foobar_bud, foobar_boo)
+
+    "For reference, warning for incompatible classes"
+    foobar <- foobar(mtcars)
+    baz <- structure(mtcars, class = c("vctrs_baz", "data.frame"))
+    vec_ptype2(foobar, baz)
   })
 })

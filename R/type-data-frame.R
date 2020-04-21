@@ -115,11 +115,22 @@ vec_ptype2_df_fallback <- function(x, y, x_arg = "", y_arg = "") {
 
   if (!all(c(x_class, y_class) %in% classes)) {
     msg <- cnd_type_message(x, y, x_arg, y_arg, NULL, "combine", NULL)
-    warn(c(
-      msg,
-      i = "Convert all inputs to the same class to avoid this warning.",
-      i = "Falling back to <data.frame>."
-    ))
+
+    if (identical(x_class, y_class)) {
+      msg <- c(
+        msg,
+        incompatible_attrib_bullets(),
+        i = "Falling back to <data.frame>."
+      )
+    } else {
+      msg <- c(
+        msg,
+        i = "Convert all inputs to the same class to avoid this warning.",
+        i = "Falling back to <data.frame>."
+      )
+    }
+
+    warn(msg)
   }
 
   # Return a fallback class so we don't warn multiple times. This
