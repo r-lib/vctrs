@@ -218,7 +218,6 @@ cnd_type_message <- function(x,
                              details,
                              action,
                              message,
-                             types = NULL,
                              from_dispatch = FALSE) {
   if (!is_null(message)) {
     return(message)
@@ -239,37 +238,31 @@ cnd_type_message <- function(x,
   action <- cnd_type_action(action)
   separator <- cnd_type_separator(action)
 
-  if (is_null(types)) {
-    if (is.data.frame(x) && is.data.frame(y)) {
-      if (vec_is_coercible(new_data_frame(x), new_data_frame(y))) {
-        x_type <- vec_ptype_abbr(x)
-        y_type <- vec_ptype_abbr(y)
-      } else {
-        x_type <- vec_ptype_full(x)
-        y_type <- vec_ptype_full(y)
-      }
+  if (is.data.frame(x) && is.data.frame(y)) {
+    if (vec_is_coercible(new_data_frame(x), new_data_frame(y))) {
+      x_type <- vec_ptype_abbr(x)
+      y_type <- vec_ptype_abbr(y)
     } else {
-      x_type <- cnd_type_message_type_label(x)
-      y_type <- cnd_type_message_type_label(y)
-    }
-
-    # If we are here directly from dispatch, this means there is no
-    # ptype2 method implemented and the is-same-class fallback has
-    # failed because of diverging attributes. The author of the class
-    # should implement a ptype2 method as documented in the FAQ
-    # indicated below.
-    if (from_dispatch && identical(class(x)[[1]], class(y)[[1]])) {
-      details <- format_error_bullets(c(
-        x = "Some attributes are incompatible.",
-        i = "The author of the class should implement vctrs methods.",
-        i = "See <https://vctrs.r-lib.org/reference/faq-error-incompatible-attributes.html>.",
-        details
-      ))
+      x_type <- vec_ptype_full(x)
+      y_type <- vec_ptype_full(y)
     }
   } else {
-    stopifnot(is_character(types, n = 2))
-    x_type <- types[[1]]
-    y_type <- types[[2]]
+    x_type <- cnd_type_message_type_label(x)
+    y_type <- cnd_type_message_type_label(y)
+  }
+
+  # If we are here directly from dispatch, this means there is no
+  # ptype2 method implemented and the is-same-class fallback has
+  # failed because of diverging attributes. The author of the class
+  # should implement a ptype2 method as documented in the FAQ
+  # indicated below.
+  if (from_dispatch && identical(class(x)[[1]], class(y)[[1]])) {
+    details <- format_error_bullets(c(
+      x = "Some attributes are incompatible.",
+      i = "The author of the class should implement vctrs methods.",
+      i = "See <https://vctrs.r-lib.org/reference/faq-error-incompatible-attributes.html>.",
+      details
+    ))
   }
 
   glue_lines(

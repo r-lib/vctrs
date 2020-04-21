@@ -104,23 +104,17 @@ vec_ptype2_df_fallback <- function(x, y, x_arg = "", y_arg = "") {
   classes <- NULL
   if (is_df_fallback(x)) {
     classes <- c(classes, known_classes(x))
-    x_class <- "data.frame"
-    x_abbr <- "df"
-  } else {
-    x_class <- class(x)[[1]]
-    x_abbr <- class(x)[[1]]
+    x <- new_data_frame(x)
   }
   if (is_df_fallback(y)) {
     classes <- c(classes, known_classes(y))
-    y_class <- "data.frame"
-    y_abbr <- "df"
-  } else {
-    y_class <- class(y)[[1]]
-    y_abbr <- class(y)[[1]]
+    y <- new_data_frame(y)
   }
+  x_class <- class(x)[[1]]
+  y_class <- class(y)[[1]]
 
   if (!all(c(x_class, y_class) %in% classes)) {
-    msg <- cnd_type_message(x, y, x_arg, y_arg, NULL, "combine", NULL, types = c(x_abbr, y_abbr))
+    msg <- cnd_type_message(x, y, x_arg, y_arg, NULL, "combine", NULL)
     warn(c(
       msg,
       i = "Convert all inputs to the same class to avoid this warning.",
