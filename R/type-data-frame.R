@@ -60,7 +60,12 @@ vec_ptype_full.data.frame <- function(x, ...) {
 
 #' @export
 vec_ptype_abbr.data.frame <- function(x, ...) {
-  paste0("df", vec_ptype_shape(x))
+  if (inherits_only(x, "data.frame")) {
+    abbr <- "df"
+  } else {
+    abbr <- class(x)[[1]]
+  }
+  paste0(abbr, vec_ptype_shape(x))
 }
 
 #' @export
@@ -99,28 +104,34 @@ vec_ptype2_df_fallback <- function(x, y, x_arg = "", y_arg = "") {
   classes <- NULL
   if (is_df_fallback(x)) {
     classes <- c(classes, known_classes(x))
-    x_class <- "data.frame"
-    x_abbr <- "df"
-  } else {
-    x_class <- class(x)[[1]]
-    x_abbr <- class(x)[[1]]
+    x <- new_data_frame(x)
   }
   if (is_df_fallback(y)) {
     classes <- c(classes, known_classes(y))
-    y_class <- "data.frame"
-    y_abbr <- "df"
-  } else {
-    y_class <- class(y)[[1]]
-    y_abbr <- class(y)[[1]]
+    y <- new_data_frame(y)
   }
+  x_class <- class(x)[[1]]
+  y_class <- class(y)[[1]]
 
   if (!all(c(x_class, y_class) %in% classes)) {
-    msg <- cnd_type_message(x, y, x_arg, y_arg, NULL, "combine", NULL, types = c(x_abbr, y_abbr))
-    warn(c(
-      msg,
-      i = "Convert all inputs to the same class to avoid this warning.",
-      i = "Falling back to <data.frame>."
-    ))
+    msg <- cnd_type_message(x, y, x_arg, y_arg, NULL, "combine", NULL)
+
+    if (identical(x_class, y_class)) {
+      msg <- c(
+        msg,
+        incompatible_attrib_bullets(),
+        i = "Falling back to <data.frame>."
+      )
+    } else {
+      msg <- c(
+        msg,
+        i = "Convert all inputs to the same class to avoid this warning.",
+        i = "See <https://vctrs.r-lib.org/reference/faq-warning-convert-inputs.html>.",
+        i = "Falling back to <data.frame>."
+      )
+    }
+
+    warn(msg)
   }
 
   # Return a fallback class so we don't warn multiple times. This

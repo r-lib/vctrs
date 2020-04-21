@@ -8,10 +8,12 @@ combining data frames with foreign classes uses fallback
 > vec_ptype_common(foo, bar, baz)
 Warning: Can't combine <foo> and <bar>.
 i Convert all inputs to the same class to avoid this warning.
+i See <https://vctrs.r-lib.org/reference/faq-warning-convert-inputs.html>.
 i Falling back to <data.frame>.
 
-Warning: Can't combine <df> and <baz>.
+Warning: Can't combine <data.frame> and <baz>.
 i Convert all inputs to the same class to avoid this warning.
+i See <https://vctrs.r-lib.org/reference/faq-warning-convert-inputs.html>.
 i Falling back to <data.frame>.
 
 [1] mpg  cyl  disp hp   drat wt   qsec vs   am  
@@ -20,10 +22,12 @@ i Falling back to <data.frame>.
 > vec_ptype_common(foo, baz, bar, baz, foo, bar)
 Warning: Can't combine <foo> and <baz>.
 i Convert all inputs to the same class to avoid this warning.
+i See <https://vctrs.r-lib.org/reference/faq-warning-convert-inputs.html>.
 i Falling back to <data.frame>.
 
-Warning: Can't combine <df> and <bar>.
+Warning: Can't combine <data.frame> and <bar>.
 i Convert all inputs to the same class to avoid this warning.
+i See <https://vctrs.r-lib.org/reference/faq-warning-convert-inputs.html>.
 i Falling back to <data.frame>.
 
 [1] mpg  cyl  disp qsec vs   am   hp   drat wt  

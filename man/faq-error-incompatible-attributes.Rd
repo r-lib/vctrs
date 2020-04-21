@@ -2,7 +2,7 @@
 % Please edit documentation in R/faq.R
 \name{faq-error-incompatible-attributes}
 \alias{faq-error-incompatible-attributes}
-\title{FAQ - Error: Some attributes are incompatible}
+\title{FAQ - Error/Warning: Some attributes are incompatible}
 \description{
 TODO. Tracked in r-lib/vctrs#1016
 
