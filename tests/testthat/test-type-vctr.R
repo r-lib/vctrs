@@ -33,12 +33,12 @@ test_that("Can opt out of base type", {
   expect_s3_class(x, c("x", "vctrs_vctr"), exact = TRUE)
 })
 
-test_that("base type is always set for lists", {
+test_that("base type is set by default for lists", {
   expect_s3_class(new_vctr(list()), "list")
 })
 
-test_that("cannot opt out of the base type with lists", {
-  expect_error(new_vctr(list(), inherit_base_type = FALSE), "must inherit from the base type")
+test_that("can opt out of the base type with lists", {
+  expect_s3_class(new_vctr(list(), inherit_base_type = FALSE), "vctrs_vctr", exact = TRUE)
 })
 
 test_that("data frames are not allowed", {

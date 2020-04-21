@@ -7,10 +7,13 @@
 #' vector classes.
 #'
 #' @details
-#' List vctrs are special cases. When created through `new_vctr()`, the
-#' resulting list vctr should always be recognized as a list by
-#' `vec_is_list()`. Because of this, if `inherit_base_type` is `FALSE`
-#' an error is thrown.
+#' List vctrs are special cases. Generally you'll want to create a vctr which
+#' is recognized by [vec_is_list()] as a list. For that reason,
+#' `inherit_base_type` defaults to `TRUE` for lists. However, in rare cases
+#' you might want to create a list vctr that acts like an atomic vector. The
+#' base R class [numeric_version()] is one such example. This is a vector, so
+#' [vec_is()] should return `TRUE`, but it isn't a list even though it is
+#' internally stored as one, so `vec_is_list()` should return `FALSE`.
 #'
 #' @section Base methods:
 #' The vctr class provides methods for many base generics using a smaller
@@ -60,7 +63,7 @@
 #'   A single logical, or `NULL`. Does this class extend the base type of
 #'   `.data`? i.e. does the resulting object extend the behaviour of the
 #'   underlying type? Defaults to `FALSE` for all types except lists, which
-#'   are required to inherit from the base type.
+#'   defaults to `TRUE`.
 #' @export
 #' @keywords internal
 #' @aliases vctr
@@ -78,11 +81,8 @@ new_vctr <- function(.data,
     if (is.data.frame(.data)) {
       abort("`.data` can't be a data frame.")
     }
-
     if (is.null(inherit_base_type)) {
       inherit_base_type <- TRUE
-    } else if (is_false(inherit_base_type)) {
-      abort("List `.data` must inherit from the base type.")
     }
   }
 

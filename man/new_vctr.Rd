@@ -18,7 +18,7 @@ new_vctr(.data, ..., class = character(), inherit_base_type = NULL)
 A single logical, or \code{NULL}. Does this class extend the base type of
 \code{.data}? i.e. does the resulting object extend the behaviour of the
 underlying type? Defaults to \code{FALSE} for all types except lists, which
-are required to inherit from the base type.}
+defaults to \code{TRUE}.}
 }
 \description{
 This abstract class provides a set of useful default methods that makes it
@@ -27,10 +27,13 @@ considerably easier to get started with a new S3 vector class. See
 vector classes.
 }
 \details{
-List vctrs are special cases. When created through \code{new_vctr()}, the
-resulting list vctr should always be recognized as a list by
-\code{vec_is_list()}. Because of this, if \code{inherit_base_type} is \code{FALSE}
-an error is thrown.
+List vctrs are special cases. Generally you'll want to create a vctr which
+is recognized by \code{\link[=vec_is_list]{vec_is_list()}} as a list. For that reason,
+\code{inherit_base_type} defaults to \code{TRUE} for lists. However, in rare cases
+you might want to create a list vctr that acts like an atomic vector. The
+base R class \code{\link[=numeric_version]{numeric_version()}} is one such example. This is a vector, so
+\code{\link[=vec_is]{vec_is()}} should return \code{TRUE}, but it isn't a list even though it is
+internally stored as one, so \code{vec_is_list()} should return \code{FALSE}.
 }
 \section{Base methods}{
 
