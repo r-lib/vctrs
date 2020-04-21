@@ -23,6 +23,8 @@ SEXP strings_posixt = NULL;
 SEXP strings_factor = NULL;
 SEXP strings_ordered = NULL;
 SEXP strings_list = NULL;
+SEXP strings_vctrs_vctr = NULL;
+SEXP strings_vctrs_list_of = NULL;
 
 SEXP classes_data_frame = NULL;
 SEXP classes_factor = NULL;
@@ -1482,7 +1484,7 @@ void vctrs_init_utils(SEXP ns) {
 
   // Holds the CHARSXP objects because unlike symbols they can be
   // garbage collected
-  strings = r_new_shared_vector(STRSXP, 19);
+  strings = r_new_shared_vector(STRSXP, 21);
 
   strings_dots = Rf_mkChar("...");
   SET_STRING_ELT(strings, 0, strings_dots);
@@ -1541,6 +1543,12 @@ void vctrs_init_utils(SEXP ns) {
   strings_list = Rf_mkChar("list");
   SET_STRING_ELT(strings, 18, strings_list);
 
+  strings_vctrs_vctr = Rf_mkChar("vctrs_vctr");
+  SET_STRING_ELT(strings, 19, strings_vctrs_vctr);
+
+  strings_vctrs_list_of = Rf_mkChar("vctrs_list_of");
+  SET_STRING_ELT(strings, 20, strings_vctrs_list_of);
+
 
   classes_data_frame = r_new_shared_vector(STRSXP, 1);
   strings_data_frame = Rf_mkChar("data.frame");
@@ -1592,7 +1600,7 @@ void vctrs_init_utils(SEXP ns) {
   classes_vctrs_group_rle = r_new_shared_vector(STRSXP, 3);
   SET_STRING_ELT(classes_vctrs_group_rle, 0, Rf_mkChar("vctrs_group_rle"));
   SET_STRING_ELT(classes_vctrs_group_rle, 1, Rf_mkChar("vctrs_rcrd"));
-  SET_STRING_ELT(classes_vctrs_group_rle, 2, Rf_mkChar("vctrs_vctr"));
+  SET_STRING_ELT(classes_vctrs_group_rle, 2, strings_vctrs_vctr);
 
 
   vctrs_shared_empty_lgl = r_new_shared_vector(LGLSXP, 0);

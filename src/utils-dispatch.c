@@ -84,13 +84,18 @@ static enum vctrs_class_type class_type_impl(SEXP class) {
   }}
 
   // Now check for inherited classes
-  p = p + n - 1;
-  SEXP last = *p;
+  p = p + n - 2;
+  SEXP butlast = *p++;
+  SEXP last = *p++;
 
   if (last == strings_data_frame) {
     return vctrs_class_data_frame;
   } else if (last == strings_list) {
     return vctrs_class_list;
+  } else if (last == strings_vctrs_vctr) {
+    if (butlast == strings_vctrs_list_of) {
+      return vctrs_class_list_of;
+    }
   }
 
   return vctrs_class_unknown;
@@ -99,6 +104,7 @@ static enum vctrs_class_type class_type_impl(SEXP class) {
 static const char* class_type_as_str(enum vctrs_class_type type) {
   switch (type) {
   case vctrs_class_list: return "list";
+  case vctrs_class_list_of: return "list_of";
   case vctrs_class_data_frame: return "data_frame";
   case vctrs_class_bare_data_frame: return "bare_data_frame";
   case vctrs_class_bare_tibble: return "bare_tibble";
