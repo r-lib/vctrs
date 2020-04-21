@@ -355,6 +355,12 @@ SEXP df_assign(SEXP x, SEXP index, SEXP value,
     // we recurse into. `vec_proxy_assign()` will proxy the `value_elt`.
     SEXP proxy_elt = PROTECT(vec_proxy(out_elt));
 
+    if (TYPEOF(proxy_elt) != TYPEOF(value_elt)) {
+      Rf_error("Internal error in `df_assign()`: Proxy of type `%s` incompatible with type `%s`.",
+               Rf_type2char(TYPEOF(proxy_elt)),
+               Rf_type2char(TYPEOF(value_elt)));
+    }
+
     SEXP assigned = PROTECT(vec_proxy_assign_opts(proxy_elt, index, value_elt, opts));
     assigned = vec_restore(assigned, out_elt, R_NilValue);
 
