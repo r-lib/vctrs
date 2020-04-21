@@ -126,6 +126,7 @@ vec_ptype2_df_fallback <- function(x, y, x_arg = "", y_arg = "") {
       msg <- c(
         msg,
         i = "Convert all inputs to the same class to avoid this warning.",
+        i = "See <https://vctrs.r-lib.org/reference/faq-warning-convert-inputs.html>.",
         i = "Falling back to <data.frame>."
       )
     }

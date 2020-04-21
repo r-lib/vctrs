@@ -83,6 +83,7 @@ i Falling back to <data.frame>.
 > vec_ptype2(foobar, baz)
 Warning: Can't combine <vctrs_foobar> and <vctrs_baz>.
 i Convert all inputs to the same class to avoid this warning.
+i See <https://vctrs.r-lib.org/reference/faq-warning-convert-inputs.html>.
 i Falling back to <data.frame>.
 
  [1] mpg  cyl  disp hp   drat wt   qsec vs   am   gear carb
