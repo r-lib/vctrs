@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Count unique values in a vector — vec_count • vctrs</title>
+<title>FAQ - Warning: Convert all inputs to the same class — faq-warning-convert-inputs • vctrs</title>
 
 <!-- favicons -->
 <link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
@@ -42,11 +42,10 @@
 
 
 
-<meta property="og:title" content="Count unique values in a vector — vec_count" />
-<meta property="og:description" content="Count the number of unique values in a vector. vec_count() has two
-important differences to table(): it returns a data frame, and when
-given multiple inputs (as a data frame), it only counts combinations that
-appear in the input." />
+<meta property="og:title" content="FAQ - Warning: Convert all inputs to the same class — faq-warning-convert-inputs" />
+<meta property="og:description" content="TODO. Tracked in r-lib/vctrs#1016
+This warning occurs before falling back to data.frame when
+incompatible data frame classes are supplied." />
 <meta property="og:image" content="https://vctrs.r-lib.org/logo.png" />
 <meta name="twitter:card" content="summary" />
 
@@ -145,128 +144,24 @@ appear in the input." />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Count unique values in a vector</h1>
+    <h1>FAQ - Warning: Convert all inputs to the same class</h1>
     
-    <div class="hidden name"><code>vec_count.Rd</code></div>
+    <div class="hidden name"><code>faq-warning-convert-inputs.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Count the number of unique values in a vector. <code>vec_count()</code> has two
-important differences to <code><a href='table.html'>table()</a></code>: it returns a data frame, and when
-given multiple inputs (as a data frame), it only counts combinations that
-appear in the input.</p>
+    <p>TODO. Tracked in r-lib/vctrs#1016</p>
+<p>This warning occurs before falling back to <code>data.frame</code> when
+incompatible data frame classes are supplied.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>vec_count</span>(<span class='no'>x</span>, <span class='kw'>sort</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"count"</span>, <span class='st'>"key"</span>, <span class='st'>"location"</span>, <span class='st'>"none"</span>))</pre>
 
-    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
-    <table class="ref-arguments">
-    <colgroup><col class="name" /><col class="desc" /></colgroup>
-    <tr>
-      <th>x</th>
-      <td><p>A vector (including a data frame).</p></td>
-    </tr>
-    <tr>
-      <th>sort</th>
-      <td><p>One of "count", "key", "location", or "none".</p><ul>
-<li><p>"count", the default, puts most frequent values at top</p></li>
-<li><p>"key", orders by the output key column (i.e. unique values of <code>x</code>)</p></li>
-<li><p>"location", orders by location where key first seen. This is useful
-if you want to match the counts up to other unique/duplicated functions.</p></li>
-<li><p>"none", leaves unordered.</p></li>
-</ul></td>
-    </tr>
-    </table>
 
-    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>A data frame with columns <code>key</code> (same type as <code>x</code>) and
-<code>count</code> (an integer vector).</p>
-
-    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'>vec_count</span>(<span class='no'>mtcars</span>$<span class='no'>vs</span>)</div><div class='output co'>#&gt;   key count
-#&gt; 1   0    18
-#&gt; 2   1    14</div><div class='input'><span class='fu'>vec_count</span>(<span class='no'>iris</span>$<span class='no'>Species</span>)</div><div class='output co'>#&gt;          key count
-#&gt; 1     setosa    50
-#&gt; 2 versicolor    50
-#&gt; 3  virginica    50</div><div class='input'>
-<span class='co'># If you count a data frame you'll get a data frame</span>
-<span class='co'># column in the output</span>
-<span class='fu'><a href='https://rdrr.io/r/utils/str.html'>str</a></span>(<span class='fu'>vec_count</span>(<span class='no'>mtcars</span>[<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"vs"</span>, <span class='st'>"am"</span>)]))</div><div class='output co'>#&gt; 'data.frame':	4 obs. of  2 variables:
-#&gt;  $ key  :'data.frame':	4 obs. of  2 variables:
-#&gt;   ..$ vs: num  0 1 1 0
-#&gt;   ..$ am: num  0 1 0 1
-#&gt;  $ count: int  12 7 7 6</div><div class='input'>
-<span class='co'># Sorting ---------------------------------------</span>
-
-<span class='no'>x</span> <span class='kw'>&lt;-</span> <span class='no'>letters</span>[<span class='fu'><a href='https://rdrr.io/r/stats/Poisson.html'>rpois</a></span>(<span class='fl'>100</span>, <span class='fl'>6</span>)]
-<span class='co'># default is to sort by frequency</span>
-<span class='fu'>vec_count</span>(<span class='no'>x</span>)</div><div class='output co'>#&gt;    key count
-#&gt; 1    f    21
-#&gt; 2    e    19
-#&gt; 3    g    16
-#&gt; 4    d    14
-#&gt; 5    h     9
-#&gt; 6    b     6
-#&gt; 7    c     4
-#&gt; 8    j     3
-#&gt; 9    l     2
-#&gt; 10   i     2
-#&gt; 11   k     2
-#&gt; 12   n     1
-#&gt; 13   a     1</div><div class='input'>
-<span class='co'># by can sort by key</span>
-<span class='fu'>vec_count</span>(<span class='no'>x</span>, <span class='kw'>sort</span> <span class='kw'>=</span> <span class='st'>"key"</span>)</div><div class='output co'>#&gt;    key count
-#&gt; 1    a     1
-#&gt; 2    b     6
-#&gt; 3    c     4
-#&gt; 4    d    14
-#&gt; 5    e    19
-#&gt; 6    f    21
-#&gt; 7    g    16
-#&gt; 8    h     9
-#&gt; 9    i     2
-#&gt; 10   j     3
-#&gt; 11   k     2
-#&gt; 12   l     2
-#&gt; 13   n     1</div><div class='input'>
-<span class='co'># or location of first value</span>
-<span class='fu'>vec_count</span>(<span class='no'>x</span>, <span class='kw'>sort</span> <span class='kw'>=</span> <span class='st'>"location"</span>)</div><div class='output co'>#&gt;    key count
-#&gt; 1    e    19
-#&gt; 2    d    14
-#&gt; 3    c     4
-#&gt; 4    k     2
-#&gt; 5    g    16
-#&gt; 6    l     2
-#&gt; 7    b     6
-#&gt; 8    f    21
-#&gt; 9    j     3
-#&gt; 10   h     9
-#&gt; 11   i     2
-#&gt; 12   n     1
-#&gt; 13   a     1</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span>(<span class='no'>x</span>)</div><div class='output co'>#&gt; [1] "e" "e" "d" "e" "c" "e"</div><div class='input'>
-<span class='co'># or not at all</span>
-<span class='fu'>vec_count</span>(<span class='no'>x</span>, <span class='kw'>sort</span> <span class='kw'>=</span> <span class='st'>"none"</span>)</div><div class='output co'>#&gt;    key count
-#&gt; 1    n     1
-#&gt; 2    f    21
-#&gt; 3    a     1
-#&gt; 4    b     6
-#&gt; 5    j     3
-#&gt; 6    h     9
-#&gt; 7    l     2
-#&gt; 8    e    19
-#&gt; 9    g    16
-#&gt; 10   d    14
-#&gt; 11   i     2
-#&gt; 12   c     4
-#&gt; 13   k     2</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
-      <li><a href="#arguments">Arguments</a></li>
-      <li><a href="#value">Value</a></li>
-      <li><a href="#examples">Examples</a></li>
     </ul>
 
   </div>
