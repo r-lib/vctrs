@@ -248,7 +248,7 @@ cnd_type_message <- function(x,
     # failed because of diverging attributes. The author of the class
     # should implement a ptype2 method as documented in the FAQ
     # indicated below.
-    if (from_dispatch && identical(x_type, y_type)) {
+    if (from_dispatch && identical(class(x)[[1]], class(y)[[1]])) {
       details <- format_error_bullets(c(
         x = "Some attributes are incompatible.",
         i = "The author of the class should implement vctrs methods.",
