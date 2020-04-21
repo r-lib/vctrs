@@ -1442,6 +1442,7 @@ SEXP syms_character = NULL;
 SEXP syms_body = NULL;
 SEXP syms_parent = NULL;
 SEXP syms_s3_methods_table = NULL;
+SEXP syms_from_dispatch = NULL;
 
 SEXP fns_bracket = NULL;
 SEXP fns_quote = NULL;
@@ -1662,6 +1663,7 @@ void vctrs_init_utils(SEXP ns) {
   syms_body = Rf_install("body");
   syms_parent = Rf_install("parent");
   syms_s3_methods_table = Rf_install(".__S3MethodsTable__.");
+  syms_from_dispatch = Rf_install("vctrs:::from_dispatch");
 
   fns_bracket = Rf_findVar(syms_bracket, R_BaseEnv);
   fns_quote = Rf_findVar(Rf_install("quote"), R_BaseEnv);

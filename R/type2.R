@@ -91,7 +91,17 @@ vec_default_ptype2 <- function(x, y, ..., x_arg = "", y_arg = "") {
     return(vec_ptype2_df_fallback(x, y))
   }
 
-  stop_incompatible_type(x, y, x_arg = x_arg, y_arg = y_arg)
+  stop_incompatible_type(
+    x,
+    y,
+    x_arg = x_arg,
+    y_arg = y_arg,
+    `vctrs:::from_dispatch` = from_dispatch(...)
+  )
+}
+
+from_dispatch <- function(..., `vctrs:::from_dispatch` = FALSE) {
+  `vctrs:::from_dispatch`
 }
 
 vec_typeof2 <- function(x, y) {

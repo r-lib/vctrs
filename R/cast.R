@@ -77,8 +77,8 @@
 #'
 #' @param x Vectors to cast.
 #' @param ... For `vec_cast_common()`, vectors to cast. For
-#'   `vec_cast()` and `vec_restore()`, these dots are only for future
-#'   extensions and should be empty.
+#'   `vec_cast()`, `vec_cast_default()`, and `vec_restore()`, these
+#'   dots are only for future extensions and should be empty.
 #' @param to,.to Type to cast to. If `NULL`, `x` will be returned as is.
 #' @param n \Sexpr[results=rd, stage=render]{vctrs:::lifecycle("experimental")}
 #'   The total size to restore to. This is currently passed by
@@ -151,7 +151,7 @@ vec_cast_common <- function(..., .to = NULL) {
 #'
 #' @inheritParams vec_cast
 #' @export
-vec_default_cast <- function(x, to, x_arg = "", to_arg = "") {
+vec_default_cast <- function(x, to, ..., x_arg = "", to_arg = "") {
   if (is_asis(x)) {
     return(vec_cast_from_asis(x, to, x_arg = x_arg, to_arg = to_arg))
   }
@@ -172,5 +172,11 @@ vec_default_cast <- function(x, to, x_arg = "", to_arg = "") {
     return(x)
   }
 
-  stop_incompatible_cast(x, to, x_arg = x_arg, to_arg = to_arg)
+  stop_incompatible_cast(
+    x,
+    to,
+    x_arg = x_arg,
+    to_arg = to_arg,
+    `vctrs:::from_dispatch` = from_dispatch(...)
+  )
 }

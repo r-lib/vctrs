@@ -6,6 +6,9 @@ vec_c() fails with complex foreign S3 classes
 > y <- structure(foobar(2), attr_bar = "bar")
 > vec_c(x, y)
 Error: Can't combine `..1` <vctrs_foobar> and `..2` <vctrs_foobar>.
+x Some attributes are incompatible.
+i The author of the class should implement vctrs methods.
+i See <https://vctrs.r-lib.org/reference/faq-error-incompatible-attributes.html>.
 
 
 vec_c() fails with complex foreign S4 classes
@@ -15,6 +18,9 @@ vec_c() fails with complex foreign S4 classes
 > jane <- .Counts(3L, name = "Jane")
 > vec_c(joe, jane)
 Error: Can't combine `..1` <vctrs_Counts> and `..2` <vctrs_Counts>.
+x Some attributes are incompatible.
+i The author of the class should implement vctrs methods.
+i See <https://vctrs.r-lib.org/reference/faq-error-incompatible-attributes.html>.
 
 
 vec_c() fallback doesn't support `name_spec` or `ptype`

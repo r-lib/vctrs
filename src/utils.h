@@ -455,6 +455,7 @@ extern SEXP syms_numeric;
 extern SEXP syms_character;
 extern SEXP syms_body;
 extern SEXP syms_parent;
+extern SEXP syms_from_dispatch;
 
 #define syms_names R_NamesSymbol
 

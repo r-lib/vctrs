@@ -130,11 +130,12 @@ static inline SEXP vec_cast_default(SEXP x,
                                     SEXP y,
                                     SEXP x_arg,
                                     SEXP to_arg) {
-  return vctrs_eval_mask4(syms_vec_cast_default,
+  return vctrs_eval_mask5(syms_vec_cast_default,
                           syms_x, x,
                           syms_to, y,
                           syms_x_arg, x_arg,
                           syms_to_arg, to_arg,
+                          syms_from_dispatch, vctrs_shared_true,
                           vctrs_ns_env);
 }
 
