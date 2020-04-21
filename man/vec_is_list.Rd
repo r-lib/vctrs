@@ -14,15 +14,16 @@ vec_is_list(x)
 returns \code{TRUE} if:
 \itemize{
 \item \code{x} is a bare list with no class.
-\item \code{x} is a list explicitly inheriting from \code{"list"}.
+\item \code{x} is a list explicitly inheriting from \code{"list"} or \code{"vctrs_list_of"}.
 }
 }
 \details{
 Notably, data frames and S3 record style classes like POSIXlt are not
 considered lists.
 
-If \code{x} inherits explicitly from \code{"list"}, it is also required that the
-proxy returned by \code{\link[=vec_proxy]{vec_proxy()}} is a list. If it is not, an error is thrown.
+If \code{x} inherits explicitly from \code{"list"} or \code{"vctrs_list_of"}, it is also
+required that the proxy returned by \code{\link[=vec_proxy]{vec_proxy()}} is a list. If it is not,
+an error is thrown.
 }
 \examples{
 vec_is_list(list())

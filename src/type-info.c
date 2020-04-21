@@ -119,8 +119,11 @@ bool vec_is_list(SEXP x) {
     return true;
   }
 
-  // Classed VECSXP are only lists if the last class is explicitly `"list"`
-  if (class_type(x) != vctrs_class_list) {
+  enum vctrs_class_type type = class_type(x);
+
+  // Classed VECSXP are only lists if the last classes are explicitly either
+  // `"list"` or `c("vctrs_list_of", "vctrs_vctr")`
+  if (type != vctrs_class_list && type != vctrs_class_list_of) {
     return false;
   }
 
@@ -131,7 +134,7 @@ bool vec_is_list(SEXP x) {
 
   Rf_errorcall(
     R_NilValue,
-    "`x` inherits explicitly from \"list\", "
+    "`x` inherits explicitly from \"list\" or \"vctrs_list_of\", "
     "but the proxy returned by `vec_proxy()` is not a list."
   );
 }

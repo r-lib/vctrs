@@ -67,7 +67,15 @@ new_list_of <- function(x = list(), ptype = logical(), ..., class = character())
     abort("`ptype` must have size 0.")
   }
 
-  new_vctr(x, ..., ptype = ptype, class = c(class, "vctrs_list_of"))
+  # Don't inherit the base type of `"list"` explicitly. A vctrs_list_of is
+  # still considered a list because of special casing in `vec_is_list()`.
+  new_vctr(
+    x,
+    ...,
+    ptype = ptype,
+    class = c(class, "vctrs_list_of"),
+    inherit_base_type = FALSE
+  )
 }
 
 #' @export
