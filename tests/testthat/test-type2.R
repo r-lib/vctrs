@@ -223,6 +223,30 @@ test_that("ptype2 and cast errors when same class fallback is impossible are inf
       vec_ptype2(foobar(1, bar = TRUE), foobar(2, baz = TRUE)),
       class = "vctrs_error_incompatible_type"
     )
+
+    "Incompatible attributes bullets are not show when methods are implemented"
+    with_foobar_cast <- function(expr ) {
+      with_methods(
+        vec_cast.vctrs_foobar = function(...) NULL,
+        vec_cast.vctrs_foobar.vctrs_foobar = function(x, to, ...) vec_default_cast(x, to, ...),
+        expr
+      )
+    }
+    with_foobar_ptype2 <- function(expr ) {
+      with_methods(
+        vec_ptype2.vctrs_foobar = function(...) NULL,
+        vec_ptype2.vctrs_foobar.vctrs_foobar = function(x, y, ...) vec_default_ptype2(x, y, ...),
+        expr
+      )
+    }
+    expect_error(
+      with_foobar_cast(vec_cast(foobar(1, bar = TRUE), foobar(2, baz = TRUE))),
+      class = "vctrs_error_incompatible_type"
+    )
+    expect_error(
+      with_foobar_ptype2(vec_ptype2(foobar(1, bar = TRUE), foobar(2, baz = TRUE))),
+       class = "vctrs_error_incompatible_type"
+    )
   })
 })
 
@@ -239,5 +263,23 @@ test_that("vec_ptype2() errors have informative output", {
     "# ptype2 and cast errors when same class fallback is impossible are informative"
     vec_cast(foobar(1, bar = TRUE), foobar(2, baz = TRUE))
     vec_ptype2(foobar(1, bar = TRUE), foobar(2, baz = TRUE))
+
+    "Incompatible attributes bullets are not show when methods are implemented"
+    with_foobar_cast <- function(expr ) {
+      with_methods(
+        vec_cast.vctrs_foobar = function(...) NULL,
+        vec_cast.vctrs_foobar.vctrs_foobar = function(x, to, ...) vec_default_cast(x, to, ...),
+        expr
+      )
+    }
+    with_foobar_ptype2 <- function(expr ) {
+      with_methods(
+        vec_ptype2.vctrs_foobar = function(...) NULL,
+        vec_ptype2.vctrs_foobar.vctrs_foobar = function(x, y, ...) vec_default_ptype2(x, y, ...),
+        expr
+      )
+    }
+    with_foobar_cast(vec_cast(foobar(1, bar = TRUE), foobar(2, baz = TRUE)))
+    with_foobar_ptype2(vec_ptype2(foobar(1, bar = TRUE), foobar(2, baz = TRUE)))
   })
 })

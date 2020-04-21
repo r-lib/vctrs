@@ -48,11 +48,12 @@ static inline SEXP vec_ptype2_default(SEXP x,
                                       SEXP y,
                                       SEXP x_arg,
                                       SEXP y_arg) {
-  return vctrs_eval_mask4(syms_vec_ptype2_default,
+  return vctrs_eval_mask5(syms_vec_ptype2_default,
                           syms_x, x,
                           syms_y, y,
                           syms_x_arg, x_arg,
                           syms_y_arg, y_arg,
+                          syms_from_dispatch, vctrs_shared_true,
                           vctrs_ns_env);
 }
 
