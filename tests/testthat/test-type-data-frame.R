@@ -279,14 +279,6 @@ test_that("class attribute", {
     class(new_data_frame(list(a = 1), .class = "foo_frame")),
     c("foo_frame", "data.frame")
   )
-  expect_identical(
-    class(exec(new_data_frame, list(a = 1), !!!attributes(new_data_frame(list(), .class = "tbl_df")))),
-    c("tbl_df", "data.frame", "data.frame")
-  )
-  expect_identical(
-    class(exec(new_data_frame, list(a = 1), !!!attributes(new_data_frame(list(b = 1), .class = "tbl_df")))),
-    c("tbl_df", "data.frame", "data.frame")
-  )
 })
 
 test_that("attributes with special names are merged", {
