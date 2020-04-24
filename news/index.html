@@ -216,7 +216,9 @@
 <a href="#breaking-changes" class="anchor"></a>Breaking changes</h2>
 <ul>
 <li>
-<code><a href="../reference/vec_bind.html">vec_rbind()</a></code> and <code><a href="../reference/vec_c.html">vec_c()</a></code> with data frame inputs now consistently preserve the names of list-columns, df-columns, and matrix-columns (#689). This can cause some false positives in unit tests, if they are sensitive to internal names (#1007).</li>
+<p><code><a href="../reference/vec_bind.html">vec_rbind()</a></code> and <code><a href="../reference/vec_c.html">vec_c()</a></code> with data frame inputs now consistently preserve the names of list-columns, df-columns, and matrix-columns (#689). This can cause some false positives in unit tests, if they are sensitive to internal names (#1007).</p>
+<p>As row names must be unique, they are repaired with <code><a href="../reference/vec_as_names.html">vec_as_names()</a></code>. This repair is silent to avoid confusing messages when the row names are not informative and were not created on purpose.</p>
+</li>
 </ul>
 </div>
 <div id="cran-results" class="section level2">
