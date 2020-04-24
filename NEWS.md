@@ -1,6 +1,9 @@
 
 # vctrs (development version)
 
+* `vec_as_name()` gains a `repair_arg` argument that when set will cause
+  `repair = "check_unique"` to generate an informative hint (#692).
+
 * `new_vctr()` now always appends a base `"list"` class to list `.data` to
   be compatible with changes to `vec_is_list()`. This affects `new_list_of()`,
   which now returns an object with a base class of `"list"`.

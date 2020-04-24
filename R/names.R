@@ -51,6 +51,8 @@
 #'   The `"check_unique"` option doesn't perform any name repair.
 #'   Instead, an error is raised if the names don't suit the
 #'   `"unique"` criteria.
+#' @param repair_arg If specified and `repair = "check_unique"`, any errors
+#'   will include a hint to set the `repair_arg`.
 #' @param quiet By default, the user is informed of any renaming
 #'   caused by repairing the names. This only concerns unique and
 #'   universal repairing. Set `quiet` to `TRUE` to silence the
@@ -151,11 +153,12 @@
 vec_as_names <- function(names,
                          ...,
                          repair = c("minimal", "unique", "universal", "check_unique"),
+                         repair_arg = "",
                          quiet = FALSE) {
   if (!missing(...)) {
     ellipsis::check_dots_empty()
   }
-  .Call(vctrs_as_names, names, repair, quiet)
+  .Call(vctrs_as_names, names, repair, repair_arg, quiet)
 }
 
 validate_name_repair_arg <- function(repair) {
@@ -164,7 +167,7 @@ validate_name_repair_arg <- function(repair) {
 validate_minimal_names <- function(names, n = NULL) {
   .Call(vctrs_validate_minimal_names, names, n)
 }
-validate_unique <- function(names, n = NULL) {
+validate_unique <- function(names, arg = "", n = NULL) {
   validate_minimal_names(names, n)
 
   empty_names <- detect_empty_names(names)
@@ -178,7 +181,7 @@ validate_unique <- function(names, n = NULL) {
   }
 
   if (anyDuplicated(names)) {
-    stop_names_must_be_unique(names)
+    stop_names_must_be_unique(names, arg)
   }
 
   invisible(names)
