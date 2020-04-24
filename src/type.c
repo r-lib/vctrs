@@ -109,8 +109,18 @@ SEXP vec_ptype_finalise(SEXP x) {
     x = PROTECT(df_map(x, &vec_ptype_finalise));
 
     if (Rf_inherits(x, "vctrs:::df_fallback")) {
-      r_poke_class(x, classes_data_frame);
+      SEXP seen_tibble_attr = PROTECT(Rf_getAttrib(x, Rf_install("seen_tibble")));
+      bool seen_tibble = r_is_true(seen_tibble_attr);
+      UNPROTECT(1);
+
+      if (seen_tibble) {
+        r_poke_class(x, classes_tibble);
+      } else {
+        r_poke_class(x, classes_data_frame);
+      }
+
       Rf_setAttrib(x, Rf_install("known_classes"), R_NilValue);
+      Rf_setAttrib(x, Rf_install("seen_tibble"), R_NilValue);
     }
 
     UNPROTECT(1);

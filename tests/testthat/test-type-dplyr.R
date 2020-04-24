@@ -164,5 +164,5 @@ test_that("no common type between rowwise and grouped data frames", {
   expect_df_fallback(
     out <- vec_ptype_common_fallback(dplyr::rowwise(mtcars), dplyr::group_by(mtcars, cyl))
   )
-  expect_identical(out, unrownames(mtcars[0, ]))
+  expect_identical(out, tibble::as_tibble(mtcars[0, ]))
 })
