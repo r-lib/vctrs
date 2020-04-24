@@ -509,6 +509,8 @@ test_that("rbind() and cbind() have informative outputs when repairing names", {
     vec_rbind(c(a = 1), c(b = 2))
     vec_rbind(c(a = 1), c(b = 2), .names_to = NULL)
 
+    vec_rbind(mtcars[1:4, ], mtcars[1:3, ])
+
     "# vec_cbind()"
     vec_cbind(1, 2)
     vec_cbind(1, 2, ...10 = 3)

@@ -178,6 +178,11 @@
   (#689). This can cause some false positives in unit tests, if they
   are sensitive to internal names (#1007).
 
+  As row names must be unique, they are repaired with
+  `vec_as_names()`. This repair is silent to avoid confusing messages
+  when the row names are not informative and were not created on
+  purpose.
+
 
 ## CRAN results
 
