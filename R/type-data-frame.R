@@ -74,6 +74,13 @@ vec_proxy_compare.data.frame <- function(x, ..., relax = FALSE) {
   new_data_frame(out, nrow(x))
 }
 
+df_is_coercible <- function(x, y) {
+  vec_is_coercible(
+    new_data_frame(x),
+    new_data_frame(y)
+  )
+}
+
 
 # Coercion ----------------------------------------------------------------
 
@@ -92,6 +99,30 @@ vec_ptype2.data.frame.data.frame <- function(x, y, ...) {
 # Returns a `data.frame` no matter the input classes
 df_ptype2 <- function(x, y, ..., x_arg = "", y_arg = "") {
   .Call(vctrs_df_ptype2, x, y, x_arg, y_arg)
+}
+
+vec_ptype2_df_fallback_normalise <- function(x, y) {
+  ptype <- df_ptype2(x, y)
+
+  # Empty columns first to avoid name repairs
+  x <- x[0, 0, drop = FALSE]
+  y <- y[0, 0, drop = FALSE]
+
+  x[seq_along(ptype)] <- ptype
+  y[seq_along(ptype)] <- ptype
+
+  list(x = x, y = y)
+}
+vec_cast_df_fallback_normalise <- function(x, to) {
+  cast <- df_cast(x, to)
+
+  # Empty columns first to avoid name repairs
+  x <- x[0]
+
+  # Seq-assign should be more widely implemented than empty-assign?
+  x[seq_along(to)] <- cast
+
+  x
 }
 
 # Fallback for data frame subclasses (#981)
@@ -160,6 +191,13 @@ new_fallback_df <- function(x, known_classes, n = nrow(x)) {
     known_classes = known_classes,
     class = "vctrs:::df_fallback"
   )
+}
+
+#' @export
+`[.vctrs:::df_fallback` <- function(x, i, ...) {
+  classes <- known_classes(x)
+  x <- NextMethod()
+  new_fallback_df(x, known_classes = classes)
 }
 
 known_classes <- function(x) {
