@@ -7,7 +7,8 @@ SEXP vec_ptype2_dispatch(SEXP x, SEXP y,
                          enum vctrs_type y_type,
                          struct vctrs_arg* x_arg,
                          struct vctrs_arg* y_arg,
-                         int* left) {
+                         int* left,
+                         bool df_fallback) {
   enum vctrs_type2_s3 type2_s3 = vec_typeof2_s3_impl(x, y, x_type, y_type, left);
 
   switch (type2_s3) {
@@ -38,7 +39,7 @@ SEXP vec_ptype2_dispatch(SEXP x, SEXP y,
     return tib_ptype2(x, y, x_arg, y_arg);
 
   default:
-    return vec_ptype2_dispatch_s3(x, y, x_arg, y_arg);
+    return vec_ptype2_dispatch_s3(x, y, x_arg, y_arg, df_fallback);
   }
 }
 
@@ -47,13 +48,15 @@ static SEXP syms_vec_ptype2_default = NULL;
 static inline SEXP vec_ptype2_default(SEXP x,
                                       SEXP y,
                                       SEXP x_arg,
-                                      SEXP y_arg) {
-  return vctrs_eval_mask5(syms_vec_ptype2_default,
+                                      SEXP y_arg,
+                                      bool df_fallback) {
+  return vctrs_eval_mask6(syms_vec_ptype2_default,
                           syms_x, x,
                           syms_y, y,
                           syms_x_arg, x_arg,
                           syms_y_arg, y_arg,
                           syms_from_dispatch, vctrs_shared_true,
+                          syms_df_fallback, r_lgl(df_fallback),
                           vctrs_ns_env);
 }
 
@@ -61,7 +64,8 @@ static inline SEXP vec_ptype2_default(SEXP x,
 SEXP vec_ptype2_dispatch_s3(SEXP x,
                             SEXP y,
                             struct vctrs_arg* x_arg,
-                            struct vctrs_arg* y_arg) {
+                            struct vctrs_arg* y_arg,
+                            bool df_fallback) {
   SEXP x_arg_obj = PROTECT(vctrs_arg(x_arg));
   SEXP y_arg_obj = PROTECT(vctrs_arg(y_arg));
 
@@ -72,7 +76,7 @@ SEXP vec_ptype2_dispatch_s3(SEXP x,
                                           &x_method_sym));
 
   if (x_method == R_NilValue) {
-    SEXP out = vec_ptype2_default(x, y, x_arg_obj, y_arg_obj);
+    SEXP out = vec_ptype2_default(x, y, x_arg_obj, y_arg_obj, df_fallback);
     UNPROTECT(3);
     return out;
   }
@@ -87,7 +91,7 @@ SEXP vec_ptype2_dispatch_s3(SEXP x,
                                           &y_method_sym));
 
   if (y_method == R_NilValue) {
-    SEXP out = vec_ptype2_default(x, y, x_arg_obj, y_arg_obj);
+    SEXP out = vec_ptype2_default(x, y, x_arg_obj, y_arg_obj, df_fallback);
     UNPROTECT(4);
     return out;
   }

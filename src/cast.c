@@ -1,8 +1,9 @@
 #include "vctrs.h"
 #include "cast.h"
+#include "dim.h"
+#include "ptype-common.h"
 #include "type-data-frame.h"
 #include "utils.h"
-#include "dim.h"
 
 static SEXP vec_cast_switch_native(SEXP x,
                                    SEXP to,
@@ -274,11 +275,9 @@ SEXP vec_cast_e(SEXP x,
 }
 
 
-SEXP vctrs_type_common_impl(SEXP dots, SEXP ptype);
-
 // [[ include("vctrs.h") ]]
 SEXP vec_cast_common(SEXP xs, SEXP to) {
-  SEXP type = PROTECT(vctrs_type_common_impl(xs, to));
+  SEXP type = PROTECT(vec_ptype_common_params(xs, to, true));
 
   R_len_t n = Rf_length(xs);
   SEXP out = PROTECT(Rf_allocVector(VECSXP, n));

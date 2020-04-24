@@ -1,5 +1,6 @@
 #include "vctrs.h"
 #include "utils.h"
+#include "ptype-common.h"
 #include "arg-counter.h"
 
 // Initialised at load time
@@ -144,8 +145,6 @@ static SEXP vec_ptype_finalise_dispatch(SEXP x) {
   );
 }
 
-
-SEXP vctrs_type_common_impl(SEXP dots, SEXP ptype);
 static SEXP vctrs_type2_common(SEXP current, SEXP next, struct counters* counters, void* data);
 
 // [[ register(external = TRUE) ]]
@@ -155,13 +154,27 @@ SEXP vctrs_type_common(SEXP call, SEXP op, SEXP args, SEXP env) {
   SEXP types = PROTECT(rlang_env_dots_values(env));
   SEXP ptype = PROTECT(Rf_eval(CAR(args), env));
 
-  SEXP out = vctrs_type_common_impl(types, ptype);
+  SEXP out = vec_ptype_common_params(types, ptype, true);
 
   UNPROTECT(2);
   return out;
 }
 
-SEXP vctrs_type_common_impl(SEXP dots, SEXP ptype) {
+SEXP vctrs_ptype_common_params(SEXP call, SEXP op, SEXP args, SEXP env) {
+  args = CDR(args);
+
+  SEXP types = PROTECT(rlang_env_dots_values(env));
+  SEXP ptype = PROTECT(Rf_eval(CAR(args), env)); args = CDR(args);
+  SEXP df_fallback = PROTECT(Rf_eval(CAR(args), env));
+
+  SEXP out = vec_ptype_common_params(types, ptype, r_lgl_get(df_fallback, 0));
+
+  UNPROTECT(3);
+  return out;
+}
+
+// [[ include("ptype-common.h") ]]
+SEXP vec_ptype_common_params(SEXP dots, SEXP ptype, bool df_fallback) {
   if (!vec_is_partial(ptype)) {
     return vec_ptype(ptype, args_dot_ptype);
   }
@@ -171,7 +184,7 @@ SEXP vctrs_type_common_impl(SEXP dots, SEXP ptype) {
   }
 
   // Start reduction with the `.ptype` argument
-  SEXP type = PROTECT(reduce(ptype, args_dot_ptype, dots, &vctrs_type2_common, NULL));
+  SEXP type = PROTECT(reduce(ptype, args_dot_ptype, dots, &vctrs_type2_common, &df_fallback));
   type = vec_ptype_finalise(type);
 
   UNPROTECT(1);
@@ -184,7 +197,14 @@ static SEXP vctrs_type2_common(SEXP current,
                                struct counters* counters,
                                void* data) {
   int left = -1;
-  current = vec_ptype2(current, next, counters->curr_arg, counters->next_arg, &left);
+  bool df_fallback = *((bool*) data);
+
+  current = vec_ptype2_params(current,
+                              next,
+                              df_fallback,
+                              counters->curr_arg,
+                              counters->next_arg,
+                              &left);
 
   // Update current if RHS is the common type. Otherwise the previous
   // counter stays in effect.

@@ -9,13 +9,29 @@ static SEXP vec_ptype2_switch_native(SEXP x,
                                      enum vctrs_type y_type,
                                      struct vctrs_arg* x_arg,
                                      struct vctrs_arg* y_arg,
-                                     int* left);
+                                     int* left,
+                                     bool df_fallback);
+
+// [[ register() ]]
+SEXP vctrs_ptype2_params(SEXP x,
+                         SEXP y,
+                         SEXP df_fallback,
+                         SEXP x_arg,
+                         SEXP y_arg) {
+  struct vctrs_arg x_arg_ = vec_as_arg(x_arg);
+  struct vctrs_arg y_arg_ = vec_as_arg(y_arg);
+  bool df_fallback_ = LOGICAL(df_fallback)[0];
+  int _left;
+  return vec_ptype2_params(x, y, df_fallback_, &y_arg_, &x_arg_, &_left);
+}
 
 // [[ include("vctrs.h") ]]
-SEXP vec_ptype2(SEXP x, SEXP y,
-               struct vctrs_arg* x_arg,
-               struct vctrs_arg* y_arg,
-               int* left) {
+SEXP vec_ptype2_params(SEXP x,
+                       SEXP y,
+                       bool df_fallback,
+                       struct vctrs_arg* x_arg,
+                       struct vctrs_arg* y_arg,
+                       int* left) {
   if (x == R_NilValue) {
     *left = y == R_NilValue;
     return vec_ptype(y, y_arg);
@@ -43,9 +59,9 @@ SEXP vec_ptype2(SEXP x, SEXP y,
   }
 
   if (type_x == vctrs_type_s3 || type_y == vctrs_type_s3) {
-    return vec_ptype2_dispatch(x, y, type_x, type_y, x_arg, y_arg, left);
+    return vec_ptype2_dispatch(x, y, type_x, type_y, x_arg, y_arg, left, df_fallback);
   } else {
-    return vec_ptype2_switch_native(x, y, type_x, type_y, x_arg, y_arg, left);
+    return vec_ptype2_switch_native(x, y, type_x, type_y, x_arg, y_arg, left, df_fallback);
   }
 }
 
@@ -55,7 +71,8 @@ static SEXP vec_ptype2_switch_native(SEXP x,
                                      enum vctrs_type y_type,
                                      struct vctrs_arg* x_arg,
                                      struct vctrs_arg* y_arg,
-                                     int* left) {
+                                     int* left,
+                                     bool df_fallback) {
   enum vctrs_type2 type2 = vec_typeof2_impl(x_type, y_type, left);
 
   switch (type2) {
@@ -92,7 +109,7 @@ static SEXP vec_ptype2_switch_native(SEXP x,
     return df_ptype2(x, y, x_arg, y_arg);
 
   default:
-    return vec_ptype2_dispatch_s3(x, y, x_arg, y_arg);
+    return vec_ptype2_dispatch_s3(x, y, x_arg, y_arg, df_fallback);
   }
 }
 

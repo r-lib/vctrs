@@ -58,6 +58,14 @@ SEXP vctrs_eval_mask5(SEXP fn,
                       SEXP x4_sym, SEXP x4,
                       SEXP x5_sym, SEXP x5,
                       SEXP env);
+SEXP vctrs_eval_mask6(SEXP fn,
+                      SEXP x1_sym, SEXP x1,
+                      SEXP x2_sym, SEXP x2,
+                      SEXP x3_sym, SEXP x3,
+                      SEXP x4_sym, SEXP x4,
+                      SEXP x5_sym, SEXP x5,
+                      SEXP x6_sym, SEXP x6,
+                      SEXP env);
 
 SEXP vctrs_dispatch_n(SEXP fn_sym, SEXP fn,
                       SEXP* syms, SEXP* args);
@@ -456,6 +464,7 @@ extern SEXP syms_character;
 extern SEXP syms_body;
 extern SEXP syms_parent;
 extern SEXP syms_from_dispatch;
+extern SEXP syms_df_fallback;
 
 #define syms_names R_NamesSymbol
 

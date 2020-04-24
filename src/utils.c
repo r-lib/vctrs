@@ -108,6 +108,18 @@ SEXP vctrs_eval_mask5(SEXP fn,
   SEXP args[6] = { x1, x2, x3, x4, x5, NULL };
   return vctrs_eval_mask_n(fn, syms, args, env);
 }
+SEXP vctrs_eval_mask6(SEXP fn,
+                      SEXP x1_sym, SEXP x1,
+                      SEXP x2_sym, SEXP x2,
+                      SEXP x3_sym, SEXP x3,
+                      SEXP x4_sym, SEXP x4,
+                      SEXP x5_sym, SEXP x5,
+                      SEXP x6_sym, SEXP x6,
+                      SEXP env) {
+  SEXP syms[7] = { x1_sym, x2_sym, x3_sym, x4_sym, x5_sym, x6_sym, NULL };
+  SEXP args[7] = { x1, x2, x3, x4, x5, x6, NULL };
+  return vctrs_eval_mask_n(fn, syms, args, env);
+}
 
 /**
  * Dispatch in the global environment
@@ -1443,6 +1455,7 @@ SEXP syms_body = NULL;
 SEXP syms_parent = NULL;
 SEXP syms_s3_methods_table = NULL;
 SEXP syms_from_dispatch = NULL;
+SEXP syms_df_fallback = NULL;
 
 SEXP fns_bracket = NULL;
 SEXP fns_quote = NULL;
@@ -1664,6 +1677,7 @@ void vctrs_init_utils(SEXP ns) {
   syms_parent = Rf_install("parent");
   syms_s3_methods_table = Rf_install(".__S3MethodsTable__.");
   syms_from_dispatch = Rf_install("vctrs:::from_dispatch");
+  syms_df_fallback= Rf_install("vctrs:::df_fallback");
 
   fns_bracket = Rf_findVar(syms_bracket, R_BaseEnv);
   fns_quote = Rf_findVar(Rf_install("quote"), R_BaseEnv);

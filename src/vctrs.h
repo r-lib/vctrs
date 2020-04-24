@@ -396,6 +396,21 @@ SEXP vec_c(SEXP xs,
 SEXP vec_c_fallback(SEXP xs, SEXP ptype, SEXP name_spec);
 bool needs_vec_c_fallback(SEXP xs);
 
+SEXP vec_ptype2_params(SEXP x,
+                       SEXP y,
+                       bool df_fallback,
+                       struct vctrs_arg* x_arg,
+                       struct vctrs_arg* y_arg,
+                       int* left);
+
+static inline
+SEXP vec_ptype2(SEXP x, SEXP y,
+                struct vctrs_arg* x_arg,
+                struct vctrs_arg* y_arg,
+                int* left) {
+  return vec_ptype2_params(x, y, true, x_arg, y_arg, left);
+}
+
 SEXP vec_ptype2(SEXP x,
                SEXP y,
                struct vctrs_arg* x_arg,
@@ -407,12 +422,14 @@ SEXP vec_ptype2_dispatch(SEXP x, SEXP y,
                          enum vctrs_type y_type,
                          struct vctrs_arg* x_arg,
                          struct vctrs_arg* y_arg,
-                         int* left);
+                         int* left,
+                         bool df_fallback);
 
 SEXP vec_ptype2_dispatch_s3(SEXP x,
                             SEXP y,
                             struct vctrs_arg* x_arg,
-                            struct vctrs_arg* y_arg);
+                            struct vctrs_arg* y_arg,
+                            bool df_fallback);
 
 SEXP df_ptype2(SEXP x, SEXP y, struct vctrs_arg* x_arg, struct vctrs_arg* y_arg);
 

@@ -84,24 +84,47 @@ vec_default_ptype2 <- function(x, y, ..., x_arg = "", y_arg = "") {
     return(vec_ptype(x, x_arg = x_arg))
   }
 
-  if (is_df_subclass(x) && is.data.frame(y)) {
-    return(vec_ptype2_df_fallback(x, y))
-  }
-  if (is_df_subclass(y) && is.data.frame(x)) {
-    return(vec_ptype2_df_fallback(x, y))
+  internal <- ptype2_params(...)
+
+  if (internal$df_fallback) {
+    if (is_df_subclass(x) && is.data.frame(y)) {
+      return(vec_ptype2_df_fallback(x, y))
+    }
+    if (is_df_subclass(y) && is.data.frame(x)) {
+      return(vec_ptype2_df_fallback(x, y))
+    }
   }
 
+  # The from-dispatch parameter is set only when called from our S3
+  # dispatch mechanism, when there is no methods. It indicates whether
+  # the error message should provide advice about diverging attributes.
   stop_incompatible_type(
     x,
     y,
     x_arg = x_arg,
     y_arg = y_arg,
-    `vctrs:::from_dispatch` = from_dispatch(...)
+    `vctrs:::from_dispatch` = internal$from_dispatch
   )
 }
 
+ptype2_params <- function(...,
+                          `vctrs:::df_fallback` = FALSE) {
+  list(
+    from_dispatch = from_dispatch(...),
+    df_fallback = `vctrs:::df_fallback`
+  )
+}
 from_dispatch <- function(..., `vctrs:::from_dispatch` = FALSE) {
   `vctrs:::from_dispatch`
+}
+
+vec_ptype2_params <- function(x,
+                              y,
+                              ...,
+                              df_fallback = FALSE,
+                              x_arg = "",
+                              y_arg = "") {
+  .Call(vctrs_ptype2_params, x, y, df_fallback, x_arg, y_arg)
 }
 
 vec_typeof2 <- function(x, y) {
