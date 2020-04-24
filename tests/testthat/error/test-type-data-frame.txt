@@ -6,64 +6,54 @@ combining data frames with foreign classes uses fallback
 > bar <- structure(mtcars[4:6], class = c("bar", "data.frame"))
 > baz <- structure(mtcars[7:9], class = c("baz", "data.frame"))
 > vec_ptype_common_fallback(foo, bar, baz)
-Warning: Can't combine <foo> and <bar>.
+Warning: Can't combine <foo> and <bar>; falling back to <data.frame>.
 i Convert all inputs to the same class to avoid this warning.
 i See <https://vctrs.r-lib.org/reference/faq-warning-convert-inputs.html>.
-i Falling back to <data.frame>.
 
-Warning: Can't combine <data.frame> and <baz>.
+Warning: Can't combine <data.frame> and <baz>; falling back to <data.frame>.
 i Convert all inputs to the same class to avoid this warning.
 i See <https://vctrs.r-lib.org/reference/faq-warning-convert-inputs.html>.
-i Falling back to <data.frame>.
 
 [1] mpg  cyl  disp hp   drat wt   qsec vs   am  
 <0 rows> (or 0-length row.names)
 
 > vec_ptype_common_fallback(foo, baz, bar, baz, foo, bar)
-Warning: Can't combine <foo> and <baz>.
+Warning: Can't combine <foo> and <baz>; falling back to <data.frame>.
 i Convert all inputs to the same class to avoid this warning.
 i See <https://vctrs.r-lib.org/reference/faq-warning-convert-inputs.html>.
-i Falling back to <data.frame>.
 
-Warning: Can't combine <data.frame> and <bar>.
+Warning: Can't combine <data.frame> and <bar>; falling back to <data.frame>.
 i Convert all inputs to the same class to avoid this warning.
 i See <https://vctrs.r-lib.org/reference/faq-warning-convert-inputs.html>.
-i Falling back to <data.frame>.
 
 [1] mpg  cyl  disp qsec vs   am   hp   drat wt  
 <0 rows> (or 0-length row.names)
 
 > invisible(vec_rbind(foo, data.frame(), foo))
-Warning: Can't combine <foo> and <data.frame>.
+Warning: Can't combine <foo> and <data.frame>; falling back to <data.frame>.
 i Convert all inputs to the same class to avoid this warning.
 i See <https://vctrs.r-lib.org/reference/faq-warning-convert-inputs.html>.
-i Falling back to <data.frame>.
 
 > invisible(vec_rbind(foo, baz, bar, baz, foo, bar))
-Warning: Can't combine <foo> and <baz>.
+Warning: Can't combine <foo> and <baz>; falling back to <data.frame>.
 i Convert all inputs to the same class to avoid this warning.
 i See <https://vctrs.r-lib.org/reference/faq-warning-convert-inputs.html>.
-i Falling back to <data.frame>.
 
-Warning: Can't combine <data.frame> and <bar>.
+Warning: Can't combine <data.frame> and <bar>; falling back to <data.frame>.
 i Convert all inputs to the same class to avoid this warning.
 i See <https://vctrs.r-lib.org/reference/faq-warning-convert-inputs.html>.
-i Falling back to <data.frame>.
 
 > invisible(vec_cbind(foo, data.frame(x = 1)))
-Warning: Can't combine <foo> and <data.frame>.
+Warning: Can't combine <foo> and <data.frame>; falling back to <data.frame>.
 i Convert all inputs to the same class to avoid this warning.
 i See <https://vctrs.r-lib.org/reference/faq-warning-convert-inputs.html>.
-i Falling back to <data.frame>.
 
 > invisible(vec_cbind(foo, data.frame(x = 1), bar))
-Warning: Can't combine <foo> and <data.frame>.
+Warning: Can't combine <foo> and <data.frame>; falling back to <data.frame>.
 i Convert all inputs to the same class to avoid this warning.
 i See <https://vctrs.r-lib.org/reference/faq-warning-convert-inputs.html>.
-i Falling back to <data.frame>.
 
-Warning: Can't combine <data.frame> and <bar>.
+Warning: Can't combine <data.frame> and <bar>; falling back to <data.frame>.
 i Convert all inputs to the same class to avoid this warning.
 i See <https://vctrs.r-lib.org/reference/faq-warning-convert-inputs.html>.
-i Falling back to <data.frame>.
 

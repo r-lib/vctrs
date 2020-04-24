@@ -83,7 +83,7 @@ test_that("combining data frames with foreign classes uses fallback", {
   # There should be only one warning even if many fallbacks
   expect_length(cnds, 1)
   expect_is(cnds[[1]], "warning")
-  expect_match(cnds[[1]]$message, "Falling back")
+  expect_match(cnds[[1]]$message, "falling back to <data.frame>")
 
   expect_identical(
     expect_df_fallback(vec_cbind(foobar(data.frame(x = 1)), data.frame(y = 2))),

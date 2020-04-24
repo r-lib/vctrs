@@ -114,20 +114,25 @@ vec_ptype2_df_fallback <- function(x, y, x_arg = "", y_arg = "") {
   y_class <- class(y)[[1]]
 
   if (!all(c(x_class, y_class) %in% classes)) {
-    msg <- cnd_type_message(x, y, x_arg, y_arg, NULL, "combine", NULL)
+    msg <- cnd_type_message(
+      x, y,
+      x_arg, y_arg,
+      NULL,
+      "combine",
+      NULL,
+      fallback = "<data.frame>"
+    )
 
     if (identical(x_class, y_class)) {
       msg <- c(
         msg,
-        incompatible_attrib_bullets(),
-        i = "Falling back to <data.frame>."
+        incompatible_attrib_bullets()
       )
     } else {
       msg <- c(
         msg,
         i = "Convert all inputs to the same class to avoid this warning.",
-        i = "See <https://vctrs.r-lib.org/reference/faq-warning-convert-inputs.html>.",
-        i = "Falling back to <data.frame>."
+        i = "See <https://vctrs.r-lib.org/reference/faq-warning-convert-inputs.html>."
       )
     }
 
