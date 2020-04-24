@@ -173,7 +173,12 @@ vec_default_cast <- function(x, to, ..., x_arg = "", to_arg = "") {
   }
 
   if (match_df_fallback(...)) {
-    return(df_cast(x, to, ..., x_arg = x_arg, to_arg = to_arg))
+    if (inherits(to, "tbl_df")) {
+      out <- tib_cast(x, to, ..., x_arg = x_arg, to_arg = to_arg)
+    } else {
+      out <- df_cast(x, to, ..., x_arg = x_arg, to_arg = to_arg)
+    }
+    return(out)
   }
 
   stop_incompatible_cast(

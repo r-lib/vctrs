@@ -440,6 +440,36 @@ test_that("data frame fallback handles column types (#999)", {
   expect_identical(out, foobar(exp, dispatched = TRUE))
 })
 
+test_that("falls back to tibble for tibble subclasses (#1025)", {
+  foo <- foobar(tibble::as_tibble(mtcars))
+  expect_is(expect_df_fallback(vec_rbind(foo, mtcars)), "tbl_df")
+  expect_is(expect_df_fallback(vec_rbind(foo, mtcars, mtcars)), "tbl_df")
+  expect_is(expect_df_fallback(vec_rbind(foo, mtcars, foobar(mtcars))), "tbl_df")
+
+  verify_errors({
+    expect_df_fallback(
+      vec_rbind(
+        foobar(tibble::as_tibble(mtcars)),
+        mtcars,
+        foobaz(mtcars)
+      )
+    )
+    expect_df_fallback(
+      vec_rbind(
+        tibble::as_tibble(mtcars),
+        foobar(tibble::as_tibble(mtcars))
+      )
+    )
+    expect_df_fallback(
+      vec_rbind(
+        foobar(tibble::as_tibble(mtcars)),
+        mtcars,
+        foobar(tibble::as_tibble(mtcars))
+      )
+    )
+  })
+})
+
 test_that("data frame output is informative", {
   verify_output(test_path("error", "test-type-data-frame.txt"), {
     "# combining data frames with foreign classes uses fallback"
@@ -454,5 +484,22 @@ test_that("data frame output is informative", {
 
     invisible(vec_cbind(foo, data.frame(x = 1)))
     invisible(vec_cbind(foo, data.frame(x = 1), bar))
+
+    "# falls back to tibble for tibble subclasses (#1025)"
+    invisible(vec_rbind(
+      foobar(tibble::as_tibble(mtcars)),
+      mtcars,
+      foobaz(mtcars)
+    ))
+
+    invisible(vec_rbind(
+      tibble::as_tibble(mtcars),
+      foobar(tibble::as_tibble(mtcars))
+    ))
+    invisible(vec_rbind(
+      foobar(tibble::as_tibble(mtcars)),
+      mtcars,
+      foobar(tibble::as_tibble(mtcars))
+    ))
   })
 })

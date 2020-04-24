@@ -145,6 +145,8 @@ vec_cast_df_fallback_normalise <- function(x, to) {
 
 # Fallback for data frame subclasses (#981)
 vec_ptype2_df_fallback <- function(x, y, x_arg = "", y_arg = "") {
+  seen_tibble <- inherits(x, "tbl_df") || inherits(y, "tbl_df")
+
   ptype <- vec_ptype2(
     new_data_frame(x),
     new_data_frame(y)
@@ -153,23 +155,24 @@ vec_ptype2_df_fallback <- function(x, y, x_arg = "", y_arg = "") {
   classes <- NULL
   if (is_df_fallback(x)) {
     classes <- c(classes, known_classes(x))
-    x <- new_data_frame(x)
+    x <- df_fallback_as_df(x)
   }
   if (is_df_fallback(y)) {
     classes <- c(classes, known_classes(y))
-    y <- new_data_frame(y)
+    y <- df_fallback_as_df(y)
   }
   x_class <- class(x)[[1]]
   y_class <- class(y)[[1]]
 
-  if (!all(c(x_class, y_class) %in% classes)) {
+  if (!all(c(x_class, y_class) %in% c(classes, "tbl_df"))) {
+    fallback_class <- if (seen_tibble) "<tibble>" else "<data.frame>"
     msg <- cnd_type_message(
       x, y,
       x_arg, y_arg,
       NULL,
       "combine",
       NULL,
-      fallback = "<data.frame>"
+      fallback = fallback_class
     )
 
     if (identical(x_class, y_class)) {
@@ -192,7 +195,8 @@ vec_ptype2_df_fallback <- function(x, y, x_arg = "", y_arg = "") {
   # fallback class is stripped in `vec_ptype_finalise()`.
   new_fallback_df(
     ptype,
-    known_classes = unique(c(classes, x_class, y_class))
+    known_classes = unique(c(classes, x_class, y_class)),
+    seen_tibble = seen_tibble
   )
 }
 
@@ -202,22 +206,27 @@ is_df_subclass <- function(x) {
 is_df_fallback <- function(x) {
   inherits(x, "vctrs:::df_fallback")
 }
-new_fallback_df <- function(x, known_classes, n = nrow(x)) {
+new_fallback_df <- function(x, known_classes, seen_tibble = FALSE, n = nrow(x)) {
+  class <- "vctrs:::df_fallback"
+  if (seen_tibble) {
+    class <- c(class, "tbl_df", "tbl")
+  }
+
   new_data_frame(
     x,
     n = n,
     known_classes = known_classes,
-    class = "vctrs:::df_fallback"
+    seen_tibble = seen_tibble,
+    class = class
   )
 }
-
-#' @export
-`[.vctrs:::df_fallback` <- function(x, i, ...) {
-  classes <- known_classes(x)
-  x <- NextMethod()
-  new_fallback_df(x, known_classes = classes)
+df_fallback_as_df <- function(x) {
+  if (inherits(x, "tbl_df")) {
+    new_data_frame(x, class = c("tbl_df", "tbl", "data.frame"))
+  } else {
+    new_data_frame(x)
+  }
 }
-
 known_classes <- function(x) {
   if (is_df_fallback(x)) {
     attr(x, "known_classes")
