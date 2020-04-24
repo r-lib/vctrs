@@ -254,18 +254,15 @@ specialised function).</p>
 
     
 
-<p><code>vec_cast()</code> dispatches on both arguments because casting depends on both
-the type of <code>x</code> and of <code>to</code>. This is implemented by having methods of
-<code>vec_cast()</code>, e.g. <code>vec_cast.integer()</code> also be S3 generics, which call
-e.g. <code>vec_cast.integer.double()</code>.</p>
+
+<p><code>vec_cast()</code> dispatches on both arguments because casting depends
+on both the type of <code>x</code> and of <code>to</code>. The dispatch mechanism is a
+bit different than regular S3 dispatch. See <code><a href='vec_ptype2.html'>vec_ptype2()</a></code> and
+<code><a href='../articles/s3-vector.html'>vignette("s3-vector")</a></code> for full details.</p>
 <p>Note that <code>vec_cast()</code> dispatches on its second argument, so that the name
 of the final method uses the same convention as <code>as.xyz()</code> methods, i.e.
 <code>vec_cast.integer.double()</code> casts double to integers, in the same way
 that <code>as.integer.double()</code> would.</p>
-<p>Whenever you implement a <code>vec_cast.new_class()</code> generic/method,
-make sure to always provide <code>vec_cast.new_class.default()</code> and
-call <code><a href='vec_default_cast.html'>vec_default_cast()</a></code> from that method.</p>
-<p>See <code><a href='../articles/s3-vector.html'>vignette("s3-vector")</a></code> for full details.</p>
     <h2 class="hasAnchor" id="restoring-attributes"><a class="anchor" href="#restoring-attributes"></a>Restoring attributes</h2>
 
     

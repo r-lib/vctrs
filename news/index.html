@@ -175,9 +175,11 @@
 <p>This change requires a bit more work from class maintainers but is safer because the coercion hyerarchies are generally different from class hierarchies. See the S3 dispatch section of <code><a href="../reference/vec_ptype2.html">?vec_ptype2</a></code> for more information.</p>
 </li>
 <li>
-<p>Double-dispatch methods for <code><a href="../reference/vec_ptype2.html">vec_ptype2()</a></code> and <code><a href="../reference/vec_cast.html">vec_cast()</a></code> are now easier to implement. vctrs takes care of implementing the default and unspecified methods. If you have implemented these methods, they can now be removed.</p>
-<p>Also methods no longer have to worry about order of dispatch, for instance it is no longer needed to supply a second argument as in <code><a href="https://rdrr.io/r/base/UseMethod.html">UseMethod("vec_ptype2.mytype", y)</a></code>.</p>
-<p>One consequence is that <code><a href="https://rdrr.io/r/base/UseMethod.html">NextMethod()</a></code> is now completely unsupported. This is for the best as it never worked correctly in a double-dispatch setting. Parent methods must now be called manually.</p>
+<p>Double-dispatch methods for <code><a href="../reference/vec_ptype2.html">vec_ptype2()</a></code> and <code><a href="../reference/vec_cast.html">vec_cast()</a></code> are now easier to implement. They no longer need any the boiler plate. Implementing a method for classes <code>foo</code> and <code>bar</code> is now as simple as:</p>
+<pre><code>#' <a href='https://github.com/export'>@export</a>
+vec_ptype2.foo.bar &lt;- function(x, y, ...) new_foo()</code></pre>
+<p>vctrs also takes care of implementing the default and unspecified methods. If you have implemented these methods, they are no longer called and can now be removed.</p>
+<p>One consequence of the new dispatch mechanism is that <code><a href="https://rdrr.io/r/base/UseMethod.html">NextMethod()</a></code> is now completely unsupported. This is for the best as it never worked correctly in a double-dispatch setting. Parent methods must now be called manually.</p>
 </li>
 <li><p>New <code><a href="../reference/vec-rep.html">vec_rep()</a></code> and <code><a href="../reference/vec-rep.html">vec_rep_each()</a></code> for repeating an entire vector and elements of a vector, respectively. These two functions provide a clearer interface for the functionality of <code><a href="../reference/vec_repeat.html">vec_repeat()</a></code>, which is now deprecated.</p></li>
 <li><p><code><a href="../reference/vec_match.html">vec_match()</a></code> and <code><a href="../reference/vec_match.html">vec_in()</a></code> gain parameters for argument tags (#944).</p></li>
@@ -388,23 +390,23 @@ vec_rbind(df1, df2)
 </li>
 <li>
 <p><code><a href="../reference/vec_bind.html">vec_cbind()</a></code> now turns named data frames to packed columns.</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1"></a>data &lt;-<span class="st"> </span>tibble<span class="op">::</span><span class="kw"><a href="https://tibble.tidyverse.org/reference/tibble.html">tibble</a></span>(<span class="dt">x =</span> <span class="dv">1</span><span class="op">:</span><span class="dv">3</span>, <span class="dt">y =</span> letters[<span class="dv">1</span><span class="op">:</span><span class="dv">3</span>])</span>
-<span id="cb6-2"><a href="#cb6-2"></a>data &lt;-<span class="st"> </span><span class="kw"><a href="../reference/vec_bind.html">vec_cbind</a></span>(data, <span class="dt">packed =</span> data)</span>
-<span id="cb6-3"><a href="#cb6-3"></a>data</span>
-<span id="cb6-4"><a href="#cb6-4"></a><span class="co"># A tibble: 3 x 3</span></span>
-<span id="cb6-5"><a href="#cb6-5"></a>      x y     packed<span class="op">$</span>x <span class="op">$</span>y</span>
-<span id="cb6-6"><a href="#cb6-6"></a>  <span class="op">&lt;</span>int<span class="op">&gt;</span><span class="st"> </span><span class="er">&lt;</span>chr<span class="op">&gt;</span><span class="st">    </span><span class="er">&lt;</span>int<span class="op">&gt;</span><span class="st"> </span><span class="er">&lt;</span>chr<span class="op">&gt;</span></span>
-<span id="cb6-7"><a href="#cb6-7"></a><span class="dv">1</span>     <span class="dv">1</span> a            <span class="dv">1</span> a</span>
-<span id="cb6-8"><a href="#cb6-8"></a><span class="dv">2</span>     <span class="dv">2</span> b            <span class="dv">2</span> b</span>
-<span id="cb6-9"><a href="#cb6-9"></a><span class="dv">3</span>     <span class="dv">3</span> c            <span class="dv">3</span> c</span></code></pre></div>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1"></a>data &lt;-<span class="st"> </span>tibble<span class="op">::</span><span class="kw"><a href="https://tibble.tidyverse.org/reference/tibble.html">tibble</a></span>(<span class="dt">x =</span> <span class="dv">1</span><span class="op">:</span><span class="dv">3</span>, <span class="dt">y =</span> letters[<span class="dv">1</span><span class="op">:</span><span class="dv">3</span>])</span>
+<span id="cb7-2"><a href="#cb7-2"></a>data &lt;-<span class="st"> </span><span class="kw"><a href="../reference/vec_bind.html">vec_cbind</a></span>(data, <span class="dt">packed =</span> data)</span>
+<span id="cb7-3"><a href="#cb7-3"></a>data</span>
+<span id="cb7-4"><a href="#cb7-4"></a><span class="co"># A tibble: 3 x 3</span></span>
+<span id="cb7-5"><a href="#cb7-5"></a>      x y     packed<span class="op">$</span>x <span class="op">$</span>y</span>
+<span id="cb7-6"><a href="#cb7-6"></a>  <span class="op">&lt;</span>int<span class="op">&gt;</span><span class="st"> </span><span class="er">&lt;</span>chr<span class="op">&gt;</span><span class="st">    </span><span class="er">&lt;</span>int<span class="op">&gt;</span><span class="st"> </span><span class="er">&lt;</span>chr<span class="op">&gt;</span></span>
+<span id="cb7-7"><a href="#cb7-7"></a><span class="dv">1</span>     <span class="dv">1</span> a            <span class="dv">1</span> a</span>
+<span id="cb7-8"><a href="#cb7-8"></a><span class="dv">2</span>     <span class="dv">2</span> b            <span class="dv">2</span> b</span>
+<span id="cb7-9"><a href="#cb7-9"></a><span class="dv">3</span>     <span class="dv">3</span> c            <span class="dv">3</span> c</span></code></pre></div>
 <p>Packed data frames are nested in a single column. This makes it possible to access it through a single name:</p>
-<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1"></a>data<span class="op">$</span>packed</span>
-<span id="cb7-2"><a href="#cb7-2"></a><span class="co"># A tibble: 3 x 2</span></span>
-<span id="cb7-3"><a href="#cb7-3"></a>      x y</span>
-<span id="cb7-4"><a href="#cb7-4"></a>  <span class="op">&lt;</span>int<span class="op">&gt;</span><span class="st"> </span><span class="er">&lt;</span>chr<span class="op">&gt;</span></span>
-<span id="cb7-5"><a href="#cb7-5"></a><span class="dv">1</span>     <span class="dv">1</span> a</span>
-<span id="cb7-6"><a href="#cb7-6"></a><span class="dv">2</span>     <span class="dv">2</span> b</span>
-<span id="cb7-7"><a href="#cb7-7"></a><span class="dv">3</span>     <span class="dv">3</span> c</span></code></pre></div>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1"></a>data<span class="op">$</span>packed</span>
+<span id="cb8-2"><a href="#cb8-2"></a><span class="co"># A tibble: 3 x 2</span></span>
+<span id="cb8-3"><a href="#cb8-3"></a>      x y</span>
+<span id="cb8-4"><a href="#cb8-4"></a>  <span class="op">&lt;</span>int<span class="op">&gt;</span><span class="st"> </span><span class="er">&lt;</span>chr<span class="op">&gt;</span></span>
+<span id="cb8-5"><a href="#cb8-5"></a><span class="dv">1</span>     <span class="dv">1</span> a</span>
+<span id="cb8-6"><a href="#cb8-6"></a><span class="dv">2</span>     <span class="dv">2</span> b</span>
+<span id="cb8-7"><a href="#cb8-7"></a><span class="dv">3</span>     <span class="dv">3</span> c</span></code></pre></div>
 <p>We are planning to use this syntax more widely in the tidyverse.</p>
 </li>
 <li>
