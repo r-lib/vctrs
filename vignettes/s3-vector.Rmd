@@ -34,55 +34,37 @@ This vignette works through five big topics:
 
 They're collectively demonstrated with a number of simple S3 classes:
 
-* Percent: a double vector that prints as a percentage. This illustrates
-  the basic mechanics of class creation, coercion, and casting.
-  
-* Decimal: a double vector that always prints with a fixed number of decimal
-  places. This class has an attribute which needs a little extra care in
-  casts and coercions.
-  
-* Cached sum: a double vector that caches the total sum in an attribute. 
-  The attribute depends on the data, so needs extra care.
+* Percent: a double vector that prints as a percentage. This illustrates the basic mechanics of class creation, coercion, and casting.
 
-* Rational: a pair of integer vectors that defines a rational number like
-  `2 / 3`. This introduces you to the record style, and to the equality and
-  comparison operators. It also needs special handling for `+`, `-`, and
-  friends.
-  
-* Polynomial: a list of integer vectors that define polynomials like
-  `1 + x - x^3`. Sorting such vectors correctly requires a custom equality
-  method.
+* Decimal: a double vector that always prints with a fixed number of decimal places. This class has an attribute which needs a little extra care in casts and coercions.
 
-* Meter: a numeric vector with meter units. This is the simplest possible class
-  with interesting algebraic properties.
-  
-* Period and frequency: a pair of classes represent a period, or it's inverse,
-  frequency. This allows us to explore more arithmetic operators.
+* Cached sum: a double vector that caches the total sum in an attribute.  The attribute depends on the data, so needs extra care.
+
+* Rational: a pair of integer vectors that defines a rational number like `2 / 3`. This introduces you to the record style, and to the equality and comparison operators. It also needs special handling for `+`, `-`, and friends.
+
+* Polynomial: a list of integer vectors that define polynomials like `1 + x - x^3`. Sorting such vectors correctly requires a custom equality method.
+
+* Meter: a numeric vector with meter units. This is the simplest possible class with interesting algebraic properties.
+
+* Period and frequency: a pair of classes represent a period, or it's inverse, frequency. This allows us to explore more arithmetic operators.
+
 
 ## Basics
 
 In this section you'll learn how to create a new vctrs class by calling `new_vctr()`. This creates an object with class `vctrs_vctr` which has a number of methods. These are designed to make your life as easy as possible. For example:
 
-* The `print()` and `str()` methods are defined in terms of `format()` so you 
-  get a pleasant, consistent display as soon as you've made your `format()`
-  method.
-  
-* You can immediately put your new vector class in a data frame because 
-  `as.data.frame.vctrs_vctr()` does the right thing.
+* The `print()` and `str()` methods are defined in terms of `format()` so you get a pleasant, consistent display as soon as you've made your `format()` method.
 
-* Subsetting (`[`, `[[`, and `$`), `length<-`, and `rep()` methods automatically
-  preserve attributes because they use `vec_restore()`. A default 
-  `vec_restore()` works for all classes where the attributes are 
-  data-independent, and can easily be customised when the attributes do 
-  depend on the data.
+* You can immediately put your new vector class in a data frame because `as.data.frame.vctrs_vctr()` does the right thing.
 
-* Default subset-assignment methods (`[<-`, `[[<-`, and `$<-`) follow the principle 
-  that the new values should be coerced to match the existing vector. This 
-  gives predictable behaviour and clear error messages.
+* Subsetting (`[`, `[[`, and `$`), `length<-`, and `rep()` methods automatically preserve attributes because they use `vec_restore()`. A default `vec_restore()` works for all classes where the attributes are data-independent, and can easily be customised when the attributes do depend on the data.
+
+* Default subset-assignment methods (`[<-`, `[[<-`, and `$<-`) follow the principle that the new values should be coerced to match the existing vector. This gives predictable behaviour and clear error messages.
+
 
 ### Percent class
 
-In this section, I'll show you how to make a `percent` class, i.e., a double vector that is printed as a percentage. We start by defining a low-level [constructor](https://adv-r.hadley.nz/s3.html#s3-constrcutor) that uses `vec_assert()` to checks types and/or sizes then calls `new_vctr()`. 
+In this section, I'll show you how to make a `percent` class, i.e., a double vector that is printed as a percentage. We start by defining a low-level [constructor](https://adv-r.hadley.nz/s3.html#s3-constrcutor) that uses `vec_assert()` to checks types and/or sizes then calls `new_vctr()`.
 
 `percent` is built on a double vector of any length and doesn't have any attributes.
 
@@ -100,7 +82,7 @@ str(x)
 
 Note that we prefix the name of the class with the name of the package. This prevents conflicting definitions between packages. For packages that implement only one class (such as [blob](https://blob.tidyverse.org/)), it's fine to use the package name without prefix as the class name.
 
-We then follow up with a user friendly [helper](https://adv-r.hadley.nz/s3.html#helpers). Here we'll use `vec_cast()`  to allow it to accept anything coercible to a double:
+We then follow up with a user friendly [helper](https://adv-r.hadley.nz/s3.html#helpers). Here we'll use `vec_cast()` to allow it to accept anything coercible to a double:
 
 ```{r}
 percent <- function(x = double()) {
@@ -109,7 +91,7 @@ percent <- function(x = double()) {
 }
 ```
 
-Before you go on, check that user-friendly constructor returns a zero-length vector when called with no arguments. This makes it easy to use as a prototype. 
+Before you go on, check that user-friendly constructor returns a zero-length vector when called with no arguments. This makes it easy to use as a prototype.
 
 ```{r}
 new_percent()
@@ -123,6 +105,7 @@ is_percent <- function(x) {
   inherits(x, "vctrs_percent")
 }
 ```
+
 
 ### `format()` method
 
@@ -169,22 +152,17 @@ str(x)
 
 If you need more control over printing in tibbles, implement a method for  `pillar::pillar_shaft()`. See `vignette("pillar", package = "vctrs")` for details.
 
+
 ## Casting and coercion
 
 The next set of methods you are likely to need are those related to coercion and casting. Coercion and casting are two sides of the same coin: changing the prototype of an existing object. When the change happens _implicitly_ (e.g in `c()`) we call it __coercion__; when the change happens _explicitly_ (e.g. with `as.integer(x)`), we call it __casting__.
 
 One of the main goals of vctrs is to put coercion and casting on a robust theoretical footing so it's possible to make accurate predictions about what (e.g.) `c(x, y)` should do when `x` and `y` have different prototypes. vctrs achieves this goal through two generics:
 
-* `vec_ptype2(x, y)` defines possible set of coercions. It returns a prototype
-  if `x` and `y` can be safely coerced to the same prototype; otherwise
-  it returns an error. The set of automatic coercions is usually quite small
-  because too many tend to make code harder to reason about and silently 
-  propagate mistakes.
-  
-* `vec_cast(x, to)` defines the possible sets of casts. It returns `x` 
-  translated to have prototype `to`, or throws an error if the conversion
-  isn't possible. The set of possible casts is a superset of possible 
-  coercions because they're requested explicitly.
+* `vec_ptype2(x, y)` defines possible set of coercions. It returns a prototype if `x` and `y` can be safely coerced to the same prototype; otherwise it returns an error. The set of automatic coercions is usually quite small because too many tend to make code harder to reason about and silently propagate mistakes.
+
+* `vec_cast(x, to)` defines the possible sets of casts. It returns `x` translated to have prototype `to`, or throws an error if the conversion isn't possible. The set of possible casts is a superset of possible coercions because they're requested explicitly.
+
 
 ### Double dispatch
 
@@ -407,6 +385,7 @@ vec_cast(c(1, 2, 10), to = integer())
 vec_cast(c(1.5, 2, 10.5), to = integer())
 ```
 
+
 ### Cached sum class {#cached-sum}
 
 The next level up in complexity is an object that has data-dependent attributes. To explore this idea we'll create a vector that caches the sum of its values. As usual, we start with low-level and user-friendly constructors:
@@ -469,13 +448,13 @@ x[1]
 
 This works because most of the vctrs methods dispatch to the underlying base function by first stripping off extra attributes with `vec_data()` and then reapplying them again with `vec_restore()`. The default `vec_restore()` method copies over all attributes, which is not appropriate when the attributes depend on the data.
 
-Note that `vec_restore.class` is subtly different from `vec_cast.class.class()`. `vec_restore()` is used when restoring attributes that have been lost; `vec_cast()` is used for coercions. This is easier to understand with a concrete example. Imagine factors were implemented with `new_vctr()`. `vec_restore.factor()` would restore attributes back to an integer vector, but you would not want to allow manually casting an integer to a factor with `vec_cast()`. 
+Note that `vec_restore.class` is subtly different from `vec_cast.class.class()`. `vec_restore()` is used when restoring attributes that have been lost; `vec_cast()` is used for coercions. This is easier to understand with a concrete example. Imagine factors were implemented with `new_vctr()`. `vec_restore.factor()` would restore attributes back to an integer vector, but you would not want to allow manually casting an integer to a factor with `vec_cast()`.
 
 
 ## Record-style objects
 
 Record-style objects use a list of equal-length vectors to represent individual components of the object. The best example of this is `POSIXlt`, which underneath the hood is a list of 11 fields like year, month, and day. Record-style classes override `length()` and subsetting  methods to conceal this implementation detail.
-   
+
 ```{r}
 x <- as.POSIXlt(ISOdatetime(2020, 1, 1, 0, 0, 1:3))
 x
@@ -489,6 +468,7 @@ unclass(x)[[1]] # the first component, the number of seconds
 
 vctrs makes it easy to create new record-style classes using `new_rcrd()`, which has a wide selection of default methods.
 
+
 ### Rational class
 
 A fraction, or rational number, can be represented by a pair of integer vectors representing the numerator (the number on top) and the denominator (the number on bottom), where the length of each vector must be the same. To represent such a data structure we turn to a new base data type: the record (or rcrd for short).
@@ -499,7 +479,7 @@ As usual we start with low-level and user-friendly constructors. The low-level c
 new_rational <- function(n = integer(), d = integer()) {
   vec_assert(n, ptype = integer())
   vec_assert(d, ptype = integer())
-  
+
   new_rcrd(list(n = n, d = d), class = "vctrs_rational")
 }
 ```
@@ -510,7 +490,7 @@ Our user friendly constructor casts `n` and `d` to integers and recycles them to
 rational <- function(n, d) {
   c(n, d) %<-% vec_cast_common(n, d, .to = integer())
   c(n, d) %<-% vec_recycle_common(n, d)
-  
+
   new_rational(n, d)
 }
 
@@ -537,10 +517,10 @@ This allows us to create a format method:
 format.vctrs_rational <- function(x, ...) {
   n <- field(x, "n")
   d <- field(x, "d")
-  
+
   out <- paste0(n, "/", d)
   out[is.na(n) | is.na(d)] <- NA
-  
+
   out
 }
 
@@ -572,9 +552,10 @@ vec_cast.vctrs_rational.integer <- function(x, to, ...) rational(x, 1)
 vec_c(rational(1, 2), 1L, NA)
 ```
 
+
 ### Decimal2 class
 
-The previous implementation of `decimal` was built on top of doubles. This is a bad idea because decimal vectors are typically used when you care about precise values (i.e., dollars and cents in a bank account), and double values suffer from floating point problems. 
+The previous implementation of `decimal` was built on top of doubles. This is a bad idea because decimal vectors are typically used when you care about precise values (i.e., dollars and cents in a bank account), and double values suffer from floating point problems.
 
 A better implementation of a decimal class would be to use pair of integers, one for the value to the left of the decimal point, and the other for the value to the right (divided by a `scale`). The following code is a very quick sketch of how you might start creating such a class:
 
@@ -583,7 +564,7 @@ new_decimal2 <- function(l, r, scale = 2L) {
   vec_assert(l, ptype = integer())
   vec_assert(r, ptype = integer())
   vec_assert(scale, ptype = integer(), size = 1L)
-  
+
   new_rcrd(list(l = l, r = r), scale = scale, class = "vctrs_decimal2")
 }
 
@@ -592,7 +573,7 @@ decimal2 <- function(l, r, scale = 2L) {
   r <- vec_cast(r, integer())
   c(l, r) %<-% vec_recycle_common(l, r)
   scale <- vec_cast(scale, integer())
-  
+
   # should check that r < 10^scale
   new_decimal2(l = l, r = r, scale = scale)
 }
@@ -605,15 +586,14 @@ format.vctrs_decimal2 <- function(x, ...) {
 decimal2(10, c(0, 5, 99))
 ```
 
+
 ## Equality and comparison
 
 vctrs provides three "proxy" generics. Two of these let you control how your class determines equality and ordering:
 
 * `vec_proxy_equal()` returns a data vector suitable for comparison. It underpins `==`, `!=`, `unique()`, `anyDuplicated()`, and `is.na()`.
 
-* `vec_proxy_compare()` specifies how to compare the elements of your vector.
-  This proxy is used in `<`, `<=`, `>=`, `>`, `min()`, `max()`, `median()`, 
-  `quantile()`, and `xtfrm()` (used in `order()` and `sort()`) methods. 
+* `vec_proxy_compare()` specifies how to compare the elements of your vector.  This proxy is used in `<`, `<=`, `>=`, `>`, `min()`, `max()`, `median()`, `quantile()`, and `xtfrm()` (used in `order()` and `sort()`) methods.
 
 By default, `vec_proxy_equal()` and `vec_proxy_compare()` just call `vec_proxy()`.
 
@@ -622,6 +602,7 @@ By default, `vec_proxy_equal()` and `vec_proxy_compare()` just call `vec_proxy()
 You should only implement these proxies when some preprocessing on the data is needed to make elements comparable. In that case, defining these methods will get you a lot of behaviour for relatively little work.
 
 These proxy functions should always return a simple object (either a bare vector or a data frame) that possesses the same properties as your class. This permits efficient implementation of the vctrs internals because it allows dispatch to happen once in R, and then efficient computations can be written in C.
+
 
 ### Rational class
 
@@ -639,7 +620,7 @@ x == rational(1, 1)
 This makes sense as a default but isn't correct here because `rational(1, 1)` represents the same number as `rational(2, 2)`, so they should be equal. We can fix that by implementing a `vec_proxy_equal()` method that divides `n` and `d` by their greatest common divisor:
 
 ```{r}
-# Thanks to Matthew Lundberg: https://stackoverflow.com/a/21504113/16632 
+# Thanks to Matthew Lundberg: https://stackoverflow.com/a/21504113/16632
 gcd <- function(x, y) {
   r <- x %% y
   ifelse(r, gcd(y, r), y)
@@ -649,7 +630,7 @@ vec_proxy_equal.vctrs_rational <- function(x, ...) {
   n <- field(x, "n")
   d <- field(x, "d")
   gcd <- gcd(n, d)
-  
+
   data.frame(n = n / gcd, d = d / gcd)
 }
 vec_proxy_equal(x)
@@ -753,10 +734,10 @@ vec_proxy_compare.vctrs_poly <- function(x, ...) {
   x_raw <- vec_data(x)
   # First figure out the maximum length
   n <- max(vapply(x_raw, length, integer(1)))
-  
+
   # Then expand all vectors to this length by filling in with zeros
   full <- lapply(x_raw, function(x) c(rep(0L, n - length(x)), x))
-  
+
   # Then turn into a data frame
   as.data.frame(do.call(rbind, full))
 }
@@ -765,19 +746,16 @@ sort(poly(3, 2, 1))
 sort(poly(1, c(1, 0, 0), c(1, 0)))
 ```
 
+
 ## Arithmetic
 
 vctrs also provides two mathematical generics that allow you to define a broad swath of mathematical behaviour at once:
 
-*  `vec_math(fn, x, ...)` specifies the behaviour of mathematical functions 
-   like `abs()`, `sum()`, and `mean()`. (See `?vec_math()` for the complete
-   list.)
-   
-*  `vec_arith(op, x, y)` specifies the behaviour of the arithmetic operations
-   like `+`, `-`, and `%%`. (See `?vec_arith()` for the complete list.)
+*  `vec_math(fn, x, ...)` specifies the behaviour of mathematical functions like `abs()`, `sum()`, and `mean()`. (See `?vec_math()` for the complete list.)
 
-Both generics define the behaviour for multiple functions because `sum.vctrs_vctr(x)` calls `vec_math.vctrs_vctr("sum", x)`, and `x + y` calls
-`vec_math.x_class.y_class("+", x, y)`. They're accompanied by `vec_math_base()` and `vec_arith_base()` which make it easy to call the underlying base R functions.
+*  `vec_arith(op, x, y)` specifies the behaviour of the arithmetic operations like `+`, `-`, and `%%`. (See `?vec_arith()` for the complete list.)
+
+Both generics define the behaviour for multiple functions because `sum.vctrs_vctr(x)` calls `vec_math.vctrs_vctr("sum", x)`, and `x + y` calls `vec_math.x_class.y_class("+", x, y)`. They're accompanied by `vec_math_base()` and `vec_arith_base()` which make it easy to call the underlying base R functions.
 
 `vec_arith()` uses double dispatch and needs the following standard boilerplate:
 
@@ -789,6 +767,7 @@ vec_arith.MYCLASS.default <- function(op, x, y, ...) {
   stop_incompatible_op(op, x, y)
 }
 ```
+
 
 ### Cached sum class
 
@@ -803,6 +782,7 @@ vec_math.vctrs_cached_sum <- function(.fn, .x, ...) {
   )
 }
 ```
+
 
 ### Meter class
 
@@ -844,16 +824,12 @@ meter(10) * 3
 
 To allow these infix functions to work, we'll need to provide `vec_arith()` generic. But before we do that, let's think about what combinations of inputs we should support:
 
-* It makes sense to add and subtract meters: that yields another meter.
-  We can divide a meter by another meter (yielding a unitless number), but
-  we can't multiply meters (because that would yield an area).
-  
-* For a combination of meter and number multiplication and division by a number
-  are acceptable. Addition and subtraction don't make much sense as we, strictly
-  speaking, are dealing with objects of different nature.
+* It makes sense to add and subtract meters: that yields another meter.  We can divide a meter by another meter (yielding a unitless number), but we can't multiply meters (because that would yield an area).
+
+* For a combination of meter and number multiplication and division by a number are acceptable. Addition and subtraction don't make much sense as we, strictly speaking, are dealing with objects of different nature.
 
 `vec_arith()` is another function that uses double dispatch, so as usual we start with a template.
-  
+
 ```{r}
 vec_arith.vctrs_meter <- function(op, x, y, ...) {
   UseMethod("vec_arith.vctrs_meter", y)
@@ -902,7 +878,7 @@ vec_arith.numeric.vctrs_meter <- function(op, x, y, ...) {
 }
 
 meter(2) * 10
-10 * meter(2) 
+10 * meter(2)
 meter(20) / 10
 10 / meter(20)
 meter(20) + 10
@@ -912,15 +888,16 @@ For completeness, we also need `vec_arith.vctrs_meter.MISSING` for the unary `+`
 
 ```{r}
 vec_arith.vctrs_meter.MISSING <- function(op, x, y, ...) {
-  switch(op, 
+  switch(op,
     `-` = x * -1,
     `+` = x,
     stop_incompatible_op(op, x, y)
   )
 }
--meter(1) 
-+meter(1) 
+-meter(1)
++meter(1)
 ```
+
 
 ## Implementing a vctrs S3 class in a package
 
@@ -928,17 +905,17 @@ Defining S3 methods interactively is fine for iteration and exploration, but if 
 
 * Register the S3 methods by listing them in the `NAMESPACE` file.
 
-* Create documentation around your methods, for the sake of your user and to
-  satisfy `R CMD check`.
+* Create documentation around your methods, for the sake of your user and to satisfy `R CMD check`.
 
 Let's assume that the `percent` class is implemented in the pizza package in the file `R/percent.R`. Here we walk through the major sections of this hypothetical file. You've seen all of this code before, but now it's augmented by the roxygen2 directives that produce the correct `NAMESPACE` entries and help topics.
+
 
 ### Getting started
 
 First, the pizza package needs to include vctrs in the `Imports` section of its `DESCRIPTION` (perhaps by calling `usethis::use_package("vctrs")`. While vctrs is under very active development, it probably makes sense to state a minimum version.
 
 ```
-Imports: 
+Imports:
     a_package,
     another_package,
     ...
@@ -950,12 +927,10 @@ Then we make all vctrs functions available within the pizza package by including
 
 Where should we put `#' @import vctrs`? There are two natural locations:
 
-* With package-level docs in `R/pizza-doc.R`. You can use
-  `usethis::use_package_doc()` to initiate this package-level documentation.
-  
-* In `R/percent.R`. This makes the most sense when the vctrs S3 class is a
-  modest and self-contained part of the overall package.
-  
+* With package-level docs in `R/pizza-doc.R`. You can use `usethis::use_package_doc()` to initiate this package-level documentation.
+
+* In `R/percent.R`. This makes the most sense when the vctrs S3 class is a modest and self-contained part of the overall package.
+
 We also must use one of these locations to dump some internal documentation that's needed to avoid `R CMD check` complaints. We don't expect any human to ever read this documentation. Here's how this dummy documentation should look, combined with the `#' @import vctrs` directive described above.
 
 ```{r eval = FALSE}
@@ -972,6 +947,7 @@ This should appear in `R/pizza-doc.R` (package-level docs) or in `R/percent.R` (
 Remember to call `devtools::document()` regularly, as you develop, to regenerate `NAMESPACE` and the `.Rd` files.
 
 From this point on, the code shown is expected to appear in `R/percent.R`.
+
 
 ### Low-level and user-friendly constructors
 
@@ -1016,6 +992,7 @@ percent <- function(x = double()) {
 
 (Again note that the package name will appear in the class, but does not need to occur in the function, because we can already do `pizza::percent()`; it would be redundant to have `pizza::pizza_percent()`.)
 
+
 ### Other helpers
 
 It's a good idea to provide a function that tests if an object is of this class. If you do so, it makes sense to document it with the user-friendly constructor `percent()`:
@@ -1031,7 +1008,7 @@ is_percent <- function(x) {
 You'll also need to update the `percent()` documentation to reflect that `x` now means two different things:
 
 ```{r}
-#' @param x 
+#' @param x
 #'  * For `percent()`: A numeric vector
 #'  * For `is_percent()`: An object to test.
 ```
@@ -1053,17 +1030,16 @@ vec_ptype_abbr.pizza_percent <- function(x, ...) {
 }
 ```
 
+
 ### Double dispatch methods for coercion and casting
 
 Next we implement methods for `vec_ptype2()` and `vec_cast()`, along with all the roxygen2 boilerplate needed to make them work. `vec_ptype2()` and `vec_cast()` have exactly the same roxygen2 considerations, so we'll explain everything via `vec_ptype2()` and just show the result for `vec_cast()`.
 
 The greatest boilerplate is needed for `vec_ptype2.pizza_percent()` because it is both a method and a generic (thanks to the double-dispatch trick):
 
-* As an S3 method, it implements `vctrs::vec_ptype2()` for the `vctrs_percent`
-  class.
+* As an S3 method, it implements `vctrs::vec_ptype2()` for the `vctrs_percent` class.
 
-* As a generic, `vec_ptype2.vctrs_percent()` has `default`, `vctrs_percent`, 
-  and `double` methods (see below).
+* As a generic, `vec_ptype2.vctrs_percent()` has `default`, `vctrs_percent`, and `double` methods (see below).
 
 ```{r eval = FALSE}
 #' @method vec_ptype2 pizza_percent   # tell roxygen2 its a method
@@ -1091,10 +1067,10 @@ Now we finish the work around `vec_ptype2()` by providing all needed methods. Ea
 
 ```{r}
 #' @method vec_ptype2.vctrs_percent vctrs_percent
-#' @export                                       
+#' @export
 vec_ptype2.vctrs_percent.vctrs_percent <- function(x, y, ...) new_percent()
-#' @method vec_ptype2.vctrs_percent double       
-#' @export                                       
+#' @method vec_ptype2.vctrs_percent double
+#' @export
 vec_ptype2.vctrs_percent.double <- function(x, y, ...) double()
 #' @method vec_ptype2.double vctrs_percent
 #' @export
@@ -1106,13 +1082,13 @@ The exact same roxygen2 treatment is needed for `vec_cast()`, which yields:
 ```{r eval = FALSE}
 #' @method vec_cast pizza_percent
 #' @export vec_cast.pizza_percent
-#' @export                         
-#' @rdname pizza-vctrs             
+#' @export
+#' @rdname pizza-vctrs
 vec_cast.pizza_percent <- function(x, to, ...) {
   UseMethod("vec_cast.pizza_percent")
 }
 #' @method vec_cast.pizza_percent pizza_percent
-#' @export 
+#' @export
 vec_cast.pizza_percent.pizza_percent <- function(x, to, ...) x
 #' @method vec_cast.pizza_percent double
 #' @export
@@ -1122,32 +1098,21 @@ vec_cast.pizza_percent.double <- function(x, to, ...) percent(x)
 vec_cast.double.pizza_percent <- function(x, to, ...) vec_data(x)
 ```
 
+
 ### Testing
 
 It's good practice to test your new class. Specific recommendations:
 
-* `R/percent.R` is the type of file where you really do want 100% test coverage.
-  You can use `devtools::test_coverage_file()` to check this.
+* `R/percent.R` is the type of file where you really do want 100% test coverage. You can use `devtools::test_coverage_file()` to check this.
 
 * Make sure to test behaviour with zero-length inputs and missing values.
 
-* Use `testthat::verify_output()` to test your format method.
-  Customised printing is often a primary motivation for creating your own S3
-  class in the first place, so this will alert you to unexpected changes in your
-  printed output. Read more about `verify_output()` in the
-  [testthat v2.3.0 blog post](https://www.tidyverse.org/blog/2019/11/testthat-2-3-0/); it's an
-  example of a so-called
-  [golden test](https://ro-che.info/articles/2017-12-04-golden-tests). 
+* Use `testthat::verify_output()` to test your format method.  Customised printing is often a primary motivation for creating your own S3 class in the first place, so this will alert you to unexpected changes in your printed output. Read more about `verify_output()` in the [testthat v2.3.0 blog post](https://www.tidyverse.org/blog/2019/11/testthat-2-3-0/); it's an example of a so-called [golden test](https://ro-che.info/articles/2017-12-04-golden-tests).
 
-* Check for method symmetry; use `expect_s3_class()`, probably with 
-  `exact = TRUE`, to ensure that `vec_c(x, y)` and `vec_c(y, x)` return the same
-  type of output for the important `x`s and `y`s in your domain.
-  
-* Use `testthat::expect_error()` to check that inputs that can't be combined
-  fail with an error. Here, you should be generally checking the class of the
-  error, not its message. Relevant classes include `vctrs_error_assert_ptype`,
-  `vctrs_error_assert_size`, and `vctrs_error_incompatible_type`.
-  
+* Check for method symmetry; use `expect_s3_class()`, probably with `exact = TRUE`, to ensure that `vec_c(x, y)` and `vec_c(y, x)` return the same type of output for the important `x`s and `y`s in your domain.
+
+* Use `testthat::expect_error()` to check that inputs that can't be combined fail with an error. Here, you should be generally checking the class of the error, not its message. Relevant classes include `vctrs_error_assert_ptype`, `vctrs_error_assert_size`, and `vctrs_error_incompatible_type`.
+
     ```{r, eval = FALSE}
     expect_error(vec_c(1, "a"), class = "vctrs_error_incompatible_type")
     ```
