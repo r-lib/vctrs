@@ -5,7 +5,7 @@
 static SEXP syms_df_lossy_cast = NULL;
 static SEXP fns_df_lossy_cast = NULL;
 
-static SEXP new_compact_rownames(R_len_t n);
+static SEXP new_compact_rownames(R_len_t size);
 
 
 // [[ include("type-data-frame.h") ]]
@@ -40,9 +40,9 @@ bool is_bare_tibble(SEXP x) {
 }
 
 // [[ include("type-data-frame.h") ]]
-SEXP new_data_frame(SEXP x, R_len_t n) {
+SEXP new_data_frame(SEXP x, R_len_t size) {
   x = PROTECT(r_maybe_duplicate(x));
-  init_data_frame(x, n);
+  init_data_frame(x, size);
 
   UNPROTECT(1);
   return x;
@@ -218,43 +218,43 @@ R_len_t rownames_size(SEXP rn) {
   never_reached("rownames_size");
 }
 
-static void init_bare_data_frame(SEXP x, R_len_t n);
+static void init_bare_data_frame(SEXP x, R_len_t size);
 
 // [[ include("type-data-frame.h") ]]
-void init_data_frame(SEXP x, R_len_t n) {
+void init_data_frame(SEXP x, R_len_t size) {
   Rf_setAttrib(x, R_ClassSymbol, classes_data_frame);
-  init_bare_data_frame(x, n);
+  init_bare_data_frame(x, size);
 }
 // [[ include("type-data-frame.h") ]]
-void init_tibble(SEXP x, R_len_t n) {
+void init_tibble(SEXP x, R_len_t size) {
   Rf_setAttrib(x, R_ClassSymbol, classes_tibble);
-  init_bare_data_frame(x, n);
+  init_bare_data_frame(x, size);
 }
 
-static void init_bare_data_frame(SEXP x, R_len_t n) {
+static void init_bare_data_frame(SEXP x, R_len_t size) {
   if (Rf_length(x) == 0) {
     Rf_setAttrib(x, R_NamesSymbol, vctrs_shared_empty_chr);
   }
 
-  init_compact_rownames(x, n);
+  init_compact_rownames(x, size);
 }
 
 // [[ include("type-data-frame.h") ]]
-void init_compact_rownames(SEXP x, R_len_t n) {
-  SEXP rn = PROTECT(new_compact_rownames(n));
+void init_compact_rownames(SEXP x, R_len_t size) {
+  SEXP rn = PROTECT(new_compact_rownames(size));
   Rf_setAttrib(x, R_RowNamesSymbol, rn);
   UNPROTECT(1);
 }
 
-static SEXP new_compact_rownames(R_len_t n) {
-  if (n <= 0) {
+static SEXP new_compact_rownames(R_len_t size) {
+  if (size <= 0) {
     return vctrs_shared_empty_int;
   }
 
   SEXP out = Rf_allocVector(INTSXP, 2);
   int* out_data = INTEGER(out);
   out_data[0] = NA_INTEGER;
-  out_data[1] = -n;
+  out_data[1] = -size;
   return out;
 }
 
