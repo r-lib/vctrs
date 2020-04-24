@@ -69,40 +69,45 @@ SEXP vec_ptype2_dispatch_s3(SEXP x,
   SEXP x_arg_obj = PROTECT(vctrs_arg(x_arg));
   SEXP y_arg_obj = PROTECT(vctrs_arg(y_arg));
 
-  SEXP x_method_sym = R_NilValue;
-  SEXP x_method = PROTECT(s3_find_method2("vec_ptype2",
-                                          x,
-                                          vctrs_method_table,
-                                          &x_method_sym));
+  SEXP method_sym = R_NilValue;
+  SEXP method = s3_find_method_xy("vec_ptype2", x, y, vctrs_method_table, &method_sym);
 
-  if (x_method == R_NilValue) {
+  // Compatibility with legacy double dispatch mechanism
+  if (method == R_NilValue) {
+    SEXP x_method_sym = R_NilValue;
+    SEXP x_method = PROTECT(s3_find_method2("vec_ptype2",
+                                             x,
+                                             vctrs_method_table,
+                                             &x_method_sym));
+
+    if (x_method != R_NilValue) {
+      const char* x_method_str = CHAR(PRINTNAME(x_method_sym));
+      SEXP x_table = s3_get_table(CLOENV(x_method));
+
+      method = s3_find_method2(x_method_str,
+                               y,
+                               x_table,
+                               &method_sym);
+    }
+
+    UNPROTECT(1);
+  }
+
+  PROTECT(method);
+
+  if (method == R_NilValue) {
     SEXP out = vec_ptype2_default(x, y, x_arg_obj, y_arg_obj, df_fallback);
     UNPROTECT(3);
     return out;
   }
 
-  const char* x_method_str = CHAR(PRINTNAME(x_method_sym));
-  SEXP x_table = s3_get_table(CLOENV(x_method));
-
-  SEXP y_method_sym = R_NilValue;
-  SEXP y_method = PROTECT(s3_find_method2(x_method_str,
-                                          y,
-                                          x_table,
-                                          &y_method_sym));
-
-  if (y_method == R_NilValue) {
-    SEXP out = vec_ptype2_default(x, y, x_arg_obj, y_arg_obj, df_fallback);
-    UNPROTECT(4);
-    return out;
-  }
-
-  SEXP out = vctrs_dispatch4(y_method_sym, y_method,
+  SEXP out = vctrs_dispatch4(method_sym, method,
                              syms_x, x,
                              syms_y, y,
                              syms_x_arg, x_arg_obj,
                              syms_y_arg, y_arg_obj);
 
-  UNPROTECT(4);
+  UNPROTECT(3);
   return out;
 }
 

@@ -75,17 +75,22 @@
   more information.
 
 * Double-dispatch methods for `vec_ptype2()` and `vec_cast()` are now
-  easier to implement. vctrs takes care of implementing the default
-  and unspecified methods. If you have implemented these methods, they
-  can now be removed.
+  easier to implement. They no longer need any the boiler plate.
+  Implementing a method for classes `foo` and `bar` is now as simple as:
 
-  Also methods no longer have to worry about order of dispatch, for
-  instance it is no longer needed to supply a second argument as in
-  `UseMethod("vec_ptype2.mytype", y)`.
+  ```
+  #' @export
+  vec_ptype2.foo.bar <- function(x, y, ...) new_foo()
+  ```
 
-  One consequence is that `NextMethod()` is now completely
-  unsupported. This is for the best as it never worked correctly in a
-  double-dispatch setting. Parent methods must now be called manually.
+  vctrs also takes care of implementing the default and unspecified
+  methods. If you have implemented these methods, they are no longer
+  called and can now be removed.
+
+  One consequence of the new dispatch mechanism is that `NextMethod()`
+  is now completely unsupported. This is for the best as it never
+  worked correctly in a double-dispatch setting. Parent methods must
+  now be called manually.
 
 * New `vec_rep()` and `vec_rep_each()` for repeating an entire vector
   and elements of a vector, respectively. These two functions provide
