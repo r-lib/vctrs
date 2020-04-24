@@ -159,5 +159,5 @@ ns_methods <- function(name) {
 df_has_base_subset <- function(x) {
   table <- ns_methods(.BaseNamespaceEnv)
   method <- .Call(vctrs_s3_find_method, "[", x, table)
-  identical(method, `[.data.frame`)
+  is_null(method) || identical(method, `[.data.frame`)
 }

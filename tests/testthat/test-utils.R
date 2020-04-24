@@ -1,7 +1,5 @@
 context("test-utils")
 
-# outer_names --------------------------------------------------------------
-
 test_that("names preserved if outer name is missing", {
   x <- c("a", "z", "")
 
@@ -37,10 +35,17 @@ test_that("can't supply unknown option", {
   )
 })
 
-# has_dim ------------------------------------------------------------------
-
 test_that("`has_dim()` doesn't partial match on the `dim` attribute (#948)", {
   x <- structure(1, dimB = 1)
   expect_false(has_dim(x))
 })
 
+test_that("df_has_base_subset() detects `[` methods", {
+  expect_true(df_has_base_subset(foobar(mtcars)))
+
+  out <- with_methods(
+    `[.vctrs_foobar` = function(x, i, ...) structure(NextMethod(), dispatched = TRUE),
+    df_has_base_subset(foobar(mtcars))
+  )
+  expect_false(out)
+})
