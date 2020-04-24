@@ -162,6 +162,12 @@ vec_default_cast <- function(x, to, ..., x_arg = "", to_arg = "") {
     return(UseMethod("vec_cast", to))
   }
 
+  # If both data frames, first find the `to` type of columns before
+  # the same-type fallback
+  if (is.data.frame(x) && is.data.frame(to) && df_is_coercible(x, to)) {
+    x <- vec_cast_df_fallback_normalise(x, to)
+  }
+
   if (is_same_type(x, to)) {
     return(x)
   }

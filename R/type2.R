@@ -83,6 +83,14 @@ vec_default_ptype2 <- function(x, y, ..., x_arg = "", y_arg = "") {
     return(UseMethod("vec_ptype2"))
   }
 
+  # If both data frames, first find common type of columns before the
+  # same-type fallback
+  if (is.data.frame(x) && is.data.frame(y) && df_is_coercible(x, y)) {
+    out <- vec_ptype2_df_fallback_normalise(x, y)
+    x <- out$x
+    y <- out$y
+  }
+
   if (is_same_type(x, y)) {
     return(vec_ptype(x, x_arg = x_arg))
   }
