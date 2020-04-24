@@ -146,7 +146,7 @@ static SEXP vec_ptype_finalise_dispatch(SEXP x) {
 
 
 SEXP vctrs_type_common_impl(SEXP dots, SEXP ptype);
-static SEXP vctrs_type2_common(SEXP current, SEXP next, struct counters* counters);
+static SEXP vctrs_type2_common(SEXP current, SEXP next, struct counters* counters, void* data);
 
 // [[ register(external = TRUE) ]]
 SEXP vctrs_type_common(SEXP call, SEXP op, SEXP args, SEXP env) {
@@ -171,7 +171,7 @@ SEXP vctrs_type_common_impl(SEXP dots, SEXP ptype) {
   }
 
   // Start reduction with the `.ptype` argument
-  SEXP type = PROTECT(reduce(ptype, args_dot_ptype, dots, &vctrs_type2_common));
+  SEXP type = PROTECT(reduce(ptype, args_dot_ptype, dots, &vctrs_type2_common, NULL));
   type = vec_ptype_finalise(type);
 
   UNPROTECT(1);
@@ -179,7 +179,10 @@ SEXP vctrs_type_common_impl(SEXP dots, SEXP ptype) {
 }
 
 
-static SEXP vctrs_type2_common(SEXP current, SEXP next, struct counters* counters) {
+static SEXP vctrs_type2_common(SEXP current,
+                               SEXP next,
+                               struct counters* counters,
+                               void* data) {
   int left = -1;
   current = vec_ptype2(current, next, counters->curr_arg, counters->next_arg, &left);
 
