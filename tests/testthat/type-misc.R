@@ -28,3 +28,28 @@ test_that("`numeric_version` falls back to base methods", {
 
   expect_identical(vec_c(x, y), z)
 })
+
+test_that("common type of data.table and data.frame is data.table", {
+  # As data.table is not in Suggests, these checks are only run on the
+  # devs' machines
+  skip_if_not_installed("data.table")
+  import_from("data.table", "data.table")
+
+  expect_identical(
+    vec_ptype2(data.table(x = TRUE), data.frame(y = 2)),
+    data.table(x = lgl(), y = dbl())
+  )
+  expect_identical(
+    vec_ptype2(data.frame(y = 2), data.table(x = TRUE)),
+    data.table(y = dbl(), x = lgl())
+  )
+
+  expect_identical(
+    vec_cast(data.frame(y = 2), data.table(x = TRUE, y = 1L)),
+    data.table(x = NA, y = 2L)
+  )
+  expect_identical(
+    vec_cast(data.table(y = 2), data.frame(x = TRUE, y = 1L)),
+    data.frame(x = NA, y = 2L)
+  )
+})
