@@ -1,8 +1,8 @@
 #' Data frame class
 #'
-#' A `data.frame` [data.frame()] is a list with "row.names" attribute. Each
+#' A `data.frame` is a list with a "row.names" attribute. Each
 #' element of the list must be named, and of the same length. These functions
-#' help the base data.frame classes fit in to the vctrs type system by
+#' help the base data.frame class fit in to the vctrs type system by
 #' providing constructors, coercion functions, and casting functions.
 #'
 #' @param .x A named list of equal-length vectors. The lengths are not

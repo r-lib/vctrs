@@ -30,9 +30,9 @@ consistent.
 the first element of \code{.x}.}
 }
 \description{
-A \code{data.frame} \code{\link[=data.frame]{data.frame()}} is a list with "row.names" attribute. Each
+A \code{data.frame} is a list with a "row.names" attribute. Each
 element of the list must be named, and of the same length. These functions
-help the base data.frame classes fit in to the vctrs type system by
+help the base data.frame class fit in to the vctrs type system by
 providing constructors, coercion functions, and casting functions.
 }
 \examples{
