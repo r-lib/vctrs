@@ -48,8 +48,7 @@ SEXP new_data_frame(SEXP x, R_len_t n) {
   return x;
 }
 
-static R_len_t df_size_from_list(SEXP x, SEXP n);
-static R_len_t df_size_from_n(SEXP n);
+static R_len_t df_size_from_list(SEXP x, SEXP size);
 static SEXP c_data_frame_class(SEXP cls);
 
 // [[ register() ]]
@@ -57,7 +56,7 @@ SEXP vctrs_new_data_frame(SEXP args) {
   args = CDR(args);
 
   SEXP x = CAR(args); args = CDR(args);
-  SEXP n = CAR(args); args = CDR(args);
+  SEXP size = CAR(args); args = CDR(args);
   SEXP cls = CAR(args); args = CDR(args);
   SEXP attrib = args;
 
@@ -65,12 +64,12 @@ SEXP vctrs_new_data_frame(SEXP args) {
   PROTECT_WITH_INDEX(attrib, &pi);
 
   if (TYPEOF(x) != VECSXP) {
-    Rf_errorcall(R_NilValue, "`x` must be a list");
+    Rf_errorcall(R_NilValue, "`.x` must be a list");
   }
 
   bool has_names = false;
   bool has_rownames = false;
-  R_len_t size = df_size_from_list(x, n);
+  R_len_t x_size = df_size_from_list(x, size);
 
   SEXP out = PROTECT(r_maybe_duplicate(x));
 
@@ -88,9 +87,9 @@ SEXP vctrs_new_data_frame(SEXP args) {
     }
 
     if (tag == R_RowNamesSymbol) {
-      // "row.names" is checked for consistency with n (if provided)
-      if (size != rownames_size(CAR(node)) && n != R_NilValue) {
-        Rf_errorcall(R_NilValue, "`n` and `row.names` must be consistent.");
+      // "row.names" is checked for consistency with `.size` (if provided)
+      if (x_size != rownames_size(CAR(node)) && size != R_NilValue) {
+        Rf_errorcall(R_NilValue, "`.size` and `row.names` must be consistent.");
       }
 
       has_rownames = true;
@@ -116,7 +115,7 @@ SEXP vctrs_new_data_frame(SEXP args) {
   }
 
   if (!has_rownames) {
-    SEXP rn = PROTECT(new_compact_rownames(size));
+    SEXP rn = PROTECT(new_compact_rownames(x_size));
     attrib = Rf_cons(rn, attrib);
     SET_TAG(attrib, R_RowNamesSymbol);
 
@@ -145,19 +144,21 @@ SEXP vctrs_new_data_frame(SEXP args) {
   return out;
 }
 
-static R_len_t df_size_from_list(SEXP x, SEXP n) {
-  if (n == R_NilValue) {
+static R_len_t df_size_from_size(SEXP size);
+
+static R_len_t df_size_from_list(SEXP x, SEXP size) {
+  if (size == R_NilValue) {
     return df_raw_size_from_list(x);
   }
-  return df_size_from_n(n);
+  return df_size_from_size(size);
 }
 
-static R_len_t df_size_from_n(SEXP n) {
-  if (TYPEOF(n) != INTSXP || Rf_length(n) != 1) {
-    Rf_errorcall(R_NilValue, "`n` must be an integer of size 1");
+static R_len_t df_size_from_size(SEXP size) {
+  if (TYPEOF(size) != INTSXP || Rf_length(size) != 1) {
+    Rf_errorcall(R_NilValue, "`.size` must be an integer of size 1");
   }
 
-  return r_int_get(n, 0);
+  return r_int_get(size, 0);
 }
 
 static SEXP c_data_frame_class(SEXP cls) {
