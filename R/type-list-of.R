@@ -193,16 +193,6 @@ vec_ptype2.vctrs_list_of.vctrs_list_of <- function(x, y, ...) {
   type <- vec_ptype2(attr(x, "ptype"), attr(y, "ptype"))
   new_list_of(list(), type)
 }
-#' @method vec_ptype2.vctrs_list_of list
-#' @export
-vec_ptype2.vctrs_list_of.list <- function(x, y, ..., x_arg = "", y_arg = "") {
-  stop_incompatible_type(x, y, x_arg = x_arg, y_arg = y_arg)
-}
-#' @method vec_ptype2.list vctrs_list_of
-#' @export
-vec_ptype2.list.vctrs_list_of <- function(x, y, ..., x_arg = "", y_arg = "") {
-  stop_incompatible_type(x, y, x_arg = x_arg, y_arg = y_arg)
-}
 
 #' @rdname list_of
 #' @export vec_cast.vctrs_list_of
@@ -211,32 +201,12 @@ vec_ptype2.list.vctrs_list_of <- function(x, y, ..., x_arg = "", y_arg = "") {
 vec_cast.vctrs_list_of <- function(x, to, ...) {
   UseMethod("vec_cast.vctrs_list_of")
 }
+
 #' @export
-#' @method vec_cast.vctrs_list_of list
-vec_cast.vctrs_list_of.list <- function(x, to, ...) {
+#' @method vec_cast.vctrs_list_of vctrs_list_of
+vec_cast.vctrs_list_of.vctrs_list_of <-function(x, to, ...) {
   # Casting list to list_of will warn/err if the cast is lossy,
   # but the locations refer to the inner vectors,
   # and the cast fails if all (vector) elements in a single (list) element
   as_list_of(x, .ptype = attr(to, "ptype"))
-}
-
-#' @export
-#' @method vec_cast.list vctrs_list_of
-vec_cast.list.vctrs_list_of <- function(x, to, ...) {
-  # Casting list_of to list is never lossy
-  shape_broadcast(as.list(x), to)
-}
-
-#' @export
-#' @method vec_cast.vctrs_list_of vctrs_list_of
-vec_cast.vctrs_list_of.vctrs_list_of <- vec_cast.vctrs_list_of.list
-
-vec_cast_to_list_of <- function(x, to, ..., x_arg = "", to_arg = "") {
-  x <- vec_cast(x, attr(to, "ptype"), x_arg = x_arg, to_arg = to_arg)
-  out <- lapply(seq_along(x), function(i) x[[i]])
-
-  miss <- is.na(x)
-  out[miss] <- rep(list(NULL), sum(miss))
-
-  new_list_of(out, ptype = attr(to, "ptype"))
 }

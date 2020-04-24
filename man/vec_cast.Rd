@@ -92,7 +92,6 @@ specialised function).
 
 \section{S3 dispatch}{
 
-
 \code{vec_cast()} dispatches on both arguments because casting depends
 on both the type of \code{x} and of \code{to}. The dispatch mechanism is a
 bit different than regular S3 dispatch. See \code{\link[=vec_ptype2]{vec_ptype2()}} and
