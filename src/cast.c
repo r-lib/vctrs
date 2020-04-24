@@ -1,8 +1,9 @@
 #include "vctrs.h"
 #include "cast.h"
+#include "dim.h"
+#include "ptype-common.h"
 #include "type-data-frame.h"
 #include "utils.h"
-#include "dim.h"
 
 static SEXP vec_cast_switch_native(SEXP x,
                                    SEXP to,
@@ -15,7 +16,8 @@ static SEXP vec_cast_switch_native(SEXP x,
 static SEXP vec_cast_dispatch_s3(SEXP x,
                                  SEXP to,
                                  struct vctrs_arg* x_arg,
-                                 struct vctrs_arg* to_arg);
+                                 struct vctrs_arg* to_arg,
+                                 bool df_fallback);
 
 // [[ register() ]]
 SEXP vctrs_cast(SEXP x, SEXP to, SEXP x_arg_, SEXP to_arg_) {
@@ -25,8 +27,12 @@ SEXP vctrs_cast(SEXP x, SEXP to, SEXP x_arg_, SEXP to_arg_) {
   return vec_cast(x, to, &x_arg, &to_arg);
 }
 
-// [[ include("vctrs.h") ]]
-SEXP vec_cast(SEXP x, SEXP to, struct vctrs_arg* x_arg, struct vctrs_arg* to_arg) {
+// [[ include("cast.h") ]]
+SEXP vec_cast_params(SEXP x,
+                     SEXP to,
+                     struct vctrs_arg* x_arg,
+                     struct vctrs_arg* to_arg,
+                     bool df_fallback) {
   if (x == R_NilValue) {
     if (!vec_is_partial(to)) {
       vec_assert(to, to_arg);
@@ -55,7 +61,7 @@ SEXP vec_cast(SEXP x, SEXP to, struct vctrs_arg* x_arg, struct vctrs_arg* to_arg
   }
 
   if (has_dim(x) || has_dim(to)) {
-    return vec_cast_dispatch_s3(x, to, x_arg, to_arg);
+    return vec_cast_dispatch_s3(x, to, x_arg, to_arg, df_fallback);
   }
 
   SEXP out = R_NilValue;
@@ -68,7 +74,7 @@ SEXP vec_cast(SEXP x, SEXP to, struct vctrs_arg* x_arg, struct vctrs_arg* to_arg
   }
 
   if (lossy || out == R_NilValue) {
-    return vec_cast_dispatch_s3(x, to, x_arg, to_arg);
+    return vec_cast_dispatch_s3(x, to, x_arg, to_arg, df_fallback);
   } else {
     return out;
   }
@@ -129,20 +135,23 @@ static SEXP syms_vec_cast_default = NULL;
 static inline SEXP vec_cast_default(SEXP x,
                                     SEXP y,
                                     SEXP x_arg,
-                                    SEXP to_arg) {
-  return vctrs_eval_mask5(syms_vec_cast_default,
+                                    SEXP to_arg,
+                                    bool df_fallback) {
+  return vctrs_eval_mask6(syms_vec_cast_default,
                           syms_x, x,
                           syms_to, y,
                           syms_x_arg, x_arg,
                           syms_to_arg, to_arg,
                           syms_from_dispatch, vctrs_shared_true,
+                          syms_df_fallback, r_lgl(df_fallback),
                           vctrs_ns_env);
 }
 
 static SEXP vec_cast_dispatch_s3(SEXP x,
                                  SEXP to,
                                  struct vctrs_arg* x_arg,
-                                 struct vctrs_arg* to_arg) {
+                                 struct vctrs_arg* to_arg,
+                                 bool df_fallback) {
   SEXP x_arg_obj = PROTECT(vctrs_arg(x_arg));
   SEXP to_arg_obj = PROTECT(vctrs_arg(to_arg));
 
@@ -153,7 +162,7 @@ static SEXP vec_cast_dispatch_s3(SEXP x,
                                            &to_method_sym));
 
   if (to_method == R_NilValue) {
-    SEXP out = vec_cast_default(x, to, x_arg_obj, to_arg_obj);
+    SEXP out = vec_cast_default(x, to, x_arg_obj, to_arg_obj, df_fallback);
     UNPROTECT(3);
     return out;
   }
@@ -168,7 +177,7 @@ static SEXP vec_cast_dispatch_s3(SEXP x,
                                           &x_method_sym));
 
   if (x_method == R_NilValue) {
-    SEXP out = vec_cast_default(x, to, x_arg_obj, to_arg_obj);
+    SEXP out = vec_cast_default(x, to, x_arg_obj, to_arg_obj, df_fallback);
     UNPROTECT(4);
     return out;
   }
@@ -274,11 +283,9 @@ SEXP vec_cast_e(SEXP x,
 }
 
 
-SEXP vctrs_type_common_impl(SEXP dots, SEXP ptype);
-
 // [[ include("vctrs.h") ]]
 SEXP vec_cast_common(SEXP xs, SEXP to) {
-  SEXP type = PROTECT(vctrs_type_common_impl(xs, to));
+  SEXP type = PROTECT(vec_ptype_common_params(xs, to, true));
 
   R_len_t n = Rf_length(xs);
   SEXP out = PROTECT(Rf_allocVector(VECSXP, n));

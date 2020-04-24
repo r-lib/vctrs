@@ -172,7 +172,7 @@ stop_incompatible_type_impl <- function(x,
     details,
     action,
     message,
-    from_dispatch = from_dispatch(...)
+    from_dispatch = match_from_dispatch(...)
   )
 
   stop_incompatible(
@@ -218,7 +218,8 @@ cnd_type_message <- function(x,
                              details,
                              action,
                              message,
-                             from_dispatch = FALSE) {
+                             from_dispatch = FALSE,
+                             fallback = NULL) {
   if (!is_null(message)) {
     return(message)
   }
@@ -261,8 +262,14 @@ cnd_type_message <- function(x,
     details <- format_error_bullets(details)
   }
 
+  if (is_null(fallback)) {
+    end <- "."
+  } else {
+    end <- glue::glue("; falling back to {fallback}.")
+  }
+
   glue_lines(
-    "Can't {action}{x_name}<{x_type}> {separator}{y_name}<{y_type}>.",
+    "Can't {action}{x_name}<{x_type}> {separator}{y_name}<{y_type}>{end}",
     details
   )
 }

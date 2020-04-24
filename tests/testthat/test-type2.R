@@ -160,14 +160,23 @@ test_that("Subclasses of data.frame dispatch to `vec_ptype2()` methods", {
 
 test_that("Subclasses of `tbl_df` do not have `tbl_df` common type (#481)", {
   quux <- tibble()
-  quux <- structure(quux, class = c("quux", class(quux)))
+  quux <- foobar(quux)
+
+  expect_error(
+    vec_ptype_common(quux, tibble()),
+    class = "vctrs_error_incompatible_type"
+  )
+  expect_error(
+    vec_ptype_common(tibble(), quux),
+    class = "vctrs_error_incompatible_type"
+  )
 
   expect_df_fallback(expect_identical(
-    vec_ptype_common(quux, tibble()),
+    vec_ptype_common_fallback(quux, tibble()),
     data.frame()
   ))
   expect_df_fallback(expect_identical(
-    vec_ptype_common(tibble(), quux),
+    vec_ptype_common_fallback(tibble(), quux),
     data.frame()
   ))
 })
@@ -263,10 +272,13 @@ test_that("common type warnings for data frames take attributes into account", {
   verify_errors({
     foobar_bud <- foobar(mtcars, bud = TRUE)
     foobar_boo <- foobar(mtcars, boo = TRUE)
-    expect_df_fallback(vec_ptype2(foobar_bud, foobar_boo))
+    expect_df_fallback(vec_ptype2_fallback(foobar_bud, foobar_boo))
 
     "For reference, warning for incompatible classes"
-    expect_df_fallback(vec_ptype2(foobar(mtcars), foobaz(mtcars)))
+    expect_df_fallback(vec_ptype2_fallback(foobar(mtcars), foobaz(mtcars)))
+
+    "For reference, error when fallback is disabled"
+    expect_error(vec_ptype2(foobar(mtcars), foobaz(mtcars)), class = "vctrs_error_incompatible_type")
   })
 })
 
@@ -311,9 +323,12 @@ test_that("vec_ptype2() errors have informative output", {
     "# common type warnings for data frames take attributes into account"
     foobar_bud <- foobar(mtcars, bud = TRUE)
     foobar_boo <- foobar(mtcars, boo = TRUE)
-    vec_ptype2(foobar_bud, foobar_boo)
+    vec_ptype2_fallback(foobar_bud, foobar_boo)
 
     "For reference, warning for incompatible classes"
+    vec_ptype2_fallback(foobar(mtcars), foobaz(mtcars))
+
+    "For reference, error when fallback is disabled"
     vec_ptype2(foobar(mtcars), foobaz(mtcars))
   })
 })

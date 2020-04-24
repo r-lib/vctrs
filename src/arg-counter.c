@@ -78,16 +78,24 @@ void counters_shift(struct counters* counters) {
 
 // Reduce `impl` with argument counters
 
-SEXP reduce_impl(SEXP current, SEXP rest, struct counters* counters, bool spliced,
-                 SEXP (*impl)(SEXP current, SEXP next, struct counters* counters));
+SEXP reduce_impl(SEXP current,
+                 SEXP rest,
+                 struct counters* counters,
+                 bool spliced,
+                 SEXP (*impl)(SEXP current, SEXP next, struct counters* counters, void* data),
+                 void* data);
 
-SEXP reduce_splice_box(SEXP current, SEXP rest, struct counters* counters,
-                       SEXP (*impl)(SEXP current, SEXP next, struct counters* counters));
+SEXP reduce_splice_box(SEXP current,
+                       SEXP rest,
+                       struct counters* counters,
+                       SEXP (*impl)(SEXP current, SEXP next, struct counters* counters, void* data),
+                       void* data);
 
 // [[ include("arg-counter.h") ]]
 SEXP reduce(SEXP current, struct vctrs_arg* current_arg,
             SEXP rest,
-            SEXP (*impl)(SEXP current, SEXP next, struct counters* counters)) {
+            SEXP (*impl)(SEXP current, SEXP next, struct counters* counters, void* data),
+            void* data) {
   // Store the box counters here as they might outlive their frame
   struct counters next_box_counters;
   struct counters prev_box_counters;
@@ -101,14 +109,18 @@ SEXP reduce(SEXP current, struct vctrs_arg* current_arg,
   int nprot = 0;
   PROTECT_COUNTERS(&counters, &nprot);
 
-  SEXP out = reduce_impl(current, rest, &counters, false, impl);
+  SEXP out = reduce_impl(current, rest, &counters, false, impl, data);
 
   UNPROTECT(nprot);
   return out;
 }
 
-SEXP reduce_impl(SEXP current, SEXP rest, struct counters* counters, bool spliced,
-                 SEXP (*impl)(SEXP current, SEXP next, struct counters* counters)) {
+SEXP reduce_impl(SEXP current,
+                 SEXP rest,
+                 struct counters* counters,
+                 bool spliced,
+                 SEXP (*impl)(SEXP current, SEXP next, struct counters* counters, void* data),
+                 void* data) {
   R_len_t n = Rf_length(rest);
 
   for (R_len_t i = 0; i < n; ++i, counters_inc(counters)) {
@@ -119,10 +131,10 @@ SEXP reduce_impl(SEXP current, SEXP rest, struct counters* counters, bool splice
     // Don't call `rlang_is_splice_box()` if we're already looking at a
     // spliced list because it's expensive
     if (spliced || !rlang_is_splice_box(next)) {
-      current = impl(current, next, counters);
+      current = impl(current, next, counters, data);
     } else {
       next = PROTECT(rlang_unbox(next));
-      current = reduce_splice_box(current, next, counters, impl);
+      current = reduce_splice_box(current, next, counters, impl, data);
       UNPROTECT(1);
     }
 
@@ -133,11 +145,12 @@ SEXP reduce_impl(SEXP current, SEXP rest, struct counters* counters, bool splice
 }
 
 SEXP reduce_splice_box(SEXP current, SEXP rest, struct counters* counters,
-                       SEXP (*impl)(SEXP current, SEXP rest, struct counters* counters)) {
+                       SEXP (*impl)(SEXP current, SEXP rest, struct counters* counters, void* data),
+                       void* data) {
   init_next_box_counters(counters, r_names(rest));
   struct counters* box_counters = counters->next_box_counters;
 
-  current = reduce_impl(current, rest, box_counters, true, impl);
+  current = reduce_impl(current, rest, box_counters, true, impl, data);
 
   counters->curr_arg = box_counters->curr_arg;
   counters->next = box_counters->next;

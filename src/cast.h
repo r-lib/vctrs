@@ -2,6 +2,12 @@
 #define VCTRS_CAST_H
 
 
+SEXP vec_cast_params(SEXP x,
+                     SEXP to,
+                     struct vctrs_arg* x_arg,
+                     struct vctrs_arg* to_arg,
+                     bool df_fallback);
+
 SEXP vec_cast_dispatch(SEXP x,
                        SEXP to,
                        enum vctrs_type x_type,

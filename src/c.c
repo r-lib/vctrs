@@ -1,9 +1,7 @@
 #include "vctrs.h"
+#include "ptype-common.h"
 #include "slice-assign.h"
 #include "utils.h"
-
-// From type.c
-SEXP vctrs_type_common_impl(SEXP dots, SEXP ptype);
 
 
 // [[ register(external = TRUE) ]]
@@ -35,7 +33,7 @@ SEXP vec_c(SEXP xs,
     return vec_c_fallback(xs, ptype, name_spec);
   }
 
-  ptype = PROTECT(vctrs_type_common_impl(xs, ptype));
+  ptype = PROTECT(vec_ptype_common_params(xs, ptype, true));
 
   if (ptype == R_NilValue) {
     UNPROTECT(1);

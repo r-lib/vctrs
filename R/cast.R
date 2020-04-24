@@ -172,11 +172,15 @@ vec_default_cast <- function(x, to, ..., x_arg = "", to_arg = "") {
     return(x)
   }
 
+  if (match_df_fallback(...)) {
+    return(df_cast(x, to, ..., x_arg = x_arg, to_arg = to_arg))
+  }
+
   stop_incompatible_cast(
     x,
     to,
     x_arg = x_arg,
     to_arg = to_arg,
-    `vctrs:::from_dispatch` = from_dispatch(...)
+    `vctrs:::from_dispatch` = match_from_dispatch(...)
   )
 }

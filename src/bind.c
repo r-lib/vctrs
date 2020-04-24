@@ -1,8 +1,9 @@
 #include "vctrs.h"
+#include "dim.h"
+#include "ptype-common.h"
 #include "slice-assign.h"
 #include "type-data-frame.h"
 #include "utils.h"
-#include "dim.h"
 
 
 static SEXP vec_rbind(SEXP xs, SEXP ptype, SEXP id, struct name_repair_opts* name_repair);
@@ -42,9 +43,6 @@ SEXP vctrs_rbind(SEXP call, SEXP op, SEXP args, SEXP env) {
 }
 
 
-// From type.c
-SEXP vctrs_type_common_impl(SEXP dots, SEXP ptype);
-
 static SEXP vec_rbind(SEXP xs, SEXP ptype, SEXP names_to, struct name_repair_opts* name_repair) {
   int nprot = 0;
   R_len_t n = Rf_length(xs);
@@ -56,7 +54,7 @@ static SEXP vec_rbind(SEXP xs, SEXP ptype, SEXP names_to, struct name_repair_opt
   // The common type holds information about common column names,
   // types, etc. Each element of `xs` needs to be cast to that type
   // before assignment.
-  ptype = PROTECT_N(vctrs_type_common_impl(xs, ptype), &nprot);
+  ptype = PROTECT_N(vec_ptype_common_params(xs, ptype, true), &nprot);
 
   if (ptype == R_NilValue) {
     UNPROTECT(nprot);
@@ -161,7 +159,7 @@ static SEXP vec_rbind(SEXP xs, SEXP ptype, SEXP names_to, struct name_repair_opt
     }
     SEXP x = VECTOR_ELT(xs, i);
 
-    SEXP tbl = PROTECT(vec_cast(x, ptype, args_empty, args_empty));
+    SEXP tbl = PROTECT(vec_cast_params(x, ptype, args_empty, args_empty, true));
     init_compact_seq(idx_ptr, counter, size, true);
     out = df_assign(out, idx, tbl, &bind_assign_opts);
     REPROTECT(out, out_pi);
@@ -332,7 +330,7 @@ static SEXP vec_cbind(SEXP xs, SEXP ptype, SEXP size, struct name_repair_opts* n
   SEXP containers = PROTECT(map_with_data(xs, &cbind_container_type, &rownames));
   ptype = PROTECT(cbind_container_type(ptype, &rownames));
 
-  SEXP type = PROTECT(vctrs_type_common_impl(containers, ptype));
+  SEXP type = PROTECT(vec_ptype_common_params(containers, ptype, true));
   if (type == R_NilValue) {
     type = new_data_frame(vctrs_shared_empty_list, 0);
   } else if (!is_data_frame(type)) {

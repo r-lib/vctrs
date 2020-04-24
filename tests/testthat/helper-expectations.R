@@ -90,5 +90,5 @@ expect_error_cnd <- function(object, class, message = NULL, ..., .fixed = TRUE) 
 }
 
 expect_df_fallback <- function(expr) {
-  expect_warning({{ expr }}, "Falling back")
+  expect_warning({{ expr }}, "falling back to <data.frame>")
 }

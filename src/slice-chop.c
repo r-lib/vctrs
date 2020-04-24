@@ -2,6 +2,7 @@
 #include "slice.h"
 #include "slice-assign.h"
 #include "subscript-loc.h"
+#include "ptype-common.h"
 #include "type-data-frame.h"
 #include "utils.h"
 #include "dim.h"
@@ -379,9 +380,6 @@ static SEXP chop_fallback_shaped(SEXP x, SEXP indices, struct vctrs_chop_info in
 
 // -----------------------------------------------------------------------------
 
-// From type.c
-SEXP vctrs_type_common_impl(SEXP dots, SEXP ptype);
-
 static SEXP vec_unchop(SEXP x,
                        SEXP indices,
                        SEXP ptype,
@@ -431,7 +429,7 @@ static SEXP vec_unchop(SEXP x,
     return vec_unchop_fallback(x, indices, ptype, name_spec);
   }
 
-  ptype = PROTECT(vctrs_type_common_impl(x, ptype));
+  ptype = PROTECT(vec_ptype_common_params(x, ptype, true));
 
   if (ptype == R_NilValue) {
     UNPROTECT(1);
