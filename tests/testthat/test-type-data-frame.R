@@ -425,6 +425,19 @@ test_that("data frame fallback handles column types (#999)", {
     vec_rbind(df1, df2),
     foobar(data.frame(x = c(1, 1), y = c(NA, 2)))
   )
+
+  # Attributes are not restored
+  df1_attrib <- foobar(df1, foo = "foo")
+  df2_attrib <- foobar(df2, bar = "bar")
+  exp <- data.frame(x = c(1, 1), y = c(NA, 2))
+  out <- expect_df_fallback(vec_rbind(df1_attrib, df2_attrib))
+  expect_identical(out, exp)
+
+  out <- with_methods(
+    `[.vctrs_foobar` = function(x, i, ...) structure(NextMethod(), dispatched = TRUE),
+    vec_rbind(df1_attrib, df2_attrib)
+  )
+  expect_identical(out, foobar(exp, dispatched = TRUE))
 })
 
 test_that("data frame output is informative", {

@@ -151,3 +151,13 @@ try_catch_impl <- function(data, ...) {
     ...
   )
 }
+
+ns_methods <- function(name) {
+  ns_env(name)$.__S3MethodsTable__.
+}
+
+df_has_base_subset <- function(x) {
+  table <- ns_methods(.BaseNamespaceEnv)
+  method <- .Call(vctrs_s3_find_method, "[", x, table)
+  identical(method, `[.data.frame`)
+}

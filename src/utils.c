@@ -369,6 +369,12 @@ SEXP s3_sym_get_method(SEXP sym, SEXP table) {
   return R_NilValue;
 }
 
+// [[ register() ]]
+SEXP vctrs_s3_find_method(SEXP generic, SEXP x, SEXP table) {
+  return s3_find_method(r_chr_get_c_string(generic, 0), x, table);
+}
+
+// [[ include("utils.h") ]]
 SEXP s3_find_method(const char* generic, SEXP x, SEXP table) {
   if (!OBJECT(x)) {
     return R_NilValue;
