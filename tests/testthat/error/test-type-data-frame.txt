@@ -33,3 +33,20 @@ i Falling back to <data.frame>.
 [1] mpg  cyl  disp qsec vs   am   hp   drat wt  
 <0 rows> (or 0-length row.names)
 
+> invisible(vec_rbind(foo, data.frame(), foo))
+Warning: Can't combine <foo> and <data.frame>.
+i Convert all inputs to the same class to avoid this warning.
+i See <https://vctrs.r-lib.org/reference/faq-warning-convert-inputs.html>.
+i Falling back to <data.frame>.
+
+> invisible(vec_rbind(foo, baz, bar, baz, foo, bar))
+Warning: Can't combine <foo> and <baz>.
+i Convert all inputs to the same class to avoid this warning.
+i See <https://vctrs.r-lib.org/reference/faq-warning-convert-inputs.html>.
+i Falling back to <data.frame>.
+
+Warning: Can't combine <data.frame> and <bar>.
+i Convert all inputs to the same class to avoid this warning.
+i See <https://vctrs.r-lib.org/reference/faq-warning-convert-inputs.html>.
+i Falling back to <data.frame>.
+

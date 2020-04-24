@@ -159,7 +159,7 @@ static SEXP vec_rbind(SEXP xs, SEXP ptype, SEXP names_to, struct name_repair_opt
     }
     SEXP x = VECTOR_ELT(xs, i);
 
-    SEXP tbl = PROTECT(vec_cast(x, ptype, args_empty, args_empty));
+    SEXP tbl = PROTECT(vec_cast_params(x, ptype, args_empty, args_empty, true));
     init_compact_seq(idx_ptr, counter, size, true);
     out = df_assign(out, idx, tbl, &bind_assign_opts);
     REPROTECT(out, out_pi);

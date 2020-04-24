@@ -172,7 +172,7 @@ stop_incompatible_type_impl <- function(x,
     details,
     action,
     message,
-    from_dispatch = from_dispatch(...)
+    from_dispatch = match_from_dispatch(...)
   )
 
   stop_incompatible(

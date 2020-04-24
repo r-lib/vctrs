@@ -89,6 +89,10 @@ test_that("combining data frames with foreign classes uses fallback", {
     expect_df_fallback(vec_cbind(foobar(data.frame(x = 1)), data.frame(y = 2))),
     data.frame(x = 1, y = 2)
   )
+  expect_identical(
+    expect_df_fallback(vec_rbind(foo, data.frame(), foo)),
+    df
+  )
 
   verify_errors({
     foo <- structure(mtcars[1:3], class = c("foo", "data.frame"))
@@ -96,13 +100,8 @@ test_that("combining data frames with foreign classes uses fallback", {
     baz <- structure(mtcars[7:9], class = c("baz", "data.frame"))
     expect_warning(vec_ptype_common_fallback(foo, bar, baz))
     expect_warning(vec_ptype_common_fallback(foo, baz, bar, baz, foo, bar))
+    expect_df_fallback(invisible(vec_rbind(foo, data.frame(), foo)))
   })
-
-  skip("FIXME - cast fallback")
-  expect_identical(
-    expect_df_fallback(vec_rbind(foo, data.frame(), foo)),
-    df
-  )
 })
 
 
@@ -399,5 +398,7 @@ test_that("data frame output is informative", {
     baz <- structure(mtcars[7:9], class = c("baz", "data.frame"))
     vec_ptype_common_fallback(foo, bar, baz)
     vec_ptype_common_fallback(foo, baz, bar, baz, foo, bar)
+    invisible(vec_rbind(foo, data.frame(), foo))
+    invisible(vec_rbind(foo, baz, bar, baz, foo, bar))
   })
 })
