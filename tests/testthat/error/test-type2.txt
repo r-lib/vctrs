@@ -67,7 +67,7 @@ common type warnings for data frames take attributes into account
 
 > foobar_bud <- foobar(mtcars, bud = TRUE)
 > foobar_boo <- foobar(mtcars, boo = TRUE)
-> vec_ptype2(foobar_bud, foobar_boo)
+> vec_ptype2_fallback(foobar_bud, foobar_boo)
 Warning: Can't combine <vctrs_foobar> and <vctrs_foobar>.
 x Some attributes are incompatible.
 i The author of the class should implement vctrs methods.
@@ -78,7 +78,7 @@ i Falling back to <data.frame>.
 <0 rows> (or 0-length row.names)
 
 > # For reference, warning for incompatible classes
-> vec_ptype2(foobar(mtcars), foobaz(mtcars))
+> vec_ptype2_fallback(foobar(mtcars), foobaz(mtcars))
 Warning: Can't combine <vctrs_foobar> and <vctrs_foobaz>.
 i Convert all inputs to the same class to avoid this warning.
 i See <https://vctrs.r-lib.org/reference/faq-warning-convert-inputs.html>.
@@ -86,4 +86,8 @@ i Falling back to <data.frame>.
 
  [1] mpg  cyl  disp hp   drat wt   qsec vs   am   gear carb
 <0 rows> (or 0-length row.names)
+
+> # For reference, error when fallback is disabled
+> vec_ptype2(foobar(mtcars), foobaz(mtcars))
+Error: Can't combine <vctrs_foobar> and <vctrs_foobaz>.
 

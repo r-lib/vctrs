@@ -408,7 +408,7 @@ SEXP vec_ptype2(SEXP x, SEXP y,
                 struct vctrs_arg* x_arg,
                 struct vctrs_arg* y_arg,
                 int* left) {
-  return vec_ptype2_params(x, y, true, x_arg, y_arg, left);
+  return vec_ptype2_params(x, y, false, x_arg, y_arg, left);
 }
 
 SEXP vec_ptype2(SEXP x,
