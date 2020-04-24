@@ -96,8 +96,9 @@ vec_default_ptype2 <- function(x, y, ..., x_arg = "", y_arg = "") {
   }
 
   # The from-dispatch parameter is set only when called from our S3
-  # dispatch mechanism, when there is no methods. It indicates whether
-  # the error message should provide advice about diverging attributes.
+  # dispatch mechanism, when no method is found to dispatch to. It
+  # indicates whether the error message should provide advice about
+  # diverging attributes.
   stop_incompatible_type(
     x,
     y,
