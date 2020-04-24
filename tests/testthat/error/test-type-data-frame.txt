@@ -50,3 +50,20 @@ i Convert all inputs to the same class to avoid this warning.
 i See <https://vctrs.r-lib.org/reference/faq-warning-convert-inputs.html>.
 i Falling back to <data.frame>.
 
+> invisible(vec_cbind(foo, data.frame(x = 1)))
+Warning: Can't combine <foo> and <data.frame>.
+i Convert all inputs to the same class to avoid this warning.
+i See <https://vctrs.r-lib.org/reference/faq-warning-convert-inputs.html>.
+i Falling back to <data.frame>.
+
+> invisible(vec_cbind(foo, data.frame(x = 1), bar))
+Warning: Can't combine <foo> and <data.frame>.
+i Convert all inputs to the same class to avoid this warning.
+i See <https://vctrs.r-lib.org/reference/faq-warning-convert-inputs.html>.
+i Falling back to <data.frame>.
+
+Warning: Can't combine <data.frame> and <bar>.
+i Convert all inputs to the same class to avoid this warning.
+i See <https://vctrs.r-lib.org/reference/faq-warning-convert-inputs.html>.
+i Falling back to <data.frame>.
+

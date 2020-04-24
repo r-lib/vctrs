@@ -100,7 +100,11 @@ test_that("combining data frames with foreign classes uses fallback", {
     baz <- structure(mtcars[7:9], class = c("baz", "data.frame"))
     expect_warning(vec_ptype_common_fallback(foo, bar, baz))
     expect_warning(vec_ptype_common_fallback(foo, baz, bar, baz, foo, bar))
+
     expect_df_fallback(invisible(vec_rbind(foo, data.frame(), foo)))
+
+    expect_df_fallback(invisible(vec_cbind(foo, data.frame(x = 1))))
+    expect_df_fallback(invisible(vec_cbind(foo, data.frame(x = 1), bar)))
   })
 })
 
@@ -398,7 +402,11 @@ test_that("data frame output is informative", {
     baz <- structure(mtcars[7:9], class = c("baz", "data.frame"))
     vec_ptype_common_fallback(foo, bar, baz)
     vec_ptype_common_fallback(foo, baz, bar, baz, foo, bar)
+
     invisible(vec_rbind(foo, data.frame(), foo))
     invisible(vec_rbind(foo, baz, bar, baz, foo, bar))
+
+    invisible(vec_cbind(foo, data.frame(x = 1)))
+    invisible(vec_cbind(foo, data.frame(x = 1), bar))
   })
 })
