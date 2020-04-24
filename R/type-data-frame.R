@@ -153,10 +153,10 @@ is_df_subclass <- function(x) {
 is_df_fallback <- function(x) {
   inherits(x, "vctrs:::df_fallback")
 }
-new_fallback_df <- function(x, known_classes, n = nrow(x)) {
+new_fallback_df <- function(x, known_classes, size = nrow(x)) {
   new_data_frame(
     x,
-    .size = n,
+    .size = size,
     known_classes = known_classes,
     .class = "vctrs:::df_fallback"
   )
