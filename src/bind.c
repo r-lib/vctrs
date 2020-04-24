@@ -200,10 +200,16 @@ static SEXP vec_rbind(SEXP xs, SEXP ptype, SEXP names_to, struct name_repair_opt
   }
 
   if (has_rownames) {
-    rownames = vec_as_names(rownames, default_unique_repair_opts);
+    const struct name_repair_opts rownames_repair = {
+      .type = name_repair_unique,
+      .fn = R_NilValue,
+      .quiet = true
+    };
+    rownames = vec_as_names(rownames, &rownames_repair);
     REPROTECT(rownames, rownames_pi);
     Rf_setAttrib(out, R_RowNamesSymbol, rownames);
   }
+
   if (has_names_to) {
     out = df_poke(out, names_to_loc, names_to_col);
   }
