@@ -1,6 +1,7 @@
 #include "vctrs.h"
 #include "cast.h"
 #include "dim.h"
+#include "ptype2.h"
 #include "ptype-common.h"
 #include "type-data-frame.h"
 #include "utils.h"
@@ -189,82 +190,6 @@ SEXP vec_cast_dispatch_s3(const struct cast_opts* opts) {
 
   UNPROTECT(3);
   return out;
-}
-
-
-struct vec_is_coercible_data {
-  SEXP x;
-  SEXP y;
-  struct vctrs_arg* x_arg;
-  struct vctrs_arg* y_arg;
-  int* dir;
-  bool df_fallback;
-};
-
-static void vec_is_coercible_cb(void* data_) {
-  struct vec_is_coercible_data* data = (struct vec_is_coercible_data*) data_;
-  vec_ptype2_params(data->x,
-                    data->y,
-                    data->df_fallback,
-                    data->x_arg,
-                    data->y_arg,
-                    data->dir);
-}
-
-static void vec_is_coercible_e(SEXP x,
-                               SEXP y,
-                               struct vctrs_arg* x_arg,
-                               struct vctrs_arg* y_arg,
-                               int* dir,
-                               bool df_fallback,
-                               ERR* err) {
-  struct vec_is_coercible_data data = {
-    .x = x,
-    .y = y,
-    .x_arg = x_arg,
-    .y_arg = y_arg,
-    .dir = dir,
-    .df_fallback = df_fallback
-  };
-
-  *err = r_try_catch(&vec_is_coercible_cb,
-                     &data,
-                     syms_vctrs_error_incompatible_type,
-                     NULL,
-                     NULL);
-}
-
-// [[ include("vctrs.h") ]]
-bool vec_is_coercible(SEXP x,
-                      SEXP y,
-                      struct vctrs_arg* x_arg,
-                      struct vctrs_arg* y_arg,
-                      int* dir) {
-  ERR err = NULL;
-  vec_is_coercible_e(x, y, x_arg, y_arg, dir, false, &err);
-  return !err;
-}
-
-static
-bool vec_is_coercible_params(SEXP x,
-                             SEXP y,
-                             struct vctrs_arg* x_arg,
-                             struct vctrs_arg* y_arg,
-                             int* dir,
-                             bool df_fallback) {
-  ERR err = NULL;
-  vec_is_coercible_e(x, y, x_arg, y_arg, dir, df_fallback, &err);
-  return !err;
-}
-
-// [[ register() ]]
-SEXP vctrs_is_coercible(SEXP x, SEXP y, SEXP x_arg_, SEXP y_arg_, SEXP df_fallback_) {
-  struct vctrs_arg x_arg = vec_as_arg(x_arg_);
-  struct vctrs_arg y_arg = vec_as_arg(y_arg_);;
-  bool df_fallback = r_lgl_get(df_fallback_, 0);
-
-  int dir = 0;
-  return r_lgl(vec_is_coercible_params(x, y, &x_arg, &y_arg, &dir, df_fallback));
 }
 
 struct cast_err_data {

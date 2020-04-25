@@ -99,7 +99,7 @@ vec_ptype2.data.frame.data.frame <- function(x, y, ...) {
 }
 # Returns a `data.frame` no matter the input classes
 df_ptype2 <- function(x, y, ..., x_arg = "", y_arg = "") {
-  .Call(vctrs_df_ptype2, x, y, x_arg, y_arg)
+  .Call(vctrs_df_ptype2, x, y, x_arg, y_arg, df_fallback = FALSE)
 }
 df_ptype2_params <- function(x,
                              y,
@@ -107,7 +107,7 @@ df_ptype2_params <- function(x,
                              x_arg = "",
                              y_arg = "",
                              df_fallback = FALSE) {
-  .Call(vctrs_df_ptype2_params, x, y, x_arg, y_arg, df_fallback)
+  .Call(vctrs_df_ptype2, x, y, x_arg, y_arg, df_fallback = df_fallback)
 }
 
 vec_ptype2_df_fallback_normalise <- function(x, y) {

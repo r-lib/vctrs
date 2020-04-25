@@ -1,4 +1,5 @@
 #include "vctrs.h"
+#include "ptype2.h"
 #include "subscript.h"
 #include "utils.h"
 #include "dim.h"
@@ -107,21 +108,31 @@ static SEXP obj_cast_subscript(SEXP subscript,
                                const struct subscript_opts* opts,
                                ERR* err) {
   int dir = 0;
-  struct vctrs_arg* arg = opts->subscript_arg;
 
-  // FIXME: No need for is-coercible check once vec-cast is restricted
-  // to coercible casts
+  struct ptype2_opts ptype2_opts = {
+    .x = subscript,
+    .y = R_NilValue,
+    .x_arg = opts->subscript_arg
+  };
+  struct cast_opts cast_opts = {
+    .x = subscript,
+    .to = R_NilValue,
+    .x_arg = opts->subscript_arg
+  };
 
-  if (vec_is_coercible(subscript, vctrs_shared_empty_lgl, arg, NULL, &dir)) {
-    return vec_cast(subscript, vctrs_shared_empty_lgl, arg, NULL);
+  ptype2_opts.y = cast_opts.to = vctrs_shared_empty_lgl;
+  if (vec_is_coercible(&ptype2_opts, &dir)) {
+    return vec_cast_opts(&cast_opts);
   }
 
-  if (vec_is_coercible(subscript, vctrs_shared_empty_int, arg, NULL, &dir)) {
-    return vec_cast(subscript, vctrs_shared_empty_int, arg, NULL);
+  ptype2_opts.y = cast_opts.to = vctrs_shared_empty_int;
+  if (vec_is_coercible(&ptype2_opts, &dir)) {
+    return vec_cast_opts(&cast_opts);
   }
 
-  if (vec_is_coercible(subscript, vctrs_shared_empty_chr, arg, NULL, &dir)) {
-    return vec_cast(subscript, vctrs_shared_empty_chr, arg, NULL);
+  ptype2_opts.y = cast_opts.to = vctrs_shared_empty_chr;
+  if (vec_is_coercible(&ptype2_opts, &dir)) {
+    return vec_cast_opts(&cast_opts);
   }
 
   *err = new_error_subscript_type(subscript, opts, R_NilValue, R_NilValue);
