@@ -1518,7 +1518,7 @@ SEXP r_new_shared_character(const char* name) {
 }
 
 void c_print_backtrace() {
-#if defined(__GNUC__)  || defined(__clang__)
+#if defined(VCTRS_DEBUG)
 #include <execinfo.h>
   void *buffer[500];
   int nptrs = backtrace(buffer, 100);
