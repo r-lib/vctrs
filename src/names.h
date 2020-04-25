@@ -16,9 +16,11 @@ struct name_repair_opts {
   bool quiet;
 };
 
-extern struct name_repair_opts default_unique_repair_opts_obj;
-static const struct name_repair_opts* const default_unique_repair_opts =
-  &default_unique_repair_opts_obj;
+extern struct name_repair_opts unique_repair_default_opts;
+extern struct name_repair_opts unique_repair_silent_opts;
+
+static const struct name_repair_opts* p_unique_repair_default_opts = &unique_repair_default_opts;
+static const struct name_repair_opts* p_unique_repair_silent_opts = &unique_repair_silent_opts;
 
 #define PROTECT_NAME_REPAIR_OPTS(opts) PROTECT((opts)->fn)
 

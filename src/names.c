@@ -722,8 +722,8 @@ SEXP vec_set_df_rownames(SEXP x, SEXP names) {
     return x;
   }
 
-  // Repair row names verbosely
-  names = PROTECT(vec_as_names(names, default_unique_repair_opts));
+  // Repair row names silently
+  names = PROTECT(vec_as_names(names, p_unique_repair_silent_opts));
 
   x = PROTECT(r_maybe_duplicate(x));
   Rf_setAttrib(x, R_RowNamesSymbol, names);
@@ -874,7 +874,8 @@ SEXP vctrs_validate_minimal_names(SEXP names, SEXP n_) {
 }
 
 
-struct name_repair_opts default_unique_repair_opts_obj;
+struct name_repair_opts unique_repair_default_opts;
+struct name_repair_opts unique_repair_silent_opts;
 
 void vctrs_init_names(SEXP ns) {
   syms_set_rownames_fallback = Rf_install("set_rownames_fallback");
@@ -891,7 +892,11 @@ void vctrs_init_names(SEXP ns) {
   fns_glue_as_name_spec = r_env_get(ns, syms_glue_as_name_spec);
   syms_internal_spec = Rf_install("_spec");
 
-  default_unique_repair_opts_obj.type = name_repair_unique;
-  default_unique_repair_opts_obj.fn = R_NilValue;
-  default_unique_repair_opts_obj.quiet = false;
+  unique_repair_default_opts.type = name_repair_unique;
+  unique_repair_default_opts.fn = R_NilValue;
+  unique_repair_default_opts.quiet = false;
+
+  unique_repair_silent_opts.type = name_repair_unique;
+  unique_repair_silent_opts.fn = R_NilValue;
+  unique_repair_silent_opts.quiet = true;
 }
