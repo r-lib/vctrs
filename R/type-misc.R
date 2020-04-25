@@ -10,6 +10,8 @@ vec_proxy.numeric_version <- function(x, ...) x
 delayedAssign("as.data.table", {
   if (is_installed("data.table")) {
     env_get(ns_env("data.table"), "as.data.table")
+  } else {
+    function(...) abort("`data.table` must be installed.")
   }
 })
 
