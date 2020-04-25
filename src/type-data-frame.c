@@ -287,11 +287,11 @@ SEXP vctrs_df_ptype2(SEXP x, SEXP y, SEXP x_arg, SEXP y_arg) {
   return df_ptype2(x, y, &x_arg_, &y_arg_);
 }
 
-static SEXP df_ptype2_impl(SEXP x, SEXP y, SEXP x_names, SEXP y_names,
-                           struct vctrs_arg* x_arg, struct vctrs_arg* y_arg);
+static SEXP df_ptype2_match(SEXP x, SEXP y, SEXP x_names, SEXP y_names,
+                            struct vctrs_arg* x_arg, struct vctrs_arg* y_arg);
 
-static SEXP df_ptype2_sequential(SEXP x, SEXP y, SEXP names,
-                                 struct vctrs_arg* x_arg, struct vctrs_arg* y_arg);
+static SEXP df_ptype2_loop(SEXP x, SEXP y, SEXP names,
+                           struct vctrs_arg* x_arg, struct vctrs_arg* y_arg);
 
 // [[ include("vctrs.h") ]]
 SEXP df_ptype2(SEXP x, SEXP y, struct vctrs_arg* x_arg, struct vctrs_arg* y_arg) {
@@ -301,17 +301,17 @@ SEXP df_ptype2(SEXP x, SEXP y, struct vctrs_arg* x_arg, struct vctrs_arg* y_arg)
   SEXP out;
 
   if (equal_object(x_names, y_names)) {
-    out = df_ptype2_sequential(x, y, x_names, x_arg, y_arg);
+    out = df_ptype2_loop(x, y, x_names, x_arg, y_arg);
   } else {
-    out = df_ptype2_impl(x, y, x_names, y_names, x_arg, y_arg);
+    out = df_ptype2_match(x, y, x_names, y_names, x_arg, y_arg);
   }
 
   UNPROTECT(2);
   return out;
 }
 
-SEXP df_ptype2_impl(SEXP x, SEXP y, SEXP x_names, SEXP y_names,
-                    struct vctrs_arg* x_arg, struct vctrs_arg* y_arg) {
+SEXP df_ptype2_match(SEXP x, SEXP y, SEXP x_names, SEXP y_names,
+                     struct vctrs_arg* x_arg, struct vctrs_arg* y_arg) {
   SEXP x_dups_pos = PROTECT(vec_match(x_names, y_names));
   SEXP y_dups_pos = PROTECT(vec_match(y_names, x_names));
 
@@ -384,8 +384,8 @@ SEXP df_ptype2_impl(SEXP x, SEXP y, SEXP x_names, SEXP y_names,
   return out;
 }
 
-SEXP df_ptype2_sequential(SEXP x, SEXP y, SEXP names,
-                          struct vctrs_arg* x_arg, struct vctrs_arg* y_arg) {
+SEXP df_ptype2_loop(SEXP x, SEXP y, SEXP names,
+                    struct vctrs_arg* x_arg, struct vctrs_arg* y_arg) {
   R_len_t len = Rf_length(names);
 
   SEXP out = PROTECT(Rf_allocVector(VECSXP, len));
