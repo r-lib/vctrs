@@ -68,7 +68,6 @@ extern SEXP vec_names(SEXP);
 extern SEXP vctrs_is_unique_names(SEXP);
 extern SEXP vctrs_as_unique_names(SEXP, SEXP);
 extern SEXP vec_set_names(SEXP, SEXP);
-extern SEXP vctrs_df_cast(SEXP, SEXP, SEXP, SEXP);
 extern SEXP vctrs_df_cast_params(SEXP, SEXP, SEXP, SEXP, SEXP);
 extern SEXP vctrs_df_ptype2(SEXP, SEXP, SEXP, SEXP);
 extern SEXP vctrs_df_ptype2_params(SEXP, SEXP, SEXP, SEXP, SEXP);
@@ -206,7 +205,6 @@ static const R_CallMethodDef CallEntries[] = {
   {"vctrs_is_unique_names",            (DL_FUNC) &vctrs_is_unique_names, 1},
   {"vctrs_as_unique_names",            (DL_FUNC) &vctrs_as_unique_names, 2},
   {"vctrs_set_names",                  (DL_FUNC) &vec_set_names, 2},
-  {"vctrs_df_cast",                    (DL_FUNC) &vctrs_df_cast, 4},
   {"vctrs_df_cast_params",             (DL_FUNC) &vctrs_df_cast_params, 5},
   {"vctrs_df_ptype2",                  (DL_FUNC) &vctrs_df_ptype2, 4},
   {"vctrs_df_ptype2_params",           (DL_FUNC) &vctrs_df_ptype2_params, 5},

@@ -174,12 +174,12 @@ static SEXP dbl_cast_subscript(SEXP subscript,
 static SEXP dbl_cast_subscript_fallback(SEXP subscript,
                                         const struct subscript_opts* opts,
                                         ERR* err) {
-
-  SEXP out = PROTECT(vec_cast_e(subscript,
-                                vctrs_shared_empty_int,
-                                opts->subscript_arg,
-                                NULL,
-                                err));
+  const struct cast_opts cast_opts = {
+    .x = subscript,
+    .to = vctrs_shared_empty_int,
+    opts->subscript_arg
+  };
+  SEXP out = PROTECT(vec_cast_e(&cast_opts, err));
   if (*err) {
     SEXP err_obj = PROTECT(*err);
 

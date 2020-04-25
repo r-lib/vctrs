@@ -3,13 +3,15 @@
 #include "utils.h"
 
 // [[ include("cast.h") ]]
-SEXP vec_cast_dispatch(SEXP x,
-                       SEXP to,
+SEXP vec_cast_dispatch(const struct cast_opts* opts,
                        enum vctrs_type x_type,
                        enum vctrs_type to_type,
-                       struct vctrs_arg* x_arg,
-                       struct vctrs_arg* to_arg,
                        bool* lossy) {
+  SEXP x = opts->x;
+  SEXP to = opts->to;
+  struct vctrs_arg* x_arg = opts->x_arg;
+  struct vctrs_arg* to_arg = opts->to_arg;
+
   int dir = 0;
   enum vctrs_type2_s3 type2_s3 = vec_typeof2_s3_impl(x, to, x_type, to_type, &dir);
 
@@ -76,7 +78,7 @@ SEXP vec_cast_dispatch(SEXP x,
     if (dir == 0) {
       return tib_cast(x, to, x_arg, to_arg);
     } else {
-      return df_cast(x, to, x_arg, to_arg);
+      return df_cast_opts(opts);
     }
 
   case vctrs_type2_s3_bare_tibble_bare_tibble:

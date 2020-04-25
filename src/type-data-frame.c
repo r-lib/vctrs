@@ -450,19 +450,20 @@ SEXP df_ptype2_loop(SEXP x,
 }
 
 // [[ register() ]]
-SEXP vctrs_df_cast(SEXP x, SEXP to, SEXP x_arg_, SEXP to_arg_) {
-  struct vctrs_arg x_arg = vec_as_arg(x_arg_);
-  struct vctrs_arg to_arg = vec_as_arg(to_arg_);;
-
-  return df_cast(x, to, &x_arg, &to_arg);
-}
-// [[ register() ]]
 SEXP vctrs_df_cast_params(SEXP x, SEXP to, SEXP x_arg_, SEXP to_arg_, SEXP df_fallback_) {
   struct vctrs_arg x_arg = vec_as_arg(x_arg_);
   struct vctrs_arg to_arg = vec_as_arg(to_arg_);;
   bool df_fallback = r_lgl_get(df_fallback_, 0);
 
-  return df_cast_params(x, to, &x_arg, &to_arg, df_fallback);
+  const struct cast_opts opts = {
+    .x = x,
+    .to = to,
+    .x_arg = &x_arg,
+    .to_arg = &to_arg,
+    .df_fallback = df_fallback
+  };
+
+  return df_cast_opts(&opts);
 }
 
 // Take all columns of `to` and preserve the order. Common columns are
@@ -470,11 +471,10 @@ SEXP vctrs_df_cast_params(SEXP x, SEXP to, SEXP x_arg_, SEXP to_arg_, SEXP df_fa
 // cause a lossy cast. Extra `to` columns are filled with missing
 // values.
 // [[ include("cast.h") ]]
-SEXP df_cast_params(SEXP x,
-                    SEXP to,
-                    struct vctrs_arg* x_arg,
-                    struct vctrs_arg* to_arg,
-                    bool df_fallback) {
+SEXP df_cast_opts(const struct cast_opts* opts) {
+  SEXP x = opts->x;
+  SEXP to = opts->to;
+
   SEXP x_names = PROTECT(r_names(x));
   SEXP to_names = PROTECT(r_names(to));
 
@@ -500,16 +500,16 @@ SEXP df_cast_params(SEXP x,
       col = vec_init(VECTOR_ELT(to, i), size);
     } else {
       --pos; // 1-based index
-      struct arg_data_index x_arg_data = new_index_arg_data(r_chr_get_c_string(x_names, pos), x_arg);
-      struct arg_data_index to_arg_data = new_index_arg_data(r_chr_get_c_string(to_names, i), to_arg);
-      struct vctrs_arg named_x_arg = new_index_arg(x_arg, &x_arg_data);
-      struct vctrs_arg named_to_arg = new_index_arg(to_arg, &to_arg_data);
+      struct arg_data_index x_arg_data = new_index_arg_data(r_chr_get_c_string(x_names, pos), opts->x_arg);
+      struct arg_data_index to_arg_data = new_index_arg_data(r_chr_get_c_string(to_names, i), opts->to_arg);
+      struct vctrs_arg named_x_arg = new_index_arg(opts->x_arg, &x_arg_data);
+      struct vctrs_arg named_to_arg = new_index_arg(opts->to_arg, &to_arg_data);
       ++common_len;
       col = vec_cast_params(VECTOR_ELT(x, pos),
                             VECTOR_ELT(to, i),
                             &named_x_arg,
                             &named_to_arg,
-                            df_fallback);
+                            opts->df_fallback);
     }
 
     SET_VECTOR_ELT(out, i, col);

@@ -360,7 +360,6 @@ SEXP vec_restore_default(SEXP x, SEXP to);
 R_len_t vec_size(SEXP x);
 R_len_t vec_size_common(SEXP xs, R_len_t absent);
 SEXP vec_cast_common(SEXP xs, SEXP to);
-SEXP vec_cast_e(SEXP x, SEXP to, struct vctrs_arg* x_arg, struct vctrs_arg* to_arg, ERR* err);
 bool vec_is_coercible(SEXP x, SEXP to, struct vctrs_arg* x_arg, struct vctrs_arg* to_arg, int* dir);
 SEXP vec_slice(SEXP x, SEXP subscript);
 SEXP vec_slice_impl(SEXP x, SEXP subscript);
@@ -384,7 +383,13 @@ SEXP vec_match_params(SEXP needles, SEXP haystack, bool na_equal,
 
 #include "cast.h"
 static inline SEXP vec_cast(SEXP x, SEXP to, struct vctrs_arg* x_arg, struct vctrs_arg* to_arg) {
-  return vec_cast_params(x, to, x_arg, to_arg, false);
+  struct cast_opts opts = {
+    .x = x,
+    .to = to,
+    .x_arg = x_arg,
+    .to_arg = to_arg
+  };
+  return vec_cast_opts(&opts);
 }
 
 static inline SEXP vec_match(SEXP needles, SEXP haystack) {
