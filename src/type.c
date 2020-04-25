@@ -1,6 +1,7 @@
 #include "vctrs.h"
 #include "utils.h"
 #include "ptype-common.h"
+#include "ptype2.h"
 #include "arg-counter.h"
 
 // Initialised at load time
@@ -209,12 +210,15 @@ static SEXP vctrs_type2_common(SEXP current,
   int left = -1;
   bool df_fallback = *((bool*) data);
 
-  current = vec_ptype2_params(current,
-                              next,
-                              df_fallback,
-                              counters->curr_arg,
-                              counters->next_arg,
-                              &left);
+  const struct ptype2_opts opts = {
+    .x = current,
+    .y = next,
+    .x_arg = counters->curr_arg,
+    .y_arg = counters->next_arg,
+    .df_fallback = df_fallback
+  };
+
+  current = vec_ptype2_opts(&opts, &left);
 
   // Update current if RHS is the common type. Otherwise the previous
   // counter stays in effect.

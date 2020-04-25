@@ -61,13 +61,11 @@
 |vlad            |0.2.0   |1     |        |     |
 |vroom           |1.2.0   |1     |        |     |
 
-## New problems (5)
+## New problems (3)
 
-|package                                  |version |error  |warning |note |
-|:----------------------------------------|:-------|:------|:-------|:----|
-|[anomalize](problems.md#anomalize)       |0.2.0   |__+2__ |        |     |
-|[BiocPkgTools](problems.md#biocpkgtools) |1.4.6   |__+1__ |        |1    |
-|[cutpointr](problems.md#cutpointr)       |1.0.2   |__+1__ |        |     |
-|[simTool](problems.md#simtool)           |1.1.5   |__+1__ |        |     |
-|[tidyjson](problems.md#tidyjson)         |0.2.4   |__+1__ |        |     |
+|package                            |version |error  |warning |note |
+|:----------------------------------|:-------|:------|:-------|:----|
+|[cutpointr](problems.md#cutpointr) |1.0.2   |__+1__ |        |     |
+|[simTool](problems.md#simtool)     |1.1.5   |__+1__ |        |     |
+|[tidyjson](problems.md#tidyjson)   |0.2.4   |__+1__ |        |     |
 

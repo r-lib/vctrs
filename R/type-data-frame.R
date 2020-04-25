@@ -74,10 +74,11 @@ vec_proxy_compare.data.frame <- function(x, ..., relax = FALSE) {
   new_data_frame(out, nrow(x))
 }
 
-df_is_coercible <- function(x, y) {
+df_is_coercible <- function(x, y, df_fallback = FALSE) {
   vec_is_coercible(
     new_data_frame(x),
-    new_data_frame(y)
+    new_data_frame(y),
+    df_fallback = df_fallback
   )
 }
 
@@ -98,14 +99,22 @@ vec_ptype2.data.frame.data.frame <- function(x, y, ...) {
 }
 # Returns a `data.frame` no matter the input classes
 df_ptype2 <- function(x, y, ..., x_arg = "", y_arg = "") {
-  .Call(vctrs_df_ptype2, x, y, x_arg, y_arg)
+  .Call(vctrs_df_ptype2, x, y, x_arg, y_arg, df_fallback = FALSE)
+}
+df_ptype2_params <- function(x,
+                             y,
+                             ...,
+                             x_arg = "",
+                             y_arg = "",
+                             df_fallback = FALSE) {
+  .Call(vctrs_df_ptype2, x, y, x_arg, y_arg, df_fallback = df_fallback)
 }
 
 vec_ptype2_df_fallback_normalise <- function(x, y) {
   x_orig <- x
   y_orig <- y
 
-  ptype <- df_ptype2(x, y)
+  ptype <- df_ptype2_params(x, y, df_fallback = TRUE)
 
   x <- x[0, , drop = FALSE]
   y <- y[0, , drop = FALSE]
@@ -129,7 +138,7 @@ vec_ptype2_df_fallback_normalise <- function(x, y) {
 }
 vec_cast_df_fallback_normalise <- function(x, to) {
   orig <- x
-  cast <- df_cast(x, to)
+  cast <- df_cast_params(x, to, df_fallback = TRUE)
 
   # Seq-assign should be more widely implemented than empty-assign?
   x[seq_along(to)] <- cast
@@ -145,13 +154,20 @@ vec_cast_df_fallback_normalise <- function(x, to) {
   x
 }
 
+df_needs_normalisation <- function(x, y) {
+  is.data.frame(x) &&
+    is.data.frame(y) &&
+    df_is_coercible(x, y, df_fallback = TRUE)
+}
+
 # Fallback for data frame subclasses (#981)
 vec_ptype2_df_fallback <- function(x, y, x_arg = "", y_arg = "") {
   seen_tibble <- inherits(x, "tbl_df") || inherits(y, "tbl_df")
 
-  ptype <- vec_ptype2(
+  ptype <- vec_ptype2_params(
     new_data_frame(x),
-    new_data_frame(y)
+    new_data_frame(y),
+    df_fallback = TRUE
   )
 
   classes <- NULL
@@ -251,7 +267,10 @@ vec_cast.data.frame.data.frame <- function(x, to, ..., x_arg = "", to_arg = "") 
   df_cast(x, to, x_arg = x_arg, to_arg = to_arg)
 }
 df_cast <- function(x, to, ..., x_arg = "", to_arg = "") {
-  .Call(vctrs_df_cast, x, to, x_arg, to_arg)
+  .Call(vctrs_df_cast_params, x, to, x_arg, to_arg, FALSE)
+}
+df_cast_params <- function(x, to, ..., x_arg = "", to_arg = "", df_fallback = FALSE) {
+  .Call(vctrs_df_cast_params, x, to, x_arg, to_arg, df_fallback)
 }
 
 #' @export

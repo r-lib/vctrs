@@ -6,7 +6,7 @@ static enum vctrs_type2_s3 vec_typeof2_s3_impl2(SEXP x,
                                                 enum vctrs_type type_y,
                                                 int* left);
 
-// [[ include("vctrs.h") ]]
+// [[ include("ptype2.h") ]]
 enum vctrs_type2_s3 vec_typeof2_s3_impl(SEXP x,
                                         SEXP y,
                                         enum vctrs_type type_x,

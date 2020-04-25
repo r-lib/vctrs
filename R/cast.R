@@ -164,7 +164,7 @@ vec_default_cast <- function(x, to, ..., x_arg = "", to_arg = "") {
 
   # If both data frames, first find the `to` type of columns before
   # the same-type fallback
-  if (is.data.frame(x) && is.data.frame(to) && df_is_coercible(x, to)) {
+  if (df_needs_normalisation(x, to)) {
     x <- vec_cast_df_fallback_normalise(x, to)
   }
 
@@ -176,7 +176,7 @@ vec_default_cast <- function(x, to, ..., x_arg = "", to_arg = "") {
     if (inherits(to, "tbl_df")) {
       out <- tib_cast(x, to, ..., x_arg = x_arg, to_arg = to_arg)
     } else {
-      out <- df_cast(x, to, ..., x_arg = x_arg, to_arg = to_arg)
+      out <- df_cast_params(x, to, ..., x_arg = x_arg, to_arg = to_arg, df_fallback = TRUE)
     }
     return(out)
   }

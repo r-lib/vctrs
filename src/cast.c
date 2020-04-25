@@ -1,23 +1,18 @@
 #include "vctrs.h"
 #include "cast.h"
 #include "dim.h"
+#include "ptype2.h"
 #include "ptype-common.h"
 #include "type-data-frame.h"
 #include "utils.h"
 
-static SEXP vec_cast_switch_native(SEXP x,
-                                   SEXP to,
-                                   enum vctrs_type x_type,
-                                   enum vctrs_type to_type,
-                                   struct vctrs_arg* x_arg,
-                                   struct vctrs_arg* to_arg,
-                                   bool* lossy);
+static
+SEXP vec_cast_switch_native(const struct cast_opts* opts,
+                            enum vctrs_type x_type,
+                            enum vctrs_type to_type,
+                            bool* lossy);
 
-static SEXP vec_cast_dispatch_s3(SEXP x,
-                                 SEXP to,
-                                 struct vctrs_arg* x_arg,
-                                 struct vctrs_arg* to_arg,
-                                 bool df_fallback);
+static SEXP vec_cast_dispatch_s3(const struct cast_opts* opts);
 
 // [[ register() ]]
 SEXP vctrs_cast(SEXP x, SEXP to, SEXP x_arg_, SEXP to_arg_) {
@@ -28,11 +23,12 @@ SEXP vctrs_cast(SEXP x, SEXP to, SEXP x_arg_, SEXP to_arg_) {
 }
 
 // [[ include("cast.h") ]]
-SEXP vec_cast_params(SEXP x,
-                     SEXP to,
-                     struct vctrs_arg* x_arg,
-                     struct vctrs_arg* to_arg,
-                     bool df_fallback) {
+SEXP vec_cast_opts(const struct cast_opts* opts) {
+  SEXP x = opts->x;
+  SEXP to = opts->to;
+  struct vctrs_arg* x_arg = opts->x_arg;
+  struct vctrs_arg* to_arg = opts->to_arg;
+
   if (x == R_NilValue) {
     if (!vec_is_partial(to)) {
       vec_assert(to, to_arg);
@@ -61,32 +57,32 @@ SEXP vec_cast_params(SEXP x,
   }
 
   if (has_dim(x) || has_dim(to)) {
-    return vec_cast_dispatch_s3(x, to, x_arg, to_arg, df_fallback);
+    return vec_cast_dispatch_s3(opts);
   }
 
   SEXP out = R_NilValue;
   bool lossy = false;
 
   if (to_type == vctrs_type_s3 || x_type == vctrs_type_s3) {
-    out = vec_cast_dispatch(x, to, x_type, to_type, x_arg, to_arg, &lossy);
+    out = vec_cast_dispatch(opts, x_type, to_type, &lossy);
   } else {
-    out = vec_cast_switch_native(x, to, x_type, to_type, x_arg, to_arg, &lossy);
+    out = vec_cast_switch_native(opts, x_type, to_type, &lossy);
   }
 
   if (lossy || out == R_NilValue) {
-    return vec_cast_dispatch_s3(x, to, x_arg, to_arg, df_fallback);
+    return vec_cast_dispatch_s3(opts);
   } else {
     return out;
   }
 }
 
-static SEXP vec_cast_switch_native(SEXP x,
-                                   SEXP to,
-                                   enum vctrs_type x_type,
-                                   enum vctrs_type to_type,
-                                   struct vctrs_arg* x_arg,
-                                   struct vctrs_arg* to_arg,
-                                   bool* lossy) {
+static
+SEXP vec_cast_switch_native(const struct cast_opts* opts,
+                            enum vctrs_type x_type,
+                            enum vctrs_type to_type,
+                            bool* lossy) {
+  SEXP x = opts->x;
+
   int dir = 0;
   enum vctrs_type2 type2 = vec_typeof2_impl(x_type, to_type, &dir);
 
@@ -120,7 +116,7 @@ static SEXP vec_cast_switch_native(SEXP x,
     }
 
   case vctrs_type2_dataframe_dataframe:
-    return df_cast(x, to, x_arg, to_arg);
+    return df_cast_opts(opts);
 
   default:
     break;
@@ -147,13 +143,12 @@ static inline SEXP vec_cast_default(SEXP x,
                           vctrs_ns_env);
 }
 
-static SEXP vec_cast_dispatch_s3(SEXP x,
-                                 SEXP to,
-                                 struct vctrs_arg* x_arg,
-                                 struct vctrs_arg* to_arg,
-                                 bool df_fallback) {
-  SEXP x_arg_obj = PROTECT(vctrs_arg(x_arg));
-  SEXP to_arg_obj = PROTECT(vctrs_arg(to_arg));
+static
+SEXP vec_cast_dispatch_s3(const struct cast_opts* opts) {
+  SEXP x = opts->x;
+  SEXP to = opts->to;
+  SEXP x_arg_obj = PROTECT(vctrs_arg(opts->x_arg));
+  SEXP to_arg_obj = PROTECT(vctrs_arg(opts->to_arg));
 
   SEXP method_sym = R_NilValue;
   SEXP method = s3_find_method_xy("vec_cast", to, x, vctrs_method_table, &method_sym);
@@ -182,7 +177,7 @@ static SEXP vec_cast_dispatch_s3(SEXP x,
   PROTECT(method);
 
   if (method == R_NilValue) {
-    SEXP out = vec_cast_default(x, to, x_arg_obj, to_arg_obj, df_fallback);
+    SEXP out = vec_cast_default(x, to, x_arg_obj, to_arg_obj, opts->df_fallback);
     UNPROTECT(3);
     return out;
   }
@@ -197,85 +192,21 @@ static SEXP vec_cast_dispatch_s3(SEXP x,
   return out;
 }
 
-
-struct vec_is_coercible_data {
-  SEXP x;
-  SEXP y;
-  struct vctrs_arg* x_arg;
-  struct vctrs_arg* y_arg;
-  int* dir;
-};
-
-static void vec_is_coercible_cb(void* data_) {
-  struct vec_is_coercible_data* data = (struct vec_is_coercible_data*) data_;
-  vec_ptype2(data->x, data->y, data->x_arg, data->y_arg, data->dir);
-}
-
-static void vec_is_coercible_e(SEXP x,
-                               SEXP y,
-                               struct vctrs_arg* x_arg,
-                               struct vctrs_arg* y_arg,
-                               int* dir,
-                               ERR* err) {
-  struct vec_is_coercible_data data = {
-    .x = x,
-    .y = y,
-    .x_arg = x_arg,
-    .y_arg = y_arg,
-    .dir = dir
-  };
-
-  *err = r_try_catch(&vec_is_coercible_cb,
-                     &data,
-                     syms_vctrs_error_incompatible_type,
-                     NULL,
-                     NULL);
-}
-
-// [[ include("vctrs.h") ]]
-bool vec_is_coercible(SEXP x,
-                      SEXP y,
-                      struct vctrs_arg* x_arg,
-                      struct vctrs_arg* y_arg,
-                      int* dir) {
-  ERR err = NULL;
-  vec_is_coercible_e(x, y, x_arg, y_arg, dir, &err);
-  return !err;
-}
-
-// [[ register() ]]
-SEXP vctrs_is_coercible(SEXP x, SEXP y, SEXP x_arg_, SEXP y_arg_) {
-  struct vctrs_arg x_arg = vec_as_arg(x_arg_);
-  struct vctrs_arg y_arg = vec_as_arg(y_arg_);;
-
-  int dir = 0;
-  return r_lgl(vec_is_coercible(x, y, &x_arg, &y_arg, &dir));
-}
-
-struct vec_cast_e_data {
-  SEXP x;
-  SEXP to;
-  struct vctrs_arg* x_arg;
-  struct vctrs_arg* to_arg;
+struct cast_err_data {
+  const struct cast_opts* opts;
   SEXP out;
 };
 
 static void vec_cast_e_cb(void* data_) {
-  struct vec_cast_e_data* data = (struct vec_cast_e_data*) data_;
-  data->out = vec_cast(data->x, data->to, data->x_arg, data->to_arg);
+  struct cast_err_data* data = (struct cast_err_data*) data_;
+  data->out = vec_cast_opts(data->opts);
 }
 
-// [[ include("vctrs.h") ]]
-SEXP vec_cast_e(SEXP x,
-                SEXP to,
-                struct vctrs_arg* x_arg,
-                struct vctrs_arg* to_arg,
+// [[ include("cast.h") ]]
+SEXP vec_cast_e(const struct cast_opts* opts,
                 ERR* err) {
-  struct vec_cast_e_data data = {
-    .x = x,
-    .to = to,
-    .x_arg = x_arg,
-    .to_arg = to_arg,
+  struct cast_err_data data = {
+    .opts = opts,
     .out = R_NilValue
   };
 
