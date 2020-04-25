@@ -286,32 +286,58 @@ SEXP vctrs_df_ptype2(SEXP x, SEXP y, SEXP x_arg, SEXP y_arg) {
 
   return df_ptype2(x, y, &x_arg_, &y_arg_);
 }
+// [[ register() ]]
+SEXP vctrs_df_ptype2_params(SEXP x, SEXP y, SEXP x_arg, SEXP y_arg, SEXP df_fallback) {
+  struct vctrs_arg x_arg_ = vec_as_arg(x_arg);
+  struct vctrs_arg y_arg_ = vec_as_arg(y_arg);;
 
-static SEXP df_ptype2_match(SEXP x, SEXP y, SEXP x_names, SEXP y_names,
-                            struct vctrs_arg* x_arg, struct vctrs_arg* y_arg);
+  return df_ptype2_params(x, y, &x_arg_, &y_arg_, r_lgl_get(df_fallback, 0));
+}
 
-static SEXP df_ptype2_loop(SEXP x, SEXP y, SEXP names,
-                           struct vctrs_arg* x_arg, struct vctrs_arg* y_arg);
+static SEXP df_ptype2_match(SEXP x,
+                            SEXP y,
+                            SEXP x_names,
+                            SEXP y_names,
+                            struct vctrs_arg* x_arg,
+                            struct vctrs_arg* y_arg,
+                            bool df_fallback);
+
+static
+SEXP df_ptype2_loop(SEXP x,
+                    SEXP y,
+                    SEXP names,
+                    struct vctrs_arg* x_arg,
+                    struct vctrs_arg* y_arg,
+                    bool df_fallback);
 
 // [[ include("vctrs.h") ]]
-SEXP df_ptype2(SEXP x, SEXP y, struct vctrs_arg* x_arg, struct vctrs_arg* y_arg) {
+SEXP df_ptype2_params(SEXP x,
+                      SEXP y,
+                      struct vctrs_arg* x_arg,
+                      struct vctrs_arg* y_arg,
+                      bool df_fallback) {
   SEXP x_names = PROTECT(r_names(x));
   SEXP y_names = PROTECT(r_names(y));
 
   SEXP out;
 
   if (equal_object(x_names, y_names)) {
-    out = df_ptype2_loop(x, y, x_names, x_arg, y_arg);
+    out = df_ptype2_loop(x, y, x_names, x_arg, y_arg, df_fallback);
   } else {
-    out = df_ptype2_match(x, y, x_names, y_names, x_arg, y_arg);
+    out = df_ptype2_match(x, y, x_names, y_names, x_arg, y_arg, df_fallback);
   }
 
   UNPROTECT(2);
   return out;
 }
 
-SEXP df_ptype2_match(SEXP x, SEXP y, SEXP x_names, SEXP y_names,
-                     struct vctrs_arg* x_arg, struct vctrs_arg* y_arg) {
+SEXP df_ptype2_match(SEXP x,
+                     SEXP y,
+                     SEXP x_names,
+                     SEXP y_names,
+                     struct vctrs_arg* x_arg,
+                     struct vctrs_arg* y_arg,
+                     bool df_fallback) {
   SEXP x_dups_pos = PROTECT(vec_match(x_names, y_names));
   SEXP y_dups_pos = PROTECT(vec_match(y_names, x_names));
 
@@ -354,11 +380,12 @@ SEXP df_ptype2_match(SEXP x, SEXP y, SEXP x_names, SEXP y_names,
 
       int _left;
 
-      type = vec_ptype2(VECTOR_ELT(x, i),
-                        VECTOR_ELT(y, dup),
-                        &named_x_arg,
-                        &named_y_arg,
-                        &_left);
+      type = vec_ptype2_params(VECTOR_ELT(x, i),
+                               VECTOR_ELT(y, dup),
+                               df_fallback,
+                               &named_x_arg,
+                               &named_y_arg,
+                               &_left);
     }
 
     SET_VECTOR_ELT(out, i, type);
@@ -384,8 +411,13 @@ SEXP df_ptype2_match(SEXP x, SEXP y, SEXP x_names, SEXP y_names,
   return out;
 }
 
-SEXP df_ptype2_loop(SEXP x, SEXP y, SEXP names,
-                    struct vctrs_arg* x_arg, struct vctrs_arg* y_arg) {
+static
+SEXP df_ptype2_loop(SEXP x,
+                    SEXP y,
+                    SEXP names,
+                    struct vctrs_arg* x_arg,
+                    struct vctrs_arg* y_arg,
+                    bool df_fallback) {
   R_len_t len = Rf_length(names);
 
   SEXP out = PROTECT(Rf_allocVector(VECSXP, len));
@@ -401,11 +433,12 @@ SEXP df_ptype2_loop(SEXP x, SEXP y, SEXP names,
 
     int _left;
 
-    SEXP type = vec_ptype2(VECTOR_ELT(x, i),
-                           VECTOR_ELT(y, i),
-                           &named_x_arg,
-                           &named_y_arg,
-                           &_left);
+    SEXP type = vec_ptype2_params(VECTOR_ELT(x, i),
+                                  VECTOR_ELT(y, i),
+                                  df_fallback,
+                                  &named_x_arg,
+                                  &named_y_arg,
+                                  &_left);
 
     SET_VECTOR_ELT(out, i, type);
   }
@@ -423,13 +456,25 @@ SEXP vctrs_df_cast(SEXP x, SEXP to, SEXP x_arg_, SEXP to_arg_) {
 
   return df_cast(x, to, &x_arg, &to_arg);
 }
+// [[ register() ]]
+SEXP vctrs_df_cast_params(SEXP x, SEXP to, SEXP x_arg_, SEXP to_arg_, SEXP df_fallback_) {
+  struct vctrs_arg x_arg = vec_as_arg(x_arg_);
+  struct vctrs_arg to_arg = vec_as_arg(to_arg_);;
+  bool df_fallback = r_lgl_get(df_fallback_, 0);
+
+  return df_cast_params(x, to, &x_arg, &to_arg, df_fallback);
+}
 
 // Take all columns of `to` and preserve the order. Common columns are
 // cast to their types in `to`. Extra `x` columns are dropped and
 // cause a lossy cast. Extra `to` columns are filled with missing
 // values.
-// [[ include(c("type-data-frame.h", "cast.h")) ]]
-SEXP df_cast(SEXP x, SEXP to, struct vctrs_arg* x_arg, struct vctrs_arg* to_arg) {
+// [[ include("cast.h") ]]
+SEXP df_cast_params(SEXP x,
+                    SEXP to,
+                    struct vctrs_arg* x_arg,
+                    struct vctrs_arg* to_arg,
+                    bool df_fallback) {
   SEXP x_names = PROTECT(r_names(x));
   SEXP to_names = PROTECT(r_names(to));
 
@@ -460,7 +505,11 @@ SEXP df_cast(SEXP x, SEXP to, struct vctrs_arg* x_arg, struct vctrs_arg* to_arg)
       struct vctrs_arg named_x_arg = new_index_arg(x_arg, &x_arg_data);
       struct vctrs_arg named_to_arg = new_index_arg(to_arg, &to_arg_data);
       ++common_len;
-      col = vec_cast(VECTOR_ELT(x, pos), VECTOR_ELT(to, i), &named_x_arg, &named_to_arg);
+      col = vec_cast_params(VECTOR_ELT(x, pos),
+                            VECTOR_ELT(to, i),
+                            &named_x_arg,
+                            &named_to_arg,
+                            df_fallback);
     }
 
     SET_VECTOR_ELT(out, i, col);

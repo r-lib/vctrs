@@ -11,6 +11,7 @@ static SEXP vec_cast_switch_native(SEXP x,
                                    enum vctrs_type to_type,
                                    struct vctrs_arg* x_arg,
                                    struct vctrs_arg* to_arg,
+                                   bool df_fallback,
                                    bool* lossy);
 
 static SEXP vec_cast_dispatch_s3(SEXP x,
@@ -70,7 +71,7 @@ SEXP vec_cast_params(SEXP x,
   if (to_type == vctrs_type_s3 || x_type == vctrs_type_s3) {
     out = vec_cast_dispatch(x, to, x_type, to_type, x_arg, to_arg, &lossy);
   } else {
-    out = vec_cast_switch_native(x, to, x_type, to_type, x_arg, to_arg, &lossy);
+    out = vec_cast_switch_native(x, to, x_type, to_type, x_arg, to_arg, df_fallback, &lossy);
   }
 
   if (lossy || out == R_NilValue) {
@@ -86,6 +87,7 @@ static SEXP vec_cast_switch_native(SEXP x,
                                    enum vctrs_type to_type,
                                    struct vctrs_arg* x_arg,
                                    struct vctrs_arg* to_arg,
+                                   bool df_fallback,
                                    bool* lossy) {
   int dir = 0;
   enum vctrs_type2 type2 = vec_typeof2_impl(x_type, to_type, &dir);
@@ -120,7 +122,7 @@ static SEXP vec_cast_switch_native(SEXP x,
     }
 
   case vctrs_type2_dataframe_dataframe:
-    return df_cast(x, to, x_arg, to_arg);
+    return df_cast_params(x, to, x_arg, to_arg, df_fallback);
 
   default:
     break;
@@ -204,11 +206,17 @@ struct vec_is_coercible_data {
   struct vctrs_arg* x_arg;
   struct vctrs_arg* y_arg;
   int* dir;
+  bool df_fallback;
 };
 
 static void vec_is_coercible_cb(void* data_) {
   struct vec_is_coercible_data* data = (struct vec_is_coercible_data*) data_;
-  vec_ptype2(data->x, data->y, data->x_arg, data->y_arg, data->dir);
+  vec_ptype2_params(data->x,
+                    data->y,
+                    data->df_fallback,
+                    data->x_arg,
+                    data->y_arg,
+                    data->dir);
 }
 
 static void vec_is_coercible_e(SEXP x,
@@ -216,13 +224,15 @@ static void vec_is_coercible_e(SEXP x,
                                struct vctrs_arg* x_arg,
                                struct vctrs_arg* y_arg,
                                int* dir,
+                               bool df_fallback,
                                ERR* err) {
   struct vec_is_coercible_data data = {
     .x = x,
     .y = y,
     .x_arg = x_arg,
     .y_arg = y_arg,
-    .dir = dir
+    .dir = dir,
+    .df_fallback = df_fallback
   };
 
   *err = r_try_catch(&vec_is_coercible_cb,
@@ -239,17 +249,30 @@ bool vec_is_coercible(SEXP x,
                       struct vctrs_arg* y_arg,
                       int* dir) {
   ERR err = NULL;
-  vec_is_coercible_e(x, y, x_arg, y_arg, dir, &err);
+  vec_is_coercible_e(x, y, x_arg, y_arg, dir, false, &err);
+  return !err;
+}
+
+static
+bool vec_is_coercible_params(SEXP x,
+                             SEXP y,
+                             struct vctrs_arg* x_arg,
+                             struct vctrs_arg* y_arg,
+                             int* dir,
+                             bool df_fallback) {
+  ERR err = NULL;
+  vec_is_coercible_e(x, y, x_arg, y_arg, dir, df_fallback, &err);
   return !err;
 }
 
 // [[ register() ]]
-SEXP vctrs_is_coercible(SEXP x, SEXP y, SEXP x_arg_, SEXP y_arg_) {
+SEXP vctrs_is_coercible(SEXP x, SEXP y, SEXP x_arg_, SEXP y_arg_, SEXP df_fallback_) {
   struct vctrs_arg x_arg = vec_as_arg(x_arg_);
   struct vctrs_arg y_arg = vec_as_arg(y_arg_);;
+  bool df_fallback = r_lgl_get(df_fallback_, 0);
 
   int dir = 0;
-  return r_lgl(vec_is_coercible(x, y, &x_arg, &y_arg, &dir));
+  return r_lgl(vec_is_coercible_params(x, y, &x_arg, &y_arg, &dir, df_fallback));
 }
 
 struct vec_cast_e_data {

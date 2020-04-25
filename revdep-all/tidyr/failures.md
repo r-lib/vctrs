@@ -232,8 +232,6 @@ ERROR: compilation failed for package ‘circumplex’
 
 * Version: 
 * Source code: ???
-* URL: https://vctrs.r-lib.org/
-* BugReports: https://github.com/r-lib/vctrs/issues
 * Number of recursive dependencies: 0
 
 Run `revdep_details(,"")` for more info
@@ -1028,8 +1026,6 @@ ERROR: compilation failed for package ‘heuristicsmineR’
 
 * Version: 
 * Source code: ???
-* URL: https://vctrs.r-lib.org/
-* BugReports: https://github.com/r-lib/vctrs/issues
 * Number of recursive dependencies: 0
 
 Run `revdep_details(,"")` for more info

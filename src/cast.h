@@ -2,6 +2,17 @@
 #define VCTRS_CAST_H
 
 
+SEXP df_cast_params(SEXP x,
+                    SEXP to,
+                    struct vctrs_arg* x_arg,
+                    struct vctrs_arg* to_arg,
+                    bool df_fallback);
+
+static inline
+SEXP df_cast(SEXP x, SEXP to, struct vctrs_arg* x_arg, struct vctrs_arg* to_arg) {
+  return df_cast_params(x, to, x_arg, to_arg, false);
+}
+
 SEXP vec_cast_params(SEXP x,
                      SEXP to,
                      struct vctrs_arg* x_arg,

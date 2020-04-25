@@ -15,9 +15,9 @@ static SEXP vec_ptype2_switch_native(SEXP x,
 // [[ register() ]]
 SEXP vctrs_ptype2_params(SEXP x,
                          SEXP y,
-                         SEXP df_fallback,
                          SEXP x_arg,
-                         SEXP y_arg) {
+                         SEXP y_arg,
+                         SEXP df_fallback) {
   struct vctrs_arg x_arg_ = vec_as_arg(x_arg);
   struct vctrs_arg y_arg_ = vec_as_arg(y_arg);
   bool df_fallback_ = LOGICAL(df_fallback)[0];
@@ -106,7 +106,7 @@ static SEXP vec_ptype2_switch_native(SEXP x,
     return vec_shaped_ptype(vctrs_shared_empty_list, x, y, x_arg, y_arg);
 
   case vctrs_type2_dataframe_dataframe:
-    return df_ptype2(x, y, x_arg, y_arg);
+    return df_ptype2_params(x, y, x_arg, y_arg, df_fallback);
 
   default:
     return vec_ptype2_dispatch_s3(x, y, x_arg, y_arg, df_fallback);

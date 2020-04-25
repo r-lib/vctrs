@@ -15,6 +15,7 @@ R_len_t df_flat_width(SEXP x);
 SEXP df_flatten(SEXP x);
 SEXP df_repair_names(SEXP x, struct name_repair_opts* name_repair);
 
+static inline
 SEXP df_cast(SEXP x, SEXP to, struct vctrs_arg* x_arg, struct vctrs_arg* to_arg);
 
 enum rownames_type {

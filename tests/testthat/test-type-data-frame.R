@@ -477,6 +477,20 @@ test_that("falls back to tibble for tibble subclasses (#1025)", {
   })
 })
 
+test_that("fallback is recursive", {
+  df <- mtcars[1:3, 1, drop = FALSE]
+
+  foo <- new_data_frame(list(x = foobar(df, foo = TRUE)))
+  bar <- new_data_frame(list(x = foobar(df, bar = TRUE)))
+  baz <- new_data_frame(list(y = 1:3, x = foobar(df, bar = TRUE)))
+
+  exp <- new_data_frame(list(x = vec_rbind(df, df)))
+  expect_identical(expect_df_fallback(vec_rbind(foo, bar)), exp)
+
+  exp <- new_data_frame(list(x = vec_rbind(df, df), y = c(NA, NA, NA, 1:3)))
+  expect_identical(expect_df_fallback(vec_rbind(foo, baz)), exp)
+})
+
 test_that("data frame output is informative", {
   verify_output(test_path("error", "test-type-data-frame.txt"), {
     "# combining data frames with foreign classes uses fallback"

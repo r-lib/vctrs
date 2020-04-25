@@ -85,7 +85,7 @@ vec_default_ptype2 <- function(x, y, ..., x_arg = "", y_arg = "") {
 
   # If both data frames, first find common type of columns before the
   # same-type fallback
-  if (is.data.frame(x) && is.data.frame(y) && df_is_coercible(x, y)) {
+  if (df_needs_normalisation(x, y)) {
     out <- vec_ptype2_df_fallback_normalise(x, y)
     x <- out$x
     y <- out$y
@@ -138,7 +138,7 @@ vec_ptype2_params <- function(x,
                               df_fallback = FALSE,
                               x_arg = "",
                               y_arg = "") {
-  .Call(vctrs_ptype2_params, x, y, df_fallback, x_arg, y_arg)
+  .Call(vctrs_ptype2_params, x, y, x_arg, y_arg, df_fallback)
 }
 
 vec_typeof2 <- function(x, y) {
@@ -150,11 +150,11 @@ vec_typeof2_s3 <- function(x, y) {
 }
 
 # https://github.com/r-lib/vctrs/issues/571
-vec_is_coercible <- function(x, y, ..., x_arg = "", y_arg = "") {
+vec_is_coercible <- function(x, y, ..., x_arg = "", y_arg = "", df_fallback = FALSE) {
   if (!missing(...)) {
     ellipsis::check_dots_empty()
   }
-  .Call(vctrs_is_coercible, x, y, x_arg, y_arg)
+  .Call(vctrs_is_coercible, x, y, x_arg, y_arg, df_fallback = df_fallback)
 }
 
 vec_is_subtype <- function(x, super, ..., x_arg = "", super_arg = "") {

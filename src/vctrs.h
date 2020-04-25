@@ -435,7 +435,16 @@ SEXP vec_ptype2_dispatch_s3(SEXP x,
                             struct vctrs_arg* y_arg,
                             bool df_fallback);
 
-SEXP df_ptype2(SEXP x, SEXP y, struct vctrs_arg* x_arg, struct vctrs_arg* y_arg);
+SEXP df_ptype2_params(SEXP x,
+                      SEXP y,
+                      struct vctrs_arg* x_arg,
+                      struct vctrs_arg* y_arg,
+                      bool df_fallback);
+
+static inline
+SEXP df_ptype2(SEXP x, SEXP y, struct vctrs_arg* x_arg, struct vctrs_arg* y_arg) {
+  return df_ptype2_params(x, y, x_arg, y_arg, false);
+}
 
 bool is_data_frame(SEXP x);
 
