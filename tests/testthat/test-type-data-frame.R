@@ -434,9 +434,16 @@ test_that("data frame fallback handles column types (#999)", {
   expect_identical(out, exp)
 
   out <- with_methods(
-    `[.vctrs_foobar` = function(x, i, ...) structure(NextMethod(), dispatched = TRUE),
+    `[.vctrs_foobar` = function(x, i, ...) {
+      new_data_frame(
+        NextMethod(),
+        dispatched = TRUE,
+        class = "vctrs_foobar"
+      )
+    },
     vec_rbind(df1_attrib, df2_attrib)
   )
+
   expect_identical(out, foobar(exp, dispatched = TRUE))
 })
 

@@ -107,12 +107,15 @@ vec_ptype2_df_fallback_normalise <- function(x, y) {
 
   ptype <- df_ptype2(x, y)
 
-  # Empty columns first to avoid name repairs
-  x <- x[0, 0, drop = FALSE]
-  y <- y[0, 0, drop = FALSE]
+  x <- x[0, , drop = FALSE]
+  y <- y[0, , drop = FALSE]
 
   x[seq_along(ptype)] <- ptype
   y[seq_along(ptype)] <- ptype
+
+  # Names might have been repaired by `[<-`
+  names(x) <- names(ptype)
+  names(y) <- names(ptype)
 
   # Restore attributes if no `[` method is implemented
   if (df_has_base_subset(x)) {
@@ -126,14 +129,13 @@ vec_ptype2_df_fallback_normalise <- function(x, y) {
 }
 vec_cast_df_fallback_normalise <- function(x, to) {
   orig <- x
-
   cast <- df_cast(x, to)
-
-  # Empty columns first to avoid name repairs
-  x <- x[0]
 
   # Seq-assign should be more widely implemented than empty-assign?
   x[seq_along(to)] <- cast
+
+  # Names might have been repaired by `[<-`
+  names(x) <- names(cast)
 
   # Restore attributes if no `[` method is implemented
   if (df_has_base_subset(x)) {
