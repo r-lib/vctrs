@@ -1517,6 +1517,23 @@ SEXP r_new_shared_character(const char* name) {
   return out;
 }
 
+void c_print_backtrace() {
+#if defined(__GNUC__)  || defined(__clang__)
+#include <execinfo.h>
+  void *buffer[500];
+  int nptrs = backtrace(buffer, 100);
+
+  char **strings = backtrace_symbols(buffer, nptrs);
+  for (int j = 0; j < nptrs; ++j) {
+    Rprintf("%s\n", strings[j]);
+  }
+
+  free(strings);
+#else
+  Rprintf("Can't print C backtrace.\n");
+#endif
+}
+
 void vctrs_init_utils(SEXP ns) {
   vctrs_ns_env = ns;
   vctrs_method_table = r_env_get(ns, Rf_install(".__S3MethodsTable__."));

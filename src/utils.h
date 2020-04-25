@@ -376,6 +376,8 @@ static inline const void* vec_type_missing_value(enum vctrs_type type) {
   }
 }
 
+void c_print_backtrace();
+
 
 extern SEXP vctrs_ns_env;
 extern SEXP vctrs_shared_empty_str;
