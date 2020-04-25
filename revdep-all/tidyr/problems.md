@@ -1,54 +1,3 @@
-# amt
-
-<details>
-
-* Version: 0.0.8
-* Source code: https://github.com/cran/amt
-* URL: https://github.com/jmsigner/amt
-* Date/Publication: 2020-03-23 14:20:02 UTC
-* Number of recursive dependencies: 168
-
-Run `revdep_details(,"amt")` for more info
-
-</details>
-
-## Newly broken
-
-*   checking examples ... ERROR
-    ```
-    ...
-    +   mutate(hr = map(data, hr_mcp), n = map_int(data, nrow)) %>%
-    +   hr_to_sf(hr, id, n)
-    Error: No common type for `..1` <track_xyt<>> and `..2` <data.frame<>>.
-    Backtrace:
-         █
-      1. ├─`%>%`(...)
-      2. │ ├─base::withVisible(eval(quote(`_fseq`(`_lhs`)), env, env))
-      3. │ └─base::eval(quote(`_fseq`(`_lhs`)), env, env)
-      4. │   └─base::eval(quote(`_fseq`(`_lhs`)), env, env)
-      5. │     └─`_fseq`(`_lhs`)
-      6. │       └─magrittr::freduce(value, `_function_list`)
-      7. │         └─function_list[[i]](value)
-      8. │           ├─tidyr::nest(., data = -id)
-      9. │           ├─amt:::nest.track_xy(., data = -id)
-     10. │           ├─base::NextMethod() 00_pkg_src/amt/R/track.R:209:1
-     11. │           └─tidyr:::nest.tbl_df(., data = -id)
-     12. │             └─vctrs::vec_cbind(u_keys, new_data_frame(out, n = nrow(u_keys)))
-     13. └─vctrs::vec_default_ptype2(x = x, y = y, x_arg = x_arg, y_arg = y_arg)
-     14.   └─vctrs::stop_incompatible_type(x, y, x_arg = x_arg, y_arg = y_arg)
-     15.     └─vctrs:::stop_incompatible(...
-    Execution halted
-    ```
-
-## In both
-
-*   checking dependencies in R code ... NOTE
-    ```
-    Namespaces in Imports field not imported from:
-      ‘magrittr’ ‘Rcpp’
-      All declared Imports should be used.
-    ```
-
 # anomalize
 
 <details>
@@ -58,7 +7,7 @@ Run `revdep_details(,"amt")` for more info
 * URL: https://github.com/business-science/anomalize
 * BugReports: https://github.com/business-science/anomalize/issues
 * Date/Publication: 2019-09-21 04:10:03 UTC
-* Number of recursive dependencies: 150
+* Number of recursive dependencies: 161
 
 Run `revdep_details(,"anomalize")` for more info
 
@@ -69,13 +18,10 @@ Run `revdep_details(,"anomalize")` for more info
 *   checking examples ... ERROR
     ```
     ...
-    >> and `..2$nested.col` <tbl_time<
-      date     : date
-      observed : double
-      season   : double
-      trend    : double
-      remainder: double
-    >>.
+    > tidyverse_cran_downloads %>%
+    +     time_decompose(count, method = "stl") %>%
+    +     anomalize(remainder, method = "iqr")
+    Error: Can't convert <tibble> to <tbl_time>.
     Backtrace:
          █
       1. ├─`%>%`(...)
@@ -84,11 +30,14 @@ Run `revdep_details(,"anomalize")` for more info
       4. │   └─base::eval(quote(`_fseq`(`_lhs`)), env, env)
       5. │     └─`_fseq`(`_lhs`)
       6. │       └─magrittr::freduce(value, `_function_list`)
-      7. │         └─function_list[[i]](value)
-      8. │           ├─anomalize::time_decompose(., count, method = "stl")
-      9. │           └─anomalize:::time_decompose.grouped_tbl_time(., count, method = "stl") 00_pkg_src/anomalize/R/time_decompose.R:102:4
-     10. │             └─`%>%`(...) 00_pkg_src/anomalize/R/time_decompose.R:183:4
-     11. │               
+      7. │         ├─base::withVisible(function_list[[k]](value))
+      8. │         └─function_list[[k]](value)
+      9. │           ├─anomalize::anomalize(., remainder, method = "iqr")
+     10. │           └─anomalize:::anomalize.grouped_df(., remainder, method = "iqr") 00_pkg_src/anomalize/R/anomalize.R:92:4
+     11. │             └─`%>%`(...) 00_pkg_src/anomalize/R/anomalize.R:174:4
+     12. │               ├─base::withVisible(eval(quote(`_fseq`(`_lhs`)), env, env))
+     13. │               └─base::eval(quote(`_fseq`(`_lhs`)), env, env)
+     14. │                 └─base::eval(quote(`_fseq`(`
     Execution halted
     ```
 
@@ -114,18 +63,18 @@ Run `revdep_details(,"anomalize")` for more info
       Execution halted
     ```
 
-# comperes
+# BiocPkgTools
 
 <details>
 
-* Version: 0.2.3
-* Source code: https://github.com/cran/comperes
-* URL: https://github.com/echasnovski/comperes
-* BugReports: https://github.com/echasnovski/comperes/issues
-* Date/Publication: 2019-12-14 21:40:03 UTC
-* Number of recursive dependencies: 58
+* Version: 1.4.6
+* Source code: https://github.com/cran/BiocPkgTools
+* URL: https://github.com/seandavi/BiocPkgTools
+* BugReports: https://github.com/seandavi/BiocPkgTools/issues/new
+* Date/Publication: 2020-03-16
+* Number of recursive dependencies: 116
 
-Run `revdep_details(,"comperes")` for more info
+Run `revdep_details(,"BiocPkgTools")` for more info
 
 </details>
 
@@ -133,62 +82,116 @@ Run `revdep_details(,"comperes")` for more info
 
 *   checking examples ... ERROR
     ```
-    ...
+    Running examples in ‘BiocPkgTools-Ex.R’ failed
+    The error most likely occurred in:
+    
+    > ### Name: pkgCombDependencyGain
+    > ### Title: Calculate dependency gain achieved by excluding combinations of
+    > ###   packages
+    > ### Aliases: pkgCombDependencyGain
     > 
-    > to_pairgames(cr_data)
-    Error: No common type for `..1` <longcr<>> and `..2` <data.frame<>>.
-    Backtrace:
-         █
-      1. ├─comperes::to_pairgames(cr_data)
-      2. │ └─`%>%`(...) 00_pkg_src/comperes/R/pairgames.R:73:2
-      3. │   ├─base::withVisible(eval(quote(`_fseq`(`_lhs`)), env, env))
-      4. │   └─base::eval(quote(`_fseq`(`_lhs`)), env, env)
-      5. │     └─base::eval(quote(`_fseq`(`_lhs`)), env, env)
-      6. │       └─comperes:::`_fseq`(`_lhs`)
-      7. │         └─magrittr::freduce(value, `_function_list`)
-      8. │           └─function_list[[i]](value)
-      9. │             ├─tidyr::nest(., data = -.data$game)
-     10. │             └─tidyr:::nest.tbl_df(., data = -.data$game)
-     11. │               └─vctrs::vec_cbind(u_keys, new_data_frame(out, n = nrow(u_keys)))
-     12. └─vctrs::vec_default_ptype2(x = x, y = y, x_arg = x_arg, y_arg = y_arg)
-     13.   └─vctrs::stop_incompatible_type(x, y, x_arg = x_arg, y_arg = y_arg)
-     14.     └─vctrs:::stop_incompatible(...)
-     15. 
+    > ### ** Examples
+    > 
+    > depdf <- buildPkgDependencyDataFrame(
+    +   dependencies=c("Depends", "Imports"), 
+    +   repo=c("BioCsoft", "CRAN")
+    + )
+    Error in readRDS(gzcon(con)) : error reading from connection
+    Calls: buildPkgDependencyDataFrame ... biocPkgList -> lapply -> FUN -> as.data.frame -> readRDS
     Execution halted
     ```
+
+## In both
+
+*   checking dependencies in R code ... NOTE
+    ```
+    Namespace in Imports field not imported from: ‘rappdirs’
+      All declared Imports should be used.
+    Unexported object imported by a ':::' call: ‘BiocManager:::.repositories’
+      See the note in ?`:::` about the use of this operator.
+    ```
+
+# brendaDb
+
+<details>
+
+* Version: 1.0.0
+* Source code: https://github.com/cran/brendaDb
+* URL: https://github.com/y1zhou/brendaDb
+* BugReports: https://github.com/y1zhou/brendaDb/issues
+* Date/Publication: 2019-10-29
+* Number of recursive dependencies: 99
+
+Run `revdep_details(,"brendaDb")` for more info
+
+</details>
+
+## Newly broken
 
 *   checking tests ...
     ```
      ERROR
     Running the tests in ‘tests/testthat.R’ failed.
     Last 13 lines of output:
-      Backtrace:
-        1. testthat::expect_identical(as_widecr(ncaa2005), to_pairgames(ncaa2005))
-       15. vctrs::vec_default_ptype2(x = x, y = y, x_arg = x_arg, y_arg = y_arg)
-       16. vctrs::stop_incompatible_type(x, y, x_arg = x_arg, y_arg = y_arg)
-       17. vctrs:::stop_incompatible(...)
-       18. vctrs:::stop_vctrs(...)
+        1. testthat::expect_message(...)
+        6. brendaDb::BiocycPathwayGenes(org.id = "HUMAN", pathway = "PWY66666")
+        7. base::tryCatch(...) revdep-all/tidyr/checks.noindex/brendaDb/new/brendaDb.Rcheck/00_pkg_src/brendaDb/R/biocyc.R:104:2
+        8. base:::tryCatchList(expr, classes, parentenv, handlers)
+        9. base:::tryCatchOne(expr, names, parentenv, handlers[[1L]])
+       10. value[[3L]](cond)
+       12. base::close.connection(con)
       
       ══ testthat results  ═══════════════════════════════════════════════════════════
-      [ OK: 259 | SKIPPED: 0 | WARNINGS: 0 | FAILED: 3 ]
-      1. Error: to_pairgames works (@test-pairgames.R#28) 
-      2. Error: to_pairgames handles NA and NaN (@test-pairgames.R#46) 
-      3. Error: to_pairgames doesn't change pairgames (@test-pairgames.R#50) 
+      [ OK: 109 | SKIPPED: 0 | WARNINGS: 0 | FAILED: 2 ]
+      1. Error: Get enzymes in BioCyc pathway  (@test-biocyc.R#7) 
+      2. Error: Get genes in BioCyc pathway  (@test-biocyc.R#18) 
       
       Error: testthat unit tests failed
       Execution halted
+    ```
+
+## Newly fixed
+
+*   checking examples ... ERROR
+    ```
+    Running examples in ‘brendaDb-Ex.R’ failed
+    The error most likely occurred in:
+    
+    > ### Name: BiocycPathwayEnzymes
+    > ### Title: Get all EC numbers involved in a BioCyc pathway.
+    > ### Aliases: BiocycPathwayEnzymes
+    > 
+    > ### ** Examples
+    > 
+    > BiocycPathwayEnzymes("HUMAN", "PWY66-400")
+    Found 10 reactions for HUMAN pathway PWY66-400.
+    Error in read_xml.raw(raw, encoding = encoding, base_url = base_url, as_html = as_html,  : 
+      Failed to parse text
+    Calls: BiocycPathwayEnzymes ... read_xml.character -> read_xml.connection -> read_xml.raw
+    Execution halted
+    ```
+
+## In both
+
+*   checking for hidden files and directories ... NOTE
+    ```
+    Found the following hidden files and directories:
+      .travis.yml
+      .github
+    These were most likely included in error. See section ‘Package structure’ in
+    the ‘Writing R Extensions’ manual.
     ```
 
 # cutpointr
 
 <details>
 
-* Version: 1.0.1
+* Version: 1.0.2
 * Source code: https://github.com/cran/cutpointr
 * URL: https://github.com/thie1e/cutpointr
 * BugReports: https://github.com/thie1e/cutpointr/issues
-* Date/Publication: 2019-12-18 15:00:08 UTC
-* Number of recursive dependencies: 74
+* Date/Publication: 2020-04-14 08:50:10 UTC
+* Number of recursive dependencies: 78
 
 Run `revdep_details(,"cutpointr")` for more info
 
@@ -196,107 +199,40 @@ Run `revdep_details(,"cutpointr")` for more info
 
 ## Newly broken
 
-*   checking examples ... ERROR
-    ```
-    ...
-    > cutpointr(suicide, dsi, suicide, method = maximize_boot_metric,
-    +           metric = accuracy, boot_cut = 30)
-    Assuming the positive class is yes
-    Assuming the positive class has higher x values
-    Error: No common type for `..1` <roc_cutpointr<>> and `..2` <data.frame<>>.
-    Backtrace:
-         █
-      1. ├─cutpointr::cutpointr(...)
-      2. ├─cutpointr:::cutpointr.default(...) 00_pkg_src/cutpointr/R/cutpointr.R:264:4
-      3. │ └─cutpointr:::cutpointr_internal(...) 00_pkg_src/cutpointr/R/cutpointr.R:321:8
-      4. │   ├─`%>%`(...) 00_pkg_src/cutpointr/R/cutpointr.R:626:12
-      5. │   │ └─base::eval(lhs, parent, parent)
-      6. │   │   └─base::eval(lhs, parent, parent)
-      7. │   ├─tidyr::nest(.data = roc_curve, roc_curve = dplyr::everything())
-      8. │   └─tidyr:::nest.tbl_df(.data = roc_curve, roc_curve = dplyr::everything())
-      9. │     └─vctrs::vec_cbind(u_keys, new_data_frame(out, n = nrow(u_keys)))
-     10. └─vctrs::vec_default_ptype2(x = x, y = y, x_arg = x_arg, y_arg = y_arg)
-     11.   └─vctrs::stop_incompatible_type(x, y, x_arg = x_arg, y_arg = y_arg)
-     12.     └─vctrs:::stop_incompatible(...)
-     13.       └─vctrs:::stop_vctrs(...)
-    Execution halted
-    ```
-
 *   checking tests ...
     ```
      ERROR
     Running the tests in ‘tests/testthat.R’ failed.
     Last 13 lines of output:
       ══ testthat results  ═══════════════════════════════════════════════════════════
-      [ OK: 250 | SKIPPED: 0 | WARNINGS: 43 | FAILED: 27 ]
-      1. Error: Plotting with bootstrapping is silent (@test-cutpointr.R#100) 
-      2. Error: no duplicate column names are returned (@test-cutpointr.R#164) 
-      3. Error: Metric colnames that are already in cutpointr are modified (@test-cutpointr.R#253) 
-      4. Failure: Bootstrap returns plausible results (@test-cutpointr.R#335) 
-      5. Failure: Bootstrap returns plausible results (@test-cutpointr.R#337) 
-      6. Failure: Bootstrap returns plausible results (@test-cutpointr.R#339) 
-      7. Failure: Bootstrap returns plausible results (@test-cutpointr.R#341) 
-      8. Failure: Bootstrap returns plausible results (@test-cutpointr.R#347) 
-      9. Failure: Bootstrap returns plausible results (@test-cutpointr.R#349) 
-      1. ...
+      [ OK: 493 | SKIPPED: 0 | WARNINGS: 1643 | FAILED: 10 ]
+      1.  Failure: LOESS smoothing does not return warnings or errors (@test-cutpointr.R#681) 
+      2.  Failure: LOESS smoothing does not return warnings or errors (@test-cutpointr.R#696) 
+      3.  Failure: LOESS smoothing does not return warnings or errors (@test-cutpointr.R#704) 
+      4.  Failure: LOESS smoothing does not return warnings or errors (@test-cutpointr.R#718) 
+      5.  Failure: LOESS smoothing does not return warnings or errors (@test-cutpointr.R#729) 
+      6.  Failure: cutpointr works if method / metric are called with :: (@test-cutpointr.R#1291) 
+      7.  Failure: cutpointr works if method / metric are called with :: (@test-cutpointr.R#1294) 
+      8.  Failure: Summary(multi_cutpointr) is silent (@test-cutpointr.R#1324) 
+      9.  Failure: Summary(multi_cutpointr) is silent (@test-cutpointr.R#1331) 
+      10. Failure: multi_cutpointr fetches numeric columns correctly (@test-cutpointr.R#1356) 
       
       Error: testthat unit tests failed
       Execution halted
     ```
 
-# fable
+# ggmap
 
 <details>
 
-* Version: 0.1.2
-* Source code: https://github.com/cran/fable
-* URL: https://fable.tidyverts.org
-* BugReports: https://github.com/tidyverts/fable/issues
-* Date/Publication: 2020-01-29 11:00:03 UTC
-* Number of recursive dependencies: 99
+* Version: 3.0.0
+* Source code: https://github.com/cran/ggmap
+* URL: https://github.com/dkahle/ggmap
+* BugReports: https://github.com/dkahle/ggmap/issues
+* Date/Publication: 2019-02-05 10:19:04
+* Number of recursive dependencies: 69
 
-Run `revdep_details(,"fable")` for more info
-
-</details>
-
-## Newly broken
-
-*   checking examples ... ERROR
-    ```
-    ...
-    +   autoplot(sim_poisson)
-    Error: No common type for `..1` <tbl_ts<>> and `..2` <tbl_df<>>.
-    Backtrace:
-         █
-      1. ├─`%>%`(...)
-      2. │ ├─base::withVisible(eval(quote(`_fseq`(`_lhs`)), env, env))
-      3. │ └─base::eval(quote(`_fseq`(`_lhs`)), env, env)
-      4. │   └─base::eval(quote(`_fseq`(`_lhs`)), env, env)
-      5. │     └─`_fseq`(`_lhs`)
-      6. │       └─magrittr::freduce(value, `_function_list`)
-      7. │         ├─base::withVisible(function_list[[k]](value))
-      8. │         └─function_list[[k]](value)
-      9. │           ├─ggplot2::autoplot(., sim_poisson)
-     10. │           └─fabletools:::autoplot.fbl_ts(., sim_poisson)
-     11. │             ├─ggplot2::autolayer(...)
-     12. │             └─fabletools:::autolayer.fbl_ts(...)
-     13. │               ├─`%>%`(...)
-     14. │               │ └─base::eval(lhs, parent, parent)
-     15. │               │   └─base::eval(lhs, parent, parent)
-     16. │               ├─ggplot2::fortify(object, level = level
-    Execution halted
-    ```
-
-# predictrace
-
-<details>
-
-* Version: 1.0.0
-* Source code: https://github.com/cran/predictrace
-* Date/Publication: 2019-05-22 07:50:03 UTC
-* Number of recursive dependencies: 63
-
-Run `revdep_details(,"predictrace")` for more info
+Run `revdep_details(,"ggmap")` for more info
 
 </details>
 
@@ -306,29 +242,45 @@ Run `revdep_details(,"predictrace")` for more info
     ```
       installed size is  5.3Mb
       sub-directories of 1Mb or more:
-        data   3.1Mb
-        R      2.1Mb
+        data   4.8Mb
     ```
 
-## In both
-
-*   checking dependencies in R code ... NOTE
-    ```
-    Namespaces in Imports field not imported from:
-      ‘here’ ‘tidyr’
-      All declared Imports should be used.
-    ```
-
-# tidyfast
+# idiogramFISH
 
 <details>
 
-* Version: 0.2.1
-* Source code: https://github.com/cran/tidyfast
-* Date/Publication: 2020-03-20 10:40:02 UTC
-* Number of recursive dependencies: 51
+* Version: 1.14.7
+* Source code: https://github.com/cran/idiogramFISH
+* URL: https://ferroao.gitlab.io/manualidiogramfish/, https://ferroao.gitlab.io/idiogramFISH
+* BugReports: https://gitlab.com/ferroao/idiogramFISH/issues
+* Date/Publication: 2020-03-28 08:20:12 UTC
+* Number of recursive dependencies: 117
 
-Run `revdep_details(,"tidyfast")` for more info
+Run `revdep_details(,"idiogramFISH")` for more info
+
+</details>
+
+## Newly broken
+
+*   checking installed package size ... NOTE
+    ```
+      installed size is  5.0Mb
+      sub-directories of 1Mb or more:
+        doc   3.7Mb
+    ```
+
+# simTool
+
+<details>
+
+* Version: 1.1.5
+* Source code: https://github.com/cran/simTool
+* URL: https://github.com/MarselScheer/simTool
+* BugReports: https://github.com/MarselScheer/simTool/issues
+* Date/Publication: 2020-03-15 20:10:02 UTC
+* Number of recursive dependencies: 70
+
+Run `revdep_details(,"simTool")` for more info
 
 </details>
 
@@ -339,94 +291,21 @@ Run `revdep_details(,"tidyfast")` for more info
      ERROR
     Running the tests in ‘tests/testthat.R’ failed.
     Last 13 lines of output:
-       12. vctrs:::stop_incompatible(...)
-       13. vctrs:::stop_vctrs(...)
+      fs$results not identical to fs$expected.
+      names for target but not for current
+      
+      ── 3. Failure: Create a tibble containing the results sumamrized by one summary 
+      fs$results not identical to fs$expected.
+      names for target but not for current
       
       ══ testthat results  ═══════════════════════════════════════════════════════════
-      [ OK: 80 | SKIPPED: 0 | WARNINGS: 2 | FAILED: 7 ]
-      1. Error: can pivot all cols (unspecified) to long (@test-dt_pivot_longer.R#7) 
-      2. Error: can pivot all cols (specified) to long (@test-dt_pivot_longer.R#18) 
-      3. Error: can select a single column (@test-dt_pivot_longer.R#28) 
-      4. Error: preserves original keys (@test-dt_pivot_longer.R#41) 
-      5. Error: can drop missing values (@test-dt_pivot_longer.R#50) 
-      6. Error: works with select helpers (@test-dt_pivot_longer.R#77) 
-      7. Error: a single helper works outside of c() call (@test-dt_pivot_longer.R#86) 
+      [ OK: 97 | SKIPPED: 0 | WARNINGS: 0 | FAILED: 3 ]
+      1. Failure: Simplify the simulation results (@test_eval_tibbles.R#381) 
+      2. Failure: Create a tibble containing the results for every replication (@test_frame_simulation.R#33) 
+      3. Failure: Create a tibble containing the results sumamrized by one summary function (@test_frame_simulation.R#73) 
       
       Error: testthat unit tests failed
       Execution halted
-    ```
-
-# tidygapminder
-
-<details>
-
-* Version: 0.1.1
-* Source code: https://github.com/cran/tidygapminder
-* URL: https://ebedthan.github.io/tidygapminder
-* BugReports: https://github.com/ebedthan/tidygapminder/issues
-* Date/Publication: 2020-02-04 07:30:02 UTC
-* Number of recursive dependencies: 64
-
-Run `revdep_details(,"tidygapminder")` for more info
-
-</details>
-
-## Newly broken
-
-*   checking examples ... ERROR
-    ```
-    ...
-    > folder_path <- system.file("extdata", package = "tidygapminder")
-    > 
-    > tidy_bunch(folder_path)
-    Error: No common type for `..1` <data.table<>> and `..2` <tbl_df<>>.
-    Backtrace:
-         █
-      1. ├─tidygapminder::tidy_bunch(folder_path)
-      2. │ └─base::lapply(file_list, tidy_indice) 00_pkg_src/tidygapminder/R/tidy_bunch.R:28:2
-      3. │   └─tidygapminder:::FUN(X[[i]], ...)
-      4. │     └─tidyr::pivot_longer(...) 00_pkg_src/tidygapminder/R/tidy_indice.R:41:2
-      5. │       └─tidyr::pivot_longer_spec(...)
-      6. │         ├─tidyr:::wrap_error_names(...)
-      7. │         │ └─base::tryCatch(...)
-      8. │         │   └─base:::tryCatchList(expr, classes, parentenv, handlers)
-      9. │         │     └─base:::tryCatchOne(expr, names, parentenv, handlers[[1L]])
-     10. │         │       └─base:::doTryCatch(return(expr), name, parentenv, handler)
-     11. │         └─vctrs::vec_cbind(...)
-     12. └─vctrs::vec_default_ptype2(x = x, y = y, x_arg = x_arg, y_arg = y_arg)
-     13.   └─vctrs::stop_incompatible_type(x, y, x_arg = x_arg, y_arg = y_arg)
-     
-    Execution halted
-    ```
-
-*   checking tests ...
-    ```
-     ERROR
-    Running the tests in ‘tests/testthat.R’ failed.
-    Last 13 lines of output:
-        1. testthat::expect_equal(...)
-       15. vctrs::vec_default_ptype2(x = x, y = y, x_arg = x_arg, y_arg = y_arg)
-       16. vctrs::stop_incompatible_type(x, y, x_arg = x_arg, y_arg = y_arg)
-       17. vctrs:::stop_incompatible(...)
-       18. vctrs:::stop_vctrs(...)
-      
-      ══ testthat results  ═══════════════════════════════════════════════════════════
-      [ OK: 0 | SKIPPED: 0 | WARNINGS: 0 | FAILED: 4 ]
-      1. Error: Output a list of data frame (@test-tidy_bunch.R#4) 
-      2. Error: Output a big data frame (@test-tidy_bunch.R#8) 
-      3. Error: Output a data frame (@test-tidy_indice.R#5) 
-      4. Error: Colnames are right (@test-tidy_indice.R#9) 
-      
-      Error: testthat unit tests failed
-      Execution halted
-    ```
-
-## In both
-
-*   checking dependencies in R code ... NOTE
-    ```
-    Namespace in Imports field not imported from: ‘dplyr’
-      All declared Imports should be used.
     ```
 
 # tidyjson
@@ -438,7 +317,7 @@ Run `revdep_details(,"tidygapminder")` for more info
 * URL: https://github.com/colearendt/tidyjson
 * BugReports: https://github.com/colearendt/tidyjson/issues
 * Date/Publication: 2019-12-02 21:39:30
-* Number of recursive dependencies: 88
+* Number of recursive dependencies: 89
 
 Run `revdep_details(,"tidyjson")` for more info
 
