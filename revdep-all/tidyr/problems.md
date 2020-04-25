@@ -21,7 +21,10 @@ Run `revdep_details(,"anomalize")` for more info
     > tidyverse_cran_downloads %>%
     +     time_decompose(count, method = "stl") %>%
     +     anomalize(remainder, method = "iqr")
-    Error: Can't convert <tibble> to <tbl_time>.
+    Error: Can't combine `..1$nested.col` <tbl_time> and `..2$nested.col` <tbl_time>.
+    ✖ Some attributes are incompatible.
+    ℹ The author of the class should implement vctrs methods.
+    ℹ See <https://vctrs.r-lib.org/reference/faq-error-incompatible-attributes.html>.
     Backtrace:
          █
       1. ├─`%>%`(...)
@@ -30,14 +33,11 @@ Run `revdep_details(,"anomalize")` for more info
       4. │   └─base::eval(quote(`_fseq`(`_lhs`)), env, env)
       5. │     └─`_fseq`(`_lhs`)
       6. │       └─magrittr::freduce(value, `_function_list`)
-      7. │         ├─base::withVisible(function_list[[k]](value))
-      8. │         └─function_list[[k]](value)
-      9. │           ├─anomalize::anomalize(., remainder, method = "iqr")
-     10. │           └─anomalize:::anomalize.grouped_df(., remainder, method = "iqr") 00_pkg_src/anomalize/R/anomalize.R:92:4
-     11. │             └─`%>%`(...) 00_pkg_src/anomalize/R/anomalize.R:174:4
-     12. │               ├─base::withVisible(eval(quote(`_fseq`(`_lhs`)), env, env))
-     13. │               └─base::eval(quote(`_fseq`(`_lhs`)), env, env)
-     14. │                 └─base::eval(quote(`_fseq`(`
+      7. │         └─function_list[[i]](value)
+      8. │           ├─anomalize::time_decompose(., count, method = "stl")
+      9. │           └─anomalize:::time_decompose.grouped_tbl_time(., count, method = "stl") 00_pkg_src/anomalize/R/time_decompose.R:102:4
+     10. │             └─`%>%`(...) 00_pkg_src/anomalize/R/time_decompose.R:183:4
+     11. │               ├─base::withVisible(e
     Execution halted
     ```
 
@@ -96,7 +96,8 @@ Run `revdep_details(,"BiocPkgTools")` for more info
     +   dependencies=c("Depends", "Imports"), 
     +   repo=c("BioCsoft", "CRAN")
     + )
-    Error in readRDS(gzcon(con)) : error reading from connection
+    Error in readRDS(gzcon(con)) : 
+      ReadItem: unknown type 101, perhaps written by later version of R
     Calls: buildPkgDependencyDataFrame ... biocPkgList -> lapply -> FUN -> as.data.frame -> readRDS
     Execution halted
     ```
@@ -109,77 +110,6 @@ Run `revdep_details(,"BiocPkgTools")` for more info
       All declared Imports should be used.
     Unexported object imported by a ':::' call: ‘BiocManager:::.repositories’
       See the note in ?`:::` about the use of this operator.
-    ```
-
-# brendaDb
-
-<details>
-
-* Version: 1.0.0
-* Source code: https://github.com/cran/brendaDb
-* URL: https://github.com/y1zhou/brendaDb
-* BugReports: https://github.com/y1zhou/brendaDb/issues
-* Date/Publication: 2019-10-29
-* Number of recursive dependencies: 99
-
-Run `revdep_details(,"brendaDb")` for more info
-
-</details>
-
-## Newly broken
-
-*   checking tests ...
-    ```
-     ERROR
-    Running the tests in ‘tests/testthat.R’ failed.
-    Last 13 lines of output:
-        1. testthat::expect_message(...)
-        6. brendaDb::BiocycPathwayGenes(org.id = "HUMAN", pathway = "PWY66666")
-        7. base::tryCatch(...) revdep-all/tidyr/checks.noindex/brendaDb/new/brendaDb.Rcheck/00_pkg_src/brendaDb/R/biocyc.R:104:2
-        8. base:::tryCatchList(expr, classes, parentenv, handlers)
-        9. base:::tryCatchOne(expr, names, parentenv, handlers[[1L]])
-       10. value[[3L]](cond)
-       12. base::close.connection(con)
-      
-      ══ testthat results  ═══════════════════════════════════════════════════════════
-      [ OK: 109 | SKIPPED: 0 | WARNINGS: 0 | FAILED: 2 ]
-      1. Error: Get enzymes in BioCyc pathway  (@test-biocyc.R#7) 
-      2. Error: Get genes in BioCyc pathway  (@test-biocyc.R#18) 
-      
-      Error: testthat unit tests failed
-      Execution halted
-    ```
-
-## Newly fixed
-
-*   checking examples ... ERROR
-    ```
-    Running examples in ‘brendaDb-Ex.R’ failed
-    The error most likely occurred in:
-    
-    > ### Name: BiocycPathwayEnzymes
-    > ### Title: Get all EC numbers involved in a BioCyc pathway.
-    > ### Aliases: BiocycPathwayEnzymes
-    > 
-    > ### ** Examples
-    > 
-    > BiocycPathwayEnzymes("HUMAN", "PWY66-400")
-    Found 10 reactions for HUMAN pathway PWY66-400.
-    Error in read_xml.raw(raw, encoding = encoding, base_url = base_url, as_html = as_html,  : 
-      Failed to parse text
-    Calls: BiocycPathwayEnzymes ... read_xml.character -> read_xml.connection -> read_xml.raw
-    Execution halted
-    ```
-
-## In both
-
-*   checking for hidden files and directories ... NOTE
-    ```
-    Found the following hidden files and directories:
-      .travis.yml
-      .github
-    These were most likely included in error. See section ‘Package structure’ in
-    the ‘Writing R Extensions’ manual.
     ```
 
 # cutpointr
@@ -219,54 +149,6 @@ Run `revdep_details(,"cutpointr")` for more info
       
       Error: testthat unit tests failed
       Execution halted
-    ```
-
-# ggmap
-
-<details>
-
-* Version: 3.0.0
-* Source code: https://github.com/cran/ggmap
-* URL: https://github.com/dkahle/ggmap
-* BugReports: https://github.com/dkahle/ggmap/issues
-* Date/Publication: 2019-02-05 10:19:04
-* Number of recursive dependencies: 69
-
-Run `revdep_details(,"ggmap")` for more info
-
-</details>
-
-## Newly broken
-
-*   checking installed package size ... NOTE
-    ```
-      installed size is  5.3Mb
-      sub-directories of 1Mb or more:
-        data   4.8Mb
-    ```
-
-# idiogramFISH
-
-<details>
-
-* Version: 1.14.7
-* Source code: https://github.com/cran/idiogramFISH
-* URL: https://ferroao.gitlab.io/manualidiogramfish/, https://ferroao.gitlab.io/idiogramFISH
-* BugReports: https://gitlab.com/ferroao/idiogramFISH/issues
-* Date/Publication: 2020-03-28 08:20:12 UTC
-* Number of recursive dependencies: 117
-
-Run `revdep_details(,"idiogramFISH")` for more info
-
-</details>
-
-## Newly broken
-
-*   checking installed package size ... NOTE
-    ```
-      installed size is  5.0Mb
-      sub-directories of 1Mb or more:
-        doc   3.7Mb
     ```
 
 # simTool

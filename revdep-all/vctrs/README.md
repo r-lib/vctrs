@@ -10,7 +10,7 @@
 |collate  |en_US.UTF-8                  |
 |ctype    |en_US.UTF-8                  |
 |tz       |Europe/Brussels              |
-|date     |2020-04-24                   |
+|date     |2020-04-25                   |
 
 # Dependencies
 
@@ -34,14 +34,14 @@
 
 ## New problems (8)
 
-|package                              |version |error    |warning |note |
-|:------------------------------------|:-------|:--------|:-------|:----|
-|[dm](problems.md#dm)                 |0.1.1   |1 __+1__ |        |1    |
-|[glue](problems.md#glue)             |1.4.0   |__+1__   |        |     |
-|[hardhat](problems.md#hardhat)       |0.1.2   |__+1__   |        |     |
-|[probably](problems.md#probably)     |0.0.4   |__+1__   |        |     |
-|[projects](problems.md#projects)     |2.1.0   |__+1__   |        |1    |
-|[slider](problems.md#slider)         |0.1.2   |__+2__   |        |     |
-|[tibbletime](problems.md#tibbletime) |0.1.3   |__+2__   |        |     |
-|[tidyr](problems.md#tidyr)           |1.0.2   |__+2__   |        |1    |
+|package                                |version |error    |warning |note |
+|:--------------------------------------|:-------|:--------|:-------|:----|
+|[dm](problems.md#dm)                   |0.1.1   |1 __+1__ |        |1    |
+|[glue](problems.md#glue)               |1.4.0   |__+1__   |        |     |
+|[hardhat](problems.md#hardhat)         |0.1.2   |__+1__   |        |     |
+|[probably](problems.md#probably)       |0.0.4   |__+1__   |        |     |
+|[projects](problems.md#projects)       |2.1.0   |__+1__   |        |1    |
+|[slider](problems.md#slider)           |0.1.2   |__+2__   |        |     |
+|[textrecipes](problems.md#textrecipes) |0.2.0   |__+1__   |        |1    |
+|[tidyr](problems.md#tidyr)             |1.0.2   |__+2__   |        |1    |
 

@@ -301,69 +301,52 @@ Run `revdep_details(,"slider")` for more info
       Execution halted
     ```
 
-# tibbletime
+# textrecipes
 
 <details>
 
-* Version: 0.1.3
-* Source code: https://github.com/cran/tibbletime
-* URL: https://github.com/business-science/tibbletime
-* BugReports: https://github.com/business-science/tibbletime/issues
-* Date/Publication: 2019-09-20 05:00:02 UTC
-* Number of recursive dependencies: 64
+* Version: 0.2.0
+* Source code: https://github.com/cran/textrecipes
+* URL: https://github.com/tidymodels/textrecipes
+* BugReports: https://github.com/tidymodels/textrecipes/issues
+* Date/Publication: 2020-04-14 05:00:03 UTC
+* Number of recursive dependencies: 112
 
-Run `revdep_details(,"tibbletime")` for more info
+Run `revdep_details(,"textrecipes")` for more info
 
 </details>
 
 ## Newly broken
-
-*   checking examples ... ERROR
-    ```
-    ...
-    Error: Can't convert <tibble> to <tbl_time>.
-    Backtrace:
-         █
-      1. ├─`%>%`(...)
-      2. │ ├─base::withVisible(eval(quote(`_fseq`(`_lhs`)), env, env))
-      3. │ └─base::eval(quote(`_fseq`(`_lhs`)), env, env)
-      4. │   └─base::eval(quote(`_fseq`(`_lhs`)), env, env)
-      5. │     └─`_fseq`(`_lhs`)
-      6. │       └─magrittr::freduce(value, `_function_list`)
-      7. │         ├─base::withVisible(function_list[[k]](value))
-      8. │         └─function_list[[k]](value)
-      9. │           ├─tidyr::nest(.)
-     10. │           └─tibbletime:::nest.tbl_time(.)
-     11. │             ├─dplyr::mutate(...) 00_pkg_src/tibbletime/R/compat-tidyr.R:44:6
-     12. │             └─dplyr:::mutate.tbl_df(...)
-     13. │               └─dplyr:::mutate_impl(.data, dots, caller_env())
-     14. ├─vctrs::as_list_of(data, .ptype = data[[1]])
-     15. ├─vctrs:::as_list_of.list(data, .ptype = data[[1]])
-     16. │ └─vctrs::list_of(!!!x, .ptype = .ptype)
-     17. │   └─
-    Execution halted
-    ```
 
 *   checking tests ...
     ```
      ERROR
     Running the tests in ‘tests/testthat.R’ failed.
     Last 13 lines of output:
-       47. testthat:::failure_summary(result, self$n_fail)
-       50. testthat:::format.expectation(x)
-       51. testthat:::format_with_trace(x)
-       53. rlang:::format.rlang_trace(...)
-       54. rlang:::trace_format_branch(x, max_frames, dir, srcrefs)
-       55. rlang:::branch_uncollapse_pipe(trace)
+      Backtrace:
+        1. testthat::expect_error(...)
+       10. vctrs::vec_default_cast(...)
+       11. vctrs::stop_incompatible_cast(...)
+       12. vctrs:::stop_incompatible_type_convert(...)
+       13. vctrs:::stop_incompatible_type_impl(...)
+       14. vctrs:::stop_incompatible(...)
+       15. vctrs:::stop_vctrs(...)
       
       ══ testthat results  ═══════════════════════════════════════════════════════════
-      [ OK: 126 | SKIPPED: 0 | WARNINGS: 0 | FAILED: 3 ]
-      1. Error: nest() with index creates tbl_df (@test_compat-tidyr.R#22) 
-      2. Error: nest() with index creates tbl_df (@test_compat-tidyr.R#20) 
-      3. Error: (unknown) (@test_compat-tidyr.R#20) 
+      [ OK: 203 | SKIPPED: 8 | WARNINGS: 1 | FAILED: 1 ]
+      1. Failure: tokenlist_pos_filter works (@test-tokenlist.R#399) 
       
       Error: testthat unit tests failed
       Execution halted
+    ```
+
+## In both
+
+*   checking dependencies in R code ... NOTE
+    ```
+    Namespaces in Imports field not imported from:
+      ‘dials’ ‘modeldata’
+      All declared Imports should be used.
     ```
 
 # tidyr
