@@ -156,15 +156,15 @@
 <p>The following errors are caused by breaking changes.</p>
 <ul>
 <li>
-<p>“Can’t convert <character> to <list>.”</list></character></p>
+<p><code>"Can't convert &lt;character&gt; to &lt;list&gt;."</code></p>
 <p><code><a href="../reference/vec_cast.html">vec_cast()</a></code> no longer converts to list. Use <code><a href="../reference/vec_chop.html">vec_chop()</a></code> or <code><a href="https://rdrr.io/r/base/list.html">as.list()</a></code> instead.</p>
 </li>
 <li>
-<p>“Can’t convert <integer> to <character>.”</character></integer></p>
+<p><code>"Can't convert &lt;integer&gt; to &lt;character&gt;."</code></p>
 <p><code><a href="../reference/vec_cast.html">vec_cast()</a></code> no longer converts to character. Use <code><a href="https://rdrr.io/r/base/character.html">as.character()</a></code>to deparse objects.</p>
 </li>
 <li>
-<p>“names for target but not for current”</p>
+<p><code>"names for target but not for current"</code></p>
 <p>Names of list-columns are now preserved by <code><a href="../reference/vec_bind.html">vec_rbind()</a></code>. Adjust tests accordingly.</p>
 </li>
 </ul>
