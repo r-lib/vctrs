@@ -149,13 +149,35 @@
 <h1 class="page-header">
 <a href="#vctrs-development-version" class="anchor"></a>vctrs (development version)<small> Unreleased </small>
 </h1>
+<p>This version features an overhaul of the coercion system to make it more consistent and easier to implement. See the <em>Breaking changes</em> and <em>Type system</em> sections for details.</p>
+<div id="reverse-dependencies-troubleshooting" class="section level2">
+<h2 class="hasAnchor">
+<a href="#reverse-dependencies-troubleshooting" class="anchor"></a>Reverse dependencies troubleshooting</h2>
+<p>The following errors are caused by breaking changes.</p>
 <ul>
-<li><p>vctrs now supports the <code>data.table</code> class. The common type of a data frame or a tibble and a data table is a data table.</p></li>
-<li><p><code><a href="../reference/new_vctr.html">new_vctr()</a></code> now always appends a base <code>"list"</code> class to list <code>.data</code> to be compatible with changes to <code><a href="../reference/vec_is_list.html">vec_is_list()</a></code>. This affects <code><a href="../reference/new_list_of.html">new_list_of()</a></code>, which now returns an object with a base class of <code>"list"</code>.</p></li>
-<li><p><code><a href="../reference/vec_is_list.html">vec_is_list()</a></code> no longer allows S3 lists that implement a <code><a href="../reference/vec_data.html">vec_proxy()</a></code> method to automatically be considered lists. A S3 list must explicitly inherit from <code>"list"</code> in the base class to be considered a list.</p></li>
-<li><p><code><a href="../reference/vec_bind.html">vec_rbind()</a></code> gains option to treat input names as row names. This is disabled by default (#966).</p></li>
-<li><p><code><a href="../reference/vec_ptype.html">vec_ptype()</a></code> gained an <code>x_arg</code> argument.</p></li>
-<li><p><code><a href="../reference/vctrs-conditions.html">stop_incompatible_cast()</a></code> now throws an error of class <code>vctrs_error_incompatible_type</code> rather than <code>vctrs_error_incompatible_cast</code>. This means that <code><a href="../reference/vec_cast.html">vec_cast()</a></code> also throws errors of this class, which better aligns it with <code><a href="../reference/vec_ptype2.html">vec_ptype2()</a></code> now that they are restricted to the same conversions.</p></li>
+<li>
+<p>“Can’t convert <character> to <list>.”</list></character></p>
+<p><code><a href="../reference/vec_cast.html">vec_cast()</a></code> no longer converts to list. Use <code><a href="../reference/vec_chop.html">vec_chop()</a></code> or <code><a href="https://rdrr.io/r/base/list.html">as.list()</a></code> instead.</p>
+</li>
+<li>
+<p>“Can’t convert <integer> to <character>.”</character></integer></p>
+<p><code><a href="../reference/vec_cast.html">vec_cast()</a></code> no longer converts to character. Use <code><a href="https://rdrr.io/r/base/character.html">as.character()</a></code>to deparse objects.</p>
+</li>
+<li>
+<p>“names for target but not for current”</p>
+<p>Names of list-columns are now preserved by <code><a href="../reference/vec_bind.html">vec_rbind()</a></code>. Adjust tests accordingly.</p>
+</li>
+</ul>
+</div>
+<div id="breaking-changes" class="section level2">
+<h2 class="hasAnchor">
+<a href="#breaking-changes" class="anchor"></a>Breaking changes</h2>
+<ul>
+<li>
+<p>Double-dispatch methods for <code><a href="../reference/vec_ptype2.html">vec_ptype2()</a></code> and <code><a href="../reference/vec_cast.html">vec_cast()</a></code> are no longer inherited (#710). Class implementers must implement one set of methods for each compatible class.</p>
+<p>For example, a tibble subclass no longer inherits from the <code><a href="../reference/vec_ptype2.html">vec_ptype2()</a></code> methods between <code>tbl_df</code> and <code>data.frame</code>. This means that you explicitly need to implement <code><a href="../reference/vec_ptype2.html">vec_ptype2()</a></code> methods with <code>tbl_df</code> and <code>data.frame</code>.</p>
+<p>This change requires a bit more work from class maintainers but is safer because the coercion hyerarchies are generally different from class hierarchies. See the S3 dispatch section of <code><a href="../reference/vec_ptype2.html">?vec_ptype2</a></code> for more information.</p>
+</li>
 <li>
 <p><code><a href="../reference/vec_cast.html">vec_cast()</a></code> is now restricted to the same conversions as <code><a href="../reference/vec_ptype2.html">vec_ptype2()</a></code> methods (#606, #741). This change is motivated by safety and performance:</p>
 <ul>
@@ -164,17 +186,13 @@
 <li><p>To implement the useful semantics of coercible casts (already used in <code><a href="../reference/vec_slice.html">vec_assign()</a></code>), two double dispatch were needed. Now it can be done with one double dispatch by calling <code><a href="../reference/vec_cast.html">vec_cast()</a></code> directly.</p></li>
 </ul>
 </li>
-<li><p><code><a href="../reference/vec_ptype2.html">vec_ptype2()</a></code> is now more permissive with subclasses of data frames and falls back to a bare data frame when the classes do not have a common type (#981). This is for convenience, users should normalise their inputs to a common data frame class manually to avoid the warning (if applicable, the classes could also implement a common type).</p></li>
-<li>
-<p><code><a href="../reference/vec_bind.html">vec_cbind()</a></code> now calls <code><a href="../reference/vec_cast.html">vec_restore()</a></code> on inputs emptied of their columns before computing the common type. This has consequences for data frame classes with special columns that devolve into simpler classes when the columns are subsetted out. These classes are now always simplified by <code><a href="../reference/vec_bind.html">vec_cbind()</a></code>.</p>
-<p>For instance, column-binding a grouped data frame with a data frame now produces a tibble (the simplified class of a grouped data frame).</p>
-</li>
-<li><p>dplyr methods are now implemented for <code><a href="../reference/vec_cast.html">vec_restore()</a></code>, <code><a href="../reference/vec_ptype2.html">vec_ptype2()</a></code>, and <code><a href="../reference/vec_cast.html">vec_cast()</a></code>. The user-visible consequence (and breaking change) is that row-binding a grouped data frame and a data frame or tibble now returns a grouped data frame. It would previously return a tibble.</p></li>
-<li>
-<p>Double-dispatch methods for <code><a href="../reference/vec_ptype2.html">vec_ptype2()</a></code> and <code><a href="../reference/vec_cast.html">vec_cast()</a></code> are no longer inherited (#710). Class implementers must implement one set of methods for each compatible class.</p>
-<p>For example, a tibble subclass no longer inherits from the <code><a href="../reference/vec_ptype2.html">vec_ptype2()</a></code> methods between <code>tbl_df</code> and <code>data.frame</code>. This means that you explicitly need to implement <code><a href="../reference/vec_ptype2.html">vec_ptype2()</a></code> methods with <code>tbl_df</code> and <code>data.frame</code>.</p>
-<p>This change requires a bit more work from class maintainers but is safer because the coercion hyerarchies are generally different from class hierarchies. See the S3 dispatch section of <code><a href="../reference/vec_ptype2.html">?vec_ptype2</a></code> for more information.</p>
-</li>
+<li><p><code><a href="../reference/vctrs-conditions.html">stop_incompatible_cast()</a></code> now throws an error of class <code>vctrs_error_incompatible_type</code> rather than <code>vctrs_error_incompatible_cast</code>. This means that <code><a href="../reference/vec_cast.html">vec_cast()</a></code> also throws errors of this class, which better aligns it with <code><a href="../reference/vec_ptype2.html">vec_ptype2()</a></code> now that they are restricted to the same conversions.</p></li>
+</ul>
+</div>
+<div id="type-system" class="section level2">
+<h2 class="hasAnchor">
+<a href="#type-system" class="anchor"></a>Type system</h2>
+<ul>
 <li>
 <p>Double-dispatch methods for <code><a href="../reference/vec_ptype2.html">vec_ptype2()</a></code> and <code><a href="../reference/vec_cast.html">vec_cast()</a></code> are now easier to implement. They no longer need any the boiler plate. Implementing a method for classes <code>foo</code> and <code>bar</code> is now as simple as:</p>
 <pre><code>#' <a href='https://github.com/export'>@export</a>
@@ -182,14 +200,19 @@ vec_ptype2.foo.bar &lt;- function(x, y, ...) new_foo()</code></pre>
 <p>vctrs also takes care of implementing the default and unspecified methods. If you have implemented these methods, they are no longer called and can now be removed.</p>
 <p>One consequence of the new dispatch mechanism is that <code><a href="https://rdrr.io/r/base/UseMethod.html">NextMethod()</a></code> is now completely unsupported. This is for the best as it never worked correctly in a double-dispatch setting. Parent methods must now be called manually.</p>
 </li>
-<li><p>New <code><a href="../reference/vec-rep.html">vec_rep()</a></code> and <code><a href="../reference/vec-rep.html">vec_rep_each()</a></code> for repeating an entire vector and elements of a vector, respectively. These two functions provide a clearer interface for the functionality of <code><a href="../reference/vec_repeat.html">vec_repeat()</a></code>, which is now deprecated.</p></li>
-<li><p><code><a href="../reference/vec_match.html">vec_match()</a></code> and <code><a href="../reference/vec_match.html">vec_in()</a></code> gain parameters for argument tags (#944).</p></li>
-<li><p>The <code>is.na&lt;-()</code> method for <code>vctrs_vctr</code> now supports numeric and character subscripts to indicate where to insert missing values (#947).</p></li>
-<li><p>The internal version of <code><a href="../reference/vec_slice.html">vec_assign()</a></code> now has support for assigning names and inner names. For data frames, the names are assigned recursively.</p></li>
+<li><p><code><a href="../reference/vec_is_list.html">vec_is_list()</a></code> no longer allows S3 lists that implement a <code><a href="../reference/vec_data.html">vec_proxy()</a></code> method to automatically be considered lists. A S3 list must explicitly inherit from <code>"list"</code> in the base class to be considered a list.</p></li>
 <li><p><code><a href="../reference/vec_cast.html">vec_restore()</a></code> no longer restores row names if the target is not a data frame. This fixes an issue where <code>POSIXlt</code> objects would carry a <code>row.names</code> attribute after a proxy/restore roundtrip.</p></li>
-<li><p><code><a href="../reference/vec_as_subscript.html">vec_as_subscript()</a></code> now fails when the subscript is a matrix or an array, consistently with <code><a href="../reference/vec_as_location.html">vec_as_location()</a></code>.</p></li>
-<li><p>Improved error messages in <code><a href="../reference/vec_as_location.html">vec_as_location()</a></code> when subscript is a matrix or array (#936).</p></li>
-<li><p>New <code><a href="../reference/vec_size.html">list_sizes()</a></code> for computing the size of every element in a list. <code><a href="../reference/vec_size.html">list_sizes()</a></code> is to <code><a href="../reference/vec_size.html">vec_size()</a></code> as <code><a href="https://rdrr.io/r/base/lengths.html">lengths()</a></code> is to <code><a href="https://rdrr.io/r/base/length.html">length()</a></code>, except that it only supports lists. Atomic vectors and data frames result in an error.</p></li>
+<li><p><code><a href="../reference/vec_cast.html">vec_cast()</a></code> to and from data frames preserves the row names of inputs.</p></li>
+<li>
+<p>The internal function <code>vec_names()</code> now returns row names if the input is a data frame. Similarly, <code>vec_set_names()</code> sets row names on data frames. This is part of a general effort at making row names the vector names of data frames in vctrs.</p>
+<p>If necessary, the row names are repaired verbosely but without error to make them unique. This should be a mostly harmless change for users, but it could break unit tests in packages if they make assumptions about the row names.</p>
+</li>
+</ul>
+</div>
+<div id="compatibility-and-fallbacks" class="section level2">
+<h2 class="hasAnchor">
+<a href="#compatibility-and-fallbacks" class="anchor"></a>Compatibility and fallbacks</h2>
+<ul>
 <li>
 <p>Improved support for foreign classes in the combining operations <code><a href="../reference/vec_c.html">vec_c()</a></code>, <code><a href="../reference/vec_bind.html">vec_rbind()</a></code>, and <code><a href="../reference/vec_chop.html">vec_unchop()</a></code>. A foreign class is a class that doesn’t implement <code><a href="../reference/vec_ptype2.html">vec_ptype2()</a></code>. When all the objects to combine have the same foreign class, one of these fallbacks is invoked:</p>
 <ul>
@@ -199,29 +222,51 @@ vec_ptype2.foo.bar &lt;- function(x, y, ...) new_foo()</code></pre>
 <p>These fallbacks do not make your class completely compatible with vctrs-powered packages, but they should help in many simple cases.</p>
 </li>
 <li><p><code><a href="../reference/vec_c.html">vec_c()</a></code> and <code><a href="../reference/vec_chop.html">vec_unchop()</a></code> now fall back to <code><a href="https://rdrr.io/r/base/c.html">base::c()</a></code> for S4 objects if the object doesn’t implement <code><a href="../reference/vec_ptype2.html">vec_ptype2()</a></code> but sets an S4 <code><a href="https://rdrr.io/r/base/c.html">c()</a></code> method (#919).</p></li>
-<li><p><code><a href="../reference/vec_as_location.html">vec_as_location2()</a></code> properly picks up <code>subscript_arg</code> (tidyverse/tibble#735).</p></li>
-<li><p><code><a href="../reference/vec_cast.html">vec_cast()</a></code> to and from data frames preserves the row names of inputs.</p></li>
-<li><p><code><a href="../reference/vec_cast.html">vec_cast()</a></code> with data frames no longer uses inheritance (#710).</p></li>
+<li><p><code><a href="../reference/vec_ptype2.html">vec_ptype2()</a></code> is now more permissive with subclasses of data frames and falls back to a bare data frame when the classes do not have a common type (#981). This is for convenience, users should normalise their inputs to a common data frame class manually to avoid the warning (if applicable, the classes could also implement a common type).</p></li>
+</ul>
+</div>
+<div id="vector-operations" class="section level2">
+<h2 class="hasAnchor">
+<a href="#vector-operations" class="anchor"></a>Vector operations</h2>
+<ul>
+<li><p><code><a href="../reference/vec_bind.html">vec_rbind()</a></code> and <code><a href="../reference/vec_c.html">vec_c()</a></code> with data frame inputs now consistently preserve the names of list-columns, df-columns, and matrix-columns (#689). This can cause some false positives in unit tests, if they are sensitive to internal names (#1007).</p></li>
+<li><p><code><a href="../reference/vec_bind.html">vec_rbind()</a></code> now repairs row names silently to avoid confusing messages when the row names are not informative and were not created on purpose.</p></li>
+<li><p><code><a href="../reference/vec_bind.html">vec_rbind()</a></code> gains option to treat input names as row names. This is disabled by default (#966).</p></li>
+<li><p>New <code><a href="../reference/vec-rep.html">vec_rep()</a></code> and <code><a href="../reference/vec-rep.html">vec_rep_each()</a></code> for repeating an entire vector and elements of a vector, respectively. These two functions provide a clearer interface for the functionality of <code><a href="../reference/vec_repeat.html">vec_repeat()</a></code>, which is now deprecated.</p></li>
 <li>
-<p>The internal function <code>vec_names()</code> now returns row names if the input is a data frame. Similarly, <code>vec_set_names()</code> sets row names on data frames. This is part of a general effort at making row names the vector names of data frames in vctrs.</p>
-<p>If necessary, the row names are repaired verbosely but without error to make them unique. This should be a mostly harmless change for users, but it could break unit tests in packages if they make assumptions about the row names.</p>
+<p><code><a href="../reference/vec_bind.html">vec_cbind()</a></code> now calls <code><a href="../reference/vec_cast.html">vec_restore()</a></code> on inputs emptied of their columns before computing the common type. This has consequences for data frame classes with special columns that devolve into simpler classes when the columns are subsetted out. These classes are now always simplified by <code><a href="../reference/vec_bind.html">vec_cbind()</a></code>.</p>
+<p>For instance, column-binding a grouped data frame with a data frame now produces a tibble (the simplified class of a grouped data frame).</p>
 </li>
+<li><p><code><a href="../reference/vec_match.html">vec_match()</a></code> and <code><a href="../reference/vec_match.html">vec_in()</a></code> gain parameters for argument tags (#944).</p></li>
+<li><p>The internal version of <code><a href="../reference/vec_slice.html">vec_assign()</a></code> now has support for assigning names and inner names. For data frames, the names are assigned recursively.</p></li>
 <li><p><code><a href="../reference/vec_slice.html">vec_assign()</a></code> gains <code>x_arg</code> and <code>value_arg</code> parameters (#918).</p></li>
 <li><p><code><a href="../reference/vec_group.html">vec_group_loc()</a></code>, which powers <code><a href="https://dplyr.tidyverse.org/reference/group_by.html">dplyr::group_by()</a></code>, now has more efficient vector access (#911).</p></li>
-<li><p><code><a href="../reference/vec_as_names.html">vec_as_names()</a></code> now has more informative error messages when names are not unique (#882).</p></li>
+<li><p><code><a href="../reference/vec_ptype.html">vec_ptype()</a></code> gained an <code>x_arg</code> argument.</p></li>
+<li><p>New <code><a href="../reference/vec_size.html">list_sizes()</a></code> for computing the size of every element in a list. <code><a href="../reference/vec_size.html">list_sizes()</a></code> is to <code><a href="../reference/vec_size.html">vec_size()</a></code> as <code><a href="https://rdrr.io/r/base/lengths.html">lengths()</a></code> is to <code><a href="https://rdrr.io/r/base/length.html">length()</a></code>, except that it only supports lists. Atomic vectors and data frames result in an error.</p></li>
+<li><p><code><a href="../reference/new_data_frame.html">new_data_frame()</a></code> infers size from row names when <code>n = NULL</code> (#894).</p></li>
+</ul>
+</div>
+<div id="classes" class="section level2">
+<h2 class="hasAnchor">
+<a href="#classes" class="anchor"></a>Classes</h2>
+<ul>
+<li><p>vctrs now supports the <code>data.table</code> class. The common type of a data frame or a tibble and a data table is a data table.</p></li>
+<li><p><code><a href="../reference/new_vctr.html">new_vctr()</a></code> now always appends a base <code>"list"</code> class to list <code>.data</code> to be compatible with changes to <code><a href="../reference/vec_is_list.html">vec_is_list()</a></code>. This affects <code><a href="../reference/new_list_of.html">new_list_of()</a></code>, which now returns an object with a base class of <code>"list"</code>.</p></li>
+<li><p>dplyr methods are now implemented for <code><a href="../reference/vec_cast.html">vec_restore()</a></code>, <code><a href="../reference/vec_ptype2.html">vec_ptype2()</a></code>, and <code><a href="../reference/vec_cast.html">vec_cast()</a></code>. The user-visible consequence (and breaking change) is that row-binding a grouped data frame and a data frame or tibble now returns a grouped data frame. It would previously return a tibble.</p></li>
+<li><p>The <code>is.na&lt;-()</code> method for <code>vctrs_vctr</code> now supports numeric and character subscripts to indicate where to insert missing values (#947).</p></li>
 <li><p>Improved support for vector-like S4 objects (#550, #551).</p></li>
 <li><p>The base classes <code>AsIs</code> and <code>table</code> have vctrs methods (#904, #906).</p></li>
 <li><p><code>POSIXlt</code> and <code>POSIXct</code> vectors are handled more consistently (#901).</p></li>
-<li><p><code><a href="../reference/new_data_frame.html">new_data_frame()</a></code> infers size from row names when <code>n = NULL</code> (#894).</p></li>
 </ul>
-<div id="breaking-changes" class="section level2">
+</div>
+<div id="indexing-and-names" class="section level2">
 <h2 class="hasAnchor">
-<a href="#breaking-changes" class="anchor"></a>Breaking changes</h2>
+<a href="#indexing-and-names" class="anchor"></a>Indexing and names</h2>
 <ul>
-<li>
-<p><code><a href="../reference/vec_bind.html">vec_rbind()</a></code> and <code><a href="../reference/vec_c.html">vec_c()</a></code> with data frame inputs now consistently preserve the names of list-columns, df-columns, and matrix-columns (#689). This can cause some false positives in unit tests, if they are sensitive to internal names (#1007).</p>
-<p>As row names must be unique, they are repaired with <code><a href="../reference/vec_as_names.html">vec_as_names()</a></code>. This repair is silent to avoid confusing messages when the row names are not informative and were not created on purpose.</p>
-</li>
+<li><p><code><a href="../reference/vec_as_subscript.html">vec_as_subscript()</a></code> now fails when the subscript is a matrix or an array, consistently with <code><a href="../reference/vec_as_location.html">vec_as_location()</a></code>.</p></li>
+<li><p>Improved error messages in <code><a href="../reference/vec_as_location.html">vec_as_location()</a></code> when subscript is a matrix or array (#936).</p></li>
+<li><p><code><a href="../reference/vec_as_location.html">vec_as_location2()</a></code> properly picks up <code>subscript_arg</code> (tidyverse/tibble#735).</p></li>
+<li><p><code><a href="../reference/vec_as_names.html">vec_as_names()</a></code> now has more informative error messages when names are not unique (#882).</p></li>
 </ul>
 </div>
 <div id="cran-results" class="section level2">
