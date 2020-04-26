@@ -1,27 +1,46 @@
 
 # vctrs (development version)
 
-* vctrs now supports the `data.table` class. The common type of a data
-  frame or a tibble and a data table is a data table.
+This version features an overhaul of the coercion system to make it
+more consistent and easier to implement. See the _Breaking changes_
+and _Type system_ sections for details.
 
-* `new_vctr()` now always appends a base `"list"` class to list `.data` to
-  be compatible with changes to `vec_is_list()`. This affects `new_list_of()`,
-  which now returns an object with a base class of `"list"`.
 
-* `vec_is_list()` no longer allows S3 lists that implement a `vec_proxy()`
-  method to automatically be considered lists. A S3 list must explicitly
-  inherit from `"list"` in the base class to be considered a list.
+## Reverse dependencies troubleshooting
 
-* `vec_rbind()` gains option to treat input names as row names. This
-  is disabled by default (#966).
+The following errors are caused by breaking changes.
 
-* `vec_ptype()` gained an `x_arg` argument.
+* `"Can't convert <character> to <list>."`
 
-* `stop_incompatible_cast()` now throws an error of class
-  `vctrs_error_incompatible_type` rather than `vctrs_error_incompatible_cast`.
-  This means that `vec_cast()` also throws errors of this class, which better
-  aligns it with `vec_ptype2()` now that they are restricted to the same
-  conversions.
+  `vec_cast()` no longer converts to list. Use `vec_chop()` or
+  `as.list()` instead.
+
+* `"Can't convert <integer> to <character>."`
+
+  `vec_cast()` no longer converts to character. Use `as.character()`to
+  deparse objects.
+
+* `"names for target but not for current"`
+
+  Names of list-columns are now preserved by `vec_rbind()`. Adjust
+  tests accordingly.
+
+
+## Breaking changes
+
+* Double-dispatch methods for `vec_ptype2()` and `vec_cast()` are no
+  longer inherited (#710). Class implementers must implement one set
+  of methods for each compatible class.
+
+  For example, a tibble subclass no longer inherits from the
+  `vec_ptype2()` methods between `tbl_df` and `data.frame`. This means
+  that you explicitly need to implement `vec_ptype2()` methods with
+  `tbl_df` and `data.frame`.
+
+  This change requires a bit more work from class maintainers but is
+  safer because the coercion hyerarchies are generally different from
+  class hierarchies. See the S3 dispatch section of `?vec_ptype2` for
+  more information.
 
 * `vec_cast()` is now restricted to the same conversions as
   `vec_ptype2()` methods (#606, #741). This change is motivated by
@@ -41,41 +60,14 @@
     in `vec_assign()`), two double dispatch were needed. Now it can be
     done with one double dispatch by calling `vec_cast()` directly.
 
-* `vec_ptype2()` is now more permissive with subclasses of data frames
-  and falls back to a bare data frame when the classes do not have a
-  common type (#981). This is for convenience, users should normalise
-  their inputs to a common data frame class manually to avoid the
-  warning (if applicable, the classes could also implement a common type).
+* `stop_incompatible_cast()` now throws an error of class
+  `vctrs_error_incompatible_type` rather than `vctrs_error_incompatible_cast`.
+  This means that `vec_cast()` also throws errors of this class, which better
+  aligns it with `vec_ptype2()` now that they are restricted to the same
+  conversions.
 
-* `vec_cbind()` now calls `vec_restore()` on inputs emptied of their
-  columns before computing the common type. This has
-  consequences for data frame classes with special columns that
-  devolve into simpler classes when the columns are subsetted
-  out. These classes are now always simplified by `vec_cbind()`.
 
-  For instance, column-binding a grouped data frame with a data frame
-  now produces a tibble (the simplified class of a grouped data
-  frame).
-
-* dplyr methods are now implemented for `vec_restore()`,
-  `vec_ptype2()`, and `vec_cast()`. The user-visible consequence (and
-  breaking change) is that row-binding a grouped data frame and a data
-  frame or tibble now returns a grouped data frame. It would
-  previously return a tibble.
-
-* Double-dispatch methods for `vec_ptype2()` and `vec_cast()` are no
-  longer inherited (#710). Class implementers must implement one set
-  of methods for each compatible class.
-
-  For example, a tibble subclass no longer inherits from the
-  `vec_ptype2()` methods between `tbl_df` and `data.frame`. This means
-  that you explicitly need to implement `vec_ptype2()` methods with
-  `tbl_df` and `data.frame`.
-
-  This change requires a bit more work from class maintainers but is
-  safer because the coercion hyerarchies are generally different from
-  class hierarchies. See the S3 dispatch section of `?vec_ptype2` for
-  more information.
+## Type system
 
 * Double-dispatch methods for `vec_ptype2()` and `vec_cast()` are now
   easier to implement. They no longer need any the boiler plate.
@@ -95,34 +87,29 @@
   worked correctly in a double-dispatch setting. Parent methods must
   now be called manually.
 
-* New `vec_rep()` and `vec_rep_each()` for repeating an entire vector
-  and elements of a vector, respectively. These two functions provide
-  a clearer interface for the functionality of `vec_repeat()`, which
-  is now deprecated.
-
-* `vec_match()` and `vec_in()` gain parameters for argument tags (#944).
-
-* The `is.na<-()` method for `vctrs_vctr` now supports numeric and
-  character subscripts to indicate where to insert missing values (#947).
-
-* The internal version of `vec_assign()` now has support for assigning
-  names and inner names. For data frames, the names are assigned
-  recursively.
+* `vec_is_list()` no longer allows S3 lists that implement a `vec_proxy()`
+  method to automatically be considered lists. A S3 list must explicitly
+  inherit from `"list"` in the base class to be considered a list.
 
 * `vec_restore()` no longer restores row names if the target is not a
   data frame. This fixes an issue where `POSIXlt` objects would carry
   a `row.names` attribute after a proxy/restore roundtrip.
 
-* `vec_as_subscript()` now fails when the subscript is a matrix or an
-  array, consistently with `vec_as_location()`.
+* `vec_cast()` to and from data frames preserves the row names of
+  inputs.
 
-* Improved error messages in `vec_as_location()` when subscript is a
-  matrix or array (#936).
+* The internal function `vec_names()` now returns row names if the
+  input is a data frame. Similarly, `vec_set_names()` sets row names
+  on data frames. This is part of a general effort at making row names
+  the vector names of data frames in vctrs.
 
-* New `list_sizes()` for computing the size of every element in a list.
-  `list_sizes()` is to `vec_size()` as `lengths()` is to `length()`, except
-  that it only supports lists. Atomic vectors and data frames result in an
-  error.
+  If necessary, the row names are repaired verbosely but without error
+  to make them unique. This should be a mostly harmless change for
+  users, but it could break unit tests in packages if they make
+  assumptions about the row names.
+
+
+## Compatibility and fallbacks
 
 * Improved support for foreign classes in the combining operations
   `vec_c()`, `vec_rbind()`, and `vec_unchop()`. A foreign class is a
@@ -144,31 +131,80 @@
   the object doesn't implement `vec_ptype2()` but sets an S4 `c()`
   method (#919).
 
-* `vec_as_location2()` properly picks up `subscript_arg`
-  (tidyverse/tibble#735).
+* `vec_ptype2()` is now more permissive with subclasses of data frames
+  and falls back to a bare data frame when the classes do not have a
+  common type (#981). This is for convenience, users should normalise
+  their inputs to a common data frame class manually to avoid the
+  warning (if applicable, the classes could also implement a common type).
 
-* `vec_cast()` to and from data frames preserves the row names of
-  inputs.
 
-* `vec_cast()` with data frames no longer uses inheritance (#710).
+## Vector operations
 
-* The internal function `vec_names()` now returns row names if the
-  input is a data frame. Similarly, `vec_set_names()` sets row names
-  on data frames. This is part of a general effort at making row names
-  the vector names of data frames in vctrs.
+* `vec_rbind()` and `vec_c()` with data frame inputs now consistently
+  preserve the names of list-columns, df-columns, and matrix-columns
+  (#689). This can cause some false positives in unit tests, if they
+  are sensitive to internal names (#1007).
 
-  If necessary, the row names are repaired verbosely but without error
-  to make them unique. This should be a mostly harmless change for
-  users, but it could break unit tests in packages if they make
-  assumptions about the row names.
+* `vec_rbind()` now repairs row names silently to avoid confusing
+  messages when the row names are not informative and were not created
+  on purpose.
+
+* `vec_rbind()` gains option to treat input names as row names. This
+  is disabled by default (#966).
+
+* New `vec_rep()` and `vec_rep_each()` for repeating an entire vector
+  and elements of a vector, respectively. These two functions provide
+  a clearer interface for the functionality of `vec_repeat()`, which
+  is now deprecated.
+
+* `vec_cbind()` now calls `vec_restore()` on inputs emptied of their
+  columns before computing the common type. This has
+  consequences for data frame classes with special columns that
+  devolve into simpler classes when the columns are subsetted
+  out. These classes are now always simplified by `vec_cbind()`.
+
+  For instance, column-binding a grouped data frame with a data frame
+  now produces a tibble (the simplified class of a grouped data
+  frame).
+
+* `vec_match()` and `vec_in()` gain parameters for argument tags (#944).
+
+* The internal version of `vec_assign()` now has support for assigning
+  names and inner names. For data frames, the names are assigned
+  recursively.
 
 * `vec_assign()` gains `x_arg` and `value_arg` parameters (#918).
 
 * `vec_group_loc()`, which powers `dplyr::group_by()`, now has more
   efficient vector access (#911).
 
-* `vec_as_names()` now has more informative error messages when names
-  are not unique (#882).
+* `vec_ptype()` gained an `x_arg` argument.
+
+* New `list_sizes()` for computing the size of every element in a list.
+  `list_sizes()` is to `vec_size()` as `lengths()` is to `length()`, except
+  that it only supports lists. Atomic vectors and data frames result in an
+  error.
+
+* `new_data_frame()` infers size from row names when `n = NULL` (#894).
+
+
+## Classes
+
+* vctrs now supports the `data.table` class. The common type of a data
+  frame or a tibble and a data table is a data table.
+
+* `new_vctr()` now always appends a base `"list"` class to list `.data` to
+  be compatible with changes to `vec_is_list()`. This affects `new_list_of()`,
+  which now returns an object with a base class of `"list"`.
+
+* dplyr methods are now implemented for `vec_restore()`,
+  `vec_ptype2()`, and `vec_cast()`. The user-visible consequence (and
+  breaking change) is that row-binding a grouped data frame and a data
+  frame or tibble now returns a grouped data frame. It would
+  previously return a tibble.
+
+* The `is.na<-()` method for `vctrs_vctr` now supports numeric and
+  character subscripts to indicate where to insert missing values (#947).
 
 * Improved support for vector-like S4 objects (#550, #551).
 
@@ -176,20 +212,20 @@
 
 * `POSIXlt` and `POSIXct` vectors are handled more consistently (#901).
 
-* `new_data_frame()` infers size from row names when `n = NULL` (#894).
 
+## Indexing and names
 
-## Breaking changes
+* `vec_as_subscript()` now fails when the subscript is a matrix or an
+  array, consistently with `vec_as_location()`.
 
-* `vec_rbind()` and `vec_c()` with data frame inputs now consistently
-  preserve the names of list-columns, df-columns, and matrix-columns
-  (#689). This can cause some false positives in unit tests, if they
-  are sensitive to internal names (#1007).
+* Improved error messages in `vec_as_location()` when subscript is a
+  matrix or array (#936).
 
-  As row names must be unique, they are repaired with
-  `vec_as_names()`. This repair is silent to avoid confusing messages
-  when the row names are not informative and were not created on
-  purpose.
+* `vec_as_location2()` properly picks up `subscript_arg`
+  (tidyverse/tibble#735).
+
+* `vec_as_names()` now has more informative error messages when names
+  are not unique (#882).
 
 
 ## CRAN results
