@@ -1,0 +1,4 @@
+release_version: 0.3.0
+release_date: 2020-05-06
+rel_release_date: 10 days
+my_news_url: https://github.com/r-lib/vctrs/blob/master/NEWS.md
