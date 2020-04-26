@@ -12,6 +12,10 @@ on_package_load <- function(pkg, expr) {
 .onLoad <- function(libname, pkgname) {
   check_linked_version(pkgname)
 
+  on_package_load("testthat", {
+    s3_register("testthat::is_informative_error", "vctrs_error_cast_lossy_dropped")
+  })
+
   s3_register("generics::as.factor", "vctrs_vctr")
   s3_register("generics::as.ordered", "vctrs_vctr")
   s3_register("generics::as.difftime", "vctrs_vctr")
