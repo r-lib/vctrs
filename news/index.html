@@ -250,7 +250,7 @@ vec_ptype2.foo.bar &lt;- function(x, y, ...) new_foo()</code></pre>
 <h2 class="hasAnchor">
 <a href="#classes" class="anchor"></a>Classes</h2>
 <ul>
-<li><p>vctrs now supports the <code>data.table</code> class. The common type of a data frame or a tibble and a data table is a data table.</p></li>
+<li><p>vctrs now supports the <code>data.table</code> class. The common type of a data frame and a data table is a data table.</p></li>
 <li><p><code><a href="../reference/new_vctr.html">new_vctr()</a></code> now always appends a base <code>"list"</code> class to list <code>.data</code> to be compatible with changes to <code><a href="../reference/vec_is_list.html">vec_is_list()</a></code>. This affects <code><a href="../reference/new_list_of.html">new_list_of()</a></code>, which now returns an object with a base class of <code>"list"</code>.</p></li>
 <li><p>dplyr methods are now implemented for <code><a href="../reference/vec_cast.html">vec_restore()</a></code>, <code><a href="../reference/vec_ptype2.html">vec_ptype2()</a></code>, and <code><a href="../reference/vec_cast.html">vec_cast()</a></code>. The user-visible consequence (and breaking change) is that row-binding a grouped data frame and a data frame or tibble now returns a grouped data frame. It would previously return a tibble.</p></li>
 <li><p>The <code>is.na&lt;-()</code> method for <code>vctrs_vctr</code> now supports numeric and character subscripts to indicate where to insert missing values (#947).</p></li>
