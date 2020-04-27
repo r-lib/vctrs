@@ -1247,7 +1247,7 @@ bool r_is_function(SEXP x) {
 }
 
 SEXP r_maybe_duplicate(SEXP x) {
-  if (MAYBE_REFERENCED(x)) {
+  if (MAYBE_SHARED(x)) {
     return Rf_shallow_duplicate(x);
   } else {
     return x;
