@@ -135,6 +135,17 @@ bool needs_vec_c_fallback(SEXP xs) {
     return false;
   }
 
+  // Never fall back for `vctrs_vctr` classes to avoid infinite
+  // recursion through `c.vctrs_vctr()`
+  if (Rf_inherits(x, "vctrs_vctr")) {
+    return false;
+  }
+
+  // Temporary compatibility with `sf` implementations
+  if (Rf_inherits(x, "sfc")) {
+    return false;
+  }
+
   return
     !vec_implements_ptype2(x) &&
     list_is_homogeneously_classed(xs) &&

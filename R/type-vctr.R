@@ -131,14 +131,6 @@ vec_restore.vctrs_vctr <- function(x, to, ..., i = NULL) {
   NextMethod()
 }
 
-#' @method vec_ptype2 vctrs_vctr
-#' @export
-vec_ptype2.vctrs_vctr <- function(x, y, ..., x_arg = "", y_arg = "") {
-  # This method instructs `vec_c()` that it isn't a foreign type. This
-  # avoids infinite recursion through `c.vctrs_vctr()`.
-  vec_default_ptype2(x, y, ..., x_arg = x_arg, y_arg = y_arg)
-}
-
 #' @method vec_cast vctrs_vctr
 #' @export
 vec_cast.vctrs_vctr <- function(x, to, ...) {

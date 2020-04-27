@@ -271,6 +271,21 @@ test_that("vec_c() fallback doesn't support `name_spec` or `ptype`", {
   })
 })
 
+test_that("vec_c() doesn't fall back when ptype2 is implemented", {
+  new_quux <- function(x) structure(x, class = "vctrs_quux")
+
+  with_methods(
+    vec_ptype2.vctrs_foobar.vctrs_foobar = function(x, y, ...) new_quux(int()),
+    vec_cast.vctrs_quux.vctrs_foobar = function(x, to, ...) new_quux(x),
+    vec_restore.vctrs_quux = function(x, ...) new_quux(x),
+    c.vctrs_foobar = function(...) foobar(NextMethod()),
+    {
+      expect_is(c(foobar(1:3), foobar(4L)), "vctrs_foobar")
+      expect_is(vec_c(foobar(1:3), foobar(4L)), "vctrs_quux")
+    }
+  )
+})
+
 test_that("vec_c() has informative error messages", {
   verify_output(test_path("error", "test-c.txt"), {
     "# vec_c() fails with complex foreign S3 classes"

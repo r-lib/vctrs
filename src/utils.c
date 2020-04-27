@@ -530,8 +530,9 @@ SEXP s4_find_method(SEXP x, SEXP table) {
 // [[ include("utils.h") ]]
 bool vec_implements_ptype2(SEXP x) {
   if (vec_typeof(x) == vctrs_type_s3) {
-    SEXP met = s3_find_method("vec_ptype2", x, vctrs_method_table);
-    return met != R_NilValue;
+    SEXP method_sym = R_NilValue;
+    SEXP method = s3_find_method_xy("vec_ptype2", x, x, vctrs_method_table, &method_sym);
+    return method != R_NilValue;
   } else {
     return true;
   }
