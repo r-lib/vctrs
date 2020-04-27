@@ -191,7 +191,7 @@ The following errors are caused by breaking changes.
 ## Classes
 
 * vctrs now supports the `data.table` class. The common type of a data
-  frame or a tibble and a data table is a data table.
+  frame and a data table is a data table.
 
 * `new_vctr()` now always appends a base `"list"` class to list `.data` to
   be compatible with changes to `vec_is_list()`. This affects `new_list_of()`,

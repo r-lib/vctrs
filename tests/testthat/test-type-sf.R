@@ -1,6 +1,4 @@
 
-skip_if_not_installed("sf")
-
 # Avoids adding `sf` to Suggests
 import_from("sf", c(
   "st_sfc",
