@@ -200,6 +200,7 @@ vec_ptype2.foo.bar &lt;- function(x, y, ...) new_foo()</code></pre>
 <p>vctrs also takes care of implementing the default and unspecified methods. If you have implemented these methods, they are no longer called and can now be removed.</p>
 <p>One consequence of the new dispatch mechanism is that <code><a href="https://rdrr.io/r/base/UseMethod.html">NextMethod()</a></code> is now completely unsupported. This is for the best as it never worked correctly in a double-dispatch setting. Parent methods must now be called manually.</p>
 </li>
+<li><p><code><a href="../reference/vec_ptype2.html">vec_ptype2()</a></code> methods now get zero-size prototypes as inputs. This guarantees that methods do not peek at the data to determine the richer type.</p></li>
 <li><p><code><a href="../reference/vec_is_list.html">vec_is_list()</a></code> no longer allows S3 lists that implement a <code><a href="../reference/vec_data.html">vec_proxy()</a></code> method to automatically be considered lists. A S3 list must explicitly inherit from <code>"list"</code> in the base class to be considered a list.</p></li>
 <li><p><code><a href="../reference/vec_cast.html">vec_restore()</a></code> no longer restores row names if the target is not a data frame. This fixes an issue where <code>POSIXlt</code> objects would carry a <code>row.names</code> attribute after a proxy/restore roundtrip.</p></li>
 <li><p><code><a href="../reference/vec_cast.html">vec_cast()</a></code> to and from data frames preserves the row names of inputs.</p></li>
