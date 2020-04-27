@@ -87,6 +87,10 @@ The following errors are caused by breaking changes.
   worked correctly in a double-dispatch setting. Parent methods must
   now be called manually.
 
+* `vec_ptype2()` methods now get zero-size prototypes as inputs. This
+  guarantees that methods do not peek at the data to determine the
+  richer type.
+
 * `vec_is_list()` no longer allows S3 lists that implement a `vec_proxy()`
   method to automatically be considered lists. A S3 list must explicitly
   inherit from `"list"` in the base class to be considered a list.

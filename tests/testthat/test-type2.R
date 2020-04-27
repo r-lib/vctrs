@@ -282,6 +282,26 @@ test_that("common type warnings for data frames take attributes into account", {
   })
 })
 
+test_that("vec_ptype2() methods get prototypes", {
+  x <- NULL
+  y <- NULL
+
+  local_methods(vec_ptype2.vctrs_foobar.vctrs_foobar = function(x, y, ...) {
+    x <<- x
+    y <<- y
+    NULL
+  })
+
+  vec_ptype2(foobar(1:3), foobar(letters))
+  expect_identical(x, foobar(int()))
+  expect_identical(y, foobar(chr()))
+
+  skip("Figure out what to do with row names in `vec_ptype()`")
+  vec_ptype2(foobar(mtcars), foobar(iris))
+  expect_identical(x, foobar(mtcars[0, , drop = FALSE]))
+  expect_identical(y, foobar(iris[0, , drop = FALSE]))
+})
+
 test_that("vec_ptype2() errors have informative output", {
   verify_output(test_path("error", "test-type2.txt"), {
     "# can override scalar vector error message for base scalar types"
