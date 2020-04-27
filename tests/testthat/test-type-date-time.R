@@ -470,9 +470,15 @@ test_that("date-time vs numeric", {
    expect_error(vec_arith("*", d, 1), class = "vctrs_error_incompatible_op")
 })
 
+test_that("vec_arith() standardizes the `tzone` attribute", {
+  dt <- structure(0, class = c("POSIXct", "POSIXt"))
+  x <- vec_arith("+", dt, 1)
+  expect_identical(attr(x, "tzone"), "")
+})
+
 test_that("date-time vs difftime", {
   d <- as.Date("2018-01-01")
-  dt <- as.POSIXct(d)
+  dt <- as.POSIXct("2018-01-01", tz = "UTC")
   t <- as.difftime(1, units = "days")
   th <- as.difftime(c(1, 24), units = "hours")
 
