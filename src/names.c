@@ -18,7 +18,7 @@ SEXP fns_validate_unique_names = NULL;
 // Defined below
 SEXP vctrs_as_minimal_names(SEXP names);
 SEXP vec_as_universal_names(SEXP names, bool quiet);
-SEXP vec_validate_unique_names(SEXP names, const char* arg);
+SEXP vec_validate_unique_names(SEXP names, struct vctrs_arg* arg);
 SEXP vec_as_custom_names(SEXP names, const struct name_repair_opts* opts);
 static void vec_validate_minimal_names(SEXP names, R_len_t n);
 
@@ -49,9 +49,9 @@ SEXP vctrs_as_names(SEXP names, SEXP repair, SEXP repair_arg, SEXP quiet) {
   if (!r_is_string(repair_arg)) {
     Rf_errorcall(R_NilValue, "`repair_arg` must a string.");
   }
-  const char* arg_ = Rf_translateCharUTF8(STRING_ELT(repair_arg, 0));
+  struct vctrs_arg arg_ = vec_as_arg(repair_arg);
 
-  struct name_repair_opts repair_opts = new_name_repair_opts(repair, arg_, quiet_);
+  struct name_repair_opts repair_opts = new_name_repair_opts(repair, &arg_, quiet_);
   PROTECT_NAME_REPAIR_OPTS(&repair_opts);
 
   SEXP out = vec_as_names(names, &repair_opts);
@@ -68,8 +68,8 @@ SEXP vec_as_universal_names(SEXP names, bool quiet) {
   UNPROTECT(1);
   return out;
 }
-SEXP vec_validate_unique_names(SEXP names, const char* arg) {
-  SEXP arg_obj = PROTECT(r_chr(arg));
+SEXP vec_validate_unique_names(SEXP names, struct vctrs_arg* arg) {
+  SEXP arg_obj = PROTECT(vctrs_arg(arg));
 
   SEXP out = PROTECT(vctrs_dispatch2(syms_validate_unique_names, fns_validate_unique_names,
                                      syms_names, names,
@@ -771,7 +771,7 @@ SEXP vec_set_names(SEXP x, SEXP names) {
 }
 
 SEXP vctrs_validate_name_repair_arg(SEXP arg) {
-  struct name_repair_opts opts = new_name_repair_opts(arg, "", true);
+  struct name_repair_opts opts = new_name_repair_opts(arg, args_empty, true);
   if (opts.type == name_repair_custom) {
     return opts.fn;
   } else if (Rf_length(arg) != 1) {
@@ -785,7 +785,7 @@ void stop_name_repair() {
   Rf_errorcall(R_NilValue, "`.name_repair` must be a string or a function. See `?vctrs::vec_as_names`.");
 }
 
-struct name_repair_opts new_name_repair_opts(SEXP name_repair, const char* arg, bool quiet) {
+struct name_repair_opts new_name_repair_opts(SEXP name_repair, struct vctrs_arg* arg, bool quiet) {
   struct name_repair_opts opts = {
     .type = 0,
     .fn = R_NilValue,
