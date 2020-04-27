@@ -201,6 +201,7 @@ levels are nested.</p>
   <span class='no'>names</span>,
   <span class='no'>...</span>,
   <span class='kw'>repair</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"minimal"</span>, <span class='st'>"unique"</span>, <span class='st'>"universal"</span>, <span class='st'>"check_unique"</span>),
+  <span class='kw'>repair_arg</span> <span class='kw'>=</span> <span class='st'>""</span>,
   <span class='kw'>quiet</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>
 )</pre>
 
@@ -233,6 +234,11 @@ error.</p></li>
 <p>The <code>"check_unique"</code> option doesn't perform any name repair.
 Instead, an error is raised if the names don't suit the
 <code>"unique"</code> criteria.</p></td>
+    </tr>
+    <tr>
+      <th>repair_arg</th>
+      <td><p>If specified and <code>repair = "check_unique"</code>, any errors
+will include a hint to set the <code>repair_arg</code>.</p></td>
     </tr>
     <tr>
       <th>quiet</th>

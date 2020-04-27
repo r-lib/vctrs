@@ -267,6 +267,7 @@ vec_ptype2.foo.bar &lt;- function(x, y, ...) new_foo()</code></pre>
 <li><p>Improved error messages in <code><a href="../reference/vec_as_location.html">vec_as_location()</a></code> when subscript is a matrix or array (#936).</p></li>
 <li><p><code><a href="../reference/vec_as_location.html">vec_as_location2()</a></code> properly picks up <code>subscript_arg</code> (tidyverse/tibble#735).</p></li>
 <li><p><code><a href="../reference/vec_as_names.html">vec_as_names()</a></code> now has more informative error messages when names are not unique (#882).</p></li>
+<li><p><code><a href="../reference/vec_as_names.html">vec_as_names()</a></code> gains a <code>repair_arg</code> argument that when set will cause <code>repair = "check_unique"</code> to generate an informative hint (#692).</p></li>
 </ul>
 </div>
 <div id="cran-results" class="section level2">
