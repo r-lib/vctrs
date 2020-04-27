@@ -45,7 +45,8 @@ Suggests:
     xml2,
     zeallot
 Remotes: 
-    r-lib/pillar
+    r-lib/pillar,
+    r-lib/rlang#963
 VignetteBuilder: 
     knitr
 Encoding: UTF-8
