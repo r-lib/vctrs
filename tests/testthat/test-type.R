@@ -221,3 +221,11 @@ test_that("vec_ptype_finalise() requires vector types", {
   expect_error(vec_ptype_finalise(quote(name)), class = "vctrs_error_scalar_type")
   expect_error(vec_ptype_finalise(foobar()), class = "vctrs_error_scalar_type")
 })
+
+# This might change in the future if we decide that prototypes don't
+# have names
+test_that("vec_ptype() preserves type of names and row names", {
+  expect_identical(vec_ptype(c(foo = 1)), named(dbl()))
+  expect_identical(vec_ptype(mtcars), mtcars[0, ])
+  expect_identical(vec_ptype(foobar(mtcars)), foobar(mtcars[0, ]))
+})
