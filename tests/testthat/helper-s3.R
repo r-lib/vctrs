@@ -1,22 +1,23 @@
 
-foobar <- function(x = list(), ...) {
-  if (inherits(x, "tbl_df")) {
-    tibble::new_tibble(x, class = "vctrs_foobar", nrow = nrow(x))
-  } else if (is.data.frame(x)) {
-    structure(x, class = c("vctrs_foobar", "data.frame"), ...)
-  } else {
-    structure(x, class = "vctrs_foobar", ...)
+new_ctor <- function(class) {
+  function(x = list(), ...) {
+    if (inherits(x, "tbl_df")) {
+      tibble::new_tibble(x, class = class, nrow = nrow(x))
+    } else if (is.data.frame(x)) {
+      structure(x, class = c(class, "data.frame"), ...)
+    } else {
+      structure(x, class = class, ...)
+    }
   }
 }
-foobaz <- function(x = list(), ...) {
-  if (inherits(x, "tbl_df")) {
-    tibble::new_tibble(x, class = "vctrs_foobaz", nrow = nrow(x))
-  } else if (is.data.frame(x)) {
-    structure(x, class = c("vctrs_foobaz", "data.frame"), ...)
-  } else {
-    structure(x, class = "vctrs_foobaz", ...)
-  }
-}
+
+foobar <- new_ctor("vctrs_foobar")
+foobaz <- new_ctor("vctrs_foobaz")
+quux <- new_ctor("vctrs_quux")
+
+expect_foobar <- function(x) expect_is({{ x }}, "vctrs_foobar")
+expect_foobaz <- function(x) expect_is({{ x }}, "vctrs_foobaz")
+expect_quux <- function(x) expect_is({{ x }}, "vctrs_quux")
 
 with_c_foobar <- function(expr) {
   with_methods(

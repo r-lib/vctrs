@@ -397,8 +397,8 @@ SEXP vctrs_unchop(SEXP x, SEXP indices, SEXP ptype, SEXP name_spec, SEXP name_re
   return out;
 }
 
-static inline bool needs_vec_unchop_fallback(SEXP x);
-static SEXP vec_unchop_fallback(SEXP x, SEXP indices, SEXP ptype, SEXP name_spec);
+static inline bool needs_vec_unchop_fallback(SEXP x, SEXP ptype);
+static SEXP vec_unchop_fallback(SEXP x, SEXP indices, SEXP name_spec);
 
 static SEXP vec_unchop(SEXP x,
                        SEXP indices,
@@ -425,8 +425,8 @@ static SEXP vec_unchop(SEXP x,
     Rf_errorcall(R_NilValue, "`indices` must be a list of integers, or `NULL`");
   }
 
-  if (needs_vec_unchop_fallback(x)) {
-    return vec_unchop_fallback(x, indices, ptype, name_spec);
+  if (needs_vec_unchop_fallback(x, ptype)) {
+    return vec_unchop_fallback(x, indices, name_spec);
   }
 
   ptype = PROTECT(vec_ptype_common_params(x, ptype, true));
@@ -529,14 +529,14 @@ static SEXP vec_unchop(SEXP x,
 
 // Unchopping is a just version of `vec_c()` that controls the ordering,
 // so they both fallback to `c()` in the same situations
-static inline bool needs_vec_unchop_fallback(SEXP x) {
-  return needs_vec_c_fallback(x);
+static inline bool needs_vec_unchop_fallback(SEXP x, SEXP ptype) {
+  return needs_vec_c_fallback(x, ptype);
 }
 
 // This is essentially:
 // vec_slice_fallback(vec_c_fallback(!!!x), order(vec_c(!!!indices)))
 // with recycling of each element of `x` to the corresponding index size
-static SEXP vec_unchop_fallback(SEXP x, SEXP indices, SEXP ptype, SEXP name_spec) {
+static SEXP vec_unchop_fallback(SEXP x, SEXP indices, SEXP name_spec) {
   R_len_t x_size = vec_size(x);
   x = PROTECT(r_maybe_duplicate(x));
 
@@ -554,7 +554,7 @@ static SEXP vec_unchop_fallback(SEXP x, SEXP indices, SEXP ptype, SEXP name_spec
 
   indices = PROTECT(vec_as_indices(indices, out_size, R_NilValue));
 
-  SEXP out = PROTECT(vec_c_fallback(x, ptype, name_spec));
+  SEXP out = PROTECT(vec_c_fallback(x, name_spec));
 
   const struct name_repair_opts name_repair_opts = {
     .type = name_repair_none,

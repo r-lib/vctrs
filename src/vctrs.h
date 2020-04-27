@@ -401,8 +401,8 @@ SEXP vec_c(SEXP xs,
            SEXP name_spec,
            const struct name_repair_opts* name_repair);
 
-SEXP vec_c_fallback(SEXP xs, SEXP ptype, SEXP name_spec);
-bool needs_vec_c_fallback(SEXP xs);
+SEXP vec_c_fallback(SEXP xs, SEXP name_spec);
+bool needs_vec_c_fallback(SEXP xs, SEXP ptype);
 
 bool is_data_frame(SEXP x);
 

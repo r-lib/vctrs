@@ -32,7 +32,5 @@ vctrs methods must be implemented for class `vctrs_foobar`.
 See <https://vctrs.r-lib.org/articles/s3-vector.html>.
 
 > with_c_foobar(vec_c(foobar(1), foobar(2), .ptype = ""))
-Error: Can't specify a prototype with non-vctrs types.
-vctrs methods must be implemented for class `vctrs_foobar`.
-See <https://vctrs.r-lib.org/articles/s3-vector.html>.
+Error: Can't convert <vctrs_foobar> to <character>.
 

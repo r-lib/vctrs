@@ -29,8 +29,8 @@ SEXP vec_c(SEXP xs,
            const struct name_repair_opts* name_repair) {
   R_len_t n = Rf_length(xs);
 
-  if (needs_vec_c_fallback(xs)) {
-    return vec_c_fallback(xs, ptype, name_spec);
+  if (needs_vec_c_fallback(xs, ptype)) {
+    return vec_c_fallback(xs, name_spec);
   }
 
   ptype = PROTECT(vec_ptype_common_params(xs, ptype, true));
@@ -125,7 +125,7 @@ SEXP vec_c(SEXP xs,
 static inline bool vec_implements_base_c(SEXP x);
 
 // [[ include("vctrs.h") ]]
-bool needs_vec_c_fallback(SEXP xs) {
+bool needs_vec_c_fallback(SEXP xs, SEXP ptype) {
   if (!Rf_length(xs)) {
     return false;
   }
@@ -146,6 +146,10 @@ bool needs_vec_c_fallback(SEXP xs) {
     return false;
   }
 
+  if (ptype != R_NilValue && !equal_object(r_class(x), r_class(ptype))) {
+    return false;
+  }
+
   return
     !vec_implements_ptype2(x) &&
     list_is_homogeneously_classed(xs) &&
@@ -163,12 +167,14 @@ static inline bool vec_implements_base_c(SEXP x) {
   }
 }
 
-static inline int vec_c_fallback_validate_args(SEXP ptype, SEXP name_spec);
+static inline int vec_c_fallback_validate_args(SEXP x, SEXP name_spec);
 static inline void stop_vec_c_fallback(SEXP xs, int err_type);
 
 // [[ include("vctrs.h") ]]
-SEXP vec_c_fallback(SEXP xs, SEXP ptype, SEXP name_spec) {
-  int err_type = vec_c_fallback_validate_args(ptype, name_spec);
+SEXP vec_c_fallback(SEXP xs, SEXP name_spec) {
+  SEXP x = list_first_non_null(xs, NULL);
+
+  int err_type = vec_c_fallback_validate_args(x, name_spec);
   if (err_type) {
     stop_vec_c_fallback(xs, err_type);
   }
@@ -185,10 +191,8 @@ SEXP vec_c_fallback(SEXP xs, SEXP ptype, SEXP name_spec) {
   return out;
 }
 
-static inline int vec_c_fallback_validate_args(SEXP ptype, SEXP name_spec) {
-  if (ptype != R_NilValue) {
-    return 1;
-  }
+static inline
+int vec_c_fallback_validate_args(SEXP x, SEXP name_spec) {
   if (name_spec != R_NilValue) {
     return 2;
   }
@@ -201,7 +205,6 @@ static void stop_vec_c_fallback(SEXP xs, int err_type) {
 
   const char* msg = NULL;
   switch (err_type) {
-  case 1: msg = "Can't specify a prototype with non-vctrs types."; break;
   case 2: msg = "Can't use a name specification with non-vctrs types."; break;
   case 3: msg = "Can't find vctrs or base methods for concatenation."; break;
   default: msg = "Internal error: Unexpected error type."; break;
