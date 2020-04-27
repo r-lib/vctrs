@@ -65,8 +65,8 @@ static inline SEXP vec_ptype2_default(SEXP x,
 
 // [[ include("vctrs.h") ]]
 SEXP vec_ptype2_dispatch_s3(const struct ptype2_opts* opts) {
-  SEXP x = opts->x;
-  SEXP y = opts->y;
+  SEXP x = PROTECT(vec_ptype(opts->x, opts->x_arg));
+  SEXP y = PROTECT(vec_ptype(opts->y, opts->y_arg));
 
   SEXP x_arg_obj = PROTECT(vctrs_arg(opts->x_arg));
   SEXP y_arg_obj = PROTECT(vctrs_arg(opts->y_arg));
@@ -99,7 +99,7 @@ SEXP vec_ptype2_dispatch_s3(const struct ptype2_opts* opts) {
 
   if (method == R_NilValue) {
     SEXP out = vec_ptype2_default(x, y, x_arg_obj, y_arg_obj, opts->df_fallback);
-    UNPROTECT(3);
+    UNPROTECT(5);
     return out;
   }
 
@@ -109,7 +109,7 @@ SEXP vec_ptype2_dispatch_s3(const struct ptype2_opts* opts) {
                              syms_x_arg, x_arg_obj,
                              syms_y_arg, y_arg_obj);
 
-  UNPROTECT(3);
+  UNPROTECT(5);
   return out;
 }
 
