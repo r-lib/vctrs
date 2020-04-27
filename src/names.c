@@ -46,9 +46,6 @@ SEXP vctrs_as_names(SEXP names, SEXP repair, SEXP repair_arg, SEXP quiet) {
   }
   bool quiet_ = LOGICAL(quiet)[0];
 
-  if (!r_is_string(repair_arg)) {
-    Rf_errorcall(R_NilValue, "`repair_arg` must a string.");
-  }
   struct vctrs_arg arg_ = vec_as_arg(repair_arg);
 
   struct name_repair_opts repair_opts = new_name_repair_opts(repair, &arg_, quiet_);
