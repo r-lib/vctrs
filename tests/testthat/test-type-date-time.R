@@ -1,14 +1,14 @@
 context("test-type-date-time")
 
 test_that("date-times have informative types", {
-  expect_equal(vec_ptype_abbr(Sys.Date()), "date")
-  expect_equal(vec_ptype_full(Sys.Date()), "date")
+  expect_identical(vec_ptype_abbr(Sys.Date()), "date")
+  expect_identical(vec_ptype_full(Sys.Date()), "date")
 
-  expect_equal(vec_ptype_abbr(Sys.time()), "dttm")
-  expect_equal(vec_ptype_full(Sys.time()), "datetime<local>")
+  expect_identical(vec_ptype_abbr(Sys.time()), "dttm")
+  expect_identical(vec_ptype_full(Sys.time()), "datetime<local>")
 
-  expect_equal(vec_ptype_abbr(new_duration(10)), "drtn")
-  expect_equal(vec_ptype_full(new_duration(10)), "duration<secs>")
+  expect_identical(vec_ptype_abbr(new_duration(10)), "drtn")
+  expect_identical(vec_ptype_full(new_duration(10)), "duration<secs>")
 })
 
 test_that("vec_ptype() returns a double date for integer dates", {
@@ -129,21 +129,21 @@ test_that("tz comes from first non-empty", {
   x <- as.POSIXct("2020-01-01")
   y <- as.POSIXct("2020-01-01", tz = "America/New_York")
 
-  expect_equal(vec_ptype2(x, y), y[0])
-  expect_equal(vec_ptype2(y, x), y[0])
+  expect_identical(vec_ptype2(x, y), y[0])
+  expect_identical(vec_ptype2(y, x), y[0])
 
   z <- as.POSIXct("2020-01-01", tz = "Pacific/Auckland")
-  expect_equal(vec_ptype2(y, z), y[0])
-  expect_equal(vec_ptype2(z, y), z[0])
+  expect_identical(vec_ptype2(y, z), y[0])
+  expect_identical(vec_ptype2(z, y), z[0])
 })
 
 test_that("POSIXlt always steered towards POSIXct", {
-  dtc <- as.POSIXct("2020-01-01")
-  dtl <- as.POSIXlt("2020-01-01")
+  dtc <- as.POSIXct("2020-01-01", tz = "UTC")
+  dtl <- as.POSIXlt("2020-01-01", tz = "UTC")
 
-  expect_equal(vec_ptype2(dtc, dtl), dtc[0])
-  expect_equal(vec_ptype2(dtl, dtc), dtc[0])
-  expect_equal(vec_ptype2(dtl, dtl), dtc[0])
+  expect_identical(vec_ptype2(dtc, dtl), dtc[0])
+  expect_identical(vec_ptype2(dtl, dtc), dtc[0])
+  expect_identical(vec_ptype2(dtl, dtl), dtc[0])
 })
 
 test_that("vec_ptype2() on a POSIXlt with multiple time zones returns the first", {
@@ -185,16 +185,16 @@ test_that("safe casts work as expected", {
   datetime_ct <- as.POSIXct(as.character(date))
   datetime_lt <- as.POSIXlt(datetime_ct)
 
-  expect_equal(vec_cast(NULL, date), NULL)
-  expect_equal(vec_cast(date, date), date)
-  expect_equal(vec_cast(datetime_ct, date), date)
-  expect_equal(vec_cast(datetime_lt, date), date)
+  expect_identical(vec_cast(NULL, date), NULL)
+  expect_identical(vec_cast(date, date), date)
+  expect_identical(vec_cast(datetime_ct, date), date)
+  expect_identical(vec_cast(datetime_lt, date), date)
 
   missing_date <- new_date(NA_real_)
 
-  expect_equal(vec_cast(missing_date, missing_date), missing_date)
-  expect_equal(vec_cast(as.POSIXct(missing_date), missing_date), missing_date)
-  expect_equal(vec_cast(as.POSIXlt(missing_date), missing_date), missing_date)
+  expect_identical(vec_cast(missing_date, missing_date), missing_date)
+  expect_identical(vec_cast(as.POSIXct(missing_date), missing_date), missing_date)
+  expect_identical(vec_cast(as.POSIXlt(missing_date), missing_date), missing_date)
 
   # These used to be allowed
   expect_error(vec_cast(17532, date), class = "vctrs_error_incompatible_type")
@@ -243,27 +243,27 @@ test_that("safe casts work as expected", {
   datetime_c <- as.POSIXct("1970-02-01", tz = "UTC")
   datetime_l <- as.POSIXlt("1970-02-01", tz = "UTC")
 
-  expect_equal(vec_cast(NULL, datetime_c), NULL)
-  expect_equal(vec_cast(datetime_c, datetime_c), datetime_c)
-  expect_equal(vec_cast(datetime_l, datetime_c), datetime_c)
-  expect_equal(vec_cast(as.Date(datetime_c), datetime_c), datetime_c)
+  expect_identical(vec_cast(NULL, datetime_c), NULL)
+  expect_identical(vec_cast(datetime_c, datetime_c), datetime_c)
+  expect_identical(vec_cast(datetime_l, datetime_c), datetime_c)
+  expect_identical(vec_cast(as.Date(datetime_c), datetime_c), datetime_c)
 
-  expect_equal(vec_cast(NULL, datetime_l), NULL)
-  expect_equal(vec_cast(datetime_c, datetime_l), datetime_l)
-  expect_equal(vec_cast(datetime_l, datetime_l), datetime_l)
-  expect_equal(vec_cast(as.Date(datetime_l), datetime_l), datetime_l)
+  expect_identical(vec_cast(NULL, datetime_l), NULL)
+  expect_identical(vec_cast(datetime_c, datetime_l), datetime_l)
+  expect_identical(vec_cast(datetime_l, datetime_l), datetime_l)
+  expect_identical(vec_cast(as.Date(datetime_l), datetime_l), datetime_l)
   expect_error(vec_cast(raw(), datetime_l), class = "vctrs_error_incompatible_type")
 
   missing_c <- new_datetime(NA_real_, tzone = "UTC")
   missing_l <- as.POSIXlt(missing_c)
 
-  expect_equal(vec_cast(missing_c, missing_c), missing_c)
-  expect_equal(vec_cast(missing_l, missing_c), missing_c)
-  expect_equal(vec_cast(as.Date(missing_c), missing_c), missing_c)
+  expect_identical(vec_cast(missing_c, missing_c), missing_c)
+  expect_identical(vec_cast(missing_l, missing_c), missing_c)
+  expect_identical(vec_cast(as.Date(missing_c), missing_c), missing_c)
 
-  expect_equal(vec_cast(missing_l, missing_l), missing_l)
-  expect_equal(vec_cast(missing_c, missing_l), missing_l)
-  expect_equal(vec_cast(as.Date(missing_l), missing_l), missing_l)
+  expect_identical(vec_cast(missing_l, missing_l), missing_l)
+  expect_identical(vec_cast(missing_c, missing_l), missing_l)
+  expect_identical(vec_cast(as.Date(missing_l), missing_l), missing_l)
 
   # These used to be allowed
   expect_error(vec_cast(2678400, datetime_c), class = "vctrs_error_incompatible_type")
@@ -286,12 +286,12 @@ test_that("dates become midnight in date-time tzone", {
   datetime_l <- as.POSIXlt(character(), tz = "Pacific/Auckland")
 
   date2_c <- vec_cast(date1, datetime_c)
-  expect_equal(tzone(date2_c), "Pacific/Auckland")
-  expect_equal(format(date2_c, "%H:%M"), "00:00")
+  expect_identical(tzone(date2_c), "Pacific/Auckland")
+  expect_identical(format(date2_c, "%H:%M"), "00:00")
 
   date2_l <- vec_cast(date1, datetime_l)
-  expect_equal(tzone(date2_l), "Pacific/Auckland")
-  expect_equal(format(date2_l, "%H:%M"), "00:00")
+  expect_identical(tzone(date2_l), "Pacific/Auckland")
+  expect_identical(format(date2_l, "%H:%M"), "00:00")
 })
 
 test_that("can cast NA and unspecified to POSIXct and POSIXlt", {
@@ -331,9 +331,9 @@ test_that("safe casts work as expected", {
   dt1 <- as.difftime(600, units = "secs")
   dt2 <- as.difftime(10, units = "mins")
 
-  expect_equal(vec_cast(NULL, dt1), NULL)
-  expect_equal(vec_cast(dt1, dt1), dt1)
-  expect_equal(vec_cast(dt1, dt2), dt2)
+  expect_identical(vec_cast(NULL, dt1), NULL)
+  expect_identical(vec_cast(dt1, dt1), dt1)
+  expect_identical(vec_cast(dt1, dt2), dt2)
 
   # These used to be allowed
   expect_error(vec_cast(600, dt1), class = "vctrs_error_incompatible_type")
@@ -445,49 +445,55 @@ test_that("date-time vs date-time", {
   dt <- as.POSIXct(d)
 
   expect_error(vec_arith("+", d, d), class = "vctrs_error_incompatible_op")
-  expect_equal(vec_arith("-", d, d), d - d)
+  expect_identical(vec_arith("-", d, d), d - d)
 
   expect_error(vec_arith("+", d, dt), class = "vctrs_error_incompatible_op")
-  expect_equal(vec_arith("-", d, dt), difftime(d, dt))
+  expect_identical(vec_arith("-", d, dt), difftime(d, dt))
 
   expect_error(vec_arith("+", dt, d), class = "vctrs_error_incompatible_op")
-  expect_equal(vec_arith("-", dt, d), difftime(dt, d))
+  expect_identical(vec_arith("-", dt, d), difftime(dt, d))
 
   expect_error(vec_arith("+", dt, dt), class = "vctrs_error_incompatible_op")
-  expect_equal(vec_arith("-", dt, dt), dt - dt)
+  expect_identical(vec_arith("-", dt, dt), dt - dt)
 })
 
 test_that("date-time vs numeric", {
    d <- as.Date("2018-01-01")
    dt <- as.POSIXct(d)
 
-   expect_equal(vec_arith("+", d, 1), d + 1)
-   expect_equal(vec_arith("+", 1, d), d + 1)
-   expect_equal(vec_arith("-", d, 1), d - 1)
+   expect_identical(vec_arith("+", d, 1), d + 1)
+   expect_identical(vec_arith("+", 1, d), d + 1)
+   expect_identical(vec_arith("-", d, 1), d - 1)
    expect_error(vec_arith("-", 1, d), class = "vctrs_error_incompatible_op")
 
    expect_error(vec_arith("*", 1, d), class = "vctrs_error_incompatible_op")
    expect_error(vec_arith("*", d, 1), class = "vctrs_error_incompatible_op")
 })
 
+test_that("vec_arith() standardizes the `tzone` attribute", {
+  dt <- structure(0, class = c("POSIXct", "POSIXt"))
+  x <- vec_arith("+", dt, 1)
+  expect_identical(attr(x, "tzone"), "")
+})
+
 test_that("date-time vs difftime", {
   d <- as.Date("2018-01-01")
-  dt <- as.POSIXct(d)
+  dt <- as.POSIXct("2018-01-01", tz = "UTC")
   t <- as.difftime(1, units = "days")
   th <- as.difftime(c(1, 24), units = "hours")
 
-  expect_equal(vec_arith("+", dt, t), dt + t)
-  expect_equal(vec_arith("+", d, t), d + t)
-  expect_equal(vec_arith("+", dt, th), dt + th)
+  expect_identical(vec_arith("+", dt, t), dt + t)
+  expect_identical(vec_arith("+", d, t), d + t)
+  expect_identical(vec_arith("+", dt, th), dt + th)
   expect_lossy(vec_arith("+", d, th), d + th, x = t, to = d)
-  expect_equal(vec_arith("-", dt, t), dt - t)
-  expect_equal(vec_arith("-", d, t), d - t)
-  expect_equal(vec_arith("-", dt, th), dt - th)
+  expect_identical(vec_arith("-", dt, t), dt - t)
+  expect_identical(vec_arith("-", d, t), d - t)
+  expect_identical(vec_arith("-", dt, th), dt - th)
   expect_lossy(vec_arith("-", d, th), d - th, x = t, to = d)
 
-  expect_equal(vec_arith("+", t, dt), dt + t)
-  expect_equal(vec_arith("+", t, d), d + t)
-  expect_equal(vec_arith("+", th, dt), dt + th)
+  expect_identical(vec_arith("+", t, dt), dt + t)
+  expect_identical(vec_arith("+", t, d), d + t)
+  expect_identical(vec_arith("+", th, dt), dt + th)
   expect_lossy(vec_arith("+", th, d), d + th, x = t, to = d)
 
   expect_error(vec_arith("-", t, dt), class = "vctrs_error_incompatible_op")
@@ -497,27 +503,27 @@ test_that("date-time vs difftime", {
 test_that("difftime vs difftime/numeric", {
   t <- as.difftime(12, units = "hours")
 
-  expect_equal(vec_arith("-", t, MISSING()), -t)
-  expect_equal(vec_arith("+", t, MISSING()), t)
+  expect_identical(vec_arith("-", t, MISSING()), -t)
+  expect_identical(vec_arith("+", t, MISSING()), t)
 
-  expect_equal(vec_arith("-", t, t), t - t)
-  expect_equal(vec_arith("-", t, 1), t - 1)
-  expect_equal(vec_arith("-", 1, t), 1 - t)
+  expect_identical(vec_arith("-", t, t), t - t)
+  expect_identical(vec_arith("-", t, 1), t - 1)
+  expect_identical(vec_arith("-", 1, t), 1 - t)
 
-  expect_equal(vec_arith("+", t, t), 2 * t)
-  expect_equal(vec_arith("+", t, 1), t + 1)
-  expect_equal(vec_arith("+", 1, t), t + 1)
+  expect_identical(vec_arith("+", t, t), 2 * t)
+  expect_identical(vec_arith("+", t, 1), t + 1)
+  expect_identical(vec_arith("+", 1, t), t + 1)
 
-  expect_equal(vec_arith("*", 2, t), 2 * t)
-  expect_equal(vec_arith("*", t, 2), 2 * t)
+  expect_identical(vec_arith("*", 2, t), 2 * t)
+  expect_identical(vec_arith("*", t, 2), 2 * t)
   expect_error(vec_arith("*", t, t), class = "vctrs_error_incompatible_op")
 
-  expect_equal(vec_arith("/", t, 2), t / 2)
+  expect_identical(vec_arith("/", t, 2), t / 2)
   expect_error(vec_arith("/", 2, t), class = "vctrs_error_incompatible_op")
 
-  expect_equal(vec_arith("/", t, t), 1)
-  expect_equal(vec_arith("%/%", t, t), 1)
-  expect_equal(vec_arith("%%", t, t), 0)
+  expect_identical(vec_arith("/", t, t), 1)
+  expect_identical(vec_arith("%/%", t, t), 1)
+  expect_identical(vec_arith("%%", t, t), 0)
 })
 
 

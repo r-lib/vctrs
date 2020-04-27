@@ -179,15 +179,17 @@ test_that("vec_chop() with data frame proxies always uses the proxy's length inf
     }
   )
 
-  x <- new_proxy(list(x = 1:3, y = 4:6))
+  x <- new_proxy(list(x = 1:2, y = 3:4))
+  result <- vec_chop(x)
 
-  expect <- list(
-    new_proxy(list(x = 1L, y = 4L)),
-    new_proxy(list(x = 2L, y = 5L)),
-    new_proxy(list(x = 3L, y = 6L))
-  )
+  result1 <- result[[1]]
+  result2 <- result[[2]]
 
-  expect_equal(vec_chop(x), expect)
+  expect1 <- new_proxy(list(x = 1L, y = 3L))
+  expect2 <- new_proxy(list(x = 2L, y = 4L))
+
+  expect_identical(proxy_deref(result1), proxy_deref(expect1))
+  expect_identical(proxy_deref(result2), proxy_deref(expect2))
 })
 
 # vec_chop + compact_seq --------------------------------------------------
