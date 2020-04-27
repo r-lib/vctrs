@@ -394,6 +394,103 @@ test_that("new_data_frame() zaps existing attributes", {
   )
 })
 
+test_that("data frame fallback handles column types (#999)", {
+  df1 <- foobar(data.frame(x = 1))
+  df2 <- foobar(data.frame(x = 1, y = 2))
+  df3 <- foobar(data.frame(x = "", y = 2))
+
+  common <- foobar(data.frame(x = dbl(), y = dbl()))
+  expect_identical(vec_ptype2(df1, df2), common)
+  expect_identical(vec_ptype2(df2, df1), common)
+
+  expect_error(
+    vec_ptype2(df1, df3),
+    class = "vctrs_error_incompatible_type"
+  )
+  expect_error(
+    vec_ptype2(df3, df1),
+    class = "vctrs_error_incompatible_type"
+  )
+
+  expect_identical(
+    vec_cast(df1, df2),
+    foobar(data.frame(x = 1, y = na_dbl))
+  )
+  expect_error(
+    vec_cast(df2, df1),
+    class = "vctrs_error_cast_lossy"
+  )
+
+  expect_identical(
+    vec_rbind(df1, df2),
+    foobar(data.frame(x = c(1, 1), y = c(NA, 2)))
+  )
+
+  # Attributes are not restored
+  df1_attrib <- foobar(df1, foo = "foo")
+  df2_attrib <- foobar(df2, bar = "bar")
+  exp <- data.frame(x = c(1, 1), y = c(NA, 2))
+  out <- expect_df_fallback(vec_rbind(df1_attrib, df2_attrib))
+  expect_identical(out, exp)
+
+  out <- with_methods(
+    `[.vctrs_foobar` = function(x, i, ...) {
+      new_data_frame(
+        NextMethod(),
+        dispatched = TRUE,
+        class = "vctrs_foobar"
+      )
+    },
+    vec_rbind(df1_attrib, df2_attrib)
+  )
+
+  expect_identical(out, foobar(exp, dispatched = TRUE))
+})
+
+test_that("falls back to tibble for tibble subclasses (#1025)", {
+  foo <- foobar(tibble::as_tibble(mtcars))
+  expect_is(expect_df_fallback(vec_rbind(foo, mtcars)), "tbl_df")
+  expect_is(expect_df_fallback(vec_rbind(foo, mtcars, mtcars)), "tbl_df")
+  expect_is(expect_df_fallback(vec_rbind(foo, mtcars, foobar(mtcars))), "tbl_df")
+
+  verify_errors({
+    expect_df_fallback(
+      vec_rbind(
+        foobar(tibble::as_tibble(mtcars)),
+        mtcars,
+        foobaz(mtcars)
+      )
+    )
+    expect_df_fallback(
+      vec_rbind(
+        tibble::as_tibble(mtcars),
+        foobar(tibble::as_tibble(mtcars))
+      )
+    )
+    expect_df_fallback(
+      vec_rbind(
+        foobar(tibble::as_tibble(mtcars)),
+        mtcars,
+        foobar(tibble::as_tibble(mtcars))
+      )
+    )
+  })
+})
+
+test_that("fallback is recursive", {
+  df <- mtcars[1:3, 1, drop = FALSE]
+
+  foo <- new_data_frame(list(x = foobar(df, foo = TRUE)))
+  bar <- new_data_frame(list(x = foobar(df, bar = TRUE)))
+  baz <- new_data_frame(list(y = 1:3, x = foobar(df, bar = TRUE)))
+
+  exp <- new_data_frame(list(x = vec_rbind(df, df)))
+  expect_identical(expect_df_fallback(vec_rbind(foo, bar)), exp)
+
+  exp <- new_data_frame(list(x = vec_rbind(df, df), y = c(NA, NA, NA, 1:3)))
+  expect_identical(expect_df_fallback(vec_rbind(foo, baz)), exp)
+})
+
 test_that("data frame output is informative", {
   verify_output(test_path("error", "test-type-data-frame.txt"), {
     "# combining data frames with foreign classes uses fallback"
@@ -408,5 +505,22 @@ test_that("data frame output is informative", {
 
     invisible(vec_cbind(foo, data.frame(x = 1)))
     invisible(vec_cbind(foo, data.frame(x = 1), bar))
+
+    "# falls back to tibble for tibble subclasses (#1025)"
+    invisible(vec_rbind(
+      foobar(tibble::as_tibble(mtcars)),
+      mtcars,
+      foobaz(mtcars)
+    ))
+
+    invisible(vec_rbind(
+      tibble::as_tibble(mtcars),
+      foobar(tibble::as_tibble(mtcars))
+    ))
+    invisible(vec_rbind(
+      foobar(tibble::as_tibble(mtcars)),
+      mtcars,
+      foobar(tibble::as_tibble(mtcars))
+    ))
   })
 })

@@ -16,13 +16,15 @@
 #'
 #' \figure{coerce.png}
 #'
-#' @section S3 dispatch:
-#' `vec_ptype2()` dispatches on both arguments. This is implemented by having
-#' methods of `vec_ptype2()`, e.g. `vec_ptype2.integer()` also be S3 generics,
-#' which call e.g. `vec_ptype2.integer.double()`. `vec_ptype2.x.y()` must
-#' return the same value as `vec_ptype2.y.x()`; this is not enforced
+#' When you implement methods, make sure that `vec_ptype2.x.y()`
+#' returns the same value as `vec_ptype2.y.x()`; this is not enforced
 #' for reasons of efficiency, but should be tested.
 #'
+#' @section S3 dispatch:
+#'
+#' `vec_ptype2()` dispatches on both arguments. This is implemented
+#' with a custom dispatch mechanism that has different semantics than
+#' regular S3 dispatch. The most important difference is that
 #' `vec_ptype2()` are not inherited, classes must explicitly implement
 #' the methods. There are two reasons for this:
 #'
@@ -44,8 +46,9 @@
 #'   tsibble via the tsibble-tibble method. `vec_ptype2(gdf, tsibble)`
 #'   would return a grouped data frame via the gdf-tibble method.
 #'
-#' Because of the way double dispatch is implemented, `NextMethod()`
-#' does not work inside `vec_ptype2()` methods.
+#' Another difference with regular dispatch is that `NextMethod()`
+#' does not work inside `vec_ptype2()` methods, and `default` methods
+#' are never called.
 #'
 #' See `vignette("s3-vector")` for full details.
 #' @keywords internal
@@ -78,6 +81,14 @@ vec_default_ptype2 <- function(x, y, ..., x_arg = "", y_arg = "") {
   # Compatibility for sfc lists (#989)
   if (inherits(x, "sfc") || inherits(y, "sfc")) {
     return(UseMethod("vec_ptype2"))
+  }
+
+  # If both data frames, first find common type of columns before the
+  # same-type fallback
+  if (df_needs_normalisation(x, y)) {
+    out <- vec_ptype2_df_fallback_normalise(x, y)
+    x <- out$x
+    y <- out$y
   }
 
   if (is_same_type(x, y)) {
@@ -127,7 +138,7 @@ vec_ptype2_params <- function(x,
                               df_fallback = FALSE,
                               x_arg = "",
                               y_arg = "") {
-  .Call(vctrs_ptype2_params, x, y, df_fallback, x_arg, y_arg)
+  .Call(vctrs_ptype2_params, x, y, x_arg, y_arg, df_fallback)
 }
 
 vec_typeof2 <- function(x, y) {
@@ -139,11 +150,11 @@ vec_typeof2_s3 <- function(x, y) {
 }
 
 # https://github.com/r-lib/vctrs/issues/571
-vec_is_coercible <- function(x, y, ..., x_arg = "", y_arg = "") {
+vec_is_coercible <- function(x, y, ..., x_arg = "", y_arg = "", df_fallback = FALSE) {
   if (!missing(...)) {
     ellipsis::check_dots_empty()
   }
-  .Call(vctrs_is_coercible, x, y, x_arg, y_arg)
+  .Call(vctrs_is_coercible, x, y, x_arg, y_arg, df_fallback = df_fallback)
 }
 
 vec_is_subtype <- function(x, super, ..., x_arg = "", super_arg = "") {

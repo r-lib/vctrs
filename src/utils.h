@@ -102,6 +102,11 @@ SEXP vec_unique_colnames(SEXP x, bool quiet);
 SEXP s3_get_method(const char* generic, const char* cls, SEXP table);
 SEXP s3_sym_get_method(SEXP sym, SEXP table);
 SEXP s3_find_method(const char* generic, SEXP x, SEXP table);
+SEXP s3_find_method_xy(const char* generic,
+                       SEXP x,
+                       SEXP y,
+                       SEXP table,
+                       SEXP* method_sym_out);
 SEXP s3_find_method2(const char* generic,
                      SEXP x,
                      SEXP table,
@@ -370,6 +375,8 @@ static inline const void* vec_type_missing_value(enum vctrs_type type) {
   default: vctrs_stop_unsupported_type(type, "vec_type_missing_value");
   }
 }
+
+void c_print_backtrace();
 
 
 extern SEXP vctrs_ns_env;

@@ -1,13 +1,17 @@
 
 foobar <- function(x = list(), ...) {
-  if (is.data.frame(x)) {
+  if (inherits(x, "tbl_df")) {
+    tibble::new_tibble(x, class = "vctrs_foobar", nrow = nrow(x))
+  } else if (is.data.frame(x)) {
     structure(x, class = c("vctrs_foobar", "data.frame"), ...)
   } else {
     structure(x, class = "vctrs_foobar", ...)
   }
 }
 foobaz <- function(x = list(), ...) {
-  if (is.data.frame(x)) {
+  if (inherits(x, "tbl_df")) {
+    tibble::new_tibble(x, class = "vctrs_foobaz", nrow = nrow(x))
+  } else if (is.data.frame(x)) {
     structure(x, class = c("vctrs_foobaz", "data.frame"), ...)
   } else {
     structure(x, class = "vctrs_foobaz", ...)

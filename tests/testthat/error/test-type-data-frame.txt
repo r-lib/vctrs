@@ -57,3 +57,27 @@ Warning: Can't combine <data.frame> and <bar>; falling back to <data.frame>.
 i Convert all inputs to the same class to avoid this warning.
 i See <https://vctrs.r-lib.org/reference/faq-warning-convert-inputs.html>.
 
+
+falls back to tibble for tibble subclasses (#1025)
+==================================================
+
+> invisible(vec_rbind(foobar(tibble::as_tibble(mtcars)), mtcars, foobaz(mtcars)))
+Warning: Can't combine <vctrs_foobar> and <data.frame>; falling back to <tibble>.
+i Convert all inputs to the same class to avoid this warning.
+i See <https://vctrs.r-lib.org/reference/faq-warning-convert-inputs.html>.
+
+Warning: Can't combine <tibble> and <vctrs_foobaz>; falling back to <tibble>.
+i Convert all inputs to the same class to avoid this warning.
+i See <https://vctrs.r-lib.org/reference/faq-warning-convert-inputs.html>.
+
+> invisible(vec_rbind(tibble::as_tibble(mtcars), foobar(tibble::as_tibble(mtcars))))
+Warning: Can't combine <tibble> and <vctrs_foobar>; falling back to <tibble>.
+i Convert all inputs to the same class to avoid this warning.
+i See <https://vctrs.r-lib.org/reference/faq-warning-convert-inputs.html>.
+
+> invisible(vec_rbind(foobar(tibble::as_tibble(mtcars)), mtcars, foobar(tibble::
++   as_tibble(mtcars))))
+Warning: Can't combine <vctrs_foobar> and <data.frame>; falling back to <tibble>.
+i Convert all inputs to the same class to avoid this warning.
+i See <https://vctrs.r-lib.org/reference/faq-warning-convert-inputs.html>.
+

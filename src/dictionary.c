@@ -2,6 +2,7 @@
 #include "dictionary.h"
 #include "equal.h"
 #include "hash.h"
+#include "ptype2.h"
 #include "utils.h"
 
 // Initialised at load time

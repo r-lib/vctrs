@@ -56,16 +56,18 @@ The poset of the most important base vectors is shown below:
 (where datetime stands for \code{POSIXt}, and date for \code{Date})
 
 \figure{coerce.png}
+
+When you implement methods, make sure that \code{vec_ptype2.x.y()}
+returns the same value as \code{vec_ptype2.y.x()}; this is not enforced
+for reasons of efficiency, but should be tested.
 }
 
 \section{S3 dispatch}{
 
-\code{vec_ptype2()} dispatches on both arguments. This is implemented by having
-methods of \code{vec_ptype2()}, e.g. \code{vec_ptype2.integer()} also be S3 generics,
-which call e.g. \code{vec_ptype2.integer.double()}. \code{vec_ptype2.x.y()} must
-return the same value as \code{vec_ptype2.y.x()}; this is not enforced
-for reasons of efficiency, but should be tested.
 
+\code{vec_ptype2()} dispatches on both arguments. This is implemented
+with a custom dispatch mechanism that has different semantics than
+regular S3 dispatch. The most important difference is that
 \code{vec_ptype2()} are not inherited, classes must explicitly implement
 the methods. There are two reasons for this:
 \itemize{
@@ -87,8 +89,9 @@ tsibble via the tsibble-tibble method. \code{vec_ptype2(gdf, tsibble)}
 would return a grouped data frame via the gdf-tibble method.
 }
 
-Because of the way double dispatch is implemented, \code{NextMethod()}
-does not work inside \code{vec_ptype2()} methods.
+Another difference with regular dispatch is that \code{NextMethod()}
+does not work inside \code{vec_ptype2()} methods, and \code{default} methods
+are never called.
 
 See \code{vignette("s3-vector")} for full details.
 }

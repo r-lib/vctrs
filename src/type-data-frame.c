@@ -280,38 +280,53 @@ SEXP df_rownames(SEXP x) {
 // vctrs type methods ------------------------------------------------
 
 // [[ register() ]]
-SEXP vctrs_df_ptype2(SEXP x, SEXP y, SEXP x_arg, SEXP y_arg) {
+SEXP vctrs_df_ptype2(SEXP x, SEXP y, SEXP x_arg, SEXP y_arg, SEXP df_fallback) {
   struct vctrs_arg x_arg_ = vec_as_arg(x_arg);
   struct vctrs_arg y_arg_ = vec_as_arg(y_arg);;
 
-  return df_ptype2(x, y, &x_arg_, &y_arg_);
+  const struct ptype2_opts opts = {
+    .x = x,
+    .y = y,
+    .x_arg = &x_arg_,
+    .y_arg = &y_arg_,
+    .df_fallback = r_lgl_get(df_fallback, 0)
+  };
+
+  return df_ptype2(&opts);
 }
 
-static SEXP df_ptype2_impl(SEXP x, SEXP y, SEXP x_names, SEXP y_names,
-                           struct vctrs_arg* x_arg, struct vctrs_arg* y_arg);
+static
+SEXP df_ptype2_match(const struct ptype2_opts* opts,
+                     SEXP x_names,
+                     SEXP y_names);
 
-static SEXP df_ptype2_sequential(SEXP x, SEXP y, SEXP names,
-                                 struct vctrs_arg* x_arg, struct vctrs_arg* y_arg);
+static
+SEXP df_ptype2_loop(const struct ptype2_opts* opts,
+                    SEXP y_names);
 
-// [[ include("vctrs.h") ]]
-SEXP df_ptype2(SEXP x, SEXP y, struct vctrs_arg* x_arg, struct vctrs_arg* y_arg) {
-  SEXP x_names = PROTECT(r_names(x));
-  SEXP y_names = PROTECT(r_names(y));
+// [[ include("type-data-frame.h") ]]
+SEXP df_ptype2(const struct ptype2_opts* opts) {
+  SEXP x_names = PROTECT(r_names(opts->x));
+  SEXP y_names = PROTECT(r_names(opts->y));
 
-  SEXP out;
+  SEXP out = R_NilValue;
 
   if (equal_object(x_names, y_names)) {
-    out = df_ptype2_sequential(x, y, x_names, x_arg, y_arg);
+    out = df_ptype2_loop(opts, x_names);
   } else {
-    out = df_ptype2_impl(x, y, x_names, y_names, x_arg, y_arg);
+    out = df_ptype2_match(opts, x_names, y_names);
   }
 
   UNPROTECT(2);
   return out;
 }
 
-SEXP df_ptype2_impl(SEXP x, SEXP y, SEXP x_names, SEXP y_names,
-                    struct vctrs_arg* x_arg, struct vctrs_arg* y_arg) {
+SEXP df_ptype2_match(const struct ptype2_opts* opts,
+                     SEXP x_names,
+                     SEXP y_names) {
+  SEXP x = opts->x;
+  SEXP y = opts->y;
+
   SEXP x_dups_pos = PROTECT(vec_match(x_names, y_names));
   SEXP y_dups_pos = PROTECT(vec_match(y_names, x_names));
 
@@ -340,8 +355,9 @@ SEXP df_ptype2_impl(SEXP x, SEXP y, SEXP x_names, SEXP y_names,
   for (; i < x_len; ++i) {
     R_len_t dup = x_dups_pos_data[i];
 
-    struct arg_data_index x_arg_data = new_index_arg_data(r_chr_get_c_string(x_names, i), x_arg);
-    struct vctrs_arg named_x_arg = new_index_arg(x_arg, &x_arg_data);
+    struct arg_data_index x_arg_data = new_index_arg_data(r_chr_get_c_string(x_names, i),
+                                                          opts->x_arg);
+    struct vctrs_arg named_x_arg = new_index_arg(opts->x_arg, &x_arg_data);
 
     SEXP type;
     if (dup == NA_INTEGER) {
@@ -349,16 +365,19 @@ SEXP df_ptype2_impl(SEXP x, SEXP y, SEXP x_names, SEXP y_names,
     } else {
       --dup; // 1-based index
 
-      struct arg_data_index y_arg_data = new_index_arg_data(r_chr_get_c_string(y_names, dup), y_arg);
-      struct vctrs_arg named_y_arg = new_index_arg(y_arg, &y_arg_data);
+      struct arg_data_index y_arg_data = new_index_arg_data(r_chr_get_c_string(y_names, dup),
+                                                            opts->y_arg);
+      struct vctrs_arg named_y_arg = new_index_arg(opts->y_arg, &y_arg_data);
 
+      const struct ptype2_opts col_opts = {
+        .x = VECTOR_ELT(x, i),
+        .y = VECTOR_ELT(y, dup),
+        .x_arg = &named_x_arg,
+        .y_arg = &named_y_arg,
+        .df_fallback = opts->df_fallback
+      };
       int _left;
-
-      type = vec_ptype2(VECTOR_ELT(x, i),
-                        VECTOR_ELT(y, dup),
-                        &named_x_arg,
-                        &named_y_arg,
-                        &_left);
+      type = vec_ptype2_opts(&col_opts, &_left);
     }
 
     SET_VECTOR_ELT(out, i, type);
@@ -369,8 +388,9 @@ SEXP df_ptype2_impl(SEXP x, SEXP y, SEXP x_names, SEXP y_names,
   for (R_len_t j = 0; i < out_len; ++j) {
     R_len_t dup = y_dups_pos_data[j];
     if (dup == NA_INTEGER) {
-      struct arg_data_index y_arg_data = new_index_arg_data(r_chr_get_c_string(y_names, j), y_arg);
-      struct vctrs_arg named_y_arg = new_index_arg(y_arg, &y_arg_data);
+      struct arg_data_index y_arg_data = new_index_arg_data(r_chr_get_c_string(y_names, j),
+                                                            opts->y_arg);
+      struct vctrs_arg named_y_arg = new_index_arg(opts->y_arg, &y_arg_data);
 
       SET_VECTOR_ELT(out, i, vec_ptype(VECTOR_ELT(y, j), &named_y_arg));
       SET_STRING_ELT(nms, i, STRING_ELT(y_names, j));
@@ -384,8 +404,12 @@ SEXP df_ptype2_impl(SEXP x, SEXP y, SEXP x_names, SEXP y_names,
   return out;
 }
 
-SEXP df_ptype2_sequential(SEXP x, SEXP y, SEXP names,
-                          struct vctrs_arg* x_arg, struct vctrs_arg* y_arg) {
+static
+SEXP df_ptype2_loop(const struct ptype2_opts* opts,
+                    SEXP names) {
+  SEXP x = opts->x;
+  SEXP y = opts->y;
+
   R_len_t len = Rf_length(names);
 
   SEXP out = PROTECT(Rf_allocVector(VECSXP, len));
@@ -394,18 +418,21 @@ SEXP df_ptype2_sequential(SEXP x, SEXP y, SEXP names,
   for (R_len_t i = 0; i < len; ++i) {
     const char* name = r_chr_get_c_string(names, i);
 
-    struct arg_data_index x_arg_data = new_index_arg_data(name, x_arg);
-    struct arg_data_index y_arg_data = new_index_arg_data(name, y_arg);
-    struct vctrs_arg named_x_arg = new_index_arg(x_arg, &x_arg_data);
-    struct vctrs_arg named_y_arg = new_index_arg(y_arg, &y_arg_data);
+    struct arg_data_index x_arg_data = new_index_arg_data(name, opts->x_arg);
+    struct arg_data_index y_arg_data = new_index_arg_data(name, opts->y_arg);
+    struct vctrs_arg named_x_arg = new_index_arg(opts->x_arg, &x_arg_data);
+    struct vctrs_arg named_y_arg = new_index_arg(opts->y_arg, &y_arg_data);
 
+    const struct ptype2_opts col_opts = {
+      .x = VECTOR_ELT(x, i),
+      .y = VECTOR_ELT(y, i),
+      .x_arg = &named_x_arg,
+      .y_arg = &named_y_arg,
+      .df_fallback = opts->df_fallback
+    };
     int _left;
 
-    SEXP type = vec_ptype2(VECTOR_ELT(x, i),
-                           VECTOR_ELT(y, i),
-                           &named_x_arg,
-                           &named_y_arg,
-                           &_left);
+    SEXP type = vec_ptype2_opts(&col_opts, &_left);
 
     SET_VECTOR_ELT(out, i, type);
   }
@@ -417,19 +444,31 @@ SEXP df_ptype2_sequential(SEXP x, SEXP y, SEXP names,
 }
 
 // [[ register() ]]
-SEXP vctrs_df_cast(SEXP x, SEXP to, SEXP x_arg_, SEXP to_arg_) {
+SEXP vctrs_df_cast_params(SEXP x, SEXP to, SEXP x_arg_, SEXP to_arg_, SEXP df_fallback_) {
   struct vctrs_arg x_arg = vec_as_arg(x_arg_);
   struct vctrs_arg to_arg = vec_as_arg(to_arg_);;
+  bool df_fallback = r_lgl_get(df_fallback_, 0);
 
-  return df_cast(x, to, &x_arg, &to_arg);
+  const struct cast_opts opts = {
+    .x = x,
+    .to = to,
+    .x_arg = &x_arg,
+    .to_arg = &to_arg,
+    .df_fallback = df_fallback
+  };
+
+  return df_cast_opts(&opts);
 }
 
 // Take all columns of `to` and preserve the order. Common columns are
 // cast to their types in `to`. Extra `x` columns are dropped and
 // cause a lossy cast. Extra `to` columns are filled with missing
 // values.
-// [[ include(c("type-data-frame.h", "cast.h")) ]]
-SEXP df_cast(SEXP x, SEXP to, struct vctrs_arg* x_arg, struct vctrs_arg* to_arg) {
+// [[ include("cast.h") ]]
+SEXP df_cast_opts(const struct cast_opts* opts) {
+  SEXP x = opts->x;
+  SEXP to = opts->to;
+
   SEXP x_names = PROTECT(r_names(x));
   SEXP to_names = PROTECT(r_names(to));
 
@@ -455,12 +494,16 @@ SEXP df_cast(SEXP x, SEXP to, struct vctrs_arg* x_arg, struct vctrs_arg* to_arg)
       col = vec_init(VECTOR_ELT(to, i), size);
     } else {
       --pos; // 1-based index
-      struct arg_data_index x_arg_data = new_index_arg_data(r_chr_get_c_string(x_names, pos), x_arg);
-      struct arg_data_index to_arg_data = new_index_arg_data(r_chr_get_c_string(to_names, i), to_arg);
-      struct vctrs_arg named_x_arg = new_index_arg(x_arg, &x_arg_data);
-      struct vctrs_arg named_to_arg = new_index_arg(to_arg, &to_arg_data);
+      struct arg_data_index x_arg_data = new_index_arg_data(r_chr_get_c_string(x_names, pos), opts->x_arg);
+      struct arg_data_index to_arg_data = new_index_arg_data(r_chr_get_c_string(to_names, i), opts->to_arg);
+      struct vctrs_arg named_x_arg = new_index_arg(opts->x_arg, &x_arg_data);
+      struct vctrs_arg named_to_arg = new_index_arg(opts->to_arg, &to_arg_data);
       ++common_len;
-      col = vec_cast(VECTOR_ELT(x, pos), VECTOR_ELT(to, i), &named_x_arg, &named_to_arg);
+      col = vec_cast_params(VECTOR_ELT(x, pos),
+                            VECTOR_ELT(to, i),
+                            &named_x_arg,
+                            &named_to_arg,
+                            opts->df_fallback);
     }
 
     SET_VECTOR_ELT(out, i, col);

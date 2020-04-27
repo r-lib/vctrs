@@ -1,19 +1,23 @@
 #include "vctrs.h"
+#include "ptype2.h"
 #include "utils.h"
 
 static SEXP levels_union(SEXP x, SEXP y);
 
-// [[ include("vctrs.h") ]]
-SEXP fct_ptype2(SEXP x, SEXP y, struct vctrs_arg* x_arg, struct vctrs_arg* y_arg) {
+// [[ include("type-factor.h") ]]
+SEXP fct_ptype2(const struct ptype2_opts* opts) {
+  SEXP x = opts->x;
+  SEXP y = opts->y;
+
   SEXP x_levels = Rf_getAttrib(x, R_LevelsSymbol);
   SEXP y_levels = Rf_getAttrib(y, R_LevelsSymbol);
 
   if (TYPEOF(x_levels) != STRSXP) {
-    stop_corrupt_factor_levels(x, x_arg);
+    stop_corrupt_factor_levels(x, opts->x_arg);
   }
 
   if (TYPEOF(y_levels) != STRSXP) {
-    stop_corrupt_factor_levels(y, y_arg);
+    stop_corrupt_factor_levels(y, opts->y_arg);
   }
 
   // Quick early exit for identical levels pointing to the same SEXP
@@ -29,17 +33,20 @@ SEXP fct_ptype2(SEXP x, SEXP y, struct vctrs_arg* x_arg, struct vctrs_arg* y_arg
   return out;
 }
 
-// [[ include("vctrs.h") ]]
-SEXP ord_ptype2(SEXP x, SEXP y, struct vctrs_arg* x_arg, struct vctrs_arg* y_arg) {
+// [[ include("type-factor.h") ]]
+SEXP ord_ptype2(const struct ptype2_opts* opts) {
+  SEXP x = opts->x;
+  SEXP y = opts->y;
+
   SEXP x_levels = Rf_getAttrib(x, R_LevelsSymbol);
   SEXP y_levels = Rf_getAttrib(y, R_LevelsSymbol);
 
   if (TYPEOF(x_levels) != STRSXP) {
-    stop_corrupt_ordered_levels(x, x_arg);
+    stop_corrupt_ordered_levels(x, opts->x_arg);
   }
 
   if (TYPEOF(y_levels) != STRSXP) {
-    stop_corrupt_ordered_levels(y, y_arg);
+    stop_corrupt_ordered_levels(y, opts->y_arg);
   }
 
   // Quick early exit for identical levels pointing to the same SEXP

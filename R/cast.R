@@ -28,21 +28,15 @@
 #' specialised function).
 #'
 #' @section S3 dispatch:
-#' `vec_cast()` dispatches on both arguments because casting depends on both
-#' the type of `x` and of `to`. This is implemented by having methods of
-#' `vec_cast()`, e.g. `vec_cast.integer()` also be S3 generics, which call
-#' e.g. `vec_cast.integer.double()`.
+#' `vec_cast()` dispatches on both arguments because casting depends
+#' on both the type of `x` and of `to`. The dispatch mechanism is a
+#' bit different than regular S3 dispatch. See [vec_ptype2()] and
+#' `vignette("s3-vector")` for full details.
 #'
 #' Note that `vec_cast()` dispatches on its second argument, so that the name
 #' of the final method uses the same convention as `as.xyz()` methods, i.e.
 #' `vec_cast.integer.double()` casts double to integers, in the same way
 #' that `as.integer.double()` would.
-#'
-#' Whenever you implement a `vec_cast.new_class()` generic/method,
-#' make sure to always provide `vec_cast.new_class.default()` and
-#' call [vec_default_cast()] from that method.
-#'
-#' See `vignette("s3-vector")` for full details.
 #'
 #'
 #' @section Restoring attributes:
@@ -159,7 +153,7 @@ vec_default_cast <- function(x, to, ..., x_arg = "", to_arg = "") {
     return(vec_cast_to_asis(x, to, x_arg = x_arg, to_arg = to_arg))
   }
 
-  if (inherits(to, "vctrs_vctr") && !inherits(to, "vctrs_rcrd")) {
+  if (inherits(to, "vctrs_vctr") && !inherits(to, c("vctrs_rcrd", "vctrs_list_of"))) {
     return(vctr_cast(x, to, x_arg = x_arg, to_arg = to_arg))
   }
 
@@ -168,12 +162,23 @@ vec_default_cast <- function(x, to, ..., x_arg = "", to_arg = "") {
     return(UseMethod("vec_cast", to))
   }
 
+  # If both data frames, first find the `to` type of columns before
+  # the same-type fallback
+  if (df_needs_normalisation(x, to)) {
+    x <- vec_cast_df_fallback_normalise(x, to)
+  }
+
   if (is_same_type(x, to)) {
     return(x)
   }
 
   if (match_df_fallback(...)) {
-    return(df_cast(x, to, ..., x_arg = x_arg, to_arg = to_arg))
+    if (inherits(to, "tbl_df")) {
+      out <- tib_cast(x, to, ..., x_arg = x_arg, to_arg = to_arg)
+    } else {
+      out <- df_cast_params(x, to, ..., x_arg = x_arg, to_arg = to_arg, df_fallback = TRUE)
+    }
+    return(out)
   }
 
   stop_incompatible_cast(

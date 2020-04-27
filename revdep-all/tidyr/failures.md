@@ -46,6 +46,13 @@ Run `revdep_details(,"BgeeDB")` for more info
 *   R CMD check timed out
     
 
+*   checking whether package ‘BgeeDB’ can be installed ... WARNING
+    ```
+    Found the following significant warnings:
+      Warning: package ‘S4Vectors’ was built under R version 3.6.3
+    See ‘/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/checks.noindex/BgeeDB/new/BgeeDB.Rcheck/00install.out’ for details.
+    ```
+
 *   checking DESCRIPTION meta-information ... NOTE
     ```
     Malformed Title field: should not end in a period.
@@ -94,7 +101,7 @@ Run `revdep_details(,"BUSpaRse")` for more info
 * installing *source* package ‘BUSpaRse’ ...
 ** using staged installation
 ** libs
-clang++ -std=gnu++11 -std=c++11 -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG  -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/BUSpaRse/Rcpp/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/BUSpaRse/RcppArmadillo/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/BUSpaRse/RcppProgress/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/BUSpaRse/BH/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/BUSpaRse/RcppParallel/include" -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I/usr/local/include -fopenmp  -fPIC  -Wall -g -O2  -arch x86_64 -ftemplate-depth-256 -Wall -pedantic -g -O0 -c RcppExports.cpp -o RcppExports.o
+clang++ -std=gnu++11 -std=c++11 -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG  -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/BUSpaRse/Rcpp/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/BUSpaRse/RcppArmadillo/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/BUSpaRse/RcppProgress/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/BUSpaRse/BH/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/BUSpaRse/RcppParallel/include" -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I/usr/local/include -fopenmp  -fPIC  -Wall -g -O2  -arch x86_64 -ftemplate-depth-256 -Wall -pedantic -c RcppExports.cpp -o RcppExports.o
 clang: error: unsupported option '-fopenmp'
 make: *** [RcppExports.o] Error 1
 ERROR: compilation failed for package ‘BUSpaRse’
@@ -107,7 +114,7 @@ ERROR: compilation failed for package ‘BUSpaRse’
 * installing *source* package ‘BUSpaRse’ ...
 ** using staged installation
 ** libs
-clang++ -std=gnu++11 -std=c++11 -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG  -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/BUSpaRse/Rcpp/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/BUSpaRse/RcppArmadillo/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/BUSpaRse/RcppProgress/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/BUSpaRse/BH/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/BUSpaRse/RcppParallel/include" -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I/usr/local/include -fopenmp  -fPIC  -Wall -g -O2  -arch x86_64 -ftemplate-depth-256 -Wall -pedantic -g -O0 -c RcppExports.cpp -o RcppExports.o
+clang++ -std=gnu++11 -std=c++11 -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG  -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/BUSpaRse/Rcpp/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/BUSpaRse/RcppArmadillo/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/BUSpaRse/RcppProgress/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/BUSpaRse/BH/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/BUSpaRse/RcppParallel/include" -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I/usr/local/include -fopenmp  -fPIC  -Wall -g -O2  -arch x86_64 -ftemplate-depth-256 -Wall -pedantic -c RcppExports.cpp -o RcppExports.o
 clang: error: unsupported option '-fopenmp'
 make: *** [RcppExports.o] Error 1
 ERROR: compilation failed for package ‘BUSpaRse’
@@ -131,6 +138,14 @@ Run `revdep_details(,"cicero")` for more info
 
 *   R CMD check timed out
     
+
+*   checking whether package ‘cicero’ can be installed ... WARNING
+    ```
+    Found the following significant warnings:
+      Warning: package ‘S4Vectors’ was built under R version 3.6.3
+      Warning: package ‘GenomeInfoDb’ was built under R version 3.6.3
+    See ‘/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/checks.noindex/cicero/new/cicero.Rcheck/00install.out’ for details.
+    ```
 
 *   checking R code for possible problems ... NOTE
     ```
@@ -190,7 +205,7 @@ Run `revdep_details(,"circumplex")` for more info
 ** package ‘circumplex’ successfully unpacked and MD5 sums checked
 ** using staged installation
 ** libs
-clang++ -std=gnu++11 -std=c++11 -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG  -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/circumplex/Rcpp/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/circumplex/RcppArmadillo/include" -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I/usr/local/include -fopenmp  -fPIC  -Wall -g -O2  -arch x86_64 -ftemplate-depth-256 -Wall -pedantic -g -O0 -c RcppExports.cpp -o RcppExports.o
+clang++ -std=gnu++11 -std=c++11 -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG  -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/circumplex/Rcpp/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/circumplex/RcppArmadillo/include" -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I/usr/local/include -fopenmp  -fPIC  -Wall -g -O2  -arch x86_64 -ftemplate-depth-256 -Wall -pedantic -c RcppExports.cpp -o RcppExports.o
 clang: error: unsupported option '-fopenmp'
 make: *** [RcppExports.o] Error 1
 ERROR: compilation failed for package ‘circumplex’
@@ -204,7 +219,7 @@ ERROR: compilation failed for package ‘circumplex’
 ** package ‘circumplex’ successfully unpacked and MD5 sums checked
 ** using staged installation
 ** libs
-clang++ -std=gnu++11 -std=c++11 -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG  -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/circumplex/Rcpp/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/circumplex/RcppArmadillo/include" -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I/usr/local/include -fopenmp  -fPIC  -Wall -g -O2  -arch x86_64 -ftemplate-depth-256 -Wall -pedantic -g -O0 -c RcppExports.cpp -o RcppExports.o
+clang++ -std=gnu++11 -std=c++11 -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG  -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/circumplex/Rcpp/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/circumplex/RcppArmadillo/include" -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I/usr/local/include -fopenmp  -fPIC  -Wall -g -O2  -arch x86_64 -ftemplate-depth-256 -Wall -pedantic -c RcppExports.cpp -o RcppExports.o
 clang: error: unsupported option '-fopenmp'
 make: *** [RcppExports.o] Error 1
 ERROR: compilation failed for package ‘circumplex’
@@ -229,6 +244,11 @@ Run `revdep_details(,"")` for more info
 
 ```
 
+  There is a binary version available but the source version is later:
+     binary  source needs_compilation
+Rcpp  1.0.4 1.0.4.6              TRUE
+
+  Binaries will be installed
 
 
 installing the source package ‘reactome.db’
@@ -240,6 +260,11 @@ installing the source package ‘reactome.db’
 
 ```
 
+  There is a binary version available but the source version is later:
+     binary  source needs_compilation
+Rcpp  1.0.4 1.0.4.6              TRUE
+
+  Binaries will be installed
 
 
 installing the source package ‘reactome.db’
@@ -278,7 +303,7 @@ Run `revdep_details(,"colorednoise")` for more info
 ** package ‘colorednoise’ successfully unpacked and MD5 sums checked
 ** using staged installation
 ** libs
-clang++ -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG  -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/colorednoise/Rcpp/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/colorednoise/RcppArmadillo/include" -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I/usr/local/include -fopenmp -fPIC  -Wall -g -O2  -arch x86_64 -ftemplate-depth-256 -Wall -pedantic -g -O0 -c RcppExports.cpp -o RcppExports.o
+clang++ -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG  -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/colorednoise/Rcpp/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/colorednoise/RcppArmadillo/include" -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I/usr/local/include -fopenmp -fPIC  -Wall -g -O2  -arch x86_64 -ftemplate-depth-256 -Wall -pedantic -mtune=core2 -O3 -c RcppExports.cpp -o RcppExports.o
 clang: error: unsupported option '-fopenmp'
 make: *** [RcppExports.o] Error 1
 ERROR: compilation failed for package ‘colorednoise’
@@ -292,7 +317,7 @@ ERROR: compilation failed for package ‘colorednoise’
 ** package ‘colorednoise’ successfully unpacked and MD5 sums checked
 ** using staged installation
 ** libs
-clang++ -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG  -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/colorednoise/Rcpp/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/colorednoise/RcppArmadillo/include" -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I/usr/local/include -fopenmp -fPIC  -Wall -g -O2  -arch x86_64 -ftemplate-depth-256 -Wall -pedantic -g -O0 -c RcppExports.cpp -o RcppExports.o
+clang++ -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG  -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/colorednoise/Rcpp/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/colorednoise/RcppArmadillo/include" -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I/usr/local/include -fopenmp -fPIC  -Wall -g -O2  -arch x86_64 -ftemplate-depth-256 -Wall -pedantic -mtune=core2 -O3 -c RcppExports.cpp -o RcppExports.o
 clang: error: unsupported option '-fopenmp'
 make: *** [RcppExports.o] Error 1
 ERROR: compilation failed for package ‘colorednoise’
@@ -331,16 +356,16 @@ Run `revdep_details(,"detrendr")` for more info
 ** package ‘detrendr’ successfully unpacked and MD5 sums checked
 ** using staged installation
 ** libs
-clang++ -std=gnu++11 -std=c++11 -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG  -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/detrendr/Rcpp/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/detrendr/RcppParallel/include" -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I/usr/local/include  -fPIC  -Wall -g -O2  -arch x86_64 -ftemplate-depth-256 -Wall -pedantic -g -O0 -c RcppExports.cpp -o RcppExports.o
-clang++ -std=gnu++11 -std=c++11 -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG  -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/detrendr/Rcpp/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/detrendr/RcppParallel/include" -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I/usr/local/include  -fPIC  -Wall -g -O2  -arch x86_64 -ftemplate-depth-256 -Wall -pedantic -g -O0 -c anyNA.cpp -o anyNA.o
-clang++ -std=gnu++11 -std=c++11 -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG  -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/detrendr/Rcpp/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/detrendr/RcppParallel/include" -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I/usr/local/include  -fPIC  -Wall -g -O2  -arch x86_64 -ftemplate-depth-256 -Wall -pedantic -g -O0 -c col_stats_parallel.cpp -o col_stats_parallel.o
-clang++ -std=gnu++11 -std=c++11 -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG  -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/detrendr/Rcpp/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/detrendr/RcppParallel/include" -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I/usr/local/include  -fPIC  -Wall -g -O2  -arch x86_64 -ftemplate-depth-256 -Wall -pedantic -g -O0 -c frame_utils.cpp -o frame_utils.o
+clang++ -std=gnu++11 -std=c++11 -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG  -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/detrendr/Rcpp/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/detrendr/RcppParallel/include" -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I/usr/local/include  -fPIC  -Wall -g -O2  -arch x86_64 -ftemplate-depth-256 -Wall -pedantic -c RcppExports.cpp -o RcppExports.o
+clang++ -std=gnu++11 -std=c++11 -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG  -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/detrendr/Rcpp/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/detrendr/RcppParallel/include" -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I/usr/local/include  -fPIC  -Wall -g -O2  -arch x86_64 -ftemplate-depth-256 -Wall -pedantic -c anyNA.cpp -o anyNA.o
+clang++ -std=gnu++11 -std=c++11 -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG  -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/detrendr/Rcpp/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/detrendr/RcppParallel/include" -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I/usr/local/include  -fPIC  -Wall -g -O2  -arch x86_64 -ftemplate-depth-256 -Wall -pedantic -c col_stats_parallel.cpp -o col_stats_parallel.o
+clang++ -std=gnu++11 -std=c++11 -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG  -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/detrendr/Rcpp/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/detrendr/RcppParallel/include" -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I/usr/local/include  -fPIC  -Wall -g -O2  -arch x86_64 -ftemplate-depth-256 -Wall -pedantic -c frame_utils.cpp -o frame_utils.o
 In file included from frame_utils.cpp:6:
 In file included from /Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/detrendr/RcppParallel/include/RcppParallel.h:6:
 In file included from /Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/detrendr/RcppParallel/include/RcppParallel/TinyThread.h:9:
 In file included from /Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/detrendr/RcppParallel/include/tthread/tinythread.h:83:
 In file included from /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/unistd.h:655:
-/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/gethostuuid.h:39:17: error: C++ requires a type specifier for all declarations
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/gethostuuid.h:39:17: error: unknown type name 'uuid_t'
 int gethostuuid(uuid_t, const struct timespec *) __OSX_AVAILABLE_STARTING(__MAC_10_5, __IPHONE_NA);
                 ^
 In file included from frame_utils.cpp:6:
@@ -396,16 +421,16 @@ ERROR: compilation failed for package ‘detrendr’
 ** package ‘detrendr’ successfully unpacked and MD5 sums checked
 ** using staged installation
 ** libs
-clang++ -std=gnu++11 -std=c++11 -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG  -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/detrendr/Rcpp/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/detrendr/RcppParallel/include" -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I/usr/local/include  -fPIC  -Wall -g -O2  -arch x86_64 -ftemplate-depth-256 -Wall -pedantic -g -O0 -c RcppExports.cpp -o RcppExports.o
-clang++ -std=gnu++11 -std=c++11 -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG  -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/detrendr/Rcpp/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/detrendr/RcppParallel/include" -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I/usr/local/include  -fPIC  -Wall -g -O2  -arch x86_64 -ftemplate-depth-256 -Wall -pedantic -g -O0 -c anyNA.cpp -o anyNA.o
-clang++ -std=gnu++11 -std=c++11 -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG  -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/detrendr/Rcpp/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/detrendr/RcppParallel/include" -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I/usr/local/include  -fPIC  -Wall -g -O2  -arch x86_64 -ftemplate-depth-256 -Wall -pedantic -g -O0 -c col_stats_parallel.cpp -o col_stats_parallel.o
-clang++ -std=gnu++11 -std=c++11 -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG  -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/detrendr/Rcpp/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/detrendr/RcppParallel/include" -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I/usr/local/include  -fPIC  -Wall -g -O2  -arch x86_64 -ftemplate-depth-256 -Wall -pedantic -g -O0 -c frame_utils.cpp -o frame_utils.o
+clang++ -std=gnu++11 -std=c++11 -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG  -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/detrendr/Rcpp/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/detrendr/RcppParallel/include" -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I/usr/local/include  -fPIC  -Wall -g -O2  -arch x86_64 -ftemplate-depth-256 -Wall -pedantic -c RcppExports.cpp -o RcppExports.o
+clang++ -std=gnu++11 -std=c++11 -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG  -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/detrendr/Rcpp/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/detrendr/RcppParallel/include" -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I/usr/local/include  -fPIC  -Wall -g -O2  -arch x86_64 -ftemplate-depth-256 -Wall -pedantic -c anyNA.cpp -o anyNA.o
+clang++ -std=gnu++11 -std=c++11 -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG  -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/detrendr/Rcpp/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/detrendr/RcppParallel/include" -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I/usr/local/include  -fPIC  -Wall -g -O2  -arch x86_64 -ftemplate-depth-256 -Wall -pedantic -c col_stats_parallel.cpp -o col_stats_parallel.o
+clang++ -std=gnu++11 -std=c++11 -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG  -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/detrendr/Rcpp/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/detrendr/RcppParallel/include" -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I/usr/local/include  -fPIC  -Wall -g -O2  -arch x86_64 -ftemplate-depth-256 -Wall -pedantic -c frame_utils.cpp -o frame_utils.o
 In file included from frame_utils.cpp:6:
 In file included from /Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/detrendr/RcppParallel/include/RcppParallel.h:6:
 In file included from /Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/detrendr/RcppParallel/include/RcppParallel/TinyThread.h:9:
 In file included from /Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/detrendr/RcppParallel/include/tthread/tinythread.h:83:
 In file included from /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/unistd.h:655:
-/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/gethostuuid.h:39:17: error: C++ requires a type specifier for all declarations
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/gethostuuid.h:39:17: error: unknown type name 'uuid_t'
 int gethostuuid(uuid_t, const struct timespec *) __OSX_AVAILABLE_STARTING(__MAC_10_5, __IPHONE_NA);
                 ^
 In file included from frame_utils.cpp:6:
@@ -458,11 +483,11 @@ ERROR: compilation failed for package ‘detrendr’
 
 <details>
 
-* Version: 1.0.6
+* Version: 1.0.7
 * Source code: https://github.com/cran/dexter
 * URL: http://dexterities.netlify.com
 * BugReports: https://github.com/jessekps/dexter/issues
-* Date/Publication: 2020-03-12 12:40:17 UTC
+* Date/Publication: 2020-04-02 15:00:02 UTC
 * Number of recursive dependencies: 76
 
 Run `revdep_details(,"dexter")` for more info
@@ -486,7 +511,7 @@ Run `revdep_details(,"dexter")` for more info
 ** package ‘dexter’ successfully unpacked and MD5 sums checked
 ** using staged installation
 ** libs
-clang++ -std=gnu++11 -std=c++11 -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG  -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/dexter/Rcpp/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/dexter/RcppArmadillo/include" -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I/usr/local/include -fopenmp  -fPIC  -Wall -g -O2  -arch x86_64 -ftemplate-depth-256 -Wall -pedantic -g -O0 -c RcppExports.cpp -o RcppExports.o
+clang++ -std=gnu++11 -std=c++11 -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG  -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/dexter/Rcpp/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/dexter/RcppArmadillo/include" -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I/usr/local/include -fopenmp  -fPIC  -Wall -g -O2  -arch x86_64 -ftemplate-depth-256 -Wall -pedantic -c RcppExports.cpp -o RcppExports.o
 clang: error: unsupported option '-fopenmp'
 make: *** [RcppExports.o] Error 1
 ERROR: compilation failed for package ‘dexter’
@@ -500,7 +525,7 @@ ERROR: compilation failed for package ‘dexter’
 ** package ‘dexter’ successfully unpacked and MD5 sums checked
 ** using staged installation
 ** libs
-clang++ -std=gnu++11 -std=c++11 -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG  -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/dexter/Rcpp/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/dexter/RcppArmadillo/include" -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I/usr/local/include -fopenmp  -fPIC  -Wall -g -O2  -arch x86_64 -ftemplate-depth-256 -Wall -pedantic -g -O0 -c RcppExports.cpp -o RcppExports.o
+clang++ -std=gnu++11 -std=c++11 -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG  -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/dexter/Rcpp/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/dexter/RcppArmadillo/include" -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I/usr/local/include -fopenmp  -fPIC  -Wall -g -O2  -arch x86_64 -ftemplate-depth-256 -Wall -pedantic -c RcppExports.cpp -o RcppExports.o
 clang: error: unsupported option '-fopenmp'
 make: *** [RcppExports.o] Error 1
 ERROR: compilation failed for package ‘dexter’
@@ -511,12 +536,12 @@ ERROR: compilation failed for package ‘dexter’
 
 <details>
 
-* Version: 1.1.0
+* Version: 1.2.0
 * Source code: https://github.com/cran/dscore
 * URL: https://github.com/stefvanbuuren/dscore, https://stefvanbuuren.name/dscore/, https://stefvanbuuren.name/dbook1/
 * BugReports: https://github.com/stefvanbuuren/dscore/issues
-* Date/Publication: 2020-02-23 22:10:02 UTC
-* Number of recursive dependencies: 90
+* Date/Publication: 2020-04-02 10:20:02 UTC
+* Number of recursive dependencies: 91
 
 Run `revdep_details(,"dscore")` for more info
 
@@ -539,7 +564,7 @@ Run `revdep_details(,"dscore")` for more info
 ** package ‘dscore’ successfully unpacked and MD5 sums checked
 ** using staged installation
 ** libs
-clang++ -std=gnu++11 -std=c++11 -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG  -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/dscore/Rcpp/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/dscore/RcppArmadillo/include" -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I/usr/local/include -fopenmp  -fPIC  -Wall -g -O2  -arch x86_64 -ftemplate-depth-256 -Wall -pedantic -g -O0 -c RcppExports.cpp -o RcppExports.o
+clang++ -std=gnu++11 -std=c++11 -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG  -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/dscore/Rcpp/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/dscore/RcppArmadillo/include" -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I/usr/local/include -fopenmp  -fPIC  -Wall -g -O2  -arch x86_64 -ftemplate-depth-256 -Wall -pedantic -c RcppExports.cpp -o RcppExports.o
 clang: error: unsupported option '-fopenmp'
 make: *** [RcppExports.o] Error 1
 ERROR: compilation failed for package ‘dscore’
@@ -553,7 +578,7 @@ ERROR: compilation failed for package ‘dscore’
 ** package ‘dscore’ successfully unpacked and MD5 sums checked
 ** using staged installation
 ** libs
-clang++ -std=gnu++11 -std=c++11 -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG  -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/dscore/Rcpp/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/dscore/RcppArmadillo/include" -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I/usr/local/include -fopenmp  -fPIC  -Wall -g -O2  -arch x86_64 -ftemplate-depth-256 -Wall -pedantic -g -O0 -c RcppExports.cpp -o RcppExports.o
+clang++ -std=gnu++11 -std=c++11 -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG  -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/dscore/Rcpp/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/dscore/RcppArmadillo/include" -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I/usr/local/include -fopenmp  -fPIC  -Wall -g -O2  -arch x86_64 -ftemplate-depth-256 -Wall -pedantic -c RcppExports.cpp -o RcppExports.o
 clang: error: unsupported option '-fopenmp'
 make: *** [RcppExports.o] Error 1
 ERROR: compilation failed for package ‘dscore’
@@ -567,7 +592,7 @@ ERROR: compilation failed for package ‘dscore’
 * Version: 0.5.2
 * Source code: https://github.com/cran/dynfrail
 * Date/Publication: 2017-10-30 10:11:49 UTC
-* Number of recursive dependencies: 72
+* Number of recursive dependencies: 75
 
 Run `revdep_details(,"dynfrail")` for more info
 
@@ -590,7 +615,7 @@ Run `revdep_details(,"dynfrail")` for more info
 ** package ‘dynfrail’ successfully unpacked and MD5 sums checked
 ** using staged installation
 ** libs
-clang++ -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG  -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/dynfrail/Rcpp/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/dynfrail/RcppArmadillo/include" -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I/usr/local/include -fopenmp  -fPIC  -Wall -g -O2  -arch x86_64 -ftemplate-depth-256 -Wall -pedantic -g -O0 -c RcppExports.cpp -o RcppExports.o
+clang++ -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG  -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/dynfrail/Rcpp/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/dynfrail/RcppArmadillo/include" -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I/usr/local/include -fopenmp  -fPIC  -Wall -g -O2  -arch x86_64 -ftemplate-depth-256 -Wall -pedantic -mtune=core2 -O3 -c RcppExports.cpp -o RcppExports.o
 clang: error: unsupported option '-fopenmp'
 make: *** [RcppExports.o] Error 1
 ERROR: compilation failed for package ‘dynfrail’
@@ -604,7 +629,7 @@ ERROR: compilation failed for package ‘dynfrail’
 ** package ‘dynfrail’ successfully unpacked and MD5 sums checked
 ** using staged installation
 ** libs
-clang++ -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG  -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/dynfrail/Rcpp/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/dynfrail/RcppArmadillo/include" -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I/usr/local/include -fopenmp  -fPIC  -Wall -g -O2  -arch x86_64 -ftemplate-depth-256 -Wall -pedantic -g -O0 -c RcppExports.cpp -o RcppExports.o
+clang++ -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG  -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/dynfrail/Rcpp/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/dynfrail/RcppArmadillo/include" -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I/usr/local/include -fopenmp  -fPIC  -Wall -g -O2  -arch x86_64 -ftemplate-depth-256 -Wall -pedantic -mtune=core2 -O3 -c RcppExports.cpp -o RcppExports.o
 clang: error: unsupported option '-fopenmp'
 make: *** [RcppExports.o] Error 1
 ERROR: compilation failed for package ‘dynfrail’
@@ -751,13 +776,13 @@ Run `revdep_details(,"GillespieSSA2")` for more info
 ** package ‘GillespieSSA2’ successfully unpacked and MD5 sums checked
 ** using staged installation
 ** libs
-clang++ -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG  -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/GillespieSSA2/Rcpp/include" -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I/usr/local/include  -fPIC  -Wall -g -O2  -arch x86_64 -ftemplate-depth-256 -Wall -pedantic -g -O0 -c RcppExports.cpp -o RcppExports.o
-clang++ -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG  -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/GillespieSSA2/Rcpp/include" -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I/usr/local/include  -fPIC  -Wall -g -O2  -arch x86_64 -ftemplate-depth-256 -Wall -pedantic -g -O0 -c ode_em.cpp -o ode_em.o
-clang++ -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG  -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/GillespieSSA2/Rcpp/include" -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I/usr/local/include  -fPIC  -Wall -g -O2  -arch x86_64 -ftemplate-depth-256 -Wall -pedantic -g -O0 -c ssa_btl.cpp -o ssa_btl.o
-clang++ -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG  -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/GillespieSSA2/Rcpp/include" -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I/usr/local/include  -fPIC  -Wall -g -O2  -arch x86_64 -ftemplate-depth-256 -Wall -pedantic -g -O0 -c ssa_etl.cpp -o ssa_etl.o
-clang++ -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG  -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/GillespieSSA2/Rcpp/include" -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I/usr/local/include  -fPIC  -Wall -g -O2  -arch x86_64 -ftemplate-depth-256 -Wall -pedantic -g -O0 -c ssa_exact.cpp -o ssa_exact.o
-clang++ -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG  -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/GillespieSSA2/Rcpp/include" -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I/usr/local/include  -fPIC  -Wall -g -O2  -arch x86_64 -ftemplate-depth-256 -Wall -pedantic -g -O0 -c ssa_method.cpp -o ssa_method.o
-clang++ -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG  -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/GillespieSSA2/Rcpp/include" -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I/usr/local/include  -fPIC  -Wall -g -O2  -arch x86_64 -ftemplate-depth-256 -Wall -pedantic -g -O0 -c ssa_simulation.cpp -o ssa_simulation.o
+clang++ -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG  -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/GillespieSSA2/Rcpp/include" -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I/usr/local/include  -fPIC  -Wall -g -O2  -arch x86_64 -ftemplate-depth-256 -Wall -pedantic -mtune=core2 -O3 -c RcppExports.cpp -o RcppExports.o
+clang++ -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG  -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/GillespieSSA2/Rcpp/include" -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I/usr/local/include  -fPIC  -Wall -g -O2  -arch x86_64 -ftemplate-depth-256 -Wall -pedantic -mtune=core2 -O3 -c ode_em.cpp -o ode_em.o
+clang++ -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG  -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/GillespieSSA2/Rcpp/include" -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I/usr/local/include  -fPIC  -Wall -g -O2  -arch x86_64 -ftemplate-depth-256 -Wall -pedantic -mtune=core2 -O3 -c ssa_btl.cpp -o ssa_btl.o
+clang++ -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG  -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/GillespieSSA2/Rcpp/include" -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I/usr/local/include  -fPIC  -Wall -g -O2  -arch x86_64 -ftemplate-depth-256 -Wall -pedantic -mtune=core2 -O3 -c ssa_etl.cpp -o ssa_etl.o
+clang++ -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG  -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/GillespieSSA2/Rcpp/include" -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I/usr/local/include  -fPIC  -Wall -g -O2  -arch x86_64 -ftemplate-depth-256 -Wall -pedantic -mtune=core2 -O3 -c ssa_exact.cpp -o ssa_exact.o
+clang++ -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG  -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/GillespieSSA2/Rcpp/include" -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I/usr/local/include  -fPIC  -Wall -g -O2  -arch x86_64 -ftemplate-depth-256 -Wall -pedantic -mtune=core2 -O3 -c ssa_method.cpp -o ssa_method.o
+clang++ -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG  -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/GillespieSSA2/Rcpp/include" -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I/usr/local/include  -fPIC  -Wall -g -O2  -arch x86_64 -ftemplate-depth-256 -Wall -pedantic -mtune=core2 -O3 -c ssa_simulation.cpp -o ssa_simulation.o
 In file included from ssa_simulation.cpp:3:
 In file included from /Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/GillespieSSA2/Rcpp/include/Rcpp/Benchmark/Timer.h:36:
 In file included from /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/mach/mach_time.h:32:
@@ -781,13 +806,13 @@ ERROR: compilation failed for package ‘GillespieSSA2’
 ** package ‘GillespieSSA2’ successfully unpacked and MD5 sums checked
 ** using staged installation
 ** libs
-clang++ -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG  -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/GillespieSSA2/Rcpp/include" -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I/usr/local/include  -fPIC  -Wall -g -O2  -arch x86_64 -ftemplate-depth-256 -Wall -pedantic -g -O0 -c RcppExports.cpp -o RcppExports.o
-clang++ -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG  -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/GillespieSSA2/Rcpp/include" -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I/usr/local/include  -fPIC  -Wall -g -O2  -arch x86_64 -ftemplate-depth-256 -Wall -pedantic -g -O0 -c ode_em.cpp -o ode_em.o
-clang++ -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG  -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/GillespieSSA2/Rcpp/include" -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I/usr/local/include  -fPIC  -Wall -g -O2  -arch x86_64 -ftemplate-depth-256 -Wall -pedantic -g -O0 -c ssa_btl.cpp -o ssa_btl.o
-clang++ -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG  -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/GillespieSSA2/Rcpp/include" -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I/usr/local/include  -fPIC  -Wall -g -O2  -arch x86_64 -ftemplate-depth-256 -Wall -pedantic -g -O0 -c ssa_etl.cpp -o ssa_etl.o
-clang++ -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG  -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/GillespieSSA2/Rcpp/include" -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I/usr/local/include  -fPIC  -Wall -g -O2  -arch x86_64 -ftemplate-depth-256 -Wall -pedantic -g -O0 -c ssa_exact.cpp -o ssa_exact.o
-clang++ -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG  -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/GillespieSSA2/Rcpp/include" -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I/usr/local/include  -fPIC  -Wall -g -O2  -arch x86_64 -ftemplate-depth-256 -Wall -pedantic -g -O0 -c ssa_method.cpp -o ssa_method.o
-clang++ -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG  -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/GillespieSSA2/Rcpp/include" -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I/usr/local/include  -fPIC  -Wall -g -O2  -arch x86_64 -ftemplate-depth-256 -Wall -pedantic -g -O0 -c ssa_simulation.cpp -o ssa_simulation.o
+clang++ -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG  -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/GillespieSSA2/Rcpp/include" -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I/usr/local/include  -fPIC  -Wall -g -O2  -arch x86_64 -ftemplate-depth-256 -Wall -pedantic -mtune=core2 -O3 -c RcppExports.cpp -o RcppExports.o
+clang++ -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG  -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/GillespieSSA2/Rcpp/include" -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I/usr/local/include  -fPIC  -Wall -g -O2  -arch x86_64 -ftemplate-depth-256 -Wall -pedantic -mtune=core2 -O3 -c ode_em.cpp -o ode_em.o
+clang++ -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG  -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/GillespieSSA2/Rcpp/include" -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I/usr/local/include  -fPIC  -Wall -g -O2  -arch x86_64 -ftemplate-depth-256 -Wall -pedantic -mtune=core2 -O3 -c ssa_btl.cpp -o ssa_btl.o
+clang++ -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG  -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/GillespieSSA2/Rcpp/include" -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I/usr/local/include  -fPIC  -Wall -g -O2  -arch x86_64 -ftemplate-depth-256 -Wall -pedantic -mtune=core2 -O3 -c ssa_etl.cpp -o ssa_etl.o
+clang++ -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG  -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/GillespieSSA2/Rcpp/include" -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I/usr/local/include  -fPIC  -Wall -g -O2  -arch x86_64 -ftemplate-depth-256 -Wall -pedantic -mtune=core2 -O3 -c ssa_exact.cpp -o ssa_exact.o
+clang++ -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG  -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/GillespieSSA2/Rcpp/include" -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I/usr/local/include  -fPIC  -Wall -g -O2  -arch x86_64 -ftemplate-depth-256 -Wall -pedantic -mtune=core2 -O3 -c ssa_method.cpp -o ssa_method.o
+clang++ -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG  -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/GillespieSSA2/Rcpp/include" -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I/usr/local/include  -fPIC  -Wall -g -O2  -arch x86_64 -ftemplate-depth-256 -Wall -pedantic -mtune=core2 -O3 -c ssa_simulation.cpp -o ssa_simulation.o
 In file included from ssa_simulation.cpp:3:
 In file included from /Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/GillespieSSA2/Rcpp/include/Rcpp/Benchmark/Timer.h:36:
 In file included from /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/mach/mach_time.h:32:
@@ -808,12 +833,12 @@ ERROR: compilation failed for package ‘GillespieSSA2’
 
 <details>
 
-* Version: 0.2.3
+* Version: 0.2.4
 * Source code: https://github.com/cran/heuristicsmineR
 * URL: https://github.com/bupaverse/heuristicsmineR
 * BugReports: https://github.com/bupaverse/heuristicsmineR/issues
-* Date/Publication: 2020-03-19 17:10:05 UTC
-* Number of recursive dependencies: 102
+* Date/Publication: 2020-03-29 19:50:03 UTC
+* Number of recursive dependencies: 103
 
 Run `revdep_details(,"heuristicsmineR")` for more info
 
@@ -836,8 +861,8 @@ Run `revdep_details(,"heuristicsmineR")` for more info
 ** package ‘heuristicsmineR’ successfully unpacked and MD5 sums checked
 ** using staged installation
 ** libs
-clang++ -std=gnu++11 -std=c++11 -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG  -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/heuristicsmineR/Rcpp/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/heuristicsmineR/BH/include" -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I/usr/local/include  -fPIC  -Wall -g -O2  -arch x86_64 -ftemplate-depth-256 -Wall -pedantic -g -O0 -c RcppExports.cpp -o RcppExports.o
-clang++ -std=gnu++11 -std=c++11 -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG  -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/heuristicsmineR/Rcpp/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/heuristicsmineR/BH/include" -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I/usr/local/include  -fPIC  -Wall -g -O2  -arch x86_64 -ftemplate-depth-256 -Wall -pedantic -g -O0 -c count_length_two_loops.cpp -o count_length_two_loops.o
+clang++ -std=gnu++11 -std=c++11 -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG  -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/heuristicsmineR/Rcpp/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/heuristicsmineR/BH/include" -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I/usr/local/include  -fPIC  -Wall -g -O2  -arch x86_64 -ftemplate-depth-256 -Wall -pedantic -c RcppExports.cpp -o RcppExports.o
+clang++ -std=gnu++11 -std=c++11 -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG  -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/heuristicsmineR/Rcpp/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/heuristicsmineR/BH/include" -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I/usr/local/include  -fPIC  -Wall -g -O2  -arch x86_64 -ftemplate-depth-256 -Wall -pedantic -c count_length_two_loops.cpp -o count_length_two_loops.o
 In file included from count_length_two_loops.cpp:6:
 In file included from /Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/heuristicsmineR/BH/include/boost/functional/hash.hpp:6:
 In file included from /Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/heuristicsmineR/BH/include/boost/container_hash/hash.hpp:19:
@@ -847,7 +872,7 @@ In file included from /Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/t
 In file included from /Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/heuristicsmineR/BH/include/boost/config/platform/macos.hpp:28:
 In file included from /Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/heuristicsmineR/BH/include/boost/config/detail/posix_features.hpp:18:
 In file included from /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/unistd.h:655:
-/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/gethostuuid.h:39:17: error: C++ requires a type specifier for all declarations
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/gethostuuid.h:39:17: error: unknown type name 'uuid_t'
 int gethostuuid(uuid_t, const struct timespec *) __OSX_AVAILABLE_STARTING(__MAC_10_5, __IPHONE_NA);
                 ^
 In file included from count_length_two_loops.cpp:6:
@@ -919,8 +944,8 @@ ERROR: compilation failed for package ‘heuristicsmineR’
 ** package ‘heuristicsmineR’ successfully unpacked and MD5 sums checked
 ** using staged installation
 ** libs
-clang++ -std=gnu++11 -std=c++11 -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG  -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/heuristicsmineR/Rcpp/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/heuristicsmineR/BH/include" -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I/usr/local/include  -fPIC  -Wall -g -O2  -arch x86_64 -ftemplate-depth-256 -Wall -pedantic -g -O0 -c RcppExports.cpp -o RcppExports.o
-clang++ -std=gnu++11 -std=c++11 -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG  -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/heuristicsmineR/Rcpp/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/heuristicsmineR/BH/include" -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I/usr/local/include  -fPIC  -Wall -g -O2  -arch x86_64 -ftemplate-depth-256 -Wall -pedantic -g -O0 -c count_length_two_loops.cpp -o count_length_two_loops.o
+clang++ -std=gnu++11 -std=c++11 -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG  -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/heuristicsmineR/Rcpp/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/heuristicsmineR/BH/include" -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I/usr/local/include  -fPIC  -Wall -g -O2  -arch x86_64 -ftemplate-depth-256 -Wall -pedantic -c RcppExports.cpp -o RcppExports.o
+clang++ -std=gnu++11 -std=c++11 -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG  -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/heuristicsmineR/Rcpp/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/heuristicsmineR/BH/include" -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I/usr/local/include  -fPIC  -Wall -g -O2  -arch x86_64 -ftemplate-depth-256 -Wall -pedantic -c count_length_two_loops.cpp -o count_length_two_loops.o
 In file included from count_length_two_loops.cpp:6:
 In file included from /Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/heuristicsmineR/BH/include/boost/functional/hash.hpp:6:
 In file included from /Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/heuristicsmineR/BH/include/boost/container_hash/hash.hpp:19:
@@ -930,7 +955,7 @@ In file included from /Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/t
 In file included from /Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/heuristicsmineR/BH/include/boost/config/platform/macos.hpp:28:
 In file included from /Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/heuristicsmineR/BH/include/boost/config/detail/posix_features.hpp:18:
 In file included from /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/unistd.h:655:
-/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/gethostuuid.h:39:17: error: C++ requires a type specifier for all declarations
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/gethostuuid.h:39:17: error: unknown type name 'uuid_t'
 int gethostuuid(uuid_t, const struct timespec *) __OSX_AVAILABLE_STARTING(__MAC_10_5, __IPHONE_NA);
                 ^
 In file included from count_length_two_loops.cpp:6:
@@ -1014,8 +1039,8 @@ Run `revdep_details(,"")` for more info
 ```
 
   There is a binary version available but the source version is later:
-      binary source needs_compilation
-Hmisc  4.3-1  4.4-0              TRUE
+     binary  source needs_compilation
+Rcpp  1.0.4 1.0.4.6              TRUE
 
   Binaries will be installed
 
@@ -1030,8 +1055,8 @@ installing the source packages ‘hugene10sttranscriptcluster.db’, ‘pd.hugen
 ```
 
   There is a binary version available but the source version is later:
-      binary source needs_compilation
-Hmisc  4.3-1  4.4-0              TRUE
+     binary  source needs_compilation
+Rcpp  1.0.4 1.0.4.6              TRUE
 
   Binaries will be installed
 
@@ -1045,11 +1070,11 @@ installing the source packages ‘hugene10sttranscriptcluster.db’, ‘pd.hugen
 
 <details>
 
-* Version: 1.0.0
+* Version: 1.0.2
 * Source code: https://github.com/cran/MOSim
 * URL: https://github.com/Neurergus/MOSim
 * BugReports: https://github.com/Neurergus/MOSim/issues
-* Date/Publication: 2019-10-29
+* Date/Publication: 2020-04-03
 * Number of recursive dependencies: 76
 
 Run `revdep_details(,"MOSim")` for more info
@@ -1072,12 +1097,12 @@ Run `revdep_details(,"MOSim")` for more info
 
 <details>
 
-* Version: 0.2.5-2
+* Version: 0.2.7
 * Source code: https://github.com/cran/phenofit
 * URL: https://github.com/kongdd/phenofit
 * BugReports: https://github.com/kongdd/phenofit/issues
-* Date/Publication: 2019-06-07 08:00:08 UTC
-* Number of recursive dependencies: 87
+* Date/Publication: 2020-04-02 11:40:03 UTC
+* Number of recursive dependencies: 89
 
 Run `revdep_details(,"phenofit")` for more info
 
@@ -1100,7 +1125,7 @@ Run `revdep_details(,"phenofit")` for more info
 ** package ‘phenofit’ successfully unpacked and MD5 sums checked
 ** using staged installation
 ** libs
-clang++ -std=gnu++11 -std=c++11 -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG  -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/phenofit/Rcpp/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/phenofit/RcppArmadillo/include" -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I/usr/local/include -fopenmp  -fPIC  -Wall -g -O2  -arch x86_64 -ftemplate-depth-256 -Wall -pedantic -g -O0 -c RcppExports.cpp -o RcppExports.o
+clang++ -std=gnu++11 -std=c++11 -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG  -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/phenofit/Rcpp/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/phenofit/RcppArmadillo/include" -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I/usr/local/include -fopenmp  -fPIC  -Wall -g -O2  -arch x86_64 -ftemplate-depth-256 -Wall -pedantic -c RcppExports.cpp -o RcppExports.o
 clang: error: unsupported option '-fopenmp'
 make: *** [RcppExports.o] Error 1
 ERROR: compilation failed for package ‘phenofit’
@@ -1114,7 +1139,7 @@ ERROR: compilation failed for package ‘phenofit’
 ** package ‘phenofit’ successfully unpacked and MD5 sums checked
 ** using staged installation
 ** libs
-clang++ -std=gnu++11 -std=c++11 -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG  -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/phenofit/Rcpp/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/phenofit/RcppArmadillo/include" -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I/usr/local/include -fopenmp  -fPIC  -Wall -g -O2  -arch x86_64 -ftemplate-depth-256 -Wall -pedantic -g -O0 -c RcppExports.cpp -o RcppExports.o
+clang++ -std=gnu++11 -std=c++11 -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG  -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/phenofit/Rcpp/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/phenofit/RcppArmadillo/include" -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I/usr/local/include -fopenmp  -fPIC  -Wall -g -O2  -arch x86_64 -ftemplate-depth-256 -Wall -pedantic -c RcppExports.cpp -o RcppExports.o
 clang: error: unsupported option '-fopenmp'
 make: *** [RcppExports.o] Error 1
 ERROR: compilation failed for package ‘phenofit’
@@ -1130,7 +1155,7 @@ ERROR: compilation failed for package ‘phenofit’
 * URL: https://www.bupar.net, https://github.com/bupaverse/processmapr
 * BugReports: https://github.com/bupaverse/processmapr/issues
 * Date/Publication: 2020-03-11 23:10:15 UTC
-* Number of recursive dependencies: 102
+* Number of recursive dependencies: 103
 
 Run `revdep_details(,"processmapR")` for more info
 
@@ -1153,8 +1178,8 @@ Run `revdep_details(,"processmapR")` for more info
 ** package ‘processmapR’ successfully unpacked and MD5 sums checked
 ** using staged installation
 ** libs
-clang++ -std=gnu++11 -std=c++11 -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG  -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/processmapR/Rcpp/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/processmapR/BH/include" -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I/usr/local/include  -fPIC  -Wall -g -O2  -arch x86_64 -ftemplate-depth-256 -Wall -pedantic -g -O0 -c RcppExports.cpp -o RcppExports.o
-clang++ -std=gnu++11 -std=c++11 -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG  -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/processmapR/Rcpp/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/processmapR/BH/include" -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I/usr/local/include  -fPIC  -Wall -g -O2  -arch x86_64 -ftemplate-depth-256 -Wall -pedantic -g -O0 -c count_precedence.cpp -o count_precedence.o
+clang++ -std=gnu++11 -std=c++11 -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG  -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/processmapR/Rcpp/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/processmapR/BH/include" -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I/usr/local/include  -fPIC  -Wall -g -O2  -arch x86_64 -ftemplate-depth-256 -Wall -pedantic -c RcppExports.cpp -o RcppExports.o
+clang++ -std=gnu++11 -std=c++11 -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG  -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/processmapR/Rcpp/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/processmapR/BH/include" -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I/usr/local/include  -fPIC  -Wall -g -O2  -arch x86_64 -ftemplate-depth-256 -Wall -pedantic -c count_precedence.cpp -o count_precedence.o
 In file included from count_precedence.cpp:6:
 In file included from /Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/processmapR/BH/include/boost/functional/hash.hpp:6:
 In file included from /Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/processmapR/BH/include/boost/container_hash/hash.hpp:19:
@@ -1164,7 +1189,7 @@ In file included from /Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/t
 In file included from /Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/processmapR/BH/include/boost/config/platform/macos.hpp:28:
 In file included from /Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/processmapR/BH/include/boost/config/detail/posix_features.hpp:18:
 In file included from /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/unistd.h:655:
-/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/gethostuuid.h:39:17: error: C++ requires a type specifier for all declarations
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/gethostuuid.h:39:17: error: unknown type name 'uuid_t'
 int gethostuuid(uuid_t, const struct timespec *) __OSX_AVAILABLE_STARTING(__MAC_10_5, __IPHONE_NA);
                 ^
 In file included from count_precedence.cpp:6:
@@ -1236,8 +1261,8 @@ ERROR: compilation failed for package ‘processmapR’
 ** package ‘processmapR’ successfully unpacked and MD5 sums checked
 ** using staged installation
 ** libs
-clang++ -std=gnu++11 -std=c++11 -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG  -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/processmapR/Rcpp/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/processmapR/BH/include" -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I/usr/local/include  -fPIC  -Wall -g -O2  -arch x86_64 -ftemplate-depth-256 -Wall -pedantic -g -O0 -c RcppExports.cpp -o RcppExports.o
-clang++ -std=gnu++11 -std=c++11 -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG  -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/processmapR/Rcpp/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/processmapR/BH/include" -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I/usr/local/include  -fPIC  -Wall -g -O2  -arch x86_64 -ftemplate-depth-256 -Wall -pedantic -g -O0 -c count_precedence.cpp -o count_precedence.o
+clang++ -std=gnu++11 -std=c++11 -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG  -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/processmapR/Rcpp/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/processmapR/BH/include" -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I/usr/local/include  -fPIC  -Wall -g -O2  -arch x86_64 -ftemplate-depth-256 -Wall -pedantic -c RcppExports.cpp -o RcppExports.o
+clang++ -std=gnu++11 -std=c++11 -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG  -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/processmapR/Rcpp/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/processmapR/BH/include" -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I/usr/local/include  -fPIC  -Wall -g -O2  -arch x86_64 -ftemplate-depth-256 -Wall -pedantic -c count_precedence.cpp -o count_precedence.o
 In file included from count_precedence.cpp:6:
 In file included from /Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/processmapR/BH/include/boost/functional/hash.hpp:6:
 In file included from /Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/processmapR/BH/include/boost/container_hash/hash.hpp:19:
@@ -1247,7 +1272,7 @@ In file included from /Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/t
 In file included from /Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/processmapR/BH/include/boost/config/platform/macos.hpp:28:
 In file included from /Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/processmapR/BH/include/boost/config/detail/posix_features.hpp:18:
 In file included from /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/unistd.h:655:
-/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/gethostuuid.h:39:17: error: C++ requires a type specifier for all declarations
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/gethostuuid.h:39:17: error: unknown type name 'uuid_t'
 int gethostuuid(uuid_t, const struct timespec *) __OSX_AVAILABLE_STARTING(__MAC_10_5, __IPHONE_NA);
                 ^
 In file included from count_precedence.cpp:6:
@@ -1316,12 +1341,12 @@ ERROR: compilation failed for package ‘processmapR’
 
 <details>
 
-* Version: 0.6
+* Version: 0.7.1
 * Source code: https://github.com/cran/psychonetrics
 * URL: http://psychonetrics.org/
 * BugReports: https://github.com/SachaEpskamp/psychonetrics/issues
-* Date/Publication: 2020-02-21 19:20:06 UTC
-* Number of recursive dependencies: 149
+* Date/Publication: 2020-04-15 09:20:02 UTC
+* Number of recursive dependencies: 153
 
 Run `revdep_details(,"psychonetrics")` for more info
 
@@ -1344,9 +1369,9 @@ Run `revdep_details(,"psychonetrics")` for more info
 ** package ‘psychonetrics’ successfully unpacked and MD5 sums checked
 ** using staged installation
 ** libs
-clang++ -std=gnu++11 -std=c++11 -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG -DARMA_DONT_USE_OPENMP -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/psychonetrics/Rcpp/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/psychonetrics/RcppArmadillo/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/psychonetrics/pbv/include" -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I/usr/local/include -fopenmp  -fPIC  -Wall -g -O2  -arch x86_64 -ftemplate-depth-256 -Wall -pedantic -g -O0 -c 04_generalfit_loglik_fimlcpp.cpp -o 04_generalfit_loglik_fimlcpp.o
+clang++ -std=gnu++11 -std=c++11 -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG -DARMA_DONT_USE_OPENMP -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/psychonetrics/Rcpp/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/psychonetrics/RcppArmadillo/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/psychonetrics/pbv/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/psychonetrics/roptim/include" -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I/usr/local/include -fopenmp  -fPIC  -Wall -g -O2  -arch x86_64 -ftemplate-depth-256 -Wall -pedantic -c 02_algebrahelpers_RcppHelpers.cpp -o 02_algebrahelpers_RcppHelpers.o
 clang: error: unsupported option '-fopenmp'
-make: *** [04_generalfit_loglik_fimlcpp.o] Error 1
+make: *** [02_algebrahelpers_RcppHelpers.o] Error 1
 ERROR: compilation failed for package ‘psychonetrics’
 * removing ‘/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/checks.noindex/psychonetrics/new/psychonetrics.Rcheck/psychonetrics’
 
@@ -1358,9 +1383,9 @@ ERROR: compilation failed for package ‘psychonetrics’
 ** package ‘psychonetrics’ successfully unpacked and MD5 sums checked
 ** using staged installation
 ** libs
-clang++ -std=gnu++11 -std=c++11 -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG -DARMA_DONT_USE_OPENMP -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/psychonetrics/Rcpp/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/psychonetrics/RcppArmadillo/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/psychonetrics/pbv/include" -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I/usr/local/include -fopenmp  -fPIC  -Wall -g -O2  -arch x86_64 -ftemplate-depth-256 -Wall -pedantic -g -O0 -c 04_generalfit_loglik_fimlcpp.cpp -o 04_generalfit_loglik_fimlcpp.o
+clang++ -std=gnu++11 -std=c++11 -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG -DARMA_DONT_USE_OPENMP -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/psychonetrics/Rcpp/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/psychonetrics/RcppArmadillo/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/psychonetrics/pbv/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/psychonetrics/roptim/include" -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I/usr/local/include -fopenmp  -fPIC  -Wall -g -O2  -arch x86_64 -ftemplate-depth-256 -Wall -pedantic -c 02_algebrahelpers_RcppHelpers.cpp -o 02_algebrahelpers_RcppHelpers.o
 clang: error: unsupported option '-fopenmp'
-make: *** [04_generalfit_loglik_fimlcpp.o] Error 1
+make: *** [02_algebrahelpers_RcppHelpers.o] Error 1
 ERROR: compilation failed for package ‘psychonetrics’
 * removing ‘/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/checks.noindex/psychonetrics/old/psychonetrics.Rcheck/psychonetrics’
 
@@ -1369,9 +1394,9 @@ ERROR: compilation failed for package ‘psychonetrics’
 
 <details>
 
-* Version: 0.3.0
+* Version: 0.3.1
 * Source code: https://github.com/cran/rubias
-* Date/Publication: 2019-06-10 15:00:03 UTC
+* Date/Publication: 2020-04-02 20:10:02 UTC
 * Number of recursive dependencies: 70
 
 Run `revdep_details(,"rubias")` for more info
@@ -1395,15 +1420,15 @@ Run `revdep_details(,"rubias")` for more info
 ** package ‘rubias’ successfully unpacked and MD5 sums checked
 ** using staged installation
 ** libs
-clang++ -std=gnu++11 -std=c++11 -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG  -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/rubias/Rcpp/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/rubias/RcppParallel/include" -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I/usr/local/include  -fPIC  -Wall -g -O2  -arch x86_64 -ftemplate-depth-256 -Wall -pedantic -g -O0 -c RcppExports.cpp -o RcppExports.o
-clang++ -std=gnu++11 -std=c++11 -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG  -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/rubias/Rcpp/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/rubias/RcppParallel/include" -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I/usr/local/include  -fPIC  -Wall -g -O2  -arch x86_64 -ftemplate-depth-256 -Wall -pedantic -g -O0 -c rcpp_close_matchers.cpp -o rcpp_close_matchers.o
-clang++ -std=gnu++11 -std=c++11 -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG  -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/rubias/Rcpp/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/rubias/RcppParallel/include" -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I/usr/local/include  -fPIC  -Wall -g -O2  -arch x86_64 -ftemplate-depth-256 -Wall -pedantic -g -O0 -c rcpp_fullBayes_mcmc.cpp -o rcpp_fullBayes_mcmc.o
+clang++ -std=gnu++11 -std=c++11 -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG  -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/rubias/Rcpp/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/rubias/RcppParallel/include" -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I/usr/local/include  -fPIC  -Wall -g -O2  -arch x86_64 -ftemplate-depth-256 -Wall -pedantic -c RcppExports.cpp -o RcppExports.o
+clang++ -std=gnu++11 -std=c++11 -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG  -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/rubias/Rcpp/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/rubias/RcppParallel/include" -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I/usr/local/include  -fPIC  -Wall -g -O2  -arch x86_64 -ftemplate-depth-256 -Wall -pedantic -c rcpp_close_matchers.cpp -o rcpp_close_matchers.o
+clang++ -std=gnu++11 -std=c++11 -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG  -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/rubias/Rcpp/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/rubias/RcppParallel/include" -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I/usr/local/include  -fPIC  -Wall -g -O2  -arch x86_64 -ftemplate-depth-256 -Wall -pedantic -c rcpp_fullBayes_mcmc.cpp -o rcpp_fullBayes_mcmc.o
 In file included from rcpp_fullBayes_mcmc.cpp:2:
 In file included from /Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/rubias/RcppParallel/include/RcppParallel.h:6:
 In file included from /Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/rubias/RcppParallel/include/RcppParallel/TinyThread.h:9:
 In file included from /Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/rubias/RcppParallel/include/tthread/tinythread.h:83:
 In file included from /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/unistd.h:655:
-/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/gethostuuid.h:39:17: error: C++ requires a type specifier for all declarations
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/gethostuuid.h:39:17: error: unknown type name 'uuid_t'
 int gethostuuid(uuid_t, const struct timespec *) __OSX_AVAILABLE_STARTING(__MAC_10_5, __IPHONE_NA);
                 ^
 In file included from rcpp_fullBayes_mcmc.cpp:2:
@@ -1459,15 +1484,15 @@ ERROR: compilation failed for package ‘rubias’
 ** package ‘rubias’ successfully unpacked and MD5 sums checked
 ** using staged installation
 ** libs
-clang++ -std=gnu++11 -std=c++11 -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG  -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/rubias/Rcpp/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/rubias/RcppParallel/include" -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I/usr/local/include  -fPIC  -Wall -g -O2  -arch x86_64 -ftemplate-depth-256 -Wall -pedantic -g -O0 -c RcppExports.cpp -o RcppExports.o
-clang++ -std=gnu++11 -std=c++11 -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG  -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/rubias/Rcpp/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/rubias/RcppParallel/include" -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I/usr/local/include  -fPIC  -Wall -g -O2  -arch x86_64 -ftemplate-depth-256 -Wall -pedantic -g -O0 -c rcpp_close_matchers.cpp -o rcpp_close_matchers.o
-clang++ -std=gnu++11 -std=c++11 -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG  -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/rubias/Rcpp/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/rubias/RcppParallel/include" -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I/usr/local/include  -fPIC  -Wall -g -O2  -arch x86_64 -ftemplate-depth-256 -Wall -pedantic -g -O0 -c rcpp_fullBayes_mcmc.cpp -o rcpp_fullBayes_mcmc.o
+clang++ -std=gnu++11 -std=c++11 -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG  -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/rubias/Rcpp/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/rubias/RcppParallel/include" -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I/usr/local/include  -fPIC  -Wall -g -O2  -arch x86_64 -ftemplate-depth-256 -Wall -pedantic -c RcppExports.cpp -o RcppExports.o
+clang++ -std=gnu++11 -std=c++11 -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG  -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/rubias/Rcpp/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/rubias/RcppParallel/include" -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I/usr/local/include  -fPIC  -Wall -g -O2  -arch x86_64 -ftemplate-depth-256 -Wall -pedantic -c rcpp_close_matchers.cpp -o rcpp_close_matchers.o
+clang++ -std=gnu++11 -std=c++11 -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG  -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/rubias/Rcpp/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/rubias/RcppParallel/include" -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I/usr/local/include  -fPIC  -Wall -g -O2  -arch x86_64 -ftemplate-depth-256 -Wall -pedantic -c rcpp_fullBayes_mcmc.cpp -o rcpp_fullBayes_mcmc.o
 In file included from rcpp_fullBayes_mcmc.cpp:2:
 In file included from /Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/rubias/RcppParallel/include/RcppParallel.h:6:
 In file included from /Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/rubias/RcppParallel/include/RcppParallel/TinyThread.h:9:
 In file included from /Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/rubias/RcppParallel/include/tthread/tinythread.h:83:
 In file included from /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/unistd.h:655:
-/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/gethostuuid.h:39:17: error: C++ requires a type specifier for all declarations
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/gethostuuid.h:39:17: error: unknown type name 'uuid_t'
 int gethostuuid(uuid_t, const struct timespec *) __OSX_AVAILABLE_STARTING(__MAC_10_5, __IPHONE_NA);
                 ^
 In file included from rcpp_fullBayes_mcmc.cpp:2:
@@ -1558,10 +1583,10 @@ Run `revdep_details(,"TCGAbiolinks")` for more info
 
 *   checking installed package size ... NOTE
     ```
-      installed size is 105.3Mb
+      installed size is 104.6Mb
       sub-directories of 1Mb or more:
-        data   4.3Mb
-        doc   98.0Mb
+        data   4.0Mb
+        doc   97.6Mb
         R      2.8Mb
     ```
 
@@ -1623,7 +1648,7 @@ Run `revdep_details(,"teachingApps")` for more info
 ** package ‘teachingApps’ successfully unpacked and MD5 sums checked
 ** using staged installation
 ** libs
-clang++ -std=gnu++11 -std=c++11 -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG  -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/teachingApps/Rcpp/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/teachingApps/BH/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/teachingApps/RcppEigen/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/teachingApps/RcppNumerical/include" -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I/usr/local/include  -fPIC  -Wall -g -O2  -arch x86_64 -ftemplate-depth-256 -Wall -pedantic -g -O0 -c RcppExports.cpp -o RcppExports.o
+clang++ -std=gnu++11 -std=c++11 -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG  -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/teachingApps/Rcpp/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/teachingApps/BH/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/teachingApps/RcppEigen/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/teachingApps/RcppNumerical/include" -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I/usr/local/include  -fPIC  -Wall -g -O2  -arch x86_64 -ftemplate-depth-256 -Wall -pedantic -c RcppExports.cpp -o RcppExports.o
 In file included from RcppExports.cpp:4:
 In file included from /Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/teachingApps/RcppEigen/include/RcppEigen.h:25:
 In file included from /Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/teachingApps/RcppEigen/include/RcppEigenForward.h:30:
@@ -1759,7 +1784,7 @@ In file included from /Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/t
     #pragma clang diagnostic pop
                              ^
 17 warnings generated.
-clang++ -std=gnu++11 -std=c++11 -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG  -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/teachingApps/Rcpp/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/teachingApps/BH/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/teachingApps/RcppEigen/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/teachingApps/RcppNumerical/include" -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I/usr/local/include  -fPIC  -Wall -g -O2  -arch x86_64 -ftemplate-depth-256 -Wall -pedantic -g -O0 -c beta_funcs.cpp -o beta_funcs.o
+clang++ -std=gnu++11 -std=c++11 -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG  -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/teachingApps/Rcpp/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/teachingApps/BH/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/teachingApps/RcppEigen/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/teachingApps/RcppNumerical/include" -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I/usr/local/include  -fPIC  -Wall -g -O2  -arch x86_64 -ftemplate-depth-256 -Wall -pedantic -c beta_funcs.cpp -o beta_funcs.o
 In file included from beta_funcs.cpp:6:
 In file included from /Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/teachingApps/BH/include/boost/math/special_functions/beta.hpp:13:
 In file included from /Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/teachingApps/BH/include/boost/math/special_functions/math_fwd.hpp:27:
@@ -1768,7 +1793,7 @@ In file included from /Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/t
 In file included from /Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/teachingApps/BH/include/boost/config/platform/macos.hpp:28:
 In file included from /Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/teachingApps/BH/include/boost/config/detail/posix_features.hpp:18:
 In file included from /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/unistd.h:655:
-/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/gethostuuid.h:39:17: error: C++ requires a type specifier for all declarations
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/gethostuuid.h:39:17: error: unknown type name 'uuid_t'
 int gethostuuid(uuid_t, const struct timespec *) __OSX_AVAILABLE_STARTING(__MAC_10_5, __IPHONE_NA);
                 ^
 In file included from beta_funcs.cpp:6:
@@ -1987,7 +2012,7 @@ ERROR: compilation failed for package ‘teachingApps’
 ** package ‘teachingApps’ successfully unpacked and MD5 sums checked
 ** using staged installation
 ** libs
-clang++ -std=gnu++11 -std=c++11 -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG  -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/teachingApps/Rcpp/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/teachingApps/BH/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/teachingApps/RcppEigen/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/teachingApps/RcppNumerical/include" -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I/usr/local/include  -fPIC  -Wall -g -O2  -arch x86_64 -ftemplate-depth-256 -Wall -pedantic -g -O0 -c RcppExports.cpp -o RcppExports.o
+clang++ -std=gnu++11 -std=c++11 -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG  -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/teachingApps/Rcpp/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/teachingApps/BH/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/teachingApps/RcppEigen/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/teachingApps/RcppNumerical/include" -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I/usr/local/include  -fPIC  -Wall -g -O2  -arch x86_64 -ftemplate-depth-256 -Wall -pedantic -c RcppExports.cpp -o RcppExports.o
 In file included from RcppExports.cpp:4:
 In file included from /Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/teachingApps/RcppEigen/include/RcppEigen.h:25:
 In file included from /Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/teachingApps/RcppEigen/include/RcppEigenForward.h:30:
@@ -2123,7 +2148,7 @@ In file included from /Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/t
     #pragma clang diagnostic pop
                              ^
 17 warnings generated.
-clang++ -std=gnu++11 -std=c++11 -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG  -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/teachingApps/Rcpp/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/teachingApps/BH/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/teachingApps/RcppEigen/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/teachingApps/RcppNumerical/include" -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I/usr/local/include  -fPIC  -Wall -g -O2  -arch x86_64 -ftemplate-depth-256 -Wall -pedantic -g -O0 -c beta_funcs.cpp -o beta_funcs.o
+clang++ -std=gnu++11 -std=c++11 -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG  -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/teachingApps/Rcpp/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/teachingApps/BH/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/teachingApps/RcppEigen/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/teachingApps/RcppNumerical/include" -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I/usr/local/include  -fPIC  -Wall -g -O2  -arch x86_64 -ftemplate-depth-256 -Wall -pedantic -c beta_funcs.cpp -o beta_funcs.o
 In file included from beta_funcs.cpp:6:
 In file included from /Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/teachingApps/BH/include/boost/math/special_functions/beta.hpp:13:
 In file included from /Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/teachingApps/BH/include/boost/math/special_functions/math_fwd.hpp:27:
@@ -2132,7 +2157,7 @@ In file included from /Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/t
 In file included from /Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/teachingApps/BH/include/boost/config/platform/macos.hpp:28:
 In file included from /Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/teachingApps/BH/include/boost/config/detail/posix_features.hpp:18:
 In file included from /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/unistd.h:655:
-/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/gethostuuid.h:39:17: error: C++ requires a type specifier for all declarations
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/gethostuuid.h:39:17: error: unknown type name 'uuid_t'
 int gethostuuid(uuid_t, const struct timespec *) __OSX_AVAILABLE_STARTING(__MAC_10_5, __IPHONE_NA);
                 ^
 In file included from beta_funcs.cpp:6:
@@ -2376,8 +2401,8 @@ Run `revdep_details(,"textreuse")` for more info
 ** package ‘textreuse’ successfully unpacked and MD5 sums checked
 ** using staged installation
 ** libs
-clang++ -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG  -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/textreuse/BH/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/textreuse/Rcpp/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/textreuse/RcppProgress/include" -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I/usr/local/include  -fPIC  -Wall -g -O2  -arch x86_64 -ftemplate-depth-256 -Wall -pedantic -g -O0 -c RcppExports.cpp -o RcppExports.o
-clang++ -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG  -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/textreuse/BH/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/textreuse/Rcpp/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/textreuse/RcppProgress/include" -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I/usr/local/include  -fPIC  -Wall -g -O2  -arch x86_64 -ftemplate-depth-256 -Wall -pedantic -g -O0 -c hash_string.cpp -o hash_string.o
+clang++ -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG  -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/textreuse/BH/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/textreuse/Rcpp/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/textreuse/RcppProgress/include" -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I/usr/local/include  -fPIC  -Wall -g -O2  -arch x86_64 -ftemplate-depth-256 -Wall -pedantic -mtune=core2 -O3 -c RcppExports.cpp -o RcppExports.o
+clang++ -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG  -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/textreuse/BH/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/textreuse/Rcpp/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/textreuse/RcppProgress/include" -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I/usr/local/include  -fPIC  -Wall -g -O2  -arch x86_64 -ftemplate-depth-256 -Wall -pedantic -mtune=core2 -O3 -c hash_string.cpp -o hash_string.o
 In file included from hash_string.cpp:2:
 In file included from /Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/textreuse/BH/include/boost/functional/hash.hpp:6:
 In file included from /Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/textreuse/BH/include/boost/container_hash/hash.hpp:19:
@@ -2387,7 +2412,7 @@ In file included from /Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/t
 In file included from /Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/textreuse/BH/include/boost/config/platform/macos.hpp:28:
 In file included from /Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/textreuse/BH/include/boost/config/detail/posix_features.hpp:18:
 In file included from /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/unistd.h:655:
-/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/gethostuuid.h:39:17: error: C++ requires a type specifier for all declarations
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/gethostuuid.h:39:17: error: unknown type name 'uuid_t'
 int gethostuuid(uuid_t, const struct timespec *) __OSX_AVAILABLE_STARTING(__MAC_10_5, __IPHONE_NA);
                 ^
 In file included from hash_string.cpp:2:
@@ -2454,7 +2479,7 @@ In file included from /Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/t
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/stdint.h:70:23: note: expanded from macro 'UINT64_C'
 #define UINT64_C(v)  (v ## ULL)
                       ^
-<scratch space>:74:1: note: expanded from here
+<scratch space>:78:1: note: expanded from here
 0xc6a4a7935bd1e995ULL
 ^
 1 warning and 5 errors generated.
@@ -2470,8 +2495,8 @@ ERROR: compilation failed for package ‘textreuse’
 ** package ‘textreuse’ successfully unpacked and MD5 sums checked
 ** using staged installation
 ** libs
-clang++ -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG  -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/textreuse/BH/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/textreuse/Rcpp/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/textreuse/RcppProgress/include" -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I/usr/local/include  -fPIC  -Wall -g -O2  -arch x86_64 -ftemplate-depth-256 -Wall -pedantic -g -O0 -c RcppExports.cpp -o RcppExports.o
-clang++ -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG  -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/textreuse/BH/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/textreuse/Rcpp/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/textreuse/RcppProgress/include" -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I/usr/local/include  -fPIC  -Wall -g -O2  -arch x86_64 -ftemplate-depth-256 -Wall -pedantic -g -O0 -c hash_string.cpp -o hash_string.o
+clang++ -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG  -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/textreuse/BH/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/textreuse/Rcpp/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/textreuse/RcppProgress/include" -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I/usr/local/include  -fPIC  -Wall -g -O2  -arch x86_64 -ftemplate-depth-256 -Wall -pedantic -mtune=core2 -O3 -c RcppExports.cpp -o RcppExports.o
+clang++ -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG  -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/textreuse/BH/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/textreuse/Rcpp/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/textreuse/RcppProgress/include" -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I/usr/local/include  -fPIC  -Wall -g -O2  -arch x86_64 -ftemplate-depth-256 -Wall -pedantic -mtune=core2 -O3 -c hash_string.cpp -o hash_string.o
 In file included from hash_string.cpp:2:
 In file included from /Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/textreuse/BH/include/boost/functional/hash.hpp:6:
 In file included from /Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/textreuse/BH/include/boost/container_hash/hash.hpp:19:
@@ -2481,7 +2506,7 @@ In file included from /Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/t
 In file included from /Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/textreuse/BH/include/boost/config/platform/macos.hpp:28:
 In file included from /Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/textreuse/BH/include/boost/config/detail/posix_features.hpp:18:
 In file included from /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/unistd.h:655:
-/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/gethostuuid.h:39:17: error: C++ requires a type specifier for all declarations
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/gethostuuid.h:39:17: error: unknown type name 'uuid_t'
 int gethostuuid(uuid_t, const struct timespec *) __OSX_AVAILABLE_STARTING(__MAC_10_5, __IPHONE_NA);
                 ^
 In file included from hash_string.cpp:2:
@@ -2548,7 +2573,7 @@ In file included from /Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/t
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/stdint.h:70:23: note: expanded from macro 'UINT64_C'
 #define UINT64_C(v)  (v ## ULL)
                       ^
-<scratch space>:74:1: note: expanded from here
+<scratch space>:78:1: note: expanded from here
 0xc6a4a7935bd1e995ULL
 ^
 1 warning and 5 errors generated.
@@ -2561,11 +2586,11 @@ ERROR: compilation failed for package ‘textreuse’
 
 <details>
 
-* Version: 1.0.4
+* Version: 1.0.5
 * Source code: https://github.com/cran/tidyxl
 * URL: https://github.com/nacnudus/tidyxl
 * BugReports: https://github.com/nacnudus/tidyxl/issues
-* Date/Publication: 2019-01-02 11:30:04 UTC
+* Date/Publication: 2020-04-02 12:10:02 UTC
 * Number of recursive dependencies: 74
 
 Run `revdep_details(,"tidyxl")` for more info
@@ -2589,15 +2614,15 @@ Run `revdep_details(,"tidyxl")` for more info
 ** package ‘tidyxl’ successfully unpacked and MD5 sums checked
 ** using staged installation
 ** libs
-clang++ -std=gnu++11 -std=c++11 -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG  -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/tidyxl/Rcpp/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/tidyxl/piton/include" -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I/usr/local/include  -fPIC  -Wall -g -O2  -arch x86_64 -ftemplate-depth-256 -Wall -pedantic -g -O0 -c RcppExports.cpp -o RcppExports.o
-clang++ -std=gnu++11 -std=c++11 -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG  -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/tidyxl/Rcpp/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/tidyxl/piton/include" -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I/usr/local/include  -fPIC  -Wall -g -O2  -arch x86_64 -ftemplate-depth-256 -Wall -pedantic -g -O0 -c border.cpp -o border.o
-clang++ -std=gnu++11 -std=c++11 -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG  -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/tidyxl/Rcpp/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/tidyxl/piton/include" -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I/usr/local/include  -fPIC  -Wall -g -O2  -arch x86_64 -ftemplate-depth-256 -Wall -pedantic -g -O0 -c color.cpp -o color.o
-clang++ -std=gnu++11 -std=c++11 -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG  -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/tidyxl/Rcpp/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/tidyxl/piton/include" -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I/usr/local/include  -fPIC  -Wall -g -O2  -arch x86_64 -ftemplate-depth-256 -Wall -pedantic -g -O0 -c fill.cpp -o fill.o
-clang++ -std=gnu++11 -std=c++11 -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG  -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/tidyxl/Rcpp/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/tidyxl/piton/include" -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I/usr/local/include  -fPIC  -Wall -g -O2  -arch x86_64 -ftemplate-depth-256 -Wall -pedantic -g -O0 -c font.cpp -o font.o
-clang++ -std=gnu++11 -std=c++11 -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG  -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/tidyxl/Rcpp/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/tidyxl/piton/include" -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I/usr/local/include  -fPIC  -Wall -g -O2  -arch x86_64 -ftemplate-depth-256 -Wall -pedantic -g -O0 -c gradientFill.cpp -o gradientFill.o
-clang++ -std=gnu++11 -std=c++11 -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG  -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/tidyxl/Rcpp/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/tidyxl/piton/include" -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I/usr/local/include  -fPIC  -Wall -g -O2  -arch x86_64 -ftemplate-depth-256 -Wall -pedantic -g -O0 -c gradientStop.cpp -o gradientStop.o
-clang++ -std=gnu++11 -std=c++11 -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG  -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/tidyxl/Rcpp/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/tidyxl/piton/include" -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I/usr/local/include  -fPIC  -Wall -g -O2  -arch x86_64 -ftemplate-depth-256 -Wall -pedantic -g -O0 -c patternFill.cpp -o patternFill.o
-clang++ -std=gnu++11 -std=c++11 -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG  -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/tidyxl/Rcpp/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/tidyxl/piton/include" -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I/usr/local/include  -fPIC  -Wall -g -O2  -arch x86_64 -ftemplate-depth-256 -Wall -pedantic -g -O0 -c ref.cpp -o ref.o
+clang++ -std=gnu++11 -std=c++11 -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG  -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/tidyxl/Rcpp/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/tidyxl/piton/include" -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I/usr/local/include  -fPIC  -Wall -g -O2  -arch x86_64 -ftemplate-depth-256 -Wall -pedantic -c RcppExports.cpp -o RcppExports.o
+clang++ -std=gnu++11 -std=c++11 -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG  -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/tidyxl/Rcpp/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/tidyxl/piton/include" -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I/usr/local/include  -fPIC  -Wall -g -O2  -arch x86_64 -ftemplate-depth-256 -Wall -pedantic -c border.cpp -o border.o
+clang++ -std=gnu++11 -std=c++11 -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG  -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/tidyxl/Rcpp/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/tidyxl/piton/include" -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I/usr/local/include  -fPIC  -Wall -g -O2  -arch x86_64 -ftemplate-depth-256 -Wall -pedantic -c color.cpp -o color.o
+clang++ -std=gnu++11 -std=c++11 -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG  -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/tidyxl/Rcpp/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/tidyxl/piton/include" -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I/usr/local/include  -fPIC  -Wall -g -O2  -arch x86_64 -ftemplate-depth-256 -Wall -pedantic -c fill.cpp -o fill.o
+clang++ -std=gnu++11 -std=c++11 -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG  -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/tidyxl/Rcpp/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/tidyxl/piton/include" -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I/usr/local/include  -fPIC  -Wall -g -O2  -arch x86_64 -ftemplate-depth-256 -Wall -pedantic -c font.cpp -o font.o
+clang++ -std=gnu++11 -std=c++11 -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG  -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/tidyxl/Rcpp/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/tidyxl/piton/include" -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I/usr/local/include  -fPIC  -Wall -g -O2  -arch x86_64 -ftemplate-depth-256 -Wall -pedantic -c gradientFill.cpp -o gradientFill.o
+clang++ -std=gnu++11 -std=c++11 -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG  -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/tidyxl/Rcpp/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/tidyxl/piton/include" -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I/usr/local/include  -fPIC  -Wall -g -O2  -arch x86_64 -ftemplate-depth-256 -Wall -pedantic -c gradientStop.cpp -o gradientStop.o
+clang++ -std=gnu++11 -std=c++11 -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG  -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/tidyxl/Rcpp/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/tidyxl/piton/include" -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I/usr/local/include  -fPIC  -Wall -g -O2  -arch x86_64 -ftemplate-depth-256 -Wall -pedantic -c patternFill.cpp -o patternFill.o
+clang++ -std=gnu++11 -std=c++11 -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG  -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/tidyxl/Rcpp/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/tidyxl/piton/include" -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I/usr/local/include  -fPIC  -Wall -g -O2  -arch x86_64 -ftemplate-depth-256 -Wall -pedantic -c ref.cpp -o ref.o
 ref.cpp:24:14: warning: explicitly assigning value of variable of type 'std::string::const_iterator' (aka '__wrap_iter<const char *>') to itself [-Wself-assign-overloaded]
     for(iter = iter; (*iter >= 'A' && *iter <= 'Z'); ++iter) {
         ~~~~ ^ ~~~~
@@ -2611,14 +2636,14 @@ ref.cpp:61:16: warning: explicitly assigning value of variable of type 'std::str
       for(iter = iter; (*iter >= '0' && *iter <= '9'); ++iter) {
           ~~~~ ^ ~~~~
 4 warnings generated.
-clang++ -std=gnu++11 -std=c++11 -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG  -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/tidyxl/Rcpp/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/tidyxl/piton/include" -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I/usr/local/include  -fPIC  -Wall -g -O2  -arch x86_64 -ftemplate-depth-256 -Wall -pedantic -g -O0 -c shared_formula.cpp -o shared_formula.o
+clang++ -std=gnu++11 -std=c++11 -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG  -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/tidyxl/Rcpp/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/tidyxl/piton/include" -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I/usr/local/include  -fPIC  -Wall -g -O2  -arch x86_64 -ftemplate-depth-256 -Wall -pedantic -c shared_formula.cpp -o shared_formula.o
 In file included from shared_formula.cpp:2:
 In file included from ./shared_formula.h:5:
 In file included from ./ref_grammar.h:6:
 In file included from /Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/tidyxl/piton/include/pegtl.hpp:20:
 In file included from /Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/tidyxl/piton/include/pegtl/file_input.hpp:12:
 In file included from /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/unistd.h:655:
-/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/gethostuuid.h:39:17: error: C++ requires a type specifier for all declarations
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/gethostuuid.h:39:17: error: unknown type name 'uuid_t'
 int gethostuuid(uuid_t, const struct timespec *) __OSX_AVAILABLE_STARTING(__MAC_10_5, __IPHONE_NA);
                 ^
 In file included from shared_formula.cpp:2:
@@ -2670,33 +2695,33 @@ In file included from /Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/t
 In file included from /Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/tidyxl/Rcpp/include/RcppCommon.h:29:
 In file included from /Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/tidyxl/Rcpp/include/Rcpp/r/headers.h:67:
 In file included from /Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/tidyxl/Rcpp/include/Rcpp/platform/compiler.h:153:
-In file included from /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1/unordered_map:408:
-In file included from /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1/__hash_table:16:
-/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1/memory:1881:58: warning: destructor called on non-final 'ref' that has virtual functions but non-virtual destructor [-Wdelete-non-abstract-non-virtual-dtor]
+In file included from /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1/unordered_map:407:
+In file included from /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1/__hash_table:15:
+/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1/memory:1880:58: warning: destructor called on non-final 'ref' that has virtual functions but non-virtual destructor [-Wdelete-non-abstract-non-virtual-dtor]
     _LIBCPP_INLINE_VISIBILITY void destroy(pointer __p) {__p->~_Tp();}
                                                          ^
-/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1/memory:1743:18: note: in instantiation of member function 'std::__1::allocator<ref>::destroy' requested here
+/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1/memory:1742:18: note: in instantiation of member function 'std::__1::allocator<ref>::destroy' requested here
             {__a.destroy(__p);}
                  ^
-/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1/memory:1596:14: note: in instantiation of function template specialization 'std::__1::allocator_traits<std::__1::allocator<ref> >::__destroy<ref>' requested here
+/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1/memory:1595:14: note: in instantiation of function template specialization 'std::__1::allocator_traits<std::__1::allocator<ref> >::__destroy<ref>' requested here
             {__destroy(__has_destroy<allocator_type, _Tp*>(), __a, __p);}
              ^
-/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1/vector:427:25: note: in instantiation of function template specialization 'std::__1::allocator_traits<std::__1::allocator<ref> >::destroy<ref>' requested here
+/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1/vector:426:25: note: in instantiation of function template specialization 'std::__1::allocator_traits<std::__1::allocator<ref> >::destroy<ref>' requested here
         __alloc_traits::destroy(__alloc(), _VSTD::__to_raw_pointer(--__soon_to_be_end));
                         ^
-/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1/vector:370:29: note: in instantiation of member function 'std::__1::__vector_base<ref, std::__1::allocator<ref> >::__destruct_at_end' requested here
+/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1/vector:369:29: note: in instantiation of member function 'std::__1::__vector_base<ref, std::__1::allocator<ref> >::__destruct_at_end' requested here
     void clear() _NOEXCEPT {__destruct_at_end(__begin_);}
                             ^
-/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1/vector:464:9: note: in instantiation of member function 'std::__1::__vector_base<ref, std::__1::allocator<ref> >::clear' requested here
+/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1/vector:463:9: note: in instantiation of member function 'std::__1::__vector_base<ref, std::__1::allocator<ref> >::clear' requested here
         clear();
         ^
-/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1/vector:496:5: note: in instantiation of member function 'std::__1::__vector_base<ref, std::__1::allocator<ref> >::~__vector_base' requested here
+/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1/vector:495:5: note: in instantiation of member function 'std::__1::__vector_base<ref, std::__1::allocator<ref> >::~__vector_base' requested here
     vector() _NOEXCEPT_(is_nothrow_default_constructible<allocator_type>::value)
     ^
 shared_formula.cpp:6:17: note: in instantiation of member function 'std::__1::vector<ref, std::__1::allocator<ref> >::vector' requested here
 shared_formula::shared_formula(
                 ^
-/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1/memory:1881:64: note: qualify call to silence this warning
+/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1/memory:1880:64: note: qualify call to silence this warning
     _LIBCPP_INLINE_VISIBILITY void destroy(pointer __p) {__p->~_Tp();}
                                                                ^
 1 warning and 5 errors generated.
@@ -2712,15 +2737,15 @@ ERROR: compilation failed for package ‘tidyxl’
 ** package ‘tidyxl’ successfully unpacked and MD5 sums checked
 ** using staged installation
 ** libs
-clang++ -std=gnu++11 -std=c++11 -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG  -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/tidyxl/Rcpp/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/tidyxl/piton/include" -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I/usr/local/include  -fPIC  -Wall -g -O2  -arch x86_64 -ftemplate-depth-256 -Wall -pedantic -g -O0 -c RcppExports.cpp -o RcppExports.o
-clang++ -std=gnu++11 -std=c++11 -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG  -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/tidyxl/Rcpp/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/tidyxl/piton/include" -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I/usr/local/include  -fPIC  -Wall -g -O2  -arch x86_64 -ftemplate-depth-256 -Wall -pedantic -g -O0 -c border.cpp -o border.o
-clang++ -std=gnu++11 -std=c++11 -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG  -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/tidyxl/Rcpp/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/tidyxl/piton/include" -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I/usr/local/include  -fPIC  -Wall -g -O2  -arch x86_64 -ftemplate-depth-256 -Wall -pedantic -g -O0 -c color.cpp -o color.o
-clang++ -std=gnu++11 -std=c++11 -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG  -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/tidyxl/Rcpp/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/tidyxl/piton/include" -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I/usr/local/include  -fPIC  -Wall -g -O2  -arch x86_64 -ftemplate-depth-256 -Wall -pedantic -g -O0 -c fill.cpp -o fill.o
-clang++ -std=gnu++11 -std=c++11 -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG  -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/tidyxl/Rcpp/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/tidyxl/piton/include" -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I/usr/local/include  -fPIC  -Wall -g -O2  -arch x86_64 -ftemplate-depth-256 -Wall -pedantic -g -O0 -c font.cpp -o font.o
-clang++ -std=gnu++11 -std=c++11 -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG  -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/tidyxl/Rcpp/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/tidyxl/piton/include" -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I/usr/local/include  -fPIC  -Wall -g -O2  -arch x86_64 -ftemplate-depth-256 -Wall -pedantic -g -O0 -c gradientFill.cpp -o gradientFill.o
-clang++ -std=gnu++11 -std=c++11 -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG  -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/tidyxl/Rcpp/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/tidyxl/piton/include" -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I/usr/local/include  -fPIC  -Wall -g -O2  -arch x86_64 -ftemplate-depth-256 -Wall -pedantic -g -O0 -c gradientStop.cpp -o gradientStop.o
-clang++ -std=gnu++11 -std=c++11 -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG  -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/tidyxl/Rcpp/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/tidyxl/piton/include" -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I/usr/local/include  -fPIC  -Wall -g -O2  -arch x86_64 -ftemplate-depth-256 -Wall -pedantic -g -O0 -c patternFill.cpp -o patternFill.o
-clang++ -std=gnu++11 -std=c++11 -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG  -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/tidyxl/Rcpp/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/tidyxl/piton/include" -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I/usr/local/include  -fPIC  -Wall -g -O2  -arch x86_64 -ftemplate-depth-256 -Wall -pedantic -g -O0 -c ref.cpp -o ref.o
+clang++ -std=gnu++11 -std=c++11 -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG  -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/tidyxl/Rcpp/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/tidyxl/piton/include" -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I/usr/local/include  -fPIC  -Wall -g -O2  -arch x86_64 -ftemplate-depth-256 -Wall -pedantic -c RcppExports.cpp -o RcppExports.o
+clang++ -std=gnu++11 -std=c++11 -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG  -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/tidyxl/Rcpp/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/tidyxl/piton/include" -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I/usr/local/include  -fPIC  -Wall -g -O2  -arch x86_64 -ftemplate-depth-256 -Wall -pedantic -c border.cpp -o border.o
+clang++ -std=gnu++11 -std=c++11 -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG  -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/tidyxl/Rcpp/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/tidyxl/piton/include" -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I/usr/local/include  -fPIC  -Wall -g -O2  -arch x86_64 -ftemplate-depth-256 -Wall -pedantic -c color.cpp -o color.o
+clang++ -std=gnu++11 -std=c++11 -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG  -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/tidyxl/Rcpp/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/tidyxl/piton/include" -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I/usr/local/include  -fPIC  -Wall -g -O2  -arch x86_64 -ftemplate-depth-256 -Wall -pedantic -c fill.cpp -o fill.o
+clang++ -std=gnu++11 -std=c++11 -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG  -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/tidyxl/Rcpp/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/tidyxl/piton/include" -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I/usr/local/include  -fPIC  -Wall -g -O2  -arch x86_64 -ftemplate-depth-256 -Wall -pedantic -c font.cpp -o font.o
+clang++ -std=gnu++11 -std=c++11 -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG  -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/tidyxl/Rcpp/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/tidyxl/piton/include" -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I/usr/local/include  -fPIC  -Wall -g -O2  -arch x86_64 -ftemplate-depth-256 -Wall -pedantic -c gradientFill.cpp -o gradientFill.o
+clang++ -std=gnu++11 -std=c++11 -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG  -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/tidyxl/Rcpp/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/tidyxl/piton/include" -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I/usr/local/include  -fPIC  -Wall -g -O2  -arch x86_64 -ftemplate-depth-256 -Wall -pedantic -c gradientStop.cpp -o gradientStop.o
+clang++ -std=gnu++11 -std=c++11 -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG  -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/tidyxl/Rcpp/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/tidyxl/piton/include" -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I/usr/local/include  -fPIC  -Wall -g -O2  -arch x86_64 -ftemplate-depth-256 -Wall -pedantic -c patternFill.cpp -o patternFill.o
+clang++ -std=gnu++11 -std=c++11 -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG  -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/tidyxl/Rcpp/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/tidyxl/piton/include" -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I/usr/local/include  -fPIC  -Wall -g -O2  -arch x86_64 -ftemplate-depth-256 -Wall -pedantic -c ref.cpp -o ref.o
 ref.cpp:24:14: warning: explicitly assigning value of variable of type 'std::string::const_iterator' (aka '__wrap_iter<const char *>') to itself [-Wself-assign-overloaded]
     for(iter = iter; (*iter >= 'A' && *iter <= 'Z'); ++iter) {
         ~~~~ ^ ~~~~
@@ -2734,14 +2759,14 @@ ref.cpp:61:16: warning: explicitly assigning value of variable of type 'std::str
       for(iter = iter; (*iter >= '0' && *iter <= '9'); ++iter) {
           ~~~~ ^ ~~~~
 4 warnings generated.
-clang++ -std=gnu++11 -std=c++11 -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG  -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/tidyxl/Rcpp/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/tidyxl/piton/include" -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I/usr/local/include  -fPIC  -Wall -g -O2  -arch x86_64 -ftemplate-depth-256 -Wall -pedantic -g -O0 -c shared_formula.cpp -o shared_formula.o
+clang++ -std=gnu++11 -std=c++11 -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG  -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/tidyxl/Rcpp/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/tidyxl/piton/include" -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I/usr/local/include  -fPIC  -Wall -g -O2  -arch x86_64 -ftemplate-depth-256 -Wall -pedantic -c shared_formula.cpp -o shared_formula.o
 In file included from shared_formula.cpp:2:
 In file included from ./shared_formula.h:5:
 In file included from ./ref_grammar.h:6:
 In file included from /Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/tidyxl/piton/include/pegtl.hpp:20:
 In file included from /Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/tidyxl/piton/include/pegtl/file_input.hpp:12:
 In file included from /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/unistd.h:655:
-/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/gethostuuid.h:39:17: error: C++ requires a type specifier for all declarations
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/gethostuuid.h:39:17: error: unknown type name 'uuid_t'
 int gethostuuid(uuid_t, const struct timespec *) __OSX_AVAILABLE_STARTING(__MAC_10_5, __IPHONE_NA);
                 ^
 In file included from shared_formula.cpp:2:
@@ -2793,33 +2818,33 @@ In file included from /Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/t
 In file included from /Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/tidyxl/Rcpp/include/RcppCommon.h:29:
 In file included from /Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/tidyxl/Rcpp/include/Rcpp/r/headers.h:67:
 In file included from /Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/tidyxl/Rcpp/include/Rcpp/platform/compiler.h:153:
-In file included from /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1/unordered_map:408:
-In file included from /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1/__hash_table:16:
-/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1/memory:1881:58: warning: destructor called on non-final 'ref' that has virtual functions but non-virtual destructor [-Wdelete-non-abstract-non-virtual-dtor]
+In file included from /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1/unordered_map:407:
+In file included from /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1/__hash_table:15:
+/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1/memory:1880:58: warning: destructor called on non-final 'ref' that has virtual functions but non-virtual destructor [-Wdelete-non-abstract-non-virtual-dtor]
     _LIBCPP_INLINE_VISIBILITY void destroy(pointer __p) {__p->~_Tp();}
                                                          ^
-/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1/memory:1743:18: note: in instantiation of member function 'std::__1::allocator<ref>::destroy' requested here
+/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1/memory:1742:18: note: in instantiation of member function 'std::__1::allocator<ref>::destroy' requested here
             {__a.destroy(__p);}
                  ^
-/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1/memory:1596:14: note: in instantiation of function template specialization 'std::__1::allocator_traits<std::__1::allocator<ref> >::__destroy<ref>' requested here
+/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1/memory:1595:14: note: in instantiation of function template specialization 'std::__1::allocator_traits<std::__1::allocator<ref> >::__destroy<ref>' requested here
             {__destroy(__has_destroy<allocator_type, _Tp*>(), __a, __p);}
              ^
-/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1/vector:427:25: note: in instantiation of function template specialization 'std::__1::allocator_traits<std::__1::allocator<ref> >::destroy<ref>' requested here
+/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1/vector:426:25: note: in instantiation of function template specialization 'std::__1::allocator_traits<std::__1::allocator<ref> >::destroy<ref>' requested here
         __alloc_traits::destroy(__alloc(), _VSTD::__to_raw_pointer(--__soon_to_be_end));
                         ^
-/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1/vector:370:29: note: in instantiation of member function 'std::__1::__vector_base<ref, std::__1::allocator<ref> >::__destruct_at_end' requested here
+/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1/vector:369:29: note: in instantiation of member function 'std::__1::__vector_base<ref, std::__1::allocator<ref> >::__destruct_at_end' requested here
     void clear() _NOEXCEPT {__destruct_at_end(__begin_);}
                             ^
-/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1/vector:464:9: note: in instantiation of member function 'std::__1::__vector_base<ref, std::__1::allocator<ref> >::clear' requested here
+/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1/vector:463:9: note: in instantiation of member function 'std::__1::__vector_base<ref, std::__1::allocator<ref> >::clear' requested here
         clear();
         ^
-/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1/vector:496:5: note: in instantiation of member function 'std::__1::__vector_base<ref, std::__1::allocator<ref> >::~__vector_base' requested here
+/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1/vector:495:5: note: in instantiation of member function 'std::__1::__vector_base<ref, std::__1::allocator<ref> >::~__vector_base' requested here
     vector() _NOEXCEPT_(is_nothrow_default_constructible<allocator_type>::value)
     ^
 shared_formula.cpp:6:17: note: in instantiation of member function 'std::__1::vector<ref, std::__1::allocator<ref> >::vector' requested here
 shared_formula::shared_formula(
                 ^
-/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1/memory:1881:64: note: qualify call to silence this warning
+/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1/memory:1880:64: note: qualify call to silence this warning
     _LIBCPP_INLINE_VISIBILITY void destroy(pointer __p) {__p->~_Tp();}
                                                                ^
 1 warning and 5 errors generated.
@@ -2886,11 +2911,11 @@ Run `revdep_details(,"TPP")` for more info
 
 <details>
 
-* Version: 0.1.3
+* Version: 0.1.4
 * Source code: https://github.com/cran/trialr
 * URL: https://github.com/brockk/trialr
 * BugReports: https://github.com/brockk/trialr/issues
-* Date/Publication: 2020-01-08 22:30:10 UTC
+* Date/Publication: 2020-04-06 13:20:02 UTC
 * Number of recursive dependencies: 102
 
 Run `revdep_details(,"trialr")` for more info
@@ -2933,15 +2958,15 @@ Run `revdep_details(,"vcfR")` for more info
 ** package ‘vcfR’ successfully unpacked and MD5 sums checked
 ** using staged installation
 ** libs
-clang++ -std=gnu++11 -std=c++11 -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG  -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/vcfR/Rcpp/include" -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I/usr/local/include  -fPIC  -Wall -g -O2  -arch x86_64 -ftemplate-depth-256 -Wall -pedantic -g -O0 -c NM2winNM.cpp -o NM2winNM.o
-clang++ -std=gnu++11 -std=c++11 -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG  -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/vcfR/Rcpp/include" -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I/usr/local/include  -fPIC  -Wall -g -O2  -arch x86_64 -ftemplate-depth-256 -Wall -pedantic -g -O0 -c RcppExports.cpp -o RcppExports.o
-clang++ -std=gnu++11 -std=c++11 -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG  -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/vcfR/Rcpp/include" -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I/usr/local/include  -fPIC  -Wall -g -O2  -arch x86_64 -ftemplate-depth-256 -Wall -pedantic -g -O0 -c ad_frequency.cpp -o ad_frequency.o
-clang++ -std=gnu++11 -std=c++11 -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG  -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/vcfR/Rcpp/include" -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I/usr/local/include  -fPIC  -Wall -g -O2  -arch x86_64 -ftemplate-depth-256 -Wall -pedantic -g -O0 -c deprecated_funcs.cpp -o deprecated_funcs.o
+clang++ -std=gnu++11 -std=c++11 -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG  -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/vcfR/Rcpp/include" -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I/usr/local/include  -fPIC  -Wall -g -O2  -arch x86_64 -ftemplate-depth-256 -Wall -pedantic -c NM2winNM.cpp -o NM2winNM.o
+clang++ -std=gnu++11 -std=c++11 -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG  -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/vcfR/Rcpp/include" -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I/usr/local/include  -fPIC  -Wall -g -O2  -arch x86_64 -ftemplate-depth-256 -Wall -pedantic -c RcppExports.cpp -o RcppExports.o
+clang++ -std=gnu++11 -std=c++11 -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG  -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/vcfR/Rcpp/include" -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I/usr/local/include  -fPIC  -Wall -g -O2  -arch x86_64 -ftemplate-depth-256 -Wall -pedantic -c ad_frequency.cpp -o ad_frequency.o
+clang++ -std=gnu++11 -std=c++11 -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG  -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/vcfR/Rcpp/include" -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I/usr/local/include  -fPIC  -Wall -g -O2  -arch x86_64 -ftemplate-depth-256 -Wall -pedantic -c deprecated_funcs.cpp -o deprecated_funcs.o
 In file included from deprecated_funcs.cpp:3:
 In file included from /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/zlib.h:34:
 In file included from /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/zconf.h:462:
 In file included from /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/unistd.h:655:
-/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/gethostuuid.h:39:17: error: C++ requires a type specifier for all declarations
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/gethostuuid.h:39:17: error: unknown type name 'uuid_t'
 int gethostuuid(uuid_t, const struct timespec *) __OSX_AVAILABLE_STARTING(__MAC_10_5, __IPHONE_NA);
                 ^
 In file included from deprecated_funcs.cpp:3:
@@ -2993,15 +3018,15 @@ ERROR: compilation failed for package ‘vcfR’
 ** package ‘vcfR’ successfully unpacked and MD5 sums checked
 ** using staged installation
 ** libs
-clang++ -std=gnu++11 -std=c++11 -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG  -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/vcfR/Rcpp/include" -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I/usr/local/include  -fPIC  -Wall -g -O2  -arch x86_64 -ftemplate-depth-256 -Wall -pedantic -g -O0 -c NM2winNM.cpp -o NM2winNM.o
-clang++ -std=gnu++11 -std=c++11 -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG  -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/vcfR/Rcpp/include" -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I/usr/local/include  -fPIC  -Wall -g -O2  -arch x86_64 -ftemplate-depth-256 -Wall -pedantic -g -O0 -c RcppExports.cpp -o RcppExports.o
-clang++ -std=gnu++11 -std=c++11 -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG  -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/vcfR/Rcpp/include" -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I/usr/local/include  -fPIC  -Wall -g -O2  -arch x86_64 -ftemplate-depth-256 -Wall -pedantic -g -O0 -c ad_frequency.cpp -o ad_frequency.o
-clang++ -std=gnu++11 -std=c++11 -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG  -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/vcfR/Rcpp/include" -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I/usr/local/include  -fPIC  -Wall -g -O2  -arch x86_64 -ftemplate-depth-256 -Wall -pedantic -g -O0 -c deprecated_funcs.cpp -o deprecated_funcs.o
+clang++ -std=gnu++11 -std=c++11 -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG  -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/vcfR/Rcpp/include" -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I/usr/local/include  -fPIC  -Wall -g -O2  -arch x86_64 -ftemplate-depth-256 -Wall -pedantic -c NM2winNM.cpp -o NM2winNM.o
+clang++ -std=gnu++11 -std=c++11 -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG  -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/vcfR/Rcpp/include" -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I/usr/local/include  -fPIC  -Wall -g -O2  -arch x86_64 -ftemplate-depth-256 -Wall -pedantic -c RcppExports.cpp -o RcppExports.o
+clang++ -std=gnu++11 -std=c++11 -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG  -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/vcfR/Rcpp/include" -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I/usr/local/include  -fPIC  -Wall -g -O2  -arch x86_64 -ftemplate-depth-256 -Wall -pedantic -c ad_frequency.cpp -o ad_frequency.o
+clang++ -std=gnu++11 -std=c++11 -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG  -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/vcfR/Rcpp/include" -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I/usr/local/include  -fPIC  -Wall -g -O2  -arch x86_64 -ftemplate-depth-256 -Wall -pedantic -c deprecated_funcs.cpp -o deprecated_funcs.o
 In file included from deprecated_funcs.cpp:3:
 In file included from /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/zlib.h:34:
 In file included from /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/zconf.h:462:
 In file included from /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/unistd.h:655:
-/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/gethostuuid.h:39:17: error: C++ requires a type specifier for all declarations
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/gethostuuid.h:39:17: error: unknown type name 'uuid_t'
 int gethostuuid(uuid_t, const struct timespec *) __OSX_AVAILABLE_STARTING(__MAC_10_5, __IPHONE_NA);
                 ^
 In file included from deprecated_funcs.cpp:3:
@@ -3078,7 +3103,7 @@ Run `revdep_details(,"vinereg")` for more info
 ** package ‘vinereg’ successfully unpacked and MD5 sums checked
 ** using staged installation
 ** libs
-clang++ -std=gnu++11 -std=c++11 -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG -I../inst/include -pthread -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/vinereg/rvinecopulib/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/vinereg/RcppEigen/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/vinereg/Rcpp/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/vinereg/BH/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/vinereg/wdm/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/vinereg/RcppThread/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/vinereg/kde1d/include" -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I/usr/local/include  -fPIC  -Wall -g -O2  -arch x86_64 -ftemplate-depth-256 -Wall -pedantic -g -O0 -c RcppExports.cpp -o RcppExports.o
+clang++ -std=gnu++11 -std=c++11 -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG -I../inst/include -pthread -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/vinereg/rvinecopulib/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/vinereg/RcppEigen/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/vinereg/Rcpp/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/vinereg/BH/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/vinereg/wdm/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/vinereg/RcppThread/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/vinereg/kde1d/include" -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I/usr/local/include  -fPIC  -Wall -g -O2  -arch x86_64 -ftemplate-depth-256 -Wall -pedantic -c RcppExports.cpp -o RcppExports.o
 In file included from RcppExports.cpp:4:
 In file included from /Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/vinereg/RcppEigen/include/RcppEigen.h:25:
 In file included from /Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/vinereg/RcppEigen/include/RcppEigenForward.h:30:
@@ -3214,7 +3239,7 @@ In file included from /Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/t
     #pragma clang diagnostic pop
                              ^
 17 warnings generated.
-clang++ -std=gnu++11 -std=c++11 -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG -I../inst/include -pthread -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/vinereg/rvinecopulib/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/vinereg/RcppEigen/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/vinereg/Rcpp/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/vinereg/BH/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/vinereg/wdm/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/vinereg/RcppThread/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/vinereg/kde1d/include" -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I/usr/local/include  -fPIC  -Wall -g -O2  -arch x86_64 -ftemplate-depth-256 -Wall -pedantic -g -O0 -c vinereg.cpp -o vinereg.o
+clang++ -std=gnu++11 -std=c++11 -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG -I../inst/include -pthread -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/vinereg/rvinecopulib/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/vinereg/RcppEigen/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/vinereg/Rcpp/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/vinereg/BH/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/vinereg/wdm/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/vinereg/RcppThread/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/vinereg/kde1d/include" -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I/usr/local/include  -fPIC  -Wall -g -O2  -arch x86_64 -ftemplate-depth-256 -Wall -pedantic -c vinereg.cpp -o vinereg.o
 In file included from vinereg.cpp:12:
 In file included from ../inst/include/dvine_reg_selector.hpp:3:
 In file included from /Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/vinereg/RcppEigen/include/RcppEigen.h:25:
@@ -3375,7 +3400,7 @@ In file included from /Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/t
 In file included from /Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/vinereg/BH/include/boost/config/platform/macos.hpp:28:
 In file included from /Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/vinereg/BH/include/boost/config/detail/posix_features.hpp:18:
 In file included from /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/unistd.h:655:
-/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/gethostuuid.h:39:17: error: C++ requires a type specifier for all declarations
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/gethostuuid.h:39:17: error: unknown type name 'uuid_t'
 int gethostuuid(uuid_t, const struct timespec *) __OSX_AVAILABLE_STARTING(__MAC_10_5, __IPHONE_NA);
                 ^
 In file included from vinereg.cpp:12:
@@ -3467,7 +3492,7 @@ ERROR: compilation failed for package ‘vinereg’
 ** package ‘vinereg’ successfully unpacked and MD5 sums checked
 ** using staged installation
 ** libs
-clang++ -std=gnu++11 -std=c++11 -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG -I../inst/include -pthread -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/vinereg/rvinecopulib/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/vinereg/RcppEigen/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/vinereg/Rcpp/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/vinereg/BH/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/vinereg/wdm/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/vinereg/RcppThread/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/vinereg/kde1d/include" -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I/usr/local/include  -fPIC  -Wall -g -O2  -arch x86_64 -ftemplate-depth-256 -Wall -pedantic -g -O0 -c RcppExports.cpp -o RcppExports.o
+clang++ -std=gnu++11 -std=c++11 -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG -I../inst/include -pthread -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/vinereg/rvinecopulib/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/vinereg/RcppEigen/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/vinereg/Rcpp/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/vinereg/BH/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/vinereg/wdm/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/vinereg/RcppThread/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/vinereg/kde1d/include" -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I/usr/local/include  -fPIC  -Wall -g -O2  -arch x86_64 -ftemplate-depth-256 -Wall -pedantic -c RcppExports.cpp -o RcppExports.o
 In file included from RcppExports.cpp:4:
 In file included from /Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/vinereg/RcppEigen/include/RcppEigen.h:25:
 In file included from /Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/vinereg/RcppEigen/include/RcppEigenForward.h:30:
@@ -3603,7 +3628,7 @@ In file included from /Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/t
     #pragma clang diagnostic pop
                              ^
 17 warnings generated.
-clang++ -std=gnu++11 -std=c++11 -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG -I../inst/include -pthread -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/vinereg/rvinecopulib/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/vinereg/RcppEigen/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/vinereg/Rcpp/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/vinereg/BH/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/vinereg/wdm/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/vinereg/RcppThread/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/vinereg/kde1d/include" -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I/usr/local/include  -fPIC  -Wall -g -O2  -arch x86_64 -ftemplate-depth-256 -Wall -pedantic -g -O0 -c vinereg.cpp -o vinereg.o
+clang++ -std=gnu++11 -std=c++11 -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG -I../inst/include -pthread -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/vinereg/rvinecopulib/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/vinereg/RcppEigen/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/vinereg/Rcpp/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/vinereg/BH/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/vinereg/wdm/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/vinereg/RcppThread/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/vinereg/kde1d/include" -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I/usr/local/include  -fPIC  -Wall -g -O2  -arch x86_64 -ftemplate-depth-256 -Wall -pedantic -c vinereg.cpp -o vinereg.o
 In file included from vinereg.cpp:12:
 In file included from ../inst/include/dvine_reg_selector.hpp:3:
 In file included from /Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/vinereg/RcppEigen/include/RcppEigen.h:25:
@@ -3764,7 +3789,7 @@ In file included from /Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/t
 In file included from /Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/vinereg/BH/include/boost/config/platform/macos.hpp:28:
 In file included from /Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/vinereg/BH/include/boost/config/detail/posix_features.hpp:18:
 In file included from /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/unistd.h:655:
-/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/gethostuuid.h:39:17: error: C++ requires a type specifier for all declarations
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/gethostuuid.h:39:17: error: unknown type name 'uuid_t'
 int gethostuuid(uuid_t, const struct timespec *) __OSX_AVAILABLE_STARTING(__MAC_10_5, __IPHONE_NA);
                 ^
 In file included from vinereg.cpp:12:
@@ -3880,7 +3905,7 @@ Run `revdep_details(,"vlad")` for more info
 ** package ‘vlad’ successfully unpacked and MD5 sums checked
 ** using staged installation
 ** libs
-clang++ -std=gnu++11 -std=c++11 -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG -I../inst/include/ -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/vlad/Rcpp/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/vlad/RcppArmadillo/include" -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I/usr/local/include -fopenmp -fPIC  -Wall -g -O2  -arch x86_64 -ftemplate-depth-256 -Wall -pedantic -g -O0 -c RcppExports.cpp -o RcppExports.o
+clang++ -std=gnu++11 -std=c++11 -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG -I../inst/include/ -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/vlad/Rcpp/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/vlad/RcppArmadillo/include" -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I/usr/local/include -fopenmp -fPIC  -Wall -g -O2  -arch x86_64 -ftemplate-depth-256 -Wall -pedantic -c RcppExports.cpp -o RcppExports.o
 clang: error: unsupported option '-fopenmp'
 make: *** [RcppExports.o] Error 1
 ERROR: compilation failed for package ‘vlad’
@@ -3894,7 +3919,7 @@ ERROR: compilation failed for package ‘vlad’
 ** package ‘vlad’ successfully unpacked and MD5 sums checked
 ** using staged installation
 ** libs
-clang++ -std=gnu++11 -std=c++11 -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG -I../inst/include/ -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/vlad/Rcpp/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/vlad/RcppArmadillo/include" -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I/usr/local/include -fopenmp -fPIC  -Wall -g -O2  -arch x86_64 -ftemplate-depth-256 -Wall -pedantic -g -O0 -c RcppExports.cpp -o RcppExports.o
+clang++ -std=gnu++11 -std=c++11 -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG -I../inst/include/ -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/vlad/Rcpp/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/vlad/RcppArmadillo/include" -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I/usr/local/include -fopenmp -fPIC  -Wall -g -O2  -arch x86_64 -ftemplate-depth-256 -Wall -pedantic -c RcppExports.cpp -o RcppExports.o
 clang: error: unsupported option '-fopenmp'
 make: *** [RcppExports.o] Error 1
 ERROR: compilation failed for package ‘vlad’
@@ -3933,17 +3958,17 @@ Run `revdep_details(,"vroom")` for more info
 ** package ‘vroom’ successfully unpacked and MD5 sums checked
 ** using staged installation
 ** libs
-clang++ -std=gnu++11 -std=c++11 -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG  -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/vroom/progress/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/vroom/Rcpp/include" -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I/usr/local/include -Imio/include -DWIN32_LEAN_AND_MEAN -Ispdlog/include -fPIC  -Wall -g -O2  -arch x86_64 -ftemplate-depth-256 -Wall -pedantic -g -O0 -c Iconv.cpp -o Iconv.o
-clang++ -std=gnu++11 -std=c++11 -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG  -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/vroom/progress/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/vroom/Rcpp/include" -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I/usr/local/include -Imio/include -DWIN32_LEAN_AND_MEAN -Ispdlog/include -fPIC  -Wall -g -O2  -arch x86_64 -ftemplate-depth-256 -Wall -pedantic -g -O0 -c LocaleInfo.cpp -o LocaleInfo.o
-clang++ -std=gnu++11 -std=c++11 -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG  -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/vroom/progress/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/vroom/Rcpp/include" -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I/usr/local/include -Imio/include -DWIN32_LEAN_AND_MEAN -Ispdlog/include -fPIC  -Wall -g -O2  -arch x86_64 -ftemplate-depth-256 -Wall -pedantic -g -O0 -c RcppExports.cpp -o RcppExports.o
-clang++ -std=gnu++11 -std=c++11 -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG  -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/vroom/progress/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/vroom/Rcpp/include" -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I/usr/local/include -Imio/include -DWIN32_LEAN_AND_MEAN -Ispdlog/include -fPIC  -Wall -g -O2  -arch x86_64 -ftemplate-depth-256 -Wall -pedantic -g -O0 -c altrep.cc -o altrep.o
-clang++ -std=gnu++11 -std=c++11 -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG  -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/vroom/progress/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/vroom/Rcpp/include" -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I/usr/local/include -Imio/include -DWIN32_LEAN_AND_MEAN -Ispdlog/include -fPIC  -Wall -g -O2  -arch x86_64 -ftemplate-depth-256 -Wall -pedantic -g -O0 -c delimited_index.cc -o delimited_index.o
-clang++ -std=gnu++11 -std=c++11 -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG  -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/vroom/progress/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/vroom/Rcpp/include" -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I/usr/local/include -Imio/include -DWIN32_LEAN_AND_MEAN -Ispdlog/include -fPIC  -Wall -g -O2  -arch x86_64 -ftemplate-depth-256 -Wall -pedantic -g -O0 -c delimited_index_connection.cc -o delimited_index_connection.o
-clang++ -std=gnu++11 -std=c++11 -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG  -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/vroom/progress/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/vroom/Rcpp/include" -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I/usr/local/include -Imio/include -DWIN32_LEAN_AND_MEAN -Ispdlog/include -fPIC  -Wall -g -O2  -arch x86_64 -ftemplate-depth-256 -Wall -pedantic -g -O0 -c fixed_width_index_connection.cc -o fixed_width_index_connection.o
-clang++ -std=gnu++11 -std=c++11 -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG  -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/vroom/progress/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/vroom/Rcpp/include" -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I/usr/local/include -Imio/include -DWIN32_LEAN_AND_MEAN -Ispdlog/include -fPIC  -Wall -g -O2  -arch x86_64 -ftemplate-depth-256 -Wall -pedantic -g -O0 -c gen.cc -o gen.o
-clang -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG  -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/vroom/progress/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/vroom/Rcpp/include" -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I/usr/local/include  -fPIC  -Wall -g -O2   -Wall -pedantic -fno-common -g -O0 -c grisu3.c -o grisu3.o
-clang++ -std=gnu++11 -std=c++11 -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG  -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/vroom/progress/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/vroom/Rcpp/include" -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I/usr/local/include -Imio/include -DWIN32_LEAN_AND_MEAN -Ispdlog/include -fPIC  -Wall -g -O2  -arch x86_64 -ftemplate-depth-256 -Wall -pedantic -g -O0 -c guess_type.cc -o guess_type.o
-clang++ -std=gnu++11 -std=c++11 -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG  -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/vroom/progress/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/vroom/Rcpp/include" -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I/usr/local/include -Imio/include -DWIN32_LEAN_AND_MEAN -Ispdlog/include -fPIC  -Wall -g -O2  -arch x86_64 -ftemplate-depth-256 -Wall -pedantic -g -O0 -c index_collection.cc -o index_collection.o
+clang++ -std=gnu++11 -std=c++11 -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG  -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/vroom/progress/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/vroom/Rcpp/include" -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I/usr/local/include -Imio/include -DWIN32_LEAN_AND_MEAN -Ispdlog/include -fPIC  -Wall -g -O2  -arch x86_64 -ftemplate-depth-256 -Wall -pedantic -c Iconv.cpp -o Iconv.o
+clang++ -std=gnu++11 -std=c++11 -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG  -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/vroom/progress/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/vroom/Rcpp/include" -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I/usr/local/include -Imio/include -DWIN32_LEAN_AND_MEAN -Ispdlog/include -fPIC  -Wall -g -O2  -arch x86_64 -ftemplate-depth-256 -Wall -pedantic -c LocaleInfo.cpp -o LocaleInfo.o
+clang++ -std=gnu++11 -std=c++11 -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG  -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/vroom/progress/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/vroom/Rcpp/include" -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I/usr/local/include -Imio/include -DWIN32_LEAN_AND_MEAN -Ispdlog/include -fPIC  -Wall -g -O2  -arch x86_64 -ftemplate-depth-256 -Wall -pedantic -c RcppExports.cpp -o RcppExports.o
+clang++ -std=gnu++11 -std=c++11 -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG  -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/vroom/progress/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/vroom/Rcpp/include" -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I/usr/local/include -Imio/include -DWIN32_LEAN_AND_MEAN -Ispdlog/include -fPIC  -Wall -g -O2  -arch x86_64 -ftemplate-depth-256 -Wall -pedantic -c altrep.cc -o altrep.o
+clang++ -std=gnu++11 -std=c++11 -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG  -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/vroom/progress/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/vroom/Rcpp/include" -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I/usr/local/include -Imio/include -DWIN32_LEAN_AND_MEAN -Ispdlog/include -fPIC  -Wall -g -O2  -arch x86_64 -ftemplate-depth-256 -Wall -pedantic -c delimited_index.cc -o delimited_index.o
+clang++ -std=gnu++11 -std=c++11 -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG  -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/vroom/progress/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/vroom/Rcpp/include" -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I/usr/local/include -Imio/include -DWIN32_LEAN_AND_MEAN -Ispdlog/include -fPIC  -Wall -g -O2  -arch x86_64 -ftemplate-depth-256 -Wall -pedantic -c delimited_index_connection.cc -o delimited_index_connection.o
+clang++ -std=gnu++11 -std=c++11 -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG  -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/vroom/progress/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/vroom/Rcpp/include" -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I/usr/local/include -Imio/include -DWIN32_LEAN_AND_MEAN -Ispdlog/include -fPIC  -Wall -g -O2  -arch x86_64 -ftemplate-depth-256 -Wall -pedantic -c fixed_width_index_connection.cc -o fixed_width_index_connection.o
+clang++ -std=gnu++11 -std=c++11 -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG  -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/vroom/progress/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/vroom/Rcpp/include" -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I/usr/local/include -Imio/include -DWIN32_LEAN_AND_MEAN -Ispdlog/include -fPIC  -Wall -g -O2  -arch x86_64 -ftemplate-depth-256 -Wall -pedantic -c gen.cc -o gen.o
+clang -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG  -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/vroom/progress/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/vroom/Rcpp/include" -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I/usr/local/include  -fPIC  -Wall -g -O2   -Wall -pedantic -fno-common -mtune=core2  -O3 -c grisu3.c -o grisu3.o
+clang++ -std=gnu++11 -std=c++11 -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG  -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/vroom/progress/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/vroom/Rcpp/include" -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I/usr/local/include -Imio/include -DWIN32_LEAN_AND_MEAN -Ispdlog/include -fPIC  -Wall -g -O2  -arch x86_64 -ftemplate-depth-256 -Wall -pedantic -c guess_type.cc -o guess_type.o
+clang++ -std=gnu++11 -std=c++11 -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG  -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/vroom/progress/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/vroom/Rcpp/include" -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I/usr/local/include -Imio/include -DWIN32_LEAN_AND_MEAN -Ispdlog/include -fPIC  -Wall -g -O2  -arch x86_64 -ftemplate-depth-256 -Wall -pedantic -c index_collection.cc -o index_collection.o
 In file included from index_collection.cc:2:
 In file included from ./delimited_index_connection.h:1:
 In file included from ./delimited_index.h:9:
@@ -3951,7 +3976,7 @@ In file included from mio/include/mio/shared_mmap.hpp:24:
 In file included from mio/include/mio/mmap.hpp:24:
 In file included from mio/include/mio/page.hpp:27:
 In file included from /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/unistd.h:655:
-/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/gethostuuid.h:39:17: error: C++ requires a type specifier for all declarations
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/gethostuuid.h:39:17: error: unknown type name 'uuid_t'
 int gethostuuid(uuid_t, const struct timespec *) __OSX_AVAILABLE_STARTING(__MAC_10_5, __IPHONE_NA);
                 ^
 In file included from index_collection.cc:2:
@@ -4015,17 +4040,17 @@ ERROR: compilation failed for package ‘vroom’
 ** package ‘vroom’ successfully unpacked and MD5 sums checked
 ** using staged installation
 ** libs
-clang++ -std=gnu++11 -std=c++11 -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG  -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/vroom/progress/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/vroom/Rcpp/include" -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I/usr/local/include -Imio/include -DWIN32_LEAN_AND_MEAN -Ispdlog/include -fPIC  -Wall -g -O2  -arch x86_64 -ftemplate-depth-256 -Wall -pedantic -g -O0 -c Iconv.cpp -o Iconv.o
-clang++ -std=gnu++11 -std=c++11 -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG  -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/vroom/progress/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/vroom/Rcpp/include" -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I/usr/local/include -Imio/include -DWIN32_LEAN_AND_MEAN -Ispdlog/include -fPIC  -Wall -g -O2  -arch x86_64 -ftemplate-depth-256 -Wall -pedantic -g -O0 -c LocaleInfo.cpp -o LocaleInfo.o
-clang++ -std=gnu++11 -std=c++11 -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG  -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/vroom/progress/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/vroom/Rcpp/include" -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I/usr/local/include -Imio/include -DWIN32_LEAN_AND_MEAN -Ispdlog/include -fPIC  -Wall -g -O2  -arch x86_64 -ftemplate-depth-256 -Wall -pedantic -g -O0 -c RcppExports.cpp -o RcppExports.o
-clang++ -std=gnu++11 -std=c++11 -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG  -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/vroom/progress/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/vroom/Rcpp/include" -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I/usr/local/include -Imio/include -DWIN32_LEAN_AND_MEAN -Ispdlog/include -fPIC  -Wall -g -O2  -arch x86_64 -ftemplate-depth-256 -Wall -pedantic -g -O0 -c altrep.cc -o altrep.o
-clang++ -std=gnu++11 -std=c++11 -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG  -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/vroom/progress/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/vroom/Rcpp/include" -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I/usr/local/include -Imio/include -DWIN32_LEAN_AND_MEAN -Ispdlog/include -fPIC  -Wall -g -O2  -arch x86_64 -ftemplate-depth-256 -Wall -pedantic -g -O0 -c delimited_index.cc -o delimited_index.o
-clang++ -std=gnu++11 -std=c++11 -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG  -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/vroom/progress/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/vroom/Rcpp/include" -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I/usr/local/include -Imio/include -DWIN32_LEAN_AND_MEAN -Ispdlog/include -fPIC  -Wall -g -O2  -arch x86_64 -ftemplate-depth-256 -Wall -pedantic -g -O0 -c delimited_index_connection.cc -o delimited_index_connection.o
-clang++ -std=gnu++11 -std=c++11 -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG  -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/vroom/progress/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/vroom/Rcpp/include" -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I/usr/local/include -Imio/include -DWIN32_LEAN_AND_MEAN -Ispdlog/include -fPIC  -Wall -g -O2  -arch x86_64 -ftemplate-depth-256 -Wall -pedantic -g -O0 -c fixed_width_index_connection.cc -o fixed_width_index_connection.o
-clang++ -std=gnu++11 -std=c++11 -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG  -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/vroom/progress/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/vroom/Rcpp/include" -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I/usr/local/include -Imio/include -DWIN32_LEAN_AND_MEAN -Ispdlog/include -fPIC  -Wall -g -O2  -arch x86_64 -ftemplate-depth-256 -Wall -pedantic -g -O0 -c gen.cc -o gen.o
-clang -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG  -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/vroom/progress/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/vroom/Rcpp/include" -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I/usr/local/include  -fPIC  -Wall -g -O2   -Wall -pedantic -fno-common -g -O0 -c grisu3.c -o grisu3.o
-clang++ -std=gnu++11 -std=c++11 -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG  -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/vroom/progress/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/vroom/Rcpp/include" -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I/usr/local/include -Imio/include -DWIN32_LEAN_AND_MEAN -Ispdlog/include -fPIC  -Wall -g -O2  -arch x86_64 -ftemplate-depth-256 -Wall -pedantic -g -O0 -c guess_type.cc -o guess_type.o
-clang++ -std=gnu++11 -std=c++11 -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG  -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/vroom/progress/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/vroom/Rcpp/include" -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I/usr/local/include -Imio/include -DWIN32_LEAN_AND_MEAN -Ispdlog/include -fPIC  -Wall -g -O2  -arch x86_64 -ftemplate-depth-256 -Wall -pedantic -g -O0 -c index_collection.cc -o index_collection.o
+clang++ -std=gnu++11 -std=c++11 -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG  -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/vroom/progress/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/vroom/Rcpp/include" -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I/usr/local/include -Imio/include -DWIN32_LEAN_AND_MEAN -Ispdlog/include -fPIC  -Wall -g -O2  -arch x86_64 -ftemplate-depth-256 -Wall -pedantic -c Iconv.cpp -o Iconv.o
+clang++ -std=gnu++11 -std=c++11 -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG  -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/vroom/progress/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/vroom/Rcpp/include" -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I/usr/local/include -Imio/include -DWIN32_LEAN_AND_MEAN -Ispdlog/include -fPIC  -Wall -g -O2  -arch x86_64 -ftemplate-depth-256 -Wall -pedantic -c LocaleInfo.cpp -o LocaleInfo.o
+clang++ -std=gnu++11 -std=c++11 -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG  -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/vroom/progress/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/vroom/Rcpp/include" -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I/usr/local/include -Imio/include -DWIN32_LEAN_AND_MEAN -Ispdlog/include -fPIC  -Wall -g -O2  -arch x86_64 -ftemplate-depth-256 -Wall -pedantic -c RcppExports.cpp -o RcppExports.o
+clang++ -std=gnu++11 -std=c++11 -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG  -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/vroom/progress/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/vroom/Rcpp/include" -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I/usr/local/include -Imio/include -DWIN32_LEAN_AND_MEAN -Ispdlog/include -fPIC  -Wall -g -O2  -arch x86_64 -ftemplate-depth-256 -Wall -pedantic -c altrep.cc -o altrep.o
+clang++ -std=gnu++11 -std=c++11 -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG  -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/vroom/progress/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/vroom/Rcpp/include" -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I/usr/local/include -Imio/include -DWIN32_LEAN_AND_MEAN -Ispdlog/include -fPIC  -Wall -g -O2  -arch x86_64 -ftemplate-depth-256 -Wall -pedantic -c delimited_index.cc -o delimited_index.o
+clang++ -std=gnu++11 -std=c++11 -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG  -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/vroom/progress/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/vroom/Rcpp/include" -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I/usr/local/include -Imio/include -DWIN32_LEAN_AND_MEAN -Ispdlog/include -fPIC  -Wall -g -O2  -arch x86_64 -ftemplate-depth-256 -Wall -pedantic -c delimited_index_connection.cc -o delimited_index_connection.o
+clang++ -std=gnu++11 -std=c++11 -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG  -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/vroom/progress/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/vroom/Rcpp/include" -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I/usr/local/include -Imio/include -DWIN32_LEAN_AND_MEAN -Ispdlog/include -fPIC  -Wall -g -O2  -arch x86_64 -ftemplate-depth-256 -Wall -pedantic -c fixed_width_index_connection.cc -o fixed_width_index_connection.o
+clang++ -std=gnu++11 -std=c++11 -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG  -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/vroom/progress/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/vroom/Rcpp/include" -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I/usr/local/include -Imio/include -DWIN32_LEAN_AND_MEAN -Ispdlog/include -fPIC  -Wall -g -O2  -arch x86_64 -ftemplate-depth-256 -Wall -pedantic -c gen.cc -o gen.o
+clang -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG  -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/vroom/progress/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/vroom/Rcpp/include" -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I/usr/local/include  -fPIC  -Wall -g -O2   -Wall -pedantic -fno-common -mtune=core2  -O3 -c grisu3.c -o grisu3.o
+clang++ -std=gnu++11 -std=c++11 -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG  -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/vroom/progress/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/vroom/Rcpp/include" -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I/usr/local/include -Imio/include -DWIN32_LEAN_AND_MEAN -Ispdlog/include -fPIC  -Wall -g -O2  -arch x86_64 -ftemplate-depth-256 -Wall -pedantic -c guess_type.cc -o guess_type.o
+clang++ -std=gnu++11 -std=c++11 -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG  -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/vroom/progress/include" -I"/Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/tidyr/library.noindex/vroom/Rcpp/include" -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I/usr/local/include -Imio/include -DWIN32_LEAN_AND_MEAN -Ispdlog/include -fPIC  -Wall -g -O2  -arch x86_64 -ftemplate-depth-256 -Wall -pedantic -c index_collection.cc -o index_collection.o
 In file included from index_collection.cc:2:
 In file included from ./delimited_index_connection.h:1:
 In file included from ./delimited_index.h:9:
@@ -4033,7 +4058,7 @@ In file included from mio/include/mio/shared_mmap.hpp:24:
 In file included from mio/include/mio/mmap.hpp:24:
 In file included from mio/include/mio/page.hpp:27:
 In file included from /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/unistd.h:655:
-/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/gethostuuid.h:39:17: error: C++ requires a type specifier for all declarations
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/gethostuuid.h:39:17: error: unknown type name 'uuid_t'
 int gethostuuid(uuid_t, const struct timespec *) __OSX_AVAILABLE_STARTING(__MAC_10_5, __IPHONE_NA);
                 ^
 In file included from index_collection.cc:2:

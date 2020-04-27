@@ -241,8 +241,8 @@ cnd_type_message <- function(x,
 
   if (is.data.frame(x) && is.data.frame(y)) {
     if (vec_is_coercible(new_data_frame(x), new_data_frame(y))) {
-      x_type <- class(x)[[1]]
-      y_type <- class(y)[[1]]
+      x_type <- cnd_type_message_df_label(x)
+      y_type <- cnd_type_message_df_label(y)
     } else {
       x_type <- vec_ptype_full(x)
       y_type <- vec_ptype_full(y)
@@ -287,6 +287,16 @@ incompatible_attrib_bullets <- function() {
     i = "The author of the class should implement vctrs methods.",
     i = "See <https://vctrs.r-lib.org/reference/faq-error-incompatible-attributes.html>."
   )
+}
+
+cnd_type_message_df_label <- function(x) {
+  x <- class(x)[[1]]
+
+  if (identical(x, "tbl_df")) {
+    "tibble"
+  } else {
+    x
+  }
 }
 
 

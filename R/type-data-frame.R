@@ -74,6 +74,14 @@ vec_proxy_compare.data.frame <- function(x, ..., relax = FALSE) {
   new_data_frame(out, nrow(x))
 }
 
+df_is_coercible <- function(x, y, df_fallback = FALSE) {
+  vec_is_coercible(
+    new_data_frame(x),
+    new_data_frame(y),
+    df_fallback = df_fallback
+  )
+}
+
 
 # Coercion ----------------------------------------------------------------
 
@@ -91,36 +99,98 @@ vec_ptype2.data.frame.data.frame <- function(x, y, ...) {
 }
 # Returns a `data.frame` no matter the input classes
 df_ptype2 <- function(x, y, ..., x_arg = "", y_arg = "") {
-  .Call(vctrs_df_ptype2, x, y, x_arg, y_arg)
+  .Call(vctrs_df_ptype2, x, y, x_arg, y_arg, df_fallback = FALSE)
+}
+df_ptype2_params <- function(x,
+                             y,
+                             ...,
+                             x_arg = "",
+                             y_arg = "",
+                             df_fallback = FALSE) {
+  .Call(vctrs_df_ptype2, x, y, x_arg, y_arg, df_fallback = df_fallback)
+}
+
+vec_ptype2_df_fallback_normalise <- function(x, y) {
+  x_orig <- x
+  y_orig <- y
+
+  ptype <- df_ptype2_params(x, y, df_fallback = TRUE)
+
+  x <- x[0, , drop = FALSE]
+  y <- y[0, , drop = FALSE]
+
+  x[seq_along(ptype)] <- ptype
+  y[seq_along(ptype)] <- ptype
+
+  # Names might have been repaired by `[<-`
+  names(x) <- names(ptype)
+  names(y) <- names(ptype)
+
+  # Restore attributes if no `[` method is implemented
+  if (df_has_base_subset(x)) {
+    x <- vec_restore(x, x_orig)
+  }
+  if (df_has_base_subset(y)) {
+    y <- vec_restore(y, y_orig)
+  }
+
+  list(x = x, y = y)
+}
+vec_cast_df_fallback_normalise <- function(x, to) {
+  orig <- x
+  cast <- df_cast_params(x, to, df_fallback = TRUE)
+
+  # Seq-assign should be more widely implemented than empty-assign?
+  x[seq_along(to)] <- cast
+
+  # Names might have been repaired by `[<-`
+  names(x) <- names(cast)
+
+  # Restore attributes if no `[` method is implemented
+  if (df_has_base_subset(x)) {
+    x <- vec_restore(x, orig)
+  }
+
+  x
+}
+
+df_needs_normalisation <- function(x, y) {
+  is.data.frame(x) &&
+    is.data.frame(y) &&
+    df_is_coercible(x, y, df_fallback = TRUE)
 }
 
 # Fallback for data frame subclasses (#981)
 vec_ptype2_df_fallback <- function(x, y, x_arg = "", y_arg = "") {
-  ptype <- vec_ptype2(
+  seen_tibble <- inherits(x, "tbl_df") || inherits(y, "tbl_df")
+
+  ptype <- vec_ptype2_params(
     new_data_frame(x),
-    new_data_frame(y)
+    new_data_frame(y),
+    df_fallback = TRUE
   )
 
   classes <- NULL
   if (is_df_fallback(x)) {
     classes <- c(classes, known_classes(x))
-    x <- new_data_frame(x)
+    x <- df_fallback_as_df(x)
   }
   if (is_df_fallback(y)) {
     classes <- c(classes, known_classes(y))
-    y <- new_data_frame(y)
+    y <- df_fallback_as_df(y)
   }
   x_class <- class(x)[[1]]
   y_class <- class(y)[[1]]
 
-  if (!all(c(x_class, y_class) %in% classes)) {
+  if (!all(c(x_class, y_class) %in% c(classes, "tbl_df"))) {
+    fallback_class <- if (seen_tibble) "<tibble>" else "<data.frame>"
     msg <- cnd_type_message(
       x, y,
       x_arg, y_arg,
       NULL,
       "combine",
       NULL,
-      fallback = "<data.frame>"
+      fallback = fallback_class
     )
 
     if (identical(x_class, y_class)) {
@@ -143,7 +213,8 @@ vec_ptype2_df_fallback <- function(x, y, x_arg = "", y_arg = "") {
   # fallback class is stripped in `vec_ptype_finalise()`.
   new_fallback_df(
     ptype,
-    known_classes = unique(c(classes, x_class, y_class))
+    known_classes = unique(c(classes, x_class, y_class)),
+    seen_tibble = seen_tibble
   )
 }
 
@@ -153,15 +224,27 @@ is_df_subclass <- function(x) {
 is_df_fallback <- function(x) {
   inherits(x, "vctrs:::df_fallback")
 }
-new_fallback_df <- function(x, known_classes, n = nrow(x)) {
+new_fallback_df <- function(x, known_classes, seen_tibble = FALSE, n = nrow(x)) {
+  class <- "vctrs:::df_fallback"
+  if (seen_tibble) {
+    class <- c(class, "tbl_df", "tbl")
+  }
+
   new_data_frame(
     x,
     n = n,
     known_classes = known_classes,
-    class = "vctrs:::df_fallback"
+    seen_tibble = seen_tibble,
+    class = class
   )
 }
-
+df_fallback_as_df <- function(x) {
+  if (inherits(x, "tbl_df")) {
+    new_data_frame(x, class = c("tbl_df", "tbl", "data.frame"))
+  } else {
+    new_data_frame(x)
+  }
+}
 known_classes <- function(x) {
   if (is_df_fallback(x)) {
     attr(x, "known_classes")
@@ -184,7 +267,10 @@ vec_cast.data.frame.data.frame <- function(x, to, ..., x_arg = "", to_arg = "") 
   df_cast(x, to, x_arg = x_arg, to_arg = to_arg)
 }
 df_cast <- function(x, to, ..., x_arg = "", to_arg = "") {
-  .Call(vctrs_df_cast, x, to, x_arg, to_arg)
+  .Call(vctrs_df_cast_params, x, to, x_arg, to_arg, FALSE)
+}
+df_cast_params <- function(x, to, ..., x_arg = "", to_arg = "", df_fallback = FALSE) {
+  .Call(vctrs_df_cast_params, x, to, x_arg, to_arg, df_fallback)
 }
 
 #' @export

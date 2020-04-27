@@ -369,6 +369,12 @@ SEXP s3_sym_get_method(SEXP sym, SEXP table) {
   return R_NilValue;
 }
 
+// [[ register() ]]
+SEXP vctrs_s3_find_method(SEXP generic, SEXP x, SEXP table) {
+  return s3_find_method(r_chr_get_c_string(generic, 0), x, table);
+}
+
+// [[ include("utils.h") ]]
 SEXP s3_find_method(const char* generic, SEXP x, SEXP table) {
   if (!OBJECT(x)) {
     return R_NilValue;
@@ -397,12 +403,10 @@ SEXP s3_find_method(const char* generic, SEXP x, SEXP table) {
   return R_NilValue;
 }
 
-// [[ include("utils.h") ]]
-SEXP s3_find_method2(const char* generic,
-                     SEXP x,
-                     SEXP table,
-                     SEXP* method_sym_out) {
+static
+SEXP s3_get_class(SEXP x) {
   SEXP class = R_NilValue;
+
   if (OBJECT(x)) {
     class = Rf_getAttrib(x, R_ClassSymbol);
   }
@@ -412,12 +416,45 @@ SEXP s3_find_method2(const char* generic,
   if (class == R_NilValue) {
     class = s3_bare_class(x);
   }
-  PROTECT(class);
 
   if (!Rf_length(class)) {
-    Rf_error("Internal error in `s3_find_method2()`: Class must have length.");
+    Rf_error("Internal error in `s3_get_class()`: Class must have length.");
   }
-  class = STRING_ELT(class, 0);
+
+  return STRING_ELT(class, 0);
+}
+
+// [[ include("utils.h") ]]
+SEXP s3_find_method_xy(const char* generic,
+                       SEXP x,
+                       SEXP y,
+                       SEXP table,
+                       SEXP* method_sym_out) {
+  SEXP x_class = PROTECT(s3_get_class(x));
+  SEXP y_class = PROTECT(s3_get_class(y));
+
+  SEXP method_sym = R_NilValue;
+  method_sym = s3_paste_method_sym(generic, CHAR(x_class));
+  method_sym = s3_paste_method_sym(CHAR(PRINTNAME(method_sym)), CHAR(y_class));
+
+  SEXP method = s3_sym_get_method(method_sym, table);
+
+  if (method == R_NilValue) {
+    *method_sym_out = R_NilValue;
+  } else {
+    *method_sym_out = method_sym;
+  }
+
+  UNPROTECT(2);
+  return method;
+}
+
+// [[ include("utils.h") ]]
+SEXP s3_find_method2(const char* generic,
+                     SEXP x,
+                     SEXP table,
+                     SEXP* method_sym_out) {
+  SEXP class = PROTECT(s3_get_class(x));
 
   SEXP method_sym = s3_paste_method_sym(generic, CHAR(class));
   SEXP method = s3_sym_get_method(method_sym, table);
@@ -1478,6 +1515,23 @@ SEXP r_new_shared_character(const char* name) {
   R_PreserveObject(out);
   MARK_NOT_MUTABLE(out);
   return out;
+}
+
+void c_print_backtrace() {
+#if defined(VCTRS_DEBUG)
+#include <execinfo.h>
+  void *buffer[500];
+  int nptrs = backtrace(buffer, 100);
+
+  char **strings = backtrace_symbols(buffer, nptrs);
+  for (int j = 0; j < nptrs; ++j) {
+    Rprintf("%s\n", strings[j]);
+  }
+
+  free(strings);
+#else
+  Rprintf("Can't print C backtrace.\n");
+#endif
 }
 
 void vctrs_init_utils(SEXP ns) {

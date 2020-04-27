@@ -149,8 +149,9 @@ static SEXP vec_rbind(SEXP xs, SEXP ptype, SEXP names_to, struct name_repair_opt
   // Compact sequences use 0-based counters
   R_len_t counter = 0;
 
-  const struct vec_assign_opts bind_assign_opts =
-    new_vec_assign_opts(true, args_empty, args_empty);
+  const struct vec_assign_opts bind_assign_opts = {
+    .assign_names = true
+  };
 
   for (R_len_t i = 0; i < n; ++i) {
     R_len_t size = ns[i];
