@@ -1,7 +1,7 @@
-maybe_referenced_col <- function(x, i) {
-  .Call(vctrs_maybe_referenced_col, x, i)
+maybe_shared_col <- function(x, i) {
+  .Call(vctrs_maybe_shared_col, x, i)
 }
 
-new_df_unreferenced_col <- function() {
-  .Call(vctrs_new_df_unreferenced_col)
+new_df_unshared_col <- function() {
+  .Call(vctrs_new_df_unshared_col)
 }

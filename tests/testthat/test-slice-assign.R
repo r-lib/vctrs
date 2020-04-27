@@ -591,15 +591,16 @@ test_that("can optionally assign names", {
 })
 
 test_that("assignment to a data frame with unreferenced columns doesn't overwrite (#986)", {
-  x <- new_df_unreferenced_col()
+  x <- new_df_unshared_col()
   value <- new_data_frame(list(x = 2))
   expect <- new_data_frame(list(x = 1L))
 
-  expect_false(maybe_referenced_col(x, 1L))
+  expect_false(maybe_shared_col(x, 1L))
 
   new <- vec_assign(x, 1, value)
 
-  expect_true(maybe_referenced_col(x, 1L))
+  # Expect that the column continues to be unshared
+  expect_false(maybe_shared_col(x, 1L))
 
   # Expect no changes to `x`!
   expect_identical(x, expect)
