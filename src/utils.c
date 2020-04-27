@@ -221,10 +221,8 @@ SEXP vctrs_set_attributes(SEXP x, SEXP attrib) {
   R_len_t n_attrib = Rf_length(attrib);
   int n_protect = 0;
 
-  if (MAYBE_REFERENCED(x)) {
-    x = PROTECT(Rf_shallow_duplicate(x));
-    ++n_protect;
-  }
+  x = PROTECT(r_maybe_duplicate(x));
+  ++n_protect;
 
   // Remove existing attributes, and unset the object bit
   SET_ATTRIB(x, R_NilValue);
