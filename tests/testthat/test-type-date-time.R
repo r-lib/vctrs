@@ -138,8 +138,8 @@ test_that("tz comes from first non-empty", {
 })
 
 test_that("POSIXlt always steered towards POSIXct", {
-  dtc <- as.POSIXct("2020-01-01")
-  dtl <- as.POSIXlt("2020-01-01")
+  dtc <- as.POSIXct("2020-01-01", tz = "UTC")
+  dtl <- as.POSIXlt("2020-01-01", tz = "UTC")
 
   expect_identical(vec_ptype2(dtc, dtl), dtc[0])
   expect_identical(vec_ptype2(dtl, dtc), dtc[0])
