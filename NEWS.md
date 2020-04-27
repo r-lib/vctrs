@@ -1,4 +1,3 @@
-
 # vctrs (development version)
 
 This version features an overhaul of the coercion system to make it
@@ -227,6 +226,8 @@ The following errors are caused by breaking changes.
 * `vec_as_names()` now has more informative error messages when names
   are not unique (#882).
 
+* `vec_as_names()` gains a `repair_arg` argument that when set will cause
+  `repair = "check_unique"` to generate an informative hint (#692).
 
 ## CRAN results
 

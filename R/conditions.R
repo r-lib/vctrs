@@ -671,9 +671,10 @@ cnd_body.vctrs_error_names_cannot_be_dot_dot <- function(cnd, ...) {
   message
 }
 
-stop_names_must_be_unique <- function(names) {
+stop_names_must_be_unique <- function(names, arg = "") {
   stop_names(
     class = "vctrs_error_names_must_be_unique",
+    arg = arg,
     names = names
   )
 }
@@ -699,6 +700,12 @@ cnd_body.vctrs_error_names_must_be_unique <- function(cnd, ...) {
 
   message <- bullets(info, header = header)
   message <- indent(message, 2)
+
+  arg <- arg_as_string(cnd$arg)
+  if (arg != "") {
+    hint <- c(i = glue::glue("Use argument `{cnd$arg}` to specify repair strategy."))
+    message <- c(message, format_error_bullets(hint))
+  }
 
   message
 }
