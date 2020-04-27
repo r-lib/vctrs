@@ -296,7 +296,6 @@ test_that("vec_ptype2() methods get prototypes", {
   expect_identical(x, foobar(int()))
   expect_identical(y, foobar(chr()))
 
-  skip("Figure out what to do with row names in `vec_ptype()`")
   vec_ptype2(foobar(mtcars), foobar(iris))
   expect_identical(x, foobar(mtcars[0, , drop = FALSE]))
   expect_identical(y, foobar(iris[0, , drop = FALSE]))
