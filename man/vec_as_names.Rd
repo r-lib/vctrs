@@ -8,6 +8,7 @@ vec_as_names(
   names,
   ...,
   repair = c("minimal", "unique", "universal", "check_unique"),
+  repair_arg = "",
   quiet = FALSE
 )
 }
@@ -33,6 +34,9 @@ error.
 The \code{"check_unique"} option doesn't perform any name repair.
 Instead, an error is raised if the names don't suit the
 \code{"unique"} criteria.}
+
+\item{repair_arg}{If specified and \code{repair = "check_unique"}, any errors
+will include a hint to set the \code{repair_arg}.}
 
 \item{quiet}{By default, the user is informed of any renaming
 caused by repairing the names. This only concerns unique and

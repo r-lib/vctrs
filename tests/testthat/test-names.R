@@ -129,6 +129,9 @@ test_that("vec_as_names() is noisy by default", {
 
     # Quiet name repair
     vec_as_names(c("x", "x"), repair = "unique", quiet = TRUE)
+
+    # Hint at repair argument, if known
+    vec_as_names(c("x", "x"), repair = "check_unique", repair_arg = "repair")
   })
 })
 

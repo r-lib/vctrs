@@ -5,7 +5,6 @@ This version features an overhaul of the coercion system to make it
 more consistent and easier to implement. See the _Breaking changes_
 and _Type system_ sections for details.
 
-
 ## Reverse dependencies troubleshooting
 
 The following errors are caused by breaking changes.
@@ -227,6 +226,8 @@ The following errors are caused by breaking changes.
 * `vec_as_names()` now has more informative error messages when names
   are not unique (#882).
 
+* `vec_as_names()` gains a `repair_arg` argument that when set will cause
+  `repair = "check_unique"` to generate an informative hint (#692).
 
 ## CRAN results
 
