@@ -55,5 +55,5 @@ vec_recycle <- function(x, size, ..., x_arg = "") {
 #' @export
 #' @rdname vec_recycle
 vec_recycle_common <- function(..., .size = NULL) {
-  .External2(vctrs_recycle_common, .size)
+  .External(vctrs_recycle_common, list2(...), .size)
 }

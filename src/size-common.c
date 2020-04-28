@@ -79,14 +79,13 @@ static SEXP vctrs_size2_common(SEXP x, SEXP y, struct counters* counters, void* 
 }
 
 // [[ register(external = TRUE) ]]
-SEXP vctrs_recycle_common(SEXP call, SEXP op, SEXP args, SEXP env) {
+SEXP vctrs_recycle_common(SEXP args) {
   args = CDR(args);
 
-  SEXP size = PROTECT(Rf_eval(CAR(args), env)); args = CDR(args);
+  SEXP xs = CAR(args); args = CDR(args);
+  SEXP size = CAR(args);
 
   R_len_t common;
-
-  SEXP xs = PROTECT(rlang_env_dots_list(env));
 
   if (size != R_NilValue) {
     common = size_validate(size, ".size");
@@ -94,9 +93,8 @@ SEXP vctrs_recycle_common(SEXP call, SEXP op, SEXP args, SEXP env) {
     common = vec_size_common(xs, -1);
   }
 
-  SEXP out = PROTECT(vec_recycle_common(xs, common));
+  SEXP out = vec_recycle_common(xs, common);
 
-  UNPROTECT(3);
   return out;
 }
 

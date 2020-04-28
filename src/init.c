@@ -259,7 +259,7 @@ static const R_CallMethodDef CallEntries[] = {
 extern SEXP vctrs_type_common(SEXP);
 extern SEXP vctrs_ptype_common_params(SEXP);
 extern SEXP vctrs_size_common(SEXP);
-extern SEXP vctrs_recycle_common(SEXP, SEXP, SEXP, SEXP);
+extern SEXP vctrs_recycle_common(SEXP);
 extern SEXP vctrs_cast_common(SEXP, SEXP, SEXP, SEXP);
 extern SEXP vctrs_rbind(SEXP, SEXP, SEXP, SEXP);
 extern SEXP vctrs_cbind(SEXP, SEXP, SEXP, SEXP);
@@ -270,7 +270,7 @@ static const R_ExternalMethodDef ExtEntries[] = {
   {"vctrs_type_common",                (DL_FUNC) &vctrs_type_common, 2},
   {"vctrs_ptype_common_params",        (DL_FUNC) &vctrs_ptype_common_params, 3},
   {"vctrs_size_common",                (DL_FUNC) &vctrs_size_common, 3},
-  {"vctrs_recycle_common",             (DL_FUNC) &vctrs_recycle_common, 1},
+  {"vctrs_recycle_common",             (DL_FUNC) &vctrs_recycle_common, 2},
   {"vctrs_cast_common",                (DL_FUNC) &vctrs_cast_common, 1},
   {"vctrs_rbind",                      (DL_FUNC) &vctrs_rbind, 3},
   {"vctrs_cbind",                      (DL_FUNC) &vctrs_cbind, 3},
