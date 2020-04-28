@@ -3,22 +3,22 @@
 
 
 // [[ register(external = TRUE) ]]
-SEXP vctrs_size_common(SEXP call, SEXP op, SEXP args, SEXP env) {
+SEXP vctrs_size_common(SEXP args) {
   args = CDR(args);
 
-  SEXP size = PROTECT(Rf_eval(CAR(args), env)); args = CDR(args);
+  SEXP xs = CAR(args); args = CDR(args);
+
+  SEXP size = CAR(args); args = CDR(args);
   if (size != R_NilValue) {
     R_len_t out = size_validate(size, ".size");
-    UNPROTECT(1);
     return r_int(out);
   }
 
-  SEXP absent = PROTECT(Rf_eval(CAR(args), env));
+  SEXP absent = CAR(args);
   if (absent != R_NilValue && (TYPEOF(absent) != INTSXP || Rf_length(absent) != 1)) {
     Rf_errorcall(R_NilValue, "`.absent` must be a single integer.");
   }
 
-  SEXP xs = PROTECT(rlang_env_dots_list(env));
   R_len_t common = vec_size_common(xs, -1);
 
   SEXP out;
@@ -31,7 +31,6 @@ SEXP vctrs_size_common(SEXP call, SEXP op, SEXP args, SEXP env) {
     out = r_int(common);
   }
 
-  UNPROTECT(3);
   return out;
 }
 
