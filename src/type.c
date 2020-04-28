@@ -179,15 +179,14 @@ static SEXP vec_ptype_finalise_dispatch(SEXP x) {
 static SEXP vctrs_type2_common(SEXP current, SEXP next, struct counters* counters, void* data);
 
 // [[ register(external = TRUE) ]]
-SEXP vctrs_type_common(SEXP call, SEXP op, SEXP args, SEXP env) {
+SEXP vctrs_type_common(SEXP args) {
   args = CDR(args);
 
-  SEXP types = PROTECT(rlang_env_dots_values(env));
-  SEXP ptype = PROTECT(Rf_eval(CAR(args), env));
+  SEXP dots = CAR(args); args = CDR(args);
+  SEXP ptype = CAR(args);
 
-  SEXP out = vec_ptype_common_params(types, ptype, false);
+  SEXP out = vec_ptype_common_params(dots, ptype, false);
 
-  UNPROTECT(2);
   return out;
 }
 

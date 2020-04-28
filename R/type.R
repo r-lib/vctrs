@@ -93,7 +93,7 @@ vec_ptype <- function(x, ..., x_arg = "") {
 #' @export
 #' @rdname vec_ptype
 vec_ptype_common <- function(..., .ptype = NULL) {
-  .External2(vctrs_type_common, .ptype)
+  .External(vctrs_type_common, dots_values(...), .ptype)
 }
 vec_ptype_common_params <- function(..., .ptype = NULL, .df_fallback = FALSE) {
   .External2(vctrs_ptype_common_params, .ptype, .df_fallback)
