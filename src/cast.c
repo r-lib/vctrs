@@ -239,15 +239,14 @@ SEXP vec_cast_common(SEXP xs, SEXP to) {
 }
 
 // [[ register(external = TRUE) ]]
-SEXP vctrs_cast_common(SEXP call, SEXP op, SEXP args, SEXP env) {
+SEXP vctrs_cast_common(SEXP args) {
   args = CDR(args);
 
-  SEXP dots = PROTECT(rlang_env_dots_list(env));
-  SEXP to = PROTECT(Rf_eval(CAR(args), env));
+  SEXP dots = CAR(args); args = CDR(args);
+  SEXP to = CAR(args);
 
   SEXP out = vec_cast_common(dots, to);
 
-  UNPROTECT(2);
   return out;
 }
 

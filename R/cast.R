@@ -127,7 +127,7 @@ vec_cast_dispatch <- function(x, to, ..., x_arg = "", to_arg = "") {
 #' @export
 #' @rdname vec_cast
 vec_cast_common <- function(..., .to = NULL) {
-  .External2(vctrs_cast_common, .to)
+  .External(vctrs_cast_common, list2(...), .to)
 }
 
 #' Default cast method
