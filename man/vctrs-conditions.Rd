@@ -15,8 +15,8 @@ stop_incompatible_type(
   y,
   x_arg = "",
   y_arg = "",
-  details = NULL,
   ...,
+  details = NULL,
   message = NULL,
   class = NULL
 )
@@ -24,10 +24,10 @@ stop_incompatible_type(
 stop_incompatible_cast(
   x,
   y,
-  details = NULL,
   ...,
   x_arg = "",
   to_arg = "",
+  details = NULL,
   message = NULL,
   class = NULL
 )
@@ -49,8 +49,8 @@ stop_incompatible_size(
   y_size,
   x_arg = "",
   y_arg = "",
-  details = NULL,
   ...,
+  details = NULL,
   message = NULL,
   class = NULL
 )
@@ -61,10 +61,10 @@ maybe_lossy_cast(
   to,
   lossy = NULL,
   locations = NULL,
-  details = NULL,
   ...,
   x_arg = "",
   to_arg = "",
+  details = NULL,
   message = NULL,
   class = NULL,
   .deprecation = FALSE
@@ -75,9 +75,12 @@ allow_lossy_cast(expr, x_ptype = NULL, to_ptype = NULL)
 \arguments{
 \item{x, y}{Vectors}
 
-\item{details}{Any additional human readable details}
+\item{..., class}{Only use these fields when creating a subclass.}
 
-\item{..., message, class}{Only use these fields when creating a subclass.}
+\item{details}{Any additional human readable details.}
+
+\item{message}{An overriding message for the error. \code{details} and
+\code{message} are mutually exclusive, supplying both is an error.}
 
 \item{result}{The result of a potentially lossy cast.}
 
@@ -101,7 +104,7 @@ to wrap their code with \code{allow_lossy_cast()}.}
 \item{x_ptype, to_ptype}{Suppress only the casting errors where \code{x}
 or \code{to} match these \link[=vec_ptype]{prototypes}.}
 
-\item{subclass}{Use if you want to further customise the class}
+\item{subclass}{Use if you want to further customise the class.}
 }
 \value{
 \verb{stop_incompatible_*()} unconditionally raise an error of class
