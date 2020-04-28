@@ -190,16 +190,15 @@ SEXP vctrs_type_common(SEXP args) {
   return out;
 }
 
-SEXP vctrs_ptype_common_params(SEXP call, SEXP op, SEXP args, SEXP env) {
+SEXP vctrs_ptype_common_params(SEXP args) {
   args = CDR(args);
 
-  SEXP types = PROTECT(rlang_env_dots_values(env));
-  SEXP ptype = PROTECT(Rf_eval(CAR(args), env)); args = CDR(args);
-  SEXP df_fallback = PROTECT(Rf_eval(CAR(args), env));
+  SEXP dots = CAR(args); args = CDR(args);
+  SEXP ptype = CAR(args); args = CDR(args);
+  SEXP df_fallback = CAR(args);
 
-  SEXP out = vec_ptype_common_params(types, ptype, r_lgl_get(df_fallback, 0));
+  SEXP out = vec_ptype_common_params(dots, ptype, r_lgl_get(df_fallback, 0));
 
-  UNPROTECT(3);
   return out;
 }
 
