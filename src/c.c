@@ -5,20 +5,20 @@
 
 
 // [[ register(external = TRUE) ]]
-SEXP vctrs_c(SEXP call, SEXP op, SEXP args, SEXP env) {
+SEXP vctrs_c(SEXP args) {
   args = CDR(args);
 
-  SEXP xs = PROTECT(rlang_env_dots_list(env));
-  SEXP ptype = PROTECT(Rf_eval(CAR(args), env)); args = CDR(args);
-  SEXP name_spec = PROTECT(Rf_eval(CAR(args), env)); args = CDR(args);
-  SEXP name_repair = PROTECT(Rf_eval(CAR(args), env));
+  SEXP xs = CAR(args); args = CDR(args);
+  SEXP ptype = CAR(args); args = CDR(args);
+  SEXP name_spec = CAR(args); args = CDR(args);
+  SEXP name_repair = CAR(args);
 
   struct name_repair_opts name_repair_opts = new_name_repair_opts(name_repair, args_empty, false);
   PROTECT_NAME_REPAIR_OPTS(&name_repair_opts);
 
   SEXP out = vec_c(xs, ptype, name_spec, &name_repair_opts);
 
-  UNPROTECT(5);
+  UNPROTECT(1);
   return out;
 }
 
