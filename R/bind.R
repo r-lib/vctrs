@@ -147,7 +147,7 @@ vec_rbind <- function(...,
                       .ptype = NULL,
                       .names_to = rlang::zap(),
                       .name_repair = c("unique", "universal", "check_unique")) {
-  .External2(vctrs_rbind, .ptype, .names_to, .name_repair)
+  .External(vctrs_rbind, list2(...), .ptype, .names_to, .name_repair)
 }
 vec_rbind <- fn_inline_formals(vec_rbind, ".name_repair")
 

@@ -261,7 +261,7 @@ extern SEXP vctrs_ptype_common_params(SEXP);
 extern SEXP vctrs_size_common(SEXP);
 extern SEXP vctrs_recycle_common(SEXP);
 extern SEXP vctrs_cast_common(SEXP);
-extern SEXP vctrs_rbind(SEXP, SEXP, SEXP, SEXP);
+extern SEXP vctrs_rbind(SEXP);
 extern SEXP vctrs_cbind(SEXP, SEXP, SEXP, SEXP);
 extern SEXP vctrs_c(SEXP, SEXP, SEXP, SEXP);
 extern SEXP vctrs_new_data_frame(SEXP);
@@ -272,7 +272,7 @@ static const R_ExternalMethodDef ExtEntries[] = {
   {"vctrs_size_common",                (DL_FUNC) &vctrs_size_common, 3},
   {"vctrs_recycle_common",             (DL_FUNC) &vctrs_recycle_common, 2},
   {"vctrs_cast_common",                (DL_FUNC) &vctrs_cast_common, 2},
-  {"vctrs_rbind",                      (DL_FUNC) &vctrs_rbind, 3},
+  {"vctrs_rbind",                      (DL_FUNC) &vctrs_rbind, 4},
   {"vctrs_cbind",                      (DL_FUNC) &vctrs_cbind, 3},
   {"vctrs_c",                          (DL_FUNC) &vctrs_c, 3},
   {"vctrs_new_data_frame",             (DL_FUNC) &vctrs_new_data_frame, -1},

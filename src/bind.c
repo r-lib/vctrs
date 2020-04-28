@@ -14,13 +14,13 @@ static SEXP vec_cbind(SEXP xs, SEXP ptype, SEXP size, struct name_repair_opts* n
 static SEXP cbind_names_to(bool has_names, SEXP names_to, SEXP ptype);
 
 // [[ register(external = TRUE) ]]
-SEXP vctrs_rbind(SEXP call, SEXP op, SEXP args, SEXP env) {
+SEXP vctrs_rbind(SEXP args) {
   args = CDR(args);
 
-  SEXP xs = PROTECT(rlang_env_dots_list(env));
-  SEXP ptype = PROTECT(Rf_eval(CAR(args), env)); args = CDR(args);
-  SEXP names_to = PROTECT(Rf_eval(CAR(args), env)); args = CDR(args);
-  SEXP name_repair = PROTECT(Rf_eval(CAR(args), env));
+  SEXP xs = CAR(args); args = CDR(args);
+  SEXP ptype = CAR(args); args = CDR(args);
+  SEXP names_to = CAR(args); args = CDR(args);
+  SEXP name_repair = CAR(args);
 
   if (names_to != R_NilValue) {
     if (Rf_inherits(names_to, "rlang_zap")) {
@@ -38,7 +38,7 @@ SEXP vctrs_rbind(SEXP call, SEXP op, SEXP args, SEXP env) {
 
   SEXP out = vec_rbind(xs, ptype, names_to, &name_repair_opts);
 
-  UNPROTECT(5);
+  UNPROTECT(1);
   return out;
 }
 
