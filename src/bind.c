@@ -306,20 +306,20 @@ static SEXP as_df_col(SEXP x, SEXP outer, bool* allow_pack);
 static SEXP cbind_container_type(SEXP x, void* data);
 
 // [[ register(external = TRUE) ]]
-SEXP vctrs_cbind(SEXP call, SEXP op, SEXP args, SEXP env) {
+SEXP vctrs_cbind(SEXP args) {
   args = CDR(args);
 
-  SEXP xs = PROTECT(rlang_env_dots_list(env));
-  SEXP ptype = PROTECT(Rf_eval(CAR(args), env)); args = CDR(args);
-  SEXP size = PROTECT(Rf_eval(CAR(args), env)); args = CDR(args);
-  SEXP name_repair = PROTECT(Rf_eval(CAR(args), env));
+  SEXP xs = CAR(args); args = CDR(args);
+  SEXP ptype = CAR(args); args = CDR(args);
+  SEXP size = CAR(args); args = CDR(args);
+  SEXP name_repair = CAR(args);
 
   struct name_repair_opts name_repair_opts = validate_bind_name_repair(name_repair, true);
   PROTECT_NAME_REPAIR_OPTS(&name_repair_opts);
 
   SEXP out = vec_cbind(xs, ptype, size, &name_repair_opts);
 
-  UNPROTECT(5);
+  UNPROTECT(1);
   return out;
 }
 
