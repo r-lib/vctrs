@@ -6,7 +6,7 @@ test_that("conditions inherit from `vctrs_error`", {
   expect_error(stop_incompatible_cast(NULL, NULL), class = "vctrs_error")
   expect_error(stop_incompatible_op("", NULL, NULL), class = "vctrs_error")
   expect_error(stop_incompatible_size(NULL, NULL, 0, 0), class = "vctrs_error")
-  expect_error(maybe_lossy_cast(NULL, NULL, NULL, TRUE), class = "vctrs_error")
+  expect_error(maybe_lossy_cast(NULL, NULL, NULL, TRUE, x_arg = "x", to_arg = "to"), class = "vctrs_error")
   expect_error(stop_unsupported("", ""), class = "vctrs_error")
   expect_error(stop_unimplemented("", ""), class = "vctrs_error")
   expect_error(stop_scalar_type(NULL), class = "vctrs_error")
@@ -17,7 +17,10 @@ test_that("conditions inherit from `vctrs_error`", {
 })
 
 test_that("incompatible cast throws an incompatible type error", {
-  expect_error(stop_incompatible_cast(1, 1), class = "vctrs_error_incompatible_type")
+  expect_error(
+    stop_incompatible_cast(1, 1, x_arg = "x", to_arg = "to"),
+    class = "vctrs_error_incompatible_type"
+  )
 })
 
 test_that("can override arg in OOB conditions", {
@@ -104,12 +107,12 @@ test_that("unique names errors are informative", {
 
 test_that("can't supply both `message` and `details`", {
   expect_error(
-    stop_incompatible_type(1, 2, message = "my message"),
+    stop_incompatible_type(1, 2, message = "my message", x_arg = "x", y_arg = "y"),
     "my message",
     class = "vctrs_error_incompatible_type"
   )
   expect_error(
-    stop_incompatible_type(1, 2, message = "my message", details = "my details"),
+    stop_incompatible_type(1, 2, message = "my message", details = "my details", x_arg = "x", y_arg = "y"),
     "Can't supply both `message` and `details`."
   )
 })

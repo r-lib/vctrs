@@ -102,7 +102,15 @@ test_that("can signal deprecation warnings for lossy casts", {
   local_lifecycle_warnings()
 
   lossy_cast <- function() {
-    maybe_lossy_cast(TRUE, factor("foo"), factor("bar"), lossy = TRUE, .deprecation = TRUE)
+    maybe_lossy_cast(
+      TRUE,
+      factor("foo"),
+      factor("bar"),
+      lossy = TRUE,
+      .deprecation = TRUE,
+      x_arg = "x",
+      to_arg = "to"
+    )
   }
 
   expect_true(expect_warning(lossy_cast(), "detected a lossy transformation"))

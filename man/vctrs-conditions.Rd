@@ -13,9 +13,9 @@
 stop_incompatible_type(
   x,
   y,
-  x_arg = "",
-  y_arg = "",
   ...,
+  x_arg,
+  y_arg,
   details = NULL,
   message = NULL,
   class = NULL
@@ -25,8 +25,8 @@ stop_incompatible_cast(
   x,
   y,
   ...,
-  x_arg = "",
-  to_arg = "",
+  x_arg,
+  to_arg,
   details = NULL,
   message = NULL,
   class = NULL
@@ -47,9 +47,9 @@ stop_incompatible_size(
   y,
   x_size,
   y_size,
-  x_arg = "",
-  y_arg = "",
   ...,
+  x_arg,
+  y_arg,
   details = NULL,
   message = NULL,
   class = NULL
@@ -62,8 +62,8 @@ maybe_lossy_cast(
   lossy = NULL,
   locations = NULL,
   ...,
-  x_arg = "",
-  to_arg = "",
+  x_arg,
+  to_arg,
   details = NULL,
   message = NULL,
   class = NULL,
@@ -134,14 +134,35 @@ returns the result silently.
 \examples{
 
 # Most of the time, `maybe_lossy_cast()` returns its input normally:
-maybe_lossy_cast(c("foo", "bar"), NULL, "", lossy = c(FALSE, FALSE))
+maybe_lossy_cast(
+  c("foo", "bar"),
+  NULL,
+  "",
+  lossy = c(FALSE, FALSE),
+  x_arg = "",
+  to_arg = ""
+)
 
 # If `lossy` has any `TRUE`, an error is thrown:
-try(maybe_lossy_cast(c("foo", "bar"), NULL, "", lossy = c(FALSE, TRUE)))
+try(maybe_lossy_cast(
+  c("foo", "bar"),
+  NULL,
+  "",
+  lossy = c(FALSE, TRUE),
+  x_arg = "",
+  to_arg = ""
+))
 
 # Unless lossy casts are allowed:
 allow_lossy_cast(
-  maybe_lossy_cast(c("foo", "bar"), NULL, "", lossy = c(FALSE, TRUE))
+  maybe_lossy_cast(
+    c("foo", "bar"),
+    NULL,
+    "",
+    lossy = c(FALSE, TRUE),
+    x_arg = "",
+    to_arg = ""
+  )
 )
 
 }
