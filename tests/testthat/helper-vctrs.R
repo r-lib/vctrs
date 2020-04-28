@@ -11,3 +11,7 @@ vec_ptype2_fallback <- function(x, y, ...) {
 vec_ptype_common_fallback <- function(..., .ptype = NULL) {
   vec_ptype_common_params(..., .ptype = .ptype, .df_fallback = TRUE)
 }
+
+shaped_int <- function(...) {
+  array(NA_integer_, c(...))
+}
