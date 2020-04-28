@@ -264,9 +264,10 @@ test_that("vec_c() fallback doesn't support `name_spec` or `ptype`", {
       with_c_foobar(vec_c(foobar(1), foobar(2), .name_spec = "{outer}_{inner}")),
       "name specification"
     )
+    # Used to be an error about `ptype`
     expect_error(
       with_c_foobar(vec_c(foobar(1), foobar(2), .ptype = "")),
-      "prototype"
+      class = "vctrs_error_incompatible_type"
     )
   })
 })
@@ -282,6 +283,18 @@ test_that("vec_c() doesn't fall back when ptype2 is implemented", {
     {
       expect_is(c(foobar(1:3), foobar(4L)), "vctrs_foobar")
       expect_is(vec_c(foobar(1:3), foobar(4L)), "vctrs_quux")
+    }
+  )
+})
+
+test_that("vec_c() falls back even when ptype is supplied", {
+  expect_foobar(vec_c(foobar(1), foobar(2), .ptype = foobar(dbl())))
+
+  with_methods(
+    c.vctrs_foobar = function(...) quux(NextMethod()),
+    {
+      expect_quux(vec_c(foobar(1), foobar(2), .ptype = foobar(dbl())))
+      expect_quux(vec_c(foobar(1, foo = TRUE), foobar(2, bar = TRUE), .ptype = foobar(dbl())))
     }
   )
 })

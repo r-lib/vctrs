@@ -624,9 +624,10 @@ test_that("vec_unchop() fallback doesn't support `name_spec` or `ptype`", {
       with_c_foobar(vec_unchop(list(foo, bar), name_spec = "{outer}_{inner}")),
       "name specification"
     )
+    # Used to be an error about `ptype`
     expect_error(
       with_c_foobar(vec_unchop(list(foobar(1)), ptype = "")),
-      "prototype"
+      class = "vctrs_error_incompatible_type"
     )
   })
 })
