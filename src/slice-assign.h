@@ -19,4 +19,6 @@ SEXP list_assign(SEXP out, SEXP index, SEXP value, bool owned);
 SEXP df_assign(SEXP x, SEXP index, SEXP value,
                const struct vec_assign_opts* opts);
 
+SEXP vec_assign_shaped(SEXP proxy, SEXP index, SEXP value, const struct vec_assign_opts* opts);
+
 #endif

@@ -179,7 +179,7 @@ SEXP vec_proxy_assign_opts(SEXP proxy, SEXP index, SEXP value,
     REPROTECT(index, index_pi);
     out = PROTECT(vec_assign_fallback(proxy, index, value));
   } else if (has_dim(proxy)) {
-    out = PROTECT(vec_assign_shaped(proxy, index, value_info.proxy));
+    out = PROTECT(vec_assign_shaped(proxy, index, value_info.proxy, opts));
   } else {
     out = PROTECT(vec_assign_switch(proxy, index, value_info.proxy, opts));
   }
