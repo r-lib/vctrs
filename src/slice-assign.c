@@ -145,12 +145,32 @@ SEXP vec_proxy_assign_names(SEXP proxy, SEXP index, SEXP value) {
   return proxy;
 }
 
-
-// `vec_proxy_assign()` will duplicate the `proxy` if it is referenced or
-// marked as not mutable. Otherwise, `vec_proxy_assign()` will assign
-// directly into the `proxy`. Even though it can directly assign, the safe
-// way to call `vec_proxy_assign()` is to catch and protect its output rather
-// than relying on it to assign directly.
+// `vec_proxy_assign_opts()` conditionally duplicates the `proxy` depending
+// on a number of factors.
+//
+// - If a fallback is required, the `proxy` is duplicated at the R level.
+// - If `opts->owned` is `true`, the `proxy` is only duplicated if it is
+//   shared, i.e. `MAYBE_SHARED()` returns `true`.
+// - If `opts->owned` is `false`, the `proxy` is only duplicated if it is
+//   referenced, i.e. `MAYBE_REFERENCED()` returns `true`.
+//
+// Ownership of the `proxy` must be recursive. For data frames, the `owned`
+// argument is passed along to each column.
+//
+// Practically, we only set `owned = true` when we create a fresh data structure
+// at the C level and then assign into it to fill it. This happens in `vec_c()`
+// and `vec_rbind()`. For data frames, this `owned` parameter is particularly
+// important for R 4.0.0 where references are tracked more precisely. In R 4.0.0,
+// a freshly created data frame's columns all have a refcount of 1 because of
+// the `SET_VECTOR_ELT()` call that set them in the data frame. This makes them
+// referenced, but not shared. If `owned = false` was set and `df_assign()` was
+// used in a loop (as it is in `vec_rbind()`), then a copy of each column would
+// be made at each iteration of the loop (any time a new set of rows is assigned
+// into the output object).
+//
+// Even though it can directly assign, the safe
+// way to call `vec_proxy_assign()` and `vec_proxy_assign_opts()` is to catch
+// and protect their output rather than relying on them to assign directly.
 
 /*
  * @param proxy The proxy of the output container
