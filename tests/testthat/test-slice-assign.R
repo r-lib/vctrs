@@ -591,15 +591,41 @@ test_that("can optionally assign names", {
 })
 
 test_that("assignment to a data frame with unreferenced columns doesn't overwrite (#986)", {
-  x <- new_df_unreferenced_col()
+  x <- new_df_unshared_col()
   value <- new_data_frame(list(x = 2))
   expect <- new_data_frame(list(x = 1L))
 
-  expect_false(maybe_referenced_col(x, 1L))
+  # - On R < 4.0.0, the NAMED value of the column is 0.
+  # - On R >= 4.0.0, the refcnt of the column is 1 from the call to
+  #   `SET_VECTOR_ELT()` in `new_df_unshared_col()`.
+  expect_false(maybe_shared_col(x, 1L))
 
   new <- vec_assign(x, 1, value)
 
-  expect_true(maybe_referenced_col(x, 1L))
+  # On R < 4.0.0, `vec_assign()` shallow duplicates `x`, which recursively
+  # bumps the NAMED-ness of each column of `x` to the max value of 7 by
+  # calling `ENSURE_NAMEDMAX()` on it. So the columns of `x` are all considered
+  # shared from that.
+
+  # On R >= 4.0.0, references are tracked more precisely.
+  # - `new_df_unshared_col()` calls `SET_VECTOR_ELT()` when setting the
+  #   column into `x`, bumping the column's namedness to 1.
+  # - Then, at the start of `df_assign()`, `x` is shallow duplicated and
+  #   assigned to `out`. This calls `ENSURE_NAMEDMAX()` on each column,
+  #   however this does nothing on R 4.0.0. The refcnt of each column is instead
+  #   incremented by 1 by calls to `SET_VECTOR_ELT()` in `duplicate1()`.
+  #   So now it is at 2.
+  # - But then in `df_assign()` we use `SET_VECTOR_ELT()` on `out`, overwriting
+  #   each column. This actually decrements the refcnt on the value that was
+  #   in `out` before the column was overwritten. The column of `out` that it
+  #   decrements the refcnt for is the same SEXP as that column in `x`, so now
+  #   it is back to 1, and it is not considered shared.
+
+  if (getRversion() >= "4.0.0") {
+    expect_false(maybe_shared_col(x, 1L))
+  } else {
+    expect_true(maybe_shared_col(x, 1L))
+  }
 
   # Expect no changes to `x`!
   expect_identical(x, expect)

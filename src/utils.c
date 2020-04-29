@@ -188,19 +188,23 @@ static SEXP vctrs_eval_mask_n_impl(SEXP fn, SEXP* syms, SEXP* args, SEXP mask) {
 }
 
 // [[ register() ]]
-SEXP vctrs_maybe_referenced_col(SEXP x, SEXP i) {
+SEXP vctrs_maybe_shared_col(SEXP x, SEXP i) {
   int i_ = r_int_get(i, 0) - 1;
   SEXP col = VECTOR_ELT(x, i_);
-  bool out = MAYBE_REFERENCED(col);
+  bool out = MAYBE_SHARED(col);
   return Rf_ScalarLogical(out);
 }
 
 // [[ register() ]]
-SEXP vctrs_new_df_unreferenced_col() {
+SEXP vctrs_new_df_unshared_col() {
   SEXP col = PROTECT(Rf_allocVector(INTSXP, 1));
   INTEGER(col)[0] = 1;
 
   SEXP out = PROTECT(Rf_allocVector(VECSXP, 1));
+
+  // In R 4.0.0, `SET_VECTOR_ELT()` bumps the REFCNT of
+  // `col`. Because of this, `col` is now referenced (refcnt > 0),
+  // but it isn't shared (refcnt > 1).
   SET_VECTOR_ELT(out, 0, col);
 
   SEXP names = PROTECT(Rf_allocVector(STRSXP, 1));

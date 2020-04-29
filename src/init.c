@@ -106,8 +106,8 @@ extern SEXP vctrs_assign_params(SEXP, SEXP, SEXP, SEXP, SEXP);
 extern SEXP vctrs_has_dim(SEXP);
 extern SEXP vctrs_rep(SEXP, SEXP);
 extern SEXP vctrs_rep_each(SEXP, SEXP);
-extern SEXP vctrs_maybe_referenced_col(SEXP, SEXP);
-extern SEXP vctrs_new_df_unreferenced_col();
+extern SEXP vctrs_maybe_shared_col(SEXP, SEXP);
+extern SEXP vctrs_new_df_unshared_col();
 extern SEXP vctrs_shaped_ptype(SEXP, SEXP, SEXP, SEXP, SEXP);
 extern SEXP vctrs_shape2(SEXP, SEXP, SEXP, SEXP);
 extern SEXP vctrs_new_date(SEXP);
@@ -243,8 +243,8 @@ static const R_CallMethodDef CallEntries[] = {
   {"vctrs_has_dim",                    (DL_FUNC) &vctrs_has_dim, 1},
   {"vctrs_rep",                        (DL_FUNC) &vctrs_rep, 2},
   {"vctrs_rep_each",                   (DL_FUNC) &vctrs_rep_each, 2},
-  {"vctrs_maybe_referenced_col",       (DL_FUNC) &vctrs_maybe_referenced_col, 2},
-  {"vctrs_new_df_unreferenced_col",    (DL_FUNC) &vctrs_new_df_unreferenced_col, 0},
+  {"vctrs_maybe_shared_col",           (DL_FUNC) &vctrs_maybe_shared_col, 2},
+  {"vctrs_new_df_unshared_col",        (DL_FUNC) &vctrs_new_df_unshared_col, 0},
   {"vctrs_shaped_ptype",               (DL_FUNC) &vctrs_shaped_ptype, 5},
   {"vctrs_shape2",                     (DL_FUNC) &vctrs_shape2, 4},
   {"vctrs_new_date",                   (DL_FUNC) &vctrs_new_date, 1},
