@@ -348,6 +348,12 @@ SEXP df_assign(SEXP x, SEXP index, SEXP value,
   SEXP out = PROTECT(r_maybe_duplicate(x));
   R_len_t n = Rf_length(out);
 
+  if (Rf_length(value) != n) {
+    Rf_error("Internal error in `df_assign()`: Can't assign %d columns to df of length %d.",
+             Rf_length(value),
+             n);
+  }
+
   for (R_len_t i = 0; i < n; ++i) {
     SEXP out_elt = VECTOR_ELT(out, i);
     SEXP value_elt = VECTOR_ELT(value, i);
