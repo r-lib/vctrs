@@ -14,13 +14,13 @@ const struct vec_assign_opts vec_assign_default_opts = {
 };
 
 static SEXP vec_assign_fallback(SEXP x, SEXP index, SEXP value);
-static SEXP lgl_assign(SEXP x, SEXP index, SEXP value);
-static SEXP int_assign(SEXP x, SEXP index, SEXP value);
-static SEXP dbl_assign(SEXP x, SEXP index, SEXP value);
-static SEXP cpl_assign(SEXP x, SEXP index, SEXP value);
-SEXP chr_assign(SEXP x, SEXP index, SEXP value);
-static SEXP raw_assign(SEXP x, SEXP index, SEXP value);
-SEXP list_assign(SEXP x, SEXP index, SEXP value);
+static SEXP lgl_assign(SEXP x, SEXP index, SEXP value, bool owned);
+static SEXP int_assign(SEXP x, SEXP index, SEXP value, bool owned);
+static SEXP dbl_assign(SEXP x, SEXP index, SEXP value, bool owned);
+static SEXP cpl_assign(SEXP x, SEXP index, SEXP value, bool owned);
+SEXP chr_assign(SEXP x, SEXP index, SEXP value, bool owned);
+static SEXP raw_assign(SEXP x, SEXP index, SEXP value, bool owned);
+SEXP list_assign(SEXP x, SEXP index, SEXP value, bool owned);
 
 // [[ register() ]]
 SEXP vctrs_assign(SEXP x, SEXP index, SEXP value, SEXP x_arg_, SEXP value_arg_) {
@@ -107,13 +107,13 @@ SEXP vctrs_assign_params(SEXP x, SEXP index, SEXP value,
 static SEXP vec_assign_switch(SEXP proxy, SEXP index, SEXP value,
                               const struct vec_assign_opts* opts) {
   switch (vec_proxy_typeof(proxy)) {
-  case vctrs_type_logical:   return lgl_assign(proxy, index, value);
-  case vctrs_type_integer:   return int_assign(proxy, index, value);
-  case vctrs_type_double:    return dbl_assign(proxy, index, value);
-  case vctrs_type_complex:   return cpl_assign(proxy, index, value);
-  case vctrs_type_character: return chr_assign(proxy, index, value);
-  case vctrs_type_raw:       return raw_assign(proxy, index, value);
-  case vctrs_type_list:      return list_assign(proxy, index, value);
+  case vctrs_type_logical:   return lgl_assign(proxy, index, value, opts->owned);
+  case vctrs_type_integer:   return int_assign(proxy, index, value, opts->owned);
+  case vctrs_type_double:    return dbl_assign(proxy, index, value, opts->owned);
+  case vctrs_type_complex:   return cpl_assign(proxy, index, value, opts->owned);
+  case vctrs_type_character: return chr_assign(proxy, index, value, opts->owned);
+  case vctrs_type_raw:       return raw_assign(proxy, index, value, opts->owned);
+  case vctrs_type_list:      return list_assign(proxy, index, value, opts->owned);
   case vctrs_type_dataframe: return df_assign(proxy, index, value, opts);
   case vctrs_type_scalar:    stop_scalar_type(proxy, args_empty);
   default:                   vctrs_stop_unsupported_type(vec_typeof(proxy), "vec_assign_switch()");
@@ -136,7 +136,7 @@ SEXP vec_proxy_assign_names(SEXP proxy, SEXP index, SEXP value) {
     PROTECT(proxy_nms);
   }
 
-  proxy_nms = PROTECT(chr_assign(proxy_nms, index, value_nms));
+  proxy_nms = PROTECT(chr_assign(proxy_nms, index, value_nms, false));
 
   proxy = PROTECT(r_maybe_duplicate(proxy));
   proxy = vec_set_names(proxy, proxy_nms);
@@ -202,7 +202,14 @@ SEXP vec_proxy_assign_opts(SEXP proxy, SEXP index, SEXP value,
   }                                                             \
                                                                 \
   const CTYPE* value_data = CONST_DEREF(value);                 \
-  SEXP out = PROTECT(r_maybe_duplicate(x));                     \
+                                                                \
+  SEXP out;                                                     \
+  if (owned) {                                                  \
+    out = PROTECT(r_maybe_duplicate_shared(x));                 \
+  } else {                                                      \
+    out = PROTECT(r_maybe_duplicate(x));                        \
+  }                                                             \
+                                                                \
   CTYPE* out_data = DEREF(out);                                 \
                                                                 \
   for (R_len_t i = 0; i < n; ++i) {                             \
@@ -227,7 +234,14 @@ SEXP vec_proxy_assign_opts(SEXP proxy, SEXP index, SEXP value,
   }                                                             \
                                                                 \
   const CTYPE* value_data = CONST_DEREF(value);                 \
-  SEXP out = PROTECT(r_maybe_duplicate(x));                     \
+                                                                \
+  SEXP out;                                                     \
+  if (owned) {                                                  \
+    out = PROTECT(r_maybe_duplicate_shared(x));                 \
+  } else {                                                      \
+    out = PROTECT(r_maybe_duplicate(x));                        \
+  }                                                             \
+                                                                \
   CTYPE* out_data = DEREF(out) + start;                         \
                                                                 \
   for (int i = 0; i < n; ++i, out_data += step, ++value_data) { \
@@ -244,22 +258,22 @@ SEXP vec_proxy_assign_opts(SEXP proxy, SEXP index, SEXP value,
     ASSIGN_INDEX(CTYPE, DEREF, CONST_DEREF);    \
   }
 
-static SEXP lgl_assign(SEXP x, SEXP index, SEXP value) {
+static SEXP lgl_assign(SEXP x, SEXP index, SEXP value, bool owned) {
   ASSIGN(int, LOGICAL, LOGICAL_RO);
 }
-static SEXP int_assign(SEXP x, SEXP index, SEXP value) {
+static SEXP int_assign(SEXP x, SEXP index, SEXP value, bool owned) {
   ASSIGN(int, INTEGER, INTEGER_RO);
 }
-static SEXP dbl_assign(SEXP x, SEXP index, SEXP value) {
+static SEXP dbl_assign(SEXP x, SEXP index, SEXP value, bool owned) {
   ASSIGN(double, REAL, REAL_RO);
 }
-static SEXP cpl_assign(SEXP x, SEXP index, SEXP value) {
+static SEXP cpl_assign(SEXP x, SEXP index, SEXP value, bool owned) {
   ASSIGN(Rcomplex, COMPLEX, COMPLEX_RO);
 }
-SEXP chr_assign(SEXP x, SEXP index, SEXP value) {
+SEXP chr_assign(SEXP x, SEXP index, SEXP value, bool owned) {
   ASSIGN(SEXP, STRING_PTR, STRING_PTR_RO);
 }
-static SEXP raw_assign(SEXP x, SEXP index, SEXP value) {
+static SEXP raw_assign(SEXP x, SEXP index, SEXP value, bool owned) {
   ASSIGN(Rbyte, RAW, RAW_RO);
 }
 
@@ -277,7 +291,12 @@ static SEXP raw_assign(SEXP x, SEXP index, SEXP value) {
              "`value` should have been recycled to fit `x`.");  \
   }                                                             \
                                                                 \
-  SEXP out = PROTECT(r_maybe_duplicate(x));                     \
+  SEXP out;                                                     \
+  if (owned) {                                                  \
+    out = PROTECT(r_maybe_duplicate_shared(x));                 \
+  } else {                                                      \
+    out = PROTECT(r_maybe_duplicate(x));                        \
+  }                                                             \
                                                                 \
   for (R_len_t i = 0; i < n; ++i) {                             \
     int j = index_data[i];                                      \
@@ -300,7 +319,12 @@ static SEXP raw_assign(SEXP x, SEXP index, SEXP value) {
              "`value` should have been recycled to fit `x`.");  \
   }                                                             \
                                                                 \
-  SEXP out = PROTECT(r_maybe_duplicate(x));                     \
+  SEXP out;                                                     \
+  if (owned) {                                                  \
+    out = PROTECT(r_maybe_duplicate_shared(x));                 \
+  } else {                                                      \
+    out = PROTECT(r_maybe_duplicate(x));                        \
+  }                                                             \
                                                                 \
   for (R_len_t i = 0; i < n; ++i, start += step) {              \
     SET(out, start, GET(value, i));                             \
@@ -316,7 +340,7 @@ static SEXP raw_assign(SEXP x, SEXP index, SEXP value) {
     ASSIGN_BARRIER_INDEX(GET, SET);             \
   }
 
-SEXP list_assign(SEXP x, SEXP index, SEXP value) {
+SEXP list_assign(SEXP x, SEXP index, SEXP value, bool owned) {
   ASSIGN_BARRIER(VECTOR_ELT, SET_VECTOR_ELT);
 }
 
@@ -348,7 +372,13 @@ SEXP list_assign(SEXP x, SEXP index, SEXP value) {
  */
 SEXP df_assign(SEXP x, SEXP index, SEXP value,
                const struct vec_assign_opts* opts) {
-  SEXP out = PROTECT(r_maybe_duplicate(x));
+  SEXP out;
+  if (opts->owned) {
+    out = PROTECT(r_maybe_duplicate_shared(x));
+  } else {
+    out = PROTECT(r_maybe_duplicate(x));
+  }
+
   R_len_t n = Rf_length(out);
 
   if (Rf_length(value) != n) {

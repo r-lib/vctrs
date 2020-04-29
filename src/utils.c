@@ -1257,6 +1257,14 @@ SEXP r_maybe_duplicate(SEXP x) {
   }
 }
 
+SEXP r_maybe_duplicate_shared(SEXP x) {
+  if (MAYBE_SHARED(x)) {
+    return Rf_shallow_duplicate(x);
+  } else {
+    return x;
+  }
+}
+
 bool r_is_names(SEXP names) {
   if (names == R_NilValue) {
     return false;

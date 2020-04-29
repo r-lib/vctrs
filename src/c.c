@@ -99,7 +99,7 @@ SEXP vec_c(SEXP xs,
       SEXP x_nms = PROTECT(apply_name_spec(name_spec, outer, inner, size));
 
       if (x_nms != R_NilValue) {
-        out_names = chr_assign(out_names, idx, x_nms);
+        out_names = chr_assign(out_names, idx, x_nms, true);
         REPROTECT(out_names, out_names_pi);
       }
 
