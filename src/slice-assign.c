@@ -9,7 +9,8 @@ SEXP syms_vec_assign_fallback = NULL;
 SEXP fns_vec_assign_fallback = NULL;
 
 const struct vec_assign_opts vec_assign_default_opts = {
-  .assign_names = false
+  .assign_names = false,
+  .owned = false
 };
 
 static SEXP vec_assign_fallback(SEXP x, SEXP index, SEXP value);
@@ -28,6 +29,7 @@ SEXP vctrs_assign(SEXP x, SEXP index, SEXP value, SEXP x_arg_, SEXP value_arg_) 
 
   const struct vec_assign_opts opts = {
     .assign_names = false,
+    .owned = false,
     .x_arg = &x_arg,
     .value_arg = &value_arg
   };
@@ -94,9 +96,10 @@ SEXP vec_assign_opts(SEXP x, SEXP index, SEXP value,
 
 // [[ register() ]]
 SEXP vctrs_assign_params(SEXP x, SEXP index, SEXP value,
-                         SEXP assign_names) {
+                         SEXP assign_names, SEXP owned) {
   const struct vec_assign_opts opts =  {
-    .assign_names = r_bool_as_int(assign_names)
+    .assign_names = r_bool_as_int(assign_names),
+    .owned = r_bool_as_int(owned)
   };
   return vec_assign_opts(x, index, value, &opts);
 }

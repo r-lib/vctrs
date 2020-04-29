@@ -74,7 +74,8 @@ SEXP vec_c(SEXP xs,
   R_len_t counter = 0;
 
   const struct vec_assign_opts c_assign_opts = {
-    .assign_names = true
+    .assign_names = true,
+    .owned = true
   };
 
   for (R_len_t i = 0; i < n; ++i) {

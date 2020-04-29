@@ -3,6 +3,7 @@
 
 struct vec_assign_opts {
   bool assign_names;
+  bool owned;
   struct vctrs_arg* x_arg;
   struct vctrs_arg* value_arg;
 };

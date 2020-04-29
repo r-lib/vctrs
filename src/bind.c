@@ -150,7 +150,8 @@ static SEXP vec_rbind(SEXP xs, SEXP ptype, SEXP names_to, struct name_repair_opt
   R_len_t counter = 0;
 
   const struct vec_assign_opts bind_assign_opts = {
-    .assign_names = true
+    .assign_names = true,
+    .owned = true
   };
 
   for (R_len_t i = 0; i < n; ++i) {
