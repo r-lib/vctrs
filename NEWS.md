@@ -233,6 +233,16 @@ The following errors are caused by breaking changes.
 * `vec_as_names()` gains a `repair_arg` argument that when set will cause
   `repair = "check_unique"` to generate an informative hint (#692).
 
+
+## Conditions
+
+* `stop_` functions now take `details` after the dots. This argument
+  can no longer be passed by position.
+
+* Supplying both `details` and `message` to the `stop_` functions is
+  now an internal error.
+
+
 ## CRAN results
 
 * Fixed clang-UBSAN error "nan is outside the range of representable

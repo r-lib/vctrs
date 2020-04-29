@@ -6,9 +6,11 @@
 #' testing easier.
 #'
 #' @param x,y Vectors
-#' @param details Any additional human readable details
-#' @param subclass Use if you want to further customise the class
-#' @param ...,message,class Only use these fields when creating a subclass.
+#' @param subclass Use if you want to further customise the class.
+#' @param ...,class Only use these fields when creating a subclass.
+#' @param details Any additional human readable details.
+#' @param message An overriding message for the error. `details` and
+#'   `message` are mutually exclusive, supplying both is an error.
 #'
 #' @section Lossy cast errors:
 #'
@@ -44,7 +46,12 @@ stop_vctrs <- function(message = NULL, class = NULL, ...) {
   abort(message, class = c(class, "vctrs_error"), ...)
 }
 
-stop_incompatible <- function(x, y, details = NULL, ..., message = NULL, class = NULL) {
+stop_incompatible <- function(x,
+                              y,
+                              ...,
+                              details = NULL,
+                              message = NULL,
+                              class = NULL) {
   stop_vctrs(
     message,
     class = c(class, "vctrs_error_incompatible"),
@@ -65,8 +72,8 @@ stop_incompatible_type <- function(x,
                                    y,
                                    x_arg = "",
                                    y_arg = "",
-                                   details = NULL,
                                    ...,
+                                   details = NULL,
                                    message = NULL,
                                    class = NULL) {
   stop_incompatible_type_combine(
@@ -74,8 +81,8 @@ stop_incompatible_type <- function(x,
     y = y,
     x_arg = x_arg,
     y_arg = y_arg,
-    details = details,
     ...,
+    details = details,
     message = message,
     class = class
   )
@@ -85,10 +92,10 @@ stop_incompatible_type <- function(x,
 #' @export
 stop_incompatible_cast <- function(x,
                                    y,
-                                   details = NULL,
                                    ...,
                                    x_arg = "",
                                    to_arg = "",
+                                   details = NULL,
                                    message = NULL,
                                    class = NULL) {
   stop_incompatible_type_convert(
@@ -96,8 +103,8 @@ stop_incompatible_cast <- function(x,
     y = y,
     x_arg = x_arg,
     y_arg = to_arg,
-    details = details,
     ...,
+    details = details,
     message = message,
     class = class
   )
@@ -114,8 +121,8 @@ stop_incompatible_type_convert <- function(x,
                                            y,
                                            x_arg = "",
                                            y_arg = "",
-                                           details = NULL,
                                            ...,
+                                           details = NULL,
                                            message = NULL,
                                            class = NULL) {
   stop_incompatible_type_impl(
@@ -123,9 +130,9 @@ stop_incompatible_type_convert <- function(x,
     y = y,
     x_arg = x_arg,
     y_arg = y_arg,
-    details = details,
     action = "convert",
     ...,
+    details = details,
     message = message,
     class = class
   )
@@ -135,8 +142,8 @@ stop_incompatible_type_combine <- function(x,
                                            y,
                                            x_arg = "",
                                            y_arg = "",
-                                           details = NULL,
                                            ...,
+                                           details = NULL,
                                            message = NULL,
                                            class = NULL) {
   stop_incompatible_type_impl(
@@ -144,9 +151,9 @@ stop_incompatible_type_combine <- function(x,
     y = y,
     x_arg = x_arg,
     y_arg = y_arg,
-    details = details,
     action = "combine",
     ...,
+    details = details,
     message = message,
     class = class
   )
@@ -156,9 +163,9 @@ stop_incompatible_type_impl <- function(x,
                                         y,
                                         x_arg,
                                         y_arg,
-                                        details,
                                         action,
                                         ...,
+                                        details,
                                         message,
                                         class) {
   vec_assert(x)
@@ -221,6 +228,9 @@ cnd_type_message <- function(x,
                              from_dispatch = FALSE,
                              fallback = NULL) {
   if (!is_null(message)) {
+    if (!is_null(details)) {
+      abort("Can't supply both `message` and `details`.")
+    }
     return(message)
   }
 
@@ -324,8 +334,8 @@ stop_incompatible_op <- function(op, x, y, details = NULL, ..., message = NULL, 
 stop_incompatible_size <- function(x, y,
                                    x_size, y_size,
                                    x_arg = "", y_arg = "",
-                                   details = NULL,
                                    ...,
+                                   details = NULL,
                                    message = NULL,
                                    class = NULL) {
   vec_assert(x)
@@ -358,8 +368,8 @@ stop_incompatible_size <- function(x, y,
     y_size = y_size,
     x_arg = x_arg,
     y_arg = y_arg,
-    details = details,
     ...,
+    details = details,
     message = message,
     class = c(class, "vctrs_error_incompatible_size")
   )
@@ -384,10 +394,10 @@ stop_incompatible_size <- function(x, y,
 maybe_lossy_cast <- function(result, x, to,
                              lossy = NULL,
                              locations = NULL,
-                             details = NULL,
                              ...,
                              x_arg = "",
                              to_arg = "",
+                             details = NULL,
                              message = NULL,
                              class = NULL,
                              .deprecation = FALSE) {
@@ -408,10 +418,10 @@ maybe_lossy_cast <- function(result, x, to,
       to = to,
       result = result,
       locations = locations,
-      details = details,
       ...,
       x_arg = x_arg,
       to_arg = to_arg,
+      details = details,
       message = message,
       class = class
     )
@@ -419,10 +429,10 @@ maybe_lossy_cast <- function(result, x, to,
 }
 stop_lossy_cast <- function(x, to, result,
                             locations = NULL,
-                            details = NULL,
                             ...,
                             x_arg = "",
                             to_arg = "",
+                            details = NULL,
                             message = NULL,
                             class = NULL) {
   stop_vctrs(
@@ -434,8 +444,8 @@ stop_lossy_cast <- function(x, to, result,
     x_arg = x_arg,
     to_arg = to_arg,
     locations = locations,
-    details = details,
     ...,
+    details = details,
     class = c(class, "vctrs_error_cast_lossy")
   )
 }

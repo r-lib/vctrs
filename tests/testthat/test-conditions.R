@@ -102,6 +102,18 @@ test_that("unique names errors are informative", {
   })
 })
 
+test_that("can't supply both `message` and `details`", {
+  expect_error(
+    stop_incompatible_type(1, 2, message = "my message"),
+    "my message",
+    class = "vctrs_error_incompatible_type"
+  )
+  expect_error(
+    stop_incompatible_type(1, 2, message = "my message", details = "my details"),
+    "Can't supply both `message` and `details`."
+  )
+})
+
 verify_output(test_path("error", "test-conditions.txt"), {
   "# can override arg in OOB conditions"
   with_subscript_data(
