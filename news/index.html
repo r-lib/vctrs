@@ -271,6 +271,14 @@ vec_ptype2.foo.bar &lt;- function(x, y, ...) new_foo()</code></pre>
 <li><p><code><a href="../reference/vec_as_names.html">vec_as_names()</a></code> gains a <code>repair_arg</code> argument that when set will cause <code>repair = "check_unique"</code> to generate an informative hint (#692).</p></li>
 </ul>
 </div>
+<div id="conditions" class="section level2">
+<h2 class="hasAnchor">
+<a href="#conditions" class="anchor"></a>Conditions</h2>
+<ul>
+<li><p><code>stop_</code> functions now take <code>details</code> after the dots. This argument can no longer be passed by position.</p></li>
+<li><p>Supplying both <code>details</code> and <code>message</code> to the <code>stop_</code> functions is now an internal error.</p></li>
+</ul>
+</div>
 <div id="cran-results" class="section level2">
 <h2 class="hasAnchor">
 <a href="#cran-results" class="anchor"></a>CRAN results</h2>

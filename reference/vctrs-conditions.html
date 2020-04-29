@@ -162,8 +162,8 @@ testing easier.</p>
   <span class='no'>y</span>,
   <span class='kw'>x_arg</span> <span class='kw'>=</span> <span class='st'>""</span>,
   <span class='kw'>y_arg</span> <span class='kw'>=</span> <span class='st'>""</span>,
-  <span class='kw'>details</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
   <span class='no'>...</span>,
+  <span class='kw'>details</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
   <span class='kw'>message</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
   <span class='kw'>class</span> <span class='kw'>=</span> <span class='kw'>NULL</span>
 )
@@ -171,10 +171,10 @@ testing easier.</p>
 <span class='fu'>stop_incompatible_cast</span>(
   <span class='no'>x</span>,
   <span class='no'>y</span>,
-  <span class='kw'>details</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
   <span class='no'>...</span>,
   <span class='kw'>x_arg</span> <span class='kw'>=</span> <span class='st'>""</span>,
   <span class='kw'>to_arg</span> <span class='kw'>=</span> <span class='st'>""</span>,
+  <span class='kw'>details</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
   <span class='kw'>message</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
   <span class='kw'>class</span> <span class='kw'>=</span> <span class='kw'>NULL</span>
 )
@@ -196,8 +196,8 @@ testing easier.</p>
   <span class='no'>y_size</span>,
   <span class='kw'>x_arg</span> <span class='kw'>=</span> <span class='st'>""</span>,
   <span class='kw'>y_arg</span> <span class='kw'>=</span> <span class='st'>""</span>,
-  <span class='kw'>details</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
   <span class='no'>...</span>,
+  <span class='kw'>details</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
   <span class='kw'>message</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
   <span class='kw'>class</span> <span class='kw'>=</span> <span class='kw'>NULL</span>
 )
@@ -208,10 +208,10 @@ testing easier.</p>
   <span class='no'>to</span>,
   <span class='kw'>lossy</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
   <span class='kw'>locations</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>details</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
   <span class='no'>...</span>,
   <span class='kw'>x_arg</span> <span class='kw'>=</span> <span class='st'>""</span>,
   <span class='kw'>to_arg</span> <span class='kw'>=</span> <span class='st'>""</span>,
+  <span class='kw'>details</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
   <span class='kw'>message</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
   <span class='kw'>class</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
   <span class='kw'>.deprecation</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>
@@ -227,12 +227,17 @@ testing easier.</p>
       <td><p>Vectors</p></td>
     </tr>
     <tr>
-      <th>details</th>
-      <td><p>Any additional human readable details</p></td>
+      <th>..., class</th>
+      <td><p>Only use these fields when creating a subclass.</p></td>
     </tr>
     <tr>
-      <th>..., message, class</th>
-      <td><p>Only use these fields when creating a subclass.</p></td>
+      <th>details</th>
+      <td><p>Any additional human readable details.</p></td>
+    </tr>
+    <tr>
+      <th>message</th>
+      <td><p>An overriding message for the error. <code>details</code> and
+<code>message</code> are mutually exclusive, supplying both is an error.</p></td>
     </tr>
     <tr>
       <th>result</th>
@@ -269,7 +274,7 @@ or <code>to</code> match these <a href='vec_ptype.html'>prototypes</a>.</p></td>
     </tr>
     <tr>
       <th>subclass</th>
-      <td><p>Use if you want to further customise the class</p></td>
+      <td><p>Use if you want to further customise the class.</p></td>
     </tr>
     </table>
 
