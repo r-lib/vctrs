@@ -23,10 +23,8 @@ SEXP vec_restore_default(SEXP x, SEXP to) {
   attrib = PROTECT(Rf_shallow_duplicate(attrib));
   ++n_protect;
 
-  if (MAYBE_REFERENCED(x)) {
-    x = PROTECT(Rf_shallow_duplicate(x));
-    ++n_protect;
-  }
+  x = PROTECT(r_maybe_duplicate(x));
+  ++n_protect;
 
   // Remove vectorised attributes which might be incongruent after reshaping.
   // Shouldn't matter for GNU R but other R implementations might have checks.
