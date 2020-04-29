@@ -242,6 +242,9 @@ The following errors are caused by breaking changes.
 * Supplying both `details` and `message` to the `stop_` functions is
   now an internal error.
 
+* `x_arg`, `y_arg`, and `to_arg` are now compulsory arguments in
+  `stop_` functions like `stop_incompatible_type()`.
+
 
 ## CRAN results
 

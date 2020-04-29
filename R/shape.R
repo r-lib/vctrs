@@ -21,7 +21,8 @@ vec_shape2 <- function(x, y, ..., x_arg = "", y_arg = "") {
   .Call(vctrs_shape2, x, y, x_arg, y_arg)
 }
 
-shape_broadcast <- function(x, to) {
+# Should take same signature as `vec_cast()`
+shape_broadcast <- function(x, to, ..., x_arg, to_arg) {
   if (is.null(x) || is.null(to)) {
     return(x)
   }
@@ -35,14 +36,26 @@ shape_broadcast <- function(x, to) {
   }
 
   if (length(dim_x) > length(dim_to)) {
-    stop_incompatible_cast(x, to, details = "Can not decrease dimensions")
+    stop_incompatible_cast(
+      x,
+      to,
+      details = "Cannot decrease dimensions.",
+      x_arg = x_arg,
+      to_arg = to_arg
+    )
   }
 
   dim_x <- n_dim2(dim_x, dim_to)$x
   dim_to[[1]] <- dim_x[[1]] # don't change number of observations
   ok <- dim_x == dim_to | dim_x == 1
   if (any(!ok)) {
-    stop_incompatible_cast(x, to, details = "Non-recyclable dimensions")
+    stop_incompatible_cast(
+      x,
+      to,
+      details = "Non-recyclable dimensions.",
+      x_arg = x_arg,
+      to_arg = to_arg
+    )
   }
 
   # Increase dimensionality if required

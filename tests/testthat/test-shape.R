@@ -34,47 +34,47 @@ test_that("can override error args", {
 # broadcasting -------------------------------------------------------------
 
 test_that("can broadcast to higher dimension, but not lower", {
-  expect_identical(shape_broadcast(1, NULL), 1)
-  expect_null(shape_broadcast(NULL, 1))
+  expect_identical(shape_broadcast_(1, NULL), 1)
+  expect_null(shape_broadcast_(NULL, 1))
 
   expect_equal(
-    shape_broadcast(1, shaped_int(0, 4)),
+    shape_broadcast_(1, shaped_int(0, 4)),
     array(1, c(1, 4))
   )
   expect_error(
-    shape_broadcast(shaped_int(1, 1, 1), shaped_int(4, 4)),
+    shape_broadcast_(shaped_int(1, 1, 1), shaped_int(4, 4)),
     class = "vctrs_error_incompatible_type"
   )
   expect_error(
-    shape_broadcast(shaped_int(3, 2), shaped_int(3, 3)),
+    shape_broadcast_(shaped_int(3, 2), shaped_int(3, 3)),
     class = "vctrs_error_incompatible_type"
   )
 })
 
 test_that("recycling rules applied", {
   expect_equal(
-    shape_broadcast(array(1:4, c(1, 1, 4)), shaped_int(0, 4, 4))[1, , ],
+    shape_broadcast_(array(1:4, c(1, 1, 4)), shaped_int(0, 4, 4))[1, , ],
     matrix(1:4, 4, 4, byrow = TRUE)
   )
 
   expect_equal(
-    shape_broadcast(array(1:4, c(1, 4, 1)), shaped_int(0, 4, 4))[1, , ],
+    shape_broadcast_(array(1:4, c(1, 4, 1)), shaped_int(0, 4, 4))[1, , ],
     matrix(1:4, 4, 4)
   )
 
   expect_equal(
-    shape_broadcast(array(1L, c(1, 1)), shaped_int(1, 0)),
+    shape_broadcast_(array(1L, c(1, 1)), shaped_int(1, 0)),
     matrix(integer(), nrow = 1)
   )
 
   expect_error(
-    shape_broadcast(array(1L, c(1, 2)), shaped_int(1, 0)),
+    shape_broadcast_(array(1L, c(1, 2)), shaped_int(1, 0)),
     "Non-recyclable dimensions",
     class = "vctrs_error_incompatible_type"
   )
 
   expect_error(
-    shape_broadcast(array(1L, c(1, 0)), shaped_int(1, 1)),
+    shape_broadcast_(array(1L, c(1, 0)), shaped_int(1, 1)),
     "Non-recyclable dimensions",
     class = "vctrs_error_incompatible_type"
   )

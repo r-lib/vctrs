@@ -34,8 +34,15 @@ vec_list_cast <- function(x, to, ..., x_arg = "", to_arg = "") {
   }
 
   if (!is.object(to)) {
-    out <- shape_broadcast(out, to)
+    out <- shape_broadcast(out, to, x_arg = x_arg, to_arg = to_arg)
   }
 
-  maybe_lossy_cast(out, x, to, lossy = !ns %in% c(0L, 1L))
+  maybe_lossy_cast(
+    out,
+    x,
+    to,
+    lossy = !ns %in% c(0L, 1L),
+    x_arg = x_arg,
+    to_arg = to_arg
+  )
 }

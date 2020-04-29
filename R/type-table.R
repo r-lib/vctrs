@@ -49,8 +49,8 @@ vec_cast.table <- function(x, to, ..., x_arg = "", to_arg = "") {
 }
 #' @method vec_cast.table table
 #' @export
-vec_cast.table.table <- function(x, to, ..., x_arg = "", to_arg = "") {
-  shape_broadcast(x, to)
+vec_cast.table.table <- function(x, to, ...) {
+  shape_broadcast(x, to, ...)
 }
 
 # ------------------------------------------------------------------------------
