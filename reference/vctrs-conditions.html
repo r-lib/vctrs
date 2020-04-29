@@ -160,9 +160,9 @@ testing easier.</p>
     <pre class="usage"><span class='fu'>stop_incompatible_type</span>(
   <span class='no'>x</span>,
   <span class='no'>y</span>,
-  <span class='kw'>x_arg</span> <span class='kw'>=</span> <span class='st'>""</span>,
-  <span class='kw'>y_arg</span> <span class='kw'>=</span> <span class='st'>""</span>,
   <span class='no'>...</span>,
+  <span class='no'>x_arg</span>,
+  <span class='no'>y_arg</span>,
   <span class='kw'>details</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
   <span class='kw'>message</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
   <span class='kw'>class</span> <span class='kw'>=</span> <span class='kw'>NULL</span>
@@ -172,8 +172,8 @@ testing easier.</p>
   <span class='no'>x</span>,
   <span class='no'>y</span>,
   <span class='no'>...</span>,
-  <span class='kw'>x_arg</span> <span class='kw'>=</span> <span class='st'>""</span>,
-  <span class='kw'>to_arg</span> <span class='kw'>=</span> <span class='st'>""</span>,
+  <span class='no'>x_arg</span>,
+  <span class='no'>to_arg</span>,
   <span class='kw'>details</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
   <span class='kw'>message</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
   <span class='kw'>class</span> <span class='kw'>=</span> <span class='kw'>NULL</span>
@@ -194,9 +194,9 @@ testing easier.</p>
   <span class='no'>y</span>,
   <span class='no'>x_size</span>,
   <span class='no'>y_size</span>,
-  <span class='kw'>x_arg</span> <span class='kw'>=</span> <span class='st'>""</span>,
-  <span class='kw'>y_arg</span> <span class='kw'>=</span> <span class='st'>""</span>,
   <span class='no'>...</span>,
+  <span class='no'>x_arg</span>,
+  <span class='no'>y_arg</span>,
   <span class='kw'>details</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
   <span class='kw'>message</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
   <span class='kw'>class</span> <span class='kw'>=</span> <span class='kw'>NULL</span>
@@ -209,8 +209,8 @@ testing easier.</p>
   <span class='kw'>lossy</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
   <span class='kw'>locations</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
   <span class='no'>...</span>,
-  <span class='kw'>x_arg</span> <span class='kw'>=</span> <span class='st'>""</span>,
-  <span class='kw'>to_arg</span> <span class='kw'>=</span> <span class='st'>""</span>,
+  <span class='no'>x_arg</span>,
+  <span class='no'>to_arg</span>,
   <span class='kw'>details</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
   <span class='kw'>message</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
   <span class='kw'>class</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
@@ -300,13 +300,34 @@ returns the result silently.</p>
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'>
 <span class='co'># Most of the time, `maybe_lossy_cast()` returns its input normally:</span>
-<span class='fu'>maybe_lossy_cast</span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"foo"</span>, <span class='st'>"bar"</span>), <span class='kw'>NULL</span>, <span class='st'>""</span>, <span class='kw'>lossy</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>FALSE</span>, <span class='fl'>FALSE</span>))</div><div class='output co'>#&gt; [1] "foo" "bar"</div><div class='input'>
+<span class='fu'>maybe_lossy_cast</span>(
+  <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"foo"</span>, <span class='st'>"bar"</span>),
+  <span class='kw'>NULL</span>,
+  <span class='st'>""</span>,
+  <span class='kw'>lossy</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>FALSE</span>, <span class='fl'>FALSE</span>),
+  <span class='kw'>x_arg</span> <span class='kw'>=</span> <span class='st'>""</span>,
+  <span class='kw'>to_arg</span> <span class='kw'>=</span> <span class='st'>""</span>
+)</div><div class='output co'>#&gt; [1] "foo" "bar"</div><div class='input'>
 <span class='co'># If `lossy` has any `TRUE`, an error is thrown:</span>
-<span class='fu'><a href='https://rdrr.io/r/base/try.html'>try</a></span>(<span class='fu'>maybe_lossy_cast</span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"foo"</span>, <span class='st'>"bar"</span>), <span class='kw'>NULL</span>, <span class='st'>""</span>, <span class='kw'>lossy</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>FALSE</span>, <span class='fl'>TRUE</span>)))</div><div class='output co'>#&gt; Error : Can't convert from &lt;NULL&gt; to &lt;character&gt; due to loss of precision.
+<span class='fu'><a href='https://rdrr.io/r/base/try.html'>try</a></span>(<span class='fu'>maybe_lossy_cast</span>(
+  <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"foo"</span>, <span class='st'>"bar"</span>),
+  <span class='kw'>NULL</span>,
+  <span class='st'>""</span>,
+  <span class='kw'>lossy</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>FALSE</span>, <span class='fl'>TRUE</span>),
+  <span class='kw'>x_arg</span> <span class='kw'>=</span> <span class='st'>""</span>,
+  <span class='kw'>to_arg</span> <span class='kw'>=</span> <span class='st'>""</span>
+))</div><div class='output co'>#&gt; Error : Can't convert from &lt;NULL&gt; to &lt;character&gt; due to loss of precision.
 #&gt; * Locations: 2</div><div class='input'>
 <span class='co'># Unless lossy casts are allowed:</span>
 <span class='fu'>allow_lossy_cast</span>(
-  <span class='fu'>maybe_lossy_cast</span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"foo"</span>, <span class='st'>"bar"</span>), <span class='kw'>NULL</span>, <span class='st'>""</span>, <span class='kw'>lossy</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>FALSE</span>, <span class='fl'>TRUE</span>))
+  <span class='fu'>maybe_lossy_cast</span>(
+    <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"foo"</span>, <span class='st'>"bar"</span>),
+    <span class='kw'>NULL</span>,
+    <span class='st'>""</span>,
+    <span class='kw'>lossy</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>FALSE</span>, <span class='fl'>TRUE</span>),
+    <span class='kw'>x_arg</span> <span class='kw'>=</span> <span class='st'>""</span>,
+    <span class='kw'>to_arg</span> <span class='kw'>=</span> <span class='st'>""</span>
+  )
 )</div><div class='output co'>#&gt; [1] "foo" "bar"</div><div class='input'>
 </div></pre>
   </div>
