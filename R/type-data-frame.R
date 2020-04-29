@@ -297,3 +297,7 @@ df_lossy_cast <- function(out, x, to) {
     class = "vctrs_error_cast_lossy_dropped"
   )
 }
+
+is_informative_error.vctrs_error_cast_lossy_dropped <- function(x, ...) {
+  TRUE
+}
