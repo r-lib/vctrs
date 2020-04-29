@@ -54,6 +54,15 @@ dt_cast <- function(x, to, ...) {
 }
 ```
 
+We start with the self-self method:
+
+```{r}
+#' @export
+vec_ptype2.data.table.data.table <- function(x, y, ...) {
+  dt_ptype2(x, y, ...)
+}
+```
+
 Between a data frame and a data table, we consider the richer type to be data table. This is not made based on the coverage of each data structures, but on the idea that data tables have richer behaviour. Since data tables are the richer type, we call `dt_type2()` from the `vec_ptype2()` method. It always returns a data table, no matter the order of arguments:
 
 ```{r}
@@ -67,10 +76,13 @@ vec_ptype2.data.frame.data.table <- function(x, y, ...) {
 }
 ```
 
-The `vec_cast()` methods follow the same pattern:
+The `vec_cast()` methods follow the same pattern, but note how the method for coercing to data frame uses `df_cast()` rather than `dt_cast()`:
 
 ```{r}
 #' @export
+vec_cast.data.table.data.table <- function(x, to, ...) {
+  dt_cast(x, to, ...)
+}
 vec_cast.data.table.data.frame <- function(x, to, ...) {
   dt_cast(x, to, ...)
 }

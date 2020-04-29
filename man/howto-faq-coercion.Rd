@@ -57,7 +57,7 @@ regular S3 methods. A typical signature for a \code{vec_ptype2()} methods
 looks like this. In these examples we are using roxygen2 tags to
 register the methods, but you can also register the methods manually in
 your NAMESPACE file or lazily with \code{s3_register()}.
-\subsection{The self-to-self method}{
+\subsection{The self-self method}{
 
 The first method to implement is the one that signals that your class is
 compatible with itself:\if{html}{\out{<div class="r">}}\preformatted{#' @export
@@ -71,11 +71,10 @@ vec_ptype2(new_natural(1), new_natural(2:3))
 }\if{html}{\out{</div>}}
 
 \code{vec_ptype2()} implements fallbacks to try and be compatible with simple
-classes, so it may seem that you don’t need to implement the
-self-to-self coercion methods. However, you still have to implement this
-method implictly because this is how vctrs knows that it is dealing with
-a class that implements vctrs methods. Also, this is a bit more
-efficient.
+classes, so it may seem that you don’t need to implement the self-self
+coercion methods. However, you still have to implement this method
+implictly because this is how vctrs knows that it is dealing with a
+class that implements vctrs methods. Also, this is a bit more efficient.
 }
 
 \subsection{The parent and children methods}{
@@ -144,8 +143,8 @@ classes for which no \code{vec_ptype2()} method is implemented. More rarely,
 inputs could be incompatible because of their attributes. In that case
 incompatibility is signalled by calling \code{stop_incompatible_type()}.
 
-In the following example, we implement a self-to-self ptype2 method for
-a hypothetical subclass of \verb{<factor>} that has stricter combination
+In the following example, we implement a self-self ptype2 method for a
+hypothetical subclass of \verb{<factor>} that has stricter combination
 semantics. The method throws when the levels of the two factors are not
 compatible.\if{html}{\out{<div class="r">}}\preformatted{#' @export
 vec_ptype2.my_strict_factor.my_strict_factor <- function(x, y, ..., x_arg = "", y_arg = "") \{
@@ -169,7 +168,7 @@ generic signature but can usually be left out if not used.
 \subsection{Implementing \code{vec_cast()}}{
 
 Corresponding \code{vec_cast()} methods must be implemented for all
-\code{vec_ptype2()} methods. The self-to-self method is easy in this case, it
+\code{vec_ptype2()} methods. The self-self method is easy in this case, it
 just returns the target input:\if{html}{\out{<div class="r">}}\preformatted{#' @export
 vec_cast.my_natural.my_natural <- function(x, to, ...) \{
   x

@@ -51,7 +51,7 @@ new_natural(c(1, NA))
 Implementing double dispatch methods is very similar to implementing regular S3 methods. A typical signature for a `vec_ptype2()` methods looks like this. In these examples we are using roxygen2 tags to register the methods, but you can also register the methods manually in your NAMESPACE file or lazily with `s3_register()`.
 
 
-### The self-to-self method
+### The self-self method
 
 The first method to implement is the one that signals that your class is compatible with itself:
 
@@ -64,7 +64,7 @@ vec_ptype2.my_natural.my_natural <- function(x, y, ...) {
 vec_ptype2(new_natural(1), new_natural(2:3))
 ```
 
-`vec_ptype2()` implements fallbacks to try and be compatible with simple classes, so it may seem that you don't need to implement the self-to-self coercion methods. However, you still have to implement this method implictly because this is how vctrs knows that it is dealing with a class that implements vctrs methods. Also, this is a bit more efficient.
+`vec_ptype2()` implements fallbacks to try and be compatible with simple classes, so it may seem that you don't need to implement the self-self coercion methods. However, you still have to implement this method implictly because this is how vctrs knows that it is dealing with a class that implements vctrs methods. Also, this is a bit more efficient.
 
 
 ### The parent and children methods
@@ -133,7 +133,7 @@ vec_ptype2.double.my_natural <- function(x, y, ...) {
 
 Most of the time, inputs are incompatible because they have different classes for which no `vec_ptype2()` method is implemented. More rarely, inputs could be incompatible because of their attributes. In that case incompatibility is signalled by calling `stop_incompatible_type()`.
 
-In the following example, we implement a self-to-self ptype2 method for a hypothetical subclass of `<factor>` that has stricter combination semantics. The method throws when the levels of the two factors are not compatible.
+In the following example, we implement a self-self ptype2 method for a hypothetical subclass of `<factor>` that has stricter combination semantics. The method throws when the levels of the two factors are not compatible.
 
 ```{r, eval = FALSE}
 #' @export
@@ -151,7 +151,7 @@ Note how the methods need to take `x_arg` and `y_arg` parameters and pass them o
 
 ## Implementing `vec_cast()`
 
-Corresponding `vec_cast()` methods must be implemented for all `vec_ptype2()` methods. The self-to-self method is easy in this case, it just returns the target input:
+Corresponding `vec_cast()` methods must be implemented for all `vec_ptype2()` methods. The self-self method is easy in this case, it just returns the target input:
 
 ```{r}
 #' @export

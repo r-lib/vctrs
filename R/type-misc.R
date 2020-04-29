@@ -23,6 +23,10 @@ dt_cast <- function(x, to, ...) {
 }
 
 #' @export
+vec_ptype2.data.table.data.table <- function(x, y, ...) {
+  dt_ptype2(x, y, ...)
+}
+#' @export
 vec_ptype2.data.table.data.frame <- function(x, y, ...) {
   dt_ptype2(x, y, ...)
 }
@@ -31,6 +35,10 @@ vec_ptype2.data.frame.data.table <- function(x, y, ...) {
   dt_ptype2(x, y, ...)
 }
 
+#' @export
+vec_cast.data.table.data.table <- function(x, to, ...) {
+  dt_ptype2(x, to, ...)
+}
 #' @export
 vec_cast.data.table.data.frame <- function(x, to, ...) {
   dt_cast(x, to, ...)

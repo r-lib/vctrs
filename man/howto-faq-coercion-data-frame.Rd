@@ -64,6 +64,12 @@ dt_cast <- function(x, to, ...) \{
 \}
 }\if{html}{\out{</div>}}
 
+We start with the self-self method:\if{html}{\out{<div class="r">}}\preformatted{#' @export
+vec_ptype2.data.table.data.table <- function(x, y, ...) \{
+  dt_ptype2(x, y, ...)
+\}
+}\if{html}{\out{</div>}}
+
 Between a data frame and a data table, we consider the richer type to be
 data table. This is not made based on the coverage of each data
 structures, but on the idea that data tables have richer behaviour.
@@ -79,7 +85,12 @@ vec_ptype2.data.frame.data.table <- function(x, y, ...) \{
 \}
 }\if{html}{\out{</div>}}
 
-The \code{vec_cast()} methods follow the same pattern:\if{html}{\out{<div class="r">}}\preformatted{#' @export
+The \code{vec_cast()} methods follow the same pattern, but note how the
+method for coercing to data frame uses \code{df_cast()} rather than
+\code{dt_cast()}:\if{html}{\out{<div class="r">}}\preformatted{#' @export
+vec_cast.data.table.data.table <- function(x, to, ...) \{
+  dt_cast(x, to, ...)
+\}
 vec_cast.data.table.data.frame <- function(x, to, ...) \{
   dt_cast(x, to, ...)
 \}
