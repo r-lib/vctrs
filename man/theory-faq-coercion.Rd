@@ -197,4 +197,29 @@ explicitly if necessary.
 \item The default method is hard-coded.
 }
 }
+
+\subsection{Data frames}{
+
+The determination of the common type of data frames with \code{vec_ptype2()}
+happens in three steps:
+\enumerate{
+\item Match the columns of the two input data frames. If some columns
+don’t exist, they are created and filled with \code{NA} values. These
+\link{unspecified} columns play a special role in vctrs as
+they can be coerced to any type.
+\item Find the common type for each column by repeatedly calling
+\code{vec_ptype2()} on the matched columns.
+\item Find the common data frame type. For example the common type of a
+grouped tibble and a tibble is a grouped tibble. The common type of
+a data table and a data frame is a data table.
+}
+
+\code{vec_cast()} operates similarly. Trying to cast a data frame to a target
+type that has fewer columns is an error.
+
+If you’re implementing coercion methods for data frames, you will need
+to explicitly call the parent methods that perform the common type
+determination or the type conversion described above. These are exported
+as \code{\link[=df_ptype2]{df_ptype2()}} and \code{\link[=df_cast]{df_cast()}}.
+}
 }

@@ -85,6 +85,53 @@ df_is_coercible <- function(x, y, df_fallback = FALSE) {
 
 # Coercion ----------------------------------------------------------------
 
+#' Coercion between two data frames
+#'
+#' `df_ptype2()` and `df_cast()` are the two functions you need to
+#' call from `vec_ptype2()` and `vec_cast()` methods for data frame
+#' subclasses. See [?howto-faq-coercion-data-frame][howto-faq-coercion-data-frame].
+#' Their main job is to determine the common type of two data frames,
+#' adding and coercing columns as needed, or throwing an incompatible
+#' type error when the columns are not compatible.
+#'
+#' @param x,y,to Subclasses of data frame.
+#' @inheritParams vec_ptype2
+#' @inheritParams vec_cast
+#'
+#' @return
+#' * When `x` and `y` are not compatible, an error of class
+#'   `vctrs_error_incompatible_type` is thrown.
+#' * When `x` and `y` are compatible, `df_ptype2()` returns the common
+#'   type as a bare data frame. `tib_ptype2()` returns the common type
+#'   as a bare tibble.
+#'
+#' @export
+df_ptype2 <- function(x, y, ..., x_arg = "", y_arg = "") {
+  .Call(vctrs_df_ptype2, x, y, x_arg, y_arg, df_fallback = FALSE)
+}
+#' @rdname df_ptype2
+#' @export
+df_cast <- function(x, to, ..., x_arg = "", to_arg = "") {
+  .Call(vctrs_df_cast_params, x, to, x_arg, to_arg, FALSE)
+}
+
+df_ptype2_params <- function(x,
+                             y,
+                             ...,
+                             x_arg = "",
+                             y_arg = "",
+                             df_fallback = FALSE) {
+  .Call(vctrs_df_ptype2, x, y, x_arg, y_arg, df_fallback)
+}
+df_cast_params <- function(x,
+                           to,
+                           ...,
+                           x_arg = "",
+                           to_arg = "",
+                           df_fallback = FALSE) {
+  .Call(vctrs_df_cast_params, x, to, x_arg, to_arg, df_fallback)
+}
+
 #' @rdname new_data_frame
 #' @export vec_ptype2.data.frame
 #' @method vec_ptype2 data.frame
@@ -96,18 +143,6 @@ vec_ptype2.data.frame <- function(x, y, ...) {
 #' @export
 vec_ptype2.data.frame.data.frame <- function(x, y, ...) {
   df_ptype2(x, y, ...)
-}
-# Returns a `data.frame` no matter the input classes
-df_ptype2 <- function(x, y, ..., x_arg = "", y_arg = "") {
-  .Call(vctrs_df_ptype2, x, y, x_arg, y_arg, df_fallback = FALSE)
-}
-df_ptype2_params <- function(x,
-                             y,
-                             ...,
-                             x_arg = "",
-                             y_arg = "",
-                             df_fallback = FALSE) {
-  .Call(vctrs_df_ptype2, x, y, x_arg, y_arg, df_fallback = df_fallback)
 }
 
 vec_ptype2_df_fallback_normalise <- function(x, y) {
@@ -265,12 +300,6 @@ vec_cast.data.frame <- function(x, to, ...) {
 #' @method vec_cast.data.frame data.frame
 vec_cast.data.frame.data.frame <- function(x, to, ..., x_arg = "", to_arg = "") {
   df_cast(x, to, x_arg = x_arg, to_arg = to_arg)
-}
-df_cast <- function(x, to, ..., x_arg = "", to_arg = "") {
-  .Call(vctrs_df_cast_params, x, to, x_arg, to_arg, FALSE)
-}
-df_cast_params <- function(x, to, ..., x_arg = "", to_arg = "", df_fallback = FALSE) {
-  .Call(vctrs_df_cast_params, x, to, x_arg, to_arg, df_fallback)
 }
 
 #' @export

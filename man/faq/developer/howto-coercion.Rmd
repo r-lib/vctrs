@@ -6,6 +6,8 @@ This is a practical example of implementation of `vec_ptype2()` and `vec_cast()`
 
 - For an overview of how these generics work and their roles in vctrs, see [`?theory-faq-coercion`][theory-faq-coercion].
 
+- For an example of implementing coercion methods for data frame subclasses, see [`?howto-faq-coercion-data-frame`][howto-faq-coercion-data-frame].
+
 
 ## The natural number class
 

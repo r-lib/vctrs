@@ -11,3 +11,10 @@ NULL
 #'
 #' @name howto-faq-coercion
 NULL
+
+#' FAQ - How to implement ptype2 and cast methods? (Data frames)
+#'
+#' @includeRmd man/faq/developer/howto-coercion-data-frame.Rmd description
+#'
+#' @name howto-faq-coercion-data-frame
+NULL
