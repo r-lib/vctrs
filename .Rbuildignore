@@ -13,3 +13,5 @@
 ^revdep$
 ^revdep-all$
 ^\.github$
+^man/faq/.*\.html
+^man/faq/.*/.*\.html

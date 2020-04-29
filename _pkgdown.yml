@@ -5,6 +5,19 @@ template:
     ganalytics: UA-115082821-1
 
 reference:
+- title: User FAQ
+  contents:
+  - starts_with("faq")
+
+- title: Developer FAQ
+  contents:
+  - starts_with("howto-faq")
+  - starts_with("theory-faq")
+
+- title: Internal FAQ
+  contents:
+  - starts_with("internal-faq")
+
 - title: Foundations
   contents:
   - vec_data
@@ -76,11 +89,3 @@ reference:
   - vec_as_names
   - vec_as_location
   - vec_as_subscript
-
-- title: User FAQ
-  contents:
-  - starts_with("faq")
-
-- title: Internal FAQ
-  contents:
-  - starts_with("internal-faq")
