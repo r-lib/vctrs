@@ -44,8 +44,8 @@ print.my_natural <- function(x, ...) {
 
 ```{r, include = FALSE}
 # Necessary because includeRmd() evaluated in a child of global
-roxy_local_registration("base::print", "my_natural")
-roxy_local_registration("base::[", "my_natural")
+knitr_local_registration("base::print", "my_natural")
+knitr_local_registration("base::[", "my_natural")
 ```
 
 ```{r}
@@ -85,7 +85,7 @@ vec_ptype2(new_natural(1), new_natural(2:3))
 
 ```{r, include = FALSE}
 # Necessary because includeRmd() evaluated in a child of global
-roxy_local_registration("vctrs::vec_ptype2", "my_natural.my_natural")
+knitr_local_registration("vctrs::vec_ptype2", "my_natural.my_natural")
 ```
 
 `vec_ptype2()` implements fallbacks to try and be compatible with simple classes, so it may seem that you don't need to implement the self-self coercion method. However, you still have to implement it explicitly because this is how vctrs knows that a class that is implementing vctrs methods (for instance this disable fallbacks to `base::c()`). Also, it makes your class a bit more efficient.
@@ -133,10 +133,10 @@ vec_ptype2.integer.my_natural <- function(x, y, ...) {
 
 ```{r, include = FALSE}
 # Necessary because includeRmd() evaluated in a child of global
-roxy_local_registration("vctrs::vec_ptype2", "my_natural.logical")
-roxy_local_registration("vctrs::vec_ptype2", "my_natural.integer")
-roxy_local_registration("vctrs::vec_ptype2", "integer.my_natural")
-roxy_local_registration("vctrs::vec_ptype2", "logical.my_natural")
+knitr_local_registration("vctrs::vec_ptype2", "my_natural.logical")
+knitr_local_registration("vctrs::vec_ptype2", "my_natural.integer")
+knitr_local_registration("vctrs::vec_ptype2", "integer.my_natural")
+knitr_local_registration("vctrs::vec_ptype2", "logical.my_natural")
 ```
 
 We no longer get common type errors for logical and integer:
@@ -162,8 +162,8 @@ vec_ptype2.double.my_natural <- function(x, y, ...) {
 
 ```{r, include = FALSE}
 # Necessary because includeRmd() evaluated in a child of global
-roxy_local_registration("vctrs::vec_ptype2", "my_natural.double")
-roxy_local_registration("vctrs::vec_ptype2", "double.my_natural")
+knitr_local_registration("vctrs::vec_ptype2", "my_natural.double")
+knitr_local_registration("vctrs::vec_ptype2", "double.my_natural")
 ```
 
 
@@ -221,10 +221,10 @@ vec_cast.my_natural.double <- function(x, to, ...) {
 
 ```{r, include = FALSE}
 # Necessary because includeRmd() evaluated in a child of global
-roxy_local_registration("vctrs::vec_cast", "my_natural.my_natural")
-roxy_local_registration("vctrs::vec_cast", "my_natural.logical")
-roxy_local_registration("vctrs::vec_cast", "my_natural.integer")
-roxy_local_registration("vctrs::vec_cast", "my_natural.double")
+knitr_local_registration("vctrs::vec_cast", "my_natural.my_natural")
+knitr_local_registration("vctrs::vec_cast", "my_natural.logical")
+knitr_local_registration("vctrs::vec_cast", "my_natural.integer")
+knitr_local_registration("vctrs::vec_cast", "my_natural.double")
 ```
 
 With these methods, vctrs is now able to combine logical and natural vectors. It properly returns the richer type of the two, a natural vector:
@@ -263,9 +263,9 @@ vec_cast.double.my_natural <- function(x, to, ...) {
 
 ```{r, include = FALSE}
 # Necessary because includeRmd() evaluated in a child of global
-roxy_local_registration("vctrs::vec_cast", "logical.my_natural")
-roxy_local_registration("vctrs::vec_cast", "integer.my_natural")
-roxy_local_registration("vctrs::vec_cast", "double.my_natural")
+knitr_local_registration("vctrs::vec_cast", "logical.my_natural")
+knitr_local_registration("vctrs::vec_cast", "integer.my_natural")
+knitr_local_registration("vctrs::vec_cast", "double.my_natural")
 ```
 
 And we now get the expected combinations.

@@ -104,10 +104,10 @@ s3_register <- function(generic, class, method = NULL) {
   invisible()
 }
 
-roxy_defer <- function(expr, env = caller_env()) {
-  roxy_caller <- detect(sys.frames(), env_inherits, ns_env("roxygen2"), .right = TRUE)
+knitr_defer <- function(expr, env = caller_env()) {
+  roxy_caller <- detect(sys.frames(), env_inherits, ns_env("knitr"))
   if (is_null(roxy_caller)) {
-    abort("Internal error: can't find roxygen2 on the stack.")
+    abort("Internal error: can't find knitr on the stack.")
   }
 
   blast(
@@ -119,7 +119,7 @@ blast <- function(expr, env = caller_env()) {
   eval_bare(enexpr(expr), env)
 }
 
-roxy_local_registration <- function(generic, class, env = caller_env()) {
+knitr_local_registration <- function(generic, class, env = caller_env()) {
   stopifnot(is.character(generic), length(generic) == 1)
   stopifnot(is.character(class), length(class) == 1)
 
@@ -132,7 +132,7 @@ roxy_local_registration <- function(generic, class, env = caller_env()) {
   method <- env_get(env, name)
 
   old <- env_bind(global_env(), !!name := method)
-  roxy_defer(env_bind(global_env(), !!!old))
+  knitr_defer(env_bind(global_env(), !!!old))
 }
 
 
