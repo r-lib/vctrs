@@ -2,7 +2,7 @@
 ```{r, child = "../setup.Rmd", include = FALSE}
 ```
 
-This is a practical example of implementation of `vec_ptype2()` and `vec_cast()` methods. Related topics:
+This guide illustrates how to implement `vec_ptype2()` and `vec_cast()` methods. Related topics:
 
 - For an overview of how these generics work and their roles in vctrs, see [`?theory-faq-coercion`][theory-faq-coercion].
 
@@ -11,7 +11,7 @@ This is a practical example of implementation of `vec_ptype2()` and `vec_cast()`
 
 ## The natural number class
 
-We'll illustrate how to implement coercion methods with a simple class that represents natural numbers. This is an existing class that features a constructor, methods for `print()` and subset.
+We'll illustrate how to implement coercion methods with a simple class that represents natural numbers. In this scenario we have an existing class that already features a constructor and methods for `print()` and subset.
 
 ```{r}
 #' @export
@@ -48,7 +48,7 @@ new_natural(c(1, NA))
 
 ## Implementing `vec_ptype2()`
 
-Implementing double dispatch methods is very similar to implementing regular S3 methods. A typical signature for a `vec_ptype2()` methods looks like this. In these examples we are using roxygen2 tags to register the methods, but you can also register the methods manually in your NAMESPACE file or lazily with `s3_register()`.
+Implementing double dispatch methods is very similar to implementing regular S3 methods. In these examples we are using roxygen2 tags to register the methods, but you can also register the methods manually in your NAMESPACE file or lazily with `s3_register()`.
 
 
 ### The self-self method
@@ -64,7 +64,7 @@ vec_ptype2.my_natural.my_natural <- function(x, y, ...) {
 vec_ptype2(new_natural(1), new_natural(2:3))
 ```
 
-`vec_ptype2()` implements fallbacks to try and be compatible with simple classes, so it may seem that you don't need to implement the self-self coercion methods. However, you still have to implement this method implictly because this is how vctrs knows that it is dealing with a class that implements vctrs methods. Also, this is a bit more efficient.
+`vec_ptype2()` implements fallbacks to try and be compatible with simple classes, so it may seem that you don't need to implement the self-self coercion method. However, you still have to implement it explicitly because this is how vctrs knows that a class that is implementing vctrs methods (for instance this disable fallbacks to `base::c()`). Also, it makes your class a bit more efficient.
 
 
 ### The parent and children methods

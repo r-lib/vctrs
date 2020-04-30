@@ -4,8 +4,8 @@
 \alias{howto-faq-coercion}
 \title{FAQ - How to implement ptype2 and cast methods?}
 \description{
-This is a practical example of implementation of \code{vec_ptype2()} and
-\code{vec_cast()} methods. Related topics:
+This guide illustrates how to implement \code{vec_ptype2()} and \code{vec_cast()}
+methods. Related topics:
 \itemize{
 \item For an overview of how these generics work and their roles in vctrs,
 see \code{\link[=theory-faq-coercion]{?theory-faq-coercion}}.
@@ -16,8 +16,9 @@ subclasses, see
 \subsection{The natural number class}{
 
 We’ll illustrate how to implement coercion methods with a simple class
-that represents natural numbers. This is an existing class that features
-a constructor, methods for \code{print()} and subset.\if{html}{\out{<div class="r">}}\preformatted{#' @export
+that represents natural numbers. In this scenario we have an existing
+class that already features a constructor and methods for \code{print()} and
+subset.\if{html}{\out{<div class="r">}}\preformatted{#' @export
 new_natural <- function(x) \{
   if (is.numeric(x) || is.logical(x)) \{
     stopifnot(is_whole(x))
@@ -53,8 +54,7 @@ new_natural(c(1, NA))
 \subsection{Implementing \code{vec_ptype2()}}{
 
 Implementing double dispatch methods is very similar to implementing
-regular S3 methods. A typical signature for a \code{vec_ptype2()} methods
-looks like this. In these examples we are using roxygen2 tags to
+regular S3 methods. In these examples we are using roxygen2 tags to
 register the methods, but you can also register the methods manually in
 your NAMESPACE file or lazily with \code{s3_register()}.
 \subsection{The self-self method}{
@@ -72,9 +72,10 @@ vec_ptype2(new_natural(1), new_natural(2:3))
 
 \code{vec_ptype2()} implements fallbacks to try and be compatible with simple
 classes, so it may seem that you don’t need to implement the self-self
-coercion methods. However, you still have to implement this method
-implictly because this is how vctrs knows that it is dealing with a
-class that implements vctrs methods. Also, this is a bit more efficient.
+coercion method. However, you still have to implement it explicitly
+because this is how vctrs knows that a class that is implementing vctrs
+methods (for instance this disable fallbacks to \code{base::c()}). Also, it
+makes your class a bit more efficient.
 }
 
 \subsection{The parent and children methods}{

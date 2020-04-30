@@ -12,7 +12,7 @@ how to implement methods for these generics, see
 
 The coercion system in vctrs is designed to make combination of multiple
 inputs consistent and extensible. Combinations occur in many places,
-such as row-binding, joins, subset-assignment, or grouped summaries
+such as row-binding, joins, subset-assignment, or grouped summary
 functions that use the split-apply-combine strategy. For example:\if{html}{\out{<div class="r">}}\preformatted{vec_c(TRUE, 1)
 #> [1] 1 1
 vec_c("a", 1)
@@ -38,7 +38,7 @@ relevant generics are \code{vec_ptype2()} and \code{vec_cast()}. They both take
 two arguments and perform \strong{double dispatch}, meaning that a method is
 selected based on the classes of both inputs.
 
-The general mechanism for combining multiple inputs has two steps:
+The general mechanism for combining multiple inputs is:
 \enumerate{
 \item Find the common type of a set of inputs by reducing (as in
 \code{base::Reduce()} or \code{purrr::reduce()}) the \code{vec_ptype2()} binary
@@ -46,7 +46,7 @@ function over the set.
 \item Convert all inputs to the common type with \code{vec_cast()}.
 \item Initialise the output vector as an instance of this common type with
 \code{vec_init()}.
-\item Fill the output vector with the elements of the inputs with
+\item Fill the output vector with the elements of the inputs using
 \code{vec_assign()}.
 }
 
@@ -61,7 +61,7 @@ steps, which require \code{vec_ptype2()} and \code{vec_cast()} implementations.
 Methods for \code{vec_ptype2()} are passed two \emph{prototypes}, i.e. two inputs
 emptied of their elements. They implement two behaviours:
 \itemize{
-\item If the types of their inputs are compatible, indicate which of one
+\item If the types of their inputs are compatible, indicate which of them
 is the richer type by returning it. If the types are of equal
 resolution, return any of the two.
 \item Throw an error when the types of their inputs are not compatible.
@@ -102,10 +102,10 @@ character:\if{html}{\out{<div class="r">}}\preformatted{vec_ptype2(factor("a"), 
 #> character(0)
 }\if{html}{\out{</div>}}
 
-The ptype2 method for \verb{<character>} + \verb{<factor>} returns \verb{<character>}.
-This is because character is a richer type than \verb{factor<"a">}. Whereas
-the latter can only contain \code{"a"} strings, the former can contain any
-strings. Factors are a \emph{subset} of character.
+The ptype2 method for \verb{<character>} and \verb{<factor<"a">>} returns
+\verb{<character>} because the former is a richer type. The factor can only
+contain \code{"a"} strings, whereas the character can contain any strings. In
+this sense, factors are a \emph{subset} of character.
 
 Note that another valid behaviour would be to throw an incompatible type
 error. This is what a strict factor implementation would do. We have
@@ -162,7 +162,7 @@ manually. This is something we might make easier in the future.
 
 \subsection{\code{vec_cast()}}{
 
-The second generic, \code{vec_cast()}, is the one that look at the data and
+The second generic, \code{vec_cast()}, is the one that looks at the data and
 actually performs the conversion. Because it has access to more
 information than \code{vec_ptype2()}, it may be stricter and cause an error
 in more cases. \code{vec_cast()} has three possible behaviours:

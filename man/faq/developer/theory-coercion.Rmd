@@ -25,7 +25,7 @@ vec_rbind(
 
 One major goal of vctrs is to provide a central place for implementing the coercion methods that make generic combinations possible. The two relevant generics are `vec_ptype2()` and `vec_cast()`. They both take two arguments and perform __double dispatch__, meaning that a method is selected based on the classes of both inputs.
 
-The general mechanism for combining multiple inputs has two steps:
+The general mechanism for combining multiple inputs is:
 
 1. Find the common type of a set of inputs by reducing (as in `base::Reduce()` or `purrr::reduce()`) the `vec_ptype2()` binary function over the set.
 
@@ -33,7 +33,7 @@ The general mechanism for combining multiple inputs has two steps:
 
 3. Initialise the output vector as an instance of this common type with `vec_init()`.
 
-4. Fill the output vector with the elements of the inputs with `vec_assign()`.
+4. Fill the output vector with the elements of the inputs using `vec_assign()`.
 
 The last two steps may require `vec_proxy()` and `vec_restore()` implementations, unless the attributes of your class are constant and do not depend on the contents of the vector. We focus here on the first two steps, which require `vec_ptype2()` and `vec_cast()` implementations.
 
@@ -73,7 +73,7 @@ Let's look again at what happens when we combine a factor and a character:
 vec_ptype2(factor("a"), "b")
 ```
 
-The ptype2 method for `<character>` + `<factor>` returns `<character>`. This is because character is a richer type than `factor<"a">`. Whereas the latter can only contain `"a"` strings, the former can contain any strings. Factors are a _subset_ of character.
+The ptype2 method for `<character>` and `<factor<"a">>` returns `<character>` because the former is a richer type. The factor can only contain `"a"` strings, whereas the character can contain any strings. In this sense, factors are a _subset_ of character.
 
 Note that another valid behaviour would be to throw an incompatible type error. This is what a strict factor implementation would do. We have decided to be laxer in vctrs because it is easy to inadvertently create factors instead of character vectors, especially with older versions of R where `stringsAsFactors` is still true by default.
 

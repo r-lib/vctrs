@@ -17,29 +17,32 @@ vectors, see \code{\link[=howto-faq-coercion]{?howto-faq-coercion}}.
 Coercion of data frames occurs when different data frame classes are
 combined in some way. The two main methods of combination are currently
 row-binding with \code{\link[=vec_rbind]{vec_rbind()}} and col-binding with
-\code{\link[=vec_cbind]{vec_cbind()}}. These functions take multiple data
-frame inputs and automatically coerce them their common type.
+\code{\link[=vec_cbind]{vec_cbind()}} (which are in turn used by a number of
+dplyr functions). These functions take multiple data frame inputs and
+automatically coerce them to their common type.
 
 vctrs is intentionally strict about the kind of automatic coercions that
-are performed when combining inputs. For instance, it doesn’t make sense
-to combine a rowwise data frame and a grouped data frame. In this case,
-vctrs throws an incompatible type error because the user should be the
-one that does the work of converting the data frames to the format makes
-the most sense for the task at hand.
+are performed when combining inputs. For instance, it’s not clear what
+combining rowwise data frame and a grouped data frame should return. In
+this case, vctrs throws an incompatible type error because the user
+needs to decide which type is appropriate for the task at hand.
 \subsection{Parent methods}{
 
 Most of the common type determination should be performed by the parent
-methods. In vctrs, double dispatch is implemented in such a way in vctrs
-that you need to call your parent method manually. For \code{vec_ptype2()}
-this is typically \code{df_ptype2()} for a data frame subclass or
-\code{tib_ptype2()} if you have a tibble subclass. Similarly, \code{df_cast()} and
-\code{tib_cast()} are the workhorses for \code{vec_cast()} methods of subtypes of
-\code{data.frame} and \code{tbl_df}.
+class. In vctrs, double dispatch is implemented in such a way that you
+need to call the methods for the parent class manually. For
+\code{vec_ptype2()} this means you need to call \code{df_ptype2()} (for data frame
+subclass) or \code{tib_ptype2()} (for tibble subclass). Similarly,
+\code{df_cast()} and \code{tib_cast()} are the workhorses for \code{vec_cast()} methods
+of subtypes of \code{data.frame} and \code{tbl_df}. These functions take the union
+of the columns in \code{x} and \code{y}, and ensure shared columns have the same
+type.
 
 These functions are much less strict than \code{vec_ptype2()} and
 \code{vec_cast()} as they accept any subclass of data frame as input. They
-always return a \code{data.frame} or a \code{tbl_df}. They should be explicitly
-exported by packages to allow creating subtypes.
+always return a \code{data.frame} or a \code{tbl_df}. Note that if you write
+similar functions for your subclass (which should be rare), you’ll need
+to export it so.
 }
 
 \subsection{A \code{data.table} example}{
@@ -91,6 +94,7 @@ method for coercing to data frame uses \code{df_cast()} rather than
 vec_cast.data.table.data.table <- function(x, to, ...) \{
   dt_cast(x, to, ...)
 \}
+#' @export
 vec_cast.data.table.data.frame <- function(x, to, ...) \{
   dt_cast(x, to, ...)
 \}
