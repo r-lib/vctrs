@@ -7,6 +7,9 @@
     <loc>https://vctrs.r-lib.org/reference/as-is.html</loc>
   </url>
   <url>
+    <loc>https://vctrs.r-lib.org/reference/df_ptype2.html</loc>
+  </url>
+  <url>
     <loc>https://vctrs.r-lib.org/reference/faq-error-incompatible-attributes.html</loc>
   </url>
   <url>
@@ -14,6 +17,12 @@
   </url>
   <url>
     <loc>https://vctrs.r-lib.org/reference/fields.html</loc>
+  </url>
+  <url>
+    <loc>https://vctrs.r-lib.org/reference/howto-faq-coercion-data-frame.html</loc>
+  </url>
+  <url>
+    <loc>https://vctrs.r-lib.org/reference/howto-faq-coercion.html</loc>
   </url>
   <url>
     <loc>https://vctrs.r-lib.org/reference/int64.html</loc>
@@ -65,6 +74,9 @@
   </url>
   <url>
     <loc>https://vctrs.r-lib.org/reference/table.html</loc>
+  </url>
+  <url>
+    <loc>https://vctrs.r-lib.org/reference/theory-faq-coercion.html</loc>
   </url>
   <url>
     <loc>https://vctrs.r-lib.org/reference/unspecified.html</loc>
