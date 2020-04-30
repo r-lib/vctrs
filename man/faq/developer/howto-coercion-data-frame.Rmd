@@ -135,7 +135,7 @@ print.my_tibble <- function(x, ...) {
 
 ```{r, include = FALSE}
 # Necessary because includeRmd() evaluated in a child of global
-s3_register("base::print", "my_tibble")
+roxy_local_registration("base::print", "my_tibble")
 ```
 
 
@@ -211,14 +211,14 @@ vec_cast.tbl_df.my_tibble <- function(x, y, ...) {
 
 ```{r, include = FALSE}
 # Necessary because includeRmd() evaluated in a child of global
-s3_register("vctrs::vec_ptype2", "my_tibble.my_tibble")
-s3_register("vctrs::vec_cast", "my_tibble.my_tibble")
+roxy_local_registration("vctrs::vec_ptype2", "my_tibble.my_tibble")
+roxy_local_registration("vctrs::vec_cast", "my_tibble.my_tibble")
 
-s3_register("vctrs::vec_ptype2", "my_tibble.tbl_df")
-s3_register("vctrs::vec_ptype2", "tbl_df.my_tibble")
+roxy_local_registration("vctrs::vec_ptype2", "my_tibble.tbl_df")
+roxy_local_registration("vctrs::vec_ptype2", "tbl_df.my_tibble")
 
-s3_register("vctrs::vec_cast", "tbl_df.my_tibble")
-s3_register("vctrs::vec_cast", "my_tibble.tbl_df")
+roxy_local_registration("vctrs::vec_cast", "tbl_df.my_tibble")
+roxy_local_registration("vctrs::vec_cast", "my_tibble.tbl_df")
 ```
 
 From this point, we get correct combinations with tibbles:
@@ -257,11 +257,11 @@ vec_cast.data.frame.my_tibble <- function(x, y, ...) {
 
 ```{r, include = FALSE}
 # Necessary because includeRmd() evaluated in a child of global
-s3_register("vctrs::vec_ptype2", "my_tibble.data.frame")
-s3_register("vctrs::vec_ptype2", "data.frame.my_tibble")
+roxy_local_registration("vctrs::vec_ptype2", "my_tibble.data.frame")
+roxy_local_registration("vctrs::vec_ptype2", "data.frame.my_tibble")
 
-s3_register("vctrs::vec_cast", "my_tibble.data.frame")
-s3_register("vctrs::vec_cast", "data.frame.my_tibble")
+roxy_local_registration("vctrs::vec_cast", "my_tibble.data.frame")
+roxy_local_registration("vctrs::vec_cast", "data.frame.my_tibble")
 ```
 
 This completes the implementation:

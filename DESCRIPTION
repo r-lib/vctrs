@@ -42,6 +42,7 @@ Suggests:
     rmarkdown,
     testthat (>= 2.3.0),
     tibble,
+    withr,
     xml2,
     zeallot
 Remotes: 
