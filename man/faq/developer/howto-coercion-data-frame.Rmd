@@ -10,7 +10,7 @@ This guide provides a practical recipe for implementing `vec_ptype2()` and `vec_
 
 Coercion of data frames occurs when different data frame classes are combined in some way. The two main methods of combination are currently row-binding with [vec_rbind()] and col-binding with [vec_cbind()] (which are in turn used by a number of dplyr functions). These functions take multiple data frame inputs and automatically coerce them to their common type.
 
-vctrs is intentionally strict about the kind of automatic coercions that are performed when combining inputs. For instance, it's not clear what combining rowwise data frame and a grouped data frame should return. In this case, vctrs throws an incompatible type error because the user needs to decide which type is appropriate for the task at hand.
+vctrs is generally strict about the kind of automatic coercions that are performed when combining inputs. In the case of data frames we have decided to be a bit less strict for convenience. Instead of throwing an incompatible type error, we fall back to  a base data frame or a tibble if we don't know how to combine two data frame subclasses. It is still a good idea to specify the proper coercion behaviour for your data frame subclasses as soon as possible.
 
 
 ## Parent methods

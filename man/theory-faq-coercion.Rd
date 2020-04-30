@@ -221,5 +221,42 @@ If you’re implementing coercion methods for data frames, you will need
 to explicitly call the parent methods that perform the common type
 determination or the type conversion described above. These are exported
 as \code{\link[=df_ptype2]{df_ptype2()}} and \code{\link[=df_cast]{df_cast()}}.
+\subsection{Data frame fallbacks}{
+
+Being too strict with data frame combinations would cause too much pain
+because there are many data frame subclasses in the wild that don’t
+implement vctrs methods. We have decided to implement a special fallback
+behaviour for foreign data frames. Incompatible data frames fall back to
+a base data frame:\if{html}{\out{<div class="r">}}\preformatted{df1 <- data.frame(x = 1)
+df2 <- structure(df1, class = c("foreign_df", "data.frame"))
+
+vec_rbind(df1, df2)
+#> Warning: Can't combine <data.frame> and <foreign_df>; falling back to <data.frame>.
+#> ℹ Convert all inputs to the same class to avoid this warning.
+#> ℹ See <https://vctrs.r-lib.org/reference/faq-warning-convert-inputs.html>.
+#>   x
+#> 1 1
+#> 2 1
+}\if{html}{\out{</div>}}
+
+When a tibble is involved, we fall back to tibble:\if{html}{\out{<div class="r">}}\preformatted{df3 <- tibble::new_tibble(df1, nrow = nrow(df1))
+
+vec_rbind(df1, df3)
+#> # A tibble: 2 x 1
+#>       x
+#>   <dbl>
+#> 1     1
+#> 2     1
+}\if{html}{\out{</div>}}
+
+These fallbacks are not ideal but they make sense because all data
+frames share a common data structure. This is not generally the case for
+vectors, for example factors and characters have different
+representations. The downside is that the behaviour of R scripts will
+change when you implement vctrs methods for your subclass. This is why
+the proper coercion behaviour for your data frame class should be
+specified as soon as possible.
+}
+
 }
 }

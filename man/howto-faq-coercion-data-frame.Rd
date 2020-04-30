@@ -21,11 +21,13 @@ row-binding with \code{\link[=vec_rbind]{vec_rbind()}} and col-binding with
 dplyr functions). These functions take multiple data frame inputs and
 automatically coerce them to their common type.
 
-vctrs is intentionally strict about the kind of automatic coercions that
-are performed when combining inputs. For instance, it’s not clear what
-combining rowwise data frame and a grouped data frame should return. In
-this case, vctrs throws an incompatible type error because the user
-needs to decide which type is appropriate for the task at hand.
+vctrs is generally strict about the kind of automatic coercions that are
+performed when combining inputs. In the case of data frames we have
+decided to be a bit less strict for convenience. Instead of throwing an
+incompatible type error, we fall back to a base data frame or a tibble
+if we don’t know how to combine two data frame subclasses. It is still a
+good idea to specify the proper coercion behaviour for your data frame
+subclasses as soon as possible.
 \subsection{Parent methods}{
 
 Most of the common type determination should be performed by the parent
