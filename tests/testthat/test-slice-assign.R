@@ -590,7 +590,7 @@ test_that("can optionally assign names", {
   )
 })
 
-test_that("monitoring: assignment to a data frame with unreferenced columns doesn't overwrite (#986)", {
+test_that("monitoring: assignment to a data frame with unshared columns doesn't overwrite (#986)", {
   x <- new_df_unshared_col()
   value <- new_data_frame(list(x = 2))
   expect <- new_data_frame(list(x = 1L))
@@ -629,6 +629,21 @@ test_that("monitoring: assignment to a data frame with unreferenced columns does
 
   # Expect no changes to `x`!
   expect_identical(x, expect)
+})
+
+test_that("monitoring: can assign in place with unshared columns when `owned = TRUE`", {
+  expect1 <- new_data_frame(list(x = 1L))
+  expect2 <- new_data_frame(list(x = 2L))
+
+  value <- new_data_frame(list(x = 2L))
+
+  x <- new_df_unshared_col()
+  .Call(vctrs_assign_params, x, 1L, value, assign_named = FALSE, owned = FALSE)
+  expect_identical(x, expect1)
+
+  x <- new_df_unshared_col()
+  .Call(vctrs_assign_params, x, 1L, value, assign_named = FALSE, owned = TRUE)
+  expect_identical(x, expect2)
 })
 
 test_that("monitoring: assignment to atomic vectors doesn't modify by reference", {
