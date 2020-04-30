@@ -5,13 +5,15 @@
 \title{FAQ - How to implement ptype2 and cast methods?}
 \description{
 This guide illustrates how to implement \code{vec_ptype2()} and \code{vec_cast()}
-methods. Related topics:
+methods for existing classes. Related topics:
 \itemize{
 \item For an overview of how these generics work and their roles in vctrs,
 see \code{\link[=theory-faq-coercion]{?theory-faq-coercion}}.
 \item For an example of implementing coercion methods for data frame
 subclasses, see
 \code{\link[=howto-faq-coercion-data-frame]{?howto-faq-coercion-data-frame}}.
+\item For a tutorial about implementing vctrs classes from scratch, see
+\code{vignette("s3-vector")}
 }
 \subsection{The natural number class}{
 

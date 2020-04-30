@@ -2,11 +2,13 @@
 ```{r, child = "../setup.Rmd", include = FALSE}
 ```
 
-This guide illustrates how to implement `vec_ptype2()` and `vec_cast()` methods. Related topics:
+This guide illustrates how to implement `vec_ptype2()` and `vec_cast()` methods for existing classes. Related topics:
 
 - For an overview of how these generics work and their roles in vctrs, see [`?theory-faq-coercion`][theory-faq-coercion].
 
 - For an example of implementing coercion methods for data frame subclasses, see [`?howto-faq-coercion-data-frame`][howto-faq-coercion-data-frame].
+
+- For a tutorial about implementing vctrs classes from scratch, see `vignette("s3-vector")`
 
 
 ## The natural number class
