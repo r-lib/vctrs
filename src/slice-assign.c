@@ -9,17 +9,18 @@ SEXP syms_vec_assign_fallback = NULL;
 SEXP fns_vec_assign_fallback = NULL;
 
 const struct vec_assign_opts vec_assign_default_opts = {
-  .assign_names = false
+  .assign_names = false,
+  .owned = false
 };
 
 static SEXP vec_assign_fallback(SEXP x, SEXP index, SEXP value);
-static SEXP lgl_assign(SEXP x, SEXP index, SEXP value);
-static SEXP int_assign(SEXP x, SEXP index, SEXP value);
-static SEXP dbl_assign(SEXP x, SEXP index, SEXP value);
-static SEXP cpl_assign(SEXP x, SEXP index, SEXP value);
-SEXP chr_assign(SEXP x, SEXP index, SEXP value);
-static SEXP raw_assign(SEXP x, SEXP index, SEXP value);
-SEXP list_assign(SEXP x, SEXP index, SEXP value);
+static SEXP lgl_assign(SEXP x, SEXP index, SEXP value, bool owned);
+static SEXP int_assign(SEXP x, SEXP index, SEXP value, bool owned);
+static SEXP dbl_assign(SEXP x, SEXP index, SEXP value, bool owned);
+static SEXP cpl_assign(SEXP x, SEXP index, SEXP value, bool owned);
+SEXP chr_assign(SEXP x, SEXP index, SEXP value, bool owned);
+static SEXP raw_assign(SEXP x, SEXP index, SEXP value, bool owned);
+SEXP list_assign(SEXP x, SEXP index, SEXP value, bool owned);
 
 // [[ register() ]]
 SEXP vctrs_assign(SEXP x, SEXP index, SEXP value, SEXP x_arg_, SEXP value_arg_) {
@@ -28,6 +29,7 @@ SEXP vctrs_assign(SEXP x, SEXP index, SEXP value, SEXP x_arg_, SEXP value_arg_) 
 
   const struct vec_assign_opts opts = {
     .assign_names = false,
+    .owned = false,
     .x_arg = &x_arg,
     .value_arg = &value_arg
   };
@@ -94,9 +96,10 @@ SEXP vec_assign_opts(SEXP x, SEXP index, SEXP value,
 
 // [[ register() ]]
 SEXP vctrs_assign_params(SEXP x, SEXP index, SEXP value,
-                         SEXP assign_names) {
+                         SEXP assign_names, SEXP owned) {
   const struct vec_assign_opts opts =  {
-    .assign_names = r_bool_as_int(assign_names)
+    .assign_names = r_bool_as_int(assign_names),
+    .owned = r_bool_as_int(owned)
   };
   return vec_assign_opts(x, index, value, &opts);
 }
@@ -104,13 +107,13 @@ SEXP vctrs_assign_params(SEXP x, SEXP index, SEXP value,
 static SEXP vec_assign_switch(SEXP proxy, SEXP index, SEXP value,
                               const struct vec_assign_opts* opts) {
   switch (vec_proxy_typeof(proxy)) {
-  case vctrs_type_logical:   return lgl_assign(proxy, index, value);
-  case vctrs_type_integer:   return int_assign(proxy, index, value);
-  case vctrs_type_double:    return dbl_assign(proxy, index, value);
-  case vctrs_type_complex:   return cpl_assign(proxy, index, value);
-  case vctrs_type_character: return chr_assign(proxy, index, value);
-  case vctrs_type_raw:       return raw_assign(proxy, index, value);
-  case vctrs_type_list:      return list_assign(proxy, index, value);
+  case vctrs_type_logical:   return lgl_assign(proxy, index, value, opts->owned);
+  case vctrs_type_integer:   return int_assign(proxy, index, value, opts->owned);
+  case vctrs_type_double:    return dbl_assign(proxy, index, value, opts->owned);
+  case vctrs_type_complex:   return cpl_assign(proxy, index, value, opts->owned);
+  case vctrs_type_character: return chr_assign(proxy, index, value, opts->owned);
+  case vctrs_type_raw:       return raw_assign(proxy, index, value, opts->owned);
+  case vctrs_type_list:      return list_assign(proxy, index, value, opts->owned);
   case vctrs_type_dataframe: return df_assign(proxy, index, value, opts);
   case vctrs_type_scalar:    stop_scalar_type(proxy, args_empty);
   default:                   vctrs_stop_unsupported_type(vec_typeof(proxy), "vec_assign_switch()");
@@ -133,7 +136,7 @@ SEXP vec_proxy_assign_names(SEXP proxy, SEXP index, SEXP value) {
     PROTECT(proxy_nms);
   }
 
-  proxy_nms = PROTECT(chr_assign(proxy_nms, index, value_nms));
+  proxy_nms = PROTECT(chr_assign(proxy_nms, index, value_nms, false));
 
   proxy = PROTECT(r_maybe_duplicate(proxy));
   proxy = vec_set_names(proxy, proxy_nms);
@@ -142,12 +145,32 @@ SEXP vec_proxy_assign_names(SEXP proxy, SEXP index, SEXP value) {
   return proxy;
 }
 
-
-// `vec_proxy_assign()` will duplicate the `proxy` if it is referenced or
-// marked as not mutable. Otherwise, `vec_proxy_assign()` will assign
-// directly into the `proxy`. Even though it can directly assign, the safe
-// way to call `vec_proxy_assign()` is to catch and protect its output rather
-// than relying on it to assign directly.
+// `vec_proxy_assign_opts()` conditionally duplicates the `proxy` depending
+// on a number of factors.
+//
+// - If a fallback is required, the `proxy` is duplicated at the R level.
+// - If `opts->owned` is `true`, the `proxy` is only duplicated if it is
+//   shared, i.e. `MAYBE_SHARED()` returns `true`.
+// - If `opts->owned` is `false`, the `proxy` is only duplicated if it is
+//   referenced, i.e. `MAYBE_REFERENCED()` returns `true`.
+//
+// Ownership of the `proxy` must be recursive. For data frames, the `owned`
+// argument is passed along to each column.
+//
+// Practically, we only set `owned = true` when we create a fresh data structure
+// at the C level and then assign into it to fill it. This happens in `vec_c()`
+// and `vec_rbind()`. For data frames, this `owned` parameter is particularly
+// important for R 4.0.0 where references are tracked more precisely. In R 4.0.0,
+// a freshly created data frame's columns all have a refcount of 1 because of
+// the `SET_VECTOR_ELT()` call that set them in the data frame. This makes them
+// referenced, but not shared. If `owned = false` was set and `df_assign()` was
+// used in a loop (as it is in `vec_rbind()`), then a copy of each column would
+// be made at each iteration of the loop (any time a new set of rows is assigned
+// into the output object).
+//
+// Even though it can directly assign, the safe
+// way to call `vec_proxy_assign()` and `vec_proxy_assign_opts()` is to catch
+// and protect their output rather than relying on them to assign directly.
 
 /*
  * @param proxy The proxy of the output container
@@ -176,7 +199,7 @@ SEXP vec_proxy_assign_opts(SEXP proxy, SEXP index, SEXP value,
     REPROTECT(index, index_pi);
     out = PROTECT(vec_assign_fallback(proxy, index, value));
   } else if (has_dim(proxy)) {
-    out = PROTECT(vec_assign_shaped(proxy, index, value_info.proxy));
+    out = PROTECT(vec_assign_shaped(proxy, index, value_info.proxy, opts));
   } else {
     out = PROTECT(vec_assign_switch(proxy, index, value_info.proxy, opts));
   }
@@ -199,7 +222,14 @@ SEXP vec_proxy_assign_opts(SEXP proxy, SEXP index, SEXP value,
   }                                                             \
                                                                 \
   const CTYPE* value_data = CONST_DEREF(value);                 \
-  SEXP out = PROTECT(r_maybe_duplicate(x));                     \
+                                                                \
+  SEXP out;                                                     \
+  if (owned) {                                                  \
+    out = PROTECT(r_maybe_duplicate_shared(x));                 \
+  } else {                                                      \
+    out = PROTECT(r_maybe_duplicate(x));                        \
+  }                                                             \
+                                                                \
   CTYPE* out_data = DEREF(out);                                 \
                                                                 \
   for (R_len_t i = 0; i < n; ++i) {                             \
@@ -224,7 +254,14 @@ SEXP vec_proxy_assign_opts(SEXP proxy, SEXP index, SEXP value,
   }                                                             \
                                                                 \
   const CTYPE* value_data = CONST_DEREF(value);                 \
-  SEXP out = PROTECT(r_maybe_duplicate(x));                     \
+                                                                \
+  SEXP out;                                                     \
+  if (owned) {                                                  \
+    out = PROTECT(r_maybe_duplicate_shared(x));                 \
+  } else {                                                      \
+    out = PROTECT(r_maybe_duplicate(x));                        \
+  }                                                             \
+                                                                \
   CTYPE* out_data = DEREF(out) + start;                         \
                                                                 \
   for (int i = 0; i < n; ++i, out_data += step, ++value_data) { \
@@ -241,22 +278,22 @@ SEXP vec_proxy_assign_opts(SEXP proxy, SEXP index, SEXP value,
     ASSIGN_INDEX(CTYPE, DEREF, CONST_DEREF);    \
   }
 
-static SEXP lgl_assign(SEXP x, SEXP index, SEXP value) {
+static SEXP lgl_assign(SEXP x, SEXP index, SEXP value, bool owned) {
   ASSIGN(int, LOGICAL, LOGICAL_RO);
 }
-static SEXP int_assign(SEXP x, SEXP index, SEXP value) {
+static SEXP int_assign(SEXP x, SEXP index, SEXP value, bool owned) {
   ASSIGN(int, INTEGER, INTEGER_RO);
 }
-static SEXP dbl_assign(SEXP x, SEXP index, SEXP value) {
+static SEXP dbl_assign(SEXP x, SEXP index, SEXP value, bool owned) {
   ASSIGN(double, REAL, REAL_RO);
 }
-static SEXP cpl_assign(SEXP x, SEXP index, SEXP value) {
+static SEXP cpl_assign(SEXP x, SEXP index, SEXP value, bool owned) {
   ASSIGN(Rcomplex, COMPLEX, COMPLEX_RO);
 }
-SEXP chr_assign(SEXP x, SEXP index, SEXP value) {
+SEXP chr_assign(SEXP x, SEXP index, SEXP value, bool owned) {
   ASSIGN(SEXP, STRING_PTR, STRING_PTR_RO);
 }
-static SEXP raw_assign(SEXP x, SEXP index, SEXP value) {
+static SEXP raw_assign(SEXP x, SEXP index, SEXP value, bool owned) {
   ASSIGN(Rbyte, RAW, RAW_RO);
 }
 
@@ -274,7 +311,12 @@ static SEXP raw_assign(SEXP x, SEXP index, SEXP value) {
              "`value` should have been recycled to fit `x`.");  \
   }                                                             \
                                                                 \
-  SEXP out = PROTECT(r_maybe_duplicate(x));                     \
+  SEXP out;                                                     \
+  if (owned) {                                                  \
+    out = PROTECT(r_maybe_duplicate_shared(x));                 \
+  } else {                                                      \
+    out = PROTECT(r_maybe_duplicate(x));                        \
+  }                                                             \
                                                                 \
   for (R_len_t i = 0; i < n; ++i) {                             \
     int j = index_data[i];                                      \
@@ -297,7 +339,12 @@ static SEXP raw_assign(SEXP x, SEXP index, SEXP value) {
              "`value` should have been recycled to fit `x`.");  \
   }                                                             \
                                                                 \
-  SEXP out = PROTECT(r_maybe_duplicate(x));                     \
+  SEXP out;                                                     \
+  if (owned) {                                                  \
+    out = PROTECT(r_maybe_duplicate_shared(x));                 \
+  } else {                                                      \
+    out = PROTECT(r_maybe_duplicate(x));                        \
+  }                                                             \
                                                                 \
   for (R_len_t i = 0; i < n; ++i, start += step) {              \
     SET(out, start, GET(value, i));                             \
@@ -313,7 +360,7 @@ static SEXP raw_assign(SEXP x, SEXP index, SEXP value) {
     ASSIGN_BARRIER_INDEX(GET, SET);             \
   }
 
-SEXP list_assign(SEXP x, SEXP index, SEXP value) {
+SEXP list_assign(SEXP x, SEXP index, SEXP value, bool owned) {
   ASSIGN_BARRIER(VECTOR_ELT, SET_VECTOR_ELT);
 }
 
@@ -345,7 +392,13 @@ SEXP list_assign(SEXP x, SEXP index, SEXP value) {
  */
 SEXP df_assign(SEXP x, SEXP index, SEXP value,
                const struct vec_assign_opts* opts) {
-  SEXP out = PROTECT(r_maybe_duplicate(x));
+  SEXP out;
+  if (opts->owned) {
+    out = PROTECT(r_maybe_duplicate_shared(x));
+  } else {
+    out = PROTECT(r_maybe_duplicate(x));
+  }
+
   R_len_t n = Rf_length(out);
 
   if (Rf_length(value) != n) {

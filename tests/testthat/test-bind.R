@@ -257,6 +257,16 @@ test_that("can assign row names in vec_rbind()", {
   expect_identical(out, exp)
 })
 
+test_that("monitoring: name repair while rbinding doesn't modify in place", {
+  df <- new_data_frame(list(x = 1, x = 1))
+  expect <- new_data_frame(list(x = 1, x = 1))
+
+  # Name repair occurs
+  expect_named(vec_rbind(df), c("x...1", "x...2"))
+
+  # No changes to `df`
+  expect_identical(df, expect)
+})
 
 # cols --------------------------------------------------------------------
 
@@ -441,6 +451,17 @@ test_that("vec_cbind() fails with arrays of dimensionality > 3", {
   a <- array(NA, c(1, 1, 1))
   expect_error(vec_cbind(a), "Can't bind arrays")
   expect_error(vec_cbind(x = a), "Can't bind arrays")
+})
+
+test_that("monitoring: name repair while cbinding doesn't modify in place", {
+  df <- new_data_frame(list(x = 1, x = 1))
+  expect <- new_data_frame(list(x = 1, x = 1))
+
+  # Name repair occurs
+  expect_named(vec_cbind(df), c("x...1", "x...2"))
+
+  # No changes to `df`
+  expect_identical(df, expect)
 })
 
 test_that("vec_rbind() consistently handles unnamed outputs", {

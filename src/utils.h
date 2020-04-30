@@ -208,6 +208,7 @@ bool r_is_string(SEXP x);
 bool r_is_number(SEXP x);
 SEXP r_peek_option(const char* option);
 SEXP r_maybe_duplicate(SEXP x);
+SEXP r_maybe_duplicate_shared(SEXP x);
 
 SEXP r_pairlist(SEXP* tags, SEXP* cars);
 SEXP r_call(SEXP fn, SEXP* tags, SEXP* cars);
