@@ -590,7 +590,7 @@ test_that("can optionally assign names", {
   )
 })
 
-test_that("assignment to a data frame with unreferenced columns doesn't overwrite (#986)", {
+test_that("monitoring: assignment to a data frame with unreferenced columns doesn't overwrite (#986)", {
   x <- new_df_unshared_col()
   value <- new_data_frame(list(x = 2))
   expect <- new_data_frame(list(x = 1L))
@@ -628,6 +628,15 @@ test_that("assignment to a data frame with unreferenced columns doesn't overwrit
   }
 
   # Expect no changes to `x`!
+  expect_identical(x, expect)
+})
+
+test_that("monitoring: assignment to atomic vectors doesn't modify by reference", {
+  x <- c(1, 2, 3)
+  expect <- c(1, 2, 3)
+
+  vec_assign(x, 2, 3)
+
   expect_identical(x, expect)
 })
 
