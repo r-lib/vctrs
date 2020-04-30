@@ -47,6 +47,17 @@ new_natural(1:3)
 new_natural(c(1, NA))
 ```
 
+## Roxygen workflow
+
+To implement methods for generics, first import the generics in your namespace and redocument:
+
+```{r}
+#' @importFrom vctrs vec_ptype2 vec_cast
+NULL
+```
+
+Note that for each batches of methods that you add to your package, you need to export the methods and redocument immediately, even during development. Otherwise they won't be in scope when you run unit tests e.g. with testthat.
+
 
 ## Implementing `vec_ptype2()`
 

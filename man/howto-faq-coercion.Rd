@@ -53,6 +53,20 @@ new_natural(c(1, NA))
 }\if{html}{\out{</div>}}
 }
 
+\subsection{Roxygen workflow}{
+
+To implement methods for generics, first import the generics in your
+namespace and redocument:\if{html}{\out{<div class="r">}}\preformatted{#' @importFrom vctrs vec_ptype2 vec_cast
+NULL
+#> NULL
+}\if{html}{\out{</div>}}
+
+Note that for each batches of methods that you add to your package, you
+need to export the methods and redocument immediately, even during
+development. Otherwise they won’t be in scope when you run unit tests
+e.g. with testthat.
+}
+
 \subsection{Implementing \code{vec_ptype2()}}{
 
 Implementing double dispatch methods is very similar to implementing

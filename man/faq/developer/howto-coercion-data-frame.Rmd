@@ -13,6 +13,18 @@ Coercion of data frames occurs when different data frame classes are combined in
 vctrs is generally strict about the kind of automatic coercions that are performed when combining inputs. In the case of data frames we have decided to be a bit less strict for convenience. Instead of throwing an incompatible type error, we fall back to  a base data frame or a tibble if we don't know how to combine two data frame subclasses. It is still a good idea to specify the proper coercion behaviour for your data frame subclasses as soon as possible.
 
 
+## Roxygen workflow
+
+To implement methods for generics, first import the generics in your namespace and redocument:
+
+```{r}
+#' @importFrom vctrs vec_ptype2 vec_cast
+NULL
+```
+
+Note that for each batches of methods that you add to your package, you need to export the methods and redocument immediately, even during development. Otherwise they won't be in scope when you run unit tests e.g. with testthat.
+
+
 ## Parent methods
 
 Most of the common type determination should be performed by the parent class. In vctrs, double dispatch is implemented in such a way that you need to call the methods for the parent class manually. For `vec_ptype2()` this means you need to call `df_ptype2()` (for data frame subclass) or `tib_ptype2()` (for tibble subclass). Similarly, `df_cast()` and `tib_cast()` are the workhorses for `vec_cast()` methods of subtypes of `data.frame` and `tbl_df`. These functions take the union of the columns in `x` and `y`, and ensure shared columns have the same type.
