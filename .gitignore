@@ -1,4 +1,5 @@
 inst/doc
+man/faq/**/*.html
 .Rproj.user
 .Rhistory
 .RData

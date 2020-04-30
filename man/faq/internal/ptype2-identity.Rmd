@@ -1,5 +1,5 @@
 
-```{r, child = "setup.Rmd", include = FALSE}
+```{r, child = "../setup.Rmd", include = FALSE}
 ```
 
 ## Promotion monoid
