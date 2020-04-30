@@ -7,7 +7,7 @@ This is an overview of the usage of `vec_ptype2()` and `vec_cast()` and their ro
 
 ## Combination mechanism in vctrs
 
-The coercion system in vctrs is designed to make combination of multiple inputs consistent and extensible. Combinations occur in many places, such as row-binding, joins, subset-assignment, or grouped summaries functions that use the split-apply-combine strategy. For example:
+The coercion system in vctrs is designed to make combination of multiple inputs consistent and extensible. Combinations occur in many places, such as row-binding, joins, subset-assignment, or grouped summary functions that use the split-apply-combine strategy. For example:
 
 ```{r, error = TRUE}
 vec_c(TRUE, 1)
@@ -42,7 +42,7 @@ The last two steps may require `vec_proxy()` and `vec_restore()` implementations
 
 Methods for `vec_ptype2()` are passed two _prototypes_, i.e. two inputs emptied of their elements. They implement two behaviours:
 
-* If the types of their inputs are compatible, indicate which of one is the richer type by returning it. If the types are of equal resolution, return any of the two.
+* If the types of their inputs are compatible, indicate which of them is the richer type by returning it. If the types are of equal resolution, return any of the two.
 
 * Throw an error when the types of their inputs are not compatible.
 
@@ -104,7 +104,7 @@ These coercion hierarchies are _implicit_, in the sense that they are implied by
 
 ## `vec_cast()`
 
-The second generic, `vec_cast()`, is the one that look at the data and actually performs the conversion. Because it has access to more information than `vec_ptype2()`, it may be stricter and cause an error in more cases. `vec_cast()` has three possible behaviours:
+The second generic, `vec_cast()`, is the one that looks at the data and actually performs the conversion. Because it has access to more information than `vec_ptype2()`, it may be stricter and cause an error in more cases. `vec_cast()` has three possible behaviours:
 
 - Determine that the prototypes of the two inputs are not compatible. This must be decided in exactly the same way as for `vec_ptype2()`. Call `stop_incompatible_cast()` if you can determine from the attributes that the types are not compatible.
 
