@@ -29,7 +29,7 @@ Note that for each batches of methods that you add to your package, you need to 
 
 Most of the common type determination should be performed by the parent class. In vctrs, double dispatch is implemented in such a way that you need to call the methods for the parent class manually. For `vec_ptype2()` this means you need to call `df_ptype2()` (for data frame subclass) or `tib_ptype2()` (for tibble subclass). Similarly, `df_cast()` and `tib_cast()` are the workhorses for `vec_cast()` methods of subtypes of `data.frame` and `tbl_df`. These functions take the union of the columns in `x` and `y`, and ensure shared columns have the same type.
 
-These functions are much less strict than `vec_ptype2()` and `vec_cast()` as they accept any subclass of data frame as input. They always return a `data.frame` or a `tbl_df`. Note that if you write similar functions for your subclass (which should be rare), you'll need to export it so.
+These functions are much less strict than `vec_ptype2()` and `vec_cast()` as they accept any subclass of data frame as input. They always return a `data.frame` or a `tbl_df`. You will probably want to write similar functions for your subclass to avoid repetition in your code. You may want to export them as well if you are expecting other people to derive from your class.
 
 
 ## A `data.table` example
@@ -133,6 +133,12 @@ print.my_tibble <- function(x, ...) {
 }
 ```
 
+```{r, include = FALSE}
+# Necessary because includeRmd() evaluated in a child of global
+s3_register("base::print", "my_tibble")
+```
+
+
 This subclass is very simple. All it does is modify the header.
 
 ```{r}
@@ -146,7 +152,7 @@ df[2]
 Combinations do not work properly out of the box, instead vctrs falls back to a bare tibble:
 
 ```{r}
-vec_rbind(df, tibble(x = 10:12))
+vec_rbind(df, tibble::tibble(x = 10:12))
 ```
 
 We would like to return a `<my_tibble>` when combined with a data frame or a tibble. This subclass of tibble is in fact a supertype of tibble, i.e. it is the richer type.
@@ -203,10 +209,22 @@ vec_cast.tbl_df.my_tibble <- function(x, y, ...) {
 }
 ```
 
+```{r, include = FALSE}
+# Necessary because includeRmd() evaluated in a child of global
+s3_register("vctrs::vec_ptype2", "my_tibble.my_tibble")
+s3_register("vctrs::vec_cast", "my_tibble.my_tibble")
+
+s3_register("vctrs::vec_ptype2", "my_tibble.tbl_df")
+s3_register("vctrs::vec_ptype2", "tbl_df.my_tibble")
+
+s3_register("vctrs::vec_cast", "tbl_df.my_tibble")
+s3_register("vctrs::vec_cast", "my_tibble.tbl_df")
+```
+
 From this point, we get correct combinations with tibbles:
 
 ```{r}
-vec_rbind(df, tibble(x = 10:12))
+vec_rbind(df, tibble::tibble(x = 10:12))
 ```
 
 However we are not done yet. Because the coercion hierarchy is different from the class hierarchy, there is no inheritance of coercion methods. We're not getting correct behaviour for data frames yet:
@@ -220,21 +238,30 @@ Let's finish up the boiler plate:
 ```{r}
 #' @export
 vec_ptype2.my_tibble.data.frame <- function(x, y, ...) {
-  tib_ptype2(x, y, ...)
+  my_tib_ptype2(x, y, ...)
 }
 #' @export
 vec_ptype2.data.frame.my_tibble <- function(x, y, ...) {
-  tib_ptype2(x, y, ...)
+  my_tib_ptype2(x, y, ...)
 }
 
 #' @export
 vec_cast.my_tibble.data.frame <- function(x, y, ...) {
-  tib_cast(x, y, ...)
+  my_tib_cast(x, y, ...)
 }
 #' @export
 vec_cast.data.frame.my_tibble <- function(x, y, ...) {
   df_cast(x, y, ...)
 }
+```
+
+```{r, include = FALSE}
+# Necessary because includeRmd() evaluated in a child of global
+s3_register("vctrs::vec_ptype2", "my_tibble.data.frame")
+s3_register("vctrs::vec_ptype2", "data.frame.my_tibble")
+
+s3_register("vctrs::vec_cast", "my_tibble.data.frame")
+s3_register("vctrs::vec_cast", "data.frame.my_tibble")
 ```
 
 This completes the implementation:

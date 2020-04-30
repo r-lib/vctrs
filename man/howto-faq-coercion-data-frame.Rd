@@ -56,9 +56,10 @@ type.
 
 These functions are much less strict than \code{vec_ptype2()} and
 \code{vec_cast()} as they accept any subclass of data frame as input. They
-always return a \code{data.frame} or a \code{tbl_df}. Note that if you write
-similar functions for your subclass (which should be rare), you’ll need
-to export it so.
+always return a \code{data.frame} or a \code{tbl_df}. You will probably want to
+write similar functions for your subclass to avoid repetition in your
+code. You may want to export them as well if you are expecting other
+people to derive from your class.
 }
 
 \subsection{A \code{data.table} example}{
@@ -165,8 +166,11 @@ df[2]
 }\if{html}{\out{</div>}}
 
 Combinations do not work properly out of the box, instead vctrs falls
-back to a bare tibble:\if{html}{\out{<div class="r">}}\preformatted{vec_rbind(df, tibble(x = 10:12))
-#> <my_very_own_tibble_class>
+back to a bare tibble:\if{html}{\out{<div class="r">}}\preformatted{vec_rbind(df, tibble::tibble(x = 10:12))
+#> Warning: Can't combine <my_tibble> and <tibble>; falling back to <tibble>.
+#> ℹ Convert all inputs to the same class to avoid this warning.
+#> ℹ See <https://vctrs.r-lib.org/reference/faq-warning-convert-inputs.html>.
+#> # A tibble: 5 x 2
 #>       x     y
 #>   <dbl> <int>
 #> 1     1     1
@@ -226,7 +230,7 @@ vec_cast.tbl_df.my_tibble <- function(x, y, ...) \{
 \}
 }\if{html}{\out{</div>}}
 
-From this point, we get correct combinations with tibbles:\if{html}{\out{<div class="r">}}\preformatted{vec_rbind(df, tibble(x = 10:12))
+From this point, we get correct combinations with tibbles:\if{html}{\out{<div class="r">}}\preformatted{vec_rbind(df, tibble::tibble(x = 10:12))
 #> <my_very_own_tibble_class>
 #>       x     y
 #>   <dbl> <int>
@@ -240,7 +244,10 @@ From this point, we get correct combinations with tibbles:\if{html}{\out{<div cl
 However we are not done yet. Because the coercion hierarchy is different
 from the class hierarchy, there is no inheritance of coercion methods.
 We’re not getting correct behaviour for data frames yet:\if{html}{\out{<div class="r">}}\preformatted{vec_rbind(df, data.frame(x = 10:12))
-#> <my_very_own_tibble_class>
+#> Warning: Can't combine <my_tibble> and <data.frame>; falling back to <tibble>.
+#> ℹ Convert all inputs to the same class to avoid this warning.
+#> ℹ See <https://vctrs.r-lib.org/reference/faq-warning-convert-inputs.html>.
+#> # A tibble: 5 x 2
 #>       x     y
 #>   <dbl> <int>
 #> 1     1     1
@@ -252,16 +259,16 @@ We’re not getting correct behaviour for data frames yet:\if{html}{\out{<div cl
 
 Let’s finish up the boiler plate:\if{html}{\out{<div class="r">}}\preformatted{#' @export
 vec_ptype2.my_tibble.data.frame <- function(x, y, ...) \{
-  tib_ptype2(x, y, ...)
+  my_tib_ptype2(x, y, ...)
 \}
 #' @export
 vec_ptype2.data.frame.my_tibble <- function(x, y, ...) \{
-  tib_ptype2(x, y, ...)
+  my_tib_ptype2(x, y, ...)
 \}
 
 #' @export
 vec_cast.my_tibble.data.frame <- function(x, y, ...) \{
-  tib_cast(x, y, ...)
+  my_tib_cast(x, y, ...)
 \}
 #' @export
 vec_cast.data.frame.my_tibble <- function(x, y, ...) \{
