@@ -114,4 +114,156 @@ frames:\if{html}{\out{<div class="r">}}\preformatted{vec_cbind(data.frame(x = 1:
 #> 3: 3 foo
 }\if{html}{\out{</div>}}
 }
+
+\subsection{A tibble example}{
+
+In this example we implement coercion methods for a tibble subclass:\if{html}{\out{<div class="r">}}\preformatted{# User constructor
+my_tibble <- function(...) \{
+  new_my_tibble(tibble::tibble(...))
+\}
+# Developer constructor
+new_my_tibble <- function(x) \{
+  stopifnot(is.data.frame(x))
+  tibble::new_tibble(x, class = "my_tibble", nrow = nrow(x))
+\}
+
+print.my_tibble <- function(x, ...) \{
+  cat("<my_very_own_tibble_class>\n")
+  cli::cat_line(format(x)[-1])
+\}
+}\if{html}{\out{</div>}}
+
+This subclass is very simple. All it does is modify the header.\if{html}{\out{<div class="r">}}\preformatted{df <- my_tibble(x = 1, y = 1:2)
+
+df
+#> <my_very_own_tibble_class>
+#>       x     y
+#>   <dbl> <int>
+#> 1     1     1
+#> 2     1     2
+
+df[2]
+#> <my_very_own_tibble_class>
+#>       y
+#>   <int>
+#> 1     1
+#> 2     2
+}\if{html}{\out{</div>}}
+
+Combinations do not work properly out of the box, instead vctrs falls
+back to a bare tibble:\if{html}{\out{<div class="r">}}\preformatted{vec_rbind(df, tibble(x = 10:12))
+#> <my_very_own_tibble_class>
+#>       x     y
+#>   <dbl> <int>
+#> 1     1     1
+#> 2     1     2
+#> 3    10    NA
+#> 4    11    NA
+#> 5    12    NA
+}\if{html}{\out{</div>}}
+
+We would like to return a \verb{<my_tibble>} when combined with a data frame
+or a tibble. This subclass of tibble is in fact a supertype of tibble,
+i.e. it is the richer type.
+
+We’ll need to call our parent methods \code{\link[=tib_ptype2]{tib_ptype2()}}
+and \code{\link[=tib_cast]{tib_cast()}} and pass their results to our
+constructor. This is best wrapped in two functions to avoid repetition:\if{html}{\out{<div class="r">}}\preformatted{#' @export
+my_tib_cast <- function(x, to, ...) \{
+  new_my_tibble(tib_cast(x, to, ...))
+\}
+#' @export
+my_tib_ptype2 <- function(x, y, ...) \{
+  new_my_tibble(tib_ptype2(x, y, ...))
+\}
+}\if{html}{\out{</div>}}
+
+Let’s implement the coercion methods, starting with the self-self
+methods.\if{html}{\out{<div class="r">}}\preformatted{#' @export
+vec_ptype2.my_tibble.my_tibble <- function(x, y, ...) \{
+  my_tib_ptype2(x, y, ...)
+\}
+#' @export
+vec_cast.my_tibble.my_tibble <- function(x, y, ...) \{
+  my_tib_cast(x, y, ...)
+\}
+}\if{html}{\out{</div>}}
+
+The methods for combining our class with tibbles follow the same
+pattern. For ptype2 we return our class in both cases because it is the
+richer type:\if{html}{\out{<div class="r">}}\preformatted{#' @export
+vec_ptype2.my_tibble.tbl_df <- function(x, y, ...) \{
+  my_tib_ptype2(x, y, ...)
+\}
+#' @export
+vec_ptype2.tbl_df.my_tibble <- function(x, y, ...) \{
+  my_tib_ptype2(x, y, ...)
+\}
+}\if{html}{\out{</div>}}
+
+For cast are careful about returning a tibble when casting to a tibble.
+Note the call to \code{vctrs::tib_cast()}:\if{html}{\out{<div class="r">}}\preformatted{#' @export
+vec_cast.my_tibble.tbl_df <- function(x, y, ...) \{
+  my_tib_cast(x, y, ...)
+\}
+#' @export
+vec_cast.tbl_df.my_tibble <- function(x, y, ...) \{
+  tib_cast(x, y, ...)
+\}
+}\if{html}{\out{</div>}}
+
+From this point, we get correct combinations with tibbles:\if{html}{\out{<div class="r">}}\preformatted{vec_rbind(df, tibble(x = 10:12))
+#> <my_very_own_tibble_class>
+#>       x     y
+#>   <dbl> <int>
+#> 1     1     1
+#> 2     1     2
+#> 3    10    NA
+#> 4    11    NA
+#> 5    12    NA
+}\if{html}{\out{</div>}}
+
+However we are not done yet. Because the coercion hierarchy is different
+from the class hierarchy, there is no inheritance of coercion methods.
+We’re not getting correct behaviour for data frames yet:\if{html}{\out{<div class="r">}}\preformatted{vec_rbind(df, data.frame(x = 10:12))
+#> <my_very_own_tibble_class>
+#>       x     y
+#>   <dbl> <int>
+#> 1     1     1
+#> 2     1     2
+#> 3    10    NA
+#> 4    11    NA
+#> 5    12    NA
+}\if{html}{\out{</div>}}
+
+Let’s finish up the boiler plate:\if{html}{\out{<div class="r">}}\preformatted{#' @export
+vec_ptype2.my_tibble.data.frame <- function(x, y, ...) \{
+  tib_ptype2(x, y, ...)
+\}
+#' @export
+vec_ptype2.data.frame.my_tibble <- function(x, y, ...) \{
+  tib_ptype2(x, y, ...)
+\}
+
+#' @export
+vec_cast.my_tibble.data.frame <- function(x, y, ...) \{
+  tib_cast(x, y, ...)
+\}
+#' @export
+vec_cast.data.frame.my_tibble <- function(x, y, ...) \{
+  df_cast(x, y, ...)
+\}
+}\if{html}{\out{</div>}}
+
+This completes the implementation:\if{html}{\out{<div class="r">}}\preformatted{vec_rbind(df, data.frame(x = 10:12))
+#> <my_very_own_tibble_class>
+#>       x     y
+#>   <dbl> <int>
+#> 1     1     1
+#> 2     1     2
+#> 3    10    NA
+#> 4    11    NA
+#> 5    12    NA
+}\if{html}{\out{</div>}}
+}
 }
