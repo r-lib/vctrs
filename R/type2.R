@@ -97,8 +97,7 @@ vec_default_ptype2 <- function(x, y, ..., x_arg = "", y_arg = "") {
 
   internal <- match_ptype2_params(...)
 
-  has_df_fallback <- !is_true(peek_option("vctrs:::disable_df_fallback"))
-  if (has_df_fallback && internal$df_fallback) {
+  if (has_df_fallback() && internal$df_fallback) {
     if (is_df_subclass(x) && is.data.frame(y)) {
       return(vec_ptype2_df_fallback(x, y))
     }

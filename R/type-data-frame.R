@@ -332,3 +332,7 @@ df_lossy_cast <- function(out, x, to, ..., x_arg = "", to_arg = "") {
 is_informative_error.vctrs_error_cast_lossy_dropped <- function(x, ...) {
   FALSE
 }
+
+has_df_fallback <- function() {
+  !is_true(peek_option("vctrs:::disable_df_fallback"))
+}
