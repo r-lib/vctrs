@@ -1,0 +1,11 @@
+
+To implement methods for generics, first import the generics in your namespace and redocument:
+
+```{r, eval = FALSE}
+#' @importFrom vctrs vec_ptype2 vec_cast
+NULL
+```
+
+Note that for each batches of methods that you add to your package, you need to export the methods and redocument immediately, even during development. Otherwise they won't be in scope when you run unit tests e.g. with testthat.
+
+Implementing double dispatch methods is very similar to implementing regular S3 methods. In these examples we are using roxygen2 tags to register the methods, but you can also register the methods manually in your NAMESPACE file or lazily with `s3_register()`.
