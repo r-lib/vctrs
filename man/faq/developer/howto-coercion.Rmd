@@ -57,18 +57,17 @@ new_natural(c(1, NA))
 
 To implement methods for generics, first import the generics in your namespace and redocument:
 
-```{r}
+```{r, eval = FALSE}
 #' @importFrom vctrs vec_ptype2 vec_cast
 NULL
 ```
 
 Note that for each batches of methods that you add to your package, you need to export the methods and redocument immediately, even during development. Otherwise they won't be in scope when you run unit tests e.g. with testthat.
 
-
-## Implementing `vec_ptype2()`
-
 Implementing double dispatch methods is very similar to implementing regular S3 methods. In these examples we are using roxygen2 tags to register the methods, but you can also register the methods manually in your NAMESPACE file or lazily with `s3_register()`.
 
+
+## Implementing `vec_ptype2()`
 
 ### The self-self method
 
@@ -88,7 +87,7 @@ vec_ptype2(new_natural(1), new_natural(2:3))
 knitr_local_registration("vctrs::vec_ptype2", "my_natural.my_natural")
 ```
 
-`vec_ptype2()` implements fallbacks to try and be compatible with simple classes, so it may seem that you don't need to implement the self-self coercion method. However, you still have to implement it explicitly because this is how vctrs knows that a class that is implementing vctrs methods (for instance this disable fallbacks to `base::c()`). Also, it makes your class a bit more efficient.
+`vec_ptype2()` implements a fallback to try and be compatible with simple classes, so it may seem that you don't need to implement the self-self coercion method. However, you must implement it explicitly because this is how vctrs knows that a class that is implementing vctrs methods (for instance this disable fallbacks to `base::c()`). Also, it makes your class a bit more efficient.
 
 
 ### The parent and children methods
@@ -190,7 +189,11 @@ Note how the methods need to take `x_arg` and `y_arg` parameters and pass them o
 
 ## Implementing `vec_cast()`
 
-Corresponding `vec_cast()` methods must be implemented for all `vec_ptype2()` methods. The self-self method is easy in this case, it just returns the target input:
+Corresponding `vec_cast()` methods must be implemented for all `vec_ptype2()` methods. The general pattern is to convert the argument `x` to the type of `to`. The methods should validate the values in `x` and make sure they conform to the values of `to`.
+
+Please note that for historical reasons, the order of the classes in the method name is in reverse order of the arguments in the function signature. The first class represents `to`, whereas the second class represents `x`.
+
+The self-self method is easy in this case, it just returns the target input:
 
 ```{r}
 #' @export
@@ -199,9 +202,7 @@ vec_cast.my_natural.my_natural <- function(x, to, ...) {
 }
 ```
 
-The general pattern for `vec_cast()` methods is to convert the argument `x` to the type of `to`. The `vec_cast()` method should validate the values in `x` and make sure they conform to the values of `to`. We perform input validation in the `new_natural()` constructor, so that's a good fit for our `vec_cast()` implementations.
-
-Note that for historical reasons, the order of the classes in the method name is in reverse order of the arguments in the function signature. The first class represents `to`, whereas the second class represents `x`.
+The other types need to be validated. We perform input validation in the `new_natural()` constructor, so that's a good fit for our `vec_cast()` implementations.
 
 ```{r}
 #' @export
@@ -272,5 +273,6 @@ And we now get the expected combinations.
 
 ```{r}
 vec_c(new_natural(1), 10L)
+
 vec_c(1.5, new_natural(1))
 ```

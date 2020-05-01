@@ -58,21 +58,20 @@ new_natural(c(1, NA))
 To implement methods for generics, first import the generics in your
 namespace and redocument:\if{html}{\out{<div class="r">}}\preformatted{#' @importFrom vctrs vec_ptype2 vec_cast
 NULL
-#> NULL
 }\if{html}{\out{</div>}}
 
 Note that for each batches of methods that you add to your package, you
 need to export the methods and redocument immediately, even during
 development. Otherwise they won’t be in scope when you run unit tests
 e.g. with testthat.
-}
-
-\subsection{Implementing \code{vec_ptype2()}}{
 
 Implementing double dispatch methods is very similar to implementing
 regular S3 methods. In these examples we are using roxygen2 tags to
 register the methods, but you can also register the methods manually in
 your NAMESPACE file or lazily with \code{s3_register()}.
+}
+
+\subsection{Implementing \code{vec_ptype2()}}{
 \subsection{The self-self method}{
 
 The first method to implement is the one that signals that your class is
@@ -86,9 +85,9 @@ vec_ptype2(new_natural(1), new_natural(2:3))
 #> integer(0)
 }\if{html}{\out{</div>}}
 
-\code{vec_ptype2()} implements fallbacks to try and be compatible with simple
-classes, so it may seem that you don’t need to implement the self-self
-coercion method. However, you still have to implement it explicitly
+\code{vec_ptype2()} implements a fallback to try and be compatible with
+simple classes, so it may seem that you don’t need to implement the
+self-self coercion method. However, you must implement it explicitly
 because this is how vctrs knows that a class that is implementing vctrs
 methods (for instance this disable fallbacks to \code{base::c()}). Also, it
 makes your class a bit more efficient.
@@ -184,22 +183,25 @@ generic signature but can usually be left out if not used.
 \subsection{Implementing \code{vec_cast()}}{
 
 Corresponding \code{vec_cast()} methods must be implemented for all
-\code{vec_ptype2()} methods. The self-self method is easy in this case, it
-just returns the target input:\if{html}{\out{<div class="r">}}\preformatted{#' @export
+\code{vec_ptype2()} methods. The general pattern is to convert the argument
+\code{x} to the type of \code{to}. The methods should validate the values in \code{x}
+and make sure they conform to the values of \code{to}.
+
+Please note that for historical reasons, the order of the classes in the
+method name is in reverse order of the arguments in the function
+signature. The first class represents \code{to}, whereas the second class
+represents \code{x}.
+
+The self-self method is easy in this case, it just returns the target
+input:\if{html}{\out{<div class="r">}}\preformatted{#' @export
 vec_cast.my_natural.my_natural <- function(x, to, ...) \{
   x
 \}
 }\if{html}{\out{</div>}}
 
-The general pattern for \code{vec_cast()} methods is to convert the argument
-\code{x} to the type of \code{to}. The \code{vec_cast()} method should validate the
-values in \code{x} and make sure they conform to the values of \code{to}. We
-perform input validation in the \code{new_natural()} constructor, so that’s a
-good fit for our \code{vec_cast()} implementations.
-
-Note that for historical reasons, the order of the classes in the method
-name is in reverse order of the arguments in the function signature. The
-first class represents \code{to}, whereas the second class represents \code{x}.\if{html}{\out{<div class="r">}}\preformatted{#' @export
+The other types need to be validated. We perform input validation in the
+\code{new_natural()} constructor, so that’s a good fit for our \code{vec_cast()}
+implementations.\if{html}{\out{<div class="r">}}\preformatted{#' @export
 vec_cast.my_natural.logical <- function(x, to, ...) \{
   # The order of the classes in the method name is in reverse order
   # of the arguments in the function signature, so `to` is the natural
@@ -250,6 +252,7 @@ vec_cast.double.my_natural <- function(x, to, ...) \{
 
 And we now get the expected combinations.\if{html}{\out{<div class="r">}}\preformatted{vec_c(new_natural(1), 10L)
 #> [1]  1 10
+
 vec_c(1.5, new_natural(1))
 #> [1] 1.5 1.0
 }\if{html}{\out{</div>}}

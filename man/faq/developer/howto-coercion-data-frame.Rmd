@@ -8,7 +8,7 @@ This guide provides a practical recipe for implementing `vec_ptype2()` and `vec_
 
 - For an example of implementing coercion methods for non-data-frame vectors, see [`?howto-faq-coercion`][howto-faq-coercion].
 
-Coercion of data frames occurs when different data frame classes are combined in some way. The two main methods of combination are currently row-binding with [vec_rbind()] and col-binding with [vec_cbind()] (which are in turn used by a number of dplyr functions). These functions take multiple data frame inputs and automatically coerce them to their common type.
+Coercion of data frames occurs when different data frame classes are combined in some way. The two main methods of combination are currently row-binding with [vec_rbind()] and col-binding with [vec_cbind()] (which are in turn used by a number of dplyr and tidyr functions). These functions take multiple data frame inputs and automatically coerce them to their common type.
 
 vctrs is generally strict about the kind of automatic coercions that are performed when combining inputs. In the case of data frames we have decided to be a bit less strict for convenience. Instead of throwing an incompatible type error, we fall back to  a base data frame or a tibble if we don't know how to combine two data frame subclasses. It is still a good idea to specify the proper coercion behaviour for your data frame subclasses as soon as possible.
 
@@ -17,17 +17,19 @@ vctrs is generally strict about the kind of automatic coercions that are perform
 
 To implement methods for generics, first import the generics in your namespace and redocument:
 
-```{r}
+```{r, eval = FALSE}
 #' @importFrom vctrs vec_ptype2 vec_cast
 NULL
 ```
 
 Note that for each batches of methods that you add to your package, you need to export the methods and redocument immediately, even during development. Otherwise they won't be in scope when you run unit tests e.g. with testthat.
 
+Implementing double dispatch methods is very similar to implementing regular S3 methods. In these examples we are using roxygen2 tags to register the methods, but you can also register the methods manually in your NAMESPACE file or lazily with `s3_register()`.
+
 
 ## Parent methods
 
-Most of the common type determination should be performed by the parent class. In vctrs, double dispatch is implemented in such a way that you need to call the methods for the parent class manually. For `vec_ptype2()` this means you need to call `df_ptype2()` (for data frame subclass) or `tib_ptype2()` (for tibble subclass). Similarly, `df_cast()` and `tib_cast()` are the workhorses for `vec_cast()` methods of subtypes of `data.frame` and `tbl_df`. These functions take the union of the columns in `x` and `y`, and ensure shared columns have the same type.
+Most of the common type determination should be performed by the parent class. In vctrs, double dispatch is implemented in such a way that you need to call the methods for the parent class manually. For `vec_ptype2()` this means you need to call `df_ptype2()` (for data frame subclasses) or `tib_ptype2()` (for tibble subclasses). Similarly, `df_cast()` and `tib_cast()` are the workhorses for `vec_cast()` methods of subtypes of `data.frame` and `tbl_df`. These functions take the union of the columns in `x` and `y`, and ensure shared columns have the same type.
 
 These functions are much less strict than `vec_ptype2()` and `vec_cast()` as they accept any subclass of data frame as input. They always return a `data.frame` or a `tbl_df`. You will probably want to write similar functions for your subclass to avoid repetition in your code. You may want to export them as well if you are expecting other people to derive from your class.
 
@@ -75,7 +77,7 @@ vec_ptype2.data.table.data.table <- function(x, y, ...) {
 }
 ```
 
-Between a data frame and a data table, we consider the richer type to be data table. This is not made based on the coverage of each data structures, but on the idea that data tables have richer behaviour. Since data tables are the richer type, we call `dt_type2()` from the `vec_ptype2()` method. It always returns a data table, no matter the order of arguments:
+Between a data frame and a data table, we consider the richer type to be data table. This decision is not based on the value coverage of each data structures, but on the idea that data tables have richer behaviour. Since data tables are the richer type, we call `dt_type2()` from the `vec_ptype2()` method. It always returns a data table, no matter the order of arguments:
 
 ```{r}
 #' @export
@@ -88,7 +90,9 @@ vec_ptype2.data.frame.data.table <- function(x, y, ...) {
 }
 ```
 
-The `vec_cast()` methods follow the same pattern, but note how the method for coercing to data frame uses `df_cast()` rather than `dt_cast()`:
+The `vec_cast()` methods follow the same pattern, but note how the method for coercing to data frame uses `df_cast()` rather than `dt_cast()`.
+
+Also, please note that for historical reasons, the order of the classes in the method name is in reverse order of the arguments in the function signature. The first class represents `to`, whereas the second class represents `x`.
 
 ```{r}
 #' @export
@@ -97,10 +101,12 @@ vec_cast.data.table.data.table <- function(x, to, ...) {
 }
 #' @export
 vec_cast.data.table.data.frame <- function(x, to, ...) {
+  # `x` is a data.frame to be converted to a data.table
   dt_cast(x, to, ...)
 }
 #' @export
 vec_cast.data.frame.data.table <- function(x, to, ...) {
+  # `x` is a data.table to be converted to a data.frame
   df_cast(x, to, ...)
 }
 ```
@@ -127,6 +133,7 @@ new_my_tibble <- function(x) {
   tibble::new_tibble(x, class = "my_tibble", nrow = nrow(x))
 }
 
+#'@export
 print.my_tibble <- function(x, ...) {
   cat("<my_very_own_tibble_class>\n")
   cli::cat_line(format(x)[-1])
@@ -155,7 +162,7 @@ Combinations do not work properly out of the box, instead vctrs falls back to a 
 vec_rbind(df, tibble::tibble(x = 10:12))
 ```
 
-We would like to return a `<my_tibble>` when combined with a data frame or a tibble. This subclass of tibble is in fact a supertype of tibble, i.e. it is the richer type.
+Instead of falling back to a data frame, we would like to return a `<my_tibble>` when combined with a data frame or a tibble. This subclass of tibble is a supertype of tibble and data frame, i.e. it is the richer type.
 
 We'll need to call our parent methods [tib_ptype2()] and [tib_cast()] and pass their results to our constructor. This is best wrapped in two functions to avoid repetition:
 
@@ -227,7 +234,7 @@ From this point, we get correct combinations with tibbles:
 vec_rbind(df, tibble::tibble(x = 10:12))
 ```
 
-However we are not done yet. Because the coercion hierarchy is different from the class hierarchy, there is no inheritance of coercion methods. We're not getting correct behaviour for data frames yet:
+However we are not done yet. Because the coercion hierarchy is different from the class hierarchy, there is no inheritance of coercion methods. We're not getting correct behaviour for data frames yet because we haven't explicitly specified the methods for this class:
 
 ```{r}
 vec_rbind(df, data.frame(x = 10:12))

@@ -18,8 +18,8 @@ Coercion of data frames occurs when different data frame classes are
 combined in some way. The two main methods of combination are currently
 row-binding with \code{\link[=vec_rbind]{vec_rbind()}} and col-binding with
 \code{\link[=vec_cbind]{vec_cbind()}} (which are in turn used by a number of
-dplyr functions). These functions take multiple data frame inputs and
-automatically coerce them to their common type.
+dplyr and tidyr functions). These functions take multiple data frame
+inputs and automatically coerce them to their common type.
 
 vctrs is generally strict about the kind of automatic coercions that are
 performed when combining inputs. In the case of data frames we have
@@ -33,13 +33,17 @@ subclasses as soon as possible.
 To implement methods for generics, first import the generics in your
 namespace and redocument:\if{html}{\out{<div class="r">}}\preformatted{#' @importFrom vctrs vec_ptype2 vec_cast
 NULL
-#> NULL
 }\if{html}{\out{</div>}}
 
 Note that for each batches of methods that you add to your package, you
 need to export the methods and redocument immediately, even during
 development. Otherwise they won’t be in scope when you run unit tests
 e.g. with testthat.
+
+Implementing double dispatch methods is very similar to implementing
+regular S3 methods. In these examples we are using roxygen2 tags to
+register the methods, but you can also register the methods manually in
+your NAMESPACE file or lazily with \code{s3_register()}.
 }
 
 \subsection{Parent methods}{
@@ -48,7 +52,7 @@ Most of the common type determination should be performed by the parent
 class. In vctrs, double dispatch is implemented in such a way that you
 need to call the methods for the parent class manually. For
 \code{vec_ptype2()} this means you need to call \code{df_ptype2()} (for data frame
-subclass) or \code{tib_ptype2()} (for tibble subclass). Similarly,
+subclasses) or \code{tib_ptype2()} (for tibble subclasses). Similarly,
 \code{df_cast()} and \code{tib_cast()} are the workhorses for \code{vec_cast()} methods
 of subtypes of \code{data.frame} and \code{tbl_df}. These functions take the union
 of the columns in \code{x} and \code{y}, and ensure shared columns have the same
@@ -91,8 +95,8 @@ vec_ptype2.data.table.data.table <- function(x, y, ...) \{
 }\if{html}{\out{</div>}}
 
 Between a data frame and a data table, we consider the richer type to be
-data table. This is not made based on the coverage of each data
-structures, but on the idea that data tables have richer behaviour.
+data table. This decision is not based on the value coverage of each
+data structures, but on the idea that data tables have richer behaviour.
 Since data tables are the richer type, we call \code{dt_type2()} from the
 \code{vec_ptype2()} method. It always returns a data table, no matter the
 order of arguments:\if{html}{\out{<div class="r">}}\preformatted{#' @export
@@ -107,16 +111,23 @@ vec_ptype2.data.frame.data.table <- function(x, y, ...) \{
 
 The \code{vec_cast()} methods follow the same pattern, but note how the
 method for coercing to data frame uses \code{df_cast()} rather than
-\code{dt_cast()}:\if{html}{\out{<div class="r">}}\preformatted{#' @export
+\code{dt_cast()}.
+
+Also, please note that for historical reasons, the order of the classes
+in the method name is in reverse order of the arguments in the function
+signature. The first class represents \code{to}, whereas the second class
+represents \code{x}.\if{html}{\out{<div class="r">}}\preformatted{#' @export
 vec_cast.data.table.data.table <- function(x, to, ...) \{
   dt_cast(x, to, ...)
 \}
 #' @export
 vec_cast.data.table.data.frame <- function(x, to, ...) \{
+  # `x` is a data.frame to be converted to a data.table
   dt_cast(x, to, ...)
 \}
 #' @export
 vec_cast.data.frame.data.table <- function(x, to, ...) \{
+  # `x` is a data.table to be converted to a data.frame
   df_cast(x, to, ...)
 \}
 }\if{html}{\out{</div>}}
@@ -142,6 +153,7 @@ new_my_tibble <- function(x) \{
   tibble::new_tibble(x, class = "my_tibble", nrow = nrow(x))
 \}
 
+#'@export
 print.my_tibble <- function(x, ...) \{
   cat("<my_very_own_tibble_class>\n")
   cli::cat_line(format(x)[-1])
@@ -180,9 +192,10 @@ back to a bare tibble:\if{html}{\out{<div class="r">}}\preformatted{vec_rbind(df
 #> 5    12    NA
 }\if{html}{\out{</div>}}
 
-We would like to return a \verb{<my_tibble>} when combined with a data frame
-or a tibble. This subclass of tibble is in fact a supertype of tibble,
-i.e. it is the richer type.
+Instead of falling back to a data frame, we would like to return a
+\verb{<my_tibble>} when combined with a data frame or a tibble. This subclass
+of tibble is a supertype of tibble and data frame, i.e. it is the richer
+type.
 
 We’ll need to call our parent methods \code{\link[=tib_ptype2]{tib_ptype2()}}
 and \code{\link[=tib_cast]{tib_cast()}} and pass their results to our
@@ -243,7 +256,8 @@ From this point, we get correct combinations with tibbles:\if{html}{\out{<div cl
 
 However we are not done yet. Because the coercion hierarchy is different
 from the class hierarchy, there is no inheritance of coercion methods.
-We’re not getting correct behaviour for data frames yet:\if{html}{\out{<div class="r">}}\preformatted{vec_rbind(df, data.frame(x = 10:12))
+We’re not getting correct behaviour for data frames yet because we
+haven’t explicitly specified the methods for this class:\if{html}{\out{<div class="r">}}\preformatted{vec_rbind(df, data.frame(x = 10:12))
 #> Warning: Can't combine <my_tibble> and <data.frame>; falling back to <tibble>.
 #> ℹ Convert all inputs to the same class to avoid this warning.
 #> ℹ See <https://vctrs.r-lib.org/reference/faq-warning-convert-inputs.html>.
