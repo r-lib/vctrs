@@ -235,13 +235,15 @@ static inline SEXP vec_assign_shaped_switch(SEXP proxy,
 // -----------------------------------------------------------------------------
 
 // [[ include("vctrs.h") ]]
-SEXP vec_assign_shaped(SEXP proxy, SEXP index, SEXP value, const struct vec_assign_opts* opts) {
+SEXP vec_assign_shaped(SEXP proxy, SEXP index, SEXP value,
+                       enum vctrs_ownership ownership,
+                       const struct vec_assign_opts* opts) {
   int n_protect = 0;
 
   struct strides_info info = new_strides_info(proxy, index);
   PROTECT_STRIDES_INFO(&info, &n_protect);
 
-  SEXP out = vec_assign_shaped_switch(proxy, index, value, opts->ownership, &info);
+  SEXP out = vec_assign_shaped_switch(proxy, index, value, ownership, &info);
 
   UNPROTECT(n_protect);
   return out;

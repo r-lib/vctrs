@@ -150,8 +150,7 @@ static SEXP vec_rbind(SEXP xs, SEXP ptype, SEXP names_to, struct name_repair_opt
   R_len_t counter = 0;
 
   const struct vec_assign_opts bind_assign_opts = {
-    .assign_names = true,
-    .ownership = vctrs_ownership_owned
+    .assign_names = true
   };
 
   for (R_len_t i = 0; i < n; ++i) {
@@ -163,7 +162,7 @@ static SEXP vec_rbind(SEXP xs, SEXP ptype, SEXP names_to, struct name_repair_opt
 
     SEXP tbl = PROTECT(vec_cast_params(x, ptype, args_empty, args_empty, true));
     init_compact_seq(idx_ptr, counter, size, true);
-    out = df_assign(out, idx, tbl, &bind_assign_opts);
+    out = df_assign(out, idx, tbl, vctrs_ownership_owned, &bind_assign_opts);
     REPROTECT(out, out_pi);
 
     if (has_rownames) {
