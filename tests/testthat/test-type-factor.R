@@ -114,6 +114,14 @@ test_that("ordered factors with different levels are not compatible", {
     vec_ptype2(ordered("a"), ordered(c("a", "b"))),
     class = "vctrs_error_incompatible_type"
   )
+  expect_error(
+    vec_cast(ordered("a"), ordered("b")),
+    class = "vctrs_error_incompatible_type"
+  )
+  expect_error(
+    vec_cast(ordered("a"), ordered(c("a", "b"))),
+    class = "vctrs_error_incompatible_type"
+  )
 })
 
 test_that("factors and ordered factors are not compatible", {

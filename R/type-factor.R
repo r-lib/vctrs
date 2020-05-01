@@ -106,7 +106,7 @@ vec_ptype2.ordered <- function(x, y, ...) {
   UseMethod("vec_ptype2.ordered")
 }
 #' @export
-vec_ptype2.ordered.ordered <- function(x, y, ..., x_arg = "", y_arg = "") {
+vec_ptype2.ordered.ordered <- function(x, y, ...) {
   stop_native_implementation("vec_ptype2.ordered.ordered")
 }
 #' @export
