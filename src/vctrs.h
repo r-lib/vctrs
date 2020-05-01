@@ -529,15 +529,13 @@ enum vctrs_dbl_class dbl_classify(double x);
 
 // Factor methods -----------------------------------------------
 
-SEXP fct_as_character(SEXP x, struct vctrs_arg* x_arg);
-SEXP ord_as_character(SEXP x, struct vctrs_arg* x_arg);
-
 SEXP chr_as_factor(SEXP x, SEXP to, bool* lossy, struct vctrs_arg* to_arg);
-SEXP fct_as_factor(SEXP x, SEXP to, bool* lossy, struct vctrs_arg* x_arg, struct vctrs_arg* to_arg);
-SEXP ord_as_factor(SEXP x, SEXP to, bool* lossy, struct vctrs_arg* x_arg, struct vctrs_arg* to_arg);
-
 SEXP chr_as_ordered(SEXP x, SEXP to, bool* lossy, struct vctrs_arg* to_arg);
-SEXP fct_as_ordered(SEXP x, SEXP to, bool* lossy, struct vctrs_arg* x_arg, struct vctrs_arg* to_arg);
+
+SEXP fct_as_character(SEXP x, struct vctrs_arg* x_arg);
+SEXP fct_as_factor(SEXP x, SEXP to, bool* lossy, struct vctrs_arg* x_arg, struct vctrs_arg* to_arg);
+
+SEXP ord_as_character(SEXP x, struct vctrs_arg* x_arg);
 SEXP ord_as_ordered(SEXP x, SEXP to, bool* lossy, struct vctrs_arg* x_arg, struct vctrs_arg* to_arg);
 
 // Datetime methods ---------------------------------------------

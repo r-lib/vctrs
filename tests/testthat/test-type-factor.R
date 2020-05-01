@@ -112,6 +112,25 @@ test_that("ordered factors with different levels are not compatible", {
   )
 })
 
+test_that("factors and ordered factors are not compatible", {
+  expect_error(
+    vec_ptype2(factor("a"), ordered("a")),
+    class = "vctrs_error_incompatible_type"
+  )
+  expect_error(
+    vec_ptype2(ordered("a"), factor("a")),
+    class = "vctrs_error_incompatible_type"
+  )
+  expect_error(
+    vec_cast(factor("a"), ordered("a")),
+    class = "vctrs_error_incompatible_type"
+  )
+  expect_error(
+    vec_cast(ordered("a"), factor("a")),
+    class = "vctrs_error_incompatible_type"
+  )
+})
+
 
 # Casting -----------------------------------------------------------------
 
@@ -161,11 +180,8 @@ test_that("invalid casts generate error", {
 })
 
 test_that("orderedness of factor is preserved", {
-  fct <- factor("a")
-  ord <- ordered("a")
-
-  expect_equal(vec_cast(fct, ord), ord)
-  expect_equal(vec_cast("a", ord), ord)
+  ord <- ordered(c("a", "b"), levels = c("b", "a"))
+  expect_equal(vec_cast("a", ord), ordered("a", levels = c("b", "a")))
 })
 
 test_that("NA are not considered lossy in factor cast (#109)", {

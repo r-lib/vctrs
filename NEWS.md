@@ -216,6 +216,7 @@ The following errors are caused by breaking changes.
 * `POSIXlt` and `POSIXct` vectors are handled more consistently (#901).
 
 * Ordered factors that do not have identical levels are now incompatible.
+  They are now incompatible with all factors.
 
 
 ## Indexing and names

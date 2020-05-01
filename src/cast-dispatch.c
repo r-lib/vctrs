@@ -31,13 +31,6 @@ SEXP vec_cast_dispatch(const struct cast_opts* opts,
       return ord_as_character(x, x_arg);
     }
 
-  case vctrs_type2_s3_bare_factor_bare_ordered:
-    if (dir == 0) {
-      return fct_as_ordered(x, to, lossy, x_arg, to_arg);
-    } else {
-      return ord_as_factor(x, to, lossy, x_arg, to_arg);
-    }
-
   case vctrs_type2_s3_bare_factor_bare_factor:
     return fct_as_factor(x, to, lossy, x_arg, to_arg);
 

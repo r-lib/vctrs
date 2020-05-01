@@ -197,15 +197,6 @@ vec_cast.ordered.ordered <- function(x, to, ...) {
 }
 
 #' @export
-vec_cast.factor.ordered <- function(x, to, ...) {
-  fct_cast(x, to, ...)
-}
-#' @export
-vec_cast.ordered.factor <- function(x, to, ...) {
-  ord_cast(x, to, ...)
-}
-
-#' @export
 vec_cast.ordered.character <-function(x, to, ...) {
   ord_cast(x, to, ...)
 }
