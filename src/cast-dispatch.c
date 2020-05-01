@@ -1,5 +1,6 @@
 #include "vctrs.h"
 #include "cast.h"
+#include "type-factor.h"
 #include "utils.h"
 
 // [[ include("cast.h") ]]
@@ -35,7 +36,7 @@ SEXP vec_cast_dispatch(const struct cast_opts* opts,
     return fct_as_factor(x, to, lossy, x_arg, to_arg);
 
   case vctrs_type2_s3_bare_ordered_bare_ordered:
-    return ord_as_ordered(x, to, lossy, x_arg, to_arg);
+    return ord_as_ordered(opts);
 
   case vctrs_type2_s3_bare_date_bare_posixct:
     if (dir == 0) {

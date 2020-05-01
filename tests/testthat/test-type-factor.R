@@ -110,6 +110,10 @@ test_that("ordered factors with different levels are not compatible", {
     vec_ptype2(ordered("a"), ordered("b")),
     class = "vctrs_error_incompatible_type"
   )
+  expect_error(
+    vec_ptype2(ordered("a"), ordered(c("a", "b"))),
+    class = "vctrs_error_incompatible_type"
+  )
 })
 
 test_that("factors and ordered factors are not compatible", {
@@ -194,6 +198,12 @@ test_that("Casting to a factor with explicit NA levels retains them", {
   expect_identical(vec_cast(f, f), f)
   expect_identical(vec_cast(f, factor()), f)
 })
+
+test_that("characters can be cast to ordered", {
+  expect_identical(vec_cast("a", ordered("a")), ordered("a"))
+  expect_error(vec_cast(c("a", "b"), ordered("a")), class = "vctrs_error_cast_lossy")
+})
+
 
 # Proxy / restore ---------------------------------------------------------
 
