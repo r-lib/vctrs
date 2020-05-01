@@ -82,46 +82,50 @@ vec_ptype_abbr.ordered <- function(x, ...) {
 #' @export vec_ptype2.factor
 #' @method vec_ptype2 factor
 #' @export
-vec_ptype2.factor <- function(x, y, ...) UseMethod("vec_ptype2.factor")
-#' @method vec_ptype2.character factor
+vec_ptype2.factor <- function(x, y, ...) {
+  UseMethod("vec_ptype2.factor")
+}
 #' @export
-vec_ptype2.character.factor <- function(x, y, ...) character()
-#' @method vec_ptype2.factor character
+vec_ptype2.factor.factor <- function(x, y, ...) {
+  stop_native_implementation("vec_ptype2.factor.factor")
+}
 #' @export
-vec_ptype2.factor.character <- function(x, y, ...) character()
-#' @method vec_ptype2.factor factor
+vec_ptype2.character.factor <- function(x, y, ...) {
+  stop_native_implementation("vec_ptype2.character.factor")
+}
 #' @export
-vec_ptype2.factor.factor <- function(x, y, ...) new_factor(levels = levels_union(x, y))
+vec_ptype2.factor.character <- function(x, y, ...) {
+  stop_native_implementation("vec_ptype2.factor.character")
+}
 
 #' @rdname new_factor
 #' @export vec_ptype2.ordered
 #' @method vec_ptype2 ordered
 #' @export
-vec_ptype2.ordered <- function(x, y, ...) UseMethod("vec_ptype2.ordered")
-#' @method vec_ptype2.ordered character
+vec_ptype2.ordered <- function(x, y, ...) {
+  UseMethod("vec_ptype2.ordered")
+}
 #' @export
-vec_ptype2.ordered.character <- function(x, y, ...) character()
-#' @method vec_ptype2.character ordered
+vec_ptype2.ordered.ordered <- function(x, y, ..., x_arg = "", y_arg = "") {
+  stop_native_implementation("vec_ptype2.ordered.ordered")
+}
 #' @export
-vec_ptype2.character.ordered <- function(x, y, ...) character()
-#' @method vec_ptype2.ordered factor
+vec_ptype2.ordered.character <- function(x, y, ...) {
+  stop_native_implementation("vec_ptype2.ordered.character")
+}
+#' @export
+vec_ptype2.character.ordered <- function(x, y, ...) {
+  stop_native_implementation("vec_ptype2.character.ordered")
+}
 #' @export
 vec_ptype2.ordered.factor <- function(x, y, ..., x_arg = "", y_arg = "") {
   stop_incompatible_type(x, y, x_arg = x_arg, y_arg = y_arg)
 }
-#' @method vec_ptype2.factor ordered
 #' @export
 vec_ptype2.factor.ordered <- function(x, y, ..., x_arg = "", y_arg = "") {
   stop_incompatible_type(x, y, x_arg = x_arg, y_arg = y_arg)
 }
-#' @method vec_ptype2.ordered ordered
-#' @export
-vec_ptype2.ordered.ordered <- function(x, y, ..., x_arg = "", y_arg = "") {
-  if (!identical(levels(x), levels(y))) {
-    stop_incompatible_type(x, y, x_arg = x_arg, y_arg = y_arg)
-  }
-  x
-}
+
 
 # Cast --------------------------------------------------------------------
 
@@ -163,22 +167,14 @@ fct_cast_impl <- function(x, to, ..., x_arg = "", to_arg = "", ordered = FALSE) 
 }
 
 #' @export
-#' @method vec_cast.factor factor
 vec_cast.factor.factor <- function(x, to, ...) {
   fct_cast(x, to, ...)
 }
 #' @export
-#' @method vec_cast.factor ordered
-vec_cast.factor.ordered <- function(x, to, ...) {
-  fct_cast(x, to, ...)
-}
-#' @export
-#' @method vec_cast.factor character
 vec_cast.factor.character <-function(x, to, ...) {
   fct_cast(x, to, ...)
 }
 #' @export
-#' @method vec_cast.character factor
 vec_cast.character.factor <- function(x, to, ...) {
   stop_native_implementation("vec_cast.character.factor")
 }
@@ -196,22 +192,24 @@ ord_cast <- function(x, to, ..., x_arg = "", to_arg = "") {
 }
 
 #' @export
-#' @method vec_cast.ordered ordered
 vec_cast.ordered.ordered <- function(x, to, ...) {
   ord_cast(x, to, ...)
 }
+
 #' @export
-#' @method vec_cast.ordered factor
+vec_cast.factor.ordered <- function(x, to, ...) {
+  fct_cast(x, to, ...)
+}
+#' @export
 vec_cast.ordered.factor <- function(x, to, ...) {
   ord_cast(x, to, ...)
 }
+
 #' @export
-#' @method vec_cast.ordered character
 vec_cast.ordered.character <-function(x, to, ...) {
   ord_cast(x, to, ...)
 }
 #' @export
-#' @method vec_cast.character ordered
 vec_cast.character.ordered <- function(x, to, ...) {
   stop_native_implementation("vec_cast.character.ordered")
 }
