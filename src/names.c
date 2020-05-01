@@ -91,10 +91,6 @@ SEXP vec_as_custom_names(SEXP names, const struct name_repair_opts* opts) {
 
   vec_validate_minimal_names(out, Rf_length(names));
 
-  if (!opts->quiet) {
-    describe_repair(names, out);
-  }
-
   UNPROTECT(4);
   return out;
 }

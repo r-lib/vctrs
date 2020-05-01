@@ -160,6 +160,16 @@ test_that("vec_as_names_validate() validates repair arguments", {
   )
 })
 
+test_that("vec_as_names() is quiet when function is supplied (#1018)", {
+  expect_silent(
+    vctrs::vec_as_names(
+      c("a", "b"),
+      repair = function(x) paste0(x, "a"),
+      quiet = FALSE
+    )
+  )
+})
+
 
 # vec_repair_names() -------------------------------------------------------
 
