@@ -333,7 +333,7 @@ x
 <li><p><code><a href="../reference/vec_ptype.html">vec_ptype()</a></code> now correctly handles unspecified columns in data frames, and will always return an unspecified column type (#800).</p></li>
 <li><p><code><a href="../reference/vec_slice.html">vec_slice()</a></code> and <code><a href="../reference/vec_chop.html">vec_chop()</a></code> now work correctly with <code><a href="https://rdrr.io/pkg/bit64/man/bit64-package.html">bit64::integer64()</a></code> objects when an <code>NA</code> subscript is supplied. By extension, this means that <code><a href="../reference/vec_init.html">vec_init()</a></code> now works with these objects as well (#813).</p></li>
 <li><p><code><a href="../reference/vec_bind.html">vec_rbind()</a></code> now binds row names. When named inputs are supplied and <code>names_to</code> is <code>NULL</code>, the names define row names. If <code>names_to</code> is supplied, they are assigned in the column name as before.</p></li>
-<li><p><code><a href="../reference/vec_bind.html">vec_cbind()</a></code> now binds row names if they are congruent across inputs. If the row names are not identical that’s an error.</p></li>
+<li><p><code><a href="../reference/vec_bind.html">vec_cbind()</a></code> now uses the row names of the first named input.</p></li>
 <li><p>The <code><a href="https://rdrr.io/r/base/c.html">c()</a></code> method for <code>vctrs_vctr</code> now throws an error when <code>recursive</code> or <code>use.names</code> is supplied (#791).</p></li>
 </ul>
 </div>
