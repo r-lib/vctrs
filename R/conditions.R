@@ -413,6 +413,9 @@ stop_incompatible_size <- function(x,
 #'   Can also be a single `TRUE`, but note that `locations` picks up
 #'   locations from this vector by default. In this case, supply your
 #'   own location vector, possibly empty.
+#' @param loss_type The kind of lossy cast to be mentioned in error
+#'   messages. Can be loss of precision (for instance from double to
+#'   integer) or loss of generality (from character to factor).
 #' @param locations An optional integer vector giving the
 #'   locations where `x` lost information.
 #' @param .deprecation If `TRUE`, the error is downgraded to a
@@ -424,6 +427,7 @@ maybe_lossy_cast <- function(result, x, to,
                              lossy = NULL,
                              locations = NULL,
                              ...,
+                             loss_type = c("precision", "generality"),
                              x_arg,
                              to_arg,
                              details = NULL,
@@ -434,7 +438,7 @@ maybe_lossy_cast <- function(result, x, to,
     return(result)
   }
   if (.deprecation) {
-    maybe_warn_deprecated_lossy_cast(x, to, x_arg, to_arg)
+    maybe_warn_deprecated_lossy_cast(x, to, loss_type, x_arg, to_arg)
     return(result)
   }
 
@@ -448,6 +452,7 @@ maybe_lossy_cast <- function(result, x, to,
       result = result,
       locations = locations,
       ...,
+      loss_type = loss_type,
       x_arg = x_arg,
       to_arg = to_arg,
       details = details,
@@ -459,6 +464,7 @@ maybe_lossy_cast <- function(result, x, to,
 stop_lossy_cast <- function(x, to, result,
                             locations = NULL,
                             ...,
+                            loss_type,
                             x_arg,
                             to_arg,
                             details = NULL,
@@ -472,6 +478,7 @@ stop_lossy_cast <- function(x, to, result,
     result = result,
     locations = locations,
     ...,
+    loss_type = loss_type,
     x_arg = x_arg,
     to_arg = to_arg,
     details = details,
@@ -496,7 +503,8 @@ conditionMessage.vctrs_error_cast_lossy <- function(c) {
 cnd_header.vctrs_error_cast_lossy <- function(cnd, ...) {
   x_label <- format_arg_label(vec_ptype_full(cnd$x), cnd$x_arg)
   to_label <- format_arg_label(vec_ptype_full(cnd$to), cnd$to_arg)
-  glue::glue("Can't convert from {x_label} to {to_label} due to loss of precision.")
+  loss_type <- loss_type(cnd$loss_type)
+  glue::glue("Can't convert from {x_label} to {to_label} due to loss of {loss_type}.")
 }
 #' @export
 cnd_body.vctrs_error_cast_lossy <- function(cnd, ...) {
@@ -507,12 +515,21 @@ cnd_body.vctrs_error_cast_lossy <- function(cnd, ...) {
   }
 }
 
+loss_type <- function(x) {
+  stopifnot(
+    is_character(x),
+    all(x %in% c("precision", "generality"))
+  )
+  x[[1]]
+}
+
 # Used in maybe_warn_deprecated_lossy_cast()
-new_error_cast_lossy <- function(x, to, x_arg = "", to_arg = "") {
+new_error_cast_lossy <- function(x, to, loss_type, x_arg = "", to_arg = "") {
   error_cnd(
     "vctrs_error_cast_lossy",
     x = x,
     to = to,
+    loss_type = loss_type,
     x_arg = x_arg,
     to_arg = to_arg
   )
@@ -538,7 +555,7 @@ allow_lossy_cast <- function(expr, x_ptype = NULL, to_ptype = NULL) {
   )
 }
 
-maybe_warn_deprecated_lossy_cast <- function(x, to, x_arg, to_arg) {
+maybe_warn_deprecated_lossy_cast <- function(x, to, loss_type, x_arg, to_arg) {
   # Returns `TRUE` if `allow_lossy_cast()` is on the stack and accepts
   # to handle the condition
   handled <- withRestarts(
@@ -546,7 +563,14 @@ maybe_warn_deprecated_lossy_cast <- function(x, to, x_arg, to_arg) {
     {
       # Signal fully formed condition but strip the error classes in
       # case someone is catching: This is not an abortive condition.
-      cnd <- new_error_cast_lossy(x, to, x_arg = x_arg, to_arg = to_arg)
+      cnd <- new_error_cast_lossy(
+        x,
+        to,
+        loss_type = loss_type,
+        x_arg = x_arg,
+        to_arg = to_arg
+      )
+
       class(cnd) <- setdiff(class(cnd), c("error", "rlang_error"))
       signalCondition(cnd)
       FALSE

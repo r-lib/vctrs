@@ -11,6 +11,7 @@ maybe_lossy_cast(
   lossy = NULL,
   locations = NULL,
   ...,
+  loss_type = c("precision", "generality"),
   x_arg,
   to_arg,
   details = NULL,
@@ -37,6 +38,10 @@ own location vector, possibly empty.}
 locations where \code{x} lost information.}
 
 \item{...}{Only use these fields when creating a subclass.}
+
+\item{loss_type}{The kind of lossy cast to be mentioned in error
+messages. Can be loss of precision (for instance from double to
+integer) or loss of generality (from character to factor).}
 
 \item{x_arg}{Argument names for \code{x} and \code{to}. These are used
 in error messages to inform the user about the locations of
