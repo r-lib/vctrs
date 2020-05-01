@@ -491,6 +491,14 @@ test_that("fallback is recursive", {
   expect_identical(expect_df_fallback(vec_rbind(foo, baz)), exp)
 })
 
+test_that("data frame fallbacks can be disabled", {
+  local_options(`vctrs:::disable_df_fallback` = TRUE)
+  expect_error(
+    vec_rbind(foobar(mtcars), mtcars),
+    class = "vctrs_error_incompatible_type"
+  )
+})
+
 test_that("data frame output is informative", {
   verify_output(test_path("error", "test-type-data-frame.txt"), {
     "# combining data frames with foreign classes uses fallback"

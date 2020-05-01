@@ -172,7 +172,8 @@ vec_default_cast <- function(x, to, ..., x_arg = "", to_arg = "") {
     return(x)
   }
 
-  if (match_df_fallback(...)) {
+  has_df_fallback <- !is_true(peek_option("vctrs:::disable_df_fallback"))
+  if (has_df_fallback && match_df_fallback(...)) {
     out <- df_cast_params(x, to, ..., x_arg = x_arg, to_arg = to_arg, df_fallback = TRUE)
 
     if (inherits(to, "tbl_df")) {
