@@ -44,22 +44,15 @@ SEXP ord_ptype2(const struct ptype2_opts* opts) {
   if (TYPEOF(x_levels) != STRSXP) {
     stop_corrupt_ordered_levels(x, opts->x_arg);
   }
-
   if (TYPEOF(y_levels) != STRSXP) {
     stop_corrupt_ordered_levels(y, opts->y_arg);
   }
 
-  // Quick early exit for identical levels pointing to the same SEXP
-  if (x_levels == y_levels) {
-    return new_empty_ordered(x_levels);
+  if (!equal_object(x_levels, y_levels)) {
+    stop_incompatible_type(x, y, opts->x_arg, opts->y_arg);
   }
 
-  SEXP levels = PROTECT(levels_union(x_levels, y_levels));
-
-  SEXP out = new_empty_ordered(levels);
-
-  UNPROTECT(1);
-  return out;
+  return new_empty_ordered(x_levels);
 }
 
 static SEXP levels_union(SEXP x, SEXP y) {

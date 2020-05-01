@@ -105,6 +105,14 @@ test_that("vec_ptype2() errors with malformed ordered factors", {
   expect_error(vec_ptype2(y, x, y_arg = "z"), "`z` is a corrupt ordered factor")
 })
 
+test_that("ordered factors with different levels are not compatible", {
+  expect_error(
+    vec_ptype2(ordered("a"), ordered("b")),
+    class = "vctrs_error_incompatible_type"
+  )
+})
+
+
 # Casting -----------------------------------------------------------------
 
 test_that("safe casts work as expected", {

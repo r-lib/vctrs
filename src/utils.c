@@ -1468,6 +1468,8 @@ SEXP syms_i = NULL;
 SEXP syms_n = NULL;
 SEXP syms_x = NULL;
 SEXP syms_y = NULL;
+SEXP syms_x_size = NULL;
+SEXP syms_y_size = NULL;
 SEXP syms_to = NULL;
 SEXP syms_dots = NULL;
 SEXP syms_bracket = NULL;
@@ -1504,6 +1506,8 @@ SEXP syms_parent = NULL;
 SEXP syms_s3_methods_table = NULL;
 SEXP syms_from_dispatch = NULL;
 SEXP syms_df_fallback = NULL;
+SEXP syms_stop_incompatible_type = NULL;
+SEXP syms_stop_incompatible_size = NULL;
 
 SEXP fns_bracket = NULL;
 SEXP fns_quote = NULL;
@@ -1705,6 +1709,8 @@ void vctrs_init_utils(SEXP ns) {
   syms_n = Rf_install("n");
   syms_x = Rf_install("x");
   syms_y = Rf_install("y");
+  syms_x_size = Rf_install("x_size");
+  syms_y_size = Rf_install("y_size");
   syms_to = Rf_install("to");
   syms_dots = Rf_install("...");
   syms_bracket = Rf_install("[");
@@ -1742,7 +1748,9 @@ void vctrs_init_utils(SEXP ns) {
   syms_parent = Rf_install("parent");
   syms_s3_methods_table = Rf_install(".__S3MethodsTable__.");
   syms_from_dispatch = Rf_install("vctrs:::from_dispatch");
-  syms_df_fallback= Rf_install("vctrs:::df_fallback");
+  syms_df_fallback = Rf_install("vctrs:::df_fallback");
+  syms_stop_incompatible_type = Rf_install("stop_incompatible_type");
+  syms_stop_incompatible_size = Rf_install("stop_incompatible_size");
 
   fns_bracket = Rf_findVar(syms_bracket, R_BaseEnv);
   fns_quote = Rf_findVar(Rf_install("quote"), R_BaseEnv);
