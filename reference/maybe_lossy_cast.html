@@ -176,6 +176,7 @@ returns the result silently.</p>
   <span class='kw'>lossy</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
   <span class='kw'>locations</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
   <span class='no'>...</span>,
+  <span class='kw'>loss_type</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"precision"</span>, <span class='st'>"generality"</span>),
   <span class='no'>x_arg</span>,
   <span class='no'>to_arg</span>,
   <span class='kw'>details</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
@@ -215,6 +216,12 @@ locations where <code>x</code> lost information.</p></td>
     <tr>
       <th>...</th>
       <td><p>Only use these fields when creating a subclass.</p></td>
+    </tr>
+    <tr>
+      <th>loss_type</th>
+      <td><p>The kind of lossy cast to be mentioned in error
+messages. Can be loss of precision (for instance from double to
+integer) or loss of generality (from character to factor).</p></td>
     </tr>
     <tr>
       <th>x_arg</th>
