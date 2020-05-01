@@ -33,33 +33,33 @@ SEXP fct_ptype2(const struct ptype2_opts* opts) {
   return out;
 }
 
-// [[ include("type-factor.h") ]]
-SEXP ord_ptype2(const struct ptype2_opts* opts) {
-  SEXP x = opts->x;
-  SEXP y = opts->y;
-
+static
+SEXP ord_ptype2_validate(SEXP x,
+                         SEXP y,
+                         struct vctrs_arg* x_arg,
+                         struct vctrs_arg* y_arg) {
   SEXP x_levels = Rf_getAttrib(x, R_LevelsSymbol);
   SEXP y_levels = Rf_getAttrib(y, R_LevelsSymbol);
 
   if (TYPEOF(x_levels) != STRSXP) {
-    stop_corrupt_ordered_levels(x, opts->x_arg);
+    stop_corrupt_ordered_levels(x, x_arg);
   }
-
   if (TYPEOF(y_levels) != STRSXP) {
-    stop_corrupt_ordered_levels(y, opts->y_arg);
+    stop_corrupt_ordered_levels(y, y_arg);
   }
 
-  // Quick early exit for identical levels pointing to the same SEXP
-  if (x_levels == y_levels) {
-    return new_empty_ordered(x_levels);
+  if (!equal_object(x_levels, y_levels)) {
+    stop_incompatible_type(x, y, x_arg, y_arg);
   }
 
-  SEXP levels = PROTECT(levels_union(x_levels, y_levels));
+  return x_levels;
+}
 
+// [[ include("type-factor.h") ]]
+SEXP ord_ptype2(const struct ptype2_opts* opts) {
+  SEXP levels = PROTECT(ord_ptype2_validate(opts->x, opts->y, opts->x_arg, opts->y_arg));
   SEXP out = new_empty_ordered(levels);
-
-  UNPROTECT(1);
-  return out;
+  return UNPROTECT(1), out;
 }
 
 static SEXP levels_union(SEXP x, SEXP y) {
@@ -253,46 +253,10 @@ SEXP fct_as_factor(SEXP x,
   return out;
 }
 
-// [[ include("vctrs.h") ]]
-SEXP fct_as_ordered(SEXP x,
-                    SEXP to,
-                    bool* lossy,
-                    struct vctrs_arg* x_arg,
-                    struct vctrs_arg* to_arg) {
-
-  SEXP x_levels = PROTECT(Rf_getAttrib(x, R_LevelsSymbol));
-  SEXP to_levels = PROTECT(Rf_getAttrib(to, R_LevelsSymbol));
-
-  if (TYPEOF(x_levels) != STRSXP) {
-    stop_corrupt_ordered_levels(x, x_arg);
-  }
-
-  if (TYPEOF(to_levels) != STRSXP) {
-    stop_corrupt_ordered_levels(to, to_arg);
-  }
-
-  SEXP out = fct_as_factor_impl(x, x_levels, to_levels, lossy, true);
-
-  UNPROTECT(2);
-  return out;
-}
-
-// [[ include("vctrs.h") ]]
-SEXP ord_as_factor(SEXP x,
-                   SEXP to,
-                   bool* lossy,
-                   struct vctrs_arg* x_arg,
-                   struct vctrs_arg* to_arg) {
-  return fct_as_factor(x, to, lossy, x_arg, to_arg);
-}
-
-// [[ include("vctrs.h") ]]
-SEXP ord_as_ordered(SEXP x,
-                    SEXP to,
-                    bool* lossy,
-                    struct vctrs_arg* x_arg,
-                    struct vctrs_arg* to_arg) {
-  return fct_as_ordered(x, to, lossy, x_arg, to_arg);
+// [[ include("factor.h") ]]
+SEXP ord_as_ordered(const struct cast_opts* opts) {
+  ord_ptype2_validate(opts->x, opts->to, opts->x_arg, opts->to_arg);
+  return opts->x;
 }
 
 static SEXP fct_as_factor_impl(SEXP x, SEXP x_levels, SEXP to_levels, bool* lossy, bool ordered) {

@@ -438,6 +438,8 @@ extern SEXP syms_i;
 extern SEXP syms_n;
 extern SEXP syms_x;
 extern SEXP syms_y;
+extern SEXP syms_x_size;
+extern SEXP syms_y_size;
 extern SEXP syms_to;
 extern SEXP syms_dots;
 extern SEXP syms_bracket;
@@ -473,6 +475,8 @@ extern SEXP syms_body;
 extern SEXP syms_parent;
 extern SEXP syms_from_dispatch;
 extern SEXP syms_df_fallback;
+extern SEXP syms_stop_incompatible_type;
+extern SEXP syms_stop_incompatible_size;
 
 #define syms_names R_NamesSymbol
 

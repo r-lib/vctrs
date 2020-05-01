@@ -529,16 +529,13 @@ enum vctrs_dbl_class dbl_classify(double x);
 
 // Factor methods -----------------------------------------------
 
-SEXP fct_as_character(SEXP x, struct vctrs_arg* x_arg);
-SEXP ord_as_character(SEXP x, struct vctrs_arg* x_arg);
-
 SEXP chr_as_factor(SEXP x, SEXP to, bool* lossy, struct vctrs_arg* to_arg);
-SEXP fct_as_factor(SEXP x, SEXP to, bool* lossy, struct vctrs_arg* x_arg, struct vctrs_arg* to_arg);
-SEXP ord_as_factor(SEXP x, SEXP to, bool* lossy, struct vctrs_arg* x_arg, struct vctrs_arg* to_arg);
-
 SEXP chr_as_ordered(SEXP x, SEXP to, bool* lossy, struct vctrs_arg* to_arg);
-SEXP fct_as_ordered(SEXP x, SEXP to, bool* lossy, struct vctrs_arg* x_arg, struct vctrs_arg* to_arg);
-SEXP ord_as_ordered(SEXP x, SEXP to, bool* lossy, struct vctrs_arg* x_arg, struct vctrs_arg* to_arg);
+
+SEXP fct_as_character(SEXP x, struct vctrs_arg* x_arg);
+SEXP fct_as_factor(SEXP x, SEXP to, bool* lossy, struct vctrs_arg* x_arg, struct vctrs_arg* to_arg);
+
+SEXP ord_as_character(SEXP x, struct vctrs_arg* x_arg);
 
 // Datetime methods ---------------------------------------------
 
@@ -609,6 +606,11 @@ void stop_scalar_type(SEXP x, struct vctrs_arg* arg) __attribute__((noreturn));
 void vec_assert(SEXP x, struct vctrs_arg* arg);
 void stop_incompatible_size(SEXP x, SEXP y,
                             R_len_t x_size, R_len_t y_size,
+                            struct vctrs_arg* x_arg,
+                            struct vctrs_arg* y_arg)
+  __attribute__((noreturn));
+void stop_incompatible_type(SEXP x,
+                            SEXP y,
                             struct vctrs_arg* x_arg,
                             struct vctrs_arg* y_arg)
   __attribute__((noreturn));

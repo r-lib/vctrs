@@ -105,6 +105,45 @@ test_that("vec_ptype2() errors with malformed ordered factors", {
   expect_error(vec_ptype2(y, x, y_arg = "z"), "`z` is a corrupt ordered factor")
 })
 
+test_that("ordered factors with different levels are not compatible", {
+  expect_error(
+    vec_ptype2(ordered("a"), ordered("b")),
+    class = "vctrs_error_incompatible_type"
+  )
+  expect_error(
+    vec_ptype2(ordered("a"), ordered(c("a", "b"))),
+    class = "vctrs_error_incompatible_type"
+  )
+  expect_error(
+    vec_cast(ordered("a"), ordered("b")),
+    class = "vctrs_error_incompatible_type"
+  )
+  expect_error(
+    vec_cast(ordered("a"), ordered(c("a", "b"))),
+    class = "vctrs_error_incompatible_type"
+  )
+})
+
+test_that("factors and ordered factors are not compatible", {
+  expect_error(
+    vec_ptype2(factor("a"), ordered("a")),
+    class = "vctrs_error_incompatible_type"
+  )
+  expect_error(
+    vec_ptype2(ordered("a"), factor("a")),
+    class = "vctrs_error_incompatible_type"
+  )
+  expect_error(
+    vec_cast(factor("a"), ordered("a")),
+    class = "vctrs_error_incompatible_type"
+  )
+  expect_error(
+    vec_cast(ordered("a"), factor("a")),
+    class = "vctrs_error_incompatible_type"
+  )
+})
+
+
 # Casting -----------------------------------------------------------------
 
 test_that("safe casts work as expected", {
@@ -153,11 +192,8 @@ test_that("invalid casts generate error", {
 })
 
 test_that("orderedness of factor is preserved", {
-  fct <- factor("a")
-  ord <- ordered("a")
-
-  expect_equal(vec_cast(fct, ord), ord)
-  expect_equal(vec_cast("a", ord), ord)
+  ord <- ordered(c("a", "b"), levels = c("b", "a"))
+  expect_equal(vec_cast("a", ord), ordered("a", levels = c("b", "a")))
 })
 
 test_that("NA are not considered lossy in factor cast (#109)", {
@@ -170,6 +206,12 @@ test_that("Casting to a factor with explicit NA levels retains them", {
   expect_identical(vec_cast(f, f), f)
   expect_identical(vec_cast(f, factor()), f)
 })
+
+test_that("characters can be cast to ordered", {
+  expect_identical(vec_cast("a", ordered("a")), ordered("a"))
+  expect_error(vec_cast(c("a", "b"), ordered("a")), class = "vctrs_error_cast_lossy")
+})
+
 
 # Proxy / restore ---------------------------------------------------------
 
