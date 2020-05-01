@@ -278,6 +278,7 @@ vec_ptype2.foo.bar &lt;- function(x, y, ...) new_foo()</code></pre>
 <li><p><code>stop_</code> functions now take <code>details</code> after the dots. This argument can no longer be passed by position.</p></li>
 <li><p>Supplying both <code>details</code> and <code>message</code> to the <code>stop_</code> functions is now an internal error.</p></li>
 <li><p><code>x_arg</code>, <code>y_arg</code>, and <code>to_arg</code> are now compulsory arguments in <code>stop_</code> functions like <code><a href="../reference/vctrs-conditions.html">stop_incompatible_type()</a></code>.</p></li>
+<li><p>Lossy cast errors are now considered internal. Please don’t test for the class or explicitly handle them.</p></li>
 </ul>
 </div>
 <div id="cran-results" class="section level2">
@@ -384,7 +385,7 @@ x
 <h2 class="hasAnchor">
 <a href="#breaking-changes-1" class="anchor"></a>Breaking changes</h2>
 <ul>
-<li><p>Lossy casts now throw errors of type <code>vctrs_error_cast_lossy</code>. Previously these were warnings. You can suppress these errors selectively with <code><a href="../reference/vctrs-conditions.html">allow_lossy_cast()</a></code> to get the partial cast results. To implement your own lossy cast operation, call the new exported function <code><a href="../reference/vctrs-conditions.html">maybe_lossy_cast()</a></code>.</p></li>
+<li><p>Lossy casts now throw errors of type <code>vctrs_error_cast_lossy</code>. Previously these were warnings. You can suppress these errors selectively with <code><a href="../reference/vctrs-conditions.html">allow_lossy_cast()</a></code> to get the partial cast results. To implement your own lossy cast operation, call the new exported function <code><a href="../reference/maybe_lossy_cast.html">maybe_lossy_cast()</a></code>.</p></li>
 <li>
 <p><code><a href="../reference/vec_c.html">vec_c()</a></code> now fails when an input is supplied with a name but has internal names or is length &gt; 1:</p>
 <pre><code><a href="../reference/vec_c.html">vec_c(foo = c(a = 1))

@@ -202,21 +202,6 @@ testing easier.</p>
   <span class='kw'>class</span> <span class='kw'>=</span> <span class='kw'>NULL</span>
 )
 
-<span class='fu'>maybe_lossy_cast</span>(
-  <span class='no'>result</span>,
-  <span class='no'>x</span>,
-  <span class='no'>to</span>,
-  <span class='kw'>lossy</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>locations</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='no'>...</span>,
-  <span class='no'>x_arg</span>,
-  <span class='no'>to_arg</span>,
-  <span class='kw'>details</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>message</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>class</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>.deprecation</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>
-)
-
 <span class='fu'>allow_lossy_cast</span>(<span class='no'>expr</span>, <span class='kw'>x_ptype</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>to_ptype</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -240,34 +225,6 @@ testing easier.</p>
 <code>message</code> are mutually exclusive, supplying both is an error.</p></td>
     </tr>
     <tr>
-      <th>result</th>
-      <td><p>The result of a potentially lossy cast.</p></td>
-    </tr>
-    <tr>
-      <th>to</th>
-      <td><p>Type to cast to.</p></td>
-    </tr>
-    <tr>
-      <th>lossy</th>
-      <td><p>A logical vector indicating which elements of <code>result</code>
-were lossy.</p>
-<p>Can also be a single <code>TRUE</code>, but note that <code>locations</code> picks up
-locations from this vector by default. In this case, supply your
-own location vector, possibly empty.</p></td>
-    </tr>
-    <tr>
-      <th>locations</th>
-      <td><p>An optional integer vector giving the
-locations where <code>x</code> lost information.</p></td>
-    </tr>
-    <tr>
-      <th>.deprecation</th>
-      <td><p>If <code>TRUE</code>, the error is downgraded to a
-deprecation warning. This is useful for transitioning your class
-to a stricter conversion scheme. The warning advises your users
-to wrap their code with <code>allow_lossy_cast()</code>.</p></td>
-    </tr>
-    <tr>
       <th>x_ptype, to_ptype</th>
       <td><p>Suppress only the casting errors where <code>x</code>
 or <code>to</code> match these <a href='vec_ptype.html'>prototypes</a>.</p></td>
@@ -282,25 +239,11 @@ or <code>to</code> match these <a href='vec_ptype.html'>prototypes</a>.</p></td>
 
     <p><code>stop_incompatible_*()</code> unconditionally raise an error of class
 <code>"vctrs_error_incompatible_*"</code> and <code>"vctrs_error_incompatible"</code>.</p>
-    <h2 class="hasAnchor" id="lossy-cast-errors"><a class="anchor" href="#lossy-cast-errors"></a>Lossy cast errors</h2>
-
-    
-
-
-<p>By default, lossy casts are an error. Use <code>allow_lossy_cast()</code> to
-silence these errors and continue with the partial results. In this
-case the lost values are typically set to <code>NA</code> or to a lower value
-resolution, depending on the type of cast.</p>
-<p>Lossy cast errors are thrown by <code>maybe_lossy_cast()</code>. Unlike
-functions prefixed with <code>stop_</code>, <code>maybe_lossy_cast()</code> usually
-returns a result. If a lossy cast is detected, it throws an error,
-unless it's been wrapped in <code>allow_lossy_cast()</code>. In that case, it
-returns the result silently.</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'>
 <span class='co'># Most of the time, `maybe_lossy_cast()` returns its input normally:</span>
-<span class='fu'>maybe_lossy_cast</span>(
+<span class='fu'><a href='maybe_lossy_cast.html'>maybe_lossy_cast</a></span>(
   <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"foo"</span>, <span class='st'>"bar"</span>),
   <span class='kw'>NULL</span>,
   <span class='st'>""</span>,
@@ -309,7 +252,7 @@ returns the result silently.</p>
   <span class='kw'>to_arg</span> <span class='kw'>=</span> <span class='st'>""</span>
 )</div><div class='output co'>#&gt; [1] "foo" "bar"</div><div class='input'>
 <span class='co'># If `lossy` has any `TRUE`, an error is thrown:</span>
-<span class='fu'><a href='https://rdrr.io/r/base/try.html'>try</a></span>(<span class='fu'>maybe_lossy_cast</span>(
+<span class='fu'><a href='https://rdrr.io/r/base/try.html'>try</a></span>(<span class='fu'><a href='maybe_lossy_cast.html'>maybe_lossy_cast</a></span>(
   <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"foo"</span>, <span class='st'>"bar"</span>),
   <span class='kw'>NULL</span>,
   <span class='st'>""</span>,
@@ -320,7 +263,7 @@ returns the result silently.</p>
 #&gt; * Locations: 2</div><div class='input'>
 <span class='co'># Unless lossy casts are allowed:</span>
 <span class='fu'>allow_lossy_cast</span>(
-  <span class='fu'>maybe_lossy_cast</span>(
+  <span class='fu'><a href='maybe_lossy_cast.html'>maybe_lossy_cast</a></span>(
     <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"foo"</span>, <span class='st'>"bar"</span>),
     <span class='kw'>NULL</span>,
     <span class='st'>""</span>,
@@ -336,7 +279,6 @@ returns the result silently.</p>
     <ul class="nav nav-pills nav-stacked">
       <li><a href="#arguments">Arguments</a></li>
       <li><a href="#value">Value</a></li>
-      <li><a href="#lossy-cast-errors">Lossy cast errors</a></li>
       <li><a href="#examples">Examples</a></li>
     </ul>
 
