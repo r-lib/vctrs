@@ -491,11 +491,6 @@ test_that("fallback is recursive", {
   expect_identical(expect_df_fallback(vec_rbind(foo, baz)), exp)
 })
 
-test_that("lossy-cast-dropped error is internal", {
-  # Should not trigger testthat warning about untested class
-  expect_error(vec_cast(mtcars, mtcars[1:3]), "convert")
-})
-
 test_that("data frame output is informative", {
   verify_output(test_path("error", "test-type-data-frame.txt"), {
     "# combining data frames with foreign classes uses fallback"

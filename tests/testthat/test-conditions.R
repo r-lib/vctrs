@@ -117,6 +117,12 @@ test_that("can't supply both `message` and `details`", {
   )
 })
 
+test_that("lossy cast errors are internal", {
+  # Should not trigger testthat warnings about untested class
+  expect_error(vec_cast(mtcars, mtcars[1:3]), "convert")
+  expect_error(vec_cast(1.5, int()), "convert")
+})
+
 verify_output(test_path("error", "test-conditions.txt"), {
   "# can override arg in OOB conditions"
   with_subscript_data(

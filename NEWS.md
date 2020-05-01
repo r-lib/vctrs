@@ -245,6 +245,9 @@ The following errors are caused by breaking changes.
 * `x_arg`, `y_arg`, and `to_arg` are now compulsory arguments in
   `stop_` functions like `stop_incompatible_type()`.
 
+* Lossy cast errors are now considered internal. Please don't test for
+  the class or explicitly handle them.
+
 
 ## CRAN results
 

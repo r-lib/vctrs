@@ -6,7 +6,6 @@
 \alias{stop_incompatible_cast}
 \alias{stop_incompatible_op}
 \alias{stop_incompatible_size}
-\alias{maybe_lossy_cast}
 \alias{allow_lossy_cast}
 \title{Custom conditions for vctrs package}
 \usage{
@@ -55,21 +54,6 @@ stop_incompatible_size(
   class = NULL
 )
 
-maybe_lossy_cast(
-  result,
-  x,
-  to,
-  lossy = NULL,
-  locations = NULL,
-  ...,
-  x_arg,
-  to_arg,
-  details = NULL,
-  message = NULL,
-  class = NULL,
-  .deprecation = FALSE
-)
-
 allow_lossy_cast(expr, x_ptype = NULL, to_ptype = NULL)
 }
 \arguments{
@@ -81,25 +65,6 @@ allow_lossy_cast(expr, x_ptype = NULL, to_ptype = NULL)
 
 \item{message}{An overriding message for the error. \code{details} and
 \code{message} are mutually exclusive, supplying both is an error.}
-
-\item{result}{The result of a potentially lossy cast.}
-
-\item{to}{Type to cast to.}
-
-\item{lossy}{A logical vector indicating which elements of \code{result}
-were lossy.
-
-Can also be a single \code{TRUE}, but note that \code{locations} picks up
-locations from this vector by default. In this case, supply your
-own location vector, possibly empty.}
-
-\item{locations}{An optional integer vector giving the
-locations where \code{x} lost information.}
-
-\item{.deprecation}{If \code{TRUE}, the error is downgraded to a
-deprecation warning. This is useful for transitioning your class
-to a stricter conversion scheme. The warning advises your users
-to wrap their code with \code{allow_lossy_cast()}.}
 
 \item{x_ptype, to_ptype}{Suppress only the casting errors where \code{x}
 or \code{to} match these \link[=vec_ptype]{prototypes}.}
@@ -116,21 +81,6 @@ errors and warnings.
 These conditions have custom classes and structures to make
 testing easier.
 }
-\section{Lossy cast errors}{
-
-
-By default, lossy casts are an error. Use \code{allow_lossy_cast()} to
-silence these errors and continue with the partial results. In this
-case the lost values are typically set to \code{NA} or to a lower value
-resolution, depending on the type of cast.
-
-Lossy cast errors are thrown by \code{maybe_lossy_cast()}. Unlike
-functions prefixed with \code{stop_}, \code{maybe_lossy_cast()} usually
-returns a result. If a lossy cast is detected, it throws an error,
-unless it's been wrapped in \code{allow_lossy_cast()}. In that case, it
-returns the result silently.
-}
-
 \examples{
 
 # Most of the time, `maybe_lossy_cast()` returns its input normally:
