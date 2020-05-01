@@ -75,7 +75,7 @@ SEXP vec_c(SEXP xs,
 
   const struct vec_assign_opts c_assign_opts = {
     .assign_names = true,
-    .owned = true
+    .ownership = vctrs_ownership_owned
   };
 
   for (R_len_t i = 0; i < n; ++i) {
@@ -99,7 +99,7 @@ SEXP vec_c(SEXP xs,
       SEXP x_nms = PROTECT(apply_name_spec(name_spec, outer, inner, size));
 
       if (x_nms != R_NilValue) {
-        out_names = chr_assign(out_names, idx, x_nms, true);
+        out_names = chr_assign(out_names, idx, x_nms, vctrs_ownership_owned);
         REPROTECT(out_names, out_names_pi);
       }
 

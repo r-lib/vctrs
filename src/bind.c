@@ -151,7 +151,7 @@ static SEXP vec_rbind(SEXP xs, SEXP ptype, SEXP names_to, struct name_repair_opt
 
   const struct vec_assign_opts bind_assign_opts = {
     .assign_names = true,
-    .owned = true
+    .ownership = vctrs_ownership_owned
   };
 
   for (R_len_t i = 0; i < n; ++i) {
@@ -181,7 +181,7 @@ static SEXP vec_rbind(SEXP xs, SEXP ptype, SEXP names_to, struct name_repair_opt
       PROTECT(rn);
 
       if (rownames_type(rn) == ROWNAMES_IDENTIFIERS) {
-        rownames = chr_assign(rownames, idx, rn, true);
+        rownames = chr_assign(rownames, idx, rn, vctrs_ownership_owned);
         REPROTECT(rownames, rownames_pi);
       }
 
@@ -420,12 +420,12 @@ static SEXP vec_cbind(SEXP xs, SEXP ptype, SEXP size, struct name_repair_opts* n
 
     R_len_t xn = Rf_length(x);
     init_compact_seq(idx_ptr, counter, xn, true);
-    out = list_assign(out, idx, x, true);
+    out = list_assign(out, idx, x, vctrs_ownership_owned);
     REPROTECT(out, out_pi);
 
     SEXP xnms = PROTECT(r_names(x));
     if (xnms != R_NilValue) {
-      names = chr_assign(names, idx, xnms, true);
+      names = chr_assign(names, idx, xnms, vctrs_ownership_owned);
       REPROTECT(names, names_pi);
     }
     UNPROTECT(1);
