@@ -116,7 +116,12 @@ vec_ptype2.factor.ordered <- function(x, y, ..., x_arg = "", y_arg = "") {
 }
 #' @method vec_ptype2.ordered ordered
 #' @export
-vec_ptype2.ordered.ordered <- function(x, y, ...) new_ordered(levels = levels_union(x, y))
+vec_ptype2.ordered.ordered <- function(x, y, ..., x_arg = "", y_arg = "") {
+  if (!identical(levels(x), levels(y))) {
+    stop_incompatible_type(x, y, x_arg = x_arg, y_arg = y_arg)
+  }
+  x
+}
 
 # Cast --------------------------------------------------------------------
 

@@ -12,19 +12,6 @@
 #' @param message An overriding message for the error. `details` and
 #'   `message` are mutually exclusive, supplying both is an error.
 #'
-#' @section Lossy cast errors:
-#'
-#' By default, lossy casts are an error. Use `allow_lossy_cast()` to
-#' silence these errors and continue with the partial results. In this
-#' case the lost values are typically set to `NA` or to a lower value
-#' resolution, depending on the type of cast.
-#'
-#' Lossy cast errors are thrown by `maybe_lossy_cast()`. Unlike
-#' functions prefixed with `stop_`, `maybe_lossy_cast()` usually
-#' returns a result. If a lossy cast is detected, it throws an error,
-#' unless it's been wrapped in `allow_lossy_cast()`. In that case, it
-#' returns the result silently.
-#'
 #' @examples
 #'
 #' # Most of the time, `maybe_lossy_cast()` returns its input normally:
@@ -399,7 +386,25 @@ stop_incompatible_size <- function(x,
   )
 }
 
-#' @rdname vctrs-conditions
+#' Lossy cast error
+#'
+#' @description
+#'
+#' \Sexpr[results=rd, stage=render]{vctrs:::lifecycle("experimental")}
+#'
+#' By default, lossy casts are an error. Use `allow_lossy_cast()` to
+#' silence these errors and continue with the partial results. In this
+#' case the lost values are typically set to `NA` or to a lower value
+#' resolution, depending on the type of cast.
+#'
+#' Lossy cast errors are thrown by `maybe_lossy_cast()`. Unlike
+#' functions prefixed with `stop_`, `maybe_lossy_cast()` usually
+#' returns a result. If a lossy cast is detected, it throws an error,
+#' unless it's been wrapped in `allow_lossy_cast()`. In that case, it
+#' returns the result silently.
+#'
+#' @inheritParams stop_incompatible_cast
+#' @inheritParams vec_cast
 #' @param result The result of a potentially lossy cast.
 #' @param to Type to cast to.
 #' @param lossy A logical vector indicating which elements of `result`

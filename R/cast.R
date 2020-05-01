@@ -189,3 +189,7 @@ vec_default_cast <- function(x, to, ..., x_arg = "", to_arg = "") {
     `vctrs:::from_dispatch` = match_from_dispatch(...)
   )
 }
+
+is_informative_error.vctrs_error_cast_lossy <- function(x, ...) {
+  FALSE
+}
