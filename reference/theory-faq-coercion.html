@@ -54,6 +54,7 @@ inputs consistent and extensible. Combinations occur in many places,
 such as row-binding, joins, subset-assignment, or grouped summary
 functions that use the split-apply-combine strategy. For example:vec_c(TRUE, 1)
 #&amp;gt; [1] 1 1
+
 vec_c(&quot;a&quot;, 1)
 #&amp;gt; Error: Can't combine `..1` &amp;lt;character&amp;gt; and `..2` &amp;lt;double&amp;gt;.
 
@@ -64,6 +65,7 @@ vec_rbind(
 #&amp;gt;   x  y
 #&amp;gt; 1 1 NA
 #&amp;gt; 2 1  2
+
 vec_rbind(
   data.frame(x = &quot;a&quot;),
   data.frame(x = 1, y = 2)
@@ -99,7 +101,9 @@ emptied of their elements. They implement two behaviours:
 If the types of their inputs are compatible, indicate which of them
 is the richer type by returning it. If the types are of equal
 resolution, return any of the two.
-Throw an error when the types of their inputs are not compatible.
+Throw an error with stop_incompatible_type() when it can be
+determined from the attributes that the types of the inputs are not
+compatible.
 
 Type compatibility
 
@@ -232,19 +236,19 @@ Data frames
 The determination of the common type of data frames with vec_ptype2()
 happens in three steps:
 Match the columns of the two input data frames. If some columns
-don’t exist, they are created and filled with NA values. These
-unspecified columns play a special role in vctrs as
-they can be coerced to any type.
-Find the common type for each column by repeatedly calling
-vec_ptype2() on the matched columns.
+don’t exist, they are created and filled with adequately typed
+NA values.
+Find the common type for each column by calling vec_ptype2() on
+each pair of matched columns.
 Find the common data frame type. For example the common type of a
-grouped tibble and a tibble is a grouped tibble. The common type of
-a data table and a data frame is a data table.
+grouped tibble and a tibble is a grouped tibble because the latter
+is the richer type. The common type of a data table and a data frame
+is a data table.
 
 
-vec_cast() operates similarly. Trying to cast a data frame to a target
-type that has fewer columns is an error.
-If you’re implementing coercion methods for data frames, you will need
+vec_cast() operates similarly. If a data frame is cast to a target
+type that has fewer columns, this is an error.
+If you are implementing coercion methods for data frames, you will need
 to explicitly call the parent methods that perform the common type
 determination or the type conversion described above. These are exported
 as df_ptype2() and df_cast().Data frame fallbacks
@@ -265,7 +269,7 @@ vec_rbind(df1, df2)
 #&amp;gt; 1 1
 #&amp;gt; 2 1
 
-When a tibble is involved, we fall back to tibble:df3 &amp;lt;- tibble::new_tibble(df1, nrow = nrow(df1))
+When a tibble is involved, we fall back to tibble:df3 &amp;lt;- tibble::as_tibble(df1)
 
 vec_rbind(df1, df3)
 #&amp;gt; # A tibble: 2 x 1
@@ -276,11 +280,14 @@ vec_rbind(df1, df3)
 
 These fallbacks are not ideal but they make sense because all data
 frames share a common data structure. This is not generally the case for
-vectors, for example factors and characters have different
-representations. The downside is that the behaviour of R scripts will
-change when you implement vctrs methods for your subclass. This is why
-the proper coercion behaviour for your data frame class should be
-specified as soon as possible.
+vectors. For example factors and characters have different
+representations, and it is not possible to find a fallback time
+mechanically.
+However this fallback has a big downside: implementing vctrs methods for
+your data frame subclass is a breaking behaviour change. The proper
+coercion behaviour for your data frame class should be specified as soon
+as possible to limit the consequences of changing the behaviour of your
+class in R scripts.
 
 
 " />
@@ -399,6 +406,7 @@ inputs consistent and extensible. Combinations occur in many places,
 such as row-binding, joins, subset-assignment, or grouped summary
 functions that use the split-apply-combine strategy. For example:<div class="r"></p><pre>vec_c(TRUE, 1)
 #&gt; [1] 1 1
+
 vec_c("a", 1)
 #&gt; Error: Can't combine `..1` &lt;character&gt; and `..2` &lt;double&gt;.
 
@@ -409,6 +417,7 @@ vec_rbind(
 #&gt;   x  y
 #&gt; 1 1 NA
 #&gt; 2 1  2
+
 vec_rbind(
   data.frame(x = "a"),
   data.frame(x = 1, y = 2)
@@ -444,7 +453,9 @@ emptied of their elements. They implement two behaviours:</p><ul>
 <li><p>If the types of their inputs are compatible, indicate which of them
 is the richer type by returning it. If the types are of equal
 resolution, return any of the two.</p></li>
-<li><p>Throw an error when the types of their inputs are not compatible.</p></li>
+<li><p>Throw an error with <code><a href='vctrs-conditions.html'>stop_incompatible_type()</a></code> when it can be
+determined from the attributes that the types of the inputs are not
+compatible.</p></li>
 </ul>
 <h3>Type compatibility</h3>
 
@@ -577,19 +588,19 @@ explicitly if necessary.</p></li>
 <p>The determination of the common type of data frames with <code><a href='vec_ptype2.html'>vec_ptype2()</a></code>
 happens in three steps:</p><ol>
 <li><p>Match the columns of the two input data frames. If some columns
-don’t exist, they are created and filled with <code>NA</code> values. These
-<a href='unspecified.html'>unspecified</a> columns play a special role in vctrs as
-they can be coerced to any type.</p></li>
-<li><p>Find the common type for each column by repeatedly calling
-<code><a href='vec_ptype2.html'>vec_ptype2()</a></code> on the matched columns.</p></li>
+don’t exist, they are created and filled with adequately typed
+<code>NA</code> values.</p></li>
+<li><p>Find the common type for each column by calling <code><a href='vec_ptype2.html'>vec_ptype2()</a></code> on
+each pair of matched columns.</p></li>
 <li><p>Find the common data frame type. For example the common type of a
-grouped tibble and a tibble is a grouped tibble. The common type of
-a data table and a data frame is a data table.</p></li>
+grouped tibble and a tibble is a grouped tibble because the latter
+is the richer type. The common type of a data table and a data frame
+is a data table.</p></li>
 </ol>
 
-<p><code><a href='vec_cast.html'>vec_cast()</a></code> operates similarly. Trying to cast a data frame to a target
-type that has fewer columns is an error.</p>
-<p>If you’re implementing coercion methods for data frames, you will need
+<p><code><a href='vec_cast.html'>vec_cast()</a></code> operates similarly. If a data frame is cast to a target
+type that has fewer columns, this is an error.</p>
+<p>If you are implementing coercion methods for data frames, you will need
 to explicitly call the parent methods that perform the common type
 determination or the type conversion described above. These are exported
 as <code><a href='df_ptype2.html'>df_ptype2()</a></code> and <code><a href='df_ptype2.html'>df_cast()</a></code>.</p><h3>Data frame fallbacks</h3>
@@ -610,7 +621,7 @@ vec_rbind(df1, df2)
 #&gt; 1 1
 #&gt; 2 1
 </pre><p></div></p>
-<p>When a tibble is involved, we fall back to tibble:<div class="r"></p><pre>df3 &lt;- tibble::new_tibble(df1, nrow = nrow(df1))
+<p>When a tibble is involved, we fall back to tibble:<div class="r"></p><pre>df3 &lt;- tibble::as_tibble(df1)
 
 vec_rbind(df1, df3)
 #&gt; # A tibble: 2 x 1
@@ -621,11 +632,14 @@ vec_rbind(df1, df3)
 </pre><p></div></p>
 <p>These fallbacks are not ideal but they make sense because all data
 frames share a common data structure. This is not generally the case for
-vectors, for example factors and characters have different
-representations. The downside is that the behaviour of R scripts will
-change when you implement vctrs methods for your subclass. This is why
-the proper coercion behaviour for your data frame class should be
-specified as soon as possible.</p>
+vectors. For example factors and characters have different
+representations, and it is not possible to find a fallback time
+mechanically.</p>
+<p>However this fallback has a big downside: implementing vctrs methods for
+your data frame subclass is a breaking behaviour change. The proper
+coercion behaviour for your data frame class should be specified as soon
+as possible to limit the consequences of changing the behaviour of your
+class in R scripts.</p>
 
 
 

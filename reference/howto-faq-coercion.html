@@ -97,20 +97,19 @@ Roxygen workflow
 To implement methods for generics, first import the generics in your
 namespace and redocument:#' @importFrom vctrs vec_ptype2 vec_cast
 NULL
-#&amp;gt; NULL
 
 Note that for each batches of methods that you add to your package, you
 need to export the methods and redocument immediately, even during
 development. Otherwise they won’t be in scope when you run unit tests
 e.g. with testthat.
-
-Implementing vec_ptype2()
-
-
 Implementing double dispatch methods is very similar to implementing
 regular S3 methods. In these examples we are using roxygen2 tags to
 register the methods, but you can also register the methods manually in
-your NAMESPACE file or lazily with s3_register().The self-self method
+your NAMESPACE file or lazily with s3_register().
+
+Implementing vec_ptype2()
+
+The self-self method
 
 
 The first method to implement is the one that signals that your class is
@@ -123,9 +122,9 @@ vec_ptype2(new_natural(1), new_natural(2:3))
 #&amp;gt; &amp;lt;natural&amp;gt;
 #&amp;gt; integer(0)
 
-vec_ptype2() implements fallbacks to try and be compatible with simple
-classes, so it may seem that you don’t need to implement the self-self
-coercion method. However, you still have to implement it explicitly
+vec_ptype2() implements a fallback to try and be compatible with
+simple classes, so it may seem that you don’t need to implement the
+self-self coercion method. However, you must implement it explicitly
 because this is how vctrs knows that a class that is implementing vctrs
 methods (for instance this disable fallbacks to base::c()). Also, it
 makes your class a bit more efficient.
@@ -215,20 +214,22 @@ Implementing vec_cast()
 
 
 Corresponding vec_cast() methods must be implemented for all
-vec_ptype2() methods. The self-self method is easy in this case, it
-just returns the target input:#' @export
+vec_ptype2() methods. The general pattern is to convert the argument
+x to the type of to. The methods should validate the values in x
+and make sure they conform to the values of to.
+Please note that for historical reasons, the order of the classes in the
+method name is in reverse order of the arguments in the function
+signature. The first class represents to, whereas the second class
+represents x.
+The self-self method is easy in this case, it just returns the target
+input:#' @export
 vec_cast.my_natural.my_natural &amp;lt;- function(x, to, ...) {
   x
 }
 
-The general pattern for vec_cast() methods is to convert the argument
-x to the type of to. The vec_cast() method should validate the
-values in x and make sure they conform to the values of to. We
-perform input validation in the new_natural() constructor, so that’s a
-good fit for our vec_cast() implementations.
-Note that for historical reasons, the order of the classes in the method
-name is in reverse order of the arguments in the function signature. The
-first class represents to, whereas the second class represents x.#' @export
+The other types need to be validated. We perform input validation in the
+new_natural() constructor, so that’s a good fit for our vec_cast()
+implementations.#' @export
 vec_cast.my_natural.logical &amp;lt;- function(x, to, ...) {
   # The order of the classes in the method name is in reverse order
   # of the arguments in the function signature, so `to` is the natural
@@ -275,6 +276,7 @@ vec_cast.double.my_natural &amp;lt;- function(x, to, ...) {
 
 And we now get the expected combinations.vec_c(new_natural(1), 10L)
 #&amp;gt; [1]  1 10
+
 vec_c(1.5, new_natural(1))
 #&amp;gt; [1] 1.5 1.0
 
@@ -437,20 +439,19 @@ new_natural(c(1, NA))
 <p>To implement methods for generics, first import the generics in your
 namespace and redocument:<div class="r"></p><pre>#' @importFrom vctrs vec_ptype2 vec_cast
 NULL
-#&gt; NULL
 </pre><p></div></p>
 <p>Note that for each batches of methods that you add to your package, you
 need to export the methods and redocument immediately, even during
 development. Otherwise they won’t be in scope when you run unit tests
 e.g. with testthat.</p>
-
-<h3>Implementing <code><a href='vec_ptype2.html'>vec_ptype2()</a></code></h3>
-
-
 <p>Implementing double dispatch methods is very similar to implementing
 regular S3 methods. In these examples we are using roxygen2 tags to
 register the methods, but you can also register the methods manually in
-your NAMESPACE file or lazily with <code><a href='s3_register.html'>s3_register()</a></code>.</p><h3>The self-self method</h3>
+your NAMESPACE file or lazily with <code><a href='s3_register.html'>s3_register()</a></code>.</p>
+
+<h3>Implementing <code><a href='vec_ptype2.html'>vec_ptype2()</a></code></h3>
+
+<h3>The self-self method</h3>
 
 
 <p>The first method to implement is the one that signals that your class is
@@ -463,9 +464,9 @@ vec_ptype2(new_natural(1), new_natural(2:3))
 #&gt; &lt;natural&gt;
 #&gt; integer(0)
 </pre><p></div></p>
-<p><code><a href='vec_ptype2.html'>vec_ptype2()</a></code> implements fallbacks to try and be compatible with simple
-classes, so it may seem that you don’t need to implement the self-self
-coercion method. However, you still have to implement it explicitly
+<p><code><a href='vec_ptype2.html'>vec_ptype2()</a></code> implements a fallback to try and be compatible with
+simple classes, so it may seem that you don’t need to implement the
+self-self coercion method. However, you must implement it explicitly
 because this is how vctrs knows that a class that is implementing vctrs
 methods (for instance this disable fallbacks to <code><a href='https://rdrr.io/r/base/c.html'>base::c()</a></code>). Also, it
 makes your class a bit more efficient.</p>
@@ -555,20 +556,22 @@ generic signature but can usually be left out if not used.</p>
 
 
 <p>Corresponding <code><a href='vec_cast.html'>vec_cast()</a></code> methods must be implemented for all
-<code><a href='vec_ptype2.html'>vec_ptype2()</a></code> methods. The self-self method is easy in this case, it
-just returns the target input:<div class="r"></p><pre>#' @export
+<code><a href='vec_ptype2.html'>vec_ptype2()</a></code> methods. The general pattern is to convert the argument
+<code>x</code> to the type of <code>to</code>. The methods should validate the values in <code>x</code>
+and make sure they conform to the values of <code>to</code>.</p>
+<p>Please note that for historical reasons, the order of the classes in the
+method name is in reverse order of the arguments in the function
+signature. The first class represents <code>to</code>, whereas the second class
+represents <code>x</code>.</p>
+<p>The self-self method is easy in this case, it just returns the target
+input:<div class="r"></p><pre>#' @export
 vec_cast.my_natural.my_natural &lt;- function(x, to, ...) {
   x
 }
 </pre><p></div></p>
-<p>The general pattern for <code><a href='vec_cast.html'>vec_cast()</a></code> methods is to convert the argument
-<code>x</code> to the type of <code>to</code>. The <code><a href='vec_cast.html'>vec_cast()</a></code> method should validate the
-values in <code>x</code> and make sure they conform to the values of <code>to</code>. We
-perform input validation in the <code>new_natural()</code> constructor, so that’s a
-good fit for our <code><a href='vec_cast.html'>vec_cast()</a></code> implementations.</p>
-<p>Note that for historical reasons, the order of the classes in the method
-name is in reverse order of the arguments in the function signature. The
-first class represents <code>to</code>, whereas the second class represents <code>x</code>.<div class="r"></p><pre>#' @export
+<p>The other types need to be validated. We perform input validation in the
+<code>new_natural()</code> constructor, so that’s a good fit for our <code><a href='vec_cast.html'>vec_cast()</a></code>
+implementations.<div class="r"></p><pre>#' @export
 vec_cast.my_natural.logical &lt;- function(x, to, ...) {
   # The order of the classes in the method name is in reverse order
   # of the arguments in the function signature, so `to` is the natural
@@ -615,6 +618,7 @@ vec_cast.double.my_natural &lt;- function(x, to, ...) {
 </pre><p></div></p>
 <p>And we now get the expected combinations.<div class="r"></p><pre>vec_c(new_natural(1), 10L)
 #&gt; [1]  1 10
+
 vec_c(1.5, new_natural(1))
 #&gt; [1] 1.5 1.0
 </pre><p></div></p>
