@@ -86,10 +86,17 @@ x These names are duplicated:
   * ...
 
 
-lossy cast from character to factor mention loss of generality
-==============================================================
+lossy cast from character to factor mentions loss of generality
+===============================================================
 
 > vec_cast("a", factor("b"))
 Error: Can't convert from <character> to <factor<ddf10>> due to loss of generality.
 * Locations: 1
+
+
+ordered cast failures mention conversion
+========================================
+
+> vec_cast(ordered("x"), ordered("y"))
+Error: Can't convert <ordered<5a425>> to <ordered<df698>>.
 

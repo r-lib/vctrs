@@ -16,16 +16,17 @@ void vec_assert(SEXP x, struct vctrs_arg* arg) {
   }
 }
 
-// [[ include("vctrs.h") ]]
-void stop_incompatible_type(SEXP x,
-                            SEXP y,
-                            struct vctrs_arg* x_arg,
-                            struct vctrs_arg* y_arg) {
+static __attribute__((noreturn))
+void stop_incompatible_type_impl(SEXP x,
+                                 SEXP y,
+                                 struct vctrs_arg* x_arg,
+                                 struct vctrs_arg* y_arg,
+                                 bool cast) {
   SEXP syms[5] = {
     syms_x,
     syms_y,
     syms_x_arg,
-    syms_y_arg,
+    cast ? syms_to_arg : syms_y_arg,
     NULL
   };
   SEXP args[5] = {
@@ -36,10 +37,27 @@ void stop_incompatible_type(SEXP x,
     NULL
   };
 
-  SEXP call = PROTECT(r_call(syms_stop_incompatible_type, syms, args));
+  SEXP fn = cast ? syms_stop_incompatible_cast : syms_stop_incompatible_type;
+
+  SEXP call = PROTECT(r_call(fn, syms, args));
   Rf_eval(call, vctrs_ns_env);
 
-  never_reached("stop_incompatible_type");
+  never_reached("stop_incompatible_type_impl");
+}
+
+// [[ include("vctrs.h") ]]
+void stop_incompatible_type(SEXP x,
+                            SEXP y,
+                            struct vctrs_arg* x_arg,
+                            struct vctrs_arg* y_arg) {
+  stop_incompatible_type_impl(x, y, x_arg, y_arg, false);
+}
+// [[ include("vctrs.h") ]]
+void stop_incompatible_cast(SEXP x,
+                            SEXP y,
+                            struct vctrs_arg* x_arg,
+                            struct vctrs_arg* y_arg) {
+  stop_incompatible_type_impl(x, y, x_arg, y_arg, true);
 }
 
 // [[ include("vctrs.h") ]]

@@ -1508,6 +1508,7 @@ SEXP syms_from_dispatch = NULL;
 SEXP syms_df_fallback = NULL;
 SEXP syms_stop_incompatible_type = NULL;
 SEXP syms_stop_incompatible_size = NULL;
+SEXP syms_stop_incompatible_cast = NULL;
 
 SEXP fns_bracket = NULL;
 SEXP fns_quote = NULL;
@@ -1751,6 +1752,7 @@ void vctrs_init_utils(SEXP ns) {
   syms_df_fallback = Rf_install("vctrs:::df_fallback");
   syms_stop_incompatible_type = Rf_install("stop_incompatible_type");
   syms_stop_incompatible_size = Rf_install("stop_incompatible_size");
+  syms_stop_incompatible_cast = Rf_install("stop_incompatible_cast");
 
   fns_bracket = Rf_findVar(syms_bracket, R_BaseEnv);
   fns_quote = Rf_findVar(Rf_install("quote"), R_BaseEnv);

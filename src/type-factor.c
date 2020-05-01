@@ -37,7 +37,8 @@ static
 SEXP ord_ptype2_validate(SEXP x,
                          SEXP y,
                          struct vctrs_arg* x_arg,
-                         struct vctrs_arg* y_arg) {
+                         struct vctrs_arg* y_arg,
+                         bool cast) {
   SEXP x_levels = Rf_getAttrib(x, R_LevelsSymbol);
   SEXP y_levels = Rf_getAttrib(y, R_LevelsSymbol);
 
@@ -49,7 +50,11 @@ SEXP ord_ptype2_validate(SEXP x,
   }
 
   if (!equal_object(x_levels, y_levels)) {
-    stop_incompatible_type(x, y, x_arg, y_arg);
+    if (cast) {
+      stop_incompatible_cast(x, y, x_arg, y_arg);
+    } else {
+      stop_incompatible_type(x, y, x_arg, y_arg);
+    }
   }
 
   return x_levels;
@@ -57,7 +62,7 @@ SEXP ord_ptype2_validate(SEXP x,
 
 // [[ include("type-factor.h") ]]
 SEXP ord_ptype2(const struct ptype2_opts* opts) {
-  SEXP levels = PROTECT(ord_ptype2_validate(opts->x, opts->y, opts->x_arg, opts->y_arg));
+  SEXP levels = PROTECT(ord_ptype2_validate(opts->x, opts->y, opts->x_arg, opts->y_arg, false));
   SEXP out = new_empty_ordered(levels);
   return UNPROTECT(1), out;
 }
@@ -255,7 +260,7 @@ SEXP fct_as_factor(SEXP x,
 
 // [[ include("factor.h") ]]
 SEXP ord_as_ordered(const struct cast_opts* opts) {
-  ord_ptype2_validate(opts->x, opts->to, opts->x_arg, opts->to_arg);
+  ord_ptype2_validate(opts->x, opts->to, opts->x_arg, opts->to_arg, true);
   return opts->x;
 }
 

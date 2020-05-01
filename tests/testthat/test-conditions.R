@@ -129,6 +129,15 @@ test_that("lossy cast from character to factor mentions loss of generality", {
   })
 })
 
+test_that("ordered cast failures mention conversion", {
+  verify_errors({
+    expect_error(
+      vec_cast(ordered("x"), ordered("y")),
+      class = "vctrs_error_incompatible_type"
+    )
+  })
+})
+
 verify_output(test_path("error", "test-conditions.txt"), {
   "# can override arg in OOB conditions"
   with_subscript_data(
@@ -165,6 +174,9 @@ verify_output(test_path("error", "test-conditions.txt"), {
   vec_as_names(c("x", "x", "x", "y", "y", "z"), repair = "check_unique")
   vec_as_names(c(rep("x", 20), rep(c("a", "b", "c", "d", "e"), 2)), repair = "check_unique")
 
-  "# lossy cast from character to factor mention loss of generality"
+  "# lossy cast from character to factor mentions loss of generality"
   vec_cast("a", factor("b"))
+
+  "# ordered cast failures mention conversion"
+  vec_cast(ordered("x"), ordered("y"))
 })

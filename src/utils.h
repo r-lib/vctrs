@@ -477,6 +477,7 @@ extern SEXP syms_from_dispatch;
 extern SEXP syms_df_fallback;
 extern SEXP syms_stop_incompatible_type;
 extern SEXP syms_stop_incompatible_size;
+extern SEXP syms_stop_incompatible_cast;
 
 #define syms_names R_NamesSymbol
 
