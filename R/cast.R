@@ -173,11 +173,12 @@ vec_default_cast <- function(x, to, ..., x_arg = "", to_arg = "") {
   }
 
   if (match_df_fallback(...)) {
+    out <- df_cast_params(x, to, ..., x_arg = x_arg, to_arg = to_arg, df_fallback = TRUE)
+
     if (inherits(to, "tbl_df")) {
-      out <- tib_cast(x, to, ..., x_arg = x_arg, to_arg = to_arg)
-    } else {
-      out <- df_cast_params(x, to, ..., x_arg = x_arg, to_arg = to_arg, df_fallback = TRUE)
+      out <- df_as_tibble(out)
     }
+
     return(out)
   }
 
