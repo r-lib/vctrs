@@ -1,28 +1,40 @@
-#' Extract underlying data
+#' Proxy and restore
 #'
 #' @description
 #'
-#' Extract the data underlying an S3 vector object, i.e. the underlying
-#' (named) atomic vector or list.
+#' `vec_proxy()` returns the memory representation of a vector. You
+#' normally don't need to implement it, except in these cases:
 #'
-#' * `vec_data()` returns unstructured data. The only attributes
-#'   preserved are names, dims, and dimnames.
+#' - S3 lists are considered scalars by default. This is the safe
+#'   choice for list objects such as returned by `stats::lm()`. To
+#'   declare that your S3 list class is a vector, give it an identity
+#'   proxy (i.e. a proxy method that just returns its input).
 #'
-#'   Currently, due to the underlying memory architecture of R, this
-#'   creates a full copy of the data.
+#' - Some vector types have vectorised attributes, i.e. metadata for
+#'   each element of the vector. These _record types_ are implemented
+#'   in vctrs by returning a data frame in the proxy method.
 #'
-#' * `vec_proxy()` may return structured data. This generic is the
-#'   main customisation point in vctrs, along with [vec_restore()].
-#'   See the section below to learn when you should implement
-#'   `vec_proxy()`.
+#' - When you're implementing a vector on top of a non-vector type,
+#'   like an environment or an S4 object. This is currently only
+#'   partially supported.
 #'
-#'   Methods must return a vector type. Records and data frames will
-#'   be processed rowwise.
+#' `vec_restore()` is the inverse operation of `vec_proxy()`. It
+#' should only be called on vector proxies.
 #'
-#' @param x A vector or object implementing `vec_proxy()`.
-#' @return The data underlying `x`, free from any attributes except the names.
+#' - It undoes the transformations of `vec_proxy()`.
 #'
-#' @section When should you proxy your type:
+#' - It restores attributes and classes. These may be lost when the
+#'   memory values are manipulated. For example slicing a subset of a
+#'   vector's proxy causes a new proxy to be allocated.
+#'
+#' By default vctrs restores all attributes and classes
+#' automatically. You only need to implement a `vec_restore()` method
+#' if your class has attributes that depend on the data.
+#'
+#' @param x A vector.
+#' @inheritParams ellipsis::dots_empty
+#'
+#' @section Proxying:
 #'
 #' You should only implement `vec_proxy()` when your type is designed
 #' around a non-vector class. I.e. anything that is not either:
@@ -62,9 +74,108 @@
 #' Note that you don't need to implement `vec_proxy()` when your class
 #' inherits from `vctrs_vctr` or `vctrs_rcrd`.
 #'
-#' @seealso See [vec_restore()] for the inverse operation: it restores
-#'   attributes given a bare vector and a prototype;
-#'   `vec_restore(vec_data(x), x)` will always yield `x`.
+#'
+#' @section Restoring:
+#'
+#' A restore is a specialised type of cast, primarily used in
+#' conjunction with `NextMethod()` or a C-level function that works on
+#' the underlying data structure. A `vec_restore()` method can make
+#' the following assumptions about `x`:
+#'
+#' * It has the correct type.
+#' * It has the correct names.
+#' * It has the correct `dim` and `dimnames` attributes.
+#' * It is unclassed. This way you can call vctrs generics with `x`
+#'   without triggering an infinite loop of restoration.
+#'
+#' The length may be different (for example after [vec_slice()] has
+#' been called), and all other attributes may have been lost. The
+#' method should restore all attributes so that after restoration,
+#' `vec_restore(vec_data(x), x)` yields `x`.
+#'
+#' To understand the difference between `vec_cast()` and `vec_restore()`
+#' think about factors: it doesn't make sense to cast an integer to a factor,
+#' but if `NextMethod()` or another low-level function has stripped attributes,
+#' you still need to be able to restore them.
+#'
+#' The default method copies across all attributes so you only need to
+#' provide your own method if your attributes require special care
+#' (i.e. they are dependent on the data in some way). When implementing
+#' your own method, bear in mind that many R users add attributes to track
+#' additional metadata that is important to them, so you should preserve any
+#' attributes that don't require special handling for your class.
+#'
+#' @export
+vec_proxy <- function(x, ...) {
+  if (!missing(...)) {
+    ellipsis::check_dots_empty()
+  }
+  return(.Call(vctrs_proxy, x))
+  UseMethod("vec_proxy")
+}
+vec_proxy_dispatch <- function(x, ...) {
+  UseMethod("vec_proxy")
+}
+#' @export
+vec_proxy.default <- function(x, ...) {
+  x
+}
+vec_proxy_recursive <- function(x, kind = "default") {
+  .Call(vctrs_proxy_recursive, x, sym(kind))
+}
+
+#' @rdname vec_proxy
+#' @param to The original vector to restore to.
+#' @param n \Sexpr[results=rd, stage=render]{vctrs:::lifecycle("experimental")}
+#'   The total size to restore to. This is currently passed by
+#'   `vec_slice()` to solve edge cases arising in data frame
+#'   restoration. In most cases you don't need this information and
+#'   can safely ignore that argument. This parameter should be
+#'   considered internal and experimental, it might change in the
+#'   future.
+#' @export
+vec_restore <- function(x, to, ..., n = NULL) {
+  if (!missing(...)) {
+    ellipsis::check_dots_empty()
+  }
+  return(.Call(vctrs_restore, x, to, n))
+  UseMethod("vec_restore", to)
+}
+vec_restore_dispatch <- function(x, to, ..., n = NULL) {
+  UseMethod("vec_restore", to)
+}
+#' @export
+vec_restore.default <- function(x, to, ..., n = NULL) {
+  .Call(vctrs_restore_default, x, to)
+}
+vec_restore_default <- function(x, to, ...) {
+  .Call(vctrs_restore_default, x, to)
+}
+
+#' Extract underlying data
+#'
+#' @description
+#'
+#' \Sexpr[results=rd, stage=render]{vctrs:::lifecycle("experimental")}
+#'
+#' Extract the data underlying an S3 vector object, i.e. the underlying
+#' (named) atomic vector or list.
+#'
+#' * `vec_data()` returns unstructured data. The only attributes
+#'   preserved are names, dims, and dimnames.
+#'
+#'   Currently, due to the underlying memory architecture of R, this
+#'   creates a full copy of the data.
+#'
+#' * `vec_proxy()` may return structured data. This generic is the
+#'   main customisation point for accessing memory values in vctrs,
+#'   along with [vec_restore()].
+#'
+#'   Methods must return a vector type. Records and data frames will
+#'   be processed rowwise.
+#'
+#' @param x A vector or object implementing `vec_proxy()`.
+#' @return The data underlying `x`, free from any attributes except the names.
 #' @export
 vec_data <- function(x) {
   vec_assert(x)
@@ -81,47 +192,4 @@ vec_data <- function(x) {
 }
 unset_s4 <- function(x) {
   .Call(vctrs_unset_s4, x)
-}
-
-#' @rdname vec_data
-#' @inheritParams ellipsis::dots_empty
-#' @export
-vec_proxy <- function(x, ...) {
-  if (!missing(...)) {
-    ellipsis::check_dots_empty()
-  }
-  return(.Call(vctrs_proxy, x))
-  UseMethod("vec_proxy")
-}
-vec_proxy_dispatch <- function(x, ...) {
-  UseMethod("vec_proxy")
-}
-#' @export
-vec_proxy.default <- function(x, ...) {
-  x
-}
-
-vec_proxy_recursive <- function(x, kind = "default") {
-  .Call(vctrs_proxy_recursive, x, sym(kind))
-}
-
-#' @export
-#' @rdname vec_cast
-vec_restore <- function(x, to, ..., n = NULL) {
-  if (!missing(...)) {
-    ellipsis::check_dots_empty()
-  }
-  return(.Call(vctrs_restore, x, to, n))
-  UseMethod("vec_restore", to)
-}
-vec_restore_dispatch <- function(x, to, ..., n = NULL) {
-  UseMethod("vec_restore", to)
-}
-#' @export
-vec_restore.default <- function(x, to, ..., n = NULL) {
-  .Call(vctrs_restore_default, x, to)
-}
-
-vec_restore_default <- function(x, to, ...) {
-  .Call(vctrs_restore_default, x, to)
 }

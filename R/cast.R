@@ -39,48 +39,11 @@
 #' that `as.integer.double()` would.
 #'
 #'
-#' @section Restoring attributes:
-#'
-#' A restore is a specialised type of cast, primarily used in
-#' conjunction with `NextMethod()` or a C-level function that works on
-#' the underlying data structure. A `vec_restore()` method can make
-#' the following assumptions about `x`:
-#'
-#' * It has the correct type.
-#' * It has the correct names.
-#' * It has the correct `dim` and `dimnames` attributes.
-#' * It is unclassed. This way you can call vctrs generics with `x`
-#'   without triggering an infinite loop of restoration.
-#'
-#' The length may be different (for example after [vec_slice()] has
-#' been called), and all other attributes may have been lost. The
-#' method should restore all attributes so that after restoration,
-#' `vec_restore(vec_data(x), x)` yields `x`.
-#'
-#' To understand the difference between `vec_cast()` and `vec_restore()`
-#' think about factors: it doesn't make sense to cast an integer to a factor,
-#' but if `NextMethod()` or another low-level function has stripped attributes,
-#' you still need to be able to restore them.
-#'
-#' The default method copies across all attributes so you only need to
-#' provide your own method if your attributes require special care
-#' (i.e. they are dependent on the data in some way). When implementing
-#' your own method, bear in mind that many R users add attributes to track
-#' additional metadata that is important to them, so you should preserve any
-#' attributes that don't require special handling for your class.
-#'
 #' @param x Vectors to cast.
 #' @param ... For `vec_cast_common()`, vectors to cast. For
 #'   `vec_cast()`, `vec_cast_default()`, and `vec_restore()`, these
 #'   dots are only for future extensions and should be empty.
 #' @param to,.to Type to cast to. If `NULL`, `x` will be returned as is.
-#' @param n \Sexpr[results=rd, stage=render]{vctrs:::lifecycle("experimental")}
-#'   The total size to restore to. This is currently passed by
-#'   `vec_slice()` to solve edge cases arising in data frame
-#'   restoration. In most cases you don't need this information and
-#'   can safely ignore that argument. This parameter should be
-#'   considered internal and experimental, it might change in the
-#'   future.
 #' @param x_arg,to_arg Argument names for `x` and `to`. These are used
 #'   in error messages to inform the user about the locations of
 #'   incompatible types (see [stop_incompatible_type()]).
