@@ -1,62 +1,35 @@
-#' Find the common type for a pair of vector types
+#' Find the common type for a pair of vectors
 #'
-#' `vec_ptype2()` finds the common type for a pair of vectors, or dies trying.
-#' It forms the foundation of the vctrs type system, along with [vec_cast()].
-#' This powers type coercion but should not usually be called directly;
-#' instead call [vec_ptype_common()].
+#' @description
 #'
-#' @section Coercion rules:
-#' vctrs thinks of the vector types as forming a partially ordered set, or
-#' poset. Then finding the common type from a set of types is a matter of
-#' finding the least-upper-bound; if the least-upper-bound does not exist,
-#' there is no common type. This is the case for many pairs of 1d vectors.
+#' `vec_ptype2()` provides directional conversions from one type of
+#' vector to another. Along with [vec_cast()], this generic forms
+#' the foundation of type coercions in vctrs.
 #'
-#' The poset of the most important base vectors is shown below:
-#' (where datetime stands for `POSIXt`, and date for `Date`)
+#' `vec_ptype2()` is relevant when you are implementing vctrs methods
+#' for your class, but it should not usually be called directly. If
+#' you need to find the common type of a set of inputs, call
+#' [vec_ptype_common()] instead. This function supports multiple
+#' inputs and [finalises][vec_ptype_finalise] the common type.
 #'
-#' \figure{coerce.png}
-#'
-#' When you implement methods, make sure that `vec_ptype2.x.y()`
-#' returns the same value as `vec_ptype2.y.x()`; this is not enforced
-#' for reasons of efficiency, but should be tested.
-#'
-#' @section S3 dispatch:
-#'
-#' `vec_ptype2()` dispatches on both arguments. This is implemented
-#' with a custom dispatch mechanism that has different semantics than
-#' regular S3 dispatch. The most important difference is that
-#' `vec_ptype2()` are not inherited, classes must explicitly implement
-#' the methods. There are two reasons for this:
-#'
-#' - The coercion hierarchy is often different from a class hierarchy.
-#'   For instance the richer type between a tibble and a data frame is
-#'   a tibble. Grouped data frames inherit from tibble, and so would by
-#'   default inherit from tibble's `vec_ptype2()` method if inheritance
-#'   was allowed. The method would then indicate that the richer type
-#'   between a grouped data frame and a data frame is a tibble, which
-#'   is wrong.
-#'
-#' - `vec_ptype2()` should be symmetric, i.e. it should return the same
-#'   type no matter the order of the inputs. With inheritance, this
-#'   isn't the case when two classes have a common parent class. For
-#'   instance the richer type between a tsibble and a tibble is
-#'   tsibble. Similarly, grouped data frames are a richer type than
-#'   tibble. Both of these classess have tibble as common parent
-#'   class. With inheritance, `vec_ptype2(tsibble, gdf)` would return a
-#'   tsibble via the tsibble-tibble method. `vec_ptype2(gdf, tsibble)`
-#'   would return a grouped data frame via the gdf-tibble method.
-#'
-#' Another difference with regular dispatch is that `NextMethod()`
-#' does not work inside `vec_ptype2()` methods, and `default` methods
-#' are never called.
-#'
-#' See `vignette("s3-vector")` for full details.
-#' @keywords internal
 #' @inheritParams ellipsis::dots_empty
 #' @param x,y Vector types.
 #' @param x_arg,y_arg Argument names for `x` and `y`. These are used
 #'   in error messages to inform the user about the locations of
 #'   incompatible types (see [stop_incompatible_type()]).
+#'
+#' @section Implementing `vec_ptype2()` methods:
+#'
+#' - For an overview of how these generics work and their roles in
+#'   vctrs, see [`?theory-faq-coercion`][theory-faq-coercion].
+#'
+#' - For an example of implementing coercion methods for data frame
+#'   subclasses, see
+#'   [`?howto-faq-coercion-data-frame`][howto-faq-coercion-data-frame].
+#'
+#' Call [stop_incompatible_type()] when you determine from the
+#' attributes that an input can't be cast to the target type.
+#'
 #' @export
 vec_ptype2 <- function(x, y, ..., x_arg = "", y_arg = "") {
   if (!missing(...)) {
@@ -68,7 +41,31 @@ vec_ptype2 <- function(x, y, ..., x_arg = "", y_arg = "") {
 vec_ptype2_dispatch_s3 <- function(x, y, ..., x_arg = "", y_arg = "") {
   UseMethod("vec_ptype2")
 }
-#' @rdname vec_ptype2
+
+#' Default cast and ptype2 methods
+#'
+#' @description
+#'
+#' These functions are automatically called when no [vec_ptype2()] or
+#' [vec_cast()] method is implemented for a pair of types.
+#'
+#' * They apply special handling if one of the inputs is of type
+#'   `AsIs` or `sfc`.
+#'
+#' * They attempt a number of fallbacks in cases where it would be too
+#'   inconvenient to be strict:
+#'
+#'   - If the class and attributes are the same they are considered
+#'     compatible. `vec_default_cast()` returns `x` in this case.
+#'
+#'   - In case of incompatible data frame classes, they fall back to
+#'     `data.frame`. If an incompatible subclass of tibble is
+#'     involved, they fall back to `tbl_df`.
+#'
+#' * Otherwise, an error is thrown with [stop_incompatible_type()] or
+#'   [stop_incompatible_cast()].
+#'
+#' @keywords internal
 #' @export
 vec_default_ptype2 <- function(x, y, ..., x_arg = "", y_arg = "") {
   if (is_asis(x)) {

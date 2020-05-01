@@ -10,7 +10,7 @@
 \alias{vec_cast.raw}
 \alias{vec_cast.character}
 \alias{vec_cast.list}
-\title{Cast a vector to specified type}
+\title{Cast a vector to the type of another vector}
 \usage{
 vec_cast(x, to, ..., x_arg = "", to_arg = "")
 
@@ -50,46 +50,22 @@ information is lost when casting between compatible types (i.e. when
 there is no 1-to-1 mapping for a specific value).
 }
 \description{
-\code{vec_cast()} provides general coercions from one type of vector to another,
-and along with \code{\link[=vec_ptype2]{vec_ptype2()}} forms the foundation of the vctrs type system.
-It should generally not be called by R users, but is important for R
-developers. \code{vec_restore()} is designed specifically for casting a bare
-vector to the original type; it's useful when relying \code{NextMethod()} for
-the actual implementation. \code{vec_cast_common(...)} casts a collection to
-vectors to the same type.
+\code{vec_cast()} provides directional conversions from one type of
+vector to another. Along with \code{\link[=vec_ptype2]{vec_ptype2()}}, this generic forms
+the foundation of type coercions in vctrs.
 }
-\section{Casting rules}{
+\section{Implementing \code{vec_cast()} methods}{
 
-Casting is more flexible than coercion, and allows for the possibility of
-information loss. This diagram summarises possible coercions. \code{vec_cast()}
-from any type connected to another type, provided that the arrows are
-followed in only one direction. For example you can cast from logical to
-character, and list to time, but you can not cast from logical to datetime.
-
-\figure{cast.png}
-
-Most casts are not symmetric: you can cast all integers to doubles, but you
-can only cast a subset of doubles back to integers. If a cast is potentially
-lossy, an error will be shown whenever an actual loss occurs.
-
-The rules for coercing from a list are fairly strict: each component of the
-list must be of length 1, and must be coercible to type \code{to}. This ensures
-that a round-trip to and form list is possible, without opening the door
-to very flexible list flattening (which should be the job of a more
-specialised function).
+\itemize{
+\item For an overview of how these generics work and their roles in
+vctrs, see \code{\link[=theory-faq-coercion]{?theory-faq-coercion}}.
+\item For an example of implementing coercion methods for data frame
+subclasses, see
+\code{\link[=howto-faq-coercion-data-frame]{?howto-faq-coercion-data-frame}}.
 }
 
-\section{S3 dispatch}{
-
-\code{vec_cast()} dispatches on both arguments because casting depends
-on both the type of \code{x} and of \code{to}. The dispatch mechanism is a
-bit different than regular S3 dispatch. See \code{\link[=vec_ptype2]{vec_ptype2()}} and
-\code{vignette("s3-vector")} for full details.
-
-Note that \code{vec_cast()} dispatches on its second argument, so that the name
-of the final method uses the same convention as \code{as.xyz()} methods, i.e.
-\code{vec_cast.integer.double()} casts double to integers, in the same way
-that \code{as.integer.double()} would.
+Call \code{\link[=stop_incompatible_cast]{stop_incompatible_cast()}} when you determine from the
+attributes that an input can't be cast to the target type.
 }
 
 \examples{
@@ -116,4 +92,3 @@ try(vec_cast(1.5, factor("a")))
 # Cast to common type
 vec_cast_common(factor("a"), factor(c("a", "b")))
 }
-\keyword{internal}

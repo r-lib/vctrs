@@ -9,8 +9,7 @@
 \alias{vec_ptype2.raw}
 \alias{vec_ptype2.list}
 \alias{vec_ptype2}
-\alias{vec_default_ptype2}
-\title{Find the common type for a pair of vector types}
+\title{Find the common type for a pair of vectors}
 \usage{
 \method{vec_ptype2}{logical}(x, y, ..., x_arg = "", y_arg = "")
 
@@ -27,8 +26,6 @@
 \method{vec_ptype2}{list}(x, y, ..., x_arg = "", y_arg = "")
 
 vec_ptype2(x, y, ..., x_arg = "", y_arg = "")
-
-vec_default_ptype2(x, y, ..., x_arg = "", y_arg = "")
 }
 \arguments{
 \item{x, y}{Vector types.}
@@ -40,60 +37,27 @@ in error messages to inform the user about the locations of
 incompatible types (see \code{\link[=stop_incompatible_type]{stop_incompatible_type()}}).}
 }
 \description{
-\code{vec_ptype2()} finds the common type for a pair of vectors, or dies trying.
-It forms the foundation of the vctrs type system, along with \code{\link[=vec_cast]{vec_cast()}}.
-This powers type coercion but should not usually be called directly;
-instead call \code{\link[=vec_ptype_common]{vec_ptype_common()}}.
+\code{vec_ptype2()} provides directional conversions from one type of
+vector to another. Along with \code{\link[=vec_cast]{vec_cast()}}, this generic forms
+the foundation of type coercions in vctrs.
+
+\code{vec_ptype2()} is relevant when you are implementing vctrs methods
+for your class, but it should not usually be called directly. If
+you need to find the common type of a set of inputs, call
+\code{\link[=vec_ptype_common]{vec_ptype_common()}} instead. This function supports multiple
+inputs and \link[=vec_ptype_finalise]{finalises} the common type.
 }
-\section{Coercion rules}{
+\section{Implementing \code{vec_ptype2()} methods}{
 
-vctrs thinks of the vector types as forming a partially ordered set, or
-poset. Then finding the common type from a set of types is a matter of
-finding the least-upper-bound; if the least-upper-bound does not exist,
-there is no common type. This is the case for many pairs of 1d vectors.
-
-The poset of the most important base vectors is shown below:
-(where datetime stands for \code{POSIXt}, and date for \code{Date})
-
-\figure{coerce.png}
-
-When you implement methods, make sure that \code{vec_ptype2.x.y()}
-returns the same value as \code{vec_ptype2.y.x()}; this is not enforced
-for reasons of efficiency, but should be tested.
-}
-
-\section{S3 dispatch}{
-
-
-\code{vec_ptype2()} dispatches on both arguments. This is implemented
-with a custom dispatch mechanism that has different semantics than
-regular S3 dispatch. The most important difference is that
-\code{vec_ptype2()} are not inherited, classes must explicitly implement
-the methods. There are two reasons for this:
 \itemize{
-\item The coercion hierarchy is often different from a class hierarchy.
-For instance the richer type between a tibble and a data frame is
-a tibble. Grouped data frames inherit from tibble, and so would by
-default inherit from tibble's \code{vec_ptype2()} method if inheritance
-was allowed. The method would then indicate that the richer type
-between a grouped data frame and a data frame is a tibble, which
-is wrong.
-\item \code{vec_ptype2()} should be symmetric, i.e. it should return the same
-type no matter the order of the inputs. With inheritance, this
-isn't the case when two classes have a common parent class. For
-instance the richer type between a tsibble and a tibble is
-tsibble. Similarly, grouped data frames are a richer type than
-tibble. Both of these classess have tibble as common parent
-class. With inheritance, \code{vec_ptype2(tsibble, gdf)} would return a
-tsibble via the tsibble-tibble method. \code{vec_ptype2(gdf, tsibble)}
-would return a grouped data frame via the gdf-tibble method.
+\item For an overview of how these generics work and their roles in
+vctrs, see \code{\link[=theory-faq-coercion]{?theory-faq-coercion}}.
+\item For an example of implementing coercion methods for data frame
+subclasses, see
+\code{\link[=howto-faq-coercion-data-frame]{?howto-faq-coercion-data-frame}}.
 }
 
-Another difference with regular dispatch is that \code{NextMethod()}
-does not work inside \code{vec_ptype2()} methods, and \code{default} methods
-are never called.
-
-See \code{vignette("s3-vector")} for full details.
+Call \code{\link[=stop_incompatible_type]{stop_incompatible_type()}} when you determine from the
+attributes that an input can't be cast to the target type.
 }
 
-\keyword{internal}
