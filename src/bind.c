@@ -466,8 +466,6 @@ static SEXP cbind_container_type(SEXP x, void* data) {
 
       if (learned_rn == R_NilValue) {
         *learned_rn_p = rn;
-      } else if (!equal_object(rn, learned_rn)) {
-        Rf_errorcall(R_NilValue, "Can't column-bind data frames with different row names.");
       }
     }
 

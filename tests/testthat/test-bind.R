@@ -562,11 +562,20 @@ test_that("cbind() deals with row names", {
   exp[[1]] <- exp[[1, 1]]
   row.names(exp) <- paste0(c("Mazda RX4..."), 1:3)
   expect_identical(out, exp)
+})
 
-  # Should work once we have frame prototyping
-  expect_error(
-    vec_cbind(mtcars[1:3], vec_slice(mtcars[4], nrow(mtcars):1)),
-    "different row names"
+test_that("prefer row names of first named input (#1058)", {
+  df0 <- unrownames(mtcars[1:5, 1:3])
+  df1 <- mtcars[1:5, 4:6]
+  df2 <- mtcars[5:1, 7:9]
+
+  expect_identical(
+    row.names(vec_cbind(df0, df1, df2)),
+    row.names(df1)
+  )
+  expect_identical(
+    row.names(vec_cbind(df0, df2, df1)),
+    row.names(df2)
   )
 })
 
