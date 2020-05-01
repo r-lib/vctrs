@@ -150,7 +150,15 @@ fct_cast_impl <- function(x, to, ..., x_arg = "", to_arg = "", ordered = FALSE) 
   } else {
     lossy <- !(x %in% levels(to) | is.na(x))
     out <- factor(x, levels = levels(to), ordered = ordered, exclude = NULL)
-    maybe_lossy_cast(out, x, to, lossy, x_arg = x_arg, to_arg = to_arg)
+    maybe_lossy_cast(
+      out,
+      x,
+      to,
+      lossy,
+      loss_type = "generality",
+      x_arg = x_arg,
+      to_arg = to_arg
+    )
   }
 }
 

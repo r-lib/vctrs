@@ -248,6 +248,12 @@ The following errors are caused by breaking changes.
 * Lossy cast errors are now considered internal. Please don't test for
   the class or explicitly handle them.
 
+* New argument `loss_type` for the experimental function
+  `maybe_lossy_cast()`. It can take the values "precision" or
+  "generality" to indicate in the error message which kind of loss is
+  the error about (double to integer loses precision, character to
+  factor loses generality).
+
 
 ## CRAN results
 
