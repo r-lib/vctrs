@@ -54,13 +54,12 @@ there is no 1-to-1 mapping for a specific value).
 vector to another. Along with \code{\link[=vec_ptype2]{vec_ptype2()}}, this generic forms
 the foundation of type coercions in vctrs.
 }
-\section{Implementing \code{vec_cast()} methods}{
-
+\section{Implementing coercion methods}{
 \itemize{
-\item For an overview of how these generics work and their roles in
-vctrs, see \code{\link[=theory-faq-coercion]{?theory-faq-coercion}}.
-\item For an example of implementing coercion methods for simple
-vectors, see \code{\link[=howto-faq-coercion]{?howto-faq-coercion}}.
+\item For an overview of how these generics work and their roles in vctrs,
+see \code{\link[=theory-faq-coercion]{?theory-faq-coercion}}.
+\item For an example of implementing coercion methods for simple vectors,
+see \code{\link[=howto-faq-coercion]{?howto-faq-coercion}}.
 \item For an example of implementing coercion methods for data frame
 subclasses, see
 \code{\link[=howto-faq-coercion-data-frame]{?howto-faq-coercion-data-frame}}.

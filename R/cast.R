@@ -6,6 +6,7 @@
 #' vector to another. Along with [vec_ptype2()], this generic forms
 #' the foundation of type coercions in vctrs.
 #'
+#' @includeRmd man/faq/developer/links-coercion.Rmd
 #'
 #' @param x Vectors to cast.
 #' @param ... For `vec_cast_common()`, vectors to cast. For
@@ -19,21 +20,6 @@
 #'   or an error if the cast is not possible. An error is generated if
 #'   information is lost when casting between compatible types (i.e. when
 #'   there is no 1-to-1 mapping for a specific value).
-#'
-#' @section Implementing `vec_cast()` methods:
-#'
-#' - For an overview of how these generics work and their roles in
-#'   vctrs, see [`?theory-faq-coercion`][theory-faq-coercion].
-#'
-#' - For an example of implementing coercion methods for simple
-#'   vectors, see [`?howto-faq-coercion`][howto-faq-coercion].
-#'
-#' - For an example of implementing coercion methods for data frame
-#'   subclasses, see
-#'   [`?howto-faq-coercion-data-frame`][howto-faq-coercion-data-frame].
-#'
-#' - For a tutorial about implementing vctrs classes from scratch, see
-#'   `vignette("s3-vector")`.
 #'
 #' @seealso Call [stop_incompatible_cast()] when you determine from the
 #' attributes that an input can't be cast to the target type.

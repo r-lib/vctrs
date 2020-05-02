@@ -12,26 +12,13 @@
 #' [vec_ptype_common()] instead. This function supports multiple
 #' inputs and [finalises][vec_ptype_finalise] the common type.
 #'
+#' @includeRmd man/faq/developer/links-coercion.Rmd
+#'
 #' @inheritParams ellipsis::dots_empty
 #' @param x,y Vector types.
 #' @param x_arg,y_arg Argument names for `x` and `y`. These are used
 #'   in error messages to inform the user about the locations of
 #'   incompatible types (see [stop_incompatible_type()]).
-#'
-#' @section Implementing `vec_ptype2()` methods:
-#'
-#' - For an overview of how these generics work and their roles in
-#'   vctrs, see [`?theory-faq-coercion`][theory-faq-coercion].
-#'
-#' - For an example of implementing coercion methods for simple
-#'   vectors, see [`?howto-faq-coercion`][howto-faq-coercion].
-#'
-#' - For an example of implementing coercion methods for data frame
-#'   subclasses, see
-#'   [`?howto-faq-coercion-data-frame`][howto-faq-coercion-data-frame].
-#'
-#' - For a tutorial about implementing vctrs classes from scratch, see
-#'   `vignette("s3-vector")`.
 #'
 #' @seealso [stop_incompatible_type()] when you determine from the
 #'   attributes that an input can't be cast to the target type.

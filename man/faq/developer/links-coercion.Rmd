@@ -1,0 +1,10 @@
+
+# Implementing coercion methods
+
+- For an overview of how these generics work and their roles in vctrs, see [`?theory-faq-coercion`][theory-faq-coercion].
+
+- For an example of implementing coercion methods for simple vectors, see [`?howto-faq-coercion`][howto-faq-coercion].
+
+- For an example of implementing coercion methods for data frame subclasses, see [`?howto-faq-coercion-data-frame`][howto-faq-coercion-data-frame].
+
+- For a tutorial about implementing vctrs classes from scratch, see `vignette("s3-vector")`.

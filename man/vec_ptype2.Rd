@@ -47,13 +47,12 @@ you need to find the common type of a set of inputs, call
 \code{\link[=vec_ptype_common]{vec_ptype_common()}} instead. This function supports multiple
 inputs and \link[=vec_ptype_finalise]{finalises} the common type.
 }
-\section{Implementing \code{vec_ptype2()} methods}{
-
+\section{Implementing coercion methods}{
 \itemize{
-\item For an overview of how these generics work and their roles in
-vctrs, see \code{\link[=theory-faq-coercion]{?theory-faq-coercion}}.
-\item For an example of implementing coercion methods for simple
-vectors, see \code{\link[=howto-faq-coercion]{?howto-faq-coercion}}.
+\item For an overview of how these generics work and their roles in vctrs,
+see \code{\link[=theory-faq-coercion]{?theory-faq-coercion}}.
+\item For an example of implementing coercion methods for simple vectors,
+see \code{\link[=howto-faq-coercion]{?howto-faq-coercion}}.
 \item For an example of implementing coercion methods for data frame
 subclasses, see
 \code{\link[=howto-faq-coercion-data-frame]{?howto-faq-coercion-data-frame}}.
