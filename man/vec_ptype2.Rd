@@ -52,12 +52,17 @@ inputs and \link[=vec_ptype_finalise]{finalises} the common type.
 \itemize{
 \item For an overview of how these generics work and their roles in
 vctrs, see \code{\link[=theory-faq-coercion]{?theory-faq-coercion}}.
+\item For an example of implementing coercion methods for simple
+vectors, see \code{\link[=howto-faq-coercion]{?howto-faq-coercion}}.
 \item For an example of implementing coercion methods for data frame
 subclasses, see
 \code{\link[=howto-faq-coercion-data-frame]{?howto-faq-coercion-data-frame}}.
+\item For a tutorial about implementing vctrs classes from scratch, see
+\code{vignette("s3-vector")}.
+}
 }
 
-Call \code{\link[=stop_incompatible_type]{stop_incompatible_type()}} when you determine from the
+\seealso{
+\code{\link[=stop_incompatible_type]{stop_incompatible_type()}} when you determine from the
 attributes that an input can't be cast to the target type.
 }
-

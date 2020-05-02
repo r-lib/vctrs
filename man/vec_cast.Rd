@@ -59,13 +59,14 @@ the foundation of type coercions in vctrs.
 \itemize{
 \item For an overview of how these generics work and their roles in
 vctrs, see \code{\link[=theory-faq-coercion]{?theory-faq-coercion}}.
+\item For an example of implementing coercion methods for simple
+vectors, see \code{\link[=howto-faq-coercion]{?howto-faq-coercion}}.
 \item For an example of implementing coercion methods for data frame
 subclasses, see
 \code{\link[=howto-faq-coercion-data-frame]{?howto-faq-coercion-data-frame}}.
+\item For a tutorial about implementing vctrs classes from scratch, see
+\code{vignette("s3-vector")}.
 }
-
-Call \code{\link[=stop_incompatible_cast]{stop_incompatible_cast()}} when you determine from the
-attributes that an input can't be cast to the target type.
 }
 
 \examples{
@@ -91,4 +92,8 @@ try(vec_cast(1.5, factor("a")))
 
 # Cast to common type
 vec_cast_common(factor("a"), factor(c("a", "b")))
+}
+\seealso{
+Call \code{\link[=stop_incompatible_cast]{stop_incompatible_cast()}} when you determine from the
+attributes that an input can't be cast to the target type.
 }

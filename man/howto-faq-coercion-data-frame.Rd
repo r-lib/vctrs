@@ -10,8 +10,8 @@ topics:
 \itemize{
 \item For an overview of the coercion mechanism in vctrs, see
 \code{\link[=theory-faq-coercion]{?theory-faq-coercion}}.
-\item For an example of implementing coercion methods for non-data-frame
-vectors, see \code{\link[=howto-faq-coercion]{?howto-faq-coercion}}.
+\item For an example of implementing coercion methods for simple vectors,
+see \code{\link[=howto-faq-coercion]{?howto-faq-coercion}}.
 }
 
 Coercion of data frames occurs when different data frame classes are

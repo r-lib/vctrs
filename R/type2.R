@@ -23,13 +23,18 @@
 #' - For an overview of how these generics work and their roles in
 #'   vctrs, see [`?theory-faq-coercion`][theory-faq-coercion].
 #'
+#' - For an example of implementing coercion methods for simple
+#'   vectors, see [`?howto-faq-coercion`][howto-faq-coercion].
+#'
 #' - For an example of implementing coercion methods for data frame
 #'   subclasses, see
 #'   [`?howto-faq-coercion-data-frame`][howto-faq-coercion-data-frame].
 #'
-#' Call [stop_incompatible_type()] when you determine from the
-#' attributes that an input can't be cast to the target type.
+#' - For a tutorial about implementing vctrs classes from scratch, see
+#'   `vignette("s3-vector")`.
 #'
+#' @seealso [stop_incompatible_type()] when you determine from the
+#'   attributes that an input can't be cast to the target type.
 #' @export
 vec_ptype2 <- function(x, y, ..., x_arg = "", y_arg = "") {
   if (!missing(...)) {
