@@ -1,4 +1,4 @@
-#' Cast a vector to the type of another vector
+#' Cast a vector to a specified type
 #'
 #' @description
 #'

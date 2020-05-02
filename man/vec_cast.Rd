@@ -10,7 +10,7 @@
 \alias{vec_cast.raw}
 \alias{vec_cast.character}
 \alias{vec_cast.list}
-\title{Cast a vector to the type of another vector}
+\title{Cast a vector to a specified type}
 \usage{
 vec_cast(x, to, ..., x_arg = "", to_arg = "")
 

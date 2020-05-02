@@ -37,9 +37,9 @@ in error messages to inform the user about the locations of
 incompatible types (see \code{\link[=stop_incompatible_type]{stop_incompatible_type()}}).}
 }
 \description{
-\code{vec_ptype2()} provides directional conversions from one type of
-vector to another. Along with \code{\link[=vec_cast]{vec_cast()}}, this generic forms
-the foundation of type coercions in vctrs.
+\code{vec_ptype2()} defines the coercion hierarchy for a set of related
+vector types. Along with \code{\link[=vec_cast]{vec_cast()}}, this generic forms the
+foundation of type coercions in vctrs.
 
 \code{vec_ptype2()} is relevant when you are implementing vctrs methods
 for your class, but it should not usually be called directly. If

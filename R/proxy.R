@@ -2,13 +2,15 @@
 #'
 #' @description
 #'
-#' `vec_proxy()` returns the memory representation of a vector. You
-#' normally don't need to implement it, except in these cases:
+#' \Sexpr[results=rd, stage=render]{vctrs:::lifecycle("experimental")}
 #'
-#' - S3 lists are considered scalars by default. This is the safe
-#'   choice for list objects such as returned by `stats::lm()`. To
-#'   declare that your S3 list class is a vector, give it an identity
-#'   proxy (i.e. a proxy method that just returns its input).
+#' `vec_proxy()` returns the data structure containing the values of a
+#' vector. This data structure is usually the vector itself. In this
+#' case the proxy is the [identity function][base::identity], which is
+#' the default `vec_proxy()` method.
+#'
+#' You normally don't need to implement `vec_proxy()`, except in these
+#' cases:
 #'
 #' - Some vector types have vectorised attributes, i.e. metadata for
 #'   each element of the vector. These _record types_ are implemented
@@ -17,6 +19,18 @@
 #' - When you're implementing a vector on top of a non-vector type,
 #'   like an environment or an S4 object. This is currently only
 #'   partially supported.
+#'
+#' - S3 lists are considered scalars by default. This is the safe
+#'   choice for list objects such as returned by `stats::lm()`. To
+#'   declare that your S3 list class is a vector, you normally add
+#'   `"list"` to the right of your class vector. Explicit inheritance
+#'   from list is generally the preferred way to declare an S3 list in
+#'   R, for instance it makes it possible to dispatch on
+#'   `generic.list` S3 methods.
+#'
+#'   If you can't modify your class vector, you can implement an
+#'   identity proxy (i.e. a proxy method that just returns its input)
+#'   to let vctrs know this is a vector list and not a scalar.
 #'
 #' `vec_restore()` is the inverse operation of `vec_proxy()`. It
 #' should only be called on vector proxies.
@@ -105,6 +119,7 @@
 #' additional metadata that is important to them, so you should preserve any
 #' attributes that don't require special handling for your class.
 #'
+#' @keywords internal
 #' @export
 vec_proxy <- function(x, ...) {
   if (!missing(...)) {
