@@ -9,10 +9,10 @@
 #' case the proxy is the [identity function][base::identity], which is
 #' the default `vec_proxy()` method.
 #'
-#' You normally don't need to implement `vec_proxy()`, except in these
+#' You only need to implement `vec_proxy()` if:
 #' cases:
 #'
-#' - Some vector types have vectorised attributes, i.e. metadata for
+#' - A vector has vectorised attributes, i.e. metadata for
 #'   each element of the vector. These _record types_ are implemented
 #'   in vctrs by returning a data frame in the proxy method.
 #'
