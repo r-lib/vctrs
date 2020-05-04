@@ -60,7 +60,7 @@ i Subscript has a missing value at location 2.
 ===========================================
 
 > vec_assign(1:2, 1L, "x", x_arg = "foo", value_arg = "bar")
-Error: Can't convert `bar` <character> to `foo` <integer>.
+Error: Can't convert `bar` <character> to match type of `foo` <integer>.
 
 > vec_assign(1:2, 1L, 1:2, value_arg = "bar")
 Error: Input `bar` can't be recycled to size 1.
