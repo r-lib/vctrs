@@ -87,32 +87,32 @@
   }
 
 static inline SEXP lgl_assign_shaped(SEXP proxy, SEXP index, SEXP value,
-                                     enum vctrs_ownership ownership,
+                                     const enum vctrs_ownership ownership,
                                      struct strides_info* p_info) {
   ASSIGN_SHAPED(int, LOGICAL, LOGICAL_RO);
 }
 static inline SEXP int_assign_shaped(SEXP proxy, SEXP index, SEXP value,
-                                     enum vctrs_ownership ownership,
+                                     const enum vctrs_ownership ownership,
                                      struct strides_info* p_info) {
   ASSIGN_SHAPED(int, INTEGER, INTEGER_RO);
 }
 static inline SEXP dbl_assign_shaped(SEXP proxy, SEXP index, SEXP value,
-                                     enum vctrs_ownership ownership,
+                                     const enum vctrs_ownership ownership,
                                      struct strides_info* p_info) {
   ASSIGN_SHAPED(double, REAL, REAL_RO);
 }
 static inline SEXP cpl_assign_shaped(SEXP proxy, SEXP index, SEXP value,
-                                     enum vctrs_ownership ownership,
+                                     const enum vctrs_ownership ownership,
                                      struct strides_info* p_info) {
   ASSIGN_SHAPED(Rcomplex, COMPLEX, COMPLEX_RO);
 }
 static inline SEXP chr_assign_shaped(SEXP proxy, SEXP index, SEXP value,
-                                     enum vctrs_ownership ownership,
+                                     const enum vctrs_ownership ownership,
                                      struct strides_info* p_info) {
   ASSIGN_SHAPED(SEXP, STRING_PTR, STRING_PTR_RO);
 }
 static inline SEXP raw_assign_shaped(SEXP proxy, SEXP index, SEXP value,
-                                     enum vctrs_ownership ownership,
+                                     const enum vctrs_ownership ownership,
                                      struct strides_info* p_info) {
   ASSIGN_SHAPED(Rbyte, RAW, RAW_RO);
 }
@@ -203,7 +203,7 @@ static inline SEXP raw_assign_shaped(SEXP proxy, SEXP index, SEXP value,
   }
 
 static SEXP list_assign_shaped(SEXP proxy, SEXP index, SEXP value,
-                               enum vctrs_ownership ownership,
+                               const enum vctrs_ownership ownership,
                                struct strides_info* p_info) {
   ASSIGN_BARRIER_SHAPED(VECTOR_ELT, SET_VECTOR_ELT);
 }
@@ -217,7 +217,7 @@ static SEXP list_assign_shaped(SEXP proxy, SEXP index, SEXP value,
 static inline SEXP vec_assign_shaped_switch(SEXP proxy,
                                             SEXP index,
                                             SEXP value,
-                                            enum vctrs_ownership ownership,
+                                            const enum vctrs_ownership ownership,
                                             struct strides_info* p_info) {
   switch (vec_proxy_typeof(proxy)) {
   case vctrs_type_logical:   return lgl_assign_shaped(proxy, index, value, ownership, p_info);
@@ -236,7 +236,7 @@ static inline SEXP vec_assign_shaped_switch(SEXP proxy,
 
 // [[ include("vctrs.h") ]]
 SEXP vec_assign_shaped(SEXP proxy, SEXP index, SEXP value,
-                       enum vctrs_ownership ownership,
+                       const enum vctrs_ownership ownership,
                        const struct vec_assign_opts* opts) {
   int n_protect = 0;
 

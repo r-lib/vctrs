@@ -183,7 +183,7 @@ vec_assign_seq <- function(x, value, start, size, increasing = TRUE) {
   .Call(vctrs_assign_seq, x, value, start, size, increasing)
 }
 
-vec_assign_params <- function(x, i, value, assign_names = FALSE, ownership = "unknown") {
+vec_assign_params <- function(x, i, value, assign_names = FALSE, ownership = "shared") {
   .Call(vctrs_assign_params, x, i, value, assign_names, ownership)
 }
 

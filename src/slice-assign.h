@@ -6,8 +6,7 @@
 // Ownership is recursive
 enum vctrs_ownership {
   vctrs_ownership_total,
-  vctrs_ownership_shared,
-  vctrs_ownership_unknown
+  vctrs_ownership_shared
 };
 
 struct vec_assign_opts {
@@ -17,21 +16,21 @@ struct vec_assign_opts {
 };
 
 SEXP vec_assign_opts(SEXP x, SEXP index, SEXP value,
-                     enum vctrs_ownership ownership,
+                     const enum vctrs_ownership ownership,
                      const struct vec_assign_opts* opts);
 
 SEXP vec_proxy_assign_opts(SEXP proxy, SEXP index, SEXP value,
-                           enum vctrs_ownership ownership,
+                           const enum vctrs_ownership ownership,
                            const struct vec_assign_opts* opts);
 
-SEXP chr_assign(SEXP out, SEXP index, SEXP value, enum vctrs_ownership ownership);
-SEXP list_assign(SEXP out, SEXP index, SEXP value, enum vctrs_ownership ownership);
+SEXP chr_assign(SEXP out, SEXP index, SEXP value, const enum vctrs_ownership ownership);
+SEXP list_assign(SEXP out, SEXP index, SEXP value, const enum vctrs_ownership ownership);
 SEXP df_assign(SEXP x, SEXP index, SEXP value,
-               enum vctrs_ownership ownership,
+               const enum vctrs_ownership ownership,
                const struct vec_assign_opts* opts);
 
 SEXP vec_assign_shaped(SEXP proxy, SEXP index, SEXP value,
-                       enum vctrs_ownership ownership,
+                       const enum vctrs_ownership ownership,
                        const struct vec_assign_opts* opts);
 
 #endif
