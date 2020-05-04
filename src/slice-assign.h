@@ -3,6 +3,7 @@
 
 #include "utils.h"
 
+// Ownership is recursive
 enum vctrs_ownership {
   vctrs_ownership_total,
   vctrs_ownership_shared,

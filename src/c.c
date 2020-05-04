@@ -89,6 +89,7 @@ SEXP vec_c(SEXP xs,
 
     init_compact_seq(idx_ptr, counter, size, true);
 
+    // Total ownership of `out` because it was freshly created with `vec_init()`
     out = vec_proxy_assign_opts(out, idx, elt, vctrs_ownership_total, &c_assign_opts);
     REPROTECT(out, out_pi);
 

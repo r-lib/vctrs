@@ -162,6 +162,8 @@ static SEXP vec_rbind(SEXP xs, SEXP ptype, SEXP names_to, struct name_repair_opt
 
     SEXP tbl = PROTECT(vec_cast_params(x, ptype, args_empty, args_empty, true));
     init_compact_seq(idx_ptr, counter, size, true);
+
+    // Total ownership of `out` because it was freshly created with `vec_init()`
     out = df_assign(out, idx, tbl, vctrs_ownership_total, &bind_assign_opts);
     REPROTECT(out, out_pi);
 
@@ -419,6 +421,8 @@ static SEXP vec_cbind(SEXP xs, SEXP ptype, SEXP size, struct name_repair_opts* n
 
     R_len_t xn = Rf_length(x);
     init_compact_seq(idx_ptr, counter, xn, true);
+
+    // Total ownership of `out` because it was freshly created with `Rf_allocVector()`
     out = list_assign(out, idx, x, vctrs_ownership_total);
     REPROTECT(out, out_pi);
 
