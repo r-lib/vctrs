@@ -225,7 +225,7 @@ SEXP vctrs_set_attributes(SEXP x, SEXP attrib) {
   R_len_t n_attrib = Rf_length(attrib);
   int n_protect = 0;
 
-  x = PROTECT(r_maybe_duplicate(x));
+  x = PROTECT(r_clone_referenced(x));
   ++n_protect;
 
   // Remove existing attributes, and unset the object bit
@@ -1251,7 +1251,7 @@ bool r_is_function(SEXP x) {
   }
 }
 
-SEXP r_maybe_duplicate(SEXP x) {
+SEXP r_clone_referenced(SEXP x) {
   if (MAYBE_REFERENCED(x)) {
     return Rf_shallow_duplicate(x);
   } else {
@@ -1259,7 +1259,7 @@ SEXP r_maybe_duplicate(SEXP x) {
   }
 }
 
-SEXP r_maybe_duplicate_shared(SEXP x) {
+SEXP r_clone_shared(SEXP x) {
   if (MAYBE_SHARED(x)) {
     return Rf_shallow_duplicate(x);
   } else {

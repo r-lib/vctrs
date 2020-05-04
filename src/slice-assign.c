@@ -137,7 +137,7 @@ SEXP vec_proxy_assign_names(SEXP proxy, SEXP index, SEXP value) {
 
   proxy_nms = PROTECT(chr_assign(proxy_nms, index, value_nms, vctrs_ownership_unknown));
 
-  proxy = PROTECT(r_maybe_duplicate(proxy));
+  proxy = PROTECT(r_clone_referenced(proxy));
   proxy = vec_set_names(proxy, proxy_nms);
 
   UNPROTECT(4);
@@ -235,9 +235,9 @@ SEXP vec_proxy_assign_opts(SEXP proxy, SEXP index, SEXP value,
                                                                 \
   SEXP out;                                                     \
   if (ownership == vctrs_ownership_owned) {                     \
-    out = PROTECT(r_maybe_duplicate_shared(x));                 \
+    out = PROTECT(r_clone_shared(x));                           \
   } else {                                                      \
-    out = PROTECT(r_maybe_duplicate(x));                        \
+    out = PROTECT(r_clone_referenced(x));                       \
   }                                                             \
                                                                 \
   CTYPE* out_data = DEREF(out);                                 \
@@ -267,9 +267,9 @@ SEXP vec_proxy_assign_opts(SEXP proxy, SEXP index, SEXP value,
                                                                 \
   SEXP out;                                                     \
   if (ownership == vctrs_ownership_owned) {                     \
-    out = PROTECT(r_maybe_duplicate_shared(x));                 \
+    out = PROTECT(r_clone_shared(x));                           \
   } else {                                                      \
-    out = PROTECT(r_maybe_duplicate(x));                        \
+    out = PROTECT(r_clone_referenced(x));                       \
   }                                                             \
                                                                 \
   CTYPE* out_data = DEREF(out) + start;                         \
@@ -323,9 +323,9 @@ static SEXP raw_assign(SEXP x, SEXP index, SEXP value, enum vctrs_ownership owne
                                                                 \
   SEXP out;                                                     \
   if (ownership == vctrs_ownership_owned) {                     \
-    out = PROTECT(r_maybe_duplicate_shared(x));                 \
+    out = PROTECT(r_clone_shared(x));                           \
   } else {                                                      \
-    out = PROTECT(r_maybe_duplicate(x));                        \
+    out = PROTECT(r_clone_referenced(x));                       \
   }                                                             \
                                                                 \
   for (R_len_t i = 0; i < n; ++i) {                             \
@@ -351,9 +351,9 @@ static SEXP raw_assign(SEXP x, SEXP index, SEXP value, enum vctrs_ownership owne
                                                                 \
   SEXP out;                                                     \
   if (ownership == vctrs_ownership_owned) {                     \
-    out = PROTECT(r_maybe_duplicate_shared(x));                 \
+    out = PROTECT(r_clone_shared(x));                           \
   } else {                                                      \
-    out = PROTECT(r_maybe_duplicate(x));                        \
+    out = PROTECT(r_clone_referenced(x));                       \
   }                                                             \
                                                                 \
   for (R_len_t i = 0; i < n; ++i, start += step) {              \
@@ -385,12 +385,12 @@ SEXP list_assign(SEXP x, SEXP index, SEXP value, enum vctrs_ownership ownership)
  *
  * Performance and safety notes:
  * If `x` is a fresh data frame (which would be the case in `vec_c()` and
- * `vec_rbind()`) then `r_maybe_duplicate()` will return it untouched. Each
+ * `vec_rbind()`) then `r_clone_referenced()` will return it untouched. Each
  * column will also be fresh, so if `vec_proxy()` just returns its input then
  * `vec_proxy_assign_opts()` will directly assign to that column in `x`. This
  * makes it extremely fast to assign to a data frame.
  *
- * If `x` is referenced already, then `r_maybe_duplicate()` will call
+ * If `x` is referenced already, then `r_clone_referenced()` will call
  * `Rf_shallow_duplicate()`. For lists, this loops over the list and marks
  * each list element with max namedness. This is helpful for us, because
  * it is possible to have a data frame that is itself referenced, with columns
@@ -405,9 +405,9 @@ SEXP df_assign(SEXP x, SEXP index, SEXP value,
                const struct vec_assign_opts* opts) {
   SEXP out;
   if (ownership == vctrs_ownership_owned) {
-    out = PROTECT(r_maybe_duplicate_shared(x));
+    out = PROTECT(r_clone_shared(x));
   } else {
-    out = PROTECT(r_maybe_duplicate(x));
+    out = PROTECT(r_clone_referenced(x));
   }
 
   R_len_t n = Rf_length(out);

@@ -95,7 +95,7 @@ SEXP vec_as_subscript_opts(SEXP subscript,
 
   if (orig_names != R_NilValue) {
     // FIXME: Handle names in cast methods
-    subscript = r_maybe_duplicate(subscript);
+    subscript = r_clone_referenced(subscript);
     REPROTECT(subscript, subscript_pi);
     r_poke_names(subscript, orig_names);
   }

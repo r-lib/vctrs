@@ -23,7 +23,7 @@ SEXP vec_restore_default(SEXP x, SEXP to) {
   attrib = PROTECT(Rf_shallow_duplicate(attrib));
   ++n_protect;
 
-  x = PROTECT(r_maybe_duplicate(x));
+  x = PROTECT(r_clone_referenced(x));
   ++n_protect;
 
   // Remove vectorised attributes which might be incongruent after reshaping.
@@ -114,7 +114,7 @@ static SEXP vec_restore_dispatch(SEXP x, SEXP to, SEXP n) {
 }
 
 static SEXP bare_df_restore_impl(SEXP x, SEXP to, R_len_t size) {
-  x = PROTECT(r_maybe_duplicate(x));
+  x = PROTECT(r_clone_referenced(x));
   x = PROTECT(vec_restore_default(x, to));
 
   if (Rf_getAttrib(x, R_NamesSymbol) == R_NilValue) {

@@ -6,9 +6,9 @@
 #define ASSIGN_SHAPED_INDEX(CTYPE, DEREF, CONST_DEREF)   \
   SEXP out;                                              \
   if (ownership == vctrs_ownership_owned) {              \
-    out = PROTECT(r_maybe_duplicate_shared(proxy));      \
+    out = PROTECT(r_clone_shared(proxy));                \
   } else {                                               \
-    out = PROTECT(r_maybe_duplicate(proxy));             \
+    out = PROTECT(r_clone_referenced(proxy));            \
   }                                                      \
                                                          \
   CTYPE* p_out = DEREF(out);                             \
@@ -44,9 +44,9 @@
 #define ASSIGN_SHAPED_COMPACT(CTYPE, DEREF, CONST_DEREF) \
   SEXP out;                                              \
   if (ownership == vctrs_ownership_owned) {              \
-    out = PROTECT(r_maybe_duplicate_shared(proxy));      \
+    out = PROTECT(r_clone_shared(proxy));                \
   } else {                                               \
-    out = PROTECT(r_maybe_duplicate(proxy));             \
+    out = PROTECT(r_clone_referenced(proxy));            \
   }                                                      \
                                                          \
   CTYPE* p_out = DEREF(out);                             \
@@ -126,9 +126,9 @@ static inline SEXP raw_assign_shaped(SEXP proxy, SEXP index, SEXP value,
 #define ASSIGN_BARRIER_SHAPED_INDEX(GET, SET)            \
   SEXP out;                                              \
   if (ownership == vctrs_ownership_owned) {              \
-    out = PROTECT(r_maybe_duplicate_shared(proxy));      \
+    out = PROTECT(r_clone_shared(proxy));                \
   } else {                                               \
-    out = PROTECT(r_maybe_duplicate(proxy));             \
+    out = PROTECT(r_clone_referenced(proxy));            \
   }                                                      \
                                                          \
   R_len_t k = 0;                                         \
@@ -162,9 +162,9 @@ static inline SEXP raw_assign_shaped(SEXP proxy, SEXP index, SEXP value,
 #define ASSIGN_BARRIER_SHAPED_COMPACT(GET, SET)         \
   SEXP out;                                             \
   if (ownership == vctrs_ownership_owned) {             \
-    out = PROTECT(r_maybe_duplicate_shared(proxy));     \
+    out = PROTECT(r_clone_shared(proxy));               \
   } else {                                              \
-    out = PROTECT(r_maybe_duplicate(proxy));            \
+    out = PROTECT(r_clone_referenced(proxy));           \
   }                                                     \
                                                         \
   const R_len_t start = p_info->p_index[0];             \

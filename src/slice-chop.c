@@ -538,7 +538,7 @@ static inline bool needs_vec_unchop_fallback(SEXP x, SEXP ptype) {
 // with recycling of each element of `x` to the corresponding index size
 static SEXP vec_unchop_fallback(SEXP x, SEXP indices, SEXP name_spec) {
   R_len_t x_size = vec_size(x);
-  x = PROTECT(r_maybe_duplicate(x));
+  x = PROTECT(r_clone_referenced(x));
 
   R_len_t out_size = 0;
 
@@ -605,7 +605,7 @@ static SEXP vec_as_indices(SEXP indices, R_len_t n, SEXP names) {
     Rf_errorcall(R_NilValue, "`indices` must be a list of index values, or `NULL`.");
   }
 
-  indices = PROTECT(r_maybe_duplicate(indices));
+  indices = PROTECT(r_clone_referenced(indices));
 
   R_len_t size = vec_size(indices);
 

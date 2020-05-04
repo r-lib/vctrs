@@ -252,7 +252,7 @@ static SEXP as_df_row_impl(SEXP x, struct name_repair_opts* name_repair) {
 
   // Remove names as they are promoted to data frame column names
   if (nms != R_NilValue) {
-    x = PROTECT_N(r_maybe_duplicate(x), &nprot);
+    x = PROTECT_N(r_clone_referenced(x), &nprot);
     r_poke_names(x, R_NilValue);
   }
 

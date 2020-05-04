@@ -696,7 +696,7 @@ SEXP vec_set_rownames(SEXP x, SEXP names) {
     }
   }
 
-  x = PROTECT_N(r_maybe_duplicate(x), &nprot);
+  x = PROTECT_N(r_clone_referenced(x), &nprot);
 
   if (dim_names == R_NilValue) {
     dim_names = PROTECT_N(Rf_allocVector(VECSXP, vec_dim_n(x)), &nprot);
@@ -716,7 +716,7 @@ SEXP vec_set_df_rownames(SEXP x, SEXP names) {
       return(x);
     }
 
-    x = PROTECT(r_maybe_duplicate(x));
+    x = PROTECT(r_clone_referenced(x));
     init_compact_rownames(x, vec_size(x));
 
     UNPROTECT(1);
@@ -726,7 +726,7 @@ SEXP vec_set_df_rownames(SEXP x, SEXP names) {
   // Repair row names silently
   names = PROTECT(vec_as_names(names, p_unique_repair_silent_opts));
 
-  x = PROTECT(r_maybe_duplicate(x));
+  x = PROTECT(r_clone_referenced(x));
   Rf_setAttrib(x, R_RowNamesSymbol, names);
 
   UNPROTECT(2);
@@ -756,7 +756,7 @@ SEXP vec_set_names(SEXP x, SEXP names) {
     return x;
   }
 
-  x = PROTECT(r_maybe_duplicate(x));
+  x = PROTECT(r_clone_referenced(x));
   Rf_setAttrib(x, R_NamesSymbol, names);
 
   UNPROTECT(1);
