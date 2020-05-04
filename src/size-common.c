@@ -107,7 +107,7 @@ SEXP vec_recycle_common(SEXP xs, R_len_t size) {
     return xs;
   }
 
-  xs = PROTECT(r_maybe_duplicate(xs));
+  xs = PROTECT(r_clone_referenced(xs));
 
   R_len_t n = vec_size(xs);
 

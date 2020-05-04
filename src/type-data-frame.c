@@ -41,7 +41,7 @@ bool is_bare_tibble(SEXP x) {
 
 // [[ include("type-data-frame.h") ]]
 SEXP new_data_frame(SEXP x, R_len_t n) {
-  x = PROTECT(r_maybe_duplicate(x));
+  x = PROTECT(r_clone_referenced(x));
   init_data_frame(x, n);
 
   UNPROTECT(1);
@@ -72,7 +72,7 @@ SEXP vctrs_new_data_frame(SEXP args) {
   bool has_rownames = false;
   R_len_t size = df_size_from_list(x, n);
 
-  SEXP out = PROTECT(r_maybe_duplicate(x));
+  SEXP out = PROTECT(r_clone_referenced(x));
 
   for (SEXP node = attrib; node != R_NilValue; node = CDR(node)) {
     SEXP tag = TAG(node);
@@ -632,7 +632,7 @@ SEXP df_repair_names(SEXP x, struct name_repair_opts* name_repair) {
   // update metadata and check invariants when special columns are
   // renamed?
   if (nms != repaired) {
-    x = PROTECT(r_maybe_duplicate(x));
+    x = PROTECT(r_clone_referenced(x));
     r_poke_names(x, repaired);
     UNPROTECT(1);
   }

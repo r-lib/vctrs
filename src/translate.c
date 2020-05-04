@@ -212,7 +212,7 @@ static SEXP chr_translate_encoding(SEXP x, R_len_t size) {
 
   const SEXP* p_x = STRING_PTR_RO(x);
 
-  SEXP out = PROTECT(r_maybe_duplicate(x));
+  SEXP out = PROTECT(r_clone_referenced(x));
   SEXP* p_out = STRING_PTR(out);
 
   const void *vmax = vmaxget();
@@ -234,7 +234,7 @@ static SEXP chr_translate_encoding(SEXP x, R_len_t size) {
 }
 
 static SEXP list_translate_encoding(SEXP x, R_len_t size) {
-  x = PROTECT(r_maybe_duplicate(x));
+  x = PROTECT(r_clone_referenced(x));
 
   for (int i = 0; i < size; ++i) {
     SEXP elt = VECTOR_ELT(x, i);
@@ -248,7 +248,7 @@ static SEXP list_translate_encoding(SEXP x, R_len_t size) {
 static SEXP df_translate_encoding(SEXP x, R_len_t size) {
   int n_col = Rf_length(x);
 
-  x = PROTECT(r_maybe_duplicate(x));
+  x = PROTECT(r_clone_referenced(x));
 
   for (int i = 0; i < n_col; ++i) {
     SEXP col = VECTOR_ELT(x, i);
@@ -304,7 +304,7 @@ static SEXP list_maybe_translate_encoding(SEXP x, R_len_t size) {
 static SEXP df_maybe_translate_encoding(SEXP x, R_len_t size) {
   int n_col = Rf_length(x);
 
-  x = PROTECT(r_maybe_duplicate(x));
+  x = PROTECT(r_clone_referenced(x));
 
   for (int i = 0; i < n_col; ++i) {
     SEXP elt = VECTOR_ELT(x, i);
@@ -392,8 +392,8 @@ static SEXP list_maybe_translate_encoding2(SEXP x, R_len_t x_size, SEXP y, R_len
 static SEXP df_maybe_translate_encoding2(SEXP x, R_len_t x_size, SEXP y, R_len_t y_size) {
   int n_col = Rf_length(x);
 
-  x = PROTECT(r_maybe_duplicate(x));
-  y = PROTECT(r_maybe_duplicate(y));
+  x = PROTECT(r_clone_referenced(x));
+  y = PROTECT(r_clone_referenced(y));
 
   SEXP out = PROTECT(Rf_allocVector(VECSXP, 2));
 

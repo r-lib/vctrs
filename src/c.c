@@ -74,8 +74,7 @@ SEXP vec_c(SEXP xs,
   R_len_t counter = 0;
 
   const struct vec_assign_opts c_assign_opts = {
-    .assign_names = true,
-    .owned = true
+    .assign_names = true
   };
 
   for (R_len_t i = 0; i < n; ++i) {
@@ -90,7 +89,8 @@ SEXP vec_c(SEXP xs,
 
     init_compact_seq(idx_ptr, counter, size, true);
 
-    out = vec_proxy_assign_opts(out, idx, elt, &c_assign_opts);
+    // Total ownership of `out` because it was freshly created with `vec_init()`
+    out = vec_proxy_assign_opts(out, idx, elt, vctrs_ownership_total, &c_assign_opts);
     REPROTECT(out, out_pi);
 
     if (has_names) {
@@ -99,7 +99,7 @@ SEXP vec_c(SEXP xs,
       SEXP x_nms = PROTECT(apply_name_spec(name_spec, outer, inner, size));
 
       if (x_nms != R_NilValue) {
-        out_names = chr_assign(out_names, idx, x_nms, true);
+        out_names = chr_assign(out_names, idx, x_nms, vctrs_ownership_total);
         REPROTECT(out_names, out_names_pi);
       }
 

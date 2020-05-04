@@ -275,7 +275,7 @@ static SEXP new_date(SEXP x) {
 
   SEXP names = PROTECT(r_names(x));
 
-  SEXP out = PROTECT(r_maybe_duplicate(x));
+  SEXP out = PROTECT(r_clone_referenced(x));
 
   SET_ATTRIB(out, R_NilValue);
 
@@ -309,7 +309,7 @@ static SEXP new_datetime(SEXP x, SEXP tzone) {
 
   SEXP names = PROTECT(r_names(x));
 
-  SEXP out = PROTECT(r_maybe_duplicate(x));
+  SEXP out = PROTECT(r_clone_referenced(x));
 
   SET_ATTRIB(out, R_NilValue);
 
@@ -371,7 +371,7 @@ static SEXP datetime_validate_tzone(SEXP x) {
     return x;
   }
 
-  x = PROTECT(r_maybe_duplicate(x));
+  x = PROTECT(r_clone_referenced(x));
 
   Rf_setAttrib(x, syms_tzone, chrs_empty);
 
@@ -407,7 +407,7 @@ static SEXP datetime_rezone(SEXP x, SEXP tzone) {
     return x;
   }
 
-  SEXP out = PROTECT(r_maybe_duplicate(x));
+  SEXP out = PROTECT(r_clone_referenced(x));
 
   Rf_setAttrib(out, syms_tzone, tzone);
 

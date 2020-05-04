@@ -150,8 +150,7 @@ static SEXP vec_rbind(SEXP xs, SEXP ptype, SEXP names_to, struct name_repair_opt
   R_len_t counter = 0;
 
   const struct vec_assign_opts bind_assign_opts = {
-    .assign_names = true,
-    .owned = true
+    .assign_names = true
   };
 
   for (R_len_t i = 0; i < n; ++i) {
@@ -163,7 +162,9 @@ static SEXP vec_rbind(SEXP xs, SEXP ptype, SEXP names_to, struct name_repair_opt
 
     SEXP tbl = PROTECT(vec_cast_params(x, ptype, args_empty, args_empty, true));
     init_compact_seq(idx_ptr, counter, size, true);
-    out = df_assign(out, idx, tbl, &bind_assign_opts);
+
+    // Total ownership of `out` because it was freshly created with `vec_init()`
+    out = df_assign(out, idx, tbl, vctrs_ownership_total, &bind_assign_opts);
     REPROTECT(out, out_pi);
 
     if (has_rownames) {
@@ -181,7 +182,7 @@ static SEXP vec_rbind(SEXP xs, SEXP ptype, SEXP names_to, struct name_repair_opt
       PROTECT(rn);
 
       if (rownames_type(rn) == ROWNAMES_IDENTIFIERS) {
-        rownames = chr_assign(rownames, idx, rn, true);
+        rownames = chr_assign(rownames, idx, rn, vctrs_ownership_total);
         REPROTECT(rownames, rownames_pi);
       }
 
@@ -253,7 +254,7 @@ static SEXP as_df_row_impl(SEXP x, struct name_repair_opts* name_repair) {
 
   // Remove names as they are promoted to data frame column names
   if (nms != R_NilValue) {
-    x = PROTECT_N(r_maybe_duplicate(x), &nprot);
+    x = PROTECT_N(r_clone_referenced(x), &nprot);
     r_poke_names(x, R_NilValue);
   }
 
@@ -420,12 +421,14 @@ static SEXP vec_cbind(SEXP xs, SEXP ptype, SEXP size, struct name_repair_opts* n
 
     R_len_t xn = Rf_length(x);
     init_compact_seq(idx_ptr, counter, xn, true);
-    out = list_assign(out, idx, x, true);
+
+    // Total ownership of `out` because it was freshly created with `Rf_allocVector()`
+    out = list_assign(out, idx, x, vctrs_ownership_total);
     REPROTECT(out, out_pi);
 
     SEXP xnms = PROTECT(r_names(x));
     if (xnms != R_NilValue) {
-      names = chr_assign(names, idx, xnms, true);
+      names = chr_assign(names, idx, xnms, vctrs_ownership_total);
       REPROTECT(names, names_pi);
     }
     UNPROTECT(1);

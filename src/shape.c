@@ -25,7 +25,7 @@ SEXP vec_shaped_ptype(SEXP ptype,
     return ptype;
   }
 
-  ptype = PROTECT(r_maybe_duplicate(ptype));
+  ptype = PROTECT(r_clone_referenced(ptype));
 
   r_poke_dim(ptype, ptype_dimensions);
 
@@ -137,7 +137,7 @@ static SEXP vec_shape(SEXP dimensions) {
     return R_NilValue;
   }
 
-  dimensions = PROTECT(r_maybe_duplicate(dimensions));
+  dimensions = PROTECT(r_clone_referenced(dimensions));
 
   if (Rf_length(dimensions) == 0) {
     Rf_errorcall(R_NilValue, "Internal error: `dimensions` must have length.");

@@ -102,7 +102,7 @@ extern SEXP vctrs_equal_scalar(SEXP, SEXP, SEXP, SEXP, SEXP);
 extern SEXP vctrs_linked_version();
 extern SEXP vctrs_tib_ptype2(SEXP x, SEXP y, SEXP x_arg_, SEXP y_arg_);
 extern SEXP vctrs_tib_cast(SEXP x, SEXP y, SEXP x_arg_, SEXP y_arg_);
-extern SEXP vctrs_assign_params(SEXP, SEXP, SEXP, SEXP, SEXP);
+extern SEXP vctrs_assign_params(SEXP, SEXP, SEXP, SEXP);
 extern SEXP vctrs_has_dim(SEXP);
 extern SEXP vctrs_rep(SEXP, SEXP);
 extern SEXP vctrs_rep_each(SEXP, SEXP);
@@ -239,7 +239,7 @@ static const R_CallMethodDef CallEntries[] = {
   {"vctrs_linked_version",             (DL_FUNC) &vctrs_linked_version, 0},
   {"vctrs_tib_ptype2",                 (DL_FUNC) &vctrs_tib_ptype2, 4},
   {"vctrs_tib_cast",                   (DL_FUNC) &vctrs_tib_cast, 4},
-  {"vctrs_assign_params",              (DL_FUNC) &vctrs_assign_params, 5},
+  {"vctrs_assign_params",              (DL_FUNC) &vctrs_assign_params, 4},
   {"vctrs_has_dim",                    (DL_FUNC) &vctrs_has_dim, 1},
   {"vctrs_rep",                        (DL_FUNC) &vctrs_rep, 2},
   {"vctrs_rep_each",                   (DL_FUNC) &vctrs_rep_each, 2},
