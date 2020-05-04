@@ -9,20 +9,6 @@ enum vctrs_ownership {
   vctrs_ownership_unknown
 };
 
-static inline enum vctrs_ownership parse_ownership(SEXP ownership) {
-  if (!r_is_string(ownership)) {
-    Rf_errorcall(R_NilValue, "Internal error: `ownership` must be a string.");
-  }
-
-  const char* str = CHAR(STRING_ELT(ownership, 0));
-
-  if (!strcmp(str, "owned")) return vctrs_ownership_owned;
-  if (!strcmp(str, "shared")) return vctrs_ownership_shared;
-  if (!strcmp(str, "unknown")) return vctrs_ownership_unknown;
-
-  Rf_errorcall(R_NilValue, "Internal error: `ownership` must be one of 'owned', 'shared', or 'unknown'.");
-}
-
 struct vec_assign_opts {
   bool assign_names;
   struct vctrs_arg* x_arg;
