@@ -3,8 +3,8 @@
 
 // Ownership is recursive
 enum vctrs_ownership {
-  vctrs_ownership_total,
-  vctrs_ownership_shared
+  vctrs_ownership_shared,
+  vctrs_ownership_total
 };
 
 struct vec_assign_opts {
