@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Extract underlying data — vec_data • vctrs</title>
+<title>Default cast and ptype2 methods — vec_default_cast • vctrs</title>
 
 <!-- favicons -->
 <link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
@@ -42,10 +42,23 @@
 
 
 
-<meta property="og:title" content="Extract underlying data — vec_data" />
-<meta property="og:description" content="
-Extract the data underlying an S3 vector object, i.e. the underlying
-(named) atomic vector or list." />
+<meta property="og:title" content="Default cast and ptype2 methods — vec_default_cast" />
+<meta property="og:description" content="These functions are automatically called when no vec_ptype2() or
+vec_cast() method is implemented for a pair of types.
+They apply special handling if one of the inputs is of type
+AsIs or sfc.
+They attempt a number of fallbacks in cases where it would be too
+inconvenient to be strict:
+If the class and attributes are the same they are considered
+compatible. vec_default_cast() returns x in this case.
+In case of incompatible data frame classes, they fall back to
+data.frame. If an incompatible subclass of tibble is
+involved, they fall back to tbl_df.
+
+Otherwise, an error is thrown with stop_incompatible_type() or
+stop_incompatible_cast().
+
+" />
 <meta property="og:image" content="https://vctrs.r-lib.org/logo.png" />
 <meta name="twitter:card" content="summary" />
 
@@ -144,46 +157,64 @@ Extract the data underlying an S3 vector object, i.e. the underlying
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Extract underlying data</h1>
+    <h1>Default cast and ptype2 methods</h1>
     
-    <div class="hidden name"><code>vec_data.Rd</code></div>
+    <div class="hidden name"><code>vec_default_ptype2.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p><a href='https://www.tidyverse.org/lifecycle/#experimental'><img src='figures/lifecycle-experimental.svg' alt='Experimental lifecycle'></a></p>
-<p>Extract the data underlying an S3 vector object, i.e. the underlying
-(named) atomic vector or list.</p>
+    <p>These functions are automatically called when no <code><a href='vec_ptype2.html'>vec_ptype2()</a></code> or
+<code><a href='vec_cast.html'>vec_cast()</a></code> method is implemented for a pair of types.</p><ul>
+<li><p>They apply special handling if one of the inputs is of type
+<code>AsIs</code> or <code>sfc</code>.</p></li>
+<li><p>They attempt a number of fallbacks in cases where it would be too
+inconvenient to be strict:</p><ul>
+<li><p>If the class and attributes are the same they are considered
+compatible. <code>vec_default_cast()</code> returns <code>x</code> in this case.</p></li>
+<li><p>In case of incompatible data frame classes, they fall back to
+<code>data.frame</code>. If an incompatible subclass of tibble is
+involved, they fall back to <code>tbl_df</code>.</p></li>
+</ul></li>
+<li><p>Otherwise, an error is thrown with <code><a href='vctrs-conditions.html'>stop_incompatible_type()</a></code> or
+<code><a href='vctrs-conditions.html'>stop_incompatible_cast()</a></code>.</p></li>
+</ul>
+
     </div>
 
-    <pre class="usage"><span class='fu'>vec_data</span>(<span class='no'>x</span>)</pre>
+    <pre class="usage"><span class='fu'>vec_default_cast</span>(<span class='no'>x</span>, <span class='no'>to</span>, <span class='no'>...</span>, <span class='kw'>x_arg</span> <span class='kw'>=</span> <span class='st'>""</span>, <span class='kw'>to_arg</span> <span class='kw'>=</span> <span class='st'>""</span>)
+
+<span class='fu'>vec_default_ptype2</span>(<span class='no'>x</span>, <span class='no'>y</span>, <span class='no'>...</span>, <span class='kw'>x_arg</span> <span class='kw'>=</span> <span class='st'>""</span>, <span class='kw'>y_arg</span> <span class='kw'>=</span> <span class='st'>""</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>x</th>
-      <td><p>A vector or object implementing <code><a href='vec_proxy.html'>vec_proxy()</a></code>.</p></td>
+      <td><p>Vectors to cast.</p></td>
+    </tr>
+    <tr>
+      <th>to</th>
+      <td><p>Type to cast to. If <code>NULL</code>, <code>x</code> will be returned as is.</p></td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td><p>For <code><a href='vec_cast.html'>vec_cast_common()</a></code>, vectors to cast. For
+<code><a href='vec_cast.html'>vec_cast()</a></code>, <code>vec_cast_default()</code>, and <code><a href='vec_proxy.html'>vec_restore()</a></code>, these
+dots are only for future extensions and should be empty.</p></td>
+    </tr>
+    <tr>
+      <th>x_arg</th>
+      <td><p>Argument names for <code>x</code> and <code>to</code>. These are used
+in error messages to inform the user about the locations of
+incompatible types (see <code><a href='vctrs-conditions.html'>stop_incompatible_type()</a></code>).</p></td>
+    </tr>
+    <tr>
+      <th>to_arg</th>
+      <td><p>Argument names for <code>x</code> and <code>to</code>. These are used
+in error messages to inform the user about the locations of
+incompatible types (see <code><a href='vctrs-conditions.html'>stop_incompatible_type()</a></code>).</p></td>
     </tr>
     </table>
-
-    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
-
-    <p>The data underlying <code>x</code>, free from any attributes except the names.</p>
-    <h2 class="hasAnchor" id="difference-with-vec-proxy-"><a class="anchor" href="#difference-with-vec-proxy-"></a>Difference with <code><a href='vec_proxy.html'>vec_proxy()</a></code></h2>
-
-    
-
-<ul>
-<li><p><code>vec_data()</code> returns unstructured data. The only attributes
-preserved are names, dims, and dimnames.</p>
-<p>Currently, due to the underlying memory architecture of R, this
-creates a full copy of the data.</p></li>
-<li><p><code><a href='vec_proxy.html'>vec_proxy()</a></code> may return structured data. This generic is the
-main customisation point for accessing memory values in vctrs,
-along with <code><a href='vec_proxy.html'>vec_restore()</a></code>.</p>
-<p>Methods must return a vector type. Records and data frames will
-be processed rowwise.</p></li>
-</ul>
 
 
   </div>
@@ -191,8 +222,6 @@ be processed rowwise.</p></li>
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
       <li><a href="#arguments">Arguments</a></li>
-      <li><a href="#value">Value</a></li>
-      <li><a href="#difference-with-vec-proxy-">Difference with <code><a href='vec_proxy.html'>vec_proxy()</a></code></a></li>
     </ul>
 
   </div>

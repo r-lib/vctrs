@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Find the common type for a pair of vector types — vec_ptype2.logical • vctrs</title>
+<title>Find the common type for a pair of vectors — vec_ptype2.logical • vctrs</title>
 
 <!-- favicons -->
 <link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
@@ -42,11 +42,15 @@
 
 
 
-<meta property="og:title" content="Find the common type for a pair of vector types — vec_ptype2.logical" />
-<meta property="og:description" content="vec_ptype2() finds the common type for a pair of vectors, or dies trying.
-It forms the foundation of the vctrs type system, along with vec_cast().
-This powers type coercion but should not usually be called directly;
-instead call vec_ptype_common()." />
+<meta property="og:title" content="Find the common type for a pair of vectors — vec_ptype2.logical" />
+<meta property="og:description" content="vec_ptype2() defines the coercion hierarchy for a set of related
+vector types. Along with vec_cast(), this generic forms the
+foundation of type coercions in vctrs.
+vec_ptype2() is relevant when you are implementing vctrs methods
+for your class, but it should not usually be called directly. If
+you need to find the common type of a set of inputs, call
+vec_ptype_common() instead. This function supports multiple
+inputs and finalises the common type." />
 <meta property="og:image" content="https://vctrs.r-lib.org/logo.png" />
 <meta name="twitter:card" content="summary" />
 
@@ -145,16 +149,20 @@ instead call vec_ptype_common()." />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Find the common type for a pair of vector types</h1>
+    <h1>Find the common type for a pair of vectors</h1>
     
     <div class="hidden name"><code>vec_ptype2.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p><code>vec_ptype2()</code> finds the common type for a pair of vectors, or dies trying.
-It forms the foundation of the vctrs type system, along with <code><a href='vec_cast.html'>vec_cast()</a></code>.
-This powers type coercion but should not usually be called directly;
-instead call <code><a href='vec_ptype.html'>vec_ptype_common()</a></code>.</p>
+    <p><code>vec_ptype2()</code> defines the coercion hierarchy for a set of related
+vector types. Along with <code><a href='vec_cast.html'>vec_cast()</a></code>, this generic forms the
+foundation of type coercions in vctrs.</p>
+<p><code>vec_ptype2()</code> is relevant when you are implementing vctrs methods
+for your class, but it should not usually be called directly. If
+you need to find the common type of a set of inputs, call
+<code><a href='vec_ptype.html'>vec_ptype_common()</a></code> instead. This function supports multiple
+inputs and <a href='new_partial.html'>finalises</a> the common type.</p>
     </div>
 
     <pre class="usage"><span class='co'># S3 method for logical</span>
@@ -178,9 +186,7 @@ instead call <code><a href='vec_ptype.html'>vec_ptype_common()</a></code>.</p>
 <span class='co'># S3 method for list</span>
 <span class='fu'>vec_ptype2</span>(<span class='no'>x</span>, <span class='no'>y</span>, <span class='no'>...</span>, <span class='kw'>x_arg</span> <span class='kw'>=</span> <span class='st'>""</span>, <span class='kw'>y_arg</span> <span class='kw'>=</span> <span class='st'>""</span>)
 
-<span class='fu'>vec_ptype2</span>(<span class='no'>x</span>, <span class='no'>y</span>, <span class='no'>...</span>, <span class='kw'>x_arg</span> <span class='kw'>=</span> <span class='st'>""</span>, <span class='kw'>y_arg</span> <span class='kw'>=</span> <span class='st'>""</span>)
-
-<span class='fu'>vec_default_ptype2</span>(<span class='no'>x</span>, <span class='no'>y</span>, <span class='no'>...</span>, <span class='kw'>x_arg</span> <span class='kw'>=</span> <span class='st'>""</span>, <span class='kw'>y_arg</span> <span class='kw'>=</span> <span class='st'>""</span>)</pre>
+<span class='fu'>vec_ptype2</span>(<span class='no'>x</span>, <span class='no'>y</span>, <span class='no'>...</span>, <span class='kw'>x_arg</span> <span class='kw'>=</span> <span class='st'>""</span>, <span class='kw'>y_arg</span> <span class='kw'>=</span> <span class='st'>""</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -201,60 +207,33 @@ incompatible types (see <code><a href='vctrs-conditions.html'>stop_incompatible_
     </tr>
     </table>
 
-    <h2 class="hasAnchor" id="coercion-rules"><a class="anchor" href="#coercion-rules"></a>Coercion rules</h2>
+    <h2 class="hasAnchor" id="implementing-coercion-methods"><a class="anchor" href="#implementing-coercion-methods"></a>Implementing coercion methods</h2>
 
     
-
-<p>vctrs thinks of the vector types as forming a partially ordered set, or
-poset. Then finding the common type from a set of types is a matter of
-finding the least-upper-bound; if the least-upper-bound does not exist,
-there is no common type. This is the case for many pairs of 1d vectors.</p>
-<p>The poset of the most important base vectors is shown below:
-(where datetime stands for <code>POSIXt</code>, and date for <code>Date</code>)</p>
-<p><img src='figures/coerce.png' alt='' /></p>
-<p>When you implement methods, make sure that <code>vec_ptype2.x.y()</code>
-returns the same value as <code>vec_ptype2.y.x()</code>; this is not enforced
-for reasons of efficiency, but should be tested.</p>
-    <h2 class="hasAnchor" id="s-dispatch"><a class="anchor" href="#s-dispatch"></a>S3 dispatch</h2>
-
-    
-
-
-<p><code>vec_ptype2()</code> dispatches on both arguments. This is implemented
-with a custom dispatch mechanism that has different semantics than
-regular S3 dispatch. The most important difference is that
-<code>vec_ptype2()</code> are not inherited, classes must explicitly implement
-the methods. There are two reasons for this:</p><ul>
-<li><p>The coercion hierarchy is often different from a class hierarchy.
-For instance the richer type between a tibble and a data frame is
-a tibble. Grouped data frames inherit from tibble, and so would by
-default inherit from tibble's <code>vec_ptype2()</code> method if inheritance
-was allowed. The method would then indicate that the richer type
-between a grouped data frame and a data frame is a tibble, which
-is wrong.</p></li>
-<li><p><code>vec_ptype2()</code> should be symmetric, i.e. it should return the same
-type no matter the order of the inputs. With inheritance, this
-isn't the case when two classes have a common parent class. For
-instance the richer type between a tsibble and a tibble is
-tsibble. Similarly, grouped data frames are a richer type than
-tibble. Both of these classess have tibble as common parent
-class. With inheritance, <code>vec_ptype2(tsibble, gdf)</code> would return a
-tsibble via the tsibble-tibble method. <code>vec_ptype2(gdf, tsibble)</code>
-would return a grouped data frame via the gdf-tibble method.</p></li>
+<ul>
+<li><p>For an overview of how these generics work and their roles in vctrs,
+see <code><a href='theory-faq-coercion.html'>?theory-faq-coercion</a></code>.</p></li>
+<li><p>For an example of implementing coercion methods for simple vectors,
+see <code><a href='howto-faq-coercion.html'>?howto-faq-coercion</a></code>.</p></li>
+<li><p>For an example of implementing coercion methods for data frame
+subclasses, see
+<code><a href='howto-faq-coercion-data-frame.html'>?howto-faq-coercion-data-frame</a></code>.</p></li>
+<li><p>For a tutorial about implementing vctrs classes from scratch, see
+<code><a href='../articles/s3-vector.html'>vignette("s3-vector")</a></code>.</p></li>
 </ul>
 
-<p>Another difference with regular dispatch is that <code><a href='https://rdrr.io/r/base/UseMethod.html'>NextMethod()</a></code>
-does not work inside <code>vec_ptype2()</code> methods, and <code>default</code> methods
-are never called.</p>
-<p>See <code><a href='../articles/s3-vector.html'>vignette("s3-vector")</a></code> for full details.</p>
+    <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
+
+    <div class='dont-index'><p><code><a href='vctrs-conditions.html'>stop_incompatible_type()</a></code> when you determine from the
+attributes that an input can't be cast to the target type.</p></div>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
       <li><a href="#arguments">Arguments</a></li>
-      <li><a href="#coercion-rules">Coercion rules</a></li>
-      <li><a href="#s-dispatch">S3 dispatch</a></li>
+      <li><a href="#implementing-coercion-methods">Implementing coercion methods</a></li>
+      <li><a href="#see-also">See also</a></li>
     </ul>
 
   </div>

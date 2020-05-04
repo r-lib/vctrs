@@ -203,14 +203,14 @@ incompatible types and sizes (see <code><a href='vctrs-conditions.html'>stop_inc
 
 
 <p>Support for S3 objects depends on whether the object implements a
-<code><a href='vec_data.html'>vec_proxy()</a></code> method.</p><ul>
-<li><p>When a <code><a href='vec_data.html'>vec_proxy()</a></code> method exists, the proxy is sliced and
-<code><a href='vec_cast.html'>vec_restore()</a></code> is called on the result.</p></li>
+<code><a href='vec_proxy.html'>vec_proxy()</a></code> method.</p><ul>
+<li><p>When a <code><a href='vec_proxy.html'>vec_proxy()</a></code> method exists, the proxy is sliced and
+<code><a href='vec_proxy.html'>vec_restore()</a></code> is called on the result.</p></li>
 <li><p>Otherwise <code>vec_slice()</code> falls back to the base generic <code>[</code>.</p></li>
 </ul>
 
 <p>Note that S3 lists are treated as scalars by default, and will
-cause an error if they don't implement a <code><a href='vec_data.html'>vec_proxy()</a></code> method.</p>
+cause an error if they don't implement a <code><a href='vec_proxy.html'>vec_proxy()</a></code> method.</p>
     <h2 class="hasAnchor" id="differences-with-base-r-subsetting"><a class="anchor" href="#differences-with-base-r-subsetting"></a>Differences with base R subsetting</h2>
 
     

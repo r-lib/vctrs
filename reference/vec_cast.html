@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Cast a vector to specified type — vec_cast • vctrs</title>
+<title>Cast a vector to a specified type — vec_cast • vctrs</title>
 
 <!-- favicons -->
 <link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
@@ -42,14 +42,10 @@
 
 
 
-<meta property="og:title" content="Cast a vector to specified type — vec_cast" />
-<meta property="og:description" content="vec_cast() provides general coercions from one type of vector to another,
-and along with vec_ptype2() forms the foundation of the vctrs type system.
-It should generally not be called by R users, but is important for R
-developers. vec_restore() is designed specifically for casting a bare
-vector to the original type; it's useful when relying NextMethod() for
-the actual implementation. vec_cast_common(...) casts a collection to
-vectors to the same type." />
+<meta property="og:title" content="Cast a vector to a specified type — vec_cast" />
+<meta property="og:description" content="vec_cast() provides directional conversions from one type of
+vector to another. Along with vec_ptype2(), this generic forms
+the foundation of type coercions in vctrs." />
 <meta property="og:image" content="https://vctrs.r-lib.org/logo.png" />
 <meta name="twitter:card" content="summary" />
 
@@ -148,26 +144,20 @@ vectors to the same type." />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Cast a vector to specified type</h1>
+    <h1>Cast a vector to a specified type</h1>
     
     <div class="hidden name"><code>vec_cast.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p><code>vec_cast()</code> provides general coercions from one type of vector to another,
-and along with <code><a href='vec_ptype2.html'>vec_ptype2()</a></code> forms the foundation of the vctrs type system.
-It should generally not be called by R users, but is important for R
-developers. <code>vec_restore()</code> is designed specifically for casting a bare
-vector to the original type; it's useful when relying <code><a href='https://rdrr.io/r/base/UseMethod.html'>NextMethod()</a></code> for
-the actual implementation. <code>vec_cast_common(...)</code> casts a collection to
-vectors to the same type.</p>
+    <p><code>vec_cast()</code> provides directional conversions from one type of
+vector to another. Along with <code><a href='vec_ptype2.html'>vec_ptype2()</a></code>, this generic forms
+the foundation of type coercions in vctrs.</p>
     </div>
 
     <pre class="usage"><span class='fu'>vec_cast</span>(<span class='no'>x</span>, <span class='no'>to</span>, <span class='no'>...</span>, <span class='kw'>x_arg</span> <span class='kw'>=</span> <span class='st'>""</span>, <span class='kw'>to_arg</span> <span class='kw'>=</span> <span class='st'>""</span>)
 
 <span class='fu'>vec_cast_common</span>(<span class='no'>...</span>, <span class='kw'>.to</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)
-
-<span class='fu'>vec_restore</span>(<span class='no'>x</span>, <span class='no'>to</span>, <span class='no'>...</span>, <span class='kw'>n</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)
 
 <span class='co'># S3 method for logical</span>
 <span class='fu'>vec_cast</span>(<span class='no'>x</span>, <span class='no'>to</span>, <span class='no'>...</span>)
@@ -204,7 +194,7 @@ vectors to the same type.</p>
     <tr>
       <th>...</th>
       <td><p>For <code>vec_cast_common()</code>, vectors to cast. For
-<code>vec_cast()</code>, <code>vec_cast_default()</code>, and <code>vec_restore()</code>, these
+<code>vec_cast()</code>, <code>vec_cast_default()</code>, and <code><a href='vec_proxy.html'>vec_restore()</a></code>, these
 dots are only for future extensions and should be empty.</p></td>
     </tr>
     <tr>
@@ -212,17 +202,6 @@ dots are only for future extensions and should be empty.</p></td>
       <td><p>Argument names for <code>x</code> and <code>to</code>. These are used
 in error messages to inform the user about the locations of
 incompatible types (see <code><a href='vctrs-conditions.html'>stop_incompatible_type()</a></code>).</p></td>
-    </tr>
-    <tr>
-      <th>n</th>
-      <td><p><a href='https://www.tidyverse.org/lifecycle/#experimental'><img src='figures/lifecycle-experimental.svg' alt='Experimental lifecycle'></a>
-
-The total size to restore to. This is currently passed by
-<code><a href='vec_slice.html'>vec_slice()</a></code> to solve edge cases arising in data frame
-restoration. In most cases you don't need this information and
-can safely ignore that argument. This parameter should be
-considered internal and experimental, it might change in the
-future.</p></td>
     </tr>
     </table>
 
@@ -232,66 +211,25 @@ future.</p></td>
 or an error if the cast is not possible. An error is generated if
 information is lost when casting between compatible types (i.e. when
 there is no 1-to-1 mapping for a specific value).</p>
-    <h2 class="hasAnchor" id="casting-rules"><a class="anchor" href="#casting-rules"></a>Casting rules</h2>
+    <h2 class="hasAnchor" id="implementing-coercion-methods"><a class="anchor" href="#implementing-coercion-methods"></a>Implementing coercion methods</h2>
 
     
-
-<p>Casting is more flexible than coercion, and allows for the possibility of
-information loss. This diagram summarises possible coercions. <code>vec_cast()</code>
-from any type connected to another type, provided that the arrows are
-followed in only one direction. For example you can cast from logical to
-character, and list to time, but you can not cast from logical to datetime.</p>
-<p><img src='figures/cast.png' alt='' /></p>
-<p>Most casts are not symmetric: you can cast all integers to doubles, but you
-can only cast a subset of doubles back to integers. If a cast is potentially
-lossy, an error will be shown whenever an actual loss occurs.</p>
-<p>The rules for coercing from a list are fairly strict: each component of the
-list must be of length 1, and must be coercible to type <code>to</code>. This ensures
-that a round-trip to and form list is possible, without opening the door
-to very flexible list flattening (which should be the job of a more
-specialised function).</p>
-    <h2 class="hasAnchor" id="s-dispatch"><a class="anchor" href="#s-dispatch"></a>S3 dispatch</h2>
-
-    
-
-<p><code>vec_cast()</code> dispatches on both arguments because casting depends
-on both the type of <code>x</code> and of <code>to</code>. The dispatch mechanism is a
-bit different than regular S3 dispatch. See <code><a href='vec_ptype2.html'>vec_ptype2()</a></code> and
-<code><a href='../articles/s3-vector.html'>vignette("s3-vector")</a></code> for full details.</p>
-<p>Note that <code>vec_cast()</code> dispatches on its second argument, so that the name
-of the final method uses the same convention as <code>as.xyz()</code> methods, i.e.
-<code>vec_cast.integer.double()</code> casts double to integers, in the same way
-that <code>as.integer.double()</code> would.</p>
-    <h2 class="hasAnchor" id="restoring-attributes"><a class="anchor" href="#restoring-attributes"></a>Restoring attributes</h2>
-
-    
-
-
-<p>A restore is a specialised type of cast, primarily used in
-conjunction with <code><a href='https://rdrr.io/r/base/UseMethod.html'>NextMethod()</a></code> or a C-level function that works on
-the underlying data structure. A <code>vec_restore()</code> method can make
-the following assumptions about <code>x</code>:</p><ul>
-<li><p>It has the correct type.</p></li>
-<li><p>It has the correct names.</p></li>
-<li><p>It has the correct <code>dim</code> and <code>dimnames</code> attributes.</p></li>
-<li><p>It is unclassed. This way you can call vctrs generics with <code>x</code>
-without triggering an infinite loop of restoration.</p></li>
+<ul>
+<li><p>For an overview of how these generics work and their roles in vctrs,
+see <code><a href='theory-faq-coercion.html'>?theory-faq-coercion</a></code>.</p></li>
+<li><p>For an example of implementing coercion methods for simple vectors,
+see <code><a href='howto-faq-coercion.html'>?howto-faq-coercion</a></code>.</p></li>
+<li><p>For an example of implementing coercion methods for data frame
+subclasses, see
+<code><a href='howto-faq-coercion-data-frame.html'>?howto-faq-coercion-data-frame</a></code>.</p></li>
+<li><p>For a tutorial about implementing vctrs classes from scratch, see
+<code><a href='../articles/s3-vector.html'>vignette("s3-vector")</a></code>.</p></li>
 </ul>
 
-<p>The length may be different (for example after <code><a href='vec_slice.html'>vec_slice()</a></code> has
-been called), and all other attributes may have been lost. The
-method should restore all attributes so that after restoration,
-<code>vec_restore(vec_data(x), x)</code> yields <code>x</code>.</p>
-<p>To understand the difference between <code>vec_cast()</code> and <code>vec_restore()</code>
-think about factors: it doesn't make sense to cast an integer to a factor,
-but if <code><a href='https://rdrr.io/r/base/UseMethod.html'>NextMethod()</a></code> or another low-level function has stripped attributes,
-you still need to be able to restore them.</p>
-<p>The default method copies across all attributes so you only need to
-provide your own method if your attributes require special care
-(i.e. they are dependent on the data in some way). When implementing
-your own method, bear in mind that many R users add attributes to track
-additional metadata that is important to them, so you should preserve any
-attributes that don't require special handling for your class.</p>
+    <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
+
+    <div class='dont-index'><p>Call <code><a href='vctrs-conditions.html'>stop_incompatible_cast()</a></code> when you determine from the
+attributes that an input can't be cast to the target type.</p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='co'># x is a double, but no information is lost</span>
@@ -324,9 +262,8 @@ attributes that don't require special handling for your class.</p>
     <ul class="nav nav-pills nav-stacked">
       <li><a href="#arguments">Arguments</a></li>
       <li><a href="#value">Value</a></li>
-      <li><a href="#casting-rules">Casting rules</a></li>
-      <li><a href="#s-dispatch">S3 dispatch</a></li>
-      <li><a href="#restoring-attributes">Restoring attributes</a></li>
+      <li><a href="#implementing-coercion-methods">Implementing coercion methods</a></li>
+      <li><a href="#see-also">See also</a></li>
       <li><a href="#examples">Examples</a></li>
     </ul>
 

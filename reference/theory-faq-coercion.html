@@ -44,9 +44,16 @@
 
 <meta property="og:title" content="FAQ - How does coercion work in vctrs? — theory-faq-coercion" />
 <meta property="og:description" content="This is an overview of the usage of vec_ptype2() and vec_cast() and
-their role in the vctrs coercion mechanism. For a practical example of
-how to implement methods for these generics, see
-?howto-faq-coercion.Combination mechanism in vctrs
+their role in the vctrs coercion mechanism. Related topics:
+For an example of implementing coercion methods for simple vectors,
+see ?howto-faq-coercion.
+For an example of implementing coercion methods for data frame
+subclasses, see
+?howto-faq-coercion-data-frame.
+For a tutorial about implementing vctrs classes from scratch, see
+vignette(&quot;s3-vector&quot;).
+
+Combination mechanism in vctrs
 
 
 The coercion system in vctrs is designed to make combination of multiple
@@ -396,9 +403,16 @@ class in R scripts.
 
     <div class="ref-description">
     <p>This is an overview of the usage of <code><a href='vec_ptype2.html'>vec_ptype2()</a></code> and <code><a href='vec_cast.html'>vec_cast()</a></code> and
-their role in the vctrs coercion mechanism. For a practical example of
-how to implement methods for these generics, see
-<code><a href='howto-faq-coercion.html'>?howto-faq-coercion</a></code>.</p><h3>Combination mechanism in vctrs</h3>
+their role in the vctrs coercion mechanism. Related topics:</p><ul>
+<li><p>For an example of implementing coercion methods for simple vectors,
+see <code><a href='howto-faq-coercion.html'>?howto-faq-coercion</a></code>.</p></li>
+<li><p>For an example of implementing coercion methods for data frame
+subclasses, see
+<code><a href='howto-faq-coercion-data-frame.html'>?howto-faq-coercion-data-frame</a></code>.</p></li>
+<li><p>For a tutorial about implementing vctrs classes from scratch, see
+<code><a href='../articles/s3-vector.html'>vignette("s3-vector")</a></code>.</p></li>
+</ul>
+<h3>Combination mechanism in vctrs</h3>
 
 
 <p>The coercion system in vctrs is designed to make combination of multiple
@@ -440,7 +454,7 @@ function over the set.</p></li>
 <code><a href='vec_slice.html'>vec_assign()</a></code>.</p></li>
 </ol>
 
-<p>The last two steps may require <code><a href='vec_data.html'>vec_proxy()</a></code> and <code><a href='vec_cast.html'>vec_restore()</a></code>
+<p>The last two steps may require <code><a href='vec_proxy.html'>vec_proxy()</a></code> and <code><a href='vec_proxy.html'>vec_restore()</a></code>
 implementations, unless the attributes of your class are constant and do
 not depend on the contents of the vector. We focus here on the first two
 steps, which require <code><a href='vec_ptype2.html'>vec_ptype2()</a></code> and <code><a href='vec_cast.html'>vec_cast()</a></code> implementations.</p>

@@ -139,7 +139,7 @@
     <loc>https://vctrs.r-lib.org/reference/vec_data.html</loc>
   </url>
   <url>
-    <loc>https://vctrs.r-lib.org/reference/vec_default_cast.html</loc>
+    <loc>https://vctrs.r-lib.org/reference/vec_default_ptype2.html</loc>
   </url>
   <url>
     <loc>https://vctrs.r-lib.org/reference/vec_duplicate.html</loc>
@@ -170,6 +170,9 @@
   </url>
   <url>
     <loc>https://vctrs.r-lib.org/reference/vec_order.html</loc>
+  </url>
+  <url>
+    <loc>https://vctrs.r-lib.org/reference/vec_proxy.html</loc>
   </url>
   <url>
     <loc>https://vctrs.r-lib.org/reference/vec_proxy_compare.html</loc>
