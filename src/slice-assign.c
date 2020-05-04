@@ -35,11 +35,6 @@ SEXP vctrs_assign(SEXP x, SEXP index, SEXP value, SEXP x_arg_, SEXP value_arg_) 
   return vec_assign_opts(x, index, value, vctrs_ownership_unknown, &opts);
 }
 
-// [[ include("vctrs.h") ]]
-SEXP vec_assign(SEXP x, SEXP index, SEXP value) {
-  return vec_assign_opts(x, index, value, vctrs_ownership_unknown, &vec_assign_default_opts);
-}
-
 // Exported for testing
 // [[ register() ]]
 SEXP vctrs_assign_seq(SEXP x, SEXP value, SEXP start, SEXP size, SEXP increasing) {
