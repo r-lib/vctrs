@@ -9,7 +9,8 @@
 status](https://codecov.io/gh/r-lib/vctrs/branch/master/graph/badge.svg)](https://codecov.io/github/r-lib/vctrs?branch=master)
 [![Lifecycle:
 maturing](https://img.shields.io/badge/lifecycle-maturing-blue.svg)](https://www.tidyverse.org/lifecycle/#maturing)
-![R build status](https://github.com/r-lib/vctrs/workflows/R-CMD-check/badge.svg)
+[![R build
+status](https://github.com/r-lib/vctrs/workflows/R-CMD-check/badge.svg)](https://github.com/r-lib/vctrs/actions)
 <!-- badges: end -->
 
 There are three main goals to the vctrs package, each described in a
@@ -97,7 +98,7 @@ dttm <- as.POSIXct(dt)
 c(dt, dttm)
 #> [1] "2020-01-01"    "4321940-06-07"
 c(dttm, dt)
-#> [1] "2019-12-31 16:00:00 PST" "1969-12-31 21:04:22 PST"
+#> [1] "2019-12-31 19:00:00 EST" "1970-01-01 00:04:22 EST"
 ```
 
 This behaviour arises because `c()` has dual purposes: as well as its
