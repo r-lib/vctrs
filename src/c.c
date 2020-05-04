@@ -89,7 +89,7 @@ SEXP vec_c(SEXP xs,
 
     init_compact_seq(idx_ptr, counter, size, true);
 
-    out = vec_proxy_assign_opts(out, idx, elt, vctrs_ownership_owned, &c_assign_opts);
+    out = vec_proxy_assign_opts(out, idx, elt, vctrs_ownership_total, &c_assign_opts);
     REPROTECT(out, out_pi);
 
     if (has_names) {
@@ -98,7 +98,7 @@ SEXP vec_c(SEXP xs,
       SEXP x_nms = PROTECT(apply_name_spec(name_spec, outer, inner, size));
 
       if (x_nms != R_NilValue) {
-        out_names = chr_assign(out_names, idx, x_nms, vctrs_ownership_owned);
+        out_names = chr_assign(out_names, idx, x_nms, vctrs_ownership_total);
         REPROTECT(out_names, out_names_pi);
       }
 

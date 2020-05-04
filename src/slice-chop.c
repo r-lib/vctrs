@@ -506,7 +506,7 @@ static SEXP vec_unchop(SEXP x,
       SEXP inner = PROTECT(vec_names(elt));
       SEXP elt_names = PROTECT(apply_name_spec(name_spec, outer, inner, size));
       if (elt_names != R_NilValue) {
-        out_names = chr_assign(out_names, index, elt_names, vctrs_ownership_owned);
+        out_names = chr_assign(out_names, index, elt_names, vctrs_ownership_total);
         REPROTECT(out_names, out_names_pi);
       }
       UNPROTECT(2);

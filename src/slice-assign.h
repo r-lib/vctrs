@@ -4,7 +4,7 @@
 #include "utils.h"
 
 enum vctrs_ownership {
-  vctrs_ownership_owned,
+  vctrs_ownership_total,
   vctrs_ownership_shared,
   vctrs_ownership_unknown
 };

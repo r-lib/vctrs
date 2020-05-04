@@ -162,7 +162,7 @@ static SEXP vec_rbind(SEXP xs, SEXP ptype, SEXP names_to, struct name_repair_opt
 
     SEXP tbl = PROTECT(vec_cast_params(x, ptype, args_empty, args_empty, true));
     init_compact_seq(idx_ptr, counter, size, true);
-    out = df_assign(out, idx, tbl, vctrs_ownership_owned, &bind_assign_opts);
+    out = df_assign(out, idx, tbl, vctrs_ownership_total, &bind_assign_opts);
     REPROTECT(out, out_pi);
 
     if (has_rownames) {
@@ -180,7 +180,7 @@ static SEXP vec_rbind(SEXP xs, SEXP ptype, SEXP names_to, struct name_repair_opt
       PROTECT(rn);
 
       if (rownames_type(rn) == ROWNAMES_IDENTIFIERS) {
-        rownames = chr_assign(rownames, idx, rn, vctrs_ownership_owned);
+        rownames = chr_assign(rownames, idx, rn, vctrs_ownership_total);
         REPROTECT(rownames, rownames_pi);
       }
 
@@ -419,12 +419,12 @@ static SEXP vec_cbind(SEXP xs, SEXP ptype, SEXP size, struct name_repair_opts* n
 
     R_len_t xn = Rf_length(x);
     init_compact_seq(idx_ptr, counter, xn, true);
-    out = list_assign(out, idx, x, vctrs_ownership_owned);
+    out = list_assign(out, idx, x, vctrs_ownership_total);
     REPROTECT(out, out_pi);
 
     SEXP xnms = PROTECT(r_names(x));
     if (xnms != R_NilValue) {
-      names = chr_assign(names, idx, xnms, vctrs_ownership_owned);
+      names = chr_assign(names, idx, xnms, vctrs_ownership_total);
       REPROTECT(names, names_pi);
     }
     UNPROTECT(1);
