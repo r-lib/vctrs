@@ -12,7 +12,7 @@ const struct vec_assign_opts vec_assign_default_opts = {
   .assign_names = false
 };
 
-static const enum vctrs_ownership determine_ownership(SEXP x);
+static const enum vctrs_ownership proxy_ownership(SEXP x);
 
 static SEXP vec_assign_fallback(SEXP x, SEXP index, SEXP value);
 static SEXP lgl_assign(SEXP x, SEXP index, SEXP value, const enum vctrs_ownership ownership);
@@ -53,7 +53,7 @@ SEXP vctrs_assign_seq(SEXP x, SEXP value, SEXP start, SEXP size, SEXP increasing
   value = PROTECT(vec_recycle(value, vec_subscript_size(index), opts->value_arg));
 
   SEXP proxy = PROTECT(vec_proxy(x));
-  const enum vctrs_ownership ownership = determine_ownership(proxy);
+  const enum vctrs_ownership ownership = proxy_ownership(proxy);
   proxy = PROTECT(vec_proxy_assign_opts(proxy, index, value, ownership, opts));
 
   SEXP out = vec_restore(proxy, x, R_NilValue);
@@ -82,7 +82,7 @@ SEXP vec_assign_opts(SEXP x, SEXP index, SEXP value,
   value = PROTECT(vec_recycle(value, vec_size(index), opts->value_arg));
 
   SEXP proxy = PROTECT(vec_proxy(x));
-  const enum vctrs_ownership ownership = determine_ownership(proxy);
+  const enum vctrs_ownership ownership = proxy_ownership(proxy);
   proxy = PROTECT(vec_proxy_assign_opts(proxy, index, value, ownership, opts));
 
   SEXP out = vec_restore(proxy, x, R_NilValue);
@@ -198,7 +198,7 @@ SEXP vec_proxy_assign_names(SEXP proxy, SEXP index, SEXP value) {
  */
 SEXP vec_proxy_assign(SEXP proxy, SEXP index, SEXP value) {
   return vec_proxy_assign_opts(proxy, index, value,
-                               determine_ownership(proxy),
+                               proxy_ownership(proxy),
                                &vec_assign_default_opts);
 }
 SEXP vec_proxy_assign_opts(SEXP proxy, SEXP index, SEXP value,
@@ -461,8 +461,8 @@ static SEXP vec_assign_fallback(SEXP x, SEXP index, SEXP value) {
                          syms_value, value);
 }
 
-static const enum vctrs_ownership determine_ownership(SEXP x) {
-  return NO_REFERENCES(x) ? vctrs_ownership_total : vctrs_ownership_shared;
+static const enum vctrs_ownership proxy_ownership(SEXP proxy) {
+  return NO_REFERENCES(proxy) ? vctrs_ownership_total : vctrs_ownership_shared;
 }
 
 void vctrs_init_slice_assign(SEXP ns) {
