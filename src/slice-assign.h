@@ -1,8 +1,6 @@
 #ifndef VCTRS_SLICE_ASSIGN_H
 #define VCTRS_SLICE_ASSIGN_H
 
-#include "utils.h"
-
 // Ownership is recursive
 enum vctrs_ownership {
   vctrs_ownership_total,
