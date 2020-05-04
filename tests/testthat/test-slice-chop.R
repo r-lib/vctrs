@@ -418,6 +418,35 @@ test_that("data frame row names are kept", {
   expect_identical(vec_names(result), expect)
 })
 
+test_that("individual data frame columns retain vector names", {
+  df1 <- data_frame(x = c(a = 1, b = 2))
+  df2 <- data_frame(x = c(c = 3))
+
+  x <- list(df1, df2)
+  indices <- list(c(1, 2), 3)
+
+  result <- vec_unchop(x, indices = indices)
+
+  expect_named(result$x, c("a", "b", "c"))
+
+  # Names should be identical to equivalent `vec_c()` call
+  expect_identical(vec_unchop(x, indices = indices), vec_c(!!!x))
+})
+
+test_that("df-col row names are repaired silently", {
+  df1 <- data_frame(x = new_data_frame(list(a = 1), row.names = "inner"))
+  df2 <- data_frame(x = new_data_frame(list(a = 2), row.names = "inner"))
+
+  x <- list(df1, df2)
+  indices <- list(1, 2)
+
+  expect_silent({
+    result <- vec_unchop(x, indices = indices)
+  })
+
+  expect_identical(vec_names(result$x), c("inner...1", "inner...2"))
+})
+
 test_that("monitoring - can technically assign to the same location twice", {
   x <- list(1:2, 3L)
   indices <- list(1:2, 1L)
