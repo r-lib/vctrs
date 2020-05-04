@@ -1,6 +1,8 @@
 #ifndef VCTRS_SLICE_ASSIGN_H
 #define VCTRS_SLICE_ASSIGN_H
 
+#include "utils.h"
+
 enum vctrs_ownership {
   vctrs_ownership_owned,
   vctrs_ownership_shared,
@@ -8,7 +10,7 @@ enum vctrs_ownership {
 };
 
 static inline enum vctrs_ownership parse_ownership(SEXP ownership) {
-  if (TYPEOF(ownership) != STRSXP || Rf_length(ownership) != 1) {
+  if (!r_is_string(ownership)) {
     Rf_errorcall(R_NilValue, "Internal error: `ownership` must be a string.");
   }
 
