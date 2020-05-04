@@ -9,12 +9,16 @@
 #' case the proxy is the [identity function][base::identity], which is
 #' the default `vec_proxy()` method.
 #'
-#' You only need to implement `vec_proxy()` if:
-#' cases:
+#' Only experts should implement special `vec_proxy()` methods, for
+#' these cases:
 #'
 #' - A vector has vectorised attributes, i.e. metadata for
 #'   each element of the vector. These _record types_ are implemented
-#'   in vctrs by returning a data frame in the proxy method.
+#'   in vctrs by returning a data frame in the proxy method. If you're
+#'   starting your class from scratch, consider deriving from the
+#'   [`rcrd`][new_rcrd] class. It implements the appropriate data
+#'   frame proxy and is generally the preferred way to create a record
+#'   class.
 #'
 #' - When you're implementing a vector on top of a non-vector type,
 #'   like an environment or an S4 object. This is currently only

@@ -32,12 +32,16 @@ vector. This data structure is usually the vector itself. In this
 case the proxy is the \link[base:identity]{identity function}, which is
 the default \code{vec_proxy()} method.
 
-You normally don't need to implement \code{vec_proxy()}, except in these
-cases:
+Only experts should implement special \code{vec_proxy()} methods, for
+these cases:
 \itemize{
-\item Some vector types have vectorised attributes, i.e. metadata for
+\item A vector has vectorised attributes, i.e. metadata for
 each element of the vector. These \emph{record types} are implemented
-in vctrs by returning a data frame in the proxy method.
+in vctrs by returning a data frame in the proxy method. If you're
+starting your class from scratch, consider deriving from the
+\code{\link[=new_rcrd]{rcrd}} class. It implements the appropriate data
+frame proxy and is generally the preferred way to create a record
+class.
 \item When you're implementing a vector on top of a non-vector type,
 like an environment or an S4 object. This is currently only
 partially supported.
