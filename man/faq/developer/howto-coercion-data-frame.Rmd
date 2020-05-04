@@ -6,7 +6,7 @@ This guide provides a practical recipe for implementing `vec_ptype2()` and `vec_
 
 - For an overview of the coercion mechanism in vctrs, see [`?theory-faq-coercion`][theory-faq-coercion].
 
-- For an example of implementing coercion methods for non-data-frame vectors, see [`?howto-faq-coercion`][howto-faq-coercion].
+- For an example of implementing coercion methods for simple vectors, see [`?howto-faq-coercion`][howto-faq-coercion].
 
 Coercion of data frames occurs when different data frame classes are combined in some way. The two main methods of combination are currently row-binding with [vec_rbind()] and col-binding with [vec_cbind()] (which are in turn used by a number of dplyr and tidyr functions). These functions take multiple data frame inputs and automatically coerce them to their common type.
 

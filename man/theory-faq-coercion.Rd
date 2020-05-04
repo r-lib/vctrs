@@ -5,9 +5,16 @@
 \title{FAQ - How does coercion work in vctrs?}
 \description{
 This is an overview of the usage of \code{vec_ptype2()} and \code{vec_cast()} and
-their role in the vctrs coercion mechanism. For a practical example of
-how to implement methods for these generics, see
-\code{\link[=howto-faq-coercion]{?howto-faq-coercion}}.
+their role in the vctrs coercion mechanism. Related topics:
+\itemize{
+\item For an example of implementing coercion methods for simple vectors,
+see \code{\link[=howto-faq-coercion]{?howto-faq-coercion}}.
+\item For an example of implementing coercion methods for data frame
+subclasses, see
+\code{\link[=howto-faq-coercion-data-frame]{?howto-faq-coercion-data-frame}}.
+\item For a tutorial about implementing vctrs classes from scratch, see
+\code{vignette("s3-vector")}.
+}
 \subsection{Combination mechanism in vctrs}{
 
 The coercion system in vctrs is designed to make combination of multiple

@@ -2,24 +2,24 @@
 % Please edit documentation in R/proxy.R
 \name{vec_data}
 \alias{vec_data}
-\alias{vec_proxy}
 \title{Extract underlying data}
 \usage{
 vec_data(x)
-
-vec_proxy(x, ...)
 }
 \arguments{
 \item{x}{A vector or object implementing \code{vec_proxy()}.}
-
-\item{...}{These dots are for future extensions and must be empty.}
 }
 \value{
 The data underlying \code{x}, free from any attributes except the names.
 }
 \description{
+\Sexpr[results=rd, stage=render]{vctrs:::lifecycle("experimental")}
+
 Extract the data underlying an S3 vector object, i.e. the underlying
 (named) atomic vector or list.
+}
+\section{Difference with \code{vec_proxy()}}{
+
 \itemize{
 \item \code{vec_data()} returns unstructured data. The only attributes
 preserved are names, dims, and dimnames.
@@ -27,52 +27,12 @@ preserved are names, dims, and dimnames.
 Currently, due to the underlying memory architecture of R, this
 creates a full copy of the data.
 \item \code{vec_proxy()} may return structured data. This generic is the
-main customisation point in vctrs, along with \code{\link[=vec_restore]{vec_restore()}}.
-See the section below to learn when you should implement
-\code{vec_proxy()}.
+main customisation point for accessing memory values in vctrs,
+along with \code{\link[=vec_restore]{vec_restore()}}.
 
 Methods must return a vector type. Records and data frames will
 be processed rowwise.
 }
 }
-\section{When should you proxy your type}{
 
-
-You should only implement \code{vec_proxy()} when your type is designed
-around a non-vector class. I.e. anything that is not either:
-\itemize{
-\item An atomic vector
-\item A bare list
-\item A data frame
-}
-
-In this case, implement \code{vec_proxy()} to return such a vector
-class. The vctrs operations such as \code{\link[=vec_slice]{vec_slice()}} are applied on
-the proxy and \code{vec_restore()} is called to restore the original
-representation of your type.
-
-The most common case where you need to implement \code{vec_proxy()} is
-for S3 lists. In vctrs, S3 lists are treated as scalars by
-default. This way we don't treat objects like model fits as
-vectors. To prevent vctrs from treating your S3 list as a scalar,
-unclass it in the \code{vec_proxy()} method. For instance, here is the
-definition for \code{list_of}:\preformatted{vec_proxy.vctrs_list_of <- function(x) \{
-  unclass(x)
-\}
-}
-
-Another case where you need to implement a proxy is \link[=new_rcrd]{record types}. Record types should return a data frame, as in
-the \code{POSIXlt} method:\preformatted{vec_proxy.POSIXlt <- function(x) \{
-  new_data_frame(unclass(x))
-\}
-}
-
-Note that you don't need to implement \code{vec_proxy()} when your class
-inherits from \code{vctrs_vctr} or \code{vctrs_rcrd}.
-}
-
-\seealso{
-See \code{\link[=vec_restore]{vec_restore()}} for the inverse operation: it restores
-attributes given a bare vector and a prototype;
-\code{vec_restore(vec_data(x), x)} will always yield \code{x}.
-}
+\keyword{internal}
