@@ -176,6 +176,11 @@ vec_restore_default <- function(x, to, ...) {
 #' Extract the data underlying an S3 vector object, i.e. the underlying
 #' (named) atomic vector or list.
 #'
+#' @param x A vector or object implementing `vec_proxy()`.
+#' @return The data underlying `x`, free from any attributes except the names.
+#'
+#' @section Difference with `vec_proxy()`:
+#'
 #' * `vec_data()` returns unstructured data. The only attributes
 #'   preserved are names, dims, and dimnames.
 #'
@@ -189,8 +194,7 @@ vec_restore_default <- function(x, to, ...) {
 #'   Methods must return a vector type. Records and data frames will
 #'   be processed rowwise.
 #'
-#' @param x A vector or object implementing `vec_proxy()`.
-#' @return The data underlying `x`, free from any attributes except the names.
+#' @keywords internal
 #' @export
 vec_data <- function(x) {
   vec_assert(x)

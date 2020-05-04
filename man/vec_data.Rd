@@ -17,6 +17,9 @@ The data underlying \code{x}, free from any attributes except the names.
 
 Extract the data underlying an S3 vector object, i.e. the underlying
 (named) atomic vector or list.
+}
+\section{Difference with \code{vec_proxy()}}{
+
 \itemize{
 \item \code{vec_data()} returns unstructured data. The only attributes
 preserved are names, dims, and dimnames.
@@ -31,3 +34,5 @@ Methods must return a vector type. Records and data frames will
 be processed rowwise.
 }
 }
+
+\keyword{internal}
