@@ -91,19 +91,6 @@ SEXP vec_assign_opts(SEXP x, SEXP index, SEXP value,
   return out;
 }
 
-static const enum vctrs_ownership parse_ownership(SEXP ownership) {
-  if (!r_is_string(ownership)) {
-    Rf_errorcall(R_NilValue, "Internal error: `ownership` must be a string.");
-  }
-
-  const char* str = CHAR(STRING_ELT(ownership, 0));
-
-  if (!strcmp(str, "total")) return vctrs_ownership_total;
-  if (!strcmp(str, "shared")) return vctrs_ownership_shared;
-
-  Rf_errorcall(R_NilValue, "Internal error: `ownership` must be 'total' or 'shared'.");
-}
-
 // [[ register() ]]
 SEXP vctrs_assign_params(SEXP x, SEXP index, SEXP value,
                          SEXP assign_names) {
