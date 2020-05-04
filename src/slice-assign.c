@@ -32,7 +32,7 @@ SEXP vctrs_assign(SEXP x, SEXP index, SEXP value, SEXP x_arg_, SEXP value_arg_) 
     .value_arg = &value_arg
   };
 
-  return vec_assign_opts(x, index, value, vctrs_ownership_unknown, &opts);
+  return vec_assign_opts(x, index, value, vctrs_ownership_shared, &opts);
 }
 
 // Exported for testing
@@ -51,7 +51,7 @@ SEXP vctrs_assign_seq(SEXP x, SEXP value, SEXP start, SEXP size, SEXP increasing
   value = PROTECT(vec_recycle(value, vec_subscript_size(index), opts->value_arg));
 
   SEXP proxy = PROTECT(vec_proxy(x));
-  proxy = PROTECT(vec_proxy_assign_opts(proxy, index, value, vctrs_ownership_unknown, opts));
+  proxy = PROTECT(vec_proxy_assign_opts(proxy, index, value, vctrs_ownership_shared, opts));
 
   SEXP out = vec_restore(proxy, x, R_NilValue);
 
@@ -139,17 +139,17 @@ SEXP vec_proxy_assign_names(SEXP proxy, SEXP index, SEXP value) {
 
   SEXP proxy_nms = PROTECT(vec_names(proxy));
   if (proxy_nms == R_NilValue) {
-    proxy_nms = Rf_allocVector(STRSXP, vec_size(proxy));
-    UNPROTECT(1);
-    PROTECT(proxy_nms);
+    proxy_nms = PROTECT(Rf_allocVector(STRSXP, vec_size(proxy)));
+  } else {
+    proxy_nms = PROTECT(r_clone_referenced(proxy_nms));
   }
 
-  proxy_nms = PROTECT(chr_assign(proxy_nms, index, value_nms, vctrs_ownership_unknown));
+  proxy_nms = PROTECT(chr_assign(proxy_nms, index, value_nms, vctrs_ownership_total));
 
   proxy = PROTECT(r_clone_referenced(proxy));
   proxy = vec_set_names(proxy, proxy_nms);
 
-  UNPROTECT(4);
+  UNPROTECT(5);
   return proxy;
 }
 
