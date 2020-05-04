@@ -40,7 +40,7 @@ The following errors are caused by breaking changes.
   `tbl_df` and `data.frame`.
 
   This change requires a bit more work from class maintainers but is
-  safer because the coercion hyerarchies are generally different from
+  safer because the coercion hierarchies are generally different from
   class hierarchies. See the S3 dispatch section of `?vec_ptype2` for
   more information.
 
