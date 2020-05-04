@@ -16,7 +16,6 @@ struct vec_assign_opts {
 };
 
 SEXP vec_assign_opts(SEXP x, SEXP index, SEXP value,
-                     const enum vctrs_ownership ownership,
                      const struct vec_assign_opts* opts);
 
 SEXP vec_proxy_assign_opts(SEXP proxy, SEXP index, SEXP value,

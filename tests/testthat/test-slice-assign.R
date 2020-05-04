@@ -631,21 +631,6 @@ test_that("monitoring: assignment to a data frame with unshared columns doesn't 
   expect_identical(x, expect)
 })
 
-test_that("monitoring: can assign in place with unshared columns when totally owned", {
-  expect1 <- new_data_frame(list(x = 1L))
-  expect2 <- new_data_frame(list(x = 2L))
-
-  value <- new_data_frame(list(x = 2L))
-
-  x <- new_df_unshared_col()
-  .Call(vctrs_assign_params, x, 1L, value, assign_named = FALSE, ownership = "shared")
-  expect_identical(x, expect1)
-
-  x <- new_df_unshared_col()
-  .Call(vctrs_assign_params, x, 1L, value, assign_named = FALSE, ownership = "total")
-  expect_identical(x, expect2)
-})
-
 test_that("monitoring: assignment to atomic vectors doesn't modify by reference", {
   x <- c(1, 2, 3)
   expect <- c(1, 2, 3)

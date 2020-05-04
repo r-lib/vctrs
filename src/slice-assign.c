@@ -34,7 +34,7 @@ SEXP vctrs_assign(SEXP x, SEXP index, SEXP value, SEXP x_arg_, SEXP value_arg_) 
     .value_arg = &value_arg
   };
 
-  return vec_assign_opts(x, index, value, vctrs_ownership_shared, &opts);
+  return vec_assign_opts(x, index, value, &opts);
 }
 
 // Exported for testing
@@ -53,7 +53,8 @@ SEXP vctrs_assign_seq(SEXP x, SEXP value, SEXP start, SEXP size, SEXP increasing
   value = PROTECT(vec_recycle(value, vec_subscript_size(index), opts->value_arg));
 
   SEXP proxy = PROTECT(vec_proxy(x));
-  proxy = PROTECT(vec_proxy_assign_opts(proxy, index, value, vctrs_ownership_shared, opts));
+  const enum vctrs_ownership ownership = determine_ownership(proxy);
+  proxy = PROTECT(vec_proxy_assign_opts(proxy, index, value, ownership, opts));
 
   SEXP out = vec_restore(proxy, x, R_NilValue);
 
@@ -63,7 +64,6 @@ SEXP vctrs_assign_seq(SEXP x, SEXP value, SEXP start, SEXP size, SEXP increasing
 
 // [[ include("slice-assign.h") ]]
 SEXP vec_assign_opts(SEXP x, SEXP index, SEXP value,
-                     const enum vctrs_ownership ownership,
                      const struct vec_assign_opts* opts) {
   if (x == R_NilValue) {
     return R_NilValue;
@@ -82,6 +82,7 @@ SEXP vec_assign_opts(SEXP x, SEXP index, SEXP value,
   value = PROTECT(vec_recycle(value, vec_size(index), opts->value_arg));
 
   SEXP proxy = PROTECT(vec_proxy(x));
+  const enum vctrs_ownership ownership = determine_ownership(proxy);
   proxy = PROTECT(vec_proxy_assign_opts(proxy, index, value, ownership, opts));
 
   SEXP out = vec_restore(proxy, x, R_NilValue);
@@ -105,11 +106,11 @@ static const enum vctrs_ownership parse_ownership(SEXP ownership) {
 
 // [[ register() ]]
 SEXP vctrs_assign_params(SEXP x, SEXP index, SEXP value,
-                         SEXP assign_names, SEXP ownership) {
+                         SEXP assign_names) {
   const struct vec_assign_opts opts =  {
     .assign_names = r_bool_as_int(assign_names)
   };
-  return vec_assign_opts(x, index, value, parse_ownership(ownership), &opts);
+  return vec_assign_opts(x, index, value, &opts);
 }
 
 static SEXP vec_assign_switch(SEXP proxy, SEXP index, SEXP value,
