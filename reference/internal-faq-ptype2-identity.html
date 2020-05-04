@@ -17,23 +17,27 @@
 <link rel="apple-touch-icon" type="image/png" sizes="60x60" href="../apple-touch-icon-60x60.png" />
 
 <!-- jquery -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
 <!-- Bootstrap -->
 
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha256-916EbMg70RQy9LHiGkXzG8hSg9EdNy97GazNG/aiY1w=" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/css/bootstrap.min.css" integrity="sha256-bZLfwXAP04zRMK2BjiO8iu9pf4FbLqX6zitd+tIvLhE=" crossorigin="anonymous" />
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha256-U5ZEeKfGNOja007MMD3YBI0A3OSZOQbeG6z2f2Y0hu8=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha256-nuL8/2cJ5NDSSwnKD8VqreErSWHtnEP9E7AySL+1ev4=" crossorigin="anonymous"></script>
+
+<!-- bootstrap-toc -->
+<link rel="stylesheet" href="../bootstrap-toc.css">
+<script src="../bootstrap-toc.js"></script>
 
 <!-- Font Awesome icons -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/all.min.css" integrity="sha256-nAmazAk6vS34Xqo0BSrTb+abbtFlgsFK7NKSi6o7Y78=" crossorigin="anonymous" />
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/v4-shims.min.css" integrity="sha256-6qHlizsOWFskGlwVOKuns+D1nB6ssZrHQrNj1wGplHc=" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous" />
 
 <!-- clipboard.js -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.4/clipboard.min.js" integrity="sha256-FiZwavyI2V6+EXO1U+xzLG3IKldpiTFf3153ea9zikQ=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script>
 
 <!-- headroom.js -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/headroom.min.js" integrity="sha256-DJFC1kqIhelURkuza0AvYal5RxMtpzLjFhsnVIeuk+U=" crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script>
 
 <!-- pkgdown -->
 <link href="../pkgdown.css" rel="stylesheet">
@@ -68,20 +72,17 @@ The NULL identity
 
 As an identity element that shouldn’t influence the determination of the
 common type of a set of vectors, NULL is promoted to any type:vec_ptype2(NULL, &quot;&quot;)
-#&amp;gt; character(0)
+#&amp;amp;gt; character(0)
 vec_ptype2(1L, NULL)
-#&amp;gt; integer(0)
-
+#&amp;amp;gt; integer(0)
 The common type of NULL and NULL is the identity NULL:vec_ptype2(NULL, NULL)
-#&amp;gt; NULL
-
+#&amp;amp;gt; NULL
 This way the result of vec_ptype2(NULL, NULL) does not influence
 subsequent promotions:vec_ptype2(
   vec_ptype2(NULL, NULL),
   &quot;&quot;
 )
-#&amp;gt; character(0)
-
+#&amp;amp;gt; character(0)
 
 Unspecified vectors
 
@@ -91,10 +92,9 @@ automatically promoted to the type of any other vector, just like
 NULL. We call these vectors unspecified. The special coercion
 semantics of unspecified vectors serve two purposes:
 It makes it possible to assign vectors of NA inside any type of
-vectors, even when they are not coercible with logical:x &amp;lt;- letters[1:5]
+vectors, even when they are not coercible with logical:x &amp;amp;lt;- letters[1:5]
 vec_assign(x, 1:2, c(NA, NA))
-#&amp;gt; [1] NA  NA  &quot;c&quot; &quot;d&quot; &quot;e&quot;
-
+#&amp;amp;gt; [1] NA  NA  &quot;c&quot; &quot;d&quot; &quot;e&quot;
 We can’t put NULL in a data frame, so we need an identity element
 that behaves more like a vector. Logical vectors of NA seem a
 natural fit for this.
@@ -102,10 +102,9 @@ natural fit for this.
 
 Unspecified vectors are thus promoted to any other type, just like
 NULL:vec_ptype2(NA, &quot;&quot;)
-#&amp;gt; character(0)
+#&amp;amp;gt; character(0)
 vec_ptype2(1L, c(NA, NA))
-#&amp;gt; integer(0)
-
+#&amp;amp;gt; integer(0)
 
 Finalising common types
 
@@ -114,29 +113,25 @@ vctrs has an internal vector type of class vctrs_unspecified. Users
 normally don’t see such vectors in the wild, but they do come up when
 taking the common type of an unspecified vector with another identity
 value:vec_ptype2(NA, NA)
-#&amp;gt; &amp;lt;unspecified&amp;gt; [0]
+#&amp;amp;gt; &amp;amp;lt;unspecified&amp;amp;gt; [0]
 vec_ptype2(NA, NULL)
-#&amp;gt; &amp;lt;unspecified&amp;gt; [0]
+#&amp;amp;gt; &amp;amp;lt;unspecified&amp;amp;gt; [0]
 vec_ptype2(NULL, NA)
-#&amp;gt; &amp;lt;unspecified&amp;gt; [0]
-
+#&amp;amp;gt; &amp;amp;lt;unspecified&amp;amp;gt; [0]
 We can’t return NA here because vec_ptype2() normally returns empty
 vectors. We also can’t return NULL because unspecified vectors need to
 be recognised as logical vectors if they haven’t been promoted at the
 end of the reduction.vec_ptype_finalise(vec_ptype2(NULL, NA))
-#&amp;gt; logical(0)
-
+#&amp;amp;gt; logical(0)
 See the output of vec_ptype_common() which performs the reduction and
 finalises the type, ready to be used by the caller:vec_ptype_common(NULL, NULL)
-#&amp;gt; NULL
+#&amp;amp;gt; NULL
 vec_ptype_common(NA, NULL)
-#&amp;gt; logical(0)
-
+#&amp;amp;gt; logical(0)
 Note that partial types in vctrs make use of the same mechanism.
 They are finalised with vec_ptype_finalise().
 " />
 <meta property="og:image" content="https://vctrs.r-lib.org/logo.png" />
-<meta name="twitter:card" content="summary" />
 
 
 
@@ -164,7 +159,7 @@ They are finalised with vec_ptype_finalise().
 
   </head>
 
-  <body>
+  <body data-spy="scroll" data-target="#toc">
     <div class="container template-reference-topic">
       <header>
       <div class="navbar navbar-default navbar-fixed-top" role="navigation">
@@ -219,7 +214,12 @@ They are finalised with vec_ptype_finalise().
 </li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
-        
+        <li>
+  <a href="https://github.com/r-lib/vctrs/">
+    <span class="fab fa fab fa-github fa-lg"></span>
+     
+  </a>
+</li>
       </ul>
       
     </div><!--/.nav-collapse -->
@@ -234,7 +234,7 @@ They are finalised with vec_ptype_finalise().
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Internal FAQ - <code>vec_ptype2()</code>, <code>NULL</code>, and unspecified vectors</h1>
-    
+    <small class="dont-index">Source: <a href='https://github.com/r-lib/vctrs/blob/master/R/faq-internal.R'><code>R/faq-internal.R</code></a></small>
     <div class="hidden name"><code>internal-faq-ptype2-identity.Rd</code></div>
     </div>
 
@@ -263,21 +263,18 @@ change the result of the reduction. vctrs has two identity values,
 
 
 <p>As an identity element that shouldn’t influence the determination of the
-common type of a set of vectors, <code>NULL</code> is promoted to any type:<div class="r"></p><pre>vec_ptype2(NULL, "")
-#&gt; character(0)
-vec_ptype2(1L, NULL)
-#&gt; integer(0)
-</pre><p></div></p>
-<p>The common type of <code>NULL</code> and <code>NULL</code> is the identity <code>NULL</code>:<div class="r"></p><pre>vec_ptype2(NULL, NULL)
-#&gt; NULL
-</pre><p></div></p>
+common type of a set of vectors, <code>NULL</code> is promoted to any type:<div class="r"></p><pre><span class='fu'><a href='vec_ptype2.html'>vec_ptype2</a></span>(<span class='kw'>NULL</span>, <span class='st'>""</span>)
+<span class='co'>#&amp;gt; character(0)</span>
+<span class='fu'><a href='vec_ptype2.html'>vec_ptype2</a></span>(<span class='fl'>1L</span>, <span class='kw'>NULL</span>)
+<span class='co'>#&amp;gt; integer(0)</span></pre><p></div></p>
+<p>The common type of <code>NULL</code> and <code>NULL</code> is the identity <code>NULL</code>:<div class="r"></p><pre><span class='fu'><a href='vec_ptype2.html'>vec_ptype2</a></span>(<span class='kw'>NULL</span>, <span class='kw'>NULL</span>)
+<span class='co'>#&amp;gt; NULL</span></pre><p></div></p>
 <p>This way the result of <code><a href='vec_ptype2.html'>vec_ptype2(NULL, NULL)</a></code> does not influence
-subsequent promotions:<div class="r"></p><pre>vec_ptype2(
-  vec_ptype2(NULL, NULL),
-  ""
+subsequent promotions:<div class="r"></p><pre><span class='fu'><a href='vec_ptype2.html'>vec_ptype2</a></span>(
+  <span class='fu'><a href='vec_ptype2.html'>vec_ptype2</a></span>(<span class='kw'>NULL</span>, <span class='kw'>NULL</span>),
+  <span class='st'>""</span>
 )
-#&gt; character(0)
-</pre><p></div></p>
+<span class='co'>#&amp;gt; character(0)</span></pre><p></div></p>
 
 <h3>Unspecified vectors</h3>
 
@@ -287,21 +284,19 @@ automatically promoted to the type of any other vector, just like
 <code>NULL</code>. We call these vectors unspecified. The special coercion
 semantics of unspecified vectors serve two purposes:</p><ol>
 <li><p>It makes it possible to assign vectors of <code>NA</code> inside any type of
-vectors, even when they are not coercible with logical:<div class="r"></p><pre>x &lt;- letters[1:5]
-vec_assign(x, 1:2, c(NA, NA))
-#&gt; [1] NA  NA  "c" "d" "e"
-</pre><p></div></p></li>
+vectors, even when they are not coercible with logical:<div class="r"></p><pre><span class='no'>x</span> <span class='kw'>&amp;</span><span class='no'>lt</span>;- <span class='no'>letters</span>[<span class='fl'>1</span>:<span class='fl'>5</span>]
+<span class='fu'><a href='vec_slice.html'>vec_assign</a></span>(<span class='no'>x</span>, <span class='fl'>1</span>:<span class='fl'>2</span>, <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>NA</span>, <span class='fl'>NA</span>))
+<span class='co'>#&amp;gt; [1] NA  NA  "c" "d" "e"</span></pre><p></div></p></li>
 <li><p>We can’t put <code>NULL</code> in a data frame, so we need an identity element
 that behaves more like a vector. Logical vectors of <code>NA</code> seem a
 natural fit for this.</p></li>
 </ol>
 
 <p>Unspecified vectors are thus promoted to any other type, just like
-<code>NULL</code>:<div class="r"></p><pre>vec_ptype2(NA, "")
-#&gt; character(0)
-vec_ptype2(1L, c(NA, NA))
-#&gt; integer(0)
-</pre><p></div></p>
+<code>NULL</code>:<div class="r"></p><pre><span class='fu'><a href='vec_ptype2.html'>vec_ptype2</a></span>(<span class='fl'>NA</span>, <span class='st'>""</span>)
+<span class='co'>#&amp;gt; character(0)</span>
+<span class='fu'><a href='vec_ptype2.html'>vec_ptype2</a></span>(<span class='fl'>1L</span>, <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>NA</span>, <span class='fl'>NA</span>))
+<span class='co'>#&amp;gt; integer(0)</span></pre><p></div></p>
 
 <h3>Finalising common types</h3>
 
@@ -309,25 +304,22 @@ vec_ptype2(1L, c(NA, NA))
 <p>vctrs has an internal vector type of class <code>vctrs_unspecified</code>. Users
 normally don’t see such vectors in the wild, but they do come up when
 taking the common type of an unspecified vector with another identity
-value:<div class="r"></p><pre>vec_ptype2(NA, NA)
-#&gt; &lt;unspecified&gt; [0]
-vec_ptype2(NA, NULL)
-#&gt; &lt;unspecified&gt; [0]
-vec_ptype2(NULL, NA)
-#&gt; &lt;unspecified&gt; [0]
-</pre><p></div></p>
+value:<div class="r"></p><pre><span class='fu'><a href='vec_ptype2.html'>vec_ptype2</a></span>(<span class='fl'>NA</span>, <span class='fl'>NA</span>)
+<span class='co'>#&amp;gt; &amp;lt;unspecified&amp;gt; [0]</span>
+<span class='fu'><a href='vec_ptype2.html'>vec_ptype2</a></span>(<span class='fl'>NA</span>, <span class='kw'>NULL</span>)
+<span class='co'>#&amp;gt; &amp;lt;unspecified&amp;gt; [0]</span>
+<span class='fu'><a href='vec_ptype2.html'>vec_ptype2</a></span>(<span class='kw'>NULL</span>, <span class='fl'>NA</span>)
+<span class='co'>#&amp;gt; &amp;lt;unspecified&amp;gt; [0]</span></pre><p></div></p>
 <p>We can’t return <code>NA</code> here because <code><a href='vec_ptype2.html'>vec_ptype2()</a></code> normally returns empty
 vectors. We also can’t return <code>NULL</code> because unspecified vectors need to
 be recognised as logical vectors if they haven’t been promoted at the
-end of the reduction.<div class="r"></p><pre>vec_ptype_finalise(vec_ptype2(NULL, NA))
-#&gt; logical(0)
-</pre><p></div></p>
+end of the reduction.<div class="r"></p><pre><span class='fu'><a href='new_partial.html'>vec_ptype_finalise</a></span>(<span class='fu'><a href='vec_ptype2.html'>vec_ptype2</a></span>(<span class='kw'>NULL</span>, <span class='fl'>NA</span>))
+<span class='co'>#&amp;gt; logical(0)</span></pre><p></div></p>
 <p>See the output of <code><a href='vec_ptype.html'>vec_ptype_common()</a></code> which performs the reduction and
-finalises the type, ready to be used by the caller:<div class="r"></p><pre>vec_ptype_common(NULL, NULL)
-#&gt; NULL
-vec_ptype_common(NA, NULL)
-#&gt; logical(0)
-</pre><p></div></p>
+finalises the type, ready to be used by the caller:<div class="r"></p><pre><span class='fu'><a href='vec_ptype.html'>vec_ptype_common</a></span>(<span class='kw'>NULL</span>, <span class='kw'>NULL</span>)
+<span class='co'>#&amp;gt; NULL</span>
+<span class='fu'><a href='vec_ptype.html'>vec_ptype_common</a></span>(<span class='fl'>NA</span>, <span class='kw'>NULL</span>)
+<span class='co'>#&amp;gt; logical(0)</span></pre><p></div></p>
 <p>Note that <strong>partial</strong> types in vctrs make use of the same mechanism.
 They are finalised with <code><a href='new_partial.html'>vec_ptype_finalise()</a></code>.</p>
 
@@ -337,11 +329,10 @@ They are finalised with <code><a href='new_partial.html'>vec_ptype_finalise()</a
 
 
   </div>
-  <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
-    <h2>Contents</h2>
-    <ul class="nav nav-pills nav-stacked">
-    </ul>
-
+  <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
+    <nav id="toc" data-toggle="toc" class="sticky-top">
+      <h2 data-toc-skip>Contents</h2>
+    </nav>
   </div>
 </div>
 
@@ -352,7 +343,7 @@ They are finalised with <code><a href='new_partial.html'>vec_ptype_finalise()</a
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.4.1.9000.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.9000.</p>
 </div>
 
       </footer>

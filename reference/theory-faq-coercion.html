@@ -17,23 +17,27 @@
 <link rel="apple-touch-icon" type="image/png" sizes="60x60" href="../apple-touch-icon-60x60.png" />
 
 <!-- jquery -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
 <!-- Bootstrap -->
 
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha256-916EbMg70RQy9LHiGkXzG8hSg9EdNy97GazNG/aiY1w=" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/css/bootstrap.min.css" integrity="sha256-bZLfwXAP04zRMK2BjiO8iu9pf4FbLqX6zitd+tIvLhE=" crossorigin="anonymous" />
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha256-U5ZEeKfGNOja007MMD3YBI0A3OSZOQbeG6z2f2Y0hu8=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha256-nuL8/2cJ5NDSSwnKD8VqreErSWHtnEP9E7AySL+1ev4=" crossorigin="anonymous"></script>
+
+<!-- bootstrap-toc -->
+<link rel="stylesheet" href="../bootstrap-toc.css">
+<script src="../bootstrap-toc.js"></script>
 
 <!-- Font Awesome icons -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/all.min.css" integrity="sha256-nAmazAk6vS34Xqo0BSrTb+abbtFlgsFK7NKSi6o7Y78=" crossorigin="anonymous" />
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/v4-shims.min.css" integrity="sha256-6qHlizsOWFskGlwVOKuns+D1nB6ssZrHQrNj1wGplHc=" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous" />
 
 <!-- clipboard.js -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.4/clipboard.min.js" integrity="sha256-FiZwavyI2V6+EXO1U+xzLG3IKldpiTFf3153ea9zikQ=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script>
 
 <!-- headroom.js -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/headroom.min.js" integrity="sha256-DJFC1kqIhelURkuza0AvYal5RxMtpzLjFhsnVIeuk+U=" crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script>
 
 <!-- pkgdown -->
 <link href="../pkgdown.css" rel="stylesheet">
@@ -60,25 +64,24 @@ The coercion system in vctrs is designed to make combination of multiple
 inputs consistent and extensible. Combinations occur in many places,
 such as row-binding, joins, subset-assignment, or grouped summary
 functions that use the split-apply-combine strategy. For example:vec_c(TRUE, 1)
-#&amp;gt; [1] 1 1
+#&amp;amp;gt; [1] 1 1
 
 vec_c(&quot;a&quot;, 1)
-#&amp;gt; Error: Can't combine `..1` &amp;lt;character&amp;gt; and `..2` &amp;lt;double&amp;gt;.
+#&amp;amp;gt; Error: Can't combine `..1` &amp;amp;lt;character&amp;amp;gt; and `..2` &amp;amp;lt;double&amp;amp;gt;.
 
 vec_rbind(
   data.frame(x = TRUE),
   data.frame(x = 1, y = 2)
 )
-#&amp;gt;   x  y
-#&amp;gt; 1 1 NA
-#&amp;gt; 2 1  2
+#&amp;amp;gt;   x  y
+#&amp;amp;gt; 1 1 NA
+#&amp;amp;gt; 2 1  2
 
 vec_rbind(
   data.frame(x = &quot;a&quot;),
   data.frame(x = 1, y = 2)
 )
-#&amp;gt; Error: Can't combine `..1$x` &amp;lt;character&amp;gt; and `..2$x` &amp;lt;double&amp;gt;.
-
+#&amp;amp;gt; Error: Can't combine `..1$x` &amp;amp;lt;character&amp;amp;gt; and `..2$x` &amp;amp;lt;double&amp;amp;gt;.
 One major goal of vctrs is to provide a central place for implementing
 the coercion methods that make generic combinations possible. The two
 relevant generics are vec_ptype2() and vec_cast(). They both take
@@ -122,17 +125,16 @@ the same as the memory representation. For example, factors are
 represented in memory with integers but their values are more related to
 character vectors than to round numbers:# Two factors are compatible
 vec_ptype2(factor(&quot;a&quot;), factor(&quot;b&quot;))
-#&amp;gt; factor(0)
-#&amp;gt; Levels: a b
+#&amp;amp;gt; factor(0)
+#&amp;amp;gt; Levels: a b
 
 # Factors are compatible with a character
 vec_ptype2(factor(&quot;a&quot;), &quot;b&quot;)
-#&amp;gt; character(0)
+#&amp;amp;gt; character(0)
 
 # But they are incompatible with integers
 vec_ptype2(factor(&quot;a&quot;), 1L)
-#&amp;gt; Error: Can't combine &amp;lt;factor&amp;lt;127a2&amp;gt;&amp;gt; and &amp;lt;integer&amp;gt;.
-
+#&amp;amp;gt; Error: Can't combine &amp;amp;lt;factor&amp;amp;lt;127a2&amp;amp;gt;&amp;amp;gt; and &amp;amp;lt;integer&amp;amp;gt;.
 
 Richness of type
 
@@ -145,8 +147,7 @@ two types is richer, it probably means they shouldn’t be automatically
 coercible.
 Let’s look again at what happens when we combine a factor and a
 character:vec_ptype2(factor(&quot;a&quot;), &quot;b&quot;)
-#&amp;gt; character(0)
-
+#&amp;amp;gt; character(0)
 The ptype2 method for &amp;lt;character&amp;gt; and &amp;lt;factor&amp;lt;&quot;a&quot;&amp;gt;&amp;gt; returns
 &amp;lt;character&amp;gt; because the former is a richer type. The factor can only
 contain &quot;a&quot; strings, whereas the character can contain any strings. In
@@ -163,13 +164,12 @@ Consistency and symmetry on permutation
 Each ptype2 method should strive to have exactly the same behaviour when
 the inputs are permuted. This is not always possible, for example factor
 levels are aggregated in order:vec_ptype2(factor(c(&quot;a&quot;, &quot;c&quot;)), factor(&quot;b&quot;))
-#&amp;gt; factor(0)
-#&amp;gt; Levels: a c b
+#&amp;amp;gt; factor(0)
+#&amp;amp;gt; Levels: a c b
 
 vec_ptype2(factor(&quot;b&quot;), factor(c(&quot;a&quot;, &quot;c&quot;)))
-#&amp;gt; factor(0)
-#&amp;gt; Levels: b a c
-
+#&amp;amp;gt; factor(0)
+#&amp;amp;gt; Levels: b a c
 In any case, permuting the input should not return a fundamentally
 different type or introduce an incompatible type error.
 
@@ -265,26 +265,24 @@ Being too strict with data frame combinations would cause too much pain
 because there are many data frame subclasses in the wild that don’t
 implement vctrs methods. We have decided to implement a special fallback
 behaviour for foreign data frames. Incompatible data frames fall back to
-a base data frame:df1 &amp;lt;- data.frame(x = 1)
-df2 &amp;lt;- structure(df1, class = c(&quot;foreign_df&quot;, &quot;data.frame&quot;))
+a base data frame:df1 &amp;amp;lt;- data.frame(x = 1)
+df2 &amp;amp;lt;- structure(df1, class = c(&quot;foreign_df&quot;, &quot;data.frame&quot;))
 
 vec_rbind(df1, df2)
-#&amp;gt; Warning: Can't combine &amp;lt;data.frame&amp;gt; and &amp;lt;foreign_df&amp;gt;; falling back to &amp;lt;data.frame&amp;gt;.
-#&amp;gt; ℹ Convert all inputs to the same class to avoid this warning.
-#&amp;gt; ℹ See &amp;lt;https://vctrs.r-lib.org/reference/faq-warning-convert-inputs.html&amp;gt;.
-#&amp;gt;   x
-#&amp;gt; 1 1
-#&amp;gt; 2 1
-
-When a tibble is involved, we fall back to tibble:df3 &amp;lt;- tibble::as_tibble(df1)
+#&amp;amp;gt; Warning: Can't combine &amp;amp;lt;data.frame&amp;amp;gt; and &amp;amp;lt;foreign_df&amp;amp;gt;; falling back to &amp;amp;lt;data.frame&amp;amp;gt;.
+#&amp;amp;gt; ℹ Convert all inputs to the same class to avoid this warning.
+#&amp;amp;gt; ℹ See &amp;amp;lt;https://vctrs.r-lib.org/reference/faq-warning-convert-inputs.html&amp;amp;gt;.
+#&amp;amp;gt;   x
+#&amp;amp;gt; 1 1
+#&amp;amp;gt; 2 1
+When a tibble is involved, we fall back to tibble:df3 &amp;amp;lt;- tibble::as_tibble(df1)
 
 vec_rbind(df1, df3)
-#&amp;gt; # A tibble: 2 x 1
-#&amp;gt;       x
-#&amp;gt;   &amp;lt;dbl&amp;gt;
-#&amp;gt; 1     1
-#&amp;gt; 2     1
-
+#&amp;amp;gt; # A tibble: 2 x 1
+#&amp;amp;gt;       x
+#&amp;amp;gt;   &amp;amp;lt;dbl&amp;amp;gt;
+#&amp;amp;gt; 1     1
+#&amp;amp;gt; 2     1
 These fallbacks are not ideal but they make sense because all data
 frames share a common data structure. This is not generally the case for
 vectors. For example factors and characters have different
@@ -299,7 +297,6 @@ class in R scripts.
 
 " />
 <meta property="og:image" content="https://vctrs.r-lib.org/logo.png" />
-<meta name="twitter:card" content="summary" />
 
 
 
@@ -327,7 +324,7 @@ class in R scripts.
 
   </head>
 
-  <body>
+  <body data-spy="scroll" data-target="#toc">
     <div class="container template-reference-topic">
       <header>
       <div class="navbar navbar-default navbar-fixed-top" role="navigation">
@@ -382,7 +379,12 @@ class in R scripts.
 </li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
-        
+        <li>
+  <a href="https://github.com/r-lib/vctrs/">
+    <span class="fab fa fab fa-github fa-lg"></span>
+     
+  </a>
+</li>
       </ul>
       
     </div><!--/.nav-collapse -->
@@ -397,7 +399,7 @@ class in R scripts.
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>FAQ - How does coercion work in vctrs?</h1>
-    
+    <small class="dont-index">Source: <a href='https://github.com/r-lib/vctrs/blob/master/R/faq-developer.R'><code>R/faq-developer.R</code></a></small>
     <div class="hidden name"><code>theory-faq-coercion.Rd</code></div>
     </div>
 
@@ -418,26 +420,25 @@ subclasses, see
 <p>The coercion system in vctrs is designed to make combination of multiple
 inputs consistent and extensible. Combinations occur in many places,
 such as row-binding, joins, subset-assignment, or grouped summary
-functions that use the split-apply-combine strategy. For example:<div class="r"></p><pre>vec_c(TRUE, 1)
-#&gt; [1] 1 1
+functions that use the split-apply-combine strategy. For example:<div class="r"></p><pre><span class='fu'><a href='vec_c.html'>vec_c</a></span>(<span class='fl'>TRUE</span>, <span class='fl'>1</span>)
+<span class='co'>#&amp;gt; [1] 1 1</span>
 
-vec_c("a", 1)
-#&gt; Error: Can't combine `..1` &lt;character&gt; and `..2` &lt;double&gt;.
+<span class='fu'><a href='vec_c.html'>vec_c</a></span>(<span class='st'>"a"</span>, <span class='fl'>1</span>)
+<span class='co'>#&amp;gt; Error: Can't combine `..1` &amp;lt;character&amp;gt; and `..2` &amp;lt;double&amp;gt;.</span>
 
-vec_rbind(
-  data.frame(x = TRUE),
-  data.frame(x = 1, y = 2)
+<span class='fu'><a href='vec_bind.html'>vec_rbind</a></span>(
+  <span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span>(<span class='kw'>x</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>),
+  <span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span>(<span class='kw'>x</span> <span class='kw'>=</span> <span class='fl'>1</span>, <span class='kw'>y</span> <span class='kw'>=</span> <span class='fl'>2</span>)
 )
-#&gt;   x  y
-#&gt; 1 1 NA
-#&gt; 2 1  2
+<span class='co'>#&amp;gt;   x  y</span>
+<span class='co'>#&amp;gt; 1 1 NA</span>
+<span class='co'>#&amp;gt; 2 1  2</span>
 
-vec_rbind(
-  data.frame(x = "a"),
-  data.frame(x = 1, y = 2)
+<span class='fu'><a href='vec_bind.html'>vec_rbind</a></span>(
+  <span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span>(<span class='kw'>x</span> <span class='kw'>=</span> <span class='st'>"a"</span>),
+  <span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span>(<span class='kw'>x</span> <span class='kw'>=</span> <span class='fl'>1</span>, <span class='kw'>y</span> <span class='kw'>=</span> <span class='fl'>2</span>)
 )
-#&gt; Error: Can't combine `..1$x` &lt;character&gt; and `..2$x` &lt;double&gt;.
-</pre><p></div></p>
+<span class='co'>#&amp;gt; Error: Can't combine `..1$x` &amp;lt;character&amp;gt; and `..2$x` &amp;lt;double&amp;gt;.</span></pre><p></div></p>
 <p>One major goal of vctrs is to provide a central place for implementing
 the coercion methods that make generic combinations possible. The two
 relevant generics are <code><a href='vec_ptype2.html'>vec_ptype2()</a></code> and <code><a href='vec_cast.html'>vec_cast()</a></code>. They both take
@@ -479,19 +480,18 @@ are a subset or a superset of the values of the other type. The notion
 of “value” is to be interpreted at a high level, in particular it is not
 the same as the memory representation. For example, factors are
 represented in memory with integers but their values are more related to
-character vectors than to round numbers:<div class="r"></p><pre># Two factors are compatible
-vec_ptype2(factor("a"), factor("b"))
-#&gt; factor(0)
-#&gt; Levels: a b
+character vectors than to round numbers:<div class="r"></p><pre><span class='co'># Two factors are compatible</span>
+<span class='fu'><a href='vec_ptype2.html'>vec_ptype2</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span>(<span class='st'>"a"</span>), <span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span>(<span class='st'>"b"</span>))
+<span class='co'>#&amp;gt; factor(0)</span>
+<span class='co'>#&amp;gt; Levels: a b</span>
 
-# Factors are compatible with a character
-vec_ptype2(factor("a"), "b")
-#&gt; character(0)
+<span class='co'># Factors are compatible with a character</span>
+<span class='fu'><a href='vec_ptype2.html'>vec_ptype2</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span>(<span class='st'>"a"</span>), <span class='st'>"b"</span>)
+<span class='co'>#&amp;gt; character(0)</span>
 
-# But they are incompatible with integers
-vec_ptype2(factor("a"), 1L)
-#&gt; Error: Can't combine &lt;factor&lt;127a2&gt;&gt; and &lt;integer&gt;.
-</pre><p></div></p>
+<span class='co'># But they are incompatible with integers</span>
+<span class='fu'><a href='vec_ptype2.html'>vec_ptype2</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span>(<span class='st'>"a"</span>), <span class='fl'>1L</span>)
+<span class='co'>#&amp;gt; Error: Can't combine &amp;lt;factor&amp;lt;127a2&amp;gt;&amp;gt; and &amp;lt;integer&amp;gt;.</span></pre><p></div></p>
 
 <h3>Richness of type</h3>
 
@@ -503,9 +503,8 @@ vector), richer behaviour (a <code>data.table</code> has richer behaviour than a
 two types is richer, it probably means they shouldn’t be automatically
 coercible.</p>
 <p>Let’s look again at what happens when we combine a factor and a
-character:<div class="r"></p><pre>vec_ptype2(factor("a"), "b")
-#&gt; character(0)
-</pre><p></div></p>
+character:<div class="r"></p><pre><span class='fu'><a href='vec_ptype2.html'>vec_ptype2</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span>(<span class='st'>"a"</span>), <span class='st'>"b"</span>)
+<span class='co'>#&amp;gt; character(0)</span></pre><p></div></p>
 <p>The ptype2 method for <code>&lt;character&gt;</code> and <code>&lt;factor&lt;"a"&gt;&gt;</code> returns
 <code>&lt;character&gt;</code> because the former is a richer type. The factor can only
 contain <code>"a"</code> strings, whereas the character can contain any strings. In
@@ -521,14 +520,13 @@ R where <code>stringsAsFactors</code> is still true by default.</p>
 
 <p>Each ptype2 method should strive to have exactly the same behaviour when
 the inputs are permuted. This is not always possible, for example factor
-levels are aggregated in order:<div class="r"></p><pre>vec_ptype2(factor(c("a", "c")), factor("b"))
-#&gt; factor(0)
-#&gt; Levels: a c b
+levels are aggregated in order:<div class="r"></p><pre><span class='fu'><a href='vec_ptype2.html'>vec_ptype2</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"a"</span>, <span class='st'>"c"</span>)), <span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span>(<span class='st'>"b"</span>))
+<span class='co'>#&amp;gt; factor(0)</span>
+<span class='co'>#&amp;gt; Levels: a c b</span>
 
-vec_ptype2(factor("b"), factor(c("a", "c")))
-#&gt; factor(0)
-#&gt; Levels: b a c
-</pre><p></div></p>
+<span class='fu'><a href='vec_ptype2.html'>vec_ptype2</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span>(<span class='st'>"b"</span>), <span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"a"</span>, <span class='st'>"c"</span>)))
+<span class='co'>#&amp;gt; factor(0)</span>
+<span class='co'>#&amp;gt; Levels: b a c</span></pre><p></div></p>
 <p>In any case, permuting the input should not return a fundamentally
 different type or introduce an incompatible type error.</p>
 
@@ -624,26 +622,24 @@ as <code><a href='df_ptype2.html'>df_ptype2()</a></code> and <code><a href='df_p
 because there are many data frame subclasses in the wild that don’t
 implement vctrs methods. We have decided to implement a special fallback
 behaviour for foreign data frames. Incompatible data frames fall back to
-a base data frame:<div class="r"></p><pre>df1 &lt;- data.frame(x = 1)
-df2 &lt;- structure(df1, class = c("foreign_df", "data.frame"))
+a base data frame:<div class="r"></p><pre><span class='no'>df1</span> <span class='kw'>&amp;</span><span class='no'>lt</span>;- <span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span>(<span class='kw'>x</span> <span class='kw'>=</span> <span class='fl'>1</span>)
+<span class='no'>df2</span> <span class='kw'>&amp;</span><span class='no'>lt</span>;- <span class='fu'><a href='https://rdrr.io/r/base/structure.html'>structure</a></span>(<span class='no'>df1</span>, <span class='kw'>class</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"foreign_df"</span>, <span class='st'>"data.frame"</span>))
 
-vec_rbind(df1, df2)
-#&gt; Warning: Can't combine &lt;data.frame&gt; and &lt;foreign_df&gt;; falling back to &lt;data.frame&gt;.
-#&gt; ℹ Convert all inputs to the same class to avoid this warning.
-#&gt; ℹ See &lt;https://vctrs.r-lib.org/reference/faq-warning-convert-inputs.html&gt;.
-#&gt;   x
-#&gt; 1 1
-#&gt; 2 1
-</pre><p></div></p>
-<p>When a tibble is involved, we fall back to tibble:<div class="r"></p><pre>df3 &lt;- tibble::as_tibble(df1)
+<span class='fu'><a href='vec_bind.html'>vec_rbind</a></span>(<span class='no'>df1</span>, <span class='no'>df2</span>)
+<span class='co'>#&amp;gt; Warning: Can't combine &amp;lt;data.frame&amp;gt; and &amp;lt;foreign_df&amp;gt;; falling back to &amp;lt;data.frame&amp;gt;.</span>
+<span class='co'>#&amp;gt; ℹ Convert all inputs to the same class to avoid this warning.</span>
+<span class='co'>#&amp;gt; ℹ See &amp;lt;https://vctrs.r-lib.org/reference/faq-warning-convert-inputs.html&amp;gt;.</span>
+<span class='co'>#&amp;gt;   x</span>
+<span class='co'>#&amp;gt; 1 1</span>
+<span class='co'>#&amp;gt; 2 1</span></pre><p></div></p>
+<p>When a tibble is involved, we fall back to tibble:<div class="r"></p><pre><span class='no'>df3</span> <span class='kw'>&amp;</span><span class='no'>lt</span>;- <span class='kw pkg'>tibble</span><span class='kw ns'>::</span><span class='fu'><a href='https://tibble.tidyverse.org/reference/as_tibble.html'>as_tibble</a></span>(<span class='no'>df1</span>)
 
-vec_rbind(df1, df3)
-#&gt; # A tibble: 2 x 1
-#&gt;       x
-#&gt;   &lt;dbl&gt;
-#&gt; 1     1
-#&gt; 2     1
-</pre><p></div></p>
+<span class='fu'><a href='vec_bind.html'>vec_rbind</a></span>(<span class='no'>df1</span>, <span class='no'>df3</span>)
+<span class='co'>#&amp;gt; # A tibble: 2 x 1</span>
+<span class='co'>#&amp;gt;       x</span>
+<span class='co'>#&amp;gt;   &amp;lt;dbl&amp;gt;</span>
+<span class='co'>#&amp;gt; 1     1</span>
+<span class='co'>#&amp;gt; 2     1</span></pre><p></div></p>
 <p>These fallbacks are not ideal but they make sense because all data
 frames share a common data structure. This is not generally the case for
 vectors. For example factors and characters have different
@@ -663,11 +659,10 @@ class in R scripts.</p>
 
 
   </div>
-  <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
-    <h2>Contents</h2>
-    <ul class="nav nav-pills nav-stacked">
-    </ul>
-
+  <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
+    <nav id="toc" data-toggle="toc" class="sticky-top">
+      <h2 data-toc-skip>Contents</h2>
+    </nav>
   </div>
 </div>
 
@@ -678,7 +673,7 @@ class in R scripts.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.4.1.9000.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.9000.</p>
 </div>
 
       </footer>
