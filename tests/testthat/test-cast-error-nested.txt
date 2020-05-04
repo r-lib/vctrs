@@ -11,12 +11,12 @@ Can't convert <factor<bd40e>> to <double>.
 
 vec_cast(x, y):
 
-Can't convert `a$b` <character> to `a$b` <double>. 
+Can't convert `a$b` <character> to match type of `a$b` <double>. 
 
 
 vec_cast(x, y):
 
-Can't convert `a$b` <factor<bd40e>> to `a$b` <double>. 
+Can't convert `a$b` <factor<bd40e>> to match type of `a$b` <double>. 
 
 
 vec_cast_common(x, y):

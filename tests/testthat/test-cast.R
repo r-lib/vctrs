@@ -1,5 +1,14 @@
 context("test-cast")
 
+test_that("vec_cast() has helpful error messages", {
+  verify_output(test_path("error", "test-cast.txt"), {
+    "# Casting to named argument mentions 'match type <foo>'"
+    vec_cast(1, "", x_arg = "foo", to_arg = "bar")
+    vec_cast(1, "", x_arg = "foo")
+  })
+})
+
+
 # vec_cast ---------------------------------------------------------------
 
 test_that("new classes are uncoercible by default", {

@@ -242,6 +242,9 @@ cnd_type_message <- function(x,
     return(message)
   }
 
+  x_arg <- arg_as_string(x_arg)
+  y_arg <- arg_as_string(y_arg)
+
   if (nzchar(x_arg)) {
     x_name <- paste0(" `", x_arg, "` ")
   } else {
@@ -286,10 +289,13 @@ cnd_type_message <- function(x,
     end <- glue::glue("; falling back to {fallback}.")
   }
 
-  glue_lines(
-    "Can't {action}{x_name}<{x_type}> {separator}{y_name}<{y_type}>{end}",
-    details
-  )
+  if (action == "convert" && nzchar(y_arg)) {
+    header <- glue::glue("Can't convert{x_name}<{x_type}> to match type of{y_name}<{y_type}>{end}")
+  } else {
+    header <- glue::glue("Can't {action}{x_name}<{x_type}> {separator}{y_name}<{y_type}>{end}")
+  }
+
+  paste_line(header, details)
 }
 
 cnd_type_message_type_label <- function(x) {
