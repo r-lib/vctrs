@@ -27,6 +27,9 @@ The following errors are caused by breaking changes.
 
 ## Breaking changes
 
+* The minimum required version of R has been increased to 3.3.0. This is
+  consistent with our commitment to support the last 5 versions of R.
+
 * Double-dispatch methods for `vec_ptype2()` and `vec_cast()` are no
   longer inherited (#710). Class implementers must implement one set
   of methods for each compatible class.
