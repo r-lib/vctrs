@@ -263,6 +263,9 @@ The following errors are caused by breaking changes.
 * Fixed clang-UBSAN error "nan is outside the range of representable
   values of type 'int'" (#902).
 
+* Fixed compilation of stability vignette following the date
+  conversion changes on R-devel.
+
 
 # vctrs 0.2.4
 

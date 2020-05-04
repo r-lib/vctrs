@@ -162,18 +162,26 @@ c(FALSE, list(1))
 vec_c(FALSE, list(1))
 ```
 
-### Non-vectors
+### Incompatible vectors and non-vectors
 
-As far as I can tell, `c()` never throws an error. No matter how bizarre the inputs, it always returns something:
+In general, most base methods do not throw an error:
 
 ```{r}
-c(Sys.Date(), factor("x"), "x")
+c(10.5, factor("x"))
 ```
 
 If the inputs aren't vectors, `c()` automatically puts them in a list:
 
 ```{r}
 c(mean, globalenv())
+```
+
+For numeric versions, this depends on the order of inputs. Version first is an error, otherwise the input is wrapped in a list:
+
+```{r, error = TRUE}
+c(getRversion(), "x")
+
+c("x", getRversion())
 ```
 
 `vec_c()` throws an error if the inputs are not vectors or not automatically coercible:
@@ -183,6 +191,7 @@ vec_c(mean, globalenv())
 
 vec_c(Sys.Date(), factor("x"), "x")
 ```
+
 
 ### Factors
 
