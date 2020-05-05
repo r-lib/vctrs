@@ -191,7 +191,10 @@ SEXP vec_proxy_assign(SEXP proxy, SEXP index, SEXP value) {
 SEXP vec_proxy_assign_opts(SEXP proxy, SEXP index, SEXP value,
                            const enum vctrs_ownership ownership,
                            const struct vec_assign_opts* opts) {
+  int n_protect = 0;
+
   struct vctrs_proxy_info value_info = vec_proxy_info(value);
+  PROTECT_PROXY_INFO(&value_info, &n_protect);
 
   if (TYPEOF(proxy) != TYPEOF(value_info.proxy)) {
     Rf_error(
@@ -208,6 +211,7 @@ SEXP vec_proxy_assign_opts(SEXP proxy, SEXP index, SEXP value,
 
   PROTECT_INDEX index_pi;
   PROTECT_WITH_INDEX(index, &index_pi);
+  ++n_protect;
 
   if (vec_requires_fallback(value, value_info)) {
     index = compact_materialize(index);
@@ -218,12 +222,13 @@ SEXP vec_proxy_assign_opts(SEXP proxy, SEXP index, SEXP value,
   } else {
     out = PROTECT(vec_assign_switch(proxy, index, value_info.proxy, ownership, opts));
   }
+  ++n_protect;
 
   if (opts->assign_names) {
     out = vec_proxy_assign_names(out, index, value_info.proxy);
   }
 
-  UNPROTECT(2);
+  UNPROTECT(n_protect);
   return out;
 }
 
