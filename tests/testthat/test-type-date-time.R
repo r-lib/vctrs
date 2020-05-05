@@ -429,13 +429,16 @@ test_that("subclassed Dates / POSIXct / POSIXlt can be restored (#1015)", {
 test_that("default is error", {
   d <- as.Date("2018-01-01")
   dt <- as.POSIXct("2018-01-02 12:00")
+  lt <- as.POSIXlt(dt)
   t <- as.difftime(12, units = "hours")
   f <- factor("x")
 
   expect_error(vec_arith("+", d, f), class = "vctrs_error_incompatible_op")
   expect_error(vec_arith("+", dt, f), class = "vctrs_error_incompatible_op")
+  expect_error(vec_arith("+", lt, f), class = "vctrs_error_incompatible_op")
   expect_error(vec_arith("+", t, f), class = "vctrs_error_incompatible_op")
   expect_error(vec_arith("*", dt, t), class = "vctrs_error_incompatible_op")
+  expect_error(vec_arith("*", lt, t), class = "vctrs_error_incompatible_op")
   expect_error(vec_arith("*", d, t), class = "vctrs_error_incompatible_op")
   expect_error(vec_arith("!", t, MISSING()), class = "vctrs_error_incompatible_op")
 })
@@ -443,9 +446,17 @@ test_that("default is error", {
 test_that("date-time vs date-time", {
   d <- as.Date("2018-01-01")
   dt <- as.POSIXct(d)
+  lt <- as.POSIXlt(dt)
 
   expect_error(vec_arith("+", d, d), class = "vctrs_error_incompatible_op")
   expect_identical(vec_arith("-", d, d), d - d)
+
+  expect_error(vec_arith("+", dt, dt), class = "vctrs_error_incompatible_op")
+  expect_identical(vec_arith("-", dt, dt), dt - dt)
+
+  expect_error(vec_arith("+", lt, lt), class = "vctrs_error_incompatible_op")
+  expect_identical(vec_arith("-", lt, lt), lt - lt)
+
 
   expect_error(vec_arith("+", d, dt), class = "vctrs_error_incompatible_op")
   expect_identical(vec_arith("-", d, dt), difftime(d, dt))
@@ -453,21 +464,56 @@ test_that("date-time vs date-time", {
   expect_error(vec_arith("+", dt, d), class = "vctrs_error_incompatible_op")
   expect_identical(vec_arith("-", dt, d), difftime(dt, d))
 
-  expect_error(vec_arith("+", dt, dt), class = "vctrs_error_incompatible_op")
-  expect_identical(vec_arith("-", dt, dt), dt - dt)
+
+  expect_error(vec_arith("+", d, lt), class = "vctrs_error_incompatible_op")
+  expect_identical(vec_arith("-", d, lt), difftime(d, lt))
+
+  expect_error(vec_arith("+", lt, d), class = "vctrs_error_incompatible_op")
+  expect_identical(vec_arith("-", lt, d), difftime(lt, d))
+
+
+  expect_error(vec_arith("+", dt, lt), class = "vctrs_error_incompatible_op")
+  expect_identical(vec_arith("-", dt, lt), difftime(dt, lt))
+
+  expect_error(vec_arith("+", lt, dt), class = "vctrs_error_incompatible_op")
+  expect_identical(vec_arith("-", lt, dt), difftime(lt, dt))
 })
 
 test_that("date-time vs numeric", {
    d <- as.Date("2018-01-01")
-   dt <- as.POSIXct(d)
+   dt <- as.POSIXct("2018-01-01", tz = "America/New_York")
+   lt <- as.POSIXlt(dt)
 
    expect_identical(vec_arith("+", d, 1), d + 1)
    expect_identical(vec_arith("+", 1, d), d + 1)
    expect_identical(vec_arith("-", d, 1), d - 1)
    expect_error(vec_arith("-", 1, d), class = "vctrs_error_incompatible_op")
 
+   expect_identical(vec_arith("+", dt, 1), dt + 1)
+   expect_identical(vec_arith("+", 1, dt), dt + 1)
+   expect_identical(vec_arith("-", dt, 1), dt - 1)
+   expect_error(vec_arith("-", 1, dt), class = "vctrs_error_incompatible_op")
+
+   expect_identical(vec_arith("+", lt, 1), lt + 1)
+   expect_identical(vec_arith("+", 1, lt), lt + 1)
+   expect_identical(vec_arith("-", lt, 1), lt - 1)
+   expect_error(vec_arith("-", 1, lt), class = "vctrs_error_incompatible_op")
+
+
    expect_error(vec_arith("*", 1, d), class = "vctrs_error_incompatible_op")
    expect_error(vec_arith("*", d, 1), class = "vctrs_error_incompatible_op")
+
+   expect_error(vec_arith("*", 1, dt), class = "vctrs_error_incompatible_op")
+   expect_error(vec_arith("*", dt, 1), class = "vctrs_error_incompatible_op")
+
+   expect_error(vec_arith("*", 1, lt), class = "vctrs_error_incompatible_op")
+   expect_error(vec_arith("*", lt, 1), class = "vctrs_error_incompatible_op")
+})
+
+test_that("POSIXlt + numeric = POSIXct", {
+  lt <- as.POSIXlt("2018-01-01", tz = "America/New_York")
+  expect_s3_class(vec_arith("+", lt, 1), "POSIXct")
+  expect_s3_class(vec_arith("+", 1, lt), "POSIXct")
 })
 
 test_that("vec_arith() standardizes the `tzone` attribute", {
@@ -479,25 +525,48 @@ test_that("vec_arith() standardizes the `tzone` attribute", {
 test_that("date-time vs difftime", {
   d <- as.Date("2018-01-01")
   dt <- as.POSIXct("2018-01-01", tz = "UTC")
+  lt <- as.POSIXlt(dt)
   t <- as.difftime(1, units = "days")
   th <- as.difftime(c(1, 24), units = "hours")
 
-  expect_identical(vec_arith("+", dt, t), dt + t)
   expect_identical(vec_arith("+", d, t), d + t)
-  expect_identical(vec_arith("+", dt, th), dt + th)
+  expect_identical(vec_arith("+", t, d), t + d)
+
+  expect_identical(vec_arith("+", dt, t), dt + t)
+  expect_identical(vec_arith("+", t, dt), t + dt)
+
+  expect_identical(vec_arith("+", lt, t), lt + t)
+  expect_identical(vec_arith("+", t, lt), t + lt)
+
+
   expect_lossy(vec_arith("+", d, th), d + th, x = t, to = d)
-  expect_identical(vec_arith("-", dt, t), dt - t)
+  expect_lossy(vec_arith("+", th, d), th + d, x = t, to = d)
+
+  expect_identical(vec_arith("+", dt, th), dt + th)
+  expect_identical(vec_arith("+", th, dt), th + dt)
+
+  expect_identical(vec_arith("+", lt, th), lt + th)
+  expect_identical(vec_arith("+", th, lt), th + lt)
+
+
   expect_identical(vec_arith("-", d, t), d - t)
-  expect_identical(vec_arith("-", dt, th), dt - th)
-  expect_lossy(vec_arith("-", d, th), d - th, x = t, to = d)
-
-  expect_identical(vec_arith("+", t, dt), dt + t)
-  expect_identical(vec_arith("+", t, d), d + t)
-  expect_identical(vec_arith("+", th, dt), dt + th)
-  expect_lossy(vec_arith("+", th, d), d + th, x = t, to = d)
-
-  expect_error(vec_arith("-", t, dt), class = "vctrs_error_incompatible_op")
   expect_error(vec_arith("-", t, d), class = "vctrs_error_incompatible_op")
+
+  expect_identical(vec_arith("-", dt, t), dt - t)
+  expect_error(vec_arith("-", t, dt), class = "vctrs_error_incompatible_op")
+
+  expect_identical(vec_arith("-", lt, t), lt - t)
+  expect_error(vec_arith("-", t, lt), class = "vctrs_error_incompatible_op")
+
+
+  expect_lossy(vec_arith("-", d, th), d - th, x = t, to = d)
+  expect_error(vec_arith("-", th, d), class = "vctrs_error_incompatible_op")
+
+  expect_identical(vec_arith("-", dt, th), dt - th)
+  expect_error(vec_arith("-", th, dt), class = "vctrs_error_incompatible_op")
+
+  expect_identical(vec_arith("-", lt, th), lt - th)
+  expect_error(vec_arith("-", th, lt), class = "vctrs_error_incompatible_op")
 })
 
 test_that("difftime vs difftime/numeric", {
