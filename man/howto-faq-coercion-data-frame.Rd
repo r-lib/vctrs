@@ -143,42 +143,62 @@ frames:\if{html}{\out{<div class="r">}}\preformatted{vec_cbind(data.frame(x = 1:
 
 \subsection{A tibble example}{
 
-In this example we implement coercion methods for a tibble subclass:\if{html}{\out{<div class="r">}}\preformatted{# User constructor
-my_tibble <- function(...) \{
-  new_my_tibble(tibble::tibble(...))
+In this example we implement coercion methods for a tibble subclass that
+carries a colour as metadata:\if{html}{\out{<div class="r">}}\preformatted{# User constructor
+my_tibble <- function(colour = NULL, ...) \{
+  new_my_tibble(tibble::tibble(...), colour = colour)
 \}
 # Developer constructor
-new_my_tibble <- function(x) \{
+new_my_tibble <- function(x, colour = NULL) \{
   stopifnot(is.data.frame(x))
-  tibble::new_tibble(x, class = "my_tibble", nrow = nrow(x))
+  tibble::new_tibble(
+    x,
+    colour = colour,
+    class = "my_tibble",
+    nrow = nrow(x)
+  )
+\}
+
+df_colour <- function(x) \{
+  if (inherits(x, "my_tibble")) \{
+    attr(x, "colour")
+  \} else \{
+    NULL
+  \}
 \}
 
 #'@export
 print.my_tibble <- function(x, ...) \{
-  cat("<my_very_own_tibble_class>\n")
+  cat(sprintf("<my_tibble: \%s>\n", df_colour(x)))
   cli::cat_line(format(x)[-1])
 \}
 }\if{html}{\out{</div>}}
 
-This subclass is very simple. All it does is modify the header.\if{html}{\out{<div class="r">}}\preformatted{df <- my_tibble(x = 1, y = 1:2)
-
-df
-#> <my_very_own_tibble_class>
+This subclass is very simple. All it does is modify the header.\if{html}{\out{<div class="r">}}\preformatted{red <- my_tibble("red", x = 1, y = 1:2)
+red
+#> <my_tibble: red>
 #>       x     y
 #>   <dbl> <int>
 #> 1     1     1
 #> 2     1     2
 
-df[2]
-#> <my_very_own_tibble_class>
+red[2]
+#> <my_tibble: red>
 #>       y
 #>   <int>
 #> 1     1
 #> 2     2
+
+green <- my_tibble("green", z = TRUE)
+green
+#> <my_tibble: green>
+#>   z    
+#>   <lgl>
+#> 1 TRUE
 }\if{html}{\out{</div>}}
 
 Combinations do not work properly out of the box, instead vctrs falls
-back to a bare tibble:\if{html}{\out{<div class="r">}}\preformatted{vec_rbind(df, tibble::tibble(x = 10:12))
+back to a bare tibble:\if{html}{\out{<div class="r">}}\preformatted{vec_rbind(red, tibble::tibble(x = 10:12))
 #> Warning: Can't combine <my_tibble> and <tibble>; falling back to <tibble>.
 #> ℹ Convert all inputs to the same class to avoid this warning.
 #> ℹ See <https://vctrs.r-lib.org/reference/faq-warning-convert-inputs.html>.
@@ -193,31 +213,109 @@ back to a bare tibble:\if{html}{\out{<div class="r">}}\preformatted{vec_rbind(df
 }\if{html}{\out{</div>}}
 
 Instead of falling back to a data frame, we would like to return a
-\verb{<my_tibble>} when combined with a data frame or a tibble. This subclass
-of tibble is a supertype of tibble and data frame, i.e. it is the richer
-type.
+\verb{<my_tibble>} when combined with a data frame or a tibble. Because this
+subclass has more metadata than normal data frames (it has a colour), it
+is a \emph{supertype} of tibble and data frame, i.e. it is the richer type.
+This is similar to how a grouped tibble is a more general type than a
+tibble or a data frame. Conceptually, the latter are pinned to a single
+constant group.
 
-We’ll need to call our parent methods \code{\link[=tib_ptype2]{tib_ptype2()}}
-and \code{\link[=tib_cast]{tib_cast()}} and pass their results to our
-constructor. This is best wrapped in two functions to avoid repetition:\if{html}{\out{<div class="r">}}\preformatted{#' @export
-my_tib_cast <- function(x, to, ...) \{
-  new_my_tibble(tib_cast(x, to, ...))
-\}
-#' @export
-my_tib_ptype2 <- function(x, y, ...) \{
-  new_my_tibble(tib_ptype2(x, y, ...))
+The coercion methods for data frames operate in two steps:
+\itemize{
+\item They check for compatible subclass attributes. In our case the
+tibble colour has to be the same, or be undefined.
+\item They call their parent methods, in this case
+\code{\link[=tib_ptype2]{tib_ptype2()}} and \code{\link[=tib_cast]{tib_cast()}}
+because we have a subclass of tibble. This eventually calls the data
+frame methods \code{\link[=df_ptype2]{df_ptype2()}} and
+\code{\link[=tib_ptype2]{tib_ptype2()}} which match the columns and their
+types.
+}
+
+This process should usually be wrapped in two functions to avoid
+repetition. Consider exporting these if you expect your class to be
+derived by other subclasses.
+
+We first implement a helper to determine if two data frames have
+compatible colours. We use the \code{df_colour()} accessor which returns
+\code{NULL} when the data frame colour is undefined.\if{html}{\out{<div class="r">}}\preformatted{has_compatible_colours <- function(x, y) \{
+  x_colour <- df_colour(x) \%||\% df_colour(y)
+  y_colour <- df_colour(y) \%||\% x_colour
+  identical(x_colour, y_colour)
 \}
 }\if{html}{\out{</div>}}
 
-Let’s implement the coercion methods, starting with the self-self
+Next we implement the coercion helpers. If the colours are not
+compatible, we call \code{stop_incompatible_cast()} or
+\code{stop_incompatible_type()}. In simpler cases (like the data.table
+example), these methods do not need to take the arguments suffixed in
+\verb{_arg}. Here we do need to take these arguments so we can pass them to
+the \code{stop_} functions. They also should be passed to the parent methods.\if{html}{\out{<div class="r">}}\preformatted{#' @export
+my_tib_cast <- function(x, to, ..., x_arg = "", to_arg = "") \{
+  out <- tib_cast(x, to, ..., x_arg = x_arg, to_arg = to_arg)
+
+  if (!has_compatible_colours(x, to)) \{
+    stop_incompatible_cast(
+      x,
+      to,
+      x_arg = x_arg,
+      to_arg = to_arg,
+      details = "Can't combine colours."
+    )
+  \}
+
+  colour <- df_colour(x) \%||\% df_colour(to)
+  new_my_tibble(out, colour = colour)
+\}
+#' @export
+my_tib_ptype2 <- function(x, y, ..., x_arg = "", y_arg = "") \{
+  out <- tib_ptype2(x, y, ..., x_arg = x_arg, y_arg = y_arg)
+
+  if (!has_compatible_colours(x, y)) \{
+    stop_incompatible_type(
+      x,
+      y,
+      x_arg = x_arg,
+      y_arg = y_arg,
+      details = "Can't combine colours."
+    )
+  \}
+
+  colour <- df_colour(x) \%||\% df_colour(y)
+  new_my_tibble(out, colour = colour)
+\}
+}\if{html}{\out{</div>}}
+
+Let’s now implement the coercion methods, starting with the self-self
 methods.\if{html}{\out{<div class="r">}}\preformatted{#' @export
 vec_ptype2.my_tibble.my_tibble <- function(x, y, ...) \{
   my_tib_ptype2(x, y, ...)
 \}
 #' @export
-vec_cast.my_tibble.my_tibble <- function(x, y, ...) \{
-  my_tib_cast(x, y, ...)
+vec_cast.my_tibble.my_tibble <- function(x, to, ...) \{
+  my_tib_cast(x, to, ...)
 \}
+}\if{html}{\out{</div>}}
+
+We can now combine compatible instances of our class!\if{html}{\out{<div class="r">}}\preformatted{vec_rbind(red, red)
+#> <my_tibble: red>
+#>       x     y
+#>   <dbl> <int>
+#> 1     1     1
+#> 2     1     2
+#> 3     1     1
+#> 4     1     2
+
+vec_rbind(green, green)
+#> <my_tibble: green>
+#>   z    
+#>   <lgl>
+#> 1 TRUE 
+#> 2 TRUE
+
+vec_rbind(green, red)
+#> Error: Can't combine `..1` <my_tibble> and `..2` <my_tibble>.
+#> Can't combine colours.
 }\if{html}{\out{</div>}}
 
 The methods for combining our class with tibbles follow the same
@@ -234,17 +332,17 @@ vec_ptype2.tbl_df.my_tibble <- function(x, y, ...) \{
 
 For cast are careful about returning a tibble when casting to a tibble.
 Note the call to \code{vctrs::tib_cast()}:\if{html}{\out{<div class="r">}}\preformatted{#' @export
-vec_cast.my_tibble.tbl_df <- function(x, y, ...) \{
-  my_tib_cast(x, y, ...)
+vec_cast.my_tibble.tbl_df <- function(x, to, ...) \{
+  my_tib_cast(x, to, ...)
 \}
 #' @export
-vec_cast.tbl_df.my_tibble <- function(x, y, ...) \{
-  tib_cast(x, y, ...)
+vec_cast.tbl_df.my_tibble <- function(x, to, ...) \{
+  tib_cast(x, to, ...)
 \}
 }\if{html}{\out{</div>}}
 
-From this point, we get correct combinations with tibbles:\if{html}{\out{<div class="r">}}\preformatted{vec_rbind(df, tibble::tibble(x = 10:12))
-#> <my_very_own_tibble_class>
+From this point, we get correct combinations with tibbles:\if{html}{\out{<div class="r">}}\preformatted{vec_rbind(red, tibble::tibble(x = 10:12))
+#> <my_tibble: red>
 #>       x     y
 #>   <dbl> <int>
 #> 1     1     1
@@ -257,7 +355,7 @@ From this point, we get correct combinations with tibbles:\if{html}{\out{<div cl
 However we are not done yet. Because the coercion hierarchy is different
 from the class hierarchy, there is no inheritance of coercion methods.
 We’re not getting correct behaviour for data frames yet because we
-haven’t explicitly specified the methods for this class:\if{html}{\out{<div class="r">}}\preformatted{vec_rbind(df, data.frame(x = 10:12))
+haven’t explicitly specified the methods for this class:\if{html}{\out{<div class="r">}}\preformatted{vec_rbind(red, data.frame(x = 10:12))
 #> Warning: Can't combine <my_tibble> and <data.frame>; falling back to <tibble>.
 #> ℹ Convert all inputs to the same class to avoid this warning.
 #> ℹ See <https://vctrs.r-lib.org/reference/faq-warning-convert-inputs.html>.
@@ -281,17 +379,17 @@ vec_ptype2.data.frame.my_tibble <- function(x, y, ...) \{
 \}
 
 #' @export
-vec_cast.my_tibble.data.frame <- function(x, y, ...) \{
-  my_tib_cast(x, y, ...)
+vec_cast.my_tibble.data.frame <- function(x, to, ...) \{
+  my_tib_cast(x, to, ...)
 \}
 #' @export
-vec_cast.data.frame.my_tibble <- function(x, y, ...) \{
-  df_cast(x, y, ...)
+vec_cast.data.frame.my_tibble <- function(x, to, ...) \{
+  df_cast(x, to, ...)
 \}
 }\if{html}{\out{</div>}}
 
-This completes the implementation:\if{html}{\out{<div class="r">}}\preformatted{vec_rbind(df, data.frame(x = 10:12))
-#> <my_very_own_tibble_class>
+This completes the implementation:\if{html}{\out{<div class="r">}}\preformatted{vec_rbind(red, data.frame(x = 10:12))
+#> <my_tibble: red>
 #>       x     y
 #>   <dbl> <int>
 #> 1     1     1
