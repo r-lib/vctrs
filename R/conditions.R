@@ -296,20 +296,23 @@ stop_incompatible_size <- function(x,
   vec_assert(x_size, int(), 1)
   vec_assert(y_size, int(), 1)
 
+  x_arg <- arg_as_string(x_arg)
+  y_arg <- arg_as_string(y_arg)
+
   if (is_null(message)) {
     if (nzchar(x_arg)) {
-      x_name <- paste0("`", x_arg, "`, size")
+      x_tag <- glue::glue("`{x_arg}` (size {x_size})")
     } else {
-      x_name <- "vector, size"
+      x_tag <- glue::glue("size {x_size}")
     }
     if (nzchar(y_arg)) {
-      y_name <- paste0("`", y_arg, "`, size")
+      y_tag <- glue::glue("and `{y_arg}` (size {y_size})")
     } else {
-      y_name <- "vector, size"
+      y_tag <- glue::glue("to size {y_size}")
     }
 
     message <- glue_lines(
-      "No common size for {x_name} {x_size}, and {y_name} {y_size}.",
+      "Can't recycle {x_tag} {y_tag}.",
       details
     )
   }
