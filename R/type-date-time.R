@@ -590,3 +590,7 @@ vec_math.Date <- function(.fn, .x, ...) {
 vec_math.POSIXct <- function(.fn, .x, ...) {
   stop_unsupported(.x, .fn)
 }
+#' @export
+vec_math.POSIXlt <- function(.fn, .x, ...) {
+  stop_unsupported(.x, .fn)
+}
