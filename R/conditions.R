@@ -306,13 +306,13 @@ stop_incompatible_size <- function(x,
       x_tag <- glue::glue("size {x_size}")
     }
     if (nzchar(y_arg)) {
-      y_tag <- glue::glue("and `{y_arg}` (size {y_size})")
+      y_tag <- glue::glue("`{y_arg}` (size {y_size})")
     } else {
-      y_tag <- glue::glue("to size {y_size}")
+      y_tag <- glue::glue("size {y_size}")
     }
 
     message <- glue_lines(
-      "Can't recycle {x_tag} {y_tag}.",
+      "Can't recycle {x_tag} to match {y_tag}.",
       details
     )
   }
