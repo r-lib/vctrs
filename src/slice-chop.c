@@ -488,6 +488,10 @@ static SEXP vec_unchop(SEXP x,
   }
   PROTECT_WITH_INDEX(out_names, &out_names_pi);
 
+  const struct vec_assign_opts unchop_assign_opts = {
+    .assign_names = true
+  };
+
   for (R_len_t i = 0; i < x_size; ++i) {
     SEXP elt = VECTOR_ELT(x, i);
 
@@ -497,7 +501,8 @@ static SEXP vec_unchop(SEXP x,
 
     SEXP index = VECTOR_ELT(indices, i);
 
-    proxy = vec_proxy_assign(proxy, index, elt);
+    // Total ownership of `proxy` because it was freshly created with `vec_init()`
+    proxy = vec_proxy_assign_opts(proxy, index, elt, vctrs_ownership_total, &unchop_assign_opts);
     REPROTECT(proxy, proxy_pi);
 
     if (has_names) {
