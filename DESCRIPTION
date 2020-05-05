@@ -37,7 +37,7 @@ Suggests:
     dplyr (>= 0.8.5),
     generics,
     knitr,
-    pillar (>= 1.4.3.9001),
+    pillar (>= 1.4.4),
     pkgdown,
     rmarkdown,
     testthat (>= 2.3.0),
@@ -45,8 +45,6 @@ Suggests:
     withr,
     xml2,
     zeallot
-Remotes: 
-    r-lib/pillar
 VignetteBuilder: 
     knitr
 Encoding: UTF-8
