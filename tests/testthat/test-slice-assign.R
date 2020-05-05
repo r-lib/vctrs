@@ -590,6 +590,44 @@ test_that("can optionally assign names", {
   )
 })
 
+test_that("assignment requires that the value proxy is the same type as the output proxy", {
+  x <- foobar(1)
+  y <- foobar("a")
+
+  local_foobar_proxy()
+  local_methods(
+    vec_cast.vctrs_foobar.vctrs_foobar = function(x, to, ...) x
+  )
+
+  expect_error(
+    vec_assign(x, 1, y),
+    "`double` incompatible with `value` proxy of type `character`"
+  )
+})
+
+test_that("assignment allows a df `value`'s column to be a different type than its proxy (#1082)", {
+  x <- new_data_frame(list(x = foobar(1)))
+  y <- new_data_frame(list(x = foobar(2)))
+
+  local_methods(
+    # proxying foobar wraps it in a 1 col df
+    vec_proxy.vctrs_foobar = function(x, ...) {
+      attributes(x) <- NULL
+      new_data_frame(list(vec = x))
+    },
+    # restoring extracts the column
+    vec_restore.vctrs_foobar = function(x, to, ...) {
+      foobar(x$vec)
+    }
+  )
+
+  expect1 <- new_data_frame(list(x = foobar(c(1, 1))))
+  expect2 <- new_data_frame(list(x = foobar(2)))
+
+  expect_identical(vec_rbind(x, x), expect1)
+  expect_identical(vec_assign(x, 1, y), expect2)
+})
+
 test_that("monitoring: assignment to a data frame with unshared columns doesn't overwrite (#986)", {
   x <- new_df_unshared_col()
   value <- new_data_frame(list(x = 2))

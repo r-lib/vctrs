@@ -193,6 +193,15 @@ SEXP vec_proxy_assign_opts(SEXP proxy, SEXP index, SEXP value,
                            const struct vec_assign_opts* opts) {
   struct vctrs_proxy_info value_info = vec_proxy_info(value);
 
+  if (TYPEOF(proxy) != TYPEOF(value_info.proxy)) {
+    Rf_error(
+      "Internal error in `vec_proxy_assign_opts()`: "
+      "`proxy` of type `%s` incompatible with `value` proxy of type `%s`.",
+      Rf_type2char(TYPEOF(proxy)),
+      Rf_type2char(TYPEOF(value_info.proxy))
+    );
+  }
+
   // If a fallback is required, the `proxy` is identical to the output container
   // because no proxy method was called
   SEXP out = R_NilValue;
@@ -423,12 +432,6 @@ SEXP df_assign(SEXP x, SEXP index, SEXP value,
     // restore are not recursive so need to be done for each element
     // we recurse into. `vec_proxy_assign()` will proxy the `value_elt`.
     SEXP proxy_elt = PROTECT(vec_proxy(out_elt));
-
-    if (TYPEOF(proxy_elt) != TYPEOF(value_elt)) {
-      Rf_error("Internal error in `df_assign()`: Proxy of type `%s` incompatible with type `%s`.",
-               Rf_type2char(TYPEOF(proxy_elt)),
-               Rf_type2char(TYPEOF(value_elt)));
-    }
 
     SEXP assigned = PROTECT(vec_proxy_assign_opts(proxy_elt, index, value_elt, ownership, opts));
     assigned = vec_restore(assigned, out_elt, R_NilValue);
