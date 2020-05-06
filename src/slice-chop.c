@@ -439,8 +439,12 @@ static SEXP vec_unchop(SEXP x,
   x = PROTECT(vec_cast_common(x, ptype));
 
   SEXP x_names = PROTECT(r_names(x));
-  const bool has_outer_names = (x_names != R_NilValue);
-  const bool has_names = !is_data_frame(ptype) &&
+
+  bool has_outer_names = (x_names != R_NilValue);
+  bool assign_names = !Rf_inherits(name_spec, "rlang_zap");
+  bool has_names =
+    assign_names &&
+    !is_data_frame(ptype) &&
     (has_outer_names || list_has_inner_vec_names(x, x_size));
 
   // Element sizes are only required for applying the `name_spec`
@@ -489,7 +493,7 @@ static SEXP vec_unchop(SEXP x,
   PROTECT_WITH_INDEX(out_names, &out_names_pi);
 
   const struct vec_assign_opts unchop_assign_opts = {
-    .assign_names = true
+    .assign_names = assign_names
   };
 
   for (R_len_t i = 0; i < x_size; ++i) {
@@ -526,6 +530,11 @@ static SEXP vec_unchop(SEXP x,
     out_names = vec_as_names(out_names, name_repair);
     REPROTECT(out_names, out_names_pi);
     out = vec_set_names(out, out_names);
+  } else if (!assign_names) {
+    // FIXME: `vec_ptype2()` doesn't consistently zaps names, so `out`
+    // might have been initialised with names. This branch can be
+    // removed once #1020 is resolved.
+    out = vec_set_names(out, R_NilValue);
   }
 
   UNPROTECT(9);

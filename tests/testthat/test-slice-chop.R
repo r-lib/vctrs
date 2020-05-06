@@ -689,10 +689,30 @@ test_that("vec_unchop() does not support non-numeric S3 indices", {
 
 test_that("can ignore names in `vec_unchop()` by providing a `zap()` name-spec (#232)", {
   expect_error(vec_unchop(list(a = c(b = 1:2))))
-  expect_identical(vec_unchop(list(a = c(b = 1:2), b = 3L), name_spec = zap()), 1:3)
+  expect_identical(
+    vec_unchop(list(a = c(b = 1:2), b = 3L), name_spec = zap()),
+    1:3
+  )
+  expect_identical(
+    vec_unchop(
+      list(a = c(foo = 1:2), b = c(bar = 3L)),
+      indices = list(2:1, 3),
+      name_spec = zap()
+    ),
+    c(2L, 1L, 3L)
+  )
+
   verify_errors({
     expect_error(
       vec_unchop(list(a = c(b = letters), b = 3L), name_spec = zap()),
+      class = "vctrs_error_incompatible_type"
+    )
+    expect_error(
+      vec_unchop(
+        list(a = c(foo = 1:2), b = c(bar = "")),
+        indices = list(2:1, 3),
+        name_spec = zap()
+      ),
       class = "vctrs_error_incompatible_type"
     )
   })
@@ -731,5 +751,10 @@ test_that("vec_unchop() has informative error messages", {
 
     "# can ignore names in `vec_unchop()` by providing a `zap()` name-spec (#232)"
     vec_unchop(list(a = c(b = letters), b = 3L), name_spec = zap())
+    vec_unchop(
+        list(a = c(foo = 1:2), b = c(bar = "")),
+        indices = list(2:1, 3),
+        name_spec = zap()
+      )
   })
 })
