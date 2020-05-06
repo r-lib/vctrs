@@ -253,6 +253,7 @@ vec_ptype2.foo.bar &lt;- function(x, y, ...) new_foo()</code></pre>
 <li><p><code><a href="../reference/vec_ptype.html">vec_ptype()</a></code> gained an <code>x_arg</code> argument.</p></li>
 <li><p>New <code><a href="../reference/vec_size.html">list_sizes()</a></code> for computing the size of every element in a list. <code><a href="../reference/vec_size.html">list_sizes()</a></code> is to <code><a href="../reference/vec_size.html">vec_size()</a></code> as <code><a href="https://rdrr.io/r/base/lengths.html">lengths()</a></code> is to <code><a href="https://rdrr.io/r/base/length.html">length()</a></code>, except that it only supports lists. Atomic vectors and data frames result in an error.</p></li>
 <li><p><code><a href="../reference/new_data_frame.html">new_data_frame()</a></code> infers size from row names when <code>n = NULL</code> (<a href='https://github.com/r-lib/vctrs/issues/894'>#894</a>).</p></li>
+<li><p><code><a href="../reference/vec_c.html">vec_c()</a></code> now accepts <code><a href="https://rlang.r-lib.org/reference/zap.html">rlang::zap()</a></code> as <code>.name_spec</code> input. The returned vector is then always unnamed, and the names do not cause errors when they can’t be combined. They are still used to create more informative messages when the inputs have incompatible types (<a href='https://github.com/r-lib/vctrs/issues/232'>#232</a>).</p></li>
 </ul>
 </div>
 <div id="classes" class="section level2">

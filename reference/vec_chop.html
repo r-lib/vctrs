@@ -240,7 +240,10 @@ are passed as second argument.</p></li>
     </tr>
     <tr>
       <th>name_repair</th>
-      <td><p>How to repair names, see <code>repair</code> options in <code><a href='vec_as_names.html'>vec_as_names()</a></code>.</p></td>
+      <td><p>How to repair names, see <code>repair</code> options in
+<code><a href='vec_as_names.html'>vec_as_names()</a></code>.  Can also be <code><a href='https://rlang.r-lib.org/reference/zap.html'>rlang::zap()</a></code> to ignore names
+during concatenation. The names are still used to give
+informative error messages, e.g. with coercion errors.</p></td>
     </tr>
     </table>
 
