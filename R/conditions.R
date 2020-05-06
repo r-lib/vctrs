@@ -5,9 +5,15 @@
 #' These conditions have custom classes and structures to make
 #' testing easier.
 #'
-#' @param x,y Vectors
-#' @param subclass Use if you want to further customise the class.
+#' @param x,y,to Vectors
+#' @param subclass Use if you want to further customize the class.
 #' @param ...,class Only use these fields when creating a subclass.
+#' @param x_arg,y_arg,to_arg Argument names for `x`, `y`, and `to`. Used in
+#'   error messages to inform the user about the locations of incompatible
+#'   types.
+#' @param action An option to customize the incompatible type message depending
+#'   on the context. Errors thrown from [vec_ptype2()] use `"combine"` and
+#'   those thrown from [vec_cast()] use `"convert"`.
 #' @param details Any additional human readable details.
 #' @param message An overriding message for the error. `details` and
 #'   `message` are mutually exclusive, supplying both is an error.
@@ -81,103 +87,14 @@ stop_incompatible_type <- function(x,
                                    ...,
                                    x_arg,
                                    y_arg,
+                                   action = c("combine", "convert"),
                                    details = NULL,
                                    message = NULL,
                                    class = NULL) {
-  stop_incompatible_type_combine(
-    x = x,
-    y = y,
-    ...,
-    x_arg = x_arg,
-    y_arg = y_arg,
-    details = details,
-    message = message,
-    class = class
-  )
-}
+  vec_assert(x, arg = x_arg)
+  vec_assert(y, arg = y_arg)
 
-#' @rdname vctrs-conditions
-#' @export
-stop_incompatible_cast <- function(x,
-                                   y,
-                                   ...,
-                                   x_arg,
-                                   to_arg,
-                                   details = NULL,
-                                   message = NULL,
-                                   class = NULL) {
-  stop_incompatible_type_convert(
-    x = x,
-    y = y,
-    ...,
-    x_arg = x_arg,
-    y_arg = to_arg,
-    details = details,
-    message = message,
-    class = class
-  )
-}
-
-stop_incompatible_shape <- function(x, y, x_size, y_size, axis, x_arg, y_arg) {
-  details <- format_error_bullets(c(
-    x = glue::glue("Incompatible sizes {x_size} and {y_size} along axis {axis}.")
-  ))
-  stop_incompatible_type(x, y, x_arg = x_arg, y_arg = y_arg, details = details)
-}
-
-stop_incompatible_type_convert <- function(x,
-                                           y,
-                                           ...,
-                                           x_arg,
-                                           y_arg,
-                                           details = NULL,
-                                           message = NULL,
-                                           class = NULL) {
-  stop_incompatible_type_impl(
-    x = x,
-    y = y,
-    action = "convert",
-    ...,
-    x_arg = x_arg,
-    y_arg = y_arg,
-    details = details,
-    message = message,
-    class = class
-  )
-}
-
-stop_incompatible_type_combine <- function(x,
-                                           y,
-                                           ...,
-                                           x_arg,
-                                           y_arg,
-                                           details = NULL,
-                                           message = NULL,
-                                           class = NULL) {
-  stop_incompatible_type_impl(
-    x = x,
-    y = y,
-    action = "combine",
-    ...,
-    x_arg = x_arg,
-    y_arg = y_arg,
-    details = details,
-    message = message,
-    class = class
-  )
-}
-
-stop_incompatible_type_impl <- function(x,
-                                        y,
-                                        action,
-                                        ...,
-                                        x_arg,
-                                        y_arg,
-                                        details,
-                                        message,
-                                        class) {
-  vec_assert(x)
-  vec_assert(y)
+  action <- arg_match(action)
 
   message <- cnd_type_message(
     x,
@@ -201,25 +118,44 @@ stop_incompatible_type_impl <- function(x,
   )
 }
 
+#' @rdname vctrs-conditions
+#' @export
+stop_incompatible_cast <- function(x,
+                                   to,
+                                   ...,
+                                   x_arg,
+                                   to_arg,
+                                   details = NULL,
+                                   message = NULL,
+                                   class = NULL) {
+  stop_incompatible_type(
+    x = x,
+    y = to,
+    ...,
+    x_arg = x_arg,
+    y_arg = to_arg,
+    action = "convert",
+    details = details,
+    message = message,
+    class = class
+  )
+}
+
+stop_incompatible_shape <- function(x, y, x_size, y_size, axis, x_arg, y_arg) {
+  details <- format_error_bullets(c(
+    x = glue::glue("Incompatible sizes {x_size} and {y_size} along axis {axis}.")
+  ))
+  stop_incompatible_type(x, y, x_arg = x_arg, y_arg = y_arg, details = details)
+}
+
 type_actions <- c(
   "combine", "convert"
 )
 
-cnd_type_action <- function(action) {
-  if (!is_string(action, type_actions)) {
-    abort(paste0(
-      "Internal error: `action` must be either ",
-      "`combine` or `convert`."
-    ))
-  }
-
-  action
-}
-
 cnd_type_separator <- function(action) {
-  if (action == "combine") {
+  if (identical(action, "combine")) {
     "and"
-  } else if (action == "convert") {
+  } else if (identical(action, "convert")) {
     "to"
   } else {
     abort("Internal error: Unknown `action`.")
@@ -257,7 +193,6 @@ cnd_type_message <- function(x,
     y_name <- " "
   }
 
-  action <- cnd_type_action(action)
   separator <- cnd_type_separator(action)
 
   if (is.data.frame(x) && is.data.frame(y)) {

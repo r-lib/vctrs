@@ -15,6 +15,7 @@ stop_incompatible_type(
   ...,
   x_arg,
   y_arg,
+  action = c("combine", "convert"),
   details = NULL,
   message = NULL,
   class = NULL
@@ -22,7 +23,7 @@ stop_incompatible_type(
 
 stop_incompatible_cast(
   x,
-  y,
+  to,
   ...,
   x_arg,
   to_arg,
@@ -57,9 +58,17 @@ stop_incompatible_size(
 allow_lossy_cast(expr, x_ptype = NULL, to_ptype = NULL)
 }
 \arguments{
-\item{x, y}{Vectors}
+\item{x, y, to}{Vectors}
 
 \item{..., class}{Only use these fields when creating a subclass.}
+
+\item{x_arg, y_arg, to_arg}{Argument names for \code{x}, \code{y}, and \code{to}. Used in
+error messages to inform the user about the locations of incompatible
+types.}
+
+\item{action}{An option to customize the incompatible type message depending
+on the context. Errors thrown from \code{\link[=vec_ptype2]{vec_ptype2()}} use \code{"combine"} and
+those thrown from \code{\link[=vec_cast]{vec_cast()}} use \code{"convert"}.}
 
 \item{details}{Any additional human readable details.}
 
@@ -69,7 +78,7 @@ allow_lossy_cast(expr, x_ptype = NULL, to_ptype = NULL)
 \item{x_ptype, to_ptype}{Suppress only the casting errors where \code{x}
 or \code{to} match these \link[=vec_ptype]{prototypes}.}
 
-\item{subclass}{Use if you want to further customise the class.}
+\item{subclass}{Use if you want to further customize the class.}
 }
 \value{
 \verb{stop_incompatible_*()} unconditionally raise an error of class
