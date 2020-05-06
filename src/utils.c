@@ -1478,6 +1478,8 @@ SEXP chrs_function = NULL;
 SEXP chrs_empty = NULL;
 SEXP chrs_cast = NULL;
 SEXP chrs_error = NULL;
+SEXP chrs_combine = NULL;
+SEXP chrs_convert = NULL;
 
 SEXP syms_i = NULL;
 SEXP syms_n = NULL;
@@ -1523,7 +1525,7 @@ SEXP syms_from_dispatch = NULL;
 SEXP syms_df_fallback = NULL;
 SEXP syms_stop_incompatible_type = NULL;
 SEXP syms_stop_incompatible_size = NULL;
-SEXP syms_stop_incompatible_cast = NULL;
+SEXP syms_action = NULL;
 
 SEXP fns_bracket = NULL;
 SEXP fns_quote = NULL;
@@ -1676,6 +1678,8 @@ void vctrs_init_utils(SEXP ns) {
   chrs_empty = r_new_shared_character("");
   chrs_cast = r_new_shared_character("cast");
   chrs_error = r_new_shared_character("error");
+  chrs_combine = r_new_shared_character("combine");
+  chrs_convert = r_new_shared_character("convert");
 
   classes_tibble = r_new_shared_vector(STRSXP, 3);
 
@@ -1767,7 +1771,7 @@ void vctrs_init_utils(SEXP ns) {
   syms_df_fallback = Rf_install("vctrs:::df_fallback");
   syms_stop_incompatible_type = Rf_install("stop_incompatible_type");
   syms_stop_incompatible_size = Rf_install("stop_incompatible_size");
-  syms_stop_incompatible_cast = Rf_install("stop_incompatible_cast");
+  syms_action = Rf_install("action");
 
   fns_bracket = Rf_findVar(syms_bracket, R_BaseEnv);
   fns_quote = Rf_findVar(Rf_install("quote"), R_BaseEnv);

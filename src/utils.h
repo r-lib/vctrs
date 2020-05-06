@@ -433,6 +433,8 @@ extern SEXP chrs_function;
 extern SEXP chrs_empty;
 extern SEXP chrs_cast;
 extern SEXP chrs_error;
+extern SEXP chrs_combine;
+extern SEXP chrs_convert;
 
 extern SEXP syms_i;
 extern SEXP syms_n;
@@ -477,7 +479,7 @@ extern SEXP syms_from_dispatch;
 extern SEXP syms_df_fallback;
 extern SEXP syms_stop_incompatible_type;
 extern SEXP syms_stop_incompatible_size;
-extern SEXP syms_stop_incompatible_cast;
+extern SEXP syms_action;
 
 #define syms_names R_NamesSymbol
 

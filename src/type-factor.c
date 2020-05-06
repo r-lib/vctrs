@@ -50,11 +50,7 @@ SEXP ord_ptype2_validate(SEXP x,
   }
 
   if (!equal_object(x_levels, y_levels)) {
-    if (cast) {
-      stop_incompatible_cast(x, y, x_arg, y_arg);
-    } else {
-      stop_incompatible_type(x, y, x_arg, y_arg);
-    }
+    stop_incompatible_type(x, y, x_arg, y_arg, cast);
   }
 
   return x_levels;
