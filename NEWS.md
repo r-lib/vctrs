@@ -65,6 +65,8 @@ The following errors are caused by breaking changes.
   aligns it with `vec_ptype2()` now that they are restricted to the same
   conversions.
 
+* The `y` argument of `stop_incompatible_cast()` has been renamed to `to` to
+  better match `to_arg`.
 
 ## Type system
 
@@ -243,6 +245,11 @@ The following errors are caused by breaking changes.
 
 
 ## Conditions
+
+* `stop_incompatible_type()` now has an `action` argument for customizing
+  whether the coercion error came from `vec_ptype2()` or `vec_cast()`.
+  `stop_incompatible_cast()` is now a thin wrapper around
+  `stop_incompatible_type(action = "convert")`.
 
 * `stop_` functions now take `details` after the dots. This argument
   can no longer be passed by position.
