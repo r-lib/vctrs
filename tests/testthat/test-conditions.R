@@ -2,8 +2,8 @@ context("conditions")
 
 test_that("conditions inherit from `vctrs_error`", {
   expect_error(stop_incompatible(NULL, NULL), class = "vctrs_error")
-  expect_error(stop_incompatible_type(NULL, NULL), class = "vctrs_error")
-  expect_error(stop_incompatible_cast(NULL, NULL), class = "vctrs_error")
+  expect_error(stop_incompatible_type(NULL, NULL, x_arg = "x", y_arg = "y"), class = "vctrs_error")
+  expect_error(stop_incompatible_cast(NULL, NULL, x_arg = "x", to_arg = "to"), class = "vctrs_error")
   expect_error(stop_incompatible_op("", NULL, NULL), class = "vctrs_error")
   expect_error(stop_incompatible_size(NULL, NULL, 0, 0), class = "vctrs_error")
   expect_error(maybe_lossy_cast(NULL, NULL, NULL, TRUE, x_arg = "x", to_arg = "to"), class = "vctrs_error")
@@ -21,6 +21,13 @@ test_that("incompatible cast throws an incompatible type error", {
     stop_incompatible_cast(1, 1, x_arg = "x", to_arg = "to"),
     class = "vctrs_error_incompatible_type"
   )
+})
+
+test_that("incompatible type error validates `action`", {
+  verify_errors({
+    expect_error(stop_incompatible_type(1, 1, x_arg = "", y_arg = "", action = "c"))
+    expect_error(stop_incompatible_type(1, 1, x_arg = "", y_arg = "", action = 1))
+  })
 })
 
 test_that("can override arg in OOB conditions", {
@@ -139,6 +146,10 @@ test_that("ordered cast failures mention conversion", {
 })
 
 verify_output(test_path("error", "test-conditions.txt"), {
+  "# incompatible type error validates `action`"
+  stop_incompatible_type(1, 1, x_arg = "", y_arg = "", action = "conver")
+  stop_incompatible_type(1, 1, x_arg = "", y_arg = "", action = 1)
+
   "# can override arg in OOB conditions"
   with_subscript_data(
     vec_slice(set_names(letters), "foo"),

@@ -612,12 +612,8 @@ __attribute__((noreturn))
 void stop_incompatible_type(SEXP x,
                             SEXP y,
                             struct vctrs_arg* x_arg,
-                            struct vctrs_arg* y_arg);
-__attribute__((noreturn))
-void stop_incompatible_cast(SEXP x,
-                            SEXP y,
-                            struct vctrs_arg* x_arg,
-                            struct vctrs_arg* y_arg);
+                            struct vctrs_arg* y_arg,
+                            bool cast);
 __attribute__((noreturn))
 void stop_recycle_incompatible_size(R_len_t x_size, R_len_t size,
                                     struct vctrs_arg* x_arg);

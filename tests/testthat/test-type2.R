@@ -97,7 +97,7 @@ test_that("vec_ptype2() forwards argument tag", {
 })
 
 test_that("stop_incompatible_type() checks for scalars", {
-  expect_error(stop_incompatible_type(NA, foobar()), class = "vctrs_error_scalar_type")
+  expect_error(stop_incompatible_type(NA, foobar(), x_arg = "x", y_arg = "y"), class = "vctrs_error_scalar_type")
   expect_error(vec_ptype_common(NA, foobar()), class = "vctrs_error_scalar_type")
   expect_error(vec_ptype_common(foobar(), list()), class = "vctrs_error_scalar_type")
 })
