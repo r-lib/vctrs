@@ -195,6 +195,7 @@
 </ul>
 </li>
 <li><p><code><a href="../reference/vctrs-conditions.html">stop_incompatible_cast()</a></code> now throws an error of class <code>vctrs_error_incompatible_type</code> rather than <code>vctrs_error_incompatible_cast</code>. This means that <code><a href="../reference/vec_cast.html">vec_cast()</a></code> also throws errors of this class, which better aligns it with <code><a href="../reference/vec_ptype2.html">vec_ptype2()</a></code> now that they are restricted to the same conversions.</p></li>
+<li><p>The <code>y</code> argument of <code><a href="../reference/vctrs-conditions.html">stop_incompatible_cast()</a></code> has been renamed to <code>to</code> to better match <code>to_arg</code>.</p></li>
 </ul>
 </div>
 <div id="type-system" class="section level2">
@@ -285,6 +286,7 @@ vec_ptype2.foo.bar &lt;- function(x, y, ...) new_foo()</code></pre>
 <h2 class="hasAnchor">
 <a href="#conditions" class="anchor"></a>Conditions</h2>
 <ul>
+<li><p><code><a href="../reference/vctrs-conditions.html">stop_incompatible_type()</a></code> now has an <code>action</code> argument for customizing whether the coercion error came from <code><a href="../reference/vec_ptype2.html">vec_ptype2()</a></code> or <code><a href="../reference/vec_cast.html">vec_cast()</a></code>. <code><a href="../reference/vctrs-conditions.html">stop_incompatible_cast()</a></code> is now a thin wrapper around <code><a href="../reference/vctrs-conditions.html">stop_incompatible_type(action = "convert")</a></code>.</p></li>
 <li><p><code>stop_</code> functions now take <code>details</code> after the dots. This argument can no longer be passed by position.</p></li>
 <li><p>Supplying both <code>details</code> and <code>message</code> to the <code>stop_</code> functions is now an internal error.</p></li>
 <li><p><code>x_arg</code>, <code>y_arg</code>, and <code>to_arg</code> are now compulsory arguments in <code>stop_</code> functions like <code><a href="../reference/vctrs-conditions.html">stop_incompatible_type()</a></code>.</p></li>
