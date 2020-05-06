@@ -217,7 +217,8 @@ vec_ptype2_df_fallback <- function(x, y, df_fallback, x_arg = "", y_arg = "") {
   x_class <- class(x)[[1]]
   y_class <- class(y)[[1]]
 
-  if (df_fallback < 2L && !all(c(x_class, y_class) %in% c(classes, "tbl_df"))) {
+  if (df_fallback < DF_FALLBACK_QUIET &&
+      !all(c(x_class, y_class) %in% c(classes, "tbl_df"))) {
     fallback_class <- if (seen_tibble) "<tibble>" else "<data.frame>"
     msg <- cnd_type_message(
       x, y,

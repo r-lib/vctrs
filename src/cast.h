@@ -44,6 +44,8 @@ SEXP vec_cast_params(SEXP x,
   return vec_cast_opts(&opts);
 }
 
+SEXP vec_cast_common_params(SEXP xs, SEXP to, enum df_fallback df_fallback);
+
 SEXP vec_cast_dispatch(const struct cast_opts* opts,
                        enum vctrs_type x_type,
                        enum vctrs_type to_type,

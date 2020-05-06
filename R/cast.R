@@ -63,6 +63,11 @@ vec_cast_dispatch <- function(x, to, ..., x_arg = "", to_arg = "") {
 vec_cast_common <- function(..., .to = NULL) {
   .External2(vctrs_cast_common, .to)
 }
+vec_cast_common_params <- function(...,
+                                   .to = NULL,
+                                   .df_fallback = DF_FALLBACK_NONE) {
+  .External2(vctrs_cast_common_params, .to, .df_fallback)
+}
 
 #' @rdname vec_default_ptype2
 #' @inheritParams vec_cast

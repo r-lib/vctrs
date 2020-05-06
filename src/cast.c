@@ -222,17 +222,18 @@ SEXP vec_cast_e(const struct cast_opts* opts,
   return data.out;
 }
 
-
-// [[ include("vctrs.h") ]]
-SEXP vec_cast_common(SEXP xs, SEXP to) {
-  SEXP type = PROTECT(vec_ptype_common_params(xs, to, true));
+// [[ include("cast.h") ]]
+SEXP vec_cast_common_params(SEXP xs, SEXP to, enum df_fallback df_fallback) {
+  SEXP type = PROTECT(vec_ptype_common_params(xs, to, df_fallback));
 
   R_len_t n = Rf_length(xs);
   SEXP out = PROTECT(Rf_allocVector(VECSXP, n));
 
   for (R_len_t i = 0; i < n; ++i) {
     SEXP elt = VECTOR_ELT(xs, i);
-    SET_VECTOR_ELT(out, i, vec_cast(elt, type, args_empty, args_empty));
+    SET_VECTOR_ELT(out, i, vec_cast_params(elt, type,
+                                           args_empty, args_empty,
+                                           df_fallback));
   }
 
   SEXP names = PROTECT(Rf_getAttrib(xs, R_NamesSymbol));
@@ -240,6 +241,11 @@ SEXP vec_cast_common(SEXP xs, SEXP to) {
 
   UNPROTECT(3);
   return out;
+}
+
+// [[ include("vctrs.h") ]]
+SEXP vec_cast_common(SEXP xs, SEXP to) {
+  return vec_cast_common_params(xs, to, DF_FALLBACK_NONE);
 }
 
 // [[ register(external = TRUE) ]]
@@ -252,6 +258,20 @@ SEXP vctrs_cast_common(SEXP call, SEXP op, SEXP args, SEXP env) {
   SEXP out = vec_cast_common(dots, to);
 
   UNPROTECT(2);
+  return out;
+}
+
+// [[ register(external = TRUE) ]]
+SEXP vctrs_cast_common_params(SEXP call, SEXP op, SEXP args, SEXP env) {
+  args = CDR(args);
+
+  SEXP dots = PROTECT(rlang_env_dots_list(env));
+  SEXP to = PROTECT(Rf_eval(CAR(args), env)); args = CDR(args);
+  SEXP df_fallback = PROTECT(Rf_eval(CAR(args), env));
+
+  SEXP out = vec_cast_common_params(dots, to, r_int_get(df_fallback, 0));
+
+  UNPROTECT(3);
   return out;
 }
 

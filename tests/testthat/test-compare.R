@@ -230,6 +230,13 @@ test_that("can't supply NA as `na_equal`", {
   expect_error(vec_compare(NA, NA, na_equal = NA), "single `TRUE` or `FALSE`")
 })
 
+test_that("vec_compare() silently falls back to base data frame", {
+  expect_silent(expect_identical(
+    vec_compare(foobar(mtcars), foobar(tibble::as_tibble(mtcars))),
+    rep(0L, 32)
+  ))
+})
+
 # order/sort --------------------------------------------------------------
 
 test_that("can request NAs sorted first", {

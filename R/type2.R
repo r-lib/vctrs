@@ -131,6 +131,10 @@ vec_ptype2_params <- function(x,
   .Call(vctrs_ptype2_params, x, y, x_arg, y_arg, df_fallback)
 }
 
+DF_FALLBACK_NONE <- 0L
+DF_FALLBACK_WARN <- 1L
+DF_FALLBACK_QUIET <- 2L
+
 vec_typeof2 <- function(x, y) {
   .Call(vctrs_typeof2, x, y)
 }
