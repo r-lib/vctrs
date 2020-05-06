@@ -445,9 +445,9 @@ vec_arith.POSIXct.difftime <- function(op, x, y, ...) {
   y <- vec_cast(y, new_duration(units = "secs"))
 
   switch(op,
-         `+` = vec_restore(vec_arith_base(op, x, y), x),
-         `-` = vec_restore(vec_arith_base(op, x, y), x),
-         stop_incompatible_op(op, x, y)
+    `+` = vec_restore(vec_arith_base(op, x, y), x),
+    `-` = vec_restore(vec_arith_base(op, x, y), x),
+    stop_incompatible_op(op, x, y)
   )
 }
 #' @method vec_arith.difftime POSIXct
@@ -456,8 +456,8 @@ vec_arith.difftime.POSIXct <- function(op, x, y, ...) {
   x <- vec_cast(x, new_duration(units = "secs"))
 
   switch(op,
-         `+` = vec_restore(vec_arith_base(op, x, y), y),
-         stop_incompatible_op(op, x, y)
+    `+` = vec_restore(vec_arith_base(op, x, y), y),
+    stop_incompatible_op(op, x, y)
   )
 }
 #' @method vec_arith.POSIXlt difftime
