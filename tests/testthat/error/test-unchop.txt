@@ -72,3 +72,10 @@ Error: Must subset elements with a valid subscript vector.
 x Subscript has the wrong type `vctrs_foobar`.
 i It must be numeric.
 
+
+can ignore names in `vec_unchop()` by providing a `zap()` name-spec (#232)
+==========================================================================
+
+> vec_unchop(list(a = c(b = letters), b = 3L), name_spec = zap())
+Error: Can't combine `a` <character> and `b` <integer>.
+

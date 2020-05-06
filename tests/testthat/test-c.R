@@ -324,7 +324,7 @@ test_that("vec_implements_ptype2() and vec_c() fallback are compatible with old 
   expect_identical(vec_c(bar), bar)
 })
 
-test_that("can ignore names by providing a `zap()` name-spec (#232)", {
+test_that("can ignore names in `vec_c()` by providing a `zap()` name-spec (#232)", {
   expect_error(vec_c(a = c(b = 1:2)))
   expect_identical(vec_c(a = c(b = 1:2), b = 3L, .name_spec = zap()), 1:3)
   verify_errors({
