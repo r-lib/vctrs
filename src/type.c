@@ -185,7 +185,7 @@ SEXP vctrs_type_common(SEXP call, SEXP op, SEXP args, SEXP env) {
   SEXP types = PROTECT(rlang_env_dots_values(env));
   SEXP ptype = PROTECT(Rf_eval(CAR(args), env));
 
-  SEXP out = vec_ptype_common_params(types, ptype, false);
+  SEXP out = vec_ptype_common_params(types, ptype, DF_FALLBACK_NONE);
 
   UNPROTECT(2);
   return out;
