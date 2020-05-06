@@ -48,19 +48,24 @@ SEXP vec_ptype2_dispatch(const struct ptype2_opts* opts,
 
 // Initialised at load time
 static SEXP syms_vec_ptype2_default = NULL;
-static inline SEXP vec_ptype2_default(SEXP x,
-                                      SEXP y,
-                                      SEXP x_arg,
-                                      SEXP y_arg,
-                                      bool df_fallback) {
-  return vctrs_eval_mask6(syms_vec_ptype2_default,
-                          syms_x, x,
-                          syms_y, y,
-                          syms_x_arg, x_arg,
-                          syms_y_arg, y_arg,
-                          syms_from_dispatch, vctrs_shared_true,
-                          syms_df_fallback, r_lgl(df_fallback),
-                          vctrs_ns_env);
+
+static inline
+SEXP vec_ptype2_default(SEXP x,
+                        SEXP y,
+                        SEXP x_arg,
+                        SEXP y_arg,
+                        enum df_fallback df_fallback) {
+  SEXP df_fallback_obj = PROTECT(r_int(df_fallback));
+  SEXP out = vctrs_eval_mask6(syms_vec_ptype2_default,
+                              syms_x, x,
+                              syms_y, y,
+                              syms_x_arg, x_arg,
+                              syms_y_arg, y_arg,
+                              syms_from_dispatch, vctrs_shared_true,
+                              syms_df_fallback, df_fallback_obj,
+                              vctrs_ns_env);
+  UNPROTECT(1);
+  return out;
 }
 
 // [[ include("vctrs.h") ]]

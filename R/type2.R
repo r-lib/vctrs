@@ -85,13 +85,14 @@ vec_default_ptype2 <- function(x, y, ..., x_arg = "", y_arg = "") {
   }
 
   internal <- match_ptype2_params(...)
+  df_fallback <- internal$df_fallback
 
-  if (has_df_fallback() && internal$df_fallback) {
+  if (has_df_fallback() && df_fallback) {
     if (is_df_subclass(x) && is.data.frame(y)) {
-      return(vec_ptype2_df_fallback(x, y))
+      return(vec_ptype2_df_fallback(x, y, df_fallback))
     }
     if (is_df_subclass(y) && is.data.frame(x)) {
-      return(vec_ptype2_df_fallback(x, y))
+      return(vec_ptype2_df_fallback(x, y, df_fallback))
     }
   }
 
@@ -129,6 +130,10 @@ vec_ptype2_params <- function(x,
                               y_arg = "") {
   .Call(vctrs_ptype2_params, x, y, x_arg, y_arg, df_fallback)
 }
+
+DF_FALLBACK_NONE <- 0L
+DF_FALLBACK_WARN <- 1L
+DF_FALLBACK_QUIET <- 2L
 
 vec_typeof2 <- function(x, y) {
   .Call(vctrs_typeof2, x, y)

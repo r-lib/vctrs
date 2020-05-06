@@ -447,7 +447,7 @@ SEXP df_ptype2_loop(const struct ptype2_opts* opts,
 SEXP vctrs_df_cast_params(SEXP x, SEXP to, SEXP x_arg_, SEXP to_arg_, SEXP df_fallback_) {
   struct vctrs_arg x_arg = vec_as_arg(x_arg_);
   struct vctrs_arg to_arg = vec_as_arg(to_arg_);;
-  bool df_fallback = r_lgl_get(df_fallback_, 0);
+  enum df_fallback df_fallback = r_int_get(df_fallback_, 0);
 
   const struct cast_opts opts = {
     .x = x,

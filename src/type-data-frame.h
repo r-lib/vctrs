@@ -38,7 +38,7 @@ SEXP df_ptype2_params(SEXP x,
                       SEXP y,
                       struct vctrs_arg* x_arg,
                       struct vctrs_arg* y_arg,
-                      bool df_fallback) {
+                      enum df_fallback df_fallback) {
   const struct ptype2_opts opts = {
     .x = x,
     .y = y,

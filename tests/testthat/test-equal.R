@@ -221,6 +221,13 @@ test_that("equal_scalar() compares", {
   expect_error(test_equal_scalar(expression(0), 0, expression(1), 1), "Unsupported")
 })
 
+test_that("vec_equal() silently falls back to base data frame", {
+  expect_silent(expect_identical(
+    vec_equal(foobar(mtcars), foobar(tibble::as_tibble(mtcars))),
+    rep(TRUE, 32)
+  ))
+})
+
 
 # object ------------------------------------------------------------------
 
