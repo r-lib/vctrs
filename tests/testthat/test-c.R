@@ -299,6 +299,31 @@ test_that("vec_c() falls back even when ptype is supplied", {
   )
 })
 
+test_that("vec_implements_ptype2() is FALSE for scalars", {
+  expect_false(vec_implements_ptype2(quote(foo)))
+})
+
+test_that("vec_implements_ptype2() and vec_c() fallback are compatible with old registration", {
+  foo <- structure(NA, class = "vctrs_implements_ptype2_false")
+  expect_false(vec_implements_ptype2(foo))
+
+  vec_ptype2.vctrs_implements_ptype2_true <- function(...) NULL
+  s3_register(
+    "vctrs::vec_ptype2",
+    "vctrs_implements_ptype2_true",
+    vec_ptype2.vctrs_implements_ptype2_true
+  )
+
+  bar <- structure(NA, class = "vctrs_implements_ptype2_true")
+  expect_true(vec_implements_ptype2(bar))
+
+  local_methods(
+    `c.vctrs_implements_ptype2_true` = function(...) stop("never called")
+  )
+
+  expect_identical(vec_c(bar), bar)
+})
+
 test_that("vec_c() has informative error messages", {
   verify_output(test_path("error", "test-c.txt"), {
     "# vec_c() fails with complex foreign S3 classes"

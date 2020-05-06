@@ -116,6 +116,7 @@ extern SEXP vctrs_new_datetime(SEXP, SEXP);
 extern SEXP vctrs_datetime_validate(SEXP);
 extern SEXP vctrs_ptype2_params(SEXP, SEXP, SEXP, SEXP, SEXP);
 extern SEXP vctrs_s3_find_method(SEXP, SEXP, SEXP);
+extern SEXP vctrs_implements_ptype2(SEXP);
 
 
 // Maturing
@@ -253,6 +254,7 @@ static const R_CallMethodDef CallEntries[] = {
   {"vctrs_datetime_validate",          (DL_FUNC) &vctrs_datetime_validate, 1},
   {"vctrs_ptype2_params",              (DL_FUNC) &vctrs_ptype2_params, 5},
   {"vctrs_s3_find_method",             (DL_FUNC) &vctrs_s3_find_method, 3},
+  {"vctrs_implements_ptype2",          (DL_FUNC) &vctrs_implements_ptype2, 1},
   {NULL, NULL, 0}
 };
 

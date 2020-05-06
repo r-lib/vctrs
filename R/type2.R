@@ -155,3 +155,7 @@ vec_is_subtype <- function(x, super, ..., x_arg = "", super_arg = "") {
     }
   )
 }
+
+vec_implements_ptype2 <- function(x) {
+  .Call(vctrs_implements_ptype2, x)
+}
