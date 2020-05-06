@@ -28,6 +28,11 @@ incompatible type error, we fall back to a base data frame or a tibble
 if we don’t know how to combine two data frame subclasses. It is still a
 good idea to specify the proper coercion behaviour for your data frame
 subclasses as soon as possible.
+
+We will see two examples in this guide. The first example is about a
+data frame subclass that has no particular attributes to manage. In the
+second example, we implement coercion methods for a tibble subclass that
+includes potentially incompatible attributes.
 \subsection{Roxygen workflow}{
 
 To implement methods for generics, first import the generics in your
@@ -69,7 +74,9 @@ people to derive from your class.
 \subsection{A \code{data.table} example}{
 
 This example is the actual implementation of vctrs coercion methods for
-\code{data.table}.
+\code{data.table}. This is a simple example because we don’t have to keep
+track of attributes for this class or manage incompatibilities. See the
+tibble section for a more complicated example.
 
 We first create the \code{dt_ptype2()} and \code{dt_cast()} helpers. They wrap
 around the parent methods \code{df_ptype2()} and \code{df_cast()}, and transform
@@ -144,7 +151,7 @@ frames:\if{html}{\out{<div class="r">}}\preformatted{vec_cbind(data.frame(x = 1:
 \subsection{A tibble example}{
 
 In this example we implement coercion methods for a tibble subclass that
-carries a colour as metadata:\if{html}{\out{<div class="r">}}\preformatted{# User constructor
+carries a colour as a scalar metadata:\if{html}{\out{<div class="r">}}\preformatted{# User constructor
 my_tibble <- function(colour = NULL, ...) \{
   new_my_tibble(tibble::tibble(...), colour = colour)
 \}
@@ -169,7 +176,7 @@ df_colour <- function(x) \{
 
 #'@export
 print.my_tibble <- function(x, ...) \{
-  cat(sprintf("<my_tibble: \%s>\n", df_colour(x)))
+  cat(sprintf("<\%s: \%s>\n", class(x)[[1]], df_colour(x)))
   cli::cat_line(format(x)[-1])
 \}
 }\if{html}{\out{</div>}}
@@ -247,10 +254,16 @@ compatible colours. We use the \code{df_colour()} accessor which returns
 
 Next we implement the coercion helpers. If the colours are not
 compatible, we call \code{stop_incompatible_cast()} or
-\code{stop_incompatible_type()}. In simpler cases (like the data.table
-example), these methods do not need to take the arguments suffixed in
-\verb{_arg}. Here we do need to take these arguments so we can pass them to
-the \code{stop_} functions. They also should be passed to the parent methods.\if{html}{\out{<div class="r">}}\preformatted{#' @export
+\code{stop_incompatible_type()}. These strict coercion semantics are
+justified because in this class colour is a \emph{data} attribute. If it were
+a non essential \emph{detail} attribute, like the timezone in a datetime, we
+would just standardise it to the value of the left-hand side.
+
+In simpler cases (like the data.table example), these methods do not
+need to take the arguments suffixed in \verb{_arg}. Here we do need to take
+these arguments so we can pass them to the \code{stop_} functions when we
+detect an incompatibility. They also should be passed to the parent
+methods.\if{html}{\out{<div class="r">}}\preformatted{#' @export
 my_tib_cast <- function(x, to, ..., x_arg = "", to_arg = "") \{
   out <- tib_cast(x, to, ..., x_arg = x_arg, to_arg = to_arg)
 

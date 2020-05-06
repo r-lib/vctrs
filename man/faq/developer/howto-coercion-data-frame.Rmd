@@ -12,6 +12,8 @@ Coercion of data frames occurs when different data frame classes are combined in
 
 vctrs is generally strict about the kind of automatic coercions that are performed when combining inputs. In the case of data frames we have decided to be a bit less strict for convenience. Instead of throwing an incompatible type error, we fall back to  a base data frame or a tibble if we don't know how to combine two data frame subclasses. It is still a good idea to specify the proper coercion behaviour for your data frame subclasses as soon as possible.
 
+We will see two examples in this guide. The first example is about a data frame subclass that has no particular attributes to manage. In the second example, we implement coercion methods for a tibble subclass that includes potentially incompatible attributes.
+
 
 ## Roxygen workflow
 
@@ -45,7 +47,7 @@ delayedAssign("data.table", {
 })
 ```
 
-This example is the actual implementation of vctrs coercion methods for `data.table`.
+This example is the actual implementation of vctrs coercion methods for `data.table`. This is a simple example because we don't have to keep track of attributes for this class or manage incompatibilities. See the tibble section for a more complicated example.
 
 We first create the `dt_ptype2()` and `dt_cast()` helpers. They wrap around the parent methods `df_ptype2()` and `df_cast()`, and transform the common type or converted input to a data table. You may want to export these helpers if you expect other packages to derive from your data frame class.
 
@@ -112,7 +114,7 @@ vec_cbind(data.frame(x = 1:3), data.table(y = "foo"))
 
 ## A tibble example
 
-In this example we implement coercion methods for a tibble subclass that carries a colour as metadata:
+In this example we implement coercion methods for a tibble subclass that carries a colour as a scalar metadata:
 
 ```{r}
 # User constructor
@@ -140,7 +142,7 @@ df_colour <- function(x) {
 
 #'@export
 print.my_tibble <- function(x, ...) {
-  cat(sprintf("<my_tibble: %s>\n", df_colour(x)))
+  cat(sprintf("<%s: %s>\n", class(x)[[1]], df_colour(x)))
   cli::cat_line(format(x)[-1])
 }
 ```
@@ -189,7 +191,9 @@ has_compatible_colours <- function(x, y) {
 }
 ```
 
-Next we implement the coercion helpers. If the colours are not compatible, we call `stop_incompatible_cast()` or `stop_incompatible_type()`. In simpler cases (like the data.table example), these methods do not need to take the arguments suffixed in `_arg`. Here we do need to take these arguments so we can pass them to the `stop_` functions. They also should be passed to the parent methods.
+Next we implement the coercion helpers. If the colours are not compatible, we call `stop_incompatible_cast()` or `stop_incompatible_type()`. These strict coercion semantics are justified because in this class colour is a _data_ attribute. If it were a non essential _detail_ attribute, like the timezone in a datetime, we would just standardise it to the value of the left-hand side.
+
+In simpler cases (like the data.table example), these methods do not need to take the arguments suffixed in `_arg`. Here we do need to take these arguments so we can pass them to the `stop_` functions when we detect an incompatibility. They also should be passed to the parent methods.
 
 ```{r}
 #' @export
