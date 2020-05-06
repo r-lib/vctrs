@@ -198,14 +198,14 @@ SEXP vctrs_ptype_common_params(SEXP call, SEXP op, SEXP args, SEXP env) {
   SEXP ptype = PROTECT(Rf_eval(CAR(args), env)); args = CDR(args);
   SEXP df_fallback = PROTECT(Rf_eval(CAR(args), env));
 
-  SEXP out = vec_ptype_common_params(types, ptype, r_lgl_get(df_fallback, 0));
+  SEXP out = vec_ptype_common_params(types, ptype, r_int_get(df_fallback, 0));
 
   UNPROTECT(3);
   return out;
 }
 
 // [[ include("ptype-common.h") ]]
-SEXP vec_ptype_common_params(SEXP dots, SEXP ptype, bool df_fallback) {
+SEXP vec_ptype_common_params(SEXP dots, SEXP ptype, enum df_fallback df_fallback) {
   if (!vec_is_partial(ptype)) {
     return vec_ptype(ptype, args_dot_ptype);
   }
@@ -228,7 +228,7 @@ static SEXP vctrs_type2_common(SEXP current,
                                struct counters* counters,
                                void* data) {
   int left = -1;
-  bool df_fallback = *((bool*) data);
+  enum df_fallback df_fallback = *((enum df_fallback*) data);
 
   const struct ptype2_opts opts = {
     .x = current,

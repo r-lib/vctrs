@@ -325,3 +325,14 @@ test_that("dictionary tools have informative errors", {
     vec_in(df1, df2, needles_arg = "n", haystack_arg = "h")
   })
 })
+
+test_that("vec_match() and vec_in() silently fall back to base data frame", {
+  expect_silent(expect_identical(
+    vec_match(foobar(mtcars), foobar(tibble::as_tibble(mtcars))),
+    1:32
+  ))
+  expect_silent(expect_identical(
+    vec_in(foobar(mtcars), foobar(tibble::as_tibble(mtcars))),
+    rep(TRUE, 32)
+  ))
+})

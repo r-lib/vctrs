@@ -24,7 +24,7 @@ SEXP vctrs_ptype2_params(SEXP x,
     .y = y,
     .x_arg = &x_arg_,
     .y_arg = &y_arg_,
-    .df_fallback = r_lgl_get(df_fallback, 0)
+    .df_fallback = r_int_get(df_fallback, 0)
   };
 
   int _left;
@@ -161,7 +161,7 @@ bool vec_is_coercible(const struct ptype2_opts* opts,
 SEXP vctrs_is_coercible(SEXP x, SEXP y, SEXP x_arg_, SEXP y_arg_, SEXP df_fallback_) {
   struct vctrs_arg x_arg = vec_as_arg(x_arg_);
   struct vctrs_arg y_arg = vec_as_arg(y_arg_);;
-  bool df_fallback = r_lgl_get(df_fallback_, 0);
+  enum df_fallback df_fallback = r_int_get(df_fallback_, 0);
 
   const struct ptype2_opts opts = {
     .x = x,

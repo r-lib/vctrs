@@ -128,19 +128,23 @@ SEXP vec_cast_switch_native(const struct cast_opts* opts,
 
 static SEXP syms_vec_cast_default = NULL;
 
-static inline SEXP vec_cast_default(SEXP x,
-                                    SEXP y,
-                                    SEXP x_arg,
-                                    SEXP to_arg,
-                                    bool df_fallback) {
-  return vctrs_eval_mask6(syms_vec_cast_default,
-                          syms_x, x,
-                          syms_to, y,
-                          syms_x_arg, x_arg,
-                          syms_to_arg, to_arg,
-                          syms_from_dispatch, vctrs_shared_true,
-                          syms_df_fallback, r_lgl(df_fallback),
-                          vctrs_ns_env);
+static inline
+SEXP vec_cast_default(SEXP x,
+                      SEXP y,
+                      SEXP x_arg,
+                      SEXP to_arg,
+                      enum df_fallback df_fallback) {
+  SEXP df_fallback_obj = PROTECT(r_int(df_fallback));
+  SEXP out = vctrs_eval_mask6(syms_vec_cast_default,
+                              syms_x, x,
+                              syms_to, y,
+                              syms_x_arg, x_arg,
+                              syms_to_arg, to_arg,
+                              syms_from_dispatch, vctrs_shared_true,
+                              syms_df_fallback, df_fallback_obj,
+                              vctrs_ns_env);
+  UNPROTECT(1);
+  return out;
 }
 
 static

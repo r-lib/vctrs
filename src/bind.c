@@ -160,7 +160,10 @@ static SEXP vec_rbind(SEXP xs, SEXP ptype, SEXP names_to, struct name_repair_opt
     }
     SEXP x = VECTOR_ELT(xs, i);
 
-    SEXP tbl = PROTECT(vec_cast_params(x, ptype, args_empty, args_empty, true));
+    SEXP tbl = vec_cast_params(x, ptype,
+                               args_empty, args_empty,
+                               DF_FALLBACK_WARN);
+    PROTECT(tbl);
     init_compact_seq(idx_ptr, counter, size, true);
 
     // Total ownership of `out` because it was freshly created with `vec_init()`

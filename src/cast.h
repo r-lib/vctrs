@@ -1,13 +1,15 @@
 #ifndef VCTRS_CAST_H
 #define VCTRS_CAST_H
 
+#include "ptype2.h"
+
 
 struct cast_opts {
   SEXP x;
   SEXP to;
   struct vctrs_arg* x_arg;
   struct vctrs_arg* to_arg;
-  bool df_fallback;
+  enum df_fallback df_fallback;
 };
 
 SEXP df_cast_opts(const struct cast_opts* opts);
@@ -31,7 +33,7 @@ SEXP vec_cast_params(SEXP x,
                      SEXP to,
                      struct vctrs_arg* x_arg,
                      struct vctrs_arg* to_arg,
-                     bool df_fallback) {
+                     enum df_fallback df_fallback) {
   const struct cast_opts opts = {
     .x = x,
     .to = to,

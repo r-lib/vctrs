@@ -2,12 +2,18 @@
 #define VCTRS_PTYPE2_H
 
 
+enum df_fallback {
+  DF_FALLBACK_NONE,
+  DF_FALLBACK_WARN,
+  DF_FALLBACK_QUIET
+};
+
 struct ptype2_opts {
   SEXP x;
   SEXP y;
   struct vctrs_arg* x_arg;
   struct vctrs_arg* y_arg;
-  bool df_fallback;
+  enum df_fallback df_fallback;
 };
 
 SEXP vec_ptype2_dispatch(const struct ptype2_opts* opts,
@@ -23,7 +29,7 @@ SEXP vec_ptype2_params(SEXP x,
                        SEXP y,
                        struct vctrs_arg* x_arg,
                        struct vctrs_arg* y_arg,
-                       bool df_fallback,
+                       enum df_fallback df_fallback,
                        int* left) {
   const struct ptype2_opts opts = {
     .x = x,

@@ -1,6 +1,10 @@
 #ifndef VCTRS_PTYPE_COMMON_H
 #define VCTRS_PTYPE_COMMON_H
 
-SEXP vec_ptype_common_params(SEXP dots, SEXP ptype, bool df_fallback);
+#include "ptype2.h"
+
+
+SEXP vec_ptype_common_params(SEXP dots, SEXP ptype, enum df_fallback df_fallback);
+
 
 #endif
