@@ -6,7 +6,7 @@
 #include "utils.h"
 
 
-static SEXP vec_rbind(SEXP xs, SEXP ptype, SEXP id, struct name_repair_opts* name_repair);
+static SEXP vec_rbind(SEXP xs, SEXP ptype, SEXP id, struct name_repair_opts* name_repair, SEXP name_spec);
 static SEXP as_df_row(SEXP x, struct name_repair_opts* name_repair);
 static SEXP as_df_row_impl(SEXP x, struct name_repair_opts* name_repair);
 struct name_repair_opts validate_bind_name_repair(SEXP name_repair, bool allow_minimal);
@@ -20,7 +20,8 @@ SEXP vctrs_rbind(SEXP call, SEXP op, SEXP args, SEXP env) {
   SEXP xs = PROTECT(rlang_env_dots_list(env));
   SEXP ptype = PROTECT(Rf_eval(CAR(args), env)); args = CDR(args);
   SEXP names_to = PROTECT(Rf_eval(CAR(args), env)); args = CDR(args);
-  SEXP name_repair = PROTECT(Rf_eval(CAR(args), env));
+  SEXP name_repair = PROTECT(Rf_eval(CAR(args), env)); args = CDR(args);
+  SEXP name_spec = PROTECT(Rf_eval(CAR(args), env));
 
   if (names_to != R_NilValue) {
     if (Rf_inherits(names_to, "rlang_zap")) {
@@ -36,14 +37,18 @@ SEXP vctrs_rbind(SEXP call, SEXP op, SEXP args, SEXP env) {
   struct name_repair_opts name_repair_opts = validate_bind_name_repair(name_repair, false);
   PROTECT_NAME_REPAIR_OPTS(&name_repair_opts);
 
-  SEXP out = vec_rbind(xs, ptype, names_to, &name_repair_opts);
+  SEXP out = vec_rbind(xs, ptype, names_to, &name_repair_opts, name_spec);
 
-  UNPROTECT(5);
+  UNPROTECT(6);
   return out;
 }
 
 
-static SEXP vec_rbind(SEXP xs, SEXP ptype, SEXP names_to, struct name_repair_opts* name_repair) {
+static SEXP vec_rbind(SEXP xs,
+                      SEXP ptype,
+                      SEXP names_to,
+                      struct name_repair_opts* name_repair,
+                      SEXP name_spec) {
   int nprot = 0;
   R_len_t n = Rf_length(xs);
 
@@ -176,7 +181,7 @@ static SEXP vec_rbind(SEXP xs, SEXP ptype, SEXP names_to, struct name_repair_opt
 
       if (has_names && nms_p[i] != strings_empty && !has_names_to) {
         if (rownames_type(rn) == ROWNAMES_IDENTIFIERS) {
-          rn = r_chr_paste_prefix(rn, CHAR(nms_p[i]), "...");
+          rn = apply_name_spec(name_spec, nms_p[i], rn, size);
         } else if (size > 1) {
           rn = r_seq_chr(CHAR(nms_p[i]), size);
         } else {
