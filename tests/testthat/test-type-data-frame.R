@@ -63,10 +63,22 @@ test_that("combining data frames with foreign classes uses fallback", {
   expect_identical(vec_ptype_common(foo, foo, foo), foo)
   expect_error(vec_ptype_common(foo, foo, df, foo), class = "vctrs_error_incompatible_type")
 
-  expect_identical(expect_df_fallback(vec_ptype2_fallback(foo, df)), new_fallback_df(df, c("vctrs_foobar", "data.frame")))
-  expect_identical(expect_df_fallback(vec_ptype2_fallback(df, foo)), new_fallback_df(df, c("data.frame", "vctrs_foobar")))
-  expect_identical(expect_df_fallback(vec_ptype_common_fallback(foo, df)), df)
-  expect_identical(expect_df_fallback(vec_ptype_common_fallback(df, foo)), df)
+  expect_identical(
+    expect_df_fallback(vec_ptype2_fallback(foo, df), force = TRUE),
+    new_fallback_df(df, c("vctrs_foobar", "data.frame"))
+  )
+  expect_identical(
+    expect_df_fallback(vec_ptype2_fallback(df, foo), force = TRUE),
+    new_fallback_df(df, c("data.frame", "vctrs_foobar"))
+  )
+  expect_identical(
+    expect_df_fallback(vec_ptype_common_fallback(foo, df), force = TRUE),
+    df
+  )
+  expect_identical(
+    expect_df_fallback(vec_ptype_common_fallback(df, foo), force = TRUE),
+    df
+  )
 
   cnds <- list()
   withCallingHandlers(

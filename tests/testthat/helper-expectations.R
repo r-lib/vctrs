@@ -89,6 +89,11 @@ expect_error_cnd <- function(object, class, message = NULL, ..., .fixed = TRUE) 
   expect_equal(cnd[names(exp_fields)], exp_fields)
 }
 
-expect_df_fallback <- function(expr) {
-  expect_warning({{ expr }}, "falling back to (<data.frame>|<tibble>)")
+expect_df_fallback <- function(expr, force = FALSE) {
+  # Fallback warning disabled by default
+  if (force) {
+    expect_warning({{ expr }}, "falling back to (<data.frame>|<tibble>)")
+  } else {
+    expr
+  }
 }

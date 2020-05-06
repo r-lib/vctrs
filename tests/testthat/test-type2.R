@@ -171,14 +171,20 @@ test_that("Subclasses of `tbl_df` do not have `tbl_df` common type (#481)", {
     class = "vctrs_error_incompatible_type"
   )
 
-  expect_df_fallback(expect_identical(
-    vec_ptype_common_fallback(quux, tibble()),
-    tibble()
-  ))
-  expect_df_fallback(expect_identical(
-    vec_ptype_common_fallback(tibble(), quux),
-    tibble()
-  ))
+  expect_df_fallback(
+    expect_identical(
+      vec_ptype_common_fallback(quux, tibble()),
+      tibble()
+    ),
+    force = TRUE
+  )
+  expect_df_fallback(
+    expect_identical(
+      vec_ptype_common_fallback(tibble(), quux),
+      tibble()
+    ),
+    force = TRUE
+  )
 })
 
 test_that("Column name encodings are handled correctly in the common type (#553)", {
@@ -272,10 +278,10 @@ test_that("common type warnings for data frames take attributes into account", {
   verify_errors({
     foobar_bud <- foobar(mtcars, bud = TRUE)
     foobar_boo <- foobar(mtcars, boo = TRUE)
-    expect_df_fallback(vec_ptype2_fallback(foobar_bud, foobar_boo))
+    expect_df_fallback(vec_ptype2_fallback(foobar_bud, foobar_boo), force = TRUE)
 
     "For reference, warning for incompatible classes"
-    expect_df_fallback(vec_ptype2_fallback(foobar(mtcars), foobaz(mtcars)))
+    expect_df_fallback(vec_ptype2_fallback(foobar(mtcars), foobaz(mtcars)), force = TRUE)
 
     "For reference, error when fallback is disabled"
     expect_error(vec_ptype2(foobar(mtcars), foobaz(mtcars)), class = "vctrs_error_incompatible_type")
