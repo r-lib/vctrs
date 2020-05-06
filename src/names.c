@@ -515,6 +515,10 @@ static SEXP glue_as_name_spec(SEXP spec);
 
 // [[ include("utils.h") ]]
 SEXP apply_name_spec(SEXP name_spec, SEXP outer, SEXP inner, R_len_t n) {
+  if (Rf_inherits(name_spec, "rlang_zap")) {
+    return R_NilValue;
+  }
+
   if (outer == R_NilValue) {
     return inner;
   }

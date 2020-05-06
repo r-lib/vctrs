@@ -190,6 +190,11 @@ The following errors are caused by breaking changes.
 
 * `new_data_frame()` infers size from row names when `n = NULL` (#894).
 
+* `vec_c()` now accepts `rlang::zap()` as `.name_spec` input. The
+  returned vector is then always unnamed, and the names do not cause
+  errors when they can't be combined. They are still used to create
+  more informative messages when the inputs have incompatible types (#232).
+
 
 ## Classes
 

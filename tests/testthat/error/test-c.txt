@@ -34,3 +34,10 @@ See <https://vctrs.r-lib.org/articles/s3-vector.html>.
 > with_c_foobar(vec_c(foobar(1), foobar(2), .ptype = ""))
 Error: Can't convert <vctrs_foobar> to <character>.
 
+
+can ignore names by providing a `zap()` name-spec (#232)
+========================================================
+
+> vec_c(a = c(b = letters), b = 1, .name_spec = zap())
+Error: Can't combine `a` <character> and `b` <double>.
+

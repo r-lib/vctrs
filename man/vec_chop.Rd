@@ -48,7 +48,10 @@ are passed as second argument.
 
 See the \link[=name_spec]{name specification topic}.}
 
-\item{name_repair}{How to repair names, see \code{repair} options in \code{\link[=vec_as_names]{vec_as_names()}}.}
+\item{name_repair}{How to repair names, see \code{repair} options in
+\code{\link[=vec_as_names]{vec_as_names()}}.  Can also be \code{\link[rlang:zap]{rlang::zap()}} to ignore names
+during concatenation. The names are still used to give
+informative error messages, e.g. with coercion errors.}
 }
 \value{
 \itemize{

@@ -63,7 +63,8 @@ SEXP vec_c(SEXP xs,
   int* idx_ptr = INTEGER(idx);
 
   SEXP xs_names = PROTECT(r_names(xs));
-  bool has_names = xs_names != R_NilValue || list_has_inner_vec_names(xs, n);
+  bool assign_names = !Rf_inherits(name_spec, "rlang_zap");
+  bool has_names = assign_names && (xs_names != R_NilValue || list_has_inner_vec_names(xs, n));
   has_names = has_names && !is_data_frame(ptype);
 
   PROTECT_INDEX out_names_pi;
@@ -74,7 +75,7 @@ SEXP vec_c(SEXP xs,
   R_len_t counter = 0;
 
   const struct vec_assign_opts c_assign_opts = {
-    .assign_names = true
+    .assign_names = assign_names
   };
 
   for (R_len_t i = 0; i < n; ++i) {
@@ -83,7 +84,6 @@ SEXP vec_c(SEXP xs,
       continue;
     }
 
-    // TODO
     SEXP x = VECTOR_ELT(xs, i);
     SEXP elt = PROTECT(vec_cast(x, ptype, args_empty, args_empty));
 
@@ -115,8 +115,12 @@ SEXP vec_c(SEXP xs,
   if (has_names) {
     out_names = PROTECT(vec_as_names(out_names, name_repair));
     out = vec_set_names(out, out_names);
-    REPROTECT(out, out_pi);
     UNPROTECT(1);
+  } else if (!assign_names) {
+    // FIXME: `vec_ptype2()` doesn't consistently zaps names, so `out`
+    // might have been initialised with names. This branch can be
+    // removed once #1020 is resolved.
+    out = vec_set_names(out, R_NilValue);
   }
 
   UNPROTECT(7);
