@@ -323,6 +323,11 @@ vec_arith.Date <- function(op, x, y, ...) UseMethod("vec_arith.Date", y)
 #' @export
 vec_arith.POSIXct <- function(op, x, y, ...) UseMethod("vec_arith.POSIXct", y)
 #' @rdname new_date
+#' @export vec_arith.POSIXlt
+#' @method vec_arith POSIXlt
+#' @export
+vec_arith.POSIXlt <- function(op, x, y, ...) UseMethod("vec_arith.POSIXlt", y)
+#' @rdname new_date
 #' @export vec_arith.difftime
 #' @method vec_arith difftime
 #' @export
@@ -334,6 +339,9 @@ vec_arith.Date.default <- function(op, x, y, ...) stop_incompatible_op(op, x, y)
 #' @method vec_arith.POSIXct default
 #' @export
 vec_arith.POSIXct.default <- function(op, x, y, ...) stop_incompatible_op(op, x, y)
+#' @method vec_arith.POSIXlt default
+#' @export
+vec_arith.POSIXlt.default <- function(op, x, y, ...) stop_incompatible_op(op, x, y)
 #' @method vec_arith.difftime default
 #' @export
 vec_arith.difftime.default <- function(op, x, y, ...) stop_incompatible_op(op, x, y)
@@ -354,12 +362,27 @@ vec_arith.POSIXct.POSIXct <- function(op, x, y, ...) {
     stop_incompatible_op(op, x, y)
   )
 }
+#' @method vec_arith.POSIXlt POSIXlt
+#' @export
+vec_arith.POSIXlt.POSIXlt <- vec_arith.POSIXct.POSIXct
 #' @method vec_arith.POSIXct Date
 #' @export
 vec_arith.POSIXct.Date <- vec_arith.POSIXct.POSIXct
 #' @method vec_arith.Date POSIXct
 #' @export
 vec_arith.Date.POSIXct <- vec_arith.POSIXct.POSIXct
+#' @method vec_arith.POSIXlt Date
+#' @export
+vec_arith.POSIXlt.Date <- vec_arith.POSIXct.POSIXct
+#' @method vec_arith.Date POSIXlt
+#' @export
+vec_arith.Date.POSIXlt <- vec_arith.POSIXct.POSIXct
+#' @method vec_arith.POSIXlt POSIXct
+#' @export
+vec_arith.POSIXlt.POSIXct <- vec_arith.POSIXct.POSIXct
+#' @method vec_arith.POSIXct POSIXlt
+#' @export
+vec_arith.POSIXct.POSIXlt <- vec_arith.POSIXct.POSIXct
 
 #' @method vec_arith.Date numeric
 #' @export
@@ -384,7 +407,38 @@ vec_arith.POSIXct.numeric <- vec_arith.Date.numeric
 #' @method vec_arith.numeric POSIXct
 #' @export
 vec_arith.numeric.POSIXct <- vec_arith.numeric.Date
+#' @method vec_arith.POSIXlt numeric
+#' @export
+vec_arith.POSIXlt.numeric <- function(op, x, y, ...) {
+  vec_arith.POSIXct.numeric(op, as.POSIXct(x), y, ...)
+}
+#' @method vec_arith.numeric POSIXlt
+#' @export
+vec_arith.numeric.POSIXlt <- function(op, x, y, ...) {
+  vec_arith.numeric.POSIXct(op, x, as.POSIXct(y), ...)
+}
 
+#' @method vec_arith.Date difftime
+#' @export
+vec_arith.Date.difftime <- function(op, x, y, ...) {
+  y <- vec_cast(y, new_duration(units = "days"))
+
+  switch(op,
+    `+` = ,
+    `-` = vec_restore(vec_arith_base(op, x, lossy_floor(y, x)), x),
+    stop_incompatible_op(op, x, y)
+  )
+}
+#' @method vec_arith.difftime Date
+#' @export
+vec_arith.difftime.Date <- function(op, x, y, ...) {
+  x <- vec_cast(x, new_duration(units = "days"))
+
+  switch(op,
+    `+` = vec_restore(vec_arith_base(op, lossy_floor(x, y), y), y),
+    stop_incompatible_op(op, x, y)
+  )
+}
 #' @method vec_arith.POSIXct difftime
 #' @export
 vec_arith.POSIXct.difftime <- function(op, x, y, ...) {
@@ -406,26 +460,15 @@ vec_arith.difftime.POSIXct <- function(op, x, y, ...) {
     stop_incompatible_op(op, x, y)
   )
 }
-#' @method vec_arith.Date difftime
+#' @method vec_arith.POSIXlt difftime
 #' @export
-vec_arith.Date.difftime <- function(op, x, y, ...) {
-  y <- vec_cast(y, new_duration(units = "days"))
-
-  switch(op,
-    `+` = ,
-    `-` = vec_restore(vec_arith_base(op, x, lossy_floor(y, x)), x),
-    stop_incompatible_op(op, x, y)
-  )
+vec_arith.POSIXlt.difftime <- function(op, x, y, ...) {
+  vec_arith.POSIXct.difftime(op, as.POSIXct(x), y, ...)
 }
-#' @method vec_arith.difftime Date
+#' @method vec_arith.difftime POSIXlt
 #' @export
-vec_arith.difftime.Date <- function(op, x, y, ...) {
-  x <- vec_cast(x, new_duration(units = "days"))
-
-  switch(op,
-    `+` = vec_restore(vec_arith_base(op, lossy_floor(x, y), y), y),
-    stop_incompatible_op(op, x, y)
-  )
+vec_arith.difftime.POSIXlt <- function(op, x, y, ...) {
+  vec_arith.difftime.POSIXct(op, x, as.POSIXct(y), ...)
 }
 
 #' @method vec_arith.difftime difftime
@@ -545,5 +588,9 @@ vec_math.Date <- function(.fn, .x, ...) {
 }
 #' @export
 vec_math.POSIXct <- function(.fn, .x, ...) {
+  stop_unsupported(.x, .fn)
+}
+#' @export
+vec_math.POSIXlt <- function(.fn, .x, ...) {
   stop_unsupported(.x, .fn)
 }

@@ -14,6 +14,7 @@
 \alias{vec_cast.difftime}
 \alias{vec_arith.Date}
 \alias{vec_arith.POSIXct}
+\alias{vec_arith.POSIXlt}
 \alias{vec_arith.difftime}
 \title{Date, date-time, and duration S3 classes}
 \usage{
@@ -42,6 +43,8 @@ new_duration(x = double(), units = c("secs", "mins", "hours", "days", "weeks"))
 \method{vec_arith}{Date}(op, x, y, ...)
 
 \method{vec_arith}{POSIXct}(op, x, y, ...)
+
+\method{vec_arith}{POSIXlt}(op, x, y, ...)
 
 \method{vec_arith}{difftime}(op, x, y, ...)
 }
