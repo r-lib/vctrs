@@ -324,6 +324,17 @@ test_that("vec_implements_ptype2() and vec_c() fallback are compatible with old 
   expect_identical(vec_c(bar), bar)
 })
 
+test_that("can ignore names by providing a `zap()` name-spec (#232)", {
+  expect_error(vec_c(a = c(b = 1:2)))
+  expect_identical(vec_c(a = c(b = 1:2), b = 3L, .name_spec = zap()), 1:3)
+  verify_errors({
+    expect_error(
+      vec_c(a = c(b = letters), b = 1, .name_spec = zap()),
+      class = "vctrs_error_incompatible_type"
+    )
+  })
+})
+
 test_that("vec_c() has informative error messages", {
   verify_output(test_path("error", "test-c.txt"), {
     "# vec_c() fails with complex foreign S3 classes"
@@ -339,5 +350,8 @@ test_that("vec_c() has informative error messages", {
     "# vec_c() fallback doesn't support `name_spec` or `ptype`"
     with_c_foobar(vec_c(foobar(1), foobar(2), .name_spec = "{outer}_{inner}"))
     with_c_foobar(vec_c(foobar(1), foobar(2), .ptype = ""))
+
+    "# can ignore names by providing a `zap()` name-spec (#232)"
+    vec_c(a = c(b = letters), b = 1, .name_spec = zap())
   })
 })
