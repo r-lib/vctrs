@@ -116,6 +116,23 @@ The following errors are caused by breaking changes.
 
 ## Compatibility and fallbacks
 
+* With the double dispatch changes, the coercion methods are no longer
+  inherited from parent classes. This is because the coercion
+  hierarchy is in principle different from the S3 hierarchy. A
+  consequence of this change is that subclasses that don't implement
+  coercion methods are now in principle incompatible.
+
+  This is particularly problematic with subclasses of data frames for
+  which throwing incompatible errors would be too incovenient for
+  users. To work around this, we have implemented a fallback to the
+  relevant base data frame class (either `data.frame` or `tbl_df`) in
+  coercion methods (#981). This fallback is silent unless you set the
+  `vctrs:::warn_on_fallback` option to `TRUE`.
+
+  In the future we may extend this fallback principle to other base
+  types when they are explicitly included in the class vector (such as
+  `"list"`).
+
 * Improved support for foreign classes in the combining operations
   `vec_c()`, `vec_rbind()`, and `vec_unchop()`. A foreign class is a
   class that doesn't implement `vec_ptype2()`. When all the objects to
@@ -135,12 +152,6 @@ The following errors are caused by breaking changes.
 * `vec_c()` and `vec_unchop()` now fall back to `base::c()` for S4 objects if
   the object doesn't implement `vec_ptype2()` but sets an S4 `c()`
   method (#919).
-
-* `vec_ptype2()` is now more permissive with subclasses of data frames
-  and falls back to a bare data frame when the classes do not have a
-  common type (#981). This is for convenience, users should normalise
-  their inputs to a common data frame class manually to avoid the
-  warning (if applicable, the classes could also implement a common type).
 
 
 ## Vector operations

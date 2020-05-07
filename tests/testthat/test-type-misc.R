@@ -64,21 +64,21 @@ test_that("common type of data.table and data.frame is data.table", {
 test_that("data.table and tibble do not have a common type", {
   import_from("data.table", "data.table")
 
-  expect_error(
-    vec_ptype2(data.table(x = TRUE), tibble(y = 2)),
-    class = "vctrs_error_incompatible_type"
+  expect_incompatible_df(
+    vec_ptype_common(data.table(x = TRUE), tibble(y = 2)),
+    tibble(x = lgl(), y = dbl())
   )
-  expect_error(
-    vec_ptype2(tibble(y = 2), data.table(x = TRUE)),
-    class = "vctrs_error_incompatible_type"
+  expect_incompatible_df(
+    vec_ptype_common(tibble(y = 2), data.table(x = TRUE)),
+    tibble(y = dbl(), x = lgl())
   )
 
-  expect_error(
+  expect_incompatible_df_cast(
     vec_cast(tibble(y = 2), data.table(x = TRUE, y = 1L)),
-    class = "vctrs_error_incompatible_type"
+    data.frame(x = NA, y = 2L)
   )
-  expect_error(
+  expect_incompatible_df_cast(
     vec_cast(data.table(y = 2), tibble(x = TRUE, y = 1L)),
-    class = "vctrs_error_incompatible_type"
+    tibble(x = NA, y = 2L)
   )
 })

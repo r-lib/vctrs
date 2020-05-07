@@ -162,23 +162,27 @@ test_that("Subclasses of `tbl_df` do not have `tbl_df` common type (#481)", {
   quux <- tibble()
   quux <- foobar(quux)
 
-  expect_error(
+  expect_incompatible_df(
     vec_ptype_common(quux, tibble()),
-    class = "vctrs_error_incompatible_type"
+    tibble()
   )
-  expect_error(
+  expect_incompatible_df(
     vec_ptype_common(tibble(), quux),
-    class = "vctrs_error_incompatible_type"
+    tibble()
   )
 
-  expect_df_fallback(expect_identical(
-    vec_ptype_common_fallback(quux, tibble()),
-    tibble()
-  ))
-  expect_df_fallback(expect_identical(
-    vec_ptype_common_fallback(tibble(), quux),
-    tibble()
-  ))
+  expect_df_fallback_warning(
+    expect_identical(
+      vec_ptype_common_fallback(quux, tibble()),
+      tibble()
+    )
+  )
+  expect_df_fallback_warning(
+    expect_identical(
+      vec_ptype_common_fallback(tibble(), quux),
+      tibble()
+    )
+  )
 })
 
 test_that("Column name encodings are handled correctly in the common type (#553)", {
@@ -264,7 +268,10 @@ test_that("common type errors don't mention columns if they are compatible", {
     df <- data.frame(x = 1, y = "")
     foo <- structure(df, class = c("vctrs_foo", "data.frame"))
     bar <- structure(df, class = c("vctrs_bar", "data.frame"))
-    expect_error(vec_cast(foo, bar), class = "vctrs_error_incompatible_type")
+    expect_error(
+      vec_cast_no_fallback(foo, bar),
+      class = "vctrs_error_incompatible_type"
+    )
   })
 })
 
@@ -272,13 +279,16 @@ test_that("common type warnings for data frames take attributes into account", {
   verify_errors({
     foobar_bud <- foobar(mtcars, bud = TRUE)
     foobar_boo <- foobar(mtcars, boo = TRUE)
-    expect_df_fallback(vec_ptype2_fallback(foobar_bud, foobar_boo))
+    expect_df_fallback_warning(vec_ptype2_fallback(foobar_bud, foobar_boo))
 
     "For reference, warning for incompatible classes"
-    expect_df_fallback(vec_ptype2_fallback(foobar(mtcars), foobaz(mtcars)))
+    expect_df_fallback_warning(vec_ptype2_fallback(foobar(mtcars), foobaz(mtcars)))
 
     "For reference, error when fallback is disabled"
-    expect_error(vec_ptype2(foobar(mtcars), foobaz(mtcars)), class = "vctrs_error_incompatible_type")
+    expect_error(
+      vec_ptype2_no_fallback(foobar(mtcars), foobaz(mtcars)),
+      class = "vctrs_error_incompatible_type"
+    )
   })
 })
 
@@ -337,7 +347,7 @@ test_that("vec_ptype2() errors have informative output", {
     df <- data.frame(x = 1, y = "")
     foo <- structure(df, class = c("vctrs_foo", "data.frame"))
     bar <- structure(df, class = c("vctrs_bar", "data.frame"))
-    vec_cast(foo, bar)
+    vec_cast_no_fallback(foo, bar)
 
     "# common type warnings for data frames take attributes into account"
     foobar_bud <- foobar(mtcars, bud = TRUE)
@@ -348,6 +358,6 @@ test_that("vec_ptype2() errors have informative output", {
     vec_ptype2_fallback(foobar(mtcars), foobaz(mtcars))
 
     "For reference, error when fallback is disabled"
-    vec_ptype2(foobar(mtcars), foobaz(mtcars))
+    vec_ptype2_no_fallback(foobar(mtcars), foobaz(mtcars))
   })
 })

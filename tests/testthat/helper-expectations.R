@@ -89,6 +89,24 @@ expect_error_cnd <- function(object, class, message = NULL, ..., .fixed = TRUE) 
   expect_equal(cnd[names(exp_fields)], exp_fields)
 }
 
-expect_df_fallback <- function(expr) {
+expect_incompatible_df <- function(x, fallback) {
+  if (is_true(peek_option("vctrs:::warn_on_fallback"))) {
+    x <- expect_df_fallback_warning(x)
+  }
+  expect_identical(x, fallback)
+}
+# Never warns so we don't get repeat warnings
+expect_incompatible_df_cast <- function(x, fallback) {
+  expect_identical(x, fallback)
+}
+
+expect_df_fallback_warning <- function(expr) {
   expect_warning({{ expr }}, "falling back to (<data.frame>|<tibble>)")
+}
+expect_df_fallback_warning_maybe <- function(expr) {
+  if (is_true(peek_option("vctrs:::warn_on_fallback"))) {
+    expect_warning({{ expr }}, "falling back to (<data.frame>|<tibble>)")
+  } else {
+    expr
+  }
 }

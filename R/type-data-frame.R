@@ -217,7 +217,7 @@ vec_ptype2_df_fallback <- function(x, y, df_fallback, x_arg = "", y_arg = "") {
   x_class <- class(x)[[1]]
   y_class <- class(y)[[1]]
 
-  if (df_fallback < DF_FALLBACK_QUIET &&
+  if (needs_fallback_warning(df_fallback) &&
       !all(c(x_class, y_class) %in% c(classes, "tbl_df"))) {
     fallback_class <- if (seen_tibble) "<tibble>" else "<data.frame>"
     msg <- cnd_type_message(
@@ -233,12 +233,6 @@ vec_ptype2_df_fallback <- function(x, y, df_fallback, x_arg = "", y_arg = "") {
       msg <- c(
         msg,
         incompatible_attrib_bullets()
-      )
-    } else {
-      msg <- c(
-        msg,
-        i = "Convert all inputs to the same class to avoid this warning.",
-        i = "See <https://vctrs.r-lib.org/reference/faq-warning-convert-inputs.html>."
       )
     }
 
@@ -332,8 +326,4 @@ df_lossy_cast <- function(out, x, to, ..., x_arg = "", to_arg = "") {
 
 is_informative_error.vctrs_error_cast_lossy_dropped <- function(x, ...) {
   FALSE
-}
-
-has_df_fallback <- function() {
-  !is_true(peek_option("vctrs:::disable_df_fallback"))
 }

@@ -58,6 +58,10 @@ vec_cast_dispatch <- function(x, to, ..., x_arg = "", to_arg = "") {
   UseMethod("vec_cast", to)
 }
 
+vec_cast_no_fallback <- function(x, to) {
+  vec_cast_common_params(x = x, .to = to, .df_fallback = DF_FALLBACK_NONE)$x
+}
+
 #' @export
 #' @rdname vec_cast
 vec_cast_common <- function(..., .to = NULL) {
@@ -65,7 +69,7 @@ vec_cast_common <- function(..., .to = NULL) {
 }
 vec_cast_common_params <- function(...,
                                    .to = NULL,
-                                   .df_fallback = DF_FALLBACK_NONE) {
+                                   .df_fallback = DF_FALLBACK_DEFAULT) {
   .External2(vctrs_cast_common_params, .to, .df_fallback)
 }
 
@@ -99,8 +103,16 @@ vec_default_cast <- function(x, to, ..., x_arg = "", to_arg = "") {
     return(x)
   }
 
-  if (has_df_fallback() && match_df_fallback(...)) {
-    out <- df_cast_params(x, to, ..., x_arg = x_arg, to_arg = to_arg, df_fallback = TRUE)
+  df_fallback <- match_df_fallback(...)
+  if (has_df_fallback(df_fallback) && is_df_subclass(x)) {
+    out <- df_cast_params(
+      x,
+      to,
+      ...,
+      x_arg = x_arg,
+      to_arg = to_arg,
+      df_fallback = df_fallback
+    )
 
     if (inherits(to, "tbl_df")) {
       out <- df_as_tibble(out)

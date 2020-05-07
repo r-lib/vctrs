@@ -206,9 +206,6 @@ green
 
 Combinations do not work properly out of the box, instead vctrs falls
 back to a bare tibble:\if{html}{\out{<div class="r">}}\preformatted{vec_rbind(red, tibble::tibble(x = 10:12))
-#> Warning: Can't combine <my_tibble> and <tibble>; falling back to <tibble>.
-#> ℹ Convert all inputs to the same class to avoid this warning.
-#> ℹ See <https://vctrs.r-lib.org/reference/faq-warning-convert-inputs.html>.
 #> # A tibble: 5 x 2
 #>       x     y
 #>   <dbl> <int>
@@ -369,9 +366,6 @@ However we are not done yet. Because the coercion hierarchy is different
 from the class hierarchy, there is no inheritance of coercion methods.
 We’re not getting correct behaviour for data frames yet because we
 haven’t explicitly specified the methods for this class:\if{html}{\out{<div class="r">}}\preformatted{vec_rbind(red, data.frame(x = 10:12))
-#> Warning: Can't combine <my_tibble> and <data.frame>; falling back to <tibble>.
-#> ℹ Convert all inputs to the same class to avoid this warning.
-#> ℹ See <https://vctrs.r-lib.org/reference/faq-warning-convert-inputs.html>.
 #> # A tibble: 5 x 2
 #>       x     y
 #>   <dbl> <int>

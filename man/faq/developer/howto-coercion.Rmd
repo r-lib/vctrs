@@ -2,6 +2,11 @@
 ```{r, child = "../setup.Rmd", include = FALSE}
 ```
 
+```{r, include = FALSE}
+old_warn_on_fallback <- options(`vctrs:::warn_on_fallback` = FALSE)
+knitr_defer(options(old_warn_on_fallback))
+```
+
 This guide illustrates how to implement `vec_ptype2()` and `vec_cast()` methods for existing classes. Related topics:
 
 - For an overview of how these generics work and their roles in vctrs, see [`?theory-faq-coercion`][theory-faq-coercion].
