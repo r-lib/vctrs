@@ -151,8 +151,15 @@ bool needs_vec_c_fallback(SEXP xs, SEXP ptype) {
     return false;
   }
 
-  if (ptype != R_NilValue && !equal_object(r_class(x), r_class(ptype))) {
-    return false;
+  if (ptype != R_NilValue) {
+    SEXP x_class = PROTECT(r_class(x));
+    SEXP ptype_class = PROTECT(r_class(ptype));
+    bool equal = equal_object(x_class, ptype_class);
+    UNPROTECT(2);
+
+    if (!equal) {
+      return false;
+    }
   }
 
   return
