@@ -224,6 +224,11 @@ vec_ptype2.foo.bar &lt;- function(x, y, ...) new_foo()</code></pre>
 <a href="#compatibility-and-fallbacks" class="anchor"></a>Compatibility and fallbacks</h2>
 <ul>
 <li>
+<p>With the double dispatch changes, the coercion methods are no longer inherited from parent classes. This is because the coercion hierarchy is in principle different from the S3 hierarchy. A consequence of this change is that subclasses that don’t implement coercion methods are now in principle incompatible.</p>
+<p>This is particularly problematic with subclasses of data frames for which throwing incompatible errors would be too incovenient for users. To work around this, we have implemented a fallback to the relevant base data frame class (either <code>data.frame</code> or <code>tbl_df</code>) in coercion methods (<a href='https://github.com/r-lib/vctrs/issues/981'>#981</a>). This fallback is silent unless you set the <code>vctrs:::warn_on_fallback</code> option to <code>TRUE</code>.</p>
+<p>In the future we may extend this fallback principle to other base types when they are explicitly included in the class vector (such as <code>"list"</code>).</p>
+</li>
+<li>
 <p>Improved support for foreign classes in the combining operations <code><a href="../reference/vec_c.html">vec_c()</a></code>, <code><a href="../reference/vec_bind.html">vec_rbind()</a></code>, and <code><a href="../reference/vec_chop.html">vec_unchop()</a></code>. A foreign class is a class that doesn’t implement <code><a href="../reference/vec_ptype2.html">vec_ptype2()</a></code>. When all the objects to combine have the same foreign class, one of these fallbacks is invoked:</p>
 <ul>
 <li><p>If the class implements a <code><a href="https://rdrr.io/r/base/c.html">base::c()</a></code> method, the method is used for the combination. (FIXME: <code><a href="../reference/vec_bind.html">vec_rbind()</a></code> currently doesn’t use this fallback.)</p></li>
@@ -232,7 +237,6 @@ vec_ptype2.foo.bar &lt;- function(x, y, ...) new_foo()</code></pre>
 <p>These fallbacks do not make your class completely compatible with vctrs-powered packages, but they should help in many simple cases.</p>
 </li>
 <li><p><code><a href="../reference/vec_c.html">vec_c()</a></code> and <code><a href="../reference/vec_chop.html">vec_unchop()</a></code> now fall back to <code><a href="https://rdrr.io/r/base/c.html">base::c()</a></code> for S4 objects if the object doesn’t implement <code><a href="../reference/vec_ptype2.html">vec_ptype2()</a></code> but sets an S4 <code><a href="https://rdrr.io/r/base/c.html">c()</a></code> method (<a href='https://github.com/r-lib/vctrs/issues/919'>#919</a>).</p></li>
-<li><p><code><a href="../reference/vec_ptype2.html">vec_ptype2()</a></code> is now more permissive with subclasses of data frames and falls back to a bare data frame when the classes do not have a common type (<a href='https://github.com/r-lib/vctrs/issues/981'>#981</a>). This is for convenience, users should normalise their inputs to a common data frame class manually to avoid the warning (if applicable, the classes could also implement a common type).</p></li>
 </ul>
 </div>
 <div id="vector-operations" class="section level2">

@@ -226,9 +226,6 @@ green
 #&amp;amp;gt; 1 TRUE
 Combinations do not work properly out of the box, instead vctrs falls
 back to a bare tibble:vec_rbind(red, tibble::tibble(x = 10:12))
-#&amp;amp;gt; Warning: Can't combine &amp;amp;lt;my_tibble&amp;amp;gt; and &amp;amp;lt;tibble&amp;amp;gt;; falling back to &amp;amp;lt;tibble&amp;amp;gt;.
-#&amp;amp;gt; ℹ Convert all inputs to the same class to avoid this warning.
-#&amp;amp;gt; ℹ See &amp;amp;lt;https://vctrs.r-lib.org/reference/faq-warning-convert-inputs.html&amp;amp;gt;.
 #&amp;amp;gt; # A tibble: 5 x 2
 #&amp;amp;gt;       x     y
 #&amp;amp;gt;   &amp;amp;lt;dbl&amp;amp;gt; &amp;amp;lt;int&amp;amp;gt;
@@ -369,9 +366,6 @@ However we are not done yet. Because the coercion hierarchy is different
 from the class hierarchy, there is no inheritance of coercion methods.
 We’re not getting correct behaviour for data frames yet because we
 haven’t explicitly specified the methods for this class:vec_rbind(red, data.frame(x = 10:12))
-#&amp;amp;gt; Warning: Can't combine &amp;amp;lt;my_tibble&amp;amp;gt; and &amp;amp;lt;data.frame&amp;amp;gt;; falling back to &amp;amp;lt;tibble&amp;amp;gt;.
-#&amp;amp;gt; ℹ Convert all inputs to the same class to avoid this warning.
-#&amp;amp;gt; ℹ See &amp;amp;lt;https://vctrs.r-lib.org/reference/faq-warning-convert-inputs.html&amp;amp;gt;.
 #&amp;amp;gt; # A tibble: 5 x 2
 #&amp;amp;gt;       x     y
 #&amp;amp;gt;   &amp;amp;lt;dbl&amp;amp;gt; &amp;amp;lt;int&amp;amp;gt;
@@ -694,9 +688,6 @@ carries a colour as a scalar metadata:<div class="r"></p><pre><span class='co'>#
 <span class='co'>#&amp;gt; 1 TRUE</span></pre><p></div></p>
 <p>Combinations do not work properly out of the box, instead vctrs falls
 back to a bare tibble:<div class="r"></p><pre><span class='fu'><a href='vec_bind.html'>vec_rbind</a></span>(<span class='no'>red</span>, <span class='kw pkg'>tibble</span><span class='kw ns'>::</span><span class='fu'><a href='https://tibble.tidyverse.org/reference/tibble.html'>tibble</a></span>(<span class='kw'>x</span> <span class='kw'>=</span> <span class='fl'>10</span>:<span class='fl'>12</span>))
-<span class='co'>#&amp;gt; Warning: Can't combine &amp;lt;my_tibble&amp;gt; and &amp;lt;tibble&amp;gt;; falling back to &amp;lt;tibble&amp;gt;.</span>
-<span class='co'>#&amp;gt; ℹ Convert all inputs to the same class to avoid this warning.</span>
-<span class='co'>#&amp;gt; ℹ See &amp;lt;https://vctrs.r-lib.org/reference/faq-warning-convert-inputs.html&amp;gt;.</span>
 <span class='co'>#&amp;gt; # A tibble: 5 x 2</span>
 <span class='co'>#&amp;gt;       x     y</span>
 <span class='co'>#&amp;gt;   &amp;lt;dbl&amp;gt; &amp;lt;int&amp;gt;</span>
@@ -837,9 +828,6 @@ Note the call to <code><a href='df_ptype2.html'>vctrs::tib_cast()</a></code>:<di
 from the class hierarchy, there is no inheritance of coercion methods.
 We’re not getting correct behaviour for data frames yet because we
 haven’t explicitly specified the methods for this class:<div class="r"></p><pre><span class='fu'><a href='vec_bind.html'>vec_rbind</a></span>(<span class='no'>red</span>, <span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span>(<span class='kw'>x</span> <span class='kw'>=</span> <span class='fl'>10</span>:<span class='fl'>12</span>))
-<span class='co'>#&amp;gt; Warning: Can't combine &amp;lt;my_tibble&amp;gt; and &amp;lt;data.frame&amp;gt;; falling back to &amp;lt;tibble&amp;gt;.</span>
-<span class='co'>#&amp;gt; ℹ Convert all inputs to the same class to avoid this warning.</span>
-<span class='co'>#&amp;gt; ℹ See &amp;lt;https://vctrs.r-lib.org/reference/faq-warning-convert-inputs.html&amp;gt;.</span>
 <span class='co'>#&amp;gt; # A tibble: 5 x 2</span>
 <span class='co'>#&amp;gt;       x     y</span>
 <span class='co'>#&amp;gt;   &amp;lt;dbl&amp;gt; &amp;lt;int&amp;gt;</span>
