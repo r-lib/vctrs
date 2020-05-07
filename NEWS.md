@@ -4,6 +4,19 @@ This version features an overhaul of the coercion system to make it
 more consistent and easier to implement. See the _Breaking changes_
 and _Type system_ sections for details.
 
+There are three new documentation topics if you'd like to learn how to
+implement coercion methods to make your class compatible with
+tidyverse packages like dplyr:
+
+* https://vctrs.r-lib.org/reference/theory-faq-coercion.html for an
+  overview of the coercion mechanism in vctrs.
+
+* https://vctrs.r-lib.org/reference/howto-faq-coercion.html for a
+  practical guide about implementing methods for vectors.
+
+* https://vctrs.r-lib.org/reference/howto-faq-coercion-data-frame.html
+  for a practical guide about implementing methods for data frames.
+
 
 ## Reverse dependencies troubleshooting
 
@@ -67,6 +80,7 @@ The following errors are caused by breaking changes.
 
 * The `y` argument of `stop_incompatible_cast()` has been renamed to `to` to
   better match `to_arg`.
+
 
 ## Type system
 
