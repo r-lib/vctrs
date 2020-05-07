@@ -296,6 +296,7 @@ vec_ptype2.foo.bar &lt;- function(x, y, ...) new_foo()</code></pre>
 <li><p><code>x_arg</code>, <code>y_arg</code>, and <code>to_arg</code> are now compulsory arguments in <code>stop_</code> functions like <code><a href="../reference/vctrs-conditions.html">stop_incompatible_type()</a></code>.</p></li>
 <li><p>Lossy cast errors are now considered internal. Please don’t test for the class or explicitly handle them.</p></li>
 <li><p>New argument <code>loss_type</code> for the experimental function <code><a href="../reference/maybe_lossy_cast.html">maybe_lossy_cast()</a></code>. It can take the values “precision” or “generality” to indicate in the error message which kind of loss is the error about (double to integer loses precision, character to factor loses generality).</p></li>
+<li><p>Coercion and recycling errors are now more consistent.</p></li>
 </ul>
 </div>
 <div id="cran-results" class="section level2">
