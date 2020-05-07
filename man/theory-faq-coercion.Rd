@@ -243,8 +243,6 @@ df2 <- structure(df1, class = c("foreign_df", "data.frame"))
 
 vec_rbind(df1, df2)
 #> Warning: Can't combine <data.frame> and <foreign_df>; falling back to <data.frame>.
-#> ℹ Convert all inputs to the same class to avoid this warning.
-#> ℹ See <https://vctrs.r-lib.org/reference/faq-warning-convert-inputs.html>.
 #>   x
 #> 1 1
 #> 2 1
