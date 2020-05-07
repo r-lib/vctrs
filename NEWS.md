@@ -280,6 +280,8 @@ The following errors are caused by breaking changes.
   the error about (double to integer loses precision, character to
   factor loses generality).
 
+* Coercion and recycling errors are now more consistent.
+
 
 ## CRAN results
 

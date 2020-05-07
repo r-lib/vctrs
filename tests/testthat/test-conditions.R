@@ -5,7 +5,7 @@ test_that("conditions inherit from `vctrs_error`", {
   expect_error(stop_incompatible_type(NULL, NULL, x_arg = "x", y_arg = "y"), class = "vctrs_error")
   expect_error(stop_incompatible_cast(NULL, NULL, x_arg = "x", to_arg = "to"), class = "vctrs_error")
   expect_error(stop_incompatible_op("", NULL, NULL), class = "vctrs_error")
-  expect_error(stop_incompatible_size(NULL, NULL, 0, 0), class = "vctrs_error")
+  expect_error(stop_incompatible_size(NULL, NULL, 0, 0, x_arg = "x", y_arg = "y"), class = "vctrs_error")
   expect_error(maybe_lossy_cast(NULL, NULL, NULL, TRUE, x_arg = "x", to_arg = "to"), class = "vctrs_error")
   expect_error(stop_unsupported("", ""), class = "vctrs_error")
   expect_error(stop_unimplemented("", ""), class = "vctrs_error")
@@ -145,6 +145,15 @@ test_that("ordered cast failures mention conversion", {
   })
 })
 
+test_that("incompatible size errors", {
+  verify_errors({
+    expect_error(stop_incompatible_size(1:2, 3:5, 2L, 3L, x_arg = "", y_arg = ""))
+    expect_error(stop_incompatible_size(1:2, 3:5, 2L, 3L, x_arg = quote(foo), y_arg = ""))
+    expect_error(stop_incompatible_size(1:2, 3:5, 2L, 3L, x_arg = "", y_arg = "bar"))
+    expect_error(stop_incompatible_size(1:2, 3:5, 2L, 3L, x_arg = quote(foo), y_arg = quote(bar)))
+  })
+})
+
 verify_output(test_path("error", "test-conditions.txt"), {
   "# incompatible type error validates `action`"
   stop_incompatible_type(1, 1, x_arg = "", y_arg = "", action = "conver")
@@ -190,4 +199,10 @@ verify_output(test_path("error", "test-conditions.txt"), {
 
   "# ordered cast failures mention conversion"
   vec_cast(ordered("x"), ordered("y"))
+
+  "# incompatible size errors"
+  stop_incompatible_size(1:2, 3:5, 2L, 3L, x_arg = "", y_arg = "")
+  stop_incompatible_size(1:2, 3:5, 2L, 3L, x_arg = quote(foo), y_arg = "")
+  stop_incompatible_size(1:2, 3:5, 2L, 3L, x_arg = "", y_arg = "bar")
+  stop_incompatible_size(1:2, 3:5, 2L, 3L, x_arg = quote(foo), y_arg = quote(bar))
 })

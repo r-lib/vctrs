@@ -290,32 +290,9 @@ stop_incompatible_size <- function(x,
                                    details = NULL,
                                    message = NULL,
                                    class = NULL) {
-  vec_assert(x)
-  vec_assert(y)
-
-  vec_assert(x_size, int(), 1)
-  vec_assert(y_size, int(), 1)
-
-  if (is_null(message)) {
-    if (nzchar(x_arg)) {
-      x_name <- paste0("`", x_arg, "`, size")
-    } else {
-      x_name <- "vector, size"
-    }
-    if (nzchar(y_arg)) {
-      y_name <- paste0("`", y_arg, "`, size")
-    } else {
-      y_name <- "vector, size"
-    }
-
-    message <- glue_lines(
-      "No common size for {x_name} {x_size}, and {y_name} {y_size}.",
-      details
-    )
-  }
-
   stop_incompatible(
-    x, y,
+    x,
+    y,
     x_size = x_size,
     y_size = y_size,
     ...,
@@ -325,6 +302,42 @@ stop_incompatible_size <- function(x,
     message = message,
     class = c(class, "vctrs_error_incompatible_size")
   )
+}
+
+#' @export
+cnd_header.vctrs_error_incompatible_size <- function(cnd, ...) {
+  if (is_string(cnd$message) && nzchar(cnd$message)) {
+    return(cnd$message)
+  }
+
+  x_size <- vec_cast(cnd$x_size, int())
+  y_size <- vec_cast(cnd$y_size, int())
+
+  stopifnot(
+    length(x_size) == 1,
+    length(y_size) == 1
+  )
+
+  x_arg <- arg_as_string(cnd$x_arg)
+  y_arg <- arg_as_string(cnd$y_arg)
+
+  if (nzchar(x_arg)) {
+    x_tag <- glue::glue("`{x_arg}` (size {x_size})")
+  } else {
+    x_tag <- glue::glue("input of size {x_size}")
+  }
+  if (nzchar(y_arg)) {
+    y_tag <- glue::glue("to match `{y_arg}` (size {y_size})")
+  } else {
+    y_tag <- glue::glue("to size {y_size}")
+  }
+
+  glue::glue("Can't recycle {x_tag} {y_tag}.")
+}
+
+#' @export
+cnd_body.vctrs_error_incompatible_size <- function(cnd, ...) {
+  cnd$details
 }
 
 #' Lossy cast error
@@ -585,25 +598,11 @@ stop_corrupt_ordered_levels <- function(x, arg = "x") {
 stop_recycle_incompatible_size <- function(x_size, size, x_arg = "x") {
   stop_vctrs(
     x_size = x_size,
-    size = size,
+    y_size = size,
     x_arg = x_arg,
-    class = "vctrs_error_recycle_incompatible_size"
+    # FIXME: tibble is the only package that uses `vctrs_error_recycle_incompatible_size`
+    class = c("vctrs_error_incompatible_size", "vctrs_error_recycle_incompatible_size")
   )
-}
-
-#' @export
-cnd_header.vctrs_error_recycle_incompatible_size <- function(cnd, ...) {
-  arg <- append_arg("Input", cnd$x_arg)
-  glue::glue("{arg} can't be recycled to size {cnd$size}.")
-}
-#' @export
-cnd_body.vctrs_error_recycle_incompatible_size <- function(cnd, ...) {
-  if (cnd$size == 1) {
-    msg <- "It must be size 1, not {x_size}."
-  } else {
-    msg <- "It must be size {size} or 1, not {x_size}."
-  }
-  glue_data_bullets(cnd, x = msg)
 }
 
 
@@ -776,7 +775,9 @@ format_arg_label <- function(type, arg = "") {
 }
 
 arg_as_string <- function(arg) {
-  if (is_string(arg)) {
+  if (is_null(arg)) {
+    ""
+  } else if (is_string(arg)) {
     arg
   } else {
     as_label(arg)
