@@ -1,40 +1,52 @@
-# cutpointr
+# biclustermd
 
 <details>
 
-* Version: 1.0.2
-* Source code: https://github.com/cran/cutpointr
-* URL: https://github.com/thie1e/cutpointr
-* BugReports: https://github.com/thie1e/cutpointr/issues
-* Date/Publication: 2020-04-14 08:50:10 UTC
-* Number of recursive dependencies: 78
+* Version: 0.2.2
+* Source code: https://github.com/cran/biclustermd
+* URL: http://github.com/jreisner/biclustermd
+* BugReports: http://github.com/jreisner/biclustermd/issues
+* Date/Publication: 2020-04-15 05:10:02 UTC
+* Number of recursive dependencies: 79
 
-Run `revdep_details(,"cutpointr")` for more info
+Run `revdep_details(,"biclustermd")` for more info
 
 </details>
 
 ## Newly broken
 
-*   checking tests ...
+*   checking examples ... ERROR
     ```
-     ERROR
-    Running the tests in ‘tests/testthat.R’ failed.
-    Last 13 lines of output:
-      ══ testthat results  ═══════════════════════════════════════════════════════════
-      [ OK: 493 | SKIPPED: 0 | WARNINGS: 1643 | FAILED: 10 ]
-      1.  Failure: LOESS smoothing does not return warnings or errors (@test-cutpointr.R#681) 
-      2.  Failure: LOESS smoothing does not return warnings or errors (@test-cutpointr.R#696) 
-      3.  Failure: LOESS smoothing does not return warnings or errors (@test-cutpointr.R#704) 
-      4.  Failure: LOESS smoothing does not return warnings or errors (@test-cutpointr.R#718) 
-      5.  Failure: LOESS smoothing does not return warnings or errors (@test-cutpointr.R#729) 
-      6.  Failure: cutpointr works if method / metric are called with :: (@test-cutpointr.R#1291) 
-      7.  Failure: cutpointr works if method / metric are called with :: (@test-cutpointr.R#1294) 
-      8.  Failure: Summary(multi_cutpointr) is silent (@test-cutpointr.R#1324) 
-      9.  Failure: Summary(multi_cutpointr) is silent (@test-cutpointr.R#1331) 
-      10. Failure: multi_cutpointr fetches numeric columns correctly (@test-cutpointr.R#1356) 
-      
-      Error: testthat unit tests failed
-      Execution halted
+    ...
+    $runtime
+       user  system elapsed 
+      0.229   0.000   0.229 
+    
+    > autoplot(repeat_bc$best_bc)
+    > plot(repeat_bc$rep_sse, type = 'b', pch = 20)
+    > repeat_bc$runtime
+       user  system elapsed 
+      0.229   0.000   0.229 
+    > 
+    > # 20 repeats with parallelization over 2 cores
+    > repeat_bc <- rep_biclustermd(synthetic, nrep = 20, parallel = TRUE, ncores = 2,
+    +                              col_clusters = 3, row_clusters = 2,
+    +                              miss_val = mean(synthetic, na.rm = TRUE),
+    +                              miss_val_sd = sd(synthetic, na.rm = TRUE),
+    +                              col_min_num = 2, row_min_num = 2,
+    +                              col_num_to_move = 1, row_num_to_move = 1,
+    +                              max.iter = 10)
+    Error in z$SSE[z$iteration, 1] : incorrect number of dimensions
+    Calls: rep_biclustermd -> sapply -> lapply -> FUN
+    Execution halted
+    ```
+
+## In both
+
+*   checking dependencies in R code ... NOTE
+    ```
+    Namespace in Imports field not imported from: ‘nycflights13’
+      All declared Imports should be used.
     ```
 
 # simTool
@@ -54,9 +66,9 @@ Run `revdep_details(,"simTool")` for more info
 
 ## Newly broken
 
-*   checking tests ...
+*   checking tests ... ERROR
     ```
-     ERROR
+      Running ‘testthat.R’
     Running the tests in ‘tests/testthat.R’ failed.
     Last 13 lines of output:
       fs$results not identical to fs$expected.
@@ -93,9 +105,9 @@ Run `revdep_details(,"tidyjson")` for more info
 
 ## Newly broken
 
-*   checking tests ...
+*   checking tests ... ERROR
     ```
-     ERROR
+      Running ‘testthat.R’
     Running the tests in ‘tests/testthat.R’ failed.
     Last 13 lines of output:
       ══ testthat results  ═══════════════════════════════════════════════════════════
