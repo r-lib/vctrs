@@ -1,4 +1,4 @@
-# vctrs (development version)
+# vctrs 0.3.0
 
 This version features an overhaul of the coercion system to make it
 more consistent and easier to implement. See the _Breaking changes_
