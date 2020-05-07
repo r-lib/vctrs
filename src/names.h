@@ -20,8 +20,8 @@ struct name_repair_opts {
 extern struct name_repair_opts unique_repair_default_opts;
 extern struct name_repair_opts unique_repair_silent_opts;
 
-static const struct name_repair_opts* p_unique_repair_default_opts = &unique_repair_default_opts;
-static const struct name_repair_opts* p_unique_repair_silent_opts = &unique_repair_silent_opts;
+static struct name_repair_opts const * const p_unique_repair_default_opts = &unique_repair_default_opts;
+static struct name_repair_opts const * const p_unique_repair_silent_opts = &unique_repair_silent_opts;
 
 #define PROTECT_NAME_REPAIR_OPTS(opts) PROTECT((opts)->fn)
 
