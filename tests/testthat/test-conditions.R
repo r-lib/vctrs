@@ -5,7 +5,7 @@ test_that("conditions inherit from `vctrs_error`", {
   expect_error(stop_incompatible_type(NULL, NULL, x_arg = "x", y_arg = "y"), class = "vctrs_error")
   expect_error(stop_incompatible_cast(NULL, NULL, x_arg = "x", to_arg = "to"), class = "vctrs_error")
   expect_error(stop_incompatible_op("", NULL, NULL), class = "vctrs_error")
-  expect_error(stop_incompatible_size(NULL, NULL, 0, 0), class = "vctrs_error")
+  expect_error(stop_incompatible_size(NULL, NULL, 0, 0, x_arg = "x", y_arg = "y"), class = "vctrs_error")
   expect_error(maybe_lossy_cast(NULL, NULL, NULL, TRUE, x_arg = "x", to_arg = "to"), class = "vctrs_error")
   expect_error(stop_unsupported("", ""), class = "vctrs_error")
   expect_error(stop_unimplemented("", ""), class = "vctrs_error")

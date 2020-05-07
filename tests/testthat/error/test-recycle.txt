@@ -3,18 +3,15 @@ incompatible recycling size has informative error
 =================================================
 
 > vec_recycle(1:2, 4)
-Error: Input can't be recycled to size 4.
-x It must be size 4 or 1, not 2.
+Error: Can't recycle size 2 to match size 4.
 
 > vec_recycle(1:2, 4, x_arg = "foo")
-Error: Input `foo` can't be recycled to size 4.
-x It must be size 4 or 1, not 2.
+Error: Can't recycle `foo` (size 2) to match size 4.
 
 
 recycling to size 1 has informative error
 =========================================
 
 > vec_recycle(1:2, 1)
-Error: Input can't be recycled to size 1.
-x It must be size 1, not 2.
+Error: Can't recycle size 2 to match size 1.
 

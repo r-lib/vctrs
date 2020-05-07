@@ -38,6 +38,5 @@ Error: `times` can't be missing. Location 2 is missing.
 =======================================
 
 > vec_rep_each(1:2, 1:3)
-Error: Input `times` can't be recycled to size 2.
-x It must be size 2 or 1, not 3.
+Error: Can't recycle `times` (size 3) to match size 2.
 
