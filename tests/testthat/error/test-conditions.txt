@@ -116,13 +116,13 @@ incompatible size errors
 ========================
 
 > stop_incompatible_size(1:2, 3:5, 2L, 3L, x_arg = "", y_arg = "")
-Error: Can't recycle size 2 to match size 3.
+Error: Can't recycle input of size 2 to size 3.
 
 > stop_incompatible_size(1:2, 3:5, 2L, 3L, x_arg = quote(foo), y_arg = "")
-Error: Can't recycle `foo` (size 2) to match size 3.
+Error: Can't recycle `foo` (size 2) to size 3.
 
 > stop_incompatible_size(1:2, 3:5, 2L, 3L, x_arg = "", y_arg = "bar")
-Error: Can't recycle size 2 to match `bar` (size 3).
+Error: Can't recycle input of size 2 to match `bar` (size 3).
 
 > stop_incompatible_size(1:2, 3:5, 2L, 3L, x_arg = quote(foo), y_arg = quote(bar))
 Error: Can't recycle `foo` (size 2) to match `bar` (size 3).

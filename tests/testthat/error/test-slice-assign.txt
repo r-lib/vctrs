@@ -3,7 +3,7 @@
 ========================================
 
 > vec_assign(1:3, 1:3, 1:2)
-Error: Can't recycle size 2 to match size 3.
+Error: Can't recycle input of size 2 to size 3.
 
 
 logical subscripts must match size of indexed vector
@@ -62,5 +62,5 @@ i Subscript has a missing value at location 2.
 Error: Can't convert `bar` <character> to match type of `foo` <integer>.
 
 > vec_assign(1:2, 1L, 1:2, value_arg = "bar")
-Error: Can't recycle `bar` (size 2) to match size 1.
+Error: Can't recycle `bar` (size 2) to size 1.
 

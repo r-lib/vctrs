@@ -324,15 +324,15 @@ cnd_header.vctrs_error_incompatible_size <- function(cnd, ...) {
   if (nzchar(x_arg)) {
     x_tag <- glue::glue("`{x_arg}` (size {x_size})")
   } else {
-    x_tag <- glue::glue("size {x_size}")
+    x_tag <- glue::glue("input of size {x_size}")
   }
   if (nzchar(y_arg)) {
-    y_tag <- glue::glue("`{y_arg}` (size {y_size})")
+    y_tag <- glue::glue("to match `{y_arg}` (size {y_size})")
   } else {
-    y_tag <- glue::glue("size {y_size}")
+    y_tag <- glue::glue("to size {y_size}")
   }
 
-  glue::glue("Can't recycle {x_tag} to match {y_tag}.")
+  glue::glue("Can't recycle {x_tag} {y_tag}.")
 }
 
 #' @export
