@@ -4,8 +4,24 @@
 \alias{faq-error-incompatible-attributes}
 \title{FAQ - Error/Warning: Some attributes are incompatible}
 \description{
-TODO. Tracked in r-lib/vctrs#1016
-
 This error occurs when \code{\link[=vec_ptype2]{vec_ptype2()}} or \code{\link[=vec_cast]{vec_cast()}} are supplied
-vectors of the same classes with different attributes.
+vectors of the same classes with different attributes. In this
+case, vctrs doesn't know how to combine the inputs.
+
+To fix this error, the maintainer of the class should implement
+self-to-self coercion methods for \code{\link[=vec_ptype2]{vec_ptype2()}} and \code{\link[=vec_cast]{vec_cast()}}.
 }
+\section{Implementing coercion methods}{
+\itemize{
+\item For an overview of how these generics work and their roles in vctrs,
+see \code{\link[=theory-faq-coercion]{?theory-faq-coercion}}.
+\item For an example of implementing coercion methods for simple vectors,
+see \code{\link[=howto-faq-coercion]{?howto-faq-coercion}}.
+\item For an example of implementing coercion methods for data frame
+subclasses, see
+\code{\link[=howto-faq-coercion-data-frame]{?howto-faq-coercion-data-frame}}.
+\item For a tutorial about implementing vctrs classes from scratch, see
+\code{vignette("s3-vector")}.
+}
+}
+
