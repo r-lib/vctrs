@@ -140,11 +140,11 @@ vec_ptype2_no_fallback <- function(x, y, ..., x_arg = "", y_arg = "") {
 DF_FALLBACK_DEFAULT <- 0L
 DF_FALLBACK_NONE <- 1L
 DF_FALLBACK_WARN <- 2L
-DF_FALLBACK_WARN_DEV <- 3L
+DF_FALLBACK_WARN_MAYBE <- 3L
 DF_FALLBACK_QUIET <- 255L
 
 df_fallback <- function(df_fallback) {
-  if (df_fallback) df_fallback else DF_FALLBACK_WARN_DEV
+  if (df_fallback) df_fallback else DF_FALLBACK_WARN_MAYBE
 }
 has_df_fallback <- function(df_fallback) {
   df_fallback(df_fallback) > DF_FALLBACK_NONE
@@ -152,17 +152,17 @@ has_df_fallback <- function(df_fallback) {
 needs_fallback_warning <- function(df_fallback) {
   df_fallback <- df_fallback(df_fallback)
 
-  if (df_fallback == DF_FALLBACK_WARN_DEV) {
-    is_true(peek_option("vctrs:::dev_version"))
+  if (df_fallback == DF_FALLBACK_WARN_MAYBE) {
+    is_true(peek_option("vctrs:::warn_on_fallback"))
   } else {
     df_fallback < DF_FALLBACK_QUIET
   }
 }
-with_dev_version <- function(expr) {
-  with_options(expr, `vctrs:::dev_version` = TRUE)
+with_fallback_warning <- function(expr) {
+  with_options(expr, `vctrs:::warn_on_fallback` = TRUE)
 }
-with_cran_version <- function(expr) {
-  with_options(expr, `vctrs:::dev_version` = FALSE)
+with_fallback_quiet <- function(expr) {
+  with_options(expr, `vctrs:::warn_on_fallback` = FALSE)
 }
 
 vec_typeof2 <- function(x, y) {

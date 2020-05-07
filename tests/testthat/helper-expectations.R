@@ -90,7 +90,7 @@ expect_error_cnd <- function(object, class, message = NULL, ..., .fixed = TRUE) 
 }
 
 expect_incompatible_df <- function(x, fallback) {
-  if (is_true(peek_option("vctrs:::dev_version"))) {
+  if (is_true(peek_option("vctrs:::warn_on_fallback"))) {
     x <- expect_df_fallback_warning(x)
   }
   expect_identical(x, fallback)
@@ -104,7 +104,7 @@ expect_df_fallback_warning <- function(expr) {
   expect_warning({{ expr }}, "falling back to (<data.frame>|<tibble>)")
 }
 expect_df_fallback_warning_maybe <- function(expr) {
-  if (is_true(peek_option("vctrs:::dev_version"))) {
+  if (is_true(peek_option("vctrs:::warn_on_fallback"))) {
     expect_warning({{ expr }}, "falling back to (<data.frame>|<tibble>)")
   } else {
     expr

@@ -113,13 +113,13 @@ test_that("combining data frames with foreign classes uses fallback", {
     expect_warning(vec_ptype_common_fallback(foo, bar, baz))
     expect_warning(vec_ptype_common_fallback(foo, baz, bar, baz, foo, bar))
 
-    with_dev_version(expect_df_fallback_warning(invisible(vec_rbind(foo, data.frame(), foo))))
-    with_dev_version(expect_df_fallback_warning(invisible(vec_cbind(foo, data.frame(x = 1)))))
-    with_dev_version(expect_df_fallback_warning(invisible(vec_cbind(foo, data.frame(x = 1), bar))))
+    with_fallback_warning(expect_df_fallback_warning(invisible(vec_rbind(foo, data.frame(), foo))))
+    with_fallback_warning(expect_df_fallback_warning(invisible(vec_cbind(foo, data.frame(x = 1)))))
+    with_fallback_warning(expect_df_fallback_warning(invisible(vec_cbind(foo, data.frame(x = 1), bar))))
 
-    with_cran_version(invisible(vec_rbind(foo, data.frame(), foo)))
-    with_cran_version(invisible(vec_cbind(foo, data.frame(x = 1))))
-    with_cran_version(invisible(vec_cbind(foo, data.frame(x = 1), bar)))
+    with_fallback_quiet(invisible(vec_rbind(foo, data.frame(), foo)))
+    with_fallback_quiet(invisible(vec_cbind(foo, data.frame(x = 1))))
+    with_fallback_quiet(invisible(vec_cbind(foo, data.frame(x = 1), bar)))
   })
 })
 
@@ -471,20 +471,20 @@ test_that("falls back to tibble for tibble subclasses (#1025)", {
   expect_is(expect_df_fallback_warning_maybe(vec_rbind(foo, mtcars, foobar(mtcars))), "tbl_df")
 
   verify_errors({
-    with_dev_version(expect_df_fallback_warning(
+    with_fallback_warning(expect_df_fallback_warning(
       vec_rbind(
         foobar(tibble::as_tibble(mtcars)),
         mtcars,
         foobaz(mtcars)
       )
     ))
-    with_dev_version(expect_df_fallback_warning(
+    with_fallback_warning(expect_df_fallback_warning(
       vec_rbind(
         tibble::as_tibble(mtcars),
         foobar(tibble::as_tibble(mtcars))
       )
     ))
-    with_dev_version(expect_df_fallback_warning(
+    with_fallback_warning(expect_df_fallback_warning(
       vec_rbind(
         foobar(tibble::as_tibble(mtcars)),
         mtcars,
@@ -492,20 +492,20 @@ test_that("falls back to tibble for tibble subclasses (#1025)", {
       )
     ))
 
-    with_cran_version(
+    with_fallback_quiet(
       vec_rbind(
         foobar(tibble::as_tibble(mtcars)),
         mtcars,
         foobaz(mtcars)
       )
     )
-    with_cran_version(
+    with_fallback_quiet(
       vec_rbind(
         tibble::as_tibble(mtcars),
         foobar(tibble::as_tibble(mtcars))
       )
     )
-    with_cran_version(
+    with_fallback_quiet(
       vec_rbind(
         foobar(tibble::as_tibble(mtcars)),
         mtcars,
@@ -538,33 +538,33 @@ test_that("data frame output is informative", {
     vec_ptype_common_fallback(foo, bar, baz)
     vec_ptype_common_fallback(foo, baz, bar, baz, foo, bar)
 
-    with_dev_version(invisible(vec_rbind(foo, data.frame(), foo)))
-    with_dev_version(invisible(vec_rbind(foo, baz, bar, baz, foo, bar)))
+    with_fallback_warning(invisible(vec_rbind(foo, data.frame(), foo)))
+    with_fallback_warning(invisible(vec_rbind(foo, baz, bar, baz, foo, bar)))
 
-    with_dev_version(invisible(vec_cbind(foo, data.frame(x = 1))))
-    with_dev_version(invisible(vec_cbind(foo, data.frame(x = 1), bar)))
+    with_fallback_warning(invisible(vec_cbind(foo, data.frame(x = 1))))
+    with_fallback_warning(invisible(vec_cbind(foo, data.frame(x = 1), bar)))
 
-    with_cran_version(invisible(vec_rbind(foo, data.frame(), foo)))
-    with_cran_version(invisible(vec_rbind(foo, baz, bar, baz, foo, bar)))
+    with_fallback_quiet(invisible(vec_rbind(foo, data.frame(), foo)))
+    with_fallback_quiet(invisible(vec_rbind(foo, baz, bar, baz, foo, bar)))
 
-    with_cran_version(invisible(vec_cbind(foo, data.frame(x = 1))))
-    with_cran_version(invisible(vec_cbind(foo, data.frame(x = 1), bar)))
+    with_fallback_quiet(invisible(vec_cbind(foo, data.frame(x = 1))))
+    with_fallback_quiet(invisible(vec_cbind(foo, data.frame(x = 1), bar)))
 
     "# falls back to tibble for tibble subclasses (#1025)"
-    with_dev_version(
+    with_fallback_warning(
       invisible(vec_rbind(
         foobar(tibble::as_tibble(mtcars)),
         mtcars,
         foobaz(mtcars)
       ))
     )
-    with_dev_version(
+    with_fallback_warning(
       invisible(vec_rbind(
         tibble::as_tibble(mtcars),
         foobar(tibble::as_tibble(mtcars))
       ))
     )
-    with_dev_version(
+    with_fallback_warning(
       invisible(vec_rbind(
         foobar(tibble::as_tibble(mtcars)),
         mtcars,
@@ -572,7 +572,7 @@ test_that("data frame output is informative", {
       ))
     )
 
-    with_cran_version(
+    with_fallback_quiet(
       invisible(vec_rbind(
         foobar(tibble::as_tibble(mtcars)),
         mtcars,
@@ -580,13 +580,13 @@ test_that("data frame output is informative", {
       ))
     )
 
-    with_cran_version(
+    with_fallback_quiet(
       invisible(vec_rbind(
         tibble::as_tibble(mtcars),
         foobar(tibble::as_tibble(mtcars))
       ))
     )
-    with_cran_version(
+    with_fallback_quiet(
       invisible(vec_rbind(
         foobar(tibble::as_tibble(mtcars)),
         mtcars,

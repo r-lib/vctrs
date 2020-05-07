@@ -126,9 +126,8 @@ The following errors are caused by breaking changes.
   which throwing incompatible errors would be too incovenient for
   users. To work around this, we have implemented a fallback to the
   relevant base data frame class (either `data.frame` or `tbl_df`) in
-  coercion methods (#981). This fallback is silent in released
-  versions but gives a warning in dev versions. This way missing
-  coercion methods can be reported to the class maintainers.
+  coercion methods (#981). This fallback is silent unless you set the
+  `vctrs:::warn_on_fallback` option to `TRUE`.
 
   In the future we may extend this fallback principle to other base
   types when they are explicitly included in the class vector (such as
