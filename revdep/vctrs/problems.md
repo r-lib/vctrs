@@ -1,74 +1,3 @@
-# dm
-
-<details>
-
-* Version: 0.1.1
-* Source code: https://github.com/cran/dm
-* Date/Publication: 2020-03-12 17:30:02 UTC
-* Number of recursive dependencies: 116
-
-Run `revdep_details(,"dm")` for more info
-
-</details>
-
-## Newly broken
-
-*   checking examples ... ERROR
-    ```
-    ...
-    +   unique_table_names = TRUE
-    + ) %>%
-    +   dm_get_con()
-    Error: Can't convert <character> to <list>.
-    Backtrace:
-         █
-      1. ├─`%>%`(...)
-      2. │ └─base::eval(lhs, parent, parent)
-      3. │   └─base::eval(lhs, parent, parent)
-      4. ├─dm::copy_dm_to(dbplyr::src_memdb(), dm_nycflights13(), unique_table_names = TRUE)
-      5. │ └─dm:::dm_set_key_constraints(remote_dm) 00_pkg_src/dm/R/db-interface.R:106:4
-      6. │   └─dm::dm_get_all_pks(dm) 00_pkg_src/dm/R/db-interface.R:141:2
-      7. │     └─dm_get_all_pks_impl(dm) %>% mutate(pk_col = new_keys(pk_col)) 00_pkg_src/dm/R/primary-keys.R:178:2
-      8. │       ├─base::withVisible(eval(quote(`_fseq`(`_lhs`)), env, env))
-      9. │       └─base::eval(quote(`_fseq`(`_lhs`)), env, env)
-     10. │         └─base::eval(quote(`_fseq`(`_lhs`)), env, env)
-     11. │           └─dm:::`_fseq`(`_lhs`)
-     12. │             └─magrittr::freduce(value, `_function_list`)
-     13. │               ├─base::withVisible(function_list[[k]](value))
-     14. │               └─functi
-    Execution halted
-    ```
-
-## In both
-
-*   checking tests ...
-    ```
-     ERROR
-    Running the tests in ‘tests/testthat.R’ failed.
-    Last 13 lines of output:
-        3. │   └─testthat::test_dir(...)
-        4. │     └─testthat::source_test_helpers(path, env)
-        5. │       └─testthat::source_dir(path, "^helper.*\\.[rR]$", env = env, wrap = FALSE)
-        6. │         └─base::lapply(files, source_file, env = env, chdir = chdir, wrap = wrap)
-        7. │           └─testthat:::FUN(X[[i]], ...)
-        8. │             └─base::eval(exprs, env)
-        9. │               └─base::eval(exprs, env)
-       10. │                 ├─dm_for_filter_src %<-% dm_test_load(dm_for_filter) helper-src.R:535:2
-       11. │                 └─dm:::dm_test_load(dm_for_filter) helper-src.R:15:4
-       12. │                   └─purrr::map(...) /Users/lionel/Dropbox/Projects/R/hadley/vctrs/revdep-all/vctrs/checks.noindex/dm/new/dm.Rcheck/00_pkg_src/dm/R/test-dm.R:21:2
-       13. │                     └─dm:::.f(.x[
-      In addition: Warning message:
-      In file(filename, "r", encoding = encoding) :
-        cannot open file '/Users/tobiasschieferdecker/git/cynkra/dm/.Rprofile': No such file or directory
-      Execution halted
-    ```
-
-*   checking dependencies in R code ... NOTE
-    ```
-    Namespace in Imports field not imported from: ‘DT’
-      All declared Imports should be used.
-    ```
-
 # glue
 
 <details>
@@ -86,16 +15,16 @@ Run `revdep_details(,"glue")` for more info
 
 ## Newly broken
 
-*   checking tests ...
+*   checking tests ... ERROR
     ```
-     ERROR
+      Running ‘testthat.R’
     Running the tests in ‘tests/testthat.R’ failed.
     Last 13 lines of output:
+        7. vctrs::vec_default_cast(...)
         8. vctrs::stop_incompatible_cast(...)
-        9. vctrs:::stop_incompatible_type_convert(...)
-       10. vctrs:::stop_incompatible_type_impl(...)
-       11. vctrs:::stop_incompatible(...)
-       12. vctrs:::stop_vctrs(...)
+        9. vctrs::stop_incompatible_type(...)
+       10. vctrs:::stop_incompatible(...)
+       11. vctrs:::stop_vctrs(...)
       
       ══ testthat results  ═══════════════════════════════════════════════════════════
       [ OK: 210 | SKIPPED: 1 | WARNINGS: 0 | FAILED: 4 ]
@@ -125,23 +54,62 @@ Run `revdep_details(,"hardhat")` for more info
 
 ## Newly broken
 
-*   checking tests ...
+*   checking tests ... ERROR
     ```
-     ERROR
+      Running ‘testthat.R’
     Running the tests in ‘tests/testthat.R’ failed.
     Last 13 lines of output:
       Backtrace:
         1. testthat::expect_error(...)
         8. vctrs::vec_default_cast(...)
         9. vctrs::stop_incompatible_cast(...)
-       10. vctrs:::stop_incompatible_type_convert(...)
-       11. vctrs:::stop_incompatible_type_impl(...)
-       12. vctrs:::stop_incompatible(...)
-       13. vctrs:::stop_vctrs(...)
+       10. vctrs::stop_incompatible_type(...)
+       11. vctrs:::stop_incompatible(...)
+       12. vctrs:::stop_vctrs(...)
       
       ══ testthat results  ═══════════════════════════════════════════════════════════
-      [ OK: 406 | SKIPPED: 0 | WARNINGS: 0 | FAILED: 1 ]
-      1. Failure: ignoring novel levels still passes through incompatible classes (@test-scream.R#50) 
+      [ OK: 402 | SKIPPED: 0 | WARNINGS: 0 | FAILED: 2 ]
+      1. Error: missing ordered factor levels are handled correctly (@test-forge-formula.R#510) 
+      2. Failure: ignoring novel levels still passes through incompatible classes (@test-scream.R#50) 
+      
+      Error: testthat unit tests failed
+      Execution halted
+    ```
+
+# ipaddress
+
+<details>
+
+* Version: 0.2.0
+* Source code: https://github.com/cran/ipaddress
+* URL: https://davidchall.github.io/ipaddress, https://github.com/davidchall/ipaddress
+* BugReports: https://github.com/davidchall/ipaddress/issues
+* Date/Publication: 2020-03-25 17:30:02 UTC
+* Number of recursive dependencies: 41
+
+Run `revdep_details(,"ipaddress")` for more info
+
+</details>
+
+## Newly broken
+
+*   checking tests ... ERROR
+    ```
+      Running ‘testthat.R’
+    Running the tests in ‘tests/testthat.R’ failed.
+    Last 13 lines of output:
+      Backtrace:
+        1. testthat::expect_error(...)
+        7. vctrs::vec_default_cast(...)
+        8. vctrs::stop_incompatible_cast(...)
+        9. vctrs::stop_incompatible_type(...)
+       10. vctrs:::stop_incompatible(...)
+       11. vctrs:::stop_vctrs(...)
+      
+      ══ testthat results  ═══════════════════════════════════════════════════════════
+      [ OK: 508 | SKIPPED: 3 | WARNINGS: 0 | FAILED: 2 ]
+      1. Failure: casting works (@test-ip_interface.R#35) 
+      2. Failure: casting works (@test-ip_interface.R#36) 
       
       Error: testthat unit tests failed
       Execution halted
@@ -164,14 +132,14 @@ Run `revdep_details(,"probably")` for more info
 
 ## Newly broken
 
-*   checking tests ...
+*   checking tests ... ERROR
     ```
-     ERROR
+      Running ‘testthat.R’
     Running the tests in ‘tests/testthat.R’ failed.
     Last 13 lines of output:
-        8. vctrs:::stop_incompatible_type_impl(...)
-        9. vctrs:::stop_incompatible(...)
-       10. vctrs:::stop_vctrs(...)
+       7. vctrs::stop_incompatible_type(...)
+       8. vctrs:::stop_incompatible(...)
+       9. vctrs:::stop_vctrs(...)
       
       ── 3. Failure: casting character to class_pred (@test-class-pred.R#198)  ───────
       is_ordered_class_pred(vec_cast(chr1, cp3)) isn't true.
@@ -205,6 +173,7 @@ Run `revdep_details(,"projects")` for more info
 *   checking examples ... ERROR
     ```
     ...
+    New author:
     # A tibble: 1 x 7
          id last_name given_names title degree email phone
       <int> <chr>     <chr>       <chr> <chr>  <chr> <chr>
@@ -217,14 +186,13 @@ Run `revdep_details(,"projects")` for more info
     Backtrace:
         █
      1. ├─projects::new_project(...)
-     2. │ └─projects::projects_stage(1L) 00_pkg_src/projects/R/new.R:275:2
-     3. │   └─vctrs::vec_cast(x, character()) 00_pkg_src/projects/R/class-projects_stage.R:73:2
+     2. │ └─projects::projects_stage(1L)
+     3. │   └─vctrs::vec_cast(x, character())
      4. └─vctrs::vec_default_cast(...)
      5.   └─vctrs::stop_incompatible_cast(...)
-     6.     └─vctrs:::stop_incompatible_type_convert(...)
-     7.       └─vctrs:::stop_incompatible_type_impl(...)
-     8.         └─vctrs:::stop_incompatible(...)
-     9.           └─vctrs:::stop_vctrs(...)
+     6.     └─vctrs::stop_incompatible_type(...)
+     7.       └─vctrs:::stop_incompatible(...)
+     8.         └─vctrs:::stop_vctrs(...)
     Execution halted
     ```
 
@@ -279,9 +247,9 @@ Run `revdep_details(,"slider")` for more info
     Execution halted
     ```
 
-*   checking tests ...
+*   checking tests ... ERROR
     ```
-     ERROR
+      Running ‘testthat.R’
     Running the tests in ‘tests/testthat.R’ failed.
     Last 13 lines of output:
       ══ testthat results  ═══════════════════════════════════════════════════════════
@@ -299,125 +267,5 @@ Run `revdep_details(,"slider")` for more info
       
       Error: testthat unit tests failed
       Execution halted
-    ```
-
-# textrecipes
-
-<details>
-
-* Version: 0.2.0
-* Source code: https://github.com/cran/textrecipes
-* URL: https://github.com/tidymodels/textrecipes
-* BugReports: https://github.com/tidymodels/textrecipes/issues
-* Date/Publication: 2020-04-14 05:00:03 UTC
-* Number of recursive dependencies: 112
-
-Run `revdep_details(,"textrecipes")` for more info
-
-</details>
-
-## Newly broken
-
-*   checking tests ...
-    ```
-     ERROR
-    Running the tests in ‘tests/testthat.R’ failed.
-    Last 13 lines of output:
-      Backtrace:
-        1. testthat::expect_error(...)
-       10. vctrs::vec_default_cast(...)
-       11. vctrs::stop_incompatible_cast(...)
-       12. vctrs:::stop_incompatible_type_convert(...)
-       13. vctrs:::stop_incompatible_type_impl(...)
-       14. vctrs:::stop_incompatible(...)
-       15. vctrs:::stop_vctrs(...)
-      
-      ══ testthat results  ═══════════════════════════════════════════════════════════
-      [ OK: 203 | SKIPPED: 8 | WARNINGS: 1 | FAILED: 1 ]
-      1. Failure: tokenlist_pos_filter works (@test-tokenlist.R#399) 
-      
-      Error: testthat unit tests failed
-      Execution halted
-    ```
-
-## In both
-
-*   checking dependencies in R code ... NOTE
-    ```
-    Namespaces in Imports field not imported from:
-      ‘dials’ ‘modeldata’
-      All declared Imports should be used.
-    ```
-
-# tidyr
-
-<details>
-
-* Version: 1.0.2
-* Source code: https://github.com/cran/tidyr
-* URL: https://tidyr.tidyverse.org, https://github.com/tidyverse/tidyr
-* BugReports: https://github.com/tidyverse/tidyr/issues
-* Date/Publication: 2020-01-24 14:30:02 UTC
-* Number of recursive dependencies: 61
-
-Run `revdep_details(,"tidyr")` for more info
-
-</details>
-
-## Newly broken
-
-*   checking examples ... ERROR
-    ```
-    ...
-    > df %>% unchop(y, ptype = tibble(y = integer()))
-    Error: Can't convert `y` <character> to `y` <integer>.
-    Backtrace:
-         █
-      1. ├─df %>% unchop(y, ptype = tibble(y = integer()))
-      2. │ ├─base::withVisible(eval(quote(`_fseq`(`_lhs`)), env, env))
-      3. │ └─base::eval(quote(`_fseq`(`_lhs`)), env, env)
-      4. │   └─base::eval(quote(`_fseq`(`_lhs`)), env, env)
-      5. │     └─`_fseq`(`_lhs`)
-      6. │       └─magrittr::freduce(value, `_function_list`)
-      7. │         ├─base::withVisible(function_list[[k]](value))
-      8. │         └─function_list[[k]](value)
-      9. │           └─tidyr::unchop(., y, ptype = tibble(y = integer()))
-     10. │             └─vctrs::vec_rbind(!!!x, .ptype = ptype) 00_pkg_src/tidyr/R/chop.R:101:4
-     11. └─vctrs::vec_default_cast(...)
-     12.   └─vctrs::stop_incompatible_cast(...)
-     13.     └─vctrs:::stop_incompatible_type_convert(...)
-     14.       └─vctrs:::stop_incompatible_type_impl(...)
-     15.         └─vctrs:::stop_incompatible(...)
-     16.           └─vctr
-    Execution halted
-    ```
-
-*   checking tests ...
-    ```
-     ERROR
-    Running the tests in ‘tests/testthat.R’ failed.
-    Last 13 lines of output:
-       55. rlang:::branch_uncollapse_pipe(trace)
-      
-      ══ testthat results  ═══════════════════════════════════════════════════════════
-      [ OK: 501 | SKIPPED: 0 | WARNINGS: 0 | FAILED: 8 ]
-      1. Error: can override default output column type (@test-pivot-long.R#69) 
-      2. Error: can cast to custom type (@test-pivot-long.R#204) 
-      3. Error: can require specific type with ptype (@test-rectangle.R#18) 
-      4. Error: can require specific type with ptype (@test-rectangle.R#12) 
-      5. Error: (unknown) (@test-rectangle.R#12) 
-      6. Error: drops grouping when needed (@test-separate-rows.R#30) 
-      7. Error: drops grouping when needed (@test-separate-rows.R#27) 
-      8. Error: (unknown) (@test-separate-rows.R#27) 
-      
-      Error: testthat unit tests failed
-      Execution halted
-    ```
-
-## In both
-
-*   checking data for non-ASCII characters ... NOTE
-    ```
-      Note: found 24 marked UTF-8 strings
     ```
 
