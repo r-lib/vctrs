@@ -169,7 +169,8 @@ across all arguments.</p>
   <span class='no'>...</span>,
   <span class='kw'>.ptype</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
   <span class='kw'>.names_to</span> <span class='kw'>=</span> <span class='kw pkg'>rlang</span><span class='kw ns'>::</span><span class='fu'><a href='https://rlang.r-lib.org/reference/zap.html'>zap</a></span>(),
-  <span class='kw'>.name_repair</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"unique"</span>, <span class='st'>"universal"</span>, <span class='st'>"check_unique"</span>)
+  <span class='kw'>.name_repair</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"unique"</span>, <span class='st'>"universal"</span>, <span class='st'>"check_unique"</span>),
+  <span class='kw'>.name_spec</span> <span class='kw'>=</span> <span class='kw'>NULL</span>
 )
 
 <span class='fu'>vec_cbind</span>(
@@ -228,6 +229,14 @@ have unique names. On the other hand, <code>vec_cbind()</code> applies the
 repair function after all inputs have been concatenated together
 in a final data frame. Hence <code>vec_cbind()</code> allows the more
 permissive minimal names repair.</p></td>
+    </tr>
+    <tr>
+      <th>.name_spec</th>
+      <td><p>A name specification (as documented in <code><a href='vec_c.html'>vec_c()</a></code>)
+for combining the outer inputs names in <code>...</code> and the inner row
+names of the inputs. This only has an effect when <code>.names_to</code> is
+set to <code>NULL</code>, which causes the input names to be assigned as row
+names.</p></td>
     </tr>
     <tr>
       <th>.size</th>
