@@ -14,11 +14,9 @@ on_package_load <- function(pkg, expr) {
 
   ver <- utils::packageVersion("vctrs")
   components <- strsplit(as.character(ver), "[.]")[[1]]
-  is_dev_version <- any(nchar(components) > 2)
-
-  if (is_dev_version) {
-    options(`vctrs:::dev_version` = TRUE)
-  }
+  options(
+    `vctrs:::dev_version` = any(nchar(components) > 2)
+  )
 
   on_package_load("testthat", {
     s3_register("testthat::is_informative_error", "vctrs_error_cast_lossy")

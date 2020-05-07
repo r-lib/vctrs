@@ -61,22 +61,22 @@ test_that("combining data frames with foreign classes uses fallback", {
 
   # Same type fallback
   expect_identical(vec_ptype_common(foo, foo, foo), foo)
-  expect_error(vec_ptype_common(foo, foo, df, foo), class = "vctrs_error_incompatible_type")
+  expect_incompatible_df(vec_ptype_common(foo, foo, df, foo), df)
 
   expect_identical(
-    expect_df_fallback(vec_ptype2_fallback(foo, df), force = TRUE),
+    expect_df_fallback_warning(vec_ptype2_fallback(foo, df)),
     new_fallback_df(df, c("vctrs_foobar", "data.frame"))
   )
   expect_identical(
-    expect_df_fallback(vec_ptype2_fallback(df, foo), force = TRUE),
+    expect_df_fallback_warning(vec_ptype2_fallback(df, foo)),
     new_fallback_df(df, c("data.frame", "vctrs_foobar"))
   )
   expect_identical(
-    expect_df_fallback(vec_ptype_common_fallback(foo, df), force = TRUE),
+    expect_df_fallback_warning(vec_ptype_common_fallback(foo, df)),
     df
   )
   expect_identical(
-    expect_df_fallback(vec_ptype_common_fallback(df, foo), force = TRUE),
+    expect_df_fallback_warning(vec_ptype_common_fallback(df, foo)),
     df
   )
 
@@ -97,12 +97,12 @@ test_that("combining data frames with foreign classes uses fallback", {
   expect_is(cnds[[1]], "warning")
   expect_match(cnds[[1]]$message, "falling back to <data.frame>")
 
-  expect_identical(
-    expect_df_fallback(vec_cbind(foobar(data.frame(x = 1)), data.frame(y = 2))),
+  expect_incompatible_df(
+    vec_cbind(foobar(data.frame(x = 1)), data.frame(y = 2)),
     data.frame(x = 1, y = 2)
   )
-  expect_identical(
-    expect_df_fallback(vec_rbind(foo, data.frame(), foo)),
+  expect_incompatible_df(
+    vec_rbind(foo, data.frame(), foo),
     df
   )
 
@@ -113,10 +113,13 @@ test_that("combining data frames with foreign classes uses fallback", {
     expect_warning(vec_ptype_common_fallback(foo, bar, baz))
     expect_warning(vec_ptype_common_fallback(foo, baz, bar, baz, foo, bar))
 
-    expect_df_fallback(invisible(vec_rbind(foo, data.frame(), foo)))
+    with_dev_version(expect_df_fallback_warning(invisible(vec_rbind(foo, data.frame(), foo))))
+    with_dev_version(expect_df_fallback_warning(invisible(vec_cbind(foo, data.frame(x = 1)))))
+    with_dev_version(expect_df_fallback_warning(invisible(vec_cbind(foo, data.frame(x = 1), bar))))
 
-    expect_df_fallback(invisible(vec_cbind(foo, data.frame(x = 1))))
-    expect_df_fallback(invisible(vec_cbind(foo, data.frame(x = 1), bar)))
+    with_cran_version(invisible(vec_rbind(foo, data.frame(), foo)))
+    with_cran_version(invisible(vec_cbind(foo, data.frame(x = 1))))
+    with_cran_version(invisible(vec_cbind(foo, data.frame(x = 1), bar)))
   })
 })
 
@@ -442,8 +445,10 @@ test_that("data frame fallback handles column types (#999)", {
   df1_attrib <- foobar(df1, foo = "foo")
   df2_attrib <- foobar(df2, bar = "bar")
   exp <- data.frame(x = c(1, 1), y = c(NA, 2))
-  out <- expect_df_fallback(vec_rbind(df1_attrib, df2_attrib))
-  expect_identical(out, exp)
+  expect_incompatible_df(
+    vec_rbind(df1_attrib, df2_attrib),
+    exp
+  )
 
   out <- with_methods(
     `[.vctrs_foobar` = function(x, i, ...) {
@@ -461,25 +466,46 @@ test_that("data frame fallback handles column types (#999)", {
 
 test_that("falls back to tibble for tibble subclasses (#1025)", {
   foo <- foobar(tibble::as_tibble(mtcars))
-  expect_is(expect_df_fallback(vec_rbind(foo, mtcars)), "tbl_df")
-  expect_is(expect_df_fallback(vec_rbind(foo, mtcars, mtcars)), "tbl_df")
-  expect_is(expect_df_fallback(vec_rbind(foo, mtcars, foobar(mtcars))), "tbl_df")
+  expect_is(expect_df_fallback_warning_maybe(vec_rbind(foo, mtcars)), "tbl_df")
+  expect_is(expect_df_fallback_warning_maybe(vec_rbind(foo, mtcars, mtcars)), "tbl_df")
+  expect_is(expect_df_fallback_warning_maybe(vec_rbind(foo, mtcars, foobar(mtcars))), "tbl_df")
 
   verify_errors({
-    expect_df_fallback(
+    with_dev_version(expect_df_fallback_warning(
+      vec_rbind(
+        foobar(tibble::as_tibble(mtcars)),
+        mtcars,
+        foobaz(mtcars)
+      )
+    ))
+    with_dev_version(expect_df_fallback_warning(
+      vec_rbind(
+        tibble::as_tibble(mtcars),
+        foobar(tibble::as_tibble(mtcars))
+      )
+    ))
+    with_dev_version(expect_df_fallback_warning(
+      vec_rbind(
+        foobar(tibble::as_tibble(mtcars)),
+        mtcars,
+        foobar(tibble::as_tibble(mtcars))
+      )
+    ))
+
+    with_cran_version(
       vec_rbind(
         foobar(tibble::as_tibble(mtcars)),
         mtcars,
         foobaz(mtcars)
       )
     )
-    expect_df_fallback(
+    with_cran_version(
       vec_rbind(
         tibble::as_tibble(mtcars),
         foobar(tibble::as_tibble(mtcars))
       )
     )
-    expect_df_fallback(
+    with_cran_version(
       vec_rbind(
         foobar(tibble::as_tibble(mtcars)),
         mtcars,
@@ -497,10 +523,10 @@ test_that("fallback is recursive", {
   baz <- new_data_frame(list(y = 1:3, x = foobar(df, bar = TRUE)))
 
   exp <- new_data_frame(list(x = vec_rbind(df, df)))
-  expect_identical(expect_df_fallback(vec_rbind(foo, bar)), exp)
+  expect_incompatible_df(vec_rbind(foo, bar), exp)
 
   exp <- new_data_frame(list(x = vec_rbind(df, df), y = c(NA, NA, NA, 1:3)))
-  expect_identical(expect_df_fallback(vec_rbind(foo, baz)), exp)
+  expect_incompatible_df(vec_rbind(foo, baz), exp)
 })
 
 test_that("data frame output is informative", {
@@ -512,27 +538,60 @@ test_that("data frame output is informative", {
     vec_ptype_common_fallback(foo, bar, baz)
     vec_ptype_common_fallback(foo, baz, bar, baz, foo, bar)
 
-    invisible(vec_rbind(foo, data.frame(), foo))
-    invisible(vec_rbind(foo, baz, bar, baz, foo, bar))
+    with_dev_version(invisible(vec_rbind(foo, data.frame(), foo)))
+    with_dev_version(invisible(vec_rbind(foo, baz, bar, baz, foo, bar)))
 
-    invisible(vec_cbind(foo, data.frame(x = 1)))
-    invisible(vec_cbind(foo, data.frame(x = 1), bar))
+    with_dev_version(invisible(vec_cbind(foo, data.frame(x = 1))))
+    with_dev_version(invisible(vec_cbind(foo, data.frame(x = 1), bar)))
+
+    with_cran_version(invisible(vec_rbind(foo, data.frame(), foo)))
+    with_cran_version(invisible(vec_rbind(foo, baz, bar, baz, foo, bar)))
+
+    with_cran_version(invisible(vec_cbind(foo, data.frame(x = 1))))
+    with_cran_version(invisible(vec_cbind(foo, data.frame(x = 1), bar)))
 
     "# falls back to tibble for tibble subclasses (#1025)"
-    invisible(vec_rbind(
-      foobar(tibble::as_tibble(mtcars)),
-      mtcars,
-      foobaz(mtcars)
-    ))
+    with_dev_version(
+      invisible(vec_rbind(
+        foobar(tibble::as_tibble(mtcars)),
+        mtcars,
+        foobaz(mtcars)
+      ))
+    )
+    with_dev_version(
+      invisible(vec_rbind(
+        tibble::as_tibble(mtcars),
+        foobar(tibble::as_tibble(mtcars))
+      ))
+    )
+    with_dev_version(
+      invisible(vec_rbind(
+        foobar(tibble::as_tibble(mtcars)),
+        mtcars,
+        foobar(tibble::as_tibble(mtcars))
+      ))
+    )
 
-    invisible(vec_rbind(
-      tibble::as_tibble(mtcars),
-      foobar(tibble::as_tibble(mtcars))
-    ))
-    invisible(vec_rbind(
-      foobar(tibble::as_tibble(mtcars)),
-      mtcars,
-      foobar(tibble::as_tibble(mtcars))
-    ))
+    with_cran_version(
+      invisible(vec_rbind(
+        foobar(tibble::as_tibble(mtcars)),
+        mtcars,
+        foobaz(mtcars)
+      ))
+    )
+
+    with_cran_version(
+      invisible(vec_rbind(
+        tibble::as_tibble(mtcars),
+        foobar(tibble::as_tibble(mtcars))
+      ))
+    )
+    with_cran_version(
+      invisible(vec_rbind(
+        foobar(tibble::as_tibble(mtcars)),
+        mtcars,
+        foobar(tibble::as_tibble(mtcars))
+      ))
+    )
   })
 })

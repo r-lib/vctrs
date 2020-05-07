@@ -58,7 +58,7 @@ common type errors don't mention columns if they are compatible
 > df <- data.frame(x = 1, y = "")
 > foo <- structure(df, class = c("vctrs_foo", "data.frame"))
 > bar <- structure(df, class = c("vctrs_bar", "data.frame"))
-> vec_cast(foo, bar)
+> vec_cast_no_fallback(foo, bar)
 Error: Can't convert <vctrs_foo> to <vctrs_bar>.
 
 
@@ -86,6 +86,6 @@ i See <https://vctrs.r-lib.org/reference/faq-warning-convert-inputs.html>.
 <0 rows> (or 0-length row.names)
 
 > # For reference, error when fallback is disabled
-> vec_ptype2(foobar(mtcars), foobaz(mtcars))
+> vec_ptype2_no_fallback(foobar(mtcars), foobaz(mtcars))
 Error: Can't combine <vctrs_foobar> and <vctrs_foobaz>.
 

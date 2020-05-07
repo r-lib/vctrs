@@ -125,10 +125,14 @@ match_from_dispatch <- function(..., `vctrs:::from_dispatch` = FALSE) {
 vec_ptype2_params <- function(x,
                               y,
                               ...,
-                              df_fallback = FALSE,
+                              df_fallback = DF_FALLBACK_DEFAULT,
                               x_arg = "",
                               y_arg = "") {
   .Call(vctrs_ptype2_params, x, y, x_arg, y_arg, df_fallback)
+}
+
+vec_ptype2_no_fallback <- function(x, y, ..., x_arg = "", y_arg = "") {
+  .Call(vctrs_ptype2_params, x, y, x_arg, y_arg, DF_FALLBACK_NONE)
 }
 
 
@@ -140,7 +144,7 @@ DF_FALLBACK_WARN_DEV <- 3L
 DF_FALLBACK_QUIET <- 255L
 
 df_fallback <- function(df_fallback) {
-  if (df_fallback) df_fallback else DF_FALLBACK_NONE
+  if (df_fallback) df_fallback else DF_FALLBACK_WARN_DEV
 }
 has_df_fallback <- function(df_fallback) {
   df_fallback(df_fallback) > DF_FALLBACK_NONE
@@ -154,7 +158,12 @@ needs_fallback_warning <- function(df_fallback) {
     df_fallback < DF_FALLBACK_QUIET
   }
 }
-
+with_dev_version <- function(expr) {
+  with_options(expr, `vctrs:::dev_version` = TRUE)
+}
+with_cran_version <- function(expr) {
+  with_options(expr, `vctrs:::dev_version` = FALSE)
+}
 
 vec_typeof2 <- function(x, y) {
   .Call(vctrs_typeof2, x, y)
