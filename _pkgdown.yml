@@ -24,12 +24,15 @@ reference:
   - vec_ptype
   - vec_size
   - vec_is
+  - vec_is_list
   - vec_assert
 
-- title: Casting and combining
+- title: Combining
   contents:
   - vec_c
   - vec_cbind
+  - vec_rbind
+  - name_spec
 
 - title: Slicing and recycling
   contents:
@@ -37,6 +40,7 @@ reference:
   - vec_slice
   - vec_assign
   - vec_recycle
+  - vec_chop
 
 - title: Equality and ordering
   contents:
@@ -66,6 +70,10 @@ reference:
   contents:
   - list_of
 
+- title: User tools
+  contents:
+  - "`%0%`"
+
 - title: Developer tools
   contents:
   - vctr
@@ -76,11 +84,14 @@ reference:
   - vec_proxy_equal
   - vec_ptype_full
   - vec_ptype_finalise
+  - df_ptype2
+  - df_cast
+  - tib_ptype2
+  - tib_cast
   - "vctrs-conditions"
   - rcrd
   - fields
   - s3_register
-  - vec_resize
   - vec_arith
   - vec_math
   - unspecified

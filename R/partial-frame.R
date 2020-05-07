@@ -4,6 +4,7 @@
 #' types of only some of the columns in a data frame.
 #'
 #' @param ... Attributes of subclass
+#' @keywords internal
 #' @export
 #' @examples
 #' pf <- partial_frame(x = double())

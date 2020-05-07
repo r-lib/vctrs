@@ -33,3 +33,4 @@ pf
 vec_ptype_common(factor("v"), factor("w"), .ptype = pf)
 
 }
+\keyword{internal}

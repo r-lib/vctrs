@@ -4,6 +4,7 @@
 #' result should be a factor that contains at least the specified levels.
 #'
 #' @inheritParams new_factor
+#' @keywords internal
 #' @export
 #' @examples
 #' # Assert that `x` is a factor

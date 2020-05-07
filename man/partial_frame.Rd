@@ -23,3 +23,4 @@ vec_rbind(
   .ptype = partial_frame(x = double(), a = character())
 )
 }
+\keyword{internal}

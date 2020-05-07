@@ -77,3 +77,4 @@ returns a result. If a lossy cast is detected, it throws an error,
 unless it's been wrapped in \code{allow_lossy_cast()}. In that case, it
 returns the result silently.
 }
+\keyword{internal}

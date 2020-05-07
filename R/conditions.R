@@ -376,6 +376,7 @@ cnd_body.vctrs_error_incompatible_size <- function(cnd, ...) {
 #'   deprecation warning. This is useful for transitioning your class
 #'   to a stricter conversion scheme. The warning advises your users
 #'   to wrap their code with `allow_lossy_cast()`.
+#' @keywords internal
 #' @export
 maybe_lossy_cast <- function(result, x, to,
                              lossy = NULL,
