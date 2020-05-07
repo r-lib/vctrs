@@ -245,7 +245,7 @@ SEXP vec_cast_common_params(SEXP xs, SEXP to, enum df_fallback df_fallback) {
 
 // [[ include("vctrs.h") ]]
 SEXP vec_cast_common(SEXP xs, SEXP to) {
-  return vec_cast_common_params(xs, to, DF_FALLBACK_NONE);
+  return vec_cast_common_params(xs, to, DF_FALLBACK_DEFAULT);
 }
 
 // [[ register(external = TRUE) ]]

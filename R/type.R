@@ -97,7 +97,7 @@ vec_ptype_common <- function(..., .ptype = NULL) {
 }
 vec_ptype_common_params <- function(...,
                                     .ptype = NULL,
-                                    .df_fallback = DF_FALLBACK_NONE) {
+                                    .df_fallback = DF_FALLBACK_DEFAULT) {
   .External2(vctrs_ptype_common_params, .ptype, .df_fallback)
 }
 

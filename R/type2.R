@@ -87,7 +87,7 @@ vec_default_ptype2 <- function(x, y, ..., x_arg = "", y_arg = "") {
   internal <- match_ptype2_params(...)
   df_fallback <- internal$df_fallback
 
-  if (has_df_fallback() && df_fallback) {
+  if (has_df_fallback(df_fallback)) {
     if (is_df_subclass(x) && is.data.frame(y)) {
       return(vec_ptype2_df_fallback(x, y, df_fallback))
     }
@@ -131,10 +131,30 @@ vec_ptype2_params <- function(x,
   .Call(vctrs_ptype2_params, x, y, x_arg, y_arg, df_fallback)
 }
 
-DF_FALLBACK_NONE <- 0L
-DF_FALLBACK_WARN <- 1L
-DF_FALLBACK_WARN_DEV <- 2L
-DF_FALLBACK_QUIET <- 3L
+
+# Kept in sync with ptype2.h
+DF_FALLBACK_DEFAULT <- 0L
+DF_FALLBACK_NONE <- 1L
+DF_FALLBACK_WARN <- 2L
+DF_FALLBACK_WARN_DEV <- 3L
+DF_FALLBACK_QUIET <- 255L
+
+df_fallback <- function(df_fallback) {
+  if (df_fallback) df_fallback else DF_FALLBACK_NONE
+}
+has_df_fallback <- function(df_fallback) {
+  df_fallback(df_fallback) > DF_FALLBACK_NONE
+}
+needs_fallback_warning <- function(df_fallback) {
+  df_fallback <- df_fallback(df_fallback)
+
+  if (df_fallback == DF_FALLBACK_WARN_DEV) {
+    is_true(peek_option("vctrs:::dev_version"))
+  } else {
+    df_fallback < DF_FALLBACK_QUIET
+  }
+}
+
 
 vec_typeof2 <- function(x, y) {
   .Call(vctrs_typeof2, x, y)

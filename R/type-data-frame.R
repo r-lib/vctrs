@@ -195,14 +195,6 @@ df_needs_normalisation <- function(x, y) {
     df_is_coercible(x, y, df_fallback = TRUE)
 }
 
-needs_fallback_warning <- function(df_fallback) {
-  if (df_fallback == DF_FALLBACK_WARN_DEV) {
-    is_true(peek_option("vctrs:::dev_version"))
-  } else {
-    df_fallback < DF_FALLBACK_QUIET
-  }
-}
-
 # Fallback for data frame subclasses (#981)
 vec_ptype2_df_fallback <- function(x, y, df_fallback, x_arg = "", y_arg = "") {
   seen_tibble <- inherits(x, "tbl_df") || inherits(y, "tbl_df")
@@ -340,8 +332,4 @@ df_lossy_cast <- function(out, x, to, ..., x_arg = "", to_arg = "") {
 
 is_informative_error.vctrs_error_cast_lossy_dropped <- function(x, ...) {
   FALSE
-}
-
-has_df_fallback <- function() {
-  !is_true(peek_option("vctrs:::disable_df_fallback"))
 }
