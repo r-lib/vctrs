@@ -47,9 +47,11 @@
 
 
 <meta property="og:title" content="FAQ - Error/Warning: Some attributes are incompatible — faq-error-incompatible-attributes" />
-<meta property="og:description" content="TODO. Tracked in r-lib/vctrs#1016
-This error occurs when vec_ptype2() or vec_cast() are supplied
-vectors of the same classes with different attributes." />
+<meta property="og:description" content="This error occurs when vec_ptype2() or vec_cast() are supplied
+vectors of the same classes with different attributes. In this
+case, vctrs doesn't know how to combine the inputs.
+To fix this error, the maintainer of the class should implement
+self-to-self coercion methods for vec_ptype2() and vec_cast()." />
 <meta property="og:image" content="https://vctrs.r-lib.org/logo.png" />
 
 
@@ -158,12 +160,29 @@ vectors of the same classes with different attributes." />
     </div>
 
     <div class="ref-description">
-    <p>TODO. Tracked in r-lib/vctrs#1016</p>
-<p>This error occurs when <code><a href='vec_ptype2.html'>vec_ptype2()</a></code> or <code><a href='vec_cast.html'>vec_cast()</a></code> are supplied
-vectors of the same classes with different attributes.</p>
+    <p>This error occurs when <code><a href='vec_ptype2.html'>vec_ptype2()</a></code> or <code><a href='vec_cast.html'>vec_cast()</a></code> are supplied
+vectors of the same classes with different attributes. In this
+case, vctrs doesn't know how to combine the inputs.</p>
+<p>To fix this error, the maintainer of the class should implement
+self-to-self coercion methods for <code><a href='vec_ptype2.html'>vec_ptype2()</a></code> and <code><a href='vec_cast.html'>vec_cast()</a></code>.</p>
     </div>
 
 
+
+    <h2 class="hasAnchor" id="implementing-coercion-methods"><a class="anchor" href="#implementing-coercion-methods"></a>Implementing coercion methods</h2>
+
+    
+<ul>
+<li><p>For an overview of how these generics work and their roles in vctrs,
+see <code><a href='theory-faq-coercion.html'>?theory-faq-coercion</a></code>.</p></li>
+<li><p>For an example of implementing coercion methods for simple vectors,
+see <code><a href='howto-faq-coercion.html'>?howto-faq-coercion</a></code>.</p></li>
+<li><p>For an example of implementing coercion methods for data frame
+subclasses, see
+<code><a href='howto-faq-coercion-data-frame.html'>?howto-faq-coercion-data-frame</a></code>.</p></li>
+<li><p>For a tutorial about implementing vctrs classes from scratch, see
+<code><a href='../articles/s3-vector.html'>vignette("s3-vector")</a></code>.</p></li>
+</ul>
 
 
   </div>
