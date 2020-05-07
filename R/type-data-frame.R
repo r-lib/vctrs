@@ -234,12 +234,6 @@ vec_ptype2_df_fallback <- function(x, y, df_fallback, x_arg = "", y_arg = "") {
         msg,
         incompatible_attrib_bullets()
       )
-    } else {
-      msg <- c(
-        msg,
-        i = "Convert all inputs to the same class to avoid this warning.",
-        i = "See <https://vctrs.r-lib.org/reference/faq-warning-convert-inputs.html>."
-      )
     }
 
     warn(msg)

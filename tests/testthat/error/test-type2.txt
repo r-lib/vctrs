@@ -79,8 +79,6 @@ i See <https://vctrs.r-lib.org/reference/faq-error-incompatible-attributes.html>
 > # For reference, warning for incompatible classes
 > vec_ptype2_fallback(foobar(mtcars), foobaz(mtcars))
 Warning: Can't combine <vctrs_foobar> and <vctrs_foobaz>; falling back to <data.frame>.
-i Convert all inputs to the same class to avoid this warning.
-i See <https://vctrs.r-lib.org/reference/faq-warning-convert-inputs.html>.
 
  [1] mpg  cyl  disp hp   drat wt   qsec vs   am   gear carb
 <0 rows> (or 0-length row.names)
