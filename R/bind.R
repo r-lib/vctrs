@@ -142,12 +142,18 @@
 NULL
 
 #' @export
+#' @param .name_spec A name specification (as documented in [vec_c()])
+#'   for combining the outer inputs names in `...` and the inner row
+#'   names of the inputs. This only has an effect when `.names_to` is
+#'   set to `NULL`, which causes the input names to be assigned as row
+#'   names.
 #' @rdname vec_bind
 vec_rbind <- function(...,
                       .ptype = NULL,
                       .names_to = rlang::zap(),
-                      .name_repair = c("unique", "universal", "check_unique")) {
-  .External2(vctrs_rbind, .ptype, .names_to, .name_repair)
+                      .name_repair = c("unique", "universal", "check_unique"),
+                      .name_spec = NULL) {
+  .External2(vctrs_rbind, .ptype, .names_to, .name_repair, .name_spec)
 }
 vec_rbind <- fn_inline_formals(vec_rbind, ".name_repair")
 

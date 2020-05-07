@@ -10,7 +10,8 @@ vec_rbind(
   ...,
   .ptype = NULL,
   .names_to = rlang::zap(),
-  .name_repair = c("unique", "universal", "check_unique")
+  .name_repair = c("unique", "universal", "check_unique"),
+  .name_spec = NULL
 )
 
 vec_cbind(
@@ -64,6 +65,12 @@ have unique names. On the other hand, \code{vec_cbind()} applies the
 repair function after all inputs have been concatenated together
 in a final data frame. Hence \code{vec_cbind()} allows the more
 permissive minimal names repair.}
+
+\item{.name_spec}{A name specification (as documented in \code{\link[=vec_c]{vec_c()}})
+for combining the outer inputs names in \code{...} and the inner row
+names of the inputs. This only has an effect when \code{.names_to} is
+set to \code{NULL}, which causes the input names to be assigned as row
+names.}
 
 \item{.size}{If, \code{NULL}, the default, will determine the number of
 rows in \code{vec_cbind()} output by using the standard recycling rules.

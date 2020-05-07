@@ -219,14 +219,24 @@ test_that("can assign row names in vec_rbind()", {
   df1 <- mtcars[1:3, ]
   df2 <- mtcars[4:5, ]
 
+  expect_error(
+    vec_rbind(
+      foo = df1,
+      df2,
+      .names_to = NULL
+    ),
+    "specification"
+  )
+
   # Combination
   out <- vec_rbind(
     foo = df1,
     df2,
-    .names_to = NULL
+    .names_to = NULL,
+    .name_spec = "{outer}_{inner}"
   )
   exp <- mtcars[1:5, ]
-  row.names(exp) <- c(paste0("foo...", row.names(df1)), row.names(df2))
+  row.names(exp) <- c(paste0("foo_", row.names(df1)), row.names(df2))
   expect_identical(out, exp)
 
   out <- vec_rbind(foo = df1, df2, .names_to = "id")
