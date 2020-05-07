@@ -195,6 +195,14 @@ df_needs_normalisation <- function(x, y) {
     df_is_coercible(x, y, df_fallback = TRUE)
 }
 
+needs_fallback_warning <- function(df_fallback) {
+  if (df_fallback == DF_FALLBACK_WARN_DEV) {
+    is_true(peek_option("vctrs:::dev_version"))
+  } else {
+    df_fallback < DF_FALLBACK_QUIET
+  }
+}
+
 # Fallback for data frame subclasses (#981)
 vec_ptype2_df_fallback <- function(x, y, df_fallback, x_arg = "", y_arg = "") {
   seen_tibble <- inherits(x, "tbl_df") || inherits(y, "tbl_df")
@@ -217,7 +225,7 @@ vec_ptype2_df_fallback <- function(x, y, df_fallback, x_arg = "", y_arg = "") {
   x_class <- class(x)[[1]]
   y_class <- class(y)[[1]]
 
-  if (df_fallback < DF_FALLBACK_QUIET &&
+  if (needs_fallback_warning(df_fallback) &&
       !all(c(x_class, y_class) %in% c(classes, "tbl_df"))) {
     fallback_class <- if (seen_tibble) "<tibble>" else "<data.frame>"
     msg <- cnd_type_message(

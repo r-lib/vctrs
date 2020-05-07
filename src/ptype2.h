@@ -2,9 +2,11 @@
 #define VCTRS_PTYPE2_H
 
 
+// Sync with R constants in ptype2.R
 enum df_fallback {
   DF_FALLBACK_NONE,
   DF_FALLBACK_WARN,
+  DF_FALLBACK_WARN_DEV,
   DF_FALLBACK_QUIET
 };
 
