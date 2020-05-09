@@ -1,6 +1,5 @@
 
-* The UBSAN error is fixed.
-* The r-devel warning is fixed.
+This is a resubmission to fix the SAN error.
 
 
 ## Test environments
