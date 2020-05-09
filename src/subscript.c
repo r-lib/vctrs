@@ -165,7 +165,7 @@ static SEXP dbl_cast_subscript(SEXP subscript,
       continue;
     }
 
-    if (!isfinite(elt) || elt > INT_MAX) {
+    if (!isfinite(elt) || elt <= INT_MIN || elt > INT_MAX) {
       // Once we throw lazy errors from the cast method, we should
       // throw the error here as well
       UNPROTECT(1);
