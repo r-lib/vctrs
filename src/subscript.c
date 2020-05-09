@@ -165,17 +165,21 @@ static SEXP dbl_cast_subscript(SEXP subscript,
       continue;
     }
 
-    int out_elt = (int) elt;
-
-    // Detect out-of-bounds and fractional numbers
-    if (elt > INT_MAX || out_elt != elt) {
+    if (!isfinite(elt) || elt > INT_MAX) {
       // Once we throw lazy errors from the cast method, we should
       // throw the error here as well
       UNPROTECT(1);
       return dbl_cast_subscript_fallback(subscript, opts, err);
     }
 
-    out_p[i] = out_elt;
+    int elt_int = (int) elt;
+
+    if (elt != elt_int) {
+      UNPROTECT(1);
+      return dbl_cast_subscript_fallback(subscript, opts, err);
+    }
+
+    out_p[i] = elt_int;
   }
 
   UNPROTECT(1);

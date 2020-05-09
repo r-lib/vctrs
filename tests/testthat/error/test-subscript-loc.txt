@@ -169,6 +169,14 @@ i It must be numeric or character.
 Error: Must extract element with a single valid subscript.
 x Can't convert from <double> to <integer> due to loss of precision.
 
+> vec_as_location2(Inf, 10L)
+Error: Must extract element with a single valid subscript.
+x Can't convert from <double> to <integer> due to loss of precision.
+
+> vec_as_location2(-Inf, 10L)
+Error: Must extract element with a single valid subscript.
+x Can't convert from <double> to <integer> due to loss of precision.
+
 > # Idem with custom `arg`
 > vec_as_location2(foobar(), 10L, arg = "foo")
 Error: Must extract element with a single valid subscript.
