@@ -1426,6 +1426,8 @@ ERR r_try_catch(void (*fn)(void*),
 SEXP (*rlang_sym_as_character)(SEXP x);
 
 
+bool vctrs_debug_verbose = false;
+
 SEXP vctrs_ns_env = NULL;
 SEXP vctrs_shared_empty_str = NULL;
 
@@ -1569,8 +1571,10 @@ void c_print_backtrace() {
 
 void vctrs_init_utils(SEXP ns) {
   vctrs_ns_env = ns;
-  vctrs_method_table = r_env_get(ns, Rf_install(".__S3MethodsTable__."));
 
+  vctrs_debug_verbose = r_is_true(Rf_GetOption1(Rf_install("vctrs:::debug")));
+
+  vctrs_method_table = r_env_get(ns, Rf_install(".__S3MethodsTable__."));
   base_method_table = r_env_get(R_BaseNamespace, Rf_install(".__S3MethodsTable__."));
 
   s4_c_method_table = r_parse_eval("environment(methods::getGeneric('c'))$.MTable", R_GlobalEnv);

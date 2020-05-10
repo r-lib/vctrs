@@ -10,9 +10,13 @@
 #include <stdbool.h>
 #include <stdint.h>
 
-typedef R_xlen_t r_ssize_t;
+
+extern bool vctrs_debug_verbose;
 
 #define VCTRS_ASSERT(condition) ((void)sizeof(char[1 - 2*!(condition)]))
+
+
+typedef R_xlen_t r_ssize_t;
 
 // An ERR indicates either a C NULL in case of no error, or a
 // condition object otherwise

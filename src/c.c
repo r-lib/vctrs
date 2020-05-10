@@ -186,6 +186,11 @@ static inline void stop_vec_c_fallback(SEXP xs, int err_type);
 SEXP vec_c_fallback(SEXP xs, SEXP name_spec) {
   SEXP x = list_first_non_null(xs, NULL);
 
+  if (vctrs_debug_verbose) {
+    Rprintf("Falling back to `base::c()` for class `%s`.\n",
+            r_chr_get_c_string(r_class(x), 0));
+  }
+
   int err_type = vec_c_fallback_validate_args(x, name_spec);
   if (err_type) {
     stop_vec_c_fallback(xs, err_type);
