@@ -10,6 +10,7 @@ struct cast_opts {
   struct vctrs_arg* x_arg;
   struct vctrs_arg* to_arg;
   enum df_fallback df_fallback;
+  enum s3_fallback s3_fallback;
 };
 
 SEXP df_cast_opts(const struct cast_opts* opts);
@@ -45,6 +46,12 @@ SEXP vec_cast_params(SEXP x,
 }
 
 SEXP vec_cast_common_params(SEXP xs, SEXP to, enum df_fallback df_fallback);
+
+struct cast_opts new_cast_opts(SEXP x,
+                               SEXP y,
+                               struct vctrs_arg* x_arg,
+                               struct vctrs_arg* y_arg,
+                               SEXP opts);
 
 SEXP vec_cast_dispatch(const struct cast_opts* opts,
                        enum vctrs_type x_type,

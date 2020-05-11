@@ -54,18 +54,43 @@ SEXP vec_ptype2_default(SEXP x,
                         SEXP y,
                         SEXP x_arg,
                         SEXP y_arg,
-                        enum df_fallback df_fallback) {
-  SEXP df_fallback_obj = PROTECT(r_int(df_fallback));
-  SEXP out = vctrs_eval_mask6(syms_vec_ptype2_default,
+                        const struct ptype2_opts* opts) {
+  SEXP df_fallback_obj = PROTECT(r_int(opts->df_fallback));
+  SEXP s3_fallback_obj = PROTECT(r_int(opts->s3_fallback));
+  SEXP out = vctrs_eval_mask7(syms_vec_ptype2_default,
                               syms_x, x,
                               syms_y, y,
                               syms_x_arg, x_arg,
                               syms_y_arg, y_arg,
                               syms_from_dispatch, vctrs_shared_true,
                               syms_df_fallback, df_fallback_obj,
+                              Rf_install("vctrs:::s3_fallback"), s3_fallback_obj,
                               vctrs_ns_env);
-  UNPROTECT(1);
+  UNPROTECT(2);
   return out;
+}
+
+SEXP find_common_class(SEXP x, SEXP y) {
+  SEXP x_class = PROTECT(r_class(x));
+  SEXP y_class = PROTECT(r_class(y));
+
+  R_len_t x_n = Rf_length(x_class);
+  R_len_t y_n = Rf_length(x_class);
+
+  SEXP const * p_x_classes = STRING_PTR_RO(x_class);
+  SEXP const * p_y_classes = STRING_PTR_RO(y_class);
+
+  for (R_len_t i = 0; i < x_n; ++i) {
+    for (R_len_t j = 0; j < y_n; ++j) {
+      if (p_x_classes[i] == p_y_classes[j]) {
+        UNPROTECT(2);
+        return p_x_classes[i];
+      }
+    }
+  }
+
+  UNPROTECT(2);
+  return R_NilValue;
 }
 
 // [[ include("vctrs.h") ]]
@@ -103,7 +128,7 @@ SEXP vec_ptype2_dispatch_s3(const struct ptype2_opts* opts) {
   PROTECT(method);
 
   if (method == R_NilValue) {
-    SEXP out = vec_ptype2_default(x, y, x_arg_obj, y_arg_obj, opts->df_fallback);
+    SEXP out = vec_ptype2_default(x, y, x_arg_obj, y_arg_obj, opts);
     UNPROTECT(5);
     return out;
   }

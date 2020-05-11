@@ -280,19 +280,13 @@ SEXP df_rownames(SEXP x) {
 // vctrs type methods ------------------------------------------------
 
 // [[ register() ]]
-SEXP vctrs_df_ptype2(SEXP x, SEXP y, SEXP x_arg, SEXP y_arg, SEXP df_fallback) {
-  struct vctrs_arg x_arg_ = vec_as_arg(x_arg);
-  struct vctrs_arg y_arg_ = vec_as_arg(y_arg);;
+SEXP vctrs_df_ptype2_opts(SEXP x, SEXP y, SEXP x_arg, SEXP y_arg, SEXP opts) {
+  struct vctrs_arg c_x_arg = vec_as_arg(x_arg);
+  struct vctrs_arg c_y_arg = vec_as_arg(y_arg);
 
-  const struct ptype2_opts opts = {
-    .x = x,
-    .y = y,
-    .x_arg = &x_arg_,
-    .y_arg = &y_arg_,
-    .df_fallback = r_lgl_get(df_fallback, 0)
-  };
+  const struct ptype2_opts c_opts = new_ptype2_opts(x, y, &c_x_arg, &c_y_arg, opts);
 
-  return df_ptype2(&opts);
+  return df_ptype2(&c_opts);
 }
 
 static
@@ -369,13 +363,12 @@ SEXP df_ptype2_match(const struct ptype2_opts* opts,
                                                             opts->y_arg);
       struct vctrs_arg named_y_arg = new_index_arg(opts->y_arg, &y_arg_data);
 
-      const struct ptype2_opts col_opts = {
-        .x = VECTOR_ELT(x, i),
-        .y = VECTOR_ELT(y, dup),
-        .x_arg = &named_x_arg,
-        .y_arg = &named_y_arg,
-        .df_fallback = opts->df_fallback
-      };
+      struct ptype2_opts col_opts = *opts;
+      col_opts.x = VECTOR_ELT(x, i);
+      col_opts.y = VECTOR_ELT(y, dup);
+      col_opts.x_arg = &named_x_arg;
+      col_opts.y_arg = &named_y_arg;
+
       int _left;
       type = vec_ptype2_opts(&col_opts, &_left);
     }
@@ -423,13 +416,11 @@ SEXP df_ptype2_loop(const struct ptype2_opts* opts,
     struct vctrs_arg named_x_arg = new_index_arg(opts->x_arg, &x_arg_data);
     struct vctrs_arg named_y_arg = new_index_arg(opts->y_arg, &y_arg_data);
 
-    const struct ptype2_opts col_opts = {
-      .x = VECTOR_ELT(x, i),
-      .y = VECTOR_ELT(y, i),
-      .x_arg = &named_x_arg,
-      .y_arg = &named_y_arg,
-      .df_fallback = opts->df_fallback
-    };
+    struct ptype2_opts col_opts = *opts;
+    col_opts.x = VECTOR_ELT(x, i);
+    col_opts.y = VECTOR_ELT(y, i);
+    col_opts.x_arg = &named_x_arg;
+    col_opts.y_arg = &named_y_arg;
     int _left;
 
     SEXP type = vec_ptype2_opts(&col_opts, &_left);
@@ -444,20 +435,13 @@ SEXP df_ptype2_loop(const struct ptype2_opts* opts,
 }
 
 // [[ register() ]]
-SEXP vctrs_df_cast_params(SEXP x, SEXP to, SEXP x_arg_, SEXP to_arg_, SEXP df_fallback_) {
-  struct vctrs_arg x_arg = vec_as_arg(x_arg_);
-  struct vctrs_arg to_arg = vec_as_arg(to_arg_);;
-  enum df_fallback df_fallback = r_int_get(df_fallback_, 0);
+SEXP vctrs_df_cast_opts(SEXP x, SEXP to, SEXP opts, SEXP x_arg, SEXP to_arg) {
+  struct vctrs_arg c_x_arg = vec_as_arg(x_arg);
+  struct vctrs_arg c_to_arg = vec_as_arg(to_arg);;
 
-  const struct cast_opts opts = {
-    .x = x,
-    .to = to,
-    .x_arg = &x_arg,
-    .to_arg = &to_arg,
-    .df_fallback = df_fallback
-  };
+  const struct cast_opts c_opts = new_cast_opts(x, to, &c_x_arg, &c_to_arg, opts);
 
-  return df_cast_opts(&opts);
+  return df_cast_opts(&c_opts);
 }
 
 static SEXP df_cast_match(const struct cast_opts* opts,

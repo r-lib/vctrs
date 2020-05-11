@@ -278,6 +278,22 @@ SEXP vctrs_cast_common_params(SEXP call, SEXP op, SEXP args, SEXP env) {
   return out;
 }
 
+// [[ include("cast.h") ]]
+struct cast_opts new_cast_opts(SEXP x,
+                               SEXP to,
+                               struct vctrs_arg* x_arg,
+                               struct vctrs_arg* to_arg,
+                               SEXP opts) {
+  return (struct cast_opts) {
+    .x = x,
+    .to = to,
+    .x_arg = x_arg,
+    .to_arg = to_arg,
+    .df_fallback = r_int_get(r_list_get(opts, 0), 0),
+    .s3_fallback = r_int_get(r_list_get(opts, 1), 0)
+  };
+}
+
 
 void vctrs_init_cast(SEXP ns) {
   syms_vec_cast_default = Rf_install("vec_default_cast");

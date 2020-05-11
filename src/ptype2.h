@@ -69,5 +69,11 @@ SEXP vec_ptype2_dispatch_s3(const struct ptype2_opts* opts);
 
 bool vec_is_coercible(const struct ptype2_opts* opts, int* dir);
 
+struct ptype2_opts new_ptype2_opts(SEXP x,
+                                   SEXP y,
+                                   struct vctrs_arg* x_arg,
+                                   struct vctrs_arg* y_arg,
+                                   SEXP opts);
+
 
 #endif

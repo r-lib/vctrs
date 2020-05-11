@@ -59,7 +59,7 @@ static SEXP vec_rbind(SEXP xs,
   // The common type holds information about common column names,
   // types, etc. Each element of `xs` needs to be cast to that type
   // before assignment.
-  ptype = vec_ptype_common_params(xs, ptype, DF_FALLBACK_DEFAULT, S3_FALLBACK_false);
+  ptype = vec_ptype_common_params(xs, ptype, DF_FALLBACK_DEFAULT, S3_FALLBACK_true);
   PROTECT_N(ptype, &n_prot);
 
   if (ptype == R_NilValue) {

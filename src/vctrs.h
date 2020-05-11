@@ -604,7 +604,6 @@ static inline void growable_push_int(struct growable* g, int i) {
 
 // Conditions ---------------------------------------------------
 
-void vctrs_stop_unsupported_type(enum vctrs_type, const char* fn) __attribute__((noreturn));
 void stop_scalar_type(SEXP x, struct vctrs_arg* arg) __attribute__((noreturn));
 void vec_assert(SEXP x, struct vctrs_arg* arg);
 __attribute__((noreturn))

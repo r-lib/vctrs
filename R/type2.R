@@ -76,27 +76,26 @@ vec_default_ptype2 <- function(x, y, ..., x_arg = "", y_arg = "") {
     return(UseMethod("vec_ptype2"))
   }
 
+  opts <- match_ptype2_opts(...)
+
   # If both data frames, first find common type of columns before the
   # same-type fallback
-  if (df_needs_normalisation(x, y)) {
-    out <- vec_ptype2_df_fallback_normalise(x, y)
+  if (df_needs_normalisation(x, y, opts)) {
+    out <- vec_ptype2_df_fallback_normalise(x, y, opts)
     x <- out$x
     y <- out$y
   }
 
-  if (is_same_type(x, y)) {
+  if (!is.data.frame(x) && is_same_type(x, y)) {
     return(vec_ptype(x, x_arg = x_arg))
   }
 
-  internal <- match_ptype2_params(...)
-  df_fallback <- internal$df_fallback
-
-  if (has_df_fallback(df_fallback)) {
+  if (has_df_fallback(opts$df_fallback)) {
     if (is_df_subclass(x) && is.data.frame(y)) {
-      return(vec_ptype2_df_fallback(x, y, df_fallback))
+      return(vec_ptype2_df_fallback(x, y, opts))
     }
     if (is_df_subclass(y) && is.data.frame(x)) {
-      return(vec_ptype2_df_fallback(x, y, df_fallback))
+      return(vec_ptype2_df_fallback(x, y, opts))
     }
   }
 
@@ -109,43 +108,80 @@ vec_default_ptype2 <- function(x, y, ..., x_arg = "", y_arg = "") {
     y,
     x_arg = x_arg,
     y_arg = y_arg,
-    `vctrs:::from_dispatch` = internal$from_dispatch
+    `vctrs:::from_dispatch` = match_from_dispatch(...)
   )
 }
 
-match_ptype2_params <- function(...) {
-  list(
-    from_dispatch = match_from_dispatch(...),
-    df_fallback = match_df_fallback(...)
-  )
+check_ptype2_dots_empty <- function(...,
+                                    `vctrs:::from_dispatch`,
+                                    `vctrs:::df_fallback`,
+                                    `vctrs:::s3_fallback`) {
+  ellipsis::check_dots_empty()
 }
-match_df_fallback <- function(..., `vctrs:::df_fallback` = FALSE) {
-  `vctrs:::df_fallback`
+match_ptype2_opts <- function(...,
+                              `vctrs:::df_fallback` = NULL,
+                              `vctrs:::s3_fallback` = NULL) {
+  ptype2_opts(
+    df_fallback = `vctrs:::df_fallback`,
+    s3_fallback = `vctrs:::s3_fallback`
+  )
 }
 match_from_dispatch <- function(..., `vctrs:::from_dispatch` = FALSE) {
   `vctrs:::from_dispatch`
 }
 
+ptype2_opts <- function(df_fallback = NULL,
+                        s3_fallback = NULL) {
+  # Order is important for the C side
+  list(
+    df_fallback = df_fallback %||% df_fallback_default(),
+    s3_fallback = s3_fallback %||% s3_fallback_default()
+  )
+}
+
+vec_ptype2_opts <- function(x,
+                            y,
+                            ...,
+                            opts,
+                            x_arg = "",
+                            y_arg = "") {
+  .Call(vctrs_ptype2_opts, x, y, opts, x_arg, y_arg)
+}
 vec_ptype2_params <- function(x,
                               y,
                               ...,
-                              df_fallback = DF_FALLBACK_DEFAULT,
+                              df_fallback = NULL,
+                              s3_fallback = NULL,
                               x_arg = "",
                               y_arg = "") {
-  .Call(vctrs_ptype2_params, x, y, x_arg, y_arg, df_fallback)
+  opts <- ptype2_opts(
+    df_fallback = df_fallback,
+    s3_fallback = s3_fallback
+  )
+  vec_ptype2_opts(x, y, opts = opts, x_arg = x_arg, y_arg = y_arg)
 }
 
 vec_ptype2_no_fallback <- function(x, y, ..., x_arg = "", y_arg = "") {
-  .Call(vctrs_ptype2_params, x, y, x_arg, y_arg, DF_FALLBACK_NONE)
+  opts <- ptype2_opts(
+    `vctrs:::df_fallback` = DF_FALLBACK_NONE,
+    `vctrs:::s3_fallback` = S3_FALLBACK_false
+  )
+  vec_ptype2_opts(x, y, ..., , opts = opts, x_arg = x_arg, y_arg = y_arg)
 }
 
 
 # Kept in sync with ptype2.h
+df_fallback_default <- function() DF_FALLBACK_DEFAULT
 DF_FALLBACK_DEFAULT <- 0L
 DF_FALLBACK_NONE <- 1L
 DF_FALLBACK_WARN <- 2L
 DF_FALLBACK_WARN_MAYBE <- 3L
 DF_FALLBACK_QUIET <- 255L
+
+s3_fallback_default <- function() S3_FALLBACK_false
+S3_FALLBACK_false <- 0L
+S3_FALLBACK_true <- 1L
+
 
 df_fallback <- function(df_fallback) {
   if (df_fallback) df_fallback else DF_FALLBACK_WARN_MAYBE
@@ -178,11 +214,25 @@ vec_typeof2_s3 <- function(x, y) {
 }
 
 # https://github.com/r-lib/vctrs/issues/571
-vec_is_coercible <- function(x, y, ..., x_arg = "", y_arg = "", df_fallback = FALSE) {
+vec_is_coercible <- function(x,
+                             y,
+                             ...,
+                             x_arg = "",
+                             y_arg = "",
+                             opts = ptype2_opts()) {
   if (!missing(...)) {
     ellipsis::check_dots_empty()
   }
-  .Call(vctrs_is_coercible, x, y, x_arg, y_arg, df_fallback = df_fallback)
+
+  .Call(
+    vctrs_is_coercible,
+    x,
+    y,
+    x_arg,
+    y_arg,
+    df_fallback = opts$df_fallback,
+    s3_fallback = opts$s3_fallback
+  )
 }
 
 vec_is_subtype <- function(x, super, ..., x_arg = "", super_arg = "") {
