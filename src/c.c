@@ -33,8 +33,8 @@ SEXP vec_c(SEXP xs,
     return vec_c_fallback(xs, name_spec);
   }
 
-  ptype = PROTECT(vec_ptype_common_params(xs, ptype, DF_FALLBACK_DEFAULT));
-  xs = PROTECT(vec_cast_common_params(xs, ptype, DF_FALLBACK_DEFAULT));
+  ptype = PROTECT(vec_ptype_common_params(xs, ptype, DF_FALLBACK_DEFAULT, S3_FALLBACK_false));
+  xs = PROTECT(vec_cast_common_params(xs, ptype, DF_FALLBACK_DEFAULT, S3_FALLBACK_false));
 
   if (ptype == R_NilValue) {
     UNPROTECT(2);

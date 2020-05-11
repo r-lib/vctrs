@@ -59,7 +59,7 @@ static SEXP vec_rbind(SEXP xs,
   // The common type holds information about common column names,
   // types, etc. Each element of `xs` needs to be cast to that type
   // before assignment.
-  ptype = vec_ptype_common_params(xs, ptype, DF_FALLBACK_DEFAULT);
+  ptype = vec_ptype_common_params(xs, ptype, DF_FALLBACK_DEFAULT, S3_FALLBACK_false);
   PROTECT_N(ptype, &n_prot);
 
   if (ptype == R_NilValue) {
@@ -91,7 +91,7 @@ static SEXP vec_rbind(SEXP xs,
   }
 
   // Must happen after the `names_to` column has been added to `ptype`
-  xs = vec_cast_common_params(xs, ptype, DF_FALLBACK_DEFAULT);
+  xs = vec_cast_common_params(xs, ptype, DF_FALLBACK_DEFAULT, S3_FALLBACK_false);
   PROTECT_N(xs, &n_prot);
 
   // Find individual input sizes and total size of output
@@ -350,7 +350,10 @@ static SEXP vec_cbind(SEXP xs, SEXP ptype, SEXP size, struct name_repair_opts* n
   SEXP containers = PROTECT(map_with_data(xs, &cbind_container_type, &rownames));
   ptype = PROTECT(cbind_container_type(ptype, &rownames));
 
-  SEXP type = PROTECT(vec_ptype_common_params(containers, ptype, DF_FALLBACK_DEFAULT));
+  SEXP type = PROTECT(vec_ptype_common_params(containers,
+                                              ptype,
+                                              DF_FALLBACK_DEFAULT,
+                                              S3_FALLBACK_false));
   if (type == R_NilValue) {
     type = new_data_frame(vctrs_shared_empty_list, 0);
   } else if (!is_data_frame(type)) {

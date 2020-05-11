@@ -11,12 +11,18 @@ enum df_fallback {
   DF_FALLBACK_QUIET = 255
 };
 
+enum s3_fallback {
+  S3_FALLBACK_false = 0,
+  S3_FALLBACK_true
+};
+
 struct ptype2_opts {
   SEXP x;
   SEXP y;
   struct vctrs_arg* x_arg;
   struct vctrs_arg* y_arg;
   enum df_fallback df_fallback;
+  enum s3_fallback s3_fallback;
 };
 
 SEXP vec_ptype2_dispatch(const struct ptype2_opts* opts,

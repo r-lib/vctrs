@@ -224,7 +224,10 @@ SEXP vec_cast_e(const struct cast_opts* opts,
 
 // [[ include("cast.h") ]]
 SEXP vec_cast_common_params(SEXP xs, SEXP to, enum df_fallback df_fallback) {
-  SEXP type = PROTECT(vec_ptype_common_params(xs, to, df_fallback));
+  SEXP type = PROTECT(vec_ptype_common_params(xs,
+                                              to,
+                                              df_fallback,
+                                              S3_FALLBACK_false));
 
   R_len_t n = Rf_length(xs);
   SEXP out = PROTECT(Rf_allocVector(VECSXP, n));
