@@ -62,16 +62,16 @@ SEXP dbl_as_logical(SEXP x, bool* lossy) {
 
 // [[ include("cast.h") ]]
 SEXP chr_as_logical(SEXP x, bool* lossy) {
-  SEXP* data = STRING_PTR(x);
+  SEXP const* x_p = STRING_PTR_RO(x);
   R_len_t n = Rf_length(x);
 
   SEXP out = PROTECT(Rf_allocVector(LGLSXP, n));
-  int* out_data = LOGICAL(out);
+  int* p_out = LOGICAL(out);
 
-  for (R_len_t i = 0; i < n; ++i, ++data, ++out_data) {
-    SEXP str = *data;
+  for (R_len_t i = 0; i < n; ++i) {
+    SEXP str = x_p[i];
     if (str == NA_STRING) {
-      *out_data = NA_LOGICAL;
+      p_out[i] = NA_LOGICAL;
       continue;
     }
 
@@ -79,25 +79,25 @@ SEXP chr_as_logical(SEXP x, bool* lossy) {
     switch (elt[0]) {
     case 'T':
       if (elt[1] == '\0' || strcmp(elt, "TRUE") == 0) {
-        *out_data = 1;
+        p_out[i] = 1;
         continue;
       }
       break;
     case 'F':
       if (elt[1] == '\0' || strcmp(elt, "FALSE") == 0) {
-        *out_data = 0;
+        p_out[i] = 0;
         continue;
       }
       break;
     case 't':
       if (strcmp(elt, "true") == 0) {
-        *out_data = 1;
+        p_out[i] = 1;
         continue;
       }
       break;
     case 'f':
       if (strcmp(elt, "false") == 0) {
-        *out_data = 0;
+        p_out[i] = 0;
         continue;
       }
       break;

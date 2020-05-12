@@ -611,10 +611,10 @@ SEXP r_chr_paste_prefix(SEXP names, const char* prefix, const char* sep) {
     *bufp++ = sep[i];
   }
 
-  SEXP* p = STRING_PTR(names);
+  SEXP const* p_names = STRING_PTR_RO(names);
 
-  for (R_len_t i = 0; i < n; ++i, ++p) {
-    const char* inner = CHAR(*p);
+  for (R_len_t i = 0; i < n; ++i) {
+    const char* inner = CHAR(p_names[i]);
     int inner_n = strlen(inner);
 
     memcpy(bufp, inner, inner_n);

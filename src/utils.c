@@ -390,11 +390,11 @@ SEXP s3_find_method(const char* generic, SEXP x, SEXP table) {
     return R_NilValue;
   }
 
-  SEXP* class_ptr = STRING_PTR(class);
+  SEXP const* p_class = STRING_PTR_RO(class);
   int n_class = Rf_length(class);
 
-  for (int i = 0; i < n_class; ++i, ++class_ptr) {
-    SEXP method = s3_get_method(generic, CHAR(*class_ptr), table);
+  for (int i = 0; i < n_class; ++i) {
+    SEXP method = s3_get_method(generic, CHAR(p_class[i]), table);
     if (method != R_NilValue) {
       UNPROTECT(1);
       return method;
@@ -514,7 +514,7 @@ SEXP s4_find_method(SEXP x, SEXP table) {
     return R_NilValue;
   }
 
-  SEXP* p_class = STRING_PTR(class);
+  SEXP const* p_class = STRING_PTR_RO(class);
   int n_class = Rf_length(class);
 
   for (int i = 0; i < n_class; ++i) {
@@ -998,7 +998,7 @@ bool r_int_any_na(SEXP x) {
 
 int r_chr_max_len(SEXP x) {
   R_len_t n = Rf_length(x);
-  SEXP* p = STRING_PTR(x);
+  SEXP const* p = STRING_PTR_RO(x);
 
   int max = 0;
   for (R_len_t i = 0; i < n; ++i, ++p) {

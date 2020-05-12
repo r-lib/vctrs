@@ -36,7 +36,7 @@ enum vctrs_class_type class_type(SEXP x) {
 
 static enum vctrs_class_type class_type_impl(SEXP class) {
   int n = Rf_length(class);
-  SEXP const* p = STRING_PTR(class);
+  SEXP const* p = STRING_PTR_RO(class);
 
   // First check for bare types for which we know how many strings are
   // the classes composed of

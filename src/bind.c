@@ -369,7 +369,7 @@ static SEXP vec_cbind(SEXP xs, SEXP ptype, SEXP size, struct name_repair_opts* n
   // Convert inputs to data frames, validate, and collect total number of columns
   SEXP xs_names = PROTECT(r_names(xs));
   bool has_names = xs_names != R_NilValue;
-  SEXP* xs_names_p = has_names ? STRING_PTR(xs_names) : NULL;
+  SEXP const* xs_names_p = has_names ? STRING_PTR_RO(xs_names) : NULL;
 
   R_len_t ncol = 0;
   for (R_len_t i = 0; i < n; ++i) {
