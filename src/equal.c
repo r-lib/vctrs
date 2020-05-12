@@ -480,12 +480,12 @@ static inline int df_equal_na_scalar(SEXP x, R_len_t i);
 // beforehand so we can safely use `TYPEOF(x)`
 int equal_na(SEXP x, R_len_t i) {
   switch (TYPEOF(x)) {
-  case LGLSXP: return lgl_equal_na_scalar(LOGICAL(x) + i);
-  case INTSXP: return int_equal_na_scalar(INTEGER(x) + i);
-  case REALSXP: return dbl_equal_na_scalar(REAL(x) + i);
-  case CPLXSXP: return cpl_equal_na_scalar(COMPLEX(x) + i);
-  case RAWSXP: return raw_equal_na_scalar(RAW(x) + i);
-  case STRSXP: return chr_equal_na_scalar(STRING_PTR(x) + i);
+  case LGLSXP: return lgl_equal_na_scalar(LOGICAL_RO(x) + i);
+  case INTSXP: return int_equal_na_scalar(INTEGER_RO(x) + i);
+  case REALSXP: return dbl_equal_na_scalar(REAL_RO(x) + i);
+  case CPLXSXP: return cpl_equal_na_scalar(COMPLEX_RO(x) + i);
+  case RAWSXP: return raw_equal_na_scalar(RAW_RO(x) + i);
+  case STRSXP: return chr_equal_na_scalar(STRING_PTR_RO(x) + i);
   default: break;
   }
 

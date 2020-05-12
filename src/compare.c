@@ -146,10 +146,10 @@ static inline int df_compare_scalar(SEXP x, R_len_t i, SEXP y, R_len_t j, bool n
 // [[ include("vctrs.h") ]]
 int compare_scalar(SEXP x, R_len_t i, SEXP y, R_len_t j, bool na_equal) {
   switch (TYPEOF(x)) {
-  case LGLSXP: return lgl_compare_scalar(LOGICAL(x) + i, LOGICAL(y) + j, na_equal);
-  case INTSXP: return int_compare_scalar(INTEGER(x) + i, INTEGER(y) + j, na_equal);
-  case REALSXP: return dbl_compare_scalar(REAL(x) + i, REAL(y) + j, na_equal);
-  case STRSXP: return chr_compare_scalar(STRING_PTR(x) + i, STRING_PTR(y) + j, na_equal);
+  case LGLSXP: return lgl_compare_scalar(LOGICAL_RO(x) + i, LOGICAL_RO(y) + j, na_equal);
+  case INTSXP: return int_compare_scalar(INTEGER_RO(x) + i, INTEGER_RO(y) + j, na_equal);
+  case REALSXP: return dbl_compare_scalar(REAL_RO(x) + i, REAL_RO(y) + j, na_equal);
+  case STRSXP: return chr_compare_scalar(STRING_PTR_RO(x) + i, STRING_PTR_RO(y) + j, na_equal);
   default: break;
   }
 
