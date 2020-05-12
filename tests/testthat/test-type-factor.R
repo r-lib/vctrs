@@ -24,10 +24,15 @@ test_that("slicing factors uses a proxy to not go through `[.factor`", {
 })
 
 test_that("`vec_c()` throws the right error with subclassed factors (#1015)", {
+  skip("Factors now have a `c()` method")
+
   a <- subclass(factor("a"))
   b <- subclass(factor("b"))
 
+  # We used to return a subclass
   expect_identical(vec_c(a, a), subclass(factor(c("a", "a"))))
+
+  # We used to fail if attributes were incoPatible
   expect_error(vec_c(a, b), class = "vctrs_error_incompatible_type")
 })
 
