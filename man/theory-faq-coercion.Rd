@@ -242,7 +242,6 @@ a base data frame:\if{html}{\out{<div class="r">}}\preformatted{df1 <- data.fram
 df2 <- structure(df1, class = c("foreign_df", "data.frame"))
 
 vec_rbind(df1, df2)
-#> Warning: Can't combine <data.frame> and <foreign_df>; falling back to <data.frame>.
 #>   x
 #> 1 1
 #> 2 1
