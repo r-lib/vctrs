@@ -24,19 +24,6 @@ SEXP chr_assign(SEXP x, SEXP index, SEXP value, const enum vctrs_ownership owner
 static SEXP raw_assign(SEXP x, SEXP index, SEXP value, const enum vctrs_ownership ownership);
 SEXP list_assign(SEXP x, SEXP index, SEXP value, const enum vctrs_ownership ownership);
 
-// [[ register() ]]
-SEXP vctrs_assign(SEXP x, SEXP index, SEXP value, SEXP x_arg_, SEXP value_arg_) {
-  struct vctrs_arg x_arg = vec_as_arg(x_arg_);
-  struct vctrs_arg value_arg = vec_as_arg(value_arg_);
-
-  const struct vec_assign_opts opts = {
-    .assign_names = false,
-    .x_arg = &x_arg,
-    .value_arg = &value_arg
-  };
-
-  return vec_assign_opts(x, index, value, &opts);
-}
 
 // [[ include("slice-assign.h") ]]
 SEXP vec_assign_opts(SEXP x, SEXP index, SEXP value,
@@ -65,6 +52,20 @@ SEXP vec_assign_opts(SEXP x, SEXP index, SEXP value,
 
   UNPROTECT(6);
   return out;
+}
+
+// [[ register() ]]
+SEXP vctrs_assign(SEXP x, SEXP index, SEXP value, SEXP x_arg_, SEXP value_arg_) {
+  struct vctrs_arg x_arg = vec_as_arg(x_arg_);
+  struct vctrs_arg value_arg = vec_as_arg(value_arg_);
+
+  const struct vec_assign_opts opts = {
+    .assign_names = false,
+    .x_arg = &x_arg,
+    .value_arg = &value_arg
+  };
+
+  return vec_assign_opts(x, index, value, &opts);
 }
 
 // [[ register() ]]
