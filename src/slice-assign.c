@@ -37,31 +37,6 @@ SEXP vctrs_assign(SEXP x, SEXP index, SEXP value, SEXP x_arg_, SEXP value_arg_) 
   return vec_assign_opts(x, index, value, &opts);
 }
 
-// Exported for testing
-// [[ register() ]]
-SEXP vctrs_assign_seq(SEXP x, SEXP value, SEXP start, SEXP size, SEXP increasing) {
-  R_len_t start_ = r_int_get(start, 0);
-  R_len_t size_ = r_int_get(size, 0);
-  bool increasing_ = r_lgl_get(increasing, 0);
-
-  SEXP index = PROTECT(compact_seq(start_, size_, increasing_));
-
-  const struct vec_assign_opts* opts = &vec_assign_default_opts;
-
-  // Cast and recycle `value`
-  value = PROTECT(vec_cast(value, x, opts->value_arg, opts->x_arg));
-  value = PROTECT(vec_recycle(value, vec_subscript_size(index), opts->value_arg));
-
-  SEXP proxy = PROTECT(vec_proxy(x));
-  const enum vctrs_ownership ownership = proxy_ownership(proxy);
-  proxy = PROTECT(vec_proxy_assign_opts(proxy, index, value, ownership, opts));
-
-  SEXP out = vec_restore(proxy, x, R_NilValue);
-
-  UNPROTECT(5);
-  return out;
-}
-
 // [[ include("slice-assign.h") ]]
 SEXP vec_assign_opts(SEXP x, SEXP index, SEXP value,
                      const struct vec_assign_opts* opts) {
@@ -459,6 +434,33 @@ static SEXP vec_assign_fallback(SEXP x, SEXP index, SEXP value) {
 static const enum vctrs_ownership proxy_ownership(SEXP proxy) {
   return NO_REFERENCES(proxy) ? vctrs_ownership_total : vctrs_ownership_shared;
 }
+
+
+// Exported for testing
+// [[ register() ]]
+SEXP vctrs_assign_seq(SEXP x, SEXP value, SEXP start, SEXP size, SEXP increasing) {
+  R_len_t start_ = r_int_get(start, 0);
+  R_len_t size_ = r_int_get(size, 0);
+  bool increasing_ = r_lgl_get(increasing, 0);
+
+  SEXP index = PROTECT(compact_seq(start_, size_, increasing_));
+
+  const struct vec_assign_opts* opts = &vec_assign_default_opts;
+
+  // Cast and recycle `value`
+  value = PROTECT(vec_cast(value, x, opts->value_arg, opts->x_arg));
+  value = PROTECT(vec_recycle(value, vec_subscript_size(index), opts->value_arg));
+
+  SEXP proxy = PROTECT(vec_proxy(x));
+  const enum vctrs_ownership ownership = proxy_ownership(proxy);
+  proxy = PROTECT(vec_proxy_assign_opts(proxy, index, value, ownership, opts));
+
+  SEXP out = vec_restore(proxy, x, R_NilValue);
+
+  UNPROTECT(5);
+  return out;
+}
+
 
 void vctrs_init_slice_assign(SEXP ns) {
   syms_vec_assign_fallback = Rf_install("vec_assign_fallback");
