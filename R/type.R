@@ -102,10 +102,20 @@ vec_ptype <- function(x, ..., x_arg = "") {
 vec_ptype_common <- function(..., .ptype = NULL) {
   .External2(vctrs_type_common, .ptype)
 }
+vec_ptype_common_opts <- function(...,
+                                  .ptype = NULL,
+                                  .opts = ptype2_opts()) {
+  .External2(vctrs_ptype_common_opts, .ptype, .opts)
+}
 vec_ptype_common_params <- function(...,
                                     .ptype = NULL,
-                                    .df_fallback = DF_FALLBACK_DEFAULT) {
-  .External2(vctrs_ptype_common_params, .ptype, .df_fallback)
+                                    .df_fallback = NULL,
+                                    .s3_fallback = NULL) {
+  opts <- ptype2_opts(
+    df_fallback = .df_fallback,
+    s3_fallback = .s3_fallback
+  )
+  vec_ptype_common_opts(..., .ptype = .ptype, .opts = opts)
 }
 
 #' @export

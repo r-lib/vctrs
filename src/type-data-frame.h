@@ -44,7 +44,9 @@ SEXP df_ptype2_params(SEXP x,
     .y = y,
     .x_arg = x_arg,
     .y_arg = y_arg,
-    .df_fallback = df_fallback
+    .fallback = {
+      .df = df_fallback
+    }
   };
   return df_ptype2(&opts);
 }

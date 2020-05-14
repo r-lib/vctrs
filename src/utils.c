@@ -1538,6 +1538,7 @@ SEXP syms_parent = NULL;
 SEXP syms_s3_methods_table = NULL;
 SEXP syms_from_dispatch = NULL;
 SEXP syms_df_fallback = NULL;
+SEXP syms_s3_fallback = NULL;
 SEXP syms_stop_incompatible_type = NULL;
 SEXP syms_stop_incompatible_size = NULL;
 SEXP syms_action = NULL;
@@ -1786,6 +1787,7 @@ void vctrs_init_utils(SEXP ns) {
   syms_s3_methods_table = Rf_install(".__S3MethodsTable__.");
   syms_from_dispatch = Rf_install("vctrs:::from_dispatch");
   syms_df_fallback = Rf_install("vctrs:::df_fallback");
+  syms_s3_fallback = Rf_install("vctrs:::s3_fallback");
   syms_stop_incompatible_type = Rf_install("stop_incompatible_type");
   syms_stop_incompatible_size = Rf_install("stop_incompatible_size");
   syms_action = Rf_install("action");

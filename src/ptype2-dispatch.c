@@ -54,9 +54,9 @@ SEXP vec_ptype2_default(SEXP x,
                         SEXP y,
                         SEXP x_arg,
                         SEXP y_arg,
-                        const struct ptype2_opts* opts) {
-  SEXP df_fallback_obj = PROTECT(r_int(opts->df_fallback));
-  SEXP s3_fallback_obj = PROTECT(r_int(opts->s3_fallback));
+                        const struct fallback_opts* opts) {
+  SEXP df_fallback_obj = PROTECT(r_int(opts->df));
+  SEXP s3_fallback_obj = PROTECT(r_int(opts->s3));
   SEXP out = vctrs_eval_mask7(syms_vec_ptype2_default,
                               syms_x, x,
                               syms_y, y,
@@ -64,7 +64,7 @@ SEXP vec_ptype2_default(SEXP x,
                               syms_y_arg, y_arg,
                               syms_from_dispatch, vctrs_shared_true,
                               syms_df_fallback, df_fallback_obj,
-                              Rf_install("vctrs:::s3_fallback"), s3_fallback_obj,
+                              syms_s3_fallback, s3_fallback_obj,
                               vctrs_ns_env);
   UNPROTECT(2);
   return out;
@@ -128,7 +128,7 @@ SEXP vec_ptype2_dispatch_s3(const struct ptype2_opts* opts) {
   PROTECT(method);
 
   if (method == R_NilValue) {
-    SEXP out = vec_ptype2_default(x, y, x_arg_obj, y_arg_obj, opts);
+    SEXP out = vec_ptype2_default(x, y, x_arg_obj, y_arg_obj, &opts->fallback);
     UNPROTECT(5);
     return out;
   }

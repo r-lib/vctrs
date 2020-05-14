@@ -221,6 +221,17 @@ SEXP r_peek_option(const char* option);
 SEXP r_clone_referenced(SEXP x);
 SEXP r_clone_shared(SEXP x);
 
+SEXP r_parse_eval(const char* str, SEXP env);
+
+static inline
+SEXP r_copy(SEXP x) {
+  return Rf_duplicate(x);
+}
+static inline
+SEXP r_clone(SEXP x) {
+  return Rf_shallow_duplicate(x);
+}
+
 SEXP r_pairlist(SEXP* tags, SEXP* cars);
 SEXP r_call(SEXP fn, SEXP* tags, SEXP* cars);
 
@@ -281,6 +292,12 @@ static inline double r_dbl_get(SEXP x, R_len_t i) {
 }
 #define r_chr_get STRING_ELT
 #define r_list_get VECTOR_ELT
+
+static inline
+void r_int_poke(SEXP x, R_len_t i, int value) {
+  r__vec_get_check(x, i, "r_int_poke");
+  INTEGER(x)[i] = value;
+}
 
 static inline void* r_vec_unwrap(SEXPTYPE type, SEXP x) {
   switch (type) {
@@ -489,6 +506,7 @@ extern SEXP syms_body;
 extern SEXP syms_parent;
 extern SEXP syms_from_dispatch;
 extern SEXP syms_df_fallback;
+extern SEXP syms_s3_fallback;
 extern SEXP syms_stop_incompatible_type;
 extern SEXP syms_stop_incompatible_size;
 extern SEXP syms_action;

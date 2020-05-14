@@ -154,26 +154,16 @@ bool vec_is_coercible(const struct ptype2_opts* opts,
 // [[ register() ]]
 SEXP vctrs_is_coercible(SEXP x,
                         SEXP y,
-                        SEXP x_arg_,
-                        SEXP y_arg_,
-                        SEXP df_fallback_,
-                        SEXP s3_fallback_) {
-  struct vctrs_arg x_arg = vec_as_arg(x_arg_);
-  struct vctrs_arg y_arg = vec_as_arg(y_arg_);;
-  enum df_fallback df_fallback = r_int_get(df_fallback_, 0);
-  enum s3_fallback s3_fallback = r_int_get(s3_fallback_, 0);
+                        SEXP opts,
+                        SEXP x_arg,
+                        SEXP y_arg) {
+  struct vctrs_arg c_x_arg = vec_as_arg(x_arg);
+  struct vctrs_arg c_y_arg = vec_as_arg(y_arg);;
 
-  const struct ptype2_opts opts = {
-    .x = x,
-    .y = y,
-    .x_arg = &x_arg,
-    .y_arg = &y_arg,
-    .df_fallback = df_fallback,
-    .s3_fallback = s3_fallback
-  };
+  const struct ptype2_opts c_opts = new_ptype2_opts(x, y, &c_x_arg, &c_y_arg, opts);
 
   int dir = 0;
-  return r_lgl(vec_is_coercible(&opts, &dir));
+  return r_lgl(vec_is_coercible(&c_opts, &dir));
 }
 
 
@@ -187,6 +177,14 @@ SEXP vctrs_ptype2(SEXP x, SEXP y, SEXP x_arg, SEXP y_arg) {
 }
 
 // [[ include("ptype2.h") ]]
+struct fallback_opts new_fallback_opts(SEXP opts) {
+  return (struct fallback_opts) {
+    .df = r_int_get(r_list_get(opts, 0), 0),
+    .s3 = r_int_get(r_list_get(opts, 1), 0)
+  };
+}
+
+// [[ include("ptype2.h") ]]
 struct ptype2_opts new_ptype2_opts(SEXP x,
                                    SEXP y,
                                    struct vctrs_arg* x_arg,
@@ -197,7 +195,25 @@ struct ptype2_opts new_ptype2_opts(SEXP x,
     .y = y,
     .x_arg = x_arg,
     .y_arg = y_arg,
-    .df_fallback = r_int_get(r_list_get(opts, 0), 0),
-    .s3_fallback = r_int_get(r_list_get(opts, 1), 0)
+    .fallback = new_fallback_opts(opts)
   };
+}
+
+static SEXP r_ptype2_opts_template = NULL;
+
+// [[ include("ptype2.h") ]]
+SEXP new_ptype2_r_opts(const struct ptype2_opts* opts) {
+  SEXP r_opts = PROTECT(r_copy(r_ptype2_opts_template));
+
+  r_int_poke(r_list_get(r_opts, 0), 0, opts->fallback.df);
+  r_int_poke(r_list_get(r_opts, 1), 0, opts->fallback.s3);
+
+  UNPROTECT(1);
+  return r_opts;
+}
+
+
+void vctrs_init_ptype2(SEXP ns) {
+  r_ptype2_opts_template = r_parse_eval("ptype2_opts()", ns);
+  R_PreserveObject(r_ptype2_opts_template);
 }

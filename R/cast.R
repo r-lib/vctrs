@@ -81,10 +81,20 @@ vec_cast_no_fallback <- function(x, to) {
 vec_cast_common <- function(..., .to = NULL) {
   .External2(vctrs_cast_common, .to)
 }
+vec_cast_common_opts <- function(...,
+                                 .to = NULL,
+                                 .opts = ptype2_opts()) {
+  .External2(vctrs_cast_common_opts, .to, .opts)
+}
 vec_cast_common_params <- function(...,
                                    .to = NULL,
-                                   .df_fallback = DF_FALLBACK_DEFAULT) {
-  .External2(vctrs_cast_common_params, .to, .df_fallback)
+                                   .df_fallback = NULL,
+                                   .s3_fallback = NULL) {
+  opts <- ptype2_opts(
+    df_fallback = .df_fallback,
+    s3_fallback = .s3_fallback
+  )
+  vec_cast_common_opts(..., .to = .to, .opts = opts)
 }
 
 #' @rdname vec_default_ptype2
@@ -120,13 +130,13 @@ vec_default_cast <- function(x, to, ..., x_arg = "", to_arg = "") {
   }
 
   if (has_df_fallback(opts$df_fallback) && is_df_subclass(x)) {
-    out <- df_cast_params(
+    out <- df_cast_opts(
       x,
       to,
       ...,
+      opts = opts,
       x_arg = x_arg,
-      to_arg = to_arg,
-      df_fallback = opts$df_fallback
+      to_arg = to_arg
     )
 
     if (inherits(to, "tbl_df")) {

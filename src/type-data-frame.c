@@ -280,7 +280,7 @@ SEXP df_rownames(SEXP x) {
 // vctrs type methods ------------------------------------------------
 
 // [[ register() ]]
-SEXP vctrs_df_ptype2_opts(SEXP x, SEXP y, SEXP x_arg, SEXP y_arg, SEXP opts) {
+SEXP vctrs_df_ptype2_opts(SEXP x, SEXP y, SEXP opts, SEXP x_arg, SEXP y_arg) {
   struct vctrs_arg c_x_arg = vec_as_arg(x_arg);
   struct vctrs_arg c_y_arg = vec_as_arg(y_arg);
 
@@ -499,16 +499,21 @@ static SEXP df_cast_match(const struct cast_opts* opts,
       col = vec_init(VECTOR_ELT(to, i), size);
     } else {
       --pos; // 1-based index
+      ++common_len;
+
       struct arg_data_index x_arg_data = new_index_arg_data(r_chr_get_c_string(x_names, pos), opts->x_arg);
       struct arg_data_index to_arg_data = new_index_arg_data(r_chr_get_c_string(to_names, i), opts->to_arg);
       struct vctrs_arg named_x_arg = new_index_arg(opts->x_arg, &x_arg_data);
       struct vctrs_arg named_to_arg = new_index_arg(opts->to_arg, &to_arg_data);
-      ++common_len;
-      col = vec_cast_params(VECTOR_ELT(x, pos),
-                            VECTOR_ELT(to, i),
-                            &named_x_arg,
-                            &named_to_arg,
-                            opts->df_fallback);
+
+      struct cast_opts col_opts = {
+        .x = VECTOR_ELT(x, pos),
+        .to = VECTOR_ELT(to, i),
+        .x_arg = &named_x_arg,
+        .to_arg = &named_to_arg,
+        .fallback = opts->fallback
+      };
+      col = vec_cast_opts(&col_opts);
     }
 
     SET_VECTOR_ELT(out, i, col);
@@ -550,11 +555,14 @@ static SEXP df_cast_loop(const struct cast_opts* opts, SEXP names) {
     struct vctrs_arg named_x_arg = new_index_arg(opts->x_arg, &x_arg_data);
     struct vctrs_arg named_to_arg = new_index_arg(opts->to_arg, &to_arg_data);
 
-    SEXP col = vec_cast_params(VECTOR_ELT(x, i),
-                               VECTOR_ELT(to, i),
-                               &named_x_arg,
-                               &named_to_arg,
-                               opts->df_fallback);
+    struct cast_opts col_opts = {
+      .x = VECTOR_ELT(x, i),
+      .to = VECTOR_ELT(to, i),
+      .x_arg = &named_x_arg,
+      .to_arg = &named_to_arg,
+      .fallback = opts->fallback
+    };
+    SEXP col = vec_cast_opts(&col_opts);
 
     SET_VECTOR_ELT(out, i, col);
   }

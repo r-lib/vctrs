@@ -11,9 +11,17 @@ enum df_fallback {
   DF_FALLBACK_QUIET = 255
 };
 
+
+#define S3_FALLBACK_DEFAULT 0
+
 enum s3_fallback {
   S3_FALLBACK_false = 0,
   S3_FALLBACK_true
+};
+
+struct fallback_opts {
+  enum df_fallback df;
+  enum s3_fallback s3;
 };
 
 struct ptype2_opts {
@@ -21,8 +29,7 @@ struct ptype2_opts {
   SEXP y;
   struct vctrs_arg* x_arg;
   struct vctrs_arg* y_arg;
-  enum df_fallback df_fallback;
-  enum s3_fallback s3_fallback;
+  struct fallback_opts fallback;
 };
 
 SEXP vec_ptype2_dispatch(const struct ptype2_opts* opts,
@@ -45,7 +52,9 @@ SEXP vec_ptype2_params(SEXP x,
     .y = y,
     .x_arg = x_arg,
     .y_arg = y_arg,
-    .df_fallback = df_fallback
+    .fallback = {
+      .df = df_fallback
+    }
   };
   return vec_ptype2_opts(&opts, left);
 }
@@ -74,6 +83,9 @@ struct ptype2_opts new_ptype2_opts(SEXP x,
                                    struct vctrs_arg* x_arg,
                                    struct vctrs_arg* y_arg,
                                    SEXP opts);
+
+SEXP new_ptype2_r_opts(const struct ptype2_opts* opts);
+struct fallback_opts new_fallback_opts(SEXP opts);
 
 
 #endif

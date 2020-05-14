@@ -139,6 +139,13 @@ ptype2_opts <- function(df_fallback = NULL,
   )
 }
 
+fallback_ptype2_opts <- function() {
+  ptype2_opts(
+    df_fallback = DF_FALLBACK_QUIET,
+    s3_fallback = S3_FALLBACK_true
+  )
+}
+
 vec_ptype2_opts <- function(x,
                             y,
                             ...,
@@ -163,22 +170,22 @@ vec_ptype2_params <- function(x,
 
 vec_ptype2_no_fallback <- function(x, y, ..., x_arg = "", y_arg = "") {
   opts <- ptype2_opts(
-    `vctrs:::df_fallback` = DF_FALLBACK_NONE,
-    `vctrs:::s3_fallback` = S3_FALLBACK_false
+    df_fallback = DF_FALLBACK_NONE,
+    s3_fallback = S3_FALLBACK_false
   )
   vec_ptype2_opts(x, y, ..., , opts = opts, x_arg = x_arg, y_arg = y_arg)
 }
 
 
 # Kept in sync with ptype2.h
-df_fallback_default <- function() DF_FALLBACK_DEFAULT
+df_fallback_default <- function() 0L
 DF_FALLBACK_DEFAULT <- 0L
 DF_FALLBACK_NONE <- 1L
 DF_FALLBACK_WARN <- 2L
 DF_FALLBACK_WARN_MAYBE <- 3L
 DF_FALLBACK_QUIET <- 255L
 
-s3_fallback_default <- function() S3_FALLBACK_false
+s3_fallback_default <- function() 0L
 S3_FALLBACK_false <- 0L
 S3_FALLBACK_true <- 1L
 
@@ -217,9 +224,9 @@ vec_typeof2_s3 <- function(x, y) {
 vec_is_coercible <- function(x,
                              y,
                              ...,
+                             opts = ptype2_opts(),
                              x_arg = "",
-                             y_arg = "",
-                             opts = ptype2_opts()) {
+                             y_arg = "") {
   if (!missing(...)) {
     ellipsis::check_dots_empty()
   }
@@ -228,10 +235,9 @@ vec_is_coercible <- function(x,
     vctrs_is_coercible,
     x,
     y,
+    opts,
     x_arg,
-    y_arg,
-    df_fallback = opts$df_fallback,
-    s3_fallback = opts$s3_fallback
+    y_arg
   )
 }
 

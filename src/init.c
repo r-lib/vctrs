@@ -93,7 +93,7 @@ extern SEXP vctrs_as_names(SEXP, SEXP, SEXP, SEXP);
 extern SEXP vctrs_is_partial(SEXP);
 extern SEXP vctrs_is_list(SEXP);
 extern SEXP vctrs_try_catch_callback(SEXP, SEXP);
-extern SEXP vctrs_is_coercible(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
+extern SEXP vctrs_is_coercible(SEXP, SEXP, SEXP, SEXP, SEXP);
 extern SEXP vctrs_as_subscript(SEXP, SEXP, SEXP, SEXP, SEXP);
 extern SEXP vctrs_as_subscript_result(SEXP, SEXP, SEXP, SEXP, SEXP);
 extern SEXP vctrs_df_flat_width(SEXP);
@@ -231,7 +231,7 @@ static const R_CallMethodDef CallEntries[] = {
   {"vctrs_is_partial",                 (DL_FUNC) &vctrs_is_partial, 1},
   {"vctrs_is_list",                    (DL_FUNC) &vctrs_is_list, 1},
   {"vctrs_try_catch_callback",         (DL_FUNC) &vctrs_try_catch_callback, 2},
-  {"vctrs_is_coercible",               (DL_FUNC) &vctrs_is_coercible, 6},
+  {"vctrs_is_coercible",               (DL_FUNC) &vctrs_is_coercible, 5},
   {"vctrs_as_subscript",               (DL_FUNC) &vctrs_as_subscript, 5},
   {"vctrs_as_subscript_result",        (DL_FUNC) &vctrs_as_subscript_result, 5},
   {"vctrs_df_flat_width",              (DL_FUNC) &vctrs_df_flat_width, 1},
@@ -259,11 +259,11 @@ static const R_CallMethodDef CallEntries[] = {
 };
 
 extern SEXP vctrs_type_common(SEXP, SEXP, SEXP, SEXP);
-extern SEXP vctrs_ptype_common_params(SEXP, SEXP, SEXP, SEXP);
+extern SEXP vctrs_ptype_common_opts(SEXP, SEXP, SEXP, SEXP);
 extern SEXP vctrs_size_common(SEXP, SEXP, SEXP, SEXP);
 extern SEXP vctrs_recycle_common(SEXP, SEXP, SEXP, SEXP);
 extern SEXP vctrs_cast_common(SEXP, SEXP, SEXP, SEXP);
-extern SEXP vctrs_cast_common_params(SEXP, SEXP, SEXP, SEXP);
+extern SEXP vctrs_cast_common_opts(SEXP, SEXP, SEXP, SEXP);
 extern SEXP vctrs_rbind(SEXP, SEXP, SEXP, SEXP, SEXP);
 extern SEXP vctrs_cbind(SEXP, SEXP, SEXP, SEXP);
 extern SEXP vctrs_c(SEXP, SEXP, SEXP, SEXP);
@@ -271,11 +271,11 @@ extern SEXP vctrs_new_data_frame(SEXP);
 
 static const R_ExternalMethodDef ExtEntries[] = {
   {"vctrs_type_common",                (DL_FUNC) &vctrs_type_common, 1},
-  {"vctrs_ptype_common_params",        (DL_FUNC) &vctrs_ptype_common_params, 2},
+  {"vctrs_ptype_common_opts",          (DL_FUNC) &vctrs_ptype_common_opts, 2},
   {"vctrs_size_common",                (DL_FUNC) &vctrs_size_common, 2},
   {"vctrs_recycle_common",             (DL_FUNC) &vctrs_recycle_common, 1},
   {"vctrs_cast_common",                (DL_FUNC) &vctrs_cast_common, 1},
-  {"vctrs_cast_common_params",         (DL_FUNC) &vctrs_cast_common_params, 2},
+  {"vctrs_cast_common_opts",           (DL_FUNC) &vctrs_cast_common_opts, 2},
   {"vctrs_rbind",                      (DL_FUNC) &vctrs_rbind, 4},
   {"vctrs_cbind",                      (DL_FUNC) &vctrs_cbind, 3},
   {"vctrs_c",                          (DL_FUNC) &vctrs_c, 3},
@@ -323,6 +323,7 @@ void vctrs_init_slice(SEXP ns);
 void vctrs_init_slice_assign(SEXP ns);
 void vctrs_init_subscript(SEXP ns);
 void vctrs_init_subscript_loc(SEXP ns);
+void vctrs_init_ptype2(SEXP ns);
 void vctrs_init_ptype2_dispatch(SEXP ns);
 void vctrs_init_rep(SEXP ns);
 void vctrs_init_type(SEXP ns);
@@ -343,6 +344,7 @@ SEXP vctrs_init_library(SEXP ns) {
   vctrs_init_slice_assign(ns);
   vctrs_init_subscript(ns);
   vctrs_init_subscript_loc(ns);
+  vctrs_init_ptype2(ns);
   vctrs_init_ptype2_dispatch(ns);
   vctrs_init_rep(ns);
   vctrs_init_type(ns);

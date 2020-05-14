@@ -110,16 +110,27 @@ df_is_coercible <- function(x, y, opts) {
 #'
 #' @export
 df_ptype2 <- function(x, y, ..., x_arg = "", y_arg = "") {
-  .Call(vctrs_df_ptype2_opts, x, y, x_arg, y_arg, opts = ptype2_opts())
+  .Call(vctrs_df_ptype2_opts, x, y, opts = ptype2_opts(), x_arg, y_arg)
 }
 #' @rdname df_ptype2
 #' @export
 df_cast <- function(x, to, ..., x_arg = "", to_arg = "") {
-  .Call(vctrs_df_cast_opts, x, to, x_arg, to_arg, opts = ptype2_opts())
+  .Call(vctrs_df_cast_opts, x, to, opts = ptype2_opts(), x_arg, to_arg)
 }
 
-df_ptype2_opts <- function(x, y, ..., x_arg = "", y_arg = "", opts) {
-  .Call(vctrs_df_ptype2_opts, x, y, x_arg, y_arg, opts = opts)
+df_ptype2_opts <- function(x, y, ..., opts, x_arg = "", y_arg = "") {
+  .Call(vctrs_df_ptype2_opts, x, y, opts = opts, x_arg, y_arg)
+}
+
+df_cast_opts <- function(x,
+                         to,
+                         ...,
+                         opts = ptype2_opts(),
+                         x_arg = "",
+                         to_arg = "",
+                         df_fallback = NULL,
+                         s3_fallback = NULL) {
+  .Call(vctrs_df_cast_opts, x, to, opts, x_arg, to_arg)
 }
 df_cast_params <- function(x,
                            to,
@@ -132,7 +143,7 @@ df_cast_params <- function(x,
     df_fallback = df_fallback,
     s3_fallback = s3_fallback
   )
-  .Call(vctrs_df_cast_opts, x, to, opts, x_arg, to_arg)
+  df_cast_opts(x, to, opts = opts, x_arg = x_arg, to_arg = to_arg)
 }
 
 #' @rdname new_data_frame

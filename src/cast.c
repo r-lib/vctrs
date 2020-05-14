@@ -133,17 +133,19 @@ SEXP vec_cast_default(SEXP x,
                       SEXP y,
                       SEXP x_arg,
                       SEXP to_arg,
-                      enum df_fallback df_fallback) {
-  SEXP df_fallback_obj = PROTECT(r_int(df_fallback));
-  SEXP out = vctrs_eval_mask6(syms_vec_cast_default,
+                      const struct fallback_opts* opts) {
+  SEXP df_fallback = PROTECT(r_int(opts->df));
+  SEXP s3_fallback = PROTECT(r_int(opts->s3));
+  SEXP out = vctrs_eval_mask7(syms_vec_cast_default,
                               syms_x, x,
                               syms_to, y,
                               syms_x_arg, x_arg,
                               syms_to_arg, to_arg,
                               syms_from_dispatch, vctrs_shared_true,
-                              syms_df_fallback, df_fallback_obj,
+                              syms_df_fallback, df_fallback,
+                              syms_s3_fallback, s3_fallback,
                               vctrs_ns_env);
-  UNPROTECT(1);
+  UNPROTECT(2);
   return out;
 }
 
@@ -181,7 +183,7 @@ SEXP vec_cast_dispatch_s3(const struct cast_opts* opts) {
   PROTECT(method);
 
   if (method == R_NilValue) {
-    SEXP out = vec_cast_default(x, to, x_arg_obj, to_arg_obj, opts->df_fallback);
+    SEXP out = vec_cast_default(x, to, x_arg_obj, to_arg_obj, &opts->fallback);
     UNPROTECT(3);
     return out;
   }
@@ -223,20 +225,22 @@ SEXP vec_cast_e(const struct cast_opts* opts,
 }
 
 // [[ include("cast.h") ]]
-SEXP vec_cast_common_params(SEXP xs, SEXP to, enum df_fallback df_fallback) {
-  SEXP type = PROTECT(vec_ptype_common_params(xs,
-                                              to,
-                                              df_fallback,
-                                              S3_FALLBACK_false));
+SEXP vec_cast_common_opts(SEXP xs,
+                          SEXP to,
+                          const struct fallback_opts* fallback_opts) {
+  SEXP type = PROTECT(vec_ptype_common_opts(xs, to, fallback_opts));
 
   R_len_t n = Rf_length(xs);
   SEXP out = PROTECT(Rf_allocVector(VECSXP, n));
 
   for (R_len_t i = 0; i < n; ++i) {
     SEXP elt = VECTOR_ELT(xs, i);
-    SET_VECTOR_ELT(out, i, vec_cast_params(elt, type,
-                                           args_empty, args_empty,
-                                           df_fallback));
+    struct cast_opts opts = {
+      .x = elt,
+      .to = type,
+      .fallback = *fallback_opts
+    };
+    SET_VECTOR_ELT(out, i, vec_cast_opts(&opts));
   }
 
   SEXP names = PROTECT(Rf_getAttrib(xs, R_NamesSymbol));
@@ -245,10 +249,21 @@ SEXP vec_cast_common_params(SEXP xs, SEXP to, enum df_fallback df_fallback) {
   UNPROTECT(3);
   return out;
 }
+// [[ include("cast.h") ]]
+SEXP vec_cast_common_params(SEXP xs,
+                            SEXP to,
+                            enum df_fallback df_fallback,
+                            enum s3_fallback s3_fallback) {
+  struct fallback_opts opts = {
+    .df = df_fallback,
+    .s3 = s3_fallback
+  };
+  return vec_cast_common_opts(xs, to, &opts);
+}
 
 // [[ include("vctrs.h") ]]
 SEXP vec_cast_common(SEXP xs, SEXP to) {
-  return vec_cast_common_params(xs, to, DF_FALLBACK_DEFAULT);
+  return vec_cast_common_params(xs, to, DF_FALLBACK_DEFAULT, S3_FALLBACK_DEFAULT);
 }
 
 // [[ register(external = TRUE) ]]
@@ -265,14 +280,16 @@ SEXP vctrs_cast_common(SEXP call, SEXP op, SEXP args, SEXP env) {
 }
 
 // [[ register(external = TRUE) ]]
-SEXP vctrs_cast_common_params(SEXP call, SEXP op, SEXP args, SEXP env) {
+SEXP vctrs_cast_common_opts(SEXP call, SEXP op, SEXP args, SEXP env) {
   args = CDR(args);
 
   SEXP dots = PROTECT(rlang_env_dots_list(env));
   SEXP to = PROTECT(Rf_eval(CAR(args), env)); args = CDR(args);
-  SEXP df_fallback = PROTECT(Rf_eval(CAR(args), env));
+  SEXP opts = PROTECT(Rf_eval(CAR(args), env));
 
-  SEXP out = vec_cast_common_params(dots, to, r_int_get(df_fallback, 0));
+  const struct fallback_opts c_opts = new_fallback_opts(opts);
+
+  SEXP out = vec_cast_common_opts(dots, to, &c_opts);
 
   UNPROTECT(3);
   return out;
@@ -289,8 +306,10 @@ struct cast_opts new_cast_opts(SEXP x,
     .to = to,
     .x_arg = x_arg,
     .to_arg = to_arg,
-    .df_fallback = r_int_get(r_list_get(opts, 0), 0),
-    .s3_fallback = r_int_get(r_list_get(opts, 1), 0)
+    .fallback = {
+      .df = r_int_get(r_list_get(opts, 0), 0),
+      .s3 = r_int_get(r_list_get(opts, 1), 0)
+    }
   };
 }
 

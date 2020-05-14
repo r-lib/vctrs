@@ -3,14 +3,12 @@
 
 #include "ptype2.h"
 
-
 struct cast_opts {
   SEXP x;
   SEXP to;
   struct vctrs_arg* x_arg;
   struct vctrs_arg* to_arg;
-  enum df_fallback df_fallback;
-  enum s3_fallback s3_fallback;
+  struct fallback_opts fallback;
 };
 
 SEXP df_cast_opts(const struct cast_opts* opts);
@@ -40,12 +38,20 @@ SEXP vec_cast_params(SEXP x,
     .to = to,
     .x_arg = x_arg,
     .to_arg = to_arg,
-    .df_fallback = df_fallback
+    .fallback = {
+      .df = df_fallback
+    }
   };
   return vec_cast_opts(&opts);
 }
 
-SEXP vec_cast_common_params(SEXP xs, SEXP to, enum df_fallback df_fallback);
+SEXP vec_cast_common_opts(SEXP xs,
+                          SEXP to,
+                          const struct fallback_opts* fallback_opts);
+SEXP vec_cast_common_params(SEXP xs,
+                            SEXP to,
+                            enum df_fallback df_fallback,
+                            enum s3_fallback s3_fallback);
 
 struct cast_opts new_cast_opts(SEXP x,
                                SEXP y,

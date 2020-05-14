@@ -9,5 +9,9 @@ SEXP vec_ptype_common_params(SEXP dots,
                              enum df_fallback df_fallback,
                              enum s3_fallback s3_fallback);
 
+SEXP vec_ptype_common_opts(SEXP dots,
+                           SEXP ptype,
+                           const struct fallback_opts* opts);
+
 
 #endif
