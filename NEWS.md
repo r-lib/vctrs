@@ -1,6 +1,11 @@
 
 # vctrs (development version)
 
+* The documentation of vctrs functions now includes a Dependencies
+  section to reference which other vctrs operations are called from
+  that function. By following the dependencies links recursively, you
+  will find the vctrs primitives on which an operation relies.
+
 
 # vctrs 0.3.0
 

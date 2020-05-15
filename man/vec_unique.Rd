@@ -31,6 +31,13 @@ number of unique values.
 \item \code{vec_unique_count()}: the number of unique values.
 }
 }
+\section{Dependencies}{
+
+\itemize{
+\item \code{\link[=vec_proxy_equal]{vec_proxy_equal()}}
+}
+}
+
 \section{Missing values}{
 
 In most cases, missing values are not considered to be equal, i.e.

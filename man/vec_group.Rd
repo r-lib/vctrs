@@ -48,6 +48,13 @@ corresponding group. The number of groups is also returned as an
 attribute, \code{n}.
 }
 }
+\section{Dependencies}{
+
+\itemize{
+\item \code{\link[=vec_proxy_equal]{vec_proxy_equal()}}
+}
+}
+
 \examples{
 purrr <- c("p", "u", "r", "r", "r")
 vec_group_id(purrr)

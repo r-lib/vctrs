@@ -32,6 +32,15 @@ This preserves the invariant that \code{vec_equal_na(x)} is equal to
 \code{vec_equal(x, vec_init(x), na_equal = TRUE)}.
 }
 }
+\section{Dependencies}{
+
+\itemize{
+\item \code{\link[=vec_cast_common]{vec_cast_common()}} with fallback
+\item \code{\link[=vec_recycle_common]{vec_recycle_common()}}
+\item \code{\link[=vec_proxy_equal]{vec_proxy_equal()}}
+}
+}
+
 \examples{
 vec_equal(c(TRUE, FALSE, NA), FALSE)
 vec_equal(c(TRUE, FALSE, NA), FALSE, na_equal = TRUE)

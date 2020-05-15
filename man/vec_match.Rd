@@ -62,6 +62,14 @@ By \code{vec_match()} and \code{vec_in()} will match \code{NA}s; but you can con
 this behaviour with the \code{na_equal} argument.
 }
 
+\section{Dependencies}{
+
+\itemize{
+\item \code{\link[=vec_cast_common]{vec_cast_common()}} with fallback
+\item \code{\link[=vec_proxy_equal]{vec_proxy_equal()}}
+}
+}
+
 \examples{
 hadley <- strsplit("hadley", "")[[1]]
 vec_match(hadley, letters)

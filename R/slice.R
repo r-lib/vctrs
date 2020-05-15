@@ -42,6 +42,20 @@
 #' * `vec_slice<-()` is type-stable and always returns the same type
 #'   as the LHS.
 #'
+#' @section Dependencies:
+#'
+#' ## vctrs dependencies
+#'
+#' - [vec_proxy()]
+#' - [vec_restore()]
+#'
+#' ## base dependencies
+#'
+#' - \code{base::`[`}
+#'
+#' If a non-data-frame vector class doesn't have a [vec_proxy()]
+#' method, the vector is sliced with `[` instead.
+#'
 #' @export
 #' @keywords internal
 #' @examples

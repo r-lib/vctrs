@@ -20,6 +20,9 @@
 #' @return A 1d atomic vector or a data frame.
 #' @keywords internal
 #'
+#' @section Dependencies:
+#' - [vec_proxy()] by default
+#'
 #' @export
 vec_proxy_equal <- function(x, ...) {
   if (!missing(...)) {
@@ -48,6 +51,12 @@ vec_proxy_equal.default <- function(x, ...) {
 #'
 #' @inheritParams vec_compare
 #' @return A logical vector the same size as. Will only contain `NA`s if `na_equal` is `FALSE`.
+#'
+#' @section Dependencies:
+#' - [vec_cast_common()] with fallback
+#' - [vec_recycle_common()]
+#' - [vec_proxy_equal()]
+#'
 #' @export
 #' @examples
 #' vec_equal(c(TRUE, FALSE, NA), FALSE)

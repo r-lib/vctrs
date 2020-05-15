@@ -21,6 +21,20 @@
 #'   information is lost when casting between compatible types (i.e. when
 #'   there is no 1-to-1 mapping for a specific value).
 #'
+#' @section Dependencies of `vec_cast_common()`:
+#'
+#' ## vctrs dependencies
+#'
+#' - [vec_ptype2()]
+#' - [vec_cast()]
+#'
+#'
+#' ## base dependencies
+#'
+#' Some functions enable a `data.frame` fallback for
+#' `vec_cast_common()`. In that case the inputs are deemed compatible
+#' when they are all data frames with compatible columns.
+#'
 #' @seealso Call [stop_incompatible_cast()] when you determine from the
 #' attributes that an input can't be cast to the target type.
 #' @export

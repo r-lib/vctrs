@@ -140,4 +140,17 @@ additional metadata that is important to them, so you should preserve any
 attributes that don't require special handling for your class.
 }
 
+\section{Dependencies}{
+
+\itemize{
+\item \code{x} must be a vector in the vctrs sense (see \code{\link[=vec_is]{vec_is()}})
+\item By default the underlying data is returned as is (identity proxy)
+}
+
+All vector classes have a proxy, even those who don't implement any
+vctrs methods. The exception is S3 lists that don't inherit from
+\code{"list"} explicitly. These might have to implement an identity
+proxy for compatibility with vctrs (see discussion above).
+}
+
 \keyword{internal}

@@ -37,6 +37,13 @@ For \code{vec_rep_each()}, a vector the same type as \code{x} with size
 its length. For data frames, this means that rows are repeated rather
 than columns.
 }
+\section{Dependencies}{
+
+\itemize{
+\item \code{\link[=vec_slice]{vec_slice()}}
+}
+}
+
 \examples{
 # Repeat the entire vector
 vec_rep(1:2, 3)

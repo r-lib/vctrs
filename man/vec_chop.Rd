@@ -78,6 +78,20 @@ If \code{indices} selects every value in \code{x} exactly once, in any order, th
 holds:\preformatted{vec_unchop(vec_chop(x, indices), indices) == x
 }
 }
+\section{Dependencies of \code{vec_chop()}}{
+
+\itemize{
+\item \code{\link[=vec_slice]{vec_slice()}}
+}
+}
+
+\section{Dependencies of \code{vec_unchop()}}{
+
+\itemize{
+\item \code{\link[=vec_c]{vec_c()}}
+}
+}
+
 \examples{
 vec_chop(1:5)
 vec_chop(1:5, list(1, 1:2))

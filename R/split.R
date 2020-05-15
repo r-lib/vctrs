@@ -15,6 +15,11 @@
 #'   suboptimal, and you will want to coerce into a tibble to better
 #'   understand the output.
 #' @export
+#'
+#' @section Dependencies:
+#' - [vec_group_loc()]
+#' - [vec_chop()]
+#'
 #' @examples
 #' vec_split(mtcars$cyl, mtcars$vs)
 #' vec_split(mtcars$cyl, mtcars[c("vs", "am")])

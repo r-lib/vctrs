@@ -43,6 +43,13 @@ so these functions consider all \code{NAs} to be equal. (Similarly,
 all \code{NaN} are also considered to be equal.)
 }
 
+\section{Dependencies}{
+
+\itemize{
+\item \code{\link[=vec_proxy_equal]{vec_proxy_equal()}}
+}
+}
+
 \examples{
 vec_duplicate_any(1:10)
 vec_duplicate_any(c(1, 1:10))

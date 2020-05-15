@@ -68,6 +68,23 @@ subclasses, see
 }
 }
 
+\section{Dependencies of \code{vec_cast_common()}}{
+
+\subsection{vctrs dependencies}{
+\itemize{
+\item \code{\link[=vec_ptype2]{vec_ptype2()}}
+\item \code{\link[=vec_cast]{vec_cast()}}
+}
+}
+
+\subsection{base dependencies}{
+
+Some functions enable a \code{data.frame} fallback for
+\code{vec_cast_common()}. In that case the inputs are deemed compatible
+when they are all data frames with compatible columns.
+}
+}
+
 \examples{
 # x is a double, but no information is lost
 vec_cast(1, integer())
