@@ -86,11 +86,11 @@ vec_default_ptype2 <- function(x, y, ..., x_arg = "", y_arg = "") {
     y <- out$y
   }
 
-  if (!is.data.frame(x)) {
+  if (!is.data.frame(x) && identical(typeof(x), typeof(y))) {
     if (opts$s3_fallback) {
       common <- common_base_class(x, y)
       if (length(common)) {
-        return(new_common_class_fallback(common))
+        return(new_common_class_fallback(x, common))
       }
     }
   }
@@ -121,9 +121,9 @@ vec_default_ptype2 <- function(x, y, ..., x_arg = "", y_arg = "") {
   )
 }
 
-new_common_class_fallback <- function(base_class) {
+new_common_class_fallback <- function(x, base_class) {
   structure(
-    lgl(),
+    vec_ptype(x),
     class = "vctrs:::common_class_fallback",
     base_class = base_class
   )

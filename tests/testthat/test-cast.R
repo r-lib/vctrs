@@ -181,3 +181,31 @@ test_that("vec_ptype_common() optionally falls back to base class", {
   common <- vec_cast_common_opts(x = x_df, y = y_df, .opts = fallback_ptype2_opts())
   expect_identical(common, list(x = x_df, y = y_df))
 })
+
+test_that("vec_ptype_common() collects common type", {
+  x <- foobar(1, foo = 1)
+  y <- foobar(2, bar = 2)
+
+  x_df <- data_frame(x = x)
+  y_df <- data_frame(x = y)
+
+  out <- vec_ptype_common_opts(x, y, .opts = fallback_ptype2_opts())
+  expect_identical(typeof(out), "double")
+  expect_true(is_common_class_fallback(out))
+
+  out <- vec_ptype_common_opts(x_df, y_df, .opts = fallback_ptype2_opts())
+  expect_identical(typeof(out$x), "double")
+  expect_true(is_common_class_fallback(out$x))
+
+  z <- foobar(3L, baz = 3)
+  expect_error(
+    vec_ptype_common_opts(x, z, .opts = fallback_ptype2_opts()),
+    class = "vctrs_error_incompatible_type"
+  )
+
+  z_df <- data_frame(x = z)
+  expect_error(
+    vec_ptype_common_opts(x_df, z_df, .opts = fallback_ptype2_opts()),
+    class = "vctrs_error_incompatible_type"
+  )
+})
