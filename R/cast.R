@@ -31,9 +31,10 @@
 #'
 #' ## base dependencies
 #'
-#' Some functions enable a `data.frame` fallback for
+#' Some functions enable a base-class fallback for
 #' `vec_cast_common()`. In that case the inputs are deemed compatible
-#' when they are all data frames with compatible columns.
+#' when they have the same [base type][base::typeof] and inherit from
+#' the same base class.
 #'
 #' @seealso Call [stop_incompatible_cast()] when you determine from the
 #' attributes that an input can't be cast to the target type.
@@ -118,6 +119,10 @@ vec_default_cast <- function(x, to, ..., x_arg = "", to_arg = "") {
   }
 
   opts <- match_ptype2_opts(...)
+
+  if (opts$s3_fallback && is_common_class_fallback(to) && length(common_base_class(x, to))) {
+    return(x)
+  }
 
   # If both data frames, first find the `to` type of columns before
   # the same-type fallback

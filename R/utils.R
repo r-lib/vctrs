@@ -161,3 +161,7 @@ df_has_base_subset <- function(x) {
   method <- .Call(vctrs_s3_find_method, "[", x, table)
   is_null(method) || identical(method, `[.data.frame`)
 }
+
+last <- function(x) {
+  x[[length(x)]]
+}

@@ -135,3 +135,49 @@ test_that("can signal deprecation warnings for lossy casts", {
   expect_true(expect_warning(regexp = NA, allow_lossy_cast(lossy_cast(), factor("foo"), factor("bar"))))
   expect_true(expect_warning(allow_lossy_cast(lossy_cast(), factor("bar"), double())))
 })
+
+
+# vec_cast_common() -------------------------------------------------------
+
+test_that("vec_ptype_common() optionally falls back to base class", {
+  x <- foobar(NA, foo = 1)
+  y <- foobaz(NA, bar = 2)
+
+  x_df <- data_frame(x = x)
+  y_df <- data_frame(x = y)
+
+  expect_error(
+    vec_ptype_common_opts(x, y, .opts = fallback_ptype2_opts()),
+    class = "vctrs_error_incompatible_type"
+  )
+  expect_error(
+    vec_ptype_common_opts(x_df, y_df, .opts = fallback_ptype2_opts()),
+    class = "vctrs_error_incompatible_type"
+  )
+
+  expect_error(
+    vec_cast_common_opts(x, y, .opts = fallback_ptype2_opts()),
+    class = "vctrs_error_incompatible_type"
+  )
+  expect_error(
+    vec_cast_common_opts(x_df, y_df, .opts = fallback_ptype2_opts()),
+    class = "vctrs_error_incompatible_type"
+  )
+
+  class(y) <- c("foo", class(x))
+  y_df <- data_frame(x = y)
+
+  common_sentinel <- vec_ptype_common_opts(x, y, .opts = fallback_ptype2_opts())
+  expect_true(is_common_class_fallback(common_sentinel))
+  expect_identical(common_class(common_sentinel), "vctrs_foobar")
+
+  common_sentinel <- vec_ptype_common_opts(x_df, y_df, .opts = fallback_ptype2_opts())
+  expect_true(is_common_class_fallback(common_sentinel$x))
+  expect_identical(common_class(common_sentinel$x), "vctrs_foobar")
+
+  common <- vec_cast_common_opts(x = x, y = y, .opts = fallback_ptype2_opts())
+  expect_identical(common, list(x = x, y = y))
+
+  common <- vec_cast_common_opts(x = x_df, y = y_df, .opts = fallback_ptype2_opts())
+  expect_identical(common, list(x = x_df, y = y_df))
+})

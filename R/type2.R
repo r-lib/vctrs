@@ -86,7 +86,16 @@ vec_default_ptype2 <- function(x, y, ..., x_arg = "", y_arg = "") {
     y <- out$y
   }
 
-  if (!is.data.frame(x) && is_same_type(x, y)) {
+  if (!is.data.frame(x)) {
+    if (opts$s3_fallback) {
+      common <- common_base_class(x, y)
+      if (length(common)) {
+        return(new_common_class_fallback(common))
+      }
+    }
+  }
+
+  if (is_same_type(x, y)) {
     return(vec_ptype(x, x_arg = x_arg))
   }
 
@@ -110,6 +119,35 @@ vec_default_ptype2 <- function(x, y, ..., x_arg = "", y_arg = "") {
     y_arg = y_arg,
     `vctrs:::from_dispatch` = match_from_dispatch(...)
   )
+}
+
+new_common_class_fallback <- function(base_class) {
+  structure(
+    lgl(),
+    class = "vctrs:::common_class_fallback",
+    base_class = base_class
+  )
+}
+
+is_common_class_fallback <- function(x) {
+  inherits(x, "vctrs:::common_class_fallback")
+}
+common_base_class <- function(x, y) {
+  x_class <- common_class(x)
+  y_class <- common_class(y)
+
+  if (identical(last(x_class), last(y_class))) {
+    last(x_class)
+  } else {
+    chr()
+  }
+}
+common_class <- function(x) {
+  if (is_common_class_fallback(x)) {
+    attr(x, "base_class")
+  } else {
+    class(x)
+  }
 }
 
 check_ptype2_dots_empty <- function(...,

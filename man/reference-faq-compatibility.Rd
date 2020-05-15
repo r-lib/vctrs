@@ -21,6 +21,17 @@ the next section. However there are many higher level operations. The
 most important ones implement fallbacks to base generics for maximum
 compatibility with existing classes.
 \itemize{
+\item We have started to implement a fallback mechanism in
+\code{\link[=vec_cast_common]{vec_cast_common()}}. This function normally
+calls \code{\link[=vec_ptype2]{vec_ptype2()}} and
+\code{\link[=vec_cast]{vec_cast()}} to normalise a set of inputs to the
+same type. When the inputs do not implement the coercion generics
+but they all inherit from the same base class, we do not attempt any
+coercion and leave the inputs as is.
+
+This fallback should be safe to use before operations like
+\code{\link[=vec_match]{vec_match()}} or \code{\link[=vec_rbind]{vec_rbind()}}.
+It is currently internal.
 \item \code{\link[=vec_slice]{vec_slice()}} falls back to the base \code{[} generic
 if no \code{\link[=vec_proxy]{vec_proxy()}} method is implemented. This
 way foreign classes that do not implement
@@ -84,11 +95,6 @@ the atomic vector types, a list, or a data frame. By default, S3 lists
 that do not inherit from \code{"list"} do not have an identity proxy. In that
 case, you need to explicitly implement \code{vec_proxy()} or make your class
 inherit from list.
-
-\code{vec_restore()} is called is called after manipulating vector proxies,
-to restore attributes that might have been lost in the process or that
-need to be updated when the contents of a vector have changed. If not
-implemented, all attributes are restored by default.
 }
 
 }
