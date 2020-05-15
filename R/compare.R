@@ -16,6 +16,10 @@
 #'   future.
 #' @inheritParams ellipsis::dots_empty
 #' @return A 1d atomic vector or a data frame.
+#'
+#' @section Dependencies:
+#' - [vec_proxy()] called by default
+#'
 #' @keywords internal
 #' @export
 vec_proxy_compare <- function(x, ..., relax = FALSE) {

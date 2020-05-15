@@ -33,7 +33,7 @@ recursively applied on all columns as well.
 \section{Dependencies}{
 
 \itemize{
-\item \code{\link[=vec_proxy]{vec_proxy()}} by default
+\item \code{\link[=vec_proxy]{vec_proxy()}} called by default
 }
 }
 

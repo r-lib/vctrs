@@ -21,7 +21,7 @@
 #' @keywords internal
 #'
 #' @section Dependencies:
-#' - [vec_proxy()] by default
+#' - [vec_proxy()] called by default
 #'
 #' @export
 vec_proxy_equal <- function(x, ...) {
