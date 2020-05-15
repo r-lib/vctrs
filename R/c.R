@@ -11,6 +11,8 @@
 #' ## vctrs dependencies
 #'
 #' - [vec_cast_common()]
+#' - [vec_proxy()]
+#' - [vec_restore()]
 #'
 #'
 #' ## base dependencies

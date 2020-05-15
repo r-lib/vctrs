@@ -67,6 +67,8 @@ Combine all arguments into a new vector of common type.
 \subsection{vctrs dependencies}{
 \itemize{
 \item \code{\link[=vec_cast_common]{vec_cast_common()}}
+\item \code{\link[=vec_proxy]{vec_proxy()}}
+\item \code{\link[=vec_restore]{vec_restore()}}
 }
 }
 
