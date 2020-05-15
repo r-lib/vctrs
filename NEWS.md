@@ -4,6 +4,11 @@
 * `vec_rbind()` now internally calls `vec_proxy()` and `vec_restore()` on
   the data frame common type that is used to create the output (#1109).
 
+* `?reference-faq-compatibility` is a new reference guide on vctrs
+  primitives. It includes an overview of the fallbacks to base R
+  generics implemented in vctrs for compatibility with existing
+  classes.
+
 * The documentation of vctrs functions now includes a Dependencies
   section to reference which other vctrs operations are called from
   that function. By following the dependencies links recursively, you

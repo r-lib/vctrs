@@ -1,3 +1,10 @@
+#' FAQ - Is my class compatible with vctrs?
+#'
+#' @includeRmd man/faq/developer/reference-compatibility.Rmd description
+#'
+#' @name reference-faq-compatibility
+NULL
+
 #' FAQ - How does coercion work in vctrs?
 #'
 #' @includeRmd man/faq/developer/theory-coercion.Rmd description
