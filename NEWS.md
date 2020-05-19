@@ -1,6 +1,9 @@
 
 # vctrs (development version)
 
+* `vec_rbind()` now internally calls `vec_proxy()` and `vec_restore()` on
+  the data frame common type that is used to create the output (#1109).
+
 * The documentation of vctrs functions now includes a Dependencies
   section to reference which other vctrs operations are called from
   that function. By following the dependencies links recursively, you
