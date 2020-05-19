@@ -285,7 +285,7 @@ test_that("vec_rbind() takes the proxy and restores", {
       if (any(is.na(x$x))) {
         new_data_frame(x)
       } else {
-        NextMethod()
+        vec_restore_default(x, to)
       }
     }
   )
@@ -313,7 +313,7 @@ test_that("vec_rbind() proxies before initializing", {
       if (any(is.na(x$x))) {
         abort("`x` can't have NA values.")
       }
-      NextMethod()
+      vec_restore_default(x, to)
     }
   )
 
