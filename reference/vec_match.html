@@ -226,6 +226,15 @@ i.e. <code>NA == NA</code> is not <code>TRUE</code>. The exception is in matchin
 like <code><a href='https://rdrr.io/r/base/match.html'>match()</a></code> and <code><a href='https://rdrr.io/r/base/merge.html'>merge()</a></code>, where an <code>NA</code> will match another <code>NA</code>.
 By <code>vec_match()</code> and <code>vec_in()</code> will match <code>NA</code>s; but you can control
 this behaviour with the <code>na_equal</code> argument.</p>
+    <h2 class="hasAnchor" id="dependencies"><a class="anchor" href="#dependencies"></a>Dependencies</h2>
+
+    
+
+<ul>
+<li><p><code><a href='vec_cast.html'>vec_cast_common()</a></code> with fallback</p></li>
+<li><p><code><a href='vec_proxy_equal.html'>vec_proxy_equal()</a></code></p></li>
+</ul>
+
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='no'>hadley</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/strsplit.html'>strsplit</a></span>(<span class='st'>"hadley"</span>, <span class='st'>""</span>)<span class='kw'>[[</span><span class='fl'>1</span>]]

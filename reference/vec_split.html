@@ -187,6 +187,15 @@ the are returned in a separate parallel vector.</p>
 <p>Note for complex types, the default <code>data.frame</code> print method will be
 suboptimal, and you will want to coerce into a tibble to better
 understand the output.</p>
+    <h2 class="hasAnchor" id="dependencies"><a class="anchor" href="#dependencies"></a>Dependencies</h2>
+
+    
+
+<ul>
+<li><p><code><a href='vec_group.html'>vec_group_loc()</a></code></p></li>
+<li><p><code><a href='vec_chop.html'>vec_chop()</a></code></p></li>
+</ul>
+
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='fu'>vec_split</span>(<span class='no'>mtcars</span>$<span class='no'>cyl</span>, <span class='no'>mtcars</span>$<span class='no'>vs</span>)</div><div class='output co'>#&gt;   key                                                  val

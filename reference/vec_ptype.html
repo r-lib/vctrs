@@ -233,6 +233,23 @@ finalised prototype as returned by <code><a href='vec_slice.html'>vec_slice(x, 0
 <p><code>vec_ptype_common()</code> first finds the prototype of each input, then
 successively calls <code><a href='vec_ptype2.html'>vec_ptype2()</a></code> to find a common type. It returns
 a <a href='new_partial.html'>finalised</a> prototype.</p>
+    <h2 class="hasAnchor" id="dependencies-of-vec-ptype-"><a class="anchor" href="#dependencies-of-vec-ptype-"></a>Dependencies of <code>vec_ptype()</code></h2>
+
+    
+
+<ul>
+<li><p><code><a href='vec_slice.html'>vec_slice()</a></code> for returning an empty slice</p></li>
+</ul>
+
+    <h2 class="hasAnchor" id="dependencies-of-vec-ptype-common-"><a class="anchor" href="#dependencies-of-vec-ptype-common-"></a>Dependencies of <code>vec_ptype_common()</code></h2>
+
+    
+
+<ul>
+<li><p><code><a href='vec_ptype2.html'>vec_ptype2()</a></code></p></li>
+<li><p><code><a href='new_partial.html'>vec_ptype_finalise()</a></code></p></li>
+</ul>
+
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='co'># Unknown types ------------------------------------------</span>

@@ -290,12 +290,12 @@ for S3 lists. In vctrs, S3 lists are treated as scalars by
 default. This way we don't treat objects like model fits as
 vectors. To prevent vctrs from treating your S3 list as a scalar,
 unclass it in the <code>vec_proxy()</code> method. For instance, here is the
-definition for <code>list_of</code>:</p><pre><span class='no'>vec_proxy.vctrs_list_of</span> <span class='kw'>&amp;</span><span class='no'>lt</span>;- <span class='kw'>function</span>(<span class='no'>x</span>) {
+definition for <code>list_of</code>:</p><pre><span class='no'>vec_proxy.vctrs_list_of</span> <span class='kw'>&lt;-</span> <span class='kw'>function</span>(<span class='no'>x</span>) {
   <span class='fu'><a href='https://rdrr.io/r/base/class.html'>unclass</a></span>(<span class='no'>x</span>)
 }</pre>
 
 <p>Another case where you need to implement a proxy is <a href='new_rcrd.html'>record types</a>. Record types should return a data frame, as in
-the <code>POSIXlt</code> method:</p><pre><span class='no'>vec_proxy.POSIXlt</span> <span class='kw'>&amp;</span><span class='no'>lt</span>;- <span class='kw'>function</span>(<span class='no'>x</span>) {
+the <code>POSIXlt</code> method:</p><pre><span class='no'>vec_proxy.POSIXlt</span> <span class='kw'>&lt;-</span> <span class='kw'>function</span>(<span class='no'>x</span>) {
   <span class='fu'><a href='new_data_frame.html'>new_data_frame</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/class.html'>unclass</a></span>(<span class='no'>x</span>))
 }</pre>
 
@@ -331,6 +331,19 @@ provide your own method if your attributes require special care
 your own method, bear in mind that many R users add attributes to track
 additional metadata that is important to them, so you should preserve any
 attributes that don't require special handling for your class.</p>
+    <h2 class="hasAnchor" id="dependencies"><a class="anchor" href="#dependencies"></a>Dependencies</h2>
+
+    
+
+<ul>
+<li><p><code>x</code> must be a vector in the vctrs sense (see <code><a href='vec_assert.html'>vec_is()</a></code>)</p></li>
+<li><p>By default the underlying data is returned as is (identity proxy)</p></li>
+</ul>
+
+<p>All vector classes have a proxy, even those who don't implement any
+vctrs methods. The exception is S3 lists that don't inherit from
+<code>"list"</code> explicitly. These might have to implement an identity
+proxy for compatibility with vctrs (see discussion above).</p>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

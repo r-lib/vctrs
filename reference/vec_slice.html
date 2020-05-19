@@ -231,6 +231,27 @@ two-dimensional types, the first dimension is subsetted.</p></li>
 as the LHS.</p></li>
 </ul>
 
+    <h2 class="hasAnchor" id="dependencies"><a class="anchor" href="#dependencies"></a>Dependencies</h2>
+
+    
+
+<h3>vctrs dependencies</h3>
+
+<ul>
+<li><p><code><a href='vec_proxy.html'>vec_proxy()</a></code></p></li>
+<li><p><code><a href='vec_proxy.html'>vec_restore()</a></code></p></li>
+</ul>
+
+
+<h3>base dependencies</h3>
+
+<ul>
+<li><p><code><a href='https://rdrr.io/r/base/Extract.html'>base::`[`</a></code></p></li>
+</ul>
+
+<p>If a non-data-frame vector class doesn't have a <code><a href='vec_proxy.html'>vec_proxy()</a></code>
+method, the vector is sliced with <code>[</code> instead.</p>
+
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='no'>x</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/sample.html'>sample</a></span>(<span class='fl'>10</span>)

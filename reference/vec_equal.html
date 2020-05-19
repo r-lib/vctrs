@@ -203,6 +203,16 @@ This preserves the invariant that <code>vec_equal_na(x)</code> is equal to
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
     <p>A logical vector the same size as. Will only contain <code>NA</code>s if <code>na_equal</code> is <code>FALSE</code>.</p>
+    <h2 class="hasAnchor" id="dependencies"><a class="anchor" href="#dependencies"></a>Dependencies</h2>
+
+    
+
+<ul>
+<li><p><code><a href='vec_cast.html'>vec_cast_common()</a></code> with fallback</p></li>
+<li><p><code><a href='vec_recycle.html'>vec_recycle_common()</a></code></p></li>
+<li><p><code><a href='vec_proxy_equal.html'>vec_proxy_equal()</a></code></p></li>
+</ul>
+
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='fu'>vec_equal</span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>TRUE</span>, <span class='fl'>FALSE</span>, <span class='fl'>NA</span>), <span class='fl'>FALSE</span>)</div><div class='output co'>#&gt; [1] FALSE  TRUE    NA</div><div class='input'><span class='fu'>vec_equal</span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>TRUE</span>, <span class='fl'>FALSE</span>, <span class='fl'>NA</span>), <span class='fl'>FALSE</span>, <span class='kw'>na_equal</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</div><div class='output co'>#&gt; [1] FALSE  TRUE FALSE</div><div class='input'><span class='fu'>vec_equal_na</span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>TRUE</span>, <span class='fl'>FALSE</span>, <span class='fl'>NA</span>))</div><div class='output co'>#&gt; [1] FALSE FALSE  TRUE</div><div class='input'>

@@ -189,6 +189,16 @@ if either <code>x</code> or <code>y</code> is <code>NA</code>.</p>
 
 <p><code>vec_compare()</code> is not generic for performance; instead it uses
 <code><a href='vec_proxy_compare.html'>vec_proxy_compare()</a></code> to</p>
+    <h2 class="hasAnchor" id="dependencies"><a class="anchor" href="#dependencies"></a>Dependencies</h2>
+
+    
+
+<ul>
+<li><p><code><a href='vec_cast.html'>vec_cast_common()</a></code> with fallback</p></li>
+<li><p><code><a href='vec_recycle.html'>vec_recycle_common()</a></code></p></li>
+<li><p><code><a href='vec_proxy_compare.html'>vec_proxy_compare()</a></code></p></li>
+</ul>
+
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='fu'>vec_compare</span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>TRUE</span>, <span class='fl'>FALSE</span>, <span class='fl'>NA</span>), <span class='fl'>FALSE</span>)</div><div class='output co'>#&gt; [1]  1  0 NA</div><div class='input'><span class='fu'>vec_compare</span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>TRUE</span>, <span class='fl'>FALSE</span>, <span class='fl'>NA</span>), <span class='fl'>FALSE</span>, <span class='kw'>na_equal</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</div><div class='output co'>#&gt; [1]  1  0 -1</div><div class='input'>
