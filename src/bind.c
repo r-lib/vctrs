@@ -49,10 +49,10 @@ static SEXP vec_rbind(SEXP xs,
                       SEXP names_to,
                       struct name_repair_opts* name_repair,
                       SEXP name_spec) {
-  int nprot = 0;
-  R_len_t n = Rf_length(xs);
+  int n_prot = 0;
+  R_len_t n_inputs = Rf_length(xs);
 
-  for (R_len_t i = 0; i < n; ++i) {
+  for (R_len_t i = 0; i < n_inputs; ++i) {
     SET_VECTOR_ELT(xs, i, as_df_row(VECTOR_ELT(xs, i), name_repair));
   }
 
@@ -60,21 +60,21 @@ static SEXP vec_rbind(SEXP xs,
   // types, etc. Each element of `xs` needs to be cast to that type
   // before assignment.
   ptype = vec_ptype_common_params(xs, ptype, DF_FALLBACK_DEFAULT);
-  PROTECT_N(ptype, &nprot);
+  PROTECT_N(ptype, &n_prot);
 
   if (ptype == R_NilValue) {
-    UNPROTECT(nprot);
+    UNPROTECT(n_prot);
     return new_data_frame(vctrs_shared_empty_list, 0);
   }
   if (TYPEOF(ptype) == LGLSXP && !Rf_length(ptype)) {
     ptype = as_df_row_impl(vctrs_shared_na_lgl, name_repair);
-    PROTECT_N(ptype, &nprot);
+    PROTECT_N(ptype, &n_prot);
   }
   if (!is_data_frame(ptype)) {
     Rf_errorcall(R_NilValue, "Can't bind objects that are not coercible to a data frame.");
   }
 
-  SEXP nms = PROTECT_N(r_names(xs), &nprot);
+  SEXP nms = PROTECT_N(r_names(xs), &n_prot);
   bool has_names = nms != R_NilValue;
   bool has_names_to = names_to != R_NilValue;
   R_len_t names_to_loc = 0;
@@ -85,13 +85,13 @@ static SEXP vec_rbind(SEXP xs,
     UNPROTECT(1);
 
     if (names_to_loc < 0) {
-      ptype = PROTECT_N(cbind_names_to(has_names, names_to, ptype), &nprot);
+      ptype = PROTECT_N(cbind_names_to(has_names, names_to, ptype), &n_prot);
       names_to_loc = 0;
     }
   }
 
   // Find individual input sizes and total size of output
-  R_len_t nrow = 0;
+  R_len_t n_rows = 0;
 
   bool has_rownames = false;
   if (!has_names_to && r_names(xs) != R_NilValue) {
@@ -99,13 +99,13 @@ static SEXP vec_rbind(SEXP xs,
     has_rownames = true;
   }
 
-  SEXP ns_placeholder = PROTECT_N(Rf_allocVector(INTSXP, n), &nprot);
+  SEXP ns_placeholder = PROTECT_N(Rf_allocVector(INTSXP, n_inputs), &n_prot);
   int* ns = INTEGER(ns_placeholder);
 
-  for (R_len_t i = 0; i < n; ++i) {
+  for (R_len_t i = 0; i < n_inputs; ++i) {
     SEXP elt = VECTOR_ELT(xs, i);
     R_len_t size = (elt == R_NilValue) ? 0 : vec_size(elt);
-    nrow += size;
+    n_rows += size;
     ns[i] = size;
 
     if (!has_rownames && is_data_frame(elt)) {
@@ -119,16 +119,16 @@ static SEXP vec_rbind(SEXP xs,
   }
 
   PROTECT_INDEX out_pi;
-  SEXP out = vec_init(proxy, nrow);
+  SEXP out = vec_init(proxy, n_rows);
   PROTECT_WITH_INDEX(out, &out_pi);
 
-  SEXP idx = PROTECT_N(compact_seq(0, 0, true), &nprot);
+  SEXP idx = PROTECT_N(compact_seq(0, 0, true), &n_prot);
   int* idx_ptr = INTEGER(idx);
 
   PROTECT_INDEX rownames_pi;
   SEXP rownames = R_NilValue;
   if (has_rownames) {
-    rownames = Rf_allocVector(STRSXP, nrow);
+    rownames = Rf_allocVector(STRSXP, n_rows);
   }
   PROTECT_WITH_INDEX(rownames, &rownames_pi);
 
@@ -147,13 +147,13 @@ static SEXP vec_rbind(SEXP xs,
     if (has_names) {
       index = nms;
     } else {
-      index = PROTECT_N(Rf_allocVector(INTSXP, n), &nprot);
-      r_int_fill_seq(index, 1, n);
+      index = PROTECT_N(Rf_allocVector(INTSXP, n_inputs), &n_prot);
+      r_int_fill_seq(index, 1, n_inputs);
     }
     index_p = r_vec_const_deref(index);
 
     names_to_type = TYPEOF(index);
-    names_to_col = PROTECT_N(Rf_allocVector(names_to_type, nrow), &nprot);
+    names_to_col = PROTECT_N(Rf_allocVector(names_to_type, n_rows), &n_prot);
     names_to_p = r_vec_deref(names_to_col);
   }
 
@@ -164,7 +164,7 @@ static SEXP vec_rbind(SEXP xs,
     .assign_names = true
   };
 
-  for (R_len_t i = 0; i < n; ++i) {
+  for (R_len_t i = 0; i < n_inputs; ++i) {
     R_len_t size = ns[i];
     if (!size) {
       continue;
@@ -229,10 +229,10 @@ static SEXP vec_rbind(SEXP xs,
     out = df_poke(out, names_to_loc, names_to_col);
   }
 
-  out = vec_restore(out, ptype, r_int(nrow));
+  out = vec_restore(out, ptype, r_int(n_rows));
   REPROTECT(out, out_pi);
 
-  UNPROTECT(nprot);
+  UNPROTECT(n_prot);
   UNPROTECT(3);
   return out;
 }
