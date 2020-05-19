@@ -158,7 +158,8 @@
 <a href="#vctrs-development-version" class="anchor"></a>vctrs (development version)<small> Unreleased </small>
 </h1>
 <ul>
-<li>The documentation of vctrs functions now includes a Dependencies section to reference which other vctrs operations are called from that function. By following the dependencies links recursively, you will find the vctrs primitives on which an operation relies.</li>
+<li><p><code><a href="../reference/vec_bind.html">vec_rbind()</a></code> now internally calls <code><a href="../reference/vec_proxy.html">vec_proxy()</a></code> and <code><a href="../reference/vec_proxy.html">vec_restore()</a></code> on the data frame common type that is used to create the output (<a href='https://github.com/r-lib/vctrs/issues/1109'>#1109</a>).</p></li>
+<li><p>The documentation of vctrs functions now includes a Dependencies section to reference which other vctrs operations are called from that function. By following the dependencies links recursively, you will find the vctrs primitives on which an operation relies.</p></li>
 </ul>
 </div>
     <div id="vctrs-030" class="section level1">
