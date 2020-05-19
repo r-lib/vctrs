@@ -123,6 +123,26 @@ For column-binding, the following invariants apply:
 }
 }
 
+\section{Dependencies}{
+
+\subsection{vctrs dependencies}{
+\itemize{
+\item \code{\link[=vec_cast_common]{vec_cast_common()}}
+\item \code{\link[=vec_proxy]{vec_proxy()}}
+\item \code{\link[=vec_restore]{vec_restore()}}
+}
+}
+
+\subsection{base dependencies of \code{vec_rbind()}}{
+\itemize{
+\item \code{\link[base:c]{base::c()}}
+}
+
+If columns to combine have the same class, \code{vec_rbind()} falls back
+to \code{base::c()} if there exists a \code{c()} method for this class.
+}
+}
+
 \examples{
 # row binding -----------------------------------------
 

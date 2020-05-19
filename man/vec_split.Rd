@@ -26,6 +26,14 @@ This is a generalisation of \code{\link[=split]{split()}} that can split by any 
 not just factors. Instead of returning the keys in the character names,
 the are returned in a separate parallel vector.
 }
+\section{Dependencies}{
+
+\itemize{
+\item \code{\link[=vec_group_loc]{vec_group_loc()}}
+\item \code{\link[=vec_chop]{vec_chop()}}
+}
+}
+
 \examples{
 vec_split(mtcars$cyl, mtcars$vs)
 vec_split(mtcars$cyl, mtcars[c("vs", "am")])

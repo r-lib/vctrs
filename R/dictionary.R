@@ -14,6 +14,11 @@
 #'  * "none", leaves unordered.
 #' @return A data frame with columns `key` (same type as `x`) and
 #'   `count` (an integer vector).
+#'
+#' @section Dependencies:
+#' - [vec_proxy_equal()]
+#' - [vec_slice()]
+#' - [vec_order()]
 #' @export
 #' @examples
 #' vec_count(mtcars$vs)
@@ -42,7 +47,7 @@ vec_count <- function(x, sort = c("count", "key", "location", "none")) {
   sort <- match.arg(sort)
 
   # Returns key-value pair giving index of first occurrence value and count
-  kv <- .Call(vctrs_count, vec_proxy(x))
+  kv <- .Call(vctrs_count, x)
 
   # rep_along() to support zero-length vectors!
   df <- data_frame(key = rep_along(kv$val, NA), count = kv$val)
@@ -95,6 +100,10 @@ reset_rownames <- function(x) {
 #'   * `vec_duplicate_any()`: a logical vector of length 1.
 #'   * `vec_duplicate_detect()`: a logical vector the same length as `x`.
 #'   * `vec_duplicate_id()`: an integer vector the same length as `x`.
+#'
+#' @section Dependencies:
+#' - [vec_proxy_equal()]
+#'
 #' @seealso [vec_unique()] for functions that work with the dual of duplicated
 #'   values: unique values.
 #' @name vec_duplicate
@@ -153,6 +162,10 @@ vec_duplicate_id <- function(x) {
 #'   number of unique values.
 #' @seealso [vec_duplicate] for functions that work with the dual of
 #'   unique values: duplicated values.
+#'
+#' @section Dependencies:
+#' - [vec_proxy_equal()]
+#'
 #' @export
 #' @examples
 #' x <- rpois(100, 8)
@@ -219,6 +232,11 @@ vec_unique_count <- function(x) {
 #'   `haystack` used in error messages.
 #' @return A vector the same length as `needles`. `vec_in()` returns a
 #'   logical vector; `vec_match()` returns an integer vector.
+#'
+#' @section Dependencies:
+#' - [vec_cast_common()] with fallback
+#' - [vec_proxy_equal()]
+#'
 #' @export
 #' @examples
 #' hadley <- strsplit("hadley", "")[[1]]

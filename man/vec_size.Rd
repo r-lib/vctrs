@@ -84,6 +84,13 @@ finding the common size because 1 is the identity of the recycling
 rules.
 }
 
+\section{Dependencies}{
+
+\itemize{
+\item \code{\link[=vec_proxy]{vec_proxy()}}
+}
+}
+
 \examples{
 vec_size(1:100)
 vec_size(mtcars)

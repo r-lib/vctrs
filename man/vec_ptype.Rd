@@ -72,6 +72,21 @@ successively calls \code{\link[=vec_ptype2]{vec_ptype2()}} to find a common type
 a \link[=vec_ptype_finalise]{finalised} prototype.
 }
 
+\section{Dependencies of \code{vec_ptype()}}{
+
+\itemize{
+\item \code{\link[=vec_slice]{vec_slice()}} for returning an empty slice
+}
+}
+
+\section{Dependencies of \code{vec_ptype_common()}}{
+
+\itemize{
+\item \code{\link[=vec_ptype2]{vec_ptype2()}}
+\item \code{\link[=vec_ptype_finalise]{vec_ptype_finalise()}}
+}
+}
+
 \examples{
 # Unknown types ------------------------------------------
 vec_ptype_show()

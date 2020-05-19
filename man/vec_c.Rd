@@ -62,6 +62,26 @@ Combine all arguments into a new vector of common type.
 }
 }
 
+\section{Dependencies}{
+
+\subsection{vctrs dependencies}{
+\itemize{
+\item \code{\link[=vec_cast_common]{vec_cast_common()}}
+\item \code{\link[=vec_proxy]{vec_proxy()}}
+\item \code{\link[=vec_restore]{vec_restore()}}
+}
+}
+
+\subsection{base dependencies}{
+\itemize{
+\item \code{\link[base:c]{base::c()}}
+}
+
+If inputs have the same class, \code{vec_c()} falls back to \code{base::c()}
+if there exists a \code{c()} method for this class.
+}
+}
+
 \examples{
 vec_c(FALSE, 1L, 1.5)
 

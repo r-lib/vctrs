@@ -27,6 +27,15 @@ Compare two vectors
 \code{\link[=vec_proxy_compare]{vec_proxy_compare()}} to
 }
 
+\section{Dependencies}{
+
+\itemize{
+\item \code{\link[=vec_cast_common]{vec_cast_common()}} with fallback
+\item \code{\link[=vec_recycle_common]{vec_recycle_common()}}
+\item \code{\link[=vec_proxy_compare]{vec_proxy_compare()}}
+}
+}
+
 \examples{
 vec_compare(c(TRUE, FALSE, NA), FALSE)
 vec_compare(c(TRUE, FALSE, NA), FALSE, na_equal = TRUE)

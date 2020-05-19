@@ -25,8 +25,10 @@
 #' For `vec_rep_each()`, a vector the same type as `x` with size
 #' `sum(vec_recycle(times, vec_size(x)))`.
 #'
-#' @name vec-rep
+#' @section Dependencies:
+#' - [vec_slice()]
 #'
+#' @name vec-rep
 #' @examples
 #' # Repeat the entire vector
 #' vec_rep(1:2, 3)

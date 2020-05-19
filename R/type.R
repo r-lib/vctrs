@@ -49,6 +49,13 @@
 #' successively calls [vec_ptype2()] to find a common type. It returns
 #' a [finalised][vec_ptype_finalise] prototype.
 #'
+#' @section Dependencies of `vec_ptype()`:
+#' - [vec_slice()] for returning an empty slice
+#'
+#' @section Dependencies of `vec_ptype_common()`:
+#' - [vec_ptype2()]
+#' - [vec_ptype_finalise()]
+#'
 #' @export
 #' @examples
 #' # Unknown types ------------------------------------------

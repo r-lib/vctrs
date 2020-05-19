@@ -64,6 +64,8 @@
 #' finding the common size because 1 is the identity of the recycling
 #' rules.
 #'
+#' @section Dependencies:
+#' - [vec_proxy()]
 #'
 #' @export
 #' @examples

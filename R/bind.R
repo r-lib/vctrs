@@ -68,6 +68,23 @@
 #'   will determine the type of the container and the type of each column;
 #'   for `vec_cbind()` it only determines the type of the output container.
 #'   If there are no non-`NULL` inputs, the result will be `data.frame()`.
+#'
+#' @section Dependencies:
+#'
+#' ## vctrs dependencies
+#'
+#' - [vec_cast_common()]
+#' - [vec_proxy()]
+#' - [vec_restore()]
+#'
+#'
+#' ## base dependencies of `vec_rbind()`
+#'
+#' - [base::c()]
+#'
+#' If columns to combine have the same class, `vec_rbind()` falls back
+#' to `base::c()` if there exists a `c()` method for this class.
+#'
 #' @seealso [vec_c()] for combining 1d vectors.
 #' @examples
 #' # row binding -----------------------------------------

@@ -6,6 +6,22 @@
 #' * `vec_size(vec_c(x, y)) == vec_size(x) + vec_size(y)`
 #' * `vec_ptype(vec_c(x, y)) == vec_ptype_common(x, y)`.
 #'
+#' @section Dependencies:
+#'
+#' ## vctrs dependencies
+#'
+#' - [vec_cast_common()]
+#' - [vec_proxy()]
+#' - [vec_restore()]
+#'
+#'
+#' ## base dependencies
+#'
+#' - [base::c()]
+#'
+#' If inputs have the same class, `vec_c()` falls back to `base::c()`
+#' if there exists a `c()` method for this class.
+#'
 #' @param ... Vectors to coerce.
 #' @param .name_repair How to repair names, see `repair` options in
 #'   [vec_as_names()].  Can also be [rlang::zap()] to ignore names

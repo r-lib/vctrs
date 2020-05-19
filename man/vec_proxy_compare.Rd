@@ -30,4 +30,11 @@ The default method assumes that all classes built on top of atomic
 vectors or records are orderable. If your class is not, you will need
 to provide a \code{vec_proxy_compare()} method that throws an error.
 }
+\section{Dependencies}{
+
+\itemize{
+\item \code{\link[=vec_proxy]{vec_proxy()}} called by default
+}
+}
+
 \keyword{internal}

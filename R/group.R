@@ -31,6 +31,10 @@
 #'   `data.frame` print method will be suboptimal, and you will want to coerce
 #'   into a tibble to better understand the output.
 #' @name vec_group
+#'
+#' @section Dependencies:
+#' - [vec_proxy_equal()]
+#'
 #' @keywords internal
 #' @examples
 #' purrr <- c("p", "u", "r", "r", "r")

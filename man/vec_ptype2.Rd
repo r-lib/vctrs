@@ -61,6 +61,13 @@ subclasses, see
 }
 }
 
+\section{Dependencies}{
+
+\itemize{
+\item \code{\link[=vec_ptype]{vec_ptype()}} is applied to \code{x} and \code{y}
+}
+}
+
 \seealso{
 \code{\link[=stop_incompatible_type]{stop_incompatible_type()}} when you determine from the
 attributes that an input can't be cast to the target type.

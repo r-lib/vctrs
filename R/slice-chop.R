@@ -39,6 +39,13 @@
 #' - `vec_unchop()`: A vector of type `vec_ptype_common(!!!x)`, or `ptype`, if
 #'   specified. The size is computed as `vec_size_common(!!!indices)` unless
 #'   the indices are `NULL`, in which case the size is `vec_size_common(!!!x)`.
+#'
+#' @section Dependencies of `vec_chop()`:
+#' - [vec_slice()]
+#'
+#' @section Dependencies of `vec_unchop()`:
+#' - [vec_c()]
+#'
 #' @export
 #' @examples
 #' vec_chop(1:5)

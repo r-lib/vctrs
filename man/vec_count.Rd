@@ -28,6 +28,15 @@ important differences to \code{table()}: it returns a data frame, and when
 given multiple inputs (as a data frame), it only counts combinations that
 appear in the input.
 }
+\section{Dependencies}{
+
+\itemize{
+\item \code{\link[=vec_proxy_equal]{vec_proxy_equal()}}
+\item \code{\link[=vec_slice]{vec_slice()}}
+\item \code{\link[=vec_order]{vec_order()}}
+}
+}
+
 \examples{
 vec_count(mtcars$vs)
 vec_count(iris$Species)

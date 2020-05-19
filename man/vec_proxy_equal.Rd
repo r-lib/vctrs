@@ -30,4 +30,11 @@ error.
 If the proxy for \code{x} is a data frame, \code{vec_proxy_equal()} is
 recursively applied on all columns as well.
 }
+\section{Dependencies}{
+
+\itemize{
+\item \code{\link[=vec_proxy]{vec_proxy()}} called by default
+}
+}
+
 \keyword{internal}

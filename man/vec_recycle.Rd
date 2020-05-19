@@ -53,6 +53,13 @@ We say that two vectors have \strong{compatible size} if they can be
 recycled to be the same length.
 }
 
+\section{Dependencies}{
+
+\itemize{
+\item \code{\link[=vec_slice]{vec_slice()}}
+}
+}
+
 \examples{
 # Inputs with 1 observation are recycled
 vec_recycle_common(1:5, 5)

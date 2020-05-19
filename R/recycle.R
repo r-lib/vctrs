@@ -32,6 +32,10 @@
 #' @param x_arg Argument name for `x`. These are used in error
 #'   messages to inform the user about which argument has an
 #'   incompatible size.
+#'
+#' @section Dependencies:
+#' - [vec_slice()]
+#'
 #' @export
 #' @examples
 #' # Inputs with 1 observation are recycled

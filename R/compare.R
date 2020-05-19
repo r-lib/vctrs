@@ -16,6 +16,10 @@
 #'   future.
 #' @inheritParams ellipsis::dots_empty
 #' @return A 1d atomic vector or a data frame.
+#'
+#' @section Dependencies:
+#' - [vec_proxy()] called by default
+#'
 #' @keywords internal
 #' @export
 vec_proxy_compare <- function(x, ..., relax = FALSE) {
@@ -61,6 +65,12 @@ vec_proxy_compare_default <- function(x, relax = FALSE) {
 #' @return An integer vector with values -1 for `x < y`, 0 if `x == y`,
 #'    and 1 if `x > y`. If `na_equal` is `FALSE`, the result will be `NA`
 #'    if either `x` or `y` is `NA`.
+#'
+#' @section Dependencies:
+#' - [vec_cast_common()] with fallback
+#' - [vec_recycle_common()]
+#' - [vec_proxy_compare()]
+#'
 #' @export
 #' @examples
 #' vec_compare(c(TRUE, FALSE, NA), FALSE)

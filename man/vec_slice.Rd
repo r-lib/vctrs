@@ -65,6 +65,25 @@ as the LHS.
 }
 }
 
+\section{Dependencies}{
+
+\subsection{vctrs dependencies}{
+\itemize{
+\item \code{\link[=vec_proxy]{vec_proxy()}}
+\item \code{\link[=vec_restore]{vec_restore()}}
+}
+}
+
+\subsection{base dependencies}{
+\itemize{
+\item \code{base::`[`}
+}
+
+If a non-data-frame vector class doesn't have a \code{\link[=vec_proxy]{vec_proxy()}}
+method, the vector is sliced with \code{[} instead.
+}
+}
+
 \examples{
 x <- sample(10)
 x

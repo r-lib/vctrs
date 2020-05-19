@@ -22,6 +22,10 @@
 #'
 #' @seealso [stop_incompatible_type()] when you determine from the
 #'   attributes that an input can't be cast to the target type.
+#'
+#' @section Dependencies:
+#' - [vec_ptype()] is applied to `x` and `y`
+#'
 #' @export
 vec_ptype2 <- function(x, y, ..., x_arg = "", y_arg = "") {
   if (!missing(...)) {
