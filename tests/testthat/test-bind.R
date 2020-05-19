@@ -267,6 +267,73 @@ test_that("can assign row names in vec_rbind()", {
   expect_identical(out, exp)
 })
 
+test_that("vec_rbind() takes the proxy and restores", {
+  df <- foobar(data.frame(x = 1))
+
+  # This data frame subclass has an identity proxy and the restore
+  # method falls back to a bare data frame if `$x` has any missing values.
+  # In `vec_rbind()`, the `vec_init()` call will create a bare data frame,
+  # but at the end it is `vec_restore()`d to the right class.
+  local_methods(
+    vec_ptype2.vctrs_foobar.vctrs_foobar = function(x, y, ...) {
+      x
+    },
+    vec_proxy.vctrs_foobar = function(x, ...) {
+      x
+    },
+    vec_restore.vctrs_foobar = function(x, to, ...) {
+      if (any(is.na(x$x))) {
+        new_data_frame(x)
+      } else {
+        vec_restore_default(x, to)
+      }
+    }
+  )
+
+  expect_identical(
+    vec_rbind(df, df),
+    foobar(data.frame(x = c(1, 1)))
+  )
+})
+
+test_that("vec_rbind() proxies before initializing", {
+  df <- foobar(data.frame(x = 1))
+
+  # This data frame subclass doesn't allow `NA`s in columns.
+  # If initialization happened before proxying, it would try to
+  # create `NA` rows with `vec_init()`.
+  local_methods(
+    vec_ptype2.vctrs_foobar.vctrs_foobar = function(x, y, ...) {
+      x
+    },
+    vec_proxy.vctrs_foobar = function(x, ...) {
+      new_data_frame(x)
+    },
+    vec_restore.vctrs_foobar = function(x, to, ...) {
+      if (any(is.na(x$x))) {
+        abort("`x` can't have NA values.")
+      }
+      vec_restore_default(x, to)
+    }
+  )
+
+  expect_identical(
+    vec_rbind(df, df),
+    foobar(data.frame(x = c(1, 1)))
+  )
+})
+
+test_that("vec_rbind() requires a data frame proxy for data frame ptypes", {
+  df <- foobar(data.frame(x = 1))
+
+  local_methods(
+    vec_ptype2.vctrs_foobar.vctrs_foobar = function(x, y, ...) x,
+    vec_proxy.vctrs_foobar = function(x, ...) 1
+  )
+
+  expect_error(vec_rbind(df, df), "doesn't have a data frame proxy")
+})
+
 test_that("monitoring: name repair while rbinding doesn't modify in place", {
   df <- new_data_frame(list(x = 1, x = 1))
   expect <- new_data_frame(list(x = 1, x = 1))
