@@ -113,8 +113,13 @@ static SEXP vec_rbind(SEXP xs,
     }
   }
 
+  SEXP proxy = PROTECT(vec_proxy(ptype));
+  if (!is_data_frame(proxy)) {
+    Rf_errorcall(R_NilValue, "Can't fill a data frame that doesn't have a data frame proxy.");
+  }
+
   PROTECT_INDEX out_pi;
-  SEXP out = vec_init(ptype, nrow);
+  SEXP out = vec_init(proxy, nrow);
   PROTECT_WITH_INDEX(out, &out_pi);
 
   SEXP idx = PROTECT_N(compact_seq(0, 0, true), &nprot);
@@ -224,8 +229,11 @@ static SEXP vec_rbind(SEXP xs,
     out = df_poke(out, names_to_loc, names_to_col);
   }
 
+  out = vec_restore(out, ptype, r_int(nrow));
+  REPROTECT(out, out_pi);
+
   UNPROTECT(nprot);
-  UNPROTECT(2);
+  UNPROTECT(3);
   return out;
 }
 
