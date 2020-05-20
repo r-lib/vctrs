@@ -34,9 +34,10 @@ SEXP vec_c(SEXP xs,
   }
 
   ptype = PROTECT(vec_ptype_common_params(xs, ptype, DF_FALLBACK_DEFAULT));
+  xs = PROTECT(vec_cast_common_params(xs, ptype, DF_FALLBACK_DEFAULT));
 
   if (ptype == R_NilValue) {
-    UNPROTECT(1);
+    UNPROTECT(2);
     return R_NilValue;
   }
 
@@ -47,8 +48,8 @@ SEXP vec_c(SEXP xs,
   int* ns = INTEGER(ns_placeholder);
 
   for (R_len_t i = 0; i < n; ++i) {
-    SEXP elt = VECTOR_ELT(xs, i);
-    R_len_t size = (elt == R_NilValue) ? 0 : vec_size(elt);
+    SEXP x = VECTOR_ELT(xs, i);
+    R_len_t size = (x == R_NilValue) ? 0 : vec_size(x);
     out_size += size;
     ns[i] = size;
   }
@@ -85,12 +86,11 @@ SEXP vec_c(SEXP xs,
     }
 
     SEXP x = VECTOR_ELT(xs, i);
-    SEXP elt = PROTECT(vec_cast(x, ptype, args_empty, args_empty));
 
     init_compact_seq(idx_ptr, counter, size, true);
 
     // Total ownership of `out` because it was freshly created with `vec_init()`
-    out = vec_proxy_assign_opts(out, idx, elt, vctrs_ownership_total, &c_assign_opts);
+    out = vec_proxy_assign_opts(out, idx, x, vctrs_ownership_total, &c_assign_opts);
     REPROTECT(out, out_pi);
 
     if (has_names) {
@@ -107,7 +107,6 @@ SEXP vec_c(SEXP xs,
     }
 
     counter += size;
-    UNPROTECT(1);
   }
 
   out = PROTECT(vec_restore(out, ptype, R_NilValue));
@@ -123,7 +122,7 @@ SEXP vec_c(SEXP xs,
     out = vec_set_names(out, R_NilValue);
   }
 
-  UNPROTECT(7);
+  UNPROTECT(8);
   return out;
 }
 
