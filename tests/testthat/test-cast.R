@@ -189,12 +189,12 @@ test_that("vec_ptype_common() collects common type", {
   x_df <- data_frame(x = x)
   y_df <- data_frame(x = y)
 
-  out <- vec_ptype_common_opts(x, y, .opts = fallback_ptype2_opts())
+  out <- vec_ptype_common_fallback(x, y)
   expect_identical(typeof(out), "double")
   expect_true(is_common_class_fallback(out))
   expect_identical(fallback_class(out), c("baz", "vctrs_foobar"))
 
-  out <- vec_ptype_common_opts(x_df, y_df, .opts = fallback_ptype2_opts())
+  out <- vec_ptype_common_fallback(x_df, y_df)
   expect_identical(typeof(out$x), "double")
   expect_true(is_common_class_fallback(out$x))
   expect_identical(fallback_class(out$x), c("baz", "vctrs_foobar"))
@@ -202,13 +202,13 @@ test_that("vec_ptype_common() collects common type", {
   # Different base types can't fall back to common class
   z <- foobar(3L, baz = 3)
   expect_error(
-    vec_ptype_common_opts(x, z, .opts = fallback_ptype2_opts()),
+    vec_ptype_common_fallback(x, z),
     class = "vctrs_error_incompatible_type"
   )
 
   z_df <- data_frame(x = z)
   expect_error(
-    vec_ptype_common_opts(x_df, z_df, .opts = fallback_ptype2_opts()),
+    vec_ptype_common_fallback(x_df, z_df),
     class = "vctrs_error_incompatible_type"
   )
 })

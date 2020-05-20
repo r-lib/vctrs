@@ -117,6 +117,9 @@ vec_ptype_common_params <- function(...,
   )
   vec_ptype_common_opts(..., .ptype = .ptype, .opts = opts)
 }
+vec_ptype_common_fallback <- function(..., .ptype = NULL) {
+  vec_ptype_common_opts(..., .ptype = .ptype, .opts = fallback_ptype2_opts())
+}
 
 #' @export
 #' @rdname vec_ptype
