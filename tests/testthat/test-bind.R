@@ -712,7 +712,19 @@ test_that("vec_rbind() fails with complex foreign S4 classes", {
 })
 
 test_that("vec_rbind() falls back to c() if S3 method is available", {
-  skip("TODO")
+  x <- foobar(1, foo = 1)
+  y <- foobar(2, bar = 2)
+
+  x_df <- data_frame(x = x)
+  y_df <- data_frame(x = y)
+
+  expect_error(vec_rbind(x_df, y_df), class = "vctrs_error_incompatible_type")
+
+  out <- with_methods(
+    c.vctrs_foobar = function(...) quux(NextMethod()),
+    vec_rbind(x_df, y_df)
+  )
+  expect_identical(out, data_frame(x = quux(c(1, 2))))
 })
 
 test_that("vec_rbind() falls back to c() if S4 method is available", {

@@ -5,7 +5,7 @@ vec_rbind() fails with complex foreign S3 classes
 > x <- structure(foobar(1), attr_foo = "foo")
 > y <- structure(foobar(2), attr_bar = "bar")
 > vec_rbind(set_names(x, "x"), set_names(y, "x"))
-Error: Can't combine `..1$x` <vctrs_foobar> and `..2$x` <vctrs_foobar>.
+Error: Can't combine `..1` <vctrs_foobar> and `..2` <vctrs_foobar>.
 x Some attributes are incompatible.
 i The author of the class should implement vctrs methods.
 i See <https://vctrs.r-lib.org/reference/faq-error-incompatible-attributes.html>.

@@ -396,10 +396,16 @@ SEXP s3_find_method(const char* generic, SEXP x, SEXP table) {
   }
 
   SEXP class = PROTECT(Rf_getAttrib(x, R_ClassSymbol));
+  SEXP method = s3_class_find_method(generic, class, table);
 
+  UNPROTECT(1);
+  return method;
+}
+
+// [[ include("utils.h") ]]
+SEXP s3_class_find_method(const char* generic, SEXP class, SEXP table) {
   // Avoid corrupt objects where `x` is an OBJECT(), but the class is NULL
   if (class == R_NilValue) {
-    UNPROTECT(1);
     return R_NilValue;
   }
 
@@ -409,12 +415,10 @@ SEXP s3_find_method(const char* generic, SEXP x, SEXP table) {
   for (int i = 0; i < n_class; ++i) {
     SEXP method = s3_get_method(generic, CHAR(p_class[i]), table);
     if (method != R_NilValue) {
-      UNPROTECT(1);
       return method;
     }
   }
 
-  UNPROTECT(1);
   return R_NilValue;
 }
 
@@ -673,6 +677,25 @@ bool list_has_inner_vec_names(SEXP x, R_len_t size) {
 
   return false;
 }
+
+/**
+ * Pluck elements `i` from a list of lists.
+ * @return A list of the same length as `xs`.
+ */
+// [[ include("utils.h") ]]
+SEXP list_pluck(SEXP xs, R_len_t i) {
+  R_len_t n = Rf_length(xs);
+  SEXP out = PROTECT(r_new_list(n));
+
+  for (R_len_t j = 0; j < n; ++j) {
+    SEXP x = r_list_get(xs, j);
+    r_list_poke(out, j, r_list_get(x, i));
+  }
+
+  UNPROTECT(1);
+  return out;
+}
+
 
 // [[ include("vctrs.h") ]]
 enum vctrs_dbl_class dbl_classify(double x) {
@@ -1542,6 +1565,8 @@ SEXP syms_s3_fallback = NULL;
 SEXP syms_stop_incompatible_type = NULL;
 SEXP syms_stop_incompatible_size = NULL;
 SEXP syms_action = NULL;
+SEXP syms_vctrs_common_class_fallback = NULL;
+SEXP syms_fallback_class = NULL;
 
 SEXP fns_bracket = NULL;
 SEXP fns_quote = NULL;
@@ -1791,6 +1816,8 @@ void vctrs_init_utils(SEXP ns) {
   syms_stop_incompatible_type = Rf_install("stop_incompatible_type");
   syms_stop_incompatible_size = Rf_install("stop_incompatible_size");
   syms_action = Rf_install("action");
+  syms_vctrs_common_class_fallback = Rf_install(c_strs_vctrs_common_class_fallback);
+  syms_fallback_class = Rf_install("fallback_class");
 
   fns_bracket = Rf_findVar(syms_bracket, R_BaseEnv);
   fns_quote = Rf_findVar(Rf_install("quote"), R_BaseEnv);

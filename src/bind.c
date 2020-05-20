@@ -43,7 +43,6 @@ SEXP vctrs_rbind(SEXP call, SEXP op, SEXP args, SEXP env) {
   return out;
 }
 
-
 static SEXP vec_rbind(SEXP xs,
                       SEXP ptype,
                       SEXP names_to,
@@ -59,14 +58,16 @@ static SEXP vec_rbind(SEXP xs,
   // The common type holds information about common column names,
   // types, etc. Each element of `xs` needs to be cast to that type
   // before assignment.
-  ptype = vec_ptype_common_params(xs, ptype, DF_FALLBACK_DEFAULT, S3_FALLBACK_DEFAULT);
+  ptype = vec_ptype_common_params(xs, ptype, DF_FALLBACK_DEFAULT, S3_FALLBACK_true);
   PROTECT_N(ptype, &n_prot);
+
+  R_len_t n_cols = Rf_length(ptype);
 
   if (ptype == R_NilValue) {
     UNPROTECT(n_prot);
     return new_data_frame(vctrs_shared_empty_list, 0);
   }
-  if (TYPEOF(ptype) == LGLSXP && !Rf_length(ptype)) {
+  if (TYPEOF(ptype) == LGLSXP && !n_cols) {
     ptype = as_df_row_impl(vctrs_shared_na_lgl, name_repair);
     PROTECT_N(ptype, &n_prot);
   }
@@ -91,7 +92,7 @@ static SEXP vec_rbind(SEXP xs,
   }
 
   // Must happen after the `names_to` column has been added to `ptype`
-  xs = vec_cast_common_params(xs, ptype, DF_FALLBACK_DEFAULT, S3_FALLBACK_false);
+  xs = vec_cast_common_params(xs, ptype, DF_FALLBACK_DEFAULT, S3_FALLBACK_true);
   PROTECT_N(xs, &n_prot);
 
   // Find individual input sizes and total size of output
@@ -227,6 +228,33 @@ static SEXP vec_rbind(SEXP xs,
 
   if (has_names_to) {
     out = df_poke(out, names_to_loc, names_to_col);
+  }
+
+  // Not optimal. Happens after the fallback columns have been
+  // assigned already, ideally they should be ignored. Also this is
+  // currently not recursive. Should we deal with this during
+  // restoration?
+  for (R_len_t i = 0; i < n_cols; ++i) {
+    SEXP col = r_list_get(ptype, i);
+
+    if (vec_is_common_class_fallback(col)) {
+      SEXP col_xs = PROTECT(list_pluck(xs, i));
+
+      SEXP class = PROTECT(Rf_getAttrib(col, syms_fallback_class));
+      SEXP method = PROTECT(s3_class_find_method("c", class, base_method_table));
+
+      if (method == R_NilValue) {
+        struct fallback_opts opts = {
+          .df = DF_FALLBACK_NONE,
+          .s3 = S3_FALLBACK_false
+        };
+        vec_ptype_common_opts(col_xs, R_NilValue, &opts);
+        never_reached("vec_rbind");
+      }
+
+      r_list_poke(out, i, vec_c_fallback(col_xs, name_spec));
+      UNPROTECT(3);
+    }
   }
 
   out = vec_restore(out, ptype, r_int(n_rows));

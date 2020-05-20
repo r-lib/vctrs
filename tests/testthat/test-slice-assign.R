@@ -618,7 +618,8 @@ test_that("assignment allows a df `value`'s column to be a different type than i
     # restoring extracts the column
     vec_restore.vctrs_foobar = function(x, to, ...) {
       foobar(x$vec)
-    }
+    },
+    vec_ptype2.vctrs_foobar.vctrs_foobar = function(x, y, ...) x
   )
 
   expect1 <- new_data_frame(list(x = foobar(c(1, 1))))

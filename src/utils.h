@@ -113,6 +113,7 @@ SEXP vec_unique_colnames(SEXP x, bool quiet);
 SEXP s3_get_method(const char* generic, const char* cls, SEXP table);
 SEXP s3_sym_get_method(SEXP sym, SEXP table);
 SEXP s3_find_method(const char* generic, SEXP x, SEXP table);
+SEXP s3_class_find_method(const char* generic, SEXP class, SEXP table);
 SEXP s3_find_method_xy(const char* generic,
                        SEXP x,
                        SEXP y,
@@ -158,6 +159,7 @@ SEXP new_empty_factor(SEXP levels);
 SEXP new_empty_ordered(SEXP levels);
 
 bool list_has_inner_vec_names(SEXP x, R_len_t size);
+SEXP list_pluck(SEXP xs, R_len_t i);
 
 void init_compact_seq(int* p, R_len_t start, R_len_t size, bool increasing);
 SEXP compact_seq(R_len_t start, R_len_t size, bool increasing);
@@ -208,6 +210,19 @@ R_len_t r_chr_find(SEXP x, SEXP value);
 
 int r_chr_max_len(SEXP x);
 SEXP r_chr_iota(R_len_t n, char* buf, int len, const char* prefix);
+
+static inline
+SEXP r_new_logical(R_len_t n) {
+  return Rf_allocVector(LGLSXP, n);
+}
+static inline
+SEXP r_new_integer(R_len_t n) {
+  return Rf_allocVector(INTSXP, n);
+}
+static inline
+SEXP r_new_list(R_len_t n) {
+  return Rf_allocVector(VECSXP, n);
+}
 
 SEXP r_new_environment(SEXP parent, R_len_t size);
 SEXP r_new_function(SEXP formals, SEXP body, SEXP env);
@@ -292,6 +307,8 @@ static inline double r_dbl_get(SEXP x, R_len_t i) {
 }
 #define r_chr_get STRING_ELT
 #define r_list_get VECTOR_ELT
+#define r_chr_poke SET_STRING_ELT
+#define r_list_poke SET_VECTOR_ELT
 
 static inline
 void r_int_poke(SEXP x, R_len_t i, int value) {
@@ -510,6 +527,10 @@ extern SEXP syms_s3_fallback;
 extern SEXP syms_stop_incompatible_type;
 extern SEXP syms_stop_incompatible_size;
 extern SEXP syms_action;
+extern SEXP syms_vctrs_common_class_fallback;
+extern SEXP syms_fallback_class;
+
+static const char * const c_strs_vctrs_common_class_fallback = "vctrs:::common_class_fallback";
 
 #define syms_names R_NamesSymbol
 

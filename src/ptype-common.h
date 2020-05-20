@@ -2,7 +2,12 @@
 #define VCTRS_PTYPE_COMMON_H
 
 #include "ptype2.h"
+#include "utils.h"
 
+static inline
+bool vec_is_common_class_fallback(SEXP ptype) {
+  return Rf_inherits(ptype, c_strs_vctrs_common_class_fallback);
+}
 
 SEXP vec_ptype_common_params(SEXP dots,
                              SEXP ptype,
