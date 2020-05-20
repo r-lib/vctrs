@@ -243,16 +243,26 @@ static SEXP vec_rbind(SEXP xs,
       SEXP class = PROTECT(Rf_getAttrib(col, syms_fallback_class));
       SEXP method = PROTECT(s3_class_find_method("c", class, base_method_table));
 
+      SEXP col_out = R_NilValue;
+
       if (method == R_NilValue) {
         struct fallback_opts opts = {
           .df = DF_FALLBACK_NONE,
           .s3 = S3_FALLBACK_false
         };
+
+        // Should cause a common type error, unless another fallback
+        // kicks in (for instance, homogeneous class with homogeneous
+        // attributes)
         vec_ptype_common_opts(col_xs, R_NilValue, &opts);
-        never_reached("vec_rbind");
+
+        // Suboptimal: Call `vec_c()` to combine vector with homogeneous class fallback
+        col_out = vec_c(col_xs, R_NilValue, name_spec, name_repair);
+      } else {
+        col_out = vec_c_fallback(col_xs, name_spec);
       }
 
-      r_list_poke(out, i, vec_c_fallback(col_xs, name_spec));
+      r_list_poke(out, i, col_out);
       UNPROTECT(3);
     }
   }
