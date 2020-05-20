@@ -935,9 +935,9 @@
   <span class="fu"><a href="https://rdrr.io/r/base/class.html">inherits</a></span>(<span class="no">x</span>, <span class="st">"pizza_percent"</span>)
 }</pre></body></html></div>
 <p>You’ll also need to update the <code>percent()</code> documentation to reflect that <code>x</code> now means two different things:</p>
-<div class="sourceCode" id="cb66"><html><body><pre class="r">#' @param x
-#'  * For `percent()`: A numeric vector
-#'  * For `is_percent()`: An object to test.</pre></body></html></div>
+<div class="sourceCode" id="cb66"><html><body><pre class="r"><span class="co">#' @param x</span>
+<span class="co">#'  * For `percent()`: A numeric vector</span>
+<span class="co">#'  * For `is_percent()`: An object to test.</span></pre></body></html></div>
 <p>Next we provide the key methods to make printing work. These are S3 methods, so they don’t need to be documented, but they do need to be exported.</p>
 <div class="sourceCode" id="cb67"><html><body><pre class="r"><span class="co">#' @export</span>
 <span class="no">format.pizza_percent</span> <span class="kw">&lt;-</span> <span class="kw">function</span>(<span class="no">x</span>, <span class="no">...</span>) {
