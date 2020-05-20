@@ -1,4 +1,5 @@
 #include "vctrs.h"
+#include "c.h"
 #include "slice.h"
 #include "slice-assign.h"
 #include "subscript-loc.h"

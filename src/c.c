@@ -1,4 +1,5 @@
 #include "vctrs.h"
+#include "c.h"
 #include "ptype-common.h"
 #include "slice-assign.h"
 #include "utils.h"
@@ -128,7 +129,7 @@ SEXP vec_c(SEXP xs,
 
 static inline bool vec_implements_base_c(SEXP x);
 
-// [[ include("vctrs.h") ]]
+// [[ include("c.h") ]]
 bool needs_vec_c_homogeneous_fallback(SEXP xs, SEXP ptype) {
   if (!Rf_length(xs)) {
     return false;
@@ -181,7 +182,7 @@ static inline bool vec_implements_base_c(SEXP x) {
 static inline int vec_c_fallback_validate_args(SEXP x, SEXP name_spec);
 static inline void stop_vec_c_fallback(SEXP xs, int err_type);
 
-// [[ include("vctrs.h") ]]
+// [[ include("c.h") ]]
 SEXP vec_c_fallback_invoke(SEXP xs, SEXP name_spec) {
   SEXP x = list_first_non_null(xs, NULL);
 

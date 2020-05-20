@@ -1,4 +1,5 @@
 #include "vctrs.h"
+#include "c.h"
 #include "dim.h"
 #include "ptype-common.h"
 #include "slice-assign.h"

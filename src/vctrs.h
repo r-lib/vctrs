@@ -403,9 +403,6 @@ SEXP vec_c(SEXP xs,
            SEXP name_spec,
            const struct name_repair_opts* name_repair);
 
-SEXP vec_c_fallback_invoke(SEXP xs, SEXP name_spec);
-bool needs_vec_c_homogeneous_fallback(SEXP xs, SEXP ptype);
-
 bool is_data_frame(SEXP x);
 
 R_len_t df_size(SEXP x);
