@@ -90,6 +90,10 @@ static SEXP vec_rbind(SEXP xs,
     }
   }
 
+  // Must happen after the `names_to` column has been added to `ptype`
+  xs = vec_cast_common_params(xs, ptype, DF_FALLBACK_DEFAULT);
+  PROTECT_N(xs, &n_prot);
+
   // Find individual input sizes and total size of output
   R_len_t n_rows = 0;
 
@@ -171,14 +175,10 @@ static SEXP vec_rbind(SEXP xs,
     }
     SEXP x = VECTOR_ELT(xs, i);
 
-    SEXP tbl = vec_cast_params(x, ptype,
-                               args_empty, args_empty,
-                               DF_FALLBACK_DEFAULT);
-    PROTECT(tbl);
     init_compact_seq(idx_ptr, counter, size, true);
 
     // Total ownership of `out` because it was freshly created with `vec_init()`
-    out = df_assign(out, idx, tbl, vctrs_ownership_total, &bind_assign_opts);
+    out = df_assign(out, idx, x, vctrs_ownership_total, &bind_assign_opts);
     REPROTECT(out, out_pi);
 
     if (has_rownames) {
@@ -211,7 +211,7 @@ static SEXP vec_rbind(SEXP xs,
     }
 
     counter += size;
-    UNPROTECT(2);
+    UNPROTECT(1);
   }
 
   if (has_rownames) {

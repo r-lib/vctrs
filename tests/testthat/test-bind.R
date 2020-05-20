@@ -331,7 +331,7 @@ test_that("vec_rbind() requires a data frame proxy for data frame ptypes", {
     vec_proxy.vctrs_foobar = function(x, ...) 1
   )
 
-  expect_error(vec_rbind(df, df), "doesn't have a data frame proxy")
+  expect_error(vec_rbind(df, df), "Attempt to restore data frame from a double")
 })
 
 test_that("monitoring: name repair while rbinding doesn't modify in place", {
