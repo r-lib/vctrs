@@ -32,14 +32,16 @@ SEXP vec_cast_params(SEXP x,
                      SEXP to,
                      struct vctrs_arg* x_arg,
                      struct vctrs_arg* to_arg,
-                     enum df_fallback df_fallback) {
+                     enum df_fallback df_fallback,
+                     enum s3_fallback s3_fallback) {
   const struct cast_opts opts = {
     .x = x,
     .to = to,
     .x_arg = x_arg,
     .to_arg = to_arg,
     .fallback = {
-      .df = df_fallback
+      .df = df_fallback,
+      .s3 = s3_fallback
     }
   };
   return vec_cast_opts(&opts);
