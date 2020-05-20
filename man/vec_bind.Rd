@@ -140,8 +140,9 @@ For column-binding, the following invariants apply:
 \item \code{\link[base:c]{base::c()}}
 }
 
-If columns to combine have the same class, \code{vec_rbind()} falls back
-to \code{base::c()} if there exists a \code{c()} method for this class.
+If columns to combine inherit from a common class hierarchy,
+\code{vec_rbind()} falls back to \code{base::c()} if there exists a \code{c()}
+method implemented for this class hierarchy.
 }
 }
 

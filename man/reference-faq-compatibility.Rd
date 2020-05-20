@@ -37,8 +37,9 @@ if no \code{\link[=vec_proxy]{vec_proxy()}} method is implemented. This
 way foreign classes that do not implement
 \code{\link[=vec_restore]{vec_restore()}} can restore attributes based on
 the new subsetted contents.
-\item \code{\link[=vec_c]{vec_c()}} falls back to \code{base::c()} if all inputs have
-the same class for which a \code{c()} method is implemented but no
+\item \code{\link[=vec_c]{vec_c()}} and \code{\link[=vec_rbind]{vec_rbind()}} fall
+back to \code{\link[base:c]{base::c()}} if the inputs have a common class
+hierarchy for which a \code{c()} method is implemented but no
 self-to-self \code{\link[=vec_ptype2]{vec_ptype2()}} method is
 implemented.
 
