@@ -725,6 +725,15 @@ test_that("vec_rbind() falls back to c() if S3 method is available", {
     vec_rbind(x_df, y_df)
   )
   expect_identical(out, data_frame(x = quux(c(1, 2))))
+
+  foo_df <- foobar(x_df)
+  bar_df <- foobar(y_df)
+
+  out <- with_methods(
+    c.vctrs_foobar = function(...) quux(NextMethod()),
+    vec_rbind(foo_df, bar_df)
+  )
+  expect_identical(out, foobar(data_frame(x = quux(c(1, 2)))))
 })
 
 test_that("vec_rbind() falls back to c() if S4 method is available", {

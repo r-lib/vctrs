@@ -127,7 +127,7 @@ vec_default_cast <- function(x, to, ..., x_arg = "", to_arg = "") {
   # If both data frames, first find the `to` type of columns before
   # the same-type fallback
   if (df_needs_normalisation(x, to, opts)) {
-    x <- vec_cast_df_fallback_normalise(x, to)
+    x <- vec_cast_df_fallback_normalise(x, to, opts)
   }
 
   if (is_same_type(x, to)) {

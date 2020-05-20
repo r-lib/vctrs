@@ -127,9 +127,7 @@ df_cast_opts <- function(x,
                          ...,
                          opts = ptype2_opts(),
                          x_arg = "",
-                         to_arg = "",
-                         df_fallback = NULL,
-                         s3_fallback = NULL) {
+                         to_arg = "") {
   .Call(vctrs_df_cast_opts, x, to, opts, x_arg, to_arg)
 }
 df_cast_params <- function(x,
@@ -185,9 +183,9 @@ vec_ptype2_df_fallback_normalise <- function(x, y, opts) {
 
   list(x = x, y = y)
 }
-vec_cast_df_fallback_normalise <- function(x, to) {
+vec_cast_df_fallback_normalise <- function(x, to, opts) {
   orig <- x
-  cast <- df_cast_params(x, to, df_fallback = TRUE)
+  cast <- df_cast_opts(x, to, opts = opts)
 
   # Seq-assign should be more widely implemented than empty-assign?
   x[seq_along(to)] <- cast
