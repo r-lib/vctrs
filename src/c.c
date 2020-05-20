@@ -23,26 +23,61 @@ SEXP vctrs_c(SEXP call, SEXP op, SEXP args, SEXP env) {
   return out;
 }
 
+
 // [[ include("vctrs.h") ]]
 SEXP vec_c(SEXP xs,
            SEXP ptype,
            SEXP name_spec,
            const struct name_repair_opts* name_repair) {
-  R_len_t n = Rf_length(xs);
+  struct fallback_opts opts = {
+    .df = DF_FALLBACK_DEFAULT,
+    .s3 = S3_FALLBACK_true
+  };
+  return vec_c_opts(xs, ptype, name_spec, name_repair, &opts);
+}
 
-  if (needs_vec_c_homogeneous_fallback(xs, ptype)) {
-    return vec_c_homogeneous_fallback(xs, name_spec);
-  }
-
-  ptype = PROTECT(vec_ptype_common_params(xs, ptype, DF_FALLBACK_DEFAULT, S3_FALLBACK_false));
-  xs = PROTECT(vec_cast_common_params(xs, ptype, DF_FALLBACK_DEFAULT, S3_FALLBACK_false));
+SEXP vec_c_opts(SEXP xs,
+                SEXP ptype,
+                SEXP name_spec,
+                const struct name_repair_opts* name_repair,
+                struct fallback_opts* fallback_opts) {
+  SEXP orig_ptype = ptype;
+  ptype = PROTECT(vec_ptype_common_opts(xs, orig_ptype, fallback_opts));
 
   if (ptype == R_NilValue) {
-    UNPROTECT(2);
+    UNPROTECT(1);
     return R_NilValue;
   }
 
+  if (needs_vec_c_fallback(ptype)) {
+    SEXP out = vec_c_fallback(ptype, xs, name_spec, name_repair);
+    UNPROTECT(1);
+    return out;
+  }
+  // FIXME: Needed for dplyr::summarise() which passes a non-fallback ptype
+  if (needs_vec_c_homogeneous_fallback(xs, ptype)) {
+    SEXP out = vec_c_fallback_invoke(xs, name_spec);
+    UNPROTECT(1);
+    return out;
+  }
+
+  // FIXME: If data frame, recompute ptype without common class
+  // fallback. Should refactor this to allow common class fallback
+  // with data frame columns.
+  if (is_data_frame(ptype) && fallback_opts->s3 == S3_FALLBACK_true) {
+    struct fallback_opts d_fallback_opts = *fallback_opts;
+    d_fallback_opts.s3 = S3_FALLBACK_false;
+
+    UNPROTECT(1);
+    ptype = PROTECT(vec_ptype_common_opts(xs, orig_ptype, &d_fallback_opts));
+    xs = vec_cast_common_opts(xs, ptype, &d_fallback_opts);
+  } else {
+    xs = vec_cast_common_opts(xs, ptype, fallback_opts);
+  }
+  PROTECT(xs);
+
   // Find individual input sizes and total size of output
+  R_len_t n = Rf_length(xs);
   R_len_t out_size = 0;
 
   SEXP ns_placeholder = PROTECT(Rf_allocVector(INTSXP, n));
@@ -167,7 +202,9 @@ bool needs_vec_c_homogeneous_fallback(SEXP xs, SEXP ptype) {
     list_is_homogeneously_classed(xs) &&
     vec_implements_base_c(x);
 }
-static inline bool vec_implements_base_c(SEXP x) {
+
+static inline
+bool vec_implements_base_c(SEXP x) {
   if (!OBJECT(x)) {
     return false;
   }
@@ -181,6 +218,38 @@ static inline bool vec_implements_base_c(SEXP x) {
 
 static inline int vec_c_fallback_validate_args(SEXP x, SEXP name_spec);
 static inline void stop_vec_c_fallback(SEXP xs, int err_type);
+
+// [[ include("c.h") ]]
+SEXP vec_c_fallback(SEXP ptype,
+                    SEXP xs,
+                    SEXP name_spec,
+                    const struct name_repair_opts* name_repair) {
+  SEXP class = PROTECT(Rf_getAttrib(ptype, syms_fallback_class));
+  SEXP method = PROTECT(s3_class_find_method("c", class, base_method_table));
+
+  SEXP out = R_NilValue;
+
+  if (method == R_NilValue) {
+    struct fallback_opts fallback_opts = {
+      .df = DF_FALLBACK_NONE,
+      .s3 = S3_FALLBACK_false
+    };
+
+    // Should cause a common type error, unless another fallback
+    // kicks in (for instance, homogeneous class with homogeneous
+    // attributes)
+    vec_ptype_common_opts(xs, R_NilValue, &fallback_opts);
+
+    // Suboptimal: Call `vec_c()` again to combine vector with
+    // homogeneous class fallback
+    out = vec_c_opts(xs, R_NilValue, name_spec, name_repair, &fallback_opts);
+  } else {
+    out = vec_c_fallback_invoke(xs, name_spec);
+  }
+
+  UNPROTECT(2);
+  return out;
+}
 
 // [[ include("c.h") ]]
 SEXP vec_c_fallback_invoke(SEXP xs, SEXP name_spec) {

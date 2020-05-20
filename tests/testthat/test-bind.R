@@ -728,7 +728,16 @@ test_that("vec_rbind() falls back to c() if S3 method is available", {
 })
 
 test_that("vec_rbind() falls back to c() if S4 method is available", {
-  skip("TODO")
+  joe <- data_frame(x = .Counts(c(1L, 2L), name = "Joe"))
+  jane <- data_frame(x = .Counts(3L, name = "Jane"))
+
+  expect_error(vec_rbind(joe, jane), class = "vctrs_error_incompatible_type")
+
+  out <- with_methods(
+    c.vctrs_Counts = function(...) .Counts(NextMethod(), name = "dispatched"),
+    vec_rbind(joe, jane)
+  )
+  expect_identical(out$x, .Counts(1:3, name = "dispatched"))
 })
 
 test_that("vec_cbind() and vec_rbind() have informative error messages", {

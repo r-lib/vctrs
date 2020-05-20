@@ -207,11 +207,11 @@ test_that("vec_c() falls back to c() if S3 method is available", {
     c.vctrs_foobar = method
   )
   expect_identical(
-    vec_c(foobar(1), foobar(2)),
+    vec_c(foobar(1), foobar(2, class = "foo")),
     c("dispatched", "dispatched")
   )
   expect_identical(
-    vec_c(NULL, foobar(1), NULL, foobar(2)),
+    vec_c(NULL, foobar(1), NULL, foobar(2, class = "foo")),
     c("dispatched", "dispatched")
   )
 

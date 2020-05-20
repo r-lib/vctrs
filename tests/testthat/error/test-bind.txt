@@ -17,7 +17,7 @@ vec_rbind() fails with complex foreign S4 classes
 > joe <- .Counts(1L, name = "Joe")
 > jane <- .Counts(2L, name = "Jane")
 > vec_rbind(set_names(joe, "x"), set_names(jane, "x"))
-Error: Can't combine `..1$x` <vctrs_Counts> and `..2$x` <vctrs_Counts>.
+Error: Can't combine `..1` <vctrs_Counts> and `..2` <vctrs_Counts>.
 x Some attributes are incompatible.
 i The author of the class should implement vctrs methods.
 i See <https://vctrs.r-lib.org/reference/faq-error-incompatible-attributes.html>.
