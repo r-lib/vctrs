@@ -29,8 +29,8 @@ SEXP vec_c(SEXP xs,
            const struct name_repair_opts* name_repair) {
   R_len_t n = Rf_length(xs);
 
-  if (needs_vec_c_fallback(xs, ptype)) {
-    return vec_c_fallback(xs, name_spec);
+  if (needs_vec_c_homogeneous_fallback(xs, ptype)) {
+    return vec_c_homogeneous_fallback(xs, name_spec);
   }
 
   ptype = PROTECT(vec_ptype_common_params(xs, ptype, DF_FALLBACK_DEFAULT, S3_FALLBACK_false));
@@ -129,7 +129,7 @@ SEXP vec_c(SEXP xs,
 static inline bool vec_implements_base_c(SEXP x);
 
 // [[ include("vctrs.h") ]]
-bool needs_vec_c_fallback(SEXP xs, SEXP ptype) {
+bool needs_vec_c_homogeneous_fallback(SEXP xs, SEXP ptype) {
   if (!Rf_length(xs)) {
     return false;
   }
@@ -182,7 +182,7 @@ static inline int vec_c_fallback_validate_args(SEXP x, SEXP name_spec);
 static inline void stop_vec_c_fallback(SEXP xs, int err_type);
 
 // [[ include("vctrs.h") ]]
-SEXP vec_c_fallback(SEXP xs, SEXP name_spec) {
+SEXP vec_c_fallback_invoke(SEXP xs, SEXP name_spec) {
   SEXP x = list_first_non_null(xs, NULL);
 
   if (vctrs_debug_verbose) {

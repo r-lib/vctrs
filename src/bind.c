@@ -259,7 +259,7 @@ static SEXP vec_rbind(SEXP xs,
         // Suboptimal: Call `vec_c()` to combine vector with homogeneous class fallback
         col_out = vec_c(col_xs, R_NilValue, name_spec, name_repair);
       } else {
-        col_out = vec_c_fallback(col_xs, name_spec);
+        col_out = vec_c_homogeneous_fallback(col_xs, name_spec);
       }
 
       r_list_poke(out, i, col_out);
