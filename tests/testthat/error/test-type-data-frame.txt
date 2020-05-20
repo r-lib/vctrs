@@ -5,7 +5,7 @@ combining data frames with foreign classes uses fallback
 > foo <- structure(mtcars[1:3], class = c("foo", "data.frame"))
 > bar <- structure(mtcars[4:6], class = c("bar", "data.frame"))
 > baz <- structure(mtcars[7:9], class = c("baz", "data.frame"))
-> vec_ptype_common_fallback(foo, bar, baz)
+> vec_ptype_common_df_fallback(foo, bar, baz)
 Warning: Can't combine <foo> and <bar>; falling back to <data.frame>.
 
 Warning: Can't combine <data.frame> and <baz>; falling back to <data.frame>.
@@ -13,7 +13,7 @@ Warning: Can't combine <data.frame> and <baz>; falling back to <data.frame>.
 [1] mpg  cyl  disp hp   drat wt   qsec vs   am  
 <0 rows> (or 0-length row.names)
 
-> vec_ptype_common_fallback(foo, baz, bar, baz, foo, bar)
+> vec_ptype_common_df_fallback(foo, baz, bar, baz, foo, bar)
 Warning: Can't combine <foo> and <baz>; falling back to <data.frame>.
 
 Warning: Can't combine <data.frame> and <bar>; falling back to <data.frame>.

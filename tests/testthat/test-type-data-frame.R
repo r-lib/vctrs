@@ -72,11 +72,11 @@ test_that("combining data frames with foreign classes uses fallback", {
     new_fallback_df(df, c("data.frame", "vctrs_foobar"))
   )
   expect_identical(
-    expect_df_fallback_warning(vec_ptype_common_fallback(foo, df)),
+    expect_df_fallback_warning(vec_ptype_common_df_fallback(foo, df)),
     df
   )
   expect_identical(
-    expect_df_fallback_warning(vec_ptype_common_fallback(df, foo)),
+    expect_df_fallback_warning(vec_ptype_common_df_fallback(df, foo)),
     df
   )
 
@@ -87,7 +87,7 @@ test_that("combining data frames with foreign classes uses fallback", {
       invokeRestart("muffleWarning")
     },
     expect_identical(
-      vec_ptype_common_fallback(foo, df, foo, foo),
+      vec_ptype_common_df_fallback(foo, df, foo, foo),
       df
     )
   )
@@ -110,8 +110,8 @@ test_that("combining data frames with foreign classes uses fallback", {
     foo <- structure(mtcars[1:3], class = c("foo", "data.frame"))
     bar <- structure(mtcars[4:6], class = c("bar", "data.frame"))
     baz <- structure(mtcars[7:9], class = c("baz", "data.frame"))
-    expect_warning(vec_ptype_common_fallback(foo, bar, baz))
-    expect_warning(vec_ptype_common_fallback(foo, baz, bar, baz, foo, bar))
+    expect_warning(vec_ptype_common_df_fallback(foo, bar, baz))
+    expect_warning(vec_ptype_common_df_fallback(foo, baz, bar, baz, foo, bar))
 
     with_fallback_warning(expect_df_fallback_warning(invisible(vec_rbind(foo, data.frame(), foo))))
     with_fallback_warning(expect_df_fallback_warning(invisible(vec_cbind(foo, data.frame(x = 1)))))
@@ -535,8 +535,8 @@ test_that("data frame output is informative", {
     foo <- structure(mtcars[1:3], class = c("foo", "data.frame"))
     bar <- structure(mtcars[4:6], class = c("bar", "data.frame"))
     baz <- structure(mtcars[7:9], class = c("baz", "data.frame"))
-    vec_ptype_common_fallback(foo, bar, baz)
-    vec_ptype_common_fallback(foo, baz, bar, baz, foo, bar)
+    vec_ptype_common_df_fallback(foo, bar, baz)
+    vec_ptype_common_df_fallback(foo, baz, bar, baz, foo, bar)
 
     with_fallback_warning(invisible(vec_rbind(foo, data.frame(), foo)))
     with_fallback_warning(invisible(vec_rbind(foo, baz, bar, baz, foo, bar)))

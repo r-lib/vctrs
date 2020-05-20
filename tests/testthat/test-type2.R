@@ -173,13 +173,13 @@ test_that("Subclasses of `tbl_df` do not have `tbl_df` common type (#481)", {
 
   expect_df_fallback_warning(
     expect_identical(
-      vec_ptype_common_fallback(quux, tibble()),
+      vec_ptype_common_df_fallback(quux, tibble()),
       tibble()
     )
   )
   expect_df_fallback_warning(
     expect_identical(
-      vec_ptype_common_fallback(tibble(), quux),
+      vec_ptype_common_df_fallback(tibble(), quux),
       tibble()
     )
   )
