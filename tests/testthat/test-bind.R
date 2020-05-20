@@ -726,14 +726,37 @@ test_that("vec_rbind() falls back to c() if S3 method is available", {
   )
   expect_identical(out, data_frame(x = quux(c(1, 2))))
 
-  foo_df <- foobar(x_df)
-  bar_df <- foobar(y_df)
+  foo_df <- foobaz(x_df)
+  bar_df <- foobaz(y_df)
 
   out <- with_methods(
     c.vctrs_foobar = function(...) quux(NextMethod()),
     vec_rbind(foo_df, bar_df)
   )
-  expect_identical(out, foobar(data_frame(x = quux(c(1, 2)))))
+  expect_identical(out, foobaz(data_frame(x = quux(c(1, 2)))))
+
+  skip("FIXME: c() fallback with recursion through df_ptype2()")
+
+  out <- with_methods(
+    c.vctrs_foobar = function(...) quux(NextMethod()),
+    vec_ptype2.vctrs_foobaz.vctrs_foobaz = function(...) foobaz(df_ptype2(...)),
+    vec_rbind(foo_df, bar_df)
+  )
+  expect_identical(out, foobaz(data_frame(x = quux(c(1, 2)))))
+
+  skip("FIXME: c() fallback with recursion through df-col")
+
+  wrapper_x_df <- data_frame(x = x_df)
+  wrapper_y_df <- data_frame(x = y_df)
+
+  with_methods(
+    c.vctrs_foobar = function(...) quux(NextMethod()),
+    vec_rbind(wrapper_x_df, wrapper_y_df)
+  )
+})
+
+test_that("c() fallback works with unspecified columns", {
+  skip("FIXME: c() fallback with unspecified columns")
 })
 
 test_that("vec_rbind() falls back to c() if S4 method is available", {
