@@ -335,6 +335,11 @@ test_that("can ignore names in `vec_c()` by providing a `zap()` name-spec (#232)
   })
 })
 
+test_that("can concatenate subclasses of `vctrs_vctr` which don't have ptype2 methods", {
+  x <- new_vctr(1, class = "vctrs_foo")
+  expect_identical(vec_c(x, x), new_vctr(c(1, 1), class = "vctrs_foo"))
+})
+
 test_that("vec_c() has informative error messages", {
   verify_output(test_path("error", "test-c.txt"), {
     "# vec_c() fails with complex foreign S3 classes"

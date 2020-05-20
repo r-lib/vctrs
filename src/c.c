@@ -64,7 +64,14 @@ SEXP vec_c_opts(SEXP xs,
   // FIXME: If data frame, recompute ptype without common class
   // fallback. Should refactor this to allow common class fallback
   // with data frame columns.
-  if (is_data_frame(ptype) && fallback_opts->s3 == S3_FALLBACK_true) {
+  //
+  // FIXME: If `ptype` is a `vctrs_vctr` class without a
+  // `vec_ptype2()` method, the common type is a common class
+  // fallback. To avoid infinit recursion through `c.vctrs_vctr()`, we
+  // bail out from `needs_vec_c_fallback()`. In this case recurse with
+  // fallback disabled as well.
+  if ((is_data_frame(ptype) && fallback_opts->s3 == S3_FALLBACK_true) ||
+      vec_is_common_class_fallback(ptype)) {
     struct fallback_opts d_fallback_opts = *fallback_opts;
     d_fallback_opts.s3 = S3_FALLBACK_false;
 
@@ -163,6 +170,25 @@ SEXP vec_c_opts(SEXP xs,
 }
 
 static inline bool vec_implements_base_c(SEXP x);
+
+// [[ include("c.h") ]]
+bool needs_vec_c_fallback(SEXP ptype) {
+  if (!Rf_inherits(ptype, c_strs_vctrs_common_class_fallback)) {
+    return false;
+  }
+
+  // Suboptimal: Prevent infinite recursion through `vctrs_vctr` method
+  SEXP class = PROTECT(Rf_getAttrib(ptype, syms_fallback_class));
+  class = r_chr_get(class, r_length(class) - 1);
+
+  if (class == strings_vctrs_vctr) {
+    UNPROTECT(1);
+    return false;
+  }
+
+  UNPROTECT(1);
+  return true;
+}
 
 // [[ include("c.h") ]]
 bool needs_vec_c_homogeneous_fallback(SEXP xs, SEXP ptype) {

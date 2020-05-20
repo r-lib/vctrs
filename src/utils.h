@@ -187,6 +187,11 @@ extern SEXP (*rlang_unbox)(SEXP);
 extern SEXP (*rlang_env_dots_values)(SEXP);
 extern SEXP (*rlang_env_dots_list)(SEXP);
 
+static inline
+R_len_t r_length(SEXP x) {
+  return Rf_length(x);
+}
+
 void* r_vec_deref(SEXP x);
 const void* r_vec_const_deref(SEXP x);
 
@@ -460,6 +465,7 @@ extern SEXP strings_loc;
 extern SEXP strings_val;
 extern SEXP strings_group;
 extern SEXP strings_length;
+extern SEXP strings_vctrs_vctr;
 
 extern SEXP chrs_subset;
 extern SEXP chrs_extract;

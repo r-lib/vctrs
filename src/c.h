@@ -16,12 +16,8 @@ SEXP vec_c_fallback(SEXP ptype,
                     SEXP name_spec,
                     const struct name_repair_opts* name_repair);
 
+bool needs_vec_c_fallback(SEXP ptype);
 bool needs_vec_c_homogeneous_fallback(SEXP xs, SEXP ptype);
-
-static inline
-bool needs_vec_c_fallback(SEXP ptype) {
-  return Rf_inherits(ptype, c_strs_vctrs_common_class_fallback);
-}
 
 
 #endif
