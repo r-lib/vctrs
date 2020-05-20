@@ -71,11 +71,6 @@ vec_default_ptype2 <- function(x, y, ..., x_arg = "", y_arg = "") {
     return(vec_ptype2_asis_right(x, y, x_arg = x_arg, y_arg = y_arg))
   }
 
-  # Compatibility for sfc lists (#989)
-  if (inherits(x, "sfc") || inherits(y, "sfc")) {
-    return(UseMethod("vec_ptype2"))
-  }
-
   opts <- match_ptype2_opts(...)
 
   # If both data frames, first find common type of columns before the

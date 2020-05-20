@@ -113,11 +113,6 @@ vec_default_cast <- function(x, to, ..., x_arg = "", to_arg = "") {
     return(vctr_cast(x, to, x_arg = x_arg, to_arg = to_arg))
   }
 
-  # Compatibility for sfc lists (#989)
-  if (inherits(x, "sfc") || inherits(to, "sfc")) {
-    return(UseMethod("vec_cast", to))
-  }
-
   opts <- match_ptype2_opts(...)
 
   if (opts$s3_fallback && is_common_class_fallback(to) && length(common_class_suffix(x, to))) {

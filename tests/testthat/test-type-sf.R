@@ -9,21 +9,15 @@ import_from("sf", c(
   "st_linestring"
 ))
 
+# https://github.com/r-spatial/sf/issues/1390
+test_that("can combine sfc lists", {
+  ls <- st_linestring(matrix(1:3, ncol = 3))
 
-# These tests are missing upstream
+  sfc <- st_sfc(ls)
+  expect_identical(vec_c(sfc, sfc), c(sfc, sfc))
 
-test_that("can cast `sfc` vectors", {
-  pt <- st_sfc(st_point())
-  ln <- st_sfc(st_linestring())
-  expect_identical(class(vctrs::vec_cast(pt, ln)), c("sfc_LINESTRING", "sfc"))
-})
-
-
-# Keep these tests in sync with
-# https://github.com/r-spatial/sf/blob/master/tests/testthat/test_vctrs.R
-
-test_that("`sfc` vectors are treated as vectors", {
-	expect_true(vctrs::vec_is(st_sfc(st_point())))
+  sf <- sf::st_as_sf(data.frame(id = 1, geometry = sfc))
+  expect_identical(vec_rbind(sf, sf), rbind(sf, sf))
 })
 
 test_that("`n_empty` attribute of `sfc` vectors is restored", {
@@ -66,17 +60,12 @@ test_that("`precision` and `crs` attributes of `sfc` vectors are combined", {
 	expect_identical(st_precision(x), st_precision(out))
 	expect_identical(st_crs(x), st_crs(out))
 
+        # These used to be errors before we fell back to c()
 	y = st_sfc(st_point(c(0, 0)), precision = 1e-2, crs = 3857)
-	expect_error(vctrs::vec_c(x, y), "precisions not equal")
+	expect_identical(vctrs::vec_c(x, y), c(x, y))
+	# expect_error(vctrs::vec_c(x, y), "precisions not equal")
 
 	y = st_sfc(st_point(c(0, 0)), precision = 1e-4, crs = 4326)
-	expect_error(vctrs::vec_c(x, y), "coordinate reference systems not equal")
-})
-
-test_that("`sfc` vectors have a common type", {
-	pt = st_sfc(st_point())
-	ln = st_sfc(st_linestring())
-	expect_identical(class(vctrs::vec_ptype2(pt, pt)), c("sfc_POINT", "sfc"))
-	expect_identical(class(vctrs::vec_ptype2(ln, ln)), c("sfc_LINESTRING", "sfc"))
-	expect_identical(class(vctrs::vec_ptype2(pt, ln)), c("sfc_GEOMETRY", "sfc"))
+	expect_identical(vctrs::vec_c(x, y), c(x, y))
+	# expect_error(vctrs::vec_c(x, y), "coordinate reference systems not equal")
 })
