@@ -212,3 +212,16 @@ test_that("vec_ptype_common() collects common type", {
     class = "vctrs_error_incompatible_type"
   )
 })
+
+test_that("vec_ptype_common() supports subclasses of list", {
+  x <- structure(list(1), class = c("vctrs_foo", "list"))
+  y <- structure(list(2), class = c("bar", "vctrs_foo", "list"))
+
+  expect_error(vec_c(x, y), class = "vctrs_error_incompatible_type")
+
+  out <- with_methods(
+    c.vctrs_foo = function(...) quux(NextMethod()),
+    vec_c(x, y)
+  )
+  expect_identical(out, quux(list(1, 2)))
+})

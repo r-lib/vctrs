@@ -128,6 +128,10 @@ new_common_class_fallback <- function(x, fallback_class) {
     fallback_class = fallback_class
   )
 }
+#' @export
+`vec_proxy.vctrs:::common_class_fallback` <- function(x, ...) {
+  x
+}
 
 is_common_class_fallback <- function(x) {
   inherits(x, "vctrs:::common_class_fallback")
