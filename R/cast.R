@@ -120,7 +120,7 @@ vec_default_cast <- function(x, to, ..., x_arg = "", to_arg = "") {
 
   opts <- match_ptype2_opts(...)
 
-  if (opts$s3_fallback && is_common_class_fallback(to) && length(common_base_class(x, to))) {
+  if (opts$s3_fallback && is_common_class_fallback(to) && length(common_class_suffix(x, to))) {
     return(x)
   }
 

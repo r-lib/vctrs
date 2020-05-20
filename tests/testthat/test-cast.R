@@ -169,11 +169,11 @@ test_that("vec_ptype_common() optionally falls back to base class", {
 
   common_sentinel <- vec_ptype_common_opts(x, y, .opts = fallback_ptype2_opts())
   expect_true(is_common_class_fallback(common_sentinel))
-  expect_identical(common_class(common_sentinel), "vctrs_foobar")
+  expect_identical(fallback_class(common_sentinel), "vctrs_foobar")
 
   common_sentinel <- vec_ptype_common_opts(x_df, y_df, .opts = fallback_ptype2_opts())
   expect_true(is_common_class_fallback(common_sentinel$x))
-  expect_identical(common_class(common_sentinel$x), "vctrs_foobar")
+  expect_identical(fallback_class(common_sentinel$x), "vctrs_foobar")
 
   common <- vec_cast_common_opts(x = x, y = y, .opts = fallback_ptype2_opts())
   expect_identical(common, list(x = x, y = y))
@@ -183,8 +183,8 @@ test_that("vec_ptype_common() optionally falls back to base class", {
 })
 
 test_that("vec_ptype_common() collects common type", {
-  x <- foobar(1, foo = 1)
-  y <- foobar(2, bar = 2)
+  x <- foobar(1, foo = 1, class = c("quux", "baz"))
+  y <- foobar(2, bar = 2, class = "baz")
 
   x_df <- data_frame(x = x)
   y_df <- data_frame(x = y)
@@ -192,11 +192,14 @@ test_that("vec_ptype_common() collects common type", {
   out <- vec_ptype_common_opts(x, y, .opts = fallback_ptype2_opts())
   expect_identical(typeof(out), "double")
   expect_true(is_common_class_fallback(out))
+  expect_identical(fallback_class(out), c("baz", "vctrs_foobar"))
 
   out <- vec_ptype_common_opts(x_df, y_df, .opts = fallback_ptype2_opts())
   expect_identical(typeof(out$x), "double")
   expect_true(is_common_class_fallback(out$x))
+  expect_identical(fallback_class(out$x), c("baz", "vctrs_foobar"))
 
+  # Different base types can't fall back to common class
   z <- foobar(3L, baz = 3)
   expect_error(
     vec_ptype_common_opts(x, z, .opts = fallback_ptype2_opts()),
