@@ -18,7 +18,9 @@ tib_cast(x, to, ..., x_arg = "", to_arg = "")
 \arguments{
 \item{x, y, to}{Subclasses of data frame.}
 
-\item{...}{These dots are for future extensions and must be empty.}
+\item{...}{If you call \code{df_ptype2()} or \code{df_cast()} from a
+\code{vec_ptype2()} or \code{vec_cast()} method, you must forward the dots
+passed to your method on to \code{df_ptype2()} or \code{df_cast()}.}
 
 \item{x_arg}{Argument names for \code{x} and \code{y}. These are used
 in error messages to inform the user about the locations of

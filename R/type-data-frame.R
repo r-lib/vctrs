@@ -95,6 +95,9 @@ df_is_coercible <- function(x, y, df_fallback = FALSE) {
 #' type error when the columns are not compatible.
 #'
 #' @param x,y,to Subclasses of data frame.
+#' @param ... If you call `df_ptype2()` or `df_cast()` from a
+#'   `vec_ptype2()` or `vec_cast()` method, you must forward the dots
+#'   passed to your method on to `df_ptype2()` or `df_cast()`.
 #' @inheritParams vec_ptype2
 #' @inheritParams vec_cast
 #'
