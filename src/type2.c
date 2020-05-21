@@ -9,6 +9,12 @@ SEXP vec_ptype2_switch_native(const struct ptype2_opts* opts,
                               enum vctrs_type x_type,
                               enum vctrs_type y_type,
                               int* left);
+static
+SEXP vec_ptype2_from_unspecified(const struct ptype2_opts* opts,
+                                 enum vctrs_type other_type,
+                                 SEXP other,
+                                 struct vctrs_arg* other_arg);
+
 
 // [[ register() ]]
 SEXP vctrs_ptype2_opts(SEXP x,
@@ -45,10 +51,10 @@ SEXP vec_ptype2_opts(const struct ptype2_opts* opts,
   enum vctrs_type type_y = vec_typeof(y);
 
   if (type_x == vctrs_type_unspecified) {
-    return vec_ptype(y, y_arg);
+    return vec_ptype2_from_unspecified(opts, type_y, y, y_arg);
   }
   if (type_y == vctrs_type_unspecified) {
-    return vec_ptype(x, x_arg);
+    return vec_ptype2_from_unspecified(opts, type_x, x, x_arg);
   }
 
   if (type_x == vctrs_type_scalar) {
@@ -113,6 +119,38 @@ SEXP vec_ptype2_switch_native(const struct ptype2_opts* opts,
   default:
     return vec_ptype2_dispatch_s3(opts);
   }
+}
+
+/**
+ * Return non-unspecified type.
+ *
+ * This is normally the `vec_ptype()` of the other input, but if the
+ * common class fallback is enabled we return the `vec_ptype2()` of
+ * this input. This way we may return a fallback sentinel which can be
+ * treated specially, for instance in `vec_c(NA, x, NA)`.
+ */
+static
+SEXP vec_ptype2_from_unspecified(const struct ptype2_opts* opts,
+                                 enum vctrs_type other_type,
+                                 SEXP other,
+                                 struct vctrs_arg* other_arg) {
+  if (other_type == vctrs_type_unspecified) {
+    return vctrs_shared_empty_uns;
+  }
+
+  if (opts->fallback.s3) {
+    const struct ptype2_opts self_self_opts = (const struct ptype2_opts) {
+      .x = other,
+      .y = other,
+      .x_arg = other_arg,
+      .y_arg = other_arg,
+      .fallback = opts->fallback
+    };
+    int _left = 0;
+    return vec_ptype2_opts(&self_self_opts, &_left);
+  }
+
+  return vec_ptype(other, other_arg);
 }
 
 
