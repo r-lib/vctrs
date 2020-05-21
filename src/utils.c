@@ -185,6 +185,17 @@ SEXP vctrs_dispatch4(SEXP fn_sym, SEXP fn,
   SEXP args[5] = { w, x, y, z, NULL };
   return vctrs_dispatch_n(fn_sym, fn, syms, args);
 }
+SEXP vctrs_dispatch6(SEXP fn_sym, SEXP fn,
+                     SEXP x1_sym, SEXP x1,
+                     SEXP x2_sym, SEXP x2,
+                     SEXP x3_sym, SEXP x3,
+                     SEXP x4_sym, SEXP x4,
+                     SEXP x5_sym, SEXP x5,
+                     SEXP x6_sym, SEXP x6) {
+  SEXP syms[7] = { x1_sym, x2_sym, x3_sym, x4_sym, x5_sym, x6_sym, NULL };
+  SEXP args[7] = { x1, x2, x3, x4, x5, x6, NULL };
+  return vctrs_dispatch_n(fn_sym, fn, syms, args);
+}
 
 static SEXP vctrs_eval_mask_n_impl(SEXP fn, SEXP* syms, SEXP* args, SEXP mask) {
   SEXP call = PROTECT(r_call(fn, syms, syms));

@@ -735,8 +735,6 @@ test_that("vec_rbind() falls back to c() if S3 method is available", {
   )
   expect_identical(out, foobaz(data_frame(x = quux(c(1, 2)))))
 
-  skip("FIXME: c() fallback with recursion through df_ptype2()")
-
   out <- with_methods(
     c.vctrs_foobar = function(...) quux(NextMethod()),
     vec_ptype2.vctrs_foobaz.vctrs_foobaz = function(...) foobaz(df_ptype2(...)),
@@ -749,10 +747,11 @@ test_that("vec_rbind() falls back to c() if S3 method is available", {
   wrapper_x_df <- data_frame(x = x_df)
   wrapper_y_df <- data_frame(x = y_df)
 
-  with_methods(
+  out <- with_methods(
     c.vctrs_foobar = function(...) quux(NextMethod()),
     vec_rbind(wrapper_x_df, wrapper_y_df)
   )
+  expect_identical(out, data_frame(data_frame(x = quux(c(1, 2)))))
 })
 
 test_that("c() fallback works with unspecified columns", {

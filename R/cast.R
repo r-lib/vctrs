@@ -64,7 +64,7 @@
 #' vec_cast_common(factor("a"), factor(c("a", "b")))
 vec_cast <- function(x, to, ..., x_arg = "", to_arg = "") {
   if (!missing(...)) {
-    ellipsis::check_dots_empty()
+    check_ptype2_dots_empty(...)
   }
   return(.Call(vctrs_cast, x, to, x_arg, to_arg))
   UseMethod("vec_cast", to)

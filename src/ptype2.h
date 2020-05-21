@@ -87,5 +87,13 @@ struct ptype2_opts new_ptype2_opts(SEXP x,
 SEXP new_ptype2_r_opts(const struct ptype2_opts* opts);
 struct fallback_opts new_fallback_opts(SEXP opts);
 
+SEXP vec_invoke_coerce_method(SEXP method_sym,
+                              SEXP method,
+                              SEXP x,
+                              SEXP y,
+                              SEXP x_arg,
+                              SEXP y_arg,
+                              const struct fallback_opts* opts);
+
 
 #endif

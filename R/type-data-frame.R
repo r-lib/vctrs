@@ -110,7 +110,7 @@ df_is_coercible <- function(x, y, opts) {
 #'
 #' @export
 df_ptype2 <- function(x, y, ..., x_arg = "", y_arg = "") {
-  .Call(vctrs_df_ptype2_opts, x, y, opts = ptype2_opts(), x_arg, y_arg)
+  .Call(vctrs_df_ptype2_opts, x, y, opts = match_ptype2_opts(...), x_arg, y_arg)
 }
 #' @rdname df_ptype2
 #' @export

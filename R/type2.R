@@ -29,7 +29,7 @@
 #' @export
 vec_ptype2 <- function(x, y, ..., x_arg = "", y_arg = "") {
   if (!missing(...)) {
-    ellipsis::check_dots_empty()
+    check_ptype2_dots_empty(...)
   }
   return(.Call(vctrs_ptype2, x, y, x_arg, y_arg))
   UseMethod("vec_ptype2")
