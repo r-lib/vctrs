@@ -70,3 +70,43 @@ vec_c <- function(...,
   .External2(vctrs_c, .ptype, .name_spec, .name_repair)
 }
 vec_c <- fn_inline_formals(vec_c, ".name_repair")
+
+base_c <- function(xs) {
+  # Dispatch in the base namespace which inherits from the global env
+  exec("c", !!!xs, .env = ns_env("base"))
+}
+
+base_c_invoke <- function(xs) {
+  # Remove all `NULL` arguments which prevent dispatch if in first
+  # position and might not be handled correctly by methods
+  xs <- compact(xs)
+
+  unspecified <- map_lgl(xs, is_unspecified)
+  if (!any(unspecified)) {
+    return(base_c(xs))
+  }
+
+  # First concatenate without the unspecified chunks. This way the
+  # `c()` method doesn't need to handle unspecified inputs correctly,
+  # and we're guaranteed to dispatch on the correct class even if the
+  # first input is unspecified.
+  out <- base_c(xs[!unspecified])
+
+  # Create index vector with `NA` locations for unspecified chunks
+  locs <- c_locs(xs)
+  locs[unspecified] <- map(locs[unspecified], rep_along, na_int)
+  locs[!unspecified] <- c_locs(xs[!unspecified])
+  locs <- vec_c(!!!locs, .ptype = int())
+
+  # Expand the concatenated vector with unspecified chunks
+  out[locs]
+}
+
+c_locs <- function(xs) {
+  locs <- reduce(lengths(xs), .init = list(0), function(output, input) {
+    n <- last(last(output))
+    c(output, list(seq(n + 1, n + input)))
+  })
+
+  locs[-1]
+}

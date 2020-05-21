@@ -291,15 +291,10 @@ SEXP vec_c_fallback_invoke(SEXP xs, SEXP name_spec) {
     stop_vec_c_fallback(xs, err_type);
   }
 
-  SEXP args = PROTECT(Rf_coerceVector(xs, LISTSXP));
-  args = PROTECT(node_compact_d(args));
+  SEXP call = PROTECT(Rf_lang2(Rf_install("base_c_invoke"), xs));
+  SEXP out = Rf_eval(call, vctrs_ns_env);
 
-  SEXP call = PROTECT(Rf_lcons(Rf_install("c"), args));
-
-  // Dispatch in the base namespace which inherits from the global env
-  SEXP out = Rf_eval(call, R_BaseNamespace);
-
-  UNPROTECT(3);
+  UNPROTECT(1);
   return out;
 }
 

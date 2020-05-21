@@ -21,6 +21,12 @@ test_that("can combine sfc lists", {
   expect_identical(vec_rbind(sf, sf), rbind(sf, sf))
 })
 
+test_that("can combine sfc lists with unspecified chunks", {
+  point <- st_point(1:2)
+  out <- vec_c(c(NA, NA), st_sfc(point), NA)
+  expect_identical(out, st_sfc(NA, NA, point, NA))
+})
+
 test_that("`n_empty` attribute of `sfc` vectors is restored", {
 	pt1 = st_sfc(st_point(c(NA_real_, NA_real_)))
 	pt2 = st_sfc(st_point(0:1))

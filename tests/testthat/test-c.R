@@ -340,6 +340,31 @@ test_that("can concatenate subclasses of `vctrs_vctr` which don't have ptype2 me
   expect_identical(vec_c(x, x), new_vctr(c(1, 1), class = "vctrs_foo"))
 })
 
+test_that("base c() fallback handles unspecified chunks", {
+  local_methods(
+    c.vctrs_foobar = function(...) {
+      x <- NextMethod()
+
+      # Should not be passed any unspecified chunks
+      if (anyNA(x)) {
+        abort("tilt")
+      }
+
+      foobar(x)
+    },
+    `[.vctrs_foobar` = function(x, i, ...) {
+      # Return a quux to detect dispatch
+      quux(NextMethod())
+    }
+  )
+
+  out <- vec_c(foobar(1:2), rep(NA, 2))
+  expect_identical(out, quux(c(1:2, NA, NA)))
+
+  out <- vec_c(rep(NA, 2), foobar(1:2), NA)
+  expect_identical(out, quux(c(NA, NA, 1:2, NA)))
+})
+
 test_that("vec_c() has informative error messages", {
   verify_output(test_path("error", "test-c.txt"), {
     "# vec_c() fails with complex foreign S3 classes"
