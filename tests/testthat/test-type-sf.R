@@ -7,7 +7,8 @@ import_from("sf", c(
   "st_precision",
   "st_crs",
   "st_linestring",
-  "st_as_sf"
+  "st_as_sf",
+  "st_multipoint"
 ))
 
 # https://github.com/r-spatial/sf/issues/1390
@@ -25,6 +26,18 @@ test_that("can combine sfc lists with unspecified chunks", {
   point <- st_point(1:2)
   out <- vec_c(c(NA, NA), st_sfc(point), NA)
   expect_identical(out, st_sfc(NA, NA, point, NA))
+
+  multipoint <- st_multipoint(matrix(1:4, 2))
+  x <- st_sfc(point)
+  y <- st_sfc(multipoint, multipoint)
+  out <- vec_rbind(
+    data_frame(x = x),
+    data_frame(y = y)
+  )
+  expect_identical(out, data_frame(
+    x = st_sfc(point, NA, NA),
+    y = st_sfc(NA, multipoint, multipoint)
+  ))
 })
 
 test_that("`n_empty` attribute of `sfc` vectors is restored", {

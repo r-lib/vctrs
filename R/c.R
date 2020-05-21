@@ -81,7 +81,7 @@ base_c_invoke <- function(xs) {
   # position and might not be handled correctly by methods
   xs <- compact(xs)
 
-  unspecified <- map_lgl(xs, is_unspecified)
+  unspecified <- map_lgl(xs, fallback_is_unspecified)
   if (!any(unspecified)) {
     return(base_c(xs))
   }
@@ -100,6 +100,15 @@ base_c_invoke <- function(xs) {
 
   # Expand the concatenated vector with unspecified chunks
   out[locs]
+}
+
+# FIXME: Should be unnecessary in the future. We currently attach an
+# attribute to unspecified columns initialised in `df_cast()`. We
+# can't use an unspecified vector because we (unnecessarily but for
+# convenience) go through `vec_assign()` before falling back in
+# `vec_rbind()`.
+fallback_is_unspecified <- function(x) {
+  is_unspecified(x) || is_true(attr(x, "vctrs:::unspecified"))
 }
 
 c_locs <- function(xs) {

@@ -9,12 +9,6 @@ SEXP vec_ptype2_switch_native(const struct ptype2_opts* opts,
                               enum vctrs_type x_type,
                               enum vctrs_type y_type,
                               int* left);
-static
-SEXP vec_ptype2_from_unspecified(const struct ptype2_opts* opts,
-                                 enum vctrs_type other_type,
-                                 SEXP other,
-                                 struct vctrs_arg* other_arg);
-
 
 // [[ register() ]]
 SEXP vctrs_ptype2_opts(SEXP x,
@@ -38,36 +32,36 @@ SEXP vec_ptype2_opts(const struct ptype2_opts* opts,
   struct vctrs_arg* x_arg = opts->x_arg;
   struct vctrs_arg* y_arg = opts->y_arg;
 
-  if (x == R_NilValue) {
+  enum vctrs_type x_type = vec_typeof(x);
+  enum vctrs_type y_type = vec_typeof(y);
+
+  if (x_type == vctrs_type_null) {
     *left = y == R_NilValue;
-    return vec_ptype(y, y_arg);
+    return vec_ptype2_from_unspecified(opts, x_type, y, y_arg);
   }
-  if (y == R_NilValue) {
+  if (y_type == vctrs_type_null) {
     *left = x == R_NilValue;
-    return vec_ptype(x, x_arg);
+    return vec_ptype2_from_unspecified(opts, x_type, x, x_arg);
   }
 
-  enum vctrs_type type_x = vec_typeof(x);
-  enum vctrs_type type_y = vec_typeof(y);
-
-  if (type_x == vctrs_type_unspecified) {
-    return vec_ptype2_from_unspecified(opts, type_y, y, y_arg);
+  if (x_type == vctrs_type_unspecified) {
+    return vec_ptype2_from_unspecified(opts, y_type, y, y_arg);
   }
-  if (type_y == vctrs_type_unspecified) {
-    return vec_ptype2_from_unspecified(opts, type_x, x, x_arg);
+  if (y_type == vctrs_type_unspecified) {
+    return vec_ptype2_from_unspecified(opts, x_type, x, x_arg);
   }
 
-  if (type_x == vctrs_type_scalar) {
+  if (x_type == vctrs_type_scalar) {
     stop_scalar_type(x, x_arg);
   }
-  if (type_y == vctrs_type_scalar) {
+  if (y_type == vctrs_type_scalar) {
     stop_scalar_type(y, y_arg);
   }
 
-  if (type_x == vctrs_type_s3 || type_y == vctrs_type_s3) {
-    return vec_ptype2_dispatch(opts, type_x, type_y, left);
+  if (x_type == vctrs_type_s3 || y_type == vctrs_type_s3) {
+    return vec_ptype2_dispatch(opts, x_type, y_type, left);
   } else {
-    return vec_ptype2_switch_native(opts, type_x, type_y, left);
+    return vec_ptype2_switch_native(opts, x_type, y_type, left);
   }
 }
 
@@ -129,13 +123,12 @@ SEXP vec_ptype2_switch_native(const struct ptype2_opts* opts,
  * this input. This way we may return a fallback sentinel which can be
  * treated specially, for instance in `vec_c(NA, x, NA)`.
  */
-static
 SEXP vec_ptype2_from_unspecified(const struct ptype2_opts* opts,
                                  enum vctrs_type other_type,
                                  SEXP other,
                                  struct vctrs_arg* other_arg) {
-  if (other_type == vctrs_type_unspecified) {
-    return vctrs_shared_empty_uns;
+  if (other_type == vctrs_type_unspecified || other_type == vctrs_type_null) {
+    return vec_ptype(other, other_arg);
   }
 
   if (opts->fallback.s3) {

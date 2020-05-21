@@ -1,4 +1,6 @@
 #include "vctrs.h"
+#include "ptype-common.h"
+#include "ptype2.h"
 #include "type-data-frame.h"
 #include "utils.h"
 
@@ -353,20 +355,26 @@ SEXP df_ptype2_match(const struct ptype2_opts* opts,
                                                           opts->x_arg);
     struct vctrs_arg named_x_arg = new_index_arg(opts->x_arg, &x_arg_data);
 
+    SEXP col = VECTOR_ELT(x, i);
+    struct ptype2_opts col_opts = *opts;
+    col_opts.x = col;
+    col_opts.x_arg = &named_x_arg;
+
     SEXP type;
     if (dup == NA_INTEGER) {
-      type = vec_ptype(VECTOR_ELT(x, i), &named_x_arg);
+      col_opts.y = vctrs_shared_empty_uns;
+      col_opts.y_arg = NULL;
+      type = vec_ptype2_from_unspecified(&col_opts,
+                                         vec_typeof(col),
+                                         col,
+                                         &named_x_arg);
     } else {
       --dup; // 1-based index
 
       struct arg_data_index y_arg_data = new_index_arg_data(r_chr_get_c_string(y_names, dup),
                                                             opts->y_arg);
       struct vctrs_arg named_y_arg = new_index_arg(opts->y_arg, &y_arg_data);
-
-      struct ptype2_opts col_opts = *opts;
-      col_opts.x = VECTOR_ELT(x, i);
       col_opts.y = VECTOR_ELT(y, dup);
-      col_opts.x_arg = &named_x_arg;
       col_opts.y_arg = &named_y_arg;
 
       int _left;
@@ -380,12 +388,25 @@ SEXP df_ptype2_match(const struct ptype2_opts* opts,
   // Fill in prototypes of the columns that are only in `y`
   for (R_len_t j = 0; i < out_len; ++j) {
     R_len_t dup = y_dups_pos_data[j];
+
     if (dup == NA_INTEGER) {
+      SEXP col = VECTOR_ELT(y, j);
+
       struct arg_data_index y_arg_data = new_index_arg_data(r_chr_get_c_string(y_names, j),
                                                             opts->y_arg);
       struct vctrs_arg named_y_arg = new_index_arg(opts->y_arg, &y_arg_data);
 
-      SET_VECTOR_ELT(out, i, vec_ptype(VECTOR_ELT(y, j), &named_y_arg));
+      struct ptype2_opts col_opts = *opts;
+      col_opts.y = col;
+      col_opts.y_arg = &named_y_arg;
+      col_opts.x = vctrs_shared_empty_uns;
+      col_opts.x_arg = NULL;
+      SEXP type = vec_ptype2_from_unspecified(&col_opts,
+                                              vec_typeof(col),
+                                              col,
+                                              &named_y_arg);
+
+      SET_VECTOR_ELT(out, i, type);
       SET_STRING_ELT(nms, i, STRING_ELT(y_names, j));
       ++i;
     }
@@ -496,7 +517,18 @@ static SEXP df_cast_match(const struct cast_opts* opts,
 
     SEXP col;
     if (pos == NA_INTEGER) {
-      col = vec_init(VECTOR_ELT(to, i), size);
+      SEXP to_col = VECTOR_ELT(to, i);
+      col = vec_init(to_col, size);
+
+      // FIXME: Need to initialise the vector because we currently use
+      // `vec_assign()` in `vec_rbind()` before falling back. Attach
+      // an attribute to recognise unspecified vectors in
+      // `base_c_invoke()`.
+      if (opts->fallback.s3 && vec_is_common_class_fallback(to_col)) {
+        PROTECT(col);
+        Rf_setAttrib(col, Rf_install("vctrs:::unspecified"), vctrs_shared_true);
+        UNPROTECT(1);
+      }
     } else {
       --pos; // 1-based index
       ++common_len;

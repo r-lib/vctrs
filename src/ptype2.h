@@ -95,5 +95,10 @@ SEXP vec_invoke_coerce_method(SEXP method_sym,
                               SEXP y_arg,
                               const struct fallback_opts* opts);
 
+SEXP vec_ptype2_from_unspecified(const struct ptype2_opts* opts,
+                                 enum vctrs_type other_type,
+                                 SEXP other,
+                                 struct vctrs_arg* other_arg);
+
 
 #endif
