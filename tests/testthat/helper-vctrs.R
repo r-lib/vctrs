@@ -6,13 +6,13 @@ import_from <- function(ns, names, env = caller_env()) {
 }
 
 vec_ptype2_fallback <- function(x, y, ...) {
-  vec_ptype2_params(x, y, ..., df_fallback = DF_FALLBACK_WARN)
+  vec_ptype2_params(x, y, ..., df_fallback = DF_FALLBACK_warn)
 }
 vec_ptype_common_df_fallback <- function(..., .ptype = NULL) {
   vec_ptype_common_params(
     ...,
     .ptype = .ptype,
-    .df_fallback = DF_FALLBACK_WARN
+    .df_fallback = DF_FALLBACK_warn
   )
 }
 

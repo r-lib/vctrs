@@ -74,7 +74,7 @@ vec_cast_dispatch <- function(x, to, ..., x_arg = "", to_arg = "") {
 }
 
 vec_cast_no_fallback <- function(x, to) {
-  vec_cast_common_params(x = x, .to = to, .df_fallback = DF_FALLBACK_NONE)$x
+  vec_cast_common_params(x = x, .to = to, .df_fallback = DF_FALLBACK_none)$x
 }
 
 #' @export

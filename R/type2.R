@@ -171,7 +171,7 @@ ptype2_opts <- function(df_fallback = NULL,
 
 fallback_ptype2_opts <- function() {
   ptype2_opts(
-    df_fallback = DF_FALLBACK_QUIET,
+    df_fallback = DF_FALLBACK_quiet,
     s3_fallback = S3_FALLBACK_true
   )
 }
@@ -200,7 +200,7 @@ vec_ptype2_params <- function(x,
 
 vec_ptype2_no_fallback <- function(x, y, ..., x_arg = "", y_arg = "") {
   opts <- ptype2_opts(
-    df_fallback = DF_FALLBACK_NONE,
+    df_fallback = DF_FALLBACK_none,
     s3_fallback = S3_FALLBACK_false
   )
   vec_ptype2_opts(x, y, ..., , opts = opts, x_arg = x_arg, y_arg = y_arg)
@@ -210,10 +210,10 @@ vec_ptype2_no_fallback <- function(x, y, ..., x_arg = "", y_arg = "") {
 # Kept in sync with ptype2.h
 df_fallback_default <- function() 0L
 DF_FALLBACK_DEFAULT <- 0L
-DF_FALLBACK_NONE <- 1L
-DF_FALLBACK_WARN <- 2L
-DF_FALLBACK_WARN_MAYBE <- 3L
-DF_FALLBACK_QUIET <- 255L
+DF_FALLBACK_none <- 1L
+DF_FALLBACK_warn <- 2L
+DF_FALLBACK_warn_maybe <- 3L
+DF_FALLBACK_quiet <- 255L
 
 s3_fallback_default <- function() 0L
 S3_FALLBACK_false <- 0L
@@ -221,18 +221,18 @@ S3_FALLBACK_true <- 1L
 
 
 df_fallback <- function(df_fallback) {
-  if (df_fallback) df_fallback else DF_FALLBACK_WARN_MAYBE
+  if (df_fallback) df_fallback else DF_FALLBACK_warn_maybe
 }
 has_df_fallback <- function(df_fallback) {
-  df_fallback(df_fallback) > DF_FALLBACK_NONE
+  df_fallback(df_fallback) > DF_FALLBACK_none
 }
 needs_fallback_warning <- function(df_fallback) {
   df_fallback <- df_fallback(df_fallback)
 
-  if (df_fallback == DF_FALLBACK_WARN_MAYBE) {
+  if (df_fallback == DF_FALLBACK_warn_maybe) {
     is_true(peek_option("vctrs:::warn_on_fallback"))
   } else {
-    df_fallback < DF_FALLBACK_QUIET
+    df_fallback < DF_FALLBACK_quiet
   }
 }
 with_fallback_warning <- function(expr) {

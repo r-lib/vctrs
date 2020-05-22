@@ -91,7 +91,7 @@ vec_compare <- function(x, y, na_equal = FALSE, .ptype = NULL) {
   args <- vec_cast_common_params(
     !!!args,
     .to = .ptype,
-    .df_fallback = DF_FALLBACK_QUIET
+    .df_fallback = DF_FALLBACK_quiet
   )
 
   .Call(vctrs_compare, vec_proxy_compare(args[[1]]), vec_proxy_compare(args[[2]]), na_equal)

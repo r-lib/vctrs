@@ -430,7 +430,7 @@ static SEXP vec_unchop(SEXP x,
     return vec_unchop_fallback(x, indices, name_spec);
   }
 
-  ptype = PROTECT(vec_ptype_common_params(x, ptype, DF_FALLBACK_WARN, S3_FALLBACK_false));
+  ptype = PROTECT(vec_ptype_common_params(x, ptype, DF_FALLBACK_warn, S3_FALLBACK_false));
 
   if (ptype == R_NilValue) {
     UNPROTECT(1);

@@ -257,7 +257,7 @@ SEXP vec_c_fallback(SEXP ptype,
 
   if (method == R_NilValue) {
     struct fallback_opts fallback_opts = {
-      .df = DF_FALLBACK_NONE,
+      .df = DF_FALLBACK_none,
       .s3 = S3_FALLBACK_false
     };
 
