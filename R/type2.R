@@ -209,30 +209,24 @@ vec_ptype2_no_fallback <- function(x, y, ..., x_arg = "", y_arg = "") {
 
 # Kept in sync with ptype2.h
 df_fallback_default <- function() 0L
-DF_FALLBACK_DEFAULT <- 0L
-DF_FALLBACK_none <- 1L
-DF_FALLBACK_warn <- 2L
-DF_FALLBACK_warn_maybe <- 3L
-DF_FALLBACK_quiet <- 255L
+DF_FALLBACK_warn_maybe <- 0L
+DF_FALLBACK_warn <- 1L
+DF_FALLBACK_none <- 2L
+DF_FALLBACK_quiet <- 3L
 
 s3_fallback_default <- function() 0L
 S3_FALLBACK_false <- 0L
 S3_FALLBACK_true <- 1L
 
 
-df_fallback <- function(df_fallback) {
-  if (df_fallback) df_fallback else DF_FALLBACK_warn_maybe
-}
 has_df_fallback <- function(df_fallback) {
-  df_fallback(df_fallback) > DF_FALLBACK_none
+  df_fallback != DF_FALLBACK_none
 }
 needs_fallback_warning <- function(df_fallback) {
-  df_fallback <- df_fallback(df_fallback)
-
   if (df_fallback == DF_FALLBACK_warn_maybe) {
     is_true(peek_option("vctrs:::warn_on_fallback"))
   } else {
-    df_fallback < DF_FALLBACK_quiet
+    df_fallback == DF_FALLBACK_warn
   }
 }
 with_fallback_warning <- function(expr) {

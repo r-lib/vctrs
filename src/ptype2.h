@@ -7,11 +7,10 @@
 #define DF_FALLBACK_DEFAULT 0
 
 enum df_fallback {
-  DF_FALLBACK_default = 0,
-  DF_FALLBACK_none = 1,
+  DF_FALLBACK_warn_maybe = 0,
   DF_FALLBACK_warn,
-  DF_FALLBACK_warn_maybe,
-  DF_FALLBACK_quiet = 255
+  DF_FALLBACK_none,
+  DF_FALLBACK_quiet
 };
 
 
