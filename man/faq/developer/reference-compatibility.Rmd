@@ -1,6 +1,8 @@
 
 vctrs provides a framework for working with vector classes in a generic way. However, it implements several compatibility fallbacks to base R methods. In this reference you will find how vctrs tries to be compatible with your vector class, and what base methods you need to implement for compatibility.
 
+If you're starting from scratch, we think you'll find it easier to start using [new_vctr()] as documented in `vignette("s3-vector")`. This guide is aimed for developers with existing vector classes.
+
 
 ## The vctrs primitives
 
