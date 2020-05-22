@@ -68,8 +68,8 @@ extern SEXP vec_names(SEXP);
 extern SEXP vctrs_is_unique_names(SEXP);
 extern SEXP vctrs_as_unique_names(SEXP, SEXP);
 extern SEXP vec_set_names(SEXP, SEXP);
-extern SEXP vctrs_df_cast_params(SEXP, SEXP, SEXP, SEXP, SEXP);
-extern SEXP vctrs_df_ptype2(SEXP, SEXP, SEXP, SEXP);
+extern SEXP vctrs_df_cast_opts(SEXP, SEXP, SEXP, SEXP, SEXP);
+extern SEXP vctrs_df_ptype2_opts(SEXP, SEXP, SEXP, SEXP, SEXP);
 extern SEXP vctrs_type_info(SEXP);
 extern SEXP vctrs_proxy_info(SEXP);
 extern SEXP vctrs_class_type(SEXP);
@@ -114,7 +114,7 @@ extern SEXP vctrs_new_date(SEXP);
 extern SEXP vctrs_date_validate(SEXP);
 extern SEXP vctrs_new_datetime(SEXP, SEXP);
 extern SEXP vctrs_datetime_validate(SEXP);
-extern SEXP vctrs_ptype2_params(SEXP, SEXP, SEXP, SEXP, SEXP);
+extern SEXP vctrs_ptype2_opts(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
 extern SEXP vctrs_s3_find_method(SEXP, SEXP, SEXP);
 extern SEXP vctrs_implements_ptype2(SEXP);
 
@@ -205,8 +205,8 @@ static const R_CallMethodDef CallEntries[] = {
   {"vctrs_is_unique_names",            (DL_FUNC) &vctrs_is_unique_names, 1},
   {"vctrs_as_unique_names",            (DL_FUNC) &vctrs_as_unique_names, 2},
   {"vctrs_set_names",                  (DL_FUNC) &vec_set_names, 2},
-  {"vctrs_df_cast_params",             (DL_FUNC) &vctrs_df_cast_params, 5},
-  {"vctrs_df_ptype2",                  (DL_FUNC) &vctrs_df_ptype2, 5},
+  {"vctrs_df_cast_opts",               (DL_FUNC) &vctrs_df_cast_opts, 5},
+  {"vctrs_df_ptype2_opts",             (DL_FUNC) &vctrs_df_ptype2_opts, 5},
   {"vctrs_type_info",                  (DL_FUNC) &vctrs_type_info, 1},
   {"vctrs_proxy_info",                 (DL_FUNC) &vctrs_proxy_info, 1},
   {"vctrs_class_type",                 (DL_FUNC) &vctrs_class_type, 1},
@@ -252,18 +252,18 @@ static const R_CallMethodDef CallEntries[] = {
   {"vctrs_date_validate",              (DL_FUNC) &vctrs_date_validate, 1},
   {"vctrs_new_datetime",               (DL_FUNC) &vctrs_new_datetime, 2},
   {"vctrs_datetime_validate",          (DL_FUNC) &vctrs_datetime_validate, 1},
-  {"vctrs_ptype2_params",              (DL_FUNC) &vctrs_ptype2_params, 5},
+  {"vctrs_ptype2_opts",                (DL_FUNC) &vctrs_ptype2_opts, 5},
   {"vctrs_s3_find_method",             (DL_FUNC) &vctrs_s3_find_method, 3},
   {"vctrs_implements_ptype2",          (DL_FUNC) &vctrs_implements_ptype2, 1},
   {NULL, NULL, 0}
 };
 
 extern SEXP vctrs_type_common(SEXP, SEXP, SEXP, SEXP);
-extern SEXP vctrs_ptype_common_params(SEXP, SEXP, SEXP, SEXP);
+extern SEXP vctrs_ptype_common_opts(SEXP, SEXP, SEXP, SEXP);
 extern SEXP vctrs_size_common(SEXP, SEXP, SEXP, SEXP);
 extern SEXP vctrs_recycle_common(SEXP, SEXP, SEXP, SEXP);
 extern SEXP vctrs_cast_common(SEXP, SEXP, SEXP, SEXP);
-extern SEXP vctrs_cast_common_params(SEXP, SEXP, SEXP, SEXP);
+extern SEXP vctrs_cast_common_opts(SEXP, SEXP, SEXP, SEXP);
 extern SEXP vctrs_rbind(SEXP, SEXP, SEXP, SEXP, SEXP);
 extern SEXP vctrs_cbind(SEXP, SEXP, SEXP, SEXP);
 extern SEXP vctrs_c(SEXP, SEXP, SEXP, SEXP);
@@ -271,11 +271,11 @@ extern SEXP vctrs_new_data_frame(SEXP);
 
 static const R_ExternalMethodDef ExtEntries[] = {
   {"vctrs_type_common",                (DL_FUNC) &vctrs_type_common, 1},
-  {"vctrs_ptype_common_params",        (DL_FUNC) &vctrs_ptype_common_params, 2},
+  {"vctrs_ptype_common_opts",          (DL_FUNC) &vctrs_ptype_common_opts, 2},
   {"vctrs_size_common",                (DL_FUNC) &vctrs_size_common, 2},
   {"vctrs_recycle_common",             (DL_FUNC) &vctrs_recycle_common, 1},
   {"vctrs_cast_common",                (DL_FUNC) &vctrs_cast_common, 1},
-  {"vctrs_cast_common_params",         (DL_FUNC) &vctrs_cast_common_params, 2},
+  {"vctrs_cast_common_opts",           (DL_FUNC) &vctrs_cast_common_opts, 2},
   {"vctrs_rbind",                      (DL_FUNC) &vctrs_rbind, 4},
   {"vctrs_cbind",                      (DL_FUNC) &vctrs_cbind, 3},
   {"vctrs_c",                          (DL_FUNC) &vctrs_c, 3},
@@ -323,6 +323,7 @@ void vctrs_init_slice(SEXP ns);
 void vctrs_init_slice_assign(SEXP ns);
 void vctrs_init_subscript(SEXP ns);
 void vctrs_init_subscript_loc(SEXP ns);
+void vctrs_init_ptype2(SEXP ns);
 void vctrs_init_ptype2_dispatch(SEXP ns);
 void vctrs_init_rep(SEXP ns);
 void vctrs_init_type(SEXP ns);
@@ -343,6 +344,7 @@ SEXP vctrs_init_library(SEXP ns) {
   vctrs_init_slice_assign(ns);
   vctrs_init_subscript(ns);
   vctrs_init_subscript_loc(ns);
+  vctrs_init_ptype2(ns);
   vctrs_init_ptype2_dispatch(ns);
   vctrs_init_rep(ns);
   vctrs_init_type(ns);

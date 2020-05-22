@@ -66,7 +66,7 @@ Combine all arguments into a new vector of common type.
 
 \subsection{vctrs dependencies}{
 \itemize{
-\item \code{\link[=vec_cast_common]{vec_cast_common()}}
+\item \code{\link[=vec_cast_common]{vec_cast_common()}} with fallback
 \item \code{\link[=vec_proxy]{vec_proxy()}}
 \item \code{\link[=vec_restore]{vec_restore()}}
 }
@@ -77,8 +77,9 @@ Combine all arguments into a new vector of common type.
 \item \code{\link[base:c]{base::c()}}
 }
 
-If inputs have the same class, \code{vec_c()} falls back to \code{base::c()}
-if there exists a \code{c()} method for this class.
+If inputs inherit from a common class hierarchy, \code{vec_c()} falls
+back to \code{base::c()} if there exists a \code{c()} method implemented for
+this class hierarchy.
 }
 }
 

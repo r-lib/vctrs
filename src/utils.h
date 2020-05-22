@@ -66,6 +66,15 @@ SEXP vctrs_eval_mask6(SEXP fn,
                       SEXP x5_sym, SEXP x5,
                       SEXP x6_sym, SEXP x6,
                       SEXP env);
+SEXP vctrs_eval_mask7(SEXP fn,
+                      SEXP x1_sym, SEXP x1,
+                      SEXP x2_sym, SEXP x2,
+                      SEXP x3_sym, SEXP x3,
+                      SEXP x4_sym, SEXP x4,
+                      SEXP x5_sym, SEXP x5,
+                      SEXP x6_sym, SEXP x6,
+                      SEXP x7_sym, SEXP x7,
+                      SEXP env);
 
 SEXP vctrs_dispatch_n(SEXP fn_sym, SEXP fn,
                       SEXP* syms, SEXP* args);
@@ -83,6 +92,15 @@ SEXP vctrs_dispatch4(SEXP fn_sym, SEXP fn,
                      SEXP x_sym, SEXP x,
                      SEXP y_sym, SEXP y,
                      SEXP z_sym, SEXP z);
+SEXP vctrs_dispatch6(SEXP fn_sym, SEXP fn,
+                     SEXP x1_sym, SEXP x1,
+                     SEXP x2_sym, SEXP x2,
+                     SEXP x3_sym, SEXP x3,
+                     SEXP x4_sym, SEXP x4,
+                     SEXP x5_sym, SEXP x5,
+                     SEXP x6_sym, SEXP x6);
+
+void vctrs_stop_unsupported_type(enum vctrs_type, const char* fn) __attribute__((noreturn));
 
 SEXP map(SEXP x, SEXP (*fn)(SEXP));
 SEXP map_with_data(SEXP x, SEXP (*fn)(SEXP, void*), void* data);
@@ -102,6 +120,7 @@ SEXP vec_unique_colnames(SEXP x, bool quiet);
 SEXP s3_get_method(const char* generic, const char* cls, SEXP table);
 SEXP s3_sym_get_method(SEXP sym, SEXP table);
 SEXP s3_find_method(const char* generic, SEXP x, SEXP table);
+SEXP s3_class_find_method(const char* generic, SEXP class, SEXP table);
 SEXP s3_find_method_xy(const char* generic,
                        SEXP x,
                        SEXP y,
@@ -147,6 +166,7 @@ SEXP new_empty_factor(SEXP levels);
 SEXP new_empty_ordered(SEXP levels);
 
 bool list_has_inner_vec_names(SEXP x, R_len_t size);
+SEXP list_pluck(SEXP xs, R_len_t i);
 
 void init_compact_seq(int* p, R_len_t start, R_len_t size, bool increasing);
 SEXP compact_seq(R_len_t start, R_len_t size, bool increasing);
@@ -174,6 +194,11 @@ extern SEXP (*rlang_unbox)(SEXP);
 extern SEXP (*rlang_env_dots_values)(SEXP);
 extern SEXP (*rlang_env_dots_list)(SEXP);
 
+static inline
+R_len_t r_length(SEXP x) {
+  return Rf_length(x);
+}
+
 void* r_vec_deref(SEXP x);
 const void* r_vec_const_deref(SEXP x);
 
@@ -198,6 +223,19 @@ R_len_t r_chr_find(SEXP x, SEXP value);
 int r_chr_max_len(SEXP x);
 SEXP r_chr_iota(R_len_t n, char* buf, int len, const char* prefix);
 
+static inline
+SEXP r_new_logical(R_len_t n) {
+  return Rf_allocVector(LGLSXP, n);
+}
+static inline
+SEXP r_new_integer(R_len_t n) {
+  return Rf_allocVector(INTSXP, n);
+}
+static inline
+SEXP r_new_list(R_len_t n) {
+  return Rf_allocVector(VECSXP, n);
+}
+
 SEXP r_new_environment(SEXP parent, R_len_t size);
 SEXP r_new_function(SEXP formals, SEXP body, SEXP env);
 SEXP r_as_function(SEXP x, const char* arg);
@@ -209,6 +247,17 @@ bool r_is_number(SEXP x);
 SEXP r_peek_option(const char* option);
 SEXP r_clone_referenced(SEXP x);
 SEXP r_clone_shared(SEXP x);
+
+SEXP r_parse_eval(const char* str, SEXP env);
+
+static inline
+SEXP r_copy(SEXP x) {
+  return Rf_duplicate(x);
+}
+static inline
+SEXP r_clone(SEXP x) {
+  return Rf_shallow_duplicate(x);
+}
 
 SEXP r_pairlist(SEXP* tags, SEXP* cars);
 SEXP r_call(SEXP fn, SEXP* tags, SEXP* cars);
@@ -269,6 +318,15 @@ static inline double r_dbl_get(SEXP x, R_len_t i) {
   return REAL(x)[i];
 }
 #define r_chr_get STRING_ELT
+#define r_list_get VECTOR_ELT
+#define r_chr_poke SET_STRING_ELT
+#define r_list_poke SET_VECTOR_ELT
+
+static inline
+void r_int_poke(SEXP x, R_len_t i, int value) {
+  r__vec_get_check(x, i, "r_int_poke");
+  INTEGER(x)[i] = value;
+}
 
 static inline void* r_vec_unwrap(SEXPTYPE type, SEXP x) {
   switch (type) {
@@ -414,6 +472,7 @@ extern SEXP strings_loc;
 extern SEXP strings_val;
 extern SEXP strings_group;
 extern SEXP strings_length;
+extern SEXP strings_vctrs_vctr;
 
 extern SEXP chrs_subset;
 extern SEXP chrs_extract;
@@ -477,9 +536,14 @@ extern SEXP syms_body;
 extern SEXP syms_parent;
 extern SEXP syms_from_dispatch;
 extern SEXP syms_df_fallback;
+extern SEXP syms_s3_fallback;
 extern SEXP syms_stop_incompatible_type;
 extern SEXP syms_stop_incompatible_size;
 extern SEXP syms_action;
+extern SEXP syms_vctrs_common_class_fallback;
+extern SEXP syms_fallback_class;
+
+static const char * const c_strs_vctrs_common_class_fallback = "vctrs:::common_class_fallback";
 
 #define syms_names R_NamesSymbol
 

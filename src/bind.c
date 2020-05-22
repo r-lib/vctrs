@@ -1,4 +1,5 @@
 #include "vctrs.h"
+#include "c.h"
 #include "dim.h"
 #include "ptype-common.h"
 #include "slice-assign.h"
@@ -43,7 +44,6 @@ SEXP vctrs_rbind(SEXP call, SEXP op, SEXP args, SEXP env) {
   return out;
 }
 
-
 static SEXP vec_rbind(SEXP xs,
                       SEXP ptype,
                       SEXP names_to,
@@ -59,14 +59,16 @@ static SEXP vec_rbind(SEXP xs,
   // The common type holds information about common column names,
   // types, etc. Each element of `xs` needs to be cast to that type
   // before assignment.
-  ptype = vec_ptype_common_params(xs, ptype, DF_FALLBACK_DEFAULT);
+  ptype = vec_ptype_common_params(xs, ptype, DF_FALLBACK_DEFAULT, S3_FALLBACK_true);
   PROTECT_N(ptype, &n_prot);
+
+  R_len_t n_cols = Rf_length(ptype);
 
   if (ptype == R_NilValue) {
     UNPROTECT(n_prot);
     return new_data_frame(vctrs_shared_empty_list, 0);
   }
-  if (TYPEOF(ptype) == LGLSXP && !Rf_length(ptype)) {
+  if (TYPEOF(ptype) == LGLSXP && !n_cols) {
     ptype = as_df_row_impl(vctrs_shared_na_lgl, name_repair);
     PROTECT_N(ptype, &n_prot);
   }
@@ -89,6 +91,10 @@ static SEXP vec_rbind(SEXP xs,
       names_to_loc = 0;
     }
   }
+
+  // Must happen after the `names_to` column has been added to `ptype`
+  xs = vec_cast_common_params(xs, ptype, DF_FALLBACK_DEFAULT, S3_FALLBACK_true);
+  PROTECT_N(xs, &n_prot);
 
   // Find individual input sizes and total size of output
   R_len_t n_rows = 0;
@@ -171,14 +177,10 @@ static SEXP vec_rbind(SEXP xs,
     }
     SEXP x = VECTOR_ELT(xs, i);
 
-    SEXP tbl = vec_cast_params(x, ptype,
-                               args_empty, args_empty,
-                               DF_FALLBACK_DEFAULT);
-    PROTECT(tbl);
     init_compact_seq(idx_ptr, counter, size, true);
 
     // Total ownership of `out` because it was freshly created with `vec_init()`
-    out = df_assign(out, idx, tbl, vctrs_ownership_total, &bind_assign_opts);
+    out = df_assign(out, idx, x, vctrs_ownership_total, &bind_assign_opts);
     REPROTECT(out, out_pi);
 
     if (has_rownames) {
@@ -211,7 +213,7 @@ static SEXP vec_rbind(SEXP xs,
     }
 
     counter += size;
-    UNPROTECT(2);
+    UNPROTECT(1);
   }
 
   if (has_rownames) {
@@ -227,6 +229,21 @@ static SEXP vec_rbind(SEXP xs,
 
   if (has_names_to) {
     out = df_poke(out, names_to_loc, names_to_col);
+  }
+
+  // Not optimal. Happens after the fallback columns have been
+  // assigned already, ideally they should be ignored. Also this is
+  // currently not recursive. Should we deal with this during
+  // restoration?
+  for (R_len_t i = 0; i < n_cols; ++i) {
+    SEXP col = r_list_get(ptype, i);
+
+    if (vec_is_common_class_fallback(col)) {
+      SEXP col_xs = PROTECT(list_pluck(xs, i));
+      SEXP col_out = vec_c_fallback(col, col_xs, name_spec, name_repair);
+      r_list_poke(out, i, col_out);
+      UNPROTECT(1);
+    }
   }
 
   out = vec_restore(out, ptype, r_int(n_rows));
@@ -350,7 +367,10 @@ static SEXP vec_cbind(SEXP xs, SEXP ptype, SEXP size, struct name_repair_opts* n
   SEXP containers = PROTECT(map_with_data(xs, &cbind_container_type, &rownames));
   ptype = PROTECT(cbind_container_type(ptype, &rownames));
 
-  SEXP type = PROTECT(vec_ptype_common_params(containers, ptype, DF_FALLBACK_DEFAULT));
+  SEXP type = PROTECT(vec_ptype_common_params(containers,
+                                              ptype,
+                                              DF_FALLBACK_DEFAULT,
+                                              S3_FALLBACK_false));
   if (type == R_NilValue) {
     type = new_data_frame(vctrs_shared_empty_list, 0);
   } else if (!is_data_frame(type)) {

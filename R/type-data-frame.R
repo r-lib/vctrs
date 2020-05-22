@@ -74,11 +74,11 @@ vec_proxy_compare.data.frame <- function(x, ..., relax = FALSE) {
   new_data_frame(out, nrow(x))
 }
 
-df_is_coercible <- function(x, y, df_fallback = FALSE) {
+df_is_coercible <- function(x, y, opts) {
   vec_is_coercible(
     new_data_frame(x),
     new_data_frame(y),
-    df_fallback = df_fallback
+    opts = opts
   )
 }
 
@@ -110,29 +110,38 @@ df_is_coercible <- function(x, y, df_fallback = FALSE) {
 #'
 #' @export
 df_ptype2 <- function(x, y, ..., x_arg = "", y_arg = "") {
-  .Call(vctrs_df_ptype2, x, y, x_arg, y_arg, df_fallback = FALSE)
+  .Call(vctrs_df_ptype2_opts, x, y, opts = match_ptype2_opts(...), x_arg, y_arg)
 }
 #' @rdname df_ptype2
 #' @export
 df_cast <- function(x, to, ..., x_arg = "", to_arg = "") {
-  .Call(vctrs_df_cast_params, x, to, x_arg, to_arg, FALSE)
+  .Call(vctrs_df_cast_opts, x, to, opts = ptype2_opts(), x_arg, to_arg)
 }
 
-df_ptype2_params <- function(x,
-                             y,
-                             ...,
-                             x_arg = "",
-                             y_arg = "",
-                             df_fallback = FALSE) {
-  .Call(vctrs_df_ptype2, x, y, x_arg, y_arg, df_fallback)
+df_ptype2_opts <- function(x, y, ..., opts, x_arg = "", y_arg = "") {
+  .Call(vctrs_df_ptype2_opts, x, y, opts = opts, x_arg, y_arg)
+}
+
+df_cast_opts <- function(x,
+                         to,
+                         ...,
+                         opts = ptype2_opts(),
+                         x_arg = "",
+                         to_arg = "") {
+  .Call(vctrs_df_cast_opts, x, to, opts, x_arg, to_arg)
 }
 df_cast_params <- function(x,
                            to,
                            ...,
                            x_arg = "",
                            to_arg = "",
-                           df_fallback = FALSE) {
-  .Call(vctrs_df_cast_params, x, to, x_arg, to_arg, df_fallback)
+                           df_fallback = NULL,
+                           s3_fallback = NULL) {
+  opts <- ptype2_opts(
+    df_fallback = df_fallback,
+    s3_fallback = s3_fallback
+  )
+  df_cast_opts(x, to, opts = opts, x_arg = x_arg, to_arg = to_arg)
 }
 
 #' @rdname new_data_frame
@@ -148,11 +157,11 @@ vec_ptype2.data.frame.data.frame <- function(x, y, ...) {
   df_ptype2(x, y, ...)
 }
 
-vec_ptype2_df_fallback_normalise <- function(x, y) {
+vec_ptype2_df_fallback_normalise <- function(x, y, opts) {
   x_orig <- x
   y_orig <- y
 
-  ptype <- df_ptype2_params(x, y, df_fallback = TRUE)
+  ptype <- df_ptype2_opts(x, y, opts = opts)
 
   x <- x[0, , drop = FALSE]
   y <- y[0, , drop = FALSE]
@@ -174,9 +183,9 @@ vec_ptype2_df_fallback_normalise <- function(x, y) {
 
   list(x = x, y = y)
 }
-vec_cast_df_fallback_normalise <- function(x, to) {
+vec_cast_df_fallback_normalise <- function(x, to, opts) {
   orig <- x
-  cast <- df_cast_params(x, to, df_fallback = TRUE)
+  cast <- df_cast_opts(x, to, opts = opts)
 
   # Seq-assign should be more widely implemented than empty-assign?
   x[seq_along(to)] <- cast
@@ -192,20 +201,19 @@ vec_cast_df_fallback_normalise <- function(x, to) {
   x
 }
 
-df_needs_normalisation <- function(x, y) {
-  is.data.frame(x) &&
-    is.data.frame(y) &&
-    df_is_coercible(x, y, df_fallback = TRUE)
+df_needs_normalisation <- function(x, y, opts) {
+  is.data.frame(x) && is.data.frame(y) && df_is_coercible(x, y, opts)
 }
 
 # Fallback for data frame subclasses (#981)
-vec_ptype2_df_fallback <- function(x, y, df_fallback, x_arg = "", y_arg = "") {
+vec_ptype2_df_fallback <- function(x, y, opts, x_arg = "", y_arg = "") {
   seen_tibble <- inherits(x, "tbl_df") || inherits(y, "tbl_df")
 
   ptype <- vec_ptype2_params(
     new_data_frame(x),
     new_data_frame(y),
-    df_fallback = TRUE
+    df_fallback = opts$df_fallback,
+    s3_fallback = opts$s3_fallback
   )
 
   classes <- NULL
@@ -220,7 +228,7 @@ vec_ptype2_df_fallback <- function(x, y, df_fallback, x_arg = "", y_arg = "") {
   x_class <- class(x)[[1]]
   y_class <- class(y)[[1]]
 
-  if (needs_fallback_warning(df_fallback) &&
+  if (needs_fallback_warning(opts$df_fallback) &&
       !all(c(x_class, y_class) %in% c(classes, "tbl_df"))) {
     fallback_class <- if (seen_tibble) "<tibble>" else "<data.frame>"
     msg <- cnd_type_message(

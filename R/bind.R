@@ -84,8 +84,9 @@
 #'
 #' - [base::c()]
 #'
-#' If columns to combine have the same class, `vec_rbind()` falls back
-#' to `base::c()` if there exists a `c()` method for this class.
+#' If columns to combine inherit from a common class,
+#' `vec_rbind()` falls back to `base::c()` if there exists a `c()`
+#' method implemented for this class hierarchy.
 #'
 #' @seealso [vec_c()] for combining 1d vectors.
 #' @examples

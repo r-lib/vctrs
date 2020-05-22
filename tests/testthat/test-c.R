@@ -207,11 +207,11 @@ test_that("vec_c() falls back to c() if S3 method is available", {
     c.vctrs_foobar = method
   )
   expect_identical(
-    vec_c(foobar(1), foobar(2)),
+    vec_c(foobar(1), foobar(2, class = "foo")),
     c("dispatched", "dispatched")
   )
   expect_identical(
-    vec_c(NULL, foobar(1), NULL, foobar(2)),
+    vec_c(NULL, foobar(1), NULL, foobar(2, class = "foo")),
     c("dispatched", "dispatched")
   )
 
@@ -333,6 +333,11 @@ test_that("can ignore names in `vec_c()` by providing a `zap()` name-spec (#232)
       class = "vctrs_error_incompatible_type"
     )
   })
+})
+
+test_that("can concatenate subclasses of `vctrs_vctr` which don't have ptype2 methods", {
+  x <- new_vctr(1, class = "vctrs_foo")
+  expect_identical(vec_c(x, x), new_vctr(c(1, 1), class = "vctrs_foo"))
 })
 
 test_that("vec_c() has informative error messages", {

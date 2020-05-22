@@ -11,12 +11,25 @@ enum df_fallback {
   DF_FALLBACK_QUIET = 255
 };
 
+
+#define S3_FALLBACK_DEFAULT 0
+
+enum s3_fallback {
+  S3_FALLBACK_false = 0,
+  S3_FALLBACK_true
+};
+
+struct fallback_opts {
+  enum df_fallback df;
+  enum s3_fallback s3;
+};
+
 struct ptype2_opts {
   SEXP x;
   SEXP y;
   struct vctrs_arg* x_arg;
   struct vctrs_arg* y_arg;
-  enum df_fallback df_fallback;
+  struct fallback_opts fallback;
 };
 
 SEXP vec_ptype2_dispatch(const struct ptype2_opts* opts,
@@ -39,7 +52,9 @@ SEXP vec_ptype2_params(SEXP x,
     .y = y,
     .x_arg = x_arg,
     .y_arg = y_arg,
-    .df_fallback = df_fallback
+    .fallback = {
+      .df = df_fallback
+    }
   };
   return vec_ptype2_opts(&opts, left);
 }
@@ -62,6 +77,23 @@ SEXP vec_ptype2(SEXP x,
 SEXP vec_ptype2_dispatch_s3(const struct ptype2_opts* opts);
 
 bool vec_is_coercible(const struct ptype2_opts* opts, int* dir);
+
+struct ptype2_opts new_ptype2_opts(SEXP x,
+                                   SEXP y,
+                                   struct vctrs_arg* x_arg,
+                                   struct vctrs_arg* y_arg,
+                                   SEXP opts);
+
+SEXP new_ptype2_r_opts(const struct ptype2_opts* opts);
+struct fallback_opts new_fallback_opts(SEXP opts);
+
+SEXP vec_invoke_coerce_method(SEXP method_sym,
+                              SEXP method,
+                              SEXP x,
+                              SEXP y,
+                              SEXP x_arg,
+                              SEXP y_arg,
+                              const struct fallback_opts* opts);
 
 
 #endif

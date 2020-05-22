@@ -403,9 +403,6 @@ SEXP vec_c(SEXP xs,
            SEXP name_spec,
            const struct name_repair_opts* name_repair);
 
-SEXP vec_c_fallback(SEXP xs, SEXP name_spec);
-bool needs_vec_c_fallback(SEXP xs, SEXP ptype);
-
 bool is_data_frame(SEXP x);
 
 R_len_t df_size(SEXP x);
@@ -604,7 +601,6 @@ static inline void growable_push_int(struct growable* g, int i) {
 
 // Conditions ---------------------------------------------------
 
-void vctrs_stop_unsupported_type(enum vctrs_type, const char* fn) __attribute__((noreturn));
 void stop_scalar_type(SEXP x, struct vctrs_arg* arg) __attribute__((noreturn));
 void vec_assert(SEXP x, struct vctrs_arg* arg);
 __attribute__((noreturn))

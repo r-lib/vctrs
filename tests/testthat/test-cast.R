@@ -135,3 +135,93 @@ test_that("can signal deprecation warnings for lossy casts", {
   expect_true(expect_warning(regexp = NA, allow_lossy_cast(lossy_cast(), factor("foo"), factor("bar"))))
   expect_true(expect_warning(allow_lossy_cast(lossy_cast(), factor("bar"), double())))
 })
+
+
+# vec_cast_common() -------------------------------------------------------
+
+test_that("vec_ptype_common() optionally falls back to base class", {
+  x <- foobar(NA, foo = 1)
+  y <- foobaz(NA, bar = 2)
+
+  x_df <- data_frame(x = x)
+  y_df <- data_frame(x = y)
+
+  expect_error(
+    vec_ptype_common_opts(x, y, .opts = fallback_ptype2_opts()),
+    class = "vctrs_error_incompatible_type"
+  )
+  expect_error(
+    vec_ptype_common_opts(x_df, y_df, .opts = fallback_ptype2_opts()),
+    class = "vctrs_error_incompatible_type"
+  )
+
+  expect_error(
+    vec_cast_common_opts(x, y, .opts = fallback_ptype2_opts()),
+    class = "vctrs_error_incompatible_type"
+  )
+  expect_error(
+    vec_cast_common_opts(x_df, y_df, .opts = fallback_ptype2_opts()),
+    class = "vctrs_error_incompatible_type"
+  )
+
+  class(y) <- c("foo", class(x))
+  y_df <- data_frame(x = y)
+
+  common_sentinel <- vec_ptype_common_opts(x, y, .opts = fallback_ptype2_opts())
+  expect_true(is_common_class_fallback(common_sentinel))
+  expect_identical(fallback_class(common_sentinel), "vctrs_foobar")
+
+  common_sentinel <- vec_ptype_common_opts(x_df, y_df, .opts = fallback_ptype2_opts())
+  expect_true(is_common_class_fallback(common_sentinel$x))
+  expect_identical(fallback_class(common_sentinel$x), "vctrs_foobar")
+
+  common <- vec_cast_common_opts(x = x, y = y, .opts = fallback_ptype2_opts())
+  expect_identical(common, list(x = x, y = y))
+
+  common <- vec_cast_common_opts(x = x_df, y = y_df, .opts = fallback_ptype2_opts())
+  expect_identical(common, list(x = x_df, y = y_df))
+})
+
+test_that("vec_ptype_common_fallback() collects common type", {
+  x <- foobar(1, foo = 1, class = c("quux", "baz"))
+  y <- foobar(2, bar = 2, class = "baz")
+
+  x_df <- data_frame(x = x)
+  y_df <- data_frame(x = y)
+
+  out <- vec_ptype_common_fallback(x, y)
+  expect_identical(typeof(out), "double")
+  expect_true(is_common_class_fallback(out))
+  expect_identical(fallback_class(out), c("baz", "vctrs_foobar"))
+
+  out <- vec_ptype_common_fallback(x_df, y_df)
+  expect_identical(typeof(out$x), "double")
+  expect_true(is_common_class_fallback(out$x))
+  expect_identical(fallback_class(out$x), c("baz", "vctrs_foobar"))
+
+  # Different base types can't fall back to common class
+  z <- foobar(3L, baz = 3)
+  expect_error(
+    vec_ptype_common_fallback(x, z),
+    class = "vctrs_error_incompatible_type"
+  )
+
+  z_df <- data_frame(x = z)
+  expect_error(
+    vec_ptype_common_fallback(x_df, z_df),
+    class = "vctrs_error_incompatible_type"
+  )
+})
+
+test_that("vec_ptype_common() supports subclasses of list", {
+  x <- structure(list(1), class = c("vctrs_foo", "list"))
+  y <- structure(list(2), class = c("bar", "vctrs_foo", "list"))
+
+  expect_error(vec_c(x, y), class = "vctrs_error_incompatible_type")
+
+  out <- with_methods(
+    c.vctrs_foo = function(...) quux(NextMethod()),
+    vec_c(x, y)
+  )
+  expect_identical(out, quux(list(1, 2)))
+})

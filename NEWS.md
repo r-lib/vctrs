@@ -1,6 +1,11 @@
 
 # vctrs (development version)
 
+* `vec_c()` and `vec_rbind()` now fall back to `base::c()` if the
+  inputs have a common class hierarchy for which a `c()` method is
+  implemented but no self-to-self `vec_ptype2()` method is
+  implemented.
+
 * `vec_rbind()` now internally calls `vec_proxy()` and `vec_restore()` on
   the data frame common type that is used to create the output (#1109).
 

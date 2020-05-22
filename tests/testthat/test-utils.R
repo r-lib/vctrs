@@ -49,3 +49,22 @@ test_that("df_has_base_subset() detects `[` methods", {
   )
   expect_false(out)
 })
+
+test_that("vec_common_suffix() finds common suffix", {
+  x <- c("foo", "bar", "baz")
+  y <- c("quux", "foo", "hop", "baz")
+  expect_identical(vec_common_suffix(x, y), "baz")
+
+  x <- c("foo", "bar", "baz")
+  y <- c("quux", "foo", "bar", "baz")
+  expect_identical(vec_common_suffix(x, y), x)
+
+  x <- letters
+  y <- chr()
+  expect_identical(vec_common_suffix(x, y), chr())
+
+  x <- data.frame(x = 1:3, y = c("foo", "bar", "baz"))
+  y <- data.frame(x = 0:3, y = c("foo", "hop", "bar", "baz"))
+  exp <- data.frame(x = 2:3, y = c("bar", "baz"))
+  expect_identical(vec_common_suffix(x, y), exp)
+})

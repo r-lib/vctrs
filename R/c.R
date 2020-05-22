@@ -10,7 +10,7 @@
 #'
 #' ## vctrs dependencies
 #'
-#' - [vec_cast_common()]
+#' - [vec_cast_common()] with fallback
 #' - [vec_proxy()]
 #' - [vec_restore()]
 #'
@@ -19,8 +19,9 @@
 #'
 #' - [base::c()]
 #'
-#' If inputs have the same class, `vec_c()` falls back to `base::c()`
-#' if there exists a `c()` method for this class.
+#' If inputs inherit from a common class hierarchy, `vec_c()` falls
+#' back to `base::c()` if there exists a `c()` method implemented for
+#' this class hierarchy.
 #'
 #' @param ... Vectors to coerce.
 #' @param .name_repair How to repair names, see `repair` options in

@@ -521,12 +521,14 @@ SEXP vec_match_params(SEXP needles,
 
   needles = vec_cast_params(needles, type,
                             needles_arg, args_empty,
-                            DF_FALLBACK_QUIET);
+                            DF_FALLBACK_QUIET,
+                            S3_FALLBACK_false);
   PROTECT_N(needles, &nprot);
 
   haystack = vec_cast_params(haystack, type,
                              haystack_arg, args_empty,
-                             DF_FALLBACK_QUIET);
+                             DF_FALLBACK_QUIET,
+                             S3_FALLBACK_false);
   PROTECT_N(haystack, &nprot);
 
   needles = PROTECT_N(vec_proxy_equal(needles), &nprot);
@@ -622,12 +624,14 @@ SEXP vctrs_in(SEXP needles, SEXP haystack, SEXP na_equal_,
 
   needles = vec_cast_params(needles, type,
                             &needles_arg, args_empty,
-                            DF_FALLBACK_QUIET);
+                            DF_FALLBACK_QUIET,
+                            S3_FALLBACK_false);
   PROTECT_N(needles, &nprot);
 
   haystack = vec_cast_params(haystack, type,
                              &haystack_arg, args_empty,
-                             DF_FALLBACK_QUIET);
+                             DF_FALLBACK_QUIET,
+                             S3_FALLBACK_false);
   PROTECT_N(haystack, &nprot);
 
   needles = PROTECT_N(vec_proxy_equal(needles), &nprot);

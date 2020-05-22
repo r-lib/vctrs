@@ -1,4 +1,5 @@
 #include "vctrs.h"
+#include "c.h"
 #include "slice.h"
 #include "slice-assign.h"
 #include "subscript-loc.h"
@@ -429,7 +430,7 @@ static SEXP vec_unchop(SEXP x,
     return vec_unchop_fallback(x, indices, name_spec);
   }
 
-  ptype = PROTECT(vec_ptype_common_params(x, ptype, DF_FALLBACK_WARN));
+  ptype = PROTECT(vec_ptype_common_params(x, ptype, DF_FALLBACK_WARN, S3_FALLBACK_false));
 
   if (ptype == R_NilValue) {
     UNPROTECT(1);
@@ -544,11 +545,11 @@ static SEXP vec_unchop(SEXP x,
 // Unchopping is a just version of `vec_c()` that controls the ordering,
 // so they both fallback to `c()` in the same situations
 static inline bool needs_vec_unchop_fallback(SEXP x, SEXP ptype) {
-  return needs_vec_c_fallback(x, ptype);
+  return needs_vec_c_homogeneous_fallback(x, ptype);
 }
 
 // This is essentially:
-// vec_slice_fallback(vec_c_fallback(!!!x), order(vec_c(!!!indices)))
+// vec_slice_fallback(vec_c_fallback_invoke(!!!x), order(vec_c(!!!indices)))
 // with recycling of each element of `x` to the corresponding index size
 static SEXP vec_unchop_fallback(SEXP x, SEXP indices, SEXP name_spec) {
   R_len_t x_size = vec_size(x);
@@ -568,7 +569,7 @@ static SEXP vec_unchop_fallback(SEXP x, SEXP indices, SEXP name_spec) {
 
   indices = PROTECT(vec_as_indices(indices, out_size, R_NilValue));
 
-  SEXP out = PROTECT(vec_c_fallback(x, name_spec));
+  SEXP out = PROTECT(vec_c_fallback_invoke(x, name_spec));
 
   const struct name_repair_opts name_repair_opts = {
     .type = name_repair_none,

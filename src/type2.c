@@ -11,24 +11,18 @@ SEXP vec_ptype2_switch_native(const struct ptype2_opts* opts,
                               int* left);
 
 // [[ register() ]]
-SEXP vctrs_ptype2_params(SEXP x,
-                         SEXP y,
-                         SEXP x_arg,
-                         SEXP y_arg,
-                         SEXP df_fallback) {
-  struct vctrs_arg x_arg_ = vec_as_arg(x_arg);
-  struct vctrs_arg y_arg_ = vec_as_arg(y_arg);
+SEXP vctrs_ptype2_opts(SEXP x,
+                       SEXP y,
+                       SEXP opts,
+                       SEXP x_arg,
+                       SEXP y_arg) {
+  struct vctrs_arg c_x_arg = vec_as_arg(x_arg);
+  struct vctrs_arg c_y_arg = vec_as_arg(y_arg);
 
-  const struct ptype2_opts opts = {
-    .x = x,
-    .y = y,
-    .x_arg = &x_arg_,
-    .y_arg = &y_arg_,
-    .df_fallback = r_int_get(df_fallback, 0)
-  };
+  const struct ptype2_opts c_opts = new_ptype2_opts(x, y, &c_x_arg, &c_y_arg, opts);
 
   int _left;
-  return vec_ptype2_opts(&opts, &_left);
+  return vec_ptype2_opts(&c_opts, &_left);
 }
 
 SEXP vec_ptype2_opts(const struct ptype2_opts* opts,
@@ -158,21 +152,18 @@ bool vec_is_coercible(const struct ptype2_opts* opts,
 }
 
 // [[ register() ]]
-SEXP vctrs_is_coercible(SEXP x, SEXP y, SEXP x_arg_, SEXP y_arg_, SEXP df_fallback_) {
-  struct vctrs_arg x_arg = vec_as_arg(x_arg_);
-  struct vctrs_arg y_arg = vec_as_arg(y_arg_);;
-  enum df_fallback df_fallback = r_int_get(df_fallback_, 0);
+SEXP vctrs_is_coercible(SEXP x,
+                        SEXP y,
+                        SEXP opts,
+                        SEXP x_arg,
+                        SEXP y_arg) {
+  struct vctrs_arg c_x_arg = vec_as_arg(x_arg);
+  struct vctrs_arg c_y_arg = vec_as_arg(y_arg);
 
-  const struct ptype2_opts opts = {
-    .x = x,
-    .y = y,
-    .x_arg = &x_arg,
-    .y_arg = &y_arg,
-    .df_fallback = df_fallback
-  };
+  const struct ptype2_opts c_opts = new_ptype2_opts(x, y, &c_x_arg, &c_y_arg, opts);
 
   int dir = 0;
-  return r_lgl(vec_is_coercible(&opts, &dir));
+  return r_lgl(vec_is_coercible(&c_opts, &dir));
 }
 
 
@@ -183,4 +174,46 @@ SEXP vctrs_ptype2(SEXP x, SEXP y, SEXP x_arg, SEXP y_arg) {
 
   int _left;
   return vec_ptype2(x, y, &x_arg_, &y_arg_, &_left);
+}
+
+// [[ include("ptype2.h") ]]
+struct fallback_opts new_fallback_opts(SEXP opts) {
+  return (struct fallback_opts) {
+    .df = r_int_get(r_list_get(opts, 0), 0),
+    .s3 = r_int_get(r_list_get(opts, 1), 0)
+  };
+}
+
+// [[ include("ptype2.h") ]]
+struct ptype2_opts new_ptype2_opts(SEXP x,
+                                   SEXP y,
+                                   struct vctrs_arg* x_arg,
+                                   struct vctrs_arg* y_arg,
+                                   SEXP opts) {
+  return (struct ptype2_opts) {
+    .x = x,
+    .y = y,
+    .x_arg = x_arg,
+    .y_arg = y_arg,
+    .fallback = new_fallback_opts(opts)
+  };
+}
+
+static SEXP r_ptype2_opts_template = NULL;
+
+// [[ include("ptype2.h") ]]
+SEXP new_ptype2_r_opts(const struct ptype2_opts* opts) {
+  SEXP r_opts = PROTECT(r_copy(r_ptype2_opts_template));
+
+  r_int_poke(r_list_get(r_opts, 0), 0, opts->fallback.df);
+  r_int_poke(r_list_get(r_opts, 1), 0, opts->fallback.s3);
+
+  UNPROTECT(1);
+  return r_opts;
+}
+
+
+void vctrs_init_ptype2(SEXP ns) {
+  r_ptype2_opts_template = r_parse_eval("ptype2_opts()", ns);
+  R_PreserveObject(r_ptype2_opts_template);
 }

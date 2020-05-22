@@ -331,7 +331,7 @@ test_that("vec_rbind() requires a data frame proxy for data frame ptypes", {
     vec_proxy.vctrs_foobar = function(x, ...) 1
   )
 
-  expect_error(vec_rbind(df, df), "doesn't have a data frame proxy")
+  expect_error(vec_rbind(df, df), "Attempt to restore data frame from a double")
 })
 
 test_that("monitoring: name repair while rbinding doesn't modify in place", {
@@ -712,11 +712,65 @@ test_that("vec_rbind() fails with complex foreign S4 classes", {
 })
 
 test_that("vec_rbind() falls back to c() if S3 method is available", {
-  skip("TODO")
+  x <- foobar(1, foo = 1)
+  y <- foobar(2, bar = 2)
+
+  x_df <- data_frame(x = x)
+  y_df <- data_frame(x = y)
+
+  expect_error(vec_rbind(x_df, y_df), class = "vctrs_error_incompatible_type")
+
+  out <- with_methods(
+    c.vctrs_foobar = function(...) quux(NextMethod()),
+    vec_rbind(x_df, y_df)
+  )
+  expect_identical(out, data_frame(x = quux(c(1, 2))))
+
+  # Fallback is used with data frame subclasses, with or without
+  # ptype2 method
+  foo_df <- foobaz(x_df)
+  bar_df <- foobaz(y_df)
+
+  out <- with_methods(
+    c.vctrs_foobar = function(...) quux(NextMethod()),
+    vec_rbind(foo_df, bar_df)
+  )
+  expect_identical(out, foobaz(data_frame(x = quux(c(1, 2)))))
+
+  out <- with_methods(
+    c.vctrs_foobar = function(...) quux(NextMethod()),
+    vec_ptype2.vctrs_foobaz.vctrs_foobaz = function(...) foobaz(df_ptype2(...)),
+    vec_rbind(foo_df, bar_df)
+  )
+  expect_identical(out, foobaz(data_frame(x = quux(c(1, 2)))))
+
+  skip("FIXME: c() fallback with recursion through df-col")
+
+  wrapper_x_df <- data_frame(x = x_df)
+  wrapper_y_df <- data_frame(x = y_df)
+
+  out <- with_methods(
+    c.vctrs_foobar = function(...) quux(NextMethod()),
+    vec_rbind(wrapper_x_df, wrapper_y_df)
+  )
+  expect_identical(out, data_frame(data_frame(x = quux(c(1, 2)))))
 })
 
-test_that("vec_rbind() falls back to c() if S4 method is available", {
-  skip("TODO")
+test_that("c() fallback works with unspecified columns", {
+  skip("FIXME: c() fallback with unspecified columns")
+})
+
+test_that("vec_rbind() falls back to c() if S3 method is available for S4 class", {
+  joe <- data_frame(x = .Counts(c(1L, 2L), name = "Joe"))
+  jane <- data_frame(x = .Counts(3L, name = "Jane"))
+
+  expect_error(vec_rbind(joe, jane), class = "vctrs_error_incompatible_type")
+
+  out <- with_methods(
+    c.vctrs_Counts = function(...) .Counts(NextMethod(), name = "dispatched"),
+    vec_rbind(joe, jane)
+  )
+  expect_identical(out$x, .Counts(1:3, name = "dispatched"))
 })
 
 test_that("vec_cbind() and vec_rbind() have informative error messages", {

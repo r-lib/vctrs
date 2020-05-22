@@ -26,10 +26,10 @@ if no \code{\link[=vec_proxy]{vec_proxy()}} method is implemented. This
 way foreign classes that do not implement
 \code{\link[=vec_restore]{vec_restore()}} can restore attributes based on
 the new subsetted contents.
-\item \code{\link[=vec_c]{vec_c()}} falls back to \code{base::c()} if all inputs have
-the same class for which a \code{c()} method is implemented but no
-self-to-self \code{\link[=vec_ptype2]{vec_ptype2()}} method is
-implemented.
+\item \code{\link[=vec_c]{vec_c()}} and \code{\link[=vec_rbind]{vec_rbind()}} now fall
+back to \code{\link[base:c]{base::c()}} if the inputs have a common
+parent class with a \code{c()} method (only if they have no self-to-self
+\code{vec_ptype2()} method).
 
 vctrs works hard to make your \code{c()} method success in various
 situations (with \code{NULL} and \code{NA} inputs, even as first input which
@@ -84,11 +84,6 @@ the atomic vector types, a list, or a data frame. By default, S3 lists
 that do not inherit from \code{"list"} do not have an identity proxy. In that
 case, you need to explicitly implement \code{vec_proxy()} or make your class
 inherit from list.
-
-\code{vec_restore()} is called is called after manipulating vector proxies,
-to restore attributes that might have been lost in the process or that
-need to be updated when the contents of a vector have changed. If not
-implemented, all attributes are restored by default.
 }
 
 }

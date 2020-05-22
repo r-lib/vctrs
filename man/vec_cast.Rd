@@ -79,9 +79,10 @@ subclasses, see
 
 \subsection{base dependencies}{
 
-Some functions enable a \code{data.frame} fallback for
+Some functions enable a base-class fallback for
 \code{vec_cast_common()}. In that case the inputs are deemed compatible
-when they are all data frames with compatible columns.
+when they have the same \link[base:typeof]{base type} and inherit from
+the same base class.
 }
 }
 

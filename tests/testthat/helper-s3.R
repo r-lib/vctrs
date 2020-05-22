@@ -1,12 +1,12 @@
 
-new_ctor <- function(class) {
-  function(x = list(), ...) {
+new_ctor <- function(base_class) {
+  function(x = list(), ..., class = NULL) {
     if (inherits(x, "tbl_df")) {
-      tibble::new_tibble(x, class = class, nrow = nrow(x))
+      tibble::new_tibble(x, class = c(class, base_class), nrow = nrow(x))
     } else if (is.data.frame(x)) {
-      structure(x, class = c(class, "data.frame"), ...)
+      structure(x, class = c(class, base_class, "data.frame"), ...)
     } else {
-      structure(x, class = class, ...)
+      structure(x, class = c(class, base_class), ...)
     }
   }
 }
