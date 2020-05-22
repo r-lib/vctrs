@@ -6,7 +6,8 @@ import_from("sf", c(
   "st_bbox",
   "st_precision",
   "st_crs",
-  "st_linestring"
+  "st_linestring",
+  "st_as_sf"
 ))
 
 # https://github.com/r-spatial/sf/issues/1390
@@ -16,7 +17,7 @@ test_that("can combine sfc lists", {
   sfc <- st_sfc(ls)
   expect_identical(vec_c(sfc, sfc), c(sfc, sfc))
 
-  sf <- sf::st_as_sf(data.frame(id = 1, geometry = sfc))
+  sf <- st_as_sf(data.frame(id = 1, geometry = sfc))
   expect_identical(vec_rbind(sf, sf), rbind(sf, sf))
 })
 
