@@ -182,7 +182,7 @@ test_that("vec_ptype_common() optionally falls back to base class", {
   expect_identical(common, list(x = x_df, y = y_df))
 })
 
-test_that("vec_ptype_common() collects common type", {
+test_that("vec_ptype_common_fallback() collects common type", {
   x <- foobar(1, foo = 1, class = c("quux", "baz"))
   y <- foobar(2, bar = 2, class = "baz")
 

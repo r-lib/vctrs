@@ -173,7 +173,7 @@ static inline bool vec_implements_base_c(SEXP x);
 
 // [[ include("c.h") ]]
 bool needs_vec_c_fallback(SEXP ptype) {
-  if (!Rf_inherits(ptype, c_strs_vctrs_common_class_fallback)) {
+  if (!vec_is_common_class_fallback(ptype)) {
     return false;
   }
 

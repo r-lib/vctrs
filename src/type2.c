@@ -158,7 +158,7 @@ SEXP vctrs_is_coercible(SEXP x,
                         SEXP x_arg,
                         SEXP y_arg) {
   struct vctrs_arg c_x_arg = vec_as_arg(x_arg);
-  struct vctrs_arg c_y_arg = vec_as_arg(y_arg);;
+  struct vctrs_arg c_y_arg = vec_as_arg(y_arg);
 
   const struct ptype2_opts c_opts = new_ptype2_opts(x, y, &c_x_arg, &c_y_arg, opts);
 

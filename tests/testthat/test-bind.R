@@ -726,6 +726,8 @@ test_that("vec_rbind() falls back to c() if S3 method is available", {
   )
   expect_identical(out, data_frame(x = quux(c(1, 2))))
 
+  # Fallback is used with data frame subclasses, with or without
+  # ptype2 method
   foo_df <- foobaz(x_df)
   bar_df <- foobaz(y_df)
 
@@ -758,7 +760,7 @@ test_that("c() fallback works with unspecified columns", {
   skip("FIXME: c() fallback with unspecified columns")
 })
 
-test_that("vec_rbind() falls back to c() if S4 method is available", {
+test_that("vec_rbind() falls back to c() if S3 method is available for S4 class", {
   joe <- data_frame(x = .Counts(c(1L, 2L), name = "Joe"))
   jane <- data_frame(x = .Counts(3L, name = "Jane"))
 

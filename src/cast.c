@@ -183,7 +183,7 @@ SEXP vec_cast_dispatch_s3(const struct cast_opts* opts) {
   PROTECT(method);
 
   if (method == R_NilValue) {
-    SEXP out = vec_cast_default(x, to, x_arg_obj, to_arg_obj, &opts->fallback);
+    SEXP out = vec_cast_default(x, to, x_arg_obj, to_arg_obj, &(opts->fallback));
     UNPROTECT(3);
     return out;
   }
