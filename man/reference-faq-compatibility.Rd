@@ -9,6 +9,30 @@ way. However, it implements several compatibility fallbacks to base R
 methods. In this reference you will find how vctrs tries to be
 compatible with your vector class, and what base methods you need to
 implement for compatibility.
+
+If you’re starting from scratch, we think you’ll find it easier to start
+using \code{\link[=new_vctr]{new_vctr()}} as documented in
+\code{vignette("s3-vector")}. This guide is aimed for developers with
+existing vector classes.
+\subsection{Aggregate operations with fallbacks}{
+
+All vctrs operations are based on four primitive generics described in
+the next section. However there are many higher level operations. The
+most important ones implement fallbacks to base generics for maximum
+compatibility with existing classes.
+\itemize{
+\item \code{\link[=vec_slice]{vec_slice()}} falls back to the base \code{[} generic
+if no \code{\link[=vec_proxy]{vec_proxy()}} method is implemented. This
+way foreign classes that do not implement
+\code{\link[=vec_restore]{vec_restore()}} can restore attributes based on
+the new subsetted contents.
+\item \code{\link[=vec_c]{vec_c()}} falls back to \code{base::c()} if all inputs have
+the same class for which a \code{c()} method is implemented but no
+self-to-self \code{\link[=vec_ptype2]{vec_ptype2()}} method is
+implemented.
+}
+}
+
 \subsection{The vctrs primitives}{
 
 Most functions in vctrs are aggregate operations: they call other vctrs
@@ -19,6 +43,25 @@ an example.
 
 These dependencies form a tree whose roots are the four vctrs
 primitives.
+\subsection{The coercion generics}{
+
+The coercion mechanism in vctrs is based on two generics:
+\itemize{
+\item \code{\link[=vec_ptype2]{vec_ptype2()}}
+\item \code{\link[=vec_cast]{vec_cast()}}
+}
+
+See the \link[=theory-faq-coercion]{theory overview}.
+
+Two objects with the same class and the same attributes are always
+considered compatible by ptype2 and cast. If the attributes or classes
+differ, they throw an incompatible type error.
+
+Coercion errors are the main source of incompatibility with vctrs. See
+the \link[=howto-faq-coercion]{howto guide} if you need to implement methods
+for these generics.
+}
+
 \subsection{The proxy and restoration generics}{
 \itemize{
 \item \code{\link[=vec_proxy]{vec_proxy()}}
@@ -39,43 +82,5 @@ need to be updated when the contents of a vector have changed. If not
 implemented, all attributes are restored by default.
 }
 
-\subsection{The coercion generics}{
-
-The coercion mechanism in vctrs is based on two generics:
-\itemize{
-\item \code{\link[=vec_ptype2]{vec_ptype2()}}
-\item \code{\link[=vec_cast]{vec_cast()}}
-}
-
-See the \link[=theory-faq-coercion]{theory overview}.
-
-Two objects with the same class and the same attributes are always
-considered compatible by ptype2 and cast. If the attributes or classes
-differ, they throw an incompatible type error.
-
-Coercion errors are the main source of incompatibility with vctrs. See
-the \link[=howto-faq-coercion]{howto guide} if you need to implement methods
-for these generics.
-}
-
-}
-
-\subsection{Aggregate operations with fallbacks}{
-
-vctrs can achieve all necessary operations on vectors with the four
-primitives listed boved. However there are many higher level operations.
-The most important ones implement fallbacks to base generics for maximum
-compatibility with existing classes.
-\itemize{
-\item \code{\link[=vec_slice]{vec_slice()}} falls back to the base \code{[} generic
-if no \code{\link[=vec_proxy]{vec_proxy()}} method is implemented. This
-way foreign classes that do not implement
-\code{\link[=vec_restore]{vec_restore()}} can restore attributes based on
-the new subsetted contents.
-\item \code{\link[=vec_c]{vec_c()}} falls back to \code{base::c()} if all inputs have
-the same class for which a \code{c()} method is implemented but no
-self-to-self \code{\link[=vec_ptype2]{vec_ptype2()}} method is
-implemented.
-}
 }
 }

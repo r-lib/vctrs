@@ -4,21 +4,20 @@ vctrs provides a framework for working with vector classes in a generic way. How
 If you're starting from scratch, we think you'll find it easier to start using [new_vctr()] as documented in `vignette("s3-vector")`. This guide is aimed for developers with existing vector classes.
 
 
+## Aggregate operations with fallbacks
+
+All vctrs operations are based on four primitive generics described in the next section. However there are many higher level operations. The most important ones implement fallbacks to base generics for maximum compatibility with existing classes.
+
+- [vec_slice()] falls back to the base `[` generic if no [vec_proxy()] method is implemented. This way foreign classes  that do not implement [vec_restore()] can restore attributes based on the new subsetted contents.
+
+- [vec_c()] falls back to `base::c()` if all inputs have the same class for which a `c()` method is implemented but no self-to-self [vec_ptype2()] method is implemented.
+
+
 ## The vctrs primitives
 
 Most functions in vctrs are aggregate operations: they call other vctrs functions which themselves call other vctrs functions. The dependencies of a vctrs functions are listed in the Dependencies section of its documentation page. Take a look at [vec_count()] for an example.
 
 These dependencies form a tree whose roots are the four vctrs primitives.
-
-
-### The proxy and restoration generics
-
-- [vec_proxy()]
-- [vec_restore()]
-
-These generics are essential for vctrs but mostly optional. `vec_proxy()` defaults to an [identity][identity] function and you normally don't need to implement it. The proxy a vector must be one of the atomic vector types, a list, or a data frame. By default, S3 lists that do not inherit from `"list"` do not have an identity proxy. In that case, you need to explicitly implement `vec_proxy()` or make your class inherit from list.
-
-`vec_restore()` is called is called after manipulating vector proxies, to restore attributes that might have been lost in the process or that need to be updated when the contents of a vector have changed. If not implemented, all attributes are restored by default.
 
 
 ### The coercion generics
@@ -35,10 +34,12 @@ Two objects with the same class and the same attributes are always considered co
 Coercion errors are the main source of incompatibility with vctrs. See the [howto guide][howto-faq-coercion] if you need to implement methods for these generics.
 
 
-## Aggregate operations with fallbacks
+### The proxy and restoration generics
 
-vctrs can achieve all necessary operations on vectors with the four primitives listed boved. However there are many higher level operations. The most important ones implement fallbacks to base generics for maximum compatibility with existing classes.
+- [vec_proxy()]
+- [vec_restore()]
 
-- [vec_slice()] falls back to the base `[` generic if no [vec_proxy()] method is implemented. This way foreign classes  that do not implement [vec_restore()] can restore attributes based on the new subsetted contents.
+These generics are essential for vctrs but mostly optional. `vec_proxy()` defaults to an [identity][identity] function and you normally don't need to implement it. The proxy a vector must be one of the atomic vector types, a list, or a data frame. By default, S3 lists that do not inherit from `"list"` do not have an identity proxy. In that case, you need to explicitly implement `vec_proxy()` or make your class inherit from list.
 
-- [vec_c()] falls back to `base::c()` if all inputs have the same class for which a `c()` method is implemented but no self-to-self [vec_ptype2()] method is implemented.
+`vec_restore()` is called is called after manipulating vector proxies, to restore attributes that might have been lost in the process or that need to be updated when the contents of a vector have changed. If not implemented, all attributes are restored by default.
+
