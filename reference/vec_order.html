@@ -188,6 +188,24 @@
 <li><p><code>vec_sort()</code> a vector with the same size and type as <code>x</code>.</p></li>
 </ul>
 
+    <h2 class="hasAnchor" id="dependencies-of-vec-order-"><a class="anchor" href="#dependencies-of-vec-order-"></a>Dependencies of <code>vec_order()</code></h2>
+
+    
+
+<ul>
+<li><p><code><a href='vec_proxy_compare.html'>vec_proxy_compare()</a></code></p></li>
+</ul>
+
+    <h2 class="hasAnchor" id="dependencies-of-vec-sort-"><a class="anchor" href="#dependencies-of-vec-sort-"></a>Dependencies of <code>vec_sort()</code></h2>
+
+    
+
+<ul>
+<li><p><code><a href='vec_proxy_compare.html'>vec_proxy_compare()</a></code></p></li>
+<li><p><code>vec_order()</code></p></li>
+<li><p><code><a href='vec_slice.html'>vec_slice()</a></code></p></li>
+</ul>
+
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='no'>x</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/Round.html'>round</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fu'><a href='https://rdrr.io/r/stats/Uniform.html'>runif</a></span>(<span class='fl'>9</span>), <span class='fl'>NA</span>), <span class='fl'>3</span>)
