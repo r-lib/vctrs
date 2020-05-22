@@ -14,6 +14,13 @@ vec_init(x, n = 1L)
 \description{
 Initialize a vector
 }
+\section{Dependencies}{
+
+\itemize{
+\item vec_slice()
+}
+}
+
 \examples{
 vec_init(1:10, 3)
 vec_init(Sys.Date(), 5)

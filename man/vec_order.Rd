@@ -25,6 +25,22 @@ vec_sort(x, direction = c("asc", "desc"), na_value = c("largest", "smallest"))
 \description{
 Order and sort vectors
 }
+\section{Dependencies of \code{vec_order()}}{
+
+\itemize{
+\item \code{\link[=vec_proxy_compare]{vec_proxy_compare()}}
+}
+}
+
+\section{Dependencies of \code{vec_sort()}}{
+
+\itemize{
+\item \code{\link[=vec_proxy_compare]{vec_proxy_compare()}}
+\item \code{\link[=vec_order]{vec_order()}}
+\item \code{\link[=vec_slice]{vec_slice()}}
+}
+}
+
 \examples{
 x <- round(c(runif(9), NA), 3)
 vec_order(x)

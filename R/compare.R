@@ -108,6 +108,14 @@ vec_compare <- function(x, y, na_equal = FALSE, .ptype = NULL) {
 #' @return
 #' * `vec_order()` an integer vector the same size as `x`.
 #' * `vec_sort()` a vector with the same size and type as `x`.
+#'
+#' @section Dependencies of `vec_order()`:
+#' * [vec_proxy_compare()]
+#'
+#' @section Dependencies of `vec_sort()`:
+#' * [vec_proxy_compare()]
+#' * [vec_order()]
+#' * [vec_slice()]
 #' @export
 #' @examples
 #' x <- round(c(runif(9), NA), 3)

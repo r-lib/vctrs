@@ -75,6 +75,8 @@
 #'
 #' - [vec_cast_common()]
 #' - [vec_proxy()]
+#' - [vec_init()]
+#' - [vec_assign()]
 #' - [vec_restore()]
 #'
 #'
