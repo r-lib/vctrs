@@ -227,6 +227,8 @@ vec_index <- function(x, i, ...) {
 #' @param x Template of vector to initialize.
 #' @param n Desired size of result.
 #' @export
+#' @section Dependencies:
+#' * vec_slice()
 #' @examples
 #' vec_init(1:10, 3)
 #' vec_init(Sys.Date(), 5)
