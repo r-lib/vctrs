@@ -303,8 +303,9 @@ effective size for the total number of rows is 1.</p>
 <li><p><code><a href='https://rdrr.io/r/base/c.html'>base::c()</a></code></p></li>
 </ul>
 
-<p>If columns to combine have the same class, <code>vec_rbind()</code> falls back
-to <code><a href='https://rdrr.io/r/base/c.html'>base::c()</a></code> if there exists a <code><a href='https://rdrr.io/r/base/c.html'>c()</a></code> method for this class.</p>
+<p>If columns to combine inherit from a common class hierarchy,
+<code>vec_rbind()</code> falls back to <code><a href='https://rdrr.io/r/base/c.html'>base::c()</a></code> if there exists a <code><a href='https://rdrr.io/r/base/c.html'>c()</a></code>
+method implemented for this class hierarchy.</p>
 
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 

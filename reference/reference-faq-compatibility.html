@@ -67,10 +67,10 @@ if no vec_proxy() method is implemented. This
 way foreign classes that do not implement
 vec_restore() can restore attributes based on
 the new subsetted contents.
-vec_c() falls back to base::c() if all inputs have
-the same class for which a c() method is implemented but no
-self-to-self vec_ptype2() method is
-implemented.
+vec_c() and vec_rbind() now fall
+back to base::c() if the inputs have a common
+parent class with a c() method (only if they have no self-to-self
+vec_ptype2() method).
 vctrs works hard to make your c() method success in various
 situations (with NULL and NA inputs, even as first input which
 would normally prevent dispatch to your method). The main downside
@@ -120,10 +120,6 @@ the atomic vector types, a list, or a data frame. By default, S3 lists
 that do not inherit from &quot;list&quot; do not have an identity proxy. In that
 case, you need to explicitly implement vec_proxy() or make your class
 inherit from list.
-vec_restore() is called is called after manipulating vector proxies,
-to restore attributes that might have been lost in the process or that
-need to be updated when the contents of a vector have changed. If not
-implemented, all attributes are restored by default.
 
 
 " />
@@ -255,10 +251,10 @@ if no <code><a href='vec_proxy.html'>vec_proxy()</a></code> method is implemente
 way foreign classes that do not implement
 <code><a href='vec_proxy.html'>vec_restore()</a></code> can restore attributes based on
 the new subsetted contents.</p></li>
-<li><p><code><a href='vec_c.html'>vec_c()</a></code> falls back to <code><a href='https://rdrr.io/r/base/c.html'>base::c()</a></code> if all inputs have
-the same class for which a <code><a href='https://rdrr.io/r/base/c.html'>c()</a></code> method is implemented but no
-self-to-self <code><a href='vec_ptype2.html'>vec_ptype2()</a></code> method is
-implemented.</p>
+<li><p><code><a href='vec_c.html'>vec_c()</a></code> and <code><a href='vec_bind.html'>vec_rbind()</a></code> now fall
+back to <code><a href='https://rdrr.io/r/base/c.html'>base::c()</a></code> if the inputs have a common
+parent class with a <code><a href='https://rdrr.io/r/base/c.html'>c()</a></code> method (only if they have no self-to-self
+<code><a href='vec_ptype2.html'>vec_ptype2()</a></code> method).</p>
 <p>vctrs works hard to make your <code><a href='https://rdrr.io/r/base/c.html'>c()</a></code> method success in various
 situations (with <code>NULL</code> and <code>NA</code> inputs, even as first input which
 would normally prevent dispatch to your method). The main downside
@@ -308,10 +304,6 @@ the atomic vector types, a list, or a data frame. By default, S3 lists
 that do not inherit from <code>"list"</code> do not have an identity proxy. In that
 case, you need to explicitly implement <code><a href='vec_proxy.html'>vec_proxy()</a></code> or make your class
 inherit from list.</p>
-<p><code><a href='vec_proxy.html'>vec_restore()</a></code> is called is called after manipulating vector proxies,
-to restore attributes that might have been lost in the process or that
-need to be updated when the contents of a vector have changed. If not
-implemented, all attributes are restored by default.</p>
 
 
 

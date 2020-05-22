@@ -249,9 +249,10 @@ subclasses, see
 <h3>base dependencies</h3>
 
 
-<p>Some functions enable a <code>data.frame</code> fallback for
+<p>Some functions enable a base-class fallback for
 <code>vec_cast_common()</code>. In that case the inputs are deemed compatible
-when they are all data frames with compatible columns.</p>
+when they have the same <a href='https://rdrr.io/r/base/typeof.html'>base type</a> and inherit from
+the same base class.</p>
 
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
