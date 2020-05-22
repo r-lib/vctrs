@@ -13,6 +13,7 @@ reference:
   contents:
   - starts_with("howto-faq")
   - starts_with("theory-faq")
+  - starts_with("reference-faq")
 
 - title: Internal FAQ
   contents:
