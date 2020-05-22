@@ -12,6 +12,8 @@ All vctrs operations are based on four primitive generics described in the next 
 
 - [vec_c()] falls back to `base::c()` if all inputs have the same class for which a `c()` method is implemented but no self-to-self [vec_ptype2()] method is implemented.
 
+  vctrs works hard to make your `c()` method success in various situations (with `NULL` and `NA` inputs, even as first input which would normally prevent dispatch to your method). The main downside compared to using vctrs primitives is that you can't combine vectors of different classes since there is no extensible mechanism of coercion in `c()`, and it is less efficient in some cases.
+
 
 ## The vctrs primitives
 

@@ -30,6 +30,13 @@ the new subsetted contents.
 the same class for which a \code{c()} method is implemented but no
 self-to-self \code{\link[=vec_ptype2]{vec_ptype2()}} method is
 implemented.
+
+vctrs works hard to make your \code{c()} method success in various
+situations (with \code{NULL} and \code{NA} inputs, even as first input which
+would normally prevent dispatch to your method). The main downside
+compared to using vctrs primitives is that you can’t combine vectors
+of different classes since there is no extensible mechanism of
+coercion in \code{c()}, and it is less efficient in some cases.
 }
 }
 
