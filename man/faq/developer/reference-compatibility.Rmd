@@ -19,7 +19,9 @@ All vctrs operations are based on four primitive generics described in the next 
 
 Most functions in vctrs are aggregate operations: they call other vctrs functions which themselves call other vctrs functions. The dependencies of a vctrs functions are listed in the Dependencies section of its documentation page. Take a look at [vec_count()] for an example.
 
-These dependencies form a tree whose roots are the four vctrs primitives.
+These dependencies form a tree whose leaves are the four vctrs primitives. Here is the diagram for `vec_count()`:
+
+\\figure{vec-count-deps.svg}
 
 
 ### The coercion generics

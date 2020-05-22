@@ -48,8 +48,10 @@ of a vctrs functions are listed in the Dependencies section of its
 documentation page. Take a look at \code{\link[=vec_count]{vec_count()}} for
 an example.
 
-These dependencies form a tree whose roots are the four vctrs
-primitives.
+These dependencies form a tree whose leaves are the four vctrs
+primitives. Here is the diagram for \code{vec_count()}:
+
+\figure{vec-count-deps.svg}
 \subsection{The coercion generics}{
 
 The coercion mechanism in vctrs is based on two generics:
