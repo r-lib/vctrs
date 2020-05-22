@@ -129,6 +129,8 @@ For column-binding, the following invariants apply:
 \itemize{
 \item \code{\link[=vec_cast_common]{vec_cast_common()}}
 \item \code{\link[=vec_proxy]{vec_proxy()}}
+\item \code{\link[=vec_init]{vec_init()}}
+\item \code{\link[=vec_assign]{vec_assign()}}
 \item \code{\link[=vec_restore]{vec_restore()}}
 }
 }
