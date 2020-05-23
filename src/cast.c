@@ -153,8 +153,8 @@ static
 SEXP vec_cast_dispatch_s3(const struct cast_opts* opts) {
   SEXP x = opts->x;
   SEXP to = opts->to;
-  SEXP x_arg_obj = PROTECT(vctrs_arg(opts->x_arg));
-  SEXP to_arg_obj = PROTECT(vctrs_arg(opts->to_arg));
+  SEXP r_x_arg = PROTECT(vctrs_arg(opts->x_arg));
+  SEXP r_to_arg = PROTECT(vctrs_arg(opts->to_arg));
 
   SEXP method_sym = R_NilValue;
   SEXP method = s3_find_method_xy("vec_cast", to, x, vctrs_method_table, &method_sym);
@@ -183,7 +183,7 @@ SEXP vec_cast_dispatch_s3(const struct cast_opts* opts) {
   PROTECT(method);
 
   if (method == R_NilValue) {
-    SEXP out = vec_cast_default(x, to, x_arg_obj, to_arg_obj, &(opts->fallback));
+    SEXP out = vec_cast_default(x, to, r_x_arg, r_to_arg, &(opts->fallback));
     UNPROTECT(3);
     return out;
   }
@@ -191,8 +191,8 @@ SEXP vec_cast_dispatch_s3(const struct cast_opts* opts) {
   SEXP out = vec_invoke_coerce_method(method_sym, method,
                                       syms_x, x,
                                       syms_to, to,
-                                      syms_x_arg, x_arg_obj,
-                                      syms_to_arg, to_arg_obj,
+                                      syms_x_arg, r_x_arg,
+                                      syms_to_arg, r_to_arg,
                                       &(opts->fallback));
 
   UNPROTECT(3);

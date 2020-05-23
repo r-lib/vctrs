@@ -98,8 +98,8 @@ SEXP vec_ptype2_dispatch_s3(const struct ptype2_opts* opts) {
   SEXP x = PROTECT(vec_ptype(opts->x, opts->x_arg));
   SEXP y = PROTECT(vec_ptype(opts->y, opts->y_arg));
 
-  SEXP x_arg_obj = PROTECT(vctrs_arg(opts->x_arg));
-  SEXP y_arg_obj = PROTECT(vctrs_arg(opts->y_arg));
+  SEXP r_x_arg = PROTECT(vctrs_arg(opts->x_arg));
+  SEXP r_y_arg = PROTECT(vctrs_arg(opts->y_arg));
 
   SEXP method_sym = R_NilValue;
   SEXP method = s3_find_method_xy("vec_ptype2", x, y, vctrs_method_table, &method_sym);
@@ -128,7 +128,7 @@ SEXP vec_ptype2_dispatch_s3(const struct ptype2_opts* opts) {
   PROTECT(method);
 
   if (method == R_NilValue) {
-    SEXP out = vec_ptype2_default(x, y, x_arg_obj, y_arg_obj, &(opts->fallback));
+    SEXP out = vec_ptype2_default(x, y, r_x_arg, r_y_arg, &(opts->fallback));
     UNPROTECT(5);
     return out;
   }
@@ -136,8 +136,8 @@ SEXP vec_ptype2_dispatch_s3(const struct ptype2_opts* opts) {
   SEXP out = vec_invoke_coerce_method(method_sym, method,
                                       syms_x, x,
                                       syms_y, y,
-                                      syms_x_arg, x_arg_obj,
-                                      syms_y_arg, y_arg_obj,
+                                      syms_x_arg, r_x_arg,
+                                      syms_y_arg, r_y_arg,
                                       &(opts->fallback));
 
   UNPROTECT(5);
