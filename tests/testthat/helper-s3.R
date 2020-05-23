@@ -132,3 +132,25 @@ with_lgl_supertype <- function(expr) {
   local_lgl_supertype()
   expr
 }
+
+foobar_df_ptype2 <- function(x, y, ...) {
+  foobar(df_ptype2(x, y, ...))
+}
+foobar_df_cast <- function(x, y, ...) {
+  foobar(df_cast(x, y, ...))
+}
+local_foobar_df_methods <- function(expr, frame = caller_env()) {
+  local_methods(
+    .frame = frame,
+    vec_ptype2.vctrs_foobar.vctrs_foobar = foobar_df_ptype2,
+    vec_ptype2.data.frame.vctrs_foobar = foobar_df_ptype2,
+    vec_ptype2.vctrs_foobar.data.frame = foobar_df_ptype2,
+    vec_cast.vctrs_foobar.vctrs_foobar = foobar_df_cast,
+    vec_cast.data.frame.vctrs_foobar = foobar_df_cast,
+    vec_cast.vctrs_foobar.data.frame = foobar_df_cast
+  )
+}
+with_foobar_df_methods <- function(expr) {
+  local_foobar_df_methods()
+  expr
+}

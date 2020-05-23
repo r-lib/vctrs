@@ -188,11 +188,12 @@ SEXP vec_cast_dispatch_s3(const struct cast_opts* opts) {
     return out;
   }
 
-  SEXP out = vctrs_dispatch4(method_sym, method,
-                             syms_x, x,
-                             syms_to, to,
-                             syms_x_arg, x_arg_obj,
-                             syms_to_arg, to_arg_obj);
+  SEXP out = vec_invoke_coerce_method(method_sym, method,
+                                      syms_x, x,
+                                      syms_to, to,
+                                      syms_x_arg, x_arg_obj,
+                                      syms_to_arg, to_arg_obj,
+                                      &(opts->fallback));
 
   UNPROTECT(3);
   return out;

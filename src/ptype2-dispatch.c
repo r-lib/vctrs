@@ -134,20 +134,21 @@ SEXP vec_ptype2_dispatch_s3(const struct ptype2_opts* opts) {
   }
 
   SEXP out = vec_invoke_coerce_method(method_sym, method,
-                                      x, y,
-                                      x_arg_obj, y_arg_obj,
+                                      syms_x, x,
+                                      syms_y, y,
+                                      syms_x_arg, x_arg_obj,
+                                      syms_y_arg, y_arg_obj,
                                       &(opts->fallback));
 
   UNPROTECT(5);
   return out;
 }
 
-SEXP vec_invoke_coerce_method(SEXP method_sym,
-                              SEXP method,
-                              SEXP x,
-                              SEXP y,
-                              SEXP x_arg,
-                              SEXP y_arg,
+SEXP vec_invoke_coerce_method(SEXP method_sym, SEXP method,
+                              SEXP x_sym, SEXP x,
+                              SEXP y_sym, SEXP y,
+                              SEXP x_arg_sym, SEXP x_arg,
+                              SEXP y_arg_sym, SEXP y_arg,
                               const struct fallback_opts* opts) {
   if (opts->df != DF_FALLBACK_DEFAULT ||
       opts->s3 != S3_FALLBACK_DEFAULT) {
@@ -155,20 +156,20 @@ SEXP vec_invoke_coerce_method(SEXP method_sym,
     SEXP s3_fallback_obj = PROTECT(r_int(opts->s3));
 
     SEXP out = vctrs_dispatch6(method_sym, method,
-                               syms_x, x,
-                               syms_y, y,
-                               syms_x_arg, x_arg,
-                               syms_y_arg, y_arg,
+                               x_sym, x,
+                               y_sym, y,
+                               x_arg_sym, x_arg,
+                               y_arg_sym, y_arg,
                                syms_df_fallback, df_fallback_obj,
                                syms_s3_fallback, s3_fallback_obj);
     UNPROTECT(2);
     return out;
   } else {
     return vctrs_dispatch4(method_sym, method,
-                           syms_x, x,
-                           syms_y, y,
-                           syms_x_arg, x_arg,
-                           syms_y_arg, y_arg);
+                           x_sym, x,
+                           y_sym, y,
+                           x_arg_sym, x_arg,
+                           y_arg_sym, y_arg);
   }
 }
 

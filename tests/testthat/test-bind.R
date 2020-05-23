@@ -772,6 +772,44 @@ test_that("c() fallback works with unspecified columns", {
   ))
 })
 
+test_that("c() fallback works with vctrs-powered data frame subclass", {
+  local_methods(
+    c.vctrs_quux = function(...) quux(NextMethod(), c_dispatched = TRUE),
+    `[.vctrs_quux` = function(x, i, ...) quux(NextMethod(), bracket_dispatched = TRUE)
+  )
+  local_foobar_df_methods()
+
+  ### Joint case
+  df1 <- foobar(data_frame(x = quux(1:3)))
+  df2 <- data_frame(x = quux(4:5))
+
+  out <- vctrs::vec_rbind(df1, df2)
+  exp <- foobar(data_frame(x = quux(1:5, c_dispatched = TRUE)))
+  expect_identical(out, exp)
+
+  out <- vctrs::vec_rbind(df2, df1)
+  exp <- foobar(data_frame(x = quux(c(4:5, 1:3), c_dispatched = TRUE)))
+  expect_identical(out, exp)
+
+  ### Disjoint case
+  df1 <- foobar(data_frame(x = quux(1:3)))
+  df2 <- data.frame(y = 4:5)
+
+  out <- vctrs::vec_rbind(df1, df2)
+  exp <- foobar(data_frame(
+    x = quux(c(1:3, NA, NA), bracket_dispatched = TRUE),
+    y = c(rep(NA, 3), 4:5)
+  ))
+  expect_identical(out, exp)
+
+  out <- vctrs::vec_rbind(df2, df1)
+  exp <- foobar(data_frame(
+    y = c(4:5, rep(NA, 3)),
+    x = quux(c(NA, NA, 1:3), bracket_dispatched = TRUE)
+  ))
+  expect_identical(out, exp)
+})
+
 test_that("vec_rbind() falls back to c() if S3 method is available for S4 class", {
   joe <- data_frame(x = .Counts(c(1L, 2L), name = "Joe"))
   jane <- data_frame(x = .Counts(3L, name = "Jane"))
