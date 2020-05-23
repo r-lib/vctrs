@@ -84,21 +84,21 @@ vec_cast_common <- function(..., .to = NULL) {
 }
 vec_cast_common_opts <- function(...,
                                  .to = NULL,
-                                 .opts = ptype2_opts()) {
+                                 .opts = fallback_opts()) {
   .External2(vctrs_cast_common_opts, .to, .opts)
 }
 vec_cast_common_params <- function(...,
                                    .to = NULL,
                                    .df_fallback = NULL,
                                    .s3_fallback = NULL) {
-  opts <- ptype2_opts(
+  opts <- fallback_opts(
     df_fallback = .df_fallback,
     s3_fallback = .s3_fallback
   )
   vec_cast_common_opts(..., .to = .to, .opts = opts)
 }
 vec_cast_common_fallback <- function(..., .to = NULL) {
-  vec_cast_common_opts(..., .to = .to, .opts = fallback_ptype2_opts())
+  vec_cast_common_opts(..., .to = .to, .opts = full_fallback_opts())
 }
 
 #' @rdname vec_default_ptype2
@@ -116,7 +116,7 @@ vec_default_cast <- function(x, to, ..., x_arg = "", to_arg = "") {
     return(vctr_cast(x, to, x_arg = x_arg, to_arg = to_arg))
   }
 
-  opts <- match_ptype2_opts(...)
+  opts <- match_fallback_opts(...)
 
   if (opts$s3_fallback && is_common_class_fallback(to) && length(common_class_suffix(x, to))) {
     return(x)

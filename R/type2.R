@@ -71,7 +71,7 @@ vec_default_ptype2 <- function(x, y, ..., x_arg = "", y_arg = "") {
     return(vec_ptype2_asis_right(x, y, x_arg = x_arg, y_arg = y_arg))
   }
 
-  opts <- match_ptype2_opts(...)
+  opts <- match_fallback_opts(...)
 
   # If both data frames, first find common type of columns before the
   # same-type fallback
@@ -148,10 +148,10 @@ check_ptype2_dots_empty <- function(...,
                                     `vctrs:::s3_fallback`) {
   ellipsis::check_dots_empty()
 }
-match_ptype2_opts <- function(...,
-                              `vctrs:::df_fallback` = NULL,
-                              `vctrs:::s3_fallback` = NULL) {
-  ptype2_opts(
+match_fallback_opts <- function(...,
+                                `vctrs:::df_fallback` = NULL,
+                                `vctrs:::s3_fallback` = NULL) {
+  fallback_opts(
     df_fallback = `vctrs:::df_fallback`,
     s3_fallback = `vctrs:::s3_fallback`
   )
@@ -160,8 +160,8 @@ match_from_dispatch <- function(..., `vctrs:::from_dispatch` = FALSE) {
   `vctrs:::from_dispatch`
 }
 
-ptype2_opts <- function(df_fallback = NULL,
-                        s3_fallback = NULL) {
+fallback_opts <- function(df_fallback = NULL,
+                          s3_fallback = NULL) {
   # Order is important for the C side
   list(
     df_fallback = df_fallback %||% df_fallback_default(),
@@ -169,8 +169,8 @@ ptype2_opts <- function(df_fallback = NULL,
   )
 }
 
-fallback_ptype2_opts <- function() {
-  ptype2_opts(
+full_fallback_opts <- function() {
+  fallback_opts(
     df_fallback = DF_FALLBACK_quiet,
     s3_fallback = S3_FALLBACK_true
   )
@@ -191,7 +191,7 @@ vec_ptype2_params <- function(x,
                               s3_fallback = NULL,
                               x_arg = "",
                               y_arg = "") {
-  opts <- ptype2_opts(
+  opts <- fallback_opts(
     df_fallback = df_fallback,
     s3_fallback = s3_fallback
   )
@@ -199,7 +199,7 @@ vec_ptype2_params <- function(x,
 }
 
 vec_ptype2_no_fallback <- function(x, y, ..., x_arg = "", y_arg = "") {
-  opts <- ptype2_opts(
+  opts <- fallback_opts(
     df_fallback = DF_FALLBACK_none,
     s3_fallback = S3_FALLBACK_false
   )
@@ -248,7 +248,7 @@ vec_typeof2_s3 <- function(x, y) {
 vec_is_coercible <- function(x,
                              y,
                              ...,
-                             opts = ptype2_opts(),
+                             opts = fallback_opts(),
                              x_arg = "",
                              y_arg = "") {
   if (!missing(...)) {

@@ -104,21 +104,21 @@ vec_ptype_common <- function(..., .ptype = NULL) {
 }
 vec_ptype_common_opts <- function(...,
                                   .ptype = NULL,
-                                  .opts = ptype2_opts()) {
+                                  .opts = fallback_opts()) {
   .External2(vctrs_ptype_common_opts, .ptype, .opts)
 }
 vec_ptype_common_params <- function(...,
                                     .ptype = NULL,
                                     .df_fallback = NULL,
                                     .s3_fallback = NULL) {
-  opts <- ptype2_opts(
+  opts <- fallback_opts(
     df_fallback = .df_fallback,
     s3_fallback = .s3_fallback
   )
   vec_ptype_common_opts(..., .ptype = .ptype, .opts = opts)
 }
 vec_ptype_common_fallback <- function(..., .ptype = NULL) {
-  vec_ptype_common_opts(..., .ptype = .ptype, .opts = fallback_ptype2_opts())
+  vec_ptype_common_opts(..., .ptype = .ptype, .opts = full_fallback_opts())
 }
 
 #' @export

@@ -230,11 +230,11 @@ struct ptype2_opts new_ptype2_opts(SEXP x,
   };
 }
 
-static SEXP r_ptype2_opts_template = NULL;
+static SEXP r_fallback_opts_template = NULL;
 
 // [[ include("ptype2.h") ]]
-SEXP new_ptype2_r_opts(const struct ptype2_opts* opts) {
-  SEXP r_opts = PROTECT(r_copy(r_ptype2_opts_template));
+SEXP new_fallback_r_opts(const struct ptype2_opts* opts) {
+  SEXP r_opts = PROTECT(r_copy(r_fallback_opts_template));
 
   r_int_poke(r_list_get(r_opts, 0), 0, opts->fallback.df);
   r_int_poke(r_list_get(r_opts, 1), 0, opts->fallback.s3);
@@ -245,6 +245,6 @@ SEXP new_ptype2_r_opts(const struct ptype2_opts* opts) {
 
 
 void vctrs_init_ptype2(SEXP ns) {
-  r_ptype2_opts_template = r_parse_eval("ptype2_opts()", ns);
-  R_PreserveObject(r_ptype2_opts_template);
+  r_fallback_opts_template = r_parse_eval("fallback_opts()", ns);
+  R_PreserveObject(r_fallback_opts_template);
 }
