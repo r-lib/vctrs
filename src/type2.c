@@ -120,7 +120,7 @@ SEXP vec_ptype2_switch_native(const struct ptype2_opts* opts,
  *
  * This is normally the `vec_ptype()` of the other input, but if the
  * common class fallback is enabled we return the `vec_ptype2()` of
- * this input. This way we may return a fallback sentinel which can be
+ * this input with itself. This way we may return a fallback sentinel which can be
  * treated specially, for instance in `vec_c(NA, x, NA)`.
  */
 SEXP vec_ptype2_from_unspecified(const struct ptype2_opts* opts,
