@@ -17,10 +17,6 @@ vec_restore.grouped_df <- function(x, to, ...) {
 
 # `vec_ptype2()` -----------------------------------------------------
 
-vec_ptype2.grouped_df <- function(x, y, ...) {
-  UseMethod("vec_ptype2.grouped_df", y)
-}
-
 vec_ptype2.grouped_df.grouped_df <- function(x, y, ...) {
   gdf_ptype2(x, y, ...)
 }
@@ -53,10 +49,6 @@ gdf_ptype2 <- function(x, y, ...) {
 
 
 # `vec_cast()` -------------------------------------------------------
-
-vec_cast.grouped_df <- function(x, to, ...) {
-  UseMethod("vec_cast.grouped_df")
-}
 
 vec_cast.grouped_df.grouped_df <- function(x, to, ...) {
   gdf_cast(x, to, ...)
@@ -95,10 +87,6 @@ vec_restore.rowwise_df <- function(x, to, ...) {
 
 # `vec_ptype2()` -----------------------------------------------------
 
-vec_ptype2.rowwise_df <- function(x, y, ...) {
-  UseMethod("vec_ptype2.rowwise_df", y)
-}
-
 vec_ptype2.rowwise_df.rowwise_df <- function(x, y, ...) {
   rww_ptype2(x, y, ...)
 }
@@ -123,10 +111,6 @@ rww_ptype2 <- function(x, y, ...) {
 
 
 # `vec_cast()` -------------------------------------------------------
-
-vec_cast.rowwise_df <- function(x, to, ...) {
-  UseMethod("vec_cast.rowwise_df")
-}
 
 vec_cast.rowwise_df.rowwise_df <- function(x, to, ...) {
   rww_cast(x, to, ...)

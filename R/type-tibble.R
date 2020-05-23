@@ -27,29 +27,23 @@ df_as_tibble <- function(df) {
 }
 
 # Conditionally registered in .onLoad()
-vec_ptype2.tbl_df <- function(x, y, ...) {
-  UseMethod("vec_ptype2.tbl_df")
-}
 
+vec_ptype2.tbl_df.tbl_df <- function(x, y, ...) {
+  stop_native_implementation("vec_ptype2.tbl_df.tbl_df")
+}
 vec_ptype2.tbl_df.data.frame <- function(x, y, ...) {
-  tib_ptype2(x, y, ...)
+  stop_native_implementation("vec_ptype2.tbl_df.data.frame")
 }
 vec_ptype2.data.frame.tbl_df <- function(x, y, ...) {
-  tib_ptype2(x, y, ...)
+  stop_native_implementation("vec_ptype2.data.frame.tbl_df")
 }
 
-
-# Conditionally registered in .onLoad()
-vec_cast.tbl_df <- function(x, to, ..., x_arg = "", to_arg = "") {
-  UseMethod("vec_cast.tbl_df")
+vec_cast.tbl_df.tbl_df <- function(x, to, ...) {
+  stop_native_implementation("vec_ptype2.tbl_df.tbl_df")
 }
-vec_cast.tbl_df.tbl_df <- function(x, to, ..., x_arg = "", to_arg = "") {
-  tib_cast(x, to, x_arg = x_arg, to_arg = to_arg)
+vec_cast.data.frame.tbl_df <- function(x, to, ...) {
+  stop_native_implementation("vec_cast.data.frame.tbl_df")
 }
-
-vec_cast.data.frame.tbl_df <- function(x, to, ..., x_arg = "", to_arg = "") {
-  tib_cast(x, to, x_arg = x_arg, to_arg = to_arg)
-}
-vec_cast.tbl_df.data.frame <- function(x, to, ..., x_arg = "", to_arg = "") {
-  df_cast(x, to, x_arg = x_arg, to_arg = to_arg)
+vec_cast.tbl_df.data.frame <- function(x, to, ...) {
+  stop_native_implementation("vec_cast.tbl_df.data.frame")
 }
