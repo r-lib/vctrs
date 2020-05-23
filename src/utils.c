@@ -1620,6 +1620,19 @@ void c_print_backtrace() {
 #endif
 }
 
+void r_browse(SEXP x) {
+  r_env_poke(R_GlobalEnv, Rf_install(".debug"), x);
+
+  Rprintf("Object saved in `.debug`:\n");
+  Rf_PrintValue(x);
+
+  // `browser()` can't be trailing due to ESS limitations
+  SEXP call = PROTECT(r_parse("{ base::browser(); NULL }"));
+  Rf_eval(call, R_GlobalEnv);
+
+  UNPROTECT(1);
+}
+
 void vctrs_init_utils(SEXP ns) {
   vctrs_ns_env = ns;
 

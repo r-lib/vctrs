@@ -137,6 +137,11 @@ bool vec_implements_ptype2(SEXP x);
 
 SEXP r_env_get(SEXP env, SEXP sym);
 
+static inline
+void r_env_poke(SEXP env, SEXP sym, SEXP value) {
+  Rf_defineVar(sym, value, env);
+}
+
 extern SEXP syms_s3_methods_table;
 static inline SEXP s3_get_table(SEXP env) {
   return r_env_get(env, syms_s3_methods_table);
@@ -436,6 +441,7 @@ static inline const void* vec_type_missing_value(enum vctrs_type type) {
 }
 
 void c_print_backtrace();
+void r_browse(SEXP x);
 
 
 extern SEXP vctrs_ns_env;

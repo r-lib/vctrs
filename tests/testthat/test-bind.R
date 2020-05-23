@@ -757,7 +757,19 @@ test_that("vec_rbind() falls back to c() if S3 method is available", {
 })
 
 test_that("c() fallback works with unspecified columns", {
-  skip("FIXME: c() fallback with unspecified columns")
+  local_methods(
+    c.vctrs_foobar = function(...) foobar(NextMethod()),
+    `[.vctrs_foobar` = function(x, i, ...) foobar(NextMethod(), dispatched = TRUE)
+  )
+
+  out <- vec_rbind(
+    data_frame(x = foobar(1)),
+    data_frame(y = foobar(2))
+  )
+  expect_identical(out, data_frame(
+    x = foobar(c(1, NA), dispatched = TRUE),
+    y = foobar(c(NA, 2), dispatched = TRUE)
+  ))
 })
 
 test_that("vec_rbind() falls back to c() if S3 method is available for S4 class", {

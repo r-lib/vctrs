@@ -97,6 +97,9 @@ vec_cast_common_params <- function(...,
   )
   vec_cast_common_opts(..., .to = .to, .opts = opts)
 }
+vec_cast_common_fallback <- function(..., .to = NULL) {
+  vec_cast_common_opts(..., .to = .to, .opts = fallback_ptype2_opts())
+}
 
 #' @rdname vec_default_ptype2
 #' @inheritParams vec_cast
