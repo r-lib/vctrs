@@ -1,6 +1,9 @@
 
 # vctrs (development version)
 
+* The `as.list()` method for `vctrs_rcrd` objects has been removed in favor
+  of directly using the method for `vctrs_vctr`, which calls `vec_chop()`.
+
 * `vec_c()` and `vec_rbind()` now fall back to `base::c()` if the
   inputs have a common class hierarchy for which a `c()` method is
   implemented but no self-to-self `vec_ptype2()` method is

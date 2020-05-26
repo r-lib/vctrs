@@ -195,6 +195,16 @@ test_that("cannot round trip through list", {
   expect_error(vec_cast(t, list()), class = "vctrs_error_incompatible_type")
 })
 
+test_that("can convert to list using as.list() or vec_chop() (#1113)", {
+  local_tuple_methods()
+  t <- tuple(1:2, 3:4)
+
+  expect <- list(tuple(1L, 3L), tuple(2L, 4L))
+
+  expect_identical(as.list(t), expect)
+  expect_identical(vec_chop(t), expect)
+})
+
 test_that("dangerous methods marked as unimplemented", {
   local_tuple_methods()
   t <- tuple()

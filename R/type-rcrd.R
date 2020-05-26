@@ -136,11 +136,6 @@ rep.vctrs_rcrd <- function(x, ...) {
   vec_restore(out, x)
 }
 
-#' @export
-as.list.vctrs_rcrd <- function(x, ...) {
-  vec_cast(x, list())
-}
-
 # Replacement -------------------------------------------------------------
 
 #' @export
