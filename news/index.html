@@ -158,6 +158,7 @@
 <a href="#vctrs-development-version" class="anchor"></a>vctrs (development version)<small> Unreleased </small>
 </h1>
 <ul>
+<li><p>The <code><a href="https://rdrr.io/r/base/list.html">as.list()</a></code> method for <code>vctrs_rcrd</code> objects has been removed in favor of directly using the method for <code>vctrs_vctr</code>, which calls <code><a href="../reference/vec_chop.html">vec_chop()</a></code>.</p></li>
 <li><p><code><a href="../reference/vec_c.html">vec_c()</a></code> and <code><a href="../reference/vec_bind.html">vec_rbind()</a></code> now fall back to <code><a href="https://rdrr.io/r/base/c.html">base::c()</a></code> if the inputs have a common class hierarchy for which a <code><a href="https://rdrr.io/r/base/c.html">c()</a></code> method is implemented but no self-to-self <code><a href="../reference/vec_ptype2.html">vec_ptype2()</a></code> method is implemented.</p></li>
 <li><p><code><a href="../reference/vec_bind.html">vec_rbind()</a></code> now internally calls <code><a href="../reference/vec_proxy.html">vec_proxy()</a></code> and <code><a href="../reference/vec_proxy.html">vec_restore()</a></code> on the data frame common type that is used to create the output (<a href='https://github.com/r-lib/vctrs/issues/1109'>#1109</a>).</p></li>
 <li><p><code>?reference-faq-compatibility</code> is a new reference guide on vctrs primitives. It includes an overview of the fallbacks to base R generics implemented in vctrs for compatibility with existing classes.</p></li>
