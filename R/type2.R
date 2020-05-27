@@ -81,12 +81,10 @@ vec_default_ptype2 <- function(x, y, ..., x_arg = "", y_arg = "") {
     y <- out$y
   }
 
-  if (!is.data.frame(x) && identical(typeof(x), typeof(y))) {
-    if (opts$s3_fallback) {
-      common <- common_class_suffix(x, y)
-      if (length(common)) {
-        return(new_common_class_fallback(x, common))
-      }
+  if (opts$s3_fallback && can_fall_back(x, y)) {
+    common <- common_class_suffix(x, y)
+    if (length(common)) {
+      return(new_common_class_fallback(x, common))
     }
   }
 
@@ -114,6 +112,29 @@ vec_default_ptype2 <- function(x, y, ..., x_arg = "", y_arg = "") {
     y_arg = y_arg,
     `vctrs:::from_dispatch` = match_from_dispatch(...)
   )
+}
+
+# We can't check for a proxy or ptype2 method to determine whether a
+# class is foreign, because we implement these generics for many base
+# classes and we still need to allow base fallbacks with subclasses.
+can_fall_back <- function(x, y) {
+  if (is.data.frame(x) || is.data.frame(y)) {
+    return(FALSE)
+  }
+
+  if (!identical(typeof(x), typeof(y))) {
+    return(FALSE)
+  }
+
+  # Suboptimal: Prevent bad interaction with proxy-assign
+  has_no_proxy(x) && has_no_proxy(y)
+}
+has_no_proxy <- function(x) {
+  proxy <- vec_proxy(x)
+
+  # Don't compare data for performance
+  identical(typeof(x), typeof(proxy)) &&
+    identical(attributes(x), attributes(proxy))
 }
 
 new_common_class_fallback <- function(x, fallback_class) {

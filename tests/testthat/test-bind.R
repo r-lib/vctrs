@@ -871,3 +871,23 @@ test_that("rbind supports names and inner names (#689)", {
   expect_identical(names(nested_out$vec), c("a", "b", "c", "FOO"))
   expect_identical(names(nested_out$oo), c("a", "b", "c", "FOO"))
 })
+
+test_that("vec_rbind() doesn't fall back to c() with proxied classes (#1119)", {
+  foobar_rcrd <- function(x, y) new_rcrd(list(x = x, y = y), class = "vctrs_foobar")
+
+  x <- foobar_rcrd(x = 1:2, y = 3:4)
+  y <- foobar_rcrd(x = 5L, y = 6L)
+
+  out <- vec_rbind(x, x)
+  exp <- data_frame(
+    ...1 = foobar_rcrd(x = c(1L, 1L), y = c(3L, 3L)),
+    ...2 = foobar_rcrd(x = c(2L, 2L), y = c(4L, 4L))
+  )
+  expect_identical(out, exp)
+
+  out <- vec_rbind(data_frame(x = x), data_frame(x = x))
+  exp <- data_frame(
+    x = foobar_rcrd(x = c(1L, 2L, 1L, 2L), y = c(3L, 4L, 3L, 4L))
+  )
+  expect_identical(out, exp)
+})
