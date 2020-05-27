@@ -207,11 +207,6 @@ bool needs_vec_c_homogeneous_fallback(SEXP xs, SEXP ptype) {
     return false;
   }
 
-  // Temporary compatibility with `sf` implementations
-  if (Rf_inherits(x, "sfc")) {
-    return false;
-  }
-
   if (ptype != R_NilValue) {
     SEXP x_class = PROTECT(r_class(x));
     SEXP ptype_class = PROTECT(r_class(ptype));
