@@ -114,7 +114,6 @@ static SEXP vec_restore_dispatch(SEXP x, SEXP to, SEXP n) {
 }
 
 static SEXP vec_bare_df_restore_impl(SEXP x, SEXP to, R_len_t size) {
-  x = PROTECT(r_clone_referenced(x));
   x = PROTECT(vec_restore_default(x, to));
 
   if (Rf_getAttrib(x, R_NamesSymbol) == R_NilValue) {
@@ -126,7 +125,7 @@ static SEXP vec_bare_df_restore_impl(SEXP x, SEXP to, R_len_t size) {
     init_compact_rownames(x, size);
   }
 
-  UNPROTECT(3);
+  UNPROTECT(2);
   return x;
 }
 
