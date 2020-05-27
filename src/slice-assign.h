@@ -1,11 +1,7 @@
 #ifndef VCTRS_SLICE_ASSIGN_H
 #define VCTRS_SLICE_ASSIGN_H
 
-// Ownership is recursive
-enum vctrs_ownership {
-  vctrs_ownership_shared,
-  vctrs_ownership_total
-};
+#include "ownership.h"
 
 struct vec_assign_opts {
   bool assign_names;

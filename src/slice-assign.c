@@ -1,6 +1,7 @@
 #include "vctrs.h"
 #include "slice-assign.h"
 #include "subscript-loc.h"
+#include "ownership.h"
 #include "utils.h"
 #include "dim.h"
 
@@ -11,8 +12,6 @@ SEXP fns_vec_assign_fallback = NULL;
 const struct vec_assign_opts vec_assign_default_opts = {
   .assign_names = false
 };
-
-static const enum vctrs_ownership proxy_ownership(SEXP x);
 
 static SEXP vec_assign_fallback(SEXP x, SEXP index, SEXP value);
 static SEXP vec_proxy_assign_names(SEXP proxy, SEXP index, SEXP value);
@@ -407,10 +406,6 @@ static SEXP vec_assign_fallback(SEXP x, SEXP index, SEXP value) {
                          syms_x, x,
                          syms_i, index,
                          syms_value, value);
-}
-
-static const enum vctrs_ownership proxy_ownership(SEXP proxy) {
-  return NO_REFERENCES(proxy) ? vctrs_ownership_total : vctrs_ownership_shared;
 }
 
 static

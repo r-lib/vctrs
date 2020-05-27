@@ -2,6 +2,7 @@
 #include "c.h"
 #include "slice.h"
 #include "slice-assign.h"
+#include "ownership.h"
 #include "subscript-loc.h"
 #include "ptype-common.h"
 #include "type-data-frame.h"

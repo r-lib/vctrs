@@ -2,6 +2,7 @@
 #include "utils.h"
 #include "strides.h"
 #include "slice-assign.h"
+#include "ownership.h"
 
 #define ASSIGN_SHAPED_INDEX(CTYPE, DEREF, CONST_DEREF)   \
   SEXP out;                                              \

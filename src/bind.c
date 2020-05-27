@@ -3,6 +3,7 @@
 #include "dim.h"
 #include "ptype-common.h"
 #include "slice-assign.h"
+#include "ownership.h"
 #include "type-data-frame.h"
 #include "utils.h"
 
