@@ -47,7 +47,7 @@ SEXP vec_assign_opts(SEXP x, SEXP index, SEXP value,
   const enum vctrs_ownership ownership = vec_ownership(proxy);
   proxy = PROTECT(vec_proxy_assign_opts(proxy, index, value, ownership, opts));
 
-  SEXP out = vec_restore(proxy, x, R_NilValue);
+  SEXP out = vec_restore(proxy, x, R_NilValue, ownership);
 
   UNPROTECT(6);
   return out;
@@ -391,7 +391,7 @@ SEXP df_assign(SEXP x, SEXP index, SEXP value,
     SEXP proxy_elt = PROTECT(vec_proxy(out_elt));
 
     SEXP assigned = PROTECT(vec_proxy_assign_opts(proxy_elt, index, value_elt, ownership, opts));
-    assigned = vec_restore(assigned, out_elt, R_NilValue);
+    assigned = vec_restore(assigned, out_elt, R_NilValue, ownership);
 
     SET_VECTOR_ELT(out, i, assigned);
     UNPROTECT(2);
@@ -453,7 +453,7 @@ SEXP vctrs_assign_seq(SEXP x, SEXP value, SEXP start, SEXP size, SEXP increasing
   const enum vctrs_ownership ownership = vec_ownership(proxy);
   proxy = PROTECT(vec_proxy_assign_opts(proxy, index, value, ownership, opts));
 
-  SEXP out = vec_restore(proxy, x, R_NilValue);
+  SEXP out = vec_restore(proxy, x, R_NilValue, ownership);
 
   UNPROTECT(5);
   return out;

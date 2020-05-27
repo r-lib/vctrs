@@ -349,6 +349,7 @@ bool vec_is_unspecified(SEXP x);
 
 #include "arg.h"
 #include "names.h"
+#include "ownership.h"
 
 enum vctrs_proxy_kind {
   vctrs_proxy_default,
@@ -359,8 +360,8 @@ enum vctrs_proxy_kind {
 SEXP vec_proxy(SEXP x);
 SEXP vec_proxy_equal(SEXP x);
 SEXP vec_proxy_recursive(SEXP x, enum vctrs_proxy_kind kind);
-SEXP vec_restore(SEXP x, SEXP to, SEXP i);
-SEXP vec_restore_default(SEXP x, SEXP to);
+SEXP vec_restore(SEXP x, SEXP to, SEXP i, const enum vctrs_ownership ownership);
+SEXP vec_restore_default(SEXP x, SEXP to, const enum vctrs_ownership ownership);
 R_len_t vec_size(SEXP x);
 R_len_t vec_size_common(SEXP xs, R_len_t absent);
 SEXP vec_cast_common(SEXP xs, SEXP to);
@@ -409,8 +410,8 @@ R_len_t df_size(SEXP x);
 R_len_t df_rownames_size(SEXP x);
 R_len_t df_raw_size(SEXP x);
 R_len_t df_raw_size_from_list(SEXP x);
-SEXP vec_bare_df_restore(SEXP x, SEXP to, SEXP n);
-SEXP vec_df_restore(SEXP x, SEXP to, SEXP n);
+SEXP vec_bare_df_restore(SEXP x, SEXP to, SEXP n, const enum vctrs_ownership ownership);
+SEXP vec_df_restore(SEXP x, SEXP to, SEXP n, const enum vctrs_ownership ownership);
 
 // equal_object() never propagates missingness, so
 // it can return a `bool`
@@ -549,9 +550,9 @@ SEXP posixlt_as_posixct(SEXP x, SEXP to);
 SEXP posixct_as_posixlt(SEXP x, SEXP to);
 SEXP posixlt_as_posixlt(SEXP x, SEXP to);
 
-SEXP vec_date_restore(SEXP x, SEXP to);
-SEXP vec_posixct_restore(SEXP x, SEXP to);
-SEXP vec_posixlt_restore(SEXP x, SEXP to);
+SEXP vec_date_restore(SEXP x, SEXP to, const enum vctrs_ownership ownership);
+SEXP vec_posixct_restore(SEXP x, SEXP to, const enum vctrs_ownership ownership);
+SEXP vec_posixlt_restore(SEXP x, SEXP to, const enum vctrs_ownership ownership);
 
 SEXP date_datetime_ptype2(SEXP x, SEXP y);
 SEXP datetime_datetime_ptype2(SEXP x, SEXP y);
