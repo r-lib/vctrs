@@ -113,7 +113,7 @@ static SEXP vec_restore_dispatch(SEXP x, SEXP to, SEXP n) {
                          syms_n, n);
 }
 
-static SEXP bare_df_restore_impl(SEXP x, SEXP to, R_len_t size) {
+static SEXP vec_bare_df_restore_impl(SEXP x, SEXP to, R_len_t size) {
   x = PROTECT(r_clone_referenced(x));
   x = PROTECT(vec_restore_default(x, to));
 
@@ -138,7 +138,7 @@ SEXP vec_bare_df_restore(SEXP x, SEXP to, SEXP n) {
   }
 
   R_len_t size = (n == R_NilValue) ? df_raw_size(x) : r_int_get(n, 0);
-  return bare_df_restore_impl(x, to, size);
+  return vec_bare_df_restore_impl(x, to, size);
 }
 
 // Restore methods are passed the original atomic type back, so we
