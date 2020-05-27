@@ -44,7 +44,7 @@ SEXP vec_assign_opts(SEXP x, SEXP index, SEXP value,
   value = PROTECT(vec_recycle(value, vec_size(index), opts->value_arg));
 
   SEXP proxy = PROTECT(vec_proxy(x));
-  const enum vctrs_ownership ownership = proxy_ownership(proxy);
+  const enum vctrs_ownership ownership = vec_ownership(proxy);
   proxy = PROTECT(vec_proxy_assign_opts(proxy, index, value, ownership, opts));
 
   SEXP out = vec_restore(proxy, x, R_NilValue);
@@ -137,7 +137,7 @@ static SEXP vec_assign_switch(SEXP proxy, SEXP index, SEXP value,
  */
 SEXP vec_proxy_assign(SEXP proxy, SEXP index, SEXP value) {
   return vec_proxy_assign_opts(proxy, index, value,
-                               proxy_ownership(proxy),
+                               vec_ownership(proxy),
                                &vec_assign_default_opts);
 }
 SEXP vec_proxy_assign_opts(SEXP proxy, SEXP index, SEXP value,
@@ -450,7 +450,7 @@ SEXP vctrs_assign_seq(SEXP x, SEXP value, SEXP start, SEXP size, SEXP increasing
   value = PROTECT(vec_recycle(value, vec_subscript_size(index), opts->value_arg));
 
   SEXP proxy = PROTECT(vec_proxy(x));
-  const enum vctrs_ownership ownership = proxy_ownership(proxy);
+  const enum vctrs_ownership ownership = vec_ownership(proxy);
   proxy = PROTECT(vec_proxy_assign_opts(proxy, index, value, ownership, opts));
 
   SEXP out = vec_restore(proxy, x, R_NilValue);
