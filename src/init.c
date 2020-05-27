@@ -128,14 +128,10 @@ extern SEXP short_vec_recycle(SEXP, R_len_t);
 // Experimental
 // Exported but not available in the public header
 extern SEXP exp_vec_cast(SEXP, SEXP);
-extern SEXP exp_vec_restore(SEXP, SEXP);
-extern SEXP exp_vec_proxy(SEXP);
 extern SEXP exp_vec_chop(SEXP, SEXP);
-extern SEXP exp_vec_proxy_assign(SEXP, SEXP, SEXP);
 extern SEXP exp_vec_slice_impl(SEXP, SEXP);
 extern SEXP exp_vec_names(SEXP);
 extern SEXP exp_vec_set_names(SEXP, SEXP);
-extern SEXP exp_short_vec_init(SEXP, R_len_t);
 extern SEXP exp_short_compact_seq(R_len_t, R_len_t, bool);
 extern SEXP exp_short_init_compact_seq(int*, R_len_t, R_len_t, bool);
 
@@ -297,14 +293,10 @@ export void R_init_vctrs(DllInfo *dll)
     // Experimental
     // Exported but not available in the public header
     R_RegisterCCallable("vctrs", "exp_vec_cast",                (DL_FUNC) &exp_vec_cast);
-    R_RegisterCCallable("vctrs", "exp_vec_restore",             (DL_FUNC) &exp_vec_restore);
-    R_RegisterCCallable("vctrs", "exp_vec_proxy",               (DL_FUNC) &exp_vec_proxy);
     R_RegisterCCallable("vctrs", "exp_vec_chop",                (DL_FUNC) &exp_vec_chop);
-    R_RegisterCCallable("vctrs", "exp_vec_proxy_assign",        (DL_FUNC) &exp_vec_proxy_assign);
     R_RegisterCCallable("vctrs", "exp_vec_slice_impl",          (DL_FUNC) &exp_vec_slice_impl);
     R_RegisterCCallable("vctrs", "exp_vec_names",               (DL_FUNC) &exp_vec_names);
     R_RegisterCCallable("vctrs", "exp_vec_set_names",           (DL_FUNC) &exp_vec_set_names);
-    R_RegisterCCallable("vctrs", "exp_short_vec_init",          (DL_FUNC) &exp_short_vec_init);
     R_RegisterCCallable("vctrs", "exp_short_compact_seq",       (DL_FUNC) &exp_short_compact_seq);
     R_RegisterCCallable("vctrs", "exp_short_init_compact_seq",  (DL_FUNC) &exp_short_init_compact_seq);
 
