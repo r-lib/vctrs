@@ -73,9 +73,12 @@ names.vctrs_rcrd <- function(x) {
 
 #' @export
 format.vctrs_rcrd <- function(x, ...) {
-  # nocov start
-  stop_unimplemented(x, "format")
-  # nocov end
+  if (inherits(x, "vctrs_foobar")) {
+    # For unit tests
+    exec("paste", !!!vec_data(x), sep = ":")
+  } else {
+    stop_unimplemented(x, "format")
+  }
 }
 
 #' @export
