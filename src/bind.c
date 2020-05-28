@@ -229,6 +229,7 @@ static SEXP vec_rbind(SEXP xs,
 
   if (has_names_to) {
     out = df_poke(out, names_to_loc, names_to_col);
+    REPROTECT(out, out_pi);
   }
 
   // Not optimal. Happens after the fallback columns have been
@@ -246,11 +247,10 @@ static SEXP vec_rbind(SEXP xs,
     }
   }
 
-  out = vec_restore(out, ptype, r_int(n_rows));
-  REPROTECT(out, out_pi);
+  out = vec_restore(out, ptype, PROTECT(r_int(n_rows)));
 
   UNPROTECT(n_prot);
-  UNPROTECT(3);
+  UNPROTECT(4);
   return out;
 }
 
