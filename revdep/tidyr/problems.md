@@ -1,15 +1,15 @@
-# biclustermd
+# broom
 
 <details>
 
-* Version: 0.2.2
-* Source code: https://github.com/cran/biclustermd
-* URL: http://github.com/jreisner/biclustermd
-* BugReports: http://github.com/jreisner/biclustermd/issues
-* Date/Publication: 2020-04-15 05:10:02 UTC
-* Number of recursive dependencies: 79
+* Version: 0.5.6
+* Source code: https://github.com/cran/broom
+* URL: http://github.com/tidyverse/broom
+* BugReports: http://github.com/tidyverse/broom/issues
+* Date/Publication: 2020-04-20 17:10:02 UTC
+* Number of recursive dependencies: 262
 
-Run `revdep_details(,"biclustermd")` for more info
+Run `cloud_details(, "broom")` for more info
 
 </details>
 
@@ -18,26 +18,68 @@ Run `revdep_details(,"biclustermd")` for more info
 *   checking examples ... ERROR
     ```
     ...
-    $runtime
-       user  system elapsed 
-      0.229   0.000   0.229 
-    
-    > autoplot(repeat_bc$best_bc)
-    > plot(repeat_bc$rep_sse, type = 'b', pch = 20)
-    > repeat_bc$runtime
-       user  system elapsed 
-      0.229   0.000   0.229 
-    > 
-    > # 20 repeats with parallelization over 2 cores
-    > repeat_bc <- rep_biclustermd(synthetic, nrep = 20, parallel = TRUE, ncores = 2,
-    +                              col_clusters = 3, row_clusters = 2,
-    +                              miss_val = mean(synthetic, na.rm = TRUE),
-    +                              miss_val_sd = sd(synthetic, na.rm = TRUE),
-    +                              col_min_num = 2, row_min_num = 2,
-    +                              col_num_to_move = 1, row_num_to_move = 1,
-    +                              max.iter = 10)
-    Error in z$SSE[z$iteration, 1] : incorrect number of dimensions
-    Calls: rep_biclustermd -> sapply -> lapply -> FUN
+    +     decomp = c("decompose", "stl"),
+    +     model = list(d1, d2)
+    + ) %>%
+    +     rowwise() %>%
+    +     # Pull out the fitted data using broom::augment.
+    +     mutate(augment = list(broom::augment(model))) %>%
+    +     ungroup() %>%
+    +     # Unnest the data frames into a tidy arrangement of
+    +     # the series next to its seasonal decomposition, grouped
+    +     # by the method (stl or decompose).
+    +     group_by(decomp) %>%
+    +     unnest(series, augment) %>%
+    +     mutate(index = 1:n()) %>%
+    +     ungroup() %>%
+    +     select(decomp, index, x, adjusted = .seasadj)
+    Warning: unnest() has a new interface. See ?unnest for details.
+    Try `df %>% unnest(c(series, augment))`, with `mutate()` if needed
+    Error in attributes(.Data) <- c(attributes(.Data), attrib) : 
+      cannot assign 'tsp' to zero-length vector
+    Calls: %>% ... vec_default_ptype2 -> new_common_class_fallback -> structure
+    Execution halted
+    ```
+
+# RTL
+
+<details>
+
+* Version: 0.1.1
+* Source code: https://github.com/cran/RTL
+* URL: https://github.com/risktoollib/RTL
+* Date/Publication: 2020-02-23 18:50:02 UTC
+* Number of recursive dependencies: 136
+
+Run `cloud_details(, "RTL")` for more info
+
+</details>
+
+## Newly broken
+
+*   checking examples ... ERROR
+    ```
+    ...
+    + per = "yearweek", output = "stats", chart = "seasons")
+    Error: Can't convert `$freq` <date> to match type of `$freq` <vctrs:::common_class_fallback>.
+    Backtrace:
+         █
+      1. ├─RTL::chart_zscore(...)
+      2. │ └─`%>%`(...)
+      3. │   ├─base::withVisible(eval(quote(`_fseq`(`_lhs`)), env, env))
+      4. │   └─base::eval(quote(`_fseq`(`_lhs`)), env, env)
+      5. │     └─base::eval(quote(`_fseq`(`_lhs`)), env, env)
+      6. │       └─RTL:::`_fseq`(`_lhs`)
+      7. │         └─magrittr::freduce(value, `_function_list`)
+      8. │           └─function_list[[i]](value)
+      9. │             ├─fabletools::components(.)
+     10. │             └─fabletools:::components.mdl_df(.)
+     11. │               └─fabletools:::unnest_tsbl(object, "cmp", parent_key = kv)
+     12. │                 └─fabletools:::unnest_tbl(.data, tsbl_col)
+     13. │                   └─fabletools:::map(...)
+     14. │                     └─base::lapply(.x, .f, ...)
+     15. │                       └─fabletools:::FUN(X[[i]], ...)
+     16. │ 
     Execution halted
     ```
 
@@ -45,85 +87,69 @@ Run `revdep_details(,"biclustermd")` for more info
 
 *   checking dependencies in R code ... NOTE
     ```
-    Namespace in Imports field not imported from: ‘nycflights13’
+    Namespace in Imports field not imported from: ‘quantmod’
       All declared Imports should be used.
     ```
 
-# simTool
+*   checking data for non-ASCII characters ... NOTE
+    ```
+      Note: found 15456 marked UTF-8 strings
+    ```
+
+# timetk
 
 <details>
 
-* Version: 1.1.5
-* Source code: https://github.com/cran/simTool
-* URL: https://github.com/MarselScheer/simTool
-* BugReports: https://github.com/MarselScheer/simTool/issues
-* Date/Publication: 2020-03-15 20:10:02 UTC
-* Number of recursive dependencies: 70
+* Version: 1.0.0
+* Source code: https://github.com/cran/timetk
+* URL: https://github.com/business-science/timetk
+* BugReports: https://github.com/business-science/timetk/issues
+* Date/Publication: 2020-04-19 17:50:02 UTC
+* Number of recursive dependencies: 151
 
-Run `revdep_details(,"simTool")` for more info
+Run `cloud_details(, "timetk")` for more info
 
 </details>
 
 ## Newly broken
 
-*   checking tests ... ERROR
+*   checking examples ... ERROR
     ```
-      Running ‘testthat.R’
-    Running the tests in ‘tests/testthat.R’ failed.
-    Last 13 lines of output:
-      fs$results not identical to fs$expected.
-      names for target but not for current
-      
-      ── 3. Failure: Create a tibble containing the results sumamrized by one summary 
-      fs$results not identical to fs$expected.
-      names for target but not for current
-      
-      ══ testthat results  ═══════════════════════════════════════════════════════════
-      [ OK: 97 | SKIPPED: 0 | WARNINGS: 0 | FAILED: 3 ]
-      1. Failure: Simplify the simulation results (@test_eval_tibbles.R#381) 
-      2. Failure: Create a tibble containing the results for every replication (@test_frame_simulation.R#33) 
-      3. Failure: Create a tibble containing the results sumamrized by one summary function (@test_frame_simulation.R#73) 
-      
-      Error: testthat unit tests failed
-      Execution halted
+    ...
+    > # Training Data
+    > FB_tbl <- FANG %>%
+    +     filter(symbol == "FB") %>%
+    +     select(symbol, date, adjusted)
+    > 
+    > # ---- FUNCTION FORMAT ----
+    > # - The `.f = mean` function is used. Argument `na.rm = TRUE` is passed as ...
+    > FB_tbl %>%
+    +     mutate(adjusted_30_ma = roll_apply_vec(
+    +         .x      = adjusted,
+    +         .period = 30,
+    +         .f      = mean,
+    +         na.rm   = TRUE,
+    +         .align  = "center")) %>%
+    +         ggplot(aes(date, adjusted)) +
+    +         geom_line() +
+    +         geom_line(aes(y = adjusted_30_ma), color = "blue")
+    Error: .onLoad failed in loadNamespace() for 'slider', details:
+      call: fun(libname, pkgname)
+      error: function 'exp_vec_restore' not provided by package 'vctrs'
+    Execution halted
     ```
 
-# tidyjson
+## In both
 
-<details>
-
-* Version: 0.2.4
-* Source code: https://github.com/cran/tidyjson
-* URL: https://github.com/colearendt/tidyjson
-* BugReports: https://github.com/colearendt/tidyjson/issues
-* Date/Publication: 2019-12-02 21:39:30
-* Number of recursive dependencies: 89
-
-Run `revdep_details(,"tidyjson")` for more info
-
-</details>
-
-## Newly broken
-
-*   checking tests ... ERROR
+*   checking installed package size ... NOTE
     ```
-      Running ‘testthat.R’
-    Running the tests in ‘tests/testthat.R’ failed.
-    Last 13 lines of output:
-      ══ testthat results  ═══════════════════════════════════════════════════════════
-      [ OK: 290 | SKIPPED: 7 | WARNINGS: 0 | FAILED: 10 ]
-      1.  Failure: has correct complete structure with simple input (@test-append_values.R#7) 
-      2.  Failure: recursive works as expected (@test-append_values.R#191) 
-      3.  Failure: recursive works as expected (@test-append_values.R#206) 
-      4.  Failure: works in a simple case (@test-gather_object.R#7) 
-      5.  Failure: works with compound values (@test-gather_object.R#31) 
-      6.  Failure: column.name works and doesn't clobber existing name (@test-gather_object.R#80) 
-      7.  Error: preserves a NULL column (@test-gather_object.R#100) 
-      8.  Failure: can call repeatedly without having to change column.name (@test-gather_object.R#150) 
-      9.  Error: simple object works (@test-json_structure.R#27) 
-      10. Error: nested object works (@test-json_structure.R#71) 
-      
-      Error: testthat unit tests failed
-      Execution halted
+      installed size is  6.5Mb
+      sub-directories of 1Mb or more:
+        doc   5.1Mb
+    ```
+
+*   checking data for non-ASCII characters ... NOTE
+    ```
+      Note: found 2750 marked UTF-8 strings
     ```
 
