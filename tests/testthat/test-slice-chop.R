@@ -718,6 +718,32 @@ test_that("can ignore names in `vec_unchop()` by providing a `zap()` name-spec (
   })
 })
 
+test_that("vec_unchop() falls back to c() methods (#1120)", {
+  expect_error(
+    vec_unchop(list(foobar(1), foobar(2, class = "foo"))),
+    class = "vctrs_error_incompatible_type"
+  )
+
+  local_methods(
+    c.vctrs_foobar = function(...) {
+      inputs <- list(...)
+      paste0(rep_along(inputs, "dispatched"), seq_along(inputs))
+    }
+  )
+
+  # Different subclasses
+  xs <- list(foobar(1), foobar(2, class = "foo"))
+
+  expect_identical(
+    vec_unchop(xs),
+    c("dispatched1", "dispatched2")
+  )
+  expect_identical(
+    vec_unchop(xs, indices = list(2, 1)),
+    c("dispatched2", "dispatched1")
+  )
+})
+
 test_that("vec_unchop() has informative error messages", {
   verify_output(test_path("error", "test-unchop.txt"), {
     "# vec_unchop() errors on unsupported location values"

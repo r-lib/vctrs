@@ -27,7 +27,15 @@ SEXP vctrs_unchop(SEXP x, SEXP indices, SEXP ptype, SEXP name_spec, SEXP name_re
 }
 
 static inline bool needs_vec_unchop_fallback(SEXP x, SEXP ptype);
-static SEXP vec_unchop_fallback(SEXP x, SEXP indices, SEXP name_spec);
+
+enum fallback_homogeneous {
+  FALLBACK_HOMOGENEOUS_false = 0,
+  FALLBACK_HOMOGENEOUS_true
+};
+static SEXP vec_unchop_fallback(SEXP x,
+                                SEXP indices,
+                                SEXP name_spec,
+                                enum fallback_homogeneous homogenous);
 
 static SEXP vec_unchop(SEXP x,
                        SEXP indices,
@@ -54,11 +62,19 @@ static SEXP vec_unchop(SEXP x,
     Rf_errorcall(R_NilValue, "`indices` must be a list of integers, or `NULL`");
   }
 
-  if (needs_vec_unchop_fallback(x, ptype)) {
-    return vec_unchop_fallback(x, indices, name_spec);
-  }
+  ptype = PROTECT(vec_ptype_common_params(x, ptype, DF_FALLBACK_DEFAULT, S3_FALLBACK_true));
 
-  ptype = PROTECT(vec_ptype_common_params(x, ptype, DF_FALLBACK_warn, S3_FALLBACK_false));
+  if (needs_vec_c_fallback(ptype)) {
+    SEXP out = vec_unchop_fallback(x, indices, name_spec, FALLBACK_HOMOGENEOUS_false);
+    UNPROTECT(1);
+    return out;
+  }
+  // FIXME: Needed for dplyr::summarise() which passes a non-fallback ptype
+  if (needs_vec_c_homogeneous_fallback(x, ptype)) {
+    SEXP out = vec_unchop_fallback(x, indices, name_spec, FALLBACK_HOMOGENEOUS_true);
+    UNPROTECT(1);
+    return out;
+  }
 
   if (ptype == R_NilValue) {
     UNPROTECT(1);
@@ -179,7 +195,10 @@ static inline bool needs_vec_unchop_fallback(SEXP x, SEXP ptype) {
 // This is essentially:
 // vec_slice_fallback(vec_c_fallback_invoke(!!!x), order(vec_c(!!!indices)))
 // with recycling of each element of `x` to the corresponding index size
-static SEXP vec_unchop_fallback(SEXP x, SEXP indices, SEXP name_spec) {
+static SEXP vec_unchop_fallback(SEXP x,
+                                SEXP indices,
+                                SEXP name_spec,
+                                enum fallback_homogeneous homogenous) {
   R_len_t x_size = vec_size(x);
   x = PROTECT(r_clone_referenced(x));
 
