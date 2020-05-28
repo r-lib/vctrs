@@ -536,6 +536,9 @@ vec_as_names_legacy <- function(names, prefix = "V", sep = "") {
 #'
 #'   * A glue specification of the form `"{outer}_{inner}"`.
 #'
+#'   * An [rlang::zap()] object, in which case both outer and inner
+#'     names are ignored and the result is unnamed.
+#'
 #'   See the [name specification topic][name_spec].
 #'
 #' @examples

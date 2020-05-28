@@ -25,9 +25,7 @@
 #'
 #' @param ... Vectors to coerce.
 #' @param .name_repair How to repair names, see `repair` options in
-#'   [vec_as_names()].  Can also be [rlang::zap()] to ignore names
-#'   during concatenation. The names are still used to give
-#'   informative error messages, e.g. with coercion errors.
+#'   [vec_as_names()].
 #' @return A vector with class given by `.ptype`, and length equal to the
 #'   sum of the `vec_size()` of the contents of `...`.
 #'
@@ -37,6 +35,7 @@
 #'   `.name_spec` is provided.
 #' @inheritParams vec_ptype_show
 #' @inheritParams name_spec
+#' @inheritParams vec_as_names
 #' @seealso [vec_cbind()]/[vec_rbind()] for combining data frames by rows
 #'   or columns.
 #' @export

@@ -16,6 +16,8 @@ string to the first argument, and the inner names or positions
 are passed as second argument.
 \item An anonymous function as a purrr-style formula.
 \item A glue specification of the form \code{"{outer}_{inner}"}.
+\item An \code{\link[rlang:zap]{rlang::zap()}} object, in which case both outer and inner
+names are ignored and the result is unnamed.
 }
 
 See the \link[=name_spec]{name specification topic}.}
