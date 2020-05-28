@@ -23,6 +23,11 @@
   will find the vctrs primitives on which an operation relies.
 
 
+## CRAN results
+
+* Fixed type declaration mismatches revealed by LTO build.
+
+
 # vctrs 0.3.0
 
 This version features an overhaul of the coercion system to make it
