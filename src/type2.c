@@ -25,8 +25,9 @@ SEXP vctrs_ptype2_opts(SEXP x,
   return vec_ptype2_opts(&c_opts, &_left);
 }
 
-SEXP vec_ptype2_opts(const struct ptype2_opts* opts,
-                     int* left) {
+SEXP vec_ptype2_opts_impl(const struct ptype2_opts* opts,
+                          int* left,
+                          bool first_pass) {
   SEXP x = opts->x;
   SEXP y = opts->y;
   struct vctrs_arg* x_arg = opts->x_arg;
@@ -58,11 +59,37 @@ SEXP vec_ptype2_opts(const struct ptype2_opts* opts,
     stop_scalar_type(y, y_arg);
   }
 
-  if (x_type == vctrs_type_s3 || y_type == vctrs_type_s3) {
-    return vec_ptype2_dispatch(opts, x_type, y_type, left);
-  } else {
+  if (x_type != vctrs_type_s3 && y_type != vctrs_type_s3) {
     return vec_ptype2_switch_native(opts, x_type, y_type, left);
   }
+
+  if (x_type == vctrs_type_s3 || y_type == vctrs_type_s3) {
+    SEXP out = vec_ptype2_dispatch(opts, x_type, y_type, left);
+    if (out != R_NilValue) {
+      return out;
+    }
+  }
+
+  // Try native dispatch again with prototypes, in case the prototype
+  // is another type
+  if (first_pass) {
+    struct ptype2_opts mut_opts = *opts;
+    mut_opts.x = PROTECT(vec_ptype(x, x_arg));
+    mut_opts.y = PROTECT(vec_ptype(y, y_arg));
+
+    SEXP out = vec_ptype2_opts_impl(&mut_opts, left, false);
+
+    UNPROTECT(2);
+    return out;
+  }
+
+  return vec_ptype2_dispatch_s3(opts);
+}
+
+// [[ include("ptype2.h") ]]
+SEXP vec_ptype2_opts(const struct ptype2_opts* opts,
+                     int* left) {
+  return vec_ptype2_opts_impl(opts, left, true);
 }
 
 static

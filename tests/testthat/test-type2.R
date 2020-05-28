@@ -311,6 +311,14 @@ test_that("vec_ptype2() methods get prototypes", {
   expect_identical(y, foobar(iris[0, , drop = FALSE]))
 })
 
+test_that("vec_ptype2() allows vec_ptype() to return another type", {
+  out <- with_methods(
+    vec_restore.vctrs_foobar = function(x, to, ...) unstructure(x),
+    vec_ptype2(foobar(1), foobar(2))
+  )
+  expect_identical(out, dbl())
+})
+
 test_that("vec_ptype2() errors have informative output", {
   verify_output(test_path("error", "test-type2.txt"), {
     "# can override scalar vector error message for base scalar types"

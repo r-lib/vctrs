@@ -5,7 +5,7 @@
 #include "type-tibble.h"
 #include "utils.h"
 
-// [[ include("vctrs.h") ]]
+// [[ include("ptype2.h") ]]
 SEXP vec_ptype2_dispatch(const struct ptype2_opts* opts,
                          enum vctrs_type x_type,
                          enum vctrs_type y_type,
@@ -42,7 +42,7 @@ SEXP vec_ptype2_dispatch(const struct ptype2_opts* opts,
     return tib_ptype2(opts);
 
   default:
-    return vec_ptype2_dispatch_s3(opts);
+    return R_NilValue;
   }
 }
 
