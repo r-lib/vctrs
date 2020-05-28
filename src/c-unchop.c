@@ -26,8 +26,6 @@ SEXP vctrs_unchop(SEXP x, SEXP indices, SEXP ptype, SEXP name_spec, SEXP name_re
   return out;
 }
 
-static inline bool needs_vec_unchop_fallback(SEXP x, SEXP ptype);
-
 enum fallback_homogeneous {
   FALLBACK_HOMOGENEOUS_false = 0,
   FALLBACK_HOMOGENEOUS_true
@@ -186,12 +184,6 @@ static SEXP vec_unchop(SEXP x,
 
   UNPROTECT(9);
   return out;
-}
-
-// Unchopping is a just version of `vec_c()` that controls the ordering,
-// so they both fallback to `c()` in the same situations
-static inline bool needs_vec_unchop_fallback(SEXP x, SEXP ptype) {
-  return needs_vec_c_homogeneous_fallback(x, ptype);
 }
 
 // This is essentially:
