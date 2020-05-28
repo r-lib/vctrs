@@ -81,14 +81,14 @@ test_that("vec_chop() doesn't restore when attributes have already been restored
   expect_equal(result, structure("dispatched", foo = "bar"))
 })
 
-test_that("vec_chop() restores when attributes have not been restored by `[`", {
+test_that("vec_chop() does not restore when attributes have not been restored by `[`", {
   local_methods(
     `[.vctrs_foobar` = function(x, i, ...) "dispatched",
     vec_restore.vctrs_foobar = function(...) "dispatched-and-restored"
   )
 
   result <- vec_chop(foobar(NA))[[1]]
-  expect_equal(result, "dispatched-and-restored")
+  expect_equal(result, "dispatched")
 })
 
 test_that("vec_chop() falls back to `[` for shaped objects with no proxy", {

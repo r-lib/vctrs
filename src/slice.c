@@ -349,9 +349,8 @@ SEXP vec_slice_impl(SEXP x, SEXP subscript) {
       out = PROTECT_N(vec_slice_dispatch(x, subscript), &nprot);
     }
 
-    // Take over attribute restoration only if the `[` method did not
-    // restore itself
-    if (!vec_is_restored(out)) {
+    // Take over attribute restoration only if there is no `[` method
+    if (!vec_is_restored(out, x)) {
       out = vec_restore(out, x, restore_size);
     }
 
@@ -410,7 +409,14 @@ SEXP vec_slice_impl(SEXP x, SEXP subscript) {
   }
 }
 
-bool vec_is_restored(SEXP x) {
+bool vec_is_restored(SEXP x, SEXP to) {
+  // Don't restore if there is an actual `[` method that ignored
+  // attributes. Some methods like [.ts intentionally strip the class
+  // and attributes. FIXME: This branch is now probably sufficient.
+  if (s3_find_method("[", to, base_method_table) != R_NilValue) {
+    return true;
+  }
+
   SEXP attrib = ATTRIB(x);
 
   if (attrib == R_NilValue) {

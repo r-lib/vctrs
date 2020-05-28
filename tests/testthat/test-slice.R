@@ -297,7 +297,7 @@ test_that("vec_slice() falls back to `[` with S3 objects", {
   local_methods(
     `[.vctrs_foobar` = function(x, i, ...) "dispatched"
   )
-  expect_identical(vec_slice(foobar(NA), 1), foobar("dispatched"))
+  expect_identical(vec_slice(foobar(NA), 1), "dispatched")
 
   expect_error(vec_slice(foobar(list(NA)), 1), class = "vctrs_error_scalar_type")
   local_methods(
@@ -312,6 +312,14 @@ test_that("vec_slice() doesn't restore when attributes have already been restore
     vec_restore.vctrs_foobar = function(...) stop("not called")
   )
   expect_error(vec_slice(foobar(NA), 1), NA)
+})
+
+test_that("vec_slice() doesn't restore when `[` method intentionally dropped attributes", {
+  local_methods(
+    `[.vctrs_foobar` = function(x, i, ...) unstructure(NextMethod()),
+    vec_restore.vctrs_foobar = function(...) stop("not called")
+  )
+  expect_identical(vec_slice(foobar(NA), 1), NA)
 })
 
 test_that("can vec_slice() without inflooping when restore calls math generics", {

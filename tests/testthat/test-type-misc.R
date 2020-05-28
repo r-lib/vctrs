@@ -82,3 +82,9 @@ test_that("data.table and tibble do not have a common type", {
     tibble(x = NA, y = 2L)
   )
 })
+
+test_that("can slice `ts` vectors", {
+  x <- ts(1:3)
+  expect_identical(vec_ptype(x), x[0])
+  expect_identical(vec_slice(x, 2), x[2])
+})

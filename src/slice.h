@@ -9,7 +9,7 @@ SEXP slice_rownames(SEXP names, SEXP subscript);
 SEXP vec_slice_base(enum vctrs_type type, SEXP x, SEXP subscript);
 SEXP vec_slice_fallback(SEXP x, SEXP subscript);
 
-bool vec_is_restored(SEXP x);
+bool vec_is_restored(SEXP x, SEXP to);
 
 
 #endif
