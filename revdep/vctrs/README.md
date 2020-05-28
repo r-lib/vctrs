@@ -1,13 +1,19 @@
 # Revdeps
 
-## New problems (6)
+## Failed to check (3)
 
-|package                            |version |error  |warning |note |
-|:----------------------------------|:-------|:------|:-------|:----|
-|[glue](problems.md#glue)           |1.4.0   |__+1__ |        |     |
-|[hardhat](problems.md#hardhat)     |0.1.2   |__+1__ |        |     |
-|[ipaddress](problems.md#ipaddress) |0.2.0   |__+1__ |        |     |
-|[probably](problems.md#probably)   |0.0.4   |__+1__ |        |     |
-|[projects](problems.md#projects)   |2.1.0   |__+1__ |        |1    |
-|[slider](problems.md#slider)       |0.1.2   |__+2__ |        |     |
+|package                      |version |error  |warning |note |
+|:----------------------------|:-------|:------|:-------|:----|
+|NA                           |?       |       |        |     |
+|[slider](failures.md#slider) |0.1.3   |__+1__ |        |     |
+|NA                           |?       |       |        |     |
+
+## New problems (4)
+
+|package                              |version |error  |warning |note |
+|:------------------------------------|:-------|:------|:-------|:----|
+|[fabletools](problems.md#fabletools) |0.1.3   |__+2__ |        |     |
+|[feasts](problems.md#feasts)         |0.1.3   |__+1__ |        |     |
+|[haven](problems.md#haven)           |2.3.0   |__+1__ |        |3    |
+|[sf](problems.md#sf)                 |0.9-3   |__+1__ |        |1    |
 

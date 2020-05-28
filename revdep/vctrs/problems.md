@@ -1,170 +1,15 @@
-# glue
+# fabletools
 
 <details>
 
-* Version: 1.4.0
-* Source code: https://github.com/cran/glue
-* URL: https://github.com/tidyverse/glue, https://glue.tidyverse.org/
-* BugReports: https://github.com/tidyverse/glue/issues
-* Date/Publication: 2020-04-03 14:10:30 UTC
-* Number of recursive dependencies: 83
+* Version: 0.1.3
+* Source code: https://github.com/cran/fabletools
+* URL: http://fabletools.tidyverts.org/, https://github.com/tidyverts/fabletools
+* BugReports: https://github.com/tidyverts/fabletools/issues
+* Date/Publication: 2020-03-24 07:10:02 UTC
+* Number of recursive dependencies: 92
 
-Run `revdep_details(,"glue")` for more info
-
-</details>
-
-## Newly broken
-
-*   checking tests ... ERROR
-    ```
-      Running ‘testthat.R’
-    Running the tests in ‘tests/testthat.R’ failed.
-    Last 13 lines of output:
-        7. vctrs::vec_default_cast(...)
-        8. vctrs::stop_incompatible_cast(...)
-        9. vctrs::stop_incompatible_type(...)
-       10. vctrs:::stop_incompatible(...)
-       11. vctrs:::stop_vctrs(...)
-      
-      ══ testthat results  ═══════════════════════════════════════════════════════════
-      [ OK: 210 | SKIPPED: 1 | WARNINGS: 0 | FAILED: 4 ]
-      1. Failure: coercion is not inherited (@test-vctrs.R#48) 
-      2. Failure: coercion is not inherited (@test-vctrs.R#52) 
-      3. Failure: coercion is not inherited (@test-vctrs.R#56) 
-      4. Failure: coercion is not inherited (@test-vctrs.R#60) 
-      
-      Error: testthat unit tests failed
-      Execution halted
-    ```
-
-# hardhat
-
-<details>
-
-* Version: 0.1.2
-* Source code: https://github.com/cran/hardhat
-* URL: https://github.com/tidymodels/hardhat
-* BugReports: https://github.com/tidymodels/hardhat/issues
-* Date/Publication: 2020-02-28 07:20:16 UTC
-* Number of recursive dependencies: 100
-
-Run `revdep_details(,"hardhat")` for more info
-
-</details>
-
-## Newly broken
-
-*   checking tests ... ERROR
-    ```
-      Running ‘testthat.R’
-    Running the tests in ‘tests/testthat.R’ failed.
-    Last 13 lines of output:
-      Backtrace:
-        1. testthat::expect_error(...)
-        8. vctrs::vec_default_cast(...)
-        9. vctrs::stop_incompatible_cast(...)
-       10. vctrs::stop_incompatible_type(...)
-       11. vctrs:::stop_incompatible(...)
-       12. vctrs:::stop_vctrs(...)
-      
-      ══ testthat results  ═══════════════════════════════════════════════════════════
-      [ OK: 402 | SKIPPED: 0 | WARNINGS: 0 | FAILED: 2 ]
-      1. Error: missing ordered factor levels are handled correctly (@test-forge-formula.R#510) 
-      2. Failure: ignoring novel levels still passes through incompatible classes (@test-scream.R#50) 
-      
-      Error: testthat unit tests failed
-      Execution halted
-    ```
-
-# ipaddress
-
-<details>
-
-* Version: 0.2.0
-* Source code: https://github.com/cran/ipaddress
-* URL: https://davidchall.github.io/ipaddress, https://github.com/davidchall/ipaddress
-* BugReports: https://github.com/davidchall/ipaddress/issues
-* Date/Publication: 2020-03-25 17:30:02 UTC
-* Number of recursive dependencies: 41
-
-Run `revdep_details(,"ipaddress")` for more info
-
-</details>
-
-## Newly broken
-
-*   checking tests ... ERROR
-    ```
-      Running ‘testthat.R’
-    Running the tests in ‘tests/testthat.R’ failed.
-    Last 13 lines of output:
-      Backtrace:
-        1. testthat::expect_error(...)
-        7. vctrs::vec_default_cast(...)
-        8. vctrs::stop_incompatible_cast(...)
-        9. vctrs::stop_incompatible_type(...)
-       10. vctrs:::stop_incompatible(...)
-       11. vctrs:::stop_vctrs(...)
-      
-      ══ testthat results  ═══════════════════════════════════════════════════════════
-      [ OK: 508 | SKIPPED: 3 | WARNINGS: 0 | FAILED: 2 ]
-      1. Failure: casting works (@test-ip_interface.R#35) 
-      2. Failure: casting works (@test-ip_interface.R#36) 
-      
-      Error: testthat unit tests failed
-      Execution halted
-    ```
-
-# probably
-
-<details>
-
-* Version: 0.0.4
-* Source code: https://github.com/cran/probably
-* URL: https://github.com/tidymodels/probably/
-* BugReports: https://github.com/tidymodels/probably/issues
-* Date/Publication: 2020-01-13 17:00:05 UTC
-* Number of recursive dependencies: 85
-
-Run `revdep_details(,"probably")` for more info
-
-</details>
-
-## Newly broken
-
-*   checking tests ... ERROR
-    ```
-      Running ‘testthat.R’
-    Running the tests in ‘tests/testthat.R’ failed.
-    Last 13 lines of output:
-       7. vctrs::stop_incompatible_type(...)
-       8. vctrs:::stop_incompatible(...)
-       9. vctrs:::stop_vctrs(...)
-      
-      ── 3. Failure: casting character to class_pred (@test-class-pred.R#198)  ───────
-      is_ordered_class_pred(vec_cast(chr1, cp3)) isn't true.
-      
-      ══ testthat results  ═══════════════════════════════════════════════════════════
-      [ OK: 111 | SKIPPED: 1 | WARNINGS: 0 | FAILED: 3 ]
-      1. Error: class_pred can be coerced to ordered factor (@test-class-pred.R#74) 
-      2. Error: casting class_pred to factor (@test-class-pred.R#124) 
-      3. Failure: casting character to class_pred (@test-class-pred.R#198) 
-      
-      Error: testthat unit tests failed
-      Execution halted
-    ```
-
-# projects
-
-<details>
-
-* Version: 2.1.0
-* Source code: https://github.com/cran/projects
-* URL: https://cran.r-project.org/package=projects
-* Date/Publication: 2020-03-18 16:40:02 UTC
-* Number of recursive dependencies: 48
-
-Run `revdep_details(,"projects")` for more info
+Run `cloud_details(, "fabletools")` for more info
 
 </details>
 
@@ -173,27 +18,127 @@ Run `revdep_details(,"projects")` for more info
 *   checking examples ... ERROR
     ```
     ...
-    New author:
-    # A tibble: 1 x 7
-         id last_name given_names title degree email phone
-      <int> <chr>     <chr>       <chr> <chr>  <chr> <chr>
-    1   303 <NA>      Plato       <NA>  <NA>   <NA>  <NA> 
-    
-    New author's affiliations:
-    None.> new_project(title = "Test Project 1", authors = c(13, "303", "Stone"),
-    +             corresp_auth = "Stone")
-    Error: Can't convert <integer> to <character>.
+    > tourism %>% 
+    +   aggregate_key(Purpose * (State / Region), Trips = sum(Trips))
+    Error: Can't convert `$Quarter` <date> to match type of `$Quarter` <vctrs:::common_class_fallback>.
     Backtrace:
-        █
-     1. ├─projects::new_project(...)
-     2. │ └─projects::projects_stage(1L)
-     3. │   └─vctrs::vec_cast(x, character())
-     4. └─vctrs::vec_default_cast(...)
-     5.   └─vctrs::stop_incompatible_cast(...)
-     6.     └─vctrs::stop_incompatible_type(...)
-     7.       └─vctrs:::stop_incompatible(...)
-     8.         └─vctrs:::stop_vctrs(...)
+         █
+      1. ├─tourism %>% aggregate_key(Purpose * (State/Region), Trips = sum(Trips))
+      2. │ ├─base::withVisible(eval(quote(`_fseq`(`_lhs`)), env, env))
+      3. │ └─base::eval(quote(`_fseq`(`_lhs`)), env, env)
+      4. │   └─base::eval(quote(`_fseq`(`_lhs`)), env, env)
+      5. │     └─`_fseq`(`_lhs`)
+      6. │       └─magrittr::freduce(value, `_function_list`)
+      7. │         ├─base::withVisible(function_list[[k]](value))
+      8. │         └─function_list[[k]](value)
+      9. │           ├─fabletools::aggregate_key(., Purpose * (State/Region), Trips = sum(Trips))
+     10. │           └─fabletools:::aggregate_key.tbl_ts(...)
+     11. │             └─fabletools:::bind_row_attrb(...)
+     12. │               └─vctrs::vec_rbind(!!!x)
+     13. └─vctrs::vec_default_cast(...)
+     14.   └─vctrs::stop_incompatible_cast(...)
+     15.     └─vctrs:
     Execution halted
+    ```
+
+*   checking tests ... ERROR
+    ```
+      Running ‘testthat.R’
+    Running the tests in ‘tests/testthat.R’ failed.
+    Last 13 lines of output:
+        1. ├─testthat::test_check("fabletools")
+        2. │ └─testthat:::test_package_dir(...)
+        3. │   └─testthat::test_dir(...)
+        4. │     └─testthat::source_test_setup(path, env)
+        5. │       └─testthat::source_dir(path, "^setup.*\\.[rR]$", env = env, wrap = FALSE)
+        6. │         └─base::lapply(files, source_file, env = env, chdir = chdir, wrap = wrap)
+        7. │           └─testthat:::FUN(X[[i]], ...)
+        8. │             └─base::eval(exprs, env)
+        9. │               └─base::eval(exprs, env)
+       10. │                 └─mbl_multi %>% forecast(h = 12) setup-data.R:17:0
+       11. │                   ├─base::withVisible(eval(quote(`_fseq`(`_lhs`)), env, env))
+       12. │                   └─base::eval(quote(`_fseq`(`_lhs`)), env, env)
+       13. │                     └─base::eval(quote(`_fseq`(`_lhs`)), env, env)
+       14. │          
+      Execution halted
+    ```
+
+# feasts
+
+<details>
+
+* Version: 0.1.3
+* Source code: https://github.com/cran/feasts
+* URL: http://feasts.tidyverts.org/, https://github.com/tidyverts/feasts/
+* BugReports: https://github.com/tidyverts/feasts/issues
+* Date/Publication: 2020-03-18 07:00:11 UTC
+* Number of recursive dependencies: 92
+
+Run `cloud_details(, "feasts")` for more info
+
+</details>
+
+## Newly broken
+
+*   checking tests ... ERROR
+    ```
+      Running ‘testthat.R’
+    Running the tests in ‘tests/testthat.R’ failed.
+    Last 13 lines of output:
+      ── 1. Failure: basic features (@test-features.R#30)  ───────────────────────────
+      as.list(ft) not equivalent to list(...).
+      Length mismatch: comparison on first 3 components
+      
+      ── 2. Failure: *shift features (@test-features.R#55)  ──────────────────────────
+      as.list(ft) not equivalent to list(...).
+      Length mismatch: comparison on first 0 components
+      
+      ══ testthat results  ═══════════════════════════════════════════════════════════
+      [ OK: 106 | SKIPPED: 0 | WARNINGS: 5 | FAILED: 2 ]
+      1. Failure: basic features (@test-features.R#30) 
+      2. Failure: *shift features (@test-features.R#55) 
+      
+      Error: testthat unit tests failed
+      Execution halted
+    ```
+
+# haven
+
+<details>
+
+* Version: 2.3.0
+* Source code: https://github.com/cran/haven
+* URL: http://haven.tidyverse.org, https://github.com/tidyverse/haven, https://github.com/WizardMac/ReadStat
+* BugReports: https://github.com/tidyverse/haven/issues
+* Date/Publication: 2020-05-24 15:00:02 UTC
+* Number of recursive dependencies: 60
+
+Run `cloud_details(, "haven")` for more info
+
+</details>
+
+## Newly broken
+
+*   checking tests ... ERROR
+    ```
+      Running ‘testthat.R’
+    Running the tests in ‘tests/testthat.R’ failed.
+    Last 13 lines of output:
+      Can't convert <integer> to <labelled<double>>.
+      Backtrace:
+        1. testthat::expect_identical(...)
+        9. vctrs:::vec_restore.vctrs_vctr(x = x, to = to, n = n)
+       10. vctrs::stop_incompatible_cast(x, to, x_arg = "", to_arg = "")
+       11. vctrs::stop_incompatible_type(...)
+       12. vctrs:::stop_incompatible(...)
+       13. vctrs:::stop_vctrs(...)
+      
+      ══ testthat results  ═══════════════════════════════════════════════════════════
+      [ OK: 300 | SKIPPED: 2 | WARNINGS: 0 | FAILED: 1 ]
+      1. Error: combining is symmetrical w.r.t. data types (@test-labelled.R#75) 
+      
+      Error: testthat unit tests failed
+      Execution halted
     ```
 
 ## In both
@@ -204,68 +149,166 @@ Run `revdep_details(,"projects")` for more info
       All declared Imports should be used.
     ```
 
-# slider
+*   checking Rd cross-references ... NOTE
+    ```
+    Package unavailable to check Rd xrefs: ‘dplyr’
+    ```
+
+*   checking for GNU extensions in Makefiles ... NOTE
+    ```
+    GNU make is a SystemRequirements.
+    ```
+
+# sf
 
 <details>
 
-* Version: 0.1.2
-* Source code: https://github.com/cran/slider
-* URL: https://github.com/DavisVaughan/slider
-* BugReports: https://github.com/DavisVaughan/slider/issues
-* Date/Publication: 2020-03-10 15:10:02 UTC
-* Number of recursive dependencies: 61
+* Version: 0.9-3
+* Source code: https://github.com/cran/sf
+* URL: https://r-spatial.github.io/sf/, https://github.com/r-spatial/sf/
+* BugReports: https://github.com/r-spatial/sf/issues/
+* Date/Publication: 2020-05-04 17:40:02 UTC
+* Number of recursive dependencies: 145
 
-Run `revdep_details(,"slider")` for more info
+Run `cloud_details(, "sf")` for more info
 
 </details>
 
 ## Newly broken
 
-*   checking examples ... ERROR
-    ```
-    ...
-    > ### ** Examples
-    > 
-    > # `hop()` let's you manually specify locations to apply `.f` at.
-    > hop(1:3, .starts = c(1, 3), .stops = 3, ~.x)
-    [[1]]
-    [1] 1 2 3
-    
-    [[2]]
-    [1] 3
-    
-    > 
-    > # `hop()`'s start/stop locations are allowed to be out of bounds relative
-    > # to the size of `.x`.
-    > hop(
-    +   mtcars,
-    +   .starts = c(-1, 3),
-    +   .stops  = c(2, 6),
-    +   ~.x
-    + )
-    Error: The size of `names`, 32, must be the same as the size of `x`, 2.
-    Execution halted
-    ```
-
 *   checking tests ... ERROR
     ```
+    ...
+    < CRS:            GEOGCS["NAD27",DATUM["North_American_Datum_1927",SPHEROID["Clarke 1866",6378206.4,294.9786982138982,AUTHORITY["EPSG","7008"]],AUTHORITY["EPSG","6267"]],PRIMEM["Greenwich",0],UNIT["degree",0.0174532925199433],AUTHORITY["EPSG","4267"]]
+    ---
+    > geographic CRS: NAD27
       Running ‘testthat.R’
     Running the tests in ‘tests/testthat.R’ failed.
     Last 13 lines of output:
+       5. vctrs::vec_default_ptype2(...)
+       6. vctrs::stop_incompatible_type(...)
+       7. vctrs:::stop_incompatible(...)
+       8. vctrs:::stop_vctrs(...)
+      
+      Failed to create feature 1 in x
+      Failed to create feature 1 in x
       ══ testthat results  ═══════════════════════════════════════════════════════════
-      [ OK: 566 | SKIPPED: 9 | WARNINGS: 0 | FAILED: 42 ]
-      1. Error: inner type is allowed to be different (@test-hop-index-vec.R#12) 
-      2. Failure: inner type can be restricted with list_of (@test-hop-index-vec.R#19) 
-      3. Error: .ptype is respected (@test-hop-index-vec.R#31) 
-      4. Failure: names are not placed on data frames rownames (@test-hop-index-vec.R#122) 
-      5. Error: inner type is allowed to be different (@test-hop-vec.R#12) 
-      6. Failure: inner type can be restricted with list_of (@test-hop-vec.R#19) 
-      7. Error: .ptype is respected (@test-hop-vec.R#31) 
-      8. Failure: names are not placed on data frames rownames (@test-hop-vec.R#97) 
-      9. Error: pslide_index_chr() can coerce (@test-pslide-index-vec.R#54) 
-      1. ...
+      [ OK: 704 | SKIPPED: 55 | WARNINGS: 5 | FAILED: 3 ]
+      1. Failure: `precision` and `crs` attributes of `sfc` vectors are combined (@test_vctrs.R#48) 
+      2. Failure: `precision` and `crs` attributes of `sfc` vectors are combined (@test_vctrs.R#51) 
+      3. Error: `sfc` vectors have a common type (@test_vctrs.R#59) 
       
       Error: testthat unit tests failed
       Execution halted
     ```
 
+## In both
+
+*   checking installed package size ... NOTE
+    ```
+      installed size is 26.7Mb
+      sub-directories of 1Mb or more:
+        doc     11.9Mb
+        libs    10.3Mb
+        sqlite   1.5Mb
+    ```
+
+# slider
+
+<details>
+
+* Version: 0.1.3
+* Source code: https://github.com/cran/slider
+* URL: https://github.com/DavisVaughan/slider
+* BugReports: https://github.com/DavisVaughan/slider/issues
+* Date/Publication: 2020-05-14 14:00:02 UTC
+* Number of recursive dependencies: 61
+
+Run `cloud_details(, "slider")` for more info
+
+</details>
+
+## Newly broken
+
+*   checking whether package ‘slider’ can be installed ... ERROR
+    ```
+    Installation failed.
+    See ‘/tmp/workdir/slider/new/slider.Rcheck/00install.out’ for details.
+    ```
+
+## Installation
+
+### Devel
+
+```
+* installing *source* package ‘slider’ ...
+** package ‘slider’ successfully unpacked and MD5 sums checked
+** using staged installation
+** libs
+gcc -I"/opt/R/3.6.3/lib/R/include" -DNDEBUG  -I"/tmp/workdir/slider/new/vctrs/include" -I/usr/local/include  -fpic  -g -O2  -c block.c -o block.o
+gcc -I"/opt/R/3.6.3/lib/R/include" -DNDEBUG  -I"/tmp/workdir/slider/new/vctrs/include" -I/usr/local/include  -fpic  -g -O2  -c compare.c -o compare.o
+gcc -I"/opt/R/3.6.3/lib/R/include" -DNDEBUG  -I"/tmp/workdir/slider/new/vctrs/include" -I/usr/local/include  -fpic  -g -O2  -c hop.c -o hop.o
+gcc -I"/opt/R/3.6.3/lib/R/include" -DNDEBUG  -I"/tmp/workdir/slider/new/vctrs/include" -I/usr/local/include  -fpic  -g -O2  -c index.c -o index.o
+gcc -I"/opt/R/3.6.3/lib/R/include" -DNDEBUG  -I"/tmp/workdir/slider/new/vctrs/include" -I/usr/local/include  -fpic  -g -O2  -c init.c -o init.o
+gcc -I"/opt/R/3.6.3/lib/R/include" -DNDEBUG  -I"/tmp/workdir/slider/new/vctrs/include" -I/usr/local/include  -fpic  -g -O2  -c names.c -o names.o
+gcc -I"/opt/R/3.6.3/lib/R/include" -DNDEBUG  -I"/tmp/workdir/slider/new/vctrs/include" -I/usr/local/include  -fpic  -g -O2  -c params.c -o params.o
+gcc -I"/opt/R/3.6.3/lib/R/include" -DNDEBUG  -I"/tmp/workdir/slider/new/vctrs/include" -I/usr/local/include  -fpic  -g -O2  -c slide-period.c -o slide-period.o
+gcc -I"/opt/R/3.6.3/lib/R/include" -DNDEBUG  -I"/tmp/workdir/slider/new/vctrs/include" -I/usr/local/include  -fpic  -g -O2  -c slide.c -o slide.o
+gcc -I"/opt/R/3.6.3/lib/R/include" -DNDEBUG  -I"/tmp/workdir/slider/new/vctrs/include" -I/usr/local/include  -fpic  -g -O2  -c slider-vctrs-private.c -o slider-vctrs-private.o
+gcc -I"/opt/R/3.6.3/lib/R/include" -DNDEBUG  -I"/tmp/workdir/slider/new/vctrs/include" -I/usr/local/include  -fpic  -g -O2  -c slider-vctrs-public.c -o slider-vctrs-public.o
+gcc -I"/opt/R/3.6.3/lib/R/include" -DNDEBUG  -I"/tmp/workdir/slider/new/vctrs/include" -I/usr/local/include  -fpic  -g -O2  -c utils.c -o utils.o
+gcc -shared -L/opt/R/3.6.3/lib/R/lib -L/usr/local/lib -o slider.so block.o compare.o hop.o index.o init.o names.o params.o slide-period.o slide.o slider-vctrs-private.o slider-vctrs-public.o utils.o -L/opt/R/3.6.3/lib/R/lib -lR
+installing to /tmp/workdir/slider/new/slider.Rcheck/00LOCK-slider/00new/slider/libs
+** R
+** inst
+** byte-compile and prepare package for lazy loading
+** help
+*** installing help indices
+** building package indices
+** installing vignettes
+** testing if installed package can be loaded from temporary location
+Error: package or namespace load failed for ‘slider’:
+ .onLoad failed in loadNamespace() for 'slider', details:
+  call: fun(libname, pkgname)
+  error: function 'exp_vec_restore' not provided by package 'vctrs'
+Error: loading failed
+Execution halted
+ERROR: loading failed
+* removing ‘/tmp/workdir/slider/new/slider.Rcheck/slider’
+
+```
+### CRAN
+
+```
+* installing *source* package ‘slider’ ...
+** package ‘slider’ successfully unpacked and MD5 sums checked
+** using staged installation
+** libs
+gcc -I"/opt/R/3.6.3/lib/R/include" -DNDEBUG  -I"/tmp/workdir/slider/old/vctrs/include" -I/usr/local/include  -fpic  -g -O2  -c block.c -o block.o
+gcc -I"/opt/R/3.6.3/lib/R/include" -DNDEBUG  -I"/tmp/workdir/slider/old/vctrs/include" -I/usr/local/include  -fpic  -g -O2  -c compare.c -o compare.o
+gcc -I"/opt/R/3.6.3/lib/R/include" -DNDEBUG  -I"/tmp/workdir/slider/old/vctrs/include" -I/usr/local/include  -fpic  -g -O2  -c hop.c -o hop.o
+gcc -I"/opt/R/3.6.3/lib/R/include" -DNDEBUG  -I"/tmp/workdir/slider/old/vctrs/include" -I/usr/local/include  -fpic  -g -O2  -c index.c -o index.o
+gcc -I"/opt/R/3.6.3/lib/R/include" -DNDEBUG  -I"/tmp/workdir/slider/old/vctrs/include" -I/usr/local/include  -fpic  -g -O2  -c init.c -o init.o
+gcc -I"/opt/R/3.6.3/lib/R/include" -DNDEBUG  -I"/tmp/workdir/slider/old/vctrs/include" -I/usr/local/include  -fpic  -g -O2  -c names.c -o names.o
+gcc -I"/opt/R/3.6.3/lib/R/include" -DNDEBUG  -I"/tmp/workdir/slider/old/vctrs/include" -I/usr/local/include  -fpic  -g -O2  -c params.c -o params.o
+gcc -I"/opt/R/3.6.3/lib/R/include" -DNDEBUG  -I"/tmp/workdir/slider/old/vctrs/include" -I/usr/local/include  -fpic  -g -O2  -c slide-period.c -o slide-period.o
+gcc -I"/opt/R/3.6.3/lib/R/include" -DNDEBUG  -I"/tmp/workdir/slider/old/vctrs/include" -I/usr/local/include  -fpic  -g -O2  -c slide.c -o slide.o
+gcc -I"/opt/R/3.6.3/lib/R/include" -DNDEBUG  -I"/tmp/workdir/slider/old/vctrs/include" -I/usr/local/include  -fpic  -g -O2  -c slider-vctrs-private.c -o slider-vctrs-private.o
+gcc -I"/opt/R/3.6.3/lib/R/include" -DNDEBUG  -I"/tmp/workdir/slider/old/vctrs/include" -I/usr/local/include  -fpic  -g -O2  -c slider-vctrs-public.c -o slider-vctrs-public.o
+gcc -I"/opt/R/3.6.3/lib/R/include" -DNDEBUG  -I"/tmp/workdir/slider/old/vctrs/include" -I/usr/local/include  -fpic  -g -O2  -c utils.c -o utils.o
+gcc -shared -L/opt/R/3.6.3/lib/R/lib -L/usr/local/lib -o slider.so block.o compare.o hop.o index.o init.o names.o params.o slide-period.o slide.o slider-vctrs-private.o slider-vctrs-public.o utils.o -L/opt/R/3.6.3/lib/R/lib -lR
+installing to /tmp/workdir/slider/old/slider.Rcheck/00LOCK-slider/00new/slider/libs
+** R
+** inst
+** byte-compile and prepare package for lazy loading
+** help
+*** installing help indices
+** building package indices
+** installing vignettes
+** testing if installed package can be loaded from temporary location
+** checking absolute paths in shared objects and dynamic libraries
+** testing if installed package can be loaded from final location
+** testing if installed package keeps a record of temporary installation path
+* DONE (slider)
+
+```
