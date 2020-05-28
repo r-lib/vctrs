@@ -51,7 +51,7 @@ an example.
 These dependencies form a tree whose leaves are the four vctrs
 primitives. Here is the diagram for \code{vec_count()}:
 
-\figure{vec-count-deps.svg}
+\figure{vec-count-deps.png}
 \subsection{The coercion generics}{
 
 The coercion mechanism in vctrs is based on two generics:

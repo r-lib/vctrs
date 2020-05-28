@@ -21,7 +21,7 @@ Most functions in vctrs are aggregate operations: they call other vctrs function
 
 These dependencies form a tree whose leaves are the four vctrs primitives. Here is the diagram for `vec_count()`:
 
-\\figure{vec-count-deps.svg}
+\\figure{vec-count-deps.png}
 
 
 ### The coercion generics
