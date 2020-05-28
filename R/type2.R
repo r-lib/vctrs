@@ -118,6 +118,11 @@ vec_default_ptype2 <- function(x, y, ..., x_arg = "", y_arg = "") {
 # class is foreign, because we implement these generics for many base
 # classes and we still need to allow base fallbacks with subclasses.
 can_fall_back <- function(x, y) {
+  # Work around bug with hard-coded `tsp` attribute in Rf_setAttrib()
+  if (inherits(x, "ts") || inherits(y, "ts")) {
+    return(FALSE)
+  }
+
   if (is.data.frame(x) || is.data.frame(y)) {
     return(FALSE)
   }

@@ -11,9 +11,3 @@
 |SimDesign |?       |      |        |     |
 |wrswoR    |?       |      |        |     |
 
-## New problems (1)
-
-|package                    |version |error  |warning |note |
-|:--------------------------|:-------|:------|:-------|:----|
-|[broom](problems.md#broom) |0.5.6   |__+1__ |        |     |
-
