@@ -1,5 +1,5 @@
 
-# vctrs (development version)
+# vctrs 0.3.1
 
 * The `as.list()` method for `vctrs_rcrd` objects has been removed in favor
   of directly using the method for `vctrs_vctr`, which calls `vec_chop()`.
