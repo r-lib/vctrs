@@ -236,6 +236,16 @@ bool vec_implements_base_c(SEXP x) {
     return s3_find_method("c", x, base_method_table) != R_NilValue;
   }
 }
+static inline
+bool class_implements_base_c(SEXP cls) {
+  if (s3_class_find_method("c", cls, base_method_table) != R_NilValue) {
+    return true;
+  }
+  if (s4_class_find_method(cls, s4_c_method_table) != R_NilValue) {
+    return true;
+  }
+  return false;
+}
 
 static inline int vec_c_fallback_validate_args(SEXP x, SEXP name_spec);
 static inline void stop_vec_c_fallback(SEXP xs, int err_type);
@@ -246,11 +256,12 @@ SEXP vec_c_fallback(SEXP ptype,
                     SEXP name_spec,
                     const struct name_repair_opts* name_repair) {
   SEXP class = PROTECT(Rf_getAttrib(ptype, syms_fallback_class));
-  SEXP method = PROTECT(s3_class_find_method("c", class, base_method_table));
+  bool implements_c = class_implements_base_c(class);
+  UNPROTECT(1);
 
-  SEXP out = R_NilValue;
-
-  if (method == R_NilValue) {
+  if (implements_c) {
+    return vec_c_fallback_invoke(xs, name_spec);
+  } else {
     struct fallback_opts fallback_opts = {
       .df = DF_FALLBACK_none,
       .s3 = S3_FALLBACK_false
@@ -263,13 +274,8 @@ SEXP vec_c_fallback(SEXP ptype,
 
     // Suboptimal: Call `vec_c()` again to combine vector with
     // homogeneous class fallback
-    out = vec_c_opts(xs, R_NilValue, name_spec, name_repair, &fallback_opts);
-  } else {
-    out = vec_c_fallback_invoke(xs, name_spec);
+    return vec_c_opts(xs, R_NilValue, name_spec, name_repair, &fallback_opts);
   }
-
-  UNPROTECT(2);
-  return out;
 }
 
 // [[ include("c.h") ]]

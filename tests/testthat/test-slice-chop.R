@@ -718,6 +718,62 @@ test_that("can ignore names in `vec_unchop()` by providing a `zap()` name-spec (
   })
 })
 
+test_that("vec_unchop() falls back to c() methods (#1120)", {
+  expect_error(
+    vec_unchop(list(foobar(1), foobar(2, class = "foo"))),
+    class = "vctrs_error_incompatible_type"
+  )
+
+  local_methods(
+    c.vctrs_foobar = function(...) {
+      out <- NextMethod()
+      paste0(rep_along(out, "dispatched"), seq_along(out))
+    }
+  )
+
+  # Homogeneous subclasses
+  xs <- list(foobar(1), foobar(2, class = "foo"))
+
+  expect_identical(
+    vec_unchop(xs),
+    c("dispatched1", "dispatched2")
+  )
+  expect_identical(
+    vec_unchop(xs, indices = list(2, 1)),
+    c("dispatched2", "dispatched1")
+  )
+
+  # Different subclasses
+  xs <- list(
+    foobar(c(x = 1, y = 2), class = "foo"),
+    foobar(c(x = 1), foo = 1)
+  )
+
+  expect_identical(
+    vec_unchop(xs),
+    c("dispatched1", "dispatched2", "dispatched3")
+  )
+  expect_identical(
+    vec_unchop(xs, list(c(2, 1), 3)),
+    c("dispatched2", "dispatched1", "dispatched3")
+  )
+})
+
+test_that("vec_unchop() fails if foreign classes are not homogeneous and there is no c() method", {
+  xs <- list(
+    foobar(c(x = 1, y = 2), class = "foo"),
+    foobar(c(x = 1), foo = 1)
+  )
+  expect_error(
+    vec_unchop(xs),
+    class = "vctrs_error_incompatible_type"
+  )
+  expect_error(
+    vec_unchop(xs, list(c(2, 1), 3)),
+    class = "vctrs_error_incompatible_type"
+  )
+})
+
 test_that("vec_unchop() has informative error messages", {
   verify_output(test_path("error", "test-unchop.txt"), {
     "# vec_unchop() errors on unsupported location values"
