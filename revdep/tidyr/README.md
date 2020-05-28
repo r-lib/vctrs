@@ -11,10 +11,9 @@
 |SimDesign |?       |      |        |     |
 |wrswoR    |?       |      |        |     |
 
-## New problems (2)
+## New problems (1)
 
-|package                      |version |error  |warning |note |
-|:----------------------------|:-------|:------|:-------|:----|
-|[broom](problems.md#broom)   |0.5.6   |__+1__ |        |     |
-|[timetk](problems.md#timetk) |1.0.0   |__+1__ |        |2    |
+|package                    |version |error  |warning |note |
+|:--------------------------|:-------|:------|:-------|:----|
+|[broom](problems.md#broom) |0.5.6   |__+1__ |        |     |
 
