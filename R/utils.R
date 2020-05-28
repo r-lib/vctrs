@@ -156,9 +156,17 @@ ns_methods <- function(name) {
   ns_env(name)$.__S3MethodsTable__.
 }
 
+s3_find_method <- function(x, generic, ns = "base") {
+  stopifnot(
+    is_string(generic),
+    is_string(ns)
+  )
+  table <- ns_methods(ns_env(ns))
+  .Call(vctrs_s3_find_method, generic, x, table)
+}
+
 df_has_base_subset <- function(x) {
-  table <- ns_methods(.BaseNamespaceEnv)
-  method <- .Call(vctrs_s3_find_method, "[", x, table)
+  method <- s3_find_method(x, "[", ns = "base")
   is_null(method) || identical(method, `[.data.frame`)
 }
 
