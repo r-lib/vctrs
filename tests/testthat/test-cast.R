@@ -231,3 +231,15 @@ test_that("vec_ptype_common() supports subclasses of list", {
   )
   expect_identical(out, quux(list(1, 2)))
 })
+
+test_that("vec_cast_common_fallback() works with tibbles", {
+  x <- foobar("foo")
+  df <- data_frame(x = x)
+  tib <- tibble(x = x)
+
+  exp <- list(tib, tib)
+
+  expect_identical(vec_cast_common_fallback(tib, tib), exp)
+  expect_identical(vec_cast_common_fallback(tib, df), exp)
+  expect_identical(vec_cast_common_fallback(df, tib), exp)
+})

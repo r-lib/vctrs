@@ -5,6 +5,7 @@
 
 
 SEXP tib_ptype2(const struct ptype2_opts* opts);
+SEXP tib_cast(const struct cast_opts* opts);
 
 
 #endif

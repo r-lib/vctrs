@@ -556,10 +556,6 @@ SEXP vec_posixlt_restore(SEXP x, SEXP to);
 SEXP date_datetime_ptype2(SEXP x, SEXP y);
 SEXP datetime_datetime_ptype2(SEXP x, SEXP y);
 
-// Tibble methods ----------------------------------------------------
-
-SEXP tib_cast(SEXP x, SEXP y, struct vctrs_arg* x_arg, struct vctrs_arg* y_arg);
-
 // Character translation ---------------------------------------------
 
 SEXP obj_maybe_translate_encoding(SEXP x, R_len_t size);

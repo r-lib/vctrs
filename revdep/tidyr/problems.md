@@ -41,61 +41,6 @@ Run `cloud_details(, "broom")` for more info
     Execution halted
     ```
 
-# RTL
-
-<details>
-
-* Version: 0.1.1
-* Source code: https://github.com/cran/RTL
-* URL: https://github.com/risktoollib/RTL
-* Date/Publication: 2020-02-23 18:50:02 UTC
-* Number of recursive dependencies: 136
-
-Run `cloud_details(, "RTL")` for more info
-
-</details>
-
-## Newly broken
-
-*   checking examples ... ERROR
-    ```
-    ...
-    + per = "yearweek", output = "stats", chart = "seasons")
-    Error: Can't convert `$freq` <date> to match type of `$freq` <vctrs:::common_class_fallback>.
-    Backtrace:
-         █
-      1. ├─RTL::chart_zscore(...)
-      2. │ └─`%>%`(...)
-      3. │   ├─base::withVisible(eval(quote(`_fseq`(`_lhs`)), env, env))
-      4. │   └─base::eval(quote(`_fseq`(`_lhs`)), env, env)
-      5. │     └─base::eval(quote(`_fseq`(`_lhs`)), env, env)
-      6. │       └─RTL:::`_fseq`(`_lhs`)
-      7. │         └─magrittr::freduce(value, `_function_list`)
-      8. │           └─function_list[[i]](value)
-      9. │             ├─fabletools::components(.)
-     10. │             └─fabletools:::components.mdl_df(.)
-     11. │               └─fabletools:::unnest_tsbl(object, "cmp", parent_key = kv)
-     12. │                 └─fabletools:::unnest_tbl(.data, tsbl_col)
-     13. │                   └─fabletools:::map(...)
-     14. │                     └─base::lapply(.x, .f, ...)
-     15. │                       └─fabletools:::FUN(X[[i]], ...)
-     16. │ 
-    Execution halted
-    ```
-
-## In both
-
-*   checking dependencies in R code ... NOTE
-    ```
-    Namespace in Imports field not imported from: ‘quantmod’
-      All declared Imports should be used.
-    ```
-
-*   checking data for non-ASCII characters ... NOTE
-    ```
-      Note: found 15456 marked UTF-8 strings
-    ```
-
 # timetk
 
 <details>

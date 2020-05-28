@@ -1,37 +1,3 @@
-# NA
-
-<details>
-
-* Version: NA
-* Source code: https://github.com/cran/NA
-* Number of recursive dependencies: 0
-
-Run `cloud_details(, "NA")` for more info
-
-</details>
-
-## Error before installation
-
-### Devel
-
-```
-
-
-
-
-
-
-```
-### CRAN
-
-```
-
-
-
-
-
-
-```
 # slider
 
 <details>
@@ -129,39 +95,5 @@ installing to /tmp/workdir/slider/old/slider.Rcheck/00LOCK-slider/00new/slider/l
 ** testing if installed package can be loaded from final location
 ** testing if installed package keeps a record of temporary installation path
 * DONE (slider)
-
-```
-# NA
-
-<details>
-
-* Version: NA
-* Source code: https://github.com/cran/NA
-* Number of recursive dependencies: 0
-
-Run `cloud_details(, "NA")` for more info
-
-</details>
-
-## Error before installation
-
-### Devel
-
-```
-
-
-
-
-
-
-```
-### CRAN
-
-```
-
-
-
-
-
 
 ```

@@ -1,6 +1,7 @@
 #include "vctrs.h"
 #include "cast.h"
 #include "type-factor.h"
+#include "type-tibble.h"
 #include "utils.h"
 
 // [[ include("cast.h") ]]
@@ -70,13 +71,13 @@ SEXP vec_cast_dispatch(const struct cast_opts* opts,
 
   case vctrs_type2_s3_dataframe_bare_tibble:
     if (dir == 0) {
-      return tib_cast(x, to, x_arg, to_arg);
+      return tib_cast(opts);
     } else {
       return df_cast_opts(opts);
     }
 
   case vctrs_type2_s3_bare_tibble_bare_tibble:
-    return tib_cast(x, to, x_arg, to_arg);
+    return tib_cast(opts);
 
   default:
     return R_NilValue;

@@ -891,3 +891,17 @@ test_that("vec_rbind() doesn't fall back to c() with proxied classes (#1119)", {
   )
   expect_identical(out, exp)
 })
+
+test_that("vec_rbind() fallback works with tibbles", {
+  x <- foobar("foo")
+  df <- data_frame(x = x)
+  tib <- tibble(x = x)
+
+  local_methods(c.vctrs_foobar = function(...) quux(NextMethod()))
+
+  exp <- tibble(x = quux(c("foo", "foo")))
+
+  expect_identical(vec_rbind(tib, tib), exp)
+  expect_identical(vec_rbind(df, tib), exp)
+  expect_identical(vec_rbind(tib, df), exp)
+})
