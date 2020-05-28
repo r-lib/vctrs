@@ -41,6 +41,7 @@
 #'   `NULL` inputs are silently ignored. Empty (e.g. zero row) inputs
 #'   will not appear in the output, but will affect the derived `.ptype`.
 #' @param .names_to
+#' This controls what to do with input names supplied in `...`.
 #'   * By default, input names are [zapped][rlang::zap].
 #'
 #'   * If a string, specifies a column where the input names will be
