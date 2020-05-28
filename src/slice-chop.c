@@ -1,12 +1,9 @@
 #include "vctrs.h"
-#include "c.h"
+#include "dim.h"
 #include "slice.h"
-#include "slice-assign.h"
 #include "subscript-loc.h"
-#include "ptype-common.h"
 #include "type-data-frame.h"
 #include "utils.h"
-#include "dim.h"
 
 /*
  * @member proxy_info The result of `vec_proxy_info(x)`.
@@ -80,7 +77,7 @@ static SEXP chop_fallback_shaped(SEXP x, SEXP indices, struct vctrs_chop_info in
 
 static SEXP vec_chop_base(SEXP x, SEXP indices, struct vctrs_chop_info info);
 
-static SEXP vec_as_indices(SEXP indices, R_len_t n, SEXP names);
+SEXP vec_as_indices(SEXP indices, R_len_t n, SEXP names);
 
 // [[ register() ]]
 SEXP vctrs_chop_seq(SEXP x, SEXP starts, SEXP sizes, SEXP increasings) {
@@ -381,7 +378,7 @@ static SEXP chop_fallback_shaped(SEXP x, SEXP indices, struct vctrs_chop_info in
 
 // -----------------------------------------------------------------------------
 
-static SEXP vec_as_indices(SEXP indices, R_len_t n, SEXP names) {
+SEXP vec_as_indices(SEXP indices, R_len_t n, SEXP names) {
   if (indices == R_NilValue) {
     return indices;
   }
