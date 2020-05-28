@@ -32,9 +32,11 @@ enum fallback_homogeneous {
   FALLBACK_HOMOGENEOUS_false = 0,
   FALLBACK_HOMOGENEOUS_true
 };
-static SEXP vec_unchop_fallback(SEXP x,
+static SEXP vec_unchop_fallback(SEXP ptype,
+                                SEXP x,
                                 SEXP indices,
                                 SEXP name_spec,
+                                const struct name_repair_opts* name_repair,
                                 enum fallback_homogeneous homogenous);
 
 static SEXP vec_unchop(SEXP x,
@@ -65,13 +67,13 @@ static SEXP vec_unchop(SEXP x,
   ptype = PROTECT(vec_ptype_common_params(x, ptype, DF_FALLBACK_DEFAULT, S3_FALLBACK_true));
 
   if (needs_vec_c_fallback(ptype)) {
-    SEXP out = vec_unchop_fallback(x, indices, name_spec, FALLBACK_HOMOGENEOUS_false);
+    SEXP out = vec_unchop_fallback(ptype, x, indices, name_spec, name_repair, FALLBACK_HOMOGENEOUS_false);
     UNPROTECT(1);
     return out;
   }
   // FIXME: Needed for dplyr::summarise() which passes a non-fallback ptype
   if (needs_vec_c_homogeneous_fallback(x, ptype)) {
-    SEXP out = vec_unchop_fallback(x, indices, name_spec, FALLBACK_HOMOGENEOUS_true);
+    SEXP out = vec_unchop_fallback(ptype, x, indices, name_spec, name_repair, FALLBACK_HOMOGENEOUS_true);
     UNPROTECT(1);
     return out;
   }
@@ -195,10 +197,12 @@ static inline bool needs_vec_unchop_fallback(SEXP x, SEXP ptype) {
 // This is essentially:
 // vec_slice_fallback(vec_c_fallback_invoke(!!!x), order(vec_c(!!!indices)))
 // with recycling of each element of `x` to the corresponding index size
-static SEXP vec_unchop_fallback(SEXP x,
+static SEXP vec_unchop_fallback(SEXP ptype,
+                                SEXP x,
                                 SEXP indices,
                                 SEXP name_spec,
-                                enum fallback_homogeneous homogenous) {
+                                const struct name_repair_opts* name_repair,
+                                enum fallback_homogeneous homogeneous) {
   R_len_t x_size = vec_size(x);
   x = PROTECT(r_clone_referenced(x));
 
@@ -216,7 +220,12 @@ static SEXP vec_unchop_fallback(SEXP x,
 
   indices = PROTECT(vec_as_indices(indices, out_size, R_NilValue));
 
-  SEXP out = PROTECT(vec_c_fallback_invoke(x, name_spec));
+  SEXP out = R_NilValue;
+  if (homogeneous) {
+    out = PROTECT(vec_c_fallback_invoke(x, name_spec));
+  } else {
+    out = PROTECT(vec_c_fallback(ptype, x, name_spec, name_repair));
+  }
 
   const struct name_repair_opts name_repair_opts = {
     .type = name_repair_none,
