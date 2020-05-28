@@ -15,9 +15,6 @@ SEXP fns_vec_slice_fallback_integer64 = NULL;
 SEXP syms_vec_slice_dispatch_integer64 = NULL;
 SEXP fns_vec_slice_dispatch_integer64 = NULL;
 
-// Defined below
-static bool vec_is_restored(SEXP x);
-
 
 #define SLICE_SUBSCRIPT(RTYPE, CTYPE, DEREF, CONST_DEREF, NA_VALUE)     \
   const CTYPE* data = CONST_DEREF(x);                                   \
@@ -413,7 +410,6 @@ SEXP vec_slice_impl(SEXP x, SEXP subscript) {
   }
 }
 
-static
 bool vec_is_restored(SEXP x) {
   SEXP attrib = ATTRIB(x);
 

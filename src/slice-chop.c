@@ -346,7 +346,7 @@ static SEXP chop_fallback(SEXP x, SEXP indices, struct vctrs_chop_info info) {
     SEXP elt = PROTECT(Rf_eval(call, env));
 
     // Restore attributes only if `[` fallback doesn't
-    if (ATTRIB(elt) == R_NilValue) {
+    if (!vec_is_restored(elt)) {
       elt = vec_restore(elt, x, info.restore_size);
     }
 
