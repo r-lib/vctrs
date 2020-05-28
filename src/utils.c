@@ -535,10 +535,14 @@ SEXP s4_find_method(SEXP x, SEXP table) {
   }
 
   SEXP class = PROTECT(Rf_getAttrib(x, R_ClassSymbol));
+  SEXP out = s4_class_find_method(class, table);
 
+  UNPROTECT(1);
+  return out;
+}
+SEXP s4_class_find_method(SEXP class, SEXP table) {
   // Avoid corrupt objects where `x` is an OBJECT(), but the class is NULL
   if (class == R_NilValue) {
-    UNPROTECT(1);
     return R_NilValue;
   }
 
@@ -548,12 +552,10 @@ SEXP s4_find_method(SEXP x, SEXP table) {
   for (int i = 0; i < n_class; ++i) {
     SEXP method = s4_get_method(CHAR(p_class[i]), table);
     if (method != R_NilValue) {
-      UNPROTECT(1);
       return method;
     }
   }
 
-  UNPROTECT(1);
   return R_NilValue;
 }
 

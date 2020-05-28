@@ -133,6 +133,7 @@ SEXP s3_find_method2(const char* generic,
 SEXP s3_paste_method_sym(const char* generic, const char* cls);
 SEXP s3_bare_class(SEXP x);
 SEXP s4_find_method(SEXP x, SEXP table);
+SEXP s4_class_find_method(SEXP class, SEXP table);
 bool vec_implements_ptype2(SEXP x);
 
 SEXP r_env_get(SEXP env, SEXP sym);
