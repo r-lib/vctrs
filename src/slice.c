@@ -15,6 +15,9 @@ SEXP fns_vec_slice_fallback_integer64 = NULL;
 SEXP syms_vec_slice_dispatch_integer64 = NULL;
 SEXP fns_vec_slice_dispatch_integer64 = NULL;
 
+// Defined below
+static bool vec_is_restored(SEXP x);
+
 
 #define SLICE_SUBSCRIPT(RTYPE, CTYPE, DEREF, CONST_DEREF, NA_VALUE)     \
   const CTYPE* data = CONST_DEREF(x);                                   \
@@ -351,7 +354,7 @@ SEXP vec_slice_impl(SEXP x, SEXP subscript) {
 
     // Take over attribute restoration only if the `[` method did not
     // restore itself
-    if (ATTRIB(out) == R_NilValue) {
+    if (!vec_is_restored(out)) {
       out = vec_restore(out, x, restore_size);
     }
 
@@ -409,6 +412,29 @@ SEXP vec_slice_impl(SEXP x, SEXP subscript) {
              vec_type_as_str(info.type));
   }
 }
+
+static
+bool vec_is_restored(SEXP x) {
+  SEXP attrib = ATTRIB(x);
+
+  if (attrib == R_NilValue) {
+    return false;
+  }
+
+  // Class is restored if it contains any other attributes than names.
+  // We might want to add support for data frames later on.
+  SEXP node = attrib;
+  while (node != R_NilValue) {
+    if (TAG(node) == R_NamesSymbol) {
+      node = CDR(node);
+      continue;
+    }
+    return true;
+  }
+
+  return false;
+}
+
 
 // [[export]]
 SEXP vctrs_slice(SEXP x, SEXP subscript) {
